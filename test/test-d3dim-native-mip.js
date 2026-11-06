@@ -77,16 +77,16 @@ const extraWat=String.raw`
  // Anisotropic footprint must consider the y derivative even on a constant-U
  // scanline. A horizontal-only span heuristic wrongly returns level zero.
  stage();draw(0,{uv:[[.25,0],[.25,0],[.25,16]]});expect('vertical footprint',colors[3]);
- // Distinct within-level texels distinguish legacy filters 3/4 from 5/6.
+ // Distinct within-level texels distinguish legacy filters 3/5 from 4/6.
  const greenWhite=levels[1];for(let y=0;y<8;y++)for(let x=0;x<8;x++)m.setUint32(dib(greenWhite)+y*pitch(greenWhite)+4*x,x%2?0xffffffff:0xff000000,true);
  function legacy(f){
   assert.equal(e.mip_device(rt,out)>>>0,0);dev=e.guest_read32(out)>>>0;
   e.mip_bind(dev,0,tex);rs(22,1);rs(7,0);rs(27,0);tss(1,2);tss(4,2);tss(13,1);tss(14,1);
   rs(17,1);rs(18,f);
  }
- for(const [f,c] of [[3,0xff000000],[4,0xff000000],[5,0xff7f7f7f],[6,0xff7f7f7f]]){legacy(f);draw(4);expect(`legacy filter ${f} exact mip1`,c,4,4,1);}
+ for(const [f,c] of [[3,0xff000000],[4,0xff7f7f7f],[5,0xff000000],[6,0xff7f7f7f]]){legacy(f);draw(4);expect(`legacy filter ${f} exact mip1`,c,4,4,1);}
  levels.forEach((s,i)=>fill(s,colors[i]));
- for(const [f,c] of [[3,colors[2]],[4,0xff006699],[5,colors[2]],[6,0xff006699]]){legacy(f);draw(2*2**1.6);expect(`legacy filter ${f} fractional LOD`,c,4,4,1);}
+ for(const [f,c] of [[3,colors[2]],[4,colors[2]],[5,0xff006699],[6,0xff006699]]){legacy(f);draw(2*2**1.6);expect(`legacy filter ${f} fractional LOD`,c,4,4,1);}
  // Explicit NONE overrides legacy even with MIN unset (zero fallback).
  tss(18,MIP_NONE);draw(32);expect('explicit NONE with legacy MIN fallback',colors[0]);
  // Stage overrides select point texels / no mips despite legacy filter 6.

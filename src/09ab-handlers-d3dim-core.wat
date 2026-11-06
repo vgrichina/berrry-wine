@@ -9355,8 +9355,8 @@
       (i32.load (i32.add (local.get $v0) (i32.const 16)))))
 
   ;; Stage MIN/MAG/MIP values take precedence over their legacy sources.
-  ;; Legacy 3/4 use point texels, 5/6 bilinear; 3/5 select nearest mip,
-  ;; 4/6 blend adjacent mips. NONE stays at level zero under minification.
+  ;; Legacy 3/5 use point texels, 4/6 bilinear; 3/4 select nearest mip,
+  ;; 5/6 blend adjacent mips. NONE stays at level zero under minification.
   (func $d3dim_mip_filters (param $state i32)
     (local $min i32) (local $mag i32) (local $mip i32) (local $legacy i32)
     (local.set $min (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 17)))
@@ -9371,12 +9371,12 @@
     (if (i32.eqz (local.get $min)) (then
       (local.set $min (select (i32.const 2) (i32.const 1)
         (i32.or (i32.eq (local.get $legacy) (i32.const 2))
-          (i32.or (i32.eq (local.get $legacy) (i32.const 5)) (i32.eq (local.get $legacy) (i32.const 6))))))
+          (i32.or (i32.eq (local.get $legacy) (i32.const 4)) (i32.eq (local.get $legacy) (i32.const 6))))))
       (if (i32.and (i32.eqz (local.get $mip))
             (i32.eqz (call $gl32 (i32.add (local.get $state) (i32.const 3940))))) (then
         (if (i32.and (i32.ge_u (local.get $legacy) (i32.const 3)) (i32.le_u (local.get $legacy) (i32.const 6)))
           (then (local.set $mip (select (i32.const 1) (i32.const 2)
-            (i32.ne (i32.and (local.get $legacy) (i32.const 1)) (i32.const 0))))))))))
+            (i32.le_u (local.get $legacy) (i32.const 4))))))))))
     (if (i32.eqz (local.get $mag)) (then
       (local.set $mag (call $gl32 (i32.add (local.get $state) (i32.const 324))))))
     (global.set $d3dim_mip_min (i32.eq (local.get $min) (i32.const 2)))

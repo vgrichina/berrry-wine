@@ -5,6 +5,8 @@
 // reuse the public x86 COM harness. --plan cannot qualify rendered coverage.
 // Runtime requires LEGACY_PUBLIC_MIP_{EVIDENCE,MODULE_DIR,SOURCE,MODULE_MANIFEST};
 // the manifest is {source: GitSHA, modules: [{name, sha256, bytes}, ...]}.
+// --combined covers combined MIN enums and supported stage ordering.
+// --combined --combined-point-none-probe retains the known POINT/NONE failure.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const crypto=require('node:crypto'),vm=require('node:vm');
 const {browserFixture}=require('./test-legacy-texture-rendered-contract');
@@ -133,6 +135,87 @@ function spatialPlan(){
     assert(uv.every(v=>Math.abs(v*16-Math.round(v*16))>.01),'noninteger base texel coordinates');
   }
   return {colors,states,tolerance,spatial:true,queuedPairs:[[0,1],[3,4],[4,5]],update:null};
+}
+
+// Public legacy enum values are deliberately
+// independent of the implementation's current normalized sampler fields.
+function combinedPlan({pointNoneProbe=process.argv.includes('--combined-point-none-probe')}={}){
+  const colors=spatialPlan().colors,tolerance=2;
+  const definitions=[
+    {label:'NEAREST_MIPNEAREST / MIPNEAREST=3',legacy:3,min:1,mip:2},
+    {label:'LINEAR_MIPNEAREST / MIPLINEAR=4',legacy:4,min:2,mip:2},
+    {label:'NEAREST_MIPLINEAR / LINEARMIPNEAREST=5',legacy:5,min:1,mip:3},
+    {label:'LINEAR_MIPLINEAR / LINEARMIPLINEAR=6',legacy:6,min:2,mip:3},
+  ];
+  const states=definitions.map(s=>({...s,ops:[['rs',18,s.legacy]]}));
+  states.push({...definitions[0],label:'bare combined POINT restored',ops:[['rs',18,3]]});
+  // A fresh device's untouched stage MIN/MIP selects the legacy fallback.
+  // Thereafter exercise legal explicit overrides without any zero/unset write.
+  states.push({label:'explicit MIP NONE after legacy6',legacy:6,min:2,mip:1,
+    ops:[['rs',18,6],['tss',18,1]]});
+  // Equal POINT min/mag with NONE takes the older non-atlas GL UV path and
+  // currently fails this pixel oracle. Keep an explicit reproducible probe;
+  // the supported matrix retains NONE across a later bilinear legacy call.
+  states.push(pointNoneProbe?
+    {label:'unsupported later legacy3 with explicit MIP NONE',legacy:3,min:1,mip:1,ops:[['rs',18,3]]}:
+    {label:'later legacy4 with explicit MIP NONE',legacy:4,min:2,mip:1,ops:[['rs',18,4]]});
+  states.push({label:'explicit MIP LINEAR after legacy3',legacy:3,min:1,mip:3,
+    ops:[['rs',18,3],['tss',18,3]]});
+  states.push({label:'explicit MIN LINEAR after legacy3',legacy:3,min:2,mip:3,
+    ops:[['rs',18,3],['tss',18,3],['tss',17,2]]});
+  // These last three are complete reproducible stage configurations, suitable
+  // for replay in held Worker batches after the one-way bare-legacy sequence.
+  states.push({label:'explicit POINT/POINT after legacy6',legacy:6,min:1,mip:2,
+    ops:[['rs',18,6],['tss',17,1],['tss',18,2]]});
+  states.push({label:'explicit LINEAR/LINEAR before later legacy3',legacy:3,min:2,mip:3,
+    ops:[['tss',17,2],['tss',18,3],['rs',18,3]]});
+  states.push({label:'explicit LINEAR/NONE before later legacy6',legacy:6,min:2,mip:1,
+    ops:[['tss',17,2],['tss',18,1],['rs',18,6]]});
+  for(const s of states)Object.assign(s,{spatial:true,n:2*2**1.25,mag:1,
+    offset:[.137,.193],samples:[{x:2,y:3},{x:5,y:2}]});
+  const vectors=states.slice(0,4).map(s=>s.samples.flatMap(p=>oracle(colors,s,p)));
+  for(let a=0;a<4;a++)for(let b=a+1;b<4;b++)assert(
+    vectors[a].some((v,i)=>Math.abs(v-vectors[b][i])>2*tolerance),
+    'all four documented combined filters discriminate '+a+'/'+b);
+  assert.deepEqual(states[4].samples.map(p=>oracle(colors,states[4],p)),
+    states[0].samples.map(p=>oracle(colors,states[0],p)),'bare legacy restored');
+  return {colors,states,tolerance,spatial:true,combined:true,update:null,
+    queuedPairs:[[9,10],[10,11],[11,9]],
+    semantics:'documented D3DTEXTUREFILTER; persistent explicit stage precedence only; Windows last-writer aliasing unqualified'};
+}
+
+function combinedFixtureSource(){
+  let source=fixtureSource();
+  const replace=(a,b)=>{assert.equal(source.split(a).length,2,'unique combined seam '+a.slice(0,50));source=source.replace(a,b);};
+  // Do not mark MIPFILTER explicit on a fresh public device. No private reset
+  // and no invalid zero enum are used to recover the legacy fallback.
+  replace('\n    for(const [id,v] of [[1,2],[2,2],[4,2],[5,2],[18,0]])await tss(id,v);',
+    '\n    for(const [id,v] of [[1,2],[2,2],[4,2],[5,2]])await tss(id,v);');
+  const begin=source.indexOf('    let previousMip=1;'),end=source.indexOf('    const describe=async()=>{',begin);
+  assert(begin>=0&&end>begin);
+  source=source.slice(0,begin)+`    const setState=async state=>{
+      const ops=state.ops.map(op=>op.slice());
+      for(const op of ops)if(op[0]==='rs'&&op[1]===18){
+        if(negative==='combined-point-only')op[2]=op[2]===4?3:op[2]===6?5:op[2];
+        if(negative==='combined-nearest-mip-only')op[2]=op[2]===5?3:op[2]===6?4:op[2];
+        if(negative==='combined-swapped-enums')op[2]=op[2]===4?5:op[2]===5?4:op[2];
+      }
+      // Magnification is deliberately independent of the combined MIN call.
+      await ok(com('SetRenderState7 TEXTUREMAG',device,20,17,1));
+      for(const [kind,id,value] of ops){
+        if(kind==='rs')await ok(com('SetRenderState7 combined TEXTUREMIN',device,20,id,value));
+        else await tss(id,value);
+        const out=await guard(4);
+        await ok(kind==='rs'?com('GetRenderState7 combined',device,21,id,out.p):
+          com('GetTextureStageState7 override',device,36,0,id,out.p));
+        await out.check();eq(await read(out.p),value,'public combined state round trip '+kind+'/'+id);
+      }
+      await tss(13,1);await tss(14,1);
+      evidence.stateWrites=evidence.stateWrites||[];
+      evidence.stateWrites.push({label:state.label,ops});
+    };
+`+source.slice(end);
+  return source;
 }
 
 function fixtureSource() {
@@ -342,7 +425,7 @@ function batchTopologyControls(){
 }
 
 function controls(){
-  versionControls();plan();batchTopologyControls();const p=spatialPlan(),source=fixtureSource();
+  versionControls();plan();batchTopologyControls();combinedPlan();new vm.Script('('+combinedFixtureSource()+')');const p=spatialPlan(),source=fixtureSource();
   new vm.Script('('+source+')');
   new vm.Script('('+batchedFixtureSource()+')');
   assert(!/mip_seed|mip_surface|mip_draw|fixedLOD/.test(source));
@@ -363,9 +446,9 @@ function controls(){
 }
 
 function config(planName='spatial'){
-  assert(['solid','spatial'].includes(planName));
+  assert(['solid','spatial','combined'].includes(planName));
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
-  const selected=planName==='solid'?plan():spatialPlan();
+  const selected=planName==='combined'?combinedPlan():planName==='solid'?plan():spatialPlan();
   if(process.argv.includes('--batched'))selected.states=selected.states.map(s=>({...s,samples:[{x:2,y:3},{x:18,y:3,second:true}]}));
   return {...selected,captureHeldPackets:true,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
@@ -464,8 +547,10 @@ async function bootstrap(modulePath){
 
 async function runtime(){
   controls();await serverControls();
-  const batched=process.argv.includes('--batched');
-  const selectedFixture=batched?batchedFixtureSource():fixtureSource();
+  const batched=process.argv.includes('--batched'),combined=process.argv.includes('--combined');
+  assert(!(batched&&combined),'combined and batched are separate bounded matrices');
+  assert(!process.argv.includes('--combined-point-none-probe')||combined,'POINT/NONE probe requires --combined');
+  const selectedFixture=combined?combinedFixtureSource():batched?batchedFixtureSource():fixtureSource();
   const oracleSource=batched?`(function(colors,state,sample){const base=${oracle.toString()};
     return sample.second?base(colors,{...state,n:-4,q:[1,1,1],offset:[.815,.867]},{x:sample.x-16,y:sample.y}):base(colors,state,sample);})`:oracle.toString();
   const dir=process.env.LEGACY_PUBLIC_MIP_EVIDENCE,moduleDir=process.env.LEGACY_PUBLIC_MIP_MODULE_DIR;
@@ -475,13 +560,14 @@ async function runtime(){
   assert.equal(pins.source,source,'module manifest source must match tested Git source');
   assert.deepEqual(pins.modules.map(m=>m.name).sort(),['wine-assembly.compat.wasm','wine-assembly.wasm']);
   fs.mkdirSync(dir,{recursive:true});
-  const evidence={status:'RUNNING',source,batched,node:process.version,plans:{solid:plan(),spatial:spatialPlan()},modules:[],results:[],negativeControls:[],requests:[],
+  const evidence={status:'RUNNING',source,batched,combined,node:process.version,plans:combined?{combined:combinedPlan()}:{solid:plan(),spatial:spatialPlan()},modules:[],results:[],negativeControls:[],requests:[],
     fixtureSha256:sha(fs.readFileSync(__filename)),adaptedFixtureSha256:sha(fixtureSource()),
     publicFixtureSha256:sha(fs.readFileSync(path.join(__dirname,'test-legacy-texture-rendered-contract.js'))),
     selectedFixtureSha256:sha(selectedFixture),selectedOracleSha256:sha(oracleSource),
     calcSha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))),
     unexecuted:['partial/malformed chains',
-      'other per-level formats/padded pitch','legacy combined filters','other dimensions/formats',
+      'other per-level formats/padded pitch',...(combined?['Windows last-writer render/stage alias semantics','stage MIN without explicit MIP after override',
+        ...(!process.argv.includes('--combined-point-none-probe')?['equal POINT min/mag with explicit MIP NONE after later legacy3: known direct WebGL1 pixel mismatch; --combined-point-none-probe']:[])]:['legacy combined filters']),'other dimensions/formats',
       'physical GPU','games / full27']};
   const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(evidence,null,2)+'\n');
   let server,browser,page,wasm,activeNegative=null;
@@ -507,11 +593,14 @@ async function runtime(){
       await isolationControls(server,wasm);
       evidence.httpIsolation.push({module:module.name,sha256:sha(wasm),routes:3,status:'PASS'});
     }
+    evidence.serverAddress=server.address();
     save();
     evidence.browserOpenedAt=new Date().toISOString();
     browser=await require('puppeteer').launch({headless:true,executablePath:process.env.CHROME||'/usr/bin/google-chrome',
       args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader'],protocolTimeout:120000});
     evidence.browser=await browser.version();evidence.browserPid=browser.process().pid;
+    evidence.browserProfile=browser.process().spawnargs.find(a=>a.startsWith('--user-data-dir='))?.slice('--user-data-dir='.length);
+    evidence.browserArgs=browser.process().spawnargs;
     const cdp=await browser.target().createCDPSession();evidence.systemInfo=await cdp.send('SystemInfo.getInfo');await cdp.detach();
     const fixture=Function('return ('+selectedFixture+')')();
     const open=async()=>{page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');};
@@ -547,7 +636,7 @@ async function runtime(){
       else if(mode==='webgl')assert(partial.observations.some(o=>o.webglRGBA&&o.glError===0));
       await page.close();page=null;console.log('PASS rendered negative '+negative+' '+module.name+' '+mode+' WebGL'+webglVersion);
     };
-    for(const planName of ['solid','spatial'])for(const module of evidence.modules){
+    for(const planName of combined?['combined']:['solid','spatial'])for(const module of evidence.modules){
       wasm=fs.readFileSync(path.join(moduleDir,module.name));
       for(const mode of ['software','webgl','worker'])
       for(const webglVersion of mode==='software'?[null]:[1,2]){
@@ -567,7 +656,7 @@ async function runtime(){
         evidence.results.push({module:module.name,webglVersion,planName,...result});save();
         await page.screenshot({path:path.join(dir,module.name+'-'+planName+'-'+mode+'-'+webglVersion+'.png')});await page.close();page=null;
         console.log('PASS '+module.name+' '+mode+' WebGL'+webglVersion+' observations '+result.observations.length);
-        const negatives=planName==='spatial'?['nearest-only']:['level-zero-only','stale-mip-filter',
+        const negatives=planName==='combined'?['combined-point-only','combined-nearest-mip-only','combined-swapped-enums']:planName==='spatial'?['nearest-only']:['level-zero-only','stale-mip-filter',
           ...(mode==='software'?[]:['stale-child-upload'])];
         for(const negative of negatives)await runNegative(module,mode,webglVersion,negative,planName);
       }
@@ -589,4 +678,4 @@ if(require.main===module){
     .catch(error=>{console.error(error);process.exitCode=1;});
   else runtime().catch(error=>{console.error(error);process.exitCode=1;});
 }
-module.exports={oracle,plan,spatialPlan,fixtureSource,controls,bootstrap,serverControls};
+module.exports={oracle,plan,spatialPlan,combinedPlan,combinedFixtureSource,fixtureSource,controls,bootstrap,serverControls,config,createServer};
