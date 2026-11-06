@@ -6040,7 +6040,16 @@
   ;; Fill an RT DIB rect with a 32-bit color, dispatching by bpp.
   ;; rt_entry is WASM addr of the DDSurface entry; (x,y,w,h) are the viewport
   ;; rect (caller already clipped to surface bounds — we re-clip defensively).
-  (func $viewport_fill_rect (param $rt_entry i32) (param $x i32) (param $y i32) (param $w i32) (param $h i32) (param $color i32)
+  ;; RGB rectangle callers historically force opaque native16 storage. Keep
+  ;; that contract separate from POINTLIST's complete diffuse RGBA color.
+  (func $viewport_fill_rect (param $rt_entry i32) (param $x i32) (param $y i32)
+    (param $w i32) (param $h i32) (param $color i32)
+    (call $viewport_fill_rect_rgba (local.get $rt_entry) (local.get $x) (local.get $y)
+      (local.get $w) (local.get $h)
+      (select (i32.or (local.get $color) (i32.const 0xFF000000)) (local.get $color)
+        (i32.eq (load.field DxObject bpp (local.get $rt_entry)) (i32.const 16)))))
+
+  (func $viewport_fill_rect_rgba (param $rt_entry i32) (param $x i32) (param $y i32) (param $w i32) (param $h i32) (param $color i32)
     (local $sw i32) (local $sh i32) (local $bpp i32) (local $pitch i32) (local $dib_wa i32)
     (local $row i32) (local $col i32) (local $row_wa i32) (local $px16 i32)
     (local.set $sw (i32.and (i32.load (i32.add (local.get $rt_entry) (i32.const 12))) (i32.const 0xFFFF)))
@@ -6076,9 +6085,9 @@
       (then (return)))
     (call $d3dim_exec_extent_draw (local.get $rt_entry)
       (local.get $x) (local.get $y) (local.get $w) (local.get $h))
-    ;; Convert color to 16-bit 5-6-5 if needed (assumes input is 0x00RRGGBB).
+    ;; Store complete diffuse RGBA using the declared native component masks.
     (local.set $px16 (call $d3dim_encode_surface_pixel (local.get $rt_entry)
-      (i32.or (local.get $color) (i32.const 0xFF000000)) (i32.const 16)))
+      (local.get $color) (i32.const 16)))
     (local.set $row (i32.const 0))
     (block $rdone (loop $rlp
       (br_if $rdone (i32.ge_s (local.get $row) (local.get $h)))
@@ -8539,7 +8548,7 @@
       (block $pdone (loop $plp
         (br_if $pdone (i32.ge_u (local.get $i) (local.get $dwVertexCount)))
         (local.set $v0 (i32.add (local.get $v_wa) (i32.mul (local.get $i) (call $d3dim_tl_stride))))
-        (call $viewport_fill_rect (local.get $rt)
+        (call $viewport_fill_rect_rgba (local.get $rt)
           (call $d3dim_coord_i (f32.load (local.get $v0)))
           (call $d3dim_coord_i (f32.load (i32.add (local.get $v0) (i32.const 4))))
           (i32.const 2) (i32.const 2)
@@ -9031,7 +9040,7 @@
           (local.get $state_guest) (local.get $vbase_wa) (local.get $ibase_wa)
           (local.get $dwVertexCount) (local.get $vtxType) (local.get $idx0) (local.get $t0)))
       (then (return)))
-    (call $viewport_fill_rect (local.get $rt)
+    (call $viewport_fill_rect_rgba (local.get $rt)
       (call $d3dim_coord_i (f32.load (local.get $t0)))
       (call $d3dim_coord_i (f32.load (i32.add (local.get $t0) (i32.const 4))))
       (i32.const 2) (i32.const 2)
@@ -10334,7 +10343,7 @@
         (br_if $pdone (i32.ge_u (local.get $j) (local.get $pcount)))
         (local.set $v (i32.add (local.get $vbase)
           (i32.mul (i32.add (local.get $pfirst) (local.get $j)) (i32.const 32))))
-        (call $viewport_fill_rect (local.get $rt)
+        (call $viewport_fill_rect_rgba (local.get $rt)
           (call $d3dim_coord_i (f32.reinterpret_i32 (call $gl32 (local.get $v))))
           (call $d3dim_coord_i (f32.reinterpret_i32 (call $gl32 (i32.add (local.get $v) (i32.const 4)))))
           (i32.const 2) (i32.const 2)
