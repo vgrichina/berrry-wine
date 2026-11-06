@@ -6613,9 +6613,9 @@
           ]
         ]
       ],
-      "sha256": "6dcfefc7da383da86fd83d73049c50f197cedc624d0988b0cbe642c5ae0af4f5",
+      "sha256": "1d4eb0e070198b5d99e314099163ed00dbccaed2f8f72956581136384ee2323a",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Modal teardown review 20261106: FFE4 resumes the invocation-owned 24-byte owner/bounds frame above the saved DialogBox result and far return. The existing far destruction walk now stores its modal cleanup policy in its own 28-byte stack frame; nested calls preserve outer state and ordinary DestroyWindow guards. Generated native/modal, reentrant, handle-generation and full-memory controls qualify delivery; no guest-owned map repair.",
       "ownership": "pending"
     },
     {
@@ -7340,9 +7340,9 @@
           ]
         ]
       ],
-      "sha256": "661d978ec958d206ec8d58cb2e63a1a8308a1bad59a0cb5560121a378d1275ce",
+      "sha256": "89b90d0d61a823f72378d3f6ccf75e74c3091ff7f3118b5af8fbed9c1c3aa759",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Modal teardown review 20261106: FFE4 resumes the invocation-owned 24-byte owner/bounds frame above the saved DialogBox result and far return. The existing far destruction walk now stores its modal cleanup policy in its own 28-byte stack frame; nested calls preserve outer state and ordinary DestroyWindow guards. Generated native/modal, reentrant, handle-generation and full-memory controls qualify delivery; no guest-owned map repair.",
       "ownership": "pending"
     },
     {

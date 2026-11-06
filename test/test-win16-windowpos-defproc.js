@@ -1367,7 +1367,13 @@ const pack = (x, y) => ((x & 0xffff) | (y << 16)) >>> 0;
       assert.strictEqual(e.guest_read32(0x110f40) >>> 16, e.test_narrow(owner),
         'owner has focus before its real far WM_SETFOCUS callback');
       assert(pumpMessages().some(m => m.msg === 7));
-    } else assert.deepStrictEqual(pumpMessages(), [], 'surviving guest focus is not replaced');
+    } else {
+      const notifications = pumpMessages();
+      assert.deepStrictEqual(notifications.filter(m => m.msg === 7 || m.msg === 8), [],
+        'surviving guest focus is not replaced');
+      assert.deepStrictEqual(notifications.map(m => m.msg), [2, 0x82, 2, 0x82],
+        'modal child and root complete their far destruction callbacks');
+    }
     if (mode === 'nested-dialog') {
       assert.strictEqual(e.guest_read32(0x110f44) & 0xffff, 99,
         'actual nested DialogBoxIndirect/EndDialog returns its own result');

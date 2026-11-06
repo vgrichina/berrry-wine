@@ -12948,11 +12948,12 @@
   ;;
   ;; The walk's state is a frame on the task's stack, under the far calls:
   ;;   +0 root  +4 cur  +8 cur's parent  +12 cur's slot  +16 stage  +20 guard
+  ;;   +24 modal cleanup policy (ordinary DestroyWindow uses zero)
   ;; cur's parent and slot are captured when it is chosen, so the walk can
   ;; still advance if a handler destroyed cur. Stage 0 sends WM_DESTROY, 1
   ;; sends WM_NCDESTROY, 2 moves to the next window in post-order.
   (global $WIN16_CONT_DESTROY i32 (i32.const 0xFF88))
-  (global $WIN16_DESTROY_FRAME i32 (i32.const 24))
+  (global $WIN16_DESTROY_FRAME i32 (i32.const 28))
   ;; Set while the 32-bit teardown runs after a walk: every 16-bit procedure in
   ;; the tree has had both messages, so $wnd_destroy_recursive must not post
   ;; them again.
@@ -13052,7 +13053,7 @@
       (then (call $win16_destroy_slot_set (local.get $slot) (local.get $h)))))
 
   (func $win16_DestroyWindow
-    (local $hwnd i32) (local $sp i32)
+    (local $hwnd i32)
     (local.set $hwnd (call $win16_h32 (call $win16_arg16 (i32.const 0))))
     ;; A retired narrow HWND widens to zero. wnd_table_find(0) deliberately
     ;; finds an empty slot, and the children of parent zero are top-level
@@ -13065,18 +13066,31 @@
         (call $win16_api_return (i32.const 2))
         (return)))
     (call $win16_cont_push (call $win16_take_return (i32.const 2)) (i32.const 1))
+    (call $win16_destroy_begin (local.get $hwnd) (i32.const 0)))
+
+  ;; Run normal far notification teardown with an invocation-owned return
+  ;; record already on the stack. Modal completion uses the same walk instead
+  ;; of posting callbacks immediately before purging their HWNDs.
+  (func $win16_destroy_begin (param $hwnd i32) (param $modal i32)
+    (local $sp i32)
+    ;; A modal callback may already have destroyed the HWND. As at USER.53,
+    ;; zero must not select an empty row and traverse the desktop's children.
+    (if (i32.or (i32.eqz (local.get $hwnd))
+          (i32.lt_s (call $wnd_table_find (local.get $hwnd)) (i32.const 0)))
+      (then (call $win16_cont_resume) (return)))
     (if (call $win16_destroy_in_walk (local.get $hwnd))
-      (then (call $win16_destroy_finish (local.get $hwnd)) (return)))
+      (then (call $win16_destroy_finish (local.get $hwnd) (local.get $modal)) (return)))
     (local.set $sp (i32.sub (i32.load offset=16 (global.get $reg_base)) (global.get $WIN16_DESTROY_FRAME)))
     (i32.store offset=16 (global.get $reg_base) (local.get $sp))
     (call $gs32 (local.get $sp) (local.get $hwnd))
     (call $gs32 (i32.add (local.get $sp) (i32.const 20)) (call $win16_destroy_slot_claim))
+    (call $gs32 (i32.add (local.get $sp) (i32.const 24)) (local.get $modal))
     (call $win16_destroy_select (local.get $sp) (call $win16_first_leaf (local.get $hwnd)))
     (call $win16_destroy_continue))
 
   (func $win16_destroy_continue
     (local $sp i32) (local $root i32) (local $cur i32) (local $stage i32)
-    (local $proc i32) (local $parent i32) (local $next i32) (local $slot i32)
+    (local $proc i32) (local $parent i32) (local $next i32) (local $slot i32) (local $modal i32)
     (local.set $sp (i32.load offset=16 (global.get $reg_base)))
     (local.set $root (call $gl32 (local.get $sp)))
     (block $done (loop $step
@@ -13119,22 +13133,32 @@
     (local.set $slot (call $gl32 (i32.add (local.get $sp) (i32.const 20))))
     (if (i32.ge_s (local.get $slot) (i32.const 0))
       (then (call $win16_destroy_slot_set (local.get $slot) (i32.const 0))))
+    (local.set $modal (call $gl32 (i32.add (local.get $sp) (i32.const 24))))
     (i32.store offset=16 (global.get $reg_base)
       (i32.add (local.get $sp) (global.get $WIN16_DESTROY_FRAME)))
-    (call $win16_destroy_finish (local.get $root)))
+    (call $win16_destroy_finish (local.get $root) (local.get $modal)))
 
   ;; The teardown itself, with DestroyWindow's continuation record on top of
   ;; the stack. A window a handler already destroyed needs none.
-  (func $win16_destroy_finish (param $hwnd i32)
+  (func $win16_destroy_finish (param $hwnd i32) (param $modal i32)
     (local $quit i32)
     (if (i32.ge_s (call $wnd_table_find (local.get $hwnd)) (i32.const 0))
       (then
         (local.set $quit (global.get $quit_flag))
         (global.set $win16_destroy_notified (i32.const 1))
-        (call $win16_call32_begin (i32.const 1))
-        (call $handle_DestroyWindow (local.get $hwnd)
-          (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
-        (call $win16_call32_end)
+        ;; DialogBox completion owns focus/activation restoration. Ordinary
+        ;; DestroyWindow's main-window fallback would select an unrelated
+        ;; window before the modal owner's far focus transaction can run.
+        (if (local.get $modal)
+          (then
+            (call $wnd_destroy_children (local.get $hwnd))
+            (call $wnd_table_remove (local.get $hwnd))
+            (call $host_destroy_window (local.get $hwnd)))
+          (else
+            (call $win16_call32_begin (i32.const 1))
+            (call $handle_DestroyWindow (local.get $hwnd)
+              (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+            (call $win16_call32_end)))
         (global.set $win16_destroy_notified (i32.const 0))
         (if (i32.eq (global.get $quit_flag) (i32.const 1))
           (then (global.set $quit_flag (local.get $quit))))))
@@ -18368,6 +18392,8 @@
       (then (call $win16_dlg_pump) (return)))
     (if (i32.eq (local.get $thunk_off) (global.get $WIN16_DLG_INIT_RET))
       (then (call $win16_dlg_init_complete) (return)))
+    (if (i32.eq (local.get $thunk_off) (global.get $WIN16_DLG_DESTROY_RET))
+      (then (call $win16_dlg_destroy_complete) (return)))
     ;; The dialog's own WH_CALLWNDPROC filter has returned; WM_INITDIALOG is
     ;; what it was standing in front of.
     (if (i32.eq (local.get $thunk_off) (global.get $WIN16_DLG_CWP))
