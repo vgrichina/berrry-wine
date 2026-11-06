@@ -6,7 +6,8 @@
 // Runtime requires LEGACY_PUBLIC_MIP_{EVIDENCE,MODULE_DIR,SOURCE,MODULE_MANIFEST};
 // the manifest is {source: GitSHA, modules: [{name, sha256, bytes}, ...]}.
 // --combined covers combined MIN enums and supported stage ordering.
-// --combined --combined-point-none-probe retains the known POINT/NONE failure.
+// --combined --combined-point-none-probe retains the original POINT/NONE reproducer.
+// --point-none adds fresh-device, neighboring-texel and perspective coverage.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const crypto=require('node:crypto'),vm=require('node:vm');
 const {browserFixture}=require('./test-legacy-texture-rendered-contract');
@@ -153,11 +154,9 @@ function combinedPlan({pointNoneProbe=process.argv.includes('--combined-point-no
   // Thereafter exercise legal explicit overrides without any zero/unset write.
   states.push({label:'explicit MIP NONE after legacy6',legacy:6,min:2,mip:1,
     ops:[['rs',18,6],['tss',18,1]]});
-  // Equal POINT min/mag with NONE takes the older non-atlas GL UV path and
-  // currently fails this pixel oracle. Keep an explicit reproducible probe;
-  // the supported matrix retains NONE across a later bilinear legacy call.
+  // Retain the exact formerly failing non-atlas POINT/NONE transition.
   states.push(pointNoneProbe?
-    {label:'unsupported later legacy3 with explicit MIP NONE',legacy:3,min:1,mip:1,ops:[['rs',18,3]]}:
+    {label:'later legacy3 with explicit MIP NONE',legacy:3,min:1,mip:1,ops:[['rs',18,3]]}:
     {label:'later legacy4 with explicit MIP NONE',legacy:4,min:2,mip:1,ops:[['rs',18,4]]});
   states.push({label:'explicit MIP LINEAR after legacy3',legacy:3,min:1,mip:3,
     ops:[['rs',18,3],['tss',18,3]]});
@@ -184,6 +183,32 @@ function combinedPlan({pointNoneProbe=process.argv.includes('--combined-point-no
     semantics:'documented D3DTEXTUREFILTER; persistent explicit stage precedence only; Windows last-writer aliasing unqualified'};
 }
 
+function pointNonePlan(){
+  const colors=spatialPlan().colors,tolerance=2;
+  const complete=(min=1,mip=1)=>[['rs',18,6],['tss',17,min],['tss',18,mip]];
+  const states=[
+    {label:'fresh device POINT/NONE',ops:[['rs',18,1],['tss',18,1]]},
+    {label:'explicit POINT/NONE after legacy6',ops:complete()},
+    {label:'later legacy3 retains explicit NONE',ops:[['rs',18,3]]},
+    {label:'LINEAR/NONE after POINT/NONE',min:2,ops:complete(2)},
+    {label:'POINT/NONE restored after LINEAR',ops:complete()},
+    {label:'POINT/NONE reversed gradient',n:-4,offset:[.815,.867],ops:complete()},
+    {label:'POINT/NONE perspective boundary',n:4,q:[1,.5,.75],offset:[.115,.193],ops:complete()},
+    {label:'POINT/NONE steep perspective',n:4,q:[1,.001,.01],samples:[{x:30,y:1}],ops:complete()},
+    {label:'POINT/NONE magnified',n:.5,ops:complete()},
+    {label:'POINT mip magnified same base texels',n:.5,mip:2,ops:complete(1,2)},
+    {label:'POINT/NONE magnified restored',n:.5,ops:complete()},
+  ].map(s=>({spatial:true,n:2*2**1.25,min:1,mag:1,mip:1,offset:[.137,.193],
+    samples:[{x:2,y:3},{x:3,y:3},{x:2,y:4},{x:5,y:2}],...s}));
+  assert.notDeepEqual(oracle(colors,states[0],states[0].samples[0]),
+    oracle(colors,states[0],states[0].samples[1]),'neighboring samples select distinct texels');
+  for(const i of [9,10])assert.deepEqual(states[8].samples.map(p=>oracle(colors,states[8],p)),
+    states[i].samples.map(p=>oracle(colors,states[i],p)),'magnified NONE/mip use identical base texels');
+  return {colors,states,tolerance,spatial:true,combined:true,update:null,
+    queuedPairs:[[1,3],[3,4],[4,1]],
+    semantics:'integer-center POINT/NONE; persistent stage precedence; Windows last-writer aliasing unqualified'};
+}
+
 function combinedFixtureSource(){
   let source=fixtureSource();
   const replace=(a,b)=>{assert.equal(source.split(a).length,2,'unique combined seam '+a.slice(0,50));source=source.replace(a,b);};
@@ -195,6 +220,8 @@ function combinedFixtureSource(){
   assert(begin>=0&&end>begin);
   source=source.slice(0,begin)+`    const setState=async state=>{
       const ops=state.ops.map(op=>op.slice());
+      if(negative==='point-none-mip')for(const op of ops)
+        if(op[0]==='tss'&&op[1]===18&&op[2]===1)op[2]=2;
       for(const op of ops)if(op[0]==='rs'&&op[1]===18){
         if(negative==='combined-point-only')op[2]=op[2]===4?3:op[2]===6?5:op[2];
         if(negative==='combined-nearest-mip-only')op[2]=op[2]===5?3:op[2]===6?4:op[2];
@@ -283,6 +310,7 @@ function fixtureSource() {
   replace("if(preview)preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),8,8)","if(preview)preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),32,32)");
   replace("const expectedAddress=state.address===4?(mode==='software'?1:3):state.address;\n      const expected=expectedColor(state.palette||config.texture,sample.uv,state.filter,expectedAddress);",'const expectedAddress=[1,1];\n      const expected=expectedColor(config.colors,state,sample);');
   replace('gl.readPixels(2,8-1-2,1,1','gl.readPixels(sample.x,32-1-sample.y,1,1');
+  replace('new Uint32Array(memory.buffer,p,45)','new Uint32Array(memory.buffer,p,48)');
   replace("      eq(actual,expected,'PIXEL ORACLE '+label);\n      if(gpu)eq(state.rgbOnly?row.webglRGBA.slice(0,3):row.webglRGBA,\n        state.rgbOnly?expected:[...expected,255],'independent actual WebGL pixels');",`      const close=(got,want,label)=>check(got.length===want.length&&got.every((c,i)=>Math.abs(c-want[i])<=config.tolerance),
         'PIXEL ORACLE '+label+': '+JSON.stringify(got)+' expected '+JSON.stringify(want));
       if(mode==='worker'){
@@ -299,6 +327,14 @@ function fixtureSource() {
         const version=gpu?evidence.glRenderer.version:row.workerStats.glVersion;
         check(version.startsWith('WebGL '+config.webglVersion+'.0'),'actual context VERSION '+version);
       }
+      if(!negative){
+        const queued=label.startsWith('queued '),decoded=queued?heldRecord.descriptorAtQueue:row.descriptor;
+        eq(decoded.slice(45,48),[state.min||state.filter,state.mag||state.filter,state.mip-1],
+          'decoded MIN/MAG/MIP at submission');
+        if(queued){const live=heldRecord.next;
+          eq(row.descriptor.slice(45,48),[live.min||live.filter,live.mag||live.filter,live.mip-1],
+            'live descriptor changed while queued pixels retain old state');}
+      }
       close(actual,expected,label);
       if(gpu){close(row.webglRGBA.slice(0,3),expected,'actual GL '+label);eq(row.webglRGBA[3],255,'GL opaque alpha');}`);
   block('    if(!config.stateblocks&&!config.immediate)for(const state of config.states){','    evidence.drawCount=drawCount;',`    for(const state of config.states){await setState(state);await geometry(state);await draw();
@@ -308,7 +344,7 @@ function fixtureSource() {
       for(const [a,b] of config.queuedPairs||[[0,1],[1,2],[2,3]]){
         const old=config.states[a],next=config.states[b];
         await geometry(old);await setState(old);
-        heldRecord={old,next,messages:[]};evidence.queued.push(heldRecord);holding=true;
+        heldRecord={old,next,messages:[],descriptorAtQueue:await describe()};evidence.queued.push(heldRecord);holding=true;
         await draw();await until(()=>held.length>0,'held production batch');
         if(config.captureHeldPackets){
           check(heldPackets.length>0,'held production packet retained');
@@ -446,9 +482,9 @@ function controls(){
 }
 
 function config(planName='spatial'){
-  assert(['solid','spatial','combined'].includes(planName));
+  assert(['solid','spatial','combined','point-none'].includes(planName));
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
-  const selected=planName==='combined'?combinedPlan():planName==='solid'?plan():spatialPlan();
+  const selected=planName==='point-none'?pointNonePlan():planName==='combined'?combinedPlan():planName==='solid'?plan():spatialPlan();
   if(process.argv.includes('--batched'))selected.states=selected.states.map(s=>({...s,samples:[{x:2,y:3},{x:18,y:3,second:true}]}));
   return {...selected,captureHeldPackets:true,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
@@ -468,6 +504,13 @@ function staleUploadControl(){
   };
 }
 
+// Rendered fault control: preserve public state, texture uploads and LOD
+// selection, but omit only the new ordinary-sampler center correction.
+function uncorrectedCenterControl(){
+  const lower=D3D9Shader.withMipSampling;
+  D3D9Shader.withMipSampling=(shader,stages,offset,planes)=>lower(shader,stages,offset,planes);
+}
+
 async function createServer(getWasm,getNegative=()=>null,onInjection=()=>{},onServe=()=>{}){
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
     'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
@@ -476,6 +519,13 @@ async function createServer(getWasm,getNegative=()=>null,onInjection=()=>{},onSe
     res.setHeader('Cross-Origin-Opener-Policy','same-origin');
     res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
     const pathname=new URL(req.url,'http://localhost').pathname;
+    if(pathname==='/lib/d3d9-shader.js'&&getNegative()==='uncorrected-texture-center'){
+      const body=fs.readFileSync(path.join(ROOT,'lib/d3d9-shader.js'),'utf8')+'\n;('+uncorrectedCenterControl.toString()+')();';
+      onInjection({url:req.url,sha256:sha(body),bytes:Buffer.byteLength(body)});
+      onServe({url:req.url,sha256:sha(body),bytes:Buffer.byteLength(body),injected:true});
+      res.writeHead(200,{'Content-Type':'application/javascript','Cache-Control':'no-store'});
+      res.end(body);return true;
+    }
     if(pathname==='/lib/d3dim-gpu.js'&&getNegative()==='stale-child-upload'){
       const body=fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8')+'\n;('+staleUploadControl.toString()+')();';
       onInjection({url:req.url,sha256:sha(body),bytes:Buffer.byteLength(body)});
@@ -547,7 +597,8 @@ async function bootstrap(modulePath){
 
 async function runtime(){
   controls();await serverControls();
-  const batched=process.argv.includes('--batched'),combined=process.argv.includes('--combined');
+  const pointNone=process.argv.includes('--point-none');pointNonePlan();
+  const batched=process.argv.includes('--batched'),combined=process.argv.includes('--combined')||pointNone;
   assert(!(batched&&combined),'combined and batched are separate bounded matrices');
   assert(!process.argv.includes('--combined-point-none-probe')||combined,'POINT/NONE probe requires --combined');
   const selectedFixture=combined?combinedFixtureSource():batched?batchedFixtureSource():fixtureSource();
@@ -560,14 +611,14 @@ async function runtime(){
   assert.equal(pins.source,source,'module manifest source must match tested Git source');
   assert.deepEqual(pins.modules.map(m=>m.name).sort(),['wine-assembly.compat.wasm','wine-assembly.wasm']);
   fs.mkdirSync(dir,{recursive:true});
-  const evidence={status:'RUNNING',source,batched,combined,node:process.version,plans:combined?{combined:combinedPlan()}:{solid:plan(),spatial:spatialPlan()},modules:[],results:[],negativeControls:[],requests:[],
+  const evidence={status:'RUNNING',source,batched,combined,pointNone,node:process.version,plans:pointNone?{'point-none':pointNonePlan()}:combined?{combined:combinedPlan()}:{solid:plan(),spatial:spatialPlan()},modules:[],results:[],negativeControls:[],requests:[],
     fixtureSha256:sha(fs.readFileSync(__filename)),adaptedFixtureSha256:sha(fixtureSource()),
     publicFixtureSha256:sha(fs.readFileSync(path.join(__dirname,'test-legacy-texture-rendered-contract.js'))),
     selectedFixtureSha256:sha(selectedFixture),selectedOracleSha256:sha(oracleSource),
     calcSha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))),
     unexecuted:['partial/malformed chains',
       'other per-level formats/padded pitch',...(combined?['Windows last-writer render/stage alias semantics','stage MIN without explicit MIP after override',
-        ...(!process.argv.includes('--combined-point-none-probe')?['equal POINT min/mag with explicit MIP NONE after later legacy3: known direct WebGL1 pixel mismatch; --combined-point-none-probe']:[])]:['legacy combined filters']),'other dimensions/formats',
+        ]:['legacy combined filters']),'other dimensions/formats',
       'physical GPU','games / full27']};
   const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(evidence,null,2)+'\n');
   let server,browser,page,wasm,activeNegative=null;
@@ -632,11 +683,17 @@ async function runtime(){
         assert(before&&after);assert.deepEqual(after.actual,before.actual,'old generation actually sampled');
         assert.deepEqual(after.expected,cfg.update.color,'independent new authored color');
       }
+      if(negative==='uncorrected-texture-center'){
+        assert(injections.some(r=>new URL(r.url,'http://localhost').pathname==='/lib/d3d9-shader.js'),
+          'actual executor shader served with center-correction fault');
+        assert.deepEqual(partial.observations.at(-1).descriptor.slice(45,48),[1,1,0],
+          'fault preserves POINT/POINT/NONE descriptor');
+      }
       if(mode==='worker')assert(partial.observations.some(o=>o.workerStats?.drawCalls>0));
       else if(mode==='webgl')assert(partial.observations.some(o=>o.webglRGBA&&o.glError===0));
       await page.close();page=null;console.log('PASS rendered negative '+negative+' '+module.name+' '+mode+' WebGL'+webglVersion);
     };
-    for(const planName of combined?['combined']:['solid','spatial'])for(const module of evidence.modules){
+    for(const planName of pointNone?['point-none']:combined?['combined']:['solid','spatial'])for(const module of evidence.modules){
       wasm=fs.readFileSync(path.join(moduleDir,module.name));
       for(const mode of ['software','webgl','worker'])
       for(const webglVersion of mode==='software'?[null]:[1,2]){
@@ -656,7 +713,7 @@ async function runtime(){
         evidence.results.push({module:module.name,webglVersion,planName,...result});save();
         await page.screenshot({path:path.join(dir,module.name+'-'+planName+'-'+mode+'-'+webglVersion+'.png')});await page.close();page=null;
         console.log('PASS '+module.name+' '+mode+' WebGL'+webglVersion+' observations '+result.observations.length);
-        const negatives=planName==='combined'?['combined-point-only','combined-nearest-mip-only','combined-swapped-enums']:planName==='spatial'?['nearest-only']:['level-zero-only','stale-mip-filter',
+        const negatives=planName==='point-none'?['point-none-mip',...(mode==='software'?[]:['uncorrected-texture-center'])]:planName==='combined'?['combined-point-only','combined-nearest-mip-only','combined-swapped-enums']:planName==='spatial'?['nearest-only']:['level-zero-only','stale-mip-filter',
           ...(mode==='software'?[]:['stale-child-upload'])];
         for(const negative of negatives)await runNegative(module,mode,webglVersion,negative,planName);
       }
@@ -678,4 +735,4 @@ if(require.main===module){
     .catch(error=>{console.error(error);process.exitCode=1;});
   else runtime().catch(error=>{console.error(error);process.exitCode=1;});
 }
-module.exports={oracle,plan,spatialPlan,combinedPlan,combinedFixtureSource,fixtureSource,controls,bootstrap,serverControls,config,createServer};
+module.exports={oracle,plan,spatialPlan,combinedPlan,pointNonePlan,combinedFixtureSource,fixtureSource,controls,bootstrap,serverControls,config,createServer};

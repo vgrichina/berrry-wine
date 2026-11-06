@@ -26,6 +26,18 @@ for(const entry of ['void main() {','void main(){','void main ( void )\n{']){
   assert.match(lowered.source,/if\(false\)d3d_discard = true;/);
   assert.match(lowered.source,/gl_FragColor = d3d_sample0\(vec2\(0.25\)\)/);
   assert.deepStrictEqual(lowered.mipStages,[0]);
+  const centered=withMipSampling(shader,[],1/16,[0],[0]);
+  assert.deepStrictEqual(centered.mipStages,[],'center correction must not select atlas uploads');
+  assert.deepStrictEqual(centered.centerStages,[0]);
+  assert.strictEqual(centered.samplingDerivatives,false,'submitted planes need no derivative extension');
+  assert.match(centered.source,/gl_FragColor = d3d_center0\(vec2\(0.25\)\)/);
+  assert.match(centered.source,/return texture2D\(d3d_s0,uv\)/);
+  assert(!centered.uniforms.some(n=>n.startsWith('d3d_mips')));
+  const quotient=withMipSampling(shader,[],1/16,[],[0]);
+  assert.strictEqual(quotient.samplingDerivatives,true);
+  assert.match(quotient.source,/numerator-=0.0625\*/);
+  assert.match(quotient.source,/reciprocalW-=0.0625\*/);
+  assert.strictEqual(withMipSampling(shader,[],1/16,[],[1]),shader,'unused sampler stays untouched');
 }
 assert.throws(()=>withMipSampling({source:'uniform sampler2D d3d_s0;',uniforms:['d3d_s0']},[0]),/main function/);
 const masked = compile(u32([0xffff0101, 1, 0x81130000, 0x91c60000, 0xffff]));
