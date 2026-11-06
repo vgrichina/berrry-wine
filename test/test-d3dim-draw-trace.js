@@ -186,5 +186,69 @@ async function fixture(backend = 'software') {
   backend.drawObserver=failingObserver;target.device.draw=()=>{throw renderFailure;};
   assert.throws(()=>backend._submitImmediate(target,draw),e=>e===renderFailure,'active observer preserves render failure');
   assert.strictEqual(backend.stats.errors,1);assert.strictEqual(failingObserver.receipt().records[0].completed,false);
-  console.log('PASS bounded owning D3DIM trace and completed-target ground observer');
+  // Producer-route controls use independent known data and preserve exception
+  // identity. No inference of absent geometry from an omitted source route.
+  const {createProducer,createDxProducer}=require('../lib/d3dim-draw-trace');
+  assert.throws(()=>createProducer({endpointId:1,x:2,y:2,maxEvents:2}),/maxEvents/);
+  const producerOutput=[0,0,0,255],producerBytes=new Uint8Array(256),producerView=new DataView(producerBytes.buffer);
+  const producerTarget={rt:7,dib:0,width:8,height:8,pitch:32,bpp:32,format:0,
+    device:{gpu:{gl:{RGBA:1,UNSIGNED_BYTE:2},readPixels(x,y,w,h,f,t,p){p.set(producerOutput);}}}};
+  const routeCalls=[];
+  const routeGPU={u8:producerBytes,dv:producerView,targets:new Map([[7,producerTarget]]),textures:new Map(),commandContext:{sequence:9,ordinal:3},
+    _describe(){return {rt:7,width:8,height:8,dib:0};},
+    _draw(){routeCalls.push('draw');this._describe();return 0;},
+    _clear(){routeCalls.push('clear');producerOutput.splice(0,4,0,85,170,255);return 1;},
+    _upload(){routeCalls.push('upload');producerOutput.splice(0,4,192,32,144,255);},
+    _writeBack(){routeCalls.push('writeBack');},_flip(){routeCalls.push('flip');return 0;},
+    _submitImmediate(){routeCalls.push('submit');return 1;}};
+  producerView.setUint32(0,7,true);producerView.setUint32(4,1,true);
+  producerBytes.set([144,32,192,255],2*32+2*4);
+  const originalUpload=routeGPU._upload;
+  const producer=createProducer({endpointId:1,x:2,y:2,maxEvents:8}).attach(routeGPU);
+  routeGPU._upload(producerTarget,producerBytes,32,0,8,1234);
+  routeGPU._draw(0);routeGPU._clear(0);
+  routeGPU._submitImmediate(producerTarget,{primitive:2});
+  let pr=producer.receipt();
+  assert.deepStrictEqual(routeCalls,['upload','draw','clear','submit']);
+  assert.deepStrictEqual(pr.events[0].native,[144,32,192,255]);
+  assert.deepStrictEqual(pr.events[0].after,[192,32,144,255]);
+  assert.strictEqual(pr.events[0].target.dib,1234,'new backing identity retained before owner updates t.dib');
+  assert.strictEqual(pr.events[0].completed,true);
+  assert.strictEqual(pr.events[1].kind,'draw-declined');
+  assert.strictEqual(pr.counts['submission-without-legacy-source'],1);
+  assert.strictEqual(pr.counts['submission-nontriangle'],1);
+  assert.deepStrictEqual(pr.events[2].after,[0,85,170,255]);
+  pr.events[0].native.fill(0);assert.deepStrictEqual(producer.receipt().events[0].native,[144,32,192,255]);
+  routeGPU._writeBack(producerTarget,null,[0,0,8,8],0);routeGPU._flip(0);
+  assert(producer.receipt().events.some(e=>e.kind==='target-readback'&&e.completed));
+  assert(producer.receipt().events.some(e=>e.kind==='flip-result'&&e.result===0));
+  producer.route('excluded-software-GL-draw',{completed:true,targetUnknown:true});
+  assert.strictEqual(producer.receipt().events.at(-1).targetUnknown,true);
+  for(let i=0;i<12;i++)routeGPU._clear(0);
+  assert.strictEqual(producer.receipt().events.length,8);assert(producer.receipt().dropped>0);
+  const drained=producer.drain();assert.strictEqual(drained.events.length,8);assert.strictEqual(producer.receipt().events.length,0);
+  producer.dispose();assert.strictEqual(routeGPU._upload,originalUpload,'restores exact method on disposal');
+  const expectedFailure=Error('producer real failure');routeGPU._draw=()=>{throw expectedFailure;};
+  const producerFailure=createProducer({endpointId:1,x:2,y:2}).attach(routeGPU);
+  assert.throws(()=>routeGPU._draw(0),e=>e===expectedFailure);
+  assert.strictEqual(producerFailure.receipt().events.at(-1).kind,'renderer-error');producerFailure.dispose();
+
+  const cpuMemory={buffer:new ArrayBuffer(65536)},cpuView=new DataView(cpuMemory.buffer),cpuBytes=new Uint8Array(cpuMemory.buffer);
+  const cpuRegions={BASE:{DX_OBJECTS:4096,GUEST_BASE:512,VIRTUAL_BACKING_BASE:32768},SIZE:{DX_OBJECTS:1024}};
+  for(const index of [1,2]){
+    const p=4096+index*32;cpuView.setUint32(p,2,true);cpuView.setUint16(p+12,8,true);cpuView.setUint16(p+14,8,true);
+    cpuView.setUint16(p+16,32,true);cpuView.setUint16(p+18,32,true);cpuView.setUint32(p+20,8192+index*256,true);
+    cpuBytes.set([144,32,192,255],8192+index*256+72);
+  }
+  const cpu=createDxProducer({memory:cpuMemory,regions:cpuRegions,imageBase:0x400000,x:2,y:2,maxEvents:2});
+  cpu.observe(3,1,2,8448,0x1000000);
+  let cr=cpu.receipt();assert.deepStrictEqual(cr.events[0].source.point,[144,32,192,255]);
+  assert.strictEqual(cr.events[0].key,'blt-entry-before-fences');
+  cpuBytes.fill(0);assert.deepStrictEqual(cpu.receipt().events[0].source.point,[144,32,192,255]);
+  cr.events[0].source.point.fill(0);assert.deepStrictEqual(cpu.receipt().events[0].source.point,[144,32,192,255]);
+  cpu.observe(17,4,0,0,0);cpu.observe(17,4,0,0,0);
+  assert.strictEqual(cpu.receipt().dropped,1);assert.strictEqual(cpu.receipt().events[1].destination,undefined,'software route target is explicitly unknown');
+  assert.strictEqual(cpu.drain().events.length,2);assert.strictEqual(cpu.receipt().events.length,0);cpu.stop();
+
+  console.log('PASS bounded owning D3DIM trace, completed-target ground and producer observers');
 })().catch(error => { console.error(error); process.exitCode = 1; });
