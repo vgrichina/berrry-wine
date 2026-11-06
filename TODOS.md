@@ -2059,6 +2059,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [~] New-game lane: Lords of the Realm II original playable Windows demo
   id: NEW-GAME-LORDS2-DEMO-20261015
+  Update 2026-11-06T07:56Z: Published4c34366c7: original installer reached System Test/Wave Question. First USER53 HWND013b was already retired/unmapped and returned AX0; earlier retirement notifications/guest detach remain unqualified. No demonstrated emulator defect, repair, installation or gameplay. Both-module NE/far-fault controls and locked builds pass; continuous runtime-lock ownership not proven after holder exit143. Coordinator verified122 hashes,495 absentPIDs/49 refusedports/27 absentprofiles. Worker released; next Lords investigation must trace earlier retirement producer.
   Prior evidence: scratch/runs/20261015-lords2-review-hold and shared WIP; original250171 reached GetNextWindow invalid1446 after GetParent fix, no gameplay.
   status: active (original installer reached sound test; Win16 far-call failure, gameplay unverified)
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
@@ -2248,6 +2249,7 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-ARANNA-DEMO-20261010
+  Update 2026-11-06T07:56Z: Fresh aranna-semantic-menu-0800 launcher4168044 investigates actual MainMenu semantic action/state writer from retained wrapper212 evidence. Source-only until AoW0725 -> LegacyVB0730 -> KKnDCaps0745 FINAL and cleanup. Both-module passivity/input controls and locked build precede one materially improved original, 45 minutes including cleanup. No forced guest state or unchanged replay; gameplay remains unverified.
   Update 2026-11-06T04:23Z: Published73d155b61 complete-listener boundary. Locked build and both-module ordinaryAPI/owningWorker controls pass; original1600 transactions complete without missing ends. Click accepts candidate08609d40,17 failed draw allocations return zero; inner handler/transition remains uncovered, so no menu/gameplay or allocation-causality claim. MainMenu personally reviewed; coordinator independently verified350 artifact hashes,38 absentPIDs/8refusedports/4absentprofiles. Worker released. Next distinct Aranna investigation must cover inner accepted-candidate handler and transition; no unchanged retry. Freed slot assigned fresh D3D9 selector/lifetime regression, retaining Conan/KKnD/AoWII visible lanes.
   blocker: Repaired defaults reach EULA/cinematic/Main Menu; Single Player remains unopened. Later sparse backing commit and heap refusals have no established cause or input causal link.
   worker: aranna-inner-transition-0500 (launcher3966981); source-only behind KKnDVersion0400 -> AoWIIGroundProducer0410 -> D3D9BackbufferSelectors0430 exact FINAL releases and independent cleanup
