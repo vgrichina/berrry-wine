@@ -712,26 +712,51 @@ sets `$last_error` on success only, and there is no host→WAT error import to
 set it from JS. That import is the follow-up; inventing a silent one here
 would have been a stub that lies.
 
-**Copy-on-write over a provider-backed base file** (a zip mounted under
-`C:\Program Files\…`) has three cases, and the middle one is the honest
-failure the risk register asked for:
+**Sparse copy-on-write over an immutable provider-backed base.** The built-in
+stores advertise `sparseWrites`. On a successful nontruncating write open, the
+overlay replaces the entry's provider window with a `SparseByteProvider`.
+Writes allocate 64 KiB dirty pages and record exact covered ranges; untouched
+bytes still come from the original mount. No base bytes are fetched to open,
+overwrite, extend, truncate or checkpoint. Shrinking caps the retained base
+extent, so later growth reads zeros instead of resurrecting discarded bytes.
+`CREATE_ALWAYS` and `TRUNCATE_EXISTING` discard the provider immediately,
+including through the real host-import `createFileResult` route.
 
-1. *Bytes already resident* (chunk-cache hit, or a synchronous provider):
-   the existing `entry.data` getter/setter pair already copies on write —
-   reading materializes, writing drops the provider. Nothing new is needed.
-2. *Bytes not resident*: the open **fails** with `ERROR_NOT_READY` (21) and a
-   loud host log naming the path, rather than materializing. It cannot be
-   parked: parking must happen in WAT before the handler pops its stdcall
-   frame (`src/09b-dispatch.wat`), `$handle_CreateFileA` has no pending status
-   to observe, and a "pending" throw that unwinds nested Wasm is forbidden by
-   risk item 1. A `CreateFile`-side parking contract is the fix when an app
-   demands it; until then the failure is visible, not silent.
-3. *Pre-materialize*: mount code that knows a file will be written calls
-   `await vfs.materialize(path)` from the async side before launch. This is
-   the documented escape hatch for case 2.
+Sparse file records carry logical `size`, `sparse: {basePath, originalSize,
+baseSize, ranges: [{offset, length}]}`, and a blob containing only those ranges
+concatenated in offset order. `store.read()` returns that payload; callers must
+interpret the sparse descriptor instead of treating it as a whole file.
+Hydration reads only the payload and resolves every base reference against the
+mounts captured before replay, then installs a lazy provider. The scope must
+refer to the same immutable imported media: replay checks base path and size,
+not a content hash. Changing media to different bytes of the same size is not
+supported. A missing, eager or differently sized base is an explicit hydration
+error; sparse journals are not standalone exports of their media.
+
+Checkpoint records own copied covered bytes before persistence starts. A write
+while a checkpoint waits remains dirty and cannot alter its predecessor's
+published payload. Failed publication retains the latest dirty marks for retry.
+No acknowledged checkpoint rebases a live eager entry onto asynchronous storage.
+
+Sparse bases remain borrowed, matching main's existing mount ownership.
+The mount owner must keep a source open while a live VFS or snapshot uses it.
+Forks and asynchronous reads own their copied dirty bytes and hold their base
+references independently; deleting, replacing, truncating or materializing a
+live entry, or closing a fork, does not close the borrowed source. Sparse views
+do not acquire external `retain`/`release` leases. Owning source lifetimes across
+VFS-wide map/snapshot disposal remains unsupported; this slice does not add a
+partial disposal or thread-retirement protocol.
+
+A custom store without `sparseWrites`, or `attach(..., {sparseWrites: false})`,
+keeps the previous contract: resident bytes can be copied synchronously;
+nonresident nontruncating write opens fail explicitly with `ERROR_NOT_READY`
+(21). Pre-materializing with `await vfs.materialize(path)` remains the escape
+hatch for these stores. Consumers that require whole-file bytes (such as writable
+mappings) retain their existing explicit materialization path; sparse writes do
+not make every synchronous consumer park-capable.
 
 **Persistence is batched and its failures are held, not dropped.** Dirty paths
-accumulate; `flush()` snapshots the set, reads the bytes, and hands one batch
+accumulate; `flush()` snapshots the set and covered bytes, and hands one batch
 to the store. The guest never sees a store failure — its write already
 succeeded in RAM — so the host must: `flush()` resolves to
 `{written, removed, failed, errors}` and `overlay.errors` keeps every failure
@@ -779,9 +804,10 @@ session-only instead of claiming those new writes are durable.
 
 ### Sparse checkpoints and lazy hydration: lessons from an unmerged branch
 
-(Recovered from branch commits `686bf81e` / `c16666d3`, Sep 2026. None of
-`SparseByteProvider`, `rangeWrites`, `lazyHydrate` or the shared chunk LRU is on
-main; these are the design facts that branch established.)
+(Recovered from branch commits `686bf81e` / `c16666d3`, Sep 2026. The bounded
+`SparseByteProvider` and base-relative checkpoint slice now follows the contract
+above. General `rangeWrites`, lazy standalone overlay hydration, shared chunk
+LRU and consumer continuation recovery remain separate.)
 
 - **Read one logical range, then scatter.** A host file read that is split by
   guest mappings and restarted on a later cache miss can loop forever once the

@@ -13,8 +13,9 @@ const assert = require('assert');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { execFileSync } = require('child_process');
 
-const { VirtualFS } = require('../lib/filesystem');
+const { VirtualFS, createFilesystemImports } = require('../lib/filesystem');
 const VfsOverlay = require('../lib/vfs-overlay');
 const {
   memoryStore, nodeDirStore, opfsStore, removeOpfsScope, assertStore, metaOf,
@@ -355,14 +356,14 @@ test('copy-on-write over a resident base file keeps the base mount intact', asyn
     'the overlay copy must win over the base mount');
 });
 
-test('an unresident provider file opened for write fails loudly, not silently', () => {
+test('a store without sparse support rejects unresident writes explicitly', () => {
   for (const [name, access] of [
     ['GENERIC_WRITE', GENERIC_WRITE],
     ['GENERIC_ALL', GENERIC_ALL],
   ]) {
     const vfs = new VirtualFS();
     mountProviderFile(vfs, 'C:\\game\\big.dat', 'x'.repeat(64));
-    const overlay = VfsOverlay.attach(vfs, { store: memoryStore() });
+    const overlay = VfsOverlay.attach(vfs, { store: { ...memoryStore(), sparseWrites: false } });
     // Case 2: nothing has filled the chunk cache, so CreateFile-for-write has
     // no synchronous way to copy on write and must not pretend otherwise.
     const handle = vfs.createFile('C:\\game\\big.dat', access, OPEN_EXISTING);
@@ -654,6 +655,371 @@ test('a queued flush snapshots bytes before later guest writes', async () => {
   await overlay.flush();
   assert.strictEqual(text(await store.read('c:\\slot.sav')), 'new');
   vfs.closeHandle(handle);
+});
+
+
+// No giant byte array: expected bytes come from a fixed mathematical pattern.
+const LARGE_SIZE = 128 * 1024 * 1024 + 37;
+const pattern = at => ((at * 29 + Math.floor(at / 251) * 7) & 255);
+function largeMount(vfs) {
+  const stats = { fetched: 0, reads: 0, largest: 0, closed: 0 };
+  const provider = {
+    size: LARGE_SIZE,
+    async readRange(off, len) {
+      assert.strictEqual(stats.closed, 0, 'backing was prematurely closed');
+      stats.fetched += len; stats.reads++; stats.largest = Math.max(stats.largest, len);
+      return Uint8Array.from({ length: len }, (_, n) => pattern(off + n));
+    },
+    close() { stats.closed++; },
+  };
+  vfs.setProviderFile('C:\\large.dat', {
+    provider: byteProvider.cached(provider, { chunkSize: 4096, maxChunks: 2, readAhead: 0 }),
+  });
+  return stats;
+}
+async function readRange(vfs, off, len) {
+  const h = vfs.createFile('C:\\large.dat', GENERIC_READ, OPEN_EXISTING);
+  assert.ok(h);
+  vfs.setFilePointer(h, off, 0);
+  const out = new Uint8Array(len);
+  let result = vfs.readFile(h, out, len);
+  if (result.pending) {
+    await vfs.fillPendingRead(result.pending);
+    result = vfs.readFile(h, out, len);
+  }
+  vfs.closeHandle(h);
+  assert.ok(result.ok, JSON.stringify(result));
+  return out.subarray(0, result.bytesRead);
+}
+function hostOpen(vfs, creation, access = GENERIC_WRITE) {
+  const memory = new ArrayBuffer(65536);
+  new Uint8Array(memory).set(Buffer.from('C:\\large.dat\0'), 1024);
+  return createFilesystemImports({ vfs, getMemory: () => memory })
+    .fs_create_file(1024, access, creation, 0, 0);
+}
+
+function hostOpenResult(vfs, creation, access = GENERIC_WRITE) {
+  const memory = new ArrayBuffer(65536);
+  new Uint8Array(memory).set(Buffer.from('C:\\large.dat\0'), 1024);
+  const imports = createFilesystemImports({ vfs, getMemory: () => memory });
+  const error = imports.fs_create_file_result(1024, access, creation, 0, 0, 2048);
+  return { handle: new DataView(memory).getUint32(2048, true), error };
+}
+
+test('real host imports journal empty creates/truncation and preserve create errors', async () => {
+  for (const existing of [false, true]) {
+    const vfs = new VirtualFS();
+    const stats = existing ? largeMount(vfs) : null;
+    const store = memoryStore(), overlay = VfsOverlay.attach(vfs, { store });
+    assert.deepStrictEqual(hostOpenResult(vfs, 5, GENERIC_READ), { handle: 0xffffffff, error: 5 });
+    assert.deepStrictEqual(overlay.dirtyPaths(), []);
+    const h = hostOpen(vfs, CREATE_ALWAYS);
+    assert.ok(h && h !== 0xffffffff);
+    vfs.closeHandle(h);
+    assert.deepStrictEqual(overlay.dirtyPaths(), ['c:\\large.dat']);
+    assert.strictEqual((await overlay.flush()).written, 1);
+    assert.strictEqual((await store.list())[0].size, 0);
+    assert.strictEqual((await store.read('c:\\large.dat')).length, 0);
+    if (stats) assert.strictEqual(stats.fetched, 0, 'truncate fetched discarded bytes');
+    const failed = vfs.createFileResult('C:\\large.dat', GENERIC_WRITE, 1);
+    assert.deepStrictEqual(failed, { handle: 0, error: 80 });
+    assert.deepStrictEqual(hostOpenResult(vfs, 1), { handle: 0xffffffff, error: 80 });
+    assert.deepStrictEqual(overlay.dirtyPaths(), []);
+    const opened = vfs.createFileResult('C:\\large.dat', GENERIC_WRITE, 4);
+    assert.ok(opened.handle); assert.strictEqual(opened.error, 183);
+    vfs.closeHandle(opened.handle);
+    assert.deepStrictEqual(overlay.dirtyPaths(), [], 'existing OPEN_ALWAYS is not a mutation');
+  }
+});
+
+for (const backend of ['node', 'opfs-model']) {
+  test(`${backend}: bounded lazy overwrite, extension, holes, immutable checkpoints and durable reload`, async () => {
+    const dir = backend === 'node' ? fs.mkdtempSync(path.join(os.tmpdir(), 'sparse-overlay-')) : null;
+    const root = new FakeOpfsDirectoryHandle();
+    const fresh = () => backend === 'node' ? nodeDirStore(dir) : opfsStore('sparse', { root, locks });
+    try {
+      const vfs = new VirtualFS(), stats = largeMount(vfs), store = fresh();
+      let complete, entered;
+      const ready = new Promise(resolve => { entered = resolve; });
+      let defer = true, fail = false;
+      const delayed = { ...store, writeBatch(records) {
+        if (fail) { fail = false; return Promise.reject(new Error('injected publication failure')); }
+        if (!defer) return store.writeBatch(records);
+        defer = false; entered();
+        return new Promise(resolve => { complete = () => resolve(store.writeBatch(records)); });
+      } };
+      const overlay = VfsOverlay.attach(vfs, { store: delayed });
+      const h = hostOpen(vfs, OPEN_EXISTING, GENERIC_WRITE | GENERIC_READ);
+      assert.ok(h && h !== 0xffffffff);
+      assert.strictEqual(stats.fetched, 0, 'write open must not materialize');
+      const edit = 400003;
+      vfs.setFilePointer(h, edit, 0);
+      assert.ok(vfs.writeFile(h, Uint8Array.of(11, 12, 13), 3).ok);
+      const first = overlay.flush(); await ready;
+      vfs.setFilePointer(h, edit + 1, 0);
+      assert.ok(vfs.writeFile(h, Uint8Array.of(99), 1).ok);
+      complete(); assert.strictEqual((await first).failed, 0);
+      const firstVfs = new VirtualFS(), firstStats = largeMount(firstVfs);
+      const firstReplay = VfsOverlay.attach(firstVfs, { store: fresh() });
+      assert.strictEqual((await firstReplay.hydrate()).files, 1);
+      assert.deepStrictEqual([...await readRange(firstVfs, edit, 3)], [11, 12, 13]);
+      assert.strictEqual(firstStats.fetched, 0, 'dirty-only reads fetch no base');
+      assert.deepStrictEqual(overlay.dirtyPaths(), ['c:\\large.dat']);
+      vfs.setFilePointer(h, LARGE_SIZE + 100, 0);
+      assert.ok(vfs.writeFile(h, Uint8Array.of(77, 88), 2).ok);
+      fail = true;
+      assert.strictEqual((await overlay.flush()).failed, 1);
+      assert.deepStrictEqual(overlay.dirtyPaths(), ['c:\\large.dat']);
+      assert.strictEqual((await overlay.flush()).failed, 0);
+      assert.strictEqual(stats.fetched, 0, 'checkpoint must not fetch base');
+      const meta = (await store.list())[0];
+      assert.strictEqual(meta.size, LARGE_SIZE + 102);
+      assert.strictEqual((await store.read(meta.path)).length, 5, 'persist only edited coverage');
+      if (dir) {
+        const blobs = fs.readdirSync(path.join(dir, 'blobs'));
+        assert.strictEqual(blobs.reduce((n, name) => n + fs.statSync(path.join(dir, 'blobs', name)).size, 0), 5);
+      }
+      const reload = new VirtualFS(), reloadStats = largeMount(reload);
+      const replay = VfsOverlay.attach(reload, { store: fresh() });
+      assert.strictEqual((await replay.hydrate()).files, 1);
+      assert.strictEqual(reloadStats.fetched, 0);
+      const expected = Uint8Array.from({ length: 23 }, (_, n) => pattern(edit - 10 + n));
+      expected.set([11, 99, 13], 10);
+      assert.deepStrictEqual(await readRange(reload, edit - 10, 23), expected);
+      assert.deepStrictEqual(await readRange(reload, 0, 31), Uint8Array.from({ length: 31 }, (_, n) => pattern(n)));
+      const tail = new Uint8Array(112);
+      for (let n = 0; n < 10; n++) tail[n] = pattern(LARGE_SIZE - 10 + n);
+      tail.set([77, 88], 110);
+      assert.deepStrictEqual(await readRange(reload, LARGE_SIZE - 10, 112), tail);
+      assert.ok(reloadStats.fetched <= 32768, JSON.stringify(reloadStats));
+      assert.ok(reloadStats.largest <= 4096);
+
+      if (dir) {
+        const child = JSON.parse(execFileSync(process.execPath, ['-e', String.raw`
+          const {VirtualFS}=require('./lib/filesystem');
+          const {attach}=require('./lib/vfs-overlay');
+          const {nodeDirStore}=require('./lib/overlay-store');
+          const bp=require('./lib/byte-provider');
+          (async()=>{
+            let fetched=0;
+            const vfs=new VirtualFS();
+            vfs.setProviderFile('C:\\large.dat',{provider:bp.cached({size:128*1024*1024+37,
+              async readRange(off,len){fetched+=len;return Uint8Array.from({length:len},(_,n)=>(29*(off+n)+7*Math.trunc((off+n)/251))%256);}
+            },{chunkSize:4096,maxChunks:2,readAhead:0})});
+            const report=await attach(vfs,{store:nodeDirStore(process.argv[1])}).hydrate();
+            if(report.errors.length)throw Error(JSON.stringify(report.errors));
+            const hydratedFetch=fetched;
+            const h=vfs.createFile('C:\\large.dat',0x80000000,3),out=new Uint8Array(23);
+            vfs.setFilePointer(h,399993,0);
+            let r=vfs.readFile(h,out,23);
+            if(r.pending){await vfs.fillPendingRead(r.pending);r=vfs.readFile(h,out,23);}
+            if(!r.ok||r.bytesRead!==23)throw Error('child read failed');
+            vfs.closeHandle(h);
+            console.log(JSON.stringify({bytes:[...out],hydratedFetch,fetched}));
+          })().catch(e=>{console.error(e);process.exitCode=1});
+        `, dir], { cwd: path.join(__dirname, '..'), encoding: 'utf8' }));
+        assert.deepStrictEqual(child.bytes, [...expected]);
+        assert.strictEqual(child.hydratedFetch, 0, 'independent process hydrate fetched base');
+        assert.ok(child.fetched <= 32768);
+        console.log('SPARSE_CHILD_PROCESS ' + JSON.stringify(child));
+      }
+      const sparse = reload.files.get('c:\\large.dat')._provider;
+      assert.ok([...sparse.pages.values()].reduce((n, p) => n + p.data.length, 0) <= 2 * 65536);
+      const snapshot = sparse.fork();
+      sparse.write(edit, Uint8Array.of(55));
+      assert.deepStrictEqual([...await snapshot.readRange(edit, 3)], [11, 99, 13]);
+      snapshot.close();
+      assert.deepStrictEqual([...await sparse.readRange(edit, 3)], [55, 99, 13]);
+      assert.strictEqual(reloadStats.closed, 0, 'snapshot release must not close borrowed mount');
+      console.log('SPARSE_METRICS ' + JSON.stringify({ backend, baseSize: LARGE_SIZE, payloadBytes: (await store.read(meta.path)).length,
+        checkpointSource: stats, reloadSource: reloadStats, pageBytes: [...sparse.pages.values()].reduce((n, p) => n + p.data.length, 0) }));
+      // Shrink then regrow: discarded base bytes must never reappear.
+      const rh = reload.createFile('C:\\large.dat', GENERIC_WRITE, OPEN_EXISTING);
+      reload.setFilePointer(rh, 17, 0); assert.ok(reload.setEndOfFile(rh));
+      reload.setFilePointer(rh, 29, 0); assert.ok(reload.setEndOfFile(rh));
+      assert.strictEqual((await replay.flush()).failed, 0);
+      const shrunk = new VirtualFS(); largeMount(shrunk);
+      assert.strictEqual((await VfsOverlay.attach(shrunk, { store: fresh() }).hydrate()).files, 1);
+      assert.deepStrictEqual(await readRange(shrunk, 17, 12), new Uint8Array(12));
+      vfs.closeHandle(h); reload.closeHandle(rh);
+    } finally { if (dir) fs.rmSync(dir, { recursive: true, force: true }); }
+  });
+}
+
+
+
+
+test('overlapping writes across dirty-page boundaries preserve only covered bytes and trim discarded edits', async () => {
+  const vfs = new VirtualFS(), stats = largeMount(vfs), store = memoryStore();
+  const overlay = VfsOverlay.attach(vfs, { store });
+  const h = hostOpen(vfs, OPEN_EXISTING);
+  for (const [offset, data] of [[65534, [1, 2, 3, 4, 5]], [65535, [9, 8]], [65538, [7, 6, 5, 4]]]) {
+    vfs.setFilePointer(h, offset, 0);
+    assert.ok(vfs.writeFile(h, Uint8Array.from(data), data.length).ok);
+  }
+  assert.strictEqual((await overlay.flush()).failed, 0);
+  assert.strictEqual(stats.fetched, 0);
+  assert.strictEqual((await store.read('c:\\large.dat')).length, 8);
+  const reload = new VirtualFS(); largeMount(reload);
+  assert.strictEqual((await VfsOverlay.attach(reload, { store }).hydrate()).files, 1);
+  const expected = Uint8Array.from({ length: 18 }, (_, n) => pattern(65530 + n));
+  expected.set([1, 9, 8, 4, 7, 6, 5, 4], 4);
+  assert.deepStrictEqual(await readRange(reload, 65530, 18), expected);
+  vfs.setFilePointer(h, 65537, 0); assert.ok(vfs.setEndOfFile(h));
+  vfs.setFilePointer(h, 65545, 0); assert.ok(vfs.setEndOfFile(h));
+  assert.strictEqual((await overlay.flush()).failed, 0);
+  assert.strictEqual((await store.read('c:\\large.dat')).length, 3);
+  const trimmed = new VirtualFS(); largeMount(trimmed);
+  assert.strictEqual((await VfsOverlay.attach(trimmed, { store }).hydrate()).files, 1);
+  assert.deepStrictEqual([...await readRange(trimmed, 65534, 11)], [1, 9, 8, 0, 0, 0, 0, 0, 0, 0, 0]);
+  vfs.closeHandle(h);
+});
+
+test('sparse pending reads own bytes per handle and reject mutation-stale completions', async () => {
+  const vfs = new VirtualFS();
+  let unblock, announce, delayed = false;
+  let entered;
+  const provider = { size: 1024 * 1024,
+    async readRange(off, len) {
+      if (delayed) { delayed = false; announce(); await new Promise(resolve => { unblock = resolve; }); }
+      return Uint8Array.from({ length: len }, (_, n) => pattern(off + n));
+    },
+  };
+  vfs.setProviderFile('C:\\large.dat', {
+    provider: byteProvider.cached(provider, { chunkSize: 1024, maxChunks: 1, readAhead: 0 }),
+  });
+  VfsOverlay.attach(vfs, { store: memoryStore() });
+  const a = vfs.createFile('C:\\large.dat', GENERIC_READ | GENERIC_WRITE, OPEN_EXISTING);
+  const b = vfs.createFile('C:\\large.dat', GENERIC_READ, OPEN_EXISTING);
+  vfs.setFilePointer(b, 10000, 0);
+  const outA = new Uint8Array(8193), outB = new Uint8Array(8193);
+  const pa = vfs.readFile(a, outA, outA.length).pending;
+  const pb = vfs.readFile(b, outB, outB.length).pending;
+  assert.ok(pa && pb);
+  await Promise.all([vfs.fillPendingRead(pa), vfs.fillPendingRead(pb)]);
+  assert.ok(vfs.readFile(a, outA, outA.length).ok);
+  assert.ok(vfs.readFile(b, outB, outB.length).ok);
+  assert.deepStrictEqual(outA, Uint8Array.from({ length: outA.length }, (_, n) => pattern(n)));
+  assert.deepStrictEqual(outB, Uint8Array.from({ length: outB.length }, (_, n) => pattern(10000 + n)));
+
+  vfs.setFilePointer(a, 0, 0);
+  const out = new Uint8Array(31);
+  const pending = vfs.readFile(a, out, out.length).pending;
+  assert.ok(pending);
+  delayed = true; entered = new Promise(resolve => { announce = resolve; });
+  const fill = vfs.fillPendingRead(pending); await entered;
+  vfs.setFilePointer(a, 20, 0); vfs.writeFile(a, Uint8Array.of(41), 1);
+  vfs.setFilePointer(a, 0, 0);
+  unblock(); assert.strictEqual(await fill, false);
+  const retry = vfs.readFile(a, out, out.length);
+  assert.ok(retry.pending, 'stale completion must not publish pre-write bytes');
+  await vfs.fillPendingRead(retry.pending);
+  assert.ok(vfs.readFile(a, out, out.length).ok);
+  const expected = Uint8Array.from({ length: out.length }, (_, n) => pattern(n)); expected[20] = 41;
+  assert.deepStrictEqual(out, expected);
+  // Provider failures still become a concrete guest-visible read error.
+  provider.readRange = async () => { throw new Error('revoked source'); };
+  vfs.setFilePointer(b, 20000, 0);
+  const failed = vfs.readFile(b, out, out.length);
+  assert.ok(failed.pending);
+  assert.strictEqual(await vfs.fillPendingRead(failed.pending), false);
+  assert.strictEqual(vfs.readFile(b, out, out.length).error, 30);
+  vfs.closeHandle(a); vfs.closeHandle(b);
+});
+
+
+for (const operation of ['delete', 'replace', 'truncate', 'materialize']) {
+  test(`public ${operation} keeps borrowed backing valid for a sparse snapshot`, async () => {
+    let closed = false;
+    const source = {
+      size: 1024,
+      // Sparse views must not acquire an external lease that the current
+      // public VFS map/snapshot lifecycle cannot yet release deterministically.
+      retain() { throw new Error('borrowed source unexpectedly retained'); },
+      release() { throw new Error('borrowed source unexpectedly released'); },
+      close() { closed = true; },
+      async readRange(off, len) {
+        assert.ok(!closed, 'read after owner closed borrowed source');
+        return Uint8Array.from({ length: len }, (_, n) => pattern(off + n));
+      },
+    };
+    const live = new VirtualFS();
+    live.setProviderFile('C:\\large.dat', { provider: source });
+    VfsOverlay.attach(live, { store: memoryStore() });
+    const h = hostOpen(live, OPEN_EXISTING);
+    assert.ok(h);
+    live.writeFile(h, Uint8Array.of(123), 1);
+    const snapshot = live.files.get('c:\\large.dat')._provider.fork();
+    live.closeHandle(h);
+    if (operation === 'delete') assert.ok(live.deleteFile('C:\\large.dat'));
+    else if (operation === 'replace') live.setProviderFile('C:\\large.dat', { provider: new byteProvider.BytesProvider(Uint8Array.of(9)) });
+    else if (operation === 'truncate') {
+      const truncate = hostOpen(live, CREATE_ALWAYS); assert.ok(truncate); live.closeHandle(truncate);
+    } else await live.materialize('C:\\large.dat');
+    assert.strictEqual(closed, false);
+    const expected = Uint8Array.from({ length: 17 }, (_, n) => pattern(n)); expected[0] = 123;
+    assert.deepStrictEqual(await snapshot.readRange(0, 17), expected);
+    snapshot.close();
+    assert.strictEqual(closed, false, 'fork close must not close owner-managed backing');
+    if (operation === 'materialize') assert.deepStrictEqual(live.files.get('c:\\large.dat').data.subarray(0, 17), expected);
+    source.close(); assert.strictEqual(closed, true);
+  });
+}
+
+
+
+
+test('missing or mismatched immutable bases produce explicit hydration errors', async () => {
+  const vfs = new VirtualFS(); largeMount(vfs);
+  const store = memoryStore(), overlay = VfsOverlay.attach(vfs, { store });
+  const h = hostOpen(vfs, OPEN_EXISTING);
+  vfs.writeFile(h, Uint8Array.of(5), 1); vfs.closeHandle(h);
+  assert.strictEqual((await overlay.flush()).failed, 0);
+  for (const mode of ['missing', 'wrong-size', 'legacy-loader']) {
+    const target = new VirtualFS();
+    if (mode === 'wrong-size') target.setProviderFile('C:\\large.dat', { provider: new byteProvider.BytesProvider(Uint8Array.of(1, 2)) });
+    if (mode === 'legacy-loader') target.setLazyFile('C:\\large.dat', { size: LARGE_SIZE, load() { throw new Error('hydration must not invoke whole-file loaders'); } });
+    const replay = VfsOverlay.attach(target, { store });
+    const report = await replay.hydrate();
+    assert.strictEqual(report.files, 0);
+    assert.strictEqual(report.errors.length, 1);
+    assert.match(report.errors[0].message, /original mounted base/);
+    if (mode === 'missing') assert.ok(!target.files.has('c:\\large.dat'));
+  }
+});
+
+test('copying and renaming a sparse file preserves independent bytes and base references on reload', async () => {
+  const vfs = new VirtualFS(), stats = largeMount(vfs), store = memoryStore();
+  const overlay = VfsOverlay.attach(vfs, { store });
+  const h = hostOpen(vfs, OPEN_EXISTING);
+  vfs.setFilePointer(h, 23, 0); vfs.writeFile(h, Uint8Array.of(91), 1);
+  assert.ok(vfs.copyFile('C:\\large.dat', 'C:\\copy.dat', false));
+  const ch = vfs.createFile('C:\\copy.dat', GENERIC_WRITE, OPEN_EXISTING);
+  vfs.setFilePointer(ch, 23, 0); vfs.writeFile(ch, Uint8Array.of(92), 1);
+  vfs.closeHandle(ch);
+  assert.ok(vfs.moveFile('C:\\copy.dat', 'C:\\renamed.dat'));
+  assert.strictEqual((await overlay.flush()).failed, 0);
+  assert.strictEqual(stats.fetched, 0);
+  const reload = new VirtualFS(); largeMount(reload);
+  assert.strictEqual((await VfsOverlay.attach(reload, { store }).hydrate()).errors.length, 0);
+  assert.deepStrictEqual([...await readRange(reload, 23, 1)], [91]);
+  assert.ok(reload.moveFile('C:\\large.dat', 'C:\\old.dat'));
+  assert.ok(reload.moveFile('C:\\renamed.dat', 'C:\\large.dat'));
+  assert.deepStrictEqual([...await readRange(reload, 23, 1)], [92]);
+  vfs.closeHandle(h);
+});
+
+test('an adopted VFS retains sparse backing after the original namespace and handles disappear', async () => {
+  const original = new VirtualFS(), stats = largeMount(original);
+  VfsOverlay.attach(original, { store: memoryStore() });
+  const h = hostOpen(original, OPEN_EXISTING);
+  original.setFilePointer(h, 15, 0); original.writeFile(h, Uint8Array.of(91), 1);
+  const adopted = new VirtualFS(); adopted.adoptFrom(original);
+  assert.ok(original.deleteFile('C:\\large.dat'));
+  original.closeHandle(h);
+  const expected = Uint8Array.from({ length: 31 }, (_, n) => pattern(n)); expected[15] = 91;
+  assert.deepStrictEqual(await readRange(adopted, 0, 31), expected);
+  assert.strictEqual(stats.closed, 0);
 });
 
 test('detach flushes and restores the original VirtualFS methods', async () => {

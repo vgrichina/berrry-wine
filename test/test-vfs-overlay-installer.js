@@ -56,6 +56,7 @@ const work = fs.mkdtempSync(path.join(os.tmpdir(), 'wine-overlay-e2e-'));
 const overlayDir = path.join(work, 'overlay');
 const exportOne = path.join(work, 'export-install');
 const exportTwo = path.join(work, 'export-hydrated');
+console.log('OVERLAY_TEST_WORK ' + JSON.stringify({ path: work, wasm: process.env.WINE_ASSEMBLY_WASM || null }));
 
 let failures = 0;
 function check(name, pass, detail) {

@@ -103,3 +103,21 @@ for (const backend of ['memory', 'node-dir']) {
     assert.deepEqual([...(await store.list())].map(r => r.path), ['keep', 'folder']);
   });
 }
+
+for (const backend of ['memory', 'node-dir']) {
+  test(`${backend}: invalid sparse payload cannot publish an earlier batch member`, async t => {
+    const dir = backend === 'node-dir' ? fs.mkdtempSync(path.join(os.tmpdir(), 'overlay-sparse-invalid-')) : null;
+    if (dir) t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+    const store = dir ? overlay.nodeDirStore(dir) : overlay.memoryStore();
+    await store.writeBatch([file('save', 'accepted')]);
+    const before = await state(store);
+    for (const ranges of [[{ offset: 9, length: 2 }], [{ offset: 2, length: 1 }, { offset: 1, length: 1 }], [{ offset: 1, length: 3 }]]) {
+      await assert.rejects(store.writeBatch([
+        file('save', 'must roll back'),
+        { path: 'bad', kind: 'file', size: 10, data: Uint8Array.of(1, 2),
+          sparse: { basePath: 'base', originalSize: 10, baseSize: 10, ranges } },
+      ]), /sparse/);
+      assert.deepStrictEqual(await state(store), before);
+    }
+  });
+}
