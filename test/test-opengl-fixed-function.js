@@ -393,4 +393,17 @@ assert.strictEqual(lifecycleWin._gpuFrameLayer, null,
   assert.strictEqual(call('glGetError'),0x505,'native allocation failure reaches guest error query');
 }
 
+// A scalar state update must not inspect unrelated light/projection state.
+// In particular z-trick projection folding is only needed when it is dirty.
+{
+  const b = new FakeBackend(), f = new FixedFunctionGL(b);
+  f.uniformDirty.clear();
+  f.uniformDirty.add('uAlphaRef'); f.alphaRef = 0.375;
+  Object.defineProperty(f, 'lights', { get() { throw new Error('unrelated lights evaluated'); } });
+  f._uniformProjection = () => { throw new Error('unrelated projection evaluated'); };
+  f._applyUniforms();
+  assert.strictEqual(b.uniforms.get('uAlphaRef'), 0.375);
+  assert.strictEqual(b.uniformCalls, 1);
+}
+
 console.log('PASS OpenGL packed fixed-function rendering (state, matrix, texture)');

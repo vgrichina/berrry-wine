@@ -175,7 +175,7 @@ function collectTextFiles() {
   // the repo's Markdown right before upload, so the served story is never
   // behind PROJECT_STORY.md and the docs index never misses a new note.
   const site = require('./gen-site-pages');
-  site.writePages(site.generatePages());
+  site.writePages(site.generatePages({ progress: message => console.log(`  ${message}`) }));
   // Root-level text files
   for (const entry of fs.readdirSync(ROOT)) {
     const ext = path.extname(entry);

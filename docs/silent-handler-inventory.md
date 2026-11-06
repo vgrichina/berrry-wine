@@ -816,3 +816,17 @@ inventory members are unchanged. Pin
 239/dd03acce6daa85ac00a3959a3b58175dc272f1e157f4c124527e4c18176f28cf.
 See `docs/re-notes/d3dim-immediate-drawing-20261105.md` and run
 `20261105-d3dim-immediate-drawing` for public COM/pixel validation.
+## Shared cursor state (2026-10-31)
+
+GetCursor now calls the per-thread shared cursor-state helper instead of
+reading a WASM-instance-local global. This removes one straight-line handler
+from the inventory, 241 to 240. ShowCursor already contained conditional
+behavior and was outside this inventory; its shared-memory mutation is tested
+across two instances alongside thread isolation and reuse.
+
+## Half-Life integration with current main (2026-11-06)
+
+Merged inventory: 236 manual handlers. Main's 237-entry inventory loses the
+straight-line GetCursor body when the release's shared per-thread cursor read
+is integrated. Device2 immediate-drawing guards and the other main reductions
+remain. Pin: 236/58875d93b21205d21af31abe8c64c1934097c05a567caa78dcca624317395c43.

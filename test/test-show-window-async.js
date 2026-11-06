@@ -16,6 +16,13 @@ const ERROR_INVALID_WINDOW_HANDLE = 1400;
 const LAST_ERROR_SENTINEL = 0x5a5aa55a;
 
 const extraWat = String.raw`
+  (func (export "test_guest_wndproc") (param $hwnd i32)
+    (call $wnd_table_set (local.get $hwnd) (i32.const 0x401234)))
+  (func (export "test_guest_return")
+    (i32.store (global.get $THUNK_BASE) (i32.const 0xCACA0001))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+    (call $win32_dispatch (i32.const 0)))
   (func (export "test_create_hidden_iconic_window") (result i32)
     (local $hwnd i32)
     (local.set $hwnd (global.get $next_hwnd))
@@ -111,12 +118,8 @@ const extraWat = String.raw`
     'dispatch applies SW_RESTORE placement state');
   assert.deepStrictEqual(hostShows, [[hwnd, 9]],
     'dispatch performs the host transition exactly once');
-  assert.strictEqual(e.post_queue_depth(), 1,
-    'the internal event becomes the ordinary WM_SHOWWINDOW notification');
-  assert.deepStrictEqual([0, 1, 2, 3].map(field =>
-    e.post_queue_peek(0, field) >>> 0),
-  [hwnd, 0x0018, 1, 0],
-  'the target WndProc receives public WM_SHOWWINDOW, not the private event');
+  assert.strictEqual(e.post_queue_depth(), 0,
+    'dispatch sends WM_SHOWWINDOW synchronously without posting another event');
 
   e.set_post_queue_count(0);
   assert.strictEqual(e.test_call_ShowWindowAsync(hwnd, 0) >>> 0, 1);
@@ -152,7 +155,23 @@ const extraWat = String.raw`
     'growing the queue still has no synchronous host-visible side effect');
   e.set_post_queue_count(0);
 
-  console.log('PASS ShowWindowAsync defers complete show state through the owner post queue');
+  e.test_guest_wndproc(hwnd);
+  for(const cmd of [5,0]) {
+    const before=hostShows.length;
+    e.test_call_ShowWindowAsync(hwnd,cmd);
+    e.test_dispatch_first_post();
+    assert.strictEqual(e.get_eip(),0x401234,'owner dispatch enters guest WM_SHOWWINDOW');
+    assert.strictEqual(hostShows.length,before,'visibility waits for guest callback');
+    assert.strictEqual(e.get_esp()>>>0,ESP0-44);
+    e.test_guest_return();
+    assert.strictEqual(e.get_eax(),0,'private DispatchMessage result survives guest callback');
+    assert.strictEqual(e.get_esp()>>>0,ESP0+8);
+    assert.strictEqual(e.get_eip(),0);
+    assert.strictEqual(hostShows.length,before+1);
+    assert.strictEqual(e.wnd_get_style_export(hwnd)&WS_VISIBLE,cmd?WS_VISIBLE:0);
+    e.set_post_queue_count(0);
+  }
+  console.log('PASS ShowWindowAsync owner queue and guest callback completion');
 })().catch(error => {
   console.error(error && error.stack || error);
   process.exit(1);

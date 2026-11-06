@@ -100,6 +100,7 @@ function unpack(value) {
     'inactive caption uses COLOR_INACTIVECAPTION gradient endpoints');
 
   let foreground = TOP_A;
+  let gpuReadbacks = 0;
   const h = await bootRenderHarness({
     extraWat,
     fonts: 'none',
@@ -108,6 +109,12 @@ function unpack(value) {
     extraHostOverrides: {
       foreground_window: () => foreground >>> 0,
       invalidate_frame() {},
+      gpu_gl_call(opcode, hwnd) {
+        assert.strictEqual(opcode, 0x10002, 'only a window readback is expected');
+        gpuReadbacks++;
+        h.exports.gl_window_set_gpu_owned(hwnd, 0);
+        return 1;
+      },
     },
   });
   const e = h.exports;
@@ -174,7 +181,22 @@ function unpack(value) {
   assert.strictEqual(rgbAtCaption(e, TOP_A, 4), 0x808080,
     'Unicode default procedure selects the same background inactive caption');
 
-  console.log('PASS  foreground-aware Win98 caption state (A/W, flash, child, NULL)');
+  const popup = 0x10004;
+  install(popup, 0x90000000, 0, 0, 0);
+  e.test_gdi_client_rect_set(popup, 0, 0, 120, 80);
+  // Establish canonical storage, then leave the most recent frame GPU-owned.
+  e.test_caption_pixel(popup, 0, 0);
+  assert.strictEqual(e.gl_window_set_gpu_owned(popup, 1), 1);
+  e.test_paint_caption(popup);
+  e.defwndproc_ncpaint(popup, 120, 80, 0, 0, 0, 0);
+  assert.strictEqual(gpuReadbacks, 0,
+    'fully clipped NC paint leaves the GPU frame untouched through both entry points');
+  e.test_gdi_client_rect_set(popup, 1, 0, 120, 80);
+  e.test_paint_caption(popup);
+  assert.strictEqual(gpuReadbacks, 1,
+    'even a one-pixel nonclient band still resolves pixels before painting');
+
+  console.log('PASS  caption state and empty-NC GPU readback avoidance');
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exit(1);

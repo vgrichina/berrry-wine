@@ -26,6 +26,31 @@ assert.equal(renderer.windows[2].visible,false,'raise must not show hidden owner
 renderer._raiseWindowGroup(renderer.windows[4]);
 assert(renderer.windows[3].zOrder > renderer.windows[1].zOrder);
 assert(renderer.windows[4].zOrder > renderer.windows[3].zOrder);
+// A newly shown popup can have an older z-order than its visible sibling.
+// Explicitly raising that popup must change sibling order, unlike raising
+// the common owner. Its descendants (even through a hidden owner) follow it.
+renderer.windows = {
+  1: win(1,0,true,1),
+  2: win(2,1,true,25),
+  3: win(3,1,true,10),
+  4: win(4,3,false,11),
+  5: win(5,4,true,12),
+  6: win(6,3,true,13,true),
+  7: win(7,0,true,26),
+};
+renderer._raiseWindowGroup(renderer.windows[3]);
+assert(renderer.windows[3].zOrder > renderer.windows[2].zOrder,
+  'explicit popup raise must bring an older sibling above the newer sibling');
+assert(renderer.windows[5].zOrder > renderer.windows[3].zOrder,
+  'requested popup keeps its visible owned descendants above it');
+assert.equal(renderer.windows[4].zOrder,11,'hidden descendant owner is not raised');
+assert.equal(renderer.windows[4].visible,false,'hidden descendant owner stays hidden');
+assert.equal(renderer.windows[6].zOrder,13,'child stacking stays independent');
+assert.equal(renderer.windows[7].zOrder,26,'unrelated top-level stays unchanged');
+renderer._raiseWindowGroup(renderer.windows[1]);
+assert(renderer.windows[3].zOrder > renderer.windows[2].zOrder,
+  'subsequent owner-only raise preserves the chosen sibling order');
+assert(renderer.windows[5].zOrder > renderer.windows[3].zOrder);
 // Multiple hidden owner levels, with an owner cycle, still terminate.
 renderer.windows = {1:win(1,2,true,1),2:win(2,1,false,2),3:win(3,2,false,3),4:win(4,3,true,4)};
 renderer._raiseWindowGroup(renderer.windows[1]);

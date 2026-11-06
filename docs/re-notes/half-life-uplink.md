@@ -2186,3 +2186,662 @@ back. Evidence, unchanged recovery recipe and limits are retained in this
 run's `verification.json`, `lifecycle.json`, `recovery.txt` and `result.json`.
 Next: diagnose the SIGKILL sender or external browser lifecycle before another
 native floor recovery; covered-route gameplay remains pending.
+## Headed renderer profiling (2026-10-30)
+
+Visible Chrome 156, release base `14b05c8d8`, threads enabled, same saved
+640x480 staircase: two 60-second presentation-rate samples give OpenGL
+22.75/30.46, Direct3D 6.67/7.43, and game Software 4.33/4.63 per second.
+Evidence: `20261030-uplink-headed-{gl,d3d,software-640}`. Count only `gpu:-1`,
+`directdraw:6`, and `directdraw:3`, respectively; generic DirectDraw events
+duplicate surface notifications. This is stationary animated gameplay, not
+combat or unique-frame proof. Software mode index 0 is 640x480; hardware uses
+index 3. The initial Software index-3 run is excluded (1152x864).
+
+Four 30-second profiles use the same save in visible Chrome:
+`20261030-uplink-{d3d-profile,gl-webgl-profile,gl-wat-profile,d3d-wat-profile}`.
+The last two force our software rasterizer, distinct from game Software.
+All show textured staircase geometry and HUD. GPU runs confirm WebGL through
+ANGLE/Metal on Apple M1; D3D has zero software fallbacks. Profiled rates include
+instrumentation overhead and are not clean FPS benchmarks.
+
+D3D's guest spends 13.22 seconds in heap_alloc via ProcessVertices FVF packing.
+Renderer replay totals 1.72 seconds, including 0.39 seconds of readback sync;
+the renderer is roughly 93% idle. ProcessVertices-only reuse moves allocation
+to DrawIndexedPrimitiveVB (11.39 seconds): `20261030-uplink-d3d-pv-reuse` is
+superseded. The complete candidate reuses growable per-instance FVF storage
+across ProcessVertices and both VB draw paths. Whole-source packing preserves
+overlapping VBs; queued draws copy into owned packets before returning.
+Other allocating callers retain their contract.
+
+`20261030-uplink-d3d-fvf-reuse` samples only 0.298 ms in heap_alloc over 30 s.
+WASM: `ff157b84e37bc99ce8e1839026b8a4030f398276dd255ec0b861656325129f52`.
+Its profiled presentation rate is 8.40/s, but heavy competing Safari load was
+observed during candidate measurements: a clean FPS improvement is unverified.
+
+Approximate simultaneous CPU activity, guest execution versus render worker:
+
+| Baseline API/backend | Guest active | Renderer active | Overlap | Share of renderer activity |
+| --- | ---: | ---: | ---: | ---: |
+| OpenGL/WebGL | 15.16 s | 2.20 s | 1.07 s | 48.8% |
+| Direct3D/WebGL | 20.13 s | 2.04 s | 0.90 s | 44.1% |
+| OpenGL/our software | 8.79 s | 21.99 s | 4.70 s | 21.4% |
+| Direct3D/our software | 13.04 s | 11.90 s | 4.54 s | 38.2% |
+
+Each interval is about 30 s. Exclude idle, unattributed samples and recognized
+blocking waits. Reconstruct and sort CDP timestamps (negative deltas occur),
+and map functions against each saved combined.wat. This is sampled CPU overlap,
+not GPU execution timing. Do not count entire Atomics.wait tasks as active.
+Baseline D3D has no saved timeline, only CPU profiles. Candidate overlap is
+0.36 s, with 5.04 s guest and 2.33 s renderer active; contention and changed
+bottlenecks prevent calling this a regression.
+
+Next lead: browser-shell classifies DirectDraw presents as software, setting
+runSlice=1000 even with D3D/WebGL, versus GL's 10000. This remains unchanged;
+the candidate guest profile is largely idle and warrants a scheduling test.
+
+Validation passes: ProcessVertices growth/reuse/alias, v3 VB draws, fog,
+camera-position texgen, worker parity with queued indexed draws, neutral
+command-stream ownership, and native/compat builds. Intro offset, menu cursor,
+reported Safari white gameplay, and repeated-switch menu issues remain open.
+No newer main was merged, no release deployed, and this work is uncommitted.
+
+### Direct3D Worker slice experiment
+
+`20261030-uplink-slice-sweep` keeps the FVF-reuse module above and alternates
+1k/10k/10k/1k blocks in one visible Chrome session. Each round reloads the
+same save, settles for 30 seconds and measures for 60 seconds. Correct
+surface-specific presentation rates are 8.08, 10.91, 15.68, and 6.21/s.
+Weighted means: 7.14/s at 1k, 13.29/s at 10k (1.86x observed). The page stays
+visible throughout all four samples. Competing Safari, screen recording,
+audio and other system activity varies, so the exact gain is not a quiet-box
+estimate; both 10k samples nevertheless exceed both 1k samples.
+
+The app policy now distinguishes Direct3D's EngineType=3 from Software's
+EngineType=1 even though both present through DirectDraw. A confirmed guest
+Worker uses the measured 10k D3D budget; cooperative D3D and game Software
+retain their existing 1k policy. Successful registry writes track in-process
+switches, and initial selection includes restored registry state. Selecting
+Software still defers the smaller budget until presentation so setup dialogs
+are not throttled. Explicit slice dropdown choices remain authoritative.
+Callback tests cover these transitions and restored D3D selection.
+
+Separate 30-second CPU profiles, without full timeline tracing, estimate
+guest/render overlap at 2.01 s (53.2% of renderer active time) for 1k versus
+4.30 s (66.3%) for 10k. Guest active samples are 18.76/23.92 s; renderer
+active samples are 3.78/6.48 s. Profiled presentation rates are 5.54/7.63/s
+and are excluded from the unprofiled FPS comparison. These remain sampled
+CPU estimates under variable load, not GPU timing or scheduling proof.
+
+`20261030-uplink-d3d-slice-policy` validates the final browser policy in a
+fresh visible Chrome launch without runtime slice overrides: actual budget
+10000, 596 surface presents in 60.03 seconds (9.93/s), no visibility changes
+or page errors. Reviewed captures show textured staircase/HUD, complete pause
+menu and resumed gameplay. The single fresh-run rate is a functional check
+under current load, not a replacement for the paired comparison. Callback
+regressions, installed-payload main-menu test, JS syntax/diff checks and browser
+cache-version self-test pass. The WASM is unchanged from the FVF candidate;
+source hashes and runtime patch are archived with this run. Work remains
+uncommitted on `fix/uplink-startup-20261030`; dev server 52671 serves it.
+
+### Idle submission experiment after c98d17dd6
+
+`20261030-uplink-idle-batch-sweep` adds submission-reason counters to the
+legacy Encoder without changing its default behavior. In one visible Chrome
+session, the guest remains at 10k blocks. The experiment overrides only the
+idle submission decision to require 1/4/4/1 commands, reloading the same save
+and settling 30 seconds before each 60-second sample. Capacity, presentation,
+fence, clear and publication barriers retain their immediate flush behavior.
+
+Immediate-mode samples: 12.66 and 10.80 presents/s; four-command samples:
+12.00 and 12.46. Weighted means are 11.73 versus 12.23 (+4.3% observed), smaller
+than baseline drift under competing system load. This does not establish a
+repeatable FPS gain, so the production idle-submission rule remains unchanged.
+
+Counters identify the cause conclusively: 99.3-99.4% of baseline submissions
+come from the idle-consumer rule, not capacity or synchronization. Batches
+average 1.91 commands and about 87 submissions/frame. Requiring four commands
+raises the mean to 4.29 and reduces submissions to about 39/frame, without a
+convincing throughput benefit. The counters and shared submission-decision
+helper remain for diagnosis; the four-command override exists only in the
+scratch benchmark. This legacy path's capacity is 2 MiB and its size threshold
+does not fire in this scene; increasing that capacity cannot remove these
+idle-triggered submissions.
+
+Separate CPU profiles show 4.12 s guest/render overlap over 31.03 s with
+immediate submission (67.8% of renderer active time), versus 3.53 s over
+30.56 s with four-command batching (63.8%). Profiled rates are 10.91/11.11/s.
+These approximate CPU sampling results exclude recognized waits and are not
+GPU timings; neither FPS nor overlap supports changing the default. Reviewed
+captures retain the textured staircase/HUD in both conditions, with no page
+errors. Counters/helper and these notes are uncommitted; no release was made.
+
+Next measured target: `$d3dim_lights_refresh` takes 1.54 seconds of self
+samples in the 31-second immediate-submit profile (~4.9%). It scans
+DX_OBJECTS up to DX_MAX=16384 until four initialized lights are found, on
+each refresh. Investigate a correctly invalidated shared light index or a
+safe scan bound; do not cache pointers per Worker without accounting for
+light creation, mutation and release by other instances. No light-scan
+optimization has been implemented by this experiment.
+
+Validation of the retained counters/helper: neutral command-stream ordering,
+OpenGL command-stream barriers, real software-GL producer/Worker bitmap pixel
+parity and synchronous visibility, browser cache-version self-test, JS syntax
+and diff checks pass. All six browser samples used actual slice10000, remained
+visible, and reported no page errors.
+
+### Shared light scan bound (2026-10-30)
+
+`$dx_alloc` now publishes a monotonic exclusive upper bound for slots ever
+allocated as legacy light objects, under LOCK_DX in shared memory. Refresh
+atomically reads that bound and retains the existing type/buffer/dwSize checks,
+slot ordering and four-light limit. It does not cache guest pointers across
+refreshes. Releases never lower the bound; both initial allocation and recycled
+allocation update it. A scene with no legacy lights skips the table scan.
+The bound can still reach DX_MAX in a long-lived process; this is a safe scan
+reduction, not a full live-light index.
+
+Evidence: `20261030-uplink-light-bound-baseline` and
+`20261030-uplink-light-bound-candidate`. Visible Chrome, threads, WebGL-backed
+Direct3D, 640x480, automatic 10k budget, same saved staircase checkpoint,
+30-second settling before each of two 60-second samples, then a separate
+30-second CPU profile without full timeline tracing. Baseline rates are
+14.73/16.07 presents/s (mean 15.40); candidate 22.31/21.17 (mean 21.74).
+These sequential runs are subject to variable background load: the observed
+41% difference is not an isolated estimate of this optimization's FPS gain.
+
+The targeted CPU result is clear: light refresh self samples fall from
+1776.976 ms / 30171.804 ms (5.89%) to 5.974 ms / 30136.601 ms (0.020%).
+A live read before timing confirmed the candidate light bound was zero.
+Sampled guest/render overlap is 4.475/4.459 seconds, 69.0/64.6% of renderer
+active time; this is not GPU execution timing and shows no overlap improvement.
+Reviewed captures retain textured geometry and the HUD; all samples remain
+visible, use slice10000 and report no page errors. No combat/traversal claim.
+
+Loaded WASM: baseline ff157b84e37bc99ce8e1839026b8a4030f398276dd255ec0b861656325129f52;
+candidate df83d2d4939e2409687c02162544f07609049ff93dd9535c0ed25ab2b6e0ccf0,
+layout 84cbc24fabc77b4b. Both runs retain the preexisting desktop-query change
+and JS submission diagnostics. Native/compat builds pass. ProcessVertices
+regression covers another WASM instance allocating, initializing, changing,
+retiring and reusing lights, four-light cap, and fallback recycling into the
+last table slot. Viewport ownership, D3D7 lighting, fog and queued Worker pixel
+parity pass. The prior scheduling commit's two stale callback-census hashes
+were reconciled after reviewing closure lifetimes; ownership remains pending.
+Changes remain uncommitted; dev server 52671 serves the candidate.
+
+## Cursor ownership and fresh-launch menu investigation (2026-11-01)
+
+The light-bound changes above are committed as `0e36a8d0d` (not pushed).
+Cursor follow-up is still uncommitted. In a real Worker menu, the owning guest
+thread reports ShowCursor count 1 while the page-shadow instance reports 0.
+The older qualification based on page count/CSS alone did not establish the
+guest cursor state. Cursor handle and signed count now live in shared,
+per-guest-thread slots (IDs 1..16, with slot 0 reserved). Browser visibility
+reads the hit window's owning thread, and thread retirement resets that slot.
+Cross-instance NULL cursor, hide/show, thread isolation and reuse tests pass;
+renderer cursor tests pass 21/21. Native and compatibility builds pass, layout
+`624d2388f3d5dc0b`; actual browser-loaded module SHA-256 is
+`7625ed243bbcb54a7c5ac7c3bfe7d5004eb4c5829c0ce680bf81778d9c92875b`.
+
+Evidence in `20261031-uplink-ui-before`, `20261031-uplink-ui-cursor`,
+`20261031-uplink-ui-bitmap` and `20261031-uplink-ui-dib` remains diagnostic.
+The first run includes the normal intro; later runs use `-nosierra -console`
+only to shorten investigation, not as a shipping default. Native cursor
+screencapture attempts caught Terminal, so they are not cursor verification.
+Page screenshots omit the OS pointer. The custom CUR decoded to 32x32 with
+104 opaque pixels in the initial run, but visible native cursor verification
+and gameplay/menu transitions are still open.
+
+Fresh launch also lacks the textured background in the canonical menu GDI
+surface, before exclusive composition. The original splash.bmp in pak0.pak
+is a valid 640x480 4-bpp image with 11 palette entries and visible texture.
+Configuration and Video labels animate on black; Video Modes also shows
+untranslated IDS_VIDMODE_* checkbox labels. This is not yet resolved, and
+these runs do not qualify repeated renderer switching. Intro positioning
+remains offset: its 320x240 movie centers on the virtual desktop while the
+black backing window remains 640x480. No pre-intro mode change was observed.
+The independent GetDisplayMode desktop-metrics regression passes, but does
+not resolve that intro positioning. Safari remains intentionally untested.
+
+`20261031-uplink-ui-coop` narrows the startup issue: cooperative mode also
+starts with a black menu. New Game -> Easy reaches the introduction with a
+legible HUD; Escape then restores the textured pause background. The signed
+cursor count changes 1 -> -1 -> 1 and CSS changes custom CUR -> none -> custom
+CUR. This verifies the cooperative visibility transition, not native pointer
+pixels or the corresponding Worker gameplay transition. Background decoding
+therefore works after engine initialization; do not classify the startup
+failure as a general 4-bpp decoder failure or a Worker-only race.
+
+## Initial-show ordering and presentation queries (2026-11-02)
+
+The fresh-launch black background is now fixed in the isolated release
+worktree. A nested child creation returned through CACA0001 while the main
+WM_CREATE was still outstanding and consumed the main implicit-show latch.
+Only the main invocation may now consume it. Its initial WM_SHOWWINDOW runs
+before activation, on an owned guest-stack continuation so resource-loading
+yields cannot abandon the callback. The saved HWND survives nested creation;
+destroying that HWND returns NULL and releases the frame. The regression
+checks ordering, nested child latch preservation, nested main replacement and
+destruction cleanup. ShowWindowAsync and failed creation regressions pass.
+
+Evidence `20261101-uplink-main-show` reviews a fresh Worker menu with a complete
+textured background, then Configuration, Video and Video Modes. The two earlier
+diagnostic variants, `20261101-uplink-show-fixed` and
+`20261101-uplink-show-ordered`, still fail startup and are published as such.
+Video Modes temporarily displays template checkbox labels while its driver
+information dialog is open; after dismissal initialization finishes and those
+controls disappear on the OpenGL page. The run uses `-nosierra -console` only
+for diagnosis. Loaded WASM is
+`a9b1c2b749ce023d7b01d97e7514911f439be2c00e625b1ded4f792aae52569f`,
+layout `624d2388f3d5dc0b`; native and compatibility builds pass. Native pointer
+captures still do not establish the cursor over the game canvas and are not
+published as cursor proof. Intro geometry and repeated renderer switching
+still need qualification; Safari remains excluded.
+
+D3D presentation was calling getExtension and getParameter for the renderer
+name on every frame. This identity is now cached per WebGL context with a
+WeakMap. Missing contexts are retried and replacement contexts get their own
+query. The real adapter test checks 100 presents produce one query and a
+replacement produces another. Shared-render and OpenGL worker protocol tests
+pass. The prior D3D profile spent 232 ms / 30.14 s (0.77%) in getParameter;
+this is a small optimization, not a claim of a material FPS gain. Remaining
+large guest costs are interpreted execution and response waits; no further
+allocation hotspot comparable to the previously fixed ProcessVertices buffer
+allocation was established.
+
+Startup/cursor/display changes are committed as `de71e7c07`; presentation
+query caching and moving the unused argument view/closure off the GPU path
+are committed as `33704ddf5`. Neither commit is pushed. The allocation cleanup
+also passes the shared-render adapter test, but was added after the benchmark
+page loaded and is excluded from its timing claim.
+
+`20261102-uplink-d3d-query-cache` reviews headed Chrome Worker gameplay at the
+same 640x480 stationary staircase save, textured pause menu, then resumed
+gameplay, with no page errors. After settling, two unprofiled 60-second samples
+are 10.05/10.32 presents/s. The separate 30-second profile has zero
+getParameter samples. Guest execution remains dominated by uop dispatch
+(9.47%), response waits (6.03%), branch-end handling (5.29%) and x87 islands
+(4.05%); render-worker readPixels is 2.46% and writeback 1.43%. The render
+worker is idle 79.84% of its sampled interval. This does not measure GPU
+execution or establish that more batching would improve throughput.
+
+The much older 21.74 presents/s average is not reproduced today:
+`20261102-uplink-baseline-recheck` replays its saved `df83d2d...` WASM and
+region map with renderer-input/D3D adapter from `0e36a8d0d`, through a separate
+local proxy without replacing dev-server artifacts. That unprofiled 60-second
+sample is 4.77 presents/s, with the same textured save reviewed. Sequential
+runs under variable load are insufficient to attribute the candidate's higher
+rate to the query cache or to estimate a regression against the older day.
+The narrow demonstrated optimization is removal of repeated context queries.
+
+`20261102-uplink-normal-intro` verifies the normal launch, without
+`-nosierra`, reaches the corrected menu. A native macOS screenshot with the
+pointer explicitly placed over the game canvas now shows the white menu
+cursor; the owning Worker reports display count 1, with no pointer lock or
+hidden-cursor CSS. This closes the earlier native-pointer verification gap.
+The intro geometry issue persists: its backdrop is 578x431 during this run,
+while the 320x240 movie is explicitly positioned at desktop-centered
+(370,248). The later menu becomes 640x480. This is still a failed intro
+qualification, not a fully qualified release; the launch arguments were not
+changed to suppress it.
+
+The same normal-launch run then reaches textured default OpenGL gameplay
+with a legible HUD at 320x240, and returns to the textured pause menu. The
+owning Worker cursor count/CSS changes 1/visible -> -1/none -> 1/custom CUR.
+Native cursor pixels were reviewed at 16:44; a later capture overwrote that
+artifact with unrelated foreground content, so native screenshots are omitted
+from the published bundle rather than presenting the replacement as proof.
+Gameplay/pause screenshots and shared-state readbacks are retained. Repeated
+renderer switching was not requalified in this pass. Automated test browsers
+are closed; local dev server 52671 still serves the committed fixes.
+
+## Hidden intro window and explicit show ordering (2026-11-04)
+
+The intro backdrop is a hidden indirect-template root (style 0x80000840),
+initially 578x431. Half-Life clears its DC before showing the separate 320x240
+movie, which it explicitly centers on the virtual desktop. Our unconditional
+force-show of hidden top-level indirect templates exposed this unfinished root.
+Removing that workaround restores the template visibility contract. Hidden
+dialogs must also not arm the implicit-main activation continuation.
+
+The first candidate (`3f7e0afd...`, `20261103-uplink-intro-hidden`) removes the
+stray backdrop but exposes a second ordering error: explicit ShowWindow posted
+WM_SHOWWINDOW, allowing activation/painting before Half-Life initialized its
+menu background. The next candidate sends that notification using a guest-stack
+continuation that retains the HWND, resolved show command, placement return
+convention and original visibility. Completion revalidates the HWND before
+changing visibility; built-in controls stay on native dispatch. Creation,
+explicit callback/destruction, ShowWindowAsync, secondary sizing, modal show
+ordering and Paint Attributes regressions pass, as do native/compat builds.
+Final candidate `13e7c0acf67521ac91fb8462896c80b1cdfc3ac98c527398272a4186e9a08650`
+in `20261104-uplink-final-intro` shows the centered movie without the stray
+backdrop, a complete main menu, textured Hazard Course gameplay and a complete
+pause menu. However, repeated switching is NOT qualified: dismissing the
+driver-advice popup returns to Video instead of exposing the mode controls.
+The final run is therefore failed release qualification. Keep the startup/
+ShowWindow changes uncommitted pending diagnosis; only the independent empty
+nonclient-paint optimization is ready to commit. Safari remains excluded.
+
+`20261103-uplink-switch-review` completed OpenGL -> Software -> OpenGL ->
+Direct3D -> Software at 640x480 in one headed Chrome Worker session. Each
+restart reached textured Hazard Course elevator gameplay and a textured pause
+menu, without Z_Free or runtime errors. This is the prior committed module
+`a9b1c2b7...`, not the new explicit-show candidate; camera positions vary and
+the run is not an FPS comparison. Safari remains intentionally excluded.
+
+Four SEO-only main commits were cherry-picked onto the release branch:
+e3467a0bc, 332e567d3, b52c9193f and 337621c88, now 9cd701049, 7462d9282,
+4a48b4385 and 003a6e730. Game descriptions, screenshots, FAQs and Space Cadet
+title changes are included, along with the correction preserving existing
+demoscene pages. Generated game pages pass screenshot, JSON-LD and indexability
+checks. Unrelated main runtime changes were excluded; nothing was deployed.
+
+## Resolution-dependent OpenGL readback (2026-11-04)
+
+Headed Chrome/ANGLE Metal on Apple M1, Worker gameplay, the saved staircase
+view, 30-second settling and two 60-second samples per resolution:
+`20261104-uplink-resolution-640-repeat` gives 39.98/39.93 presents/s;
+`20261104-uplink-resolution-1024-repeat` gives 34.51/34.55. Both load module
+`b70e10ee645f5660065fe5e98257b7b6fac191fce3a9ad893c87ea3d0df1c507`.
+These are guest presentations, not independently verified unique display
+frames. Screenshots show the same textured view/HUD. Earlier single samples
+17.12/8.36, in the runs without `-repeat`, are not reliable controls: the same
+640 build subsequently runs at 40/s. Those first samples also did not trigger
+the readback path; retain them rather than generalizing their zero counters.
+
+The repeat profile establishes the unnecessary work precisely:
+`DefWindowProcA -> defwndproc_do_ncpaint -> defwndproc_ncpaint ->
+gdi_surface_descriptor -> gpu_gl_call(0x10002)`. The frame painter resolves
+GPU-owned pixels before a fill that is entirely excluded by its NC clip.
+The game repeatedly shows its already-visible borderless game window; its
+client covers the whole window, so no nonclient pixels need painting.
+
+Each repeat frame triggers getImageData, RGBA-to-canonical conversion and a
+subsequent canonical-to-RGBA upload. At 640x480, readback traffic is ~49 MB/s
+and merge time ~1.18 ms/frame. At 1024x768, it is ~109 MB/s and ~2.96 ms/frame.
+The 1024 page profile spends 7.29% in writeRgbaRect, 3.17% in rgbaRect and
+2.90% in getImageData; the guest spends 21.04% in brokerCall. The render Worker
+is idle ~93% of its sampled interval; this is not a GPU-utilization reading.
+
+The fix checks whether the positive client rectangle covers the complete
+window before NC DC allocation/pixel access, in both frame-painter entry
+paths. It follows geometry rather than a game-name or style-only exception.
+The regression retains GPU ownership for an empty NC clip and still resolves
+a one-pixel nonclient band. Caption states, WinMine dialog frames, borderless
+dialog menus and real deferred OpenGL/GDI ordering regressions pass.
+
+`20261104-uplink-empty-nc-1024`, module
+`43610ae3be08103e3e66c7fee10a8eba82131f669c510b2d6af54f947e687120`,
+has zero readbacks/merges in both 60-second samples and the separate 30-second
+profile. Textured gameplay, full pause background and resumed gameplay were
+reviewed. The pixel-copy hotspot disappears. Its 7.72/8.62 presents/s cannot
+establish a gain or regression: contemporaneous process snapshots show heavy
+Safari/WebKit/WindowServer load, unlike the earlier repeat. Do not advertise
+an FPS gain until a quiet paired rerun. The proven improvement is removal of
+the unnecessary per-frame copy/fence, not resolution-independent rendering.
+The later show-callback return-value correction is outside this timing run.
+
+## Uniform preparation and presentation reuse (2026-11-05)
+
+The GL frontend previously built every uniform value (including four flattened
+eight-light arrays and a folded projection) whenever any uniform was dirty.
+It now resolves only dirty names. The shared GPU backend compares caller values
+against its owned snapshot before allocating, and reuses snapshot storage on
+changes of the same shape. In-place matrix/integer changes, signed zero and
+NaN comparisons are covered; values are never cached by caller-array identity.
+
+The GL Worker presentation bridge now resizes its canvas only when a dimension
+changes. Bitmap frames use copy compositing to replace transparent pixels as
+well as opaque pixels; raw frames still use putImageData. The protocol regression
+covers stable dimensions, resizing, raw frames and bitmap retirement.
+
+Fixed-function, GPU resource/cache, Worker protocol, depth-range folding,
+multitexture, stencil and color-mask tests pass. Browser cache-version and diff
+checks pass. These are JS changes; the loaded WASM stays
+`13e7c0acf67521ac91fb8462896c80b1cdfc3ac98c527398272a4186e9a08650`.
+The unrelated dirty ShowWindow candidate remains present in both measurements
+and is still not release-qualified.
+
+Headed Chrome Worker runs `20261105-uplink-uniform-baseline` and
+`20261105-uplink-uniform-candidate` use the same 1024x768 staircase save,
+settling, two 60-second samples and a separate 30-second CPU profile. Baseline
+samples are 9.54/12.03 presentations/s; candidate samples are 14.56/7.73.
+The large within-run variation prevents a defensible overall FPS gain claim.
+Both runs preserve the actual three JS sources, loaded WASM hash, source patch,
+profiles, process-load snapshots and harnesses.
+
+Render-Worker profiles attribute 260.963 + 56.822 ms of self time to uniform
+preparation/cache calls over 284 baseline presentations, versus 4.793 + 7.321 ms
+over 224 candidate presentations: about 1.119 -> 0.054 ms per presentation.
+This is sampled CPU attribution under variable host load, not an isolated
+end-to-end speedup. Total sampled Worker GC rose from 44.005 to 93.701 ms;
+do not claim reduced overall GC from these runs. No page errors were reported,
+and textured gameplay/HUD captures were reviewed at the same saved position.
+
+The additional real Chrome pixel probe passes opaque-to-translucent replacement
+without stale pixels, same-size canvas reuse, resizing to transparent content,
+and a subsequent raw-pixel frame. Probe output and source are preserved in the
+candidate run. No interpreter/JIT optimization is involved.
+
+## Aggregate CPU bottleneck profile (2026-11-05)
+
+`20261105-uplink-cpu-breakdown` rechecks the bottleneck after c84edcd8d,
+using the same loaded WASM/dirty startup candidate. One visible Chrome game,
+1024x768 OpenGL/WebGL Worker mode, saved staircase viewpoint; HUD and runtime
+logging disabled before measurement. A settled 60-second unprofiled window
+records 10.90 guest presentations/s; a separately settled 60-second profile
+records 9.61/s. These are not clean profiler-overhead or peak-FPS measurements:
+process snapshots show Safari/WebKit/WindowServer contention. Screenshots
+retain textures and HUD, and no page errors are reported.
+
+The analyzer resolves WASM indices against saved combined.wat and groups
+mutually exclusive leaf/self sample counts by source subsystem. Guest Worker
+has 32,678 samples, of which 29,478 are non-idle. Their distribution is CPU
+core/instruction execution/guest memory 76.03%, OS APIs 5.32%, graphics APIs
+4.93%, synchronization stacks 3.48%, message submission 2.65%, and other
+JS/runtime/helpers/GC 7.59%. CPU-core attribution includes memory helpers
+called by APIs; it does not mean all of that work is removable overhead.
+
+Within that same non-idle denominator: ALU/instruction handlers 27.00%, uop
+engine 10.78%, core handlers 9.17%, FPU 8.58%, loop matchers 7.80%, cache/branch
+machinery 5.81%, and register/memory helpers 4.28%. Largest individual core
+functions by all guest samples are uop_fast 7.90%, x87_island_fast 5.14%, and
+branch_end_at 4.96%. The dominant measured workload is CPU emulation, not
+uniform preparation or buffer allocation. The previous shortlist was a list
+of small local candidates, not a ranking of the main bottlenecks.
+
+The page is 87.29% profiler-idle and the render Worker 92.96%; neither is GPU
+utilization. Thread percentages are not added. Counts avoid assigning long
+sampling gaps to whichever function happened to be sampled; 1,318 guest
+intervals exceed 5 ms. Synchronization samples can include blocked time and
+are not pure CPU usage. This capture does not measure GPU execution duration
+or distinguish necessary game math from avoidable emulator dispatch cost.
+
+Next investigation: identify the guest blocks behind the instruction/x87
+workload and measure fast-path coverage before proposing an interpreter
+variant. Any such variant still needs the required V8/SpiderMonkey native
+disassembly and matched A/B measurements. No runtime change was made here.
+
+## Guest hot-block diagnosis (2026-11-05)
+
+Evidence: `20261105-uplink-hot-loops`, headed Chrome, same saved staircase,
+1024x768 OpenGL/WebGL Workers, HUD/logging off. Three 15-second handler/block
+histograms, restoring the save between windows; a separate uninstrumented
+20-second counter interval precedes them. Loaded WASM SHA-256 remains
+`13e7c0acf67521ac91fb8462896c80b1cdfc3ac98c527398272a4186e9a08650`.
+Reviewed all three captures: textured scene and HUD intact, no page errors.
+
+Stable regions below are percentages of recorded threaded block entries,
+**not CPU time**. Grouping joins nearby addresses; a region is not necessarily
+one control-flow loop. Addresses are preferred full VAs in hw.dll:
+
+| Region | Three-window range | Disassembly finding |
+| --- | --- | --- |
+| 1000a27a–1000a96f | 15.2–15.8% | Contains per-vertex texture-coordinate, color and vertex submission loop; repeated indirect GL calls and x87 preparation |
+| 10007130–100074b2 | 14.2–15.7% | Floating-point dot-product/clamp/table-lookup calculations and vector helpers, consistent with lighting preparation |
+| 100a5920–100a5ddd | 11.1–11.4% | Math-runtime region, including sin/cos/tan, floating-point control/status handling and conversions |
+| 1000e198–1000f145 | 8.4–8.6% | Contains another immediate-mode polygon submission loop |
+
+The tight loop at 1000a875 ends with the backward branch at 1000a932;
+calls through GL slots split its execution repeatedly. The scalar routine
+at 100071c0 calls the float-to-integer helper at 1009e920, which saves the
+x87 control word, selects truncation, converts and restores it. These are
+concrete candidates for reducing generic instruction/call overhead; block
+counts alone do not establish their individual CPU costs or expected FPS wins.
+The saved live-byte disassembly avoids relying only on unrelocated disk code.
+
+The uop tier remained enabled. Diagnostic uop block share was 35.9%, 34.6%,
+35.5% using uopBlocks/(uopBlocks+threadedBlockHits). Do **not** call this normal
+coverage: histogram mode changes chaining and compilation behavior; new
+declines occurred during collection. Block-histogram collision counts were
+860302/142407/91057, so some entries are lost. The original module-base probe
+returned empty; attributed copies use recorded route runtime bases plus PE
+preferred bases, preserving original raw artifacts.
+
+Without the histogram, 20 seconds recorded 21,852,837 uop blocks across
+2,351,723 entries, 6,548,835 x87-island runs and 2,641,163 pipeline runs.
+There were no new installs, kills or guard failures: recompilation churn is
+not supported as the steady-state cause. There were 1,072,083 memory-window
+re-guards proving 17,153,328 pages, another measurable candidate, but its CPU
+cost is not ranked by these counters. Experimental block-exec is disabled;
+that alone does not establish it would improve this workload.
+
+Priority: measure CPU cost within the stable x87/vertex regions, then test a
+generic fast path for repeated FP conversion or call-boundary overhead, with
+matched native-code inspection and A/B runs. Do not infer that changing GL
+queue batching or enabling an experimental tier will help from this census.
+No interpreter variant or runtime changes were made in this investigation.
+
+### Follow-up: conversion is already folded; arithmetic-dispatch experiment
+
+The 1009e920 conversion body matches `$ftol_body_at` exactly. The third
+histogram recorded 374,888 H500 (`$th_ftol_native`) executions; a hot guest
+entry does not mean its body is still interpreted. In the prior uninstrumented
+CPU profile, H500 has only 54 self samples (0.18% of non-idle guest samples).
+Do not prioritize adding another conversion fast path here.
+
+Tested one isolated variant in `$x87_island_fast`: replace the eight arithmetic
+operation comparisons with a br_table, leaving the actual arithmetic,
+exception checks, memory helpers and state updates unchanged. Differential
+test passes 400 randomized sequences / 7,178 operations against both generic
+and unfused execution, including FPU state and exception traces. Candidate
+module SHA-256 is
+`931c87e29d970ddce738cc0094e51b23f48de5334b8ecbe1a96603180015036a`.
+Control sources were compared against saved combined.wat and match exactly
+apart from this variant. Canonical compiler builds tail-call and compatibility
+artifacts; the local dev server keeps serving the control module. Candidate
+Chrome uses request interception for its WASM only.
+
+ARM64 native captures: V8 shell 15.4.49 TurboFan and SpiderMonkey C155 Ion,
+both control and candidate, using tools/wasm-native.js. V8 handler size grows
+23,328 -> 23,360 bytes; Ion 9,136 -> 9,296. Both emit a table-indexed indirect
+branch. V8 keeps its 0x2a0 frame and spills; Ion keeps its 0x70 frame and FP
+state loads/stores. Memory helper and exception call paths are unchanged.
+These shell versions are not the Chrome 156 engine; no x86-64 measurement
+was performed. Eight alternating synthetic arithmetic pairs vary from
+152 to 601 ms per million islands and do not establish a stable speedup.
+
+Headed Chrome evidence: `20261105-uplink-x87-dispatch-control` and
+`20261105-uplink-x87-dispatch-candidate`. Both restore the same staircase
+save, settle, then capture a 60-second unprofiled window and a separate
+60-second CPU-profile window with HUD/logging off. Reviewed textures/HUD,
+no page errors. The control's first window overlaps compilation and is
+excluded as clean FPS evidence (10.02 presents/s versus candidate 8.97).
+The separate profile windows report 8.58 versus 8.81 presents/s. x87-island
+self sample share is 5.89% versus 5.67% of non-idle guest samples. Sample
+counts differ substantially (10,272 versus 14,211 total, with 2,050 versus
+2,821 gaps over 5ms), so raw samples/present cannot be compared as CPU time.
+Safari/WebKit/WindowServer contention is recorded in load files. No reliable
+speedup or regression established; the variant was reverted, with its patch,
+modules, native disassembly and profiles retained in evidence. Dev server
+still serves the original control. FP state spilling/helper boundaries remain
+an untested candidate; this profile does not establish a benefit from changing
+them. A quieter paired dispatch benchmark can also resolve the uncertain result.
+
+### Arithmetic-dispatch microbenchmark details and decision
+
+The saved `uplink-x87-micro.cjs` and `micro.json` in both dispatch evidence
+directories reproduce the synthetic test. Node v24.21.0 uses V8
+13.6.233.17-node.53 on ARM64, a third engine version distinct from the native
+capture shell and Chrome. The harness instantiates the complete control and
+candidate modules, runs 100,000 warmup islands each, then eight alternating
+AB/BA pairs of 1,000,000 islands. Each island loads 3.25, multiplies by 2,
+adds and subtracts 1, divides by 2, and stores 3.25. It checks the final value
+and exact island-run count. Uop execution and competing specialized FP folds
+are disabled to isolate H451; this is deliberately not the gameplay operation
+mix or its usual tier configuration.
+
+Candidate wins 6/8 pairs. The median of the eight paired time reductions,
+`100 * (1 - candidate_ms/control_ms)`, is **4.685%**. Separately pooling each
+variant's times gives medians of 196.414 ms control and 199.844 ms candidate,
+or **1.746% slower** for the candidate. These summarize different things and
+must not be substituted for one another. The full 152–601 ms range and
+contradictory direction of the summaries leave the result inconclusive;
+no confidence interval or stable speedup was established.
+
+The revert keeps the release candidate on the previously tested execution
+shape while measurements remain uncertain. It is not evidence that the change
+is incorrect or slower. A jump table removes comparisons but can introduce
+an indexed indirect branch and enlarge code; it is not strictly less work on
+every engine. Correctness passed, and the preserved candidate remains suitable
+for further measurement. The current evidence does not justify claiming a
+gameplay FPS improvement. The separately requested wasm3 measurement below
+also does not establish an interpreter improvement.
+
+### wasm3 arithmetic-dispatch microbenchmark (2026-11-05)
+
+Evidence: `20261105-uplink-wasm3`, Homebrew wasm3 0.5.0 on ARM64. Loading the
+complete emulator fails with `unknown value_type`; this is not a demonstration
+of full Wine-Assembly compatibility with wasm3. The benchmark instead extracts
+the exact control/candidate `$x87_island_fast` bodies with `fpu_mul`, `gl64`,
+`gs64`, `page_watch_cell`, `page_watch_write_one` and the required macros.
+`control-scope.json` and `candidate-scope.json` record kernel hashes and scope.
+
+The standalone kernel uses 256 KiB unshared memory and synthetic addresses;
+the direct-window bound becomes that memory size. Atomic reads become ordinary
+reads for the empty, single-thread observer table. Uncalled helpers trap so an
+unexpected path cannot silently produce a result. A direct island loop omits
+the guest x86 decoding and loop-control overhead present in the Node benchmark.
+It uses the same six operations and 3.25 result. Node and wasm3 checks pass for
+the result, x87 top/tags and island count. These adaptations limit the result
+to this exercised arithmetic path, not general FP semantics or gameplay.
+
+Eight alternating AB/BA pairs run 3,000,000 islands each (18,000,000 x87
+operations per timed process), following 100,000-island warmup runs per arm.
+`/usr/bin/time -p` measures whole-process wall and user/system time, including
+startup, at 0.01-second precision. CPU time is user plus system time. The raw
+rows and summaries are retained in `timings.json`:
+
+| Metric | Control pooled median | Candidate pooled median | Median paired time reduction | Candidate wins |
+| --- | --- | --- | --- | --- |
+| CPU time | 3.585 s | 3.555 s | -0.569% (slower) | 4/8 |
+| Wall time | 5.995 s | 5.510 s | +0.040% (faster) | 4/8 |
+
+The pooled CPU medians suggest a 0.84% reduction, but the paired summary has
+the opposite direction. Similarly, the pooled wall medians must not become
+an 8% speedup claim: their paired median is almost unchanged. This run finds
+no reliable interpreter gain and no established regression. The dispatch
+variant remains reverted; no runtime source changes result from this test.
+
+### Evidence and release handoff (2026-11-05)
+
+All run IDs below refer to repository-root `scratch/runs/`; the implementation
+worktree's scratch directory is not the evidence root. Keep the saved source
+patch, module hash, harness and environment alongside the result: recent
+gameplay profiles include the dirty startup candidate, so they are not proof
+that an otherwise clean release build has been tested.
+
+| Evidence runs | Supported finding | Limit |
+| --- | --- | --- |
+| `20261104-uplink-resolution-{640,1024}-repeat` | Same-view resolution dependence and unnecessary NC readback identified | Guest presents/s, not unique displayed frames |
+| `20261104-uplink-empty-nc-1024` | Per-frame readback/merge removed; fix committed in f6a667094 | Host load prevents a matched FPS claim |
+| `20261105-uplink-uniform-{baseline,candidate}` | Uniform preparation self time/present reduced; JS fix committed in c84edcd8d | No stable aggregate FPS or GC reduction |
+| `20261105-uplink-cpu-breakdown` | CPU emulation dominates sampled guest work | Self samples, not GPU timings or removable-overhead estimate |
+| `20261105-uplink-hot-loops` | Stable guest regions and active FP/uop fast paths identified | Histogram changes execution; block shares are not CPU shares |
+| `20261105-uplink-x87-dispatch-{control,candidate}` | Correct dispatch variant; native code and synthetic/gameplay comparisons retained | Variant reverted; performance unresolved |
+| `20261105-uplink-wasm3` | Restricted exact-body arithmetic kernel passes checks; eight interpreter timing pairs retained | Full emulator cannot load; no reliable dispatch speedup |
+
+Release preparation must preserve the outstanding distinction: the prior
+committed module passed the renderer-switch sequence, while the later dirty
+startup/ShowWindow candidate failed Video Modes navigation after the driver
+advice popup. Do not silently include those unqualified edits or describe this
+as a fully qualified release. Safari is intentionally excluded by the user.

@@ -8,7 +8,7 @@
 // that successfully started, not merely to the user's Threads preference.
 
 const assert = require('assert');
-const { createBrowserShell } = require('../lib/browser-shell.js');
+const { createBrowserShell, installRendererRunSlices } = require('../lib/browser-shell.js');
 const { APPS, resolveRunSlice } = require('../lib/apps.js');
 
 let selected = 'auto';
@@ -90,4 +90,47 @@ assert(!shellSource.includes("applyRendererSlice(Number(change.data) === 2 ? 'op
 assert(hasPageScript('host.js'),
   'the page centrally versions cooperative slice enforcement');
 
-console.log('PASS browser run-slice policy distinguishes Jazz Worker and cooperative backends');
+// Exercise the actual presentation/write callbacks: DirectDraw is shared by
+// software and D3D, and selecting Software must not throttle its setup UI.
+const enginePath = 'HKCU\\Software\\Valve\\HLDemo\\Settings';
+const log = { textContent: '', scrollHeight: 0 };
+function rendererWine(worker, initialEngine = 3) {
+  const wine = { guestWorker: worker ? {} : null, stepsPerSlice: 1000 };
+  installRendererRunSlices(wine, { ...APPS.halflife_uplink,
+    startupRegistry: [{ keyPath: enginePath, valueName: 'EngineType', data: initialEngine }],
+  }, log);
+  return wine;
+}
+const threaded = rendererWine(true);
+threaded.onGuestFrame({ kind: 'directdraw' });
+assert.strictEqual(threaded.stepsPerSlice, 10000, 'D3D Worker presents retain throughput budget');
+threaded.onOpenGLContextCountChange(0);
+assert.strictEqual(threaded.stepsPerSlice, 10000, 'tearing down a GL context does not misclassify D3D');
+threaded.onRegistryValueChanged({ path: enginePath, name: 'EngineType', data: 1 });
+assert.strictEqual(threaded.stepsPerSlice, 10000, 'Software setup retains its larger budget');
+threaded.onGuestFrame({ kind: 'directdraw' });
+assert.strictEqual(threaded.stepsPerSlice, 1000, 'actual Software presentation applies its small budget');
+threaded.onRegistryValueChanged({ path: 'HKCU\\Other', name: 'EngineType', data: 3 });
+threaded.onGuestFrame({ kind: 'directdraw' });
+assert.strictEqual(threaded.stepsPerSlice, 1000, 'unrelated registry writes do not switch renderers');
+threaded.onRegistryValueChanged({ path: enginePath, name: 'EngineType', data: 3 });
+assert.strictEqual(threaded.stepsPerSlice, 10000, 'selecting Direct3D restores Worker throughput');
+const cooperative = rendererWine(false);
+cooperative.onGuestFrame({ kind: 'directdraw' });
+assert.strictEqual(cooperative.stepsPerSlice, 1000, 'cooperative D3D policy remains unchanged');
+cooperative.onRegistryValueChanged({ path: enginePath, name: 'EngineType', data: 2 });
+assert.strictEqual(cooperative.stepsPerSlice, 10000, 'OpenGL still raises the setup budget immediately');
+selected = '20000';
+threaded.stepsPerSlice = 20000;
+threaded.onGuestFrame({ kind: 'directdraw' });
+assert.strictEqual(threaded.stepsPerSlice, 20000, 'automatic renderer policy respects a manual override');
+selected = 'auto';
+window.StorageImports = { exportStore: () => ({
+  ['reg:' + enginePath]: JSON.stringify({ values: { EngineType: { type: 4, data: 3 } } }),
+}) };
+const restored = rendererWine(true, 2);
+restored.onGuestFrame({ kind: 'directdraw' });
+assert.strictEqual(restored.stepsPerSlice, 10000, 'restored D3D selection overrides the startup GL default');
+delete window.StorageImports;
+
+console.log('PASS browser run-slice policy: Worker/cooperative budgets and Uplink renderer transitions');

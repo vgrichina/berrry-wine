@@ -1383,14 +1383,14 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
-  ;; 186: ShowCursor — STUB: unimplemented
+  ;; 186: ShowCursor — per-input-thread signed display count.
   (func $handle_ShowCursor (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; ShowCursor(bShow) → display count. 1 arg stdcall
     ;; Track internal display count: show increments, hide decrements
-    (if (local.get $arg0)
-      (then (global.set $cursor_count (i32.add (global.get $cursor_count) (i32.const 1))))
-      (else (global.set $cursor_count (i32.sub (global.get $cursor_count) (i32.const 1)))))
-    (i32.store offset=0 (global.get $reg_base) (global.get $cursor_count))
+    (drop (i32.atomic.rmw.add offset=8
+      (call $cursor_thread_addr (global.get $current_thread_id))
+      (select (i32.const 1) (i32.const -1) (i32.ne (local.get $arg0) (i32.const 0)))))
+    (i32.store offset=0 (global.get $reg_base) (call $cursor_thread_count (global.get $current_thread_id)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 

@@ -77,6 +77,18 @@ gpu.setUniform(program, 'u', '1i', 8);
 assert.strictEqual(calls.filter(call => call[0] === 'uniform1i').length, 2,
   'changed uniform values still reach WebGL');
 const secondBuffer = gpu.createBuffer();
+const matrix = new Float32Array(16);
+matrix[0] = NaN;
+gpu.setUniform(program, 'u', 'matrix4', matrix);
+gpu.setUniform(program, 'u', 'matrix4', matrix);
+assert.strictEqual(calls.filter(c => c[0] === 'uniformMatrix4fv').length, 1,
+  'unchanged NaN lanes compare equal');
+matrix[1] = -0;
+gpu.setUniform(program, 'u', 'matrix4', matrix);
+matrix[15] = 2;
+gpu.setUniform(program, 'u', 'matrix4', matrix);
+assert.strictEqual(calls.filter(c => c[0] === 'uniformMatrix4fv').length, 3,
+  'signed zero and in-place changes are detected against an owned snapshot');
 const integers = new Int32Array([-2147483648, 7, 2147483647, -1]);
 gpu.setUniform(program, 'u', '4i', integers);
 gpu.setUniform(program, 'u', '4i', integers);
