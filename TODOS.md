@@ -1531,7 +1531,8 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   status: active (UT2003 repair/UT2004 WebGL/Forsaken movement accepted; Pirates textured coast repaired/native landing party accepted; full27 both-backend coverage incomplete)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Update 2026-11-06T11:03Z: Publishede11d55168 current-build public mip coverage passes11cells/226observations/29negatives/12immutableheldpackets; first spatial directWebGL1 MIN LINEAR fails121,50,107 versus113.752,42.28,103.405. Locked build and focused tests PASS; no production repair. Coordinator verified67artifact hashes141absentPIDs3closedports1absentprofile. Remaining8spatialcells and9negatives unexecuted.
-  worker: legacy-spatial-min-linear-1105 fresh causal interpolation/sampling diagnosis; source-only behind DisciplesCorrected1040 -> HelpSuspension1048 -> KKnDMenuConsumer1055 FINAL release and cleanup. Two new-game lanes retained; historical27 remains open.
+  Update 2026-11-06T12:00Z: Published52aaa0ee6 proves coverage translation explains retained MIN LINEAR UV mismatch. All10solidcells/12heldpackets pass; new steep software pixel103,113,95 versus103.221,113.925,97.216 fails unchanged tolerance2. Spatial GPU candidate remains untested and was reverted; no production repair landed. Cleanup140PIDs independently absent.
+  worker: legacy-steep-software-1200 fresh software precision regression and subsequent GPU qualification; source-only behind DisciplesPrelaunchScope1110 -> KKnDClosedTarget1154 FINAL releases and cleanup. Two new-game lanes retained; historical27 remains open.
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (fleet stopped)
   created: 2026-10-06T02:09:48.337Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
