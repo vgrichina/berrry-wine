@@ -395,9 +395,9 @@
     {
       "file": "lib/thread-manager.js",
       "name": "host-file",
-      "sha256": "f362057697f9a29ab2b7d924b9158e889a016521798b5827ee19b30559972d30",
+      "sha256": "191ff51f823a38a24e09487ec14c2657d796cca0380883676e700420aa8c5caf",
       "kind": "host-entry",
-      "reason": "Release integration review 20261028: main be0eb25fc adds optional synchronous isMainSleeping observer with one clock read; callback is not retained and receives only scalar timing data. Default path unchanged; observer regression passes. Existing ownership remains pending. Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Import retry review: retain the existing parked thunk frame until host deadline or qualified CS owner change; clear_yield resumes that same frame, with preparation guarded against nested dispatch and cleanup in finally. No context restore or new guest callback is introduced; acquisition remains in WAT. Lifetime review 20261021: process waits use object validity/access/exited state, not exit-code sentinels. Nested local event pumping validates original generation before and after runSlice; auto-reset uses CAS. CLI named finite waits own one provider reservation per thread and entry, poll status without reacquisition, reject stale continuations, cancel/forget on close and thread/owner teardown, and reject nested remote parking. Completion carries namedWaitSequence to Worker. Qualified source-slice regressions passed; concurrent close/acquire and general nonlocal ownership remain unqualified. See docs/reviews/hock-startup-census-20261021.md. Integration 20261022: Import retry review: retain the existing parked thunk frame until host deadline or qualified CS owner change; its clear now rides the next slice and is guarded by the Worker live yield. Parking metadata survives an incoming-send skipped slice, preparation blocks nested dispatch, and finally releases the guard on success or failure. Render/query and other wait clears are unchanged. No context restore or new guest callback is introduced; acquisition remains in WAT. Shared-tree review 2026-10-30: cooperative mutex waiter precedence reads live parked single-wait state without retaining a reservation, invoking guest code, transferring ownership, or completing a guest frame. Worker-backed waits bypass it; normal scheduler remains responsible for acquisition/completion. Reviewed exact current Enigma-owned delta and test-thread-manager regression; ownership remains pending. Bootstrap progress review 20261031: scheduler starts but does not join pending Worker bootstrap; publish the shared promise before backend reentry, observe each background pass once, and surface pass errors at a scheduler boundary. Pending records and aliases retain identity until readiness; TerminateThread during bootstrap retains intent without signaling/releasing live callback ownership, then retires the completed link before any user slice. Existing Worker stack/slot retirement barriers remain. No DLL gate/pin reset or callback cancellation protocol added; timeout/error retirement remains unresolved. Focused creator/existing-owner CS, multiple pending/reentry, suspended entry, pending termination and failure identity regressions; evidence scratch/runs/20261031T0953Z-pirates-bootstrap/. Big5 DBCS review 20261031 (PR #27, goxofy): the registered ansiCodePage is data forwarded into init and spawn specs (set_ansi_code_page); no guest callback, invocation or context restoration added. Ownership remains pending. Constructor options review 20261101: moves the existing opts = opts || {} before the first callbackLifecycleTrace read, restoring omitted/null defaults without replacing supplied options or callback identities. No callback entry, saved context, continuation, readiness, cancellation, retirement, unwind or restoration path changes; bootstrap timeout/error retirement and general nonlocal ownership remain unresolved. See docs/re-notes/thread-send-helper-init-repair-20261101.md and scratch/runs/20261101-thread-manager-options-land/; ownership remains pending. Ready-any API review 20261101: complete producer delta is confined to waitMultiple handle-array/set validation and ordered zero-time acquisitions before rejecting an unsupported remote blocking wait. Uses existing local CAS and authority acquire paths; no callback entry, retained guest frame, continuation registration, scheduling, cancellation, unwind or restoration change. Named wait-all and no-ready nonzero-timeout multiple waits remain unsupported. Concurrent close/acquire and general ownership remain pending. See scratch/runs/20261101-urban-chaos-ready-wait-repair/census-review.json. Review 20261103 Alice CLI cooperative owner scheduling: select only an active instance with the observed gate owner identity and an existing DLL attach continuation, reject Worker-backed and synchronous nested scheduler entry, and advance through existing runSlice with onlyThreadHandle and a bounded quantum. Existing suspend/wait checks, cooperative import ownership, callback generator completion, fault retirement/quarantine and global publication apply. Restore auxiliary scheduler flags in finally. No main guest entry, new callback frame, gate force-release, callback skip or fabricated clock/credit is introduced. Production CLI real PE old-fail/new-pass, ordinary scheduling, actual owner-id/nested load/unload, owner fault quarantine, gate hook rejection/retired requester and existing real Worker serialization/lifecycle tests are retained in scratch/runs/20261103-alice-gate-scheduling-repair/. Broader invocation ownership remains pending. Review 20261103 Alice native fault retention: four-line cooperative scheduler delta checks the opt-in fault latch before admission and captures a thrown native Error before crash logging, thread retirement or a later sibling. The latch retains the actual instance and original error until explicit evidence-persisting termination; it offers no resume, callback entry, guest register restoration, DLL gate force-release or completed batch credit. Unarmed retirement remains unchanged. Existing finally clears only the host running-handle and reads diagnostics; callback/Player lifetimes, Worker-backed faults and general nonlocal ownership remain unqualified. See docs/re-notes/alice-native-fault-latch-repair-20261103.md and scratch/runs/20261103-alice-native-fault-latch-repair/. Ownership remains pending. Fault capture retains exports instance; schedulerSlot is distinct from captured nativeThreadId; no callback lifetime change.",
+      "reason": "Release integration review 20261028: main be0eb25fc adds optional synchronous isMainSleeping observer with one clock read; callback is not retained and receives only scalar timing data. Default path unchanged; observer regression passes. Existing ownership remains pending. Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Import retry review: retain the existing parked thunk frame until host deadline or qualified CS owner change; clear_yield resumes that same frame, with preparation guarded against nested dispatch and cleanup in finally. No context restore or new guest callback is introduced; acquisition remains in WAT. Lifetime review 20261021: process waits use object validity/access/exited state, not exit-code sentinels. Nested local event pumping validates original generation before and after runSlice; auto-reset uses CAS. CLI named finite waits own one provider reservation per thread and entry, poll status without reacquisition, reject stale continuations, cancel/forget on close and thread/owner teardown, and reject nested remote parking. Completion carries namedWaitSequence to Worker. Qualified source-slice regressions passed; concurrent close/acquire and general nonlocal ownership remain unqualified. See docs/reviews/hock-startup-census-20261021.md. Integration 20261022: Import retry review: retain the existing parked thunk frame until host deadline or qualified CS owner change; its clear now rides the next slice and is guarded by the Worker live yield. Parking metadata survives an incoming-send skipped slice, preparation blocks nested dispatch, and finally releases the guard on success or failure. Render/query and other wait clears are unchanged. No context restore or new guest callback is introduced; acquisition remains in WAT. Shared-tree review 2026-10-30: cooperative mutex waiter precedence reads live parked single-wait state without retaining a reservation, invoking guest code, transferring ownership, or completing a guest frame. Worker-backed waits bypass it; normal scheduler remains responsible for acquisition/completion. Reviewed exact current Enigma-owned delta and test-thread-manager regression; ownership remains pending. Bootstrap progress review 20261031: scheduler starts but does not join pending Worker bootstrap; publish the shared promise before backend reentry, observe each background pass once, and surface pass errors at a scheduler boundary. Pending records and aliases retain identity until readiness; TerminateThread during bootstrap retains intent without signaling/releasing live callback ownership, then retires the completed link before any user slice. Existing Worker stack/slot retirement barriers remain. No DLL gate/pin reset or callback cancellation protocol added; timeout/error retirement remains unresolved. Focused creator/existing-owner CS, multiple pending/reentry, suspended entry, pending termination and failure identity regressions; evidence scratch/runs/20261031T0953Z-pirates-bootstrap/. Big5 DBCS review 20261031 (PR #27, goxofy): the registered ansiCodePage is data forwarded into init and spawn specs (set_ansi_code_page); no guest callback, invocation or context restoration added. Ownership remains pending. Constructor options review 20261101: moves the existing opts = opts || {} before the first callbackLifecycleTrace read, restoring omitted/null defaults without replacing supplied options or callback identities. No callback entry, saved context, continuation, readiness, cancellation, retirement, unwind or restoration path changes; bootstrap timeout/error retirement and general nonlocal ownership remain unresolved. See docs/re-notes/thread-send-helper-init-repair-20261101.md and scratch/runs/20261101-thread-manager-options-land/; ownership remains pending. Ready-any API review 20261101: complete producer delta is confined to waitMultiple handle-array/set validation and ordered zero-time acquisitions before rejecting an unsupported remote blocking wait. Uses existing local CAS and authority acquire paths; no callback entry, retained guest frame, continuation registration, scheduling, cancellation, unwind or restoration change. Named wait-all and no-ready nonzero-timeout multiple waits remain unsupported. Concurrent close/acquire and general ownership remain pending. See scratch/runs/20261101-urban-chaos-ready-wait-repair/census-review.json. Review 20261103 Alice CLI cooperative owner scheduling: select only an active instance with the observed gate owner identity and an existing DLL attach continuation, reject Worker-backed and synchronous nested scheduler entry, and advance through existing runSlice with onlyThreadHandle and a bounded quantum. Existing suspend/wait checks, cooperative import ownership, callback generator completion, fault retirement/quarantine and global publication apply. Restore auxiliary scheduler flags in finally. No main guest entry, new callback frame, gate force-release, callback skip or fabricated clock/credit is introduced. Production CLI real PE old-fail/new-pass, ordinary scheduling, actual owner-id/nested load/unload, owner fault quarantine, gate hook rejection/retired requester and existing real Worker serialization/lifecycle tests are retained in scratch/runs/20261103-alice-gate-scheduling-repair/. Broader invocation ownership remains pending. Review 20261103 Alice native fault retention: four-line cooperative scheduler delta checks the opt-in fault latch before admission and captures a thrown native Error before crash logging, thread retirement or a later sibling. The latch retains the actual instance and original error until explicit evidence-persisting termination; it offers no resume, callback entry, guest register restoration, DLL gate force-release or completed batch credit. Unarmed retirement remains unchanged. Existing finally clears only the host running-handle and reads diagnostics; callback/Player lifetimes, Worker-backed faults and general nonlocal ownership remain unqualified. See docs/re-notes/alice-native-fault-latch-repair-20261103.md and scratch/runs/20261103-alice-native-fault-latch-repair/. Ownership remains pending. Fault capture retains exports instance; schedulerSlot is distinct from captured nativeThreadId; no callback lifetime change. Review 20261106 native help suspension: exact live child/root/depth or synchronous ancestry guards the saved frame. Validated root replacement discards old help frames; existing init_thread owns sync-pin retirement; main wait snapshots retain their absolute deadline only for their original instance/root. Real PE/DLL public RegisterRoutine/HELP_COMMAND eager/lazy, nested, termination and stale-owner tests cover this bounded path on both modules. Broader ownership remains pending. See docs/re-notes/help-suspension-20261106.md.",
       "ownership": "pending"
     },
     {
@@ -4745,8 +4745,14 @@
           "$gl32",
           [
             "i32.add",
-            ["local.get", "$esp"],
-            ["i32.const", "20"]
+            [
+              "local.get",
+              "$esp"
+            ],
+            [
+              "i32.const",
+              "20"
+            ]
           ]
         ],
         [
@@ -5203,7 +5209,7 @@
           ]
         ]
       ],
-      "sha256": "1a98869ceb5e659868cfd431ce01e70c0957ba5cee0d9be917ae5a09e8ac519d",
+      "sha256": "f33425da38a40d611694bd6c447586f57d01a28b0f1d53e1f797708af1743a51",
       "kind": "mixed-dispatch",
       "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending. Shadow Man exact-candidate source review 2026-10-28: CACA0005 remains intentional EIP=0 nested-run completion with handler_set_eip=1, no ESP pop here. Added kind1 snapshot precedes zero assignment, requires run thunk-entry route and matching current EIP/thunk in helper. Other EIP targets and lifetime boundaries unchanged; sender context restoration still belongs to enclosing synchronous caller, not this diagnostic record. Ownership remains pending. Release integration: Implicit-show correction 2026-11-01: guest-stack CSHW marker retains target/caller across yielding WM_SHOWWINDOW; activation follows completion, destruction returns NULL. Ordering, nested-main replacement and frame cleanup regression passes. Broader ownership remains pending. Nested child returns leave the main implicit-show latch pending. Review 20261105: explicit SWND frame retains target, resolved show command, return convention and prior visibility across callbacks. Resume validates HWND before host mutation. Legacy cdecl return normalizes four arguments only when the owned marker, WM_SHOWWINDOW and retained HWND agree; stdcall layout unchanged. No new shared continuation state; broader ownership remains pending. Integration 20261106: merged the previously reviewed Half-Life cursor/startup/popup and launch-policy changes with current-main behavior; retained both callback lifetime contracts and pending ownership status. No additional retained invocation introduced by conflict resolution.",
       "ownership": "pending"
@@ -6078,9 +6084,9 @@
           "$old_eip"
         ]
       ],
-      "sha256": "56120c5e9c5d176c4517bd41fd0c791dfcd05b2feee70a31686238ce658d9739",
+      "sha256": "8d8a0c412e0fa90825804d595202653ff3d855620ee2fc1900eee564022b7b56",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261106 native help suspension: exact live child/root/depth or synchronous ancestry guards the saved frame. Validated root replacement discards old help frames; existing init_thread owns sync-pin retirement; main wait snapshots retain their absolute deadline only for their original instance/root. Real PE/DLL public RegisterRoutine/HELP_COMMAND eager/lazy, nested, termination and stale-owner tests cover this bounded path on both modules. Broader ownership remains pending. See docs/re-notes/help-suspension-20261106.md.",
       "ownership": "pending"
     },
     {
@@ -7824,9 +7830,9 @@
           ]
         ]
       ],
-      "sha256": "7f89f4f6fd7c5d5024121824bd7772869ea023e85ff7fb3eb70fe47c068642fd",
+      "sha256": "94b1c8bf933ed84c4d3b7aa6ccd629e142bf6ba3e0bf82ce0c7e3765ef1ef353",
       "kind": "host-entry",
-      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. Shadow Man exact-candidate source review 2026-10-28: Reentrant host entry retains existing budget/API-depth save/restore and thunk auto-pop target. Clears kind/thunk-entry at fresh run and each nonzero loop boundary; brackets explicit thunk dispatch with entry flag; zero branch checks record before null_diag_event increments count and notifies synchronous host observer (return traps). Nested run or deferred unload invalidates attribution; diagnostic globals are not a retained per-invocation stack. No new EIP target/ownership retain; source inventory only, reentry/runtime and original writer remain unqualified. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
+      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. Shadow Man exact-candidate source review 2026-10-28: Reentrant host entry retains existing budget/API-depth save/restore and thunk auto-pop target. Clears kind/thunk-entry at fresh run and each nonzero loop boundary; brackets explicit thunk dispatch with entry flag; zero branch checks record before null_diag_event increments count and notifies synchronous host observer (return traps). Nested run or deferred unload invalidates attribution; diagnostic globals are not a retained per-invocation stack. No new EIP target/ownership retain; source inventory only, reentry/runtime and original writer remain unqualified. Ownership remains pending. REP debugger pre-effect guard/element continuation preserves unsupported entry state; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Review 20261106 native help suspension: exact live child/root/depth or synchronous ancestry guards the saved frame. Validated root replacement discards old help frames; existing init_thread owns sync-pin retirement; main wait snapshots retain their absolute deadline only for their original instance/root. Real PE/DLL public RegisterRoutine/HELP_COMMAND eager/lazy, nested, termination and stale-owner tests cover this bounded path on both modules. Broader ownership remains pending. See docs/re-notes/help-suspension-20261106.md.",
       "ownership": "pending"
     },
     {
@@ -9415,6 +9421,115 @@
       "sha256": "b1367a1661b572b3a4b68d8a64c858046396381a50ba923aebb619073b734d40",
       "kind": "continuation",
       "reason": "Stronghold profile-2 loader resume: exact retained token and current DLL generation/root required; complete proof requires native checked RET sentinel with exact stack, normal run halt and no yield. Incomplete callbacks restore only their owned continuation while retaining failed shadow history. Foreign/reused tokens never restore CPU; general ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c9-winhelp-ui.wat",
+      "name": "$help_macro_frame_check",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "f27b41070a2bdeac77766a3e36f8ebc4fcb6d6491938bc6142f4a3316932526b",
+      "kind": "continuation",
+      "reason": "Native help frame retains its exact child/root/depth across a host-owned park; validates before typed return, restoration or retirement. Source inventory only; runtime coverage is reported separately.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c9-winhelp-ui.wat",
+      "name": "$help_macro_frame_save",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "c15aa284e32fb779b727165de2be46bee05dd43705eaaf19246d8f918194e150",
+      "kind": "continuation",
+      "reason": "Native help frame retains its exact child/root/depth across a host-owned park; validates before typed return, restoration or retirement. Source inventory only; runtime coverage is reported separately.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c9-winhelp-ui.wat",
+      "name": "$help_macro_resume_boundary",
+      "writes": 2,
+      "boundaryCalls": [
+        "$sync_depth_leave"
+      ],
+      "exports": [],
+      "targets": [
+        [
+          "i32.load",
+          "offset=72",
+          [
+            "local.get",
+            "$wa"
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ]
+      ],
+      "sha256": "bf0606dde845fab97534d3ccee78a190d93eafc764da3c987b7c75fbede2c34c",
+      "kind": "continuation",
+      "reason": "Native help frame retains its exact child/root/depth across a host-owned park; validates before typed return, restoration or retirement. Source inventory only; runtime coverage is reported separately.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c9-winhelp-ui.wat",
+      "name": "$help_macro_resume_check",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "d953b0a67e01b85e07f493bff20e71205d8ccb02a669d0791d15c299dddbbb33",
+      "kind": "continuation",
+      "reason": "Native help frame retains its exact child/root/depth across a host-owned park; validates before typed return, restoration or retirement. Source inventory only; runtime coverage is reported separately.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c9-winhelp-ui.wat",
+      "name": "export:get_help_macro_suspended_token",
+      "writes": 0,
+      "boundaryCalls": [
+        "$help_macro_resume_check",
+        "$g2w",
+        "$g2w"
+      ],
+      "exports": [
+        "get_help_macro_suspended_token"
+      ],
+      "targets": [],
+      "sha256": "411a33d4112d1c68ad3105edada18a62e275e4164e2d6abcf6e45ccfc358063d",
+      "kind": "continuation",
+      "reason": "Native help frame retains its exact child/root/depth across a host-owned park; validates before typed return, restoration or retirement. Source inventory only; runtime coverage is reported separately.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c9-winhelp-ui.wat",
+      "name": "$help_macro_frame_drop",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "c8c6938a2f815e5a7b245d19c82ea8fb220d355ce974039e8269bb7878347799",
+      "kind": "continuation",
+      "reason": "Native help frame retains its exact child/root/depth across a host-owned park; validates before typed return, restoration or retirement. Source inventory only; runtime coverage is reported separately.",
       "ownership": "pending"
     }
   ]

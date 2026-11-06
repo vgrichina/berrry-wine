@@ -2079,14 +2079,29 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)
   )
 
+  ;; Both public spellings share pending return and stdcall completion.
+  (func $dispatch_winhelp_finish (param $accepted i32) (param $command i32)
+    (if (i32.eq (local.get $accepted) (i32.const -1))
+      (then
+        ;; The callback CPU/stack is still installed. JS services its real
+        ;; yield; its typed continuation completes this stdcall exactly once.
+        (global.set $handler_set_eip (i32.const 1))
+        (return)))
+    (call $help_present_dispatch (local.get $accepted) (local.get $command))
+    (i32.store (global.get $reg_base) (local.get $accepted))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
 ;; 132: WinHelpA(hwnd, lpszHelp, uCommand, dwData) — unified WAT dispatcher
   (func $handle_WinHelpA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $accepted i32)
+    (local $old_public i32)
+    (local.set $old_public (global.get $help_macro_public_entry))
+    (global.set $help_macro_public_entry (i32.const 1))
     (local.set $accepted (call $help_dispatch_api_a
       (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)))
-    (call $help_present_dispatch (local.get $accepted) (local.get $arg2))
-    (i32.store offset=0 (global.get $reg_base) (local.get $accepted))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+    (global.set $help_macro_public_entry (local.get $old_public))
+    (call $dispatch_winhelp_finish (local.get $accepted) (local.get $arg2))
   )
 
   ;; 133: IsChild

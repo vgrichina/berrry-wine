@@ -136,7 +136,7 @@ function oracleBytes(kind) {
   put(0xa8, kind.endsWith('timeout') ? 0 : 0x1234);
   put(0xac, kind.endsWith('timeout') ? 0 : 0x2234);
   put(0x300, failed ? 0 : 0x58);
-  for (const [off, seed, result] of [[0x100, 0x11000000, help || !failed ? 1 : 0],
+  for (const [off, seed, result] of [[0x100, 0x11000000, failed || kind === 'help-timeout' ? 0 : 1],
     [0x140, 0x22000000, 1], [0x200, 0x33000000, 1]]) {
     for (const reg of [1, 2, 3, 5, 6, 7]) {
       put(off + reg * 4, seed + reg * 0x101);

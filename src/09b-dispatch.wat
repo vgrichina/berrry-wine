@@ -1426,6 +1426,7 @@
     ;; Synchronous SendMessage continuation — WndProc returned
     (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0005))
       (then
+        (call $help_macro_return_note)
         (global.set $handler_set_eip (i32.const 1))
         (call $null_transfer_record (i32.const 1) (i32.const 0)
           (i32.load offset=16 (global.get $reg_base)) (i32.const 0) (i32.const 0)

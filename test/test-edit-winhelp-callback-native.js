@@ -301,7 +301,7 @@ function checkSuccess(out, kind) {
   const rd = parseDump(out), help = kind.startsWith('help-');
   const failedEdit = kind === 'edit-error' || kind === 'edit-timeout';
   assert.notEqual(rd(DATA), 0, 'public setup succeeded');
-  checkRestored(rd, SNAP, 0x11000000, failedEdit ? 0 : 1);
+  checkRestored(rd, SNAP, 0x11000000, failedEdit || kind === 'help-timeout' ? 0 : 1);
   checkRestored(rd, SNAP + 64, 0x22000000, 1);
   if (kind.endsWith('nested')) checkRestored(rd, INNER, 0x33000000, 1);
   assert.equal(rd(DATA + 16), 70);
@@ -440,5 +440,6 @@ function main() {
   } catch (error) { receipt.status = 'FAIL'; receipt.failure = error.message; throw error; }
   finally { save(); }
 }
-module.exports = { fixtures, checkSuccess, parseArgs, runnerArgs, KINDS };
+module.exports = { fixtures, checkSuccess, parseArgs, runnerArgs, KINDS, buildPe, X86,
+  checkRestored };
 if (require.main === module) main();

@@ -364,6 +364,7 @@
     (local $prev_eip i32) (local $prev_esp i32)
     (local $saved_budget i32) (local $saved_start i32) (local $shared_cache_generation i32)
     (local $saved_api_depth i32)
+    (call $help_macro_resume_check)
     (if (global.get $pending_active) (then (call $pending_gap)))
     (global.set $pending_active (i32.const 1))
     (global.set $pending_seen (i32.const 1))
@@ -426,6 +427,8 @@
           (local.get $shared_cache_generation))
         (global.set $thread_flush_pending (i32.const 1))))
     (block $halt (loop $main
+      (if (call $help_macro_resume_boundary)
+        (then (global.set $last_run_halt (i32.const 4)) (br $halt)))
       (call $pending_entry (global.get $eip) (i32.load offset=16 (global.get $reg_base)))
       (if (i32.eqz (global.get $eip))
         (then

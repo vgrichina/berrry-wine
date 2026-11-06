@@ -26,14 +26,14 @@ class Return { constructor(value) { this.value = value; } }
 function fixture(depth = 0) {
   const g = {
     $reg_base: 0, $eip: 101,
-    $handler_set_eip: 103, $steps: 104, $yield_reason: 105, $yield_flag: 106,
+    $handler_set_eip: 103, $steps: 104, $yield_reason: 105, $yield_flag: 106, $sleep_yielded: 0,
     $sync_msg_ret_thunk: 0x1234,
     $invocation_root: 0x100000001n, $sync_msg_depth: depth,
   };
   const m = new Map(Array.from({ length: 8 }, (_, i) => [i * 4, i === 4 ? 4096 : 200 + i]));
   for (let i = 0; i < 16; i++) m.set(8192 + i * 8, 11 * (i + 1));
   const stack = Array.from({ length: depth + 1 }, (_, i) => 0x100000001n + BigInt(i)), seen = [];
-  let next = stack.at(-1) + 1n, leaves = 0, runs = 0, hook, enterFailure = false;
+  let next = stack.at(-1) + 1n, leaves = 0, runs = 0, hook, enterFailure = false, frame = 12288;
   const snap = () => ({ g: { ...g }, m: [...m], stack: [...stack], leaves });
   function call(callback = 500, count = 4) {
     const l = {};
@@ -54,6 +54,9 @@ function fixture(depth = 0) {
         case 'i32.mul': return Math.imul(v(0), v(1));
         case 'i32.sub': return (v(0) - v(1)) | 0;
         case 'i32.eqz': return Number(v(0) === 0);
+        case 'i32.eq': return Number(v(0) === v(1));
+        case 'i32.and': return v(0) & v(1);
+        case 'i32.or': return v(0) | v(1);
         case 'i32.ne': case 'i64.ne': return Number(v(0) !== v(1));
         case 'i32.ge_u': return Number((v(0) >>> 0) >= (v(1) >>> 0));
         case 'i32.load': case 'i32.store': {
@@ -83,6 +86,12 @@ function fixture(depth = 0) {
         case 'call': {
           const args = a.slice(1).map(ev);
           switch (a[0]) {
+            // The persistent frame and typed native return are exercised by
+            // test-winhelp-callback-suspension-native.js. Here they are an
+            // explicit boundary, retaining the original wrapper guard tests.
+            case '$help_macro_frame_save':
+              frame += 256; m.set(frame + 36, 1); return frame;
+            case '$g2w': return args[0];
             case '$sync_depth_enter':
               if (enterFailure || stack.length >= 64) throw new Trap('capacity');
               stack.push(next++); g.$sync_msg_depth++; return;
@@ -215,6 +224,9 @@ for (const finish of ['return', 'last-slice', 'timeout']) {
     for (let i = 0; i < 8; i++) f.m.set(i * 4, 900 + i);
     for (const key of ['$handler_set_eip', '$steps', '$yield_reason', '$yield_flag'])
       f.g[key] = 999;
+    // A nonzero reason now intentionally transfers ownership to the host.
+    // These cases test bounded synchronous execution and restoration.
+    f.g.$yield_reason = 0;
     if (finish === 'return' || (finish === 'last-slice' && f.runs() === 64))
       f.complete();
   });
