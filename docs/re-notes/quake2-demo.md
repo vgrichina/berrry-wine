@@ -1,5 +1,13 @@
 # Quake II 3.14 demo
 
+## Brighter first-launch defaults (2026-10-15)
+
+The bundled config now seeds `vid_gamma 0.7`; Q2's gamma exponent becomes
+brighter as it decreases. Saved player configs still replace the seed.
+Before/after Chrome captures of demo1 are under
+`scratch/runs/20261015-quake-brightness/quake2_demo-{before,after}-verified`.
+The comparison uses the stable deployed WASM with intercepted seed configs.
+
 ## Package and layout
 
 - Local-only installer: `test/binaries/candidates/quake-2-demo-installer/q2-314-demo-x86.exe`
