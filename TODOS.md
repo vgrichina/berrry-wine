@@ -74,6 +74,16 @@
 
 # TODOS
 
+- [ ] Owner-requested corpus addition: KKnD (1997), original DOS and Windows Xtreme demos
+  id: NEW-GAME-KKND-DEMO-20261106
+  status: queued (original media acquired and verified; registration/gameplay pending)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Request: Telegram163 links exQUIZitely status2118524267604140164, identifying Beam Software's original KKnD: Krush, Kill 'n' Destroy (1997), not KKnD2.
+  Media: https://archive.org/details/kknd-demo original DOS demo ZIP5684907B SHA2567ff2ef0abe45322027750cee26caf871d970474d92d98272598ab15426cc0be4; https://archive.org/details/KKNDXT Windows Xtreme demo installer7737611B SHA256b0974e129ab1c02d4fdf7cd202494f39f426a1e08cbd37759db125a9a114248d. Both downloaded once; byte sizes and Archive.org SHA1 verified. Existing paths and recovery URLs in docs/re-notes/kknd-corpus-intake-20261106.md.
+  Next: Fresh worker uses scratch/usage-watch/kknd-original-demo-next.task.txt at next free slot. Inspect original installer statically, recover Windows Xtreme payload through supported installation, register complete original assets and attempt ordinary visible unit movement/combat after serialized runtime gate. Keep original DOS demo separately identified; its DOS/4G entry requires the DOS route. Windows installer is NE, and generic ZIP listing is incomplete; no complete extraction or playable claim yet.
+  Done: Original demo registered with exact media identity and reviewed ordinary player-controlled gameplay, or a specific emulator prerequisite recorded. No fifth worker launched for intake.
+  Evidence: scratch/runs/20261106-kknd-corpus-intake/media-inventory.json; docs/re-notes/kknd-corpus-intake-20261106.md.
+
 - [x] Measure Hype logical gameplay FPS in browser
   id: HYPE-BROWSER-FPS-20261013
   status: done (one bounded instrumented browser logical callback interval)
