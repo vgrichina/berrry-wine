@@ -1,5 +1,42 @@
 # Quake III Arena demo 1.11
 
+## Display gamma presentation (2026-10-19)
+
+OpenGL frames now opt into display gamma in the presentation filter. It reads
+the WAT-owned `SetDeviceGammaRamp` tables through `dib.gammaLut` for the
+composited window image, so GL attachments/readback and canonical GDI pixels
+stay intact. Both local GL and render-Worker frame layers carry the OpenGL
+marker; other graphics APIs keep their existing gamma handling. Identity ramps
+keep the direct-canvas bypass. The new-player seed retains `r_gamma 1.3` but
+drops the temporary `r_ignorehwgamma 1` workaround; persisted configs are not
+rewritten.
+
+The pixel regression `test/test-opengl-gamma-web.js` exercises actual local
+WebGL and a real render Worker frame, distinct RGB tables, identity
+restoration, repeated presentation, untouched source/GL readback, every scaler
+with and without an exclusive viewport, dedither, both correction backends,
+and exclusion of DirectDraw and hidden windows. Q3 q3dm1 acceptance uses
+hardware gamma explicitly enabled and paired captures with only the display
+correction toggled. Evidence: `scratch/runs/20261019-q3-display-gamma-no-threads`
+and `scratch/runs/20261019-q3-display-gamma-threads-verified`. Those captures
+predate the 2026-11-05 restructuring below and were local Chrome/SwiftShader
+checks, not Safari.
+
+2026-11-05: the first version was an extra pass over the finished, scaled
+presentation canvas (texture upload of the whole output, draw, copy back).
+Headless Chrome on an M1 (ANGLE Metal, alternating arms, loaded box) measured
+it at +0.7 to +1.0 ms/frame at 1x and +1.8 to +3.4 ms/frame at 1920x1080
+(throughput). The tables are now applied where each path already handles the
+source: GPU scalers (FSR1, auto pixel scale, dedither) correct the source
+texture in a source-sized framebuffer pass; Canvas2D scalers draw through an
+SVG `feComponentTransfer` table filter that is used only after a 256-entry
+ramp drawn through it matches the tables exactly, otherwise through one WebGL
+copy of the cropped source at source resolution. Measured delta now: +0.02 to
++0.04 ms/frame (filter) and +0.05 to +0.2 ms/frame (FSR1) for 640x480 and
+1024x768 sources at 1x and 1080p; the WebGL fallback costs +0.65 to +1.5
+ms/frame, almost all of it the WebGL to Canvas2D hand-off. Smooth scalers now
+interpolate corrected source pixels rather than correcting interpolated ones.
+
 ## Worker joining and download deadlines (2026-10-16)
 
 The remaining c29ca48c1 discovery/join changes are integrated while keeping
@@ -16,6 +53,16 @@ headers and the complete body. Timeout aborts the fetch and rejects even if
 an adapter ignores abort, so existing parked-read retries and Retry/Quit UI
 can run. Late responses cannot populate the cache. This deadline is for
 provider-backed game data; eager downloads and bundle requests are separate.
+
+## Brighter first-launch defaults (2026-10-15)
+
+The original pending config seeded `r_gamma 1.3` with `r_ignorehwgamma 1` so the
+engine applies gamma during texture uploads. Gamma alone had no visible
+effect on the deployed runtime's display-ramp path. Saved player configs
+still replace the seed. No texture-intensity override is added.
+Before/after Chrome captures of q3dm1 are under
+`scratch/runs/20261015-quake-brightness/quake3_demo-{before,after}-verified`.
+The comparison uses the stable deployed WASM with intercepted seed configs.
 
 ## File-access trace (2026-10-15)
 
