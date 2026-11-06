@@ -3010,6 +3010,7 @@
   ;; and fall back to bump allocation when no free block fits.
   (func $heap_alloc (param $size i32) (result i32)
     (local $need i32) (local $ptr i32)
+    (local $retried i32) (local $largest i32) (local $scan_steps i32)
     (local $prev_w i32) (local $cur i32) (local $cur_w i32)
     (local $bsz i32) (local $rem i32) (local $steps i32) (local $from_free i32)
     (local $cur_rec i32) (local $bi i32) (local $bv i64) (local $next i32)
@@ -3028,7 +3029,7 @@
     ;; Walk free list (guest pointers)
     (local.set $prev_w (i32.const 0)) ;; 0 = scanning from head
     (local.set $cur (global.get $free_list))
-    (block $found (block $scan
+    (block $found (loop $pressure_retry (block $scan
       ;; Large blocks live in an arena of their own ($heap_large_alloc).
       (if (i32.ge_u (local.get $need) (global.get $HEAP_LARGE))
         (then
@@ -3196,15 +3197,33 @@
               (if (local.get $ptr)
                 (then (br $found))
                 (else
+                  ;; Existing bump/reservation/reclaim paths failed. Coalesce
+                  ;; only our safely validated free extents, once, then retry
+                  ;; the ordinary serving path without recursive allocation.
+                  (if (i32.eqz (local.get $retried))
+                    (then
+                      (local.set $retried (i32.const 1))
+                      (local.set $largest (call $heap_compact_free_list_bounded
+                        (i32.const 262144)))
+                      (if (i32.and
+                            (i32.ge_s (local.get $largest) (i32.const 0))
+                            (i32.ge_u (local.get $largest)
+                              (i32.sub (local.get $need) (i32.const 4))))
+                        (then
+                          (local.set $prev_w (i32.const 0))
+                          (local.set $scan_steps (local.get $steps))
+                          (local.set $steps (i32.const 0))
+                          (br $pressure_retry)))))
                   (call $host_heap_oom_trace (local.get $need) (i32.const 1))
                   (return (i32.const 0))))))))
       (local.set $ptr (global.get $heap_ptr))
       (i32.store (call $g2w (local.get $ptr)) (local.get $need))
       (global.set $heap_ptr (i32.add (global.get $heap_ptr) (local.get $need)))
       (call $heap_arena_charge (global.get $heap_arena_record) (local.get $need))
-      (i32.atomic.store offset=8 (global.get $heap_arena_record) (global.get $heap_ptr)))
+      (i32.atomic.store offset=8 (global.get $heap_arena_record) (global.get $heap_ptr))))
     (global.set $heap_stat_allocs (i32.add (global.get $heap_stat_allocs) (i32.const 1)))
-    (global.set $heap_stat_steps (i64.add (global.get $heap_stat_steps) (i64.extend_i32_u (local.get $steps))))
+    (global.set $heap_stat_steps (i64.add (global.get $heap_stat_steps)
+      (i64.extend_i32_u (i32.add (local.get $steps) (local.get $scan_steps)))))
     ;; A recycled block still holds whatever the last owner left in it -- and,
     ;; at offset 4, this allocator's own free-list next pointer. Bump space is
     ;; zero because every arena chunk is committed zeroed, so before this the

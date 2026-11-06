@@ -1,5 +1,15 @@
 # RollerCoaster Tycoon (shareware/demo)
 
+## File-access trace (2026-10-15)
+
+`scratch/runs/20261015-game-file-reads/rct/` reaches Forest Frontiers with
+the pre-workaround ranged manifest on the stable deployed WASM/local server.
+The five large streamed DAT files total 29,406,859 bytes; their HTTP response
+bodies total 33,830,433 bytes across 18 requests. CSG1 is fully materialized;
+CSS1 transfers twice. Whole downloads retained once would cost 29,406,859
+bytes. This excludes small bundled files and is not a timing/compression
+benchmark. See the parent `analysis.json` for build identity and limitations.
+
 `test/binaries/shareware/rct/English/RCT.exe` — Chris Sawyer / Hasbro Interactive,
 1999. App id `rct`. Image base `0x00400000`, entry `0x00412d80`; the whole game is
 one EXE with no shipped DLLs, so every address below is both an original and a

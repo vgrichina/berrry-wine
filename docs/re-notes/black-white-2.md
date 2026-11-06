@@ -448,6 +448,23 @@ normal key-event route, not evidence of an input-routing fault; this intro does
 not check Escape. A fresh long run is needed to establish progression after the
 FILETIME fix; no menu/gameplay acceptance yet.
 
+## Intro skip input recheck (2026-10-19)
+
+Re-disassembled the original installed BW2Demo.exe, including the complete
+per-frame routine 00526cf0–00529453 and outer loop 005260e0. USER32 import
+index19 at imageBase00400000 + IAT RVA00812370 + 19*4 resolves00c123bc
+to GetAsyncKeyState. The frame routine polls PageUp, PageDown, Left, Right,
+Up, Down, and left mouse button (twice); none of these calls polls Escape,
+Space, or Enter. The apparent `push 0x1b` at00527f13 is a D3D device
+SetRenderState call (vtable+e4), not an Escape query. The final mouse poll
+at005293d5 leads to drawing helper00526b70, not a completion return.
+The frame routine's only true return follows the finish-frame comparison
+at0052943b; its other return is false. The outer loop tests that result
+at005261d8. This supports the frame-count explanation specifically for
+the Lionhead particle intro, not an assertion about every later movie/menu.
+This was static inspection, not a new Safari input-delivery test; it does
+not establish that all browser keyboard events currently reach the guest.
+
 ## Software-worker launch integration (2026-09-10)
 
 The first current-source software CLI probes use all MainApp assets and the

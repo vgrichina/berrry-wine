@@ -14,6 +14,9 @@ const corePath = process.env.LEGACY_CAPS_CORE || path.join(root, 'src/09ab-handl
 const core = fs.readFileSync(corePath, 'utf8');
 const directx = fs.readFileSync(path.join(root, 'src/09a8-handlers-directx.wat'), 'utf8');
 const rasterSource = fs.readFileSync(path.join(root, 'src/09a8g-gl-raster.wat'), 'utf8');
+const openglSource = fs.readFileSync(path.join(root, 'src/09a8b-handlers-opengl.wat'), 'utf8');
+const stippleSource = fs.readFileSync(path.join(root, 'src/09a8cc-gl-stipple.wat'), 'utf8');
+const helperSource = fs.readFileSync(path.join(root, 'src/10-helpers.wat'), 'utf8');
 const stencilSource = fs.readFileSync(path.join(root, 'src/09a8cc-gl-stencil.wat'), 'utf8');
 const colorMaskSource = fs.readFileSync(path.join(root, 'src/09a8cd-gl-color-mask.wat'), 'utf8');
 const sha = s => crypto.createHash('sha256').update(s).digest('hex');
@@ -52,7 +55,7 @@ const names = ['d3dim_fill_device_desc7', 'd3dim_div255', 'd3dim_modulate_rgb',
   'd3dim_tss_load', 'd3dim_draw_tl_triangle_maybe_textured',
   'd3dim_draw_tl_triangle_dp_raw', 'd3dim_draw_tl_triangle_textured'];
 const argumentStateRepair = core.includes('(func $d3dim_stage_operation ');
-names.push('d3dim_tss_addr', 'rasterize_triangle_textured', 'viewport_draw_textured_span');
+names.push('d3dim_tss_addr', 'd3dim_mip_filters', 'rasterize_triangle_textured', 'viewport_draw_textured_span');
 names.push('d3dim_color_lerp', 'd3dim_texture_sample_prepared', 'd3dim_point_index',
   'd3dim_decode_surface_pixel_fmt', 'd3dim_alpha_pass', 'd3dim_clip_row_out',
   'd3dim_texture_sample_keyed', 'd3dim_decode_surface_pixel', 'd3dim_address_texel',
@@ -82,7 +85,7 @@ const imported = [...calls].filter(n => !selected.has(n));
 const signatures = {};
 for (const n of imported) {
   if (builtins[n]) { signatures[n] = builtins[n]; continue; }
-  const source = [core, directx, rasterSource, stencilSource].find(s => s.includes(`(func $${n} `) || s.includes(`(func $${n}\n`));
+  const source = [core, directx, rasterSource, stencilSource, openglSource, stippleSource, helperSource].find(s => s.includes(`(func $${n} `) || s.includes(`(func $${n}\n`));
   assert(source, `missing import signature ${n}`);
   const f = form(source, `(func $${n}`, 'import-signature-only');
   const header = strip(f).slice(`(func $${n}`.length).match(/^\s*((?:\((?:param|result)\s+[^)]*\)\s*)*)/)[1];
@@ -94,13 +97,16 @@ const globalText = [...globals].map(n => {
     return form(core, `(global $${n}`, 'src/09ab-handlers-d3dim-core.wat');
   // Non-allocated fixture globals: white texel absent, viewport clipping off,
   // reg_base fixture address. These do not implement texture operations.
-  const declaration = [core, directx, rasterSource, stencilSource].join('\n')
+  const declaration = [core, directx, rasterSource, stencilSource, openglSource, stippleSource, helperSource].join('\n')
     .match(new RegExp(`\\(global \\$${n}\\s+(?:\\(mut\\s+)?(i32|f32|f64)`));
   const type = declaration ? declaration[1] : 'i32';
   return `(global $${n} (mut ${type}) (${type}.const ${n === 'reg_base' ? 256 : n === 'rast_color_mask' ? -1 : 0}))`;
 }).join('\n');
 // WATX consumes top-level forms, rather than a standard-WAT module wrapper.
-const prefix = `(memory 1) (export "memory" (memory 0))\n${imported.map(n => `(import "fixture" "${n}" (func $${n} ${signatures[n]}))`).join('\n')}\n${globalText}\n`;
+// Only the unsupported-key/mip diagnostic references this fixture region.
+// Keep its real region.addr intact; crash_unimplemented remains a throwing import.
+const prefix = `(region.declare-fixed $D3DIM_AUX (base 1024) (size 128) (align 16))
+(memory 1) (export "memory" (memory 0))\n${imported.map(n => `(import "fixture" "${n}" (func $${n} ${signatures[n]}))`).join('\n')}\n${globalText}\n`;
 const suffix = [...names, ...(argumentStateRepair ? ['d3ddev_init_state'] : [])].map(n => `(export "${n}" (func $${n}))`).join('\n');
 const assembled = prefix + forms.join('\n') + suffix;
 const mutations = process.argv.includes('--negative-controls');
@@ -124,6 +130,15 @@ function makeFixture(source) {
     gs32: (a, v) => new DataView(e.memory.buffer).setUint32(a, v, true),
     zero_memory: (a, n) => new Uint8Array(e.memory.buffer, a, n).fill(0),
     d3ddev_state: () => 4096,
+    // Ordinary setters: this fixture opens neither an immediate sequence nor
+    // state-block recording. Keep those peripheral lifecycle checks explicit.
+    d3dim_immediate_forbid: () => {
+      assert.equal(new DataView(e.memory.buffer).getUint32(4096 + 4028, true), 0);
+      return 0;
+    },
+    d3dim_sb_record: () => 0,
+    gl_2d_border_record: () => 0, // Fixture textures have no GL border records.
+    gl_sw_second_pixel: () => {}, // No GL front-and-back secondary target.
     d3dim_texture_entry_from_slot: slot => { assert(slot === 0 || slot === 1); return slot ? 8192 : 0; },
     d3ddev_rt_entry: () => 24576, d3dim_gpu_buffer: () => 16384,
     dx_surf_fmt_get: entry => entry === 8192 ? 5 : 1, dx_surf_pal_get: () => 0, dx_surf_pal_alpha: () => 0,
@@ -227,7 +242,8 @@ function caps(f) {
   assert.equal(f.dv.getUint32(p + 176, true), 8);
   assert.equal(f.dv.getUint32(p + 188, true), 8);
   assert.equal(f.dv.getUint32(p + 40, true), 0x030003c3);
-  assert.equal(f.dv.getUint32(p + 96, true), 0x030003c3);
+  assert.equal(f.dv.getUint32(p + 96, true), 0x030003c3 | 0x0003003c,
+    'triangle base filters plus independently covered point/linear mip filters');
   return Buffer.from(f.e.memory.buffer, p, 236).toString('hex');
 }
 function reject(label, fn) { assert.throws(fn, assert.AssertionError, label); receipts.controls.push(label); }
@@ -299,19 +315,25 @@ try {
       assert.equal(f.e.d3dim_texture_stage_combine(t, d, op, op) >>> 0, want >>> 0);
   }
   // DISABLE now has its contract regression in test-legacy-texture-disable.js.
-  // Keep the remaining unsupported-operation diagnostics and controls intact.
+  // Keep diagnostics for all six unadvertised operations. RGB ADD is now
+  // implemented (its ALPHAOP still falls back); the other five still modulate.
   for (const op of [5, 6, 7, 8, 9, 10]) {
     const got = f.e.d3dim_texture_stage_combine(tex, diffuse, op, op) >>> 0;
-    // Official semantics distinguish each from the observed MODULATE fallback.
+    // Independent semantic red values distinguish the five MODULATE fallbacks
+    // and prove the now-implemented saturated RGB ADD without advertising it.
     // Expected red in byte units (fractional values precede quantization).
     const redExpected = new Map([[5, 192 * 96 / 255 * 2], [6, 255],
       [7, 255], [8, 160.5], [9, 255], [10, 96]]).get(op);
-    assert.equal(got, expected.get(4)); assert.notEqual((got >>> 16) & 255, redExpected);
-    const stage = gpuDraw(f, op, op); assert.equal(stage.colorOp, 4); assert.equal(stage.alphaOp, 4);
-    f.softwareOuter(expected.get(4));
+    const want = op === 7 ? 0x50ffffff : expected.get(4);
+    assert.equal(got, want);
+    if (op === 7) assert.equal((got >>> 16) & 255, redExpected);
+    else assert.notEqual((got >>> 16) & 255, redExpected);
+    const stage = gpuDraw(f, op, op); assert.equal(stage.colorOp, op === 7 ? 7 : 4); assert.equal(stage.alphaOp, 4);
+    f.softwareOuter(want);
     receipts.cases.push({operation: op, observed: got.toString(16), observedRed: got >>> 16 & 255,
       semanticRed: redExpected, gpuColorOp: stage.colorOp, gpuAlphaOp: stage.alphaOp,
-      bothOuterSoftwareRoutes: 'actual software triangle and span, legacy MODULATE fallback'});
+      bothOuterSoftwareRoutes: op === 7 ? 'actual software triangle and span, saturated RGB ADD / MODULATE alpha'
+        : 'actual software triangle and span, legacy MODULATE fallback'});
   }
   receipts.descriptorHex = caps(f);
   if (argumentStateRepair) receipts.argumentCases = argumentCases(makeFixture(assembled));
@@ -326,7 +348,8 @@ try {
     assert.notEqual(wrongSoftware, assembled);
     reject('software SELECTARG1 operand mutation', () => supported(makeFixture(wrongSoftware)));
     const gpuSource = fs.readFileSync(path.join(root, 'lib/d3dim-gpu.js'), 'utf8');
-    const wrongGpu = gpuSource.replace('v === 2 || v === 3 ? v : 4', 'v === 2 || v === 3 ? 4 : 4');
+    const wrongGpu = gpuSource.replace('v === 2 || v === 3 || v === 13 ? v : 4',
+      'v === 2 || v === 3 || v === 13 ? 4 : 4');
     assert.notEqual(wrongGpu, gpuSource);
     reject('GPU SELECTARG lowering mutation', () => supported(f, wrongGpu));
     if (argumentStateRepair) {
@@ -353,7 +376,7 @@ try {
   }
   receipts.descriptorHex = acceptedDescriptor;
   receipts.status = 'PASS';
-  console.log(`PASS legacy texture-operation caps: 9 pairs, 6 remaining unsupported operations; ${receipts.argumentCases || 0} argument combinations, real software pixels and GPU lowering; ${receipts.controls.length} rejecting controls`);
+  console.log(`PASS legacy texture-operation caps: 9 pairs, 6 unadvertised operations (RGB ADD and 5 fallbacks); ${receipts.argumentCases || 0} argument combinations, real software pixels and GPU lowering; ${receipts.controls.length} rejecting controls`);
 } catch (e) {
   receipts.status = 'FAIL'; receipts.error = e.message;
   console.error('FAIL legacy texture-operation caps: ' + e.message); process.exitCode = 1;
