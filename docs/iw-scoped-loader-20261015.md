@@ -37,6 +37,16 @@ publication epoch. It retains the DLL/thunk scalars and result until host
 metadata/resources are published and the owning frame acknowledges publication. Publication retries reuse the retained result; nesting defers acknowledgement. The host cannot resume past an unacknowledged publication or abort away the
 completed transaction. Ordinary getters remain fenced throughout.
 
+**The publication receipt is not a native loader lock.** (Recovered from
+branch commit `e2d10ebb`, Oct 2026.) `load_dll` publishes native DLL_TABLE rows
+during mapping, so `loadedModuleNames` — or another thread reading a shared
+registry — can see a module before its DllMain finishes. Cross-thread loads of
+the same name and in-flight initialization readiness are not serialized by this
+design. Current main addresses that separately in `src/08b-dll-loader.wat`:
+`$DLL_LOAD_LOCK` covers staging, placement and row publication (commit
+`cfe411bd`), and `$dll_row_init_pending` parks another thread's LoadLibrary
+while a row is still `DLL_LIFE_INITIALIZING`.
+
 ## Verification and limits
 
 `node test/test-thread-send-scoped-loader.js` passes with actual

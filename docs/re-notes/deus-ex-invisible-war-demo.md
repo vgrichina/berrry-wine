@@ -355,7 +355,9 @@ player-controlled gameplay, audio and FPS remain unqualified.
 
 (Recovered from branch commit 149a3547b, Oct 2026. The host/WAT fixes named
 here are on main: process aliases `0x00E6xxxx` in `09a0-handlers-base.wat`,
-`lib/process-send-broker.js`, D3D8/D3D9 `GetAdapterMonitor`.)
+`lib/process-send-broker.js`. The `GetAdapterMonitor` change in step 2 is
+**not** on main: as of 2026-11-05 both D3D8 and D3D9 handlers deliberately
+return NULL ("no native HMONITOR"), so step 2 may break again.)
 
 Start Game makes DX2 hand the level to `C:\System\Ion Launcher.exe` and exit.
 Each link that broke, in order:
@@ -370,7 +372,8 @@ Each link that broke, in order:
    `GetDirect3D` → `GetAdapterMonitor` (`0x4020db`) → `GetMonitorInfoA`
    (`0x402104`). D3D8/D3D9 returned NULL for every adapter, the empty field
    shifted the launcher's strtok parse, and it restarted DX2 with empty args.
-   Fix: adapter 0 → USER32 primary monitor `0x10000`, absent adapters NULL.
+   Branch fix (unmerged): adapter 0 → USER32 primary monitor `0x10000`,
+   absent adapters NULL.
    Good child command: `-display \\.\DISPLAY1 640x480 M1_Seattle_MercDistrict_Sak.gmp?-LoadTravel`.
 3. **Launcher WinMain** `0x4038b0` creates two *events* named `Ion Launcher
    Mutex` (`0x40a278`) / `Ion Game Mutex` (`0x40a268`); `GetLastError == 183`

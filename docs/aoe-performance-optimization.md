@@ -2330,3 +2330,45 @@ scratch/runs/<run-id>/aoe-full-brtable-candidate-30s.png
 scratch/runs/<run-id>/rct-full-brtable-candidate-10s.json
 scratch/runs/<run-id>/rct-full-brtable-candidate-10s.png
 ```
+
+### Further August 2026 dispatch experiments (recovered)
+
+(Recovered from branch commit `a7d19467`, Aug 2026. Fixture = the four-block
+AoE blitter cycle from the POC above; none of this is a whole-game number unless
+stated. The packet prototypes themselves are summarised in
+[wasm-stack-threaded-code.md](wasm-stack-threaded-code.md#prototype-results-august-2026).)
+
+**What the 4x `br_table` microbench win is made of.** Same decoded thread words,
+101 interleaved 500k-block trials, cumulative speedup over `call_indirect`:
+A current handlers 1.000x; B one-function `br_table` + generic helpers 2.036x;
+C + thread IP in a local 2.190x (+7.5%); D + direct register access 3.593x
+(+64%); E + specialised ALU/branch semantics 4.248x (+18%); F + *all*
+architectural state in locals 4.263x (+0.4%, noise). So the win is dispatch
+collapse plus removing dynamic `get_reg`/`set_reg` selection; persistent
+register locals on top are worth nothing. Stage B is a 16-handler upper bound
+(bodies in one function, cold/debug paths omitted), so it prices collapse and
+inlining together, not the `call_indirect` opcode alone.
+
+**Specialising inside the existing `call_indirect` shape.** Promoting handler
+IDs only (same packet, same dispatch count): register-form handlers were
+consistently 16-29% faster (paired ~1.2x); ALU/branch-only specialisation was
+neutral-to-slower (0.87-1.05x) and added nothing on top of register forms.
+Conclusion: emit direct handler IDs for census-backed register *forms*; do not
+add ALU-only variants.
+
+**Full-app exact forms.** Seven forms (AoE: `mov ecx,eax`, `mov edx,edi`,
+`add edx,ecx`, `add edi,ecx`; RCT: `add byte [eax+disp],al`,
+`add byte [ecx+disp],al`, `add dl,dh` — the RCT three were 68.3% of its
+dispatched handlers) gave AoE runSlice -8.7% / present FPS +7.4% and RCT
+runSlice -5.9% over three headless-Chrome runs each. RCT was still in its
+`EIP=0x00850000` loop, not a park. (Toggle was `HOTFORM_SPECIALIZE` /
+`set_hotform_specialization_enabled`; not present in current `src/`.)
+
+**Dormant debug/profiling checks cost nothing measurable.** A build with the
+handler-hist, watch/break, hit-counter, EIP/ESP trace, `dbg_prev_eip` and
+shadow-call-stack checks compiled out was 0.09% faster on fixed-work 2M-block
+runs (140.70 vs 140.58 ms). Full-browser pairs swung -30%..+15% *with run
+order*, i.e. browser warmup, not the change. 26 `logToUI` calls cost 5.5 ms per
+10 s window; no-op `log_i32` imports ~4-6 ns each. The stripped build was not
+kept. Keep `HANDLER_HIST=0` explicit when timing: the harness enables the
+histogram by default.

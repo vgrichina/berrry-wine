@@ -651,6 +651,37 @@ Examples from the current AoE notes:
 - `0x00535b13` is a good mixed target after partial-width support, but not a
   first milestone.
 
+## Prototype results (August 2026)
+
+(Recovered from branch commits `324896d0` / `a7d19467`, Aug 2026; the
+prototype was never merged.) Fixture: the four-block AoE blitter cycle
+`0x00535c20 -> 0x00535e00 -> 0x00535e08 -> 0x00535e7c`, 2M blocks after a 2M
+warmup, every arm differentially checked (registers, flags, memory, EIP).
+
+| variant | vs x86 threaded |
+|---|---:|
+| narrow AoE-specific packet | 2.05-2.20x |
+| generic stack packet VM (`PUSH_REG`/`LOAD32`/`ADD_FLAGS`/`CMP_JCC`...) | **0.93x** |
+| generic stack + `CMP_RM32_JCC` fusion | 0.91x |
+| four-slot register packet (158 generated opcodes, dead-slot reuse) | 1.25x |
+| hand-written straight-line WAT | 3.2-3.5x |
+
+- Keeping state inside one Wasm invocation captures most of the win; removing
+  the packet interpreter itself is still worth ~50% more (narrow packet vs
+  straight-line), so direct compilation has real headroom.
+- The **generic stack VM loses to the existing interpreter**: it expands one
+  x86 op into several packet dispatches. The census-backed
+  `cmp r,[base+disp]; Jcc` fusion (858 static sites, 7.2M weighted entries)
+  lost too, because its dynamic register selection cost more than the
+  dispatches it removed.
+- The four-slot design (arbitrary guest regs mapped to four packet locals,
+  slot operands encoded statically) recovers part of the locals benefit;
+  packet dispatch and boundary work still leave it far from straight-line.
+- Lesson: change the dispatch/operand encoding (dense `br_table`,
+  register-form packets) before adding fusions, and never encode application
+  algorithms as packet opcodes. Decomposition of where the `br_table` win comes
+  from is in [aoe-performance-optimization.md](aoe-performance-optimization.md#further-august-2026-dispatch-experiments-recovered).
+
 ## Recommendation
 
 Treat stack-threaded code as a backend experiment after the normalized

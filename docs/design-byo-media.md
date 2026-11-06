@@ -776,3 +776,30 @@ seconds and starts a final snapshot on every stop path. Session imports use a
 memory store retained for the life of the page; if browser storage becomes
 unavailable after a kept import was restored, the shell logs the downgrade to
 session-only instead of claiming those new writes are durable.
+
+### Sparse checkpoints and lazy hydration: lessons from an unmerged branch
+
+(Recovered from branch commits `686bf81e` / `c16666d3`, Sep 2026. None of
+`SparseByteProvider`, `rangeWrites`, `lazyHydrate` or the shared chunk LRU is on
+main; these are the design facts that branch established.)
+
+- **Read one logical range, then scatter.** A host file read that is split by
+  guest mappings and restarted on a later cache miss can loop forever once the
+  already-read prefix exceeds the chunk-cache budget. Request the whole logical
+  range first, then copy completed bytes over the mappings.
+- **Pending reads must own their bytes per handle**, independent of cache
+  eviction or another handle's fill, with revision/entry/close guards rejecting
+  stale completions.
+- **CRT consumers replay.** `fgets` re-read its whole line prefix on each
+  retry; it needs per-call progress (a zero-cache regression used a 1,026-byte
+  line), and under extreme pressure a durable continuation. Sound, version
+  resources, bitmap, font and help consumers likewise need explicit read-stage
+  state before lazy hydration can be a default — which is why eager hydration
+  stayed the default.
+- **A checkpoint rebase turns an eager file asynchronous.** Rebase onto an
+  acknowledged snapshot only when no newer mutation exists, and only once all
+  consumers tolerate pending reads.
+- Sparse writes as 64 KiB dirty pages with byte-range coverage over an
+  immutable base never fetch untouched bytes; shrinking must cap the base
+  extent so regrowth reads zeros. A snapshot lease is coarse: one retained
+  file pins every blob of that snapshot.

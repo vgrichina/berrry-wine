@@ -153,6 +153,16 @@ smaller than the concurrent null control is not a result.
 A new shape whose null control does not come back near zero on a quiet box has a
 layout or aliasing problem, and none of its other numbers mean anything.
 
+**The ±1% floor is intra-process only.** (Recovered from branch commit
+`36ec8f1f`, Aug 2026.) It holds between two `--toggle` arms alternating inside
+one process. Swapping `build/wine-assembly.wasm` between invocations makes the
+comparison cross-process, and there it does not apply: five invocations
+alternating two builds at load 5-8 gave build B minima of 168-242 ms on `lut`
+— a **44% spread for one binary**, whose first run alone read as a 26% win. A
+build-vs-build question needs `--toggle` (if expressible as a flag) or the
+whole-app fixed-work measurement (`--max-batches=N`, user CPU). Loading two wasm
+files into one process and alternating them like toggle arms would close the gap.
+
 ## 3.1 Every shape verifies its own work
 
 Each shape carries a `verify` hook, run unconditionally outside the timed
