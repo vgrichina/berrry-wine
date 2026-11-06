@@ -6,6 +6,7 @@
 //   node tools/uop-game-ab.js [--games=h3,sc,...] [--arms=off,uop] [--jobs=N]
 //        [--out=DIR] [--extra='--flag ...'] [--ref-wasm=FILE [--ref-region-map=FILE]] [--gl=headless] [--cpu-prof] [--no-build] [--list]
 //        [--extend=GAME:N,...]   (N more gameplay batches past the route's end, split there)
+//        [--trim=GAME:N,...]     (end the route at batch N, past its split: fit the 30 s cap)
 //
 // Runs each game's own gameplay route (the one its test/test-*-gameplay.js or
 // its re-notes use) in two arms and prints, per game: whether the final frames
@@ -288,6 +289,14 @@ function runArm(game, name, armArgs, outDir, extra) {
     // state the route left it in (a town, an adventure map, a HUD).
     const ext = +((arg('extend', '').split(',').find(s => s.startsWith(`${game}:`)) || ':0').split(':')[1]);
     let splits = g.split ? [g.split] : [];
+    // --trim=GAME:N[,GAME:N]: stop the route at batch N instead (N past the
+    // game's split), so a timed A/B fits the 30-second benchmark cap; the
+    // gameplay phase is then split..N.
+    const trim = +((arg('trim', '').split(',').find(s => s.startsWith(`${game}:`)) || ':0').split(':')[1]);
+    if (trim > 0) {
+      if (g.split && trim <= g.split) throw new Error(`--trim=${game}:${trim} is not past the split ${g.split}`);
+      gargs = gargs.map(a => a.startsWith('--max-batches=') ? `--max-batches=${trim}` : a);
+    }
     if (ext > 0) {
       const mb = gargs.find(a => a.startsWith('--max-batches='));
       const end = +mb.split('=')[1];
