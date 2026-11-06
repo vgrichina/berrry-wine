@@ -1897,3 +1897,227 @@ The additional real Chrome pixel probe passes opaque-to-translucent replacement
 without stale pixels, same-size canvas reuse, resizing to transparent content,
 and a subsequent raw-pixel frame. Probe output and source are preserved in the
 candidate run. No interpreter/JIT optimization is involved.
+
+## Aggregate CPU bottleneck profile (2026-11-05)
+
+`20261105-uplink-cpu-breakdown` rechecks the bottleneck after c84edcd8d,
+using the same loaded WASM/dirty startup candidate. One visible Chrome game,
+1024x768 OpenGL/WebGL Worker mode, saved staircase viewpoint; HUD and runtime
+logging disabled before measurement. A settled 60-second unprofiled window
+records 10.90 guest presentations/s; a separately settled 60-second profile
+records 9.61/s. These are not clean profiler-overhead or peak-FPS measurements:
+process snapshots show Safari/WebKit/WindowServer contention. Screenshots
+retain textures and HUD, and no page errors are reported.
+
+The analyzer resolves WASM indices against saved combined.wat and groups
+mutually exclusive leaf/self sample counts by source subsystem. Guest Worker
+has 32,678 samples, of which 29,478 are non-idle. Their distribution is CPU
+core/instruction execution/guest memory 76.03%, OS APIs 5.32%, graphics APIs
+4.93%, synchronization stacks 3.48%, message submission 2.65%, and other
+JS/runtime/helpers/GC 7.59%. CPU-core attribution includes memory helpers
+called by APIs; it does not mean all of that work is removable overhead.
+
+Within that same non-idle denominator: ALU/instruction handlers 27.00%, uop
+engine 10.78%, core handlers 9.17%, FPU 8.58%, loop matchers 7.80%, cache/branch
+machinery 5.81%, and register/memory helpers 4.28%. Largest individual core
+functions by all guest samples are uop_fast 7.90%, x87_island_fast 5.14%, and
+branch_end_at 4.96%. The dominant measured workload is CPU emulation, not
+uniform preparation or buffer allocation. The previous shortlist was a list
+of small local candidates, not a ranking of the main bottlenecks.
+
+The page is 87.29% profiler-idle and the render Worker 92.96%; neither is GPU
+utilization. Thread percentages are not added. Counts avoid assigning long
+sampling gaps to whichever function happened to be sampled; 1,318 guest
+intervals exceed 5 ms. Synchronization samples can include blocked time and
+are not pure CPU usage. This capture does not measure GPU execution duration
+or distinguish necessary game math from avoidable emulator dispatch cost.
+
+Next investigation: identify the guest blocks behind the instruction/x87
+workload and measure fast-path coverage before proposing an interpreter
+variant. Any such variant still needs the required V8/SpiderMonkey native
+disassembly and matched A/B measurements. No runtime change was made here.
+
+## Guest hot-block diagnosis (2026-11-05)
+
+Evidence: `20261105-uplink-hot-loops`, headed Chrome, same saved staircase,
+1024x768 OpenGL/WebGL Workers, HUD/logging off. Three 15-second handler/block
+histograms, restoring the save between windows; a separate uninstrumented
+20-second counter interval precedes them. Loaded WASM SHA-256 remains
+`13e7c0acf67521ac91fb8462896c80b1cdfc3ac98c527398272a4186e9a08650`.
+Reviewed all three captures: textured scene and HUD intact, no page errors.
+
+Stable regions below are percentages of recorded threaded block entries,
+**not CPU time**. Grouping joins nearby addresses; a region is not necessarily
+one control-flow loop. Addresses are preferred full VAs in hw.dll:
+
+| Region | Three-window range | Disassembly finding |
+| --- | --- | --- |
+| 1000a27a–1000a96f | 15.2–15.8% | Contains per-vertex texture-coordinate, color and vertex submission loop; repeated indirect GL calls and x87 preparation |
+| 10007130–100074b2 | 14.2–15.7% | Floating-point dot-product/clamp/table-lookup calculations and vector helpers, consistent with lighting preparation |
+| 100a5920–100a5ddd | 11.1–11.4% | Math-runtime region, including sin/cos/tan, floating-point control/status handling and conversions |
+| 1000e198–1000f145 | 8.4–8.6% | Contains another immediate-mode polygon submission loop |
+
+The tight loop at 1000a875 ends with the backward branch at 1000a932;
+calls through GL slots split its execution repeatedly. The scalar routine
+at 100071c0 calls the float-to-integer helper at 1009e920, which saves the
+x87 control word, selects truncation, converts and restores it. These are
+concrete candidates for reducing generic instruction/call overhead; block
+counts alone do not establish their individual CPU costs or expected FPS wins.
+The saved live-byte disassembly avoids relying only on unrelocated disk code.
+
+The uop tier remained enabled. Diagnostic uop block share was 35.9%, 34.6%,
+35.5% using uopBlocks/(uopBlocks+threadedBlockHits). Do **not** call this normal
+coverage: histogram mode changes chaining and compilation behavior; new
+declines occurred during collection. Block-histogram collision counts were
+860302/142407/91057, so some entries are lost. The original module-base probe
+returned empty; attributed copies use recorded route runtime bases plus PE
+preferred bases, preserving original raw artifacts.
+
+Without the histogram, 20 seconds recorded 21,852,837 uop blocks across
+2,351,723 entries, 6,548,835 x87-island runs and 2,641,163 pipeline runs.
+There were no new installs, kills or guard failures: recompilation churn is
+not supported as the steady-state cause. There were 1,072,083 memory-window
+re-guards proving 17,153,328 pages, another measurable candidate, but its CPU
+cost is not ranked by these counters. Experimental block-exec is disabled;
+that alone does not establish it would improve this workload.
+
+Priority: measure CPU cost within the stable x87/vertex regions, then test a
+generic fast path for repeated FP conversion or call-boundary overhead, with
+matched native-code inspection and A/B runs. Do not infer that changing GL
+queue batching or enabling an experimental tier will help from this census.
+No interpreter variant or runtime changes were made in this investigation.
+
+### Follow-up: conversion is already folded; arithmetic-dispatch experiment
+
+The 1009e920 conversion body matches `$ftol_body_at` exactly. The third
+histogram recorded 374,888 H500 (`$th_ftol_native`) executions; a hot guest
+entry does not mean its body is still interpreted. In the prior uninstrumented
+CPU profile, H500 has only 54 self samples (0.18% of non-idle guest samples).
+Do not prioritize adding another conversion fast path here.
+
+Tested one isolated variant in `$x87_island_fast`: replace the eight arithmetic
+operation comparisons with a br_table, leaving the actual arithmetic,
+exception checks, memory helpers and state updates unchanged. Differential
+test passes 400 randomized sequences / 7,178 operations against both generic
+and unfused execution, including FPU state and exception traces. Candidate
+module SHA-256 is
+`931c87e29d970ddce738cc0094e51b23f48de5334b8ecbe1a96603180015036a`.
+Control sources were compared against saved combined.wat and match exactly
+apart from this variant. Canonical compiler builds tail-call and compatibility
+artifacts; the local dev server keeps serving the control module. Candidate
+Chrome uses request interception for its WASM only.
+
+ARM64 native captures: V8 shell 15.4.49 TurboFan and SpiderMonkey C155 Ion,
+both control and candidate, using tools/wasm-native.js. V8 handler size grows
+23,328 -> 23,360 bytes; Ion 9,136 -> 9,296. Both emit a table-indexed indirect
+branch. V8 keeps its 0x2a0 frame and spills; Ion keeps its 0x70 frame and FP
+state loads/stores. Memory helper and exception call paths are unchanged.
+These shell versions are not the Chrome 156 engine; no x86-64 measurement
+was performed. Eight alternating synthetic arithmetic pairs vary from
+152 to 601 ms per million islands and do not establish a stable speedup.
+
+Headed Chrome evidence: `20261105-uplink-x87-dispatch-control` and
+`20261105-uplink-x87-dispatch-candidate`. Both restore the same staircase
+save, settle, then capture a 60-second unprofiled window and a separate
+60-second CPU-profile window with HUD/logging off. Reviewed textures/HUD,
+no page errors. The control's first window overlaps compilation and is
+excluded as clean FPS evidence (10.02 presents/s versus candidate 8.97).
+The separate profile windows report 8.58 versus 8.81 presents/s. x87-island
+self sample share is 5.89% versus 5.67% of non-idle guest samples. Sample
+counts differ substantially (10,272 versus 14,211 total, with 2,050 versus
+2,821 gaps over 5ms), so raw samples/present cannot be compared as CPU time.
+Safari/WebKit/WindowServer contention is recorded in load files. No reliable
+speedup or regression established; the variant was reverted, with its patch,
+modules, native disassembly and profiles retained in evidence. Dev server
+still serves the original control. FP state spilling/helper boundaries remain
+an untested candidate; this profile does not establish a benefit from changing
+them. A quieter paired dispatch benchmark can also resolve the uncertain result.
+
+### Arithmetic-dispatch microbenchmark details and decision
+
+The saved `uplink-x87-micro.cjs` and `micro.json` in both dispatch evidence
+directories reproduce the synthetic test. Node v24.21.0 uses V8
+13.6.233.17-node.53 on ARM64, a third engine version distinct from the native
+capture shell and Chrome. The harness instantiates the complete control and
+candidate modules, runs 100,000 warmup islands each, then eight alternating
+AB/BA pairs of 1,000,000 islands. Each island loads 3.25, multiplies by 2,
+adds and subtracts 1, divides by 2, and stores 3.25. It checks the final value
+and exact island-run count. Uop execution and competing specialized FP folds
+are disabled to isolate H451; this is deliberately not the gameplay operation
+mix or its usual tier configuration.
+
+Candidate wins 6/8 pairs. The median of the eight paired time reductions,
+`100 * (1 - candidate_ms/control_ms)`, is **4.685%**. Separately pooling each
+variant's times gives medians of 196.414 ms control and 199.844 ms candidate,
+or **1.746% slower** for the candidate. These summarize different things and
+must not be substituted for one another. The full 152–601 ms range and
+contradictory direction of the summaries leave the result inconclusive;
+no confidence interval or stable speedup was established.
+
+The revert keeps the release candidate on the previously tested execution
+shape while measurements remain uncertain. It is not evidence that the change
+is incorrect or slower. A jump table removes comparisons but can introduce
+an indexed indirect branch and enlarge code; it is not strictly less work on
+every engine. Correctness passed, and the preserved candidate remains suitable
+for further measurement. The current evidence does not justify claiming a
+gameplay FPS improvement. The separately requested wasm3 measurement below
+also does not establish an interpreter improvement.
+
+### wasm3 arithmetic-dispatch microbenchmark (2026-11-05)
+
+Evidence: `20261105-uplink-wasm3`, Homebrew wasm3 0.5.0 on ARM64. Loading the
+complete emulator fails with `unknown value_type`; this is not a demonstration
+of full Wine-Assembly compatibility with wasm3. The benchmark instead extracts
+the exact control/candidate `$x87_island_fast` bodies with `fpu_mul`, `gl64`,
+`gs64`, `page_watch_cell`, `page_watch_write_one` and the required macros.
+`control-scope.json` and `candidate-scope.json` record kernel hashes and scope.
+
+The standalone kernel uses 256 KiB unshared memory and synthetic addresses;
+the direct-window bound becomes that memory size. Atomic reads become ordinary
+reads for the empty, single-thread observer table. Uncalled helpers trap so an
+unexpected path cannot silently produce a result. A direct island loop omits
+the guest x86 decoding and loop-control overhead present in the Node benchmark.
+It uses the same six operations and 3.25 result. Node and wasm3 checks pass for
+the result, x87 top/tags and island count. These adaptations limit the result
+to this exercised arithmetic path, not general FP semantics or gameplay.
+
+Eight alternating AB/BA pairs run 3,000,000 islands each (18,000,000 x87
+operations per timed process), following 100,000-island warmup runs per arm.
+`/usr/bin/time -p` measures whole-process wall and user/system time, including
+startup, at 0.01-second precision. CPU time is user plus system time. The raw
+rows and summaries are retained in `timings.json`:
+
+| Metric | Control pooled median | Candidate pooled median | Median paired time reduction | Candidate wins |
+| --- | --- | --- | --- | --- |
+| CPU time | 3.585 s | 3.555 s | -0.569% (slower) | 4/8 |
+| Wall time | 5.995 s | 5.510 s | +0.040% (faster) | 4/8 |
+
+The pooled CPU medians suggest a 0.84% reduction, but the paired summary has
+the opposite direction. Similarly, the pooled wall medians must not become
+an 8% speedup claim: their paired median is almost unchanged. This run finds
+no reliable interpreter gain and no established regression. The dispatch
+variant remains reverted; no runtime source changes result from this test.
+
+### Evidence and release handoff (2026-11-05)
+
+All run IDs below refer to repository-root `scratch/runs/`; the implementation
+worktree's scratch directory is not the evidence root. Keep the saved source
+patch, module hash, harness and environment alongside the result: recent
+gameplay profiles include the dirty startup candidate, so they are not proof
+that an otherwise clean release build has been tested.
+
+| Evidence runs | Supported finding | Limit |
+| --- | --- | --- |
+| `20261104-uplink-resolution-{640,1024}-repeat` | Same-view resolution dependence and unnecessary NC readback identified | Guest presents/s, not unique displayed frames |
+| `20261104-uplink-empty-nc-1024` | Per-frame readback/merge removed; fix committed in f6a667094 | Host load prevents a matched FPS claim |
+| `20261105-uplink-uniform-{baseline,candidate}` | Uniform preparation self time/present reduced; JS fix committed in c84edcd8d | No stable aggregate FPS or GC reduction |
+| `20261105-uplink-cpu-breakdown` | CPU emulation dominates sampled guest work | Self samples, not GPU timings or removable-overhead estimate |
+| `20261105-uplink-hot-loops` | Stable guest regions and active FP/uop fast paths identified | Histogram changes execution; block shares are not CPU shares |
+| `20261105-uplink-x87-dispatch-{control,candidate}` | Correct dispatch variant; native code and synthetic/gameplay comparisons retained | Variant reverted; performance unresolved |
+| `20261105-uplink-wasm3` | Restricted exact-body arithmetic kernel passes checks; eight interpreter timing pairs retained | Full emulator cannot load; no reliable dispatch speedup |
+
+Release preparation must preserve the outstanding distinction: the prior
+committed module passed the renderer-switch sequence, while the later dirty
+startup/ShowWindow candidate failed Video Modes navigation after the driver
+advice popup. Do not silently include those unqualified edits or describe this
+as a fully qualified release. Safari is intentionally excluded by the user.
