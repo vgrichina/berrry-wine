@@ -1,0 +1,33 @@
+# Aranna stepped native menu attempt, 2026-11-06
+
+Run: `scratch/runs/20261106-aranna-stepped-native-menu/` (ignored). Exactly one original reached Main Menu, then stopped at a pointer-lock precondition failure before the proposed relative move. Single Player, a mission, gameplay movement and a second gameplay response remain unverified. No production repair was made.
+
+The coordinator explicitly granted sole local runtime at 18:38:23 UTC through 19:23:23, including cleanup, after AoW1715 FINAL75c4ccb33 and Forsaken1735 FINAL54f8e917d. Before that grant, only fresh run-local scripts and a plan were prepared, with board polling at most 60 seconds apart. Independent predecessor cleanup passed before runtime. No boxes or workers were launched.
+
+## Driver and qualification
+
+The run-local driver starts its bounded continuation deadline at queue readiness, capped at 22 minutes and five minutes before the grant deadline. It retains 48 commands and 16 steps per command, requires each preceding response to finish, and requires a personally reviewed capture with a matching hash before the next input. Each command permits one native action, or a balanced key pair. No guest coordinates or game state are written.
+
+The retained generated full-shell control was exercised at 1001x800 with the changed driver. Trusted relative steps (+30,-145) and (-60,+96) produced generated UI points (428,155) and (368,251); balanced clicks activated A and B. A's capture visibly reads its activation; B's image is a partial GDI repaint, with activation independently verified in the generated fixture's state. These are generated controls, not Aranna gameplay. The control's instantiated observer was a6947c527a812d80a33d22894cc83abab2f55b8fd4ef45572047be54bb6d7fde.
+
+The passive store observer was then retargeted to changed native input +12c/+130 and manager +78/+7c stores, with old/new/readback and context packets. The existing shared kind24 limit32 and global8192 limit were unchanged. A fresh disabled/observed standard/compat ordinaryAPI/owningWorker eight-cell matrix passed, including ownership negatives and the added store assertions. One earlier qualification failed because run-local source pins changed while it was running; that failure is retained, and the final immutable rerun passed. Production code was unchanged, so the prior focused regressions and locked full build were not repeated or represented as new results.
+
+## Native initialization evidence
+
+Source identity version3 pins execution to main 613c98785ee6c858ef8aa40381b85a040aa4941a, relevant binary diffs and new run-script patches. The unchanged baseline SHA-256 was 2fa9f377dde5e477eb811baceb64032889fbe9b27a664b213477e84627e5eb94. The original's actual instantiated observer was 81aa53bfe5edeea3678fe9c96f3a8d5f41619ee118507cddf08eaecf2380523f, verified through owning Worker slot0, endpoint1, target5772D260263B284B0F2BBDA7C6EF30CF, session0FD9997D429EFDCB21C03B83B72A9717. Additional instantiated Workers and module identities are retained in the capture states.
+
+Fresh packets resolve the input singleton to 0x074ffd1c and the menu receiver/manager to 0x09f32f2c; the input address happens to match historical evidence but was independently observed. Initial current X/Y is (400,300). At 18:49:23, a changed-value store/readback records input Y300 becoming400. Native block41842b contains instruction418458 storing the computed value (height600 *2)/3. Host recenter remains (400,300). This establishes a native initialization offset before menu movement and supplies a concrete mechanism for a 100-pixel difference between host point and the guest accumulator. It does not retroactively prove the precise initialization history of the previous run's host(401,155)/native(401,255), and establishes no CPU discrepancy or filtering defect. Raw packets and native disassembly are in native-initial-offset.json and the native-sampler/initial-y400 logs.
+
+## First failing boundary
+
+The original followed EULA acceptance, loading, Microsoft intro, character cinematic and Mad Doc logo naturally into Main Menu. Captures were personally inspected; no transition was skipped. Response06 shows Main Menu, the sword near Continue and its hint. Actual native member packets refresh the receiver above and menu rectangles, including Single Player [280,132,517,178]. The last positive manager store captures (399,400); shared writer admissions are30/32. No absence is inferred after any observer cap.
+
+The center acquisition click produced a trusted CANVAS pointer-lock event at 18:53:07.110. Response06 completed at 18:53:10.172, and its state positively records pointerLock:true. At 18:54:06.583, a later trusted pointerlockchange records loss of lock. After reviewing response06, command7 proposed relative(0,-245), targeting native(399,155), with a further positive-point proof required before any Single Player click. The driver's actual-lock guard rejected it at 18:54:44 with `AssertionError: actual canvas pointer lock required`, before page.mouse.move. Command7 has neither a completion marker nor response07 capture. The cause of intervening lock loss is unproved; a completed acquisition screenshot is insufficient to prove current lock after a review interval. No Single Player click was issued. The driver exited1 and Chrome exited0. The session was not restarted.
+
+This differs from the prior `20261106-aranna-relative-control` original: that ONE original ended at its fixed input-queue deadline on Main Menu after native targeting attempts. Its published fractional-letterbox96-to95 host fix remains commit44478a1cdf538185610a178b744f092be9c19b3e. This ONE original ended on the live pointer-lock guard, before relative menu movement, not at a queue deadline. Neither run proves Single Player or gameplay.
+
+## Cleanup and next work
+
+final-cleanup.json verifies39 recorded owned PIDs absent, eight ports refused, four profiles absent, four locks free and more than3.06GB free on /home. The first cleanup snapshot raced the lock holder's final exit and is retained separately; the final check passed after its session exited0. No boxes were assigned or created. No genuine flagged-operation hold was bypassed.
+
+A future separately authorized attempt should first establish why pointer lock was lost during the review interval and make live lock status part of the reviewed continuation boundary. Reacquisition must itself be a separately reviewed native action. It should preserve the fresh initialization evidence and observer quotas, then positively verify the native Single Player hit before clicking. No speculative emulator fix is supported by this run.
