@@ -189,7 +189,7 @@ function fixtureSource() {
   replace("if(preview)preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),8,8)","if(preview)preview.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(dibRGBA),32,32)");
   replace("const expectedAddress=state.address===4?(mode==='software'?1:3):state.address;\n      const expected=expectedColor(state.palette||config.texture,sample.uv,state.filter,expectedAddress);",'const expectedAddress=[1,1];\n      const expected=expectedColor(config.colors,state,sample);');
   replace('gl.readPixels(2,8-1-2,1,1','gl.readPixels(sample.x,32-1-sample.y,1,1');
-  replace("      eq(actual,expected,'PIXEL ORACLE '+label);\n      if(gpu)eq(row.webglRGBA,[...expected,255],'independent actual WebGL pixels');",`      const close=(got,want,label)=>check(got.length===want.length&&got.every((c,i)=>Math.abs(c-want[i])<=config.tolerance),
+  replace("      eq(actual,expected,'PIXEL ORACLE '+label);\n      if(gpu)eq(state.rgbOnly?row.webglRGBA.slice(0,3):row.webglRGBA,\n        state.rgbOnly?expected:[...expected,255],'independent actual WebGL pixels');",`      const close=(got,want,label)=>check(got.length===want.length&&got.every((c,i)=>Math.abs(c-want[i])<=config.tolerance),
         'PIXEL ORACLE '+label+': '+JSON.stringify(got)+' expected '+JSON.stringify(want));
       if(mode==='worker'){
         await until(()=>lastStats?.stats.drawCalls===drawCount,'observed worker stats');
