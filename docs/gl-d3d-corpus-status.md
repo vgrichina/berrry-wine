@@ -78,6 +78,27 @@ running today's expanded scanner against today's files cannot establish the
 historical membership. No app is removed on the basis of the noise warning.
 Source-only evidence: `scratch/runs/20261105-gld3d-historical-census-provenance/`.
 
+On November 6, the exact September 22 registry and scanner were evaluated
+directly from Git objects against the currently retained binary paths. The
+registry still has 225 apps. This produced 89 candidates including DirectDraw,
+and **28 candidates with a family other than DirectDraw**; the original commit
+reported 87 and 27 respectively. The reconstruction records SHA-256 and size
+for each available input among 333 unique paths, with four missing inputs.
+It does not establish that today's files equal the September 22 binaries.
+The script and complete results are retained in
+`scratch/runs/20261106-historical-census-candidate/`.
+
+The 28 reconstructed candidates are `generally`, `arcanum_demo`,
+`ut2003_demo`, `ut2003_demo_server`, `ut2004_demo`, `icewind_dale_demo`,
+`baldurs_gate_chapters_1_2_demo`, `morrowind`, `simgolf_demo`,
+`black_white_2_demo`, `quake2_demo`, `halflife_uplink`, `warcraft3_demo`,
+`pawn`, `tworld`, `winamp`, `mcm`, `ptct`, `dx_globe`, `dx_viewer`,
+`dx_flip3dtl`, and the seven screen savers listed below. These are a reproducible
+candidate list for follow-up, not a replacement historical 27-ID manifest or
+runtime coverage evidence. The missing paths are the historical Atomic
+Bomberman executable and the Quake II, Diablo II and Half-Life installer paths;
+other registered files can still produce hits for an app with a missing path.
+
 The original version of this file is retained at commit `d5b3b56cb`
 (October 6, task `GLD3D-CORPUS-27-20261006`). It describes the goal as every
 OpenGL and Direct3D registry app working on both software and WebGL. Its
@@ -1394,7 +1415,7 @@ Receipt groups used in the table:
 | `morrowind` / M | No reviewed software movement receipt identified; software fix unit tests do not qualify the world. | H `20261005-morrowind-prison-movement`, browser Worker/WebGL forward/reverse/idle; source `94d18605`, module `2e2fd8d1ca62cd87f0bc09312bc4836108df610d00cb7771bb5ae22755eceedc`. | [Metadata review](../ops/handoffs/morrowind-dashboard-evidence-metadata-20261005.md) reports four reviewed gameplay images; bundle absent. Preserve no-heavy-Morrowind restriction. Recover evidence/membership; no software gameplay/FPS claim. |
 | `black_white_2_demo` / M | H `20261010T1638Z-bw2-raster-budget-boat-w6`: software island, 3300 s, zero failed commands; exact tested source/module U in table. | No fresh WebGL gameplay receipt identified in this reconciliation. | [Later camera note](re-notes/black-white-2.md) reports `20261011T1840Z-bw2-lock-flag-boat` zoom/drag after the scripted intro; exact backend/source must be recovered before upgrading either column. 3300 s and zero failures are not FPS/control proof. Recover membership and full paired gameplay, preserve pauses. |
 | `winamp` / M | No CLI software MilkDrop visualization receipt. | H browser `20261007-winamp-milkdrop-complete-closure`: source `0cbc1c6ffd`, module `7c6864f8e224a0d42c6743b3c088ce79349101182295b79b1e4fa8a4c3911cc0`; ordinary Start ends in illegal-operation `(2)`, not a backend rendering pass. | [Review](../ops/handoffs/winamp-milkdrop-ordinary-20261007.md) reports 11 images and complete-loader rerun. Capture actual exception/API; do not repeat obsolete “needs Winamp 5” inference. Visualization/FPS unqualified; recover bundle/membership. |
-| `pawn` / M | H P10: `20261010T1850Z-gld3d-current-main-probes`, D3D9 board renders. | H B6 browser board; P10 Node GL board. | Earlier September 23 gameplay report lacks exact ID/input receipts here. Board image alone does not establish ordinary chess control. Recover bundle, input/identity receipts and membership; FPS U. |
+| `pawn` / M | Recorded October 30 software D3D9 e2–e4 drag and engine e7–e5 reply, run `20261030T2238Z-pawn-software-move`, documented in `4c2fdf3df`. Composited desktop was inspected; exit 0 after 20,000 batches and six original inputs hashed. | Recorded October 30 ordinary browser WebGL-selected drag/reply, run `20261030T2250Z-pawn-browser-move`, documented in `26465f29b`; Chrome/ANGLE SwiftShader, child frame sequence 2→25, threads enabled. | [Pawn notes](re-notes/pawn.md) and the October 30 sections above supersede the earlier board-only observations. Both pin module `7e8d3194…`; compiled source revision remains unknown, and browser backend implementation/export state was not captured. November 6 reconciliation found both original run directories absent from `scratch/runs/`, so captures and identity receipts cannot currently be independently rechecked. Recover bundles and historical membership; no fresh execution, hardware-GPU, full-game or FPS claim. |
 
 ### What this delivers, and what remains unqualified
 
