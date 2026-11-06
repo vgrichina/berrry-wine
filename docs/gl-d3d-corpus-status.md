@@ -1,4 +1,4 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-11-04
+# OpenGL / Direct3D corpus status, reconciled 2026-11-06
 
 ## November 4: original MDK2 browser/WebGL gameplay controls observed
 
@@ -87,6 +87,20 @@ for each available input among 333 unique paths, with four missing inputs.
 It does not establish that today's files equal the September 22 binaries.
 The script and complete results are retained in
 `scratch/runs/20261106-historical-census-candidate/`.
+
+A hash crosscheck against notes at that same September 22 revision anchors
+41 of the 329 retained inputs to historically documented SHA-256 values.
+All 41 retained files were rehashed and their sizes checked. These anchors
+include non-graphics inputs and do not prove census-time file availability.
+The historical Icewind Dale note documents the same 6,283,264-byte executable
+retained today, SHA-256
+`b94816d10029cb99c0315f175330c917be2fff298394e853e2764973d8d13af4`.
+Changed Icewind executable bytes therefore do not explain the reconstruction's
+eight OpenGL candidates versus the reported seven. Availability at scan time,
+other input identities and the exact 27-ID membership remain unresolved.
+The reproducible matches and historical note identity are retained as
+`historical-hash-anchors.json` and `icewind-identity-followup.json` in that run.
+A missing hash citation is not evidence that an input changed.
 
 The 28 reconstructed candidates are `generally`, `arcanum_demo`,
 `ut2003_demo`, `ut2003_demo_server`, `ut2004_demo`, `icewind_dale_demo`,
