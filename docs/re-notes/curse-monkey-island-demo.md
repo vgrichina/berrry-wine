@@ -143,3 +143,10 @@ Mixing routine `0x425030` refills both before and after mixing at
 `0x425079`/`0x4251bb`. An alternating gate alone is not evidence of
 half-rate audio. Public Worker liveAudioRing was enabled in the observed
 route, so its absent cooperative default did not explain this waveOut path.
+
+The mixer service has no direct call xrefs because it is registered
+indirectly (recovered from branch archive cbfe9895, Oct 2026): `0x424c6b`
+stores callback `0x424ce0` into the caller descriptor at `+0x18`; `0x424c64`
+reads descriptor `+0x1c`, saved to `0x48e7fc` at `0x424c7c`. Call cadence and
+any timer association are unobserved. Note `set_trace_eip_range` disables the
+optimized paths, so traced wall time cannot measure normal mixer cost.

@@ -1952,3 +1952,45 @@ the MMX forms it declines as `head-unsupported`: 34.9-40.9% of all Deus Ex
 entries with the fill on. That tier needs `pmulhw`, `punpck*`, `psrlq` by
 memory count, `movd` between GPRs and MMX, and a loop that uses ESP as a GPR
 (`mov esp,[0x10d7d39c]` in the span setup).
+
+## 24. Generic byte FILL_RUN: built, correct, and cold (2026-09-15, unmerged)
+
+(Recovered from branch commit `02570433`, Sep 2026. That branch numbered the
+fold H454; it never merged, and H454 on main is now the tree fold. Main's
+runtime matcher still has no generic FILL_RUN — see
+[starcraft-shareware.md](re-notes/starcraft-shareware.md).)
+
+**Shape.** Exactly four ops: one STORE8 through a unit-stride pointer, two
+ADDI (the *last* is the counter decrement that feeds the branch, the other the
+±1 pointer step), and `jnz` (H312) to the block's own entry. Three body orders
+occur: `mov [edi],al; inc edi; dec edx; jnz` (StarCraft `0x004b48d7`),
+`inc edi; dec edx; mov [edi-1],al; jnz` (StarCraft `0x004b4d2a`), and the
+descending `dec edi; dec edx; mov [edi],al; jnz`. When the pointer step runs
+before the store the first address is `disp + step`, not `disp` — a one-byte
+shift invisible in any histogram, so a test must compare bytes, all registers
+and flags for all three orders. Lowered to one `memory.fill` behind
+`$g2w_affine_span`, elementwise `$gs8` fallback on `NULL_SENTINEL`, budget
+charged exactly as unfolded.
+
+**Generality was real:** `find-byte-fills` found the shape in 479 of 1107
+distinct corpus binaries (1417 sites; scummvm 87, AvP demo 33, DOSBox 22/18,
+SMACKW32 15, RCT 15). **Microbench was positive** at every run length
+(`bench-loops --toggle=fill_run`, fixed short runs: 4 B +21.8%, 16 B +53.5%,
+64 B +83.4%).
+
+**What killed it: the target arm is cold.** Premise was that StarCraft's
+`0x004b48xx` GRP blit nest is ~30% of block entries with ~16-byte fill runs.
+Measured on the gameplay route (1.218e9 block entries): the whole nest is
+~4.15%, the hot arm is the literal *copy* `0x004b48aa` (2.17%), and
+`0x004b48d7` is 0.037% — coldest by 58x — with a mean run of **3.5 bytes**
+(467,232 bytes / 132,865 runs). Folding it removed 0.026% of block entries.
+Default stayed off. **Lesson:** match density says a primitive is reusable;
+only a `--count` on the candidate arm (one run, before any WAT) says it is
+worth lowering. None of the 1417 sites has been ranked by hotness yet — that is
+the next step for this family, not more matcher generality.
+
+**Gate note.** StarCraft gameplay captures are only reproducible to ~batch
+1200 (same-flags self-diff reaches 25% of pixels by batch 4690 while adjacent
+batches within one run are identical), and the blit nest switches on between
+batches 1120 and 1160. A 1160-batch `--count=0x4b48d7,0x4b48aa` pair is the
+narrow window where the fold is active and pixel parity is meaningful.

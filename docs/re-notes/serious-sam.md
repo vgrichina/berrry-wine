@@ -99,6 +99,53 @@ entry + browser `reservedPageFaults`.
 - Browser route: registered and `reservedPageFaults` is wired into host.js, but
   exercised in a browser; see the bounded startup comparison below for current evidence.
 
+## More addresses and root causes from the 2026-10-01 bring-up
+
+(Recovered from branch `archive/shared-tree-presync-20261011`, Oct 2026. Same
+module bases as above; private-build details dropped.)
+
+- Without a working multimedia timer the engine aborts with `Problem with
+  initializing multimedia timer - please try again.` Its periodic timer is
+  50 ms, callback runtime 0x591610.
+- Loading `classes/Player.ecl` from a GRO throws `Expected keyword Package: not
+  found` when a reserved stream page reads as zero (default sentinel mode): the
+  keyword-mismatch branch is runtime 0x58d931 (original 0x600d9931). The EXE's
+  CRT scope filter 0x423830 is what calls `CTStream::ExceptionFilter`.
+  `--fault-null=raise` globally is not a fix: it trips an earlier low read
+  (address 0xa, EIP 0x580910) and reaches a generic Fatal Error.
+- Streams are also reserved *below* 0x70000000 (e.g. 0x6fff0000 for
+  `FleshGreen.tex`), so any "fault only above X" cutoff silently reads zeros
+  (`TVER` mismatch); the bound has to be the reservation itself.
+- A fault inside one REP MOVS must keep the completed iterations, and a second
+  fault must not be raised before the first one's handler runs, or the stream
+  pointer is clobbered by the exception record (bogus `AFIN` header error).
+- Missing `CFlame` (`Class 'CFlame' not found in entity class package file`) is
+  optional precaching, not a missing export to synthesize: the demo's
+  Entities.dll really lacks `CFlame_DLLClass` (2146 exports). Engine 0x6019eb80
+  catches component-load failures (handler FuncInfo 0x601f26e8);
+  `CDLLEntityClass::PrecacheClass` 0x6019f2d0; `gam_iPrecachePolicy` BSS
+  0x60243b38 (live value 1). The catch path rethrows through the CRT, which
+  needs per-invocation SEH dispatch state (fixed in `11-seh.wat`/`09b-dispatch.wat`).
+- Stream handling is per thread: `CNetworkTimerHandler::HandleTimer` 0x60175b00
+  calls EnableStreamHandling at 0x60175b33 and `DisableStreamHandling`
+  (0x600d9290) at 0x60175b6d. A timer callback that borrows the main thread's
+  TIB/TLS therefore clears the main thread's stream list and later fails with
+  `Can create memory stream, stream handling is not enabled for this thread`.
+  The timer needs its own thread context (winmm's timer thread on main does this).
+  Note `$apply_seg_override` (`07-decoder.wat`) adds `$fs_base` to the
+  displacement at decode time, so swapping `$fs_base` alone under cached code
+  does not change which TIB an FS: access reads.
+- GL loader 0x5bd140 (runtime) resolves many names but requires only
+  `glGetError` and ten WGL calls (including `wglGetCurrentContext`/`DC`).
+  `glClearDepth` slot original 0x60231238 (name at 0x6021a838), called from
+  0x600fdba7 with 1.0; `glDrawElements` slot 0x60231510, call site 0x6010c0bf.
+- Windows: game window HWND 0x10006 (EXE proc 0x4047f0); Engine rendering child
+  0x10008 (proc runtime 0x5d20b0) takes focus. An old bug let 0x10008 inherit a
+  previous dialog's `WND_DLG_RECORDS` entry and eat Escape (`wnd_slot_reset` now
+  clears it).
+- `inp_iKeyboardReadingMethod` is original 0x60222ca8 (default 2 = hook array);
+  `GetInput` 0x600cc290 polls GetAsyncKeyState when it is 0.
+
 ## 2026-10-14 user crash: cooperative lazy fault reads
 
 Telegram76 reports Safari26.4, isolated/SAB available, module SHA256

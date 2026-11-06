@@ -101,3 +101,24 @@ free (above the 2 GiB floor). The dependency symlink was removed and the
 worktree was clean before recording this receipt. No original game, browser,
 main merge or deployment ran. This validates the readable-image stage only;
 guest LoadLibrary16/GetProcAddress16/FreeLibrary16 and QT remain separate work.
+
+## Root causes found during the October 15 attempts
+
+(Recovered from branch commit fb37ac0c5, Oct 2026.)
+
+- **Name-pointer hint offset.** `win32_dispatch` reads a thunk's name at
+  `image_base + record + 2` then `g2w`s it. The first builder copied the
+  dynamic GetProcAddress backing-offset idiom without the two-byte hint, so
+  `_hread` decoded as `read`, and sparse backing would have been translated
+  twice. Fixed by writing a zero hint before each name and storing a guest RVA;
+  `test-kernel32-image.js --sparse` is the negative control. The generic
+  GetProcAddress backing-offset path was not audited.
+- **Worker fixture exiting early.** A Node Worker awaiting only an
+  `Atomics.waitAsync` callback has no live event-loop handle and exits 0
+  mid-operation; the fixture keeps an interval alive until done.
+- **Cooperative FreeLibraryAndExitThread exit code (may be stale; all four
+  lifecycle cases passed on Oct 18).** The CLI serviced yield 5 via async
+  `handleLoadLibraryYield` outside `runSlice`; `finishDllUnload` →
+  `exit_thread_after_dll_unload(73)` → `ThreadManager.exitThread` records the
+  code only for `_runningThreadHandle`, which is 0 outside the scheduler, so the
+  thread exited 0. The same failure reproduced on the historical module.

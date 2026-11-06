@@ -58,6 +58,19 @@ keeps pumping while MsgWait says yes, so `DX5_PumpEvents` never returned. Fixed 
 intro and credits play, the hotel room is up by batch 8,000, hovering the chest shows
 "look at chest", and mousedown, gap, mouseup walks Joe to it.
 
+## Browser audio stall on the Worker backend (2026-10-03)
+
+(Recovered from branch archive cbfe9895, Oct 2026.) In the browser Worker
+backend, submitted PCM stalled at 44,096 bytes (~0.5 s at 22050 Hz stereo16):
+SDL.dll's waveOut CALLBACK_FUNCTION at original VA `0x10012140` releases the
+audio semaphore on WOM_DONE, and Worker execution then had no completion-queue
+delivery (the cooperative loop pumped it), so both completions sat queued and
+the audio thread starved. The required shape is delivery on the owning Worker,
+never `fire_wave_out_callback` on the page shadow instance. (Likely fixed since:
+`lib/guest-worker.js` now calls `fire_wave_out_callback_bound`.) Also observed:
+the registered command line has no `-f`, and Alt+Enter did not toggle
+fullscreen in that check (undiagnosed).
+
 ## GOG SDL2 build
 
 The GOG ScummVM (SDL2, the one that actually imports GetMessageExtraInfo) dies earlier on

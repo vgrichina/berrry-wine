@@ -389,6 +389,15 @@ PE_STAGING, address selection, reentrant initialization and module-graph
 lifetime still require synchronization before FreeLibraryAndExitThread can
 be implemented correctly. CMR3 gameplay remains unqualified.
 
+**Follow-up (11 October; recovered from branch commit d7c0b587, Oct 2026).**
+The JS loader then picked `get_dll_count() - 1` after `load_dll` and re-read
+the count when writing the module path, so another instance publishing in
+between made a successful load return the *other* module's address and
+overwrite its path. `load_dll` now records its own row in instance-local
+`$last_loaded_dll_index` (export `get_last_loaded_dll_index`, -1 on entry) and
+JS uses that one row for both. This fixes bookkeeping only, not staging,
+address allocation, the WinHelp WAT load route or unload/DllMain lifetime.
+
 ## Original CMR3 native quartz A/B (14 October, 00:22 UTC)
 
 Run `scratch/runs/20261014T0022Z-cmr3-original-validation` compares held DLL

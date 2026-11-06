@@ -341,3 +341,43 @@ VFS path resolution had removed the trailing separator. This finding is
 followed by the separator and slash-classification work in
 [army-men-fullpath-separator-20261019.md](army-men-fullpath-separator-20261019.md);
 the earlier campaign parser and fixed-allocation hypotheses are not established.
+
+## Directory validator and CRT/MFC binding map (2026-10-19)
+
+(Recovered from branch `task/army-cmos-rtc-oct19` history, Oct 2026.)
+
+- **Outer validator `0x43c710` deliberately empties a failed path.** It calls
+  producer `0x43c760` at `0x43c723`, retries with the other base at
+  `0x43c73a`, and if both fail pushes char 0 / index 0 with ECX=`record+0x14`
+  and calls CString::SetAt thunk `0x46fb0e` at `0x43c754`. The caller
+  `0x43c320` still links the record and returns `[record+0x14]` (`0x43c3e8`);
+  cache lookup `0x43c404` / user `0x43c600` test only the pointer, not its
+  first byte, before native `_chdir` at `0x43c618`. So a leading-NUL cached
+  directory is the game's own failure marker, not heap corruption or a
+  destructor race; the earlier AVI C-to-NUL watch transition was a red herring.
+- **Directory check = MFC CFileFind lookahead.** IAT `0x66d948` is MFC42
+  ord 2770 (RVA `0x26d52`, CFileFind::FindFile: FindFirstFileA then native
+  `_fullpath`; INVALID_HANDLE_VALUE or NULL fails); `0x66d944` is ord 2781
+  (RVA `0x26f7b`, FindNextFile: swaps lookahead buffers, returns
+  FindNextFileA). The game requires *both* to be nonzero, with pattern suffix
+  `*.*` at `0x48927c` appended to the stack copy of the `_fullpath` result —
+  which is why a missing trailing separator (`campaigns*.*`) fails it. Every
+  real directory yields `.` then `..`, so the two-result check passes once the
+  separator is present.
+- **Inner producer `0x43c760`** does not zero byte 0: MFC42 ord 5856 (game IAT
+  `0x66d93c`, RVA `0x60517`) is CString::SetAt (copy-on-write, then one byte at
+  buffer+index); the slash loop `0x43c8c0` only writes `/` at backslash indices.
+- **Native CRT is authentic, not builtin.** MSVCRT loads at `0xdd3000`; EXE
+  imports bind to its real exports (fopen `0xdfa013`, fgets `0xdfb80e`, fclose
+  `0xddb106`, `_chdir` `0xddc5b6` = original `0x780095b6`, return site
+  `0xddc5c7`) because `patch_caller_iat` only redirects names listed in
+  `native_override_export_api_id` / `crt_override_api_id`. `--trace-api=fopen,...`
+  therefore sees nothing on this route; trace the lower CreateFileA / ReadFile
+  / SetCurrentDirectoryA / FindFirstFileA imports instead. `_fullpath` (RVA
+  `0x1dabe`) calls GetFullPathNameA at original `0x7801db12`; `_getcwd`
+  (RVA `0x6f05`) calls GetCurrentDirectoryA at `0x78006f56`.
+- **Tracing caveat:** `--trace-api-mem` used to defeat `--trace-api-paused`'s
+  quiet-log optimisation, so startup records appeared despite pausing; the
+  runner predicate was later changed to
+  `(!TRACE_API_MEM.length || (TRACE_API && TRACE_API_PAUSED))` (see the
+  fullpath-separator note).

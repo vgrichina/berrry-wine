@@ -261,3 +261,18 @@ yield/steps reset. Restoring that reset changed the gate verdict without
 changing the picture, so it was a masking change, not a renderer repair.
 Disabling colorkey8, reverting the GDI object/DC count expansion, and
 reverting peek paint/timer filtering did not fix this test sensitivity.
+
+Also ruled out for the black park view, before the camera was found
+(recovered from branch archive cbfe9895, Oct 2026):
+- not paused — `byte [0x8e31a9] == 0` in-run;
+- not stalled — `--count=0x00436234` 5,097 over the gate's step budget;
+- not progressive paint — later captures differ by <1,100 px, the black never fills;
+- not a truncated `.SC4` load — `--trace-fs` shows `sc0.sc4` read in 0x400
+  chunks to EOF (283,109 bytes, short final read 0x1e5 at 0x45000);
+- not the renderer — the title screen is complete (`--dx-surfaces` slot 29
+  640x480, 128 colours, all nonzero).
+- Arrow keys cannot scroll the view headlessly: RCT reads DirectInput 5, so
+  `--input=keydown` never reaches it. Use the Map window or zoom instead.
+- The empty-PeekMessage yield made RCT retire *less* work: over 1500 batches,
+  980 frames / 784 updates without it vs 777 / 0 with it, so "the clock is
+  starved" is contradicted.

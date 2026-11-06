@@ -240,3 +240,28 @@ defect. It does not identify the later faulting iteration. Existing
 `unmapped_trace` is reached after unsuccessful/skipped mode5 handling and
 cannot recover the first pre-dispatch fault state. See the separate
 [fault observer investigation](dungeon-siege-fault-observer.md).
+
+### Further static addresses (Recovered from branch `task/dungeon-thread-snapshot-oct19`, Oct 2026)
+
+- The game itself sets last error 23 on CRC mismatch (`SetLastError` at
+  `0x00628d70`, propagated at `0x00628e71`); it is guest validation, not a
+  failed host ReadFile. CRC table is at `0x006f6468`.
+- `C:\demo.ds` Tank header: directory region offset `0x0b9c4f60`
+  (194,793,312), length `0x1c040c` (1,836,044), ending exactly at file length
+  196,629,356; expected CRC at header `+0x50`. `tools/dungeon-siege-resource-audit.js`
+  recomputes `0x6fdb45eb` over that region from the original table.
+- Directory load path: `0x00628d07` passes handle, base `[esi+0x94]` and length
+  `[esi+0x9c]` to `0x0062949f`, which builds a file-slice object (vtable
+  `0x006f6d58`, via `0x0042bbee`) and a virtual buffer via `0x006292fb`
+  (VirtualAlloc/VirtualProtect, not MapViewOfFile). Inner buffer flags bit 1
+  selects eager fill `0x00629654`; slice vtable `+0xc` (`0x0041cc51`) seeks
+  relative to the slice base, `+4` (`0x0042bc65`) reads.
+- Resolver `0x004178ad` (block `0x004178eb`) walks 12-byte records calling
+  GetProcAddress (IAT `0x006f50a0`); LoadLibraryExA is IAT `0x006f52f0`.
+- Ruled out: a blanket inability to run an MSVC `_except_handler3` scope filter
+  that commits a reserved page and fills it with real ReadFile bytes under
+  mode5 (native fixture passed, tail and compat). The capability-enabled
+  startup stall is still unexplained. `$seh_fault_sync` runs each FS handler for
+  up to 64 rounds of 1,000,000 blocks over at most 64 chain nodes, does not roll
+  back guest memory on give-up, and is skipped (sentinel) at API depth > 0 or
+  while already raising.

@@ -33,6 +33,30 @@ covers child/popup/top-level relationships, allocated nonwindows and stale
 mappings, and register preservation; it is prepared but not yet executed.
 No full build or original-demo replay was performed for this candidate.
 
+### CWnd::FromHandle adapter and the next trap (source-only + replay e26a)
+
+(Recovered from branch commit 172e0c54, Oct 2026.) In `_setup.exe`,
+segment4:8f36 passes the HWND and descriptor DS:4f1e to 4:a776, which has
+three paths: a permanent-map hit returns the object's far pointer unchanged
+(4:a794/4:a79d); a temporary-map hit (4:a7b1) writes the handle SI at object
++ descriptor word+0x30 (4:a7ba–4:a7c3); a miss constructs an object (4:a7e2),
+stores it in the temporary map (4:a802/4:a805) and writes SI through the same
+offset (4:a817–4:a826). Descriptor+0x32 can request a second handle word. The
+descriptor is zero on disk, so the live member offset (expected 0x14) must be
+observed, not assumed. Map lookup helper 5:3468 copies the far pointer from
+node +8/+10. GetWindow(GW_CHILD) at 5:cbf1 and GetNextWindow(GW_HWNDNEXT) at
+5:cbc5 (USER.230, called from 3:e729) both feed this adapter; between them
+the caller builds a font and queries dialog base units. With an intact handle
+table our narrowing emits only 0, 0xffff or 0x101–0x1100, so 0x1446 cannot be
+an ordinary return: it points to corrupted map/descriptor/object state, a
+stale object pointer, a later overwrite, or damaged handle metadata.
+
+With GetParent rejecting 0x1446, the replay now traps in GetNextWindow
+(EIP 1acbb9, same ES:BX 007f:889c, stack: return 005f:cbca, GW_HWNDNEXT,
+HWND 1446). The adapter routes USER.230 and 262 through one GetWindow
+implementation. Useful next reads: saved pointer SS:85dc/85de, object
+SS:889c+0x14, the 54-byte descriptor at DS:4f1e.
+
 ### Native validation completed (2026-10-15 16:25 UTC)
 
 The preceding source-only status is superseded for build/conformance only.
