@@ -1834,7 +1834,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   Update 2026-11-06: Reclaimed released follow-up from codex:01a19022. Current source and docs/re-notes/disciples2-demo.md supersede the October9 menu hypothesis: 22d835d4f is an ancestor of main and the October11 notes report first-click hover sequencing fixed. Registry already contains logicalFrame647da0/verifier647df2; the historical27.4FPS sample explicitly lacked verifier confirmation. October19 native-module identity repair qualified startup only. Next: current-build registered gameplay with ordinary first-click progression and movement, verify logical marker and presentation verifier together, and assess audio only with actual listening evidence. Do not repeat the old menu repair or promote historical measurements to current acceptance. No new run/test/build performed in this reconciliation; follow-up awaits a free worker slot.
   status: active
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
-  worker: none; reclaimed by coordinator 2026-11-06, current gameplay/verifier/audio follow-up queued
+  worker: disciples2-current-gameplay-0955; fresh session 2026-11-06, source preparation now, runtime after LegacyMip0900 -> KKnD0905 -> GLFog0925 FINAL releases and cleanup
   prev-owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66 (released)
   candidate: test/binaries/win98-games-a-d/Discipless2_demo-D3D.exe
   Historical October9: Registered native and browser gameplay verified: ordinary leader move20/20->16/20 and camera follow, reviewed run20261009T0728Z-disciples2-browser-gameplay, photo967. Registration fd5aa4a35 on main. Browser50788/50800 clean stop07:28:27Z. The then-open menu repeat-click issue was superseded by22d835d4f/October11 notes above.30.10599s presentation sample2432 events/1649 uploads is80.7813/54.7732 per second, not logical FPS. Current gameplay, verified logical frames and audio remain separate requirements. No public promotion.
@@ -2230,6 +2230,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 
 - [ ] Authorized original installer acceptance
   id: NEW-GAME-CONAN-DEMO-20261010
+  Update 2026-11-06T09:50Z: Published91323aed5, run20261106-conan-first-draw-lifetime. Both-module bounded lifetime/passivity controls and locked build PASS; coordinator verified2188 artifact hashes and438 absent owned PIDs. Sole original stopped before any input because command2 lacked required reviewRef; publisher splashes only, no first-draw causal chain or gameplay. Strict guard preserved, no emulator repair. Any future original needs validated review metadata before launch. Fresh freed slot assigned DisciplesII current gameplay; Conan remains open.
   blocker: Earlier writers on other owners match native x87, but transport loss and exhausted observation quotas hide the first-zero owner's earlier lifetime. Strict singular normal-transform failure persists; no player gameplay. Texture residency72768dcf8 remains repaired.
   status: queued (genuine installed state and rendered opening cinematic verified; player gameplay outstanding, historical identity unknown)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
