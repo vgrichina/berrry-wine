@@ -76,7 +76,8 @@
 
 - [ ] Owner-requested corpus addition: KKnD (1997), original DOS and Windows Xtreme demos
   id: NEW-GAME-KKND-DEMO-20261106
-  status: queued (original media acquired and verified; registration/gameplay pending)
+  status: active (media verified; fresh worker preparing original Windows demo)
+  worker: kknd-original-demo-0235 (launcher3787699); source-only behind Reset0130 then CapsFixture0135 then Aranna0205 final releases/cleanup
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Request: Telegram163 links exQUIZitely status2118524267604140164, identifying Beam Software's original KKnD: Krush, Kill 'n' Destroy (1997), not KKnD2.
   Media: https://archive.org/details/kknd-demo original DOS demo ZIP5684907B SHA2567ff2ef0abe45322027750cee26caf871d970474d92d98272598ab15426cc0be4; https://archive.org/details/KKNDXT Windows Xtreme demo installer7737611B SHA256b0974e129ab1c02d4fdf7cd202494f39f426a1e08cbd37759db125a9a114248d. Both downloaded once; byte sizes and Archive.org SHA1 verified. Existing paths and recovery URLs in docs/re-notes/kknd-corpus-intake-20261106.md.
@@ -2205,7 +2206,8 @@ Current scoped ownership after reconciling the stopped fleet. The shared operati
   blocker: First failing draw66517 WORLD is singular before SetTransform call0x41cd03; caller bits reach executor unchanged. Upstream matrix producer/emulator divergence unresolved; no player gameplay. Texture residency72768dcf8 remains repaired.
   status: queued (genuine installed state and rendered opening cinematic verified; player gameplay outstanding, historical identity unknown)
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  worker: conan-palette-producer-0125; fresh successor queued after legacyPoint0025 then ArannaPressure0100 final releases/cleanup.
+  worker: none; Conan0125 finished, next original producer investigation queued
+  Update 2026-11-06T02:35Z: Published0f474b7ad, run20261106-conan-palette-producer. Corrected same-source both-module controls pass20producer/16pager plus24native x87 controls and locked build. Sole original run was disqualified by mismatched baseline/diagnostic sources and closed before producer observations or gameplay input; no causal defect/gameplay established and no retry. Coordinator verified448artifact hashes and absent321ownedPIDs/18ports/18profiles. Next capture original lazy-updater inputs and first mismatch with validated passive observer; do not repeat REP-copy diagnosis. Slot reassigned to owner-requested KKnD corpus addition.
   Update 2026-11-06T01:21Z: Published38d338418. ONE original reached Kordava opening cinematic then black viewport/subtitle, no player gameplay. First changed WORLD component is a correct64-byte REP copy; both preceding product firstcomponents agree with native x87 using captured inputs. Already-degenerate palette entry032e7a34/index72 produced inside or before431e30 remains unobserved. Decoder kind31 was filtered by production RPC; successor must validate supported passive decoder transport before tracing upstream. Controls12CPU/COM+16pager/SEH+9native PASS; coordinator verified221artifact hashes and29absentPIDs/6refusedports/3absentprofiles. No emulator defect or repair proved.
   candidate: test/binaries/win98-games-a-d/Conan cauldron-DX9-D3D/ConanPC-Demo.exe
   Media recovered 2026-11-05: scratch/game-media/conan-demo-20261105/ConanPC-Demo-from-Herni-Vyber-23.exe, 126741363B, SHA256 73038ac99299abc8d5e0cef28d83324e6b493fecdbd21fd65964919376fa3007, from archived Herni Vyber23 magazine disc. Historical installer size/hash unknown, so equivalence is unproved. Initial recovery did not execute it; subsequent1840 observed acceptance and installer success. Receipt scratch/runs/20261105-conan-original-media-recovery/recovery-receipt.json.
