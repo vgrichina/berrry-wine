@@ -6748,46 +6748,44 @@
     (call $d3dim_bilerp (local.get $c00) (local.get $c10) (local.get $c01) (local.get $c11)
       (local.get $fx) (local.get $fy)))
 
-  ;; Bilinear filter of four packed 0xAARRGGBB texels, fixed point: 8-bit
-  ;; weights, and both rows in one i16x8 (lanes 0-3 c00->c10, lanes 4-7
-  ;; c01->c11). Each lerp is (a*(256-w) + b*w) >> 8, which fits u16 (at most
-  ;; 255*256). Truncating like the float lerp it replaced, a channel can still
-  ;; land one level away from it; on MCM's 565 target that moved 0.77% of
-  ;; the race frame by one 5/6-bit step, deterministically, for -2.4% of the
-  ;; whole race window (box, 2026-09-19).
+  ;; Bilinear weighted average of four packed 0xAARRGGBB texels. Keep both
+  ;; rows fractional until the complete tensor product is evaluated, then
+  ;; truncate once to UNORM8. Quantizing weights and packing each horizontal row
+  ;; accumulated a downward error through vertical and subsequent mip blends
+  ;; (the steep public sample's blue became 95 instead of about 97.216).
   ;;
   ;; A magnified texture repeats texels, and a lerp between equal values
   ;; returns that value exactly, so four equal texels short-circuit.
   (func $d3dim_bilerp
     (param $c00 i32) (param $c10 i32) (param $c01 i32) (param $c11 i32)
     (param $fx f32) (param $fy f32) (result i32)
-    (local $wx i32) (local $wy i32) (local $h v128)
+    (local $a v128) (local $b v128) (local $c v128) (local $d v128)
+    (local $top v128) (local $bottom v128)
     (if (i32.and (i32.eq (local.get $c00) (local.get $c10))
           (i32.and (i32.eq (local.get $c00) (local.get $c01))
                    (i32.eq (local.get $c00) (local.get $c11))))
       (then (return (local.get $c00))))
-    (local.set $wx (i32.trunc_sat_f32_u (f32.mul (local.get $fx) (f32.const 256.0))))
-    (local.set $wy (i32.trunc_sat_f32_u (f32.mul (local.get $fy) (f32.const 256.0))))
-    (local.set $h (i16x8.shr_u
-      (i16x8.add
-        (i16x8.mul
-          (i16x8.extend_low_i8x16_u
-            (i32x4.replace_lane 1 (i32x4.splat (local.get $c00)) (local.get $c01)))
-          (i16x8.splat (i32.sub (i32.const 256) (local.get $wx))))
-        (i16x8.mul
-          (i16x8.extend_low_i8x16_u
-            (i32x4.replace_lane 1 (i32x4.splat (local.get $c10)) (local.get $c11)))
-          (i16x8.splat (local.get $wx))))
-      (i32.const 8)))
+    ;; Packed BGRA bytes become one f32 lane per component.
+    (local.set $a (f32x4.convert_i32x4_u (i32x4.extend_low_i16x8_u
+      (i16x8.extend_low_i8x16_u (i32x4.splat (local.get $c00))))))
+    (local.set $b (f32x4.convert_i32x4_u (i32x4.extend_low_i16x8_u
+      (i16x8.extend_low_i8x16_u (i32x4.splat (local.get $c10))))))
+    (local.set $c (f32x4.convert_i32x4_u (i32x4.extend_low_i16x8_u
+      (i16x8.extend_low_i8x16_u (i32x4.splat (local.get $c01))))))
+    (local.set $d (f32x4.convert_i32x4_u (i32x4.extend_low_i16x8_u
+      (i16x8.extend_low_i8x16_u (i32x4.splat (local.get $c11))))))
+    (local.set $top (f32x4.add (local.get $a)
+      (f32x4.mul (f32x4.sub (local.get $b) (local.get $a)) (f32x4.splat (local.get $fx)))))
+    (local.set $bottom (f32x4.add (local.get $c)
+      (f32x4.mul (f32x4.sub (local.get $d) (local.get $c)) (f32x4.splat (local.get $fx)))))
     (i32x4.extract_lane 0
       (i8x16.narrow_i16x8_u
-        (i16x8.shr_u
-          (i16x8.add
-            (i16x8.mul (local.get $h) (i16x8.splat (i32.sub (i32.const 256) (local.get $wy))))
-            (i16x8.mul
-              (i8x16.shuffle 8 9 10 11 12 13 14 15 8 9 10 11 12 13 14 15 (local.get $h) (local.get $h))
-              (i16x8.splat (local.get $wy))))
-          (i32.const 8))
+        (i16x8.narrow_i32x4_u
+          (i32x4.trunc_sat_f32x4_u
+            (f32x4.add (local.get $top)
+              (f32x4.mul (f32x4.sub (local.get $bottom) (local.get $top))
+                (f32x4.splat (local.get $fy)))))
+          (i32x4.splat (i32.const 0)))
         (i16x8.splat (i32.const 0)))))
 
   ;; Fixed-function stage 0 defaults to MODULATE: texture RGB is multiplied by

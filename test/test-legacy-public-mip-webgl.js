@@ -101,6 +101,13 @@ function spatialPlan(){
     {label:'spatial fractional trilinear point taps',n:2*Math.sqrt(8),min:1,mag:2,mip:3},
     {label:'spatial perspective trilinear',n:4,min:2,mag:1,mip:3,q:[1,.5,.75],
       samples:[2,5,8].map(x=>({x,y:2}))},
+    // Opposite gradients reject a constant UV adjustment masquerading as a
+    // sample-location repair. Keep the same integer centre and authored grid.
+    {label:'spatial reversed MIN LINEAR',n:-4,min:2,mag:1,offset:[.815,.867]},
+    // A small, changing reciprocal W makes reuse of the displaced denominator
+    // distinguishable from reconstructing both affine planes before division.
+    {label:'spatial steep perspective trilinear',n:4,min:2,mag:1,mip:3,
+      q:[1,.001,.01],samples:[{x:30,y:1}]},
   ].map(s=>({spatial:true,mip:2,offset:[.137,.193],samples:[{x:2,y:3}],...s}));
   const tolerance=2;
   for(const [a,b] of [[0,1],[3,4],[6,7],[7,8]]){
@@ -112,7 +119,9 @@ function spatialPlan(){
   assert.deepEqual(oracle(colors,states[3],states[3].samples[0]),[159,37,143]);
   for(const [index,expected] of [[1,[45.504,99.44,85.580032]],
     [4,[113.752,42.28,103.404992]],
-    [7,[120.84812152132,111.900779386421,103.339059274967]]]){
+    [7,[120.84812152132,111.900779386421,103.339059274967]],
+    [10,[49.24,104.68,100.89824]],
+    [11,[103.22077804435263,113.92472681378077,97.21580498154373]]]){
     const actual=oracle(colors,states[index],states[index].samples[0]);
     for(const [i,c] of expected.entries())assert(Math.abs(actual[i]-c)<1e-8,'analytic reference '+index);
   }
@@ -279,9 +288,63 @@ function fixtureSource() {
   return source;
 }
 
+// Additional batch regression; the original fixture/oracle/geometry above
+// remain the default qualification. A second triangle starts at x=16 with
+// a different UV plane, so left and right samples reject stale plane uniforms.
+function batchedFixtureSource(){
+  let source=fixtureSource();
+  const replace=(a,b)=>{assert.equal(source.split(a).length,2,'unique batch seam');source=source.replace(a,b);};
+  replace('const vertices=await alloc(96)','const vertices=await alloc(192)');
+  const start=source.indexOf('    const geometry=async state=>{'),end=source.indexOf('    let previousMip=1;',start);
+  assert(start>=0&&end>start);
+  source=source.slice(0,start)+`    const geometry=async state=>{
+      for(let triangle=0;triangle<2;triangle++)for(const [i,[x,y]] of [[0,0],[32,0],[0,32]].entries()){
+        const s=triangle?{n:-4,q:[1,1,1],offset:[.815,.867]}:state;
+        await words(vertices+(triangle*3+i)*32,[bits(x+triangle*16),bits(y),bits(.5),bits((s.q||[1,1,1])[i]),
+          0xffffffff,0,bits((s.offset||[0,0])[0]+(i===1?s.n:0)),bits((s.offset||[0,0])[1]+(i===2?s.n:0))]);
+      }
+    };
+`+source.slice(end);
+  replace("await ok(com('DrawPrimitive7',device,25,4,0x1c4,vertices,3,0));", "await ok(com('DrawPrimitive7',device,25,4,0x1c4,vertices,6,0));");
+  return source;
+}
+
+function batchTopologyControls(){
+  const {Device}=require('../lib/d3d9-backend'),Fixed=require('../lib/d3d9-fixed');
+  const identity=()=>Float32Array.from([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);
+  const vertices=new Uint8Array(6*32),data=new DataView(vertices.buffer);
+  for(let i=0;i<6;i++){
+    [i*3,i%2?8:0,.5,1].forEach((v,c)=>data.setFloat32(i*32+c*4,v,true));
+    data.setUint32(i*32+16,0xffffffff,true);data.setFloat32(i*32+24,i/8,true);data.setFloat32(i*32+28,i/9,true);
+  }
+  let cases=0;
+  for(const [primitive,corners] of [[4,[[0,1,2],[3,4,5]]],[5,[[0,1,2],[2,1,3]]],[6,[[0,1,2],[0,2,3]]]])for(const indexed of [false,true]){
+    const children=[],device=Object.create(Device.prototype);
+    Object.assign(device,{gpu:{version:2,canvas:{width:32,height:32},renderHeight:32,gl:{},createProgram(){return {}; }},
+      programs:new Map(),fixedPlans:new Fixed.TLCache(),bindDepth(){}});
+    const indices=indexed?new Uint16Array([5,4,3,2,1,0]):undefined;
+    const draw={primitive,primitiveCount:2,stride:32,vertices,indices,textures:[{width:16,height:16,clampMipChain:true,sampler:{min:2,mag:1,mip:2}}],
+      attributes:[{register:0,usage:9,usageIndex:0,type:3,offset:0},{register:5,usage:10,usageIndex:0,type:4,offset:16},{register:7,usage:5,usageIndex:0,type:1,offset:24}],
+      fixedFunction:{lighting:false,specular:false,fog:false,world:identity(),view:identity(),projection:identity(),textureFactor:0xffffffff,
+        stages:[{colorOp:2,colorArg1:2,alphaOp:2,alphaArg1:2,transformFlags:0,texCoordIndex:0},{colorOp:1}]}};
+    device.draw=d=>{if(d.primitiveCount===1)children.push(d);else Device.prototype.draw.call(device,d);};
+    device.draw(draw);assert.equal(children.length,2);
+    for(const [i,child] of children.entries()){
+      assert.equal(child.primitive,4);assert.equal(child.indices,undefined);assert.equal(child.textures,draw.textures);
+      const expected=Buffer.concat(corners[i].map(c=>Buffer.from(vertices.subarray((indices?indices[c]:c)*32,(indices?indices[c]:c)*32+32))));
+      assert.deepEqual(Buffer.from(child.vertices),expected,'immutable triangle records and winding '+primitive+'/'+indexed+'/'+i);
+    }
+    children.length=0;
+    assert.throws(()=>device.draw({...draw,vertices:vertices.subarray(0,32)}),/vertex input outside buffer/);
+    assert.equal(children.length,0,'entire batch validated before first draw');cases++;
+  }
+  return cases;
+}
+
 function controls(){
-  versionControls();plan();const p=spatialPlan(),source=fixtureSource();
+  versionControls();plan();batchTopologyControls();const p=spatialPlan(),source=fixtureSource();
   new vm.Script('('+source+')');
+  new vm.Script('('+batchedFixtureSource()+')');
   assert(!/mip_seed|mip_surface|mip_draw|fixedLOD/.test(source));
   for(const label of ['DirectDrawCreateEx','QI IDirect3D7','CreateSurface','CreateDevice7',
     'GetAttachedSurface7 mip','SetTextureStageState7','DrawPrimitive7','Lock Surface7'])assert(source.includes(label));
@@ -302,7 +365,9 @@ function controls(){
 function config(planName='spatial'){
   assert(['solid','spatial'].includes(planName));
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
-  return {...(planName==='solid'?plan():spatialPlan()),captureHeldPackets:true,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+  const selected=planName==='solid'?plan():spatialPlan();
+  if(process.argv.includes('--batched'))selected.states=selected.states.map(s=>({...s,samples:[{x:2,y:3},{x:18,y:3,second:true}]}));
+  return {...selected,captureHeldPackets:true,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52)};
 }
@@ -399,6 +464,10 @@ async function bootstrap(modulePath){
 
 async function runtime(){
   controls();await serverControls();
+  const batched=process.argv.includes('--batched');
+  const selectedFixture=batched?batchedFixtureSource():fixtureSource();
+  const oracleSource=batched?`(function(colors,state,sample){const base=${oracle.toString()};
+    return sample.second?base(colors,{...state,n:-4,q:[1,1,1],offset:[.815,.867]},{x:sample.x-16,y:sample.y}):base(colors,state,sample);})`:oracle.toString();
   const dir=process.env.LEGACY_PUBLIC_MIP_EVIDENCE,moduleDir=process.env.LEGACY_PUBLIC_MIP_MODULE_DIR;
   const source=process.env.LEGACY_PUBLIC_MIP_SOURCE;
   assert(dir&&moduleDir);assert.match(source||'',/^[0-9a-f]{40}$/);
@@ -406,9 +475,10 @@ async function runtime(){
   assert.equal(pins.source,source,'module manifest source must match tested Git source');
   assert.deepEqual(pins.modules.map(m=>m.name).sort(),['wine-assembly.compat.wasm','wine-assembly.wasm']);
   fs.mkdirSync(dir,{recursive:true});
-  const evidence={status:'RUNNING',source,node:process.version,plans:{solid:plan(),spatial:spatialPlan()},modules:[],results:[],negativeControls:[],requests:[],
+  const evidence={status:'RUNNING',source,batched,node:process.version,plans:{solid:plan(),spatial:spatialPlan()},modules:[],results:[],negativeControls:[],requests:[],
     fixtureSha256:sha(fs.readFileSync(__filename)),adaptedFixtureSha256:sha(fixtureSource()),
     publicFixtureSha256:sha(fs.readFileSync(path.join(__dirname,'test-legacy-texture-rendered-contract.js'))),
+    selectedFixtureSha256:sha(selectedFixture),selectedOracleSha256:sha(oracleSource),
     calcSha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))),
     unexecuted:['partial/malformed chains',
       'other per-level formats/padded pitch','legacy combined filters','other dimensions/formats',
@@ -443,13 +513,13 @@ async function runtime(){
       args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader'],protocolTimeout:120000});
     evidence.browser=await browser.version();evidence.browserPid=browser.process().pid;
     const cdp=await browser.target().createCDPSession();evidence.systemInfo=await cdp.send('SystemInfo.getInfo');await cdp.detach();
-    const fixture=Function('return ('+fixtureSource()+')')();
+    const fixture=Function('return ('+selectedFixture+')')();
     const open=async()=>{page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');};
     const runNegative=async(module,mode,webglVersion,negative,planName='spatial')=>{
       const cfg={...config(planName),webglVersion},injectionStart=evidence.injections.length;
       activeNegative=negative;
       await open();let failure;
-      try{await page.evaluate(fixture,mode,cfg,oracle.toString(),negative);}catch(error){failure=String(error);}
+      try{await page.evaluate(fixture,mode,cfg,oracleSource,negative);}catch(error){failure=String(error);}
       const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
       const injections=evidence.injections.slice(injectionStart);
       evidence.negativeControls.push({module:module.name,mode,webglVersion,planName,negative,failure,partial,injections});save();
@@ -482,7 +552,7 @@ async function runtime(){
       for(const mode of ['software','webgl','worker'])
       for(const webglVersion of mode==='software'?[null]:[1,2]){
         const cfg={...config(planName),webglVersion};
-        activeNegative=null;await open();const result=await page.evaluate(fixture,mode,cfg,oracle.toString());
+        activeNegative=null;await open();const result=await page.evaluate(fixture,mode,cfg,oracleSource);
         assert.equal(result.status,'PASS');
         const expected=cfg.states.reduce((n,s)=>n+s.samples.length,0)+(mode==='worker'?6:0)+(cfg.update?2:0);
         assert.equal(result.observations.length,expected);
