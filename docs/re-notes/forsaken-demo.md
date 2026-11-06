@@ -561,3 +561,98 @@ browser exit-0 receipt and verified cleanup; controller exit 0 is not claimed.
 No watcher, Boat/test box, public deployment or successor was started
 (ID/state/expiry N/A). Next gameplay work can continue toward the hidden-door
 objective; its enemy/door conditions are still unproved.
+
+### 2026-11-06: current-main registered software Volcano gameplay
+
+Run `scratch/runs/20261106-forsaken-current-software-gameplay/` advances
+`GLD3D-CORPUS-27-20261006`, candidate **forsaken-demo**, through the registered
+**forsaken_demo** launcher. Fresh `flock /tmp/wine-build.lock bash tools/build.sh`
+passed against commit `75c4ccb331a7c377496f088958853ed45af90cc2`. The actual
+instantiated standard module is **2,180,791 bytes**, SHA256
+`2fa9f377dde5e477eb811baceb64032889fbe9b27a664b213477e84627e5eb94`.
+Launch-time `source-identity.json` records commit
+`dc09732f272a592749518446751ddae8a495d2b7`; only `TODOS.md` changed since the
+build commit. The relevant binary diff and the new-file patch for the
+already-present untracked `lib/wininit-boot.js` preserve the tested closure.
+Git is the source archive; no source tree or repeated game media was copied.
+All **1,470** pinned inputs, including **873** original Forsaken executable,
+manifest and media files, match after play. The original EXE SHA256 is
+`366ec5d0943daca839836296f9fb52724e94dc155630c6b0c30d7181106b5e24`.
+
+This is fresh **software gameplay**, beyond the briefing and independent of the
+accepted historical WebGL run. Chrome **151.0.7922.108**, 1024×768, default guest
+Workers and Threads were used with explicit `d3d-renderer=software`. Every live
+CPU Worker's actual module bytecode was hashed through CDP. Main CPU **slot 0,
+endpoint 1**, target `C93D27F48E28390FB08B973B8C9C8F8E`, has GPU disabled.
+Passive sampling of that owning Worker resolves
+`viewport_draw_textured_span`, `rasterize_triangle_textured` and D3DIM Execute
+functions. Resolution uses a separate compiler-generated name-section artifact
+whose executable sections equal the canonical loaded module; it does not guess
+function names from source order. `software-owner-proof.json` records this
+inline software renderer evidence. No separate D3D render-worker endpoint was
+present. CPU samples are not completed-draw counts or FPS measurements.
+
+Personally inspected trusted native controls establish Single Player → Start →
+Level Volcano → loading/briefing → readable world. The original readme's A,
+Z, arrows, Ctrl, Space, Alt+arrow and Escape controls were used through ordinary
+browser keyboard events. No guest state, asset, clock, cheat or input-queue
+edits were made.
+
+- `briefing-ready.png` shows the full teal starting room, central doorway,
+  crosshair and readable HUD: LIVES **5**, SHLD/HULL **128**, PULS **2000**,
+  MUG **5**. `forward-door.png` shows purposeful translation after A **600 ms**:
+  the doorway grows from a central opening to nearly the full view width.
+- `primary-response.png` shows a green bolt and corridor lighting after Ctrl
+  **800 ms**, with PULS **1992** and unchanged SHLD/HULL **128**.
+  `through-door-fire.png` shows entry into the textured metal corridor after
+  A+Ctrl **1500 ms**, PULS **1978**. This proves movement and firing response.
+- `corridor-combat.png` shows bright white/yellow/green projectile and blast
+  effects, PULS **1974**, MUG **1**, and **3 LIVES LEFT**. Deaths/respawns occur
+  between early captures; ammunition resets prevent treating the whole run as
+  one monotonic ammunition sequence. These bright effects are not diagnosed as
+  a rendering defect.
+- The later **same-life** sequence is stronger combat evidence.
+  `last-life-resume.png` has LIVES **0** / LAST LIFE, SHLD/HULL **128**, PULS
+  **1972**, MUG **5**. `last-life-push1.png` shows a translated close wall/recess
+  and large blast, SHLD **109**, HULL **128**, PULS **1944**, MUG **1**.
+  `last-life-push2.png` has SHLD **86**, HULL **128**, PULS **1914**;
+  `last-life-push3.png` has SHLD **0**, HULL **102**, PULS **1884**, MUG **1**.
+  These are readable damage, firing and secondary-weapon responses within one
+  life, without an intervening respawn.
+- The bounded hidden-door pursuit reached a close wall/recess. After resume,
+  reverse and look commands, `reverse-off-wall.png` and `look-left-corner.png`
+  show the original readable **“ENEMY KILLED YOU”** message and death effects.
+  This is player-death evidence, not an enemy kill. No hidden-door opening or
+  new-room traversal is proved. White combat frames, pause menus and misleading
+  command labels remain explicitly excluded from traversal proof in the review
+  files. Native thrust restored readable world after the earlier white frames.
+
+The strict paused-response collector finishes with no fault, no missing
+receipt and complete lifecycle coverage: **689** successful responses,
+**580** distinct successful URLs, all exact pinned bytes/hashes. **80** captured
+native events are trusted; all **78** keyboard down/up events target the guest
+screen and balance. All **27** main-run 1024×768 PNGs were personally inspected;
+per-image review files distinguish menus, gameplay, bright effects and death.
+Three failed setup attempts are retained separately: omitted manifest pin,
+missing `?candidates` causing an asserted-selector correction, and an absent
+optional launcher icon needing an exact 404 policy. These were run-local setup
+errors corrected before the healthy session, not emulator diagnoses. The
+selector attempt launched default Notepad; the icon attempt fetched the
+original Forsaken executable. Neither contributes gameplay evidence.
+
+The locked full build, existing **32-cycle vertices-sparse** regression,
+**second-instance software Worker parity** test and **99 synthetic/real-byte
+collector lifecycle** cases pass. No reproducible emulator discrepancy was
+established, so no production fix or speculative regression was added.
+No enemy kill, hidden-door opening, level completion, audio, FPS or full-scene
+parity claim is made. The next gameplay objective remains locating/opening the
+hidden door after satisfying its enemy condition.
+
+The healthy browser exited **0** on ordinary stop, all held keys were released,
+HTTP **34387** and CDP **43653** closed, and its profile was removed. Final
+cleanup independently checks every recorded startup and gameplay process,
+port/profile, the lock holder and all four local runtime/build locks. No test
+box was created (ID/state/expiry N/A), no public deployment occurred, and disk
+stayed above 2 GiB. See `verification.json`, `cleanup.json` and
+`aggregate-cleanup.json`; setup-attempt cleanup records retain their historical
+held-lock state rather than rewriting it as a release.
