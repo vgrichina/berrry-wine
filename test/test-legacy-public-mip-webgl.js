@@ -3,6 +3,8 @@
 
 // Prebuilt, unmodified production modules; all resource/state/draw operations
 // reuse the public x86 COM harness. --plan cannot qualify rendered coverage.
+// Runtime requires LEGACY_PUBLIC_MIP_{EVIDENCE,MODULE_DIR,SOURCE,MODULE_MANIFEST};
+// the manifest is {source: GitSHA, modules: [{name, sha256, bytes}, ...]}.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const crypto=require('node:crypto'),vm=require('node:vm');
 const {browserFixture}=require('./test-legacy-texture-rendered-contract');
@@ -201,8 +203,10 @@ function fixtureSource() {
         eq(row.workerStats.d3dimFallbackSoftwareDrawCallsCompleted,0,'no fallback software pixels');
         check(row.workerStats.renderEndpointId&&row.workerStats.glRenderer,'actual worker identity');
       }
-      const version=gpu?evidence.glRenderer.version:row.workerStats.glVersion;
-      check(version.startsWith('WebGL '+config.webglVersion+'.0'),'actual context VERSION '+version);
+      if(mode!=='software'){
+        const version=gpu?evidence.glRenderer.version:row.workerStats.glVersion;
+        check(version.startsWith('WebGL '+config.webglVersion+'.0'),'actual context VERSION '+version);
+      }
       close(actual,expected,label);
       if(gpu){close(row.webglRGBA.slice(0,3),expected,'actual GL '+label);eq(row.webglRGBA[3],255,'GL opaque alpha');}`);
   block('    if(!config.stateblocks&&!config.immediate)for(const state of config.states){','    evidence.drawCount=drawCount;',`    for(const state of config.states){await setState(state);await geometry(state);await draw();
@@ -214,9 +218,33 @@ function fixtureSource() {
         await geometry(old);await setState(old);
         heldRecord={old,next,messages:[]};evidence.queued.push(heldRecord);holding=true;
         await draw();await until(()=>held.length>0,'held production batch');
+        if(config.captureHeldPackets){
+          check(heldPackets.length>0,'held production packet retained');
+          const packet=heldPackets.at(-1),buffer=queueBuffers[packet.index],view=new DataView(buffer);
+          eq(packet.commands,1,'one draw in held production packet');
+          eq(view.getUint32(28,true),0,'real D3DIM draw record');
+          eq(view.getUint32(20,true),4096,'production state snapshot size');
+          heldRecord.sequence=packet.seq;heldRecord.index=packet.index;
+          heldRecord.before=transportSnapshot();
+          heldRecord.header=Array.from(new Uint32Array(buffer,0,8));
+          heldRecord.state=Array.from(new Uint8Array(buffer,32,4096));
+          check(heldRecord.before.completed<packet.seq,'packet not consumed before live change');
+        }
         await setState(next);heldRecord.liveChangedBeforeDrain=true;
+        if(config.captureHeldPackets){
+          heldRecord.afterLiveChange=transportSnapshot();
+          check(heldRecord.afterLiveChange.completed<heldRecord.sequence,'packet still held after live change');
+          eq(Array.from(new Uint8Array(queueBuffers[heldRecord.index],32,4096)),heldRecord.state,
+            'queued state immutable after public sampler changes');
+          heldRecord.immutable=true;
+        }
         holding=false;for(const send of held.splice(0))send();
         await observe('queued '+old.label,old.samples[0],old);
+        if(config.captureHeldPackets){
+          heldPackets.length=0;heldRecord.afterDrain=transportSnapshot();
+          check(heldRecord.afterDrain.completed>=heldRecord.sequence,'held production packet actually consumed');
+          eq(heldRecord.afterDrain.error,0,'production queue error');
+        }
         await geometry(next);await draw();await observe('next '+next.label,next.samples[0],next);
       }
       await until(()=>lastStats?.stats.drawCalls===drawCount,'all production stats');evidence.stats=lastStats.stats;
@@ -257,6 +285,9 @@ function controls(){
   assert(!/mip_seed|mip_surface|mip_draw|fixedLOD/.test(source));
   for(const label of ['DirectDrawCreateEx','QI IDirect3D7','CreateSurface','CreateDevice7',
     'GetAttachedSurface7 mip','SetTextureStageState7','DrawPrimitive7','Lock Surface7'])assert(source.includes(label));
+  for(const expression of ['const heldPackets=[]','Atomics.load(queueControl,1)',
+    'queued state immutable after public sampler changes','packet still held after live change',
+    'held production packet actually consumed'])assert(source.includes(expression),expression);
   const context=vm.createContext({D3DIMGpu:{D3DIMGpu:class{_textureLevel(t,d){return {key:d.generation};}}}});
   vm.runInContext('('+staleUploadControl.toString()+')()',context);
   assert.deepEqual(JSON.parse(vm.runInContext(`JSON.stringify((()=>{
@@ -268,9 +299,10 @@ function controls(){
   return {status:'PLANNER ONLY; no pixels',observations:p.states.reduce((n,s)=>n+s.samples.length,0),...p};
 }
 
-function config(){
+function config(planName='spatial'){
+  assert(['solid','spatial'].includes(planName));
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
-  return {...spatialPlan(),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+  return {...(planName==='solid'?plan():spatialPlan()),captureHeldPackets:true,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52)};
 }
@@ -288,7 +320,7 @@ function staleUploadControl(){
   };
 }
 
-async function createServer(getWasm,getNegative=()=>null,onInjection=()=>{}){
+async function createServer(getWasm,getNegative=()=>null,onInjection=()=>{},onServe=()=>{}){
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
     'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
   return require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
@@ -299,10 +331,20 @@ async function createServer(getWasm,getNegative=()=>null,onInjection=()=>{}){
     if(pathname==='/lib/d3dim-gpu.js'&&getNegative()==='stale-child-upload'){
       const body=fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8')+'\n;('+staleUploadControl.toString()+')();';
       onInjection({url:req.url,sha256:sha(body),bytes:Buffer.byteLength(body)});
+      onServe({url:req.url,sha256:sha(body),bytes:Buffer.byteLength(body),injected:true});
       res.writeHead(200,{'Content-Type':'application/javascript','Cache-Control':'no-store'});
       res.end(body);return true;
     }
-    if(req.url==='/legacy-render.wasm'){res.writeHead(200,{'Content-Type':'application/wasm'});res.end(getWasm());return true;}
+    if(req.url==='/legacy-render.wasm'){
+      const bytes=getWasm();onServe({url:req.url,sha256:sha(bytes),bytes:bytes.length});
+      res.writeHead(200,{'Content-Type':'application/wasm'});res.end(bytes);return true;
+    }
+    if(/^\/lib\/[a-zA-Z0-9_.-]+\.(js|json)$/.test(pathname)){
+      const bytes=fs.readFileSync(path.join(ROOT,pathname));
+      onServe({url:req.url,sha256:sha(bytes),bytes:bytes.length});
+      res.writeHead(200,{'Content-Type':pathname.endsWith('.json')?'application/json':'application/javascript'});
+      res.end(bytes);return true;
+    }
     if(req.url!=='/legacy-render-fixture')return false;
     res.writeHead(200,{'Content-Type':'text/html'});res.end(scripts.map(n=>'<script src="/lib/'+n+'.js"></script>').join('\n'));return true;
   }});
@@ -360,8 +402,11 @@ async function runtime(){
   const dir=process.env.LEGACY_PUBLIC_MIP_EVIDENCE,moduleDir=process.env.LEGACY_PUBLIC_MIP_MODULE_DIR;
   const source=process.env.LEGACY_PUBLIC_MIP_SOURCE;
   assert(dir&&moduleDir);assert.match(source||'',/^[0-9a-f]{40}$/);
+  const pins=JSON.parse(fs.readFileSync(process.env.LEGACY_PUBLIC_MIP_MODULE_MANIFEST,'utf8'));
+  assert.equal(pins.source,source,'module manifest source must match tested Git source');
+  assert.deepEqual(pins.modules.map(m=>m.name).sort(),['wine-assembly.compat.wasm','wine-assembly.wasm']);
   fs.mkdirSync(dir,{recursive:true});
-  const evidence={status:'RUNNING',source,node:process.version,plan:spatialPlan(),modules:[],results:[],negativeControls:[],
+  const evidence={status:'RUNNING',source,node:process.version,plans:{solid:plan(),spatial:spatialPlan()},modules:[],results:[],negativeControls:[],requests:[],
     fixtureSha256:sha(fs.readFileSync(__filename)),adaptedFixtureSha256:sha(fixtureSource()),
     publicFixtureSha256:sha(fs.readFileSync(path.join(__dirname,'test-legacy-texture-rendered-contract.js'))),
     calcSha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))),
@@ -373,8 +418,10 @@ async function runtime(){
   try{
     for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
       const bytes=fs.readFileSync(path.join(moduleDir,name)),hash=sha(bytes);
-      assert.equal(hash,name==='wine-assembly.wasm'?'1a021b0f9ef7eeba12637c66e8929fdd75383e16c431ee318f812af8dbd78e58':
-        '74b34125e175895dc3ca843ccaa555f934611e3bd676e1e95f25aae9c2e7be66');
+      const pin=pins.modules.find(m=>m.name===name);
+      assert.match(pin.sha256,/^[0-9a-f]{64}$/);
+      assert.equal(hash,pin.sha256,'exact prebuilt production module '+name);
+      assert.equal(bytes.length,pin.bytes,'exact module length '+name);
       evidence.modules.push({name,sha256:hash,bytes:bytes.length});
       fs.writeFileSync(path.join(dir,name),bytes);
       const result=await bootstrap(path.join(moduleDir,name));
@@ -383,7 +430,7 @@ async function runtime(){
     }
     if(process.argv.includes('--bootstrap')){evidence.status='BOOTSTRAP PASS; rendered paths unexecuted';return;}
     evidence.injections=[];
-    server=await createServer(()=>wasm,()=>activeNegative,row=>evidence.injections.push(row));
+    server=await createServer(()=>wasm,()=>activeNegative,row=>evidence.injections.push(row),row=>evidence.requests.push(row));
     evidence.httpIsolation=[];
     for(const module of evidence.modules){
       wasm=fs.readFileSync(path.join(moduleDir,module.name));
@@ -398,14 +445,14 @@ async function runtime(){
     const cdp=await browser.target().createCDPSession();evidence.systemInfo=await cdp.send('SystemInfo.getInfo');await cdp.detach();
     const fixture=Function('return ('+fixtureSource()+')')();
     const open=async()=>{page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');};
-    const runNegative=async(module,mode,webglVersion,negative)=>{
-      const cfg={...config(),webglVersion},injectionStart=evidence.injections.length;
+    const runNegative=async(module,mode,webglVersion,negative,planName='spatial')=>{
+      const cfg={...config(planName),webglVersion},injectionStart=evidence.injections.length;
       activeNegative=negative;
       await open();let failure;
       try{await page.evaluate(fixture,mode,cfg,oracle.toString(),negative);}catch(error){failure=String(error);}
       const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
       const injections=evidence.injections.slice(injectionStart);
-      evidence.negativeControls.push({module:module.name,mode,webglVersion,negative,failure,partial,injections});save();
+      evidence.negativeControls.push({module:module.name,mode,webglVersion,planName,negative,failure,partial,injections});save();
       assert(failure?.includes('PIXEL ORACLE'),'negative must fail actual pixels: '+failure);
       assert(partial.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0));
       assert(partial.observations.some(o=>o.actual.some((c,i)=>Math.abs(c-o.expected[i])>cfg.tolerance)));
@@ -427,30 +474,40 @@ async function runtime(){
         assert.deepEqual(after.expected,cfg.update.color,'independent new authored color');
       }
       if(mode==='worker')assert(partial.observations.some(o=>o.workerStats?.drawCalls>0));
-      else assert(partial.observations.some(o=>o.webglRGBA&&o.glError===0));
+      else if(mode==='webgl')assert(partial.observations.some(o=>o.webglRGBA&&o.glError===0));
       await page.close();page=null;console.log('PASS rendered negative '+negative+' '+module.name+' '+mode+' WebGL'+webglVersion);
     };
-    // Fail-fast new rendered control before positives; old solid matrix accepted.
-    wasm=fs.readFileSync(path.join(moduleDir,evidence.modules[0].name));
-    await runNegative(evidence.modules[0],'worker',1,'nearest-only');
-    for(const module of evidence.modules){
+    for(const planName of ['solid','spatial'])for(const module of evidence.modules){
       wasm=fs.readFileSync(path.join(moduleDir,module.name));
-      for(const mode of ['worker','webgl'])for(const webglVersion of [1,2]){
-        const cfg={...config(),webglVersion};
+      for(const mode of ['software','webgl','worker'])
+      for(const webglVersion of mode==='software'?[null]:[1,2]){
+        const cfg={...config(planName),webglVersion};
         activeNegative=null;await open();const result=await page.evaluate(fixture,mode,cfg,oracle.toString());
-        assert.equal(result.status,'PASS');assert.equal(result.observations.length,mode==='worker'?18:12);
-        evidence.results.push({module:module.name,webglVersion,...result});save();
-        await page.screenshot({path:path.join(dir,module.name+'-'+mode+'-'+webglVersion+'.png')});await page.close();page=null;
-        console.log('PASS '+module.name+' '+mode+' WebGL'+webglVersion+' observations '+result.observations.length);
-        for(const negative of ['nearest-only']){
-          if(module===evidence.modules[0]&&mode==='worker'&&webglVersion===1)continue;
-          await runNegative(module,mode,webglVersion,negative);
+        assert.equal(result.status,'PASS');
+        const expected=cfg.states.reduce((n,s)=>n+s.samples.length,0)+(mode==='worker'?6:0)+(cfg.update?2:0);
+        assert.equal(result.observations.length,expected);
+        if(mode==='worker'){
+          assert.equal(result.queued.length,3);
+          assert(result.queued.every(q=>q.immutable&&q.afterLiveChange.completed<q.sequence&&q.afterDrain.completed>=q.sequence));
+          assert.equal(result.retirement?.t,'render-stopped','owning render Worker acknowledged retirement');
+          assert(Number.isInteger(result.retirement.heapHead),'native render heap retirement recorded');
+          if(result.retirement.heapHead)assert(Number.isInteger(result.retirement.heapAdopted)&&result.retirement.heapAdopted>=0,
+            'native render heap adopted before owning Worker termination');
         }
+        evidence.results.push({module:module.name,webglVersion,planName,...result});save();
+        await page.screenshot({path:path.join(dir,module.name+'-'+planName+'-'+mode+'-'+webglVersion+'.png')});await page.close();page=null;
+        console.log('PASS '+module.name+' '+mode+' WebGL'+webglVersion+' observations '+result.observations.length);
+        const negatives=planName==='spatial'?['nearest-only']:['level-zero-only','stale-mip-filter',
+          ...(mode==='software'?[]:['stale-child-upload'])];
+        for(const negative of negatives)await runNegative(module,mode,webglVersion,negative,planName);
       }
     }
     evidence.status='PASS';
   }catch(error){evidence.status='FAIL; subsequent paths unexecuted';evidence.error=error.stack;
-    evidence.partial=error.partial||(page?await page.evaluate(()=>globalThis.legacyTextureEvidence).catch(()=>null):null);throw error;
+    evidence.partial=error.partial||(page?await page.evaluate(()=>globalThis.legacyTextureEvidence).catch(()=>null):null);
+    if(page)try{await page.screenshot({path:path.join(dir,'failure.png')});evidence.failureScreenshot='failure.png';}
+    catch(captureError){evidence.captureError=String(captureError);}
+    throw error;
   }finally{
     if(browser)await browser.close();evidence.browserClosedAt=new Date().toISOString();
     if(server)await require('./static-server').closeServer(server);evidence.helpersClosedAt=new Date().toISOString();save();
