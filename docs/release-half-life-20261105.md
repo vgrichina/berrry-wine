@@ -44,12 +44,28 @@ Verified pins:
 scripts, 11 worker scripts). `node test/test-deploy-morrowind-local-only.js`
 passes (1,231 release assets, retail exclusion intact).
 
-`node test/test-deploy-build-outputs.js` fails because the registry names
-`build/nfs2se-browser.json` but this checkout lacks that generated local fixture.
-The earlier implementation checkout lacks it too. This is a current packaging
-gate failure, not a Half-Life missing asset; restore/generate its reviewed
-fixture and rerun before a full release. Do not silently publish a partial
-asset set. No full deployment dry run has passed for this new checkout.
+The initially missing `build/nfs2se-browser.json` fixture was restored by linking
+the existing root checkout's manifest and `build/nfs2se-demo` directory into
+this checkout. `test/binaries/SOURCES.md` records the original `nfs2sea.zip`
+demo URL; `docs/nfs-renderer-benchmark.md` describes the manifest construction.
+All 73 files exist and resolve under `nfs2se-demo/`. No retail fixture or newly
+invented manifest is substituted. Manifest SHA-256:
+`7022d85d9b8fd801ca391c6bbf0219a2cb5a1bbc8b11ec4d966c2eddfcc750b0`;
+`NFS2SEA.EXE` SHA-256:
+`7e357542a3f7a3a67f6fac06c299e6bdc23529f0b9a16d9e7639079e56c039d9`.
+`node test/test-deploy-build-outputs.js` now passes; the retail exclusion test
+also passes with the restored fixture (1,304 release assets).
+An existence audit of all 1,304 registry-derived assets reports no missing
+files. Native and compatibility WASM outputs are still absent until the final
+clean build; the asset checks alone do not qualify a deployable package.
+The complete offline dry-run command
+`BERRRY_KEY=offline-dry-run node tools/deploy-berrry.js --dry-run` generated
+static pages and collected the demo assets (including eight Uplink PAK parts),
+then correctly stopped at the absent `build/wine-assembly.wasm`. There were no
+`MISSING` asset warnings. The original log is
+`/private/tmp/wine-release-20261105-packaging-dry-run.log`; rerun after the
+clean native/compat build to finish qualification. Quake III deployment asset
+regressions also pass. No upload or network credential was used.
 
 ## Required before cutting the release
 
