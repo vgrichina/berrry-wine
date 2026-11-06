@@ -6,7 +6,7 @@ const root=path.resolve(__dirname,'..');
 const {fixture,oracle,validateFixture}=require('./fixtures/d3d9-reset-fixture');
 const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 (async()=>{
- const f=fixture(),apis=require('../src/api_table.json'),layout=validateFixture(f,apis);
+ const f=fixture({reuseIdentity:true}),apis=require('../src/api_table.json'),layout=validateFixture(f,apis);
  // Reject both specific predecessor fixture errors before starting Chromium.
  assert.throws(()=>validateFixture({...f,bytes:f.bytes.subarray(0x1200,0x1200+f.codeBytes)},apis),/PE MZ/);
  const wrongSlot={...f,calls:f.calls.map(c=>c.iface==='IDirect3DDevice9'&&c.slot===18?{...c,slot:13}:c)};
@@ -48,7 +48,7 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
   await page.waitForFunction(()=>typeof WineAssembly==='function'&&typeof D3D9Host==='object');
   for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
    const moduleBytes=fs.readFileSync(path.join(root,'build',name));
-   const row=await page.evaluate(async ({name,bytes,statusWasm,controlWasm,deviceWasm,frameWasm,frames,checks,selectors,selectorWasm})=>{
+   const row=await page.evaluate(async ({name,bytes,statusWasm,controlWasm,deviceWasm,frameWasm,frames,checks,selectors,selectorWasm,reuse})=>{
     const check=(v,m)=>{if(!v)throw Error(m);},sleep=ms=>new Promise(r=>setTimeout(r,ms));
     const bytesModule=await(await fetch('/build/'+name)).arrayBuffer(),module=await WebAssembly.compile(bytesModule);
     const digest=await crypto.subtle.digest('SHA-256',bytesModule),hash=[...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
@@ -108,13 +108,21 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
      check(recovered&&recovered!==first,'public recreation gets fresh host entry');
      check(recovered.workerConsumer.worker.id!==oldEndpoint,'public recreation gets new endpoint');
      check(!recovered.queue.error&&!manager.stopped&&manager.worker===physical,'recovery on surviving physical Worker');
-     if(newId===oldId)check(recovered.queue.generation===generation+1,'reused public identity advances generation');
+     check(first.queue.error===failure&&first.queue.generation===generation,'retired producer retains its original error and generation');
+     check(bridge.devices.get(peerId)===peer&&!peer.queue.error&&!peer.lost,'peer entry survives public allocation churn and same-identity recreation');
+     check(newId===oldId,'bounded ordinary public allocation reuses retired device identity');
+     check(recovered.queue.generation===generation+1,'reused public identity advances generation');
+     const churn=Array.from({length:4},(_,i)=>view.getUint32(reuse.wasm+i*4,true));
+     check(churn[0]===churn[1]&&churn[2]>0&&churn[2]<=reuse.limit&&churn[3]===oldId,'bounded public parent churn receipt');
+     result.reuse={paddingParent:churn[0],lastReleasedParent:churn[1],iterations:churn[2],limit:reuse.limit,originalDevice:churn[3]};
      // Positive production FENCE before the explicitly malformed stale descriptor.
      await bridge._submit(recovered,D3DCommandStream.OPCODES.FENCE,null);
+     const currentFence=recovered.queue.snapshot();
+     check(!recovered.queue.error&&!recovered.queue.inflight&&recovered.queue.poll().status==='completed','valid current-generation fence completed before stale control');
      let retiredRejected=false;try{first.workerConsumer.execute({});}catch(e){retiredRejected=/stopped/.test(String(e));}
      check(retiredRejected,'old endpoint consumer rejects reuse');
-     const staleGeneration=newId===oldId?generation:recovered.queue.generation;
-     const staleDeviceId=oldId,staleSequence=newId===oldId?recovered.queue.submitted+1:1;
+     const staleGeneration=generation;
+     const staleDeviceId=newId,staleSequence=recovered.queue.submitted+1;
      let producerRejected=null;
      if(newId===oldId){
       const before=recovered.queue.submitted;
@@ -125,9 +133,10 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
       generation:staleGeneration,sequence:staleSequence,opcode:D3DCommandStream.OPCODES.FENCE,payload:null,resources:[],byteLength:64});
      stale.consumed.catch(()=>{});let rejected;
      try{await stale.completion;}catch(e){rejected=String(e);}
-     check(rejected&&/stale|unordered/.test(rejected),'owning receiver rejects old lifetime descriptor '+rejected);
+     check(rejected&&/stale or unordered render worker command/.test(rejected),'owning receiver rejects old generation descriptor '+rejected);
+     check(staleDeviceId===newId&&staleGeneration!==recovered.queue.generation&&staleSequence===currentFence.submitted+1,'generation is the only stale identity/order field');
      result.events.push({checkpoint:7,recovered:snap(recovered),oldId,newId,oldGeneration:generation,
-      staleControl:{deviceId:staleDeviceId,generation:staleGeneration,sequence:staleSequence,producerRejected,rejected,kind:newId===oldId?'old-generation':'old-device-identity'},validFenceCompleted:true,retiredRejected});
+      staleControl:{deviceId:staleDeviceId,generation:staleGeneration,sequence:staleSequence,producerRejected,rejected,kind:'old-generation',currentGeneration:recovered.queue.generation,currentFence},validFenceCompleted:true,retiredRejected});
      resume(7);await wait(1);
      check(!bridge.devices.size,'guest releases both devices');
      check(!manager.stopped&&manager.worker===physical,'physical Worker survived every control');
@@ -150,7 +159,7 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
      canvas.remove();D3D9Host.Bridge=Base;WineAssembly.getWasmModule=getModule;
     }
     return result;
-   },{name,bytes:[...f.bytes],statusWasm:f.statusWasm,controlWasm:f.controlWasm,deviceWasm:f.deviceWasm,frameWasm:f.frameWasm,frames:f.frames,checks:f.checks,selectors:f.selectors,selectorWasm:f.selectorWasm});
+   },{name,bytes:[...f.bytes],statusWasm:f.statusWasm,controlWasm:f.controlWasm,deviceWasm:f.deviceWasm,frameWasm:f.frameWasm,frames:f.frames,checks:f.checks,selectors:f.selectors,selectorWasm:f.selectorWasm,reuse:f.reuse});
    row.name=name;evidence.rows.push(row);save();
    if(out){
     const {PNG}=require('pngjs');row.captures=[];
@@ -164,7 +173,7 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
    row.pixelChecks=[];
    for(const frame of row.frames){const points=oracle(frame);for(const p of points)assert.equal(frame.words[p.index],p.expected,frame.name+' independent pixel '+p.x+','+p.y);row.pixelChecks.push({name:frame.name,checked:points.length,sha256:sha(Buffer.from(Uint32Array.from(frame.words).buffer))});}
    const peerFrame=row.frames.find(f=>f.name==='peer-before');
-   for(const label of ['peer-after-resize','peer-after-refusal'])assert.deepEqual(row.frames.find(f=>f.name===label).words,peerFrame.words,'peer full-frame isolation '+label);
+   for(const label of ['peer-after-resize','peer-after-refusal','peer-after-recreation'])assert.deepEqual(row.frames.find(f=>f.name===label).words,peerFrame.words,'peer full-frame isolation '+label);
    // The changed size, colors, and triangle direction reject stale/no-redraw frames.
    const before=row.frames.find(f=>f.name==='before-reset'),after=row.frames.find(f=>f.name==='after-resize');
    assert.notDeepEqual(before.words,after.words);assert.notEqual(before.words[1*8+1],after.words[1*12+1]);
@@ -195,5 +204,5 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
   if(browser){const pids=[],visit=pid=>{if(!pid||pids.includes(pid))return;pids.push(pid);try{fs.readFileSync('/proc/'+pid+'/task/'+pid+'/children','utf8').trim().split(/\s+/).filter(Boolean).map(Number).forEach(visit);}catch{}};visit(browser.process().pid);evidence.observedPids=pids;}
   await browser?.close();await new Promise(r=>{server.closeAllConnections();server.close(r);});evidence.endedAt=new Date().toISOString();save();
  }
- console.log('PASS both modules: public guest x86 COM Reset, independent pixels, peer isolation, failure lifetime and supported recreation');
+ console.log('PASS both modules: public x86 COM Reset, bounded same-identity recreation, new generation pixels, peer isolation and stale-generation rejection');
 })().catch(e=>{console.error(e);process.exitCode=1;});

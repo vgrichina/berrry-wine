@@ -2,7 +2,7 @@
 // Generated ordinary PE; every API method dereferences its public x86 COM vtable.
 // Independent literal colors and scalar triangle coverage; no production oracle.
 const assert=require('node:assert/strict');
-function fixture(){
+function fixture({reuseIdentity=false}={}){
  const BASE=0x400000,b=Buffer.alloc(0x30200),raw=rva=>rva-0x1000+0x200,p=0x80,o=p+24,s=o+0xe0;
  b.writeUInt16LE(0x5a4d);b.writeUInt32LE(p,0x3c);b.writeUInt32LE(0x4550,p);
  b.writeUInt16LE(0x14c,p+4);b.writeUInt16LE(1,p+6);b.writeUInt16LE(0xe0,p+20);b.writeUInt16LE(0x010e,p+22);
@@ -34,8 +34,8 @@ function fixture(){
   calls.push({iface:'IDirect3DDevice9',slot,args:args.length,label});saveAbi();
   for(const a of [...args].reverse())push(a);emit(0x56,0x8b,0x06,0xff,0x90,u32(slot*4));if(hr!==null)expect(hr,label+' return');checkAbi();
  };
- const object=(address,slot,args=[],rc=0,label='object'+slot)=>{
-  calls.push({iface:address===D+12?'IDirect3D9':'IDirect3DSurface9',slot,args:args.length,label});saveAbi();
+ const object=(address,slot,args=[],rc=0,label='object'+slot,iface=address===D+12?'IDirect3D9':'IDirect3DSurface9')=>{
+  calls.push({iface,slot,args:args.length,label});saveAbi();
   for(const a of [...args].reverse())push(a);emit(0xa1,u32(address),0x50,0x8b,0x08,0xff,0x91,u32(slot*4));if(rc!==null)expect(rc,label+' return');checkAbi();
  };
  const checkpoint=n=>{
@@ -65,7 +65,16 @@ function fixture(){
  const klass=str('STATIC'),title=str('Generated public D3D9 Reset regression');
  emit(0xbb,u32(0x13579bdf),0xbe,u32(0x5a5aa5a5),0xbf,u32(0x2468ace0),0xbd,u32(0x31415926));
  for(const a of [0,0,0,0,32,32,0,0,0x10000000,title,klass,0])push(a);api('CreateWindowExA');emit(0xa3,u32(D+20));
- push(32);api('Direct3DCreate9');emit(0xa3,u32(D+12));params(8,8);create(D);params(8,8);create(D+8);
+ push(32);api('Direct3DCreate9');emit(0xa3,u32(D+12));
+ // An ordinary released parent immediately precedes the first surface/device
+ // pair. Its returned pointer is only an equality witness; never overwrite a
+ // guest COM pointer, wrapper, allocation cursor or renderer map.
+ const PAD=D+704,FILL=D+708,CHURN=D+712,ORIGINAL=D+716,REUSE_LIMIT=16384;
+ const parent=dest=>{saveAbi();push(32);api('Direct3DCreate9');emit(0xa3,u32(dest));checkAbi();
+  emit(0xa1,u32(dest),0x85,0xc0,0x0f,0x84);fixups.push([code.length,'allocation-fail']);emit(0,0,0,0);};
+ if(reuseIdentity){parent(PAD);object(PAD,2,[],0,'padding parent Release','IDirect3D9');}
+ params(8,8);create(D);params(8,8);create(D+8);
+ if(reuseIdentity)emit(0xa1,u32(D),0xa3,u32(ORIGINAL));
  // Public selector/lifetime controls. Record failures without consuming the
  // unspecified output pointer; an unexpected baseline success is released.
  const REPORT=D+17000,IMPLICIT=D+512,SWAP=D+516,EXTRA=D+520,TARGET=D+524;
@@ -182,17 +191,34 @@ function fixture(){
  dev(41,[],0,'BeginScene before refusal');dev(83,[4,1,V,28],0x8876086c,'ordinary singular normal refusal');dev(42,[],0,'EndScene after refused draw');checkpoint(4);
  params(12,10);dev(16,[PP],0x88760868,'failed Reset preserves refused stream');dev(3,[],0x88760868,'TestCooperativeLevel after failed Reset');checkpoint(5);
  select(D+8);draw('peer-after-refusal',8,8,0xff3b91d7,true);select(D);dev(2,[],0,'failed device Release');checkpoint(6);
- params(8,8);create(D);select(D);draw('recreated',8,8,0xff8d27b9,true);checkpoint(7);
+ if(reuseIdentity){
+  // At most one pool's worth of cheap public parent objects. Every iteration
+  // releases its sole reference and checks both public ABI and return value.
+  // No GPU device/context/endpoint is created by Direct3DCreate9 alone.
+  write(CHURN,0);labels.set('reuse-churn',code.length);
+  parent(FILL);object(FILL,2,[],0,'filler parent Release','IDirect3D9');
+  emit(0xff,0x05,u32(CHURN),0xa1,u32(FILL),0x3b,0x05,u32(PAD),0x0f,0x84);
+  fixups.push([code.length,'reuse-ready']);emit(0,0,0,0);
+  emit(0xa1,u32(CHURN),0x3d,u32(REUSE_LIMIT),0x0f,0x82);
+  fixups.push([code.length,'reuse-churn']);emit(0,0,0,0);jump('allocation-fail');
+  labels.set('reuse-ready',code.length);
+ }
+ params(8,8);create(D);
+ if(reuseIdentity){emit(0xa1,u32(D),0x33,0x05,u32(ORIGINAL));expect(0,'ordinary recreation reuses retired device identity');}
+ select(D);draw('recreated',8,8,0xff8d27b9,true);
+ if(reuseIdentity){select(D+8);draw('peer-after-recreation',8,8,0xff3b91d7,true);select(D);}
+ checkpoint(7);
  // The browser runs the separate malformed-protocol old-lifetime control
  // at checkpoint7, after recovery pixels. The guest only releases afterward.
  select(D);dev(2,[],0,'recreated device Release');select(D+8);draw('peer-after-stale-control',8,8,0xff79a531);dev(2,[],0,'peer Release');
  object(D+12,2,[],0,'IDirect3D9 Release');write(STATUS,1);jump('sleep');
  for(const row of checks){labels.set('fail'+row.id,code.length);write(STATUS,row.id);emit(0xa3,u32(STATUS+4));write(STATUS+8,row.expected);jump('sleep');}
+ labels.set('allocation-fail',code.length);write(STATUS,0xfffe);jump('sleep');
  labels.set('abi-fail',code.length);write(STATUS,0xffff);emit(0xa3,u32(STATUS+4));
  labels.set('sleep',code.length);push(1000);api('Sleep');jump('sleep');
  const bytes=Buffer.from(code);for(const [at,target] of fixups){assert(labels.has(target),target);bytes.writeInt32LE(labels.get(target)-at-4,at);}
  assert(bytes.length<0x24000);bytes.copy(b,raw(0x2000));
- return {bytes:b,checks,frames,calls,selectors,selectorWasm:0x12000+REPORT-BASE,codeBytes:bytes.length,statusWasm:0x12000+STATUS-BASE,controlWasm:0x12000+CONTROL-BASE,frameWasm:0x12000+FRAMES-BASE,deviceWasm:0x12000+D-BASE};
+ return {bytes:b,checks,frames,calls,selectors,reuse:reuseIdentity?{limit:REUSE_LIMIT,wasm:0x12000+PAD-BASE}:null,selectorWasm:0x12000+REPORT-BASE,codeBytes:bytes.length,statusWasm:0x12000+STATUS-BASE,controlWasm:0x12000+CONTROL-BASE,frameWasm:0x12000+FRAMES-BASE,deviceWasm:0x12000+D-BASE};
 }
 
 // D3D9 integer pixel centers, with a margin excluding every edge and tie.
