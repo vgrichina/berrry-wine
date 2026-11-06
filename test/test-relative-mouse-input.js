@@ -100,3 +100,23 @@ assert(/handleRelativeMouseMove\(Number\(e\.movementX\)[^]*?guestCounts: true/.t
   'locked movementX/Y should enter the renderer relative-mouse path as mouse counts');
 
 console.log('PASS  ClipCursor-gated pointer lock preserves relative guest mouse motion');
+
+// Actual full-shell 1001x800 Aranna control: an 800x600 guest is
+// presented into661x568 with a661x496 image at Y36. A recentered
+// native(+96) Y move used to round-trip through395.999999 and lose a count.
+renderer.canvas.width = 800; renderer.canvas.height = 600;
+renderer._exclusiveTransform = { hwnd:7, srcX:0, srcY:0, srcW:800, srcH:600,
+  dstX:0, dstY:0, dstW:800, dstH:600 };
+renderer._exclusivePresentationViewport = { nativeX:0,nativeY:0,nativeW:800,nativeH:600,
+  dstX:0,dstY:36,dstW:661,dstH:496,outputW:661,outputH:568 };
+renderer._relativeMouseRemainderX = 0; renderer._relativeMouseRemainderY = 0;
+for (const [dx,dy] of [[30,-145],[-60,96],[0,1],[1,0],[-1,-1]]) {
+  renderer.setMousePosition(400,300);
+  diWords[diMouseState]=0;diWords[diMouseState+1]=0;
+  renderer.handleRelativeMouseMove(dx,dy,{guestCounts:true});
+  assert.deepStrictEqual([renderer._mouseX,renderer._mouseY],[400+dx,300+dy],
+    'locked counts survive the actual letterboxed cursor transform');
+  assert.deepStrictEqual([diWords[diMouseState],diWords[diMouseState+1]],[dx,dy],
+    'locked counts reach DirectInput exactly while guest warps add none');
+}
+console.log('PASS native counts preserve exact recentered motion across fractional letterboxing');
