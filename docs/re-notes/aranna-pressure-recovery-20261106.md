@@ -60,8 +60,8 @@ This is an internal temporary-allocation test, not an API-only proxy.
 
 `control-review.json`, `baseline-public/results.json`,
 `repaired-public/results.json`, and the two `*-internal.log` files retain the
-reviewed values and exact loaded module identities. The canonical repaired
-standard module is SHA-256
+reviewed values and exact loaded module identities. The first repaired build, used by these controls and the original, has
+standard module SHA-256
 `33503ea5b68e0d17926530c0908e9ecc4001ddca7fb2f894f65b2ffe91bb90fe`;
 compatibility is
 `7382b37a7acde7faa512bf40d74bf5ba09e732fdd4e7845e3ed0fb9dbb9c3748`.
@@ -183,10 +183,20 @@ edited. Three initial neighbor launcher failures passed a wrapper's mode word as
 a module filename; their logs are retained, and direct unchanged reruns passed.
 
 `flock /tmp/wine-build.lock bash tools/build.sh` passed on baseline at
-01:35:39–01:36:14Z and after the change at 01:37:19–01:37:52Z. No production
-source changed after that passing build. Layout hash `7613635e22710ee1` stayed
+01:35:39–01:36:14Z and after the change at 01:37:19–01:37:52Z. The owned heap
+source did not change after that passing build. Layout hash `7613635e22710ee1` stayed
 unchanged. Canonical standard/compatibility build outputs were saved and loaded
 by the public tests, not inferred from the current files after execution.
+
+Repair commit: `c6ce9168e` (on main). The required publication pull merged
+remote TrueType face-identity work into main
+`4132a485e1c7ae9797a0adbc545c8dd702baf15a`, changing `src/10c-truetype.wat`
+and its test while leaving the owned heap source unchanged. The locked full
+build passed again on that merged source at 01:58:40Z. Both new heap regressions
+passed again in both modules, with all four public guest output arrays unchanged;
+the merged `test-tt-face-identity.js` also passed. `published-build.json` records
+the new canonical module hashes, and `control-review.json` links the final
+checks. The original used the earlier recorded build and was not replayed.
 
 Tested base: main `c34ec10ccd60e128fa3df69e009c0483187262b3`.
 `baseline-source.binarydiff`, `applied-source.binarydiff`, final source records
