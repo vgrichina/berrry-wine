@@ -22,6 +22,12 @@ The unchanged package supplies all 39 original setup/game assets, including
 `SETUP.INI`, `setup.ins`, bitmaps, the demo licence, original game/launcher,
 three GOB archives, Smacker library/movie, controller files and readmes. The flat archive output is not an observed installed-game directory.
 
+`_setup.lib` unpacks with `tools/is3-extract.js` + `tools/mpq.js` into six
+files matching the historical child manifest: `CTL3D32.DLL`, `CTL3D32S.DLL`,
+`corecomp.ini`, `uninst.exe`, `_isres.dll` (historically extracted as
+`1847.dll`) and a `License.txt` distinct from the package's own licence.
+(Recovered from branch task/jedi-original-recovery-oct20, Oct 2026.)
+
 The retained capture archive is 644,121 bytes, SHA-256
 `df8a7ff64f8961da38afb8f95165bc1e73ba274aa725c5d208831e8502a0411c`. It was transferred via authorized exec APIs and selectively extracted under
 remote `retained/`. All nine capture members present in that archive match
