@@ -886,6 +886,47 @@ CASES.push({ name: 'span-shrink', regs: { ecx: N },
   code: [L('l'), [0x8B, 0x06], [0x01, 0xC3], [0x83, 0xC6, 0x04], [0x81, 0xF9, ...d32(0x7FFFFFFF)], JFAR(cc.Z, 'far'),
          0x49, J(cc.NZ, 'l'), 0xC3, new Array(0x1000).fill(0xCC), L('far'), new Array(700).fill(0x42), 0xC3] });
 
+// ---- the retry ladder (07e $uc_lower_head, docs/uop-tier-design.md section 24) ----
+// Each rung once where it must be the one that compiles, and the pre-ladder
+// order (--no-uop-retry-ladder, mask 0) on the same code as the control.
+// Rung 2, halve with calls followed: call-big-callee's loop, whose rare
+// callee overflows the scan at every span but the smallest. The old order cut
+// every call instead -- the leaf call on the loop's only path with them, which
+// breaks the cycle and loses the head (no-backedge).
+const BIG_CALLEE_LOOP = [L('l'), [0x03, 0x06], CALL('leaf'), [0x83, 0xC6, 0x04], [0xF6, 0xC1, 0x3F], J(cc.NZ, 's'), CALL('f'),
+  L('s'), 0x49, J(cc.NZ, 'l'), 0xC3, L('leaf'), [0x33, 0x5E, 0x04], 0xC3, L('f'), new Array(620).fill(0x90), 0xC3];
+CASES.push(
+  { name: 'ladder-halve', regs: { ecx: N }, head: 'l', want: { ladHalved: '>0', ladNocall: 0 }, code: BIG_CALLEE_LOOP },
+  // the old order: every call cut, the leaf call on the loop's only path
+  // breaks the cycle, and the head is lost (no-backedge)
+  { name: 'ladder-halve-old', regs: { ecx: N }, head: 'l', ladder: 0, modes: ['pre'], declines: true, code: BIG_CALLEE_LOOP },
+);
+// Rung 1, cut only the FF /2 sites: a hot E8 leaf call and, on a rare path,
+// call eax into a 620-instruction callee. Following the icall overflows the
+// scan; cutting it alone keeps the leaf call followed. The old order cut both,
+// and with the leaf call cut no head in the loop has a back edge: nothing enters.
+const ICUT_LOOP = [CALL('s1'), new Array(620).fill(0x90), 0xC3, L('s1'), 0x58,
+  L('l'), [0x03, 0x1E], CALL('leaf'), [0x83, 0xC6, 0x04], [0xF6, 0xC1, 0x3F], J(cc.NZ, 's'), [0xFF, 0xD0],
+  L('s'), 0x49, J(cc.NZ, 'l'), [0x31, 0xC0], 0xC3, L('leaf'), [0x33, 0x5E, 0x04], 0xC3];
+CASES.push(
+  { name: 'ladder-icut', regs: { ecx: N }, icall: true, hotOnly: true, head: 'l', want: { ladIcut: '>0', ladNocall: 0 }, code: ICUT_LOOP },
+  { name: 'ladder-icut-old', regs: { ecx: N }, icall: true, hotOnly: true, head: 'l', ladder: 0, declines: true, code: ICUT_LOOP },
+);
+// Rung 4, the nocall retry keeps the head's own call: a trace head that IS
+// `call f`, f 120 instructions long and rarely calling g, 520 one-byte
+// instructions, so f + g overflow the scan even at the smallest span (g's own
+// span is what bounds its scan). Nocall used to make the head's call
+// unsupported and decline the head (head-unsupported); now f is followed and
+// only g is cut. The control pre-compiles the head under the old order and
+// must decline it.
+const HEADCALL = [L('main'), CALL('f'), [0x0F, 0xBD, 0xD3], 0x49, J(cc.NZ, 'main'), 0xC3,
+  L('f'), new Array(120).fill(0x42), [0xF6, 0xC1, 0x3F], J(cc.NZ, 'r'), CALL('g'),
+  L('r'), [0x83, 0xC6, 0x04], 0xC3, L('g'), new Array(520).fill(0x90), 0xC3];
+CASES.push(
+  { name: 'ladder-head-call', regs: { ecx: N }, trace: true, head: 'main', want: { ladHead: '>0' }, code: HEADCALL },
+  { name: 'ladder-head-old', regs: { ecx: N }, trace: true, head: 'main', ladder: 0, modes: ['pre'], declines: true, code: HEADCALL },
+);
+
 const REGS = ['eax', 'ecx', 'edx', 'ebx', 'ebp', 'esi', 'edi'];
 
 function seed(mem, g2w, a) {
@@ -941,15 +982,20 @@ function runCase(inst, c, a, codeAddr, mode) {
   // c.icgMega: the megamorphic-site threshold for this case (07d
   // $uop_icg_mega), put back to the default after
   if (c.icgMega !== undefined) e.set_uop_icg_mega(c.icgMega);
+  // c.ladder: the retry-ladder mask (07e $uc_ladder, section 24), put back
+  // to the default (7) after
+  if (c.ladder !== undefined) e.set_uop_retry_ladder(c.ladder);
   const unfeat = () => {
     for (const f of feats) e['set_uop_' + f](0);
     if (c.icgMega !== undefined) e.set_uop_icg_mega(32);
+    if (c.ladder !== undefined) e.set_uop_retry_ladder(7);
   };
   const before = { installs: e.uop_stats(2), enters: e.uop_stats(4), blocks: e.uop_stats(5), traces: e.uop_cstat(26) };
   // uop_stats counters, then (negative) uop_cstat ones: sites kept, FF /2 refused
   // (100+: uop_bulk_stats -- COPY/FILL slow arms and deopts)
   const CTR = { divExits: 16, icPass: 17, icFail: 18, iatPass: 19, iatFail: 20, icSites: -28, iatSites: -29, icRej: -30,
                 megaSites: 21, megaKills: 22, megaRef: -31,
+                ladN: -32, ladHalved: -33, ladIcut: -34, ladHead: -35, ladNocall: -36,
                 bulkSlow: 100, bulkDeopt: 101, mcopyRuns: 200, mcopySlow: 300, mcopyDeopt: 301 };
   const ctrOf = (i) => (i < 0 ? e.uop_cstat(-i) : i >= 300 ? e.uop_mcopy_stats(i - 300)
     : i >= 200 ? e.uop_mcopy_cstat(i - 200) : i >= 100 ? e.uop_bulk_stats(i - 100) : e.uop_stats(i));
@@ -1926,7 +1972,7 @@ async function main() {
     const results = [];
     // hotOnly: an inline cache records what the slot holds when the head is
     // compiled, which a pre-compile (before the prologue has run) cannot see.
-    for (const mode of c.hotOnly ? ['hot'] : ['hot', 'pre']) {
+    for (const mode of c.modes || (c.hotOnly ? ['hot'] : ['hot', 'pre'])) {
       const st = runCase(inst, c, a, at(), mode);
       if (st.err && c.declines) { results.push(`${mode}: ok (${st.err})`); continue; }
       if (st.err) { results.push(`${mode}: ${st.err}`); fails++; continue; }

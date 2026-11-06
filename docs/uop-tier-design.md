@@ -3118,3 +3118,155 @@ unusable, and Rodent's CPU claim rests on the census alone.
   inline cache then turns positive is a separate question; §23.5's A/B would
   have to be rerun.
 - `--uop-icall` stays default-off.
+
+## 24. Retry ladder: calls-followed failures no longer fall straight to nocall (2026-11-06, default on)
+
+§23.7's option C, implemented in `$uc_lower_head` (07e). It ships in the
+default build as mask `$uc_ladder` = 7. `--no-uop-retry-ladder` (mask 0)
+restores the pre-§24 order exactly, and `--uop-retry-ladder=N` selects
+rungs one at a time.
+
+### 24.1 What it does
+
+When a calls-followed attempt fails, the compiler now tries these in order
+before it gives up on following calls (`$uc_nocall` mode in brackets):
+
+1. **icall cut** (mask 1, mode 1). Retry with only the FF /2 inline-cache
+   sites as the region's edge. E8 calls are still followed. This runs only
+   when the scan actually met such a site.
+2. **halve first** (mask 2, mode 0). Halve the span with calls still
+   followed, on scan-limit (1) or unreached-block (8). The old order halved
+   only after the nocall retry, and only on reason 1.
+3. **nocall keeps the head's own call** (mask 4, mode 2). The nocall retry
+   cuts every call except the head instruction's. So a head that *is* a
+   call compiles with its callee followed, instead of declining as
+   head-unsupported (reason 3).
+
+Census kind 18 records which rung ended the ladder. `uop_cstat` 32-36 count
+the rungs, run.js prints them as a `uop ladder:` line, and
+`tools/uop-census-diff.js` prints "ladder endings" per arm. The new
+uop-game-ab arms are `ladder`, `noladder`, `icladder`, `icnoladder`,
+`ladhalve`, `ladhead` and `ladicut`. `--trim=GAME:N` ends a route early so a
+timed run fits the 30 s cap.
+
+### 24.2 Unit tests
+
+`test/test-uop-compiler.js` has one case per rung, each with an old-order
+control, run on both clocks:
+
+- `ladder-halve`: the old order loses the head as no-backedge.
+- `ladder-icut`: the old order enters 0 times.
+- `ladder-head-call`: the old order declines head-unsupported.
+
+The suite passes in full on main ed1aa7e6 plus the ladder.
+`movsd-nfs-record-loop` and `nobump-mark`, flagged as at risk when this work
+was paused, pass under mask 7.
+
+### 24.3 Counters and frames (fast-near-9tb-1, i9-9900K, Node 20.11.1, one build, `--branch-clock`, `--uop-census`)
+
+The box built the same wasm as the laptop: sha256 `a8c622f8...`, identical.
+
+**Heroes III, main thread:**
+
+| arm | program enters | program blocks | installs | poor | gameplay guest s (4100..5101) | ladder endings |
+|---|---:|---:|---:|---:|---:|---|
+| noladder | 62.08M | 647.6M | 1044 | 95 | 7.4 | nocall 308, failed 94 |
+| ladder | 61.96M | 649.7M | 1034 | 91 | 7.4 | halved 111, nocall-head 52, nocall 166 |
+| icnoladder | 63.31M | **456.5M** | 1699 | 538 | **17.9** | nocall 458, failed 100 |
+| icladder | 62.11M | **671.7M** | 1252 | 118 | 7.4 | halved 164, icut 41, nocall-head 63, nocall 211 |
+
+- Final frames are identical in all four arms.
+- Gameplay times come from concurrent census runs (jobs=4), so they are
+  not a timing. A 2.4x gap is still unambiguous.
+- **The §23.7 call heads install again.**
+  - The work 0x4522f9 carried under uop (11.15M enters, 44.6M blocks) is
+    entered at 0x4522f6, three bytes earlier, on today's main. In
+    icnoladder that head is declined (reason 4 after 1). In icladder it is a
+    trace/160 with 11.15M enters and 44.6M blocks.
+  - 0x590061 goes from decline 3 to trace/17 (3.72M enters), and 0x4c5d9b
+    from decline 3 to trace/160 (0.74M).
+  - The H3 icall arm therefore ends with 24M *more* program blocks than
+    plain uop, where before it had 191M fewer.
+- With icall off, the ladder moves 0x4522f9's work to a trace headed at the
+  caller 0x4521db (11.20M enters, 56.0M blocks). Net program blocks change
+  by +2.1M.
+
+**StarCraft (main + tid 2):**
+
+- Frames are identical in all four arms.
+- Ladder vs noladder: installs 2979 -> 2832, main blocks 169.6M -> 172.1M.
+  Rungs: halved 93, nocall-head 30.
+
+**Rodent:**
+
+- Frames are identical in all four arms.
+- icnoladder -> icladder: program enters 284K -> 411K, blocks 2.20M -> 3.19M
+  (uop: 2.45M).
+
+**Caesar III:**
+
+- Program enters 32.3M -> 39.0M with the ladder, and installs 432 -> 464.
+- Frames differ, but this is not a ladder fault:
+  - `off` already differs from `noladder` on city.png and city-later.png,
+    and `noladder` and `noladder2` are identical. So c3 is not clock-exact
+    across tiers on main (the fold families that §8 notes do not charge
+    trips under `--branch-clock`).
+  - Ladder vs noladder: city.png is identical. name.png differs by a 4x2
+    caret, and city-later.png is a later simulation frame. Both are timing
+    divergence of the same kind.
+
+**Diablo:** stopped. The census run reached batch 1080 of 4100 in 70
+minutes on this box.
+
+### 24.4 Timing (fast-near-9tb-1, quiet, load 1.0-1.2)
+
+The method:
+- one run at a time, under `/tmp/wine-assembly-diablo-benchmark.lock`;
+- arm order rotated every rep;
+- fixed work, process user CPU (`/usr/bin/time -p`);
+- band = (max - min) / median.
+
+| game | noladder | ladder | icnoladder | icladder |
+|---|---|---|---|---|
+| Rodent, whole run, n=7 | 4.79 [4.77..4.84] band 1.5% | 4.79 [4.76..4.83] **0.0%** | 4.87 [4.84..4.94] **+1.7%** | 4.81 [4.77..4.85] **+0.4%** |
+| sc `--trim=sc:2800`, n=5 | 27.71 [27.54..27.73] band 0.7% | 27.89 [27.83..28.13] **+0.6%** | 27.19 [27.13..27.32] **-1.9%** | 27.93 [27.79..28.43] **+0.8%** |
+
+- **Rodent.** The ladder is neutral. It recovers icall's loss: +1.7%,
+  outside the band, becomes +0.4%, inside it.
+- **StarCraft.** This run is boot-dominated: gameplay 1750..2800 is 0.8 s of
+  guest time.
+  - The ladder costs +0.6%, and the ranges do not overlap. That is the
+    price of the extra compile attempts (halving retries) during boot.
+  - icnoladder at -1.9% reverses §23.5's +2.0%, which was a full route on
+    another box. This is one window on one box; it is not read as an icall
+    win.
+- **Heroes III and Caesar III** were not timed. Their routes run about
+  130 s and 70 s, over the 30 s cap. Their counters are in §24.3.
+
+### 24.5 Native code
+
+Native code was not captured. The ladder changes which programs are
+compiled, not how they run:
+- 07d's source diff is a comment;
+- the engine ops and lowering are unchanged;
+- 07e's change is confined to `$uc_lower_head`, `$uc_form_loop`'s call
+  classification and new counters.
+
+The disassembly rule in CLAUDE.md applies to runtime code-shape variants.
+
+### 24.6 Verdict
+
+- **The ladder stays on (mask 7).**
+  - It is neutral on Rodent and on H3 gameplay, and it adds coverage on
+    H3, StarCraft and c3.
+  - It costs +0.6% on StarCraft's boot-heavy window.
+  - It is the prerequisite for `--uop-icall`: without it, icall loses 29%
+    of H3's program blocks and runs gameplay 2.4x slower.
+- **`--uop-icall` stays default-off.** With the ladder it is at parity, not
+  a win: Rodent +0.4%, sc +0.8%, H3 gameplay 7.4 s vs 7.4 s.
+- **What is left:**
+  - a timed H3 gameplay comparison that fits the cap (it needs a cheaper
+    way into the adventure map);
+  - pricing StarCraft's boot compile cost per rung (`ladhalve` / `ladhead`
+    arms);
+  - Diablo counters on a faster box.

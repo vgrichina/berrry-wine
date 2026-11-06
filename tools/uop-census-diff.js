@@ -19,7 +19,8 @@
 // target) and the instruction ranges it covers. From 07e kind 17: a compile
 // whose calls-followed attempt failed and was retried with calls as the edge,
 // with the first attempt's reason -- the verdict a head ends with is the
-// retry's, and for a head that is itself a call that is always 3.
+// retry's (before the section-24 ladder, for a head that is itself a call that
+// was always 3). From kind 18: which rung of the ladder ended it.
 //
 // "Swallowed" means: the head's EIP is an instruction inside some OTHER
 // head's program in arm B, that program keeps an icall/IAT site, and the same
@@ -41,6 +42,7 @@ if (files.length !== 2) {
 }
 const TOP = parseInt(flag('top', '20'), 10);
 const THREAD = flag('thread', null);
+const RUNG = ['halved', 'icut', 'nocall-head', 'nocall'];
 const hex = v => '0x' + (v >>> 0).toString(16);
 const M = n => (n / 1e6).toFixed(2) + 'M';
 
@@ -54,7 +56,7 @@ function load(file) {
   const heads = new Map();
   const H = eip => {
     let h = heads.get(eip);
-    if (!h) heads.set(eip, h = { eip, compiles: 0, installs: 0, traces: 0, insns: 0, declines: {}, retry: {},
+    if (!h) heads.set(eip, h = { eip, compiles: 0, installs: 0, traces: 0, insns: 0, declines: {}, retry: {}, rung: {},
       enters: 0, blocks: 0, work: 0, poor: 0, cw: 0, mega: 0, flushed: 0, liveEnd: 0,
       cuts: 0, exits: new Map(), sites: [], ranges: [], allRanges: [], pendSites: [], pendRanges: [],
       progs: [] });
@@ -77,7 +79,7 @@ function load(file) {
   for (let i = 0; i + 4 < vals.length; i++) {
     if ((vals[i] & 0xFFFF0000) >>> 0 !== 0xC5E50000) continue;
     const k = vals[i] & 0xFFFF;
-    if (k < 1 || k > 17) continue;
+    if (k < 1 || k > 18) continue;
     const [a, b, c, d] = [vals[i + 1], vals[i + 2], vals[i + 3], vals[i + 4]];
     i += 4; n++;
     if (k === 1) {
@@ -113,6 +115,13 @@ function load(file) {
       // retry's, so a call-headed head reads head-unsupported there
       const h = H(a);
       h.retry[b] = (h.retry[b] || 0) + 1;
+    } else if (k === 18) {
+      // the attempt that ended the retry ladder: mode b (0 calls followed at
+      // a halved span, 1 icall sites cut, 2 nocall keeping the head's call,
+      // 3 nocall), final reason c (0 = compiled), span d
+      const h = H(a);
+      const key = `${RUNG[b] || b}${c ? ':fail' + c : ''}`;
+      h.rung[key] = (h.rung[key] || 0) + 1;
     }
   }
   if (!n) { console.error(`${file}: no census records (thread ${THREAD || 'main'})`); process.exit(1); }
@@ -235,6 +244,13 @@ for (const [name, arm] of [['A', A], ['B', B]]) {
   say(`${name === 'A' ? '\n' : ''}calls-followed failures retried with calls as the edge, arm ${name} (reason: count): ` +
     (Object.entries(by).map(([w, n]) => `${w}:${n}`).join(' ') || 'none'));
 }
+// ---- which rung ended each ladder (07e kind 18) -------------------------------
+for (const [name, arm] of [['A', A], ['B', B]]) {
+  const by = {};
+  for (const h of arm.heads.values()) for (const [r, n] of Object.entries(h.rung)) by[r] = (by[r] || 0) + n;
+  say(`ladder endings, arm ${name} (mode[:failREASON]: count): ` +
+    (Object.entries(by).sort().map(([w, n]) => `${w}:${n}`).join(' ') || 'none'));
+}
 
 // ---- icall-bearing programs in B: what they became ---------------------------
 const ic = [...B.heads.values()].filter(h => icallSites(h).length).sort((x, y) => y.enters - x.enters);
@@ -267,7 +283,7 @@ if (flag('json', null)) {
   fs.writeFileSync(flag('json', null), JSON.stringify(rows.map(r => ({
     eip: hex(r.eip), aEnters: r.a.enters, bEnters: r.b.enters, aBlocks: r.a.blocks, bBlocks: r.b.blocks,
     aInstalls: r.a.installs, bInstalls: r.b.installs, aKind: kind(r.a), bKind: kind(r.b), cls: cls(r),
-    aPoor: r.a.poor, bPoor: r.b.poor, bRetry: r.b.retry || {},
+    aPoor: r.a.poor, bPoor: r.b.poor, bRetry: r.b.retry || {}, aRung: r.a.rung || {}, bRung: r.b.rung || {},
     swallowers: r.swallowers.map(p => hex(p.eip)), newCoverB: r.newCoverB.map(p => hex(p.eip)),
   })), null, 1));
 }

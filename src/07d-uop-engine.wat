@@ -379,6 +379,11 @@
   ;;  16 cut        head, landing EIP, 0, 0  (07e $uc_form_trace)
   ;;  17 retry      head, first reason, calls followed, is-trace  (07e
   ;;                $uc_lower_head, before the nocall retry)
+  ;;  18 rung       head, mode, final reason (0 = compiled), span  (07e
+  ;;                $uc_lower_head, after any 17: the attempt that ended the
+  ;;                retry ladder; mode 0 calls followed at a halved span,
+  ;;                1 only the icall sites cut, 2 nocall keeping the head's
+  ;;                own call, 3 nocall)
   (global $uop_census (mut i32) (i32.const 0))
   (func $uop_census_ev (param $k i32) (param $a i32) (param $b i32) (param $c i32) (param $d i32)
     (call $host_log_i32 (i32.or (i32.const 0xC5E50000) (local.get $k)))

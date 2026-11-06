@@ -6,6 +6,7 @@
 //   node tools/uop-game-ab.js [--games=h3,sc,...] [--arms=off,uop] [--jobs=N]
 //        [--out=DIR] [--extra='--flag ...'] [--ref-wasm=FILE [--ref-region-map=FILE]] [--gl=headless] [--cpu-prof] [--no-build] [--list]
 //        [--extend=GAME:N,...]   (N more gameplay batches past the route's end, split there)
+//        [--trim=GAME:N,...]     (end the route at batch N, past its split: fit the 30 s cap)
 //
 // Runs each game's own gameplay route (the one its test/test-*-gameplay.js or
 // its re-notes use) in two arms and prints, per game: whether the final frames
@@ -288,6 +289,14 @@ function runArm(game, name, armArgs, outDir, extra) {
     // state the route left it in (a town, an adventure map, a HUD).
     const ext = +((arg('extend', '').split(',').find(s => s.startsWith(`${game}:`)) || ':0').split(':')[1]);
     let splits = g.split ? [g.split] : [];
+    // --trim=GAME:N[,GAME:N]: stop the route at batch N instead (N past the
+    // game's split), so a timed A/B fits the 30-second benchmark cap; the
+    // gameplay phase is then split..N.
+    const trim = +((arg('trim', '').split(',').find(s => s.startsWith(`${game}:`)) || ':0').split(':')[1]);
+    if (trim > 0) {
+      if (g.split && trim <= g.split) throw new Error(`--trim=${game}:${trim} is not past the split ${g.split}`);
+      gargs = gargs.map(a => a.startsWith('--max-batches=') ? `--max-batches=${trim}` : a);
+    }
     if (ext > 0) {
       const mb = gargs.find(a => a.startsWith('--max-batches='));
       const end = +mb.split('=')[1];
@@ -323,7 +332,7 @@ function parse(r) {
     .map(m => ({ lo: +m[1], hi: +m[2], s: +m[3] }));
   const uop = (text.match(/^uop: .*$/m) || [''])[0];
   // Secondary tier lines (`uop hot:`, `uop nobump:`), printed as they came.
-  const hot = [...text.matchAll(/^(?:uop (?:hot|nobump|widen): .*|  guard-fail sites: .*)$/mg)].map(m => m[0].trim()).join('\n       ');
+  const hot = [...text.matchAll(/^(?:uop (?:hot|nobump|widen|ladder): .*|  guard-fail sites: .*)$/mg)].map(m => m[0].trim()).join('\n       ');
   const declines = (text.match(/^\s+declines: (.*)$/m) || [, ''])[1];
   const threads = [...text.matchAll(/^uop\[thread [^\]]+\]: .*$/mg)].map(m => m[0]);
   const crash = (text.match(/(RuntimeError|unreachable|CRASH|crash_unimplemented)[^\n]*/) || [''])[0];
@@ -414,6 +423,17 @@ async function main() {
   // docs/uop-tier-design.md section 23) -- every guard kept however it fails.
   ARMS.icallpoly = [...ARMS.icall, '--uop-icg-mega=0'];
   ARMS.iat = [...ARMS.uop, '--uop-iat'];
+  // Retry ladder (07e $uc_lower_head, docs/uop-tier-design.md section 24):
+  // ladder / noladder force it on (mask 7) / off (the pre-24 order) whatever
+  // the build's default; icladder / icnoladder are the same over --uop-icall.
+  // ladhalve / ladhead / ladicut are one rung each (masks 2 / 4 / 1).
+  ARMS.ladder = [...ARMS.uop, '--uop-retry-ladder=7'];
+  ARMS.noladder = [...ARMS.uop, '--no-uop-retry-ladder'];
+  ARMS.icladder = [...ARMS.icall, '--uop-retry-ladder=7'];
+  ARMS.icnoladder = [...ARMS.icall, '--no-uop-retry-ladder'];
+  ARMS.ladhalve = [...ARMS.uop, '--uop-retry-ladder=2'];
+  ARMS.ladhead = [...ARMS.uop, '--uop-retry-ladder=4'];
+  ARMS.ladicut = [...ARMS.icall, '--uop-retry-ladder=1'];
   ARMS.widen = [...ARMS.uop, '--uop-muldiv', '--uop-icall', '--uop-iat'];
   // --ref-wasm=FILE adds arms refoff / refuop: the same two arms on another
   // prebuilt module, so an engine change is measured against its predecessor
