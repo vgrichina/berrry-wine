@@ -1252,9 +1252,9 @@
   ;; into scalar trace messages before resuming. No live export or guest write.
   (global $d3d9_world_trace_enabled (mut i32) (i32.const -1))
   (global $d3d9_world_trace_serial (mut i32) (i32.const 0))
-  ;; MultiplyTransform currently does not read its input. A diagnostic must
-  ;; therefore translate only an already mapped, contiguous 64-byte source,
-  ;; without g2w misses, SEH, lazy DIB materialization or sentinel writes.
+  ;; Read-only diagnostic probe: never fault in guest memory or materialize
+  ;; lazy DIB backing merely to observe it. Semantic API reads validate their
+  ;; own spans independently of this optional diagnostic.
   (func $d3d9_world_probe_matrix (param $ga i32) (result i32)
     (local $wa i32)
     (if (i32.gt_u (local.get $ga) (i32.const 0xFFFFFFC0)) (then (return (i32.const 0))))
@@ -1360,6 +1360,45 @@
           (call $g2w (local.get $matrix)) (local.get $slot) (select (local.get $record) (local.get $state) (local.get $block))
           (local.get $matrix))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+
+  ;; MultiplyTransform is not recorded by BeginStateBlock. It always changes
+  ;; live state; recorded SetTransform values and their selection masks remain
+  ;; intact. Microsoft specifies pMatrix * State (row-major D3DMATRIX).
+  (func $d3d9_multiply_transform (param $device i32) (param $type i32) (param $matrix i32)
+    (local $index i32) (local $state i32) (local $slot i32) (local $source i32) (local $copy i32) (local $byte i32)
+    (i32.store (global.get $reg_base) (i32.const 0x8876086c))
+    (local.set $index (call $d3d9_transform_index (local.get $type)))
+    (if (i32.eq (local.get $index) (i32.const -1)) (then (return)))
+    (local.set $state (call $d3d9_program_state (local.get $device)))
+    (if (i32.eqz (local.get $state)) (then (return)))
+    (if (i32.or (i32.eqz (local.get $matrix))
+      (i32.gt_u (local.get $matrix) (i32.const 0xffffffc0))) (then (return)))
+    ;; Validate the whole guest span before copying. Guest adjacency does not
+    ;; imply backing adjacency; guest_span_in gathers split sparse pages.
+    ;; The read-only mapping check avoids quiet-miss writes or exception entry
+    ;; for truly missing pages, independently of diagnostic enablement.
+    (loop $validate
+      (if (i32.eqz (call $guest_addr_mapped (i32.add (local.get $matrix) (local.get $byte))))
+        (then (return)))
+      (local.set $byte (i32.add (local.get $byte) (i32.const 1)))
+      (br_if $validate (i32.lt_u (local.get $byte) (i32.const 64))))
+    (local.set $source (call $guest_span_in (local.get $matrix) (i32.const 64)))
+    (local.set $slot (i32.add (call $g2w (local.get $state))
+      (i32.add (i32.const 2068) (i32.mul (local.get $index) (i32.const 64)))))
+    ;; Keep original source bits for provenance even when input overlaps state.
+    ;; mat4_mul snapshots both operands before storing, so the destination may
+    ;; alias either operand. Scratch is device-local, never a shared global.
+    (local.set $copy (i32.add (call $g2w (local.get $state)) (i32.const 25616)))
+    (memory.copy (local.get $copy) (local.get $source) (i32.const 64))
+    (call $guest_span_release (local.get $source) (i32.const 64))
+    (if (i32.eq (local.get $type) (i32.const 256)) (then
+      (call $d3d9_trace_world (local.get $device) (i32.const 9) (local.get $copy)
+        (local.get $slot) (local.get $state) (local.get $matrix))))
+    (call $mat4_mul (local.get $slot) (local.get $copy) (local.get $slot))
+    (if (i32.eq (local.get $type) (i32.const 256)) (then
+      (call $d3d9_trace_world (local.get $device) (i32.const 10) (local.get $copy)
+        (local.get $slot) (local.get $state) (local.get $matrix))))
+    (i32.store (global.get $reg_base) (i32.const 0)))
 
   (func $d3d9_resource_free (param $obj i32)
     (local $wa i32) (local $stage i32)

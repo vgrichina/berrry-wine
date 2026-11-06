@@ -82,9 +82,10 @@
     ;; +25600 actual backbuffer storage format, separate from display mode.
     ;; +25604 D3D8 pixel-shader handle list; +25608 monotonic handle counter.
     ;; +25612 D3D8 vertex-program/declaration handle list.
-    (local.set $state (call $heap_alloc (i32.const 25616)))
+    ;; +25616 copied MultiplyTransform input, owned by this device.
+    (local.set $state (call $heap_alloc (i32.const 25680)))
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
-    (call $zero_memory (call $g2w (local.get $state)) (i32.const 25616))
+    (call $zero_memory (call $g2w (local.get $state)) (i32.const 25680))
     (call $gs32 (i32.add (local.get $state) (i32.const 21780)) (global.get $current_thread_id))
     (loop $texture_stages
       (local.set $sampler (i32.add (call $g2w (local.get $state))
@@ -1647,18 +1648,7 @@
 
   ;; IDirect3DDevice9_MultiplyTransform — 3 args (incl. this)
   (func $handle_IDirect3DDevice9_MultiplyTransform (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (i32.and (i32.eq (local.get $arg1) (i32.const 256))
-      (i32.and (i32.ne (local.get $arg2) (i32.const 0)) (i32.ne (call $d3d9_program_state (local.get $arg0)) (i32.const 0)))) (then
-      (call $d3d9_trace_world (local.get $arg0) (i32.const 9) (call $d3d9_world_probe_matrix (local.get $arg2))
-        (i32.add (call $g2w (call $d3d9_program_state (local.get $arg0))) (i32.const 2708))
-        (call $d3d9_program_state (local.get $arg0)) (local.get $arg2))))
-    (call $d3d9_recording_guard (local.get $arg0) (local.get $name_ptr))
-    (if (i32.and (i32.eq (local.get $arg1) (i32.const 256))
-      (i32.and (i32.ne (local.get $arg2) (i32.const 0)) (i32.ne (call $d3d9_program_state (local.get $arg0)) (i32.const 0)))) (then
-      (call $d3d9_trace_world (local.get $arg0) (i32.const 10) (call $d3d9_world_probe_matrix (local.get $arg2))
-        (i32.add (call $g2w (call $d3d9_program_state (local.get $arg0))) (i32.const 2708))
-        (call $d3d9_program_state (local.get $arg0)) (local.get $arg2))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (call $d3d9_multiply_transform (local.get $arg0) (local.get $arg1) (local.get $arg2))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice9_SetViewport — 2 args (incl. this)
