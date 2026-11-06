@@ -1336,11 +1336,16 @@
 
   ;; IDirect3DDevice9_GetBackBuffer(this, iSwapChain, iBackBuffer, Type,
   ;;                                ppBackBuffer) — 5 args.
-  ;; We render straight into the device's render target, so the back buffer is
-  ;; that surface seen through the IDirect3DSurface9 vtable.
+  ;; The supported chain has one implicit back buffer, independent of RT0
+  ;; bindings, exposed through the IDirect3DSurface9 vtable.
   (func $handle_IDirect3DDevice9_GetBackBuffer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $rt i32) (local $slot i32) (local $surface i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+    ;; Only the implicit chain/buffer and D3DBACKBUFFER_TYPE_MONO exist.
+    ;; Reject selectors before acquiring a surface or retaining its device.
+    (if (i32.or (i32.or (local.get $arg1) (local.get $arg2)) (local.get $arg3)) (then
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086C))
+      (return)))
     (if (i32.eqz (local.get $arg4)) (then
       (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086C)) ;; D3DERR_INVALIDCALL
       (return)))
@@ -2748,6 +2753,11 @@
   (func $handle_IDirect3DSwapChain9_GetBackBuffer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $rt i32) (local $slot i32) (local $surface i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+    ;; Only the implicit chain/buffer and D3DBACKBUFFER_TYPE_MONO exist.
+    ;; Reject selectors before acquiring a surface or retaining its device.
+    (if (local.get $arg2) (then
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086C))
+      (return)))
     (if (i32.or (local.get $arg1) (i32.eqz (local.get $arg3)))
       (then
         (if (local.get $arg3) (then (call $gs32 (local.get $arg3) (i32.const 0))))

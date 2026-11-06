@@ -48,7 +48,7 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
   await page.waitForFunction(()=>typeof WineAssembly==='function'&&typeof D3D9Host==='object');
   for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
    const moduleBytes=fs.readFileSync(path.join(root,'build',name));
-   const row=await page.evaluate(async ({name,bytes,statusWasm,controlWasm,deviceWasm,frameWasm,frames,checks})=>{
+   const row=await page.evaluate(async ({name,bytes,statusWasm,controlWasm,deviceWasm,frameWasm,frames,checks,selectors,selectorWasm})=>{
     const check=(v,m)=>{if(!v)throw Error(m);},sleep=ms=>new Promise(r=>setTimeout(r,ms));
     const bytesModule=await(await fetch('/build/'+name)).arrayBuffer(),module=await WebAssembly.compile(bytesModule);
     const digest=await crypto.subtle.digest('SHA-256',bytesModule),hash=[...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
@@ -137,6 +137,7 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
     }catch(e){result.error=e.stack;}
     finally{
      if(view){result.status=view.getUint32(statusWasm,true);result.actual=view.getUint32(statusWasm+4,true);result.expected=view.getUint32(statusWasm+8,true);
+      result.selectorResults=selectors.map(c=>({...c,hr:view.getUint32(selectorWasm+c.offset,true),output:view.getUint32(selectorWasm+c.offset+4,true),reset:view.getUint32(selectorWasm+c.offset+8,true),implicit:view.getUint32(selectorWasm+c.offset+12,true)}));
       result.frames=frames.map(frame=>({...frame,words:Array.from({length:frame.w*frame.h},(_,i)=>view.getUint32(frameWasm+frame.offset+i*4,true))}));}
      const worker=wine.guestWorker,renderManager=wine._renderWorkerManager;wine.stop();await worker?.stop();
      try{
@@ -149,7 +150,7 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
      canvas.remove();D3D9Host.Bridge=Base;WineAssembly.getWasmModule=getModule;
     }
     return result;
-   },{name,bytes:[...f.bytes],statusWasm:f.statusWasm,controlWasm:f.controlWasm,deviceWasm:f.deviceWasm,frameWasm:f.frameWasm,frames:f.frames,checks:f.checks});
+   },{name,bytes:[...f.bytes],statusWasm:f.statusWasm,controlWasm:f.controlWasm,deviceWasm:f.deviceWasm,frameWasm:f.frameWasm,frames:f.frames,checks:f.checks,selectors:f.selectors,selectorWasm:f.selectorWasm});
    row.name=name;evidence.rows.push(row);save();
    if(out){
     const {PNG}=require('pngjs');row.captures=[];
@@ -178,7 +179,17 @@ const out=process.env.D3D9_RESET_EVIDENCE,sha=b=>crypto.createHash('sha256').upd
    await gallery.setContent('<style>body{background:#eee;font:14px sans-serif}main{display:grid;grid-template-columns:repeat(7,1fr)}figure{margin:6px}img{width:128px;height:160px;object-fit:contain;image-rendering:pixelated;background:white}figcaption{font-size:11px;overflow-wrap:anywhere}</style><h2>Generated public D3D9 COM LockRect readbacks</h2><p>Standard then compat. Independent colors/coverage checked away from edge ties. No gameplay.</p><main>'+cards+'</main>');
    await gallery.screenshot({path:path.join(out,'public-reset-readbacks.png'),fullPage:true});await gallery.close();evidence.contactSheet='public-reset-readbacks.png';
   }
-  assert(!errors.length,errors.join('\n'));evidence.outcome='PASS';
+  assert(!errors.length,errors.join('\n'));
+  // Inspect both shipped modules before rejecting a reproduced baseline.
+  // Failure output is retained as observation only: the contract does not
+  // specify whether it is cleared or preserved. Never Release it on failure.
+  evidence.selectorMismatches=evidence.rows.flatMap(row=>row.selectorResults.filter(c=>c.hr!==0x8876086c||c.reset!==0).map(c=>({name:row.name,...c})));
+  save();
+  for(const row of evidence.rows)for(const c of row.selectorResults){
+   assert.equal(c.hr,0x8876086c,row.name+' invalid GetBackBuffer '+JSON.stringify(c));
+   assert.equal(c.reset,0,row.name+' failed selector must not acquire a Reset-blocking resource '+JSON.stringify(c));
+  }
+  evidence.outcome='PASS';
  }catch(e){evidence.outcome='FAIL';evidence.error=e.stack;throw e;}
  finally{
   if(browser){const pids=[],visit=pid=>{if(!pid||pids.includes(pid))return;pids.push(pid);try{fs.readFileSync('/proc/'+pid+'/task/'+pid+'/children','utf8').trim().split(/\s+/).filter(Boolean).map(Number).forEach(visit);}catch{}};visit(browser.process().pid);evidence.observedPids=pids;}
