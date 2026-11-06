@@ -1187,6 +1187,7 @@ commit output — do not assume your hunks landed.**
 
 - [ ] Reconcile remaining historical recovery changes against current main
   id: RECOVERY-PATCH-RETRIAGE
+  Update 2026-11-06T09:54Z: Atomic bitmap-font replacement slice80bc9a615 already integrated by ancestor e46b2145f with owned path identity; current staging/rollback retained and replacement regression updated for full CreateFontW ABI by217f33947. Static function/test comparison recorded in ops/handoffs/recovery-font-replacement-disposition-20261106.md; do not port over newer code. No fresh runtime certification. Worker font-catalog startup is separate and remains unreviewed.
   Update 2026-11-06T09:46Z: Isolated actual host fs_create_file CREATE_ALWAYS + close-without-WriteFile reproduces missing overlay records for both new empty files and truncation of an existing file; direct VirtualFS controls persist zero-byte records. Cause: overlay wraps createFile while host imports call createFileResult. Evidence: run20261106-overlay-create-route-probe (four cases, source hashes); recovery-sparse-save-candidate-20261106.md and queued assignment now require real host-import regression coverage. No production repair, durable reload, compiled guest or sparse-write success claimed.
   status: backlog
   created: 2026-10-02T04:16:51.185761+00:00

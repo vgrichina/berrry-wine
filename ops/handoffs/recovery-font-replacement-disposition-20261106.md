@@ -1,0 +1,9 @@
+# Recovery bitmap-font replacement disposition
+
+Static comparison on 2026-11-06 against main `48fc7ba08`: recovery commit `80bc9a61509d1976ea55b2610b3b987611c48595` does not require another bitmap-font replacement port. Main contains ancestor `e46b2145f9da13fa0ce545bad597e2e69ff985bb` (atomic replacement and owned path identity), followed by `217f339475d3b1fc3a67efb6273a74eb012713fe` (full CreateFontW test signature).
+
+Compared the complete `gdi_bitmap_font_copy_strike_to`, `gdi_bitmap_font_parse_file_to`, `gdi_bitmap_font_discard_stage`, and `gdi_bitmap_font_replace_file` functions in `src/10b-gdi-font.wat`. The discard-stage function is byte-identical. Main preserves private staging, rollback of staged allocations, capacity/target planning before retiring old registrations, and publication without further allocation or parsing. Differences extend identity from a hash to an owned folded path: strike allocation includes path bytes, parsing forwards the path, capacity/victim selection matches the path, and retirement removes matching path records.
+
+Compared recovery and current `test/test-bitmap-font-replacement.js`. Current changes use the complete CreateFontW ABI and account for the owned path bytes in allocator-pressure/rollback checks; the recovery failure-preservation tests remain present. These comparisons establish integration of this slice, not current runtime certification. No tests, module compilation, browser, or build were run during this review.
+
+Do not port `80bc9a615` over the newer implementation. The broader recovery task remains open: Worker font-catalog startup publication (`6533ea42b`, `60dab3e4f`) is a distinct slice, and current main lacks `lib/font-catalog.js`. Its absence alone does not establish a defect or justify restoring the historical architecture; compare current startup behavior before assigning a minimal reproduction or repair.
