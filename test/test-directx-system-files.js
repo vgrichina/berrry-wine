@@ -11,6 +11,7 @@
 // LoadLibrary is not offered the stub as a PE to map.
 
 const assert = require('assert');
+const fs = require('fs');
 const boot = require('../lib/process-boot');
 const { buildVersionBlob, buildVersionPe } = require('../tools/pe-version');
 const fixture = process.argv.includes('--source-fixture');
@@ -47,7 +48,7 @@ async function main() {
   imports.host.com_create_instance = () => 0x80004002;
   boot.mountSystemDataFiles(ctx.vfs, []);
 
-  const { instance } = await WebAssembly.instantiate(compileSrcWasm(), imports);
+  const { instance } = await WebAssembly.instantiate(process.env.WA_TEST_WASM ? fs.readFileSync(process.env.WA_TEST_WASM) : compileSrcWasm(), imports);
   const e = instance.exports;
   ctx.exports = e;
   const u8 = new Uint8Array(memory.buffer);
@@ -79,6 +80,9 @@ async function main() {
     const size = e.test_call_GetFileVersionInfoSizeW(wide, 0) >>> 0;
     if (file !== 'OPENGL32.DLL') {
       assert.strictEqual(size, 0, `${file} has no invented version resource`);
+      for (const isWide of [false, true]) assert.strictEqual(
+        e['test_call_GetFileVersionInfoSize' + (isWide ? 'W' : 'A')](writeStr(file, isWide), 0),
+        0, `${file} basename has no invented version resource`);
       const handleOut = e.guest_alloc(4);
       dv.setUint32(wa(handleOut), 0xdeadbeef, true);
       const ansi = writeStr(full, false);

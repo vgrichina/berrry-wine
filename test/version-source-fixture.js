@@ -2,7 +2,8 @@
 
 // Standalone VERSION source fixture, not the full emulator or an x86 guest.
 // Execute the real resource parser, query walker and A/W handlers. Substitute
-// only flat guest memory, allocator and host wiring; use the real VFS imports.
+// flat guest memory, allocator, process image/environment and host wiring;
+// use the real directory search helpers and VFS imports.
 const fs = require('fs');
 const path = require('path');
 const { sourceFunction } = require('./wat-source-function');
@@ -21,7 +22,7 @@ function compileSrcWasm(_transform, { source: override, extraWat = '' } = {}) {
   const helper = fs.readFileSync(path.join(root, 'src/10-helpers.wat'), 'utf8');
   const names = [
     'version_read_exact', 'version_rsrc_child', 'version_ne_resource',
-    'file_version_resource', 'file_version_info_size_named', 'file_version_info_named',
+    'version_open_in_directory', 'version_open_file', 'file_version_resource', 'file_version_info_size_named', 'file_version_info_named',
     'version_is_ne', 'version_value_offset', 'version_value_bytes',
     'version_find_node', 'version_ne_text_path', 'version_query',
     'handle_GetFileVersionInfoSizeA', 'handle_GetFileVersionInfoA',
@@ -30,7 +31,11 @@ function compileSrcWasm(_transform, { source: override, extraWat = '' } = {}) {
   ];
   const functions = names.map(n => sourceFunction(source, n));
   // Encoding helpers are also taken from production, with their dependencies.
-  functions.push(sourceFunction(helper, 'tolower'));
+  for (const n of ['tolower', 'strlen', 'strlen_a', 'strlen_w', 'guest_strlen', 'env_find'])
+    functions.push(sourceFunction(helper, n));
+  const base = fs.readFileSync(path.join(root, 'src/09a0-handlers-base.wat'), 'utf8');
+  for (const n of ['module_file_name', 'store_char']) functions.push(sourceFunction(base, n));
+  functions.push(sourceFunction(fs.readFileSync(path.join(root, 'src/09a-handlers2-runtime.wat'), 'utf8'), 'gl_char'));
   functions.push(sourceFunction(fs.readFileSync(path.join(root, 'src/10c-truetype.wat'), 'utf8'), 'tt_cp1252_to_unicode'));
   const wrappers = [
     ['GetFileVersionInfoSizeA', 2], ['GetFileVersionInfoSizeW', 2],
@@ -41,6 +46,8 @@ function compileSrcWasm(_transform, { source: override, extraWat = '' } = {}) {
     (i32.store offset=16 (global.get $reg_base) (i32.const 0x00b00000))
     (call $handle_${name} ${Array.from({length: 6}, (_, i) => i < count ? `(local.get $p${i})` : '(i32.const 0)').join(' ')})
     (i32.load (global.get $reg_base)))`).join('\n');
+  const environmentData = [...Buffer.from('PATH=C:\\WINDOWS;C:\\WINDOWS\\COMMAND\0\0')]
+    .map(b => '\\' + b.toString(16).padStart(2, '0')).join('');
   const wat = `
     (import "host" "memory" (memory 16 8192 shared))
     (import "host" "fs_create_file" (func $host_fs_create_file (param i32 i32 i32 i32 i32) (result i32)))
@@ -52,6 +59,13 @@ function compileSrcWasm(_transform, { source: override, extraWat = '' } = {}) {
     (global $GUEST_BASE i32 (i32.const ${GUEST_BASE}))
     (global $heap (mut i32) (i32.const 0x00500000))
     (global $version_query_scratch (mut i32) (i32.const 0))
+    (global $exe_name_len i32 (i32.const 11))
+    (global $exe_name_wa i32 (i32.const 0x1400))
+    (global $exe_drive i32 (i32.const 67))
+    (data (i32.const 0x1400) "fixture.exe")
+    (global $env_block i32 (i32.const 0x00402000))
+    (data (i32.const ${GUEST_BASE + 0x2000}) "${environmentData}")
+    (func $env_ensure)
     ${extraWat}
     (func (export "get_image_base") (result i32) (i32.const 0x00400000))
     (func (export "get_guest_base") (result i32) (global.get $GUEST_BASE))

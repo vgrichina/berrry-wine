@@ -109,6 +109,89 @@ async function main() {
     (e.test_call_GetFileVersionInfoSizeA(writeAscii('C:\\SOMEAPP.EXE'), 0) >>> 0) !== size ||
     size === 0);
 
+  // VERSION chooses a file first, then reads that file's resource. A nearer
+  // file without RT_VERSION must not expose a later file's version instead.
+  const put = (name, version) => ctx.vfs.files.set(name.toLowerCase(), {
+    data: version === null ? Buffer.from('no version resource') :
+      buildVersionPe(buildVersionBlob([0xFEEF04BD, 0x10000, version, 0])), attrs: 0x20,
+  });
+  const searchName = 'version-search.dll';
+  const dirs = ['D:\\Program Files\\Version', 'C:\\work',
+    'C:\\WINDOWS\\SYSTEM', 'C:\\WINDOWS', 'C:\\WINDOWS\\COMMAND'];
+  const imageName = 'Program Files\\Version\\probe.exe';
+  u8.set(Buffer.from(imageName), e.get_staging());
+  e.set_exe_name(e.get_staging(), imageName.length);
+  e.set_exe_drive(68);
+  ctx.vfs.dirs.add('c:\\work');
+  check('VERSION fixture uses a distinct existing current directory', ctx.vfs.setCurrentDirectory('C:\\work'));
+  const writeName = (name, wide) => {
+    if (!wide) return writeAscii(name);
+    const g = e.guest_alloc((name.length + 1) * 2);
+    for (let i = 0; i <= name.length; i++) dv.setUint16(wa(g) + i * 2, name.charCodeAt(i) || 0, true);
+    return g;
+  };
+  function readVersion(name, wide) {
+    const ptr = writeName(name, wide), suffix = wide ? 'W' : 'A';
+    const size = e['test_call_GetFileVersionInfoSize' + suffix](ptr, 0) >>> 0;
+    const block = e.guest_alloc(Math.max(size, 92));
+    u8.fill(0xa5, wa(block), wa(block) + Math.max(size, 92));
+    const filled = e['test_call_GetFileVersionInfo' + suffix](ptr, 0, Math.max(size, 92), block);
+    if (!size) {
+      check(`${suffix} missing resource fails without fabricating output: ${name}`,
+        filled === 0 && u8.subarray(wa(block), wa(block) + Math.max(size, 92)).every(v => v === 0xa5));
+      return 0;
+    }
+    const found = e.test_call_VerQueryValueA(block, writeAscii('\\'), outPtr, outLen);
+    check(`${suffix} chosen file version root reads: ${name}`, filled === 1 && found === 1);
+    return dv.getUint32(wa(dv.getUint32(wa(outPtr), true)) + 8, true);
+  }
+  for (let i = 0; i < dirs.length; i++) put(dirs[i] + '\\' + searchName, 0x00040010 + i);
+  for (let i = 0; i < dirs.length; i++) {
+    for (const wide of [false, true]) check(`VERSION ${wide ? 'W' : 'A'} directory precedence ${i}`,
+      readVersion(searchName, wide) === 0x00040010 + i);
+    ctx.vfs.files.delete((dirs[i] + '\\' + searchName).toLowerCase());
+  }
+  put(dirs[2] + '\\' + searchName, 0x00040025);
+  put(dirs[0] + '\\' + searchName, null);
+  put(dirs[2] + '\\version-explicit.dll', 0x00040029);
+  for (const wide of [false, true]) {
+    check('nearer unversioned file shadows versioned system file', readVersion(searchName, wide) === 0);
+    check('absolute VERSION path bypasses nearer unversioned file',
+      readVersion(dirs[2] + '\\' + searchName, wide) === 0x00040025);
+    check('missing explicit path does not fall back to system basename',
+      readVersion('C:\\absent\\version-explicit.dll', wide) === 0);
+    check('rooted path is not redirected to a system basename',
+      readVersion('\\absent\\version-explicit.dll', wide) === 0);
+    check('missing bare name fails without invented version', readVersion('version-missing.dll', wide) === 0);
+    put(dirs[0] + '\\sub\\' + searchName, 0x00040026);
+    check('relative subdirectory uses application directory', readVersion('sub\\' + searchName, wide) === 0x00040026);
+  }
+  put(dirs[2] + '\\version-\u03bb.dll', 0x00040027);
+  check('wide VERSION search preserves Unicode filename', readVersion('version-\u03bb.dll', true) === 0x00040027);
+  put(dirs[2] + '\\version-\u00e9.dll', 0x00040028);
+  check('ANSI VERSION search preserves CP1252 filename', readVersion('version-\u00e9.dll', false) === 0x00040028);
+  // Optional retained original input, never a synthetic replacement. The pin
+  // is the DX7a member recorded by the real installer checkpoint. Metadata
+  // reads below do not execute or load the native file.
+  if (process.env.WA_TEST_DDRAW_GZIP) {
+    const bytes = require('zlib').gunzipSync(fs.readFileSync(process.env.WA_TEST_DDRAW_GZIP));
+    const hash = require('crypto').createHash('sha256').update(bytes).digest('hex');
+    if (bytes.length !== 352528 || hash !== '0a37a508dc6703f0998fb41d8fd5b03d7bbb5d466165dce5b45559d85174ca26')
+      throw new Error('authentic DDRAW input differs from recorded original');
+    ctx.vfs.files.set('c:\\windows\\system\\ddraw.dll', {data:bytes, attrs:0x20});
+    for (const wide of [false, true]) {
+      const actualMs = readVersion('ddraw.dll', wide);
+      check('authentic installed-target DDRAW basename supplies exact 4.7 file MS',
+        actualMs === 0x00040007);
+      check('authentic DDRAW resource supplies exact 0.700 file LS',
+        actualMs === 0x00040007 && dv.getUint32(wa(dv.getUint32(wa(outPtr), true)) + 12, true) === 0x000002bc);
+      check('authentic explicit DDRAW path supplies identical metadata',
+        readVersion('C:\\WINDOWS\\SYSTEM\\ddraw.dll', wide) === 0x00040007);
+    }
+    check('authentic DDRAW bytes remain unchanged',
+      require('crypto').createHash('sha256').update(bytes).digest('hex') === hash);
+  }
+
   console.log(`--- static-dx-version: ${pass} passed, ${fail} failed`);
   if (fail) process.exit(1);
 }

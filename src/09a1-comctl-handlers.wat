@@ -2442,6 +2442,116 @@
       (then (call $heap_free (local.get $blob)) (return (i32.const 0))))
     (local.get $blob))
 
+  ;; VERSION reads file resources without loading executable DLL code. Win9x
+  ;; uses application, current, system, Windows, then PATH directories. Stop
+  ;; at the first existing file, even when that file has no version resource.
+  (func $version_open_in_directory (param $dir_wa i32) (param $dir_len i32)
+      (param $filename_g i32) (param $wide i32) (result i32)
+    (local $name_len i32) (local $path_g i32) (local $path_wa i32)
+    (local $i i32) (local $ch i32) (local $handle i32)
+    (local.set $name_len (if (result i32) (local.get $wide)
+      (then (call $strlen_w (call $g2w (local.get $filename_g))))
+      (else (call $strlen_a (call $g2w (local.get $filename_g))))))
+    (local.set $path_g (call $heap_alloc
+      (i32.mul (i32.add (i32.add (local.get $dir_len) (local.get $name_len))
+        (i32.const 2)) (i32.const 2))))
+    (if (i32.eqz (local.get $path_g)) (then (return (i32.const -1))))
+    (local.set $path_wa (call $g2w (local.get $path_g)))
+    (block $copied (loop $copy
+      (br_if $copied (i32.ge_u (local.get $i) (local.get $dir_len)))
+      (i32.store16 (i32.add (local.get $path_wa) (i32.mul (local.get $i) (i32.const 2)))
+        (call $tt_cp1252_to_unicode
+          (i32.load8_u (i32.add (local.get $dir_wa) (local.get $i)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $copy)))
+    (i32.store16 (i32.add (local.get $path_wa) (i32.mul (local.get $i) (i32.const 2))) (i32.const 92))
+    (local.set $i (i32.const 0))
+    (loop $name
+      (local.set $ch (call $fmt_get
+        (i32.add (local.get $filename_g)
+          (i32.mul (local.get $i) (select (i32.const 2) (i32.const 1) (local.get $wide))))
+        (local.get $wide)))
+      (if (i32.eqz (local.get $wide))
+        (then (local.set $ch (call $tt_cp1252_to_unicode (local.get $ch)))))
+      (i32.store16 (i32.add (local.get $path_wa)
+        (i32.mul (i32.add (i32.add (local.get $dir_len) (i32.const 1)) (local.get $i)) (i32.const 2)))
+        (local.get $ch))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $name (i32.ne (local.get $ch) (i32.const 0))))
+    (local.set $handle (call $host_fs_create_file (local.get $path_wa)
+      (i32.const 0x80000000) (i32.const 3) (i32.const 0x80) (i32.const 1)))
+    (call $heap_free (local.get $path_g))
+    (local.get $handle))
+
+  (func $version_open_file (param $filename_g i32) (param $wide i32) (result i32)
+    (local $i i32) (local $ch i32) (local $step i32) (local $length i32)
+    (local $dir_len i32) (local $buffer_g i32) (local $buffer_wa i32)
+    (local $handle i32) (local $env_g i32) (local $start i32)
+    (local.set $step (select (i32.const 2) (i32.const 1) (local.get $wide)))
+    (local.set $handle (i32.const -1))
+    ;; Absolute, rooted and drive-relative paths are explicit. Relative
+    ;; subdirectories are appended to each search directory, as LoadLibrary.
+    (local.set $ch (call $fmt_get (local.get $filename_g) (local.get $wide)))
+    (if (i32.or (i32.eq (local.get $ch) (i32.const 92))
+          (i32.eq (local.get $ch) (i32.const 47)))
+      (then (return (call $host_fs_create_file (call $g2w (local.get $filename_g))
+        (i32.const 0x80000000) (i32.const 3) (i32.const 0x80) (local.get $wide)))))
+    (block $end (loop $scan
+      (local.set $ch (call $fmt_get
+        (i32.add (local.get $filename_g) (i32.mul (local.get $i) (local.get $step))) (local.get $wide)))
+      (br_if $end (i32.eqz (local.get $ch)))
+      (if (i32.eq (local.get $ch) (i32.const 58))
+        (then (return (call $host_fs_create_file (call $g2w (local.get $filename_g))
+          (i32.const 0x80000000) (i32.const 3) (i32.const 0x80) (local.get $wide)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (if (i32.eqz (local.get $i)) (then (return (i32.const -1))))
+    ;; GetModuleFileName uses the process image name, independently of CWD.
+    (local.set $length (i32.add (global.get $exe_name_len) (i32.const 8)))
+    (local.set $buffer_g (call $heap_alloc (local.get $length)))
+    (if (i32.eqz (local.get $buffer_g)) (then (return (i32.const -1))))
+    (local.set $buffer_wa (call $g2w (local.get $buffer_g)))
+    (drop (call $module_file_name (local.get $buffer_g) (local.get $length) (i32.const 0)))
+    (local.set $i (i32.const 0))
+    (block $end (loop $scan
+      (local.set $ch (i32.load8_u (i32.add (local.get $buffer_wa) (local.get $i))))
+      (br_if $end (i32.eqz (local.get $ch)))
+      (if (i32.or (i32.eq (local.get $ch) (i32.const 92)) (i32.eq (local.get $ch) (i32.const 47)))
+        (then (local.set $dir_len (local.get $i))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (block $done
+      (local.set $handle (call $version_open_in_directory (local.get $buffer_wa)
+        (local.get $dir_len) (local.get $filename_g) (local.get $wide)))
+      (br_if $done (i32.ne (local.get $handle) (i32.const -1)))
+      (local.set $handle (call $host_fs_create_file (call $g2w (local.get $filename_g))
+        (i32.const 0x80000000) (i32.const 3) (i32.const 0x80) (local.get $wide)))
+      (br_if $done (i32.ne (local.get $handle) (i32.const -1)))
+      (local.set $handle (call $version_open_in_directory "C:\\WINDOWS\\SYSTEM"
+        (i32.const 17) (local.get $filename_g) (local.get $wide)))
+      (br_if $done (i32.ne (local.get $handle) (i32.const -1)))
+      (local.set $handle (call $version_open_in_directory "C:\\WINDOWS"
+        (i32.const 10) (local.get $filename_g) (local.get $wide)))
+      (br_if $done (i32.ne (local.get $handle) (i32.const -1)))
+      ;; Reuse the invocation-owned buffer only after its image-path use.
+      (i32.store (local.get $buffer_wa) (i32.const 0x48544150)) ;; PATH
+      (i32.store8 offset=4 (local.get $buffer_wa) (i32.const 0))
+      (local.set $env_g (call $env_find (local.get $buffer_g) (i32.const 0)))
+      (br_if $done (i32.eqz (local.get $env_g)))
+      (local.set $env_g (i32.add (local.get $env_g) (i32.const 5)))
+      (local.set $start (local.get $env_g))
+      (loop $path
+        (local.set $ch (call $gl8 (local.get $env_g)))
+        (if (i32.or (i32.eqz (local.get $ch)) (i32.eq (local.get $ch) (i32.const 59)))
+          (then
+            (if (i32.ne (local.get $start) (local.get $env_g))
+              (then
+                (local.set $handle (call $version_open_in_directory (call $g2w (local.get $start))
+                  (i32.sub (local.get $env_g) (local.get $start)) (local.get $filename_g) (local.get $wide)))
+                (br_if $done (i32.ne (local.get $handle) (i32.const -1)))))
+            (br_if $done (i32.eqz (local.get $ch)))
+            (local.set $start (i32.add (local.get $env_g) (i32.const 1)))))
+        (local.set $env_g (i32.add (local.get $env_g) (i32.const 1))) (br $path)))
+    (call $heap_free (local.get $buffer_g))
+    (local.get $handle))
+
   (func $file_version_resource (param $filename_g i32) (param $wide i32)
       (param $size_out_wa i32) (result i32)
     (local $handle i32) (local $file_size i32) (local $count_g i32)
@@ -2459,10 +2569,7 @@
     (local.set $handle (i32.const -1))
     (block $load
       (br_if $load (i32.eqz (local.get $filename_g)))
-      (local.set $handle (call $host_fs_create_file
-        (call $g2w (local.get $filename_g))
-        (i32.const 0x80000000) (i32.const 3) (i32.const 0x80)
-        (local.get $wide)))
+      (local.set $handle (call $version_open_file (local.get $filename_g) (local.get $wide)))
       (br_if $load (i32.eq (local.get $handle) (i32.const -1)))
       (local.set $file_size (call $host_fs_get_file_size (local.get $handle)))
       (br_if $load (i32.lt_u (local.get $file_size) (i32.const 64)))
