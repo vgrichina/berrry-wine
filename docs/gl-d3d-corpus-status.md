@@ -11,10 +11,22 @@ The cooperative original passed its notice and reached native GL plus MIDI
 open-callback execution. Missing replies stopped that run as UNKNOWN; the
 threaded arm was not launched. Its final logo texture is not a composited menu
 or world capture. Evidence was verified before normal shutdown of
-`bx_25tc5y5f`. Fresh `graphics-repaired-pair-1555` targets the incomplete pair
-with repaired transport and composited captures. Gameplay, playback, parity
-and historical27 completion remain open.
+`bx_25tc5y5f`.
 [Observed progress, regression and limits](re-notes/graphics-post-notice-20261107.md).
+
+Published `eee2adf57` follows through with repaired transport: the cooperative
+original reaches a reviewed composited courtyard with fists and HUD, but black
+scene regions and incomplete HUD glyphs remain visible. The threaded arm creates
+native GL and then fails at MIDI stream open. The host incorrectly rejects its
+local main VM when an auxiliary Worker backend exists. The fix admits only the
+verified main instance; callback lifecycle, foreign-owner rejection, actual
+Worker regressions and the locked build pass. The original was not rerun after
+the fix. Backend selection does not prove auxiliary-thread execution, and empty
+PCM does not prove playback. Evidence was verified before normal archived stop
+of `bx_xtyxkm7m`. The active `graphics-threaded-followthrough-1608` assignment
+tests the repaired threaded path and investigates remaining rendering defects.
+Gameplay, playback, parity and historical27 completion remain open.
+[Composited world, MIDI repair and limits](re-notes/graphics-repaired-pair-20261107.md).
 
 ## November 7: Tunnel, Twist and Boids browser coverage
 
