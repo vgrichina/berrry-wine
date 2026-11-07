@@ -1,5 +1,15 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: Descent 3 installation prerequisite
+
+Published `c2316ac83` records current browser startup stopping before GL at
+missing installer-derived DirectX registry metadata, followed by normal exit.
+The existing registry regression passes; no rendering defect or current flight
+progress was demonstrated. A fresh worker is recovering authentic installation
+state before repeating cockpit, movement and firing checks.
+[Startup evidence and recovery prerequisite](re-notes/descent3-current-browser-flight-20261107.md).
+
+
 ## November 7: repaired original Quake III torch follow-through
 
 Published `eef6cb6cb` closely matched the retained skull-torch scene on repaired
