@@ -1,0 +1,34 @@
+# Lords II demo: ordinary recruitment, selection and movement
+
+Verified the unchanged installed demo creating a **51-man army (50 swordsmen and one peasant)** and moving it northeast from Radberryshire's town in the same visible introductory campaign. No emulator discrepancy was demonstrated; no emulator, guest, configuration or saved-state repair was needed. Evidence is retained in `scratch/runs/20261107-lords2-army-controls/`. This extends [the seasonal gameplay result](lords2-season-progress-20261107.md); the seasonal turn alone is not the army result.
+
+Before gameplay, the original media's `Gametips.wri` was read without modification. Its Raising An Army section describes the armoury, draft slider, weapon allocation, Create, lower-body selection and route markers. The actual in-game **Army Movement** help then explicitly instructs clicking the army once and clicking a destination. That visible instruction governed the successful movement input. Source path/hash and the extracted army instructions are retained locally.
+
+Every meaningful capture was individually opened and inspected, together with the immediately following running/stopped/fault state, before the next gameplay input. The decisive sequence is:
+
+| Capture | UTC | Observed action/result |
+|---|---|---|
+| `armoury-help-dismiss.png` | 05:16:38 | Winter 1268: 172 peasants, zero recruits, happiness 56; weapon stocks visible. |
+| `recruit-reduce.png` | 05:17:13 | Ordinary slider proposes 20 recruits, 152 peasants, happiness 50. |
+| `allocate-swords.png` | 05:18:04 | Weapon control assigns 20 swordsmen. |
+| `army-create.png` | 05:18:37 | Game explicitly rejects fewer than 50 men: **Army too small**. County restored to population 172/happiness 56. |
+| `spring-settled.png` | 05:19:47 | One ordinary seasonal turn has grown population to 204, happiness 62. Same county, default taxes/rations and 200 crowns. |
+| `recruitment-balanced.png` | 05:20:49 | Revised draft: 51 recruits, 153 peasants, projected happiness 43. |
+| `fifty-swordsmen.png` | 05:21:34 | 50 swordsmen allocated; one peasant remains in the troop composition. |
+| `army-created.png` | 05:22:07 | Create command 39 succeeds: new red-flagged soldier beside town, population 153/happiness 43. |
+| `army-selected.png` | 05:22:26 | Lower-body selection opens authentic Army Movement help. |
+| `movement-help-dismiss.png` | 05:22:41 | Army at town, route markers visible; immediately before the movement command. |
+| `army-move-command.png` | 05:23:04 | Completed command 42 moves the soldier northeast onto the road, approximately screen (226,455) to (320,385). |
+| `moved-army-selected.png` | 05:23:26 | Soldier remains at new position and can be selected again, with numbered route markers visible. |
+
+The town flag/buildings, fields, minimap, Spring 1268, 200 crowns, county population and happiness remain fixed across the movement pair. This demonstrates commanded army displacement, rather than a changed view. Command 42 is the balanced trusted click `canvasclick:0.476,0.363`; its completed receipt and immediately following state are retained. No combat, conquest, siege, audio or whole-game correctness is claimed. The first 20-man rejection is an explicit game rule, not an emulator defect. A short read-only wait was needed after starting the campaign and after End Turn because the first captures preceded completion; inputs were not replayed.
+
+One fresh separate box, `bx_2rzv84mw`, was created at 05:09:16Z with a UUID Idempotency-Key persisted before the request. Its original expiry was 06:39:16.407Z. The retained successful installation/real desktop shortcut recipe was reused with default `C:\SIERRA\L2Demo`, default introductory difficulty, Player1 versus the Knight, and the same Radberryshire campaign. No old box was resumed or touched. Exactly one original browser session ran, with a 1,200,000 ms command lifetime and a separate 1,260-second guard. No UNKNOWN input, risk/access flag, input replay or second original occurred.
+
+All **638 runtime/media dependency pins**, including **181 original media files**, matched before staging and after the run. Chrome **151.0.7922.108** passed a separate page/click/normal-close browser smoke. The production queue validator was checked before original launch and before each command. The run-local harness additionally supports normalized `canvasdrag` with four finite interior fractions and balanced trusted mouse down/move/up; its self-test accepts valid fractions and rejects a zero-edge coordinate. The exact patch is retained in `harness-only.patch`. This supports the genuine recruitment slider; successful army movement used the in-game click/destination instruction. Shared harness/source files were not edited.
+
+The frozen retained runtime is Git **`2472ef81ac266b5a500153998577c266473286cc`**, its empty relevant tracked diff and retained untracked `lib/wininit-boot.js` patch. All predecessor pins matched the local inputs before provisioning. The loaded standard WASM SHA-256 is **`e41511fe861363fbe1639d80f20cbcdd7240f46937c93a801eaa256ca094c467`**; staged compatibility is **`04acbb89f66ad9814836b5e2c34de659b518f4e1994f50c4ee8069c991f02f72`**. Exact matching modules remain at the retained `20261107-lords2-winexec-search` run. This is a pinned predecessor runtime, not a claim about concurrent later builds. Git plus patches is the source recovery record; no source/media archive was created.
+
+Installed executable and DLL hashes remain `c83df505c4be850c10425f1770090ba3ca31fa6b87d8bce2cde3c66ae11dd0dc` (`LORDS2.EXE`) and `16725648b30a2bdcd2959a52ca92f9a0e14a7fc9fb26c84e90363c2631887f83` (`SMACKW32.DLL`). Matching snapshots preserve VFS/module/browser context, running true, stopped false and farFault null. The retained selective path/API observer is not a complete CPU trace. Execution used cooperative browser mode, `?debug&no-threads`, viewport 1000×800 and production presentation.
+
+Command 44 requested ordinary quit. Chrome exited normally, code 0, at **05:23:43.115Z**. The unique logs, captures and matching compressed snapshots were retrieved with **157 size/SHA-256 checks** before the explicitly delegated normal box stop. Cleanup verifies harness 6253, server 6252, guard 6254 and Chrome 6272 absent; HTTP 36939 and debug 41473 closed; no Chrome using the owned profile; and `/tmp/wine-assembly-input-oHyNCE` removed. Box `bx_2rzv84mw` is confirmed **archived** at **05:24:32.934Z**, stop completed with `forced:false`. Box ownership is returned with no running test runtime or active expiry. All 35 installed-game snapshots passed the identity/running/fault checks. Local free space remained above 2 GB. Only this note is committed; a code regression or new locked build was not warranted for this documentation-only result. Further requested work can test combat or conquest; this army-control task is complete.
