@@ -43,8 +43,8 @@ const retained=Object.assign(Error('WEP trap'),{pendingTerminations:[13]});
 f=serviceFixture(2,{releaseGuest:()=>{throw retained;}});assert.throws(()=>f.run(),e=>e===retained);
 assert.deepEqual(f.settled,[]);assert.deepEqual(f.trace,[]);retained.neRecovery.retry(13);assert.deepEqual(f.trace,[['retry',13]]);
 assert.throws(()=>retained.neRecovery.retry(14),/Unowned/);
-f=serviceFixture(1);assert.throws(()=>f.run({neBackend:'worker'}),/Worker/);assert.deepEqual(f.settled,[]);
-console.log('PASS NE host request service: sparse strings, exactly-once settlement, stale completion, typed errors, explicit WEP retry and Worker rejection');
+f=serviceFixture(1);assert.equal(f.run({neBackend:'worker'}),true);assert.deepEqual(f.settled,[257]);
+console.log('PASS NE host request service: sparse strings, exactly-once settlement, stale completion, typed errors, explicit WEP retry and prepared Worker service');
 
 // Execute the production browser entry methods with a captured ProcessBoot
 // boundary. No browser, WASM or guest execution: this checks the options that
