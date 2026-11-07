@@ -7690,8 +7690,9 @@ async function main() {
           // was sitting on the profile dialog. A control command must never be
           // able to take the run down with it.
           stdinCommands = stdinCommands.then(() => new Promise(r => r(handleControlCommand(one))).then(
-            value => console.log(`[ctl] ${JSON.stringify({ ok: true, id: one.id, value })}`),
-            error => console.log(`[ctl] ${JSON.stringify({ ok: false, id: one.id, error: String(error && error.message || error) })}`)));
+            // Replies are protocol output, independent of diagnostic trace windows.
+            value => process.stdout.write(`[ctl] ${JSON.stringify({ ok: true, id: one.id, value })}\n`),
+            error => process.stdout.write(`[ctl] ${JSON.stringify({ ok: false, id: one.id, error: String(error && error.message || error) })}\n`)));
         }
       });
       // EOF just ends the stream — the pipe's producer finishing must not

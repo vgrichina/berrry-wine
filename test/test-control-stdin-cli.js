@@ -151,6 +151,35 @@ async function waitFor(what, probe, ms = 45000) {
       /run\.js exited before replying to drop1 \(exit 7\)/
         .test(abandonedReply.error.message),
     `exit=${abandonedCode} reply=${JSON.stringify(abandonedReply)}`);
+
+  // A trace window controls diagnostics, never the request/reply protocol.
+  // Keep the window closed throughout this actual production-harness run.
+  for (const traceWindow of ['--trace-from=1000000000', '--trace-to=0']) {
+    const windowed = startControlSession([
+      RUN, `--exe=${EXE}`, '--no-build', '--control-stdin',
+      '--max-seconds=3', '--quiet-api', '--quiet-blocks',
+      traceWindow,
+    ], { cwd: ROOT, idPrefix: 'window-' });
+    let windowReply, windowError;
+    try {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      windowReply = await windowed.send({ action: 'ping' });
+      const bad = await windowed.send({ action: 'eval', code: 'throw new Error("window-error")' })
+        .then(() => null, error => error);
+      check('error ACK survives a closed trace window', /window-error/.test(String(bad)), String(bad));
+      const snapshot = await windowed.send({ action: 'snapshot' });
+      check('observation ACK survives a closed trace window', Number.isInteger(snapshot.batch), JSON.stringify(snapshot));
+      await windowed.send('keydown:13');
+      await windowed.send('keyup:13');
+      check('ordinary input ACKs survive a closed trace window', true);
+      await windowed.quit();
+    } catch (error) {
+      windowError = error;
+      await windowed.exited;
+    }
+    check('success ACK survives a closed trace window', windowReply?.pong === true && !windowError,
+      `${traceWindow}: ${String(windowError || JSON.stringify(windowReply))}`);
+  }
 })().catch(error => {
   console.log('FAIL  ' + (error.stack || error.message));
   failed = true;
