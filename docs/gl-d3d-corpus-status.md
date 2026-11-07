@@ -25,10 +25,17 @@ nor correctness of the original model/matrix projection. No rendering defect
 was demonstrated; a model/matrix oracle remains the next useful discriminator.
 Evidence was hash-verified before normal nonforced archive of `bx_z65jbe9z`.
 [Geometry and visible-flock evidence](re-notes/boids-visible-flock-20261107.md).
-Fresh `simgolf-release-repair-gameplay-1107` targets current original bitmap
-course rendering and native course progress after independently timed key/mouse
-release controls and the complete staged production Worker path passed. The
-original is running on fresh `bx_bevw9s9b`; course progress is not yet verified.
+Published `f04a2048d` verifies current original SimGolf bitmap rendering and
+native construction: a new tee and green, Hole 1 open for play as a scenic
+127-yard par 3, and a native championship course export. The 86,831-byte CSE
+was recovered and SHA-verified; a resumable career save or played round remains
+unverified. The actual owning WebGL 1 bitmap is 800×600, hwnd 0, composed through
+GDI; browser provider reports ANGLE Mesa Intel UHD 620. Both executing modules
+are `e41511fe…`. Twenty-eight actual Chromium release controls, full production
+Worker qualification and the locked build passed. Evidence was verified before
+normal archived shutdown of `bx_bevw9s9b`. This adds named scene and native
+interaction evidence, without claiming historical27 completion or parity.
+[SimGolf course and export evidence](re-notes/simgolf-release-repair-gameplay-20261107.md).
 
 ## November 7: Architecture, Jazz and Rock & Roll scene motion
 
