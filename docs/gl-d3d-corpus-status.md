@@ -1,5 +1,16 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: native GL gameplay with the Worker scheduler
+
+Published `999436b27` records original Quake II movement, turning and visible
+blaster fire, and GLTron cycle turns through native llvmpipe GL. Quake II
+created no auxiliary guest threads; GLTron created a guest Worker that executed
+two slices and RPCs. Balanced controls were released and both originals exited
+normally. Retained round-result text does not establish GLTron survival or
+victory. No new emulator defect was demonstrated. Browser parity, FPS and
+audio remain open; a fresh worker is checking Quake III browser torch rendering.
+[Gameplay captures, thread observations and limits](re-notes/graphics-repaired-native-sweep-20261107.md).
+
 ## November 7: Forsaken browser WebGL combat
 
 Published `8304ab98e` verifies ordinary Volcano movement, look and firing on
@@ -8,9 +19,8 @@ show ammunition 2000→1918, “ENEMY KILLED YOU,” then a readable respawn wit
 lives and restored shield/hull. No emulator mismatch was demonstrated. The
 white death interval is excluded from readable-world claims; intermediate
 damage, enemy kills, level completion and backend parity remain unverified.
-The box stopped normally after evidence retrieval. The fresh graphics worker
-targets Quake II and GLTron real-thread gameplay, which earlier runs reached
-only in cooperative mode.
+The box stopped normally after evidence retrieval. The subsequent native GL
+Worker-scheduler gameplay observations are recorded above.
 [Captures, identities and limits](re-notes/forsaken-current-webgl-combat-20261107.md).
 
 ## November 7: Descent 3 installation prerequisite
