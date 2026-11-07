@@ -9,6 +9,11 @@
   ;; every attempt to reach another player truthfully finds nobody there. That
   ;; is what lets Hearts get to its own table and fill the empty seats.
   ;;
+  ;; A process-local PROGMAN/PROGMAN server also serves ordinary installers,
+  ;; using the shared shell command parser and real Start Menu/shortcut writes.
+  ;; It is distinguished from room conversations; other services still ask
+  ;; their real server callbacks and retain transport failures.
+  ;;
   ;; Nothing here is a constant-returning stub: string handles intern and
   ;; compare, data handles hold the bytes written into them and hand them back,
   ;; and DdeGetLastError answers with what actually went wrong. Two emulator
@@ -1268,7 +1273,7 @@
 
   ;; DDEML.3 DdeUninitialize(DWORD idInst) -> BOOL.
   (func $win16_DdeUninitialize
-    (local $id i32) (local $slot i32)
+    (local $id i32) (local $slot i32) (local $i i32) (local $convslot i32)
     (local.set $id (call $win16_arg32 (i32.const 0)))
     (if (i32.and (i32.gt_u (local.get $id) (i32.const 0))
                  (i32.le_u (local.get $id) (i32.const 8)))
@@ -1280,6 +1285,15 @@
             (i32.store (local.get $slot) (i32.const 0))
             (global.set $win16_dde_users
               (i32.sub (global.get $win16_dde_users) (i32.const 1)))))))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
+      (local.set $convslot (call $win16_dde_conv_slot (local.get $i)))
+      (if (i32.and
+            (i32.eq (i32.load offset=16 (local.get $convslot)) (i32.const 2))
+            (i32.eq (i32.load offset=4 (local.get $convslot)) (local.get $id)))
+        (then (i32.store (local.get $convslot) (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (call $win16_api_return (i32.const 4)))
 
@@ -1391,6 +1405,23 @@
   ;; How long to leave a busy server alone before asking again.
   (global $DDE_BUSY_RETRY_MS i32 (i32.const 50))
 
+  ;; The process-local Program Manager shares the real Win32 command engine.
+  ;; Only an explicit PROGMAN/PROGMAN pair selects it; room discovery and
+  ;; application callbacks keep their existing transport and selection rules.
+  (func $win16_dde_is_progman (param $hsz i32) (result i32)
+    (local $slot i32)
+    (if (i32.or (i32.eqz (local.get $hsz))
+                (i32.gt_u (local.get $hsz) (i32.const 64)))
+      (then (return (i32.const 0))))
+    (local.set $slot (call $win16_dde_hsz_slot
+      (i32.sub (local.get $hsz) (i32.const 1))))
+    (if (i32.eqz (i32.load (local.get $slot)))
+      (then (return (i32.const 0))))
+    (i32.and
+      (i32.eqz (i32.load8_u offset=11 (local.get $slot)))
+      (call $progman_name_eq (call $w2g (i32.add (local.get $slot) (i32.const 4)))
+        (i32.const 7) "PROGMAN")))
+
   (func $win16_DdeConnect
     (local $inst i32) (local $svc i32) (local $topic i32)
     (local $pend i32) (local $conv i32) (local $wa i32) (local $len i32)
@@ -1403,6 +1434,33 @@
         (call $win16_dde_set_error (i32.const 0x4007))   ;; DMLERR_LOW_MEMORY
         (i32.store offset=8 (global.get $reg_base) (i32.const 0))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (call $win16_api_return (i32.const 16))
+        (return)))
+    (local.set $svc (call $win16_arg32 (i32.const 4)))
+    (local.set $topic (call $win16_arg32 (i32.const 2)))
+    (if (i32.and (call $win16_dde_is_progman (local.get $svc))
+                 (call $win16_dde_is_progman (local.get $topic)))
+      (then
+        ;; is_server=2 identifies the built-in shell, never a wire peer.
+        (local.set $wa (call $win16_dde_conv_slot
+          (i32.sub (local.get $conv) (i32.const 1))))
+        (if (i32.or (i32.eqz (local.get $inst))
+                     (i32.gt_u (local.get $inst) (i32.const 8)))
+          (then (local.set $len (i32.const 0x4006)))
+          (else
+            (if (i32.eqz (i32.load (call $win16_dde_inst
+                  (i32.sub (local.get $inst) (i32.const 1)))))
+              (then (local.set $len (i32.const 0x4006))))))
+        (if (local.get $len)
+          (then
+            (i32.store (local.get $wa) (i32.const 0))
+            (local.set $conv (i32.const 0)))
+          (else
+            (i32.store offset=16 (local.get $wa) (i32.const 2))
+            (i32.store offset=20 (local.get $wa) (local.get $topic))))
+        (call $win16_dde_set_error (local.get $len))
+        (i32.store (global.get $reg_base) (local.get $conv))
+        (i32.store offset=8 (global.get $reg_base) (i32.const 0))
         (call $win16_api_return (i32.const 16))
         (return)))
     (i32.store (local.get $pend) (i32.const 1))
@@ -1593,8 +1651,10 @@
           (i32.sub (local.get $conv) (i32.const 1))))
         (if (i32.load (local.get $slot))
           (then
-            (drop (call $win16_dde_emit (i32.const 3) (local.get $conv)
-              (i32.load offset=12 (local.get $slot)) (i32.const 0)))
+            (if (i32.ne (i32.load offset=16 (local.get $slot)) (i32.const 2))
+              (then
+                (drop (call $win16_dde_emit (i32.const 3) (local.get $conv)
+                  (i32.load offset=12 (local.get $slot)) (i32.const 0)))))
             (i32.store (local.get $slot) (i32.const 0))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (call $win16_api_return (i32.const 4)))
@@ -1621,6 +1681,52 @@
               (i32.sub (local.get $conv) (i32.const 1)))) (i32.const 1)))))
     (if (call $win16_arg16 (i32.const 1))
       (then (call $gs32 (local.get $result) (i32.const 0))))
+
+    (if (local.get $live)
+      (then
+        (local.set $wa (call $win16_dde_conv_slot
+          (i32.sub (local.get $conv) (i32.const 1))))
+        (if (i32.eq (i32.load offset=16 (local.get $wa)) (i32.const 2))
+          (then
+            (local.set $cb (call $win16_arg32 (i32.const 10)))
+            (local.set $len (i32.const 0))
+            (local.set $wa (i32.const 0))
+            (if (i32.and (i32.eq (local.get $wtype) (global.get $XTYP_EXECUTE))
+                  (i32.and (i32.eqz (local.get $item))
+                    (i32.ne (call $win16_arg32 (i32.const 2)) (i32.const -1))))
+              (then
+                (if (i32.eq (local.get $cb) (i32.const -1))
+                  (then
+                    (local.set $cb (call $win16_arg32 (i32.const 12)))
+                    (if (i32.and (i32.ge_u (local.get $cb) (i32.const 0x100))
+                                 (i32.lt_u (local.get $cb) (i32.const 0x110)))
+                      (then
+                        (local.set $frame (call $win16_dde_data_slot
+                          (i32.sub (local.get $cb) (i32.const 0x100))))
+                        (if (i32.load (local.get $frame))
+                          (then
+                            (local.set $wa (call $w2g (i32.add (local.get $frame) (i32.const 8))))
+                            (local.set $len (i32.load offset=4 (local.get $frame))))))))
+                  (else
+                    (if (call $win16_arg16 (i32.const 13))
+                      (then
+                        (local.set $wa (call $win16_far_to_guest
+                          (call $win16_arg16 (i32.const 13))
+                          (call $win16_arg16 (i32.const 12))))
+                        (local.set $len (local.get $cb))))))))
+            (local.set $live (i32.const 0))
+            (if (i32.and (i32.ne (local.get $wa) (i32.const 0))
+                         (i32.ne (local.get $len) (i32.const 0)))
+              (then (local.set $live (call $progman_execute (local.get $wa) (local.get $len)))))
+            (if (i32.and (i32.ne (local.get $live) (i32.const 0))
+                         (i32.ne (call $win16_arg16 (i32.const 1)) (i32.const 0)))
+              (then (call $gs32 (local.get $result) (i32.const 0x8000))))
+            (call $win16_dde_set_error
+              (select (i32.const 0) (i32.const 0x4009) (local.get $live)))
+            (i32.store (global.get $reg_base) (local.get $live))
+            (i32.store offset=8 (global.get $reg_base) (i32.const 0))
+            (call $win16_api_return (i32.const 28))
+            (return)))))
 
     ;; Every transaction that carries something to the far application goes
     ;; over the wire; anything else says so rather than pretending, since
