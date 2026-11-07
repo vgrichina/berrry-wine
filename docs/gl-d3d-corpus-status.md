@@ -1,5 +1,16 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: repaired original Quake III torch follow-through
+
+Published `eef6cb6cb` closely matched the retained skull-torch scene on repaired
+native GL without the black quads before firing. A bot kill interrupted firing
+at that camera. Separate inner-room firing consumed four machinegun rounds;
+ordered decal draws and compositor samples preserve darkened RGB with opaque
+presentation. No new emulator defect was demonstrated. Exact historical cause,
+browser parity and synchronized firing at the retained camera remain open.
+[Original captures, owning pixels and runtime limits](re-notes/q3-repaired-torch-world-20261107.md).
+
+
 ## November 7: opaque GL window presentation repaired
 
 Published `36a212cac` fixes two demonstrated presentation defects: destination
