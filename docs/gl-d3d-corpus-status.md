@@ -34,8 +34,14 @@ levels and positive primary colors. The ordinary shader incorrectly sampled
 incomplete textures; the repair preserves API enable state while skipping
 incomplete texture application, with failing-before/passing-after WebGL1/2 pixel
 regressions, focused suites and locked build passing. These original captures
-predate the shader fix: its visible effect and the reason for missing image
-definitions remain unverified. Fresh `graphics-texture-world-1626` pursues both.
+predate the shader fix. Published `cd98b939d` reviews a fresh original with the
+repair: previously black statue/tree geometry becomes grey and HUD blocks become
+a white strip; missing artwork and broad black world regions persist. The first
+observed failed image call, number3550, sets WAT `GL_OUT_OF_MEMORY` before host
+upload. CPU image storage fails before definition metadata is written; DIB
+backing versus DX/COM record exhaustion remains unresolved. A prepared local
+allocator assignment targets that distinction and a production regression.
+[Visible repair and storage failure](re-notes/graphics-texture-world-20261107.md).
 MIDI open/callback execution was observed, but no playback or auxiliary guest
 execution was established. Evidence was retrieved and hash-verified before
 normal archived stop of `bx_hqm2pn99`.
