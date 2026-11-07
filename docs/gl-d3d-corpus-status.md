@@ -1,19 +1,24 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
-## November 7: Tunnel, Twist and Boids partial browser coverage
+## November 7: Tunnel, Twist and Boids browser coverage
 
-Published `f6c0a8392` records seven configurations with worker-reviewed moving
-scenes across software/WebGL and cooperative/Worker execution. Cooperative
-WebGL Boids shows terrain but no recognizable flock through 120 seconds;
-advancing draws and zero errors/fallbacks do not establish flock rendering.
-A Tunnel software Worker observation is excluded because its observer resized
-the viewport. Three WebGL Worker cases remain unlaunched. No semantics defect
-or emulator fix is established. Earlier [Boids geometry evidence](re-notes/dx-sdk-d3drm-samples.md#october-31-original-boids-flock-is-phase-dependent-not-absent)
-shows all birds off-camera in an outline-only phase on an older build; current
-frame geometry is needed to distinguish that case. Both locked builds and three focused checks
-passed; artifacts and both modules were hash-verified before normal nonforced
-box shutdown. The actual launcher forces SwiftShader despite an Intel renderer
-string. [Named cases and limits](re-notes/graphics-tunnel-twist-boids-20261107.md).
+Published `fa63787b0` closes the four remaining Worker configuration harness
+gaps after exercising boolean readiness and the exact capture path against
+production guest/render Workers locally. Twelve native compositor captures
+cover software Tunnel Worker and WebGL Tunnel, Twist and Boids Worker cases.
+Tunnel and Twist show scene motion. Boids shows a moving terrain boundary
+and one blue triangle; a recognizable flock remains unverified. Earlier
+cooperative WebGL Boids observations also lacked a flock through 120 seconds.
+Advancing draws and zero errors do not establish complete flock rendering.
+
+The WebGL launcher forces ANGLE SwiftShader; the reported Intel renderer string
+is not physical GPU evidence. Unique evidence and both modules were SHA-verified
+before normal nonforced shutdown of `bx_88fguqk8`. No emulator defect, FPS,
+audio, parity or historical 27-app completion is claimed.
+[Worker configuration evidence](re-notes/graphics-worker-readiness-20261107.md).
+Fresh `boids-visible-flock-1042` targets current completed geometry and reviewed
+pixels to distinguish off-camera birds from rendering loss, preserving the
+default guest scene and camera.
 
 ## November 7: Architecture, Jazz and Rock & Roll scene motion
 
