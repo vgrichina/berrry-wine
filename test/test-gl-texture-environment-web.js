@@ -35,6 +35,29 @@ let browser;
    const captured=new Uint8Array(4);g.readPixels(4,4,1,1,g.RGBA,g.UNSIGNED_BYTE,captured);if(captured[0]!==255||captured[1]!==0)throw Error('pending draw env snapshot');
    f.pushAttrib(0x40000);f.setTextureMode(G.REPLACE);f.setTextureEnv(G.TEXTURE_ENV,G.TEXTURE_ENV_COLOR,[0,0,1,1]);f.popAttrib();draw('attribute environment restore',[0,255,0,192]);
    f.setActiveTexture(0x84c1);f.bindTexture(2);f.setEnabled(G.TEXTURE_2D,true);f.texParameter(G.TEXTURE_MIN_FILTER,G.NEAREST);f.texParameter(G.TEXTURE_MAG_FILTER,G.NEAREST);upload(G.RGBA,[255,255,255,255]);f.setTextureMode(G.BLEND);f.setTextureEnv(G.TEXTURE_ENV,G.TEXTURE_ENV_COLOR,[0,0,1,1]);draw('unit1 environment',[0,0,255,192]);
+   // Incomplete desktop GL textures disable this unit's texture application.
+   // Keep the API enable bit set while binding, defining, and invalidating images.
+   f.setEnabled(G.TEXTURE_2D,false);f.setActiveTexture(0x84c0);
+   f.setTextureMode(G.MODULATE);f.bindTexture(91);f.texParameter(G.TEXTURE_MIN_FILTER,0x2701);
+   draw('null mipmapped texture uses primary color',[128,64,32,192]);
+   f.texParameter(G.TEXTURE_MIN_FILTER,G.NEAREST);
+   draw('null nonmipmapped texture uses primary color',[128,64,32,192]);
+   f.setTextureMode(G.REPLACE);draw('null HUD replacement uses primary color',[128,64,32,192]);f.setTextureMode(G.MODULATE);
+   upload(G.RGBA,[64,128,192,128]);draw('defined level enables sampling',[32,32,24,96]);
+   f.bindTexture(92);draw('binding null texture invalidates sampling',[128,64,32,192]);
+   f.texImage(0,G.RGBA,2,2,0,G.RGBA,G.UNSIGNED_BYTE,new Uint8Array(16).fill(255));
+   draw('missing mip uses primary color',[128,64,32,192]);
+   f.texImage(1,G.RGBA,1,1,0,G.RGBA,G.UNSIGNED_BYTE,new Uint8Array([64,128,192,128]));
+   f.setTextureMode(G.REPLACE);draw('complete mip chain samples white base',[255,255,255,255]);
+   f.texImage(1,G.RGB,1,1,0,G.RGBA,G.UNSIGNED_BYTE,new Uint8Array([64,128,192,255]));
+   f.setTextureMode(G.REPLACE);draw('mismatched mip format uses primary color',[128,64,32,192]);
+   f.texParameter(G.TEXTURE_MIN_FILTER,G.NEAREST);draw('nonmip filter restores sampling',[255,255,255,255]);
+   f.setActiveTexture(0x84c1);f.bindTexture(93);f.setEnabled(G.TEXTURE_2D,true);f.setTextureMode(G.REPLACE);
+   draw('incomplete second unit preserves first unit',[255,255,255,255]);
+   f.setActiveTexture(0x84c0);f.setEnabled(G.TEXTURE_2D,false);
+   draw('incomplete second unit alone uses primary color',[128,64,32,192]);
+   f.setActiveTexture(0x84c1);f.texParameter(G.TEXTURE_MIN_FILTER,G.NEAREST);upload(G.RGBA,[64,128,192,128]);
+   draw('second unit becomes complete without enable toggle',[64,128,192,128]);
    f.destroy();
   }
   return results;

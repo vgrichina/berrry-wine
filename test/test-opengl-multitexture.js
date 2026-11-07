@@ -186,7 +186,8 @@ frontend._applyUniforms();
 assert.strictEqual(backend.uniforms.get('uTexture'), 0);
 assert.strictEqual(backend.uniforms.get('uTexture1'), 1);
 assert.strictEqual(backend.uniforms.get('uTextureEnabled'), 0);
-assert.strictEqual(backend.uniforms.get('uTexture1Enabled'), 1);
+assert.strictEqual(backend.uniforms.get('uTexture1Enabled'), 0,
+  'an enabled unit with no defined image does not apply a texture');
 assert.strictEqual(backend.uniforms.get('uTexture1Mode'), 1,
   'unit 1 reports its own GL_REPLACE environment to the shader');
 
