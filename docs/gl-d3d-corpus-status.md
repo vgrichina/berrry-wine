@@ -1,5 +1,19 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: opaque GL window presentation repaired
+
+Published `36a212cac` fixes two demonstrated presentation defects: destination
+alpha leaked into opaque window composition, and native canvas readback read
+the restored draw framebuffer instead of the presented default framebuffer.
+Public GL/WGL regressions pass on standard and compatibility modules and reject
+the old behavior; focused rendering tests and the locked full build pass.
+
+The preceding original Quake III run captured Q3DM1 wall-fire decal state on
+native GL. It did not match the retained skull-torch viewpoint and preceded the
+repair. The exact torch shapes, post-repair original rendering and browser
+parity remain unverified. A fresh worker continues that rendering investigation.
+[Owning draw evidence, regression oracles and run limits](re-notes/q3-torch-rendering-20261107.md).
+
 ## November 7: original native GL gameplay after the shader repair
 
 Published `7e26c8485` records original runs containing native GL shader repair
