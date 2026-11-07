@@ -2978,7 +2978,7 @@ than the 60-second sample; discarded, then remeasured the loaded control with
 a 120-second timeout. This gave the first control additional warmup time.
 
 A separate fixed-build CPU profile included simultaneous counters: 257 frames
-in 30.011945 seconds (116.77 ms/frame, profiler enabled). Sample-normalized
+in 30.010945 seconds (116.77 ms/frame, profiler enabled). Sample-normalized
 main guest: 66.13 ms WASM, 9.21 ms RPC JS including waits, 7.04 ms other JS/native,
 0.13 ms GC, 34.26 ms idle. Render Worker non-idle about 19.42 ms/frame, page
 non-idle 39.24 ms/frame; these overlap guest time and must not be added to it.
