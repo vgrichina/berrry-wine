@@ -60,6 +60,23 @@ execution was established. Evidence was retrieved and hash-verified before
 normal archived stop of `bx_hqm2pn99`.
 [Threaded movement, texture repair and remaining boundary](re-notes/graphics-threaded-followthrough-20261107.md).
 
+## November 7: Heretic II after texture storage repair
+
+Published `1815b027c` verifies textured Silverspring docks, roofs, sky, Corvus,
+stone and HUD on the registered threaded/headless-GL route. Ordinary movement
+reaches waterside views; health falls from100 to26 near a visible rat, followed
+by the native Load Game book. No attack input, enemy defeat, doorway traversal
+or objective was proved. The bounded observer records3,002 image definitions
+and matching uploads with error zero; later image coverage is unknown.
+
+The revised detached supervisor survives launcher-session termination in focused
+mock tests and records original watchdog heartbeats through normal stop. This
+addresses the next-run lifetime prerequisite without explaining the earlier
+HexenII watchdog disappearance. Evidence was hashed before nonforced archived
+shutdown. The graphics slot next runs the existing current-module crash sweep;
+this one GL app does not establish historical27 membership or D3D parity.
+[World progress, lifecycle checks and limits](re-notes/heretic2-texture-followthrough-20261107.md).
+
 ## November 7: Tunnel, Twist and Boids browser coverage
 
 Published `fa63787b0` closes the four remaining Worker configuration harness
