@@ -39,9 +39,22 @@ repair: previously black statue/tree geometry becomes grey and HUD blocks become
 a white strip; missing artwork and broad black world regions persist. The first
 observed failed image call, number3550, sets WAT `GL_OUT_OF_MEMORY` before host
 upload. CPU image storage fails before definition metadata is written; DIB
-backing versus DX/COM record exhaustion remains unresolved. A prepared local
-allocator assignment targets that distinction and a production regression.
+backing exhaustion was subsequently reproduced and repaired in published
+`ef2709a76`: GL CPU images now use reclaimable heap backing, with production
+capacity/lifetime/copy regressions and the locked build passing.
 [Visible repair and storage failure](re-notes/graphics-texture-world-20261107.md).
+
+Published `4e9e3fe17` verifies the allocator repair in a fresh registered original:
+textured statue/tree, illustrated HUD, courtyard floor/walls and ramps replace
+the grey/white/missing artwork. All 5,563 image definitions reach host uploads;
+call 3,550 has error zero and sampled DIB occupancy remains 621 pages. Ordinary
+movement produces a flask inventory icon and changed views, followed by damage,
+zero health and a natural return. No confirmed enemy hit, objective or visual
+parity follows. Evidence was hash-verified before normal archived shutdown.
+The prearmed watchdog was absent at final inspection; its unexplained lifetime
+is a prerequisite for the next original, rather than claimed continuous coverage.
+[Restored artwork, gameplay and limits](re-notes/graphics-storage-gameplay-20261107.md).
+
 MIDI open/callback execution was observed, but no playback or auxiliary guest
 execution was established. Evidence was retrieved and hash-verified before
 normal archived stop of `bx_hqm2pn99`.
