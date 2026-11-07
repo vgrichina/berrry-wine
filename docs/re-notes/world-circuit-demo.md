@@ -32,10 +32,21 @@ PE app or a Windows DOSBox wrapper registration.
 
 Fetcher recovery validates package hashes and finds the executable. Selected
 ToyVM manifest generation and `--check` pass with three original files. Static
-assessment reports untested without a static blocker; that is not execution or
-compatibility evidence. No emulator run, rendered screenshot, controls, sound,
-FPS or playability has been tested by this acquisition task.
+assessment initially reported untested without a static blocker. Subsequent
+startup work published CPU saved-divide-fault-IP repair `90e01588d`, with76
+regressions and the locked build passing. The native original now renders a
+320×200 cockpit, cars, track and starting lights. Root reviewed the capture;
+neutral0MPH is not driving proof. Controls, movement, sound, FPS and playability
+remain unverified. [Startup evidence and remaining boundary](world-circuit-startup-20261107.md).
 
 Evidence: `scratch/runs/20261107-world-circuit-corpus/` retains source metadata
 and fixture hashes. Next: a separately assigned bounded native ToyVM startup and
 ordinary driving probe, retaining the first concrete CPU/device/API blocker.
+
+
+Period control references: [MicroProse DOS technical booklet](https://archive.org/details/f1gp-begleitheft)
+and [German DOS manual](https://archive.org/details/f1gp-handbuch), both archived
+as1993. Their standard keyboard table documents A acceleration, Z braking,
+angle-bracket steering keys, and Space gear selection. These retail references
+are candidates for the1992demo control investigation, not proof of this demo’s
+interactivity or an instruction to patch its configuration.

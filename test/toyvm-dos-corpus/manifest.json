@@ -1135,7 +1135,7 @@
    ],
    "toyvm": {
     "status": "untested",
-    "verdict": "No static blocker found, but it has never been run on ToyVM. Untested; not a claim that it works.",
+    "verdict": "No static blocker; furthest recorded ToyVM run: cockpit starting grid (scratch/runs/20261107-world-circuit-startup). Gameplay untested; not a claim that it works.",
     "blockers": [],
     "cautions": [
      {
@@ -1151,7 +1151,14 @@
      "collisions": [],
      "collisionCount": 0
     },
-    "evidence": []
+    "evidence": [
+     {
+      "run": "scratch/runs/20261107-world-circuit-startup",
+      "at": "2026-11-07T22:14:17.592Z",
+      "reached": "cockpit-starting-grid",
+      "summary": "Native ToyVM original320x200 cockpit, cars, track, sky and startlights personally reviewed after CPU dividefault saved-IP repair90e01588d. Car remains neutral0MPH; help/control workflow, movement and playability unverified. Evidence retrieved before normal archived shutdown."
+     }
+    ]
    },
    "load": {
     "policy": "preload-all",
