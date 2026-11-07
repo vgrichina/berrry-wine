@@ -7,8 +7,8 @@ const vfs=new VirtualFS();vfs.cwd='c:\\work\\';
 const host=createFilesystemImports({vfs,getMemory:()=>memory});
 const input=0x100,output=0x1000,part=0x3000;
 const cases=[
- ['Campaigns/','C:\\work\\campaigns\\',null],
- ['c:/work\\Mixed/','C:\\work\\mixed\\',null],
+ ['Campaigns/','C:\\work\\Campaigns\\',null],
+ ['c:/work\\Mixed/','C:\\work\\Mixed\\',null],
  ['C:\\work\\folder\\','C:\\work\\folder\\',null],
  ['child/../folder/','C:\\work\\folder\\',null],
  ['\\folder\\','C:\\folder\\',null],
@@ -18,6 +18,9 @@ const cases=[
  ['c:/work/folder/report.txt','C:\\work\\folder\\report.txt','report.txt'],
  ['missing/','C:\\work\\missing\\',null],
  ['folder','C:\\work\\folder','folder'],
+ ['C:/Assets/Chapter_Final.map','C:\\Assets\\Chapter_Final.map','Chapter_Final.map'],
+ ['../Assets/./Chapter_Final.map','C:\\Assets\\Chapter_Final.map','Chapter_Final.map'],
+ ['D:Chapter_Final.map','D:\\Chapter_Final.map','Chapter_Final.map'],
 ];
 for(const wide of [0,1])for(const [name,expected,filePart] of cases){
  const enc=wide?'utf16le':'latin1',unit=wide?2:1;
@@ -36,6 +39,11 @@ for(const wide of [0,1])for(const [name,expected,filePart] of cases){
  assert.deepEqual(Buffer.from(bytes.slice(output,output+(expected.length+1)*unit)),Buffer.from(expected+'\0',enc));
  assert.equal(bytes[output-1],0xcc);assert.equal(bytes[output+(expected.length+1)*unit],0xcc);
  assert.equal(dv.getUint32(part,true),filePart===null?0:output+(expected.length-filePart.length)*unit);
+ if(filePart) {
+  const offset=dv.getUint32(part,true);
+  const basename=Buffer.from(bytes.slice(offset,output+expected.length*unit)).toString(enc);
+  assert.equal(basename,filePart,'case-sensitive consumers receive the original filename');
+ }
  assert.equal(host.fs_get_full_path_name(input,260,output,0,wide),expected.length,'optional filePart');
 }
 // Generic directory wildcard composition from an API result, not a game bypass.
