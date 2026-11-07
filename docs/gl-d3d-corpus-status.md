@@ -2520,3 +2520,5 @@ These results establish the named Node routes and observed controls. Browser
 WebGL, full visual parity, FPS, audio, game completion and the missing historical
 27-ID census remain unproven. Current runtime evidence does not reconstruct
 that census.
+
+2026-11-07 10:00 UTC: [Wormhole/Bellhop corrected report](re-notes/graphics-wormhole-bellhop-20261107.md), commit5a5f148ff, establishes zero qualified cases: a missing transitive helper import falsely satisfied broad rejection assertions. Eight observations/24 captures are supplemental only; Wormhole uses DirectDraw and Bellhop remains at an empty GDI connection dialog, with no active D3D/WebGL draws proved. The coordinator independently rehashed all185 retrieved artifacts and inspected both scenes; bx_24t85jnv was normally archived after retrieval. Fresh boids-current-frustum-1000 requires positive complete helper transport before allocation and natural completed-geometry evidence before any rendering diagnosis. No parity/FPS/audio/full27 claim.
