@@ -2300,6 +2300,12 @@ class Machine {
     this.mem[base + DEFAULT_IRET_OFF] = 0xCF; // actual BIOS default IRET
     for (let i = 0; i < EMS_NAME.length; i++) this.mem[base + 0x0A + i] = EMS_NAME.charCodeAt(i);
 
+    // AT-compatible system configuration, in the conventional BIOS ROM slot.
+    // Eight bytes follow the length word. Only implemented hardware is exposed:
+    // cascaded interrupt controllers and RTC; no DMA3 disk, keyboard intercept,
+    // external-event wait, EBDA, MCA, or reserved feature flags.
+    this.mem.set([8, 0, 0xFC, 0, 0, 0x60, 0, 0, 0, 0], 0xFE6F5);
+    this.mem[0xFFFFE] = 0xFC;
     this.installRomFonts();
 
     // The XMS control function is not reached through an interrupt: INT 2Fh
@@ -4281,7 +4287,7 @@ class Machine {
     }
   }
 
-  // The BIOS system services. Only the timing half matters here: AH=86h is a
+  // The BIOS system services. AH=86h is a
   // delay of CX:DX microseconds and three programs spend a thousand calls in
   // it, so declining it left them measuring an elapsed time that never moved.
   //
@@ -4293,6 +4299,11 @@ class Machine {
   int15(ah, al, r) {
     const US_PER_TICK = 1000000 / 18.2065;
     switch (ah) {
+      // Return a ROM table through ES:BX and status through AH / saved carry.
+      case 0xC0:
+        r.set('es', 0xF000); r.set('bx', 0xE6F5);
+        r.set('ax', r.get('ax') & 0xFF); r.setResultCf(false);
+        return true;
       case 0x86: {
         const us = ((r.get('cx') & 0xFFFF) * 65536) + (r.get('dx') & 0xFFFF);
         this.setClock(this.pit.phase + us / US_PER_TICK);

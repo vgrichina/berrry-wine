@@ -1,0 +1,385 @@
+{
+ "schemaVersion": 1,
+ "id": "world-circuit-v103",
+ "gameDir": "test/binaries/dos-games/world-circuit-v103/MPS/GPRIX",
+ "files": [
+  {
+   "path": "acredit.bin",
+   "size": 27463,
+   "sha256": "5fe1b3c900871a695131181aedc7ddf2cd08cfb88448c22a581a725f055d8d28",
+   "load": "preload"
+  },
+  {
+   "path": "adlib.cat",
+   "size": 42612,
+   "sha256": "99003e82ffec9f3dd7f7bc9ec938d43c4bd23557199fe3a4cdd7019b6471b66b",
+   "load": "preload"
+  },
+  {
+   "path": "aingame.bin",
+   "size": 7113,
+   "sha256": "e859cc3b57b3e5be5b411a4eaeb9d88df3d37aa95a8e90509ef6a1ba2fa5633e",
+   "load": "preload"
+  },
+  {
+   "path": "aintro.bin",
+   "size": 18342,
+   "sha256": "f7d9b516638c62b00c7c588fdf9bb5ff63dafcb5190e39f537846693abeab787",
+   "load": "preload"
+  },
+  {
+   "path": "asound.bin",
+   "size": 2571,
+   "sha256": "633b4d315ab84ba50c7b8ca2d64e72504dfbf235b8546d02ab085f88a7d12f27",
+   "load": "preload"
+  },
+  {
+   "path": "backdrop.dat",
+   "size": 539821,
+   "sha256": "375643fd952b0c884785149b55782d6c56821c847964635eaece775cc3dc2f67",
+   "load": "preload"
+  },
+  {
+   "path": "bcredit.bin",
+   "size": 57,
+   "sha256": "f9e8c6d38ac27e2d31a17d812a42309d498e6bdaef99d18d0e3867c74cb3b1a2",
+   "load": "preload"
+  },
+  {
+   "path": "beep.cat",
+   "size": 1875,
+   "sha256": "4b5f1a80979fcb0d320e26df4853dd6564577025e4abd59ece5606e0159a8aa5",
+   "load": "preload"
+  },
+  {
+   "path": "bingame.bin",
+   "size": 1475,
+   "sha256": "3e31e2835c37202bc276b8325f4c1bebba03155cdb39b045dc130fb2ef3cb990",
+   "load": "preload"
+  },
+  {
+   "path": "bintro.bin",
+   "size": 2659,
+   "sha256": "274e196e7ddac3c631a488d13f1d789a639fbc61ed306bd50af1f2dc905104c7",
+   "load": "preload"
+  },
+  {
+   "path": "bsound.bin",
+   "size": 1332,
+   "sha256": "137819201887a730ecba7ef80ecf0f3b86f3a393a86461b6721dfef1470c8358",
+   "load": "preload"
+  },
+  {
+   "path": "champ.dat",
+   "size": 298132,
+   "sha256": "2c5f74b05416423f533a4af37347ab1eaa874d98323f729655c0b89d2d163968",
+   "load": "preload"
+  },
+  {
+   "path": "crash1.dat",
+   "size": 325608,
+   "sha256": "25f80db92ab8e92380fc4e282ebb8fef75d3a4f0751e8b51afcea6d5443f38f2",
+   "load": "preload"
+  },
+  {
+   "path": "crash2.dat",
+   "size": 164169,
+   "sha256": "28336aeb8620aa745bae92030aa4bbf345de4bd06a5d54544d42362484492dfe",
+   "load": "preload"
+  },
+  {
+   "path": "crash3.dat",
+   "size": 134857,
+   "sha256": "ca82ad57559036bb2e4cb9acb0f0e4948f14bdcf14c4b7a03a24e071e1d720d9",
+   "load": "preload"
+  },
+  {
+   "path": "dropen.fli",
+   "size": 163671,
+   "sha256": "b60f8c379444b6a8578e04bef1cd7645dae8b81480519d86bf19fe55b10a77b2",
+   "load": "preload"
+  },
+  {
+   "path": "earth.fli",
+   "size": 190609,
+   "sha256": "83baca334fbf3990532390894c92afda67e2704a4b01a008afa450aa0e567f13",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct01.dat",
+   "size": 16924,
+   "sha256": "3b7c7131e1c9e957e2336fc097c4dcb304d3808aff14a89c62ab3be8e88bdc2f",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct02.dat",
+   "size": 15453,
+   "sha256": "6c8268f3d571dd1609425c5f4cb37de595e6ee74b690748fcfd611e717efef81",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct03.dat",
+   "size": 15905,
+   "sha256": "2021701fd28c376e2337bce4a092e45c8f1a83a6ee0bf27e3ed17907c65fded0",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct04.dat",
+   "size": 20497,
+   "sha256": "59f0c103fa63d7cf6d2ca93d4a942189b601628aa27d56c3eeeba9b2506014d0",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct05.dat",
+   "size": 15081,
+   "sha256": "f1023fe231e2fbc0ead380f169efa5961a8de434041d3851384eb5b1896cbbaf",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct06.dat",
+   "size": 13541,
+   "sha256": "ecf08a9cb0197dc11ba61cad104ad02440448fb1fcecdaf5acc718e2bb7f40ae",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct07.dat",
+   "size": 15640,
+   "sha256": "f949cfed045ba3729b0066ac8d5fc79ac3fd53203374b1ff43e7cdad34377f4e",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct08.dat",
+   "size": 14561,
+   "sha256": "c8803d8e198a899d41fd4e581ecb8035b87412f30e083e51dd578faec5e6ea76",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct09.dat",
+   "size": 14834,
+   "sha256": "9add090e98627df136aa9341333fbcccec2db5e115203eb63cd4e76cb19b96ac",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct10.dat",
+   "size": 14550,
+   "sha256": "a4977b68ddb4730957682d89f9f506194fce84b1a7d54a98759801881d0bfd9c",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct11.dat",
+   "size": 18500,
+   "sha256": "69d5bec01313d6844967f8dfb0aa6540236ac199787ac1db253b63c280d01577",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct12.dat",
+   "size": 15020,
+   "sha256": "4f57fdf72da00b809fccd64aecae1b5450cef27c1bb823b0d6ba1d1675f2f36d",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct13.dat",
+   "size": 13368,
+   "sha256": "87dbf5a17e897320332a10d436764189e615a8d019f1b73cf4d90225b0211caf",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct14.dat",
+   "size": 14329,
+   "sha256": "b852175e7e3c67f414d00bb6ef7ec629306d9f3542dbf36d6c0dad5b7f720eec",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct15.dat",
+   "size": 15801,
+   "sha256": "96403fcc633c4ffbee2ae9de10ad10820389f09957f16f88e31c2bd1cfe8af2c",
+   "load": "preload"
+  },
+  {
+   "path": "f1ct16.dat",
+   "size": 15801,
+   "sha256": "f90d0b41a6699e8ff962ded71cb0ad1ed14dc97075e86bc9668f2f5d825e9f7e",
+   "load": "preload"
+  },
+  {
+   "path": "f1gp.$$$",
+   "size": 8,
+   "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+   "load": "preload"
+  },
+  {
+   "path": "f1gpdata.dat",
+   "size": 46110,
+   "sha256": "b25ea2c35a7b5d895c86e6b07789a5a25538d797c66bcb85f312c4308a81ce89",
+   "load": "preload"
+  },
+  {
+   "path": "f1gpdatb.dat",
+   "size": 63678,
+   "sha256": "4ef2711bcdb731fdcb4130943a1cb64aaa47585d79c5825468a319f071bfa783",
+   "load": "preload"
+  },
+  {
+   "path": "f1prefs.286",
+   "size": 1166,
+   "sha256": "74219e718120e40995b41b263581b13fc26b4e92d3a412016e9bfb79bc393050",
+   "load": "preload"
+  },
+  {
+   "path": "f1prefs.386",
+   "size": 1166,
+   "sha256": "79a8ad3c68e489dc60a7f4321671d1d3fa6385f943e467cc5b7fd5bcffad276e",
+   "load": "preload"
+  },
+  {
+   "path": "f1prefs.486",
+   "size": 1166,
+   "sha256": "ccc6a74ceb6660e1809d69bf58ecc7e6b9921379a82a9ec6d7a13317de7dfd41",
+   "load": "preload"
+  },
+  {
+   "path": "flags.dat",
+   "size": 1558,
+   "sha256": "29f975d7ba9d009c35041e3e9b9a5510c93dbca812627b93d2d089ed144bd8db",
+   "load": "preload"
+  },
+  {
+   "path": "frntend.fli",
+   "size": 1784149,
+   "sha256": "481ea3bb06ac070b450400c73d867340dc51ef956d3959091b4302c95565ede6",
+   "load": "preload"
+  },
+  {
+   "path": "full.bat",
+   "size": 55,
+   "sha256": "efc984c7678faf142a57530df1e2a4b0f09aaf4576929e2372e8096db3553551",
+   "load": "preload"
+  },
+  {
+   "path": "gp.exe",
+   "size": 332840,
+   "sha256": "b29f8154cfd435796df01da9e4a0e6209a70613da95f7fd128f5e84edf26bf15",
+   "load": "preload"
+  },
+  {
+   "path": "gplogo.lbm",
+   "size": 6798,
+   "sha256": "3cb497ae21983d5dbe796e0f822bc80c34bcb8255c5b9f56bd3623448cf9cf14",
+   "load": "preload"
+  },
+  {
+   "path": "helmets.dat",
+   "size": 53703,
+   "sha256": "376c8ca4f5243aa2ccaae82f490d75ae4adaff49fdd6f827676d5f091f7db34d",
+   "load": "preload"
+  },
+  {
+   "path": "install.exe",
+   "size": 96163,
+   "sha256": "e4d0e821c511f39218239c33fe1d3cad6a8920dbdbd3335d0e408294f6f73df2",
+   "load": "preload"
+  },
+  {
+   "path": "med.bat",
+   "size": 23,
+   "sha256": "615215b7ba5fea13f685d03980654561c8b30035c9aa707fe618b544faecf0af",
+   "load": "preload"
+  },
+  {
+   "path": "mprose.lbm",
+   "size": 8296,
+   "sha256": "0a4830ebbd7e216cfa99a3848015dc6403f8cba9dd786edb125dc4b60674f7e0",
+   "load": "preload"
+  },
+  {
+   "path": "mpscopy.exe",
+   "size": 84210,
+   "sha256": "b4748720775e055a6919bd5a26f89f66bf69469eed23a3beca35c24114d9e79d",
+   "load": "preload"
+  },
+  {
+   "path": "playscr.exe",
+   "size": 133083,
+   "sha256": "1988a6dcfbcf18a77d035333eb277962a386a7491c377cb90895c965db36f9fb",
+   "load": "preload"
+  },
+  {
+   "path": "rcredit.bin",
+   "size": 21713,
+   "sha256": "013447bb0af019673b8fed55f4d0bb61e0665ce8ad99c90ecff6a6652af8612f",
+   "load": "preload"
+  },
+  {
+   "path": "readme.txt",
+   "size": 5694,
+   "sha256": "88e8373d5cb0154f7be9b207c060a4c098cd3b67bd79a0d580be12d7c17d9bd0",
+   "load": "preload"
+  },
+  {
+   "path": "ringame.bin",
+   "size": 5352,
+   "sha256": "a3d372746ce38cfa5638e18194b906b4d944ea57ec10b34d6a43e2aae170d88b",
+   "load": "preload"
+  },
+  {
+   "path": "rintro.bin",
+   "size": 15024,
+   "sha256": "22cf4524af462b91bec339cb132ed4d8720a11ad66b40fb499190ef07058fca6",
+   "load": "preload"
+  },
+  {
+   "path": "roland.cat",
+   "size": 36777,
+   "sha256": "faafdc053ccf4c32c6fd9430a0a62d3cd3ef06260d8e7ff9486165a262620225",
+   "load": "preload"
+  },
+  {
+   "path": "rsound.bin",
+   "size": 3215,
+   "sha256": "284989b52fae5f7e667c1f9d24512a495b72b558091a01d1804c961a05635df3",
+   "load": "preload"
+  },
+  {
+   "path": "small.bat",
+   "size": 22,
+   "sha256": "601c6cd1b16bb05514fcf87a434c674cdfdca8f18576b3d572728b93d25d021c",
+   "load": "preload"
+  },
+  {
+   "path": "test.scr",
+   "size": 294,
+   "sha256": "4490fb5133e779c85063ede600e5a816f97892b95fe7e5d59a985a5315112ac7",
+   "load": "preload"
+  },
+  {
+   "path": "trackpix.dat",
+   "size": 521916,
+   "sha256": "9685de411aed79e8604081f24977bfe6a27a98cb4fcacdd01be47b6021932b3d",
+   "load": "preload"
+  },
+  {
+   "path": "trophy.dat",
+   "size": 265247,
+   "sha256": "512605b96c504f5ad655f189a0f9a4fdf811c474ee279e5cb33d1565e0e590ff",
+   "load": "preload"
+  },
+  {
+   "path": "worldc.scr",
+   "size": 284,
+   "sha256": "88389fded581b556e3f4b8ef35e4047b437a5b54a784122c3a99d1c23b890c8d",
+   "load": "preload"
+  },
+  {
+   "path": "worldc2.fli",
+   "size": 157392,
+   "sha256": "9605d2217354e305645f8863a3d7ecdc2297b65b8eda5d675a8a605623cb5793",
+   "load": "preload"
+  },
+  {
+   "path": "worldc2.gif",
+   "size": 11543,
+   "sha256": "7b88b27d56adb19066e8061377cdf3c8806c66ecb7493290f63378a1f1eab4e1",
+   "load": "preload"
+  }
+ ]
+}

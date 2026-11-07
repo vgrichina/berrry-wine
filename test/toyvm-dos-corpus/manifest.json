@@ -1168,6 +1168,86 @@
     "reason": "ToyVM reads a file whole and synchronously when it is opened, so every file a live session might open must be downloaded before boot; there is no on-demand fetch."
    },
    "fileList": "test/toyvm-dos-corpus/files/world-circuit-demo.json"
+  },
+  {
+   "id": "world-circuit-v103",
+   "title": "Formula One Grand Prix / World Circuit v1.03 (installed original)",
+   "candidateId": null,
+   "dosGameId": null,
+   "dosboxAppIds": [],
+   "gameDir": "test/binaries/dos-games/world-circuit-v103/MPS/GPRIX",
+   "entry": {
+    "program": "gp.exe",
+    "args": "/c",
+    "env": {}
+   },
+   "entrySource": "Original INSTALL.EXE Full Installation from genuine A: disk1, prompted disks2/3, destination C:\\MPS\\GPRIX. Original full.bat invokes gp /c after playscr. Exact installed hashes and recovery: scratch/runs/20261107-world-circuit-timestamp-install/installed-active-hashes.json and RECOVERY.md.",
+   "notes": "docs/re-notes/world-circuit-timestamp-install-20261107.md",
+   "payload": {
+    "present": true,
+    "files": 63,
+    "bytes": 5830816,
+    "excluded": {},
+    "largest": [
+     {
+      "path": "frntend.fli",
+      "size": 1784149
+     },
+     {
+      "path": "backdrop.dat",
+      "size": 539821
+     },
+     {
+      "path": "trackpix.dat",
+      "size": 521916
+     }
+    ]
+   },
+   "programs": [
+    {
+     "name": "gp.exe",
+     "bytes": 332840,
+     "mode": "real",
+     "extender": null,
+     "packers": [],
+     "newHeader": null
+    }
+   ],
+   "toyvm": {
+    "status": "untested",
+    "verdict": "No static blocker; furthest recorded ToyVM run: installed gp bios config query (scratch/runs/20261107-world-circuit-timestamp-install). Gameplay untested; not a claim that it works.",
+    "blockers": [],
+    "cautions": [
+     {
+      "id": "browser-mouse-limits",
+      "text": "Browser absolute mouse input has polling-only limits; gameplay is not qualified by input fixtures.",
+      "facts": [
+       "browser-mouse-limits"
+      ]
+     }
+    ],
+    "flatFs": {
+     "filesInSubdirs": 0,
+     "collisions": [],
+     "collisionCount": 0
+    },
+    "evidence": [
+     {
+      "run": "scratch/runs/20261107-world-circuit-timestamp-install",
+      "at": "2026-11-07T23:15:00Z",
+      "reached": "installed-gp-bios-config-query",
+      "summary": "Authentic installer success/configuration; native installed GP.EXE startup stops at unhandled INT15 AH=C0 (6AAE:77BB). Generic system configuration fixed with focused Node/browser/native IRET regression and locked build; original GP not rerun after fix. Quick Race and driving unverified."
+     }
+    ]
+   },
+   "load": {
+    "policy": "preload-all",
+    "preloadFiles": 63,
+    "preloadBytes": 5830816,
+    "lazyFiles": 0,
+    "reason": "ToyVM reads a file whole and synchronously when it is opened, so every file a live session might open must be downloaded before boot; there is no on-demand fetch."
+   },
+   "fileList": "test/toyvm-dos-corpus/files/world-circuit-v103.json"
   }
  ]
 }
