@@ -43,6 +43,7 @@
   ;; visible before the guest resumes.
   (import "host" "wall_clock" (func $host_wall_clock (param i32 i32) (result i32)))
   (import "host" "cmos_io" (func $host_cmos_io (param i32 i32 i32) (result i32)))
+  (import "host" "pit_io" (func $host_pit_io (param i32 i32 i32 i32) (result i32)))
   (import "host" "yield" (func $host_yield (param i32)))
   ;; One bounded inline turn for the worker threads, for the case where the
   ;; main instance cannot yield: inside a synchronous wndproc the interpreter

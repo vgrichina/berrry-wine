@@ -21,7 +21,9 @@ async function main() {
   }
 
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
-  const context = { exports: null, getMemory: () => memory.buffer, guestNowMs: () => 1234 };
+  let pitNow = 0;
+  const context = { exports: null, getMemory: () => memory.buffer,
+    guestNowMs: () => 1234, pitNowMs: () => pitNow };
   const imports = createHostImports(context);
   imports.host.memory = memory;
   imports.host.exit = () => {};
@@ -469,6 +471,7 @@ async function main() {
     'AAM sign flag must use byte width');
 
   const portIoCode = imageBase + 0x1380;
+  pitNow = 1234;
   run(portIoCode, [
     0xba, 0x43, 0x00, 0x00, 0x00, // mov edx,0x43
     0x30, 0xc0,                   // xor al,al (latch channel 0)
@@ -485,7 +488,7 @@ async function main() {
     e.set_edx(0);
   }, false);
   assert.strictEqual(e.get_eax() >>> 0,
-    (0xaaaa0000 | ((-(1234 * 1193)) & 0xffff)) >>> 0,
+    (0xaaaa0000 | ((-Math.floor(1234 * 1193182 / 1000)) & 0xffff)) >>> 0,
     'OUT 0x43 followed by two IN 0x40 reads must return one latched PIT count');
 
   const enterCode = imageBase + 0x13c0;

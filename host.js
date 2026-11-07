@@ -1883,6 +1883,8 @@ class WineAssembly {
     const ctx = {
       getMemory: () => self.memory.buffer,
       cmosRtc: opts.cmosRtc,
+      pitTimer: opts.pitTimer,
+      pitNowMs: opts.pitNowMs,
       calendarClock: opts.calendarClock,
       d3d9Bridge: opts.d3d9Bridge,
       d3dCommands: opts.d3dCommands,

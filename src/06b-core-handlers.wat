@@ -941,13 +941,9 @@
     (global.set $flag_sign_shift (i32.const 7))
     (dispatch-next))
 
-  ;; Minimal PC port state used by Win9x applications that legitimately issue
-  ;; user-mode IN/OUT. Channel 0 is latched through port 0x43 and returned low
-  ;; byte then high byte from 0x40, matching the 8254 access Fallout uses for
-  ;; its random/timer seed. Port 0x3DA alternates vertical-retrace status so a
-  ;; legacy VGA polling loop cannot deadlock. Other ports float high.
-  (global $io_pit_latch (mut i32) (i32.const 0))
-  (global $io_pit_phase (mut i32) (i32.const 0))
+  ;; PIT/CMOS device state lives in the process host, shared with cooperative
+  ;; instances and synchronous Worker RPC. Port 0x3DA alternates retrace status
+  ;; so a legacy VGA polling loop cannot deadlock. Other ports float high.
   (global $io_vga_status (mut i32) (i32.const 0))
 
   ;; PCI configuration mechanism #1: a dword written to 0xCF8 selects
@@ -989,7 +985,7 @@
   ;; the x86 opcode, 8..15 hold an immediate port, and bit 16 records 66h.
   (func $th_port_io (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $opcode i32) (local $port i32) (local $value i32)
-    (local $wide i32) (local $word i32) (local $is_in i32)
+    (local $wide i32) (local $word i32) (local $is_in i32) (local $io_width i32)
     (local.set $opcode (i32.and (local.get $op) (i32.const 0xFF)))
     (local.set $port
       (if (result i32) (i32.lt_u (local.get $opcode) (i32.const 0xEC))
@@ -1008,6 +1004,9 @@
           (i32.or
             (i32.eq (local.get $opcode) (i32.const 0xEC))
             (i32.eq (local.get $opcode) (i32.const 0xED))))))
+    (local.set $io_width
+      (if (result i32) (i32.eqz (local.get $wide)) (then (i32.const 1))
+        (else (if (result i32) (local.get $word) (then (i32.const 2)) (else (i32.const 4))))))
 
     (if (local.get $is_in)
       (then
@@ -1015,18 +1014,10 @@
         (if (i32.and (i32.eqz (local.get $wide))
               (i32.eq (i32.and (local.get $port) (i32.const 0xFFFE)) (i32.const 0x70)))
           (then (local.set $value (call $host_cmos_io (local.get $port) (i32.const 0) (i32.const 0)))))
-        (if (i32.eq (local.get $port) (i32.const 0x40))
-          (then
-            (if (i32.eqz (global.get $io_pit_phase))
-              (then
-                (local.set $value (i32.and (global.get $io_pit_latch) (i32.const 0xFF)))
-                (global.set $io_pit_phase (i32.const 1)))
-              (else
-                (local.set $value
-                  (i32.and (i32.shr_u (global.get $io_pit_latch) (i32.const 8)) (i32.const 0xFF)))
-                (global.set $io_pit_phase (i32.const 0))))))
-        (if (i32.eq (local.get $port) (i32.const 0x61))
-          (then (local.set $value (i32.const 0))))
+        (if (i32.or (i32.eq (local.get $port) (i32.const 0x61))
+              (i32.eq (i32.and (local.get $port) (i32.const 0xFFFC)) (i32.const 0x40)))
+          (then (local.set $value (call $host_pit_io
+            (local.get $port) (i32.const 0) (i32.const 0) (local.get $io_width)))))
         (if (i32.eq (local.get $port) (i32.const 0x3DA))
           (then
             (global.set $io_vga_status
@@ -1060,22 +1051,15 @@
         (if (i32.and (i32.eqz (local.get $wide))
               (i32.eq (i32.and (local.get $port) (i32.const 0xFFFE)) (i32.const 0x70)))
           (then (drop (call $host_cmos_io (local.get $port) (local.get $value) (i32.const 1)))))
+        (if (i32.or (i32.eq (local.get $port) (i32.const 0x61))
+              (i32.eq (i32.and (local.get $port) (i32.const 0xFFFC)) (i32.const 0x40)))
+          (then (drop (call $host_pit_io
+            (local.get $port) (local.get $value) (i32.const 1) (local.get $io_width)))))
         ;; Only a dword write reaches the mechanism #1 address register; a byte
         ;; write to 0xCF8 is mechanism #2's enable register, which is absent.
         (if (i32.and (i32.eq (local.get $port) (i32.const 0xCF8))
                      (i32.and (local.get $wide) (i32.eqz (local.get $word))))
-          (then (global.set $io_pci_addr (i32.and (local.get $value) (i32.const 0x80FFFFFC)))))
-        (if (i32.and
-              (i32.eq (local.get $port) (i32.const 0x43))
-              (i32.eqz (i32.and (local.get $value) (i32.const 0xC0))))
-          (then
-            (global.set $io_pit_latch
-              (i32.and
-                (i32.sub
-                  (i32.const 0)
-                  (i32.mul (call $host_get_ticks) (i32.const 1193)))
-                (i32.const 0xFFFF)))
-            (global.set $io_pit_phase (i32.const 0))))))
+          (then (global.set $io_pci_addr (i32.and (local.get $value) (i32.const 0x80FFFFFC)))))))
     (dispatch-next))
 
   ;; Helper: compute EA from operand encoding (alu_op<<8 | reg<<4 | base)

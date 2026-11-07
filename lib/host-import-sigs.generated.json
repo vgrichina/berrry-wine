@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 293,
+  "count": 294,
   "sigs": {
     "log": {
       "params": [
@@ -129,6 +129,17 @@
     },
     "cmos_io": {
       "params": [
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "pit_io": {
+      "params": [
+        "i32",
         "i32",
         "i32",
         "i32"
