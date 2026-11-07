@@ -1,5 +1,63 @@
 # Aranna selected-map loader investigation
 
+## 04:33 successor: filename case repair published
+
+Commit `64823a6ad8bc73ada23f39a1f61573172d10837c` fixes a demonstrated
+`GetFullPathNameA/W` defect: display paths lowercased caller-supplied filenames.
+Lookup keys remain case-insensitive. Both API variants now retain the filename
+spelling, including nonexistent files, dot traversal and drive-relative paths.
+The focused regression failed before the repair and passes afterward; all 46
+VFS tests and the mandatory locked build passed. Evidence for this successor is
+under `scratch/runs/20261107-aranna-map-load/successor-0433/`; the earlier
+01:39 attempt below and its evidence are retained.
+
+The acquisition-before-arm predecessor's ordered observations establish a more
+precise failure than its dialog alone:
+
+- At `0x4bb378`, the main map loader returned AL=1.
+- The separate validator at `0x51f06a` obtained header pointer `0x0b6ef180`.
+  The next retained snapshot of that header contains all three expected words
+  at offsets `0x3c`, `0x50` and `0x54`.
+- After calling `0x40dcd0` (a case-sensitive substring search) for
+  `Expansion.dsmap`, execution skips the three header comparisons. The
+  validator returns AL=0 at `0x4bb387`, leading to the selected-map dialog.
+- Static data flow explains the discrepancy: resource open `0x655458` calls
+  `0x434c1d`, whose import at IAT `0x72925c` is `GetFullPathNameA`. Its returned
+  full path is stored at resource `+0x364`, precisely the name selected by
+  `0x51efad` for that substring search. The previous implementation converts
+  `C:\DSLOA\Expansion.dsmap` into `C:\dsloa\expansion.dsmap`.
+
+This identifies a concrete emulator discrepancy on the executed path. The
+filename bytes at the final substring call were not directly captured; that
+link follows the static data flow and demonstrated API behavior. It does not
+establish that this is the only gameplay blocker. Microsoft documents that
+[GetFullPathName does not convert the specified filename](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfullpathnamea).
+No guest, map, resource, save or configuration bytes were changed. There were
+zero read mismatches in all 28,643 retained broker completions; the earlier
+optional startup misses are not assigned as the map cause.
+
+The fresh-box attempt stopped **before guest launch**. Box `bx_dbhdzfqg` was
+created at 04:38:49Z with a persisted UUID Idempotency-Key and 40-minute TTL
+(original expiry 05:18:49Z). Its prerequisite check verified all 1,906 staged
+file size/SHA-256 pins, then failed at `require.resolve('puppeteer')` with
+`MODULE_NOT_FOUND`. No original-attempt marker, browser, guest process, profile
+or app port was created. No install/retry, alternative driver, original replay
+or old-box resume followed that concrete blocker. Therefore the repair's effect
+on the original map load, world rendering and visible movement remains
+**unverified**. Next work must prepare the missing browser-driver dependency
+before a separately authorized original on the published repair.
+
+The exact preflight failure and remote cleanup were recovered before the
+explicitly delegated normal shutdown request at 04:40:20Z. Remote cleanup
+rechecked all pins and found no owned processes or profiles; listed listeners
+belonged to the base box. No local runtime was launched. Source/build ownership
+was released after publication. Final box state and local cleanup are retained
+in this successor's result and lifecycle JSON. No source/media archive,
+deployment, nested worker or agent was created. The observations and generic
+repair tests do not constitute a new original-gameplay pass.
+
+## Earlier 01:39 attempt (retained)
+
 Evidence lives in `scratch/runs/20261107-aranna-map-load/`. This follows
 [the complete-transport predecessor](aranna-transport-window-20261107.md).
 The one new original ended at Single Player before Start New Game: an unnecessary
