@@ -73,7 +73,10 @@ remained. All 12 remote run artifacts (200,423 bytes) were recovered or matched
 existing local bytes and SHA-256 verified before the delegated normal stop.
 The box is archived, stopped at 09:46:05.245 UTC, expiry null, stop completed
 with `forced:false`. It is handed back to the coordinator and must not be
-resumed for this task. Local `/home` remained above 2 GB at recorded checks.
+resumed for this task. One terminal disk recheck transiently failed the 2 GB
+guard during shared filesystem activity; the immediate measured follow-up was
+2,683,056,128 bytes free. This run used 1.6 MB, launched no further runtime,
+and removed no peer files. The incident is retained in `disk-incident.json`.
 
 No production code changed. No equipment, pickup/HUD/action consequence,
 damage, FPS, audio or parity claim is made. Prior original sessions remain
