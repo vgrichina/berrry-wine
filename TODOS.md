@@ -397,7 +397,7 @@ and jobs remain preserved. No old-session wakeup is requested.
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: Owner correction 2026-11-05 assigns MIG to claude-laptop; do not start, resume or retry it from this coordinator. Other authorized lanes proceed independently, one retry at a time.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
-  Result: Mode-5 reservedPageFaults REP MOVS now reports the faulting instruction EIP, current progress registers and correct access kind; mode-3 ContinueSearch preserves write kind. Owner reports test/test-rep-movs-fault-restart.js 215 checks PASS, build and REP/SEH/uop regressions PASS. Commits b786b78da / eadf70fd5 are on origin/main; shared-worktree integration is pending Stronghold-owned overlap reconciliation.
+  Result: Mode-5 reservedPageFaults REP MOVS now reports the faulting instruction EIP, current progress registers and correct access kind; mode-3 ContinueSearch preserves write kind. Owner reports test/test-rep-movs-fault-restart.js 215 checks PASS, build and REP/SEH/uop regressions PASS. Commits b786b78da / eadf70fd5 are ancestors of current main (rechecked 2026-11-07); shared-worktree integration is complete. The separate same-block repair3a38eed05 is also on current main.
   Next: complete; remove SAM REP blocker. Same-block stale decoded execution is a distinct task below, not a reason to reopen this accepted repair.
   candidate: serious-sam-demo
   owner: claude-laptop
