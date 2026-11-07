@@ -118,8 +118,13 @@ from the owning endpoint, not the toolbar or the prior TR3 SwiftShader boat.
 
 Before the original, actual production direct-initializer, atomic transport,
 executor/recovery, literal action, renderer key-state and duration controls
-passed. All five intended arrows/Enter keys ran balanced trusted CDP pairs on
-about:blank in each browser; invalid holds produced zero events. Holds remain
+passed. Up, Left, Space, Enter and Escape ran balanced trusted CDP pairs on
+about:blank in each browser; invalid holds produced zero events. The copied
+TR3 native preflight did **not** include Down or Right. Down passed the
+literal executor and production renderer/DirectInput state controls, but its
+later reverse action lacks the requested prior trusted-browser qualification.
+This closeout-discovered coverage gap further limits that action; it was not
+repaired by relaunching the original. Holds remain
 50–2000 ms and the unmodified scene guard remains 12 seconds.
 
 The generated Boids guest ran in a real Worker with an actual healthy WebGL
