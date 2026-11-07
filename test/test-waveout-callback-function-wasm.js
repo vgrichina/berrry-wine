@@ -27,6 +27,7 @@ const CALLBACK_VA = 0x00401230;
 const INSTANCE = 0x12345678;
 
 const extraWat = String.raw`
+  (func (export "test_wo_begin_process") (call $invocation_process_begin))
   (func (export "test_wo_alloc") (param $n i32) (result i32)
     (local $p i32)
     (local.set $p (call $heap_alloc (local.get $n)))
@@ -77,6 +78,7 @@ const extraWat = String.raw`
   assert.strictEqual(e.fire_wave_out_callback(hwo, hdr), 0, 'uninitialized/shadow owner rejects callback');
   const resume = e.test_wo_alloc(16);
   e.guest_write32(resume, 0x0000FEEB); // jmp $: synthetic interrupted guest loop
+  e.test_wo_begin_process(); // The harness has no PE loader to establish its root.
   e.set_eip(resume);
   const espBefore = e.get_esp() >>> 0;
   clockMs = 1000;

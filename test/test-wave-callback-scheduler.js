@@ -12,7 +12,7 @@ async function oneStep(pending,yieldReason) {
  const result={eip:0x401000,yield:yieldReason,blocks:0,ms:0,waitHandle:0xe0001,waitStackBytes:12};
  wine._workerLastSlice=result;
  wine.guestWorker={link:{_waveOffer:pending?{token:1}:null,completeWait:async()=>{calls.complete++;}},slice:async()=>{calls.slice++;return result;}};
- wine.threadManager={backend:'worker',runWorkerSlices:async()=>0,workerSyncState:()=>({}),publishWorkerThunkState:()=>{},resolveMainWorkerWait:()=>{calls.resolve++;return {result:0,waitStackBytes:12};}};
+ wine.threadManager={backend:'worker',startPendingWorkers:async()=>0,runWorkerSlices:async()=>0,workerSyncState:()=>({}),publishWorkerThunkState:()=>{},resolveMainWorkerWait:()=>{calls.resolve++;return {result:0,waitStackBytes:12};}};
  for(const name of ['_frozenRegister','_installVisibilityPause','_installInputWake','_beginGuestTickBatch','_presentAtBoundary']) wine[name]=()=>{};
  wine._maybePauseForHidden=()=>false;
  wine._pumpWaveCallbacksAtBoundary=async()=>{};

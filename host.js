@@ -1514,19 +1514,24 @@ class WineAssembly {
   async _offerWaveCallback(item) {
     const registration=item.registration, owner=registration && registration.owner;
     if(!this.running || !owner || (registration.retired && !owner.link?._waveOffer)) return {status:'retired'};
+    if(item.midiMessage !== undefined && owner.host &&
+      (owner.host!==this || owner.processId!==this.processId ||
+       owner.document!==(typeof document==='undefined'?null:document))) return {status:'retired'};
     const tm=this.threadManager;
     if(owner.kind==='worker') {
-      if (item.midiMessage !== undefined) throw new Error('MIDI worker callback transport unsupported');
+      const midi = item.midiMessage !== undefined;
       const backend=owner.backend;
       if(this.guestWorker!==backend) return {status:'retired'};
       const live=owner.slot===0 ? backend.link : backend.threadLinks.get(owner.slot);
       if(!owner.link) owner.link=live || null;
       if(!owner.link) return {status:'busy'};
       if(live!==owner.link || !live.worker) return {status:'retired'};
-      const stream=live.waveRegistrations.get(registration.handle);
+      if(midi && (live.worker!==owner.worker || live.endpointIdentity!==owner.endpointIdentity)) return {status:'retired'};
+      const stream=(midi ? live.midiRegistrations : live.waveRegistrations).get(registration.handle);
       if(!stream && !live._waveOffer) return owner.stream ? {status:'retired'} : {status:'busy'};
       if(!owner.stream) {
-        if(stream.callback!==registration.callback || stream.instance!==registration.instance) return {status:'retired'};
+        if(stream.callback!==registration.callback || stream.instance!==registration.instance ||
+          (midi && stream.type!==registration.type)) return {status:'retired'};
         owner.stream=stream;
       }
       if(stream!==owner.stream && !live._waveOffer) return {status:'retired'};
@@ -1538,7 +1543,11 @@ class WineAssembly {
       if(thread && (thread.inFlight || thread.freeRunPending || thread.parkedWaitDone)) return {status:'busy'};
       const state=thread || (tm ? (tm._mainWaitState || (tm._mainWaitState={})) : {});
       const saved={waitStartedAt:state.waitStartedAt||0,waitPolls:state.waitPolls||0,lastPollAt:state.lastPollAt||0};
-      const result=await live.offerWaveCallback(owner.stream,item.waveHdrGA,1000,registration.retired);
+      const result=await live.offerWaveCallback(owner.stream,item.waveHdrGA,1000,registration.retired,item.midiMessage);
+      if(midi && registration.type===1) {
+        if(result.status==='accepted') this._wakeStep();
+        return result;
+      }
       if(result.status==='accepted') {
         if(!this.running || !live.worker || (thread && thread.state!=='active')) return {status:'retired'};
         // Only the accepted callback changes run eligibility; original WAT wait
@@ -1557,6 +1566,13 @@ class WineAssembly {
     if(!owner.tid && tm?.isMainThreadSuspended?.()) return {status:'busy'};
     if(thread?.suspendCount>0) return {status:'busy'};
     if(!ex.get_eip() || ex.get_yield_reason()===2) return {status:'retired'};
+    if(item.midiMessage !== undefined && owner.root !== undefined) {
+      try { if(ex.null_diag_root()!==owner.root || !ex.null_diag_token()) return {status:'retired'}; }
+      catch (_) { return {status:'retired'}; }
+    }
+    if(item.midiMessage !== undefined && registration.type===1) {
+      return {status:ex.post_message_q(registration.callback,item.midiMessage,registration.handle,item.waveHdrGA) ? 'accepted' : 'busy'};
+    }
     const saved=thread ? {waitStartedAt:thread.waitStartedAt||0,waitPolls:thread.waitPolls||0}
       : {waitStartedAt:tm?._mainWaitStartedAt||0,waitPolls:tm?._mainWaitPolls||0};
     const admitted = item.midiMessage === undefined
@@ -1974,6 +1990,8 @@ class WineAssembly {
       sharedGdi: opts.sharedGdi || null,
       sharedAudio,
       sharedMixer,
+      callbackHost: self,
+      get callbackDocument() { return typeof document==='undefined' ? null : document; },
       get waveCallbackOwner() {
         const backend=self.guestWorker;
         if(backend) {
@@ -1985,7 +2003,7 @@ class WineAssembly {
       offerWaveCallback:item=>self._offerWaveCallback(item),
       offerMidiCallback:item=>self._offerWaveCallback({
         registration: { handle:item.handle, callback:item.registration.callback,
-          instance:item.registration.instance, owner:item.registration.routingOwner },
+          instance:item.registration.instance, type:item.registration.type, owner:item.registration.routingOwner },
         waveHdrGA:item.header, midiMessage:item.message,
       }),
       wakeWaveCallback:()=>self._wakeStep(),

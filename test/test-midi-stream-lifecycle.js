@@ -14,7 +14,7 @@ const sha = s => crypto.createHash('sha256').update(s).digest('hex');
 const files = ['src/09a3-handlers-audio.wat', 'src/01-header.wat', 'src/13-exports.wat',
   'src/03-registers.wat', 'src/10-helpers.wat', 'src/api_table.json',
   'src/01b-api-hashes.generated.wat', 'src/09b2-dispatch-table.generated.wat',
-  'lib/host-audio.js', 'host.js', 'src/09a-handlers.wat', 'src/04-cache.wat'];
+  'lib/host-audio.js', 'host.js', 'src/09a-handlers.wat', 'src/04-cache.wat', 'src/05-alu.wat'];
 const sources = Object.fromEntries(files.map(p => [p, read(p)]));
 const table = JSON.parse(sources['src/api_table.json']);
 const stop = table.find(r => r.name === 'midiStreamStop');
@@ -124,6 +124,8 @@ for (const n of ['hash_api_name', 'lookup_api_id']) bodies.push(fn('src/10-helpe
 // Only its private storage is relocated into this two-page fixture.
 for (const n of ['mm_callback_begin', 'mm_callback_frame_at', 'mm_callback_frame',
   'mm_callback_check', 'mm_callback_finish']) bodies.push(fn('src/09a-handlers.wat', n));
+for (const n of ['pending_gap', 'pending_gap_at', 'pending_failure'])
+  bodies.push(fn('src/05-alu.wat', n));
 for (const n of ['invocation_new_id', 'invocation_install', 'invocation_process_begin',
   'invocation_validate', 'invocation_current', 'invocation_enter', 'invocation_leave'])
   bodies.push(fn('src/04-cache.wat', n).replace(
@@ -132,11 +134,20 @@ for (const n of ['invocation_new_id', 'invocation_install', 'invocation_process_
 const page = Math.floor(stop.id / 256);
 const dispatch = fn('src/09b2-dispatch-table.generated.wat', 'dispatch_api_table_page_' + page);
 bodies.push(dispatch);
+bodies.push('(func $gl_object_enter (unreachable))', '(func $gl_object_leave (unreachable))');
 // Unrelated dispatch branches are trap sentinels. The stop branch is the exact
 // generated call to the real production handler, never a successful stub.
-for (const n of new Set([...dispatch.matchAll(/\(call \$(handle_\S+)/g)].map(m => m[1]))) {
+// Zero-argument production calls end directly in ')'; it is not part of the
+// function identifier. Keep all real stop dispatch/handler coverage below.
+for (const n of new Set([...dispatch.matchAll(/\(call \$(handle_[^\s()]+)/g)].map(m => m[1]))) {
   if (n === 'handle_midiStreamStop') continue;
-  const arity = n === 'handle_fallback' ? 2 : n === 'handle_gpu_api' ? 8 : 6;
+  const callStart = new RegExp(`\\(call \\$${n}(?=[\\s)])`).exec(dispatch).index;
+  const call = form(dispatch.slice(callStart), '(call');
+  let depth = 0, arity = 0;
+  for (const ch of call) {
+    if (ch === '(') { if (depth === 1) arity++; depth++; }
+    else if (ch === ')') depth--;
+  }
   bodies.push(`(func $${n} (param ${Array(arity).fill('i32').join(' ')}) (unreachable))`);
 }
 const globals = new Set([...bodies.join('\n').matchAll(/\(global\.(?:get|set) \$(\w+)/g)].map(m => m[1]));
@@ -149,6 +160,7 @@ const imports = [...sources['src/01-header.wat'].matchAll(/\(import "host" "(mid
   .map(m => form(sources['src/01-header.wat'], m[0]));
 const wasmSource = `
  (import "host" "memory" (memory 2 2 shared))
+ (import "host" "log_i32" (func $host_log_i32 (param i32)))
  ${imports.join('\n')}
  ${[...globals].map(g => `${typedGlobals.get(g) || `(global $${g} (mut i32) (i32.const ${initial[g] || 0}))`}
    (export "${g}" (global $${g}))`).join('\n')}
@@ -203,7 +215,7 @@ function setup() {
   const ac = { get currentTime() { return now / 1000; }, state: 'running' };
   ctx._voices._ensureCtx = () => ac;
   const e = new WebAssembly.Instance(moduleUnderTest, { host: { ...audio.imports,
-    memory, get_ticks: () => now } }).exports;
+    memory, get_ticks: () => now, log_i32: value => events.push(value) } }).exports;
   ctx.exports = { ...e, post_message_q: (...args) => windows.push(args) };
   e.beginProcess();
   assert.notEqual(e.currentInvocation(), 0n, 'production initializer establishes root');

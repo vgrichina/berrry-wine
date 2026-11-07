@@ -10,7 +10,7 @@ const Module = require('node:module');
 const file = path.resolve(__dirname, '../lib/host-audio.js');
 const raw = fs.readFileSync(file, 'utf8');
 const sha = crypto.createHash('sha256').update(raw).digest('hex');
-assert.equal(sha, '00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb');
+assert.equal(sha, '70795825d7d11ecb026e22c2875ef4eaf4fba60758e5da4fcc99ab624c4f4513');
 const mode = process.argv.find(a => a.startsWith('--mutant='))?.split('=')[1];
 let createAudioHost;
 if (mode) {
