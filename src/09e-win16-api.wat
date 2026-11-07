@@ -6349,6 +6349,26 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (call $win16_api_return (i32.const 0)))
 
+  ;; KERNEL.92 GetTempDrive(BYTE suggestion in one Pascal WORD slot).
+  ;; Wine krnl386.exe16/file.c and its export spec: the Win9x-compatible
+  ;; result is DX:AX = 1:(':' << 8 | uppercase temp-path drive letter).
+  ;; The suggested drive is ignored; this is an ASCII letter, not the
+  ;; zero-based index accepted by GetDriveType. Use the same VFS temp path
+  ;; as GetTempPathA, with the reference implementation's C: fallback.
+  (func $win16_GetTempDrive
+    (local $path i32) (local $letter i32)
+    (local.set $path (call $win16_name_scratch))
+    (local.set $letter (i32.const 0x43))
+    (if (call $host_fs_get_temp_path (i32.const 260) (local.get $path) (i32.const 0))
+      (then
+        (local.set $letter (call $gl8 (local.get $path)))
+        (if (i32.and (i32.ge_u (local.get $letter) (i32.const 0x61))
+                     (i32.le_u (local.get $letter) (i32.const 0x7A)))
+          (then (local.set $letter (i32.sub (local.get $letter) (i32.const 0x20)))))))
+    (i32.store offset=0 (global.get $reg_base) (i32.or (local.get $letter) (i32.const 0x3A00)))
+    (i32.store offset=8 (global.get $reg_base) (i32.const 1))
+    (call $win16_api_return (i32.const 2)))
+
   ;; KERNEL.136 GetDriveType(nDrive) -> UINT, by drive number rather than a
   ;; root-path string. A letter the host has mounted (a CD image) answers from its mount record.
   ;; Win16 has no DRIVE_CDROM: under MSCDEX a CD-ROM is DRIVE_REMOTE, and that
@@ -6684,6 +6704,8 @@
       (i32.shl (i32.add (local.get $count) (i32.const 3)) (i32.const 2))))
 
   (func $win16_kernel (param $ordinal i32) (result i32)
+    (if (i32.eq (local.get $ordinal) (i32.const 92))
+      (then (call $win16_GetTempDrive) (return (i32.const 1))))
     ;; Windows 95 generic thunks, resolved by name through GetProcAddress.
     ;; WISE uses these to call its 32-bit W32INST helper from the 16-bit setup
     ;; engine. The private ordinals are the real Win9x KERNEL export numbers.
