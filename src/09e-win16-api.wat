@@ -9240,6 +9240,8 @@
       (then (call $win16_InvalidateRgn) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 127))
       (then (call $win16_ValidateRect) (return (i32.const 1))))
+    (if (i32.eq (local.get $ordinal) (i32.const 290))
+      (then (call $win16_RedrawWindow) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 150))
       (then (call $win16_LoadMenu) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 158))
@@ -11907,6 +11909,97 @@
       (then (call $win16_h16_forget (local.get $hdc))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (call $win16_api_return (i32.const 6)))
+
+  ;; USER.290 RedrawWindow(HWND16, const RECT16 FAR *, HRGN16, UINT16).
+  ;; Pascal arguments occupy ten bytes. Resolve all inputs before a callback;
+  ;; only the invocation-owned return record survives synchronous WM_PAINT.
+  ;; Region precision is the shared update engine's bounding-box precision.
+  (func $win16_RedrawWindow
+    (local $hwnd i32) (local $hrgn i32) (local $flags i32)
+    (local $src i32) (local $tmp i32) (local $box i32) (local $cs i32)
+    (local $l i32) (local $t i32) (local $r i32) (local $b i32)
+    (local $empty i32) (local $h16 i32)
+    (local.set $flags (call $win16_arg16 (i32.const 0)))
+    ;; Internal-paint, child traversal, nonclient delivery and ERASENOW are
+    ;; distinct operations, not success-only hints. Keep their missing paths
+    ;; explicit rather than manufacturing full-client damage for them.
+    (if (i32.and (local.get $flags) (i32.const 0xFEE2))
+      (then
+        (call $host_log_i32 (i32.const 0xCA16A929))
+        (call $host_log_i32 (local.get $flags))
+        (unreachable)))
+    (local.set $h16 (call $win16_arg16 (i32.const 4)))
+    ;; An arbitrary guest HWND/HRGN is a recoverable API error. Do not let
+    ;; the strict internal mapping invariant turn an unallocated index into
+    ;; a CPU trap. A stale mapped slot resolves to zero and fails below.
+    (block $bad
+      (if (i32.and (i32.ge_u (local.get $h16) (global.get $WIN16_HANDLE_BASE))
+            (i32.gt_u (i32.sub (local.get $h16) (global.get $WIN16_HANDLE_BASE))
+              (call $win16_handle_next_get)))
+        (then (br $bad)))
+      (local.set $hwnd (call $win16_h32 (local.get $h16)))
+      (br_if $bad (i32.lt_s (call $wnd_table_find (local.get $hwnd)) (i32.const 0)))
+      (local.set $h16 (call $win16_arg16 (i32.const 1)))
+      (if (i32.and (i32.ge_u (local.get $h16) (global.get $WIN16_HANDLE_BASE))
+            (i32.gt_u (i32.sub (local.get $h16) (global.get $WIN16_HANDLE_BASE))
+              (call $win16_handle_next_get)))
+        (then (br $bad)))
+      (local.set $hrgn (call $win16_h32 (local.get $h16)))
+      (local.set $tmp (global.get $GUEST_STACK))
+      (local.set $box (call $g2w (local.get $tmp)))
+      (if (call $win16_arg16 (i32.const 3))
+        (then
+          (local.set $src (call $win16_far_to_guest
+            (call $win16_arg16 (i32.const 3)) (call $win16_arg16 (i32.const 2))))
+          (call $win16_rect_widen (local.get $tmp) (local.get $src)))
+        (else
+          (if (local.get $hrgn)
+            (then (br_if $bad (i32.eqz (call $gdi_rgn_get_box (local.get $hrgn) (local.get $box)))))
+            (else
+              (local.set $cs (call $wnd_client_size_or_host (local.get $hwnd)))
+              (call $gs32 (local.get $tmp) (i32.const 0))
+              (call $gs32 (i32.add (local.get $tmp) (i32.const 4)) (i32.const 0))
+              (call $gs32 (i32.add (local.get $tmp) (i32.const 8)) (i32.and (local.get $cs) (i32.const 65535)))
+              (call $gs32 (i32.add (local.get $tmp) (i32.const 12)) (i32.shr_u (local.get $cs) (i32.const 16)))))))
+      (local.set $l (call $gl32 (local.get $tmp)))
+      (local.set $t (call $gl32 (i32.add (local.get $tmp) (i32.const 4))))
+      (local.set $r (call $gl32 (i32.add (local.get $tmp) (i32.const 8))))
+      (local.set $b (call $gl32 (i32.add (local.get $tmp) (i32.const 12))))
+      (if (i32.and (local.get $flags) (i32.const 8))
+        (then
+          (if (i32.or (call $win16_arg16 (i32.const 3)) (local.get $hrgn))
+            (then (local.set $empty (call $update_validate_rect (local.get $hwnd)
+              (local.get $l) (local.get $t) (local.get $r) (local.get $b))))
+            (else (call $update_clear_hwnd (local.get $hwnd)) (local.set $empty (i32.const 1))))
+          (if (local.get $empty)
+            (then
+              (call $paint_flag_clear_hwnd (local.get $hwnd))
+              (if (i32.eq (local.get $hwnd) (global.get $main_hwnd))
+                (then (global.set $paint_pending (i32.const 0)))))))
+        (else
+          (if (i32.and (local.get $flags) (i32.const 1))
+            (then
+              ;; RedrawWindow's client update cannot extend outside the client.
+              (local.set $cs (call $wnd_client_size_or_host (local.get $hwnd)))
+              (local.set $l (select (local.get $l) (i32.const 0) (i32.gt_s (local.get $l) (i32.const 0))))
+              (local.set $t (select (local.get $t) (i32.const 0) (i32.gt_s (local.get $t) (i32.const 0))))
+              (local.set $r (select (local.get $r) (i32.and (local.get $cs) (i32.const 65535))
+                (i32.lt_s (local.get $r) (i32.and (local.get $cs) (i32.const 65535)))))
+              (local.set $b (select (local.get $b) (i32.shr_u (local.get $cs) (i32.const 16))
+                (i32.lt_s (local.get $b) (i32.shr_u (local.get $cs) (i32.const 16)))))
+              (call $invalidate_rect_core (local.get $hwnd)
+                (local.get $l) (local.get $t) (local.get $r) (local.get $b)
+                (i32.and (local.get $flags) (i32.const 4)))))))
+      (if (i32.and (local.get $flags) (i32.const 0x10))
+        (then (call $nc_flags_clear (local.get $hwnd) (i32.const 2))))
+      (call $win16_cont_push (call $win16_take_return (i32.const 10)) (i32.const 1))
+      (if (i32.and (local.get $flags) (i32.const 0x100))
+        (then (call $win16_update_window_start (local.get $hwnd)))
+        (else (call $win16_cont_resume)))
+      (return))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=8 (global.get $reg_base) (i32.const 0))
+    (call $win16_api_return (i32.const 10)))
 
   ;; USER.125 InvalidateRect(hWnd, lpRect, bErase) — lpRect may be NULL, which
   ;; means the whole client area and must stay NULL rather than becoming a
