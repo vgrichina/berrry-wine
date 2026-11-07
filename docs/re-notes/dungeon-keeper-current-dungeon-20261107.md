@@ -61,7 +61,7 @@ Sampled `/home` free space stayed above 2 GB.
 
 The only executed browser backend was the generated local COM fixture's
 production guest/render Worker with a legacy WebGL render endpoint, using
-Chrome 151.0.7922.71 and native 1024×712 inner viewport. Original Dungeon
+Chrome 151.0.7922.108 and native 1024×712 inner viewport. Original Dungeon
 Keeper presentation was not executed: DirectDraw software presentation and
 active D3D coverage are both unobserved for this task. No FPS, audio, parity,
 whole-game correctness or persistent action claim follows from these checks.
