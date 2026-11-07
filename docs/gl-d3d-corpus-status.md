@@ -1,5 +1,29 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: Forsaken threaded recovery and GLTron audio primitive
+
+Published `6c682a2ab` follows the short startup sweep with a longer original
+Forsaken observation. Threaded software Direct3D is black at ten seconds,
+reaches the original menu at twenty seconds, and proceeds to readable Volcano.
+Ordinary thrust moves from the starting room into the metal corridor; firing
+reduces PULS from 2000 to 1946. The coordinator inspected the matching room and
+corridor captures. This does not establish a persistent threaded renderer
+failure, a hit, WebGL parity or complete crash freedom. The exact clear/caller
+preceding transient black intervals remains uncaptured. Evidence:
+`20261107-forsaken-threaded-black`.
+[Source, controls, screenshots and limits](re-notes/forsaken-threaded-black-20261107.md).
+
+Published `ac1bcecee` fixes headless waveOut idle-time banking: a drained queue
+previously counted its idle gap as playback of newly submitted buffers, causing
+premature completion. Duration/FIFO/header-reuse/rate/callback regressions and
+the locked build pass. The original cooperative GLTron still submits no first
+scene and reaches no menu. The remaining investigation follows batch-clock
+publication, completion eligibility, consumer wake and runnable producer budget;
+the primitive repair is not a menu fix. Evidence: `20261107-gltron-audio-service`.
+[Regression, original result and missing observations](re-notes/gltron-audio-service-20261107.md).
+Full historical27 membership and per-app software/WebGL gameplay coverage remain
+incomplete. These observations do not change that requirement.
+
 ## November 7: Hexen II post-notice progress and control repair
 
 Published `10bf01e42` fixes stdin control replies being suppressed by diagnostic
@@ -90,8 +114,9 @@ by themselves identify a renderer defect. No speculative production fix landed.
 
 All twelve actual module reads match the tested allocator build; runtime/native
 pins and20 sweep regressions pass. Evidence was hash-verified before normal
-archived shutdown. A focused cooperative GLTron progression/presentation task is
-ready; exact historical27 membership and the Forsaken gap remain open.
+archived shutdown. Later Forsaken progression and the partial GLTron audio
+repair are recorded above; exact historical27 membership and full backend
+coverage remain open.
 [Six-app results and limitations](re-notes/graphics-post-allocator-crash-sweep-20261107.md).
 
 ## November 7: Tunnel, Twist and Boids browser coverage
