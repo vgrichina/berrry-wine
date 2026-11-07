@@ -1,4 +1,25 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-11-06
+# OpenGL / Direct3D corpus status, reconciled 2026-11-07
+
+## November 7: current Tomb Raider and Diablo II gameplay evidence
+
+These runs advance individual title/backend cells. Their linked notes record
+actual source and module identities, reviewed captures, inputs, owning renderer
+counters, and cleanup. They do not establish current-main coverage for the entire
+historical corpus or resolve the exact historical 27-ID membership. Older dated
+tables below retain their historical scope.
+
+| Title | Current WebGL evidence | Current software evidence | Remaining limits |
+| --- | --- | --- | --- |
+| Tomb Raider II demo | Venice: forward translation persists after idle; a separate Space action draws pistols. Owning Worker WebGL draws advance, with zero reported errors or software fallback. Published `07c00a950`. [Run and review](re-notes/tr2-bounded-gameplay-20261107.md). | Historical software gameplay remains recorded below; no fresh software result from this run. | Jump, firing, combat, audio and FPS comparison unproven. |
+| Tomb Raider III demo | Explicit New Game reaches Jungle. Forward movement settles at a changed position/camera; a separate Space action leaves both pistols raised. Owning Worker WebGL draws advance, with zero reported errors or software fallback. Published `d5c39cdf2`. [Run and review](re-notes/tr3-current-browser-20261107.md). | Historical software gameplay remains recorded below; no fresh software result from this run. | Alt was acknowledged but no airborne capture was obtained; jump, combat, audio and backend parity remain unproven. |
+| Diablo II demo | Single Player reaches town; ordinary ground-click movement changes terrain position and persists after idle. Actual owning WebGL counters advance. Published `68240bf8b`. [Town movement](re-notes/diablo2-recoverable-scene-20261106.md). | Supported software selection reaches town and demonstrates persistent ground-click movement, with advancing owning software draw counters and no GPU adapter. Published `7437aa212`. [Software run](re-notes/diablo2-software-town-20261106.md). | Later traversal remained in town: field/enemy combat and FPS parity are unproven. [Later attempt](re-notes/diablo2-field-combat-20261106.md). |
+
+The Tomb Raider runs used actual Worker module
+`6cd858302895de91df5af17e3a3742281e31f369ddb6528d7b96252b3423caac`.
+Missing historical provenance files are disclosed in their notes rather than
+reconstructed. Each run used one original on a fresh separate boat and retrieved
+evidence before normal stop. None demonstrated a new emulator defect or changed
+production code.
 
 ## November 4: original MDK2 browser/WebGL gameplay controls observed
 
