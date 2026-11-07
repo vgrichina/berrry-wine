@@ -32,6 +32,7 @@ const VGA_BASE = 0xA0000;
 const STUB_SEG = 0xF000;      // dedicated host entries occupy F000:0100-01FF
 const STUB_OFF = 0x100;       // ...leaving F000:0000-00FF for driver signatures
 const DEFAULT_IRET_OFF = 0x200;
+const BIOS_KEYBOARD_OFF = 0x300; // real IRQ1 code, outside the host stub window
 // Keep host services and hardware delivery entries individually addressable.
 const HOST_VECTORS = new Set([0, 4, 6, 0x0D, 0x10, 0x11, 0x12, 0x15, 0x16,
   0x1A, 0x1C, 0x31, 0x33, 0x40, 0x5C, 0x67,
@@ -896,6 +897,10 @@ class Machine {
     // The keyboard as hardware: scancodes waiting to be delivered as IRQ1, and
     // the one port 60h reads right now. See keyboardIrq.
     this.kbQueue = [];
+    this.kbBiosQueue = []; // parallel input provenance; never guest-visible
+    this.kbBiosCurrent = null;
+    this.kbBiosFrames = []; // one provenance record per outstanding BIOS IRQ1
+    this.kbBiosExtended = false;
     this.heldKeys = new Map();
     // --keys go on BOTH wires, for the reason pushKey gives: which one a
     // program listens on is not knowable from here. They used to go only into
@@ -908,7 +913,8 @@ class Machine {
     this.kbScan = 0;
     for (const k of this.keys) {
       const sc = (k.ah & 0x7F) || 0x1C;
-      this.kbQueue.push(sc, sc | 0x80);   // make code, then break code
+      this.queueKeyboardScan(sc, { key: k, deferred: false, deliver: true });
+      this.queueKeyboardScan(sc | 0x80);
     }
     this.kbFresh = false;   // set by IRQ1, cleared by the handler's port read
     this.kbReads = 0;
@@ -2279,6 +2285,10 @@ class Machine {
   }
 
   installIvt() {
+    // CLI/batch construction precedes VM allocation. setMemory installs this
+    // firmware once the real backing exists; bulk ROM writes cannot target the
+    // initial empty view (the older byte-at-a-time writes silently did nothing).
+    if (!this.mem.length) return;
     for (let v = 0; v < 256; v++) {
       const at = v * 4;
       // Host-service offset is 0x100 + the vector: the run loop
@@ -2289,7 +2299,8 @@ class Machine {
       // ES:000A against "EMMXXXX0" -- and with the stubs at offset v those
       // eight bytes sat on top of the stubs for INT 0Ah through INT 11h,
       // INT 10h among them.
-      const off = HOST_VECTORS.has(v) ? STUB_OFF + v : DEFAULT_IRET_OFF;
+      const off = v === 9 ? BIOS_KEYBOARD_OFF
+        : HOST_VECTORS.has(v) ? STUB_OFF + v : DEFAULT_IRET_OFF;
       this.mem[at] = off & 0xFF;
       this.mem[at + 1] = off >> 8;
       this.mem[at + 2] = STUB_SEG & 0xFF;
@@ -2298,13 +2309,20 @@ class Machine {
     }
     const base = STUB_SEG << 4;
     this.mem[base + DEFAULT_IRET_OFF] = 0xCF; // actual BIOS default IRET
+    // IRQ1 saves the interrupted registers, reads the controller, and calls
+    // the guest's real INT 15h vector with AH=4F, AL=scan, CF=1. The host BIOS
+    // continuation at F000:0109 receives the returned AL/CF through PUSHF/CALL;
+    // it translates accepted scans only. The outer IRET restores caller flags.
+    this.mem.set([0x60,0x1e,0x06, 0xe4,0x60, 0xb4,0x4f, 0xf9,0xcd,0x15,
+      0x9c,0x9a,0x09,0x01,0x00,0xf0, 0xb0,0x20,0xe6,0x20,
+      0x07,0x1f,0x61,0xcf], base + BIOS_KEYBOARD_OFF);
     for (let i = 0; i < EMS_NAME.length; i++) this.mem[base + 0x0A + i] = EMS_NAME.charCodeAt(i);
 
     // AT-compatible system configuration, in the conventional BIOS ROM slot.
     // Eight bytes follow the length word. Only implemented hardware is exposed:
-    // cascaded interrupt controllers and RTC; no DMA3 disk, keyboard intercept,
-    // external-event wait, EBDA, MCA, or reserved feature flags.
-    this.mem.set([8, 0, 0xFC, 0, 0, 0x60, 0, 0, 0, 0], 0xFE6F5);
+    // cascaded interrupt controllers, RTC and the IRQ1 keyboard intercept;
+    // no DMA3 disk, external-event wait, EBDA, MCA, or reserved feature flags.
+    this.mem.set([8, 0, 0xFC, 0, 0, 0x70, 0, 0, 0, 0], 0xFE6F5);
     this.mem[0xFFFFE] = 0xFC;
     this.installRomFonts();
 
@@ -2441,7 +2459,8 @@ class Machine {
   // said when the extender built the table -- see pmHookedVector below.
   hookedVector(v) {
     const at = v << 2;
-    const expected = HOST_VECTORS.has(v) ? STUB_OFF + v : DEFAULT_IRET_OFF;
+    const expected = v === 9 ? BIOS_KEYBOARD_OFF
+      : HOST_VECTORS.has(v) ? STUB_OFF + v : DEFAULT_IRET_OFF;
     if ((this.mem[at + 2] | (this.mem[at + 3] << 8)) !== STUB_SEG
         || (this.mem[at] | (this.mem[at + 1] << 8)) !== expected) return true;
     return this.pmHookedVector(v);
@@ -2544,11 +2563,72 @@ class Machine {
   // person at the keyboard, in the page, a demo reading the hardware directly
   // could never be sent anything at all.
   keyboardIrq() {
-    if (!this.hookedVector(0x09)) return 0;
+    const bios = this.biosKeyboardIntercept();
+    if (!this.hookedVector(0x09) && !bios) return 0;
+    if (bios && (this.pic.imr[0] & 2)) return 0;
     if (!this.kbQueue.length && !this.kbFill()) return 0;
-    this.kbScan = this.kbQueue.shift();
+    this.kbScan = this.takeKeyboardScan();
+    if (bios && this.kbBiosCurrent?.key) {
+      // A key queued before the hook was installed must not bypass CF/AL.
+      const i = this.keys.indexOf(this.kbBiosCurrent.key);
+      this.kbBiosCurrent.deliver = this.kbBiosCurrent.deferred || i >= 0;
+      if (i >= 0) { this.keys.splice(i, 1); this.syncKbBda(); }
+    }
+    if (bios) this.kbBiosFrames.push({ input: this.kbBiosCurrent });
     this.kbFresh = true;
     return 0x09;
+  }
+
+  biosKeyboardIntercept() {
+    // An extender owns its protected IRQ gates; do not run real BIOS code in
+    // an unrelated protected selector. Existing custom INT 9 delivery stays.
+    return !(this.vmExports?.get_cr0?.() & 1) && this.pic.base[0] === 8
+      && !this.hookedVector(9) && this.hookedVector(0x15);
+  }
+
+  queueKeyboardScan(scan, input = null) {
+    this.kbQueue.push(scan);
+    this.kbBiosQueue.push(input);
+  }
+
+  takeKeyboardScan() {
+    this.kbBiosCurrent = this.kbBiosQueue.shift() || null;
+    return this.kbQueue.shift();
+  }
+
+  biosKeyboardScan(scan) {
+    const frame = this.kbBiosFrames.pop();
+    const input = frame ? frame.input : this.kbBiosCurrent;
+    this.kbBiosCurrent = null;
+    if (scan === 0xe0 || scan === 0xe1) { this.kbBiosExtended = true; return; }
+    const extended = this.kbBiosExtended; this.kbBiosExtended = false;
+    const code = scan & 0x7f, up = !!(scan & 0x80);
+    // Modifier state belongs to the accepted/translated scan, after the hook.
+    const mask = code === 0x2a ? 2 : code === 0x36 ? 1
+      : code === 0x1d ? 4 : code === 0x38 ? 8 : 0;
+    if (mask) {
+      this.mem[0x417] = up ? this.mem[0x417] & ~mask : this.mem[0x417] | mask;
+      return;
+    }
+    if ([0x3a,0x45,0x46].includes(code)) {
+      if (!up) this.mem[0x417] ^= code === 0x3a ? 0x40 : code === 0x45 ? 0x20 : 0x10;
+      return;
+    }
+    if (up || (input && !input.deliver)) return;
+    let ascii;
+    if (input?.key?.ah === code) ascii = input.key.al;
+    else {
+      // Set-1 US translation for a hook that replaces AL. Unchanged keys keep
+      // the frontend's supplied character (including its active layout).
+      const normal = '\0\x1b1234567890-=\b\tqwertyuiop[]\r\0asdfghjkl;\'`\0\\zxcvbnm,./\0*\0 ';
+      const shifted = '\0\x1b!@#$%^&*()_+\b\tQWERTYUIOP{}\r\0ASDFGHJKL:"~\0|ZXCVBNM<>?\0*\0 ';
+      const flags = this.mem[0x417], lower = normal[code] || '\0';
+      const shift = !!(flags & 3) !== (!!(flags & 0x40) && /[a-z]/.test(lower));
+      ascii = (extended ? '\0' : (shift ? shifted[code] : lower) || '\0').charCodeAt(0);
+      if ((flags & 4) && /[a-z]/.test(lower)) ascii = lower.charCodeAt(0) - 96;
+      if (flags & 8) ascii = 0;
+    }
+    this.keys.push({ ah: code, al: ascii }); this.syncKbBda();
   }
 
   // A keystroke from outside: a person typing at the live page, or a test.
@@ -2559,8 +2639,10 @@ class Machine {
   // nothing. Make code then break code, so a handler tracking which keys are
   // held does not think one is stuck down.
   pushKey(scan, ascii) {
-    this.keys.push({ ah: scan & 0xFF, al: ascii & 0xFF });
-    this.kbQueue.push(scan & 0x7F, (scan & 0x7F) | 0x80);
+    const key = { ah: scan & 0xFF, al: ascii & 0xFF }, deferred = this.biosKeyboardIntercept();
+    if (!deferred) this.keys.push(key);
+    this.queueKeyboardScan(scan & 0x7F, { key, deferred, deliver: true });
+    this.queueKeyboardScan((scan & 0x7F) | 0x80);
     this.syncKbBda();
   }
 
@@ -2571,9 +2653,11 @@ class Machine {
     const held = this.heldKeys.has(id);
     if (held && !repeat) return false;
     if (!held) this.heldKeys.set(id, { scan: scan & 0x7F, extended });
-    if (bios) this.keys.push({ ah: scan & 0xFF, al: ascii & 0xFF });
-    if (extended) this.kbQueue.push(0xE0);
-    this.kbQueue.push(scan & 0x7F);
+    const key = bios ? { ah: scan & 0xFF, al: ascii & 0xFF } : null;
+    const deferred = this.biosKeyboardIntercept();
+    if (key && !deferred) this.keys.push(key);
+    if (extended) this.queueKeyboardScan(0xE0);
+    this.queueKeyboardScan(scan & 0x7F, { key, deferred, deliver: bios });
     this.syncKbBda();
     return true;
   }
@@ -2581,8 +2665,8 @@ class Machine {
   keyUp(scan, extended = false) {
     const id = `${extended ? 'e0:' : ''}${scan & 0x7F}`;
     if (!this.heldKeys.delete(id)) return false;
-    if (extended) this.kbQueue.push(0xE0);
-    this.kbQueue.push((scan & 0x7F) | 0x80);
+    if (extended) this.queueKeyboardScan(0xE0);
+    this.queueKeyboardScan((scan & 0x7F) | 0x80);
     return true;
   }
 
@@ -2638,7 +2722,8 @@ class Machine {
     if (!k) return false;
     this.syncKbBda();
     const sc = (k.ah & 0xFF) || 0x1C;
-    this.kbQueue.push(sc, sc | 0x80);
+    this.queueKeyboardScan(sc, { key: k, deferred: true, deliver: true });
+    this.queueKeyboardScan(sc | 0x80);
     this.log(`autokey putting scancode ${sc.toString(16)} on the keyboard port`);
     return true;
   }
@@ -3188,7 +3273,7 @@ class Machine {
       if (this.kbc.reply.length) return this.kbc.reply.shift();
       if (this.kbFresh) { this.kbFresh = false; return this.kbScan; }
       if (!this.kbQueue.length && (this.kbReads++ & 0xFFF) === 0) this.kbFill();
-      if (this.kbQueue.length) this.kbScan = this.kbQueue.shift();
+      if (this.kbQueue.length) this.kbScan = this.takeKeyboardScan();
       return this.kbScan;
     }
     // System control port B: the speaker gate and data bits a driver reads,
@@ -3716,6 +3801,12 @@ class Machine {
     const ah = (r.get('ax') >> 8) & 0xFF, al = r.get('ax') & 0xFF;
 
     switch (vec) {
+      case 0x09:
+        // Called by the real BIOS IRQ1 code after the guest INT 15h handler.
+        // CF clear drops the scan; CF set uses the handler's returned AL.
+        if (r.get('flags') & 1) this.biosKeyboardScan(al);
+        else { this.kbBiosFrames.pop(); this.kbBiosCurrent = null; }
+        return true;
       case 0x10: return this.int10(ah, al, r);
       case 0x16: return this.int16(ah, r);
       case 0x1A:
@@ -4299,6 +4390,8 @@ class Machine {
   int15(ah, al, r) {
     const US_PER_TICK = 1000000 / 18.2065;
     switch (ah) {
+      case 0x4F: // Default keyboard intercept: preserve AL and accept it.
+        r.setResultCf(true); return true;
       // Return a ROM table through ES:BX and status through AH / saved carry.
       case 0xC0:
         r.set('es', 0xF000); r.set('bx', 0xE6F5);

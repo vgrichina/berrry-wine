@@ -2233,7 +2233,8 @@ class DosSession {
     } else if (rvec) {
       this.retraceEdge = false;
       this.raise(rvec, 'retrace');
-    // IRQ1. A program with its own INT 9 handler reads the keyboard as hardware
+    // IRQ1. The native BIOS handler invokes an installed INT 15h keyboard
+    // intercept; a program with its own INT 9 handler reads the hardware
     // and never calls the BIOS, so answering INT 16h reaches it not at all --
     // BTW.EXE sits on a sound menu having made zero INT 16h calls in 11M
     // dispatches. The machine decides whether there is anything to send and
