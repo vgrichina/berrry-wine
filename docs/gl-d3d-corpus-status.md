@@ -1,5 +1,18 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: Tunnel, Twist and Boids partial browser coverage
+
+Published `f6c0a8392` records seven configurations with worker-reviewed moving
+scenes across software/WebGL and cooperative/Worker execution. Cooperative
+WebGL Boids shows terrain but no recognizable flock through 120 seconds;
+advancing draws and zero errors/fallbacks do not establish flock rendering.
+A Tunnel software Worker observation is excluded because its observer resized
+the viewport. Three WebGL Worker cases remain unlaunched. No semantics defect
+or emulator fix is established. Both locked builds and three focused checks
+passed; artifacts and both modules were hash-verified before normal nonforced
+box shutdown. The actual launcher forces SwiftShader despite an Intel renderer
+string. [Named cases and limits](re-notes/graphics-tunnel-twist-boids-20261107.md).
+
 ## November 7: Architecture, Jazz and Rock & Roll scene motion
 
 Published `17a9d604d` adds 12 named cases for original registered Architecture,
