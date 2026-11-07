@@ -218,6 +218,54 @@ try {
   pacedImports.host.wave_out_close(pacedHandle);
   console.log('PASS  non-browser waveOut completion follows the simulated audio clock');
 
+  // A drained queue must not bank idle time against the next request. Use
+  // GLTron's actual format and buffer length, with two ordered WAVEHDRs.
+  const gapHandle = pacedImports.host.wave_out_open(rate, channels, bits, 1, pacedHwnd, 0);
+  const gapHeaders = [0x26000, 0x26020];
+  const gapLength = 22048;
+  const gapDuration = gapLength / bytesPerSec * 1000;
+  const gapPosted = pacedPosted.length;
+  const gapSubmit = index => {
+    const hdr = gapHeaders[index];
+    pacedDv.setUint32(hdr + 16, WHDR_PREPARED | WHDR_INQUEUE, true);
+    pacedImports.host.wave_out_write(gapHandle, pcmPtr, gapLength);
+    pacedImports.host.wave_out_schedule_done(gapHandle, hdr, hdr + 0x400000, gapLength);
+  };
+  gapSubmit(0);
+  clockMs += 1000;
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 1);
+  const gapStart = clockMs;
+  gapSubmit(0);
+  gapSubmit(1);
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 0,
+    'neither new header may complete at submission after a drained gap');
+  assert.strictEqual(pacedImports.host.wave_out_get_pos(gapHandle), gapLength,
+    'idle time after the first buffer must not play newly submitted bytes');
+  clockMs = gapStart + gapDuration - 0.01;
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 0);
+  clockMs = gapStart + gapDuration + 0.01;
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 1);
+  assert.strictEqual(pacedDv.getUint32(gapHeaders[1] + 16, true), WHDR_PREPARED | WHDR_INQUEUE,
+    'the second request waits behind the first request');
+  clockMs = gapStart + 2 * gapDuration + 0.01;
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 1);
+  assert.deepStrictEqual(pacedPosted.slice(gapPosted).map(x => x[3]),
+    [gapHeaders[0], gapHeaders[0], gapHeaders[1]].map(x => x + 0x400000),
+    'completion preserves submission order across the idle gap and header reuse');
+  clockMs = gapStart + 1000;
+  pacedImports.host.voice_set_freq(gapHandle, rate * 2);
+  gapSubmit(0);
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 0,
+    'an old rate segment cannot bank drained idle time either');
+  clockMs += gapDuration / 2 - 0.01;
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 0);
+  clockMs += 0.02;
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 1,
+    'restarted playback uses its new frequency when deriving duration');
+  pacedImports.host.wave_out_close(gapHandle);
+  clockMs = 2000;
+  console.log('PASS  drained headless waveOut queue preserves request duration and order');
+
   const functionCalls = [];
   pacedCtx.exports.get_eip = () => 0x401000;
   pacedCtx.exports.fire_wave_out_callback_bound = (hwo, waveHdr, cb, instance) => {
@@ -248,6 +296,17 @@ try {
   assert.strictEqual(pacedDv.getUint32(functionHdrWA + 16, true),
     WHDR_PREPARED | WHDR_DONE,
     'CALLBACK_FUNCTION completion should clear WHDR_INQUEUE');
+  clockMs = 5000;
+  pacedDv.setUint32(functionHdrWA + 16, WHDR_PREPARED | WHDR_INQUEUE, true);
+  pacedImports.host.wave_out_write(functionHandle, pcmPtr, gapLength);
+  pacedImports.host.wave_out_schedule_done(functionHandle, functionHdrWA, functionHdrGA, gapLength);
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 0,
+    'a drained stream must not wake its function consumer on submission');
+  assert.strictEqual(functionCalls.length, 1);
+  clockMs += gapDuration + 0.01;
+  assert.strictEqual(pacedCtx.pumpAudioCompletions(), 1);
+  assert.strictEqual(functionCalls.length, 2,
+    'the function consumer wakes after the new request actually plays');
   pacedImports.host.wave_out_close(functionHandle);
   console.log('PASS  waveOut CALLBACK_FUNCTION dispatches WOM_DONE between guest slices');
 
