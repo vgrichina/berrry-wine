@@ -2175,7 +2175,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   Update 2026-11-06T07:56Z: Published4c34366c7: original installer reached System Test/Wave Question. First USER53 HWND013b was already retired/unmapped and returned AX0; earlier retirement notifications/guest detach remain unqualified. No demonstrated emulator defect, repair, installation or gameplay. Both-module NE/far-fault controls and locked builds pass; continuous runtime-lock ownership not proven after holder exit143. Coordinator verified122 hashes,495 absentPIDs/49 refusedports/27 absentprofiles. Worker released; next Lords investigation must trace earlier retirement producer.
   Prior evidence: scratch/runs/20261015-lords2-review-hold and shared WIP; original250171 reached GetNextWindow invalid1446 after GetParent fix, no gameplay.
   status: done (registered installed original, ordinary campaign controls, tactical victory and county conquest screenshots verified)
-  worker: lords2-tactical-battle-0618 finishing evidence publication and normal shutdown; successor slot goes to another new-game lane.
+  worker: completed c41fdbf63; box bx_p7gzx7s6 archived normally. Fresh MCM-original-race-0659 replaces this gameplay slot.
   retry-authorization: Owner authorized one emulator-only retry on 2026-11-05; supersedes this task's previous no-retry/rephrase/delegate wording. Guest programs remain unmodified, read-only test evidence.
   retry-order: 6 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
@@ -2193,7 +2193,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 
 - [ ] Motocross Madness registered demo: ordinary race controls
   id: MCM-ORIGINAL-RACE-20261107
-  status: queued (prepared successor to completed Lords II gameplay lane)
+  status: active (fresh worker mcm-original-race-0659, PID1626895; started2026-11-07T06:59Z after Lords process exited)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Evidence: docs/re-notes/mcm-recovered-space-race-20261107.md; prior run reached video-memory prompt only. Supported direct app route and311 media inputs are known; race/throttle/steering remain unverified.
   Next: Fresh worker uses scratch/usage-watch/mcm-original-race-next.task.txt after Lords closeout. First fix duplicate generated-closeout retrieval labels and prove injected retrieval failure prevents original launch; validate exact ordinary input commands. Then one fresh-box original through name/menu/Start to race, throttle and separate steering. Fix only demonstrated emulator defects with regression and locked build; retrieve evidence and stop box normally.
