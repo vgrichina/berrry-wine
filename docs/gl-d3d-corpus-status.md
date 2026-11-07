@@ -1,5 +1,27 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: original native GL gameplay after the shader repair
+
+Published `7e26c8485` records original runs containing native GL shader repair
+`aaaf6e370`, with standard module
+`e41511fe861363fbe1639d80f20cbcdd7240f46937c93a801eaa256ca094c467`.
+These are Node routes on Mesa llvmpipe, separate from browser WebGL evidence.
+
+| Title | Observed route and ordinary gameplay | Remaining limits |
+| --- | --- | --- |
+| Quake II demo | Cooperative native GL: Game/Easy reaches the world; paired W and Right change the view. | Threads reached menus only. |
+| Quake III demo | Cooperative native GL reaches Q3DM7 and moves forward; threads reaches Q3DM1, respawns and moves forward. | Cooperative Left press lacked release when the guard ended. Torch-adjacent black shapes remain under investigation. |
+| GLTron | Cooperative native GL: cycle/trail, paired A turn, crash/winner and return to menu. | Threads reached menus only; visual parity remains unproven. |
+| Forsaken demo | Registered software D3D in both modes: Volcano world, visible green fire/ammunition decrease and changed view after Up. | This supplies no GL or browser evidence for Forsaken. |
+
+The eight serial startup checks reported no escaped trap or unimplemented API.
+Their short captures alone did not prove gameplay; six controlled followups
+supplied the observations above. The sweep selected a Quake III logo texture,
+so followups used compositor captures. The coordinator reviewed selected world
+and input captures. No new repair, FPS, audio, complete crash freedom or full
+historical27 coverage follows from these runs. Evidence was retrieved before
+normal box shutdown. [Exact identities, captures and route limits](re-notes/graphics-fixed-gl-originals-20261107.md).
+
 ## November 7: OrganicArt rectangle reproduced on both renderers
 
 Published `8b1dae070` recovers the run-local browser adapter and records eight
