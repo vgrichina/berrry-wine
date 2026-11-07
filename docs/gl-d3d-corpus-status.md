@@ -1,5 +1,24 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: Quake III browser software torch and WebGL menu
+
+Published `e0194cce7` repairs stale launch metadata: the controls file contains
+567 bytes, while its recorded size was 488. The production-loader regression,
+focused checks and locked build passed. Findings `2661845f9` record original
+browser software GL gameplay, respawn, movement and firing. Paired skull-torch
+captures show ammunition 96→94 with health 21 and readable flames in both;
+the coordinator personally inspected both captures. Actual GL endpoint 1 uses
+software, despite the UI WebGL label and a separate legacy WebGL endpoint.
+
+The serial WebGL run verifies the owning OpenGLHostBridge WebGLBackend and
+Intel/Mesa ANGLE provider at level selection only. A CDP Tab timeout followed
+by an incorrectly queued Enter prevented a gameplay claim; recovery released
+both keys and emptied the queue. WebGL world rendering and torch parity remain
+unproved. A fresh worker tests finally-release and command-success gating
+before original WebGL follow-through. All 909 pins passed and the sole box
+stopped normally after evidence retrieval. No FPS, audio or full27 claim follows.
+[Captures, renderer identities and input boundary](re-notes/q3-browser-torch-20261107.md).
+
 ## November 7: native GL gameplay with the Worker scheduler
 
 Published `999436b27` records original Quake II movement, turning and visible
@@ -8,7 +27,7 @@ created no auxiliary guest threads; GLTron created a guest Worker that executed
 two slices and RPCs. Balanced controls were released and both originals exited
 normally. Retained round-result text does not establish GLTron survival or
 victory. No new emulator defect was demonstrated. Browser parity, FPS and
-audio remain open; a fresh worker is checking Quake III browser torch rendering.
+audio remain open; the browser Quake III follow-through is recorded above.
 [Gameplay captures, thread observations and limits](re-notes/graphics-repaired-native-sweep-20261107.md).
 
 ## November 7: Forsaken browser WebGL combat
