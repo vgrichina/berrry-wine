@@ -36,6 +36,23 @@ class Session extends EventEmitter {
   }
 }
 async function main() {
+  // Lazy media need not be fetched at startup. Once a fetch begins, the same
+  // exact invocation/EOF contract applies; this changes only coverage checks.
+  const {observeConsumers} = require('../tools/browser-consumer-completion.cjs');
+  const coverageSession = new Session('coverage');
+  const coverageOptions = {session: coverageSession, collector: {},
+    identity: {sessionId: 'coverage', targetId: 'coverage-target'},
+    urls: ['http://localhost/lazy.exe'], onFault: assert.fail};
+  const lazy = await observeConsumers({...coverageOptions, requiredUrls: []});
+  lazy.check();
+  await lazy.close();
+  const required = await observeConsumers(coverageOptions);
+  assert.throws(() => required.check(), /required consumer resource uncovered/);
+  await required.close();
+  await assert.rejects(observeConsumers({...coverageOptions,
+    requiredUrls: ['http://localhost/other.exe']}));
+  for (const maxBytes of [0, -1, NaN, 1.5])
+    await assert.rejects(observeConsumers({...coverageOptions, maxBytes}));
   const server = await startStaticServer({root: path.resolve(__dirname, '..'), port: 0});
   const origin = 'http://127.0.0.1:' + server.address().port;
   const http = await fetch(origin + '/index.html');

@@ -80,8 +80,11 @@ function install({binding, prefix, urls, maxBytes}) {
   };
 }
 
-async function observeConsumers({session, collector, identity, urls, record = () => {}, onFault}) {
+async function observeConsumers({session, collector, identity, urls, requiredUrls = urls,
+  maxBytes = 64 * 1024 * 1024, record = () => {}, onFault}) {
   assert(Array.isArray(urls) && urls.length && new Set(urls).size === urls.length);
+  assert(Array.isArray(requiredUrls) && requiredUrls.every(url => urls.includes(url)));
+  assert(Number.isSafeInteger(maxBytes) && maxBytes > 0);
   urls.forEach(url => assert.equal(new URL(url).href, url));
   const prefix = 'wineConsumer_' + randomBytes(12).toString('hex') + '_';
   const binding = prefix + 'binding', sourceURL = prefix + 'observer.js';
@@ -149,12 +152,12 @@ async function observeConsumers({session, collector, identity, urls, record = ()
   await session.send('Debugger.enable');
   await session.send('Runtime.addBinding', {name: binding});
   const expression = '(' + install.toString() + ')(' + JSON.stringify({binding, prefix, urls,
-    maxBytes: 64 * 1024 * 1024}) + ')\n//# sourceURL=' + sourceURL;
+    maxBytes}) + ')\n//# sourceURL=' + sourceURL;
   const {identifier} = await session.send('Page.addScriptToEvaluateOnNewDocument', {source: expression});
   const result = await session.send('Runtime.evaluate', {expression});
   assert(!result.exceptionDetails, 'consumer observer installation failed');
   return {check() {
-    for (const url of urls) assert([...pending.values()].some(item => item.begin.url === url &&
+    for (const url of requiredUrls) assert([...pending.values()].some(item => item.begin.url === url &&
       item.binding), 'required consumer resource uncovered: ' + url);
     for (const item of pending.values()) assert(item.binding, 'consumer lacks exact Network identity');
   }, async close() {

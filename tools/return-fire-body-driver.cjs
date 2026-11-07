@@ -58,7 +58,7 @@ module.exports = {compose, sha};
 
 // Pinned actual browser adapter, shared by generated controls and future explicitly
 // authorized routes. The sealed compose entry above keeps its default policy.
-async function attach({page,origin,pins,record,onFault,onResponse=()=>{},optional=()=>null,observe=async()=>{},timeoutMs=5000,consumerCompletion=false}){
+async function attach({page,origin,pins,record,onFault,onResponse=()=>{},optional=()=>null,observe=async()=>{},timeoutMs=5000,maxBodyBytes=64*1024*1024,consumerCompletion=false}){
  const pending=[],sessions=new Map();let firstFault=null;
  const fail=f=>{if(!firstFault){firstFault=JSON.parse(JSON.stringify(f));onFault(firstFault);}};
  const policy=r=>{
@@ -82,7 +82,7 @@ async function attach({page,origin,pins,record,onFault,onResponse=()=>{},optiona
   })();
  };
  const collector=createCollector({origin,onResponse:policy,onFault:fail,record:r=>record('body-collector.jsonl',r),timeoutMs,
-  consumerCompletion:!!consumerCompletion,disconnectedEvent:require('puppeteer').CDPSessionEvent.Disconnected});
+  maxBodyBytes,consumerCompletion:!!consumerCompletion,disconnectedEvent:require('puppeteer').CDPSessionEvent.Disconnected});
  const cdp=await page.createCDPSession();
  const observers=[];
  const onAttached=(parent,event)=>{
@@ -95,7 +95,7 @@ async function attach({page,origin,pins,record,onFault,onResponse=()=>{},optiona
    try{await session.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true});}
    catch(error){assert(identity.type==='worklet'&&error.name==='ProtocolError'&&error.originalMessage==="'Target.setAutoAttach' wasn't found"&&(error.code===undefined||error.code===-32601),String(error));record('worklet-target-capability.jsonl',{...identity,method:'Target.setAutoAttach',state:'method-unavailable',error:String(error)});}
    if(consumerCompletion)session.on('Network.requestWillBeSent',event=>{
-    if(consumerCompletion.urls.includes(event.request.url))fail({boundary:'unsupported-consumer-owner',...identity,networkId:event.requestId});
+    if([...consumerCompletion.urls,...(consumerCompletion.observedUrls||[])].includes(event.request.url))fail({boundary:'unsupported-consumer-owner',...identity,networkId:event.requestId});
    });
    await observe(session,identity);
    await session.send('Runtime.runIfWaitingForDebugger');
@@ -105,7 +105,7 @@ async function attach({page,origin,pins,record,onFault,onResponse=()=>{},optiona
  // The page is attached before navigation; children are paused before execution.
  const {targetInfo}=await cdp.send('Target.getTargetInfo');
  await collector.attach(cdp,{type:'page',sessionId:cdp.id(),targetId:targetInfo.targetId,url:page.url()});
- if(consumerCompletion)observers.push(await require('./browser-consumer-completion.cjs').observeConsumers({session:cdp,collector,identity:{sessionId:cdp.id(),targetId:targetInfo.targetId},urls:consumerCompletion.urls,record:r=>record('consumer-completion.jsonl',r),onFault:fail}));
+ if(consumerCompletion)observers.push(await require('./browser-consumer-completion.cjs').observeConsumers({session:cdp,collector,identity:{sessionId:cdp.id(),targetId:targetInfo.targetId},urls:[...new Set([...consumerCompletion.urls,...(consumerCompletion.observedUrls||[])])],requiredUrls:consumerCompletion.urls,maxBytes:maxBodyBytes,record:r=>record('consumer-completion.jsonl',r),onFault:fail}));
  await cdp.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true});
  return {collector,pending,sessions,cdp,get firstFault(){return firstFault;},
   async drain(){await Promise.all(pending);for(const observer of observers)observer.check();await collector.drain();if(firstFault)throw Error(JSON.stringify(firstFault));},
