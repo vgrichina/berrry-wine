@@ -15,7 +15,11 @@
         "env": {}
       },
       "entrySource": "Original README.TXT GETTING STARTED: type GAME at the C:\\CN prompt. The README identifies a 20-minute timed demo and documents Enter through splash screens, then mouse-driven PLAY GAME / SELECT / ACCEPT.",
-      "otherPrograms": ["DOS4GW.EXE", "INSTALL.EXE", "MUSIC/SNDSETUP.EXE"],
+      "otherPrograms": [
+        "DOS4GW.EXE",
+        "INSTALL.EXE",
+        "MUSIC/SNDSETUP.EXE"
+      ],
       "notes": "docs/re-notes/constructor-demo.md"
     },
     {
@@ -73,7 +77,7 @@
           "ARENADATA": "C:"
         }
       },
-      "entrySource": "__support/app/dosbox_arena_single.conf [autoexec]: `mount d \"..\" -t cdrom`, `SET ARENADATA=C:`, `d:`, `ACD -S… -Mgenmidi.adv -IOM330 …`",
+      "entrySource": "__support/app/dosbox_arena_single.conf [autoexec]: `mount d \"..\" -t cdrom`, `SET ARENADATA=C:`, `d:`, `ACD -S\u2026 -Mgenmidi.adv -IOM330 \u2026`",
       "otherPrograms": [
         "INSTALL.EXE",
         "ULTRAMID.EXE"
@@ -324,6 +328,39 @@
           "sha256": "cf69292520367883887453f43e047a5b6ecb401dbf660c43abe8e592784a623b"
         }
       ]
+    },
+    {
+      "id": "world-circuit-demo",
+      "title": "Formula One Grand Prix / World Circuit (DOS demo)",
+      "dosGameId": "world-circuit-demo",
+      "dosboxAppIds": [],
+      "gameDir": "test/binaries/dos-games/world-circuit-demo/F1GP",
+      "exclude": [],
+      "entry": {
+        "program": "F1GPDEMO.EXE",
+        "args": "",
+        "env": {}
+      },
+      "entrySource": "Internet Archive WorldCircuit_1020 metadata emulator_start: F1GP/F1GPDEMO.EXE. Archive contains this executable plus ADLIB.CAT and XSOUND.BIN; no batch file or README. Runtime entry remains untested.",
+      "otherPrograms": [],
+      "originalFiles": [
+        {
+          "path": "ADLIB.CAT",
+          "size": 42612,
+          "sha256": "99003e82ffec9f3dd7f7bc9ec938d43c4bd23557199fe3a4cdd7019b6471b66b"
+        },
+        {
+          "path": "F1GPDEMO.EXE",
+          "size": 343002,
+          "sha256": "5c88d286945690fc7340ce98aaab0ca51912e7b0cc1ed1f89754fa0e82721511"
+        },
+        {
+          "path": "XSOUND.BIN",
+          "size": 2571,
+          "sha256": "633b4d315ab84ba50c7b8ca2d64e72504dfbf235b8546d02ab085f88a7d12f27"
+        }
+      ],
+      "notes": "docs/re-notes/world-circuit-demo.md"
     }
   ]
 }

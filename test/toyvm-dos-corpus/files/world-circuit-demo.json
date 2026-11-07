@@ -1,0 +1,25 @@
+{
+ "schemaVersion": 1,
+ "id": "world-circuit-demo",
+ "gameDir": "test/binaries/dos-games/world-circuit-demo/F1GP",
+ "files": [
+  {
+   "path": "ADLIB.CAT",
+   "size": 42612,
+   "sha256": "99003e82ffec9f3dd7f7bc9ec938d43c4bd23557199fe3a4cdd7019b6471b66b",
+   "load": "preload"
+  },
+  {
+   "path": "F1GPDEMO.EXE",
+   "size": 343002,
+   "sha256": "5c88d286945690fc7340ce98aaab0ca51912e7b0cc1ed1f89754fa0e82721511",
+   "load": "preload"
+  },
+  {
+   "path": "XSOUND.BIN",
+   "size": 2571,
+   "sha256": "633b4d315ab84ba50c7b8ca2d64e72504dfbf235b8546d02ab085f88a7d12f27",
+   "load": "preload"
+  }
+ ]
+}

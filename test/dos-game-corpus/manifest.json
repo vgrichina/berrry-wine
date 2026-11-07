@@ -47,6 +47,28 @@
         "VESA VBE 2.0",
         "full extracted companion-file tree"
       ]
+    },
+    {
+      "id": "world-circuit-demo",
+      "name": "Formula One Grand Prix / World Circuit",
+      "release": "Original DOS demo, archived as World Circuit Demo",
+      "year": 1992,
+      "platform": "DOS",
+      "executable": "F1GP/F1GPDEMO.EXE",
+      "sourcePage": "https://archive.org/details/WorldCircuit_1020",
+      "license": "commercial demo; retain only as an ignored local fixture, no redistribution grant established",
+      "localOnly": true,
+      "package": {
+        "url": "https://archive.org/download/WorldCircuit_1020/f1gp.zip",
+        "file": "f1gp.zip",
+        "size": 181661,
+        "sha1": "449c9daca44620be82b3b299418e5b530ba37d19",
+        "sha256": "48c65c989875f8eb04ef9a61eb7ce33fdb03aefe2247eb329b52718bf6d52c61"
+      },
+      "requirements": [
+        "Original DOS executable F1GPDEMO.EXE, not a Windows remake",
+        "Keep companion ADLIB.CAT and XSOUND.BIN beside the executable"
+      ]
     }
   ]
 }

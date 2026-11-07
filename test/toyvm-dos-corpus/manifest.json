@@ -1088,6 +1088,79 @@
     "reason": "ToyVM reads a file whole and synchronously when it is opened, so every file a live session might open must be downloaded before boot; there is no on-demand fetch."
    },
    "fileList": "test/toyvm-dos-corpus/files/constructor-demo.json"
+  },
+  {
+   "id": "world-circuit-demo",
+   "title": "Formula One Grand Prix / World Circuit (DOS demo)",
+   "candidateId": null,
+   "dosGameId": "world-circuit-demo",
+   "dosboxAppIds": [],
+   "gameDir": "test/binaries/dos-games/world-circuit-demo/F1GP",
+   "entry": {
+    "program": "F1GPDEMO.EXE",
+    "args": "",
+    "env": {}
+   },
+   "entrySource": "Internet Archive WorldCircuit_1020 metadata emulator_start: F1GP/F1GPDEMO.EXE. Archive contains this executable plus ADLIB.CAT and XSOUND.BIN; no batch file or README. Runtime entry remains untested.",
+   "notes": "docs/re-notes/world-circuit-demo.md",
+   "payload": {
+    "present": true,
+    "files": 3,
+    "bytes": 388185,
+    "excluded": {},
+    "largest": [
+     {
+      "path": "F1GPDEMO.EXE",
+      "size": 343002
+     },
+     {
+      "path": "ADLIB.CAT",
+      "size": 42612
+     },
+     {
+      "path": "XSOUND.BIN",
+      "size": 2571
+     }
+    ]
+   },
+   "programs": [
+    {
+     "name": "F1GPDEMO.EXE",
+     "bytes": 343002,
+     "mode": "real",
+     "extender": null,
+     "packers": [],
+     "newHeader": null
+    }
+   ],
+   "toyvm": {
+    "status": "untested",
+    "verdict": "No static blocker found, but it has never been run on ToyVM. Untested; not a claim that it works.",
+    "blockers": [],
+    "cautions": [
+     {
+      "id": "browser-mouse-limits",
+      "text": "Browser absolute mouse input has polling-only limits; gameplay is not qualified by input fixtures.",
+      "facts": [
+       "browser-mouse-limits"
+      ]
+     }
+    ],
+    "flatFs": {
+     "filesInSubdirs": 0,
+     "collisions": [],
+     "collisionCount": 0
+    },
+    "evidence": []
+   },
+   "load": {
+    "policy": "preload-all",
+    "preloadFiles": 3,
+    "preloadBytes": 388185,
+    "lazyFiles": 0,
+    "reason": "ToyVM reads a file whole and synchronously when it is opened, so every file a live session might open must be downloaded before boot; there is no on-demand fetch."
+   },
+   "fileList": "test/toyvm-dos-corpus/files/world-circuit-demo.json"
   }
  ]
 }
