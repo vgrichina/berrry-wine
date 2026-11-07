@@ -2263,3 +2263,38 @@ producer counterexample before dispatch. Arbitrary descriptor corruption,
 other surface users, runtime lifetime safety, backend parity and the historical
 27-app qualification remain unproven. `source-pins.json` records the eight
 inspected files and revision; this is a scoped source assessment only.
+
+
+## Native GL original gameplay refresh — 7 November 2026
+
+[Original-title evidence and recovery recipe](re-notes/graphics-fixed-gl-originals-20261107.md)
+records run `20261107-graphics-fixed-gl-originals`, published as `7e26c8485`.
+After native GL shader repair `aaaf6e370`, eight original startup sweeps
+(four titles, coop and threads) ended without escaped traps or unimplemented
+APIs. Six ordinary-input followups supplied the following inspected progress.
+
+| Original | Executed route | Inspected progress and limits |
+| --- | --- | --- |
+| Quake II | Node native GL, coop | First-person world, weapon/HUD and view changes after paired W/Right inputs. Threads reached the menu only. |
+| Quake III | Node native GL, coop and threads | Q3DM7/Q3DM1 worlds with bots, weapon/HUD; threads death, respawn and paired W movement. Coop W was balanced, but the later Left release was cut off by the harness deadline. Torch-adjacent black shapes remain unresolved. |
+| GLTron | Node native GL, coop | Moving cycle/trail and paired A direction change, followed by a crash/winner screen. Threads reached the menu only. |
+| Forsaken | Software D3D, coop and threads | Volcano world, visible firing/ammo change and paired Up view change. This does not establish a GL route. |
+
+The tested source was `ce0330c444ea43742259624db5e9cd0240b2f156` plus the
+recorded untracked `lib/wininit-boot.js` patch. All 14 original runs loaded
+standard WASM SHA-256
+`e41511fe861363fbe1639d80f20cbcdd7240f46937c93a801eaa256ca094c467`.
+The native environment was Node 24.22.1, `@node-3d/glfw` 7.4.1,
+`@node-3d/webgl` 6.0.3 and Mesa llvmpipe LLVM 20.1.2. Native GL and WGL
+regressions passed before originals; loaded-module audits matched the pinned
+inputs. The run retained 66 unique inspected PNGs and normally stopped its
+fresh box after evidence recovery.
+
+The short startup sweep selected a Quake III logo texture rather than its
+display; the world claims above use compositor followups. One Q2 teardown/Q3
+launch overlapped by 0.107 seconds in supervisor bookkeeping; later launches
+required terminal records. No new production fix was justified by this run.
+These results establish the named Node routes and observed controls. Browser
+WebGL, full visual parity, FPS, audio, game completion and the missing historical
+27-ID census remain unproven. Current runtime evidence does not reconstruct
+that census.
