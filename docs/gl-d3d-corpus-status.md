@@ -22,9 +22,18 @@ Two birds intersect the Worker view while 11 lie outside; all 13 lie outside
 the separately timed cooperative view. Six native compositor captures agree
 with those counts. These observations establish neither a full visible flock
 nor correctness of the original model/matrix projection. No rendering defect
-was demonstrated; a model/matrix oracle remains the next useful discriminator.
+was demonstrated in that run.
 Evidence was hash-verified before normal nonforced archive of `bx_z65jbe9z`.
 [Geometry and visible-flock evidence](re-notes/boids-visible-flock-20261107.md).
+Published `bae5dfb76` completes the original-model transform comparison:
+an independent scalar oracle exactly reproduces all 4,680 submitted position
+components across 39 bird draws. A separate high-precision calculation places
+all 13 birds outside the frustum in each of three observation windows, explaining
+the terrain-only phase. This excludes a model-to-submission transform mismatch
+in those draws; upstream x86 simulation, camera construction and native Windows
+parity remain unverified. Evidence was SHA/size verified before normal nonforced
+archive of `bx_2svdb5d8`.
+[Original-model transform evidence](re-notes/boids-model-transform-20261107.md).
 Published `f04a2048d` verifies current original SimGolf bitmap rendering and
 native construction: a new tee and green, Hole 1 open for play as a scenic
 127-yard par 3, and a native championship course export. The 86,831-byte CSE
