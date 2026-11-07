@@ -16,9 +16,17 @@ is not physical GPU evidence. Unique evidence and both modules were SHA-verified
 before normal nonforced shutdown of `bx_88fguqk8`. No emulator defect, FPS,
 audio, parity or historical 27-app completion is claimed.
 [Worker configuration evidence](re-notes/graphics-worker-readiness-20261107.md).
-Fresh `boids-visible-flock-1042` targets current completed geometry and reviewed
-pixels to distinguish off-camera birds from rendering loss, preserving the
-default guest scene and camera.
+Published `794273255` completes that discriminator: all 13 birds and 130
+triangles survive into completed GPU geometry with exact XYZ/RHW preservation.
+Two birds intersect the Worker view while 11 lie outside; all 13 lie outside
+the separately timed cooperative view. Six native compositor captures agree
+with those counts. These observations establish neither a full visible flock
+nor correctness of the original model/matrix projection. No rendering defect
+was demonstrated; a model/matrix oracle remains the next useful discriminator.
+Evidence was hash-verified before normal nonforced archive of `bx_z65jbe9z`.
+[Geometry and visible-flock evidence](re-notes/boids-visible-flock-20261107.md).
+Fresh `simgolf-current-bitmap-course-1103` targets current original bitmap course
+rendering and ordinary native course progress.
 
 ## November 7: Architecture, Jazz and Rock & Roll scene motion
 
