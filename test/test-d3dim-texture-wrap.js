@@ -200,7 +200,9 @@ async function software() {
   }
 }
 
-// The GPU executor with a recording device: the vertices it hands over.
+// The GPU executor with a recording device: submitted UVs, not GPU pixels.
+// Observe native16 storage boundaries explicitly; the real conversion/pixel
+// contract is covered by test-legacy-framebuffer-blend-web.js (dependent mode).
 function gpu(wrap, us) {
   const memory = new ArrayBuffer(0x10000);
   const dv = new DataView(memory);
@@ -222,7 +224,7 @@ function gpu(wrap, us) {
   dv.setUint32(CALL + 8, 3, true);       // TL vertex
   dv.setUint32(CALL + 12, VERTS, true);
   dv.setUint32(CALL + 16, us.length, true);
-  const draws = [];
+  const draws = [], submissions = [];
   const exec = new D3DIMGpu({
     getExports: () => ({ d3dim_gpu_describe: () => DESC, guest_to_wasm: a => a }),
     getMemory: () => memory,
@@ -230,12 +232,29 @@ function gpu(wrap, us) {
     onError: message => { throw new Error(message); },
   });
   const target = { width: 640, height: 480, bpp: 16, dib: 0x8000, check: false, textureKeys: new Set(),
-    device: { draw: d => draws.push(d) } };
+    device: { draw: d => { draws.push(d); submissions.push('draw'); } } };
+  // Instance-local observation only: this fake has no GL storage and cannot
+  // validate native16 pixels. Keep production's per-primitive submission path.
+  exec._storeNative16 = t => {
+    assert.strictEqual(t, target, 'storage observation belongs to the recording target');
+    assert.strictEqual(t.device.gpu, undefined, 'UV recorder has no real GPU');
+    submissions.push('store');
+  };
   exec._target = () => target;
   exec._texture = () => ({ width: 4, height: 4 });
   assert.strictEqual(exec.call(OPCODES.DRAW, CALL), 1, 'the draw is taken, not declined');
-  const out = new DataView(draws[0].vertices.buffer);
-  return us.map((_, i) => [out.getFloat32(i * 32 + 24, true), out.getFloat32(i * 32 + 28, true)]);
+  assert.strictEqual(draws.length, us.length / 3, 'every triangle is submitted');
+  assert.deepStrictEqual(submissions, draws.flatMap(() => ['draw', 'store']),
+    'every primitive submission is immediately followed by a storage observation');
+  return draws.flatMap(d => {
+    assert.strictEqual(d.primitive, 4, 'recorded primitive is a triangle');
+    assert.strictEqual(d.primitiveCount, 1, 'native16 submits one triangle at a time');
+    assert.strictEqual(d.stride, 32, 'TL vertex stride');
+    assert.strictEqual(d.vertices.byteLength, 3 * d.stride, 'exactly three submitted vertices');
+    const out = new DataView(d.vertices.buffer, d.vertices.byteOffset, d.vertices.byteLength);
+    return Array.from({ length: 3 }, (_, i) =>
+      [out.getFloat32(i * d.stride + 24, true), out.getFloat32(i * d.stride + 28, true)]);
+  });
 }
 
 (async () => {
