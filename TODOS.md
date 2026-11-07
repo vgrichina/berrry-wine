@@ -2201,11 +2201,12 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 
 - [ ] Motocross Madness registered demo: ordinary race controls
   id: MCM-ORIGINAL-RACE-20261107
-  status: active (fresh mcm-bound-input-0810; helper boundary published8c1c93f3a)
+  status: active (fresh mcm-fast-live-driving-0832; identity repair published783efd83b)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   Evidence: Publishedff57206b1 verifies original forward throttle displacement. Published89e10ad7f verifies generated simultaneous throttle/steer overlap and release controls, but original stopped before accepted input on stale review. Published cb7676db2 recovers scratch/runs/20261107-mcm-refresh-driving/: actual Worker WebGL SwiftShader quarry and combined-input ACKs do not prove steering. The ENOSPC pulse never dispatched; keys released, 364 artifacts and 939 runtime pins verified, box bx_tevwnwhg normally archived. Old zero-byte launcher result and unknown OS exit remain preserved.
   Update 2026-11-07T08:10Z: Published8c1c93f3a reproduces exact retained helper admitting all five replacements: process, endpoint, Worker, module and epoch. Balanced release/stale/UNKNOWN controls pass; no new original launched. Dequeued Win32 messages do not prove DirectInput polling during hold, and retained captures do not establish an at-speed baseline.
-  Next: Fresh mcm-bound-input-0810 repairs actual capture/caller/helper identity binding and tests replacement refusals in a generated browser, with passive progress observation during held input. Once verified, at most one original on a fresh separate box seeks reviewed at-speed steering; distinguish opponents/camera drift from player trajectory.
+  Update 2026-11-07T08:32Z: Published783efd83b repairs actual capture/caller/live owner-module-epoch binding; generated replacement, native release/progress, slow-capture and slow-sampler controls plus locked build PASS. One original reached quarry race, but every throttle was refused before effects: admission entered at6.631s, live validation took7.286s and exceeded12s freshness. No steering claim; bx_bgrkbcnu archived normally after verified recovery.
+  Next: Fresh mcm-fast-live-driving-0832 reduces measured passive identity-validation latency without weakening binding or extending freshness, then seeks ordinary at-speed throttle and steering on one fresh box. Recoil gameplay and saver-motion workers remain active.
   Done: Registered original race with personally inspected throttle and distinct steering response captures, matching completed input records and actual runtime/renderer identity; publish findings and any justified emulator fix.
 
 - title: USER ASK - add a FIFA game to the corpus (user linked FIFA Street; that is console-only, so a Win9x FIFA demo instead)
