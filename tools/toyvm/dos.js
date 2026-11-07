@@ -5739,6 +5739,17 @@ class Machine {
         return this.findNext(r, 2);
       }
       case 0x4F: return this.findNext(r, 0x12);
+      case 0x2A: {                              // get date (binary, Sunday=0)
+        // The DOS clock starts at its epoch, 1980-01-01, at tick zero.
+        // Use the same virtual milliseconds as AH=2Ch, not the host wall
+        // clock: pausing/checkpointing a machine must not change its date.
+        // UTC arithmetic avoids host time zones and daylight-saving gaps.
+        const date = new Date(Date.UTC(1980, 0, 1) + this.ticks * 55);
+        r.set('ax', (r.get('ax') & 0xFF00) | date.getUTCDay());
+        r.set('cx', date.getUTCFullYear());
+        r.set('dx', ((date.getUTCMonth() + 1) << 8) | date.getUTCDate());
+        return true;
+      }
       case 0x2C: {                              // get time
         const t = this.ticks * 55;
         r.set('cx', (Math.floor(t / 3600000) << 8) | (Math.floor(t / 60000) % 60));
