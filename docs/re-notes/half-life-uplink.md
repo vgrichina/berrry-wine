@@ -3035,3 +3035,79 @@ guest 50.04 ms/frame WASM, 11.36 RPC, 6.50 other/GC, 35.62 idle. Renderer
 non-idle 19.27 ms/frame vs null 7.87; page 37.51 vs null 36.40. The guest
 emulation cost remains nearly identical while render-worker work falls, which
 supports using this mode to isolate renderer changes. Phone left in WebGL.
+
+### 2026-11-07: Gameplay RPC attribution and control-trace batching
+
+Instrumented the real Android guest Worker's outgoing messages and blocking
+Atomics.wait calls for 30 seconds in the stationary corridor, WebGL1024x768,
+same release-based module as the null comparison. Counted 279 presents:
+
+| Operation | Calls/frame | Blocked ms/frame |
+|---|---:|---:|
+| GL command batch | 4.99 | 5.280 |
+| Window rectangle | 7.38 | 1.507 |
+| Mouse position | 4.00 | 1.504 |
+| Network frame peek | 3.00 | 0.648 |
+| Control paint trace | 3.00 | 0.521 |
+| Invalidate | 1.00 | 0.204 |
+| Window info | 1.00 | 0.166 |
+| Foreground window | 1.00 | 0.159 |
+
+These waits include scheduling/service latency, not just host-function CPU.
+Also observed 37.97 sliceDone messages/frame. An initial probe attributed
+glBatch waits to the stale RPC function slot; discarded that attribution and
+fixed the probe to track the actual outgoing message type before repeating.
+Both files are retained in scratch/runs/20261107-uplink-android-rpc.
+
+Control paint tracing defaults to a no-op, yet these records made synchronous
+round trips and invalidated the rectangle cache. Both ctrl_paint_trace and
+ctrl_sb_trace take only scalar snapshots and return void. Added them to the
+existing asynchronous allowlist: preserve logging when enabled, preserve
+argument values, and flush FIFO before later synchronous calls. No guest
+pointers are deferred. Tests check the two records and subsequent RPC order,
+plus existing import error, caller-stack and nested-wait behavior. This removes
+a measured source of blocking; it does not establish an FPS improvement.
+
+The first 10k/50k slice trial produced 9.40/7.57 FPS but lost screenshot/CDP
+responsiveness after the 50k sample, and lacked visibility tracking. Do not use
+that pair as a performance conclusion. Repeated without intervening screenshots,
+recording any visibility loss throughout each 60-second window, with 10 seconds
+settling per setting. All three stayed visible in the same stationary corridor:
+
+| Slice ceiling | Presents / 60s | FPS | Retired blocks/frame |
+|---|---:|---:|---:|
+| 10k control | 625 | 10.416 | 362747 |
+| 50k | 995 | 16.583 | 308436 |
+| 10k repeated | 612 | 10.199 | 366101 |
+
+50k is about 61% faster than the mean of the two controls here. The endpoint
+adaptive budget was 50k for the larger-ceiling sample. Fewer scheduler handoffs
+and fewer retired blocks per presented frame accompany the improvement; the
+block reduction's exact cause has not been established. No instruction handler
+or renderer changed between these samples. This is an idle-corridor benchmark,
+not a combat/interaction-latency or desktop-browser claim.
+
+Added an explicit `openglWorker: 50000` renderer policy for Half-Life only.
+OpenGL cooperative retains 10k; Direct3D Worker retains 10k; software retains
+1k. The generic Worker controller still adapts down from the ceiling based on
+its 12ms target, and manual dropdown settings win. Callback tests cover GL/D3D
+switches, the confirmed Worker check, cooperative behavior and manual overrides.
+
+Fresh release-based launch with both fixes selects 50k automatically and
+renders the same corridor/HUD; 1090 presents / 60.0022s = 18.166 FPS, no page
+errors. This later run is not the matched estimate of the trace fix alone.
+A separate 30-second instrumented interval confirms zero synchronous control
+paint-trace calls (previously three/frame). 3198 sliceDone messages / 521 frames
+= 6.14 handoffs/frame, versus 37.97 previously. Window-rectangle round trips
+fell to 6.24/frame; both scheduling and trace batching changed, so attribution
+of that reduction is not isolated. Installed-payload menu test passes with
+local socket access; its initial sandboxed ECONNECTION run is discarded.
+
+Requested higher-ceiling sweep on the updated build: 50k control17.316 FPS,
+100k18.565 FPS, both 60-second windows continuously visible. Actual adaptive
+budgets sampled once/second: 50k min40k/median50k/max50k; 100k
+min43k/median82k/max100k. The phone disappeared from `adb devices` during the
+500k run and CDP closed, so no valid 500k measurement or final50k control was
+obtained. This is a disconnected-device interruption, not evidence of a
+500k-induced game crash. 100k is promising but lacks the planned repeated
+control; keep the verified50k default pending a completed comparison.
