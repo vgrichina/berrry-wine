@@ -25,8 +25,10 @@ nor correctness of the original model/matrix projection. No rendering defect
 was demonstrated; a model/matrix oracle remains the next useful discriminator.
 Evidence was hash-verified before normal nonforced archive of `bx_z65jbe9z`.
 [Geometry and visible-flock evidence](re-notes/boids-visible-flock-20261107.md).
-Fresh `simgolf-current-bitmap-course-1103` targets current original bitmap course
-rendering and ordinary native course progress.
+Fresh `simgolf-release-repair-gameplay-1107` targets current original bitmap
+course rendering and native course progress after independently timed key/mouse
+release controls and the complete staged production Worker path passed. The
+original is running on fresh `bx_bevw9s9b`; course progress is not yet verified.
 
 ## November 7: Architecture, Jazz and Rock & Roll scene motion
 
