@@ -6851,10 +6851,7 @@
         ;; The CPU bit is WF_CPU486 (0x08), not WF_CPU386: the flags are
         ;; exclusive, and Windows on a 486 or any Pentium reports 486. Intel's
         ;; Indeo 4 driver (ir41.dll) refuses DRV_LOAD when it sees a 386.
-        (i32.store offset=0 (global.get $reg_base) (i32.or (i32.const 0x0429)
-          (select (i32.const 0x4000) (i32.const 0)
-            (i32.ge_u (i32.and (global.get $winver) (i32.const 0xFF))
-                      (i32.const 4)))))
+        (i32.store offset=0 (global.get $reg_base) (call $win16_winflags))
         (i32.store offset=8 (global.get $reg_base) (i32.const 0))
         (call $win16_api_return (i32.const 0))
         (return (i32.const 1))))

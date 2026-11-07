@@ -1909,6 +1909,15 @@
       (then (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x10))))
       (else (i32.const 0))))
 
+  ;; The absolute __WINFLAGS export and callable GetWinFlags describe the
+  ;; same configured machine. Keep their existing result in one place;
+  ;; relocation sites must receive the value, never a callable thunk offset.
+  (func $win16_winflags (result i32)
+    (i32.or (i32.const 0x0429)
+      (select (i32.const 0x4000) (i32.const 0)
+        (i32.ge_u (i32.and (global.get $winver) (i32.const 0xFF))
+                  (i32.const 4)))))
+
   ;; KERNEL's __AHSHIFT and __AHINCR exports are absolute constants, not
   ;; callable entry points. 16-bit compilers import them through OFFSET
   ;; fixups to normalize huge pointers: selector += carry << __AHSHIFT.
@@ -1922,7 +1931,9 @@
         (if (i32.eq (local.get $ordinal) (i32.const 113))
           (then (return (i32.const 3))))  ;; __AHSHIFT
         (if (i32.eq (local.get $ordinal) (i32.const 114))
-          (then (return (i32.const 8)))))) ;; __AHINCR
+          (then (return (i32.const 8)))) ;; __AHINCR
+        (if (i32.eq (local.get $ordinal) (i32.const 178))
+          (then (return (call $win16_winflags)))))) ;; __WINFLAGS
     (i32.const -1))
 
   ;; ---- Inspection exports (used by test/test-ne-loader.js) ----
