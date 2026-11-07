@@ -2949,3 +2949,46 @@ frame-counter window, so these are sampled estimates, not exact timings.
 Do not attribute the integration/release performance difference to this patch
 without a matched control. Investigation of integration RPC/render scheduling
 is a follow-up; this commit proves redundant call elimination, not an FPS gain.
+
+### 2026-11-07: Android matched release-source ShowWindow comparison
+
+ADB reconnected to A142, Chrome 157.0.8103.46 / V8 15.7.112.23. To avoid
+confounding integration rendering changes, compiled two modules from release
+422eba5a4 with test/compile-src.js: unchanged control e7135cb1dfd54a4bf1144a716265d3f10caab66355d302dd1f5e26713414fe1b,
+and only the committed ShowWindow guard inserted, fixed fc9fa56ccc385e12015785e9c031c448541c8ff1c4f33e616d78d7e80cd1cb59.
+Puppeteer served the selected module through request interception; all other
+files were identical at localhost:52675 via adb reverse, isolated Workers,
+OpenGL 1024x768. The old background production game was stopped before timing.
+Reviewed screenshots show the same fresh-game corridor/camera and HUD.
+Diagnostic graph remained enabled in all runs (start({draw:false}) alone did
+not hide an already-running graph). Loading was excluded; 60-second samples:
+
+| Run order | Presents | FPS | ShowWindow host calls/frame |
+|---|---:|---:|---:|
+| Control | 612 | 10.200 | 2 |
+| Fixed | 555 | 9.250 | 0 |
+| Control repeat | 541 | 9.016 | 2 |
+
+Battery temperature rose from 35C before testing to 41C by the end of the
+first control, and remained 41C at subsequent checks. Control drift exceeds
+the expected small optimization benefit: no reliable FPS gain or regression
+is established. The zero redundant host-call result is confirmed on Android.
+An initial diagnostic timed out because its 30-second CDP timeout was shorter
+than the 60-second sample; discarded, then remeasured the loaded control with
+a 120-second timeout. This gave the first control additional warmup time.
+
+A separate fixed-build CPU profile included simultaneous counters: 257 frames
+in 30.011945 seconds (116.77 ms/frame, profiler enabled). Sample-normalized
+main guest: 66.13 ms WASM, 9.21 ms RPC JS including waits, 7.04 ms other JS/native,
+0.13 ms GC, 34.26 ms idle. Render Worker non-idle about 19.42 ms/frame, page
+non-idle 39.24 ms/frame; these overlap guest time and must not be added to it.
+GPU time is unknown. Native idle/wait samples are not physical CPU usage.
+Evidence scratch/runs/20261107-uplink-android-showwindow includes both modules,
+three run JSONs/screenshots and profile/window.json with the frame denominator.
+Phone returned to fixed module after testing; production unchanged.
+
+Proposed follow-up diagnostic: a null render backend behind the existing render
+endpoint. Keep command generation, transport, queue ordering and completion
+fences, omit draw/present execution. Readbacks and queries require explicit
+semantics rather than arbitrary zero results. It measures the no-rendering
+ceiling; it has not been implemented by this investigation.
