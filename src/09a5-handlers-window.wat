@@ -1392,7 +1392,24 @@
             (return (i32.const 0))))
         (drop (call $wnd_send_message (local.get $arg0) (i32.const 0x18)
           (i32.ne (local.get $arg1) (i32.const 0)) (i32.const 0)))))
-    (local.set $client_size (call $host_show_window (local.get $arg0) (local.get $arg1)))
+    ;; Reasserting stable visibility needs no renderer round trip. Keep the
+    ;; guest-side work below (including activation and the prior-state BOOL).
+    ;; Restrict the visible case to an established active top-level: first
+    ;; show still needs client dimensions, other windows may need raising, and
+    ;; a minimized window must restore its renderer geometry.
+    (if (i32.eqz
+          (i32.or
+            (i32.and (i32.eqz (local.get $arg1)) (i32.eqz (local.get $was_visible)))
+            (i32.and
+              (i32.and (i32.eq (local.get $arg1) (i32.const 5)) (local.get $was_visible))
+              (i32.and
+                (i32.and (i32.eqz (call $wnd_get_parent (local.get $arg0)))
+                         (i32.eq (local.get $arg0) (global.get $active_hwnd)))
+                (i32.and
+                  (i32.and (i32.ne (global.get $show_window_activated) (i32.const 0))
+                           (i32.eqz (call $show_window_replaces_utility_main (local.get $arg0))))
+                  (i32.eqz (call $wnd_min_get (local.get $arg0))))))))
+      (then (local.set $client_size (call $host_show_window (local.get $arg0) (local.get $arg1)))))
     ;; Record the minimized/maximized state the command asks for. The renderer
     ;; keeps its own copy for compositing; this is the one the guest reads back
     ;; through IsIconic/IsZoomed/GetWindowPlacement, and it used to not exist —

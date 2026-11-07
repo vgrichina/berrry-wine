@@ -2845,3 +2845,107 @@ committed module passed the renderer-switch sequence, while the later dirty
 startup/ShowWindow candidate failed Video Modes navigation after the driver
 advice popup. Do not silently include those unqualified edits or describe this
 as a fully qualified release. Safari is intentionally excluded by the user.
+
+### 2026-11-06: Android live gameplay CPU profile
+
+Run `20261106-uplink-android-adb` controls the user's attached A142 Android
+phone through ADB/Chrome CDP. Production build `422eba5a4+ 2026-11-06 04:57`,
+native WASM SHA-256 `999a42bfe60981e6e40cb1f41d7f1b9676229eeb5552849fc7d58e521cd57e22`
+was verified by fetching the page's exact versioned resource. Chrome
+156.0.8078.79 / V8 15.6.75.27, OpenGL EngineType 2, 1024x768, WebGL host,
+cross-origin-isolated Worker mode. New Game/Easy reached a textured corridor
+and shaped HUD. A separate 27.76-second gameplay counter interval averaged
+8.14 presents/s; scene/player movement was not fixed for this diagnostic.
+
+`node scratch/android-profile-puppeteer.cjs` captured the page and three
+Workers simultaneously at 1ms sampling for approximately 30 seconds. Direct
+Target.attachToTarget Worker requests timed out; Puppeteer's existing Worker
+clients succeeded. No game code or resolution was changed for profiling.
+
+Main guest Worker sampled 17.93s in WASM, 2.49s in guest-rpc.js, 1.76s in
+other code, 0.04s GC, and 7.98s idle. Leading WASM self samples mapped against
+the matching release combined.wat: uop_fast 3.09s, branch_end_at 1.02s,
+x87_island_fast 0.89s, win32_dispatch_inner 0.64s, th_load32_rop 0.52s,
+run 0.43s, th_uop_enter 0.40s, th_fpu_mem_ro 0.38s, and
+gl_finish_immediate 0.32s. RPC waitForResponse alone accounts for 1.18s;
+sampled waits are not equivalent to CPU execution time.
+
+Render Worker: 23.91s idle, 6.24s non-idle; flushPendingDraw self 1.78s,
+bufferData 0.72s, command-stream replay 0.53s. Only 0.007s WASM was sampled
+there, inconsistent with a dominant software-rasterization fallback. Page:
+20.86s idle, 9.44s non-idle, including messaging and the enabled diagnostic
+HUD. Secondary guest Worker was effectively entirely idle. CPU sampling does
+not measure GPU execution, and non-idle samples may include native waits;
+do not present these as GPU utilization or summed physical CPU percentages.
+The strongest observed optimization target is guest instruction execution,
+followed by RPC overhead and draw preparation; allocation/GC is minor here.
+
+### 2026-11-06: repeated ShowWindow caller, Android and desktop
+
+Live Android stack/byte capture identifies hldemo.exe 0x40b0bb calling
+ShowWindow(gameplay HWND, SW_SHOW), returning to 0x40b0c1. It next calls
+wrapper 0x45a54a with SW_HIDE; the wrapper calls ShowWindow at 0x45a558,
+returning to 0x45a55e. The hide result reaches 0x40b0cc, which immediately
+calls 0x40afd0 and tests that function's result, not either ShowWindow result.
+Thus this pair is not a retry caused by an incorrect ShowWindow BOOL.
+The emulator's show_window_result returns prior WS_VISIBLE for ordinary
+ShowWindow; host_show_window's packed client size is an internal result.
+
+Confirmed with headed local Chrome/Puppeteer, release 422eba5a4, isolated
+guest Workers and OpenGL: 386 presents in 10.002 seconds, with exactly 386
+SW_SHOW calls on the already-visible gameplay window and 386 SW_HIDE calls
+on the already-hidden menu window. Caller return addresses match Android.
+The menu also repeats a visibility pair (202 show-normal and 202 hide in
+10 seconds), with the window roles reversed. Screenshot reviewed at the
+textured initial corridor with HUD. Evidence:
+scratch/runs/20261106-uplink-showwindow-local-isolated. The first nonisolated
+run's fixed delays mislabeled intro/menu as menu/gameplay; exclude it from
+gameplay claims. No runtime optimization applied by this investigation.
+
+### Redundant ShowWindow host-call fix and frame-cost limits
+
+The subsequent fix elides host_show_window for SW_HIDE with prior visibility
+false, and SW_SHOW on an established active, visible, non-minimized top-level
+window that does not replace a utility main. It does not return early from the guest handler: visibility bookkeeping,
+paint, activation and prior-visibility BOOL paths remain. First show, other
+windows and restoration retain the host call. Focused tests assert both elision
+and preserved startup/restoration/activation/return behavior.
+
+The Android RPC sample has a simultaneous denominator: 294 presents over
+30.021545 seconds, or 102.114 ms/frame. Average blocking waits per frame:
+render batches 4.906 ms; window rectangles 2.047; ShowWindow 1.930; mouse
+0.994; network peek 0.788; control paint trace 0.386; invalidate 0.239;
+foreground query 0.166; window info 0.159; audio 0.021. These sum to about
+11.64 ms/frame. The remaining 90.48 ms is not all guest CPU: it includes
+execution, scheduling, pacing and unmeasured waits. Render-worker work can
+overlap these intervals; do not add its CPU samples to the frame wall time.
+
+The separate earlier CPU profile had no simultaneous frame counter, so it
+cannot provide exact CPU milliseconds per frame. Main guest samples were
+59.4% WASM, 8.2% RPC JavaScript, 26.4% idle and roughly 6% other/GC; render
+worker non-idle was 20.7% of its sampled interval. WASM includes API/graphics
+handlers as well as x86 execution. GPU time was not captured. A fresh combined
+Android profile/frame-count attempt was blocked by the phone disconnecting;
+do not report a measured Android FPS improvement from this fix yet.
+
+Final candidate local evidence: scratch/runs/20261106-uplink-showwindow-fixed-final,
+headed Chrome, isolated Workers, integration 457f25f30 plus this patch, native
+WASM e49dbb3241327a0fcf74da39af963355c3bc3379bba24796c02572303dfcf4ab.
+Reviewed corridor/HUD screenshot; zero show_window host calls in 56 presents
+over 10.000315 seconds. Six regression scripts pass (created-dialog/main
+promotion including redundant-call cases, active-window, owned-form activation,
+child size, secondary top-level size, and ShowWindowAsync); native/compat build
+and gates pass. Removed the async test's duplicate test_get_last_error export;
+the same helper already exists in src/13-exports.wat.
+
+The profiled local integration run is much slower than the earlier release
+run, so these are not matched performance A/B results. Its 178.58 ms/frame
+sample-normalized main guest breakdown is approximately 40.2 ms WASM,
+120.7 ms RPC JS (predominantly waitForResponse, including blocked time),
+13.5 ms other JS/native and 4.2 ms idle. Render Worker non-idle corresponds
+to about 83.1 ms/frame and page non-idle to 71.6 ms/frame, overlapping the
+guest interval; neither may be added to it. Profiles slightly bracket the
+frame-counter window, so these are sampled estimates, not exact timings.
+Do not attribute the integration/release performance difference to this patch
+without a matched control. Investigation of integration RPC/render scheduling
+is a follow-up; this commit proves redundant call elimination, not an FPS gain.

@@ -3239,9 +3239,9 @@
           "$wndproc"
         ]
       ],
-      "sha256": "cf69d16016af355543969e96d5c342f79916ec709a6fe6c26cee133b70eba3a7",
+      "sha256": "f66ef12674cf981311b8ae21a8c2f5980044fb57f0d170c25c128a3fc5872379",
       "kind": "mixed-dispatch",
-      "reason": "WM_SHOWWINDOW now precedes visibility/activation on a guest-stack SWND continuation retaining HWND, resolved command, placement convention and prior visibility. Resumption revalidates HWND and restores the API frame; native controls use native dispatch. Focused show/async/size/modal/Paint tests pass. Final WM_SIZE retains CACA003D ownership. Other mixed-dispatch lifetimes and private invocation-token ownership remain pending.",
+      "reason": "WM_SHOWWINDOW now precedes visibility/activation on a guest-stack SWND continuation retaining HWND, resolved command, placement convention and prior visibility. Resumption revalidates HWND and restores the API frame; native controls use native dispatch. Focused show/async/size/modal/Paint tests pass. Final WM_SIZE retains CACA003D ownership. Other mixed-dispatch lifetimes and private invocation-token ownership remain pending. 2026-11-06: omit only the synchronous host_show_window call for stable hide and established active top-level SW_SHOW (excluding utility-main replacement); all guest continuation, activation, return and paint paths remain in place, with no new retained state. Startup/restoration/visibility/activation regressions pass.",
       "ownership": "pending"
     },
     {
