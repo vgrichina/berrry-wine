@@ -384,6 +384,52 @@ function workerSoftwareResponseClone(){
     assert.deepStrictEqual(released.producerConfig,[0,0,0,0]);
   }finally{adapter.destroy();}
 }
+async function nullRendererProtocol(){
+  const memory={buffer:new SharedArrayBuffer(4096)},frames=[];
+  const adapter=require('../lib/gl-render-worker').create({instance:{exports:{
+    guest_to_wasm:p=>p,gl_sw_set_enabled(){throw Error('null enabled native rasterization');}
+  }},memory,backend:'null',sendFrame:frame=>frames.push(frame)});
+  const execute=(name,aux,args=[])=>{
+    const input=scalarBatch(memory.buffer,0,name,args);
+    new DataView(memory.buffer).setUint32(8,aux,true);
+    return adapter.execute({memoryOffset:0,bytes:input.bytes,owner:0,frameToken:17,
+      windows:[{hwnd:1,w:16,h:16,clientRect:{w:16,h:16}}]});
+  };
+  try {
+    const context=execute('wglCreateContext',1,[1]).value;
+    assert(context);
+    assert.deepStrictEqual(execute('wglMakeCurrent',1,[1,context]).producerConfig,[0,0,0,0],
+      'null never requests software rasterization in the guest');
+    execute('glEnable',0,[0xb71]);
+    assert.strictEqual(execute('glIsEnabled',0,[0xb71]).value,1,'state queries survive');
+    execute('glViewport',0,[2,3,7,9]);
+    execute('glGetIntegerv',0,[0xba2,1024]);
+    assert.deepStrictEqual(Array.from(new Int32Array(memory.buffer,1024,4)),[2,3,7,9]);
+    const bytes=32+Stream.VERTEX_FLOATS*4,v=new DataView(memory.buffer);
+    v.setUint32(0,bytes,true);v.setUint32(4,Stream.PACKED_DRAW_OPCODE,true);v.setUint32(8,4,true);
+    v.setUint32(12,0,true);v.setUint32(20,Stream.VERTEX_FLOATS*4,true);
+    v.setUint32(24,32,true);v.setUint32(28,Stream.FLAG_POINTER_COPY,true);
+    const draw=()=>adapter.execute({memoryOffset:0,bytes,owner:0});
+    assert.strictEqual(draw().value,0,'packed geometry is discarded without a rasterizer');
+    v.setUint32(20,Stream.VERTEX_FLOATS*4-4,true);
+    assert.throws(draw,/invalid packed GL vertex payload/,'null still rejects malformed vertex records');
+    assert.strictEqual(execute('glFinish',0).value,0);
+    assert.strictEqual(execute('gpuPresent',0).value,1);
+    assert(frames.length);assert(frames.every(f=>f.nullRender&&f.hwnd===1&&f.frameToken===17&&!f.pixels&&!f.bitmap));
+    assert.throws(()=>execute('glReadPixels',0,[0,0,1,1,0x1908,0x1401,1024]),/null renderer cannot answer/);
+    assert.throws(()=>execute('wglCreateContext',0x80000001,[1]),/bitmap drawables/);
+  } finally {adapter.destroy();}
+  let counted=0;
+  const f=await queuedFixture({backend:'null',onPresent:()=>counted++,createCanvas(){throw Error('null allocated canvas');}});
+  await f.bridge.replay(scalarBatch(f.memory,128,'glClear',[0x4000]),1);
+  await tick();
+  let finished=false;
+  const finish=f.bridge.replay(batch(f.memory,256,GL.CALL_INDEX.glFinish),1).then(()=>finished=true);
+  await tick();assert(!finished,'null retains synchronization behind queued work');
+  f.complete(1);await tick();f.complete(2);await finish;
+  f.bridge._present({hwnd:8,nullRender:true});assert.strictEqual(counted,1);
+  await f.bridge.close();
+}
 async function hostProtocol(){
   // Same-sized frames retain storage; bitmap replacement must include alpha.
   {
@@ -518,7 +564,7 @@ function legacyUnavailableFallback(){
   adapter.destroy();
 }
 const watchdog=setTimeout(()=>{console.error('GL shared render worker protocol timed out');process.exitCode=1;},10000);
-(async()=>{await hostProtocol();await brokerProtocol();bitmapWorkerCoherence();
+(async()=>{await nullRendererProtocol();await hostProtocol();await brokerProtocol();bitmapWorkerCoherence();
   await queuedSnapshotsAndOrder();await queuedBarriersAndFallbacks();await queuedFailure();await queuedClose();
   await queuedSynchronization();await queuedOwnerInvalidation();await queuedPackedPayload();await queuedWindowLifetime();
   await queuedCopiedVectors();await queuedMalformedVectors();

@@ -2987,8 +2987,51 @@ Evidence scratch/runs/20261107-uplink-android-showwindow includes both modules,
 three run JSONs/screenshots and profile/window.json with the frame denominator.
 Phone returned to fixed module after testing; production unchanged.
 
-Proposed follow-up diagnostic: a null render backend behind the existing render
-endpoint. Keep command generation, transport, queue ordering and completion
-fences, omit draw/present execution. Readbacks and queries require explicit
-semantics rather than arbitrary zero results. It measures the no-rendering
-ceiling; it has not been implemented by this investigation.
+### 2026-11-07: Null OpenGL diagnostic
+
+Implemented `?debug&perf&gl-renderer=null` behind the existing GL render endpoint.
+It retains command generation, transport, queue ordering, fences, texture
+decoding and GL state/query handling, discarding packed geometry and publishing
+completion tokens without pixels. Neither WebGL nor the native software
+rasterizer runs. Bitmap drawables and framebuffer read/copy operations fail
+explicitly. This is OpenGL-only; Direct3D/Glide are unchanged. Capability
+queries use the existing software mirror, including its 2048 texture limit.
+
+Protocol regression covers state/viewport queries, valid and malformed packed
+geometry, producer rasterizer disablement, frame tokens, no display canvas,
+readback rejection, and a glFinish barrier behind queued work. Existing command
+stream ordering/overflow/texture tests and browser cache-version check pass.
+
+For phone comparison, used release 422eba5a4 plus the null JS changes and the
+same ShowWindow-fixed native module fc9fa56ccc385e12015785e9c031c448541c8ff1c4f33e616d78d7e80cd1cb59
+for both renderers. The implementation lives on the integration branch, whose
+other renderer changes are deliberately excluded from these benchmark files.
+Evidence: scratch/runs/20261107-uplink-android-null, including tested WASM and
+release-null.patch. Android A142 / Chrome 157, isolated Workers, 1024x768, graph
+enabled, one foreground game; fresh New Game / Easy, 120 seconds loading then
+60-second sample. Null intentionally retains the last GDI loading picture;
+gameplay window visibility, ongoing swaps, renderer endpoint options and CPU
+profiles provide evidence of continued execution, not visual correctness.
+
+Unprofiled repeat null sample: 656 presents / 60.00143s = 10.933 FPS;
+WebGL: 604 / 60.00179s = 10.066 FPS (91.47 vs 99.34 ms/present).
+An earlier null sample was 12.499 FPS; retain it as diagnostic evidence, not
+the selected comparison, since profiler startup was adjacent to its end and
+the repeat explicitly followed profiler shutdown. This spread means the
+8.6% difference in the selected pair is not a precise causal speedup estimate.
+Battery was 35C during WebGL warmup; no matched null temperature was recorded.
+
+Separate null profile: 286 frames / 30.043s, main guest about 49.07 ms/frame
+WASM, 12.68 RPC JS (including waits), 6.53 other/GC and 36.76 idle. Renderer
+about 7.87 ms/frame non-idle, 92.51% idle. Page non-idle about 36.40 ms/frame,
+including the diagnostic HUD. Thread numbers overlap and must not be added;
+these are sample-normalized occupancies, not hardware CPU/GPU timings.
+Rendering-free execution is still slow: prioritize guest emulation and RPC
+profiling over assuming GPU rasterization is the dominant limit. Further
+controlled repetitions are needed to quantify the renderer's FPS contribution.
+
+Matching WebGL profile (separate from the FPS sample): 290 frames / 30.0211s,
+guest 50.04 ms/frame WASM, 11.36 RPC, 6.50 other/GC, 35.62 idle. Renderer
+non-idle 19.27 ms/frame vs null 7.87; page 37.51 vs null 36.40. The guest
+emulation cost remains nearly identical while render-worker work falls, which
+supports using this mode to isolate renderer changes. Phone left in WebGL.
