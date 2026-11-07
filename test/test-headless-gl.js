@@ -218,4 +218,32 @@ assert.strictEqual(hgl.liveContextCount(), 1, 'D3D9 device did not own a native 
 assert.strictEqual(bridge.call(0x30004, 0, 7), 1, 'D3D9 device release failed');
 assert.strictEqual(hgl.liveContextCount(), 0, 'D3D9 device release leaked its native context');
 
+// Native context allocation alone missed a desktop shader-port regression in
+// the MRT shader used by WGL. Exercise the real bridge through drawable readback.
+{
+  const { OpenGLHostBridge } = require('../lib/gl-compat');
+  const storage = new ArrayBuffer(4096);
+  const wgl = new OpenGLHostBridge({
+    backend: 'webgl', createCanvas, getMemory: () => storage,
+    renderer: { windows: { 1: { hwnd: 1, w: 8, h: 8 } } },
+  });
+  try {
+    const handle = wgl.createContext(1);
+    assert.notStrictEqual(handle, 0, 'WGL rejected a usable native context');
+    assert.strictEqual(wgl.makeCurrent(handle, 1), 1);
+    const context = wgl.contexts.get(handle);
+    assert.ok(context.frontend.program.handle, 'fixed-function drawable shader failed to link');
+    context.backend.clear([1, 0, 0, 1], 0x4000);
+    const pixel = new Uint8Array(4);
+    context.backend.readPixels(0, 0, 1, 1, 0x1908, 0x1401, pixel);
+    assert.deepStrictEqual(Array.from(pixel), [255, 0, 0, 255]);
+  } finally {
+    // The harness owns the native window supplied by its canvas factory.
+    const nativeGl = wgl._webglBackend && wgl._webglBackend.gl;
+    wgl.destroy();
+    if (nativeGl) hgl.destroyContext(nativeGl);
+  }
+  assert.strictEqual(hgl.liveContextCount(), 0, 'WGL probe leaked its native context');
+}
+
 console.log('PASS test-headless-gl');
