@@ -77,6 +77,23 @@ shutdown. The graphics slot next runs the existing current-module crash sweep;
 this one GL app does not establish historical27 membership or D3D parity.
 [World progress, lifecycle checks and limits](re-notes/heretic2-texture-followthrough-20261107.md).
 
+## November 7: Repaired-module startup crash sweep
+
+Published `3b89643d3` records twelve serial20-second windows across QuakeII,
+QuakeIII, GLTron, HexenII, HereticII and Forsaken, cooperative and threaded.
+Every window reaches its harness deadline without a classified escaped trap,
+unimplementedAPI, guest exit, setup failure or external timeout. This is startup
+coverage, not gameplay or complete crash freedom. HexenII remains at its notice.
+Cooperative GLTron and threaded Forsaken end black; their opposite modes show
+menus. Native contexts, backend selection and unequal scheduler progress do not
+by themselves identify a renderer defect. No speculative production fix landed.
+
+All twelve actual module reads match the tested allocator build; runtime/native
+pins and20 sweep regressions pass. Evidence was hash-verified before normal
+archived shutdown. A focused cooperative GLTron progression/presentation task is
+ready; exact historical27 membership and the Forsaken gap remain open.
+[Six-app results and limitations](re-notes/graphics-post-allocator-crash-sweep-20261107.md).
+
 ## November 7: Tunnel, Twist and Boids browser coverage
 
 Published `fa63787b0` closes the four remaining Worker configuration harness
