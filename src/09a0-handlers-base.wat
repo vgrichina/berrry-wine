@@ -4092,6 +4092,10 @@
       (then (local.set $access (i32.const 0x40000000))))
     (if (i32.eq (i32.and (local.get $arg2) (i32.const 3)) (i32.const 2))
       (then (local.set $access (i32.const 0xC0000000))))
+    ;; OF_CREATE creates a read/write file regardless of the low access bits,
+    ;; as OpenFile does. In particular, OF_CREATE alone must be writable.
+    (if (i32.and (local.get $arg2) (i32.const 0x1000))
+      (then (local.set $access (i32.const 0xC0000000))))
     (local.set $creation
       (select (i32.const 2) (i32.const 3)
         (i32.ne (i32.and (local.get $arg2) (i32.const 0x1000)) (i32.const 0))))
