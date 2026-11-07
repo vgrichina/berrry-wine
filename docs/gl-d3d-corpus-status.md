@@ -1,5 +1,22 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: OrganicArt rectangle reproduced on both renderers
+
+Published `8b1dae070` recovers the run-local browser adapter and records eight
+confirmed software/WebGL scene layers, all with the same lower-right white
+rectangle. The coordinator inspected a scene layer from each renderer. Native
+traces report missing `CALogo.gif` and installation registry values; software
+submits white geometry at the rectangle bounds. This corroborates the existing
+missing authentic logo-input explanation; no emulator rendering repair was
+justified. Matching original installation metadata/assets remain needed.
+
+The actual loaded module is
+`e41511fe861363fbe1639d80f20cbcdd7240f46937c93a801eaa256ca094c467`.
+The two routes were observed at different natural scenes, so these captures do
+not establish frame parity or FPS. All 117 retrieved artifacts passed hash
+checks and the fresh box stopped normally. [Run, route corrections and evidence
+limits](re-notes/organicart-adapter-recovery-20261107.md).
+
 ## November 7: current GTA2, Tomb Raider and Diablo II gameplay evidence
 
 These runs advance individual title/backend cells. Their linked notes record
