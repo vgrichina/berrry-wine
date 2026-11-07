@@ -32,7 +32,12 @@ the remaining hooded Thug three times. Passive captures separated the turns.
 | turn-three-before | 102/150 | 0/40, 65/65, 0/40 | Second peasant skull; leader active again |
 | turn-four-before | 72/150 | 0/40, 65/65, 0/40 | Thug HP unchanged after previous action; leader active again |
 | turn-five-before | 45/150 | 0/40, 12/65, 0/40 | Thug reduced to 12 HP; leader active again |
-| battle-outcome / accept-reward | 12/150 | 0/40, 0/65, 0/40 | Three corpses/skulls, surviving leader, XP +25 reward |
+| battle-outcome / accept-reward | 12 HP remaining | 0/40, 0/65, 0/40 | Three corpses/skulls, surviving leader, XP +25 reward |
+
+The later `return-to-map.png` is still the reward scene: its bottom HUD reads
+**HP 12/163**, **XP 342/360**, alongside XP +25. This distinguishes the later
+HUD from the earlier 150-HP battle checkpoints; no cause for the maximum-HP
+change is established. The filename alone does not establish map return.
 
 Health was rechecked using magnified crops of the retained originals. These
 correct the immediate commentary/admission annotations that read 123 for the
