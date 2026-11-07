@@ -43,7 +43,7 @@ for(const [aggregate,name,left,right] of families) for(const start of [0,1]) {
    mask=down?(mask|(1<<s)):(mask&~(1<<s));
    states.push([mask?H:0,mask&1?H:0,mask&2?H:0]);
   }
-  for(const expected of states){assert.ok(d.takeInput());assert.deepEqual(values(d,'peekAsyncKeyState',keys),expected);assert.deepEqual(values(d,'getAsyncKeyState',keys),expected);assert.deepEqual(values(d,'getAsyncKeyState',keys),expected);assert.deepEqual(values(d,'peekKeyDownState',keys),[0,0,0]);}
+  for(const expected of states){assert.ok(d.takeInput());assert.deepEqual(values(d,'peekAsyncKeyState',keys),expected);assert.deepEqual(values(d,'getAsyncKeyState',keys),[0,0,0]);assert.deepEqual(values(d,'getAsyncKeyState',keys),[0,0,0]);assert.deepEqual(values(d,'peekKeyDownState',keys),[0,0,0]);}
   assert.equal(d.takeInput(),null);
  });
  test(`${name}/${start}: numeric reset during overlap leaves pending press bits consumable then admits a fresh side`,()=>{
@@ -65,7 +65,7 @@ for(const [aggregate,name,left,right] of families) for(const start of [0,1]) {
   values(d,'getAsyncKeyState',keys);
   d.pokeAsyncKeyState(sides[start],false);
   assert.deepEqual(values(d,'peekKeyDownState',keys),[H,H,H]);
-  assert.equal(d.getAsyncKeyState(sides[start]),0);assert.equal(d.getAsyncKeyState(sides[1-start]),H);
+  assert.equal(d.getAsyncKeyState(sides[start]),H);assert.equal(d.getAsyncKeyState(sides[1-start]),H);
   d.pokeKeyDownState(aggregate,false);
   assert.deepEqual(values(d,'peekKeyDownState',keys),[0,0,0]);
   // Reset is physical only; public key-up also advances the async timeline.

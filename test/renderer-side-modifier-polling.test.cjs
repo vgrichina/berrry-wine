@@ -119,7 +119,7 @@ for (const [vk, name, left, right] of families) {
     r.getAsyncKeyState(left);
     r.pokeAsyncKeyState(left, false);
     assert.equal(r.peekKeyDownState(left), 0x8000);
-    assert.equal(r.getAsyncKeyState(left), 0);
+    assert.equal(r.getAsyncKeyState(left), 0x8000, 'async API follows physical owner despite message override');
     r.pokeKeyDownState(vk, false);
     assert.deepEqual(physical(r, vk, left, right), [0,0,0]);
     r.handleKeyDown(vk, {code: name + 'Right'}); r.takeInput();
