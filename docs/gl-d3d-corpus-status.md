@@ -1,6 +1,6 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
-## November 7: current Tomb Raider and Diablo II gameplay evidence
+## November 7: current GTA2, Tomb Raider and Diablo II gameplay evidence
 
 These runs advance individual title/backend cells. Their linked notes record
 actual source and module identities, reviewed captures, inputs, owning renderer
@@ -10,6 +10,7 @@ tables below retain their historical scope.
 
 | Title | Current WebGL evidence | Current software evidence | Remaining limits |
 | --- | --- | --- | --- |
+| GTA2 Wild Demo | Walking, native Enter vehicle entry and distinct SHARK driving translation; owning WebGL endpoint reports zero errors/software fallback. Coordinator reviewed entry/driving captures. Published `27fdd86e9`. [Run and review](re-notes/gta2-current-driving-20261107.md). | No fresh software result from this run. | Combat, audio, FPS and backend parity unproven; old fullscreen failure did not recur. |
 | Tomb Raider II demo | Venice: forward translation persists after idle; a separate Space action draws pistols. Owning Worker WebGL draws advance, with zero reported errors or software fallback. Published `07c00a950`. [Run and review](re-notes/tr2-bounded-gameplay-20261107.md). | Historical software gameplay remains recorded below; no fresh software result from this run. | Jump, firing, combat, audio and FPS comparison unproven. |
 | Tomb Raider III demo | Explicit New Game reaches Jungle. Forward movement settles at a changed position/camera; a separate Space action leaves both pistols raised. Owning Worker WebGL draws advance, with zero reported errors or software fallback. Published `d5c39cdf2`. [Run and review](re-notes/tr3-current-browser-20261107.md). | Historical software gameplay remains recorded below; no fresh software result from this run. | Alt was acknowledged but no airborne capture was obtained; jump, combat, audio and backend parity remain unproven. |
 | Diablo II demo | Single Player reaches town; ordinary ground-click movement changes terrain position and persists after idle. Actual owning WebGL counters advance. Published `68240bf8b`. [Town movement](re-notes/diablo2-recoverable-scene-20261106.md). | Supported software selection reaches town and demonstrates persistent ground-click movement, with advancing owning software draw counters and no GPU adapter. Published `7437aa212`. [Software run](re-notes/diablo2-software-town-20261106.md). | Later traversal remained in town: field/enemy combat and FPS parity are unproven. [Later attempt](re-notes/diablo2-field-combat-20261106.md). |
