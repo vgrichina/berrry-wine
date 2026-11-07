@@ -116,8 +116,10 @@ Chrome PID 8354 were absent; ports 44155 and 39617 closed; profile, writer and
 held keys were clear. Local qualification processes, ports, profiles and
 input were also cleared. Sampled free space stayed above 2 GB.
 
-The coordinator owns box shutdown. At handoff, the API state was `idle`
-(active, not stopped or archived), expiry 13:26:13.015Z. The worker did not
-stop, delete or resume a box. Archived state will only be claimed if supported
-by a subsequent coordinator receipt. Unique evidence and module identity are
-already local and recoverable.
+The coordinator owned box shutdown. At handoff, the API state was `idle`
+(active, not stopped or archived), expiry 13:26:13.015Z. After independently
+verifying the 264 recovered artifacts, the coordinator completed a normal
+stop at 13:12:54.261Z with `forced:false`. `coordinator-stop-info.json` records
+state `stopped`, cleared active expiry, and a completed, verified snapshot.
+The worker did not stop, delete or resume a box. Unique evidence and module
+identity were retained before that delegated shutdown.
