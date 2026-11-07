@@ -72,6 +72,24 @@ async function ordinary() {
   results.push({ ordinaryUnpinnedWithoutHashing: 'PASS', unavailableHashing: 'reject' });
 }
 
+async function registeredQuakeControls() {
+  // This first-launch file is tracked emulator input, not optional local media.
+  // Exercise the stamped registry through the production loader: a stale size
+  // used to abort the entire original browser launch before guest execution.
+  const file = APPS.quake3_demo.files.find(f => f.url === 'lib/quake3-modern-controls.ini');
+  assert(file, 'registered Quake III controls');
+  const bytes = new Uint8Array(fs.readFileSync(path.join(repo, file.url)));
+  const { Host, host, vfs } = hostFor('node');
+  Host.fetchAssetBytes = async () => bytes;
+  await host.loadFiles([file], { required: true });
+  assert.equal(hash(vfs.files.get(file.vfsPath.toLowerCase()).data), hash(bytes));
+  const stale = hostFor('node');
+  stale.Host.fetchAssetBytes = async () => bytes;
+  await assert.rejects(stale.host.loadFiles([{ ...file, size: 488 }], { required: true }), /size mismatch/);
+  assert(!stale.vfs.files.has(file.vfsPath.toLowerCase()));
+  results.push({ registeredQuakeControls: 'PASS', bytes: bytes.length, stale488: 'reject' });
+}
+
 async function originals(stage) {
   const { Host, host, vfs } = hostFor('node');
   const files = normalizeLazyFiles(APPS.gltron, APPS.gltron.files).files;
@@ -99,6 +117,7 @@ async function originals(stage) {
 (async () => {
   for (const platform of ['node', 'webcrypto', 'plain-http']) await synthetic(platform);
   await ordinary();
+  await registeredQuakeControls();
   if (process.argv[2]) await originals(path.resolve(process.argv[2]));
   console.log(JSON.stringify({ hostSHA256: hash(hostSource), hashingSHA256: hash(hashingSource), results }, null, 2));
 })().catch(error => { console.error(error.stack); process.exitCode = 1; });
