@@ -8,7 +8,9 @@ WebGL Boids shows terrain but no recognizable flock through 120 seconds;
 advancing draws and zero errors/fallbacks do not establish flock rendering.
 A Tunnel software Worker observation is excluded because its observer resized
 the viewport. Three WebGL Worker cases remain unlaunched. No semantics defect
-or emulator fix is established. Both locked builds and three focused checks
+or emulator fix is established. Earlier [Boids geometry evidence](re-notes/dx-sdk-d3drm-samples.md#october-31-original-boids-flock-is-phase-dependent-not-absent)
+shows all birds off-camera in an outline-only phase on an older build; current
+frame geometry is needed to distinguish that case. Both locked builds and three focused checks
 passed; artifacts and both modules were hash-verified before normal nonforced
 box shutdown. The actual launcher forces SwiftShader despite an Intel renderer
 string. [Named cases and limits](re-notes/graphics-tunnel-twist-boids-20261107.md).
