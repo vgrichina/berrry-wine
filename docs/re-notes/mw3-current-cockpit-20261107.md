@@ -38,3 +38,27 @@ disposable files, then assign a fresh bounded attempt. Qualify the complete
 staged observer and native controls before the one fresh allocation, verify
 registered input and HTTP body closure, and review fresh original captures
 before any ordinary action. This attempt stops at the recorded disk blocker.
+
+## Fresh assignment recheck at 13:22 UTC
+
+The fresh assignment also stopped before allocation. The initial `df -B1
+/home` reported **1,896,611,840 available bytes**. The recorded
+`os.statvfs('/home')` check at **2026-11-07T13:22:46.580070Z** reported
+**1,033,785,344 available bytes**, below the required 2,000,000,000-byte floor.
+These are separate observations during shared disk activity. Evidence for
+this assignment is under `scratch/runs/20261107-mw3-current-cockpit/recheck/`;
+the earlier terminal artifacts and root `result.json` are preserved.
+
+No production observer/native-control qualification, registry/HTTP body hash
+verification, deadline qualification, allocation, guest launch or input was
+attempted after this prerequisite failed. The actual D3D backend, runtime
+module hash, current cockpit and visible action remain unknown. There is no
+demonstrated emulator failure to repair. Installed assets, app-local DLLs,
+configuration, memory and clocks were untouched. No box exists for this
+assignment, so no shutdown or lifecycle handoff is needed. The source record
+contains the preparation Git SHA and relevant working-tree diff, with this
+note's change retained as a patch; no source or media archive was made.
+
+Next: the coordinator's authorized disk recovery must restore the floor
+before another fresh assignment. This worker retains the first blocker and
+stops without a runtime retry.
