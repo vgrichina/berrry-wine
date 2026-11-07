@@ -169,18 +169,33 @@ async function queuedOwnerInvalidation(){
   await f.bridge.close();
 }
 async function queuedPackedPayload(){
-  const f=await queuedFixture(),at=128,bytes=32+Stream.VERTEX_FLOATS*4;
+  for(const [opcode,stride] of [[Stream.PACKED_DRAW_OPCODE,Stream.VERTEX_FLOATS],
+    [Stream.EXACT_DRAW_OPCODE,Stream.EXACT_VERTEX_FLOATS],
+    [Stream.EDGE_DRAW_OPCODE,Stream.EXACT_VERTEX_FLOATS+1]]) {
+  const f=await queuedFixture(),at=128,bytes=32+stride*4;
   const v=new DataView(f.memory,at,bytes);
-  v.setUint32(0,bytes,true);v.setUint32(4,Stream.PACKED_DRAW_OPCODE,true);v.setUint32(8,4,true);
-  v.setUint32(20,Stream.VERTEX_FLOATS*4,true);v.setUint32(24,32,true);
+  v.setUint32(0,bytes,true);v.setUint32(4,opcode,true);v.setUint32(8,4,true);
+  v.setUint32(20,stride*4,true);v.setUint32(24,32,true);
   v.setUint32(28,Stream.FLAG_POINTER_COPY,true);v.setFloat32(32,42.5,true);
   await f.bridge.replay(Stream.memoryBatch(f.memory,at,bytes),1);await tick();
   v.setFloat32(32,-1,true);let position;
   Stream.replay(Stream.memoryBatch(f.requests[1].message.commandBuffer,0,bytes),(op,aux,capture)=>{
-    position=new Float32Array(capture.buffer,capture.pointerOffset,Stream.VERTEX_FLOATS)[0];return 0;
+    position=new Float32Array(capture.buffer,capture.pointerOffset,stride)[0];return 0;
   });
   assert.strictEqual(position,42.5,'packed vertex payload is copied with its relative pointer intact');
-  f.complete(1);await f.bridge.close();
+  f.complete(1);await f.bridge.drain();
+  for(const borrowed of [false,true]) {
+    v.setUint32(20,(stride-(borrowed?0:1))*4,true);
+    v.setUint32(28,borrowed?Stream.FLAG_POINTER_BORROW:Stream.FLAG_POINTER_COPY,true);
+    let acknowledged=false;
+    const index=f.requests.length;
+    const pending=f.bridge.replay(Stream.memoryBatch(f.memory,at,bytes),1).then(()=>{acknowledged=true;});
+    await tick();assert(!acknowledged,'borrowed or incomplete vertices retain the producer lease');
+    assert.strictEqual(f.requests[index].message.commandBuffer,undefined);
+    f.complete(index);await pending;
+  }
+  await f.bridge.close();
+  }
 }
 async function queuedCopiedVectors(){
   const f=await queuedFixture(),pointer=0x30000000;

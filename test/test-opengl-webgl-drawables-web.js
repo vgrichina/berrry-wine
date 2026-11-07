@@ -6,11 +6,14 @@ function runDrawableTests() {
     const ok=Array.isArray(expected)?Array.isArray(actual)&&actual.length===expected.length&&actual.every((v,i)=>Math.abs(v-expected[i])<=tolerance):actual===expected;
     if(!ok)throw Error(`${label}: ${JSON.stringify(actual)} expected ${JSON.stringify(expected)}`);
   };
-  for(const apiVersion of [1,2]) {
+  for(const selection of ['default','fallback',1,2]) {
+    const apiVersion=typeof selection==='number'?selection:undefined;
     const memory=new ArrayBuffer(4096),dv=new DataView(memory),windows={42:{hwnd:42,w:8,h:8,clientRect:{w:8,h:8}},123:{hwnd:123,w:8,h:8,clientRect:{w:8,h:8}}};
     const renderer={windows,repaint(){},mergeGpuLayerIntoBackCanvas(){}};
     const bridge=new OpenGLCompat.OpenGLHostBridge({apiVersion,getMemory:()=>memory,exports:{guest_to_wasm:p=>p},renderer,
-      createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;}});
+      createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;
+        if(selection==='fallback'){const get=c.getContext.bind(c);c.getContext=(name,...args)=>name==='webgl2'?null:get(name,...args);}
+        return c;}});
     let checks=0;
     const check=(a,b,label,t=0)=>{equal(a,b,`v${apiVersion} ${label}`,t);checks++;};
     const f=x=>{dv.setFloat32(4000,x,true);return dv.getUint32(4000,true);};
@@ -28,6 +31,7 @@ function runDrawableTests() {
     };
     try {
       const a=bridge.createContext(42);check(!!a,true,'create');check(bridge.makeCurrent(a,42),1,'bind');
+      check(bridge._current().backend.version,selection==='default'?2:selection==='fallback'?1:apiVersion,'selected API '+selection);
       call('glViewport',[0,0,8,8]);
       // Invalid setters must preserve authoritative context state across both
       // presentation paths, even when the execution-device cache was cleared.
@@ -132,7 +136,7 @@ function runDrawableTests() {
       check(Array.from(canonical.slice(0,4)),[0,0,255,255],'bitmap retains GDI outside scissor');
       call('glDisable',[0xc11]);check(bridge.makeCurrent(c,42),1,'restore window');
       const gl=bridge._current().backend.gl,ext=gl.getExtension('WEBGL_debug_renderer_info');
-      results.push({apiVersion,checks,renderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),error:error()});
+      results.push({selection,apiVersion,checks,renderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),error:error()});
     } finally {if(bridge.destroy)bridge.destroy();else for(const handle of [...bridge.contexts.keys()])bridge.deleteContext(handle);}
   }
   if(typeof GLRenderWorker!=='undefined'){

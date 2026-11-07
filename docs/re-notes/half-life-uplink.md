@@ -3111,3 +3111,74 @@ min43k/median82k/max100k. The phone disappeared from `adb devices` during the
 obtained. This is a disconnected-device interruption, not evidence of a
 500k-induced game crash. 100k is promising but lacks the planned repeated
 control; keep the verified50k default pending a completed comparison.
+
+### 2026-11-07: Integration Android launch and queue regressions
+
+Evidence: `scratch/runs/20261107-uplink-integration-perf`. Integration
+`cd9722da4`, native module
+`e49dbb3241327a0fcf74da39af963355c3bc3379bba24796c02572303dfcf4ab`,
+Chrome157 on Android A142, isolated Workers, fresh OpenGL1024x768 corridor.
+The initial launch reached the menu but rejected the OpenGL gameplay mode.
+A caught-exception debugger probe identified
+`GL drawable buffers require WEBGL_draw_buffers`: the bridge forced WebGL1,
+and this phone does not expose that extension there. Prefer the backend's
+existing automatic WebGL2 selection, retaining WebGL1 fallback and explicit
+version overrides. The phone then rendered the textured corridor and HUD.
+Drawable pixel tests pass for default, simulated WebGL2 unavailability,
+explicit WebGL1/2, and the actual browser Worker.
+
+With only API selection changed, the visible 60-second gameplay sample was
+53 presents / 60.000335s = 0.883 FPS, Auto50k, no page errors. This is a real
+integration regression relative to the earlier release-based results, but
+not a matched alternating build comparison or an isolated estimate of its
+cause. The failed launch's zero presents are excluded. A subsequent RPC
+probe did not complete; after debug-connection interruptions the host logged
+`worker 0 did not answer slice in 60000ms`. The later CPU capture contained
+only the stopped page, so it is not a gameplay profile. Preserve these
+limitations rather than attributing idle-page samples to the game.
+
+Source inspection found two transport issues. Native `gl_object_leave`
+publishes the stream on every outer call to preserve cross-producer shared
+object ordering. Simply deleting that flush breaks the documented shared
+texture visibility contract. Separately, the host's async eligibility check
+recognized only the old 19-float packed vertices: the newer exact-color and
+edge records fell back to synchronous rendering despite owning their inputs.
+Extend the existing bounded queue to these 28/29-float records. Regression
+coverage checks early acknowledgement, payload survival after producer reuse,
+and synchronous fallback for borrowed or incomplete vertices. Existing queue
+ordering, backpressure, query and finish-fence tests remain passing.
+
+Fresh launch with the queue change: 49 presents / 60.00393s = 0.817 FPS,
+continuously visible, Auto50k, no page errors, matching textured corridor/HUD.
+This change did not recover integration performance. These single successive
+samples lack an alternating control, so neither a small speedup nor slowdown
+is established; the protocol correction alone is insufficient.
+
+Per-call publication and per-pixel texture-decoder array allocation remain
+investigation targets, not fixes in this change. The earlier local integration
+profile implicated messaging and `_decodeTexture`.
+
+A valid 30-second Android profile after the queue change captured 23 presents.
+Main guest Worker: 68.08% `waitForResponse`, 69.51% all RPC JS, 24.06% WASM.
+Render Worker: 54.46% idle; `self.onmessage`8.84%, `postMessage`4.83%,
+`sharedMessage`4.55%, `execute`3.49%, `messageBytes`2.35%,
+`_decodeTexture`2.19%. Page: 58.47% idle, with message admission/replies
+prominent in its active samples. These are sample shares including waits,
+not hardware CPU/GPU utilization, and overlapping threads must not be summed.
+The immediate priority is command publication/round-trip overhead, not raising
+the slice ceiling again or assuming GPU fill rate is the main limit. Any
+batching repair must preserve the completed cross-producer prefix documented
+in `gl-shared-texture-visibility-20261103.md`; simply reverting that flush is
+not a correct fix. Source-text function index tools did not match this compiled
+module's function count, so no individual native hotspot names are inferred.
+
+Fresh release-based control afterward: 988 presents / approximately60s =
+16.466 FPS, visible throughout, Auto50k, no page errors. Loaded module
+`fc9fa56ccc385e12015785e9c031c448541c8ff1c4f33e616d78d7e80cd1cb59`
+is the previously tested release422eba5a4 plus ShowWindow guard, with the null
+diagnostic and scheduling JS patches. Same phone, resolution and camera route;
+the scripted ceiling/light animation has progressed further in the faster
+build. Release uses its WebGL1 path, integration now uses WebGL2. Thus this
+confirms a substantial build discrepancy, not an isolated optimization ratio
+or an identical-frame comparison. Phone left on the faster release-based
+local build. Neither these fixes nor the integration build were deployed.
