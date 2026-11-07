@@ -1,5 +1,24 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: Current GLTron browser gameplay on both backends
+
+Published `175f0258b`, run `20261107-gltron-current-browser-round`, verifies
+ordinary native steering in serial cooperative browser rounds on both routes:
+
+| App | Software GL | WebGL |
+| --- | --- | --- |
+| Original GLTron 0.70 | Main `OpenGLHostBridge`, software context and `gl_sw_enabled=1`; live turn and bent yellow trail reviewed. | Owning `WebGLBackend.gl` matches the observed context and `gl_sw_enabled=0`; live turn and bent yellow trail reviewed. |
+
+The coordinator inspected both `steer-live-after.png` captures and their paired
+state records: direction 3 → 0, trail offset 0 → 1, player alive before/after
+with speed 8.5 and winner -1. Actual module is `f9650607…`, with the published
+audio fix present. The toolbar label is not backend evidence; stale overlay
+text and different viewports are disclosed. This proves scoped gameplay on
+both routes, not matching pixels, FPS, physical GPU performance or audio quality.
+The synthetic-clock CLI menu limitation remains a separate observation.
+[Backend ownership, captures, original inputs and limits](re-notes/gltron-current-browser-round-20261107.md).
+Other per-app cells and full historical27 coverage remain incomplete.
+
 ## November 7: Forsaken threaded recovery and GLTron audio primitive
 
 Published `6c682a2ab` follows the short startup sweep with a longer original
