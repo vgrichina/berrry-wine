@@ -139,3 +139,13 @@ running (API state **idle**), with original expiry **2026-11-07 22:51:06.810Z**.
 No stop, resume, delete or public deployment occurred. Coordinator receives box
 ownership and the remaining expiry window. This bounded task ends with the
 sound-refill exit unresolved, not a menu/gameplay pass.
+
+
+## Coordinator lifecycle closure
+
+After this handoff, the coordinator inspected the idle box and the43-reference
+retrieval verification, then requested normal stop `stop_94b30b71284d081b`.
+It completed2026-11-07T22:36:50.783Z, forced=false, error=null. Final inspected
+state is **stopped**, current expiry null. No resume/delete occurred. Exact
+CLI request/result and final info are retained in `coordinator-stop-result.json`
+and `coordinator-stop-info.json` under this run. Runtime findings remain unchanged.
