@@ -50,6 +50,7 @@
 // Options:
 //   --seconds=N      run.js --max-seconds (default 20); the external kill is N+90
 //   --modes=a,b      coop and/or threads (default coop: run.js's own default)
+//   --headless-gl    forward run.js's supported native headless GL bridge (opt-in)
 //   --stuck-after=N  pass run.js --stuck-after (0: never end a run as stuck)
 //   --min-free-mb=N  wait before each run until /proc/meminfo MemAvailable >= N MB
 //   --feed=URL       fetch each app's files from tools/app-files-feed.js serve first
@@ -249,6 +250,7 @@ function runOne(id, mode) {
     // of guest seconds of PCM per wall second (Tile World: 2.9 GB in a 15 s
     // coop run, which filled the disk and cost the run its PNG).
     `--audio-out-max=${4 << 20}`];
+  if (flag('headless-gl')) args.push('--headless-gl');
   if (STUCK_AFTER !== null) args.push(`--stuck-after=${STUCK_AFTER}`);
   // run.js prints a register line per batch, so a healthy 20 s run is ~100 MB:
   // send it to a file and read back only the head and tail, which is where

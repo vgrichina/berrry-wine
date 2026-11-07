@@ -9,6 +9,38 @@ const vm = require('node:vm');
 const source = fs.readFileSync(path.join(__dirname, '../tools/registry-crash-sweep.js'), 'utf8');
 const cases = [];
 function test(name, fn) { cases.push([name, fn]); }
+// Exercise the actual crash-sweep subprocess boundary without launching a guest.
+test('crash-sweep forwards headless GL only when explicitly requested in both modes', async () => {
+  const script = fs.readFileSync(path.join(__dirname, '../tools/crash-sweep.js'), 'utf8');
+  const prefix = script.slice(0, script.indexOf('const FATAL ='));
+  for (const enabled of [false, true]) {
+    const launches = [];
+    const context = vm.createContext({
+      require(name) {
+        if (name === 'child_process') return { spawn(cmd, args) {
+          launches.push({ cmd, args });
+          return { on(event, callback) { assert.equal(event, 'exit'); queueMicrotask(() => callback(0)); } };
+        } };
+        return require(name);
+      },
+      __dirname: path.join(__dirname, '../tools'),
+      process: { execPath: process.execPath, argv: ['node', 'crash-sweep', '--jsonl=unused', ...(enabled ? ['--headless-gl'] : [])] },
+      console, Buffer, setTimeout, clearTimeout,
+    });
+    vm.runInContext(prefix, context);
+    try {
+      for (const mode of ['coop', 'threads']) await vm.runInContext(`runOne('fixture', '${mode}')`, context);
+      assert.equal(launches.length, 2);
+      for (const [index, launch] of launches.entries()) {
+        assert.equal(launch.cmd, process.execPath);
+        assert.equal(launch.args.filter(a => a === '--headless-gl').length, enabled ? 1 : 0);
+        assert(launch.args.includes(index ? '--threads' : '--no-threads'));
+        assert(launch.args.includes('--app=fixture'));
+        assert(launch.args.includes('--no-build'));
+      }
+    } finally { vm.runInContext('fs.rmSync(LOG_DIR, { recursive: true, force: true })', context); }
+  }
+});
 async function sweep({ log, output = '300 batches in 1s\n', code = 0, before = false, budget = 300, arm = 300, limit = 1, stalePng = false } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'crash-sweep-fixture-'));
   const out = path.join(dir, 'out'); fs.mkdirSync(out);
