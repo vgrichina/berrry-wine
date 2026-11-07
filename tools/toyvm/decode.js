@@ -1020,7 +1020,11 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
     case 0x2F: words.push(H.das); break;
     case 0x37: words.push(H.aaa); break;
     case 0x3F: words.push(H.aas); break;
-    case 0xD4: words.push(H.aam, imm8(), wip(start + n)); break;
+    case 0xD4: {
+      const radix = imm8();
+      words.push(H.aam, radix, wip(cpuLevel >= 286 ? start : start + n));
+      break;
+    }
     case 0xD5: words.push(H.aad, imm8()); break;
     // SALC: undocumented, no operands, sets AL from CF.
     case 0xD6: words.push(H.salc); break;
@@ -1040,17 +1044,15 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
         else { writesMem = true; words.push(H[`${nm}_m${w}`], packEa(m), m.disp); }
       } else {
         const nm = ['mul', 'imul', 'div', 'idiv'][m.reg - 4];
-        // DIV and IDIV can fault, and a fault pushes the address of the
-        // instruction ITSELF, not the next one -- the 8086 restarts it.
+        // DIV/IDIV #DE restarts at the first prefix on a 286 or later.
+        // The 8086/80186 instead save the following instruction's address.
         const faults = nm[nm.length - 1] === 'v';
         if (m.isReg) words.push(H[`${nm}_r${w}`], m.rm & 7);
         else words.push(H[`${nm}_m${w}`], packEa(m), m.disp);
         // Not endsBlock: a divide that does not fault falls through normally,
         // and one that does sets the step budget negative and returns before
         // the rest of the block can run.
-        // The 8086 pushes the address of the NEXT instruction on a divide
-        // error -- it does not restart the divide the way a 286 does.
-        if (faults) words.push(wip(start + n));
+        if (faults) words.push(wip(cpuLevel >= 286 ? start : start + n));
       }
       break;
     }
