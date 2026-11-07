@@ -194,36 +194,56 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
   }
   // Bounded passive reads only. These are execution observations, never a
   // logical frame/keyboard-poll or simulation-step assertion.
-  async function progress(identity) {
+  async function progress(identity, stream = 'page') {
+    assert(['page','renderer'].includes(stream), 'known passive progress stream');
     const page = await evaluate(PAGE_READ), a = page.apps[0];
     assert(page.apps.length === 1 && a?.running && !a.stopped);
     for (const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject'])
       assert.equal(a[f], identity[f], 'held identity changed: '+f);
-    const w = [...workers.values()].find(w=>w.targetId===identity.workerTarget&&!w.closed);
-    assert(w, 'held Worker retired');
+    function worker(target, digest) {
+      const matches=[...workers.values()].filter(w=>w.targetId===target&&!w.closed);
+      assert.equal(matches.length,1,'held Worker retired or ambiguous');
+      const w=matches[0];
+      assert.equal(workers.get(w.sessionId),w,'held Worker session replaced');
+      assert(modules(w).every(s=>s.sha256===digest),'held module inventory changed');
+      return w;
+    }
+    worker(identity.workerTarget,identity.moduleSha256);
     // Do not enqueue guest export commands: the existing page slice and
     // shared render controls are passive and remain observable while blocked.
-    const render = [];
-    for (const r of workers.values()) if (!r.closed && r.url.includes('d3d-render-worker')) {
+    if(stream==='page')return {stream,at:new Date(now()).toISOString(),slice:a.slice,d3dStats:a.d3dStats,physical:a.physical};
+    const render=[];
+    if(identity.rendererTarget!=='none') {
+      const r=worker(identity.rendererTarget,identity.rendererModuleSha256);
       const endpoints=await evaluate(RENDER_READ,r.sessionId);
-      if(r.targetId===identity.rendererTarget)assert(endpoints.some(e=>e.id===identity.renderEndpoint&&e.epoch===identity.rendererEpoch&&!e.failed&&!e.control?.error),'held renderer epoch changed');
+      assert(endpoints.filter(e=>e.id===identity.renderEndpoint).length===1 && endpoints.some(e=>e.id===identity.renderEndpoint&&e.epoch===identity.rendererEpoch&&!e.failed&&!e.control?.error),'held renderer epoch changed');
+      assert.equal(worker(identity.rendererTarget,identity.rendererModuleSha256),r,'held renderer replaced');
+      // A renderer reply is usable only while its page owner still matches.
+      // This read is independent of the page sampling loop.
+      const after=await evaluate(PAGE_READ);
+      assert(after.apps.length===1&&after.apps[0]?.running&&!after.apps[0].stopped);
+      for(const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject'])
+        assert.equal(after.apps[0][f],identity[f],'held identity changed: '+f);
       render.push({targetId:r.targetId,endpoints});
     }
-    return {at:new Date(now()).toISOString(), slice:a.slice, d3dStats:a.d3dStats, physical:a.physical, render};
+    return {stream,at:new Date(now()).toISOString(),render};
   }
   return {capture, admit, readLive, progress, get closed(){return closed;}};
 }
 
 const KEYS = {ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:27};
-async function hold({send, session, keys, holdMs, sample, saveSample = ()=>{}}) {
+async function hold({send, session, keys, holdMs, sample, renderSample, saveSample = ()=>{}}) {
   assert(Array.isArray(keys) && (keys.length===1 || keys.length===2 && keys[0]==='ArrowUp' && ['ArrowLeft','ArrowRight'].includes(keys[1])), 'ordinary key or throttle plus steering');
   assert(keys.every(k=>Object.hasOwn(KEYS,k)) && new Set(keys).size===keys.length);
   assert(Number.isInteger(holdMs) && holdMs>=50 && holdMs<=2000, 'bounded physical hold');
   assert(typeof sample==='function', 'passive in-hold sampler required');
   const attempted=[], samples=[]; let error;
-  const record = async phase => {
-    const started=Date.now(), value=await sample();
-    const row={phase,started,finished:Date.now(),...value}; samples.push(row); await saveSample(row);
+  assert(renderSample===undefined||typeof renderSample==='function');
+  const record = async (reader,stream) => {
+    const began=Date.now(), value=await reader(), finished=Date.now();
+    const row={...value,phase:'held',stream,started:began,finished,
+      whollyDuringHold:began>=started&&finished<(releaseAt??Infinity)};
+    samples.push(row); await saveSample(row);
   };
   // The release timer is independent of sampler completion. A slow passive
   // read must never extend a physical hold, and is labelled outside the hold.
@@ -243,7 +263,15 @@ async function hold({send, session, keys, holdMs, sample, saveSample = ()=>{}}) 
       await send('Input.dispatchKeyEvent',{type:'keyDown',...base},session);
       assert(!releasePromise,'input delivery exceeded hold bound');
     }
-    while(!releasePromise) {await record('held');if(!releasePromise)await wait(Math.min(100,Math.max(1,holdMs-(Date.now()-started))));}
+    // Each stream has at most one outstanding read. A blocked renderer cannot
+    // delay page observations or the independent physical release timer.
+    const loop=async(reader,stream)=>{
+      try {while(!releasePromise) {
+        await record(reader,stream);
+        if(!releasePromise)await wait(Math.min(100,Math.max(1,holdMs-(Date.now()-started))));
+      }}catch(e){error??=e;await release();}
+    };
+    await Promise.all([loop(sample,'page'),...(renderSample?[loop(renderSample,'renderer')]:[])]);
   } catch(e){error??=e;}
   finally {clearTimeout(timer);await release();}
   for(const s of samples)s.whollyDuringHold=s.started>=started&&s.finished<releaseAt;
