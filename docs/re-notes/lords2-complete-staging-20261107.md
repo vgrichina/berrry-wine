@@ -1,6 +1,6 @@
 # Lords2 complete staging and successful first LZCopy
 
-Task: NEW-GAME-LORDS2-DEMO-20261015. Evidence: `scratch/runs/20261107-lords2-complete-staging/`. Follows [the fresh-box preparation failure](lords2-fresh-box-install-20261107.md) and [the OF_CREATE repair](lords2-file-copy-20261107.md). No emulator or guest source/media/config/save bytes changed in this run.
+Task: NEW-GAME-LORDS2-DEMO-20261015. Evidence: `scratch/runs/20261107-lords2-complete-staging/`. Follows [the fresh-box preparation failure](lords2-fresh-box-install-20261107.md) and [the OF_CREATE repair](lords2-file-copy-20261107.md). No production emulator edits or manual guest/media/config/save edits were made. The original installer performed its ordinary VFS writes.
 
 The staging omission is corrected. Before allocating a box, I inspected predecessor `prepare.py`, both generated NE tests, LZcreate/passivity checks, their computed root requires and the runtime/browser dependencies. The inventory now includes `test/helpers/ne-lifecycle-image.js` and browser-fetched `src/api_table.json`. The offline filesystem-only audit verified 618 files, 35,205,682 bytes, all eight computed-root edges, the relative require closure, both pinned modules, all 181 media hashes and the launcher manifest. Complete `lib/`, fonts/icons and root browser assets cover conditional browser imports; npm dependencies are installed remotely. No local emulator, browser or build ran, and no Python file was named `inspect.py`.
 
