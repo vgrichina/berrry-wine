@@ -1,5 +1,24 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: three registered savers across both backends and schedulers
+
+Published `c04cc7024` records motion in the original Falling Leaves, Geometry
+and Sci-Fi savers: software and WebGL, each with cooperative and guest Worker
+execution. The worker inspected all 36 preferred captures across 12 named
+cases, showing objects moving relative to fixed backgrounds. The coordinator
+also inspected Geometry's threaded WebGL motion pair. Fourteen launches had
+no recorded escaped trap, unimplemented-API trap or page exception.
+
+Two initial trials affected by an observer's viewport change remain excluded
+from the preferred motion evidence; fixed-viewport followups cover those cases.
+The locked build and three focused regressions passed. All 2,218 captured
+successful response bodies matched pinned bytes; 62 additional bodies were
+unavailable to DevTools and are not individually certified. Evidence and both
+modules were retrieved and verified before normal box shutdown. This establishes
+named scene motion, with timing, visual-reference parity, audio and full
+historical27 membership still open.
+[Named cases, captures and limits](re-notes/graphics-saver-motion-20261107.md).
+
 ## November 7: registered Direct3D samples across both schedulers
 
 Published `3a006e140` records 12 successful registered startup cases for
@@ -10,12 +29,18 @@ File/Open; Globe switches to wireframe through its Render menu; Flip3DTL rotates
 The coordinator also inspected the threaded WebGL Viewer model and Globe
 wireframe captures and sent them to the owner.
 
-The locked build and three focused sample regressions passed. The unchanged
-texture-wrap regression fails because its recording GPU fixture lacks the
-`device.gpu.gl` object now needed by the native 16-bit store path. A local
-diagnostic bypass isolates that fixture limitation; it is not an unmodified
-test pass or evidence that native 16-bit rendering is correct. No emulator
-repair was justified. Globe texture bands still need an aligned Windows
+The locked build and three focused sample regressions passed. The texture-wrap
+recording fixture failure found during that run was subsequently reproduced and
+repaired in `fe9458c93`. The fixture explicitly observes per-primitive storage
+and every submitted UV view, preserving its existing software pixel and wrap
+oracles. The focused test and locked build pass; production rendering is
+unchanged. A separate actual WebGL native16 regression passed 16 configurations
+and 96 dependent pixel pairs across both shipped modules and direct/Worker
+execution, with 56 negative controls rejected. That pixel evidence is separate
+from the recording fixture's UV checks.
+[Fixture repair and native16 evidence](re-notes/graphics-wrap-fixture-20261107.md).
+
+No emulator repair was justified. Globe texture bands still need an aligned Windows
 reference; full historical27 membership, FPS, audio and backend parity remain
 open. Evidence was retrieved and verified before normal nonforced box shutdown.
 [Cases, controls, hashes and test limitation](re-notes/graphics-dx-samples-20261107.md).
