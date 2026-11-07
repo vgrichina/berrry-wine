@@ -1,6 +1,12 @@
+- [ ] World Circuit v1.03 original installation and native driving
+  id: NEW-GAME-WORLD-CIRCUIT-V103-20261107
+  status: ready; original3disk source recovered and hashed; no execution yet
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Next: OwnerTelegram177 title priority when a new-game slot releases. Use scratch/usage-watch/world-circuit-v103-install-next.task.txt and docs/re-notes/world-circuit-v103-source-20261107.md. Preserve original INSTALL.EXE workflow and authentic installed outputs; native Quick Race/driving remain unverified. Source ZIP/images at scratch/game-media/world-circuit-v103/; no public deployment.
+
 - [ ] Formula One Grand Prix / World Circuit DOS demo startup and driving
   id: NEW-GAME-WORLD-CIRCUIT-DEMO-20261107
-  status: active; world-circuit-driving-2222, reviewed native starting grid; driving unverified
+  status: demo limitation; 3a443a1c4 proves keys consumed/discarded, driving unverified; interactive v1.03 intake ready
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Next: Trace original keyboard/control consumption and verify ordinary driving on the fresh assigned separate box. Published90e01588d repairs CPU saved-divide-fault-IP behavior;76 regressions/build pass and native cockpit/grid is reviewed at neutral0MPH. Use pinned world-circuit-demo and period manual references; do not infer demo interactivity. Note docs/re-notes/world-circuit-startup-20261107.md. No public deployment.
 
