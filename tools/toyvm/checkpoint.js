@@ -352,7 +352,7 @@ async function createMachineRunner(options) {
   const { DosSession } = require('./dos-loop');
   const { makeVm, buildModule } = require('./vm');
   const isa = require('./isa');
-  const allowed = ['image', 'name', 'args', 'machineOptions', 'sessionOptions', 'inputs', 'budget', 'files', 'directories', 'currentDirectory'];
+  const allowed = ['image', 'name', 'args', 'machineOptions', 'sessionOptions', 'inputs', 'budget', 'files', 'directories', 'currentDirectory', 'floppies'];
   if (!options || Object.keys(options).some(k => !allowed.includes(k)) || !(options.image instanceof Uint8Array)) throw Error('unsupported checkpoint runner options');
   // A detached, data-only recipe is both the fixture identity and fresh-process
   // recovery input. Reject arbitrary functions/host objects before instantiation.
@@ -365,7 +365,7 @@ async function createMachineRunner(options) {
   plain(options);
   const recipe = v8.deserialize(v8.serialize({ image: Uint8Array.from(options.image), name: options.name || 'PROGRAM.COM',
     args: options.args || '', machineOptions: options.machineOptions || {}, sessionOptions: options.sessionOptions || {},
-    inputs: options.inputs || [], files: options.files || [], directories: options.directories || [],
+    inputs: options.inputs || [], files: options.files || [], directories: options.directories || [], floppies: options.floppies || [],
     currentDirectory: options.currentDirectory || '', budget: options.budget ?? 1000000 }));
   const bools = ['noCache', 'smcFlush', 'wasmDecode', 'fuse', 'deadFlags', 'crossFlags', 'traceBlocks',
     'spinLoops', 'regSpec', 'volatileCode', 'pitClock', 'latticeClock', 'irqSchedule', 'intFast', 'edgeLookup', 'smcCensus'];
@@ -423,6 +423,10 @@ async function createMachineRunner(options) {
   // default native ABI; cached archive bytes alone would skip that work.
   const module = await buildModule('tailcall', { exportAll: true });
   const machine = new Machine(new Uint8Array(1 << 20), { ...recipe.machineOptions, log: NO_LOG });
+  if (!Array.isArray(recipe.floppies) || recipe.floppies.some(e => !Array.isArray(e) || e.length !== 2 ||
+      !['A', 'B'].includes(e[0]) || !(e[1] instanceof Uint8Array)) ||
+      new Set(recipe.floppies.map(e => e[0])).size !== recipe.floppies.length) throw Error('invalid runner floppy mounts');
+  for (const [drive, image] of recipe.floppies) machine.changeDisk(drive, image);
   const vm = await makeVm('tailcall', { ...module,
     portIn: (p, w) => machine.portIn(p, w), portOut: (p, v, w) => machine.portOut(p, v, w) });
   vm.exports.set_cpu(386); machine.setMemory(vm.mem, vm.exports);
@@ -443,6 +447,10 @@ async function createMachineRunner(options) {
   session.endAt = recipe.budget;
   const state = { steps: 0, inputIndex: 0, inputs: recipe.inputs, budget: recipe.budget };
   const runner = { vm, machine, session,
+    changeDisk(drive, image) {
+      if (meta.active || meta.failed) throw Error('runner is active or failed');
+      return machine.changeDisk(drive, image);
+    },
     step() {
       if (meta.active || meta.failed) throw Error('runner is active or failed');
       if (session.dispatched >= state.budget && !session.owesEnd(state.budget)) return 'done';
@@ -466,7 +474,7 @@ async function createMachineRunner(options) {
       'dispatchesPerTick', 'tickScale', 'pitClock', 'stuckLimit', 'stuckWork']],
     [session.cache, ['noCache', 'smcFlush', 'watch', 'fuse', 'deadFlags', 'crossFlags', 'traceBlocks',
       'spinLoops', 'regSpec', 'volatileCode', 'regionCodeBits']],
-    [machine, ['svga', 'sound', 'pspSeg', 'loadSeg', 'forceChained', 'dspVersion', 'extraEnv', 'virtualDirectories']],
+    [machine, ['svga', 'sound', 'pspSeg', 'loadSeg', 'forceChained', 'dspVersion', 'extraEnv']],
   ];
   const meta = { machine, session, cache: session.cache, exports: vm.exports, wat: vm.wat, module: sha256(vm.bytes),
     recipe, state, active: false, failed: false, consoleMethods,

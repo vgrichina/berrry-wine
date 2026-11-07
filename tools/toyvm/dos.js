@@ -26,6 +26,7 @@ const fs = require('fs');
 const isa = require('./isa');
 const { Sound, PIT_HZ } = require('./audio');
 const { Gus } = require('./gus');
+const { readFat12 } = require('./fat12');
 
 const VGA_BASE = 0xA0000;
 const STUB_SEG = 0xF000;      // dedicated host entries occupy F000:0100-01FF
@@ -947,6 +948,10 @@ class Machine {
     // not find" is the first question when a demo renders an empty screen.
     this.fileRoot = opts.fileRoot || null;
     this.currentDirectory = '';
+    this.currentDrive = 2;
+    this.driveDirectories = new Map([[0, ''], [1, ''], [2, '']]);
+    this.floppyVolumes = new Map();
+    this.mediaChanges = [];
     this.directorySearches = new Map();
     this.directorySearchIds = new Map();
     this.directorySearchSerial = 0;
@@ -1227,7 +1232,7 @@ class Machine {
     // volunteer a configuration nothing is standing behind.
     mem[at++] = 0;                    // end of the variables
     mem[at++] = 0x01; mem[at++] = 0x00;   // one string follows: the program path
-    put(`C:\\${String(name).toUpperCase()}`);
+    put(this.absolutePath(String(name)) || String(name).toUpperCase());
     mem[at++] = 0;
     const psp = this.pspSeg << 4;
     mem[psp + 0x2C] = ENV_SEG & 0xFF;
@@ -1261,10 +1266,11 @@ class Machine {
   resolvePath(name, directory = false) {
     if (typeof name !== 'string' || !name || /^[\\/]{2}/.test(name)) return null;
     const drive = /^([a-z]):/i.exec(name);
-    if (drive && drive[1].toUpperCase() !== 'C') return null;
+    const disk = drive ? drive[1].toUpperCase().charCodeAt(0) - 65 : this.currentDrive;
+    if (!this.driveAvailable(disk)) return null;
     const rest = drive ? name.slice(2) : name;
     if (/[:*?\x00-\x1f]/.test(rest) || (!directory && /[\\/]$/.test(rest))) return null;
-    const parts = /^[\\/]/.test(rest) ? [] : this.currentDirectory.split('/').filter(Boolean);
+    const parts = /^[\\/]/.test(rest) ? [] : this.driveDirectory(disk).split('/').filter(Boolean);
     for (const part of rest.split(/[\\/]+/)) {
       if (!part || part === '.') continue;
       if (part === '..') { parts.pop(); continue; } // DOS root is its own parent.
@@ -1272,15 +1278,42 @@ class Machine {
       if (!key) return null;
       parts.push(key);
     }
-    return directory || parts.length ? parts.join('/') : null;
+    return directory || parts.length ? (disk === 2 ? '' : String.fromCharCode(97 + disk) + ':/') + parts.join('/') : null;
+  }
+
+  driveAvailable(drive) { return drive === 2 || this.floppyVolumes.has(drive); }
+  driveDirectory(drive) { return drive === this.currentDrive ? this.currentDirectory : this.driveDirectories.get(drive) || ''; }
+  keyDrive(key) { return /^[ab]:\//.test(key || '') ? key.charCodeAt(0) - 97 : 2; }
+  readOnlyKey(key) { return key !== null && this.keyDrive(key) !== 2; }
+  volumeEntry(key) { return this.floppyVolumes.get(this.keyDrive(key))?.entries.get(key.slice(3)); }
+
+  // Call between runner steps. Failed parsing leaves old media and cwd intact.
+  // Open handles retain old bytes; new opens and searches use the inserted disk.
+  changeDisk(drive, image) {
+    if (typeof drive === 'string' && /^[ab]:?$/i.test(drive)) drive = drive.toUpperCase().charCodeAt(0) - 65;
+    if (drive !== 0 && drive !== 1) throw Error('floppy drive must be A: or B:');
+    const volume = image === null ? null : readFat12(image);
+    if (volume) this.floppyVolumes.set(drive, volume); else this.floppyVolumes.delete(drive);
+    this.mediaChanges.push({ drive, label: volume?.label || '', mounted: !!volume });
+    return { drive, label: volume?.label || '', mounted: !!volume };
   }
 
   fileKey(name) { return this.resolvePath(name); }
 
+  absolutePath(name) {
+    const key = this.fileKey(name);
+    return key === null ? null : (this.keyDrive(key) === 2 ? 'C:/' + key : key).replace(/\//g, '\\').toUpperCase();
+  }
+
+  nextFileHandle() {
+    while (this.files.has(this.fileNext) && this.fileNext <= 0xffff) this.fileNext++;
+    return this.fileNext <= 0xffff ? this.fileNext++ : 0;
+  }
+
   // Resolve each component independently. Never fall back to a basename or
   // traverse host symlinks: neither is part of the mounted DOS namespace.
   hostKey(key) {
-    if (!this.fileRoot || key === null) return null;
+    if (!this.fileRoot || key === null || this.readOnlyKey(key)) return null;
     let at = this.fileRoot;
     for (const part of key.split('/').filter(Boolean)) {
       let names;
@@ -1299,6 +1332,7 @@ class Machine {
   hostPath(name) { return this.hostKey(this.fileKey(name)); }
 
   isDirectory(key) {
+    if (this.readOnlyKey(key)) return this.floppyVolumes.get(this.keyDrive(key))?.directories.has(key.slice(3)) || false;
     // An unmounted machine still has an empty virtual C: root for temp files.
     if (key === '' || this.virtualDirectories?.has(key)) return true;
     const at = this.hostKey(key);
@@ -1307,7 +1341,10 @@ class Machine {
   }
 
   parentExists(key) {
-    return key !== null && this.isDirectory(key.includes('/') ? key.slice(0, key.lastIndexOf('/')) : '');
+    if (key === null) return false;
+    let parent = key.includes('/') ? key.slice(0, key.lastIndexOf('/')) : '';
+    if (/^[ab]:$/.test(parent)) parent += '/';
+    return this.isDirectory(parent);
   }
 
   // Where the DTA is: wherever AH=1Ah last put it, else the PSP's own at +80h,
@@ -1317,7 +1354,17 @@ class Machine {
   }
 
   // Immediate children only, merging guest overlays with immutable host files.
-  dirEntries(directory = this.currentDirectory) {
+  dirEntries(directory = this.resolvePath('.', true)) {
+    if (this.readOnlyKey(directory)) {
+      const volume = this.floppyVolumes.get(this.keyDrive(directory));
+      if (!volume) return [];
+      const prefix = directory.slice(3), lead = prefix ? prefix + '/' : '', out = [];
+      for (const [key, e] of volume.entries) if (key.startsWith(lead) && !key.slice(lead.length).includes('/'))
+        out.push({ name: key.slice(lead.length).toUpperCase(), size: e.size, attributes: e.attributes, time: e.time, date: e.date });
+      for (const key of volume.directories) if (key && key.startsWith(lead) && !key.slice(lead.length).includes('/'))
+        out.push({ name: key.slice(lead.length).toUpperCase(), size: 0, ...volume.directoryMetadata.get(key) });
+      return out;
+    }
     const out = [];
     const seen = new Set();
     const prefix = directory ? directory + '/' : '';
@@ -1365,8 +1412,9 @@ class Machine {
       if (!dosMatch(pattern, e.name)) continue;
       bytes[0x0d] = (at + 1) & 0xff; bytes[0x0e] = (at + 1) >>> 8;
       bytes[0x15] = e.attributes;
-      bytes[0x16] = 0; bytes[0x17] = 0;
-      bytes[0x18] = 0x21; bytes[0x19] = 0x1e;
+      const time = e.time ?? 0, date = e.date ?? 0x1e21;
+      bytes[0x16] = time & 255; bytes[0x17] = time >>> 8;
+      bytes[0x18] = date & 255; bytes[0x19] = date >>> 8;
       for (let i = 0; i < 4; i++) bytes[0x1a + i] = e.size >>> (8 * i) & 0xff;
       const name = e.name.slice(0, 12);
       for (let i = 0; i < 13; i++) bytes[0x1e + i] = i < name.length ? name.charCodeAt(i) : 0;
@@ -1392,7 +1440,7 @@ class Machine {
     // missing file.
     const dev = (name || '').replace(/^[A-Za-z]:/, '').split(/[\\/]/).filter(Boolean).pop();
     if (dev && DEVICES.has(dev.toUpperCase())) {
-      const h = this.fileNext++;
+      const h = this.nextFileHandle(); if (!h) return 0;
       this.files.set(h, { buf: EMPTY, pos: 0, name: dev, device: true });
       this.filesOpened.push(dev);
       return h;
@@ -1402,9 +1450,16 @@ class Machine {
     // decompressed temp file and reads it straight back has to see its own
     // bytes, and nothing here ever touches the real disk for writes.
     const key = this.fileKey(name);
+    if (this.readOnlyKey(key)) {
+      const entry = this.volumeEntry(key);
+      if (!entry) { this.filesMissed.push(name); return 0; }
+      const h = this.nextFileHandle(); if (!h) return 0;
+      this.files.set(h, { buf: Uint8Array.from(entry.data), pos: 0, name, key, readOnly: true });
+      this.filesOpened.push(name); return h;
+    }
     if (key && this.tempFiles.has(key)) {
       const rec = this.tempFiles.get(key);
-      const h = this.fileNext++;
+      const h = this.nextFileHandle(); if (!h) return 0;
       this.files.set(h, { buf: rec.data.subarray(0, rec.len), pos: 0, name, rec });
       this.filesOpened.push(name);
       return h;
@@ -1413,7 +1468,7 @@ class Machine {
     if (!p) { this.filesMissed.push(name); return 0; }
     let buf;
     try { buf = fs.readFileSync(p); } catch { this.filesMissed.push(name); return 0; }
-    const h = this.fileNext++;
+    const h = this.nextFileHandle(); if (!h) return 0;
     this.files.set(h, { buf, pos: 0, name, key });
     this.filesOpened.push(name);
     return h;
@@ -1424,6 +1479,11 @@ class Machine {
   // needs it: the program it is asked to run is usually one this run produced.
   readWholeFile(name) {
     const key = this.fileKey(name);
+    if (this.readOnlyKey(key)) {
+      const entry = this.volumeEntry(key);
+      if (!entry) { this.filesMissed.push(name); return null; }
+      return Buffer.from(entry.data);
+    }
     if (key && this.tempFiles.has(key)) {
       const rec = this.tempFiles.get(key);
       return Buffer.from(rec.data.subarray(0, rec.len));
@@ -1438,7 +1498,7 @@ class Machine {
   // real file to the guest: writeable, seekable, and re-openable by name.
   createFile(name) {
     const key = this.fileKey(name);
-    if (!key || !this.parentExists(key) || this.isDirectory(key)) return 0;
+    if (!key || this.readOnlyKey(key) || !this.parentExists(key) || this.isDirectory(key)) return 0;
     // AH=3Ch may truncate an AH=5Ah file while another handle still exists.
     // Keep its identity and attribute policy shared by all open handles.
     const previous = this.tempFiles.get(key);
@@ -1450,7 +1510,7 @@ class Machine {
       }
     }
     this.tempFiles.set(key, rec);
-    const h = this.fileNext++;
+    const h = this.nextFileHandle(); if (!h) return 0;
     this.files.set(h, { buf: rec.data.subarray(0, 0), pos: 0, name, rec });
     this.filesCreated.push(name);
     return h;
@@ -1459,6 +1519,7 @@ class Machine {
   // Write into a created file, growing it. `pos` is honoured, so a program that
   // seeks back to patch a header gets what it wrote there.
   writeFile(f, src, n) {
+    if (f.readOnly) throw Error('read-only DOS volume');
     const source = this.vmExports && this.vmExports.get_cr0() < 0 ? this.guestBytes(src, n) : null;
     // A write into a file that came off the host disk copies it into the
     // in-memory file system first, and every later read of that name sees the
@@ -4844,9 +4905,8 @@ class Machine {
         let end = envAt;
         while (end + 1 < envEnd && !(this.mem[end] === 0 && this.mem[end + 1] === 0)) end++;
         if (!sourceEnv || end + 1 >= envEnd) { r.setResultCf(true); r.set('ax', 10); return true; }
-        let childPath = name.replace(/\\/g, '/');
-        if (!/^[A-Za-z]:/.test(childPath)) childPath = 'C:' + (childPath.startsWith('/') ? '' : '/') + childPath;
-        childPath = childPath.replace(/\//g, '\\').toUpperCase();
+        const childPath = this.absolutePath(name);
+        if (childPath === null) { r.setResultCf(true); r.set('ax', 3); return true; }
         const variables = this.mem.slice(envAt, end + 2);
         const envBytes = variables.length + 2 + childPath.length + 1;
         const envParas = Math.ceil(envBytes / 16);
@@ -5044,7 +5104,7 @@ class Machine {
           const bytes = this.guestBytes(src, n, true);
           for (const b of bytes) this.conPutc(b);
         } else if (f && !f.device) {
-          if (f.rec && f.rec.temporary && f.access === 0) { r.setResultCf(true); r.set('ax', 5); return true; }
+          if (f.readOnly || (f.rec && f.rec.temporary && f.access === 0)) { r.setResultCf(true); r.set('ax', 5); return true; }
           this.writeFile(f, src, n);
         }
         r.set('ax', n);
@@ -5166,21 +5226,39 @@ class Machine {
         else return false;
         r.setResultCf(false);
         return true;
-      case 0x19: r.set('ax', (r.get('ax') & 0xFF00) | 2); return true;   // drive C:
-      // C: is the only mounted drive. Unavailable selections leave it current.
+      case 0x19: r.set('ax', (r.get('ax') & 0xFF00) | this.currentDrive); return true;
+      // Unavailable selections leave the current drive unchanged.
       // AL reports the highest possible drive plus one, not a mounted count.
-      case 0x0E: r.set('ax', (r.get('ax') & 0xFF00) | 3); return true;
+      case 0x0E: {
+        const drive = r.get('dx') & 255;
+        if (this.driveAvailable(drive)) {
+          this.driveDirectories.set(this.currentDrive, this.currentDirectory);
+          this.currentDirectory = this.driveDirectory(drive); this.currentDrive = drive;
+        }
+        r.set('ax', (r.get('ax') & 0xFF00) | 3); return true;
+      }
+      case 0x39: {                              // mkdir, writable C: only
+        const key = this.resolvePath(this.guestPath(r), true);
+        if (key === null || !this.parentExists(key)) { r.setResultCf(true); r.set('ax', 3); return true; }
+        if (!key || this.readOnlyKey(key) || this.isDirectory(key) || this.tempFiles.has(key) || this.hostKey(key)) {
+          r.setResultCf(true); r.set('ax', 5); return true;
+        }
+        if (!this.virtualDirectories) this.virtualDirectories = new Set();
+        this.virtualDirectories.add(key); r.setResultCf(false); return true;
+      }
       case 0x3B: {                              // change current directory
         const key = this.resolvePath(this.guestPath(r), true);
         if (key === null || key.length > 63 || !this.isDirectory(key)) { r.setResultCf(true); r.set('ax', 3); return true; }
-        this.currentDirectory = key;
+        const drive = this.keyDrive(key), relative = drive === 2 ? key : key.slice(3);
+        if (drive === this.currentDrive) this.currentDirectory = relative;
+        this.driveDirectories.set(drive, relative);
         r.setResultCf(false); return true;
       }
       case 0x47: {                              // get current directory
-        const drive = r.get('dx') & 255;
-        if (drive !== 0 && drive !== 3) { r.setResultCf(true); r.set('ax', 15); return true; }
+        const requested = r.get('dx') & 255, drive = requested ? requested - 1 : this.currentDrive;
+        if (!this.driveAvailable(drive)) { r.setResultCf(true); r.set('ax', 15); return true; }
         const at = this.lin(r, 'ds', r.get('si'));
-        this.guestWrite(at, [...Array.from(this.currentDirectory.replace(/\//g, '\\').toUpperCase(), c => c.charCodeAt(0)), 0]);
+        this.guestWrite(at, [...Array.from(this.driveDirectory(drive).replace(/\//g, '\\').toUpperCase(), c => c.charCodeAt(0)), 0]);
         r.setResultCf(false);
         return true;
       }
@@ -5195,6 +5273,7 @@ class Machine {
       case 0x3D: {                              // open
         const name = this.guestPath(r), rec = this.tempFiles.get(this.fileKey(name));
         const access = al & 3;
+        if (this.readOnlyKey(this.fileKey(name)) && access !== 0) { r.setResultCf(true); r.set('ax', 5); return true; }
         if (rec && rec.temporary && (access > 2 || (rec.attributesActive && (rec.attributes & 1) && access !== 0))) {
           r.setResultCf(true); r.set('ax', 5); return true;
         }
@@ -5248,6 +5327,7 @@ class Machine {
         // AH=40h cheerfully accepted. It reads the result back, finds nothing it
         // wrote and exits 0 without drawing a frame.
         const name = this.guestPath(r), rec = this.tempFiles.get(this.fileKey(name));
+        if (this.readOnlyKey(this.fileKey(name))) { r.setResultCf(true); r.set('ax', 5); return true; }
         if (rec && rec.temporary && rec.attributesActive && (rec.attributes & 1)) {
           r.setResultCf(true); r.set('ax', 5); return true;
         }
@@ -5267,6 +5347,7 @@ class Machine {
       }
       case 0x41: {                              // delete
         const key = this.fileKey(this.guestPath(r));
+        if (this.readOnlyKey(key)) { r.setResultCf(true); r.set('ax', 5); return true; }
         const rec = key && this.tempFiles.get(key);
         if (rec && rec.temporary && rec.attributesActive && (rec.attributes & 1)) { r.setResultCf(true); r.set('ax', 5); return true; }
         if (this.hostKey(key)) { r.setResultCf(true); r.set('ax', 5); return true; }
@@ -5295,7 +5376,7 @@ class Machine {
           const rest = name.replace(/^[A-Za-z]:/, '').replace(/\//g, '\\');
           const parts = rest.split('\\').filter(Boolean);
           if (!parts.length || rest.includes(':')) return null;
-          return { drive: drive ? drive[1].toUpperCase() : 'C', key: this.fileKey(name) };
+          return { drive: drive ? drive[1].toUpperCase() : String.fromCharCode(65 + this.currentDrive), key: this.fileKey(name) };
         };
         const from = parse(source), to = parse(target);
         if (!from || !to) return fail(3);
@@ -5314,6 +5395,12 @@ class Machine {
         return true;
       }
       case 0x36: {                              // free disk space
+        const requested = r.get('dx') & 255, drive = requested ? requested - 1 : this.currentDrive;
+        if (!this.driveAvailable(drive)) { r.set('ax', 0xffff); return true; }
+        const volume = this.floppyVolumes.get(drive);
+        if (volume) {
+          r.set('ax', volume.spc); r.set('cx', volume.bps); r.set('dx', volume.clusters); r.set('bx', volume.freeClusters); return true;
+        }
         r.set('ax', 8);                         // sectors per cluster
         r.set('cx', 512);                       // bytes per sector
         r.set('dx', 0xFFFF);                    // total clusters
@@ -5321,9 +5408,10 @@ class Machine {
         return true;
       }
       case 0x3E: {                              // close
-        const closing = this.files.get(r.get('bx') & 0xFFFF);
+        const handle = r.get('bx') & 0xffff, closing = this.files.get(handle);
         if (closing && closing.rec && closing.rec.temporary) closing.rec.attributesActive = true;
-        this.files.delete(r.get('bx') & 0xFFFF);
+        this.files.delete(handle);
+        if (closing && handle >= 5) this.fileNext = Math.min(this.fileNext, handle);
         r.setResultCf(false);
         return true;
       }
@@ -5385,10 +5473,11 @@ class Machine {
           r.setResultCf(false); return true;
         }
         const key = this.resolvePath(name, true), directory = key !== null && this.isDirectory(key);
+        const entry = key && this.readOnlyKey(key) && this.volumeEntry(key);
         const p = this.hostKey(key);
-        if (!p && !rec && !directory) { r.setResultCf(true); r.set('ax', 2); return true; }
+        if (!p && !rec && !directory && !entry) { r.setResultCf(true); r.set('ax', 2); return true; }
         if (al !== 0) { r.setResultCf(true); r.set('ax', 5); return true; }
-        r.set('cx', directory ? 0x10 : 0x20);
+        r.set('cx', directory ? 0x10 : entry ? entry.attributes : 0x20);
         r.setResultCf(false);
         return true;
       }
