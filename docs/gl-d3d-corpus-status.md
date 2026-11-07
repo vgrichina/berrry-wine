@@ -1,5 +1,25 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: registered Direct3D samples across both schedulers
+
+Published `3a006e140` records 12 successful registered startup cases for
+`dx_globe`, `dx_viewer` and `dx_flip3dtl`: software and WebGL, each with
+cooperative and threaded execution. The worker inspected every final startup
+capture and ordinary controls. Viewer loads the original `mslogo.x` through
+File/Open; Globe switches to wireframe through its Render menu; Flip3DTL rotates.
+The coordinator also inspected the threaded WebGL Viewer model and Globe
+wireframe captures and sent them to the owner.
+
+The locked build and three focused sample regressions passed. The unchanged
+texture-wrap regression fails because its recording GPU fixture lacks the
+`device.gpu.gl` object now needed by the native 16-bit store path. A local
+diagnostic bypass isolates that fixture limitation; it is not an unmodified
+test pass or evidence that native 16-bit rendering is correct. No emulator
+repair was justified. Globe texture bands still need an aligned Windows
+reference; full historical27 membership, FPS, audio and backend parity remain
+open. Evidence was retrieved and verified before normal nonforced box shutdown.
+[Cases, controls, hashes and test limitation](re-notes/graphics-dx-samples-20261107.md).
+
 ## November 7: Quake III browser WebGL movement, firing and torch pair
 
 Published `524cc8138` verifies the authentic PK3 transfer and 913 runtime pins.
