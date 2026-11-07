@@ -2158,7 +2158,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   status: done (original launch, forward and registered turning reviewed)
   owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
   worker: /root/outlaws_original_qt_prepare
-  Next: Root reviewedsettledturn before/held/idle directionalworldchange health10/tint0 allsamples; oneLeft500ms releasedorientationheld. Priorforward also reviewed. Run20261018-outlaws-settled-turn-observation root3149pins31original/groupemptyPASS exits0. Corequalified; combat/audioFPS/browser/fullgame remain unverified. Fresh /root/new_game_refill_after_outlaws screeningreplacement.
+  Next: Production Worker nested NE lifecycle fixed and published c254a3e3e (actual Worker fail-before/pass-after, cancellation controls and locked build pass). Root reviewed current original browser level-ready, walk-forward, turn-right and secondary-fire captures in 20261107-outlaws-worker-ne-lifecycle: movement beyond gate, changed orientation and visible muzzle flash/hammer animation. All103 retrieved artifacts independently match recorded SHA-256/size. Enemy hit/kill, audio, FPS and full-game behavior remain unverified; worker is closing evidence and runtime custody. Further Outlaws work should target an enemy interaction, not repeat startup or movement.
   Done: Original working launch, ordinary player-controlled gameplay and reviewed screenshot with exact run/source identities.
 
 - [x] New-game lane: Army Men original 1998 Windows demo
