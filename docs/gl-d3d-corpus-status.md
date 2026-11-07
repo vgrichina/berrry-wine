@@ -1,5 +1,21 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: Hexen II post-notice progress and control repair
+
+Published `10bf01e42` fixes stdin control replies being suppressed by diagnostic
+trace windows. Actual production Notepad reproduces the missing reply before
+the fix; success, error, snapshot and ordinary key replies pass afterward.
+Focused control regressions and the locked build passed.
+
+The cooperative original passed its notice and reached native GL plus MIDI
+open-callback execution. Missing replies stopped that run as UNKNOWN; the
+threaded arm was not launched. Its final logo texture is not a composited menu
+or world capture. Evidence was verified before normal shutdown of
+`bx_25tc5y5f`. Fresh `graphics-repaired-pair-1555` targets the incomplete pair
+with repaired transport and composited captures. Gameplay, playback, parity
+and historical27 completion remain open.
+[Observed progress, regression and limits](re-notes/graphics-post-notice-20261107.md).
+
 ## November 7: Tunnel, Twist and Boids browser coverage
 
 Published `fa63787b0` closes the four remaining Worker configuration harness
