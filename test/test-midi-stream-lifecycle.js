@@ -525,6 +525,36 @@ test('event/window/NULL notifications and unsupported routes fail explicitly', (
   assert.throws(() => s.open(3), /worker delivery unsupported/);
   assert.equal(s.ctx._midiOut.devices.size, 0);
 });
+test('local main MIDI owner survives an auxiliary Worker scheduler', () => {
+  for (const type of [1, 3]) {
+    const s = setup();
+    // CLI --threads keeps its main VM local; only auxiliary VMs are Workers.
+    s.ctx.threadManager = { workerBackend: {}, mainInstance: { exports: s.ctx.exports } };
+    const h = s.open(type, type === 1 ? 77 : 0x12345);
+    s.queue(h);
+    s.call('midiStreamStop', h);
+    s.call('midiStreamClose', h);
+    s.pump();
+    if (type === 3) {
+      assert.deepEqual(s.notifications.map(n => n.args[1]), [0x3c7, 0x3c9, 0x3c8]);
+      assert(s.notifications.every(n => n.cb === 0x12345 && n.args[0] === h));
+      assert.equal(s.e.mm_timer_in_cb.value, 0, 'local callback returned');
+    } else {
+      assert.deepEqual(s.windows, [[77, 0x3c7, h, 0], [77, 0x3c9, h, 1024], [77, 0x3c8, h, 0]]);
+    }
+    assert.equal(s.ctx._midiOut.callbacks.length, 0);
+  }
+  // A broker/proxy or another VM must not inherit the local-main exception.
+  for (const main of [undefined, {}, { exports: {} }]) {
+    const s = setup();
+    s.ctx.threadManager = { workerBackend: {}, mainInstance: main };
+    for (const type of [1, 3]) {
+      assert.throws(() => s.open(type), /worker delivery unsupported/);
+      assert.equal(s.ctx._midiOut.devices.size, 0);
+      assert.equal(s.ctx._midiOut.callbacks.length, 0);
+    }
+  }
+});
 test('reentrant DONE requeues/restarts/closes without consuming new work or old registration', () => {
   const s = setup(), h = s.open(); s.queue(h); s.call('midiStreamStop', h);
   let reentered = false;
