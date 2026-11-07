@@ -2465,7 +2465,7 @@
         (local.set $internal (i32.load offset=12 (local.get $s)))
         (local.set $src (i32.load offset=32 (local.get $s)))
         (if (local.get $w) (then
-          (local.set $obj (call $d3d9_create_surface (local.get $w) (i32.const 1) (i32.const 32) (i32.const 4)))
+          (local.set $obj (call $d3d9_create_surface (local.get $w) (i32.const 1) (i32.const 32) (i32.const 0x404)))
           (if (i32.eqz (local.get $obj)) (then
             (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 0))))))))
     ;; All validation and allocation precede mutation, including queued use.
@@ -3035,7 +3035,9 @@
         (local.set $border (i32.load offset=24 (local.get $s)))
         (local.set $internal (i32.load offset=12 (local.get $s)))
         (if (i32.and (i32.ne (local.get $w) (i32.const 0)) (i32.ne (local.get $h) (i32.const 0))) (then
-          (local.set $surface (call $d3d9_create_surface (local.get $w) (local.get $h) (i32.const 32) (i32.const 4)))
+          ;; CPU texture mirrors are not guest-visible display bitmaps. Keep
+          ;; them in reclaimable heap storage rather than the fixed DIB arena.
+          (local.set $surface (call $d3d9_create_surface (local.get $w) (local.get $h) (i32.const 32) (i32.const 0x404)))
           (if (i32.eqz (local.get $surface)) (then
             (call $gl_list_error (local.get $ctx) (i32.const 0x505)) (return (i32.const 0))))))))
     (call $d3dim_worker_fence)

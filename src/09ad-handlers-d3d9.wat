@@ -668,7 +668,9 @@
   ;; works on D3D9 surfaces unchanged. Entry fields match
   ;; $handle_IDirectDraw_CreateSurface: +12 w, +14 h, +16 bpp, +18 pitch,
   ;; +20 DIB (WASM addr), +24 vidmem bytes, +28 flags (1=primary, 4=offscreen).
-  ;; Returns the COM object, or 0 when the DIB arena or object table is full.
+  ;; Flag 0x400 selects heap-owned backing (GL CPU texture images); ordinary
+  ;; D3D render targets retain DIB backing. Release uses the same ownership bit.
+  ;; Returns the COM object, or 0 when backing or the object table is full.
   (func $d3d9_create_surface (param $w i32) (param $h i32) (param $bpp i32) (param $flags i32) (result i32)
     (local $pitch i32) (local $size i32) (local $dib_guest i32) (local $dib_wa i32)
     (local $obj i32) (local $entry i32)
@@ -676,14 +678,14 @@
       (i32.add (i32.mul (local.get $w) (i32.div_u (local.get $bpp) (i32.const 8))) (i32.const 3))
       (i32.const 0xFFFFFFFC)))
     (local.set $size (i32.mul (local.get $pitch) (local.get $h)))
-    ;; Match DirectDraw's canonical DIB ownership, including Release/GetDC.
-    (local.set $dib_guest (call $dib_alloc (local.get $size)))
+    ;; Match DirectDraw's canonical storage ownership, including Release/GetDC.
+    (local.set $dib_guest (call $dx_surface_storage_alloc (local.get $size) (local.get $flags)))
     ;; g2w(0) is the base of the guest image; never zero a surface from there.
     (if (i32.eqz (local.get $dib_guest)) (then (return (i32.const 0))))
     (local.set $dib_wa (call $g2w (local.get $dib_guest))) (call $zero_memory (local.get $dib_wa) (local.get $size))
     (local.set $obj (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF2)))
     (if (i32.eqz (local.get $obj)) (then
-      (call $dib_free_wasm (local.get $dib_wa)) (return (i32.const 0))))
+      (call $dx_surface_storage_free (local.get $dib_wa) (local.get $flags)) (return (i32.const 0))))
     (local.set $entry (call $dx_from_this (local.get $obj)))
     (store.field DxObject width (local.get $entry) (local.get $w))
     (store.field DxObject height (local.get $entry) (local.get $h))

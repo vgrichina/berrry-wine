@@ -941,7 +941,7 @@
     (if (i32.or (i32.gt_s (local.get $w) (i32.const 4096)) (i32.gt_s (local.get $h) (i32.const 4096)))
       (then (return)))
     (local.set $obj (call $d3d9_create_surface (local.get $w) (local.get $h)
-      (i32.const 32) (i32.const 4)))
+      (i32.const 32) (i32.const 0x404)))
     (if (i32.eqz (local.get $obj)) (then (return)))
     (local.set $entry (call $dx_from_this (local.get $obj)))
     (call $dx_surf_fmt_set (local.get $entry) (i32.const 5))       ;; ARGB8888
