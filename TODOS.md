@@ -2038,8 +2038,9 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 
 - [~] New-game lane: Recoil demo
   id: NEW-GAME-RECOIL-DEMO-20261011
-  status: blocked (core gameplay merged; device/audio/FPS follow-ups require runtime)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  status: queued (historical gameplay accepted; current-main browser movement/turn/fire follow-through prepared)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Update 2026-11-07T08:26Z: Reclaimed released previous-codex lane. All107 original game files and existing browser manifest are present;108 exact paths/76019820 bytes hashed in scratch/runs/20261107-recoil-next-inputs/fixture-pins.json. Prepared scratch/usage-watch/recoil-current-gameplay-next.task.txt for ONE fresh box and current-main ordinary movement/turn/fire with reviewed gameplay captures. Not launched while MCM, AVP2 collector prerequisite and saver-motion workers occupy the three slots. Historical acceptance remains; physical phone/WebKit/audio/FPS remain unverified. Old resume requirement below is superseded by fresh-box reconstruction.
   source: https://archive.org/details/RecoilDemo
   Next: Main f9376176448849d53c9cfbcfc47e330691457ac0 cherry-picks d189a725a qualification notes; ancestor and exact note content verified2026-10-15. No integration blocker remains. Historical run20261011T2056Z-recoil-main-tap-gameplay records ordinary touch route and padLeft tank/view turn on274902b02.15.10 guest presentation events/s is not logical/display FPS or controlled benchmark. Physical phone/WebKit/audio remain unverified; no new runtime or release qualification from this reconciliation.
   Done: Ordinary launch and player-controlled gameplay with reviewed screenshot/build identity, registered and pushed main; FPS/audio separately measured.
