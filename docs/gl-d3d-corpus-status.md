@@ -5,9 +5,15 @@
 Published `c2316ac83` records current browser startup stopping before GL at
 missing installer-derived DirectX registry metadata, followed by normal exit.
 The existing registry regression passes; no rendering defect or current flight
-progress was demonstrated. A fresh worker is recovering authentic installation
-state before repeating cockpit, movement and firing checks.
+progress was demonstrated. Published `35952117c` completes bounded installation
+recovery: 25 installed media hashes match, but no completed authentic DirectX
+snapshot or original setup media was found. The recovered genuine DX7a installer
+checkpoint still requires six WININIT operations; importing its version alone
+would misrepresent installation. Supported restart completion remains necessary
+before another flight check. The graphics slot now tests original Forsaken
+browser WebGL combat.
 [Startup evidence and recovery prerequisite](re-notes/descent3-current-browser-flight-20261107.md).
+[Installation recovery evidence](re-notes/descent3-installation-state-20261107.md).
 
 
 ## November 7: repaired original Quake III torch follow-through
