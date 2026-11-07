@@ -23,10 +23,23 @@ verified main instance; callback lifecycle, foreign-owner rejection, actual
 Worker regressions and the locked build pass. The original was not rerun after
 the fix. Backend selection does not prove auxiliary-thread execution, and empty
 PCM does not prove playback. Evidence was verified before normal archived stop
-of `bx_xtyxkm7m`. The active `graphics-threaded-followthrough-1608` assignment
-tests the repaired threaded path and investigates remaining rendering defects.
-Gameplay, playback, parity and historical27 completion remain open.
+of `bx_xtyxkm7m`. Playback, parity and historical27 completion remain open.
 [Composited world, MIDI repair and limits](re-notes/graphics-repaired-pair-20261107.md).
+
+
+Published `fece02eca` then reaches the threaded composited courtyard and records
+visible forward movement toward a stone wall. Black models and HUD regions
+persist. Bounded draw state identifies enabled texture names with no image
+levels and positive primary colors. The ordinary shader incorrectly sampled
+incomplete textures; the repair preserves API enable state while skipping
+incomplete texture application, with failing-before/passing-after WebGL1/2 pixel
+regressions, focused suites and locked build passing. These original captures
+predate the shader fix: its visible effect and the reason for missing image
+definitions remain unverified. Fresh `graphics-texture-world-1626` pursues both.
+MIDI open/callback execution was observed, but no playback or auxiliary guest
+execution was established. Evidence was retrieved and hash-verified before
+normal archived stop of `bx_hqm2pn99`.
+[Threaded movement, texture repair and remaining boundary](re-notes/graphics-threaded-followthrough-20261107.md).
 
 ## November 7: Tunnel, Twist and Boids browser coverage
 
