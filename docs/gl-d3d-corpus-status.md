@@ -1,5 +1,20 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: Quake III browser WebGL world movement
+
+Published `524cc8138` verifies the authentic PK3 transfer and 913 runtime pins.
+The owning OpenGLHostBridge uses WebGLBackend v1 on Intel/Mesa ANGLE, with no
+software batches or fallback reported. The coordinator inspected the settled
+Q3DM1 courtyard, forward-progress and torch-approach captures: ordinary balanced
+W input moves toward the lit arch while the weapon, HUD and world remain readable.
+
+The browser deadline closed during a later camera-turn capture. Release records
+show no held keys, and dependent inputs stopped. Firing and the requested paired
+same-camera torch views remain unverified. This advances the named browser route;
+full historical27 coverage, FPS, audio and backend parity remain open.
+[Transfer, captures, identities and cleanup](re-notes/q3-chunked-media-20261107.md).
+
+
 ## November 7: Quake III browser software torch and WebGL menu
 
 Published `e0194cce7` repairs stale launch metadata: the controls file contains
