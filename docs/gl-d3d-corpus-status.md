@@ -1,5 +1,22 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-07
 
+## November 7: Architecture, Jazz and Rock & Roll scene motion
+
+Published `17a9d604d` adds 12 named cases for original registered Architecture,
+Jazz and Rock & Roll savers: software and WebGL, each with cooperative and
+guest Worker execution. All 36 captures were inspected by the worker; the
+coordinator inspected Architecture's threaded WebGL motion pair and Rock & Roll
+scene. Objects change pose and extent against fixed backgrounds, with continued
+owning execution and no recorded escaped trap during the observation windows.
+
+All six WebGL cases report zero errors and fallbacks; their actual provider is
+ANGLE Vulkan SwiftShader. Software draw completion counts remain unavailable.
+The locked build, three focused checks and postflight pins passed. Evidence and
+both modules were retrieved and hash-verified before normal nonforced shutdown.
+No implementation defect was established. FPS, audio, Windows-reference
+correctness, backend parity and historical27 membership remain open.
+[Named cases, actual providers and evidence limits](re-notes/graphics-remaining-savers-20261107.md).
+
 ## November 7: three registered savers across both backends and schedulers
 
 Published `c04cc7024` records motion in the original Falling Leaves, Geometry
