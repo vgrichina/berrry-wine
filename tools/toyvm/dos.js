@@ -1371,7 +1371,7 @@ class Machine {
     for (const [key, rec] of this.tempFiles) {
       if (!key.startsWith(prefix) || key.slice(prefix.length).includes('/')) continue;
       const name = key.slice(prefix.length);
-      out.push({ name: name.toUpperCase(), size: rec.len, attributes: rec.attributes ?? 0x20 }); seen.add(name);
+      out.push({ name: name.toUpperCase(), size: rec.len, attributes: rec.attributes ?? 0x20, time: rec.time, date: rec.date }); seen.add(name);
     }
     for (const key of this.virtualDirectories || []) {
       if (!key || !key.startsWith(prefix) || key.slice(prefix.length).includes('/')) continue;
@@ -1454,7 +1454,7 @@ class Machine {
       const entry = this.volumeEntry(key);
       if (!entry) { this.filesMissed.push(name); return 0; }
       const h = this.nextFileHandle(); if (!h) return 0;
-      this.files.set(h, { buf: Uint8Array.from(entry.data), pos: 0, name, key, readOnly: true });
+      this.files.set(h, { buf: Uint8Array.from(entry.data), pos: 0, name, key, readOnly: true, time: entry.time, date: entry.date });
       this.filesOpened.push(name); return h;
     }
     if (key && this.tempFiles.has(key)) {
@@ -5270,6 +5270,32 @@ class Machine {
       // buffer. MAINPART.EXE is the second kind: it allocates EMS, maps four
       // pages and reads its data into them, and every one of those reads was
       // going nowhere.
+      case 0x57: {                              // get/set last-write date/time
+        const fail = code => { r.setResultCf(true); r.set('ax', code); return true; };
+        if (al !== 0 && al !== 1) return fail(1);
+        const f = this.files.get(r.get('bx') & 0xffff);
+        if (!f || f.device) return fail(6);
+        if (al === 0) {
+          // Immutable media handles retain their original disk's metadata.
+          // Unstamped C: files use the same deterministic date as FindFirst.
+          const rec = f.rec || f;
+          r.set('cx', rec.time ?? 0); r.set('dx', rec.date ?? 0x1e21);
+        } else {
+          if (f.readOnly) return fail(5);
+          if (!f.rec) {
+            // Host corpus bytes stay immutable. Metadata changes, like writes,
+            // belong to the guest overlay and must survive close/reopen.
+            const key = f.key || this.fileKey(f.name);
+            const rec = this.tempFiles.get(key) || { data: Uint8Array.from(f.buf), len: f.buf.length };
+            this.tempFiles.set(key, rec);
+            for (const other of this.files.values()) {
+              if (!other.device && !other.readOnly && (other.key || this.fileKey(other.name)) === key) other.rec = rec;
+            }
+          }
+          f.rec.time = r.get('cx') & 0xffff; f.rec.date = r.get('dx') & 0xffff;
+        }
+        r.setResultCf(false); return true;
+      }
       case 0x3D: {                              // open
         const name = this.guestPath(r), rec = this.tempFiles.get(this.fileKey(name));
         const access = al & 3;

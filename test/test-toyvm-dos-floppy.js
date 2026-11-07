@@ -58,6 +58,22 @@ function suite(Klass) {
   for (const ah of [0x3c, 0x41, 0x39]) fail(call(m, ah, 'A:/SAME.TXT'), 5);
   fail(call(m, 0x3d, 'A:/SAME.TXT', {}, 2), 5);
   const handle = call(m, 0x3d, 'A:/SAME.TXT').ax;
+  const stamp = call(m, 0x57, undefined, { bx: handle });
+  assert.equal(stamp.cf, false); assert.equal(stamp.cx, 0x1234); assert.equal(stamp.dx, 0x4321);
+  fail(call(m, 0x57, undefined, { bx: handle, cx: 0, dx: 0 }, 1), 5);
+  fail(call(m, 0x57, undefined, { bx: 0xffff }), 6);
+  fail(call(m, 0x57, undefined, { bx: handle }, 2), 1);
+  const output = call(m, 0x3d, 'C:/MPS/GPRIX/SAME.TXT').ax;
+  const peer = call(m, 0x3d, 'C:/MPS/GPRIX/SAME.TXT').ax;
+  // The first original unpacked file stopped at precisely this set-time call.
+  assert.equal(call(m, 0x57, undefined, { bx: output, cx: 0x3621, dx: 0x0036 }, 1).cf, false);
+  assert.equal(call(m, 0x57, undefined, { bx: peer }).cx, 0x3621);
+  call(m, 0x3e, undefined, { bx: output }); call(m, 0x3e, undefined, { bx: peer });
+  fail(call(m, 0x57, undefined, { bx: peer }), 6);
+  const reopened = call(m, 0x3d, 'C:/MPS/GPRIX/SAME.TXT').ax;
+  assert.equal(call(m, 0x57, undefined, { bx: reopened }).dx, 0x0036);
+  assert.equal(m.dirEntries('mps/gprix').find(e => e.name === 'SAME.TXT').time, 0x3621);
+  call(m, 0x3e, undefined, { bx: reopened });
   fail(call(m, 0x40, undefined, { bx: handle, cx: 1 }), 5);
   call(m, 0x1a, undefined, { dx: 0x500 });
   assert.equal(call(m, 0x4e, 'A:/*.TXT').cf, false);
@@ -73,6 +89,7 @@ function suite(Klass) {
   assert.throws(() => m.changeDisk('C', b));
   assert.equal(m.readWholeFile('A:/SAME.TXT').toString(), 'first');
   m.changeDisk('A', b);
+  assert.equal(call(m, 0x57, undefined, { bx: handle }).cx, 0x1234);
   assert.equal(m.files.get(handle).buf.toString ? Buffer.from(m.files.get(handle).buf).toString() : '', 'first');
   assert.equal(m.readWholeFile('A:/SAME.TXT').toString(), 'second');
   assert.equal(m.currentDirectory, 'mps/gprix');
@@ -101,6 +118,21 @@ function suite(Klass) {
   a.fill(0); assert.equal(m.readWholeFile('A:/SAME.TXT').toString(), 'second');
 }
 suite(Machine);
+// Timestamp-only changes to corpus files are guest overlays, never host writes.
+const hostRoot = fs.mkdtempSync(require('os').tmpdir() + '/toyvm-date-');
+try {
+  fs.writeFileSync(hostRoot + '/HOST.DAT', 'immutable');
+  const m = new Machine(new Uint8Array(1 << 20)); m.fileRoot = hostRoot;
+  const one = call(m, 0x3d, 'HOST.DAT').ax, two = call(m, 0x3d, 'HOST.DAT').ax;
+  assert.equal(call(m, 0x57, undefined, { bx: one, cx: 0xabcd, dx: 0x5678 }, 1).cf, false);
+  assert.equal(call(m, 0x57, undefined, { bx: two }).cx, 0xabcd);
+  call(m, 0x3e, undefined, { bx: one }); call(m, 0x3e, undefined, { bx: two });
+  const reopened = call(m, 0x3d, 'HOST.DAT').ax;
+  assert.equal(call(m, 0x57, undefined, { bx: reopened }).dx, 0x5678);
+  assert.equal(m.dirEntries('').find(e => e.name === 'HOST.DAT').date, 0x5678);
+  assert.equal(fs.readFileSync(hostRoot + '/HOST.DAT', 'utf8'), 'immutable');
+  assert.equal(m.readWholeFile('HOST.DAT').toString(), 'immutable');
+} finally { fs.rmSync(hostRoot, { recursive: true, force: true }); }
 for (const mutate of [
   b => b.fill(0, 510, 512),
   b => b[5120] ^= 1,
@@ -151,7 +183,9 @@ async function production() {
     a(0xba, 'source'); e(0xb8, 0, 0x3d, 0xcd, 0x21, 0x89, 0xc3);
     a(0xba, 'buffer'); e(0xb9, 5, 0, 0xb4, 0x3f, 0xcd, 0x21);
     a(0xba, 'target'); e(0x31, 0xc9, 0xb4, 0x3c, 0xcd, 0x21, 0x89, 0xc3);
-    a(0xba, 'buffer'); e(0xb9, 5, 0, 0xb4, 0x40, 0xcd, 0x21, 0xb4, 0x3e, 0xcd, 0x21);
+    a(0xba, 'buffer'); e(0xb9, 5, 0, 0xb4, 0x40, 0xcd, 0x21);
+    e(0xb9, 0x21, 0x36, 0xba, 0x36, 0, 0xb8, 1, 0x57, 0xcd, 0x21);
+    e(0xb4, 0x3e, 0xcd, 0x21);
     e(0xb8, 7, 0x4c, 0xcd, 0x21);
   }, { source: 'A:SAME.TXT', target: 'C:/MPS/GPRIX/CHILD.TXT', buffer: Array(8).fill(0), dir: 'C:/MPS', subdir: 'C:/MPS/GPRIX' });
   const parent = program((e, a) => {
@@ -174,11 +208,15 @@ async function production() {
   assert.equal(runner.vm.mem[(runner.machine.pspSeg << 4) + 0x300], 7);
   assert.equal(runner.vm.mem[(runner.machine.pspSeg << 4) + 0x301], 0);
   const saved = runner.capture();
+  const originalRecord = runner.machine.tempFiles.get('mps/gprix/child.txt');
+  assert.equal(originalRecord.time, 0x3621); assert.equal(originalRecord.date, 0x0036);
+  originalRecord.time = 0;
   runner.changeDisk('A', disk('second'));
   assert.equal(runner.machine.readWholeFile('A:/SAME.TXT').toString(), 'second');
   runner.restore(saved);
   assert.equal(runner.machine.readWholeFile('A:/SAME.TXT').toString(), 'first');
   assert.equal(runner.machine.readWholeFile('C:/MPS/GPRIX/CHILD.TXT').toString(), 'first');
+  assert.equal(runner.machine.tempFiles.get('mps/gprix/child.txt').time, 0x3621);
   assert.equal(sha(image), before);
   console.log('PASS production native DOS drive selection, FAT file open/read, child EXEC inheritance, C: output and runner disk change');
 }
