@@ -65,51 +65,95 @@ const RENDER_READ = `(() => {
 
 function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = Date.now}) {
   let latest = null, busy = false, closed = false;
+  // CDP WebAssembly scripts are immutable within their actual Worker/session.
+  // Cache only bytes we recovered and hashed ourselves. Each use still reads
+  // current page/Worker/instance/renderer identities and the full script set.
+  const moduleCache = new WeakMap();
+  function modules(w) {
+    assert(!w.closed, 'Worker detached during identity read');
+    assert(w.scripts.length && w.scripts.every(s=>s.bytecodeAvailable && s.sha256 && !s.error),
+      'complete recovered live module inventory required');
+    return [...new Map(w.scripts.map(s=>[s.scriptId,s])).values()];
+  }
   async function readLive() {
-    const page = await evaluate(PAGE_READ);
+    const started = performance.now(), timings = [];
+    async function measured(operation, task) {
+      const at = performance.now();
+      const value = await task();
+      timings.push({operation, ms:performance.now()-at});
+      return value;
+    }
+    const read = (expression, session, label) => measured(label, ()=>evaluate(expression, session));
+    async function moduleHash(w, scripts, label) {
+      const signature = JSON.stringify([w.sessionId,w.targetId,scripts.map(s=>[s.scriptId,s.sha256])]);
+      const cached = moduleCache.get(w);
+      if(cached?.signature===signature) {
+        timings.push({operation:label,ms:0,cached:true,bytes:cached.bytes});
+        return cached.sha256;
+      }
+      const source = await measured(label+'.transfer', ()=>send('Debugger.getScriptSource', {scriptId:scripts[0].scriptId}, w.sessionId));
+      assert(source.bytecode, 'live module bytecode required');
+      const at=performance.now(), bytes=Buffer.from(source.bytecode,'base64'), digest=sha(bytes);
+      timings.push({operation:label+'.hash',ms:performance.now()-at,bytes:bytes.length,cached:false});
+      assert.equal(digest,scripts[0].sha256,'live module bytes changed');
+      assert.equal(JSON.stringify([w.sessionId,w.targetId,modules(w).map(s=>[s.scriptId,s.sha256])]),signature,'module inventory changed during retrieval');
+      moduleCache.set(w,{signature,sha256:digest,bytes:bytes.length});
+      return digest;
+    }
+    const page = await read(PAGE_READ, undefined, 'page.before');
     assert(page.isolated && page.apps.length === 1, 'one isolated registered app required');
     const a = page.apps[0];
     assert(a.name === app && a.running && !a.stopped && a.guestWorker, 'live registered app required');
-    const matches = [];
-    for (const w of workers.values()) {
-      if (w.closed || !w.url.includes('guest-worker')) continue;
-      const live = await evaluate(WORKER_READ, w.sessionId);
-      if (live?.endpointIdentity === a.guestEndpoint && live.slot === a.slot) matches.push({w, live});
-    }
-    assert.equal(matches.length, 1, 'unique actual guest Worker target required');
-    const {w, live} = matches[0];
-    const scripts = [...new Map(w.scripts.filter(s => s.bytecodeAvailable && s.sha256 && !s.error).map(s=>[s.scriptId,s])).values()];
-    assert.equal(scripts.length, 1, 'unique recovered live Worker module required');
-    const source = await send('Debugger.getScriptSource', {scriptId:scripts[0].scriptId}, w.sessionId);
-    assert(source.bytecode, 'live module bytecode required');
-    const moduleSha256 = sha(Buffer.from(source.bytecode, 'base64'));
-    assert.equal(moduleSha256, scripts[0].sha256, 'live module bytes changed');
-    let rendererTarget='none',rendererEpoch='none',rendererModuleSha256='none';
+    const candidates=[...workers.values()].filter(w=>!w.closed);
+    // Different Worker targets and renderer reads have no dependency on each
+    // other. Await all results, so failures cannot leave unobserved reads.
+    const results=await Promise.allSettled(candidates.filter(w=>w.url.includes('guest-worker') || a.renderEndpoint!=='none'&&w.url.includes('d3d-render-worker')).map(async w=>{
+      const guest=w.url.includes('guest-worker');
+      return {w,guest,value:await read(guest?WORKER_READ:RENDER_READ,w.sessionId,(guest?'guest:':'renderer:')+w.targetId)};
+    }));
+    for(const r of results)if(r.status==='rejected')throw r.reason;
+    const observations=results.map(r=>r.value);
+    const matches=observations.filter(o=>o.guest&&o.value?.endpointIdentity===a.guestEndpoint&&o.value.slot===a.slot);
+    assert.equal(matches.length,1,'unique actual guest Worker target required');
+    const {w,value:live}=matches[0],scripts=modules(w);
+    assert.equal(scripts.length,1,'unique recovered live Worker module required');
+    const owners=observations.filter(o=>!o.guest).flatMap(o=>o.value.filter(e=>e.id===a.renderEndpoint).map(endpoint=>({r:o.w,endpoint})));
+    let rendererTarget='none',rendererEpoch='none',rendererModuleSha256='none',owner,renderScripts;
     if(a.renderEndpoint!=='none') {
-      const owners=[];
-      for(const r of workers.values())if(!r.closed&&r.url.includes('d3d-render-worker')) {
-        const endpoints=await evaluate(RENDER_READ,r.sessionId);
-        for(const endpoint of endpoints)if(endpoint.id===a.renderEndpoint)owners.push({r,endpoint});
-      }
       assert.equal(owners.length,1,'unique actual owning renderer required');
-      const {r,endpoint}=owners[0];assert(!endpoint.failed&&!endpoint.control?.error,'live renderer required');
+      owner=owners[0];const {r,endpoint}=owner;
+      assert(!endpoint.failed&&!endpoint.control?.error,'live renderer required');
       rendererTarget=r.targetId;rendererEpoch=endpoint.epoch;
-      const modules=[...new Map(r.scripts.filter(s=>s.sha256&&s.bytecodeAvailable&&!s.error).map(s=>[s.scriptId,s])).values()];
-      assert.equal(new Set(modules.map(s=>s.sha256)).size,1,'unique actual renderer module required');
-      const bytes=await send('Debugger.getScriptSource',{scriptId:modules[0].scriptId},r.sessionId);
-      assert(bytes.bytecode,'actual renderer module bytes required');
-      rendererModuleSha256=sha(Buffer.from(bytes.bytecode,'base64'));
-      assert.equal(rendererModuleSha256,modules[0].sha256);
+      renderScripts=modules(r);
+      assert.equal(new Set(renderScripts.map(s=>s.sha256)).size,1,'unique actual renderer module required');
     }
+    const hashes=await Promise.allSettled([moduleHash(w,scripts,'guest.module'),...(owner?[moduleHash(owner.r,renderScripts,'renderer.module')]:[])]);
+    for(const h of hashes)if(h.status==='rejected')throw h.reason;
+    const moduleSha256=hashes[0].value;
+    if(owner)rendererModuleSha256=hashes[1].value;
     const rendererIdentity={rendererTarget,rendererEpoch,rendererModuleSha256};
     const identity = {...a, workerTarget:w.targetId, workerInstance:live.instance, moduleSha256,...rendererIdentity};
     same(identity, identity);
-    // Recheck page references after asynchronous Worker reads.
-    const after = await evaluate(PAGE_READ);
-    assert(after.apps.length === 1 && after.apps[0].running && !after.apps[0].stopped);
+    // Recheck page references after asynchronous Worker reads. Never cache a
+    // live object identity, target membership or running/failed status.
+    const finalReads=await Promise.allSettled([
+      read(PAGE_READ, undefined, 'page.after'),
+      read(WORKER_READ,w.sessionId,'guest.after'),
+      ...(owner?[read(RENDER_READ,owner.r.sessionId,'renderer.after')]:[])
+    ]);
+    for(const r of finalReads)if(r.status==='rejected')throw r.reason;
+    const after=finalReads[0].value;
+    assert.deepEqual(finalReads[1].value,live,'guest instance changed during identity read');
+    if(owner)assert(finalReads[2].value.some(e=>e.id===a.renderEndpoint&&e.epoch===rendererEpoch&&!e.failed&&!e.control?.error),'renderer instance changed during identity read');
+    assert(after.isolated && after.apps.length === 1 && after.apps[0].name===app && after.apps[0].running && !after.apps[0].stopped);
     same(identity, {...after.apps[0], workerTarget:w.targetId, workerInstance:live.instance, moduleSha256,...rendererIdentity});
-    assert(!w.closed, 'Worker detached during identity read');
-    return {identity, page:after, worker:{targetId:w.targetId, sessionId:w.sessionId, ...live}};
+    assert.equal(workers.get(w.sessionId),w,'Worker session replaced during identity read');
+    assert.deepEqual(modules(w),scripts,'guest module inventory changed');
+    if(owner) {
+      assert.equal(workers.get(owner.r.sessionId),owner.r,'renderer session replaced during identity read');
+      assert.deepEqual(modules(owner.r),renderScripts,'renderer module inventory changed');
+    }
+    return {identity, page:after, worker:{targetId:w.targetId, sessionId:w.sessionId, ...live},timing:{totalMs:performance.now()-started,reads:timings}};
   }
   function fresh(capture) {
     const age = now() - Date.parse(capture?.at);
