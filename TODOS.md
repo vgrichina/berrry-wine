@@ -2191,6 +2191,14 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   prev-owner: /root/new_demo_refill (released; coordinator reclaimed 2026-11-05)
   Done: Registered original launch, actual ordinary player control and reviewed gameplay screenshot with source/run identity.
 
+- [ ] Motocross Madness registered demo: ordinary race controls
+  id: MCM-ORIGINAL-RACE-20261107
+  status: queued (prepared successor to completed Lords II gameplay lane)
+  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  Evidence: docs/re-notes/mcm-recovered-space-race-20261107.md; prior run reached video-memory prompt only. Supported direct app route and311 media inputs are known; race/throttle/steering remain unverified.
+  Next: Fresh worker uses scratch/usage-watch/mcm-original-race-next.task.txt after Lords closeout. First fix duplicate generated-closeout retrieval labels and prove injected retrieval failure prevents original launch; validate exact ordinary input commands. Then one fresh-box original through name/menu/Start to race, throttle and separate steering. Fix only demonstrated emulator defects with regression and locked build; retrieve evidence and stop box normally.
+  Done: Registered original race with personally inspected throttle and distinct steering response captures, matching completed input records and actual runtime/renderer identity; publish findings and any justified emulator fix.
+
 - title: USER ASK - add a FIFA game to the corpus (user linked FIFA Street; that is console-only, so a Win9x FIFA demo instead)
   id: USER-FIFA-DEMO-20261012
   status: done (core registration, reviewed keyboard gameplay, touch layout; device qualification separate)
