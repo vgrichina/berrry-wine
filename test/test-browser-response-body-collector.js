@@ -258,6 +258,78 @@ async function main() {
         optionalAbsence: mode === 'wrong-identity' ? {...response.bodyIdentity} : response.bodyIdentity,
         policy: mode === 'missing-policy' ? '' : 'fixture-optional-absence'}});
     }
+    // Required-200 completion is opt-in and waits for actual adapter receipts.
+    for (const mode of ['reader-eof', 'arrayBuffer', 'no-abort', 'no-eof', 'abort',
+      'reader-cancel', 'wrong-length', 'wrong-hash', 'wrong-session', 'wrong-target',
+      'wrong-network', 'wrong-context', 'wrong-context-unique', 'wrong-document',
+      'wrong-time-origin', 'wrong-frame', 'wrong-token', 'duplicate-receipt',
+      'document-replaced', 'session-detached', 'uncovered-resource', 'unrelated-sticky',
+      'request-duplicate', 'response-duplicate', 'other-error', 'not-canceled',
+      'blocked', 'cors', 'missing-response', 'before-continuation']) {
+      await run('consumer-' + mode, async ({collector, s, rows, faults}) => {
+        const identity = {sessionId: s.id, targetId: 'target-' + s.id,
+          networkId: 'network-a', token: 'unique-invocation', contextId: 3,
+          contextUniqueId: 'unique-context', documentURL: origin + '/index.html',
+          frameId: 'frame', timeOrigin: 12345.6};
+        const request = {requestId: 'network-a', type: 'Fetch',
+          request: {url: origin + '/index.html', method: 'GET'}};
+        s.emit('Network.requestWillBeSent', request);
+        collector.bindConsumer(identity);
+        if (mode === 'request-duplicate') s.emit('Network.requestWillBeSent', request);
+        const failed = {requestId: 'network-a', type: 'Fetch',
+          errorText: mode === 'other-error' ? 'net::ERR_FAILED' : 'net::ERR_ABORTED',
+          canceled: mode !== 'not-canceled',
+          ...(mode === 'blocked' ? {blockedReason: 'other'} : {}),
+          ...(mode === 'cors' ? {corsErrorStatus: {corsError: 'InvalidResponse'}} : {})};
+        if (mode === 'before-continuation') {
+          const send = s.send.bind(s);
+          s.send = (method, params) => {
+            if (method === 'Fetch.continueResponse') s.emit('Network.loadingFailed', failed);
+            return send(method, params);
+          };
+        }
+        s.pause('a', body, {resourceType: 'XHR'});
+        await tick();
+        const response = {requestId: 'network-a', type: 'Fetch',
+          response: {url: origin + '/index.html', status: 200}};
+        if (mode !== 'missing-response') s.emit('Network.responseReceived', response);
+        if (mode === 'response-duplicate') s.emit('Network.responseReceived', response);
+        if (mode === 'unrelated-sticky') {
+          s.emit('Network.requestWillBeSent', {...request, requestId: 'unrelated'});
+          s.emit('Network.loadingFailed', {...failed, requestId: 'unrelated', errorText: 'sticky unrelated'});
+        }
+        if (mode !== 'no-abort' && mode !== 'before-continuation') s.emit('Network.loadingFailed', failed);
+        if (['reader-eof', 'arrayBuffer', 'no-abort'].includes(mode)) {
+          assert.equal(faults.length, 0);
+          assert(!collector.snapshot().complete, 'capture does not establish consumption');
+        }
+        const receipt = {...identity, completion: true,
+          kind: mode === 'arrayBuffer' ? 'arrayBuffer' : 'reader-eof', bytes: body.length, sha256: digest(body)};
+        const identityMutations = {'wrong-session': 'sessionId', 'wrong-target': 'targetId',
+          'wrong-network': 'networkId', 'wrong-context': 'contextId',
+          'wrong-context-unique': 'contextUniqueId', 'wrong-document': 'documentURL',
+          'wrong-time-origin': 'timeOrigin', 'wrong-frame': 'frameId', 'wrong-token': 'token'};
+        if (identityMutations[mode]) receipt[identityMutations[mode]] = 'wrong';
+        if (mode === 'wrong-length') receipt.bytes--;
+        if (mode === 'wrong-hash') receipt.sha256 = '0'.repeat(64);
+        if (mode === 'abort' || mode === 'reader-cancel') {
+          receipt.completion = false; receipt.error = mode;
+        }
+        if (mode === 'document-replaced') collector.invalidateConsumers(s.id, identity.contextId);
+        if (mode === 'session-detached') s.emit(DISCONNECT);
+        if (mode === 'uncovered-resource') s.emit('Network.responseReceived', {
+          requestId: 'uncovered', type: 'Fetch', response: {url: origin + '/missing', status: 200}});
+        if (mode !== 'no-eof') collector.completeConsumer(receipt);
+        if (mode === 'duplicate-receipt') collector.completeConsumer(receipt);
+        if (['reader-eof', 'arrayBuffer', 'no-abort'].includes(mode)) {
+          await collector.drain(); assert(collector.snapshot().complete);
+          assert(rows.some(r => r.source === 'application-consumer' && r.state === 'completed'));
+        } else {
+          await assert.rejects(collector.drain()); assert(!collector.snapshot().complete);
+          if (mode === 'unrelated-sticky') assert.equal(collector.snapshot().firstFault.error, 'sticky unrelated');
+        }
+      }, {consumerCompletion: true});
+    }
     const protocolError = (message, code) => Object.assign(Error(message),
       {name: 'ProtocolError', originalMessage: message, ...(code === undefined ? {} : {code})});
     async function worker(ctx, options = {}) {

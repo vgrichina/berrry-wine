@@ -7,7 +7,7 @@ const {createHash} = require('crypto');
 const assert = require('assert/strict');
 
 function createCollector({origin, onResponse, onFault, disconnectedEvent, record = () => {},
-  timeoutMs = 2000, maxBodyBytes = 64 * 1024 * 1024} = {}) {
+  timeoutMs = 2000, maxBodyBytes = 64 * 1024 * 1024, consumerCompletion = false} = {}) {
   assert.equal(new URL(origin).origin, origin);
   assert.equal(typeof onResponse, 'function');
   assert.equal(typeof onFault, 'function');
@@ -17,6 +17,73 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
   assert(Number.isSafeInteger(maxBodyBytes) && maxBodyBytes > 0);
   const sessions = new Map(), jobs = new Set(), rows = [];
   let closed = false, firstFault = null;
+  const consumers = new Map();
+  const consumerKey = id => JSON.stringify([id.sessionId, id.networkId]);
+  // This opt-in API is fed by the actual adapter, never by captured bytes.
+  // A registration is a required completion, including when CDP never aborts.
+  function bindConsumer(identity) {
+    assert(consumerCompletion && !closed, 'consumer completion not enabled');
+    const state = sessions.get(identity.sessionId);
+    assert(state && !state.detached && state.identity.targetId === identity.targetId,
+      'consumer owner mismatch');
+    for (const key of ['networkId', 'token', 'contextUniqueId', 'documentURL', 'frameId'])
+      assert(typeof identity[key] === 'string' && identity[key].length, 'missing consumer ' + key);
+    assert(Number.isInteger(identity.contextId) && Number.isFinite(identity.timeOrigin));
+    const key = consumerKey(identity);
+    assert(!consumers.has(key), 'ambiguous consumer request');
+    let resolve, reject, continued;
+    const receipt = new Promise((yes, no) => {resolve = yes; reject = no;});
+    const continuation = new Promise(yes => {continued = yes;});
+    const entry = {identity: freeze({...identity}), resolve, reject, continued, complete: false};
+    consumers.set(key, entry);
+    track((async () => {
+      try {
+        const [value, row] = await deadline(Promise.all([receipt, continuation]), identity,
+          'consumer completion', state);
+        assert(!state.detached && !closed, 'consumer owner lost');
+        assert.equal(row.status, 200);
+        assert.equal(row.state, 'continued');
+        const request = state.requests.get(identity.networkId);
+        const response = state.responses.get(identity.networkId);
+        assert(rows.filter(r => r.sessionId === identity.sessionId &&
+          r.networkId === identity.networkId).length === 1 &&
+          row.targetId === identity.targetId && row.method === 'GET' &&
+          ['XHR', 'Fetch'].includes(row.resourceType) && !row.redirectedRequestId &&
+          request?.count === 1 && !request.redirected && request.method === 'GET' &&
+          request.type === 'Fetch' && request.url === row.url &&
+          response?.count === 1 && response.status === 200 && response.type === 'Fetch' &&
+          response.url === row.url, 'ambiguous consumer request/response chain');
+        assert.equal(value.completion, true, 'consumer did not complete');
+        assert(['reader-eof', 'arrayBuffer'].includes(value.kind), 'missing application EOF');
+        assert.equal(value.bytes, row.bytes, 'consumer body length mismatch');
+        assert.equal(value.sha256, row.sha256, 'consumer body hash mismatch');
+        entry.complete = true;
+        log(row, 'continued', {consumerCompletion: {...identity, requestId: row.requestId,
+          kind: value.kind, bytes: value.bytes, sha256: value.sha256}});
+        record({...identity, source: 'application-consumer', state: 'completed',
+          requestId: row.requestId, kind: value.kind, bytes: value.bytes, sha256: value.sha256, at: Date.now()});
+      } catch (error) {fault({...identity, state: 'consumer-completion-failed'}, error);}
+    })());
+  }
+  function completeConsumer(value) {
+    try {
+      const entry = consumers.get(consumerKey(value));
+      assert(entry && !entry.received, 'unknown or duplicate consumer receipt');
+      for (const [key, expected] of Object.entries(entry.identity))
+        assert.equal(value[key], expected, 'consumer identity mismatch: ' + key);
+      entry.received = true;
+      assert(value.completion === true, value.error || 'consumer incomplete');
+      entry.resolve(freeze({...value}));
+    } catch (error) {fault({...value, state: 'consumer-receipt-rejected'}, error);}
+  }
+  function invalidateConsumers(sessionId, contextId, reason = 'consumer owner replaced') {
+    for (const entry of consumers.values()) if (entry.identity.sessionId === sessionId &&
+        (contextId === undefined || entry.identity.contextId === contextId)) {
+      entry.reject(Error(reason));
+      // Replacement after receipt but before drain is also a failed contract.
+      fault({...entry.identity, state: 'consumer-owner-lost'}, reason);
+    }
+  }
 
   const freeze = value => {
     if (value && typeof value === 'object') {Object.values(value).forEach(freeze); Object.freeze(value);}
@@ -173,6 +240,7 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
         row, 'continuation', state);
       assert(!closed && !state.detached, 'target lost during continuation');
       log(row, 'continued');
+      consumers.get(consumerKey(row))?.continued(row);
     } catch (error) {
       log(row, closed ? 'cancelled' : 'failed', {error: String(error)});
       fault({...row}, error);
@@ -195,6 +263,7 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
     const detached = () => {
       if (state.detached) return;
       state.detached = true;
+      if (!closed) invalidateConsumers(identity.sessionId, undefined, 'consumer session detached');
       record({source: 'CDP.Fetch.response-stage', ...state.identity, state: 'detached', at: Date.now()});
       for (const cancel of state.cancels) cancel('target detached');
       // Captured and continued bodies remain valid after a natural target
@@ -268,6 +337,21 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
           const request = state.requests.get(event.requestId), response = state.responses.get(event.requestId);
           const matches = rows.filter(r => r.sessionId === identity.sessionId && r.networkId === event.requestId);
           const row = matches.length === 1 ? matches[0] : null;
+          const consumer = consumers.get(consumerKey({...identity, networkId: event.requestId}));
+          if (consumer && !closed && !firstFault && !state.detached && !alreadyTerminal &&
+              state.transport === 'Fetch' && row?.state === 'continued' && row.status === 200 &&
+              row.method === 'GET' && !row.redirectedRequestId &&
+              request?.count === 1 && !request.redirected && request.method === 'GET' &&
+              request.type === 'Fetch' && request.url === row.url &&
+              response?.count === 1 && response.status === 200 && response.type === 'Fetch' &&
+              response.url === row.url && event.type === 'Fetch' &&
+              event.errorText === 'net::ERR_ABORTED' && event.canceled === true &&
+              !event.blockedReason && !event.corsErrorStatus) {
+            record({...identity, source: name, state: consumer.complete ?
+              'completed-consumer-abort' : 'awaiting-consumer-completion',
+              networkId: event.requestId, requestId: row.requestId, at: Date.now()});
+            return;
+          }
           // Chromium rejects a classic-script HTTP 404 with ERR_ABORTED even
           // without interception. Settle only the explicitly accepted absence
           // whose complete owning chain confirms that status rejection. Never
@@ -356,7 +440,8 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
   function snapshot() {
     const missing = uncovered();
     return {closed, firstFault, missing, complete: sessions.size > 0 &&
-      [...sessions.values()].every(s => s.ready && !s.active.size) && !firstFault && !missing.length && rows.every(finished),
+      [...sessions.values()].every(s => s.ready && !s.active.size) && !firstFault && !missing.length &&
+      [...consumers.values()].every(c => c.complete) && rows.every(finished),
       responses: rows.map(r => ({...r})), sessions: [...sessions.values()].map(s => ({...s.identity, transport: s.transport, ready: s.ready, detached: s.detached}))};
   }
   function uncovered() {
@@ -365,6 +450,6 @@ function createCollector({origin, onResponse, onFault, disconnectedEvent, record
         r.status === 200 && finished(r))).map(([networkId, url]) =>
       ({...s.identity, networkId, url})));
   }
-  return {attach, drain, settle, close, snapshot};
+  return {attach, drain, settle, close, snapshot, bindConsumer, completeConsumer, invalidateConsumers};
 }
 module.exports = {createCollector};
