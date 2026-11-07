@@ -189,7 +189,7 @@ function makeShell(opts = {}) {
     'browser host offers relative and absolute executable names to the caller VFS');
   const relativeLaunch = hostSource.indexOf('if (!absolute && shell.launchVfsExe && shell.launchVfsExe(launchFile, self, launchDir, params, launchOpts))');
   assert(relativeLaunch >= 0 && relativeLaunch <
-      hostSource.indexOf("if (/\\.(exe|scr)$/i.test(file) && shell.launchExe(file, launchOpts))"),
+      hostSource.indexOf("if (!parsedCommand.isWinExec && /\\.(exe|scr)$/i.test(file) && shell.launchExe(file, launchOpts))"),
     'a bare name in the caller current directory (NFS II autorun "setup.exe") beats the registry basename match');
   assert.strictEqual(
     (shellSource.match(/queuePendingLaunch\(key, SINGLE_APP\(\), launchOpts\);/g) || []).length,
@@ -227,11 +227,11 @@ function makeShell(opts = {}) {
   const end = source.indexOf('    // The guest asked for the machine to go down', start);
   assert(start >= 0 && end > start);
   const image = 'C:\\Program Files\\Sub Dir\\program.exe';
-  function launch(command, files, operation = 'WinExec') {
+  function launch(command, files, operation = 'WinExec', applicationPath = '', searchPath = '') {
     const vfs = new VirtualFS();
     for (const file of files) vfs.files.set(vfs._resolvePath(file), { data: new Uint8Array(1) });
     const calls = [];
-    const strings = [null, operation, command];
+    const strings = [null, operation, command, applicationPath, searchPath];
     const parent = { _helpCtx: { vfs }, readString: p => strings[p], logToUI() {} };
     const h = {}, winexecReadiness = createWinExecReadiness();
     vm.runInNewContext(source.slice(start, end), {
@@ -248,7 +248,7 @@ function makeShell(opts = {}) {
         }, launchExe() { return false; },
       } },
     });
-    let status = h.shell_execute(0, 1, 2, 0, 0, 5);
+    let status = h.shell_execute(0, 1, 2, searchPath ? 4 : 0, applicationPath ? 3 : 0, 5);
     if ((status >>> 16) === 0x5745) status = winexecReadiness.control(10, 123, status);
     return { status, calls };
   }
@@ -261,6 +261,18 @@ function makeShell(opts = {}) {
   assert.strictEqual(launch('"C:\\Program" Files\\Sub Dir\\program.exe', [image]).status, 2);
   assert.strictEqual(launch(image, []).status, 2);
   assert.deepStrictEqual(launch(image, [image], 'open').calls, [{ file: image, params: '' }]);
+  const app = 'C:\\Tools\\Parent.exe', sibling = 'C:\\Tools\\Helper.exe';
+  const order = [sibling, 'C:\\Helper.exe', 'C:\\WINDOWS\\SYSTEM\\Helper.exe',
+    'C:\\WINDOWS\\Helper.exe', 'D:\\Bin\\Helper.exe', 'E:\\Bin\\Helper.exe'];
+  for (let i = 0; i < order.length; i++) {
+    const result = launch('helper /flag "two words"', order.slice(i), 'WinExec', app, 'D:\\Bin;E:\\Bin');
+    assert.strictEqual(result.status, 33, 'each search fallback launches');
+    assert.deepStrictEqual(result.calls, [{ file: order[i].toLowerCase(), params: '/flag "two words"' }]);
+  }
+  assert.strictEqual(launch('absent /flag', order, 'WinExec', app).status, 2);
+  assert.strictEqual(launch('.\\helper /flag', [sibling], 'WinExec', app).status, 2,
+    'explicit relative directory does not search the application directory');
+  assert.strictEqual(launch('"helper" /flag', [sibling], 'WinExec', app).status, 33);
   console.log('ok: browser WinExec candidate order, quoted and absent controls, separate ShellExecute lpFile');
 }
 

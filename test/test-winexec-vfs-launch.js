@@ -29,7 +29,7 @@ const extraWat = String.raw`
     memory,
     extraHostOverrides: {
       shell_execute(hwnd, op, file, params, directory, show) {
-        launches.push({ hwnd, op, file: readString(file), params, directory, show });
+        launches.push({ hwnd, op, file: readString(file), params: readString(params), directory: readString(directory), show });
         return 33;
       },
     },
@@ -42,7 +42,7 @@ const extraWat = String.raw`
   assert.strictEqual(e.test_winexec(command, 1), 33,
     'WinExec returns the process-launch success code');
   assert.deepStrictEqual(launches, [{
-    hwnd: 0, op: 0, file: 'pockettanks.exe', params: 0, directory: 0, show: 1,
+    hwnd: 0, op: 0, file: 'pockettanks.exe', params: 'C:\\WINDOWS;C:\\WINDOWS\\COMMAND', directory: 'C:\\app.exe', show: 1,
   }], 'WinExec forwards the relative command to the shared launch boundary');
   assert.strictEqual(e.get_esp(), 0x0030000c,
     'WinExec pops its two stdcall arguments and return address');

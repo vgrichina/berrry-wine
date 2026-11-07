@@ -1067,6 +1067,28 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 44))) ;; stdcall, 10 args
   )
 
+  ;; Private WinExec host context. Keep the caller image and actual PATH
+  ;; separate from the command line and from the child's inherited cwd.
+  (func $winexec_application_path (result i32)
+    (local $p i32)
+    (local.set $p (region.addr $TEXT_SCRATCH 16))
+    (i32.store8 (local.get $p) (global.get $exe_drive))
+    (i32.store16 offset=1 (local.get $p) (i32.const 0x5C3A))
+    (memory.copy (i32.add (local.get $p) (i32.const 3))
+      (global.get $exe_name_wa) (global.get $exe_name_len))
+    (i32.store8 (i32.add (local.get $p) (i32.add (global.get $exe_name_len) (i32.const 3))) (i32.const 0))
+    (local.get $p))
+
+  (func $winexec_search_path (result i32)
+    (local $p i32) (local $entry i32)
+    (local.set $p (region.addr $TEXT_SCRATCH 288))
+    (i32.store (local.get $p) (i32.const 0x48544150)) ;; PATH
+    (i32.store8 offset=4 (local.get $p) (i32.const 0))
+    (local.set $entry (call $env_find (call $w2g (local.get $p)) (i32.const 0)))
+    (if (result i32) (local.get $entry)
+      (then (call $g2w (i32.add (local.get $entry) (i32.const 5))))
+      (else (i32.const 0))))
+
   ;; WinExec(lpCmdLine, uCmdShow) — legacy launcher. Pinball's Options →
   ;; Select Table and Win9x installers expect a real child-launch attempt.
   ;; Mark this call so the browser host applies WinExec parsing/error rules.
@@ -1083,7 +1105,7 @@
         (local.set $result (call $host_shell_execute
           (i32.const 0) (local.get $name_ptr)
           (if (result i32) (local.get $arg0) (then (call $g2w (local.get $arg0))) (else (i32.const 0)))
-          (i32.const 0) (i32.const 0) (local.get $arg1)))
+          (call $winexec_search_path) (call $winexec_application_path) (local.get $arg1)))
         (if (i32.gt_u (local.get $result) (i32.const 31))
           (then
             (local.set $status (call $host_process_ctl (i32.const 10) (local.get $sp) (local.get $result)))

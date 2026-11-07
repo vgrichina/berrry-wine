@@ -6587,25 +6587,53 @@
 
   (func $win16_WinExec
     (local $command i32) (local $show i32) (local $guest i32) (local $hinst i32)
-    (local.set $show (call $win16_arg16 (i32.const 0)))
-    (if (call $win16_arg16 (i32.const 2))
+    (local $sp i32) (local $result i32) (local $status i32) (local $park i32)
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $result (call $host_process_ctl (i32.const 9) (local.get $sp) (global.get $current_thread_id)))
+    (local.set $park (i32.eqz (local.get $result)))
+    (if (i32.lt_s (local.get $result) (i32.const 0))
       (then
-        (local.set $guest (call $win16_far_to_guest
-          (call $win16_arg16 (i32.const 2)) (call $win16_arg16 (i32.const 1))))
-        (local.set $command (call $g2w (local.get $guest)))))
-    (if (local.get $guest)
-      (then
-        (local.set $hinst (call $win16_winexec_task (local.get $guest) (local.get $show)))
-        (if (local.get $hinst)
+        (local.set $show (call $win16_arg16 (i32.const 0)))
+        (if (call $win16_arg16 (i32.const 2))
           (then
-            (i32.store offset=0 (global.get $reg_base) (local.get $hinst))
-            (i32.store offset=8 (global.get $reg_base) (i32.const 0))
-            (call $win16_api_return (i32.const 6))
-            (return)))))
-    (i64.store (global.get $TEXT_SCRATCH) (i64.const 0x00636578456E6957)) ;; "WinExec\0"
-    (i32.store offset=0 (global.get $reg_base) (call $host_shell_execute
-      (i32.const 0) (global.get $TEXT_SCRATCH) (local.get $command)
-      (i32.const 0) (i32.const 0) (local.get $show)))
+            (local.set $guest (call $win16_far_to_guest
+              (call $win16_arg16 (i32.const 2)) (call $win16_arg16 (i32.const 1))))
+            (local.set $command (call $g2w (local.get $guest)))))
+        (if (local.get $guest)
+          (then
+            (local.set $hinst (call $win16_winexec_task (local.get $guest) (local.get $show)))
+            (if (local.get $hinst)
+              (then
+                (drop (call $host_process_ctl (i32.const 12) (local.get $sp) (i32.const 0)))
+                (i32.store offset=0 (global.get $reg_base) (local.get $hinst))
+                (i32.store offset=8 (global.get $reg_base) (i32.const 0))
+                (call $win16_api_return (i32.const 6))
+                (return)))))
+        (i64.store (global.get $TEXT_SCRATCH) (i64.const 0x00636578456E6957)) ;; "WinExec\0"
+        (local.set $result (call $host_shell_execute
+          (i32.const 0) (global.get $TEXT_SCRATCH) (local.get $command)
+          (call $winexec_search_path)
+          (if (result i32) (global.get $win16_task_module)
+            (then (i32.add (call $win16_task_start_slot (global.get $win16_task_slot)) (i32.const 0x98)))
+            (else (call $winexec_application_path)))
+          (local.get $show)))
+        (if (i32.gt_u (local.get $result) (i32.const 31))
+          (then
+            (local.set $status (call $host_process_ctl (i32.const 10) (local.get $sp) (local.get $result)))
+            (if (i32.ge_s (local.get $status) (i32.const 0))
+              (then
+                (local.set $result (local.get $status))
+                (local.set $park (i32.eqz (local.get $status)))))))))
+    (if (local.get $park)
+      (then
+        (call $win16_set_sreg (i32.const 1) (global.get $WIN16_THUNK_SEL))
+        (global.set $eip (i32.add (global.get $seg_base_cs) (global.get $win16_cur_thunk_off)))
+        (global.set $yield_reason (i32.const 9))
+        (global.set $yield_flag (i32.const 1))
+        (global.set $steps (i32.const 0))
+        (return)))
+    (drop (call $host_process_ctl (i32.const 12) (local.get $sp) (i32.const 0)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=8 (global.get $reg_base) (i32.const 0))
     (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
     (call $win16_api_return (i32.const 6)))

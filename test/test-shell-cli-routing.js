@@ -142,7 +142,7 @@ try {
       const fork = f.forks[0];
       assert.strictEqual(arg(fork, 'exe-guest-path'), f.exe);
       assert.strictEqual(arg(fork, 'args'), '/flag "two words"');
-      assert.strictEqual(arg(fork, 'cwd'), 'c:\\requested');
+      assert.strictEqual(arg(fork, 'cwd'), op === 'WinExec' ? f.cwd : 'c:\\requested');
       assert(fork.args.includes('--startup-show=0'));
       finish(f);
     }
@@ -177,6 +177,24 @@ try {
         finish(f);
       }
     }
+    const order = ['c:\\tools\\helper.exe', 'c:\\work\\helper.exe',
+      'c:\\windows\\system\\helper.exe', 'c:\\windows\\helper.exe', 'c:\\bin\\helper.exe'];
+    for (let i = 0; i < order.length; i++) {
+      const f = fixture();
+      for (const file of order.slice(i)) f.vfs.files.set(file, { data: Buffer.from('offline fixture, never executed') });
+      assert.strictEqual(f.launch('helper /flag "two words"', 'c:\\bin', 'c:\\tools\\parent.exe'), 33);
+      assert.strictEqual(arg(f.forks[0], 'exe-guest-path'), order[i]);
+      assert.strictEqual(arg(f.forks[0], 'args'), '/flag "two words"');
+      assert.strictEqual(arg(f.forks[0], 'cwd'), f.cwd, 'search context never changes inherited cwd');
+      finish(f);
+    }
+    const capturedSearch = fixture({ capture: true });
+    capturedSearch.vfs.files.set(order[0], { data: Buffer.from('offline fixture, never executed') });
+    assert.strictEqual(capturedSearch.launch('helper /flag "two words"', 'c:\\bin', 'c:\\tools\\parent.exe'), 33);
+    assert.strictEqual(capturedSearch.context.capture().guestExe, order[0]);
+    assert.strictEqual(capturedSearch.context.capture().args, '/flag "two words"');
+    assert.strictEqual(capturedSearch.context.capture().directory, capturedSearch.cwd);
+    assert.strictEqual(capturedSearch.forks.length, 0);
     const unquoted = fixture();
     assert.strictEqual(unquoted.launch(unquoted.exe), 33, 'unquoted full image after absent earlier candidate');
     finish(unquoted);

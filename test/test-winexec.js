@@ -13,6 +13,8 @@ const extraWat = String.raw`
       (local.get $command) (local.get $show) (i32.const 0)
       (i32.const 0) (i32.const 0) (call $g2w (local.get $name)))
     (i32.load offset=0 (global.get $reg_base)))
+  (func (export "test_set_path") (param $name i32) (param $value i32) (result i32)
+    (call $env_set (local.get $name) (local.get $value) (i32.const 0)))
   (func (export "test_winexec_esp") (result i32) (i32.load offset=16 (global.get $reg_base)))
 `;
 
@@ -91,7 +93,7 @@ async function main() {
     extraHostOverrides: {
       shell_execute(hwnd, op, file, params, dir, show) {
         launches.push({
-          hwnd, op: readString(op), file: readString(file), params, dir, show,
+          hwnd, op: readString(op), file: readString(file), params: readString(params), dir: readString(dir), show,
         });
         return returnCode;
       },
@@ -111,9 +113,19 @@ async function main() {
   assert.strictEqual(e.test_call_WinExec(command, 7, name), 33,
     'WinExec returns the host launch success code');
   assert.deepStrictEqual(launches.pop(), {
-    hwnd: 0, op: 'WinExec', file: 'child.exe /S', params: 0, dir: 0, show: 7,
+    hwnd: 0, op: 'WinExec', file: 'child.exe /S', params: 'C:\\WINDOWS;C:\\WINDOWS\\COMMAND', dir: 'C:\\app.exe', show: 7,
   }, 'WinExec forwards its full command line and nCmdShow with an operation marker');
   assert.strictEqual(e.test_winexec_esp(), 12, 'WinExec pops its two stdcall arguments');
+
+  const imageName = 'Ordinary App\\Parent.exe';
+  new Uint8Array(memory.buffer).set(Buffer.from(imageName + String.fromCharCode(0)), e.get_staging());
+  e.set_exe_name(e.get_staging(), imageName.length);
+  assert.strictEqual(e.test_set_path(writeString('PATH'), writeString('D:\\Bin;E:\\Other')), 1);
+  assert.strictEqual(e.test_call_WinExec(command, 1, name), 33);
+  const context = launches.pop();
+  assert.strictEqual(context.dir, 'C:\\Ordinary App\\Parent.exe', 'Win32 caller retains application path');
+  assert.strictEqual(context.params, 'D:\\Bin;E:\\Other', 'handoff uses current guest environment');
+  assert.strictEqual(context.file, 'child.exe /S', 'PATH context never replaces command arguments');
 
   returnCode = 2;
   assert.strictEqual(e.test_call_WinExec(command, 1, name), 2,

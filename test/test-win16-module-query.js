@@ -16,7 +16,8 @@ function neFixture(name='QUERYAPP'){
 }
 async function main(){
  const mod=await WebAssembly.compile(fs.readFileSync(process.argv[2]||path.join(__dirname,'../build/wine-assembly.wasm')));
- const hostCalls={};
+ // This fixture has no host startup-ticket service; -1 is the unsupported ABI.
+ const hostCalls={process_ctl:()=>-1};
  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),imports={};for(const x of WebAssembly.Module.imports(mod)){const a=imports[x.module]||={};a[x.name]=x.kind==='memory'?memory:(...args)=>hostCalls[x.name]?.(...args)||0;}
  const {exports:e}=await WebAssembly.instantiate(mod,imports),u=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),b=neFixture();u.set(b,e.get_staging());assert.ok(e.load_ne(b.length)>=0);
  const code=e.win16_seg_base(1),data=e.win16_seg_base(2)+GUEST_BASE,task=(e.win16_auto_data()<<3)|7;

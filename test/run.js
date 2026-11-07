@@ -4082,16 +4082,20 @@ async function main() {
   h.shell_execute = (hwnd, opWa, fileWa, paramsWa, dirWa, nShow) => {
     threadSnapshotSystemIncomplete = true;
     const file = fileWa ? readStr(fileWa) : '';
-    const params = paramsWa ? readStr(paramsWa) : '';
+    const hostParams = paramsWa ? readStr(paramsWa) : '';
     const operation = opWa ? readStr(opWa) : 'open';
-    const directory = dirWa ? readStr(dirWa) : '';
+    const hostDirectory = dirWa ? readStr(dirWa) : '';
+    const isWinExec = /^winexec$/i.test(operation);
+    const params = isWinExec ? '' : hostParams;
+    const directory = isWinExec ? '' : hostDirectory;
+    const search = { applicationPath: hostDirectory || EXE_GUEST_PATH, path: isWinExec ? hostParams : '' };
     const result = baseShellExecute(hwnd, opWa, fileWa, paramsWa, dirWa, nShow);
     // Capture is a separate handoff: never launch while taking its snapshot.
     if (!CAPTURE_LAUNCH && ctx.vfs &&
         (SPAWN_PROCESSES_FLAG || (APP_ENTRY && APP_ENTRY.spawnProcesses)) &&
         /^(?:winexec|open)?$/i.test(operation)) {
-      const parsed = parseShellLaunchCommand(file, params, operation, ctx.vfs);
-      const executable = resolveShellLaunchPath(parsed.file.trim(), ctx.vfs, parsed.isWinExec);
+      const parsed = parseShellLaunchCommand(file, params, operation, ctx.vfs, search);
+      const executable = resolveShellLaunchPath(parsed.file.trim(), ctx.vfs, parsed.isWinExec, search);
       if (!executable) return 2; // ERROR_FILE_NOT_FOUND
       // Keep ShellExecute's separate arguments and WinExec's selected image;
       // the transport accepts a quoted command line, not a shell expression.
@@ -4111,9 +4115,9 @@ async function main() {
     // about whether the closing quote follows argv[0] or the final argument.
     // Use the browser's parser so capture/replay sees exactly what a live
     // ShellExecute handoff sees.
-    const parsedCommand = parseShellLaunchCommand(file, params, operation, ctx.vfs);
+    const parsedCommand = parseShellLaunchCommand(file, params, operation, ctx.vfs, search);
     const executable = resolveShellLaunchPath(
-      parsedCommand.file.trim(), ctx.vfs, parsedCommand.isWinExec);
+      parsedCommand.file.trim(), ctx.vfs, parsedCommand.isWinExec, search);
     const inlineArgs = parsedCommand.params.trim();
     const guestExe = ctx.vfs._resolvePath ? ctx.vfs._resolvePath(executable)
       : (ctx.vfs._normPath ? ctx.vfs._normPath(executable) : executable.toLowerCase());

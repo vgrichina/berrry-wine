@@ -32,7 +32,7 @@ if (typeof window !== 'undefined') window.claimAudioSession = claimAudioSession;
 // one string contains an image name followed by arguments. WinExec delegates
 // to CreateProcess: unquoted whitespace boundaries are tried in order until an
 // image exists. ShellExecute's separately supplied lpFile keeps its own rules.
-function parseShellLaunchCommand(rawFile, explicitParams, operation, vfs) {
+function parseShellLaunchCommand(rawFile, explicitParams, operation, vfs, search = {}) {
   const source = String(rawFile || '');
   const isWinExec = /^winexec$/i.test(String(operation || ''));
   const s = source.trim();
@@ -61,7 +61,7 @@ function parseShellLaunchCommand(rawFile, explicitParams, operation, vfs) {
         for (const boundary of s.matchAll(/\s+|$/g)) {
           const candidate = s.slice(0, boundary.index);
           if (!candidate) continue;
-          const resolved = resolveShellLaunchPath(candidate, vfs, true);
+          const resolved = resolveShellLaunchPath(candidate, vfs, true, search);
           const entry = vfs.files.get(vfs._resolvePath(resolved));
           if (!entry || (entry.attrs & 0x10)) continue;
           file = candidate;
@@ -154,14 +154,29 @@ function createWinExecReadiness({ now = () => performance.now(), timeoutMs = 100
 }
 
 
-function resolveShellLaunchPath(file, vfs, isWinExec) {
+function resolveShellLaunchPath(file, vfs, isWinExec, search = {}) {
   if (!isWinExec || !file) return file;
-  // WinExec accepts an executable stem; only the final path component
-  // determines whether an extension was supplied (including a trailing dot).
+  // A supplied directory (including drive-relative paths) is used literally.
+  // Only a bare image name participates in WinExec's executable search.
   const leaf = file.split(/[\\/]/).pop();
   if (leaf && !leaf.includes('.')) file += '.exe';
-  if (/^[a-z]:[\\/]/i.test(file) || !vfs ||
-      typeof vfs._resolvePath !== 'function') return file;
+  if (!vfs || typeof vfs._resolvePath !== 'function') return file;
+  if (/[\\/:]/.test(file)) {
+    return /^[a-z]:[\\/]/i.test(file) ? file : vfs._resolvePath(file);
+  }
+  const applicationDir = String(search.applicationPath || '').replace(/[^\\/]*$/, '');
+  const directories = [...(applicationDir ? [applicationDir] : []), '', 'C:\\WINDOWS\\SYSTEM', 'C:\\WINDOWS',
+    ...String(search.path || '').split(';').map(p => p.trim().replace(/^"(.*)"$/, '$1'))];
+  const seen = new Set();
+  for (const directory of directories) {
+    const candidate = vfs._resolvePath(directory ? directory.replace(/[\\/]$/, '') + '\\' + file : file);
+    if (seen.has(candidate)) continue;
+    seen.add(candidate);
+    const entry = vfs.files && vfs.files.get(candidate);
+    if (entry && !(entry.attrs & 0x10)) return candidate;
+  }
+  // Retain a concrete missing path so production consumers report FNF and
+  // never replace a requested WinExec image with a registered-app basename.
   return vfs._resolvePath(file);
 }
 
@@ -2630,11 +2645,16 @@ class WineAssembly {
       const rawFile = fileWa ? self.readString(fileWa) : '';
       const op = opWa ? self.readString(opWa) : 'open';
       const vfs = self._helpCtx && self._helpCtx.vfs;
+      // WinExec's private host handoff uses lpDirectory for the calling
+      // image path and lpParameters for its PATH, never guest arguments.
+      const isWinExec = /^winexec$/i.test(op);
+      const dir = dirWa ? self.readString(dirWa) : '';
+      const explicitParams = paramsWa ? self.readString(paramsWa) : '';
+      const search = { applicationPath: dir, path: isWinExec ? explicitParams : '' };
       const parsedCommand = parseShellLaunchCommand(
-        rawFile, paramsWa ? self.readString(paramsWa) : '', op, vfs);
+        rawFile, isWinExec ? '' : explicitParams, op, vfs, search);
       const file = parsedCommand.file;
       const params = parsedCommand.params;
-      const dir = dirWa ? self.readString(dirWa) : '';
       // Preserve the show request through queueing. hidden suppresses launch
       // progress UI; guest startup/window-state handling remains separate.
       const startup = { ready: false, exited: false };
@@ -2655,7 +2675,7 @@ class WineAssembly {
         // filesystem (a CD launcher handing off to the game its installer
         // just wrote); that beats the registered-app basename heuristic,
         // which could resolve "diablo.exe" to a different registered build.
-        const launchFile = resolveShellLaunchPath(file, vfs, parsedCommand.isWinExec);
+        const launchFile = resolveShellLaunchPath(file, vfs, parsedCommand.isWinExec, search);
         const absolute = /^[a-z]:\\/i.test(launchFile);
         const launchDir = parsedCommand.isWinExec && vfs &&
           typeof vfs.getCurrentDirectory === 'function' ? vfs.getCurrentDirectory() : dir;
@@ -2672,7 +2692,7 @@ class WineAssembly {
           self.logToUI(`[ShellExecute] launching ${launchFile} from the caller's current directory`);
           return accepted();
         }
-        if (/\.(exe|scr)$/i.test(file) && shell.launchExe(file, launchOpts)) {
+        if (!parsedCommand.isWinExec && /\.(exe|scr)$/i.test(file) && shell.launchExe(file, launchOpts)) {
           self.logToUI(`[ShellExecute] launching ${file}`);
           return accepted();
         }
