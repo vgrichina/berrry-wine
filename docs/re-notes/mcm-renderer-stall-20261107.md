@@ -129,3 +129,72 @@ No box was assigned or created; state/expiry: none. Historical original box
 `bx_z3xstz2x` remains archived as recorded by the prior run; no lifecycle
 operation was performed. This assignment ends at the concrete readback
 discriminator; at-speed driving and steering remain unproved for this run.
+
+## Run-only discriminator prepared 2026-11-07
+
+`scratch/runs/20261107-mcm-flip-span-measurement/probe.js` supplies the missing
+passive spans without changing production files. The existing adapter's
+`diagnostic('arm', ..., factory)` accepts a custom factory whose `attach(gpu)`
+receives the actual owning GPU. This suffices: no new production diagnostic
+surface is needed. The probe uses no pixel sampling from the existing ground
+or producer observers. Installation alone is inert; explicit arming is required.
+
+For the ONE separately authorized original measurement, retain the ordinary
+independent live page/guest/renderer/module identity checks from
+`tools/mcm-bound-input.cjs`. Evaluate its established renderer identity read
+first (`__mcmPassiveRenderV1`); then evaluate `probe.js` in that same renderer
+CDP session. Call `__mcmFlipSpans.arm({endpointId, epoch, maxRecords:128,
+timeoutMs:10000})` with the verified renderer endpoint and `rendererEpoch`.
+Arming rejects a different entry/instance token and an active existing
+diagnostic. Do not use installation or the supplied epoch as a substitute for
+the independent live module and owning Worker checks. No original was run
+for this preparation, and no test box was assigned or manipulated.
+
+The run-only wrapper surrounds actual `replay`, GPU `fence`, `_flushDraws`,
+`bindImplicitTarget`, `gl.readPixels`, `_writeBack`, and the target watch's
+`capture`. It invokes each original function exactly once, preserving its
+receiver, arguments, return value and exception. It adds no fence, flush,
+readback, guest call, timer, scheduling change or ownership change. Each row
+contains monotonic start/end/duration, completion status, endpoint/epoch,
+batch sequence and production record ordinal/kind; whole replay has a null
+ordinal. Explicit nonbatch fence routes retain issuer endpoint when present.
+The receipt includes the renderer's `performance.timeOrigin` and source
+version. Durations are inclusive CPU wall time and overlap; `_writeBack`
+includes conversion, shadow copying and the existing `page_watch_write`
+export as well as the separately nested watch capture. Subtracting capture
+does not isolate conversion from those other writeback costs.
+
+Read `__mcmFlipSpans.read()` after the blocked operation returns. The default
+retains the earliest 128 span entries (validated maximum 512), with an explicit
+dropped count. Entries are reserved on entry so a long fence cannot displace
+its enclosing replay. No more entries are admitted after the monotonic
+deadline; already admitted spans still retain their exit. Deadline checking
+is lazy, at span entry, and introduces no asynchronous task. This cannot
+observe the middle of an uninterruptible readPixels call. Call
+`__mcmFlipSpans.stop()` or `.dispose()` after collection; disposal restores
+the original functions/context/observer. Endpoint destroy uses the existing
+diagnostic disposal path. Per-target wrappers live only for one natural fence.
+
+Record separate host start/reply timestamps for each page and renderer CDP
+evaluation, retaining the independent physical input evidence and freshness
+rules. Stop early if the record bound is reached before the desired Flip;
+that is missing evidence, not a timing conclusion. The probe does not change
+or qualify the steering helper, nor does it demonstrate an optimization.
+
+Small validation: `node scratch/runs/20261107-mcm-flip-span-measurement/test-probe.cjs`
+reuses the existing focused draw-trace dispatch fixture, substitutes the real
+production adapter and GPU, and executes the real replay/Flip fence/writeback.
+Controlled latency in readPixels versus destination byte writes through the
+actual conversion loop separates the two spans. Separate slow capture,
+timing/correlation, endpoint isolation, bounded storage, deadline crossing,
+detached receipts, inert/disabled behavior, exception identity, restoration,
+and fence-before-Flip-before-COMPLETED checks pass. Existing
+`test/test-d3dim-draw-trace.js`, `test/test-d3dim-gpu-batching.js` and
+`test/test-d3dim-gpu-async-flip.js` also pass. These are implementation tests
+with deterministic clocks and synthetic GPU outputs, not original GPU driver
+measurements. Exact source SHA, small patches and logs are retained in the
+run directory; no source or media archive was made.
+After disk recovery raised free `/home` above 3.5 GB, the required
+`flock /tmp/wine-build.lock bash tools/build.sh` also passed. Build output
+and focused-test results are retained in this run; no original measurement
+or steering claim follows from these checks.
