@@ -21,6 +21,21 @@ qualification before another original attack. Parity, FPS, audio, full game
 and full27 remain open; Asghan takes the released gameplay slot.
 [Bootstrap controls, action limits and cleanup](re-notes/drakan-native-warning-gameplay-20261108.md).
 
+## November 8: remote journal delivery fails before startup readiness
+
+Published `7fa820727`, run `20261108-browser-page-nonreturn-cause`,
+qualifies local production observer/busy-call controls. The fresh remote
+recorder receives idle journal batches with median33s/max53.7s lag; guest
+attachment is processed after Chrome exits. Seven page heartbeats after the
+readiness request exclude uninterrupted synchronous execution during that
+interval. No production call entry, startup owner proof, original input or
+image is recovered. This does not identify the historical stall or justify
+an emulator change. The coordinator independently verified32 references
+(4,787,418 bytes) and the normal archived shutdown. A fresh worker must qualify
+remote recorder service and attachment before launching the original.
+Thrall control, paired gameplay, full27, parity, FPS and audio remain open.
+[Diagnostic coverage and delivery failure](re-notes/browser-page-nonreturn-cause-20261108.md).
+
 ## November 8: optional capture-state change does not resolve the page stall
 
 Published `a7581bcd5`, run `20261108-browser-page-capture-cause`, removes
