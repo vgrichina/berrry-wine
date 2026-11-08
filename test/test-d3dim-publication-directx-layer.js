@@ -128,8 +128,35 @@ async function fixture(corrected,variant='actual-layer',observed=false,nativeCli
  if(variant==='host-version')epoch.invalidateVersions();
  if(variant==='page-dirty')native.exports.guest_write32(0x50000000+dib-BASE.DIB_BACKING_BASE,0x00330000);
  if(variant==='poison')epoch.invalidate();
+ let boundaryPresented=false;
+ if(variant==='native-writer-boundary') {
+   // Use the real host presentation entry and renderer, not a direct decoder
+   // call with an artificially idle epoch. The completed main slice does
+   // not imply that independently owned command/render writers have ended.
+   const hostContext={console,setTimeout,clearTimeout,URLSearchParams};
+   vm.runInNewContext(fs.readFileSync(root+'/host.js','utf8')+
+     '\n;globalThis.WineAssembly=WineAssembly;',hostContext);
+   const wine=new hostContext.WineAssembly();wine.renderer=renderer;
+   wine._presentDxIfDirty=()=>gdi.presentBestDxOffscreen(true);
+   const command=epoch.begin(),render=epoch.begin();
+   const version=Atomics.load(epoch.words,3);
+   assert.equal(renderer._workerGuestSliceDepth,0,'main slice has completed');
+   assert.equal(wine._presentNow(),0,'pending writers defer before decoding');
+   assert.equal(wine._dxLockDeferred,true,'existing paced retry remains armed');
+   renderer.repaint();
+   assert.equal(hostCallbacks.length,0,'deferred compositor performs no native scratch writes');
+   assert.equal(renderer.windows[0x77]._dxFrameLayer,undefined,'no unqualified layer replaced the pending source');
+   assert.equal(Atomics.load(epoch.words,3),version,'pending source host lifetime retained');
+   assert.equal(journal.unchanged(memory,first),true);
+   epoch.end(command);
+   assert.equal(wine._presentNow(),0,'one remaining independent writer still holds');
+   epoch.end(render);
+   assert.equal(wine._presentNow(),1,'same source retries after ALL writers drain');
+   assert.equal(wine._dxLockDeferred,false);
+   boundaryPresented=true;
+ }
  const ticket=variant==='overlap'||variant==='native-client-rect-overlap'?epoch.begin():null;
- assert.equal(gdi.presentBestDxOffscreen(true),1,'actual native layer decoder runs');
+ if(!boundaryPresented)assert.equal(gdi.presentBestDxOffscreen(true),1,'actual native layer decoder runs');
  const layer=renderer.windows[0x77]._dxFrameLayer;
  assert(layer && layer.canvas !== renderer.windows[0x77]._backCanvas);
  if(ticket)epoch.end(ticket);
@@ -149,10 +176,10 @@ async function fixture(corrected,variant='actual-layer',observed=false,nativeCli
  if(variant==='forged-cache-token')layer.canvas._waD3dimVersion={...layer.canvas._waD3dimVersion};
  if(variant==='missing-cache-token')delete layer.canvas._waD3dimVersion;
  if(variant==='entry-overlap-released')entryTicket=epoch.begin();
- renderer.repaint();
+ if(!boundaryPresented)renderer.repaint();
  if(compositorTicket)epoch.end(compositorTicket);
  if(variant.startsWith('compositor-'))assert(injected,'negative ran inside actual WAT host callback');
- const expected=corrected && observed!=='full-baseline' && observed!=='menu-baseline' && ['actual-layer','native-client-rect'].includes(variant)?1:0;
+ const expected=corrected && observed!=='full-baseline' && observed!=='menu-baseline' && ['actual-layer','native-client-rect','native-writer-boundary'].includes(variant)?1:0;
  if(typeof observed==='string' && observed.startsWith('full') && process.env.FULL_FACADE_DIAGNOSTIC) console.log(JSON.stringify({variant,exportCalls,hostCallbacks,hostVersion:Atomics.load(epoch.words,3),qualified:join.rows.length,ledger:join.ledger}));
  assert.equal(join.rows.length,expected,variant);
  if(expected){
@@ -240,6 +267,11 @@ async function nativeClientCases(){
    return result;
 }
 (async()=>{
+ if(process.env.NATIVE_WRITER_BOUNDARY_ONLY){
+   const result=await fixture(true,'native-writer-boundary','full',true);
+   if(process.env.DIRECTX_LAYER_RESULT)fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
+   console.log(JSON.stringify({passed:true,raw:result.raw,qualified:result.qualified,discarded:result.discarded,hostCallbacks:result.hostCallbacks.length}));return;
+ }
  if(process.env.NATIVE_CLIENT_RECT_ONLY){
    const result=await nativeClientCases();
    if(process.env.DIRECTX_LAYER_RESULT)fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
@@ -248,6 +280,7 @@ async function nativeClientCases(){
  if(process.env.FULL_FACADE_ONLY){console.log(JSON.stringify(await fixture(true,'actual-layer','full')));return;}
  if(process.env.MENU_EXPORTS_ONLY){console.log(JSON.stringify({baseline:await fixture(true,'actual-layer','menu-baseline'),corrected:await fixture(true,'actual-layer','menu-query')}));return;}
  if(process.env.OBSERVED_EXPORTS_ONLY){console.log(JSON.stringify(await fixture(true,'actual-layer',true)));return;}
+ const nativeWriterBoundary=await fixture(true,'native-writer-boundary','full',true);
  const getterGuards=getterExclusion();
  const menuGuards=menuBranchGuards();
  const nativeClientRect=await nativeClientCases();
@@ -266,7 +299,7 @@ async function nativeClientCases(){
  const fullCorrected=await fixture(true,'actual-layer','full');
  const fullNegative=[];
  for(const variant of [...negative.map(x=>x.variant),'compositor-poison','compositor-overlap','compositor-owner','compositor-page','compositor-token','compositor-size','forged-cache-token','missing-cache-token','entry-overlap-released'])fullNegative.push(await fixture(true,variant,'full'));
- const result = {passed:true,nativeClientRect,fullBaseline,fullCorrected,fullNegative,baseline,corrected,negative,observed,observedNegative,getterGuards,
+ const result = {passed:true,nativeWriterBoundary,nativeClientRect,fullBaseline,fullCorrected,fullNegative,baseline,corrected,negative,observed,observedNegative,getterGuards,
    menuBaseline,menuCorrected,menuNegative,menuGuards,
    moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
  if(process.env.DIRECTX_LAYER_RESULT) fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));

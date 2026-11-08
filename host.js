@@ -6863,6 +6863,11 @@ class WineAssembly {
   // Where every run loop used to present: the end of a completed slice.
   _presentAtBoundary(perf) {
     if (typeof requestAnimationFrame !== 'function') {
+      const r = this.renderer;
+      if (r && r._workerPublicationHeld && r._workerPublicationHeld()) {
+        this._dxLockDeferred = true;
+        return;
+      }
       const t0 = perf ? performance.now() : 0;
       if (this._presentDxIfDirty) this._presentDxIfDirty();
       if (this.renderer && this.renderer.flushRepaint) this.renderer.flushRepaint(true);
@@ -6957,11 +6962,21 @@ class WineAssembly {
   _presentNow() {
     this._cancelPresentFrame();
     this._dxLockDeferred = false;
+    const r = this.renderer;
+    // The boundary can be idle for the main slice while a separately owned
+    // command/render writer is still active. Do not decode first and only
+    // then ask the compositor to defer: that loses the immutable source and
+    // can read a surface midway through a write. Preserve damage and retry
+    // through the existing deferred-frame path after the writer drains.
+    if (r && r._workerPublicationHeld && r._workerPublicationHeld()) {
+      this._dxLockDeferred = true;
+      this._dropRendererFrame();
+      return 0;
+    }
     const perf = (typeof window !== 'undefined' && window.WinePerf && window.WinePerf.enabled)
       ? window.WinePerf : null;
     const t0 = perf ? performance.now() : 0;
     const dx = this._presentDxIfDirty ? this._presentDxIfDirty(true) : 0;
-    const r = this.renderer;
     let composited = 0;
     if (r && r.flushRepaint) {
       const held = r._workerPublicationHeld && r._workerPublicationHeld();

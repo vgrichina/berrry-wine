@@ -142,6 +142,52 @@ function driveWorkerLoop(h) {
 }
 
 (async () => {
+  // A completed main slice is not a completed observed command/render
+  // writer. Neither the renderer rAF nor the native decoder may consume
+  // damage until those independent writers have all released it.
+  {
+    const { WriterEpoch } = require('../lib/render-worker');
+    const h = makeHost({ withRaf: true, actualRenderer: true });
+    const epoch = new WriterEpoch();
+    const join = { live: true, epoch };
+    h.wine.renderer._d3dimPublicationJoins = new Set([join]);
+    h.present();
+    const first = epoch.begin(), second = epoch.begin();
+    h.wine._presentAtBoundary();
+    h.fireRaf();
+    assert.deepStrictEqual(h.log.uploads, []);
+    assert.strictEqual(h.wine._presentFrameDue, true);
+    h.wine._presentAtBoundary();
+    assert.deepStrictEqual(h.log.uploads, [], 'due boundary checks observed writers BEFORE native decode');
+    assert.strictEqual(h.wine._dxDirty, true, 'damage is retained');
+    assert.strictEqual(h.rafQueue.size, 1, 'retry survives an otherwise completed main slice');
+    epoch.end(first);
+    h.fireRaf();h.wine._presentAtBoundary();
+    assert.deepStrictEqual(h.log.uploads, [], 'one remaining writer still excludes the decode');
+    epoch.end(second);
+    assert.strictEqual(h.wine.renderer._workerPublicationHeld(), false, 'all writers drained at the same main boundary');
+    // This test's join supplies only the actual writer epoch; publication
+    // correctness is covered by the WAT/native-layer integration fixture.
+    h.wine.renderer._d3dimPublicationJoins.clear();
+    h.fireRaf();
+    assert.deepStrictEqual(h.log.uploads, [1], 'original pending damage uploads after ALL writers drain');
+    h.wine.renderer._d3dimPublicationJoins.add(join);
+    const stale = epoch.begin();
+    join.live = false;
+    assert.strictEqual(h.wine.renderer._workerPublicationHeld(), false, 'retired observation cannot hold ordinary display');
+    join.live = true;epoch.invalidate();
+    assert.strictEqual(h.wine.renderer._workerPublicationHeld(), false, 'poison does not deadlock ordinary display');
+    epoch.end(stale);
+  }
+  {
+    const h = makeHost({ withRaf: false });
+    h.present();h.wine.renderer.beginWorkerGuestSlice();
+    h.wine._presentAtBoundary();
+    assert.deepStrictEqual(h.log.uploads, [], 'non-DOM boundary also defers BEFORE decode');
+    assert.strictEqual(h.wine._dxLockDeferred, true);
+    h.wine.renderer.endWorkerGuestSlice();h.wine._presentAtBoundary();
+    assert.deepStrictEqual(h.log.uploads, [1]);
+  }
   // ---- many presents in one display frame -> one upload -------------------
   {
     const h = makeHost({ withRaf: true });

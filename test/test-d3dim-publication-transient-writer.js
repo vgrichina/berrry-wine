@@ -59,6 +59,13 @@ async function fixture(corrected,variant='unrelated'){
  }, undefined, []);
  assert.equal(epoch.snapshot(), null, 'async writer remains excluded');
  assert.equal(journal.unchanged(memory, first), variant!=='page-write');
+ // The renderer now defers the complete composition while a writer is
+ // active. Exercise the lower-level cache/publication refusal explicitly:
+ // a direct cache client can still decode without owning a safe source.
+ gdi.flushSurfacePresentation(sid);
+ assert.equal(gdi.surfacePresentations.get(sid).canvas._waD3dimVersion,undefined,
+   'direct GDI decode under a writer receives no immutable token');
+ join.publication({output:renderer.canvas},0);
  renderer.repaint();
  assert.equal(join.rows.length, 0, 'no qualification during writer exclusion');
  if (corrected && variant==='unrelated') {
