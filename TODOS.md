@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active offline streamed restore transport repair; gameplay pending sustainable storage
+  status: active fresh remote streamed restore and native BAT response
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-streamed-restore-2003 substantive offline gzip-to-upload helper avoids regenerated4.55MB local stage, exact canonical final1910 chars4762ae9c/game5e898dc9 stream SHA/length/CRC and remote HASH acceptance controls. No new bx/original or unchanged disk-floor retry; final pair retained not reloaded. Reviewed custody d8573b542 241refs214079B HASH actual tracer-parent adoption regression25focused/build PASS. Historical1910 normalChromeUNPROVEN remains. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-streamed-bat-response-2012 integrates canonical final1910 gzip providers and accepted streaming upload consumer into staging barrier before ONE new remote original; review actual numeric health/liveBAT, one ordinary response, native New Save at first verified consequence. Reviewed7c7657c5f helper source+22refs112534B HASH fouroriginalgziplogs SHA/CRC tenfocused/lockedbuild PASS zero localrawstage avoids4546657B. Historical1940 uploadUNKNOWN no replay; final1910 reload/normalChrome remain unproven. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
