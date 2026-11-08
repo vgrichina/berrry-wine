@@ -26,10 +26,38 @@ const baselineAPI = baselineModule.exports;
 const menuBaselineModule = new Module(root+'/lib/render-worker.js', module);
 menuBaselineModule.paths = module.paths;
 menuBaselineModule._compile(apiSource.replace("name === 'menu_bar_count'", "name === 'menu_bar_count_disabled_fixture'"), root+'/lib/render-worker.js');
+const fullBaselineModule = new Module(root+'/lib/render-worker.js', module);
+fullBaselineModule.paths = module.paths;
+// Restore the preceding source-lifetime rule, without changing rendering or
+// the export facade, for an in-process baseline/fixed comparison.
+assert(apiSource.includes('this.compositionReads?.get(version)'));
+fullBaselineModule._compile(apiSource.replace('this.compositionReads?.get(version)', 'null'),root+'/lib/render-worker.js');
 async function fixture(corrected,variant='actual-layer',observed=false){
- const API=observed==='menu-baseline'?menuBaselineModule.exports:corrected?productionAPI:baselineAPI;
+ const API=observed==='full-baseline'?fullBaselineModule.exports:observed==='menu-baseline'?menuBaselineModule.exports:corrected?productionAPI:baselineAPI;
  const memory=new WebAssembly.Memory({initial:8192,maximum:32768,shared:true}),imports={host:{memory}};
- for(const i of WebAssembly.Module.imports(moduleBytes))if(i.kind==='function')imports[i.module][i.name]=()=>0;
+ let windowHost, callbackEpoch, callbackRenderer, callbackNative, compositorTicket;
+ let injected=false, entryTicket;
+ const hostCallbacks=[];
+ for(const i of WebAssembly.Module.imports(moduleBytes))if(i.kind==='function')imports[i.module][i.name]=(...args)=>{
+   if(i.name!=='get_window_rect' || !windowHost)return 0;
+   return API.observeHostWrite(callbackEpoch,function(){
+     assert(Atomics.load(callbackEpoch.words,0)>0,'host scratch writer remains excluded');
+     const result=windowHost.get_window_rect(...args);
+     hostCallbacks.push({name:i.name,args,rect:Array.from(new Int32Array(memory.buffer,args[1],4))});
+     if(variant==='entry-overlap-released' && entryTicket){callbackEpoch.end(entryTicket);entryTicket=null;}
+     if(!injected && variant.startsWith('compositor-')) {
+       injected=true;
+       const win=callbackRenderer.windows[0x77],layer=win._dxFrameLayer;
+       if(variant==='compositor-poison')callbackEpoch.invalidate();
+       if(variant==='compositor-overlap')compositorTicket=callbackEpoch.begin();
+       if(variant==='compositor-owner')win.wasmMemory=null;
+       if(variant==='compositor-page')callbackNative.exports.guest_write32(0x50000000,0x001f001f);
+       if(variant==='compositor-token')delete layer.canvas._waD3dimVersion;
+       if(variant==='compositor-size')layer.canvas.width=3;
+     }
+     return result;
+   },undefined,[]);
+ };
  const native=new WebAssembly.Instance(moduleBytes,imports);native.exports.heap_init(0x3000000);
  const sent=[],c={performance,console,WebAssembly,ArrayBuffer,SharedArrayBuffer,Uint8Array,DataView,Map,Set,Atomics,Promise,require:name=>name==='worker_threads'?{parentPort:{on(){},postMessage:m=>sent.push(structuredClone(m))}}:name==='./render-worker'?API:require(root+'/lib/'+name.replace('./',''))};
  vm.createContext(c);vm.runInContext(source+`\nglobalThis.install=(n,m)=>{instance=n;memory=m;sharedMode=true;initializedImage=0x400000;stateGuest=1;verticesGuest=2;descriptorGuest=3;};globalThis.dispatch=sharedMessage;globalThis.entry=id=>endpoints.get(id);`,c);c.install(native,memory);
@@ -51,6 +79,17 @@ async function fixture(corrected,variant='actual-layer',observed=false){
    gamma_ramp_gen:native.exports.gamma_ramp_gen};
  const exportCalls=[];
  const facade=API.observeInstance({exports:decoderExports},()=>epoch);
+ if(typeof observed==='string' && observed.startsWith('full')) {
+   const exports={};
+   for(const [name,value] of Object.entries(facade.exports)) exports[name]=typeof value==='function'?function(...args){
+     const before=Atomics.load(epoch.words,3),result=value(...args);
+     exportCalls.push({name,before,after:Atomics.load(epoch.words,3)});
+     return result;
+   }:value;
+   Object.assign(facade.exports,exports);
+   renderer.wasm=facade;renderer.windows[0x77].wasm=facade;
+   assert.equal(renderer.windows[0x77].wasm.exports,facade.exports);
+ }
  if(typeof observed==='string' && observed.startsWith('menu-')) {
    // Isolate the FIRST failing compositor branch. Other scene exports keep
    // their prior fixture behavior; this does not certify the entire facade.
@@ -64,6 +103,7 @@ async function fixture(corrected,variant='actual-layer',observed=false){
  const {host,gdi}=createHostImports({getMemory:()=>memory.buffer,
    exports:observed?facade.exports:decoderExports,
    renderer,d3dimPublicationJoin:join});
+ windowHost=host;callbackEpoch=epoch;callbackRenderer=renderer;callbackNative=native;
  const dv=new DataView(memory.buffer),bytes=new Uint8Array(memory.buffer),front=BASE.DX_OBJECTS+32*7,back=front+32,dibA=BASE.DIB_BACKING_BASE,dibB=dibA+64,descriptor=dibB+64,sid=0x200007;
  for(const [entry,dib,red]of [[front,dibA,17],[back,dibB,34]]){dv.setUint32(entry,2,true);for(const [o,v]of [[12,2],[14,2],[16,16],[18,4]])dv.setUint16(entry+o,v,true);dv.setUint32(entry+20,dib,true);dv.setUint32(entry+28,1,true);for(let i=0;i<8;i+=2)dv.setUint16(dib+i,red===34?0xf800:0x001f,true);}
  let seq=0,serial=0;
@@ -96,11 +136,24 @@ async function fixture(corrected,variant='actual-layer',observed=false){
  if(variant==='resized-after-decode')layer.canvas.width=3;
  if(variant==='dirty-after-decode')native.exports.guest_write32(0x50000000+dib-BASE.DIB_BACKING_BASE,0x00330000);
  if(variant==='host-after-decode')epoch.invalidateVersions();
+ if(variant==='forged-cache-token')layer.canvas._waD3dimVersion={...layer.canvas._waD3dimVersion};
+ if(variant==='missing-cache-token')delete layer.canvas._waD3dimVersion;
+ if(variant==='entry-overlap-released')entryTicket=epoch.begin();
  renderer.repaint();
- const expected=corrected && observed!=='menu-baseline' && variant==='actual-layer'?1:0;
+ if(compositorTicket)epoch.end(compositorTicket);
+ if(variant.startsWith('compositor-'))assert(injected,'negative ran inside actual WAT host callback');
+ const expected=corrected && observed!=='full-baseline' && observed!=='menu-baseline' && variant==='actual-layer'?1:0;
+ if(typeof observed==='string' && observed.startsWith('full') && process.env.FULL_FACADE_DIAGNOSTIC) console.log(JSON.stringify({variant,exportCalls,hostCallbacks,hostVersion:Atomics.load(epoch.words,3),qualified:join.rows.length,ledger:join.ledger}));
  assert.equal(join.rows.length,expected,variant);
  if(expected){
    const row=join.rows[0];
+   if(observed==='full') {
+     assert(row.canonicalRead.compositionAdmission,'source admitted before compositor exports');
+     assert.equal(row.canonicalRead.compositionAdmission.hostVersion,first.hostVersion);
+     assert(Atomics.load(epoch.words,3)>first.hostVersion,'scratch writes still invalidate host versions');
+     assert.equal(hostCallbacks.length,2,'real X/Y host callbacks write rectangle scratch');
+     assert(hostCallbacks.every(c=>c.rect.join(',')==='0,0,2,2'));
+   }
    assert.equal(row.sourceVersion,first.sourceVersion);
    assert.equal(row.consumedSurfaceVersion,first.sourceVersion);
    assert.equal(row.canvasCacheSerial,layer.canvas._waD3dimVersion.cacheSerial);
@@ -110,7 +163,7 @@ async function fixture(corrected,variant='actual-layer',observed=false){
  }
  join.retire('fixture-finished');
  assert.equal(journal.records().length, join.rows.length+join.ledger.length);
- return {variant, corrected, observed, exportCalls, raw:journal.records().length,qualified:join.rows.length,
+ return {variant, corrected, observed, exportCalls, hostCallbacks, raw:journal.records().length,qualified:join.rows.length,
    discarded:join.ledger.length,rows:join.rows,ledger:join.ledger};
 }
 // Getter classification never removes its writer ticket. In particular, only
@@ -169,6 +222,7 @@ function menuBranchGuards(){
  return {passed:true,nativeValidAndAbsentWindow:true,nonzeroEmptyAndPopulatedBlobInvalidation:true,legacyConservative:true,exclusionAndPoison:true};
 }
 (async()=>{
+ if(process.env.FULL_FACADE_ONLY){console.log(JSON.stringify(await fixture(true,'actual-layer','full')));return;}
  if(process.env.MENU_EXPORTS_ONLY){console.log(JSON.stringify({baseline:await fixture(true,'actual-layer','menu-baseline'),corrected:await fixture(true,'actual-layer','menu-query')}));return;}
  if(process.env.OBSERVED_EXPORTS_ONLY){console.log(JSON.stringify(await fixture(true,'actual-layer',true)));return;}
  const getterGuards=getterExclusion();
@@ -184,10 +238,14 @@ function menuBranchGuards(){
  for(const variant of negative.map(x=>x.variant))observedNegative.push(await fixture(true,variant,true));
  const menuNegative=[];
  for(const variant of negative.map(x=>x.variant))menuNegative.push(await fixture(true,variant,'menu-query'));
- const result = {passed:true,baseline,corrected,negative,observed,observedNegative,getterGuards,
+ const fullBaseline=await fixture(true,'actual-layer','full-baseline');
+ const fullCorrected=await fixture(true,'actual-layer','full');
+ const fullNegative=[];
+ for(const variant of [...negative.map(x=>x.variant),'compositor-poison','compositor-overlap','compositor-owner','compositor-page','compositor-token','compositor-size','forged-cache-token','missing-cache-token','entry-overlap-released'])fullNegative.push(await fixture(true,variant,'full'));
+ const result = {passed:true,fullBaseline,fullCorrected,fullNegative,baseline,corrected,negative,observed,observedNegative,getterGuards,
    menuBaseline,menuCorrected,menuNegative,menuGuards,
    moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
  if(process.env.DIRECTX_LAYER_RESULT) fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
- console.log(JSON.stringify({passed:true,baselineQualified:baseline.qualified,
+ console.log(JSON.stringify({passed:true,fullBaselineQualified:fullBaseline.qualified,fullCorrectedQualified:fullCorrected.qualified,fullNegative:fullNegative.map(x=>({variant:x.variant,qualified:x.qualified})),baselineQualified:baseline.qualified,
    correctedQualified:corrected.qualified,observedQualified:observed.qualified,observedNegative:observedNegative.length,getterGuards,menuGuards,menuBaselineQualified:menuBaseline.qualified,menuCorrectedQualified:menuCorrected.qualified,menuNegative:menuNegative.length,negative:negative.map(x=>({variant:x.variant,qualified:x.qualified,discarded:x.discarded}))}));
 })().catch(e=>{console.error(e);process.exitCode=1;});
