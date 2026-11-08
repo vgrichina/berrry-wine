@@ -3300,3 +3300,89 @@ groups,31,264 notifications and1,657,562,432 payload bytes. That is about80
 packets per notification; it demonstrates notification coalescing, not GPU/guest
 execution overlap. Copies and decoder work remain potential costs. No valid
 foreground Android speedup or cross-renderer FPS comparison is claimed here.
+
+### 2026-11-08: Foreground Android publication and release comparison
+
+Evidence: `scratch/runs/20261108-android-publication`. Android A142,
+Chrome157, isolated guest Workers, Auto50k, one game at a time. Actual drawable
+640x480: the harness requested1024x768 through registry entries but the observed
+transform remained640x480 on every build. All samples lasted60seconds and
+remained visible; counts are presentation deltas, not page refreshes.
+
+| Build / route | Presents | Seconds | FPS |
+| --- | ---: | ---: | ---: |
+| Current shared publication | 577 | 60.004030 | 9.616 |
+| Current publication disabled | 25 | 60.001325 | 0.417 |
+| Disabled repeat | 29 | 60.002970 | 0.483 |
+| Shared publication repeat | 533 | 60.002640 | 8.883 |
+| Earlier release-based build | 973 | 60.002075 | 16.216 |
+
+The current pair serves identical WASM and source except queue creation in
+guest-thread-host. Current module SHA256 is
+`6d2b8ef07e867641b26b3b6762f66ab8a605bcdca4970a9860d108709d422cfd`.
+The earlier release module was captured from its browser response and matches
+the previous16.466FPS run:
+`fc9fa56ccc385e12015785e9c031c448541c8ff1c4f33e616d78d7e80cd1cb59`.
+Disabling the new queue does NOT reproduce the earlier release; it retains the
+integration's per-call publication and other native changes. The remaining
+release-to-integration regression is unresolved. This GL workload does not
+exercise the pending D3D9 guest-side CLEAR capture optimization.
+
+Captures show textured corridor/HUD, but not an exact deterministic replay:
+the slow control still has debris from the opening animation; camera/lighting
+phases differ. The phone changed from portrait to landscape before the current
+repeat; current repeat and release use the same871x309 CSS viewport and2.625DPR.
+Battery temperature rose from28C initially to32C after first current/control,
+then36C before release. These are sequential samples, not confidence intervals
+or an isolated WebGL1-versus-WebGL2 performance test. The release remains faster
+despite running later. The original current60s sample published1,169,834 packets,
+930,761,776 bytes and4,350 notifications; this is transport throughput, not a
+measurement of actual GPU/guest overlap. No new CPU profile was collected.
+
+Backend recommendation: keep one queue/ownership/resource model with WebGL2
+preferred in browsers and capability-checked WebGL1 for the native CLI provider.
+Actual `test-headless-gl.js` passes on Apple M1/WebGL1. A separate provider probe
+confirms `getContext('webgl2')` returnsnull, WEBGL_draw_buffers is available and
+enableDrawableBuffers succeeds. Thus current CLI GPU rendering is not WebGL2,
+but can retain the shared renderer through WebGL1 extensions. This is a provider
+smoke check, not a full CLI Half-Life playthrough. Software remains a separate
+raster backend. Do not attribute the regression to WebGL2 without holding the
+command stream and other runtime changes constant.
+
+Follow-up30-second CPU profiles in the same evidence folder separate this
+regression from API-version speculation. Release main guest: waitForResponse
+8.09% of samples; render Worker idle74.07%. Current main guest: WASM53.72%,
+RPC JS29.65% (waitForResponse28.51%), idle10.86%. Current render Worker:
+idle48.76%, `_decodeTexture`23.05%, `drawBuffers`2.11%, GC1.18%; page idle58.42%,
+`joinPublished`1.83%. These are per-thread sample shares including waits, not
+hardware utilization or additive CPU totals. Profiled presentation rates are
+13.96FPS release and6.70FPS current; do not substitute them for unprofiled FPS.
+Current capture tracks visibility and stayed visible; the earlier collector
+did not track visibility transitions, a limitation of the release profile.
+This supports investigating redundant per-texel conversion alongside remaining
+producer waits, not blaming WebGL2 itself.
+
+The first identity-RGBA-byte fast path did not target the observed workload:
+a5-second temporary Worker wrapper counted83 uploads/1,359,872 pixels, all
+canonical RGBA/GL_FLOAT with identity pixel transfer. The wrapper was removed
+before subsequent timing. Native capture already expands these source pixels
+to floats. Final decoding therefore handles identity RGBA bytes by owned row
+copies and floats by direct scalar clamp/round loops; nonidentity transfer/maps
+retain the generic path. No producer ownership or barrier was relaxed.
+
+The byte-only run measured441/60.003650s=7.350FPS. The float-path run measured
+518/60.003585s=8.633FPS, foreground640x480 with matching corridor route. Phone
+temperature reached39C; these sequential samples do not establish a precise
+speedup relative to earlier cooler runs. More decisive supporting evidence is
+the second30-second profile: decoder2.19% of render-worker samples versus23.05%,
+render idle62.29% versus48.76%, guest waitForResponse19.53% versus28.51%.
+Profiled FPS7.998 versus6.699 is diagnostic only. The release gap remains.
+
+Validation: owned byte output after producer mutation; padded rows, skips,
+canonical unpack override; float clamp/round, NaN/infinity, byte swapping,
+nonidentity alpha transfer, enabled maps and short-input rejection; packed
+fixed-function suite and935 native/host pixel-map checks pass. Exact source
+snapshots/patches, format probe, screenshots, timing JSON and raw CPU profiles
+are retained in the same run folder. D3D9 clear publication is separately
+committed as7a05ea3f8; this OpenGL decoder optimization is shared by both browser
+WebGL versions and the CLI frontend, not a WebGL2-specific workaround.
