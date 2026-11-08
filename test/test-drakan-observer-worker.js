@@ -34,7 +34,7 @@ const F = fixtureModule.exports;
 let checks = 0;
 function pass(name) { checks++; console.log('PASS ' + name); }
 
-async function workerCase(mode = '', mutate = () => {}, useLink = false) {
+async function workerCase(mode = '', mutate = () => {}, useLink = false, lifecycle = {}) {
   const f = await F.fixture(mode), memory = f.e.memory;
   assert(memory instanceof WebAssembly.Memory);
   const saved = [];
@@ -115,12 +115,32 @@ async function workerCase(mode = '', mutate = () => {}, useLink = false) {
     const owner = { worker: String(endpoint), endpoint, slot: 0, process: pid, epoch, moduleSha256: MODULE_SHA };
     if (!link) controller = new Controller({ owner, timestamp: F.STAMP, maxMs: 1700, worker, releaseT: () => { released++; } });
     const options = { base: F.B, object: F.OBJ, actor: F.ACTOR, keyboardDevice: regions.BASE.DX_OBJECTS, pins };
-    await mutate({ controller, options, owner, f, request });
-    const start = link ? await (productionHost || link).observeDrakanActor({ ...options, timestamp: F.STAMP,
-      actionStartedAt: performance.timeOrigin + performance.now(), maxMs: 1700, releaseT: () => { released++; } })
-      : await controller.observe(request, options);
+    await mutate({ controller, options, owner, f, request, link });
+    let start;
+    try {
+      lifecycle.actionStartedAt = performance.timeOrigin + performance.now() - (lifecycle.age || 0);
+      start = link ? await (lifecycle.observe || (productionHost || link).observeDrakanActor).call(productionHost || link, { ...options, timestamp: F.STAMP,
+        actionStartedAt: lifecycle.actionStartedAt,
+        maxMs: lifecycle.maxMs || 1700,
+        releaseT: () => { released++; return lifecycle.release?.(); } })
+        : await controller.observe(request, options);
+    } catch (error) {
+      controller = link?.drakanController || controller;
+      if (!lifecycle.setupError) throw error;
+      await lifecycle.setupError({ error, controller, link, request });
+      assert.equal(released, 1);
+      assert.equal(consumedCalls, 0);
+      assert.equal(events.filter(m => m.t === 'drakanObserverComplete').length, 0);
+      return;
+    }
     if (link) controller = start.controller;
     let result = start.result;
+    if (lifecycle.afterStart) {
+      await lifecycle.afterStart({ controller, link, request, productionHost });
+      assert.equal(consumedCalls, 0, 'release tests issue no guest action or replay');
+      assert.equal(events.filter(m => m.t === 'drakanObserverComplete').length, 0);
+      return;
+    }
     if (mode === 'deadline') {
       // Keep ordinary WASM busy without calls/imports. Controller release must
       // happen independently, before that same production slice returns.
@@ -160,7 +180,134 @@ async function workerCase(mode = '', mutate = () => {}, useLink = false) {
   }
 }
 
+const turn = () => new Promise(resolve => setImmediate(resolve));
+async function releaseCase(outcome, trigger, useLink) {
+  const sentinel = Error('physical release ' + outcome);
+  let resolve, reject, calls = 0, physicalSettled = false, releaseAt;
+  const original = new Promise((yes, no) => { resolve = yes; reject = no; });
+  // The throwing case has no asynchronous operation to settle.
+  if (outcome === 'throw') resolve();
+  const release = () => {
+    calls++;
+    releaseAt = performance.timeOrigin + performance.now();
+    if (outcome === 'throw') throw sentinel;
+    if (outcome === 'reject-early') setTimeout(() => { physicalSettled = true; reject(sentinel); }, 5);
+    return original;
+  };
+  const verify = async (controller, promise) => {
+    assert.equal(typeof promise?.then, 'function', 'every release exposes a completion Promise across realms');
+    if (controller) {
+      assert.equal(controller.stop('duplicate stop'), promise);
+      assert.equal(controller.stop('duplicate stop again'), promise);
+      assert.equal(controller.completed, undefined);
+      const control = readControl(controller.buffer);
+      assert.equal(control.downActive, false);
+      assert.equal(control.unknown, true, 'cleared action is UNKNOWN, not a released-input receipt');
+      const first = controller.releaseT();
+      assert.equal(controller.releaseT(), first, 'wrapper reuses cached result');
+      if (outcome !== 'throw') assert.equal(first, original, 'original Promise preserved');
+    }
+    let settled = false;
+    promise.then(() => { settled = true; });
+    await turn();
+    if (outcome === 'reject-early') {
+      assert.equal(settled, true, 'setup joins release that already rejected during dependency loading');
+      assert.equal(physicalSettled, true);
+    } else if (outcome !== 'throw') {
+      assert.equal(settled, false, 'release completion must wait for physical callback');
+      assert.equal(physicalSettled, false);
+      physicalSettled = true;
+      if (outcome === 'reject') reject(sentinel); else resolve('physical up acknowledged');
+    }
+    await promise;
+    await turn();
+    assert.equal(calls, 1);
+  };
+  const lifecycle = { release, maxMs: trigger === 'deadline' ? 300 : 1700, age: trigger === 'deadline' ? 100 : 0 };
+  if (trigger === 'loading-deadline') {
+    // Execute the unchanged browser WorkerLink method on the actual live Node
+    // WorkerLink. Only dependency loading is delayed; no Worker is simulated.
+    const self = { GuestRpc: RPC, processBoot: require('../lib/process-boot'),
+      ThreadSendWaits: require('../lib/thread-send-waits'), RegionMap: regions,
+      DrakanObserverWorker: require('../lib/drakan-observer-worker') };
+    const context = vm.createContext({ self, performance, URL, setTimeout, clearTimeout,
+      document: { baseURI: require('node:url').pathToFileURL(ROOT + '/').href } });
+    const script = new vm.Script(fs.readFileSync(require.resolve('../lib/guest-thread-host'), 'utf8'), {
+      filename: require.resolve('../lib/guest-thread-host'),
+      importModuleDynamically: async url => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return import(url);
+      },
+    });
+    script.runInContext(context);
+    lifecycle.observe = self.GuestWorkerLink.prototype.observeDrakanActor;
+    lifecycle.maxMs = 60; lifecycle.age = 20;
+  }
+  if (['setup', 'expired', 'unavailable', 'constructor', 'loading-deadline'].includes(trigger)) {
+    if (trigger === 'expired') lifecycle.age = 3000;
+    if (trigger === 'constructor') lifecycle.maxMs = 2001;
+    lifecycle.setupError = async ({ error, controller }) => {
+      assert.match(error.message, /actual keyboard device|fresh original action|unavailable|configuration|released.*during setup/);
+      if (trigger === 'loading-deadline') {
+        assert(!controller, 'setup expiry never rearms down in a new Controller');
+        const initiationMs = releaseAt - lifecycle.actionStartedAt;
+        assert(initiationMs < 300 && initiationMs >= 20, 'original setup deadline independently initiates release');
+        console.log(JSON.stringify({ setupReleaseInitiationMs: initiationMs, controllerCreated: false, outcome }));
+      }
+      await verify(controller, error.releasePromise);
+      assert.equal(error.releaseError, outcome === 'success' ? null : String(sentinel));
+      if (controller) assert.equal(controller.releaseError || null, error.releaseError);
+    };
+  } else lifecycle.afterStart = async ({ controller, link, request }) => {
+    assert.equal(controller.deadline, lifecycle.actionStartedAt + lifecycle.maxMs);
+    if (trigger === 'deadline') {
+      const started = controller.deadline - 300;
+      assert(controller.clock() - started >= 100, 'original action start retained');
+      while (!controller.stopped && controller.clock() < started + 1000)
+        await new Promise(resolve => setTimeout(resolve, 5));
+      assert(controller.stopped, 'independent deadline initiates release');
+      assert(controller.clock() - started < 1000, 'deadline not restarted at setup');
+    } else if (trigger === 'retirement') link._beginRetiring();
+    else controller.stop('explicit stop');
+    await verify(controller, controller.releasePromise);
+    assert.equal(controller.releaseError || null, outcome === 'success' ? null : String(sentinel));
+    if (trigger !== 'retirement') {
+      await assert.rejects(request({ t: 'drakanObserver', action: 'start' }), /already used/);
+      assert.equal(readControl(controller.buffer).downActive, false, 'duplicate start cannot rearm down');
+      assert.equal(calls, 1, 'rearm refusal cannot replay release');
+    }
+  };
+  await workerCase('release-lifecycle', ({ options, link }) => {
+    if (trigger === 'setup') options.keyboardDevice += 32;
+    if (trigger === 'unavailable') link.drakanModuleBytes = null;
+  }, useLink, lifecycle);
+  pass(`actual ${useLink === 'host' ? 'GuestThreadHost' : 'WorkerLink'} ${trigger} ${outcome}: physical settlement, error, exact once and duplicate stops`);
+}
+
 (async () => {
+  const unhandled = [];
+  const onUnhandled = e => unhandled.push(String(e));
+  process.on('unhandledRejection', onUnhandled);
+  if (process.env.WINE_DRAKAN_RELEASE_REPRO === '1') {
+    for (const outcome of ['success', 'reject']) {
+      let settle, physical = false;
+      const original = new Promise((yes, no) => { settle = outcome === 'success' ? yes : no; });
+      await workerCase('release-reproduction', () => {}, 'host', {
+        release: () => original,
+        afterStart: async ({ controller }) => {
+          const p = controller.stop('reproduce dropped async release');
+          let settled = false; p.then(() => { settled = true; });
+          await turn();
+          console.log(JSON.stringify({ reproduction: outcome, releasePromiseSettledBeforePhysical: settled && !physical }));
+          physical = true; settle(outcome === 'success' ? 'physical up' : Error('delayed physical release rejection'));
+          await turn(); await turn();
+          console.log(JSON.stringify({ releaseError: controller.releaseError || null, unhandled: [...unhandled] }));
+        },
+      });
+    }
+    process.off('unhandledRejection', onUnhandled);
+    return;
+  }
   assert.equal(await sha256(bytes), MODULE_SHA);
   const browser = { self: {}, crypto: require('node:crypto').webcrypto, Uint8Array };
   vm.runInNewContext(fs.readFileSync(require.resolve('../lib/drakan-passive-actor-observer'), 'utf8'), browser);
@@ -219,5 +366,14 @@ async function workerCase(mode = '', mutate = () => {}, useLink = false) {
   const link = new WorkerLink({ slot: 0 });
   await assert.rejects(link.observeDrakanActor({ actionStartedAt: 0, releaseT: () => failedRelease++ }), /fresh original action/);
   assert.equal(failedRelease, 2); pass('parent setup/late action failure releases once without a Worker');
+  for (const trigger of ['stop', 'deadline', 'retirement', 'setup', 'expired', 'unavailable', 'constructor'])
+    for (const outcome of ['success', 'reject', 'throw'])
+      await releaseCase(outcome, trigger, outcome === 'reject' ? 'host' : true);
+  if (process.env.WINE_DRAKAN_BROWSER_SETUP === '1')
+    for (const outcome of ['success', 'reject', 'throw', 'reject-early']) await releaseCase(outcome, 'loading-deadline', true);
+  await turn(); await turn();
+  assert.deepEqual(unhandled, [], 'no asynchronous release rejection escapes the actual host path');
+  process.off('unhandledRejection', onUnhandled);
+  pass('no unhandled release rejection across all actual WorkerLink/GuestThreadHost lifecycle cases');
   console.log(JSON.stringify({ checks, moduleSha256: MODULE_SHA, productionWorker: true, syntheticGuest: true, original: false }));
 })().catch(e => { console.error(e); process.exitCode = 1; });
