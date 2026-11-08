@@ -6,9 +6,9 @@
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
-  status: active; offline compressed custody shutdown repair; onward consequence open
+  status: active; supported gzip custody repaired; fresh remote upper-opening gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh custody-gzip-drain-1925 repairs supported gzip journal and bounded cancellation/drain before another native run. Reviewed d14f845e6 whole note105refs1053455B HASH plus independent truncated297654B prefixHASH: Chrome0 after disk safety, supervisor143 causeUNKNOWN missing trailer, no fullcustody claim. New187 exactBSP sightline controls locate upperopening bearing~92 versus135 preparationONLY, no movement/attack. Module d8fac unchanged distinctcc438/f965. No box allocated. See docs/re-notes/quake2-northern-aperture-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh quake2-upper-opening-1940 qualifies upper northern opening from current pixels, short reviewed independent inputs; remote explicitly authorized because localChrome disk unsustainable. Reviewed e1a413983f 319refs170604B HASH39validgzip10deliberatepartial 24focused+lockedbuildPASS supportedgzip/cancellation actualdrain; original143causeUNKNOWN unchanged. Current701 CPUd8fac distinctcc438/f965 static187controls bearing~92 preparationONLY notblindscript. First onward consequence or causaltestedrepair STOP. See docs/re-notes/custody-gzip-drain-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -18,9 +18,9 @@
 
 - [ ] Current TR2 native controls and qualified presentation rates
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
-  status: active; offline weapon snapshot read repair; consumption open
+  status: active; mapped observer repaired; fresh early weapon original
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-mapped-snapshot-1925 identifies failing read and tests read-only mapping/structured diagnostics before another original. Reviewed37e3869c0 whole note143remoteRefs33122607B plus327ownedrefs11113621B HASH and drawnpistol pixels. Healthy original oneControl requested2000 actual2001ms OVERRUN; poll->ActionEBX40 then unmappedread beforeinputPublished/weaponrows; address absent, no readiness/target/hit inferred. Selected615/29ab9355dd unchanged, prior126weapon32Action/closure/build reused. bx_5krvn687 archived expiryNULL stop_85773d3776d8aa30; direct7terminalwait scope. Intel/SystemInfoSwiftShader unresolved. See docs/re-notes/tr2-early-weapon-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-mapped-weapon-original-1940 selects new615/29 mappedobserver with explicitweapon+action optin ONE healthy early Control requested1900ms independentrelease, actualreceipt bounds honest. Reviewed971b059a44 50refs532722B HASH5gzip valid 150weapon32Action13closure8generation+lockedbuildPASS CPUd8fac unchanged. Readonly direct/sparse/DIB authoritativePTE structuredfailure; oldactual1914 address unrecoverable authored12000022 fixture NOToriginalreconstruction. Firstlinkedreturn or exactreadfailure STOP beforemoregameplay. Intel/SystemInfoSwiftShader unresolved. See docs/re-notes/tr2-mapped-snapshot-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; new bat-damage checkpoint saved; offline Chrome close repair
+  status: active; browser terminal drain repaired; fresh BAT response
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-close-escalation-1925 investigates driver close ordering before further encounter. Reviewed3a75ffb9c whole note234remoteRefs191308046B streamHASH and475ownedrefs22130931B HASH; CURRENT17/35->16/35 native panel BATlive first consequence STOP no attack/potion. Final1910 continuation characters1342316B4762ae9c +game641d_6af0ca48.sav3204341B5e898dc9 recovered not reloaded; future fresh restore ONLYthis pair with current health review. ChromeSIGKILL normalexitUNPROVEN distinct kernel357/357actualreaps. bx_p85tr6tn archived expiryNULL stop_ae93d9661a714576. Early328.983s final416.772s native saves retained. See docs/re-notes/darkstone-bat-continuation-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-bat-response-1940 restore ONLY final1910 chars4762ae9c/game5e898dc9 pair, currenthealthreview then ONE ordinary BATresponse firstconsequence STOP nativeNewSave recovery. Lastnumeric16/35 liveBAT Gold1713. Reviewed aa677ef46 17refs48067B HASH4gzip valid tenactualprocesscontrols+lockedbuildPASS sharedclosepromise actualexit+pipeDrain BEFOREcleanup/quitACK finiteUNKNOWN noACK retainsprofile. Newselection hashes/invokes guardedadapter+helper; historical1910SIGKILLnormalUNPROVEN distinct357/357actualreaps; oldboxarchivedstop_ae93d9661a714576. See docs/re-notes/darkstone-close-escalation-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
