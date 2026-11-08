@@ -1,5 +1,26 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Drakan native bootstrap and both current D3DIM worlds
+
+Published `ed993c025`, run `20261108-drakan-native-warning-gameplay`,
+qualifies ordinary native MessageBox/GDI Enter before renderer creation, then
+a one-way handoff to strict actual D3DIM ownership. Production software/WebGL
+triangle, native input and zero-input rejection controls pass. Both original
+arms reach the rainy dragon level through native New Game/Normal/story input.
+Software D3DIM and actual WebGL2 producer work and both owner modules are
+verified; WebGL reports Intel/Mesa ANGLE. Native relative mouse input changes
+terrain-relative heading. Sustained forward flight/altitude is unproved.
+
+Software primary/secondary attacks show no outgoing target consequence and
+incoming enemies drain health; WebGL does not establish a target engagement.
+The coordinator inspected both world/heading views and the software attack,
+independently verified459 references, and delivered Telegram2296.39 exact ACKs,
+zero UNKNOWN, unchanged681pins/454HTTP checks and normal archived stop pass.
+No emulator repair is claimed. Actual attack polling/timing needs local
+qualification before another original attack. Parity, FPS, audio, full game
+and full27 remain open; Asghan takes the released gameplay slot.
+[Bootstrap controls, action limits and cleanup](re-notes/drakan-native-warning-gameplay-20261108.md).
+
 ## November 8: optional capture-state change does not resolve the page stall
 
 Published `a7581bcd5`, run `20261108-browser-page-capture-cause`, removes
