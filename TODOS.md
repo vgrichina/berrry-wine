@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-full-facade-native-1224 validates published4003f6502 FULLobservedcompositorlifetime repair onoriginal before reviewedmovement/weapon. ExactdecodedDXtoken admittedBEFOREscratchqueries; realhostscratch/fullWAT/dispatcher/RGB565/compositor baseline0fixed1red29negativeguards sevenfocusedLockedBuildPASS. Independentlyhashed33refs596967B reviewedproductiondiff; same d8facd06module fixtureONLY nativevalidationOPEN nooriginal/box. Note: docs/re-notes/tr2-full-compositor-facade-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-predecode-native-1250 validates exclusiveDX deferredGDIpreparation2666626f9 then reviewedmovement/weapon onlyafterqualifiedDXjoins. Priororiginal534raw0qualified nativeclientgeometryscratchBEFOREdecode; actualnonemptyWATclientrect exactbaseline0/fixed1red29guards/placement/Workerorder/lockedbuildPASS. Independentlyhashed95refs168302266B; allocationorderingviolation/truncatedUNKNOWNretained. bx_2b52t3h9 archived normalstop_734c8dd2681a7a69 expiryNULL. Note: docs/re-notes/tr2-full-facade-native-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; seven victories and town gateway crossing verified; onward/area transition open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-outer-road-1224 restores characters9c26d3cc/game641d_6af0686c.savda42f724 then onwardfromstoneruins. Publishedeeeb468bd crossedpalisadegateway reviewedGIANTWASPdefeat nativeVictories7+0 LIFE22/35Gold1532Food65MANA25/25vialretained nativeNewSave. Independentlyhashed225refs213443560B personallyreviewedcounterPNG; bx_dfmv5fk7 archivednormalstop_034beaeea7ffcd60 expiryNULL29PIDdrain. Note: docs/re-notes/darkstone-rozanne-route-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-hollow-onward-1250 restores newhollowslot characters77cc4de6/game641d_6af06c20.sav79e1d54c then roadtowardentrance/areatransition/reviewedencounter. Sevenvictories LIFE22/35Food61Gold1532MANA25/25vialretained; personallyreviewednewhollowPNG nativeNewSave notreloaded sourceuntouched. Independentlyhashed340refs258058950B; bx_92rf4xra archived normalstop_72c665fa7f827547 expiryNULL. Note: docs/re-notes/darkstone-outer-road-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
