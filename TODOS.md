@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-clear-integration-progress-1032 integrates tested productionCLEAR0x20004observer repair withfullbuild/focusedtests then originalexactjoins/reviewedmovementweapon. Publishedaee5fec9c nativeGraphics8906ms/500ms Enter/owningWebGL/module/4096armPASS observerunsupported-sync-retired beforeanysource; noUpSpaceControl. Candidate realWAT/canonicalcomposition baselineRetires correctedraw2qualified1discard1 asyncwriter/oldproofrefusal/ACK/unsupported/throwcontrolsPASS. Coordinator patch reviewed74refs7814479B68hashes independentlyverified archived/drained. Note: docs/re-notes/tr2-qualified-native-progress-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-pending-source-native-progress-1043 uses published0ac9414c6CLEAR+f8a4241c7transientpublicationwriter fixes for exactqualifiedjoins before reviewedUp/Space/Control. Bothlockedfullbuilds/focusedrealWATcanonicalregressionsPASS. Solepriororiginal now51raw=0qualified+51discard (46overlap5sealed), no gameplaycommands. Pendingimmutablesource survivesunrelatedwriter, freshcanonicalreadrequired; overlap/hostversion/poisonnegatives retained. Coordinator code reviewed75refs8060809B69hashes independentlyverified archived/drained. Note: docs/re-notes/tr2-clear-integration-progress-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
