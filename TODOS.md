@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-software-native-1302 uses tested exactPNGcoordinatewitness850pin closuread64cd3ff; priorSoftwareclickMISSEDactualaccelerator retained. Nativephase333.7ms=request269/owner.185/PNG50.9/return13 checkedage82fresh; onlyonecandidate nochangedtimerpair noM/movement. Fourmoduleprobe2792+2031ms workerentrydelayopen. Independentlyhashed404refs283598772B normalbx_2y99hk7g archivedstop_e72f230e4919cf59 expiryNULL. Note: docs/re-notes/recoil-admitted-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-software-owner-1324 LOCAL actual Software render-owner attestation repair before another original; Software visibly verified black radio196457, native tank timer09 then MENU but no D3D owner, strict four-response gate withheld Resume/M. Tested cumulative integer motion repair851pins29startup not native uploaded. Independentlyhashed369refs395122266B normalbx_kvzp7fye archivedstop_44fc7f9835ab35f3 expiryNULL. Note: docs/re-notes/recoil-software-native-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-writer-boundary-native-1304 validates efae2c6d3 host/rendererALLwriterdeferBEFOREdecode then qualifiedDXjoins/reviewedmovement. Prior113raw0qualified predecodeactive1 despite mainboundary; actualsameWATclientrect twoindependentwriters fixedsamependingraw1qualified1red vs exactGitbaselineFAIL,29guards/rAF/nonDOM/placement/transient/sourceLifetime/census/lockedbuildPASS. Independentlyhashed96refs55928814B bx_bryqb7fr archivednormalstop_c632b48c26c551c7 expiryNULL. Note: docs/re-notes/tr2-predecode-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-clear-order-repair-1324 LOCAL production ordering/immutable-source repair ONLY no unchanged original. Exact efae2c6d3 native441raw0qualified; synchronousclear0x20004 host522->523 invalidates sealedsource; safe decoder owes serial445 latestsame descriptor446. Preserve exact request/all guards and ordinary display. Independentlyhashed117refs230524323B normalbx_9g3gxu95 archivedstop_87d38cea39ee9af1 expiryNULL. Note: docs/re-notes/tr2-writer-boundary-native-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
