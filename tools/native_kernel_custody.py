@@ -1,0 +1,165 @@
+"""Linux ptrace custody: fork events stop children before they run; peek before reap.
+No /proc sampling is used to discover descendants. Every task is registered from
+its kernel fork/vfork/clone event before either side of the fork resumes.
+"""
+import ctypes, errno, json, os, signal, sys, time
+from pathlib import Path
+
+TRACEME, CONT, SETOPTIONS, GETEVENTMSG = 0, 7, 0x4200, 0x4201
+OPTIONS = 2 | 4 | 8 | 16 | 64 | (1 << 20) # fork/vfork/clone/exec/exit/EXITKILL
+WALL = 0x40000000
+libc = ctypes.CDLL(None, use_errno=True)
+libc.ptrace.restype = ctypes.c_long
+
+def ptrace(request, pid, addr=0, data=0):
+    result = libc.ptrace(request, pid, ctypes.c_void_p(addr), ctypes.c_void_p(data))
+    if result == -1:
+        e = ctypes.get_errno()
+        raise OSError(e, os.strerror(e), str(pid))
+    return result
+
+def identity(pid):
+    p = Path('/proc') / str(pid)
+    stat = (p / 'stat').read_text(); fields = stat[stat.rfind(')') + 2:].split()
+    status = (p / 'status').read_text().splitlines()
+    return dict(pid=pid, start=fields[19], ppid=int(fields[1]), state=fields[0],
+                tgid=int(next(s.split()[1] for s in status if s.startswith('Tgid:'))))
+
+def supervise(run, command, *, deadline, cleanup_deadline):
+    run = Path(run).resolve(); run.mkdir(parents=True, exist_ok=True)
+    assert time.time() < deadline < cleanup_deadline, "expired or invalid immutable deadlines"
+    assert libc.prctl(36, 1, 0, 0, 0) == 0, 'subreaper required'
+    owned = {}; reaped = []; parked = set(); root_status = None; sequence = 0
+    journal = open(run / 'custody.ndjson', 'w', buffering=1)
+    def log(kind, **value):
+        nonlocal sequence
+        sequence += 1
+        journal.write(json.dumps(dict(sequence=sequence, at=time.time(), kind=kind, **value))+'\n')
+        journal.flush(); os.fsync(journal.fileno())
+        return sequence
+    def write(name, value):
+        (run / name).write_text(json.dumps(value, indent=2))
+    def register(pid, parent, cause):
+        row = identity(pid)
+        if pid in owned:
+            assert owned[pid]['start'] == row['start'], 'PID reused while in custody'
+            assert owned[pid]['cause'] == 'kernel-autoattach-stop', 'duplicate fork event'
+            owned[pid].update(parentCustodian=parent, cause=cause)
+            log('fork-lineage', pid=pid, start=row['start'], parentCustodian=parent, cause=cause)
+            return
+        row.update(parentCustodian=parent, cause=cause)
+        row['registeredSequence'] = log('custody', **row)
+        owned[pid] = row
+    # Parent never uses Popen.poll()/wait(): those can reap an unrecorded child.
+    pid = os.fork()
+    if pid == 0:
+        try:
+            os.setsid()
+            fd = os.open(run / 'kernel-command.log', os.O_WRONLY|os.O_CREAT|os.O_TRUNC, 0o600)
+            os.dup2(fd, 1); os.dup2(fd, 2); os.close(fd)
+            ptrace(TRACEME, 0); os.kill(os.getpid(), signal.SIGSTOP)
+            os.execvp(command[0], command)
+        except BaseException:
+            os._exit(127)
+    register(pid, os.getpid(), 'initial-traceme-barrier')
+    armed = False
+    try:
+        while True:
+            # WNOWAIT explicitly leaves even adopted zombies in /proc until their
+            # PID/start/current PPID and custody are durably logged below.
+            peek = os.waitid(os.P_ALL, 0, os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|WALL)
+            if peek is None:
+                if time.time() > cleanup_deadline:
+                    log('cleanup-deadline', deadline=cleanup_deadline)
+                    raise TimeoutError('immutable cleanup deadline')
+                time.sleep(.001); continue
+            task = peek.si_pid
+            unlinked = task not in owned
+            if unlinked:
+                assert peek.si_code == os.CLD_TRAPPED and peek.si_status == signal.SIGSTOP, ('unexpected unlinked task', task, peek)
+                register(task, None, 'kernel-autoattach-stop')
+            awaiting_lineage = owned[task]['cause'] == 'kernel-autoattach-stop'
+            row = identity(task)
+            assert row['start'] == owned[task]['start']
+            terminal = peek.si_code in (os.CLD_EXITED, os.CLD_KILLED, os.CLD_DUMPED)
+            if terminal:
+                before = log('before-reap', **row, custodySequence=owned[task]['registeredSequence'],
+                             siCode=peek.si_code, siStatus=peek.si_status)
+            else:
+                # A concurrent signal can supersede a peeked stop. Retain the
+                # identity before waitpid even if its next status is terminal.
+                before = log('before-consume', **row, custodySequence=owned[task]['registeredSequence'],
+                             siCode=peek.si_code, siStatus=peek.si_status)
+            got, status = os.waitpid(task, os.WNOHANG|WALL)
+            if got == 0 and not terminal:
+                log('stop-peek-superseded', pid=task, start=row['start'], beforeConsumeSequence=before)
+                continue
+            assert got == task, ('peek/consume mismatch', task, got)
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                reaped.append(dict(pid=task, start=row['start'], beforeReapSequence=before,
+                                   sequence=log('reaped', pid=task, start=row['start'], status=status), status=status))
+                if task == pid: root_status = os.waitstatus_to_exitcode(status)
+                continue
+            assert os.WIFSTOPPED(status), status
+            sig = os.WSTOPSIG(status); event = status >> 16
+            if awaiting_lineage:
+                # The child initial stop may be delivered before its parent's
+                # fork event. Keep it stopped until kernel lineage is consumed.
+                parked.add(task); log('parked-autoattach', pid=task)
+                continue
+            if not armed:
+                assert task == pid and sig == signal.SIGSTOP
+                ptrace(SETOPTIONS, task, data=OPTIONS)
+                write('kernel-armed.json', dict(pid=pid, supervisor=os.getpid(), supervisorStart=identity(os.getpid())['start'], deadline=deadline,
+                      cleanupDeadline=cleanup_deadline, kind='kernel fork barrier; external deadline watchdog required',
+                      armedBeforeCustodian=True, command=command, custodySequence=owned[pid]['registeredSequence']))
+                log('watchdog-barrier-released', pid=pid)
+                armed = True
+            elif event in (1, 2, 3):
+                child = ctypes.c_ulong()
+                ptrace(GETEVENTMSG, task, data=ctypes.addressof(child))
+                register(child.value, task, {1:'fork',2:'vfork',3:'clone'}[event])
+                if child.value in parked:
+                    parked.remove(child.value)
+                    ptrace(CONT, child.value)
+                    log('parked-child-release', pid=child.value, parent=task)
+                log('fork-parent-release', pid=task, child=child.value)
+            elif event == 6:
+                log('pre-exit-stop', **row, custodySequence=owned[task]['registeredSequence'])
+            elif event == 4:
+                # A nonleader exec changes TID to TGID; refuse rather than lose
+                # identity if this unsupported transition is ever encountered.
+                former = ctypes.c_ulong(); ptrace(GETEVENTMSG, task, data=ctypes.addressof(former))
+                assert former.value in (0, task), ('nonleader exec identity transition', task, former.value)
+            deliver = 0 if event or sig in (signal.SIGTRAP, signal.SIGSTOP) else sig
+            ptrace(CONT, task, data=deliver)
+    except ChildProcessError:
+        pass
+    except BaseException as error:
+        log('failure', error=repr(error))
+        for task, row in owned.items():
+            try:
+                if identity(task)['start'] == row['start']: os.kill(task, signal.SIGKILL)
+            except (ProcessLookupError, FileNotFoundError): pass
+        raise
+    finally:
+        remaining=[]
+        for task,row in owned.items():
+            try:
+                if identity(task)['start']==row['start']: remaining.append(identity(task))
+            except (ProcessLookupError,FileNotFoundError): pass
+        write('kernel-drain.json',dict(exit=root_status,owned=list(owned.values()),reaped=reaped,
+              remaining=remaining,finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
+              custody='ptrace fork/vfork/clone barriers + waitid WNOWAIT before waitpid',
+              kernelForkLineage=True,untracedCloneFlagsAudited=False))
+        journal.close()
+    assert not parked, parked
+    assert not remaining, remaining
+    assert root_status == 0, root_status
+
+if __name__ == '__main__':
+    # Deadlines are assigned before allocation and never extended at startup.
+    run=Path(sys.argv[1]).resolve()
+    life=json.loads((run/'lifecycle.json').read_text())
+    supervise(run, sys.argv[2:], deadline=life['browserDeadline']/1000,
+              cleanup_deadline=life['browserDeadline']/1000+30)
