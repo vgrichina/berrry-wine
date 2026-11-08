@@ -6,9 +6,9 @@
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
-  status: active; startup readiness and terminal adoption repaired; fresh upper-opening original
+  status: active; Chrome thread-exit startup and cancellation lineage repair
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh quake2-current-opening-2025 ONEremote original using accepted252888061 repaired kernel command_compression=gzip and Node gzip browser/drain plus exhaustive inventory/retrieval. Reviewed code/doc196refs326772B62annotatedoriginalstreams HASH30custody24Node3inventory2launch/buildPASS; new706pins currenthelpers CPUd8fac unchanged. Currentpixelshortinput/displacementreview to upper northern opening; static187preparationONLY historical143UNKNOWN. Full27/parity/audio/FPS open.
+  Next: Fresh native-thread-exit-causality-2038 repairs real thread-exit/cancellation cause before another original. Reviewed3021d134c 332localrefs4101731B70gzip plus180remote2716996B9gzip independentHASH; 706pins/barrierPASS but60sDevTools deadline before gameplay, Chrome stopped-thread fatal,132actualreaps one unresolvedLineage. bx_nbuk2fjc ARCHIVED expiryNULL stop_93185522ea29c01d normal. No original retry until causal repair; upper opening and historical143UNKNOWN remain open. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -18,9 +18,9 @@
 
 - [ ] Current TR2 native controls and qualified presentation rates
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
-  status: active; first linked weapon return verified; bounded later firing observation in progress
+  status: queued pending shared Chrome startup/cancellation repair; linked shot remains open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-current-linked-shot-2027 completes remote closure then ONE original using accepteddfd857dac consumer explicitActionWeaponUntilShotTRUE, gzip kernel/logger/drain and exhaustive retrieval. Reviewed consumer/options/launch source 89refs130902B40originalgzipstreams independently HASH;27Node57observer150weapon3inventory2launch/build PASS. Current upright fullhealth drawn-pistols review then sole requested1900ms independently released Control actual<=2000; observer2500ms32records first exact shotRETURN pendingWeaponTRUE pendingShotFALSE. No preparation-only success stop or UNKNOWNreplay; raw0attempt not aim/hit/kill. Historical1940 noShot/renderer discrepancy preserved; Full27/parity/audio/FPS open.
+  Next: Reviewedde0097eb5 remote607pins/barrierPASS but30sDevTools deadline beforeoriginal/input.114actualterminalreaps3unresolvedLineage completeFALSE; bx_wws687r7ARCHIVED expiryNULL stop_a5e399e16e6c6896 normal. All own/recovered evidence independentHASH gzipCRC originalchecks accepted. Commonstartup/cancellation fix native-thread-exit-causality-2038 beforeanotherTR2original. SlotfreshDrakanpassiveobserver2041. FirstlinkedshotRETURN remainsunqualified; sole1900msControl observer2500/32 contract retained Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: current WebGL buffered forward movement and takeoff with rising terrain viewpoint verified; sustained flight/outgoing attack open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Replace stalled flight-observer lane with fresh Darkstone new-slot progress. Published8987ef1a4 identifies drain->event4->state1 actor boundary but exact6cf120 empty EIP trace changes tierguard0->1->0; passive completion observer unqualified, no original allocated or flight input repeated. Coordinator verified39hashes589411bytes. Resume only with qualified passive completion observer; accepted separate-drain takeoffcc6a stands. Note: docs/re-notes/drakan-actor-update-flight-20261108.md. Sustainedflight/worldZ/full27/parity/audio/FPS open.
+  Next: Fresh drakan-passive-actor-observer-2041 implements and tests natural actor/state1 completion before any new original. Prior8987ef1a4 drain/event4/state1 boundary static only; retained6cf empty EIP trace changes tierguard0->1->0. Preservecc6a separate-drain takeoff, no ineffectiveT-only retry. Require actual owner/drain/actor entry+return and down-active attribution without changing execution policy; newlybuilt module must be qualified separately from old6cf. Offline code/tests/build only; Full27/parity/audio/FPS/worldZ/sustainedflight open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
