@@ -69,13 +69,18 @@ const extraWat=`
  const call=op=>{const result=receive();worker.postMessage({op});return result;};
  try{
   await receive();
+  assert.equal(e.d3d_state_guard_held(),0,'producer capture unavailable outside guarded dispatch');
   assert.equal(e.guard_enter(),1);assert.equal(e.guard_enter(),1);
+  assert.equal(e.d3d_state_guard_held(),1,'owning instance may capture');
+  assert.equal((await call('d3d_state_guard_held')).value,0,'foreign instance cannot claim capture ownership');
   await call('guard_dispatch');
   assert.deepEqual(state(workerRegs),{eax:123,esp:7000000});
   assert.equal((await call('guard_retry')).value,1,'contended API retries its thunk');
   e.guard_leave();await call('guard_dispatch');
   assert.equal(state(workerRegs).eax,123,'nested leave retains ownership');
+  assert.equal(e.d3d_state_guard_held(),1);
   e.guard_leave();await call('guard_dispatch');
+  assert.equal(e.d3d_state_guard_held(),0,'outer return closes capture ownership');
   assert.equal(state(workerRegs).esp,7000008,'retry executes exactly once');
   assert.notEqual(state(workerRegs).eax,123);
   assert.equal((await call('guard_enter')).value,1);

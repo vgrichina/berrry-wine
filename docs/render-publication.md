@@ -60,9 +60,9 @@ admission token before releasing snapshot credit. Creation, resources, queries,
 reset and presentation are not accepted through this entry point yet. A test
 drives the actual publication broker and neutral execution path with a payload
 larger than its test ring, a delayed consumer, source mutation and stale-device
-rejection. The normal guest D3D9 call path is still synchronous until producer
-state/resource synchronization is wired; this receiving path alone does not
-complete that migration.
+rejection. Guarded default-target D3D9 clears now capture in the guest Worker
+and publish owned API4 commands. Draws and resource operations still use the
+synchronous broker; their producer/resource migration remains open.
 
 OpenGL retains native `gl_object_leave` publication under the shared-object
 lock. Removing that native flush would break completed cross-thread texture
@@ -122,8 +122,8 @@ ownership. Gameplay evidence and limitations are in `re-notes/half-life-uplink.m
 This is not yet a completed migration of every graphics API. The following
 requirements remain open; a passing GL gameplay run does not discharge them.
 
-* **D3D9 producer snapshots:** `guest-rpc.js` still brokers opcodes
-  `0x30000..0x30017` synchronously. `d3d9-host.js` validates and snapshots draws
+* **D3D9 producer snapshots:** `guest-rpc.js` still brokers draws and resource
+  operations synchronously. `d3d9-host.js` validates and snapshots draws
   on the page, then submits neutral commands to the process render Worker.
   Move immutable draw/resource capture to the producer and publish owned bytes
   or leases through the common queue. Passing raw guest addresses asynchronously
@@ -208,8 +208,26 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   no more messages, while a recreated device or reused thread slot receives
   a fresh delivery. A real-thread test drives the production RPC and WorkerLink
   and checks local reads, reset, recreation, stale generations and slot reuse.
-  Guest draw/clear capture activation remains to be wired; no per-draw or FPS
-  improvement is claimed yet.
+  Draw and named-color-target capture remain to be wired. Default-target clears
+  use `RenderClear.captureNative` in both the page and guest paths, so viewport,
+  scissor, rectangle, depth/stencil and attachment validation have one decoder.
+  Guest capture requires the current instance's `d3d_state_guard_held()` export,
+  a ready lifecycle channel and no independently bound color storage. It copies
+  the complete descriptor, checks the epoch again, and publishes through API4.
+  Initial calls, older WASM without the guard export, unguarded calls, named
+  targets and rejected captures retain the ordinary broker. The receiver still
+  validates epoch/generation at admission. A real Worker/RPC test delays
+  admission, mutates guest color/rectangles, verifies the original clipped clear
+  and checks that the eligible call adds no RPC. It also checks named-target,
+  missing-guard and invalid-input fallbacks. The transport fixture supplies a
+  guard test double; the separate native two-instance test proves the production
+  export distinguishes the owner, a competing instance and nested/outer return.
+  Native color-surface and depth/stencil regressions pass; both normal/compat
+  WASM builds pass. No gameplay FPS gain is claimed for clear publication yet.
+  The byte-pinned clear-contract test needs its recorded compiler blobs (the
+  default compiler has changed since those hash and size pins). It passes with
+  `WINE_CLEAR_COMPILER=scratch/clear-pinned-compiler/tools/watx.js`, reconstructed
+  from `test/support/d3d9-clear-excerpt-pins.json`; no pins were weakened or changed.
   Delivery validation: all 18 immutable-snapshot cases, GL shared protocol,
   real x86 D3D9 draw/Present/retirement, browser cache graph and reviewed host
   census pass. The broader browser guest-Worker suite passes its threading,

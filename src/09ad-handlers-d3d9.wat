@@ -27,6 +27,8 @@
   ;; Release on handler return, even when it parks for renderer completion;
   ;; queued commands already own their inputs by then. This is not a GPU fence.
   (global $d3d_state_depth (mut i32) (i32.const 0))
+  (func (export "d3d_state_guard_held") (result i32)
+    (i32.gt_u (global.get $d3d_state_depth) (i32.const 0)))
   (func $d3d_state_try_enter (result i32)
     (if (i32.eqz (global.get $d3d_state_depth)) (then (loop $claim
       (if (i32.atomic.rmw.cmpxchg offset=36 (global.get $DX_PROCESS_STATE)

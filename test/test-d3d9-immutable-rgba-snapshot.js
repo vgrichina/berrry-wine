@@ -144,11 +144,12 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
   const memory={buffer:new SharedArrayBuffer(RPC.RPC_BASE+RPC.RPC_STRIDE*RPC.RPC_MAX_SLOTS)};
   const f=fixture({guestMemory:memory.buffer}),publication=new SharedArrayBuffer(64+128);
   const sigs={gpu_gl_call:{params:['i32','i32','i32'],results:['i32']}};
-  let posts=0,rpcs=0,worker,link,sequence=0;
+  let posts=0,rpcs=0,worker,link,sequence=0,holdPublications=false;
   const pending=new Map();
   const broker=RPC.createMainBroker(memory,{
     gpu_gl_call:(...args)=>{rpcs++;return f.bridge.call(...args);},
     gpu_d3d9_snapshot_state:id=>f.bridge.snapshotState(id),
+    gpu_d3d9_snapshot:command=>f.bridge.submitSnapshot(command),
   },sigs,{renderPublication:publication});
   const start=()=>{
     link=new WorkerLink({slot:1,memory,sigs,broker,renderPublication:publication});
@@ -156,14 +157,18 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
       const {parentPort,workerData:d}=require('node:worker_threads');
       const RPC=require(d.module);
       const built=RPC.createWorkerImports(d.memory,d.sigs,m=>parentPort.postMessage(m),
-        {slot:1,renderPublication:d.publication});
+        {slot:1,renderPublication:d.publication,guestToWasm:p=>p,
+          getExports:()=>({d3d_state_guard_held:()=>guardHeld})});
+      let guardHeld=true;
       parentPort.on('message',m=>{
         if(m.t==='renderSnapshotState'){
           if(m.endpointIdentity===d.identity)built.receiveSnapshotState(m.channel);
           return;
         }
         try {
-          const value=m.t==='draw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):built.readSnapshotState(7);
+          guardHeld=m.t!=='unguardedClear';
+          const value=m.t==='draw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):
+            m.t==='clear'||m.t==='unguardedClear'?built.imports.host.gpu_gl_call(0x30003,d.desc,0):built.readSnapshotState(7);
           parentPort.postMessage({t:'result',id:m.id,value});
         }catch(e){parentPort.postMessage({t:'result',id:m.id,error:e.stack});}
       });
@@ -172,7 +177,7 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     const active=link;
     link.worker={postMessage:m=>{posts++;worker.postMessage(m);}};
     worker.on('message',m=>{
-      if(m.t==='rpc')active._onMessage(m);
+      if(m.t==='rpc'||m.t==='renderSnapshot'||m.t==='renderPublished'&&!holdPublications)active._onMessage(m);
       else if(m.t==='result'){
         const p=pending.get(m.id);if(!p)return;
         pending.delete(m.id);clearTimeout(p.timer);m.error?p.reject(Error(m.error)):p.resolve(m.value);
@@ -190,6 +195,30 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     assert.equal(original.deviceId,7);assert.equal(posts,1);
     assert.equal(await ask('draw'),1);await f.drain();assert.equal(posts,1,'ordinary draws do not repost');
     const calls=rpcs;assert.deepEqual(await ask('read'),original);assert.equal(rpcs,calls,'read stays local');
+    const saved=new Uint8Array(memory.buffer,f.desc,64).slice();
+    f.set(f.desc+40,72000);f.set(72000+256+174*4,1);
+    f.set(f.program+22016,1);[1,0,2,2].forEach((v,i)=>f.set(f.program+22000+i*4,v));
+    f.set(f.desc+44,1);f.set(f.desc+48,0xff123456);f.set(f.desc+56,1);f.set(f.desc+60,80000);
+    [-10,-10,2,2].forEach((v,i)=>f.set(80000+i*4,v));
+    const expected=require('../lib/render-clear').captureNative({memory:memory.buffer,guestToWasm:p=>p,address:f.desc});
+    holdPublications=true;
+    assert.equal(await ask('clear'),1);assert.equal(rpcs,calls,'guarded clear bypasses page RPC');
+    f.set(f.desc+48,0xffabcdef);f.set(80000,1);
+    holdPublications=false;await broker.drainPublications();await f.drain();
+    assert.deepEqual(f.commands.filter(c=>c.opcode===OP.CLEAR).at(-1).payload,expected,'consumer sees owned pre-mutation clear');
+    assert.deepEqual(expected.rects,[[1,0,2,2]]);
+    assert.equal(await ask('unguardedClear'),1);await f.drain();
+    assert.equal(rpcs,calls+1,'missing native guard retains synchronous capture');
+    const color=90000;
+    for(const [offset,value] of [[8,7],[12,0xd3d90006],[20,2],[24,2],[28,21],[36,99],[40,91000],[48,8],[52,16]])f.set(color+offset,value);
+    f.set(f.program+22020,color);
+    assert.equal(await ask('clear'),1);await f.drain();
+    assert.equal(rpcs,calls+2,'named color storage retains synchronous resource resolution');
+    assert.equal(f.commands.filter(c=>c.opcode===OP.CLEAR).at(-1).payload.colorAttachment.id,99);
+    f.set(f.program+22020,0);f.set(f.desc+56,65537);
+    assert.equal(await ask('clear'),-1,'invalid clear retains broker error result');
+    assert.equal(rpcs,calls+3);
+    new Uint8Array(memory.buffer,f.desc,64).set(saved);f.set(f.program+22016,0);f.set(72000+256+174*4,0);
     f.set(232,2);f.set(236,2);f.set(240,22);
     const reset=f.bridge.call(0x30009,200,7);await f.bridge.wait(reset);
     assert.equal(await ask('read'),null);assert.equal(f.bridge._poll(reset),1);
