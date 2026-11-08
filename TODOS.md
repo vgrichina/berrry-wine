@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-retained-native-1354 validates published e4238acfc complete-source handoff in actual game then reviewedmovement. Local exactowed445RED/latest446BLUE eachraw2qualified2 word+oddpitch; 16newnegatives29guards lockedbuildPASS unchangednative. Independentlyhashed49refs3649388B localonly. Native qualification STILLunvalidated. Note: docs/re-notes/tr2-clear-order-repair-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-alley-onward-1418 visibleVeniceonward. Native e4238acfc actualowed525retainedgeneration491 decoded307200/output397485pixelsZERO mismatches then independentlyreleasedUp2000 newforwardposition retained. 67qualifiedallretained/616raw noFPSclaim. Personallyreviewedbefore/settledPNGs170refs273530723B independentlyhashed normalbx_p462sgmc archivedstop_0d3764bc5c018692 expiryNULL. Note: docs/re-notes/tr2-retained-native-20261108.md8da363804. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; nine victories and new road checkpoint recovered; entrance/transition open
+  status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-road-onward-1354 restores NEWroadpair b9c9a3af/f046038c, followslowerroadtowardwalls nativeidentify thensavebyminute10. NewSave+VFSrecoveredwithin4min9victories LIFE19MANA25Gold1532Food57vial; noentrance/transition yet. Independentlyhashed183refs129751032B personallyreviewedroadPNG normalbx_5g5a9sn2 archivedstop_e60beedc38fa9e04 expiryNULL. Note: docs/re-notes/darkstone-road-save-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-level-one-1418 restores NEWLevel1pair62322670/da159714 then dungeonexploration+earlysave. NativeTOLEVEL1/loading/liveLEVEL1 entrance established9victoriesLIFE19MANA25Gold1532Food52redvial. Earlyrecesssavewithin10min andLevel1pairrecovered592s retrieval606s. PersonallyreviewedLEVEL1PNG510refs341033494B independentlyhashed normalbx_2cjsgbey archivedstop_9b8d925fbd151567 expiryNULL. Note: docs/re-notes/darkstone-road-onward-20261108.mdb13b01367. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
