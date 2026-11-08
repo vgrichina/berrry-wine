@@ -2,6 +2,7 @@
 'use strict';
 
 const assert = require('assert');
+const { exportStore } = require('../lib/storage');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
@@ -60,6 +61,8 @@ function utf16z(view, offset, maxChars) {
   assert.strictEqual(view.getUint32(wasmBuf, true), 0x348, 'cb is restored');
   assert.strictEqual(utf16z(view, wasmBuf + 4, 32), '\\\\.\\DISPLAY1');
   assert.strictEqual(utf16z(view, wasmBuf + 68, 128), 'Wine-Assembly Display');
+  assert.strictEqual(JSON.parse(exportStore()['reg:HKLM\\Enum\\ROOT\\WINEASSEMBLYDISPLAY\\0000']).values.DeviceDesc.data,
+    utf16z(view, wasmBuf + 68, 128), 'Win9x registry and display API describe the same virtual adapter');
   assert.strictEqual(view.getUint32(wasmBuf + 324, true), 0x5,
     'adapter is attached and primary');
 
@@ -67,6 +70,8 @@ function utf16z(view, offset, maxChars) {
   assert.strictEqual(Number(result & 0xffffffffn), 1, 'monitor zero exists');
   assert.strictEqual(utf16z(view, wasmBuf + 4, 32), '\\\\.\\DISPLAY1\\Monitor0');
   assert.strictEqual(utf16z(view, wasmBuf + 68, 128), 'Default Monitor');
+  assert.strictEqual(JSON.parse(exportStore()['reg:HKLM\\Enum\\ROOT\\WINEASSEMBLYMONITOR\\0000']).values.DeviceDesc.data,
+    utf16z(view, wasmBuf + 68, 128), 'Win9x registry and display API describe the same monitor');
   assert.strictEqual(view.getUint32(wasmBuf + 324, true), 0x1, 'monitor is active');
 
   result = e.test_enum_display_devices_w(0, 1, buf);

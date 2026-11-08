@@ -136,7 +136,7 @@ assert.strictEqual(readGuestU32(infoMaxValueDataGA), 4);
 
 writeGuestU32(enumNameLenGA, 64);
 assert.strictEqual(storage.reg_enum_key(0x80000002, 0, enumNameGA, 64, 0), 0);
-assert.strictEqual(readStrA(memory, g2w(enumNameGA, IMAGE_BASE)).toLowerCase(), 'software');
+assert.strictEqual(readStrA(memory, g2w(enumNameGA, IMAGE_BASE)).toLowerCase(), 'enum');
 writeGuestU32(cbGA, 32);
 assert.strictEqual(storage.reg_query_value(hKey, g2w(valueNameGA, IMAGE_BASE), 0, outGA, cbGA, 0), 0);
 assert.strictEqual(readStrA(memory, g2w(outGA, IMAGE_BASE)), 'Ada');
@@ -508,3 +508,74 @@ assert.strictEqual(storage.reg_delete_key(deleteHandle, g2w(subKeyGA, IMAGE_BASE
   'clearing an already empty open key succeeds');
 assert.strictEqual(storage.reg_close_key(deleteHandle), 0);
 console.log('PASS  shell registry deletion removes mixed-case subtrees and retains an open key on NULL');
+
+// Walk the Win9x live device tree as native detection utilities do. The
+// platform has one virtual display and monitor, rather than a PCI GPU.
+writeGuestString(subKeyGA, 'config manager\\enum');
+const devices = storage.reg_open_key(0x80000006, g2w(subKeyGA, IMAGE_BASE), 0);
+assert(devices, 'Win9x Config Manager exposes the active virtual devices');
+assert.strictEqual(storage.reg_query_info(devices, infoSubCountGA, 0, infoValueCountGA, 0, 0, 0), 0);
+assert.strictEqual(readGuestU32(infoSubCountGA), 2);
+assert.strictEqual(readGuestU32(infoValueCountGA), 0);
+const descriptions = [];
+for (let i = 0; i < 2; i++) {
+  mem.fill(0xa5, g2w(enumNameGA, IMAGE_BASE), g2w(enumNameGA, IMAGE_BASE) + 64);
+  assert.strictEqual(storage.reg_enum_key(devices, i, enumNameGA, 8, 0), 234,
+    'eight hex digits also require room for the terminator');
+  assert.strictEqual(mem[g2w(enumNameGA, IMAGE_BASE)], 0xa5, 'short output is untouched');
+  assert.strictEqual(storage.reg_enum_key(devices, i, enumNameGA, 64, 0), 0);
+  const nodeName = readStrA(memory, g2w(enumNameGA, IMAGE_BASE));
+  assert(/^[0-9a-f]{8}$/i.test(nodeName));
+  writeGuestStringW(subKeyGA, nodeName);
+  const node = storage.reg_open_key(devices, g2w(subKeyGA, IMAGE_BASE), 1);
+  assert(node, 'relative W open resolves the enumerated node');
+  writeGuestString(valueNameGA, 'hardwarekey');
+  writeGuestU32(cbGA, 128);
+  assert.strictEqual(storage.reg_query_value(node, g2w(valueNameGA, IMAGE_BASE), enumTypeGA, outGA, cbGA, 0), 0);
+  assert.strictEqual(readGuestU32(enumTypeGA), 1);
+  const hardwareKey = readStrA(memory, g2w(outGA, IMAGE_BASE));
+  assert(hardwareKey.startsWith('ROOT\\WINEASSEMBLY'), 'only our virtual device namespace is reported');
+  writeGuestString(subKeyGA, 'Enum\\' + hardwareKey);
+  const hardware = storage.reg_open_key(0x80000002, g2w(subKeyGA, IMAGE_BASE), 0);
+  assert(hardware, 'HardwareKey resolves under HKLM Enum');
+  writeGuestString(valueNameGA, 'DeviceDesc');
+  writeGuestU32(cbGA, 128);
+  assert.strictEqual(storage.reg_query_value(hardware, g2w(valueNameGA, IMAGE_BASE), 0, outGA, cbGA, 0), 0);
+  descriptions.push(readStrA(memory, g2w(outGA, IMAGE_BASE)));
+  writeGuestString(valueNameGA, 'Problem');
+  writeGuestU32(cbGA, 4);
+  assert.strictEqual(storage.reg_query_value(node, g2w(valueNameGA, IMAGE_BASE), enumTypeGA, outGA, cbGA, 0), 0);
+  assert.strictEqual(readGuestU32(enumTypeGA), 4);
+  assert.strictEqual(readGuestU32(outGA), 0);
+  writeGuestString(valueNameGA, 'MissingValue');
+  assert.strictEqual(storage.reg_query_value(node, g2w(valueNameGA, IMAGE_BASE), 0, outGA, cbGA, 0), 2);
+  storage.reg_close_key(hardware);
+  storage.reg_close_key(node);
+  assert.strictEqual(storage.reg_enum_key(node, 0, enumNameGA, 64, 0), 6, 'closed handles are invalid');
+  assert.strictEqual(storage.reg_query_value(node, 0, 0, 0, cbGA, 0), 6);
+  assert.strictEqual(storage.reg_set_value(node, 0, 1, valueGA, 0, 0), 6);
+  assert.strictEqual(storage.reg_close_key(node), 6);
+  writeGuestString(subKeyGA, 'HKLM');
+  assert.strictEqual(storage.reg_open_key(node, g2w(subKeyGA, IMAGE_BASE), 0), 0,
+    'closed handles cannot open an unrelated absolute-looking key');
+  assert.strictEqual(storage.reg_create_key(node, g2w(subKeyGA, IMAGE_BASE), phkGA, 0, 0), 6);
+}
+assert.deepStrictEqual(descriptions, ['Wine-Assembly Display', 'Default Monitor'],
+  'same virtual devices described by EnumDisplayDevices');
+assert.strictEqual(storage.reg_enum_key(devices, 2, enumNameGA, 64, 0), 259);
+assert(!Object.keys(exportStore()).some(k => /^reg:hkdd\\config manager(?:\\|$)/i.test(k)),
+  'live Config Manager data is not transferred as installation state');
+assert.strictEqual(importStore({
+  'reg:HKDD\\Config Manager\\Enum\\deadbeef': JSON.stringify({values:{HardWareKey:{type:1,data:'PCI\\FAKE'}}}),
+}), 0, 'a saved device tree must not introduce foreign hardware');
+assert.strictEqual(storage.reg_enum_key(devices, 2, enumNameGA, 64, 0), 259);
+writeGuestString(subKeyGA, 'Config Manager\\Enum\\DoesNotExist');
+assert.strictEqual(storage.reg_open_key(0x80000006, g2w(subKeyGA, IMAGE_BASE), 0), 0);
+console.log('PASS Win9x live virtual display/monitor enumeration, linked values, bounds, handles and snapshot isolation');
+
+require('../lib/storage').clearStore();
+writeGuestString(subKeyGA, 'Config Manager\\Enum');
+const rebootedDevices = storage.reg_open_key(0x80000006, g2w(subKeyGA, IMAGE_BASE), 0);
+assert(rebootedDevices);
+assert.strictEqual(storage.reg_query_info(rebootedDevices, infoSubCountGA, 0, 0, 0, 0, 0), 0);
+assert.strictEqual(readGuestU32(infoSubCountGA), 2, 'reset reconstructs the actual virtual hardware');
