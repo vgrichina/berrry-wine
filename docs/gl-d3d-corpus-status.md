@@ -1,5 +1,21 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: NFS3 native device enumeration advances setup
+
+Published `b1b631f12` implements the live Win9x Config Manager registry tree
+for the existing virtual display and monitor. Focused failing-before/passing-
+after registry/display tests and the locked build pass. Native catalogue and
+initial software-default setup writes transfer through ordinary shared storage.
+The second setup loads `d3dtest.dll`, then an absent `d3d.dll` incorrectly yields
+the EXE handle, suppressing its authentic `d3da.dll` suffix retry. The chooser
+and actual D3D race remain unqualified; no box was allocated. A fresh worker
+owns the general loader mismatch. No alias, guest patch or forced choice.
+
+The coordinator verified57 artifacts/2,427,119 bytes and133 media hashes;
+executing module and260 served-source reads are retained. This is a platform
+repair, not a renderer/gameplay/FPS/parity or full27 acceptance.
+[Live tree, native bootstrap and loader boundary](re-notes/nfs3-win9x-device-enumeration-20261108.md).
+
 ## November 8: Warcraft cause remains unproved; audio fixture passes
 
 Published `dc07cd57a`, run `20261108-warcraft3-renderer-process-loss`,
