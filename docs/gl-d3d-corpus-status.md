@@ -1,5 +1,34 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: qualification limits and active replacements
+
+Published `2ea85dd91` fixes NFS3 local staging/attachment but the full native
+route aborts at INITTIMER. A debugger-order variation also aborts, then ends
+UNKNOWN. No box, control trace or emulator-cause acceptance. The coordinator
+verified391 files/13,438,371 bytes. Exact timer predicate/API-return evidence
+and a matched observer-off control remain required; per-case helper recovery
+and changed-case game-module qualification are explicitly limited. Fresh
+Quake II guard/door progress replaces this gameplay lane.
+[Local timer boundary](re-notes/nfs3-rehearsed-consumption-20261108.md).
+
+Published `707b0f5da` finds no Forsaken latency remedy: serial21.839s and
+fresh-byte overlap21.373s both hit UNKNOWN under an optimistic original timing
+prefix. No original/box followed. The coordinator verified165 files/9,310,497
+bytes. Negative identity/replacement/release tests pass; the local module differs
+from the original, and Evaluate575's internal wait remains unattributed. Fresh
+Asghan frontal-target work takes the slot. Existing movement/ammo proof stands;
+look/navigation and rates remain unproved.
+[Exact requests and failed comparison](re-notes/forsaken-owner-observation-latency-20261108.md).
+
+The second protocol handoff remains **uncommitted WIP**. It implements exact
+queued request/owed-present/RPC transfer and optional free-run/shared-render
+writer exclusion, tested with real parallel WAT stores. The coordinator
+verified64 hashes/154,472 bytes. Build and14 focused suites pass; two failures
+reproduce baseline. A fresh worker continues complete writer coverage,
+per-surface canonical versions, canvas provenance, production Join and discard
+accounting. No installed association, live pacing or FPS is qualified.
+[Protocol implementation and remaining boundaries](re-notes/d3dim-canonical-version-protocol-20261108.md).
+
 ## November 8: fresh control attempts stop on harness boundaries
 
 Published `17d96f983` adds static NFS3 binding/packet/queue/simulation/car
