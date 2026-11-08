@@ -22,6 +22,7 @@ const { Encoder } = require('../lib/d3d-command-stream');
 const RPC = require('../lib/guest-rpc');
 
 async function main() {
+  require('./helpers/surface-journal-browser').checkSurfaceJournal(require('../lib/render-worker'));
   const hostSource = fs.readFileSync(require.resolve('../host'), 'utf8');
   const wrapper = hostSource.slice(hostSource.indexOf("    for (const [name, fn] of Object.entries(h))"),
     hostSource.indexOf("    return { host: h, gdi: base.gdi", hostSource.indexOf("    for (const [name, fn] of Object.entries(h))")));

@@ -9589,7 +9589,7 @@
     {
       "file": "lib/render-worker.js",
       "name": "host-file",
-      "sha256": "9629a7de72589d07a4c6df2615155222377168304f8eebb62636412e0e7086f8",
+      "sha256": "1c4757ca395278dec9d7e514b2f3b17789509fb896a812a09b8ab3c543fdba2a",
       "kind": "host-entry",
       "reason": "Late-bound native export facade brackets execution and conservatively invalidates standalone mutators; invocation/nonlocal ownership remains pending.",
       "ownership": "pending"
