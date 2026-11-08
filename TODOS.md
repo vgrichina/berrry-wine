@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-visible-resume-objective-1056 uses exactreviewedvisibleguestcursor witness beforeResume, unchanged4500ms freshsnapshotgate thenordinaryM/reviewedmovement. Publishedb5d322cf4 MENU500EscapePASS butofftargetResume leaves11MENUprobes zeroM/C/arrows; testedcaptureboundpointerguard+2fullbrowsercasesPASS.283refs23098993B228hash independentlyverified screenshot/helperreviewed archived; startup-lock/descendantcustodylimits retained and successor closes. Note: docs/re-notes/recoil-menu-budget-objective-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-probe-timing-objective-1119 diagnoses passive subphase costs and repairs concrete timing defect before any further original. Published67aed1955 actual visibleResume health100 timer04to05; unchanged4500gate lateprobe zeroM/C/arrows. Candidate reaper and stablecollector fixes tested. Independently hashed295refs31487238B, personally reviewed cursor/twoHUD PNGs, archived stop and all30PID custody retained. Note: docs/re-notes/recoil-visible-resume-objective-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-directx-layer-coverage-1056 FIRST production canonicalDirectXlayercoverage withrealWAT/compositor baseline/negativechecks andlockedbuild beforeoptionalONEoriginal exactqualifiedjoins thenUp/Space/Control. Published8bdc8a667 nondestructivetransientsceneaccounting freshFULLcanonicalrequired cached/partialrefused negativeguardsPASS. Prior94raw=0qualified+94discard (61overlap20scene10overwrite3coalesced) no gameplaykeys.75refs8416828B69hash independentlyverified code reviewed archived/drained. No allocatingjusttorepeatknownsceneexclusion. Note: docs/re-notes/tr2-pending-source-native-progress-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-source-lifetime-repair-1119 isolates exact writer/poison/epoch cause then generic production repair before optional native. Publishedb2af046ef/7a34e56a4 nativeDXlayer proof actualWAT/decoder/compositor baseline0corrected1 and20negativePASS lockedbuilds. Native133raw=0qualified+133discard112combinedwriter14overwrite7coalesced, noUpSpaceControl. Independently hashed87refs9430602B code/report reviewed archived/fullcustody. Note: docs/re-notes/tr2-directx-layer-coverage-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
