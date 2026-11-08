@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-software-owner-1324 LOCAL actual Software render-owner attestation repair before another original; Software visibly verified black radio196457, native tank timer09 then MENU but no D3D owner, strict four-response gate withheld Resume/M. Tested cumulative integer motion repair851pins29startup not native uploaded. Independentlyhashed369refs395122266B normalbx_kvzp7fye archivedstop_44fc7f9835ab35f3 expiryNULL. Note: docs/re-notes/recoil-software-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-software-browser-1354 LOCAL corrected real-browser source responses then explicit Software gate. 807e003e2 attestor28negatives+build PASS but actual generatedbrowser failed invalidallocationtype0, correctedtype2 NOTbrowservalidated; gateEligiblefalse preserves originalWASMcontract. Independentlyhashed35refs89789B nooriginal/noBox. Note: docs/re-notes/recoil-software-owner-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-clear-order-repair-1324 LOCAL production ordering/immutable-source repair ONLY no unchanged original. Exact efae2c6d3 native441raw0qualified; synchronousclear0x20004 host522->523 invalidates sealedsource; safe decoder owes serial445 latestsame descriptor446. Preserve exact request/all guards and ordinary display. Independentlyhashed117refs230524323B normalbx_9g3gxu95 archivedstop_87d38cea39ee9af1 expiryNULL. Note: docs/re-notes/tr2-writer-boundary-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-retained-native-1354 validates published e4238acfc complete-source handoff in actual game then reviewedmovement. Local exactowed445RED/latest446BLUE eachraw2qualified2 word+oddpitch; 16newnegatives29guards lockedbuildPASS unchangednative. Independentlyhashed49refs3649388B localonly. Native qualification STILLunvalidated. Note: docs/re-notes/tr2-clear-order-repair-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; nine victories and onward ruined-wall route verified; new route save incomplete
+  status: active; nine victories and new road checkpoint recovered; entrance/transition open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-road-save-1338 restores unchanged ninevictoryba2c2c5f/b56122d3, follows useful road then SAVE+recover by runtime minute10. Last exploredbrokenwalls/recessunidentified9+0 LIFE19/35Gold1532Food46MANA25/25vialretained; deadline interrupted command63 UNKNOWNnoreplay NOnewSave originalinputsuntouched. Independentlyhashed726refs636936613B personallyreviewedwallPNG normalbx_kmajkaur archivedstop_ef9f58e7dd7e0010 expiryNULL. Note: docs/re-notes/darkstone-nine-onward-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-road-onward-1354 restores NEWroadpair b9c9a3af/f046038c, followslowerroadtowardwalls nativeidentify thensavebyminute10. NewSave+VFSrecoveredwithin4min9victories LIFE19MANA25Gold1532Food57vial; noentrance/transition yet. Independentlyhashed183refs129751032B personallyreviewedroadPNG normalbx_5g5a9sn2 archivedstop_e60beedc38fa9e04 expiryNULL. Note: docs/re-notes/darkstone-road-save-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
