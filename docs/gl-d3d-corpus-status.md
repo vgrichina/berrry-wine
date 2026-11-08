@@ -1,5 +1,31 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: qualified consequences remain separate from route attempts
+
+Published `19d2fb24a` ends Quake II local route qualification without a shot,
+box or new consequence. Closer captures correct flame/wall-feature guard
+identifications; the corpse predates input. The coordinator inspected the
+closer view and verified472 files/18,289,946 bytes. Twenty-one ACKs,18 independent
+releases, currentcc438 owning WebGL1, PNG/pin checks and local drain pass;
+physical GPU and an absent numeric fallback counter remain unknown. Fresh
+Drakan poll/flight work replaces this slot.
+[Corrected route observations](re-notes/quake2-guard-door-progress-20261108.md).
+
+Published `1e2bdf191` exposes Recoil's uphill gated ramp but the tank dies before
+power-control identification. No objective increment, access or restart is
+claimed. The coordinator inspected ramp/death frames, verified307 references,
+26,957,532 bytes, and independently checked108 fixture/manifest pins totaling
+76,019,820 bytes against staged pins. The empty-file fixture report is withdrawn;
+its nonempty manifest replacement and negative checks pass. Normal archived
+stop/full drain pass. A fresh worker tests native menu-assisted review against
+the mission clock and uses justified defense while pursuing the objective.
+Software/Canvas2D is explicit; toolbar WebGL supplies no GL coverage.
+[Death boundary, corrected closure and source pins](re-notes/recoil-forcefield-objective-20261108.md).
+
+The protocol remains active uncommitted work. Positive production-path tests
+and the receiver-preservation fix still require final regression/build review;
+no live pacing, FPS, full27, parity or audio completion follows from them.
+
 ## November 8: Asghan same-plane contact; outgoing consequence open
 
 Published `6b38c6987` establishes broad same-ground frontal preparation and

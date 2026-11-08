@@ -2,13 +2,13 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Fresh recoil-forcefield-objective-0705 follows the reviewed Mission1.1 power-control brief/map through ordinary navigation and native target action. Prior enemy explosion/disappearance with score0to1550 stands; objectives0/4 did not change. Require objective text/counter, force-field/access change or distinct onward consequence; no repeating beach-biped kill as completion. Native Software/Canvas2D is explicit, not GL coverage. Note: docs/re-notes/recoil-native-objective-20261108.md. Full27/parity/audio/FPS remain open.
+  Next: Fresh recoil-menu-assisted-objective-0729 qualifies documented Escape In-GameMenu for review using native missionclock/health/actors (freeze not assumed), then takes the earlier visible uphill ramp with justified targeted defense toward actual powercontrol. Published1e2bdf191 used published59abb GitVFS/WAT7ec49 excludingpeerWIP, saw ramp thenovershot and died; objectives0/4 unchanged, nofiring/restart/controlidentification/access. Coordinator viewed ramp/death, verified307refs26957532bytes and108fixtureentries76019820bytes matching726stagepins. Vacuouszero-app.files report withdrawn; actual106manifestentries+exe107+manifest withempty/missing/duplicate/wronghashnegativesPASS.21ACK0UNKNOWN68PNG normalarchivedstop/full15PIDdrainPASS; failedsharedWIPbuild retainedNOTPASS. Note: docs/re-notes/recoil-forcefield-objective-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
-  status: active; prior movement/discharge/incoming damage/health pickup accepted
+  status: queued on unambiguous local target/onward route; prior movement/discharge/incoming damage/health pickup accepted
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Fresh quake2-guard-door-progress-0701 follows ordinary Game/Easy and reviewed living-guard aim or visible door/new-room route on owning WebGL. Prior327e830da health100to104/102 stands; corpse present before input is excluded from kill evidence. No pickup repetition as deliverable, console/map commands or forced state. OptionalSoftware only after complete WebGLdrain/noUNKNOWN. Full27/parity/audio/FPS/levelclear open.
+  Next: Qualify an unambiguous living target or ordinary onward threshold locally before another watched original. Published19d2fb24a localcc438 WebGL1 route found only known support/alcove geometry; closer review did not establish a living guard, flame/wall misidentifications corrected and corpseexcluded. NOshot/BOX/UNKNOWN/newconsequence. Coordinator inspected targetapproach and verified472files18289946bytes;21ACK18indepUP48PNG176HTTP and localdrainPASS. NativeWebGL nonlost/SW0 recorded, physicalGPU and absentnumericfallbackcounter unknown. Slot replaced by freshDrakanpoll/flight0714. Note: docs/re-notes/quake2-guard-door-progress-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: native warning/graphics handoff qualified; current software/WebGL world and heading reviewed; flight/outgoing attack open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Qualify actual DirectInput attack polling/timing before another targeted-attack attempt. Publisheded993c025 qualifies native MessageBox/GDI Enter -> actual D3DIM producer -> one-way strict binding on both paths, with zero-input invalid-state controls. Both originals reach the rainy level and terrain-relative heading change; sustained forward flight/altitude and successful outgoing attack remain unproved. Software primary/secondary attempts show incoming damage only; WebGL has no reviewed target engagement. Coordinator inspected both level/turn views and software attack, independently verified459references/404hashes and delivered Telegram2296.39exactACK/zeroUNKNOWN,681pins/454HTTP checks and normal archived stop pass. No emulator code change; historical media hashes unknown. Note: docs/re-notes/drakan-native-warning-gameplay-20261108.md. Fresh Asghan current-browser action replaces this lane alongside Redline vehicle and independent Warcraft diagnostics.
+  Next: Active drakan-polled-flight-action-0714 reuses native warning/onewayD3DIM handoff, qualifies exact original input-import return observation and seeks current flight/altitude or outgoing consequence; GetAsyncKeyState in dragon.rfl is a separate remaining coverage question. Prior ed993c025 both-world/terrain-heading acceptance stands; heldACK/producercounts and incomingdamage are not flight/attack proof. No current consequence accepted until final reviewed evidence. Note: docs/re-notes/drakan-native-warning-gameplay-20261108.md. Recoil objective and productionversionJoin occupy the other slots; full27/parity/audio/FPS open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
