@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-clock-ready-1528: finish actual independent same-host clock/process proof producer and launch watchdog, then original reviewed Resume/qualifiedM/movement if ready. Publishedeb598f71d binds actual provisioning to physical dependency checker before remote effects; 8 focused tests/fullbuild passed,916pins/917mockuploads preserve original JS. Coordinator independently hashed48refs429904B; no allocation/gameplay. Reuse unchanged controls. See docs/re-notes/recoil-original-gate-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-generation-ready-1558 reconciles historical stale checker provider into correctly versioned current generation, preserves851original game providers and historical916prefix recovery; test actual mandatory provisionJOIN/barriers before original Software/M. Publishedfbcf60472 independent clock/process producer+immutable watchdog actualChrome tests and lockedbuildPASS; coordinator hashed321refs4022311B. No allocation; exact local recorded starts absent. Kernel repair owned fresh Darkstone peer, consume published fix before runtime. See docs/re-notes/recoil-clock-ready-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-helmet-native-1545: use integrated normal kernel-custody/watchdog path for actual helmet checkpoint restore, production loadFiles/VFS/native preview then second opening; early native NewSave independently retrieve/hash by minute10. Published0696e8112 fixes clean-bootstrap missing reaper and nonterminal stop-peek race;4focused+2actualstartup tests+lockedbuild passed. Coordinator independently hashed122refs5354177B, exact watchdog/kernel identities absent. No allocation/newgameplay, source70fcfbe3/a4ecb215 unchanged; known CLONE_UNTRACED/history limits retained. See docs/re-notes/darkstone-custody-ready-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-parked-exit-1558 causally repairs retained kernel thread awaiting-lineage EXIT-stop normal-drain failure before another original; coordinate published fix to Recoil peer. Publishedb3377657b fixes actual fixed10s browser endpoint wait with4focused+same-child regression+lockedbuild; coordinator hashed29refs26955252B. Native restore/pixels/save not reached; failure-retirement74starts absent bx_qrycbp4p archived expiryNULL stop_6b521006bd998781. Preserve548repairedproviders42helpers and helmet source pair. See docs/re-notes/darkstone-helmet-native-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
