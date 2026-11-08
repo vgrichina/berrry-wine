@@ -188,9 +188,25 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   The real x86 COM/software Worker/Present test also passes. This guard does
   not yet protect multi-phase reset finalization, direct guest writes through
   resource locks, or shared DirectDraw object allocation; those lifetimes need
-  explicit coordination before guest-producer activation. Contention inside
-  bounded synchronous guest callback loops also needs a retained-continuation
-  test; the current concurrency test covers top-level dispatch, not that case.
+  explicit coordination before guest-producer activation. Native Worker callbacks
+  now use private host opcode `0x30018` to wait locally on the guard rather than
+  unwinding their native stack into the bounded synchronous-send loop. Outer
+  unlock notifies waiters. The page import returns immediately without blocking.
+  Pending publication failure is checked before and after the bounded wait, so
+  a failed process is not silently reported as a completed callback.
+  `test-d3d9-callback-guard.js` runs a real native callback in a Worker through
+  the production import table, checks that nested unlock retains ownership,
+  lets the page service a timer during contention, and verifies the same callback
+  continues with its result and restored depth. It also checks queue failure.
+  The mixed local-main/Worker topology is still unresolved: the local synchronous
+  callback loop abandons a contended call after 64 rounds, observed in 0.094ms
+  with a 100ms owner hold. Uncontended and post-release controls complete.
+  Reproduce with `node tools/d3d-state-callback-probe.js`; the report is
+  `scratch/runs/20261108-d3d-callback-contention/probe.json`. A zero probe exit
+  is execution success, not callback-retention success (`callbackPreserved:false`).
+  Browser threaded execution uses a guest-main Worker and an idle page shadow;
+  `test/run.js --threads` still keeps the guest main local. Do not treat those
+  topologies as equivalent or block the page to conceal this remaining gap.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.

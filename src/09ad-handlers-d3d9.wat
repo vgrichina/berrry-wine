@@ -28,20 +28,28 @@
   ;; queued commands already own their inputs by then. This is not a GPU fence.
   (global $d3d_state_depth (mut i32) (i32.const 0))
   (func $d3d_state_try_enter (result i32)
-    (if (i32.eqz (global.get $d3d_state_depth)) (then
+    (if (i32.eqz (global.get $d3d_state_depth)) (then (loop $claim
       (if (i32.atomic.rmw.cmpxchg offset=36 (global.get $DX_PROCESS_STATE)
             (i32.const 0) (i32.const 1)) (then
+        ;; A nested synchronous callback cannot unwind to the slice driver.
+        ;; Worker imports wait locally, keeping this native stack intact; the
+        ;; page import refuses to block and retains the runnable retry path.
+        (if (global.get $sync_msg_depth) (then
+          (br_if $claim (call $host_gpu_gl_call (i32.const 0x30018)
+            (region.addr $DX_PROCESS_STATE 36) (i32.const 1)))))
         (call $io_block (i32.const 0))
         ;; Plain runnable yield, not reason 1 (a handle wait with saved
         ;; wait parameters). Keep io_block's retry EIP/stack and yield flag.
         (global.set $yield_reason (i32.const 0))
-        (return (i32.const 0))))))
+        (return (i32.const 0)))))))
     (global.set $d3d_state_depth (i32.add (global.get $d3d_state_depth) (i32.const 1)))
     (i32.const 1))
   (func $d3d_state_leave
     (global.set $d3d_state_depth (i32.sub (global.get $d3d_state_depth) (i32.const 1)))
     (if (i32.eqz (global.get $d3d_state_depth))
-      (then (i32.atomic.store offset=36 (global.get $DX_PROCESS_STATE) (i32.const 0)))))
+      (then
+        (i32.atomic.store offset=36 (global.get $DX_PROCESS_STATE) (i32.const 0))
+        (drop (memory.atomic.notify (region.addr $DX_PROCESS_STATE 36) (i32.const -1))))))
 
   ;; True while a windowed D3D9 device is the thing presenting to this window,
   ;; i.e. the surface handed to $dx_present holds CLIENT-relative pixels.
