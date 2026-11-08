@@ -42,9 +42,9 @@
 
 - [ ] Drakan current-browser movement, flight and attack
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
-  status: current WebGL buffered forward movement and terrain heading verified; sustained flight/ascent/outgoing attack open
+  status: current WebGL buffered forward movement and takeoff with rising terrain viewpoint verified; sustained flight/outgoing attack open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh drakan-buffered-ascent-0757 qualifies current published663f production closure locally, then ONE native WebGL original seeks documented T ascent with actual separate buffered down/release consumption and altitude landmarks. Publishedeeebeb755 verifies Up2000 down/release at distinct reads/consumes with modest terrain parallax; coordinator inspected paired frames and verified204references15607196bytes. No altitude/attack/emulator repair/Join claim. bx_f5tuw877 normally archived, expiry null, full drain retained. Note: docs/re-notes/drakan-buffered-flight-consumption-20261108.md. Recoil bounded actions and TR2 publication pacing fill other slots; full27/parity/audio/FPS open.
+  Next: Fresh drakan-sustained-flight-0824 seeks controlled flight beyond accepted T-only takeoff, using separate bounded forward/heading controls and settled terrain landmarks. Publishedcc6a14236 proves T2001ms separate buffered down/release consumption and depth-dependent terrain35/72/36px downward, supporting rising viewpoint; worldZ and sustained flight remain unqualified. Coordinator inspected living/ascent frames and verified214references16036342bytes. bx_3hcpqd88 normally archived, expiry null, full drain retained. Note: docs/re-notes/drakan-buffered-ascent-20261108.md. Recoil HUDgate0819 and D3DIM command-wait0819 fill other slots; full27/parity/audio/FPS open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
