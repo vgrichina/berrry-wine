@@ -348,9 +348,72 @@ class ContinueRace(unittest.TestCase):
             self.assertEqual(drain['unreaped'],[]);self.assertEqual(drain['remaining'],[])
 
 
+class CompressedCommand(unittest.TestCase):
+    def test_exact_selected_predecessor_cannot_compress_command_output(self):
+        import types
+        revision='d8573b542dc437d6a2e6aeff0c3f3ed7c006a8de'
+        source=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+        self.assertEqual(hashlib.sha256(source).hexdigest(),'5fb6488ef45f394ce871507528cb7cce48507b07eb5cf73f25a7becfaedd16b5')
+        previous=types.ModuleType('previous');exec(compile(source,revision,'exec'),previous.__dict__)
+        with tempfile.TemporaryDirectory() as run,patch.object(previous.os,'fork') as fork:
+            with self.assertRaisesRegex(TypeError,'command_compression'):
+                previous.supervise(run,['/bin/true'],deadline=time.time()+1,cleanup_deadline=time.time()+2,
+                    journal_compression='gzip',command_compression='gzip')
+            fork.assert_not_called()
+
+    def run_case(self, mode):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(os.environ.get('CUSTODY_COMMAND_EVIDENCE',tmp))
+            run=Path(tempfile.mkdtemp(prefix=mode+'-',dir=base))
+            result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                '--command-gzip-fixture',str(run),mode],capture_output=True,text=True,timeout=12)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            drain=json.loads((run/'kernel-drain.json').read_text())
+            self.assertTrue(drain['complete'])
+            self.assertEqual(drain['remaining'],[])
+            self.assertEqual(drain['unreaped'],[])
+            receipt=drain['commandLog']
+            self.assertTrue(receipt['closed']);self.assertTrue(receipt['eof'])
+            self.assertFalse((run/'kernel-command.log').exists())
+            data=gzip.decompress((run/'kernel-command.log.gz').read_bytes())
+            expected=(b'begin\x00\xff\n'+b'x'*2097152+b'unique-stderr\n') if mode=='bulk' else b'adopted-after-root\n'
+            self.assertEqual(data,expected)
+            self.assertEqual(receipt['originalBytes'],len(data))
+            self.assertEqual(receipt['originalSha256'],hashlib.sha256(data).hexdigest())
+            journal=gzip.decompress((run/'custody.ndjson.gz').read_bytes())
+            self.assertEqual(drain['journal']['originalSha256'],hashlib.sha256(journal).hexdigest())
+
+    def test_output_larger_than_pipe_is_lossless_binary_gzip_from_outset(self):self.run_case('bulk')
+    def test_adopted_writer_after_root_exit_reaches_actual_eof(self):self.run_case('adopted')
+
+    def test_invalid_compression_refuses_before_any_process(self):
+        with tempfile.TemporaryDirectory() as run,patch.object(kernel.os,'fork') as fork,patch.object(kernel.libc,'prctl') as prctl:
+            with self.assertRaisesRegex(ValueError,'command_compression'):
+                kernel.supervise(run,['false'],deadline=time.time()+1,cleanup_deadline=time.time()+2,command_compression='zip')
+            fork.assert_not_called();prctl.assert_not_called()
+
+    def test_no_pipe_eof_cannot_be_promoted_from_all_terminal_waits(self):
+        with tempfile.TemporaryDirectory() as run,patch.object(kernel.os,'read',side_effect=BlockingIOError()):
+            due=time.time()+.1
+            with self.assertRaisesRegex(TimeoutError,'immutable cleanup'):
+                kernel.supervise(run,['/bin/true'],deadline=due,cleanup_deadline=due+.15,
+                    journal_compression='gzip',command_compression='gzip')
+            drain=json.loads((Path(run)/'kernel-drain.json').read_text())
+            self.assertFalse(drain['complete']);self.assertFalse(drain['commandLog']['eof'])
+            self.assertTrue(drain['commandLog']['closed']);self.assertEqual(drain['unreaped'],[])
+
+
+def command_gzip_fixture(run,mode):
+    due=time.time()+5
+    command=("import os;os.write(1,b'begin\\x00\\xff\\n'+b'x'*2097152);os.write(2,b'unique-stderr\\n')"
+        if mode=='bulk' else "import os,time;p=os.fork();os._exit(0) if p else None;time.sleep(.05);os.write(1,b'adopted-after-root\\n')")
+    kernel.supervise(run,[sys.executable,'-c',command],deadline=due,cleanup_deadline=due+2,
+        journal_compression='gzip',command_compression='gzip')
+
+
 class TerminalAdoption(unittest.TestCase):
     def test_real_tracer_wait_then_adopted_parent_wait(self):
-        for mode in ('historical', 'adopt', 'adopt-signal', 'parent-wait', 'bad-status', 'third-receipt'):
+        for mode in ('historical', 'adopt', 'adopt-gzip', 'adopt-signal', 'parent-wait', 'bad-status', 'third-receipt'):
             with self.subTest(mode=mode), tempfile.TemporaryDirectory() as tmp:
                 base=Path(os.environ.get('CUSTODY_TERMINAL_EVIDENCE',tmp))
                 run=Path(tempfile.mkdtemp(prefix=mode+'-',dir=base))
@@ -362,13 +425,21 @@ class TerminalAdoption(unittest.TestCase):
                 receipt=json.loads((run/'terminal-fixture-waits.json').read_text())
                 self.assertFalse((run/'watchdog-fired.json').exists())
                 self.assertEqual(receipt['watchdogWait'],-15)
-                success=mode in ('adopt','adopt-signal','parent-wait')
+                success=mode in ('adopt','adopt-gzip','adopt-signal','parent-wait')
                 self.assertEqual(drain['complete'],success)
                 self.assertEqual(receipt['supervisorWait'],0 if success else 1)
                 if not success:
                     self.assertIn('duplicate terminal receipt',drain['failure'])
                     continue
                 self.assertEqual(drain['remaining'],[]);self.assertEqual(drain['unreaped'],[])
+                if mode=='adopt-gzip':
+                    self.assertTrue(drain['commandLog']['closed']);self.assertTrue(drain['commandLog']['eof'])
+                    output=gzip.decompress((run/'kernel-command.log.gz').read_bytes())
+                    # Python may warn about this deliberately multithreaded
+                    # fork. Preserve its real stderr instead of assuming silence.
+                    self.assertEqual(drain['commandLog']['originalBytes'],len(output))
+                    self.assertEqual(drain['commandLog']['originalSha256'],hashlib.sha256(output).hexdigest())
+                    self.assertFalse((run/'kernel-command.log').exists())
                 adoptions=[r for r in rows if r['kind']=='adopted-reaped']
                 self.assertEqual(len(adoptions),1 if mode.startswith('adopt') else 0)
                 for adoption in adoptions:
@@ -506,7 +577,8 @@ os._exit(0)
         try:
             with patch.object(module.os,'waitpid',side_effect=wait),patch.object(module.os,'waitid',side_effect=peek):
                 due=time.time()+4
-                module.supervise(run,[sys.executable,'-c',command],deadline=due,cleanup_deadline=due+1,journal_compression='gzip')
+                options=dict(command_compression='gzip') if mode=='adopt-gzip' else {}
+                module.supervise(run,[sys.executable,'-c',command],deadline=due,cleanup_deadline=due+1,journal_compression='gzip',**options)
         except BaseException:os._exit(1)
         os._exit(0)
     watchdog=os.fork()
@@ -824,6 +896,7 @@ if __name__=='__main__':
             (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
                 fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
+    elif len(sys.argv)>1 and sys.argv[1]=='--command-gzip-fixture':command_gzip_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--gzip-fixture':gzip_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--terminal-fixture':terminal_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--cont-race-fixture':cont_race_fixture(sys.argv[2])

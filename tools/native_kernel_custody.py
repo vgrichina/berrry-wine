@@ -28,16 +28,19 @@ def identity(pid):
 
 class Journal:
     """Flush compressed bytes from the first record; hash the original bytes."""
-    def __init__(self, run, compression):
+    def __init__(self, run, compression, name='custody.ndjson'):
         if compression not in (None, 'gzip'):
             raise ValueError('journal_compression must be None or gzip')
-        self.path = run / ('custody.ndjson.gz' if compression else 'custody.ndjson')
+        self.path = run / (name + ('.gz' if compression else ''))
         self.raw = open(self.path, 'wb')
         self.stream = gzip.GzipFile(filename='', fileobj=self.raw, mode='wb', mtime=0) if compression else self.raw
         self.sha = hashlib.sha256(); self.size = 0
 
     def append(self, value):
         data = (json.dumps(value)+'\n').encode('utf-8')
+        self.write(data)
+
+    def write(self, data):
         self.stream.write(data); self.stream.flush()
         self.raw.flush(); os.fsync(self.raw.fileno())
         self.sha.update(data); self.size += len(data)
@@ -50,9 +53,12 @@ class Journal:
         finally:
             self.raw.close()
 
-def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=None):
+def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=None,
+              command_compression=None):
     run = Path(run).resolve(); run.mkdir(parents=True, exist_ok=True)
     assert time.time() < deadline < cleanup_deadline, "expired or invalid immutable deadlines"
+    if command_compression not in (None, 'gzip'):
+        raise ValueError('command_compression must be None or gzip')
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'subreaper required'
     owned = {}; reaped = []; parked = set(); exit_retired = set(); root_status = None; sequence = 0
     pending = {}
@@ -107,22 +113,49 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     def request_cancel(signum, frame):
         if not cancellation: cancellation.append(dict(signal=signum, cause='supervisor-signal'))
     handlers = {sig: signal.signal(sig, request_cancel) for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP)}
+    # Drain command output in this same event loop: no logger process outside
+    # custody, no thread across fork, and no raw disk staging. The write end is
+    # blocking so a producer cannot silently lose bytes to EAGAIN.
+    command_log = Journal(run, 'gzip', 'kernel-command.log') if command_compression else None
+    read_fd, write_fd = os.pipe2(os.O_CLOEXEC) if command_log else (None, None)
+    if read_fd is not None: os.set_blocking(read_fd, False)
+    output_eof = False
+    def pump_output():
+        nonlocal output_eof
+        if read_fd is None or output_eof: return
+        # Bound each pump so a prolific writer cannot starve waits/deadlines.
+        for _ in range(16):
+            try: data = os.read(read_fd, 65536)
+            except BlockingIOError: break
+            if not data:
+                output_eof = True
+                break
+            command_log.write(data)
     # Parent never uses Popen.poll()/wait(): those can reap an unrecorded child.
     pid = os.fork()
     if pid == 0:
         try:
             for sig, handler in handlers.items(): signal.signal(sig, handler)
             os.setsid()
-            fd = os.open(run / 'kernel-command.log', os.O_WRONLY|os.O_CREAT|os.O_TRUNC, 0o600)
+            if command_log:
+                os.close(read_fd)
+                # Do not flush the forked BufferedWriter: its copied gzip
+                # header buffer would be appended a second time to the file.
+                os.close(command_log.raw.fileno())
+                fd = write_fd
+            else:
+                fd = os.open(run / 'kernel-command.log', os.O_WRONLY|os.O_CREAT|os.O_TRUNC, 0o600)
             os.dup2(fd, 1); os.dup2(fd, 2); os.close(fd)
             ptrace(TRACEME, 0); os.kill(os.getpid(), signal.SIGSTOP)
             os.execvp(command[0], command)
         except BaseException:
             os._exit(127)
+    if write_fd is not None: os.close(write_fd)
     register(pid, os.getpid(), 'initial-traceme-barrier')
     armed = False
     try:
         while True:
+            pump_output()
             # WNOWAIT explicitly leaves even adopted zombies in /proc until their
             # PID/start/current PPID and custody are durably logged below.
             if time.time() > cleanup_deadline:
@@ -153,6 +186,11 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 assert {(r['pid'], r['start']) for r in owned.values()} == {
                     (r['pid'], r['start']) for r in reaped}, 'unreaped custody at ECHILD'
                 assert not pending, ('unresolved ptrace ESRCH', pending)
+                if command_log and not output_eof:
+                    # ECHILD does not prove pipe EOF; an inherited writer must
+                    # close or the immutable cleanup deadline fails closed.
+                    time.sleep(.001)
+                    continue
                 drained = True
                 break
             if peek is None:
@@ -289,13 +327,26 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
         unresolved=[row for row in owned.values() if row['cause']=='kernel-autoattach-stop']
         complete = drained and not (unreaped or pending or parked or remaining or unresolved)
         journal_error = None
+        command_error = None
+        if command_log:
+            try:
+                pump_output()
+                command_log.close()
+            except BaseException as error:
+                command_error = repr(error)
+            finally:
+                os.close(read_fd)
         try:
             journal.close()
         except BaseException as error:
             journal_error = repr(error)
         try:
             write('kernel-drain.json',dict(exit=root_status,owned=list(owned.values()),reaped=reaped,
-                  complete=complete and journal_error is None, failure=failure, cancellation=cancellation,
+                  complete=complete and journal_error is None and command_error is None,
+                  failure=failure, cancellation=cancellation,
+                  commandLog=(dict(path=command_log.path.name, closed=command_error is None,
+                      eof=output_eof, error=command_error, originalBytes=command_log.size,
+                      originalSha256=command_log.sha.hexdigest()) if command_log else None),
                   journal=dict(path=journal.path.name, closed=journal_error is None, error=journal_error,
                                originalBytes=journal.size, originalSha256=journal.sha.hexdigest()),
                   remaining=remaining,unreaped=unreaped,unresolvedPtrace=list(pending.values()),finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
@@ -305,6 +356,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
         finally:
             for sig, handler in handlers.items(): signal.signal(sig, handler)
         if journal_error: raise OSError('journal finalization failed: '+journal_error)
+        if command_error: raise OSError('command log finalization failed: '+command_error)
     assert not unreaped, unreaped
     assert not pending, pending
     assert not parked, parked
