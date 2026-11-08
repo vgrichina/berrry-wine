@@ -14,13 +14,24 @@ function install({WebSocket, trace, write, capacity = 64}) {
   const nonce = crypto.randomUUID(), rows = new Map();
   let dropped = 0, snapshots = 0, observerErrors = 0;
   const safe = fn => { try { return fn(); } catch { observerErrors++; } };
+  function timingLimit(row) {
+    if (row.markerOrderInvalid) return 'duplicate or reordered execution markers';
+    if (!row.entry || !row.exit) return 'entry or exit unavailable';
+    const a = row.entry, b = row.exit;
+    if (!Number.isInteger(a.executionContextId) || a.executionContextId <= 0 ||
+        a.executionContextId !== b.executionContextId) return 'same execution context unavailable';
+    if (!Number.isFinite(a.monotonicMs) || !Number.isFinite(b.monotonicMs) ||
+        a.monotonicMs < 0 || b.monotonicMs < a.monotonicMs) return 'finite ordered marker clock unavailable';
+    return null;
+  }
   function snapshot(reason) {
     // Independent Node-side copy; never sends CDP or joins a pending evaluation.
     const value = {version:1, reason, dropped, observerErrors, queueResidenceMs:null,
       limits:'Marker delivery can lag execution. Missing entry is unavailable, not proof of queued execution. No clock subtraction across processes; no GL readiness inference.',
       records:[...rows.values()].map(row => ({...row,
         execution:row.entry ? row.exit ? 'exited' : 'entered; exit unavailable' : 'entry unavailable',
-        synchronousJsMs:row.entry && row.exit ? row.exit.monotonicMs - row.entry.monotonicMs : null}))};
+        timingUnavailableReason:timingLimit(row),
+        synchronousJsMs:timingLimit(row) === null ? row.exit.monotonicMs - row.entry.monotonicMs : null}))};
     if (snapshots++ < 8) safe(() => write(value));
     return value;
   }
@@ -45,8 +56,13 @@ function install({WebSocket, trace, write, capacity = 64}) {
         if (!target || !['entry','exit','error'].includes(marker.phase)) return;
         const record = {monotonicMs:marker.ms, executionContextId:v.params.executionContextId,
           consoleTimestamp:v.params.timestamp, receivedAt:Date.now()};
-        if (marker.phase === 'entry') target.entry = record;
-        else { target.exit = record; target.jsResult = marker.phase; target.ownerTokens = marker.ownerTokens; }
+        if (marker.phase === 'entry') {
+          if (target.entry || target.exit) target.markerOrderInvalid = true;
+          if (!target.entry) target.entry = record;
+        } else {
+          if (!target.entry || target.exit) target.markerOrderInvalid = true;
+          if (!target.exit) { target.exit = record; target.jsResult = marker.phase; target.ownerTokens = marker.ownerTokens; }
+        }
       }));
     }
     send(data, ...args) {
