@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-native-hud-gate-0819 qualifies integrated v2 phase-gated driver before ONE native original toward ramp/control/access. Publisheda2c4397af stopped alive76, first sampledHUD1261..1324ms afterResume proves earlyC/steering consumption unqualified; localv2 tested but not native accepted. Resolve fresh1.3rocket vs historical1.1power briefing before mission claims. Coordinator verified365remote hashes/36515325bytes; normal archived stop/full15PID drain retained. Note: docs/re-notes/recoil-bounded-menu-action-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-hermetic-native-objective-0902 uses repaired755-pin hermetic closure for ONE native HUD-before-C/ordinary consumption then reviewed ramp/control/access. Published0da2d7fee original stopped UNKNOWN missingpngjs preResume; no C/Up replay or objective. Local dependency eagerload/hermetic full-entry and12regressions11integrated/nativeCalc passed; coordinator verified323hashes25728292bytes, box archived expiryNULL drained. Resolve cycling native1.1/1.3brief before objective claims. Note: docs/re-notes/recoil-native-hud-gate-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-native-publication-progress-0845 uses publishedf50c6d32e synchronous command-bound writer handoff for full-observer cost/idle arm controls then ONE native TR2 gameplay/publication run. Production actualChrome yields4qualified/4discard8raw with strict writer/canonical/display gates; coordinator reviewed code and verified89hashes2989825bytes, lockedbuild16focused7finalchecks pass. Baseline498 yields0qualified4rejects. RTT19/37.7us noisy, fullobserver/gameFPS unqualified. No box in repair. Note: docs/re-notes/d3dim-command-wait-handoff-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-full-observer-gameplay-0900 finishes fullobserver matched raw cost then ONE native Venice movement/weapon publication. Published88e276f31 fixes concurrent arm invalidating first epoch; actualBrowser firstSUCCESS/concurrentREFUSED plus1qualified source/canonical/display row and retirement/unarmed pixels pass, lockedbuild/association/handoff pass. Coordinator reviewed guard and verified31hashes215078bytes. Prior f50 fourqualified/fourdiscard stands; no box in repair, no fullobserver/gameFPS claim. Note: docs/re-notes/tr2-native-publication-progress-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: current WebGL buffered forward movement and takeoff with rising terrain viewpoint verified; sustained flight/outgoing attack open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh drakan-actor-update-flight-0845 first qualifies read-only drain-to-actor-update gate locally, then ONE native original only if ready within independent2000ms UP cap. Published4ea03045c bothTedges consumed together in912, pinned original handler saved exactdown timestamp but actor ascentclear/terrainunchanged; no repeatedT/Up/heading/attack. Coordinator reviewed code/state inference and verified212refs15705109bytes; bx_q6egcegc normalarchived expiryNULL/drained. Prior separate-drain takeoffcc6a remains bounded accepted. Note: docs/re-notes/drakan-sustained-flight-20261108.md. Sustainedflight/full27/parity/audio/FPS open.
+  Next: Replace stalled flight-observer lane with fresh Darkstone new-slot progress. Published8987ef1a4 identifies drain->event4->state1 actor boundary but exact6cf120 empty EIP trace changes tierguard0->1->0; passive completion observer unqualified, no original allocated or flight input repeated. Coordinator verified39hashes589411bytes. Resume only with qualified passive completion observer; accepted separate-drain takeoffcc6a stands. Note: docs/re-notes/drakan-actor-update-flight-20261108.md. Sustainedflight/worldZ/full27/parity/audio/FPS open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
@@ -63,6 +63,12 @@
   status: earned Gold1532/Victories1 restored; potion use and Victories3 verified; new slot reload and historical exit cause open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
   Evidence: Publishedbc4cd7a8c loads the unchanged retained character/named-save bytes through production HTTP/loadFiles/VFS, verifies Gold1532/Victories1+0, then native potion use and combat reach Victories3+0/LIFE28/35. Coordinator reviewed inventory/consequence captures and independently verified284 artifact references/236 hashes. New game-written character/save bytes were recovered; that new slot was not reloaded. Final requested native exit is traced to ExitProcess(0); earlier spontaneous removal was not reproduced and its cause remains unknown.22complete ACKs precede final native exit whose post-exit owner guard closes transport; all input released/no replay, normal archived-box stop. No emulator repair/GL parity/FPS/audio/fullplayability claim. Note: docs/re-notes/darkstone-native-load-exit-cause-20261108.md.
+
+- [ ] Darkstone new earned slot restore and further encounter
+  id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
+  status: active; prior three-victory save creation accepted, reload counter unverified
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
+  Next: Fresh darkstone-new-slot-progress-0900 uses untouched updated characters/new named-save recovered by bc4cd7a8c through native Load a Game, inspects actual restored counters, then one reviewed encounter/onward consequence. Reuse accepted lifecycle/input controls and ordinary manifest/loadFiles path. Note: docs/re-notes/darkstone-native-load-exit-cause-20261108.md. Historical spontaneous exit/full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
