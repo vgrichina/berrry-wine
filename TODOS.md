@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: active; first linked weapon return verified; bounded later firing observation in progress
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-bounded-shot-window-2007 offline opt-in later-cycle observation within existing2500ms/32record caps. Reviewed3a2d3bca1 159remote refs HASH: actual1900ms Control, input100040 healthy1000 mapped item7ed1a454 arms0to1 exact4275ac return. No shot/aim/hit/kill proof; first frame readiness not defect evidence. bx_favr7jd8 archived expiryNULL stop_2c0e066f5b16d356 Chrome0/adopted7actualwaits census limits retained. Preserve poll/action/caller linkage and fail-closed default. Intel/SystemInfoSwiftShader unresolved. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-first-linked-shot-2019 ONE remote original uses selected f1e9c852a weapon:true,untilShot:true observer, current upright fullhealth pistols review then ONE requested1900ms independently released Control, inspect first exact linked shot-return. Reviewed offline code/doc33refs38247B13originalgzipstreams HASH observer57weapon150RPC lockedbuildPASS native-slice fivecycles26records type2zeroAmmo result0 fixture NOToriginalfire. Unchanged2500ms32recordcaps, no bound widening/UNKNOWNreplay. Historical1940 noShot/renderer discrepancy preserved; Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
