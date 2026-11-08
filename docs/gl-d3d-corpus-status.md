@@ -1,4 +1,24 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-11-07
+# OpenGL / Direct3D corpus status, reconciled 2026-11-08
+
+## November 8: Hexen II browser world and traversal on both backends
+
+Published `3e75cd4b7`, run `20261107-hexen2-current-browser-backends`, verifies
+current browser courtyard movement, ramp ascent and skull-door traversal:
+
+| App | Software GL | WebGL |
+| --- | --- | --- |
+| Original Hexen II demo | Owning `OpenGLHostBridge` software context/shared memory, CPU software flag 1; textured chamber and close spider reviewed. | Owning live `WebGLBackend`, CPU software flag 0, non-lost ANGLE SwiftShader context; textured chamber reviewed. |
+
+The coordinator inspected both post-door captures. Live CPU/render modules
+match `f9650607…`, and the published audio repair is present. Software presents
+establish active rendering, not FPS; its separate legacy WebGL endpoint is not
+the GL owner. Thirty exact ACKs and independently released holds accompany the
+progress. No attack was submitted: player damage and a visible spider do not
+prove an enemy hit or kill. Viewpoints/timing differ, so pixel parity and
+performance remain unverified. The earlier CLI notice-only and MIDI-blocked
+observations below retain their original scope rather than describing this run.
+[Backend identity, reviewed captures and lifecycle](re-notes/hexen2-current-browser-backends-20261107.md).
+Full historical27 and remaining per-app backend/gameplay cells remain open.
 
 ## November 7: Current GLTron browser gameplay on both backends
 
