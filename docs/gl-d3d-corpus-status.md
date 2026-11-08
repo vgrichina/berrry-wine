@@ -1,5 +1,37 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: additional startup coverage stops at native dialogs
+
+Published `e6d667fa8` adds12 corrected browser cells across TR2, TR3 and
+Drakan, cooperative/threaded modes and Software/WebGL selectors. All complete
+without classified crash/deadline/UNKNOWN. TR2 remains in Graphics setup,
+TR3 at welcome and Drakan at its beta warning; no owning graphics backend
+is created. Three initial optional-type-library staging gaps remain separate.
+The15 executions are three titles, not15 or27 apps, and do not prove active
+backend rendering/gameplay/parity. Published78299/f965 runtime excludes peer WIP.
+
+The coordinator reviewed three four-cell sheets and verified521 references,
+424 hashes and38,459,391 bytes.15 PNGs,2327 served reads/53 loaded sources,
+serial cleanup and normal archived stop pass. Fresh TR3 gameplay work handles
+the ordinary dialogs before binding an actual WebGL producer.
+[Cells, staging correction and shutdown](re-notes/graphics-additional-browser-crash-sweep-20261108.md).
+
+## November 8: NFS3 loader repair reaches a null chooser-object boundary
+
+Published `0df0f1667` makes absent vendor LoadLibrary requests fail with NULL
+and error126 while retaining implemented builtins and native module identity.
+Failing-before regression, A/W/Ex checks, lifecycle neighbors and locked build
+pass. A clean production Worker using modulef5cfb1c6 now executes the native
+`d3da` suffix retry and export lookup. The chooser remains blank; its secondary
+thread reaches a null virtual call during WM_NCPAINT. The object-lookup cause
+is unproved. Mixed-module and exploratory observer runs are not acceptance.
+
+The coordinator reviewed the blank chooser and verified81 artifacts/9,051,214
+bytes and133 media hashes. No remote box or chosen-D3D/race/context proof.
+A fresh worker traces the first causal mismatch; earlier registry/bootstrap
+progress stands. Full27, benchmarks, parity and audio remain open.
+[Loader contract, clean retry and null-object failure](re-notes/nfs3-loadlibrary-missing-vendor-20261108.md).
+
 ## November 8: NFS3 native device enumeration advances setup
 
 Published `b1b631f12` implements the live Win9x Config Manager registry tree
