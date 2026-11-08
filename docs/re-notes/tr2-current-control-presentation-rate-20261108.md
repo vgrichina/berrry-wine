@@ -1,11 +1,12 @@
 # TR2 current native control and presentation-rate attempt — 2026-11-08
 
-**The current attempt stops at a native startup composition gap. It does not
-establish current WebGL controls or ordinary-speed presentation measurements.**
-The initial Graphics sheet is visible, but two later original captures show
-only the teal guest desktop. Read-only renderer metadata still lists the
-property sheet and Graphics child as visible. The cause is unresolved; no
-emulator regression or repair is claimed.
+**The attempt establishes no current WebGL controls or presentation rates.**
+The initial click was rejected locally for its coordinate format, and the final
+idle image lacks the sheet. A coordinator raw-pixel/hash review corrects the
+original worker assessment: startup, fresh-graphics and refresh-graphics all
+show the Graphics sheet; only native-after-idle shows the desktop. Persistent
+absence and an emulator composition defect are unproved. Metadata still lists
+the windows visible. Original mistaken review records remain preserved.
 
 Evidence: `scratch/runs/20261108-tr2-current-control-presentation-rate/`.
 Only this note is committed. The [previous TR2 gameplay evidence](tr2-webgl-gameplay-20261107.md)
@@ -28,10 +29,14 @@ handlers. The browser runs at ordinary clocks, without stepping or freezing.
   driver's normalized `point`. Validation rejects it before queue publication
   (`normalized canvas point`); it causes no input. This operator error and its
   original failure output are retained. It is not a transport UNKNOWN.
-- The 05:48:41 fresh capture `refresh-graphics.png` has no Graphics sheet or OK.
-  `native-after-idle.png`, requested with five seconds of passive waiting,
-  also has no sheet. Both were personally inspected. No action uses the old
-  dialog description or coordinates, and no corrected click is dispatched.
+- The original worker incorrectly assessed `refresh-graphics.png` as lacking
+  the sheet. Coordinator review finds it byte-identical to both startup and
+  fresh-graphics: SHA-256
+  `ee913bc101c32c9a630bc3eb832ced310fe20d85151af149a92e67d99a116a1e`.
+  All three visibly contain Graphics and OK. Only `native-after-idle.png`,
+  SHA-256 `f3d975d4326a7611b963fab377ec0889984e2f4c0a8df7f1077a9fb2f60be72b`,
+  shows desktop. The mistaken assessment is withdrawn; no corrected click
+  was dispatched and no dialog dismissal is accepted.
 - At 05:49:36.177, a read-only probe records the page visible, the registered
   process running, publication sequence 6, window 65538 titled Tomb Raider II
   and child 65545 titled Graphics both `visible:true`. Metadata visibility
@@ -129,8 +134,9 @@ expiry null, stopped **05:50:02.610 UTC**. Receipt
 `error=null`. Both delegates exit0; supervisor children are empty. The box is
 not left running.
 
-Next work is a separately scoped investigation of native Graphics publication
-loss, followed by ordinary OK → Venice and current-module control review. A
-collector must then prove owning-frame association and overhead before three
+Next work uses fresh original-resolution/hash-aware review and a correctly
+qualified normalized native OK action (or native default-button key), then
+ordinary Venice controls. One missing idle image does not justify assuming a
+persistent composition defect. A collector must prove frame association and overhead before three
 ordinary-clock windows can answer the owner rate request. Full27, backend
 parity, audio, full-level completion and logical FPS remain open.

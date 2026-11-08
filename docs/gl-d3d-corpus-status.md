@@ -1,5 +1,21 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: TR2 controls/rates blocked; image assessment corrected
+
+Published `957b861cd` collects no original gameplay input or rates. A pixel-
+coordinate request was rejected locally before queue publication. The worker's
+persistent Graphics-absence assessment is withdrawn after coordinator raw
+review: startup, fresh-graphics and refresh-graphics have identicalee913bc1
+hashes and show the property sheet; only the final idle frame shows desktop.
+No renderer endpoint exists, and no compositor cause is established.
+The coordinator verified63 references/56 hashes/7,092,663 bytes. Four exact
+ACKs, module7ec49cbb/596pins/173HTTP checks and normal archived stop pass;
+controller PID remains in both prestop checks, so full prestop drain is unproved.
+Fresh work qualifies correct native OK and current controls before any collector.
+Queue/notification counter examples are not unique-frame or logical FPS proof.
+Full27, control/rate acceptance, parity and audio remain open.
+[Corrected raw-image assessment and collector gap](re-notes/tr2-current-control-presentation-rate-20261108.md).
+
 ## November 8: NFS3 thread ownership fixes; chooser qualification pending
 
 Published `e6f4672ff` fixes two demonstrated wrong-thread dispatches. Shared

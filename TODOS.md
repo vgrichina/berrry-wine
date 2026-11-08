@@ -1,3 +1,9 @@
+- [ ] Current TR2 native controls and qualified presentation rates
+  id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
+  status: no original OK/control/rate acceptance; image-review correction published
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Next: Fresh tr2-native-ok-current-control-0556 uses hash-aware fresh Graphics review and correct normalized native OK/default-button input. Published957b861cd's persistent-absence assessment is corrected: startup/fresh-graphics/refresh-graphics share SHAee913bc1 and visibly show the sheet; only final idle frame is desktop. Pixel-coordinate request was rejected locally before queue, no corrected click/Venice/renderendpoint. Coordinator reviewed raw images and verified63refs/56hashes/7092663bytes.4exactACK/zeroUNKNOWN, module7ec49cbb/596pins/173HTTP pass; box normally archived, but controller PID remained in both prestop checks, so complete pre-stop process drain is unproved. Synthetic duplicate/delay counterexample does not qualify unique game frames; all rates/logicalFPS remain unknown. Note: docs/re-notes/tr2-current-control-presentation-rate-20261108.md. Full27/parity/audio/control/rate goal remains open.
+
 - [ ] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
   status: current WebGL Jungle and pistol draw verified; persistent movement/turning and software remain open
