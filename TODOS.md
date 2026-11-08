@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-source-transport-1728 isolates measured concurrent complete-uncached source transport and repairs demonstrated bottleneck before another original; no game/Resume/input/replay. Publishedc55153a2d reached actual Software/current native Resume health100timer12, but WASM transport442ms proof547ms exceeds unchanged250ms; secondread neverstarted, no Resume/M/movement. Coordinator viewed currentResume and hashed503refs448362158B. Normal552kernel drain, unresolvedlineage1 and BrowserSIGKILL retained; bx_q4mxe3ax archived expiryNULL stop_a220b23a2d53f53e. Preserve1066providers29helpers freshness/deadline fences. See docs/re-notes/recoil-original-1702-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-probe-journal-1753 implements/tests bounded six-complete-response durable transaction before any certificate/input, keeping original250ms/fiveSecond timestamps and freshowner/context/census fences unchanged. Reviewedf48707051 source/tests+561refs231574095B HASHpass: asyncsink causalCDP162-238 to92-102ms, durability162-369ms stillUNQUALIFIED nooriginal/Resume/input. Native13 strict46 owner28+sink/fullbuildPASS accepted1066/original851immutable selected1067 needs relocateddriverpatch+repin. bx_2qvsxyyn archivedexpiryNULL stop_6d70e1f754f84c70 finalnormal156drain earlieroutertimeout/unresolvedlineages retained. See docs/re-notes/recoil-source-transport-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
