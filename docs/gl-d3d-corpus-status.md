@@ -1,5 +1,33 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: NFS3 thread ownership fixes; chooser qualification pending
+
+Published `e6f4672ff` fixes two demonstrated wrong-thread dispatches. Shared
+NC retrieval delivered a main-window WM_NCPAINT to the secondary thread;
+DestroyWindow later promoted a foreign window and synchronously called its
+WM_SETFOCUS on the destroying thread. Both paths now restrict ownership.
+Failing-before/passing-after regressions, focused neighbors and locked build
+pass; an unrelated BUTTON expectation fails identically on baseline.
+The coordinator reviewed code and64 artifacts/8,947,608 bytes. Final native
+qualification of both fixes stopped on disk4.46GB, with no box allocated.
+A fresh worker now qualifies the chooser after headroom recovery. Race/context,
+three-renderer timing, full27, audio and parity remain open.
+[Wrong-context chains and regressions](re-notes/nfs3-setup-zero-eip-cause-20261108.md).
+
+## November 8: current TR3 WebGL Jungle and pistol draw
+
+Published `0a38cf484` reaches Jungle through ordinary native welcome/setup,
+then binds an actual owning WebGL2 producer using modulef5cfb1c6. Space2000
+shows raised pistols. Short Up/Left attempts do not prove persistent translation
+or heading. Disk4.48GB stops further input; software remains unexecuted.
+The coordinator inspected the armed frame and verified215 references/193 hashes,
+14,085,840 bytes.20 exact ACKs include three zero-effect stale refusals; no
+UNKNOWN.602 pins/189 HTTP reads/45 module references and normal archived stop
+pass. Intel is the reported provider string, not proved physical hardware.
+A fresh worker continues movement/turning after headroom restoration.
+Full27, parity, FPS, audio and level completion remain open.
+[Current route, actual owner and resource boundary](re-notes/tr3-current-native-gl-gameplay-20261108.md).
+
 ## November 8: additional startup coverage stops at native dialogs
 
 Published `e6d667fa8` adds12 corrected browser cells across TR2, TR3 and
