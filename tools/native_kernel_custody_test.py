@@ -21,6 +21,58 @@ kernel=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(kernel)
 
 
+class ParentLineage(unittest.TestCase):
+    def test_missing_proc_at_queued_resume_still_requires_actual_terminal_wait(self):
+        identify=kernel.identity;calls=[]
+        def observation(pid):
+            if pid!=os.getpid():
+                calls.append(pid)
+                if len(calls)==3:raise FileNotFoundError('injected unavailable observation')
+            return identify(pid)
+        with tempfile.TemporaryDirectory() as tmp,patch.object(kernel,'identity',side_effect=observation):
+            due=time.time()+2
+            kernel.supervise(tmp,['/bin/true'],deadline=due,cleanup_deadline=due+1,
+                journal_compression='gzip',command_compression='gzip')
+            drain=json.loads((Path(tmp)/'kernel-drain.json').read_text())
+            rows=[json.loads(s) for s in gzip.open(Path(tmp)/'custody.ndjson.gz','rt')]
+            self.assertTrue(drain['complete'])
+            self.assertEqual(len(drain['reaped']),1)
+            self.assertEqual(drain['unresolvedResumes'],[])
+            self.assertTrue(any(r['kind']=='identity-unavailable-before-resume' for r in rows))
+
+    def test_native_group_exit_cannot_overtake_pending_creation(self):
+        for mode in ('before', 'fixed', 'parked-before', 'parked-fixed', 'fork-before', 'fork-fixed'):
+            fixed=mode.endswith('fixed')
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as tmp:
+                base=Path(os.environ.get('CUSTODY_LINEAGE_EVIDENCE',tmp))
+                run=Path(tempfile.mkdtemp(prefix=mode+'-',dir=base))
+                result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                    '--parent-lineage-fixture',str(run),mode],capture_output=True,text=True,timeout=18)
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                receipt=json.loads((run/'lineage-waits.json').read_text())
+                self.assertEqual(receipt['supervisorWait'],0 if fixed else 1)
+                self.assertEqual(receipt['watchdogWait'],-15)
+                self.assertFalse((run/'watchdog-fired.json').exists())
+                drain=json.loads((run/'kernel-drain.json').read_text())
+                event=json.loads((run/'pending-creation.json').read_text())
+                rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+                self.assertEqual(event['siStatus'],261 if mode.startswith('fork') else 773)
+                self.assertEqual(drain['complete'],fixed)
+                self.assertEqual(drain['exit'],0)
+                self.assertFalse(drain['untracedCloneFlagsAudited'])
+                self.assertEqual(drain['remaining'],[])
+                self.assertEqual(drain['unreaped'],[])
+                self.assertEqual(drain['unresolvedPtrace'],[])
+                child=event['child']
+                self.assertTrue(any(r['pid']==child for r in drain['reaped']))
+                lineage=[r for r in drain['owned'] if r['pid']==child][0]
+                self.assertEqual(lineage['parentCustodian'],event['creator'] if fixed else None)
+                self.assertEqual([r['pid'] for r in drain['unresolvedLineage']],[] if fixed else [child])
+                if fixed:
+                    capture=next(r for r in rows if r['kind']=='fork-parent-release' and r['child']==child)
+                    self.assertLess(capture['at'],json.loads((run/'killer-resume.json').read_text())['at'])
+
+
 class ExitCausality(unittest.TestCase):
     def run_case(self, mode):
         with tempfile.TemporaryDirectory() as tmp:
@@ -599,6 +651,134 @@ class CompressedCancellation(unittest.TestCase):
     def test_original_supervisor_default_term_truncates_gzip(self):self.run_case('legacy-term')
 
 
+def parent_lineage_fixture(run, mode):
+    """Control legal wait order only; every creation, exit and status is native."""
+    run=Path(run).resolve()
+    source=r'''
+#include <pthread.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+static int fork_leaf;
+static void *leaf(void *p) { for (;;) pause(); }
+static void *creator(void *p) {
+  while(access("go",F_OK)) usleep(1000);
+  if(fork_leaf) { pid_t p=fork();if(p<0)_exit(86);if(!p)_exit(0); }
+  else { pthread_t t; if(pthread_create(&t,0,leaf,0)) _exit(81); }
+  for (;;) pause();
+}
+static void *killer(void *p) { _exit(0); }
+int main(int argc,char **argv) {
+  if(chdir(argv[1]))return 80;
+  fork_leaf=argc>2;
+  pid_t p=fork(); if(p<0)return 82;
+  if(p) { int s;return waitpid(p,&s,0)==p && s==0?0:83; }
+  pthread_t a,b;
+  if(pthread_create(&a,0,creator,0))return 84;
+  usleep(30000);
+  if(pthread_create(&b,0,killer,0))return 85;
+  for (;;) pause();
+}
+'''
+    with tempfile.TemporaryDirectory() as tmp:
+        c=Path(tmp)/'fixture.c'; binary=Path(tmp)/'fixture'
+        c.write_text(source)
+        subprocess.run(['cc','-O2','-pthread',str(c),'-o',str(binary)],check=True,timeout=10)
+        inputs=[]
+        for path in (c,binary):
+            data=path.read_bytes();assert data==path.read_bytes()
+            inputs.append(dict(name=path.name,size=len(data),sha256=hashlib.sha256(data).hexdigest()))
+        (run/'native-inputs.json').write_text(json.dumps(dict(inputs=inputs,
+            recovery='Generate source from parent_lineage_fixture in Git; cc -O2 -pthread fixture.c -o fixture. No binary or source archive retained.')))
+        gate_read,gate_write=os.pipe()
+        supervisor=os.fork()
+        if supervisor==0:
+            os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
+            module=kernel
+            if mode.endswith('before'):
+                import types
+                revision='bcf8c7bd788f2c63668406b11f72652006cde8dc'
+                data=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+                assert hashlib.sha256(data).hexdigest()=='5371233b12d3a63e13a9768529af43e5a61b7ff1682b2d3c09e4db6a976e12d0'
+                module=types.ModuleType('before');exec(compile(data,revision,'exec'),module.__dict__)
+            waitid,waitpid,trace=os.waitid,os.waitpid,module.ptrace
+            clones=[];pending=[];killer_started=[];selected_initial=[]
+            def peek(which,pid,flags):
+                if pending and not killer_started and which==os.P_ALL:
+                    value=waitid(os.P_PID,clones[1],flags)
+                    if value:return value
+                value=waitid(which,pid,flags)
+                if (mode.startswith('parked') and len(clones)==1 and not selected_initial and
+                    value and value.si_code==os.CLD_TRAPPED and value.si_status==773):
+                    child=ctypes.c_ulong();trace(module.GETEVENTMSG,value.si_pid,data=ctypes.addressof(child))
+                    selected_initial.append(child.value)
+                    due=time.monotonic()+1
+                    while time.monotonic()<due:
+                        initial=waitid(os.P_PID,child.value,flags)
+                        if initial:return initial
+                        time.sleep(.001)
+                    raise AssertionError('native killer autoattach stop missing')
+                return value
+            def consume(task,flags):
+                result=waitpid(task,flags)
+                if (mode.startswith('parked') and len(clones)==1 and not selected_initial and
+                    task!=clones[0] and result[0] and os.WIFSTOPPED(result[1]) and
+                    os.WSTOPSIG(result[1])==signal.SIGSTOP):
+                    selected_initial.append(task)
+                if result[0] and os.WIFSTOPPED(result[1]) and result[1]>>16==3 and len(clones)<2:
+                    child=ctypes.c_ulong();trace(module.GETEVENTMSG,task,data=ctypes.addressof(child))
+                    clones.append(child.value)
+                    if len(clones)==2:
+                        (run/'go').write_text('1')
+                        due=time.monotonic()+2
+                        while time.monotonic()<due:
+                            value=waitid(os.P_PID,clones[0],os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|kernel.WALL)
+                            if value and value.si_code==os.CLD_TRAPPED and value.si_status==(261 if mode.startswith('fork') else 773):
+                                nested=ctypes.c_ulong();trace(module.GETEVENTMSG,clones[0],data=ctypes.addressof(nested))
+                                pending.append(nested.value)
+                                (run/'pending-creation.json').write_text(json.dumps(dict(
+                                    creator=clones[0],child=nested.value,siStatus=value.si_status,at=time.time())))
+                                break
+                            time.sleep(.001)
+                        assert pending,'native creator did not reach clone event'
+                return result
+            def resume(request,task,addr=0,data=0):
+                if request==module.CONT and len(clones)==2 and task==clones[1] and not killer_started:
+                    killer_started.append(task)
+                    (run/'killer-resume.json').write_text(json.dumps(dict(pid=task,at=time.time())))
+                    result=trace(request,task,addr,data)
+                    # Let the real exit_group replace the creator's pending stop.
+                    time.sleep(.03)
+                    return result
+                return trace(request,task,addr,data)
+            try:
+                with patch.object(module.os,'waitid',side_effect=peek),patch.object(module.os,'waitpid',side_effect=consume),patch.object(module,'ptrace',side_effect=resume):
+                    due=time.time()+7
+                    module.supervise(run,[str(binary),str(run)]+(['fork'] if mode.startswith('fork') else []),deadline=due,cleanup_deadline=due+1,
+                        journal_compression='gzip',command_compression='gzip')
+            except BaseException as error:
+                (run/'supervisor-error.json').write_text(json.dumps(dict(error=repr(error))))
+                os._exit(1)
+            os._exit(0)
+        watchdog=os.fork()
+        if watchdog==0:
+            os.close(gate_read);os.close(gate_write)
+            start=kernel.identity(supervisor)['start']
+            (run/'watchdog-armed.json').write_text(json.dumps(dict(target=supervisor,start=start,deadline=time.time()+11)))
+            time.sleep(11)
+            try:
+                if kernel.identity(supervisor)['start']==start:os.kill(supervisor,9)
+            except (FileNotFoundError,ProcessLookupError):pass
+            (run/'watchdog-fired.json').write_text('{}');os._exit(0)
+        os.close(gate_read)
+        while not (run/'watchdog-armed.json').exists():time.sleep(.001)
+        os.write(gate_write,b'1');os.close(gate_write)
+        _,status=os.waitpid(supervisor,0)
+        os.kill(watchdog,15);_,watch_status=os.waitpid(watchdog,0)
+        (run/'lineage-waits.json').write_text(json.dumps(dict(supervisorWait=os.waitstatus_to_exitcode(status),
+            watchdogWait=os.waitstatus_to_exitcode(watch_status))))
+
+
 def causality_fixture(run, mode):
     run=Path(run).resolve()
     source=r'''
@@ -1131,10 +1311,11 @@ if __name__=='__main__':
                 pid,status=os.waitpid(-1,0)
                 adopted.append(dict(pid=pid,status=status,exit=os.waitstatus_to_exitcode(status)))
             except ChildProcessError:break
-        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture'):
+        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture','--parent-lineage-fixture'):
             (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
                 fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
+    elif len(sys.argv)>1 and sys.argv[1]=='--parent-lineage-fixture':parent_lineage_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--causality-fixture':causality_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--command-gzip-fixture':command_gzip_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--gzip-fixture':gzip_fixture(sys.argv[2],sys.argv[3])

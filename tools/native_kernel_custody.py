@@ -63,6 +63,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     owned = {}; reaped = []; parked = set(); exit_retired = set(); root_status = None; sequence = 0
     pending = {}
     exiting = set()
+    resumes = {}
     journal = Journal(run, journal_compression)
     def log(kind, **value):
         nonlocal sequence
@@ -148,7 +149,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
         if not cancellation:
             value = exit_wait()
             if value: return value
-        if cancellation or parked:
+        if cancellation or parked or resumes:
             for task, row in list(owned.items()):
                 if any(r['pid'] == task for r in reaped): continue
                 try: value = os.waitid(os.P_PID, task, wait_flags)
@@ -194,6 +195,23 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     cancel_at = time.monotonic()
                     log('cancellation', **cancellation[0], cleanupDeadline=cleanup_deadline)
             peek = priority_wait()
+            if peek is None and resumes and not cancellation:
+                # A linked child (or its creator) can immediately exit_group.
+                # Harvest other creators' already-pending kernel messages before
+                # admitting that userspace: group exit can replace their stops.
+                task, (start, deliver, parent) = next(iter(resumes.items()))
+                del resumes[task]
+                try:
+                    assert identity(task)['start'] == start, 'PID reused before resume'
+                except (ProcessLookupError, FileNotFoundError):
+                    # A dying thread can lose /proc before its terminal wait.
+                    # Keep the actual ptrace/terminal obligation, as below.
+                    log('identity-unavailable-before-resume', pid=task, start=start)
+                released = trace_task(CONT, task, deliver)
+                if parent is not None:
+                    log('parked-child-release' if released else 'parked-child-release-pending',
+                        pid=task, parent=parent)
+                continue
             if peek is None:
                 pump_output()
                 try:
@@ -203,6 +221,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     assert {(r['pid'], r['start']) for r in owned.values()} == {
                         (r['pid'], r['start']) for r in reaped}, 'unreaped custody at ECHILD'
                     assert not pending, ('unresolved ptrace ESRCH', pending)
+                    assert not resumes, ('unresolved queued resumes', resumes)
                     if command_log and not output_eof:
                         time.sleep(.001)
                         continue
@@ -226,6 +245,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             if peek is None:
                 time.sleep(.001); continue
             task = peek.si_pid
+            resumes.pop(task, None) # a newer real stop supersedes a queued CONT
             unlinked = task not in owned
             if unlinked:
                 # A fatal group signal can supersede the initial autoattach
@@ -326,8 +346,8 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 register(child.value, task, {1:'fork',2:'vfork',3:'clone'}[event])
                 if child.value in parked:
                     parked.remove(child.value)
-                    released = trace_task(CONT, child.value)
-                    log('parked-child-release' if released else 'parked-child-release-pending',
+                    resumes[child.value] = (owned[child.value]['start'], 0, task)
+                    log('parked-child-release-queued',
                         pid=child.value, parent=task)
                 log('fork-parent-release', pid=task, child=child.value)
             elif event == 6:
@@ -340,7 +360,10 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 if not trace_task(GETEVENTMSG, task, ctypes.addressof(former)): continue
                 assert former.value in (0, task), ('nonleader exec identity transition', task, former.value)
             deliver = 0 if event or sig in (signal.SIGTRAP, signal.SIGSTOP) else sig
-            trace_task(CONT, task, deliver)
+            if event == 6 or cancellation:
+                trace_task(CONT, task, deliver)
+            else:
+                resumes[task] = (owned[task]['start'], deliver, None)
     except BaseException as error:
         failure = repr(error)
         log('failure', error=repr(error))
@@ -357,7 +380,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             except (ProcessLookupError,FileNotFoundError): pass
         unreaped=[row for row in owned.values() if not any(r['pid']==row['pid'] and r['start']==row['start'] for r in reaped)]
         unresolved=[row for row in owned.values() if row['cause']=='kernel-autoattach-stop']
-        complete = drained and not (unreaped or pending or parked or remaining or unresolved)
+        complete = drained and not (unreaped or pending or parked or remaining or unresolved or resumes)
         journal_error = None
         command_error = None
         if command_log:
@@ -381,7 +404,9 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                       originalSha256=command_log.sha.hexdigest()) if command_log else None),
                   journal=dict(path=journal.path.name, closed=journal_error is None, error=journal_error,
                                originalBytes=journal.size, originalSha256=journal.sha.hexdigest()),
-                  remaining=remaining,unreaped=unreaped,unresolvedPtrace=list(pending.values()),finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
+                  remaining=remaining,unreaped=unreaped,unresolvedPtrace=list(pending.values()),
+                  unresolvedResumes=[dict(pid=task,start=value[0],signal=value[1]) for task,value in resumes.items()],
+                  finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
                   custody='ptrace fork/vfork/clone barriers + waitid WNOWAIT before waitpid',
                   kernelForkLineage=True,kernelForkLineageComplete=not unresolved,
                   unresolvedLineage=unresolved,untracedCloneFlagsAudited=False))
