@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-startup-presentation-1750 causally diagnoses gray startup before another original; compare actual production launch/presentation with successful1717, repair/test helper or code offline. Reviewed8c58a9c8b 227refs43492965B HASHpass personallyviewed780x437gray liveGraphicsHWND but no options/OK; noARM/initialRawNULL/noGame/Control/renderer authority. Chrome appendedSwiftShader notpriorIntel proof. bx_w6rs4se9 archivedexpiryNULL stop_caafc7781b6a0cad Chromeexit0 observed35drain with census scope. Preserve8579c29a2 repairedobserver615/29 and independentrelease; no speculativecause/retry. See docs/re-notes/tr2-covered-control-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-startup-control-1810 verifies actual visibleGraphicsstartup with published6de923cb8 timerwaitguard selected615/29 then freshowningWebGL2authority/ARM/nonnullraw before reviewedpistols/dogahead ONEobservedControl<=2000ms independentrelease. Reviewedsource99refs505385B HASHpass personallyviewedChrome beforegray/afterdialog causalfixture,130tick/exit/exclusive/instance regressions normalclosure/buildPASS. Originalstackunretained recoveryUNVERIFIED nofixtureGPUclaim/priorIntelcarryover. CPUd8fac observer8579c29a2 unchanged32tests reused. See docs/re-notes/tr2-startup-presentation-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-chamber-explore-1740 restores greenchamber finalpair03f44c73/65e6b47c (NOTreloaded) and follows reviewed native route beyondchamber early/finalNewSave recovery. Reviewed dea0ece72 actualenteredgreentiles+barrelBROKEN noDROP/LOOT; personallyviewedLIFE19/35MANA25Gold1637Food42AC14 victories9+0 helmetcape redbluevials. Coordinator286refs272059861B+savepair independentHASHpass. bx_eshg4q48 archivedexpiryNULLstop_7c30b90f9f0a2260 Chromeexit0normal358drain unresolved0 cloneUntracedscope. See docs/re-notes/darkstone-green-route-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-container-room-1810 restoresONLY finalpair ed35964e characters1342268B +game641d_6af0b7fa.sav3204341B85aeed05 from1740 descriptor; freshHTTP/loadFiles/VFS/nativeLoad before currentnativehover remainingcoincluster/intactbarrel/pottery then onwardroute. Reviewed91fff2583 whole note+422refs503592688B+pairHASH personallyviewed12Goldnativehover/finalGold1649Food39 LIFE19/35MANA25AC14helmetcape9+0. PairNOTreloaded. EarlyNewSave<10min finalbeforecap.548/42 unchanged68refsreuse. bx_j7sfreex archivedexpiryNULL stop_4d80368201f7e0b0 Chromeexit0normal363drainlineage0unresolved cloneUntracedunaudited. See docs/re-notes/darkstone-chamber-explore-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
