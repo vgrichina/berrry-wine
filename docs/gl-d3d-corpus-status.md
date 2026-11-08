@@ -1,5 +1,35 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: current TR2 controls and TR3 WebGL translation verified
+
+Published `811bca5b6` qualifies native Enter/default-OK locally and remotely,
+then persistent Venice Up displacement and a separate Left heading change on
+actual owning WebGL2 module7ec49cbb. The demo enters Venice directly. The
+coordinator inspected paired terrain frames and verified106 references,
+9,641,848 bytes. Eight exact ACKs, zero UNKNOWN, full settled process drain
+and normal archived stop pass. Rates remain unmeasured; a fresh task qualifies
+frame identity and overhead before live pacing windows.
+[Native OK and current Venice controls](re-notes/tr2-default-ok-activation-20261108.md).
+
+Published `767dc5774` establishes current WebGL terrain-relative Jungle
+translation retained through twelve- and ten-second idle captures. The
+coordinator inspected the same rock/boulder landmarks and verified204
+references/14,528,997 bytes. Eighteen exact ACKs, zero UNKNOWN,48 actual
+module7ec49cbb checks,189 HTTP reads and normal archived stop/full drain pass.
+Together with `78df2e4d9`, bounded current translation and separate heading
+are verified on WebGL and Software. Firing, level completion, FPS, audio,
+parity and full27 remain open. Fresh Forsaken progress takes this slot.
+[WebGL translation](re-notes/tr3-webgl-terrain-translation-20261108.md).
+
+Published `369e2613b` loads NFS3 with the complete executable closure after
+native D3D selection and reload. The owning WebGL2 D3DIM endpoint records805
+draws and zero errors/fallbacks on7ec49cbb. Race input remains untested: the
+run-local helper incorrectly required a string endpoint rather than numeric1.
+The prepared correction passes local regression tests; a fresh worker now
+qualifies its production binding and race controls. The coordinator verified130
+references/9,155,030 bytes; the prior box is normally stopped and archived.
+[Native D3DIM consumption and helper boundary](re-notes/nfs3-complete-closure-race-20261108.md).
+
 ## November 8: native NFS3 selection and current TR3 movement
 
 Published `4c1d0352a` qualifies both NFS3 thread-owner repairs through the
