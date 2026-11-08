@@ -2,7 +2,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Fresh tr2-frame-identity-rate-0612 qualifies owning frame/presentation identity and overhead locally before any live pacing windows. Published811bca5b6 qualifies native Enter/default-OK locally and on a fresh box, then current Venice Up displacement and separate Left heading retained after release; demo enters Venice directly, no NewGame screen. Coordinator viewed paired terrain frames and verified106refs9641848bytes.8exactACK/zeroUNKNOWN actual guest/render7ec49 WebGL2; normal archived stop and settled drain pass. Note: docs/re-notes/tr2-default-ok-activation-20261108.md. FPS/full27/parity/audio/weapons remain open.
+  Next: Fresh d3dim-producer-publication-identity-0617 implements the missing completed-owner/batch/ordinal to consumed canonical-surface-version/publication association, with production adversarial regressions and locked build before any live pacing. Published6eb7a8f35 proves current notifications can duplicate and delayed receipt changes counter windows; tested Join contract is a model, not installed production telemetry. Coordinator independently verified21files214361bytes. No box/FPS/gameplay-overhead claim;296ns/call and89.2percent are telemetry-seam microcost only. Published811bca5b6 current native OK and persistent Venice movement/heading remain accepted. Notes: docs/re-notes/tr2-frame-identity-rate-20261108.md and tr2-default-ok-activation-20261108.md. Full27/parity/audio/weapons/unmeasuredFPS remain open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108

@@ -1,5 +1,22 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: presentation identity fails local qualification
+
+Published `6eb7a8f35` identifies the missing association between a completed
+owning Flip and the canonical surface version consumed by page publication.
+Production-boundary tests show duplicate notifications increase counters,
+delayed arrival changes receiving intervals, and repeated bytes receive new
+composition sequences. The tested Join contract is a model, not a production
+fix. The coordinator independently verified21 files/214,361 bytes. No box was
+allocated and no rates are reported. The296ns/call microbenchmark measures
+only telemetry-seam timestamp logging, not gameplay overhead.
+
+A fresh worker now implements the version-carried production association and
+adversarial regressions before a locked build and any live pacing task. Native
+TR2 controls remain accepted; logical FPS, physical scanout, observer slowdown,
+full27, parity and audio remain unproved.
+[Boundary evidence and concrete remedy](re-notes/tr2-frame-identity-rate-20261108.md).
+
 ## November 8: current TR2 controls and TR3 WebGL translation verified
 
 Published `811bca5b6` qualifies native Enter/default-OK locally and remotely,
