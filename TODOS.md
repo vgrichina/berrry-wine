@@ -24,9 +24,9 @@
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
-  status: SoftwareGL world and both menus verified; action/torch coverage open
+  status: owning GL readiness corrected; SoftwareGL world/torch verified; paired actions and WebGL torch open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Fresh q3-gl-readiness-gameplay-0317 tests the observer's actual owning-GL producer predicate before retrying original actions. Published702535909 resolves gray startup naturally but records ammo100 unchanged after MouseLeft, death during W, and zero-effect prequeue deadline refusal; no movement/fire claim. WebGL menu draws while the observer waits on absent d3dStats.glTriangles, so no WebGL input was admitted. Coordinator inspected software courtyard/WebGL menu and independently verified388 artifact references/351 hashes; all browsers drained and box normally archived. Note: docs/re-notes/q3-current-browser-world-20261108.md. Full27/parity/FPS/audio remain open.
+  Next: Resolve the observed post-input page-owner capture latency locally before another Q3 original attempt; retain budgets and sticky UNKNOWN. Publishedc142f0785 fixes run-local readiness using completed owning GL draws/presentation, actual context/module proof and software legacy-transport attachment; production Worker positive/negative controls pass on both backends. Current SoftwareGL courtyard/torch renders, but ammo100 and intervening deaths confound movement/fire. WebGL reaches level selection then g-open-difficulty's post-input capture exceeds20s; independent release completes, final ACK absent/UNKNOWN, no replay. Coordinator reviewed courtyard/torch/menu and independently verified295references/265hashes; normal archived stop. Note: docs/re-notes/q3-gl-readiness-gameplay-20261108.md. Fresh Warcraft producer-readiness/current-objective work replaces this coverage lane; full27/parity/FPS/audio remain open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108

@@ -1,5 +1,25 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: owning GL readiness corrected; Q3 actions remain open
+
+Published `c142f0785`, run `20261108-q3-gl-readiness-gameplay`, corrects
+the run-local observer with actual owning GL draws/presentation, context and
+module proofs, retaining software legacy-transport attachment. Both production
+Worker positive controls and all zero-input negative controls pass. The fresh
+original WebGL path opens input despite empty D3D statistics.
+
+Current SoftwareGL reaches Q3DM1 and a burning torch. Ammo remains100 and
+intervening deaths/respawns prevent movement/fire attribution. WebGL reaches
+level selection; a later Enter command releases independently, then its
+post-input page-owner capture exceeds the unchanged work deadline. Its final
+ACK is absent/UNKNOWN, with no replay. The coordinator inspected courtyard,
+torch and menu, and independently verified295 artifact references. Both actual
+owner modules match f965; this WebGL1 provider is Intel/Mesa ANGLE. The box
+normally stopped after retrieval. Further Q3 runtime needs a locally validated
+capture-latency remedy; paired gameplay/torch, parity, FPS, audio and full27
+remain open. Warcraft III producer-readiness work takes the coverage slot.
+[Controls, original actions, UNKNOWN and cleanup](re-notes/q3-gl-readiness-gameplay-20261108.md).
+
 ## November 8: Warcraft III current-browser readiness blocker
 
 Published `02129c6b0`, run `20261108-warcraft3-current-browser-objective`,
