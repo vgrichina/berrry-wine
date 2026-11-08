@@ -90,6 +90,12 @@ the exact Git SHA, relevant binary diff, small owned input patches and existing
 media/module path/hash pins. The executed driver patch separately matches its
 selected SHA `ae0c74e3ad5a364a560f45277ba2a154f3abd1754d34bdcf4c9356bc91202371`;
 the repaired candidate is distinct. No tree archive or peer WIP was copied.
+The reused local watchdog and upload-ledger helpers initially wrote six JSONL
+logs uncompressed. After all roles exited, their 617,068 original bytes were
+gzip-compacted, independently rehashed, and only those owned raw duplicates
+removed. This exception to the requested gzip-from-outset rule is recorded in
+`local-log-compaction.json`; runtime stdout/custody and focused/build logs used
+gzip from their first bytes.
 
 The initial retrieval filter mistakenly omitted `kernel-command.log`. A later
 read-only archived-file retrieval was refused with HTTP 409; the box was not
