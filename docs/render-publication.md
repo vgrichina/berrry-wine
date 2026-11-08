@@ -96,9 +96,18 @@ for already-leased buffers; those buffers still retire through its existing
 completion counters. No extra copy of D3D vertices is introduced. Direct3D9's
 separate validation/resource operations retain their existing synchronous path.
 
-All synchronous broker requests fence earlier shared publications before
+Synchronous broker requests with graphics dependencies fence earlier shared publications before
 dispatch. Publication admission is not GPU completion. Existing render-worker
 fences still implement queries, readbacks and API completion requirements.
+The only broker exception currently is `get_mouse_position`: it checks queue
+failure but does not wait for render admission. The page still answers the
+query after preceding async cursor warps have been flushed in FIFO order;
+clipping and active-event coordinates remain page-owned. A warp invalidates
+the producer's pointer cache even if the shared input epoch has not changed.
+The real-Worker test holds a Glide publication while two clipped cursor
+queries complete, then proves a following graphics-dependent invalidate
+cannot dispatch until that publication is admitted. Other imports remain
+conservatively fenced unless separately proven independent of graphics.
 Normal thread exit publishes buffered D3D draws and fences admission after DLL
 detach callbacks, before reporting exit to the scheduler. Otherwise a producer's
 endpoint could retire while its last packets still wait in the publication ring.

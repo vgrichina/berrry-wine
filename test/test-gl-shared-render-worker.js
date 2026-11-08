@@ -521,6 +521,57 @@ async function brokerProtocol(){
   assert.strictEqual(Atomics.load(v.i32,RPC.SLOT.STATUS),RPC.STATUS_RESP);assert.strictEqual(v.i32[RPC.SLOT.RESULT],73);
   assert.strictEqual(new DataView(memory.buffer).getUint32(1024,true),17);assert.strictEqual(errors.length,0);
 }
+async function pointerReadWithoutRenderFence(){
+  const {PublicationQueue}=require('../lib/render-worker'),{Worker}=require('worker_threads');
+  const queue=new PublicationQueue(new SharedArrayBuffer(64+4096));
+  const memory={buffer:new SharedArrayBuffer(RPC.RPC_BASE+RPC.RPC_STRIDE*RPC.RPC_MAX_SLOTS)};
+  const sigs={set_mouse_position:{params:['i32','i32'],results:[]},get_mouse_position:{params:[],results:['i32']},
+    invalidate:{params:[],results:['i32']}};
+  const events=[];let mouse=0;
+  const broker=RPC.createMainBroker(memory,{
+    set_mouse_position(x,y){events.push('warp');mouse=(Math.max(0,y)<<16)|Math.min(100,x);},
+    get_mouse_position(){events.push('pointer');return mouse;},
+    invalidate(){events.push('invalidate');return 1;},
+    glide_batch(){events.push('render');return 1;},
+  },sigs,{renderPublication:queue.buffer});
+  const worker=new Worker(`const {parentPort,workerData:d}=require('worker_threads');
+    const R=require(d.rpc),Q=require(d.transport).PublicationQueue,queue=new Q(d.queue);
+    const built=R.createWorkerImports({buffer:d.memory},d.sigs,m=>parentPort.postMessage(m),{renderPublication:d.queue});
+    try{
+      queue.publish(2,0,new Uint8Array([1]),()=>parentPort.postMessage({t:'renderPublished'}));
+      built.imports.host.set_mouse_position(400,-50);
+      const pointer=built.imports.host.get_mouse_position();
+      if(pointer!==100)throw Error('pointer lost authoritative clipping/warp ordering');
+      built.imports.host.set_mouse_position(42,8);
+      if(built.imports.host.get_mouse_position()!==((8<<16)|42))throw Error('second warp reused cached position');
+      parentPort.postMessage({pointer});
+      if(built.imports.host.invalidate()!==1)throw Error('invalidate failed');
+      queue.fail();Atomics.add(R.views({buffer:d.memory},0).pub,R.SLOT.GEN,1);let failed=false;
+      try{built.imports.host.get_mouse_position();}catch(e){failed=true;}
+      if(!failed)throw Error('pointer RPC ignored publication failure');
+      parentPort.postMessage({done:true});
+    }catch(e){parentPort.postMessage({error:e.stack});}
+  `,{eval:true,workerData:{rpc:require.resolve('../lib/guest-rpc'),transport:require.resolve('../lib/render-worker'),
+    queue:queue.buffer,memory:memory.buffer,sigs}});
+  const timeout=setTimeout(()=>queue.fail(),5000);
+  try{await new Promise((resolve,reject)=>{
+    worker.on('error',reject);worker.on('message',msg=>{
+      if(msg.error)return reject(Error(msg.error));if(msg.done)return resolve();
+      if(msg.t==='calls')broker.serveCalls(msg);
+      else if(msg.t==='call')broker.serveCall(msg);
+      else if(msg.t==='rpc')broker.serveRpc(msg.slot);
+      else if(msg.pointer!==undefined){
+        try{assert.deepStrictEqual(events,['warp','pointer','warp','pointer']);}catch(e){return reject(e);}
+        setTimeout(()=>{
+          try{assert.deepStrictEqual(events,['warp','pointer','warp','pointer'],'graphics RPC must remain blocked behind held publication');}
+          catch(e){return reject(e);}
+          broker.drainPublications().catch(reject);
+        },30);
+      }
+    });
+  });assert.deepStrictEqual(events,['warp','pointer','warp','pointer','render','invalidate']);}
+  finally{clearTimeout(timeout);queue.fail();await worker.terminate();}
+}
 async function publishedBrokerProtocol(){
   const {PublicationQueue}=require('../lib/render-worker'),{Worker}=require('worker_threads');
   const queue=new PublicationQueue(new SharedArrayBuffer(64+4096));
@@ -664,7 +715,7 @@ function legacyUnavailableFallback(){
   adapter.destroy();
 }
 const watchdog=setTimeout(()=>{console.error('GL shared render worker protocol timed out');process.exitCode=1;},10000);
-(async()=>{await nullRendererProtocol();await hostProtocol();await brokerProtocol();await publishedBrokerProtocol();bitmapWorkerCoherence();
+(async()=>{await nullRendererProtocol();await hostProtocol();await brokerProtocol();await pointerReadWithoutRenderFence();await publishedBrokerProtocol();bitmapWorkerCoherence();
   await queuedSnapshotsAndOrder();await queuedBarriersAndFallbacks();await queuedFailure();await queuedClose();
   await queuedSynchronization();await queuedOwnerInvalidation();await queuedPackedPayload();await queuedWindowLifetime();
   await queuedCopiedVectors();await queuedMalformedVectors();

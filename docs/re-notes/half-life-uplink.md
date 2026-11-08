@@ -3386,3 +3386,28 @@ snapshots/patches, format probe, screenshots, timing JSON and raw CPU profiles
 are retained in the same run folder. D3D9 clear publication is separately
 committed as7a05ea3f8; this OpenGL decoder optimization is shared by both browser
 WebGL versions and the CLI frontend, not a WebGL2-specific workaround.
+
+The next transport change exempts only `get_mouse_position` from the shared
+render admission fence. The query still reaches the page after queued cursor
+warps, preserving clipping and active-input-event semantics; a warp now also
+invalidates the local pointer cache. This fixes consecutive same-epoch warps
+returning stale coordinates. Queue failures still reject uncached queries.
+A real Worker test holds a Glide publication, completes two pointer queries,
+then verifies a graphics-dependent invalidate remains blocked until admission.
+GL/GDI canonical-pixel ordering tests also pass.
+
+Android `pointer-independent.json` records595 presents/60.001995s =9.916FPS,
+visible throughout at640x480, following120 seconds of gameplay warmup.
+The corridor screenshot is textured and visually intact. The preceding
+float-decoder sample was8.633FPS; sequential thermal/animation differences
+prevent attributing the entire difference to this change. The older release's
+16.216FPS remains an unresolved performance gap. Exact guest-rpc source,
+working patch, loaded WASM hash and captures accompany this sample in
+`scratch/runs/20261108-android-publication`.
+
+The follow-up30-second profile (`profile-pointer-independent`) stayed visible:
+main guest waitForResponse9.43% versus19.53% in the preceding float-decoder
+profile, WASM70.75%, render Worker idle54.09%. Profiled throughput9.062FPS is
+separate from the unprofiled9.916FPS sample. Samples include idle and waits;
+these percentages are per thread and are not GPU utilization or a direct
+measurement of execution overlap.
