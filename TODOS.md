@@ -6,9 +6,9 @@
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
-  status: continuous hull check proves intact window blocks passage; explicit breakable-state route in progress
+  status: continuous hull and conditional destroyed-window route published; live pane state remains UNKNOWN
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed offline2125 once:18focused+2000independent interval checks and lockedbuild PASS. Native +/-16 hull and omitted entity328/model20 window invalidate old footprint route; whole intact aperture standing/crouched continuously obstructed. Death damage source and actual crossing remain UNKNOWN. Independently verified21refs36274B21gzip; tested checker/note stayed UNCOMMITTED when disk fell below floor, files released. Fresh quake2-window-state-route-2140 PID434379 thread01a1bd1a-9722-7ed2-906f-392c45db4cd8 owns continuation: explicit destroyed-breakable state, fail-closed validation and standing/crouched clearance before publication; no original retry. Full27/parity/audio/FPS open.
+  Next: Reviewed published f330f5c52 once result/final/note/source;25focused+2000independent oracle and lockedbuild PASS,20refs45287B18gzip independentlyHASH. Exact explicit BSP-pinned entity328/model20 destroyed assumption removes only7brushes: standing/crouched x96 step18 and conditional route clear, world edges still block. Intact noPassage stands; native live pane state, actual crossing and death damage source UNKNOWN. Fresh OFFLINE quake2-window-state-observer-2152 thread01a1bd25-583c-74f3-bd7c-2d3feb437472 derives unique native edict identity and bounded read-only state/destruction observation before any original retry; no authored-index/live-index inference. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
