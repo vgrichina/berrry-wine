@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; browser terminal drain repaired; fresh BAT response
+  status: queued; shared disk floor stopped provisioning before original
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-bat-response-1940 restore ONLY final1910 chars4762ae9c/game5e898dc9 pair, currenthealthreview then ONE ordinary BATresponse firstconsequence STOP nativeNewSave recovery. Lastnumeric16/35 liveBAT Gold1713. Reviewed aa677ef46 17refs48067B HASH4gzip valid tenactualprocesscontrols+lockedbuildPASS sharedclosepromise actualexit+pipeDrain BEFOREcleanup/quitACK finiteUNKNOWN noACK retainsprofile. Newselection hashes/invokes guardedadapter+helper; historical1910SIGKILLnormalUNPROVEN distinct357/357actualreaps; oldboxarchivedstop_ae93d9661a714576. See docs/re-notes/darkstone-close-escalation-20261108.md. Full27/parity/audio/FPS open.
+  Next: Reviewed261b054277 133refs614339B independently HASH; home1499185152B stopped475/550 upload before Chrome/gameplay, no current health or save claim. final1910 canonical chars4762ae9c/game5e898dc9 retained not loaded; own regenerated stage removed after recovery HASH. bx_pzb6x4sx archived expiryNULL stop_c53faff061481d9c completed forcedFALSE errorNULL; unlaunched kernel1/1actualreap separate historical1910 normalChromeUNPROVEN. Slot replacement custody-terminal-identity-1951 offline concrete Q2 duplicate terminal receipt repair; no unchanged storage retry. See docs/re-notes/darkstone-bat-response-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
