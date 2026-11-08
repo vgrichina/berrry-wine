@@ -102,7 +102,7 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 
-  ;; Retire or promote the process-wide main window before its table record is
+  ;; Retire or promote this thread's main window before its table record is
   ;; removed. Kept separate so lifecycle tests can exercise this decision
   ;; without invoking the host-facing recursive destruction path.
   ;;
@@ -126,7 +126,10 @@
     (if (i32.eq (local.get $hwnd) (global.get $main_hwnd))
       (then
         (if (i32.and
-              (i32.ne (call $wnd_table_get (i32.add (global.get $main_hwnd) (i32.const 1))) (i32.const 0))
+              (i32.and
+                (i32.ne (call $wnd_table_get (i32.add (global.get $main_hwnd) (i32.const 1))) (i32.const 0))
+                (i32.eq (call $wnd_get_thread (i32.add (global.get $main_hwnd) (i32.const 1)))
+                        (global.get $current_thread_id)))
               (i32.ne (call $wnd_get_parent (i32.add (global.get $main_hwnd) (i32.const 1)))
                       (global.get $main_hwnd)))
           (then (local.set $repl (i32.add (global.get $main_hwnd) (i32.const 1))))
@@ -164,11 +167,16 @@
               (i32.ne (load.field.memarg WndRecord wndproc (local.get $ptr))
                       (global.get $WNDPROC_CTRL_NATIVE))))
         (then
+          ;; main_hwnd and its focus callback context are per thread. Never
+          ;; promote a foreign window when a helper UI thread tears down its
+          ;; last top-level: its wndproc requires the owner's stack and TLS.
           (if (i32.and
+                (i32.eq (call $wnd_get_thread (local.get $h)) (global.get $current_thread_id))
                 (i32.and
-                  (i32.ne (call $wnd_get_owner (local.get $h)) (local.get $dying))
-                  (i32.gt_u (local.get $h) (local.get $best)))
-                (call $wnd_is_effectively_visible (local.get $h)))
+                  (i32.and
+                    (i32.ne (call $wnd_get_owner (local.get $h)) (local.get $dying))
+                    (i32.gt_u (local.get $h) (local.get $best)))
+                  (call $wnd_is_effectively_visible (local.get $h))))
             (then (local.set $best (local.get $h))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $scan)))

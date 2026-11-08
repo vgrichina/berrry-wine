@@ -118,6 +118,25 @@ const extraWat = String.raw`
   wat.test_set_quit(0);
   retireAll();
 
+  // A renderer probe thread destroying its final window must not adopt a
+  // different UI thread's window and run that window's MFC focus proc on
+  // the renderer's stack/TLS. Cover both the adjacent-HWND fast path and
+  // the general successor scan.
+  for (const foreign of [0x18002, 0x10001]) {
+    wat.set_current_thread_id(1);
+    wat.test_seed_window(foreign, WS_VISIBLE, 0, 0);
+    wat.set_current_thread_id(2);
+    wat.test_seed_window(0x18001, WS_VISIBLE, 0, 0);
+    wat.test_set_main(0x18001);
+    assert.strictEqual(wat.test_retire_main_window(0x18001), 0,
+      'a foreign top-level cannot become this thread main/focus callback target');
+    assert.strictEqual(wat.get_window_thread(foreign), 1);
+    wat.test_remove_window(foreign);
+    wat.test_remove_window(0x18001);
+    wat.test_set_quit(0);
+  }
+  wat.set_current_thread_id(1);
+
   const fixture = fs.readFileSync(path.join(ROOT, 'test', 'binaries', 'calc.exe'));
   new Uint8Array(memory.buffer).set(fixture, wat.get_staging());
   assert(wat.load_pe(fixture.length), 'fixture PE initializes continuation thunks');

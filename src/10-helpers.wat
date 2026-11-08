@@ -6239,7 +6239,7 @@
 
   ;; $nc_flags_scan(mask) → hwnd of first slot with any $mask bit set, else 0.
   (func $nc_flags_scan (param $mask i32) (result i32)
-    (local $i i32) (local $ptr i32) (local $flags i32) (local $hwnd i32) (local $new i32)
+    (local $i i32) (local $ptr i32) (local $flags i32) (local $hwnd i32) (local $new i32) (local $owner i32)
     (if (i32.eqz (global.get $nc_flags_count)) (then (return (i32.const 0))))
     ;; $nc_flags_count is per instance and routinely stays non-zero while no
     ;; window holds a $mask bit (a retained erase bit, or a flag set on one
@@ -6253,7 +6253,14 @@
       (br_if $done (i32.ge_u (local.get $i) (global.get $MAX_WINDOWS)))
       (local.set $ptr (i32.add (global.get $NC_FLAGS) (i32.mul (local.get $i) (i32.const 4))))
       (local.set $flags (i32.load (local.get $ptr)))
-      (if (i32.and (local.get $flags) (local.get $mask))
+      ;; NC_FLAGS is shared across UI threads, just like PAINT_FLAGS.
+      ;; GetMessage/PeekMessage may only deliver work for their own windows;
+      ;; leave foreign flags intact, including hidden-window cleanup work.
+      (local.set $owner (i32.load (call $wnd_thread_addr (local.get $i))))
+      (if (i32.and
+            (i32.ne (i32.and (local.get $flags) (local.get $mask)) (i32.const 0))
+            (i32.or (i32.eqz (local.get $owner))
+                    (i32.eq (local.get $owner) (global.get $current_thread_id))))
         (then
           (local.set $hwnd (i32.load (call $wnd_record_addr (local.get $i))))
           ;; Defensive cleanup: a corrupt/stale NC flag must not synthesize

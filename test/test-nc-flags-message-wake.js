@@ -12,6 +12,16 @@ const extraWat = String.raw`
     (call $wnd_table_set (i32.const 0x10001) (i32.const 0x00401000))
     (drop (call $wnd_set_style (i32.const 0x10001) (i32.const 0x10000000)))
     (call $nc_flags_set (i32.const 0x10001) (i32.const 8)))
+  (func (export "test_nc_add_thread_window") (param $hwnd i32) (param $tid i32)
+    (global.set $current_thread_id (local.get $tid))
+    (global.set $next_hwnd (i32.add (local.get $hwnd) (i32.const 1)))
+    (call $wnd_table_set (local.get $hwnd) (i32.const 0x00402000))
+    (drop (call $wnd_set_style (local.get $hwnd) (i32.const 0x10000000)))
+    (call $nc_flags_set (local.get $hwnd) (i32.const 5)))
+  (func (export "test_nc_scan") (param $mask i32) (result i32)
+    (call $nc_flags_scan (local.get $mask)))
+  (func (export "test_nc_flags") (param $hwnd i32) (result i32)
+    (call $nc_flags_test (local.get $hwnd)))
   (func (export "test_nc_wake_set") (param $bits i32)
     (call $nc_flags_set (i32.const 0x10001) (local.get $bits)))
   (func (export "test_nc_wake_clear") (param $bits i32)
@@ -114,6 +124,36 @@ const extraWat = String.raw`
   wat.test_nc_paint_work(0);
   assert.strictEqual(wat.has_pending_message(), 0,
     'only the erase request remains after paint is cleared');
+
+  // Two guest UI threads share NC_FLAGS, but not their message queues.
+  // The renderer probe must not dispatch the main thread's MFC wndproc on
+  // its own TLS/context. Test the real GetMessage/PeekMessage paths as well
+  // as the shared readiness scanner; both transient NC bits must survive
+  // foreign polling until their owner consumes them.
+  wat.test_nc_wake_set(5);
+  wat.test_nc_add_thread_window(0x18001, 2);
+  assert.strictEqual(wat.get_window_thread(0x10001), 1);
+  assert.strictEqual(wat.get_window_thread(0x18001), 2);
+  for (const get of [0, 1]) {
+    const expected = get ? 0x85 : 0x83;
+    assert.strictEqual(wat.test_nc_message(get, 1), 1);
+    assert.strictEqual(msg.getUint32(0, true), 0x18001,
+      'only the calling thread window can supply synthesized NC messages');
+    assert.strictEqual(msg.getUint32(4, true), expected);
+    assert.strictEqual(wat.test_nc_flags(0x10001) & 5, 5,
+      'foreign retrieval preserves both NC bits for the owning thread');
+  }
+  assert.strictEqual(wat.test_nc_scan(5), 0,
+    'foreign NC work cannot satisfy the current thread readiness scan');
+  wat.set_current_thread_id(1);
+  for (const get of [1, 0]) {
+    assert.strictEqual(wat.test_nc_message(get, 1), 1);
+    assert.strictEqual(msg.getUint32(0, true), 0x10001);
+    assert.strictEqual(msg.getUint32(4, true), get ? 0x83 : 0x85);
+  }
+  assert.strictEqual(wat.test_nc_flags(0x10001) & 5, 0);
+  assert.strictEqual(wat.paint_work_audit(), 0,
+    'thread filtering leaves shared paint/NC work counts consistent');
 
   console.log('PASS  persistent NC state does not masquerade as queued message work');
 })().catch(error => {
