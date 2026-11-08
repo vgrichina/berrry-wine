@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: startup qualified; onward opening remains unverified after player death
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedb035caf41 once; five native captures independently inspected and1055ownrefs27179701B243originalgzip plus453remote12410756B44gzip independentlyHASH. Actual repaired-kernel Chrome startup10646ms; ordinary Easy gameplay approached north broken window, health100->54->0 and rolled death. Crossing unqualified, damage source UNKNOWN; no attack/respawn/replay. Normal quit ACK34,362actualterminalreaps completeTRUE emptylineage and EOF; bx_bqb7yay4 ARCHIVED expiryNULL normalstop_c582f7f82c38bbe7. Next offline hull/sill alignment and survivable route before another original; active slot reassigned fresh TR2 startup/linked shot2116. Full27/parity/audio/FPS open.
+  Next: Reviewedb035caf41 actual Chrome startup10646ms and native health100->54->0 before qualified window crossing; damage source UNKNOWN. Independently inspected five captures and hashed1055own/453remote references. Normalquit362actualreaps completeTRUE; bx_bqb7yay4 ARCHIVED expiryNULL normalstop_c582f7f82c38bbe7. Fresh OFFLINE quake2-swept-hull-route-2125 PID414108 thread01a1bd0d-415e-7c80-85f3-8347330e8acc implements continuous player-hull BSP trace including brush/entity models and step/crouch clearance before another original; prior five-point leaf samples insufficient. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -18,9 +18,9 @@
 
 - [ ] Current TR2 native controls and qualified presentation rates
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
-  status: active fresh repaired-startup original and first linked shot
+  status: first exact linked original shot RETURN verified; effective targeting/hit/kill open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-repaired-startup-linked-shot-2116 PID398793 thread01a1bd04-a39d-7ba0-b29d-1fd89917289c uses Q22052 actual Chrome-qualified kernel5371233b unchanged caps/flags and regenerated exact closure. ONE original: review current upright fullHP pistols drawn before sole1900ms Control, independent <=2000ms release; observer2500ms/32 rows through first exact linked-shot RETURN, pendingWeaponTRUE pendingShotFALSE. No forward/heading/combo/blind target action. Raw return0 is attempt only, no effective-fire/hit/kill inference. Prior2019 untilShot repair proofs reused by HASH. New leased box normal STOP delegated after recovery/drain; no oldbox operations. Full27/parity/audio/FPS open.
+  Next: Reviewed8d1489d904 once result/final/note; independently hashed378refs5461279B235gzip originals and inspected current upright drawn-pistols/fullhealth pixels. ONE1900ms independently released Control:26records, four weapon cycles, exact type1 shot RETURNffffffff ammo1000->999 HP1000 target0; pendingWeaponTRUE pendingShotFALSE. No effective aim/hit/kill. NormalquitACK11 close12217ms EOF beforeprofilecleanup,350actualreaps completeTRUE; bx_d9smvggm ARCHIVED expiryNULL normalstop_e2d77a0f73cb3f52. Fresh OFFLINE tr2-target-damage-observer-2131 PID420383 thread01a1bd10-e16f-7d02-811c-c429b2f6e424 adds justified bounded target/damage observation before another original; unchanged2500ms/32rows no guest calls/writes. Renderer discrepancy and Full27/parity/audio/FPS remain open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: current WebGL buffered forward movement and takeoff with rising terrain viewpoint verified; sustained flight/outgoing attack open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh drakan-observer-worker-integration-2105 wires published27ace647a passive observer into actual owning Worker imports and ordinary run/controller with independent fresh deadline and <=2000ms release, offline first. Reviewed production code/tests once;173refs155794B56originalgzip independentlyHASH. Canonical4b45bda5/compatc3a4a1d9 54focused each, retained-disabled parity,673compiler/62chain/58native subset and lockedbuild PASS; historical full pending suite missing ignored pin FAIL retained. No original/new module gameplay yet; unarmed service overhead unmeasured. Preservecc6a ascent and unchanged6cf; no T-only retry. Full27/parity/audio/FPS/worldZ/sustainedflight open.
+  Next: Reviewed6fc4d59ca actual production Worker/WorkerLink/GuestThreadHost integration and33focused56adapter workerImports lockedbuild PASS;68refs125319B30gzip independentlyHASH. Module4b45/compatc3a4 verified before compile; independent <=2000ms release initiated28.834ms while Wasm busy, native down-active state1 completedRET fixture only. Coordinator found WorkerLink release wrapper drops asyncPromise; fresh OFFLINE drakan-release-promise-2127 PID415611 thread01a1bd0d-e451-79b2-aa4b-5ed1ea200caa repairs exact-once async completion/failure before original. Existing retirement suite missingRenderWorker reproduces originalGit FAIL; no fullsuite claim. Preservecc6a ascent/unchanged6cf; no T-only retry or original yet. Full27/parity/audio/FPS/worldZ/sustainedflight open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: startup failed before screenshot; active offline failure-profile retention repair
+  status: startup failed before screenshot; sticky failure-profile retention repaired offline
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed2a83f628d once;165ownrefs866998B74originalgzip plus35remote359221B10gzip independentHASH. Exact new de53 pair both streamed gates527PASS, selected6cf kernel5371233b logger979b; CDP Runtime.evaluate UNKNOWN before first screenshot, zero encounter input/save/quit/replay. Automatic Chrome actual WAIT0 and EOF but driver incorrectly removed profile after upstream UNKNOWN. Kernel314actualreaps completeFALSE unresolved autoattach7535/start17834; CDP causality unproved. bx_k4pmwxjb ARCHIVED expiryNULL normalstop_eb31971153a514b8. Fresh offline darkstone-failure-retention-2116 PID398792 thread01a1bd04-a3b1-7df3-a600-524cb25d9b14 repairs actual cleanup admission and tests real child/inherited-writer failure paths; no original/box. Preserve de53 chars1342324B SHA2c78a17064029385dee4206c9314673debb4de05205ae63d2ff144b9e6081546 game3204341B SHAcb2ca8093b2ffe45133cda87e3eea9ceafad66fd82246684ec40dd97306e66fc unchanged, last35/35 not reloaded. Full27/parity/audio/FPS open.
+  Next: Reviewed1b6f5bff2 once production/test/actualconsumer:505hashedrefs88176B107gzip originals independently verified. Failure latches before outer catch/automatic close; final gate after real child wait+inherited-writer EOF keeps sentinel profile and forbids cleanup/quitACK on startup timeout, late client fault or shutdown Evaluate failure.34focused81regression lockedbuild PASS. Exact2105 missing parent event unsupported causal kernel fix:314actualreaps completeFALSE unresolved7535/start17834; startup CDP cause UNKNOWN, no repeat original. bx_k4pmwxjb already ARCHIVED expiryNULL normalstop_eb31971153a514b8. New de53 save pair unchanged, last35/35 not postreload qualified. Next requires concrete startup evidence or another valuable lane; no unchanged retry. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
