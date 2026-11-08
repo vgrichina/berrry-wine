@@ -21,8 +21,38 @@ function attach({getExports, getMemory}) {
   const events=[];
   let eventCount=0;
   const execution={entries:0,returns:0,failures:0};
+  let trace=null, load=null, terminal=null;
+  let completionReason='no owning loader entry';
+  // These are the starts of complete, call-free native epilogue blocks in
+  // the pinned image, not the interior RETs or the post-free CALL block.
+  const epilogues=new Map([[0x411a26,'FRESH'],[0x41185b,'CACHE_NO_READ'],[0x411a83,'CACHE_NO_READ']]);
+  function read(e,b,a,n) {
+    if (!Number.isInteger(n)||n<0||n>4194304||a+n>0x100000000) throw Error('bounded source/range');
+    const w=e.guest_to_wasm(a>>>0)>>>0;
+    if(w===0xf0||w+n>b.byteLength) throw Error('unmapped memory');
+    for(let off=0;off<n;off=Math.min(n,Math.floor((a+off)/4096)*4096+4096-a)) {
+      if((e.guest_to_wasm((a+off)>>>0)>>>0)!==w+off) throw Error('noncontiguous/unmapped memory');
+    }
+    if(n&&(e.guest_to_wasm((a+n-1)>>>0)>>>0)!==w+n-1) throw Error('unmapped range end');
+    return Buffer.from(new Uint8Array(b,w,n));
+  }
+  function finishReturn(e,pc,sp,boundary) {
+    if(!terminal || !load) return;
+    const arm=terminal; terminal=null;
+    if(pc!==load.returnTarget || sp!==load.sp+4) {
+      load=null; completionReason='native return target/stack boundary missing';return;
+    }
+    validate();
+    if((e.get_eax()>>>0)!==0x6d7da0) throw Error('native return value mismatch');
+    if(records.length===32) throw Error('bounded observation exhausted');
+    records.push({kind:'NATIVE_LOAD_RETURN',pc,sp,entrySp:load.sp,
+      returnTarget:load.returnTarget,epilogue:arm.pc,path:arm.path,boundary,
+      acquisitionRecord:load.acquisitionRecord,exactIdentity:'UNKNOWN'});
+    load=null;completionReason='owning native return observed; writers/allocation lifetime remain UNKNOWN';
+  }
   const increment=value=>Math.min(Number.MAX_SAFE_INTEGER,value+1);
   function event(kind, detail, force=false) {
+    if(load || terminal) {load=null;terminal=null;completionReason=`interrupted: ${kind}: ${detail}`;}
     eventCount=increment(eventCount);
     if(events.length===32) events.shift();
     events.push({sequence:eventCount,kind,detail:String(detail).slice(0,96)});
@@ -54,27 +84,42 @@ function attach({getExports, getMemory}) {
       if ((e.get_image_base()>>>0)!==0x400000) throw Error('different module base');
       if ((e.get_eip()>>>0)!==(pc>>>0) || (e.get_esp()>>>0)!==(sp>>>0)) throw Error('not owning CPU block entry');
       if (++calls>10000000) throw Error('bounded callback count exhausted');
+      // A traced epilogue has no call or branch before its RET. The next
+      // block must be the entry's actual stack target, at the restored ESP.
+      if(terminal) finishReturn(e,pc>>>0,sp>>>0,'owning target block');
+      if (load && epilogues.has(pc>>>0)) {
+        const path=epilogues.get(pc>>>0);
+        if((sp>>>0)!==load.sp-0xb0 ||
+          (path==='FRESH' ? load.acquisitionRecord===null : !load.cache || load.acquisitionRecord!==null)) {
+          load=null;completionReason='missing acquisition/cache/epilogue stack boundary';
+        } else {validate();terminal={pc:pc>>>0,path};}
+      }
+      if (load && (pc>>>0)===0x411831 && (sp>>>0)===load.sp-0xb0) load.cache=true;
       if (![0x4117b0,0x4118d9,0x411a0e,0x42f0b0,0x42f0da].includes(pc>>>0)) return;
       if (records.length===32) throw Error('bounded observation exhausted');
-      const read=(a,n)=>{
-        if (!Number.isInteger(n)||n<0||n>4194304||a+n>0x100000000) throw Error('bounded source/range');
-        const w=e.guest_to_wasm(a>>>0)>>>0;
-        if (w===0xf0||w+n>b.byteLength) throw Error('unmapped memory');
-        // Verify every page, including sparse/non-affine translations.
-        for(let off=0;off<n;off=Math.min(n,Math.floor((a+off)/4096)*4096+4096-a)) {
-          if ((e.guest_to_wasm((a+off)>>>0)>>>0)!==w+off) throw Error('noncontiguous/unmapped memory');
-        }
-        if(n && (e.guest_to_wasm((a+n-1)>>>0)>>>0)!==w+n-1) throw Error('unmapped range end');
-        return Buffer.from(new Uint8Array(b,w,n));
-      };
-      const u32=a=>read(a,4).readUInt32LE();
-      for(const p of pins) if(hash(read(p.pc,p.size))!==p.sha256) throw Error('native body replaced/missing');
+      const readPoint=(a,n)=>read(e,b,a,n);
+      const u32=a=>readPoint(a,4).readUInt32LE();
+      for(const p of pins) if(hash(readPoint(p.pc,p.size))!==p.sha256) throw Error('native body replaced/missing');
       const record={pc:pc>>>0,sp:sp>>>0,kind:'LOAD_ENTRY',exactIdentity:'UNKNOWN'};
-      if ((pc>>>0)===0x4118d9) {
+      if ((pc>>>0)===0x4117b0) {
+        const returnTarget=u32(sp>>>0);
+        Object.assign(record,{returnTarget});
+        if(load) throw Error('nested/repeated loader entry before return');
+        terminal=null;
+        // Completion requires the production facade's actual trace setup;
+        // caller-authored coverage booleans have no authority here.
+        if(trace && trace.flag && returnTarget>=trace.lo && (!trace.hi || returnTarget<=trace.hi) &&
+          returnTarget && (returnTarget<0x4117b0 || returnTarget>=0x411a92)) {
+          load={sp:sp>>>0,returnTarget,cache:false,acquisitionRecord:null};
+          completionReason='loader entered; native return pending';
+        } else {load=null;completionReason='return target outside known owning trace boundary';}
+      } else if ((pc>>>0)===0x4118d9) {
         const length=e.get_esi()>>>0, pointer=u32((sp>>>0)+12);
-        const bytes=read(pointer,length);
+        const bytes=readPoint(pointer,length);
         if(length<160) throw Error('invalid BSP source length');
         Object.assign(record,{kind:'ACQUIRED_SOURCE',pointer,length,sha256:hash(bytes)});
+        if(load && (sp>>>0)===load.sp-0xb0 && load.acquisitionRecord===null) load.acquisitionRecord=records.length;
+        else if(load) {load=null;terminal=null;completionReason='acquisition stack/entry mismatch';}
       } else if ((pc>>>0)===0x411a0e) {
         Object.assign(record,{kind:'POST_FREE_BLOCK'});
       } else if ((pc>>>0)===0x42f0da) {
@@ -88,7 +133,7 @@ function attach({getExports, getMemory}) {
           candidateHeadnode:pointer?u32(pointer+36):null});
       }
       records.push(record);
-    } catch(error) { invalid=error.message; }
+    } catch(error) { invalid=error.message;load=null;terminal=null;completionReason=error.message; }
     finally { elapsedNs+=process.hrtime.bigint()-started; }
   }
   // A separate plain facade avoids Proxy invariants on frozen WASM exports.
@@ -101,7 +146,16 @@ function attach({getExports, getMemory}) {
       [name,typeof value!=='function' || reads.has(name) ? value : (...args)=>{
         if(name==='run') {
           execution.entries=increment(execution.entries);
-          try { const result=value(...args);execution.returns=increment(execution.returns);return result; }
+          try {
+            const result=value(...args);execution.returns=increment(execution.returns);
+            // A budget return by itself means nothing. Only a traced,
+            // call-free native epilogue can arm this post-run boundary check.
+            if(terminal && !invalid) {
+              try {const {e}=validate();finishReturn(e,e.get_eip()>>>0,e.get_esp()>>>0,'owning run boundary');}
+              catch(error) {invalid=error.message;load=null;terminal=null;completionReason=error.message;}
+            }
+            return result;
+          }
           catch(error) {
             execution.failures=increment(execution.failures);
             event('execution','run threw',true);
@@ -109,6 +163,7 @@ function attach({getExports, getMemory}) {
           }
         }
         event('export',name);
+        if(name==='set_trace_esp') trace={flag:args[0]|0,lo:args[1]>>>0,hi:args[2]>>>0};
         return value(...args);
       }])));
   }
@@ -121,11 +176,12 @@ function attach({getExports, getMemory}) {
   return Object.freeze({block,event,wrapExports,wrapImports,snapshot:()=>{
     // Pulls detect replacement even if tracing was disabled or no further
     // callback occurred. This is a point check, never a concurrent-writer lock.
-    if(owner && !invalid) try {validate();} catch(error) {invalid=error.message;}
+    if(owner && !invalid) try {validate();} catch(error) {invalid=error.message;load=null;terminal=null;completionReason=error.message;}
     return {exactIdentity:'UNKNOWN',
     reason:invalid||'no reset/reload/instruction coverage barrier; records are point observations only',
     validPointObservations:!invalid && records.length>0,calls,elapsedNs:elapsedNs.toString(),
     coverage:{completedLoad:'UNKNOWN',instructions:'UNKNOWN',allWriters:'UNKNOWN',exclusiveOwner:'UNKNOWN'},
+    nativeCompletion:{reason:completionReason,pending:!!load,returns:records.filter(r=>r.kind==='NATIVE_LOAD_RETURN').length},
     execution:{...execution},eventCount,events:events.map(e=>({...e})),
     pins:pins.map(p=>({...p})),exe:{path:EXE,sha256:EXE_SHA},records:records.map(r=>({...r}))};
   }});
