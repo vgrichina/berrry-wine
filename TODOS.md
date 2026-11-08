@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; six victories, birch clearing and Skeleton encounter verified; western junction onward open
+  status: active; six victories and red vial pickup preserved; further landmark/area transition open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-western-junction-1020 restores new6+0slot then pursues further destination/NPC/pickup/transition. Published0b246a154 nine reviewedrouteholds beyondwasps/birchclearing, Skeleton defeated actual6+0 LIFE24/35 Gold1532 Food82. Coordinator reviewed livingtarget/savedcounters: MANA35/35 corrects note25/25. New characters831e5526/game641d_6af04b03.sav813fe884 recovery preserved notyetreloaded. Independentlyhashed346refs26942500B284hashes archived/drained. Note: docs/re-notes/darkstone-onward-route-20261108.md. Historicalexit/full27/parity/audio/FPS open.
+  Next: Fresh darkstone-pickup-onward-1048 restores earned6+0/red-vial slot then follows grass/sandy route past rock toward further feature/NPC/transition. Publisheda499001da twelve reviewedrouteholds and visiblegroundvial->firstquickslot pickup; actualLIFE24/35 Gold1532 Food78 MANA25/25 (fresh screenshot corrects coordinator earlier35/35 misread). New characters83214aa0/game641d_6af0512b.sav97228afb recovery preserved notyetreloaded. Independentlyhashed374refs28754328B308unique and reviewed before/after/counters; archived/drained. Note: docs/re-notes/darkstone-western-junction-20261108.md. Historicalexit/full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
