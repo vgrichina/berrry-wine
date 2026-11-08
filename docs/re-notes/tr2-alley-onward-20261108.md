@@ -1,3 +1,43 @@
+# TR2 far-opening continuation — 2026-11-08 15:54 UTC
+
+**Blocked by death in the single fresh original.** Lara advanced farther down the lower alley, making the ornate building beyond the far opening substantially larger and clearer, but a dog attacked from behind and killed her. The final personally reviewed capture shows **Game Over**. Crossing the threshold, an airborne jump and landing remain unproven. No restart, replay or second allocation was attempted. Full27, parity, audio and FPS remain open.
+
+New evidence is `scratch/runs/20261108-tr2-alley-onward-1544/` (R). The assigned basename already held the closed 14:17 Alt-repair run documented below. Setup overwrote some old helper/metadata inputs before preflight detected that collision. All **483 original artifacts were recovered and checked against their original hashes** before allocation; historical raw journals and captures were never changed. The preflight failure and recovery steps are retained in R. The earlier report remains below.
+
+## Observation before gameplay and exact inputs
+
+Starting Git SHA: `fbcf60472ca6af3d4010c55f90994125e45f62f5`; relevant binary diff is empty. The current exact checker passed **614 providers / 29 physical helpers**, with the production-only normal driver and shared 16-key controls. The 226 accepted control references, 23 existing media references and 49 repair controls were independently reread and reused unchanged. No production code changed and no unchanged fixture suite or full build was rerun.
+
+Before allocation, a cheap smoke check exercised the actual normal driver's extracted `execute` and `capture` functions, confirming that ordinary `observe` awaits ARM then saves a non-null raw journal. This controlled check is not runtime qualification. In the actual original, reviewed Enter accepted the Graphics startup dialog; **ordinary `observe` then ACKed before any gameplay command**. Its retrieved ARM receipt binds `process:1000:endpoint:1`, owner and observation generation 1. The initial raw journal was non-null, live, failure-free and initially empty. `observe-confirmed-before-gameplay.json` records that only Graphics Enter and observe had been queued at confirmation.
+
+Final accounting is **546 raw = 79 qualified retained + 467 discarded**: 448 `coalesced-before-publication`, 19 `run-normal-shutdown`. Every qualified row retains its canonical read source; journal failure is null. The final raw journal SHA-256 is `57281a41844a73d44baf5f6c2027b857bd1edf1fb03ecd2a1b59f58fbc885778`. This is observation accounting, not FPS. Historical predecessor accounting **670 = 53 + 617**, and the earlier run below **299 = 41 + 258**, remain exact and separately attributed.
+
+All five actual parsed JavaScript sources match their pins. Actual CPU and owning native WebGL2 module hashes both equal `d8facd0658b7f158c6e60bef2de0936471f438f8bf41e9240fd75635f1d319dc`. The owning backend is WebGL2 on ANGLE Intel UHD Graphics 620. Accepted native pixel-authority proof was reused unchanged without another pixel logpoint.
+
+## Reviewed consequence
+
+Six separately reviewed Right holds revealed the lower alley. Six separately reviewed Up holds advanced toward the ornate building; the last was followed by a passive capture rather than a blind no-progress repeat. A dog became visible attacking Lara from behind, with falling health. A single ordinary Alt hold ACKed and independently released, but the held capture shows the fatal attack and the next capture shows Game Over; neither establishes a successful jump.
+
+Compare R's `review/webgl/right-6.png`, `forward-4.png`, `opening-current.png`, `assess-end.png`, `jump-fresh.png`, and `retrieved/webgl/jump-once-held.png`. The final `review/webgl/jump-once.png` SHA-256 is `5f3b9fb08bfe8049e419b05590a0257d42bd85f5fb2cc235771f7e7504526f0e`. The forward view is visibly beyond the predecessor's final lower-alley view, but the alley walls still flank Lara: crossing is not claimed.
+
+There were **27 ACKs**, including **four stale-scene refusals before dispatch with zero effects**; each was followed by a fresh reviewed capture. Fourteen actual holds comprise Enter once, Right six, Up six and Alt once. All **28 native events are trusted and balanced**; independent release receipts and the final read-only check establish all 16 admitted keys released. Requested two-second holds released in 1999–2001 ms. There was no runtime UNKNOWN, firing, compound input, private input handler, guest write or configuration change. Two attempted local image reads after stale refusals found no nonexistent output; no command was replayed to fill evidence.
+
+## Closed lifecycle and validation
+
+The observable independent 25-minute watchdog was armed before allocation. Overall, browser and cleanup deadlines were immutable, and local lifecycle PID/start identities were captured before create. Box **`bx_s6jxweu2`** was created once with a fresh persisted UUID idempotency key; initial expiry **2026-11-08 16:11:35.304 UTC** was recorded before runtime. The remote custodian held its lock from startup through drain; no local heavy runtime or local runtime lock was used.
+
+All **615 uploads joined** before verified content-barrier publication; queue admission and parent consumption match manifest SHA-256 `0378a41720c7119910926786a095175cb2b8a26faf896745f7751268cdb29127` (614 providers / 57,915,773 bytes). The published durable WNOWAIT reaper and existing tested custody were reused.
+
+Before requesting normal stop, **343 artifact references / 312 unique hashes / 347,154,484 bytes** were retrieved and independently reread. Drain passed for **28 recorded remote PID/start identities**, including observed/adopted descendants, custodian and bootstrap; endpoints, both ports, profile, writers, held input and remote lock were drained, and all provider hashes remained unchanged. Custody covers a 50 ms descendant census plus subreaper adoption and durable before-reap registration, not exhaustive kernel fork history or identities of intermediates already reaped by their parents. Diagnostic subprocesses were synchronous and parent-awaited. All three recorded local PID/start identities are absent; both lifecycle children exited zero and the supervisor ended empty.
+
+Box state is now **archived, expiry null**. Normal stop **`stop_14219da97d66b403`** completed **15:54:32.164 UTC**, forced=false, error=null. No task box remains billing.
+
+`python3 R/audit-onward.py` passes: original artifact hashes, exact barrier, pre-gameplay ARM, raw qualification accounting, parsed sources/modules, trusted balanced input and releases, 24 PNG chunk-CRC checks, remote drain, local lifecycle and old-run restoration. Run-specific helper syntax checks pass. Recovery uses the exact Git SHA, empty relevant binary diff, small owned patches, individual logs/captures/modules and existing media path/hash references; `BOAT.TR2` stays at its existing path, SHA-256 `e710716fcaf039fb3462e26e33f0ead8eb45bd01c8bbfa036c455a1d19823d9e`. No source/media archive, peer WIP, public deployment, old-box resume/delete or subworker was used.
+
+Stop after this concrete gameplay blocker. A separately assigned continuation must account for the dog encounter before attempting the far opening; it must preserve the same pre-gameplay ARM gate and avoid replaying this closed original.
+
+---
+
 # TR2 alley onward and native key integration repair — 2026-11-08
 
 The fresh original exposed and reproduced a **new generic input integration defect**: ordinary request validation admitted `Alt`, but the independently released hold executor had a separate key map without `Alt`. A reviewed jump request therefore asserted before any native Alt event, closed the runtime, and remained sticky UNKNOWN. The substantive repair uses one key definition and event encoder for request admission and execution. Eleven focused tests, including the actual numbered request/consume queue, pass; the required locked build passes and produces the unchanged `d8facd0658b7f158c6e60bef2de0936471f438f8bf41e9240fd75635f1d319dc` native module.
