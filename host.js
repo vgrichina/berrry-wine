@@ -1941,6 +1941,8 @@ class WineAssembly {
       createRenderEndpoint: options => self._createRenderWorkerEndpoint(options),
       createRenderWorker: options => self._createRenderWorkerConsumer(options),
       get sharedRenderWorkerEnabled() { return !!self.guestWorker; },
+      get writerObservation() { return self._d3dimWriterObservation || null; },
+      get d3dimPublicationJoin() { return self._d3dimPublicationJoin || null; },
       apiTable: self.apiTable,
       get renderer() { return self.renderer; },
       get resourceJson() { return self.resourceJson; },
@@ -2990,6 +2992,26 @@ class WineAssembly {
     // Memory is set later in init()
     h.memory = null;
 
+    for (const [name, fn] of Object.entries(h)) if (typeof fn === 'function') {
+      h[name] = function(...args) {
+        self._d3dimHostWritesInFlight = (self._d3dimHostWritesInFlight || 0) + 1;
+        const epoch = self._d3dimWriterObservation;
+        const hostWrite = ((!['gpu_gl_call', 'dx_trace', 'gdi_surface_create', 'gdi_surface_upload',
+          'gdi_surface_attach', 'get_ticks'].includes(name) && !name.startsWith('math_')) ||
+          (name === 'gdi_surface_create' && args[0] >= 0x00610001 && args[0] <= 0x00610100));
+        try {
+          const result = epoch ? (hostWrite ? RenderWorker.observeHostWrite : RenderWorker.observeCall)(epoch, fn, this, args) : fn.apply(this, args);
+          if (result && typeof result.then === 'function') result.then(
+            () => { self._d3dimHostWritesInFlight--; },
+            () => { self._d3dimHostWritesInFlight--; });
+          else self._d3dimHostWritesInFlight--;
+          return result;
+        } catch (error) {
+          self._d3dimHostWritesInFlight--;
+          throw error;
+        }
+      };
+    }
     return { host: h, gdi: base.gdi, __captureWin16FarFault: captureWin16FarFault };
   }
 
@@ -3116,6 +3138,7 @@ class WineAssembly {
   }
 
   async init(canvas) {
+    this._d3dimPublicationJoin?.retire('process-reinitialized');
     if (this._processObject.exited) {
       this._processObject = { wine: this, exited: false, exitCode: 259 };
       delete this._exitCode;
@@ -3256,6 +3279,7 @@ class WineAssembly {
     }
 
     this.instance = await WebAssembly.instantiate(wasmModule, imports);
+    this.instance = RenderWorker.observeInstance(this.instance, () => this._d3dimWriterObservation);
     if (this._watAppRequested && this._stopped) {
       this.stop();
       throw new Error('Applet startup canceled');
@@ -5334,6 +5358,7 @@ class WineAssembly {
   }
 
   stop(options = {}) {
+    this._d3dimPublicationJoin?.retire('process-retired');
     if (!this._processObject.exited) {
       this._processObject.exited = true;
       this._processObject.exitCode = (this._exitCode ?? 0) >>> 0;
@@ -5683,6 +5708,49 @@ class WineAssembly {
   async _createRenderWorkerConsumer(options) {
     if (typeof D3DCommandStream === 'undefined') throw new Error('Render command stream is unavailable');
     return new D3DCommandStream.WorkerConsumer(await this._createRenderWorkerEndpoint(options));
+  }
+
+  async armD3dimPublicationObservation({ maxRecords = 256 } = {}) {
+    if (this._d3dimPublicationJoin || this._d3dimHostWritesInFlight || this._stopped ||
+        !this.guestWorker || !this.renderer || !this.instance?.nativeInstance)
+      throw new Error('publication observation requires an idle instrumented production process');
+    const link = this.guestWorker.link;
+    const endpoint = link?._renderLegacyEndpoint;
+    if (!endpoint || endpoint.closed || !this.threadManager)
+      throw new Error('live shared legacy render endpoint required');
+    if (this.threadManager.mainInstance !== this.instance || (this.guestWorker.localMainExports &&
+        this.guestWorker.localMainExports() !== this.instance.exports))
+      throw new Error('publication observation requires the instrumented main owner');
+    if (!Number.isInteger(maxRecords) || maxRecords < 1 || maxRecords > 4096)
+      throw new Error('bounded source record limit required');
+    const epoch = new RenderWorker.WriterEpoch();
+    const journal = new RenderWorker.SurfaceVersionJournal(new SharedArrayBuffer(maxRecords * 65536));
+    const ownerScope = `process:${this.processId}:endpoint:${link.endpointIdentity}`;
+    // Attach every local/remote guest entry before arming the shared renderer.
+    // These checks reject a mid-flight attachment without stopping the guest.
+    try {
+      this.guestWorker.setWriterObservation(epoch);
+      this.threadManager.setWriterObservation(epoch);
+      this._d3dimWriterObservation = epoch;
+      const sourceOwner = await endpoint.producerObservation('arm', { ownerGeneration: ownerScope,
+        maxRecords, writerEpochBuffer: epoch.buffer, surfaceVersionBuffer: journal.buffer });
+      if (this._stopped || endpoint.closed || !epoch.snapshot() || sourceOwner?.owner?.scope !== ownerScope ||
+          sourceOwner.owner.endpointId !== endpoint.id || !Number.isSafeInteger(sourceOwner.owner.generation) ||
+          !Number.isSafeInteger(sourceOwner.generation)) throw new Error('owner changed while arming publication observation');
+      const join = new RenderWorker.SurfacePublicationJoin({ epoch, journal, memory: this.memory,
+        ownerScope, renderer: this.renderer, workerSlot: link.slot, endpointId: endpoint.id,
+        owner: sourceOwner.owner, observationGeneration: sourceOwner.generation });
+      this._d3dimPublicationJoin = join;
+      endpoint.addEventListener('message', event => {
+        if (event.data.t === 'legacy-producer-completed') join.receipt(event.data);
+      });
+      endpoint.addEventListener('error', () => join.retire('render-owner-retired'));
+      link.onRetiring(() => join.retire('guest-owner-retired'));
+      return join;
+    } catch (error) {
+      epoch.invalidate();
+      throw error;
+    }
   }
 
   // A cooperative main thread parked on a lazy ReadFile (io_wait, yield 12):
@@ -7680,6 +7748,24 @@ class WineAssembly {
     // is at instruction zero until an agent steps it.
     if (self._frozen) self._scheduleStep(step, 0); else step();
   }
+}
+
+// These drivers write staging/loader storage directly as well as invoking
+// guest exports. Cover the asynchronous owner, including its JS writes, rather
+// than assuming an individual exported call spans an awaited loader callback.
+for (const name of ['_loadWin16Dlls', '_stageWin16Module', 'loadDlls', 'handleComDllLoad',
+  'handleLoadLibrary', 'handleCooperativeThreadLoadLibraries']) {
+  const original = WineAssembly.prototype[name];
+  WineAssembly.prototype[name] = function (...args) {
+    this._d3dimHostWritesInFlight = (this._d3dimHostWritesInFlight || 0) + 1;
+    const epoch = this._d3dimWriterObservation;
+    const finish = () => { this._d3dimHostWritesInFlight--; };
+    try {
+      const result = epoch ? RenderWorker.observeHostWrite(epoch, original, this, args) : original.apply(this, args);
+      if (result && typeof result.then === 'function') return result.finally(finish);
+      finish(); return result;
+    } catch (error) { finish(); throw error; }
+  };
 }
 
 if (typeof module !== 'undefined' && module.exports) {

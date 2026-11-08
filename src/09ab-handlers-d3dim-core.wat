@@ -90,6 +90,22 @@
   ;; so the front buffer holds that frame only once a fence has waited for it;
   ;; the fence presents it then. Zero when no present is owed.
   (global $d3dim_present_pending (mut i32) (i32.const 0))
+  ;; Internal request correlation, not a consumed pixel version. The descriptor
+  ;; is instance-owned; its nonwrapping serial is copied into the queued record
+  ;; before the host returns. Keep the owed request independent of scratch.
+  (global $d3dim_flip_serial (mut i32) (i32.const 0))
+  (global $d3dim_flip_serial_exhausted (mut i32) (i32.const 0))
+  (global $d3dim_present_serial (mut i32) (i32.const 0))
+
+  (func $d3dim_present_request (param $front i32)
+    ;; kind 31 brackets this exact dx_present, including all of its early
+    ;; returns. A zero serial explicitly means unsupported/unwitnessed.
+    (call $host_dx_trace (i32.const 31) (call $dx_slot_of (local.get $front))
+      (global.get $d3dim_flip_desc) (global.get $d3dim_present_serial) (i32.const 1))
+    (global.set $d3dim_present_serial (i32.const 0))
+    (call $dx_present (local.get $front))
+    (call $host_dx_trace (i32.const 31) (call $dx_slot_of (local.get $front))
+      (i32.const 0) (i32.const 0) (i32.const 0)))
 
   ;; Direct3D never writes a pixel outside the current viewport, transformed
   ;; or pre-transformed (XYZRHW) vertices alike: the viewport rectangle is the
@@ -173,7 +189,7 @@
     (if (global.get $d3dim_present_pending) (then
       (local.set $front (global.get $d3dim_present_pending))
       (global.set $d3dim_present_pending (i32.const 0))
-      (call $dx_present (local.get $front)))))
+      (call $d3dim_present_request (local.get $front)))))
 
   ;; The WebGL executor's queued Flip (lib/d3dim-gpu.js _flip) owes one
   ;; present: its back buffer's readback is still in flight into the DIB that
@@ -188,7 +204,7 @@
       (load.field DxObject misc1 (local.get $front))
       (i32.mul (load.field DxObject pitch (local.get $front))
                (load.field DxObject height (local.get $front)))))
-    (call $dx_present (local.get $front)))
+    (call $d3dim_present_request (local.get $front)))
 
   ;; CPU access to one surface: WebGL executes draws synchronously, so only
   ;; overlapping GPU-owned backing bytes need readback. Result 2 keeps pending
@@ -237,12 +253,19 @@
         (else (return (i32.const 0))))))
     (local.set $desc (global.get $d3dim_flip_desc))
     (if (i32.eqz (local.get $desc)) (then
-      (local.set $desc (call $g2w (call $heap_alloc (i32.const 8))))
+      (local.set $desc (call $g2w (call $heap_alloc (i32.const 16))))
       (global.set $d3dim_flip_desc (local.get $desc))))
+    (if (i32.eqz (global.get $d3dim_flip_serial_exhausted)) (then
+      (global.set $d3dim_flip_serial (i32.add (global.get $d3dim_flip_serial) (i32.const 1)))
+      (if (i32.eqz (global.get $d3dim_flip_serial))
+        (then (global.set $d3dim_flip_serial_exhausted (i32.const 1))))))
     (i32.store offset=0 (local.get $desc) (local.get $front))
     (i32.store offset=4 (local.get $desc) (local.get $back))
-    (if (i32.eqz (call $host_gpu_gl_call (i32.const 0x20003) (local.get $desc) (i32.const 0)))
+    (i32.store offset=8 (local.get $desc) (global.get $d3dim_flip_serial))
+    (i32.store offset=12 (local.get $desc) (i32.const 0x44585031))
+    (if (i32.eqz (call $host_gpu_gl_call (i32.const 0x20003) (local.get $desc) (i32.const 16)))
       (then (return (i32.const 0))))
+    (global.set $d3dim_present_serial (global.get $d3dim_flip_serial))
     (global.set $d3dim_present_pending (local.get $front))
     (i32.const 1))
   (global $d3dim_flip_desc (mut i32) (i32.const 0))
@@ -252,6 +275,8 @@
   ;; queued before it. Both arguments are DX_OBJECTS entry addresses.
   (func (export "d3dim_worker_flip") (param $front i32) (param $back i32)
     (local $tmp i32)
+    (call $page_watch_write (local.get $front) (i32.const 32))
+    (call $page_watch_write (local.get $back) (i32.const 32))
     (local.set $tmp (load.field DxObject misc1 (local.get $front)))
     (store.field DxObject misc1 (local.get $front) (load.field DxObject misc1 (local.get $back)))
     (store.field DxObject misc1 (local.get $back) (local.get $tmp)))

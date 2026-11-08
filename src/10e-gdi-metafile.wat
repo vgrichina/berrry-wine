@@ -9,7 +9,7 @@
   ;; desktop before any window is created; DirectDraw still owns its surfaces.
   (global $GDI_DISPLAY_STATE i32 (region.addr $GDI_DISPLAY_STATE 0))
   (global $GDI_DISPLAY_STATE_SIZE i32 (region.size $GDI_DISPLAY_STATE))
-  (func (export "set_desktop_color_depth") (param $bpp i32)
+  (func (export "set_desktop_color_depth") (param $bpp i32) (call $page_watch_write (global.get $GDI_DISPLAY_STATE) (i32.const 8))
     (i32.store (global.get $GDI_DISPLAY_STATE)
       (select (i32.const 8) (i32.const 32) (i32.eq (local.get $bpp) (i32.const 8)))))
   (func $gdi_desktop_bpp (result i32)

@@ -384,12 +384,15 @@
   (func $dx_display_h_set (param $v i32)
     (i32.atomic.store offset=4 (global.get $DX_PROCESS_STATE) (local.get $v)))
   (func $dx_display_bpp_set (param $v i32)
+    (call $page_watch_write (global.get $DX_PROCESS_STATE) (i32.const 32))
     (i32.atomic.store offset=8 (global.get $DX_PROCESS_STATE) (local.get $v)))
   (func $dx_display_mode_set (param $v i32)
+    (call $page_watch_write (global.get $DX_PROCESS_STATE) (i32.const 32))
     (i32.atomic.store offset=12 (global.get $DX_PROCESS_STATE) (local.get $v)))
   (func $dx_coop_hwnd_set (param $v i32)
     (i32.atomic.store offset=16 (global.get $DX_PROCESS_STATE) (local.get $v)))
   (func $dx_exclusive_set (param $v i32)
+    (call $page_watch_write (global.get $DX_PROCESS_STATE) (i32.const 32))
     (i32.atomic.store offset=20 (global.get $DX_PROCESS_STATE) (local.get $v)))
   (func $dx_present_pal_get (result i32)
     (if (i32.and (i32.ne (call $dx_primary_pal_get) (i32.const 0))
@@ -398,6 +401,7 @@
       (then (return (i32.add (call $gdi_system_palette) (i32.const 3072)))))
     (call $dx_primary_pal_get))
   (func $dx_primary_pal_set (param $v i32)
+    (call $page_watch_write (global.get $DX_PROCESS_STATE) (i32.const 32))
     (i32.atomic.store offset=24 (global.get $DX_PROCESS_STATE) (local.get $v)))
   ;; 1 while a non-DirectDraw guest holds a ChangeDisplaySettings mode. It
   ;; lives here, in process state, rather than in a mutable WASM global,
@@ -653,6 +657,7 @@
       (if (i32.and (i32.eqz (i32.load (local.get $ptr)))
                    (i32.eqz (i32.load (local.get $wrapper_wa))))
         (then
+          (call $page_watch_write (local.get $ptr) (i32.const 32))
           (call $zero_memory (local.get $ptr) (i32.const 32))
           (i32.store (local.get $ptr) (local.get $type))
           (i32.store (i32.add (local.get $ptr) (i32.const 4)) (i32.const 1)) ;; refcount=1
@@ -686,6 +691,7 @@
                    (global.get $DX_MAX)))
       (if (i32.eqz (i32.load (local.get $ptr)))
         (then
+          (call $page_watch_write (local.get $ptr) (i32.const 32))
           (call $zero_memory (local.get $ptr) (i32.const 32))
           (i32.store (local.get $ptr) (local.get $type))
           (i32.store (i32.add (local.get $ptr) (i32.const 4)) (i32.const 1)) ;; refcount=1
@@ -782,7 +788,9 @@
 
   (func $dx_surf_fmt_set (param $entry_wa i32) (param $fmt i32)
     (if (local.get $entry_wa)
-      (then (i32.store (call $dx_surf_fmt_ptr (local.get $entry_wa)) (local.get $fmt)))))
+      (then
+        (call $page_watch_write (local.get $entry_wa) (i32.const 32))
+        (i32.store (call $dx_surf_fmt_ptr (local.get $entry_wa)) (local.get $fmt)))))
 
   ;; S3TC block-compressed surfaces (DDPF_FOURCC "DXT1".."DXT5"), stored as
   ;; format kinds 7..11 (FourCC 0x31545844 + (kind - 7) << 24). Their bytes are
@@ -1347,6 +1355,7 @@
     (if (i32.eqz (local.get $entry_wa)) (then (return)))
     (local.set $slot (call $dx_slot_of (local.get $entry_wa)))
     (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return)))
+    (call $page_watch_write (local.get $entry_wa) (i32.const 32))
     (i32.store (i32.add (global.get $DX_SURF_PAL) (i32.shl (local.get $slot) (i32.const 2)))
       (local.get $pal_obj)))
 
@@ -1452,6 +1461,7 @@
   ;; recycles freed slots after that pool is exhausted.
   (func $dx_free (param $entry_wa i32)
     (local $type i32)
+    (call $page_watch_write (local.get $entry_wa) (i32.const 32))
     (if (i32.eq (global.get $dx_scroll_hold_wa) (local.get $entry_wa))
       (then (global.set $dx_scroll_hold_wa (i32.const 0))))
     (local.set $type (i32.load (local.get $entry_wa)))
@@ -6376,6 +6386,7 @@
           (local.set $tmp_dib (load.field DxObject misc1 (local.get $entry)))
           (local.set $cursor (local.get $entry))
           (block $tail (loop $shift
+            (call $page_watch_write (local.get $cursor) (i32.const 32))
             (call $dx_surf_note_write (local.get $cursor))
             (local.set $next (load.field DxObject misc0 (local.get $cursor)))
             (br_if $tail (i32.eqz (local.get $next)))
