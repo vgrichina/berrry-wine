@@ -19,6 +19,7 @@ const providers = Object.freeze({
   'tools/native-browser-close.cjs': '1f4fe08b501ed27c90f4256e85574a788e7dd8adff60638f2c69d6a3ca2ea9b2',
   'tools/native-devtools-ready.cjs': '9ba9ae8b94ebd8a134045608074403d81f68d3cfdf6c0e3f9dbcb875e0632c1b',
   'tools/q3-execution-boundary.cjs': '1858eea7efb8875e44088ffe9f5ea434c3b22915444113204fb51673e4f5ac0d',
+  'tools/q3-screenshot-completion.cjs': '3178b45ddf608a432e70353eb0322153beb5466b62f1cbefd4b1aab0aaa7a8f0',
   'tools/native-command-log.cjs': '979b3a8bbd8625ef6bffb009650778736e20ade2d781918b83f59d9944c88f5e',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/transport.cjs': '54d7576d40df790ecf72153e289b25c6235b4e92b3f8b7332e480637bf07a9e8',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/trace.cjs': '6f440f2d1bdd9e02598a768ad041681ae1969245e9512939dff24a3970bb8b86',
@@ -53,6 +54,18 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
   extensions['.cjs']({_compile(s) { source = s; }}, path.join(root, consumerPath));
   assert.equal(typeof source, 'string');
   const retainedSource = source;
+  // Observe the exact transport send/receive/deadline boundaries. The retained
+  // transport and screenshot options, work/CDP caps and ACK rules stay intact.
+  source = replaceOnce(source, 'const pending=new Map(),workers=new Map(),workerPromises=[];',
+    "const pending=new Map(),workers=new Map(),workerPromises=[];const screenshotCompletion=require(root+'/tools/q3-screenshot-completion.cjs').create({trace,write:v=>log('screenshot-completion.jsonl',v)});");
+  source = replaceOnce(source, "trace.snapshot('CDP deadline',meta);pending.delete(n);",
+    "trace.snapshot('CDP deadline',meta);screenshotCompletion.deadline(meta);pending.delete(n);");
+  source = replaceOnce(source, 'ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));',
+    'screenshotCompletion.request(meta,params);try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));screenshotCompletion.submitted(meta);}catch(error){screenshotCompletion.sendFailed(meta,error);throw error;}');
+  source = replaceOnce(source, 'const v=JSON.parse(msg.data);if(v.id){',
+    'const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));if(v.id){');
+  source = replaceOnce(source, "ws=new WebSocket('ws://127.0.0.1:'+debugPort+debugPath);",
+    "ws=new WebSocket('ws://127.0.0.1:'+debugPort+debugPath);for(const event of ['close','error'])ws.addEventListener(event,()=>screenshotCompletion.transport(event));");
   source = replaceOnce(source,
     "const active=out+'/chrome-profile/DevToolsActivePort';for(let i=0;i<100&&!fs.existsSync(active);i++)await wait(100);const [debugPort,debugPath]=fs.readFileSync(active,'utf8').trim().split('\\n');save('endpoint.json',{debugPort:Number(debugPort),browserPath:debugPath});",
     "const endpoint=await require(root+'/tools/supertux-native-lifecycle.cjs').ready({browser,profile:out+'/chrome-profile',deadline,record:v=>log('startup-browser.jsonl',v)});const debugPort=endpoint.debugPort,debugPath=endpoint.browserPath;save('endpoint.json',endpoint);");
