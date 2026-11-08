@@ -5711,7 +5711,7 @@ class WineAssembly {
   }
 
   async armD3dimPublicationObservation({ maxRecords = 256 } = {}) {
-    if (this._d3dimPublicationJoin || this._d3dimHostWritesInFlight || this._stopped ||
+    if (this._d3dimPublicationJoin || this._d3dimPublicationArming || this._d3dimHostWritesInFlight || this._stopped ||
         !this.guestWorker || !this.renderer || !this.instance?.nativeInstance)
       throw new Error('publication observation requires an idle instrumented production process');
     const link = this.guestWorker.link;
@@ -5728,6 +5728,9 @@ class WineAssembly {
     const ownerScope = `process:${this.processId}:endpoint:${link.endpointIdentity}`;
     // Attach every local/remote guest entry before arming the shared renderer.
     // These checks reject a mid-flight attachment without stopping the guest.
+    // Reserve admission through the render acknowledgement. A second arm must
+    // not replace and invalidate the epoch the first request already installed.
+    this._d3dimPublicationArming = true;
     try {
       this.guestWorker.setWriterObservation(epoch);
       this.threadManager.setWriterObservation(epoch);
@@ -5750,6 +5753,8 @@ class WineAssembly {
     } catch (error) {
       epoch.invalidate();
       throw error;
+    } finally {
+      this._d3dimPublicationArming = false;
     }
   }
 

@@ -27,7 +27,7 @@ const save=()=>{if(process.env.HANDOFF_RESULT)fs.writeFileSync(process.env.HANDO
  }
  await page.goto('http://127.0.0.1:'+server.address().port+'/index.html?debug&threads');
  await page.waitForFunction(()=>typeof WineAssembly!=='undefined'&&typeof RenderWorker!=='undefined',{timeout:30000});
- await page.addScriptTag({content:fs.readFileSync(__dirname+'/helpers/d3dim-command-wait-browser.js','utf8')});
+ await page.addScriptTag({content:fs.readFileSync(__dirname+'/helpers/'+(process.env.HANDOFF_LIFECYCLE?'d3dim-publication-lifecycle-browser.js':'d3dim-command-wait-browser.js'),'utf8')});
  report.fixture=await page.evaluate(()=>qualifyActualJoin());
  report.workerScopes=[];for(const worker of page.workers())report.workerScopes.push({url:worker.url()});
 })().catch(async e=>{report.error=e.stack;if(page)report.partial=await page.evaluate(()=>globalThis.fixtureEvidence||null).catch(()=>null);process.exitCode=1;}).finally(async()=>{
