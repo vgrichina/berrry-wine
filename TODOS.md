@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-alley-onward-1418 visibleVeniceonward. Native e4238acfc actualowed525retainedgeneration491 decoded307200/output397485pixelsZERO mismatches then independentlyreleasedUp2000 newforwardposition retained. 67qualifiedallretained/616raw noFPSclaim. Personallyreviewedbefore/settledPNGs170refs273530723B independentlyhashed normalbx_p462sgmc archivedstop_0d3764bc5c018692 expiryNULL. Note: docs/re-notes/tr2-retained-native-20261108.md8da363804. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-native-jump-1435 repairedAlt originaljump/onward. 433e926a7 shared16key admission/executor fixes actualAlt predispatchassertion;11focused/buildPASS unchangedd8facd06. Further5Up verified slope only noPlaza/jumpclaim;223refs177965205B independentlyhashed slopePNG reviewed, archivedbx_thx2e9ky normalstop_1642f50b97c2e213 expiryNULL/drainPASS custodylimitsretained. Note: docs/re-notes/tr2-alley-onward-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
