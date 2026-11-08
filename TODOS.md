@@ -1,3 +1,9 @@
+- [x] SuperTux original browser jumps, coins and enemy stomp
+  id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
+  status: done for obstacle jumps, coins10→17 and enemy stomp; first-level exit remains unverified
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Evidence: Published9b1ab25cd records original Welcome to Antarctica movement, raised-block/snow-pillar jumps, coins10→17, score250→475 and a flattened enemy. Coordinator inspected controls, progress summary and stomp captures, independently verified1682 artifact references/848 hashes and delivered Telegram2289. Both deaths/respawns remain recorded; final three-pillars action follows respawn.39exactACK/zeroUNKNOWN, original787file/786mapping verification and normal archived-box stop pass. SDL Canvas2D gameplay does not establish GL, FPS, audio or full playability. Note: docs/re-notes/supertux-current-browser-level-20261108.md. Fresh Redline input-consumption diagnostic replaces this worker alongside active Darkstone native-load exit tracing and Q3 current browser world coverage.
+
 - [x] LBreakout2 live-ball returns, brick removal and score progress
   id: NEW-GAME-LBREAKOUT2-LIVE-PLAY-20261108
   status: done for live control and score2000; first-level clear remains unverified
