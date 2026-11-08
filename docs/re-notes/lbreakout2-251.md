@@ -187,3 +187,26 @@ documentation. `result.json` was published last, with `visual-review.json`,
 artifact hashes, exact commands and independent process/input receipts.
 Evidence checker reports no missing/invalid records; only the unrelated retained
 historical Zuma containment error remains. Public deployment is not authorized.
+
+## Original fixture restored, 2026-11-08
+
+The canonical fixture was absent after cleanup. The coordinator recovered the
+same original ZIP from the recorded SourceForge URL, verified its 3,322,804-byte
+size and SHA-256 `a152c0867abf9bc39563db932ebcd0797ed3e35d20f21c2dca2a81e321313675`,
+and checked archive paths and symlink attributes before extraction. Evidence and
+the downloaded original are under `scratch/runs/20261108-lbreakout2-media-recovery/`.
+No source/media archive was constructed and no guest was executed by recovery.
+
+With the extracted archive root as `SOURCE`, recover the ignored canonical
+fixture using the existing Git-tracked verifier:
+
+```sh
+node tools/verify-lbreakout2-251.js --prepare "$SOURCE" test/binaries/candidates/lbreakout2-251
+node tools/verify-lbreakout2-251.js
+```
+
+Both commands passed: 230 original source files, 220 client files, authentic
+shared MSVCRT and all 219 exact companion mappings. The existing registration,
+original files and settings were unchanged. `download-verification.json`,
+`ready.json` and `RECOVERY.txt` retain the recovery checks and recipe. Current
+gameplay is a separate run; this restoration does not add a playability claim.
