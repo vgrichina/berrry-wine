@@ -1,9 +1,14 @@
 'use strict';
 // Serialized into the existing owning CPU Worker by the ordinary helper.
 // No guest setters, translator calls, tracing flags, breakpoint or input changes.
+function mappingLayout(){
+  const {BASE,SIZE}=require('../lib/region-map.generated');
+  return {pageTable:BASE.GUEST_PAGE_TABLE,pageTableSize:SIZE.GUEST_PAGE_TABLE,
+    lazyShared:BASE.D3DIM_LAZY_SHARED};
+}
 function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIdentity,
   expectedEndpoint,exeSha256,maxMs=2500,maxRecords=32,defer=false,stopAfterPair=false,
-  weapon=false,now=()=>performance.now(),schedule=setTimeout,cancel=clearTimeout}={}) {
+  weapon=false,readLayout,now=()=>performance.now(),schedule=setTimeout,cancel=clearTimeout}={}) {
   const SHA='0811efa84bfab8c458b9e29976088152db4c14601a99ca4910c75a2d009233aa';
   if(exeSha256!==SHA||workerSlot!==0||endpointIdentity!==expectedEndpoint||
      !Number.isSafeInteger(endpointIdentity)||endpointIdentity<1)throw Error('TR2 owner/image mismatch');
@@ -12,14 +17,53 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
   const original=getInstance(),e=original.exports;
   if(e.get_image_base()!==0x400000||e.get_current_thread_id()!==1)throw Error('TR2 instance mismatch');
   const view=new DataView(memory.buffer);
-  // Frozen direct-window ABI only. guest_to_wasm can materialize GPU data.
-  function read(a,n=4){
-    const p=a-0x400000+0x12000;
-    if(!Number.isSafeInteger(a)||a<0x400000||n<1||n>32||p+n>0x08000000||p+n>view.byteLength)throw Error('TR2 unmapped read');
-    return Array.from(new Uint8Array(memory.buffer,p,n));
+  // Mirror the selected CPU's direct -> DIB -> packed-PTE lookup, using
+  // metadata loads only. guest_to_wasm may materialize GPU data or fault/page
+  // in a sparse miss. Neither is permissible during observation.
+  const words=new Int32Array(memory.buffer);
+  let readContext=null;
+  function read(a,n=4,field='guest'){
+    const fail=reason=>{
+      const error=Error('TR2 unmapped read');
+      error.readFailure={address:a,length:n,field,reason,...readContext};throw error;
+    };
+    if(!Number.isSafeInteger(a)||a<0||a>0xffffffff||!Number.isSafeInteger(n)||n<1||n>32||a+n>0x100000000)fail('invalid-span');
+    const out=[],ptes=new Map();let dib=false;
+    function lazy(){
+      if(!readLayout||!Number.isSafeInteger(readLayout.lazyShared)||readLayout.lazyShared<0||
+         readLayout.lazyShared%4||readLayout.lazyShared+32>view.byteLength)fail('mapping-layout-unavailable');
+      // A pending DIB may contain stale bytes. Refuse conservatively instead
+      // of calling a materializer, even if this particular span is disjoint.
+      const p=readLayout.lazyShared/4;
+      if(Atomics.load(words,p)||Atomics.load(words,p+1)||Atomics.load(words,p+4))fail('dib-pending');
+    }
+    for(let i=0;i<n;i++){
+      const ga=a+i,direct=ga-0x400000+0x12000;
+      let p;
+      if(direct>=0&&direct<0x08000000)p=direct;
+      else if(ga>=0x50000000&&ga<0x53f00000){
+        if(!dib){lazy();dib=true;}p=0x1c000000+ga-0x50000000;
+      }else{
+        if(!readLayout||readLayout.pageTable!==0x1bc00000||readLayout.pageTableSize!==0x400000||
+           readLayout.pageTable+readLayout.pageTableSize>view.byteLength)fail('mapping-layout-unavailable');
+        const cell=(readLayout.pageTable+(ga>>>12)*4)/4;
+        const pte=Atomics.load(words,cell)>>>0;
+        if(!(pte&0x800))fail('pte-not-present');
+        if(ptes.has(cell)&&ptes.get(cell)!==pte)fail('mapping-changed');ptes.set(cell,pte);
+        p=((pte&0xfffff000)>>>0)+(ga&0xfff);
+        // Reject corrupt PTEs into emulator-private storage. Sparse backing
+        // is the fixed pool or the optional extension above initial memory.
+        if(!((p>=0x08000000&&p<0x1a000000)||p>=0x20000000))fail('invalid-pte-backing');
+      }
+      if(p>=view.byteLength)fail('backing-out-of-bounds');
+      out.push(view.getUint8(p));
+    }
+    for(const [cell,pte] of ptes)if((Atomics.load(words,cell)>>>0)!==pte)fail('mapping-changed');
+    if(dib)lazy();
+    return out;
   }
-  const u32=a=>{const b=read(a);return (b[0]+b[1]*256+b[2]*65536+b[3]*16777216)>>>0;};
-  const u16=a=>{const b=read(a,2);return b[0]+b[1]*256;};
+  const u32=(a,field)=>{const b=read(a,4,field);return (b[0]+b[1]*256+b[2]*65536+b[3]*16777216)>>>0;};
+  const u16=(a,field)=>{const b=read(a,2,field);return b[0]+b[1]*256;};
   const pins=[[0x4471fc,'57680001000050ff5124'],[0x447206,'85c07d3e'],
     [0x447233,'ff512485c0'],[0x44d2b1,'6878b05100e8359fffff'],
     [0x44d3bf,'6a08e8bafdffff'],[0x44d3c6,'83c40485c0740783cb40895c24146a09e8a5fdffff'],
@@ -97,21 +141,26 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
   let timer,lastBlocks=null,last=null,poll=null,action=null,restored=false;
   let chain=null,gun=null,shot=null;
   const seen=new Set();
-  const s16=a=>(u16(a)<<16)>>16;
+  const s16=(a,field)=>(u16(a,field)<<16)>>16;
   function state(){
-    const item=u32(0x52173c);
-    return {input:u32(0x51b178),gunStatus:s16(0x521662),gunType:s16(0x521664),requested:s16(0x521666),
-      lastType:s16(0x521668),water:s16(0x52166c),waterDistance:u32(0x52168c)|0,target:u32(0x5216e0),targetAngles:[s16(0x5216e4),s16(0x5216e6)],
-      arms:[0x5216f8,0x52170a].map(a=>({frame:s16(a+4),lock:s16(a+8),yaw:s16(a+10),pitch:s16(a+12),flash:s16(a+16)})),
-      ammo:[0x52171c,0x521720,0x521724,0x521728,0x52172c,0x521730,0x521734].map(u32),
-      targetHealth:u32(0x5216e0)?s16(u32(0x5216e0)+0x22):null,
-      item,itemState:item?{health:s16(item+0x22),animation:s16(item+0x14),frame:s16(item+0x16),bodyState:s16(item+0xe),yaw:s16(item+0x42)}:null};
+    const item=u32(0x52173c,'item'),target=u32(0x5216e0,'target');
+    return {input:u32(0x51b178,'input'),gunStatus:s16(0x521662,'gunStatus'),gunType:s16(0x521664,'gunType'),requested:s16(0x521666,'requested'),
+      lastType:s16(0x521668,'lastType'),water:s16(0x52166c,'water'),waterDistance:u32(0x52168c,'waterDistance')|0,target,targetAngles:[s16(0x5216e4,'targetYaw'),s16(0x5216e6,'targetPitch')],
+      arms:[0x5216f8,0x52170a].map((a,i)=>({frame:s16(a+4,`arms[${i}].frame`),lock:s16(a+8,`arms[${i}].lock`),yaw:s16(a+10,`arms[${i}].yaw`),pitch:s16(a+12,`arms[${i}].pitch`),flash:s16(a+16,`arms[${i}].flash`)})),
+      ammo:[0x52171c,0x521720,0x521724,0x521728,0x52172c,0x521730,0x521734].map((a,i)=>u32(a,`ammo[${i}]`)),
+      targetHealth:target?s16(target+0x22,'targetHealth'):null,
+      item,itemState:item?{health:s16(item+0x22,'itemState.health'),animation:s16(item+0x14,'itemState.animation'),frame:s16(item+0x16,'itemState.frame'),bodyState:s16(item+0xe,'itemState.bodyState'),yaw:s16(item+0x42,'itemState.yaw')}:null};
   }
   function weaponRow(kind,pc,esp,extra={}){
     verifyWeapon();
     if(seen.has(pc))return true;
-    seen.add(pc);return emit({kind,pc,esp,actionRecord:chain?.index??null,...extra,state:state()});
+    readContext={kind,pc,esp};
+    try{
+      const snapshot=state();
+      seen.add(pc);return emit({kind,pc,esp,actionRecord:chain?.index??null,...extra,state:snapshot});
+    }finally{readContext=null;}
   }
+
   const facade=Object.assign(Object.create(null),e),wrapped={exports:facade};
   function finish(reason){
     if(report.status!=='active')return report;
@@ -177,12 +226,12 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
             if(!gun.aim||![0x42d59a,0x42d724].includes(caller)||esp!==gun.esp-80)throw Error('TR2 shot caller mismatch');
             if(shot)throw Error('TR2 nested shot');
             shot={esp,caller,target:u32(esp+8)};seen.delete(pc);
-            weaponRow('shot-entry',pc,esp,{caller,type:u32(esp+4),target:u32(esp+8),source:u32(esp+12),angles:read(u32(esp+16),4)});
+            weaponRow('shot-entry',pc,esp,{caller,type:u32(esp+4),target:u32(esp+8),source:u32(esp+12),angles:read(u32(esp+16,'shot.anglesPointer'),4,'shot.angles')});
           }
           if(shot&&pc===shot.caller){
             if(esp!==shot.esp+4)throw Error('TR2 shot return stack mismatch');
             // Retain both arms even though the shared entry PC is identical.
-            seen.delete(pc);weaponRow('shot-return',pc,esp,{result:e.get_eax()>>>0,target:shot.target,targetHealth:shot.target?s16(shot.target+0x22):null});shot=null;
+            seen.delete(pc);weaponRow('shot-return',pc,esp,{result:e.get_eax()>>>0,target:shot.target,targetHealth:shot.target?s16(shot.target+0x22,'shot.targetHealth'):null});shot=null;
           }
           if(pc===gun.caller){
             if(esp!==gun.esp+4||shot)throw Error('TR2 weapon return stack mismatch');
@@ -225,7 +274,7 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
         action=null;poll=null;
         if(stopAfterPair&&!weapon&&a.poll!==null)finish('witnessed');
       }
-    }catch(error){report.error=String(error);finish('unobservable');}
+    }catch(error){report.error=String(error);if(error.readFailure)report.readFailure={...error.readFailure,boundary:report.boundaries,pc:e.get_eip()>>>0,esp:e.get_esp()>>>0};finish('unobservable');}
   }
   facade.run=n=>{
     lastBlocks=0;
@@ -262,7 +311,7 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
     armed=true;report.armedAt=now();report.armedWallAt=Date.now();return true;
   },status:()=>JSON.parse(JSON.stringify(report))};
 }
-function workerSource(options){return `(()=>{if(globalThis.__tr2Action)throw Error('TR2 observer already used');globalThis.__tr2Action=(${install.toString()})({getInstance:()=>instance,replaceInstance:v=>{instance=v},memory,rpc:GuestRpc,workerSlot,endpointIdentity,...${JSON.stringify(options)}});return globalThis.__tr2Action.status()})()`;}
+function workerSource(options){return `(()=>{if(globalThis.__tr2Action)throw Error('TR2 observer already used');globalThis.__tr2Action=(${install.toString()})({getInstance:()=>instance,replaceInstance:v=>{instance=v},memory,rpc:GuestRpc,workerSlot,endpointIdentity,...${JSON.stringify({readLayout:mappingLayout(),...options})}});return globalThis.__tr2Action.status()})()`;}
 // Called inside the existing reviewed/native admission. The caller's hold()
 // keeps the independent release timer and its unchanged input policy.
 async function observedHold({evaluate,workerSession,expectedEndpoint,exeSha256,hold,record,weapon=false}){
@@ -287,4 +336,4 @@ async function observedHold({evaluate,workerSession,expectedEndpoint,exeSha256,h
   await record('correlation',result);
   return result;
 }
-module.exports={install,workerSource,observedHold};
+module.exports={install:options=>install({readLayout:mappingLayout(),...options}),workerSource,observedHold};

@@ -134,13 +134,104 @@ copy(0x44dd55,25);wr(A+0x18,64);wr(A+0x68,0x41427f);
 {const e=cpu(0x42e85a,G-16);e.set_eax(1);assert.equal(until(e,[0x42d330]),0x42d330);assert.equal(e.get_esp()>>>0,G-24);assert.equal(dv.getUint32(wa(G-24),true),0x42e860);checks++;}
 copy(0x42d452,6);
 {const e=cpu(0x42d452,G-32);e.set_edi(1);assert.equal(until(e,[0x42d4c0]),0x42d4c0);assert.equal(e.get_esp()>>>0,G-40);assert.equal(dv.getUint32(wa(G-40),true),0x42d458);checks++;}
+// Causal mapping fixtures use the exact production allocator and x86 load.
+// Fixture setup can write memory; the observer is checked independently for
+// zero writes and must never invoke a translator/materializer or setter.
+const regions=require('../lib/region-map.generated');
+const mapCpu=cpu(0x450000),sparse=0x12000000,sparseTarget=0x13000000;
+assert(mapCpu.test_virtual_map_commit(sparse,0x3000));
+assert(mapCpu.test_virtual_map_commit(sparseTarget,0x1000));
+const dib=mapCpu.test_dib_alloc(0x1000)>>>0;assert(dib>=0x50000000&&dib<0x53f00000);
+const physical=a=>mapCpu.guest_to_wasm(a)>>>0; // setup/oracle ONLY
+const put16=(a,v)=>dv.setUint16(physical(a),v,true);
+function body(a,hp){if(!a)return;for(const [off,v] of [[0x22,hp],[0x14,7],[0x16,11],[0xe,2],[0x42,-123]])put16(a+off,v);}
+function noEffects(f){
+ for(const name of ['guest_to_wasm','test_g2w_slow','guest_write16','set_eip','set_esp','d3dim_lazy_enable'])
+  f.e[name]=()=>{throw Error('observer invoked forbidden '+name);};
+}
+function memoryHash(){return crypto.createHash('sha256').update(b).digest('hex');}
+const lazy=regions.BASE.D3DIM_LAZY_SHARED;
+function clearLazy(){b.fill(0,lazy,lazy+32);}
+clearLazy();
+copy(0x42e666,0x19);
+for(const [name,bodyPointer,targetPointer] of [
+ ['direct',item,target],['direct+sparse',item,sparseTarget],['sparse+direct',sparse,target],
+ ['sparse+null',sparse,0],['sparse+sparse',sparse,sparseTarget],['DIB+null',dib,0],
+ ['direct+DIB',item,dib],['null+null',0,0]]){
+ initial();wr(0x52173c,bodyPointer);wr(0x5216e0,targetPointer);body(bodyPointer,777);body(targetPointer,33);
+ // Original 42e666..42e679 loads item and compares signed HP to zero.
+ // Null is an observed pointer value, not a claim of valid Lara/game state.
+ if(bodyPointer){const e=cpu(0x42e666);e.set_esi(0);assert.equal(until(e,[0x42e949,0x42e67f]),0x42e949,name);assert.equal(e.get_eax()>>>0,bodyPointer);}
+ const f=fixture({weapon:true,stopAfterPair:true});noEffects(f);
+ pair(f);enter(f);f.step({pc:0x431757,esp:G+4});
+ // pair/enter are fixture writers, so verify observation separately below.
+ const r=f.o.status();assert.equal(r.status,'witnessed',JSON.stringify({name,r}));assert(r.consumptionQualified);
+ const snap=r.records.find(r=>r.kind==='input-published').state;
+ assert.equal(snap.item,bodyPointer);assert.equal(snap.target,targetPointer);
+ assert.equal(snap.itemState?.health??null,bodyPointer?777:null);assert.equal(snap.targetHealth,targetPointer?33:null);
+ assert.equal(r.records.filter(r=>r.kind==='weapon-return').length,1);
+ const endHash=memoryHash();f.step({pc:0x42e640,esp:G});assert.equal(memoryHash(),endHash,'removed observer cannot write');
+ checks++;
+}
+// Hold fixtures' stack writes constant: full 512MB before/after hash proves
+// the active reader leaves every guest/private/PTE/DIB/RPC byte unchanged.
+initial();wr(0x52173c,sparse);wr(0x5216e0,sparseTarget);body(sparse,777);body(sparseTarget,33);
+wr(A+0x68,0x41427f);wr(G,0x431757);
+{const f=fixture({weapon:true,stopAfterPair:true});noEffects(f);poll(f);action(f);wr(0x51b178,64);
+ const before=memoryHash();f.step({pc:0x41427f,esp:A+0x6c});f.step({pc:0x42e640,esp:G});f.step({pc:0x431757,esp:G+4});
+ assert.equal(f.o.status().status,'witnessed');assert.equal(memoryHash(),before);checks++;}
+// The former exact direct-window guard rejects this actually mapped HP read.
+// This reproduces a causal observer defect; it does NOT recover the old run's
+// lost address/pointer. Same pointers and bytes succeed above after repair.
+{const a=sparse+0x22,p=a-0x400000+0x12000;assert(p+2>0x08000000);assert.equal(dv.getInt16(physical(a),true),777);checks++;}
+for(const [name,ptr,field,reason,address] of [
+ ['low-target',0x100,'targetHealth','pte-not-present',0x122],
+ ['unmapped-target',0x14000000,'targetHealth','pte-not-present',0x14000022],
+ ['wrapped-target',0xffffffff,'targetHealth','invalid-span',0x100000021],
+ ['cross-page-hole',sparse+0x2fdd,'targetHealth','pte-not-present',sparse+0x2fff],
+ ['bad-item',0x14000000,'itemState.health','pte-not-present',0x14000022],
+ ['DIB-pending',dib,'targetHealth','dib-pending',dib+0x22],
+ ['invalid-PTE',0x14000000,'targetHealth','invalid-pte-backing',0x14000022],
+ ['PTE-out-of-memory',0x14000000,'targetHealth','backing-out-of-bounds',0x14000022]]){
+ initial();clearLazy();const cell=regions.BASE.GUEST_PAGE_TABLE+(0x14000000>>>12)*4;
+ dv.setUint32(cell,0,true);
+ wr(name==='bad-item'?0x52173c:0x5216e0,ptr);
+ if(name==='DIB-pending')dv.setUint32(lazy+4,4096,true);
+ if(name==='invalid-PTE')dv.setUint32(cell,0x12000|0x800,true);
+ if(name==='PTE-out-of-memory')dv.setUint32(cell,0x20000000|0x800,true);
+ const f=fixture({weapon:true,stopAfterPair:true});noEffects(f);wr(A+0x68,0x41427f);poll(f);action(f);wr(0x51b178,64);
+ const before=memoryHash();f.step({pc:0x41427f,esp:A+0x6c});const r=f.o.status();
+ assert.equal(r.status,'unobservable',JSON.stringify({name,r}));assert(!r.qualified&&!r.consumptionQualified);assert(r.removed);
+ assert.equal(r.records.length,2,'no fabricated or partial input/weapon row');
+ assert.deepEqual(r.readFailure,{address,length:2,field,reason,kind:'input-published',pc:0x41427f,esp:A+0x6c,boundary:r.boundaries});
+ assert.equal(memoryHash(),before);assert.equal(f.instance,f.original);checks++;
+ dv.setUint32(cell,0,true);clearLazy();
+}
+// Boundary-spanning reads follow each actual PTE rather than assuming affine
+// backing. Allocate the next page after an intervening allocation.
+assert(mapCpu.test_virtual_map_commit(sparse+0x3000,0x1000));
+assert.notEqual(physical(sparse+0x3000),physical(sparse+0x2000)+4096);
+initial();wr(0x5216e0,sparse+0x2fdd);
+b[physical(sparse+0x2fff)]=0x34;b[physical(sparse+0x3000)]=0x12;
+{const f=fixture({weapon:true,stopAfterPair:true});pair(f);enter(f);f.step({pc:0x431757,esp:G+4});
+ const r=f.o.status();assert.equal(r.status,'witnessed');assert.equal(r.records[2].state.targetHealth,0x1234);checks++;}
+// Mapped memory cannot weaken saved-caller, stack or published-input causality.
+for(const mode of ['saved-caller','saved-stack','changed-mask','wrong-weapon-caller']){
+ initial();wr(0x52173c,sparse);wr(0x5216e0,sparseTarget);
+ const f=fixture({weapon:true,stopAfterPair:true});
+ if(mode==='saved-caller'){wr(A+0x68,0x450000);poll(f);action(f);}
+ else if(mode==='saved-stack'){wr(A+0x68,0x41427f);poll(f);action(f);f.step({pc:0x41427f,esp:A+0x70});}
+ else{pair(f);if(mode==='changed-mask')wr(0x51b178,0);enter(f,mode==='wrong-weapon-caller'?0x450000:0x431757);}
+ const r=f.o.status();assert.equal(r.status,'unobservable');assert(!r.consumptionQualified);assert.equal(f.instance,f.original);checks++;
+}
 console.log(JSON.stringify({passed:true,checks,original:false,cpuSha256:crypto.createHash('sha256').update(bytes).digest('hex'),scope:'exact-byte offline branch slices and bounded observer state fixtures; no gameplay/backend/aim/hit claim'}));
 // Exercise opt-in serialization in the real native hold orchestration; the
 // stalled Worker request must still release Control on its independent timer.
 (async()=>{
  const nativeHold=require('../scratch/runs/20261108-tr2-dog-encounter-1610/bound-input.cjs').hold;
- for(const mode of ['linked','stalled-arm']){
-  initial();const f=fixture();f.o.finish('removed');
+ for(const mode of ['linked','mapped-linked','stalled-arm']){
+  initial();if(mode==='mapped-linked'){wr(0x52173c,sparse);wr(0x5216e0,sparseTarget);body(sparse,777);body(sparseTarget,33);}
+  const f=fixture();f.o.finish('removed');
   const c={instance:f.original,memory,GuestRpc:require('../lib/guest-rpc'),workerSlot:0,endpointIdentity:7,performance:{now:()=>0},setTimeout,clearTimeout,globalThis:null};c.globalThis=c;
   let unblock,released=false;const gate=new Promise(r=>{unblock=r;}),events=[];
   const watchdog=setTimeout(()=>unblock(),1000);
@@ -152,14 +243,15 @@ console.log(JSON.stringify({passed:true,checks,original:false,cpuSha256:crypto.c
      if(p.type==='keyUp'){released=true;unblock();}
     },sample:async()=>{
      await arm();
-     if(mode==='linked'){
+     if(mode!=='stalled-arm'){
       const adapter={step(row){f.queue.push(row);c.instance.exports.run(1);}};
       pair(adapter);enter(adapter);aim(adapter);fire(adapter);adapter.step({pc:0x431757,esp:G+4});
      }
      return {physical:[{key:17,state:0x8000}]};
     }}),record:async()=>{}});
    assert(released);assert.deepEqual(events,['keyDown','keyUp']);assert(result.receipt.releaseAt-result.receipt.started<500);
-   assert.equal(result.qualified,mode==='linked');assert.equal(c.instance,f.original);checks++;
+   assert.equal(result.qualified,mode!=='stalled-arm');
+   if(mode==='mapped-linked')assert.equal(result.report.records.find(r=>r.kind==='input-published').state.itemState.health,777);assert.equal(c.instance,f.original);checks++;
   }finally{clearTimeout(watchdog);}
  }
  console.log(JSON.stringify({passed:true,orchestration:true,totalChecks:checks,activationAfterNativeKeydown:true,independentRelease:true,original:false}));
