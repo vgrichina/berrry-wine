@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-bootstrap-native-progress-1005 first runs prepared delayed blankChrome regression locally, then authorized original4096arm/movement/weapon+qualifiedjoins. Published3c152960c repairs firstNEW fixed10s DevToolsActivePort ENOENT with absolute30s startup withinimmutableoverall; 8focusedPASS nativecheckunrun duepeerlock. No originalnavigation/input/Join. Coordinator reviewed helper and independently verified15refs4375374bytes15hashes archived/drained. Prior0e951 queuefix/build/Workercontrols retained. Note: docs/re-notes/tr2-full-journal-native-action-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-qualified-native-progress-1020 uses tested500msblanknativepreflight/delayedbootstrap from d46f34034 then original nativeGraphics/4096arm/exactqualifiedjoins and reviewedUp/Space/Control. FiveactualChrome casesPASS; priorfirstNEW50msACKfailure beforegamenavigation noJoin. Coordinator helper reviewed23refs independentlyhashed4380437B (note4379955B discrepancy retained); bx archived/drained. Prior0e951 queuefix/build/Workercontrols reused. Note: docs/re-notes/tr2-bootstrap-native-progress-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; five victories and further Giant Wasp encounter verified; onward route open
+  status: active; six victories, birch clearing and Skeleton encounter verified; western junction onward open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-onward-route-0943 restores earned five-victory slot then pursues onward landmark/NPC/pickup/area transition. Publishedf720f9526 two GiantWasps defeated beyond fork, actualVictories5+0 LIFE24/35 Gold1532 MANA25/25 Food85. New characters cad82ff5 and game641d_6af041d7.sav d977d538 preserved with recovery recipe; not yet reloaded. Coordinator reviewed living target/final counters and independently verified382refs29289592bytes308hashes; bx archived expiryNULL full drain. Note: docs/re-notes/darkstone-fork-encounter-20261108.md. Historical spontaneousexit/full27/parity/audio/FPS open.
+  Next: Fresh darkstone-western-junction-1020 restores new6+0slot then pursues further destination/NPC/pickup/transition. Published0b246a154 nine reviewedrouteholds beyondwasps/birchclearing, Skeleton defeated actual6+0 LIFE24/35 Gold1532 Food82. Coordinator reviewed livingtarget/savedcounters: MANA35/35 corrects note25/25. New characters831e5526/game641d_6af04b03.sav813fe884 recovery preserved notyetreloaded. Independentlyhashed346refs26942500B284hashes archived/drained. Note: docs/re-notes/darkstone-onward-route-20261108.md. Historicalexit/full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
