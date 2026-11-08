@@ -117,10 +117,20 @@ function install({root = path.resolve(__dirname, '..')} = {}) {
       assert(globalThis.WebSocket?.name === 'ObservedSocket', 'Q3 execution preload missing or wrong order');
       return module._compile(result.source, filename);
     }
-    if (filename === path.join(root, path.dirname(consumerPath), 'bound-input.cjs')) return result.hook(module, filename);
+    if (filename === path.join(root, path.dirname(consumerPath), 'bound-input.cjs')) {
+      return compileBoundInput(result, module, filename, path.dirname(path.resolve(process.env.Q3_EXECUTION_BOUNDARY_OUT)));
+    }
     return original(module, filename);
   };
   return result.references;
 }
-module.exports = {compose, ready, install, providers, consumerPath, adapterPath, replaceOnce};
+function compileBoundInput(result, module, filename, evidenceDirectory) {
+  const historical = path.join(path.dirname(filename), '../20261108-q3-instrumented-webgl-gameplay-2248/physical-completion.jsonl');
+  const destination = path.join(path.resolve(evidenceDirectory), 'physical-completion.jsonl');
+  assert.notEqual(destination, historical, 'unique Q3 physical evidence directory required');
+  return result.hook({_compile(source, name) {
+    return module._compile(replaceOnce(source, JSON.stringify(historical), JSON.stringify(destination)), name);
+  }}, filename);
+}
+module.exports = {compose, ready, install, compileBoundInput, providers, consumerPath, adapterPath, replaceOnce};
 if (process.env.Q3_NATIVE_COMPOSITION === '1') install();
