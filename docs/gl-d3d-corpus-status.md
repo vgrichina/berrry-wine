@@ -1,5 +1,34 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: race rendering, corridor progress and protocol WIP
+
+Published `14827978c` reaches an ordinary NFS3 cockpit race through native D3D
+selection and numeric renderer binding. Actual7ec49 WebGL2 reports122742 draws,
+zero errors/fallbacks. Up reaches the guest scan array and clears after release;
+acceleration, steering and input-caused road displacement remain unproved.
+The coordinator viewed the cockpit and verified328 references/18,759,648 bytes.
+Normal archived stop and settled drain pass. A fresh worker connects active
+bindings and simulation consumption before another control claim.
+[Race and key-array evidence](re-notes/nfs3-numeric-endpoint-race-20261108.md).
+
+Published `9ef46f315` verifies current Forsaken WebGL thrust into the initial
+corridor and PULS2000 to1998. Eleven thrust pulses left look too late; the reserve
+guard refused it before publication. No look or beyond-corridor acceptance.
+The coordinator viewed the corridor and verified271 references/16,930,434 bytes.
+Twenty exact ACKs, zero UNKNOWN, actual7ec49 owner/context and normal archived
+stop/full drain pass. A fresh worker tests turn/look earlier, then navigation.
+[Composition qualification and current progress](re-notes/forsaken-current-native-progress-20261108.md).
+
+The D3DIM protocol task leaves tested partial source/test WIP **uncommitted**.
+Completed-producer identity exists, but owed-present and stable consumed-version
+witnesses remain missing. Actual WAT/full composition regressions demonstrate
+front-DIB rebinding and in-place/ABA changes with unchanged upload version and
+pointer. Build and focused tests pass; the coordinator verified25 evidence
+files/71,686 bytes. No box, production join or pacing qualification. A fresh
+worker reclaims this WIP to finish the protocol; no completion-only commit is
+accepted. Full27, parity, audio and unmeasured FPS remain open.
+[Uncommitted implementation and exact missing boundary](re-notes/d3dim-producer-publication-identity-20261108.md).
+
 ## November 8: presentation identity fails local qualification
 
 Published `6eb7a8f35` identifies the missing association between a completed
