@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-menu-budget-objective-1032 explicit500msnativeEscape/menuhelper/actualmanifest then qualifiedordinaryM/reviewedrampcontrol. Published1e7ac888a originalHUD100timer6 Escape100msUNKNOWN terminal noM/C/arrows/replay; nativeMENUintervalUNKNOWN. Genericexplicit500ms menucommand/shortreject/receipt sixactualChrome andfullBrowserfixturePASS; inheritedfreshsnapshot/sourcechecks unchanged. Coordinator helper reviewed231refs18128825B191hashes independentlyverified archived/drained. Note: docs/re-notes/recoil-snapshot-native-progress-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-visible-resume-objective-1056 uses exactreviewedvisibleguestcursor witness beforeResume, unchanged4500ms freshsnapshotgate thenordinaryM/reviewedmovement. Publishedb5d322cf4 MENU500EscapePASS butofftargetResume leaves11MENUprobes zeroM/C/arrows; testedcaptureboundpointerguard+2fullbrowsercasesPASS.283refs23098993B228hash independentlyverified screenshot/helperreviewed archived; startup-lock/descendantcustodylimits retained and successor closes. Note: docs/re-notes/recoil-menu-budget-objective-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-pending-source-native-progress-1043 uses published0ac9414c6CLEAR+f8a4241c7transientpublicationwriter fixes for exactqualifiedjoins before reviewedUp/Space/Control. Bothlockedfullbuilds/focusedrealWATcanonicalregressionsPASS. Solepriororiginal now51raw=0qualified+51discard (46overlap5sealed), no gameplaycommands. Pendingimmutablesource survivesunrelatedwriter, freshcanonicalreadrequired; overlap/hostversion/poisonnegatives retained. Coordinator code reviewed75refs8060809B69hashes independentlyverified archived/drained. Note: docs/re-notes/tr2-clear-integration-progress-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-directx-layer-coverage-1056 FIRST production canonicalDirectXlayercoverage withrealWAT/compositor baseline/negativechecks andlockedbuild beforeoptionalONEoriginal exactqualifiedjoins thenUp/Space/Control. Published8bdc8a667 nondestructivetransientsceneaccounting freshFULLcanonicalrequired cached/partialrefused negativeguardsPASS. Prior94raw=0qualified+94discard (61overlap20scene10overwrite3coalesced) no gameplaykeys.75refs8416828B69hash independentlyverified code reviewed archived/drained. No allocatingjusttorepeatknownsceneexclusion. Note: docs/re-notes/tr2-pending-source-native-progress-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; six victories and red vial pickup preserved; further landmark/area transition open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-pickup-onward-1048 restores earned6+0/red-vial slot then follows grass/sandy route past rock toward further feature/NPC/transition. Publisheda499001da twelve reviewedrouteholds and visiblegroundvial->firstquickslot pickup; actualLIFE24/35 Gold1532 Food78 MANA25/25 (fresh screenshot corrects coordinator earlier35/35 misread). New characters83214aa0/game641d_6af0512b.sav97228afb recovery preserved notyetreloaded. Independentlyhashed374refs28754328B308unique and reviewed before/after/counters; archived/drained. Note: docs/re-notes/darkstone-western-junction-20261108.md. Historicalexit/full27/parity/audio/FPS open.
+  Next: Fresh darkstone-manifest-onward-1056 corrects composedmanifest HTTPpin fromprovision.bytes and validatesbeforeallocation then reloads untouched83214aa0/97228afb six-victory/red-vial slot and proceeds pastrock. Predecessore464ba2c5 stoppedbeforeChrome onownstaleHTTPpin; no progress/productiondefect claim.11refs1621B10hash independentlyverified archived/drained. Note: docs/re-notes/darkstone-pickup-onward-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
