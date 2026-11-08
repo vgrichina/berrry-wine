@@ -1,5 +1,25 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Warcraft cause remains unproved; audio fixture passes
+
+Published `dc07cd57a`, run `20261108-warcraft3-renderer-process-loss`,
+finds no retained mapping between vanished OS PID11520 and Warcraft's page,
+and no original exit reason. Its matching production Worker/audio refresh
+fixture passes lazy fallback, promotion, loop2 refresh, notification, stop
+and replay. The coordinator independently parsed77682 raw records into38841
+balanced entry/return pairs and checked17 compressed hashes. No missing or
+unbalanced fixture call was found. Probes add182.5µs per refresh:25.48× in
+this synthetic burst, with original overhead unmeasured.
+
+A deliberate local Page.crash yields exact-target error134, native SIGABRT
+and crash artifacts; those explain only the control. Prelaunch PID mapping
+remains absent. No fresh original or box was launched, and no emulator fix
+is justified. Future original diagnostics need independent target-exit and
+process evidence with qualified remote service and explicit observer overhead.
+The current additional-title startup sweep proceeds separately. Player
+control, historical27, parity, FPS, audio and campaign remain open.
+[Raw-call checks, source path and mapping gap](re-notes/warcraft3-renderer-process-loss-20261108.md).
+
 ## November 8: Quake II pickups on both actual GL paths
 
 Published `327e830da`, run `20261108-quake2-native-encounter-progress`,
