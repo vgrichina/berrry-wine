@@ -1,5 +1,27 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: fresh control attempts stop on harness boundaries
+
+Published `17d96f983` adds static NFS3 binding/packet/queue/simulation/car
+boundaries but obtains no live consumption trace. An absolute observer path
+was staged at the wrong location; attachment failed before releasing the guest,
+then startup timed out UNKNOWN. Corrected path tests pass locally; a fresh
+worker must rehearse the exact staged attachment before allocation. The
+coordinator verified27 artifact references/6,659,010 bytes. Normal archived
+stop passes; settled drain stdout is retained, standalone JSON was not fetched.
+[Exact staging failure and next trace](re-notes/nfs3-control-consumption-20261108.md).
+
+Published `4ec60dbc0` obtains no Forsaken player HUD or look. Menu command5
+stops UNKNOWN during owning-guest capture-before identity: admission took8.085s,
+then that read remained pending9.092s at deadline. Enter independently released
+at2s. A fresh worker investigates this measured observation path before another
+original. The coordinator verified103 references/10,223,468 bytes. Normal
+archived stop/full drain pass; an initial supervision gap remains recorded,
+with replacement delegates retaining the original deadline. Earlier current
+movement/ammo acceptance stands. No emulator defect, navigation, rates or
+full27 completion follows from these attempts.
+[Observation timing and lifecycle limitation](re-notes/forsaken-early-look-navigation-20261108.md).
+
 ## November 8: race rendering, corridor progress and protocol WIP
 
 Published `14827978c` reaches an ordinary NFS3 cockpit race through native D3D
