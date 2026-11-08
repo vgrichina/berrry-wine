@@ -23,8 +23,11 @@ const baselineModule = new Module(root+'/lib/render-worker.js', module);
 baselineModule.paths = module.paths;
 baselineModule._compile(apiSource.replace(fixed, 'layer'), root+'/lib/render-worker.js');
 const baselineAPI = baselineModule.exports;
+const menuBaselineModule = new Module(root+'/lib/render-worker.js', module);
+menuBaselineModule.paths = module.paths;
+menuBaselineModule._compile(apiSource.replace("name === 'menu_bar_count'", "name === 'menu_bar_count_disabled_fixture'"), root+'/lib/render-worker.js');
 async function fixture(corrected,variant='actual-layer',observed=false){
- const API=corrected?productionAPI:baselineAPI;
+ const API=observed==='menu-baseline'?menuBaselineModule.exports:corrected?productionAPI:baselineAPI;
  const memory=new WebAssembly.Memory({initial:8192,maximum:32768,shared:true}),imports={host:{memory}};
  for(const i of WebAssembly.Module.imports(moduleBytes))if(i.kind==='function')imports[i.module][i.name]=()=>0;
  const native=new WebAssembly.Instance(moduleBytes,imports);native.exports.heap_init(0x3000000);
@@ -46,8 +49,20 @@ async function fixture(corrected,variant='actual-layer',observed=false){
    get_d3d9_windowed_hwnd:()=>variant==='windowed-device'?0x77:0,
    gamma_ramp_wa:variant==='gamma'?()=>BASE.DIB_BACKING_BASE+4096:native.exports.gamma_ramp_wa,
    gamma_ramp_gen:native.exports.gamma_ramp_gen};
+ const exportCalls=[];
+ const facade=API.observeInstance({exports:decoderExports},()=>epoch);
+ if(typeof observed==='string' && observed.startsWith('menu-')) {
+   // Isolate the FIRST failing compositor branch. Other scene exports keep
+   // their prior fixture behavior; this does not certify the entire facade.
+   const exports={...decoderExports,menu_bar_count(...args){
+     const before=Atomics.load(epoch.words,3),result=facade.exports.menu_bar_count(...args);
+     exportCalls.push({name:'menu_bar_count',before,after:Atomics.load(epoch.words,3)});
+     return result;
+   }};
+   renderer.wasm={exports};renderer.windows[0x77].wasm=renderer.wasm;
+ }
  const {host,gdi}=createHostImports({getMemory:()=>memory.buffer,
-   exports:observed?API.observeInstance({exports:decoderExports},()=>epoch).exports:decoderExports,
+   exports:observed?facade.exports:decoderExports,
    renderer,d3dimPublicationJoin:join});
  const dv=new DataView(memory.buffer),bytes=new Uint8Array(memory.buffer),front=BASE.DX_OBJECTS+32*7,back=front+32,dibA=BASE.DIB_BACKING_BASE,dibB=dibA+64,descriptor=dibB+64,sid=0x200007;
  for(const [entry,dib,red]of [[front,dibA,17],[back,dibB,34]]){dv.setUint32(entry,2,true);for(const [o,v]of [[12,2],[14,2],[16,16],[18,4]])dv.setUint16(entry+o,v,true);dv.setUint32(entry+20,dib,true);dv.setUint32(entry+28,1,true);for(let i=0;i<8;i+=2)dv.setUint16(dib+i,red===34?0xf800:0x001f,true);}
@@ -82,7 +97,7 @@ async function fixture(corrected,variant='actual-layer',observed=false){
  if(variant==='dirty-after-decode')native.exports.guest_write32(0x50000000+dib-BASE.DIB_BACKING_BASE,0x00330000);
  if(variant==='host-after-decode')epoch.invalidateVersions();
  renderer.repaint();
- const expected=corrected && variant==='actual-layer'?1:0;
+ const expected=corrected && observed!=='menu-baseline' && variant==='actual-layer'?1:0;
  assert.equal(join.rows.length,expected,variant);
  if(expected){
    const row=join.rows[0];
@@ -95,7 +110,7 @@ async function fixture(corrected,variant='actual-layer',observed=false){
  }
  join.retire('fixture-finished');
  assert.equal(journal.records().length, join.rows.length+join.ledger.length);
- return {variant, corrected, observed, raw:journal.records().length,qualified:join.rows.length,
+ return {variant, corrected, observed, exportCalls, raw:journal.records().length,qualified:join.rows.length,
    discarded:join.ledger.length,rows:join.rows,ledger:join.ledger};
 }
 // Getter classification never removes its writer ticket. In particular, only
@@ -119,19 +134,60 @@ function getterExclusion(){
  assert.equal(Atomics.load(epoch.words,0),0);assert.equal(Atomics.load(epoch.words,2),1);
  return {passed:true,writerExclusion:true,nonzeroInvalidation:true,arbitraryMutationInvalidation:true,errorPoison:true};
 }
+function menuBranchGuards(){
+ const memory=new WebAssembly.Memory({initial:8192,maximum:32768,shared:true}),imports={host:{memory}};
+ for(const i of WebAssembly.Module.imports(moduleBytes))if(i.kind==='function')imports[i.module][i.name]=()=>0;
+ const native=new WebAssembly.Instance(moduleBytes,imports),epoch=new productionAPI.WriterEpoch();
+ native.exports.test_wnd_table_set(0x77,0);
+ const ex=productionAPI.observeInstance(native,()=>epoch).exports;
+ const stamp=epoch.snapshot();
+ assert.equal(ex.menu_bar_count(0x77),0);
+ assert.equal(ex.menu_bar_count(0x78),0);
+ assert.equal(Atomics.load(epoch.words,3),0,'valid no-menu and absent window do not translate a blob');
+ assert(!epoch.unchanged(stamp),'the no-menu branch retains writer entry/exit');
+ const dv=new DataView(memory.buffer),guest=native.exports.get_image_base()+4096;
+ dv.setUint32(BASE.MENU_DATA_TABLE,guest,true);
+ dv.setUint32(BASE.GUEST_BASE+4096,0,true);
+ assert.equal(ex.get_menu_bar_blob_guest(0x77),guest);
+ assert.equal(ex.menu_bar_count(0x77),0);
+ assert.equal(Atomics.load(epoch.words,3),1,'an empty allocated blob still invalidates');
+ dv.setUint32(BASE.GUEST_BASE+4096,3,true);
+ assert.equal(ex.menu_bar_count(0x77),3);
+ assert.equal(Atomics.load(epoch.words,3),2);
+ const legacy=new productionAPI.WriterEpoch();
+ productionAPI.observeInstance({exports:{menu_bar_count:()=>0}},()=>legacy).exports.menu_bar_count(0x77);
+ assert.equal(Atomics.load(legacy.words,3),1,'an older module without branch proof stays conservative');
+ for(const failAt of ['metadata','count']){
+   const e=new productionAPI.WriterEpoch();
+   const f=productionAPI.observeInstance({exports:{
+     get_menu_bar_blob_guest(){assert.equal(Atomics.load(e.words,0),1);assert.equal(e.snapshot(),null);if(failAt==='metadata')throw Error('metadata');return 1;},
+     menu_bar_count(){assert.equal(Atomics.load(e.words,0),1);assert.equal(Atomics.load(e.words,3),1);throw Error('count');}
+   }},()=>e).exports;
+   assert.throws(()=>f.menu_bar_count(0x77),new RegExp(failAt));
+   assert.equal(Atomics.load(e.words,0),0);assert.equal(Atomics.load(e.words,2),1);
+ }
+ return {passed:true,nativeValidAndAbsentWindow:true,nonzeroEmptyAndPopulatedBlobInvalidation:true,legacyConservative:true,exclusionAndPoison:true};
+}
 (async()=>{
+ if(process.env.MENU_EXPORTS_ONLY){console.log(JSON.stringify({baseline:await fixture(true,'actual-layer','menu-baseline'),corrected:await fixture(true,'actual-layer','menu-query')}));return;}
  if(process.env.OBSERVED_EXPORTS_ONLY){console.log(JSON.stringify(await fixture(true,'actual-layer',true)));return;}
  const getterGuards=getterExclusion();
+ const menuGuards=menuBranchGuards();
  const baseline = await fixture(false);
  const corrected = await fixture(true);
  const negative = [];
  for (const variant of ['wrong-window-owner','wrong-layer','wrong-owner','stale-request','covered-gdi','page-dirty','dirty-after-decode','host-version','host-after-decode','overlap','poison','menu','caret','overlay','cache-blocked','owner-after-decode','resized-after-decode','windowed-device','gamma','wrong-format']) negative.push(await fixture(true,variant));
  const observed = await fixture(true,'actual-layer',true);
+ const menuBaseline=await fixture(true,'actual-layer','menu-baseline');
+ const menuCorrected=await fixture(true,'actual-layer','menu-query');
  const observedNegative=[];
  for(const variant of negative.map(x=>x.variant))observedNegative.push(await fixture(true,variant,true));
+ const menuNegative=[];
+ for(const variant of negative.map(x=>x.variant))menuNegative.push(await fixture(true,variant,'menu-query'));
  const result = {passed:true,baseline,corrected,negative,observed,observedNegative,getterGuards,
+   menuBaseline,menuCorrected,menuNegative,menuGuards,
    moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
  if(process.env.DIRECTX_LAYER_RESULT) fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
  console.log(JSON.stringify({passed:true,baselineQualified:baseline.qualified,
-   correctedQualified:corrected.qualified,observedQualified:observed.qualified,observedNegative:observedNegative.length,getterGuards,negative:negative.map(x=>({variant:x.variant,qualified:x.qualified,discarded:x.discarded}))}));
+   correctedQualified:corrected.qualified,observedQualified:observed.qualified,observedNegative:observedNegative.length,getterGuards,menuGuards,menuBaselineQualified:menuBaseline.qualified,menuCorrectedQualified:menuCorrected.qualified,menuNegative:menuNegative.length,negative:negative.map(x=>({variant:x.variant,qualified:x.qualified,discarded:x.discarded}))}));
 })().catch(e=>{console.error(e);process.exitCode=1;});

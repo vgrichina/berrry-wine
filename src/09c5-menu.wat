@@ -1612,6 +1612,14 @@
     (i32.store (local.get $tbl) (i32.const 0)))
 
   ;; Top-level item count (0 if no menu). Helper for keyboard nav.
+  ;; The observed compositor can certify the no-menu branch without invoking
+  ;; g2w (which may materialize lazy storage). This only reads window metadata.
+  (func (export "get_menu_bar_blob_guest") (param $hwnd i32) (result i32)
+    (local $slot i32)
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.eq (local.get $slot) (i32.const -1)) (then (return (i32.const 0))))
+    (i32.load (call $menu_data_table_addr (local.get $slot))))
+
   (func $menu_bar_count (export "menu_bar_count") (param $hwnd i32) (result i32)
     (local $b i32)
     (local.set $b (call $menu_blob_w (local.get $hwnd)))
