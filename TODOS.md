@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-pixel-latency-repair-1210 diagnoses/fixes finalownerpixel evaluation BEFOREanotheroriginal. Published6ab6f82c3 actualResumeHUD100timer02to03 candidates315/327msSTALE finaleval301/318ms decode13/9ms zeroM/movement unchanged250ms4500gate; concreteblocker notrepair. Independentlyhashed407refs59595955B; bx_rukvjz6t archivednormalstop_e20e9a26b23210d8 expiryNULL26PIDdrain. Note: docs/re-notes/recoil-orphan-safe-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-measured-native-1224 uses tested measured-phase/pre-snapshot helper a0dc569a9 before qualifiedM/consequence/reviewedmovement. Generated36probes144completeactualmoduleResponses baselinequeued319-345ms->fixed18-31ms; slowPNG/deliverySTILLrefused250ms, actualoriginal301/318ms causeUNKNOWN. Independentlyhashed43refs4396287B reviewedpatch; nooriginal/remote threeLOCALrunsfullydrained. Note: docs/re-notes/recoil-pixel-latency-repair-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-full-compositor-facade-1210 fixes remaining wnd_style/screenScratch invalidations in cheapFULLobservedfacade BEFOREanotheroriginal. Publishedf4fc82774 isolatedNOmenu branchbaseline0corrected1red20guards7focusedLockedBuildPASS newd8facd06module notoriginaltested; native69raw0qualified30overwrite39coalesced. Independentlyhashed78refs9924432B reviewedWAT+wrapperdiff; bx_rbx878gk archivednormalstop_bb68018e16c68f7f expiryNULL. Note: docs/re-notes/tr2-presenter-getter-native-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-full-facade-native-1224 validates published4003f6502 FULLobservedcompositorlifetime repair onoriginal before reviewedmovement/weapon. ExactdecodedDXtoken admittedBEFOREscratchqueries; realhostscratch/fullWAT/dispatcher/RGB565/compositor baseline0fixed1red29negativeguards sevenfocusedLockedBuildPASS. Independentlyhashed33refs596967B reviewedproductiondiff; same d8facd06module fixtureONLY nativevalidationOPEN nooriginal/box. Note: docs/re-notes/tr2-full-compositor-facade-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; six victories and red vial pickup preserved; further landmark/area transition open
+  status: active; seven victories and town gateway crossing verified; onward/area transition open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-rozanne-route-1210 restores newcharacters6e09d2c3/game641d_6af06343.sav579c334a for onwardlandmark/areatransition insteadofrepeatedemptyNPCtitle. Published8c1f78518 nativeROZANNEhover/ordinaryinteraction/Exit/NewSave plusactualparent-ownedstartupcustodyfixturePASS. Actual6+0 LIFE24/35Gold1532Food68MANA25/25 vialretained. Independentlyhashed255refs209405244B personallyreviewedRozannePNG; bx_7hc8exxg archivednormalstop_f8e6b2b516fb4b10 expiryNULL. Note: docs/re-notes/darkstone-mayor-onward-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-outer-road-1224 restores characters9c26d3cc/game641d_6af0686c.savda42f724 then onwardfromstoneruins. Publishedeeeb468bd crossedpalisadegateway reviewedGIANTWASPdefeat nativeVictories7+0 LIFE22/35Gold1532Food65MANA25/25vialretained nativeNewSave. Independentlyhashed225refs213443560B personallyreviewedcounterPNG; bx_dfmv5fk7 archivednormalstop_034beaeea7ffcd60 expiryNULL29PIDdrain. Note: docs/re-notes/darkstone-rozanne-route-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
