@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-green-route-1717 restores final mana/gold pair and inspects route into visible green tiled area; early NewSave retrieved/hash by minute10. Published68f80664b mana potion+105gold collected, Gold1637Food44AC14LIFE19/35MANA25 victories9+0. Coordinator viewed panel/route and hashed503refs458408782B; final pair NOTreloaded. bx_ck6rengu archived expiryNULL stop_af3d09cb35130341. BrowserSIGKILL fallback, initial drain refusal, unresolvedlineage1 and jar review error retained. Preserve548providers42helpers. See docs/re-notes/darkstone-cape-1650-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-chamber-explore-1740 restores greenchamber finalpair03f44c73/65e6b47c (NOTreloaded) and follows reviewed native route beyondchamber early/finalNewSave recovery. Reviewed dea0ece72 actualenteredgreentiles+barrelBROKEN noDROP/LOOT; personallyviewedLIFE19/35MANA25Gold1637Food42AC14 victories9+0 helmetcape redbluevials. Coordinator286refs272059861B+savepair independentHASHpass. bx_eshg4q48 archivedexpiryNULLstop_7c30b90f9f0a2260 Chromeexit0normal358drain unresolved0 cloneUntracedscope. See docs/re-notes/darkstone-green-route-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
