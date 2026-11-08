@@ -1,3 +1,9 @@
+- [ ] SuperTux first-level exit and world-map progression
+  id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
+  status: blocked by live review/reaction gaps; six deaths retained, first node remains uncleared
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Next: Qualify a faster native reaction loop or visibly documented native Pause sequence before another original exit attempt. Publishedcae327d26 crosses opening obstacles but six enemy-contact deaths occur during6–10s review gaps. Native Pause freezes timer286; Abort Level returns to unchanged first red node and Down does not progress. Coordinator reviewed Pause/map and independently verified2102 artifact references/1152hashes.58exactACK/zeroUNKNOWN,787originals/786mappings, trusted releases and normal archived stop pass. Prior9b1ab25cd jump/coin/stomp evidence stands; no level exit or emulator defect established. Note: docs/re-notes/supertux-first-level-exit-20261108.md. Fresh Drakan current-browser action lane replaces this attempt alongside Redline timing and Q3 gameplay.
+
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: blocked before input by premature software render-owner binding; WebGL unexecuted
