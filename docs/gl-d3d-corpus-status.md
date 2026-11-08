@@ -1,5 +1,26 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Quake II browser world and blaster on both backends
+
+Published `a16f5b820`, run `20261108-quake2-bounded-world`, verifies ordinary
+Game → Easy, textured world/weapon/HUD, forward movement, keyboard turning and
+blaster discharge/projectiles on both current browser routes. The coordinator
+inspected both projectile frames and software forward progress.
+
+| App | Software GL | WebGL |
+| --- | --- | --- |
+| Original Quake II demo | Owning OpenGLHostBridge software context/shared memory, guest/render CPU software flags 1; world, movement, turning and discharge reviewed. | Owning live WebGLBackend v1 on Intel/Mesa ANGLE, guest/render CPU software flags 0; world, movement, turning and discharge reviewed. |
+
+Executing modules match `f9650607…`. Nineteen exact ACKs and fourteen independent
+key releases complete without gameplay UNKNOWN or replay. The accepted size
+metadata repair remains unchanged; bounded request-path tests prevent the prior
+oversized-wait failure. Both guard encounters cause incoming player damage;
+outgoing hits, kills, door/pickup and onward level progress remain unverified.
+Different timing and views do not prove parity, FPS or audio quality. Evidence
+was hash-verified before normal nonforced box shutdown.
+[Backend identities, captures, tests and limits](re-notes/quake2-bounded-world-20261108.md).
+Full historical27 and remaining per-app coverage remain open.
+
 ## November 8: Heretic II browser docks and door on both backends
 
 Published `7000de90d`, run `20261108-heretic2-current-browser-backends`,
