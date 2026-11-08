@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-measured-native-1224 uses tested measured-phase/pre-snapshot helper a0dc569a9 before qualifiedM/consequence/reviewedmovement. Generated36probes144completeactualmoduleResponses baselinequeued319-345ms->fixed18-31ms; slowPNG/deliverySTILLrefused250ms, actualoriginal301/318ms causeUNKNOWN. Independentlyhashed43refs4396287B reviewedpatch; nooriginal/remote threeLOCALrunsfullydrained. Note: docs/re-notes/recoil-pixel-latency-repair-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-admitted-native-1236 uses repaired complete849pin/startupcontract9387bee59 then native measuredphases/qualifiedMconsequence/reviewedmovement. Solepriorfreshboxmissinglaunch-position.py BEFOREChrome; genericpreconsumephysicalclosure/admission+stickyUNKNOWN/earlystopdescendantdrain fiveactualintegrationcasesPASS. Noactualphase/Mclaim original301/318stillunclassified. Independentlyhashed36refs493901B normalbx_e9v5njhv archivedstop_006ae96d9934a7b5 expiryNULL. Note: docs/re-notes/recoil-measured-native-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
