@@ -39,11 +39,12 @@ async function fixture(corrected,variant='actual-layer'){
  const observation=c.entry(1).producerObservation;assert(observation.active);
  const renderer=new Win98Renderer(createCanvas(2,2));renderer.scheduleRepaint=()=>{};renderer.createWindow(0x77,0x90000000,0,0,2,2,'',0,native,memory);
  const join=new API.SurfacePublicationJoin({epoch,journal,memory,ownerScope:observation.owner.scope,workerSlot:3,endpointId:1,owner:observation.owner,observationGeneration:observation.generation,renderer});
- const {host,gdi}=createHostImports({getMemory:()=>memory.buffer,exports:{get_main_hwnd:()=>0x77,get_dx_exclusive_hwnd:()=>0x77},renderer,d3dimPublicationJoin:join});
+ const {host,gdi}=createHostImports({getMemory:()=>memory.buffer,exports:{get_main_hwnd:()=>0x77,get_dx_exclusive_hwnd:()=>0x77,get_d3d9_windowed_hwnd:()=>variant==='windowed-device'?0x77:0,gamma_ramp_wa:()=>variant==='gamma'?BASE.DIB_BACKING_BASE+4096:0,gamma_ramp_gen:()=>0},renderer,d3dimPublicationJoin:join});
  const dv=new DataView(memory.buffer),bytes=new Uint8Array(memory.buffer),front=BASE.DX_OBJECTS+32*7,back=front+32,dibA=BASE.DIB_BACKING_BASE,dibB=dibA+64,descriptor=dibB+64,sid=0x200007;
  for(const [entry,dib,red]of [[front,dibA,17],[back,dibB,34]]){dv.setUint32(entry,2,true);for(const [o,v]of [[12,2],[14,2],[16,16],[18,4]])dv.setUint16(entry+o,v,true);dv.setUint32(entry+20,dib,true);dv.setUint32(entry+28,1,true);for(let i=0;i<8;i+=2)dv.setUint16(dib+i,red===34?0xf800:0x001f,true);}
  let seq=0,serial=0;
  async function produce(){serial++;for(const [o,v]of [[0,32],[4,front],[8,back],[12,descriptor],[16,serial],[20,0x44585031],[28,1]])view.setUint32(o,v,true);await dispatch({t:'batch',index:0,bytes:32,commands:1,seq:++seq,imageBase:0x400000});host.gdi_surface_create(sid,2,2,16,dv.getUint32(front+20,true),4,1,0,0);host.gdi_surface_attach(sid,0x77);host.gdi_surface_upload(sid,0,0,2,2,{slot:7,workerSlot:3,descriptor,serial});return journal.records().at(-1);}
+ if(variant==='wrong-format')dv.setUint32(BASE.DX_SURF_FMT+7*4,2,true);
  const first = await produce();
  assert(first && !first.versionRejected, 'real WAT source proof must seal');
  const dib = dv.getUint32(front+20,true);
@@ -67,6 +68,8 @@ async function fixture(corrected,variant='actual-layer'){
    delete layer.canvas._waD3dimVersion;
    gdi.flushSurfacePresentation(sid);
  }
+ if(variant==='owner-after-decode')renderer.windows[0x77].wasmMemory=null;
+ if(variant==='resized-after-decode')layer.canvas.width=3;
  if(variant==='dirty-after-decode')native.exports.guest_write32(0x50000000+dib-BASE.DIB_BACKING_BASE,0x00330000);
  if(variant==='host-after-decode')epoch.invalidateVersions();
  renderer.repaint();
@@ -90,7 +93,7 @@ async function fixture(corrected,variant='actual-layer'){
  const baseline = await fixture(false);
  const corrected = await fixture(true);
  const negative = [];
- for (const variant of ['wrong-window-owner','wrong-layer','wrong-owner','stale-request','covered-gdi','page-dirty','dirty-after-decode','host-version','host-after-decode','overlap','poison','menu','caret','overlay','cache-blocked']) negative.push(await fixture(true,variant));
+ for (const variant of ['wrong-window-owner','wrong-layer','wrong-owner','stale-request','covered-gdi','page-dirty','dirty-after-decode','host-version','host-after-decode','overlap','poison','menu','caret','overlay','cache-blocked','owner-after-decode','resized-after-decode','windowed-device','gamma','wrong-format']) negative.push(await fixture(true,variant));
  const result = {passed:true,baseline,corrected,negative,
    moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
  if(process.env.DIRECTX_LAYER_RESULT) fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
