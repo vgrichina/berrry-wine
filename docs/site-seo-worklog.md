@@ -5,11 +5,12 @@ The live site is https://wine-assembly.berrry.app. Everything below `index.html`
 
 ## How the pages are made
 
-`node tools/gen-site-pages.js` writes every page (about 160) and `sitemap.xml`. The generated files are gitignored except `story.html`; `tools/deploy-berrry.js --update` regenerates and uploads them, so a deploy is the publish step and nothing needs committing besides the sources below.
+`node tools/gen-site-pages.js` writes every page (about 850, most of them `docs/`; two to seven minutes) and `sitemap.xml`. The generated files are gitignored except `story.html`; `tools/deploy-berrry.js --update` regenerates and uploads them, so a deploy is the publish step and nothing needs committing besides the sources below.
 
 | Output | Source | Notes |
 |---|---|---|
 | `apps/<id>.html`, `apps/index.html` | `lib/apps.js` desktop set, `tools/site-app-blurbs.json` (blurb per app, `_skip` list), `tools/site-app-faq.json` (`controls` per app, `_sound` per app) | Screenshot from `screenshots/apps/<id>.png`; OG card built into `screenshots/og/` by `tools/gen-og-images.js` |
+| `compat/<slug>.html`, `compat/index.html` | `tools/site-compat.json` (one entry per title, one edition per RE note, `_affiliate` templates) | Play button only for `DESKTOP_APPS`; `VideoGame` JSON-LD; see "Compatibility list" below |
 | `articles/<slug>.html` | `articles/*.md`, order from `articles/README.md` | Description from the `<!-- description: ... -->` comment under the H1; mermaid fences become `<pre class="mermaid">` and the page loads mermaid only when it has one |
 | `design/index.html` | `articles/README.md` body + the `docs/` and `docs/re-notes/` listings | The one hub in the nav; `/articles/` and `/docs/` still serve but declare it canonical |
 | `docs/**/*.html` | `docs/**/*.md` | Listed automatically; this file is one of them |
@@ -52,15 +53,17 @@ How the data was made: one pass over every per-title RE note assigned a status w
 
 Link policy, decided with the site owner: a store link whenever the game is sold today (the listing name says when it is a remaster, e.g. "Steam (Definitive Edition)"); the demo or shareware download when there is one; an archive.org item page only when no store sells the game, labelled a preservation copy, never a direct file link. The two are kept apart on purpose: under GS Media (CJEU 2016) a for-profit site is presumed to know a linked copy is unauthorised, and referral links make the site for-profit. Referral links: `_affiliate` maps a store name prefix to a template; a templated link gets `rel="sponsored"` and a disclosure line.
 
+Keeping it true: `tools/site-compat.json` is hand-maintained, nothing re-derives it from the notes. When an RE note moves a title (new route, new edition, a fix or a regression), edit that title's edition row in the same commit: `status`, `statusDate`, `works`, `issues`. A title added to `DESKTOP_APPS` gets its Play button on the next generate without a JSON change; a new title needs a new entry. Statuses that rest on CLI runs only, never a browser run (Outlaws, Nox, Die Hard: Nakatomi Plaza), and Solitaire's unconfirmed iPhone debug box are the first rows to re-check. The list names local-only titles (Half-Life, Caesar III) with no Play button; it is a status page, not launch material.
+
 ## Remaining
 
 Ranked by search value per hour. The first two need a machine that is not running other sweeps; the rest are the site owner's.
 
 1. **"What works" badges on `/apps/`**: sound, phone controls, saved state, one small badge each per card, from a repeatable sweep rather than a hand list. The sound sweep is the template. Feed the same facts into `featureList` on the app pages' JSON-LD.
 2. **Short clips per app with `VideoObject` JSON-LD**: 3 to 5 seconds each, recorded headful (headless frame timing is not real), served beside the OG cards. Hold until the apps whose input paths are still rough would not record a still frame.
-3. **Deploy and submit**: build green, `node tools/deploy-berrry.js --update`, then `/sitemap.xml` to Google Search Console and Bing Webmaster Tools, a Rich Results test on one `apps/` URL (expect `SoftwareApplication` and `FAQPage`), and a link-preview check on the same URL for the OG card.
+3. **Deploy and submit**: build green, `node tools/deploy-berrry.js --update`, then `/sitemap.xml` to Google Search Console and Bing Webmaster Tools, a Rich Results test on one `apps/` URL (expect `SoftwareApplication` and `FAQPage`) and one `compat/` URL (expect `VideoGame`), a link-preview check on the same URLs, and `/?add-game` on a phone (My Media opens).
 4. **Outreach**: the comparison pages are the hook for Hacker News and the emulation subreddits. Wait for the deploy so the first visitors see the finished pages.
-5. **A compatibility list page**: done 2026-11-04, see "Compatibility list" below. Open: affiliate templates in `_affiliate` once partner IDs exist; refresh statuses when an RE note moves a title.
+5. **A compatibility list page**: done 2026-11-04, see "Compatibility list" above. Open: affiliate templates in `_affiliate` once partner IDs exist; refresh statuses when an RE note moves a title.
 6. **Thin `docs/` pages**: 456 of the 519 sitemap URLs are `docs/`, many of them dated investigation logs (`*-2026MMDD.md`). Keep one RE note per title in the sitemap and leave the dated logs out of it, so the site's weight sits on the app and article pages.
 7. **Pinball**: "space cadet pinball online" ranks 42; `apps/pinball.html` (20 impressions at 31) is the page that should rank. Its title and H1 said only "Pinball" (the desktop label) and the blurb wrongly said Windows 98 and Maxis; the binary is the XP build (`test/binaries/SOURCES.md`). Fixed 2026-10-31 with a `_titles` override in `tools/site-app-blurbs.json` ("3D Pinball Space Cadet") and a new blurb. The screenshot is now the ball in play ("Hit Mission Targets To Select Mission"), shot headless with `--tick-ms-per-batch=5`, Space held over batches 9000-9250 and the capture at 9700 (the XP build is not ready for the plunger at 8200, where the Plus! 95 route in the RE note presses it). Still open: compare with the pages above it once the new title is indexed.
 
@@ -73,5 +76,6 @@ Skipped on purpose: crawlable launch links (the apps index already links every a
 - `node tools/gen-site-pages.js` and read the last line (page count).
 - Description lengths: any page over 158 characters is a bug; check the pages you touched.
 - Mermaid: open the page in a browser or run a puppeteer render and count `svg` elements against `pre.mermaid` blocks; a parse error renders an error box, not nothing.
+- Compat pages: `grep -c VideoGame compat/<slug>.html` should be 1; a title on the desktop has a Play link to `/apps/<id>.html`, others none; an archive.org link appears only on a page with no store link.
 - App pages: `grep -c FAQPage apps/<id>.html` should be 1; the Questions section should have six or seven `h3`s.
 - The Read Me window: a first visit to `/` shows it, OK hides it and a reload keeps it hidden, `/?app=sol` never shows it, it drags by the title bar and stops at the desktop edge.
