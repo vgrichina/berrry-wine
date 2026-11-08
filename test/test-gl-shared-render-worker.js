@@ -542,7 +542,9 @@ async function publishedBrokerProtocol(){
       if(op===12){events.push('query');return 73;}
       throw Error('unexpected published opcode '+op);
     });
-  }},sigs,{renderPublication:queue.buffer});
+  }},sigs,{renderPublication:queue.buffer,onRenderSnapshot:async value=>{
+    await tick();assert.deepStrictEqual([...value.vertices],[33,44]);events.push('neutral');
+  }});
   const code=`const {parentPort,workerData:d}=require('worker_threads');
     const RPC=require(d.rpc),S=require(d.stream),m={buffer:d.memory},v=new DataView(d.memory);
     const softwareConfig=new Int32Array(new SharedArrayBuffer(16));
@@ -560,6 +562,9 @@ async function publishedBrokerProtocol(){
     }
     try{if(make(51,[10,20],8)!==1)throw Error('bind failed');
       make(147,[0x2300,0x2200,1234],0,[0.25]);make(147,[0x2300,0x2200,1234],0,[0.75]);
+      const publication=new (require(d.transport).PublicationQueue)(d.queue),vertices=new Uint8Array([33,44]);
+      publication.publishSnapshot(4,0,{value:{vertices},bytes:64},m=>parentPort.postMessage(m),
+        ()=>parentPort.postMessage({t:'renderPublished',slot:0}));vertices.fill(99);
       const value=make(12,[]),glide=built.imports.host.glide_submit;
       softwareConfig[0]=1;const asyncBefore=built.stats.async;
       make(147,[0x2300,0x2200,1234],0,[0.5]);
@@ -570,19 +575,20 @@ async function publishedBrokerProtocol(){
       built.fencePublications();
       parentPort.postMessage({done:true,value,stats:built.stats});
     }catch(error){parentPort.postMessage({error:error.stack});}`;
-  const worker=new Worker(code,{eval:true,workerData:{rpc:require.resolve('../lib/guest-rpc'),stream:require.resolve('../lib/gl-command-stream'),memory:memory.buffer,queue:queue.buffer,marks:marks.buffer,sigs}});
+  const worker=new Worker(code,{eval:true,workerData:{rpc:require.resolve('../lib/guest-rpc'),stream:require.resolve('../lib/gl-command-stream'),transport:require.resolve('../lib/render-worker'),memory:memory.buffer,queue:queue.buffer,marks:marks.buffer,sigs}});
   const timeout=setTimeout(()=>queue.fail(),5000);
   try{
     const result=await new Promise((resolve,reject)=>{
       worker.on('error',reject);worker.on('message',msg=>{
         if(msg.done)resolve(msg);else if(msg.error)reject(new Error(msg.error));
         else if(msg.t==='renderPublished')broker.drainPublications().catch(reject);
+        else if(msg.t==='renderSnapshot')broker.receiveRenderSnapshot(msg);
         else if(msg.t==='glBatch')broker.serveGlBatch(msg);
         else if(msg.t==='rpc')broker.serveRpc(msg.slot);
       });
     });
     assert.strictEqual(result.value,73,'query keeps synchronous result');
-    assert.deepStrictEqual(events,['bind',0.25,0.75,'query',0.5,'glide-open',[7,8,9],'glide-read',[4,5,6]],
+    assert.deepStrictEqual(events,['bind',0.25,0.75,'neutral','query',0.5,'glide-open',[7,8,9],'glide-read',[4,5,6]],
       'GL and Glide own their inputs and synchronous queries/readbacks cannot overtake publications');
     assert.strictEqual(result.stats.async,4);assert.strictEqual(result.stats.sync,5);
   }finally{clearTimeout(timeout);queue.fail();await worker.terminate();}

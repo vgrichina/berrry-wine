@@ -37,6 +37,33 @@ when a guest thread slot is reused, and exhaustion fails instead of wrapping.
 `DrawProducer({producerId})` includes this identity in its texture keys. These
 resource identities are distinct from the routing slot in a publication header.
 
+Large neutral snapshots use `publishSnapshot` rather than copying an arbitrarily
+large command into the 4 MiB ring. The adapter supplies a private data-only
+snapshot and its charged size (currently `D3DCommandStream.copyPayload`). A
+structured-clone/transfer message carries the owned value; an 8-byte `{id,bytes}`
+reference in the common ring establishes execution order. Control words10/11
+bound outstanding payloads to 64 MiB and 256 messages per process; word12 issues
+nonrecycled snapshot IDs. Credits retire only after adapter admission. The
+payload-copy preparation is outside these pending-publication credits, and
+this route still copies data; it is not a zero-copy performance claim.
+
+`SnapshotInbox` awaits missing payload messages without blocking the page. This
+matters when a second producer's wake arrives before the first producer's
+payload: later GL/Glide/D3D work must not overtake that reference. Duplicate,
+stale and mismatched references fail the process queue; transport failure wakes
+credit waiters and rejects pending payload waits. Worker links verify the
+message's owner against their routing slot.
+
+API4 references route to `Bridge.submitSnapshot` for D3D9 DRAW/CLEAR commands.
+The receiving bridge checks device generation/liveness and consumes any pending
+admission token before releasing snapshot credit. Creation, resources, queries,
+reset and presentation are not accepted through this entry point yet. A test
+drives the actual publication broker and neutral execution path with a payload
+larger than its test ring, a delayed consumer, source mutation and stale-device
+rejection. The normal guest D3D9 call path is still synchronous until producer
+state/resource synchronization is wired; this receiving path alone does not
+complete that migration.
+
 OpenGL retains native `gl_object_leave` publication under the shared-object
 lock. Removing that native flush would break completed cross-thread texture
 visibility. Instead, its host import can capture the bytes into the ring and

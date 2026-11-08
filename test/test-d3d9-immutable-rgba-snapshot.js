@@ -80,6 +80,40 @@ test('producer and texture identities fail before numerical reuse',()=>{
   assert.throws(()=>producer._rememberTexture(1,{pixels:new Uint8Array(4)},new Uint8Array(4)),/identity exhausted/);
 });
 
+test('owned draw crosses publication broker with backpressure and device-generation checks',async()=>{
+  const RPC=require('../lib/guest-rpc'),{PublicationQueue}=require('../lib/render-worker');
+  const {copyPayload}=require('../lib/d3d-command-stream');
+  const f=fixture({maxDeferredCommands:0}),q=new PublicationQueue(new SharedArrayBuffer(64+128));
+  const rpcMemory={buffer:new SharedArrayBuffer(RPC.RPC_BASE+RPC.RPC_STRIDE*RPC.RPC_MAX_SLOTS)};
+  const broker=RPC.createMainBroker(rpcMemory,{gpu_d3d9_snapshot:command=>f.bridge.submitSnapshot(command)},
+    {},{renderPublication:q.buffer});
+  let resume;
+  try {
+    const initial=f.draw();await f.drain();
+    if(initial<=-2){await f.bridge.wait(initial);assert.equal(f.bridge._poll(initial),1);}
+    const entry=f.bridge.devices.get(7),producer=new DrawProducer({producerId:q.allocateProducerId(),
+      getMemory:()=>f.memory,guestToWasm:p=>p});
+    const captured=producer.captureDraw({entry:{resident:new Map(),residentBytes:0},
+      address:f.desc,program:f.program,id:7,width:2,height:2,depthAttachment:null});
+    const command={deviceId:7,generation:entry.queue.generation,opcode:OP.DRAW,payload:captured.payload};
+    const snapshot=copyPayload(command,64*1024*1024);
+    assert(snapshot.bytes>q.capacity,'owned payload is larger than the ring');
+    resume=f.hold();
+    q.publishSnapshot(4,0,snapshot,message=>broker.receiveRenderSnapshot(structuredClone(message)),()=>{});
+    f.fill(f.texels,16384,[99,88,77,255]);
+    const draining=broker.drainPublications();await tick();
+    assert(Atomics.load(q.control,10)>0,'parked neutral admission retains payload credit');
+    assert.equal(f.observations.length,1);
+    resume();resume=null;await draining;await f.drain();
+    assert.deepEqual(pixel(f.observations[1]),f.rgba,'decoder receives captured bytes');
+    assert.equal(Atomics.load(q.control,10),0);
+    assert.equal(f.bridge.requests.size,0,'adapter consumes its backpressure token');
+    await assert.rejects(f.bridge.submitSnapshot({...command,generation:command.generation+1}),/stale/);
+    await assert.rejects(f.bridge.submitSnapshot({...command,opcode:OP.RESOURCE_RELEASE}),/unsupported/);
+    assert.equal(f.observations.length,2,'rejected identity/operation never reaches executor');
+  }finally{resume?.();broker.failPublications();await f.bridge.close();}
+});
+
 test('independent producer incarnations cannot alias resident textures on one device', async () => {
   const {Worker:Thread}=require('node:worker_threads');
   const {PublicationQueue}=require('../lib/render-worker');

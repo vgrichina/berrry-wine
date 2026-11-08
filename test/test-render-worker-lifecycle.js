@@ -4,7 +4,67 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const { WorkerLink, GuestThreadHost } = require('../lib/guest-thread-host');
-const { SharedPacketPool, SubmissionQueue, PublicationQueue } = require('../lib/render-worker');
+const { SharedPacketPool, SubmissionQueue, PublicationQueue, SnapshotInbox } = require('../lib/render-worker');
+
+async function testSnapshotPublication(){
+  const q=new PublicationQueue(new SharedArrayBuffer(64+256)),inbox=new SnapshotInbox(q),messages=[],order=[];
+  const value={vertices:new Uint8Array(1024*1024),constants:new Float32Array([1.25])};value.vertices[0]=91;
+  q.publishSnapshot(4,2,{value,bytes:1024*1024+128},message=>messages.push(structuredClone(message)),()=>{});
+  value.vertices[0]=0;value.constants[0]=9;
+  q.publish(1,0,new Uint8Array([7]),()=>{});
+  const drain=q.drain(group=>group.api===4?inbox.consume(group,packet=>{
+    assert.equal(packet.vertices[0],91);assert.equal(packet.constants[0],1.25);order.push('snapshot');
+  }):order.push('GL'));
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.deepStrictEqual(order,[],'other producer wake cannot overtake a late payload');
+  assert.equal(Atomics.load(q.control,10),1024*1024+128,'unadmitted payload retains byte credit');
+  inbox.receive(messages[0]);await drain;
+  assert.deepStrictEqual(order,['snapshot','GL']);assert.equal(Atomics.load(q.control,10),0);
+  assert.equal(Atomics.load(q.control,11),0);
+  assert.throws(()=>inbox.receive(messages[0]),/duplicate/,'consumed identities cannot be replayed');
+
+  const bad=new PublicationQueue(new SharedArrayBuffer(64+128)),badInbox=new SnapshotInbox(bad);
+  bad.publishSnapshot(4,1,{value:{},bytes:32},message=>badInbox.receive({...message,owner:2}),()=>{});
+  await assert.rejects(bad.drain(group=>badInbox.consume(group,()=>assert.fail('wrong owner admitted'))),/mismatch/);
+
+  // An actual blocked producer must wake on either admission or failure.
+  const {Worker}=require('worker_threads');
+  for(const fail of [false,true]){
+    const queue=new PublicationQueue(new SharedArrayBuffer(64+128)),receiver=new SnapshotInbox(queue),gate=deferred();
+    let received=0,accepted=0;const errors=[];
+    const worker=new Worker(`
+      const {parentPort,workerData:d}=require('worker_threads');
+      const {PublicationQueue}=require(d.module),q=new PublicationQueue(d.buffer);
+      try {for(let i=0;i<2;i++)q.publishSnapshot(4,0,{value:i,bytes:40*1024*1024},
+        packet=>parentPort.postMessage(packet),()=>parentPort.postMessage({wake:true}));
+        q.fence(()=>parentPort.postMessage({wake:true}));parentPort.postMessage({done:true});
+      }catch(error){parentPort.postMessage({error:error.message});}
+    `,{eval:true,workerData:{module:require.resolve('../lib/render-worker'),buffer:queue.buffer}});
+    const timer=setTimeout(()=>receiver.fail(Error('test timeout')),5000);
+    try{
+      const result=await new Promise((resolve,reject)=>{
+        worker.on('error',reject);worker.on('message',message=>{
+          if(message.t==='renderSnapshot'){
+            received++;receiver.receive(message);
+          }else if(message.wake){
+            queue.drain(group=>receiver.consume(group,async()=>{
+              if(!accepted){await gate.promise;if(fail)throw Error('consumer failed');}
+              accepted++;
+            })).catch(error=>errors.push(error.message));
+          }else resolve(message);
+        });
+        const release=setInterval(()=>{
+          if(received===1){clearInterval(release);
+            setTimeout(()=>{assert.equal(received,1,'byte budget parks second snapshot');gate.resolve();},20);
+          }
+        },1);
+        worker.once('exit',()=>clearInterval(release));
+      });
+      if(fail){assert.match(result.error,/closed or failed/);assert(errors.includes('consumer failed'));}
+      else {assert(result.done);assert.equal(accepted,2);assert.equal(Atomics.load(queue.control,10),0);}
+    }finally{clearTimeout(timer);receiver.fail();await worker.terminate();}
+  }
+}
 
 async function testPublicationQueue(){
   const q=new PublicationQueue(new SharedArrayBuffer(64+256));let wakes=0;
@@ -121,6 +181,7 @@ const deferred = () => {
 
 (async () => {
   await testPublicationQueue();
+  await testSnapshotPublication();
   // One contract for atomic producers and asynchronous page brokers. No
   // snapshot may run while credits are exhausted, even for a smaller packet
   // behind an exclusive oversized packet.
