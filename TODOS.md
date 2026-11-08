@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: active; startup readiness and terminal adoption repaired; fresh upper-opening original
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh quake2-upper-opening-2003 explicitly selects bounded DevTools helper d15ef97b8 and kernel d8573b542 before ONE remote current-pixels opening attempt. Reviewed bf87da154 140refs498348B HASH and d8573b542 241refs214079B HASH; 9readiness/25custody focused+lockedbuild PASS. Historical1940 original never launched, second terminal status unlogged and prior143causeUNKNOWN stay. All unique logs including kernel-command.log retrieved before STOP. bx_rxvzubfd archived expiryNULL stop_e37948f9ddc48635. First verified onward consequence or causal tested repair STOP; no blind static-route script. Full27/parity/audio/FPS open.
+  Next: Fresh quake2-upper-opening-2007 explicitly selects bounded DevTools helper d15ef97b8 and kernel d8573b542 before ONE remote current-pixels opening attempt. Reviewed bf87da154 140refs498348B HASH and d8573b542 241refs214079B HASH; 9readiness/25custody focused+lockedbuild PASS. Historical1940 original never launched, second terminal status unlogged and prior143causeUNKNOWN stay. All unique logs including kernel-command.log retrieved before STOP. bx_rxvzubfd archived expiryNULL stop_e37948f9ddc48635. First verified onward consequence or causal tested repair STOP; no blind static-route script. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: active; first linked weapon return verified; bounded later firing observation in progress
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-bounded-shot-window-2003 offline opt-in later-cycle observation within existing2500ms/32record caps. Reviewed3a2d3bca1 159remote refs HASH: actual1900ms Control, input100040 healthy1000 mapped item7ed1a454 arms0to1 exact4275ac return. No shot/aim/hit/kill proof; first frame readiness not defect evidence. bx_favr7jd8 archived expiryNULL stop_2c0e066f5b16d356 Chrome0/adopted7actualwaits census limits retained. Preserve poll/action/caller linkage and fail-closed default. Intel/SystemInfoSwiftShader unresolved. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-bounded-shot-window-2007 offline opt-in later-cycle observation within existing2500ms/32record caps. Reviewed3a2d3bca1 159remote refs HASH: actual1900ms Control, input100040 healthy1000 mapped item7ed1a454 arms0to1 exact4275ac return. No shot/aim/hit/kill proof; first frame readiness not defect evidence. bx_favr7jd8 archived expiryNULL stop_2c0e066f5b16d356 Chrome0/adopted7actualwaits census limits retained. Preserve poll/action/caller linkage and fail-closed default. Intel/SystemInfoSwiftShader unresolved. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
