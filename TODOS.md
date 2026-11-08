@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-original-ready-1621 selects published275dd018a kernel into normal979-provider generation, then one original Software qualification/current Resume/M/reviewed movement. Published9761d8b9a explicit generation preserves851original and historical916;980actualuploadsJOIN production content/queue/parent PASS. FIRSTNEW SIGTERM kernel refusal repaired by Darkstone275dd018a realregression. Coordinator hashed179refs12122431B; failedstartup128starts absent bx_a83xxze6 archived expiryNULL stop_8ab30cb50615e3ba; noResume/M/gameplay. See docs/re-notes/recoil-generation-ready-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-software-ready-1650 selects repaired persistent-clock generation for one original Software qualification/current Resume/M/reviewed movement. Published220947e35 fixes first-new independent census startup timeout with prearmed fresh-challenge producer; real Chrome/kernel tests and locked build PASS. Coordinator independently hashed346refs45275983B; predecessor no original page/gameplay; bx_p9mj8t7q archived expiryNULL normalstop_573e96c10f80b6ce. Preserve1008providers29helpers and freshness fences. See docs/re-notes/recoil-original-ready-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-weapon-input-1636 diagnoses delivered Control/action versus guest polling/target acquisition BEFORE another original; no allocation/replay. Published598e4f815 visibly drew pistols but three native Control holds did not stop dog; Lara died, no hit/lock/crossing proof. Coordinator personally reviewed death and hashed608refs817251223B PASS; bx_pg79mqj7 archived expiryNULL stop_aad1229993aa52d1. ARM beforegameplay confirmed;837raw145retained692discarded, noFPS. Preserve614providers29helpers. See docs/re-notes/tr2-dog-encounter-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-action-observer-1652 prepares bounded passive actual poll-return/DIK/slot8-conflict/Action-mask observer and normal generation repin; no allocation/original/replay this task. Published50896dcd5 production direct/RPC Control positives and expected negative controls plus locked build PASS; no demonstrated Control defect, actual game polling and Action mask unobserved. Coordinator independently hashed21refs139205B; no box. Preserve614providers29helpers until explicit normal repin. See docs/re-notes/tr2-weapon-input-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-helmet-1621 uses published275dd018a shared kernel and current bounded endpoint to restore helmet checkpoint/native Load preview, review current pixels, advance beyond second opening and retrieve/hash incremental NewSave by minute10. Published275dd018a repairs real unlinked SIGTERM terminal retirement;8kernel2startup4endpoint/fullbuild PASS. Coordinator hashed89refs283383B noallocation52localstarts absent. Preserve548providers42helpers and source pair. See docs/re-notes/darkstone-exit-terminal-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-cape-1650 restores recovered cape pair/native Load preview and explores second room, independently retrieving/hash-checking early NewSave by minute10. Published404b1e3d6 crossed second opening and native-identified Neophytes Cape autoequipped AC12 to14; LIFE19/35 MANA25 Gold1532 Food47 victories9+0. Coordinator viewed room/inventory and hashed335refs265799084B; final pair NOT reloaded. bx_5mw95z27 archived expiryNULL normalstop_10273603198cf55a; BrowserClose SIGKILL fallback retained, kernel359 normal drain PASS. Preserve548providers42helpers. See docs/re-notes/darkstone-helmet-1621-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
