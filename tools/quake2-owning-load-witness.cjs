@@ -1,6 +1,7 @@
 'use strict';
 // Node-only synchronous owning-CPU observation. This deliberately issues no
-// continuity/source-at-later-use certificate: log_block has no reset barrier.
+// continuity/source-at-later-use certificate: shared writers and interior
+// instructions remain uncovered even with the NodeWorker invalidation facade.
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const {readPE} = require('../lib/pe');
@@ -17,6 +18,31 @@ function attach({getExports, getMemory}) {
   const pins = WINDOWS.map(([pc,size]) => ({pc,size,sha256:hash(file.subarray(pe.va2off(pc),pe.va2off(pc)+size))}));
   let owner, buffer, invalid, calls=0, elapsedNs=0n;
   const records=[];
+  const events=[];
+  let eventCount=0;
+  const execution={entries:0,returns:0,failures:0};
+  const increment=value=>Math.min(Number.MAX_SAFE_INTEGER,value+1);
+  function event(kind, detail, force=false) {
+    eventCount=increment(eventCount);
+    if(events.length===32) events.shift();
+    events.push({sequence:eventCount,kind,detail:String(detail).slice(0,96)});
+    // Setup before the first point cannot stale an acquisition. Once a point
+    // exists, invalidation is sticky: trace rearming cannot resurrect it.
+    if ((records.length || force) && !invalid) invalid=`${kind}: ${detail}`;
+  }
+  function validate() {
+    const e=getExports(), b=getMemory();
+    if (!e || !b) throw Error('missing owning instance/memory');
+    if (owner && (owner!==e || buffer!==b)) throw Error('owning instance/memory replaced');
+    if ((e.get_image_base()>>>0)!==0x400000) throw Error('different module base');
+    for(const p of pins) {
+      const w=e.guest_to_wasm(p.pc)>>>0;
+      if(w===0xf0 || w+p.size>b.byteLength ||
+        (e.guest_to_wasm(p.pc+p.size-1)>>>0)!==w+p.size-1 ||
+        hash(new Uint8Array(b,w,p.size))!==p.sha256) throw Error('native body replaced/missing');
+    }
+    return {e,b};
+  }
   function block(pc, sp) {
     const started=process.hrtime.bigint();
     try {
@@ -65,9 +91,43 @@ function attach({getExports, getMemory}) {
     } catch(error) { invalid=error.message; }
     finally { elapsedNs+=process.hrtime.bigint()-started; }
   }
-  return Object.freeze({block,snapshot:()=>({exactIdentity:'UNKNOWN',
+  // A separate plain facade avoids Proxy invariants on frozen WASM exports.
+  // Cover every production user of the instance, including loader helpers and
+  // readExports (which historically accepts arbitrary function names).
+  function wrapExports(exports) {
+    const reads=new Set(['get_image_base','get_eip','get_esp','get_esi','guest_to_wasm',
+      'get_eax','get_ebx','get_ecx','get_edx','get_edi','get_ebp','get_yield_reason']);
+    return Object.freeze(Object.fromEntries(Object.entries(exports).map(([name,value])=>
+      [name,typeof value!=='function' || reads.has(name) ? value : (...args)=>{
+        if(name==='run') {
+          execution.entries=increment(execution.entries);
+          try { const result=value(...args);execution.returns=increment(execution.returns);return result; }
+          catch(error) {
+            execution.failures=increment(execution.failures);
+            event('execution','run threw',true);
+            throw error;
+          }
+        }
+        event('export',name);
+        return value(...args);
+      }])));
+  }
+  function wrapImports(imports) {
+    for(const [name,fn] of Object.entries(imports)) {
+      if(typeof fn!=='function' || name==='log_block') continue;
+      imports[name]=(...args)=>{event('import',name);return fn(...args);};
+    }
+  }
+  return Object.freeze({block,event,wrapExports,wrapImports,snapshot:()=>{
+    // Pulls detect replacement even if tracing was disabled or no further
+    // callback occurred. This is a point check, never a concurrent-writer lock.
+    if(owner && !invalid) try {validate();} catch(error) {invalid=error.message;}
+    return {exactIdentity:'UNKNOWN',
     reason:invalid||'no reset/reload/instruction coverage barrier; records are point observations only',
-    validPointObservations:!invalid,calls,elapsedNs:elapsedNs.toString(),
-    pins:pins.map(p=>({...p})),exe:{path:EXE,sha256:EXE_SHA},records:records.map(r=>({...r}))})});
+    validPointObservations:!invalid && records.length>0,calls,elapsedNs:elapsedNs.toString(),
+    coverage:{completedLoad:'UNKNOWN',instructions:'UNKNOWN',allWriters:'UNKNOWN',exclusiveOwner:'UNKNOWN'},
+    execution:{...execution},eventCount,events:events.map(e=>({...e})),
+    pins:pins.map(p=>({...p})),exe:{path:EXE,sha256:EXE_SHA},records:records.map(r=>({...r}))};
+  }});
 }
 module.exports={attach,hash,EXE,EXE_SHA};

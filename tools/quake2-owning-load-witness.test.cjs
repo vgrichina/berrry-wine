@@ -105,7 +105,7 @@ async function fixture(mode,enabled) {
   try{m._compile(source,ORIGINAL);}finally{console.log=log;}
   return {...globalThis.quake2FixtureResult,wallNs:(process.hrtime.bigint()-start).toString()};
 }
-async function queuedWorker(enabled) {
+async function queuedWorker(enabled, scenario='use') {
   // Unmodified shipped Worker, real command queue and local log_block import.
   // Small point fixture: native branch after mocked acquisition, then genuine
   // edict/table/headnode instructions. Full native loads above are reused.
@@ -124,7 +124,8 @@ async function queuedWorker(enabled) {
   const module=await WebAssembly.compile(bytes);
   const w=new Worker(path.join(ROOT,'lib/guest-worker.js'));
   let sequence=0,pending,failed;
-  const watchdog=setTimeout(()=>{failed=Error('queued production fixture deadline');pending?.reject(failed);void w.terminate();},60000);
+  const lifecycle={deadlineArmedBeforeInit:true,deadlineFired:false};
+  const watchdog=setTimeout(()=>{lifecycle.deadlineFired=true;failed=Error('queued production fixture deadline');pending?.reject(failed);void w.terminate();},60000);
   w.on('message',m=>{
     if(m.t==='rpc')return broker.serveRpc(m.slot,m.waitEntry);
     if(m.t==='call')return broker.serveCall(m);
@@ -139,13 +140,84 @@ async function queuedWorker(enabled) {
   try{
     await command({t:'init',module,memory,sigs,slot:0,endpointIdentity:2244,quake2LoadObservation:enabled});
     await call('init_thread',0,0x400000,0x401000,0x440000,0,0,0,0);
-    await call('set_trace_esp',1,0x4117b0,0x42f0f5);
+    const staging=(await call('get_staging')).value;
+    mem.set(pe.buf,staging);
+    if(scenario==='import')await call('set_trace_eip_range',1,0x4118d9,0x4118d9);
+    await call('set_trace_esp',scenario==='noTrace'?0:1,0x4117b0,0x42f0f5);
     await call('set_esp',sp);await call('set_esi',160);await call('set_eax',source);await call('set_ebx',0);
     // Native CMP/JNE actually chooses the post-read acquisition path.
     await call('set_eip',0x4118c5);await call('run',1);await call('run',1);
     const acquired=(await command({t:'quake2LoadObservation'})).observation;
-    if(enabled){assert.equal(acquired.records.length,1);assert.equal(acquired.records[0].sha256,api.hash(Buffer.alloc(160,0x65)));}
+    if(enabled){assert.equal(acquired.records.length,scenario==='noTrace'?0:1);
+      if(scenario!=='noTrace')assert.equal(acquired.records[0].sha256,api.hash(Buffer.alloc(160,0x65)));}
     else assert.equal(acquired,null);
+    if(scenario!=='use') {
+      let outcome=null,activeMemory=memory;
+      const expect={reset:/export: init_thread/,reload:/export: load_pe/,disarm:/export: set_trace_esp/,
+        rearm:/export: set_trace_esp/,readExportMutation:/export: set_eax/,import:/import: log_eip/,
+        code:/native body replaced/,module:/lifecycle: worker reinit/,memory:/lifecycle: worker reinit/,
+        missingModule:/lifecycle: worker reinit/,missingMemory:/lifecycle: worker reinit/,
+        executionError:/execution: run threw/};
+      if(scenario==='reset')outcome=(await call('init_thread',0,0x400000,0x401000,0x440000,0,0,0,0)).value;
+      else if(scenario==='reload')outcome=(await call('load_pe',pe.buf.length)).value;
+      else if(scenario==='disarm'||scenario==='rearm') {
+        await call('set_trace_esp',0,0,0);
+        if(scenario==='rearm')for(let i=0;i<40;i++)await call('set_trace_esp',1,0x4117b0,0x42f0f5);
+      } else if(scenario==='readExportMutation')outcome=(await command({t:'readExports',names:['set_eax']})).values;
+      else if(scenario==='code')mem[wa(0x410e50)]^=1;
+      else if(scenario==='writerGap')mem[wa(source)]^=1;
+      else if(scenario==='executionError') {
+        await assert.rejects(call('run',1n),/BigInt/);outcome='expected export argument error';
+      } else if(['module','memory','missingModule','missingMemory'].includes(scenario)) {
+        if(scenario==='memory')activeMemory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
+        try {
+          await command({t:'init',module:scenario==='missingModule'?null:await WebAssembly.compile(bytes),
+            memory:scenario==='missingMemory'?null:activeMemory,sigs,slot:0,endpointIdentity:2258,quake2LoadObservation:enabled});
+        } catch(error) {
+          assert(['missingModule','missingMemory'].includes(scenario));outcome='expected init error';
+        }
+      } else assert(['positive','missingCoverage','import','noTrace'].includes(scenario),scenario);
+      const status=await command({t:'quake2LoadObservation'});
+      const observation=['module','memory','missingModule','missingMemory'].includes(scenario)?status.retiredObservation:status.observation;
+      if(enabled) {
+        assert.equal(observation.exactIdentity,'UNKNOWN');
+        assert.deepEqual(observation.coverage,{completedLoad:'UNKNOWN',instructions:'UNKNOWN',allWriters:'UNKNOWN',exclusiveOwner:'UNKNOWN'});
+        assert.equal(observation.validPointObservations,!expect[scenario] && scenario!=='noTrace',JSON.stringify(observation));
+        if(expect[scenario])assert.match(observation.reason,expect[scenario]);
+        assert(observation.events.length<=32);
+        if(scenario==='rearm') {
+          assert.equal(observation.events.length,32);
+          assert(observation.eventCount>32);
+          assert.equal(observation.events.at(-1).sequence,observation.eventCount);
+        }
+        if(scenario==='executionError')assert.deepEqual(observation.execution,{entries:3,returns:2,failures:1});
+        if(['module','memory','missingModule','missingMemory'].includes(scenario)) {
+          assert.equal(observation.events.at(-1).kind,'lifecycle');
+          if(status.observation) {
+            assert.equal(status.observation.records.length,0);
+            assert.equal(status.observation.validPointObservations,false);
+          }
+        }
+        if(scenario==='writerGap')assert.notEqual(observation.records[0].sha256,api.hash(mem.subarray(wa(source),wa(source)+160)));
+        if(scenario==='missingCoverage') {
+          // Caller booleans are ignored by the actual queued status path.
+          const claimed=await command({t:'quake2LoadObservation',exclusiveOwner:true,allWriters:true,continuous:true,completedLoad:true});
+          assert.deepEqual(claimed.observation,status.observation);
+          assert.deepEqual(claimed.retiredObservation,status.retiredObservation);
+        }
+        // Sticky invalidation, including trace rearming; no later block may
+        // append to old evidence even when genuine execution resumes.
+      } else assert.equal(observation,null);
+      if(['reset','disarm','rearm','code','readExportMutation'].includes(scenario)) {
+        const count=observation?.records.length;
+        await call('set_eip',0x42f0b0);await call('set_esp',sp);await call('run',1);
+        if(enabled)assert.equal((await command({t:'quake2LoadObservation'})).observation.records.length,count);
+      }
+      const state=(await command({t:'readExports',names:['get_eip','get_eax','get_esp']})).values;
+      return {scenario,state,outcome,acquired,observation,status,lifecycle,
+        guestHash:api.hash(new Uint8Array(activeMemory.buffer,0x12000,0x8000000-0x12000)),
+        module:{path:'build/wine-assembly.wasm',sha256:api.hash(bytes),size:bytes.length}};
+    }
     await call('set_eip',0x42f0b0);await call('set_esp',sp);
     // Original use completes to the synthetic return sentinel through real RET.
     put(sp,0x1100000);
@@ -153,8 +225,9 @@ async function queuedWorker(enabled) {
     const state=(await command({t:'readExports',names:['get_eip','get_eax','get_esp']})).values;
     assert.equal(state.get_eax,4948);assert.equal(state.get_eip,0x1100000);
     const observation=(await command({t:'quake2LoadObservation'})).observation;
-    if(enabled){assert.equal(observation.records[1].candidateHeadnode,4948);
-      assert.equal(observation.records[2].kind,'HEADNODE_READ_BLOCK');assert.equal(observation.records[2].pointer,pointer);
+    if(enabled){assert.equal(observation.records.length,1);
+      assert.equal(observation.validPointObservations,false);
+      assert.match(observation.reason,/export: set_eip/);
       assert.equal(observation.exactIdentity,'UNKNOWN');}
     // Disarm trace, reset same instance, reinit Worker: all later identity is
     // UNKNOWN or absent, never inferred from old source records.
@@ -162,11 +235,16 @@ async function queuedWorker(enabled) {
     if(enabled)assert.equal((await command({t:'quake2LoadObservation'})).observation.exactIdentity,'UNKNOWN');
     await command({t:'init',module,memory,sigs,slot:0,endpointIdentity:2245});
     assert.equal((await command({t:'quake2LoadObservation'})).observation,null);
-    return {state,observation,module:{path:'build/wine-assembly.wasm',sha256:api.hash(bytes),size:bytes.length}};
-  }finally{clearTimeout(watchdog);await w.terminate();}
+    return {state,observation,lifecycle,guestHash:api.hash(mem.subarray(0x12000,0x8000000)),
+      module:{path:'build/wine-assembly.wasm',sha256:api.hash(bytes),size:bytes.length}};
+  }finally{
+    clearTimeout(watchdog);lifecycle.deadlineCleared=true;
+    lifecycle.terminationCode=await w.terminate();lifecycle.terminationAwaited=true;
+    lifecycle.threadIdAfter=w.threadId;
+  }
 }
 if(!isMainThread) parentPort.once('message',()=>fixture('rpc',workerData.enabled).then(r=>parentPort.postMessage(r)).catch(e=>{throw e;}));
-else {
+else if(require.main===module) {
   async function worker(enabled){
     const w=new Worker(__filename,{workerData:{enabled}});
     return new Promise((resolve,reject)=>{
@@ -194,3 +272,4 @@ else {
     console.log(JSON.stringify({pass:true,original:{path:ORIGINAL,sha256:originalSHA},results,queuedOff,queuedOn}));
   })().catch(e=>{console.error(e);process.exitCode=1;});
 }
+module.exports={queuedWorker};
