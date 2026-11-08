@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-probe-journal-1753 implements/tests bounded six-complete-response durable transaction before any certificate/input, keeping original250ms/fiveSecond timestamps and freshowner/context/census fences unchanged. Reviewedf48707051 source/tests+561refs231574095B HASHpass: asyncsink causalCDP162-238 to92-102ms, durability162-369ms stillUNQUALIFIED nooriginal/Resume/input. Native13 strict46 owner28+sink/fullbuildPASS accepted1066/original851immutable selected1067 needs relocateddriverpatch+repin. bx_2qvsxyyn archivedexpiryNULL stop_6d70e1f754f84c70 finalnormal156drain earlieroutertimeout/unresolvedlineages retained. See docs/re-notes/recoil-source-transport-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-compound-journal-1823 stages phaseJSON+decodedPNG with six sources/proofs in bounded streaming durable journal, precreates durable name outsidecompound, finalsync before unchanged250ms/fiveSecond/freshowner/census fences. Reviewed706a23082 source/note+560refs151438922B independentHASHpass: journal tests/native13 strict46 owner28 clock7 closure13 selection8/fullbuildPASS but actual sources745/749ms UNQUALIFIED phase saves214/319ms plus sync. Nooriginal/input/replay; original851/accepted1066/predecessor1067 immutable. bx_q54tv2w3 archivedexpiryNULL stop_0f0339ee0901f6c3 normal158+176drain unresolved0 cloneUntracedunaudited. See docs/re-notes/recoil-probe-journal-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
