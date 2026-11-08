@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-predecode-native-1250 validates exclusiveDX deferredGDIpreparation2666626f9 then reviewedmovement/weapon onlyafterqualifiedDXjoins. Priororiginal534raw0qualified nativeclientgeometryscratchBEFOREdecode; actualnonemptyWATclientrect exactbaseline0/fixed1red29guards/placement/Workerorder/lockedbuildPASS. Independentlyhashed95refs168302266B; allocationorderingviolation/truncatedUNKNOWNretained. bx_2b52t3h9 archived normalstop_734c8dd2681a7a69 expiryNULL. Note: docs/re-notes/tr2-full-facade-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-writer-boundary-native-1304 validates efae2c6d3 host/rendererALLwriterdeferBEFOREdecode then qualifiedDXjoins/reviewedmovement. Prior113raw0qualified predecodeactive1 despite mainboundary; actualsameWATclientrect twoindependentwriters fixedsamependingraw1qualified1red vs exactGitbaselineFAIL,29guards/rAF/nonDOM/placement/transient/sourceLifetime/census/lockedbuildPASS. Independentlyhashed96refs55928814B bx_bryqb7fr archivednormalstop_c632b48c26c551c7 expiryNULL. Note: docs/re-notes/tr2-predecode-native-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
