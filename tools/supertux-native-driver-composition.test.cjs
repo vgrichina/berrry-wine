@@ -4,23 +4,46 @@ const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
 const readline = require('node:readline');
-const {createTransport, compose, applyPatch} = require('./supertux-native-driver-composition.cjs');
+const {createTransport, compose, applyPatch, runController} = require('./supertux-native-driver-composition.cjs');
 const lifecycle = require('./supertux-native-lifecycle.cjs');
 const root = path.resolve(__dirname, '..');
 const run = process.env.COMPOSITION_RUN;
 assert(run && path.isAbsolute(run), 'explicit evidence directory');
 
 (async () => {
-  const manifest = JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(run + '/composition-pins.json.gz')));
+  const manifest = JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(process.env.COMPOSITION_MANIFEST || run + '/composition-pins.json.gz')));
   const integrated = compose({root, manifest});
   assert(integrated.source.indexOf('await pauseController?.settle()') < integrated.source.indexOf('await logs.drainStreams()'));
   assert(!integrated.source.includes('pending.delete(n)'));
+  assert(integrated.source.includes("if(c.action==='pause-step'){pauseCommandId=c.id;"));
+  assert(integrated.source.includes("save:r=>log('pause-composition.jsonl',{id:pauseCommandId,...r})"));
   assert.throws(() => compose({root, manifest: {...manifest, files: manifest.files.map((pin, i) =>
     i === 0 ? {...pin, sha256: '0'.repeat(64)} : pin)}}));
   assert.throws(() => compose({root, manifest: {...manifest, files: manifest.files.filter(pin =>
     pin.path !== 'tools/supertux-native-lifecycle.cjs')}}), /unique pinned provider/);
   assert.throws(() => applyPatch('a\nb\n', '--- a\n+++ a\n@@ -1,1 +1,1 @@\n-c\n+d\n'));
   assert.throws(() => applyPatch('a\nb\n', '--- a\n+++ a\n@@ -1,2 +1,1 @@\n-a\n+d\n'));
+
+  const retained = require('../scratch/runs/20261108-supertux-native-pause-controller-2251/driver.cjs');
+  const pins = Object.fromEntries(retained.binding.FIELDS.map(field => [field, 'fixture-' + field]));
+  const stale = Object.assign(Error('stale scene refused'), {code: 'STALE_SCENE_BEFORE_DISPATCH'});
+  let effects = 0;
+  const controller = require('./supertux-native-pause-controller.cjs').create({
+    chain: {readLive: async () => ({identity: pins}), admit: async () => {throw stale;}},
+    send: () => {effects++; throw Error('must not dispatch');}, session: 'page',
+    identity: pins, deadline: Date.now() + 20000, input: retained.input, binding: retained.binding});
+  const dir = run + '/sticky-fixture-' + process.pid;fs.mkdirSync(dir);fs.mkdirSync(dir + '/commands');
+  const restoreStorage = require(run + '/json-storage.cjs').install(dir);
+  fs.writeFileSync(dir + '/commands/0.json.gz', require('node:zlib').gzipSync(JSON.stringify({id: 'stale', action: 'pause-step'})));
+  try {
+    await assert.rejects(retained.transport.consume(dir, 0, async () => {
+      await runController(controller, {id: 'stale', keys: ['ArrowRight'], holdMs: 100});
+    }), error => error.message.includes('controller UNKNOWN') && error.cause === stale && !error.code);
+  } finally { restoreStorage(); }
+  assert(controller.closed && effects === 0);
+  assert(fs.existsSync(dir + '/first-failure.json'));
+  assert(!fs.existsSync(dir + '/reply-0.json'), 'sticky UNKNOWN cannot become refreshable stale ACK');
+  await controller.settle();
 
   let child, closed;
   // Observable finite cap precedes the actual Node child, never Chrome/game.

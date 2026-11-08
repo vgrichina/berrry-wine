@@ -100,6 +100,17 @@ function replaceOnce(source, before, after) {
   return source.replace(before, after);
 }
 
+// The generic retained transport allows a fresh capture after a zero-effect
+// stale refusal. The persistent Pause controller instead closes on that same
+// exception. Preserve the controller's stronger UNKNOWN across this boundary.
+async function runController(controller, command) {
+  try { return await controller.run(command); }
+  catch (cause) {
+    if (controller.closed) throw Error('native Pause controller UNKNOWN; no replay', {cause});
+    throw cause;
+  }
+}
+
 // manifest contains only PATH+HASH references. The caller pins its exact bytes
 // in the final startup barrier; compose rechecks every provider before launch.
 // No source/media/module copy is written, and this function starts no runtime.
@@ -119,6 +130,13 @@ function compose({root, manifest}) {
       .map(name => 'scratch/runs/20261108-supertux-short-step-progression-2236/' + name)]) lookup(required);
   const base = manifest.base, patch = manifest.patch;
   let source = applyPatch(lookup(base), zlib.gunzipSync(lookup(patch)).toString());
+  source = replaceOnce(source, 'let pauseController;', 'let pauseCommandId,pauseController;');
+  source = replaceOnce(source, "if(c.action==='pause-step'){", "if(c.action==='pause-step'){pauseCommandId=c.id;");
+  source = replaceOnce(source, "save:r=>log('pause-composition.jsonl',{id:c.id,...r})",
+    "save:r=>log('pause-composition.jsonl',{id:pauseCommandId,...r})");
+  source = replaceOnce(source,
+    'await pauseController.run({id:c.id,review,observation:c.observation,keys:c.keys,holdMs:c.holdMs,markDispatch});',
+    "await require(root+'/tools/supertux-native-driver-composition.cjs').runController(pauseController,{id:c.id,review,observation:c.observation,keys:c.keys,holdMs:c.holdMs,markDispatch});");
   source = replaceOnce(source, "const run=__dirname,root=path.resolve(run,'../../..'),out=run+'/'",
     "const run=(()=>{const p=process.env.SUPERTUX_RUN_DIRECTORY;assert(p&&path.isAbsolute(p),'explicit fresh run directory');return p;})(),root=path.resolve(__dirname,'../../..'),out=run+'/'");
   // Keep helper resolution at the accepted retained driver's original path.
@@ -139,9 +157,9 @@ function compose({root, manifest}) {
     "cdp.disconnect(Error('browser terminal; unresolved CDP UNKNOWN; no replay'));await pauseController?.settle();await require('./input.cjs').drain();save('physical-terminal-drain.json',{pending:require('./input.cjs').physical.size,at:Date.now()});");
   assert(source.includes("supertux-native-lifecycle.cjs').ready({browser"));
   assert(source.includes("supertux-native-lifecycle.cjs').close({browser"));
-  assert(source.includes('await pauseController.run({id:c.id,review,observation:c.observation'));
+  assert(source.includes('.runController(pauseController,{id:c.id,review,observation:c.observation'));
   new vm.Script(Module.wrap(source), {filename: base});
   return {source, filename: path.resolve(root, base), sha256: sha(source), providers: manifest.files.length};
 }
 
-module.exports = {createTransport, compose, applyPatch, verify};
+module.exports = {createTransport, compose, applyPatch, verify, runController};
