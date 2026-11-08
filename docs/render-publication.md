@@ -164,10 +164,18 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   `snapshotEpoch`. Reset increments the epoch before submission and refuses
   snapshots until the guest consumes the reset result and residency is cleared.
   Old epochs remain invalid afterward; a failed reset keeps snapshot admission
-  closed until device recreation. Tests hold an earlier draw to delay reset,
+  closed until a successful reset retry or device recreation. Pending reset and
+  snapshot validity are separate: consuming failure releases the pending flag
+  without validating producer snapshots. A pre-admission allocation failure
+  must not permanently disable a healthy device's reset path. Tests hold an earlier draw to delay reset,
   reject overlapping resets and old/current snapshots while pending, and verify
-  a fresh definition after finalization. This protects receiving-side lifetime;
-  it does not by itself serialize native device setters with producer capture.
+  a fresh definition after finalization. This protects receiving-side lifetime.
+  Native reset checks creation-thread ownership before touching an existing
+  plan, polling a render token or changing device-lost state. A second native
+  instance sharing guest memory is tested against both healthy and pending
+  resets; it cannot poll or dispose the owner's transaction. The reset and
+  presentation regression covers recoverable pre-admission failures too.
+  It does not by itself serialize native device setters with producer capture.
   Generated D3D8/9 dispatch now guards synchronous handler execution and owned
   host capture with one process-wide native try-lock. Contention uses the
   existing thunk retry/yield protocol without popping arguments; it never spins

@@ -38,6 +38,9 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
   (func (export "sampler") (param $d i32) (param $stage i32) (param $value i32) (result i32)
     (call $d3d9_sampler_state (local.get $d) (local.get $stage) (i32.const 1) (local.get $value) (i32.const 0)) (i32.load offset=0 (global.get $reg_base)))
   (func (export "program") (param $d i32) (result i32) (call $d3d9_program_state (local.get $d)))
+  (func (export "foreign_thread") (param $regs i32)
+    (global.set $reg_base (local.get $regs))
+    (global.set $current_thread_id (i32.const 2)))
   (func (export "scissor") (param $d i32) (param $p i32) (param $get i32) (result i32)
     (call $d3d9_scissor (local.get $d) (local.get $p) (local.get $get)) (i32.load offset=0 (global.get $reg_base)))
   ;; $heap_bins_flush first, exactly as the shipped "get_free_list" export
@@ -59,6 +62,19 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
       (i32.shl (load.field DxObject height (call $d3ddev_rt_entry (local.get $d))) (i32.const 16))))`});
  e.d3dim_worker_init(0x400000);e.init_dx_com_thunks();
  const pp=e.guest_alloc(64),out=e.guest_alloc(4),wa=p=>e.guest_to_wasm(p)>>>0;
+ const foreignHost={memory};let foreignCalls=0;
+ for(const [name,sig]of Object.entries(sigs))foreignHost[name]=sig.results?.length?()=>0:()=>{};
+ foreignHost.gpu_gl_call=()=>{foreignCalls++;return -1;};
+ const foreign=(await WebAssembly.instantiate(module,{host:foreignHost})).exports;
+ foreign.d3dim_worker_init(0x400000);foreign.foreign_thread(wa(e.guest_alloc(64)));
+ const refuseForeignReset=d=>{
+  const program=e.program(d),before=new Uint8Array(memory.buffer,wa(program),25680).slice();
+  const token=e.get_d3d_render_token(),calls=foreignCalls;
+  assert.strictEqual(foreign.reset(d,pp)>>>0,0x8876086c,'only creating thread can reset');
+  assert.strictEqual(foreignCalls,calls,'foreign reset cannot poll another thread transaction');
+  assert.strictEqual(e.get_d3d_render_token(),token,'owner keeps its completion token');
+  assert.deepStrictEqual(new Uint8Array(memory.buffer,wa(program),25680),before,'foreign reset preserves state and plan');
+ };
  const params=(overrides={})=>{const words=[8,8,21,1,0,0,1,1,1,0,0,0,0,0x80000000];
   for(const [index,value]of Object.entries(overrides))words[index]=value;
   new Uint8Array(memory.buffer,wa(pp),64).fill(0);words.forEach((v,i)=>e.guest_write32(pp+i*4,v));};
@@ -97,6 +113,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
    assert.strictEqual(await invoke(e.release,fullscreen565),0);
    params({13:0});assert.strictEqual(e.create(pp,out),0);const d=e.guest_read32(out)>>>0;
    assert.strictEqual(await invoke(e.clear,d),0,'create real backend before Reset');
+   refuseForeignReset(d);
    e.present(d);assert(e.get_d3d_render_token()<=-2,'DEFAULT waits for display boundary even for direct software');
    await bridge.wait(e.get_d3d_render_token());assert.strictEqual(await invoke(e.present,d),0);
    const extraTextures=[4,5].map(stage=>{
@@ -154,7 +171,11 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
    assert.strictEqual(e.size(d),12|(10<<16),'windowed zero dimensions use client');
    params({0:800,1:600,8:0,12:60});const before=moves.length;
    let result=e.reset(d,pp);
-   if(async){assert(e.get_d3d_render_token()<=-2);assert.strictEqual(moves.length,before,'pending Reset does not resize window');}
+   if(async){
+    assert(e.get_d3d_render_token()<=-2);assert.strictEqual(moves.length,before,'pending Reset does not resize window');
+    assert(e.guest_read32(e.program(d)+21768),'native reset plan is live');
+    refuseForeignReset(d);
+   }
    while(e.get_d3d_render_token()){await bridge.wait(e.get_d3d_render_token());result=e.reset(d,pp);}
    assert.strictEqual(result,0);assert.strictEqual(e.size(d),800|(600<<16));
    assert.strictEqual(e.desktop(),800|(600<<16),'fullscreen publishes virtual display mode');

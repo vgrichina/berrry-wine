@@ -356,7 +356,7 @@ test('reset rejects captured snapshots until finalization and never revives an o
   }finally{resume?.();await f.bridge.close();}
 });
 
-test('failed reset keeps snapshot admission closed',async()=>{
+test('failed reset keeps snapshots closed but permits a successful reset retry',async()=>{
   const f=fixture();
   try{
     assert.equal(f.draw(),1);await f.drain();
@@ -367,8 +367,18 @@ test('failed reset keeps snapshot admission closed',async()=>{
     };
     const token=f.bridge.call(0x30009,200,7);assert(token<=-2);
     await f.bridge.wait(token);assert.equal(f.bridge.call(0x30007,0,token),-1);
-    assert.equal(entry.resetting,true);
-    await assert.rejects(f.bridge.submitSnapshot({deviceId:7,generation:entry.queue.generation,
-      snapshotEpoch:entry.snapshotEpoch,opcode:OP.CLEAR,payload:{}}),/stale/);
+    assert.equal(entry.resetting,false);
+    const failed={deviceId:7,generation:entry.queue.generation,
+      snapshotEpoch:entry.snapshotEpoch,opcode:OP.CLEAR,payload:{}};
+    await assert.rejects(f.bridge.submitSnapshot(failed),/stale/);
+    f.bridge._submit=submit;
+    f.set(232,2);f.set(236,2);f.set(240,22);
+    const retry=f.bridge.call(0x30009,200,7);assert(retry<=-2);
+    await f.bridge.wait(retry);assert.equal(f.bridge.call(0x30007,0,retry),1);
+    assert.equal(entry.snapshotReady,true);
+    assert.equal(entry.snapshotEpoch,failed.snapshotEpoch+1);
+    await assert.rejects(f.bridge.submitSnapshot(failed),/stale/);
+    assert.equal(await f.bridge.submitSnapshot({...failed,snapshotEpoch:entry.snapshotEpoch}),1);
+    await f.drain();
   }finally{await f.bridge.close();}
 });
