@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-dog-encounter-1610 must survive observed dog encounter before far-opening crossing; ordinary native draw/action authorized with reviewed target, current admitted controls and independent releases. Published7a041fc20 advanced farther but Lara died; crossing/jump unproven. Observe ARM before gameplay now confirmed,546raw=79retained+467discarded. Coordinator reviewed opening/GameOver and hashed343refs347154484B; bx_s6jxweu2 archived expiryNULL stop_14219da97d66b403. Preserve614providers29helpers. See docs/re-notes/tr2-alley-onward-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-weapon-input-1636 diagnoses delivered Control/action versus guest polling/target acquisition BEFORE another original; no allocation/replay. Published598e4f815 visibly drew pistols but three native Control holds did not stop dog; Lara died, no hit/lock/crossing proof. Coordinator personally reviewed death and hashed608refs817251223B PASS; bx_pg79mqj7 archived expiryNULL stop_aad1229993aa52d1. ARM beforegameplay confirmed;837raw145retained692discarded, noFPS. Preserve614providers29helpers. See docs/re-notes/tr2-dog-encounter-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
