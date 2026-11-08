@@ -1,5 +1,24 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: optional capture-state change does not resolve the page stall
+
+Published `a7581bcd5`, run `20261108-browser-page-capture-cause`, removes
+an avoidable supplemental-state dependency in controlled production Worker
+tests, retaining all strict identity/module/image/admission checks. It does
+not fix the fresh original. SoftwareGL reaches Prologue loading, then page
+heartbeats stop before the final owner evaluation is sent. No entry probe,
+stack or profile is recovered for that request before the unchanged deadline.
+Input closes on UNKNOWN; WebGL is skipped. No active operation or emulator
+defect is identified, and lost object probe payloads limit interpretation.
+
+The coordinator inspected the last loading frame and independently verified
+all208 artifact references. Both modules match f965;627pins/399HTTP checks,
+18 preceding ACKs and normal archived shutdown pass. New work qualifies an
+independently readable, durably streamed journal/trace before another run.
+The prior current-module cinematic remains valid; Thrall control/tutorial,
+paired gameplay, parity, FPS, audio, campaign completion and full27 are open.
+[Composition controls, original stall and diagnostic gaps](re-notes/browser-page-capture-cause-20261108.md).
+
 ## November 8: Warcraft producer readiness and current Prologue introduction
 
 Published `9fd4b4a5c`, run `20261108-warcraft3-producer-ready-gameplay`,
