@@ -32,7 +32,7 @@ fullBaselineModule.paths = module.paths;
 // the export facade, for an in-process baseline/fixed comparison.
 assert(apiSource.includes('this.compositionReads?.get(version)'));
 fullBaselineModule._compile(apiSource.replace('this.compositionReads?.get(version)', 'null'),root+'/lib/render-worker.js');
-async function fixture(corrected,variant='actual-layer',observed=false){
+async function fixture(corrected,variant='actual-layer',observed=false,nativeClientRect=false){
  const API=observed==='full-baseline'?fullBaselineModule.exports:observed==='menu-baseline'?menuBaselineModule.exports:corrected?productionAPI:baselineAPI;
  const memory=new WebAssembly.Memory({initial:8192,maximum:32768,shared:true}),imports={host:{memory}};
  let windowHost, callbackEpoch, callbackRenderer, callbackNative, compositorTicket;
@@ -69,6 +69,16 @@ async function fixture(corrected,variant='actual-layer',observed=false){
  await dispatch({t:'legacy-producer-observation',action:'arm',options:{ownerGeneration:'clear-integration-fixture',maxRecords:8,writerEpochBuffer:epoch.buffer,surfaceVersionBuffer:journal.buffer}});
  const observation=c.entry(1).producerObservation;assert(observation.active);
  const renderer=new Win98Renderer(createCanvas(2,2));renderer.scheduleRepaint=()=>{};renderer.createWindow(0x77,0x90000000,0,0,2,2,'',0,native,memory);
+ if(nativeClientRect || variant.startsWith('native-client-rect')) {
+   // A real HWND has a nonempty native client rectangle. An absent table
+   // entry skips _computeClientRect's screen-origin calls and hid the
+   // pre-decoder getWindowCanvas scratch writers in the earlier fixture.
+   native.exports.test_wnd_table_set(0x77,0);
+   const client=new DataView(memory.buffer);
+   client.setUint32(BASE.CLIENT_RECT+8,2,true);
+   client.setUint32(BASE.CLIENT_RECT+12,2,true);
+   assert.equal(native.exports.get_client_rect_r(0x77),2);
+ }
  const join=new API.SurfacePublicationJoin({epoch,journal,memory,ownerScope:observation.owner.scope,workerSlot:3,endpointId:1,owner:observation.owner,observationGeneration:observation.generation,renderer});
  // Include the actual production export facade: direct export stubs hid the
  // presenter's own getter transitions and host-version invalidations.
@@ -118,7 +128,7 @@ async function fixture(corrected,variant='actual-layer',observed=false){
  if(variant==='host-version')epoch.invalidateVersions();
  if(variant==='page-dirty')native.exports.guest_write32(0x50000000+dib-BASE.DIB_BACKING_BASE,0x00330000);
  if(variant==='poison')epoch.invalidate();
- const ticket=variant==='overlap'?epoch.begin():null;
+ const ticket=variant==='overlap'||variant==='native-client-rect-overlap'?epoch.begin():null;
  assert.equal(gdi.presentBestDxOffscreen(true),1,'actual native layer decoder runs');
  const layer=renderer.windows[0x77]._dxFrameLayer;
  assert(layer && layer.canvas !== renderer.windows[0x77]._backCanvas);
@@ -142,7 +152,7 @@ async function fixture(corrected,variant='actual-layer',observed=false){
  renderer.repaint();
  if(compositorTicket)epoch.end(compositorTicket);
  if(variant.startsWith('compositor-'))assert(injected,'negative ran inside actual WAT host callback');
- const expected=corrected && observed!=='full-baseline' && observed!=='menu-baseline' && variant==='actual-layer'?1:0;
+ const expected=corrected && observed!=='full-baseline' && observed!=='menu-baseline' && ['actual-layer','native-client-rect'].includes(variant)?1:0;
  if(typeof observed==='string' && observed.startsWith('full') && process.env.FULL_FACADE_DIAGNOSTIC) console.log(JSON.stringify({variant,exportCalls,hostCallbacks,hostVersion:Atomics.load(epoch.words,3),qualified:join.rows.length,ledger:join.ledger}));
  assert.equal(join.rows.length,expected,variant);
  if(expected){
@@ -151,7 +161,7 @@ async function fixture(corrected,variant='actual-layer',observed=false){
      assert(row.canonicalRead.compositionAdmission,'source admitted before compositor exports');
      assert.equal(row.canonicalRead.compositionAdmission.hostVersion,first.hostVersion);
      assert(Atomics.load(epoch.words,3)>first.hostVersion,'scratch writes still invalidate host versions');
-     assert.equal(hostCallbacks.length,2,'real X/Y host callbacks write rectangle scratch');
+     assert.equal(hostCallbacks.length,nativeClientRect||variant==='native-client-rect'?4:2,'real X/Y host callbacks write rectangle scratch');
      assert(hostCallbacks.every(c=>c.rect.join(',')==='0,0,2,2'));
    }
    assert.equal(row.sourceVersion,first.sourceVersion);
@@ -221,12 +231,26 @@ function menuBranchGuards(){
  }
  return {passed:true,nativeValidAndAbsentWindow:true,nonzeroEmptyAndPopulatedBlobInvalidation:true,legacyConservative:true,exclusionAndPoison:true};
 }
+async function nativeClientCases(){
+   const positive=await fixture(true,'native-client-rect','full');
+   const overlap=await fixture(true,'native-client-rect-overlap','full');
+   const negative=[];
+   for(const variant of ['wrong-window-owner','wrong-layer','wrong-owner','stale-request','covered-gdi','page-dirty','dirty-after-decode','host-version','host-after-decode','overlap','poison','menu','caret','overlay','cache-blocked','owner-after-decode','resized-after-decode','windowed-device','gamma','wrong-format','compositor-poison','compositor-overlap','compositor-owner','compositor-page','compositor-token','compositor-size','forged-cache-token','missing-cache-token','entry-overlap-released'])negative.push(await fixture(true,variant,'full',true));
+   const result={passed:true,positive,overlap,negative,moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
+   return result;
+}
 (async()=>{
+ if(process.env.NATIVE_CLIENT_RECT_ONLY){
+   const result=await nativeClientCases();
+   if(process.env.DIRECTX_LAYER_RESULT)fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
+   console.log(JSON.stringify({passed:true,positive:result.positive.qualified,overlap:result.overlap.qualified,negative:result.negative.map(x=>({variant:x.variant,qualified:x.qualified}))}));return;
+ }
  if(process.env.FULL_FACADE_ONLY){console.log(JSON.stringify(await fixture(true,'actual-layer','full')));return;}
  if(process.env.MENU_EXPORTS_ONLY){console.log(JSON.stringify({baseline:await fixture(true,'actual-layer','menu-baseline'),corrected:await fixture(true,'actual-layer','menu-query')}));return;}
  if(process.env.OBSERVED_EXPORTS_ONLY){console.log(JSON.stringify(await fixture(true,'actual-layer',true)));return;}
  const getterGuards=getterExclusion();
  const menuGuards=menuBranchGuards();
+ const nativeClientRect=await nativeClientCases();
  const baseline = await fixture(false);
  const corrected = await fixture(true);
  const negative = [];
@@ -242,7 +266,7 @@ function menuBranchGuards(){
  const fullCorrected=await fixture(true,'actual-layer','full');
  const fullNegative=[];
  for(const variant of [...negative.map(x=>x.variant),'compositor-poison','compositor-overlap','compositor-owner','compositor-page','compositor-token','compositor-size','forged-cache-token','missing-cache-token','entry-overlap-released'])fullNegative.push(await fixture(true,variant,'full'));
- const result = {passed:true,fullBaseline,fullCorrected,fullNegative,baseline,corrected,negative,observed,observedNegative,getterGuards,
+ const result = {passed:true,nativeClientRect,fullBaseline,fullCorrected,fullNegative,baseline,corrected,negative,observed,observedNegative,getterGuards,
    menuBaseline,menuCorrected,menuNegative,menuGuards,
    moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
  if(process.env.DIRECTX_LAYER_RESULT) fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
