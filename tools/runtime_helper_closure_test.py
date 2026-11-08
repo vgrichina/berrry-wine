@@ -27,6 +27,31 @@ class ClosureTests(unittest.TestCase):
   with self.assertRaisesRegex(AssertionError,'unprovisioned'):self.check(p)
   with self.assertRaisesRegex(AssertionError,'unprovisioned'):validate(p,self.root,self.new,['bound.cjs'],[self.old],runtime_environment={'FIXTURE':'1'})
   self.assertTrue(validate(p,self.root,self.new,['bound.cjs'],[self.old],runtime_environment={'FIXTURE':''})['passed'])
+ def test_inactive_guard_cannot_cover_another_import(self):
+  samples=[
+   "require('./missing.cjs');\nconst fixture=process.env.FIXTURE?require('./missing.cjs'):undefined;\n",
+   "const fixture=process.env.FIXTURE?require('./missing.cjs'):undefined;\nrequire('./missing.cjs');\n",
+   "const fixture=process.env.FIXTURE?require('./missing.cjs'):require('./missing.cjs');\n",
+   "const fixture=process.env.FIXTURE?require('./missing.cjs'):undefined;require('./missing.cjs');\n",
+  ]
+  for source in samples:
+   with self.subTest(source=source):
+    (self.root/self.new/'bound.cjs').write_text(source)
+    with self.assertRaisesRegex(AssertionError,'unprovisioned'):
+     validate(self.repair(),self.root,self.new,['bound.cjs'],[self.old],runtime_environment={'FIXTURE':''})
+ def test_guard_must_control_the_exact_import_expression(self):
+  samples=[
+   "const fixture=true || process.env.FIXTURE?require('./missing.cjs'):undefined;\n",
+   "const fixture=true ||\nprocess.env.FIXTURE?require('./missing.cjs'):undefined;\n",
+   "// ;process.env.FIXTURE?\nrequire('./missing.cjs');\n",
+   "const fixture=process.env.FIXTURE?'yes':require('./missing.cjs');\n",
+   "const fixture=process.env.FIXTURE?require('./missing.cjs'):undefined;\n// process.env.FIXTURE?require('./missing.cjs')\nrequire('./missing.cjs');\n",
+  ]
+  for source in samples:
+   with self.subTest(source=source):
+    (self.root/self.new/'bound.cjs').write_text(source)
+    with self.assertRaisesRegex(AssertionError,'unprovisioned'):
+     validate(self.repair(),self.root,self.new,['bound.cjs'],[self.old],runtime_environment={'FIXTURE':''})
  def test_missing_launcher_refused_before_side_effects(self):
   p=self.repair();p['files']=[v for v in p['files'] if not v['path'].endswith('launch.py')]
   with self.assertRaisesRegex(AssertionError,'missing physical'):self.check(p)

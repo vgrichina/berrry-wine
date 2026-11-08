@@ -53,12 +53,22 @@ def validate(pins, root, destination, required, forbidden=(), runtime_environmen
         assert len(data) == pin['size'] and hashlib.sha256(data).hexdigest() == pin['sha256'], 'physical hash mismatch: ' + name
         if name.endswith('.cjs'):
             subprocess.run(['node', '--check'], input=data, capture_output=True, check=True)
-            for dep in re.findall(r"require\(['\"]([^'\"]+)['\"]\)", data.decode()):
+            source = data.decode()
+            for call in re.finditer(r"require\(['\"]([^'\"]+)['\"]\)", source):
+                dep = call[1]
                 if not dep.startswith('.'):
                     continue
                 target = relative(root, (root / name).parent / dep)
                 if target not in targets:
-                    guarded = re.search(r"process\.env\.([A-Z_]+)\?require\(['\"]" + re.escape(dep) + r"['\"]\)", data.decode())
+                    # Exempt only this call, in a standalone simple ternary.
+                    # Searching the whole file lets an inactive fixture import
+                    # hide a second, unconditional import of the same target.
+                    # Keep unsupported JS shapes closed rather than guessing
+                    # their control flow (including multiline OR conditions).
+                    guarded = re.search(
+                        r"(?:\A|;)[ \t\r\n]*(?:(?:const|let|var)[ \t]+[A-Za-z_$][\w$]*[ \t]*=[ \t]*)?"
+                        r"process\.env\.([A-Z_]+)[ \t]*\?[ \t]*\Z",
+                        source[:call.start()])
                     assert guarded and runtime_environment is not None and guarded[1] in runtime_environment and not runtime_environment[guarded[1]], 'unprovisioned helper dependency: ' + target
         elif name.endswith('.py'):
             compile(data, name, 'exec')
