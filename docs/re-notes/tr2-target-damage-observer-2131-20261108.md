@@ -77,8 +77,10 @@ peer WIP is captured. Preparation exception: the first disassembly/head streams
 were initially written through a subprocess file descriptor that bypassed the
 gzip wrapper; their unique bytes were losslessly compressed afterward. All
 focused/build/watch streams used pipe-to-gzip from their first stored byte.
-No old runs were deleted. Disk samples remained above1.5GB; no continuous
-floor claim or RAM gate is made.
+No old runs were deleted. Prepublication disk samples were above1.5GB. The
+final shared-tree sample fell to1,499,463,680 bytes during concurrent writes;
+the owned run holds about26KB. No unauthorized cleanup was attempted. No
+continuous floor claim or RAM gate is made.
 
 Box NONE, state NOT_CREATED, expiry NULL, stop receipt N/A. Offline only:
 no Chrome/game/original/remote/native input/new workers/public deployment.
