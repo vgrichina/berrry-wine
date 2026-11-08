@@ -1,6 +1,7 @@
 """Linux ptrace custody: fork events stop children before they run; peek before reap.
-No /proc sampling is used to discover descendants. Every task is registered from
-its kernel fork/vfork/clone event before either side of the fork resumes.
+No /proc sampling is used to discover descendants. Autoattached tasks await their
+kernel fork/vfork/clone lineage before userspace resumes. SIGKILL exit retirement
+can finish without that lineage; unresolved receipts remain explicit at drain.
 """
 import ctypes, errno, json, os, signal, sys, time
 from pathlib import Path
@@ -29,7 +30,7 @@ def supervise(run, command, *, deadline, cleanup_deadline):
     run = Path(run).resolve(); run.mkdir(parents=True, exist_ok=True)
     assert time.time() < deadline < cleanup_deadline, "expired or invalid immutable deadlines"
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'subreaper required'
-    owned = {}; reaped = []; parked = set(); root_status = None; sequence = 0
+    owned = {}; reaped = []; parked = set(); exit_retired = set(); root_status = None; sequence = 0
     journal = open(run / 'custody.ndjson', 'w', buffering=1)
     def log(kind, **value):
         nonlocal sequence
@@ -40,13 +41,23 @@ def supervise(run, command, *, deadline, cleanup_deadline):
     def write(name, value):
         (run / name).write_text(json.dumps(value, indent=2))
     def register(pid, parent, cause):
-        row = identity(pid)
         if pid in owned:
-            assert owned[pid]['start'] == row['start'], 'PID reused while in custody'
             assert owned[pid]['cause'] == 'kernel-autoattach-stop', 'duplicate fork event'
+            if not any(r['pid'] == pid for r in reaped):
+                assert owned[pid]['start'] == identity(pid)['start'], 'PID reused while in custody'
+            else:
+                # A killed child can be reaped before the parent's still-pending
+                # fork event. Bind that kernel event to its retained receipt;
+                # refuse an observed reuse rather than registering it anew.
+                assert pid in exit_retired, 'late lineage without exit retirement'
+                try:
+                    assert owned[pid]['start'] == identity(pid)['start'], 'PID reused before late lineage'
+                except (ProcessLookupError, FileNotFoundError):
+                    pass
             owned[pid].update(parentCustodian=parent, cause=cause)
-            log('fork-lineage', pid=pid, start=row['start'], parentCustodian=parent, cause=cause)
+            log('fork-lineage', pid=pid, start=owned[pid]['start'], parentCustodian=parent, cause=cause)
             return
+        row = identity(pid)
         row.update(parentCustodian=parent, cause=cause)
         row['registeredSequence'] = log('custody', **row)
         owned[pid] = row
@@ -96,6 +107,7 @@ def supervise(run, command, *, deadline, cleanup_deadline):
                 continue
             assert got == task, ('peek/consume mismatch', task, got)
             if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                parked.discard(task)
                 reaped.append(dict(pid=task, start=row['start'], beforeReapSequence=before,
                                    sequence=log('reaped', pid=task, start=row['start'], status=status), status=status))
                 if task == pid: root_status = os.waitstatus_to_exitcode(status)
@@ -103,6 +115,19 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             assert os.WIFSTOPPED(status), status
             sig = os.WSTOPSIG(status); event = status >> 16
             if awaiting_lineage:
+                if event == 6:
+                    # SIGKILL may replace the creating task's pending fork/clone
+                    # event. EXIT is irreversible: CONT here finishes death,
+                    # never runs the unlinked child's userspace. Require the
+                    # kernel exit message, not a sampled TGID inference.
+                    exit_status = ctypes.c_ulong()
+                    ptrace(GETEVENTMSG, task, data=ctypes.addressof(exit_status))
+                    assert os.WIFSIGNALED(exit_status.value) and os.WTERMSIG(exit_status.value) == signal.SIGKILL, ('unlinked non-SIGKILL exit', task, exit_status.value)
+                    log('unlinked-exit-retirement', **row, exitStatus=exit_status.value,
+                        custodySequence=owned[task]['registeredSequence'], lineageResolved=False)
+                    exit_retired.add(task); parked.discard(task)
+                    ptrace(CONT, task)
+                    continue
                 # The child initial stop may be delivered before its parent's
                 # fork event. Keep it stopped until kernel lineage is consumed.
                 parked.add(task); log('parked-autoattach', pid=task)
@@ -148,10 +173,12 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             try:
                 if identity(task)['start']==row['start']: remaining.append(identity(task))
             except (ProcessLookupError,FileNotFoundError): pass
+        unresolved=[row for row in owned.values() if row['cause']=='kernel-autoattach-stop']
         write('kernel-drain.json',dict(exit=root_status,owned=list(owned.values()),reaped=reaped,
               remaining=remaining,finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
               custody='ptrace fork/vfork/clone barriers + waitid WNOWAIT before waitpid',
-              kernelForkLineage=True,untracedCloneFlagsAudited=False))
+              kernelForkLineage=True,kernelForkLineageComplete=not unresolved,
+              unresolvedLineage=unresolved,untracedCloneFlagsAudited=False))
         journal.close()
     assert not parked, parked
     assert not remaining, remaining
