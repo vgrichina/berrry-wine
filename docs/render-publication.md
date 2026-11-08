@@ -160,6 +160,15 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   reset/release, texture replacement, shared GL objects, and thread-slot reuse
   with delayed consumers and actual concurrent producers. Generic ring ordering
   alone is not evidence for API-level state correctness.
+  The D3D9 receiving adapter now requires both endpoint generation and a
+  `snapshotEpoch`. Reset increments the epoch before submission and refuses
+  snapshots until the guest consumes the reset result and residency is cleared.
+  Old epochs remain invalid afterward; a failed reset keeps snapshot admission
+  closed until device recreation. Tests hold an earlier draw to delay reset,
+  reject overlapping resets and old/current snapshots while pending, and verify
+  a fresh definition after finalization. This protects receiving-side lifetime;
+  it does not serialize native device setters with producer capture. Native
+  state synchronization is still required before enabling guest producers.
 * **2D interoperability:** audit GDI/DirectDraw CPU surface writes, locks,
   blits and presentation against queued GL/D3D/Glide ownership. Existing GL/GDI
   tests cover a subset, not every surface lifetime or mixed-API transition.

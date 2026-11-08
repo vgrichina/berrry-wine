@@ -95,7 +95,8 @@ test('owned draw crosses publication broker with backpressure and device-generat
       getMemory:()=>f.memory,guestToWasm:p=>p});
     const captured=producer.captureDraw({entry:{resident:new Map(),residentBytes:0},
       address:f.desc,program:f.program,id:7,width:2,height:2,depthAttachment:null});
-    const command={deviceId:7,generation:entry.queue.generation,opcode:OP.DRAW,payload:captured.payload};
+    const command={deviceId:7,generation:entry.queue.generation,snapshotEpoch:entry.snapshotEpoch,
+      opcode:OP.DRAW,payload:captured.payload};
     const snapshot=copyPayload(command,64*1024*1024);
     assert(snapshot.bytes>q.capacity,'owned payload is larger than the ring');
     resume=f.hold();
@@ -325,4 +326,49 @@ test('reset retires consumer residency and the next draw republishes its definit
     assert(wire[1].payload.textures[0].levels[0].pixels instanceof Uint8Array);
     assert.deepEqual(pixel(f.observations[1]), f.rgba);
   } finally { await f.bridge.close(); }
+});
+
+test('reset rejects captured snapshots until finalization and never revives an old epoch', async () => {
+  const f=fixture();let resume;
+  try {
+    assert.equal(f.draw(),1);await f.drain();
+    const entry=f.bridge.devices.get(7);
+    const producer=new DrawProducer({producerId:1,getMemory:()=>f.memory,guestToWasm:p=>p});
+    const {payload}=producer.captureDraw({entry:{resident:new Map(),residentBytes:0},
+      address:f.desc,program:f.program,id:7,width:2,height:2,depthAttachment:null});
+    const old={deviceId:7,generation:entry.queue.generation,snapshotEpoch:entry.snapshotEpoch,opcode:OP.DRAW,payload};
+    resume=f.hold();assert.equal(f.draw(),1);
+    const reset=200;f.set(reset+32,2);f.set(reset+36,2);f.set(reset+40,22);
+    const token=f.bridge.call(0x30009,reset,7);assert(token<=-2);
+    const fresh={...old,snapshotEpoch:entry.snapshotEpoch};
+    assert.equal(fresh.snapshotEpoch,old.snapshotEpoch+1);
+    await assert.rejects(f.bridge.submitSnapshot(old),/stale/);
+    await assert.rejects(f.bridge.submitSnapshot(fresh),/stale/);
+    assert.equal(f.bridge.call(0x30009,reset,7),-1,'overlapping reset refused');
+    assert.equal(entry.snapshotEpoch,fresh.snapshotEpoch);
+    resume();resume=null;await f.bridge.wait(token);
+    await assert.rejects(f.bridge.submitSnapshot(fresh),/stale/,'completion alone does not finalize residency');
+    assert.equal(f.bridge.call(0x30007,0,token),1);
+    await assert.rejects(f.bridge.submitSnapshot(old),/stale/);
+    await assert.rejects(f.bridge.submitSnapshot({...fresh,snapshotEpoch:undefined}),/stale/);
+    assert.equal(await f.bridge.submitSnapshot(fresh),1);await f.drain();
+    assert.deepEqual(pixel(f.observations.at(-1)),f.rgba);
+  }finally{resume?.();await f.bridge.close();}
+});
+
+test('failed reset keeps snapshot admission closed',async()=>{
+  const f=fixture();
+  try{
+    assert.equal(f.draw(),1);await f.drain();
+    const entry=f.bridge.devices.get(7),submit=f.bridge._submit;
+    f.bridge._submit=function(e,op,p){
+      if(p.kind==='reset')return Promise.reject(new Error('reset failed'));
+      return submit.call(this,e,op,p);
+    };
+    const token=f.bridge.call(0x30009,200,7);assert(token<=-2);
+    await f.bridge.wait(token);assert.equal(f.bridge.call(0x30007,0,token),-1);
+    assert.equal(entry.resetting,true);
+    await assert.rejects(f.bridge.submitSnapshot({deviceId:7,generation:entry.queue.generation,
+      snapshotEpoch:entry.snapshotEpoch,opcode:OP.CLEAR,payload:{}}),/stale/);
+  }finally{await f.bridge.close();}
 });
