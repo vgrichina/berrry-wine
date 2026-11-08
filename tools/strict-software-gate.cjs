@@ -22,6 +22,12 @@ function installInPage(w, installOwner, ownerKey, gateKey) {
     if (!crossOriginIsolated || !w.running || w._stopped || globalThis[ownerKey] !== observer)
       throw Error('live isolated Software owner required');
     const guest = w.guestWorker, link = guest?.link;
+    // WorkerLink.stop() fences admission synchronously, before asynchronous
+    // loader/Worker drain clears the reference or CDP emits target detach.
+    // Stable object identities during that interval do not mean a live owner.
+    if (guest?._stopped || link?._stopping || link?._stopped ||
+        link?._transportFailure || link?._loaderRetirementFault || link?._retirementComplete)
+      throw Error('actual guest owner retiring or stopped; no replay');
     if (!link || !Number.isSafeInteger(link.endpointIdentity) || !Number.isSafeInteger(link.slot))
       throw Error('actual guest Worker endpoint required');
     const result = {software:observer.read(), guest:{processId:w.processId,
@@ -52,6 +58,7 @@ async function install({send,pageSession,ownerExpression}) {
 // claim about which instance happened to instantiate a same-looking module.
 const WORKER_READ = `(()=>{
  if(typeof endpointIdentity==='undefined'||typeof workerSlot==='undefined'||typeof instance==='undefined'||!instance)throw Error('actual guest instance required');
+ if(typeof scopedRetiring!=='undefined'&&scopedRetiring)throw Error('actual guest instance retiring; no replay');
  const key='__waStrictSoftwareGuestV1';
  if(!globalThis[key])Object.defineProperty(globalThis,key,{value:{epoch:crypto.randomUUID(),ids:new WeakMap(),next:0}});
  const s=globalThis[key];if(!s.ids.has(instance))s.ids.set(instance,s.epoch+':'+(++s.next));

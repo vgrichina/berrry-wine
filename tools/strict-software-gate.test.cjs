@@ -56,7 +56,8 @@ function fixture(hooks={}) {
  f.start=async()=>{await gate.install({send,pageSession:'page',ownerExpression:'w'});f.copy();f.guard=gate.createSoftwareGate(f.options);return f.guard;};
  return f;
 }
-(async()=>{
+module.exports={fixture};
+if(require.main===module)(async()=>{
  const f=fixture(),g=await f.start();
  const baseline=await g.probe({phase:'beforeResume'});assert(!baseline.qualified);
  f.setPixel([255,1,0,255]);f.copy();assert(!(await g.probe()).qualified);

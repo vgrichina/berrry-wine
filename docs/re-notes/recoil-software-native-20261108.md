@@ -2,6 +2,12 @@
 
 Run: `scratch/runs/20261108-recoil-software-native/`.
 
+**Current successor:** `gate-successor/` completes the assigned first-new-repair
+alternative: the explicit Software gate now rejects original guest-owner
+retirement before CDP detach. No fresh original or box was launched, and no
+qualified M or movement is claimed. The prior native evidence below is retained
+unchanged; the successor findings and validation follow it at the end.
+
 **New native result: Software was visibly selected before game load.** The
 current startup PNG was personally reviewed; the tested `reviewed-point.cjs`
 witness used that PNG's hash, captured canvas rectangle, and radio target
@@ -109,3 +115,97 @@ Next work must establish the actual Software rendering-owner proof without
 inventing a D3D endpoint or weakening the four-response contract, then qualify
 ordinary M with visible consequence before reviewed movement toward power
 control. Full27, parity, audio and FPS remain open.
+
+## Gate successor: original host retirement fenced before detach
+
+Read the published `795cc45d9` UTF-8/gate note and this note at `cf8e4252c`.
+Before allocation, the exact original host class exposed a new integration
+defect: `WorkerLink.stop()` synchronously fences its endpoint, but retains its
+Worker reference while asynchronous loader and Worker retirement drains.
+The explicit gate checked identities and CDP target closure without checking
+those host lifecycle fences. Stable references and an attached target could
+therefore still produce a qualified certificate after retirement began.
+
+`gate-successor/lifecycle-before-qualified.log` retains the causal failure:
+`qualified=true`, `_stopping=true`, `_stopped=true`, CDP detached=false.
+The focused test loads the complete original `lib/guest-thread-host.js` directly
+from Git provider `49874a81c5ae180c20a15c6bb169d9041f028cae`, verifies its SHA256
+`e0e08fe53622ba43463ed8ef5ce492c1188ddf3376523bc9f74727649a34892e`,
+and calls its public `stop()`. It supplies a controlled Worker termination
+promise, mock CDP and real decoded PNGs; it does not run Chrome or an original
+game. No production class source is copied into evidence.
+
+`tools/strict-software-gate.cjs` now checks the actual host/link retirement,
+stop, transport-failure and retirement-failure fences on every page-owner
+snapshot, including the check after final evidence saving. Its actual guest
+instance read also rejects the production `scopedRetiring` state, which can
+precede instance destruction. These errors close the gate with sticky UNKNOWN;
+subsequent calls send no CDP replay. Source lanes already in flight still drain
+through the existing `Promise.allSettled` path.
+
+The new lifecycle test passes **19 new rejection cases**: the causal public-stop
+case, 12 public-stop cases across entry, source transport, both owner sinks,
+pixels and final return, and six individual lifecycle states. The public-stop
+phase cases cover both pending Worker termination and pending loader retirement
+before `_stopped` becomes true. Controlled loader replies use the exact original
+host dispatcher, then every controlled termination promise is released and
+joined. The existing fixture is exported for this focused integration test;
+running its original script still executes the original assertions.
+
+The existing **46** gate negatives pass after this code change, including the
+six complete uncached responses per probe, concurrent independent lanes, real
+PNG decoding, changed-timer pair, final owner retirement, 250ms freshness,
+immutable transition bound and sticky UNKNOWN/no replay. The full locked build
+passed after the final production change. The hardware gate is unchanged.
+This is a substantive tested generic gate integration repair; the Software gate
+remains **not original-validated**.
+
+## Exact source identity and retained closure
+
+`gate-successor/original-source-pins.json` derives original pins from the exact
+deployed providers, before any new allocation, and cross-checks the retained
+original HTTP receipts:
+
+| Role | Original source | UTF-8 bytes | SHA256 |
+| --- | --- | ---: | --- |
+| Decoder | `lib/host-imports.js?v=dev` | 204938 | `f468ffce84da0f517df009682c111bbcb955b67f8b5a122350abbe5abc49e1d8` |
+| Compositor | `lib/renderer.js?v=dev` | 227919 | `cb21daaf7c0ce2b2cf80436c192bda4ed78930b1b07eaf21a20eb9adb7ce7b51` |
+
+The generated wrapper hashes `8697e0a4…` / `94121a91…` are not original source
+pins. No new actual CDP response was produced here. All four accepted complete
+uncached generated responses remain retained and independently hash-verified;
+this does not convert them into original-game evidence.
+
+The fresh **854-pin** helper manifest preserves every repaired851 provider
+unchanged and adds the explicit Software gate, its owner attestor and the
+accepted kernel custody supervisor. All851 providers were independently reread;
+the repaired29-file physical startup contract still passes, including exact
+motion. The new gate imports through that exact hermetic manifest. This is a
+checked helper closure, not a claim that the native driver has already been
+wired to the Software gate or that remote startup is ready to launch.
+
+Five retained manifests, covering **1937 references / 700232127 bytes**, were
+independently reread and hashed without copying their artifacts or rerunning
+their fixtures. Reused controls include the28 owner negatives,41 actual HTTP
+responses,197 kernel-task actual custody evidence,50-task kernel control,
+10 reviewed-point negatives and5 custodian controls. Earlier failures and the
+repaired native-motion/startup/absent-renderer chain remain retained.
+
+Recovery records the exact checkout SHA, relevant owned binary diff, small new
+test patch and the full provider/media path/hash manifest. No source or media
+archive, peer WIP, guest write, private game handler, forced scene, configuration,
+clock or seed change was used. No runtime, input, allocation or remote operation
+was performed, so no new watchdog or runtime lock was needed or held.
+
+New box ID/state/expiry/stop receipt: **N/A — none created**. The prior box
+`bx_kvzp7fye` and its archived/null-expiry receipt
+`stop_44fc7f9835ab35f3` remain inherited evidence and were not contacted.
+
+The task stops on this first new tested integration repair. Next work must
+integrate the repaired gate with current page/Worker script contexts, complete
+response retention including refusal, independent clock/input-release controls
+and kernel custody before any separately assigned fresh original. Personally
+review its current Resume hotspot; qualify the before/after Software gate before
+ordinary M, review M's consequence, then attempt bounded movement toward power
+control. Keep loading, MENU and active time separate and preserve health/time
+limits. Full27, parity, audio and FPS remain open.
