@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-route-ready-1528: production driver closure now passes unchanged current checker; prioritize one fresh reviewed walkable-route/jump/landing consequence, avoid unchanged no-progress Up/Alt. Publishedd781e6338 removes fixture branches; 4 actual provisioning/barrier/HTTP integration tests passed,614providers29helpers. Coordinator independently hashed89refs819879B; no allocation/gameplay. Preserve historical670raw=53qualified+617discarded and accepted pixel authority. See docs/re-notes/tr2-onward-closure-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-alley-onward-1542 must confirm ordinary publication observe ARM before gameplay, then cross the lower-alley far opening or show jump/landing. Published1b19ef83d reached a new lower alley via native reviewed turns/forward holds, but threshold/jump unproven and omitted observe means no new retained/discarded counts. Coordinator compared initial/final captures and independently hashed269refs127797075B; bx_nyh7e5hx archived stop_be8e5e24fb8970af, scoped drain PASS. Current614providers29helpers remain verified. See docs/re-notes/tr2-route-ready-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
