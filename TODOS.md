@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; prior three-victory save creation accepted, reload counter unverified
+  status: active; three-victory new slot restored and onward fork reached; further encounter open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-new-slot-progress-0900 uses untouched updated characters/new named-save recovered by bc4cd7a8c through native Load a Game, inspects actual restored counters, then one reviewed encounter/onward consequence. Reuse accepted lifecycle/input controls and ordinary manifest/loadFiles path. Note: docs/re-notes/darkstone-native-load-exit-cause-20261108.md. Historical spontaneous exit/full27/parity/audio/FPS open.
+  Next: Fresh darkstone-fork-encounter-0921 reloads newly written onward slot and pursues a reviewed living encounter/pickup/route transition beyond grassy fork. Published12e1af819 restored actual Gold1532/Victories3+0/LIFE28/35/Food91; two native route holds reached fork, Food90 with other counters unchanged. New characters dee39793 and game641d_6af03b8e.sav3ad04358 preserved but not yet reloaded. Coordinator reviewed two captures and independently verified193refs18686006bytes; normal archived stop expiryNULL and full drain pass. Note: docs/re-notes/darkstone-new-slot-progress-20261108.md. No additional victory/transition; historical spontaneous exit/full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
