@@ -1,5 +1,34 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: native NFS3 selection and current TR3 movement
+
+Published `4c1d0352a` qualifies both NFS3 thread-owner repairs through the
+native chooser and ordinary Direct3D Device 1 selection/OK. Native registry
+writes are observed. The game did not load: run preparation omitted its
+registered executable and returned HTTP404. The corrected complete closure
+passes the local HTTP/size/SHA regression but awaits fresh race execution.
+The coordinator verified115 artifact references/8,753,946 bytes and inspected
+the selected chooser. The box is normally stopped and archived.
+[Chooser, staging failure and corrected preparation](re-notes/nfs3-owner-repaired-chooser-race-20261108.md).
+
+Published `78df2e4d9` establishes current Software D3DIM persistent Jungle
+translation and separate turning; current WebGL turning also passes. WebGL
+translation remains ambiguous because camera follow confounds the captures.
+The coordinator verified415 references/25,865,913 bytes and inspected paired
+software movement captures.37 exact ACKs, zero UNKNOWN, actual module7ec49cbb,
+both backend owners and normal stopped-box cleanup are recorded. Firing,
+parity, FPS, audio and full27 remain open. Fresh work isolates WebGL translation.
+[Current movement and evidence limits](re-notes/tr3-current-movement-after-headroom-20261108.md).
+
+Published `c007b3b75` is another failed TR2 OK attempt: the worker misread the
+visible Graphics sheet and missed the activation window. No emulator defect
+is established. The coordinator verified62 references/7,090,612 bytes and
+personally confirmed the visible sheet; startup/fresh/refresh hashes match.
+The box stopped normally after settled process drain. A fresh worker first
+qualifies native default-OK activation locally before allocating another box.
+Current controls and presentation rates remain unqualified.
+[Corrected attempt](re-notes/tr2-native-ok-current-control-20261108.md).
+
 ## November 8: TR2 controls/rates blocked; image assessment corrected
 
 Published `957b861cd` collects no original gameplay input or rates. A pixel-
