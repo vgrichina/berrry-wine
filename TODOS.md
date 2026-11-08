@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-software-utf8-1406 LOCAL realbrowser validates explicitUTF8 source transport thenSoftwaregate. c7e3aea75 Chrome reached decoder but charset caused EXACTWindows1252hash mismatch; tested41actualHTTPresponses repaired NOTChromeRetested. 851pins unchanged34refs101295B independentlyhashed all23recordedPIDstart absent portsprofilelockdrained samplinglimitpreserved. Note: docs/re-notes/recoil-software-browser-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-software-native-1432 actualoriginalSoftwaregate and qualifiedM/gameplay. 795cc45d9 actualUTF8Chrome fourJSresponses/pixels/replacementRefusal PASS explicitguestWASM+actualJSgate46negatives/buildPASS not originalvalidated. Independentlyhashed56refs1437999B;197tasks durableprereap/reaped allabsent portsprofilelockdrained. Derive ORIGINAL sourcepins rather than wrapperhashes. Note: docs/re-notes/recoil-software-utf8-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
