@@ -664,7 +664,8 @@ async function main() {
   deliver(first); assert.equal(join.rows.length, 3, 'stale owner callback never becomes a new publication');
   renderer.createWindow(0x78, 0x90000000, 1, 1, 1, 1, '', 0);
   await produce(); renderer.repaint(); assert.equal(join.rows.length, 3);
-  assert(join.ledger.some(row => row.disposition === 'uncovered-scene-publication'));
+  assert(!join.ledger.some(row => row.disposition === 'uncovered-scene-publication'),
+    'unsupported scene refuses publication without consuming immutable pending sources');
   renderer.showWindow(0x78, 0);
   const { PresentationFilter } = require('../lib/presentation-filter');
   renderer.presentationCanvas = createCanvas(4, 4);
