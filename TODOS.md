@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-alley-onward-1542 must confirm ordinary publication observe ARM before gameplay, then cross the lower-alley far opening or show jump/landing. Published1b19ef83d reached a new lower alley via native reviewed turns/forward holds, but threshold/jump unproven and omitted observe means no new retained/discarded counts. Coordinator compared initial/final captures and independently hashed269refs127797075B; bx_nyh7e5hx archived stop_be8e5e24fb8970af, scoped drain PASS. Current614providers29helpers remain verified. See docs/re-notes/tr2-route-ready-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-dog-encounter-1610 must survive observed dog encounter before far-opening crossing; ordinary native draw/action authorized with reviewed target, current admitted controls and independent releases. Published7a041fc20 advanced farther but Lara died; crossing/jump unproven. Observe ARM before gameplay now confirmed,546raw=79retained+467discarded. Coordinator reviewed opening/GameOver and hashed343refs347154484B; bx_s6jxweu2 archived expiryNULL stop_14219da97d66b403. Preserve614providers29helpers. See docs/re-notes/tr2-alley-onward-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-parked-exit-1558 causally repairs retained kernel thread awaiting-lineage EXIT-stop normal-drain failure before another original; coordinate published fix to Recoil peer. Publishedb3377657b fixes actual fixed10s browser endpoint wait with4focused+same-child regression+lockedbuild; coordinator hashed29refs26955252B. Native restore/pixels/save not reached; failure-retirement74starts absent bx_qrycbp4p archived expiryNULL stop_6b521006bd998781. Preserve548repairedproviders42helpers and helmet source pair. See docs/re-notes/darkstone-helmet-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-exit-terminal-1610 repairs FIRST NEW Recoil actual unlinked SIGTERM terminal exit6812/status15 after published551b7bdc8 SIGKILL repair. Preserve durable WNOWAIT, unresolved lineage and no unlinked userspace; peer owns generation tools. Coordinator hashed51refs220261B, six kernel/two startup/four endpoint/fullbuild passed; no allocation. Preserve548providers42helpers and helmet checkpoint; restore/gameplay follows repair. See docs/re-notes/darkstone-parked-exit-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
