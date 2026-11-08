@@ -24,9 +24,9 @@
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
-  status: one missed input window diagnosed; vehicle entry/driving and underlying delay remain open
+  status: synchronous Clear blocked by preceding render batch; batch delay and vehicle progress remain open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Fresh redline-clear-executor-cause-0342 splits renderer queueing/execution for the measured Clear dependency before any repair/turn attempt. Published4e50018f4 correlates Viewport3::Clear opcode0x20004/seq17417 to3383ms of3394ms slice7087:824ms before renderer receipt,2559ms receipt-to-completion, no keyboard reads during it. Executor start/native GL calls remain unobserved, so neither native clear cost nor driver/renderer fault is established. Coordinator checked the actual correlation, passive on-foot view and all178references/166hashes;11exactACK/zeroUNKNOWN, unchanged65media pins and normal archived stop pass. No gameplay left window, approach or fix followed. Earlier6d1ca47fa's missed2.002s hold remains distinct, not retrospectively measured by this run. Notes: docs/re-notes/redline-slice-work-cause-20261108.md and redline-left-consumption-20261108.md. Driving/FPS/audio/parity remain open.
+  Next: Fresh redline-batch-continuation-cause-0355 measures the preceding batch's full replay/Flip/fence/poll/timer boundaries before a repair/turn attempt. Publishede7a17256f correlates Clearseq18610 queue2594ms behind prior batch18609; _clear takes0.145ms/nativegl.clear0.005ms, completion0.160ms after executor start. Selected interval has no logged inspector overlap, but batch internal delay/observer overhead/scheduling remain unresolved. Coordinator checked actual sequence/native spans, passive on-foot view and all180references/168hashes;11exactACK/zeroUNKNOWN,65media pins and normal archived stop pass. No source fix, new left window, turn or vehicle entry. Earlier4e50018f4 and6d1ca47fa remain distinct observed intervals, not retrospectively split. Note: docs/re-notes/redline-clear-executor-cause-20261108.md. Driving/FPS/audio/parity remain open.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
