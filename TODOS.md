@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-admitted-native-1236 uses repaired complete849pin/startupcontract9387bee59 then native measuredphases/qualifiedMconsequence/reviewedmovement. Solepriorfreshboxmissinglaunch-position.py BEFOREChrome; genericpreconsumephysicalclosure/admission+stickyUNKNOWN/earlystopdescendantdrain fiveactualintegrationcasesPASS. Noactualphase/Mclaim original301/318stillunclassified. Independentlyhashed36refs493901B normalbx_e9v5njhv archivedstop_006ae96d9934a7b5 expiryNULL. Note: docs/re-notes/recoil-measured-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-software-native-1302 uses tested exactPNGcoordinatewitness850pin closuread64cd3ff; priorSoftwareclickMISSEDactualaccelerator retained. Nativephase333.7ms=request269/owner.185/PNG50.9/return13 checkedage82fresh; onlyonecandidate nochangedtimerpair noM/movement. Fourmoduleprobe2792+2031ms workerentrydelayopen. Independentlyhashed404refs283598772B normalbx_2y99hk7g archivedstop_e72f230e4919cf59 expiryNULL. Note: docs/re-notes/recoil-admitted-native-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; seven victories and town gateway crossing verified; onward/area transition open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-hollow-onward-1250 restores newhollowslot characters77cc4de6/game641d_6af06c20.sav79e1d54c then roadtowardentrance/areatransition/reviewedencounter. Sevenvictories LIFE22/35Food61Gold1532MANA25/25vialretained; personallyreviewednewhollowPNG nativeNewSave notreloaded sourceuntouched. Independentlyhashed340refs258058950B; bx_92rf4xra archived normalstop_72c665fa7f827547 expiryNULL. Note: docs/re-notes/darkstone-outer-road-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-nine-onward-1302 restores charactersba2c2c5f/game641d_6af070ba.savb56122d3 then roadtowardnamedentrance/transition. Two nativehoverGIANTWASPdefeats ninevictories LIFE19/35Gold1532Food58MANA25/25vialretained; personallyreviewed9+0PNG nativeNewSave NOTreloaded sourceuntouched. Independentlyhashed264refs156922295B normalbx_77jg56ts archivedstop_9efbe660a67b2148 expiryNULL. Note: docs/re-notes/darkstone-hollow-onward-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
