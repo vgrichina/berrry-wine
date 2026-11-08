@@ -330,8 +330,12 @@ function successfulCaptureAck(out, capture) {
 // This exact client is also exercised against the actual shot/ACK producer
 // offline. Its stdout contains the ACK; the operator relays capture.path to
 // view_image in the same tool invocation. No automatic claim of human review.
-async function commandAck(out, command, timeoutMs = 55000) {
+function validateAckTimeout(timeoutMs) {
   if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 55000) throw Error('bounded ACK required');
+  return timeoutMs;
+}
+async function commandAck(out, command, timeoutMs = 55000) {
+  validateAckTimeout(timeoutMs);
   if (command.action === 'review-only') {
     let proof;
     try {
@@ -668,7 +672,7 @@ async function runPair(run) {
   write(path.join(run, 'runtime-summary.json'), { browserMs, stopped, finishedAt: new Date().toISOString(), boxId: null, boxState: null, boxExpiry: null });
 }
 
-module.exports = { writeJson: write, prepare, preload, pageState, captureForReview, shotCommand, commandAck, reviewedCapture, requireHandoffProbe, requireLocalFlock, steeringSample, chooseSteering, steeringDecision, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
+module.exports = { validateAckTimeout, writeJson: write, prepare, preload, pageState, captureForReview, shotCommand, commandAck, reviewedCapture, requireHandoffProbe, requireLocalFlock, steeringSample, chooseSteering, steeringDecision, balancedKey, requireReleases, normalClose, requiredShellPaths, validateShellPins, bootInputs, validateRequiredPins, validateHistory, validateHttpPaths, within };
 if (require.main === module) {
   const [action, run] = process.argv.slice(2);
   if (action === '--review-run') {
