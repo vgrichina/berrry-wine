@@ -46,9 +46,11 @@ repairs diagnostic recorder overload. Corrected remote production controls
 pass with75ms maximum delivery lag, compared with56494ms in the baseline.
 Current SoftwareGL reaches a reviewed rendered Prologue scene. Final passive
 capture times out after the journal's nested `voice_play_ring` entry without
-return/error; page and observer emissions stop and the active renderer PID
-vanishes from later browser samples. No exit reason or inner audio boundary
-is captured, so audio deadlock, OOM and emulator fault remain unproved.
+return/error; page and observer emissions stop and a renderer PID vanishes
+from later browser samples. OS PID-to-Warcraft-target mapping was not retained,
+so the vanished process is not yet proved to own that page. No exit reason
+or inner audio boundary is captured; audio deadlock, OOM and emulator fault
+remain unproved.
 
 All32552 Node-admitted batches became durable. Earlier8528 lost observer
 slots remain explicit; the final218625-slot tail is contiguous. The coordinator
