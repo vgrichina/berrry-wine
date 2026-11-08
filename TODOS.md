@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-observed-control-1717 uses published16919b487 normal615-provider29-helper generation for one original, reviewed drawn pistols/dog ahead and exactly one observed Control hold<=2000ms independently released. Observer read-only actualpoll/DIK/binding/Action, notweapon/aim proof; no-poll/unqualified STOP no retry. Coordinator reviewed source and hashed81artifacts439115B;25focused+input/helper/fullbuild PASS. Historical614 unchanged; no box in preparation. See docs/re-notes/tr2-action-observer-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-observer-coverage-1733 investigates measured4097-boundary exhaustion in32.105ms offline and implements causal boundedcoverage repair before another original. Reviewed f123e073f ONEControl2001ms independently released physicalVK17/162; zeroPoll/Action terminalunqualified STOP no retry/noafterrelease. Personally viewedheldLaraalivefullhealth pistolsdogcloser; firing/aim UNPROVEN. Coordinator707refs405743945B HASHpass; bx_22873stk archivedexpiryNULLstop_c4fce7b3ae9dc8ae. Selected615/29 historical614unchanged. See docs/re-notes/tr2-observed-control-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
