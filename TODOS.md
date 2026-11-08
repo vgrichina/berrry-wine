@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-generation-ready-1558 reconciles historical stale checker provider into correctly versioned current generation, preserves851original game providers and historical916prefix recovery; test actual mandatory provisionJOIN/barriers before original Software/M. Publishedfbcf60472 independent clock/process producer+immutable watchdog actualChrome tests and lockedbuildPASS; coordinator hashed321refs4022311B. No allocation; exact local recorded starts absent. Kernel repair owned fresh Darkstone peer, consume published fix before runtime. See docs/re-notes/recoil-clock-ready-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-original-ready-1621 selects published275dd018a kernel into normal979-provider generation, then one original Software qualification/current Resume/M/reviewed movement. Published9761d8b9a explicit generation preserves851original and historical916;980actualuploadsJOIN production content/queue/parent PASS. FIRSTNEW SIGTERM kernel refusal repaired by Darkstone275dd018a realregression. Coordinator hashed179refs12122431B; failedstartup128starts absent bx_a83xxze6 archived expiryNULL stop_8ab30cb50615e3ba; noResume/M/gameplay. See docs/re-notes/recoil-generation-ready-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-exit-terminal-1610 repairs FIRST NEW Recoil actual unlinked SIGTERM terminal exit6812/status15 after published551b7bdc8 SIGKILL repair. Preserve durable WNOWAIT, unresolved lineage and no unlinked userspace; peer owns generation tools. Coordinator hashed51refs220261B, six kernel/two startup/four endpoint/fullbuild passed; no allocation. Preserve548providers42helpers and helmet checkpoint; restore/gameplay follows repair. See docs/re-notes/darkstone-parked-exit-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-helmet-1621 uses published275dd018a shared kernel and current bounded endpoint to restore helmet checkpoint/native Load preview, review current pixels, advance beyond second opening and retrieve/hash incremental NewSave by minute10. Published275dd018a repairs real unlinked SIGTERM terminal retirement;8kernel2startup4endpoint/fullbuild PASS. Coordinator hashed89refs283383B noallocation52localstarts absent. Preserve548providers42helpers and source pair. See docs/re-notes/darkstone-exit-terminal-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
