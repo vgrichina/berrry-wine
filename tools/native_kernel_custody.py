@@ -1,6 +1,6 @@
 """Linux ptrace custody: fork events stop children before they run; peek before reap.
 No /proc sampling is used to discover descendants. Autoattached tasks await their
-kernel fork/vfork/clone lineage before userspace resumes. SIGKILL exit retirement
+kernel fork/vfork/clone lineage before userspace resumes. Irreversible exit retirement
 can finish without that lineage; unresolved receipts remain explicit at drain.
 """
 import ctypes, errno, json, os, signal, sys, time
@@ -46,7 +46,7 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             if not any(r['pid'] == pid for r in reaped):
                 assert owned[pid]['start'] == identity(pid)['start'], 'PID reused while in custody'
             else:
-                # A killed child can be reaped before the parent's still-pending
+                # A terminated child can be reaped before the parent's still-pending
                 # fork event. Bind that kernel event to its retained receipt;
                 # refuse an observed reuse rather than registering it anew.
                 assert pid in exit_retired, 'late lineage without exit retirement'
@@ -116,13 +116,16 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             sig = os.WSTOPSIG(status); event = status >> 16
             if awaiting_lineage:
                 if event == 6:
-                    # SIGKILL may replace the creating task's pending fork/clone
-                    # event. EXIT is irreversible: CONT here finishes death,
-                    # never runs the unlinked child's userspace. Require the
-                    # kernel exit message, not a sampled TGID inference.
+                    # Group termination can replace the creating task's pending
+                    # fork/clone event (including SIGTERM delivered to a sibling).
+                    # PTRACE_EVENT_EXIT is irreversible, regardless of its cause:
+                    # CONT finishes death without running unlinked userspace.
+                    # Require the consumed kernel EXIT stop and its exit message,
+                    # never a signal-delivery stop or sampled TGID inference.
+                    assert sig == signal.SIGTRAP, ('invalid EXIT stop', task, status)
                     exit_status = ctypes.c_ulong()
                     ptrace(GETEVENTMSG, task, data=ctypes.addressof(exit_status))
-                    assert os.WIFSIGNALED(exit_status.value) and os.WTERMSIG(exit_status.value) == signal.SIGKILL, ('unlinked non-SIGKILL exit', task, exit_status.value)
+                    assert exit_status.value <= 0xffff and (os.WIFEXITED(exit_status.value) or os.WIFSIGNALED(exit_status.value)), ('invalid kernel exit status', task, exit_status.value)
                     log('unlinked-exit-retirement', **row, exitStatus=exit_status.value,
                         custodySequence=owned[task]['registeredSequence'], lineageResolved=False)
                     exit_retired.add(task); parked.discard(task)
