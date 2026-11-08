@@ -28,6 +28,38 @@ function repairDriver(source) {
   replace("if(browser){const receipt=", "if(browser){let receipt;try{receipt=");
   replace("save('browser-terminal.json',receipt);}",
     "save('browser-terminal.json',receipt);}catch(e){process.exitCode=1;save('browser-drain-unknown.json',{error:String(e),receipt:e.receipt,noReplay:true});for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error('runtime closed; no replay'));}pending.clear();ws?.close();server?.closeAllConnections();server?.close();throw e;}}");
+  // A successful terminal wait proves retirement, not the outcome of an earlier
+  // CDP operation. Latch at rejection (including background worker requests),
+  // before a late response or concurrent normal close can erase uncertainty.
+  replace('async function send(method,params={},sessionId){',
+    'async function rawSend(method,params={},sessionId){');
+  replace('async function evaluate(expression,sessionId=pageSession){',
+    `async function send(...args){try{return await rawSend(...args);}catch(e){rememberFailure(e);throw e;}}
+async function evaluate(expression,sessionId=pageSession){`);
+  replace('closing=true;clearTimeout(timer);',
+    "closing=true;if(reason!=='ordinary completion')rememberFailure(Error(reason));clearTimeout(timer);");
+  replace("catch(e){save('native-save-read-error.json'", "catch(e){rememberFailure(e);save('native-save-read-error.json'");
+  replace("catch(e){save('post-guard-error.json'", "catch(e){rememberFailure(e);save('post-guard-error.json'");
+  replace("fs.rmSync(out+'/chrome-profile',{recursive:true,force:true});",
+    "requireHealthyCleanup();fs.rmSync(out+'/chrome-profile',{recursive:true,force:true});");
+  replace('async function execute(c,markDispatch){', `function rememberFailure(error){
+ if(!close.failure)close.failure={error:String(error),at:new Date().toISOString(),noReplay:true,sticky:true};
+ process.exitCode=1;
+ if(!fs.existsSync(out+'/transport-closed.json'))save('transport-closed.json',close.failure);
+ return close.failure;
+}
+function requireHealthyCleanup(){
+ const faults=['transport-closed.json','client-first-failure.json','first-failure.json','first-browser-failure.json','browser-drain-unknown.json'];
+ const fault=faults.find(name=>fs.existsSync(out+'/'+name));
+ if(close.failure||fault){
+  const failure=rememberFailure(Error('upstream UNKNOWN; profile retained; no cleanup or quit ACK'+(fault?': '+fault:'')));
+  save('cleanup-unknown.json',{...failure,profileRetained:true});
+  throw Error(failure.error);
+ }
+}
+async function execute(c,markDispatch){`);
+  replace(".catch(async e=>{save('first-browser-failure.json'",
+    ".catch(async e=>{rememberFailure(e);save('first-browser-failure.json'");
   return source;
 }
 
