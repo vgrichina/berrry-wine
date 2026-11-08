@@ -28,7 +28,10 @@ def relocate(pins, root, source, destination):
                        source=dict(kind='existing-path', path=name))
             matched += 1
     assert matched, 'no predecessor helpers relocated'
-    result['physicalHelperClosure'] = dict(directory=destination, required=[Path(p['path']).name for p in result['files'] if p['path'].startswith(destination + '/')])
+    # Required names are relative to the helper directory, not basenames:
+    # checkpoint/save.bin must remain distinct from other/save.bin and must
+    # address the very same target that provision.py will upload.
+    result['physicalHelperClosure'] = dict(directory=destination, required=[p['path'][len(destination) + 1:] for p in result['files'] if p['path'].startswith(destination + '/')])
     return result
 
 def validate(pins, root, destination, required, forbidden=(), runtime_environment=None):

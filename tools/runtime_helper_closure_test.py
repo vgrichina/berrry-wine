@@ -72,4 +72,18 @@ class ClosureTests(unittest.TestCase):
   with self.assertRaises(ValueError):self.check(p)
  def test_no_matching_source_refused(self):
   with self.assertRaisesRegex(AssertionError,'no predecessor'):relocate(self.pins,self.root,'absent',self.new)
+ def test_nested_required_targets_survive_relocation_and_actual_validation(self):
+  for directory in ['checkpoint','other']:
+   for base in [self.old,self.new]:
+    (self.root/base/directory).mkdir()
+    (self.root/base/directory/'save.bin').write_bytes(directory.encode())
+   self.pins['files'].append(self.pin(self.old+'/'+directory+'/save.bin'))
+  p=self.repair();required=p['physicalHelperClosure']['required']
+  self.assertIn('checkpoint/save.bin',required)
+  self.assertIn('other/save.bin',required)
+  self.assertEqual(len(required),len(set(required)))
+  self.assertTrue(validate(p,self.root,self.new,required)['passed'])
+  p['files']=[v for v in p['files'] if not v['path'].endswith('/checkpoint/save.bin')]
+  with self.assertRaisesRegex(AssertionError,'missing physical upload target: checkpoint/save.bin'):
+   validate(p,self.root,self.new,required)
 if __name__=='__main__':unittest.main(verbosity=2)
