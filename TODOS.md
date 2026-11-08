@@ -1,3 +1,9 @@
+- [ ] Drakan current-browser movement, flight and attack
+  id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
+  status: blocked before input at native beta warning with no graphics endpoint; WebGL unexecuted
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Next: Fresh drakan-native-warning-gameplay-0347 qualifies native MessageBox/GDI input before graphics creation, then actual D3DIM producer readiness. Published6b486344a records reviewed beta warning with running guest, no renderer/context/stats and zero commands/ACKs; producer gate exhausts before OK. Coordinator inspected warning and independently verified31references/30hashes. Focused production Worker T/G release checks pass;64current media pins unchanged, historical per-file hash equality unknown. Normal archived stop. Note: docs/re-notes/drakan-current-browser-action-20261108.md. No current movement/flight/attack/backend draw or emulator regression established; October7 level-render acceptance remains historical.
+
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: blocked by live review/reaction gaps; six deaths retained, first node remains uncleared

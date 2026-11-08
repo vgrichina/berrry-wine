@@ -1,5 +1,24 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Drakan native warning precedes graphics creation
+
+Published `6b486344a`, run `20261108-drakan-current-browser-action`,
+reaches the reviewed beta-warning dialog with a running owning guest Worker,
+but no graphics endpoint, renderer Worker/context or D3D stats. The driver
+requires a graphics producer before admitting OK, so readiness exhausts with
+zero input/commands/ACKs. WebGL is unexecuted. This identifies a native-dialog
+bootstrap gap, not a D3D rendering failure or current gameplay result.
+
+The coordinator inspected the warning and independently verified all31
+artifact references. Focused T/G input/release controls pass through a real
+guest Worker. All64 current fixture files remain unchanged; unavailable
+historical per-file hashes are explicitly unknown. The box normally stopped
+after retrieval. Fresh work qualifies pre-graphics native-dialog input and
+then positive D3DIM producer readiness before another original route.
+Movement, flight, attack, actual backend coverage, parity, FPS, audio and
+full27 remain open.
+[Warning, exact gate, provenance and cleanup](re-notes/drakan-current-browser-action-20261108.md).
+
 ## November 8: owning GL readiness corrected; Q3 actions remain open
 
 Published `c142f0785`, run `20261108-q3-gl-readiness-gameplay`, corrects
