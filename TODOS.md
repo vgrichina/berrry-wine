@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-orphan-safe-native-1148 for qualified ordinary M then reviewedmovement using testedsubreaper custodian92622006b. Actualdoublefork false-drain baseline reproduced correctedadoption/lock/reaping/failclosedPASS10immutableobjects23474B independentlyhashed. No box/native result;838pins acceptedparallel4responses250ms temporalpair4500gate reused. Note: docs/re-notes/recoil-parallel-probe-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-pixel-latency-repair-1210 diagnoses/fixes finalownerpixel evaluation BEFOREanotheroriginal. Published6ab6f82c3 actualResumeHUD100timer02to03 candidates315/327msSTALE finaleval301/318ms decode13/9ms zeroM/movement unchanged250ms4500gate; concreteblocker notrepair. Independentlyhashed407refs59595955B; bx_rukvjz6t archivednormalstop_e20e9a26b23210d8 expiryNULL26PIDdrain. Note: docs/re-notes/recoil-orphan-safe-native-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-presenter-getter-native-1148 for nativequalifiedDXjoins then reviewedUpSpaceControl. Published9c93a0f13 actualfacadegetterselfinvalidation genericfix baseline0corrected1red20guards7focusedLockedBuildPASS; prior151raw0qualified allsealedstable solewriter,71overwrite80coalesced. Independently hashed78refs12315050B reviewedproductiondiff; bx_rymyd398 archived normalstop_89ff01d03fedeb21 expiryNULL. Note: docs/re-notes/tr2-postfence-native-joins-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-full-compositor-facade-1210 fixes remaining wnd_style/screenScratch invalidations in cheapFULLobservedfacade BEFOREanotheroriginal. Publishedf4fc82774 isolatedNOmenu branchbaseline0corrected1red20guards7focusedLockedBuildPASS newd8facd06module notoriginaltested; native69raw0qualified30overwrite39coalesced. Independentlyhashed78refs9924432B reviewedWAT+wrapperdiff; bx_rbx878gk archivednormalstop_bb68018e16c68f7f expiryNULL. Note: docs/re-notes/tr2-presenter-getter-native-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; six victories and red vial pickup preserved; further landmark/area transition open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-mayor-onward-1148 restores Mayor-position characters27d90857/game641d_6af05d52.sav415887a8 for differentNPC/onwardprogress. Publishedbb05d9d3b nativeTHE MAYOR hover/conversation/Exit/NewSave verified; noquestbody/audio claim. Actual6+0 LIFE24/35Gold1532Food69MANA25/25 vialunconsumed. Independentlyhashed219refs41771905B personallyreviewed2PNGs; bx_gvpx72u5 archivedstop_ec7600e550361a02 completeexpiryNULL. Note: docs/re-notes/darkstone-enclosure-npc-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-rozanne-route-1210 restores newcharacters6e09d2c3/game641d_6af06343.sav579c334a for onwardlandmark/areatransition insteadofrepeatedemptyNPCtitle. Published8c1f78518 nativeROZANNEhover/ordinaryinteraction/Exit/NewSave plusactualparent-ownedstartupcustodyfixturePASS. Actual6+0 LIFE24/35Gold1532Food68MANA25/25 vialretained. Independentlyhashed255refs209405244B personallyreviewedRozannePNG; bx_7hc8exxg archivednormalstop_f8e6b2b516fb4b10 expiryNULL. Note: docs/re-notes/darkstone-mayor-onward-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
