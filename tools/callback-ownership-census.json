@@ -9589,9 +9589,9 @@
     {
       "file": "lib/render-worker.js",
       "name": "host-file",
-      "sha256": "7cb134cc06588c8ee131a350f35c272e9c22d1a643117c046d702e72bdfa53b2",
+      "sha256": "abeb46510c48ba3aaa3864cb8326aeabde5b248cebea07ee8eb659cf46f39075",
       "kind": "host-entry",
-      "reason": "Late-bound native export facade brackets execution and conservatively invalidates standalone mutators; invocation/nonlocal ownership remains pending. Observation queue accounting review 20261108: only validated bounded shared journal/epoch control handles are charged by reference; command payload/credit bounds and all writer/lifetime/publication gates remain unchanged. No guest callbacks or restoration changes.",
+      "reason": "Late-bound native export facade brackets execution and conservatively invalidates standalone mutators; invocation/nonlocal ownership remains pending. Observation queue accounting review 20261108: only validated bounded shared journal/epoch control handles are charged by reference; command payload/credit bounds and all writer/lifetime/publication gates remain unchanged. No guest callbacks or restoration changes. Publication accounting review 20261108: an active writer still prevents qualification; a transient failed publication no longer discards unrelated immutable pending sources. Later qualification still requires a new canonical read, unchanged host/page proof, exact owner/request, composition and display publication. Concrete invalidation/supersession and retirement retain terminal accounting. Export execution, callback and nonlocal lifetimes are unchanged.",
       "ownership": "pending"
     }
   ]
