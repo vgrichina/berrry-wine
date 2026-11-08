@@ -78,9 +78,9 @@
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
-  status: retained startup/close composition fixed offline; corrected WebGL gameplay attempt queued behind SuperTux
+  status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed d74c634ca once; retained original consumer now selects accepted deadline readiness and shares actual close settlement. Six real-process controls reproduce old10s failure and pass delayed publication/terminal/pendingCDP/preload/GL call-site cases; focused+lockedbuild PASS. Independently verified590regular files original/storedSHA sizes gzipCRC exactset. Command20s/drain30s failures stay UNKNOWN/no ACK; no native pipe-holder or gameplay claim. Previous2c15ef67b original failed before navigation; bx_vpnvz8r6 archived stop_02b88c9f7da7cda5 after136/136 custody, nativeclose drained:false remains distinct. Fresh q3-composed-visible-progress-2325 PID581516 thread01a1bd77-5a16-77e3-9ac5-b873f2e15397 prepares offline; one corrected original ONLY after explicit SuperTux2301 archived/drained heavy RELEASE and final provider barrier. Prior SoftwareGL courtyard/torch and WebGL level selection stand. Full27/parity/FPS/audio open.
+  Next: Reviewed7227918eb+e38951512 once: actual execution-marker context/order repair focused+lockedbuild PASS; personally viewed current WebGL Q3DM1 ArenaGate selection. Independent241regular original/storedSHA sizes nestedgzipCRC exactset PASS. FirstUNKNOWN level_select command stopped with screenshot345 pending16.726s while independent page evals returned; noACK/replay/movement/firing/torch proof. bx_bfn5frew ARCHIVED stop_4a533be78017c274 unforced after verified81remoteRegular recovery and332actualreaps; ChromeACKexit0 normaldrained13.648s, actualparent/outerWAIT1EOF ports/FD/profile/input/runtimeLOCKdrained. Fresh q3-screenshot-completion-2353 PID626771 thread01a1bd93-4ef0-75a0-8e88-da9f5d217cd0 targets actual screenshot boundary; no unchanged Q3 original retry. Full27/parity/FPS/audio and both-backend gameplay remain open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
