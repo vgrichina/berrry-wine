@@ -55,10 +55,9 @@ for(const mode of ['action','binding','zero','failed','retry','no-poll']){
  if(mode!=='no-poll')assert.deepEqual(r.records[0].bitmap.keys,[{vk:17,down:true},{vk:162,down:true},{vk:163,down:false}]);
  checks++;
 }
-for(const mode of ['overflow','expired','boundary-limit','owner-replaced','unpublished','bad-caller','bad-code','pending']){
- setup();const f=fixture(mode==='overflow'?{maxRecords:1}:mode==='boundary-limit'?{maxBoundaries:1}:{});
+for(const mode of ['overflow','expired','owner-replaced','unpublished','bad-caller','bad-code','pending']){
+ setup();const f=fixture(mode==='overflow'?{maxRecords:1}:{});
  if(mode==='expired')f.expire();
- else if(mode==='boundary-limit')f.step({pc:0x440001});
  else if(mode==='owner-replaced'){f.args.replaceInstance({exports:f.e});f.expire();}
  else if(mode==='unpublished'){rpc.views(memory,0).pub[rpc.SLOT.KEYS_VALID]=0;poll(f);}
  else if(mode==='bad-caller'){wr(0x7401004,0);poll(f);}
@@ -88,6 +87,37 @@ async function independentRelease(){
   assert(released);assert.deepEqual(events,['keyDown','keyUp']);assert(receipt.releaseAt-receipt.started<500);checks++;
  }finally{clearTimeout(watchdog);}
 }
+async function stalledArmRelease(){
+ const {observedHold}=require('./tr2-action-observer.cjs');
+ const {hold}=require('../scratch/runs/20261108-tr2-dog-encounter-1610/bound-input.cjs');
+ setup();const f=fixture();f.o.finish('removed');
+ const c={instance:f.original,memory,GuestRpc:rpc,workerSlot:0,endpointIdentity:7,performance:{now:()=>0},setTimeout:()=>1,clearTimeout:()=>{},globalThis:null};c.globalThis=c;
+ let unblock,released=false;const gate=new Promise(r=>{unblock=r;});
+ const watchdog=setTimeout(()=>unblock(),1000);
+ try{
+  const result=await observedHold({evaluate:async source=>{
+   const value=vm.runInNewContext(source,c);
+   if(source==='globalThis.__tr2Action.arm()')await gate;
+   return value;
+  },workerSession:'cpu',expectedEndpoint:7,exeSha256,
+  hold:arm=>hold({keys:['Control'],holdMs:50,session:'page',sample:async()=>{await arm();return {};},
+   send:async(method,p)=>{if(p.type==='keyUp'){released=true;unblock();}}}),record:async()=>{}});
+  assert(released);assert(result.receipt.releaseAt-result.receipt.started<500);
+  assert(!result.qualified);assert.equal(c.instance,f.original);checks++;
+ }finally{clearTimeout(watchdog);}
+}
+setup();{
+ const f=fixture({defer:true});f.instance.exports.run(10000);
+ assert.deepEqual(f.calls,[10000]);assert.equal(f.o.status().boundaries,0);
+ f.expire();assert.throws(()=>f.o.arm(),/cannot arm/);assert.equal(f.instance,f.original);checks++;
+}
+setup();{
+ const f=fixture({stopAfterPair:true});poll(f);action(f);
+ assert.equal(f.o.status().status,'witnessed');assert(f.o.status().qualified);
+ const count=f.o.status().records.length;
+ for(let i=0;i<40;i++)f.step({pc:0x447206});
+ assert.equal(f.o.status().records.length,count);assert.equal(f.instance,f.original);checks++;
+}
 function actualRunAdapter(){
  // Execute a three-byte synthetic INC/JMP loop, using the exact current
  // accepted production CPU module. No PE loader or original guest execution.
@@ -99,12 +129,62 @@ function actualRunAdapter(){
  e.init_thread(0,0x400000,0x450000,0x450100,0,0,0,0);e.set_esp(0x7401000);e.set_eip(0x450000);e.set_ebx(0);
  b.set([0x43,0xeb,0xfd],wa(0x450000));
  let instance=original;
- const o=install({getInstance:()=>instance,replaceInstance:v=>{instance=v},memory,rpc,workerSlot:0,endpointIdentity:7,expectedEndpoint:7,exeSha256,maxBoundaries:4,
-  now:()=>0,schedule:()=>1,cancel:()=>{}});
+ const o=install({getInstance:()=>instance,replaceInstance:v=>{instance=v},memory,rpc,workerSlot:0,endpointIdentity:7,expectedEndpoint:7,exeSha256,
+  now:(()=>{let ticks=0;return ()=>++ticks<6?0:2500;})(),schedule:()=>1,cancel:()=>{}});
  const ex=instance.exports;ex.run(10);
  assert.equal(e.get_ebx(),10,'bound expiry continues remaining ordinary guest budget');
  assert.equal(ex.get_last_run_blocks(),10,'facade aggregates production run block counts');
- assert.equal(instance,original);assert.equal(o.status().status,'boundary-limit');assert(!o.status().qualified);checks++;
+ assert.equal(instance,original);assert.equal(o.status().status,'expired');assert(!o.status().qualified);checks++;
+}
+// A busy ordinary execution epoch is longer than the old lifetime allowance.
+// Poll/Action still need to be witnessed afterwards, without a larger quota.
+function coverageAfterBusyExecution(installObserver=install){
+ setup();
+ const bytes=fs.readFileSync('build/wine-assembly.wasm');
+ assert.equal(sha(bytes),'d8facd0658b7f158c6e60bef2de0936471f438f8bf41e9240fd75635f1d319dc');
+ const m=new WebAssembly.Module(bytes),imports={host:{memory}};
+ for(const entry of WebAssembly.Module.imports(m))if(entry.kind==='function')imports.host[entry.name]=()=>0;
+ const original=new WebAssembly.Instance(m,imports),e=original.exports;
+ e.init_thread(0,0x400000,0x450000,0x450100,0,0,0,0);e.set_esp(0x7401000);e.set_eip(0x450000);e.set_ebx(0);
+ b.set([0x43,0xeb,0xfd],wa(0x450000));
+ let instance=original,clock=0;
+ const o=installObserver({getInstance:()=>instance,replaceInstance:v=>{instance=v},memory,rpc,workerSlot:0,endpointIdentity:7,expectedEndpoint:7,exeSha256,
+  now:()=>clock,schedule:()=>1,cancel:()=>{}});
+ // Same CPU, same guest budget, continuous observation across normal calls.
+ for(let i=0;i<12;i++){clock=i*10;instance.exports.run(1000);}
+ assert.equal(e.get_ebx(),12000);
+ const busy=o.status();
+ // Authored harness transfer, not a loaded game: execute the immutable poll
+ // and Action windows themselves on the exact CPU. No guest Win32 APIs run.
+ // Success JGE target bridges the fixture stack to the pinned slot8 return.
+ const bridge=[0x83,0xc4,8,0x31,0xdb,0xb8,1,0,0,0,0xe9];
+ const rel=(0x44d3c6-(0x447248+bridge.length+4))|0;
+ b.set([...bridge,rel&255,(rel>>>8)&255,(rel>>>16)&255,(rel>>>24)&255],wa(0x447248));
+ e.set_ebp(0x7402000);e.set_eax(0);e.set_eip(0x447206);
+ // Two blocks: poll test/JGE, bridge/JMP; then Action test/JE, OR/CALL.
+ instance.exports.run(4);
+ const result=o.finish('removed');
+ return {busy,result,ebx:e.get_ebx()};
+}
+const coverage=coverageAfterBusyExecution();
+assert.equal(coverage.busy.status,'active');assert(coverage.busy.boundaries>4097);
+assert(coverage.result.qualified,JSON.stringify(coverage));
+assert.equal(coverage.result.records.at(-1).outcome,'action-set-weapon-aim-unqualified');checks++;
+// Overshooting folds and non-progress are part of run's real contract.
+for(const mode of ['fold','no-progress','zero-budget','yield-entry']){
+ setup();let instance,blocks=0,calls=[],yieldReason=mode==='yield-entry'?1:0;
+ const e={get_image_base:()=>0x400000,get_current_thread_id:()=>1,get_eip:()=>0x440000,get_esp:()=>0x7401000,
+  get_yield_reason:()=>yieldReason,get_last_run_halt:()=>1,get_last_run_blocks:()=>blocks,
+  run:n=>{calls.push(n);blocks=mode==='no-progress'&&calls.length===1?0:mode==='fold'?3:Math.max(0,n);yieldReason=0;}};
+ const original={exports:e};instance=original;
+ const o=install({getInstance:()=>instance,replaceInstance:v=>{instance=v},memory,rpc,workerSlot:0,endpointIdentity:7,expectedEndpoint:7,exeSha256,
+  now:()=>0,schedule:()=>1,cancel:()=>{}});
+ const ex=instance.exports;ex.run(mode==='zero-budget'?0:5);
+ if(mode==='fold'){assert.deepEqual(calls,[1,1]);assert.equal(ex.get_last_run_blocks(),6);}
+ if(mode==='no-progress'){assert.deepEqual(calls,[1,5]);assert.equal(o.status().status,'no-progress');assert.equal(instance,original);}
+ if(mode==='zero-budget')assert.deepEqual(calls,[0]);
+ if(mode==='yield-entry')assert.equal(ex.get_last_run_blocks(),5);
+ o.finish('removed');checks++;
 }
 async function actualOrchestration(){
  const {observedHold}=require('./tr2-action-observer.cjs');
@@ -114,19 +194,19 @@ async function actualOrchestration(){
   const c={instance:f.original,memory,GuestRpc:rpc,workerSlot:0,endpointIdentity:7,performance:{now:()=>0},setTimeout:()=>1,clearTimeout:()=>{},globalThis:null};c.globalThis=c;
   const log=[];let final;
   const work=observedHold({evaluate:async s=>vm.runInNewContext(s,c),workerSession:'cpu',expectedEndpoint:7,exeSha256,
-   hold:async()=>{
+   hold:async arm=>{
     if(mode==='release-failed')throw Error('input release transport failure');
     const step=row=>{f.queue.push(row);c.instance.exports.run(1);};
     let sampled=false;
     const receipt=await nativeHold({keys:['Control'],holdMs:50,session:'page',
      send:async(method,p)=>{
-      if(p.type==='keyDown'&&mode!=='no-poll')step({pc:0x447206,esp:0x7401000,eax:0});
+      if(p.type==='keyDown')assert.equal(c.__tr2Action.status().boundaries,0,'no observation before native keyDown');
      },sample:async()=>{
-      if(!sampled){sampled=true;step({pc:0x44d3c6,esp:0x7401008,eax:1,ebx:0});
+      if(!sampled){sampled=true;await arm();if(mode==='expired')c.__tr2Action.finish('expired');if(mode!=='no-poll')step({pc:0x447206,esp:0x7401000,eax:0});step({pc:0x44d3c6,esp:0x7401008,eax:1,ebx:0});
        wr(0x7401004,0x44d3db);wr(0x7401008,9);step({pc:0x44d180,esp:0x7401004,ebx:64});}
       return {physical:[{key:17,state:mode==='no-physical'?0:0x8000}]};
      }});
-    if(mode==='expired')c.__tr2Action.finish('expired');
+
     if(mode==='outside')receipt.started=Date.now()+1000;
     return receipt;
    },record:async(k,v)=>{log.push(k);final=v;}});
@@ -136,5 +216,5 @@ async function actualOrchestration(){
  }
 }
 actualRunAdapter();
-Promise.all([independentRelease(),actualOrchestration()]).then(()=>console.log(JSON.stringify({passed:true,checks,original:false,backendQualified:false,
+(async()=>{await independentRelease();await actualOrchestration();await stalledArmRelease();})().then(()=>console.log(JSON.stringify({passed:true,checks,original:false,backendQualified:false,
  scope:'production serialized observer with fixture CPU states and actual RPC layout; unchanged native independent release; static exact game pins'}))).catch(e=>{console.error(e);process.exitCode=1;});
