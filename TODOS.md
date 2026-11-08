@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-level-one-1418 restores NEWLevel1pair62322670/da159714 then dungeonexploration+earlysave. NativeTOLEVEL1/loading/liveLEVEL1 entrance established9victoriesLIFE19MANA25Gold1532Food52redvial. Earlyrecesssavewithin10min andLevel1pairrecovered592s retrieval606s. PersonallyreviewedLEVEL1PNG510refs341033494B independentlyhashed normalbx_2cjsgbey archivedstop_9b8d925fbd151567 expiryNULL. Note: docs/re-notes/darkstone-road-onward-20261108.mdb13b01367. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-helmet-onward-1440 restoreFINAL70fcfbe3/a4ecb215 helmetpair1342204/3204341B continueLevel1secondopening. f40be5335 nativecontainersbroken HELMETidentified/equippedAC10to12 newcorridor saved;9+0 LIFE19/35 MANA25 Gold1532 Food49. Earlyrecovery468577ms retrieved482040ms final869454ms. Personallyreviewedhelmet/corridorPNGs492refs439318576B independentlyhashed normalbx_wm5z2xf8 archive/stop_63b60cb9d889d34c expiryNULLdrainPASS. Note: docs/re-notes/darkstone-level-one-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
