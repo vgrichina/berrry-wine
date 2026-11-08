@@ -9,6 +9,11 @@ import json
 import ctypes
 import sys
 import subprocess
+import gzip
+import hashlib
+import signal
+import zlib
+import struct
 from unittest.mock import patch
 
 spec=importlib.util.spec_from_file_location('kernel',Path(__file__).with_name('native_kernel_custody.py'))
@@ -343,6 +348,158 @@ class ContinueRace(unittest.TestCase):
             self.assertEqual(drain['unreaped'],[]);self.assertEqual(drain['remaining'],[])
 
 
+class CompressedCancellation(unittest.TestCase):
+    def run_case(self, mode):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(os.environ.get('CUSTODY_GZIP_EVIDENCE',tmp))
+            run=Path(tempfile.mkdtemp(prefix=mode+'-',dir=base))
+            # Outer process is a subreaper. Its isolated group and subprocess
+            # timeout are independent of the supervisor's cleanup deadline.
+            result=subprocess.run([sys.executable,__file__,'--isolated-fixture','--gzip-fixture',str(run),mode],
+                                  capture_output=True,text=True,timeout=8,start_new_session=True)
+            receipt=json.loads((run/'fixture-wait.json').read_text())
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            self.assertTrue((run/'watchdog-armed.json').exists())
+            self.assertFalse((run/'watchdog-fired.json').exists())
+            self.assertEqual(receipt['watchdogWait'],-signal.SIGTERM)
+            stored=(run/'custody.ndjson.gz').read_bytes()
+            prefix=zlib.decompressobj(31);data=prefix.decompress(stored)
+            self.assertFalse((run/'custody.ndjson').exists())
+            rows=[json.loads(s) for s in data.splitlines()]
+            self.assertTrue(rows)
+            if mode in ('hard-kill','legacy-term'):
+                self.assertEqual(receipt['supervisorWait'],-(signal.SIGKILL if mode=='hard-kill' else signal.SIGTERM))
+                self.assertFalse(prefix.eof)
+                self.assertFalse((run/'kernel-drain.json').exists())
+                with self.assertRaises(EOFError):gzip.decompress(stored)
+                self.assertEqual(receipt['validation'],'INCOMPLETE: missing footer and drain')
+                return
+            self.assertTrue(prefix.eof)
+            self.assertEqual(gzip.decompress(stored),data)
+            self.assertEqual(struct.unpack('<II',stored[-8:]),(zlib.crc32(data),len(data) & 0xffffffff))
+            if mode=='normal':
+                corrupt=stored[:-8]+bytes([stored[-8]^1])+stored[-7:]
+                with self.assertRaises(gzip.BadGzipFile):gzip.decompress(corrupt)
+            drain=json.loads((run/'kernel-drain.json').read_text())
+            self.assertEqual(drain['journal']['originalBytes'],len(data))
+            self.assertEqual(drain['journal']['originalSha256'],hashlib.sha256(data).hexdigest())
+            self.assertTrue(drain['journal']['closed'])
+            if mode=='no-waits':
+                self.assertFalse(drain['complete']);self.assertTrue(drain['unreaped'])
+                self.assertIn('immutable cleanup deadline',drain['failure'])
+                self.assertNotEqual(receipt['supervisorWait'],0)
+                return
+            self.assertTrue(drain['complete'])
+            self.assertEqual(drain['unreaped'],[]);self.assertEqual(drain['remaining'],[])
+            self.assertEqual(drain['unresolvedPtrace'],[]);self.assertEqual(drain['unresolvedLineage'],[])
+            self.assertEqual(len(drain['owned']),len(drain['reaped']))
+            for r in drain['reaped']:
+                before=next(x for x in rows if x['sequence']==r['beforeReapSequence'])
+                self.assertIn(before['kind'],('before-reap','before-consume'))
+                self.assertLess(before['sequence'],r['sequence'])
+            if mode=='normal':
+                self.assertEqual(receipt['supervisorWait'],0);self.assertEqual(drain['exit'],0)
+            else:
+                self.assertNotEqual(receipt['supervisorWait'],0)
+                self.assertEqual(len([x for x in rows if x['kind']=='cancellation']),1)
+                if mode!='deadline':
+                    self.assertEqual(drain['exit'],0) # root exited before cancellation
+                    self.assertEqual(len(drain['reaped']),4)
+                    statuses=[os.waitstatus_to_exitcode(r['status']) for r in drain['reaped']]
+                    self.assertTrue(any(s in (-15,-9) for s in statuses))
+                if mode=='repeat-term':
+                    self.assertTrue(any(x['kind']=='cancellation-sent' and x['signal']==9 for x in rows))
+            self.assertLess(receipt['elapsed'],4)
+
+    def test_gzip_normal_footer_and_original_hash(self):self.run_case('normal')
+    def test_supervisor_term_after_root_exit_drains_adopted_children(self):self.run_case('term')
+    def test_repeated_term_does_not_interrupt_kill_escalation(self):self.run_case('repeat-term')
+    def test_child_group_shutdown_and_supervisor_signal_race(self):self.run_case('group-term')
+    def test_runtime_deadline_cancels_and_reaps(self):self.run_case('deadline')
+    def test_cleanup_deadline_is_incomplete_with_verified_prefix(self):self.run_case('no-waits')
+    def test_sigkill_is_explicitly_incomplete_and_preserves_prefix(self):self.run_case('hard-kill')
+    def test_original_supervisor_default_term_truncates_gzip(self):self.run_case('legacy-term')
+
+
+def gzip_fixture(run, mode):
+    run=Path(run).resolve();started=time.monotonic()
+    # This parent is independent of the supervisor and retains its actual wait.
+    gate_read,gate_write=os.pipe()
+    pid=os.fork()
+    if pid==0:
+        os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
+        due=time.time()+(.4 if mode in ('deadline','no-waits') else 3)
+        command=['/bin/true']
+        if mode!='normal':
+            command=[sys.executable,'-c', '''import os,signal,time,pathlib,json
+signal.signal(signal.SIGTERM,signal.SIG_IGN if IGNORE else signal.SIG_DFL)
+children=[]
+for _ in range(3):
+ p=os.fork()
+ if p==0:
+  while True:time.sleep(1)
+ children.append(p)
+pathlib.Path(READY).write_text(json.dumps(dict(root=os.getpid(),children=children)))
+os._exit(0)
+'''.replace('IGNORE',repr(mode in ('repeat-term','deadline','no-waits'))).replace('READY',repr(str(run/'ready.json')))]
+        actual_waitid=os.waitid
+        def peek(*args):
+            if (run/'ready.json').exists():return None
+            return actual_waitid(*args)
+        try:
+            with patch.object(kernel.os,'waitid',side_effect=peek if mode=='no-waits' else actual_waitid):
+                if mode=='legacy-term':
+                    import types, builtins
+                    revision='3a75ffb9c5b147512e4e30ce528f9788f9cb6704'
+                    source=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+                    legacy=types.ModuleType('legacy');exec(compile(source,revision,'exec'),legacy.__dict__)
+                    # Reproduce the original sink substitution through dependency
+                    # injection, without altering even one byte of source text.
+                    def sink(path,mode,**kwargs):
+                        if Path(path).name=='custody.ndjson':return gzip.open(run/'custody.ndjson.gz','wt')
+                        return builtins.open(path,mode,**kwargs)
+                    legacy.open=sink
+                    legacy.supervise(run,command,deadline=due,cleanup_deadline=due+.6)
+                else:
+                    kernel.supervise(run,command,deadline=due,cleanup_deadline=due+.6,journal_compression='gzip')
+        except BaseException:
+            os._exit(1)
+        os._exit(0)
+    # Prearm an independent observable watchdog before waiting for readiness.
+    watchdog=os.fork()
+    if watchdog==0:
+        os.close(gate_read);os.close(gate_write)
+        (run/'watchdog-armed.json').write_text(json.dumps(dict(pid=os.getpid(),target=pid,seconds=5)))
+        time.sleep(5)
+        try:os.kill(pid,signal.SIGKILL)
+        except ProcessLookupError:pass
+        (run/'watchdog-fired.json').write_text('{}');os._exit(0)
+    os.close(gate_read)
+    while not (run/'watchdog-armed.json').exists():time.sleep(.001)
+    os.write(gate_write,b'1');os.close(gate_write)
+    if mode not in ('normal','deadline','no-waits'):
+        due=time.monotonic()+3
+        while time.monotonic()<due:
+            try:
+                raw=(run/'custody.ndjson.gz').read_bytes()
+                rows=[json.loads(s) for s in zlib.decompressobj(31).decompress(raw).splitlines()]
+                ready=json.loads((run/'ready.json').read_text())
+                if any(r['kind']=='reaped' and r['pid']==ready['root'] for r in rows):break
+            except (FileNotFoundError,ValueError,zlib.error):pass
+            time.sleep(.002)
+        else:raise AssertionError('root terminal wait barrier missing')
+        if mode=='group-term':os.killpg(ready['root'],signal.SIGTERM)
+        os.kill(pid,signal.SIGKILL if mode=='hard-kill' else signal.SIGTERM)
+        if mode=='repeat-term':
+            for _ in range(10):
+                time.sleep(.01);os.kill(pid,signal.SIGTERM)
+    got,status=os.waitpid(pid,0);assert got==pid
+    os.kill(watchdog,signal.SIGTERM);_,watch_status=os.waitpid(watchdog,0)
+    (run/'fixture-wait.json').write_text(json.dumps(dict(supervisorWait=os.waitstatus_to_exitcode(status),
+        watchdogWait=os.waitstatus_to_exitcode(watch_status),elapsed=time.monotonic()-started,
+        validation='INCOMPLETE: missing footer and drain' if mode in ('hard-kill','legacy-term') else 'checked by test')))
+
+
 def cont_race_fixture(run, concurrent=False):
     trace=kernel.ptrace;waitid=os.waitid;injected=[]
     def resume(request,pid,addr=0,data=0):
@@ -549,10 +706,17 @@ if __name__=='__main__':
         # inherits unrelated zombies between kernel tests.
         assert kernel.libc.prctl(36,1,0,0,0)==0
         result=subprocess.run([sys.executable,__file__,*sys.argv[2:]])
+        adopted=[]
         while True:
-            try:os.waitpid(-1,0)
+            try:
+                pid,status=os.waitpid(-1,0)
+                adopted.append(dict(pid=pid,status=status,exit=os.waitstatus_to_exitcode(status)))
             except ChildProcessError:break
+        if sys.argv[2]=='--gzip-fixture':
+            (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
+                fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
+    elif len(sys.argv)>1 and sys.argv[1]=='--gzip-fixture':gzip_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--cont-race-fixture':cont_race_fixture(sys.argv[2])
     elif len(sys.argv)>1 and sys.argv[1]=='--concurrent-exit-fixture':cont_race_fixture(sys.argv[2],True)
     elif len(sys.argv)>1 and sys.argv[1]=='--unseen-exit-fixture':unseen_exit_fixture(sys.argv[2])

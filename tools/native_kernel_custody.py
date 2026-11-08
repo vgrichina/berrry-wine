@@ -3,7 +3,7 @@ No /proc sampling is used to discover descendants. Autoattached tasks await thei
 kernel fork/vfork/clone lineage before userspace resumes. Irreversible exit retirement
 can finish without that lineage; unresolved receipts remain explicit at drain.
 """
-import ctypes, errno, json, os, signal, sys, time
+import ctypes, errno, gzip, hashlib, json, os, signal, sys, time
 from pathlib import Path
 
 TRACEME, CONT, SETOPTIONS, GETEVENTMSG = 0, 7, 0x4200, 0x4201
@@ -26,18 +26,41 @@ def identity(pid):
     return dict(pid=pid, start=fields[19], ppid=int(fields[1]), state=fields[0],
                 tgid=int(next(s.split()[1] for s in status if s.startswith('Tgid:'))))
 
-def supervise(run, command, *, deadline, cleanup_deadline):
+class Journal:
+    """Flush compressed bytes from the first record; hash the original bytes."""
+    def __init__(self, run, compression):
+        if compression not in (None, 'gzip'):
+            raise ValueError('journal_compression must be None or gzip')
+        self.path = run / ('custody.ndjson.gz' if compression else 'custody.ndjson')
+        self.raw = open(self.path, 'wb')
+        self.stream = gzip.GzipFile(filename='', fileobj=self.raw, mode='wb', mtime=0) if compression else self.raw
+        self.sha = hashlib.sha256(); self.size = 0
+
+    def append(self, value):
+        data = (json.dumps(value)+'\n').encode('utf-8')
+        self.stream.write(data); self.stream.flush()
+        self.raw.flush(); os.fsync(self.raw.fileno())
+        self.sha.update(data); self.size += len(data)
+
+    def close(self):
+        # GzipFile.close writes CRC32/ISIZE but does not close fileobj.
+        try:
+            if self.stream is not self.raw: self.stream.close()
+            self.raw.flush(); os.fsync(self.raw.fileno())
+        finally:
+            self.raw.close()
+
+def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=None):
     run = Path(run).resolve(); run.mkdir(parents=True, exist_ok=True)
     assert time.time() < deadline < cleanup_deadline, "expired or invalid immutable deadlines"
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'subreaper required'
     owned = {}; reaped = []; parked = set(); exit_retired = set(); root_status = None; sequence = 0
     pending = {}
-    journal = open(run / 'custody.ndjson', 'w', buffering=1)
+    journal = Journal(run, journal_compression)
     def log(kind, **value):
         nonlocal sequence
         sequence += 1
-        journal.write(json.dumps(dict(sequence=sequence, at=time.time(), kind=kind, **value))+'\n')
-        journal.flush(); os.fsync(journal.fileno())
+        journal.append(dict(sequence=sequence, at=time.time(), kind=kind, **value))
         return sequence
     def write(name, value):
         (run / name).write_text(json.dumps(value, indent=2))
@@ -78,10 +101,17 @@ def supervise(run, command, *, deadline, cleanup_deadline):
                                  pid=task, start=row['start'], request=request, data=data,
                                  custodySequence=row['registeredSequence']))
             return False
+    # Handlers only latch cancellation, including repeated/group signals during
+    # drain. Never raise or perform journal I/O from a signal handler.
+    cancellation = []; cancel_at = None; sent = set(); failure = None; drained = False
+    def request_cancel(signum, frame):
+        if not cancellation: cancellation.append(dict(signal=signum, cause='supervisor-signal'))
+    handlers = {sig: signal.signal(sig, request_cancel) for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP)}
     # Parent never uses Popen.poll()/wait(): those can reap an unrecorded child.
     pid = os.fork()
     if pid == 0:
         try:
+            for sig, handler in handlers.items(): signal.signal(sig, handler)
             os.setsid()
             fd = os.open(run / 'kernel-command.log', os.O_WRONLY|os.O_CREAT|os.O_TRUNC, 0o600)
             os.dup2(fd, 1); os.dup2(fd, 2); os.close(fd)
@@ -98,6 +128,24 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             if time.time() > cleanup_deadline:
                 log('cleanup-deadline', deadline=cleanup_deadline)
                 raise TimeoutError('immutable cleanup deadline')
+            if not cancellation and time.time() >= deadline:
+                cancellation.append(dict(signal=None, cause='runtime-deadline'))
+            if cancellation:
+                if cancel_at is None:
+                    cancel_at = time.monotonic()
+                    log('cancellation', **cancellation[0], cleanupDeadline=cleanup_deadline)
+                sig = signal.SIGKILL if time.monotonic()-cancel_at >= .25 else signal.SIGTERM
+                retired = {r['pid'] for r in reaped}
+                for target, registered in list(owned.items()):
+                    if target in retired or (target, sig) in sent: continue
+                    try:
+                        if identity(target)['start'] != registered['start']:
+                            raise AssertionError('PID reused during cancellation')
+                        os.kill(target, sig)
+                        log('cancellation-sent', pid=target, start=registered['start'], signal=sig)
+                    except (ProcessLookupError, FileNotFoundError):
+                        log('cancellation-identity-unavailable', pid=target, start=registered['start'], signal=sig)
+                    sent.add((target, sig))
             try:
                 peek = os.waitid(os.P_ALL, 0, os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|WALL)
             except ChildProcessError:
@@ -105,6 +153,7 @@ def supervise(run, command, *, deadline, cleanup_deadline):
                 assert {(r['pid'], r['start']) for r in owned.values()} == {
                     (r['pid'], r['start']) for r in reaped}, 'unreaped custody at ECHILD'
                 assert not pending, ('unresolved ptrace ESRCH', pending)
+                drained = True
                 break
             if peek is None:
                 time.sleep(.001); continue
@@ -206,6 +255,7 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             deliver = 0 if event or sig in (signal.SIGTRAP, signal.SIGSTOP) else sig
             trace_task(CONT, task, deliver)
     except BaseException as error:
+        failure = repr(error)
         log('failure', error=repr(error))
         for task, row in owned.items():
             try:
@@ -220,22 +270,38 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             except (ProcessLookupError,FileNotFoundError): pass
         unreaped=[row for row in owned.values() if not any(r['pid']==row['pid'] and r['start']==row['start'] for r in reaped)]
         unresolved=[row for row in owned.values() if row['cause']=='kernel-autoattach-stop']
-        write('kernel-drain.json',dict(exit=root_status,owned=list(owned.values()),reaped=reaped,
-              remaining=remaining,unreaped=unreaped,unresolvedPtrace=list(pending.values()),finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
-              custody='ptrace fork/vfork/clone barriers + waitid WNOWAIT before waitpid',
-              kernelForkLineage=True,kernelForkLineageComplete=not unresolved,
-              unresolvedLineage=unresolved,untracedCloneFlagsAudited=False))
-        journal.close()
+        complete = drained and not (unreaped or pending or parked or remaining or unresolved)
+        journal_error = None
+        try:
+            journal.close()
+        except BaseException as error:
+            journal_error = repr(error)
+        try:
+            write('kernel-drain.json',dict(exit=root_status,owned=list(owned.values()),reaped=reaped,
+                  complete=complete and journal_error is None, failure=failure, cancellation=cancellation,
+                  journal=dict(path=journal.path.name, closed=journal_error is None, error=journal_error,
+                               originalBytes=journal.size, originalSha256=journal.sha.hexdigest()),
+                  remaining=remaining,unreaped=unreaped,unresolvedPtrace=list(pending.values()),finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
+                  custody='ptrace fork/vfork/clone barriers + waitid WNOWAIT before waitpid',
+                  kernelForkLineage=True,kernelForkLineageComplete=not unresolved,
+                  unresolvedLineage=unresolved,untracedCloneFlagsAudited=False))
+        finally:
+            for sig, handler in handlers.items(): signal.signal(sig, handler)
+        if journal_error: raise OSError('journal finalization failed: '+journal_error)
     assert not unreaped, unreaped
     assert not pending, pending
     assert not parked, parked
     assert not remaining, remaining
     assert not unresolved, ('unresolved kernel lineage', unresolved)
+    if cancellation: raise InterruptedError('supervised cancellation: '+repr(cancellation[0]))
     assert root_status == 0, root_status
 
 if __name__ == '__main__':
     # Deadlines are assigned before allocation and never extended at startup.
     run=Path(sys.argv[1]).resolve()
     life=json.loads((run/'lifecycle.json').read_text())
-    supervise(run, sys.argv[2:], deadline=life['browserDeadline']/1000,
-              cleanup_deadline=life['browserDeadline']/1000+30)
+    command=sys.argv[2:]
+    compression='gzip' if command and command[0]=='--journal-gzip' else None
+    if compression: command=command[1:]
+    supervise(run, command, deadline=life['browserDeadline']/1000,
+              cleanup_deadline=life['browserDeadline']/1000+30, journal_compression=compression)
