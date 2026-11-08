@@ -66,7 +66,8 @@ function testObservationQueueCapacity() {
   const arm = {t: 'legacy-producer-observation', action: 'arm', options: {
     ownerGeneration: 'capacity-regression', maxRecords: 4096,
     writerEpochBuffer: new SharedArrayBuffer(16),
-    surfaceVersionBuffer: new SharedArrayBuffer(4096 * 65536)
+    surfaceVersionBuffer: new SharedArrayBuffer(4096 * 65536),
+    retainedSurfaceBuffer: new SharedArrayBuffer(4 * (16 + 2 * 1024 * 1024))
   }};
   endpoint.postMessage(arm);
   assert(manager.queuedBytes > 0 && manager.queuedBytes < 1024,
@@ -78,6 +79,10 @@ function testObservationQueueCapacity() {
   assert.equal(manager.queuedBytes, 0);
   assert.throws(() => endpoint.postMessage({...arm, options: {...arm.options, maxRecords: 4095}}), /capacity/,
     'mismatched journal receives no control-state exemption');
+  for (const retainedSurfaceBuffer of [new SharedArrayBuffer(1), new ArrayBuffer(4 * (16 + 2 * 1024 * 1024))]) {
+    assert.throws(() => endpoint.postMessage({...arm, options: {...arm.options, retainedSurfaceBuffer}}), /capacity/,
+      'malformed retained storage receives no control-state exemption');
+  }
   assert.throws(() => endpoint.postMessage({...arm, payload: arm.options.surfaceVersionBuffer}), /capacity/,
     'an extra shared payload remains charged even if it aliases control state');
   assert.throws(() => endpoint.postMessage({t: 'batch', bytes: arm.options.surfaceVersionBuffer}), /capacity/,

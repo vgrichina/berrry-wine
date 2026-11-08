@@ -709,6 +709,7 @@ async function main() {
   // Main/cooperative-style callback entry may reenter the compositor through
   // an import before its WAT store has notified the page watch.
   const reentrantSource = await produce();
+  const beforeReentrantPublication = publications.length;
   let reentrantCalls = 0;
   reentrantObserver = marker => {
     if (marker !== 0x57525031) return;
@@ -716,7 +717,7 @@ async function main() {
     assert.equal(joinEpoch.snapshot(), null);
     assert(journal.unchanged(memory, reentrantSource));
     presentation.surface.markDirty(0, 0, 2, 2); renderer.repaint();
-    assert.equal(publications.at(-1).red, 90);
+    assert.equal(publications.length, beforeReentrantPublication, 'live writer defers ordinary composition before reading');
     assert.equal(join.rows.length, 5);
   };
   try {
@@ -724,6 +725,9 @@ async function main() {
   } finally { reentrantObserver = null; }
   assert.equal(reentrantCalls, 1);
   assert.equal(journal.unchanged(memory, reentrantSource), false);
+  renderer.repaint();
+  assert.equal(publications.at(-1).red, 90, 'ordinary display resumes after the writer drains');
+  assert.equal(join.rows.length, 5, 'drain does not restore the changed source proof');
 
   // A real production WorkerLink/guest-worker callExport runs the native gs32
   // path, paused after its store and before notification. Readers must reject
@@ -738,6 +742,7 @@ async function main() {
     control.fill(0);
     await actualLink.callExport('identity_pause_at', controlWa);
     const source = await produce(), before = structuredClone(source.pages);
+    const beforeStandalonePublication = publications.length;
     const writing = actualLink.callExport('guest_write32',
       0x50000000 + source.layout.dib - BASE.DIB_BACKING_BASE, 0x00440000);
     const deadline = Date.now() + 5000;
@@ -747,11 +752,14 @@ async function main() {
     assert.deepEqual(source.pages, before);
     assert(journal.unchanged(memory, source));
     presentation.surface.markDirty(0, 0, 2, 2); renderer.repaint();
-    assert.equal(publications.at(-1).red, 68);
+    assert.equal(publications.length, beforeStandalonePublication, 'actual Worker hold prevents ordinary publication');
     assert.equal(join.rows.length, 5, 'actual live standalone writer cannot qualify publication');
     Atomics.store(control, 0, 1); Atomics.notify(control, 0);
     await writing;
     assert.equal(journal.unchanged(memory, source), false);
+    renderer.repaint();
+    assert.equal(publications.at(-1).red, 68, 'ordinary display resumes with the completed standalone write');
+    assert.equal(join.rows.length, 5, 'post-drain changed source remains unqualified');
     await actualLink.callExport('identity_pause_at', 0);
   } finally {
     const control = new Int32Array(memory.buffer, dibA + 4096, 2);

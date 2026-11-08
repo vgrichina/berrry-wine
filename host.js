@@ -5728,7 +5728,8 @@ class WineAssembly {
     const guest = this.guestWorker, threads = this.threadManager, instance = this.instance, renderer = this.renderer;
     const memory = this.memory, processId = this.processId;
     const epoch = new RenderWorker.WriterEpoch();
-    const journal = new RenderWorker.SurfaceVersionJournal(new SharedArrayBuffer(maxRecords * 65536));
+    const journal = new RenderWorker.SurfaceVersionJournal(new SharedArrayBuffer(maxRecords * 65536),
+      new SharedArrayBuffer(4 * (16 + 2 * 1024 * 1024)));
     const ownerScope = `process:${processId}:endpoint:${link.endpointIdentity}`;
     // Attach every local/remote guest entry before arming the shared renderer.
     // These checks reject a mid-flight attachment without stopping the guest.
@@ -5763,7 +5764,8 @@ class WineAssembly {
       this.threadManager.setWriterObservation(epoch);
       this._d3dimWriterObservation = epoch;
       const sourceOwner = await endpoint.producerObservation('arm', { ownerGeneration: ownerScope,
-        maxRecords, writerEpochBuffer: epoch.buffer, surfaceVersionBuffer: journal.buffer });
+        maxRecords, writerEpochBuffer: epoch.buffer, surfaceVersionBuffer: journal.buffer,
+        retainedSurfaceBuffer: journal.retainedBuffer });
       if (this._stopped || this.guestWorker !== guest || this.threadManager !== threads ||
           this.memory !== memory || this.processId !== processId ||
           this.instance !== instance || this.renderer !== renderer || guest.link !== link ||

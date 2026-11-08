@@ -8,12 +8,17 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const Module = require('node:module');
 const root = require('node:path').resolve(__dirname, '..');
-const productionAPI = require('../lib/render-worker');
+function productionModule(file) {
+ if(!process.env.CLEAR_ORDER_BASELINE)return require(root+'/'+file);
+ const text=require('node:child_process').execFileSync('git',['show',process.env.CLEAR_ORDER_BASELINE+':'+file],{cwd:root,encoding:'utf8'});
+ const m=new Module(root+'/'+file,module);m.filename=root+'/'+file;m.paths=Module._nodeModulePaths(require('node:path').dirname(m.filename));m._compile(text,m.filename);return m.exports;
+}
+const productionAPI = productionModule('lib/render-worker.js');
 const {BASE} = require('../lib/region-map.generated');
 const {Win98Renderer} = require('../lib/renderer');
 const {createCanvas} = require('../lib/raster-canvas');
-const {createHostImports} = require('../lib/host-imports');
-const source = fs.readFileSync(root+'/lib/d3d-render-worker.js','utf8');
+const {createHostImports} = productionModule('lib/host-imports.js');
+const source = process.env.CLEAR_ORDER_BASELINE?require('node:child_process').execFileSync('git',['show',process.env.CLEAR_ORDER_BASELINE+':lib/d3d-render-worker.js'],{cwd:root,encoding:'utf8'}):fs.readFileSync(root+'/lib/d3d-render-worker.js','utf8');
 const binary = fs.readFileSync(root+'/build/wine-assembly.wasm');
 const moduleBytes = new WebAssembly.Module(binary);
 const apiSource = fs.readFileSync(root+'/lib/render-worker.js','utf8');
@@ -33,6 +38,7 @@ fullBaselineModule.paths = module.paths;
 assert(apiSource.includes('this.compositionReads?.get(version)'));
 fullBaselineModule._compile(apiSource.replace('this.compositionReads?.get(version)', 'null'),root+'/lib/render-worker.js');
 async function fixture(corrected,variant='actual-layer',observed=false,nativeClientRect=false){
+ const retained=variant.startsWith('retained-');
  const API=observed==='full-baseline'?fullBaselineModule.exports:observed==='menu-baseline'?menuBaselineModule.exports:corrected?productionAPI:baselineAPI;
  const memory=new WebAssembly.Memory({initial:8192,maximum:32768,shared:true}),imports={host:{memory}};
  let windowHost, callbackEpoch, callbackRenderer, callbackNative, compositorTicket;
@@ -65,8 +71,8 @@ async function fixture(corrected,variant='actual-layer',observed=false,nativeCli
  await c.dispatch({t:'render-open',endpointId:1,options:{api:'legacy',backend:'software'}});
  const buffer=new SharedArrayBuffer(32),controlBuffer=new SharedArrayBuffer(64),control=new Int32Array(controlBuffer),view=new DataView(buffer);
  await dispatch({t:'init',control:controlBuffer,buffers:[buffer]});
- const epoch=new API.WriterEpoch(),journal=new API.SurfaceVersionJournal(new SharedArrayBuffer(8*65536));
- await dispatch({t:'legacy-producer-observation',action:'arm',options:{ownerGeneration:'clear-integration-fixture',maxRecords:8,writerEpochBuffer:epoch.buffer,surfaceVersionBuffer:journal.buffer}});
+ const epoch=new API.WriterEpoch(),journal=new API.SurfaceVersionJournal(new SharedArrayBuffer(8*65536),retained?new SharedArrayBuffer(4*(16+2*1024*1024)):undefined);
+ await dispatch({t:'legacy-producer-observation',action:'arm',options:{ownerGeneration:'clear-integration-fixture',maxRecords:8,writerEpochBuffer:epoch.buffer,surfaceVersionBuffer:journal.buffer,retainedSurfaceBuffer:journal.retainedBuffer}});
  const observation=c.entry(1).producerObservation;assert(observation.active);
  const renderer=new Win98Renderer(createCanvas(2,2));renderer.scheduleRepaint=()=>{};renderer.createWindow(0x77,0x90000000,0,0,2,2,'',0,native,memory);
  if(nativeClientRect || variant.startsWith('native-client-rect')) {
@@ -115,13 +121,65 @@ async function fixture(corrected,variant='actual-layer',observed=false,nativeCli
    renderer,d3dimPublicationJoin:join});
  windowHost=host;callbackEpoch=epoch;callbackRenderer=renderer;callbackNative=native;
  const dv=new DataView(memory.buffer),bytes=new Uint8Array(memory.buffer),front=BASE.DX_OBJECTS+32*7,back=front+32,dibA=BASE.DIB_BACKING_BASE,dibB=dibA+64,descriptor=dibB+64,sid=0x200007;
- for(const [entry,dib,red]of [[front,dibA,17],[back,dibB,34]]){dv.setUint32(entry,2,true);for(const [o,v]of [[12,2],[14,2],[16,16],[18,4]])dv.setUint16(entry+o,v,true);dv.setUint32(entry+20,dib,true);dv.setUint32(entry+28,1,true);for(let i=0;i<8;i+=2)dv.setUint16(dib+i,red===34?0xf800:0x001f,true);}
- let seq=0,serial=0;
- async function produce(){serial++;for(const [o,v]of [[0,32],[4,front],[8,back],[12,descriptor],[16,serial],[20,0x44585031],[28,1]])view.setUint32(o,v,true);await dispatch({t:'batch',index:0,bytes:32,commands:1,seq:++seq,imageBase:0x400000});host.gdi_surface_create(sid,2,2,16,dv.getUint32(front+20,true),4,1,0,0);host.gdi_surface_attach(sid,0x77);host.gdi_surface_upload(sid,0,0,2,2,{slot:7,workerSlot:3,descriptor,serial});return journal.records().at(-1);}
+ const surfacePitch=variant==='retained-odd-pitch'?5:4;
+ for(const [entry,dib,red]of [[front,dibA,17],[back,dibB,34]]){dv.setUint32(entry,2,true);for(const [o,v]of [[12,2],[14,2],[16,16],[18,surfacePitch]])dv.setUint16(entry+o,v,true);dv.setUint32(entry+20,dib,true);dv.setUint32(entry+28,1,true);for(let y=0;y<2;y++)for(let x=0;x<2;x++)dv.setUint16(dib+y*surfacePitch+x*2,red===34?0xf800:0x001f,true);}
+ if(retained)dv.setUint32(back+28,0,true); // the actual front owns scan-out
+ let seq=0,serial=retained?444:0;
+ async function produce(upload=true){serial++;for(const [o,v]of [[0,32],[4,front],[8,back],[12,descriptor],[16,serial],[20,0x44585031],[28,1]])view.setUint32(o,v,true);await dispatch({t:'batch',index:0,bytes:32,commands:1,seq:++seq,imageBase:0x400000});if(upload){host.gdi_surface_create(sid,2,2,16,dv.getUint32(front+20,true),surfacePitch,1,0,0);host.gdi_surface_attach(sid,0x77);host.gdi_surface_upload(sid,0,0,2,2,{slot:7,workerSlot:3,descriptor,serial});}return journal.records().at(-1);}
  if(variant==='wrong-format')dv.setUint32(BASE.DX_SURF_FMT+7*4,2,true);
+ let sealTicket;
+ if(variant.startsWith('retained-seal-')){
+   const writerJournal=observation.journal,retain=writerJournal.retain;
+   writerJournal.retain=function(...args){
+     const token=retain.apply(this,args);
+     if(variant==='retained-seal-overlap')sealTicket=epoch.begin();
+     if(variant==='retained-seal-page')native.exports.guest_write32(0x50000000+dv.getUint32(front+20,true)-BASE.DIB_BACKING_BASE,0x07e007e0);
+     if(variant==='retained-seal-host')epoch.invalidateVersions();
+     if(variant==='retained-seal-poison')epoch.invalidate();
+     return token;
+   };
+ }
  const first = await produce();
+ if(variant.startsWith('retained-seal-')){
+   if(sealTicket)epoch.end(sealTicket);
+   assert(first.versionRejected,'copy interval fails its actual source writer/page seal');
+   assert(Atomics.load(journal.retainedWords,0)<0,'rejected complete source never commits');
+   gdi.presentBestDxOffscreen(true);renderer.repaint();assert.equal(join.rows.length,0);
+   join.retire('fixture-finished');
+   return {variant,raw:1,qualified:0,discarded:join.ledger.length,versionRejected:first.versionRejected};
+ }
  assert(first && !first.versionRejected, 'real WAT source proof must seal');
  const dib = dv.getUint32(front+20,true);
+ let ordering;
+ if(retained){
+   c.entry(1).adapter=require('../lib/d3dim-render-worker').create({instance:native,memory,backend:'software'});
+   const owed=structuredClone(gdi.surfacePresentations.get(sid).owedPresentRequest);
+   const before=Atomics.load(epoch.words,3);
+   // Actual production legacy-call dispatcher and adapter, including its
+   // conservative invalidation BEFORE clear. No clear classification change.
+   await dispatch({t:'legacy-call',opcode:0x20004,wa:descriptor,seq:++seq});
+   assert.equal(Atomics.load(epoch.words,3),before+1);
+   const latest=await produce(false);
+   assert.equal(latest.request.serial,446);
+   assert.equal(latest.request.descriptor,owed.descriptor);
+   assert.equal(journal.records()[0].superseded,true);
+   // Both old DIB bytes and its native page lifetime really change. The
+   // decoder must display the retained red source rather than blue/green.
+   facade.exports.guest_write32(0x50000000+dib-BASE.DIB_BACKING_BASE,0x07e007e0);
+   assert.equal(journal.unchanged(memory,first),false);
+   ordering={owed,latest:latest.request,beforeClear:before,afterClear:before+1};
+   if(process.env.CLEAR_ORDER_ONLY)console.log(JSON.stringify({productionOrdering:ordering,variant}));
+   if(variant==='retained-expired')for(let i=0;i<3;i++)await produce(false);
+   if(variant==='retained-poison')epoch.invalidate();
+   if(variant==='retained-wrong-owner')gdi.surfacePresentations.get(sid).owedPresentRequest.workerSlot++;
+   if(variant==='retained-wrong-serial')gdi.surfacePresentations.get(sid).owedPresentRequest.serial=447;
+   if(variant==='retained-wrong-descriptor')gdi.surfacePresentations.get(sid).owedPresentRequest.descriptor++;
+   if(variant==='retained-window-owner')renderer.windows[0x77].wasmMemory=null;
+   if(variant==='retained-unsupported')await dispatch({t:'legacy-call',opcode:0x20003,wa:descriptor,seq:++seq});
+   if(variant==='retained-reserved')Atomics.store(journal.retainedWords,0,-1);
+   join.account();
+   if(['retained-clear-order','retained-odd-pitch'].includes(variant) && !process.env.CLEAR_ORDER_BASELINE)assert.equal(join.ledger.length,0,'complete retained sources stay pending for their actual owed request');
+ }
  if(variant==='wrong-window-owner')renderer.windows[0x77].wasmMemory=null;
  if(variant==='wrong-owner')gdi.surfacePresentations.get(sid).owedPresentRequest.workerSlot++;
  if(variant==='stale-request')gdi.surfacePresentations.get(sid).owedPresentRequest.serial++;
@@ -155,11 +213,14 @@ async function fixture(corrected,variant='actual-layer',observed=false,nativeCli
    assert.equal(wine._dxLockDeferred,false);
    boundaryPresented=true;
  }
- const ticket=variant==='overlap'||variant==='native-client-rect-overlap'?epoch.begin():null;
+ const ticket=variant==='overlap'||variant==='native-client-rect-overlap'||variant==='retained-livewriter'?epoch.begin():null;
  if(!boundaryPresented)assert.equal(gdi.presentBestDxOffscreen(true),1,'actual native layer decoder runs');
  const layer=renderer.windows[0x77]._dxFrameLayer;
  assert(layer && layer.canvas !== renderer.windows[0x77]._backCanvas);
  if(ticket)epoch.end(ticket);
+ if(variant==='retained-menu'){renderer._openMenuGeometry=()=>({x:0,y:0,w:1,h:1});renderer._menuPaintDropdown=()=>{};}
+ if(variant==='retained-token')delete layer.canvas._waD3dimVersion;
+ if(variant==='retained-layer-owner')renderer.windows[0x77].wasmMemory=null;
  if(variant==='wrong-layer') {const canvas=createCanvas(2,2);canvas._waD3dimVersion=layer.canvas._waD3dimVersion;renderer.windows[0x77]._dxFrameLayer={...layer,canvas};}
  if(variant==='menu'){renderer._openMenuGeometry=()=>({x:0,y:0,w:1,h:1});renderer._menuPaintDropdown=()=>{};}
  if(variant==='caret')renderer.observePresentationPublication=()=>{renderer._caretBlinkActiveStates=new Set([1]);};
@@ -179,7 +240,9 @@ async function fixture(corrected,variant='actual-layer',observed=false,nativeCli
  if(!boundaryPresented)renderer.repaint();
  if(compositorTicket)epoch.end(compositorTicket);
  if(variant.startsWith('compositor-'))assert(injected,'negative ran inside actual WAT host callback');
- const expected=corrected && observed!=='full-baseline' && observed!=='menu-baseline' && ['actual-layer','native-client-rect','native-writer-boundary'].includes(variant)?1:0;
+ // The later composition-entry admission also covers the old menu getter's
+ // scratch writes. Only removing that admission recreates its current failure.
+ const expected=corrected && observed!=='full-baseline' && ['actual-layer','native-client-rect','native-writer-boundary','retained-clear-order','retained-odd-pitch'].includes(variant)?1:0;
  if(typeof observed==='string' && observed.startsWith('full') && process.env.FULL_FACADE_DIAGNOSTIC) console.log(JSON.stringify({variant,exportCalls,hostCallbacks,hostVersion:Atomics.load(epoch.words,3),qualified:join.rows.length,ledger:join.ledger}));
  assert.equal(join.rows.length,expected,variant);
  if(expected){
@@ -192,15 +255,31 @@ async function fixture(corrected,variant='actual-layer',observed=false,nativeCli
      assert(hostCallbacks.every(c=>c.rect.join(',')==='0,0,2,2'));
    }
    assert.equal(row.sourceVersion,first.sourceVersion);
+   if(retained){
+     assert(row.canonicalRead.retainedSource,'canonical decode used its independent complete retained source');
+     assert.deepEqual(row.request, {descriptor:ordering.owed.descriptor,serial:445});
+     assert.deepEqual(gdi.surfacePresentations.get(sid).owedPresentRequest,ordering.owed,'owed request remains byte-for-byte unchanged');
+   }
    assert.equal(row.consumedSurfaceVersion,first.sourceVersion);
    assert.equal(row.canvasCacheSerial,layer.canvas._waD3dimVersion.cacheSerial);
    const pixel=renderer.canvas.getContext('2d').getImageData(0,0,1,1).data;
    assert.deepEqual(Array.from(pixel),[255,0,0,255],'display contains the actual DX canonical RGB565 source');
    renderer.repaint();assert.equal(join.rows.length,1,'cached republish adds no source');
+   if(retained){
+     // Only a real next upload changes the owed identity. The next complete
+     // frame must continue ordinary display without reusing the prior proof.
+     host.gdi_surface_create(sid,2,2,16,dv.getUint32(front+20,true),surfacePitch,1,0,0);
+     host.gdi_surface_attach(sid,0x77);
+     host.gdi_surface_upload(sid,0,0,2,2,{slot:7,workerSlot:3,descriptor,serial:446});
+     assert.equal(gdi.presentBestDxOffscreen(true),1);renderer.repaint();
+     assert.equal(join.rows.length,2,'next actual request continues publication');
+     assert.equal(join.rows[1].request.serial,446);
+     assert.deepEqual(Array.from(renderer.canvas.getContext('2d').getImageData(0,0,1,1).data),[0,0,255,255],'next actual upload displays its own blue pixels');
+   }
  }
  join.retire('fixture-finished');
  assert.equal(journal.records().length, join.rows.length+join.ledger.length);
- return {variant, corrected, observed, exportCalls, hostCallbacks, raw:journal.records().length,qualified:join.rows.length,
+ return {variant, corrected, observed, ordering, exportCalls, hostCallbacks, raw:journal.records().length,qualified:join.rows.length,
    discarded:join.ledger.length,rows:join.rows,ledger:join.ledger};
 }
 // Getter classification never removes its writer ticket. In particular, only
@@ -266,7 +345,18 @@ async function nativeClientCases(){
    const result={passed:true,positive,overlap,negative,moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
    return result;
 }
+async function retainedCases(){
+ const results=[];
+ for(const variant of ['retained-clear-order','retained-odd-pitch','retained-expired','retained-poison','retained-wrong-owner','retained-wrong-serial','retained-wrong-descriptor','retained-window-owner','retained-unsupported','retained-reserved','retained-livewriter','retained-menu','retained-token','retained-layer-owner','retained-seal-overlap','retained-seal-page','retained-seal-host','retained-seal-poison'])results.push(await fixture(true,variant,'full',true));
+ return results;
+}
 (async()=>{
+ if(process.env.CLEAR_ORDER_ONLY){
+   const results=await retainedCases();
+   const result={passed:true,results,moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
+   if(process.env.DIRECTX_LAYER_RESULT)fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
+   console.log(JSON.stringify({passed:true,results:results.map(r=>({variant:r.variant,raw:r.raw,qualified:r.qualified,discarded:r.discarded}))}));return;
+ }
  if(process.env.NATIVE_WRITER_BOUNDARY_ONLY){
    const result=await fixture(true,'native-writer-boundary','full',true);
    if(process.env.DIRECTX_LAYER_RESULT)fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
@@ -281,6 +371,7 @@ async function nativeClientCases(){
  if(process.env.MENU_EXPORTS_ONLY){console.log(JSON.stringify({baseline:await fixture(true,'actual-layer','menu-baseline'),corrected:await fixture(true,'actual-layer','menu-query')}));return;}
  if(process.env.OBSERVED_EXPORTS_ONLY){console.log(JSON.stringify(await fixture(true,'actual-layer',true)));return;}
  const nativeWriterBoundary=await fixture(true,'native-writer-boundary','full',true);
+ const retainedSources=await retainedCases();
  const getterGuards=getterExclusion();
  const menuGuards=menuBranchGuards();
  const nativeClientRect=await nativeClientCases();
@@ -299,7 +390,7 @@ async function nativeClientCases(){
  const fullCorrected=await fixture(true,'actual-layer','full');
  const fullNegative=[];
  for(const variant of [...negative.map(x=>x.variant),'compositor-poison','compositor-overlap','compositor-owner','compositor-page','compositor-token','compositor-size','forged-cache-token','missing-cache-token','entry-overlap-released'])fullNegative.push(await fixture(true,variant,'full'));
- const result = {passed:true,nativeWriterBoundary,nativeClientRect,fullBaseline,fullCorrected,fullNegative,baseline,corrected,negative,observed,observedNegative,getterGuards,
+ const result = {passed:true,retainedSources,nativeWriterBoundary,nativeClientRect,fullBaseline,fullCorrected,fullNegative,baseline,corrected,negative,observed,observedNegative,getterGuards,
    menuBaseline,menuCorrected,menuNegative,menuGuards,
    moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
  if(process.env.DIRECTX_LAYER_RESULT) fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
