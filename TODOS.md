@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-qualified-publication-pacing-0752 qualifies actual completed-owning-frame page publication and matched unarmed import-wrapper overhead before ONE current Venice original. Published663f1c139 installs opt-in consumed-version/canonical-decode/actual-display Join with writer/lifetime coverage and fail-closed unsupported paths;6positive publications/8discard rows/13focused controls and locked build pass. Coordinator verified115hashes/923402bytes. Default-path cost remains unqualified; known baseline test failures retained. No gameplay FPS/full27/parity claim. Note: docs/re-notes/d3dim-publication-version-join-20261108.md.
+  Next: Fresh d3dim-browser-journal-fence-0807 repairs demonstrated Chrome shared-buffer TextDecoder journal failure with actual-browser regression, immutable commit ordering and measured copy cost; then qualifies guest fence writer boundary without weakening coverage. Published359595941 actual browser fixture shows4source rejections but empty page ledger from decode TypeError; Node6positive/8discard still pass. Coordinator verified40hashes2835066bytes. Raw132matched import trials measure seam costs only; fullobserver/gameFPS remain unknown. No original/box allocated. Note: docs/re-notes/tr2-qualified-publication-pacing-20261108.md. Native Venice movement/heading acceptance stands; full27/parity/audio open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
