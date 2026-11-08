@@ -1,5 +1,24 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Heretic II browser docks and door on both backends
+
+Published `7000de90d`, run `20261108-heretic2-current-browser-backends`,
+verifies current original campaign progress on both browser routes:
+
+| App | Software GL | WebGL |
+| --- | --- | --- |
+| Original Heretic II demo | Owning GL endpoint 1 software context/shared memory, CPU software flag 1; textured docks, narrative trigger and opened door, raised threshold reviewed. | Owning GL endpoint 1 WebGLBackend v1, CPU software flag 0, live Intel/Mesa ANGLE context; textured docks, narrative trigger and opening door reviewed. |
+
+The coordinator inspected the WebGL door-before/after pair and software doorway
+capture. Both actual CPU/render modules match `f9650607…`; the separate legacy
+WebGL endpoint on the software route is not its GL owner. Forty-six exact ACKs
+and forty independently released holds accompany movement and attack poses.
+Player damage and spell light do not establish an outgoing hit or kill. Full
+interior traversal, objective completion, matched pixels, FPS and audio quality
+remain unverified. Evidence was hash-verified before normal nonforced box stop.
+[Captures, actual backend identities and limits](re-notes/heretic2-current-browser-backends-20261108.md).
+Full historical27 and remaining per-app coverage remain open.
+
 ## November 8: Hexen II browser world and traversal on both backends
 
 Published `3e75cd4b7`, run `20261107-hexen2-current-browser-backends`, verifies
