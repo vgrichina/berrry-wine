@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: active; startup readiness and terminal adoption repaired; fresh upper-opening original
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh quake2-upper-opening-2007 explicitly selects bounded DevTools helper d15ef97b8 and kernel d8573b542 before ONE remote current-pixels opening attempt. Reviewed bf87da154 140refs498348B HASH and d8573b542 241refs214079B HASH; 9readiness/25custody focused+lockedbuild PASS. Historical1940 original never launched, second terminal status unlogged and prior143causeUNKNOWN stay. All unique logs including kernel-command.log retrieved before STOP. bx_rxvzubfd archived expiryNULL stop_e37948f9ddc48635. First verified onward consequence or causal tested repair STOP; no blind static-route script. Full27/parity/audio/FPS open.
+  Next: Fresh quake2-current-opening-2025 ONEremote original using accepted252888061 repaired kernel command_compression=gzip and Node gzip browser/drain plus exhaustive inventory/retrieval. Reviewed code/doc196refs326772B62annotatedoriginalstreams HASH30custody24Node3inventory2launch/buildPASS; new706pins currenthelpers CPUd8fac unchanged. Currentpixelshortinput/displacementreview to upper northern opening; static187preparationONLY historical143UNKNOWN. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active fresh remote streamed restore and native BAT response
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-streamed-bat-response-2012 integrates canonical final1910 gzip providers and accepted streaming upload consumer into staging barrier before ONE new remote original; review actual numeric health/liveBAT, one ordinary response, native New Save at first verified consequence. Reviewed7c7657c5f helper source+22refs112534B HASH fouroriginalgziplogs SHA/CRC tenfocused/lockedbuild PASS zero localrawstage avoids4546657B. Historical1940 uploadUNKNOWN no replay; final1910 reload/normalChrome remain unproven. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-current-bat-2025 completes full supported gzip runtime closure using published252888061 command logger/kernel, accepted637008c31 streamed transaction BOTHlocal+remote launchgates then ONE remote canonicalFINAL1910 restore/currenthealthBAT ordinary response/nativeNewSave at first consequence. Reviewed31refs58362B13controlsHASH zeroLocalRaw; historicalUNKNOWN no replay normalChromeUNPROVEN. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
