@@ -17,6 +17,31 @@ spec.loader.exec_module(kernel)
 
 
 class Deadlines(unittest.TestCase):
+    def test_first_observed_child_stop_can_be_irreversible_exit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run=Path(os.environ.get('CUSTODY_UNSEEN_EXIT_EVIDENCE',tmp))
+            result=subprocess.run([sys.executable,__file__,'--isolated-fixture','--unseen-exit-fixture',str(run)],
+                                  capture_output=True,text=True,timeout=12)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            rows=[json.loads(s) for s in (run/'custody.ndjson').read_text().splitlines()]
+            retirement=next(x for x in rows if x['kind']=='unlinked-exit-retirement')
+            task=retirement['pid']
+            consumed=next(x for x in rows if x['kind']=='before-consume' and x['pid']==task)
+            self.assertEqual(consumed['siStatus'],1541)
+            self.assertEqual(retirement['exitStatus'],9)
+            self.assertFalse(any(x['kind']=='parked-autoattach' and x['pid']==task for x in rows))
+            self.assertFalse((run/'unlinked-userspace-ran').exists())
+            barrier=json.loads((run/'first-exit-cont-barrier.json').read_text())
+            self.assertEqual(barrier['durableSequence'],retirement['sequence'])
+            reaped=next(x for x in rows if x['kind']=='reaped' and x['pid']==task)
+            lineage=next(x for x in rows if x['kind']=='fork-lineage' and x['pid']==task)
+            self.assertLess(retirement['sequence'],reaped['sequence'])
+            self.assertLess(reaped['sequence'],lineage['sequence'])
+            drain=json.loads((run/'kernel-drain.json').read_text())
+            self.assertEqual(drain['remaining'],[])
+            self.assertEqual(drain['exit'],0)
+            self.assertTrue(drain['kernelForkLineageComplete'])
+
     def test_sigterm_supersedes_clone_and_retires_only_irreversible_exit(self):
         with tempfile.TemporaryDirectory() as tmp:
             run=Path(os.environ.get('CUSTODY_TERMINAL_EVIDENCE',tmp))
@@ -178,6 +203,47 @@ class Deadlines(unittest.TestCase):
             prctl.assert_not_called()
 
 
+def unseen_exit_fixture(run):
+    # Real initial SIGSTOP is superseded before the supervisor first observes
+    # this child. Only wait selection and SIGKILL scheduling are controlled;
+    # WNOWAIT, waitpid and GETEVENTMSG all return actual kernel results.
+    run=Path(run).resolve();waitid,waitpid=os.waitid,os.waitpid;trace=kernel.ptrace
+    selected=[];reaped=[]
+    def peek(which,pid,flags):
+        if selected and not reaped:return waitid(os.P_PID,selected[0],flags)
+        value=waitid(which,pid,flags)
+        if value and value.si_code==os.CLD_TRAPPED and value.si_status==261 and not selected:
+            child=ctypes.c_ulong();trace(kernel.GETEVENTMSG,value.si_pid,data=ctypes.addressof(child))
+            selected.append(child.value)
+            due=time.time()+2
+            while time.time()<due:
+                initial=waitid(os.P_PID,child.value,flags)
+                if initial:break
+                time.sleep(.001)
+            assert initial.si_code==os.CLD_TRAPPED and initial.si_status==19
+            os.kill(child.value,9)
+            while time.time()<due:
+                exited=waitid(os.P_PID,child.value,flags)
+                if exited and exited.si_status==1541:return exited
+                time.sleep(.001)
+            raise AssertionError('real first EXIT stop absent')
+        return value
+    def consume(pid,flags):
+        result=waitpid(pid,flags)
+        if selected and pid==selected[0] and result[0] and (os.WIFEXITED(result[1]) or os.WIFSIGNALED(result[1])):reaped.append(pid)
+        return result
+    def ptrace(request,pid,addr=0,data=0):
+        if request==kernel.CONT and selected and pid==selected[0]:
+            last=json.loads((run/'custody.ndjson').read_text().splitlines()[-1])
+            assert last['kind']=='unlinked-exit-retirement'
+            (run/'first-exit-cont-barrier.json').write_text(json.dumps(dict(pid=pid,durableSequence=last['sequence'])))
+        return trace(request,pid,addr,data)
+    command="import os,pathlib;p=os.fork();pathlib.Path(MARKER).write_text('ran') if p==0 else os.waitpid(p,0)".replace('MARKER',repr(str(run/'unlinked-userspace-ran')))
+    with patch.object(kernel.os,'waitid',side_effect=peek),patch.object(kernel.os,'waitpid',side_effect=consume),patch.object(kernel,'ptrace',side_effect=ptrace):
+        due=time.time()+4
+        kernel.supervise(run,[sys.executable,'-c',command],deadline=due,cleanup_deadline=due+1)
+
+
 def parked_fixture(run, fork_only=False, death_signal=9, reuse=False):
     if death_signal==15:
         return term_fixture(run)
@@ -320,6 +386,7 @@ if __name__=='__main__':
             try:os.waitpid(-1,0)
             except ChildProcessError:break
         sys.exit(result.returncode)
+    elif len(sys.argv)>1 and sys.argv[1]=='--unseen-exit-fixture':unseen_exit_fixture(sys.argv[2])
     elif len(sys.argv)>1 and sys.argv[1]=='--parked-fixture':parked_fixture(sys.argv[2])
     elif len(sys.argv)>1 and sys.argv[1]=='--parked-term-fixture':parked_fixture(sys.argv[2],death_signal=15)
     elif len(sys.argv)>1 and sys.argv[1]=='--parked-fork-fixture':parked_fixture(sys.argv[2],True)

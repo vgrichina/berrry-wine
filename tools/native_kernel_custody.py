@@ -87,7 +87,14 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             task = peek.si_pid
             unlinked = task not in owned
             if unlinked:
-                assert peek.si_code == os.CLD_TRAPPED and peek.si_status == signal.SIGSTOP, ('unexpected unlinked task', task, peek)
+                # A fatal group signal can supersede the initial autoattach
+                # SIGSTOP before its first observation. The kernel's EXIT stop
+                # still retains /proc identity and permits only irreversible
+                # retirement below, after consuming/validating that real stop
+                # and GETEVENTMSG. No lineage or userspace admission is inferred.
+                assert peek.si_code == os.CLD_TRAPPED and peek.si_status in (
+                    signal.SIGSTOP, (6 << 8) | signal.SIGTRAP
+                ), ('unexpected unlinked task', task, peek)
                 register(task, None, 'kernel-autoattach-stop')
             awaiting_lineage = owned[task]['cause'] == 'kernel-autoattach-stop'
             row = identity(task)
