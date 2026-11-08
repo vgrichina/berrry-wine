@@ -530,7 +530,7 @@ async function publishedBrokerProtocol(){
   const events=[],marks=new Int32Array(new SharedArrayBuffer(4));
   const broker=RPC.createMainBroker(memory,{
     glide_submit(op){events.push(op===1?'glide-open':'glide-read');return 1;},
-    glide_batch(bytes){events.push([...bytes]);return 1;},
+    async glide_batch(bytes){await new Promise(resolve=>setTimeout(resolve,10));events.push([...bytes]);return 1;},
     gpu_gl_batch(desc,owner){
     assert.strictEqual(desc.pool,undefined,'publication must not mix with native buffer leases');
     return Stream.replay(Stream.memoryBatch(desc.commandBuffer||memory.buffer,desc.memoryOffset,desc.bytes),(op,aux,capture)=>{
@@ -566,6 +566,8 @@ async function publishedBrokerProtocol(){
       if(built.stats.async!==asyncBefore)throw Error('software GL metadata bypassed');
       glide(1,900,0);new Uint8Array(d.memory,900,3).set([7,8,9]);
       glide(0,900,3);new Uint8Array(d.memory,900,3).fill(99);glide(9,900,3);
+      new Uint8Array(d.memory,900,3).set([4,5,6]);glide(0,900,3);
+      built.fencePublications();
       parentPort.postMessage({done:true,value,stats:built.stats});
     }catch(error){parentPort.postMessage({error:error.stack});}`;
   const worker=new Worker(code,{eval:true,workerData:{rpc:require.resolve('../lib/guest-rpc'),stream:require.resolve('../lib/gl-command-stream'),memory:memory.buffer,queue:queue.buffer,marks:marks.buffer,sigs}});
@@ -580,9 +582,9 @@ async function publishedBrokerProtocol(){
       });
     });
     assert.strictEqual(result.value,73,'query keeps synchronous result');
-    assert.deepStrictEqual(events,['bind',0.25,0.75,'query',0.5,'glide-open',[7,8,9],'glide-read'],
+    assert.deepStrictEqual(events,['bind',0.25,0.75,'query',0.5,'glide-open',[7,8,9],'glide-read',[4,5,6]],
       'GL and Glide own their inputs and synchronous queries/readbacks cannot overtake publications');
-    assert.strictEqual(result.stats.async,3);assert.strictEqual(result.stats.sync,5);
+    assert.strictEqual(result.stats.async,4);assert.strictEqual(result.stats.sync,5);
   }finally{clearTimeout(timeout);queue.fail();await worker.terminate();}
   const packed=new SharedArrayBuffer(512);
   assert(Stream.publicationSafe(scalarBatch(packed,0,'glEnable',[0x0de1])));

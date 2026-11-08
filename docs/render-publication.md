@@ -66,6 +66,10 @@ separate validation/resource operations retain their existing synchronous path.
 All synchronous broker requests fence earlier shared publications before
 dispatch. Publication admission is not GPU completion. Existing render-worker
 fences still implement queries, readbacks and API completion requirements.
+Normal thread exit publishes buffered D3D draws and fences admission after DLL
+detach callbacks, before reporting exit to the scheduler. Otherwise a producer's
+endpoint could retire while its last packets still wait in the publication ring.
+Forced process cancellation continues to fail the ring and wake blocked writers.
 
 This implementation still copies GL/Glide bytes into the ring and snapshots
 them for render admission. The reader borrows contiguous ring ranges until
@@ -79,3 +83,31 @@ shared-worker, GL/GDI composition and Direct3D browser tests. Real producers
 exercise wraparound, tiny-ring backpressure, immutable payloads, query ordering,
 coalesced wake-ups, cross-API packet ordering, failure wake-ups and dirty-window
 ownership. Gameplay evidence and limitations are in `re-notes/half-life-uplink.md`.
+
+## Remaining migration and verification
+
+This is not yet a completed migration of every graphics API. The following
+requirements remain open; a passing GL gameplay run does not discharge them.
+
+* **D3D9 producer snapshots:** `guest-rpc.js` still brokers opcodes
+  `0x30000..0x30017` synchronously. `d3d9-host.js` validates and snapshots draws
+  on the page, then submits neutral commands to the process render Worker.
+  Move immutable draw/resource capture to the producer and publish owned bytes
+  or leases through the common queue. Passing raw guest addresses asynchronously
+  would introduce a mutation race. Keep validation results, readbacks, queries,
+  device loss and lifetime boundaries synchronous where their contracts require.
+* **Shared device/resource safety:** prove multiple guest producers cannot
+  interleave state mutation with another producer's snapshot. Cover device
+  reset/release, texture replacement, shared GL objects, and thread-slot reuse
+  with delayed consumers and actual concurrent producers. Generic ring ordering
+  alone is not evidence for API-level state correctness.
+* **2D interoperability:** audit GDI/DirectDraw CPU surface writes, locks,
+  blits and presentation against queued GL/D3D/Glide ownership. Existing GL/GDI
+  tests cover a subset, not every surface lifetime or mixed-API transition.
+* **Software and cooperative routes:** verify equivalent output and ownership
+  for the software implementations and non-Worker execution, retaining native
+  synchronous semantics without introducing a second rendering state authority.
+* **Performance:** measure representative D3D9, D3DIM, Glide and GL gameplay
+  separately with visible browsers, one workload at a time. Record CPU and
+  renderer timing/overlap as well as presents. The current 6.45x GL corridor
+  result is not a cross-API or mobile speedup claim.
