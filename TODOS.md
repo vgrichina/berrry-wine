@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-action-observer-1652 prepares bounded passive actual poll-return/DIK/slot8-conflict/Action-mask observer and normal generation repin; no allocation/original/replay this task. Published50896dcd5 production direct/RPC Control positives and expected negative controls plus locked build PASS; no demonstrated Control defect, actual game polling and Action mask unobserved. Coordinator independently hashed21refs139205B; no box. Preserve614providers29helpers until explicit normal repin. See docs/re-notes/tr2-weapon-input-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-observed-control-1717 uses published16919b487 normal615-provider29-helper generation for one original, reviewed drawn pistols/dog ahead and exactly one observed Control hold<=2000ms independently released. Observer read-only actualpoll/DIK/binding/Action, notweapon/aim proof; no-poll/unqualified STOP no retry. Coordinator reviewed source and hashed81artifacts439115B;25focused+input/helper/fullbuild PASS. Historical614 unchanged; no box in preparation. See docs/re-notes/tr2-action-observer-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-cape-1650 restores recovered cape pair/native Load preview and explores second room, independently retrieving/hash-checking early NewSave by minute10. Published404b1e3d6 crossed second opening and native-identified Neophytes Cape autoequipped AC12 to14; LIFE19/35 MANA25 Gold1532 Food47 victories9+0. Coordinator viewed room/inventory and hashed335refs265799084B; final pair NOT reloaded. bx_5mw95z27 archived expiryNULL normalstop_10273603198cf55a; BrowserClose SIGKILL fallback retained, kernel359 normal drain PASS. Preserve548providers42helpers. See docs/re-notes/darkstone-helmet-1621-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-green-route-1717 restores final mana/gold pair and inspects route into visible green tiled area; early NewSave retrieved/hash by minute10. Published68f80664b mana potion+105gold collected, Gold1637Food44AC14LIFE19/35MANA25 victories9+0. Coordinator viewed panel/route and hashed503refs458408782B; final pair NOTreloaded. bx_ck6rengu archived expiryNULL stop_af3d09cb35130341. BrowserSIGKILL fallback, initial drain refusal, unresolvedlineage1 and jar review error retained. Preserve548providers42helpers. See docs/re-notes/darkstone-cape-1650-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
