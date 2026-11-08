@@ -1,3 +1,9 @@
+- [ ] Asghan current-browser outgoing attack or pickup
+  id: NEW-GAME-ASGHAN-NATIVE-ACTION-20261108
+  status: movement/jumps and incoming enemy damage verified; outgoing hit/defeat/pickup open
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Next: Fresh asghan-native-attack-consumption-0442 observes actual attack-input consumption before targeting outgoing damage or pickup. Published435f52c76 verifies vertical/forward jumps and movement; adjacent orc contact shortens displayed green health190→170→150. Sword poses do not prove outgoing damage. Coordinator inspected jump/contact frames and independently verified227references/16430219bytes.16exactACK/zeroUNKNOWN,708unchanged pins,69HTTP-consumed fixture files out of120 staged and normal archived stop pass. Software/Canvas2D only; no GL/FPS/audio/fullplayability claim. Note: docs/re-notes/asghan-current-browser-action-20261108.md.
+
 - [ ] Drakan current-browser movement, flight and attack
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: native warning/graphics handoff qualified; current software/WebGL world and heading reviewed; flight/outgoing attack open
