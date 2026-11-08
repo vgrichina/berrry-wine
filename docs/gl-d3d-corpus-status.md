@@ -1,5 +1,24 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Warcraft III current-browser readiness blocker
+
+Published `02129c6b0`, run `20261108-warcraft3-current-browser-objective`,
+stops before player input. The SoftwareGL driver binds endpoint1 on a black
+startup frame with presentation writeSeq0. The next passive capture rejects
+endpoint2 after the software legacy transport attaches; read-only state then
+records 172,189 triangles and writeSeq27. This establishes premature driver
+binding, not an emulator crash or current gameplay. WebGL was skipped.
+
+The coordinator inspected the black startup capture and independently verified
+all42 artifact references. Both live modules match f965;624pins and400HTTP
+response checks pass. Four extracted-media hashes match historical notes;
+the other eight retain current pins without historical-hash equivalence.
+The box normally stopped after retrieval. Readiness must be qualified after
+actual presentation/transport attachment before another original attempt.
+October8 movement remains historical; current Prologue, objective/combat,
+paired gameplay, parity, FPS, audio and full27 remain open.
+[Observed ownership transition and cleanup](re-notes/warcraft3-current-browser-objective-20261108.md).
+
 ## November 8: current Quake III world and GL observer boundary
 
 Published `702535909`, run `20261108-q3-current-browser-world`, resolves the

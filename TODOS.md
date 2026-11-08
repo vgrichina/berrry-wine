@@ -1,3 +1,9 @@
+- [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
+  id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
+  status: blocked before input by premature software render-owner binding; WebGL unexecuted
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Next: Qualify readiness after actual presentation and legacy transport attachment, retaining exact owner/module checks; reuse Q3's GL producer work only after its actual-path controls pass. Published02129c6b0 bound software endpoint1 with writeSeq0; later endpoint2 appears with172189triangles/writeSeq27, so the first passive command fails ownership before a screenshot or ACK. Zero player input, no Prologue/objective claim. Coordinator inspected black startup and independently verified42 artifact references/40hashes;624pins/400HTTP checks and normal archived stop pass. Four historical extracted-media hashes match; historical hashes for the other eight files are unavailable, current pins retained. Note: docs/re-notes/warcraft3-current-browser-objective-20261108.md. Fresh Redline slice-work tracing replaces this lane alongside SuperTux exit and Q3 readiness/gameplay.
+
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
   status: earned Gold1532/Victories1 restored; potion use and Victories3 verified; new slot reload and historical exit cause open
