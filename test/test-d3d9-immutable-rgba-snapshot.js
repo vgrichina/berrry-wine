@@ -30,7 +30,7 @@ function fixture(options = {}) {
   fill(texels, 16384, rgba);
   const observations = [], commands = [], instances = [];
   class MockDevice {
-    constructor() { this.levels = new Map(); this.destroyed = false; instances.push(this); }
+    constructor() { this.levels = new Map(); this.colors=new Map();this.destroyed = false; instances.push(this); }
     execute(command) {
       const p = command.payload;
       assert.equal(this.destroyed, false, 'no command executes after device destruction');
@@ -38,13 +38,15 @@ function fixture(options = {}) {
         for (const key of p.textureReleases || []) this.levels.delete(key);
         const textures = p.textures.map(texture => texture && texture.levels.map(level => {
           if (level.pixels && level.key) this.levels.set(level.key, level.pixels.slice());
-          const pixels = level.key ? this.levels.get(level.key) : level.pixels;
+          const pixels = level.resource?this.colors.get(level.resource.id):level.key ? this.levels.get(level.key) : level.pixels;
           assert(pixels, 'every queued reference has a definition in its device');
           return {key: level.key, pixels: pixels.slice()};
         }));
         observations.push({deviceId:command.deviceId, generation:command.generation, textures});
-      } else if (command.opcode === OP.RESOURCE_RELEASE && p.kind === 'device') this.destroy();
-      else if (command.opcode === OP.RESOURCE_UPDATE && p.kind === 'reset') this.levels.clear();
+      } else if(command.opcode===OP.RESOURCE_CREATE&&p.kind==='color')this.colors.set(p.resource.id,p.pixels.slice());
+      else if(command.opcode===OP.RESOURCE_RELEASE&&p.kind==='color')this.colors.delete(p.id);
+      else if (command.opcode === OP.RESOURCE_RELEASE && p.kind === 'device') this.destroy();
+      else if (command.opcode === OP.RESOURCE_UPDATE && p.kind === 'reset') {this.levels.clear();this.colors.clear();}
       return {value:1, complete:true};
     }
     destroy() { this.levels.clear(); this.destroyed = true; }
@@ -85,6 +87,42 @@ test('snapshot channel preserves full epochs and retirement cannot be reopened',
   state.close();assert.equal(state.update(Number.MAX_SAFE_INTEGER,true),false);
   assert.equal(SnapshotState.read(state.channel),null);
   assert.throws(()=>SnapshotState.read({...state.channel,buffer:new ArrayBuffer(8)}),/invalid/);
+});
+
+test('shared color metadata rejects collisions, torn reads, reset and retirement',async()=>{
+  const s=new SnapshotState(7,1);s.update(1,true);
+  const color={id:9,width:2,height:3,format:21};
+  assert(s.publishColor(color,1));assert.deepEqual(SnapshotState.readColor(s.channel,1,9),color);
+  s.publishColor({...color,id:1033},1);
+  assert.equal(SnapshotState.readColor(s.channel,1,9),null);
+  assert.equal(s.retireColor(9),false,'retiring collision does not remove another identity');
+  assert(SnapshotState.readColor(s.channel,1,1033));
+  s.publishColor(color,1);
+  const serial=new BigInt64Array(s.channel.colors,9*32,1),saved=Atomics.load(serial,0);
+  Atomics.store(serial,0,saved+1n);assert.equal(SnapshotState.readColor(s.channel,1,9),null);
+  Atomics.store(serial,0,saved);s.update(2,false);
+  assert.equal(SnapshotState.readColor(s.channel,1,9),null);
+  s.update(2,true);assert.equal(SnapshotState.readColor(s.channel,2,9),null);
+  s.publishColor(color,2);s.retireColor(9);assert.equal(SnapshotState.readColor(s.channel,2,9),null);
+  const {Worker:Thread}=require('node:worker_threads'),gate=new SharedArrayBuffer(4);
+  const worker=new Thread(`const {parentPort,workerData:d}=require('node:worker_threads');
+    const {SnapshotState}=require(d.module),gate=new Int32Array(d.gate);
+    parentPort.postMessage('ready');Atomics.wait(gate,0,0);let reads=0;
+    try{for(let i=0;i<50000||Atomics.load(gate,0)!==2;i++){
+      const r=SnapshotState.readColor(d.channel,2,9);
+      if(r){if(r.height!==r.width+1||r.format!==21)throw Error('torn resource metadata');reads++;}
+    }parentPort.postMessage({reads});}catch(e){parentPort.postMessage({error:e.stack});}
+  `,{eval:true,workerData:{module:require.resolve('../lib/d3d-command-stream'),gate,channel:s.channel}});
+  try{await new Promise((resolve,reject)=>{
+    worker.on('error',reject);worker.on('message',m=>{
+      if(m==='ready'){
+        Atomics.store(new Int32Array(gate),0,1);Atomics.notify(new Int32Array(gate),0);
+        for(let i=0;i<20000;i++)s.publishColor({...color,width:i+1,height:i+2},2);
+        Atomics.store(new Int32Array(gate),0,2);
+      }else if(m.error)reject(Error(m.error));else{try{assert(m.reads>0);resolve();}catch(e){reject(e);}}
+    });
+  });}finally{await worker.terminate();}
+  s.close();assert.equal(SnapshotState.readColor(s.channel,2,9),null);
 });
 
 test('real Worker sees reset finalization and permanent retirement without per-read RPC',async()=>{
@@ -221,7 +259,19 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     assert.equal(await ask('draw'),1);await f.drain();assert.equal(rpcs,initialCalls+3,
       'named render target uses endpoint-owned resource resolution');
     assert.equal(f.commands.filter(c=>c.opcode===OP.DRAW).at(-1).payload.colorAttachment.id,99);
+    assert.equal(await ask('draw'),1);await broker.drainPublications();await f.drain();
+    assert.equal(rpcs,initialCalls+3,'admitted named target draw stays producer-local');
     f.set(f.program+22020,0);
+    f.texture(0,f.record,f.texels,2,2);f.set(f.record+56,drawColor);
+    f.set(drawColor+72,f.record);f.set(drawColor+76,0);
+    holdPublications=true;
+    assert.equal(await ask('draw'),1);assert.equal(rpcs,initialCalls+3,'admitted render-target alias stays producer-local');
+    f.set(drawColor+20,7); // The queued alias owns the original resource metadata.
+    holdPublications=false;await broker.drainPublications();await f.drain();
+    const alias=f.commands.filter(c=>c.opcode===OP.DRAW).at(-1).payload.textures[0].levels[0];
+    assert.deepEqual(alias.resource,{id:99,width:2,height:2,format:21});
+    assert.equal(alias.pixels,undefined,'renderer-owned texels are referenced, never copied from stale guest backing');
+    f.set(drawColor+20,2);f.set(f.record+56,0);f.texture(0,f.record,f.texels);
     const calls=rpcs;assert.deepEqual(await ask('read'),original);assert.equal(rpcs,calls,'read stays local');
     const saved=new Uint8Array(memory.buffer,f.desc,64).slice();
     f.set(f.desc+40,72000);f.set(72000+256+174*4,1);
@@ -240,9 +290,13 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     const color=90000;
     for(const [offset,value] of [[8,7],[12,0xd3d90006],[20,2],[24,2],[28,21],[36,99],[40,91000],[48,8],[52,16]])f.set(color+offset,value);
     f.set(f.program+22020,color);
-    assert.equal(await ask('clear'),1);await f.drain();
-    assert.equal(rpcs,calls+2,'named color storage retains synchronous resource resolution');
+    assert.equal(await ask('clear'),1);await broker.drainPublications();await f.drain();
+    assert.equal(rpcs,calls+1,'admitted named color storage clears without page RPC');
     assert.equal(f.commands.filter(c=>c.opcode===OP.CLEAR).at(-1).payload.colorAttachment.id,99);
+    assert.equal(f.bridge.call(0x3000f,color,7),1);await f.drain();
+    assert.equal(SnapshotState.readColor(oldChannel,original.snapshotEpoch,99),null,'release retires producer metadata');
+    assert.equal(await ask('clear'),1);await f.drain();
+    assert.equal(rpcs,calls+2,'released target requires new owner admission');
     f.set(f.program+22020,0);f.set(f.desc+56,65537);
     assert.equal(await ask('clear'),-1,'invalid clear retains broker error result');
     assert.equal(rpcs,calls+3);

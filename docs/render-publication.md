@@ -60,11 +60,12 @@ admission token before releasing snapshot credit. Creation, resources, queries,
 reset and presentation are not accepted through this entry point yet. A test
 drives the actual publication broker and neutral execution path with a payload
 larger than its test ring, a delayed consumer, source mutation and stale-device
-rejection. Guarded default-target D3D9 clears and draws with CPU-backed textures
-now capture in the guest Worker and publish owned API4 commands. The first call
-establishes the endpoint through the broker. Named color targets, render-target
-texture aliases, unavailable lifecycle state and missing guards retain ordered
-broker handling; their resource migration remains open.
+rejection. Guarded D3D9 clears and draws now capture in the guest Worker and
+publish owned API4 commands. The first call establishes the endpoint through
+the broker. Named color targets and render-target texture aliases use shared
+owner-admission metadata once their storage exists. Unknown resources,
+unavailable lifecycle state and missing guards retain ordered broker handling;
+resource creation/update/release publication remains open.
 
 OpenGL retains native `gl_object_leave` publication under the shared-object
 lock. Removing that native flush would break completed cross-thread texture
@@ -135,7 +136,7 @@ requirements remain open; a passing GL gameplay run does not discharge them.
 
 * **D3D9 producer snapshots:** `guest-rpc.js` now captures eligible draws under
   the native D3D state guard, with a lazily loaded `DrawProducer`. First calls,
-  renderer-owned color resources and capture failures retain broker handling.
+  unadmitted color resources and capture failures retain broker handling.
   Complete the resource migration and publish owned bytes
   or leases through the common queue. Passing raw guest addresses asynchronously
   would introduce a mutation race. Keep validation results, readbacks, queries,
@@ -166,22 +167,36 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   The immutable copy is charged before publication, and residency commits only
   after successful publication. Capture/validation failure falls back before
   publication; publication failure is terminal and never duplicates a draw via
-  the broker. Renderer-owned color resources still need coordinated admission.
+  the broker. A bounded 32KB shared color registry per endpoint carries admitted
+  identities, dimensions, format and epoch, never pixels. Its page owner writes
+  after queueing creation; release invalidates identity and reset changes epoch.
+  Each record has an atomic 64-bit sequence; a reader returns unavailable on an
+  odd/changed sequence without waiting for the page. Sequence exhaustion closes
+  the channel rather than wrapping. Hash collisions only evict metadata and
+  cause broker fallback; they never retire renderer storage. Guest resolvers
+  also check native ownership, lock state and matching layout under the native
+  D3D guard. Already-admitted targets and aliases need no per-draw page RPC.
   A real-worker test
   verifies two independent producers and a replacement can publish to one
   device without overwriting each other's resident texture definitions.
   Activation validation: production GuestRpc/WorkerLink tests hold publication,
   mutate texels, verify original pixels, reuse resident texture references,
   and require fresh definitions after reset. Missing native guards, invalid
-  draws and named color targets preserve broker handling. The generated x86
+  draws and unknown color targets preserve broker handling. The generated x86
   multiply-transform fixture's `--default-target` mode exercises the implicit
   backbuffer; normal and compatibility builds each publish two draws without
   page-side draw capture, then public LockRect pixels match its independent
   geometry oracle. Both WebGL and `--software` pass with diagnostics on/off.
   Evidence: `scratch/runs/20261108-d3d-guest-draw-default` and
   `scratch/runs/20261108-d3d-guest-draw-software` (raw test results and served
-  module hashes). The original explicit-target fixture also passes its pixel
-  checks through the resource fallback. These are correctness tests, not FPS
+  module hashes). The original explicit-target fixture now also proves two
+  published draws per run and exact readback pixels on both backends and both
+  modules; evidence `20261108-d3d-color-registry-webgl` and
+  `20261108-d3d-color-registry-software`. Transport tests additionally cover
+  admitted alias references (without copying stale guest pixels), named clears,
+  release/readmission, collision and reset, and a real Worker reads during
+  20,000 metadata updates without observing mixed fields.
+  These are correctness tests, not FPS
   or hardware execution-overlap measurements. The older Calc-based fixture
   failed startup on its static server's external binary/DLL allowlist; that
   failure is not counted as renderer validation.

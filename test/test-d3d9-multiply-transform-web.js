@@ -78,8 +78,8 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
      if(!baseline){
       check(result.rendererPorts.some(p=>p.id>0&&p.options?.backend===backend),'actual production owning render Worker endpoint '+JSON.stringify(result.rendererPorts));
       check(status===1,'public COM/geometry assertion failed '+JSON.stringify(result));
-      check(defaultTarget?result.publishedDraws>0:result.publishedDraws===0,
-        'default draws publish; renderer-owned named targets retain broker resource handling');
+      check(result.publishedDraws>0,
+        'guest draws publish after default or named target admission');
       check(sparse.base&&sparse.first&&sparse.second&&sparse.second!==sparse.first+4096,'committed guest-adjacent pages have independently verified nonadjacent backing');
       check(sparse.missingBase&&sparse.missingFirst&&!sparse.missingSecond,'missing second page is a separate negative');
       check(result.queueStates.every(r=>!r.queue?.error&&!r.lastError),'owning renderer has no error');
