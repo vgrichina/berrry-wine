@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-original-1702 selects repaired-ready1037-provider generation published2486507db for one original current Resume/Software/M/reviewed movement. First original passed challenged independent census but failed first-observed unregistered kernel EXIT before navigation; exact real before/after regression9focused+lockedbuild PASS. Coordinator hashed177refs12259921B. Failed normal drain honestly retained; independent134PIDstarts and unknownstart6763 absent; bx_y26z5y6n archived expiryNULL normalstop_d969cf48280154d5. Preserve original851,29helpers and unchanged freshness fences. See docs/re-notes/recoil-software-ready-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-source-transport-1728 isolates measured concurrent complete-uncached source transport and repairs demonstrated bottleneck before another original; no game/Resume/input/replay. Publishedc55153a2d reached actual Software/current native Resume health100timer12, but WASM transport442ms proof547ms exceeds unchanged250ms; secondread neverstarted, no Resume/M/movement. Coordinator viewed currentResume and hashed503refs448362158B. Normal552kernel drain, unresolvedlineage1 and BrowserSIGKILL retained; bx_q4mxe3ax archived expiryNULL stop_a220b23a2d53f53e. Preserve1066providers29helpers freshness/deadline fences. See docs/re-notes/recoil-original-1702-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
