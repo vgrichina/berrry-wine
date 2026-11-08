@@ -1,5 +1,32 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Tachyon browser flight controls on both backends
+
+Published `aba977513`, run `20261108-tachyon-current-browser-backends`,
+verifies original Single Player → pilot A → Play → base door 01 → Ship Bay →
+Launch through ordinary controls on serial browser sessions:
+
+| App | Software Direct3D | WebGL |
+| --- | --- | --- |
+| Original Tachyon demo | Owning legacy endpoint 1, positive software draw completions, no WebGL context or adapter. Textured cockpit, throttle changes, turning and blue laser bolts. | Owning legacy endpoint 1, actual WebGL2 context on Intel/Mesa ANGLE. Textured cockpit, throttle changes, turning and blue laser bolts. |
+
+The coordinator inspected both blue-laser cockpit frames and independently
+checked all 453 artifact references. Live CPU/render modules match
+`f9650607…`; the recorded host includes COM boot repair `37ce9588e`.
+All 15 original/manifest files remain unchanged. Thirty-nine exact ACKs complete
+without UNKNOWN, with independent key release. One software pilot-menu click
+preceded review of its immediately preceding capture; this review-order limit
+is preserved. Flight captures were reviewed before dependent control requests.
+Both browsers and their controller processes drained before normal nonforced
+box shutdown after verified retrieval.
+
+Gate animations and changed instructions do not establish a completed jump:
+the final recorded objective remains Jumps 2 / Head to Luna. No target hit,
+Luna arrival, mission completion, parity, FPS, audio or full playability is
+claimed. Cinematic-band artifacts remain disclosed.
+[Originals, backend identities, controls, captures and limits](re-notes/tachyon-current-browser-backends-20261108.md).
+Full historical27 and remaining per-app coverage remain open.
+
 ## November 8: Redline browser texture and HUD repair
 
 Published `37ce9588e`, run `20261108-redline-texture-realization`, fixes
