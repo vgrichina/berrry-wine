@@ -23,6 +23,8 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
       (global.set $eip (local.get $code)))
     (func (export "target_bits") (param $d i32) (result i32)
       (load.field DxObject misc1 (call $d3ddev_rt_entry (local.get $d))))
+    (func (export "state_guard_held") (result i32)
+      (i32.atomic.load offset=36 (global.get $DX_PROCESS_STATE)))
   `});
   const pe=fs.readFileSync(path.join(__dirname,'binaries/calc.exe'));
   new Uint8Array(memory.buffer).set(pe,e.get_staging());assert.ok(e.load_pe(pe.length));
@@ -49,6 +51,7 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
     e.guest_write32(marker,0xdeadbeef);e.clear_yield();e.start_inline(code);
     for(let slices=0;e.get_eip();slices++) {
       assert(slices<100,'bounded guest continuation');e.run(1000);
+      assert.strictEqual(e.state_guard_held(),0,'native guard released before render waits and guest continuation');
       if(e.get_yield_reason()===16) {
         const token=e.get_d3d_render_token();assert(token<=-2);
         assert.strictEqual(read(marker),0xdeadbeef,'guest cannot return early');

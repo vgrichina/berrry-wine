@@ -633,9 +633,12 @@ for (let base = 0, page = 0; base < N; base += PAGE_SIZE, page++) {
     const api = apiTable[id];
     out.push(`    ) ;; ${id}: ${api.name}`);
     const objectCall = /^(?:gl[A-Z]|wgl[A-Z])/.test(api.name);
+    const d3dStateCall = /^IDirect3D\w*[89]_/.test(api.name) || /^Direct3DCreate[89]$/.test(api.name);
+    if (d3dStateCall) out.push('      (if (i32.eqz (call $d3d_state_try_enter)) (then (return)))');
     if (objectCall) out.push('      (call $gl_object_enter)');
     out.push(handlerCall(api));
     if (objectCall) out.push('      (call $gl_object_leave)');
+    if (d3dStateCall) out.push('      (call $d3d_state_leave)');
     out.push('      (return)');
   }
   out.push('    ) ;; fallback');

@@ -355,6 +355,8 @@
   ;;   +16       cooperative-level HWND
   ;;   +20       exclusive/fullscreen flag
   ;;   +24       primary palette WASM address
+  ;;   +32       D3D9 windowed HWND
+  ;;   +36       D3D8/9 synchronous API state/capture lock
   (global $DX_PROCESS_STATE i32 (region.addr $DX_PROCESS_STATE 0))
   (global $DX_PROCESS_STATE_SIZE i32 (region.size $DX_PROCESS_STATE))
 

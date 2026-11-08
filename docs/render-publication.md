@@ -167,8 +167,25 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   closed until device recreation. Tests hold an earlier draw to delay reset,
   reject overlapping resets and old/current snapshots while pending, and verify
   a fresh definition after finalization. This protects receiving-side lifetime;
-  it does not serialize native device setters with producer capture. Native
-  state synchronization is still required before enabling guest producers.
+  it does not by itself serialize native device setters with producer capture.
+  Generated D3D8/9 dispatch now guards synchronous handler execution and owned
+  host capture with one process-wide native try-lock. Contention uses the
+  existing thunk retry/yield protocol without popping arguments; it never spins
+  on the page while a Worker may need page-side RPC service. Nested native
+  entries retain the lock until the outer return. A parked render operation
+  releases it: command inputs must already be owned before the host returns.
+  `test-d3d9-state-guard.js` executes the actual generated dispatcher in two
+  native instances sharing memory, checks contention from both sides, nesting,
+  retry stack preservation and 4,000 concurrent consistent state updates.
+  The real x86 COM/software Worker/Present test also passes. This guard does
+  not yet protect multi-phase reset finalization, direct guest writes through
+  resource locks, or shared DirectDraw object allocation; those lifetimes need
+  explicit coordination before guest-producer activation. Contention inside
+  bounded synchronous guest callback loops also needs a retained-continuation
+  test; the current concurrency test covers top-level dispatch, not that case.
+  It serializes capture
+  across devices but leaves accepted renderer work asynchronous. No performance
+  claim is made for the guard; device-level granularity remains a tuning option.
 * **2D interoperability:** audit GDI/DirectDraw CPU surface writes, locks,
   blits and presentation against queued GL/D3D/Glide ownership. Existing GL/GDI
   tests cover a subset, not every surface lifetime or mixed-API transition.
