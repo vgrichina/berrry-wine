@@ -87,8 +87,22 @@ forcing a configuration restore. This is the exact stopping state for further
 recovery, not an emulator failure. The original media and manifest remained
 hash-identical. No forced guest memory, config, clock or focus write was made;
 the unintended native wizard state is explicitly distinct from that claim.
-A future recovery attempt needs an authentic default-control reference or a
-qualified way to cancel/inspect this wizard before entering it.
+A future recovery attempt should use the original default-control reference
+below rather than entering this reassignment wizard.
+
+### Original PC recovery-control reference
+
+The coordinator retrieved the original Acclaim
+[PC manual](https://www.bestoldgames.net/download/games/re-volt/re-volt-win-manual.pdf)
+and visually inspected printed page 5 (PDF page index 3). Its default keyboard
+chart assigns **Home** to returning the car to the track and **End** to flipping
+the car; arrows drive, left Ctrl fires, and Escape pauses. This is a primary
+control reference, not proof that the demo consumed a recovery key.
+`scratch/runs/20261107-revolt-control-reference/source.json` records the exact
+PDF size/SHA-256 and `default-controls.png` retains the rendered page. A normal
+balanced Home/End input can now test recovery without changing bindings or
+guessing how to cancel the configuration wizard. Review the actual game state
+before input; a race capture must not be treated as a pause menu.
 
 ## Evidence, validation and lifecycle
 
