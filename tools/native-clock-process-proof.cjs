@@ -49,23 +49,60 @@ function census(request) {
   chromeFds:ownedLoopbackListener.fds,sameBoot:true,sameNamespace:true,clock:{began,ended,elapsed},scope:'same Linux boot/namespaces and live listener ownership; browser clock separately bracketed by Software gate'};
 }
 function createVerifier({out,deadline,retain}) {
- assert(typeof retain==='function','durable proof retention required');const moduleSha256=sha(fs.readFileSync(__filename));let sequence=0,unknown;
- return async function verify() {
+ assert(typeof retain==='function','durable proof retention required');assert(Number.isFinite(deadline)&&deadline>Date.now(),'immutable observer deadline required');
+ const moduleSha256=sha(fs.readFileSync(__filename)),started=Date.now();let sequence=0,unknown,closed=false,current,readyIdentity,readyAt,stderr='';
+ // Start before Chrome, outside the five-second Resume transition. Kernel fork
+ // barriers and Node startup must not consume a fresh census's response budget.
+ // Every request still runs census anew in this independent, deadline-bound PID.
+ const child=cp.spawn(process.execPath,[__filename,'--serve',String(deadline)],{stdio:['pipe','pipe','pipe'],env:{PATH:process.env.PATH}});
+ function reference(active){for(const handle of [child,child.stdin,child.stdout,child.stderr,cap])handle[active?'ref':'unref']();}
+ let readyResolve,readyReject;
+ const ready=new Promise((resolve,reject)=>{readyResolve=resolve;readyReject=reject;});ready.catch(()=>{});
+ function close(){if(closed)return;closed=true;clearTimeout(cap);process.removeListener('exit',onExit);child.stdin.destroy();child.stdout.destroy();child.stderr.destroy();child.kill('SIGTERM');}
+ function fail(error){unknown??=Error('UNKNOWN independent clock/process proof: '+error.message+'; no replay');readyReject(unknown);if(current){clearTimeout(current.timer);current.reject(unknown);current=null;}close();}
+ const cap=setTimeout(()=>fail(Error('immutable observer deadline expired')),Math.max(0,deadline-Date.now()));
+ child.stderr.on('data',b=>{stderr=(stderr+b).slice(-8000);});
+ child.on('error',fail);child.stdin.on('error',fail);
+ child.on('exit',(code,signal)=>{if(!closed)fail(Error('independent observer exited '+code+'/'+signal+' '+stderr));});
+ let buffer='';child.stdout.on('data',b=>{
+  try {
+   buffer+=b;assert(buffer.length<=1024*1024,'observer response too large');let end;
+   while((end=buffer.indexOf('\n'))!==-1){
+    const row=JSON.parse(buffer.slice(0,end));buffer=buffer.slice(end+1);
+    if(!readyIdentity){
+     assert.equal(row.kind,'ready');assert.equal(row.moduleSha256,moduleSha256);assert.equal(row.deadline,deadline);
+     assert.equal(row.observer.pid,child.pid);assert.deepEqual(identity(child.pid),row.observer);
+     readyIdentity=row.observer;readyAt=Date.now();reference(false);readyResolve();
+    }else{
+     assert(current,'unsolicited observer response');const pending=current;current=null;clearTimeout(pending.timer);
+     if(row.error)pending.reject(Error(row.error));else pending.resolve(row.proof);
+    }
+   }
+  }catch(e){fail(e);}
+ });
+ const onExit=()=>close();process.once('exit',onExit);
+ const verify=async function verify() {
   if(unknown)throw unknown;
   try {
+   assert(!closed,'independent observer closed');reference(true);await ready;assert(!current,'overlapping census refused');
    const claimed=JSON.parse(fs.readFileSync(out+'/same-host-clock-proof.json')),p=JSON.parse(fs.readFileSync(out+'/process.json')),e=JSON.parse(fs.readFileSync(out+'/endpoint.json'));
    assert.equal(p.pid,process.pid,'current driver required');assert.equal(p.chromePid,claimed.chromeProc.pid);assert.equal(claimed.driverProc.pid,process.pid);
    const request={challenge:crypto.randomBytes(32).toString('hex'),bootId:claimed.bootId,node:claimed.driverProc,chrome:claimed.chromeProc,profile:p.profile,port:p.port,debugPort:e.debugPort,endpoint:claimed.endpoint,deadline};
    assert.equal(request.endpoint,'ws://127.0.0.1:'+e.debugPort+e.browserPath,'exact endpoint required');assert.equal(p.profile,out+'/chrome-profile');
    const began=Date.now(),mono=process.hrtime.bigint();
-   const proof=await new Promise((resolve,reject)=>cp.execFile(process.execPath,[__filename,JSON.stringify(request)],{timeout:2000,maxBuffer:1024*1024,env:{PATH:process.env.PATH}},(err,stdout)=>{if(err)reject(err);else try{resolve(JSON.parse(stdout));}catch(e){reject(e);}}));
+   const proof=await new Promise((resolve,reject)=>{
+    const timer=setTimeout(()=>fail(Error('fresh independent census timed out')),Math.max(0,Math.min(2000,deadline-Date.now())));
+    current={resolve,reject,timer};child.stdin.write(JSON.stringify(request)+'\n');
+   });
    const ended=Date.now(),elapsed=Number(process.hrtime.bigint()-mono)/1e6;
    assert.equal(proof.moduleSha256,moduleSha256,'producer bytes changed');assert.equal(proof.requestSha256,sha(JSON.stringify(request)));assert.equal(proof.challenge,request.challenge);assert(proof.passed);
+   assert.deepEqual(proof.observer,readyIdentity,'independent observer identity changed');assert.deepEqual(identity(child.pid),readyIdentity,'observer retired during census');
    assert(proof.clock.began>=began&&proof.clock.ended<=ended&&Math.abs(ended-began-elapsed)<=3,'independent OS clock bracket failed');
    assert(ended<deadline,'immutable deadline expired');
-   await retain({sequence:++sequence,request,proof,parentClock:{began,ended,elapsed}});return true;
-  } catch(error) {unknown=Error('UNKNOWN independent clock/process proof: '+error.message+'; no replay');try{await retain({sequence:++sequence,refused:true,error:unknown.message,at:Date.now()});}catch{}throw unknown;}
+   await retain({sequence:++sequence,request,proof,observerStartup:{began:started,readyAt},parentClock:{began,ended,elapsed}});reference(false);return true;
+  } catch(error) {fail(error);try{await retain({sequence:++sequence,refused:true,error:unknown.message,at:Date.now()});}catch{}throw unknown;}
  };
+ verify.close=()=>{process.removeListener('exit',onExit);close();};return verify;
 }
 function createGuardedProbe(verify,probe,{deadline,transitionMs=5000,isClosed=()=>false}) {
  assert(Number.isFinite(deadline)&&transitionMs>0&&transitionMs<=5000,'immutable guarded deadline required');
@@ -83,5 +120,20 @@ function createGuardedProbe(verify,probe,{deadline,transitionMs=5000,isClosed=()
   }catch(error){unknown=Error('UNKNOWN clock-guarded Software probe: '+error.message+'; no replay');throw unknown;}
  };
 }
-if(require.main===module)try {process.stdout.write(JSON.stringify(census(JSON.parse(process.argv[2]))));}catch(e){process.stderr.write(e.stack+'\n');process.exitCode=1;}
+if(require.main===module) {
+ if(process.argv[2]==='--serve') {
+  const deadline=Number(process.argv[3]);assert(Number.isFinite(deadline)&&deadline>Date.now(),'immutable observer deadline required');
+  const timer=setTimeout(()=>process.exit(1),Math.max(0,deadline-Date.now())),seen=new Set();
+  const lines=require('node:readline').createInterface({input:process.stdin});
+  process.stdout.write(JSON.stringify({kind:'ready',observer:identity(process.pid),moduleSha256:sha(fs.readFileSync(__filename)),deadline})+'\n');
+  lines.on('line',line=>{
+   try {
+    const request=JSON.parse(line);assert.equal(request.deadline,deadline,'immutable observer deadline changed');
+    assert(!seen.has(request.challenge),'challenge replay refused');seen.add(request.challenge);
+    process.stdout.write(JSON.stringify({proof:census(request)})+'\n');
+   }catch(e){process.stdout.write(JSON.stringify({error:e.stack})+'\n');lines.close();clearTimeout(timer);process.exitCode=1;}
+  });
+  lines.on('close',()=>{clearTimeout(timer);process.stdin.destroy();});
+ }else try {process.stdout.write(JSON.stringify(census(JSON.parse(process.argv[2]))));}catch(e){process.stderr.write(e.stack+'\n');process.exitCode=1;}
+}
 module.exports={identity,hasArgument,listener,census,createVerifier,createGuardedProbe};
