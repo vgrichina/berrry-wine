@@ -11,11 +11,33 @@ const EXE_SHA = '2fa987c9390663e230c5b6479285e7c55511e35f80091bfed96f43062c1c810
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const WINDOWS = [[0x4117b0,0x2e2],[0x410e50,0x11a],[0x411aa0,0x51],
   [0x42b0b9,0x6f],[0x42f0b0,0x45],[0x41a2a0,0x53]];
+// Original FS_FreeFile, Z_Free, Z_TagMalloc and CRT free/malloc wrappers.
+// Checked only at their actual owning entry; old fixture substitutes have no
+// authority to establish native release or allocation.
+const LIFETIME_WINDOWS = [[0x416ef0,14],[0x414890,0x55],[0x414950,0x8b],
+  [0x432c10,0x68],[0x432c80,0x65]];
 function attach({getExports, getMemory}) {
   const file = fs.readFileSync(path.resolve(__dirname,'..',EXE));
   if (hash(file) !== EXE_SHA) throw Error('Quake II installed EXE PATHHASH');
   const pe = readPE(file);
   const pins = WINDOWS.map(([pc,size]) => ({pc,size,sha256:hash(file.subarray(pe.va2off(pc),pe.va2off(pc)+size))}));
+  const lifetimePins=LIFETIME_WINDOWS.map(([pc,size])=>({pc,size,
+    sha256:hash(file.subarray(pe.va2off(pc),pe.va2off(pc)+size))}));
+  const sources=[],lifetimeEvents=[];
+  let lifetimeEventCount=0;
+  function revokeSources(reason,pc=null,pointer=null) {
+    const affected=[];
+    for(const source of sources) if(source.state==='ACQUIRED_POINT' &&
+      (pointer===null || pointer===source.pointer || pointer===source.pointer-16)) {
+      source.state='REVOKED';source.reason=reason;source.revokedAt=pc;
+      affected.push(source.acquisitionRecord);
+    }
+    if(affected.length) {
+      lifetimeEventCount=Math.min(Number.MAX_SAFE_INTEGER,lifetimeEventCount+1);
+      if(lifetimeEvents.length===32)lifetimeEvents.shift();
+      lifetimeEvents.push({sequence:lifetimeEventCount,reason,pc,pointer,affected});
+    }
+  }
   let owner, buffer, invalid, calls=0, elapsedNs=0n;
   const records=[];
   const events=[];
@@ -52,6 +74,7 @@ function attach({getExports, getMemory}) {
   }
   const increment=value=>Math.min(Number.MAX_SAFE_INTEGER,value+1);
   function event(kind, detail, force=false) {
+    revokeSources(`${kind}: ${String(detail).slice(0,96)}`);
     if(load || terminal) {load=null;terminal=null;completionReason=`interrupted: ${kind}: ${detail}`;}
     eventCount=increment(eventCount);
     if(events.length===32) events.shift();
@@ -84,6 +107,16 @@ function attach({getExports, getMemory}) {
       if ((e.get_image_base()>>>0)!==0x400000) throw Error('different module base');
       if ((e.get_eip()>>>0)!==(pc>>>0) || (e.get_esp()>>>0)!==(sp>>>0)) throw Error('not owning CPU block entry');
       if (++calls>10000000) throw Error('bounded callback count exhausted');
+      const lifetimePin=lifetimePins.find(p=>p.pc===(pc>>>0));
+      if(lifetimePin && sources.some(s=>s.state==='ACQUIRED_POINT')) {
+        const original=hash(read(e,b,lifetimePin.pc,lifetimePin.size))===lifetimePin.sha256;
+        // Allocation entry revokes conservatively before any allocator store.
+        // Free entry is attempted release, not a certificate of successful free.
+        const allocation=pc===0x414950 || pc===0x432c80;
+        const pointer=original&&!allocation?read(e,b,(sp>>>0)+4,4).readUInt32LE():null;
+        revokeSources(!original?'unverified native lifetime boundary':
+          allocation?'native allocation entered':'native release entered',pc>>>0,pointer);
+      }
       // A traced epilogue has no call or branch before its RET. The next
       // block must be the entry's actual stack target, at the restored ESP.
       if(terminal) finishReturn(e,pc>>>0,sp>>>0,'owning target block');
@@ -118,6 +151,8 @@ function attach({getExports, getMemory}) {
         const bytes=readPoint(pointer,length);
         if(length<160) throw Error('invalid BSP source length');
         Object.assign(record,{kind:'ACQUIRED_SOURCE',pointer,length,sha256:hash(bytes)});
+        sources.push({acquisitionRecord:records.length,pointer,length,state:'ACQUIRED_POINT',
+          reason:'historical acquisition only; allocation/writer coverage UNKNOWN',revokedAt:null});
         if(load && (sp>>>0)===load.sp-0xb0 && load.acquisitionRecord===null) load.acquisitionRecord=records.length;
         else if(load) {load=null;terminal=null;completionReason='acquisition stack/entry mismatch';}
       } else if ((pc>>>0)===0x411a0e) {
@@ -133,7 +168,7 @@ function attach({getExports, getMemory}) {
           candidateHeadnode:pointer?u32(pointer+36):null});
       }
       records.push(record);
-    } catch(error) { invalid=error.message;load=null;terminal=null;completionReason=error.message; }
+    } catch(error) { revokeSources(error.message);invalid=error.message;load=null;terminal=null;completionReason=error.message; }
     finally { elapsedNs+=process.hrtime.bigint()-started; }
   }
   // A separate plain facade avoids Proxy invariants on frozen WASM exports.
@@ -152,7 +187,7 @@ function attach({getExports, getMemory}) {
             // call-free native epilogue can arm this post-run boundary check.
             if(terminal && !invalid) {
               try {const {e}=validate();finishReturn(e,e.get_eip()>>>0,e.get_esp()>>>0,'owning run boundary');}
-              catch(error) {invalid=error.message;load=null;terminal=null;completionReason=error.message;}
+              catch(error) {revokeSources(error.message);invalid=error.message;load=null;terminal=null;completionReason=error.message;}
             }
             return result;
           }
@@ -176,12 +211,16 @@ function attach({getExports, getMemory}) {
   return Object.freeze({block,event,wrapExports,wrapImports,snapshot:()=>{
     // Pulls detect replacement even if tracing was disabled or no further
     // callback occurred. This is a point check, never a concurrent-writer lock.
-    if(owner && !invalid) try {validate();} catch(error) {invalid=error.message;load=null;terminal=null;completionReason=error.message;}
+    if(owner && !invalid) try {validate();} catch(error) {revokeSources(error.message);invalid=error.message;load=null;terminal=null;completionReason=error.message;}
     return {exactIdentity:'UNKNOWN',
     reason:invalid||'no reset/reload/instruction coverage barrier; records are point observations only',
     validPointObservations:!invalid && records.length>0,calls,elapsedNs:elapsedNs.toString(),
     coverage:{completedLoad:'UNKNOWN',instructions:'UNKNOWN',allWriters:'UNKNOWN',exclusiveOwner:'UNKNOWN'},
     nativeCompletion:{reason:completionReason,pending:!!load,returns:records.filter(r=>r.kind==='NATIVE_LOAD_RETURN').length},
+    sourceLifetime:{currentIdentity:'UNKNOWN',laterBytesCertified:false,
+      sources:sources.map(s=>({...s})),eventCount:lifetimeEventCount,
+      events:lifetimeEvents.map(e=>({...e,affected:[...e.affected]})),
+      pins:lifetimePins.map(p=>({...p}))},
     execution:{...execution},eventCount,events:events.map(e=>({...e})),
     pins:pins.map(p=>({...p})),exe:{path:EXE,sha256:EXE_SHA},records:records.map(r=>({...r}))};
   }});
