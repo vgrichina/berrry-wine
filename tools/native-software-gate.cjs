@@ -11,6 +11,7 @@ function create({send:transport, workers, retain, responseDirectory, record, sav
     const sinks = require('./native-source-retention.cjs');
     retain = sinks.createRetainer(responseDirectory);
     journal = sinks.createProbeJournal(responseDirectory);
+    save=(row,png)=>journal.phase(row,png);
     const extraRecord=record;
     record = async row => {journal.record(row);await extraRecord?.(row);};
   }
@@ -69,6 +70,8 @@ function create({send:transport, workers, retain, responseDirectory, record, sav
     return response;
   }
   return {send,event,scripts,
+    async prepareProbe() {if(unknown)throw unknown;try {assert(installed&&gate&&!gate.closed,'live installed gate required');await journal?.prepare();} catch(error) {fail(error.message);await journal?.abort();throw error;}},
+    async abortProbe(error) {fail(error.message);await journal?.abort();},
     contextLive(session,id) { return contexts.get(session)?.has(id) === true; },
     setPageSession(session) { assert(!pageSession,'one page session');pageSession=session; },
     async install(options) {
@@ -81,12 +84,13 @@ function create({send:transport, workers, retain, responseDirectory, record, sav
       } catch(error) { fail(error.message);throw error; }
     },
     async probe(options) {
-      assert(installed&&gate,'Software gate not installed');if(unknown)throw unknown;
+      assert(installed&&gate,'Software gate not installed');
       try {
+        if(unknown)throw unknown;
         const result=await gate.probe(options);
         if(unknown)throw unknown;
         return {...result,living:result.qualified,hudCandidate:result.phase==='afterResume'};
-      } catch(error) { fail(error.message);throw error; }
+      } catch(error) { fail(error.message);await journal?.abort();throw error; }
     },
     get closed() { return !!unknown||!!gate?.closed; },
   };

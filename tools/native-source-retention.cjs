@@ -17,16 +17,15 @@ function createProbeJournal(directory, {io=fs, timeoutMs=250, maxBytes=32*1024*1
   assert(Number.isFinite(timeoutMs)&&timeoutMs>0&&timeoutMs<=250, 'bounded journal timeout <=250ms');
   assert(Number.isSafeInteger(maxBytes)&&maxBytes>0&&maxBytes<=32*1024*1024, 'bounded journal bytes');
   let serial=0, active=null, poisoned=null;
-  function check() { if(poisoned)throw poisoned;assert(active&&!active.sealed, 'active unsealed probe journal required'); }
+  function check() { if(poisoned)throw poisoned;assert(active&&active.ready&&!active.sealed, 'active unsealed probe journal required'); }
   function add(kind,row) {
     check();
     try {
-      assert([1,2].includes(active.read), 'source read group required');
+      if(kind!=='phase')assert([1,2].includes(active.read), 'source read group required');
       const body=JSON.stringify({kind,read:active.read,row});
-      assert(active.bytes+Buffer.byteLength(body)<=maxBytes, 'probe journal byte bound');
-      assert(active.counts[kind]<6, 'probe journal six row bound');
-      active.rows.push(body);active.bytes+=Buffer.byteLength(body);
-      active.counts[kind]++;
+      assert(active.counts[kind]<(kind==='phase'?5:6), 'probe journal row bound');
+      frame(kind,null,Buffer.alloc(0),body);
+      active.rows.push(body);active.counts[kind]++;
     } catch(error) {poisoned=error;throw error;}
   }
   function validate(rows) {
@@ -57,42 +56,108 @@ function createProbeJournal(directory, {io=fs, timeoutMs=250, maxBytes=32*1024*1
       if(read===1)firstKeys=identities;else assert.deepEqual(identities,firstKeys,'source identities changed between reads');
     }
   }
-  async function write(complete, start=performance.now()) {
-    const tx=active;assert(tx&&!tx.sealed,'one journal flush');tx.sealed=true;
-    const payload=tx.rows.join('\n')+'\n';
-    const body=JSON.stringify({version:1,probe:tx.id,complete,records:tx.rows.length,sha256:hash(payload)})+'\n'+payload;
-    // A crash/partial write has no successful flush receipt and cannot admit
-    // input. Exclusive creation prevents a subsequent process overwriting it.
-    const work=(async()=>{
-      const file=await io.open(path.join(directory,`source-probe-${tx.id}.jsonl`),'wx');
-      try {await file.writeFile(body);await file.sync();} finally {await file.close();}
-      // File contents alone do not make a newly created directory entry durable.
+  // prepare() runs before the compound clock. Persist the empty file and its
+  // name before any response is requested; keep its exclusive FD for streaming.
+  async function prepare() {
+    if(poisoned)throw poisoned;
+    assert(!active||active.sealed,'concurrent probe journal');
+    const tx=active={id:++serial,read:0,rows:[],counts:{response:0,proof:0,phase:0,png:0},bytes:0,sealed:false,ready:false,tail:Promise.resolve(),digest:createHash('sha256')};
+    try {
+      tx.file=await io.open(path.join(directory,`source-probe-${tx.id}.journal`),'wx');
+      await tx.file.sync();
       const dir=await io.open(directory,'r');try {await dir.sync();} finally {await dir.close();}
-    })();
+      tx.ready=true;
+    } catch(error) {poisoned??=error;if(tx.file)await Promise.allSettled([tx.file.close()]);tx.sealed=true;throw error;}
+  }
+  function frame(kind,row,payload=Buffer.alloc(0),snapshot) {
+    const tx=active,base=snapshot??JSON.stringify({kind,read:tx.read,row});
+    const body=Buffer.from(base.slice(0,-1)+',"payloadBytes":'+payload.length+',"payloadSha256":"'+hash(payload)+'"}');
+    const header=Buffer.alloc(8);header.writeUInt32BE(body.length);header.writeUInt32BE(payload.length,4);
+    const bytes=Buffer.concat([header,body,payload]);
+    assert(tx.bytes+bytes.length+(kind==='seal'?0:1024)<=maxBytes,'probe journal byte bound');
+    tx.bytes+=bytes.length;if(kind!=='seal')tx.digest.update(bytes);
+    // Every frame owns its bytes. Never await disk from a CDP receive lane.
+    tx.tail=tx.tail.then(async()=>{
+      let offset=0;
+      while(offset<bytes.length) {
+        const result=await tx.file.write(bytes,offset,bytes.length-offset);
+        assert(Number.isSafeInteger(result.bytesWritten)&&result.bytesWritten>0&&result.bytesWritten<=bytes.length-offset,'partial journal write made no progress');
+        offset+=result.bytesWritten;
+      }
+    });
+    tx.tail.catch(error=>{poisoned??=error;});
+  }
+  async function finish(complete,start=performance.now()) {
+    const tx=active;assert(tx&&!tx.sealed,'one journal flush');tx.sealed=true;
+    const seal={version:2,probe:tx.id,complete,records:tx.rows.length,bytes:tx.bytes,sha256:tx.digest.digest('hex')};
+    // A seal is content evidence only. Successful sync AND close are required
+    // before a live gate can consider certification; recovery never certifies.
+    const work=(async()=>{try {frame('seal',seal);await tx.tail;await tx.file.sync();} finally {await Promise.allSettled([tx.tail]);await tx.file.close();}})();
     let timer;
     try {
       await Promise.race([work,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('probe journal flush timeout')),Math.max(0,timeoutMs-(performance.now()-start)));})]);
       assert(performance.now()-start<=timeoutMs,'probe journal flush timeout');
+      if(complete&&poisoned)throw poisoned;
     } catch(error) {poisoned??=error;throw error;}
     finally {
       clearTimeout(timer);
-      // Even on timeout, do not leave an FD writer racing shutdown or replay.
       await Promise.allSettled([work]);
-      timing({probe:tx.id,complete,bytes:Buffer.byteLength(body),flushMs:performance.now()-start,failed:!!poisoned});
+      timing({probe:tx.id,complete,bytes:tx.bytes,flushMs:performance.now()-start,failed:!!poisoned});
     }
   }
   return {
-    begin() {if(poisoned)throw poisoned;assert(!active||active.sealed,'concurrent probe journal');active={id:++serial,read:0,rows:[],counts:{response:0,proof:0},bytes:0,sealed:false};},
+    prepare,
+    begin() {check();assert(active.ready&&!active.begun,'prepared journal required');active.begun=true;},
     read(n) {check();assert(n===active.read+1&&n<=2,'ordered two-read journal');active.read=n;},
     retain:row=>add('response',row), record:row=>add('proof',row),
-    async flush() {
-      const start=performance.now();
-      check();try {validate(active.rows.map(JSON.parse));} catch(error) {poisoned=error;throw error;}
-      await write(true,start);
+    phase(row,png) {
+      check();try {
+        const stages=['entry','owner','owner','pixels','return'];
+        assert.equal(row.phase,stages[active.counts.phase],'ordered complete phase journal');
+        if(row.phase==='owner')assert.equal(row.read,active.counts.phase,'phase read group mismatch');
+        if(png) {assert.equal(row.phase,'pixels');assert.equal(hash(png),row.result.pngSha256,'decoded PNG hash mismatch');}
+        else assert.notEqual(row.phase,'pixels','actual decoded PNG required');
+        add('phase',row);
+        if(png) {frame('png',{sha256:hash(png),bytes:png.length},Buffer.from(png));active.counts.png++;}
+      } catch(error) {poisoned??=error;throw error;}
     },
-    async abort() {poisoned??=Error('aborted probe journal; no replay');if(active&&!active.sealed)await write(false);},
-    get active() {return !!active&&!active.sealed;},
+    async flush() {
+      const start=performance.now();check();
+      try {
+        validate(active.rows.map(JSON.parse));
+        assert.equal(active.counts.phase,5,'complete five phases required');assert.equal(active.counts.png,1,'one actual decoded PNG required');
+      } catch(error) {poisoned??=error;throw error;}
+      await finish(true,start);
+    },
+    async abort() {
+      poisoned??=Error('aborted probe journal; no replay');
+      if(active&&!active.sealed) {
+        // Preserve already admitted frames even if bounds leave no seal space.
+        try {await finish(false);} finally {await Promise.allSettled([active.tail]);}
+      }
+    },
+    get active() {return !!active&&active.ready&&!active.sealed;},
   };
+}
+
+// Diagnostic reader only: even a valid complete seal cannot recover admission.
+function decodeJournal(bytes,{maxBytes=32*1024*1024}={}) {
+  assert(bytes.length<=maxBytes,'journal byte bound');
+  const frames=[];let offset=0,seal;
+  while(offset<bytes.length) {
+    const begin=offset;assert(bytes.length-offset>=8,'partial frame header');
+    const metadata=bytes.readUInt32BE(offset),payload=bytes.readUInt32BE(offset+4);offset+=8;
+    assert(metadata>0&&metadata+payload<=maxBytes&&metadata+payload<=bytes.length-offset,'partial or oversized frame');
+    const row=JSON.parse(bytes.subarray(offset,offset+metadata));offset+=metadata;
+    const data=bytes.subarray(offset,offset+payload);offset+=payload;
+    assert.equal(row.payloadBytes,payload);assert.equal(row.payloadSha256,hash(data),'frame hash mismatch');
+    if(row.kind==='seal') {
+      assert(!seal&&offset===bytes.length,'terminal seal required');seal=row.row;
+      assert.equal(seal.version,2);assert.equal(seal.records,frames.filter(f=>f.kind!=='png').length);
+      assert.equal(seal.bytes,begin);assert.equal(seal.sha256,hash(bytes.subarray(0,begin)),'journal hash mismatch');
+    } else frames.push({...row,payload:Buffer.from(data)});
+  }
+  assert(seal,'missing seal');return {seal,frames};
 }
 
 function createRetainer(directory, {timing = () => {}} = {}) {
@@ -149,4 +214,4 @@ function createProofRecorder(directory, {timing = () => {}} = {}) {
   };
 }
 
-module.exports = {createRetainer, createProofRecorder, createProbeJournal};
+module.exports = {createRetainer, createProofRecorder, createProbeJournal, decodeJournal};

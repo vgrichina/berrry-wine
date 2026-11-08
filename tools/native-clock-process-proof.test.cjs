@@ -41,8 +41,8 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   const transition=createGuardedProbe(async()=>wait(10),async()=>({at:Date.now()}),{deadline,transitionMs:5});await assert.rejects(()=>transition({phase:'beforeResume'}),/transition expired/);
   const staleSource=createGuardedProbe(async()=>{},async()=>({at:Date.now(),reads:[{software:{copyAt:Date.now()},responses:[{requestAt:Date.now()-300}]}]}),{deadline});await assert.rejects(()=>staleSource({phase:'beforeResume'}),/expired/);
   const driver=fs.readFileSync(process.env.RECOIL_DRIVER_PATH,'utf8'),beginBinding=driver.indexOf('const clockProof='),endBinding=driver.indexOf('async function armSoftware()',beginBinding);assert(beginBinding>0&&endBinding>beginBinding);
-  let actualProbes=0;binding=require('node:vm').runInNewContext(driver.slice(beginBinding,endBinding)+';({independentClock,softwareProbe,censusClock})',{require,root:path.resolve(__dirname,'..'),run:out,out,deadline,fs,softwareDriver:{closed:false,probe:async()=>{actualProbes++;return {at:Date.now(),qualified:true};}}});
-  assert(await binding.independentClock());await binding.softwareProbe({phase:'beforeResume'});assert((await binding.softwareProbe()).qualified);assert.equal(actualProbes,2);
+  let actualProbes=0,actualPreparations=0;binding=require('node:vm').runInNewContext(driver.slice(beginBinding,endBinding)+';({independentClock,softwareProbe,censusClock})',{require,root:path.resolve(__dirname,'..'),run:out,out,deadline,fs,softwareDriver:{closed:false,prepareProbe:async()=>{actualPreparations++;},abortProbe:async()=>{},probe:async()=>{actualProbes++;return {at:Date.now(),qualified:true};}}});
+  assert(await binding.independentClock());await binding.softwareProbe({phase:'beforeResume'});assert((await binding.softwareProbe()).qualified);assert.equal(actualProbes,2);assert.equal(actualPreparations,driver.includes("softwareDriver.prepareProbe()")?2:0);
   const before=fs.readdirSync(out).filter(x=>x.startsWith('independent-clock-process-proof-'));assert.equal(before.length,5);
   // Retirement is sticky even if the claimed driver/Chrome pair is still live.
   let observerProof;
