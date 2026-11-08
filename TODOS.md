@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; six victories and red vial pickup preserved; further landmark/area transition open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-manifest-onward-1056 corrects composedmanifest HTTPpin fromprovision.bytes and validatesbeforeallocation then reloads untouched83214aa0/97228afb six-victory/red-vial slot and proceeds pastrock. Predecessore464ba2c5 stoppedbeforeChrome onownstaleHTTPpin; no progress/productiondefect claim.11refs1621B10hash independentlyverified archived/drained. Note: docs/re-notes/darkstone-pickup-onward-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-enclosure-npc-1122 restores new8be3e3ab/097396b8 native enclosure save, settles then reviewedNPC interaction/name. Published49a15dbf0 correctedmanifest pin preallocation and26reviewedmoves pastrock to palisade/humanNPCs; two clicks NOdialogue/name. Actual6+0 LIFE24/35Gold1532Food70MANA25/25 vialunconsumed. Independently hashed471refs104176677B and personally reviewed3PNGs; archived111559 stop_407d6b2b5f5e6c4e complete,68PIDcustody/drain. Note: docs/re-notes/darkstone-manifest-onward-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
