@@ -4138,8 +4138,13 @@ class WineAssembly {
     // into one.
     await this._loadWin16Dlls(url, exeBytes);
 
-    // Initialize DirectX COM vtable thunks (must be after load_pe sets image_base).
-    if (this.instance.exports.init_dx_com_thunks) {
+    // Worker boot already initializes COM tables on the owning instance in
+    // GuestThreadHost.loadPe. init_thread above imports those identities into
+    // this idle shadow. Reinitializing here would replace the shared registry
+    // while the owner still holds its original tables, so later threads would
+    // misidentify the owner's DirectDraw4/7 objects and create Surface2 views.
+    // Local boot initializes after load_pe sets image_base.
+    if (!this.guestWorker && this.instance.exports.init_dx_com_thunks) {
       this.instance.exports.init_dx_com_thunks();
     }
 
