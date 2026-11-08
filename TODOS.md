@@ -6,9 +6,9 @@
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
-  status: active; Chrome thread-exit startup and cancellation lineage repair
+  status: active fresh remote startup and upper-opening validation after causal kernel repair
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh native-thread-exit-causality-2038 repairs real thread-exit/cancellation cause before another original. Reviewed3021d134c 332localrefs4101731B70gzip plus180remote2716996B9gzip independentHASH; 706pins/barrierPASS but60sDevTools deadline before gameplay, Chrome stopped-thread fatal,132actualreaps one unresolvedLineage. bx_nbuk2fjc ARCHIVED expiryNULL stop_93185522ea29c01d normal. No original retry until causal repair; upper opening and historical143UNKNOWN remain open. Full27/parity/audio/FPS open.
+  Next: Fresh quake2-repaired-startup-opening-2052 uses publishedbcf8c7bd7 kernel5371233b with unchanged flags/caps and exact closure before ONE original onward-opening attempt. Reviewed native causal diff/fixtures/note;149refs447128B32originalgzip independentlyHASH. Actual pthread exit delay3.746s->0.033s and cancellation fork attribution repaired;33focused/eight-thread/lockedbuild PASS. Chrome integration pending; historical132reaps one unresolvedLineage remainsFALSE, prior bx_nbuk2fjc archived normal. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: queued pending shared Chrome startup/cancellation repair; linked shot remains open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedde0097eb5 remote607pins/barrierPASS but30sDevTools deadline beforeoriginal/input.114actualterminalreaps3unresolvedLineage completeFALSE; bx_wws687r7ARCHIVED expiryNULL stop_a5e399e16e6c6896 normal. All own/recovered evidence independentHASH gzipCRC originalchecks accepted. Commonstartup/cancellation fix native-thread-exit-causality-2038 beforeanotherTR2original. SlotfreshDrakanpassiveobserver2041. FirstlinkedshotRETURN remainsunqualified; sole1900msControl observer2500/32 contract retained Full27/parity/audio/FPS open.
+  Next: Reviewedde0097eb5 remote607pins/barrierPASS but30sDevTools deadline beforeoriginal/input.114actualterminalreaps3unresolvedLineage completeFALSE; bx_wws687r7ARCHIVED expiryNULL stop_a5e399e16e6c6896 normal. All own/recovered evidence independentHASH gzipCRC originalchecks accepted. Publishedbcf8c7bd7 causal kernel repair accepted; await actual Chrome startup validation by fresh Q22052 before anotherTR2original. SlotfreshDrakanpassiveobserver2041. FirstlinkedshotRETURN remainsunqualified; sole1900msControl observer2500/32 contract retained Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active fresh remote streamed restore and native BAT response
+  status: new native save preserved after potion recovery; active quit admission repair
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-current-bat-2025 completes full supported gzip runtime closure using published252888061 command logger/kernel, accepted637008c31 streamed transaction BOTHlocal+remote launchgates then ONE remote canonicalFINAL1910 restore/currenthealthBAT ordinary response/nativeNewSave at first consequence. Reviewed31refs58362B13controlsHASH zeroLocalRaw; historicalUNKNOWN no replay normalChromeUNPROVEN. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-quit-admission-repair-2054 tests actual client/consumer legal quit timeout before another original. Reviewed0b12ac153 once plus fourcaptures:14->11 first damage STOP then queuedvial35/35, no attack/kill; native NewSave de53+chars recovered, not reloaded. Canonical chars1342324B SHA2c78a17064029385dee4206c9314673debb4de05205ae63d2ff144b9e6081546 game3204341B SHAcb2ca8093b2ffe45133cda87e3eea9ceafad66fd82246684ec40dd97306e66fc.897ownrefs59756377B741gzip+631remote122649226B10gzip independentlyHASH. Quit100000ms>55000 refused prepublication; separate publicChrome.close actualWAIT0 then driverTERM;355/355actualreaps completeTRUE profileRETAINED noquitACK. bx_sgm4f79tARCHIVED expiryNULL stop_e43205641f748219 normal. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
