@@ -1,5 +1,37 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: browser startup sweep after the COM boot repair
+
+Published `29027f029`, run `20261108-graphics-post-renderer-repair-sweep`,
+checks the actual browser boot changed by `37ce9588e`. Twenty-four intended
+cells cover six titles in cooperative/threaded mode and requested software/
+WebGL paths. Three additional Quake II controls make 27 executions, not 27 apps.
+The initial software-labelled Quake II cases actually used WebGL; corrected
+cases establish its software path. The twelve CLI cases were deliberately
+unexecuted because they bypass the changed browser sequence.
+
+| Original | Reviewed endpoint in all four intended cells |
+| --- | --- |
+| Quake II | Main menu with console text behind |
+| Quake III | Three gray frames and one white frame; menu unreached |
+| GLTron | Colored main menu |
+| Hexen II | Undismissed notice; GL startup untested |
+| Heretic II | Textured book menu |
+| Forsaken | Logo only; probes do not establish active WebGL drawing |
+
+Raw diagnostics record no classified escaped trap, unimplemented API, guest
+exit, setup failure or case deadline. Quake III's sampled EIPs progress;
+gray/white at the 20-second observation endpoint is not a crash diagnosis.
+Capture and diagnostic overhead have separate timestamps. The coordinator
+inspected all six contact sheets and independently checked all 816 artifact
+references. Twenty-seven module reads, 96 loaded-host reads and applicable COM
+registry observations match the staged runtime. Two launcher-143 interruptions
+and missing outer reports are preserved; the serial run and evidence survived.
+The box normally stopped after verified retrieval. No emulator repair was
+introduced by this sweep, and these startup windows establish no gameplay,
+parity, FPS, audio or full historical27 completion.
+[Exact cases, identities, failures, recovery and shutdown](re-notes/graphics-post-renderer-repair-sweep-20261108.md).
+
 ## November 8: Tachyon browser flight controls on both backends
 
 Published `aba977513`, run `20261108-tachyon-current-browser-backends`,
