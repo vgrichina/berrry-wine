@@ -11,7 +11,7 @@ const b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),wa=a=>a-0x4
 // Only immutable instruction windows for static validation; never load/run PE.
 for(const [a,n] of [[0x4471fc,16],[0x447233,8],[0x44d2b1,10],[0x44d3bf,48],[0x44d18a,8],[0x44d21d,7]])b.set(pe.buf.subarray(pe.va2off(a),pe.va2off(a)+n),wa(a));
 const wr=(a,v)=>dv.setUint32(wa(a),v,true),w16=(a,v)=>dv.setUint16(wa(a),v,true);
-let checks=0;
+let checks=0,boundedShotOrchestration;
 function fixture(options={}){
  let clock=0,timer,removedTimer=false,pc=0x440000,esp=0x7401000,eax=0,ebx=0,blocks=0;
  const calls=[],queue=[];
@@ -215,6 +215,142 @@ async function actualOrchestration(){
   checks++;
  }
 }
+// Bounded multi-cycle fixtures. Original immutable arm/shot slices execute on
+// the production CPU; harness transfers and frame commits remain authored.
+// These are causal readiness tests, never original gameplay or shot evidence.
+{
+ const source=fs.readFileSync(require.resolve('./tr2-action-observer.cjs'),'utf8');
+ const copy=(a,n)=>b.set(pe.buf.subarray(pe.va2off(a),pe.va2off(a)+n),wa(a));
+ for(const m of source.matchAll(/\[0x([0-9a-f]+),'([0-9a-f]+)'\]/g))copy(parseInt(m[1],16),m[2].length/2);
+ copy(0x42d4c0,0x330);copy(0x42f270,0x370);copy(0x466ad0,0x180);
+ const bytes=fs.readFileSync('build/wine-assembly.wasm');
+ assert.equal(sha(bytes),'d8facd0658b7f158c6e60bef2de0936471f438f8bf41e9240fd75635f1d319dc');
+ const mod=new WebAssembly.Module(bytes),imports={host:{memory}};
+ for(const entry of WebAssembly.Module.imports(mod))if(entry.kind==='function')imports.host[entry.name]=()=>0;
+ const A=0x7401008,G=0x7400f00,item=0x530000;
+ const pub=rpc.views(memory,0).pub;
+ function start(options={}){
+  setup();wr(0x52173c,item);w16(item+0x22,1000);wr(0x5216e0,0);
+  w16(0x521662,4);w16(0x521664,2);w16(0x521700,0);w16(0x521712,0);
+  w16(0x52170e,0);w16(0x5216fc,0);wr(0x521720,0);wr(0x51b178,64);b[wa(0x51fd96)]=0;
+  return fixture({weapon:true,stopAfterPair:true,untilShot:true,...options});
+ }
+ function pair(f){
+  f.step({pc:0x44d2a0,esp:A});
+  wr(0x7401004,0x44d2bb);wr(0x7401008,0x51b078);wr(A+0x68,0x41427f);
+  poll(f);action(f);wr(0x51b178,64);f.step({pc:0x41427f,esp:A+0x6c});
+ }
+ function enter(f){wr(G,0x431757);f.step({pc:0x42e640,esp:G});}
+ function aim(f){wr(G-24,0x42e860);wr(G-20,2);f.step({pc:0x42d330,esp:G-24});wr(G-40,0x42d458);wr(G-36,2);f.step({pc:0x42d4c0,esp:G-40});}
+ function returned(f){f.step({pc:0x431757,esp:G+4});}
+ function slice(f){
+  const e=new WebAssembly.Instance(mod,imports).exports;
+  e.init_thread(0,0x400000,0x42d4c0,0x42d4c1,0,0,0,0);e.set_esp(G-40);e.set_eip(0x42d4c0);
+  let entered=false;
+  for(let n=0;n<100;n++){
+   e.run(1);const pc=e.get_eip()>>>0;
+   f.step({pc,esp:e.get_esp()>>>0,eax:e.get_eax()>>>0,ebx:e.get_ebx()>>>0});
+   if(pc===0x42f270)entered=true;
+   if(pc===0x42d59a){assert(entered);return {shot:true,result:e.get_eax()>>>0};}
+   if(pc===0x42cf00){
+    const frame=e.get_esi()&65535;
+    // The animation dependency is outside this fixture. Commit the exact
+    // branch-computed frame as an explicit harness continuation.
+    w16(0x52170e,frame);return {shot:false,frame};
+   }
+  }
+  throw Error('readiness slice failed to reach its bounded stop');
+ }
+ // Reproduce default first-return removal at the very first native raise.
+ {const f=start({untilShot:false});pair(f);enter(f);aim(f);
+  assert.deepEqual(slice(f),{shot:false,frame:1});returned(f);
+  const r=f.o.status();assert.equal(r.status,'witnessed');assert(r.consumptionQualified);
+  assert.equal(r.records.at(-1).state.arms[1].frame,1);assert(!r.shotQualified);
+  console.log(JSON.stringify({fixture:'native-first-return',original:false,status:r.status,frame:r.records.at(-1).state.arms[1].frame,shotQualified:r.shotQualified}));checks++;
+ }
+ // Same causal raise boundaries, four completed updates, then the exact
+ // native shot CALL and native zero-ammo RET (type2 fixture, result zero).
+ {const f=start();
+  for(let frame=1;frame<=4;frame++){
+   pair(f);enter(f);aim(f);assert.deepEqual(slice(f),{shot:false,frame});returned(f);
+   assert.equal(f.o.status().status,'active');assert.equal(f.o.status().records.length,frame*5);
+   Atomics.add(pub,rpc.SLOT.GEN,1); // ordinary later publications are allowed
+  }
+  pair(f);enter(f);aim(f);assert.deepEqual(slice(f),{shot:true,result:0});
+  const r=f.o.status();assert.equal(r.status,'witnessed',JSON.stringify(r));assert(r.shotQualified&&r.consumptionQualified&&r.qualified);
+  assert.equal(r.completedCycles,4);assert.equal(r.records.length,26);assert(r.pendingWeapon&&!r.pendingShot);
+  const ret=r.records.at(-1),entry=r.records[ret.shotRecord],a=r.records[ret.actionRecord];
+  assert.equal(ret.kind,'shot-return');assert.equal(entry.kind,'shot-entry');assert.equal(entry.actionRecord,ret.actionRecord);
+  assert.equal(r.records[a.poll].kind,'poll');assert.equal(a.poll,20);assert.equal(ret.result,0);
+  console.log(JSON.stringify({fixture:'native-delayed-shot-return',original:false,status:r.status,completedCycles:r.completedCycles,shotQualified:r.shotQualified,
+   records:r.records.map(({kind,pc,esp,actionRecord,shotRecord,poll,result,state})=>({kind,pc,esp,actionRecord,shotRecord,poll,result,frames:state?.arms.map(a=>a.frame)}))}));
+  assert.equal(f.instance,f.original);const count=r.records.length;returned(f);assert.equal(f.o.status().records.length,count);checks++;
+ }
+ // Many repeated gate boundaries never consume the later-cycle row budget.
+ {const f=start();pair(f);enter(f);aim(f);
+  for(let n=0;n<200;n++)f.step({pc:n%2?0x42d54a:0x42d6d7,esp:G-60});
+  returned(f);assert.equal(f.o.status().records.length,5);f.o.finish('removed');assert(!f.o.status().qualified);checks++;
+ }
+ for(const mode of ['crossed-update','crossed-poll','reuse','wrong-caller','wrong-return','wrong-shot-stack','wrong-mask','stale','invalid-publication','pending-action','pending-gun','pending-shot','deadline','overflow','unlinked-return']){
+  const f=start(mode==='overflow'?{maxRecords:4}:{});pair(f);
+  if(mode==='pending-action'){
+   enter(f);returned(f);f.step({pc:0x44d2a0,esp:A});
+   wr(0x7401004,0x44d2bb);wr(0x7401008,0x51b078);poll(f);
+   f.step({pc:0x44d3c6,esp:A,eax:1});f.o.finish('removed');
+  }else if(mode==='wrong-caller'){wr(G,0x450000);f.step({pc:0x42e640,esp:G});}
+  else {
+   enter(f);aim(f);
+   if(mode==='crossed-update')f.step({pc:0x44d2a0,esp:A});
+   if(mode==='crossed-poll')poll(f);
+   if(mode==='reuse'){returned(f);enter(f);}
+   if(mode==='wrong-mask'){wr(0x51b178,0x100040);f.step({pc:0x42d54a,esp:G-60});}
+   if(mode==='stale'){Atomics.sub(pub,rpc.SLOT.GEN,1);f.step({pc:0x42d54a,esp:G-60});}
+   if(mode==='invalid-publication'){Atomics.store(pub,rpc.SLOT.KEYS_VALID,0);f.step({pc:0x42d54a,esp:G-60});}
+   if(['wrong-return','wrong-shot-stack','pending-shot'].includes(mode)){
+    wr(G-80,0x42d59a);wr(G-76,2);wr(G-72,0);wr(G-68,item);wr(G-64,G-44);
+    f.step({pc:0x42f270,esp:G-80});
+    if(mode==='wrong-return')f.step({pc:0x42d724,esp:G-76});
+    else if(mode==='wrong-shot-stack')f.step({pc:0x42d59a,esp:G-72});
+    else f.o.finish('removed');
+   }
+   if(mode==='unlinked-return')f.step({pc:0x42d59a,esp:G-76});
+   if(mode==='pending-gun')f.o.finish('removed');
+   if(mode==='deadline')f.expire();
+   if(mode==='overflow')returned(f);
+  }
+  const r=f.o.status();assert.notEqual(r.status,'active',JSON.stringify({mode,r}));assert(!r.qualified&&!r.shotQualified&&!r.consumptionQualified,JSON.stringify({mode,r}));
+  assert(r.records.length<=32);assert.equal(f.instance,f.original);checks++;
+ }
+ // No shot within capacity must fail closed even after completed good cycles.
+ {const f=start();for(let n=0;n<7;n++){pair(f);enter(f);returned(f);}
+  const r=f.o.status();assert.equal(r.status,'overflow');assert.equal(r.records.length,32);assert(!r.qualified&&!r.shotQualified);checks++;
+ }
+ setup();assert.throws(()=>fixture({untilShot:true}),/requires weapon/);assert.throws(()=>fixture({weapon:true,untilShot:'yes'}),/requires weapon/);checks+=2;
+ // The serialized public hold helper must require an in-hold shot, rather
+ // than accepting a previous completed weapon cycle or an out-of-hold RET.
+ boundedShotOrchestration=async()=>{
+  const {observedHold}=require('./tr2-action-observer.cjs');
+  for(const mode of ['shot','no-shot','outside','no-physical']){
+   const f=start();f.o.finish('removed');
+   const c={instance:f.original,memory,GuestRpc:rpc,workerSlot:0,endpointIdentity:7,performance:{now:()=>0},setTimeout:()=>1,clearTimeout:()=>{},globalThis:null};c.globalThis=c;
+   const result=await observedHold({weapon:true,untilShot:true,expectedEndpoint:7,exeSha256,workerSession:'fixture',
+    evaluate:async code=>vm.runInNewContext(code,c),record:async()=>{},hold:async arm=>{
+     const started=Date.now()-1;await arm();
+     const adapter={step(row){f.queue.push(row);c.instance.exports.run(1);}};
+     pair(adapter);enter(adapter);aim(adapter);
+     if(mode==='no-shot')returned(adapter);
+     else{
+      wr(G-80,0x42d59a);wr(G-76,2);wr(G-72,0);wr(G-68,item);wr(G-64,G-44);
+      adapter.step({pc:0x42f270,esp:G-80});adapter.step({pc:0x42d59a,esp:G-76,eax:0});
+     }
+     return {started:mode==='outside'?Date.now()+1000:started,releaseAt:Date.now()+1,
+      samples:[{whollyDuringHold:true,physical:[{key:17,state:mode==='no-physical'?0:0x8000}]}]};
+    }});
+   assert.equal(result.qualified,mode==='shot',JSON.stringify({mode,result}));
+   assert.equal(result.shotsDuringHold,mode==='shot'||mode==='no-physical'?1:0);assert.equal(c.instance,f.original);checks++;
+  }
+ };
+}
 actualRunAdapter();
-(async()=>{await independentRelease();await actualOrchestration();await stalledArmRelease();})().then(()=>console.log(JSON.stringify({passed:true,checks,original:false,backendQualified:false,
+(async()=>{await independentRelease();await actualOrchestration();await stalledArmRelease();await boundedShotOrchestration();})().then(()=>console.log(JSON.stringify({passed:true,checks,original:false,backendQualified:false,
  scope:'production serialized observer with fixture CPU states and actual RPC layout; unchanged native independent release; static exact game pins'}))).catch(e=>{console.error(e);process.exitCode=1;});

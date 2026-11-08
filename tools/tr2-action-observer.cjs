@@ -8,7 +8,7 @@ function mappingLayout(){
 }
 function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIdentity,
   expectedEndpoint,exeSha256,maxMs=2500,maxRecords=32,defer=false,stopAfterPair=false,
-  weapon=false,readLayout,now=()=>performance.now(),schedule=setTimeout,cancel=clearTimeout}={}) {
+  weapon=false,untilShot=false,readLayout,now=()=>performance.now(),schedule=setTimeout,cancel=clearTimeout}={}) {
   const SHA='0811efa84bfab8c458b9e29976088152db4c14601a99ca4910c75a2d009233aa';
   if(exeSha256!==SHA||workerSlot!==0||endpointIdentity!==expectedEndpoint||
      !Number.isSafeInteger(endpointIdentity)||endpointIdentity<1)throw Error('TR2 owner/image mismatch');
@@ -71,6 +71,7 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
   function verify(){for(const [a,hex] of pins)if(read(a,hex.length/2).map(b=>b.toString(16).padStart(2,'0')).join('')!==hex)throw Error('TR2 loaded instruction mismatch');}
   verify();
   if(typeof weapon!=='boolean')throw Error('TR2 weapon option');
+  if(typeof untilShot!=='boolean'||(untilShot&&!weapon))throw Error('TR2 untilShot option requires weapon');
   // Exact original windows: publication, callers, dispatch, arm/shot gates.
   const weaponPins=[
     [0x44dd55,'8b5424145f33c05ea0f8924d005d891578b151005b83c454'],
@@ -136,10 +137,10 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
   const started=now(),report={version:2,workerSlot,endpointIdentity,exeSha256,started,
     deadline:started+maxMs,status:'active',qualified:false,records:[],boundaries:0,
     workBound:'at most one run(1) per remaining caller block, deadline checked at every boundary; no lifetime boundary quota',
-    weapon,scope:'owning CPU Worker JS boundaries; internal WAT reentry/other threads unobserved; snapshots and exact caller links only, no hit/kill/effective aim/backend qualification'};
+    weapon,untilShot,completedCycles:0,scope:'owning CPU Worker JS boundaries; internal WAT reentry/other threads unobserved; snapshots and exact caller links only, no hit/kill/effective aim/backend qualification'};
   let armed=!defer;
   let timer,lastBlocks=null,last=null,poll=null,action=null,restored=false;
-  let chain=null,gun=null,shot=null;
+  let chain=null,gun=null,shot=null,publicationGeneration=null;
   const seen=new Set();
   const s16=(a,field)=>(u16(a,field)<<16)>>16;
   function state(){
@@ -153,6 +154,9 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
   }
   function weaponRow(kind,pc,esp,extra={}){
     verifyWeapon();
+    // Keep five rows per ordinary cycle, reserving useful capacity for later
+    // readiness and shot linkage. Call/stack validation still runs at gates.
+    if(untilShot&&!['input-published','weapon-entry','weapon-return','shot-entry','shot-return'].includes(kind))return true;
     if(seen.has(pc))return true;
     readContext={kind,pc,esp};
     try{
@@ -164,16 +168,22 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
   const facade=Object.assign(Object.create(null),e),wrapped={exports:facade};
   function finish(reason){
     if(report.status!=='active')return report;
-    report.status=reason;report.ended=now();report.qualified=(reason==='removed'||reason==='witnessed')&&!action&&!shot&&!gun&&report.records.some(r=>r.kind==='action'&&r.poll!==null);
+    report.status=reason;report.ended=now();
+    const shotDone=untilShot&&reason==='witnessed'&&report.records.at(-1)?.kind==='shot-return';
+    report.qualified=(reason==='removed'||reason==='witnessed')&&!action&&!shot&&(!gun||shotDone)&&(!untilShot||shotDone)&&report.records.some(r=>r.kind==='action'&&r.poll!==null);
     report.consumptionQualified=weapon&&report.qualified&&report.records.some(r=>{
       const a=report.records[r.actionRecord],p=a&&report.records[a.poll];
-      return r.kind==='weapon-return'&&a?.action&&a.keyResult&&p?.hresult===0&&p.ctrl.some(b=>b&128);
+      return (r.kind==='weapon-return'||(shotDone&&r.kind==='shot-return'))&&a?.action&&a.keyResult&&p?.hresult===0&&p.ctrl.some(b=>b&128);
     });
+    report.shotQualified=!!(shotDone&&report.qualified&&report.records.some(r=>{
+      const a=report.records[r.actionRecord],p=a&&report.records[a.poll];
+      return r.kind==='shot-return'&&a?.action&&a.keyResult&&p?.hresult===0&&p.ctrl.some(b=>b&128);
+    }));
     report.pollObserved=report.records.some(r=>r.kind==='poll');
     report.noPollUnqualified=!report.pollObserved;
     report.pending=!!action;report.pendingWeapon=!!gun;report.pendingShot=!!shot;cancel(timer);
     if(getInstance()===wrapped){replaceInstance(original);restored=true;}
-    else {report.status='owner-replaced';report.qualified=false;report.consumptionQualified=false;}
+    else {report.status='owner-replaced';report.qualified=false;report.consumptionQualified=false;report.shotQualified=false;}
     report.removed=restored;return report;
   }
   function emit(row){if(report.status!=='active')return false;if(report.records.length>=maxRecords){finish('overflow');return false;}report.records.push({at:now(),wallAt:Date.now(),boundary:report.boundaries,...row});return true;}
@@ -189,20 +199,36 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
     try {
       if(now()>=report.deadline)return finish('expired');
       if(getInstance()!==wrapped||e.get_current_thread_id()!==1)return finish('owner-replaced');
+      if(untilShot){
+        const v=rpc.views(memory,workerSlot).pub,s=rpc.SLOT,g=Atomics.load(v,s.GEN)>>>0;
+        // GEN advances on ordinary publications (including clock updates).
+        // Accept forward/wrap progress, refuse rollback or invalid publication.
+        if(Atomics.load(v,s.KEYS_VALID)!==1||(publicationGeneration!==null&&((g-publicationGeneration)>>>0)>0x7fffffff))return finish('stale-generation');
+        publicationGeneration=g;
+      }
       ++report.boundaries;
       const pc=e.get_eip()>>>0,esp=e.get_esp()>>>0,stamp=pc+':'+esp;
       if(stamp===last)return;last=stamp;
-      if(pc===0x44d2a0){if(chain)return finish('superseded');poll=null;action=null;chain=null;gun=null;shot=null;seen.clear();}
+      if(pc===0x44d2a0){
+        if((chain&&(!untilShot||!chain.complete))||(untilShot&&(action||gun||shot||poll!==null)))return finish('superseded');
+        poll=null;action=null;chain=null;gun=null;shot=null;seen.clear();
+      }
       if(weapon&&chain){
+        if(untilShot){
+          if([0x447206,0x447236,0x44d3c6].includes(pc))return finish('superseded');
+          if(gun&&u32(0x51b178)!==chain.mask)throw Error('TR2 input changed during weapon update');
+        }
         // Caller return is observable even when the straight store/RET epilogue
         // folds inside one run block. Match this update's exact saved stack.
         if([0x41427f,0x411fd8,0x4220a7].includes(pc)){
+          if(untilShot&&chain.published)throw Error('TR2 repeated input return');
           if(pc!==chain.caller||esp!==chain.esp+0x6c)throw Error('TR2 input return stack mismatch');
           if((u32(0x51b178)&64)!==(report.records[chain.index].ebx&64))throw Error('TR2 published Action mismatch');
           if(!weaponRow('input-published',pc,esp))return;
           chain.published=true;chain.mask=u32(0x51b178);
         }
         if(pc===0x42e640&&chain.published){
+          if(untilShot&&chain.complete)throw Error('TR2 completed weapon cycle reused');
           if(gun)throw Error('TR2 nested weapon update');
           const caller=u32(esp);
           if(![0x4275ac,0x4275c2,0x431757,0x432111].includes(caller))throw Error('TR2 weapon caller mismatch');
@@ -225,18 +251,21 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
             const caller=u32(esp);
             if(!gun.aim||![0x42d59a,0x42d724].includes(caller)||esp!==gun.esp-80)throw Error('TR2 shot caller mismatch');
             if(shot)throw Error('TR2 nested shot');
-            shot={esp,caller,target:u32(esp+8)};seen.delete(pc);
+            shot={esp,caller,target:u32(esp+8),index:report.records.length};seen.delete(pc);
             weaponRow('shot-entry',pc,esp,{caller,type:u32(esp+4),target:u32(esp+8),source:u32(esp+12),angles:read(u32(esp+16,'shot.anglesPointer'),4,'shot.angles')});
           }
           if(shot&&pc===shot.caller){
             if(esp!==shot.esp+4)throw Error('TR2 shot return stack mismatch');
             // Retain both arms even though the shared entry PC is identical.
-            seen.delete(pc);weaponRow('shot-return',pc,esp,{result:e.get_eax()>>>0,target:shot.target,targetHealth:shot.target?s16(shot.target+0x22,'shot.targetHealth'):null});shot=null;
+            seen.delete(pc);const recorded=weaponRow('shot-return',pc,esp,{shotRecord:shot.index,result:e.get_eax()>>>0,target:shot.target,targetHealth:shot.target?s16(shot.target+0x22,'shot.targetHealth'):null});shot=null;
+            if(untilShot&&recorded){finish('witnessed');return;}
+          }else if(untilShot&&[0x42d59a,0x42d724].includes(pc)){
+            throw Error('TR2 unlinked shot return');
           }
           if(pc===gun.caller){
             if(esp!==gun.esp+4||shot)throw Error('TR2 weapon return stack mismatch');
-            weaponRow('weapon-return',pc,esp);gun=null;
-            if(stopAfterPair)finish('witnessed');
+            weaponRow('weapon-return',pc,esp);gun=null;chain.complete=true;++report.completedCycles;
+            if(stopAfterPair&&!untilShot)finish('witnessed');
           }
         }
         if(report.status!=='active')return;
@@ -314,9 +343,9 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
 function workerSource(options){return `(()=>{if(globalThis.__tr2Action)throw Error('TR2 observer already used');globalThis.__tr2Action=(${install.toString()})({getInstance:()=>instance,replaceInstance:v=>{instance=v},memory,rpc:GuestRpc,workerSlot,endpointIdentity,...${JSON.stringify({readLayout:mappingLayout(),...options})}});return globalThis.__tr2Action.status()})()`;}
 // Called inside the existing reviewed/native admission. The caller's hold()
 // keeps the independent release timer and its unchanged input policy.
-async function observedHold({evaluate,workerSession,expectedEndpoint,exeSha256,hold,record,weapon=false}){
+async function observedHold({evaluate,workerSession,expectedEndpoint,exeSha256,hold,record,weapon=false,untilShot=false}){
   let receipt,report,armed=false;
-  await evaluate(workerSource({expectedEndpoint,exeSha256,defer:true,stopAfterPair:true,weapon}),workerSession);
+  await evaluate(workerSource({expectedEndpoint,exeSha256,defer:true,stopAfterPair:true,weapon,untilShot}),workerSession);
   try {receipt=await hold(async()=>{
     if(armed)throw Error('TR2 hold armed twice');
     await evaluate('globalThis.__tr2Action.arm()',workerSession);armed=true;
@@ -330,9 +359,14 @@ async function observedHold({evaluate,workerSession,expectedEndpoint,exeSha256,h
     polls.includes(report.records[r.poll])&&r.wallAt>=receipt.started&&r.wallAt<receipt.releaseAt);
   const physical=receipt.samples.some(s=>s.whollyDuringHold&&s.physical?.some(k=>k.key===17&&k.state===0x8000));
   const consumption=report.records.filter(r=>r.kind==='weapon-return'&&actions.includes(report.records[r.actionRecord])&&r.wallAt>=receipt.started&&r.wallAt<receipt.releaseAt);
-  const result={receipt,report,physicalControlSample:physical,pollsDuringHold:polls.length,actionsDuringHold:actions.length,consumptionsDuringHold:consumption.length,
-    qualified:armed&&report.qualified&&physical&&actions.length>0&&(!weapon||(report.consumptionQualified&&consumption.length>0)),
-    scope:weapon?'native poll/Action through exact linked weapon return; recorded shot/aim state only, no hit/kill/effective aim/backend proof':'native delivery/actual poll/binding/Action only; weapon/aim and CPU/WebGL2 backend authority unchanged'};
+  const shots=report.records.filter(r=>{
+    const entry=report.records[r.shotRecord];
+    return r.kind==='shot-return'&&entry?.kind==='shot-entry'&&entry.actionRecord===r.actionRecord&&actions.includes(report.records[r.actionRecord])&&
+      entry.wallAt>=receipt.started&&entry.wallAt<receipt.releaseAt&&r.wallAt>=receipt.started&&r.wallAt<receipt.releaseAt;
+  });
+  const result={receipt,report,physicalControlSample:physical,pollsDuringHold:polls.length,actionsDuringHold:actions.length,consumptionsDuringHold:consumption.length,shotsDuringHold:shots.length,
+    qualified:armed&&report.qualified&&physical&&actions.length>0&&(!weapon||(report.consumptionQualified&&(untilShot?report.shotQualified&&shots.length>0:consumption.length>0))),
+    scope:untilShot?'native poll/Action through first exact linked shot return; raw result only, no hit/kill/effective aim/backend proof':weapon?'native poll/Action through exact linked weapon return; recorded shot/aim state only, no hit/kill/effective aim/backend proof':'native delivery/actual poll/binding/Action only; weapon/aim and CPU/WebGL2 backend authority unchanged'};
   await record('correlation',result);
   return result;
 }
