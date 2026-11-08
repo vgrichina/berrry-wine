@@ -42,9 +42,9 @@
 
 - [ ] Drakan current-browser movement, flight and attack
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
-  status: native warning/graphics handoff qualified; current software/WebGL world and heading reviewed; flight/outgoing attack open
+  status: current WebGL buffered forward movement and terrain heading verified; sustained flight/ascent/outgoing attack open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Inherited drakan-buffered-flight-consumption-0735 remains active with prearmed bx_f5tuw877 expiry08:05:37Z. Published279ede77e immediate-poll evidence leaves buffered native consumption open; worker reports local standardformat/buffer64 T/Up event timestamp/sequence/consume and HRESULT controls pass before ONE native-warning WebGL original. Flight/outgoing consequence awaits final evidence; no emulator repair accepted. Prior ed993c025 world/terrain-heading acceptance stands. Recoil bounded actions and TR2 publication pacing fill other slots. Full27/parity/audio/FPS open.
+  Next: Fresh drakan-buffered-ascent-0757 qualifies current published663f production closure locally, then ONE native WebGL original seeks documented T ascent with actual separate buffered down/release consumption and altitude landmarks. Publishedeeebeb755 verifies Up2000 down/release at distinct reads/consumes with modest terrain parallax; coordinator inspected paired frames and verified204references15607196bytes. No altitude/attack/emulator repair/Join claim. bx_f5tuw877 normally archived, expiry null, full drain retained. Note: docs/re-notes/drakan-buffered-flight-consumption-20261108.md. Recoil bounded actions and TR2 publication pacing fill other slots; full27/parity/audio/FPS open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
