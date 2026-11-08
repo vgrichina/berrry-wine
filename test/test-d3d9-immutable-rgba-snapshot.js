@@ -72,6 +72,29 @@ function fixture(options = {}) {
 const level = (draw, stage = 0, mip = 0) => draw.textures[stage][mip];
 const pixel = (draw, at = 0, stage = 0) => [...level(draw, stage).pixels.slice(at, at + 4)];
 
+test('standalone producer resolves render-target aliases explicitly and owns their metadata',async()=>{
+  const f=fixture(),alias=70000;
+  try {
+    f.set(f.record+56,alias);f.set(alias+72,f.record);f.set(alias+76,0);
+    const producer=new DrawProducer({getMemory:()=>f.memory,guestToWasm:p=>p});
+    const context={entry:{resident:new Map(),residentBytes:0},address:f.desc,
+      program:f.program,id:7,width:2,height:2,depthAttachment:null};
+    assert.throws(()=>producer.captureDraw(context),/color resource resolver required/);
+    const resource={id:91,width:64,height:64,format:21},seen=[];
+    const resolveColor=p=>{seen.push(p);return resource;};
+    const {payload}=producer.captureDraw({...context,resolveColor});
+    assert.deepEqual(seen,[alias]);
+    assert.deepEqual(payload.textures[0].levels[0].resource,resource);
+    resource.width=1;
+    assert.equal(payload.textures[0].levels[0].resource.width,64,'snapshot owns resolved metadata');
+    assert.throws(()=>producer.captureDraw({...context,resolveColor}),/invalid texture color alias/);
+    resource.width=64;
+    assert.throws(()=>producer.captureDraw({...context,resolveColor,colorAttachment:{id:91}}),/feedback/);
+    f.set(f.mip+20,1);
+    assert.throws(()=>producer.captureDraw({...context,resolveColor}),/locked texture/);
+  } finally {await f.bridge.close();}
+});
+
 test('producer and texture identities fail before numerical reuse',()=>{
   for(const producerId of [-1,0x100000000,1.5,NaN,'1'])
     assert.throws(()=>new DrawProducer({producerId}),/invalid.*identity/);

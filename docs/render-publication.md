@@ -132,8 +132,15 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   `d3d9-host.js` now exports a renderer-independent `DrawProducer`; the existing
   bridge inherits it and calls `captureDraw` before submission. The builder
   owns vertex/index bytes, constants, converted textures and shader IR, and
-  returns a residency plan that is committed only after admission. A real
-  worker test captures from shared memory, then replaces guest vertices,
+  returns a residency plan that is committed only after admission. A
+  render-target texture uses an explicit `resolveColor` capability supplied by
+  the endpoint owner; the builder copies the returned resource metadata. It
+  cannot infer GPU color-storage residency from native texture bytes. Missing
+  resolution fails explicitly, and the normal bridge creates storage in queue
+  order before the draw. This repairs an extraction regression where this path
+  referenced the bridge's out-of-scope `ensureColor` helper. The native color
+  surface regression exercises sampling rendered pixels through this boundary.
+  A real worker test captures from shared memory, then replaces guest vertices,
   constants and texels before consuming the first packet. This separation is
   tested but not yet wired into the guest Worker transport. That wiring must
   supply an ID from `allocateProducerId()`, coordinate device-wide residency/reset,
