@@ -121,8 +121,17 @@ kernel writes its two JSON metadata receipts raw before their gzip recovery,
 and an initial post-run stale fixture wrote raw receipt/marker artifacts.
 Those exceptions are retained and **not claimed to meet gzip-first storage**.
 Driver commands, streaming logs and the corrected storage path were gzip-first.
+The final audit also found that the initial board watch and its command wrapper
+both opened `boardwatch.log.gz`, corrupting that local log. Its stored bytes and
+SHA are preserved; decoded original SHA/size are UNKNOWN and its CRC check
+explicitly fails. The separate Q3 release/state/drain checks and all downloaded
+remote payloads verified independently. The watcher filename was corrected and
+a final five-second watch reached awaited tail/gzip/shell termination with a
+valid gzip stream. This does not reconstruct the damaged initial watch output.
 The final local inventory covers every regular file, including those exceptions
-and owned source inputs, with independent original/stored hashes and sizes.
+and owned source inputs, with independent stored hashes/sizes and decoded
+original hashes/sizes wherever decoding succeeds. It explicitly records this
+one damaged-log exception rather than claiming an all-file CRC pass.
 
 Next work requires separate authorization for a fresh original and should use
 the corrected UNKNOWN propagation with a newly captured/reviewed boundary that
