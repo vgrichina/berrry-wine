@@ -8,6 +8,20 @@ const ProcessBoot = (typeof window !== 'undefined' && window.processBoot) || nul
 const HostMemUtils = (typeof window !== 'undefined' && window.memUtils) ||
   (typeof require !== 'undefined' ? require('./lib/mem-utils') : null);
 
+// Private provenance, populated only at the actual compile boundary. A public
+// Module or a caller-provided buffer cannot authenticate one another.
+const drakanCompiledBytes = new WeakMap();
+const drakanBrowserOwners = new WeakMap();
+const DRAKAN_BROWSER_MODULE_SHA = '4b45bda53a90b665896cf3b85d9a157b7c3703563c88b6666e4ee2e4b346bcc3';
+
+function drakanCompileSnapshot(bytes) {
+  if (typeof window === 'undefined' || window.WINE_DRAKAN_OBSERVER !== true) return null;
+  const buffer = ArrayBuffer.isView(bytes) ? bytes.buffer : bytes;
+  if (!(buffer instanceof ArrayBuffer)) throw new Error('Drakan compile bytes must be unshared');
+  return new Uint8Array(ArrayBuffer.isView(bytes)
+    ? new Uint8Array(buffer, bytes.byteOffset, bytes.byteLength) : buffer).slice();
+}
+
 // iOS decides whether a page may be heard at all, and WebAudio alone does not
 // get a say. A page that only ever makes sound through an AudioContext lands
 // in the ambient-style session the ringer switch mutes: the context is
@@ -3704,7 +3718,9 @@ class WineAssembly {
             const response = await fetch(WineAssembly.versionedUrl(artifact), fetchOptions);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const bytes = await response.arrayBuffer();
-            const module = await WebAssembly.compile(bytes);
+            const observerBytes = drakanCompileSnapshot(bytes);
+            const module = await WebAssembly.compile(observerBytes || bytes);
+            if (observerBytes) drakanCompiledBytes.set(module, observerBytes);
             await recordWasmIdentity(artifact, bytes);
             return module;
           } catch (error) {
@@ -3742,7 +3758,9 @@ class WineAssembly {
               new URLSearchParams(location.search).has('watx-main-thread'),
           });
           WineAssembly._assertSourceBuildLayout(built.layout);
-          const module = await WebAssembly.compile(built.bytes);
+          const observerBytes = drakanCompileSnapshot(built.bytes);
+          const module = await WebAssembly.compile(observerBytes || built.bytes);
+          if (observerBytes) drakanCompiledBytes.set(module, observerBytes);
           await recordWasmIdentity('src/main.watx', built.bytes);
           return module;
         }
@@ -3941,10 +3959,24 @@ class WineAssembly {
       return;
     }
     try {
+      let drakanModuleBytes = null;
+      const observerMemory = this.memory, observerInstance = this.instance;
+      if (window.WINE_DRAKAN_OBSERVER === true) {
+        const bytes = drakanCompiledBytes.get(wasmModule);
+        if (!bytes || this._wasmModule !== wasmModule)
+          throw new Error('Drakan selected compile bytes unavailable; opt in before compilation');
+        const digest = await crypto.subtle.digest('SHA-256', bytes);
+        const hash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
+        if (hash !== DRAKAN_BROWSER_MODULE_SHA) throw new Error('Drakan selected module SHA-256 mismatch');
+        // Give this owner a separate copy; never expose the private compile record.
+        drakanModuleBytes = bytes.slice();
+      }
       const res = await fetch(WineAssembly.versionedUrl('lib/host-import-sigs.generated.json'));
       if (!res.ok) throw new Error(`sigs HTTP ${res.status}`);
       const sigs = (await res.json()).sigs;
       if (this._stopped) return;
+      if (drakanModuleBytes && (this.memory !== observerMemory || this.instance !== observerInstance ||
+          this._wasmModule !== wasmModule)) throw new Error('Drakan owner changed during startup');
       const self = this;
       // Guest threads are about to run at the same time, so a LOCK-prefixed
       // instruction has to be atomic across Workers (07-decoder.wat
@@ -3963,6 +3995,7 @@ class WineAssembly {
         },
         memory: this.memory,
         module: wasmModule,
+        drakanModuleBytes,
         sigs,
         hostImports: this._mainImports.host,
         workerUrl: WineAssembly.versionedUrl('lib/guest-worker.js'),
@@ -3990,6 +4023,9 @@ class WineAssembly {
       });
       this._guestWorkerStarting = worker;
       await worker.start();
+      if (drakanModuleBytes && (this._stopped || this.memory !== observerMemory ||
+          this.instance !== observerInstance || this._wasmModule !== wasmModule))
+        throw new Error('Drakan owner retired during startup');
       if (this._stopped) { this._guestWorkerStarting = null; return; }
       // The toolbar can change while the main worker is instantiating too.
       while (worker.d3dimLazySync !== (window.WINE_D3DIM_LAZY_SYNC !== false)) {
@@ -3998,6 +4034,10 @@ class WineAssembly {
       }
       this._installProcessSendBroker(worker);
       this.guestWorker = worker;
+      if (drakanModuleBytes) drakanBrowserOwners.set(this, {
+        worker, link: worker.link, module: wasmModule, memory: this.memory,
+        instance: this.instance, used: false,
+      });
       this._guestWorkerStarting = null;
       // Renderer windows still retain the browser-side WebAssembly.Instance
       // as their ownership token. Mark that token so keyboard handling queues
@@ -4028,6 +4068,71 @@ class WineAssembly {
       }
       this.logToUI(`[threads] worker start failed (${err.message}) — running single-threaded`);
     }
+  }
+
+  async observeDrakanActor(options) {
+    // The ordinary caller has already issued its action. Prearm release before
+    // checking availability; every failure, including opt-out, joins real I/O.
+    const { releaseT, actionStartedAt, maxMs = 1900 } = options;
+    let releaseResult, releasePromise, releaseError, controller, stopResolve;
+    const stopped = new Promise(resolve => { stopResolve = resolve; });
+    const release = () => {
+      if (!releasePromise) {
+        try { releaseResult = Promise.resolve(releaseT()); }
+        catch (error) { releaseResult = Promise.reject(error); }
+        releasePromise = releaseResult.catch(error => { releaseError = String(error); });
+      }
+      return releaseResult;
+    };
+    const now = performance.timeOrigin + performance.now();
+    const deadline = actionStartedAt + maxMs;
+    const timer = setTimeout(() => {
+      if (controller) controller.stop('browser action deadline');
+      else release();
+    }, Number.isFinite(deadline) ? Math.max(0, Math.min(2000, deadline - now)) : 0);
+    try {
+      const owner = drakanBrowserOwners.get(this);
+      const ownsWorker = () => owner && window.WINE_DRAKAN_OBSERVER === true && !this._stopped &&
+          this.guestWorker === owner.worker && owner.worker.link === owner.link &&
+          this.memory === owner.memory && this.instance === owner.instance &&
+          this._wasmModule === owner.module && owner.worker.module === owner.module &&
+          owner.worker.memory === owner.memory && !owner.link._stopping && !owner.link._stopped;
+      if (!owner || owner.used || !ownsWorker())
+        throw new Error('Drakan browser observer unavailable, stale owner or already used');
+      owner.used = true;
+      if (!Number.isInteger(maxMs) || maxMs < 1 || maxMs > 2000 ||
+          !Number.isFinite(actionStartedAt) || actionStartedAt > now || deadline <= now ||
+          typeof releaseT !== 'function') throw new Error('fresh original action and independent release required');
+      // WorkerLink synchronously prearms its setup timer on entry, using this
+      // same original deadline, then hands it to Controller before observation.
+      clearTimeout(timer);
+      const armed = await owner.worker.observeDrakanActor({ ...options, releaseT: release,
+        onStop: info => {
+          stopResolve();
+          if (options.onStop) options.onStop(info);
+        },
+      });
+      controller = armed.controller;
+      if (!ownsWorker()) throw new Error('Drakan browser owner changed during observation');
+      if (releasePromise) controller.stop('browser action released during setup');
+      if (!controller.stopped) await stopped;
+      await controller.releasePromise;
+      release(); await releasePromise;
+      if (!ownsWorker()) throw new Error('Drakan browser owner retired during observation');
+      if (controller.releaseError || releaseError) throw new Error('Drakan physical release failed: ' +
+        (controller.releaseError || releaseError));
+      return { result: controller.completed || { status: 'UNKNOWN' }, released: true };
+    } catch (error) {
+      if (controller) await controller.stop('browser observation failed');
+      if (error.releasePromise) await error.releasePromise;
+      release(); await releasePromise;
+      const failure = new Error(error.message || String(error), { cause: error });
+      Object.defineProperties(failure, {
+        releasePromise: { value: releasePromise },
+        releaseError: { get: () => controller?.releaseError || error.releaseError || releaseError || null },
+      });
+      throw failure;
+    } finally { clearTimeout(timer); }
   }
 
   // `opts.win16Modules` names NE DLLs the task loads by name at runtime rather
@@ -5644,6 +5749,7 @@ class WineAssembly {
     this.instance = null;
     this.memory = null;
     this._wasmModule = null;
+    drakanBrowserOwners.delete(this);
     // `ctx` closes over `self`, and is handed to worker imports and the help
     // system, both of which outlive the run loop.
     this.hostCtx = null;
