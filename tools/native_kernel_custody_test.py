@@ -47,7 +47,8 @@ class Deadlines(unittest.TestCase):
             run=Path(os.environ.get('CUSTODY_TERMINAL_EVIDENCE',tmp))
             result=subprocess.run([sys.executable,__file__,'--parked-term-fixture',str(run)],
                                   capture_output=True,text=True,timeout=12)
-            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            self.assertNotEqual(result.returncode,0)
+            self.assertIn('unresolved kernel lineage',result.stderr)
             rows=[json.loads(s) for s in (run/'custody.ndjson').read_text().splitlines()]
             retirement=next(x for x in rows if x['kind']=='unlinked-exit-retirement')
             task=retirement['pid']
@@ -105,7 +106,8 @@ class Deadlines(unittest.TestCase):
             run=Path(os.environ.get('CUSTODY_PARKED_EVIDENCE',tmp))
             result=subprocess.run([sys.executable,__file__,'--parked-fixture',str(run)],
                                   capture_output=True,text=True,timeout=12)
-            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            self.assertNotEqual(result.returncode,0)
+            self.assertIn('unresolved kernel lineage',result.stderr)
             rows=[json.loads(s) for s in (run/'custody.ndjson').read_text().splitlines()]
             retirement=next(x for x in rows if x['kind']=='unlinked-exit-retirement')
             task=retirement['pid']
@@ -201,6 +203,171 @@ class Deadlines(unittest.TestCase):
                 kernel.supervise(run,['false'],deadline=due,cleanup_deadline=due)
             fork.assert_not_called()
             prctl.assert_not_called()
+
+
+class ContinueRace(unittest.TestCase):
+    def model(self, module, run, *, mode='exit', request=kernel.CONT):
+        # Captured PID/start/TGID and EXIT stop, then legal terminal waits.
+        # No sampled absence is used to manufacture a wait status.
+        from types import SimpleNamespace
+        root, task = 18259, 18349
+        def stop(pid, sig, event=0):
+            return SimpleNamespace(si_pid=pid, si_code=os.CLD_TRAPPED,
+                                   si_status=(event << 8)|sig), (event << 16)|(sig << 8)|0x7f
+        def exit(pid):
+            return SimpleNamespace(si_pid=pid, si_code=os.CLD_EXITED,si_status=0), 0
+        events=[stop(root,19),stop(root,5,1),
+                stop(task,15 if mode=='signal' else 5,0 if mode=='signal' else (4 if mode in ('exec','exec-reidentity') else 6))]
+        if mode not in ('nonexit','missing','reuse','busy','exec-reidentity'):
+            events += ([stop(task,17)] if mode=='superseded' else []) + [exit(task),exit(root)]
+        calls=[]; failed=[]; retired=set(); ticks=[100.0]
+        def now():
+            ticks[0]+=.5 if mode=='busy' and failed else .01
+            return ticks[0]
+        def peek(*args):
+            if events:return events[0][0]
+            if mode=='busy':
+                events.append(stop(root,17)); return events[0][0]
+            if mode=='nonexit':return None
+            raise ChildProcessError()
+        def consume(pid,flags):
+            value,status=events.pop(0);self.assertEqual(value.si_pid,pid)
+            if os.WIFEXITED(status) or os.WIFSIGNALED(status):retired.add(pid)
+            return pid,status
+        def identify(pid):
+            if pid in retired:raise FileNotFoundError()
+            if failed and pid==task and mode in ('missing','identity-gone'):raise FileNotFoundError()
+            return dict(pid=pid,start=('reused' if failed and pid==task and mode=='reuse' else str(pid)),
+                        ppid=root,state='t',tgid=18271 if pid==task else root)
+        def trace(req,pid,addr=0,data=0):
+            calls.append((req,pid,data))
+            if req==module.GETEVENTMSG:
+                ctypes.c_ulong.from_address(data).value=task if pid==root else (999 if mode=='exec-reidentity' else task)
+            if pid==task and req==request and not failed and mode!='exec-reidentity':
+                failed.append(pid)
+                if mode=='reuse':events.append(exit(task))
+                raise ProcessLookupError(3,'No such process',str(pid))
+            return 0
+        with patch.object(module.os,'fork',return_value=root),patch.object(module.libc,'prctl',return_value=0), \
+             patch.object(module.os,'waitid',side_effect=peek),patch.object(module.os,'waitpid',side_effect=consume), \
+             patch.object(module,'identity',side_effect=identify),patch.object(module,'ptrace',side_effect=trace), \
+             patch.object(module.os,'kill') as kill,patch.object(module.time,'time',side_effect=now),patch.object(module.time,'sleep'):
+            try:module.supervise(run,['fixture'],deadline=101,cleanup_deadline=103)
+            finally:
+                (Path(run)/'kill-calls.json').write_text(json.dumps(kill.call_args_list,default=str))
+        return calls
+
+    def test_exact_historical_cont_failure_and_fixed_reap(self):
+        import types, hashlib
+        sha='275dd018aad23b8e2988a78033cddaa2e25d8df3'
+        data=subprocess.check_output(['git','show',sha+':tools/native_kernel_custody.py'])
+        self.assertEqual(hashlib.sha256(data).hexdigest(),
+                         'e5331081845bba9875f4e47fcb17f815945cc0c4455b5657f0678cd3626d5b7c')
+        historical=types.ModuleType('historical');exec(compile(data,sha,'exec'),historical.__dict__)
+        shared=types.ModuleType('shared_before')
+        shared_sha='2486507db075ef7d350c83666fd098cb31a5191e'
+        exec(compile(subprocess.check_output(['git','show',shared_sha+':tools/native_kernel_custody.py']),shared_sha,'exec'),shared.__dict__)
+        for name,module in [('historical',historical),('shared-before',shared),('fixed',kernel)]:
+            with tempfile.TemporaryDirectory() as tmp:
+                run=Path(os.environ.get('CUSTODY_RACE_EVIDENCE',tmp))/name;run.mkdir(parents=True,exist_ok=True)
+                if name!='fixed':
+                    with self.assertRaises(ProcessLookupError):self.model(module,run)
+                else:self.model(module,run)
+                drain=json.loads((run/'kernel-drain.json').read_text())
+                if name!='fixed':
+                    self.assertIsNone(drain['exit']);self.assertEqual(drain['reaped'],[])
+                    self.assertNotEqual((run/'kill-calls.json').read_text(),'[]')
+                else:
+                    self.assertEqual(drain['exit'],0);self.assertEqual(len(drain['reaped']),2)
+                    self.assertEqual(drain['unreaped'],[]);self.assertEqual(drain['unresolvedPtrace'],[])
+                    self.assertEqual((run/'kill-calls.json').read_text(),'[]')
+                    rows=[json.loads(x) for x in (run/'custody.ndjson').read_text().splitlines()]
+                    pending=next(x for x in rows if x['kind']=='ptrace-esrch-pending')
+                    reap=next(x for x in rows if x['kind']=='reaped' and x['pid']==18349)
+                    resolved=next(x for x in rows if x['kind']=='ptrace-esrch-reconciled')
+                    self.assertLess(pending['sequence'],reap['sequence']);self.assertLess(reap['sequence'],resolved['sequence'])
+                    self.assertTrue(drain['kernelForkLineageComplete'])
+
+    def test_signal_and_exec_message_esrch_reconcile_only_at_real_exit(self):
+        for mode,request in [('signal',kernel.CONT),('exec',kernel.GETEVENTMSG),('superseded',kernel.CONT),('identity-gone',kernel.CONT)]:
+            with self.subTest(mode=mode),tempfile.TemporaryDirectory() as run:
+                self.model(kernel,run,mode=mode,request=request)
+                drain=json.loads((Path(run)/'kernel-drain.json').read_text())
+                self.assertEqual(len(drain['reaped']),2);self.assertEqual(drain['unresolvedPtrace'],[])
+
+    def test_nonexit_esrch_and_missing_wait_receipt_fail_closed(self):
+        for mode,error in [('nonexit',TimeoutError),('missing',AssertionError),('reuse',AssertionError),('busy',TimeoutError)]:
+            with self.subTest(mode=mode),tempfile.TemporaryDirectory() as run:
+                with self.assertRaises(error):self.model(kernel,run,mode=mode)
+                drain=json.loads((Path(run)/'kernel-drain.json').read_text())
+                self.assertTrue(drain['unreaped']);self.assertTrue(drain['unresolvedPtrace'])
+                self.assertIsNone(drain['exit'])
+
+    def test_nonleader_exec_transition_refuses_without_losing_custody(self):
+        with tempfile.TemporaryDirectory() as run:
+            with self.assertRaisesRegex(AssertionError,'nonleader exec identity transition'):
+                self.model(kernel,run,mode='exec-reidentity')
+            drain=json.loads((Path(run)/'kernel-drain.json').read_text())
+            self.assertEqual(len(drain['unreaped']),2)
+            self.assertEqual(drain['reaped'],[])
+
+    def test_finite_native_cont_esrch_has_real_wait_receipt(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run=Path(os.environ.get('CUSTODY_NATIVE_RACE_EVIDENCE',tmp))
+            result=subprocess.run([sys.executable,__file__,'--isolated-fixture','--cont-race-fixture',str(run)],
+                                  capture_output=True,text=True,timeout=12)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            rows=[json.loads(s) for s in (run/'custody.ndjson').read_text().splitlines()]
+            self.assertTrue(any(x['kind']=='ptrace-esrch-reconciled' for x in rows))
+            drain=json.loads((run/'kernel-drain.json').read_text())
+            self.assertEqual(drain['exit'],0);self.assertEqual(drain['unreaped'],[])
+            self.assertEqual(len(drain['owned']),len(drain['reaped']))
+
+    def test_actual_nonzero_exit_is_retained_and_refused(self):
+        with tempfile.TemporaryDirectory() as run:
+            due=time.time()+3
+            with self.assertRaisesRegex(AssertionError,'7'):
+                kernel.supervise(run,['/bin/sh','-c','exit 7'],deadline=due,cleanup_deadline=due+1)
+            drain=json.loads((Path(run)/'kernel-drain.json').read_text())
+            self.assertEqual(drain['exit'],7);self.assertEqual(drain['unreaped'],[])
+            self.assertEqual(drain['reaped'][0]['status'],7<<8)
+
+    def test_concurrent_native_exits_retain_every_receipt(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run=os.environ.get('CUSTODY_CONCURRENT_EVIDENCE',tmp)
+            result=subprocess.run([sys.executable,__file__,'--isolated-fixture','--concurrent-exit-fixture',run],
+                                  capture_output=True,text=True,timeout=12)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            drain=json.loads((Path(run)/'kernel-drain.json').read_text())
+            self.assertEqual(len(drain['owned']),9);self.assertEqual(len(drain['reaped']),9)
+            self.assertEqual(drain['unreaped'],[]);self.assertEqual(drain['remaining'],[])
+
+
+def cont_race_fixture(run, concurrent=False):
+    trace=kernel.ptrace;waitid=os.waitid;injected=[]
+    def resume(request,pid,addr=0,data=0):
+        if request==kernel.CONT and not injected:
+            rows=[json.loads(s) for s in (Path(run)/'custody.ndjson').read_text().splitlines()]
+            if rows[-1]['kind']=='pre-exit-stop':
+                injected.append(pid)
+                # Force the completion interleaving at the CONT boundary. Both
+                # CONT calls, ESRCH and WNOWAIT are real kernel results; this
+                # is a scheduling shim, not proof of the original kernel timing.
+                trace(request,pid,addr,data)
+                due=time.monotonic()+2
+                while time.monotonic()<due:
+                    value=waitid(os.P_PID,pid,os.WEXITED|os.WNOHANG|os.WNOWAIT|kernel.WALL)
+                    if value:break
+                    time.sleep(.001)
+                assert value and value.si_code==os.CLD_EXITED
+                return trace(request,pid,addr,data)
+        return trace(request,pid,addr,data)
+    command=['/bin/true']
+    if concurrent:
+        command=[sys.executable,'-c',"import os; children=[]\nfor _ in range(8):\n p=os.fork()\n if p==0:os._exit(0)\n children.append(p)\nfor p in children:os.waitpid(p,0)"]
+    with patch.object(kernel,'ptrace',side_effect=trace if concurrent else resume):
+        due=time.time()+4
+        kernel.supervise(run,command,deadline=due,cleanup_deadline=due+1)
 
 
 def unseen_exit_fixture(run):
@@ -386,6 +553,8 @@ if __name__=='__main__':
             try:os.waitpid(-1,0)
             except ChildProcessError:break
         sys.exit(result.returncode)
+    elif len(sys.argv)>1 and sys.argv[1]=='--cont-race-fixture':cont_race_fixture(sys.argv[2])
+    elif len(sys.argv)>1 and sys.argv[1]=='--concurrent-exit-fixture':cont_race_fixture(sys.argv[2],True)
     elif len(sys.argv)>1 and sys.argv[1]=='--unseen-exit-fixture':unseen_exit_fixture(sys.argv[2])
     elif len(sys.argv)>1 and sys.argv[1]=='--parked-fixture':parked_fixture(sys.argv[2])
     elif len(sys.argv)>1 and sys.argv[1]=='--parked-term-fixture':parked_fixture(sys.argv[2],death_signal=15)

@@ -31,6 +31,7 @@ def supervise(run, command, *, deadline, cleanup_deadline):
     assert time.time() < deadline < cleanup_deadline, "expired or invalid immutable deadlines"
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'subreaper required'
     owned = {}; reaped = []; parked = set(); exit_retired = set(); root_status = None; sequence = 0
+    pending = {}
     journal = open(run / 'custody.ndjson', 'w', buffering=1)
     def log(kind, **value):
         nonlocal sequence
@@ -61,6 +62,22 @@ def supervise(run, command, *, deadline, cleanup_deadline):
         row.update(parentCustodian=parent, cause=cause)
         row['registeredSequence'] = log('custody', **row)
         owned[pid] = row
+    def trace_task(request, task, data=0):
+        try:
+            ptrace(request, task, data=data)
+            return True
+        except OSError as error:
+            if error.errno != errno.ESRCH:
+                raise
+            # ESRCH also means "not in ptrace-stop". It proves neither death
+            # nor identity retirement. Keep custody until a real terminal wait
+            # is consumed; another stop may supersede this one during exit/exec.
+            row = owned[task]
+            pending[task] = dict(pid=task, start=row['start'], request=request,
+                                 data=data, sequence=log('ptrace-esrch-pending',
+                                 pid=task, start=row['start'], request=request, data=data,
+                                 custodySequence=row['registeredSequence']))
+            return False
     # Parent never uses Popen.poll()/wait(): those can reap an unrecorded child.
     pid = os.fork()
     if pid == 0:
@@ -78,11 +95,18 @@ def supervise(run, command, *, deadline, cleanup_deadline):
         while True:
             # WNOWAIT explicitly leaves even adopted zombies in /proc until their
             # PID/start/current PPID and custody are durably logged below.
-            peek = os.waitid(os.P_ALL, 0, os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|WALL)
+            if time.time() > cleanup_deadline:
+                log('cleanup-deadline', deadline=cleanup_deadline)
+                raise TimeoutError('immutable cleanup deadline')
+            try:
+                peek = os.waitid(os.P_ALL, 0, os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|WALL)
+            except ChildProcessError:
+                # ECHILD or /proc absence cannot retire a recorded identity.
+                assert {(r['pid'], r['start']) for r in owned.values()} == {
+                    (r['pid'], r['start']) for r in reaped}, 'unreaped custody at ECHILD'
+                assert not pending, ('unresolved ptrace ESRCH', pending)
+                break
             if peek is None:
-                if time.time() > cleanup_deadline:
-                    log('cleanup-deadline', deadline=cleanup_deadline)
-                    raise TimeoutError('immutable cleanup deadline')
                 time.sleep(.001); continue
             task = peek.si_pid
             unlinked = task not in owned
@@ -97,8 +121,14 @@ def supervise(run, command, *, deadline, cleanup_deadline):
                 ), ('unexpected unlinked task', task, peek)
                 register(task, None, 'kernel-autoattach-stop')
             awaiting_lineage = owned[task]['cause'] == 'kernel-autoattach-stop'
-            row = identity(task)
-            assert row['start'] == owned[task]['start']
+            try:
+                row = identity(task)
+            except (ProcessLookupError, FileNotFoundError):
+                # Some dead threads lose /proc before their wait receipt. Use
+                # the durable registration, never absence as a synthetic exit.
+                row = dict(owned[task])
+                log('identity-unavailable-before-wait', pid=task, start=row['start'])
+            assert row['start'] == owned[task]['start'], 'PID reused while in custody'
             terminal = peek.si_code in (os.CLD_EXITED, os.CLD_KILLED, os.CLD_DUMPED)
             if terminal:
                 before = log('before-reap', **row, custodySequence=owned[task]['registeredSequence'],
@@ -115,8 +145,13 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             assert got == task, ('peek/consume mismatch', task, got)
             if os.WIFEXITED(status) or os.WIFSIGNALED(status):
                 parked.discard(task)
+                assert not any(r['pid'] == task for r in reaped), 'duplicate terminal receipt'
                 reaped.append(dict(pid=task, start=row['start'], beforeReapSequence=before,
                                    sequence=log('reaped', pid=task, start=row['start'], status=status), status=status))
+                if task in pending:
+                    receipt = pending.pop(task)
+                    log('ptrace-esrch-reconciled', pid=task, start=row['start'],
+                        pendingSequence=receipt['sequence'], reapSequence=reaped[-1]['sequence'])
                 if task == pid: root_status = os.waitstatus_to_exitcode(status)
                 continue
             assert os.WIFSTOPPED(status), status
@@ -131,12 +166,12 @@ def supervise(run, command, *, deadline, cleanup_deadline):
                     # never a signal-delivery stop or sampled TGID inference.
                     assert sig == signal.SIGTRAP, ('invalid EXIT stop', task, status)
                     exit_status = ctypes.c_ulong()
-                    ptrace(GETEVENTMSG, task, data=ctypes.addressof(exit_status))
+                    if not trace_task(GETEVENTMSG, task, ctypes.addressof(exit_status)): continue
                     assert exit_status.value <= 0xffff and (os.WIFEXITED(exit_status.value) or os.WIFSIGNALED(exit_status.value)), ('invalid kernel exit status', task, exit_status.value)
                     log('unlinked-exit-retirement', **row, exitStatus=exit_status.value,
                         custodySequence=owned[task]['registeredSequence'], lineageResolved=False)
                     exit_retired.add(task); parked.discard(task)
-                    ptrace(CONT, task)
+                    trace_task(CONT, task)
                     continue
                 # The child initial stop may be delivered before its parent's
                 # fork event. Keep it stopped until kernel lineage is consumed.
@@ -144,7 +179,7 @@ def supervise(run, command, *, deadline, cleanup_deadline):
                 continue
             if not armed:
                 assert task == pid and sig == signal.SIGSTOP
-                ptrace(SETOPTIONS, task, data=OPTIONS)
+                if not trace_task(SETOPTIONS, task, OPTIONS): continue
                 write('kernel-armed.json', dict(pid=pid, supervisor=os.getpid(), supervisorStart=identity(os.getpid())['start'], deadline=deadline,
                       cleanupDeadline=cleanup_deadline, kind='kernel fork barrier; external deadline watchdog required',
                       armedBeforeCustodian=True, command=command, custodySequence=owned[pid]['registeredSequence']))
@@ -152,24 +187,24 @@ def supervise(run, command, *, deadline, cleanup_deadline):
                 armed = True
             elif event in (1, 2, 3):
                 child = ctypes.c_ulong()
-                ptrace(GETEVENTMSG, task, data=ctypes.addressof(child))
+                if not trace_task(GETEVENTMSG, task, ctypes.addressof(child)): continue
                 register(child.value, task, {1:'fork',2:'vfork',3:'clone'}[event])
                 if child.value in parked:
                     parked.remove(child.value)
-                    ptrace(CONT, child.value)
-                    log('parked-child-release', pid=child.value, parent=task)
+                    released = trace_task(CONT, child.value)
+                    log('parked-child-release' if released else 'parked-child-release-pending',
+                        pid=child.value, parent=task)
                 log('fork-parent-release', pid=task, child=child.value)
             elif event == 6:
                 log('pre-exit-stop', **row, custodySequence=owned[task]['registeredSequence'])
             elif event == 4:
                 # A nonleader exec changes TID to TGID; refuse rather than lose
                 # identity if this unsupported transition is ever encountered.
-                former = ctypes.c_ulong(); ptrace(GETEVENTMSG, task, data=ctypes.addressof(former))
+                former = ctypes.c_ulong()
+                if not trace_task(GETEVENTMSG, task, ctypes.addressof(former)): continue
                 assert former.value in (0, task), ('nonleader exec identity transition', task, former.value)
             deliver = 0 if event or sig in (signal.SIGTRAP, signal.SIGSTOP) else sig
-            ptrace(CONT, task, data=deliver)
-    except ChildProcessError:
-        pass
+            trace_task(CONT, task, deliver)
     except BaseException as error:
         log('failure', error=repr(error))
         for task, row in owned.items():
@@ -183,15 +218,19 @@ def supervise(run, command, *, deadline, cleanup_deadline):
             try:
                 if identity(task)['start']==row['start']: remaining.append(identity(task))
             except (ProcessLookupError,FileNotFoundError): pass
+        unreaped=[row for row in owned.values() if not any(r['pid']==row['pid'] and r['start']==row['start'] for r in reaped)]
         unresolved=[row for row in owned.values() if row['cause']=='kernel-autoattach-stop']
         write('kernel-drain.json',dict(exit=root_status,owned=list(owned.values()),reaped=reaped,
-              remaining=remaining,finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
+              remaining=remaining,unreaped=unreaped,unresolvedPtrace=list(pending.values()),finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
               custody='ptrace fork/vfork/clone barriers + waitid WNOWAIT before waitpid',
               kernelForkLineage=True,kernelForkLineageComplete=not unresolved,
               unresolvedLineage=unresolved,untracedCloneFlagsAudited=False))
         journal.close()
+    assert not unreaped, unreaped
+    assert not pending, pending
     assert not parked, parked
     assert not remaining, remaining
+    assert not unresolved, ('unresolved kernel lineage', unresolved)
     assert root_status == 0, root_status
 
 if __name__ == '__main__':
