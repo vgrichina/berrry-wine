@@ -4,15 +4,41 @@
 // one durable flush before the final certificate gates. IO stays off CDP's loop.
 const fs = require('node:fs/promises');
 const path = require('node:path');
+const {spawn} = require('node:child_process');
 const assert = require('node:assert/strict');
 const {createHash} = require('node:crypto');
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+
+// Supported normal helper: Linux + /usr/bin/python3 with os.posix_fallocate.
+// Inherit the exclusive file description as fd 3; never reopen by pathname.
+// No shell, sparse fallback, zero filling, detached child or in-probe allocation.
+async function allocateExtents(file, bytes, {launch=spawn, timeoutMs=5000}={}) {
+  assert(Number.isSafeInteger(bytes)&&bytes>0&&bytes<=32*1024*1024, 'bounded allocation bytes');
+  assert(Number.isFinite(timeoutMs)&&timeoutMs>0&&timeoutMs<=5000, 'bounded allocation timeout');
+  assert(process.platform==='linux', 'posix_fallocate helper requires Linux');
+  assert(Number.isInteger(file.fd)&&file.fd>=0, 'exclusive allocation FD required');
+  const child=launch('/usr/bin/python3',['-I','-c',
+    'import os,sys; os.posix_fallocate(3,0,int(sys.argv[1]))',String(bytes)],
+    {stdio:['ignore','ignore','pipe',file.fd]});
+  let diagnostic='',spawnError,expired=false;
+  child.stderr.on('data',b=>{diagnostic=(diagnostic+b.toString()).slice(-4096);});
+  child.on('error',error=>{spawnError=error;});
+  const timer=setTimeout(()=>{expired=true;child.kill('SIGKILL');},timeoutMs);
+  try {
+    const [code,signal]=await new Promise(resolve=>child.once('close',(...args)=>resolve(args)));
+    if(spawnError)throw spawnError;
+    assert(!expired&&code===0&&!signal, 'posix_fallocate helper refused: '+diagnostic);
+    const stat=await file.stat();
+    assert(stat.isFile()&&stat.size===bytes&&stat.blocks*512>=bytes,
+      'real bounded extents required');
+  } finally {clearTimeout(timer);}
+}
 
 // One probe, two reads, three independent uncached lanes per read. Admission
 // snapshots are strings: later mutation cannot change the transaction on disk.
 // The seal is evidence completeness, never a certificate or a replay token.
 function createProbeJournal(directory, {io=fs, timeoutMs=250, maxBytes=32*1024*1024,
-  timing=()=>{}} = {}) {
+  timing=()=>{}, allocate=allocateExtents} = {}) {
   assert(path.isAbsolute(directory), 'absolute probe journal directory required');
   assert(Number.isFinite(timeoutMs)&&timeoutMs>0&&timeoutMs<=250, 'bounded journal timeout <=250ms');
   assert(Number.isSafeInteger(maxBytes)&&maxBytes>0&&maxBytes<=32*1024*1024, 'bounded journal bytes');
@@ -56,7 +82,7 @@ function createProbeJournal(directory, {io=fs, timeoutMs=250, maxBytes=32*1024*1
       if(read===1)firstKeys=identities;else assert.deepEqual(identities,firstKeys,'source identities changed between reads');
     }
   }
-  // prepare() runs before the compound clock. Persist the empty file and its
+  // prepare() runs before the compound clock. Reserve real extents and persist its
   // name before any response is requested; keep its exclusive FD for streaming.
   async function prepare() {
     if(poisoned)throw poisoned;
@@ -64,6 +90,7 @@ function createProbeJournal(directory, {io=fs, timeoutMs=250, maxBytes=32*1024*1
     const tx=active={id:++serial,read:0,rows:[],counts:{response:0,proof:0,phase:0,png:0},bytes:0,sealed:false,ready:false,tail:Promise.resolve(),digest:createHash('sha256')};
     try {
       tx.file=await io.open(path.join(directory,`source-probe-${tx.id}.journal`),'wx');
+      await allocate(tx.file,maxBytes);
       await tx.file.sync();
       const dir=await io.open(directory,'r');try {await dir.sync();} finally {await dir.close();}
       tx.ready=true;
@@ -75,12 +102,12 @@ function createProbeJournal(directory, {io=fs, timeoutMs=250, maxBytes=32*1024*1
     const header=Buffer.alloc(8);header.writeUInt32BE(body.length);header.writeUInt32BE(payload.length,4);
     const bytes=Buffer.concat([header,body,payload]);
     assert(tx.bytes+bytes.length+(kind==='seal'?0:1024)<=maxBytes,'probe journal byte bound');
-    tx.bytes+=bytes.length;if(kind!=='seal')tx.digest.update(bytes);
+    const position=tx.bytes;tx.bytes+=bytes.length;if(kind!=='seal')tx.digest.update(bytes);
     // Every frame owns its bytes. Never await disk from a CDP receive lane.
     tx.tail=tx.tail.then(async()=>{
       let offset=0;
       while(offset<bytes.length) {
-        const result=await tx.file.write(bytes,offset,bytes.length-offset);
+        const result=await tx.file.write(bytes,offset,bytes.length-offset,position+offset);
         assert(Number.isSafeInteger(result.bytesWritten)&&result.bytesWritten>0&&result.bytesWritten<=bytes.length-offset,'partial journal write made no progress');
         offset+=result.bytesWritten;
       }
@@ -92,7 +119,7 @@ function createProbeJournal(directory, {io=fs, timeoutMs=250, maxBytes=32*1024*1
     const seal={version:2,probe:tx.id,complete,records:tx.rows.length,bytes:tx.bytes,sha256:tx.digest.digest('hex')};
     // A seal is content evidence only. Successful sync AND close are required
     // before a live gate can consider certification; recovery never certifies.
-    const work=(async()=>{try {frame('seal',seal);await tx.tail;await tx.file.sync();} finally {await Promise.allSettled([tx.tail]);await tx.file.close();}})();
+    const work=(async()=>{try {frame('seal',seal);await tx.tail;await tx.file.truncate(tx.bytes);await tx.file.sync();} finally {await Promise.allSettled([tx.tail]);await tx.file.close();}})();
     let timer;
     try {
       await Promise.race([work,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('probe journal flush timeout')),Math.max(0,timeoutMs-(performance.now()-start)));})]);
@@ -148,7 +175,8 @@ function decodeJournal(bytes,{maxBytes=32*1024*1024}={}) {
     const begin=offset;assert(bytes.length-offset>=8,'partial frame header');
     const metadata=bytes.readUInt32BE(offset),payload=bytes.readUInt32BE(offset+4);offset+=8;
     assert(metadata>0&&metadata+payload<=maxBytes&&metadata+payload<=bytes.length-offset,'partial or oversized frame');
-    const row=JSON.parse(bytes.subarray(offset,offset+metadata));offset+=metadata;
+    let row;try {row=JSON.parse(bytes.subarray(offset,offset+metadata));}
+    catch {throw Error('partial or corrupt frame metadata');}offset+=metadata;
     const data=bytes.subarray(offset,offset+payload);offset+=payload;
     assert.equal(row.payloadBytes,payload);assert.equal(row.payloadSha256,hash(data),'frame hash mismatch');
     if(row.kind==='seal') {
@@ -214,4 +242,4 @@ function createProofRecorder(directory, {timing = () => {}} = {}) {
   };
 }
 
-module.exports = {createRetainer, createProofRecorder, createProbeJournal, decodeJournal};
+module.exports = {createRetainer, createProofRecorder, createProbeJournal, decodeJournal, allocateExtents};

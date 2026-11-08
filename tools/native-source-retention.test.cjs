@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs/promises');
 const os = require('node:os');
 const path = require('node:path');
-const {createRetainer, createProofRecorder, createProbeJournal, decodeJournal} = require('./native-source-retention.cjs');
+const {createRetainer, createProofRecorder, createProbeJournal, decodeJournal, allocateExtents} = require('./native-source-retention.cjs');
 const {createHash}=require('node:crypto');
 const {fixture}=require('./strict-software-gate.test.cjs');
 const sha=b=>createHash('sha256').update(b).digest('hex');
@@ -32,7 +32,10 @@ function instrument(events,failure) {
   const dir=++opens===2;if(failure==='open')throw Error('open failure');
   const f=await fs.open(name,mode);let syncs=0;
   return {
-   async write(bytes,offset,length) {events.push('write');if(failure==='write')throw Error('write failure');if(failure==='late-write')await new Promise(r=>setTimeout(r,3));if(failure==='zero-write')return {bytesWritten:0};return f.write(bytes,offset,failure==='partial-write'?Math.min(length,3):length);},
+   get fd(){return f.fd;},
+   stat:()=>f.stat(),
+   async truncate(length) {events.push('truncate');if(failure==='truncate')throw Error('truncate failure');await f.truncate(length);},
+   async write(bytes,offset,length,position) {events.push('write');if(failure==='write')throw Error('write failure');if(failure==='late-write')await new Promise(r=>setTimeout(r,3));if(failure==='zero-write')return {bytesWritten:0};return f.write(bytes,offset,failure==='partial-write'?Math.min(length,3):length,position);},
    async sync() {const stage=dir?'directory-sync':(++syncs===1?'prepare-sync':'sync');events.push(stage);if(failure==='timeout'&&stage==='sync')await new Promise(r=>setTimeout(r,35));if(failure==='blocked-sync'&&stage==='sync'){const until=performance.now()+15;while(performance.now()<until){}}if(failure===stage)throw Error(stage+' failure');await f.sync();},
    async close() {const stage=dir?'directory-close':'close';events.push(stage);if(failure==='late-close'&&!dir)await new Promise(r=>setTimeout(r,25));await f.close();if(failure===stage)throw Error(stage+' failure');},
   };
@@ -64,7 +67,7 @@ test('partial/mismatched/refused groups, phases, PNG and byte bounds poison repl
  }
 });
 test('write/sync/close/directory failures and timeout are sticky; late writers finish before refusal returns',async t=>{
- for(const failure of ['open','prepare-sync','directory-sync','directory-close','write','zero-write','sync','close','timeout','blocked-sync','late-write','late-close']) {
+ for(const failure of ['open','prepare-sync','directory-sync','directory-close','write','zero-write','truncate','sync','close','timeout','blocked-sync','late-write','late-close']) {
   const dir=await directory(t),events=[],j=createProbeJournal(dir,{io:instrument(events,failure),timeoutMs:['timeout','blocked-sync','late-write','late-close'].includes(failure)?5:250});
   if(['open','prepare-sync','directory-sync','directory-close'].includes(failure))await assert.rejects(j.prepare());
   else {await populate(j);await assert.rejects(j.flush());assert(events.includes('close'));}
@@ -167,4 +170,42 @@ test('concurrent proof records preserve append order and failure poisons their q
   await fs.mkdir(path.join(directory, 'absent'));
   await assert.rejects(bad({role: 1}), /ENOENT/);
   await assert.rejects(fs.stat(path.join(directory, 'absent/software-responses.jsonl')), /ENOENT/);
+});
+
+// Real syscalls: preparation reserves disk blocks; explicit positioned writes
+// must not depend on the inherited file description's seek position.
+test('real inherited-FD allocation precedes admission; exact truncate precedes final sync',async t=>{
+ const dir=await directory(t),events=[];
+ const io=instrument(events);
+ const j=createProbeJournal(dir,{io,allocate:async(f,n)=>{
+  events.push('allocate');await allocateExtents(f,n);
+  const stat=await f.stat();assert.equal(stat.size,n);assert(stat.blocks*512>=n);
+  // Advance the shared offset. Positioned writes must ignore it.
+  await f.write(Buffer.from('offset sentinel'),0,15,null);
+ }});
+ await populate(j);assert.deepEqual(events.slice(0,5),['allocate','write','prepare-sync','directory-sync','directory-close']);
+ assert.equal((await fs.stat(path.join(dir,'source-probe-1.journal'))).size,32*1024*1024);
+ await j.flush();assert.deepEqual(events.slice(-3),['truncate','sync','close']);
+ const data=await fs.readFile(path.join(dir,'source-probe-1.journal'));const decoded=decodeJournal(data);
+ assert(decoded.seal.complete);assert(data.length<32*1024*1024);
+});
+test('allocation refusal closes exclusive FD, leaves sticky no-replay and requests no source',async t=>{
+ const dir=await directory(t),events=[];
+ const j=createProbeJournal(dir,{io:instrument(events),allocate:async()=>{events.push('allocation-error');throw Error('ENOSPC or unsupported allocation');}});
+ await assert.rejects(j.prepare(),/allocation/);assert.deepEqual(events,['allocation-error','close']);
+ assert.throws(()=>j.begin());await assert.rejects(j.prepare(),/allocation/);await j.abort();
+});
+
+test('actual helper syscall rejects readonly or closed file descriptors without sparse fallback',async t=>{
+ const dir=await directory(t),name=path.join(dir,'readonly');await fs.writeFile(name,'x');
+ const f=await fs.open(name,'r');try {await assert.rejects(allocateExtents(f,4096),/helper refused/);}finally {await f.close();}
+ assert.equal((await fs.stat(name)).size,1);await assert.rejects(allocateExtents(f,4096),/FD required/);
+});
+
+test('allocation helper timeout waits for child close before exclusive FD cleanup; no replay',async t=>{
+ const dir=await directory(t),events=[];let child,closed=false;
+ const launch=(bin,args,options)=>{child=require('node:child_process').spawn(bin,['-I','-c','import time; time.sleep(60)'],options);child.once('close',()=>{closed=true;});return child;};
+ const j=createProbeJournal(dir,{io:instrument(events),allocate:async(f,n)=>{await allocateExtents(f,n,{launch,timeoutMs:20});}});
+ await assert.rejects(j.prepare(),/helper refused/);assert(closed);assert.equal(child.signalCode,'SIGKILL');assert.deepEqual(events,['close']);
+ assert.throws(()=>j.begin());await assert.rejects(j.prepare());await j.abort();
 });
