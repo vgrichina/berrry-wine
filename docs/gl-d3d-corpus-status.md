@@ -85,6 +85,16 @@ The prepared follow-up crash sweep must exercise actual browser Worker boot;
 a CLI-only run would bypass the repaired sequence. Full historical27 and
 remaining per-app coverage remain open.
 
+Subsequent original verification `56d1ede3a`, run
+`20261108-redline-ready-firstperson-action`, establishes firing: visible muzzle/
+projectile effects and ammo 200→150 persisting after independent Control release.
+The coordinator inspected those frames and checked all 211 artifact references.
+The requested held capture completed after key-up, so no sampled-held or input
+polling claim follows. This later run used actual legacy WebGL2 SwiftShader;
+it is not hardware-GPU or paired-backend proof. Vehicle entry, mission progress,
+FPS and audio remain open.
+[Firing, readiness correction, interrupted custody and shutdown](re-notes/redline-ready-firstperson-action-20261108.md).
+
 ## November 8: Tux Racer completes current browser races on both backends
 
 Published `d58dffae2`, run `20261108-tuxracer-current-browser-backends`,
