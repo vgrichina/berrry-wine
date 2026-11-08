@@ -4,7 +4,13 @@
 const assert = require('node:assert/strict');
 const strict = require('./strict-software-gate.cjs');
 
-function create({send:transport, workers, retain, record, save, inspect, now=Date.now}) {
+function create({send:transport, workers, retain, responseDirectory, record, save, inspect, now=Date.now}) {
+  if (responseDirectory !== undefined) {
+    assert(retain === undefined, 'choose one complete source response sink');
+    const sinks = require('./native-source-retention.cjs');
+    retain = sinks.createRetainer(responseDirectory);
+    record ??= sinks.createProofRecorder(responseDirectory);
+  }
   assert(typeof retain === 'function', 'complete response retention required');
   const scripts = new Map(), contexts = new Map();
   let pageSession, installed=false, unknown=null, gate, sequence=0;
