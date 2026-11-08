@@ -158,6 +158,7 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
       const RPC=require(d.module);
       const built=RPC.createWorkerImports(d.memory,d.sigs,m=>parentPort.postMessage(m),
         {slot:1,renderPublication:d.publication,guestToWasm:p=>p,
+          createD3DDrawProducer:options=>new (require(d.producer).DrawProducer)(options),
           getExports:()=>({d3d_state_guard_held:()=>guardHeld})});
       let guardHeld=true;
       parentPort.on('message',m=>{
@@ -166,14 +167,14 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
           return;
         }
         try {
-          guardHeld=m.t!=='unguardedClear';
-          const value=m.t==='draw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):
+          guardHeld=!['unguardedClear','unguardedDraw'].includes(m.t);
+          const value=m.t==='draw'||m.t==='unguardedDraw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):
             m.t==='clear'||m.t==='unguardedClear'?built.imports.host.gpu_gl_call(0x30003,d.desc,0):built.readSnapshotState(7);
           parentPort.postMessage({t:'result',id:m.id,value});
         }catch(e){parentPort.postMessage({t:'result',id:m.id,error:e.stack});}
       });
     `,{eval:true,workerData:{module:require.resolve('../lib/guest-rpc'),memory,sigs,publication,
-      desc:f.desc,identity:link.endpointIdentity}});
+      producer:require.resolve('../lib/d3d9-host'),desc:f.desc,identity:link.endpointIdentity}});
     const active=link;
     link.worker={postMessage:m=>{posts++;worker.postMessage(m);}};
     worker.on('message',m=>{
@@ -193,7 +194,34 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     assert.equal(await ask('draw'),1);await f.drain();
     const original=await ask('read'),oldChannel=f.bridge.snapshotState(7);
     assert.equal(original.deviceId,7);assert.equal(posts,1);
-    assert.equal(await ask('draw'),1);await f.drain();assert.equal(posts,1,'ordinary draws do not repost');
+    holdPublications=true;
+    const initialCalls=rpcs;
+    assert.equal(await ask('draw'),1);assert.equal(rpcs,initialCalls,'guarded draw bypasses page RPC');
+    f.fill(f.texels,16384,[90,80,70,255]);f.set(f.mip+28,2);
+    holdPublications=false;await broker.drainPublications();await f.drain();
+    assert.deepEqual(pixel(f.observations.at(-1)),f.rgba,'published draw owns original texels');
+    const firstKey=level(f.observations.at(-1)).key;
+    assert.match(firstKey,/^p[1-9][0-9]*:t/);
+    assert.equal(await ask('draw'),1);await broker.drainPublications();await f.drain();
+    assert.deepEqual(pixel(f.observations.at(-1)),[90,80,70,255]);
+    const residentKey=level(f.observations.at(-1)).key;
+    assert.notEqual(residentKey,firstKey);
+    assert.equal(await ask('draw'),1);await broker.drainPublications();await f.drain();
+    assert.equal(f.commands.filter(c=>c.opcode===OP.DRAW).at(-1).payload.textures[0].levels[0].pixels,undefined,
+      'subsequent accepted draw references producer residency');
+    assert.equal(rpcs,initialCalls);assert.equal(posts,1,'ordinary draws do not repost');
+    assert.equal(await ask('unguardedDraw'),1);await f.drain();assert.equal(rpcs,initialCalls+1);
+    f.set(f.desc+36,0);
+    assert.equal(await ask('draw'),-1,'invalid draw preserves broker validation result');
+    assert.equal(rpcs,initialCalls+2);f.set(f.desc+36,16);
+    const drawColor=90000;
+    for(const [offset,value]of [[8,7],[12,0xd3d90006],[20,2],[24,2],[28,21],[36,99],[40,91000],[48,8],[52,16]])
+      f.set(drawColor+offset,value);
+    f.set(f.program+22020,drawColor);
+    assert.equal(await ask('draw'),1);await f.drain();assert.equal(rpcs,initialCalls+3,
+      'named render target uses endpoint-owned resource resolution');
+    assert.equal(f.commands.filter(c=>c.opcode===OP.DRAW).at(-1).payload.colorAttachment.id,99);
+    f.set(f.program+22020,0);
     const calls=rpcs;assert.deepEqual(await ask('read'),original);assert.equal(rpcs,calls,'read stays local');
     const saved=new Uint8Array(memory.buffer,f.desc,64).slice();
     f.set(f.desc+40,72000);f.set(72000+256+174*4,1);
@@ -224,6 +252,10 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     assert.equal(await ask('read'),null);assert.equal(f.bridge._poll(reset),1);
     assert.equal((await ask('read')).snapshotEpoch,original.snapshotEpoch+1);
     assert.equal(posts,1,'reset propagates through shared state');
+    assert.equal(await ask('draw'),1);await broker.drainPublications();await f.drain();
+    assert.equal(rpcs,calls+3,'fresh reset epoch remains producer-local');
+    assert(f.commands.filter(c=>c.opcode===OP.DRAW).at(-1).payload.textures[0].levels[0].pixels,
+      'reset epoch must republish a texture definition');
     const release=f.bridge.call(0x30004,0,7);await f.bridge.wait(release);assert.equal(f.bridge._poll(release),1);
     assert.equal(await ask('read'),null);
     assert.equal(await ask('draw'),1);await f.drain();

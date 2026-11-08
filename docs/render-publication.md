@@ -60,9 +60,11 @@ admission token before releasing snapshot credit. Creation, resources, queries,
 reset and presentation are not accepted through this entry point yet. A test
 drives the actual publication broker and neutral execution path with a payload
 larger than its test ring, a delayed consumer, source mutation and stale-device
-rejection. Guarded default-target D3D9 clears now capture in the guest Worker
-and publish owned API4 commands. Draws and resource operations still use the
-synchronous broker; their producer/resource migration remains open.
+rejection. Guarded default-target D3D9 clears and draws with CPU-backed textures
+now capture in the guest Worker and publish owned API4 commands. The first call
+establishes the endpoint through the broker. Named color targets, render-target
+texture aliases, unavailable lifecycle state and missing guards retain ordered
+broker handling; their resource migration remains open.
 
 OpenGL retains native `gl_object_leave` publication under the shared-object
 lock. Removing that native flush would break completed cross-thread texture
@@ -131,10 +133,10 @@ ownership. Gameplay evidence and limitations are in `re-notes/half-life-uplink.m
 This is not yet a completed migration of every graphics API. The following
 requirements remain open; a passing GL gameplay run does not discharge them.
 
-* **D3D9 producer snapshots:** `guest-rpc.js` still brokers draws and resource
-  operations synchronously. `d3d9-host.js` validates and snapshots draws
-  on the page, then submits neutral commands to the process render Worker.
-  Move immutable draw/resource capture to the producer and publish owned bytes
+* **D3D9 producer snapshots:** `guest-rpc.js` now captures eligible draws under
+  the native D3D state guard, with a lazily loaded `DrawProducer`. First calls,
+  renderer-owned color resources and capture failures retain broker handling.
+  Complete the resource migration and publish owned bytes
   or leases through the common queue. Passing raw guest addresses asynchronously
   would introduce a mutation race. Keep validation results, readbacks, queries,
   device loss and lifetime boundaries synchronous where their contracts require.
@@ -155,15 +157,34 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   and target-specific dimensions govern default scissor bounds. A real Worker
   captures through this native entry point before guest mutation of vertex,
   constant, texture, depth-identity and scissor bytes, then verifies the original
-  packet retains the original state. This removes a second decoding path before
-  transport activation; it does not activate asynchronous guest draws by itself.
+  packet retains the original state. The live bridge uses the same decoder.
   A real worker test captures from shared memory, then replaces guest vertices,
   constants and texels before consuming the first packet. This separation is
-  tested but not yet wired into the guest Worker transport. That wiring must
-  supply an ID from `allocateProducerId()`, coordinate device-wide residency/reset,
-  and capture attachments and clear/resource packets too. A real-worker test
+  now wired into the guest Worker transport using `allocateProducerId()` for
+  texture-key ownership. Residency belongs to one device generation and snapshot
+  epoch; reset creates a fresh cache entry and republishes texture definitions.
+  The immutable copy is charged before publication, and residency commits only
+  after successful publication. Capture/validation failure falls back before
+  publication; publication failure is terminal and never duplicates a draw via
+  the broker. Renderer-owned color resources still need coordinated admission.
+  A real-worker test
   verifies two independent producers and a replacement can publish to one
   device without overwriting each other's resident texture definitions.
+  Activation validation: production GuestRpc/WorkerLink tests hold publication,
+  mutate texels, verify original pixels, reuse resident texture references,
+  and require fresh definitions after reset. Missing native guards, invalid
+  draws and named color targets preserve broker handling. The generated x86
+  multiply-transform fixture's `--default-target` mode exercises the implicit
+  backbuffer; normal and compatibility builds each publish two draws without
+  page-side draw capture, then public LockRect pixels match its independent
+  geometry oracle. Both WebGL and `--software` pass with diagnostics on/off.
+  Evidence: `scratch/runs/20261108-d3d-guest-draw-default` and
+  `scratch/runs/20261108-d3d-guest-draw-software` (raw test results and served
+  module hashes). The original explicit-target fixture also passes its pixel
+  checks through the resource fallback. These are correctness tests, not FPS
+  or hardware execution-overlap measurements. The older Calc-based fixture
+  failed startup on its static server's external binary/DLL allowlist; that
+  failure is not counted as renderer validation.
   Extraction validation: immutable-snapshot tests (including the real Worker),
   texture-cache, byte-identity, source-identity, indexed-access instrumentation,
   fixed-position and real-operation accounting tests pass. The browser pipeline

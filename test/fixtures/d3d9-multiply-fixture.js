@@ -10,7 +10,7 @@ function product(left,right){
  }
  return out;
 }
-function fixture(){
+function fixture({defaultTarget=false}={}){
  const BASE=0x400000,b=Buffer.alloc(0x30200),raw=rva=>rva-0x1000+0x200,p=0x80,o=p+24,s=o+0xe0;
  b.writeUInt16LE(0x5a4d);b.writeUInt32LE(p,0x3c);b.writeUInt32LE(0x4550,p);
  b.writeUInt16LE(0x14c,p+4);b.writeUInt16LE(1,p+6);b.writeUInt16LE(0xe0,p+20);b.writeUInt16LE(0x010e,p+22);
@@ -63,6 +63,7 @@ function fixture(){
  for(const a of [0,0,0,0,64,64,0,0,0x10000000,title,klass,0])push(a);
  api('CreateWindowExA');emit(0x89,0xc3,0xa3,u32(D+20));
  write(PP,32);write(PP+4,32);write(PP+8,21);write(PP+12,1);write(PP+24,1);emit(0x89,0x1d,u32(PP+28));write(PP+32,1);write(PP+52,0x80000000);
+ if(defaultTarget)write(PP+44,1); // Public LockRect on the implicit backbuffer.
  push(32);api('Direct3DCreate9');emit(0x89,0xc7,0xa3,u32(D+12));
  for(const output of [D,D+8]){
   push(output);push(PP);push(0);emit(0x53);push(1);push(0);emit(0x57,0x8b,0x07,0xff,0x50,64);expect(0,'CreateDevice');
@@ -124,8 +125,11 @@ function fixture(){
   }
   assert(point,'independent exclusive geometry control '+pattern);probes.push(point);
  }
- dev(28,[32,32,21,0,0,1,RT,0]); // Bind actual explicit target below.
- emit(0xa1,u32(RT),0x50);push(0);emit(0x56,0x8b,0x06,0xff,0x90,u32(37*4));expect(0,'SetRenderTarget explicit');
+ if(defaultTarget)dev(38,[0,RT]); // GetRenderTarget leaves implicit storage bound.
+ else{
+  dev(28,[32,32,21,0,0,1,RT,0]);
+  emit(0xa1,u32(RT),0x50);push(0);emit(0x56,0x8b,0x06,0xff,0x90,u32(37*4));expect(0,'SetRenderTarget explicit');
+ }
  dev(89,[0x42]);for(const [state,value] of [[137,0],[7,0],[22,1]])dev(57,[state,value]);set(2,I);set(3,I);
  original.forEach((v,i)=>{v.slice(0,3).forEach((n,j)=>write(V+i*16+j*4,bits(n)));write(V+i*16+12,0xff28c864);});
  for(const [ci,c] of cases.entries()){
