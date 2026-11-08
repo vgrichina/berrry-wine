@@ -5710,8 +5710,8 @@ class WineAssembly {
     return new D3DCommandStream.WorkerConsumer(await this._createRenderWorkerEndpoint(options));
   }
 
-  async armD3dimPublicationObservation({ maxRecords = 256 } = {}) {
-    if (this._d3dimPublicationJoin || this._d3dimPublicationArming || this._d3dimHostWritesInFlight || this._stopped ||
+  async armD3dimPublicationObservation({ maxRecords = 256, boundaryTimeoutMs = 1000 } = {}) {
+    if (this._d3dimPublicationJoin || this._d3dimPublicationArming || this._stopped ||
         !this.guestWorker || !this.renderer || !this.instance?.nativeInstance)
       throw new Error('publication observation requires an idle instrumented production process');
     const link = this.guestWorker.link;
@@ -5723,24 +5723,56 @@ class WineAssembly {
       throw new Error('publication observation requires the instrumented main owner');
     if (!Number.isInteger(maxRecords) || maxRecords < 1 || maxRecords > 4096)
       throw new Error('bounded source record limit required');
+    if (!Number.isInteger(boundaryTimeoutMs) || boundaryTimeoutMs < 1 || boundaryTimeoutMs > 5000)
+      throw new Error('bounded observation boundary timeout required');
+    const guest = this.guestWorker, threads = this.threadManager, instance = this.instance, renderer = this.renderer;
+    const memory = this.memory, processId = this.processId;
     const epoch = new RenderWorker.WriterEpoch();
     const journal = new RenderWorker.SurfaceVersionJournal(new SharedArrayBuffer(maxRecords * 65536));
-    const ownerScope = `process:${this.processId}:endpoint:${link.endpointIdentity}`;
+    const ownerScope = `process:${processId}:endpoint:${link.endpointIdentity}`;
     // Attach every local/remote guest entry before arming the shared renderer.
     // These checks reject a mid-flight attachment without stopping the guest.
     // Reserve admission through the render acknowledgement. A second arm must
     // not replace and invalidate the epoch the first request already installed.
     this._d3dimPublicationArming = true;
+    let boundary;
     try {
+      if (this.running) {
+        // A live process normally has an unanswered slice. Do not attach to
+        // that execution retroactively: wait for its ordinary completed-step
+        // boundary, then hold only the next scheduler continuation until the
+        // render acknowledgement. No guest entry, clock or input is changed.
+        await new Promise((resolve, reject) => {
+          const timer = setTimeout(() => reject(new Error('publication observation idle boundary timed out')),
+            boundaryTimeoutMs);
+          boundary = { continuation: null, enter: (step, delayMs) => {
+            boundary.continuation = { step, delayMs };
+            clearTimeout(timer);
+            resolve();
+          } };
+          this._d3dimPublicationArmBoundary = boundary;
+        });
+      }
+      if (this._stopped || this.guestWorker !== guest || this.threadManager !== threads ||
+          this.memory !== memory || this.processId !== processId ||
+          this.instance !== instance || this.renderer !== renderer || guest.link !== link ||
+          link._renderLegacyEndpoint !== endpoint || endpoint.closed || this._d3dimHostWritesInFlight ||
+          threads.mainInstance !== instance || (guest.localMainExports && guest.localMainExports() !== instance.exports))
+        throw new Error('owner changed before publication observation boundary');
       this.guestWorker.setWriterObservation(epoch);
       this.threadManager.setWriterObservation(epoch);
       this._d3dimWriterObservation = epoch;
       const sourceOwner = await endpoint.producerObservation('arm', { ownerGeneration: ownerScope,
         maxRecords, writerEpochBuffer: epoch.buffer, surfaceVersionBuffer: journal.buffer });
-      if (this._stopped || endpoint.closed || !epoch.snapshot() || sourceOwner?.owner?.scope !== ownerScope ||
+      if (this._stopped || this.guestWorker !== guest || this.threadManager !== threads ||
+          this.memory !== memory || this.processId !== processId ||
+          this.instance !== instance || this.renderer !== renderer || guest.link !== link ||
+          link._renderLegacyEndpoint !== endpoint || endpoint.closed || threads.mainInstance !== instance ||
+          (guest.localMainExports && guest.localMainExports() !== instance.exports) ||
+          !epoch.snapshot() || sourceOwner?.owner?.scope !== ownerScope ||
           sourceOwner.owner.endpointId !== endpoint.id || !Number.isSafeInteger(sourceOwner.owner.generation) ||
           !Number.isSafeInteger(sourceOwner.generation)) throw new Error('owner changed while arming publication observation');
-      const join = new RenderWorker.SurfacePublicationJoin({ epoch, journal, memory: this.memory,
+      const join = new RenderWorker.SurfacePublicationJoin({ epoch, journal, memory,
         ownerScope, renderer: this.renderer, workerSlot: link.slot, endpointId: endpoint.id,
         owner: sourceOwner.owner, observationGeneration: sourceOwner.generation });
       this._d3dimPublicationJoin = join;
@@ -5755,6 +5787,14 @@ class WineAssembly {
       throw error;
     } finally {
       this._d3dimPublicationArming = false;
+      if (boundary && this._d3dimPublicationArmBoundary === boundary) {
+        this._d3dimPublicationArmBoundary = null;
+        const next = boundary.continuation;
+        if (next && this.running && !this._stopped && this.guestWorker === guest &&
+            this.memory === memory && this.processId === processId &&
+            this.threadManager === threads && this.instance === instance && this.renderer === renderer &&
+            guest.link === link) this._scheduleStep(next.step, next.delayMs);
+      }
     }
   }
 
@@ -6493,6 +6533,11 @@ class WineAssembly {
   // and being told "no" every time. The cap is deliberate — a wake source we
   // forgot to hook up degrades to 20Hz polling, never to a hang.
   _scheduleStep(step, delayMs = 0) {
+    if (this._d3dimPublicationArmBoundary) {
+      this._cancelDelayedStep();
+      this._d3dimPublicationArmBoundary.enter(step, delayMs);
+      return;
+    }
     // Every completed step of both drive loops passes through here exactly
     // once, which makes this the only honest "did the guest run" counter the
     // page has. `_runSliceCount` is not one: it is bumped only on the branch
