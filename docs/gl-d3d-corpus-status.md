@@ -1,5 +1,26 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Warcraft producer readiness and current Prologue introduction
+
+Published `9fd4b4a5c`, run `20261108-warcraft3-producer-ready-gameplay`,
+qualifies the actual software endpoint1→transport2 transition before binding,
+and rejects postbinding replacement/invalid producers with zero input.
+Production Worker controls pass on softwareGL/WebGL. The original software
+arm retains exact ownership through native profile, Campaign and Prologue
+loading, then renders two advancing introduction frames. Both owning modules
+match f965 and the actual context is SoftwareGL. These cinematic frames do
+not establish Thrall selection, displacement or tutorial progress.
+
+The final passive capture stalls20s in page-state Runtime.evaluate before
+the strict binding/screenshot stage; its ACK is absent/UNKNOWN, input closes
+and original WebGL is skipped. The coordinator reviewed the prompt/cinematic
+pair, independently verified231 references and delivered Telegram2293. The
+box normally stopped after retrieval. Its watchdog was armed after allocation
+but before browser launch; the lifecycle deviation is retained. Fresh work
+addresses this page-state boundary before another original attempt. Current
+paired gameplay, parity, FPS, audio, campaign completion and full27 stay open.
+[Controls, original route, UNKNOWN and lifecycle](re-notes/warcraft3-producer-ready-gameplay-20261108.md).
+
 ## November 8: Drakan native warning precedes graphics creation
 
 Published `6b486344a`, run `20261108-drakan-current-browser-action`,
