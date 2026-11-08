@@ -23,7 +23,7 @@ const baselineModule = new Module(root+'/lib/render-worker.js', module);
 baselineModule.paths = module.paths;
 baselineModule._compile(apiSource.replace(fixed, 'layer'), root+'/lib/render-worker.js');
 const baselineAPI = baselineModule.exports;
-async function fixture(corrected,variant='actual-layer'){
+async function fixture(corrected,variant='actual-layer',observed=false){
  const API=corrected?productionAPI:baselineAPI;
  const memory=new WebAssembly.Memory({initial:8192,maximum:32768,shared:true}),imports={host:{memory}};
  for(const i of WebAssembly.Module.imports(moduleBytes))if(i.kind==='function')imports[i.module][i.name]=()=>0;
@@ -39,7 +39,16 @@ async function fixture(corrected,variant='actual-layer'){
  const observation=c.entry(1).producerObservation;assert(observation.active);
  const renderer=new Win98Renderer(createCanvas(2,2));renderer.scheduleRepaint=()=>{};renderer.createWindow(0x77,0x90000000,0,0,2,2,'',0,native,memory);
  const join=new API.SurfacePublicationJoin({epoch,journal,memory,ownerScope:observation.owner.scope,workerSlot:3,endpointId:1,owner:observation.owner,observationGeneration:observation.generation,renderer});
- const {host,gdi}=createHostImports({getMemory:()=>memory.buffer,exports:{get_main_hwnd:()=>0x77,get_dx_exclusive_hwnd:()=>0x77,get_d3d9_windowed_hwnd:()=>variant==='windowed-device'?0x77:0,gamma_ramp_wa:()=>variant==='gamma'?BASE.DIB_BACKING_BASE+4096:0,gamma_ramp_gen:()=>0},renderer,d3dimPublicationJoin:join});
+ // Include the actual production export facade: direct export stubs hid the
+ // presenter's own getter transitions and host-version invalidations.
+ const decoderExports={...native.exports,get_main_hwnd:()=>0x77,
+   get_dx_present_hwnd:()=>0x77,get_dx_exclusive_hwnd:()=>0x77,
+   get_d3d9_windowed_hwnd:()=>variant==='windowed-device'?0x77:0,
+   gamma_ramp_wa:variant==='gamma'?()=>BASE.DIB_BACKING_BASE+4096:native.exports.gamma_ramp_wa,
+   gamma_ramp_gen:native.exports.gamma_ramp_gen};
+ const {host,gdi}=createHostImports({getMemory:()=>memory.buffer,
+   exports:observed?API.observeInstance({exports:decoderExports},()=>epoch).exports:decoderExports,
+   renderer,d3dimPublicationJoin:join});
  const dv=new DataView(memory.buffer),bytes=new Uint8Array(memory.buffer),front=BASE.DX_OBJECTS+32*7,back=front+32,dibA=BASE.DIB_BACKING_BASE,dibB=dibA+64,descriptor=dibB+64,sid=0x200007;
  for(const [entry,dib,red]of [[front,dibA,17],[back,dibB,34]]){dv.setUint32(entry,2,true);for(const [o,v]of [[12,2],[14,2],[16,16],[18,4]])dv.setUint16(entry+o,v,true);dv.setUint32(entry+20,dib,true);dv.setUint32(entry+28,1,true);for(let i=0;i<8;i+=2)dv.setUint16(dib+i,red===34?0xf800:0x001f,true);}
  let seq=0,serial=0;
@@ -86,17 +95,43 @@ async function fixture(corrected,variant='actual-layer'){
  }
  join.retire('fixture-finished');
  assert.equal(journal.records().length, join.rows.length+join.ledger.length);
- return {variant, corrected, raw:journal.records().length,qualified:join.rows.length,
+ return {variant, corrected, observed, raw:journal.records().length,qualified:join.rows.length,
    discarded:join.ledger.length,rows:join.rows,ledger:join.ledger};
 }
+// Getter classification never removes its writer ticket. In particular, only
+// the actual zero-ramp branch avoids the process host-mutation clock; nonzero
+// address translation and arbitrary host exports retain invalidation.
+function getterExclusion(){
+ const epoch=new productionAPI.WriterEpoch();
+ let result=0,fail=false;
+ const ex=productionAPI.observeInstance({exports:{
+   gamma_ramp_wa(){assert.equal(Atomics.load(epoch.words,0),1);assert.equal(epoch.snapshot(),null);if(fail)throw Error('getter-failure');return result;},
+   dx_surface_window_clipped(){assert.equal(Atomics.load(epoch.words,0),1);return 0;},
+   host_mutation(){assert.equal(Atomics.load(epoch.words,0),1);assert.equal(Atomics.load(epoch.words,3),2);}
+ }},()=>epoch).exports;
+ const stamp=epoch.snapshot();
+ assert.equal(ex.gamma_ramp_wa(),0);assert.equal(Atomics.load(epoch.words,3),0);
+ assert(!epoch.unchanged(stamp),'getter entry/exit still invalidates an older read stamp');
+ ex.dx_surface_window_clipped();assert.equal(Atomics.load(epoch.words,3),0);
+ result=123;assert.equal(ex.gamma_ramp_wa(),123);assert.equal(Atomics.load(epoch.words,3),1);
+ ex.host_mutation();assert.equal(Atomics.load(epoch.words,3),2);
+ fail=true;assert.throws(()=>ex.gamma_ramp_wa(),/getter-failure/);
+ assert.equal(Atomics.load(epoch.words,0),0);assert.equal(Atomics.load(epoch.words,2),1);
+ return {passed:true,writerExclusion:true,nonzeroInvalidation:true,arbitraryMutationInvalidation:true,errorPoison:true};
+}
 (async()=>{
+ if(process.env.OBSERVED_EXPORTS_ONLY){console.log(JSON.stringify(await fixture(true,'actual-layer',true)));return;}
+ const getterGuards=getterExclusion();
  const baseline = await fixture(false);
  const corrected = await fixture(true);
  const negative = [];
  for (const variant of ['wrong-window-owner','wrong-layer','wrong-owner','stale-request','covered-gdi','page-dirty','dirty-after-decode','host-version','host-after-decode','overlap','poison','menu','caret','overlay','cache-blocked','owner-after-decode','resized-after-decode','windowed-device','gamma','wrong-format']) negative.push(await fixture(true,variant));
- const result = {passed:true,baseline,corrected,negative,
+ const observed = await fixture(true,'actual-layer',true);
+ const observedNegative=[];
+ for(const variant of negative.map(x=>x.variant))observedNegative.push(await fixture(true,variant,true));
+ const result = {passed:true,baseline,corrected,negative,observed,observedNegative,getterGuards,
    moduleSha256:crypto.createHash('sha256').update(binary).digest('hex')};
  if(process.env.DIRECTX_LAYER_RESULT) fs.writeFileSync(process.env.DIRECTX_LAYER_RESULT,JSON.stringify(result,null,2));
  console.log(JSON.stringify({passed:true,baselineQualified:baseline.qualified,
-   correctedQualified:corrected.qualified,negative:negative.map(x=>({variant:x.variant,qualified:x.qualified,discarded:x.discarded}))}));
+   correctedQualified:corrected.qualified,observedQualified:observed.qualified,observedNegative:observedNegative.length,getterGuards,negative:negative.map(x=>({variant:x.variant,qualified:x.qualified,discarded:x.discarded}))}));
 })().catch(e=>{console.error(e);process.exitCode=1;});
