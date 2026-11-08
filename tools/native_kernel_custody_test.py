@@ -21,6 +21,79 @@ kernel=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(kernel)
 
 
+class ExitCausality(unittest.TestCase):
+    def run_case(self, mode):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(os.environ.get('CUSTODY_CAUSALITY_EVIDENCE',tmp))
+            run=Path(tempfile.mkdtemp(prefix=mode+'-',dir=base))
+            result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                '--causality-fixture',str(run),mode],capture_output=True,text=True,timeout=15)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            receipt=json.loads((run/'causality-waits.json').read_text())
+            self.assertEqual(receipt['watchdogWait'],-15)
+            self.assertFalse((run/'watchdog-fired.json').exists())
+            drain=json.loads((run/'kernel-drain.json').read_text())
+            rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+            for key in ('journal','commandLog'):
+                stream=drain[key];data=gzip.decompress((run/stream['path']).read_bytes())
+                self.assertTrue(stream['closed'])
+                self.assertEqual(stream['originalSha256'],hashlib.sha256(data).hexdigest())
+                self.assertEqual(stream['originalBytes'],len(data))
+            self.assertTrue(drain['commandLog']['eof'])
+            self.assertEqual(drain['unreaped'],[])
+            self.assertEqual(drain['remaining'],[])
+            self.assertEqual(drain['unresolvedPtrace'],[])
+            if mode=='multi-fixed':
+                observed=json.loads((run/'native-multi-observation.json').read_text())
+                self.assertFalse(observed['present'])
+                self.assertEqual(len(observed['tids']),8)
+                self.assertTrue(drain['complete'])
+                self.assertEqual(drain['exit'],0)
+                self.assertEqual(len(drain['owned']),9)
+                for task in observed['tids']:
+                    self.assertTrue(any(r['pid']==task and r['status']==0 for r in drain['reaped']))
+            elif mode in ('exit-before','exit-fixed'):
+                observed=json.loads((run/'native-observation.json').read_text())
+                self.assertEqual(observed['present'],mode=='exit-before')
+                self.assertEqual(observed['iterations']==30,mode=='exit-before')
+                self.assertEqual(drain['exit'],42 if mode=='exit-before' else 0)
+                task=observed['tid']
+                stop=next(r for r in rows if r['kind']=='pre-exit-stop' and r['pid']==task)
+                reap=next(r for r in rows if r['kind']=='reaped' and r['pid']==task)
+                self.assertTrue(any(r['pid']==task for r in drain['reaped']))
+                # A delayed thread zombie can inherit the later group exit
+                # status. Keep the actual kernel receipt, not its exit-stop
+                # message or the status we expected from the worker function.
+                self.assertIn(reap['status'],(0,42<<8) if mode=='exit-before' else (0,))
+                between=[r for r in rows if stop['sequence']<r['sequence']<reap['sequence']]
+                if mode=='exit-fixed':
+                    # CONT is nonblocking: one competing event may arrive
+                    # before the final thread status becomes waitable.
+                    self.assertLessEqual(sum(r['kind']=='fork-parent-release' for r in between),1)
+                else:self.assertTrue(any(r['kind']=='fork-parent-release' for r in between))
+            else:
+                task=json.loads((run/'cancel-barrier.json').read_text())['child']
+                lineage=[r for r in rows if r['kind']=='fork-lineage' and r['pid']==task]
+                self.assertEqual(bool(lineage),mode=='cancel-fixed')
+                self.assertEqual(drain['complete'],mode=='cancel-fixed')
+                self.assertEqual(drain['kernelForkLineageComplete'],mode=='cancel-fixed')
+                if lineage:
+                    first_signal=next(r for r in rows if r['kind']=='cancellation-sent')
+                    self.assertLess(lineage[0]['sequence'],first_signal['sequence'])
+                else:
+                    self.assertEqual([r['pid'] for r in drain['unresolvedLineage']],[task])
+
+    def test_real_joined_thread_final_wait_precedes_creation_backlog(self):
+        for mode in ('exit-before','exit-fixed'):
+            with self.subTest(mode=mode):self.run_case(mode)
+
+    def test_pending_real_fork_lineage_is_consumed_before_cancellation(self):
+        for mode in ('cancel-before','cancel-fixed'):
+            with self.subTest(mode=mode):self.run_case(mode)
+
+    def test_eight_native_threads_exit_without_starving_each_other(self):self.run_case('multi-fixed')
+
+
 class Deadlines(unittest.TestCase):
     def test_first_observed_child_stop_can_be_irreversible_exit(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -526,6 +599,172 @@ class CompressedCancellation(unittest.TestCase):
     def test_original_supervisor_default_term_truncates_gzip(self):self.run_case('legacy-term')
 
 
+def causality_fixture(run, mode):
+    run=Path(run).resolve()
+    source=r'''
+#include <pthread.h>
+#include <sys/syscall.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <time.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdatomic.h>
+#include <sched.h>
+static pid_t tid;
+static _Atomic int multi_release;
+static void *worker(void *arg) {
+  if(arg) {
+    *(pid_t *)arg=syscall(SYS_gettid);
+    while(!atomic_load(&multi_release))sched_yield();
+  } else tid=syscall(SYS_gettid);
+  return 0;
+}
+int main(int argc, char **argv) {
+  if (chdir(argv[1])) return 80;
+  if (argc>2 && !strcmp(argv[2],"multi")) {
+    pthread_t ts[8];pid_t tids[8];
+    for(int j=0;j<8;j++)if(pthread_create(&ts[j],0,worker,&tids[j]))return 89;
+    atomic_store(&multi_release,1);
+    for(int j=0;j<8;j++)if(pthread_join(ts[j],0))return 90;
+    int i=0,present=0;
+    for(;i<30;i++) {
+      struct stat st;if(stat("/proc/self/task",&st))return 91;
+      present=st.st_nlink!=3;if(!present)break;
+      struct timespec delay={0,1L<<i};while(nanosleep(&delay,&delay) && errno==EINTR){}
+    }
+    FILE *f=fopen("native-multi-observation.json","w");if(!f)return 92;
+    fprintf(f,"{\"present\":%s,\"tids\":[",present?"true":"false");
+    for(int j=0;j<8;j++)fprintf(f,"%s%d",j?",":"",tids[j]);fprintf(f,"]}");fclose(f);
+    return present?42:0;
+  }
+  if (argc>2) {
+    pid_t p=fork();
+    if (p<0) return 81;
+    if (!p) { FILE *f=fopen("unlinked-userspace-ran","w"); if(f)fclose(f); }
+    for (;;) pause();
+  }
+  pid_t helper=fork();
+  if (helper<0) return 82;
+  if (!helper) {
+    while (access("exit-released",F_OK)) usleep(1000);
+    for (int j=0;j<24;j++) {
+      pid_t p=fork(); if(p<0)_exit(83); if(!p)_exit(0);
+      int status; if(waitpid(p,&status,0)!=p || status)_exit(84);
+    }
+    _exit(0);
+  }
+  pthread_t t; if(pthread_create(&t,0,worker,0) || pthread_join(t,0))return 85;
+  char path[128];snprintf(path,sizeof(path),"/proc/self/task/%d",tid);
+  int i=0, present=0;
+  for (;i<30;i++) {
+    struct stat st;present=stat(path,&st)==0;
+    if(!present) { if(errno!=ENOENT)return 86;break; }
+    struct timespec ts={0,1L<<i};while(nanosleep(&ts,&ts) && errno==EINTR){}
+  }
+  FILE *f=fopen("native-observation.json","w");if(!f)return 87;
+  fprintf(f,"{\"tid\":%d,\"iterations\":%d,\"present\":%s}",tid,i,present?"true":"false");fclose(f);
+  int status;if(waitpid(helper,&status,0)!=helper || status)return 88;
+  return present?42:0;
+}
+'''
+    (run/'fixture.c').write_text(source)
+    subprocess.run(['cc','-O2','-pthread',str(run/'fixture.c'),'-o',str(run/'fixture')],check=True,timeout=10)
+    gate_read,gate_write=os.pipe()
+    supervisor=os.fork()
+    if supervisor==0:
+        os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
+        module=kernel
+        if mode.endswith('before'):
+            import types
+            revision='3021d134c'
+            data=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+            assert hashlib.sha256(data).hexdigest()=='e36d34990d738e616611ce8a8f4309548abcb751bd5ef5ec119d20e561c49360'
+            module=types.ModuleType('before');exec(compile(data,revision,'exec'),module.__dict__)
+        actual_waitid,actual_waitpid,trace,fsync=os.waitid,os.waitpid,module.ptrace,os.fsync
+        selected=[];released=[];terminal=[]
+        def rows():
+            return [json.loads(s) for s in zlib.decompressobj(31).decompress((run/'custody.ndjson.gz').read_bytes()).splitlines()]
+        def peek(which,pid,flags):
+            if mode.startswith('cancel'):
+                if selected and which==os.P_ALL and not terminal:
+                    return actual_waitid(os.P_PID,selected[0],flags)
+                value=actual_waitid(which,pid,flags)
+                if which==os.P_ALL and value and value.si_code==os.CLD_TRAPPED and value.si_status==261 and not selected:
+                    child=ctypes.c_ulong();trace(module.GETEVENTMSG,value.si_pid,data=ctypes.addressof(child))
+                    selected.append(child.value)
+                    due=time.monotonic()+1
+                    while time.monotonic()<due:
+                        initial=actual_waitid(os.P_PID,child.value,flags)
+                        if initial:return initial
+                        time.sleep(.001)
+                    raise AssertionError('real child stop missing')
+                return value
+            if released and which==os.P_ALL:
+                # Select real competing kernel statuses, simulating the legal
+                # non-FIFO P_ALL order in Q2. Per-record sync latency below is
+                # injected storage latency, not an invented wait/exit status.
+                due=time.monotonic()+.03
+                while time.monotonic()<due:
+                    registered=[r['pid'] for r in rows() if r['kind']=='custody' and r['pid']!=selected[0]]
+                    for task in registered:
+                        try: value=actual_waitid(os.P_PID,task,flags)
+                        except ChildProcessError:continue
+                        if value:return value
+                    time.sleep(.001)
+            return actual_waitid(which,pid,flags)
+        def consume(task,flags):
+            result=actual_waitpid(task,flags)
+            if mode.startswith('cancel') and selected and task==selected[0] and result[0]:
+                if os.WIFSTOPPED(result[1]) and not released:
+                    released.append(task)
+                    (run/'cancel-barrier.json').write_text(json.dumps(dict(child=task)))
+                    os.kill(os.getpid(),15)
+                if os.WIFEXITED(result[1]) or os.WIFSIGNALED(result[1]):terminal.append(task)
+            return result
+        def resume(request,task,addr=0,data=0):
+            if mode.startswith('exit') and request==module.CONT:
+                last=rows()[-1]
+                if last['kind']=='pre-exit-stop' and last['pid']==task and last['tgid']!=task:
+                    selected.append(task);released.append(task)
+                    (run/'exit-released').write_text(str(task))
+            return trace(request,task,addr,data)
+        def sync(fd):
+            fsync(fd)
+            if mode.startswith('exit'):time.sleep(.015)
+        try:
+            with patch.object(module.os,'waitid',side_effect=peek),patch.object(module.os,'waitpid',side_effect=consume), \
+                 patch.object(module,'ptrace',side_effect=resume),patch.object(module.os,'fsync',side_effect=sync):
+                due=time.time()+6
+                extra=['cancel'] if mode.startswith('cancel') else (['multi'] if mode=='multi-fixed' else [])
+                module.supervise(run,[str(run/'fixture'),str(run)]+extra,
+                    deadline=due,cleanup_deadline=due+1,journal_compression='gzip',command_compression='gzip')
+        except BaseException as error:
+            (run/'supervisor-error.json').write_text(json.dumps(dict(error=repr(error))))
+            os._exit(1)
+        os._exit(0)
+    watchdog=os.fork()
+    if watchdog==0:
+        os.close(gate_read);os.close(gate_write)
+        start=kernel.identity(supervisor)['start']
+        (run/'watchdog-armed.json').write_text(json.dumps(dict(target=supervisor,start=start,deadline=time.time()+9)))
+        time.sleep(9)
+        try:
+            if kernel.identity(supervisor)['start']==start:os.kill(supervisor,9)
+        except (FileNotFoundError,ProcessLookupError):pass
+        (run/'watchdog-fired.json').write_text('{}');os._exit(0)
+    os.close(gate_read)
+    while not (run/'watchdog-armed.json').exists():time.sleep(.001)
+    os.write(gate_write,b'1');os.close(gate_write)
+    _,status=os.waitpid(supervisor,0)
+    os.kill(watchdog,15);_,watch_status=os.waitpid(watchdog,0)
+    (run/'causality-waits.json').write_text(json.dumps(dict(supervisorWait=os.waitstatus_to_exitcode(status),
+        watchdogWait=os.waitstatus_to_exitcode(watch_status))))
+
+
 def terminal_fixture(run, mode):
     # Independent watchdog is armed before the supervisor's fork barrier.
     run=Path(run).resolve();gate_read,gate_write=os.pipe()
@@ -896,6 +1135,7 @@ if __name__=='__main__':
             (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
                 fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
+    elif len(sys.argv)>1 and sys.argv[1]=='--causality-fixture':causality_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--command-gzip-fixture':command_gzip_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--gzip-fixture':gzip_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--terminal-fixture':terminal_fixture(sys.argv[2],sys.argv[3])

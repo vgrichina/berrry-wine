@@ -62,6 +62,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     assert libc.prctl(36, 1, 0, 0, 0) == 0, 'subreaper required'
     owned = {}; reaped = []; parked = set(); exit_retired = set(); root_status = None; sequence = 0
     pending = {}
+    exiting = set()
     journal = Journal(run, journal_compression)
     def log(kind, **value):
         nonlocal sequence
@@ -131,6 +132,32 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 output_eof = True
                 break
             command_log.write(data)
+    wait_flags = os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|WALL
+    def exit_wait():
+        for task in list(exiting):
+            try: value = os.waitid(os.P_PID, task, wait_flags)
+            except ChildProcessError: continue # never a retirement receipt
+            if value: return value
+        return None
+    def priority_wait():
+        # P_ALL has no FIFO/fairness guarantee. In particular, a joined thread
+        # remains in /proc until its tracer consumes the final wait. Do not put
+        # that wait behind unrelated creation stops (or a command-log fsync).
+        # During cancellation, first preserve any *actual pending* fork message
+        # before a fatal group signal can replace the creator's event stop.
+        if not cancellation:
+            value = exit_wait()
+            if value: return value
+        if cancellation or parked:
+            for task, row in list(owned.items()):
+                if any(r['pid'] == task for r in reaped): continue
+                try: value = os.waitid(os.P_PID, task, wait_flags)
+                except ChildProcessError: continue
+                if value and value.si_code == os.CLD_TRAPPED and value.si_status in (
+                        (1 << 8)|signal.SIGTRAP, (2 << 8)|signal.SIGTRAP,
+                        (3 << 8)|signal.SIGTRAP):
+                    return value
+        return exit_wait() if cancellation else None
     # Parent never uses Popen.poll()/wait(): those can reap an unrecorded child.
     pid = os.fork()
     if pid == 0:
@@ -155,7 +182,6 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     armed = False
     try:
         while True:
-            pump_output()
             # WNOWAIT explicitly leaves even adopted zombies in /proc until their
             # PID/start/current PPID and custody are durably logged below.
             if time.time() > cleanup_deadline:
@@ -167,6 +193,24 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 if cancel_at is None:
                     cancel_at = time.monotonic()
                     log('cancellation', **cancellation[0], cleanupDeadline=cleanup_deadline)
+            peek = priority_wait()
+            if peek is None:
+                pump_output()
+                try:
+                    peek = os.waitid(os.P_ALL, 0, wait_flags)
+                except ChildProcessError:
+                    # ECHILD or /proc absence cannot retire a recorded identity.
+                    assert {(r['pid'], r['start']) for r in owned.values()} == {
+                        (r['pid'], r['start']) for r in reaped}, 'unreaped custody at ECHILD'
+                    assert not pending, ('unresolved ptrace ESRCH', pending)
+                    if command_log and not output_eof:
+                        time.sleep(.001)
+                        continue
+                    drained = True
+                    break
+            fork_wait = peek and peek.si_code == os.CLD_TRAPPED and peek.si_status in (
+                (1 << 8)|signal.SIGTRAP, (2 << 8)|signal.SIGTRAP, (3 << 8)|signal.SIGTRAP)
+            if cancellation and not fork_wait:
                 sig = signal.SIGKILL if time.monotonic()-cancel_at >= .25 else signal.SIGTERM
                 retired = {r['pid'] for r in reaped}
                 for target, registered in list(owned.items()):
@@ -179,20 +223,6 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     except (ProcessLookupError, FileNotFoundError):
                         log('cancellation-identity-unavailable', pid=target, start=registered['start'], signal=sig)
                     sent.add((target, sig))
-            try:
-                peek = os.waitid(os.P_ALL, 0, os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|WALL)
-            except ChildProcessError:
-                # ECHILD or /proc absence cannot retire a recorded identity.
-                assert {(r['pid'], r['start']) for r in owned.values()} == {
-                    (r['pid'], r['start']) for r in reaped}, 'unreaped custody at ECHILD'
-                assert not pending, ('unresolved ptrace ESRCH', pending)
-                if command_log and not output_eof:
-                    # ECHILD does not prove pipe EOF; an inherited writer must
-                    # close or the immutable cleanup deadline fails closed.
-                    time.sleep(.001)
-                    continue
-                drained = True
-                break
             if peek is None:
                 time.sleep(.001); continue
             task = peek.si_pid
@@ -231,6 +261,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 continue
             assert got == task, ('peek/consume mismatch', task, got)
             if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                exiting.discard(task)
                 parked.discard(task)
                 previous = next((r for r in reaped if r['pid'] == task), None)
                 if previous is not None:
@@ -274,7 +305,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     assert exit_status.value <= 0xffff and (os.WIFEXITED(exit_status.value) or os.WIFSIGNALED(exit_status.value)), ('invalid kernel exit status', task, exit_status.value)
                     log('unlinked-exit-retirement', **row, exitStatus=exit_status.value,
                         custodySequence=owned[task]['registeredSequence'], lineageResolved=False)
-                    exit_retired.add(task); parked.discard(task)
+                    exit_retired.add(task); parked.discard(task); exiting.add(task)
                     trace_task(CONT, task)
                     continue
                 # The child initial stop may be delivered before its parent's
@@ -301,6 +332,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 log('fork-parent-release', pid=task, child=child.value)
             elif event == 6:
                 log('pre-exit-stop', **row, custodySequence=owned[task]['registeredSequence'])
+                exiting.add(task)
             elif event == 4:
                 # A nonleader exec changes TID to TGID; refuse rather than lose
                 # identity if this unsupported transition is ever encountered.
