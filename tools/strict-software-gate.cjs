@@ -66,7 +66,7 @@ const WORKER_READ = `(()=>{
 })()`;
 const same = (a,b,message) => assert.equal(JSON.stringify(a),JSON.stringify(b),message);
 function createSoftwareGate({send,pageSession,workers,scripts,expected,sameHostClock=false,
-  now=Date.now,monotonic=()=>performance.now(),deadline,transitionMs=5000,inspect,save,record=()=>{}}) {
+  now=Date.now,monotonic=()=>performance.now(),deadline,transitionMs=5000,inspect,save,record=()=>{},journal}) {
   assert(sameHostClock === true,'independently verified same-host OS clock required');
   assert(Number.isFinite(deadline)&&deadline>now(),'immutable Software deadline required');
   assert(Number.isInteger(transitionMs)&&transitionMs>=50&&transitionMs<=5000,'bounded Software transition window required');
@@ -145,6 +145,7 @@ function createSoftwareGate({send,pageSession,workers,scripts,expected,sameHostC
       if(busy){closed=true;throw Error('UNKNOWN concurrent Software probe; no replay');}
       busy=true;
       try {
+        journal?.begin();
         assert(['beforeResume','afterResume'].includes(phase),'explicit Software phase required');
         assert(now()<Math.min(deadline,transitionDue??deadline),'Software transition deadline expired');
         assert(phase==='beforeResume'?baseline===null:baseline!==null,'one baseline before Resume; no replay');
@@ -152,7 +153,9 @@ function createSoftwareGate({send,pageSession,workers,scripts,expected,sameHostC
         const clockStart=now(),mono=monotonic();
         const target=await evaluate(send,pageSession,'Date.now()');const clockEnd=now();
         assert(Number.isFinite(target)&&target>=clockStart&&target<=clockEnd&&Math.abs((clockEnd-clockStart)-(monotonic()-mono))<=3,'same-host clock bracket failed');
+        journal?.read(1);
         const first=await read(false);await sink({phase:'owner',probePhase:phase,read:1,proof:first});
+        journal?.read(2);
         const final=await read(true);same(first.owner,final.owner,'owners changed across two reads');
         await sink({phase:'owner',probePhase:phase,read:2,proof:final});
         assert(typeof final.png==='string'&&final.png.startsWith('data:image/png;base64,'),'complete actual PNG required');
@@ -172,6 +175,7 @@ function createSoftwareGate({send,pageSession,workers,scripts,expected,sameHostC
           timerSha256:inspection.timerSha256??null,owner:final.owner,reads:[first,final],hardwareGateEligible:false};
         await sink({phase:'pixels',probePhase:phase,result},png);
         await sink({phase:'return',probePhase:phase,result});
+        await journal?.flush();
         // Evidence sinks are asynchronous: retirement during a save must not
         // escape as a current certificate, even when pixels are still young.
         const current=await snapshot(false);
@@ -195,7 +199,13 @@ function createSoftwareGate({send,pageSession,workers,scripts,expected,sameHostC
         assert(now()<Math.min(deadline,transitionDue),'Software transition deadline expired');
         assert(!closed,'UNKNOWN concurrent Software probe; no replay');
         result.checkedAt=now();return result;
-      } catch(error) {closed=true;throw error;}
+      } catch(error) {
+        closed=true;
+        // Source lanes already use allSettled. Preserve partial evidence and
+        // drain the writer before the terminal UNKNOWN can leave this gate.
+        try {await journal?.abort();} catch(drainError) {throw new AggregateError([error,drainError],error.message+'; journal drain failed');}
+        throw error;
+      }
       finally {busy=false;}
     },
   };

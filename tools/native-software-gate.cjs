@@ -5,11 +5,14 @@ const assert = require('node:assert/strict');
 const strict = require('./strict-software-gate.cjs');
 
 function create({send:transport, workers, retain, responseDirectory, record, save, inspect, now=Date.now}) {
+  let journal;
   if (responseDirectory !== undefined) {
     assert(retain === undefined, 'choose one complete source response sink');
     const sinks = require('./native-source-retention.cjs');
     retain = sinks.createRetainer(responseDirectory);
-    record ??= sinks.createProofRecorder(responseDirectory);
+    journal = sinks.createProbeJournal(responseDirectory);
+    const extraRecord=record;
+    record = async row => {journal.record(row);await extraRecord?.(row);};
   }
   assert(typeof retain === 'function', 'complete response retention required');
   const scripts = new Map(), contexts = new Map();
@@ -58,11 +61,11 @@ function create({send:transport, workers, retain, responseDirectory, record, sav
     let response;
     try { response=await transport(method,params,session); }
     catch(error) {
-      await retain({...request,responseAt:now(),refused:true,error:String(error)});
+      await (journal?.active?journal.retain:retain)({...request,responseAt:now(),refused:true,error:String(error)});
       throw error;
     }
     // Retain before returning even malformed or mismatched responses. No cache.
-    await retain({...request,responseAt:now(),refused:false,response:structuredClone(response)});
+    await (journal?.active?journal.retain:retain)({...request,responseAt:now(),refused:false,response:structuredClone(response)});
     return response;
   }
   return {send,event,scripts,
@@ -74,7 +77,7 @@ function create({send:transport, workers, retain, responseDirectory, record, sav
       try {
         assert(pageSession,'actual page session required');
         await strict.install({send,pageSession,ownerExpression:options.ownerExpression});
-        gate=strict.createSoftwareGate({...options,send,pageSession,workers,scripts,record,save,inspect,now});
+        gate=strict.createSoftwareGate({...options,send,pageSession,workers,scripts,record,save,inspect,now,journal});
       } catch(error) { fail(error.message);throw error; }
     },
     async probe(options) {
