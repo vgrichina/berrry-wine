@@ -10,7 +10,7 @@ const EXE = 'test/binaries/candidates/quake-2-demo-installer/installed-extracted
 const EXE_SHA = '2fa987c9390663e230c5b6479285e7c55511e35f80091bfed96f43062c1c810b';
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const WINDOWS = [[0x4117b0,0x2e2],[0x410e50,0x11a],[0x411aa0,0x51],
-  [0x42b0b9,0x6f],[0x42f0b0,0x45],[0x41a2a0,0x53]];
+  [0x42b0b9,0x6f],[0x42f0b0,0x45],[0x41a2a0,0x53],[0x411b10,6]];
 // Original FS_FreeFile, Z_Free, Z_TagMalloc and CRT free/malloc wrappers.
 // Checked only at their actual owning entry; old fixture substitutes have no
 // authority to establish native release or allocation.
@@ -45,6 +45,91 @@ function attach({getExports, getMemory}) {
   const execution={entries:0,returns:0,failures:0};
   let trace=null, load=null, terminal=null;
   let completionReason='no owning loader entry';
+  // Generations count observed boundaries, not allocation identities. In
+  // particular, a missed reload with identical output cannot be disproved by
+  // these point samples and must never receive a continuity certificate.
+  let generation=0, conversion=null, converted=null, startup=null, use=null;
+  const laterUses=[];
+  const continuityFaults=[];
+  function fault(reason) {
+    if(!continuityFaults.includes(reason) && continuityFaults.length<32) continuityFaults.push(reason);
+  }
+  function continuity(e,b,pc,sp) {
+    const u32=a=>read(e,b,a,4).readUInt32LE();
+    if(pc===0x410e50) {
+      const source=sources.at(-1),descriptor=u32(sp+4);
+      if(!source || source.state!=='ACQUIRED_POINT' || !load ||
+        u32(sp)!==0x4119b7 || sp!==load.sp-0xb8) {fault('conversion entry/acquisition boundary missing');return;}
+      const offset=u32(descriptor),size=u32(descriptor+4);
+      if(!size || size%48 || size/48>1024 || offset+size>source.length ||
+        u32(0x8e3ea8)!==source.pointer) {fault('conversion source descriptor mismatch');return;}
+      if(hash(read(e,b,source.pointer,source.length))!==records[source.acquisitionRecord].sha256) {
+        revokeSources('source bytes changed before conversion',pc,source.pointer);
+        fault('acquired source replaced before conversion');return;
+      }
+      conversion={generation,sp,acquisitionRecord:source.acquisitionRecord,
+        source:read(e,b,source.pointer+offset,size),count:size/48};
+    }
+    if(pc===0x4119b7) {
+      if(!conversion || conversion.generation!==generation || sp!==conversion.sp+4) {
+        fault('conversion return boundary missing');return;
+      }
+      const c=conversion;conversion=null;
+      const expected=Buffer.alloc(c.count*40);
+      for(let i=0;i<c.count;i++) {
+        for(let j=0;j<9;j++)expected.writeFloatLE(Math.fround(c.source.readFloatLE(i*48+j*4)+(j<3?-1:j<6?1:0)),i*40+j*4);
+        expected.writeInt32LE(c.source.readInt32LE(i*48+36),i*40+36);
+      }
+      if(u32(0xa23f8c)!==c.count || !read(e,b,0x6d7da0,expected.length).equals(expected)) {
+        fault('native converted model bytes mismatch');return;
+      }
+      converted={generation,acquisitionRecord:c.acquisitionRecord,count:c.count,
+        sha256:hash(expected),sourceSHA256:records[c.acquisitionRecord].sha256,
+        sourceLumpSHA256:hash(c.source),entryPC:0x410e50,entrySP:c.sp,returnPC:pc,returnSP:sp};
+    }
+    if(pc===0x42b0e4) startup={generation,sp,entryPC:pc,stores:0,complete:false,lastStore:null};
+    if(pc===0x42b124) {
+      if(!startup || startup.generation!==generation || startup.sp!==sp || !converted ||
+        converted.generation!==generation) {fault('startup/conversion generation boundary missing');return;}
+      const ordinal=e.get_esi()>>>0,slot=(e.get_ebx()>>>0)-4;
+      if(ordinal!==startup.stores+2 || slot!==0x47b55c+startup.stores*4 ||
+        u32(slot)!==0x6d7da0+(ordinal-1)*40) {fault('native collision-table store mismatch');return;}
+      startup.stores++;
+      startup.lastStore={pc,sp,slot,pointer:u32(slot),ordinal:ordinal-1};
+    }
+    if(pc===0x42b128) {
+      if(!startup || !converted || startup.generation!==generation || startup.sp!==sp ||
+        startup.stores!==converted.count-1) fault('startup completion boundary missing');
+      else {startup.complete=true;startup.completionPC=pc;startup.completionSP=sp;}
+    }
+    if(pc===0x42f0b0) {
+      const edict=u32(sp+4),index=u32(edict+0x28);
+      use={generation,sp,edict,index,solid:u32(edict+0xf8),
+        pointer:index<256?u32(0x47b554+index*4):0};
+    }
+    if(pc!==0x42f0da) return;
+    const reasons=[...continuityFaults];
+    if(invalid) reasons.push(`observation interrupted: ${invalid}`);
+    if(!converted || converted.generation!==generation) reasons.push('conversion generation missing/replaced');
+    if(!startup?.complete || startup.generation!==generation) reasons.push('startup generation/completion missing');
+    if(!use || use.generation!==generation || use.sp!==sp+4 || use.solid!==3 ||
+      use.pointer!==(e.get_esi()>>>0) || u32(use.edict+0x28)!==use.index ||
+      u32(0x47b554+use.index*4)!==use.pointer) reasons.push('owning headnode entry/table boundary mismatch');
+    if(use && converted && (use.index<1 || use.index>converted.count ||
+      use.pointer!==0x6d7da0+(use.index-1)*40)) reasons.push('collision-table owner replaced');
+    if(converted && (u32(0xa23f8c)!==converted.count ||
+      hash(read(e,b,0x6d7da0,converted.count*40))!==converted.sha256)) reasons.push('converted model storage replaced');
+    const source=converted && sources.find(s=>s.acquisitionRecord===converted.acquisitionRecord);
+    if(!source || source.state==='REVOKED') reasons.push('source lifetime REVOKED or unobserved');
+    // This is the control's essential conservative rejection. Even an intact
+    // chain cannot establish absent writers, missed reloads, or edict ABA.
+    reasons.push('uncovered writers/missed native boundaries/edict ABA UNKNOWN');
+    if(laterUses.length===32)laterUses.shift();
+    laterUses.push({pc,sp,generation,entry:use?{...use}:null,
+      pointer:e.get_esi()>>>0,candidateHeadnode:u32((e.get_esi()>>>0)+36),
+      status:'REJECTED',certified:false,reasons});
+    use=null;
+  }
   // These are the starts of complete, call-free native epilogue blocks in
   // the pinned image, not the interior RETs or the post-free CALL block.
   const epilogues=new Map([[0x411a26,'FRESH'],[0x41185b,'CACHE_NO_READ'],[0x411a83,'CACHE_NO_READ']]);
@@ -74,6 +159,8 @@ function attach({getExports, getMemory}) {
   }
   const increment=value=>Math.min(Number.MAX_SAFE_INTEGER,value+1);
   function event(kind, detail, force=false) {
+    if(kind!=='import')generation=increment(generation);
+    if(converted || conversion || startup || use) fault(`${kind}: ${String(detail).slice(0,96)}`);
     revokeSources(`${kind}: ${String(detail).slice(0,96)}`);
     if(load || terminal) {load=null;terminal=null;completionReason=`interrupted: ${kind}: ${detail}`;}
     eventCount=increment(eventCount);
@@ -99,7 +186,17 @@ function attach({getExports, getMemory}) {
   function block(pc, sp) {
     const started=process.hrtime.bigint();
     try {
-      if (invalid) return;
+      // Sticky invalidation forbids completion/certification, but retain
+      // independently checked later point evidence explaining the rejection.
+      if (invalid) {
+        if(![0x4117b0,0x410e50,0x4119b7,0x42b0e4,0x42b124,0x42b128,0x42f0b0,0x42f0da].includes(pc>>>0))return;
+        const {e,b}=validate();
+        if((e.get_eip()>>>0)!==(pc>>>0) || (e.get_esp()>>>0)!==(sp>>>0)) throw Error('not owning CPU block entry');
+        if((pc>>>0)===0x4117b0)generation=increment(generation);
+        if([0x410e50,0x4119b7,0x42b0e4,0x42b124,0x42b128,0x42f0b0,0x42f0da].includes(pc>>>0))
+          continuity(e,b,pc>>>0,sp>>>0);
+        return;
+      }
       const e=getExports(), b=getMemory();
       if (!e || !b) throw Error('missing owning instance/memory');
       if (owner && (owner!==e || buffer!==b)) throw Error('owning instance/memory replaced');
@@ -107,6 +204,10 @@ function attach({getExports, getMemory}) {
       if ((e.get_image_base()>>>0)!==0x400000) throw Error('different module base');
       if ((e.get_eip()>>>0)!==(pc>>>0) || (e.get_esp()>>>0)!==(sp>>>0)) throw Error('not owning CPU block entry');
       if (++calls>10000000) throw Error('bounded callback count exhausted');
+      if((pc>>>0)===0x4117b0) generation=increment(generation);
+      if([0x410e50,0x4119b7,0x42b0e4,0x42b124,0x42b128,0x42f0b0,0x42f0da].includes(pc>>>0)) {
+        validate();continuity(e,b,pc>>>0,sp>>>0);
+      }
       const lifetimePin=lifetimePins.find(p=>p.pc===(pc>>>0));
       if(lifetimePin && sources.some(s=>s.state==='ACQUIRED_POINT')) {
         const original=hash(read(e,b,lifetimePin.pc,lifetimePin.size))===lifetimePin.sha256;
@@ -217,6 +318,12 @@ function attach({getExports, getMemory}) {
     validPointObservations:!invalid && records.length>0,calls,elapsedNs:elapsedNs.toString(),
     coverage:{completedLoad:'UNKNOWN',instructions:'UNKNOWN',allWriters:'UNKNOWN',exclusiveOwner:'UNKNOWN'},
     nativeCompletion:{reason:completionReason,pending:!!load,returns:records.filter(r=>r.kind==='NATIVE_LOAD_RETURN').length},
+    ownerContinuity:{status:converted||sources.length?'REJECTED':'UNKNOWN',certified:false,generation,
+      reason:invalid||'point chain cannot exclude missed boundaries, other writers or edict ABA',
+      conversion:converted?{...converted}:null,
+      startup:startup?{...startup,lastStore:startup.lastStore?{...startup.lastStore}:null}:null,
+      faults:[...continuityFaults],laterUses:laterUses.map(u=>({...u,entry:u.entry?{...u.entry}:null,reasons:[...u.reasons]})),
+      allWriters:'UNKNOWN',edictABA:'UNKNOWN'},
     sourceLifetime:{currentIdentity:'UNKNOWN',laterBytesCertified:false,
       sources:sources.map(s=>({...s})),eventCount:lifetimeEventCount,
       events:lifetimeEvents.map(e=>({...e,affected:[...e.affected]})),
