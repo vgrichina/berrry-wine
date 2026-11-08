@@ -6,9 +6,9 @@
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
-  status: continuous hull and conditional destroyed-window route published; live pane state remains UNKNOWN
+  status: conditional destroyed-window route retained; native identity gap isolated; collision-map resolver active
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed published f330f5c52 once result/final/note/source;25focused+2000independent oracle and lockedbuild PASS,20refs45287B18gzip independentlyHASH. Exact explicit BSP-pinned entity328/model20 destroyed assumption removes only7brushes: standing/crouched x96 step18 and conditional route clear, world edges still block. Intact noPassage stands; native live pane state, actual crossing and death damage source UNKNOWN. Fresh OFFLINE quake2-window-state-observer-2152 thread01a1bd25-583c-74f3-bd7c-2d3feb437472 derives unique native edict identity and bounded read-only state/destruction observation before any original retry; no authored-index/live-index inference. Full27/parity/audio/FPS open.
+  Next: Reviewed7a38ceeeb once result/final/note;30refs1397353B18gzip independently original/stored SHA size CRC PASS,25route+2000oracle+lockedbuild PASS. Native relocated init/free and engine unlink controls prove sampled edict bytes can recur identically; no production observer fabricated. Exact loaded-BSP-to-cmodel20 collision binding and complete generation coverage remain open. Fresh OFFLINE quake2-native-cmodel-binding-2205 PID467971 derives native load/use binding with actual-x86 controls before any original retry. Intact noPassage and conditional f330f5c52 route stand; live pane/crossing/damage source UNKNOWN. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -18,9 +18,9 @@
 
 - [ ] Current TR2 native controls and qualified presentation rates
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
-  status: first linked original shot verified; target-health observer published; visible-hit attempt in progress
+  status: linked original shot and target-health observer retained; visible-target attempt ended without shot
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed published e850fc6a9 and correction093990bdd once;20actual-x86 focused controls+lockedbuild PASS. Exact synchronous damage call/shot RETURN links positive target-health subtraction without extra rows, unchanged2500ms/32rows; no synthetic fixture hit is original gameplay. Independently verified18refs26253B12gzip. Prior original8d1489d904 type1 shot ammo1000->999 target0 HP1000 stands, no hit/kill. Fresh tr2-visible-target-damage-2142 PID434973 thread01a1bd1a-fed1-72d2-b943-a56dd65357e4 authorized ONE fresh remote original with separately reviewed bounded navigation to visible target then sole <=1900ms independently released Control, exact observer and full lifecycle; no repeat empty-alley firing. Renderer discrepancy and Full27/parity/audio/FPS open.
+  Next: Reviewedaf323ab1d once;428refs7588870B295gzip independently original/stored SHA size CRC PASS. ONE original reached empty rising alley with no visible enemy; no Control/shot, target/damage fields NOT PRODUCED. Fourth navigation requested400ms measured401ms exceeds400 cap; no compliance claim and no unchanged retry. Normal ACK15/Chrome0EOF361actualreaps completeTRUE, bx_qh5rjhvx ARCHIVED expiryNULL stop_ebd5e1a09c2a6bc1. Prior8d1489d904 ammo1000->999 target0 and e850fc6a9 native observer stand. Next needs visible-target route plus timing margin and disk headroom; released slot used for Q3 offline causal repair. Renderer discrepancy and Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -42,9 +42,9 @@
 
 - [ ] Drakan current-browser movement, flight and attack
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
-  status: movement/takeoff retained; production async release fixed; browser opt-in integration in progress
+  status: browser observer opt-in and awaited physical release integrated; one fresh original active
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed published296eb101594 once: actual GuestThreadHost dropped-Promise failure reproduced and repaired,59focused including browser-method-loading against LIVE Worker plus56adapter/11imports/lockedbuild PASS;56refs45709B17gzip independently verified. Caller must await cached releasePromise AND inspect live releaseError; physical completion is callback responsibility. Module4b45/compatc3a4 unchanged, cc6a ascent preserved. Fresh2136 stopped without edits at disk floor; after lossless recovery fresh drakan-browser-observer-optin-2140 PID434378 thread01a1bd1a-9726-7db1-8ab3-2b1bae22fd0f connects actual browser host selected compiled owning bytes and async release contract with opt-in NodeVM controls. No original authorized yet; no T-only retry. Full27/parity/audio/FPS/worldZ/sustainedflight open.
+  Next: Reviewed0e2bd19d8 once production/test/note;33refs42585B15gzip independently original/stored SHA size CRC PASS. Actual host snapshots selected canonical4b45 bytes before first compile and binds owning GuestThreadHost mainWorker; cached/late/wrong/sibling bytes fail closed.17actualHost controls plus59worker56adapter11imports and lockedbuild PASS. Physical release Promise awaited with live errors including setup failures. Fresh drakan-browser-original-2203 PID464126 thread01a1bd2f-21e4-7fc2-80ac-e055d02472e8 authorized ONE bounded remote original after fresh native pins and real ordinary-caller integration; T<=1900 release completion<=2000 no replay. Full27/parity/audio/FPS/worldZ/sustainedflight open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
@@ -78,9 +78,9 @@
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
-  status: owning GL readiness corrected; SoftwareGL world/torch verified; paired actions and WebGL torch open
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Resolve the observed post-input page-owner capture latency locally before another Q3 original attempt; retain budgets and sticky UNKNOWN. Publishedc142f0785 fixes run-local readiness using completed owning GL draws/presentation, actual context/module proof and software legacy-transport attachment; production Worker positive/negative controls pass on both backends. Current SoftwareGL courtyard/torch renders, but ammo100 and intervening deaths confound movement/fire. WebGL reaches level selection then g-open-difficulty's post-input capture exceeds20s; independent release completes, final ACK absent/UNKNOWN, no replay. Coordinator reviewed courtyard/torch/menu and independently verified295references/265hashes; normal archived stop. Note: docs/re-notes/q3-gl-readiness-gameplay-20261108.md. Fresh Warcraft producer-readiness/current-objective work replaces this coverage lane; full27/parity/FPS/audio remain open.
+  status: owning GL readiness retained; offline post-input capture latency repair active
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
+  Next: Fresh OFFLINE q3-owner-capture-latency-2203 PID464127 thread01a1bd2f-2201-7361-ab69-e149a597c2ae traces preserved g-open-difficulty capture stall and actual consumer dependencies; require causal oldFAIL/newPASS, unchanged20s action/2s releaseACK/50s request budgets and sticky UNKNOWN, no timeout enlargement. Prior c142f0785 actual SoftwareGL courtyard/torch and WebGL level selection stand; post-input capture timed out after physical release, final ACK UNKNOWN, no replay. No new original authorized for this lane. Full27/parity/FPS/audio open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
