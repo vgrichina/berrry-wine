@@ -149,6 +149,14 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   order before the draw. This repairs an extraction regression where this path
   referenced the bridge's out-of-scope `ensureColor` helper. The native color
   surface regression exercises sampling rendered pixels through this boundary.
+  `DrawProducer.nativeDrawContext` now also owns native color/depth attachment
+  and scissor decoding, shared by the live bridge and `captureNativeDraw`.
+  Named colors require the explicit resolver; returned color metadata is copied,
+  and target-specific dimensions govern default scissor bounds. A real Worker
+  captures through this native entry point before guest mutation of vertex,
+  constant, texture, depth-identity and scissor bytes, then verifies the original
+  packet retains the original state. This removes a second decoding path before
+  transport activation; it does not activate asynchronous guest draws by itself.
   A real worker test captures from shared memory, then replaces guest vertices,
   constants and texels before consuming the first packet. This separation is
   tested but not yet wired into the guest Worker transport. That wiring must

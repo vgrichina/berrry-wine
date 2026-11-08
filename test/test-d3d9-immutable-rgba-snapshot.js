@@ -354,24 +354,29 @@ test('independent producer incarnations cannot alias resident textures on one de
   } finally {await Promise.all(workers.map(worker=>worker.terminate()));await f.bridge.close();}
 });
 
-test('standalone worker producer owns vertices, constants and textures before guest reuse', async () => {
+test('native worker producer owns draw data and attachment state before guest reuse', async () => {
   const {Worker:Thread}=require('node:worker_threads');
   const f=fixture({guestMemory:new SharedArrayBuffer(262144)});
   const view=new DataView(f.memory);
   new Uint8Array(f.memory,30000,48).fill(0x5a);
   view.setFloat32(f.program+16,1.25,true);
+  const depth=80000,output=81000;
+  f.set(f.program+21752,depth);
+  for(const [offset,value]of [[8,7],[12,0xd3d90005],[20,2],[24,2],[28,75],[36,99]])f.set(depth+offset,value);
+  f.set(f.desc+40,output);f.set(output+256+174*4,1);
+  f.set(f.program+22016,1);f.set(f.program+22008,2);f.set(f.program+22012,2);
   const worker=new Thread(`
     const {parentPort,workerData:d}=require('node:worker_threads');
     const {DrawProducer}=require(d.module);
     const producer=new DrawProducer({getMemory:()=>d.memory,guestToWasm:p=>p,
       createCanvas(){throw Error('producer attempted rendering');}});
     const entry={resident:new Map(),residentBytes:0};
-    const context={entry,address:d.desc,program:d.program,id:7,width:2,height:2,depthAttachment:null};
+    const context={entry,address:d.desc};
     try {
-      const first=producer.captureDraw(context);
+      const first=producer.captureNativeDraw(context);
       parentPort.postMessage({captured:true});
       parentPort.once('message',()=>{
-        try { const next=producer.captureDraw(context);
+        try { const next=producer.captureNativeDraw(context);
           parentPort.postMessage({first:first.payload,next:next.payload});
         } catch(e) { parentPort.postMessage({error:e.stack}); }
       });
@@ -387,6 +392,7 @@ test('standalone worker producer owns vertices, constants and textures before gu
           new Uint8Array(f.memory,30000,48).fill(0x3c);
           view.setFloat32(f.program+16,2.5,true);
           f.fill(f.texels,16384,[90,80,70,255]);f.set(f.mip+28,2);
+          f.set(depth+36,100);f.set(f.program+22008,1);
           worker.postMessage('capture-again');
         } else {clearTimeout(timer);resolve(message);}
       });
@@ -395,9 +401,35 @@ test('standalone worker producer owns vertices, constants and textures before gu
     assert.equal(result.next.vertices[0],0x3c);
     assert.equal(result.first.vertexConstants[0],1.25);
     assert.equal(result.next.vertexConstants[0],2.5);
+    assert.equal(result.first.depthAttachment.id,99);
+    assert.equal(result.next.depthAttachment.id,100);
+    assert.equal(result.first.scissor.right,2);
+    assert.equal(result.next.scissor.right,1);
     assert.deepEqual([...result.first.textures[0].levels[0].pixels.slice(0,4)],f.rgba);
     assert.deepEqual([...result.next.textures[0].levels[0].pixels.slice(0,4)],[90,80,70,255]);
   } finally {await worker.terminate();await f.bridge.close();}
+});
+
+test('native draw capture validates attachments and uses resolved target bounds',async()=>{
+  const f=fixture(),producer=new DrawProducer({getMemory:()=>f.memory,guestToWasm:p=>p});
+  const entry={resident:new Map(),residentBytes:0},context={entry,address:f.desc};
+  try{
+    f.set(f.program+22020,90000);
+    assert.throws(()=>producer.captureNativeDraw(context),/color resource resolver required/);
+    const target={id:19,width:8,height:4,format:22};
+    const resolveColor=p=>{assert.equal(p,90000);return target;};
+    const output=81000;f.set(f.desc+40,output);f.set(output+256+174*4,1);
+    const {payload}=producer.captureNativeDraw({...context,resolveColor});
+    target.width=1;
+    assert.equal(payload.colorAttachment.width,8);
+    assert.equal(payload.scissor.right,8);
+    assert.equal(payload.scissor.bottom,4);
+    f.set(f.program+22016,1);f.set(f.program+22008,9);f.set(f.program+22012,4);
+    assert.throws(()=>producer.captureNativeDraw({...context,resolveColor}),/scissor rectangle/);
+    f.set(output+256+174*4,0);f.set(f.program+21752,80000);
+    f.set(80012,0xd3d90005);f.set(80008,8);
+    assert.throws(()=>producer.captureNativeDraw({...context,resolveColor}),/depth attachment identity/);
+  }finally{await f.bridge.close();}
 });
 
 test('replacement at the same mip address cannot inherit a sparse fingerprint collision', async () => {
