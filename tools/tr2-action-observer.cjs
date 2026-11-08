@@ -3,7 +3,7 @@
 // No guest setters, translator calls, tracing flags, breakpoint or input changes.
 function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIdentity,
   expectedEndpoint,exeSha256,maxMs=2500,maxRecords=32,defer=false,stopAfterPair=false,
-  now=()=>performance.now(),schedule=setTimeout,cancel=clearTimeout}={}) {
+  weapon=false,now=()=>performance.now(),schedule=setTimeout,cancel=clearTimeout}={}) {
   const SHA='0811efa84bfab8c458b9e29976088152db4c14601a99ca4910c75a2d009233aa';
   if(exeSha256!==SHA||workerSlot!==0||endpointIdentity!==expectedEndpoint||
      !Number.isSafeInteger(endpointIdentity)||endpointIdentity<1)throw Error('TR2 owner/image mismatch');
@@ -26,24 +26,108 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
     [0x44d18a,'668b0c45147f4600'],[0x44d21d,'8b0c8540b05100']];
   function verify(){for(const [a,hex] of pins)if(read(a,hex.length/2).map(b=>b.toString(16).padStart(2,'0')).join('')!==hex)throw Error('TR2 loaded instruction mismatch');}
   verify();
+  if(typeof weapon!=='boolean')throw Error('TR2 weapon option');
+  // Exact original windows: publication, callers, dispatch, arm/shot gates.
+  const weaponPins=[
+    [0x44dd55,'8b5424145f33c05ea0f8924d005d891578b151005b83c454'],
+    [0x44dd63,'891578b151005b83c454c39090e82b8b0000a1a8b151006a'],
+    [0x44d494,'a12cae4d0085c0741533c0891d78b15100a0f8924d005f5e'],
+    [0x44d49f,'891d78b15100a0f8924d005f5e5d5b83c454c3f6057ab051'],
+    [0x41427a,'e821900300393d18874d000f85c00200008b7424183bf774'],
+    [0x411fd3,'e8c8b2030085c00f8527010000a178b15100a8400f852a01'],
+    [0x4220a2,'e8f9b10200a120894d003bc5a178b15100741d3bc50f858a'],
+    [0x42e640,'53555633f666393508175200577e0766ff0d081752006639'],
+    [0x42e68d,'0fbf056216520083f8050f87a7020000ff248528eb420066'],
+    [0x42e775,'a11c175200b2403bc6740f841578b151000fbf0572305200'],
+    [0x42e803,'39307f358b0d3c1752005683c1348930516a30e8550b0100'],
+    [0x42e807,'8b0d3c1752005683c1348930516a30e8550b010083c40c68'],
+    [0x42e83c,'0fbfc18d48ff83f9060f87f900000033d28a91a4eb4200ff'],
+    [0x42e85a,'50e8d0eaffff83c4045f5e5d5bc350e802d4ffff83c4045f'],
+    [0x42eb28,'76e84200e7e84200a4e6420019e7420075e742006be74200'],
+    [0x42eb98,'5ae8420068e8420044e94200000000010101019090909090'],
+    [0x42eba4,'000000010101019090909090a08a165200b9a06c4600a804'],
+    [0x4275a7,'e8947000008b47646a0050e8b9dafeff83c4085f5ec3e87e'],
+    [0x4275bd,'e87e7000005f5ec39090909090909090909090a178b15100'],
+    [0x431752,'e8e9ceffff8b4e646a0051e80e39feff83c4085f5ec39090'],
+    [0x43210c,'e82fc5ffff8b57646a0052e8542ffeff83c4085f5e5dc390'],
+    [0x42d330,'56578b7c240c8d047fc1e0032bc78d3445d06a4600a078b1'],
+    [0x42d345,'a078b15100a840740b56e8dc19000083c404eb0ac705e016'],
+    [0x42d452,'57e86800000083c40466833d0817520000750a66833d1a17'],
+    [0x42d4c0,'51538b5c240c8b0de0165200558d045b56668b350e175200'],
+    [0x42d4df,'66392d121752005766897424188d3c45d06a4600a078b151'],
+    [0x42d4f3,'a078b151007550a840740485c974486683fe187c0ac74424'],
+    [0x42d502,'6683fe187c0ac744241804000000eb0f6685f67e0f6683fe'],
+    [0x42d54a,'6685f67c0f6683fe047d0dff442418e9030100006683fe04'],
+    [0x42d562,'0f85a7000000a8407475a13c175200668b50426603151417'],
+    [0x42d56c,'a13c175200668b5042660315141752006689542410668b15'],
+    [0x42d595,'e8d61c000083c41085c07433668b472a8b0d3c17520066a3'],
+    [0x42d59a,'83c41085c07433668b472a8b0d3c17520066a31a17520083'],
+    [0x42d60f,'6683fe187c5183fb0375238b153c1752006a000fbf472c83'],
+    [0x42d680,'a078b1510083c40866833d00175200007545a840740485c9'],
+    [0x42d69a,'6683fe187c07be04000000eb0c6685f67e076683fe047f01'],
+    [0x42d6d7,'6685f67c0c6683fe047d0a46e9f10000006683fe040f85a5'],
+    [0x42d6ec,'0f85a5000000a8407473a13c175200668b50426603150217'],
+    [0x42d6f6,'a13c175200668b5042660315021752006689542410668b15'],
+    [0x42d71f,'e84c1b000083c41085c07437668b472a6685ed66a3081752'],
+    [0x42d724,'83c41085c07437668b472a6685ed66a30817520075198b0d'],
+    [0x42d797,'6683fe187c3c83fb0375238b153c1752006a000fbf472c83'],
+    [0x42ed30,'8b0de016520083ec245633f63bce75216689351217520066'],
+    [0x42eed0,'83ec3ca13c1752005355568b483457894c242c8b483881e9'],
+    [0x42f270,'8b54240481ec54020000538d42fe555683f803577773ff24'],
+    [0x42f2f9,'b81c175200c7051c175200e80300008b0833db3bcb0f8ead'],
+    [0x42f308,'8b0833db3bcb0f8ead0200004989088d0452c1e0032bc28b'],
+    [0x42f5c1,'5f5e89185d33c05b81c454020000c38df24200a8f24200de'],
+    [0x42ea88,'663d04000f85f4fbfffff70578b151000000080074186897'],
+    [0x42eab6,'a078b15100668b0d64165200a820755666390d6616520075'],
+    [0x42eb1c,'66893d62165200e965fbffff76e84200e7e84200a4e64200'],
+    [0x42edec,'668b4c240e668b54240c83c40885c00f84a20000008b4424'],
+    [0x42ee40,'66393500175200741f663b50087c12663b500a7f0c663b48'],
+    [0x42eea3,'6689351217520066893500175200668915e416520066890d'],
+    [0x42e7ba,'841578b15100747a0fbfc183c0fe83f8057731ff248580eb'],
+    [0x42eb80,'dbe74200e2e74200d4e74200f7e74200e9e74200f0e74200'],
+    [0x42f505,'e8d600000083c40cb8010000005f5e5d5b81c454020000c3'],
+    [0x42f5e0,'568b742408578b7c2414668b46226685c07e0e0fbfc03bc7']];
+  function verifyWeapon(){for(const [a,hex] of weaponPins)if(read(a,hex.length/2).map(b=>b.toString(16).padStart(2,'0')).join('')!==hex)throw Error('TR2 loaded weapon instruction mismatch');}
+  if(weapon)verifyWeapon();
   const started=now(),report={version:2,workerSlot,endpointIdentity,exeSha256,started,
     deadline:started+maxMs,status:'active',qualified:false,records:[],boundaries:0,
     workBound:'at most one run(1) per remaining caller block, deadline checked at every boundary; no lifetime boundary quota',
-    scope:'owning CPU Worker JS run boundaries only; internal WAT reentry and other threads unobserved; no weapon/aim or backend qualification'};
+    weapon,scope:'owning CPU Worker JS boundaries; internal WAT reentry/other threads unobserved; snapshots and exact caller links only, no hit/kill/effective aim/backend qualification'};
   let armed=!defer;
   let timer,lastBlocks=null,last=null,poll=null,action=null,restored=false;
+  let chain=null,gun=null,shot=null;
+  const seen=new Set();
+  const s16=a=>(u16(a)<<16)>>16;
+  function state(){
+    const item=u32(0x52173c);
+    return {input:u32(0x51b178),gunStatus:s16(0x521662),gunType:s16(0x521664),requested:s16(0x521666),
+      lastType:s16(0x521668),water:s16(0x52166c),waterDistance:u32(0x52168c)|0,target:u32(0x5216e0),targetAngles:[s16(0x5216e4),s16(0x5216e6)],
+      arms:[0x5216f8,0x52170a].map(a=>({frame:s16(a+4),lock:s16(a+8),yaw:s16(a+10),pitch:s16(a+12),flash:s16(a+16)})),
+      ammo:[0x52171c,0x521720,0x521724,0x521728,0x52172c,0x521730,0x521734].map(u32),
+      targetHealth:u32(0x5216e0)?s16(u32(0x5216e0)+0x22):null,
+      item,itemState:item?{health:s16(item+0x22),animation:s16(item+0x14),frame:s16(item+0x16),bodyState:s16(item+0xe),yaw:s16(item+0x42)}:null};
+  }
+  function weaponRow(kind,pc,esp,extra={}){
+    verifyWeapon();
+    if(seen.has(pc))return true;
+    seen.add(pc);return emit({kind,pc,esp,actionRecord:chain?.index??null,...extra,state:state()});
+  }
   const facade=Object.assign(Object.create(null),e),wrapped={exports:facade};
   function finish(reason){
     if(report.status!=='active')return report;
-    report.status=reason;report.ended=now();report.qualified=(reason==='removed'||reason==='witnessed')&&!action&&report.records.some(r=>r.kind==='action'&&r.poll!==null);
+    report.status=reason;report.ended=now();report.qualified=(reason==='removed'||reason==='witnessed')&&!action&&!shot&&!gun&&report.records.some(r=>r.kind==='action'&&r.poll!==null);
+    report.consumptionQualified=weapon&&report.qualified&&report.records.some(r=>{
+      const a=report.records[r.actionRecord],p=a&&report.records[a.poll];
+      return r.kind==='weapon-return'&&a?.action&&a.keyResult&&p?.hresult===0&&p.ctrl.some(b=>b&128);
+    });
     report.pollObserved=report.records.some(r=>r.kind==='poll');
     report.noPollUnqualified=!report.pollObserved;
-    report.pending=!!action;cancel(timer);
+    report.pending=!!action;report.pendingWeapon=!!gun;report.pendingShot=!!shot;cancel(timer);
     if(getInstance()===wrapped){replaceInstance(original);restored=true;}
-    else {report.status='owner-replaced';report.qualified=false;}
+    else {report.status='owner-replaced';report.qualified=false;report.consumptionQualified=false;}
     report.removed=restored;return report;
   }
-  function emit(row){if(report.records.length>=maxRecords){finish('overflow');return false;}report.records.push({at:now(),wallAt:Date.now(),boundary:report.boundaries,...row});return true;}
+  function emit(row){if(report.status!=='active')return false;if(report.records.length>=maxRecords){finish('overflow');return false;}report.records.push({at:now(),wallAt:Date.now(),boundary:report.boundaries,...row});return true;}
   function bitmap(){
     const v=rpc.views(memory,workerSlot).pub,s=rpc.SLOT,g=Atomics.load(v,s.GEN);
     const keys=[17,162,163].map(k=>({vk:k,down:!!(Atomics.load(v,s.KEYS+(k>>>5))&(1<<(k&31)))}));
@@ -59,7 +143,57 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
       ++report.boundaries;
       const pc=e.get_eip()>>>0,esp=e.get_esp()>>>0,stamp=pc+':'+esp;
       if(stamp===last)return;last=stamp;
-      if(pc===0x44d2a0){poll=null;action=null;}
+      if(pc===0x44d2a0){if(chain)return finish('superseded');poll=null;action=null;chain=null;gun=null;shot=null;seen.clear();}
+      if(weapon&&chain){
+        // Caller return is observable even when the straight store/RET epilogue
+        // folds inside one run block. Match this update's exact saved stack.
+        if([0x41427f,0x411fd8,0x4220a7].includes(pc)){
+          if(pc!==chain.caller||esp!==chain.esp+0x6c)throw Error('TR2 input return stack mismatch');
+          if((u32(0x51b178)&64)!==(report.records[chain.index].ebx&64))throw Error('TR2 published Action mismatch');
+          if(!weaponRow('input-published',pc,esp))return;
+          chain.published=true;chain.mask=u32(0x51b178);
+        }
+        if(pc===0x42e640&&chain.published){
+          if(gun)throw Error('TR2 nested weapon update');
+          const caller=u32(esp);
+          if(![0x4275ac,0x4275c2,0x431757,0x432111].includes(caller))throw Error('TR2 weapon caller mismatch');
+          if(u32(0x51b178)!==chain.mask)throw Error('TR2 input changed before weapon entry');
+          gun={esp,caller,paired:false,aim:false};weaponRow('weapon-entry',pc,esp);
+        }
+        if(gun){
+          if([0x42ea88,0x42eab6,0x42eb1c,0x42e68d,0x42e775,0x42e803,0x42e807,0x42e83c].includes(pc))weaponRow('weapon-gate',pc,esp);
+          if([0x42edec,0x42ee40,0x42eea3].includes(pc))weaponRow('aim-gate',pc,esp,{losResult:pc===0x42edec?e.get_eax()>>>0:null});
+          if(pc===0x42d330){
+            if(u32(esp)!==0x42e860||esp!==gun.esp-24)throw Error('TR2 paired-arm caller mismatch');
+            gun.paired=true;weaponRow('paired-arm-entry',pc,esp,{type:u32(esp+4)});
+          }
+          if(pc===0x42d4c0){
+            if(!gun.paired||u32(esp)!==0x42d458||esp!==gun.esp-40)throw Error('TR2 arm caller mismatch');
+            gun.aim=true;weaponRow('aim-updated',pc,esp);
+          }
+          if([0x42d502,0x42d54a,0x42d562,0x42d56c,0x42d60f,0x42d69a,0x42d6d7,0x42d6ec,0x42d6f6,0x42d797].includes(pc))weaponRow('arm-gate',pc,esp);
+          if(pc===0x42f270){
+            const caller=u32(esp);
+            if(!gun.aim||![0x42d59a,0x42d724].includes(caller)||esp!==gun.esp-80)throw Error('TR2 shot caller mismatch');
+            if(shot)throw Error('TR2 nested shot');
+            shot={esp,caller,target:u32(esp+8)};seen.delete(pc);
+            weaponRow('shot-entry',pc,esp,{caller,type:u32(esp+4),target:u32(esp+8),source:u32(esp+12),angles:read(u32(esp+16),4)});
+          }
+          if(shot&&pc===shot.caller){
+            if(esp!==shot.esp+4)throw Error('TR2 shot return stack mismatch');
+            // Retain both arms even though the shared entry PC is identical.
+            seen.delete(pc);weaponRow('shot-return',pc,esp,{result:e.get_eax()>>>0,target:shot.target,targetHealth:shot.target?s16(shot.target+0x22):null});shot=null;
+          }
+          if(pc===gun.caller){
+            if(esp!==gun.esp+4||shot)throw Error('TR2 weapon return stack mismatch');
+            weaponRow('weapon-return',pc,esp);gun=null;
+            if(stopAfterPair)finish('witnessed');
+          }
+        }
+        if(report.status!=='active')return;
+      }
+      // Once paired, spend the same finite interval on its downstream path.
+      if(weapon&&chain)return;
       if(pc===0x447206||pc===0x447236){
         verify();
         // Wrapper saves EDI. Its caller must be this input update.
@@ -83,8 +217,13 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
         emit({kind:'action',pc,esp,poll:a.poll,keyResult:a.keyResult,binding:a.binding,ebx,action:!!(ebx&64),orExecuted:!!a.keyResult,
           outcome:a.poll===null?'no-poll-unqualified':report.records[a.poll].hresult!==0?'poll-failed':
             !report.records[a.poll].ctrl.some(b=>b&128)?'poll-without-control':!(ebx&64)?'binding-action-clear':'action-set-weapon-aim-unqualified'});
+        if(weapon&&report.status==='active'&&a.poll!==null){
+          const caller=u32(a.esp+0x68);
+          if(![0x41427f,0x411fd8,0x4220a7].includes(caller))throw Error('TR2 input caller mismatch');
+          chain={index:report.records.length-1,esp:a.esp,caller,published:false};
+        }
         action=null;poll=null;
-        if(stopAfterPair&&a.poll!==null)finish('witnessed');
+        if(stopAfterPair&&!weapon&&a.poll!==null)finish('witnessed');
       }
     }catch(error){report.error=String(error);finish('unobservable');}
   }
@@ -126,9 +265,9 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
 function workerSource(options){return `(()=>{if(globalThis.__tr2Action)throw Error('TR2 observer already used');globalThis.__tr2Action=(${install.toString()})({getInstance:()=>instance,replaceInstance:v=>{instance=v},memory,rpc:GuestRpc,workerSlot,endpointIdentity,...${JSON.stringify(options)}});return globalThis.__tr2Action.status()})()`;}
 // Called inside the existing reviewed/native admission. The caller's hold()
 // keeps the independent release timer and its unchanged input policy.
-async function observedHold({evaluate,workerSession,expectedEndpoint,exeSha256,hold,record}){
+async function observedHold({evaluate,workerSession,expectedEndpoint,exeSha256,hold,record,weapon=false}){
   let receipt,report,armed=false;
-  await evaluate(workerSource({expectedEndpoint,exeSha256,defer:true,stopAfterPair:true}),workerSession);
+  await evaluate(workerSource({expectedEndpoint,exeSha256,defer:true,stopAfterPair:true,weapon}),workerSession);
   try {receipt=await hold(async()=>{
     if(armed)throw Error('TR2 hold armed twice');
     await evaluate('globalThis.__tr2Action.arm()',workerSession);armed=true;
@@ -141,9 +280,10 @@ async function observedHold({evaluate,workerSession,expectedEndpoint,exeSha256,h
   const actions=report.records.filter(r=>r.kind==='action'&&r.poll!==null&&
     polls.includes(report.records[r.poll])&&r.wallAt>=receipt.started&&r.wallAt<receipt.releaseAt);
   const physical=receipt.samples.some(s=>s.whollyDuringHold&&s.physical?.some(k=>k.key===17&&k.state===0x8000));
-  const result={receipt,report,physicalControlSample:physical,pollsDuringHold:polls.length,actionsDuringHold:actions.length,
-    qualified:armed&&report.qualified&&physical&&actions.length>0,
-    scope:'native delivery/actual poll/binding/Action only; weapon/aim and CPU/WebGL2 backend authority unchanged'};
+  const consumption=report.records.filter(r=>r.kind==='weapon-return'&&actions.includes(report.records[r.actionRecord])&&r.wallAt>=receipt.started&&r.wallAt<receipt.releaseAt);
+  const result={receipt,report,physicalControlSample:physical,pollsDuringHold:polls.length,actionsDuringHold:actions.length,consumptionsDuringHold:consumption.length,
+    qualified:armed&&report.qualified&&physical&&actions.length>0&&(!weapon||(report.consumptionQualified&&consumption.length>0)),
+    scope:weapon?'native poll/Action through exact linked weapon return; recorded shot/aim state only, no hit/kill/effective aim/backend proof':'native delivery/actual poll/binding/Action only; weapon/aim and CPU/WebGL2 backend authority unchanged'};
   await record('correlation',result);
   return result;
 }
