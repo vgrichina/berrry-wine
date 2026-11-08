@@ -521,6 +521,83 @@ async function brokerProtocol(){
   assert.strictEqual(Atomics.load(v.i32,RPC.SLOT.STATUS),RPC.STATUS_RESP);assert.strictEqual(v.i32[RPC.SLOT.RESULT],73);
   assert.strictEqual(new DataView(memory.buffer).getUint32(1024,true),17);assert.strictEqual(errors.length,0);
 }
+async function publishedBrokerProtocol(){
+  const {PublicationQueue}=require('../lib/render-worker'),{Worker}=require('worker_threads');
+  const queue=new PublicationQueue(new SharedArrayBuffer(64+4096));
+  const memory={buffer:new SharedArrayBuffer(RPC.RPC_BASE+RPC.RPC_STRIDE*RPC.RPC_MAX_SLOTS)};
+  const sigs={gpu_gl_call:{params:['i32','i32','i32'],results:['i32']},
+    glide_submit:{params:['i32','i32','i32'],results:['i32']}};
+  const events=[],marks=new Int32Array(new SharedArrayBuffer(4));
+  const broker=RPC.createMainBroker(memory,{
+    glide_submit(op){events.push(op===1?'glide-open':'glide-read');return 1;},
+    glide_batch(bytes){events.push([...bytes]);return 1;},
+    gpu_gl_batch(desc,owner){
+    assert.strictEqual(desc.pool,undefined,'publication must not mix with native buffer leases');
+    return Stream.replay(Stream.memoryBatch(desc.commandBuffer||memory.buffer,desc.memoryOffset,desc.bytes),(op,aux,capture)=>{
+      if(op===51){events.push('bind');return 1;}
+      if(op===GL.CALL_INDEX.glTexEnvfv){
+        assert.strictEqual(Atomics.load(marks,0),1,'window marked before asynchronous replay');
+        events.push(new DataView(capture.buffer).getFloat32(capture.pointerOffset,true));return 0;
+      }
+      if(op===12){events.push('query');return 73;}
+      throw Error('unexpected published opcode '+op);
+    });
+  }},sigs,{renderPublication:queue.buffer});
+  const code=`const {parentPort,workerData:d}=require('worker_threads');
+    const RPC=require(d.rpc),S=require(d.stream),m={buffer:d.memory},v=new DataView(d.memory);
+    const softwareConfig=new Int32Array(new SharedArrayBuffer(16));
+    const built=RPC.createWorkerImports(m,d.sigs,msg=>parentPort.postMessage(msg),{
+      slot:0,renderPublication:d.queue,publishOpenGL:true,softwareGLConfig:softwareConfig,getExports:()=>({
+        gl_wat_stream_pool_version:()=>1,gl_wat_stream_pool_base:i=>512+i*2097152,gl_wat_stream_capacity:()=>2097152,
+        gl_window_set_gpu_owned:(hwnd,value)=>{if(hwnd!==8)throw Error('bad drawable');Atomics.store(new Int32Array(d.marks),0,value);return 1;}
+      })});
+    function make(op,args,aux=0,floats=[]){
+      new Uint8Array(d.memory,512,128).fill(0);const n=36+args.length*4+floats.length*4;
+      v.setUint32(512,n,true);v.setUint32(516,op,true);v.setUint32(520,aux,true);v.setUint32(524,4+args.length*4,true);
+      args.forEach((x,i)=>v.setUint32(548+i*4,x,true));
+      if(floats.length){const off=36+args.length*4;v.setUint32(528,1234,true);v.setUint32(532,floats.length*4,true);v.setUint32(536,off,true);v.setUint32(540,1,true);floats.forEach((x,i)=>v.setFloat32(512+off+i*4,x,true));}
+      return built.imports.host.gpu_gl_call(S.WAT_STREAM_FLUSH_OPCODE,512,n);
+    }
+    try{if(make(51,[10,20],8)!==1)throw Error('bind failed');
+      make(147,[0x2300,0x2200,1234],0,[0.25]);make(147,[0x2300,0x2200,1234],0,[0.75]);
+      const value=make(12,[]),glide=built.imports.host.glide_submit;
+      softwareConfig[0]=1;const asyncBefore=built.stats.async;
+      make(147,[0x2300,0x2200,1234],0,[0.5]);
+      if(built.stats.async!==asyncBefore)throw Error('software GL metadata bypassed');
+      glide(1,900,0);new Uint8Array(d.memory,900,3).set([7,8,9]);
+      glide(0,900,3);new Uint8Array(d.memory,900,3).fill(99);glide(9,900,3);
+      parentPort.postMessage({done:true,value,stats:built.stats});
+    }catch(error){parentPort.postMessage({error:error.stack});}`;
+  const worker=new Worker(code,{eval:true,workerData:{rpc:require.resolve('../lib/guest-rpc'),stream:require.resolve('../lib/gl-command-stream'),memory:memory.buffer,queue:queue.buffer,marks:marks.buffer,sigs}});
+  const timeout=setTimeout(()=>queue.fail(),5000);
+  try{
+    const result=await new Promise((resolve,reject)=>{
+      worker.on('error',reject);worker.on('message',msg=>{
+        if(msg.done)resolve(msg);else if(msg.error)reject(new Error(msg.error));
+        else if(msg.t==='renderPublished')broker.drainPublications().catch(reject);
+        else if(msg.t==='glBatch')broker.serveGlBatch(msg);
+        else if(msg.t==='rpc')broker.serveRpc(msg.slot);
+      });
+    });
+    assert.strictEqual(result.value,73,'query keeps synchronous result');
+    assert.deepStrictEqual(events,['bind',0.25,0.75,'query',0.5,'glide-open',[7,8,9],'glide-read'],
+      'GL and Glide own their inputs and synchronous queries/readbacks cannot overtake publications');
+    assert.strictEqual(result.stats.async,3);assert.strictEqual(result.stats.sync,5);
+  }finally{clearTimeout(timeout);queue.fail();await worker.terminate();}
+  const packed=new SharedArrayBuffer(512);
+  assert(Stream.publicationSafe(scalarBatch(packed,0,'glEnable',[0x0de1])));
+  assert(!Stream.publicationSafe(scalarBatch(packed,0,'glFinish',[])));
+  assert(!Stream.publicationSafe(scalarBatch(packed,0,'glGetError',[])));
+  const borrowed=vectorBatch(packed,0,'glTexEnvfv',[0x2300,0x2200,1234],[1]);
+  new DataView(packed).setUint32(28,Stream.FLAG_POINTER_BORROW,true);
+  assert(!Stream.publicationSafe(borrowed),'borrowed data retains synchronous fallback');
+  const f=await queuedFixture(),owned=vectorBatch(new ArrayBuffer(128),0,'glTexEnvfv',[0x2300,0x2200,1234],[0.5]);
+  owned.owned=true;
+  const done=f.bridge.replay(owned,1);await tick();
+  assert.strictEqual(f.requests[1].message.commandBuffer,owned.buffer,
+    'owned publications retain their buffer on synchronous adapter fallback');
+  f.complete(1);await done;await f.bridge.close();
+}
 function bitmapWorkerCoherence(){
   // Exercise the production endpoint surface adapter without a GPU: a bitmap
   // publish followed by a seed in one batch must read the just-written bytes.
@@ -579,7 +656,7 @@ function legacyUnavailableFallback(){
   adapter.destroy();
 }
 const watchdog=setTimeout(()=>{console.error('GL shared render worker protocol timed out');process.exitCode=1;},10000);
-(async()=>{await nullRendererProtocol();await hostProtocol();await brokerProtocol();bitmapWorkerCoherence();
+(async()=>{await nullRendererProtocol();await hostProtocol();await brokerProtocol();await publishedBrokerProtocol();bitmapWorkerCoherence();
   await queuedSnapshotsAndOrder();await queuedBarriersAndFallbacks();await queuedFailure();await queuedClose();
   await queuedSynchronization();await queuedOwnerInvalidation();await queuedPackedPayload();await queuedWindowLifetime();
   await queuedCopiedVectors();await queuedMalformedVectors();

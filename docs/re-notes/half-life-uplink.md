@@ -3182,3 +3182,121 @@ build. Release uses its WebGL1 path, integration now uses WebGL2. Thus this
 confirms a substantial build discrepancy, not an isolated optimization ratio
 or an identical-frame comparison. Phone left on the faster release-based
 local build. Neither these fixes nor the integration build were deployed.
+
+### 2026-11-07: Per-call GL publication defeats stream batching
+
+Evidence: `scratch/runs/20261107-uplink-gl-roundtrips`. Page-side
+`serveGlBatch` counters on integration `b8a3bfc94`, Android Chrome157,
+OpenGL1024x768/WebGL2, isolated Workers, Auto50k. The first 60-second sample
+still showed the intro overlay and is excluded from gameplay comparisons.
+The subsequent visible corridor sample produced 28 frames in 60.000605s
+(0.467 FPS), 61,734 batches and exactly 61,734 command records: one command
+per batch, 2,204.79 blocking admissions per frame. Average batch size was
+766.66 bytes; the normal 512 KiB stream threshold was effectively bypassed.
+There were 1,481.61 packed draws, 156.07 texture binds, 96.89 disables and
+91.57 depth-mask changes per frame. The scene has animated lighting and
+ceiling debris; its later phase and counting overhead mean this is not an
+exact repeat of the earlier 0.817 FPS interval.
+
+`gl_object_leave` flushes every completed outer GL call before releasing
+the process object lock. Each flush enters `guest-rpc.js`'s `glBatch`
+`waitForResponse`, even if the render queue acknowledges before GPU work
+finishes. Therefore extending async draw eligibility cannot remove these
+thousands of page admissions. Initial eager publication entered with
+`a08985c2b2`; the later outer-lock placement fixed the real shared-texture
+visibility failure documented in `gl-shared-texture-visibility-20261103.md`.
+Do not simply revert it: another producer cannot drain private WASM globals,
+and completed texture uploads must precede the other producer's draw.
+
+The diagnostic variant removes only the outer `gl_wat_stream_flush` call,
+retaining state publication, locks, threshold flushes and explicit barriers.
+It is deliberately not safe for general cross-producer GL sharing and must
+not ship. The canonical rebuilt control, including the original region stamp,
+is byte-identical to the tested native module (`e49dbb3241327a0fcf74da39af963355c3bc3379bba24796c02572303dfcf4ab`).
+Diagnostic SHA256: `b7f92d00449b26c3423614541ac206cae600cd9d1077c615ca24a4e33ce983cc`.
+CDP response interception serves it for this browser launch only; the dev
+server's normal module is unchanged.
+
+Native function attribution is now resolved by a compiler name-section build
+whose non-custom sections match that control byte-for-byte. In the previous
+valid integration profile, `uop_fast` accounts for 3.09% of all guest samples,
+`gl_list_intercept`1.16%, `run`1.04%, `win32_dispatch_inner`0.96% and
+`gl_wat_encode_call_locked`0.94%; no individual instruction handler explains
+the 69.51% RPC share. These are sampling shares including waits, not hardware
+CPU utilization. Source-text function indices were not sufficient because
+the compiler inserts additional functions.
+
+The isolated no-outer-flush run produced 491 frames / 60.003165s = 8.183 FPS,
+2,178 batches, 995,755 commands: 4.44 batches/frame and 457.19 commands/batch.
+The loaded response hash matches the diagnostic module above. Both gameplay
+windows remained visible, with no page errors, and before/after captures show
+the same textured corridor/HUD. Lighting animation differs; commands/frame
+also differ (2,205 control versus 2,028 diagnostic). This is strong causal
+evidence for the per-call admission regression, not an exact universal 17.5x
+speedup estimate or a correctness-approved optimization. The earlier intro
+window (1.817 FPS) is preserved separately and excluded.
+
+A separate 30-second diagnostic profile captured 195 frames; profiler overhead
+means its 6.50 FPS must not replace the unprofiled benchmark. Main guest:
+43.48% WASM, 45.21% RPC JS, 8.62% idle; `waitForResponse` alone41.27%.
+All sampled wait stacks pass through `gl_wat_stream_flush`: 26.64% of all
+guest samples from `gl_finish_immediate`, 11.23% from `gl_emit_record`, 3.40%
+from the encoder directly. These are remaining coarse batch waits, not the
+removed per-call flush. Render Worker: 63.78% idle, `_decodeTexture`19.63%,
+`flushPendingDraw`2.45%, `drawBuffers`1.65%. Page75.0% idle; sound Worker100%
+idle. `_decodeTexture` constructs component arrays and maps/clamps every
+texel; canonical texture upload conversion is now a concrete secondary target.
+The remaining gap to the earlier release-based16.47FPS control is not fully
+isolated by this experiment; API paths, other native changes and run timing
+differ. Do not attribute all of it to decoding without another controlled test.
+
+Correct repair direction: make completed command prefixes visible in an
+ordered shared queue without a blocking page RPC per GL call, coalesce consumer
+notifications, and retain immutable payload ownership/backpressure plus real
+query/readback/finish barriers. Another producer must see prior completed
+uploads before its own draw. Simply coalescing messages after page admission
+does not eliminate the already-paid producer round trips. No runtime fix was
+shipped from this diagnostic; the normal server WASM was never replaced.
+
+### 2026-11-07: Shared publication implementation
+
+The follow-up uses a process-wide 4 MiB shared publication ring for GL command
+bytes, Glide packets and D3D leased-buffer descriptors. See
+[`../render-publication.md`](../render-publication.md) for the ownership and
+barrier contract. Native outer-call publication and shared-object locks remain
+unchanged. The page groups adjacent GL packets up to 512 KiB; this is a maximum,
+not a threshold that delays the first packet. Queries and readbacks still fence
+prior publications. This removes the per-call acknowledgement dependency rather
+than removing publication itself. No native interpreter variant was introduced.
+
+Two implementation defects were caught before acceptance: owned GL bytes must
+remain attached even when an opcode takes synchronous adapter replay; and native
+GL stream leases cannot coexist with publication's independent slot rotation.
+The latter caused `invalid GL command length` during a longer headed run despite
+small protocol tests passing. Publication-enabled fallback packets now snapshot
+their data before an early acknowledgement, rather than leasing native slots.
+Regression checks also keep software GL control metadata on the synchronous
+route; software raster batches use the common D3D encoder queue.
+
+Evidence is in `scratch/runs/20261107-uplink-shared-publication`. The first two
+Android timing attempts were backgrounded (`hidden:true`) and are excluded from
+performance claims. One also timed out after the page was backgrounded. The
+first desktop publication attempt failed with the lease conflict above and is
+not a performance result. Headed desktop testing uses one game at a time, a
+two-minute corridor warmup, then 60 seconds of presentation-counter deltas,
+visibility tracking, loaded response hashes and before/after screenshots. The
+control intercepts only queue creation to disable publication; WASM and all
+other source are held constant within the pair. This is a stationary animated
+corridor workload, not a full playthrough or an exact animation-frame match.
+
+The fixed headed Chrome156 pair completed without page errors or visibility
+loss: control192 presents /60.004465s =3.199762FPS; publication1239 presents
+/60.002560s =20.649119FPS (6.45x in this pair). Both use the unchanged normal
+WASM above, Workers and Auto50k. Reviewed captures show the same corridor camera,
+textures and HUD with different lighting phases. No profiler was active during
+measurement. This is one sequential pair, not a statistical confidence interval.
+Publication counters for the measured minute:2,505,240 packets,184,732 adapter
+groups,31,264 notifications and1,657,562,432 payload bytes. That is about80
+packets per notification; it demonstrates notification coalescing, not GPU/guest
+execution overlap. Copies and decoder work remain potential costs. No valid
+foreground Android speedup or cross-renderer FPS comparison is claimed here.

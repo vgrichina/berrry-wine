@@ -42,6 +42,13 @@ function fixture(memoryBytes = 4096) {
 }
 
 (async () => {
+  const published=fixture();await published.bridge.submit(1,0,20);
+  const owned=new Uint8Array([0,0,61,62,63,64,0]);
+  assert.strictEqual(await published.bridge.submitOwned(owned.subarray(2,6)),1);
+  owned.fill(99);await new Promise(resolve=>setImmediate(resolve));
+  assert.deepStrictEqual([...published.calls[1].bytes],[61,62,63,64],
+    'published Glide input uses its owned buffer and offset, not WASM memory');
+  await published.bridge.close();
   const f = fixture();
   assert.strictEqual(await f.bridge.submit(1, 0, 20), 1);
   assert.strictEqual(f.bridge.device.glRenderer, 'ANGLE (test renderer exact string)');
