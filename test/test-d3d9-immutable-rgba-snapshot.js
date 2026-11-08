@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 const {test} = require('node:test');
 const {Bridge,DrawProducer} = require('../lib/d3d9-host');
 const Worker = require('../lib/d3d9-render-worker');
-const {OPCODES: OP} = require('../lib/d3d-command-stream');
+const {OPCODES: OP,SnapshotState} = require('../lib/d3d-command-stream');
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return {promise, resolve}; };
 
@@ -71,6 +71,72 @@ function fixture(options = {}) {
 }
 const level = (draw, stage = 0, mip = 0) => draw.textures[stage][mip];
 const pixel = (draw, at = 0, stage = 0) => [...level(draw, stage).pixels.slice(at, at + 4)];
+
+test('snapshot channel preserves full epochs and retirement cannot be reopened',()=>{
+  const state=new SnapshotState(7,Number.MAX_SAFE_INTEGER);
+  assert.equal(SnapshotState.read(state.channel),null);
+  state.update(0x100000001,true);
+  assert.deepEqual(SnapshotState.read(state.channel),{deviceId:7,generation:Number.MAX_SAFE_INTEGER,snapshotEpoch:0x100000001});
+  state.update(Number.MAX_SAFE_INTEGER,false);
+  assert.equal(SnapshotState.read(state.channel),null);
+  assert.throws(()=>state.update(1,true),/backwards/);
+  state.update(Number.MAX_SAFE_INTEGER,true);
+  assert.equal(SnapshotState.read(state.channel).snapshotEpoch,Number.MAX_SAFE_INTEGER);
+  state.close();assert.equal(state.update(Number.MAX_SAFE_INTEGER,true),false);
+  assert.equal(SnapshotState.read(state.channel),null);
+  assert.throws(()=>SnapshotState.read({...state.channel,buffer:new ArrayBuffer(8)}),/invalid/);
+});
+
+test('real Worker sees reset finalization and permanent retirement without per-read RPC',async()=>{
+  const {Worker:Thread}=require('node:worker_threads');
+  const {once}=require('node:events');
+  const f=fixture();let worker,resume;
+  try {
+    assert.equal(f.draw(),1);await f.drain();
+    const channel=f.bridge.snapshotState(7);
+    worker=new Thread(`
+      const {parentPort,workerData:d}=require('node:worker_threads');
+      const {SnapshotState}=require(d.module);
+      parentPort.on('message',()=>parentPort.postMessage(SnapshotState.read(d.channel)));
+    `,{eval:true,workerData:{module:require.resolve('../lib/d3d-command-stream'),channel}});
+    const read=async()=>{const result=once(worker,'message');worker.postMessage('read');return (await result)[0];};
+    const old=await read();assert.equal(old.snapshotEpoch,1);
+    resume=f.hold();assert.equal(f.draw(),1);
+    f.set(232,2);f.set(236,2);f.set(240,22);
+    const reset=f.bridge.call(0x30009,200,7);assert(reset<=-2);
+    assert.equal(await read(),null,'reset closes channel before queued work drains');
+    resume();resume=null;await f.bridge.wait(reset);
+    assert.equal(await read(),null,'renderer completion alone cannot validate native state');
+    assert.equal(f.bridge.call(0x30007,0,reset),1);
+    assert.deepEqual(await read(),{...old,snapshotEpoch:2});
+    resume=f.hold();assert.equal(f.draw(),1);
+    const release=f.bridge.call(0x30004,0,7);assert(release<=-2);
+    assert.equal(await read(),null,'release invalidates before destroying queued resources');
+    resume();resume=null;await f.bridge.wait(release);
+    assert.equal(f.bridge.call(0x30007,0,release),1);
+    assert.equal(f.draw(),1);await f.drain();
+    const replacement=f.bridge.snapshotState(7),current=SnapshotState.read(replacement);
+    assert.equal(current.generation,old.generation+1);
+    assert.notEqual(replacement.buffer,channel.buffer);
+    assert.equal(await read(),null,'reusing native device address cannot revive old channel');
+    await f.bridge.close();assert.equal(SnapshotState.read(replacement),null);
+  }finally{resume?.();await worker?.terminate();await f.bridge.close();}
+});
+
+test('asynchronous render failure invalidates the producer channel',async()=>{
+  const f=fixture();
+  try{
+    assert.equal(f.draw(),1);await f.drain();
+    const channel=f.bridge.snapshotState(7);
+    assert(SnapshotState.read(channel));
+    f.instances[0].execute=()=>{throw new Error('injected renderer failure');};
+    assert.equal(f.draw(),1,'deferred submission precedes renderer failure');
+    await assert.rejects(f.drain(),/injected renderer failure/);
+    await tick();
+    assert.equal(SnapshotState.read(channel),null);
+    assert.equal(f.bridge.devices.get(7).snapshotReady,false);
+  }finally{await f.bridge.close();}
+});
 
 test('standalone producer resolves render-target aliases explicitly and owns their metadata',async()=>{
   const f=fixture(),alias=70000;
@@ -407,12 +473,14 @@ test('failed reset keeps snapshots closed but permits a successful reset retry',
   try{
     assert.equal(f.draw(),1);await f.drain();
     const entry=f.bridge.devices.get(7),submit=f.bridge._submit;
+    const channel=f.bridge.snapshotState(7);
     f.bridge._submit=function(e,op,p){
       if(p.kind==='reset')return Promise.reject(new Error('reset failed'));
       return submit.call(this,e,op,p);
     };
     const token=f.bridge.call(0x30009,200,7);assert(token<=-2);
     await f.bridge.wait(token);assert.equal(f.bridge.call(0x30007,0,token),-1);
+    assert.equal(SnapshotState.read(channel),null,'failed reset leaves producer channel unavailable');
     assert.equal(entry.resetting,false);
     const failed={deviceId:7,generation:entry.queue.generation,
       snapshotEpoch:entry.snapshotEpoch,opcode:OP.CLEAR,payload:{}};
@@ -422,6 +490,7 @@ test('failed reset keeps snapshots closed but permits a successful reset retry',
     const retry=f.bridge.call(0x30009,200,7);assert(retry<=-2);
     await f.bridge.wait(retry);assert.equal(f.bridge.call(0x30007,0,retry),1);
     assert.equal(entry.snapshotReady,true);
+    assert.equal(SnapshotState.read(channel).snapshotEpoch,entry.snapshotEpoch);
     assert.equal(entry.snapshotEpoch,failed.snapshotEpoch+1);
     await assert.rejects(f.bridge.submitSnapshot(failed),/stale/);
     assert.equal(await f.bridge.submitSnapshot({...failed,snapshotEpoch:entry.snapshotEpoch}),1);

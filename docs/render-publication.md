@@ -183,6 +183,25 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   resets; it cannot poll or dispose the owner's transaction. The reset and
   presentation regression covers recoverable pre-admission failures too.
   It does not by itself serialize native device setters with producer capture.
+  `Bridge.snapshotState(deviceId)` now supplies a shared lifecycle channel for
+  that endpoint incarnation. `SnapshotState` in the neutral command transport
+  keeps immutable device/generation metadata and one atomic signed 64-bit epoch:
+  positive means ready, negative means unavailable, and zero means permanently
+  retired. Readiness and epoch cannot be observed from different resets. The
+  full JavaScript safe-integer epoch range is retained. Reading an unavailable
+  channel returns immediately; producers must fall back or await lifecycle
+  completion rather than spinning on the page's progress.
+  Reset closes readiness before submission and reopens it only when its result
+  is consumed successfully; failed reset and asynchronous renderer failure leave
+  it unavailable. Release and bridge close retire the channel before waiting
+  for old work. Reusing a device address creates a distinct channel/generation.
+  A real Worker regression observes these transitions, including renderer
+  completion before guest finalization and reuse after release. The receiving
+  bridge still validates every snapshot: reading ready is not a lease against
+  a later reset, nor a GPU completion fence. Capturing native state still requires
+  the native D3D guard; the readiness signal does not replace it. The channel is currently exposed
+  by the bridge, but runtime distribution to guest producers and capture
+  activation remain to be wired. No per-draw or FPS improvement is claimed yet.
   Generated D3D8/9 dispatch now guards synchronous handler execution and owned
   host capture with one process-wide native try-lock. Contention uses the
   existing thunk retry/yield protocol without popping arguments; it never spins
