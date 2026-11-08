@@ -1,3 +1,9 @@
+- [ ] Recoil native force-field power-control objective
+  id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
+  status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Next: Fresh recoil-forcefield-objective-0705 follows the reviewed Mission1.1 power-control brief/map through ordinary navigation and native target action. Prior enemy explosion/disappearance with score0to1550 stands; objectives0/4 did not change. Require objective text/counter, force-field/access change or distinct onward consequence; no repeating beach-biped kill as completion. Native Software/Canvas2D is explicit, not GL coverage. Note: docs/re-notes/recoil-native-objective-20261108.md. Full27/parity/audio/FPS remain open.
+
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: active; prior movement/discharge/incoming damage/health pickup accepted
@@ -32,7 +38,7 @@
   id: NEW-GAME-ASGHAN-NATIVE-ACTION-20261108
   status: movement/jumps and incoming enemy damage verified; outgoing hit/defeat/pickup open
   owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Fresh asghan-frontal-target-0654 uses reviewed same-ground-plane frontal alignment or a visible Space-action pickup, without repeating raised-edge fast/swipe poses as success. Prior04eb09d55 proves Ctrl+Up/Ctrl+Left returned high during holds and zero after release; input delivery is accepted, outgoing consequence is not. Current worker reached nativeNewGame on softwareCanvas2D with executingmodule verified. Incomingdamage/blood/standingorc are not outgoinghit proof. Note: docs/re-notes/asghan-native-attack-consumption-20261108.md. No GL/full27/FPS/audio claim.
+  Next: A future Asghan attempt must identify a visible actionable pickup or isolate an outgoing enemy reaction; do not repeat the same-plane fast/swipe sequence. Published6b38c6987 establishes broad same-ground frontal preparation and actual CtrlUp/CtrlLeft guestpollhigh/releasedzero, but standingorc/incominghealth160to120 supplies no outgoing consequence. Coordinator inspected frontal/swipe captures and independently verified198refs14737528bytes; currentcc438 differspriorf965 and was locallyqualified.15ACK/zeroUNKNOWN softwareCanvas2D, normal archived stop/settled drain pass. Slot reassigned to fresh Recoil forcefield objective0705. Note: docs/re-notes/asghan-frontal-target-20261108.md. No emulatorcause, GL/full27/parity/audio/FPS claim.
 
 - [ ] Drakan current-browser movement, flight and attack
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108

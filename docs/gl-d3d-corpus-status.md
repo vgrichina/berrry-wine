@@ -1,5 +1,18 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Asghan same-plane contact; outgoing consequence open
+
+Published `6b38c6987` establishes broad same-ground frontal preparation and
+actual Ctrl+Up/Ctrl+Left consumption with independent release. The orc remains
+standing; the shorter hero health bar does not prove outgoing damage. The
+coordinator inspected frontal/swipe captures and verified198 references,
+14,737,528 bytes. Fifteen exact ACKs, zero UNKNOWN, currentcc438 module,
+software/Canvas2D and normal archived stop/settled drain pass. No emulator
+cause, outgoing hit/pickup or GL acceptance. Fresh Recoil force-field objective
+work replaces this lane; Quake II guard/door work and protocol implementation
+remain active. Full27, parity, audio and FPS stay open.
+[Same-plane evidence and remaining attribution](re-notes/asghan-frontal-target-20261108.md).
+
 ## November 8: qualification limits and active replacements
 
 Published `2ea85dd91` fixes NFS3 local staging/attachment but the full native
