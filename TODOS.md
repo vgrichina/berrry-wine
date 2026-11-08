@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh d3dim-command-wait-handoff-0819 implements authenticated command-generation-bound synchronous nativewait writer handoff without weakening concurrentwriter/timeouts/retire/ABA guards. Published49874a81c repairs Chrome sharedbuffer journal read with immutableCAS slots: actualbrowser4rawrejects/4ledger/zeroqualified, ordinarypixels correct; lockedbuild/Chrome/15focused pass. Coordinator inspected code and verified79hashes2808545bytes. Nativefence writerqualification and fullobserver/gameFPS remain open. Note: docs/re-notes/d3dim-browser-journal-fence-20261108.md. Native Venice movement/heading stands; full27/parity/audio open.
+  Next: Fresh tr2-native-publication-progress-0845 uses publishedf50c6d32e synchronous command-bound writer handoff for full-observer cost/idle arm controls then ONE native TR2 gameplay/publication run. Production actualChrome yields4qualified/4discard8raw with strict writer/canonical/display gates; coordinator reviewed code and verified89hashes2989825bytes, lockedbuild16focused7finalchecks pass. Baseline498 yields0qualified4rejects. RTT19/37.7us noisy, fullobserver/gameFPS unqualified. No box in repair. Note: docs/re-notes/d3dim-command-wait-handoff-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: current WebGL buffered forward movement and takeoff with rising terrain viewpoint verified; sustained flight/outgoing attack open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh drakan-sustained-flight-0824 seeks controlled flight beyond accepted T-only takeoff, using separate bounded forward/heading controls and settled terrain landmarks. Publishedcc6a14236 proves T2001ms separate buffered down/release consumption and depth-dependent terrain35/72/36px downward, supporting rising viewpoint; worldZ and sustained flight remain unqualified. Coordinator inspected living/ascent frames and verified214references16036342bytes. bx_3hcpqd88 normally archived, expiry null, full drain retained. Note: docs/re-notes/drakan-buffered-ascent-20261108.md. Recoil HUDgate0819 and D3DIM command-wait0819 fill other slots; full27/parity/audio/FPS open.
+  Next: Fresh drakan-actor-update-flight-0845 first qualifies read-only drain-to-actor-update gate locally, then ONE native original only if ready within independent2000ms UP cap. Published4ea03045c bothTedges consumed together in912, pinned original handler saved exactdown timestamp but actor ascentclear/terrainunchanged; no repeatedT/Up/heading/attack. Coordinator reviewed code/state inference and verified212refs15705109bytes; bx_q6egcegc normalarchived expiryNULL/drained. Prior separate-drain takeoffcc6a remains bounded accepted. Note: docs/re-notes/drakan-sustained-flight-20261108.md. Sustainedflight/full27/parity/audio/FPS open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
