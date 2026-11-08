@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-hermetic-native-objective-0902 uses repaired755-pin hermetic closure for ONE native HUD-before-C/ordinary consumption then reviewed ramp/control/access. Published0da2d7fee original stopped UNKNOWN missingpngjs preResume; no C/Up replay or objective. Local dependency eagerload/hermetic full-entry and12regressions11integrated/nativeCalc passed; coordinator verified323hashes25728292bytes, box archived expiryNULL drained. Resolve cycling native1.1/1.3brief before objective claims. Note: docs/re-notes/recoil-native-hud-gate-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-bounded-transition-objective-0927 validates repaired757-pin compound-v3/browser-v4 separate4500ms transition and boundedcommand windows then reviewed ramp/control access. Published3fceceb34 original UNKNOWN after1049ms stale HUD, zeroC/M/arrowDOWN, no replay; native1.1powercontrol/map vs1.3rockets resolved. Seven regressions/nativeimage and six fullBrowser corrections pass; coordinator reviewed driver/briefing and independently verified558files83664519bytes491hashes, archived expiryNULL drained. Note: docs/re-notes/recoil-hermetic-native-objective-20261108.md. Objective/full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-full-observer-gameplay-0900 finishes fullobserver matched raw cost then ONE native Venice movement/weapon publication. Published88e276f31 fixes concurrent arm invalidating first epoch; actualBrowser firstSUCCESS/concurrentREFUSED plus1qualified source/canonical/display row and retirement/unarmed pixels pass, lockedbuild/association/handoff pass. Coordinator reviewed guard and verified31hashes215078bytes. Prior f50 fourqualified/fourdiscard stands; no box in repair, no fullobserver/gameFPS claim. Note: docs/re-notes/tr2-native-publication-progress-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-live-arm-native-progress-0930 uses published24913adc0 bounded completed-step admission to arm in living Venice then reviewed movement/weapon consequence with qualified source/canonical/display joins. Original reached Venice but arm refused idleHost before anyUp/Space/Control; production repair lockedbuild+actualWorker pendingfence/ownerreplacement/stop/ackhold/duplicatewake controls pass. Coordinator reviewed host diff/browser controls/Venice and independently verified64refs7219208bytes56hashes, archived expiryNULL drained. Nineprocess matched cost360raw armed120=116qualified4discard retained; fixturecost not gameplayFPS. Note: docs/re-notes/tr2-full-observer-gameplay-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
