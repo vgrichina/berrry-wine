@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-gate-integrated-1458: corrected startup/gate integration then same bounded native gameplay objective. Published34cf651d8 firstNEW generic repair tested/buildPASS; no new gameplay claimed. Coordinator independently hashed owned evidence, normal allocated-box archive/drain confirmed; reuse accepted controls unchanged. See current task and docs/re-notes/recoil-software-native-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh recoil-original-gate-1514: finish launch-specific setup and validate actual integrated Software gate in one original, reviewed Resume then qualified M consequence and bounded movement. Published5fbbd6d1a fixes actual CDP context retirement, integrates driver and staged startup; 13 new adapter/actual-handler/staging tests and build passed. Coordinator independently hashed65refs473146B; no allocation/new gameplay. Preserve886pins and unchanged accepted controls. See docs/re-notes/recoil-gate-integrated-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-jump-staged-1458: corrected startup/gate integration then same bounded native gameplay objective. Published00b079dd3 firstNEW generic repair tested/buildPASS; no new gameplay claimed. Coordinator independently hashed owned evidence, normal allocated-box archive/drain confirmed; reuse accepted controls unchanged. See current task and docs/re-notes/tr2-native-jump-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh tr2-onward-closure-1515: normal driver must pass CURRENT0099373b4 physical closure before one fresh onward/jump attempt. Published1ec8e200c native rear-to-side-on turn personally reviewed; Alt ACK1500ms but jump/beyondSlope unproven. Coordinator independently hashed251refs289052691B and confirmed bx_ba4h4axs archived expiryNULL normalstop_e0219e6ba648c78f with drained identities/ports/input/lock. Reuse accepted controls; avoid repeated no-progress Up. See docs/re-notes/tr2-jump-staged-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-helmet-staged-1458: corrected startup/gate integration then same bounded native gameplay objective. Published8d00bdda5 firstNEW generic repair tested/buildPASS; no new gameplay claimed. Coordinator independently hashed owned evidence, normal allocated-box archive/drain confirmed; reuse accepted controls unchanged. See current task and docs/re-notes/darkstone-helmet-onward-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-driver-closure-1512: resolve actual normal-driver generated.cjs physical dependency without weakening failclosed gate; then restore unchanged helmet pair and continue beyond second opening with early recovered native save. Published0099373b4 fixes per-call guarded-import exemption; 12 focused and provisioning tests/build passed, coordinator independently hashed62refs4965149B. No allocation/new gameplay. See docs/re-notes/darkstone-helmet-staged-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
