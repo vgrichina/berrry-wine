@@ -1,5 +1,26 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: current Quake III world and GL observer boundary
+
+Published `702535909`, run `20261108-q3-current-browser-world`, resolves the
+earlier gray/white startup observation through natural loading: both actual
+GL backends reach the native menu, and SoftwareGL reaches textured Q3DM1.
+The coordinator reviewed the courtyard/HUD and WebGL menu and independently
+verified all 388 retained artifact references. The current f965 module is
+recorded; WebGL's completed per-owner binding remains absent.
+
+SoftwareGL's first mouse hold leaves ammo100, followed by death during a W
+hold; neither firing nor movement is established. A later respawn request was
+refused before queueing with zero effects. WebGL input never opens because
+the run observer requires `d3dStats.glTriangles` on a native GL endpoint whose
+`d3dStats` is empty despite advancing GL batches and presentation. This is a
+harness predicate mismatch, not an emulator startup defect. Its post-close
+observer timeout remains recorded. All browsers drained and the box normally
+stopped after verified retrieval. Fresh GL-readiness work tests that exact
+predicate before another original action attempt. Paired gameplay, torch,
+parity, FPS, audio and full27 remain open.
+[Exact route, identities, observer failure and cleanup](re-notes/q3-current-browser-world-20261108.md).
+
 ## November 8: Forsaken initial world and capture-cost diagnostic
 
 Published `c1ab23eec`, run `20261108-forsaken-capture-composition-cause`,
