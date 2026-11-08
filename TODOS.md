@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: active; first linked weapon return verified; bounded later firing observation in progress
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-first-linked-shot-2019 ONE remote original uses selected f1e9c852a weapon:true,untilShot:true observer, current upright fullhealth pistols review then ONE requested1900ms independently released Control, inspect first exact linked shot-return. Reviewed offline code/doc33refs38247B13originalgzipstreams HASH observer57weapon150RPC lockedbuildPASS native-slice fivecycles26records type2zeroAmmo result0 fixture NOToriginalfire. Unchanged2500ms32recordcaps, no bound widening/UNKNOWNreplay. Historical1940 noShot/renderer discrepancy preserved; Full27/parity/audio/FPS open.
+  Next: Fresh tr2-current-linked-shot-2027 completes remote closure then ONE original using accepteddfd857dac consumer explicitActionWeaponUntilShotTRUE, gzip kernel/logger/drain and exhaustive retrieval. Reviewed consumer/options/launch source 89refs130902B40originalgzipstreams independently HASH;27Node57observer150weapon3inventory2launch/build PASS. Current upright fullhealth drawn-pistols review then sole requested1900ms independently released Control actual<=2000; observer2500ms32records first exact shotRETURN pendingWeaponTRUE pendingShotFALSE. No preparation-only success stop or UNKNOWNreplay; raw0attempt not aim/hit/kill. Historical1940 noShot/renderer discrepancy preserved; Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
