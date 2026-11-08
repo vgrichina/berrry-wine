@@ -131,7 +131,10 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
     [0x42e7ba,'841578b15100747a0fbfc183c0fe83f8057731ff248580eb'],
     [0x42eb80,'dbe74200e2e74200d4e74200f7e74200e9e74200f0e74200'],
     [0x42f505,'e8d600000083c40cb8010000005f5e5d5b81c454020000c3'],
-    [0x42f5e0,'568b742408578b7c2414668b46226685c07e0e0fbfc03bc7']];
+    [0x42f5e0,'568b742408578b7c2414668b46226685c07e0e0fbfc03bc7'],
+    [0x42f4f0,'8b5424148d4c241c8b42208b94246c020000505152'],
+    [0x42f601,'8b44241066297e22804e461085c07422'],
+    [0x42f673,'5f5ec3']];
   function verifyWeapon(){for(const [a,hex] of weaponPins)if(read(a,hex.length/2).map(b=>b.toString(16).padStart(2,'0')).join('')!==hex)throw Error('TR2 loaded weapon instruction mismatch');}
   if(weapon)verifyWeapon();
   const started=now(),report={version:2,workerSlot,endpointIdentity,exeSha256,started,
@@ -143,6 +146,8 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
   let chain=null,gun=null,shot=null,publicationGeneration=null;
   const seen=new Set();
   const s16=(a,field)=>(u16(a,field)<<16)>>16;
+  // Native ITEM pointer plus object number, not an inferred actor name/index.
+  const targetState=p=>p?{pointer:p,objectNumber:s16(p+0xc,'shot.objectNumber'),health:s16(p+0x22,'shot.targetHealth')}:null;
   function state(){
     const item=u32(0x52173c,'item'),target=u32(0x5216e0,'target');
     return {input:u32(0x51b178,'input'),gunStatus:s16(0x521662,'gunStatus'),gunType:s16(0x521664,'gunType'),requested:s16(0x521666,'requested'),
@@ -251,13 +256,40 @@ function install({getInstance,replaceInstance,memory,rpc,workerSlot,endpointIden
             const caller=u32(esp);
             if(!gun.aim||![0x42d59a,0x42d724].includes(caller)||esp!==gun.esp-80)throw Error('TR2 shot caller mismatch');
             if(shot)throw Error('TR2 nested shot');
-            shot={esp,caller,target:u32(esp+8),index:report.records.length};seen.delete(pc);
-            weaponRow('shot-entry',pc,esp,{caller,type:u32(esp+4),target:u32(esp+8),source:u32(esp+12),angles:read(u32(esp+16,'shot.anglesPointer'),4,'shot.angles')});
+            const target=u32(esp+8),entryTarget=targetState(target);
+            shot={esp,caller,target,entryTarget,damage:null,index:report.records.length};seen.delete(pc);
+            weaponRow('shot-entry',pc,esp,{caller,type:u32(esp+4),target,entryTarget,source:u32(esp+12),angles:read(u32(esp+16,'shot.anglesPointer'),4,'shot.angles')});
+          }
+          // The one native hitscan damage call inside this shot. Keep evidence
+          // in the existing return row: no additional record capacity or work.
+          if(pc===0x42f5e0&&shot){
+            verifyWeapon();
+            if(shot.damage||esp!==shot.esp-0x274||u32(esp)!==0x42f50a||!shot.target||u32(esp+4)!==shot.target)
+              throw Error('TR2 damage caller/target mismatch');
+            shot.damage={entryBoundary:report.boundaries,esp,caller:0x42f50a,target:targetState(shot.target),amount:u32(esp+12)|0,returned:false};
+          }
+          if(pc===0x42f50a&&shot){
+            const d=shot.damage;
+            if(!d||d.returned||esp!==d.esp+4)throw Error('TR2 damage return stack mismatch');
+            verifyWeapon();
+            d.after=targetState(shot.target);d.returned=true;d.returnBoundary=report.boundaries;
+            d.sameIdentity=d.target.objectNumber===d.after.objectNumber&&shot.entryTarget.objectNumber===d.after.objectNumber;
+            d.healthDelta=d.target.health-d.after.health;
+            d.expectedHealth=((d.target.health-d.amount)<<16)>>16;
+            // Evidence of this synchronous subtraction only. A kill-counter
+            // increment or crossing zero does not establish an observed kill.
+            d.subtractionObserved=d.sameIdentity&&d.after.health===d.expectedHealth;
+            d.positiveDamageObserved=d.subtractionObserved&&d.amount>0&&d.healthDelta>0;
           }
           if(shot&&pc===shot.caller){
             if(esp!==shot.esp+4)throw Error('TR2 shot return stack mismatch');
+            if(shot.damage&&!shot.damage.returned)throw Error('TR2 pending damage at shot return');
             // Retain both arms even though the shared entry PC is identical.
-            seen.delete(pc);const recorded=weaponRow('shot-return',pc,esp,{shotRecord:shot.index,result:e.get_eax()>>>0,target:shot.target,targetHealth:shot.target?s16(shot.target+0x22,'shot.targetHealth'):null});shot=null;
+            const returnTarget=targetState(shot.target);
+            seen.delete(pc);const recorded=weaponRow('shot-return',pc,esp,{shotRecord:shot.index,result:e.get_eax()>>>0,target:shot.target,targetHealth:returnTarget?.health??null,
+              entryTarget:shot.entryTarget,returnTarget,damage:shot.damage,
+              targetHealthDelta:shot.entryTarget&&returnTarget&&shot.entryTarget.objectNumber===returnTarget.objectNumber?shot.entryTarget.health-returnTarget.health:null,
+              damageScope:'only exact 42f5e0 -> 42f50a nested call observed here; absent boundary is unknown, raw EAX/ammo/target presence alone is not damage'});shot=null;
             if(untilShot&&recorded){finish('witnessed');return;}
           }else if(untilShot&&[0x42d59a,0x42d724].includes(pc)){
             throw Error('TR2 unlinked shot return');
