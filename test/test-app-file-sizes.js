@@ -68,3 +68,41 @@ if (stamped.caesar3_demo && Object.keys(sizes).some(url => url.includes('caesar'
 
 console.log(`PASS  generated sizes stamp inline files[] (${stringsStamped} strings, ${objectsStamped} objects; ` +
   `${declaredKept} declared and ${unrecordedKept} unrecorded entries left as written)`);
+
+// Tracked first-launch controls must survive the actual HTTP/host/VFS path.
+// A stale generated size previously rejected Quake II before guest boot.
+async function quake2LaunchControls() {
+  const fs = require('fs');
+  const vm = require('vm');
+  const { VirtualFS } = require('../lib/filesystem');
+  const { startStaticServer } = require('./static-server');
+  const file = stamped.quake2_demo.files.find(f => f.url === 'lib/quake2-modern-controls.ini');
+  assert(file, 'registered Quake II controls');
+  const original = fs.readFileSync(path.join(ROOT, file.url));
+  assert.strictEqual(file.size, original.length, 'registered size matches original controls bytes');
+  const server = await startStaticServer({ root: ROOT });
+  try {
+    const origin = `http://127.0.0.1:${server.address().port}/`;
+    const context = vm.createContext({
+      console: { log() {}, warn() {}, error() {} }, Uint8Array, ArrayBuffer,
+      AbortController, URL, URLSearchParams, TextEncoder, TextDecoder, setTimeout, clearTimeout,
+      fetch: (url, init) => fetch(new URL(url, origin), init),
+    });
+    vm.runInContext(fs.readFileSync(path.join(ROOT, 'host.js'), 'utf8'), context, { filename: 'host.js' });
+    const Host = vm.runInContext('WineAssembly', context);
+    const host = Object.create(Host.prototype);
+    const vfs = new VirtualFS();
+    host._helpCtx = { vfs };
+    const mountedPath = file.vfsPath.toLowerCase();
+    await assert.rejects(host.loadFiles([{ ...file, size: 568 }], { required: true }), /Asset size mismatch/);
+    assert(!vfs.files.has(mountedPath), 'stale declaration exposes no guest file');
+    await host.loadFiles([file], { required: true });
+    assert.deepStrictEqual(Buffer.from(vfs.files.get(mountedPath).data), original,
+      'corrected declaration mounts unchanged served controls');
+    console.log(`PASS  registered Quake II controls: HTTP + production loadFiles + VirtualFS (${original.length} bytes); stale 568 rejected`);
+  } finally {
+    server.closeAllConnections();
+    await new Promise(resolve => server.close(resolve));
+  }
+}
+quake2LaunchControls().catch(error => { console.error(error); process.exitCode = 1; });
