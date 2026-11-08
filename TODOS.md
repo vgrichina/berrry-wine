@@ -1,3 +1,9 @@
+- [ ] Redline vehicle entry: locate work delaying native keyboard polling
+  id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
+  status: one missed input window diagnosed; vehicle entry/driving and underlying delay remain open
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Next: Trace the invocation-correlated work inside the slice preceding the next input read before another turn/door attempt. Published6d1ca47fa records no VK37 read during the2.002s left hold; slice9504 spans2.468s, then queued DOWN/UP are dequeued after release and subsequent state reads return zero. Original caller is DirectInput GetDeviceState; full returned buffer/HRESULT and wholly-held physical high-bit sample were not captured. End EIP follows an indirect COM call but its receiver/time were unobserved: no renderer/binding defect or emulator repair established. Coordinator inspected unchanged on-foot captures and independently verified243references/225hashes;16exactACK/zeroUNKNOWN, normal archived stop. Note: docs/re-notes/redline-left-consumption-20261108.md. Fresh WarcraftIII current-browser objective lane replaces this blocked run; Darkstone and Q3 readiness work continue.
+
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: SoftwareGL world and both menus verified; action/torch coverage open
