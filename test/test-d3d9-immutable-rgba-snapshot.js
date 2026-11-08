@@ -138,6 +138,81 @@ test('asynchronous render failure invalidates the producer channel',async()=>{
   }finally{await f.bridge.close();}
 });
 
+test('production RPC and WorkerLink deliver state once per device and Worker incarnation',async()=>{
+  const {Worker:Thread}=require('node:worker_threads');
+  const RPC=require('../lib/guest-rpc'),{WorkerLink}=require('../lib/guest-thread-host');
+  const memory={buffer:new SharedArrayBuffer(RPC.RPC_BASE+RPC.RPC_STRIDE*RPC.RPC_MAX_SLOTS)};
+  const f=fixture({guestMemory:memory.buffer}),publication=new SharedArrayBuffer(64+128);
+  const sigs={gpu_gl_call:{params:['i32','i32','i32'],results:['i32']}};
+  let posts=0,rpcs=0,worker,link,sequence=0;
+  const pending=new Map();
+  const broker=RPC.createMainBroker(memory,{
+    gpu_gl_call:(...args)=>{rpcs++;return f.bridge.call(...args);},
+    gpu_d3d9_snapshot_state:id=>f.bridge.snapshotState(id),
+  },sigs,{renderPublication:publication});
+  const start=()=>{
+    link=new WorkerLink({slot:1,memory,sigs,broker,renderPublication:publication});
+    worker=new Thread(`
+      const {parentPort,workerData:d}=require('node:worker_threads');
+      const RPC=require(d.module);
+      const built=RPC.createWorkerImports(d.memory,d.sigs,m=>parentPort.postMessage(m),
+        {slot:1,renderPublication:d.publication});
+      parentPort.on('message',m=>{
+        if(m.t==='renderSnapshotState'){
+          if(m.endpointIdentity===d.identity)built.receiveSnapshotState(m.channel);
+          return;
+        }
+        try {
+          const value=m.t==='draw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):built.readSnapshotState(7);
+          parentPort.postMessage({t:'result',id:m.id,value});
+        }catch(e){parentPort.postMessage({t:'result',id:m.id,error:e.stack});}
+      });
+    `,{eval:true,workerData:{module:require.resolve('../lib/guest-rpc'),memory,sigs,publication,
+      desc:f.desc,identity:link.endpointIdentity}});
+    const active=link;
+    link.worker={postMessage:m=>{posts++;worker.postMessage(m);}};
+    worker.on('message',m=>{
+      if(m.t==='rpc')active._onMessage(m);
+      else if(m.t==='result'){
+        const p=pending.get(m.id);if(!p)return;
+        pending.delete(m.id);clearTimeout(p.timer);m.error?p.reject(Error(m.error)):p.resolve(m.value);
+      }
+    });
+  };
+  const ask=t=>new Promise((resolve,reject)=>{
+    const id=++sequence,timer=setTimeout(()=>{pending.delete(id);reject(Error('state transport timed out'));},5000);
+    pending.set(id,{resolve,reject,timer});worker.postMessage({t,id});
+  });
+  try {
+    start();assert.equal(await ask('read'),null);
+    assert.equal(await ask('draw'),1);await f.drain();
+    const original=await ask('read'),oldChannel=f.bridge.snapshotState(7);
+    assert.equal(original.deviceId,7);assert.equal(posts,1);
+    assert.equal(await ask('draw'),1);await f.drain();assert.equal(posts,1,'ordinary draws do not repost');
+    const calls=rpcs;assert.deepEqual(await ask('read'),original);assert.equal(rpcs,calls,'read stays local');
+    f.set(232,2);f.set(236,2);f.set(240,22);
+    const reset=f.bridge.call(0x30009,200,7);await f.bridge.wait(reset);
+    assert.equal(await ask('read'),null);assert.equal(f.bridge._poll(reset),1);
+    assert.equal((await ask('read')).snapshotEpoch,original.snapshotEpoch+1);
+    assert.equal(posts,1,'reset propagates through shared state');
+    const release=f.bridge.call(0x30004,0,7);await f.bridge.wait(release);assert.equal(f.bridge._poll(release),1);
+    assert.equal(await ask('read'),null);
+    assert.equal(await ask('draw'),1);await f.drain();
+    const replacement=await ask('read');assert.equal(replacement.generation,original.generation+1);
+    assert.equal(posts,2);
+    worker.postMessage({t:'renderSnapshotState',endpointIdentity:link.endpointIdentity,channel:oldChannel});
+    assert.deepEqual(await ask('read'),replacement,'late old generation cannot replace cache');
+    await worker.terminate();start();
+    assert.equal(await ask('draw'),1);await f.drain();
+    assert.deepEqual(await ask('read'),replacement);assert.equal(posts,3,'reused routing slot gets a new delivery');
+    new (require('../lib/render-worker').PublicationQueue)(publication).fail();
+    await assert.rejects(ask('read'),/publication queue closed or failed/);
+  }finally{
+    await worker?.terminate();for(const p of pending.values())clearTimeout(p.timer);
+    await f.bridge.close();
+  }
+});
+
 test('standalone producer resolves render-target aliases explicitly and owns their metadata',async()=>{
   const f=fixture(),alias=70000;
   try {

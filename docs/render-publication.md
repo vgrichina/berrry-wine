@@ -199,9 +199,26 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   completion before guest finalization and reuse after release. The receiving
   bridge still validates every snapshot: reading ready is not a lease against
   a later reset, nor a GPU completion fence. Capturing native state still requires
-  the native D3D guard; the readiness signal does not replace it. The channel is currently exposed
-  by the bridge, but runtime distribution to guest producers and capture
-  activation remain to be wired. No per-draw or FPS improvement is claimed yet.
+  the native D3D guard; the readiness signal does not replace it. The broker
+  piggybacks channel delivery on an accepted ordinary draw or clear. WorkerLink
+  sends it once per device generation and receiving Worker incarnation, using
+  the endpoint identity to reject late delivery after replacement. Guest RPC
+  caches the channel when its event loop processes the message; until then
+  calls continue through the ordinary broker. Reset readiness changes require
+  no more messages, while a recreated device or reused thread slot receives
+  a fresh delivery. A real-thread test drives the production RPC and WorkerLink
+  and checks local reads, reset, recreation, stale generations and slot reuse.
+  Guest draw/clear capture activation remains to be wired; no per-draw or FPS
+  improvement is claimed yet.
+  Delivery validation: all 18 immutable-snapshot cases, GL shared protocol,
+  real x86 D3D9 draw/Present/retirement, browser cache graph and reviewed host
+  census pass. The broader browser guest-Worker suite passes its threading,
+  windows, input, Win16 and playback checks, but its COM-load probe reports
+  zero DLL-count increment and zero load address. A focused headless replay
+  serving the four changed runtime files from control commit `157b7a991` gives
+  the identical result; this is not a newly introduced failure or a passing
+  COM claim. Evidence: `scratch/runs/20261108-d3d-state-com/probe.json`, replay
+  harness `scratch/d3d-state-com-control.cjs`.
   Generated D3D8/9 dispatch now guards synchronous handler execution and owned
   host capture with one process-wide native try-lock. Contention uses the
   existing thunk retry/yield protocol without popping arguments; it never spins
