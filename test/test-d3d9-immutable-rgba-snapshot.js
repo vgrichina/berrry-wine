@@ -11,7 +11,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return {promise, resolve}; };
 
 function fixture(options = {}) {
-  const memory = new ArrayBuffer(262144), view = new DataView(memory);
+  const memory = options.guestMemory || new ArrayBuffer(262144), view = new DataView(memory);
   const desc = 64, program = 1024, record = 40000, texels = 50000, mip = record + 64;
   const set = (p, n) => view.setUint32(p, n, true);
   [7, program, 32000, 2, 2, 1, 4, 1, 30000, 16].forEach((n, i) => set(desc + i * 4, n));
@@ -71,6 +71,52 @@ function fixture(options = {}) {
 }
 const level = (draw, stage = 0, mip = 0) => draw.textures[stage][mip];
 const pixel = (draw, at = 0, stage = 0) => [...level(draw, stage).pixels.slice(at, at + 4)];
+
+test('standalone worker producer owns vertices, constants and textures before guest reuse', async () => {
+  const {Worker:Thread}=require('node:worker_threads');
+  const f=fixture({guestMemory:new SharedArrayBuffer(262144)});
+  const view=new DataView(f.memory);
+  new Uint8Array(f.memory,30000,48).fill(0x5a);
+  view.setFloat32(f.program+16,1.25,true);
+  const worker=new Thread(`
+    const {parentPort,workerData:d}=require('node:worker_threads');
+    const {DrawProducer}=require(d.module);
+    const producer=new DrawProducer({getMemory:()=>d.memory,guestToWasm:p=>p,
+      createCanvas(){throw Error('producer attempted rendering');}});
+    const entry={resident:new Map(),residentBytes:0};
+    const context={entry,address:d.desc,program:d.program,id:7,width:2,height:2,depthAttachment:null};
+    try {
+      const first=producer.captureDraw(context);
+      parentPort.postMessage({captured:true});
+      parentPort.once('message',()=>{
+        try { const next=producer.captureDraw(context);
+          parentPort.postMessage({first:first.payload,next:next.payload});
+        } catch(e) { parentPort.postMessage({error:e.stack}); }
+      });
+    } catch(e) { parentPort.postMessage({error:e.stack}); }
+  `,{eval:true,workerData:{module:require.resolve('../lib/d3d9-host'),memory:f.memory,desc:f.desc,program:f.program}});
+  try {
+    const result=await new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(Error('producer snapshot timed out')),5000);
+      worker.on('error',error=>{clearTimeout(timer);reject(error);});
+      worker.on('message',message=>{
+        if(message.error){clearTimeout(timer);reject(Error(message.error));return;}
+        if(message.captured){
+          new Uint8Array(f.memory,30000,48).fill(0x3c);
+          view.setFloat32(f.program+16,2.5,true);
+          f.fill(f.texels,16384,[90,80,70,255]);f.set(f.mip+28,2);
+          worker.postMessage('capture-again');
+        } else {clearTimeout(timer);resolve(message);}
+      });
+    });
+    assert.equal(result.first.vertices[0],0x5a);
+    assert.equal(result.next.vertices[0],0x3c);
+    assert.equal(result.first.vertexConstants[0],1.25);
+    assert.equal(result.next.vertexConstants[0],2.5);
+    assert.deepEqual([...result.first.textures[0].levels[0].pixels.slice(0,4)],f.rgba);
+    assert.deepEqual([...result.next.textures[0].levels[0].pixels.slice(0,4)],[90,80,70,255]);
+  } finally {await worker.terminate();await f.bridge.close();}
+});
 
 test('replacement at the same mip address cannot inherit a sparse fingerprint collision', async () => {
   const f = fixture();

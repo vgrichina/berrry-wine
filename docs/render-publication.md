@@ -96,6 +96,25 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   or leases through the common queue. Passing raw guest addresses asynchronously
   would introduce a mutation race. Keep validation results, readbacks, queries,
   device loss and lifetime boundaries synchronous where their contracts require.
+  `d3d9-host.js` now exports a renderer-independent `DrawProducer`; the existing
+  bridge inherits it and calls `captureDraw` before submission. The builder
+  owns vertex/index bytes, constants, converted textures and shader IR, and
+  returns a residency plan that is committed only after admission. A real
+  worker test captures from shared memory, then replaces guest vertices,
+  constants and texels before consuming the first packet. This separation is
+  tested but not yet wired into the guest Worker transport. That wiring must
+  assign texture keys unique to a producer incarnation, coordinate device-wide
+  residency/reset, and capture attachments and clear/resource packets too;
+  independently starting each producer's texture serial at one would collide.
+  Extraction validation: immutable-snapshot tests (including the real Worker),
+  texture-cache, byte-identity, source-identity, indexed-access instrumentation,
+  fixed-position and real-operation accounting tests pass. The browser pipeline
+  fixture is not green: calls96/116/121 return `-2005530516` on both the original
+  `e087da397` bridge and the extracted bridge. All captured pipeline fields,
+  including pixels and queue counts, compare exactly equal. Evidence:
+  `scratch/runs/20261108-d3d9-producer-extraction/{baseline,extracted}.json`;
+  harness `scratch/d3d9-pipeline-compare.cjs`. These preexisting rejected draws
+  remain an open correctness check, not an accepted rendering result.
 * **Shared device/resource safety:** prove multiple guest producers cannot
   interleave state mutation with another producer's snapshot. Cover device
   reset/release, texture replacement, shared GL objects, and thread-slot reuse
