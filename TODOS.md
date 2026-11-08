@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed87221a231 once: actual NodeWorker import/export/reset/reinit invalidation, sticky UNKNOWN and native pin checks pass 17off/on pairs34awaited Workers with architectural/memory parity; focused+lockedbuild PASS. Independently verified20regular files original/storedSHA sizes gzipCRC exactset. ExactIdentity/allWriters/exclusiveOwner/completedLoad remain UNKNOWN; fused coverage and edict ABA open. Earlier native4948 vs wrong pointer/index4942 stands; crossing/damage UNKNOWN. Fresh OFFLINE quake2-native-load-completion-2320 PID579975 thread01a1bd76-8782-7321-a84e-49950e01efe8 derives actual native loader completion before gameplay, no original retry. Full27/parity/audio/FPS open.
+  Next: Reviewed3fbc7892e once: native fresh/cache return observation uses actual entry/epilogue/restored stack and target; twelve off/on pairs24awaited shipped Workers and lockedbuild PASS. Independently verified24regular evidence files original/stored SHA sizes gzipCRC exactset. Actual source-free fixture retains storage; allocation lifetime/allWriters/exclusiveOwner/exactIdentity remain UNKNOWN. Fresh OFFLINE quake2-source-lifetime-2335 PID598553 thread01a1bd81-6f63-7b30-a015-c520dd15c21f targets real native source lifetime/reuse before guard/onward gameplay. Earlier native4948 vs wrong pointer/index4942 stands; crossing/damage and full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
