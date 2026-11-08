@@ -21,6 +21,27 @@ qualification before another original attack. Parity, FPS, audio, full game
 and full27 remain open; Asghan takes the released gameplay slot.
 [Bootstrap controls, action limits and cleanup](re-notes/drakan-native-warning-gameplay-20261108.md).
 
+## November 8: recorder repaired; renderer disappears after Prologue scene
+
+Published `14057deaa`, run `20261108-browser-journal-remote-service`,
+repairs diagnostic recorder overload. Corrected remote production controls
+pass with75ms maximum delivery lag, compared with56494ms in the baseline.
+Current SoftwareGL reaches a reviewed rendered Prologue scene. Final passive
+capture times out after the journal's nested `voice_play_ring` entry without
+return/error; page and observer emissions stop and the active renderer PID
+vanishes from later browser samples. No exit reason or inner audio boundary
+is captured, so audio deadlock, OOM and emulator fault remain unproved.
+
+All32552 Node-admitted batches became durable. Earlier8528 lost observer
+slots remain explicit; the final218625-slot tail is contiguous. The coordinator
+reviewed the scene and independently verified340 artifacts/296 hashes plus
+the2,582,639,811-byte decompressed journal hash.15 original exact ACKs precede
+UNKNOWN; player control is unproved and WebGL unexecuted. The box stopped
+normally after retrieval. Fresh work qualifies full-load bursts and captures
+process/target exit and inner call evidence before another original. Full27,
+parity, FPS, audio quality and campaign completion remain open.
+[Transport comparison, final call and process evidence](re-notes/browser-journal-remote-service-20261108.md).
+
 ## November 8: remote journal delivery fails before startup readiness
 
 Published `7fa820727`, run `20261108-browser-page-nonreturn-cause`,
