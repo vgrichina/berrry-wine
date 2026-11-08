@@ -246,6 +246,29 @@ test('queued update and device release retain both original byte snapshots in or
   } finally { await f.bridge.close(); }
 });
 
+test('release closes admission for fences and resource operations before destruction',async()=>{
+  const f=fixture();let resume;
+  try{
+    assert.equal(f.draw(),1);await f.drain();
+    resume=f.hold();assert.equal(f.draw(),1);
+    const entry=f.bridge.devices.get(7),token=f.bridge.call(0x30004,0,7);
+    assert(token<=-2);assert.equal(entry.releasing,true);
+    const submitted=entry.queue.submitted,requests=f.bridge.requests.size;
+    assert.equal(f.bridge.call(0x30006,0,7),0,'event fence refuses admission after release');
+    assert.equal(f.bridge.call(0x30008,200,7),-1,'depth retirement cannot follow device retirement');
+    assert.equal(entry.queue.submitted,submitted,'refusal neither queues nor poisons work');
+    assert.equal(f.bridge.requests.size,requests,'refusal creates no completion token');
+    assert.equal(entry.queue.error,null);
+    assert.equal(f.instances[0].destroyed,false,'older draw still owns the endpoint');
+    resume();resume=null;await f.bridge.wait(token);
+    assert.equal(f.bridge.call(0x30007,0,token),1,'already admitted release remains consumable');
+    assert.equal(f.instances[0].destroyed,true);
+    assert.equal(f.bridge.devices.has(7),false);
+    assert.equal(f.bridge.requests.size,0);
+    assert.throws(()=>f.bridge._submit(entry,OP.FENCE,{}),/retired|released/,'retained entry cannot submit after destruction');
+  }finally{resume?.();await f.bridge.close();}
+});
+
 test('budget rejection publishes no partial definition or retirement and retry is complete', async () => {
   const f = fixture({commandCapacityBytes:49152, maxResidentTextureBytes:16384});
   try {

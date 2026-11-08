@@ -194,6 +194,13 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
+  Bridge `_submit` also closes admission uniformly once device release starts
+  (or the entry is dead). Draw-only checks were insufficient: event fences and
+  resource retirements could otherwise queue behind destruction. A held-consumer
+  regression proves late work is refused without changing queue/request counts
+  or poisoning the stream, while the admitted draw and release finish normally.
+  This protects the endpoint boundary; it is not proof of every native resource
+  reference or pending callback lifetime.
 * **2D interoperability:** audit GDI/DirectDraw CPU surface writes, locks,
   blits and presentation against queued GL/D3D/Glide ownership. Existing GL/GDI
   tests cover a subset, not every surface lifetime or mixed-API transition.
