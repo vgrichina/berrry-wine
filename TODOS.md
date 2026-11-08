@@ -6,9 +6,9 @@
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
-  status: startup qualified; onward opening remains unverified after player death
+  status: continuous hull check proves intact window blocks passage; explicit breakable-state route in progress
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedb035caf41 actual Chrome startup10646ms and native health100->54->0 before qualified window crossing; damage source UNKNOWN. Independently inspected five captures and hashed1055own/453remote references. Normalquit362actualreaps completeTRUE; bx_bqb7yay4 ARCHIVED expiryNULL normalstop_c582f7f82c38bbe7. Fresh OFFLINE quake2-swept-hull-route-2125 PID414108 thread01a1bd0d-415e-7c80-85f3-8347330e8acc implements continuous player-hull BSP trace including brush/entity models and step/crouch clearance before another original; prior five-point leaf samples insufficient. Full27/parity/audio/FPS open.
+  Next: Reviewed offline2125 once:18focused+2000independent interval checks and lockedbuild PASS. Native +/-16 hull and omitted entity328/model20 window invalidate old footprint route; whole intact aperture standing/crouched continuously obstructed. Death damage source and actual crossing remain UNKNOWN. Independently verified21refs36274B21gzip; tested checker/note stayed UNCOMMITTED when disk fell below floor, files released. Fresh quake2-window-state-route-2140 PID434379 thread01a1bd1a-9722-7ed2-906f-392c45db4cd8 owns continuation: explicit destroyed-breakable state, fail-closed validation and standing/crouched clearance before publication; no original retry. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -18,9 +18,9 @@
 
 - [ ] Current TR2 native controls and qualified presentation rates
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
-  status: first exact linked original shot RETURN verified; effective targeting/hit/kill open
+  status: first linked original shot verified; target-health observer published; visible-hit attempt in progress
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed8d1489d904 once result/final/note; independently hashed378refs5461279B235gzip originals and inspected current upright drawn-pistols/fullhealth pixels. ONE1900ms independently released Control:26records, four weapon cycles, exact type1 shot RETURNffffffff ammo1000->999 HP1000 target0; pendingWeaponTRUE pendingShotFALSE. No effective aim/hit/kill. NormalquitACK11 close12217ms EOF beforeprofilecleanup,350actualreaps completeTRUE; bx_d9smvggm ARCHIVED expiryNULL normalstop_e2d77a0f73cb3f52. Fresh OFFLINE tr2-target-damage-observer-2131 PID420383 thread01a1bd10-e16f-7d02-811c-c429b2f6e424 adds justified bounded target/damage observation before another original; unchanged2500ms/32rows no guest calls/writes. Renderer discrepancy and Full27/parity/audio/FPS remain open.
+  Next: Reviewed published e850fc6a9 and correction093990bdd once;20actual-x86 focused controls+lockedbuild PASS. Exact synchronous damage call/shot RETURN links positive target-health subtraction without extra rows, unchanged2500ms/32rows; no synthetic fixture hit is original gameplay. Independently verified18refs26253B12gzip. Prior original8d1489d904 type1 shot ammo1000->999 target0 HP1000 stands, no hit/kill. Fresh tr2-visible-target-damage-2142 PID434973 thread01a1bd1a-fed1-72d2-b943-a56dd65357e4 authorized ONE fresh remote original with separately reviewed bounded navigation to visible target then sole <=1900ms independently released Control, exact observer and full lifecycle; no repeat empty-alley firing. Renderer discrepancy and Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -42,9 +42,9 @@
 
 - [ ] Drakan current-browser movement, flight and attack
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
-  status: current WebGL buffered forward movement and takeoff with rising terrain viewpoint verified; sustained flight/outgoing attack open
+  status: movement/takeoff retained; production async release fixed; browser opt-in integration in progress
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed6fc4d59ca actual production Worker/WorkerLink/GuestThreadHost integration and33focused56adapter workerImports lockedbuild PASS;68refs125319B30gzip independentlyHASH. Module4b45/compatc3a4 verified before compile; independent <=2000ms release initiated28.834ms while Wasm busy, native down-active state1 completedRET fixture only. Coordinator found WorkerLink release wrapper drops asyncPromise; fresh OFFLINE drakan-release-promise-2127 PID415611 thread01a1bd0d-e451-79b2-aa4b-5ed1ea200caa repairs exact-once async completion/failure before original. Existing retirement suite missingRenderWorker reproduces originalGit FAIL; no fullsuite claim. Preservecc6a ascent/unchanged6cf; no T-only retry or original yet. Full27/parity/audio/FPS/worldZ/sustainedflight open.
+  Next: Reviewed published296eb101594 once: actual GuestThreadHost dropped-Promise failure reproduced and repaired,59focused including browser-method-loading against LIVE Worker plus56adapter/11imports/lockedbuild PASS;56refs45709B17gzip independently verified. Caller must await cached releasePromise AND inspect live releaseError; physical completion is callback responsibility. Module4b45/compatc3a4 unchanged, cc6a ascent preserved. Fresh2136 stopped without edits at disk floor; after lossless recovery fresh drakan-browser-observer-optin-2140 PID434378 thread01a1bd1a-9726-7db1-8ab3-2b1bae22fd0f connects actual browser host selected compiled owning bytes and async release contract with opt-in NodeVM controls. No original authorized yet; no T-only retry. Full27/parity/audio/FPS/worldZ/sustainedflight open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
