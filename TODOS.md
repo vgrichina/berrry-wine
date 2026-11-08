@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: queued pending shared Chrome startup/cancellation repair; linked shot remains open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedde0097eb5 remote607pins/barrierPASS but30sDevTools deadline beforeoriginal/input.114actualterminalreaps3unresolvedLineage completeFALSE; bx_wws687r7ARCHIVED expiryNULL stop_a5e399e16e6c6896 normal. All own/recovered evidence independentHASH gzipCRC originalchecks accepted. Publishedbcf8c7bd7 causal kernel repair accepted; await actual Chrome startup validation by fresh Q22052 before anotherTR2original. SlotfreshDrakanpassiveobserver2041. FirstlinkedshotRETURN remainsunqualified; sole1900msControl observer2500/32 contract retained Full27/parity/audio/FPS open.
+  Next: Reviewedde0097eb5 remote607pins/barrierPASS but30sDevTools deadline beforeoriginal/input.114actualterminalreaps3unresolvedLineage completeFALSE; bx_wws687r7ARCHIVED expiryNULL stop_a5e399e16e6c6896 normal. All own/recovered evidence independentHASH gzipCRC originalchecks accepted. Publishedbcf8c7bd7 causal kernel repair accepted; await actual Chrome startup validation by fresh Q22052 before anotherTR2original. SlotfreshDrakanWorkerintegration2105. FirstlinkedshotRETURN remainsunqualified; sole1900msControl observer2500/32 contract retained Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: current WebGL buffered forward movement and takeoff with rising terrain viewpoint verified; sustained flight/outgoing attack open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh drakan-passive-actor-observer-2041 implements and tests natural actor/state1 completion before any new original. Prior8987ef1a4 drain/event4/state1 boundary static only; retained6cf empty EIP trace changes tierguard0->1->0. Preservecc6a separate-drain takeoff, no ineffectiveT-only retry. Require actual owner/drain/actor entry+return and down-active attribution without changing execution policy; newlybuilt module must be qualified separately from old6cf. Offline code/tests/build only; Full27/parity/audio/FPS/worldZ/sustainedflight open.
+  Next: Fresh drakan-observer-worker-integration-2105 wires published27ace647a passive observer into actual owning Worker imports and ordinary run/controller with independent fresh deadline and <=2000ms release, offline first. Reviewed production code/tests once;173refs155794B56originalgzip independentlyHASH. Canonical4b45bda5/compatc3a4a1d9 54focused each, retained-disabled parity,673compiler/62chain/58native subset and lockedbuild PASS; historical full pending suite missing ignored pin FAIL retained. No original/new module gameplay yet; unarmed service overhead unmeasured. Preservecc6a ascent and unchanged6cf; no T-only retry. Full27/parity/audio/FPS/worldZ/sustainedflight open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: new native save preserved after potion recovery; active quit admission repair
+  status: quit admission repair published; active fresh de53 restore and encounter
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-quit-admission-repair-2054 tests actual client/consumer legal quit timeout before another original. Reviewed0b12ac153 once plus fourcaptures:14->11 first damage STOP then queuedvial35/35, no attack/kill; native NewSave de53+chars recovered, not reloaded. Canonical chars1342324B SHA2c78a17064029385dee4206c9314673debb4de05205ae63d2ff144b9e6081546 game3204341B SHAcb2ca8093b2ffe45133cda87e3eea9ceafad66fd82246684ec40dd97306e66fc.897ownrefs59756377B741gzip+631remote122649226B10gzip independentlyHASH. Quit100000ms>55000 refused prepublication; separate publicChrome.close actualWAIT0 then driverTERM;355/355actualreaps completeTRUE profileRETAINED noquitACK. bx_sgm4f79tARCHIVED expiryNULL stop_e43205641f748219 normal. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-de53-encounter-2105 restores exact new de53 pair, reads native health/target, then at most ONE short independently released ordinary attack if safe; first damage/UNKNOWN stops and first consequence native NewSave recovered before normal shutdown. Published84b42e990 rejects invalid timeout before publication; legal quit55000 default and sticky uncertain ACK preserved. Reviewed code/tests/actual consumer once;64refs53765B18originalgzip independentlyHASH;25focused81regression+lockedbuild PASS. Canonical chars1342324B SHA2c78a17064029385dee4206c9314673debb4de05205ae63d2ff144b9e6081546 game3204341B SHAcb2ca8093b2ffe45133cda87e3eea9ceafad66fd82246684ec40dd97306e66fc last35/35 not yet reloaded. Actual terminal wait/logEOF before cleanupACK; failure retains profile. Prior bx_sgm4f79t archived normal; no new normal-close/gameplay claim yet. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
