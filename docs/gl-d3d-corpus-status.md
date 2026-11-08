@@ -1,5 +1,23 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Quake II pickups on both actual GL paths
+
+Published `327e830da`, run `20261108-quake2-native-encounter-progress`,
+adds native HEALTH pickup consequences: WebGL100→104 and SoftwareGL100→102.
+Ordinary Game/Easy, original controls and media are unchanged. The owning
+WebGL context has software GL disabled; the owning SoftwareGL context has it
+enabled, independently of its WebGL presentation surface. This run reports
+SwiftShader and Chrome151.0.7922.71, unlike the predecessor's Intel report;
+no hardware acceleration or matched-renderer parity claim follows.
+
+The coordinator reviewed pickup pairs, delivered Telegram2301/2302/2305 and
+independently verified436 references/394 hashes.33 exact ACKs,27 independent
+releases,46 PNG checks,707 unchanged pins and359 served reads pass. Both
+browsers drained serially and the box stopped normally after retrieval.
+Guard defeat, door/onward transition, full27, FPS, audio and level completion
+remain open. No emulator repair was needed.
+[Native route, actual backends and shutdown](re-notes/quake2-native-encounter-progress-20261108.md).
+
 ## November 8: Drakan native bootstrap and both current D3DIM worlds
 
 Published `ed993c025`, run `20261108-drakan-native-warning-gameplay`,
