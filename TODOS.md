@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; seven victories and town gateway crossing verified; onward/area transition open
+  status: active; nine victories and onward ruined-wall route verified; new route save incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-nine-onward-1302 restores charactersba2c2c5f/game641d_6af070ba.savb56122d3 then roadtowardnamedentrance/transition. Two nativehoverGIANTWASPdefeats ninevictories LIFE19/35Gold1532Food58MANA25/25vialretained; personallyreviewed9+0PNG nativeNewSave NOTreloaded sourceuntouched. Independentlyhashed264refs156922295B normalbx_77jg56ts archivedstop_9efbe660a67b2148 expiryNULL. Note: docs/re-notes/darkstone-hollow-onward-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-road-save-1338 restores unchanged ninevictoryba2c2c5f/b56122d3, follows useful road then SAVE+recover by runtime minute10. Last exploredbrokenwalls/recessunidentified9+0 LIFE19/35Gold1532Food46MANA25/25vialretained; deadline interrupted command63 UNKNOWNnoreplay NOnewSave originalinputsuntouched. Independentlyhashed726refs636936613B personallyreviewedwallPNG normalbx_kmajkaur archivedstop_ef9f58e7dd7e0010 expiryNULL. Note: docs/re-notes/darkstone-nine-onward-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
