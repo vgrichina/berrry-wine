@@ -1,3 +1,9 @@
+- [x] Darkstone earned checkpoint restored across browser sessions
+  id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
+  status: earned Gold1532/Victories1 restored; potion use and Victories3 verified; new slot reload and historical exit cause open
+  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  Evidence: Publishedbc4cd7a8c loads the unchanged retained character/named-save bytes through production HTTP/loadFiles/VFS, verifies Gold1532/Victories1+0, then native potion use and combat reach Victories3+0/LIFE28/35. Coordinator reviewed inventory/consequence captures and independently verified284 artifact references/236 hashes. New game-written character/save bytes were recovered; that new slot was not reloaded. Final requested native exit is traced to ExitProcess(0); earlier spontaneous removal was not reproduced and its cause remains unknown.22complete ACKs precede final native exit whose post-exit owner guard closes transport; all input released/no replay, normal archived-box stop. No emulator repair/GL parity/FPS/audio/fullplayability claim. Note: docs/re-notes/darkstone-native-load-exit-cause-20261108.md.
+
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: one missed input window diagnosed; vehicle entry/driving and underlying delay remain open
