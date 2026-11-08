@@ -9,6 +9,13 @@ const { SharedPacketPool, SubmissionQueue, PublicationQueue } = require('../lib/
 async function testPublicationQueue(){
   const q=new PublicationQueue(new SharedArrayBuffer(64+256));let wakes=0;
   const notify=()=>wakes++,data=new Uint8Array([1,2,3,4]);
+  assert.strictEqual(q.allocateProducerId(),1);
+  assert.strictEqual(new PublicationQueue(q.buffer).allocateProducerId(),2,
+    'producer incarnations belong to shared process storage');
+  const exhausted=new PublicationQueue(new SharedArrayBuffer(64+64));
+  Atomics.store(exhausted.control,9,-2);
+  assert.strictEqual(exhausted.allocateProducerId(),0xffffffff);
+  assert.throws(()=>exhausted.allocateProducerId(),/identity exhausted/,'identity must not wrap to another owner');
   q.publish(1,0,data,notify);data.fill(9);q.publish(1,0,data,notify);q.publish(2,1,data,notify);
   assert.strictEqual(wakes,1,'coalesce wake-ups across APIs');
   assert.strictEqual(q.withEmpty(()=>assert.fail('must retain dirty ownership')),false);

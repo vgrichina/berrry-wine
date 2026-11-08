@@ -31,6 +31,12 @@ rechecking the cursor closes the empty-queue race; the drain finalizer also
 covers publication while an earlier drain promise is settling. Page-side work
 never waits on the producer lock.
 
+`allocateProducerId()` reserves a process-wide producer incarnation in shared
+control word9. Zero is reserved for the page producer; positive IDs never recycle
+when a guest thread slot is reused, and exhaustion fails instead of wrapping.
+`DrawProducer({producerId})` includes this identity in its texture keys. These
+resource identities are distinct from the routing slot in a publication header.
+
 OpenGL retains native `gl_object_leave` publication under the shared-object
 lock. Removing that native flush would break completed cross-thread texture
 visibility. Instead, its host import can capture the bytes into the ring and
@@ -103,9 +109,10 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   worker test captures from shared memory, then replaces guest vertices,
   constants and texels before consuming the first packet. This separation is
   tested but not yet wired into the guest Worker transport. That wiring must
-  assign texture keys unique to a producer incarnation, coordinate device-wide
-  residency/reset, and capture attachments and clear/resource packets too;
-  independently starting each producer's texture serial at one would collide.
+  supply an ID from `allocateProducerId()`, coordinate device-wide residency/reset,
+  and capture attachments and clear/resource packets too. A real-worker test
+  verifies two independent producers and a replacement can publish to one
+  device without overwriting each other's resident texture definitions.
   Extraction validation: immutable-snapshot tests (including the real Worker),
   texture-cache, byte-identity, source-identity, indexed-access instrumentation,
   fixed-position and real-operation accounting tests pass. The browser pipeline
@@ -114,7 +121,13 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   including pixels and queue counts, compare exactly equal. Evidence:
   `scratch/runs/20261108-d3d9-producer-extraction/{baseline,extracted}.json`;
   harness `scratch/d3d9-pipeline-compare.cjs`. These preexisting rejected draws
-  remain an open correctness check, not an accepted rendering result.
+  were traced subsequently to the fixture leaving cube samplers at WRAP when
+  the LOD atlas requires CLAMP. The positive fixture now configures CLAMP on
+  both stages and checks the implemented mixed-filter bias path's actual pixel
+  color instead of its obsolete expected rejection. Non-CLAMP atlas behavior
+  remains explicitly unsupported and covered by `test-d3d9-cube-lod-web.js`.
+  After the fixture correction the full native/browser pipeline passes, as do
+  8,880 WebGL1/2 cube-LOD pixel checks (including unsupported metadata checks).
 * **Shared device/resource safety:** prove multiple guest producers cannot
   interleave state mutation with another producer's snapshot. Cover device
   reset/release, texture replacement, shared GL objects, and thread-slot reuse

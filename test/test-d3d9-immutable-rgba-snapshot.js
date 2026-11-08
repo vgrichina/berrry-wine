@@ -4,7 +4,7 @@
 // mock device records RGBA bindings. No native executor or GPU is created.
 const assert = require('node:assert/strict');
 const {test} = require('node:test');
-const {Bridge} = require('../lib/d3d9-host');
+const {Bridge,DrawProducer} = require('../lib/d3d9-host');
 const Worker = require('../lib/d3d9-render-worker');
 const {OPCODES: OP} = require('../lib/d3d-command-stream');
 const tick = () => new Promise(resolve => setImmediate(resolve));
@@ -71,6 +71,60 @@ function fixture(options = {}) {
 }
 const level = (draw, stage = 0, mip = 0) => draw.textures[stage][mip];
 const pixel = (draw, at = 0, stage = 0) => [...level(draw, stage).pixels.slice(at, at + 4)];
+
+test('producer and texture identities fail before numerical reuse',()=>{
+  for(const producerId of [-1,0x100000000,1.5,NaN,'1'])
+    assert.throws(()=>new DrawProducer({producerId}),/invalid.*identity/);
+  const producer=new DrawProducer({producerId:0xffffffff});
+  producer._textureSerial=Number.MAX_SAFE_INTEGER;
+  assert.throws(()=>producer._rememberTexture(1,{pixels:new Uint8Array(4)},new Uint8Array(4)),/identity exhausted/);
+});
+
+test('independent producer incarnations cannot alias resident textures on one device', async () => {
+  const {Worker:Thread}=require('node:worker_threads');
+  const {PublicationQueue}=require('../lib/render-worker');
+  const queue=new PublicationQueue(),f=fixture(),workers=[];
+  async function capture(color){
+    const memory=new SharedArrayBuffer(f.memory.byteLength);
+    new Uint8Array(memory).set(new Uint8Array(f.memory));
+    for(let at=f.texels;at<f.texels+16384;at+=4)new Uint8Array(memory,at,4).set([color[2],color[1],color[0],255]);
+    const worker=new Thread(`
+      const {parentPort,workerData:d}=require('node:worker_threads');
+      const {PublicationQueue}=require(d.transport),{DrawProducer}=require(d.module);
+      try {
+        const id=new PublicationQueue(d.queue).allocateProducerId();
+        const producer=new DrawProducer({producerId:id,getMemory:()=>d.memory,guestToWasm:p=>p});
+        const {payload}=producer.captureDraw({entry:{resident:new Map(),residentBytes:0},
+          address:d.desc,program:d.program,id:7,width:2,height:2,depthAttachment:null});
+        parentPort.postMessage({id,payload});
+      } catch(e){parentPort.postMessage({error:e.stack});}
+    `,{eval:true,workerData:{module:require.resolve('../lib/d3d9-host'),transport:require.resolve('../lib/render-worker'),
+      queue:queue.buffer,memory,desc:f.desc,program:f.program}});
+    workers.push(worker);
+    return new Promise((resolve,reject)=>{
+      const timer=setTimeout(()=>reject(Error('producer timed out')),5000);
+      worker.on('error',error=>{clearTimeout(timer);reject(error);});
+      worker.on('message',value=>{clearTimeout(timer);value.error?reject(Error(value.error)):resolve(value);});
+    });
+  }
+  try {
+    f.draw();await f.drain();
+    const pair=await Promise.all([capture([220,10,20]),capture([30,210,40])]);
+    await Promise.all(workers.map(worker=>worker.terminate()));
+    const replacement=await capture([50,60,200]);
+    const all=[...pair,replacement],entry=f.bridge.devices.get(7);
+    assert.equal(new Set(all.map(item=>item.id)).size,3,'retired worker ID is never reassigned');
+    assert.equal(new Set(all.map(item=>item.payload.textures[0].levels[0].key)).size,3);
+    for(const item of all)f.bridge._issue(entry,OP.DRAW,item.payload);
+    const reference=structuredClone(pair[0].payload);
+    delete reference.textures[0].levels[0].pixels;
+    delete reference.textures[0].pixels;
+    f.bridge._issue(entry,OP.DRAW,reference);await f.drain();
+    assert.deepEqual(f.observations.slice(1).map(draw=>pixel(draw)),
+      [[220,10,20,255],[30,210,40,255],[50,60,200,255],[220,10,20,255]],
+      'later producers cannot overwrite the first producer reference');
+  } finally {await Promise.all(workers.map(worker=>worker.terminate()));await f.bridge.close();}
+});
 
 test('standalone worker producer owns vertices, constants and textures before guest reuse', async () => {
   const {Worker:Thread}=require('node:worker_threads');
