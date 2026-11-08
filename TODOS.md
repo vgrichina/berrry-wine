@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-snapshot-native-progress-1005 uses ecefbec5e co-located finalpixel HUD snapshot retaining TWO actualmodule byte checks perprobe, <=250ms and temporalpair. ActualBrowser750msstall baselineMISS correctedfreshpair plus7identitycontrols PASS. Prior nativeSoftwareHUD100 PauseResume gateMISS1839msstale zeroC/M/arrows; actualMENU verified, no replay. Coordinator reviewed patch/MENU and independently verified346refs33820191bytes281hashes archived/drained. Release localruntime lock duringremoteonly phase. Note: docs/re-notes/recoil-manifest-bound-objective-20261108.md. Objective/full27/parity/audio/FPS open.
+  Next: Fresh recoil-menu-budget-objective-1032 explicit500msnativeEscape/menuhelper/actualmanifest then qualifiedordinaryM/reviewedrampcontrol. Published1e7ac888a originalHUD100timer6 Escape100msUNKNOWN terminal noM/C/arrows/replay; nativeMENUintervalUNKNOWN. Genericexplicit500ms menucommand/shortreject/receipt sixactualChrome andfullBrowserfixturePASS; inheritedfreshsnapshot/sourcechecks unchanged. Coordinator helper reviewed231refs18128825B191hashes independentlyverified archived/drained. Note: docs/re-notes/recoil-snapshot-native-progress-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-qualified-native-progress-1020 uses tested500msblanknativepreflight/delayedbootstrap from d46f34034 then original nativeGraphics/4096arm/exactqualifiedjoins and reviewedUp/Space/Control. FiveactualChrome casesPASS; priorfirstNEW50msACKfailure beforegamenavigation noJoin. Coordinator helper reviewed23refs independentlyhashed4380437B (note4379955B discrepancy retained); bx archived/drained. Prior0e951 queuefix/build/Workercontrols reused. Note: docs/re-notes/tr2-bootstrap-native-progress-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-clear-integration-progress-1032 integrates tested productionCLEAR0x20004observer repair withfullbuild/focusedtests then originalexactjoins/reviewedmovementweapon. Publishedaee5fec9c nativeGraphics8906ms/500ms Enter/owningWebGL/module/4096armPASS observerunsupported-sync-retired beforeanysource; noUpSpaceControl. Candidate realWAT/canonicalcomposition baselineRetires correctedraw2qualified1discard1 asyncwriter/oldproofrefusal/ACK/unsupported/throwcontrolsPASS. Coordinator patch reviewed74refs7814479B68hashes independentlyverified archived/drained. Note: docs/re-notes/tr2-qualified-native-progress-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
