@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed651896b5c: default-off native free/allocation lifetime revocation; actual original allocator reuses source address and identical restored bytes remain REVOKED. Seven off/on pairs14awaited Workers architectural+direct/sparse memory parity and lockedbuild PASS; independent26regular original/storedSHA sizes gzipCRC exactset PASS. Fresh OFFLINE quake2-owner-continuity-2346 PID614260 thread01a1bd8c-0114-7061-bb78-e00a2f06d2cb targets acquisition/conversion-to-later-use continuity and missed reset rejection. Actual4948 vs wrong4942 stands; exactIdentity/allWriters/exclusiveOwner/edictABA/guard onward gameplay remain open.
+  Next: Reviewed c3f028281 actual native conversion, startup collision-table stores and later headnode point chain;12native off/on parity pairs and17facade controls plus locked build PASS; independent27regular original/stored SHA sizes CRC exactset PASS. Source lifetime REVOKED and missed boundaries/other writers/edictABA remain UNKNOWN; no later-use certificate. Fresh OFFLINE quake2-native-write-epoch-2358 PID632736 thread01a1bd97-0fad-74e0-a446-a7f460b1c3c0 implements actual native store observation for same-byte/write-restore detection before further attribution. Actual4948 versus wrong4942 stands; guard/onward-door gameplay open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -50,7 +50,7 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed6f3d95028: personally viewed current grounded first-pillar nativePause score0coins0fourlives timer286.15admitted actions; capture1.3s then deliberation17.641s correctly refused zeroEffects stickyUNKNOWN; no death/exit/unlock/replay. Independent538regular original/storedSHA sizes nestedgzipCRC exactset PASS. bx_nb2npb7k ARCHIVED normalstop_5c6cbbc22531080a forcedFALSE after verified recovery325actualreaps remote parentWAIT1 outerWAIT0EOF ChromeACKexit0 ports/FD/profile/input/runtimeLOCKdrained. Local original tool returned143 causeUNKNOWN missinglocalPIDstart/exitreceipt retained. Fresh OFFLINE supertux-review-client-2346 PID614021 thread01a1bd8b-e383-7313-b0a0-42beb95960e4 implements compact explicit review client preserving12s/stickyUNKNOWN; Q3 soleheavy. Earlier175points5coinsfirstenemy flatten remains separate; exit/unlock/full27/parity/audio/FPS open.
+  Next: Reviewed e78cb70d2 compact localhost review client: explicit exact-capture choices, original age/deadline, unchanged12s and stickyUNKNOWN. Seven real child HTTP/CLI/controller controls and locked build PASS; independent324regular original/stored SHA sizes CRC exactset PASS. Fresh supertux-client-first-exit-2356 PID631440 thread01a1bd96-1eb8-7ca1-a0db-e9ed9caeddee prepares offline then one original after explicit Q3 heavy release; personally review each fresh paused geometry. Historical2330 pillar/noexit and local143 causeUNKNOWN retained; earlier175points5coins stomp separate. Exit/unlock/full27/parity/audio/FPS open.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
