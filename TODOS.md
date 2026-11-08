@@ -2,7 +2,7 @@
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
   status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-bounded-transition-objective-0927 validates repaired757-pin compound-v3/browser-v4 separate4500ms transition and boundedcommand windows then reviewed ramp/control access. Published3fceceb34 original UNKNOWN after1049ms stale HUD, zeroC/M/arrowDOWN, no replay; native1.1powercontrol/map vs1.3rockets resolved. Seven regressions/nativeimage and six fullBrowser corrections pass; coordinator reviewed driver/briefing and independently verified558files83664519bytes491hashes, archived expiryNULL drained. Note: docs/re-notes/recoil-hermetic-native-objective-20261108.md. Objective/full27/parity/audio/FPS open.
+  Next: Fresh recoil-manifest-bound-objective-0943 uses corrected explicit-manifest launch-v2 preflight then fresh HUD/ordinary consumption/visible MENU and reviewed ramp/control access. Published0d8587810 firstNEW omittedPIN_FILE repaired; sole original failed beforeChrome, no native input or replay. Actual-v4 launcher fixture PASS; inherited timing/fullBrowser controls reused. Coordinator reviewed launcher and independently verified20refs377181bytes20hashes; bx archived expiryNULL and drained. Note: docs/re-notes/recoil-bounded-transition-objective-20261108.md. Objective/full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-live-arm-native-progress-0930 uses published24913adc0 bounded completed-step admission to arm in living Venice then reviewed movement/weapon consequence with qualified source/canonical/display joins. Original reached Venice but arm refused idleHost before anyUp/Space/Control; production repair lockedbuild+actualWorker pendingfence/ownerreplacement/stop/ackhold/duplicatewake controls pass. Coordinator reviewed host diff/browser controls/Venice and independently verified64refs7219208bytes56hashes, archived expiryNULL drained. Nineprocess matched cost360raw armed120=116qualified4discard retained; fixturecost not gameplayFPS. Note: docs/re-notes/tr2-full-observer-gameplay-20261108.md. Full27/parity/audio/rates open.
+  Next: Fresh tr2-full-journal-native-action-0943 uses published0e951a0be full-size live arm then reviewed movement/weapon consequence with exact qualified source/canonical/display joins. Prior original reached Venice then shared4096 journal counted as256MiB payload, noUp/Space/Control or joins. Generic bounded-handle accounting repair passes lockedbuild, actualWorkers4096arm1raw1qualified0discard and unchanged queuecaps/lifecycle controls. Coordinator reviewed code and independently verified64refs7220451bytes56hashes; bx archived expiryNULL drained. Nineprocess cost controls reused, not gameplayFPS. Note: docs/re-notes/tr2-live-arm-native-progress-20261108.md. Full27/parity/audio/rates open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -66,9 +66,9 @@
 
 - [ ] Darkstone new earned slot restore and further encounter
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
-  status: active; three-victory new slot restored and onward fork reached; further encounter open
+  status: active; five victories and further Giant Wasp encounter verified; onward route open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-fork-encounter-0921 reloads newly written onward slot and pursues a reviewed living encounter/pickup/route transition beyond grassy fork. Published12e1af819 restored actual Gold1532/Victories3+0/LIFE28/35/Food91; two native route holds reached fork, Food90 with other counters unchanged. New characters dee39793 and game641d_6af03b8e.sav3ad04358 preserved but not yet reloaded. Coordinator reviewed two captures and independently verified193refs18686006bytes; normal archived stop expiryNULL and full drain pass. Note: docs/re-notes/darkstone-new-slot-progress-20261108.md. No additional victory/transition; historical spontaneous exit/full27/parity/audio/FPS open.
+  Next: Fresh darkstone-onward-route-0943 restores earned five-victory slot then pursues onward landmark/NPC/pickup/area transition. Publishedf720f9526 two GiantWasps defeated beyond fork, actualVictories5+0 LIFE24/35 Gold1532 MANA25/25 Food85. New characters cad82ff5 and game641d_6af041d7.sav d977d538 preserved with recovery recipe; not yet reloaded. Coordinator reviewed living target/final counters and independently verified382refs29289592bytes308hashes; bx archived expiryNULL full drain. Note: docs/re-notes/darkstone-fork-encounter-20261108.md. Historical spontaneousexit/full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
