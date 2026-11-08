@@ -56,6 +56,40 @@ function testSharedPacketPool() {
   pool.register(3, buffer, [192], 32);
 }
 testSharedPacketPool();
+function testObservationQueueCapacity() {
+  const { Manager } = require('../lib/render-worker');
+  const messages = [];
+  const manager = new Manager({maxQueuedCommands: 1, workerFactory: () => ({
+    on() {}, postMessage(message) { messages.push(message); }, terminate() {}
+  })});
+  const endpoint = manager.createEndpoint({api: 'legacy'});
+  const arm = {t: 'legacy-producer-observation', action: 'arm', options: {
+    ownerGeneration: 'capacity-regression', maxRecords: 4096,
+    writerEpochBuffer: new SharedArrayBuffer(16),
+    surfaceVersionBuffer: new SharedArrayBuffer(4096 * 65536)
+  }};
+  endpoint.postMessage(arm);
+  assert(manager.queuedBytes > 0 && manager.queuedBytes < 1024,
+    'bounded shared observation state charges handles, not 256MiB payload');
+  const posted = messages.at(-1);
+  assert.strictEqual(posted.message, arm, 'accounting never substitutes the actual state buffers');
+  assert.throws(() => endpoint.postMessage(arm), /capacity/, 'command credits still bound control messages');
+  manager._receive({t: 'render-done', transportId: posted.transportId});
+  assert.equal(manager.queuedBytes, 0);
+  assert.throws(() => endpoint.postMessage({...arm, options: {...arm.options, maxRecords: 4095}}), /capacity/,
+    'mismatched journal receives no control-state exemption');
+  assert.throws(() => endpoint.postMessage({...arm, payload: arm.options.surfaceVersionBuffer}), /capacity/,
+    'an extra shared payload remains charged even if it aliases control state');
+  assert.throws(() => endpoint.postMessage({t: 'batch', bytes: arm.options.surfaceVersionBuffer}), /capacity/,
+    'ordinary shared command packets keep their byte cap');
+  assert.throws(() => endpoint.postMessage({t: 'batch', bytes: new Uint8Array(arm.options.surfaceVersionBuffer)}), /capacity/);
+  assert.throws(() => endpoint.postMessage({...arm, options: {...arm.options,
+    surfaceVersionBuffer: new ArrayBuffer(33 * 1024 * 1024)}}), /capacity/,
+    'copied storage cannot claim a shared-state exemption');
+  assert.equal(manager.pending.size, 0, 'refused packets consume no queue credit');
+}
+testObservationQueueCapacity();
+
 const sandbox = { console, URLSearchParams, setTimeout, clearTimeout };
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'host.js'), 'utf8') +
   '\n;globalThis.WineAssembly = WineAssembly;', sandbox);

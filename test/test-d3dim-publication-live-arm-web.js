@@ -7,7 +7,7 @@ let browser,server,page;
 const save=()=>{if(process.env.HANDOFF_RESULT)fs.writeFileSync(process.env.HANDOFF_RESULT,JSON.stringify(report,null,2));};
 (async()=>{
  report.baseline=process.env.HANDOFF_BASELINE||null;
- const baselineFiles=['host.js'];
+ const baselineFiles=['host.js','lib/render-worker.js','lib/d3d-render-worker.js'];
  const baseline=process.env.HANDOFF_BASELINE?Object.fromEntries(baselineFiles.map(f=>[f,cp.execFileSync('git',['show',process.env.HANDOFF_BASELINE+':'+f])])):{};
  const wasm=require('./helpers/d3dim-command-wait-fixture')();report.moduleSHA256=require('crypto').createHash('sha256').update(wasm).digest('hex');
  server=await startStaticServer({root,crossOriginIsolated:true,handleRequest(req,res){const f=req.url.split('?')[0].slice(1);if(baseline[f]){res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','text/javascript');res.end(baseline[f]);return true;}if(req.url==='/qualify-fixture.wasm'){res.writeHead(200,{'Content-Type':'application/wasm'});res.end(wasm);return true;}return false;}});

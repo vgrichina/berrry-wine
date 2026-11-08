@@ -82,7 +82,7 @@ globalThis.qualifyActualJoin=async function(){
   const ticks=wine._stepTicks||0;
   let join;
   try{
-   const arming=wine.armD3dimPublicationObservation({maxRecords:16});
+   const arming=wine.armD3dimPublicationObservation({maxRecords:4096});
    check(wine._d3dimPublicationArming&&!link.writerObservation,'reservation precedes boundary without attaching to old command');
    await release();release=null;
    wine._scheduleStep(nextStep,0);

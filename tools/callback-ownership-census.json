@@ -9589,9 +9589,9 @@
     {
       "file": "lib/render-worker.js",
       "name": "host-file",
-      "sha256": "e1e67baffb6c058cdeed1bdc067587595787023b71e4b94e3c66ef5d3dec8562",
+      "sha256": "7cb134cc06588c8ee131a350f35c272e9c22d1a643117c046d702e72bdfa53b2",
       "kind": "host-entry",
-      "reason": "Late-bound native export facade brackets execution and conservatively invalidates standalone mutators; invocation/nonlocal ownership remains pending.",
+      "reason": "Late-bound native export facade brackets execution and conservatively invalidates standalone mutators; invocation/nonlocal ownership remains pending. Observation queue accounting review 20261108: only validated bounded shared journal/epoch control handles are charged by reference; command payload/credit bounds and all writer/lifetime/publication gates remain unchanged. No guest callbacks or restoration changes.",
       "ownership": "pending"
     }
   ]
