@@ -1,5 +1,31 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Redline browser texture and HUD repair
+
+Published `37ce9588e`, run `20261108-redline-texture-realization`, fixes
+browser boot initializing the shared DirectX COM registry twice: once on the
+owning guest Worker, then on the idle page instance. Later guest threads read
+the replacement registry and misidentify the original DirectDraw4 creator,
+returning Surface2 interfaces that correctly reject its 124-byte descriptors.
+The repair preserves the owner's registry; local boot still initializes it.
+The actual owner/page/later-thread regression fails before and passes after,
+with strict descriptor checks and the locked build passing.
+
+The unchanged original Stadium City route now completes all 467 gameplay
+texture realizations. The coordinator inspected retained before/after captures:
+flat surfaces and HUD blocks become textured scenery and weapon, with readable
+ammo 200 and health 100. The owning legacy renderer is WebGL2 on Intel/Mesa,
+with matching exports/memory, 204 cached textures and 374 uploads. The WAT module
+remains `f9650607…`; the host boot code changed. Twenty-six commands complete
+with exact ACKs and no UNKNOWN. A single Control action produces no demonstrated
+ammo decrement or distinct shot consequence, so firing and vehicle entry remain
+open. This run does not establish software-backend coverage, parity, FPS, audio
+or full playability. Evidence was verified before normal nonforced shutdown.
+[Cause, regression, original captures and cleanup](re-notes/redline-texture-realization-20261108.md).
+The prepared follow-up crash sweep must exercise actual browser Worker boot;
+a CLI-only run would bypass the repaired sequence. Full historical27 and
+remaining per-app coverage remain open.
+
 ## November 8: Tux Racer completes current browser races on both backends
 
 Published `d58dffae2`, run `20261108-tuxracer-current-browser-backends`,
