@@ -68,7 +68,7 @@
   id: DARKSTONE-NEW-SLOT-PROGRESS-20261108
   status: active; native Level 1 entrance/transition and recovered dungeon checkpoint verified; dungeon exploration open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh darkstone-custody-ready-1528: cross-apply accepted kernel fork custody to actual startup/custodian, then restore unchanged helmet pair and continue second opening with early recovered native save if ready. Published34c92d72c fixes nested required paths and durable WNOWAIT identity before child reap; 9 focused tests/actual custodian+provision integration/fullbuild passed. Coordinator independently hashed84refs4981777B; no allocation/gameplay. Exact-call checker unchanged; known sampling/history scope explicit. See docs/re-notes/darkstone-driver-closure-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh darkstone-helmet-native-1545: use integrated normal kernel-custody/watchdog path for actual helmet checkpoint restore, production loadFiles/VFS/native preview then second opening; early native NewSave independently retrieve/hash by minute10. Published0696e8112 fixes clean-bootstrap missing reaper and nonterminal stop-peek race;4focused+2actualstartup tests+lockedbuild passed. Coordinator independently hashed122refs5354177B, exact watchdog/kernel identities absent. No allocation/newgameplay, source70fcfbe3/a4ecb215 unchanged; known CLONE_UNTRACED/history limits retained. See docs/re-notes/darkstone-custody-ready-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
