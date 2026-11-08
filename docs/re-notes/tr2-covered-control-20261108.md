@@ -1,0 +1,35 @@
+# TR2 repaired observer original attempt — 2026-11-08
+
+**Blocked before gameplay: the fresh original's Graphics dialog was not visible in reviewed pixels.** The requested observed Control hold did not occur. The one fresh box was drained and normally stopped without blind input, restart, replay or another allocation. No new substantive causal code repair or Control defect is claimed. The published `8579c29a2` observer repair remains intact.
+
+Evidence: `scratch/runs/20261108-tr2-covered-control-1743/` (R). Starting Git SHA is `b9116fecdee31f779d3c2ed303e5dd06d5da122d`; `R/relevant.diff` is empty. Git remains the source archive. Small owned helper patches, exact manifest pins and existing media path/hash references support recovery; no source/media archive, repeated media or peer WIP was copied.
+
+## Actual result and stop boundary
+
+The normal helper completed its balanced native-key preflight on **about:blank before the registered original launch**, including its existing Control check. Those preflight holds are not game input or an observed Action hold. All their independent releases preceded launch. In the game, the only numbered commands were passive `graphics-inspect` capture and `stop-blank-startup` quit; both ACKed. No Enter, gameplay key, Control hold or observer installation occurred.
+
+Personally reviewed `review/webgl/startup.png` and `graphics-dialog.png` both show a gray 780×437 canvas with the Debug button. Neither exposes readable Graphics options or an OK control. The live guest remained failure-free at PC 7069607, yield 7, focus HWND 65539. The later read-only inspection records visible top-level windows titled “Tomb Raider II,” including HWND 65538, and its visible child HWND 65545 titled “Graphics.” This establishes a presentation blocker, not a diagnosed cause: the actual page viewport is 780×437, DPR 1, screen 800×600. The prior reviewed original had different canvas geometry; this run did not change the viewport or try to reproduce it.
+
+The page input journal after navigation is empty. No D3DIM publication journal or owning renderer context is present. Consequently ordinary ARM and initial non-null raw confirmation were **not reached**; gameplay was not admitted. Pistols, dog, pose, aim, flash, hit and after-release consequence are all unreviewable here. There are no actual HRESULT, DIK1d/9d, owning bitmap VK17/162/163, slot-8 binding/conflict, or stack-paired EBX40 successor rows. No absence-of-poll inference is possible, and this run does not test repaired observer coverage.
+
+The driver requested backend `webgl`, but no owning WebGL2 authority was reached. CPU bytes match exact SHA-256 `d8facd0658b7f158c6e60bef2de0936471f438f8bf41e9240fd75635f1d319dc`; parsed host.js, host-imports.js and renderer.js match selected pins. The custody census additionally retains the fresh environment's Chrome command line with appended ANGLE/SwiftShader flags. This is not evidence of the prior Intel UHD 620 owning context and is not a backend qualification or a causal explanation for gray pixels. No backend or input-policy change was attempted.
+
+## Preserved selected generation and checks
+
+Selected source: `scratch/runs/20261108-tr2-observer-coverage-1733/runtime-pins.json`, SHA-256 `4cbcaf21b0ac26d969016af0ea8bf97a0e4a9df2465cafcc5ab5cb28f13505b0`. Normal relocation retains 615 providers / 29 physical helpers. All 586 non-helper providers, including the repaired observer, are unchanged. Historical 614 and predecessor 615 manifests remain unchanged.
+
+Only owned run paths, run metadata and obsolete 5 GB disk checks changed in the relocated helpers. The inherited `arm.py` initially refused locally on its old disk check before watchdog launch or allocation; the owner-mandated 1.5 GB rule was applied and helper pins revalidated. Free /home was 3.434 GB at admission. No observer cap increase, binding, native hold/release, guest clock, seed or private guest write changed.
+
+Before allocation the exact resolver passed all 615 providers, syntax, 226 accepted references, 23 media references and 49 repair references. The selected driver preloader passed all 615 physical hashes without Chromium. All **85 offline coverage references / 446,299 bytes** were independently rehashed unchanged. The existing 32 observer checks, exact-d8fac causal fixture, direct/RPC controls, helper closure, HTTP resolver, helper activation and locked full-build evidence were reused. The authored causal fixture is not original-game or backend authority. Production code did not change in this task, so no new production build/test result is claimed.
+
+`python3 R/audit.py` passes the retrieval reread, two-command/two-ACK sequence, absence of game input and observer installation, null unarmed publications, selected CPU/parsed-source pins, two PNG CRC checks, staging barrier, unchanged non-helper generation, inherited evidence hashes and complete observed drain. The generic cleanup receipt's literal `pending: "UNKNOWN; never replay"` is retained; there is no transport UNKNOWN record, command failure or missing ACK. Audit success validates this stopped attempt, not the requested gameplay outcome. Internal WAT reentry and other threads remain unobserved. Full27, parity, audio and FPS remain open.
+
+## Closed lifecycle
+
+One UUID idempotency key was persisted before the single create. Independent watchdog, normal-stop and supervisor PID/start identities were observable before allocation. The immutable 25-minute overall deadline was 18:06:00.872 UTC; initial box expiry was **2026-11-08 18:06:01.019 UTC**. Remote custody held its lock from startup through drain; no local heavy runtime or local runtime lock was used. All 616 upload futures joined before verified staging publication and parent consumption, manifest SHA-256 `330704ba24170de3f831e1be1a34e8901fb890967331db46e65f4c6d183ef143`.
+
+Before delegated normal stop, **72 remote artifact references / 64 unique hashes / 42,403,282 referenced bytes** were retrieved and independently reread. Chrome exited 0, signal null. Drain passed for 35 observed remote PID/start identities, adopted descendants, bootstrap/custodian, ports 45473/39851, profile, writers and remote lock; all 615 provider pins remained unchanged. There were no gameplay held keys to drain, and the prelaunch native releases are retained. Custody is a **50 ms census plus subreaper adoption and durable WNOWAIT registration**, not exhaustive kernel history or evidence about already reaped descendants. All three local lifecycle identities are absent; both child roles exited 0 and supervisor ended empty.
+
+Box **`bx_w6rs4se9`** is **archived, expiry null**. Normal stop **`stop_caafc7781b6a0cad`** completed **2026-11-08 17:42:44.497 UTC**, forced=false, error=null. No task box remains billing. No old-box resume/delete, public deployment or subworker occurred.
+
+Next work is diagnosis of the measured invisible startup dialog and fresh-environment presentation/authority before any separately authorized original. This single-task worker stops with the concrete blocker; the requested observed Control and reviewed consequence remain undone.
