@@ -2843,9 +2843,9 @@
           ]
         ]
       ],
-      "sha256": "e7678a5cef9618215e4152ee1ff709691ffffe89b1b6710c06697fdf4dacc018",
+      "sha256": "5b7ec7462f6c84e34a1c440f8ae2cbd46c3d209044831b3554d979aa638f04a9",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261031 builtin execution policy: added synchronous builtin handle resolution acquires/releases existing DLL lock and marks existing static handle loaded, or returns missing-path error. Native yield path and sole EIP restoration target unchanged; no retained callback/context added.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261031 builtin execution policy: added synchronous builtin handle resolution acquires/releases existing DLL lock and marks existing static handle loaded, or returns missing-path error. Native yield path and sole EIP restoration target unchanged; no retained callback/context added. Missing-vendor failure review 20261108: only absent-file/non-system branch now returns NULL and ERROR_MOD_NOT_FOUND before synthetic reference creation; native yield, cached retain, lock/park and guest continuation unchanged. No new callback or context restoration; ownership remains pending.",
       "ownership": "pending"
     },
     {

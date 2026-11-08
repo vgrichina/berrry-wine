@@ -24,20 +24,37 @@ const extraWat = String.raw`
       (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (local.get $sp))
     (i32.load offset=0 (global.get $reg_base)))
-`;
+` + ['LoadLibraryW', 'LoadLibraryExA', 'LoadLibraryExW'].map(name => `
+  (func (export "test_call_${name}") (param $name i32) (result i32)
+    (local $sp i32)
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (call $handle_${name} (local.get $name)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (local.get $sp))
+    (i32.load (global.get $reg_base)))
+`).join('\n');
 
 async function main() {
-  const { exports: e, memory } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const { exports: e, memory } = await bootRenderHarness({ extraWat, fonts: 'none',
+    beforeInstantiate(ctx) {
+      // Qualified builtin loads require file presence under the execution
+      // policy. This harness boots no installed system tree of its own.
+      require('../lib/process-boot').mountDirectXSystemModules(ctx.vfs);
+      for (const dir of ['c:\\windows', 'c:\\windows\\system'])
+        ctx.vfs.files.set(dir + '\\kernel32.dll', { data: new Uint8Array(), attrs: 0x20 });
+    },
+  });
   e.test_set_image_base(0x00400000);
   const bytes = new Uint8Array(memory.buffer);
   const guestToWasm = guest =>
     (guest - (e.get_image_base() >>> 0) + (e.get_guest_base() >>> 0)) >>> 0;
-  const load = value => {
-    const guest = e.guest_alloc(value.length + 1) >>> 0;
+  const load = (value, api = 'LoadLibraryA') => {
+    const wide = api.endsWith('W');
+    const guest = e.guest_alloc((value.length + 1) * (wide ? 2 : 1)) >>> 0;
     const wasm = guestToWasm(guest);
-    for (let i = 0; i < value.length; i++) bytes[wasm + i] = value.charCodeAt(i);
-    bytes[wasm + value.length] = 0;
-    return e.test_call_LoadLibraryA(guest) >>> 0;
+    const encoded = Buffer.from(value + '\0', wide ? 'utf16le' : 'latin1');
+    bytes.set(encoded, wasm);
+    return e['test_call_' + api](guest) >>> 0;
   };
 
   const bare = load('kernel32.dll');
@@ -65,6 +82,11 @@ async function main() {
   assert.strictEqual(load('C:\\WINDOWS\\SYSTEM\\a3d.dll'), 0, 'not by system path either');
   assert.strictEqual(load('msi.dll'), 0, 'Windows Installer is not installed');
   assert(load('d3d9.dll'), 'a component we dispatch by API name still loads by bare name');
+  for (const api of ['LoadLibraryA', 'LoadLibraryW', 'LoadLibraryExA', 'LoadLibraryExW']) {
+    assert.strictEqual(load('VENDOR-UNINSTALLED', api), 0, api + ' absent bare stem');
+    assert.strictEqual(e.test_get_last_error(), 126, api + ' ERROR_MOD_NOT_FOUND');
+    assert.strictEqual(load('KERNEL32', api), bare, api + ' builtin normalization');
+  }
 
   console.log('PASS test-loadlibrary-system-path');
 }

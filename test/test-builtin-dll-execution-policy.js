@@ -98,6 +98,7 @@ function fixture() {
     (func (export "index") (param $p i32) (result i32) (call $guest_name_is_static_system_dll (local.get $p)))
     (func (export "name") (param $i i32) (result i32) (call $static_sys_dll_name_at (local.get $i)))
     (func (export "yielded") (result i32) (global.get $yield_reason))
+    (func (export "setError") (param $n i32) (global.set $last_error (local.get $n)))
     (func (export "error") (result i32) (global.get $last_error))`;
   const r = compile(wat, new Map(), {mode:'production', standardWat:true,
     runtimeBuiltins:false, strictDeclarations:true});
@@ -153,6 +154,23 @@ async function main() {
     assert.equal(e.error(),126);
   }
   const handles=new Set();
+  e.setError(0x1234);
+  const d3d9=e.load(write('d3d9.dll'),0)>>>0;
+  assert(d3d9 && d3d9!==0x400000,'implemented D3D9 keeps its own module identity');
+  assert.equal(e.error(),0x1234,'successful builtin load preserves LastError');
+  // Missing vendor probes must fail before GetProcAddress: callers often
+  // retry a suffix/another driver only when LoadLibrary itself returns NULL.
+  // Use unrelated names too: this is a loader contract, not a game alias.
+  for (const name of ['d3d', 'D3D.DLL', 'vendor-probe', 'vendor-probe.dll',
+    'vendor-probe.', 'C:\\WINDOWS\\SYSTEM\\vendor-probe.dll',
+    'C:/Games/vendor-probe.dll', 'uxtheme.dll']) {
+    const refs=Buffer.from(bytes.subarray(13568,13824));
+    assert.equal(e.load(write(name),0),0,name+' missing module returns NULL');
+    assert.equal(e.error(),126,name+' ERROR_MOD_NOT_FOUND');
+    assert.equal(e.yielded(),0,name+' does not attempt a nonexistent mapping');
+    assert.deepEqual(Buffer.from(bytes.subarray(13568,13824)),refs,
+      name+' failure creates no synthetic reference');
+  }
   for (const stem of registry.WINDOWS_SYSTEM_DLLS) {
     if (!registry.isBuiltinOnlyDll(stem) || stem==='kernel32') continue;
     const name=stem.includes('.')?stem:stem+'.dll', p=write(name);
@@ -165,6 +183,11 @@ async function main() {
   for (const name of ['msvcrt.dll','d3drm.dll','ole32.dll','comctl32.dll','oleaut32.dll','dsetup.dll','vendor.dll']) {
     vfs.files.set('c:\\'+name,{data:original,attrs:0x20});
     e.load(write(name),0); assert.equal(e.yielded(),5,name+' keeps native mapping route');
+  }
+  vfs.files.set('c:\\games\\vendor-probe.dll',{data:original,attrs:0x20});
+  for (const name of ['C:/Games/VENDOR-PROBE', 'c:\\games\\vendor-probe.dll']) {
+    e.load(write(name),0);
+    assert.equal(e.yielded(),5,name+' available qualified vendor retains native route');
   }
   const requested=[];
   await boot.resolveDllGraph({exeBytes:importPe('d3d8.dll'), detectRequiredDlls:loader.detectRequiredDlls,

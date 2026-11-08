@@ -317,9 +317,8 @@
                       (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
                     (return)))))))))
     ;; COM self-registration exports belong to a real server image, and the
-    ;; EXE above did not export one. The image base also stands in for a bare
-    ;; DLL name nothing on disk provides (LoadLibrary's last fallback), so
-    ;; without this the API-by-name path below handed out our fail-fast
+    ;; EXE above did not export one. Without this the legacy API-by-name
+    ;; path below handed out our fail-fast
     ;; DllRegisterServer: Explorer loads ACTXPRXY.DLL, which a stock box need
     ;; not have, and registers whatever comes back (crash sweep, 15 s in).
     ;; Answer as Windows does for a module without the export.
@@ -333,8 +332,6 @@
             (i32.store offset=16 (global.get $reg_base)
               (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
             (return)))))
-    ;; Legacy unknown bare-DLL handles still alias image_base. Preserve that
-    ;; compatibility fallback for now; native KERNEL32 never enters it.
     ;; `_acmdln` is an exported data cell, not a callable CRT function. Old
     ;; MSVC runtimes resolve it dynamically and abort startup if it is absent.
     ;; Our static-system-DLL handles are intentionally aliases, so the export
@@ -1873,6 +1870,7 @@
     ;; handle makes VCL cache NULL theming procedure pointers, then call them.
     (if (call $dll_name_match (local.get $arg0) (i32.const 0x36D))
       (then
+        (global.set $last_error (i32.const 126))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
@@ -1889,40 +1887,15 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
     (local.set $tmp (call $guest_name_is_static_system_dll (local.get $arg0)))
-    ;; Not a system module by name and not a file we hold: a module whose name
-    ;; is not a .dll at all has no static dispatch behind it, so report the
-    ;; load failure Windows would rather than hand back a handle that resolves
-    ;; to nothing.
-    ;; A qualified path names one file on disk, and $host_has_dll_file already
-    ;; said it is not there, so the load fails. Only a bare name may stand for
-    ;; a component we dispatch by API name (dynamic d3d9.dll). Winamp's NSIS
-    ;; installer unregisters a previous install's plug-ins by full path; a
-    ;; handle here sent it into DllUnregisterServer on our own image.
-    (local.set $src (i32.const 0))
-    (local.set $dst (i32.const 0))
+    ;; No native file and no implemented system module: LoadLibrary fails
+    ;; with ERROR_MOD_NOT_FOUND, even for a bare .dll name. A nonzero EXE
+    ;; handle would suppress the caller's own optional-driver retry path.
     (if (i32.eqz (local.get $tmp))
       (then
-        (block $end (loop $scan
-          (local.set $ch (call $gl8 (i32.add (local.get $arg0) (local.get $src))))
-          (br_if $end (i32.eqz (local.get $ch)))
-          (if (i32.or (i32.eq (local.get $ch) (i32.const 92))
-                      (i32.or (i32.eq (local.get $ch) (i32.const 47))
-                              (i32.eq (local.get $ch) (i32.const 58))))
-            (then (local.set $dst (i32.const 1)) (br $end)))
-          (local.set $src (i32.add (local.get $src) (i32.const 1)))
-          (br $scan)))))
-    ;; ...except a path into the system/Windows directory, which stands for the
-    ;; bare name there exactly as a stem does.
-    (if (i32.and (i32.eq (local.get $dst) (i32.const 1))
-                 (call $loadlib_path_in_system_dirs (local.get $arg0)))
-      (then (local.set $dst (i32.const 0))))
-    (if (i32.and (i32.eqz (local.get $tmp))
-                 (i32.or (i32.eq (local.get $dst) (i32.const 1))
-                         (i32.eqz (call $guest_name_has_dll_ext (local.get $arg0)))))
-      (then
-        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store (global.get $reg_base) (i32.const 0))
         (global.set $last_error (i32.const 126))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
     (i32.store (global.get $reg_base) (global.get $image_base))
     (if (local.get $tmp)
