@@ -1,5 +1,25 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Forsaken initial world and capture-cost diagnostic
+
+Published `c1ab23eec`, run `20261108-forsaken-capture-composition-cause`,
+reaches the current browser's native Volcano loading screen and initial
+textured world/HUD: Lives 5, shield/hull 128, PULS 2000 and MUG 5. The
+coordinator inspected both frames and independently checked 143 artifact
+references. The actual owning legacy WebGL2 context and guest/render modules
+match the recorded f965 runtime. No movement, firing or combat was tested.
+
+The earlier command deadline did not recur: ten commands, including Start,
+received exact successful ACKs under unchanged budgets. The measured startup
+capture cost 16.472 seconds, dominated by owning-guest inspector evaluations
+up to 7.991 seconds; unrelated-thread reads and module transfers were short.
+The locally tested unrelated-thread-selection candidate was never enabled in
+the original because those timings do not support it. No causal repair was
+validated, and the previous failed Start remains failed with its exact pending
+await unknown. Normal shutdown followed verified retrieval.
+[Actual phase timings, controls, original frames and limits](re-notes/forsaken-capture-composition-cause-20261108.md).
+Full27, paired gameplay, FPS and audio remain open.
+
 ## November 8: browser startup sweep after the COM boot repair
 
 Published `29027f029`, run `20261108-graphics-post-renderer-repair-sweep`,
