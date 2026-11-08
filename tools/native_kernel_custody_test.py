@@ -348,6 +348,40 @@ class ContinueRace(unittest.TestCase):
             self.assertEqual(drain['unreaped'],[]);self.assertEqual(drain['remaining'],[])
 
 
+class TerminalAdoption(unittest.TestCase):
+    def test_real_tracer_wait_then_adopted_parent_wait(self):
+        for mode in ('historical', 'adopt', 'adopt-signal', 'parent-wait', 'bad-status', 'third-receipt'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as tmp:
+                base=Path(os.environ.get('CUSTODY_TERMINAL_EVIDENCE',tmp))
+                run=Path(tempfile.mkdtemp(prefix=mode+'-',dir=base))
+                result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                    '--terminal-fixture',str(run),mode],capture_output=True,text=True,timeout=12)
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                drain=json.loads((run/'kernel-drain.json').read_text())
+                rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+                receipt=json.loads((run/'terminal-fixture-waits.json').read_text())
+                self.assertFalse((run/'watchdog-fired.json').exists())
+                self.assertEqual(receipt['watchdogWait'],-15)
+                success=mode in ('adopt','adopt-signal','parent-wait')
+                self.assertEqual(drain['complete'],success)
+                self.assertEqual(receipt['supervisorWait'],0 if success else 1)
+                if not success:
+                    self.assertIn('duplicate terminal receipt',drain['failure'])
+                    continue
+                self.assertEqual(drain['remaining'],[]);self.assertEqual(drain['unreaped'],[])
+                adoptions=[r for r in rows if r['kind']=='adopted-reaped']
+                self.assertEqual(len(adoptions),1 if mode.startswith('adopt') else 0)
+                for adoption in adoptions:
+                    first=next(r for r in rows if r['sequence']==adoption['tracerReapSequence'])
+                    before=next(r for r in rows if r['sequence']==adoption['beforeReapSequence'])
+                    self.assertEqual(first['status'],15 if mode=='adopt-signal' else 7<<8)
+                    self.assertEqual(first['start'],adoption['start'])
+                    self.assertNotEqual(first['terminalParent'],adoption['terminalParent'])
+                    self.assertEqual(before['ppid'],adoption['terminalParent'])
+                    self.assertLess(first['sequence'],before['sequence'])
+                    self.assertLess(before['sequence'],adoption['sequence'])
+
+
 class CompressedCancellation(unittest.TestCase):
     def run_case(self, mode):
         with tempfile.TemporaryDirectory() as tmp:
@@ -419,6 +453,80 @@ class CompressedCancellation(unittest.TestCase):
     def test_cleanup_deadline_is_incomplete_with_verified_prefix(self):self.run_case('no-waits')
     def test_sigkill_is_explicitly_incomplete_and_preserves_prefix(self):self.run_case('hard-kill')
     def test_original_supervisor_default_term_truncates_gzip(self):self.run_case('legacy-term')
+
+
+def terminal_fixture(run, mode):
+    # Independent watchdog is armed before the supervisor's fork barrier.
+    run=Path(run).resolve();gate_read,gate_write=os.pipe()
+    pid=os.fork()
+    if pid==0:
+        os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
+        module=kernel
+        if mode=='historical':
+            import types
+            revision='e1a413983f251534ad77dbf337844ab9ca3afb74'
+            source=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+            assert hashlib.sha256(source).hexdigest()=='04a3598c7e23966d57173df5f42ba740fd36106ca4e8f78c84c435f49451221d'
+            module=types.ModuleType('historical');exec(compile(source,revision,'exec'),module.__dict__)
+        actual_wait=os.waitpid;first=[];replay=[]
+        def consume(task,flags):
+            got,status=actual_wait(task,flags)
+            if got and (os.WIFEXITED(status) or os.WIFSIGNALED(status)):
+                row=module.identity(task) if Path('/proc',str(task)).exists() else None
+                if row and row['ppid']!=os.getpid() and row['tgid']==task:
+                    first.append(task)
+                    (run/'tracer-consumed').write_text(str(task))
+                elif task in first:
+                    if mode=='bad-status':status=8<<8
+                    if mode=='third-receipt':replay.append((got,status))
+            return got,status
+        actual_peek=os.waitid
+        def peek(*args):
+            if replay:
+                from types import SimpleNamespace
+                return SimpleNamespace(si_pid=replay[0][0],si_code=os.CLD_EXITED,si_status=7)
+            return actual_peek(*args)
+        def wait(task,flags):
+            if replay:return replay.pop(0)
+            return consume(task,flags)
+        command='''import os,threading,time,pathlib,signal
+def child():
+ p=os.fork()
+ if p==0:
+  if SIGNAL:os.kill(os.getpid(),15)
+  os._exit(7)
+ pathlib.Path(CHILD).write_text(str(p))
+threading.Thread(target=child).start()
+while not pathlib.Path(MARKER).exists():time.sleep(.001)
+if PARENT_WAIT:
+ p=int(pathlib.Path(CHILD).read_text());got,status=os.waitpid(p,0)
+ assert got==p and status==7<<8
+os._exit(0)
+'''.replace('CHILD',repr(str(run/'child'))).replace('MARKER',repr(str(run/'tracer-consumed'))).replace('PARENT_WAIT',repr(mode=='parent-wait')).replace('SIGNAL',repr(mode=='adopt-signal'))
+        try:
+            with patch.object(module.os,'waitpid',side_effect=wait),patch.object(module.os,'waitid',side_effect=peek):
+                due=time.time()+4
+                module.supervise(run,[sys.executable,'-c',command],deadline=due,cleanup_deadline=due+1,journal_compression='gzip')
+        except BaseException:os._exit(1)
+        os._exit(0)
+    watchdog=os.fork()
+    if watchdog==0:
+        os.close(gate_read);os.close(gate_write)
+        target_start=kernel.identity(pid)['start']
+        (run/'watchdog-armed.json').write_text(json.dumps(dict(pid=os.getpid(),target=pid,
+            targetStart=target_start,seconds=7,deadline=time.time()+7)))
+        time.sleep(7)
+        try:
+            if kernel.identity(pid)['start']==target_start:os.kill(pid,9)
+        except (ProcessLookupError,FileNotFoundError):pass
+        (run/'watchdog-fired.json').write_text('{}');os._exit(0)
+    os.close(gate_read)
+    while not (run/'watchdog-armed.json').exists():time.sleep(.001)
+    os.write(gate_write,b'1');os.close(gate_write)
+    _,status=os.waitpid(pid,0)
+    os.kill(watchdog,15);_,watch_status=os.waitpid(watchdog,0)
+    (run/'terminal-fixture-waits.json').write_text(json.dumps(dict(supervisorWait=os.waitstatus_to_exitcode(status),
+        watchdogWait=os.waitstatus_to_exitcode(watch_status))))
 
 
 def gzip_fixture(run, mode):
@@ -712,11 +820,12 @@ if __name__=='__main__':
                 pid,status=os.waitpid(-1,0)
                 adopted.append(dict(pid=pid,status=status,exit=os.waitstatus_to_exitcode(status)))
             except ChildProcessError:break
-        if sys.argv[2]=='--gzip-fixture':
+        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture'):
             (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
                 fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
     elif len(sys.argv)>1 and sys.argv[1]=='--gzip-fixture':gzip_fixture(sys.argv[2],sys.argv[3])
+    elif len(sys.argv)>1 and sys.argv[1]=='--terminal-fixture':terminal_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--cont-race-fixture':cont_race_fixture(sys.argv[2])
     elif len(sys.argv)>1 and sys.argv[1]=='--concurrent-exit-fixture':cont_race_fixture(sys.argv[2],True)
     elif len(sys.argv)>1 and sys.argv[1]=='--unseen-exit-fixture':unseen_exit_fixture(sys.argv[2])

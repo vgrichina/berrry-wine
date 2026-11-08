@@ -194,9 +194,26 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             assert got == task, ('peek/consume mismatch', task, got)
             if os.WIFEXITED(status) or os.WIFSIGNALED(status):
                 parked.discard(task)
-                assert not any(r['pid'] == task for r in reaped), 'duplicate terminal receipt'
+                previous = next((r for r in reaped if r['pid'] == task), None)
+                if previous is not None:
+                    # A tracer's terminal wait releases the zombie to its real
+                    # parent. If that parent exits without waiting, subreaper
+                    # adoption delivers a second, distinct wait obligation.
+                    # This is not PID reuse, nor permission to ignore duplicates.
+                    assert (previous['start'] == row['start'] and
+                            previous['terminalParent'] != os.getpid() and
+                            row['ppid'] == os.getpid() and row['tgid'] == task and
+                            previous['status'] == status and
+                            'adoptionSequence' not in previous), 'duplicate terminal receipt'
+                    previous['adoptionSequence'] = log('adopted-reaped', pid=task,
+                        start=row['start'], status=status, beforeReapSequence=before,
+                        tracerReapSequence=previous['sequence'], previousParent=previous['terminalParent'],
+                        terminalParent=row['ppid'])
+                    continue
                 reaped.append(dict(pid=task, start=row['start'], beforeReapSequence=before,
-                                   sequence=log('reaped', pid=task, start=row['start'], status=status), status=status))
+                                   sequence=log('reaped', pid=task, start=row['start'], status=status,
+                                                terminalParent=row['ppid']), status=status,
+                                   terminalParent=row['ppid']))
                 if task in pending:
                     receipt = pending.pop(task)
                     log('ptrace-esrch-reconciled', pid=task, start=row['start'],
