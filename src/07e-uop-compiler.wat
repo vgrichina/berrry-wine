@@ -3766,8 +3766,9 @@
       (call $uc_o2 (i32.const 64) (local.get $d)
         (if (result i64) (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (local.get $n))
           (then (local.get $alt)) (else (call $uc_xstub))))
-      (if (global.get $pending_armed) (then
-        (call $uc_o2 (i32.const 80) (call $uc_aN (local.get $cand)) (call $uc_aR (i32.const 4)))))
+      ;; Transfer seams are unconditional: a passive observer can be armed
+      ;; after this program was compiled, without flushing or changing tiers.
+      (call $uc_o2 (i32.const 80) (call $uc_aN (local.get $cand)) (call $uc_aR (i32.const 4)))
       (call $uc_o3 (i32.const 8) (call $uc_aR (i32.const 4)) (call $uc_aR (i32.const 4))
                    (call $uc_aN (i32.add (i32.const 4) (i32.load offset=28 (local.get $R)))))
       (global.set $uc_sm (local.get $m)) (global.set $uc_smd (local.get $md))
@@ -3929,9 +3930,8 @@
                             (call $uc_xstub) (i64.const 0) (i64.const 0))))
                   (call $uc_store (i32.add (local.get $R) (i32.const 80)) (i32.const 32) (call $uc_aC (local.get $nx)))
                   (call $uc_o3 (i32.const 8) (call $uc_aR (i32.const 4)) (call $uc_aR (i32.const 4)) (call $uc_aN (i32.const -4)))
-                  (if (global.get $pending_armed) (then
-                    (call $uc_o3 (i32.const 79) (call $uc_aN (local.get $tgt))
-                      (call $uc_aN (local.get $nx)) (call $uc_aR (i32.const 4)))))
+                  (call $uc_o3 (i32.const 79) (call $uc_aN (local.get $tgt))
+                    (call $uc_aN (local.get $nx)) (call $uc_aR (i32.const 4)))
                   (local.set $md (i32.or (local.get $md) (i32.const 16)))
                   (local.set $cd (i32.or (local.get $cd) (i32.const 16)))
                   (global.set $uc_smd (local.get $md))
