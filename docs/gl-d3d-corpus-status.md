@@ -1,5 +1,26 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 8: Tux Racer completes current browser races on both backends
+
+Published `d58dffae2`, run `20261108-tuxracer-current-browser-backends`,
+completes original Practice → Frozen River through ordinary native controls:
+
+| App | Software GL | WebGL |
+| --- | --- | --- |
+| Original Tux Racer 0.61a | Owning software OpenGLHostBridge context/shared memory; main guest/render CPU flags 1. Finish and matching best result: 01:50.50, 15 herring, score 0. | Owning live WebGLBackend v1, Intel/Mesa ANGLE; guest/render CPU flags 0. Finish and matching best result: 02:02.96, 19 herring, score 0. |
+
+The coordinator inspected both returned best-result screens, the WebGL finish
+and software steering frame. Textured terrain, transparent tree silhouettes,
+Tux and readable changing HUD accompany acceleration, steering and release.
+Both actual guest/render modules match `f9650607…`. Twenty-four exact ACKs and
+sixteen independent key releases complete without UNKNOWN or replay. The black
+backing behind the speed readout remains disclosed; these are bounded visual
+checks, not flawless rendering or pixel parity. Different times and paths do
+not measure comparative performance, clock accuracy or FPS. Audio remains open.
+Evidence was hash-verified before normal nonforced box shutdown.
+[Race records, backend identities, tests and limits](re-notes/tuxracer-current-browser-backends-20261108.md).
+Full historical27 and remaining per-app coverage remain open.
+
 ## November 8: Quake II browser world and blaster on both backends
 
 Published `a16f5b820`, run `20261108-quake2-bounded-world`, verifies ordinary
