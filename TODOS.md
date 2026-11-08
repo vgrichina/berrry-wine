@@ -1,14 +1,14 @@
 - [ ] Recoil native force-field power-control objective
   id: RECOIL-FORCEFIELD-OBJECTIVE-20261108
-  status: active; prior movement/turn/fire and target destruction accepted, mission objective incomplete
+  status: queued pending a distinct durable storage service; gameplay objective incomplete
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh recoil-preallocated-journal-1844 implements bounded preallocation before the guarded compound and measures actual Chrome durability without changing 250ms, final census or fiveSecond fences. Reviewed e71fbddbe whole note/code and 358 refs/115174877B independently hashed: compound phase/source journal removed phase-save latency, fastest durable age230ms but final census268ms correctly refused qualification. No original/input. 1067/29 selected closure preserves prior two-callback patch and prepare/drain; old manifests immutable. bx_c26sux5t archived expiryNULL stop_d1c77c185b83e0c3, both normal kernel drains complete; CLONE_UNTRACED unaudited. See docs/re-notes/recoil-compound-journal-20261108.md. Full27/parity/audio/FPS open.
+  Next: Reviewed1eb2a5254 whole note/code347refs57817842B independently hashed. Actual real preallocation tested but durable source317/370ms; fastest baseline233ms then independent census260ms refused. No original/input; 13retention+syscall/gates/clock/closure/build pass. Selected1067/29 preserves all fences, old generations immutable. bx_gbee99be archived expiryNULL stop_1569916c99242c5e normal179/179drain unresolved0 CLONE_UNTRACED unaudited. Next requires actually different durable service, target<=10ms sync AND consistently short source window; no unchanged original retry. Slot replaced by quake2-onward-route-1858. See docs/re-notes/recoil-preallocated-journal-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Quake II guard or onward-door consequence
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
-  status: queued on unambiguous local target/onward route; prior movement/discharge/incoming damage/health pickup accepted
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Qualify an unambiguous living target or ordinary onward threshold locally before another watched original. Published19d2fb24a localcc438 WebGL1 route found only known support/alcove geometry; closer review did not establish a living guard, flame/wall misidentifications corrected and corpseexcluded. NOshot/BOX/UNKNOWN/newconsequence. Coordinator inspected targetapproach and verified472files18289946bytes;21ACK18indepUP48PNG176HTTP and localdrainPASS. NativeWebGL nonlost/SW0 recorded, physicalGPU and absentnumericfallbackcounter unknown. Slot replaced by freshDrakanpoll/flight0714. Note: docs/re-notes/quake2-guard-door-progress-20261108.md. Full27/parity/audio/FPS open.
+  status: active; fresh onward-route assignment, outgoing consequence open
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
+  Next: Fresh quake2-onward-route-1858 inspects exact original map geometry/entities offline to identify a defensible ordinary route, then bounded native view review. Current living target or onward threshold required before any watched original; no blind repeat of prior support/alcove circuit, corpse/flame/wall excluded. Local verified threshold screenshot is valuable without redundant remote packaging. Prior19d2fb24a route limitations retained; no causal input defect inferred. Reclaims old coordinator lane. See docs/re-notes/quake2-guard-door-progress-20261108.md. Full27/parity/audio/FPS open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: native OK/current Venice movement and heading verified; qualified rates open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh tr2-weapon-consumption-1832 offline exact-original weapon/aim branch diagnosis and minimal bounded read-only causal observer ifneeded before nextoriginal. Reviewed00c0d6293 whole note421refs457279589B HASHpass personallyviewedLara uprightdogclosehealth3/5; one2000ms qualifiedpollHRESULT0 pairedActionEBX40 but noflash/hit/kill. VisibleGraphics actualsingleappFALSE notguardcausalproof; freshowningWebGL2Intel conflicts SystemInfoSwiftShader physicalGPUunresolved.615/29 unchanged85proofsreused. bx_9hdma9ab archivedexpiryNULLstop_7250aad4c9efedb0 Chromeexit0 observed31drain50mscensusWNOWAITscope. See docs/re-notes/tr2-startup-control-20261108.md. Full27/parity/audio/FPSopen.
+  Next: Fresh tr2-observed-weapon-1858 ONE original with explicit actionObserver+weaponObserver and single independent Control<=2000ms; inspect exact linked weapon state before further action. Reviewed aadf4012e whole note/code95refs7418690B HASHpass,126weapon32Action/directRPC/closure/build pass CPUd8fac unchanged. Selected615/29 SHAab9355dd repins only observer among nonhelpers; historical immutable,85priorproofs reused. Prior actual poll/Action remains no shot/aim cause proof. Fresh owning-context authority required, Intel/SystemInfoSwiftShader discrepancy unresolved. See docs/re-notes/tr2-weapon-consumption-20261108.md. Full27/parity/audio/FPS open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
