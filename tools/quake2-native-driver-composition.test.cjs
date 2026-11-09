@@ -195,11 +195,12 @@ task=m.compose_task(original,hashlib.sha256(original.read_bytes()).hexdigest())
 task['ROOT']=root;task['REMOTE']=str(root);task['RUN']=str(runtime.relative_to(root));task['R']=directory
 (directory/'review').mkdir()
 def transport(code,timeout):
- if '--remote-parent' in code:return [sys.executable,'-c','import time;time.sleep(30)']
+ if '--remote-parent' in code:return [sys.executable,'-c',"import time,json;from pathlib import Path\\np=Path("+repr(str(runtime/'original/cleanup.json'))+")\\nwhile not p.exists():time.sleep(.005)\\nprint(json.dumps(dict(stdout='joined inert launch',exitCode=0)))"]
  tree=ast.parse(code);call=tree.body[1].value
  assert ast.unparse(call.func)=='subprocess.run'
  argv=ast.literal_eval(call.args[0]);assert argv[:2]==['node','-e']
  assert 'tools/quake2-native-transport.cjs' in argv[2]
+ argv[2]="const envelopeLog=console.log;let envelopeOutput='';console.log=(...args)=>{envelopeOutput+=require('util').format(...args)+'\\\\n'};process.on('exit',()=>envelopeLog(JSON.stringify({stdout:envelopeOutput,exitCode:process.exitCode||0})));"+argv[2]
  return argv
 caller=m.Caller(task,directory/'caller',transport)
 errors=[]
@@ -416,6 +417,26 @@ async function main(){
     };
     assert.throws(()=>composition.compose(),/tested Q2 custody provider required/);
   }finally{fs.readFileSync=read;}
+  for(const [file,hash] of Object.entries({
+    'tools/quake2-native-launch-client.py':'cd8b886512553a67a5fcc66dfc09e7932e5cde2e771f24daf3fcde64b920c338',
+    'tools/q3-native-launch-client.py':'d3b9927b17372e74ef0abc8f43b59e709b1822d4927d7793c0153b07cda6509d'
+  })){
+    assert.equal(result.references.find(v=>v.path===file).sha256,hash);
+    for(const mode of ['old','changed','missing']){
+      try{
+        fs.readFileSync=function(p,...args){
+          if(p===path.join(root,file)){
+            if(mode==='missing')throw Object.assign(Error('missing orderly caller'),{code:'ENOENT'});
+            if(mode==='old')return cp.execFileSync('git',['show','1473c5952a52d5d2b4546b93a0d462b64fe5c6cd:'+file]);
+            return Buffer.concat([read.call(this,p,...args),Buffer.from('\n# drift\n')]);
+          }
+          return read.call(this,p,...args);
+        };
+        assert.throws(()=>composition.compose(),mode==='missing'?/missing orderly caller/:/tested Q2 orderly caller required/);
+      }finally{fs.readFileSync=read;}
+    }
+  }
+  console.log('exact d90 orderly callers; old, changed and missing providers refused before startup PASS');
   assert(result.source.includes("WINE_QUAKE2_LOAD_OBSERVATION=true;window.WINE_QUAKE2_NATIVE_WRITE_OBSERVATION=true;"));
   const gateStart=' // The ordinary DLL-loader call is parked';
   const gateEnd=" save('launch.json'";
