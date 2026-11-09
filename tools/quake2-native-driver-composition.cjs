@@ -21,12 +21,13 @@ const providers=Object.freeze({
 function replaceOnce(source,before,after){assert.equal(source.split(before).length,2,'missing/nonunique Q2 integration: '+before);return source.replace(before,after);}
 function compose(){
  const references=Object.entries(providers).map(([file,hash])=>{const b=fs.readFileSync(path.join(root,file));assert.equal(crypto.createHash('sha256').update(b).digest('hex'),hash,'Q2 provider changed: '+file);return {path:file,sha256:hash,size:b.length};});
- for(const file of ['tools/quake2-native-driver-composition.cjs','tools/quake2-native-launch-client.py','tools/q3-native-launch-client.py','tools/quake2-native-input.cjs','tools/quake2-native-transport.cjs','tools/native-browser-close.cjs','tools/native-command-log.cjs','tools/native-devtools-ready.cjs','tools/native_kernel_custody.py']){
+ for(const file of ['tools/quake2-native-driver-composition.cjs','tools/quake2-passive-attack.cjs','lib/quake2-owning-load-core.js','tools/quake2-native-launch-client.py','tools/q3-native-launch-client.py','tools/quake2-native-input.cjs','tools/quake2-native-transport.cjs','tools/native-browser-close.cjs','tools/native-command-log.cjs','tools/native-devtools-ready.cjs','tools/native_kernel_custody.py']){
   const b=fs.readFileSync(path.join(root,file));references.push({path:file,sha256:crypto.createHash('sha256').update(b).digest('hex'),size:b.length});
  }
  const retainedSource=fs.readFileSync(path.join(root,consumerPath),'utf8');let source=retainedSource;
  source=replaceOnce(source,"const run=__dirname,root=path.resolve(run,'../../..')",`const run=path.resolve(process.env.QUAKE2_NATIVE_RUN),root=${JSON.stringify(root)}`);
  source=replaceOnce(source,"t=require('./transport.cjs')","t=require(root+'/tools/quake2-native-transport.cjs')");
+ source=replaceOnce(source,'chain=bound.createChain({evaluate,send,workers,pageSession,',"chain=require(root+'/tools/quake2-passive-attack.cjs').createChain(bound,{evaluate,send,workers,pageSession,");
  source=replaceOnce(source,'for(const p of pins.files){',`for(const ref of ${JSON.stringify(references)})assert(pins.files.some(p=>p.path===ref.path&&p.sha256===ref.sha256&&p.size===ref.size),'staged production Q2 provider required: '+ref.path);for(const p of pins.files){`);
  source=replaceOnce(source,'let diskTimer;',`let terminalFailure=null;const terminalAbort=new AbortController();
 function checkTerminal(){if(terminalFailure)throw terminalFailure;}
