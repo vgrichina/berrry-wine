@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed047cc76b69 once645SHA171gzip2knowntruncated. First runtime fixture ENOENT process.cwd wrong stagedroot beforeChrome nooriginal,7actualreaps EOFseparate archived stop618fb446736111cd. Fresh quake2-staged-root-upper-route-0820 fixes actual root invocation then native+safe-upper-route gameplay FIRST ONEruntime; requireMotion true, first HP decrease terminal. NativeREVOKED damagecauseUNKNOWN.
+  Next: Reviewed efdcad9a once345SHA161gzip; native inputs passed, ordinary quit escalated SIGTERM normalfalse. Box archived stop_f07c5c431fca7a35. Repair actual joined quit offline; no gameplay retry. Fresh quake2-joined-quit-repair-0832.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed2045a98ee once274SHA123gzip. Frozen tracked whole-native PASS180actualreaps separateEOF, bx_jvzc62kr ARCHIVED stopf4cdb22d404ad552. Fixed caller postterminal guesttrace/captures actualoldFAILnewPASS focused+lockedbuild; changedcaller needs integration. Fresh redline-terminal-safe-side-door-0820 SECOND waits Q20820 exactrelease then native+originalside-door same task; no standalone qualification. NativeREVOKED allwriters/edictABAUNKNOWN.
+  Next: Reviewed adf7145a once34SHA19gzip; tracked fixture bypasses production caller. Implement fixture through real production caller with terminal and startup controls offline. Fresh redline-production-fixture-repair-0832.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed623aebabe once1773SHA1015gzip productionshadowrenamePASS. OldHUP/TERM/INT TypeErrorFAIL repaired8actualparentcompositionsPASS actualwaits separateEOF focused+lockedbuild. Fresh q3-cancel-safe-visible-progress-0820 THIRD waits Redline0820release then actualremote cancellation integrated towardoriginal gameplay. PublicationcustodyUNKNOWN historical33missingwaits remainUNKNOWN nohistoricalcause. CPUa320 custody5ec810 marker1858 caps unchanged.
+  Next: Reviewed1665eff9 once51SHA36gzip; actual fixture and normal caller execute before owner authentication. Implement parked preCPU/preDLLmain gate in actual Q3 composition offline. Fresh q3-parked-startup-repair-0832.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
