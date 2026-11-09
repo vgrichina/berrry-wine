@@ -90,6 +90,10 @@ UNKNOWN; its outer transport passes. Outer EOF does not establish nested
 completion. Stop **stop_6966241a5392ff24** completed **05:35:27.161Z**,
 forced=false, error=null, final **ARCHIVED**, stoppedAt **05:35:27.139Z**,
 archiveAfter=null. Exact PHYSICAL_DRAINED release was posted **05:35:41Z**.
+An extra read-only local boardwatch transport later returned **143**; its
+recorded child identity was already absent and its actual child-wait record
+was missing. That watcher's actual wait and separate EOF remain **UNKNOWN**.
+The separately supervised watchdog and runtime waits above are preserved.
 
 Git base plus small run-input patches, relevant binary diff and parent
 manifest references preserve source recovery. No source tree, game media or
