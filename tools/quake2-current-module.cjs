@@ -7,6 +7,9 @@ const browserModuleVersion=version+'-browser-1605-v1';
 // Exact published narrow browser implementation. Historical v2 continues to
 // enforce its original provider pins and browser behavior.
 const browserPolicyCommit='a16fc87d477d8891a741e1a214cfc89f5a924ac4';
+// Actual remote-parent and wire selection repair; only the explicit browser
+// version may select these three published providers.
+const browserCallerCommit='d0ecba843c8bb7fd6a1fc5eac1c727c28fb37923';
 // Runtime mirrors of the published browser implementation, never learned
 // from runtime pins. The preparer cross-checks them against the Git authority.
 const browserProviders=Object.freeze({
@@ -88,6 +91,7 @@ function validate(options={}){
  if(browser){
   assert(browserPolicyCommit,'published Q2 browser policy authority required');
   for(const name of [policy.observer,policy.provider,'tools/quake2-current-browser-policy.cjs'])selectedAuthorities[name]=browserPolicyCommit;
+  for(const name of ['tools/quake2-native-launch-client.py','tools/quake2-native-driver-composition.cjs','tools/quake2-input-wire-observation.cjs'])selectedAuthorities[name]=browserCallerCommit;
  }
  const raw=read(historical);assert.equal(hash(raw),historicalSHA,'historical Q2 pinset integrity');
  const prior=JSON.parse(raw),seen=new Set(),changes=[],files=[];
@@ -132,7 +136,7 @@ function validate(options={}){
    assert(!files.some(p=>p.path===name),'duplicate Q2 preparer provider');files.push(pin(name,read(name)));
   }
  }
- return {version:browser?browserModuleVersion:version,...(browser?{browserPolicyVersion,publishedBrowserPolicyCommit:commits[browserPolicyCommit]}:{}),files,httpPins,changes,writerDependencies,publishedModuleCommit:cpuCommit,historical:{path:historical,sha256:historicalSHA,commit:prior.commit},
+ return {version:browser?browserModuleVersion:version,...(browser?{browserPolicyVersion,publishedBrowserPolicyCommit:commits[browserPolicyCommit],publishedBrowserCallerCommit:commits[browserCallerCommit]}:{}),files,httpPins,changes,writerDependencies,publishedModuleCommit:cpuCommit,historical:{path:historical,sha256:historicalSHA,commit:prior.commit},
   sourcePolicy:'Current bytes only; exact enumerated published changes. No historical Git provider substitution.',
   nativeQualification:false};
 }
