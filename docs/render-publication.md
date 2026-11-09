@@ -548,6 +548,22 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   until asynchronous completion or failure. The runner still explicitly selects
   the local owner while startup, register inspection, input and yield handling
   migrate; this preparatory change alone does not resolve its callback gap.
+  PE placement/loading and launch name/drive/arguments now use shared
+  `stageAndLoadPeOwned`/`configureExeOwned` helpers in both the CLI and
+  `GuestThreadHost.loadPe`. The existing `stagePe` still owns oversized PE/NE
+  and self-extractor mapping policy. Placement is read from the selected owner;
+  host code only copies bytes, then invokes `load_pe` on that same owner.
+  Metadata staging is bounded and setter errors propagate instead of silently
+  continuing with the wrong identity. Startup-show setup in the CLI also uses
+  the owner, preserving explicit SW_HIDE. Callers must keep startup quiescent;
+  these helpers do not replace loader/callback lifecycle ownership.
+  `test-cli-main-worker-boot.js` checks both shipped WASM builds with local and
+  production Node Worker owners: identical entry/EIP/image base, retained
+  metadata and an unloaded host shadow. Evidence:
+  `scratch/runs/20261109-cli-owner-boot/test-result.json`.
+  The remaining startup setters, compatibility patches and DLL initialization,
+  plus inspection/input/yield paths, still require migration before enabling
+  a Worker-owned main thread in the full CLI runner.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.

@@ -2,6 +2,14 @@
   "version": 1,
   "entries": [
     {
+      "file": "lib/guest-main-owner.js",
+      "name": "host-file",
+      "sha256": "028c2aed8d9c66c72093616ece91964c1dd339e40ba23aa61022632a6f140612",
+      "kind": "host-entry",
+      "reason": "Review 20261109: immutable explicit local-or-Worker endpoint adapter. Calls and reads delegate to the chosen owner; Worker errors never fall back to host-shadow exports. Local execution remains inline. No independent callback stack, replay, cancellation or generation implementation added; endpoint lifecycle remains the existing transport responsibility. Owner isolation/asynchronous observer tests and actual Node slot0 contended callback probe pass. CLI startup and other exports still migrating; broader ownership pending.",
+      "ownership": "pending"
+    },
+    {
       "file": "src/13-exports.wat",
       "name": "$com_callback_check",
       "writes": 0,
@@ -309,7 +317,8 @@
     {
       "file": "lib/guest-thread-host.js",
       "name": "host-file",
-      "sha256": "35265b34485d745528ac2c172603514e9a303f754e331874f72398733643aa40",
+      "sha256": "83754f907a501261ca605bfe3c6c45d517c7075ad5209c1c69f7a711552baefe",
+      "reviewOwnedBoot20261109": "PE boot delegates metadata and canonical staging to shared owner helpers, using existing callExport/readExports transport and callback-reservation checks. Metadata export failures now propagate instead of silently loading with incorrect launch identity. No new guest replay or callback restoration path. Startup caller must retain quiescence; full normal/compat Node slot0 boot parity and existing oversized PE/NE/overlay tests pass. Broader ownership pending.",
       "reviewSnapshotState20261108": "Delta from 157b7a991 adds per-link generation delivery bookkeeping and sends a shared endpoint-state channel after accepted D3D RPC. Existing onRpc/onRpcEnd try/finally remains intact. Messages carry receiving endpoint identity; no guest callback, export, context restoration or retirement admission is introduced. Real-thread RPC/WorkerLink tests cover generation replacement and reused routing slots. Invocation ownership remains pending.",
       "review20261108": "Delta from 7d2a9ec08: process publication SAB and owned snapshot messages preserve owner slot checks; legacy forwarding promise now gates admission. Shutdown and transport failure poison pending publication without granting guest retirement or discarding loader pins. Asynchronous drain handlers retain broker/link ownership, never guest callback contexts. Queue late-delivery, failure and exit-order tests pass; invocation ownership remains pending.",
       "kind": "host-entry",
@@ -375,7 +384,8 @@
     {
       "file": "lib/process-boot.js",
       "name": "host-file",
-      "sha256": "241c7f968f2f2e9bbe9d046455a71e095de71d06e59bacd135cba5525b4a50b3",
+      "sha256": "bda40d88dcb27743a6b82a1182a1d6fa126d0a667ad99977b20bd93db0cb048d",
+      "reviewOwnedBoot20261109": "New async boot helpers retain only invocation-local placement values and metadata bytes across awaited owner calls. Canonical stagePe performs host-owned copies; load_pe executes on selected owner. Staging ranges are validated, setter failures propagate. Helpers require caller-owned quiescent startup interval and do not invent a new loader lock or callback continuation. Existing DLL yield/generator/cleanup machinery unchanged. CLI and Node Worker boot plus oversized image cases pass; broader ownership pending.",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Startup review a339395: validate startup command, preserve absent versus zero, serialize child argv and publish via set_startup_show. Process-shared latch is not invocation ownership. Seal review 2026-10-22: complete producer delta from recorded seal reviewed; DirectX metadata changes only, callback/async/reset ownership paths unchanged. See scratch/runs/20261022-shadow-man-dsetup-census-fullmodule/REVIEW.md; ownership remains pending. Registry review 2026-10-31: browser Worker imports the shared real-DLL registry before process-boot, which reads it through globalThis. Complete delta changes only this bootstrap import/global lookup; callback entry, saved context, continuation, cancellation, unwind and register restoration are unchanged. Window-less production bootstrap dependency walk regression in test-worker-dll-registry.js fails without this delta; ownership remains pending. Review 20261103 Alice CLI gate admission: forward the optional host contention hook to the existing outer async gate acquisition. Main API arguments/EIP/ESP/yield remain parked until real admission. Owned load/unload, nested callback, pin and finally-release paths are unchanged; COM inherits the same option through its existing opts spread. Production CLI real PE old-fail/new-pass, ordinary scheduling, actual owner-id/nested load/unload, owner fault quarantine, gate hook rejection/retired requester and existing real Worker serialization/lifecycle tests are retained in scratch/runs/20261103-alice-gate-scheduling-repair/. Broader invocation ownership remains pending.",
       "ownership": "pending"

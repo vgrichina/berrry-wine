@@ -8,8 +8,8 @@ const { createRenderWaitAttribution } = require('../lib/render-wait-attribution'
 const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
 const { inputEventHwnd } = require('../lib/host-window');
 const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
-  applyStartupShow, startupShowArgs,
-  stageAndLoadPe, applyVirtualAllocTop, setExeName, setExeDrive, setExtraCmdline,
+  startupShowCommand, startupShowArgs,
+  stageAndLoadPeOwned, configureExeOwned, exeDriveForPath, applyVirtualAllocTop,
   setEnvironmentVariable, handleLoadLibraryYield, serviceLoadLibraryYieldSync,
   handleComDllYield, findVfsDllBytes } = require('../lib/process-boot');
 const {
@@ -5689,14 +5689,12 @@ async function main() {
   // MSVCRT data imports (__argc/__argv) can be resolved while load_pe walks
   // the executable import table. Seed process identity first so a lazy argv
   // block built during import resolution sees the real launcher metadata.
-  setExeDrive(instance.exports, EXE_GUEST_PATH || MEDIA_EXE);
-  setExeName(instance.exports, memory.buffer, EXE_PROCESS_NAME);
-  if (EXTRA_ARGS) {
-    setExtraCmdline(instance.exports, memory.buffer, EXTRA_ARGS);
-  }
+  await configureExeOwned(mainOwner, memory.buffer, {name: EXE_PROCESS_NAME,
+    drive: exeDriveForPath(EXE_GUEST_PATH || MEDIA_EXE), args: EXTRA_ARGS});
 
-  applyStartupShow(instance.exports, getArg('startup-show', undefined));
-  const { entry } = stageAndLoadPe(instance.exports, memory.buffer, exeBytes, console.log);
+  const startupShow = startupShowCommand(getArg('startup-show', undefined));
+  if (startupShow !== undefined) await mainOwner.call('set_startup_show', startupShow);
+  const { entry } = await stageAndLoadPeOwned(mainOwner, memory.buffer, exeBytes, console.log);
   // MORROWIND_NAME_ATTACH_BEGIN: loaded image, before any guest initializer.
   if (hasFlag('observe-morrowind-name')) {
     morrowindNameObserver = require('../lib/morrowind-name-observer').install({
