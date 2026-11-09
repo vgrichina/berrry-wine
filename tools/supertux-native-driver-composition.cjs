@@ -136,7 +136,7 @@ function compose({root, manifest}) {
     "save:r=>log('pause-composition.jsonl',{id:pauseCommandId,...r})");
   source = replaceOnce(source,
     'await pauseController.run({id:c.id,review,observation:c.observation,keys:c.keys,holdMs:c.holdMs,markDispatch});',
-    "await require(root+'/tools/supertux-native-driver-composition.cjs').runController(pauseController,{id:c.id,review,observation:c.observation,keys:c.keys,holdMs:c.holdMs,markDispatch});");
+    "await require(root+'/tools/supertux-native-driver-composition.cjs').runController(pauseController,{id:c.id,review,observation:c.observation,keys:c.keys,holdMs:c.holdMs,kind:c.kind,markDispatch});");
   source = replaceOnce(source, "const run=__dirname,root=path.resolve(run,'../../..'),out=run+'/'",
     "const run=(()=>{const p=process.env.SUPERTUX_RUN_DIRECTORY;assert(p&&path.isAbsolute(p),'explicit fresh run directory');return p;})(),root=path.resolve(__dirname,'../../..'),out=run+'/'");
   // Keep helper resolution at the accepted retained driver's original path.

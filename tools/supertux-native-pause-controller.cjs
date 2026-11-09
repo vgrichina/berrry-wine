@@ -2,6 +2,7 @@
 
 const assert = require('node:assert/strict');
 const MAX_AGE_MS = 12000;
+const NEUTRAL_SETTLE_MS = 200;
 const allowed = new Set(['ArrowRight', 'ArrowLeft', 'Space', 'Control']);
 
 // Inject the retained, hash-checked native pulse/key and bound-input helpers.
@@ -77,12 +78,15 @@ function create({chain, send, session, deadline, input, binding, identity,
     get commands() { return commands.map(e => ({...e.row, promise: e.promise})); },
     get pending() { return [...pending]; },
     async settle() { await Promise.allSettled([...pending]); },
-    async run({id, review, observation, keys, holdMs, markDispatch = () => {}}) {
+    async run({id, review, observation, keys, holdMs, kind = 'ordinary', markDispatch = () => {}}) {
       try {
         open(); assert(!busy, 'concurrent controller');
         assert(typeof id === 'string' && /^[a-zA-Z0-9_-]+$/.test(id) && !used.has('id:' + id), 'replayed command');
-        assert(Array.isArray(keys) && keys.length > 0 && keys.length <= 3 &&
-          new Set(keys).size === keys.length && keys.every(k => allowed.has(k)), 'ordinary action keys');
+        assert(kind === 'ordinary' || kind === 'neutral-settle', 'explicit action kind');
+        const neutral = kind === 'neutral-settle';
+        assert(!neutral || (Array.isArray(keys) && keys.length === 0 && holdMs === NEUTRAL_SETTLE_MS), 'fixed neutral settle only');
+        assert(neutral || (Array.isArray(keys) && keys.length > 0 && keys.length <= 3 &&
+          new Set(keys).size === keys.length && keys.every(k => allowed.has(k))), 'ordinary action keys');
         assert(!(keys.includes('ArrowLeft') && keys.includes('ArrowRight')), 'opposed directions');
         assert(Number.isInteger(holdMs) && holdMs >= 50 && holdMs <= 1000, 'bounded action');
         assert(Date.now() + holdMs + 200 + 6 * ackMs < deadline, 'insufficient immutable deadline');
@@ -95,13 +99,23 @@ function create({chain, send, session, deadline, input, binding, identity,
           assert(observation.label === capture.label && observation.sha256 === capture.sha256 &&
             observation.at === capture.at, 'observation must support this exact capture');
           binding.same(pins, observation.identity); fresh(observation.at);
+          assert(neutral ? observation.grounded === false && observation.airborne === true : observation.grounded === true,
+            'personally reviewed airborne settle or grounded ordinary action required');
           const token = capture.label + ':' + capture.sha256;
           assert(!used.has(token), 'reviewed capture already used; no replay'); used.add(token);
           nativePaused = true;
           grounded = typeof observation.grounded === 'boolean' ? observation.grounded : 'UNKNOWN';
           record({phase: 'admission', id, admission, observation}); open(); markDispatch();
           await press(['Escape'], 100, 'native-resume', capture);
-          await press(keys, holdMs, 'action', capture);
+          if (neutral) {
+            // No input and no ground detection. Recheck admission after the
+            // fixed wait before the normal Pause pulse; never infer landing.
+            const startedAt = Date.now();
+            record({phase: 'neutral-settle', id, startedAt, waitMs: NEUTRAL_SETTLE_MS}); open();
+            await new Promise(resolve => setTimeout(resolve, NEUTRAL_SETTLE_MS));
+            open(); fresh(capture.at);
+            record({phase: 'neutral-settle-completed', id, startedAt, completedAt: Date.now()}); open();
+          } else await press(keys, holdMs, 'action', capture);
           await press(['Escape'], 100, 'native-pause', capture);
           return {transportCompleted: true, nativePaused, grounded,
             requiresVisiblePauseAndTimerReview: true, preventsDeath: 'UNKNOWN'};
@@ -114,4 +128,4 @@ function create({chain, send, session, deadline, input, binding, identity,
   };
 }
 
-module.exports = {create, MAX_AGE_MS};
+module.exports = {create, MAX_AGE_MS, NEUTRAL_SETTLE_MS};

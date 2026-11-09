@@ -6,7 +6,7 @@ const crypto = require('node:crypto');
 const zlib = require('node:zlib');
 const http = require('node:http');
 const assert = require('node:assert/strict');
-const {MAX_AGE_MS} = require('./supertux-native-pause-controller.cjs');
+const {MAX_AGE_MS, NEUTRAL_SETTLE_MS} = require('./supertux-native-pause-controller.cjs');
 const {verify} = require('./supertux-native-driver-composition.cjs');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const read = file => {
@@ -19,7 +19,8 @@ const choices = Object.freeze({
   'left-100': {keys: ['ArrowLeft'], holdMs: 100},
   'jump-right-200': {keys: ['ArrowRight', 'Space'], holdMs: 200},
   'jump-left-200': {keys: ['ArrowLeft', 'Space'], holdMs: 200},
-  'jump-100': {keys: ['Space'], holdMs: 100}
+  'jump-100': {keys: ['Space'], holdMs: 100},
+  'neutral-settle-200': {kind: 'neutral-settle', keys: [], holdMs: NEUTRAL_SETTLE_MS}
 });
 
 // No launch, key, menu, route, refresh timer, or automatic approval path.
@@ -56,9 +57,11 @@ function createClient({out, request, deadline, save = () => {}}) {
       if (body.action === 'choose') {
         assert(current && body.token === current.token, 'exact fresh capture token');
         assert(Object.hasOwn(choices, body.choice), 'explicit short action choice');
-        assert(body.nativePaused === true && body.grounded === true, 'personally reviewed native Pause and ground contact required');
+        const neutral = choices[body.choice].kind === 'neutral-settle';
+        assert(body.nativePaused === true && (neutral ? body.grounded === false && body.airborne === true : body.grounded === true),
+          'personally reviewed native Pause and ground contact or explicit airborne settle required');
         assert(typeof body.review === 'string' && body.review.trim().length > 0 && body.review.length <= 1000,
-          'describe visible ground and chosen action geometry');
+          'describe visible ground/airborne state and chosen action geometry');
         const cap = current.capture;
         const age = Date.now() - Date.parse(cap.at);
         assert(Number.isFinite(age) && age >= 0 && age <= MAX_AGE_MS, 'stale capture; UNKNOWN; no refresh');
@@ -67,7 +70,7 @@ function createClient({out, request, deadline, save = () => {}}) {
         const review = {label: cap.label, sha256: cap.sha256, identity: cap.identity, review: body.review.trim()};
         fs.writeFileSync(path.join(out, cap.label + '-review.json'), zlib.gzipSync(JSON.stringify(review)), {flag: 'wx'});
         Object.assign(command, {action: 'pause-step', reviewRef: cap.label,
-          observation: {...cap, nativePaused: true, grounded: true, review: review.review}, ...choices[body.choice]});
+          observation: {...cap, nativePaused: true, grounded: body.grounded, airborne: body.airborne === true, review: review.review}, ...choices[body.choice]});
         save({kind: 'explicit-reviewed-choice', capture: cap, choice: body.choice, review: review.review, at: Date.now()});
       } else assert.equal(body.action, 'capture', 'only explicit capture or reviewed choice');
       current = null; // single use before any asynchronous dispatch
@@ -95,6 +98,7 @@ const html = `<!doctype html><meta charset="utf-8"><title>SuperTux Pause review<
 <div id="clock"></div><pre id="status"></pre><img id="image" alt="Explicitly request a fresh capture">
 <label><input type="checkbox" id="paused">I reviewed this image: native Pause is visible</label>
 <label><input type="checkbox" id="grounded">Tux is visibly grounded; selected direction/landing geometry reviewed</label>
+<label><input type="checkbox" id="airborne">Tux is visibly airborne; review supports one neutral settle only (landing remains unknown)</label>
 <textarea id="review" placeholder="Visible ground, obstacle/landing, and reason for this one action"></textarea><div id="choices"></div>
 <p>Each button sends one reviewed action, then native Pause. No keyboard shortcuts. UNKNOWN ends this client. Historical images cannot authorize input.</p>
 <script>
@@ -103,10 +107,10 @@ const el=id=>document.getElementById(id);
 function clock(){const now=state.now+networkBound+(performance.now()-received),age=state.capture?now-Date.parse(state.capture.at):NaN;
 el('clock').textContent=state.capture?'Capture age ≤ '+Math.ceil(age)+' ms (server sample '+(state.now-Date.parse(state.capture.at))+' ms; network bound '+Math.ceil(networkBound)+' ms) | 12s deadline '+new Date(state.captureDeadline).toISOString()+' | remaining ≥ '+Math.floor(state.captureDeadline-now)+' ms':'';
 el('capture').disabled=pending||state.closed;
-document.querySelectorAll('#choices button').forEach(b=>b.disabled=pending||state.closed||!state.capture||age<0||age>state.maxAgeMs||now>=state.runtimeDeadline||!el('paused').checked||!el('grounded').checked||!el('review').value.trim());}
-function render(s,began){state=s;received=performance.now();networkBound=received-began;el('paused').checked=el('grounded').checked=false;el('review').value='';
+document.querySelectorAll('#choices button').forEach(b=>b.disabled=pending||state.closed||!state.capture||age<0||age>state.maxAgeMs||now>=state.runtimeDeadline||!el('paused').checked||(b.dataset.neutral==='true'?(!el('airborne').checked||el('grounded').checked):!el('grounded').checked)||!el('review').value.trim());}
+function render(s,began){state=s;received=performance.now();networkBound=received-began;el('paused').checked=el('grounded').checked=el('airborne').checked=false;el('review').value='';
 el('image').src=s.image?'data:image/png;base64,'+s.image:'';el('status').textContent=s.closed?'UNKNOWN — stop; no replay':s.capture?JSON.stringify({label:s.capture.label,at:s.capture.at,sha256:s.capture.sha256,runtimeDeadline:new Date(s.runtimeDeadline).toISOString()},null,2):'Ready; no capture requested';
-el('choices').replaceChildren();Object.entries(s.choices||{}).forEach(([id,c])=>{const b=document.createElement('button');b.textContent=c.keys.join(' + ')+' '+c.holdMs+' ms';b.onclick=()=>act({action:'choose',choice:id,token:state.token,nativePaused:el('paused').checked,grounded:el('grounded').checked,review:el('review').value});el('choices').append(b)});clock();}
+el('choices').replaceChildren();Object.entries(s.choices||{}).forEach(([id,c])=>{const b=document.createElement('button');b.dataset.neutral=String(c.kind==='neutral-settle');b.textContent=(c.kind==='neutral-settle'?'Neutral settle (airborne)':c.keys.join(' + '))+' '+c.holdMs+' ms';b.onclick=()=>act({action:'choose',choice:id,token:state.token,nativePaused:el('paused').checked,grounded:el('grounded').checked,airborne:el('airborne').checked,review:el('review').value});el('choices').append(b)});clock();}
 async function act(body){if(pending)return;pending=true;const began=performance.now();clock();try{const r=await fetch('/command',{method:'POST',headers:{'authorization':auth,'content-type':'application/json'},body:JSON.stringify(body)});const s=await r.json();if(!r.ok)throw Error(s.error);render(s,began);}catch(e){state.closed=true;el('status').textContent=String(e)+'; stop, no replay';}finally{pending=false;clock();}}
 el('capture').onclick=()=>act({action:'capture'});setInterval(clock,50);
 const began=performance.now();fetch('/state',{headers:{authorization:auth}}).then(r=>r.json()).then(s=>render(s,began)).catch(e=>el('status').textContent=String(e));

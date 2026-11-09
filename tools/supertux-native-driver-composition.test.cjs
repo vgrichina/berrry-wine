@@ -17,6 +17,7 @@ assert(run && path.isAbsolute(run), 'explicit evidence directory');
   assert(!integrated.source.includes('pending.delete(n)'));
   assert(integrated.source.includes("if(c.action==='pause-step'){pauseCommandId=c.id;"));
   assert(integrated.source.includes("save:r=>log('pause-composition.jsonl',{id:pauseCommandId,...r})"));
+  assert(integrated.source.includes('holdMs:c.holdMs,kind:c.kind,markDispatch'));
   assert.throws(() => compose({root, manifest: {...manifest, files: manifest.files.map((pin, i) =>
     i === 0 ? {...pin, sha256: '0'.repeat(64)} : pin)}}));
   assert.throws(() => compose({root, manifest: {...manifest, files: manifest.files.filter(pin =>
@@ -33,7 +34,7 @@ assert(run && path.isAbsolute(run), 'explicit evidence directory');
     send: () => {effects++; throw Error('must not dispatch');}, session: 'page',
     identity: pins, deadline: Date.now() + 20000, input: retained.input, binding: retained.binding});
   const dir = run + '/sticky-fixture-' + process.pid;fs.mkdirSync(dir);fs.mkdirSync(dir + '/commands');
-  const restoreStorage = require(run + '/json-storage.cjs').install(dir);
+  const restoreStorage = require('../scratch/runs/20261108-supertux-controller-visible-progress-2301/json-storage.cjs').install(dir);
   fs.writeFileSync(dir + '/commands/0.json.gz', require('node:zlib').gzipSync(JSON.stringify({id: 'stale', action: 'pause-step'})));
   try {
     await assert.rejects(retained.transport.consume(dir, 0, async () => {

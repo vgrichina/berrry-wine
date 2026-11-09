@@ -11,7 +11,7 @@ const {create, MAX_AGE_MS} = require('./supertux-native-pause-controller.cjs');
 async function main() {
   const run = path.resolve(process.env.PAUSE_CONTROLLER_RUN ||
     'scratch/runs/20261108-supertux-native-pause-controller-2251');
-  const driver = require(path.join(run, 'driver.cjs'));
+  const driver = require('../scratch/runs/20261108-supertux-native-pause-controller-2251/driver.cjs');
   const children = [], controls = [];
   const fixtureRoot = path.join(run, 'fixtures-' + process.pid); fs.mkdirSync(fixtureRoot);
   // The invoking timeout is independent of this Node owner. This local cap also
@@ -66,13 +66,15 @@ async function main() {
     if (options.age !== undefined) chain.admit = (review, dispatch) => originalAdmit(review,
       admission => dispatch({...admission, capture: {...admission.capture, at: shot.capture.at}}));
     const review = {...shot.capture, review: 'offline fixture reviewed; no native Pause proof'};
-    const observation = {...shot.capture, nativePaused: true, review: 'fixture observation only'};
+    const observation = {...shot.capture, nativePaused: true, grounded: true, review: 'fixture observation only'};
+    if (options.neutral) Object.assign(observation, {grounded: false, airborne: true});
+    if (options.badGround) observation.grounded = false;
     if (options.observation === 'missing') delete observation.nativePaused;
     if (options.observation === 'missing-at') delete observation.at;
     if (options.observation === 'unpaused') observation.nativePaused = false;
     const dir = path.join(fixtureRoot, 'fixture-' + caseNumber); fs.mkdirSync(dir); fs.mkdirSync(path.join(dir, 'commands'));
     const consumer = driver.createConsumer({chain, send, session: 'page', identity: shot.capture.identity,
-      deadline: Date.now() + 20000, ackMs: options.ackMs || 250, save: row => rows.push(row)});
+      deadline: Date.now() + (options.deadlineMs || 20000), ackMs: options.ackMs || 250, save: row => rows.push(row)});
     current = consumer.controller;
     child.on('message', message => {
       if (message.event) {
@@ -86,10 +88,14 @@ async function main() {
         }
         const request = requests.get(message.ack); requests.delete(message.ack);
         message.reject ? request.reject(Error('Node owner rejected actual command')) : request.resolve(message);
+        if (options.cancelNeutral && events.some(e => e.id === message.ack && e.event.code === 'Escape' && e.event.type === 'keyUp'))
+          setTimeout(() => current.cancel(), 50);
       }
     });
     const command = {id: 'command-' + caseNumber, action: 'pause-step', review, observation,
       keys: ['ArrowRight'], holdMs: options.holdMs || 100};
+    if (options.neutral) Object.assign(command, {kind: 'neutral-settle', keys: [], holdMs: 200});
+    if (options.override) Object.assign(command, options.override);
     async function consume(number, commandValue = command) {
       fs.writeFileSync(path.join(dir, 'commands', number + '.json.gz'), zlib.gzipSync(JSON.stringify(commandValue)), {flag: 'wx'});
       return consumer.consume(dir, number);
@@ -105,6 +111,29 @@ async function main() {
   }
   try {
     assert.equal(MAX_AGE_MS, 12000);
+    const neutral = await fixture({neutral: true});
+    await neutral.consume(0);
+    assert.deepEqual(neutral.events.map(e => [e.event.code, e.event.type]), [
+      ['Escape', 'keyDown'], ['Escape', 'keyUp'], ['Escape', 'keyDown'], ['Escape', 'keyUp']]);
+    assert(neutral.events[2].at - neutral.completed.find(e => e.ack === neutral.events[1].id).at >= 200);
+    assert.equal(neutral.current.state.grounded, 'UNKNOWN');
+    await assert.rejects(neutral.current.run({...neutral.command, id: 'replay-settle'}), /already used/);
+    await neutral.finish(); controls.push('explicit airborne neutral 200ms, only resume/pause Escape, no inferred landing, replay rejected');
+    for (const options of [
+      {override: {keys: []}}, {badGround: true},
+      {neutral: true, override: {holdMs: 201}}, {neutral: true, override: {keys: ['Space']}},
+      {neutral: true, override: {observation: {nativePaused: true, grounded: false}}},
+      {neutral: true, age: 12001}, {neutral: true, age: -1000},
+      {neutral: true, replace: 'workerObject'}, {neutral: true, replace: 'moduleObject'},
+      {neutral: true, cancelResume: true, resumeDelay: 180}, {neutral: true, resumeDelay: 450, ackMs: 120},
+      {neutral: true, cancelNeutral: true}, {neutral: true, deadlineMs: 1000}
+    ]) {
+      const f = await fixture(options); await assert.rejects(f.consume(0));
+      assert(f.current.closed); await f.finish();
+      assert(f.events.every(e => e.event.code === 'Escape'));
+      assert(f.events.filter(e => e.event.type === 'keyDown').length <= 1);
+      controls.push('neutral/ordinary boundary sticky UNKNOWN ' + JSON.stringify(options));
+    }
     for (const holdMs of [100, 200]) {
       const f = await fixture({holdMs, delay: holdMs + 80, ackMs: 400});
       const running = f.consume(0);
