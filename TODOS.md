@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed c3f028281 actual native conversion, startup collision-table stores and later headnode point chain;12native off/on parity pairs and17facade controls plus locked build PASS; independent27regular original/stored SHA sizes CRC exactset PASS. Source lifetime REVOKED and missed boundaries/other writers/edictABA remain UNKNOWN; no later-use certificate. Fresh OFFLINE quake2-native-write-epoch-2358 PID632736 thread01a1bd97-0fad-74e0-a446-a7f460b1c3c0 implements actual native store observation for same-byte/write-restore detection before further attribution. Actual4948 versus wrong4942 stands; guard/onward-door gameplay open.
+  Next: Reviewed cc2cb5a31 default-off completed native-store epochs with owning instance/PC/range;17 shipped-core cases,10 NodeWorker off/on pairs,12 continuity pairs/facade+58CALL controls and lockedbuild PASS. Independent40regular original/stored SHA sizes CRC exactset PASS. Same-byte and write-restore detected; raw/shared/host/bulk/other writers and edictABA remain UNKNOWN, raw source REVOKED. Fresh quake2-native-runtime-0023 PID663319 thread01a1bdab-4ae0-7002-90da-f782814ab8d8 prepares native gameplay integration, waits both Q3 and SuperTux archived/drained releases. Actual4948 versus wrong4942 stands; guard/door open.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -50,7 +50,7 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed e78cb70d2 compact localhost review client: explicit exact-capture choices, original age/deadline, unchanged12s and stickyUNKNOWN. Seven real child HTTP/CLI/controller controls and locked build PASS; independent324regular original/stored SHA sizes CRC exactset PASS. Fresh supertux-client-first-exit-2356 PID631440 thread01a1bd96-1eb8-7ca1-a0db-e9ed9caeddee prepares offline then one original after explicit Q3 heavy release; personally review each fresh paused geometry. Historical2330 pillar/noexit and local143 causeUNKNOWN retained; earlier175points5coins stomp separate. Exit/unlock/full27/parity/audio/FPS open.
+  Next: Reviewed f6c282dfa native Pause before pillar and24 right100ms moves; final11777ms choice resumed before12100ms directional refusal, no jump/exit. Independent685regular hashes sizes exactset PASS except explicitly preserved preallocation heartbeat gzip-footer failure; separate readable prefix verified. bx_ja383wf2 archived normal stop_2c760072c1e1318b after recovery/drain, actual localWAIT0. Fresh supertux-early-choice-pillar-0016 PID659507 thread01a1bda8-5297-7b52-b0f8-7a064c5a7477 waits Q3 release, uses earlier personal choices and fresh supported jump-right-200 under unchanged12s. Current published CPU/provider refresh authorized after Q2 rebuild; historical2330local143 UNKNOWN retained. Exit/unlock/full27/parity/audio/FPS open.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed dd6a445e0 screenshot completion diagnostics: exact send/raw response/routing/session/deadline/lifecycle boundaries, focused6 actual transport controls and lockedbuild PASS; independent22regular hashes/sizes/gzipCRC exactset PASS. Prior2337 current WebGL menu/Q3DM1 selection verified; screenshot345 reached20.001s CDPdeadline after firstUNKNOWN16.726s, page346/347 returned but348 pending; root cause unresolved, no gameplay proof. Fresh q3-completion-visible-gameplay-0003 PID643137 thread01a1bd9c-7407-7ea2-9a07-387680971bf6 prepares exact provider graph offline then ONE instrumented original after SuperTux archived/drained release. Keep firstUNKNOWN no replay; recover new completion log before repair. Full27/parity/FPS/audio and both-backend gameplay remain open.
+  Next: Reviewed cc6839961 canonical barrier now requires entire literal composition dependency graph including dd6a445e0 completion helper;9 actual wrapper controls and lockedbuild PASS, independent52regular hashes sizes CRC exactset PASS. Fresh q3-reviewed-provider-gameplay-0009 PID649726 thread01a1bda0-ec4f-7190-8759-dcb2d70659e9 acquired sole heavy slot00:17:59 after SuperTux archived/drained release; final actual provider refresh includes published Q2 CPU. Instrumented gameplay attempt with unchanged722 marker/preload ordering, firstUNKNOWN no replay. Prior345 screenshot20.001sCDPdeadline root cause unresolved; both-backend gameplay/full27/parity/FPS/audio open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
