@@ -242,35 +242,6 @@ class UploadTests(unittest.TestCase):
                 self.upload(root, self.pins(root), base)
             self.assertEqual(seen, ['/0'])
 
-    def test_q3_actual_provision_barrier_and_terminal(self):
-        import ast, gzip, json
-        from types import SimpleNamespace
-        source = Path(__file__).with_name('q3-native-inputs')/'control.py'
-        module = ast.parse(source.read_text())
-        fn = next(x for x in module.body if isinstance(x, ast.FunctionDef) and x.name == 'provision')
-        for mode in ['ok', 'fail-stall']:
-            with tempfile.TemporaryDirectory() as directory, peer(mode) as (base, seen, _):
-                root = Path(directory); run = root/'run'; run.mkdir()
-                pins = self.pins(root, count=24, size=8*1024*1024 if mode != 'ok' else 1)
-                (root/'tools').mkdir()
-                (root/'tools/q3-provider-upload.py').symlink_to(Path(__file__).with_name('q3-provider-upload.py').resolve())
-                for p in [root/'runtime-pins.json.gz', run/'runtime-pins.json.gz', run/'lifecycle.json.gz']:
-                    p.write_bytes(b'{}')
-                barriers = []; urls = []
-                def api(method, route, body):
-                    urls.append(body['path']);return {'url': base+'/'+Path(body['path']).name}
-                env = dict(Path=Path, ROOT=root, BASE=root, R=run, REMOTE='/owned', RUN='run', H=lambda b:hashlib.sha256(b).hexdigest(),
-                           validate=lambda:dict(files=pins), box=lambda:'q3-local', c=SimpleNamespace(access=SimpleNamespace(api=api)),
-                           gzip=gzip,json=json,remote=lambda *args:barriers.append(args))
-                exec(compile(ast.Module(body=[fn], type_ignores=[]), str(source), 'exec'), env)
-                if mode == 'ok':
-                    env['provision']();self.assertEqual(len(barriers),2)
-                    self.assertEqual(len(urls),27)
-                else:
-                    with self.assertRaises(OSError):env['provision']()
-                    self.assertEqual(barriers,[]);self.assertEqual(len(urls),2)
-                self.assertTrue((run/'uploads.jsonl.gz').exists())
-
     def test_reuses_one_connection_without_replay(self):
         with tempfile.TemporaryDirectory() as directory, peer() as (base, seen, received):
             root=Path(directory);pins=self.pins(root,count=20)
@@ -278,6 +249,75 @@ class UploadTests(unittest.TestCase):
             self.upload(root,pins,base,workers=1)
             self.assertEqual(len(seen),20);self.assertEqual(len(received),20)
             self.assertEqual(len(peer.connections),1)
+
+
+class SSHProvisionTests(unittest.TestCase):
+    def test_actual_consumer_large_and_terminal_controls(self):
+        import ast, gzip, json
+        from unittest.mock import patch
+        from types import SimpleNamespace
+        source=Path(__file__).with_name('q3-native-inputs')/'control.py'
+        fn=next(x for x in ast.parse(source.read_text()).body if isinstance(x,ast.FunctionDef) and x.name=='provision')
+        receiver=runpy.run_path(str(Path(__file__).with_name('q3-provider-upload.py')))['SSH_RECEIVER']
+        real_popen=subprocess.Popen
+        for mode in ['large','heldwriter','refusal','mutation','cancel','eof']:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
+                root=Path(directory)/'local';root.mkdir();dest=Path(directory)/'remote';dest.mkdir()
+                run=root/'run';run.mkdir();(root/'tools').mkdir()
+                (root/'tools/q3-provider-upload.py').symlink_to(Path(__file__).with_name('q3-provider-upload.py').resolve())
+                payload=root/'pak0.pk3'
+                with payload.open('wb') as f:f.truncate(46853694)
+                pins=[dict(path='pak0.pk3',size=payload.stat().st_size,sha256=hashlib.sha256(payload.read_bytes()).hexdigest())]
+                for p in [root/'runtime-pins.json.gz',run/'runtime-pins.json.gz',run/'lifecycle.json.gz']:p.write_bytes(b'{}')
+                barriers=[];processes=[];cancel=threading.Event()
+                def spawn(argv,**kw):
+                    self.assertEqual(argv[:4],['boat','--no-update','ssh','q3-local'])
+                    script=receiver
+                    if mode=='heldwriter':script='import time;time.sleep(20)'
+                    if mode=='refusal':script='raise SystemExit(23)'
+                    if mode=='eof':script='import sys;sys.stdin.buffer.read(1024)'
+                    child=real_popen([sys.executable,'-B','-c',script,str(dest)],**kw);processes.append(child)
+                    return child
+                actual=runpy.run_path(str(Path(__file__).with_name('q3-provider-upload.py')))['provision_ssh_files']
+                def transfer(*args):
+                    record=args[4]
+                    def observed(event):
+                        record(event)
+                        if event['event']=='start' and mode=='mutation':
+                            with payload.open('r+b') as f:f.write(b'X')
+                        if event['event']=='start' and mode=='cancel':cancel.set()
+                    if mode=='large':tracemalloc.start()
+                    try:
+                        return actual(*args[:4],observed,timeout=.3 if mode=='heldwriter' else 5,cancel=cancel)
+                    finally:
+                        if mode=='large':
+                            _,peak=tracemalloc.get_traced_memory();tracemalloc.stop()
+                            print('SSH_ACTUAL_CONSUMER_PEAK_BYTES',peak,flush=True)
+                            self.assertLess(peak,2*1024*1024)
+                original_run=runpy.run_path
+                def load(path):
+                    if str(path).endswith('q3-provider-upload.py'):return {'provision_ssh_files':transfer}
+                    return original_run(path)
+                env=dict(Path=Path,ROOT=root,BASE=root,R=run,REMOTE=str(dest),RUN='run',H=lambda b:hashlib.sha256(b).hexdigest(),
+                         validate=lambda:dict(files=pins),box=lambda:'q3-local',gzip=gzip,json=json,remote=lambda *args:barriers.append(args))
+                exec(compile(ast.Module(body=[fn],type_ignores=[]),str(source),'exec'),env)
+                began=time.monotonic()
+                with patch('subprocess.Popen',spawn),patch('runpy.run_path',load):
+                    if mode=='large':env['provision']();self.assertEqual(len(barriers),2)
+                    else:
+                        with self.assertRaises((OSError,ValueError,EOFError)):env['provision']()
+                        self.assertEqual(barriers,[])
+                self.assertLess(time.monotonic()-began,8)
+                self.assertEqual(len(processes),1)
+                self.assertIsNotNone(processes[0].returncode)
+                events=[json.loads(x) for x in gzip.decompress((run/'uploads.jsonl.gz').read_bytes()).splitlines()]
+                self.assertEqual(events[-1]['event'],'actual-wait')
+                self.assertTrue(events[-1]['stdoutEOF'] and events[-1]['stderrEOF'])
+                if mode=='large':
+                    self.assertEqual(hashlib.sha256((dest/'pak0.pk3').read_bytes()).hexdigest(),pins[0]['sha256'])
+                    self.assertEqual((dest/'pak0.pk3').stat().st_size,46853694)
+                    self.assertEqual(len([e for e in events if e['event']=='end']),4)
+                else:self.assertEqual(len([e for e in events if e['event']=='start']),1)
 
 
 if __name__ == '__main__':

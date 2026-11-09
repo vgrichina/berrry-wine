@@ -14,6 +14,175 @@ from urllib.parse import urlsplit
 
 CHUNK = 65536
 
+# The authenticated SSH channel carries framed individual files, never an archive.
+# A receiver publishes only a fully verified file; ambiguous sessions never retry.
+SSH_RECEIVER = r'''
+import sys,json,hashlib,os
+from pathlib import Path
+root=Path(sys.argv[1]).resolve()
+while True:
+ line=sys.stdin.buffer.readline(4097)
+ if not line or len(line)>4096: raise RuntimeError('missing/big frame')
+ pin=json.loads(line)
+ if pin=={'done':True}:
+  print('{"done":true}',flush=True)
+  if sys.stdin.buffer.read(1): raise RuntimeError('trailing bytes')
+  break
+ rel=Path(pin['path']);path=root/rel
+ if rel.is_absolute() or '..' in rel.parts or not path.resolve().is_relative_to(root): raise ValueError('outside root')
+ path.parent.mkdir(parents=True,exist_ok=True)
+ tmp=path.with_name(path.name+'.q3-part-'+str(os.getpid()))
+ try:
+  h=hashlib.sha256();remaining=pin['size']
+  with tmp.open('xb') as f:
+   while remaining:
+    b=sys.stdin.buffer.read(min(65536,remaining))
+    if not b: raise EOFError('partial file')
+    f.write(b);h.update(b);remaining-=len(b)
+   f.flush();os.fsync(f.fileno())
+  if h.hexdigest()!=pin['sha256']: raise ValueError('remote pin mismatch')
+  os.replace(tmp,path)
+  # Independent final descriptor read before acknowledging publication.
+  h=hashlib.sha256();size=0
+  with path.open('rb') as f:
+   while b:=f.read(65536): h.update(b);size+=len(b)
+  if (size,h.hexdigest())!=(pin['size'],pin['sha256']): raise ValueError('final remote mismatch')
+  print(json.dumps(pin,separators=(',',':')),flush=True)
+ finally:
+  tmp.unlink(missing_ok=True)
+'''
+
+
+def provision_ssh_files(root, pins, remote_root, sandbox, record=lambda event: None,
+                        *, timeout=30, cancel=None, command=None):
+    """One bounded authenticated SSH stream; no replay on any partial failure.
+
+    command is an injected peer argv for actual-consumer pipe failure tests.
+    Production always uses the sandbox CLI's authenticated, non-TTY SSH path.
+    Each file has the original absolute 30s cap, including final remote reread.
+    """
+    import json
+    import os
+    import selectors
+    import shlex
+    import signal
+    import subprocess
+    if not 0 < timeout <= 30:
+        raise ValueError('SSH deadline exceeds strict cap')
+    root = Path(root).resolve()
+    pins = list(pins)
+    if len({p['path'] for p in pins}) != len(pins):
+        raise ValueError('duplicate provider')
+
+    def source(pin):
+        rel = Path(pin['path'])
+        path = root / rel
+        if rel.is_absolute() or '..' in rel.parts or not path.resolve().is_relative_to(root):
+            raise ValueError('provider outside root')
+        return path
+
+    for pin in pins:
+        with source(pin).open('rb') as stream:
+            verify(stream, pin)
+    argv = command if command is not None else ['boat', '--no-update', 'ssh', sandbox,
+            'python3 -B -c ' + shlex.quote(SSH_RECEIVER) + ' ' + shlex.quote(remote_root)]
+    p = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE, start_new_session=True)
+    stderr = bytearray()
+    stdout = bytearray()
+    sel = selectors.DefaultSelector()
+    for stream, event in [(p.stdin, selectors.EVENT_WRITE),
+                          (p.stdout, selectors.EVENT_READ), (p.stderr, selectors.EVENT_READ)]:
+        os.set_blocking(stream.fileno(), False)
+        sel.register(stream, event)
+    deadline = time.monotonic() + timeout
+    phase, sent = 'connect', 0
+
+    def pump(data=None, reply=False):
+        view = memoryview(data) if data is not None else None
+        if reply:
+            sel.unregister(p.stdin)
+        while (view is not None and len(view)) or reply:
+            if cancel is not None and cancel.is_set():
+                raise InterruptedError('SSH cancelled; remote effects UNKNOWN; no retry')
+            left = deadline - time.monotonic()
+            if left <= 0:
+                raise TimeoutError('SSH deadline; remote effects UNKNOWN; no retry')
+            for key, _ in sel.select(min(left, .05)):
+                stream = key.fileobj
+                if stream is p.stdin:
+                    if view is not None and len(view):
+                        n = os.write(stream.fileno(), view[:CHUNK])
+                        view = view[n:]
+                else:
+                    b = os.read(stream.fileno(), CHUNK)
+                    if not b:
+                        sel.unregister(stream)
+                        if stream is p.stdout:
+                            raise EOFError('SSH peer EOF; remote effects UNKNOWN; no retry')
+                    elif stream is p.stderr:
+                        stderr.extend(b)
+                        if len(stderr) > CHUNK:
+                            raise ValueError('SSH stderr exceeds bound')
+                    else:
+                        stdout.extend(b)
+                        if len(stdout) > 4096:
+                            raise ValueError('SSH response exceeds bound')
+            if reply and b'\n' in stdout:
+                line, _, rest = stdout.partition(b'\n')
+                stdout[:] = rest
+                sel.register(p.stdin, selectors.EVENT_WRITE)
+                return json.loads(line)
+
+    try:
+        for pin in pins:
+            deadline = time.monotonic() + timeout
+            began = time.monotonic()
+            sent, phase = 0, 'local-pin'
+            with source(pin).open('rb') as stream:
+                verify(stream, pin)
+                before = os.fstat(stream.fileno())
+                record(dict(event='start', path=pin['path'], size=pin['size'], at=time.time(), transport='ssh'))
+                phase = 'frame'
+                pump((json.dumps(pin, separators=(',', ':'))+'\n').encode())
+                digest, size = hashlib.sha256(), 0
+                phase = 'body-write'
+                for block in chunks(stream):
+                    digest.update(block);size += len(block)
+                    if size > pin['size']:
+                        raise ValueError('provider grew during SSH')
+                    pump(block);sent += len(block)
+                after = os.fstat(stream.fileno())
+                if (size, digest.hexdigest()) != (pin['size'], pin['sha256']) or (before.st_size,before.st_mtime_ns,before.st_ctime_ns)!=(after.st_size,after.st_mtime_ns,after.st_ctime_ns):
+                    raise ValueError('provider changed during SSH')
+                phase = 'remote-sha-size'
+                if pump(reply=True) != pin:
+                    raise ValueError('SSH remote final pin refusal')
+                record(dict(event='end',path=pin['path'],sent=sent,elapsed=time.monotonic()-began,remoteVerified=True))
+        deadline = time.monotonic() + timeout
+        phase = 'session-eof'
+        pump(b'{"done":true}\n')
+        if pump(reply=True) != {'done': True}:
+            raise ValueError('SSH missing session seal')
+        sel.unregister(p.stdin);p.stdin.close();p.stdin=None
+        so,se=p.communicate(timeout=max(.001,deadline-time.monotonic()))
+        if p.returncode or so or stdout or len(stderr)+len(se)>CHUNK:
+            raise OSError('SSH final exit/refusal; no retry')
+    except BaseException as error:
+        record(dict(event='error',phase=phase,completeChunksSent=sent,error=str(error),remoteEffects='UNKNOWN'))
+        raise
+    finally:
+        try:
+            os.killpg(p.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        # Always drain both pipes and perform an actual wait, even cancellation.
+        if p.stdin is not None:
+            p.stdin.close();p.stdin=None
+        so,se=p.communicate()
+        sel.close()
+        record(dict(event='actual-wait',status=p.returncode,stdoutEOF=True,stderrEOF=True,actualWait=True))
+
 
 def chunks(stream):
     while block := stream.read(CHUNK):
