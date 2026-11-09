@@ -50,7 +50,7 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed 8bec34aea 908SHA851outergzipPASS rootviewedPNG75coins3 no consequence; firstfreshnessfailure15781ms. Fresh supertux-native-block-jump-0512 PID1099947 thread01a1beb7-17e1-7471-afe0-f8813ce95375 seeks native block/jump consequence with prompt PNG review; runtime next.
+  Next: Reviewed2a2d820d0 firstjump refused14.051s screenshotage extra completionpoll delay;643SHA586gzipPASS boxarchived267actualreaps completeTRUE. Fresh supertux-prompt-image-jump-0525 PID1124358 thread01a1bec4-93c7-7173-b798-fbd5ff9b182f combines captureawait and PNG display thenprompt choice afterQ20517drain allcapsunchanged.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
