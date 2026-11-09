@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed1df867d1b once1098SHA-size339gzipCRC PASS. NativeTarget.setAutoAttach UNKNOWN beforeholdREADYauthoredcommands nooriginal;126actualreaps normalBrowsercloseACK0 separateEOF archivedUUID441ad5bf stopc13a36 expiry11:41 retained. Fresh quake2-autoattach-cause-repair-1150 OFFLINE actualrouting/startup causalrepair or testedminimaldiagnostic; no unchangednative retry.
+  Next: Reviewed2b09377fb once4453SHA-size910gzipCRC actualcode/testdiff PASS. NativewhichAutoAttach/rootpage causeUNKNOWN existingobserver extended32requests128events rawsessionpendingBEFOREdelete 9actualgeneratedpairs focusedlockedbuildPASS. LocalChrome regression constraintviolation excluded normalcleanup PIDs1653127/1653076 independentlyABSENT profileabsent. Fresh quake2-observed-autoattach-native-1205 explicitlyNOlocalbrowser tests preparesOFFLINE runtimeAFTERQ31200 exactUUIDarchive wholefixturebeforeoriginal firstHPloss terminal.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
