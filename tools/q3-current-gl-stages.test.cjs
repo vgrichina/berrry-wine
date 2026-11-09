@@ -150,7 +150,16 @@ async function ringIntegration(script){
  const compose=current.composeStartupDiagnostics;let baseline;
  try{current.composeStartupDiagnostics=prior.exports.composeStartupDiagnostics;baseline=route.composition(route.version,prepared).compose();}
  finally{current.composeStartupDiagnostics=compose;}
- assert.equal(generated.source.replace(script,preload(baseline.source)),baseline.source,'all protocol, deadlines, terminal and ownership code unchanged');
+ let observationErased=generated.source.replace(script,preload(baseline.source));
+ // The capture test separately executes these exact observation calls over a
+ // real WebSocket and through the whole sealed generated caller. Erase only
+ // those calls here to preserve the original GL/non-observation comparison.
+ for(const seam of ['ws?.q3Capture?.settlement(meta,outcome);\n ', 'ws?.q3Capture?.request(meta,params);',
+  'ws?.q3Capture?.receive(msg,v,pending.get(v.id));','ws?.q3Capture?.deadline(meta);']){
+  assert.equal(observationErased.split(seam).length,2,'unique capture observation seam');
+  observationErased=observationErased.replace(seam,'');
+ }
+ assert.equal(observationErased,baseline.source,'all protocol, deadlines, terminal and ownership code unchanged');
  assert.equal(generated.fixtureSource,baseline.fixtureSource);assert.equal(generated.controlsSource,baseline.controlsSource);
  timerControls(script);await ringIntegration(script);
  console.log(JSON.stringify({passed:true,publishedGLProviders:3,driftRefusals:6,actualCurrentGenerator:true,authenticatedStagedClosure:true,

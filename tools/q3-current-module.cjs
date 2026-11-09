@@ -111,12 +111,101 @@ function protocolMetadata(data){
    errorCode:Number.isSafeInteger(v.error?.code)?v.error.code:null};
  }catch{return {...fields,parseError:true};}
 }
+// Capture observation has its own lifetime; startup still stops at navigation.
+// Public event entry is not a network-stack/compositor timestamp. Large frames
+// are linked by the actual MessageEvent object, never reparsed for diagnostics.
+function createCaptureDiagnostics({socket,write,now=monotonicNs,schedule=setTimeout,cancel=clearTimeout}){
+ const shots=new Map(),ingress=new WeakMap(),attachments=new Map(),targets=new Map();let sequence=0,messages=0,closed=false;
+ const safe=fn=>{try{return fn();}catch{/* Never replace a protocol failure. */}};
+ const retain=(map,key,value)=>{if(!map.has(key)&&map.size>=64)map.delete(map.keys().next().value);map.set(key,value);};
+ const emit=(shot,phase,fields={})=>{
+  if(closed||!shots.has(shot.requestId)||shot.rows>=128||sequence>=4096)return;
+  safe(()=>write({version:1,observation:'capture',sequence:++sequence,monotonicNs:now(),
+   phase,requestId:shot.requestId,sessionId:shot.sessionId,targetId:shot.targetId,requestTargetId:shot.requestTargetId,...fields}));
+  ++shot.rows;
+  if(shot.rows>=128)stop(shot,'capture record limit');
+  if(sequence>=4096){for(const active of [...shots.values()])stop(active,'global record limit');dispose();}
+ };
+ const stop=(shot,reason)=>{
+  if(!shots.delete(shot.requestId))return;
+  safe(()=>cancel(shot.timer));shot.timer=null;
+  // UNKNOWN describes completion unless the consumer actually delivered it.
+  safe(()=>write({version:1,observation:'capture',sequence:++sequence,monotonicNs:now(),phase:'observation-stop',
+   requestId:shot.requestId,sessionId:shot.sessionId,targetId:shot.targetId,requestTargetId:shot.requestTargetId,reason,
+   completion:shot.delivered?'consumer delivered':'UNKNOWN'}));
+ };
+ const raw=event=>safe(()=>{
+  if(!shots.size)return;
+  const at=now(),message=++messages,fields=protocolMetadata(event.data);
+  ingress.set(event,{message,monotonicNs:at});
+  for(const shot of [...shots.values()])emit(shot,'public-message',{
+   ...fields,wireRequestId:fields.requestId??null,wireSessionId:fields.sessionId??null,
+   // Keep the observed capture identity separate from untrusted wire identity.
+   requestId:shot.requestId,sessionId:shot.sessionId,message,monotonicNs:at});
+ });
+ const dispose=()=>{
+  for(const shot of [...shots.values()])stop(shot,'socket close');closed=true;attachments.clear();targets.clear();
+  safe(()=>socket.removeEventListener('message',raw));safe(()=>socket.removeEventListener('close',dispose));
+ };
+ safe(()=>socket.addEventListener('message',raw));safe(()=>socket.addEventListener('close',dispose));
+ return {
+  request(meta,params={}){safe(()=>{
+   if(closed)return;
+   if(meta.method==='Target.attachToTarget')retain(attachments,meta.requestId,metadataToken(params.targetId));
+   if(sequence>=4096||meta.method!=='Page.captureScreenshot')return;
+   if(shots.size>=32)stop(shots.values().next().value,'capture capacity');
+   if(sequence>=4096){dispose();return;}
+   const shot={requestId:meta.requestId,sessionId:metadataToken(meta.sessionId),targetId:targets.get(metadataToken(meta.sessionId))??null,requestTargetId:metadataToken(meta.targetId),rows:0,timer:null,delivered:false};
+   shots.set(shot.requestId,shot);emit(shot,'request');
+   if(shots.has(shot.requestId)){
+    // Independent observation cap only. The consumer's existing 20000ms CDP
+    // timer, command work deadline and cancellation remain authoritative.
+    try{shot.timer=schedule(()=>stop(shot,'observation cap'),20000);shot.timer?.unref?.();}
+    catch{stop(shot,'observation timer unavailable');}
+   }
+  });},
+  send(phase,data){safe(()=>{
+   if(!shots.size)return;
+   const at=now(),fields=protocolMetadata(data),shot=shots.get(fields.requestId);
+   if(!shot)return;
+   if(phase==='pre-send')shot.sending=true;
+   emit(shot,phase,{...fields,wireSessionId:fields.sessionId,sessionId:shot.sessionId,monotonicNs:at});
+   if(phase==='send-return'||phase==='send-throw'){
+    shot.sending=false;if(shot.settled)stop(shot,shot.settled);
+   }
+  });},
+  receive(event,value,pending){safe(()=>{
+   if(closed)return;const at=now();
+   // Observe existing authenticated caller associations; never invent a page
+   // target from the consumer's symbolic 'page' metadata or affect routing.
+   if(attachments.has(value.id)){
+    const target=attachments.get(value.id);attachments.delete(value.id);
+    if(pending&&!value.error&&typeof value.result?.sessionId==='string')retain(targets,metadataToken(value.result.sessionId),target);
+   }
+   if(value.method==='Target.attachedToTarget'&&typeof value.params?.sessionId==='string')
+    retain(targets,metadataToken(value.params.sessionId),metadataToken(value.params.targetInfo?.targetId));
+   if(value.method==='Target.detachedFromTarget')targets.delete(metadataToken(value.params?.sessionId));
+   if(value.method==='Target.targetDestroyed')for(const [session,target] of targets)
+    if(target===metadataToken(value.params?.targetId))targets.delete(session);
+   const shot=shots.get(value.id);if(!shot)return;
+   const entry=ingress.get(event);shot.delivered=true;
+   emit(shot,'consumer-delivery',{monotonicNs:at,message:entry?.message??null,publicMonotonicNs:entry?.monotonicNs??null,
+    responseSessionId:metadataToken(value.sessionId),routePending:!!pending,
+    routeSessionMatches:shot.sessionId===metadataToken(value.sessionId),errorCode:Number.isSafeInteger(value.error?.code)?value.error.code:null});
+  });},
+  settlement(meta,outcome){safe(()=>{attachments.delete(meta.requestId);const shot=shots.get(meta.requestId);if(shot){shot.settled=outcome;emit(shot,'settlement',{outcome});if(!shot.sending)stop(shot,outcome);}});},
+  deadline(meta){safe(()=>{const shot=shots.get(meta.requestId);if(shot){emit(shot,'deadline');stop(shot,'CDP deadline');}});},
+  dispose,
+  get active(){return shots.size;}
+ };
+}
 function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=setTimeout,cancel=clearTimeout}){
  // WHATWG has no send callback. Wrap an existing callback only when the caller
  // supplied one; never infer callback support from function arity or inject one.
  return class TransportSocket extends WebSocket{
   constructor(...args){
    super(...args);
+   this.q3Capture=createCaptureDiagnostics({socket:this,write,now,schedule,cancel});
    let rows=0,samples=0,active=true,timer=null,armed=false;
    const record=(phase,fields={})=>{if(!active||rows>=512)return;try{
     write({version:1,sequence:++rows,monotonicNs:now(),phase,...fields,...rows===512?{recordLimitReached:true}:{}});
@@ -140,17 +229,22 @@ function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=s
    for(const event of ['error','close'])this.addEventListener(event,()=>record('transport-event',{event}));
   }
   send(data,...args){
+   const capture=this.q3Capture;
+   capture.send('pre-send',data);
    const observer=this.q3Transport;
-   if(!observer.active)return super.send(data,...args);
+   if(!observer.active){
+    try{const result=super.send(data,...args);capture.send('send-return',data);return result;}
+    catch(error){capture.send('send-throw',data);throw error;}
+   }
    const fields=protocolMetadata(data);
    observer.arm();observer.record('pre-send',fields);
    const forwarded=args.map(arg=>typeof arg!=='function'?arg:function(...values){
     observer.record('send-callback',{...fields,error:!!values[0]});return Reflect.apply(arg,this,values);
    });
-   try{const result=super.send(data,...forwarded);observer.record('send-return',fields);return result;}
-   catch(error){observer.record('send-throw',fields);throw error;}
+   try{const result=super.send(data,...forwarded);observer.record('send-return',fields);capture.send('send-return',data);return result;}
+   catch(error){observer.record('send-throw',fields);capture.send('send-throw',data);throw error;}
   }
-  close(...args){try{return super.close(...args);}finally{this.q3Transport.stop('socket close invoked');}}
+  close(...args){try{return super.close(...args);}finally{this.q3Transport.stop('socket close invoked');this.q3Capture.dispose();}}
  };
 }
 // Instrument the authenticated consumer after its existing transforms. Keep
@@ -210,6 +304,7 @@ function startupInbound(raw){
   target:v.method==='Target.attachedToTarget'?startupTargets.get(v.params?.sessionId):startupTargets.get(v.sessionId)??null});
 }
 function startupSettlement(meta,outcome){
+ ws?.q3Capture?.settlement(meta,outcome);
  if(!startupRecording)return;
  startupRecord('settlement',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId,outcome});
  if(meta.method==='Page.navigate'&&outcome==='resolve'){startupRecording=false;startupRequests.clear();startupTargets.clear();ws?.q3Transport?.stop('navigation settled');}
@@ -218,11 +313,11 @@ function send(method,params={},sessionId,captureProbe=null)`);
   once('new Promise((resolve,reject)=>{const timer=setTimeout',
     "new Promise((resolvePromise,rejectPromise)=>{let settled=false;const settle=(outcome,fn,value)=>{if(!settled){settled=true;startupSettlement(meta,outcome);}return fn(value);};const resolve=value=>settle('resolve',resolvePromise,value),reject=error=>settle('reject',rejectPromise,error);const timer=setTimeout");
   once('screenshotCompletion.request(meta,params);try{',
-    "startupOutbound(meta,params);screenshotCompletion.request(meta,params);try{");
+    "startupOutbound(meta,params);screenshotCompletion.request(meta,params);ws?.q3Capture?.request(meta,params);try{");
   once('const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));',
-    'startupInbound(msg.data);const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));');
+    'startupInbound(msg.data);const v=JSON.parse(msg.data);ws?.q3Capture?.receive(msg,v,pending.get(v.id));screenshotCompletion.receive(v,pending.get(v.id));');
   once("screenshotCompletion.deadline(meta);pending.delete(n);",
-    "screenshotCompletion.deadline(meta);if(startupRecording)startupRecord('deadline',{requestId:n,method:meta.method,sessionId:meta.sessionId});pending.delete(n);");
+    "screenshotCompletion.deadline(meta);ws?.q3Capture?.deadline(meta);if(startupRecording)startupRecord('deadline',{requestId:n,method:meta.method,sessionId:meta.sessionId});pending.delete(n);");
   once("screenshotCompletion.transport(event);if(!closing)",
     "screenshotCompletion.transport(event);if(startupRecording)startupRecord('transport',{event});if(!closing)");
   once('screenshotCompletion.sendFailed(meta,error);observeTerminal(error);',
@@ -341,7 +436,7 @@ function prepare(destination,{inputs=[]}={}){
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }
-module.exports={metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
+module.exports={createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
 if(require.main===module){
   const args=process.argv.slice(2);assert.equal(args.shift(),'--prepare','explicit preparation only');
   const destination=args.shift(),options={inputs:[]};
