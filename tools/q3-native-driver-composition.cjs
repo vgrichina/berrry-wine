@@ -26,6 +26,7 @@ const providers = Object.freeze({
   'tools/q3-execution-boundary.cjs': '1858eea7efb8875e44088ffe9f5ea434c3b22915444113204fb51673e4f5ac0d',
   'tools/q3-screenshot-completion.cjs': 'b0d8efd89e061d06b8ceb014e3eae7a3c42809f9360c47d86bfd6c61c25d85f9',
   'tools/native-command-log.cjs': '979b3a8bbd8625ef6bffb009650778736e20ade2d781918b83f59d9944c88f5e',
+  'tools/q3-native-launch-client.py': 'd3b9927b17372e74ef0abc8f43b59e709b1822d4927d7793c0153b07cda6509d',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/transport.cjs': '54d7576d40df790ecf72153e289b25c6235b4e92b3f8b7332e480637bf07a9e8',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/trace.cjs': '6f440f2d1bdd9e02598a768ad041681ae1969245e9512939dff24a3970bb8b86',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs': '175033bc07bda95dd2d618511729d901908d60a9e8ec970cdbc8d7e2d61dcd70',
@@ -72,6 +73,17 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
  await require(root+'/tools/q3-startup.cjs').launch({evaluate,send,workers,pageSession,deadline,wait,save});
  save('launch.json'`);
   source = replaceOnce(source, 'productionDirectRoute:!process.env.TR2_GENERATED', 'productionDirectRoute:false,parkedStartup:true');
+  // Opt-in native cancellation evidence runs the whole fixture first, then
+  // waits with the real browser/Workers alive. The existing terminal abort
+  // must interrupt this wait; reaching its end is a failure, never proof.
+  source = replaceOnce(source, "await close('production startup fixture complete');return;",
+    `if(process.env.Q3_NATIVE_CANCEL_PROBE==='1')await require(root+'/tools/q3-native-driver-composition.cjs').cancellationCheckpoint({save,wait});
+ if(process.env.Q3_NATIVE_JOINED_FIXTURE==='1'){
+  save('fixture-complete-awaiting-quit.json',{at:new Date().toISOString(),nextNumber:1,nativeQualified:false});
+  for(let n=1;!closing;n++){while(!closing&&!fs.existsSync(out+'/commands/'+n+'.json'))await wait(100);if(closing)break;await t.consume(out,n,execute);}
+  return;
+ }
+ await close('production startup fixture complete');return;`);
   // Observe the exact transport send/receive/deadline boundaries. The retained
   // transport and screenshot options, work/CDP caps and ACK rules stay intact.
   source = replaceOnce(source, 'const pending=new Map(),workers=new Map(),workerPromises=[];',
@@ -171,6 +183,12 @@ async function ready(options) {
   }});
   return require('./supertux-native-lifecycle.cjs').ready({...options, browser});
 }
+async function cancellationCheckpoint({save, wait}) {
+  save('cancellation-ready.json', {at:new Date().toISOString(), nativeQualified:false,
+    scope:'whole fixture complete; live browser waiting for owning caller cancellation', waitMs:10000});
+  await wait(10000);
+  throw Error('Q3 native cancellation checkpoint elapsed without cancellation; no replay');
+}
 function install({root = path.resolve(__dirname, '..')} = {}) {
   assert.equal(path.resolve(process.argv[1] || ''), path.join(root, consumerPath), 'genuine retained Q3 consumer required');
   assert(process.env.Q3_EXECUTION_BOUNDARY_OUT?.endsWith('.jsonl.gz'), 'execution preload output required');
@@ -197,5 +215,5 @@ function compileBoundInput(result, module, filename, evidenceDirectory) {
     return module._compile(replaceOnce(source, JSON.stringify(historical), JSON.stringify(destination)), name);
   }}, filename);
 }
-module.exports = {compose, ready, install, compileBoundInput, providers, consumerPath, adapterPath, fixturePath, replaceOnce};
+module.exports = {compose, ready, cancellationCheckpoint, install, compileBoundInput, providers, consumerPath, adapterPath, fixturePath, replaceOnce};
 if (process.env.Q3_NATIVE_COMPOSITION === '1') install();

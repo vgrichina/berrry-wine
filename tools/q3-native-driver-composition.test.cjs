@@ -45,6 +45,13 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
       capture:async label => ({png, before:{}, after:{}, capture:{label}})
     })};
     if (parent?.filename === retained && name === './readiness.cjs') return {ready:async() => ({fixture:'no guest'})};
+    if (parent?.filename === retained && name === './local-controls.cjs' && (process.env.Q3_NATIVE_CANCEL_PROBE === '1'||process.env.Q3_NATIVE_JOINED_FIXTURE === '1')) return {run:async({out})=>{
+      if(process.env.Q3_NATIVE_JOINED_FIXTURE==='1'){
+        // A Node-only prior ACK tests numbering, never guest input proof.
+        fs.writeFileSync(out+'/commands/0.json',JSON.stringify({id:'node_prior'}));
+        fs.writeFileSync(out+'/reply-0.json',JSON.stringify({id:'node_prior',ok:true}));
+      }
+    }};
     return load.call(this, name, parent, main);
   };
   class ProtocolSocket extends EventTarget {
@@ -137,6 +144,42 @@ async function main() {
   const run = path.resolve(process.env.Q3_TEST_RUN || 'scratch/runs/20261108-q3-readiness-drain-integration-2305/test-' + Date.now() + '-' + process.pid);
   fs.mkdirSync(run, {recursive:true});
   const result = composition.compose();
+  if (process.argv.includes('--released-caller-only')) {
+    const name='tools/q3-native-launch-client.py', read=fs.readFileSync;
+    assert.match(composition.providers[name],/^[a-f0-9]{64}$/,'released owning caller must have a literal provider pin');
+    const retired=cp.execFileSync('git',['show','3306d8477:'+name],{cwd:root});
+    const controls=[];
+    try {
+      for(const mode of ['missing','changed','retired']){
+        fs.readFileSync=function(file,...args){
+          if(file===path.join(root,name)){
+            if(mode==='missing')throw Error('missing released caller');
+            if(mode==='retired')return retired;
+            return Buffer.concat([Buffer.from(read.call(this,file,...args)),Buffer.from('\n')]);
+          }
+          return read.call(this,file,...args);
+        };
+        assert.throws(()=>composition.compose(),mode==='missing'?/missing released caller/:/provider changed/);
+        controls.push({mode,refusedBeforeLaunch:true});
+      }
+    }finally{fs.readFileSync=read;}
+    fs.writeFileSync(run+'/released-caller-controls.json.gz',zlib.gzipSync(JSON.stringify({passed:true,controls,pin:composition.providers[name],references:result.references})));
+    console.log('PASS whole composition: released caller literal pin accepted; missing, changed and retired owning callers refused before launch');
+    return;
+  }
+  if (process.argv.includes('--joined-fixture-only')) {
+    await scenario(run, {name:'joined-whole-fixture', delay:100, joinedFixture:true});
+    console.log('PASS actual composed fixture command loop: retained prior ACK0, ordinary quit ACK1 only after normal close and actual wait/EOF (Node-only scope)');
+    return;
+  }
+  if (process.argv.includes('--cancellation-only')) {
+    await scenario(run, {name:'native-cancellation-checkpoint', delay:100, nativeCancel:true});
+    const records=[];
+    await assert.rejects(composition.cancellationCheckpoint({save:(name,value)=>records.push({name,value}),wait:async ms=>assert.equal(ms,10000)}), /elapsed without cancellation/);
+    assert.equal(records[0].name,'cancellation-ready.json');
+    console.log('PASS actual composed cancellation checkpoint: caller marker interrupts live wait; normal joined browser; no input/capture/ACK after cancellation; missing cancellation fails closed (Node-only scope)');
+    return;
+  }
   // Exercise the actual whole-composition dependency gate before any adapter
   // evaluation. The custody provider is the released c443739b repair; neither
   // its historical pin nor arbitrary replacement bytes may reach the caller.
@@ -232,6 +275,8 @@ sys.exit(status if status>=0 else 128-status)
     cwd:root, env:{...process.env, Q3_NODE_FIXTURE:'preload', Q3_FIXTURE_DIR:dir,
       Q3_FIXTURE_DELAY:String(options.delay), Q3_FIXTURE_TERMINAL:options.terminal?'1':'',
       Q3_FIXTURE_CLOSE:options.close || '', Q3_FIXTURE_OLD:options.old?'1':'',
+      LOCAL_PRODUCTION_FIXTURE:options.nativeCancel||options.joinedFixture?'1':'', Q3_NATIVE_CANCEL_PROBE:options.nativeCancel?'1':'',
+      Q3_NATIVE_JOINED_FIXTURE:options.joinedFixture?'1':'',
       Q3_NATIVE_COMPOSITION:options.old?'':'1', CASE_TAG:tag, BROWSER_DEADLINE:String(Date.now()+150000),
       Q3_EXECUTION_BOUNDARY_OUT:dir+'/execution.jsonl.gz'}, stdio:['ignore', 'pipe', 'pipe']
   });
@@ -243,8 +288,14 @@ sys.exit(status if status>=0 else 128-status)
   }, 58000);
   let ack;
   try {
-    if (!options.old && !options.terminal && !options.missingPreload) {
-      await until(() => fs.existsSync(out + '/ready.json') || child.exitCode !== null);
+    if (options.nativeCancel) {
+      await until(()=>fs.existsSync(out+'/cancellation-ready.json')||child.exitCode!==null);
+      assert.equal(child.exitCode,null,'real consumer waiting at opt-in cancellation checkpoint');
+      const began=Date.now();fs.writeFileSync(dir+'/caller-cancelled.json',JSON.stringify({reason:'planned Node-only cancellation control'}));
+      await completed;
+      assert(Date.now()-began<1500,'terminal cancellation interrupts 10s wait promptly');
+    } else if (!options.old && !options.terminal && !options.missingPreload) {
+      await until(() => fs.existsSync(out + (options.joinedFixture?'/fixture-complete-awaiting-quit.json':'/ready.json')) || child.exitCode !== null);
       assert.equal(child.exitCode, null, 'actual consumer reaches command loop');
       const transport = require(base + '/transport.cjs');
       if(options.failPending)fs.writeFileSync(dir + '/arm-terminal','1');
@@ -266,13 +317,24 @@ sys.exit(status if status>=0 else 128-status)
       }else{
 
       await until(() => fs.existsSync(dir + '/close-request-at'));
-      assert(!fs.existsSync(out + '/reply-0.json'), 'pending close cannot ACK quit');
+      assert(!fs.existsSync(out + '/reply-'+(options.joinedFixture?1:0)+'.json'), 'pending close cannot ACK quit');
       ack = await request.then(value => ({value}), error => ({error:String(error)}));
       }
     }
     const [code, signal] = await completed;
     await logs.drainStreams(); logs.close();
-    if (options.missingPreload) {
+    if (options.nativeCancel) {
+      assert.equal(code,1);
+      const terminal=JSON.parse(fs.readFileSync(out+'/first-transport-failure.json'));
+      assert.match(terminal.error,/owning launch transport cancelled/);
+      assert(!fs.existsSync(out+'/reply-0.json'));
+      const protocol=zlib.gunzipSync(fs.readFileSync(dir+'/protocol.jsonl.gz')).toString().trim().split('\n').map(JSON.parse);
+      assert(!protocol.some(v=>v.method.startsWith('Input.')||v.method==='Page.captureScreenshot'),'no native input or capture in Node-only checkpoint');
+      const receipt=JSON.parse(fs.readFileSync(out+'/terminal-browser.json'));
+      assert(receipt.normal&&receipt.drained&&receipt.signals.length===0);
+      const waited=JSON.parse(zlib.gunzipSync(fs.readFileSync(dir+'/browser-actual-wait.json.gz')));
+      assert.equal(waited.code,0);assert(waited.stdoutEOF&&waited.stderrEOF);
+    } else if (options.missingPreload) {
       assert.equal(code, 1);
       assert(!fs.existsSync(dir + '/node-browser-pid'), 'missing integration fails before launch');
       assert.match(zlib.gunzipSync(fs.readFileSync(dir + '/driver.stderr.gz')).toString(), /execution preload missing/);
