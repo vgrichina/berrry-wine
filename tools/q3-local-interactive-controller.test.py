@@ -24,6 +24,7 @@ m=runpy.run_path(str(MODULE))
 RETAINED=ROOT/'scratch/runs/20261109-q3-versioned-caller-arena-progress-1705'
 CALLER=Path(sys.argv[2]).resolve() if len(sys.argv)>2 else RETAINED/'q3-checkpoint-caller.py'
 assert CALLER.is_relative_to(ROOT/'scratch/runs') and CALLER.is_file()
+FRESH_CALLER=len(sys.argv)>2
 processes=[]
 # Observable independent finite watchdog, armed before any fixture child.
 watch=OUT/'watch';watch.mkdir();(watch/'targets').write_text('[]')
@@ -229,6 +230,7 @@ print('PASS full selected generated caller import; no process or network')
  harness.write_text('''import ast,gzip,hashlib,json,os,runpy,subprocess,sys,threading,time,types
 from pathlib import Path
 ROOT=Path('''+repr(str(ROOT))+''');R=Path(__file__).parent/'retained-records';R.mkdir();phasebase=R/'original';phasebase.mkdir()
+freshCaller='''+repr(FRESH_CALLER)+'''
 source=Path('''+repr(str(CALLER))+''')
 assert hashlib.sha256(source.read_bytes()).hexdigest()=='''+repr(hashlib.sha256(CALLER.read_bytes()).hexdigest())+'''
 owner=runpy.run_path(str(ROOT/'tools/q3-native-launch-client.py'))
@@ -249,7 +251,10 @@ m=types.SimpleNamespace(compose_task=owner['compose_task'],Session=factory)
 C=dict(validate=lambda:True,box=lambda:(_ for _ in ()).throw(AssertionError('NO BOX')))
 phase='original';BASE=R;REMOTE=str(ROOT);out=str(R/'runtime');phaseRun=str(R.relative_to(ROOT))
 def load(n):return dict(passed=True)
-def remote(*_):raise RuntimeError('OFFLINE independent remote proof unavailable')
+def remote(*_):
+ if not freshCaller:raise RuntimeError('OFFLINE independent remote proof unavailable')
+ if os.environ.get('Q3_CONTROLLER_TEST_JOIN_FAILURE')=='1':raise RuntimeError('OFFLINE secondary join failure')
+ return '{}' # Read-only join succeeds; it must not erase failure.
 fn=next(n for n in ast.parse(source.read_text()).body if isinstance(n,ast.FunctionDef) and n.name=='launch')
 exec(compile(ast.Module(body=[fn],type_ignores=[]),str(source),'exec'),globals())
 try:launch()
@@ -284,6 +289,11 @@ except BaseException as e:
  # This fixture's save seam is plain JSON; the retained sticky marker uses its
  # original .gz existence check, then is written through that explicit seam.
  assert json.loads((records/'actual-first-terminal.json').read_text())['noLaterGuestInputCaptureRetry']
+ if not FRESH_CALLER:pass # Historical retained caller keeps its original body.
+ elif os.environ.get('Q3_CONTROLLER_TEST_JOIN_FAILURE')=='1':
+  assert json.loads((records/'original-join-error.json').read_text())['error']=='OFFLINE secondary join failure'
+ else:assert (records/'original-proof.json').exists(),'read-only join must finish before terminal propagation'
+ if FRESH_CALLER:assert json.loads((records/'harness-terminal.json').read_text())['error']=='remote result UNKNOWN: command-first'
  print('PASS actual retained original launch + real Session + actual retained command branch; sticky firstfailure no later capture',flush=True)
  (OUT/'result.json').write_text(json.dumps(dict(passed=True,actualRetainedCaller=True,caller=str(CALLER.relative_to(ROOT)),callerSHA256=hashlib.sha256(CALLER.read_bytes()).hexdigest(),fullCallerImport=True,nativeQualified=False,box='NOT_CREATED',remoteCustody='UNKNOWN')))
 finally:

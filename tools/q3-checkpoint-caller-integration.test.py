@@ -215,7 +215,7 @@ console.log('PASS six stale/missing provider refusals, missing caller dependency
         baseline = subprocess.check_output(['git', 'show', '6d966f9d1:tools/q3-current-module.cjs'], cwd=ROOT)
         # Existing default uses its original literal pins; no blanket repin.
         assert b"'tools/q3-native-prelaunch.py':'2591af4d" in baseline
-        for mode in ('partial', 'damaged', 'prior-failure', 'cancel', 'diagnostic-cap', 'ready'):
+        for mode in ('partial', 'damaged', 'prior-failure', 'cancel', 'diagnostic-cap', 'ready', 'planned'):
             r = OUT/mode; r.mkdir(); prepared=r/'prepared'; prepared.mkdir()
             out=r/'output'; out.mkdir()
             good = dict(at='inert', nativeQualified=False, waitMs=10000)
@@ -236,7 +236,7 @@ me=dict(pid=os.getpid(),start=Path('/proc',str(os.getpid()),'stat').read_text().
 signal.signal(signal.SIGTERM,lambda *_:sys.exit(3))
 mode='''+repr(mode)+''';n=0
 if mode=='prior-failure':(r/'output/first-browser-failure.json').write_text('{"first":"sticky"}')
-if mode in ('prior-failure','ready'):
+if mode in ('prior-failure','ready','planned'):
  (r/'output/cancellation-ready.json').write_text(json.dumps(dict(at='inert',nativeQualified=False,waitMs=10000)))
 (r/'ready').touch()
 while True:
@@ -280,8 +280,11 @@ print(json.dumps(dict(stdout=output.getvalue(),exitCode=0)),flush=True)
                     phaseRun=str(prepared.relative_to(ROOT)),out=str(out),save=record,load=read,
                     m=m,H=H,C=C,Path=Path,sys=sys,runpy=runpy,json=json,gzip=gzip,time=time,
                     subprocess=subprocess,threading=threading,os=os,
-                    remote=lambda *_: (_ for _ in ()).throw(RuntimeError('OFFLINE postlaunch proof refused')),
+                    remote=lambda *_: '{}' if mode=='planned' else (_ for _ in ()).throw(RuntimeError('OFFLINE postlaunch proof refused')),
                     physical_gate_code=lambda _: (_ for _ in ()).throw(RuntimeError('OFFLINE physical proof refused')))
+            if mode=='planned':
+                # This is an inert physical-proof seam, never native evidence.
+                ns['physical_gate_code']=lambda _: 'OFFLINE planned cancellation physical seam'
             # Only the retained phase's function body is executable here. This
             # avoids its allocation/control imports without replacing logic.
             tree=ast.parse(source)
@@ -299,7 +302,13 @@ print(json.dumps(dict(stdout=output.getvalue(),exitCode=0)),flush=True)
                 s.fail('OFFLINE external cancellation; original deadline unchanged')
             t.join(12);assert not t.is_alive(), mode
             assert s.terminal and not s.completed
-            assert not records.get('cancellation-commanded-physical-gate')
+            if mode=='planned':
+                assert records['cancellation-commanded-physical-gate']=={}
+                assert records['cancellation-planned']['expected'] and not errors
+                assert not records.get('actual-first-terminal')
+            else:
+                assert not records.get('cancellation-commanded-physical-gate')
+                assert errors==[records['actual-first-terminal']['error']],(mode,errors,records)
             assert not any('command-' in p.label for p in s.children)
             assert all(p.process.poll() is not None for p in s.children)
             assert all(v['actualWait'] and v['stdoutEOF'] and v['stderrEOF'] for v in s.receipts)

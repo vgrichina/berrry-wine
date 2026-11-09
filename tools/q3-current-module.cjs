@@ -103,6 +103,19 @@ function composeCheckpointCaller(source,version){
   assert(branch>0&&begin>branch&&end>begin,'owning observation seam');
   source=source.slice(0,begin)+"   while not session.started.wait(.01):session.check()\n"+
     "   ready=helper['observe_checkpoint'](task,session,session.remote);save('cancellation-native-checkpoint',ready)\n"+source.slice(end);
+  // A recorded controller failure used to fall through after a successful
+  // read-only join, making the actual caller exit zero. Preserve that first
+  // exception through the join without changing planned cancellation.
+  const once=(before,after)=>{
+    assert.equal(source.split(before).length,2,'owning terminal propagation seam');
+    source=source.replace(before,after);
+  };
+  once(' launcher=threading.Thread(target=owned_launch);launcher.start()',
+    ' controllerError=None\n launcher=threading.Thread(target=owned_launch);launcher.start()');
+  once(" except BaseException as e:\n  if not (R/'actual-first-terminal.json.gz').exists():",
+    " except BaseException as e:\n  controllerError=e\n  if not (R/'actual-first-terminal.json.gz').exists():");
+  once(" proof=json.loads(remote(phase+'-independent-join',code,60));save(phase+'-proof',proof)\n print(json.dumps(proof),flush=True)",
+    " try:\n  proof=json.loads(remote(phase+'-independent-join',code,60));save(phase+'-proof',proof)\n  print(json.dumps(proof),flush=True)\n except BaseException as joinError:\n  if controllerError is None:raise\n  save(phase+'-join-error',dict(error=str(joinError)))\n if controllerError is not None:raise controllerError");
   // Compile the actual generated caller, not a duplicated observer snippet.
   cp.execFileSync('python3',['-B','-c',"import ast,sys;compile(ast.parse(sys.stdin.read()),'<q3-checkpoint-caller>','exec')"],{input:source});
   return source;
