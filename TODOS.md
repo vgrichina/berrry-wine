@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed4ba9f3a1b once2808SHA-size314gzipCRC PASS actual productiondiff plus oldFAILnewPASS. Explicit requireMotion:true makes heldUNKNOWN terminal before dependent capture wait ACK, reverseUP joined firstfailure sticky; unrelated motionless capture retained. Fresh quake2-required-motion-upper-route-0754 integrates changed native qualification then safe upper-route original only if whole gates pass. FIRST ONEruntime; first unexplained health decrease terminal, no blind descent. CPUa320 custody4341 unchanged nativeREVOKED damagecauseUNKNOWN.
+  Next: Reviewed047cc76b69 once645SHA171gzip2knowntruncated. First runtime fixture ENOENT process.cwd wrong stagedroot beforeChrome nooriginal,7actualreaps EOFseparate archived stop618fb446736111cd. Fresh quake2-staged-root-upper-route-0820 fixes actual root invocation then native+safe-upper-route gameplay FIRST ONEruntime; requireMotion true, first HP decrease terminal. NativeREVOKED damagecauseUNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed2cc66eccb once412SHA-size103gzipCRC PASS tracked wholefixture/lifecycle oldFAILnewPASS nineinertcases lockedbuild. Independent server shutdown actualchildwait streams joined firstfailure preserved timeout10s unchanged; nativeChrome latencycauseUNKNOWN. Fresh redline-joined-side-door-0756 prepares OFFLINE SECOND waits Q20754 exactARCHIVEDPHYSICAL_DRAINED release beforeONEruntime. Invoke trackedfixture and pinboth files whole-native-PASS before changed side-door gameplay. Prior0724 lifecycleFAIL bx_v83snewy ARCHIVED stop_b69594a88cb5297a complete07:32:20.484Z; no partialPASS promotion. LifetimeREVOKED allwriters/edictABAUNKNOWN.
+  Next: Reviewed2045a98ee once274SHA123gzip. Frozen tracked whole-native PASS180actualreaps separateEOF, bx_jvzc62kr ARCHIVED stopf4cdb22d404ad552. Fixed caller postterminal guesttrace/captures actualoldFAILnewPASS focused+lockedbuild; changedcaller needs integration. Fresh redline-terminal-safe-side-door-0820 SECOND waits Q20820 exactrelease then native+originalside-door same task; no standalone qualification. NativeREVOKED allwriters/edictABAUNKNOWN.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed36d5529d2e once2404SHA-size1560gzipCRC PASS. Remote exit/EOF cancellation oldFAILnewPASS fouractualcompositions currentcustody5ec810 unchanged. Productionreview found remaining drain_remote output path shadowed by cancel-sent filehandle; signalrequested nextiteration may TypeError before join. Fresh q3-signal-cancellation-shadow-repair-0805 OFFLINE actualgeneratedparent signal regression and narrowfix before Boat. Historical33missingwaits and two developmentwaits remainUNKNOWN nohistoricalcause. CPUa320 marker1858eea7 caps unchanged.
+  Next: Reviewed623aebabe once1773SHA1015gzip productionshadowrenamePASS. OldHUP/TERM/INT TypeErrorFAIL repaired8actualparentcompositionsPASS actualwaits separateEOF focused+lockedbuild. Fresh q3-cancel-safe-visible-progress-0820 THIRD waits Redline0820release then actualremote cancellation integrated towardoriginal gameplay. PublicationcustodyUNKNOWN historical33missingwaits remainUNKNOWN nohistoricalcause. CPUa320 custody5ec810 marker1858 caps unchanged.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
