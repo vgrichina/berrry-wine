@@ -13,15 +13,14 @@ out.mkdir(parents=True)
 spec = importlib.util.spec_from_file_location('stage', root / 'tools/q3-phase-manifest.py')
 stage = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(stage)
+inputs = __import__('runpy').run_path(str(root / 'tools/q3-native-phase-inputs.py'))
 
 
 def prepare(name):
     base = out / name
     base.mkdir()
-    retained = root / 'scratch/runs/20261109-q3-startup-autoattach-cause-2045'
     names = ['control.py', 'physical_gate.py', 'cancellation_gate.py', 'phase-input.py']
-    for name in names:
-        (base / name).write_bytes((retained / name).read_bytes())
+    inputs['materialize'](root, base)
     args = ['node', 'tools/q3-current-module.cjs', '--prepare', str(base / 'prepared'),
             '--foreign-closure-version', 'q3-current-foreign-a16fc87d4-44fc9a134-v1',
             '--checkpoint-observer-version', 'q3-checkpoint-b993419a5-v1',

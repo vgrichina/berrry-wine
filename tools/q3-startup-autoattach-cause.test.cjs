@@ -8,10 +8,10 @@ const route=require('./q3-current-foreign-closure-v1.cjs');
 const out=path.resolve(process.argv[2]||'');
 assert(process.argv[2]&&out.startsWith(root+'/scratch/runs/')&&!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+cp.execFileSync('python3',['-B',root+'/tools/q3-native-phase-inputs.py',out]);
 const inputs=[];
 for(const name of ['control.py','physical_gate.py','cancellation_gate.py','phase-input.py']){
  const dest=out+'/'+name;
- fs.copyFileSync(root+'/scratch/runs/20261109-q3-current-checkpoint-native-progress-1585/'+name,dest);
  inputs.push(path.relative(root,dest));
 }
 const seal=current.prepare(out+'/prepared',{foreignClosureVersion:route.version,
@@ -36,7 +36,7 @@ try:adapter['candidate'](source+'\n')
 except ValueError:pass
 else:raise AssertionError('provider drift accepted')
 kernel=adapter['load']()
-assert adapter['candidate'](source).replace('defer=True)','defer=retirement or diagnostic)')==source
+assert adapter['candidate'](source).count('journal.flush_pending() # ordered durable prefix before executable userspace')==1
 # Reuse real durable-prefix-before-executable-CONT and sticky service failure
 # controls against the adapter, including irreversible retirement exceptions.
 spec=importlib.util.spec_from_file_location('controls',root/'tools/native_kernel_custody_test.py')

@@ -74,6 +74,7 @@ function validate(options={}){
     return {...p,size:after.size,sha256:after.sha256};
   });
   files.push(pin('tools/q3-current-module.cjs',read('tools/q3-current-module.cjs')));
+  files.push(pin('tools/q3-input-phase-service.cjs',read('tools/q3-input-phase-service.cjs')));
   if(foreign){
     for(const name of foreignRoute.dependencies){
       const actual=pin(name,read(name));assert.deepEqual(actual,expected[name],'published foreign dependency: '+name);files.push(actual);
@@ -254,6 +255,8 @@ function composeStartupDiagnostics(source){
     assert.equal(source.split(before).length,2,'unique startup diagnostic seam: '+before);
     source=source.replace(before,after);
   };
+  if(process.env.Q3_INPUT_SERVICE_REVIEW==='1')once("await require('./local-controls.cjs').run(",
+    "await require(root+'/tools/q3-input-phase-service.cjs').run(require('./local-controls.cjs'),");
   // Only this authenticated diagnostic consumer arms the host. The page owner
   // reads the existing shared ring even when renderer JS cannot service RPC.
   // Missing exits remain UNKNOWN; these samples perform no GL/protocol work.
@@ -397,8 +400,13 @@ function prepare(destination,{inputs=[]}={}){
     generated=generated.map(file=>{
       const before='from native_kernel_custody import supervise,identity';
       assert.equal(file.source.split(before).length,2,'unique Q3 native custody import');
-      return {...file,source:file.source.replace(before,
-        "from native_kernel_custody import identity\nimport runpy\nsupervise=runpy.run_path(str(root/'tools/q3-startup-custody.py'))['supervise']")};
+      let source=file.source.replace(before,
+        "from native_kernel_custody import identity\nimport runpy\nsupervise=runpy.run_path(str(root/'tools/q3-startup-custody.py'))['supervise']");
+      if(file.path.endsWith('/cancellation/runtime.py')){
+        assert.equal(source.split('os.environ.update(').length,2,'fixture service review environment seam');
+        source=source.replace('os.environ.update(',"os.environ.update(Q3_INPUT_SERVICE_REVIEW='1',");
+      }
+      return {...file,source};
     });
     version.nativeLifecycleVersion=lifecycle.version;
     version.files.push(pin('tools/q3-versioned-native-lifecycle.cjs',read('tools/q3-versioned-native-lifecycle.cjs')));

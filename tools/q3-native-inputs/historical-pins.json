@@ -1,0 +1,4677 @@
+{
+  "commit": "5e86db9cbcfd0ab7aedd20316a492685335a71f1",
+  "files": [
+    {
+      "path": "test/binaries/dlls/asycfilt.dll",
+      "size": 147728,
+      "sha256": "de83c9d9203050b40c098e4143ef8f577aa90016c7a64d4f2931b57a4c43e566"
+    },
+    {
+      "path": "test/binaries/dlls/cabinet.dll",
+      "size": 56080,
+      "sha256": "cb535e27870708f94f46ecb75bf6a5dff17422c28b9f21c2c80ab7b1fcf1f715"
+    },
+    {
+      "path": "test/binaries/dlls/comcat.dll",
+      "size": 22288,
+      "sha256": "96d04cdfaf4f4d7b8722b139a15074975d4c244302f78034b7be65df1a92fd03"
+    },
+    {
+      "path": "test/binaries/dlls/comctl32.dll",
+      "size": 577808,
+      "sha256": "28a41e6a35c4509924a32a99841a815cf49e1d3ee6912ec26a823e45472edfa4"
+    },
+    {
+      "path": "test/binaries/dlls/d3drm.dll",
+      "size": 437008,
+      "sha256": "fd80f3839a035b6b52362735b22eb8d2523d3434bf18afb3e0f1b5ace84357b0"
+    },
+    {
+      "path": "test/binaries/dlls/d3dxof.dll",
+      "size": 107792,
+      "sha256": "1f2d0683668b3039d451d88ed449fd9d49371fab3fadb991636cd6bfb0aa6eee"
+    },
+    {
+      "path": "test/binaries/dlls/mfc30.dll",
+      "size": 335872,
+      "sha256": "07eeb7e8d7b2fdba0a250e0f19a2d5336a0ff83ae70b7b0f8623fb86e066041a"
+    },
+    {
+      "path": "test/binaries/dlls/mfc42.dll",
+      "size": 995383,
+      "sha256": "ec63a85030c60716acdcf060abfaa95a6a3528631622fa60e7d17fbea2f751f9"
+    },
+    {
+      "path": "test/binaries/dlls/mfc42u.dll",
+      "size": 995384,
+      "sha256": "5b3b68bb88be968a0c7c24887b437fac6d9081671b8d8376482168383ca30b8b"
+    },
+    {
+      "path": "test/binaries/dlls/msvbvm60.dll",
+      "size": 1386496,
+      "sha256": "3ef32e0152cc3fa07c417e6aadf9ead83a17b5fdee73799044e1bd7564725d6e"
+    },
+    {
+      "path": "test/binaries/dlls/msvcirt.dll",
+      "size": 77878,
+      "sha256": "647f7534aaaedffa93534e4cb9b24bfcf91524828ff0364d88973be58139e255"
+    },
+    {
+      "path": "test/binaries/dlls/msvcp60.dll",
+      "size": 401462,
+      "sha256": "2b6b93c2d66969eb00258e2b5ad6172decebada096e3b1b077a3380c80e4a072"
+    },
+    {
+      "path": "test/binaries/dlls/msvcrt.dll",
+      "size": 278581,
+      "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1"
+    },
+    {
+      "path": "test/binaries/dlls/msvcrt20.dll",
+      "size": 274432,
+      "sha256": "9446a83656e24ebf303a2c8c046ef0cce252a789c1becfde3580e9ab614b4316"
+    },
+    {
+      "path": "test/binaries/dlls/oleaut32.dll",
+      "size": 598288,
+      "sha256": "baeb2f7c1b8be56738d34e1d1ddf8e0eebd3a633215dc1575e14656be38b939d"
+    },
+    {
+      "path": "test/binaries/dlls/olepro32.dll",
+      "size": 164112,
+      "sha256": "789c3c45eda1749bd939f4a96616e1e9ef1b7dcc62a2889f65088954c64d0938"
+    },
+    {
+      "path": "test/binaries/dlls/riched20.dll",
+      "size": 431133,
+      "sha256": "1c2508fb55ddc459d0327f2017471545c87420443391567094e768fb34032da1"
+    },
+    {
+      "path": "test/binaries/dlls/usp10.dll",
+      "size": 314906,
+      "sha256": "4d8ff1f53c3babf9bfd11b2ebcd44e2698cfe3bc80c6f0cbc64c0d191ea1fc1b"
+    },
+    {
+      "path": "test/binaries/entertainment-pack/cards.dll",
+      "size": 157456,
+      "sha256": "38caf8318e9a11f1f1d323a4b20544c76a2a6b29827aaf5ea178caed837f19e0"
+    },
+    {
+      "path": "build/nfs2se-browser.json",
+      "size": 9322,
+      "sha256": "7022d85d9b8fd801ca391c6bbf0219a2cb5a1bbc8b11ec4d966c2eddfcc750b0"
+    },
+    {
+      "path": "build/wine-assembly.compat.wasm",
+      "size": 2188292,
+      "sha256": "a5d7569b2315787832b7e1e720aca05e4de8012c809ac7a7e7896a29452d057f"
+    },
+    {
+      "path": "build/wine-assembly.wasm",
+      "size": 2185646,
+      "sha256": "d5dd33faadee5a0f77ac35347ecf0e4efe5efc86d92b03ef45ffe5adee83aea0"
+    },
+    {
+      "path": "cursor-demo.html",
+      "size": 18148,
+      "sha256": "301b54e1e4dab6575ef52380bd7e65d1b10d0171c0a434c4ab3ce6dc4d27ac11"
+    },
+    {
+      "path": "dashboard.html",
+      "size": 12090,
+      "sha256": "200acd731c88411160280032a723b8190d0f840274b38393e9df0a1654f5c92d"
+    },
+    {
+      "path": "fonts/ANAKRON-OFL.txt",
+      "size": 4387,
+      "sha256": "02ac225bf65ec8d403111d844eeb32a34f2b08a49b0a3a1d09a63fc3f6543719"
+    },
+    {
+      "path": "fonts/Courier.fon",
+      "size": 4816,
+      "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457"
+    },
+    {
+      "path": "fonts/FSEX302.ttf",
+      "size": 580724,
+      "sha256": "842f8fbf80f57d867aeb1d2988140d3ea8b4718e5f687035b0a3b66756df3899"
+    },
+    {
+      "path": "fonts/Fixedsys.fon",
+      "size": 5264,
+      "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4"
+    },
+    {
+      "path": "fonts/MSSansSerif.fon",
+      "size": 20128,
+      "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4"
+    },
+    {
+      "path": "fonts/README.md",
+      "size": 21284,
+      "sha256": "feb6f076587e5f2b53e297c1d8e884a00af9b85c27aeccad7c69f852899ce4eb"
+    },
+    {
+      "path": "fonts/SmallFonts.fon",
+      "size": 4432,
+      "sha256": "4732123f27559b62a8047efea41ab920c9df57367be8dd6fd12a9a63bf37c705"
+    },
+    {
+      "path": "fonts/System.fon",
+      "size": 13456,
+      "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b"
+    },
+    {
+      "path": "fonts/Tahoma.fon",
+      "size": 39840,
+      "sha256": "6ffb14378b094f763b2a86eeb9973596765c024707ae42a64ce4cd8f41dc35f4"
+    },
+    {
+      "path": "fonts/TahomaBold.fon",
+      "size": 39504,
+      "sha256": "549e1990dd2286456e1f79dbf5b7d5dd59bfca45bd8b3de3025df30e8f52bf7b"
+    },
+    {
+      "path": "fonts/Terminal.fon",
+      "size": 5168,
+      "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1"
+    },
+    {
+      "path": "fonts/W95FA-OFL.txt",
+      "size": 4598,
+      "sha256": "1a7adaa2c86cedfd6c7f5c0c7c72fd6d3e02cd0c9593f21fdb53c89bb2b130ec"
+    },
+    {
+      "path": "fonts/W95FA.otf",
+      "size": 43372,
+      "sha256": "9e1ad53708307b2b68e06d43799b2267f6aec620dda972bc62753ad16ba50f2b"
+    },
+    {
+      "path": "fonts/Wine-LGPL-2.1.txt",
+      "size": 26434,
+      "sha256": "e237fa56668030e928551ddd60f05df5fe957f75eab874bbd017e085ed722e7c"
+    },
+    {
+      "path": "fonts/anakron/ANAKRON-v0.3.3.bdf",
+      "size": 215557,
+      "sha256": "d792885acf2043beb7e16bd0a85fce498e3e072e2ce828c750d14b074474f119"
+    },
+    {
+      "path": "fonts/comic-relief/ComicRelief-Bold.ttf",
+      "size": 63808,
+      "sha256": "371fd5e24cb1f4ef5bd38940702e9a7d2caf325732e206f0eccdb49ee5345c0c"
+    },
+    {
+      "path": "fonts/comic-relief/ComicRelief-Regular.ttf",
+      "size": 53252,
+      "sha256": "557a7ea8e01c3617267ad7bb908eed3fb95591984eca749677cb340f591ad26d"
+    },
+    {
+      "path": "fonts/comic-relief/OFL.txt",
+      "size": 4394,
+      "sha256": "1acec120d128cd0c445f6f11a94a0e1deab9c886faf47c15efc304bc025f4a0e"
+    },
+    {
+      "path": "fonts/liberation/AUTHORS",
+      "size": 379,
+      "sha256": "b627404917ef824675cb24c32e2facd0b57650627955f3fc3d8a8863c5d0adfc"
+    },
+    {
+      "path": "fonts/liberation/LICENSE",
+      "size": 4414,
+      "sha256": "93fed46019c38bbe566b479d22148e2e8a1e85ada614accb0211c37b2c61c19b"
+    },
+    {
+      "path": "fonts/liberation/LiberationMono-Bold.ttf",
+      "size": 307996,
+      "sha256": "bd62a0672d0b9b6710b01df434c80ad54fa5f0835207eb7b17b7a761463067bb"
+    },
+    {
+      "path": "fonts/liberation/LiberationMono-BoldItalic.ttf",
+      "size": 284068,
+      "sha256": "79451f3c09fe25116098853b7a2ca6e2436220ccc11af022979adbcf195be130"
+    },
+    {
+      "path": "fonts/liberation/LiberationMono-Italic.ttf",
+      "size": 281536,
+      "sha256": "605c01c711b44480a7508d349dfbf3264e81fa43d69e61cfa7d10b86e764c4d1"
+    },
+    {
+      "path": "fonts/liberation/LiberationMono-Regular.ttf",
+      "size": 319508,
+      "sha256": "f2b83c763e8afd21709333370bed4774337fae82267937e2b5aea7e2fbd922c1"
+    },
+    {
+      "path": "fonts/liberation/LiberationSans-Bold.ttf",
+      "size": 414456,
+      "sha256": "788abee4c806d660e8aee46689dd8540cd4bb98da03dcc9d171ce3efd99a9173"
+    },
+    {
+      "path": "fonts/liberation/LiberationSans-BoldItalic.ttf",
+      "size": 408996,
+      "sha256": "698da70fc191cc5f33ad4d6d3fe830fe4624b898ea2e3169955928b7c491f1ee"
+    },
+    {
+      "path": "fonts/liberation/LiberationSans-Italic.ttf",
+      "size": 415816,
+      "sha256": "e5bae5c4cde31f22142753855f4f8fb86da6ff39955ed3c0a11248b0d16948b0"
+    },
+    {
+      "path": "fonts/liberation/LiberationSans-Regular.ttf",
+      "size": 410712,
+      "sha256": "76d04c18ea243f426b7de1f3ad208e927008f961dc5945e5aad352d0dfde8ee8"
+    },
+    {
+      "path": "fonts/liberation/LiberationSerif-Bold.ttf",
+      "size": 370096,
+      "sha256": "d754ba427cfe0bca54ae052384baa8f842da5bd6550ad4da024ac441e7a7d5ce"
+    },
+    {
+      "path": "fonts/liberation/LiberationSerif-BoldItalic.ttf",
+      "size": 376772,
+      "sha256": "f17db8af71e24d2066b587546021d4f0b296be389512b658dec3c09affeb11a7"
+    },
+    {
+      "path": "fonts/liberation/LiberationSerif-Italic.ttf",
+      "size": 375632,
+      "sha256": "0e3dea9f8d613e006ccfa62201f33e265d19167bd0907725c3e145368b04fc2e"
+    },
+    {
+      "path": "fonts/liberation/LiberationSerif-Regular.ttf",
+      "size": 393576,
+      "sha256": "058ea80864aef09a23f45cbec2bb5400bc3dfbdea01c3f10538a21fcb497fb74"
+    },
+    {
+      "path": "fonts/liberation/README.md",
+      "size": 2406,
+      "sha256": "625a61d7e161cde3b1e9dd1ff8b7a86c251be536c34266bf1f1a9bd1c15c19e8"
+    },
+    {
+      "path": "fonts/subset/ComicRelief-Bold.ttf",
+      "size": 27616,
+      "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7"
+    },
+    {
+      "path": "fonts/subset/ComicRelief-Regular.ttf",
+      "size": 22776,
+      "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00"
+    },
+    {
+      "path": "fonts/subset/LiberationMono-Bold.ttf",
+      "size": 34148,
+      "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110"
+    },
+    {
+      "path": "fonts/subset/LiberationMono-BoldItalic.ttf",
+      "size": 30408,
+      "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264"
+    },
+    {
+      "path": "fonts/subset/LiberationMono-Italic.ttf",
+      "size": 30056,
+      "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705"
+    },
+    {
+      "path": "fonts/subset/LiberationMono-Regular.ttf",
+      "size": 34044,
+      "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7"
+    },
+    {
+      "path": "fonts/subset/LiberationSans-Bold.ttf",
+      "size": 40984,
+      "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+    },
+    {
+      "path": "fonts/subset/LiberationSans-BoldItalic.ttf",
+      "size": 41104,
+      "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7"
+    },
+    {
+      "path": "fonts/subset/LiberationSans-Italic.ttf",
+      "size": 40848,
+      "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8"
+    },
+    {
+      "path": "fonts/subset/LiberationSans-Regular.ttf",
+      "size": 42460,
+      "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+    },
+    {
+      "path": "fonts/subset/LiberationSerif-Bold.ttf",
+      "size": 45140,
+      "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a"
+    },
+    {
+      "path": "fonts/subset/LiberationSerif-BoldItalic.ttf",
+      "size": 45144,
+      "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893"
+    },
+    {
+      "path": "fonts/subset/LiberationSerif-Italic.ttf",
+      "size": 46840,
+      "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451"
+    },
+    {
+      "path": "fonts/subset/LiberationSerif-Regular.ttf",
+      "size": 52440,
+      "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9"
+    },
+    {
+      "path": "fonts/subset/marlett.ttf",
+      "size": 6136,
+      "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+    },
+    {
+      "path": "fonts/subset/symbol.ttf",
+      "size": 26028,
+      "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+    },
+    {
+      "path": "fonts/subset/tahoma.ttf",
+      "size": 18712,
+      "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459"
+    },
+    {
+      "path": "fonts/subset/tahomabd.ttf",
+      "size": 19216,
+      "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab"
+    },
+    {
+      "path": "fonts/subset/webdings.ttf",
+      "size": 4300,
+      "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+    },
+    {
+      "path": "fonts/subset/wingding.ttf",
+      "size": 9524,
+      "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+    },
+    {
+      "path": "fonts/substitutions.json",
+      "size": 11587,
+      "sha256": "877ebe71ce19dfe78514d70ae1c2622d00fc8e02da5ae3b055cb9fd6c714cdcd"
+    },
+    {
+      "path": "fonts/w95fa.woff2",
+      "size": 7880,
+      "sha256": "d81cbd6c15b9695e614fe1674bc1f43fa79c820afd0cd4acf49955d065e71644"
+    },
+    {
+      "path": "fonts/wine/UPSTREAM.md",
+      "size": 3719,
+      "sha256": "6c73dd714f715a2a497602c48d4a64275150978fe31bb832acd74ee413406925"
+    },
+    {
+      "path": "fonts/wine/courier.sfd",
+      "size": 67248,
+      "sha256": "ab712b8cf0682a5dea331b4f518401039099c6426470763da2f8269d0dae6fa8"
+    },
+    {
+      "path": "fonts/wine/courier.ttf",
+      "size": 17892,
+      "sha256": "61c980bf21584c46cfc3d29a6dcce45ce27d7a7b50356ccc6534b2f783e4483c"
+    },
+    {
+      "path": "fonts/wine/fixedsys.sfd",
+      "size": 33539,
+      "sha256": "9019eab07b9a19f994829e88556a5df4332a6cce9543c1aa83ee2433fb58c07c"
+    },
+    {
+      "path": "fonts/wine/fixedsys.ttf",
+      "size": 10704,
+      "sha256": "097a42b9802617ab884bf19e36fe7f90cfec764f8d74151f82fda9f1b83261d7"
+    },
+    {
+      "path": "fonts/wine/marlett.sfd",
+      "size": 16782,
+      "sha256": "eaaf88567db49cdacac4ec9e61a4ce14648e682f48343d8b9c9056cb5a1d3970"
+    },
+    {
+      "path": "fonts/wine/marlett.ttf",
+      "size": 6136,
+      "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+    },
+    {
+      "path": "fonts/wine/ms_sans_serif.sfd",
+      "size": 126257,
+      "sha256": "d8cc5e8e93d70478e810b9aa3272006da57e819a063c2b34f5cf92a233b0f3f3"
+    },
+    {
+      "path": "fonts/wine/ms_sans_serif.ttf",
+      "size": 38536,
+      "sha256": "91877b45939e98d01b4c82e20c575db692c3e82a01ec3748277f3a3471d359cd"
+    },
+    {
+      "path": "fonts/wine/small_fonts.sfd",
+      "size": 71776,
+      "sha256": "9d31cc3988f1d7ecb6a650ff2b312722b0114bfedc86c03f95c4c15d0b680ca5"
+    },
+    {
+      "path": "fonts/wine/small_fonts.ttf",
+      "size": 19068,
+      "sha256": "c8b7ec4e4db4b9de2f588094376c21306cf829ad5d90b3238f86b34070b74ef6"
+    },
+    {
+      "path": "fonts/wine/symbol.sfd",
+      "size": 139504,
+      "sha256": "b146fffd2713a55b7f5101f32b3199b47542c2d5234f61cb5626ce2c886193d6"
+    },
+    {
+      "path": "fonts/wine/symbol.ttf",
+      "size": 26028,
+      "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+    },
+    {
+      "path": "fonts/wine/system.sfd",
+      "size": 97201,
+      "sha256": "88596900ca3df8dcf6ef257793a3b52baf666cc7f72140598bd2aef4787e9a41"
+    },
+    {
+      "path": "fonts/wine/system.ttf",
+      "size": 28912,
+      "sha256": "fae4ce39aeb8d5fb93a228e43e54342cf6d3b9f8dffe40a5df9a87fefb4d5d7c"
+    },
+    {
+      "path": "fonts/wine/tahoma.sfd",
+      "size": 649240,
+      "sha256": "0c1a3182a3a6b3d444113421121cbacf87322111aff245ee616109bd47479710"
+    },
+    {
+      "path": "fonts/wine/tahoma.ttf",
+      "size": 143884,
+      "sha256": "90f1abad4da0ce03da5d2277ee75a9600ce812d37c90eab76e0838ffa7937e55"
+    },
+    {
+      "path": "fonts/wine/tahomabd.sfd",
+      "size": 621648,
+      "sha256": "90e42b98fc092034e6485a7f8f811195ca2ca148b6704e5d2df56a4c97dfca49"
+    },
+    {
+      "path": "fonts/wine/tahomabd.ttf",
+      "size": 137836,
+      "sha256": "508a2acc88cd6abdd399ae79c9965db43fba75a46bb115117b55d2be2272d889"
+    },
+    {
+      "path": "fonts/wine/webdings.sfd",
+      "size": 3998,
+      "sha256": "52eea2ba6ea5bb5e5db89ce2a01e578d7bb768e8da04a0e235fa04a1c1821b09"
+    },
+    {
+      "path": "fonts/wine/webdings.ttf",
+      "size": 4300,
+      "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+    },
+    {
+      "path": "fonts/wine/wingding.sfd",
+      "size": 36760,
+      "sha256": "6d8d42e70c405f41d9a9a3c54479cee0b022b5b0509ab8c9ada0402ac3007478"
+    },
+    {
+      "path": "fonts/wine/wingding.ttf",
+      "size": 9524,
+      "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+    },
+    {
+      "path": "host.js",
+      "size": 407933,
+      "sha256": "18993aa66649701e25e678170ad86a79279c7281f5ade58c59867b6fec382008"
+    },
+    {
+      "path": "icons/apple-touch-icon.png",
+      "size": 1545,
+      "sha256": "7c71ed5a06d87a846e68fc9f86ed9c1138da812682de41b0b1a51ab862526cba"
+    },
+    {
+      "path": "icons/apps/age_of_wonders2_demo.png",
+      "size": 884,
+      "sha256": "a9058ad425e04de019a06219a3e3263d409a2b4d3d5ab33d5fd0b40e16a94305"
+    },
+    {
+      "path": "icons/apps/age_of_wonders_demo.png",
+      "size": 626,
+      "sha256": "1949e200e56e949a12a74ac5735b9e6c3cbb12b4fbbb8d90da4ce6fa7fe7db83"
+    },
+    {
+      "path": "icons/apps/alien_shooter.png",
+      "size": 908,
+      "sha256": "46b642a94c040f7a61d1518fd33963ddd6963b0f4107e346c4552bf34f2a17a1"
+    },
+    {
+      "path": "icons/apps/alpha_centauri_demo.png",
+      "size": 2860,
+      "sha256": "9d2a5112ce78bdd3674d7847d3ccac98a3b1f3b7afdc03c2beb2d060ce81cf3f"
+    },
+    {
+      "path": "icons/apps/anachronox_demo.png",
+      "size": 1805,
+      "sha256": "7ef1626c9e1a5a9d35027e2e194d93ccb1b323771e65d6cf4f6aa6f71d0f0fd3"
+    },
+    {
+      "path": "icons/apps/anno1602_demo.png",
+      "size": 596,
+      "sha256": "ed315b515bbc231de6b51b72e1ab976157fc3372bbf24e777ae0f8fbc06b4729"
+    },
+    {
+      "path": "icons/apps/arcanum_demo.png",
+      "size": 1779,
+      "sha256": "1850a472beb0ba53ee0e182431735e0567cedf0e8d47f44c0afe53de370f4b6b"
+    },
+    {
+      "path": "icons/apps/arena_gog.png",
+      "size": 2616,
+      "sha256": "55adc0ff90a8fb3d6e907b7fdf60948bbacd64334a852366c9fc6367c19f3b96"
+    },
+    {
+      "path": "icons/apps/asghan_demo.png",
+      "size": 571,
+      "sha256": "c73a46068607461b0fdc5f1ec0ab7743148a0ef8105feac9b41d77b3e6b08b7b"
+    },
+    {
+      "path": "icons/apps/atlantis_demo.png",
+      "size": 614,
+      "sha256": "ca65e86e444890e2cdefddf8185f8ffb3e8c3675a3544ed28e5626d67892326e"
+    },
+    {
+      "path": "icons/apps/atomic_bomberman_june_demo.png",
+      "size": 304,
+      "sha256": "7b6da6fa6f3f787e0f4e7eafcc5e46407b1522454e83214d89dd8f1107bd51e6"
+    },
+    {
+      "path": "icons/apps/avp_alien_demo.png",
+      "size": 395,
+      "sha256": "479c0122c7554289728c2abe7d7e32d571514d03d61f04900af754bd3e1b0e43"
+    },
+    {
+      "path": "icons/apps/avp_marine_demo.png",
+      "size": 395,
+      "sha256": "479c0122c7554289728c2abe7d7e32d571514d03d61f04900af754bd3e1b0e43"
+    },
+    {
+      "path": "icons/apps/bakkslide7.png",
+      "size": 928,
+      "sha256": "16769a27629d6e1a4bc11ce59ec82f6545a31aed5bd313a46a9c1bfde449457c"
+    },
+    {
+      "path": "icons/apps/baldurs_gate2_demo.png",
+      "size": 383,
+      "sha256": "0303e258a3b0f0c652108318d7a809342fc9a814ac3c2a7bdbda2641b7801454"
+    },
+    {
+      "path": "icons/apps/baldurs_gate_chapters_1_2_demo.png",
+      "size": 383,
+      "sha256": "0303e258a3b0f0c652108318d7a809342fc9a814ac3c2a7bdbda2641b7801454"
+    },
+    {
+      "path": "icons/apps/baldurs_gate_interactive_demo.png",
+      "size": 383,
+      "sha256": "0303e258a3b0f0c652108318d7a809342fc9a814ac3c2a7bdbda2641b7801454"
+    },
+    {
+      "path": "icons/apps/baldurs_gate_noninteractive_demo.png",
+      "size": 1811,
+      "sha256": "4625a6d6f2b69c04e1ca8b4a8377fe8f01804ae093cc30524fac589de7306e17"
+    },
+    {
+      "path": "icons/apps/black_white_2_demo.png",
+      "size": 712,
+      "sha256": "ecefe01323e03f46165380b23b9de7a75b6fa3a0bab266618bac671230b5024c"
+    },
+    {
+      "path": "icons/apps/blood2_demo.png",
+      "size": 1382,
+      "sha256": "f87657c3ce0c0839ecdc7a84d7efa39afca13575c6068efa64270db950a4dff2"
+    },
+    {
+      "path": "icons/apps/bricks.png",
+      "size": 496,
+      "sha256": "3ac88dfc00af167c39e387de3324c71991308c53ae3db6fb72f28169cd6f319c"
+    },
+    {
+      "path": "icons/apps/calc.png",
+      "size": 473,
+      "sha256": "ee17df2ad037f4bc5bad29f625edea94c37b8a295fb9478972228456ceefaad9"
+    },
+    {
+      "path": "icons/apps/carmageddon_tdr2000_demo.png",
+      "size": 1118,
+      "sha256": "16676fe72977f12bc8e878430d8c936c9d8322361f538c2a28d7090404db1b9b"
+    },
+    {
+      "path": "icons/apps/cave_story.png",
+      "size": 488,
+      "sha256": "da0c6a6386253a24aa089c77c098a4dd819853759b4780754343fc63202f7371"
+    },
+    {
+      "path": "icons/apps/cdplayer.png",
+      "size": 683,
+      "sha256": "cd482fd8083425809f95ce3b5cfe307d259abe1360c8eff00ccfa109207c8897"
+    },
+    {
+      "path": "icons/apps/cmr2_demo.png",
+      "size": 358,
+      "sha256": "ca58d88bbbcf3035e124f725fff519ef4296b0562d942d67734989ea3c9601dc"
+    },
+    {
+      "path": "icons/apps/colin_mcrae_rally_demo.png",
+      "size": 550,
+      "sha256": "ab414b4c977967601b067c603ec3e75f23fce1e826f40cdf0443fb7c9cd8cced"
+    },
+    {
+      "path": "icons/apps/collapse_crunch.png",
+      "size": 2428,
+      "sha256": "969ed9171b0a3f523dba77bd8bf77fc8d9ac83bdbbc9e2cbc790e7ca4d172ac0"
+    },
+    {
+      "path": "icons/apps/comanche_gold_demo.png",
+      "size": 685,
+      "sha256": "2e8ca18a80bc691eaaf282cab8b6e859037499587fe608fdc31e19f27a9e8b61"
+    },
+    {
+      "path": "icons/apps/commandos_demo.png",
+      "size": 1325,
+      "sha256": "62c056426fa758da64aadcd50db8740f8e0f74322ccd7a1ce0143908c85f274e"
+    },
+    {
+      "path": "icons/apps/crimsonland.png",
+      "size": 455,
+      "sha256": "a647183d7562cfe3cf80b824cd9a4f8213861dbc28ffbc0b79cb8b41a029b0da"
+    },
+    {
+      "path": "icons/apps/croc2_demo.png",
+      "size": 1671,
+      "sha256": "00b0c42a383d4a7284741d27c41f24c0d13621cd08dea1fd320274073f38ad4b"
+    },
+    {
+      "path": "icons/apps/cruel.png",
+      "size": 410,
+      "sha256": "3119a7289f41ca04b687e5dc6f6454a3ad0f545c44ba7f74868bbd9e6049f5a9"
+    },
+    {
+      "path": "icons/apps/crusaders_mm_demo.png",
+      "size": 1154,
+      "sha256": "13f78b90c16284b3775c61ccb430554cfe9eb848db37782e8ba807d133d88313"
+    },
+    {
+      "path": "icons/apps/cwordzap.png",
+      "size": 583,
+      "sha256": "058a3721926f4ab558a18ec1c698e48aebd94aeb1e0ae84503b78c054e441eb0"
+    },
+    {
+      "path": "icons/apps/daggerfall_gog.png",
+      "size": 2616,
+      "sha256": "55adc0ff90a8fb3d6e907b7fdf60948bbacd64334a852366c9fc6367c19f3b96"
+    },
+    {
+      "path": "icons/apps/dark_earth_demo.png",
+      "size": 895,
+      "sha256": "5fcd82be4cc9e8391e68cda7953bf7119fdeb9c54401aa0831b279ea33bfc253"
+    },
+    {
+      "path": "icons/apps/dark_reign_demo.png",
+      "size": 972,
+      "sha256": "e6f4461e557267fafa4512fda97aecf691001815ace938bf4c95d226031dce9a"
+    },
+    {
+      "path": "icons/apps/darkstone_demo.png",
+      "size": 1060,
+      "sha256": "bb632de9c9e4b56444a1984a4b266eda42955965554a7b871934dbbb3924ff22"
+    },
+    {
+      "path": "icons/apps/daytona_usa_deluxe_demo.png",
+      "size": 341,
+      "sha256": "670952eef11e3827d04c09eaee390fa48ced1ec260c6dbf2ae02f2869863b3ff"
+    },
+    {
+      "path": "icons/apps/deus_ex_demo.png",
+      "size": 1241,
+      "sha256": "9745b1d1c0de07ad3bc9f90fbd09ad779b52eb7693e30ef8a49819511917d173"
+    },
+    {
+      "path": "icons/apps/diablo2_demo.png",
+      "size": 702,
+      "sha256": "2aceeb1e5618106c376e41eeba4960380b1fbadd79fca86bf9a7e87177a56c5c"
+    },
+    {
+      "path": "icons/apps/diablo2_demo_installer.png",
+      "size": 702,
+      "sha256": "2aceeb1e5618106c376e41eeba4960380b1fbadd79fca86bf9a7e87177a56c5c"
+    },
+    {
+      "path": "icons/apps/diablo2_glide_demo.png",
+      "size": 702,
+      "sha256": "2aceeb1e5618106c376e41eeba4960380b1fbadd79fca86bf9a7e87177a56c5c"
+    },
+    {
+      "path": "icons/apps/diablo_shareware.png",
+      "size": 807,
+      "sha256": "5388a927a854c1ca1e4ed19ace02b8f4e153a139138c1aaf7d9985b25dad5c03"
+    },
+    {
+      "path": "icons/apps/die_by_the_sword_demo.png",
+      "size": 639,
+      "sha256": "1f476c2bd365cb6e00f1c50351eaeaa939a3b24dea24f1f6d8c16e7f53b857e8"
+    },
+    {
+      "path": "icons/apps/diehard_nakatomi_demo.png",
+      "size": 1010,
+      "sha256": "3f1370f0de1ba99ffb1e8dde4653ddb3dcaf177f156326bcf9b10f3e2579f5db"
+    },
+    {
+      "path": "icons/apps/disciples2_demo.png",
+      "size": 1783,
+      "sha256": "7045dbde063e75ae2aa397bb5a09839e73e36a6c58af9640b8f26dd72699500c"
+    },
+    {
+      "path": "icons/apps/disciples_demo.png",
+      "size": 1935,
+      "sha256": "614c38a7db3870886b94f12ae16abe2972293bb0ffc7eba740b6dfbebc83dfd3"
+    },
+    {
+      "path": "icons/apps/drakan_demo.png",
+      "size": 1197,
+      "sha256": "5667c50421622a87f7d582ab506ae8e957086c36b237c03adec338679ac555cd"
+    },
+    {
+      "path": "icons/apps/dungeon_keeper_demo.png",
+      "size": 626,
+      "sha256": "43fe132f17c179519d5cfaa7e2ba1679e4bbdf69674659ed787b459e6c671de1"
+    },
+    {
+      "path": "icons/apps/elasto_mania.png",
+      "size": 515,
+      "sha256": "ac9f182e6947242d7687f405af25a34843543b1389cfbdbfd4f4c94089b94d0d"
+    },
+    {
+      "path": "icons/apps/empipe.png",
+      "size": 366,
+      "sha256": "d04309266b76d111153434c96152503301fad9acbf928265ddd4108bf6f27ee4"
+    },
+    {
+      "path": "icons/apps/fourstones.png",
+      "size": 400,
+      "sha256": "5aec3a5545794bdbe0f019876b2d6c5ce6ff1489c2de5f14405b0cfabc72fd08"
+    },
+    {
+      "path": "icons/apps/freecell.png",
+      "size": 495,
+      "sha256": "313d6230e22ea1487d5f2edf7c2c85ea69a115aaf352c9136fc4507f4fc29c0c"
+    },
+    {
+      "path": "icons/apps/freespace_demo.png",
+      "size": 1352,
+      "sha256": "666fc8fe641904769a4d5401be09ce15979ae3a81fb787983b2feb9d49ec7a80"
+    },
+    {
+      "path": "icons/apps/funtris.png",
+      "size": 265,
+      "sha256": "6b923403871960ad5f67338b18d7e8eb3d2f51443f8d64e8d1dc98c3843f35be"
+    },
+    {
+      "path": "icons/apps/gallinelle.png",
+      "size": 805,
+      "sha256": "2b9ef134f47c9b05312d5200d879a7404993bcdc58ef8509fd34e6767d5db8b7"
+    },
+    {
+      "path": "icons/apps/generally.png",
+      "size": 2101,
+      "sha256": "3ad580276fa8fb590531dad62254e7c97440e1a22e86efd372e69981c22c614d"
+    },
+    {
+      "path": "icons/apps/generally_track_editor.png",
+      "size": 1974,
+      "sha256": "39eec59716129065d7c2501d7af25017f315edc9c0c4dd442b06cf5eb4c1a3a3"
+    },
+    {
+      "path": "icons/apps/golf.png",
+      "size": 419,
+      "sha256": "5758578894ab9f15a954e53a9c6270ed1b4e51b2a95435aab404e4d56000513c"
+    },
+    {
+      "path": "icons/apps/gta2_demo.png",
+      "size": 480,
+      "sha256": "c703ecbd61373b7f9fae2e6cd2b6261e0c43b771348569f582418f659665cd05"
+    },
+    {
+      "path": "icons/apps/halflife_uplink.png",
+      "size": 557,
+      "sha256": "3d9abc1cea995f808418f42229a2653bfeba7501080b088c2c30fb8151cd1fd2"
+    },
+    {
+      "path": "icons/apps/halflife_uplink_installer.png",
+      "size": 606,
+      "sha256": "010937a4be7baed918888ac48ce8981cde07273d2cfb5e6d6a5d14a29e0bf405"
+    },
+    {
+      "path": "icons/apps/heroes2_demo.png",
+      "size": 867,
+      "sha256": "b74ba94a7496f5e8f8194165a7a40d6be70deb8f08f613da1894d85becc8a9e8"
+    },
+    {
+      "path": "icons/apps/heroes3_demo.png",
+      "size": 1692,
+      "sha256": "d1b3ed6e83ac470134777d74e09c06d3f776710431bf66b1a0cb5969f9486328"
+    },
+    {
+      "path": "icons/apps/heroes3_demo_installer.png",
+      "size": 539,
+      "sha256": "f934784b9a930909f7e75885dc801efc4304689d1d75c6a47f0cd4825d054043"
+    },
+    {
+      "path": "icons/apps/hitman_glide_demo.png",
+      "size": 1188,
+      "sha256": "0eb604b23ff872df476ed4ba29a2d0a4093009e9354ec728e6907f6323f2a260"
+    },
+    {
+      "path": "icons/apps/hype_glide_demo.png",
+      "size": 607,
+      "sha256": "03657e5b9a316a062c425bb33c8be74e9921286fe2069ce7ff74536fdc1f3e90"
+    },
+    {
+      "path": "icons/apps/icewind_dale_demo.png",
+      "size": 2072,
+      "sha256": "d2ec3836b1605c83df291e8873d9a287423da6e0136b36c4197a0941ac24a972"
+    },
+    {
+      "path": "icons/apps/icy_tower.png",
+      "size": 698,
+      "sha256": "09715d70b843606683353a0191d91e0c759068c9d64b81d4e4db45389657b765"
+    },
+    {
+      "path": "icons/apps/icy_tower_installer.png",
+      "size": 1064,
+      "sha256": "24ccdef4ce19487a9486d1a20162e9f12cd908dfc141e648e7a10d5896b5f788"
+    },
+    {
+      "path": "icons/apps/jardinains.png",
+      "size": 527,
+      "sha256": "c584b731ec4ff769cccffc841b1c13860395834bd9b0824cc939dd4406452f6e"
+    },
+    {
+      "path": "icons/apps/jardinains_installer.png",
+      "size": 2156,
+      "sha256": "32a3dabb9823233b019f8be6e5a6e0b937a49647843c21ca7e6f831c7f7495e9"
+    },
+    {
+      "path": "icons/apps/jazz2_demo.png",
+      "size": 1031,
+      "sha256": "61373d0905fbe8614b8ab10a4e76cd5c4396a56ba6f95831af9311eb0160e594"
+    },
+    {
+      "path": "icons/apps/little_fighter_2.png",
+      "size": 637,
+      "sha256": "295dfdcada1d734d83752710f271dcf5b22f3328728088c3e66099626c8a983d"
+    },
+    {
+      "path": "icons/apps/little_fighter_2_installer.png",
+      "size": 302,
+      "sha256": "a92ad9e9cd1b3cfe1c499dd48ccb7cacedce052833b94fc3a19509b13d1f975d"
+    },
+    {
+      "path": "icons/apps/marbles.png",
+      "size": 510,
+      "sha256": "46930a8b658dd3683b9be0fa0b3e5c2abe8b29f0ac6d330da9c3fe1e28790e07"
+    },
+    {
+      "path": "icons/apps/moorhuhn.png",
+      "size": 805,
+      "sha256": "2b9ef134f47c9b05312d5200d879a7404993bcdc58ef8509fd34e6767d5db8b7"
+    },
+    {
+      "path": "icons/apps/moorhuhn_2.png",
+      "size": 981,
+      "sha256": "2baba0e9d33afc1dcc7430c8db68ad18db0d6214026c7c74cf6695d458bdfdc4"
+    },
+    {
+      "path": "icons/apps/moorhuhn_2_making_of.png",
+      "size": 1416,
+      "sha256": "03aa5ef2399e91e05c3d85d11037a736a28082c7bd56d12bb1ca3e75595ce86d"
+    },
+    {
+      "path": "icons/apps/moorhuhn_3.png",
+      "size": 1423,
+      "sha256": "4423fa535e2c767a84058a9a7b0961874dbdf34e4f5ac0d0f5d77d2e24ea012e"
+    },
+    {
+      "path": "icons/apps/moorhuhn_3_puzzle.png",
+      "size": 1479,
+      "sha256": "eea058e6096ee24ca706c40c588d5cd734ee844398380185302ce77d5699df8f"
+    },
+    {
+      "path": "icons/apps/moorhuhn_3_puzzle_fisch.png",
+      "size": 1479,
+      "sha256": "eea058e6096ee24ca706c40c588d5cd734ee844398380185302ce77d5699df8f"
+    },
+    {
+      "path": "icons/apps/moorhuhn_3_puzzle_leuchtturm.png",
+      "size": 1479,
+      "sha256": "eea058e6096ee24ca706c40c588d5cd734ee844398380185302ce77d5699df8f"
+    },
+    {
+      "path": "icons/apps/moorhuhn_tennis.png",
+      "size": 2597,
+      "sha256": "966756dc0d412b0d3c8aee1b2bbf1a420a6099fb2a54b30c28bd3b6291d854f8"
+    },
+    {
+      "path": "icons/apps/moorhuhn_training_1.png",
+      "size": 1182,
+      "sha256": "c36c5022e522e86ba963771d88512155d39fd26078bb0e5bb924f5e64c169966"
+    },
+    {
+      "path": "icons/apps/moorhuhn_training_2.png",
+      "size": 1182,
+      "sha256": "c36c5022e522e86ba963771d88512155d39fd26078bb0e5bb924f5e64c169966"
+    },
+    {
+      "path": "icons/apps/moorhuhn_winter.png",
+      "size": 628,
+      "sha256": "d7a039958a7ccf794a3998f737fee6033f3fc44a4ae2fcedb2ae30f89c1360d4"
+    },
+    {
+      "path": "icons/apps/mspaint98.png",
+      "size": 972,
+      "sha256": "45c63db383fc9e855a6355ac18bdc51bdf12e2ac0406a49989ecdac3c4ee1deb"
+    },
+    {
+      "path": "icons/apps/nethack_win32.png",
+      "size": 1005,
+      "sha256": "ae0354ffd9d232d9e4b1c6f276a0578cb4e1bcb811f9b5b690e3a961bee4a458"
+    },
+    {
+      "path": "icons/apps/nfs2_demo.png",
+      "size": 1690,
+      "sha256": "e1b39dd087cc3d7ad2089c8a3688d8a362ff79e59445deaf2678a7dada5f990e"
+    },
+    {
+      "path": "icons/apps/nfs2se_glide_demo.png",
+      "size": 897,
+      "sha256": "28389ca5a3443b949039620242c1d6f50810bd3585b186796d0300597f23e85d"
+    },
+    {
+      "path": "icons/apps/nfs3_demo.png",
+      "size": 851,
+      "sha256": "0d7aadfbf70d3f72a9040b24b74b3d2ee2666403027b76003006a1286bd2a31e"
+    },
+    {
+      "path": "icons/apps/nfs3_glide_demo.png",
+      "size": 851,
+      "sha256": "0d7aadfbf70d3f72a9040b24b74b3d2ee2666403027b76003006a1286bd2a31e"
+    },
+    {
+      "path": "icons/apps/notepad.png",
+      "size": 810,
+      "sha256": "125cf646e1eed8868efca909c630906cb8e806b3771e08a1e7357ce8610dc623"
+    },
+    {
+      "path": "icons/apps/peaks.png",
+      "size": 227,
+      "sha256": "a5bc25a1ea7c5acfafb85a480818340739f9b557b4ae345b9fc36a0d91edfcd8"
+    },
+    {
+      "path": "icons/apps/pegged.png",
+      "size": 335,
+      "sha256": "884d050195581fcf04d51e91d726b187eecee02e4dbfe5d9fd7ace777c58f0c5"
+    },
+    {
+      "path": "icons/apps/pinball.png",
+      "size": 2998,
+      "sha256": "5abfd4f492bcea9cf47c2a039569a0c03fa95374dacea301059dc8c10939829d"
+    },
+    {
+      "path": "icons/apps/pocket_tanks.png",
+      "size": 1572,
+      "sha256": "b10a728eac4c631d593e8384f696c892f89e8f83787f935f301f48196f27dea2"
+    },
+    {
+      "path": "icons/apps/pocket_tanks_installer.png",
+      "size": 1064,
+      "sha256": "24ccdef4ce19487a9486d1a20162e9f12cd908dfc141e648e7a10d5896b5f788"
+    },
+    {
+      "path": "icons/apps/populous_tb_demo.png",
+      "size": 1815,
+      "sha256": "6185f7f98b3092418038f24fa63aeeecb6d8e34bc6fdc6a00037569bf7c14760"
+    },
+    {
+      "path": "icons/apps/ptct.png",
+      "size": 270,
+      "sha256": "a4f6cc8bd8e9c75a59bfb7e3391cbe2bb0bfdc4cca769ae29576d3bd8fb111b2"
+    },
+    {
+      "path": "icons/apps/pyramid.png",
+      "size": 403,
+      "sha256": "7979ff2c455b61e670c25442ca8c4f5816ef2078e8da2918bb16e2f2c1b10f8b"
+    },
+    {
+      "path": "icons/apps/qblackjack.png",
+      "size": 533,
+      "sha256": "e98c2b3866db6a977c566ce64d626afa86f659ae90424557ab9ced8a87d200b8"
+    },
+    {
+      "path": "icons/apps/qbob.png",
+      "size": 891,
+      "sha256": "3086b6d96dd9debe2d7ad2aaf7f32911606c26ec483cbd5759121314df1ec4c6"
+    },
+    {
+      "path": "icons/apps/quake2_demo.png",
+      "size": 473,
+      "sha256": "f0e83faaec76a9b0ec29ada732268035d85f756ef2dcfd9ea58da8c6f71c54f0"
+    },
+    {
+      "path": "icons/apps/quake3_demo.png",
+      "size": 278,
+      "sha256": "5e56392452527fb223c4d7ff66056723854beb4f0c2031a48773128f1281f9f7"
+    },
+    {
+      "path": "icons/apps/rct.png",
+      "size": 937,
+      "sha256": "d5a86c5640b1c46bcb9e62a7c2ade981588292ae7434afae10dcdca56a3bc178"
+    },
+    {
+      "path": "icons/apps/red_alert_95_demo.png",
+      "size": 1613,
+      "sha256": "bf2d431295c81ff89c83caaeecca1dc5cd715d5a74fe2fa83d636c46ab9066a3"
+    },
+    {
+      "path": "icons/apps/regedit.png",
+      "size": 671,
+      "sha256": "f9ed475b1f1852108a88b273dd58c4d165e8e2b2b9be75946f8cfcfc4f2518a6"
+    },
+    {
+      "path": "icons/apps/return_fire_demo.png",
+      "size": 484,
+      "sha256": "c3d82fa244f19c2ecdac5436288eaf2575eedac582f11d1adb97df55838703c8"
+    },
+    {
+      "path": "icons/apps/reversi.png",
+      "size": 283,
+      "sha256": "f21d29f18b24a064841c5d02ba3f5dd9aa2c4e1d367df49b67f61f8fdd65b003"
+    },
+    {
+      "path": "icons/apps/ricochet_xtreme.png",
+      "size": 898,
+      "sha256": "eb5ae89fa7aad60892d29d3bbe62e311eaf3388dd7569305570cb0dff7a6a1c6"
+    },
+    {
+      "path": "icons/apps/scummvm_fotaq.png",
+      "size": 1672,
+      "sha256": "bfd2fdab3f2c51d147b8fd5f6b1cfa19273ce4eb7bfd40baaf6b0d15670c7886"
+    },
+    {
+      "path": "icons/apps/simcity2000_demo.png",
+      "size": 764,
+      "sha256": "efb752e2381e1bbe925dfadeb6ca3115d264c1ea59664157e09a8b3b7582b4a6"
+    },
+    {
+      "path": "icons/apps/simcity2000_net.png",
+      "size": 1053,
+      "sha256": "4504a24df5c1cd1e9504efbf86772230b229c756e880b3e5bee0a6fe07b6c221"
+    },
+    {
+      "path": "icons/apps/simcity2000_net_server.png",
+      "size": 905,
+      "sha256": "1b5c6ade268521e0679282c67a9d263e20f6a25ffc76f70dbbb62fe852cd4489"
+    },
+    {
+      "path": "icons/apps/ski32.png",
+      "size": 505,
+      "sha256": "a6cf445e6ee539066b42350caf74495d6cbf2697e32226d09804391fcfafc782"
+    },
+    {
+      "path": "icons/apps/snake.png",
+      "size": 359,
+      "sha256": "9946f2fd16dd8a8396b9eded94899dde1c75be6d4393c6cdcd74127b4d1666b5"
+    },
+    {
+      "path": "icons/apps/sndrec32_98.png",
+      "size": 668,
+      "sha256": "7314f78b7932e91538427b555da398030369dff0570d5cdf6fb12eea7db749bf"
+    },
+    {
+      "path": "icons/apps/snood.png",
+      "size": 468,
+      "sha256": "68c5bc3c211dfb3fbff3669e22811646261f269a0bd770466761471d0d1bfec7"
+    },
+    {
+      "path": "icons/apps/snood_installer.png",
+      "size": 613,
+      "sha256": "c5fa020d9c8065bd172a5145d98db67d030fb3ce72b5e88019147e01922b56e3"
+    },
+    {
+      "path": "icons/apps/sol.png",
+      "size": 350,
+      "sha256": "bca9e4b90d8585c19174759ef98808407d07b3ee37b83e02bc7eecdfcd5391c8"
+    },
+    {
+      "path": "icons/apps/spider.png",
+      "size": 1504,
+      "sha256": "74b2f16176e15eeef3492e4de082c726220cfef495c4eb270088fc0b1955200c"
+    },
+    {
+      "path": "icons/apps/starcraft_shareware.png",
+      "size": 732,
+      "sha256": "4868d3f908475b0833d003114ce05ad4350396fb12d0ffca647686872ed7f897"
+    },
+    {
+      "path": "icons/apps/taipei.png",
+      "size": 266,
+      "sha256": "1eb0ed7b469550cb0444cbcb3dc89ea72937ea570a97f75fe2629b737dc7f11e"
+    },
+    {
+      "path": "icons/apps/taskman.png",
+      "size": 531,
+      "sha256": "a32c70420655f781ed891b3c090f40b42913b5749a3c1fc431dd6f3db997c571"
+    },
+    {
+      "path": "icons/apps/tetrinet.png",
+      "size": 612,
+      "sha256": "e1979741f316088c06ba47dbf823cc22338c8a077b853577351ff69dcb6a2ad9"
+    },
+    {
+      "path": "icons/apps/tictac.png",
+      "size": 356,
+      "sha256": "31c468cd6db2ee70d971f63523a2fffbae3eb4575be315abc12cd8b985371ad4"
+    },
+    {
+      "path": "icons/apps/tomb_raider_2_demo.png",
+      "size": 1265,
+      "sha256": "ae19f064d43d3e8700ba7fc16aec56dd6400429bc4f8cc8d1083f966d015aaaf"
+    },
+    {
+      "path": "icons/apps/tomb_raider_3_demo.png",
+      "size": 673,
+      "sha256": "24a9532e23ea26355ce1cf9c69424feb60f97b5e22897786473a178655b7e5bb"
+    },
+    {
+      "path": "icons/apps/ultima4_gog.png",
+      "size": 2616,
+      "sha256": "55adc0ff90a8fb3d6e907b7fdf60948bbacd64334a852366c9fc6367c19f3b96"
+    },
+    {
+      "path": "icons/apps/unreal_special_demo.png",
+      "size": 397,
+      "sha256": "8eefe6dc92c5f4180f8864a96cb7548e29df44e39508595394d601a3d6102cd5"
+    },
+    {
+      "path": "icons/apps/ut2003_demo.png",
+      "size": 2671,
+      "sha256": "1ee7d6064c59d2135ffd2614990e8aebecd99525a926b511ff15e1cffe3c246d"
+    },
+    {
+      "path": "icons/apps/ut2004_demo.png",
+      "size": 2253,
+      "sha256": "8b877334a7ad3587c6c5ebcd204a180c72c68cd29372473164bb5198b711e177"
+    },
+    {
+      "path": "icons/apps/ut348_demo.png",
+      "size": 1241,
+      "sha256": "95ce3b3b6bd68330a9aee17a37a29deb54f6f4acb78a16074605f96c4c4b8845"
+    },
+    {
+      "path": "icons/apps/warcraft3_demo.png",
+      "size": 83,
+      "sha256": "b52ea83a4e2a4761b6b30e7c97861ee6d88b028195d192ea0b8ea5132a9177f0"
+    },
+    {
+      "path": "icons/apps/wep16_jezzball.png",
+      "size": 729,
+      "sha256": "046942931263bf3f2cc9b557d254d17531a0285f521cce36dc741d09a0014296"
+    },
+    {
+      "path": "icons/apps/wep16_rodent.png",
+      "size": 458,
+      "sha256": "440bd8fccfedd0540c4873552f34c4242226514d06801d8d11ab3d10933add9f"
+    },
+    {
+      "path": "icons/apps/winamp.png",
+      "size": 785,
+      "sha256": "db1d9aaccdb6938f0d92fd7fe4cbf607597fa02eef83f78982a9474a79df38ab"
+    },
+    {
+      "path": "icons/apps/winboard.png",
+      "size": 379,
+      "sha256": "ef55110978be1dd000b70dbcba45337928acbd3dcee13e43cadd88c9770d8477"
+    },
+    {
+      "path": "icons/apps/windows_installer_20.png",
+      "size": 748,
+      "sha256": "e2fe73da1ce1c7067543f6b431afdcb795c1924d3030259a18c5e91a6fa125ec"
+    },
+    {
+      "path": "icons/apps/winmine_wep.png",
+      "size": 592,
+      "sha256": "74fe96783c477be9762eb98cb84a9c12dcd32f18b89629bfa2bc522d1dc12550"
+    },
+    {
+      "path": "icons/apps/wordpad.png",
+      "size": 594,
+      "sha256": "ffce280c9934b273515dcec38a982b65354300e0c08d45a1aa0adde0580efc13"
+    },
+    {
+      "path": "icons/apps/zuma_deluxe.png",
+      "size": 2305,
+      "sha256": "8cb874a17543fc51ae22d4a144936d85cad92791336494f1b4247c0f4c788ac7"
+    },
+    {
+      "path": "icons/icon-192.png",
+      "size": 1618,
+      "sha256": "e404758a1d4025e3310d23466d1070ba1be51faaadf2a1d14ae392d766e56b2c"
+    },
+    {
+      "path": "icons/icon-512.png",
+      "size": 4661,
+      "sha256": "981443695ec475bea4862dc3fccab4adece518a63dfa2398ee5752cab1d9ca6f"
+    },
+    {
+      "path": "icons/og-image.png",
+      "size": 329029,
+      "sha256": "9ed34c510a0ed50884547b28b039f2d15f8fb07705278ff05bc76dd1e8e9a102"
+    },
+    {
+      "path": "icons/sources/README.md",
+      "size": 1876,
+      "sha256": "b4f2eb9cf308517132d58dbb6bcddab63570c954ce8eaf9e093bbb95285c3296"
+    },
+    {
+      "path": "icons/sources/nfs2.ico",
+      "size": 2238,
+      "sha256": "20de34b6c9f6baddc687cd426dd5b1a0eb6e9c8691ca9370d5a3d5c6808ec6a5"
+    },
+    {
+      "path": "icons/sources/nfs2sea.ico",
+      "size": 766,
+      "sha256": "ef37a51b1d99ef3fc0194351c9bb8ab57abd9d4a020451e32395b29cd56cedb2"
+    },
+    {
+      "path": "icons/sources/quake2.ico",
+      "size": 766,
+      "sha256": "1dfdadcc3ef3c7e1e2f58001f54cca201001ad419c98ce21b3fe875990f381a9"
+    },
+    {
+      "path": "icons/ui/account.png",
+      "size": 741,
+      "sha256": "b29e0d5db2b8259c701621e114a7b8615440ffdf7565487ea766f5b0f3c22703"
+    },
+    {
+      "path": "icons/ui/add-game.png",
+      "size": 453,
+      "sha256": "984e7b5ca42b506d1d7217d39c2a90d395582d10055e09851dee801bcb1db678"
+    },
+    {
+      "path": "icons/ui/agent.png",
+      "size": 390,
+      "sha256": "fe5426bc67f2f92ddebcfa6df52a6b29f20e9c5540813c3f83bc309de76ed321"
+    },
+    {
+      "path": "icons/ui/apps.png",
+      "size": 901,
+      "sha256": "985e2ac1b35dbf33af6e31fedc5b99ee7c6b133310ebc2e29545a233152641dc"
+    },
+    {
+      "path": "icons/ui/berrry.png",
+      "size": 639,
+      "sha256": "296e6acfc351dc0c4bdbb9fb93ffee3ca16702309014fdede316329e1fc83fbb"
+    },
+    {
+      "path": "icons/ui/debug.png",
+      "size": 771,
+      "sha256": "4e72aae9cbf3cd8df498aa6325d488fb11a2bcc35ef6a3d42594dadef16e113a"
+    },
+    {
+      "path": "icons/ui/design.png",
+      "size": 763,
+      "sha256": "7b105cd3b952451cc8cc97cc8f4f4f9e34155ae042487dafe43a141e83bc97d6"
+    },
+    {
+      "path": "icons/ui/github.png",
+      "size": 726,
+      "sha256": "8dbb9f081bde2f4bf97ef5cc6d15078c5e328c8346d709cb6ca3999cb025ea66"
+    },
+    {
+      "path": "icons/ui/readme.png",
+      "size": 164,
+      "sha256": "c38a85fff7178500f0aa290813414a606eafbb8016ffe6d5ffb2f15e833f9ac8"
+    },
+    {
+      "path": "icons/ui/sources.png",
+      "size": 336,
+      "sha256": "cf51784f2f3a6efce5cdd276330bb9d8efb3f7802c26c524761d2ddababef127"
+    },
+    {
+      "path": "icons/ui/story.png",
+      "size": 1067,
+      "sha256": "784216e850ece0e58b0547311da21f9a8c58a9880eb11d7cba4894c34e456c1c"
+    },
+    {
+      "path": "index.html",
+      "size": 183083,
+      "sha256": "fa81b9ebfd01d3fbfa2852bfec4503a87d4b5ce47cf4522cd4c134ac82cfb11c"
+    },
+    {
+      "path": "lib/agent-connect-ui.js",
+      "size": 19998,
+      "sha256": "1b0df6ce6774d2836113ae5c26482fb16ea89d4a87cc88cc163d3eaaf4532441"
+    },
+    {
+      "path": "lib/agent-connect.js",
+      "size": 10563,
+      "sha256": "d1f75b67c056fc7d7305265d8888783bbb9c1bd0557a3073af1c1d966376fe90"
+    },
+    {
+      "path": "lib/agent-pair.js",
+      "size": 15985,
+      "sha256": "ea65283149a177180badc7693aaccf1c93fad369afc0edd3ca8e5fc9ff5b5f54"
+    },
+    {
+      "path": "lib/agent-remote.js",
+      "size": 25007,
+      "sha256": "a26fa6c5fefdc605413431386818fd437f916ba7fbe41595547caf5d02ab5c12"
+    },
+    {
+      "path": "lib/api-format.js",
+      "size": 34699,
+      "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa"
+    },
+    {
+      "path": "lib/app-file-sizes.generated.js",
+      "size": 304086,
+      "sha256": "7553b685a89f560d1b3cd1065ab70b1933c5d5b38a12f12283feb37184d97693"
+    },
+    {
+      "path": "lib/app-files.js",
+      "size": 16426,
+      "sha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7"
+    },
+    {
+      "path": "lib/app-icon-manifest.json",
+      "size": 3703,
+      "sha256": "ad0de39dc85d82d1bfea52f82f6c6cd74504e7176a5f8db742e7b7a3fa726d87"
+    },
+    {
+      "path": "lib/app-profiles.js",
+      "size": 18930,
+      "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8"
+    },
+    {
+      "path": "lib/apps.js",
+      "size": 444514,
+      "sha256": "f29c432d535617ca985572a01b5455f7acc2a349d321e4dedd5b54b57b33bcd2"
+    },
+    {
+      "path": "lib/arena-gog-source.json",
+      "size": 55510,
+      "sha256": "ed20ac8e3471e42e1ab7dd10906dbc769b86acfebe369c01f2bd17a6a79b4ffd"
+    },
+    {
+      "path": "lib/audio-voice-worklet.js",
+      "size": 10257,
+      "sha256": "da695e5a3c469718c3734a568666e01bacc4ab83467ad7465b35a24376d2a6ca"
+    },
+    {
+      "path": "lib/audio-worklet-host.js",
+      "size": 14592,
+      "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14"
+    },
+    {
+      "path": "lib/batch-clock.js",
+      "size": 2726,
+      "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a"
+    },
+    {
+      "path": "lib/browser-input.js",
+      "size": 63151,
+      "sha256": "5b2c47fa0b901f0323bc04df34ff27d8c50e47a001d77e9dcae3f2986a3477f0"
+    },
+    {
+      "path": "lib/browser-shell.js",
+      "size": 215215,
+      "sha256": "d7bab9610f72c16d1c687d3a76b20cbb25da5b2fc90f111a87ad78cb23fd4f86"
+    },
+    {
+      "path": "lib/byte-provider.js",
+      "size": 44497,
+      "sha256": "9528a95150699766da08265f47118476b611ffb35d5d02e26de429fc73a5f5a7"
+    },
+    {
+      "path": "lib/callback-lifecycle-trace.js",
+      "size": 4033,
+      "sha256": "92b7a6296f1c8883866321ed3dbdeaa422ec9a6b32d53a35a432dff10d641cac"
+    },
+    {
+      "path": "lib/candidate-cli.js",
+      "size": 7985,
+      "sha256": "519d8ef938dd623e8bc2cd459c5f3b74f576fd1a40a30916fc269a4dcfa85391"
+    },
+    {
+      "path": "lib/canvas-compat.js",
+      "size": 984,
+      "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373"
+    },
+    {
+      "path": "lib/cdrom.js",
+      "size": 14034,
+      "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727"
+    },
+    {
+      "path": "lib/cli-failure-cleanup.js",
+      "size": 717,
+      "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435"
+    },
+    {
+      "path": "lib/cli-fault-input.js",
+      "size": 1508,
+      "sha256": "47ba6671a1c2674200f44370bdcfd2d4861c12d7c087cf61b02733d361ca2615"
+    },
+    {
+      "path": "lib/cli-recorder.js",
+      "size": 9287,
+      "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae"
+    },
+    {
+      "path": "lib/compile-wat.js",
+      "size": 72471,
+      "sha256": "4aae3c6ecd7949c37fcea28c9d5678b8f24038fdef9ff5bb63458cc08a198f52"
+    },
+    {
+      "path": "lib/control-server.js",
+      "size": 7126,
+      "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+    },
+    {
+      "path": "lib/d3d-command-stream.js",
+      "size": 50994,
+      "sha256": "4affcff5ad90160fb46a9052cbcccc566967afe089b35bd1bf4a7dc8a44ea7f1"
+    },
+    {
+      "path": "lib/d3d-geometry-batches.js",
+      "size": 3149,
+      "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc"
+    },
+    {
+      "path": "lib/d3d-render-worker.js",
+      "size": 44054,
+      "sha256": "44156370433644f6c10b89bc231894e5afde1b4a724f891d1a175a3ccaf47dc8"
+    },
+    {
+      "path": "lib/d3d-shader-ir.js",
+      "size": 15243,
+      "sha256": "9ada4145c3c585418c841e605332622ccbba101805d66750dd57ce213b452056"
+    },
+    {
+      "path": "lib/d3d9-backend.js",
+      "size": 86673,
+      "sha256": "ebd861f3401368f52fc7cc8aa5a9ae052bd804201c86be69cbacd6763f0099d5"
+    },
+    {
+      "path": "lib/d3d9-fixed.js",
+      "size": 31351,
+      "sha256": "5e3a7a421f5d11309be694cd1f167d36e27cee9130d8415ab22689c69867025d"
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "size": 91850,
+      "sha256": "63b651f1b7398fa664bd8505c01797e18cea846b677e0c11d5b71f0495dd63ae"
+    },
+    {
+      "path": "lib/d3d9-render-worker.js",
+      "size": 7094,
+      "sha256": "da4f84922c675199aa63dd56f4fddbffd3467f83544c5b867a0e484392979047"
+    },
+    {
+      "path": "lib/d3d9-shader.js",
+      "size": 52706,
+      "sha256": "69c71abb49844268f1025c928d5aaf21be8d6769856b33709d565abae207c8aa"
+    },
+    {
+      "path": "lib/d3d9-software-backend.js",
+      "size": 87802,
+      "sha256": "d73d855a6936881712c7b75e203cfc717c43dd82ca38fe67a576f4fc37da93ee"
+    },
+    {
+      "path": "lib/d3d9-texture.js",
+      "size": 3107,
+      "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e"
+    },
+    {
+      "path": "lib/d3dim-draw-trace.js",
+      "size": 22265,
+      "sha256": "caefae9a6cddae743a154041e4992f759757c3d5fed44229d27b2055b2835833"
+    },
+    {
+      "path": "lib/d3dim-gpu.js",
+      "size": 69370,
+      "sha256": "ff93f67de24b59cf6fb271d1c69c9f327767e501cfb4ee315e8fa7efa7a5b261"
+    },
+    {
+      "path": "lib/d3dim-render-worker.js",
+      "size": 5066,
+      "sha256": "33bfa00f23483240ddf8fb066f0b416a4ed2d66a8ea31c51059652b81fbb6a0f"
+    },
+    {
+      "path": "lib/daggerfall-gog-source.json",
+      "size": 2264,
+      "sha256": "cdc24a5907ca2caef0dc2fbd804c601d28ae124c8e97c96ff3b6dd8932e75ee5"
+    },
+    {
+      "path": "lib/debug-app-picker.js",
+      "size": 15387,
+      "sha256": "eaf2d515f27f9db641541c32bcb3307eecb9645fd08623eff906b1f0c3d58565"
+    },
+    {
+      "path": "lib/debug-midi.js",
+      "size": 7275,
+      "sha256": "75195abb8fcbc41511f4c4349284e2545e98f5ba39e533beae86ca527e7f70ae"
+    },
+    {
+      "path": "lib/debug-thread-state.js",
+      "size": 24222,
+      "sha256": "f5e1a00527797b129d2e27fc43ba6f77b9dfd9c3b4ba0c0d3d26e9356cd037b9"
+    },
+    {
+      "path": "lib/deusex-cache-loader-binding.js",
+      "size": 8426,
+      "sha256": "6233cc42f6c33c9c700469354cb29ff4f3e5acae4fbffb894e064addbdac48ce"
+    },
+    {
+      "path": "lib/deusex-draw-observer.js",
+      "size": 30229,
+      "sha256": "7255f31d95f434f118fac7ad56ace4f041743cf74fbd80fc5929b28b2020094b"
+    },
+    {
+      "path": "lib/deusex-inline-eviction-observer.js",
+      "size": 7443,
+      "sha256": "dde7764343f58e3ab7ffcf154ec5690f9e358c6aaea5ee4cd1045a10e6cbcfd0"
+    },
+    {
+      "path": "lib/deusex-native-cache-observer.js",
+      "size": 7426,
+      "sha256": "de6eb1a3110fbd5fed622444cadb75296561847e77db322c59b91f88fcdb2090"
+    },
+    {
+      "path": "lib/deusex-ordered-producer-observer.js",
+      "size": 11085,
+      "sha256": "835d15befc348faff4b50d88d5e7f6878f4238f091d76b9bf34f3c6f7877d2a7"
+    },
+    {
+      "path": "lib/deusex-softdrv-cache-observer.js",
+      "size": 11256,
+      "sha256": "6663e970a32e9d590b183bbf3d81f3d817f99310a60bacfb090efb3ab31fb148"
+    },
+    {
+      "path": "lib/deusex-startup-cache-observer.js",
+      "size": 9324,
+      "sha256": "938e2d7fa821f61c763bee5e45824718a153e9f079de1f685fabb365a3d2181a"
+    },
+    {
+      "path": "lib/dib.js",
+      "size": 12071,
+      "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34"
+    },
+    {
+      "path": "lib/dispatch-trampoline.js",
+      "size": 5332,
+      "sha256": "21267e1bec969169b1a7a619e7fee03514a88957ac9abfcc63ba0c0905a910af"
+    },
+    {
+      "path": "lib/dll-loader.js",
+      "size": 104932,
+      "sha256": "68368b502c00bf201ffa7d9a4e2ed8976cd057a1deeb9f3e545a076fbe0bf0a9"
+    },
+    {
+      "path": "lib/dll-registry.js",
+      "size": 7786,
+      "sha256": "a0150d46bb48d538543569317baad34d1fcba0ecbf85981670c28b404ab51a14"
+    },
+    {
+      "path": "lib/file-bundle.js",
+      "size": 3984,
+      "sha256": "787087d08300316ef4a9981da74fcf51e17a70db3a633e6316999c9c55184086"
+    },
+    {
+      "path": "lib/filesystem.js",
+      "size": 163310,
+      "sha256": "21c70c7821cd76bcdd7a50dd980c24dc2c33d4ddf4f669228d93930cec5f1f5a"
+    },
+    {
+      "path": "lib/font-substitutions.js",
+      "size": 4704,
+      "sha256": "4112564a27edd7b100230c94230eab80c4dfe1a989ad263183416b2085457141"
+    },
+    {
+      "path": "lib/frame-intervals.js",
+      "size": 5466,
+      "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b"
+    },
+    {
+      "path": "lib/game-wait.js",
+      "size": 10829,
+      "sha256": "171b78283e425597b95777a58bdf7387a37f50e91b6320de6b8c865f092a0999"
+    },
+    {
+      "path": "lib/gdi-surface.js",
+      "size": 20704,
+      "sha256": "d8c4b0ff4050c5ee3ebff4de9efd34609d2717617ede0a02cd1e2d916ffea9ff"
+    },
+    {
+      "path": "lib/gl-command-stream.js",
+      "size": 9518,
+      "sha256": "ef18814a52a3af3f8f86d142376bf98cf73a144d04addf900669e4325984a6c4"
+    },
+    {
+      "path": "lib/gl-compat.js",
+      "size": 220192,
+      "sha256": "2b1f2dc28b08e318e65c95bc4e2df94f4ce31dadb53f3dd84bb12d3067313c32"
+    },
+    {
+      "path": "lib/gl-render-host.js",
+      "size": 21334,
+      "sha256": "307e5e191a8473f4d0ccbceebb56ce4c8582e90bf3b385e10b01c5f0e2ff3ee1"
+    },
+    {
+      "path": "lib/gl-render-worker.js",
+      "size": 9746,
+      "sha256": "d466933dbaa891936a33bce0e1d47cb7c4ebb29f5da12ab37cbe94c3fe1a2ad0"
+    },
+    {
+      "path": "lib/gl-software-producer.js",
+      "size": 2269,
+      "sha256": "eefec43cef85c89bcd8043c413aefcf11844d929d69e6ce91f816b15ad3d8c99"
+    },
+    {
+      "path": "lib/glide-backend.js",
+      "size": 41345,
+      "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3"
+    },
+    {
+      "path": "lib/glide-host.js",
+      "size": 17374,
+      "sha256": "4d010474960efb779ce7642495e94165110e430cee96a811a2443d7f560ec591"
+    },
+    {
+      "path": "lib/glide-render-worker.js",
+      "size": 4430,
+      "sha256": "fd300dd0263d98620af9aea1fc99fd6e2567f86736b2704cb8ec8c670ebb1836"
+    },
+    {
+      "path": "lib/glide-software.js",
+      "size": 27955,
+      "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46"
+    },
+    {
+      "path": "lib/gpu-backend.js",
+      "size": 84343,
+      "sha256": "7913166b52ad34b5a7657aefec747aa66bf4b8f4c1cd3e50fa195a7956274ad7"
+    },
+    {
+      "path": "lib/guest-clock.js",
+      "size": 3204,
+      "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91"
+    },
+    {
+      "path": "lib/guest-rpc.js",
+      "size": 61562,
+      "sha256": "dc0f64435f4014e9184df560cd389f21e44df9affbc2b2d4b8ca237d109f5349"
+    },
+    {
+      "path": "lib/guest-thread-host.js",
+      "size": 86509,
+      "sha256": "43ade7fdb0a13dc7fbe16dd75a5d8f48d83f56ceb419bd294eed72258a2422ef"
+    },
+    {
+      "path": "lib/guest-worker.js",
+      "size": 82126,
+      "sha256": "9261b1deed115658e76b9eca3a6fa95d654dfd69b2a16a8b2b539339aa994c17"
+    },
+    {
+      "path": "lib/headless-gl.js",
+      "size": 15347,
+      "sha256": "d6f7d834de30711d61f4782b73fda4d13cfe1a8581b81a42d80a3246c33bdc24"
+    },
+    {
+      "path": "lib/hlp-parser.js",
+      "size": 9209,
+      "sha256": "9ace0b0178c57f11eb38476ad25944e1b523d1646483489d483c9de5dd76191e"
+    },
+    {
+      "path": "lib/host-audio.js",
+      "size": 211499,
+      "sha256": "e2ae7f782e7fbeb246471acfb3a93d7ae80eec9b195e44f02072310e81373d15"
+    },
+    {
+      "path": "lib/host-import-sigs.generated.json",
+      "size": 40404,
+      "sha256": "a14c39f7e5a4a7e396f3a5d5d61b141d58431247b044c9cefe7491e27b20c495"
+    },
+    {
+      "path": "lib/host-imports.js",
+      "size": 208275,
+      "sha256": "522ed1707139d2a6d4db5f55d38d05c9f851bc06ce98a84db7b6dfe8913d7ae5"
+    },
+    {
+      "path": "lib/host-window.js",
+      "size": 64233,
+      "sha256": "5866d86cd38e1d5a86bdb6bebe24816efeb7246f5c632e2613a8d5fdcee4a39b"
+    },
+    {
+      "path": "lib/installed-shortcuts.js",
+      "size": 5423,
+      "sha256": "a5f15467cf6309532ca65b8b4a304121f2dcd71dd176e0154d358e17fa30ac9e"
+    },
+    {
+      "path": "lib/iso9660.js",
+      "size": 23867,
+      "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544"
+    },
+    {
+      "path": "lib/launch-progress.js",
+      "size": 39200,
+      "sha256": "4496dafb7b15c7801ad5a0b3eafd3773b1530a68e1c51758abd7b2171e13a492"
+    },
+    {
+      "path": "lib/main-io-wait.js",
+      "size": 3133,
+      "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef"
+    },
+    {
+      "path": "lib/media-cli.js",
+      "size": 3730,
+      "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4"
+    },
+    {
+      "path": "lib/media-import-ui.js",
+      "size": 50466,
+      "sha256": "87ccbe12f99bb4b5ec3b7ec9b2a2bf879458fcf464c6fbb5ecff54704c2cb869"
+    },
+    {
+      "path": "lib/media-import.js",
+      "size": 37173,
+      "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47"
+    },
+    {
+      "path": "lib/media-library.js",
+      "size": 24163,
+      "sha256": "0915c4d7b2d29ff905a2e811426f59463a64d18b75e452ed5b399fdfa9f668d3"
+    },
+    {
+      "path": "lib/media-sniff.js",
+      "size": 7648,
+      "sha256": "0fd8b8269258d4664e52edeec70a9d1f7383b35bc361fd390e6c6e3713b7993f"
+    },
+    {
+      "path": "lib/mem-utils.js",
+      "size": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+    },
+    {
+      "path": "lib/mobile-keyboard.js",
+      "size": 11915,
+      "sha256": "d8822c5dd20a6b2ef6d9df12af0f8d1b2f2ae2872b8fd1bfa21b276e0cb4f35c"
+    },
+    {
+      "path": "lib/morrowind-name-observer.js",
+      "size": 10064,
+      "sha256": "a2bbe6d15de3fc46d65f6e72e365e82cd223b5db5486dc3cdbc585aad9d75799"
+    },
+    {
+      "path": "lib/named-event-authority.js",
+      "size": 15058,
+      "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278"
+    },
+    {
+      "path": "lib/native-fault-latch.js",
+      "size": 5624,
+      "sha256": "5405e25b3301ef29f04c6e5d1f98a85c86da2220820c5f7bc4a03eaca9098380"
+    },
+    {
+      "path": "lib/ne-guest-bridge.js",
+      "size": 6873,
+      "sha256": "25e7c3778236e90bfc6cb030712104b4b5cc605bc61a7579fba48cfbd1b368ca"
+    },
+    {
+      "path": "lib/ne-image.js",
+      "size": 7091,
+      "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0"
+    },
+    {
+      "path": "lib/ne-invoke.js",
+      "size": 5358,
+      "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5"
+    },
+    {
+      "path": "lib/ne-lifecycle.js",
+      "size": 12104,
+      "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4"
+    },
+    {
+      "path": "lib/ne-load-error.js",
+      "size": 676,
+      "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa"
+    },
+    {
+      "path": "lib/ne-qt-stack.js",
+      "size": 2551,
+      "sha256": "3d3971c6982a2e72b9698fbdc77aba603ad69ae038ea3bd30a928f2bae4cb4c4"
+    },
+    {
+      "path": "lib/ne-sources.js",
+      "size": 3473,
+      "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2"
+    },
+    {
+      "path": "lib/overlay-store.js",
+      "size": 24516,
+      "sha256": "ebb1c3a720d81eef351c83de2250ee3db28c6de8dbe70c01a54e52d54c37225d"
+    },
+    {
+      "path": "lib/page-settings.js",
+      "size": 7161,
+      "sha256": "937b21ccf5e3864ca46b08c295899ec5d9e54a56511343839b63616e078b8d32"
+    },
+    {
+      "path": "lib/page-viewport.js",
+      "size": 14609,
+      "sha256": "8ee519c033398a81afdfcac3a1d9b5992e60302b35501e98e86f919ced779108"
+    },
+    {
+      "path": "lib/pe.js",
+      "size": 4787,
+      "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853"
+    },
+    {
+      "path": "lib/perf-hud.js",
+      "size": 38796,
+      "sha256": "7c790bd80d8a06e8e4f9cf81fcf65f4746c04b22ba165b405435b0e0a2d22779"
+    },
+    {
+      "path": "lib/phone-diag.js",
+      "size": 25484,
+      "sha256": "3d3b3e0e2624acbbb0c5a7763261b71173914ef869b3aca20cfabbd695717ff8"
+    },
+    {
+      "path": "lib/present-frame-audit.js",
+      "size": 6506,
+      "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de"
+    },
+    {
+      "path": "lib/presentation-filter.js",
+      "size": 63345,
+      "sha256": "dc2f72eb52688ceaab8f1f4eb597b27a65a9fbd76082af59710525c23591eef0"
+    },
+    {
+      "path": "lib/process-boot.js",
+      "size": 52223,
+      "sha256": "0fa20836f44079c49e817934879aaae50304391cae97091fe0af58375d59b722"
+    },
+    {
+      "path": "lib/process-desktop.js",
+      "size": 25868,
+      "sha256": "4e225014ab2bcfd0851c0fc97a39d5e58df79723470513067dce88c2abac6325"
+    },
+    {
+      "path": "lib/process-send-broker.js",
+      "size": 11076,
+      "sha256": "60747d39426faf69836d711a7019b3ab08479f2521f70bda67ae78e2c601f47a"
+    },
+    {
+      "path": "lib/quake2-demo-source.txt",
+      "size": 1325,
+      "sha256": "f23326e1377cecff60e13fc40e334413d3f08fcd9afa08eac774c5985fd80269"
+    },
+    {
+      "path": "lib/quake2-modern-controls.ini",
+      "size": 642,
+      "sha256": "afb166910b596b204e1c11f93ff4972999804d18299bde134d6380a51587e3b3"
+    },
+    {
+      "path": "lib/quake3-demo-source.txt",
+      "size": 556,
+      "sha256": "efd14ed4967ed0e8e76845b0edcc9988a4351c37703a52e8d05798be19c11d8e"
+    },
+    {
+      "path": "lib/quake3-modern-controls.ini",
+      "size": 567,
+      "sha256": "39b8734fac56948f4f79a5a24cd74071854b7492e7b625eedc7253837b4e9c89"
+    },
+    {
+      "path": "lib/raster-canvas.js",
+      "size": 17590,
+      "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3"
+    },
+    {
+      "path": "lib/recorder.js",
+      "size": 19878,
+      "sha256": "555376002e04f3b6998b8f5a0c4b412a699c67ae7f7ed745212c7ccdd046b48d"
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "size": 37429,
+      "sha256": "1c77faf49487ccec3a580ebdec25e355396c24a088ac2c459370d88a840e991f"
+    },
+    {
+      "path": "lib/registry-snapshot.js",
+      "size": 2595,
+      "sha256": "c400a4e9609faea50f2f720490fb2e5569bb24653cb638a1ce4ae86756d4dbfc"
+    },
+    {
+      "path": "lib/render-clear.js",
+      "size": 4377,
+      "sha256": "f54281334bc40134e7a23208f6139045528e5fac600f448fe295d8d2671f0fc9"
+    },
+    {
+      "path": "lib/render-wait-attribution.js",
+      "size": 4614,
+      "sha256": "aa244e2741dc3eada31730b19a653f661b3fdd3c1e4bdfa1d09465a6a09745b0"
+    },
+    {
+      "path": "lib/render-worker.js",
+      "size": 48419,
+      "sha256": "e1bfc11ef3529176bcbdd31263cb0715ce3b76de9c0dd118176beace1f668492"
+    },
+    {
+      "path": "lib/renderer-input.js",
+      "size": 187766,
+      "sha256": "10c34564b422f7fc2669153b3662a658ea70271c87fb5a9d9213c0f1a297f21d"
+    },
+    {
+      "path": "lib/renderer.js",
+      "size": 228511,
+      "sha256": "eeeeba76865c0b94618b05c98ed33a37b51e4030b5493b792f599537270b2a82"
+    },
+    {
+      "path": "lib/resources-icon.js",
+      "size": 20791,
+      "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5"
+    },
+    {
+      "path": "lib/save-bundle.js",
+      "size": 29124,
+      "sha256": "4ac22b490b0c201d5c4d7ee0047882522eeb4690d93b095e4eb755d84590f3ee"
+    },
+    {
+      "path": "lib/save-sync.js",
+      "size": 13133,
+      "sha256": "87bc3878b4700b64f93a82f8920977677e9caeb2bbfcbecd1a572eb750d2dced"
+    },
+    {
+      "path": "lib/session-chips.js",
+      "size": 17448,
+      "sha256": "aa9d5103e3c53901a9d7c3e3e567c89b6a42d27843842cffceb6475d0cd81e5c"
+    },
+    {
+      "path": "lib/shell-link.js",
+      "size": 3388,
+      "sha256": "a9db32724bf31dc754e8ea34d304f35420b22cf81440f28fca383cbbc9a34868"
+    },
+    {
+      "path": "lib/shutdown.js",
+      "size": 26778,
+      "sha256": "2ca9baa752f48f6f0c0346232ec86807d47e0728f99c3af4ca0364927e7f3a1e"
+    },
+    {
+      "path": "lib/startup-clock.js",
+      "size": 3363,
+      "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7"
+    },
+    {
+      "path": "lib/storage.js",
+      "size": 85691,
+      "sha256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053"
+    },
+    {
+      "path": "lib/surface.js",
+      "size": 14312,
+      "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b"
+    },
+    {
+      "path": "lib/thread-manager.js",
+      "size": 240421,
+      "sha256": "8b57be4536a242d83faf06a7b7d9daabf0127dbcf73e2e34744fa5cc169144bd"
+    },
+    {
+      "path": "lib/thread-send-waits.js",
+      "size": 16614,
+      "sha256": "cb9b33489ff6dfdedd7088a39883420fa1ca81cce5cfbefbc30354a1749b9995"
+    },
+    {
+      "path": "lib/tinysynth-offline.js",
+      "size": 11712,
+      "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53"
+    },
+    {
+      "path": "lib/touch-controls.js",
+      "size": 116287,
+      "sha256": "a4277215c2521c16a28e0e8f6866a2d51c3a8c768fea298f0fc95633f2f18e28"
+    },
+    {
+      "path": "lib/touch-cursor.js",
+      "size": 26289,
+      "sha256": "56d3a1373d5a5dd4d984a793b94b6b85c2a52ff3cd040baa4da3d0544bc6a2c0"
+    },
+    {
+      "path": "lib/ultima4-gog-source.json",
+      "size": 43547,
+      "sha256": "9b7f70edab883d7e9d6dd1edbc92f122b40a49671dcbc4c4db710b4ec48eebcf"
+    },
+    {
+      "path": "lib/vendor/tweetnacl.js",
+      "size": 62737,
+      "sha256": "25b9f03f50183864436ccbf16d1d6ae72ed7cdf3330fa9eb0053d369e5962268"
+    },
+    {
+      "path": "lib/vendor/webaudio-tinysynth.js",
+      "size": 62376,
+      "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c"
+    },
+    {
+      "path": "lib/vfs-export.js",
+      "size": 9540,
+      "sha256": "81031c9ffb3dcc404160777d696b588144ee8a2d3fac11269402bd0cfc714c7c"
+    },
+    {
+      "path": "lib/vfs-host-files.js",
+      "size": 3689,
+      "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7"
+    },
+    {
+      "path": "lib/vfs-overlay.js",
+      "size": 15586,
+      "sha256": "e79c0eb397849736d310617c1595f1534b480d8f03785fa03d42d6dcf781b403"
+    },
+    {
+      "path": "lib/vfs-persistence.js",
+      "size": 17509,
+      "sha256": "fc8caa5757face2be6ae9bef9a564d7dfb58fe905d0d7d5fe386ce530cd27351"
+    },
+    {
+      "path": "lib/vfs-seed.js",
+      "size": 8258,
+      "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d"
+    },
+    {
+      "path": "lib/vlan-lobby.js",
+      "size": 12355,
+      "sha256": "a368f49ea1feb62107a3a01cd0fa76ccbe086d8b4c8475d3836b17e921db4326"
+    },
+    {
+      "path": "lib/vlan-room.js",
+      "size": 12461,
+      "sha256": "ab5a023cb10bc55ac0398b0a27a875abbc8fb86e915b32031386a3648d92afb8"
+    },
+    {
+      "path": "lib/vlan-rtc.js",
+      "size": 47377,
+      "sha256": "b88a9dea39d562f23cd4ea32b8ffed3fc7916f3f2564166d70726288e7f526ee"
+    },
+    {
+      "path": "lib/vlan-star.js",
+      "size": 19399,
+      "sha256": "73a712b009f28804fa33ade5ccc8d804eccefd72321e678bac5f1c326f97616f"
+    },
+    {
+      "path": "lib/vlan-wire.js",
+      "size": 13813,
+      "sha256": "cea7da7afafb589a9d23631ecdb4bca1a82982dcc1482706cc3d44e1a492fbcf"
+    },
+    {
+      "path": "lib/wat-manifest.js",
+      "size": 2995,
+      "sha256": "37ee6b9a0a29d6445102b81cd462c8a0692a8ab81ea22e909fcdcf34fa148656"
+    },
+    {
+      "path": "lib/watx-compile-worker.js",
+      "size": 17721,
+      "sha256": "166b14a76feb5cef7281927421e085a7fb87c099f7116727df168c195f0143dc"
+    },
+    {
+      "path": "lib/watx-launcher.js",
+      "size": 34797,
+      "sha256": "c219f778dfa6de9086198b0b96edc364af1f3cdf31c70731bef3f1d4b61a5595"
+    },
+    {
+      "path": "lib/winboard-source.json",
+      "size": 4655,
+      "sha256": "e1205b09cdb7f0dfcf610ad0c9b33e504c7b2d251a224ea21c4aa0fab6a88286"
+    },
+    {
+      "path": "lib/wininit-boot.js",
+      "size": 4099,
+      "sha256": "f2ea4b46370955e5d8fb0a9196fcca137e5d45f5e358b4918a32c7dc0dac32bb"
+    },
+    {
+      "path": "lib/worker-imports.js",
+      "size": 22869,
+      "sha256": "36063e4c347567b8bf45579eda47c8514ad622f505083381e52835be7e660f3b"
+    },
+    {
+      "path": "lib/x87-semantics.js",
+      "size": 14191,
+      "sha256": "bd8b361451703c37f1697c9ea9e6c307b849609c5220e68415fc1a8eea0c631c"
+    },
+    {
+      "path": "lib/zip-mount.js",
+      "size": 32525,
+      "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "size": 598,
+      "sha256": "f44557ea85c2a47ea82fec369c92b1c4d6c2d431a9aa3e46e7aeb4118b5e6821"
+    },
+    {
+      "path": "package-lock.json",
+      "size": 22493,
+      "sha256": "0057c3be43c6b6dac68158f84a8c1b7831ccc44c8a92bd3d263df5fbc6425eef"
+    },
+    {
+      "path": "package.json",
+      "size": 845,
+      "sha256": "d152eddf8e18958e6cfc13514339a54b0bcbb65d66d8d56d5aa7c75eb0960683"
+    },
+    {
+      "path": "safari-private-probe.html",
+      "size": 15361,
+      "sha256": "779466211cc9fb1a25c2ccd343a01d9583f8602fad4256890fe0e629a832e2cb"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/ack-client.cjs",
+      "size": 3712,
+      "sha256": "9c3a8a215d9f88f592a8960598801bb04dd7982a1a5d6af714aea891b9bafca6"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs",
+      "size": 18623,
+      "sha256": "175033bc07bda95dd2d618511729d901908d60a9e8ec970cdbc8d7e2d61dcd70"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/browser-run.cjs",
+      "size": 20177,
+      "sha256": "689b05aed1724c2998131818a558dfc2d4e87605df579b97ce2ae3c598883416"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/generated.cjs",
+      "size": 6522,
+      "sha256": "fb46f1b5f4aa6ad4f4c8874af4a1b507986dd8248f5abee086e09c2c061e89ec"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/gl-owner.js",
+      "size": 597,
+      "sha256": "51a573a8e0a13a10cf89ed0b66aca94ea8eb8d15c51a93aea430c4ca0503bc44"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/keyboard-bridge.cjs",
+      "size": 573,
+      "sha256": "b17df90ee4fa4fca0ba30ed576e69a7af9879c172cfe48ed093245272c25ed0f"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/local-controls.cjs",
+      "size": 5174,
+      "sha256": "b03cddb85f87b35d1c9c2124456474c23042d6b6c0a82bd9f74cccbe523d26ea"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/local-inspect.cjs",
+      "size": 844,
+      "sha256": "3bf186cc9d6f07675375fdfb422ab9f26dbf8a9bde05abc50830ad41c63db874"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/native-mouse.cjs",
+      "size": 2139,
+      "sha256": "8a4a51ba40b6caaf81bf155c9ee9791aa8527af221b36899bd806dfee77a8844"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/ordinary-keys.cjs",
+      "size": 1378,
+      "sha256": "4c3a4801deec77e7a689e09855916e75121265ffa8168d815edec38474173c95"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/passive.js",
+      "size": 556,
+      "sha256": "b363f2b6b6fcbeacf295c214fabaa736a9c920be49bb6a7a70a28a47f403d43d"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/producer-ready.cjs",
+      "size": 2964,
+      "sha256": "e400a370c681974dd3b9cce294ac8853e9779d8922e15f8063b23e5ed84dc5e8"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/readiness.cjs",
+      "size": 647,
+      "sha256": "e36a2fd7c30fad60fbe7dcfaa6c3c9badd09d8e0fcde0559a4ed99fc70530ee9"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/trace.cjs",
+      "size": 1409,
+      "sha256": "6f440f2d1bdd9e02598a768ad041681ae1969245e9512939dff24a3970bb8b86"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/transport.cjs",
+      "size": 5425,
+      "sha256": "54d7576d40df790ecf72153e289b25c6235b4e92b3f8b7332e480637bf07a9e8"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-gl-readiness-gameplay/worker-observe.js",
+      "size": 2732,
+      "sha256": "7bc964f15ff25c2e373a77d8a8c9b9763cb702d4ebe4778fde0f05df87751cd3"
+    },
+    {
+      "path": "signin-done.html",
+      "size": 1248,
+      "sha256": "eafabfa2fd0f0a0bf1759be4b87b87e5379accc33342b8f2cf340b4c66c96ba6"
+    },
+    {
+      "path": "sources.html",
+      "size": 4210,
+      "sha256": "3567033c91af131830d90e725db05bb4f3457cecda34814a9e8ab01a85472b05"
+    },
+    {
+      "path": "src/00-regions.wat",
+      "size": 71632,
+      "sha256": "19466141ada05fe36f98adc41551c8e8860c4f035e9de26376a4623b6f9b39a0"
+    },
+    {
+      "path": "src/01-header.wat",
+      "size": 303783,
+      "sha256": "598410808da203646a6892c8ab769e401802d138e422e82543cd32950fce20aa"
+    },
+    {
+      "path": "src/01b-api-hashes.generated.wat",
+      "size": 290013,
+      "sha256": "225c9f4db080ed3551714c084e3d83b4626fb65b4d6828a585ba972a6dc0df3e"
+    },
+    {
+      "path": "src/01c-big5-tables.generated.wat",
+      "size": 425005,
+      "sha256": "cecd639fab57d73a492d656afd49dafc1cf2dd228da666eb576c2e87917839a6"
+    },
+    {
+      "path": "src/02-thread-table.wat",
+      "size": 34035,
+      "sha256": "4da5a4dc095358d9bceef725faa225326c5d25b84a1d2d6a416a1f1b910d218c"
+    },
+    {
+      "path": "src/03-registers.wat",
+      "size": 71251,
+      "sha256": "75adeb71721d9bd74e4a9e37452fda44fbe0a0baf0e350e815d145d242181783"
+    },
+    {
+      "path": "src/03a-page-watch.wat",
+      "size": 8175,
+      "sha256": "37c1e48365c7a0f9c4bf7df10d3c90939c3d3dbc768e18d9cb6eafe7cf791612"
+    },
+    {
+      "path": "src/04-cache.wat",
+      "size": 165975,
+      "sha256": "148195dabbf53b8edde7c1219e3c7ca690dc4e39ae60f3f49a278070d3ad5864"
+    },
+    {
+      "path": "src/05-alu.wat",
+      "size": 300060,
+      "sha256": "43f08e55bfe3ac0e4fc363821b218798ab308696c29e04f2312e52ce56dc91d5"
+    },
+    {
+      "path": "src/05b-string-ops.wat",
+      "size": 41208,
+      "sha256": "bc5e1c338a7a3aacc49d4d52bf4357bc9e2e71e3bbd5457b7093a91d01c80edb"
+    },
+    {
+      "path": "src/05c-seg16-ops.wat",
+      "size": 54044,
+      "sha256": "84edeb4a90cae48d9c6bdb3cdc9451e0cf7b121007dceff38b849f045846e0f4"
+    },
+    {
+      "path": "src/06-fpu.wat",
+      "size": 72331,
+      "sha256": "9e762a871b487b82b1683a2671ec46926556291bc05bce387ce9ee04012bc925"
+    },
+    {
+      "path": "src/06b-core-handlers.wat",
+      "size": 104176,
+      "sha256": "785b9a1dff3d449a6e3f2107bfb26d779ca1eed59755c979137f40c72a67e9d9"
+    },
+    {
+      "path": "src/06c-mmx.wat",
+      "size": 60242,
+      "sha256": "aceccd5def769cf81dbedf940b716919604bba80ec2a7d0773ba0660848f6939"
+    },
+    {
+      "path": "src/07-decoder.wat",
+      "size": 334582,
+      "sha256": "389cddd793d8976e7874ddf5d489fa086e282e0c11c52dbb5d23ec462776987b"
+    },
+    {
+      "path": "src/07b-loop-match.wat",
+      "size": 436506,
+      "sha256": "75bc35ce00e283cbdd2bbb1ad7a3c5b7f848255cd50d2116ca69fdceca8de386"
+    },
+    {
+      "path": "src/07c-block-exec.wat",
+      "size": 451385,
+      "sha256": "6b0b8304cf5adc1e3367aa3344b042deb251291d8696203e5cba251298754707"
+    },
+    {
+      "path": "src/07d-uop-engine.wat",
+      "size": 166582,
+      "sha256": "ac856223f2f868c40f90b91169e904d0bc02a5daf019ef22c55d9b98917f743b"
+    },
+    {
+      "path": "src/07e-uop-compiler.wat",
+      "size": 325923,
+      "sha256": "b2a4414e7c168f9b6ad7c652fef9a7486cc21c15db7fe06fb524a019ad54ee45"
+    },
+    {
+      "path": "src/08-pe-loader.wat",
+      "size": 395512,
+      "sha256": "920d0f52d9e6c78e45384290bfca392c1bccc60b4865c86b50945e4556d3014c"
+    },
+    {
+      "path": "src/08b-dll-loader.wat",
+      "size": 108775,
+      "sha256": "f44354df5b9ea342e62428e4db3d6211f5eb41a799e3727719fa1a9cb1776694"
+    },
+    {
+      "path": "src/08c-ne-loader.wat",
+      "size": 144445,
+      "sha256": "992d938c14d0e26084829d6af883e7dd6c32623454f1e8a6092647c0c4959269"
+    },
+    {
+      "path": "src/09a-handlers.wat",
+      "size": 63553,
+      "sha256": "5175a9f3c274dd817f7957be8dc9855be804cbe08f1e38599113a1f600bcadf2"
+    },
+    {
+      "path": "src/09a-handlers0-sound.wat",
+      "size": 13322,
+      "sha256": "b3b1a0a090456c001abe80016689475ff639511eb5ada004cee81c8f0fd7ca49"
+    },
+    {
+      "path": "src/09a-handlers1-user.wat",
+      "size": 209061,
+      "sha256": "48b297a0399a1e57a87e72be3a43314bdc4ac8b692c93405c6ad709362ae66cb"
+    },
+    {
+      "path": "src/09a-handlers2-runtime.wat",
+      "size": 94103,
+      "sha256": "7089af2671dd460a5cd70f1951fcfe016197cbc4fdd719848104d1d679f34664"
+    },
+    {
+      "path": "src/09a-handlers3-sync.wat",
+      "size": 84580,
+      "sha256": "a6e66153d90c4c98db4ccd5500a324832cc1eb195a206e3380596209d2ef94a1"
+    },
+    {
+      "path": "src/09a-handlers4-late.wat",
+      "size": 143038,
+      "sha256": "558f69977d5e0788c5958a372ad6782625b3c227fc4e7b672e045f69cef09f07"
+    },
+    {
+      "path": "src/09a0-handlers-base.wat",
+      "size": 405441,
+      "sha256": "9bd2834f12281ea6101651b0588e62dfc3438da194350ee86d64c93f784e3ac0"
+    },
+    {
+      "path": "src/09a0b-handlers-base-late.wat",
+      "size": 240954,
+      "sha256": "073e56423f12c24ec7f8ec8a178fe486b32034abc8a16d97a1a463632b33fe22"
+    },
+    {
+      "path": "src/09a0c-handlers-device-io.wat",
+      "size": 15060,
+      "sha256": "3e931da8afa6ebe034e1071626235d93d86b21b051663c9d510f4454fc66d6e9"
+    },
+    {
+      "path": "src/09a0d-toolhelp.wat",
+      "size": 23440,
+      "sha256": "b81439d9487e878feace12a88f015d9c4440cd326b98210374af6a67d59b6b4c"
+    },
+    {
+      "path": "src/09a0e-process-memory.wat",
+      "size": 4885,
+      "sha256": "6366bee2a8a5168beed62be58adba3c5eb00604cf232b28f55fb48915a75b07f"
+    },
+    {
+      "path": "src/09a1-comctl-handlers.wat",
+      "size": 172957,
+      "sha256": "32fc3f712e70f2bf65dbb88704052a45fb0b2e135e3a6ad9e4b8573b905c868a"
+    },
+    {
+      "path": "src/09a2-handlers-console.wat",
+      "size": 167752,
+      "sha256": "660700e927d2025a618ebb0678ff7ed214d5fae8703b665c5d05804aadef3d58"
+    },
+    {
+      "path": "src/09a3-handlers-audio.wat",
+      "size": 277811,
+      "sha256": "77e82f1cfae122553adf97f31f56e6bd16e05faedbfd83163433f94b9df3dd08"
+    },
+    {
+      "path": "src/09a4-handlers-gdi.wat",
+      "size": 285541,
+      "sha256": "efeaa13ef2cd7466efb75d170941f7e825d09f0ee5b06e5a4749f54ed7dd6db1"
+    },
+    {
+      "path": "src/09a4b-handlers-cursor-icon.wat",
+      "size": 40075,
+      "sha256": "92a206d7d49c5475e22cab7236cfcd5b14413fca5ed663b244945c48dd023e66"
+    },
+    {
+      "path": "src/09a5-handlers-window.wat",
+      "size": 294875,
+      "sha256": "64ce7aef2b046871ed16b7645ef5370ab5ab4e4682efa037d06061574ba674ac"
+    },
+    {
+      "path": "src/09a5b-handlers-window-late.wat",
+      "size": 202122,
+      "sha256": "2dcfbd046acc0c453108b2ffa10c95e17022132a61618dbfab3c770b5a61ceae"
+    },
+    {
+      "path": "src/09a5c-handlers-wide.wat",
+      "size": 27621,
+      "sha256": "cf354d70d0123db95442cc672486adaf8b5f6f9845ebd7b392c663ca57e7320b"
+    },
+    {
+      "path": "src/09a5d-handlers-windowpos.wat",
+      "size": 37412,
+      "sha256": "a871df7574a123df2fab0c8f6b8f3f8792964e158feb6c66aa97ff242acb9507"
+    },
+    {
+      "path": "src/09a6-handlers-crt.wat",
+      "size": 251614,
+      "sha256": "41a842b70aabf75ea17ac502158fa3dea24018ff2553783c3b88027809aa23f1"
+    },
+    {
+      "path": "src/09a7-handlers-dispatch.wat",
+      "size": 418524,
+      "sha256": "678b95052acccd8e2e73bd56d6e7432bd3d6151f2ddd48e837b1bcbb45de09f3"
+    },
+    {
+      "path": "src/09a7b-ole.wat",
+      "size": 806484,
+      "sha256": "6aaa993fcf1c58899aab02e3b16866214f0e785eacad87835f8cc70fe8fc0c2d"
+    },
+    {
+      "path": "src/09a7c-mixer.wat",
+      "size": 35586,
+      "sha256": "4374dce53f5af1e8f2d578958dd4b3fa7ac4803400311657571dbe5531bae090"
+    },
+    {
+      "path": "src/09a7d-handlers-shell-file.wat",
+      "size": 236982,
+      "sha256": "73b7cc72ad9e3a185930817b5f94baa79c6cffe90b022878927a18fc4c6fdca1"
+    },
+    {
+      "path": "src/09a7e-video-codecs.wat",
+      "size": 32639,
+      "sha256": "d5705c23981b6a806e42999a5be933c1f8736ec2f3eb980b53ece54aa4dd2729"
+    },
+    {
+      "path": "src/09a7f-video-avi.wat",
+      "size": 64048,
+      "sha256": "1d3da9662d40d88f5ec0ef53ca37b53ff52458341c9ddb3dc93e7abd2a57e251"
+    },
+    {
+      "path": "src/09a7g-video-icm.wat",
+      "size": 78590,
+      "sha256": "207c804dc5cee081e1185dc2bdabbd8e49cffa0098f8269a6757bc07d0aa640b"
+    },
+    {
+      "path": "src/09a7h-video-mciavi.wat",
+      "size": 67211,
+      "sha256": "a2a107b31c4b73bf2caefe2f66756c0cae0ac9680f53f96f1b39f6ade318707f"
+    },
+    {
+      "path": "src/09a7i-video-mciwnd.wat",
+      "size": 22042,
+      "sha256": "c4697a604fbdc51da22948559d585b7f7d60a451f6f7934ef6c71f0473b010fb"
+    },
+    {
+      "path": "src/09a8-handlers-directx.wat",
+      "size": 1070361,
+      "sha256": "b96b007a50098b070829dace5f29bd06b171b3cb6d1882c04a950d6db67532ec"
+    },
+    {
+      "path": "src/09a8b-handlers-opengl.wat",
+      "size": 272970,
+      "sha256": "07110a70639ec5e924b9776ce280ac2eb992446bb7c1cc4b4f8b2099123ad50c"
+    },
+    {
+      "path": "src/09a8bf-wgl-font.wat",
+      "size": 28567,
+      "sha256": "fdeecd42d2ea67bc8d2b3307352c8d289da3e562644d117f9cedcbb46fcf7a4d"
+    },
+    {
+      "path": "src/09a8c-gl-encoder.wat",
+      "size": 107930,
+      "sha256": "c6fe4770ea69cd8c4c0de84b25d4a44f70a4e8f8ce7d88c1a7f861ad2bd43bf7"
+    },
+    {
+      "path": "src/09a8ca-gl-lists.wat",
+      "size": 52949,
+      "sha256": "709d217285b4c668bf966f77010f9e339100d34f9fd7f4e265066a285177c6c3"
+    },
+    {
+      "path": "src/09a8cb-gl-bitmap.wat",
+      "size": 64641,
+      "sha256": "54e54da6f53ea4d0b568923f58596ae4480051a706c8e748123755b9eec158a8"
+    },
+    {
+      "path": "src/09a8cc-gl-stencil.wat",
+      "size": 12683,
+      "sha256": "6e31c06cb1cfb7778ed9f6384866f0dd22731578252e8e2dcfa01a4e5c01d3de"
+    },
+    {
+      "path": "src/09a8cc-gl-stipple.wat",
+      "size": 14319,
+      "sha256": "13a1f05e84bbb90cb0c4151289499d6e507b03d80deb4c69fa1234e5d3d42b0a"
+    },
+    {
+      "path": "src/09a8cd-gl-color-mask.wat",
+      "size": 8539,
+      "sha256": "d51a12a7beebeec5be6c53983de420500ada1af94cf498ad57b11d1e3e49aacd"
+    },
+    {
+      "path": "src/09a8cd-gl-evaluators.wat",
+      "size": 68780,
+      "sha256": "133add2e3bdc8dd2666343eb684220e8eb9687a2c9b0f04a256a155f9b100f1f"
+    },
+    {
+      "path": "src/09a8ce-gl-selection.wat",
+      "size": 30465,
+      "sha256": "24106435b9d4c9e9ee0f4da0c9104916f76e1e11abee2f34e4010106643fd5b4"
+    },
+    {
+      "path": "src/09a8d-gl-abi.generated.wat",
+      "size": 3242,
+      "sha256": "97f87eca4b958db25199330cc4e064e447b45d66ee6f93bfa372e442077171d3"
+    },
+    {
+      "path": "src/09a8e-gl-state.wat",
+      "size": 131067,
+      "sha256": "855e7f54817729a88b0b02cc654f7b7cc38dc35bf605f7c426932ce082fe35cc"
+    },
+    {
+      "path": "src/09a8f-gl-matrix.wat",
+      "size": 82984,
+      "sha256": "3e98fefa64992359a1f16c80d636e5a2915b33c2eb277baae7eb681f369afa3f"
+    },
+    {
+      "path": "src/09a8g-gl-raster.wat",
+      "size": 302502,
+      "sha256": "f0b4290c1b3fbd971751473872bfd864465ba0cb1d396686e812046d09394050"
+    },
+    {
+      "path": "src/09a8h-glide.wat",
+      "size": 168750,
+      "sha256": "ccc60e16d81584a031ea455752aecc425aad87693c518165eefc2dae2a91e3bf"
+    },
+    {
+      "path": "src/09a9-comctl32.wat",
+      "size": 160197,
+      "sha256": "7847d73c5a3b4222c94ee59374f675b549cb3d3a32743375dce69114842d0e39"
+    },
+    {
+      "path": "src/09aa-handlers-d3dim.wat",
+      "size": 145691,
+      "sha256": "927cd022bb8b8408202baed418fe9fb3cfe05a592dbe7704ed7a3ce3e94097c3"
+    },
+    {
+      "path": "src/09ab-handlers-d3dim-core.wat",
+      "size": 732574,
+      "sha256": "f58d1eb0549234d44b87dd65255a68dfeab80d8bb9c8f210c3857b543b87e5da"
+    },
+    {
+      "path": "src/09ac-handlers-d3d8.wat",
+      "size": 117905,
+      "sha256": "73ee973c7aaf374f2b378ec502ea268279908b69917204907ff6c237be818922"
+    },
+    {
+      "path": "src/09ad-handlers-d3d9.wat",
+      "size": 210868,
+      "sha256": "ecc3213371c281ef63605d86f0f64ac6d3138c8e4ff185d43850119b6f2802b9"
+    },
+    {
+      "path": "src/09ae-d3d9-resources.wat",
+      "size": 161595,
+      "sha256": "5cd946de1b5065759b4cfa921fc200526c0d95f7d284bb929f6932e65e495a29"
+    },
+    {
+      "path": "src/09af-d3d-shader-ir.wat",
+      "size": 122718,
+      "sha256": "aabdebfd1473693ed2c1601570ac0fc629e12000ac06fd5208890f313d644613"
+    },
+    {
+      "path": "src/09ag-d3d-shader-vm.wat",
+      "size": 194436,
+      "sha256": "d2ea659e5b67c7d0c7ed619a39845962bf398b181a9ff1a3822027e02516c88c"
+    },
+    {
+      "path": "src/09ah-d3d-software.wat",
+      "size": 143023,
+      "sha256": "43ec7d8685cc4942dbdb30b8c9efacf28ec1add81fed4f55f008b7dbe9c4b0c3"
+    },
+    {
+      "path": "src/09ai-d3d-render-lifetime.wat",
+      "size": 16092,
+      "sha256": "fd2ef49db696bb333fc57258af3edacda5b9b2728ed0f018ccf740364297dcfb"
+    },
+    {
+      "path": "src/09aj-d3d-fixed.wat",
+      "size": 115132,
+      "sha256": "15acb3542a03ac6ffddecaae5467b8083cd91085e310524e058d2011582563b1"
+    },
+    {
+      "path": "src/09ak-d3d-depth.wat",
+      "size": 14458,
+      "sha256": "ccc22a0736e11a7371119bd66ca453d2379db9880b2cc13a972ac351bc74f32b"
+    },
+    {
+      "path": "src/09al-d3d-reset.wat",
+      "size": 15496,
+      "sha256": "a780c6b041f8770c7836a3b8a88e48ad5e61279053c17ec88b1da58bf61003c7"
+    },
+    {
+      "path": "src/09am-d3d-color.wat",
+      "size": 57053,
+      "sha256": "2737a82cd51243daeacddeccd14c8cb1f06f9bfb4397908a03241db32dbe43e1"
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "size": 120565,
+      "sha256": "f2869bd1149549b679129f7095d83aae6af036bd6e63a658e0367518e7fa9c38"
+    },
+    {
+      "path": "src/09b2-dispatch-table.generated.wat",
+      "size": 1450757,
+      "sha256": "a46b7b9730cbebd007d688786ee10d4bdac864d68a7e3d55f2735fb1a19a9d32"
+    },
+    {
+      "path": "src/09c-help.wat",
+      "size": 55117,
+      "sha256": "0d0b2cb46c0d5f320d7a6a2f9d31075271916674426ad2e7400524eb331d01e9"
+    },
+    {
+      "path": "src/09c0-window-table.wat",
+      "size": 113853,
+      "sha256": "49f428b1f12b193f9367e6b76d837c005f08b583dd8e3fdc2026f7264ef86bed"
+    },
+    {
+      "path": "src/09c2-treeview.wat",
+      "size": 109358,
+      "sha256": "bd0904b3a6d3dda2ecac7142d2a4e8bdc7350b36e5242cf8c370f9854d2753ef"
+    },
+    {
+      "path": "src/09c3-controls.wat",
+      "size": 180295,
+      "sha256": "9a2f225abe3ba86333cdf7d2ee8c3b96036d694e4495d86d26d6e7638ec0d2a4"
+    },
+    {
+      "path": "src/09c3-controls0-basic-wndprocs.wat",
+      "size": 142302,
+      "sha256": "af333a7d28e1b0a21bb3e99e0afa3ff6463a850d50fed692b488879e11250cd5"
+    },
+    {
+      "path": "src/09c3-controls1-browse-dialog.wat",
+      "size": 30207,
+      "sha256": "bff02be9a4119daeb97717fe57cf2399ff06477174e94fdec0f20364b8321f3a"
+    },
+    {
+      "path": "src/09c3-controls2-open-save-dialog.wat",
+      "size": 49631,
+      "sha256": "739f003d1b9215cb08792dede95319c8f1822237c1bc7283701ad79e9dad92af"
+    },
+    {
+      "path": "src/09c3-controls3-color-dialog.wat",
+      "size": 61169,
+      "sha256": "afeadda4c94bb264686c7ff41da81a8ce5d1e4677f018f48cbb201de2fd72a31"
+    },
+    {
+      "path": "src/09c3-controls4-shell-dialogs.wat",
+      "size": 33889,
+      "sha256": "4b99cd7a8af6aae04a273d24d5a2bd155e47edefdf04588b0d2956e167c725bb"
+    },
+    {
+      "path": "src/09c3-wndprocs.wat",
+      "size": 138167,
+      "sha256": "629179ab5e65edb0ba496bc8ab4ea7bfb1f02fb6982c5b3026a7ab83446aa3d4"
+    },
+    {
+      "path": "src/09c3-wndprocs1-toolbar.wat",
+      "size": 70465,
+      "sha256": "2a239c38f20e11f2c5fb315afc0d04fceb7b7ba5ef148c3f132e83108f7f80e7"
+    },
+    {
+      "path": "src/09c3-wndprocs2-tooltip-trackbar.wat",
+      "size": 39555,
+      "sha256": "50a1141434801068b26bfef6388c9708c70ffeef19c6b65e3779e00c91d9d3de"
+    },
+    {
+      "path": "src/09c3-wndprocs3-listbox.wat",
+      "size": 66500,
+      "sha256": "468cf820b4820c0aa2fe5e2c42cf91d80b9fdf729206476d6ec117dda03a7f6c"
+    },
+    {
+      "path": "src/09c3-wndprocs4-combobox.wat",
+      "size": 70077,
+      "sha256": "498a3c09f428d9a745e11cda4a9caa70098f7ed46f1d293e74293c3b8eab9a52"
+    },
+    {
+      "path": "src/09c3-wndprocs5-edit.wat",
+      "size": 159239,
+      "sha256": "074c173009da12fc49eed8c01c3a7d6d8274ad567fea2250c71511d78edb352b"
+    },
+    {
+      "path": "src/09c3-wndprocs6-animate.wat",
+      "size": 42576,
+      "sha256": "14b0085c53ef0d9feae6394f3981291e0f7dea0f0f5b15d8383826657e0f588f"
+    },
+    {
+      "path": "src/09c3a-dialog-runtime.wat",
+      "size": 91488,
+      "sha256": "645bdeb0e8aab8c68b2580f8470556188b7f48b981639d45616599f803d609a1"
+    },
+    {
+      "path": "src/09c3b-scrollbar.wat",
+      "size": 40193,
+      "sha256": "5cc2efb5331864cdc0dae4968cd7045c6b0a66f2ad102435a4c11efe05661fc4"
+    },
+    {
+      "path": "src/09c4-defwndproc.wat",
+      "size": 74684,
+      "sha256": "66ba23a9a3d504058c64b4047fac942b229cadb50220b3d60cf142297f20957a"
+    },
+    {
+      "path": "src/09c5-menu.wat",
+      "size": 320488,
+      "sha256": "b9dc6c974ab6be62f3733b48a2c29bdb827f5c6d2a7f31f6db8285c7c8db5864"
+    },
+    {
+      "path": "src/09c6-winhelp-core.wat",
+      "size": 98628,
+      "sha256": "53066a3d64f3d6ff829bcec58343daae57c019684429ea563f21b1e0505ca319"
+    },
+    {
+      "path": "src/09c7-winhelp-hlp.wat",
+      "size": 295174,
+      "sha256": "6caf9025d4d9501a4a0b830dcedc9ae2a54627b880ed17fddda359da8491f40b"
+    },
+    {
+      "path": "src/09c8-winhelp-cnt.wat",
+      "size": 44754,
+      "sha256": "1d342496c3d94c628e4eca4a6de67408f018a62fbb7fd6683f092028073fc5b7"
+    },
+    {
+      "path": "src/09c9-winhelp-ui.wat",
+      "size": 198639,
+      "sha256": "4614693d387c04cad237cd6b2a554d08582aacf2e6b796f6b546a26227fc4208"
+    },
+    {
+      "path": "src/09ca-screensavers.wat",
+      "size": 25741,
+      "sha256": "aad58860888217cdfb510cec70d7a4f7ce81b810cfa8bbb82c682e8a9b2c8444"
+    },
+    {
+      "path": "src/09d-winsock.wat",
+      "size": 262420,
+      "sha256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab"
+    },
+    {
+      "path": "src/09d1-mpr.wat",
+      "size": 7722,
+      "sha256": "0b500cf83415c2125c169505193b272bf767be68d954d99f3e56f921c87d95b8"
+    },
+    {
+      "path": "src/09d2-tapi.wat",
+      "size": 17304,
+      "sha256": "7d7f73daf1e98274cfcc1e62eca54e71ff865ad91aae46ac19b563bc3c2834f8"
+    },
+    {
+      "path": "src/09d3-spooler.wat",
+      "size": 6858,
+      "sha256": "8f39e30062fa5720e66401671eee805585197ee0f4d7f0cc600afd7fad023ec1"
+    },
+    {
+      "path": "src/09d4-dplay-net.wat",
+      "size": 62636,
+      "sha256": "57badf93ecc19597c02e4fee45009813b726b02645479ea17d1d9439b2ccfa21"
+    },
+    {
+      "path": "src/09d5-dispdib.wat",
+      "size": 13045,
+      "sha256": "0e7cf56899d8b956478cf45282a375eed6be155c908fe6d4042b42d2a4f70466"
+    },
+    {
+      "path": "src/09d6-wininet.wat",
+      "size": 7743,
+      "sha256": "07bff4c56411398b507a130a80d1d8a476a71972cfb473aae49bdc76125fd2c6"
+    },
+    {
+      "path": "src/09d7-pipes.wat",
+      "size": 39148,
+      "sha256": "1d754f1a785256bfaffd8d4b2413ddb59fb4a13315e6bde83cb0af613b89f2ee"
+    },
+    {
+      "path": "src/09e-win16-api.wat",
+      "size": 1098696,
+      "sha256": "e1ab3a567a9a8d68b299dd88a571e61da35f1516d8b39a33a948e980f8cdf7d2"
+    },
+    {
+      "path": "src/09e2-win16-dialog.wat",
+      "size": 77732,
+      "sha256": "9ad4d13e850aaa3b5131f20dccf9d16c4cf64d014086a15aacd79e06787dc92c"
+    },
+    {
+      "path": "src/09f-win16-ddeml.wat",
+      "size": 115900,
+      "sha256": "00bab423d807187097d1ddd5b03a61b3c0cdfbaeefab85fa04ef576b8d80810c"
+    },
+    {
+      "path": "src/10-helpers.wat",
+      "size": 570769,
+      "sha256": "bba6e9fcc74c862735ed46d666447395e5deea2289635785d051cbed37f3177b"
+    },
+    {
+      "path": "src/10a-gdi-bitmap.wat",
+      "size": 111220,
+      "sha256": "82f562c08ee7ebe894524b61f0c5e8e533e14ec6b9f761b910b04cd620d74506"
+    },
+    {
+      "path": "src/10b-gdi-font.wat",
+      "size": 215211,
+      "sha256": "7eaa4175440745eebbdb35b87464620a51964c78c4d53c35b22b86fa3af428e2"
+    },
+    {
+      "path": "src/10c-truetype.wat",
+      "size": 331676,
+      "sha256": "5f113fd2f247d817be5f160832d20f36a40dbbda1dc56294ba7e36ff46fb72ec"
+    },
+    {
+      "path": "src/10c1-truetype-hint.wat",
+      "size": 160188,
+      "sha256": "08019af574a4be3e5d51c64b206a07a936fae0cbd5543d467c9115c6f4289cec"
+    },
+    {
+      "path": "src/10d-gdi-region-path.wat",
+      "size": 252629,
+      "sha256": "41909fbb8a6d4ffc815a6f504dcc7ae94090ceaed4a3741a8aa1289654869227"
+    },
+    {
+      "path": "src/10e-gdi-metafile.wat",
+      "size": 169657,
+      "sha256": "fe9e5781814913b611c9691913d8c7a0994fc9ca86eb09bd3bea657f435d1882"
+    },
+    {
+      "path": "src/10f-gdi-dc.wat",
+      "size": 141980,
+      "sha256": "b38affd44880a46e1d19052825f9947962662ac1ab210dc3934c4e08ab4c30c0"
+    },
+    {
+      "path": "src/10g-gdi-raster.wat",
+      "size": 456636,
+      "sha256": "1724be82f258bc4f3a0b8318ba027f2ac7472564dae789dd1534c436e0a2d9b5"
+    },
+    {
+      "path": "src/10h-gdi-adapters.wat",
+      "size": 16190,
+      "sha256": "8e3de44cba63bc0de10e500050e3a69612b5d973afdc80c57c4993b3e6eed53e"
+    },
+    {
+      "path": "src/11-seh.wat",
+      "size": 59644,
+      "sha256": "4fce9b30bc0bcc6e26a551e37a07af22b6c6aa1d2fb2c143a7bde6f279924b51"
+    },
+    {
+      "path": "src/12-wsprintf.wat",
+      "size": 21194,
+      "sha256": "e71272a507fcd4316c0240525c4101f252200069dfc1d2d1ca3b1ba8285fce75"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "size": 376277,
+      "sha256": "7140258e886dfa5981ac158fe453ed8fa1d6eb50adc3b5775196ee958a646eee"
+    },
+    {
+      "path": "src/api_table.json",
+      "size": 722844,
+      "sha256": "0b97e8e3eda7e19a24a022208deddf03ee414cfef3cc6eb1b07689ad65ae2123"
+    },
+    {
+      "path": "src/kernel32-exports.json",
+      "size": 47478,
+      "sha256": "5561e7d41b6fd467aebbc057c92be2a750cf66c9e1f706eaf0d121b04f6c2262"
+    },
+    {
+      "path": "src/main.watx",
+      "size": 6114,
+      "sha256": "d5c6ce401bc245b19305e9e63c70c9912053cf84ef774b7a3f79e6e37899a037"
+    },
+    {
+      "path": "src/win16-ordinals.generated.json",
+      "size": 42442,
+      "sha256": "a61a6c67700cf35f29c75cdc5a2e3f5923f9ce6e39a69db433d04d524a8e21f4"
+    },
+    {
+      "path": "story.html",
+      "size": 105735,
+      "sha256": "dafb68bd5ccdf41bf187881b7be0297a7a675751f5bd96f4986e940a8815522c"
+    },
+    {
+      "path": "sw-coi.js",
+      "size": 2291,
+      "sha256": "23f60e9a80e2a8a47f5963b5d532661a20187443755faa7f1a1556ea2844365c"
+    },
+    {
+      "path": "test/binaries/dlls/SOURCES.md",
+      "size": 19033,
+      "sha256": "ff29387a5545f3ebee6e1635700b1a1532260dcf1c9b1aa5b60d8ce7ffb75aef"
+    },
+    {
+      "path": "test/binaries/tlbs/stdole2.tlb",
+      "size": 15088,
+      "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895"
+    },
+    {
+      "path": "test/static-server.js",
+      "size": 6557,
+      "sha256": "1c1917ea4a9e0d430e27e66006be2eb8bbba932ae87295bae131e5dee2dfdb1b"
+    },
+    {
+      "path": "threads-probe-worker.js",
+      "size": 6137,
+      "sha256": "f3a01d7238206ca1653f43ef4af554ab9a3df9b700c438126e9c455892816ab0"
+    },
+    {
+      "path": "threads-probe.html",
+      "size": 30142,
+      "sha256": "e603e8fe6d34e811269a658ad987b2657d7d6b3fa303f402580989fa1bcf511a"
+    },
+    {
+      "path": "tools/browser-response-body-collector.cjs",
+      "size": 27391,
+      "sha256": "ed74b116e3386b327554dafd6546f7f86eec88b5d28aa1deea4000274d48f9fb"
+    },
+    {
+      "path": "tools/q3-execution-boundary.cjs",
+      "size": 6876,
+      "sha256": "1858eea7efb8875e44088ffe9f5ea434c3b22915444113204fb51673e4f5ac0d"
+    },
+    {
+      "path": "tools/native_kernel_custody.py",
+      "size": 31987,
+      "sha256": "05b7fe42cf7ac09df5f12f0ea073ea066892efb598b64b05fae19a3492c9f32c"
+    },
+    {
+      "path": "tools/native-startup-barrier.py",
+      "size": 2298,
+      "sha256": "2fa84dbd955fcd1cc0a81ee252d933915f9437973239184e08fd82594b96de28"
+    },
+    {
+      "path": "tools/native-command-log.cjs",
+      "size": 2461,
+      "sha256": "979b3a8bbd8625ef6bffb009650778736e20ade2d781918b83f59d9944c88f5e"
+    },
+    {
+      "path": "tools/native-browser-close.cjs",
+      "size": 3209,
+      "sha256": "1f4fe08b501ed27c90f4256e85574a788e7dd8adff60638f2c69d6a3ca2ea9b2"
+    },
+    {
+      "path": "scratch/runs/20261108-q3-instrumented-webgl-gameplay-2248/adapter.cjs",
+      "size": 5610,
+      "sha256": "84c8419f7848fabc8f2c75a7949c6aa6d61a730cb72e71c5e3436f786ce3ac2a"
+    },
+    {
+      "path": "tools/supertux-native-lifecycle.cjs",
+      "size": 1287,
+      "sha256": "56536226dfd28666b50b902df26005f25641718aa9a398daff65aefdcb3e9d06"
+    },
+    {
+      "path": "tools/native-devtools-ready.cjs",
+      "size": 1755,
+      "sha256": "9ba9ae8b94ebd8a134045608074403d81f68d3cfdf6c0e3f9dbcb875e0632c1b"
+    },
+    {
+      "path": "tools/q3-native-driver-composition.cjs",
+      "size": 23229,
+      "sha256": "f273af8a6ee10cbef6878832dd5b103c4b7f5527af7518233cf9f2f426ab04b3"
+    },
+    {
+      "path": "tools/q3-native-prelaunch.py",
+      "size": 6068,
+      "sha256": "0dc855eea7395cb587c8e71613f46f46fa2bf9758a794056427d7658383cc795"
+    },
+    {
+      "path": "tools/q3-screenshot-completion.cjs",
+      "size": 10807,
+      "sha256": "b0d8efd89e061d06b8ceb014e3eae7a3c42809f9360c47d86bfd6c61c25d85f9"
+    },
+    {
+      "path": "lib/quake2-owning-load-core.js",
+      "size": 26598,
+      "sha256": "fde76cbd450cc951db04a341e1cfe2d84d705f265e86d863ebcbd6bf360acf67"
+    },
+    {
+      "path": "lib/drakan-passive-actor-observer.js",
+      "size": 7866,
+      "sha256": "4c1b17d503ee2a283fa15bc8aae2da9c87c06896355c1aedb6c91c5b2a35f254"
+    },
+    {
+      "path": "lib/drakan-observer-worker.js",
+      "size": 14438,
+      "sha256": "6ec4db61c388eb71994f0d0b699a0ded37fab9bbd051b3a53d1b0825168094fc"
+    },
+    {
+      "path": "lib/quake2-browser-load-observer.js",
+      "size": 2015,
+      "sha256": "3973369e554a9ed6f071930a2b10fe0ef0083ca48a190d3ac258074f7655021c"
+    },
+    {
+      "path": "lib/redline-startup-admission.js",
+      "size": 5712,
+      "sha256": "afcb3bae5807a0b08e8d49262af33c1c64ecfa601717173b630658198de185e2"
+    },
+    {
+      "path": "tools/q3-native-launch-client.py",
+      "size": 26500,
+      "sha256": "d3b9927b17372e74ef0abc8f43b59e709b1822d4927d7793c0153b07cda6509d"
+    },
+    {
+      "path": "tools/q3-startup.cjs",
+      "size": 8776,
+      "sha256": "b3c419924809e4e27a5f4119a0d401c81dff01f1f98538e68a5ce0b74ac11b1c"
+    },
+    {
+      "path": "test/binaries/calc.exe",
+      "size": 94208,
+      "sha256": "cb71fcc9726f756421519a215c39cf89efd930c9ae0fa5bbb59b64050faef52b"
+    },
+    {
+      "path": "tools/q3-input-delivery.cjs",
+      "size": 5320,
+      "sha256": "b0106da3fa7b2b806fe5c56d9aab940c5d9e235c1d3144195f8248db7af3a7c7"
+    },
+    {
+      "path": "tools/q3-fixture-input.cjs",
+      "size": 3374,
+      "sha256": "3136d15840a90e1eb601979b89f92b2bbfa592d32c310528686d4db1cf8689f1"
+    },
+    {
+      "path": "tools/q3-input-wire-observation.cjs",
+      "size": 4771,
+      "sha256": "90fd7a0943da5185972b6a991c1cf88b7759416a9fd2f463d35de276b504ec21"
+    },
+    {
+      "path": "tools/q3-native-input-cause-diagnostic.cjs",
+      "size": 12849,
+      "sha256": "cdf4d95bf0c45e9ee07bee704b2c0ec67127446cb35f719fb275629ce2d2a2ef"
+    },
+    {
+      "path": "tools/q3-cancellation-stream-eof.py",
+      "size": 5040,
+      "sha256": "416dc166d4c92fb59ddb254bd4ffd312f02aea8a6ba244e8a5cd67aadf049f47"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/.wine-assembly-browser.json",
+      "size": 50556,
+      "sha256": "66a53cf2292e89dd668d7e6e444cfc3af67d53a05c0d1509495de87060fe7d72"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/demoq3/pak0.pk3",
+      "size": 46853694,
+      "sha256": "e77abad2466f45a0a7ea018445528f9b95a0fe7789fa1abc1a7718bbf0754b08"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/announcements & news.url",
+      "size": 86,
+      "sha256": "eeaf1dc46aa4f2de0dad263b822bd22e286434d906c1712ac9b6afd0769fef69"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/challenge ladders & leagues.url",
+      "size": 89,
+      "sha256": "41482375c32daf6438c890b810e639b7404bd0e5e89c90173119745aa33971fd"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/current player statistics & rankings.url",
+      "size": 88,
+      "sha256": "1043eb6a03319fd4fd4e64a0d750ad7f836d64ca8e49f46c84d24d9ec444603b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/discussion forums.url",
+      "size": 91,
+      "sha256": "d212d920475138a09a2bd8f7148fa1ebcfa00a83098d7b75a6d4db1a6c913a05"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/events & tournaments.url",
+      "size": 88,
+      "sha256": "a160fe0511abcea09b5a68c2ba919866534eaba429550de77791bc64219c0507"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/botcommands.htm",
+      "size": 44950,
+      "sha256": "22f6edabe5e870e1914c5e49c83bee804f098b26f02a3e08d53b996e31533430"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/dedicated server.htm",
+      "size": 26406,
+      "sha256": "4d0d4dcbd4b99f4febe23b9250a40d35e4056cf4dfca8add36fb438583d18bf7"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/docsart/fast1.jpg",
+      "size": 20102,
+      "sha256": "ac5a11a2b256b38c3ff9ff473eca887e3e9b083c5512119cbf47dacaea6e0165"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/docsart/fast2.jpg",
+      "size": 21919,
+      "sha256": "2089880e48a8d1802f29c0d74893b2df4c2b12d5212646f78a7f9d2dedd1e360"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/docsart/header.jpg",
+      "size": 11762,
+      "sha256": "6a3c25cc736e82515a6a944c2d64536c586623013bcfe5f0b955ed9c831ccea4"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/index.htm",
+      "size": 4103,
+      "sha256": "db116fd4c67b001b4a7351de3dd3dd975377582a7ee100ae2297d85bc844f6cd"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/arena.html",
+      "size": 163439,
+      "sha256": "f512f0ba8b88c6247e926564ae412eeb9f86e5cb79f3af88964a4ee254dca637"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/arenaa.html",
+      "size": 11623,
+      "sha256": "bf792363068ec72c734078621baf03b1820c9d0f0a1af05888719062f109288d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/arenae.html",
+      "size": 31214,
+      "sha256": "fb054f561994d36d0b25b67112030ffd602e62989b9abd7e30bae7216ec63abb"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/arenaf.html",
+      "size": 73697,
+      "sha256": "a8638bacca988d563c9414645fc060b3e5f31dc3242a9f86f3aaed37cdc0407f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/arenag.html",
+      "size": 36268,
+      "sha256": "7bc02a48d6d5fe52afa8519d319ebc65ff7d7a878c6aceddb426a815f5229b96"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/arenah.html",
+      "size": 10597,
+      "sha256": "3ce2914efc158850b2eb95c58dfd8db99b544c656c5ef9bf62f02ce644c073d0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/arenam.html",
+      "size": 13810,
+      "sha256": "d8c6f06af64e7e433c7031163b00213b29b4aceb3e5a64998a2b226b9d53ec8d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/arenaw.html",
+      "size": 139182,
+      "sha256": "c137be9601825fb43f1db9a9f67621c5511d9c15d2b7141c8576441598e5f59d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/credits.html",
+      "size": 6045,
+      "sha256": "5b05d7e5e3e7286eafc499677476619654df6ec81a3e97b4b6fc34bee0749c98"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/customer.html",
+      "size": 16157,
+      "sha256": "ac83f87bc4cacdd5ed3de949ee2e171863ca4e908ef8e4dc9e519b41ca1b3d46"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/default.html",
+      "size": 9036,
+      "sha256": "3fa39143a3f9d414aea71e4d1226c17a9fa06cb60cbcb5a11a86524fc50ad7bb"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/escmenu.html",
+      "size": 14495,
+      "sha256": "9ad55c7847f3f6237c565721321aad84f6c5effc389598bb06eafadbd087b154"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/installation.html",
+      "size": 15115,
+      "sha256": "229d03ff016a5d46c31744b7caff412d28f39f34b9627e2818b26b5f536fc503"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/main.html",
+      "size": 21934,
+      "sha256": "8d7fa34864a0e1e9877d70a9dac757761258ddd06b9cf0a94f100e33dc5f6ca0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/mainm.html",
+      "size": 38553,
+      "sha256": "a18da79a4a734378ee18a3a0cab44654336acd33462ec6ac3004245e4856db84"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/mains.html",
+      "size": 84643,
+      "sha256": "e461d8a10a66df18a33e46e0fd2eb10e81f5f1566a5dbc0dd6c111d77ddcda3a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/navigate.html",
+      "size": 9033,
+      "sha256": "7fc40fba3c11ee477a59c1e226aa1ec5784424e9b75042f020b4c9c86473b1c1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/htmlpages/overview.html",
+      "size": 6528,
+      "sha256": "cf6da5f914e11fe6dc54fedc72cd296a996685dd25fb3515690d234870116f4a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/index.html",
+      "size": 525,
+      "sha256": "d809cf592f8b9f7f9cf503c1cc694dfd5585eea902792ce026fd08bae6b21906"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/anarki.jpg",
+      "size": 11166,
+      "sha256": "245e051ee62a435d6eb9fed3ddd1a34696f17f0d7621bdc247c8383260e7982f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/angel.jpg",
+      "size": 11186,
+      "sha256": "97b02ac9f6d6fd63fb786484e9ff602794db52d2bc500ae226f4f026858a94a1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/biker.jpg",
+      "size": 12104,
+      "sha256": "9840df31422725a42f51ebf793a6388bd270c3eddc8f161460d673e744db6f31"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/bitterman.jpg",
+      "size": 9063,
+      "sha256": "0623ebc3db0939ba0f7a142a3446a06c96125a3eb36b631cd8bd6da32e45f5e1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/bones.jpg",
+      "size": 10081,
+      "sha256": "5f0652037527924353fde2aa0cc30396c430e8f4f3d45a0082c04eaba102bab3"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/cadavre.jpg",
+      "size": 13371,
+      "sha256": "733f214a4c86173e6568ec7b95971387783b77320956c33cbfcb612d1a8fd4be"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/crash.jpg",
+      "size": 9759,
+      "sha256": "421065b7fe0c8616b4d67eba1dcc467363cf6ba27228ead999c1e69adc3aa73f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/daemia.jpg",
+      "size": 10237,
+      "sha256": "35f4feac9ad57ce46b1088e60c3ea13d14e538ee02ea6db654df7fac1963447c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/doom.jpg",
+      "size": 12705,
+      "sha256": "50ec9cd795d84040e9e7bec4c16f357d146aded8249770621e78a3a3a9de0a93"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/gorre.jpg",
+      "size": 12110,
+      "sha256": "96a02268b34de13717246fe744d2fbfc2632283e00b4aa1c5b3112c56a847592"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/grunt.jpg",
+      "size": 12160,
+      "sha256": "bf394b20b5ede9856a24a041397d6523820755af97b6121c5876839774961c09"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/hossman.jpg",
+      "size": 11625,
+      "sha256": "184bfc82cbead1c23d22273c716341e06b91e847cf554844c1da195df93cca8c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/hunter.jpg",
+      "size": 9840,
+      "sha256": "311b480b5195ed951ff1304c2ef264a68ad87107ff1a3c0f4b4832c5bd769bad"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/keel.jpg",
+      "size": 12963,
+      "sha256": "d07be93eee940b0f03160d44fd44f7432bca0254bf406ad785c6273d5f1d3eeb"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/klesk.jpg",
+      "size": 11755,
+      "sha256": "8b3956b7e317ea77b71622438afb22cf0629dabc8c02a0e0eab1144aedac907f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/lucy.jpg",
+      "size": 12129,
+      "sha256": "32d1003bf84a358d493e60590b2a3f1d8f8a06629245627de1769c4f53f61959"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/major.jpg",
+      "size": 10759,
+      "sha256": "ece2ce01b3ba71fcd9a4048b1a954674b1bc1c33eb6d74722fdbefac7a8b8adb"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/mynx.jpg",
+      "size": 9097,
+      "sha256": "cf79c25bb6f02d65a3a00ed07de898160d0f3be49b8a93795bdb6e5d68feecab"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/orbb.jpg",
+      "size": 11782,
+      "sha256": "74b87f6c0e9a2eaf6096f5ce8cf238ce2a899cdfc8c9e9d071043615be1ea431"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/patriot.jpg",
+      "size": 11038,
+      "sha256": "ddbccdb388939faa2b83c663ef5f6f1f38c7d5d4d079f85a13248a1c8675d680"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/phobos.jpg",
+      "size": 12675,
+      "sha256": "ea5247743cfeeaebf61aa0ff751c739920b452059036bbac6e0477297df259cd"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/ranger.jpg",
+      "size": 12558,
+      "sha256": "a07e5e0218bb907d6e17fd5b99866bde376140edc5aa20f233c5fd7a9d720a31"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/razor.jpg",
+      "size": 12155,
+      "sha256": "3538d4032c5f37b1738c9909e789248ee012a09a397476dffb45cb25a5e6a28d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/sarge.jpg",
+      "size": 11481,
+      "sha256": "c0309a4ac616dd661ac7e9387c4bd8a67c00b668e54e3eb43445d90cf5a670c6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/slash.jpg",
+      "size": 10745,
+      "sha256": "030cd6d151c5c3acba7744b06c842df3f1ffac4cfe0422b391b9231b868d2731"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/sorlag.jpg",
+      "size": 14427,
+      "sha256": "3b33ceddf29f304d4e1e5dea24f487d679d1d813f9eb5e322a816b9128986a13"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/stripe.jpg",
+      "size": 13946,
+      "sha256": "4eea147af7439887ce9ebd82610662b6a36bc22837ec0da3ae0813efb1fa01a0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/tankjr.jpg",
+      "size": 15821,
+      "sha256": "8b88af03e887018fca1f41036a6001c585a04a35ce1ccc85d277b9d06a4d7ba1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/uriel.jpg",
+      "size": 11999,
+      "sha256": "b875678e2bc14043f207d2d90672bf1226a06edea2ed57b24ec09a5abcaa915b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/visor.jpg",
+      "size": 10841,
+      "sha256": "ff4463d66a2e61571aedbaf76a204001e5d59e834d078abd2253fa92db2fa98d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/wrack.jpg",
+      "size": 12496,
+      "sha256": "7c8d1c347e0ce2041ba43800dbcb8613fa6b8dea5e5884d95e4c1be0a374103a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/charart/xaero.jpg",
+      "size": 12738,
+      "sha256": "fc880e831a672ded27d2a13355980858c427482ee8c1a85aa79880032c13dba9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/cornerlogo.jpg",
+      "size": 7928,
+      "sha256": "3b51f0e9a16203c89e14a7e4ad473bf209f37a0067843a1e6facad5e4e73ad3b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/cover.jpg",
+      "size": 33424,
+      "sha256": "da9e4039a9b73d211262cec935118001cfd95d68cfc5b9d2c88e786e27b68bcc"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_01_dn.gif",
+      "size": 1566,
+      "sha256": "710897082b27d2249a0320ccebda74f3e7daf2f4410292fdf78df5a2956b0651"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_01_up.gif",
+      "size": 2585,
+      "sha256": "98faade305adcb120d7d14e794627d4ed6990e73aa01e6f0b20f3a118ed7ff1f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_02_dn.gif",
+      "size": 1551,
+      "sha256": "494caab4b6b383fa6005d8c5dc13094eff983d34d92c8a9f5eb1642d956b66a0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_02_up.gif",
+      "size": 2434,
+      "sha256": "b0df7771bcd8db8f1253d6c5bfdb29780bbb92457b9c1277000b5b714735f595"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_03_dn.gif",
+      "size": 1957,
+      "sha256": "81b7b9d47984f52a1787d7c14ecc152388c2d5d509ceb03035f535982af9dd25"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_03_up.gif",
+      "size": 3042,
+      "sha256": "0f88ff80fd4b32f4a041f1e1f9e07101a10d9e1ed56ae544f865d1af21e0cb3d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_04_dn.gif",
+      "size": 1397,
+      "sha256": "20cc03d77fa66e4216879faabf7e428f8f652afeb4ea4f1a83851de761859314"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_04_up.gif",
+      "size": 2195,
+      "sha256": "d91ec403793f7db8ff7bb9f26ea902d2fc8bfda3514b794310ba6f75e301dd15"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_05_dn.gif",
+      "size": 1236,
+      "sha256": "b844ab7d5c862d182a200736ab6582663fc0287177b695c7c74bfad2572c5c0c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_05_up.gif",
+      "size": 1948,
+      "sha256": "342e2f6b46ba44a492ea3681579db781c351f6c7ce2169136e597cb17806218d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_06_dn.gif",
+      "size": 1632,
+      "sha256": "8e156ce21253621d6e185916877329534c95960f50adf3d15861fe15be2fafb1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_06_up.gif",
+      "size": 2438,
+      "sha256": "0b8a87f00ff2958b4173637ee362240d0ec338e89906d00296011e53bc9006e7"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_07_dn.gif",
+      "size": 1705,
+      "sha256": "f546f6fcea9f1d2ea4bde36c1f66e6a46fabbd67a9d1fd4adec416ff9fc89c64"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_07_up.gif",
+      "size": 2747,
+      "sha256": "fac58b56fb84615772b37d23b02c9c0d0f8727f90ce8c275a00ff50dca0ca51d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_08_dn.gif",
+      "size": 1079,
+      "sha256": "ff45870137e10505933d41a5b6ffd4e497d2b2cbeb2b0f763a26e97f6c5cbe4c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/nav_08_up.gif",
+      "size": 1573,
+      "sha256": "f8c6c147465e774f33ff6ff519c6ee553b9b696b88ee6e490783f043b34e0003"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/acceler_l.jpg",
+      "size": 5786,
+      "sha256": "8caf7c1d1ab2d53d94054d8aea131f1f9d45f8ea2357cc31d6c253d9bd1a3775"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/acceler_r.jpg",
+      "size": 5369,
+      "sha256": "208641747201fcee4c0094f412e931b2b94f071ed3a7a301a3dce985a2711977"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/bounce_l.jpg",
+      "size": 4664,
+      "sha256": "a377e60a34a19f729316600d26514e0913af4e09cd7e664da3c11903d25aa58a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/bounce_r.jpg",
+      "size": 5053,
+      "sha256": "2995596619f230053ced2447eb9d09b359b12a08156e953c9ded9aead38432e5"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/captureflag.jpg",
+      "size": 14203,
+      "sha256": "197b72c6af3e0716276295d5232ae403da3e337315664ddaed02dd0bed264727"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/controls.jpg",
+      "size": 14961,
+      "sha256": "206ece074fa05c26e6f3d7aa585590cc5b13a74f43f4b664c8cc58a2ff32f2c7"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/create.jpg",
+      "size": 13029,
+      "sha256": "31db09abfc7d7cddb7e795c599442db5abe63d7e35640d8576e35113818eb2d0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/doors_l.jpg",
+      "size": 5633,
+      "sha256": "c88b7ece4311f56376cc61fa0a4deb9f69b464dd890505838454d6235db7e857"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/doors_r.jpg",
+      "size": 4226,
+      "sha256": "2da6d20d361f69094bd60c93073c746f3454934a0a799427bd263019738e4e75"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/escmenu.jpg",
+      "size": 16668,
+      "sha256": "01a9a0cc02b17070742992f187046da95412bd48490a7f9e0996768d53ce1bba"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/fog_l.jpg",
+      "size": 3049,
+      "sha256": "178215dafc0e9c7716db2e5bc711242472f8e4c3c0682683e8cf5d87ecbad5a1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/fog_r.jpg",
+      "size": 3591,
+      "sha256": "d6e1013bfe3fe938ce29364646e3cf79b76a64fcd792d22f72745adf0e0d1d5e"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/fogdeath.jpg",
+      "size": 3741,
+      "sha256": "e01d7da7db7bac139ca36be986acd76b4f860b8bbc8386af58b52740a5940a78"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/freeforall.jpg",
+      "size": 17750,
+      "sha256": "d93227b6cc3748af408153aee268837db905f8d0060cc90b1350fc5f25026c2d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/gameoptions.jpg",
+      "size": 13404,
+      "sha256": "ff123fc48d84269205307b4bfbf9fb4d028babf63e47d42fcbd1ce1307efee04"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/gates.jpg",
+      "size": 4139,
+      "sha256": "1de54b4c74dc80dc96ef6f909a524f43c59c54ba0f64bb9edbf82401ba19ddba"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/graphics.jpg",
+      "size": 15267,
+      "sha256": "6144476f9be580193969e08283d5f064af15c6a51692d3fc45b72babfd9e1fd9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/lava_l.jpg",
+      "size": 5916,
+      "sha256": "e79606867491d6073713e8042fe950e830f460e6c716a3478054c393501193a8"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/lava_r.jpg",
+      "size": 5852,
+      "sha256": "107368bd2d06d6cd6298403c018cc4036cffb05a46f2bb0ba585af33ec295bd9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/lift.jpg",
+      "size": 3519,
+      "sha256": "b97a6c93efd1696bbd71f284f58ace63a8524ada2833f52f3b187f278c1efc5e"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/multiplayer.jpg",
+      "size": 16354,
+      "sha256": "bbbebed9ad7e4be262739ac2a4be622ff0823a6cd1742b8e61690362c3a4f13b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/pendulum.jpg",
+      "size": 5074,
+      "sha256": "04b87eb83e73757d4fe275008ee646ba0a3eaa2cad3dc69c6e5fe8a41266e2b6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/platform.jpg",
+      "size": 4458,
+      "sha256": "5db5cb0afba13856ba66f2acd8c960a69e986164766dd037d83def853a9e5fd7"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/playerset.jpg",
+      "size": 14539,
+      "sha256": "00fa4622d4b4310afc91c01aa644fb76d0eb21446577f5e8698ad91c353dfdf2"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/setup.jpg",
+      "size": 13133,
+      "sha256": "b4130648a6e6b6c16c676e70ef086dd0ff43e71f7625e86cb899425f5c5c4697"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/singleplayer.jpg",
+      "size": 12180,
+      "sha256": "03218f919cb6896a9f56ea4c6f9452993f62355ee50b5cfea98e18d7510673b3"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/skirmish.jpg",
+      "size": 12578,
+      "sha256": "c0f81eb250e07f0d2bff5bd4e0cbdc96b1d192f6786a434e95c270534f6091ee"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/slime.jpg",
+      "size": 4222,
+      "sha256": "d74065dfbf6cd843647cb4c742acd45174b3d7a9777afea38899d78a6d1ac926"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/teamdeath.jpg",
+      "size": 16275,
+      "sha256": "4b70c7a0c1a9e43853fcbd79dca518a852a94edbd9b05df24d557e38f2164768"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/teleport.jpg",
+      "size": 4620,
+      "sha256": "05f8f4777b7a7f05f30782dfd0000aedabed2639e925ba0d70ca41d075a18283"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/tourney.jpg",
+      "size": 16933,
+      "sha256": "4fe7bcf415172012bdef95aba5bbab378ab516f05d8714fe8cce6e6fdd810d43"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/trigger.jpg",
+      "size": 5266,
+      "sha256": "49d5e0c6d371ba865265c7712748c42591ea2ca08837775e359b3f78058bcca6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/voids.jpg",
+      "size": 3814,
+      "sha256": "7f87c7f473a4647f4611a1c43b5e7dc1e4dae0ec735461e00cae8b8fc68e6ad9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/screens/water.jpg",
+      "size": 6676,
+      "sha256": "36b9fbe341b433764c557f129586b129d119a4a7e52a93da9778de1b31733a0f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/sidebar.jpg",
+      "size": 10877,
+      "sha256": "1e7ba8237c2e05cf22f0c5328c7c4b04ca154aa3e479abebe4951427aafe4586"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/sidebarb.jpg",
+      "size": 6246,
+      "sha256": "b2ab30a582537e8f87a1bbbeb6725e821bd5898b48fe17b3ed635908ef63cc1c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/sidebarg.jpg",
+      "size": 6361,
+      "sha256": "2a83a67d70f9ae5766da11e9697312e1810fcf215107ed468937d84075abfcfc"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/space.jpg",
+      "size": 4714,
+      "sha256": "705796d7c7b631ae3cd9fb160284043368bc165fe77ee49277c6345ea0f9d7d1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subcatline.jpg",
+      "size": 6453,
+      "sha256": "4fed66e85ff564b841ae60b3aee2d1636928af568113071fe4d3ddd83d1fd30c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtfrag.jpg",
+      "size": 9635,
+      "sha256": "3e6c2956d26d4f6e64843d6757a4582281cbfdf92c576ee749efae1a6d10f353"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subarena.jpg",
+      "size": 9517,
+      "sha256": "663b402c609989594c54ecef7237d9a201b55845f9e317492ada5f9d406088f1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subarmor.jpg",
+      "size": 6937,
+      "sha256": "e04a1927b27e4b387e97b7504765db210b64422027acb951be28e11dec4b76bb"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subcarri.jpg",
+      "size": 8513,
+      "sha256": "8ef68ec6721d136deed987e16fefa5c681ef75c469aee69a12bf0a6cfaae40df"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subchoose.jpg",
+      "size": 8940,
+      "sha256": "79313f35fca2010d35624f98354ecf7fcffcbcbefb2b3ea5afd7a617fa88275d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subcontr.jpg",
+      "size": 7903,
+      "sha256": "b72f9fdef116a9951cca3c524972e62439d05306531d2a0b30eb200fdbdc5da8"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subcontrol.jpg",
+      "size": 8658,
+      "sha256": "41968f1c0b3d75c134d62bd658619737814315ca31fd199b6a0a63088e7b5606"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subcopy.jpg",
+      "size": 9615,
+      "sha256": "913e1594344db79f6002c07719e4cc4a5abbf0378d33fb7f49c97e7436b92330"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subdemo.jpg",
+      "size": 6867,
+      "sha256": "ff44ca71bce971bbb49443979cf997d1daac3f8c5221f8485a0451bfe4a58ef7"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subenviro.jpg",
+      "size": 9168,
+      "sha256": "9e4a17767d44ec5cdbb54e32325403083bed49358d24a2c5b66b2c9487ee3968"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subflags.jpg",
+      "size": 6375,
+      "sha256": "20bc2e9e6eb2caea8ec5f43adb960254962ee6832ebb6aa8e2006485c3c31ce7"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subgame.jpg",
+      "size": 8848,
+      "sha256": "efd0ca1e5046b97948b3f09d039b156ba4c4d243702396a1cdd58e3054668c4f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subgamg.jpg",
+      "size": 8879,
+      "sha256": "8d9982562cb608a364bfa4f0eddc9e18e0f25c34d1187993380d6e239fac8068"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subglad.jpg",
+      "size": 7958,
+      "sha256": "8f1e5ea208858c73bb96a9b05f046e1e011a7a2c41d64c43360ced3725b85227"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subgraph.jpg",
+      "size": 9524,
+      "sha256": "6a5a85b600e801eb5becb73f480215512f13f347d4962e7be64e6749a070a1ee"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subheal.jpg",
+      "size": 6704,
+      "sha256": "d2d62246e3b9233a4023f31448e82103a7bb208628f2ac29f148b1ba11114eb3"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subhost.jpg",
+      "size": 8809,
+      "sha256": "ac5bbfb9bca788f46ec44773e49d4d22978a74d74c0b84e7bb6c8370417b3b4b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subinaust.jpg",
+      "size": 9161,
+      "sha256": "ba64baaecbfefbc67cb863a3477a64d6e8c5ae361874f96baf45ba5e1e77cef1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subinter.jpg",
+      "size": 9722,
+      "sha256": "8b83fe1e4bab9110ea4bf296288d3e1dc7ae6bc45ed38a95a4c242c56acf094f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subintheus.jpg",
+      "size": 7500,
+      "sha256": "cf63a80a1c7dda9b935d8fdb39728cb899a0f9e86afdfc59d24394cea8f511d4"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subitems.jpg",
+      "size": 6613,
+      "sha256": "156927a2092867a8494dfdc22678bf38dae03e64327e771be04be934e6c91505"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subjoin.jpg",
+      "size": 8833,
+      "sha256": "63eb1ad025c04e4bf58aa7c96573285f3267151d93c34aa1b93f576ffa9c343c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subleave.jpg",
+      "size": 8055,
+      "sha256": "812228370ff131b7e0b74af42f353603ae39174c833ea384008f4068aabacb5f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/sublook.jpg",
+      "size": 6275,
+      "sha256": "3a099227f4ee54f09de9ffb22af42e870b5cead9455165be836dccb597f8fce2"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/sublook02.jpg",
+      "size": 6559,
+      "sha256": "415ea5028d0174832b434df556f02684c363c067e1c18312a2bd83a1802ca938"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/submedal.jpg",
+      "size": 7179,
+      "sha256": "57e037b2a4e26985fdb660e93aec1575bfe5d67c8e89142222be68b4bc0191b0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/submisc.jpg",
+      "size": 6300,
+      "sha256": "5ff85f71ee0fd1f7a60552687fbe1f5c41d420c836dac0dcd20c38a577c03897"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/submisc02.jpg",
+      "size": 6558,
+      "sha256": "0b422d9bf3c16a771a1e0e012bda8cf9fd2c11a264557fe3f7849a93d9957567"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/submove.jpg",
+      "size": 6323,
+      "sha256": "0d68b3ab36705bfcb45d3d9ca426a23e7b558f66d3a0e29d1abe396907e0a692"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/submove02.jpg",
+      "size": 6580,
+      "sha256": "801927ffed45a85b1141f14e28a7b3ccc3daf87c3e0ae379c3a85f4dbeb7f67a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/submulti.jpg",
+      "size": 8468,
+      "sha256": "ecb5640933f584a70442d7a7367041c3f29437dc9338649dac78c0ab2923206a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subnews.jpg",
+      "size": 8638,
+      "sha256": "be4014c8ac83883d0d4ba30a4c36d32452d7698464c092549bb6371fbd38da0c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subplayer.jpg",
+      "size": 10510,
+      "sha256": "06a5e246bcf1d2cb821e8743add86d0aa3e567cf2f22740e5c8f6e0dcd3be2bb"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subplayer02.jpg",
+      "size": 6883,
+      "sha256": "99dd6622702295821217848a0cb5014f57ff09bf99ebf811e2fc11542b8350ff"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subpower.jpg",
+      "size": 7867,
+      "sha256": "bdfe79faa1de44e808ea6c99a2e5b51010428249c74acb156b04f1718f04fa05"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subquit.jpg",
+      "size": 6624,
+      "sha256": "8e457d40cfe055f96d7029cf233dbdf1561a1af0d8a3adca878213576619866f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subquit02.jpg",
+      "size": 6744,
+      "sha256": "22bc596b12aeaf4387280c3f1b14d52a0edfa1bdc76bf3c985ad61e7fdbb7d4c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subreset.jpg",
+      "size": 8994,
+      "sha256": "d4c86b0c998eb1a4692a5290b13e1dbf2041631e49bd50518a0f01b53a1ec1fc"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subserve.jpg",
+      "size": 7165,
+      "sha256": "3c453a4b87a07dba570a70fb4a6321461205966100e5bc3a38ace0f8fa937428"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subsetup.jpg",
+      "size": 7945,
+      "sha256": "208b681a4975aeed7776dfa49bc42620eb92d4106f15d3992ae1912e8ea2c1d0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subshoot.jpg",
+      "size": 6597,
+      "sha256": "487d0229cfabd71e734159bcd3ee8b2c280cd7bc500d58d308eaa651d4eecb4d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subshoot02.jpg",
+      "size": 7042,
+      "sha256": "5f2603b5f5421e89e426c3e187598e549b261eb24a6b37fe17dceaee9acea714"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subsing.jpg",
+      "size": 8767,
+      "sha256": "a8f68c34506c9eae7e5b4b269841f571289fa13d42cd694a8b5796e0689c6a9d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subsyst.jpg",
+      "size": 7038,
+      "sha256": "0fe0115c86e6243a95871b9797a706ae05c8859d9a1694b1c9fc9c2d8116b586"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subteam.jpg",
+      "size": 6498,
+      "sha256": "6d3dca705c5b4087cc51f406296d5fca3a5f8ebc80c0f39e97976a6eb5674914"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subtstruct.jpg",
+      "size": 8712,
+      "sha256": "be4a190e6429cc4eb4e8e7d9962048a9d9bb0ff3e4de563f211881bac57b5960"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/subtitles/subweap.jpg",
+      "size": 7100,
+      "sha256": "3520c6c4c3a8fba1c60cf6d1bff1e9ff9f70de8d2d4fcdcb7f0744fa2facf03b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/titlearena.jpg",
+      "size": 13709,
+      "sha256": "0cce6234eda231391fb0b32d669705ae9bc75ecf37cdcd6380a9cfde5a4ca128"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/titlecred.jpg",
+      "size": 10043,
+      "sha256": "95f0b16e0842a721688cc1851f3d0c2831bd97222d22c8b20b2e9aea56a8b917"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/titlecust.jpg",
+      "size": 15186,
+      "sha256": "7f6cf292784a847c5a7f3a3d61871da811f4732cdbc93454d2e0f2fb49bf1921"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/titledef.jpg",
+      "size": 13796,
+      "sha256": "07eca145b8c3408d3e21eb2d66e3fd99f9d2fc59e75d28ff309a53768cb895b5"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/titleesc.jpg",
+      "size": 10423,
+      "sha256": "3a2b57bb947ce5a2c5a1dfbbf3207d7cf55b4ae4c9bfa1c38ba33bb5ca5ecd4a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/titleinstall.jpg",
+      "size": 12257,
+      "sha256": "c3b06b05ac2721ea9a773d11f63ef491104f2723bf840ab11fdbaddbc7ea10d8"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/titleline.jpg",
+      "size": 9461,
+      "sha256": "fa9c9fa2785fe2951fc79078a5522e00d3bf9c349ecf8c92ec75544dc2b06b9c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/titlemain.jpg",
+      "size": 11739,
+      "sha256": "b1adae11a7286cde314be200aa190a986ff140f06f8dbaaf4ad89b31e14c0b7d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/titleover.jpg",
+      "size": 13370,
+      "sha256": "190204299e3de33413cd2d060c149f010aa4f1b2857947dadf9f4c6bff77eb67"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/armorcombat.jpg",
+      "size": 10836,
+      "sha256": "83f613323457095b85e0198f729658552ead8d25375cee6ab3ce343397f8b911"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/armorheavy.jpg",
+      "size": 9339,
+      "sha256": "cb93a0242801389f5fbaa745be5eed972731c44a620590740d5730cd14b57990"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/armorshard.jpg",
+      "size": 7965,
+      "sha256": "4bb64e6d1ac95e4a9a68a038bcb8c9a3940875767cc7d422ac512f9ae66b2b8b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/battles.jpg",
+      "size": 8736,
+      "sha256": "491d2f2e7daa6389c731cb0b5ab8b01d433d05e17120522e957440d918ee00a1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/bfg-10k.jpg",
+      "size": 8716,
+      "sha256": "978f54454b021d12fe7a8a373df1f4efb50d4dce23da60a67049d049e3ea4604"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/bfg-10ka.jpg",
+      "size": 7582,
+      "sha256": "2439b919117e503d4d9678277127c4e6a8b3c90985883e37d4912af45cb31761"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/bfg-10kh.jpg",
+      "size": 7048,
+      "sha256": "eeea389bcd82103c116925417bb5b69a4e1562c1652668e35532157cd7559df2"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/blue.jpg",
+      "size": 6404,
+      "sha256": "ae5fdb544f2c7fae73e455f53684cca71a82253f95e2d39800550c2757a585c6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/flight.jpg",
+      "size": 8764,
+      "sha256": "f73d9147a3ba0a2755a7b54b5a734a4797ae980fe7b4272a1e022ea63103b286"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/gauntlet.jpg",
+      "size": 8349,
+      "sha256": "767f798eda5da03f8f411c609180ab089665bef980dade36fabcc095b6bc6fc1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/grenadea.jpg",
+      "size": 7217,
+      "sha256": "491a2effda2b9c153b6282e9c0881c795ce0cd4dbc64e03c2acbdba68ec2a6d6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/grenadeh.jpg",
+      "size": 6424,
+      "sha256": "58cf4b4fdd1189c805b435bbc4bca9416812c7be5d96382c02601dc435e0017c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/grenadel.jpg",
+      "size": 8523,
+      "sha256": "8497a376dda25dc61525b687e86ca95cc12739c00af9302a66b1e347f58e43c9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/haste.jpg",
+      "size": 8724,
+      "sha256": "a3f6303402618cee6f2dfd07a11910d07a32dcc66c34aa3f5b377e5a018b9778"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/healthgld.jpg",
+      "size": 9970,
+      "sha256": "49f6fe94b49b529a2b1423d6fe70998fc34879a9f919cbc3333ffdf22d4ba7a7"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/healthgrn.jpg",
+      "size": 10306,
+      "sha256": "8130178361cce813b599d253de9afb39678c925efa18ccdfad866af33934a884"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/healthyelo.jpg",
+      "size": 10412,
+      "sha256": "e0518ef41ccac452d2f918fdc9a3d0edf0a48d02e0bf723def2e91db13080ebb"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/invisib.jpg",
+      "size": 6997,
+      "sha256": "fd886a6e0e4a3b97e9b3e463cdc750b0c88ac749545aaa883742acf2c49f03a1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/lightinga.jpg",
+      "size": 7379,
+      "sha256": "bceb852e0a77dd2e350a7ea45adf85061e0619362fde10a8a22e6eed49f3ca4a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/lightingg.jpg",
+      "size": 8814,
+      "sha256": "42bb5264e3917c8c36f98905429f2a2247e254d9d84fb1af9856548124aae193"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/lightningh.jpg",
+      "size": 6823,
+      "sha256": "c32661c030945ed308c277fc52190d59c46c3f25fd3e20f73c2670ffc4e0ed1b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/machinea.jpg",
+      "size": 7462,
+      "sha256": "d7ca20ff1af81ef2faaa45f5c9f906d642ae7a5378e16c459d765536ea1d7308"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/machineg.jpg",
+      "size": 9096,
+      "sha256": "fd915ae82ef1b3b87b2b03782965ee77a4688786ac8dd09acec66d6e2a5501d6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/machineh.jpg",
+      "size": 7355,
+      "sha256": "7e49e52cc374b570601849bc89fd534a3b3441ab6f525e05ed8641ea696cb58c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/medacc.jpg",
+      "size": 5632,
+      "sha256": "def8e067c46aad5889a22c072913d460266099d6699d6944b4800e398a1e8f07"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/medexce.jpg",
+      "size": 5882,
+      "sha256": "a16b229c90abd2cc665d317a2195558cad10e07807d2e7cebbc73d2d83022ca5"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/medfrag.jpg",
+      "size": 5688,
+      "sha256": "9cf887da1834ed50c258303a6dc188ac4df0c1f52e57dc303c00a0bc123c4124"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/medgua.jpg",
+      "size": 5836,
+      "sha256": "1a896415e323d94ada9413d378845e40ff7078a293cf28a09f572ccd5257b0fa"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/medimpr.jpg",
+      "size": 5734,
+      "sha256": "efb37a0ef44ffaa9747af3e58d50947b05821a1a84a09d92174e8144b3ee136e"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/medkit.jpg",
+      "size": 6982,
+      "sha256": "f23c22f29e2b2f94b542176306d4157118d5b13e5d66a72ac6811a85671984fc"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/medperf.jpg",
+      "size": 5752,
+      "sha256": "4c1a6617629076b99c5677adaedf9341476174d94d9b739ef626107ae4a1695d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/megaheal.jpg",
+      "size": 7984,
+      "sha256": "bcaa9d4de8d8b4a60aff6e5ce969917e935e0cca16c16ccb4996740955ddf1f3"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/plasmaa.jpg",
+      "size": 7468,
+      "sha256": "b33c0e24276c880b8e1829ca4cdc91fe699975dbccdf5478a8e48f34079b4ed0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/plasmag.jpg",
+      "size": 10393,
+      "sha256": "0ef6dff74a21eed8c553bfa106833db79c200539f8daace357eb55b5e10b27f9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/plasmah.jpg",
+      "size": 7075,
+      "sha256": "f2b01665d454eda2672d1fc6ab336075059243ed30acfff02a2d5907ec3e506c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/quaddam.jpg",
+      "size": 8233,
+      "sha256": "5f21d9fddffb2b4c775ad047b5e50be0c29b2750f12f391f896c1535c64efd6f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/raila.jpg",
+      "size": 7728,
+      "sha256": "8d78aec896410821e670cf6a74db13f3ae7a8d6f42096399af3e6db0693e7720"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/railg.jpg",
+      "size": 9869,
+      "sha256": "c0dfef448d4dd835a438ddb768ca1db454fa57e9dec3d8d5663063cc377d035f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/railh.jpg",
+      "size": 7566,
+      "sha256": "6f926963a75c13e9ce397623c1908ee2746be2766259ee7e33af6d4970c4eac0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/red.jpg",
+      "size": 6832,
+      "sha256": "64863b35616b2c8593df397d84be7cd0be3a2ec1b5dd96eb0b0caa5bf0c12582"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/regen.jpg",
+      "size": 8524,
+      "sha256": "322ff659ddb07bdd46ca5598e0f5a3aadca8c404c746c5fe5e1eb258ffb15141"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/rocketa.jpg",
+      "size": 7229,
+      "sha256": "458293ea779346d32387704d5cab6d778a47eabca2a9533890650b5706035428"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/rocketh.jpg",
+      "size": 6763,
+      "sha256": "a251e1d4c5fb905b4d7d0951d09e80145371130f9f009db95c3334430813ce06"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/rocketl.jpg",
+      "size": 8771,
+      "sha256": "c8ff057c355786af5088982fa2d6683b13837b41b57fb9fc9210a57f4cd63a9c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/shotg.jpg",
+      "size": 8232,
+      "sha256": "1a27ea4088ebe56d85a7fc443aea809ad7c7023e9adbf65405309d0fdfe0601f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/shotguna.jpg",
+      "size": 7341,
+      "sha256": "e6f3d2998aa80a63cc60487d4027d5a9c68807eca66fee10ea654b938b4f5358"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/shotgunh.jpg",
+      "size": 7194,
+      "sha256": "567533db76b91e0f5a43352d51e3df1dd782e99efe579854d8208bcd6b9d1f80"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/manual/navart/weapons/teleport.jpg",
+      "size": 7327,
+      "sha256": "09c02f084b5471e9841af146d1462afcc8cd63022ed520c0e4c8468e1ce663aa"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/q3a eula.htm",
+      "size": 30480,
+      "sha256": "2d473a168d9a19df17cb64362cd6e08d2e48a4d8c0f4846b0221f775705cdb3b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/readme.htm",
+      "size": 19122,
+      "sha256": "10556b4aa2026047c7b4372e2394e2744704b3fbe65cec0ee7e4ecc6a3a47577"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/index.htm",
+      "size": 3590,
+      "sha256": "483fa6ced3384854e27e27a6c6ab7aad0cc4a427eeaaae2fc644696287dd3f8f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/a3d_driver_issues.htm",
+      "size": 484,
+      "sha256": "247991eb73e4cca81cad14852cce31d2872e29afb5c16955900ff59bd2b9e257"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/audio_problems.htm",
+      "size": 1741,
+      "sha256": "d98c8fde9607a68f010d5a54a4257c73f0b9611a21bfd762fd4daa9e84239a7d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/cyrix_processors.htm",
+      "size": 602,
+      "sha256": "398d1e595f51ed97e0e927546ef60ab9d690f85a740a25ce9d2065a97111a06d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/directx.htm",
+      "size": 3135,
+      "sha256": "beebf298af37b30b3d0984054bb959bb3e8f5ef5248ca178f290537588dfeae3"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/glsetup_info.htm",
+      "size": 3211,
+      "sha256": "8baf851c5fe9c7f6d8f74eda87fa7df26048a4009a81d3df533019ce32297236"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/improving_performance.htm",
+      "size": 5271,
+      "sha256": "e62367b839832176f6a767aa2934c177aef0fbf8242af4ad48c825e63abcaad9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/installing_the_game_to_a_compressed_hard_drive.htm",
+      "size": 567,
+      "sha256": "ebe9b18dd32ff6ce1ecf345703da18c9df713aa6c58c208a6c28093794ec36fe"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/minimum_system_requirements.htm",
+      "size": 2781,
+      "sha256": "3656c2cc2400b00a85f12d5d24f8d0ed85d4e49f8474147eabff6b0470e5f50c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/sound_card_conflicts.htm",
+      "size": 1779,
+      "sha256": "47d46cb2f210c3771a7a2a47089de37488516fcdf4086c34c64e4c424704d173"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/information/updates_and_or_patches.htm",
+      "size": 3443,
+      "sha256": "9eabd600684e1dc83d81e7bb34229ad6f068f39b25b7473853e951080ef94de9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/3dfx.htm",
+      "size": 319,
+      "sha256": "b9c64dd3d6e34011e34cf0515576a55fc491ce06d443c8a385adf51a9b750b23"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/acer_america.htm",
+      "size": 545,
+      "sha256": "2b75e83fe27508a104ba2ca8078f1c5d66a303a13551a5d3593a712fe9d9cd73"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/adlib_multimedia__inc.htm",
+      "size": 550,
+      "sha256": "3e80f0b207ea4886db0297ebe469b525767ef743766b5c3906cc5111c133165d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/advanced_gravis.htm",
+      "size": 799,
+      "sha256": "ec395d3d8b97176ee578dc04aca65904531d39a4751508c7f4cd55cd85f96ccf"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/advanced_integration_research.htm",
+      "size": 1223,
+      "sha256": "4db2f1c4dd43652f8612100b950722923cf8faab94a7a2a7ce48aa60732a32e8"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/ast_computers.htm",
+      "size": 721,
+      "sha256": "b2275085c81ce6e094d57579a28374769da1bdf62aae464cb0f097cf531da4f3"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/asus.htm",
+      "size": 907,
+      "sha256": "a23cc701149607cb4d2254fa00f65b501af1f6d338931ba8343ce89d25e404b8"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/ati_technologies_inc_.htm",
+      "size": 651,
+      "sha256": "cb1864d603d40b94128457b391fea4f47830f13a5eba7b0518b8e9632a3a9df8"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/aztech_labs.htm",
+      "size": 734,
+      "sha256": "02f1284bf658d6e45f1ce193df37e82665bfa4c910e14157cab352968f3b453d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/boca_research_inc_.htm",
+      "size": 564,
+      "sha256": "5006c69ad738dcf6d1fa693cf0951fbb6598bce3775990165c2a08939aa09a25"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/canopus_corporation.htm",
+      "size": 408,
+      "sha256": "fdc2881e50b146867a49a6b3a5644ffd1f61d78c1c4a9e9af6eab6946a0ab5be"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/cardinal_technologies.htm",
+      "size": 1018,
+      "sha256": "c3ce8487fe59000a9b876f33ca26df9ff896196f529050429aec99bc620d3550"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/cd_rom_drive_manufacturers_list.htm",
+      "size": 745,
+      "sha256": "42d93d6f377c7fe1de1cfe3cf45cfbd45fca7feac0a2a61042a71504d209f7e0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/cirrus_logic.htm",
+      "size": 671,
+      "sha256": "77f1f5b8903057463bdd55decf3cbffc52f54cc1996b7e192feddebde0c2de0a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/colorgraphic_communication.htm",
+      "size": 528,
+      "sha256": "a6561071c486dd3d6e316e22493c0ebe5b6c392f5fc35a0503e9098fe2cf38e9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/compaq_computer_corporation.htm",
+      "size": 661,
+      "sha256": "aa4316671158835dae7fb8e24f577a3b815affa212fb747efe12e2215419b50a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/creative_labs.htm",
+      "size": 636,
+      "sha256": "0821f568c89b677b66e467080fe3e75ec5d0f308fed8713b94f4ff7a09942562"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/css_laboratories__inc_.htm",
+      "size": 523,
+      "sha256": "8f34aaed4ac372fbbac83a5edecfd17d4d74b08ba08a09720580ad0a21df9a9a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/dell_computers.htm",
+      "size": 720,
+      "sha256": "16dd07f8b3c9bca475d0e1be8537870ea35d4a99f0849e8e78de3960ad20aa51"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/diamond_multimedia_systems.htm",
+      "size": 623,
+      "sha256": "dc50057bbe8b1177bac12300f99010c1b57f59b9678ddaff9b1c58338f01b4a9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/epson_america.htm",
+      "size": 499,
+      "sha256": "ea323b3b926e5c9d8964ffc044613eba3b698005913305af6d13ed8557a252f1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/gateway_2000.htm",
+      "size": 611,
+      "sha256": "b1c89d8cb2064ee9d9794634c5883a5c243f0122189a84d76ece85e604c51522"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/genoa_systems.htm",
+      "size": 1030,
+      "sha256": "cb71a2191692abc27707a6120d60089763a3d159217faa1ba8e303d251923072"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/hercules_computer_technology_inc_.htm",
+      "size": 865,
+      "sha256": "750f930ce8fc21569005d4d221d21593a21682db20f98473aba2d51364535c75"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/hitachi.htm",
+      "size": 516,
+      "sha256": "3a5b48b5b727a0b076e7cd30215bf7581173613f6cdf99f3cefc4de7c381e89b"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/ibm__international_business_machines_.htm",
+      "size": 571,
+      "sha256": "8e1fb0056ebbc3ab3ed4615eac622d555ee5ab4785e018026250f373354edac1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/intel_corp_.htm",
+      "size": 461,
+      "sha256": "1c167cd887b7ea4a12e58ba856d88edfb720edc2f1cfafd7e399b24390a5749f"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/jazz_multimedia.htm",
+      "size": 1097,
+      "sha256": "b4d216246058a32f7dd7a04673dfcf71aadf60e5adc9847c23336ee7a70359d7"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/liberty_electronics_usa.htm",
+      "size": 502,
+      "sha256": "d2332e811df4c334d748bfaea98820345a4d1e484ab6e0bd06e72c613e560a02"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/logitech.htm",
+      "size": 534,
+      "sha256": "8913c50a81595205646fdacfdfbe8b5af1b1832d60d14ffb3c83333e442ccbd6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/matrox_graphics_inc_.htm",
+      "size": 595,
+      "sha256": "4a2150a51425ecb465f8e643e694ef93cf1fbe1a275c5ce8edcc317d1a4f31d5"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/media_vision.htm",
+      "size": 652,
+      "sha256": "2aba45c38854e6ec37b8508a937c8ced0bd281eea85a760ea0ab5c38069dee18"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/microsoft.htm",
+      "size": 464,
+      "sha256": "1436a9771c0a7be76e43925544b5769b5287eba8052eec10690490130d6bc8b2"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/mitsubishi.htm",
+      "size": 469,
+      "sha256": "79f390fd6c341a50a1eb0cd06bb578394306fe94801e609b2b93301c1e77a72a"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/mitsumi.htm",
+      "size": 396,
+      "sha256": "db106b437a0130241142ad0e4a76706e774ee46a26c14c4cca83383053cbfe19"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/nec.htm",
+      "size": 520,
+      "sha256": "d212feb915a9109893184a3cdb6d9d7a8b02bad7ab961d4bb4dac973d7792b4c"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/number_nine_visual_technology.htm",
+      "size": 558,
+      "sha256": "07de0cf77d9b74cdcfb3f74fee879d2687a201b71354f7b545f87025453342e7"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/nvidia.htm",
+      "size": 495,
+      "sha256": "7d34224951340e7e8335202c98dc96dd026a7fad51095a8c55e0772cf2468b58"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/oak_technology.htm",
+      "size": 472,
+      "sha256": "78f20ba7a4adbe349baa990d54f752f576b18e2424a2c43ca3a5b5b2280111f6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/orchid_technology.htm",
+      "size": 1029,
+      "sha256": "e91bf931ec7edfaa0e4f1f922415c63440e3b6988f7dbc9e8d1277d259a00615"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/packard_bell.htm",
+      "size": 612,
+      "sha256": "90c2694ae404d4393eded9e28778019fd252da0419e37e5056b71101bca9c4e5"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/panasonic_interactive_media.htm",
+      "size": 593,
+      "sha256": "f43b18c8cac047c89d7714a669e5726648d6c7d6c26fec48a247ad7c75e8edd3"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/paradise__phillips_electronics.htm",
+      "size": 808,
+      "sha256": "87b0754aafde4edd29dfee648d396686581f97fe8713ef5a3a5e52a055e527f1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/real_magic.htm",
+      "size": 519,
+      "sha256": "3098b3e2fb47f72eb4096c16a450b03881e39711a75fc45a1f7b6f541a1017ea"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/rendition.htm",
+      "size": 577,
+      "sha256": "b54fac4c11faaad7b452e760ab13d771916446d99fdf8c7314b686d0aa365269"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/s3.htm",
+      "size": 476,
+      "sha256": "d70e79f4b04b3d55389e2e435154f64ab6374ba22a006fcadb443f14c348e884"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/sigma_designs.htm",
+      "size": 520,
+      "sha256": "74f7cc1215f8d89efcfb2ddd44b356356b802bd435c0102fcc3815995b1587ea"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/sony.htm",
+      "size": 447,
+      "sha256": "d98f724cbfce9f3cca3b04b9e1a2d6b4f7a068ee99ef80e01e877c3a8e7118b1"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/sound_card_manufacturers_list.htm",
+      "size": 1422,
+      "sha256": "77928574eb8fcce4ca12c4c7c7ca5c3627893f6a52fa06a466a477b332cfb7e3"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/stb_systems__inc_.htm",
+      "size": 544,
+      "sha256": "7e98db7db5d550dd84461efc5d9f7cc15cc702a3d3122eb867f81938686cf254"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/swan_technologies__inc_.htm",
+      "size": 370,
+      "sha256": "7f410867fcfbf52c5e3c5abc8950e31806e17a8fd73400e99f994e07acd1ec7d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/system_manufacturers_list.htm",
+      "size": 1556,
+      "sha256": "eb9ed934ab98e5e0d7e88e7ec8ea8e9c13459bde0d0d5df25a55dc7778122c22"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/tandy_computer.htm",
+      "size": 532,
+      "sha256": "8f1c3bca73fb060e238fdd70817507377d071ea15b11ecef5cb531ecac83445d"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/teac.htm",
+      "size": 462,
+      "sha256": "70b20de067c997d2c84ccf952479103ec20cc98c003ac3706470d6762728e2bf"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/toshiba.htm",
+      "size": 457,
+      "sha256": "88295b45df38cc5e36b72c177e32673aec1145641c9d36eec368ab76478a8999"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/trident_microsystems_inc_.htm",
+      "size": 515,
+      "sha256": "04884a10b2ccfe3b2ac2f3de8bfc7c652b76d7a9d1a2347e5dbb17a9c95cc6e4"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/tseng_labs.htm",
+      "size": 700,
+      "sha256": "bb88e8a5f18f199492b4fa55ff787481e7c71694e99c2f99dc584b7438975463"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/turtle_beach.htm",
+      "size": 505,
+      "sha256": "2a50e1b76ce8dbdca0acaeaa0bbb45f17a5dfe49d3f919affa83de70c14a06d4"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/vendor.htm",
+      "size": 6255,
+      "sha256": "6658b2b0f69d963c86858a3ab4e565b8bb14df218af3e12e49c98fe48dbb17c6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/video_card_manufacturers_list.htm",
+      "size": 2685,
+      "sha256": "89a189f9375e09b0c294759a32900e9298f4604b2e799b2b729329745d30ca68"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/willow_peripherals.htm",
+      "size": 589,
+      "sha256": "3448c9c55a1697cdd0dde22e7fdd18de662c1d3aafad3a300999fc9623f7c1c9"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/help/support/vendor/zenith_data_systems.htm",
+      "size": 554,
+      "sha256": "83c86523a1cf792a321c3a730776a4a9eb4d7adc5d8992fbee5d1ffc89509db6"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/mplayer.com - quake iii arena.url",
+      "size": 164,
+      "sha256": "430392b5c6fb5f4728e0db5e71e7b144b6cb65e483dd319d212f9a70c0824921"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/extras/team (clan) listings.url",
+      "size": 87,
+      "sha256": "49072c8b3ec8ef92cdbbe798a5c7475fbbd422ff97c970917f68d9679e402fbe"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/quake3.exe",
+      "size": 864313,
+      "sha256": "2c0dd4d06e3282e0abc41ebc8e84e2d9868a17182ac175b232a9bb604a8269a3"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/requirements.txt",
+      "size": 1547,
+      "sha256": "2578ee1e7a10caf6d7fd1d2d6039a55487583f27876b327e5570f6f4269e71b0"
+    },
+    {
+      "path": "test/binaries/candidates/quake-3-arena-demo-installer/installed/uninstal.log",
+      "size": 20900,
+      "sha256": "733c730306e8dc04765a85191c45b748b66d9db0f0f720a0c794ffbbc83e23bc"
+    },
+    {
+      "path": "scratch/runs/20261109-q3-relative-menu-native-progress-1415/original/runtime.py",
+      "size": 1805,
+      "sha256": "4cc374d2f733a23ecf27693c7ccf56e2a124812f1fbccd3721b63662adbfeba0"
+    },
+    {
+      "path": "tools/q3-menu-pointer-control.cjs",
+      "size": 5636,
+      "sha256": "405c8af989d4f0c8329cf1ae4d8e7a3e0d87961cba92e7b295ca1b23eba953a4"
+    },
+    {
+      "path": "tools/q3-menu-pointer-control.test.cjs",
+      "size": 12523,
+      "sha256": "2adec94e7cd716204eacbe66509c907541e9aa2e3b1042dcb3003794713b88e2"
+    }
+  ],
+  "httpPins": [
+    {
+      "url": "/build/wine-assembly.wasm",
+      "size": 2185646,
+      "sha256": "d5dd33faadee5a0f77ac35347ecf0e4efe5efc86d92b03ef45ffe5adee83aea0"
+    },
+    {
+      "url": "/host.js",
+      "size": 407933,
+      "sha256": "18993aa66649701e25e678170ad86a79279c7281f5ade58c59867b6fec382008"
+    },
+    {
+      "url": "/index.html",
+      "size": 183083,
+      "sha256": "fa81b9ebfd01d3fbfa2852bfec4503a87d4b5ce47cf4522cd4c134ac82cfb11c"
+    },
+    {
+      "url": "/lib/apps.js",
+      "size": 444514,
+      "sha256": "f29c432d535617ca985572a01b5455f7acc2a349d321e4dedd5b54b57b33bcd2"
+    },
+    {
+      "url": "/test/binaries/calc.exe",
+      "size": 94208,
+      "sha256": "cb71fcc9726f756421519a215c39cf89efd930c9ae0fa5bbb59b64050faef52b"
+    }
+  ]
+}
