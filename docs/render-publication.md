@@ -494,6 +494,34 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   Browser threaded execution uses a guest-main Worker and an idle page shadow;
   `test/run.js --threads` still keeps the guest main local. Do not treat those
   topologies as equivalent or block the page to conceal this remaining gap.
+  A stronger dependency probe now records both independent Worker release and
+  release requiring a message serviced by the local host event loop. On Node
+  v24.21.0 at `6b7eeeaf8`, the local callback abandoned the former in 0.126ms
+  and the latter in 0.042ms. In both cases its pre-call increment executed once
+  but its post-call completion marker stayed zero. The host-dependent order was
+  `send entered -> send returned -> host serviced owner request`; both fresh
+  sends after release completed normally. Thus restoring the outer registers
+  does not roll back the abandoned callback's effects, and replaying the
+  callback from its entry would duplicate them. A blocking wait or a larger
+  retry limit cannot service the host-dependent owner request.
+  Evidence: `scratch/runs/20261109-d3d-callback-dependency/probe.json`.
+  Run `node tools/d3d-state-callback-probe.js --require-preserved` to make this
+  unresolved condition fail the process; `--output=PATH` preserves separate
+  investigation runs. Ordinary diagnostic mode still exits successfully after
+  recording the failure, not after proving callback correctness.
+
+  Required continuation work: move saved registers, interpreter/yield state,
+  invocation identity and scratch ownership out of `wnd_send_message_inner`'s
+  native locals before allowing a local callback to park. Its native callers
+  must also retain their remaining work and temporary output lifetimes; merely
+  returning a pending result from the inner function would unwind those frames.
+  Resume the existing child at its blocked API, not at the wndproc entry, only
+  after the host services the owner and the guard can be reacquired. Validate
+  same-child completion, exactly-once effects, parent restoration and failure
+  cleanup. An owning guest-main Worker keeps this native stack alive using the
+  existing local Worker wait and is the browser's current supported topology;
+  extending that topology to the CLI is an alternative to a full native-caller
+  continuation migration, but neither is implemented by this diagnostic.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
