@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed2bf66d297 local cancellation fix1198SHA-size PASS; original0052 remains menu-only historical33missingwaits commandEOFfalse UNKNOWN. Fresh q3-remote-cancellation-repair-0737 thread01a1bf3f-e985-7312-aef5-45351a8ccb7b OFFLINE actual generated remote-parent/caller/native custody cancellation repro and repair if established. No historical SIGPIPE cause inference, original retry or shared custody edits. Marker1858eea7 caps unchanged; gameplay parity FPS/audio open.
+  Next: Reviewed36d5529d2e once2404SHA-size1560gzipCRC PASS. Remote exit/EOF cancellation oldFAILnewPASS fouractualcompositions currentcustody5ec810 unchanged. Productionreview found remaining drain_remote output path shadowed by cancel-sent filehandle; signalrequested nextiteration may TypeError before join. Fresh q3-signal-cancellation-shadow-repair-0805 OFFLINE actualgeneratedparent signal regression and narrowfix before Boat. Historical33missingwaits and two developmentwaits remainUNKNOWN nohistoricalcause. CPUa320 marker1858eea7 caps unchanged.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
