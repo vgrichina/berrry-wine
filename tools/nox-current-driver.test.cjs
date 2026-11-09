@@ -121,7 +121,8 @@ async function child(){
      const transport=require(generated+'/transport.cjs');
      if(mode==='stale-refusal')clockOffset=120001;
      const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));save(out+'/'+latest.label+'-review.json',{...latest,review:'Offline peer review for actual consumer control flow only'});
-     const commands=mode==='commands'?[
+     const invalidLabels={ 'label-missing':undefined,'label-null':null,'label-number':42,'label-undefined':'undefined','label-path':'../escape','label-long':'a'.repeat(81),'label-duplicate':latest.label};
+     const commands=mode==='commands'&&process.env.NOX_COMMAND_SEQUENCE?JSON.parse(fs.readFileSync(process.env.NOX_COMMAND_SEQUENCE)):mode==='commands'?[
        {action:'move',point:[.4,.5]}, {action:'key',key:'KeyI',holdMs:100},
        {action:'key',key:'Tab',holdMs:150}, {action:'key',key:'Enter',holdMs:250},
        {action:'type',text:'JACK'}, {action:'combo',keys:['ArrowUp','ArrowLeft'],holdMs:100},
@@ -132,8 +133,8 @@ async function child(){
      ]:[mode==='refusal'?{action:'mouse',point:[.6,.5]}:mode==='stale-refusal'?{action:'click',point:[.6,.5],button:'left',holdMs:150}:mode==='held-identity'?{action:'key',key:'KeyI',holdMs:1000}:mode==='held-capture'?{action:'capture'}:{action:'drag',button:'right',point:[.3,.4],to:[.6,.7],holdMs:200}];
      for(let n=0;n<commands.length;n++){
        const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));const review=out+'/'+latest.label+'-review.json';if(!fs.existsSync(review))save(review,{...latest,review:'Offline actual consumer command admission'});
-       try{await transport.request(out,'command-'+n,{...commands[n],waitMs:0,label:'command-'+n,reviewRef:latest.label},30000);}
-       catch(e){if(!['drag-failure','held-mouse','held-capture','refusal','stale-refusal','held-identity'].includes(mode))throw e;return;}
+       try{await transport.request(out,'command-'+n,{...commands[n],waitMs:0,label:Object.hasOwn(invalidLabels,mode)?invalidLabels[mode]:(commands[n].label??'command-'+n),reviewRef:latest.label},30000);}
+       catch(e){if(!mode.startsWith('label-')&&!['drag-failure','held-mouse','held-capture','refusal','stale-refusal','held-identity'].includes(mode))throw e;return;}
      }
      await transport.request(out,'quit',{action:'quit'},3000);
    })().catch(e=>{console.error(e);process.exitCode=3;});
@@ -148,7 +149,7 @@ async function main(){
  // The unchanged driver actually executes its full strict preflight.
  const pre=cp.spawnSync(process.execPath,[generated+'/browser-run.cjs'],{env:{...process.env,DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+120000)},encoding:'utf8'});
  assert.equal(pre.status,0,pre.stderr);results.push({mode:'current-preflight',status:pre.status,proof:JSON.parse(pre.stdout)});
- for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','stopped-port','ordinary','drag','commands','drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture']){
+ for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','stopped-port','ordinary','drag','commands','drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture','label-missing','label-null','label-number','label-undefined','label-path','label-long','label-duplicate']){
    const dir=out+'/'+mode;fs.mkdirSync(dir);
    // The actual generated source is shared; move only its run-specific outputs
    // after each execution, retaining every failure and ordinary-close artifact.
@@ -192,7 +193,7 @@ async function main(){
      assert.equal(JSON.parse(fs.readFileSync(dir+'/runtime/close-reason.json')).reason,mode==='early-death'?'browser exit':'first terminal failure');
    }else{
      const source=generated+'/'+(mode==='ordinary'?'production-preflight':'original');fs.renameSync(source,dir+'/runtime');
-     const failed=['drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture'].includes(mode);
+     const failed=mode.startsWith('label-')||['drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture'].includes(mode);
      const joined=JSON.parse(fs.readFileSync(dir+'/child-wait.json'));assert.equal(joined.stdoutEOF,true);assert.equal(joined.stderrEOF,true);assert.equal(joined.signal,failed?'SIGTERM':null);
      assert.equal(r.status,failed?1:0,r.stderr);
      assert.equal(peer.protocol.filter(q=>q.method==='Browser.close').length,failed?0:1);
@@ -203,6 +204,7 @@ async function main(){
      if(mode==='drag'){assert.deepEqual(mouse.map(p=>p.type),['mousePressed','mouseReleased']);assert(mouse.every(p=>p.button==='right'));}
      if(mode==='commands'){assert(mouse.some(p=>p.type==='mousePressed'&&p.button==='left'));assert.equal(mouse.filter(p=>p.type==='mousePressed').length,5);}
      if(failed){
+       if(mode.startsWith('label-')){assert.equal(peer.deliveries.filter(p=>p.type==='mousePressed').length,0,'malformed labels have zero input effects');assert.equal(peer.protocol.filter(q=>q.method==='Page.captureScreenshot').length,1,'startup capture only');}
        assert.equal(peer.protocol.length,peer.failurePublishedIndex,'zero protocol after terminal failure publication');
        if(peer.terminalIndex!==null){
          // Observe the real 20-second timer callback; do not shorten the bound.
@@ -210,7 +212,7 @@ async function main(){
        }
        assert(!fs.existsSync(dir+'/runtime/native-events.json'),'terminal cleanup never evaluates native events');
        assert(!fs.existsSync(dir+'/runtime/command-0.png'),'no post-failure capture');
-       const failure=JSON.parse(fs.readFileSync(dir+'/runtime/first-browser-failure.json'));assert.match(failure.error,mode==='drag-failure'?/OFFLINE_FIRST_DRAG_FAILURE/:mode==='refusal'?/known action/:mode==='stale-refusal'?/stale scene/:mode==='held-identity'?/AssertionError/:/CDP UNKNOWN/);
+       const failure=JSON.parse(fs.readFileSync(dir+'/runtime/first-browser-failure.json'));assert.match(failure.error,mode.startsWith('label-')?(mode==='label-duplicate'?/unique capture label required/:/valid capture label required/):mode==='drag-failure'?/OFFLINE_FIRST_DRAG_FAILURE/:mode==='refusal'?/known action/:mode==='stale-refusal'?/stale scene/:mode==='held-identity'?/AssertionError/:/CDP UNKNOWN/);
        assert(!fs.existsSync(dir+'/runtime/drag.png'),'no later capture after first failure');
        assert(JSON.parse(fs.readFileSync(dir+'/runtime/first-failure.json')).noReplay);
      }

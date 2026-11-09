@@ -163,6 +163,16 @@ function send(method,params={},sessionId){if(terminalError)return Promise.reject
   source=exact(source,"})().catch(async e=>{save('first-browser-failure.json'","})().catch(async e=>{terminal(e);save('first-browser-failure.json'");
   return source;
 }
+function captureLabels(source){
+  // Validate every captured command before review reads, live observations or input.
+  source=exact(source,"async function capture(label){assert(/^[a-z0-9-]+$/.test(label));",`function validCaptureLabel(label){assert(typeof label==='string'&&label.length<=80&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(label)&&!['undefined','null'].includes(label),'valid capture label required');}
+async function capture(label){validCaptureLabel(label);`);
+  source=exact(source," if(c.action==='quit'){await close('ordinary completion');return;}",` if(c.action==='quit'){await close('ordinary completion');return;}
+ validCaptureLabel(c.label);
+ assert(!fs.existsSync(out+'/'+c.label+'.png'),'unique capture label required');
+ assert(!c.captureHeld||!fs.existsSync(out+'/'+c.label+'-held.png'),'unique held capture label required');`);
+  return source;
+}
 function generate(planFile,destination){
   const reviewed=json(planFile),{plan,patches}=inspect();
   assert.deepEqual(plan,reviewed,'current inputs differ from explicit reviewed plan');
@@ -186,6 +196,7 @@ function generate(planFile,destination){
   source=exact(source,"const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));","const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));\nrequire(root+'/tools/nox-current-driver.cjs').verify(root,pins,run,"+JSON.stringify(planHash(plan))+");");
   source=startupDiagnostics(source);
   source=terminalCleanup(source);
+  source=captureLabels(source);
   emit('browser-run.cjs',source);
   const generated=walk(destination).map(p=>pin(path.basename(p),fs.readFileSync(p))).sort((a,b)=>a.path.localeCompare(b.path));
   const provenance=Object.entries(patches).map(([name,b])=>pin(name,b));
