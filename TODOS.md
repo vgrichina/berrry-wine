@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed c443739b5 once1376SHA342gzip. Bounded custody retirement service actual composed oldFAIL/newPASS normalquit72ms122realreaps; admission barriers caps unchanged46custody21caller10close buildPASS. Fresh quake2-current-custody-upper-route-0900 integrates current committed dependency offline then THIRD native+original after Redline0856 and Q30856 exact release.
+  Next: Reviewed3af071d4/4954dc86 once1468SHA276gzip. Nativeholds+quitACK normal930ms173realreaps but fullcaller cleanEOF rejected; archivedstop6bb0. Fresh q2-q3-orderly-caller-repair-0924 repairs actualsharedclient completion OFFLINE preserving earlyEOF cancellation caps.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed8ce511fe9 once195SHA112gzip. Actualnative startupPASS firstcomma600msdeliveryboundterminal nooriginal;185actualreaps archivedstopcae2. Fresh redline-key-delivery-repair-0912 implements justified bounded input fix OFFLINE unchangedcaps.
+  Next: Reviewedd81e7524 once750SHA122gzip. Sixproductioncontrols preservefailedholdreceipt/timing unchanged600msbound; nativecauseUNKNOWN. Fresh redline-observed-key-gameplay-0924 FIRST native diagnostic thenoriginal onlyafterwholefixturePASS.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Revieweda161e5af2 once279SHA220gzip. Nativecalc404preauthterminal157actualreaps archivedstop77d. RequiredPEclosure repaired34dependency15prelaunch buildPASS. Fresh q3-required-fixture-gameplay-0912 native+original afterQ20900 exactrelease.
+  Next: Reviewed3306d8477/5f4877083 once238SHA194gzip. ActualcalcHTTP parkedowner inputACK normalbrowser155ms165reaps thenclientEOFterminal archivedstop8514. Fresh q3-orderly-original-progress-0924 waits sharedcallerrepair commit andRedline0924 exactrelease thennative+original.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
