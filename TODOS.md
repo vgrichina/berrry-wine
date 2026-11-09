@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed0450 published78af6db8b firstbindingUNKNOWN actual0x08ff pointers outside0x04000000 observercoverage no gameplay boxarchived;270SHA103gzip verified. Fresh quake2-passive-sparse-bindings-0505 PID1089629 thread01a1beb1-b623-7b22-9f69-c3f9c16b052d OFFLINE actualmemorytranslation validated boundedpassivereader codefix beforeoriginal.
+  Next: Reviewed6e18a9865 sparsebindingfix461SHA46gzipPASS focused11composed buildPASS noBox actualbindingsUNKNOWN. Fresh quake2-sparse-native-combat-0517 PID1111584 thread01a1bebc-94a4-7bc0-b6f8-a46188811e96 prepares original gameplay after WC0512 PHYSICAL_DRAINED; strictcaps unchanged.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
