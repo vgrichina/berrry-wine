@@ -41,6 +41,7 @@ def save(path, value):
 
 
 def scenario(mode, fixed):
+    signal_case = mode.startswith('signal-')
     run = OUT/(('fixed-' if fixed else 'old-')+mode)
     run.mkdir()
     prepared = run/'prepared'
@@ -106,6 +107,13 @@ os.environ.update(Q3_NODE_FIXTURE='preload',Q3_FIXTURE_DIR=str(run/'node-fixture
 command=['node','--require',str(root/'tools/q3-native-driver-composition.test.cjs'),'--require',str(root/'tools/q3-native-driver-composition.cjs'),'--require',str(root/'tools/q3-execution-boundary.cjs'),str(root/'scratch/runs/20261108-q3-gl-readiness-gameplay/browser-run.cjs')]
 supervise(R,command,deadline=end,cleanup_deadline=end+30,journal_compression='gzip',command_compression='gzip')
 ''')
+    if signal_case:
+        # Keep the real runtime/prelaunch pipe open after native drain, forcing
+        # many parent pump iterations without changing any production deadline.
+        source = runtime.read_text()
+        call = "supervise(R,command,deadline=end,cleanup_deadline=end+30,journal_compression='gzip',command_compression='gzip')"
+        assert source.count(call) == 1
+        runtime.write_text(source.replace(call, "try:\n    "+call+"\nfinally:\n    (run/'runtime-holding-pipe').touch()\n    due=time.monotonic()+5\n    while not (run/'release-runtime-pipe').exists() and time.monotonic()<due:time.sleep(.005)"))
     providers = subprocess.check_output(['node','-e', "const c=require('./tools/q3-native-driver-composition.cjs');console.log(JSON.stringify(c.compose().references))"], cwd=ROOT)
     refs = json.loads(providers)
     for p in (CLIENT, ROOT/'tools/q3-native-driver-composition.cjs', ROOT/'tools/q3-native-driver-composition.test.cjs', ROOT/'tools/q3-native-prelaunch.py', ROOT/'tools/native-startup-barrier.py',runtime):
@@ -159,6 +167,28 @@ supervise(R,command,deadline=end,cleanup_deadline=end+30,journal_compression='gz
             assert not command_thread.is_alive()
             assert json.loads((output/'reply-0.json').read_text())['ok']
             until(lambda: remote_launch.poll() is not None)
+        if signal_case:
+            first_signal = getattr(signal, 'SIG'+mode.split('-')[1])
+            os.kill(remote_launch.pid, first_signal)
+            until(lambda: (prepared/'caller-cancel-sent.json').exists())
+            cancellation = (prepared/'caller-cancelled.json').read_bytes()
+            failure = (output/'first-failure.json').read_bytes()
+            sent = (prepared/'caller-cancel-sent.json').read_bytes()
+            # This interval necessarily crosses the .02s pump boundary while
+            # requested remains nonempty and the runtime pipe remains open.
+            time.sleep(.12)
+            assert remote_launch.poll() is None, 'signal parent aborted before child join'
+            for sig in (first_signal, signal.SIGHUP, signal.SIGTERM, signal.SIGINT):
+                os.kill(remote_launch.pid, sig)
+                time.sleep(.03)
+                assert remote_launch.poll() is None, 'repeated signal aborted parent'
+            assert (prepared/'caller-cancelled.json').read_bytes() == cancellation
+            assert (output/'first-failure.json').read_bytes() == failure
+            assert (prepared/'caller-cancel-sent.json').read_bytes() == sent
+            until(lambda: (run/'runtime-holding-pipe').exists())
+            assert not (prepared/'prelaunch-child-actual-wait.json.gz').exists()
+            (run/'release-runtime-pipe').touch()
+            until(lambda: remote_launch.poll() is not None)
         trigger.touch()
         until(lambda: session.terminal is not None)
         first = dict(session.terminal)
@@ -196,6 +226,7 @@ supervise(R,command,deadline=end,cleanup_deadline=end+30,journal_compression='gz
     finally:
         # Failure rescue: signal ONLY this fixture's actual supervisor; keep its
         # reaper alive for the existing cancellation/drain protocol.
+        (run/'release-runtime-pipe').touch()
         ident=prepared/'runtime-identity.json.gz'
         if remote_launch and remote_launch.poll() is None and ident.exists():
             row=json.loads(gzip.decompress(ident.read_bytes()))
@@ -256,5 +287,8 @@ except ValueError:pass
 else:raise AssertionError('unsupported parent accepted')
 print('pre-cancel PASS actual generated source; zero child; first failure sticky; unsupported source refused',flush=True)
 
-for mode in ('exit','eof','exit-cdp','eof-cdp','normal'):
+modes = ('exit','eof','exit-cdp','eof-cdp','normal','signal-HUP','signal-TERM-cdp','signal-INT')
+if '--mode' in sys.argv:
+    modes = (sys.argv[sys.argv.index('--mode')+1],)
+for mode in modes:
     scenario(mode, '--old' not in sys.argv)

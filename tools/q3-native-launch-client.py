@@ -395,8 +395,8 @@ def drain_remote(process, run, log, requested, output):
                         raise TerminalFailure('remote supervisor identity changed; no signal')
                     os.kill(runtime['pid'], signal.SIGTERM)
                     signalled = dict(pid=runtime['pid'], start=start, signal=signal.SIGTERM)
-                    with (run/'caller-cancel-sent.json').open('x') as output:
-                        json.dump(dict(at=time.time(), **signalled, remoteCustody='UNKNOWN'), output)
+                    with (run/'caller-cancel-sent.json').open('x') as marker:
+                        json.dump(dict(at=time.time(), **signalled, remoteCustody='UNKNOWN'), marker)
                 except (FileNotFoundError, ProcessLookupError, EOFError, gzip.BadGzipFile, json.JSONDecodeError):
                     pass  # No absence-as-wait or fabricated kernel receipt.
             if eof:
