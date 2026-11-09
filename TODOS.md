@@ -72,15 +72,15 @@
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
-  status: startup and locked menu selection pass; capture-trace repair under native garage test
+  status: capture diagnostics bounded; mouse hold failure terminal before vehicle proof
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed 9ec30be84/7c473d9fa: durable service repair passes native startup; current locked cursor selection reaches Stadium City. Capture-trace deadline remains open in that reviewed run; all owned tasks reaped and root verified normal stopped boxes. Fresh redline-command-trace-deadline-repair-2230 passes loading into the garage and is reviewing camera turns toward the car. Side-door contact, entry and driving remain unverified.
+  Next: Reviewed b454987afd/c9bbb514e: delayed optional trace no longer blocks required image ACK; actual consumer controls and locked build pass. Original produced23 complete image ACKs, then mouse hold guard failed; no later protocol or entry. Root separately inspected car-side-view/car-corner: cabinets, brick walls and ramp, health100/ammo200; filenames do not establish a car. Root confirmed bx_u92q6cbf stopped with exact unforced receipt. Fresh redline-mouse-service-entry-2300 traces press/release service timing; establish a visible vehicle from fresh images before entry. Driving remains unverified.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
-  status: bounded live pak provisioning passes; current fixture observer paths need correction before gameplay
+  status: sealed observer gates pass offline; remote wrapper cwd and terminal cancellation need repair
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed 5cc350b5e/f4511c967: real 46.9MB pak transferred in 12 bounded HTTP chunks, independently verified remote SHA/size, assembly and both phase barriers. Fixture image produced but task-local observer watched obsolete paths; unchanged checkpoint failed before input or original launch. Terminal cleanup sent zero Browser.close; all161 tasks reaped. Root verified bx_7w69crw8 STOPPED with exact normal receipt. Fresh q3-current-observer-arena-2250 derives paths from generated phase layout and preflights review gating before fixture and conditional original movement/fire. Alive arena and both-backend progress remain open.
+  Next: Reviewed a9d727ebf/a335e00dc: sealed phase layout and actual consumer review gates pass offline/build. Live wrapper resolved relative helper outside checkout and failed; autonomous fixture capture continued after failure, violating strict-stop invariant. Zero input, no original. All163 tasks reaped; root verified bx_4w352ebj stopped with exact unforced receipt. Fresh q3-observer-terminal-coupling-2305 tests actual wrapper from /home/user with absolute paths and immediate native cancellation before fixture and conditional original. Alive arena movement/fire remain open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
