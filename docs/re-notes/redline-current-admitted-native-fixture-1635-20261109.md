@@ -82,8 +82,8 @@ causal contribution of per-stop fsync or establish why native startup stalled.
 Filesystem-only recovery found no live owned identities, runtime FD holders,
 profile processes, profile or writer locks. No endpoint port was published, so
 there is no independent numbered-port connect probe; this limit is retained.
-Twenty unique evidence files were compressed before transfer and independently
-reread by SHA, size and outer gzip CRC. Valid inner gzip streams were also
+Twenty logical evidence files (19 distinct stored SHA/size pairs) were compressed
+before transfer and independently reread by SHA, size and outer gzip CRC. Valid inner gzip streams were also
 checked; four empty artifacts remain **EMPTY_INVALID**, never native proof.
 All evidence was verified before delegated normal shutdown was requested at
 `15:41:45.542Z`.
@@ -100,8 +100,8 @@ the final exact-UUID read separately confirmed completion.
 Evidence is retained under
 `scratch/runs/20261109-redline-current-admitted-native-fixture-1635/`, with Git
 base and small owned patches rather than source archives. Media and module
-bytes are referenced by their existing paths and hashes. Free local `/home`
-remained above 1.5 GB; no RAM gate, local Chrome, source archive, agent, worker,
+bytes are referenced by their existing paths and hashes. Recorded free local `/home`
+checks remained above 1.5 GB; no RAM gate, local Chrome, source archive, agent, worker,
 original-game attempt or public deployment was created.
 
 Next is offline work on the actual pre-browser production path and its durable
