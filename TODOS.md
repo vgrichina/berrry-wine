@@ -78,9 +78,9 @@
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
-  status: current WebGL menu and level selection verified; native startup late reply blocks current gameplay attempt
+  status: current native fixture and Q3 level-selection menu verified; in-command capture deadline blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh q3-autoattach-service-delay-repair-1723 diagnoses actual generated CDP scheduling offline only; no runtime or speculative deadline/routing relaxation. Reviewed published6d90a3ea1 raw startup diagnostics and actual native trace: correct request6 reply arrived7ms after unchanged20s deadline, following Browser.close; internal Chromium service-delay cause and renderer pause remain UNKNOWN. Ten production-path peer cases, lifecycle/controller/authentication controls and locked build PASS. Own bx_882xv5qc ARCHIVED normalstop6fd590a9e08ece24 watchdog joined; no arena/input/capture followed. Offline causal diagnosis required before another changed attempt; gameplay remains unverified.
+  Next: Reviewed da3d5f5b4 using unchanged published caller repair2b945315a: native fixturePASS, original ACK0-2 menu only; command3 terminal at20s work deadline after renderer-owner read12413ms and screenshot pending6911ms. Underlying renderer/compositor cause UNKNOWN; no firing/useful movement verified. Own box bx_hpghx7b2 ARCHIVED unforced normalstop_be8291f1bda93533; actual watchdog wait0 separateEOF verified. Fresh q3-renderer-read-latency-repair-1840 diagnoses actual generated capture path OFFLINE ONLY and fixes a reproduced causal defect with focused tests/build; no deadline/ownership relaxation or unchanged runtime retry. ReturnFire1822 runtime then Nox1828 remain independent gameplay lanes.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
