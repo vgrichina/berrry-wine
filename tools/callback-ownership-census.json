@@ -319,7 +319,8 @@
     {
       "file": "lib/guest-worker.js",
       "name": "host-file",
-      "sha256": "4ac33cbcdbbadbaa2db9a7ceb74e8583b596d853d5fbcfcc3b491657852efdc1",
+      "sha256": "0842794670105f6d22f85ce175d2e70344d6865e8ad517a66836c4d882ab5846",
+      "reviewDrawProducer20261109": "Reviewed complete f8a8d0e64 delta from the sealed 7a05ea3f8 Worker: adds only a createD3DDrawProducer factory to the import options, lazily loading the existing versioned GPU graph and d3d9-host.js, or requiring the same DrawProducer in Node. It constructs a JS snapshot encoder without guest entry, callback execution, context restoration or scheduling changes. Guarded capture and publication ordering are implemented/tested in guest-rpc separately; broader invocation ownership remains pending.",
       "reviewWorkerClear20261108": "Delta from fa408086f adds render-clear.js to the versioned Worker dependency list. Shared native descriptor capture is renderer-independent; no new callback, guest export, context restoration, scheduling or retirement handling is introduced in guest-worker. Invocation ownership remains pending.",
       "reviewSnapshotState20261108": "Delta from 157b7a991 adds one queued data-only renderSnapshotState handler. It rejects retirement/foreign endpoint identity and stores validated metadata in the existing import transport. It performs no guest export call, callback, context restoration or native state mutation. Existing command-queue and teardown ownership are unchanged; invocation ownership remains pending.",
       "review20261108": "Delta from 7d2a9ec08: route leased D3D descriptors through process publication, fence before non-batch messages, publish final batch and fence admission after existing DLL detach before normal sliceDone. No new guest entry/context restoration. Trap/termination still skip arbitrary guest detach. Lifetime ordering covered by shared Worker protocol tests; invocation ownership remains pending.",

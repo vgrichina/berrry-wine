@@ -130,14 +130,44 @@ forced synchronization point; gameplay FPS impact has not been measured.
 an invocation-owned 112-byte packet, reads back the source using color sync or
 backbuffer sync, runs `d3d9_stretch_pixels`, and uploads the destination rectangle
 through opcode0x30015. Opcode0x30016 is a CPU backbuffer readback, not a GPU copy.
-The neutral `COPY` opcode exists but neither D3D9 executor handles it. Moving
-this operation requires an owned source/destination identity and rectangle/filter
-contract, renderer-owned source pixels, equivalent point/linear sampling and
-format behavior in both executors, and native dispatch that no longer mutates
-the canonical destination before publication. The existing nested StretchRect
+The neutral `COPY` opcode now has a renderer-owned implementation in both
+executors, described below. The remaining activation requires native dispatch
+that no longer mutates the canonical destination before publication and guest
+capture of its owned identities/rectangles. The existing nested StretchRect
 and pixel-center tests must remain valid. Merely publishing the current upload
 does not remove its earlier readback or CPU scaling. CPU LockRect/GetDC reads
 must still wait and materialize the latest renderer-owned contents.
+
+`D3DCommandStream.colorCopy` validates and owns distinct source/destination
+identities, bounded top-left rectangles and point/linear filter selection;
+null denotes the implicit backbuffer. The initial contract matches existing
+native StretchRect support: A8R8G8B8/X8R8G8B8 targets, no same-resource feedback.
+WebGL executes a textured rectangle against renderer-owned color storage.
+It explicitly samples source pixel centers, clamps interpolation to the source
+subrectangle, preserves untouched destination pixels and forces alpha for X8
+copies. It works on WebGL1 and WebGL2 and performs no CPU readback or GPU finish.
+Software uses the same contract and invokes the existing native
+`d3d9_stretch_pixels` scaler through the new `d3d_software_copy_color` export,
+with a bounded renderer-owned temporary packet; it does not implement a second
+JS resampler. Both executors retain the actual implicit format across reset.
+Previously software collapsed X8 to A8, which loses required copy alpha semantics.
+
+Validation: shared independent color fixtures perform 1,120 checks per route
+(software direct/Worker and WebGL1/2), including point/linear up/downscaling,
+one-pixel edge expansion, preserved destination regions, explicit/implicit
+roundtrips and alpha. Filtered GPU pixels permit one byte of rounding tolerance;
+roundtrip ownership/orientation checks are exact. Separate X8 tests assert exact
+opaque alpha. A real WebGL1/2 Worker queues COPY, sampled draw and color-set
+retirement before readback, retaining exact pixels with no intervening finish.
+24 snapshot/contract tests, software backend regressions, existing native
+StretchRect/suspend/nested-call tests and the full normal/compat build pass.
+The initial tests caught an unsupported `2f` uniform setter (the helper now uses
+the existing `4f` contract) and an incorrect test assumption about default A8
+backbuffer alpha. Build reconciliation reviewed the earlier DrawProducer factory
+addition to guest-worker and updated only its stale callback census hash/review;
+callback ownership remains pending. Evidence and source patch are recorded in
+`scratch/runs/20261109-d3d-copy-executors/`. Public guest StretchRect still uses
+the old path, and no game performance improvement is claimed yet.
 
 ColorFill (native opcode0x30014) uses `RenderClear.captureNativeColorFill` in
 both the guest producer and page bridge. It names its destination explicitly,

@@ -87,12 +87,16 @@ async function main(){
           const mips=[await done(mipOffer),await done(mipUse)],mipPixel=await read(7);
           const resource={id:71,width:1,height:1,format:21};
           await done(send(7,op.RESOURCE_CREATE,{kind:'color',resource,pitch:4,pixels:new Uint8Array([30,60,90,255])}));
+          const copiedResource={id:72,width:1,height:1,format:21};
+          await done(send(7,op.RESOURCE_CREATE,{kind:'color',resource:copiedResource}));
           const beforeRetire=await inspect('before-retire');
           // Queue the consuming draw and deletion before either completes.
           // Deletion also retires the sampled GPU texture composition.
-          const aliasDraw=send(7,op.DRAW,draw({width:1,height:1,resource}));
-          const aliasRetire=send(7,op.RESOURCE_RELEASE,{kind:'color',id:resource.id});
-          const retirement=[await done(aliasDraw),await done(aliasRetire)];
+          const copy=send(7,op.COPY,{source:resource,destination:copiedResource,
+            sourceRect:{x:0,y:0,width:1,height:1},destinationRect:{x:0,y:0,width:1,height:1},filter:2});
+          const aliasDraw=send(7,op.DRAW,draw({width:1,height:1,resource:copiedResource}));
+          const aliasRetire=send(7,op.RESOURCE_RELEASE,{kind:'color-set',ids:[resource.id,copiedResource.id]});
+          const retirement=[await done(copy),await done(aliasDraw),await done(aliasRetire)];
           const afterRetire=await inspect('after-retire'),retirementPixel=await read(7);
           await done(send(7,op.DRAW,draw(level('never-sampled',[1,2,3,255]),false)));
           const beforeReset=await inspect('before-reset');

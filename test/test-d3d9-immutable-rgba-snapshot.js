@@ -610,6 +610,21 @@ test('native retirement owns complete color sets and rejects wrong device or sto
   }finally{await f.bridge.close();}
 });
 
+test('color copy contract owns rectangles and refuses feedback or out-of-bounds targets',()=>{
+  const {colorCopy}=require('../lib/d3d-command-stream');
+  const source={id:1,width:4,height:3,format:21},destination={id:2,width:6,height:5,format:22};
+  const sourceRect={x:0,y:0,width:4,height:3},destinationRect={x:1,y:1,width:3,height:2};
+  const p={source,destination,sourceRect,destinationRect,filter:2};
+  const owned=colorCopy(p,{width:8,height:8,format:21});
+  sourceRect.x=1;source.width=9;
+  assert.equal(owned.sourceRect.x,0);assert.equal(owned.source.width,4);
+  assert.throws(()=>colorCopy({...owned,destination:owned.source}),/invalid color copy/);
+  assert.throws(()=>colorCopy({...owned,source:null,destination:null},{width:8,height:8,format:21}),/invalid color copy/);
+  assert.throws(()=>colorCopy({...owned,filter:3}),/invalid color copy/);
+  assert.throws(()=>colorCopy({...owned,destinationRect:{x:5,y:0,width:2,height:1}}),/invalid color copy/);
+  assert.throws(()=>colorCopy({...owned,source:{...owned.source,format:23}}),/invalid color copy/);
+});
+
 test('native color upload packs RGB565 rows and rejects bounds before allocation',async()=>{
   const f=fixture(),producer=new DrawProducer({getMemory:()=>f.memory,guestToWasm:p=>p});
   try{

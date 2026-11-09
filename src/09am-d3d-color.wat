@@ -626,7 +626,7 @@
 
 ;; Center-sampled BGRA8 POINT/NONE and bilinear LINEAR. Coordinates clamp to
 ;; the captured source rectangle, not adjacent pixels outside that rectangle.
-(func $d3d9_stretch_pixels (param $p i32)
+(func $d3d9_stretch_pixels (export "d3d_software_copy_color") (param $p i32)
   (local $src i32) (local $dst i32) (local $sp i32) (local $dp i32)
   (local $sw i32) (local $sh i32) (local $dw i32) (local $dh i32)
   (local $x i32) (local $y i32) (local $x0 i32) (local $x1 i32) (local $y0 i32) (local $y1 i32)
