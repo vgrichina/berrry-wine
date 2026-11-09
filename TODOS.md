@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed57b80f334 once actual retainedprovision oldENOTDIR/new production manifest-file CLI Git-free controls+owningkernel+lockedbuild PASS. Recovered1 artifact stored/original SHA-sizeCRC verified; bx_cjbyepj8 ARCHIVED normalstop_c65a2fce3029d9a5 watchdogactualwait0 separateEOF noChrome. Fresh quake2-manifest-cli-guard-progress-1615 soleNEXT ONEfixture conditionalguarddoor original; exact generatedprovision command offline beforeallocation. Gameplay/allwriters/aliases/ABA historicalbrowserEOF UNKNOWN.
+  Next: Reviewed a48191173 once: actual retained provision CLI passed; leased first failure exposed missing retained pipe-wait helper after parentSpawn. Published exact helper staging repair with actual launch/provision CLI, missing/damaged helper controls, kernel lifecycle and locked build PASS. Box bx_y37jnhc6 ARCHIVED after verified recovery, six actual kernel reaps and two runtime parent waits/separate EOF; generated outer parent wait UNKNOWN. Fresh quake2-staged-parent-wait-guard-progress-1626 queued after Q3 and Redline final release; repaired actual provision AND launch offline before ONE fixture and conditional guard-door original. Gameplay/allwriters/aliases/ABA UNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
