@@ -601,8 +601,14 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   owning instance after termination with the shadow free list unchanged.
   Local and Worker owners pass on normal and compatibility WASM builds:
   `scratch/runs/20261109-cli-render-retirement/test-result.json`.
-  Renderer construction still obtains image-base metadata locally in the CLI;
-  this change completes heap handoff ownership, not full Worker-main startup.
+  CLI renderer construction now uses validated image-base metadata read from
+  the guest owner after PE load, before DLL initializers can create a device.
+  That process-constant snapshot permits synchronous renderer construction
+  without reading the shadow or calling back into a busy guest Worker.
+  A renderer requested before metadata is ready fails before creating a Worker.
+  The actual Node test constructs the renderer from the owning instance's
+  reported base, with the host shadow still unloaded. This covers construction
+  metadata and heap handoff, not full Worker-main startup or draw capture.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.

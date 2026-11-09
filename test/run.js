@@ -2758,6 +2758,10 @@ async function main() {
 
   const apiTable = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'api_table.json'), 'utf8'));
   const apiByName = new Map(apiTable.map(e => [e.name, e]));
+  // Process image base is fixed after load_pe. Capture it from the owning
+  // instance before DLL initializers can create a renderer; a host shadow has
+  // its own (unloaded) image-base global and is not a metadata fallback.
+  let renderImageBase = null;
   const ctx = {
     getMemory: () => ctx._memory ? ctx._memory.buffer : null,
     // Without --headless-gl the WebGL backend has no context, CreateDevice fails
@@ -2773,11 +2777,12 @@ async function main() {
     glideBackend: GLIDE_RENDERER,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
     createD3DRenderWorker: () => {
+      if (renderImageBase === null) throw new Error('render worker requested before guest image metadata is ready');
       const {Worker} = require('worker_threads');
       const {WorkerConsumer} = require('../lib/d3d-command-stream');
       const sigs = JSON.parse(fs.readFileSync(path.join(ROOT,'lib','host-import-sigs.generated.json'),'utf8')).sigs;
       return new WorkerConsumer(new Worker(path.join(ROOT,'lib','d3d-render-worker.js')),
-        {module:wasmModule,memory,sigs,imageBase:instance.exports.get_image_base() >>> 0,
+        {module:wasmModule,memory,sigs,imageBase:renderImageBase,
           // Retirement awaits adoption after the renderer has terminated.
           // The free list belongs to the guest owner, never its host shadow.
           reclaimHeap:head=>mainOwner.call('d3d_render_adopt_free_list',head)});
@@ -5696,6 +5701,10 @@ async function main() {
   const startupShow = startupShowCommand(getArg('startup-show', undefined));
   if (startupShow !== undefined) await mainOwner.call('set_startup_show', startupShow);
   const { entry } = await stageAndLoadPeOwned(mainOwner, memory.buffer, exeBytes, console.log);
+  const imageMetadata = await mainOwner.read(['get_image_base']);
+  if (!Number.isInteger(imageMetadata.get_image_base) || imageMetadata.get_image_base < 0 ||
+      imageMetadata.get_image_base > 0xffffffff) throw new Error('invalid guest image metadata for render worker');
+  renderImageBase = imageMetadata.get_image_base;
   // MORROWIND_NAME_ATTACH_BEGIN: loaded image, before any guest initializer.
   if (hasFlag('observe-morrowind-name')) {
     morrowindNameObserver = require('../lib/morrowind-name-observer').install({

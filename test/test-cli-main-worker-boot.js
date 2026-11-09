@@ -77,7 +77,7 @@ const root=path.resolve(__dirname,'..');
     const shadowFree=h.exports.get_free_list();
     const renderWorker=new Worker(path.join(root,'lib/d3d-render-worker.js'));
     let adoptions=0;
-    const consumer=new WorkerConsumer(renderWorker,{module,memory:h.memory,sigs,imageBase,
+    const consumer=new WorkerConsumer(renderWorker,{module,memory:h.memory,sigs,imageBase:state.get_image_base,
      reclaimHeap:async head=>{
       assert.equal(renderWorker.threadId,-1,'renderer terminated before heap handoff');
       adoptions++;
