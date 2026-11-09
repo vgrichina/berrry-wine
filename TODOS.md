@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed5bc5f86f9 once1262SHA-size159gzipCRC PASS actual reader and native disassembly-derived layout. Received-frame signed origin/velocity1over8 rawflags now carried in composed capture/hold output with own SNAPSHOT/UNKNOWN; no contact/consumption/damage/lifetime proof. Fresh quake2-motion-guided-upper-route-0728 PID1298779 thread01a1bf32-bcab-7c30-bb21-f14cc3d62515 prepares changed upper-route gameplay AFTER exact Redline0724 ARCHIVED PHYSICAL_DRAINED release. No blind descent; first unexplained health decrease terminal. CPUa320 caller1473 custody4341 strict caps unchanged. Last death cause remains UNKNOWN.
+  Next: Reviewed883c0385b once1021SHA-size118gzipCRC PASS. Offline actual driver initialmotionSNAPSHOT then heldmotionUNKNOWN still captured and ACKed; no original runtime created. Fresh quake2-motion-terminal-repair-0737 thread01a1bf3d-6007-7122-8dde-e452c3f8f259 fixes terminal boundary before dependent capture with actual composed regressions. CPUa320 custody4341 strict caps unchanged; prior death cause UNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed0f0a3f100 once94SHA-size/gzipCRC PASS actual composed caller/host/service. Private compile authentication and preCPU/preDLLmain owner barrier repaired; offline negatives zero-entry and joined retirement pass, native Chrome proof still required. Fresh redline-admitted-side-door-0724 PID1296325 thread01a1bf31-1934-7e61-a21c-b0284ad63ff9 integrates current native qualification and changed side-door gameplay; ONE runtime authorized only after gates, no blocked-forward replay. See docs/re-notes/redline-startup-barrier-repair-0700-20261109.md.
+  Next: Reviewed63ce15d7c once140SHA-size93gzipCRC PASS plus actual stop/drain/watchdog receipts. Native privatea320 owningWorker startup and comma/period consumption pass, whole qualification FAIL at Chrome exit wait10s then controllerdeadlineSIGTERM. No original gameplay. bx_v83snewy UUIDa77bebaa-668a-4a93-be77-4970ab05f03d ARCHIVED unforced stop_b69594a88cb5297a complete07:32:20.484Z physicaldrain verified. Fresh redline-fixture-shutdown-repair-0740 thread01a1bf40-5cf4-71f2-9216-38926afff331 OFFLINE fixes finally-path server leak and joined shutdown; no original retry. LifetimeREVOKED allwriters/edictABAUNKNOWN.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed eac54d350 menu-only original0052 and all451 indexed files plus inventory stored/original hashes sizes nestedCRC exactset PASS. Boxbx_74fcszqf archived unforced with physical drain; historical33 missing waits and commandEOF false remain UNKNOWN. Local helper SIGPIPE noticed late and later menu input invalidated firstUNKNOWN handling; movement/firing unverified. Reviewed 2bf66d297 production shared launch/command owner and actual composed browser cancellation: six real caller failure cases stop within38ms, normal commands and eight composed-driver cases pass, locked build passes. All1198 indexed evidence files independently SHA/size/gzipCRC exactset verified. Local cancellation does not prove remote custody; repair bounded shutdown missing-wait handling before another original. Marker1858eea7 and caps unchanged. Both-backend gameplay/full27/parity/FPS/audio open.
+  Next: Reviewed2bf66d297 local cancellation fix1198SHA-size PASS; original0052 remains menu-only historical33missingwaits commandEOFfalse UNKNOWN. Fresh q3-remote-cancellation-repair-0737 thread01a1bf3f-e985-7312-aef5-45351a8ccb7b OFFLINE actual generated remote-parent/caller/native custody cancellation repro and repair if established. No historical SIGPIPE cause inference, original retry or shared custody edits. Marker1858eea7 caps unchanged; gameplay parity FPS/audio open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
@@ -1233,7 +1233,7 @@ commit output — do not assume your hunks landed.**
   created: 2026-10-02T04:00:31.545Z
   created-by: user-request via ops-dashboard
   candidate: need-for-speed-3-demo
-  Next: Fresh nfs3-native-timer-cause-0724 PID1296502 thread01a1bf31-2c5b-7d22-99d8-f14825e4e414 OFFLINE actual native timer-init fixture and API-contract causal repair. No Chrome/original/box authorized. Prior INITTIMER clearing path and observer causation unmeasured; no clock/branch/API-success forcing. Same executing module observer-off comparison required; renderer benchmark remains open. See docs/re-notes/nfs3-rehearsed-consumption-20261108.md.
+  Next: Reviewed187502349 once71SHA-size32gzipCRC PASS. Actual original timer-init instructions with exact retained host launch policy unchanged observeroff/on both PASS readiness100 counter1 retries0 APIcaps0 nativewrapper1 BeginPeriod0; no production defect or justified patch. Missing historical entry/API/counter/clearing trace remains UNKNOWN; no clock/observer causation. Park original retry and renderer benchmark pending historically bound evidence. Slot reassigned Q3 remote cancellation repair0737 OFFLINE.
   Done: Report all three guest renderer paths on the same identified source/WASM/browser/CPU/GPU, resolution and controlled race/weather/input route. Separate original game software rendering from our software backend; verify no hidden GPU fallback or SwiftShader substitution. Save reviewed race images, repeated warmed-up FPS/frame-time median and p95, CPU profiles, draw/triangle/texture/upload/readback/fallback counters, sample counts and spread, plus same-path control. Report unavailable paths explicitly. Record bottlenecks and a predeclared performance acceptance budget; historical high-load FPS is not a current baseline.
   Evidence: ops/handoffs/nfs3-renderer-bench.md; scratch/nfs3-renderer-bench-20261002/closure-report.json; scratch/nfs3-renderer-bench-20261002/local-resource-preflight.json; ops/handoffs/nfs3-capacity-recheck.md; ops/handoffs/nfs3-software-prep.md
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
