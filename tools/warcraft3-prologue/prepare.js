@@ -1,5 +1,40 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto'),zlib=require('node:zlib');
+// The current native composition stages only a launcher and exact provider pins.
+// Git + small patches recover source; existing media/module paths are referenced.
+if(process.argv[2]==='--native'){
+ const [manifest,destination]=process.argv.slice(3),root=path.resolve(__dirname,'../..');
+ if(!manifest||!destination||fs.existsSync(destination))throw Error('prior manifest and fresh native run directory required');
+ const original=JSON.parse(fs.readFileSync(manifest)),files=new Map();
+ for(const p of original.files){
+  // Resolve symlinks as well as lexical paths before reading any provider.
+  require('./staging').provider(root,p.path);
+  if(p.path.startsWith('scratch/')&&!p.path.startsWith('scratch/runs/20261108-browser-journal-remote-service/'))continue;
+  const b=fs.readFileSync(path.join(root,p.path)),digest=crypto.createHash('sha256').update(b).digest('hex');
+  if(p.path.startsWith('test/binaries/')&&digest!==p.sha256)throw Error('original media drift '+p.path);
+  files.set(p.path,{path:p.path,size:b.length,sha256:digest});
+ }
+ for(const n of ['startup.js','native-composition.js','renderer-identity.js','staging.js']){
+  const rel='tools/warcraft3-prologue/'+n,b=fs.readFileSync(path.join(root,rel));files.set(rel,{path:rel,size:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')});
+ }
+ // The native supervisor is part of the prepared production closure. Retain
+ // the exact published EXIT-before-queued-CONT, cancellation and EXEC repair.
+ const custodyCommit='4341b87723a7d56bc98223215cca4cdc878fcae2';
+ for(const rel of ['tools/native_kernel_custody.py','tools/native_custody_reaper.py','tools/native-startup-barrier.py']){
+  const b=fs.readFileSync(path.join(root,rel)),published=cp.execFileSync('git',['show',custodyCommit+':'+rel],{cwd:root});
+  if(!b.equals(published))throw Error('published native custody drift '+rel);
+  files.set(rel,{path:rel,size:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')});
+ }
+ new (require('node:vm').Script)(require('./native-composition').compose({root}));
+ fs.mkdirSync(destination,{recursive:true});
+ fs.writeFileSync(path.join(destination,'compose.cjs'),"require("+JSON.stringify(path.join(root,'tools/warcraft3-prologue/native-composition.js'))+").run(__dirname);\n",{flag:'wx'});
+ const pins={...original,commit:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),custodyCommit,files:[...files.values()]};
+ pins.httpPins=(original.httpPins||[]).map(p=>{const row=files.get(p.url.slice(1));if(!row)throw Error('missing HTTP provider '+p.url);return {...p,size:row.size,sha256:row.sha256}});
+ require('./staging').validate(root,pins.files);
+ fs.writeFileSync(path.join(destination,'runtime-pins.json'),JSON.stringify(pins,null,2),{flag:'wx'});
+ console.log(JSON.stringify({native:true,providers:files.size,sourceArchive:false,mediaCopied:false,destination}));
+ process.exit(0);
+}
 const [prior,media,out,acceptedSource]=process.argv.slice(2);
 if(!prior||!media||!out||!acceptedSource||fs.existsSync(out))throw Error('prior immutable runtime, original media, fresh output required');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
