@@ -9,9 +9,15 @@ const save=(p,v)=>fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function child(){
  const dir=process.env.NOX_TEST_DIR,generated=process.env.NOX_TEST_GENERATED,mode=process.env.NOX_TEST_MODE;
  const consumer=path.join(generated,'browser-run.cjs'),protocol=[],deliveries=[];
+ const realNow=Date.now;let clockOffset=0;
+ if(mode==='stale-refusal')Date.now=()=>realNow()+clockOffset;
  const startupFailure=['missing-port','early-death','malformed-port','stopped-port'].includes(mode);
  const originalRead=fs.readFileSync,originalLoad=Module._load,originalSpawn=cp.spawn;
- let browser,compiled=false,firstMouseFault=false,workerAttached=false,stdoutEOF=false,stderrEOF=false;
+ const originalRename=fs.renameSync;let failurePublishedIndex=null;
+ fs.renameSync=function(from,to){if(String(to).endsWith('/first-browser-failure.json'))failurePublishedIndex=protocol.length;return originalRename.call(this,from,to);};
+ let browser,compiled=false,firstMouseFault=false,workerAttached=false,stdoutEOF=false,stderrEOF=false,terminalIndex=null;
+ const originalTimeout=globalThis.setTimeout;
+ globalThis.setTimeout=(fn,ms,...args)=>originalTimeout(()=>{if(ms===20000&&['held-mouse','held-capture'].includes(mode))terminalIndex=protocol.length;fn(...args);},ms);
  const faults={primary:'build/wine-assembly.wasm',compat:'build/wine-assembly.compat.wasm',source:'lib/renderer.js',media:'test/binaries/candidates/nox-demo/game/nox.exe',historical:current.HISTORY+'/browser-run.cjs',repin:'lib/renderer.js'};
  if(faults[mode]){
    const target=path.join(root,faults[mode]);fs.readFileSync=function(file,...args){
@@ -86,15 +92,17 @@ async function child(){
            }
          }else if(q.method==='Runtime.evaluate'){
            const value=vm.runInContext(q.params.expression,q.sessionId==='worker-session'?workerCtx:page);
+           if(mode==='held-identity'&&!wine.running)terminalIndex=protocol.length;
            r={result:{value:JSON.parse(JSON.stringify(value===undefined?null:value))}};
          }else if(q.method==='Debugger.getScriptSource')r={bytecode:fs.readFileSync(root+'/build/wine-assembly.wasm').toString('base64')};
          else if(q.method==='Input.dispatchKeyEvent'){
            const p=q.params,type=p.type==='keyDown'?'keydown':'keyup';page.emit(type,{key:p.key,code:p.code});deliveries.push({type,key:p.key});
            if(p.type==='keyDown'&&(p.text||p.key==='Enter'))page.emit('keypress',{key:p.key});
+           if(mode==='held-identity'&&fs.existsSync(generated+'/original/ready.json')&&p.type==='keyDown')wine.running=false;
          }else if(q.method==='Input.dispatchMouseEvent'){
            const p=q.params;deliveries.push(p);page.emit(p.type==='mousePressed'?'mousedown':p.type==='mouseReleased'?'mouseup':'mousemove',p);
-           if(mode==='drag-failure'&&p.type==='mousePressed'&&!firstMouseFault){firstMouseFault=true;return this.reply(q,{}, {code:-1,message:'OFFLINE_FIRST_DRAG_FAILURE'});}
-         }else if(q.method==='Page.captureScreenshot')r={data:Buffer.from('offline screenshot bytes').toString('base64')};
+           if(['drag-failure','held-mouse'].includes(mode)&&p.type==='mousePressed'&&!firstMouseFault){firstMouseFault=true;terminalIndex=protocol.length;if(mode==='held-mouse')return;return this.reply(q,{}, {code:-1,message:'OFFLINE_FIRST_DRAG_FAILURE'});}
+         }else if(q.method==='Page.captureScreenshot'){if(mode==='held-capture'&&fs.existsSync(generated+'/original/ready.json')){terminalIndex=protocol.length;return;}r={data:Buffer.from('offline screenshot bytes').toString('base64')};}
          else if(q.method==='Browser.close'){this.reply(q);browser.stdin.end('close\n');return;}
          else assert(['Target.setDiscoverTargets','Target.setAutoAttach','Page.enable','Runtime.enable','Debugger.enable'].includes(q.method),q.method);
          this.reply(q,r);
@@ -104,17 +112,30 @@ async function child(){
    close(){this.readyState=3;}
  }
  globalThis.WebSocket=Peer;
- process.on('exit',code=>save(dir+'/peer.json',{mode,code,compiled,protocol,deliveries,chromeStarted:false,browserPeerOnly:true}));
- process.env.BROWSER_DEADLINE=String(Date.now()+120000);
+ process.on('exit',code=>save(dir+'/peer.json',{mode,code,compiled,protocol,deliveries,terminalIndex,failurePublishedIndex,chromeStarted:false,browserPeerOnly:true}));
+ process.env.BROWSER_DEADLINE=String(Date.now()+600000);
  if(mode==='ordinary')process.env.NO_ORIGINAL='1';
  if(!faults[mode]&&mode!=='ordinary'&&!startupFailure){
    (async()=>{
      const out=generated+'/original';while(!fs.existsSync(out+'/ready.json')){if(fs.existsSync(out+'/first-browser-failure.json'))return;await wait(20);}
      const transport=require(generated+'/transport.cjs');
+     if(mode==='stale-refusal')clockOffset=120001;
      const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));save(out+'/'+latest.label+'-review.json',{...latest,review:'Offline peer review for actual consumer control flow only'});
-     try{await transport.request(out,'drag',{action:'drag',button:'right',point:[.3,.4],to:[.6,.7],holdMs:200,waitMs:0,label:'drag',reviewRef:latest.label},3000);}
-     catch(e){if(mode!=='drag-failure')throw e;return;}
-     assert.equal(mode,'drag');await transport.request(out,'quit',{action:'quit'},3000);
+     const commands=mode==='commands'?[
+       {action:'move',point:[.4,.5]}, {action:'key',key:'KeyI',holdMs:100},
+       {action:'key',key:'Tab',holdMs:150}, {action:'key',key:'Enter',holdMs:250},
+       {action:'type',text:'JACK'}, {action:'combo',keys:['ArrowUp','ArrowLeft'],holdMs:100},
+       {action:'click',button:'left',point:[.815,.601],holdMs:150},
+       {action:'click',button:'right',point:[.49,.63],holdMs:1500},
+       {action:'doubleclick',button:'left',point:[.6,.5],holdMs:100},
+       {action:'drag',button:'right',point:[.3,.4],to:[.6,.7],holdMs:200}, {action:'capture'}
+     ]:[mode==='refusal'?{action:'mouse',point:[.6,.5]}:mode==='stale-refusal'?{action:'click',point:[.6,.5],button:'left',holdMs:150}:mode==='held-identity'?{action:'key',key:'KeyI',holdMs:1000}:mode==='held-capture'?{action:'capture'}:{action:'drag',button:'right',point:[.3,.4],to:[.6,.7],holdMs:200}];
+     for(let n=0;n<commands.length;n++){
+       const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));const review=out+'/'+latest.label+'-review.json';if(!fs.existsSync(review))save(review,{...latest,review:'Offline actual consumer command admission'});
+       try{await transport.request(out,'command-'+n,{...commands[n],waitMs:0,label:'command-'+n,reviewRef:latest.label},30000);}
+       catch(e){if(!['drag-failure','held-mouse','held-capture','refusal','stale-refusal','held-identity'].includes(mode))throw e;return;}
+     }
+     await transport.request(out,'quit',{action:'quit'},3000);
    })().catch(e=>{console.error(e);process.exitCode=3;});
  }
  require(consumer);
@@ -127,11 +148,11 @@ async function main(){
  // The unchanged driver actually executes its full strict preflight.
  const pre=cp.spawnSync(process.execPath,[generated+'/browser-run.cjs'],{env:{...process.env,DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+120000)},encoding:'utf8'});
  assert.equal(pre.status,0,pre.stderr);results.push({mode:'current-preflight',status:pre.status,proof:JSON.parse(pre.stdout)});
- for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','stopped-port','ordinary','drag','drag-failure']){
+ for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','stopped-port','ordinary','drag','commands','drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture']){
    const dir=out+'/'+mode;fs.mkdirSync(dir);
    // The actual generated source is shared; move only its run-specific outputs
    // after each execution, retaining every failure and ordinary-close artifact.
-   const r=cp.spawnSync(process.execPath,[__filename],{env:{...process.env,NOX_TEST_CHILD:'1',NOX_TEST_MODE:mode,NOX_TEST_DIR:dir,NOX_TEST_GENERATED:generated},encoding:'utf8',timeout:45000,maxBuffer:1024*1024});
+   const r=cp.spawnSync(process.execPath,[__filename],{env:{...process.env,NOX_TEST_CHILD:'1',NOX_TEST_MODE:mode,NOX_TEST_DIR:dir,NOX_TEST_GENERATED:generated},encoding:'utf8',timeout:75000,maxBuffer:1024*1024});
    fs.writeFileSync(dir+'/stdout',r.stdout||'');fs.writeFileSync(dir+'/stderr',r.stderr||'');
    const peer=JSON.parse(fs.readFileSync(dir+'/peer.json'));assert(peer.compiled);assert.equal(peer.chromeStarted,false);
    if(['primary','compat','source','media','historical','repin'].includes(mode)){
@@ -168,19 +189,28 @@ async function main(){
      }
      assert(!fs.existsSync(dir+'/runtime/chrome-profile'));assert(!fs.existsSync(dir+'/runtime/endpoint.json')||mode==='malformed-port');
      assert(!fs.existsSync(dir+'/runtime/ready.json'));assert(!peer.protocol.some(q=>q.method==='Page.captureScreenshot'));
-     assert.equal(JSON.parse(fs.readFileSync(dir+'/runtime/close-reason.json')).reason,'first terminal failure');
+     assert.equal(JSON.parse(fs.readFileSync(dir+'/runtime/close-reason.json')).reason,mode==='early-death'?'browser exit':'first terminal failure');
    }else{
      const source=generated+'/'+(mode==='ordinary'?'production-preflight':'original');fs.renameSync(source,dir+'/runtime');
-     const joined=JSON.parse(fs.readFileSync(dir+'/child-wait.json'));assert.deepEqual(joined,{code:0,signal:null,stdoutEOF:true,stderrEOF:true});
-     assert.equal(r.status,mode==='drag-failure'?1:0,r.stderr);
-     assert.equal(peer.protocol.filter(q=>q.method==='Browser.close').length,1);
+     const failed=['drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture'].includes(mode);
+     const joined=JSON.parse(fs.readFileSync(dir+'/child-wait.json'));assert.equal(joined.stdoutEOF,true);assert.equal(joined.stderrEOF,true);assert.equal(joined.signal,failed?'SIGTERM':null);
+     assert.equal(r.status,failed?1:0,r.stderr);
+     assert.equal(peer.protocol.filter(q=>q.method==='Browser.close').length,failed?0:1);
      assert(!fs.existsSync(dir+'/runtime/chrome-profile'));
      assert(!fs.existsSync(dir+'/runtime/native-startup-failure.json'),'successful startup emits no failure diagnostic');
      const timing=JSON.parse(fs.readFileSync(dir+'/runtime/native-startup-timing.json'));assert(timing.portRead);assert(timing.samples.length<=102);
      const mouse=peer.deliveries.filter(p=>p.type==='mousePressed'||p.type==='mouseReleased');
-     if(mode!=='ordinary'){assert.deepEqual(mouse.map(p=>p.type),['mousePressed','mouseReleased']);assert(mouse.every(p=>p.button==='right'));}
-     if(mode==='drag-failure'){
-       const failure=JSON.parse(fs.readFileSync(dir+'/runtime/first-browser-failure.json'));assert.match(failure.error,/OFFLINE_FIRST_DRAG_FAILURE/);
+     if(mode==='drag'){assert.deepEqual(mouse.map(p=>p.type),['mousePressed','mouseReleased']);assert(mouse.every(p=>p.button==='right'));}
+     if(mode==='commands'){assert(mouse.some(p=>p.type==='mousePressed'&&p.button==='left'));assert.equal(mouse.filter(p=>p.type==='mousePressed').length,5);}
+     if(failed){
+       assert.equal(peer.protocol.length,peer.failurePublishedIndex,'zero protocol after terminal failure publication');
+       if(peer.terminalIndex!==null){
+         // Observe the real 20-second timer callback; do not shorten the bound.
+         assert.equal(peer.protocol.length,peer.terminalIndex);
+       }
+       assert(!fs.existsSync(dir+'/runtime/native-events.json'),'terminal cleanup never evaluates native events');
+       assert(!fs.existsSync(dir+'/runtime/command-0.png'),'no post-failure capture');
+       const failure=JSON.parse(fs.readFileSync(dir+'/runtime/first-browser-failure.json'));assert.match(failure.error,mode==='drag-failure'?/OFFLINE_FIRST_DRAG_FAILURE/:mode==='refusal'?/known action/:mode==='stale-refusal'?/stale scene/:mode==='held-identity'?/AssertionError/:/CDP UNKNOWN/);
        assert(!fs.existsSync(dir+'/runtime/drag.png'),'no later capture after first failure');
        assert(JSON.parse(fs.readFileSync(dir+'/runtime/first-failure.json')).noReplay);
      }

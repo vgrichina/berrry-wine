@@ -137,12 +137,44 @@ ${startup} }catch(error){
  }
 `+source.slice(b);
 }
+function terminalCleanup(source){
+  source=exact(source,'function send(method,params={},sessionId){return new Promise',`let terminalError=null;
+function terminal(error){
+ if(!terminalError){terminalError=error;process.exitCode=1;clearTimeout(timer);
+  save('terminal-error.json',{at:new Date().toISOString(),error:error.stack||String(error),noReplay:true});
+  queueMicrotask(()=>close('first terminal failure').catch(e=>console.error(e)));
+ }
+ for(const p of pending.values()){clearTimeout(p.timer);p.reject(terminalError);}pending.clear();
+ return terminalError;
+}
+function send(method,params={},sessionId){if(terminalError)return Promise.reject(terminalError);return new Promise`);
+  source=exact(source,"pending.delete(n);reject(Error('CDP UNKNOWN '+method+'; no replay'));","const error=Error('CDP UNKNOWN '+method+'; no replay');terminal(error);reject(error);");
+  source=exact(source,'ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));',"try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));}catch(error){terminal(error);reject(error);}");
+  source=exact(source,'async function event(v){','async function event(v){\n if(terminalError)return;');
+  source=exact(source,"if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));", "if(r.exceptionDetails)throw terminal(Error(JSON.stringify(r.exceptionDetails)));");
+  source=exact(source,' await Promise.all(workerPromises);'," if(page.apps.some(a=>a.stopped||!a.running))throw terminal(Error('guest death; no replay'));\n await Promise.all(workerPromises);");
+  source=exact(source,"async function close(reason){if(closing)return;closing=true;clearTimeout(timer);try{if(pageSession)","async function close(reason){if(closing)return;closing=true;clearTimeout(timer);try{if(!terminalError&&pageSession)");
+  source=exact(source,"if(ws?.readyState===1)await send('Browser.close');","if(!terminalError&&ws?.readyState===1)await send('Browser.close');");
+  source=exact(source,'async function execute(c,markDispatch){','async function execute(c,markDispatch){\n if(terminalError)throw terminalError;');
+  source=exact(source,'return chain.progress(receipt.live.identity)', 'return chain.progress(receipt.live.identity).catch(error=>{throw terminal(error);})');
+  source=exact(source,"browser.once('exit',(code,signal)=>save('chrome-exit.json',{at:new Date().toISOString(),code,signal}));",`browser.once('exit',(code,signal)=>{save('chrome-exit.json',{at:new Date().toISOString(),code,signal});if(!closing){terminal(Error('browser exited; no replay'));close('browser exit').catch(e=>console.error(e));}});`);
+  source=exact(source,"timer=setTimeout(()=>close('immutable runtime cap').catch(e=>console.error(e)),deadline-Date.now());","timer=setTimeout(()=>{terminal(Error('immutable runtime cap'));close('immutable runtime cap').catch(e=>console.error(e));},deadline-Date.now());");
+  source=exact(source,"v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);","v.error?p.reject(terminal(Error(JSON.stringify(v.error)))):p.resolve(v.result);");
+  source=exact(source,"})().catch(async e=>{save('first-browser-failure.json'","})().catch(async e=>{terminal(e);save('first-browser-failure.json'");
+  return source;
+}
 function generate(planFile,destination){
   const reviewed=json(planFile),{plan,patches}=inspect();
   assert.deepEqual(plan,reviewed,'current inputs differ from explicit reviewed plan');
   assert(!fs.existsSync(destination),'fresh generated destination');fs.mkdirSync(destination,{recursive:true});
   const emit=(name,bytes)=>fs.writeFileSync(path.join(destination,name),bytes,{flag:'wx'});
-  for(const name of HELPERS)emit(name,read(HISTORY+'/'+name));
+  for(const name of HELPERS){
+    let bytes=read(HISTORY+'/'+name);
+    if(name==='transport.cjs')bytes=Buffer.from(exact(bytes.toString(),`   if(e.code==='STALE_SCENE_BEFORE_DISPATCH'&&!dispatched){
+    base.writeJson(path.join(out,'reply-'+number+'.json'),{ok:true,id:c.id,status:'refused-before-dispatch',effects:0,refreshRequired:true,error:String(e)});return true;
+   }`, '   // Nox: every refusal is terminal; retain the unchanged pre-effect guard.'));
+    emit(name,bytes);
+  }
   // Compose the actual current production helper with only Nox key descriptors.
   let native=read('ops/browser-native-input.cjs').toString();
   native=exact(native,'KeyI:73,','KeyI:73,KeyV:86,KeyB:66,KeyQ:81,');
@@ -153,6 +185,7 @@ function generate(planFile,destination){
   source=exact(source,"root=path.resolve(run,'../../..')",'root=path.resolve(run,'+JSON.stringify(relRoot)+')');
   source=exact(source,"const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));","const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));\nrequire(root+'/tools/nox-current-driver.cjs').verify(root,pins,run,"+JSON.stringify(planHash(plan))+");");
   source=startupDiagnostics(source);
+  source=terminalCleanup(source);
   emit('browser-run.cjs',source);
   const generated=walk(destination).map(p=>pin(path.basename(p),fs.readFileSync(p))).sort((a,b)=>a.path.localeCompare(b.path));
   const provenance=Object.entries(patches).map(([name,b])=>pin(name,b));
