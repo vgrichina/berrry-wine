@@ -10,7 +10,7 @@ const { inputEventHwnd } = require('../lib/host-window');
 const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
   startupShowCommand, startupShowArgs,
   stageAndLoadPeOwned, configureExeOwned, exeDriveForPath,
-  setEnvironmentVariable, handleLoadLibraryYield, serviceLoadLibraryYieldSync,
+  setEnvironmentVariableOwned, handleLoadLibraryYield, serviceLoadLibraryYieldSync,
   handleComDllYield, findVfsDllBytes } = require('../lib/process-boot');
 const {
   applyExeCompatibilityPatches: applyProfilePatches,
@@ -5771,7 +5771,7 @@ async function main() {
     (ASSET_ENTRY && ASSET_ENTRY.environment) || {}));
   for (const [name, value] of PROCESS_ENVIRONMENT) processEnvironment.set(name, value);
   for (const [name, value] of processEnvironment) {
-    if (!setEnvironmentVariable(instance.exports, memory.buffer, name, value)) {
+    if (!await setEnvironmentVariableOwned(mainOwner, memory.buffer, name, value)) {
       throw new Error(`failed to set guest process environment variable ${name}`);
     }
     console.log(`Guest environment: ${name}=${JSON.stringify(value)}`);

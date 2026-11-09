@@ -575,7 +575,7 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   code-page, Windows-version and allocation settings, and verify that Worker
   configuration leaves the host shadow's local globals unchanged. Evidence:
   `scratch/runs/20261109-cli-owner-config/test-result.json`.
-  Graphics backend attachment, environment setup, compatibility patches,
+  Graphics backend attachment, compatibility patches,
   remaining debug hooks and DLL initialization still have local
   paths; the CLI continues to select a local owner until all are migrated.
   Post-load interpreter options now share one `visitMain` setting policy
@@ -609,6 +609,14 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   The actual Node test constructs the renderer from the owning instance's
   reported base, with the host shadow still unloaded. This covers construction
   metadata and heap handoff, not full Worker-main startup or draw capture.
+  CLI launch environment overrides now stage through the selected guest owner
+  and await native consumption before staging another value or entering DLL
+  initialization. Shared staging requires the same quiescent startup interval
+  as executable metadata; this is not a concurrent runtime environment API.
+  Local and real Node Worker tests prove lazy environment initialization,
+  correct queried values and untouched shadow globals. Empty values remain
+  supported and null launch values remain rejected by the native export.
+  Staging bounds and embedded NUL checks precede writes; owner errors propagate.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
