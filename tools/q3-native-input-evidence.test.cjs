@@ -7,6 +7,7 @@ async function main() {
   const result = composition.compose();
   const file = path.join(root, path.dirname(composition.consumerPath), 'bound-input.cjs');
   const run = path.resolve(process.env.Q3_INPUT_TEST_RUN);
+  fs.mkdirSync(run, {recursive:true});
   const old = path.join(root, path.dirname(composition.adapterPath), 'physical-completion.jsonl');
   const before = fs.existsSync(old) ? fs.readFileSync(old) : null;
   let source;

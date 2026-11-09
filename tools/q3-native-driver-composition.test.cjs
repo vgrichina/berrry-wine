@@ -137,6 +137,37 @@ async function main() {
   const run = path.resolve(process.env.Q3_TEST_RUN || 'scratch/runs/20261108-q3-readiness-drain-integration-2305/test-' + Date.now() + '-' + process.pid);
   fs.mkdirSync(run, {recursive:true});
   const result = composition.compose();
+  // Exercise the actual whole-composition dependency gate before any adapter
+  // evaluation. The custody provider is the released c443739b repair; neither
+  // its historical pin nor arbitrary replacement bytes may reach the caller.
+  const dependencyControls = [];
+  const dependencyRead = fs.readFileSync;
+  try {
+    for (const file of Object.keys(composition.providers)) {
+      for (const mode of ['changed', 'missing']) {
+        fs.readFileSync = function(name, ...args) {
+          if (name === path.join(root, file)) {
+            if (mode === 'missing') throw Object.assign(Error('missing dependency'), {code:'ENOENT'});
+            return Buffer.concat([Buffer.from(dependencyRead.call(this, name, ...args)), Buffer.from('\n')]);
+          }
+          return dependencyRead.call(this, name, ...args);
+        };
+        assert.throws(() => composition.compose(), mode === 'missing' ? /missing dependency/ : /provider changed/);
+        dependencyControls.push({file, mode, refused:true});
+      }
+    }
+  } finally { fs.readFileSync = dependencyRead; }
+  assert.equal(composition.providers['tools/native_kernel_custody.py'],
+    '05b7fe42cf7ac09df5f12f0ea073ea066892efb598b64b05fae19a3492c9f32c');
+  fs.writeFileSync(run + '/dependency-controls.json.gz', zlib.gzipSync(JSON.stringify({
+    passed:true, controls:dependencyControls, references:result.references,
+    callerSHA256:require('node:crypto').createHash('sha256').update(result.source).digest('hex'),
+    fixtureSHA256:require('node:crypto').createHash('sha256').update(result.fixtureSource).digest('hex')
+  })));
+  if (process.argv.includes('--dependencies-only')) {
+    console.log('PASS whole composition: current released providers compile; '+dependencyControls.length+' changed/missing dependencies refused');
+    return;
+  }
   assert(result.retainedSource.includes('i<100&&!fs.existsSync(active)'));
   assert(!result.source.includes('i<100&&!fs.existsSync(active)'));
   assert(result.source.includes('if(closePromise)return closePromise'));

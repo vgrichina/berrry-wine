@@ -29,7 +29,7 @@ const providers = Object.freeze({
   'scratch/runs/20261108-q3-gl-readiness-gameplay/trace.cjs': '6f440f2d1bdd9e02598a768ad041681ae1969245e9512939dff24a3970bb8b86',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs': '175033bc07bda95dd2d618511729d901908d60a9e8ec970cdbc8d7e2d61dcd70',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/producer-ready.cjs': 'e400a370c681974dd3b9cce294ac8853e9779d8922e15f8063b23e5ed84dc5e8',
-  'tools/native_kernel_custody.py': '5ec810c4d4704ff86afc367b38f7335edf1214e3450ebb98a62ce3df6386b5fe'
+  'tools/native_kernel_custody.py': '05b7fe42cf7ac09df5f12f0ea073ea066892efb598b64b05fae19a3492c9f32c'
 });
 function replaceOnce(source, before, after) {
   assert.equal(source.split(before).length, 2, 'missing/nonunique Q3 integration: ' + before.slice(0, 70));
