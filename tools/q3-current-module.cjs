@@ -224,6 +224,27 @@ function composeCheckpointCaller(source,version){
   };
   once(' launcher=threading.Thread(target=owned_launch);launcher.start()',
     ' controllerError=None\n launcher=threading.Thread(target=owned_launch);launcher.start()');
+  // select() observes the kernel pipe, not TextIOWrapper's read-ahead buffer.
+  // Two prepared lines in one write used to strand the second until a third
+  // write arrived. Retain complete byte lines ourselves; never wait for more
+  // bytes when a complete line is pending, and observe EOF before admission.
+  once("   while not session.completed:\n    session.check()\n    import select\n    if not select.select([sys.stdin],[],[],.05)[0]:continue\n    line=sys.stdin.readline()\n    if not line:raise session.fail('original controller stdin EOF')\n    value=json.loads(line);command=value['command']",
+    `   import select
+   inputPoll=select.poll();inputPoll.register(sys.stdin,select.POLLIN|select.POLLHUP|select.POLLERR)
+   inputPending=b''
+   while not session.completed:
+    session.check()
+    events=inputPoll.poll(0 if b'\\n' in inputPending else 50)
+    if any(mask&(select.POLLHUP|select.POLLERR|select.POLLNVAL) for _,mask in events):
+     raise session.fail('original controller stdin EOF')
+    if events:
+     chunk=os.read(sys.stdin.fileno(),65536)
+     if not chunk:raise session.fail('original controller stdin EOF')
+     inputPending+=chunk
+    if b'\\n' not in inputPending:continue
+    line,inputPending=inputPending.split(b'\\n',1)
+    session.check()
+    value=json.loads(line);command=value['command']`);
   once(" except BaseException as e:\n  if not (R/'actual-first-terminal.json.gz').exists():",
     " except BaseException as e:\n  controllerError=e\n  if not (R/'actual-first-terminal.json.gz').exists():");
   once(" proof=json.loads(remote(phase+'-independent-join',code,60));save(phase+'-proof',proof)\n print(json.dumps(proof),flush=True)",

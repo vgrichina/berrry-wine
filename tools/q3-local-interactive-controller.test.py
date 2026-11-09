@@ -295,6 +295,78 @@ except BaseException as e:
  else:assert (records/'original-proof.json').exists(),'read-only join must finish before terminal propagation'
  if FRESH_CALLER:assert json.loads((records/'harness-terminal.json').read_text())['error']=='remote result UNKNOWN: command-first'
  print('PASS actual retained original launch + real Session + actual retained command branch; sticky firstfailure no later capture',flush=True)
+ if FRESH_CALLER:
+  # The first command succeeds so the actual generated original loop must
+  # consume the next line without another writer wake. Both are read-only
+  # captures; coalescing input never supplies an unreviewed gameplay action.
+  # The second command fails through the real Session/retained command branch.
+  baseline=ROOT/'scratch/runs/20261109-q3-arena-harness-runtime-1748/q3-checkpoint-caller.py'
+  assert hashlib.sha256(baseline.read_bytes()).hexdigest()=='92a515d8418704721ad0f1650fb686576f52d037f2c1412fcee71dcaa02bfd1f'
+  schedule=[]
+  for label,selected,fragmented,close_pending in (
+      ('baseline-read-ahead',baseline,False,False),
+      ('prepared-lines',CALLER,False,False),
+      ('fragmented-line',CALLER,True,False),
+      ('eof-with-pending',CALLER,False,True)):
+   directory=OUT/label;directory.mkdir();records=directory/'records'
+   code=harness.read_text().replace(
+    "R=Path(__file__).parent/'retained-records'", "R=Path(__file__).parent/'records'").replace(
+    repr(str(CALLER)),repr(str(selected))).replace(
+    repr(hashlib.sha256(CALLER.read_bytes()).hexdigest()),repr(hashlib.sha256(selected.read_bytes()).hexdigest()))
+   before='  return [sys.executable,\'-B\',\'-c\',\'import json;print(json.dumps(dict(exitCode=1,stdout="OFFLINE first command refusal")))\']'
+   assert code.count(before)==1
+   success="import json;print(json.dumps(dict(exitCode=0,stdout='{}')))"
+   if close_pending:
+    success="from pathlib import Path;import time,json;p=Path("+repr(str(records/'allow-first'))+");\nwhile not p.exists():time.sleep(.005)\nprint(json.dumps(dict(exitCode=0,stdout='{}')))"
+   code=code.replace(before,
+    "  if not (R/'first-accepted').exists():\n   (R/'first-accepted').touch()\n   return [sys.executable,'-B','-c',"+repr(success)+"]\n"+before)
+   script=directory/'harness.py';script.write_text(code)
+   r,wr=livepipe()
+   # Real buffered sys.stdin inside the actual launch body; controller uses
+   # its production unbuffered forwarding and retains the pipe writer.
+   p=spawn([sys.executable,'-B',str(MODULE),'--caller',str(script),
+            '--caller-sha256',hashlib.sha256(script.read_bytes()).hexdigest(),
+            '--evidence',str(directory/'controller')],stdin=r,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+   until(lambda:(records/'actual-retained-launch-code.sha256').exists())
+   payload=b'{"command":{"id":"first","action":"capture"},"review":"\xc3\xa9"}\n{"command":{"id":"later_capture","action":"capture"}}\n{"command":{"id":"forbidden","action":"capture"}}\n'
+   if fragmented:
+    cut=payload.index(b'\xc3')+1;os.write(wr,payload[:cut]);time.sleep(.1)
+    assert not (records/'original-requested-first.json').exists(),'partial UTF-8 line must not dispatch'
+    os.write(wr,payload[cut:])
+   else:os.write(wr,payload)
+   until(lambda:(records/'first-accepted').exists())
+   if label=='baseline-read-ahead':
+    # First ACK has settled; the second complete line is trapped in TextIO.
+    until(lambda:(records/'original/actual-caller-session/command-first.wait.json').exists())
+    time.sleep(.2)
+    assert p.poll() is None and not (records/'original-requested-later_capture.json').exists()
+    os.close(wr);wr=None
+   elif close_pending:
+    # Close the upstream controller while its first command is in flight.
+    # Controller EOF cancels the downstream writer before that ACK completes.
+    os.close(wr);wr=None
+    until(lambda:(directory/'controller/first-terminal.json').exists())
+    (records/'allow-first').touch()
+   so,se=p.communicate(timeout=15)
+   if wr is not None:os.close(wr)
+   r.close();assert p.returncode==1,(label,se.decode())
+   v=receipt(directory/'controller')
+   joined=json.loads((records/'original-local-joined.json').read_text())
+   assert joined['launcherJoined'] and joined['terminal'] and not joined['completed']
+   assert all(x['actualWait'] and x['stdoutEOF'] and x['stderrEOF'] for x in joined['receipts'])
+   # Closing the writer wakes the baseline's select, which then consumes its
+   # buffered second line despite EOF. The fixed caller refuses that boundary.
+   expected='original controller stdin EOF' if close_pending else 'remote result UNKNOWN: command-later_capture'
+   assert joined['terminal']['reason']==expected,(label,joined)
+   assert (records/'original-requested-later_capture.json').exists()==(not close_pending)
+   assert not (records/'original-requested-forbidden.json').exists()
+   row=dict(case=label,passed=True,caller=str(selected.relative_to(ROOT)),
+            callerSHA256=hashlib.sha256(selected.read_bytes()).hexdigest(),
+            actualWait=v,terminal=joined['terminal'],nativeQualified=False)
+   schedule.append(row)
+   (directory/'actual-wait.json').write_text(json.dumps(dict(status=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=so.decode(),stderr=se.decode())))
+   print('PASS actual generated original input schedule',label,flush=True)
+  (OUT/'input-scheduling.json').write_text(json.dumps(dict(passed=True,cases=schedule,baselineReadAheadStall=True,nativeQualified=False)))
  (OUT/'result.json').write_text(json.dumps(dict(passed=True,actualRetainedCaller=True,caller=str(CALLER.relative_to(ROOT)),callerSHA256=hashlib.sha256(CALLER.read_bytes()).hexdigest(),fullCallerImport=True,nativeQualified=False,box='NOT_CREATED',remoteCustody='UNKNOWN')))
 finally:
  for p in processes:
