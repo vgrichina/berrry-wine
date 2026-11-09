@@ -63,7 +63,8 @@ providers += [ROOT / name for name in wrapper_functions['composition_providers']
 pins = {'files': [dict(path=str(p.relative_to(ROOT)), size=p.stat().st_size,
                       sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in providers]}
 for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing-provider', 'bad-import',
-             'missing-screenshot', 'missing-composition', 'stale-composition-pin', 'missing-caller'):
+             'missing-screenshot', 'missing-composition', 'stale-composition-pin', 'missing-caller',
+             'missing-startup', 'missing-fixture', 'missing-admission'):
     active = OUT / case
     active.mkdir()
     selected = json.loads(json.dumps(pins))
@@ -72,6 +73,11 @@ for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing
         selected['files'][1]['sha256'] = '0' * 64
     if case == 'missing-caller':
         selected['files'] = [p for p in selected['files'] if p['path'] != 'tools/q3-native-launch-client.py']
+    if case in ('missing-startup', 'missing-fixture', 'missing-admission'):
+        omitted = {'missing-startup': 'tools/q3-startup.cjs',
+                   'missing-fixture': 'scratch/runs/20261108-q3-gl-readiness-gameplay/generated.cjs',
+                   'missing-admission': 'lib/redline-startup-admission.js'}[case]
+        selected['files'] = [p for p in selected['files'] if p['path'] != omitted]
     if case == 'missing-provider':
         selected['files'] = [p for p in selected['files'] if p['path'] != 'tools/native_kernel_custody.py']
     if case in ('missing-screenshot', 'missing-composition'):
@@ -99,7 +105,8 @@ for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing
         assert case == 'spawn-refused'
     except ValueError as error:
         assert case in ('bad-pin', 'changed-generation', 'missing-provider', 'missing-screenshot',
-                        'missing-composition', 'stale-composition-pin', 'missing-caller'), error
+                        'missing-composition', 'stale-composition-pin', 'missing-caller',
+                        'missing-startup', 'missing-fixture', 'missing-admission'), error
         print(case, str(error))
     except ModuleNotFoundError as error:
         assert case == 'bad-import' and error.name == 'q3_deliberately_absent_prelaunch_control'
@@ -108,7 +115,8 @@ for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing
     assert calls == ({'check': ['publish', 'require'], 'spawn-refused': ['publish', 'require'],
                       'bad-pin': ['publish'], 'changed-generation': ['publish', 'require'],
                       'missing-provider': [], 'bad-import': ['publish'], 'missing-screenshot': [],
-                      'missing-composition': [], 'stale-composition-pin': [], 'missing-caller': []}[case]), calls
+                      'missing-composition': [], 'stale-composition-pin': [], 'missing-caller': [],
+                      'missing-startup': [], 'missing-fixture': [], 'missing-admission': []}[case]), calls
     assert attempts == (['subprocess.Popen'] if case == 'spawn-refused' else [])
     assert (active / 'one-original-claim.json.gz').exists() == (case == 'spawn-refused')
     assert not (active / 'runtime-parent-actual-wait.json.gz').exists()

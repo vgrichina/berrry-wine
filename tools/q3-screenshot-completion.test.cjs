@@ -26,6 +26,7 @@ async function main() {
   fs.mkdirSync(out,{recursive:true});
   const source=composition.compose().source;
   const sendSource=source.slice(source.indexOf('function send('),source.indexOf('\nasync function evaluate'));
+  const terminalCheck=source.slice(source.indexOf('function checkTerminal()'),source.indexOf('const callerMonitor='));
   const receiveSource=source.slice(source.indexOf('ws.onmessage=')+13,source.indexOf('\n save(\'browser-version.json\''));
   assert(receiveSource.endsWith(';'));
   const diagnosticRows=[], traceRows=[], pending=new Map(), timers=new Set();
@@ -61,6 +62,8 @@ async function main() {
   server.listen(0,'127.0.0.1');await once(server,'listening');
   const ws=new WebSocket('ws://127.0.0.1:'+server.address().port);await once(ws,'open');
   scope=vm.createContext({trace,pending,workers:new Map(),pageSession:'page',id:0,ws,
+    fs,callerCancellation:path.join(out,'caller-cancelled.json'),terminalFailure:null,
+    observeTerminal(reason){throw Error(reason);},
     root,require(name){
       if(name===root+'/tools/q3-screenshot-completion.cjs')return {create(options){
         return create({...options,probe:p=>probeEnabled?options.probe(p):undefined});
@@ -70,7 +73,7 @@ async function main() {
     setTimeout(fn,ms){assert.equal(ms,20000,'actual unchanged CDP cap');const timer=setTimeout(()=>{timers.delete(timer);fn();},ms);timers.add(timer);return timer;},
     clearTimeout(timer){timers.delete(timer);clearTimeout(timer);}});
   const initializer=source.match(/const screenshotCompletion=[^\n]+/)[0];
-  vm.runInContext(initializer+'\nglobalThis.diagnostic=screenshotCompletion;\n'+sendSource+'\nglobalThis.send=send;globalThis.receive='+receiveSource,scope);
+  vm.runInContext(terminalCheck+initializer+'\nglobalThis.diagnostic=screenshotCompletion;\n'+sendSource+'\nglobalThis.send=send;globalThis.receive='+receiveSource,scope);
   diagnostic=scope.diagnostic;
   ws.onmessage=scope.receive;
   for(const event of ['close','error'])ws.addEventListener(event,()=>diagnostic.transport(event));

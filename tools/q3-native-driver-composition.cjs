@@ -12,7 +12,11 @@ const assert = require('node:assert/strict');
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const consumerPath = 'scratch/runs/20261108-q3-gl-readiness-gameplay/browser-run.cjs';
 const adapterPath = 'scratch/runs/20261108-q3-instrumented-webgl-gameplay-2248/adapter.cjs';
+const fixturePath = 'scratch/runs/20261108-q3-gl-readiness-gameplay/generated.cjs';
 const providers = Object.freeze({
+  [fixturePath]: 'fb46f1b5f4aa6ad4f4c8874af4a1b507986dd8248f5abee086e09c2c061e89ec',
+  'tools/q3-startup.cjs': 'b3c419924809e4e27a5f4119a0d401c81dff01f1f98538e68a5ce0b74ac11b1c',
+  'lib/redline-startup-admission.js': 'afcb3bae5807a0b08e8d49262af33c1c64ecfa601717173b630658198de185e2',
   [consumerPath]: '689b05aed1724c2998131818a558dfc2d4e87605df579b97ce2ae3c598883416',
   [adapterPath]: '84c8419f7848fabc8f2c75a7949c6aa6d61a730cb72e71c5e3436f786ce3ac2a',
   'tools/supertux-native-lifecycle.cjs': '56536226dfd28666b50b902df26005f25641718aa9a398daff65aefdcb3e9d06',
@@ -55,6 +59,18 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
   extensions['.cjs']({_compile(s) { source = s; }}, path.join(root, consumerPath));
   assert.equal(typeof source, 'string');
   const retainedSource = source;
+  source = replaceOnce(source, "const start=Date.now()", "assert(!process.env.TR2_GENERATED&&!process.env.WEBGL_QUALIFY,'unsupported Q3 startup path; no launch');const start=Date.now()");
+  // Navigate to a neutral document. Only the authenticated one-shot startup
+  // controller may release the original; app= navigation is not admission.
+  source = replaceOnce(source,
+    "(process.env.TR2_GENERATED||process.env.NO_ORIGINAL?'':'&app='+selectedApp+'&gl-renderer='+(process.env.RENDER_BACKEND||'software')+'&d3d-renderer='+(process.env.RENDER_BACKEND||'software'))",
+    "('&gl-renderer='+(process.env.RENDER_BACKEND||'software')+'&d3d-renderer='+(process.env.RENDER_BACKEND||'software'))");
+  source = replaceOnce(source, "await require('./readiness.cjs').ready(evaluate,'dx_tunnel',{attempts:300,wait});",
+    "await require(root+'/tools/q3-startup.cjs').launch({evaluate,send,workers,pageSession,deadline,fixture:true,wait,save});await require('./readiness.cjs').ready(evaluate,'dx_tunnel',{attempts:300,wait});");
+  source = replaceOnce(source, "save('launch.json'", `for(let n=0;n<100;n++){if(await evaluate("typeof WineAssembly!=='undefined' && typeof shell!=='undefined' && typeof runningApps!=='undefined'"))break;await wait(100);}
+ await require(root+'/tools/q3-startup.cjs').launch({evaluate,send,workers,pageSession,deadline,wait,save});
+ save('launch.json'`);
+  source = replaceOnce(source, 'productionDirectRoute:!process.env.TR2_GENERATED', 'productionDirectRoute:false,parkedStartup:true');
   // Observe the exact transport send/receive/deadline boundaries. The retained
   // transport and screenshot options, work/CDP caps and ACK rules stay intact.
   source = replaceOnce(source, 'const pending=new Map(),workers=new Map(),workerPromises=[];',
@@ -141,7 +157,9 @@ function close(reason){
   assert(source.includes('value.configureDiagnostics({enabled:true,maxRecords:64})'), 'GL configure-before-hostimport missing');
   assert(source.indexOf("Page.addScriptToEvaluateOnNewDocument") < source.indexOf("await send('Page.navigate'"), 'GL preload must precede navigation');
   new vm.Script(Module.wrap(source), {filename:path.join(root, consumerPath)});
-  return {source, retainedSource, references, hook:extensions['.cjs'], append:localFs.appendFileSync};
+  const fixtureSource = require('./q3-startup.cjs').composeFixture(fs.readFileSync(path.join(root, fixturePath), 'utf8'), root);
+  new vm.Script(Module.wrap(fixtureSource), {filename:path.join(root, fixturePath)});
+  return {source, fixtureSource, retainedSource, references, hook:extensions['.cjs'], append:localFs.appendFileSync};
 }
 async function ready(options) {
   // The real consumer records spawn errors before this poll. Throw on the next
@@ -162,6 +180,7 @@ function install({root = path.resolve(__dirname, '..')} = {}) {
       assert(globalThis.WebSocket?.name === 'ObservedSocket', 'Q3 execution preload missing or wrong order');
       return module._compile(result.source, filename);
     }
+    if (filename === path.join(root, fixturePath)) return module._compile(result.fixtureSource, filename);
     if (filename === path.join(root, path.dirname(consumerPath), 'bound-input.cjs')) {
       return compileBoundInput(result, module, filename, path.dirname(path.resolve(process.env.Q3_EXECUTION_BOUNDARY_OUT)));
     }
@@ -177,5 +196,5 @@ function compileBoundInput(result, module, filename, evidenceDirectory) {
     return module._compile(replaceOnce(source, JSON.stringify(historical), JSON.stringify(destination)), name);
   }}, filename);
 }
-module.exports = {compose, ready, install, compileBoundInput, providers, consumerPath, adapterPath, replaceOnce};
+module.exports = {compose, ready, install, compileBoundInput, providers, consumerPath, adapterPath, fixturePath, replaceOnce};
 if (process.env.Q3_NATIVE_COMPOSITION === '1') install();

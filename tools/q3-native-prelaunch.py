@@ -25,13 +25,13 @@ def identity(pid):
 def composition_providers(root):
     """Read the owning composition's literal pins without executing a runtime."""
     source = (root / 'tools/q3-native-driver-composition.cjs').read_text()
-    declarations = dict(re.findall(r"const (consumerPath|adapterPath) = '([^']+)';", source))
+    declarations = dict(re.findall(r"const (consumerPath|adapterPath|fixturePath) = '([^']+)';", source))
     blocks = re.findall(r'const providers = Object\.freeze\(\{\n(.*?)\n\}\);', source, re.S)
     if len(blocks) != 1:
         raise ValueError('unsupported Q3 composition provider declaration')
     providers = {}
     for line in blocks[0].splitlines():
-        match = re.fullmatch(r"\s*(?:'([^']+)'|\[(consumerPath|adapterPath)\]): '([0-9a-f]{64})',?", line)
+        match = re.fullmatch(r"\s*(?:'([^']+)'|\[(consumerPath|adapterPath|fixturePath)\]): '([0-9a-f]{64})',?", line)
         if not match:
             raise ValueError('unsupported Q3 composition provider entry')
         name = match[1] or declarations[match[2]]

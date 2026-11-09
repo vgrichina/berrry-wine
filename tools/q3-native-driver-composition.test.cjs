@@ -34,6 +34,9 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
   };
   const png = Buffer.from('node-protocol-capture-fixture');
   Module._load = function(name, parent, main) {
+    // Lifecycle-only controls have no page/guest. Parked admission is exercised
+    // by q3-startup.test.cjs through the whole production composition.
+    if (parent?.filename === retained && name === root + '/tools/q3-startup.cjs') return {launch:async()=>({fixture:'lifecycle only; no startup proof'})};
     if (name === root + '/test/static-server.js') return {startStaticServer:async() => ({
       prependListener() {}, address:() => ({port:1}), closeAllConnections() {}, close:fn => fn()
     })};
