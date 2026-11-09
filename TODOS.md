@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedbae02f6a1 once35SHA-size17gzipCRC; actualsource controls oldabsolute0motion FAIL correctedexplicitrelative198,2 PASS balancedbuttons stickyterminal/buildPASS no productionbugclaim historicalguestselectionUNKNOWN. Fresh q3-relative-menu-native-progress-1415 ONEoriginal with correctedcaller freshreviewedcounts existinglock only soleNEXTruntime after1395APIarchive/drain verify. No syntheticmenu or acceptancewaiver.
+  Next: Reviewedc3a215f99 once839SHA-size538unique587gzipPASS. PREALLOCATION providerdrift refused beforeBox/input/capture; no guestprogress claim. Fresh q3-settled-source-relative-progress-1445 WAIT BOTH Q21425 andRedline1435 publishedRELEASEs before freshcurrentpins/module selection. Then ONEoriginal correctedrelativecaller freshreviewedcounts existinglock soleNEXTruntime; reuse1305proof only unchangedclosure. No syntheticmenu or acceptancewaiver.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
