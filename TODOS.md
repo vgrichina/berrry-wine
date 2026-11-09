@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed75b1a18c3 reader repair; current quake2-bound-moveup-route-0635 PID1230881 thread01a1bf04-53ec-7f92-bf33-dca36ea9c7e8 acquired sole runtime bx_zzxck5un UUIDd0f9ed07-5967-4d1b-93ac-ea79750df84b after exactDrakan archived drain. Initialexpiry07:16:45.168Z prearmedwatchdog07:16:45.264Z. Correct-bound Space ladder/onward attempt active; native consumption/contact remains unclaimed until actual result. Strictcaps custody4341 CPUa320 unchanged.
+  Next: Reviewed10ba6767b once586SHA-size188gzipCRC PASS and death PNG personallyviewed: HP94 thenHP0 LOADGAME before Space, pane traversal unestablished damagecauseUNKNOWN no subsequentinputcapture. bx_zzxck5un ARCHIVED PHYSICAL_DRAINED stop_f0d1a38a57eff38f; 346actualreaps completeTRUE cancellationcallerwait1 preserved. Fresh quake2-native-motion-observation-0713 PID1281219 thread01a1bf25-9e9e-7320-b864-7ba1e444f3d0 OFFLINE implements provable passive player position/motion fields in actual composed reader, strictcaps currentCPUa320 custody4341 unchanged. No further original authorized.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
