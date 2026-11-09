@@ -29,7 +29,15 @@ def identity(pid):
                 tgid=int(next(s.split()[1] for s in status if s.startswith('Tgid:'))))
 
 class Journal:
-    """Flush compressed bytes from the first record; hash the original bytes."""
+    """Ordered durable barriers with a bounded irreversible-retirement batch.
+
+    Only records that cannot admit executable userspace may be deferred. A
+    later admission record flushes the entire prefix before CONT. Saturation
+    applies synchronous backpressure; final close must persist every byte.
+    No worker/thread is inherited across the traced fork.
+    """
+    MAX_PENDING_BYTES = 1024 * 1024
+    MAX_PENDING_RECORDS = 4096
     def __init__(self, run, compression, name='custody.ndjson'):
         if compression not in (None, 'gzip'):
             raise ValueError('journal_compression must be None or gzip')
@@ -37,19 +45,40 @@ class Journal:
         self.raw = open(self.path, 'wb')
         self.stream = gzip.GzipFile(filename='', fileobj=self.raw, mode='wb', mtime=0) if compression else self.raw
         self.sha = hashlib.sha256(); self.size = 0
+        self.pending = bytearray(); self.pending_records = 0
+        self.error = None
 
-    def append(self, value):
+    def append(self, value, *, defer=False):
         data = (json.dumps(value)+'\n').encode('utf-8')
-        self.write(data)
+        if self.error is not None: raise OSError('journal service failed: '+self.error)
+        if len(self.pending) + len(data) > self.MAX_PENDING_BYTES or self.pending_records >= self.MAX_PENDING_RECORDS:
+            self.flush_pending()
+        if len(data) > self.MAX_PENDING_BYTES:
+            self.write(data)
+            return
+        self.pending.extend(data); self.pending_records += 1
+        if not defer: self.flush_pending()
+
+    def flush_pending(self):
+        if self.error is not None: raise OSError('journal service failed: '+self.error)
+        if self.pending:
+            self.write(self.pending)
+            self.pending.clear(); self.pending_records = 0
 
     def write(self, data):
-        self.stream.write(data); self.stream.flush()
-        self.raw.flush(); os.fsync(self.raw.fileno())
+        if self.error is not None: raise OSError('journal service failed: '+self.error)
+        try:
+            self.stream.write(data); self.stream.flush()
+            self.raw.flush(); os.fsync(self.raw.fileno())
+        except BaseException as error:
+            self.error = repr(error)
+            raise
         self.sha.update(data); self.size += len(data)
 
     def close(self):
         # GzipFile.close writes CRC32/ISIZE but does not close fileobj.
         try:
+            self.flush_pending()
             if self.stream is not self.raw: self.stream.close()
             self.raw.flush(); os.fsync(self.raw.fileno())
         finally:
@@ -69,10 +98,11 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     exec_transfers = {}
     exit_stops = {}
     journal = Journal(run, journal_compression)
+    retirement = False
     def log(kind, **value):
         nonlocal sequence
         sequence += 1
-        journal.append(dict(sequence=sequence, at=time.time(), kind=kind, **value))
+        journal.append(dict(sequence=sequence, at=time.time(), kind=kind, **value), defer=retirement)
         return sequence
     def write(name, value):
         (run / name).write_text(json.dumps(value, indent=2))
@@ -102,8 +132,8 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             return
         row = identity(pid)
         row.update(parentCustodian=parent, cause=cause)
-        row['registeredSequence'] = log('custody', **row)
         owned[pid] = row
+        row['registeredSequence'] = log('custody', **row)
     def trace_task(request, task, data=0):
         try:
             ptrace(request, task, data=data)
@@ -201,12 +231,14 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
         except BaseException:
             os._exit(127)
     if write_fd is not None: os.close(write_fd)
-    register(pid, os.getpid(), 'initial-traceme-barrier')
     armed = False
     try:
+        register(pid, os.getpid(), 'initial-traceme-barrier')
         while True:
-            # WNOWAIT explicitly leaves even adopted zombies in /proc until their
-            # PID/start/current PPID and custody are durably logged below.
+            retirement = False
+            # WNOWAIT retains the real status and /proc identity for the
+            # observation below. Registration/admission is durable; terminal
+            # observations join the bounded ordered retirement batch.
             if time.time() > cleanup_deadline:
                 log('cleanup-deadline', deadline=cleanup_deadline)
                 raise TimeoutError('immutable cleanup deadline')
@@ -272,6 +304,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     # A dying thread can lose /proc before its terminal wait.
                     # Keep the actual ptrace/terminal obligation, as below.
                     log('identity-unavailable-before-resume', pid=task, start=start)
+                journal.flush_pending() # ordered durable prefix before executable userspace
                 released = trace_task(CONT, task, deliver)
                 if parent is not None:
                     log('parked-child-release' if released else 'parked-child-release-pending',
@@ -293,6 +326,12 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     signal.SIGSTOP, (6 << 8) | signal.SIGTRAP
                 ), ('unexpected unlinked task', task, peek)
                 register(task, None, 'kernel-autoattach-stop')
+            # The registered identity is already durable. EXIT CONT can only
+            # finish irreversible death; terminal waitpid is the real receipt.
+            # Keep their ordered evidence in the bounded batch, without disk
+            # service on every stop/reap. All other stops remain sync barriers.
+            retirement = peek.si_code in (os.CLD_EXITED, os.CLD_KILLED, os.CLD_DUMPED) or (
+                peek.si_code == os.CLD_TRAPPED and peek.si_status == ((6 << 8)|signal.SIGTRAP))
             awaiting_lineage = owned[task]['cause'] == 'kernel-autoattach-stop'
             try:
                 row = identity(task)
@@ -434,7 +473,10 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 resumes[task] = (owned[task]['start'], deliver, None)
     except BaseException as error:
         failure = repr(error)
-        log('failure', error=repr(error))
+        # A failed logger must never prevent containment, nor a later successful
+        # close conceal an earlier write/fsync error.
+        try: log('failure', error=repr(error))
+        except BaseException: pass
         for task, row in owned.items():
             if task in exec_transfers: continue
             try:

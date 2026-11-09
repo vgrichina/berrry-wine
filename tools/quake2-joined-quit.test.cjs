@@ -1,6 +1,6 @@
 'use strict';
-// Offline dependency reproduction: actual composed driver + numbered Caller +
-// close helper + unchanged ptrace supervisor. No Chrome, PE or guest executes.
+// Offline oldFAIL/newPASS: actual composed driver + numbered Caller + close
+// helper + production ptrace supervisor. No Chrome, PE or guest executes.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
 const assert=require('node:assert/strict'),{once}=require('node:events'),zlib=require('node:zlib');
 const root=path.resolve(__dirname,'..'),composition=require('./quake2-native-driver-composition.cjs');
@@ -43,21 +43,29 @@ if(process.env.Q2_JOINED_PRELOAD==='1'){
 }
 
 const supervisor=String.raw`
-import sys,os,time,json
+import sys,os,time,json,subprocess,types
 from pathlib import Path
-root,directory,delay=sys.argv[1:];directory=Path(directory)
+root,directory,delay,version=sys.argv[1:];directory=Path(directory)
 sys.path.insert(0,root+'/tools')
 import native_kernel_custody as custody
+if version=='before':
+ source=subprocess.check_output(['git','-C',root,'cat-file','blob','c604ccf084212eaeeff2d0fd92c65fbd535360ab'])
+ custody=types.ModuleType('before');exec(compile(source,'git:c604ccf084212eaeeff2d0fd92c65fbd535360ab','exec'),custody.__dict__)
 # Model slow journal service, only after ordinary close starts.
 # This is an explicit storage fault fixture, not a production-source change or
 # a claim that the historical fsync syscall duration was measured.
 original=custody.Journal.write
+service=[]
 def delayed(self,data):
- if float(delay) and (directory/'close-at').exists():time.sleep(float(delay))
+ if (directory/'close-at').exists():
+  service.append(dict(at=time.time(),path=self.path.name,bytes=len(data)))
+  if float(delay):time.sleep(float(delay))
  return original(self,data)
 custody.Journal.write=delayed
 command=[os.environ['NODE_BINARY'],'--require',root+'/tools/quake2-joined-quit.test.cjs',root+'/'+os.environ['Q2_RETAINED']]
-result=custody.supervise(directory/'custody',command,deadline=time.time()+80,cleanup_deadline=time.time()+100,journal_compression='gzip',command_compression='gzip')
+try:
+ result=custody.supervise(directory/'custody',command,deadline=time.time()+80,cleanup_deadline=time.time()+100,journal_compression='gzip',command_compression='gzip')
+finally:(directory/'journal-service.json').write_text(json.dumps(service))
 (directory/'supervisor-result.json').write_text(json.dumps(result))
 `;
 const caller=String.raw`
@@ -100,13 +108,14 @@ async function capture(child,prefix){
   fs.writeFileSync(prefix+'.wait.json',JSON.stringify(result));return result;
 }
 async function until(fn,child){const due=Date.now()+60000;while(!fn()){assert(child.exitCode===null,'supervisor exited before ready');assert(Date.now()<due,'ready deadline');await pause(20);}}
-async function scenario(run,name,delay){
+async function scenario(run,name,delay,version='fixed'){
+  const normal=version==='fixed'||delay===0;
   const disk=fs.statfsSync('/home');assert(disk.bavail*disk.bsize>1500000000,'free /home launch floor');
   const directory=path.join(run,name),runtime=path.join(directory,'runtime'),out=runtime+'/original';
   fs.mkdirSync(runtime,{recursive:true});
   const env={...process.env,Q2_JOINED_PRELOAD:'1',Q2_FIXTURE_DIR:directory,QUAKE2_NATIVE_RUN:runtime,
     BROWSER_DEADLINE:String(Date.now()+180000),NODE_BINARY:process.execPath,Q2_RETAINED:composition.consumerPath};
-  const owner=cp.spawn('python3',['-c',supervisor,root,directory,String(delay)],{env,stdio:['ignore','pipe','pipe']});
+  const owner=cp.spawn('python3',['-c',supervisor,root,directory,String(delay),version],{env,stdio:['ignore','pipe','pipe']});
   const joined=capture(owner,directory+'/supervisor');
   // Independent outer process deadline, armed before requests. Its target is
   // the existing supervisor; that owner retains the actual reap obligations.
@@ -126,16 +135,16 @@ print(json.dumps(dict(fired=fired,pid=pid)))
     await until(()=>fs.existsSync(out+'/ready.json'),owner);
     const client=cp.spawn('python3',['-c',caller,root,directory,runtime],{stdio:['ignore','pipe','pipe']});
     const clientWait=await capture(client,directory+'/client');assert.equal(clientWait.code,0);
-    const ownerWait=await joined;assert.equal(ownerWait.code,delay===0?0:1);
+    const ownerWait=await joined;assert.equal(ownerWait.code,normal?0:1);
     const read=n=>JSON.parse(fs.readFileSync(n));
     const result=read(directory+'/caller-result.json'),receipt=read(out+'/browser-terminal.json');
     const custody=read(directory+'/custody/kernel-drain.json');
     assert.equal(custody.complete,true);assert.equal(custody.commandLog.eof,true);
-    assert.equal(result.outcome.ok,delay===0);
-    assert.equal(receipt.normal,delay===0);assert.equal(receipt.drained,true);assert.equal(receipt.terminal.code,0);
-    assert.equal(receipt.signals.length,delay===0?0:1);assert(receipt.capMs<20000);
-    assert.equal(fs.existsSync(out+'/reply-0.json'),delay===0);
-    assert.equal(fs.existsSync(out+'/cleanup.json'),delay===0);
+    assert.equal(result.outcome.ok,normal);
+    assert.equal(receipt.normal,normal);assert.equal(receipt.drained,true);assert.equal(receipt.terminal.code,0);
+    assert.equal(receipt.signals.length,normal?0:1);assert(receipt.capMs<20000);
+    assert.equal(fs.existsSync(out+'/reply-0.json'),normal);
+    assert.equal(fs.existsSync(out+'/cleanup.json'),normal);
     const protocol=fs.readFileSync(directory+'/protocol.jsonl','utf8').trim().split('\n').map(JSON.parse);
     const close=protocol.findIndex(v=>v.method==='Browser.close');assert(close>=0);
     assert.deepEqual(protocol.slice(close).map(v=>v.method),['Browser.close'],'no post-close guest CDP');
@@ -146,7 +155,14 @@ print(json.dumps(dict(fired=fired,pid=pid)))
     const retirement=journal.filter(v=>v.at>=began&&v.kind==='reaped');
     const terminal=retirement.find(v=>v.pid===pid);assert(terminal&&terminal.status===0);
     assert(retirement.length>=110,'actual native thread terminal waits');
-    const summary={name,delaySecondsPerJournalWrite:delay,receipt,caller:result.outcome,owned:custody.owned.length,reaped:custody.reaped.length,complete:custody.complete,retirementsAfterClose:retirement.length,mainTerminal:terminal,browserWait,ownerWait,clientWait};
+    assert.deepEqual(journal.map(v=>v.sequence),journal.map((_,i)=>i+1));
+    const crypto=require('node:crypto');
+    for(const stream of [custody.journal,custody.commandLog]){
+      const data=zlib.gunzipSync(fs.readFileSync(directory+'/custody/'+stream.path));
+      assert.equal(data.length,stream.originalBytes);assert.equal(crypto.createHash('sha256').update(data).digest('hex'),stream.originalSha256);assert(stream.closed);
+    }
+    const service=read(directory+'/journal-service.json');
+    const summary={name,version,delaySecondsPerJournalWrite:delay,serviceWritesAfterClose:service.length,receipt,caller:result.outcome,owned:custody.owned.length,reaped:custody.reaped.length,complete:custody.complete,retirementsAfterClose:retirement.length,mainTerminal:terminal,browserWait,ownerWait,clientWait};
     fs.writeFileSync(directory+'/result.json',JSON.stringify(summary,null,2));console.log(JSON.stringify(summary));
   }finally{
     if(owner.exitCode===null&&owner.signalCode===null)owner.kill('SIGTERM');
@@ -157,6 +173,7 @@ print(json.dumps(dict(fired=fired,pid=pid)))
 }
 async function main(){
   const run=path.resolve(process.argv[2]);fs.mkdirSync(run,{recursive:true});
+  await scenario(run,'before-paced-retirement',.05,'before');
   await scenario(run,'unpaced',0);await scenario(run,'paced-retirement',.05);
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});

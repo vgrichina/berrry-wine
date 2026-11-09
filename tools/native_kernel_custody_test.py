@@ -21,6 +21,143 @@ kernel=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(kernel)
 
 
+def journal_probe(module):
+    """Observe recorded records without forcing retirement batches to disk."""
+    rows=[];append=module.Journal.append
+    def observe(stream,value,**options):
+        result=append(stream,value,**options)
+        if stream.path.name.startswith('custody.ndjson'):rows.append(dict(value))
+        return result
+    return rows,patch.object(module.Journal,'append',observe)
+
+
+class RetirementService(unittest.TestCase):
+    def test_bounded_ordered_batches_and_oversize_record_preserve_all_bytes(self):
+        for compression in (None,'gzip'):
+            with self.subTest(compression=compression),tempfile.TemporaryDirectory() as tmp:
+                journal=kernel.Journal(Path(tmp),compression)
+                records=[dict(sequence=i,payload='x'*(300 if i==9 else 10)) for i in range(20)]
+                sync=os.fsync
+                with patch.object(journal,'MAX_PENDING_BYTES',256),patch.object(journal,'MAX_PENDING_RECORDS',3), \
+                     patch.object(kernel.os,'fsync',wraps=sync) as synced:
+                    for record in records:
+                        journal.append(record,defer=True)
+                        self.assertLessEqual(len(journal.pending),256)
+                        self.assertLessEqual(journal.pending_records,3)
+                    # Saturation is bounded synchronous backpressure, not loss.
+                    self.assertGreater(synced.call_count,0)
+                    self.assertLess(synced.call_count,len(records))
+                    barrier=dict(sequence=20,kind='admission')
+                    journal.append(barrier)
+                    self.assertFalse(journal.pending)
+                    prefix=journal.path.read_bytes()
+                    if compression:prefix=zlib.decompressobj(31).decompress(prefix)
+                    self.assertEqual([json.loads(s) for s in prefix.splitlines()],records+[barrier])
+                    journal.close()
+                data=journal.path.read_bytes()
+                if compression:data=gzip.decompress(data)
+                self.assertEqual([json.loads(s) for s in data.splitlines()],records+[barrier])
+                self.assertEqual(hashlib.sha256(data).hexdigest(),journal.sha.hexdigest())
+                self.assertEqual(len(data),journal.size)
+
+    def test_failed_sync_is_sticky_at_saturation_admission_and_finalization(self):
+        for compression in (None,'gzip'):
+            for boundary in ('saturation','admission','final'):
+                with self.subTest(compression=compression,boundary=boundary),tempfile.TemporaryDirectory() as tmp:
+                    journal=kernel.Journal(Path(tmp),compression)
+                    journal.append(dict(sequence=1),defer=True)
+                    with patch.object(journal,'MAX_PENDING_RECORDS',1 if boundary=='saturation' else 4096), \
+                         patch.object(kernel.os,'fsync',side_effect=OSError('injected durable service failure')):
+                        with self.assertRaisesRegex(OSError,'durable service failure'):
+                            if boundary=='final':journal.close()
+                            else:journal.append(dict(sequence=2),defer=boundary=='saturation')
+                    # Recovery of the storage call cannot turn a partial prefix
+                    # into an accepted successful journal after an earlier error.
+                    with self.assertRaisesRegex(OSError,'journal service failed'):
+                        journal.append(dict(sequence=3))
+                    with self.assertRaisesRegex(OSError,'journal service failed'):journal.close()
+                    self.assertTrue(journal.raw.closed)
+
+    def test_native_executable_cont_always_has_durable_ordered_prefix(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            run=Path(tmp);trace=kernel.ptrace;waitpid=os.waitpid
+            rows,probe=journal_probe(kernel);last={};barriers=[];deferred=[]
+            def consume(pid,flags):
+                result=waitpid(pid,flags)
+                if result[0]:last[pid]=result[1]
+                return result
+            def resume(request,pid,addr=0,data=0):
+                if request==kernel.CONT:
+                    prefix=zlib.decompressobj(31).decompress((run/'custody.ndjson.gz').read_bytes())
+                    durable=[json.loads(s) for s in prefix.splitlines()]
+                    if last[pid]>>16==6:
+                        deferred.append(len(durable)<len(rows))
+                        custody=next(r for r in durable if r['kind']=='custody' and r['pid']==pid)
+                        self.assertLess(custody['sequence'],rows[-1]['sequence'])
+                    else:
+                        self.assertEqual(durable,rows)
+                        barriers.append(pid)
+                return trace(request,pid,addr,data)
+            with probe,patch.object(kernel,'ptrace',side_effect=resume),patch.object(kernel.os,'waitpid',side_effect=consume):
+                due=time.time()+5
+                kernel.supervise(run,[sys.executable,'-c',
+                    "import os;p=os.fork();os.execl('/bin/true','true') if p==0 else os.waitpid(p,0)"],
+                    deadline=due,cleanup_deadline=due+2,journal_compression='gzip')
+            self.assertTrue(barriers);self.assertTrue(any(deferred))
+            final=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+            self.assertEqual(final,rows)
+            drain=json.loads((run/'kernel-drain.json').read_text())
+            self.assertTrue(drain['complete'])
+            self.assertEqual(len(drain['owned']),len(drain['reaped']))
+
+    def test_failed_admission_service_contains_owned_tasks_before_cont(self):
+        write=kernel.Journal.write
+        def failed(stream,data):
+            if b'fork-parent-release' in data:
+                raise OSError('injected admission failure')
+            return write(stream,data)
+        # Reuse the wait model, including real ordered identity obligations;
+        # this failure probe must not create or signal actual host processes.
+        with tempfile.TemporaryDirectory() as tmp,patch.object(kernel.Journal,'write',failed):
+            with self.assertRaisesRegex(OSError,'injected admission failure'):
+                ContinueRace().model(kernel,tmp)
+            drain=json.loads((Path(tmp)/'kernel-drain.json').read_text())
+            self.assertFalse(drain['complete'])
+            self.assertIn('injected admission failure',drain['failure'])
+            self.assertTrue(drain['unreaped'])
+            self.assertNotEqual((Path(tmp)/'kill-calls.json').read_text(),'[]')
+
+    def test_final_sync_failure_cannot_accept_fully_reaped_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            sync=os.fsync
+            def failed(fd):
+                data=(Path(tmp)/'custody.ndjson').read_bytes()
+                if b'"kind": "reaped", "pid": 18259' in data:
+                    raise OSError('injected final durability failure')
+                return sync(fd)
+            with patch.object(kernel.os,'fsync',side_effect=failed):
+                with self.assertRaisesRegex(OSError,'journal finalization failed'):
+                    ContinueRace().model(kernel,tmp)
+            drain=json.loads((Path(tmp)/'kernel-drain.json').read_text())
+            self.assertEqual(len(drain['reaped']),2)
+            self.assertFalse(drain['complete']);self.assertFalse(drain['journal']['closed'])
+            self.assertIn('final durability failure',drain['journal']['error'])
+
+    def test_gzip_footer_requires_its_own_successful_final_sync(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            journal=kernel.Journal(Path(tmp),'gzip')
+            journal.append(dict(sequence=1))
+            sync=os.fsync
+            def failed(fd):
+                # The final footer is present in the OS cache; deliberately
+                # reject its actual durability call, regardless of readability.
+                gzip.decompress(journal.path.read_bytes())
+                raise OSError('injected footer sync failure')
+            with patch.object(kernel.os,'fsync',side_effect=failed):
+                with self.assertRaisesRegex(OSError,'footer sync failure'):journal.close()
+            self.assertTrue(journal.raw.closed)
+
+
 class ParentLineage(unittest.TestCase):
     def test_native_nonleader_exec_transfers_only_kernel_bound_wait_obligation(self):
         for version in ('exec-before', 'fixed', 'exec-cancel', 'exec-fork'):
@@ -306,7 +443,8 @@ class Deadlines(unittest.TestCase):
             self.assertFalse(any(x['kind']=='parked-autoattach' and x['pid']==task for x in rows))
             self.assertFalse((run/'unlinked-userspace-ran').exists())
             barrier=json.loads((run/'first-exit-cont-barrier.json').read_text())
-            self.assertEqual(barrier['durableSequence'],retirement['sequence'])
+            self.assertEqual(barrier['recordedSequence'],retirement['sequence'])
+            self.assertEqual(barrier['durableCustodySequence'],retirement['custodySequence'])
             reaped=next(x for x in rows if x['kind']=='reaped' and x['pid']==task)
             lineage=next(x for x in rows if x['kind']=='fork-lineage' and x['pid']==task)
             self.assertLess(retirement['sequence'],reaped['sequence'])
@@ -342,7 +480,8 @@ class Deadlines(unittest.TestCase):
             self.assertFalse(drain['kernelForkLineageComplete'])
             self.assertEqual([x['pid'] for x in drain['unresolvedLineage']],[task])
             barrier=json.loads((run/'retirement-cont-barrier.json').read_text())
-            self.assertEqual(barrier['durableSequence'],retirement['sequence'])
+            self.assertEqual(barrier['recordedSequence'],retirement['sequence'])
+            self.assertEqual(barrier['durableCustodySequence'],retirement['custodySequence'])
 
     def test_late_lineage_refuses_observed_pid_reuse(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1475,8 +1614,9 @@ int main(int argc, char **argv) {
             module=types.ModuleType('before');exec(compile(data,revision,'exec'),module.__dict__)
         actual_waitid,actual_waitpid,trace,fsync=os.waitid,os.waitpid,module.ptrace,os.fsync
         selected=[];released=[];terminal=[]
+        observed,probe=journal_probe(module)
         def rows():
-            return [json.loads(s) for s in zlib.decompressobj(31).decompress((run/'custody.ndjson.gz').read_bytes()).splitlines()]
+            return observed
         def peek(which,pid,flags):
             if mode.startswith('cancel'):
                 if selected and which==os.P_ALL and not terminal:
@@ -1525,7 +1665,7 @@ int main(int argc, char **argv) {
             fsync(fd)
             if mode.startswith('exit'):time.sleep(.015)
         try:
-            with patch.object(module.os,'waitid',side_effect=peek),patch.object(module.os,'waitpid',side_effect=consume), \
+            with probe,patch.object(module.os,'waitid',side_effect=peek),patch.object(module.os,'waitpid',side_effect=consume), \
                  patch.object(module,'ptrace',side_effect=resume),patch.object(module.os,'fsync',side_effect=sync):
                 due=time.time()+6
                 extra=['cancel'] if mode.startswith('cancel') else (['multi'] if mode=='multi-fixed' else [])
@@ -1598,6 +1738,7 @@ def child():
 threading.Thread(target=child).start()
 while not pathlib.Path(MARKER).exists():time.sleep(.001)
 if PARENT_WAIT:
+ while not pathlib.Path(CHILD).exists():time.sleep(.001)
  p=int(pathlib.Path(CHILD).read_text());got,status=os.waitpid(p,0)
  assert got==p and status==7<<8
 os._exit(0)
@@ -1650,12 +1791,18 @@ for _ in range(3):
 pathlib.Path(READY).write_text(json.dumps(dict(root=os.getpid(),children=children)))
 os._exit(0)
 '''.replace('IGNORE',repr(mode in ('repeat-term','deadline','no-waits'))).replace('READY',repr(str(run/'ready.json')))]
-        actual_waitid=os.waitid
+        actual_waitid=os.waitid;actual_waitpid=os.waitpid
+        def consume(task,flags):
+            result=actual_waitpid(task,flags)
+            if result[0] and (os.WIFEXITED(result[1]) or os.WIFSIGNALED(result[1])) and (run/'ready.json').exists():
+                ready=json.loads((run/'ready.json').read_text())
+                if task==ready['root']:(run/'root-wait-consumed.json').write_text(json.dumps(dict(pid=task,status=result[1])))
+            return result
         def peek(*args):
             if (run/'ready.json').exists():return None
             return actual_waitid(*args)
         try:
-            with patch.object(kernel.os,'waitid',side_effect=peek if mode=='no-waits' else actual_waitid):
+            with patch.object(kernel.os,'waitpid',side_effect=consume),patch.object(kernel.os,'waitid',side_effect=peek if mode=='no-waits' else actual_waitid):
                 if mode=='legacy-term':
                     import types, builtins
                     revision='3a75ffb9c5b147512e4e30ce528f9788f9cb6704'
@@ -1689,10 +1836,9 @@ os._exit(0)
         due=time.monotonic()+3
         while time.monotonic()<due:
             try:
-                raw=(run/'custody.ndjson.gz').read_bytes()
-                rows=[json.loads(s) for s in zlib.decompressobj(31).decompress(raw).splitlines()]
                 ready=json.loads((run/'ready.json').read_text())
-                if any(r['kind']=='reaped' and r['pid']==ready['root'] for r in rows):break
+                receipt=json.loads((run/'root-wait-consumed.json').read_text())
+                if receipt['pid']==ready['root']:break
             except (FileNotFoundError,ValueError,zlib.error):pass
             time.sleep(.002)
         else:raise AssertionError('root terminal wait barrier missing')
@@ -1710,9 +1856,9 @@ os._exit(0)
 
 def cont_race_fixture(run, concurrent=False):
     trace=kernel.ptrace;waitid=os.waitid;injected=[]
+    rows,probe=journal_probe(kernel)
     def resume(request,pid,addr=0,data=0):
         if request==kernel.CONT and not injected:
-            rows=[json.loads(s) for s in (Path(run)/'custody.ndjson').read_text().splitlines()]
             if rows[-1]['kind']=='pre-exit-stop':
                 injected.append(pid)
                 # Force the completion interleaving at the CONT boundary. Both
@@ -1730,7 +1876,7 @@ def cont_race_fixture(run, concurrent=False):
     command=['/bin/true']
     if concurrent:
         command=[sys.executable,'-c',"import os; children=[]\nfor _ in range(8):\n p=os.fork()\n if p==0:os._exit(0)\n children.append(p)\nfor p in children:os.waitpid(p,0)"]
-    with patch.object(kernel,'ptrace',side_effect=trace if concurrent else resume):
+    with probe,patch.object(kernel,'ptrace',side_effect=trace if concurrent else resume):
         due=time.time()+4
         kernel.supervise(run,command,deadline=due,cleanup_deadline=due+1)
 
@@ -1741,6 +1887,7 @@ def unseen_exit_fixture(run):
     # WNOWAIT, waitpid and GETEVENTMSG all return actual kernel results.
     run=Path(run).resolve();waitid,waitpid=os.waitid,os.waitpid;trace=kernel.ptrace
     selected=[];reaped=[]
+    rows,probe=journal_probe(kernel)
     def peek(which,pid,flags):
         if selected and not reaped:return waitid(os.P_PID,selected[0],flags)
         value=waitid(which,pid,flags)
@@ -1766,12 +1913,15 @@ def unseen_exit_fixture(run):
         return result
     def ptrace(request,pid,addr=0,data=0):
         if request==kernel.CONT and selected and pid==selected[0]:
-            last=json.loads((run/'custody.ndjson').read_text().splitlines()[-1])
+            last=rows[-1]
             assert last['kind']=='unlinked-exit-retirement'
-            (run/'first-exit-cont-barrier.json').write_text(json.dumps(dict(pid=pid,durableSequence=last['sequence'])))
+            durable=[json.loads(s) for s in (run/'custody.ndjson').read_text().splitlines()]
+            custody=next(r for r in durable if r['sequence']==last['custodySequence'])
+            (run/'first-exit-cont-barrier.json').write_text(json.dumps(dict(pid=pid,
+                recordedSequence=last['sequence'],durableCustodySequence=custody['sequence'])))
         return trace(request,pid,addr,data)
     command="import os,pathlib;p=os.fork();pathlib.Path(MARKER).write_text('ran') if p==0 else os.waitpid(p,0)".replace('MARKER',repr(str(run/'unlinked-userspace-ran')))
-    with patch.object(kernel.os,'waitid',side_effect=peek),patch.object(kernel.os,'waitpid',side_effect=consume),patch.object(kernel,'ptrace',side_effect=ptrace):
+    with probe,patch.object(kernel.os,'waitid',side_effect=peek),patch.object(kernel.os,'waitpid',side_effect=consume),patch.object(kernel,'ptrace',side_effect=ptrace):
         due=time.time()+4
         kernel.supervise(run,[sys.executable,'-c',command],deadline=due,cleanup_deadline=due+1)
 
@@ -1842,15 +1992,15 @@ def term_fixture(run):
     # producer trace. No status/GETEVENTMSG result is invented.
     run=Path(run).resolve()
     waitid,waitpid=os.waitid,os.waitpid
-    ptrace,fsync=kernel.ptrace,os.fsync
-    durable=[]
-    def sync(fd):
-        fsync(fd)
-        durable[:]=[json.loads((run/'custody.ndjson').read_text().splitlines()[-1])]
+    ptrace=kernel.ptrace
+    rows,probe=journal_probe(kernel)
     def trace(request,pid,addr=0,data=0):
         if request==kernel.CONT and selected and pid==selected[0] and delivered:
-            assert durable[-1]['kind']=='unlinked-exit-retirement'
-            (run/'retirement-cont-barrier.json').write_text(json.dumps(dict(pid=pid,durableSequence=durable[-1]['sequence'])))
+            last=rows[-1];assert last['kind']=='unlinked-exit-retirement'
+            durable=[json.loads(s) for s in (run/'custody.ndjson').read_text().splitlines()]
+            custody=next(r for r in durable if r['sequence']==last['custodySequence'])
+            (run/'retirement-cont-barrier.json').write_text(json.dumps(dict(pid=pid,
+                recordedSequence=last['sequence'],durableCustodySequence=custody['sequence'])))
         return ptrace(request,pid,addr,data)
     sibling=[];selected=[];consumed=[];delivered=[]
     def peek(which,pid,flags):
@@ -1902,7 +2052,7 @@ else:
  _,status=os.waitpid(p,0)
  assert os.WIFSIGNALED(status) and os.WTERMSIG(status)==15
 '''.replace('MARKER',repr(str(run/'unlinked-userspace-ran')))
-    with patch.object(kernel.os,'waitid',side_effect=peek),patch.object(kernel.os,'waitpid',side_effect=consume),patch.object(kernel.os,'fsync',side_effect=sync),patch.object(kernel,'ptrace',side_effect=trace):
+    with probe,patch.object(kernel.os,'waitid',side_effect=peek),patch.object(kernel.os,'waitpid',side_effect=consume),patch.object(kernel,'ptrace',side_effect=trace):
         due=time.time()+3
         kernel.supervise(run,[sys.executable,'-c',command],deadline=due,cleanup_deadline=due+1)
 
