@@ -26,11 +26,12 @@ const read=n=>fs.readFileSync(path.join(root,n));
 const pin=(name,b)=>({path:name,size:b.length,sha256:sha(b)});
 const git=args=>cp.execFileSync('git',args,{cwd:root,maxBuffer:32*1024*1024});
 function optin(selected){assert.equal(selected,version,'unknown Redline current publication version');}
-function validate(selected){
- optin(selected);
+function validate(selected,startupVersion){
+ optin(selected);if(startupVersion!==undefined)require('./redline-current-startup.cjs').optin(startupVersion);
  const legacy=require('./redline-current-module.cjs'),raw=read(legacy.historical);
  assert.equal(sha(raw),legacy.historicalSHA,'historical pinset integrity');
  const prior=JSON.parse(raw),expected=Object.fromEntries(Object.entries(builds).map(([name,p])=>[name,{path:name,...p}])),seen=new Set(),explainedDrift=[];
+ if(startupVersion!==undefined)Object.assign(expected,require('./redline-current-startup.cjs').admissionPins());
  for(const p of prior.files){assert(!seen.has(p.path),'duplicate historical pin');seen.add(p.path);}
  for(const commit of new Set([cpu,...Object.values(published),'06a42152c','d7459f3f6','daa44c07c']))
   for(const target of ['HEAD','origin/main'])git(['merge-base','--is-ancestor',commit,target]);
@@ -56,31 +57,31 @@ function validate(selected){
  for(const name of ['tools/redline-current-module.cjs','tools/redline-current-publication.cjs']){
   assert(!files.some(p=>p.path===name),'unique preparer pin');files.push(pin(name,read(name)));
  }
- return {files,httpPins,moduleVersion:version,publicationVersion:version,publishedModuleCommit:cpu,
+ return {files,httpPins,moduleVersion:version,publicationVersion:version,...(startupVersion!==undefined?{startupVersion}:{}),publishedModuleCommit:cpu,
   historicalPinset:{path:legacy.historical,sha256:legacy.historicalSHA,commit:prior.commit},explainedDrift};
 }
 const bridges=['bound-input.cjs','ordinary-keys.cjs','native-mouse.cjs','relative-input.cjs','keyboard-bridge.cjs','transport.cjs'];
 function closureSHA(files){return sha(Buffer.from(JSON.stringify([...files].sort((a,b)=>a.path.localeCompare(b.path)))));}
-function callerSource(run,digest){
- return "'use strict';\nrequire("+JSON.stringify('./'+path.relative(run,path.join(__dirname,'redline-current-publication.cjs')))+").runCaller(__dirname,"+JSON.stringify(version)+","+JSON.stringify(digest)+");\n";
+function callerSource(run,digest,startupVersion){
+ return "'use strict';\nrequire("+JSON.stringify('./'+path.relative(run,path.join(__dirname,'redline-current-publication.cjs')))+").runCaller(__dirname,"+JSON.stringify(version)+","+JSON.stringify(digest)+(startupVersion!==undefined?","+JSON.stringify(startupVersion):"")+");\n";
 }
-function prepare(run,selected){
+function prepare(run,selected,startupVersion){
  optin(selected);run=path.resolve(run);assert(!fs.existsSync(run),'fresh task-owned run required');
- const pins=validate(selected),prior=path.dirname(require('./redline-native-trace.cjs').generatedPath);
+ const pins=validate(selected,startupVersion),prior=path.dirname(require('./redline-native-trace.cjs').generatedPath);
  const inputs=bridges.map(name=>[name,"'use strict';\nmodule.exports=require("+JSON.stringify('./'+path.relative(run,path.join(root,prior,name)))+");\n"]);
  for(const [name,source] of inputs)pins.files.push(pin(path.relative(root,path.join(run,name)),Buffer.from(source)));
- const caller=callerSource(run,closureSHA(pins.files));inputs.push(['publication-caller.cjs',caller]);
+ const caller=callerSource(run,closureSHA(pins.files),startupVersion);inputs.push(['publication-caller.cjs',caller]);
  pins.files.push(pin(path.relative(root,path.join(run,'publication-caller.cjs')),Buffer.from(caller)));
  pins.files.sort((a,b)=>a.path.localeCompare(b.path));pins.commit=git(['rev-parse','HEAD']).toString().trim();
  const bytes=Buffer.from(JSON.stringify(pins,null,2));
  const plan={offlinePrepared:true,nativeAttemptAuthorized:false,fixtureOnly:true,moduleVersion:version,
-  publicationVersion:version,providers:pins.files.length,manifestSHA256:sha(bytes),traceDurationSeconds:10,
+  publicationVersion:version,...(startupVersion!==undefined?{startupVersion}:{}),providers:pins.files.length,manifestSHA256:sha(bytes),traceDurationSeconds:10,
   commands:[{key:',',holdMs:600,waitMs:0},'ordinary joined quit'],
-  argv:[process.execPath,path.join(__dirname,'redline-current-publication.cjs'),'--fixture',run,version],
+  argv:[process.execPath,path.join(__dirname,'redline-current-publication.cjs'),'--fixture',run,version,...(startupVersion!==undefined?[startupVersion]:[])],
   env:{REDLINE_RUN:run,REDLINE_NATIVE_TRACE:'1',REDLINE_STARTUP_BOUNDARY:'1',BROWSER_DEADLINE:'REQUIRED future immutable deadline; existing <30min cap'},
   prerequisite:'Separate native authorization and prearmed independent watchdog required',nativeReady:false};
  // All authentication and generation finish before any destination write.
- fixtureSource(selected);require('./redline-startup-boundary.cjs').integrate();
+ fixtureSource(selected,startupVersion);require('./redline-startup-boundary.cjs').integrate();
  fs.mkdirSync(run,{recursive:true});
  for(const [name,source] of inputs)fs.writeFileSync(path.join(run,name),source,{flag:'wx',mode:0o444});
  fs.writeFileSync(path.join(run,'runtime-pins.json'),bytes,{flag:'wx',mode:0o444});
@@ -88,45 +89,45 @@ function prepare(run,selected){
  fs.writeFileSync(path.join(run,'experiment-plan.json'),JSON.stringify(plan,null,2),{flag:'wx',mode:0o444});
  return plan;
 }
-function prelaunch(run,selected){
- optin(selected);run=path.resolve(run);const versioned=validate(selected);
+function prelaunch(run,selected,startupVersion){
+ optin(selected);run=path.resolve(run);const versioned=validate(selected,startupVersion);
  const raw=fs.readFileSync(path.join(run,'runtime-pins.json')),pins=JSON.parse(raw);
  const seal=JSON.parse(fs.readFileSync(path.join(run,'replacement-pinset-seal.json')));
  assert.equal(seal.manifestSHA256,sha(raw),'sealed actual staged manifest');
- assert.equal(pins.publicationVersion,version);assert.equal(pins.moduleVersion,version);
+ assert.equal(pins.publicationVersion,version);assert.equal(pins.moduleVersion,version);assert.equal(pins.startupVersion,startupVersion);
  const expected=[...versioned.files];
  const prior=path.dirname(require('./redline-native-trace.cjs').generatedPath);
  for(const name of bridges)expected.push(pin(path.relative(root,path.join(run,name)),Buffer.from("'use strict';\nmodule.exports=require("+JSON.stringify('./'+path.relative(run,path.join(root,prior,name)))+");\n")));
- expected.push(pin(path.relative(root,path.join(run,'publication-caller.cjs')),Buffer.from(callerSource(run,closureSHA(expected)))));
+ expected.push(pin(path.relative(root,path.join(run,'publication-caller.cjs')),Buffer.from(callerSource(run,closureSHA(expected),startupVersion))));
  assert.deepEqual(pins.files,expected.sort((a,b)=>a.path.localeCompare(b.path)),'authenticated narrow staged closure');
  assert.deepEqual(pins.httpPins,versioned.httpPins,'authenticated HTTP pins');
  for(const p of pins.files)assert.deepEqual(pin(p.path,read(p.path)),p,'staged provider before spawn: '+p.path);
  return pins;
 }
-function launch({run,publicationVersion,deadline,options,spawn}={}){
- prelaunch(run,publicationVersion);
+function launch({run,publicationVersion,startupVersion,deadline,options,spawn}={}){
+ prelaunch(run,publicationVersion,startupVersion);
  assert(Number.isFinite(deadline)&&deadline>Date.now()&&deadline-Date.now()<30*60000,'original browser deadline');
  const custody=path.join(run,'publication-custody');assert(!fs.existsSync(custody),'fresh custody run');
  fs.mkdirSync(custody);fs.writeFileSync(path.join(custody,'lifecycle.json'),JSON.stringify({browserDeadline:deadline}),{flag:'wx'});
  const adapter=require('./redline-publication-caller.cjs');
  return adapter.launch({run:custody,observerVersion:adapter.version,argv:[process.execPath,path.join(run,'publication-caller.cjs')],options,...(spawn?{spawn}:{})});
 }
-function fixtureSource(selected){
+function fixtureSource(selected,startupVersion){
  optin(selected);let source=require('./redline-startup-boundary.cjs').fixtureSource();
  const before="cp.spawn(process.execPath,[path.join(__dirname,'redline-startup-boundary.cjs'),'--caller'],{detached:true,env:{...process.env,REDLINE_NATIVE_FIXTURE:'1'},stdio:['ignore','pipe','pipe']})";
  assert.equal(source.split(before).length,2,'actual controller outer launch seam');
- source=source.replace(before,"require('./redline-current-publication.cjs').launch({run,publicationVersion:"+JSON.stringify(version)+",deadline,options:{detached:true,env:{...process.env,REDLINE_NATIVE_FIXTURE:'1'},stdio:['ignore','pipe','pipe']}})");
+ source=source.replace(before,"require('./redline-current-publication.cjs').launch({run,publicationVersion:"+JSON.stringify(version)+(startupVersion!==undefined?",startupVersion:"+JSON.stringify(startupVersion):"")+",deadline,options:{detached:true,env:{...process.env,REDLINE_NATIVE_FIXTURE:'1'},stdio:['ignore','pipe','pipe']}})");
  const joined="assert.equal(watched.code,0,'independent watchdog must be explicitly disarmed and joined');";
  assert.equal(source.split(joined).length,2,'actual controller joined retrieval seam');
  source=source.replace(joined,joined+"save('publication-retrieval.json',require('./redline-publication-caller.cjs').retrieve(run+'/publication-custody'));");
  new(require('node:vm').Script)(source);return source;
 }
-function runCaller(run,selected,digest){
+function runCaller(run,selected,digest,startupVersion){
  // The generated small caller binds the complete authenticated provider list.
  // Parent prelaunch checks Git provenance before custody; inside custody check
  // those sealed bytes directly, without spawning Git/source-compiler children.
  optin(selected);const raw=fs.readFileSync(path.join(run,'runtime-pins.json')),pins=JSON.parse(raw);
- assert.equal(pins.moduleVersion,version);assert.equal(pins.publicationVersion,version);
+ assert.equal(pins.moduleVersion,version);assert.equal(pins.publicationVersion,version);assert.equal(pins.startupVersion,startupVersion);
  assert.equal(sha(raw),JSON.parse(fs.readFileSync(path.join(run,'replacement-pinset-seal.json'))).manifestSHA256);
  const caller=path.relative(root,path.join(run,'publication-caller.cjs'));
  assert.equal(pins.files.filter(p=>p.path===caller).length,1);
@@ -134,12 +135,13 @@ function runCaller(run,selected,digest){
  for(const p of pins.files)assert.deepEqual(pin(p.path,read(p.path)),p,'actual caller pinned bytes: '+p.path);
  assert.equal(path.resolve(process.env.REDLINE_RUN),path.resolve(run));
  assert.equal(process.env.REDLINE_NATIVE_FIXTURE,'1');assert.equal(process.env.REDLINE_NATIVE_TRACE,'1');assert.equal(process.env.REDLINE_STARTUP_BOUNDARY,'1');
- compile(require('./redline-startup-boundary.cjs').integrate(),'redline-browser-run.cjs');
+ const source=require('./redline-startup-boundary.cjs').integrate();
+ compile(startupVersion!==undefined?require('./redline-current-startup.cjs').integrate(source):source,'redline-browser-run.cjs');
 }
 function compile(source,name){const Module=require('node:module'),filename=path.join(__dirname,name),m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(__dirname);m._compile(source,filename);}
 module.exports={version,published,builds,validate,prepare,prelaunch,launch,fixtureSource,runCaller};
 if(require.main===module){
- const [mode,run,selected]=process.argv.slice(2);optin(selected);
- if(mode==='--prepare')console.log(JSON.stringify(prepare(run,selected)));
- else {assert.equal(mode,'--fixture','explicit fixture mode');prelaunch(run,selected);assert.equal(path.resolve(process.env.REDLINE_RUN),path.resolve(run));compile(fixtureSource(selected),'redline-native-fixture.cjs');}
+ const [mode,run,selected,startupVersion]=process.argv.slice(2);optin(selected);
+ if(mode==='--prepare')console.log(JSON.stringify(prepare(run,selected,startupVersion)));
+ else {assert.equal(mode,'--fixture','explicit fixture mode');prelaunch(run,selected,startupVersion);assert.equal(path.resolve(process.env.REDLINE_RUN),path.resolve(run));compile(fixtureSource(selected,startupVersion),'redline-native-fixture.cjs');}
 }

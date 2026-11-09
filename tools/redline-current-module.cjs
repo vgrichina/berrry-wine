@@ -18,8 +18,9 @@ const pin=(name,b)=>({path:name,size:b.length,sha256:hash(b)});
 const read=name=>fs.readFileSync(path.join(root,name));
 const git=args=>cp.execFileSync('git',args,{cwd:root,maxBuffer:32*1024*1024});
 function validate(options={}){
-  assert(Object.keys(options).every(k=>k==='publicationVersion'),'explicit supported validation options');
-  if(options.publicationVersion!==undefined)return require('./redline-current-publication.cjs').validate(options.publicationVersion);
+  assert(Object.keys(options).every(k=>k==='publicationVersion'||k==='startupVersion'),'explicit supported validation options');
+  if(options.publicationVersion!==undefined)return require('./redline-current-publication.cjs').validate(options.publicationVersion,options.startupVersion);
+  assert.equal(options.startupVersion,undefined,'startup version requires publication version');
   // Authenticate the complete retained manifest before consulting replacements.
   const raw=read(historical);assert.equal(hash(raw),historicalSHA,'historical pinset integrity');
   const pins=JSON.parse(raw),seen=new Set(),explainedDrift=[];
@@ -48,8 +49,9 @@ function validate(options={}){
   return {files,httpPins,moduleVersion,historicalPinset:{path:historical,sha256:historicalSHA,commit:pins.commit},explainedDrift,publishedCommit:commit};
 }
 function prepare(run,options={}){
-  assert(Object.keys(options).every(k=>k==='publicationVersion'),'explicit supported preparation options');
-  if(options.publicationVersion!==undefined)return require('./redline-current-publication.cjs').prepare(run,options.publicationVersion);
+  assert(Object.keys(options).every(k=>k==='publicationVersion'||k==='startupVersion'),'explicit supported preparation options');
+  if(options.publicationVersion!==undefined)return require('./redline-current-publication.cjs').prepare(run,options.publicationVersion,options.startupVersion);
+  assert.equal(options.startupVersion,undefined,'startup version requires publication version');
   // Validate before the underlying preparer creates any destination inputs.
   const version=validate(),plan=require('./redline-startup-boundary.cjs').prepare(run,{currentPublishedModules:true});
   const file=path.join(path.resolve(run),'runtime-pins.json'),pins=JSON.parse(fs.readFileSync(file));
@@ -67,6 +69,6 @@ module.exports={validate,prepare,moduleVersion,historical,historicalSHA};
 if(require.main===module){
   assert.equal(process.argv[2],'--prepare','explicit new-version preparation only');
   const args=process.argv.slice(4),options={};
-  if(args.length){assert.equal(args.length,2,'explicit publication version option');assert.equal(args[0],'--publication-version');options.publicationVersion=args[1];}
+  if(args.length){assert([2,4].includes(args.length),'explicit version options');assert.equal(args[0],'--publication-version');options.publicationVersion=args[1];if(args.length===4){assert.equal(args[2],'--startup-version');options.startupVersion=args[3];}}
   console.log(JSON.stringify(prepare(process.argv[3],options)));
 }
