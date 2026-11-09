@@ -9,6 +9,68 @@ const vm = require('node:vm');
 const Module = require('node:module');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 
+// JSON boundaries must retain the actual exception, including wrapper causes.
+// Classification uses positive evidence only; an old capture alone is no proof
+// that the exception was stale. Never put the stale code on the outer error:
+// the generic numbered transport would turn it into a refresh authorization.
+function failureDetail(error, depth = 0) {
+  if (!error || depth > 8) return undefined;
+  const row = {name: error.name || 'Error', message: error.message || String(error)};
+  for (const key of ['code', 'stage', 'method', 'diagnostic', 'receipt', 'inputFailures'])
+    if (error[key] !== undefined) row[key] = error[key];
+  if (error.cause) row.cause = failureDetail(error.cause, depth + 1);
+  return row;
+}
+
+// The accepted pulse retains physical promises and schedules UP independently,
+// but its JSON receipt reduces a rejected CDP error to a string. Retain the
+// rejected values without adding a timer, cancelling a promise or replaying.
+async function runPulse(pulse, options) {
+  const failures = [];
+  const observe = (op, phase) => async () => {
+    try { return await op(); }
+    catch (error) { failures.push({phase, error}); throw error; }
+  };
+  try { return await pulse({...options, down: observe(options.down, 'down'), up: observe(options.up, 'up')}); }
+  catch (error) {
+    if (failures.length) {
+      error.inputFailures = failures.map(f => ({phase: f.phase, failure: failureDetail(f.error)}));
+      error.cause ??= failures[0].error;
+    }
+    throw error;
+  }
+}
+
+function commandDiagnostic(command, capture) {
+  const stamps = {commandAdmittedAt: Date.now(), captureProducedAt: capture?.at ?? null,
+    captureCompletedAt: capture?.completedAt ?? null, captureReadAt: null, inputAdmittedAt: null};
+  let stage = 'command-validation';
+  return {
+    stage(value) { stage = value; stamps[value + 'At'] = Date.now(); },
+    read() { stamps.captureReadAt = Date.now(); },
+    admitted() { stamps.inputAdmittedAt = Date.now(); },
+    snapshot() {
+      const at = Date.now(), source = Date.parse(stamps.captureProducedAt);
+      return {id: command.id, stage, ...stamps, observedAt: at,
+        sourceAgeMs: Number.isFinite(source) ? at - source : null, freshnessBudgetMs: 12000, aimMs: 8000};
+    },
+    failed(error) { error.diagnostic = this.snapshot(); return error; }
+  };
+}
+
+function terminalDetail(error) {
+  let reason = error, category = 'unknown';
+  for (let e = error, depth = 0; e && depth <= 8; e = e.cause, depth++) {
+    reason = e;
+    if (e.code === 'STALE_SCENE_BEFORE_DISPATCH') category = 'stale';
+    else if (['ENOENT', 'EIO', 'ENOSPC', 'EACCES', 'EEXIST', 'EROFS'].includes(e.code)) category = 'storage';
+    else if (typeof e.code === 'string' && e.code.startsWith('CDP_')) category = 'browser';
+    else if (e.receipt && [e.receipt.down, e.receipt.up].some(r => r?.unknown && r.error === 'ACK deadline')) category = 'helperACKtimeout';
+  }
+  return {category, exactReason: reason.message || String(reason), failure: failureDetail(error),
+    stage: error.diagnostic?.stage ?? 'numbered-transport', failedAt: Date.now()};
+}
+
 // Input ACK bounds belong to the accepted pulse/controller. A CDP timer must
 // not erase the original promise: independent UP may precede a late DOWN reply.
 // Disconnection is an explicit UNKNOWN, never a fabricated successful reply.
@@ -17,7 +79,7 @@ function createTransport({write, timeoutMs = 20000}) {
   assert(Number.isFinite(timeoutMs) && timeoutMs > 0);
   let serial = 0, closed = false;
   const pending = new Map();
-  function disconnect(error = Error('CDP disconnected; UNKNOWN; no replay')) {
+  function disconnect(error = Object.assign(Error('CDP disconnected; UNKNOWN; no replay'), {code: 'CDP_DISCONNECTED'})) {
     closed = true;
     for (const row of pending.values()) {
       clearTimeout(row.timer);
@@ -28,14 +90,14 @@ function createTransport({write, timeoutMs = 20000}) {
   return {
     pending, disconnect,
     send(method, params = {}, sessionId) {
-      if (closed) return Promise.reject(Error('CDP closed; UNKNOWN; no replay'));
+      if (closed) return Promise.reject(Object.assign(Error('CDP closed; UNKNOWN; no replay'), {code: 'CDP_CLOSED', method}));
       return new Promise((resolve, reject) => {
         const id = ++serial;
         const row = {resolve, reject, method, timer: null};
         if (method !== 'Input.dispatchKeyEvent' && method !== 'Input.dispatchMouseEvent') {
           row.timer = setTimeout(() => {
             pending.delete(id);
-            reject(Error('CDP UNKNOWN ' + method + '; no replay'));
+            reject(Object.assign(Error('CDP UNKNOWN ' + method + '; no replay'), {code: 'CDP_TIMEOUT', method}));
           }, timeoutMs);
         }
         pending.set(id, row);
@@ -48,7 +110,7 @@ function createTransport({write, timeoutMs = 20000}) {
       if (!row) return false;
       clearTimeout(row.timer);
       pending.delete(message.id);
-      if (message.error) row.reject(Error(JSON.stringify(message.error)));
+      if (message.error) row.reject(Object.assign(Error(JSON.stringify(message.error)), {code: 'CDP_ERROR', method: row.method}));
       else row.resolve(message.result);
       return true;
     }
@@ -128,6 +190,8 @@ function createSession({out, deadline, publish}) {
 // another startup allowance. No ID, lock or command is admitted before ready.
 async function requestReady(transport, out, id, command, timeout = 30000) {
   const until = Date.now() + timeout;
+  const timing = {helperStartedAt: Date.now(), readyObservedAt: null, commandSubmittedAt: null, ackReadAt: null};
+  let stage = 'helper-readiness';
   try {
     for (;;) {
       for (const name of ['first-failure.json', 'transport-closed.json', 'cleanup.json', 'first-browser-failure.json'])
@@ -137,14 +201,38 @@ async function requestReady(transport, out, id, command, timeout = 30000) {
         const ready = JSON.parse(fs.readFileSync(file));
         assert(ready.ready === true && ready.deadline > Date.now(), 'live readiness required');
         assert(Date.now() < until, 'UNKNOWN command readiness deadline');
-        return await transport.request(out, id, command, Math.min(until - Date.now(), ready.deadline - Date.now()));
+        timing.readyObservedAt = Date.now();
+        stage = 'helper-command-ack';timing.commandSubmittedAt = Date.now();
+        const ack = await transport.request(out, id, command, Math.min(until - Date.now(), ready.deadline - Date.now()));
+        timing.ackReadAt = Date.now();
+        transport.publish(path.join(out, 'request-' + id + '-timing.json'), timing);
+        return ack;
       }
       assert(Date.now() < until, 'UNKNOWN command readiness deadline');
       await new Promise(resolve => setTimeout(resolve, Math.min(20, until - Date.now())));
     }
   } catch (error) {
-    const file = path.join(out, 'transport-closed.json');
-    if (!fs.existsSync(file)) transport.publish(file, {id, error: String(error), sticky: true, noReplay: true});
+    try {
+      const file = path.join(out, 'transport-closed.json');
+      if (!fs.existsSync(file)) transport.publish(file, {id, error: String(error), sticky: true, noReplay: true});
+      // The retained sender throws a generic failed-ACK assertion. Recover only
+      // the durable detail for this exact command, never infer from capture age.
+      const terminal = path.join(out, 'terminal-failure.json');
+      if (fs.existsSync(terminal)) {
+        const detail = JSON.parse(fs.readFileSync(terminal));
+        if (detail.id === id) {
+          error.terminal = detail;
+          const closed = JSON.parse(fs.readFileSync(file));
+          transport.publish(file, {...closed, terminal: detail});
+        }
+      } else {
+        const detail = {id, ...terminalDetail(error), stage, timing};
+        if (stage === 'helper-command-ack' && error.message === 'UNKNOWN command ACK deadline') detail.category = 'helperACKtimeout';
+        error.terminal = detail;
+        const closed = JSON.parse(fs.readFileSync(file));
+        if (!closed.terminal) transport.publish(file, {...closed, terminal: detail});
+      }
+    } catch { /* Diagnostic storage cannot replace the actual sender failure. */ }
     throw error;
   }
 }
@@ -171,6 +259,11 @@ async function runBoundAction(chain, review, effect) {
 // A terminal consumer failure has no success ACK. Notify the waiting sender
 // immediately instead of leaving it polling until its unchanged ACK deadline.
 async function consumeTerminal(transport, out, number, execute) {
+  const terminal = path.join(out, 'terminal-failure.json');
+  if (fs.existsSync(terminal)) {
+    throw Object.assign(Error('UNKNOWN/partial closure is sticky; no replay'),
+      {terminal: JSON.parse(fs.readFileSync(terminal))});
+  }
   try { return await transport.consume(out, number, execute); }
   catch (cause) {
     try {
@@ -179,7 +272,10 @@ async function consumeTerminal(transport, out, number, execute) {
       const reply = path.join(out, 'reply-' + number + '.json');
       if (failure.number === number && typeof command.id === 'string' &&
           /^[a-zA-Z0-9_-]+$/.test(command.id) && !fs.existsSync(reply)) {
-        transport.publish(reply, {ok: false, id: command.id, error: String(cause), noReplay: true});
+        const detail = {id: command.id, number, ...terminalDetail(cause)};
+        transport.publish(path.join(out, 'terminal-failure.json'), detail);
+        transport.publish(path.join(out, 'first-failure.json'), {...failure, terminal: detail});
+        transport.publish(reply, {ok: false, id: command.id, error: String(cause), terminal: detail, noReplay: true});
       }
     } catch { /* Preserve the original terminal failure if notification fails. */ }
     throw cause;
@@ -210,7 +306,17 @@ function compose({root, manifest}) {
   source = replaceOnce(source, 'async function capture(label){', 'async function capture(label){session.check();');
   source = replaceOnce(source, 'const shot=await chain.capture(label);', 'session.check();const shot=await chain.capture(label);session.check();');
   source = replaceOnce(source, 'if(closing)return;closing=true;', 'session.close();if(closing)return;closing=true;');
-  source = replaceOnce(source, 'async function execute(c,markDispatch){', 'async function execute(c,markDispatch){session.check(true);');
+  source = replaceOnce(source, 'async function execute(c,markDispatch){',
+    "async function execute(c,markDispatch){const diagnostic=require(root+'/tools/supertux-native-driver-composition.cjs').commandDiagnostic(c,latest);try{session.check(true);");
+  source = replaceOnce(source, "assert(latest&&c.reviewRef===latest.label);const review=",
+    "diagnostic.stage('review-storage');diagnostic.read();assert(latest&&c.reviewRef===latest.label);const review=");
+  source = replaceOnce(source, "if(c.action==='pause-step'){", "diagnostic.stage('review-admission');if(c.action==='pause-step'){");
+  source = replaceOnce(source, "markDispatch();save('input-'+c.id+'-admission.json',receipt);",
+    "diagnostic.admitted();diagnostic.stage('input');markDispatch();save('input-'+c.id+'-admission.json',receipt);");
+  source = replaceOnce(source, 'await pulse({down,up,deadline,',
+    "await require(root+'/tools/supertux-native-driver-composition.cjs').runPulse(pulse,{down,up,deadline,");
+  source = replaceOnce(source, 'await wait(c.waitMs);await capture(c.label);\n}',
+    "diagnostic.stage('post-input-wait');await wait(c.waitMs);diagnostic.stage('capture');await capture(c.label);save('command-'+c.id+'-timing.json',diagnostic.snapshot());}catch(error){throw diagnostic.failed(error);}\n}");
   source = replaceOnce(source, "await capture('startup');save('ready.json',{ready:true,deadline});",
     "await capture('startup');session.admit();");
   source = replaceOnce(source, "async function send(method,params={},sessionId){",
@@ -241,6 +347,8 @@ function compose({root, manifest}) {
     "if(v.id){const p=pending.get(v.id);if(!p)return;clearTimeout(p.timer);pending.delete(v.id);v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);}else",
     'if(v.id){cdp.receive(v);}else');
   source = replaceOnce(source, "ws.onmessage=msg=>", "ws.onclose=()=>{session.close();cdp.disconnect();};ws.onmessage=msg=>");
+  source = replaceOnce(source, 'if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));',
+    "if(r.exceptionDetails)throw Object.assign(Error(JSON.stringify(r.exceptionDetails)),{code:'CDP_EVALUATION',method:'Runtime.evaluate'});");
   source = replaceOnce(source, "browser.once('exit',(code,signal)=>save('chrome-exit.json',",
     "browser.once('exit',()=>session.close());browser.once('exit',(code,signal)=>save('chrome-exit.json',");
   source = replaceOnce(source,
@@ -253,4 +361,4 @@ function compose({root, manifest}) {
   return {source, filename: path.resolve(root, base), sha256: sha(source), providers: manifest.files.length};
 }
 
-module.exports = {createTransport, compose, applyPatch, verify, runController, runBoundAction, consumeTerminal, createSession, requestReady};
+module.exports = {createTransport, compose, applyPatch, verify, runController, runBoundAction, consumeTerminal, createSession, requestReady, failureDetail, commandDiagnostic, terminalDetail, runPulse};

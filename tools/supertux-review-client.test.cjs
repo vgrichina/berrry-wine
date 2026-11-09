@@ -63,11 +63,12 @@ async function fixture() {
   };
   const productionRequire = name => name === './input.cjs' ? retained.input : require(name);
   const driver = new Function('assert', 'fs', 'out', 'root', 'require', 'chain', 'send', 'pageSession', 'deadline',
-    'bound', 'log', 'wait', 'capture', 'getLatest', 'sha', `const session={check:()=>{}};let pauseCommandId,pauseController;
-    ${integrated.source.slice(begin, end).replace('assert(latest&&c.reviewRef===latest.label);', 'const latest=getLatest();assert(latest&&c.reviewRef===latest.label);')}
+    'bound', 'log', 'wait', 'capture', 'getLatest', 'save', 'sha', `const session={check:()=>{}};let pauseCommandId,pauseController;
+    ${integrated.source.slice(begin, end).replace('async function execute(c,markDispatch){', 'async function execute(c,markDispatch){let latest=getLatest();')}
     return {execute,get controller(){return pauseController;}};`)(assert, fs, out, root, productionRequire, chain,
       send, 'page', deadline, binding, (name, row) => process.send({receipt: row}),
-      ms => new Promise(r => setTimeout(r, ms)), capture, () => latest, binding.sha);
+      ms => new Promise(r => setTimeout(r, ms)), capture, () => latest,
+      (name, row) => retained.transport.publish(path.join(out, name), row), binding.sha);
   let n = 0;
   fs.writeFileSync(path.join(out, 'ready.json'), JSON.stringify({ready: true, deadline}));
   process.send({ready: true, deadline});

@@ -91,7 +91,7 @@ const command={id:'map-down',action:'key',label:'map-down',waitMs:100,keys:['Arr
  const noRecord=fixture+'/no-record';fs.mkdirSync(noRecord);
  await assert.rejects(composition.consumeTerminal({consume:async()=>{throw generic;},publish:()=>assert.fail('no terminal record')},noRecord,0,execute),e=>e===generic);
  const existing=fs.readFileSync(fixture+'/reply-0.json');
- await assert.rejects(composition.consumeTerminal({consume:async()=>{throw generic;},publish:()=>assert.fail('existing reply must remain')},fixture,0,execute),e=>e===generic);
+ await assert.rejects(composition.consumeTerminal({consume:async()=>assert.fail('terminal consumer must stay closed'),publish:()=>assert.fail('existing reply must remain')},fixture,0,execute),/UNKNOWN\/partial closure/);
  assert.deepEqual(fs.readFileSync(fixture+'/reply-0.json'),existing);
  const success=fixture+'/success';fs.mkdirSync(success);fs.mkdirSync(success+'/commands');
  const successReply=transport.request(success,'normal',{...command,id:'normal'},30000);
