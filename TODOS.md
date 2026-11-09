@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed64a21d22b once1964SHA-size638gzipCRC independentPASS actualHP100gameplayPNG inspected. BothautoAttachmatchrawreplies no timeout; wholefixture212reapsPASS original4ACK lastHP100 then passivehealthmotionUNKNOWN firstterminal independentUPACK275reaps archivefad5. Fresh quake2-received-frame-read-repair-1240 OFFLINE realhealthconsumer causalrepair oldFAILnewPASS noBoxbrowser or waivedhealth/retry.
+  Next: Reviewed7c953b676 once17SHA-size independentPASS. Actual1205 rawframecomparisoninputs absent fourcauses identicalUNKNOWN no justifiedlifetimefix. Fresh quake2-rejected-frame-values-1250 OFFLINE returnonlyalreadyreadvalues and rejectingpredicates with identicalreadcount acceptance firstHPterminal; noBoxbrowser.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Revieweddbd7adddb once529SHA-size73gzipCRC independentPASS. Supportedpassive5000 titletransition actual0955captures+exe150updates20controls lockedbuild860pins26refs. Workerouterlabelcollision FileExistsError BEFOREPopen nofixture/original; archive d8ab9 normalwaitEOF. Fresh redline-distinct-label-training-1235 actualnestedwrapper inert oldFAILnewPASS beforeallocation then wholefixture derivedtitle/menuTraining route.
+  Next: Reviewedde81e4579 once633SHA-size125gzipCRC independentPASS. Actualnestedwrapper labelcollision fixed; firstcomma600ms DOWN1147.669 UP601.110/1148.158 terminal no samples/original;187reaps archived2049. Fresh redline-first-reply-cause-1250 OFFLINE actualconsumer causalrepair no timingwaiver or unchanged retry.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed940eff221 once2474SHA-size1721gzipCRC independentPASS. Actualdiagnosticinstalled1/64 pagecontext1 noDOMhandlerlongtask observation causeUNKNOWN; Enter100DOWN247UP248 no rawreply physicalproof ACK/cancel/original;166reaps archived00f9. Fresh q3-missing-dom-boundary-repair-1220 OFFLINEONLY actualfullcompiledchain causalrepair oldFAILnewPASS; no browser or unchangednative retry.
+  Next: Reviewedd3e02a9d5 once2448SHA-size2054gzipCRC independentPASS actualfullgenerated oldAbruptFAIL/newJoinedPASS ACKpromise observer fix lockedbuild; native firstmissingDOM causeUNKNOWN. Fresh q3-joined-console-native-1250 soleeligiblefinitebox repairedwholefixture unchangedEnter100 existingconsolethroughcleanup nooriginal.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
