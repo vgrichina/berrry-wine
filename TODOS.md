@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed5f8ea1811aaa once222SHA104gzip poststage disk1499811840 terminal beforeChrome no actualfixture/gameplay. UUIDa41ddbef archivedstop_d504 expiry10:40:16. Rootverified losslessduplicatecleanup restored2.24GB. Fresh quake2-health-history-gameplay-1020 soleNEXTnative wholefixture beforeoriginal firstHPloss diagnostic; causeUNKNOWN capsunchanged.
+  Next: Reviewed26403670e once178SHA80gzip actualcaller ROOT=REMOTE rebind makes localhealthpreload.relative_to(ROOT) ValueError BEFOREremotespawn noChrome. UUIDd28d470b archivedstop_b39b expiry10:47:30. Fresh quake2-staged-health-path-repair-1030 OFFLINE minimalproviderpath correction actualmainnamespace oldFAILnewPASS before anothernativefixture; Redline1020 thenQ31025 runtime.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
