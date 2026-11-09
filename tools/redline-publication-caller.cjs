@@ -35,7 +35,7 @@ function retrieve(run,{maxCustodyBytes=64*1024*1024,python='python3'}={}){
  assert(Number.isSafeInteger(maxCustodyBytes)&&maxCustodyBytes>0&&maxCustodyBytes<=64*1024*1024);
  const bounds={'kernel-drain.json':4*1024*1024,'publication-launch.json':128*1024,
   'publication-syscalls.ndjson':4*1024*1024,'custody.ndjson.gz':maxCustodyBytes,'kernel-command.log':64*1024*1024};
- const artifacts={};
+ const artifacts={},snapshots={};
  for(const [name,limit] of Object.entries(bounds)){
   const file=path.join(run,name);let fd;
   try{
@@ -46,12 +46,12 @@ function retrieve(run,{maxCustodyBytes=64*1024*1024,python='python3'}={}){
    assert.equal(offset,st.size,'evidence changed during bounded snapshot');
    assert.equal(fs.fstatSync(fd).size,st.size,'evidence grew during retrieval');const bytes=buffer.subarray(0,offset);
    artifacts[name]={bytes:bytes.length,sha256:sha(bytes)};
+   snapshots[name]=bytes.toString('base64');
   }finally{if(fd!==undefined)fs.closeSync(fd);}
  }
- // The verified launcher validates gzip CRC, custody links and raw syscall data.
- // Bound decompression as well as disk reads before invoking its validator.
- const script=`import sys,json,gzip,io\nfrom pathlib import Path\nsys.path.insert(0,sys.argv[1])\nimport native_publication_launch as l\nr=Path(sys.argv[2]);cap=int(sys.argv[3])\nwith gzip.GzipFile(fileobj=io.BytesIO((r/'custody.ndjson.gz').read_bytes())) as f:\n data=f.read(cap+1)\n if len(data)>cap: raise ValueError('decoded custody cap')\nh,s=l.load_providers()\nprint(json.dumps(l.validate_run(r,h,True)))\n`;
- const report=JSON.parse(cp.execFileSync(python,['-c',script,__dirname,run,String(maxCustodyBytes)],{encoding:'utf8',timeout:10000,maxBuffer:1024*1024}));
+ // Validation sees only these fd snapshots, never the mutable evidence paths.
+ const report=JSON.parse(cp.execFileSync(python,[path.join(__dirname,'redline-publication-snapshots.py'),String(maxCustodyBytes)],{
+  input:JSON.stringify(snapshots),encoding:'utf8',timeout:10000,maxBuffer:1024*1024}));
  return {artifacts,...report,publication:'UNKNOWN',readiness:'UNKNOWN',ancestry:'UNKNOWN',atomicity:'UNKNOWN'};
 }
 // Candidate is exactly the shipped generated consumer, including its launch
