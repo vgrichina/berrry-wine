@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed8b91cbbc once1801SHA-size868validgzipCRC119EMPTY_INVALID envelopes; recovered193artifacts SHA-size/decodePASS. Nativefixture/cancel168/168 original350/350 physicallydrained bx_fgp2sh86 UUID3021654f ARCHIVED normalstop_5169faa2b0691980. Q3DM1 DIFFICULTY/menu captures reviewed; start-arena screenshot522 pending at30scommanddeadline, movement/firing/browserEOFUNKNOWN. Fresh q3-arena-command-boundary-repair-1625 OFFLINE actualproduction causal fix+composedregression unchangeddeadlines; no native retry.
+  Next: Reviewed16b78ad85 once7actualcomposedclockcases baseline latePNG/newterminalabort no latecaptureACKinput;497physicalSHA4validgzip5watchdogactualwaitseparateEOF lockedbuildPASS. First1585 screenshotstallcause UNKNOWN movementfiringUNVERIFIED. Fresh q3-current-foreign-closure-integration-1655 OFFLINE narrow explicitpublishedQ2observer/Redlineadmission productionpreparer/runtime integration with realCLI regression; no blanketrepin/test-only substitution/native retry. Redline1635soleNEXT Q21645queuedafter.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
