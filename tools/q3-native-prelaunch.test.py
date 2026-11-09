@@ -64,13 +64,16 @@ pins = {'files': [dict(path=str(p.relative_to(ROOT)), size=p.stat().st_size,
                       sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in providers]}
 for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing-provider', 'bad-import',
              'missing-screenshot', 'missing-composition', 'stale-composition-pin', 'missing-caller',
-             'missing-startup', 'missing-fixture', 'missing-admission', 'retired-custody-pin'):
+             'missing-startup', 'missing-fixture', 'missing-admission', 'retired-custody-pin',
+             'missing-fixture-pe'):
     active = OUT / case
     active.mkdir()
     selected = json.loads(json.dumps(pins))
     runtime = RUNTIME
     if case == 'retired-custody-pin':
         next(p for p in selected['files'] if p['path'] == 'tools/native_kernel_custody.py')['sha256'] = '5ec810c4d4704ff86afc367b38f7335edf1214e3450ebb98a62ce3df6386b5fe'
+    if case == 'missing-fixture-pe':
+        selected['files'] = [p for p in selected['files'] if p['path'] != 'test/binaries/calc.exe']
     if case == 'bad-pin':
         selected['files'][1]['sha256'] = '0' * 64
     if case == 'missing-caller':
@@ -108,7 +111,8 @@ for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing
     except ValueError as error:
         assert case in ('bad-pin', 'changed-generation', 'missing-provider', 'missing-screenshot',
                         'missing-composition', 'stale-composition-pin', 'missing-caller',
-                        'missing-startup', 'missing-fixture', 'missing-admission', 'retired-custody-pin'), error
+                        'missing-startup', 'missing-fixture', 'missing-admission', 'retired-custody-pin',
+                        'missing-fixture-pe'), error
         print(case, str(error))
     except ModuleNotFoundError as error:
         assert case == 'bad-import' and error.name == 'q3_deliberately_absent_prelaunch_control'
@@ -119,7 +123,7 @@ for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing
                       'missing-provider': [], 'bad-import': ['publish'], 'missing-screenshot': [],
                       'missing-composition': [], 'stale-composition-pin': [], 'missing-caller': [],
                       'missing-startup': [], 'missing-fixture': [], 'missing-admission': [],
-                      'retired-custody-pin': []}[case]), calls
+                      'retired-custody-pin': [], 'missing-fixture-pe': []}[case]), calls
     assert attempts == (['subprocess.Popen'] if case == 'spawn-refused' else [])
     assert (active / 'one-original-claim.json.gz').exists() == (case == 'spawn-refused')
     assert not (active / 'runtime-parent-actual-wait.json.gz').exists()

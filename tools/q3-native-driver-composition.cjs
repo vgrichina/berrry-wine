@@ -15,6 +15,7 @@ const adapterPath = 'scratch/runs/20261108-q3-instrumented-webgl-gameplay-2248/a
 const fixturePath = 'scratch/runs/20261108-q3-gl-readiness-gameplay/generated.cjs';
 const providers = Object.freeze({
   [fixturePath]: 'fb46f1b5f4aa6ad4f4c8874af4a1b507986dd8248f5abee086e09c2c061e89ec',
+  'test/binaries/calc.exe': 'cb71fcc9726f756421519a215c39cf89efd930c9ae0fa5bbb59b64050faef52b',
   'tools/q3-startup.cjs': 'b3c419924809e4e27a5f4119a0d401c81dff01f1f98538e68a5ce0b74ac11b1c',
   'lib/redline-startup-admission.js': 'afcb3bae5807a0b08e8d49262af33c1c64ecfa601717173b630658198de185e2',
   [consumerPath]: '689b05aed1724c2998131818a558dfc2d4e87605df579b97ce2ae3c598883416',
