@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed0425 callerstdinEOF noinput/capture/guestexecutionestablished,134SHA96gzip verified; boxarchiveddrained. Fresh quake2-caller-lifetime-0435 PID1034531 thread01a1be92-4e98-7170-88ed-fc32d307dcdb OFFLINE production callerinput/bootstrap lifetime repair before nextoriginal.
+  Next: Reviewed0435 published1473c5952 persistentstdin+explicitstart concurrentEOF terminalbootstraprevocation actualoldFAILnewPASS;1598SHA81gzip verified. Fresh quake2-persistent-native-combat-0450 PID1059247 thread01a1be9f-c4de-7c03-b841-750392cc5056 prepares nativecombat offline; waits Super0445 thenWC0445 physicalrelease before soleoriginal; no repeateddeathroute.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
