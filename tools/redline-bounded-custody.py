@@ -9,6 +9,7 @@ also batch until the existing executable-CONT barrier, as in the authenticated
 Q3 durable-prefix repair. No closure check or executable barrier is changed.
 """
 import hashlib
+import time
 import json
 import os
 from pathlib import Path
@@ -18,6 +19,89 @@ import native_publication_launch as published
 
 VERSION = 'redline-bounded-custody-v1'
 LAUNCHER_SHA = '3dc65b811a9b73a85fa5c4f9482d8a063865d397994e8160e08c51985f5f7d89'
+
+
+class StartupService:
+    """Bounded passive service timings; no periodic IO or extra ptrace stops.
+
+    Roles are snapshots at consumed waits, never ownership/lineage evidence.
+    Call durations include descheduling; thread CPU is retained separately.
+    """
+    current = None
+    MAX_RECORDS = 32768
+    MAX_BYTES = 8 * 1024 * 1024
+
+    def __init__(self, run):
+        self.run = Path(run)
+        self.rows = []
+        self.size = self.dropped = 0
+        self.context = {}
+        self.totals = {}
+        StartupService.current = self
+
+    def retain(self, row):
+        data = json.dumps(row, separators=(',', ':'))
+        if len(self.rows) >= self.MAX_RECORDS or self.size + len(data) > self.MAX_BYTES:
+            self.dropped += 1
+            return
+        self.rows.append(row)
+        self.size += len(data)
+
+    def call(self, name, fn, *args, **kwargs):
+        start = time.monotonic_ns(); cpu = time.thread_time_ns()
+        error = None
+        try:
+            return fn(*args, **kwargs)
+        except BaseException as e:
+            error = type(e).__name__
+            raise
+        finally:
+            end = time.monotonic_ns(); cost = time.thread_time_ns() - cpu
+            total = self.totals.setdefault(name, dict(calls=0, wallNs=0, cpuNs=0))
+            total['calls'] += 1; total['wallNs'] += end-start; total['cpuNs'] += cost
+            self.retain(dict(kind='service', service=name, beginNs=start, endNs=end,
+                             cpuNs=cost, error=error, **self.context))
+
+    @classmethod
+    def sync(cls, fd):
+        current = cls.current
+        if current is None:
+            return os.fsync(fd)
+        return current.call('fsync', os.fsync, fd)
+
+    def role(self, task, start, sequence, status):
+        self.context = dict(pid=task, start=start, waitSequence=sequence, waitStatus=status)
+        begin = time.monotonic_ns()
+        p = Path('/proc') / str(task)
+        role = {}
+        try:
+            # Snapshot is bound to the already consumed identity, with a second
+            # start-time read. A vanished task retains the failed read explicitly.
+            role['comm'] = (p/'comm').read_text()[:64].strip()
+            role['exe'] = os.readlink(p/'exe')[:512]
+            role['cmdlineHex'] = (p/'cmdline').read_bytes()[:2048].hex()
+            stat = (p/'stat').read_text()
+            role['observedStart'] = stat[stat.rfind(')')+2:].split()[19]
+            role['identityMatches'] = role['observedStart'] == start
+        except OSError as e:
+            role['errno'] = e.errno
+        self.retain(dict(kind='role', beginNs=begin, endNs=time.monotonic_ns(),
+                         snapshotOnly=True, **self.context, **role))
+
+    def close(self):
+        value = dict(version=1, clock='monotonic_ns; thread_time_ns',
+                     anchor=dict(monotonicNs=time.monotonic_ns(), unixNs=time.time_ns()),
+                     rows=self.rows, totals=self.totals, dropped=self.dropped,
+                     maxRecords=self.MAX_RECORDS, maxBytes=self.MAX_BYTES,
+                     observationOnly=True, durationsIncludeDescheduling=True)
+        data = json.dumps(value).encode()
+        # Only finalization writes this separate diagnostic. No diagnostic IO
+        # is inserted before CONT or into the durable custody prefix.
+        with (self.run/'startup-service.json').open('xb') as out:
+            out.write(data)
+            out.flush()
+            os.fsync(out.fileno())
+        StartupService.current = None
 
 
 def adapt(helper, source, **options):
@@ -63,6 +147,34 @@ def adapt(helper, source, **options):
             '                if consumed_waits[task]["status"] != ((signal.SIGTRAP | 128) << 8 | 0x7f):\n'
             '                    journal.flush_pending()\n'
             '                    observer.flush_pending()')
+    # Inline the lane-only observer into the authenticated generated consumer.
+    # No shared module is changed and all existing barriers remain in place.
+    replace('def supervise(run, command,', 'class StartupService:' + Path(__file__).read_text().split('\nclass StartupService:', 1)[1].split('\ndef adapt(', 1)[0]+'\ndef supervise(run, command,')
+    replace('    journal = Journal(run, journal_compression)\n',
+            '    service = StartupService(run)\n'
+            '    journal = Journal(run, journal_compression)\n')
+    replace('            self.stream.write(data); self.stream.flush()\n            self.raw.flush(); os.fsync(self.raw.fileno())',
+            '            self.stream.write(data); self.stream.flush()\n            self.raw.flush(); StartupService.sync(self.raw.fileno())')
+    replace('\n    retirement = False\n', '\n    observer.service = service\n    retirement = False\n')
+    replace('    def trace_task(request, task, data=0):\n',
+            '    def trace_task(request, task, data=0):\n'
+            '        service.context = dict(pid=task, start=owned[task]["start"], request=request, waitSequence=consumed_waits.get(task, {}).get("sequence"))\n')
+    replace('                # Pure syscall continuation admits no new owned identity.\n',
+            '                service.context = dict(pid=task, start=start, waitSequence=consumed_waits[task]["sequence"])\n'
+            '                # Pure syscall continuation admits no new owned identity.\n')
+    replace('            peek = priority_wait()\n',
+            '            peek = service.call("priority-wait", priority_wait)\n')
+    replace('            ptrace(actual_request, task, data=data)\n',
+            '            service.context = dict(pid=task, start=owned[task]["start"], request=actual_request, waitSequence=consumed_waits.get(task, {}).get("sequence"))\n'
+            '            service.call("ptrace", ptrace, actual_request, task, data=data)\n')
+    replace('            if os.WIFEXITED(status) or os.WIFSIGNALED(status):\n',
+            '            service.role(task, row["start"], consumed_waits[task]["sequence"], status)\n'
+            '            if os.WIFEXITED(status) or os.WIFSIGNALED(status):\n')
+    replace('        finally:\n            for sig, handler in handlers.items(): signal.signal(sig, handler)\n',
+            '        finally:\n            for sig, handler in handlers.items(): signal.signal(sig, handler)\n'
+            '            try: service.close()\n'
+            '            except BaseException:\n'
+            '                if journal_error is None and command_error is None: raise\n')
     return candidate
 
 
@@ -88,7 +200,11 @@ def bounded_observer(original):
                 if not n:
                     raise OSError('observer short write')
                 offset += n
-            os.fsync(self.file.fileno())
+            service = getattr(self, 'service', None)
+            if service is None:
+                os.fsync(self.file.fileno())
+            else:
+                service.call('observer-fsync', os.fsync, self.file.fileno())
             self.buffer.clear()
             self.buffer_records = 0
 

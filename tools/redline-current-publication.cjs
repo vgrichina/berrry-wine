@@ -37,6 +37,7 @@ function phases(run,label,write=(name,value)=>require('./redline-startup-boundar
 }
 function prebrowserSource(source){
  const replace=(a,b)=>{assert.equal(source.split(a).length,2,'actual prebrowser phase seam: '+a);source=source.replace(a,b);};
+ replace("if(ws?.readyState===1){const n=++id;","if(!firstFailure&&ws?.readyState===1){const n=++id;");
  replace("const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));","const prebrowserPhase=require('./redline-current-publication.cjs').phases(run,'browser');prebrowserPhase('provider-validation-begin');const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));");
  replace('const start=Date.now(),deadline=',"prebrowserPhase('provider-validation-end',{providers:pins.files.length,bytes:pins.files.reduce((n,p)=>n+p.size,0)});const start=Date.now(),deadline=");
  replace("serverAcquisition=require(root+'/test/static-server.js')","prebrowserPhase('server-acquisition-begin');serverAcquisition=require(root+'/test/static-server.js')");
@@ -171,6 +172,9 @@ function fixtureSource(selected,startupVersion,manifestSHA256){
  assert.equal(source.split(before).length,2,'actual controller outer launch seam');
  if(manifestSHA256!==undefined){require('./redline-current-startup.cjs').optin(startupVersion);assert.match(manifestSHA256,/^[a-f0-9]{64}$/);}
  source=source.replace(before,"require('./redline-current-publication.cjs')."+(manifestSHA256!==undefined?'stagedLaunch':'launch')+"({run,publicationVersion:"+JSON.stringify(version)+(startupVersion!==undefined?",startupVersion:"+JSON.stringify(startupVersion):"")+(manifestSHA256!==undefined?",manifestSHA256:"+JSON.stringify(manifestSHA256):"")+",deadline,options:{detached:true,env:{...process.env,REDLINE_NATIVE_FIXTURE:'1'},stdio:['ignore','pipe','pipe']}})");
+ const automaticReview="transport.publish(out+'/'+capture.label+'-review.json',{...capture,review:'Synthetic fixture control; verify authenticated owner and ordinary input release.'});";
+ assert.equal(source.split(automaticReview).length,2,'one synthetic review site');
+ source=source.replace(automaticReview,"while(!fs.existsSync(out+'/'+capture.label+'-review.json')){check();await wait(25);}const reviewed=JSON.parse(fs.readFileSync(out+'/'+capture.label+'-review.json'));assert.equal(reviewed.sha256,capture.sha256,'reviewed exact returned image');assert(reviewed.review?.trim(),'explicit image review required');");
  source=source.replace('const child=',"const controllerPhase=require('./redline-current-publication.cjs').phases(run,'controller');controllerPhase('validated-launch-begin');const child=");
  source=source.replace("watchdog.stdin.write(child.pid+'\\n');","controllerPhase('custody-spawn-returned',{childPID:child.pid});watchdog.stdin.write(child.pid+'\\n');");
  const joined="assert.equal(watched.code,0,'independent watchdog must be explicitly disarmed and joined');";
