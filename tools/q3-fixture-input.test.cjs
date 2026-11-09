@@ -12,7 +12,7 @@ async function createPage(result) {
   const listeners=new Map();let allocated=4096;
   const scope={console,ArrayBuffer,Uint8Array,Int32Array,DataView,Set,WeakMap,Map,Date,
     performance,crypto:webcrypto,crossOriginIsolated:true,URL,RegionMap:{BASE:{THUNK_BASE:512}},
-    document:{createElement:()=>({getContext:()=>({drawImage(){}})}),body:{append(c){scope.canvas=c;}},getElementById:()=>scope.canvas},
+    document:{createElement:()=>({getBoundingClientRect:()=>({left:0,top:0,width:320,height:200}),getContext:()=>({drawImage(){}})}),body:{append(c){scope.canvas=c;}},getElementById:()=>scope.canvas},
     addEventListener(type,fn){listeners.set(type,fn);},
     WINE_REDLINE_STARTUP:{compile:async()=>({}),park:async()=>{},retired(){}},
     WebAssembly:{compile:async()=>({}),Memory:class{constructor(){this.buffer=new ArrayBuffer(1024*1024);}}},
@@ -32,7 +32,26 @@ async function createPage(result) {
   vm.runInContext(result.fixtureSource+'\nglobalThis.runFixture=fixture;',Object.assign(page,{
     require,module:{exports:{}},__dirname:base}));
   await scope.runFixture('webgl');
-  return {scope,evaluate:expression=>vm.runInContext(expression,page),
+  if(result.fixtureSource.includes('installFixtureInput'))assert(!Object.hasOwn(scope.__fixture.wine.renderer,'peekKeyDownState'));
+  if(result.fixtureSource.includes('installFixtureInput'))assert.equal(typeof Object.getPrototypeOf(scope.__fixture.wine.renderer).peekKeyDownState,'function');
+  // Only external guest/render execution is inert. Real PAGE/WORKER/RENDER
+  // readers and producer selection run against stable object identities.
+  let draws=0, current=true;
+  const context={handle:1,hwnd:65537,backend:{gl:{}},layer:{writeSeq:0}};
+  const bridge={contexts:new Map([[1,context]]),currentByOwner:new Map([[0,1]])};
+  const producer={bridge,owners:new Map([[0,{completed:0,presented:0}]])};
+  const endpoint={options:{api:'gl',backend:'webgl'},adapter:{__q3Producer:producer},control:new Int32Array(6)};
+  const renderScope=vm.createContext({crypto:webcrypto,Map,WeakMap,Atomics,
+    endpoints:new Map([['render-endpoint',endpoint]]),instance:{},__simgolfGL:[{context,canvas:{width:320,height:200}}]});
+  const guestScope=vm.createContext({crypto:webcrypto,WeakMap,endpointIdentity:'fixture-endpoint',workerSlot:0,instance:{}});
+  scope.__fixture.wine._renderWorkerManager.ports=new Map([['render-endpoint',{id:'render-endpoint'}]]);
+  scope.__fixture.link.d3dStats={ready:true,glTriangles:1,renderEndpointId:'render-endpoint'};
+  scope.__draw=async()=>{draws++;context.layer.writeSeq=draws;context.__q3CompletedDraws=draws;
+    context.__q3CompletedVertices=draws*3;producer.owners.set(0,{completed:draws,presented:draws});return {};};
+  scope.__fixture.invoke=async(name,args)=>{if(name==='wglMakeCurrent'){
+    current=!!args[0];bridge.currentByOwner.set(0,current?1:0);
+  }return 1;};
+  return {scope,evaluate:(expression,session)=>vm.runInContext(expression,session==='render-session'?renderScope:session==='guest-session'?guestScope:page),
     dispatch(params,mode){
       if(mode==='missing-key')return;
       const vk=mode==='wrong-key'?40:params.windowsVirtualKeyCode;
@@ -48,18 +67,48 @@ async function scenario(run,mode,old=false){
   const dir=path.join(run,(old?'old-':'new-')+mode);fs.mkdirSync(dir,{recursive:true});
   const tag='offline-fixture-input-'+process.pid+'-'+(old?'old-':'')+mode,out=path.join(base,tag);
   const args=[process.execPath,'--require',__dirname+'/q3-native-driver-composition.test.cjs',
-    '--require',__dirname+'/q3-native-driver-composition.cjs','--require',__dirname+'/q3-execution-boundary.cjs',root+'/'+composition.consumerPath];
+    '--require',__dirname+'/q3-native-driver-composition.cjs',...(mode.startsWith('full')?['--require',__dirname+'/q3-input-wire-observation.cjs']:[]),'--require',__dirname+'/q3-execution-boundary.cjs',root+'/'+composition.consumerPath];
   const supervisor="import subprocess,sys,json,os,signal,gzip\np=subprocess.Popen(json.loads(sys.argv[1]),start_new_session=True)\nopen(sys.argv[2]+'.pid','w').write(str(p.pid))\ntry:s=p.wait(timeout=12)\nexcept subprocess.TimeoutExpired:os.killpg(p.pid,signal.SIGKILL);s=p.wait()\nopen(sys.argv[2],'wb').write(gzip.compress(json.dumps(dict(actualWait=s)).encode()))\nsys.exit(s if s>=0 else 128-s)\n";
   fs.writeFileSync(dir+'/watchdog-armed.json.gz',z.gzipSync(JSON.stringify({supervisorMs:12000,outerMs:14000})));
   const child=cp.spawn('python3',['-c',supervisor,JSON.stringify(args),dir+'/wait.json.gz'],{cwd:root,
-    env:{...process.env,Q3_NODE_FIXTURE:'preload',Q3_FIXTURE_DIR:dir,Q3_FIXTURE_DELAY:'5',
-      Q3_PHYSICAL_CASE:mode,Q3_INPUT_OLD:old?'1':'',Q3_INPUT_BASE:process.env.Q3_FIXTURE_BASE,
-      Q3_NATIVE_COMPOSITION:old?'':'1',LOCAL_PRODUCTION_FIXTURE:'1',Q3_NATIVE_JOINED_FIXTURE:'1',
+    env:{...process.env,RENDER_BACKEND:'webgl',Q3_NODE_FIXTURE:'preload',Q3_FIXTURE_DIR:dir,Q3_FIXTURE_DELAY:'5',
+      Q3_INPUT_WIRE:mode.startsWith('full')?'1':'',Q3_PHYSICAL_CASE:mode,Q3_FULL_FIXTURE:mode.startsWith('full')?'1':'',Q3_REPLACEMENT_OLD:old&&mode.startsWith('full')?'1':'',Q3_INPUT_OLD:old&&!mode.startsWith('full')?'1':'',Q3_INPUT_BASE:process.env.Q3_FIXTURE_BASE,
+      Q3_NATIVE_COMPOSITION:old&&!mode.startsWith('full')?'':'1',LOCAL_PRODUCTION_FIXTURE:'1',Q3_NATIVE_JOINED_FIXTURE:'1',
       CASE_TAG:tag,BROWSER_DEADLINE:String(Date.now()+150000),Q3_EXECUTION_BOUNDARY_OUT:dir+'/execution.jsonl.gz'},stdio:['ignore','pipe','pipe']});
   const logs=require('./native-command-log.cjs').createLogs(dir);logs.attach('stdout',child.stdout);logs.attach('stderr',child.stderr);
   const done=once(child,'close');const watchdog=setTimeout(()=>{try{process.kill(-Number(fs.readFileSync(dir+'/wait.json.gz.pid')),'SIGKILL');}catch{}},14000);
   try{
     await until(()=>fs.existsSync(out+'/fixture-complete-awaiting-quit.json')||child.exitCode!==null);
+    if(mode.startsWith('full')){
+      if(old){
+        await done;assert.equal(child.exitCode,1);
+        assert.match(read(out+'/first-browser-failure.json').error,/replacement:.*peekKeyDownState is not a function/);
+        assert(!fs.existsSync(out+'/local-controls.json'));assert(!fs.existsSync(out+'/reply-1.json'));
+      }else{
+        assert.equal(child.exitCode,null,'actual complete generated controls reached joined loop');
+        assert(read(out+'/local-controls.json').passed);
+        if(process.env.Q3_PHYSICAL_GATE)cp.execFileSync('python3',['-B','-c',
+          "import runpy,sys;exec(runpy.run_path(sys.argv[1])['physical_gate_code'](sys.argv[2]))",process.env.Q3_PHYSICAL_GATE,out]);
+        assert.equal(read(out+'/reply-0.json').id,'positive-webgl');
+        assert.equal(read(out+'/input-positive-webgl-hold.json').fixturePhysicalGate,'PASS');
+        const rows=read(out+'/local-controls.json').rows;
+        assert.equal(rows.length,9);assert(rows.every(r=>r.passed&&r.dispatch===0));
+        assert.match(rows.find(r=>r.name==='replacement').error,/identity changed/);
+        const quit=await require(base+'/transport.cjs').request(out,'ordinary_quit',{action:'quit'},55000);
+        assert(quit.ok);await done;assert.equal(child.exitCode,0);
+        assert(read(out+'/reply-1.json').ok);
+      }
+      await logs.drainStreams();logs.close();
+      const wire=z.gunzipSync(fs.readFileSync(out+'/input-wire.jsonl.gz')).toString().trim().split('\n').map(JSON.parse).flatMap(r=>r.events);
+      assert(wire.some(r=>r.kind==='socket-send-entry'&&r.method==='Input.dispatchKeyEvent'));
+      assert(wire.some(r=>r.kind==='raw-matching-reply'&&r.pendingPresent));
+      const browser=JSON.parse(z.gunzipSync(fs.readFileSync(dir+'/browser-actual-wait.json.gz')));
+      assert.equal(browser.code,0);assert(browser.stdoutEOF&&browser.stderrEOF);
+      const terminal=read(out+'/terminal-browser.json');assert(terminal.normal&&terminal.drained);
+      assert.equal(terminal.closeRequest,'pending','unanswered Browser.close never becomes successful ACK');
+      fs.writeFileSync(dir+'/result.json.gz',z.gzipSync(JSON.stringify({passed:true,old,mode,actualWait:child.exitCode,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,nativeQualified:false})));
+      return;
+    }
     assert.equal(child.exitCode,null,'full fixture controller reached input loop');
     const transport=require(base+'/transport.cjs');
     const request=transport.request(out,'physical',{...(mode==='combo'?{action:'combo',keys:['a','Control']}:
@@ -117,6 +166,10 @@ async function scenario(run,mode,old=false){
 }
 if(require.main===module)(async()=>{
   const run=path.resolve(process.env.Q3_FIXTURE_TEST_RUN);fs.mkdirSync(run,{recursive:true});
+  if(process.argv.includes('--complete-controls')){
+    await scenario(run,'full-old',true);await scenario(run,'full-new');
+    console.log('PASS actual generated controls old FAIL/new PASS through ordinary joined quit; offline only');return;
+  }
   await scenario(run,'enter',true);
   for(const mode of ['enter','arrow','combo','missing-key','wrong-key','release-stuck','source-race','untrusted'])await scenario(run,mode);
   console.log('PASS actual full composed fixture/controller: old FAIL; Enter/arrow/combo held and release PASS; missing/wrong/stuck/replaced/untrusted refused terminal; normal child waits and separate EOF; offline only');

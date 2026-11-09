@@ -14,6 +14,7 @@ const consumerPath = 'scratch/runs/20261108-q3-gl-readiness-gameplay/browser-run
 const adapterPath = 'scratch/runs/20261108-q3-instrumented-webgl-gameplay-2248/adapter.cjs';
 const fixturePath = 'scratch/runs/20261108-q3-gl-readiness-gameplay/generated.cjs';
 const providers = Object.freeze({
+  'scratch/runs/20261108-q3-gl-readiness-gameplay/local-controls.cjs': 'b03cddb85f87b35d1c9c2124456474c23042d6b6c0a82bd9f74cccbe523d26ea',
   'tools/q3-fixture-input.cjs': '3136d15840a90e1eb601979b89f92b2bbfa592d32c310528686d4db1cf8689f1',
   'lib/renderer-input.js': '10c34564b422f7fc2669153b3662a658ea70271c87fb5a9d9213c0f1a297f21d',
   'tools/q3-input-delivery.cjs': 'b0106da3fa7b2b806fe5c56d9aab940c5d9e235c1d3144195f8248db7af3a7c7',
@@ -181,7 +182,15 @@ function close(reason){
   fixtureSource = replaceOnce(fixtureSource, "globalThis.runningApps=[{name:'dx_tunnel',wine}];",
     `(${require('./q3-fixture-input.cjs').installFixtureInput.toString()})({renderer,wine,link});\n globalThis.runningApps=[{name:'dx_tunnel',wine}];`);
   new vm.Script(Module.wrap(fixtureSource), {filename:path.join(root, fixturePath)});
-  return {source, fixtureSource, retainedSource, references, hook:extensions['.cjs'], append:localFs.appendFileSync};
+  // Replace object identity while retaining the prototype-backed physical reader.
+  let controlsSource=replaceOnce(fs.readFileSync(path.join(root, path.dirname(consumerPath), 'local-controls.cjs'),'utf8'),
+    '__fixture.wine.renderer={...__oldRenderer}',
+    '__fixture.wine.renderer=Object.assign(Object.create(Object.getPrototypeOf(__oldRenderer)),__oldRenderer)');
+  controlsSource=replaceOnce(controlsSource, " await negative('stale'", ` await negative('missing-reader',()=>evaluate('globalThis.__readerPrototype=Object.getPrototypeOf(__fixture.wine.renderer);Object.setPrototypeOf(__fixture.wine.renderer,null);true'),()=>evaluate('Object.setPrototypeOf(__fixture.wine.renderer,__readerPrototype);true'),/physical reader missing or malformed/);
+ await negative('malformed-reader',()=>evaluate('__fixture.wine.renderer.peekKeyDownState=()=>null;true'),()=>evaluate('delete __fixture.wine.renderer.peekKeyDownState;true'),/physical reader missing or malformed/);
+ await negative('stale'`);
+  new vm.Script(Module.wrap(controlsSource));
+  return {source, fixtureSource, controlsSource, retainedSource, references, hook:extensions['.cjs'], append:localFs.appendFileSync};
 }
 async function ready(options) {
   // The real consumer records spawn errors before this poll. Throw on the next
@@ -209,6 +218,9 @@ function install({root = path.resolve(__dirname, '..')} = {}) {
       return module._compile(result.source, filename);
     }
     if (filename === path.join(root, fixturePath)) return module._compile(result.fixtureSource, filename);
+    if (filename === path.join(root, path.dirname(consumerPath), 'local-controls.cjs')) {
+      return module._compile(result.controlsSource, filename);
+    }
     if (filename === path.join(root, path.dirname(consumerPath), 'bound-input.cjs')) {
       return compileBoundInput(result, module, filename, path.dirname(path.resolve(process.env.Q3_EXECUTION_BOUNDARY_OUT)));
     }
@@ -230,6 +242,12 @@ function compileBoundInput(result, module, filename, evidenceDirectory) {
     const replacement=`function hold(options){return require(${helper}).hold({...options,fixture:process.env.LOCAL_PRODUCTION_FIXTURE==='1',record:value=>require('node:fs').appendFileSync(${JSON.stringify(destination)},JSON.stringify(value)+'\\n')});}`;
     let integrated=source.slice(0,begin)+replacement+source.slice(end);
     integrated=replaceOnce(integrated, 'physical:[37,38,39,40].map', "physicalSource:{kind:'renderer-input.peekKeyDownState',renderer:token(w?.renderer),endpoint:l?.endpointIdentity,worker:token(l?.worker),module:token(l?.module),reader:token(w?.renderer?.peekKeyDownState)},physical:[37,38,39,40].map");
+    integrated=replaceOnce(integrated, 'state:w?.renderer?.peekKeyDownState(key)??null',
+      "state:typeof w?.renderer?.peekKeyDownState==='function'?w.renderer.peekKeyDownState(key):null");
+    // Compare owners before validating physical data. Missing or malformed
+    // readers then refuse explicitly without an accidental JavaScript TypeError.
+    integrated=replaceOnce(integrated, 'if (binding) same(binding, identity);',
+      "if (binding) same(binding, identity);assert(identity.physicalSource.reader&&identity.physical.every(r=>r.state===0||r.state===32768),'physical reader missing or malformed');");
     integrated=replaceOnce(integrated, 'async function progress(identity) {\n    const page = await evaluate(PAGE_READ)',
       `async function progress(identity, keys) {\n    const page = await evaluate(keys ? PAGE_READ.replace('[37,38,39,40]',JSON.stringify(keys.map(k=>require(${helper}).KEYS[k]))) : PAGE_READ)`);
     integrated=replaceOnce(integrated, "'renderWorkerObject'])\n      assert.equal(a[f], identity[f], 'held identity changed: '+f);",

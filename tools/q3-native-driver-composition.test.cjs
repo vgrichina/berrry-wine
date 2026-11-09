@@ -18,8 +18,20 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
   const load = Module._load, read = fs.readFileSync, spawn = cp.spawn;
   const dir = process.env.Q3_FIXTURE_DIR;
   let browser;
+  if(process.env.Q3_REPLACEMENT_OLD==='1'){
+    const compile=Module.prototype._compile;
+    Module.prototype._compile=function(source,name){
+      if(name===base+'/bound-input.cjs')source=source.replace(
+        "state:typeof w?.renderer?.peekKeyDownState==='function'?w.renderer.peekKeyDownState(key):null",
+        'state:w?.renderer?.peekKeyDownState(key)??null');
+      if(name===base+'/local-controls.cjs')source=read(name,'utf8');
+      return compile.call(this,source,name);
+    };
+  }
+
   fs.readFileSync = function(file, ...args) {
-    if (file === base + '/runtime-pins.json') return JSON.stringify({files:[], httpPins:[], commit:'NODE_PROTOCOL_FIXTURE_ONLY'});
+    if(file===root+'/build/inert.wasm'&&process.env.Q3_FULL_FIXTURE==='1')return Buffer.from('inert-module');
+    if (file === base + '/runtime-pins.json') return JSON.stringify({files:process.env.Q3_FULL_FIXTURE==='1'?[{path:'build/inert.wasm',size:12,sha256:require('node:crypto').createHash('sha256').update('inert-module').digest('hex')}]:[], httpPins:[], commit:'NODE_PROTOCOL_FIXTURE_ONLY'});
     return read.call(this, file, ...args);
   };
   cp.spawn = function(command, args) {
@@ -43,6 +55,12 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
     })};
     if (parent?.filename === retained && name === './bound-input.cjs' && process.env.Q3_PHYSICAL_CASE) {
       const bound=load.call(this,name,parent,main);
+      if(process.env.Q3_FULL_FIXTURE==='1')return {...bound,createChain:options=>{
+        const bytes=Buffer.from('inert-module'),sha256=require('node:crypto').createHash('sha256').update(bytes).digest('hex');
+        for(const [sessionId,url] of [['guest-session','guest-worker'],['render-session','d3d-render-worker']])
+          options.workers.set(sessionId,{sessionId,targetId:sessionId,closed:false,url,scripts:[{scriptId:sessionId,sha256,bytecodeAvailable:true}]});
+        return bound.createChain(options);
+      }};
       return {...bound,createChain:options=>{
         options.workers.set('fixture-owner',{targetId:'fixture-owner',closed:false,url:'inert-owning-worker'});
         const chain=bound.createChain(options);
@@ -63,7 +81,8 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
       progress:async()=>{if(process.env.Q3_INPUT_CASE==='sample-error')throw Error('FIRST inert sample failure');return {fixture:'no guest'};}
     })};
     if (parent?.filename === retained && name === './readiness.cjs') return {ready:async() => ({fixture:'no guest'})};
-    if (parent?.filename === retained && name === './local-controls.cjs' && (process.env.Q3_NATIVE_CANCEL_PROBE === '1'||process.env.Q3_NATIVE_JOINED_FIXTURE === '1')) return {run:async({out,capture})=>{
+    if (parent?.filename === retained && name === './local-controls.cjs' && process.env.Q3_FULL_FIXTURE!=='1' && (process.env.Q3_NATIVE_CANCEL_PROBE === '1'||process.env.Q3_NATIVE_JOINED_FIXTURE === '1')) return {run:async({out,capture})=>{
+      if(process.env.Q3_FULL_FIXTURE==='1')throw Error('actual local controls must execute');
       if(process.env.Q3_PHYSICAL_CASE){
         await capture('fixture-startup');
         const review=JSON.parse(fs.readFileSync(out+'/fixture-startup-capture.json'));review.review='inert generated fixture';
@@ -103,7 +122,7 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
       }
       if (v.method === 'Input.dispatchKeyEvent' && process.env.Q3_INPUT_CASE) {
         const mode=process.env.Q3_INPUT_CASE;
-        const reply=()=>{const message=new MessageEvent('message',{data:JSON.stringify({id:v.id,result:{}})});this.dispatchEvent(message);this.onmessage?.(message);};
+        const reply=()=>{const message=new MessageEvent('message',{data:JSON.stringify({id:v.id,sessionId:v.sessionId,result:{}})});this.dispatchEvent(message);this.onmessage?.(message);};
         const applied=()=>fs.appendFileSync(dir+'/application.jsonl',JSON.stringify({at:Date.now(),type:v.params.type,key:v.params.key})+'\n');
         if(mode==='delayed-application')setTimeout(applied,650).unref();else applied();
         if(mode==='stalled-down'&&v.params.type==='keyDown')return;
@@ -125,7 +144,7 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
         }
         require('./q3-fixture-input.test.cjs').createPage(selected.compose()).then(value=>{
           physicalPage=value;
-          const message=new MessageEvent('message',{data:JSON.stringify({id:v.id,result:{}})});
+          const message=new MessageEvent('message',{data:JSON.stringify({id:v.id,sessionId:v.sessionId,result:{}})});
           this.dispatchEvent(message);this.onmessage?.(message);
         }).catch(error=>{console.error(error);browser.kill('SIGTERM');});
         return;
@@ -134,7 +153,7 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
         fs.writeFileSync(dir + '/pending-cdp-at', String(Date.now()));
         if(process.env.Q3_FIXTURE_STALL_CDP==='1'){
           const timer=setInterval(()=>{if(fs.existsSync(dir+'/release-cdp')){
-            clearInterval(timer);const message=new MessageEvent('message',{data:JSON.stringify({id:v.id,result:{result:{value:{apps:[]}}}})});
+            clearInterval(timer);const message=new MessageEvent('message',{data:JSON.stringify({id:v.id,sessionId:v.sessionId,result:{result:{value:{apps:[]}}}})});
             this.dispatchEvent(message);this.onmessage?.(message);
           }},5);timer.unref();
         }else setTimeout(() => browser.kill('SIGKILL'), 25);
@@ -143,12 +162,18 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
       let result = {};
       if (v.method === 'Target.getTargets') result = {targetInfos:[{type:'page', targetId:'node-protocol-page'}]};
       if (v.method === 'Target.attachToTarget') result = {sessionId:'node-protocol-session'};
-      if (v.method === 'Runtime.evaluate') result = {result:{value:process.env.Q3_PHYSICAL_CASE&&physicalPage&&v.params.expression.includes('__mcmPassiveIdentityV1')
+      if(process.env.Q3_FULL_FIXTURE==='1'&&v.method==='Debugger.getScriptSource')result={bytecode:Buffer.from('inert-module').toString('base64')};
+      if(process.env.Q3_FULL_FIXTURE==='1'&&v.method==='Page.captureScreenshot')result={data:png.toString('base64')};
+      if (v.method === 'Runtime.evaluate') result = {result:{value:process.env.Q3_FULL_FIXTURE==='1'&&physicalPage
+        ?physicalPage.evaluate(v.params.expression,v.sessionId):process.env.Q3_PHYSICAL_CASE&&physicalPage&&v.params.expression.includes('__mcmPassiveIdentityV1')
         ?physicalPage.evaluate(v.params.expression):{apps:[]}}};
-      queueMicrotask(() => {
-        const message = new MessageEvent('message', {data:JSON.stringify({id:v.id, result})});
+      Promise.resolve(result.result?.value).then(value=>{
+        if(result.result)result.result.value=value;
+        queueMicrotask(() => {
+        const message = new MessageEvent('message', {data:JSON.stringify({id:v.id,sessionId:v.sessionId,result})});
         this.dispatchEvent(message); this.onmessage?.(message);
       });
+      }).catch(error=>{console.error(error);browser.kill('SIGTERM');});
     }
     close() { this.readyState = 3; }
   }
