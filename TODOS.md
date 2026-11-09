@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed a48191173 once: actual retained provision CLI passed; leased first failure exposed missing retained pipe-wait helper after parentSpawn. Published exact helper staging repair with actual launch/provision CLI, missing/damaged helper controls, kernel lifecycle and locked build PASS. Box bx_y37jnhc6 ARCHIVED after verified recovery, six actual kernel reaps and two runtime parent waits/separate EOF; generated outer parent wait UNKNOWN. Fresh quake2-staged-parent-wait-guard-progress-1626 queued after Q3 and Redline final release; repaired actual provision AND launch offline before ONE fixture and conditional guard-door original. Gameplay/allwriters/aliases/ABA UNKNOWN.
+  Next: Reviewed586f4aa44 once:383 physical SHA-size49gzip PASS; fresh staged provision/launch and helper audit/parentwait controls/build passed. Accidental prohibited localChrome test terminal; census empty port40955 closed, browser separateEOF UNKNOWN. No remote box or production repair. Fresh quake2-reviewed-launch-guard-route-1638 excludes that test, inspects launch paths, prepares actual generated CLI offline then ONE conditional guard-door attempt AFTER Redline1634 finalrelease/archive/drain. Gameplay/allwriters/aliases/ABA UNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed1f69c75b6 once actualgeneratedcontroller firsterror preserved BEFOREcancel cleanup secondary; actualowningcaller boundedstartup phases realserver/HTTP controls stagedCLI/build PASS.754physicalreads82validgzip47empty2intentionalincomplete excluded noBox; historical1114sstall/fsync/nativeReady/browserEOF UNKNOWN. Fresh redline-phased-side-door-progress-1617 offlinepreparation then runtime AFTER Q21615 and Q31615 finalreleases/ARCHIVED/drain; ONEfixture then conditionalcarDoor original unchangeddeadlines.
+  Next: Reviewed17c842b69 once:636 physical SHA-size and87validgzip PASS; no box, queued fallback ended without gameplay. Actual generated caller returns0 after missingACK failure. Fresh redline-caller-failure-side-door-1634 owns narrow exit propagation repair and ONE conditional native car-door attempt after independent predecessor archival/drain checks. Historical startup cause/nativeReady/browserEOF UNKNOWN.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed139fba0ed once productioncontroller rejects invalidstdin BEFOREspawn and finally actualchildwait separateEOF; actualretained1705 caller+Session stickyfailure controls/build PASS.692inventorySHA-size matched181gzipCRC75empty excluded noBox. Fresh q3-preflighted-controller-arena-1615 prepares offline then runtime AFTER Q21615 finalrelease/ARCHIVED/drain. ONEfixture then conditionaloriginal via SHAauthenticated controller livewriter unchanged deadlines. Historicalchildwait/movement/firing/stall UNKNOWN.
+  Next: Revieweda8aea2338 once:1483 physical SHA-size595gzip PASS. Actual generated caller now propagates first failure after cleanup/read-only join; actual CLI regressions and locked build PASS. Sole fixture timed out page-session Target.setAutoAttach; cause UNKNOWN, no original/input/capture. bx_t2ubq3yn ARCHIVED normalstop_eb076fca0d3c6cdf;132reaps3parentwaits/separateEOF watchdogJOIN0, browsernormalclose UNKNOWN. Fresh q3-page-attach-stall-repair-1638 diagnoses actual CDP sequencing offline; runtime after Redline1634 then Q2-reviewed1638.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
