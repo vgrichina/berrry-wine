@@ -101,9 +101,21 @@ function startupDiagnostics(source){
   assert(a>=0&&b>a&&source.indexOf(begin,a+1)<0&&source.indexOf(end,b+1)<0,'unique native startup boundary');
   let startup=source.slice(a,b);
   startup=exact(startup,"const active=out+'/chrome-profile/DevToolsActivePort';",'');
-  startup=exact(startup,'i++)await wait(100);','i++){startupPolls++;await wait(100);}');
+  startup=exact(startup,'i++)await wait(100);','i++){startupPolls++;sampleStartup();await wait(100);}');
   startup=exact(startup,"fs.readFileSync(active,'utf8').trim()","(startupPortText=fs.readFileSync(active,'utf8')).trim()");
   return source.slice(0,a)+` const active=out+'/chrome-profile/DevToolsActivePort';let startupPolls=0,startupPortText=null;
+ const startupSamples=[],startupBeginNs=process.hrtime.bigint().toString();
+ function sampleStartup(){
+  if(startupSamples.length>=102)return;
+  const row={monoNs:process.hrtime.bigint().toString(),at:new Date().toISOString(),poll:startupPolls};
+  try{
+   const base='/proc/'+browser.pid,stat=fs.readFileSync(base+'/stat','utf8'),fields=stat.slice(stat.lastIndexOf(')')+2).trim().split(/\\s+/);
+   row.process={state:fields[0],ppid:Number(fields[1]),startTicks:fields[19],userTicks:Number(fields[11]),systemTicks:Number(fields[12]),threads:Number(fields[17])};
+   row.process.wchan=fs.readFileSync(base+'/wchan','utf8').trim();
+   const status=fs.readFileSync(base+'/status','utf8');row.process.tracerPid=Number(status.match(/^TracerPid:\\s+(\\d+)/m)?.[1]??0);
+  }catch(e){row.error={code:e.code,message:e.message};}
+  startupSamples.push(row);
+ }
  try{
 ${startup} }catch(error){
   // Snapshot before terminal cleanup removes the profile. Observations only:
@@ -118,6 +130,10 @@ ${startup} }catch(error){
     portFile:{path:active,existsAtFailure:fs.existsSync(active),readCompleted:startupPortText!==null,text:startupPortText===null?null:startupPortText.slice(0,1024),truncated:startupPortText!==null&&startupPortText.length>1024},stderr});
   }catch(diagnosticError){console.error('native startup diagnostic failed:',diagnosticError);}
   throw error;
+ }finally{
+  // Same existing polls only. Observations never supply an endpoint or extend
+  // readiness. CLOCK_MONOTONIC aligns these Linux samples with custody timing.
+  try{sampleStartup();save('native-startup-timing.json',{version:1,observationalOnly:true,clock:'Linux CLOCK_MONOTONIC / hrtime.bigint',beginNs:startupBeginNs,endNs:process.hrtime.bigint().toString(),polls:startupPolls,portRead:startupPortText!==null,samples:startupSamples});}catch(e){console.error('native startup timing failed:',e);}
  }
 `+source.slice(b);
 }

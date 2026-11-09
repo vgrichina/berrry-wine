@@ -9,7 +9,7 @@ const save=(p,v)=>fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function child(){
  const dir=process.env.NOX_TEST_DIR,generated=process.env.NOX_TEST_GENERATED,mode=process.env.NOX_TEST_MODE;
  const consumer=path.join(generated,'browser-run.cjs'),protocol=[],deliveries=[];
- const startupFailure=['missing-port','early-death','malformed-port'].includes(mode);
+ const startupFailure=['missing-port','early-death','malformed-port','stopped-port'].includes(mode);
  const originalRead=fs.readFileSync,originalLoad=Module._load,originalSpawn=cp.spawn;
  let browser,compiled=false,firstMouseFault=false,workerAttached=false,stdoutEOF=false,stderrEOF=false;
  const faults={primary:'build/wine-assembly.wasm',compat:'build/wine-assembly.compat.wasm',source:'lib/renderer.js',media:'test/binaries/candidates/nox-demo/game/nox.exe',historical:current.HISTORY+'/browser-run.cjs',repin:'lib/renderer.js'};
@@ -33,7 +33,8 @@ async function child(){
      if(mode==='early-death'){process.stderr.write('OFFLINE_CHILD_EARLY_DEATH\\n');process.exitCode=17;}
      else {
        process.stderr.write('OFFLINE_CHILD_STARTED\\n');
-       if(mode==='missing-port')process.stderr.write('DevTools listening on ws://127.0.0.1:1/devtools/browser/offline\\n');
+       if(mode==='stopped-port'){process.stderr.write('OFFLINE_CHILD_STOPPED\\n');process.kill(process.pid,'SIGSTOP');}
+       else if(mode==='missing-port')process.stderr.write('DevTools listening on ws://127.0.0.1:1/devtools/browser/offline\\n');
        else fs.writeFileSync(profile+'/DevToolsActivePort',mode==='malformed-port'?'bad-port\\n/devtools/browser/offline\\n':'1\\n/devtools/browser/offline\\n');
        const timer=setInterval(()=>{},1000);
        process.stdin.once('data',()=>{clearInterval(timer);process.stdout.write('closed\\n');process.stderr.write('closed\\n');process.stdin.destroy();});
@@ -43,6 +44,12 @@ async function child(){
    browser.stderr.pipe(fs.createWriteStream('',{fd:options.stdio[2],autoClose:false}));
    browser.stdout.resume();browser.stderr.resume();browser.stdout.on('end',()=>stdoutEOF=true);browser.stderr.on('end',()=>stderrEOF=true);
    browser.once('close',(code,signal)=>save(dir+'/child-wait.json',{code,signal,stdoutEOF,stderrEOF}));
+   if(mode==='stopped-port'){
+     // An offline process stopped before readiness must remain a terminal
+     // failure. Cleanup resumes it only after the actual terminal handler.
+     const kill=browser.kill.bind(browser);
+     browser.kill=signal=>{if(signal==='SIGTERM')kill('SIGCONT');return kill(signal);};
+   }
    return browser;
  };
  Module._load=function(name,parent,main){
@@ -120,7 +127,7 @@ async function main(){
  // The unchanged driver actually executes its full strict preflight.
  const pre=cp.spawnSync(process.execPath,[generated+'/browser-run.cjs'],{env:{...process.env,DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+120000)},encoding:'utf8'});
  assert.equal(pre.status,0,pre.stderr);results.push({mode:'current-preflight',status:pre.status,proof:JSON.parse(pre.stdout)});
- for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','ordinary','drag','drag-failure']){
+ for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','stopped-port','ordinary','drag','drag-failure']){
    const dir=out+'/'+mode;fs.mkdirSync(dir);
    // The actual generated source is shared; move only its run-specific outputs
    // after each execution, retaining every failure and ordinary-close artifact.
@@ -129,7 +136,7 @@ async function main(){
    const peer=JSON.parse(fs.readFileSync(dir+'/peer.json'));assert(peer.compiled);assert.equal(peer.chromeStarted,false);
    if(['primary','compat','source','media','historical','repin'].includes(mode)){
      assert.equal(r.status,1,r.stderr);assert.equal(peer.protocol.length,0);assert.match(r.stderr,mode==='repin'?/immutable current plan/:/immutable input/);
-   }else if(['missing-port','early-death','malformed-port'].includes(mode)){
+   }else if(['missing-port','early-death','malformed-port','stopped-port'].includes(mode)){
      const source=generated+'/original';fs.renameSync(source,dir+'/runtime');
      assert.equal(r.status,1,r.stderr);assert.equal(peer.protocol.length,0,'no CDP admission from stderr or malformed port');
      const diagnostic=JSON.parse(fs.readFileSync(dir+'/runtime/native-startup-failure.json'));
@@ -137,6 +144,13 @@ async function main(){
      assert.equal(diagnostic.error.stack,failure.error,'original error reaches terminal handler unchanged');
      assert.equal(failure.noReplay,true);assert.equal(diagnostic.pollLimit,100);assert.equal(diagnostic.pollIntervalMs,100);assert.equal(diagnostic.pollBoundMs,10000);
      assert.equal(diagnostic.phase,'native-devtools-startup');assert(diagnostic.elapsedMs>=0);
+     const timing=JSON.parse(fs.readFileSync(dir+'/runtime/native-startup-timing.json'));
+     assert(timing.observationalOnly);assert.equal(timing.polls,diagnostic.polls);
+     assert.equal(timing.samples.length,timing.polls+1);assert(timing.samples.length<=102);
+     assert(BigInt(timing.endNs)>=BigInt(timing.beginNs));
+     assert(timing.samples.every((s,i)=>!i||BigInt(s.monoNs)>=BigInt(timing.samples[i-1].monoNs)));
+     if(mode==='stopped-port')assert(timing.samples.some(s=>s.process?.state==='T'),'actual stopped child observed');
+     if(mode==='early-death')assert(timing.samples.some(s=>s.error?.code==='ENOENT'),'actual process absence observed');
      const joined=JSON.parse(fs.readFileSync(dir+'/child-wait.json'));
      assert.equal(joined.stdoutEOF,true);assert.equal(joined.stderrEOF,true);
      if(mode==='malformed-port'){
@@ -162,6 +176,7 @@ async function main(){
      assert.equal(peer.protocol.filter(q=>q.method==='Browser.close').length,1);
      assert(!fs.existsSync(dir+'/runtime/chrome-profile'));
      assert(!fs.existsSync(dir+'/runtime/native-startup-failure.json'),'successful startup emits no failure diagnostic');
+     const timing=JSON.parse(fs.readFileSync(dir+'/runtime/native-startup-timing.json'));assert(timing.portRead);assert(timing.samples.length<=102);
      const mouse=peer.deliveries.filter(p=>p.type==='mousePressed'||p.type==='mouseReleased');
      if(mode!=='ordinary'){assert.deepEqual(mouse.map(p=>p.type),['mousePressed','mouseReleased']);assert(mouse.every(p=>p.button==='right'));}
      if(mode==='drag-failure'){
