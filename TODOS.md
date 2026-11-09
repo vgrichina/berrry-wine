@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewede2499b949/ab545221c once387SHA-size98gzipCRC0INVALID; actualtransitive/allsevenmissingSHA and bothCPUcaller/cancel/buildPASS no nativeallocation. Fresh quake2-staged-closure-gameplay-1575 currentv2 actualremote staging/control then conditionalONEoriginal guard/door. 1555 verifiedQ31535 ownedmodule/prelaunch absentQ2closure: freshworker independentlyrechecksdisjointness then pinning/allocation allowed without unrelatedreleasegate; sharedprovidersfrozen preserveQ3pins. No acceptance/writercoveragewaiver.
+  Next: Reviewedf8675f5a5 once432SHA-size267gzipCRC0INVALID; actualremote7importsPASS but currentCPU3e491browserpolicy stilla320 mismatch beforeREADY. bx_tuwugvr3 UUID9d26b631 ARCHIVED normalstop_b9b9272e814d13bc physical200/200drain. Fresh quake2-current-browser-policy-1605 OFFLINE actualversionedcanonicalCPU integration code+realprepare regression; Q31585 soleNEXT freezeactualoverlaps. No native retry/guarddoorclaim.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
