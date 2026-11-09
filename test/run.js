@@ -2778,7 +2778,9 @@ async function main() {
       const sigs = JSON.parse(fs.readFileSync(path.join(ROOT,'lib','host-import-sigs.generated.json'),'utf8')).sigs;
       return new WorkerConsumer(new Worker(path.join(ROOT,'lib','d3d-render-worker.js')),
         {module:wasmModule,memory,sigs,imageBase:instance.exports.get_image_base() >>> 0,
-          reclaimHeap:head=>instance.exports.d3d_render_adopt_free_list(head)});
+          // Retirement awaits adoption after the renderer has terminated.
+          // The free list belongs to the guest owner, never its host shadow.
+          reclaimHeap:head=>mainOwner.call('d3d_render_adopt_free_list',head)});
     },
     renderer,
     // --headless-gl: give the OpenGL bridge a drawable factory so wglCreateContext

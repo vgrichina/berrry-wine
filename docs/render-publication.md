@@ -593,6 +593,16 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   This moves configuration ownership, not interpreter algorithms or rendering
   throughput. Watchpoint/control callbacks and diagnostic reads still require
   migration along with the remaining initialization and runtime paths.
+  CLI renderer shutdown now adopts retired native heap blocks through the
+  selected guest owner. `WorkerConsumer` already awaits this handoff after
+  renderer termination; the CLI no longer writes the host shadow's allocator.
+  Actual Node guest/renderer Worker tests create a software device, verify all
+  64 BGRA pixels after clear/readback, and prove exactly one adoption into the
+  owning instance after termination with the shadow free list unchanged.
+  Local and Worker owners pass on normal and compatibility WASM builds:
+  `scratch/runs/20261109-cli-render-retirement/test-result.json`.
+  Renderer construction still obtains image-base metadata locally in the CLI;
+  this change completes heap handoff ownership, not full Worker-main startup.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
