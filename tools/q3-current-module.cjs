@@ -416,6 +416,7 @@ function prepare(destination,{inputs=[]}={}){
     const custodyAdapter='tools/q3-startup-custody.py';
     version.files.push(pin(custodyAdapter,read(custodyAdapter)));
     version.files.push(pin('tools/q3-provider-upload.py',read('tools/q3-provider-upload.py')));
+    version.files.push(pin('tools/q3-phase-observer.py',read('tools/q3-phase-observer.py')));
     generated=generated.map(file=>{
       const before='from native_kernel_custody import supervise,identity';
       assert.equal(file.source.split(before).length,2,'unique Q3 native custody import');
@@ -428,6 +429,15 @@ function prepare(destination,{inputs=[]}={}){
       return {...file,source};
     });
     version.nativeLifecycleVersion=lifecycle.version;
+    // Match the generated runtime boundary and the current staged consumer.
+    // Observers consume this sealed layout instead of historical CASE_TAG paths.
+    version.phaseLayout=Object.fromEntries(['cancellation','original'].map(phase=>{
+      const prepared=path.join(path.dirname(destination),phase,'prepared');
+      const runtime=generated.find(file=>file.path===path.relative(root,path.join(prepared,'../runtime.py')));
+      assert(runtime?.source.includes("Q3_EXECUTION_BOUNDARY_OUT=str(R/'execution-boundary.jsonl.gz')"),'generated boundary layout');
+      return [phase,{prepared:path.relative(root,prepared),output:path.relative(root,path.join(prepared,'runtime')),
+        boundary:path.relative(root,path.join(prepared,'execution-boundary.jsonl.gz'))}];
+    }));
     version.files.push(pin('tools/q3-versioned-native-lifecycle.cjs',read('tools/q3-versioned-native-lifecycle.cjs')));
     for(const file of generated)version.files.push(pin(file.path,Buffer.from(file.source)));
   }
@@ -469,7 +479,7 @@ function prepare(destination,{inputs=[]}={}){
   for(const file of generated){fs.mkdirSync(path.dirname(path.join(root,file.path)),{recursive:true});fs.writeFileSync(path.join(root,file.path),file.source,{flag:'wx',mode:0o444});}
   if(runtimeCaller)fs.writeFileSync(runtimeCaller,runtimeSource,{flag:'wx',mode:0o444});
   fs.writeFileSync(path.join(destination,'runtime-pins.json.gz'),zlib.gzipSync(raw),{flag:'wx',mode:0o444});
-  const seal={moduleVersion:version.moduleVersion,...(caller?{caller:version.checkpointCaller}:{}),...(runtimeCaller?{runtimeCaller:version.runtimeCaller,foreignClosureVersion:version.foreignClosureVersion,offlinePrepared:true,nativeReady:false}:{}),manifestSHA256:hash(raw),providers:pins.files.length,publishedModuleCommit:cpuCommit,publishedCustodyCommit:custodyCommit,historicalPinset:version.historicalPinset,explainedDrift:version.explainedDrift};
+  const seal={moduleVersion:version.moduleVersion,...(version.phaseLayout?{phaseLayout:version.phaseLayout}:{}),...(caller?{caller:version.checkpointCaller}:{}),...(runtimeCaller?{runtimeCaller:version.runtimeCaller,foreignClosureVersion:version.foreignClosureVersion,offlinePrepared:true,nativeReady:false}:{}),manifestSHA256:hash(raw),providers:pins.files.length,publishedModuleCommit:cpuCommit,publishedCustodyCommit:custodyCommit,historicalPinset:version.historicalPinset,explainedDrift:version.explainedDrift};
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }

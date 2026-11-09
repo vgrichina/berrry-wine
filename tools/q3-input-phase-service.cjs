@@ -9,7 +9,7 @@ async function run(controls,options){
   if(label!=='fixture-startup')return result;
   const capture=JSON.parse(fs.readFileSync(options.out+'/'+label+'-capture.json'));
   const ready=path.join(parent,'input-service-review-ready.json');
-  fs.writeFileSync(ready,JSON.stringify({capture,label,at:Date.now()}),{flag:'wx'});
+  fs.writeFileSync(ready,JSON.stringify({capture,label,at:Date.now(),image:path.resolve(options.out,label+'.png'),captureFile:path.resolve(options.out,label+'-capture.json')}),{flag:'wx'});
   const due=Date.now()+60000,reviewFile=path.join(parent,'input-service-model-review.json');
   while(!fs.existsSync(reviewFile)){assert(Date.now()<due,'fixture model review unavailable');await options.wait(20);}
   const review=JSON.parse(fs.readFileSync(reviewFile));
