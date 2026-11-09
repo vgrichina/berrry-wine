@@ -1,7 +1,8 @@
 'use strict';
 // Node-only synchronous owning-CPU observation. This deliberately issues no
-// continuity/source-at-later-use certificate: shared writers and interior
-// instructions remain uncovered even with the NodeWorker invalidation facade.
+// continuity/source-at-later-use certificate. Optional native gsN receipts
+// retain derived-storage writes; shared/bulk/other-instance writers and edict
+// lifetime remain uncovered even with the NodeWorker invalidation facade.
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const {readPE} = require('../lib/pe');
@@ -16,7 +17,32 @@ const WINDOWS = [[0x4117b0,0x2e2],[0x410e50,0x11a],[0x411aa0,0x51],
 // authority to establish native release or allocation.
 const LIFETIME_WINDOWS = [[0x416ef0,14],[0x414890,0x55],[0x414950,0x8b],
   [0x432c10,0x68],[0x432c80,0x65]];
-function attach({getExports, getMemory}) {
+function attach({getExports, getMemory, nativeWrites=false}) {
+  const instanceIdentity=nativeWrites?crypto.randomUUID():null;
+  let nativeOwner=null, nativeBuffer=null, nativeArmed=false, nativeInvalid=null;
+  const nativeFields=['on','pc','generation','invalid','limit',
+    ...['a','b'].flatMap(r=>['lo','hi','epoch','overflow','pc','address','width','host'].map(k=>r+'_'+k))];
+  function storeReceipt() {
+    if(!nativeWrites)return null;
+    const e=getExports(),b=getMemory();
+    if(!nativeArmed)return {status:'NOT_ARMED',instanceIdentity,allWriters:'UNKNOWN'};
+    if(e!==nativeOwner || b!==nativeBuffer)nativeInvalid='owning instance/memory replaced';
+    const raw=Object.fromEntries(nativeFields.map((k,i)=>[k,nativeOwner.native_store_get(i)>>>0]));
+    if(raw.invalid || !raw.on || raw.pc)nativeInvalid ||= 'native store observation invalidated/disarmed or execution unsettled';
+    const range=r=>Object.fromEntries(['lo','hi','epoch','overflow','pc','address','width','host'].map(k=>[k,raw[r+'_'+k]]));
+    return {status:nativeInvalid?'INVALID':'OBSERVING',reason:nativeInvalid,instanceIdentity,
+      generation:raw.generation,models:range('a'),table:range('b'),
+      coverage:'completed gs8/16/32/64/128 helpers on this instance; instruction PC during run, PC=0 outside run; split stores may emit fragments',
+      history:'epoch and last completion per range; intermediate PCs not retained',
+      allWriters:'UNKNOWN',rawSharedMemory:'UNKNOWN',hostImports:'UNKNOWN',otherWorkers:'UNKNOWN',
+      bulkNativeStores:'UNKNOWN',lockedNativeStores:'UNKNOWN',partialFaultStores:'UNKNOWN',edictABA:'UNKNOWN'};
+  }
+  function armStores() {
+    if(!nativeWrites || nativeArmed)return;
+    nativeOwner=getExports();nativeBuffer=getMemory();
+    nativeOwner.native_store_arm(0x6d7da0,0x6d7da0+1024*40,0x47b554,0x47b554+256*4,0);
+    nativeArmed=true;
+  }
   const file = fs.readFileSync(path.resolve(__dirname,'..',EXE));
   if (hash(file) !== EXE_SHA) throw Error('Quake II installed EXE PATHHASH');
   const pe = readPE(file);
@@ -86,6 +112,7 @@ function attach({getExports, getMemory}) {
       converted={generation,acquisitionRecord:c.acquisitionRecord,count:c.count,
         sha256:hash(expected),sourceSHA256:records[c.acquisitionRecord].sha256,
         sourceLumpSHA256:hash(c.source),entryPC:0x410e50,entrySP:c.sp,returnPC:pc,returnSP:sp};
+      if(nativeWrites)converted.nativeStores=storeReceipt();
     }
     if(pc===0x42b0e4) startup={generation,sp,entryPC:pc,stores:0,complete:false,lastStore:null};
     if(pc===0x42b124) {
@@ -100,7 +127,8 @@ function attach({getExports, getMemory}) {
     if(pc===0x42b128) {
       if(!startup || !converted || startup.generation!==generation || startup.sp!==sp ||
         startup.stores!==converted.count-1) fault('startup completion boundary missing');
-      else {startup.complete=true;startup.completionPC=pc;startup.completionSP=sp;}
+      else {startup.complete=true;startup.completionPC=pc;startup.completionSP=sp;
+        if(nativeWrites)startup.nativeStores=storeReceipt();}
     }
     if(pc===0x42f0b0) {
       const edict=u32(sp+4),index=u32(edict+0x28);
@@ -120,6 +148,17 @@ function attach({getExports, getMemory}) {
     if(converted && (u32(0xa23f8c)!==converted.count ||
       hash(read(e,b,0x6d7da0,converted.count*40))!==converted.sha256)) reasons.push('converted model storage replaced');
     const source=converted && sources.find(s=>s.acquisitionRecord===converted.acquisitionRecord);
+    const nativeStores=storeReceipt();
+    if(nativeStores && converted?.nativeStores && startup?.nativeStores) {
+      const baselines=[['models',converted.nativeStores],['table',startup.nativeStores]];
+      for(const [range,baseline] of baselines) {
+        if(nativeStores.status!=='OBSERVING' || nativeStores.generation!==baseline.generation ||
+          nativeStores[range]?.overflow || baseline[range]?.overflow)
+          reasons.push(`${range} native store observation interrupted/overflow`);
+        else if(nativeStores[range].epoch!==baseline[range].epoch)
+          reasons.push(`${range} native stores since ${range==='models'?'conversion':'startup'}`);
+      }
+    }
     if(!source || source.state==='REVOKED') reasons.push('source lifetime REVOKED or unobserved');
     // This is the control's essential conservative rejection. Even an intact
     // chain cannot establish absent writers, missed reloads, or edict ABA.
@@ -127,12 +166,15 @@ function attach({getExports, getMemory}) {
     if(laterUses.length===32)laterUses.shift();
     laterUses.push({pc,sp,generation,entry:use?{...use}:null,
       pointer:e.get_esi()>>>0,candidateHeadnode:u32((e.get_esi()>>>0)+36),
-      status:'REJECTED',certified:false,reasons});
+      status:'REJECTED',certified:false,reasons,...(nativeWrites?{nativeStores}: {})});
     use=null;
   }
   // These are the starts of complete, call-free native epilogue blocks in
   // the pinned image, not the interior RETs or the post-free CALL block.
   const epilogues=new Map([[0x411a26,'FRESH'],[0x41185b,'CACHE_NO_READ'],[0x411a83,'CACHE_NO_READ']]);
+  const nativePoints=new Set([0x4117b0,0x4118d9,0x411a0e,0x411831,
+    0x410e50,0x4119b7,0x42b0e4,0x42b124,0x42b128,0x42f0b0,0x42f0da,
+    ...epilogues.keys(),...LIFETIME_WINDOWS.map(([entry])=>entry)]);
   function read(e,b,a,n) {
     if (!Number.isInteger(n)||n<0||n>4194304||a+n>0x100000000) throw Error('bounded source/range');
     const w=e.guest_to_wasm(a>>>0)>>>0;
@@ -159,6 +201,10 @@ function attach({getExports, getMemory}) {
   }
   const increment=value=>Math.min(Number.MAX_SAFE_INTEGER,value+1);
   function event(kind, detail, force=false) {
+    if(nativeArmed && kind!=='import') {
+      nativeInvalid ||= `${kind}: ${String(detail).slice(0,96)}`;
+      nativeOwner.native_store_invalidate();
+    }
     if(kind!=='import')generation=increment(generation);
     if(converted || conversion || startup || use) fault(`${kind}: ${String(detail).slice(0,96)}`);
     revokeSources(`${kind}: ${String(detail).slice(0,96)}`);
@@ -184,6 +230,11 @@ function attach({getExports, getMemory}) {
     return {e,b};
   }
   function block(pc, sp) {
+    // Instruction mode supplies the store PC in WASM. Keep JS acquisition and
+    // lifetime work at actual relevant boundaries, rather than charging every
+    // instruction in the BSP checksum/copy loops to the point-record budget.
+    if(nativeWrites && !nativePoints.has(pc>>>0) &&
+      !(terminal && (pc<terminal.pc || pc>=terminal.end)))return;
     const started=process.hrtime.bigint();
     try {
       // Sticky invalidation forbids completion/certification, but retain
@@ -220,13 +271,15 @@ function attach({getExports, getMemory}) {
       }
       // A traced epilogue has no call or branch before its RET. The next
       // block must be the entry's actual stack target, at the restored ESP.
-      if(terminal) finishReturn(e,pc>>>0,sp>>>0,'owning target block');
+      if(terminal && !(nativeWrites && pc>=terminal.pc && pc<terminal.end))
+        finishReturn(e,pc>>>0,sp>>>0,'owning target block');
       if (load && epilogues.has(pc>>>0)) {
         const path=epilogues.get(pc>>>0);
         if((sp>>>0)!==load.sp-0xb0 ||
           (path==='FRESH' ? load.acquisitionRecord===null : !load.cache || load.acquisitionRecord!==null)) {
           load=null;completionReason='missing acquisition/cache/epilogue stack boundary';
-        } else {validate();terminal={pc:pc>>>0,path};}
+        } else {validate();terminal={pc:pc>>>0,path,
+          end:pc===0x411a26?0x411a5c:pc===0x41185b?0x41186b:0x411a93};}
       }
       if (load && (pc>>>0)===0x411831 && (sp>>>0)===load.sp-0xb0) load.cache=true;
       if (![0x4117b0,0x4118d9,0x411a0e,0x42f0b0,0x42f0da].includes(pc>>>0)) return;
@@ -277,16 +330,19 @@ function attach({getExports, getMemory}) {
   // readExports (which historically accepts arbitrary function names).
   function wrapExports(exports) {
     const reads=new Set(['get_image_base','get_eip','get_esp','get_esi','guest_to_wasm',
-      'get_eax','get_ebx','get_ecx','get_edx','get_edi','get_ebp','get_yield_reason']);
+      'get_eax','get_ebx','get_ecx','get_edx','get_edi','get_ebp','get_yield_reason',
+      'native_store_get','native_store_invalidate','get_flag_op','get_flag_a','get_flag_b','get_flag_res']);
     return Object.freeze(Object.fromEntries(Object.entries(exports).map(([name,value])=>
       [name,typeof value!=='function' || reads.has(name) ? value : (...args)=>{
         if(name==='run') {
+          armStores();
           execution.entries=increment(execution.entries);
           try {
             const result=value(...args);execution.returns=increment(execution.returns);
             // A budget return by itself means nothing. Only a traced,
             // call-free native epilogue can arm this post-run boundary check.
-            if(terminal && !invalid) {
+            if(terminal && !invalid && (!nativeWrites ||
+                (exports.get_eip()>>>0)<terminal.pc || (exports.get_eip()>>>0)>=terminal.end)) {
               try {const {e}=validate();finishReturn(e,e.get_eip()>>>0,e.get_esp()>>>0,'owning run boundary');}
               catch(error) {revokeSources(error.message);invalid=error.message;load=null;terminal=null;completionReason=error.message;}
             }
@@ -313,16 +369,18 @@ function attach({getExports, getMemory}) {
     // Pulls detect replacement even if tracing was disabled or no further
     // callback occurred. This is a point check, never a concurrent-writer lock.
     if(owner && !invalid) try {validate();} catch(error) {revokeSources(error.message);invalid=error.message;load=null;terminal=null;completionReason=error.message;}
-    return {exactIdentity:'UNKNOWN',
+    return {exactIdentity:'UNKNOWN',...(nativeWrites?{nativeStores:storeReceipt()}:{}),
     reason:invalid||'no reset/reload/instruction coverage barrier; records are point observations only',
     validPointObservations:!invalid && records.length>0,calls,elapsedNs:elapsedNs.toString(),
     coverage:{completedLoad:'UNKNOWN',instructions:'UNKNOWN',allWriters:'UNKNOWN',exclusiveOwner:'UNKNOWN'},
     nativeCompletion:{reason:completionReason,pending:!!load,returns:records.filter(r=>r.kind==='NATIVE_LOAD_RETURN').length},
     ownerContinuity:{status:converted||sources.length?'REJECTED':'UNKNOWN',certified:false,generation,
       reason:invalid||'point chain cannot exclude missed boundaries, other writers or edict ABA',
-      conversion:converted?{...converted}:null,
-      startup:startup?{...startup,lastStore:startup.lastStore?{...startup.lastStore}:null}:null,
-      faults:[...continuityFaults],laterUses:laterUses.map(u=>({...u,entry:u.entry?{...u.entry}:null,reasons:[...u.reasons]})),
+      conversion:converted?{...converted,...(converted.nativeStores?{nativeStores:structuredClone(converted.nativeStores)}:{})}:null,
+      startup:startup?{...startup,lastStore:startup.lastStore?{...startup.lastStore}:null,
+        ...(startup.nativeStores?{nativeStores:structuredClone(startup.nativeStores)}:{})}:null,
+      faults:[...continuityFaults],laterUses:laterUses.map(u=>({...u,entry:u.entry?{...u.entry}:null,reasons:[...u.reasons],
+        ...(u.nativeStores?{nativeStores:structuredClone(u.nativeStores)}:{})})),
       allWriters:'UNKNOWN',edictABA:'UNKNOWN'},
     sourceLifetime:{currentIdentity:'UNKNOWN',laterBytesCertified:false,
       sources:sources.map(s=>({...s})),eventCount:lifetimeEventCount,

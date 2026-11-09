@@ -10,7 +10,9 @@
   (global $rep_store_step (mut i32) (i32.const 0))
   (func $set_instruction_watchpoint (export "set_instruction_watchpoint") (param $addr i32)
     (global.set $rep_store_step (i32.const 0))
-    (global.set $instruction_watch (i32.ne (local.get $addr) (i32.const 0)))
+    (global.set $native_store_saved_watch (i32.ne (local.get $addr) (i32.const 0)))
+    (global.set $instruction_watch (i32.or (global.get $native_store_on)
+      (i32.ne (local.get $addr) (i32.const 0))))
     (global.set $watch_addr (local.get $addr))
     (global.set $watch_size (i32.const 4))
     (global.set $watch_val

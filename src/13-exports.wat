@@ -706,7 +706,8 @@
       (if (i32.or (i32.eq (global.get $eip) (global.get $sbh_eip_a))
                   (i32.eq (global.get $eip) (global.get $sbh_eip_b)))
         (then
-          (if (call $fast_msvc_sbh_scan)
+          (if (if (result i32) (global.get $native_store_on)
+                (then (i32.const 0)) (else (call $fast_msvc_sbh_scan)))
             (then (br $main)))))
       ;; The page index is the only lookup there is now: it is exact, so a miss
       ;; here really does mean nothing is compiled at this address. The hash
@@ -722,7 +723,11 @@
       ;; $jcc_end fall-through frames and on how long the input-wake check
       ;; above waits, both of which used to be 1000 ops.
       (global.set $steps (i32.const 256))
+      (if (global.get $native_store_on)
+        (then (global.set $native_store_pc (global.get $eip))))
       (call $next)
+      (if (global.get $native_store_on)
+        (then (global.set $native_store_pc (i32.const 0))))
       (if (global.get $page_chunk_deferred)
         (then (call $page_chunk_reclaim_deferred)))
       (br $main)))
@@ -2099,6 +2104,7 @@
       (param $main_rsrc_rva i32)
     (local $pe_off i32)
     (if (global.get $pending_seen) (then (call $pending_gap)))
+    (if (global.get $native_store_on) (then (call $native_store_invalidate)))
     (call $gdi_thread_scratch_init (local.get $tid))
     ;; A reused Worker instance must not retain heap-backed queue overflow from
     ;; its previous guest thread. Do this before replacing allocator cursors.
@@ -2911,6 +2917,7 @@
             (i32.or (i32.ne (global.get $trace_esp_flag) (i32.const 0))
               (i32.or (i32.ne (global.get $trace_eip_flag) (i32.const 0))
                       (i32.ne (global.get $handler_hist_enabled) (i32.const 0))))))))
+    (global.set $dbg_any (i32.or (global.get $dbg_any) (global.get $native_store_on)))
     (global.set $dbg_chain_guard (global.get $dbg_any))
     (if (global.get $benchmark_chain_bp)
       (then (global.set $dbg_chain_guard
@@ -2922,7 +2929,8 @@
     ;; Not a debug facility: a depth-0 frame owes the spill's full flush, which
     ;; only $run's desk takes (04-cache.wat $sync_depth_leave).
     (global.set $dbg_chain_guard
-      (i32.or (global.get $dbg_chain_guard) (global.get $spill_desk_forced)))
+      (i32.or (global.get $native_store_on)
+        (i32.or (global.get $dbg_chain_guard) (global.get $spill_desk_forced))))
     ;; The same set minus the histogram. Benchmark mode exempts the breakpoint
     ;; here exactly as it does above, so the tier's behaviour under
     ;; --benchmark-chain-bp is unchanged.
@@ -2934,7 +2942,9 @@
                          (i32.eqz (global.get $benchmark_chain_bp)))
           (i32.or (i32.ne (global.get $hit_count_n) (i32.const 0))
             (i32.or (i32.ne (global.get $trace_esp_flag) (i32.const 0))
-                    (i32.ne (global.get $trace_eip_flag) (i32.const 0))))))))
+                    (i32.ne (global.get $trace_eip_flag) (i32.const 0)))))))
+    ;; Store receipts require original instruction boundaries and gsN helpers.
+    (global.set $dbg_tier_guard (i32.or (global.get $dbg_tier_guard) (global.get $native_store_on))))
   (func (export "get_dbg_tier_guard") (result i32) (global.get $dbg_tier_guard))
   (func (export "set_benchmark_chain_bp") (param $on i32)
     (global.set $benchmark_chain_bp (local.get $on)) (call $dbg_recompute))

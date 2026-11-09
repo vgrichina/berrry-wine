@@ -9,6 +9,7 @@
     (local $src i32) (local $dst i32) (local $characteristics i32)
     (local $mapped_size i32) (local $copy_size i32) (local $initialized_size i32)
 
+    (if (global.get $native_store_on) (then (call $native_store_invalidate)))
     (if (global.get $pending_seen) (then (call $pending_gap)))
     (if (i32.ne (i32.load16_u (global.get $PE_STAGING)) (i32.const 0x5A4D)) (then (return (i32.const -1))))
     (local.set $pe_off (i32.add (global.get $PE_STAGING)
