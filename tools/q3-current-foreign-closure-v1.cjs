@@ -62,6 +62,9 @@ function composition(selected,run,outputDirectory){
  // An explicit versioned loader, never filesystem/Git read substitution. All
  // command, physical admission, checkpoint, fixture and deadline code stays.
  let transformed=source.replace(before,"'lib/redline-startup-admission.js': '"+authorities['lib/redline-startup-admission.js'][1]+"'");
+ const diagnosticSeam='  return {source, fixtureSource, controlsSource, retainedSource, references, hook:';
+ assert.equal(transformed.split(diagnosticSeam).length,2,'unique current startup diagnostics seam');
+ transformed=transformed.replace(diagnosticSeam,"  source=require('./q3-current-module.cjs').composeStartupDiagnostics(source);\n"+diagnosticSeam);
  if(run!==undefined){
   run=path.resolve(run);assert(run.startsWith(root+'/scratch/runs/'),'owned runtime directory required');
   const seam='  return {source, fixtureSource, controlsSource, retainedSource, references, hook:';

@@ -71,6 +71,11 @@ if(process.env.Q3_PAGE_PEER_CHILD==='1'){
         if(mode==='withheld-page-reply'||mode==='late-page-reply')return;
         if(mode==='page-protocol-error')return queueMicrotask(()=>this.reply(q,{}, {code:-32000,message:'OFFLINE_PAGE_REFUSAL'}));
         if(mode==='page-socket-close')return queueMicrotask(()=>this.dispatchEvent(new Event('close')));
+        if(mode==='duplicate-page-reply')return queueMicrotask(()=>{
+          this.reply(q);
+          this.deliver({id:q.id,sessionId:'other-session',result:{duplicate:true}});
+          this.deliver({id:8675309,sessionId:'unknown-session',error:{code:-32001,message:'UNMATCHED_PEER_ERROR'}});
+        });
         return queueMicrotask(()=>this.reply(q));
       }
       if(q.method==='Target.getTargets')return queueMicrotask(()=>this.reply(q,{targetInfos:[{type:'page',targetId:'page-target',url:'about:blank'}]}));
@@ -84,9 +89,10 @@ if(process.env.Q3_PAGE_PEER_CHILD==='1'){
       }
       if(q.method==='Page.addScriptToEvaluateOnNewDocument')return queueMicrotask(()=>this.reply(q,{}, {code:-32000,message:'OFFLINE_STOP_BEFORE_NAVIGATION'}));
       if(q.method==='Browser.close')return queueMicrotask(()=>{
-        // A genuine response after the timeout must not revive the continuation.
-        if(mode==='late-page-reply')this.reply(request6);
-        this.reply(q);browser.stdin.end('close\n');
+        // Native raw evidence: close ACK precedes request 6's valid late ACK.
+        // Neither ordering may revive the timed-out continuation.
+        this.reply(q);if(mode==='late-page-reply')this.reply(request6);
+        browser.stdin.end('close\n');
       });
       assert(['Target.setDiscoverTargets','Page.enable','Runtime.enable'].includes(q.method),q.method);
       queueMicrotask(()=>this.reply(q));
@@ -95,8 +101,8 @@ if(process.env.Q3_PAGE_PEER_CHILD==='1'){
   }
   globalThis.WebSocket=Peer;
   process.once('exit',code=>save(dir+'/peer.json.gz',{mode,code,protocol,deliveries,chainSession,
-    firstFailure:fs.existsSync(dir+'/prepared/runtime/first-browser-failure.json')?
-      JSON.parse(fs.readFileSync(dir+'/prepared/runtime/first-browser-failure.json')):null,
+    firstFailure:fs.existsSync(dir+'/cancellation/prepared/runtime/first-browser-failure.json')?
+      JSON.parse(fs.readFileSync(dir+'/cancellation/prepared/runtime/first-browser-failure.json')):null,
     nativeCause:'UNKNOWN',browserImplementation:'NOT_MODELLED',chromeStarted:false}));
 }else if(require.main===module){
   main().catch(error=>{console.error(error);process.exitCode=1;});
@@ -106,10 +112,18 @@ async function main(){
   const out=path.resolve(process.argv[2]||'');assert(process.argv[2]&&out.startsWith(root+'/scratch/runs/'),'explicit owned run directory');
   assert(!fs.existsSync(out),'fresh test output');fs.mkdirSync(out,{recursive:true});
   const results=[];
-  for(const mode of ['single','duplicate-before-root','event-after-root','event-after-manual','duplicate-paused',
+  for(const mode of ['single','duplicate-before-root','event-after-root','event-after-manual','duplicate-paused','duplicate-page-reply',
     'page-protocol-error','page-socket-close','withheld-page-reply','late-page-reply']){
     const dir=out+'/'+mode;fs.mkdirSync(dir);
-    const prepared=dir+'/prepared',seal=current.prepare(prepared,{foreignClosureVersion:route.version});
+    const inputs=[];
+    const retained=root+'/scratch/runs/20261109-q3-preflighted-controller-arena-1615';
+    for(const name of ['control.py','physical_gate.py','cancellation_gate.py','phase-input.py']){
+      fs.copyFileSync(retained+'/'+name,dir+'/'+name);inputs.push(path.relative(root,dir+'/'+name));
+    }
+    const prepared=dir+'/prepared',seal=current.prepare(prepared,{foreignClosureVersion:route.version,
+      checkpointObserverVersion:current.checkpointObserverVersion,nativeLifecycleVersion:require('./q3-versioned-native-lifecycle.cjs').version,
+      inputs,caller:path.relative(root,dir+'/phase-input.py')});
+    const runtime=dir+'/cancellation/prepared/runtime';fs.mkdirSync(path.dirname(runtime),{recursive:true});
     const raw=zlib.gunzipSync(fs.readFileSync(prepared+'/runtime-pins.json.gz'));
     assert.equal(hash(raw),seal.manifestSHA256);route.staged(prepared,route.version,hash(raw));
     // The exact generated entry and full actual setup run unmodified. The peer
@@ -122,6 +136,7 @@ async function main(){
       BROWSER_DEADLINE:String(Date.now()+90000),Q3_EXECUTION_BOUNDARY_OUT:dir+'/boundary.jsonl.gz'};
     for(const key of ['Q3_NATIVE_COMPOSITION','Q3_NATIVE_PHASE','Q3_INPUT_WIRE','DRIVER_PREFLIGHT',
       'LOCAL_PRODUCTION_FIXTURE','TR2_GENERATED','WEBGL_QUALIFY','NO_ORIGINAL'])delete env[key];
+    env.Q3_NATIVE_PHASE='cancellation';
     const child=cp.spawn(process.execPath,['--require',__filename,prepared+'/q3-runtime-caller.cjs'],
       {cwd:root,env,stdio:['ignore','pipe','pipe']});
     const logs=require('./native-command-log.cjs').createLogs(dir);logs.attach('stdout',child.stdout);logs.attach('stderr',child.stderr);
@@ -133,9 +148,31 @@ async function main(){
     finally{clearTimeout(guard);if(child.exitCode===null&&child.signalCode===null)child.kill('SIGKILL');}
     assert.equal(code,1);assert.equal(signal,null);assert(child.stdout.readableEnded&&child.stderr.readableEnded);
     const peer=JSON.parse(zlib.gunzipSync(fs.readFileSync(dir+'/peer.json.gz')));
+    const diagnostic=zlib.gunzipSync(fs.readFileSync(runtime+'/cdp-startup.jsonl.gz')).toString().trim().split('\n').map(line=>JSON.parse(line));
+    const outbound=diagnostic.filter(v=>v.direction==='outbound');
+    assert.deepEqual(outbound.map(v=>[v.requestId,v.method,v.sessionId]),peer.protocol.map(v=>[v.id,v.method,v.sessionId??null]));
+    assert.deepEqual(outbound.map(v=>JSON.parse(v.raw)),peer.protocol,'exact outbound envelopes');
+    const inbound=diagnostic.filter(v=>v.direction==='inbound');
+    assert.deepEqual(inbound.map(v=>JSON.parse(v.raw)),peer.deliveries,'all exact raw frames retained before routing');
+    const attachment=inbound.filter(v=>v.method==='Target.attachedToTarget');
+    assert(attachment.every(v=>v.target.type==='page'&&v.target.url==='about:blank'&&typeof v.target.waitingForDebugger==='boolean'));
+    const sent6=outbound.find(v=>v.requestId===6);assert.equal(sent6.target.type,'page');assert.equal(sent6.target.targetId,'page-target');
+    if(mode==='late-page-reply'){
+      const late=inbound.find(v=>v.requestId===6);assert.equal(late.matched,false);assert.equal(late.knownRequest,true);
+      assert.equal(late.method,'Target.setAutoAttach');assert.equal(late.requestSessionId,'manual-page');
+      assert(diagnostic.some(v=>v.direction==='deadline'&&v.requestId===6));
+      assert(inbound.findIndex(v=>v.requestId===6)>inbound.findIndex(v=>v.method==='Browser.close'),'native close-ACK then late page-ACK order');
+    }
+    if(mode==='duplicate-page-reply'){
+      const replies=inbound.filter(v=>v.requestId===6);assert.equal(replies.length,2);
+      assert.equal(replies[0].matched,true);assert.equal(replies[1].matched,false);assert.equal(replies[1].sessionId,'other-session');
+      const unknown=inbound.find(v=>v.requestId===8675309);assert.equal(unknown.knownRequest,false);assert.equal(unknown.matched,false);
+      assert.equal(unknown.error.message,'UNMATCHED_PEER_ERROR');
+    }
+    if(mode==='page-protocol-error')assert.equal(inbound.find(v=>v.requestId===6).error.message,'OFFLINE_PAGE_REFUSAL');
     const waited=JSON.parse(zlib.gunzipSync(fs.readFileSync(dir+'/browser-wait.json.gz')));
     assert.equal(waited.code,0);assert.equal(waited.signal,null);assert(waited.stdoutEOF&&waited.stderrEOF);
-    assert(!fs.existsSync(prepared+'/runtime/chrome-profile'),'physical profile removed after close');
+    assert(!fs.existsSync(runtime+'/chrome-profile'),'physical profile removed after close');
     assert.equal(peer.chainSession,'manual-page');
     const attached=peer.deliveries.filter(v=>v.method==='Target.attachedToTarget');
     assert.equal(new Set(attached.map(v=>v.params.sessionId)).size,mode==='single'?1:2);
@@ -143,13 +180,14 @@ async function main(){
     const methods=peer.protocol.map(q=>q.method),prefix=['Browser.getVersion','Target.setDiscoverTargets',
       'Target.setAutoAttach','Target.getTargets','Target.attachToTarget','Target.setAutoAttach'];
     assert.deepEqual(methods.slice(0,6),prefix);assert.deepEqual(peer.protocol.slice(0,6).map(q=>q.id),[1,2,3,4,5,6]);
-    const terminal=mode==='page-protocol-error'||mode==='page-socket-close'||mode.endsWith('page-reply');
+    const timedOut=mode==='withheld-page-reply'||mode==='late-page-reply';
+    const terminal=mode==='page-protocol-error'||mode==='page-socket-close'||timedOut;
     assert.deepEqual(methods,terminal?[...prefix,'Browser.close']:[...prefix,'Page.enable','Runtime.enable','Page.addScriptToEvaluateOnNewDocument','Browser.close']);
-    if(mode.endsWith('page-reply'))assert.match(peer.firstFailure.error,/CDP UNKNOWN Target.setAutoAttach; no replay/);
+    if(timedOut)assert.match(peer.firstFailure.error,/CDP UNKNOWN Target.setAutoAttach; no replay/);
     else if(mode==='page-socket-close')assert.match(peer.firstFailure.error,/CDP close/);
     else if(mode==='page-protocol-error')assert.match(peer.firstFailure.error,/OFFLINE_PAGE_REFUSAL/);
     else assert.match(peer.firstFailure.error,/OFFLINE_STOP_BEFORE_NAVIGATION/);
-    assert(!methods.includes('Page.navigate'));assert(!fs.existsSync(prepared+'/runtime/ready.json'));
+    assert(!methods.includes('Page.navigate'));assert(!fs.existsSync(runtime+'/ready.json'));
     const result={mode,code,signal,methods,manualPageSession:peer.chainSession,
       browserWait:waited,stdoutEOF:true,stderrEOF:true,nativeCause:'UNKNOWN',nativeQualified:false};
     save(dir+'/result.json.gz',result);results.push(result);console.log('PASS '+mode);

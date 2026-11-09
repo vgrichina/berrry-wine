@@ -92,6 +92,49 @@ function validate(options={}){
     ...(checkpoint?{checkpointObserverVersion,publishedCheckpointCommit:checkpointCommit}:{}),
     publishedModuleCommit:cpuCommit,publishedCustodyCommit:custodyCommit,historicalPinset:{path:historical,sha256:historicalSHA,commit:prior.commit},explainedDrift};
 }
+// Instrument the authenticated consumer after its existing transforms. Keep
+// protocol routing, debugger policy, terminal propagation and timers intact.
+function composeStartupDiagnostics(source){
+  const once=(before,after)=>{
+    assert.equal(source.split(before).length,2,'unique startup diagnostic seam: '+before);
+    source=source.replace(before,after);
+  };
+  once('function send(method,params={},sessionId,captureProbe=null)',`const startupRequests=new Map(),startupTargets=new Map();let startupRecording=true;
+function startupRecord(direction,fields){log('cdp-startup.jsonl',{at:new Date().toISOString(),direction,...fields});}
+function startupOutbound(meta,params){
+ if(!startupRecording)return;
+ startupRequests.set(meta.requestId,meta);
+ startupRecord('outbound',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId,
+  raw:JSON.stringify({id:meta.requestId,method:meta.method,params,...(meta.sessionId?{sessionId:meta.sessionId}:{})}),target:startupTargets.get(meta.sessionId)??null});
+}
+function startupInbound(raw){
+ if(!startupRecording)return;
+ // Record before parsing/routing, including malformed and unmatched replies.
+ // No protocol fields are fabricated when a peer omitted them.
+ let v;try{v=JSON.parse(raw);}catch{startupRecord('inbound',{raw,parseError:true});return;}
+ const request=startupRequests.get(v.id),matched=pending.has(v.id);
+ if(v.method==='Target.attachedToTarget')startupTargets.set(v.params?.sessionId,{
+  targetId:v.params?.targetInfo?.targetId,type:v.params?.targetInfo?.type,url:v.params?.targetInfo?.url,
+  waitingForDebugger:v.params?.waitingForDebugger});
+ startupRecord('inbound',{raw,requestId:v.id??null,method:v.method??request?.method??null,
+  sessionId:v.sessionId??null,requestSessionId:request?.sessionId??null,matched,
+  knownRequest:!!request,error:v.error??null,result:v.result??null,
+  target:v.method==='Target.attachedToTarget'?startupTargets.get(v.params?.sessionId):startupTargets.get(v.sessionId)??null});
+ if(matched&&request?.method==='Page.navigate'&&!v.error){startupRecording=false;startupRequests.clear();startupTargets.clear();}
+}
+function send(method,params={},sessionId,captureProbe=null)`);
+  once('screenshotCompletion.request(meta,params);try{',
+    "startupOutbound(meta,params);screenshotCompletion.request(meta,params);try{");
+  once('const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));',
+    'startupInbound(msg.data);const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));');
+  once("screenshotCompletion.deadline(meta);pending.delete(n);",
+    "screenshotCompletion.deadline(meta);if(startupRecording)startupRecord('deadline',{requestId:n,method:meta.method,sessionId:meta.sessionId});pending.delete(n);");
+  once("screenshotCompletion.transport(event);if(!closing)",
+    "screenshotCompletion.transport(event);if(startupRecording)startupRecord('transport',{event});if(!closing)");
+  once('screenshotCompletion.sendFailed(meta,error);observeTerminal(error);',
+    "if(startupRecording)startupRecord('send-error',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId,error:String(error)});screenshotCompletion.sendFailed(meta,error);observeTerminal(error);");
+  return source;
+}
 function composeCheckpointCaller(source,version){
   assert.equal(version,checkpointObserverVersion,'explicit checkpoint observer version');
   assert.equal(hash(Buffer.from(source)),checkpointCallerSHA,'authenticated retained1475 caller');
@@ -183,7 +226,7 @@ function prepare(destination,{inputs=[]}={}){
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }
-module.exports={SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller};
+module.exports={SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
 if(require.main===module){
   const args=process.argv.slice(2);assert.equal(args.shift(),'--prepare','explicit preparation only');
   const destination=args.shift(),options={inputs:[]};
