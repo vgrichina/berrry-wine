@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed213d150b7 Q20301 unchangedactualChrome normal237ms/207ms delayedEOF1569ms all415kernelwaitscomplete,612indexedSHA166gzip PASS; historicalfailurecauseUNKNOWN no speculativefix, bx_m6w3a76f archived stop_c41c040c0474c08a drained. Fresh quake2-guard-door-onward-0325 PID939537 thread01a1be54-bd74-7af0-9b76-8a52c72948d9 ONEoriginal guard/door consequence after Super0320 exactrelease. Pin published0312 custody0cde26d0b, bounded personallyreviewed gameinput unchangedcaps. Native REVOKED/allwriters/edictABA UNKNOWN remains.
+  Next: Reviewed50c5f6adf rootPNG onwardtunnel JacketArmor25 HP100;595SHA268gzip verified, abnormalquit preserved, boxarchiveddrained. Fresh quake2-tunnel-guard-progress-0350 PID968167 thread01a1be69-56b3-7e10-890c-201464a8d399 guard/door gameplay beyondpickup; runtime AFTER Warcraft0350 exactrelease. NativeREVOKED/allwriters/edictABAUNKNOWN full27/parity/audioFPSopen.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -50,13 +50,13 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed1e733b2fcc Super0320 no gameplay: initialcapture before ready timedout then automaticPNG7.312s after failure,277SHA253gzip verified; box archived/drained. Fresh supertux-startup-capture-latch-0335 PID952435 thread01a1be5e-373f-7990-8823-87cf0f96e576 OFFLINE production readiness-before-admission and sticky capture/input latch repair; unchangedcaps no original until concrete fix. Full27/parity/audio/FPS open.
+  Next: Reviewed7df56770a production readiness/capture latch actualoldFAIL/newPASS13fullcomposedcontrols tests+build;1347SHA323gzip verified. Fresh supertux-ready-client-gameplay-0350 PID967861 thread01a1be69-4da8-7973-9e5d-bce7021f66c2 ONEoriginal runtimefirst using requestReady afterdriverready thenexplicitreviewclientinitialcapture token, newcoin/block/exit. Unchangedcaps CPUa320 observationOFF full27/parity/audioFPSopen.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed2df8d81b41 native nonleaderEXEC repair actualoldFAILnewPASS sibling/cancel/identity negatives,544SHA84gzip verified tests+buildPASS. Historical0244 lineageUNKNOWN remains. Fresh warcraft-production-startup-0335 PID952587 thread01a1be5e-3a8c-77f3-bbb0-48e1aeece0b2 actual production startup integration using released0244 WIP and publishedcustody2df8d81b; ONEsmallChrome after exactQ20325 runtime release, no original. Preserve caps actualwaits separateEOF; require startup and normal cleanup. Prologue/full27/parity/audio/FPS open.
+  Next: Reviewed0335 missingpreparedrendererprovider beforeChrome;233SHA36gzip verified no codecommit WIPpreserved boxarchiveddrained. Fresh warcraft-prepared-closure-startup-0350 PID968014 thread01a1be69-5224-7972-bce6-c6b48bc53099 deriveuploadclosurefromactualpreparedmanifest with containment/SHA negativecontrol BEFOREcreate, productionstartup integration ONEsmallChrome AFTER Super0350 release. Custody2df8 pinned historicallineageUNKNOWN caps unchanged nooriginal.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
