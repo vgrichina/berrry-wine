@@ -56,7 +56,7 @@
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed c4b4cd337 cancellation waitstarvation repair fullproductiondiff485SHA19gzipPASS; actualcomposed old0/48 new48/48 completeEOF. Fresh warcraft-repaired-custody-objective-0558 PID1174917 thread01a1bee1-04cc-7ce3-8aaa-787c41d4f556 prepares pinned5ec810c4 waits exactSuper0542drain then ONE explicitlyauthorized currentobjective run unchangedcaps; historicalstartup/missingwaitsUNKNOWN.
+  Next: WC0558 f4580e4c9 provisioningHTTPSwriteTimeout628of629providers noChrome119SHA92gzipPASS archivedstop16b96853. Fresh warcraft-upload-transport-repair-0607 PID1186095 thread01a1bee8-5031-79b3-9d14-26d86e1b5e1c controlledHTTP actualhelper repair oldFAILnewPASS no runtime retry allcapsunchanged.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
