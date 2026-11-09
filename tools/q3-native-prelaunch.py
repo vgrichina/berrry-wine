@@ -76,7 +76,8 @@ def main():
     pins = json.loads(manifest.read_bytes())
     required = [Path(__file__).resolve(), runtime,
                 root / 'tools/native-startup-barrier.py',
-                root / 'tools/native_kernel_custody.py']
+                root / 'tools/native_kernel_custody.py',
+                root / 'tools/q3-native-launch-client.py']
     paths = {p['path'] for p in pins['files']}
     for provider in required:
         if str(provider.relative_to(root)) not in paths:

@@ -70,7 +70,12 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
       }
       if (v.method === 'Runtime.evaluate' && fs.existsSync(dir + '/arm-terminal')) {
         fs.writeFileSync(dir + '/pending-cdp-at', String(Date.now()));
-        setTimeout(() => browser.kill('SIGKILL'), 25);
+        if(process.env.Q3_FIXTURE_STALL_CDP==='1'){
+          const timer=setInterval(()=>{if(fs.existsSync(dir+'/release-cdp')){
+            clearInterval(timer);const message=new MessageEvent('message',{data:JSON.stringify({id:v.id,result:{result:{value:{apps:[]}}}})});
+            this.dispatchEvent(message);this.onmessage?.(message);
+          }},5);timer.unref();
+        }else setTimeout(() => browser.kill('SIGKILL'), 25);
         return; // Real pending CDP promise; termination must cancel it promptly.
       }
       let result = {};

@@ -25,7 +25,7 @@ const providers = Object.freeze({
   'scratch/runs/20261108-q3-gl-readiness-gameplay/trace.cjs': '6f440f2d1bdd9e02598a768ad041681ae1969245e9512939dff24a3970bb8b86',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs': '175033bc07bda95dd2d618511729d901908d60a9e8ec970cdbc8d7e2d61dcd70',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/producer-ready.cjs': 'e400a370c681974dd3b9cce294ac8853e9779d8922e15f8063b23e5ed84dc5e8',
-  'tools/native_kernel_custody.py': 'fb670a47d4712aa44fd2fae3d2047587374c0e1c2bb4e927ff87572147dfcfff'
+  'tools/native_kernel_custody.py': '5ec810c4d4704ff86afc367b38f7335edf1214e3450ebb98a62ce3df6386b5fe'
 });
 function replaceOnce(source, before, after) {
   assert.equal(source.split(before).length, 2, 'missing/nonunique Q3 integration: ' + before.slice(0, 70));
@@ -63,12 +63,14 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
   // cancellable waits before cleanup, so a suspended command cannot later send.
   source = replaceOnce(source, 'let floorTimer,passive;', `let floorTimer,passive;
 let terminalFailure=null;const terminalAbort=new AbortController();
-function checkTerminal(){if(terminalFailure)throw terminalFailure;}
+const callerCancellation=path.join(path.dirname(process.env.Q3_EXECUTION_BOUNDARY_OUT),'caller-cancelled.json');
+function checkTerminal(){if(!terminalFailure&&fs.existsSync(callerCancellation))observeTerminal('owning launch transport cancelled');if(terminalFailure)throw terminalFailure;}
+const callerMonitor=setInterval(()=>{if(fs.existsSync(callerCancellation))observeTerminal('owning launch transport cancelled');},20);callerMonitor.unref();
 function observeTerminal(reason){
  if(terminalFailure)return terminalFailure;
  terminalFailure=Error('Q3 terminal UNKNOWN; no replay: '+reason);
  save('first-transport-failure.json',{at:new Date().toISOString(),error:String(terminalFailure),noReplay:true});
- terminalAbort.abort(terminalFailure);
+ clearInterval(callerMonitor);terminalAbort.abort(terminalFailure);
  for(const p of pending.values()){clearTimeout(p.timer);p.reject(terminalFailure);}pending.clear();
  if(!closing)close('first transport failure').catch(error=>{process.exitCode=1;console.error(error);});
  return terminalFailure;
@@ -111,7 +113,7 @@ function observeTerminal(reason){
   source = source.slice(0, begin) + `let closePromise;
 function close(reason){
  if(closePromise)return closePromise;
- closing=true;clearTimeout(timer);clearInterval(floorTimer);clearInterval(passive);
+ closing=true;clearInterval(callerMonitor);clearTimeout(timer);clearInterval(floorTimer);clearInterval(passive);
  closePromise=(async()=>{
   save('close-reason.json',{at:new Date().toISOString(),reason});
   let receipt,failure;

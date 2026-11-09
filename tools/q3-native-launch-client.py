@@ -187,7 +187,7 @@ class Session:
         with self.lock:
             children = list(self.children)
         due = time.monotonic()+self.cleanup_seconds
-        # Only the Q2 caller supplies this run-scoped cancellation operation.
+        # Q2 and Q3 callers supply this run-scoped cancellation operation.
         # It is cleanup, never an admitted command or another launch. A failed
         # transport remains UNKNOWN; local waits do not prove remote custody.
         if self.cancel_code is not None and self.launch is not None:
@@ -326,6 +326,125 @@ def compose_task(task, expected_sha):
     return namespace
 
 
+def cancel_remote(run, output=None):
+    """Publish run-scoped revocation; publishing alone never proves custody."""
+    run = Path(run).resolve()
+    try:
+        with (run/'caller-cancelled.json').open('x') as marker:
+            json.dump(dict(at=time.time(), reason='owning launch transport terminal',
+                           noReplay=True, remoteCustody='UNKNOWN'), marker)
+            marker.flush()
+            os.fsync(marker.fileno())
+    except FileExistsError:
+        pass  # First failure is sticky, including cancellation before bootstrap.
+    if output is not None and Path(output).is_dir():
+        # Wake the independently dispatched ACK sender even if the consumer is
+        # killed before it observes revocation. This is a failure, never an ACK.
+        try:
+            with (Path(output)/'first-failure.json').open('x') as fault:
+                json.dump(dict(at=time.time(), source='owning launch transport',
+                               error='caller cancelled; UNKNOWN; no replay', noReplay=True), fault)
+                fault.flush()
+                os.fsync(fault.fileno())
+        except FileExistsError:
+            pass
+    return dict(cancelPublished=True, remoteCustody='UNKNOWN')
+
+
+def check_remote_cancel(run):
+    if (Path(run)/'caller-cancelled.json').exists():
+        raise TerminalFailure('remote caller cancelled before prelaunch; no replay')
+
+
+def arm_remote_cancel(run):
+    # Do no file I/O or process work from a signal handler.
+    import signal
+    requested = []
+    for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        signal.signal(sig, lambda signum, frame: requested.append(signum))
+    return requested
+
+
+def drain_remote(process, run, log, requested, output):
+    """Pump independently of wait; notify the existing native reaper, not kill it.
+
+    The native runtime publishes identity before supervise installs handlers.
+    Wait for its matching kernel-armed receipt before sending TERM. No new
+    runtime/cleanup budget is introduced; custody retains its immutable caps.
+    """
+    import gzip
+    import signal
+    run = Path(run)
+    signalled = None
+    eof = False
+    os.set_blocking(process.stdout.fileno(), False)
+    with selectors.DefaultSelector() as poll:
+        poll.register(process.stdout, selectors.EVENT_READ)
+        while process.poll() is None or not eof:
+            if requested:
+                cancel_remote(run, output)
+            if (run/'caller-cancelled.json').exists() and signalled is None:
+                try:
+                    runtime = json.loads(gzip.decompress((run/'runtime-identity.json.gz').read_bytes()))
+                    armed = json.loads((run/'kernel-armed.json').read_bytes())
+                    stat = Path('/proc', str(runtime['pid']), 'stat').read_text()
+                    start = stat.rsplit(')', 1)[1].split()[19]
+                    if (armed['supervisor'], armed['supervisorStart']) != (runtime['pid'], runtime['start']):
+                        raise TerminalFailure('remote supervisor binding mismatch; no signal')
+                    if start != runtime['start']:
+                        raise TerminalFailure('remote supervisor identity changed; no signal')
+                    os.kill(runtime['pid'], signal.SIGTERM)
+                    signalled = dict(pid=runtime['pid'], start=start, signal=signal.SIGTERM)
+                    with (run/'caller-cancel-sent.json').open('x') as output:
+                        json.dump(dict(at=time.time(), **signalled, remoteCustody='UNKNOWN'), output)
+                except (FileNotFoundError, ProcessLookupError, EOFError, gzip.BadGzipFile, json.JSONDecodeError):
+                    pass  # No absence-as-wait or fabricated kernel receipt.
+            if eof:
+                time.sleep(.02)
+                continue
+            for key, _ in poll.select(.02):
+                # Bounded pumping cannot starve cancellation or actual waits.
+                for _ in range(16):
+                    try:
+                        chunk = os.read(key.fd, 65536)
+                    except BlockingIOError:
+                        break
+                    if not chunk:
+                        eof = True
+                        poll.unregister(key.fileobj)
+                        break
+                    log.write(chunk)
+                    log.flush()
+    # Caller records this actual wait separately from the observed pipe EOF.
+    return process.wait()
+
+
+def compose_remote_launch(code, root, output):
+    """Amend the exact generated retained parent without rewriting history."""
+    before = " while chunk:=p.stdout.read1(65536):log.write(chunk);log.flush()\n status=p.wait();p.stdout.close()"
+    if code.count(before) != 1 or code.count('parent=identity(os.getpid());') != 1:
+        raise ValueError('unsupported Q3 generated remote launch parent')
+    prefix = ("import runpy\n_q3=runpy.run_path("+repr(str(Path(root)/'tools/q3-native-launch-client.py'))+")\n"
+              "_q3_signals=_q3['arm_remote_cancel'](r)\n_q3['check_remote_cancel'](r)\n")
+    code = code.replace('parent=identity(os.getpid());', prefix+'parent=identity(os.getpid());')
+    code = code.replace(before, " status=_q3['drain_remote'](p,r,log,_q3_signals,"+repr(str(output))+");p.stdout.close()")
+    compile(code, '<q3-owned-remote-parent>', 'exec')
+    return code
+
+
+def bind_remote(task, session):
+    """One owner at both retained call sites, plus a separate cleanup channel."""
+    run = str(Path(task['REMOTE'])/task['c'].RUN)
+    helper = str(Path(task['REMOTE'])/'tools/q3-native-launch-client.py')
+    session.cancel_code = ("import runpy,json;m=runpy.run_path("+repr(helper)+
+                           ");print(json.dumps(m['cancel_remote']("+repr(run)+","+repr(task['OUT'])+")))")
+    def remote(label, code, timeout=40):
+        if label == session.launch_label:
+            code = compose_remote_launch(code, task['REMOTE'], task['OUT'])
+        return session.remote(label, code, timeout)
+    task['remote'] = task['c'].remote = remote
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--task', type=Path, required=True)
@@ -336,7 +455,7 @@ def main():
     session = Session(args.evidence, lambda code, timeout: [
         'boat', '--no-update', '--json', 'exec', task['c'].box(), '--timeout', str(timeout),
         '--', 'python3', '-c', code])
-    task['remote'] = task['c'].remote = session.remote
+    bind_remote(task, session)
     return run_input(session, lambda: task['owned_launch'](['task.py', 'launch']),
         lambda value: task['owned_command'](['task.py', 'command', json.dumps(value['command']), value.get('review')]))
 
