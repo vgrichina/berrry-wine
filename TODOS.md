@@ -50,13 +50,13 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed7df56770a production readiness/capture latch actualoldFAIL/newPASS13fullcomposedcontrols tests+build;1347SHA323gzip verified. Fresh supertux-ready-client-gameplay-0350 PID967861 thread01a1be69-4da8-7973-9e5d-bce7021f66c2 ONEoriginal runtimefirst using requestReady afterdriverready thenexplicitreviewclientinitialcapture token, newcoin/block/exit. Unchangedcaps CPUa320 observationOFF full27/parity/audioFPSopen.
+  Next: Reviewedbef7251a0 Super0350 readybeforehelperPASS but Return spelling rejectedbeforeinput;319SHA293gzip verified no newprogress boxarchiveddrained. Fresh supertux-validated-enter-gameplay-0400 PID984814 thread01a1be74-6057-7642-a2fa-a8ef4d42375f exactEnter/setup/Pause validation offline before ONEoriginal AFTER Q20350 release; explicitreviewclientinitialcapture and promptchoice unchangedcaps. Full27/parity/audioFPSopen.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed0335 missingpreparedrendererprovider beforeChrome;233SHA36gzip verified no codecommit WIPpreserved boxarchiveddrained. Fresh warcraft-prepared-closure-startup-0350 PID968014 thread01a1be69-5224-7972-bce6-c6b48bc53099 deriveuploadclosurefromactualpreparedmanifest with containment/SHA negativecontrol BEFOREcreate, productionstartup integration ONEsmallChrome AFTER Super0350 release. Custody2df8 pinned historicallineageUNKNOWN caps unchanged nooriginal.
+  Next: ReviewedWC0350 closurefixed actual23.939sChrome startupPASS but18scleanup terminalNULL neitherEOF,123actualwaitscomplete later,283SHA66gzip verified WIPunpublished boxarchiveddrained. Fresh native-chrome-terminal-delay-0400 PID985898 thread01a1be75-0a87-7640-9b9b-1b6dae0c8b62 OFFLINE causal native/Node topology reproduction and concrete terminaldelayrepair preservingcaps realwaits separateEOF. No unchangedChrome/original retry; historicalUNKNOWN preserved.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
