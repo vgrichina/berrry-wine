@@ -75,7 +75,7 @@ function validate(selected,startupVersion){
   assert(before&&after,'HTTP provider');assert.equal(p.size,before.size);assert.equal(p.sha256,before.sha256);
   return {...p,size:after.size,sha256:after.sha256};
  });
- for(const name of ['tools/redline-current-module.cjs','tools/redline-current-publication.cjs']){
+ for(const name of ['tools/redline-current-module.cjs','tools/redline-current-publication.cjs','tools/redline-bounded-custody.py']){
   assert(!files.some(p=>p.path===name),'unique preparer pin');files.push(pin(name,read(name)));
  }
  return {files,httpPins,moduleVersion:version,publicationVersion:version,...(startupVersion!==undefined?{startupVersion}:{}),publishedModuleCommit:cpu,
@@ -131,7 +131,14 @@ function launch({run,publicationVersion,startupVersion,deadline,options,spawn}={
  const custody=path.join(run,'publication-custody');assert(!fs.existsSync(custody),'fresh custody run');
  fs.mkdirSync(custody);fs.writeFileSync(path.join(custody,'lifecycle.json'),JSON.stringify({browserDeadline:deadline}),{flag:'wx'});
  const adapter=require('./redline-publication-caller.cjs');
- return adapter.launch({run:custody,observerVersion:adapter.version,argv:[process.execPath,path.join(run,'publication-caller.cjs')],options,...(spawn?{spawn}:{})});
+ return adapter.launch({run:custody,observerVersion:adapter.version,argv:[process.execPath,path.join(run,'publication-caller.cjs')],options,spawn:(...args)=>boundedCustodySpawn(spawn??cp.spawn,...args)});
+}
+// The published launcher/observer/collector stay byte-exact. Only this explicit
+// authenticated current route uses bounded syscall diagnostics. Retrieval still
+// runs the published snapshot validator and reports capped observations incomplete.
+function boundedCustodySpawn(spawn,exe,argv,options){
+ assert.equal(argv[0],path.join(__dirname,'native_publication_launch.py'),'published custody command');
+ return spawn(exe,[path.join(__dirname,'redline-bounded-custody.py'),'--bounded-custody=redline-bounded-custody-v1',...argv.slice(1)],options);
 }
 // The preparing parent authenticates Git provenance and passes this exact digest
 // independently of the staged files. Never derive the trusted digest from a
@@ -156,7 +163,7 @@ function stagedLaunch({run,publicationVersion,startupVersion,manifestSHA256,dead
  const custody=path.join(run,'publication-custody');assert(!fs.existsSync(custody),'fresh custody run');
  fs.mkdirSync(custody);fs.writeFileSync(path.join(custody,'lifecycle.json'),JSON.stringify({browserDeadline:deadline}),{flag:'wx'});
  const adapter=require('./redline-publication-caller.cjs');
- return adapter.launch({run:custody,observerVersion:adapter.version,argv:[process.execPath,path.join(run,'publication-caller.cjs')],options,...(spawn?{spawn}:{})});
+ return adapter.launch({run:custody,observerVersion:adapter.version,argv:[process.execPath,path.join(run,'publication-caller.cjs')],options,spawn:(...args)=>boundedCustodySpawn(spawn??cp.spawn,...args)});
 }
 function fixtureSource(selected,startupVersion,manifestSHA256){
  optin(selected);let source=require('./redline-startup-boundary.cjs').fixtureSource();
