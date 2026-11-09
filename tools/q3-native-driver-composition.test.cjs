@@ -33,6 +33,7 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
     return browser;
   };
   const png = Buffer.from('node-protocol-capture-fixture');
+  let physicalPage;
   Module._load = function(name, parent, main) {
     // Lifecycle-only controls have no page/guest. Parked admission is exercised
     // by q3-startup.test.cjs through the whole production composition.
@@ -40,6 +41,21 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
     if (name === root + '/test/static-server.js') return {startStaticServer:async() => ({
       prependListener() {}, address:() => ({port:1}), closeAllConnections() {}, close:fn => fn()
     })};
+    if (parent?.filename === retained && name === './bound-input.cjs' && process.env.Q3_PHYSICAL_CASE) {
+      const bound=load.call(this,name,parent,main);
+      return {...bound,createChain:options=>{
+        options.workers.set('fixture-owner',{targetId:'fixture-owner',closed:false,url:'inert-owning-worker'});
+        const chain=bound.createChain(options);
+        const identity=()=>({...physicalPage.evaluate(bound.PAGE_READ).apps[0],workerTarget:'fixture-owner'});
+        return {establishReady:async()=>({scope:'inert fixture'}),
+          capture:async label=>({png,before:{},after:{},capture:{label,sha256:require('node:crypto').createHash('sha256').update(png).digest('hex')}}),
+          admit:async(review,dispatch)=>dispatch({live:{identity:identity()}}),
+          progress:async(...args)=>{
+            if(process.env.Q3_PHYSICAL_CASE==='source-race')physicalPage.scope.runningApps[0].wine.renderer={};
+            return chain.progress(...args);
+          }};
+      }};
+    }
     if (parent?.filename === retained && name === './bound-input.cjs') return {...(process.env.Q3_INPUT_CASE?load.call(this,name,parent,main):{}),createChain:() => ({
       establishReady:async() => ({fixture:'no guest'}),
       capture:async label => ({png, before:{}, after:{}, capture:{label,sha256:require('node:crypto').createHash('sha256').update(png).digest('hex')}}),
@@ -47,7 +63,12 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
       progress:async()=>{if(process.env.Q3_INPUT_CASE==='sample-error')throw Error('FIRST inert sample failure');return {fixture:'no guest'};}
     })};
     if (parent?.filename === retained && name === './readiness.cjs') return {ready:async() => ({fixture:'no guest'})};
-    if (parent?.filename === retained && name === './local-controls.cjs' && (process.env.Q3_NATIVE_CANCEL_PROBE === '1'||process.env.Q3_NATIVE_JOINED_FIXTURE === '1')) return {run:async({out})=>{
+    if (parent?.filename === retained && name === './local-controls.cjs' && (process.env.Q3_NATIVE_CANCEL_PROBE === '1'||process.env.Q3_NATIVE_JOINED_FIXTURE === '1')) return {run:async({out,capture})=>{
+      if(process.env.Q3_PHYSICAL_CASE){
+        await capture('fixture-startup');
+        const review=JSON.parse(fs.readFileSync(out+'/fixture-startup-capture.json'));review.review='inert generated fixture';
+        fs.writeFileSync(out+'/fixture-startup-review.json',JSON.stringify(review));
+      }
       if(process.env.Q3_NATIVE_JOINED_FIXTURE==='1'){
         // A Node-only prior ACK tests numbering, never guest input proof.
         fs.writeFileSync(out+'/commands/0.json',JSON.stringify({id:'node_prior'}));
@@ -91,6 +112,24 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
         else queueMicrotask(reply);
         return;
       }
+      if(v.method==='Input.dispatchKeyEvent'&&process.env.Q3_PHYSICAL_CASE){
+        physicalPage.dispatch(v.params,process.env.Q3_PHYSICAL_CASE);
+      }
+      if(v.method==='Page.navigate'&&process.env.Q3_PHYSICAL_CASE){
+        let selected=composition;
+        if(process.env.Q3_INPUT_OLD==='1'){
+          const control=new Module(path.join(__dirname,'q3-native-driver-composition.control.cjs'),module);
+          control.filename=path.join(__dirname,'q3-native-driver-composition.control.cjs');control.paths=module.paths;
+          control._compile(cp.execFileSync('git',['show',process.env.Q3_INPUT_BASE+':tools/q3-native-driver-composition.cjs'],{cwd:root}).toString(),control.filename);
+          selected=control.exports;
+        }
+        require('./q3-fixture-input.test.cjs').createPage(selected.compose()).then(value=>{
+          physicalPage=value;
+          const message=new MessageEvent('message',{data:JSON.stringify({id:v.id,result:{}})});
+          this.dispatchEvent(message);this.onmessage?.(message);
+        }).catch(error=>{console.error(error);browser.kill('SIGTERM');});
+        return;
+      }
       if (v.method === 'Runtime.evaluate' && fs.existsSync(dir + '/arm-terminal')) {
         fs.writeFileSync(dir + '/pending-cdp-at', String(Date.now()));
         if(process.env.Q3_FIXTURE_STALL_CDP==='1'){
@@ -104,7 +143,8 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
       let result = {};
       if (v.method === 'Target.getTargets') result = {targetInfos:[{type:'page', targetId:'node-protocol-page'}]};
       if (v.method === 'Target.attachToTarget') result = {sessionId:'node-protocol-session'};
-      if (v.method === 'Runtime.evaluate') result = {result:{value:{apps:[]}}};
+      if (v.method === 'Runtime.evaluate') result = {result:{value:process.env.Q3_PHYSICAL_CASE&&physicalPage&&v.params.expression.includes('__mcmPassiveIdentityV1')
+        ?physicalPage.evaluate(v.params.expression):{apps:[]}}};
       queueMicrotask(() => {
         const message = new MessageEvent('message', {data:JSON.stringify({id:v.id, result})});
         this.dispatchEvent(message); this.onmessage?.(message);

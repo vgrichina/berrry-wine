@@ -14,6 +14,8 @@ const consumerPath = 'scratch/runs/20261108-q3-gl-readiness-gameplay/browser-run
 const adapterPath = 'scratch/runs/20261108-q3-instrumented-webgl-gameplay-2248/adapter.cjs';
 const fixturePath = 'scratch/runs/20261108-q3-gl-readiness-gameplay/generated.cjs';
 const providers = Object.freeze({
+  'tools/q3-fixture-input.cjs': '3136d15840a90e1eb601979b89f92b2bbfa592d32c310528686d4db1cf8689f1',
+  'lib/renderer-input.js': '10c34564b422f7fc2669153b3662a658ea70271c87fb5a9d9213c0f1a297f21d',
   'tools/q3-input-delivery.cjs': 'b0106da3fa7b2b806fe5c56d9aab940c5d9e235c1d3144195f8248db7af3a7c7',
   [fixturePath]: 'fb46f1b5f4aa6ad4f4c8874af4a1b507986dd8248f5abee086e09c2c061e89ec',
   'test/binaries/calc.exe': 'cb71fcc9726f756421519a215c39cf89efd930c9ae0fa5bbb59b64050faef52b',
@@ -64,6 +66,7 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
   const retainedSource = source;
   source = replaceOnce(source, "const bound=require('./bound-input.cjs'),trace=", "const bound={...require('./bound-input.cjs'),hold:options=>require('./bound-input.cjs').hold({...options,onFailure:error=>observeTerminal(error)})},trace=");
   source = replaceOnce(source, "bound.hold({send,session:pageSession,keys:", "bound.hold({send,saveReceipt:value=>save('input-'+c.id+'-delivery.json',value),session:pageSession,keys:");
+  source = replaceOnce(source, 'return chain.progress(receipt.live.identity)', "return chain.progress(receipt.live.identity,c.action==='combo'?c.keys:[c.key])");
   source = replaceOnce(source, "const start=Date.now()", "assert(!process.env.TR2_GENERATED&&!process.env.WEBGL_QUALIFY,'unsupported Q3 startup path; no launch');const start=Date.now()");
   // Navigate to a neutral document. Only the authenticated one-shot startup
   // controller may release the original; app= navigation is not admission.
@@ -173,7 +176,10 @@ function close(reason){
   assert(source.includes('value.configureDiagnostics({enabled:true,maxRecords:64})'), 'GL configure-before-hostimport missing');
   assert(source.indexOf("Page.addScriptToEvaluateOnNewDocument") < source.indexOf("await send('Page.navigate'"), 'GL preload must precede navigation');
   new vm.Script(Module.wrap(source), {filename:path.join(root, consumerPath)});
-  const fixtureSource = require('./q3-startup.cjs').composeFixture(fs.readFileSync(path.join(root, fixturePath), 'utf8'), root);
+  let fixtureSource = require('./q3-startup.cjs').composeFixture(fs.readFileSync(path.join(root, fixturePath), 'utf8'), root);
+  fixtureSource = replaceOnce(fixtureSource, "'host-window','host-imports'", "'host-window','host-imports','renderer-input'");
+  fixtureSource = replaceOnce(fixtureSource, "globalThis.runningApps=[{name:'dx_tunnel',wine}];",
+    `(${require('./q3-fixture-input.cjs').installFixtureInput.toString()})({renderer,wine,link});\n globalThis.runningApps=[{name:'dx_tunnel',wine}];`);
   new vm.Script(Module.wrap(fixtureSource), {filename:path.join(root, fixturePath)});
   return {source, fixtureSource, retainedSource, references, hook:extensions['.cjs'], append:localFs.appendFileSync};
 }
@@ -220,8 +226,16 @@ function compileBoundInput(result, module, filename, evidenceDirectory) {
     const begin=source.indexOf('async function hold({'), end=source.indexOf('\nmodule.exports =',begin);
     assert(begin>=0&&end>begin,'Q3 physical hold integration missing');
     assert(source.includes(JSON.stringify(historical)),'Q3 historical telemetry anchor missing');
-    const replacement=`function hold(options){return require(${JSON.stringify(path.join(__dirname,'q3-input-delivery.cjs'))}).hold({...options,record:value=>require('node:fs').appendFileSync(${JSON.stringify(destination)},JSON.stringify(value)+'\\n')});}`;
-    return module._compile(source.slice(0,begin)+replacement+source.slice(end), name);
+    const helper=JSON.stringify(path.join(__dirname,'q3-fixture-input.cjs'));
+    const replacement=`function hold(options){return require(${helper}).hold({...options,fixture:process.env.LOCAL_PRODUCTION_FIXTURE==='1',record:value=>require('node:fs').appendFileSync(${JSON.stringify(destination)},JSON.stringify(value)+'\\n')});}`;
+    let integrated=source.slice(0,begin)+replacement+source.slice(end);
+    integrated=replaceOnce(integrated, 'physical:[37,38,39,40].map', "physicalSource:{kind:'renderer-input.peekKeyDownState',renderer:token(w?.renderer),endpoint:l?.endpointIdentity,worker:token(l?.worker),module:token(l?.module),reader:token(w?.renderer?.peekKeyDownState)},physical:[37,38,39,40].map");
+    integrated=replaceOnce(integrated, 'async function progress(identity) {\n    const page = await evaluate(PAGE_READ)',
+      `async function progress(identity, keys) {\n    const page = await evaluate(keys ? PAGE_READ.replace('[37,38,39,40]',JSON.stringify(keys.map(k=>require(${helper}).KEYS[k]))) : PAGE_READ)`);
+    integrated=replaceOnce(integrated, "'renderWorkerObject'])\n      assert.equal(a[f], identity[f], 'held identity changed: '+f);",
+      "'renderWorkerObject','pageRendererObject','canvasObject'])\n      assert.equal(a[f], identity[f], 'held identity changed: '+f);");
+    integrated=replaceOnce(integrated, 'physical:a.physical, render}', 'physical:a.physical, physicalSource:a.physicalSource, render}');
+    return module._compile(integrated, name);
   }}, filename);
 }
 module.exports = {compose, ready, cancellationCheckpoint, install, compileBoundInput, providers, consumerPath, adapterPath, fixturePath, replaceOnce};
