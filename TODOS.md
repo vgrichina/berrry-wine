@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedc76eda4b2 once523SHA244gzipCRC menuPNG personallyviewed. WholeactualfixturePASS189reaps finalguardoriginalACK0/1PASS StartUp lockedfalse thenfirstrelative24 rejectedbeforemouse dispatch noTraining. Original349actualreaps separateEOF UUID1e82aeaf archivedstop5f82 expiry11:15 retained. Fresh redline-menu-pointer-mode-repair-1105 OFFLINE actualgeneratedsupportedmenu pointermode diagnosis/fix with focusedcontrols and lockedbuild beforeanyfreshnative.
+  Next: Reviewedc10059418 once412SHA3gzipCRC actualmenu-command.cjs unlocked picturedTraining click [.51,.59]150ms supportedroute;12actualgeneratedcontrols fourfocusedsuites lockedbuildPASS no productionlockbugclaim historicalautorelativedetectionUNKNOWN. Fresh redline-unlocked-training-native-1120 repins correctedroute wholeactualfixture beforeoriginal reviewedStartUp currentmode thenTraining/VehicleTraining. SoleRuntime AFTER exactQ21100UUIDda11875e archiveddrain stop_ab746b75b57021ae; peersOFFLINE.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
