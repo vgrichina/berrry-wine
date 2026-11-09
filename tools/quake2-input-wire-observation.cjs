@@ -4,9 +4,24 @@
 const {performance}=require('node:perf_hooks');
 function create({write,now=()=>performance.now(),...options}) {
   const holds=[],inputs=new Map();let stage='transport setup',pendingAtTerminal=null;
+  // Extend this recorder's previously empty setup window. This is passive:
+  // routing/settlement stays with the consumer, including ID-only settlement.
+  const startupRequests=new Map(),startupEvents=[];
+  let startupDropped=0,startupErrors=0,startupSequence=0;
+  const setupMethods=new Set(['Browser.getVersion','Target.setDiscoverTargets','Target.setAutoAttach',
+    'Target.getTargets','Target.attachToTarget','Page.enable','Runtime.enable','Browser.close']);
+  const bounded=value=>{const raw=JSON.stringify(value);return raw===undefined?null:{json:raw.slice(0,4096),bytes:Buffer.byteLength(raw),truncated:raw.length>4096};};
+  const safe=fn=>{try{return fn();}catch{startupErrors++;}};
+  const setupEvent=(kind,fields={})=>safe(()=>{
+    if(startupEvents.length===128){startupDropped++;return;}
+    startupEvents.push({sequence:++startupSequence,kind,nodeMonotonicMs:now(),stage,...fields});defer();
+  });
   const key=v=>JSON.stringify([v.sessionId??null,v.requestId]);
   const wire=require('./q3-input-wire-observation.cjs').create({...options,now,
     write:value=>write({...value,stage,pendingAtTerminal,holds:holds.map(row=>({...row})),
+      startup:{events:startupEvents.map(row=>({...row})),dropped:startupDropped,observerErrors:startupErrors,
+        routing:'consumer settles by request ID only; session comparison is observational',
+        taskDelayMeaning:'timeout elapsed minus 20000ms; not browser service time'},
       events:value.events.map(row=>({...row,...inputs.get(key(row))})),
       clockAnchor:{nodeMonotonicMs:anchor,unixMs:wall},
       sourceMeaning:'Node socket boundary; CDP replies do not prove application consumption'})});
@@ -14,16 +29,47 @@ function create({write,now=()=>performance.now(),...options}) {
   const defer=()=>setImmediate(()=>wire.flush());
   return {...wire,
     send(meta,invoke){
+      let startup;
+      safe(()=>{
+        if(!setupMethods.has(meta.method)||(stage!=='transport setup'&&meta.method!=='Browser.close'))return;
+        startup={requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId??null,entryMonotonicMs:now()};
+        if(startupRequests.size===32){startupRequests.delete(startupRequests.keys().next().value);startupDropped++;}
+        startupRequests.set(meta.requestId,startup);
+        setupEvent('send-entry',{...startup,params:bounded(meta.params)});
+      });
       // Identity and direction only; no payload strings or guest state.
       if(meta.method.startsWith('Input.')){
         if(inputs.size===64)inputs.delete(inputs.keys().next().value);
         inputs.set(key(meta),{inputType:meta.type??null,key:meta.key??null});
       }
-      return wire.send(meta,invoke);
+      try{const result=wire.send(meta,invoke);if(startup)setupEvent('send-return',startup);return result;}
+      catch(error){if(startup)setupEvent('send-throw',{...startup,error:String(error)});throw error;}
     },
-    stage(value){stage=value;defer();},
+    receive(value,pending){
+      safe(()=>{
+        const request=startupRequests.get(value.id);
+        if(request)setupEvent('raw-reply',{requestId:value.id,method:request.method,
+          sessionId:value.sessionId??null,expectedSessionId:request.sessionId,
+          sessionMatches:(value.sessionId??null)===request.sessionId,pendingPresent:!!pending,
+          late:wire.status().firstTerminal!==null,raw:bounded(value)});
+        else if(stage==='transport setup'&&value.id!==undefined)
+          setupEvent('unmatched-raw-reply',{requestId:value.id,sessionId:value.sessionId??null,pendingPresent:!!pending,raw:bounded(value)});
+        else if(stage==='transport setup'&&/^(Target\.|Runtime\.executionContext)/.test(value.method??''))
+          setupEvent('context-event',{sessionId:value.sessionId??null,raw:bounded(value)});
+      });
+      return wire.receive(value,pending);
+    },
+    timeout(requestId,pending){safe(()=>{
+      const request=startupRequests.get(requestId);if(!request)return;
+      const elapsedMs=now()-request.entryMonotonicMs;
+      setupEvent('request-timeout',{...request,elapsedMs,timerOverrunMs:elapsedMs-20000,
+        pendingBeforeDelete:[...pending].slice(0,32).map(([requestId,p])=>({requestId,method:p.method,sessionId:p.sessionId??null}))});
+    });},
+    transport(kind){setupEvent('transport-'+kind);return wire.transport(kind);},
+    stage(value){setupEvent('stage-change',{next:value});stage=value;defer();},
     terminal(reason,pending){
       if(!pendingAtTerminal)pendingAtTerminal=[...pending].map(([requestId,p])=>({requestId,method:p.method,sessionId:p.sessionId??null}));
+      setupEvent('terminal',{reason:String(reason),pending:pendingAtTerminal});
       wire.terminal(reason);
     },
     async hold(invoke,keys,holdMs){
@@ -52,7 +98,9 @@ function integrate(source){
     "terminalFailure=Error('Q2 terminal UNKNOWN; no replay: '+reason);inputWire.terminal(terminalFailure,pending);");
   source=replaceOnce(source,'pending.set(n,{resolve,reject,timer});','pending.set(n,{resolve,reject,timer,method,sessionId});');
   source=replaceOnce(source,'ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));',
-    'const inputWirePayload=JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})});inputWire.send({requestId:n,method,sessionId,type:params.type,key:params.key},()=>ws.send(inputWirePayload));');
+    'const inputWirePayload=JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})});inputWire.send({requestId:n,method,sessionId,params,type:params.type,key:params.key},()=>ws.send(inputWirePayload));');
+  source=replaceOnce(source,"pending.delete(n);const error=Error('CDP UNKNOWN '",
+    "inputWire.timeout(n,pending);pending.delete(n);const error=Error('CDP UNKNOWN '");
   source=replaceOnce(source,'const v=JSON.parse(msg.data);if(v.id)',
     'const v=JSON.parse(msg.data);inputWire.receive(v,pending.get(v.id));if(v.id)');
   source=replaceOnce(source,"()=>{if(!closing)observeTerminal('CDP '+event);}",
