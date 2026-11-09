@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Revieweda06c8e6ac once74SHA18gzip actualmain ROOTrebind oldFAILnewPASS eagerHEALTH_PROVIDER corrected; generatedvalid/missing/wrongroot/tamper checks all724pins buildPASS. Fresh quake2-corrected-health-native-1040 prepares repinned wholeactualfixture thenoriginal passivehealthhistory; soleRuntime AFTER Redline1035 exact archiveddrain stopreceipt. PriorQ21020 UUIDd28d470b archivedstopb39b expiry10:47:30 retained.
+  Next: Reviewedc052bc921 once312SHA124gzipCRC; twoexplicitunfinalizedstreams invalidCRC notwaitproof. Nativefixture startupframe17HP100physicalzero only thenmissingwaitMs budgetrejectBEFOREdispatch nooriginal;166actualreaps separateEOF UUID348dbc99 archivedstop_e2eb expiry11:10. Fresh quake2-complete-command-native-1100 fixes actualcommandproducer completecontract oldFAILnewPASS thenwholeactualfixture beforeoriginal passivehealth/guarddoor; soleRuntime AFTER Q31055 exactarchiveddrain stopreceipt.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
