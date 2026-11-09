@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed24dc417ef once1155SHA224gzip2initialtruncated retained. Actual production fixture integration oldFAILnewPASS startup/terminal/quit controls buildPASS. Fresh redline-production-side-door-0856 prepares offline waits committed custody0844 then FIRST native+original side-door same task.
+  Next: Reviewed8ce511fe9 once195SHA112gzip. Actualnative startupPASS firstcomma600msdeliveryboundterminal nooriginal;185actualreaps archivedstopcae2. Fresh redline-key-delivery-repair-0912 implements justified bounded input fix OFFLINE unchangedcaps.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed0faf1af334 once4866SHA2023gzip. Actual production/fixture parked startup45controls buildPASS; oldcustody pin correctly refuses authorizedpeerWIP. Fresh q3-parked-visible-progress-0856 prepares current dependency aftercustodyrelease then SECOND native+original afterRedline0856 exactrelease.
+  Next: Revieweda161e5af2 once279SHA220gzip. Nativecalc404preauthterminal157actualreaps archivedstop77d. RequiredPEclosure repaired34dependency15prelaunch buildPASS. Fresh q3-required-fixture-gameplay-0912 native+original afterQ20900 exactrelease.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
