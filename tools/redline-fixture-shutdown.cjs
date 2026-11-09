@@ -9,7 +9,7 @@ function observeChild(child) {
 }
 
 function createLifecycle({resources, closeBrowser, stopProtocol, finalize = () => {},
-  signal, exitWaitMs = 10000}) {
+  signal, exitWaitMs = 10000, initialFailure}) {
   let terminal = false, firstFailure, failed = false, shutdown, protocolStop;
   let failBody;
   const failure = new Promise((_, reject) => { failBody = reject; });
@@ -33,9 +33,22 @@ function createLifecycle({resources, closeBrowser, stopProtocol, finalize = () =
 
   function close() {
     if (shutdown) return shutdown;
+    // The run body joins outstanding acquisition before taking this inventory.
+    // Seed the primary failure here so it cannot skip that acquisition join.
+    if (initialFailure) remember(initialFailure);
     terminal = true; // Synchronous gate, before any independent cleanup starts.
     shutdown = (async () => {
-      const {server, browser, exit, streams = [], tasks = []} = resources();
+      const {server, browser, exit, streams = [], streamHandles = [], tasks = []} = resources();
+      // The same existing shutdown budget also bounds inherited pipe writers.
+      // Destroying our read ends joins pipelines but is explicitly NOT EOF proof.
+      let streamsSettled=false, streamsTruncated=false;
+      const streamTimer=streamHandles.length ? setTimeout(() => {
+        if (streamsSettled) return;
+        streamsTruncated=true;
+        const error=Error('Chrome stream EOF missing within shutdown budget');
+        remember(error);
+        for(const stream of streamHandles) stream.destroy(error);
+      },exitWaitMs) : undefined;
       // Start server close before touching CDP. A CDP failure cannot skip it.
       const serverJoin = attempt(async () => {
         if (!server) return;
@@ -67,14 +80,15 @@ function createLifecycle({resources, closeBrowser, stopProtocol, finalize = () =
         return actualExit;
       });
       const streamJoin = Promise.allSettled(streams).then(rows => {
+        streamsSettled=true; clearTimeout(streamTimer);
         for (const row of rows) if (row.status === 'rejected') remember(row.reason);
-        return rows.every(row => row.status === 'fulfilled');
+        return !streamsTruncated && rows.every(row => row.status === 'fulfilled');
       });
       const taskJoin = Promise.allSettled(tasks).then(rows => {
         for (const row of rows) if (row.status === 'rejected') remember(row.reason);
       });
       const [actualBrowserExit, , streamEOF] = await Promise.all([browserJoin, serverJoin, streamJoin, taskJoin]);
-      await attempt(() => finalize({actualBrowserExit, streamEOF, terminal:failed, firstFailure}));
+      await attempt(() => finalize({actualBrowserExit, streamEOF, streamsTruncated, terminal:failed, firstFailure}));
     })();
     return shutdown;
   }

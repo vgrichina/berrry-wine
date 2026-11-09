@@ -179,7 +179,7 @@ async function composed(caller,mode='positive',liveRun=null) {
     close(){this.readyState=3;}
   }
   const pins={commit:'fixture',files:[{path:'build/wine-assembly.wasm',sha256:SELECTED.sha256,size:SELECTED.bytes}],httpPins:[]};
-  for(const p of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','lib/redline-startup-admission.js','tools/redline-fixture-shutdown.cjs','tools/redline-key-delivery.cjs']) {
+  for(const p of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','lib/redline-startup-admission.js','tools/redline-fixture-shutdown.cjs','tools/redline-chrome-startup.cjs','tools/redline-key-delivery.cjs']) {
     const bytes=fs.readFileSync(path.join(ROOT,p));pins.files.push({path:p,sha256:sha(bytes),size:bytes.length});
   }
   if(liveRun)for(const p of ['tools/redline-native-fixture.cjs','tools/redline-production-fixture.cjs']){const bytes=fs.readFileSync(path.join(ROOT,p));pins.files.push({path:p,sha256:sha(bytes),size:bytes.length});}
@@ -214,6 +214,11 @@ async function composed(caller,mode='positive',liveRun=null) {
   const mockRequire=n=>{
     if(n==='node:fs')return liveRun?liveFs:fakeFs;
     if(n==='node:child_process')return {spawn:()=>browser};
+    // Endpoint publication is a service seam in this guest-admission suite.
+    // redline-chrome-startup.test.cjs exercises the actual filesystem/child branch.
+    if(n==='./redline-chrome-startup.cjs')return {observeStartup:()=>({}),
+      publicationSnapshot:()=>({fixture:true}),
+      portPublication:async()=>({debugPort:1234,browserPath:'/fixture'})};
     if(n.endsWith('/bound-input.cjs'))return liveRun?require('../scratch/runs/20261108-redline-car-door-native/bound-input.cjs'):bound;
     if(n.endsWith('/transport.cjs')){if(!liveRun)return transport;const real=require('../scratch/runs/20261108-redline-car-door-native/transport.cjs');return {...real,publish:(p,v)=>{if(path.basename(p)==='first-browser-failure.json')events.push('first-terminal-failure');return real.publish(p,v);}};}
     if(n.endsWith('/ordinary-keys.cjs'))return liveRun?require('../scratch/runs/20261108-redline-car-door-native/ordinary-keys.cjs'):{hold:async()=>{}};
