@@ -382,13 +382,19 @@ class ChunkConsumerTests(unittest.TestCase):
                 for p in [root/'runtime-pins.json.gz',run/'runtime-pins.json.gz',run/'lifecycle.json.gz']:p.write_bytes(b'{}')
                 if mode=='source-mismatch':payload.write_bytes(b'bad')
                 requests=[];barriers=[];remote_calls=[];cancel=threading.Event();release=threading.Event()
+                eof_read,eof_write=os.pipe()
+                def owning_eof():
+                    assert os.read(eof_read,1)==b'';cancel.set()
+                eof_thread=threading.Thread(target=owning_eof) if mode=='cancel-eof' else None
+                if eof_thread:eof_thread.start()
                 class Handler(BaseHTTPRequestHandler):
                     protocol_version='HTTP/1.1'
                     def log_message(self,*args):pass
                     def do_PUT(self):
                         requests.append(self.path)
                         if mode in ('heldwriter','cancel','cancel-eof'):
-                            if mode in ('cancel','cancel-eof'):cancel.set()
+                            if mode=='cancel':cancel.set()
+                            if mode=='cancel-eof':os.close(eof_write)
                             release.wait(2);return
                         if mode=='refusal':
                             self.send_response(503);self.send_header('Content-Length','0');self.end_headers();return
@@ -445,7 +451,11 @@ class ChunkConsumerTests(unittest.TestCase):
                         else:
                             with self.assertRaises((OSError,ValueError,EOFError)):env['provision']()
                             self.assertEqual(barriers,[])
-                finally:release.set();server.shutdown();server.server_close();thread.join()
+                finally:
+                    release.set();server.shutdown();server.server_close();thread.join()
+                    if mode!='cancel-eof':os.close(eof_write)
+                    if eof_thread:eof_thread.join(1);self.assertFalse(eof_thread.is_alive())
+                    os.close(eof_read)
                 events=[json.loads(x) for x in gzip.decompress((run/'uploads.jsonl.gz').read_bytes()).splitlines()]
                 self.assertEqual(len(requests),len(set(requests)))
                 if mode=='actual-media':
