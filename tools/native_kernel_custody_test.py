@@ -1350,6 +1350,10 @@ int main(int argc,char **argv) {
                         assert selected,'second native creator message absent'
                 return result
             def resume(request,task,addr=0,data=0):
+                # The EXEC fault window ends at its actual CONT. A later
+                # observation-only GETEVENTMSG for a pending CLONE must not
+                # inject EXEC corruption before that CLONE is consumed.
+                if request==module.CONT and exec_stop==[task]:exec_stop.clear()
                 if request==module.CONT and selected and task==selected[0] and not released:
                     released.append(task)
                     (run/'first-creator-resume.json').write_text(json.dumps(dict(pid=task,at=time.time())))

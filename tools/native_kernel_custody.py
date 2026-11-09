@@ -97,12 +97,18 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     resumes = {}
     exec_transfers = {}
     exit_stops = {}
+    consumed_waits = {} # one latest real wait per owned task, diagnostic only
     journal = Journal(run, journal_compression)
     retirement = False
     def log(kind, **value):
         nonlocal sequence
         sequence += 1
-        journal.append(dict(sequence=sequence, at=time.time(), kind=kind, **value), defer=retirement)
+        # Diagnostic records share the bounded journal batch. Existing
+        # admission barriers still flush the full prefix before CONT.
+        diagnostic = kind in ('wait-consumed', 'kernel-event-message',
+                              'creation-peek-message', 'ptrace-cont-returned')
+        journal.append(dict(sequence=sequence, at=time.time(), kind=kind, **value),
+                       defer=retirement or diagnostic)
         return sequence
     def write(name, value):
         (run / name).write_text(json.dumps(value, indent=2))
@@ -137,6 +143,14 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     def trace_task(request, task, data=0):
         try:
             ptrace(request, task, data=data)
+            if request == GETEVENTMSG:
+                log('kernel-event-message', pid=task, start=owned[task]['start'],
+                    waitSequence=consumed_waits[task]['sequence'],
+                    waitStatus=consumed_waits[task]['status'],
+                    kernelMessage=ctypes.c_ulong.from_address(data).value)
+            elif request == CONT:
+                log('ptrace-cont-returned', pid=task, start=owned[task]['start'],
+                    signal=data, waitSequence=consumed_waits[task]['sequence'])
             return True
         except OSError as error:
             if error.errno != errno.ESRCH:
@@ -350,11 +364,31 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 # identity before waitpid even if its next status is terminal.
                 before = log('before-consume', **row, custodySequence=owned[task]['registeredSequence'],
                              siCode=peek.si_code, siStatus=peek.si_status)
+            # Preserve a pending creator message even if a fatal signal
+            # replaces this peek before waitpid. This observation cannot
+            # register a child or authorize CONT; only consumed events do.
+            if peek.si_code == os.CLD_TRAPPED and peek.si_status in (261, 517, 773):
+                observed_message = ctypes.c_ulong()
+                try:
+                    ptrace(GETEVENTMSG, task, data=ctypes.addressof(observed_message))
+                except OSError as error:
+                    log('creation-peek-message', pid=task, start=row['start'],
+                        beforeConsumeSequence=before, peekStatus=peek.si_status,
+                        kernelMessage=None, errno=error.errno, observationalOnly=True)
+                else:
+                    log('creation-peek-message', pid=task, start=row['start'],
+                        beforeConsumeSequence=before, peekStatus=peek.si_status,
+                        kernelMessage=observed_message.value, errno=None, observationalOnly=True)
             got, status = os.waitpid(task, os.WNOHANG|WALL)
             if got == 0 and not terminal:
                 log('stop-peek-superseded', pid=task, start=row['start'], beforeConsumeSequence=before)
                 continue
             assert got == task, ('peek/consume mismatch', task, got)
+            # WNOWAIT is an observation, not the consumed status: a fatal
+            # signal may supersede it. Retain both without inferring lineage.
+            consumed_waits[task] = dict(status=status, sequence=log('wait-consumed',
+                pid=task, start=row['start'], waitStatus=status,
+                beforeConsumeSequence=before, peekCode=peek.si_code, peekStatus=peek.si_status))
             if os.WIFEXITED(status) or os.WIFSIGNALED(status):
                 exiting.discard(task)
                 parked.discard(task)
@@ -518,6 +552,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                                originalBytes=journal.size, originalSha256=journal.sha.hexdigest()),
                   remaining=remaining,unreaped=unreaped,unresolvedPtrace=list(pending.values()),
                   execTransfers=list(exec_transfers.values()),
+                  kernelEventEvidenceVersion=1,
                   unresolvedResumes=[dict(pid=task,start=value[0],signal=value[1]) for task,value in resumes.items()],
                   finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
                   custody='ptrace fork/vfork/clone barriers + waitid WNOWAIT before waitpid',
