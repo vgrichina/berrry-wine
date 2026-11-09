@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed1f3bd16c1 once23SHA-size13gzipCRC; armedREPpublication/frameclear now60completions oldFAILnewPASS 66CPU240faultcases regressions/buildPASS unarmedbulkpreserved. Fresh quake2-rep-witness-native-progress-1405 actualreader integration + boundedgameplay QUEUEDbehindRedline1395; no acceptancewaiver allwritersparseABAUNKNOWN.
+  Next: Reviewed43ec0e8cd once43SHA-size9gzip1EXPECTEDinvalid; actualsixcopies witnessintegration 15CPU13068readsparity sixREPhealthstickyUP tests/buildPASS. No native: actualWorkerLink asynchronous pageCPUidle witnessunavailable. Fresh quake2-owning-witness-transport-1425 OFFLINE explicitlyscope narrow actualworker/sharedmetadata/nativeobserver bridge; no predicatewaiver nativequalificationFALSE allwritersparseABAUNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedba66d97b2 once1873SHA-size1104gzipCRC rootGameServerPNG; original5ACK menuOnly cursorawayNEXT no worldmovementfiretorch. Archived25fdf3f2 stopcc4d683a all330actualreaps separateEOF. Fresh q3-menu-pointer-routing-repair-1385 OFFLINE actualpointer/menu/caller paths executableoldnewcontrol concretefix ifdemonstrated; no unchangednative retry.
+  Next: Reviewedbae02f6a1 once35SHA-size17gzipCRC; actualsource controls oldabsolute0motion FAIL correctedexplicitrelative198,2 PASS balancedbuttons stickyterminal/buildPASS no productionbugclaim historicalguestselectionUNKNOWN. Fresh q3-relative-menu-native-progress-1415 ONEoriginal with correctedcaller freshreviewedcounts existinglock only soleNEXTruntime after1395APIarchive/drain verify. No syntheticmenu or acceptancewaiver.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
