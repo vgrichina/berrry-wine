@@ -92,6 +92,63 @@ function validate(options={}){
     ...(checkpoint?{checkpointObserverVersion,publishedCheckpointCommit:checkpointCommit}:{}),
     publishedModuleCommit:cpuCommit,publishedCustodyCommit:custodyCommit,historicalPinset:{path:historical,sha256:historicalSHA,commit:prior.commit},explainedDrift};
 }
+// One Node monotonic clock across transport and consumer. No browser clock subtraction.
+const monotonicNs=()=>process.hrtime.bigint().toString();
+const metadataToken=x=>typeof x==='string'?(x.length<=256?x:'sha256:'+hash(Buffer.from(x))):null;
+function protocolMetadata(data){
+ const bytes=typeof data==='string'?Buffer.from(data):Buffer.isBuffer(data)?data:
+  ArrayBuffer.isView(data)?Buffer.from(data.buffer,data.byteOffset,data.byteLength):data instanceof ArrayBuffer?Buffer.from(data):null;
+ if(!bytes)return {bytes:null,sha256:null,unavailable:true};
+ const fields={bytes:bytes.length,sha256:hash(bytes)};
+ if(bytes.length>65536)return {...fields,parseSkipped:true};
+ try{
+  const v=JSON.parse(bytes.toString()),token=metadataToken;
+  return {...fields,requestId:Number.isSafeInteger(v.id)?v.id:null,method:token(v.method),sessionId:token(v.sessionId),
+   errorCode:Number.isSafeInteger(v.error?.code)?v.error.code:null};
+ }catch{return {...fields,parseError:true};}
+}
+function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=setTimeout,cancel=clearTimeout}){
+ // WHATWG has no send callback. Wrap an existing callback only when the caller
+ // supplied one; never infer callback support from function arity or inject one.
+ return class TransportSocket extends WebSocket{
+  constructor(...args){
+   super(...args);
+   let rows=0,samples=0,active=true,timer=null,armed=false;
+   const record=(phase,fields={})=>{if(!active||rows>=512)return;try{
+    write({version:1,sequence:++rows,monotonicNs:now(),phase,...fields,...rows===512?{recordLimitReached:true}:{}});
+   }catch{/* Observation must not replace the first protocol/transport error. */}
+    if(rows===512){active=false;if(timer!==null)cancel(timer);}
+   };
+   const stop=reason=>{record('observation-stop',{reason});active=false;if(timer!==null)cancel(timer);};
+   const tick=()=>{
+    if(!active||samples>=96)return;
+    const armedNs=now();
+    timer=schedule(()=>{timer=null;record('node-scheduling',{sample:++samples,armedNs,expectedDelayMs:250,
+     delayMs:Math.max(0,Number(BigInt(now())-BigInt(armedNs))/1e6-250)});tick();},250);
+    timer?.unref?.();
+   };
+   this.q3Transport={record,stop,get active(){return active;},arm:()=>{if(!armed){armed=true;tick();}}};
+   this.addEventListener('message',event=>{
+    if(!active)return;
+    const monotonicNs=now(); // Public event entry, before hashing or JSON work.
+    record('raw-message',{...protocolMetadata(event.data),monotonicNs});
+   });
+   for(const event of ['error','close'])this.addEventListener(event,()=>record('transport-event',{event}));
+  }
+  send(data,...args){
+   const observer=this.q3Transport;
+   if(!observer.active)return super.send(data,...args);
+   const fields=protocolMetadata(data);
+   observer.arm();observer.record('pre-send',fields);
+   const forwarded=args.map(arg=>typeof arg!=='function'?arg:function(...values){
+    observer.record('send-callback',{...fields,error:!!values[0]});return Reflect.apply(arg,this,values);
+   });
+   try{const result=super.send(data,...forwarded);observer.record('send-return',fields);return result;}
+   catch(error){observer.record('send-throw',fields);throw error;}
+  }
+  close(...args){try{return super.close(...args);}finally{this.q3Transport.stop('socket close invoked');}}
+ };
+}
 // Instrument the authenticated consumer after its existing transforms. Keep
 // protocol routing, debugger policy, terminal propagation and timers intact.
 function composeStartupDiagnostics(source){
@@ -99,30 +156,42 @@ function composeStartupDiagnostics(source){
     assert.equal(source.split(before).length,2,'unique startup diagnostic seam: '+before);
     source=source.replace(before,after);
   };
-  once('function send(method,params={},sessionId,captureProbe=null)',`const startupRequests=new Map(),startupTargets=new Map();let startupRecording=true;
-function startupRecord(direction,fields){log('cdp-startup.jsonl',{at:new Date().toISOString(),direction,...fields});}
+  once('function send(method,params={},sessionId,captureProbe=null)',`const startupDiagnostics=require(root+'/tools/q3-current-module.cjs');
+const startupRequests=new Map(),startupTargets=new Map();let startupRecording=true,startupRows=0;
+function startupRecord(direction,fields){
+ if(startupRows++>=512)return;
+ try{
+ const row={direction,...fields};
+ for(const key of ['sessionId','requestSessionId','method'])if(key in row)row[key]=startupDiagnostics.metadataToken(row[key]);
+ log('cdp-startup.jsonl',{monotonicNs:startupDiagnostics.monotonicNs(),...row});
+ ws?.q3Transport?.record('consumer',row);
+ }catch{/* Diagnostic failure cannot replace the original failure. */}
+}
 function startupOutbound(meta,params){
  if(!startupRecording)return;
- startupRequests.set(meta.requestId,meta);
+ if(startupRequests.size<64)startupRequests.set(meta.requestId,{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId});
  startupRecord('outbound',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId,
-  raw:JSON.stringify({id:meta.requestId,method:meta.method,params,...(meta.sessionId?{sessionId:meta.sessionId}:{})}),target:startupTargets.get(meta.sessionId)??null});
+  ...startupDiagnostics.protocolMetadata(JSON.stringify({id:meta.requestId,method:meta.method,params,...(meta.sessionId?{sessionId:meta.sessionId}:{})})),target:startupTargets.get(meta.sessionId)??null});
 }
 function startupInbound(raw){
  if(!startupRecording)return;
- // Record before parsing/routing, including malformed and unmatched replies.
- // No protocol fields are fabricated when a peer omitted them.
- let v;try{v=JSON.parse(raw);}catch{startupRecord('inbound',{raw,parseError:true});return;}
- const request=startupRequests.get(v.id),matched=pending.has(v.id);
- if(v.method==='Target.attachedToTarget')startupTargets.set(v.params?.sessionId,{
-  targetId:v.params?.targetInfo?.targetId,type:v.params?.targetInfo?.type,url:v.params?.targetInfo?.url,
-  waitingForDebugger:v.params?.waitingForDebugger});
- startupRecord('inbound',{raw,requestId:v.id??null,method:v.method??request?.method??null,
-  sessionId:v.sessionId??null,requestSessionId:request?.sessionId??null,matched,
-  knownRequest:!!request,error:v.error??null,result:v.result??null,
+ const fields=startupDiagnostics.protocolMetadata(raw),request=startupRequests.get(fields.requestId),matched=pending.has(fields.requestId);
+ if(fields.parseSkipped||fields.unavailable){startupRecord('inbound',fields);return;}
+ let v;try{v=JSON.parse(raw);}catch{startupRecord('inbound',fields);return;}
+ if(v.method==='Target.attachedToTarget'&&startupTargets.size<64)startupTargets.set(v.params?.sessionId,{
+  targetId:startupDiagnostics.metadataToken(v.params?.targetInfo?.targetId),type:startupDiagnostics.metadataToken(v.params?.targetInfo?.type),waitingForDebugger:!!v.params?.waitingForDebugger});
+ startupRecord('inbound',{...fields,method:fields.method??request?.method??null,
+  requestSessionId:request?.sessionId??null,matched,knownRequest:!!request,
   target:v.method==='Target.attachedToTarget'?startupTargets.get(v.params?.sessionId):startupTargets.get(v.sessionId)??null});
- if(matched&&request?.method==='Page.navigate'&&!v.error){startupRecording=false;startupRequests.clear();startupTargets.clear();}
+}
+function startupSettlement(meta,outcome){
+ if(!startupRecording)return;
+ startupRecord('settlement',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId,outcome});
+ if(meta.method==='Page.navigate'&&outcome==='resolve'){startupRecording=false;startupRequests.clear();startupTargets.clear();ws?.q3Transport?.stop('navigation settled');}
 }
 function send(method,params={},sessionId,captureProbe=null)`);
+  once('new Promise((resolve,reject)=>{const timer=setTimeout',
+    "new Promise((resolvePromise,rejectPromise)=>{let settled=false;const settle=(outcome,fn,value)=>{if(!settled){settled=true;startupSettlement(meta,outcome);}return fn(value);};const resolve=value=>settle('resolve',resolvePromise,value),reject=error=>settle('reject',rejectPromise,error);const timer=setTimeout");
   once('screenshotCompletion.request(meta,params);try{',
     "startupOutbound(meta,params);screenshotCompletion.request(meta,params);try{");
   once('const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));',
@@ -132,7 +201,7 @@ function send(method,params={},sessionId,captureProbe=null)`);
   once("screenshotCompletion.transport(event);if(!closing)",
     "screenshotCompletion.transport(event);if(startupRecording)startupRecord('transport',{event});if(!closing)");
   once('screenshotCompletion.sendFailed(meta,error);observeTerminal(error);',
-    "if(startupRecording)startupRecord('send-error',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId,error:String(error)});screenshotCompletion.sendFailed(meta,error);observeTerminal(error);");
+    "if(startupRecording)startupRecord('send-error',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId});screenshotCompletion.sendFailed(meta,error);observeTerminal(error);");
   return source;
 }
 function composeCheckpointCaller(source,version){
@@ -226,7 +295,7 @@ function prepare(destination,{inputs=[]}={}){
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }
-module.exports={SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
+module.exports={metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
 if(require.main===module){
   const args=process.argv.slice(2);assert.equal(args.shift(),'--prepare','explicit preparation only');
   const destination=args.shift(),options={inputs:[]};

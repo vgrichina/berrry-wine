@@ -30,6 +30,8 @@ if(process.env.Q3_PAGE_PEER_CHILD==='1'){
     if(filename===consumer){
       assert(source.includes('inputWire.receive(v,pending.get(v.id))'),'actual native input-wire hook installed');
       assert(source.includes('executionContextId:v.params.executionContextId'),'actual native cause hook installed');
+      assert(source.includes('startupSettlement(meta,outcome)'),'actual consumer settlement hook');
+      assert(globalThis.WebSocket.prototype instanceof Peer,'transport wraps the actual base peer');
       save(dir+'/installed-consumer.json.gz',{sha256:hash(Buffer.from(source)),bytes:Buffer.byteLength(source),
         inputWire:true,causeDiagnostic:true,sourceCopied:false});
     }
@@ -77,6 +79,7 @@ if(process.env.Q3_PAGE_PEER_CHILD==='1'){
       sessionId,targetInfo:{targetId:'page-target',type:'page',url:'about:blank'},waitingForDebugger
     }});}
     send(raw){
+      this.firstSendAt??=performance.now();
       const q=JSON.parse(raw);protocol.push(q);
       assert(!q.method.startsWith('Input.')&&q.method!=='Page.captureScreenshot','no input/capture in startup peer');
       if(native&&q.id<=6){
@@ -110,6 +113,15 @@ if(process.env.Q3_PAGE_PEER_CHILD==='1'){
           });
         }
         assert.equal(q.id,6);assert.equal(q.sessionId,manualSession);request6=q;
+        if(mode==='send-throw')throw Error('OFFLINE_SEND_THROW');
+        if(mode==='send-error-event'){this.dispatchEvent(new Event('error'));return;}
+        if(mode==='delayed-inbound'){
+          // Overlap the next observer tick; request 6 can start well after
+          // the first send because the real createChain initializer runs.
+          const untilTick=250-((performance.now()-this.firstSendAt)%250);
+          setTimeout(()=>{const until=performance.now()+130;while(performance.now()<until){}},Math.max(0,untilTick-20));
+          return setTimeout(()=>this.reply(q),420);
+        }
         if(mode==='withheld-page-reply'||mode==='late-page-reply')return;
         if(mode==='page-protocol-error')return queueMicrotask(()=>this.reply(q,{}, {code:-32000,message:'OFFLINE_PAGE_REFUSAL'}));
         if(mode==='page-socket-close')return queueMicrotask(()=>this.dispatchEvent(new Event('close')));
@@ -156,13 +168,63 @@ if(process.env.Q3_PAGE_PEER_CHILD==='1'){
   main().catch(error=>{console.error(error);process.exitCode=1;});
 }
 
+function transportControls(out){
+  let clock=0n,scheduled=null,cancelled=0;const records=[],calls=[],sentinel=Error('send failed'),callbackError=Error('callback failed');
+  class Base extends EventTarget{
+    send(data,...args){
+      calls.push({data,args});
+      if(this.fail)throw sentinel;
+      if(args.at(-1) instanceof Function)args.at(-1).call(this,this.callbackError,'extra');
+      this.dispatchEvent(new MessageEvent('message',{data}));return 37;
+    }
+    close(){return 'closed';}
+  }
+  const Socket=current.installTransportDiagnostics({WebSocket:Base,write:v=>records.push(v),now:()=>String(clock),
+    schedule:fn=>{assert.equal(scheduled,null);scheduled=fn;return 1;},cancel:()=>{cancelled++;scheduled=null;}});
+  const socket=new Socket(),raw=' {"id":6,"method":"Target.setAutoAttach","sessionId":"exact-session","params":{"secret":"PRIVATE"}} ';
+  socket.callbackError=sentinel;let callbackThis,callbackValues;
+  assert.equal(socket.send(raw,{binary:false},function(...v){callbackThis=this;callbackValues=v;}),37);
+  assert.equal(calls[0].data,raw);assert.deepEqual(calls[0].args[0],{binary:false});assert.equal(callbackThis,socket);
+  assert.deepEqual(callbackValues,[sentinel,'extra']);
+  assert.deepEqual(records.map(v=>v.phase),['pre-send','send-callback','raw-message','send-return']);
+  assert(records.every(v=>v.sha256===hash(Buffer.from(raw))&&v.bytes===Buffer.byteLength(raw)&&v.sessionId==='exact-session'));
+  socket.callbackError=null;socket.send(raw,()=>{});assert.equal(records.findLast(v=>v.phase==='send-callback').error,false);
+  socket.fail=true;assert.throws(()=>socket.send(raw),e=>e===sentinel);socket.fail=false;
+  assert.throws(()=>socket.send(raw,()=>{throw callbackError;}),e=>e===callbackError);
+  for(let i=0;i<96;i++){const fn=scheduled;assert(fn);scheduled=null;clock+=275000000n;fn();}
+  assert.equal(scheduled,null);assert.equal(records.filter(v=>v.phase==='node-scheduling').length,96);
+  assert(records.filter(v=>v.phase==='node-scheduling').every(v=>v.delayMs===25));
+  assert.equal(socket.close(),'closed');const stopped=records.length;socket.send(raw);assert.equal(records.length,stopped);
+  const bounded=[];const Flood=current.installTransportDiagnostics({WebSocket:Base,write:v=>bounded.push(v),schedule:()=>1,cancel:()=>cancelled++});
+  const flood=new Flood();for(let i=0;i<600;i++)flood.send(raw);
+  assert.equal(bounded.length,512);assert(cancelled>0);
+  const Broken=current.installTransportDiagnostics({WebSocket:Base,write:()=>{throw Error('observer failure');},schedule:()=>1,cancel:()=>{}});
+  const broken=new Broken();assert.equal(broken.send(raw),37);broken.fail=true;assert.throws(()=>broken.send(raw),e=>e===sentinel);broken.close();
+  const transformed=[];
+  const Transport=current.installTransportDiagnostics({WebSocket:Base,write:v=>transformed.push(v),schedule:()=>1,cancel:()=>{}});
+  const Execution=require('./q3-execution-boundary.cjs').install({WebSocket:Transport,trace:{snapshot(){}},write(){}}).WebSocket;
+  const execution=new Execution(),expression='(()=>{const __mcmPassiveIdentityV1=true;return 1;})()',
+    evaluation=JSON.stringify({id:10,method:'Runtime.evaluate',sessionId:'page',params:{expression}});
+  execution.send(evaluation);execution.close();
+  const actual=calls.at(-1).data;
+  assert.notEqual(actual,evaluation,'execution wrapper really changed bytes');
+  assert.equal(transformed.find(v=>v.phase==='pre-send').sha256,hash(Buffer.from(actual)),'transport observes post-transform bytes');
+  assert.equal(current.protocolMetadata(Buffer.from('{bad')).parseError,true);
+  assert.equal(current.protocolMetadata('x'.repeat(65537)).parseSkipped,true);
+  assert(!JSON.stringify({records,bounded}).includes('PRIVATE'));
+  save(out+'/transport-controls.json.gz',{passed:true,records,boundedRows:bounded.length,callbackIdentity:true,throwIdentity:true,
+    schedulingSamples:96,observerFailureIsolated:true,bytesUnchanged:true,postTransformBytes:true,noPayload:true});
+  console.log('PASS transport controls');
+}
+
 async function main(){
   const out=path.resolve(process.argv[2]||'');assert(process.argv[2]&&out.startsWith(root+'/scratch/runs/'),'explicit owned run directory');
   assert(!fs.existsSync(out),'fresh test output');fs.mkdirSync(out,{recursive:true});
+  transportControls(out);
   const results=[];
   for(const mode of ['single','duplicate-before-root','event-after-root','event-after-manual','duplicate-paused','duplicate-page-reply',
     'page-protocol-error','page-socket-close','withheld-page-reply','late-page-reply',
-    'native-sync-ack','native-task-ack','native-late-ack']){
+    'native-sync-ack','native-task-ack','native-late-ack','delayed-inbound','send-throw','send-error-event']){
     const dir=out+'/'+mode;fs.mkdirSync(dir);
     const inputs=[];
     const retained=root+'/scratch/runs/20261109-q3-preflighted-controller-arena-1615';
@@ -202,20 +264,20 @@ async function main(){
     const diagnostic=zlib.gunzipSync(fs.readFileSync(runtime+'/cdp-startup.jsonl.gz')).toString().trim().split('\n').map(line=>JSON.parse(line));
     const outbound=diagnostic.filter(v=>v.direction==='outbound');
     assert.deepEqual(outbound.map(v=>[v.requestId,v.method,v.sessionId]),peer.protocol.map(v=>[v.id,v.method,v.sessionId??null]));
-    assert.deepEqual(outbound.map(v=>JSON.parse(v.raw)),peer.protocol,'exact outbound envelopes');
+    assert.deepEqual(outbound.map(v=>v.sha256),peer.protocol.map(v=>hash(Buffer.from(JSON.stringify(v)))),'exact outbound byte hashes');
     const inbound=diagnostic.filter(v=>v.direction==='inbound');
-    assert.deepEqual(inbound.map(v=>JSON.parse(v.raw)),peer.deliveries,'all exact raw frames retained before routing');
+    assert.deepEqual(inbound.map(v=>v.sha256),peer.deliveries.map(v=>hash(Buffer.from(JSON.stringify(v)))),'byte identities before routing');
     const attachment=inbound.filter(v=>v.method==='Target.attachedToTarget');
     const native=mode.startsWith('native-')?nativeFrames():null;
     const manualSession=native?JSON.parse(native.find(v=>v.direction==='outbound'&&v.requestId===6).raw).sessionId:'manual-page';
     const target=native?JSON.parse(native.find(v=>v.direction==='outbound'&&v.requestId===5).raw).params.targetId:'page-target';
     if(native){
-      assert.deepEqual(attachment.map(v=>JSON.parse(v.raw)),native.filter(v=>v.direction==='inbound'&&v.method==='Target.attachedToTarget').map(v=>JSON.parse(v.raw)));
+      assert.deepEqual(attachment.map(v=>v.sha256),native.filter(v=>v.direction==='inbound'&&v.method==='Target.attachedToTarget').map(v=>hash(Buffer.from(v.raw))));
       assert.deepEqual(attachment.map(v=>v.target.type),['page','browser_ui','browser_ui','page']);
       assert(attachment.every(v=>v.target.waitingForDebugger===false));
-      assert.deepEqual(outbound.slice(0,6).map(v=>v.raw),native.filter(v=>v.direction==='outbound').slice(0,6).map(v=>v.raw));
+      assert.deepEqual(outbound.slice(0,6).map(v=>v.sha256),native.filter(v=>v.direction==='outbound').slice(0,6).map(v=>hash(Buffer.from(v.raw))));
       assert.equal(inbound.find(v=>v.requestId===6).matched,mode!=='native-late-ack');
-    }else assert(attachment.every(v=>v.target.type==='page'&&v.target.url==='about:blank'&&typeof v.target.waitingForDebugger==='boolean'));
+    }else assert(attachment.every(v=>v.target.type==='page'&&typeof v.target.waitingForDebugger==='boolean'));
     const sent6=outbound.find(v=>v.requestId===6);assert.equal(sent6.target.type,'page');assert.equal(sent6.target.targetId,target);
     if(mode==='late-page-reply'||mode==='native-late-ack'){
       const late=inbound.find(v=>v.requestId===6);assert.equal(late.matched,false);assert.equal(late.knownRequest,true);
@@ -227,9 +289,33 @@ async function main(){
       const replies=inbound.filter(v=>v.requestId===6);assert.equal(replies.length,2);
       assert.equal(replies[0].matched,true);assert.equal(replies[1].matched,false);assert.equal(replies[1].sessionId,'other-session');
       const unknown=inbound.find(v=>v.requestId===8675309);assert.equal(unknown.knownRequest,false);assert.equal(unknown.matched,false);
-      assert.equal(unknown.error.message,'UNMATCHED_PEER_ERROR');
+      assert.equal(unknown.errorCode,-32001);
     }
-    if(mode==='page-protocol-error')assert.equal(inbound.find(v=>v.requestId===6).error.message,'OFFLINE_PAGE_REFUSAL');
+    if(mode==='page-protocol-error')assert.equal(inbound.find(v=>v.requestId===6).errorCode,-32000);
+    const boundary=zlib.gunzipSync(fs.readFileSync(dir+'/boundary-transport.jsonl.gz')).toString().trim().split('\n').map(JSON.parse);
+    assert(boundary.length<=512);
+    assert(boundary.every((r,i)=>r.sequence===i+1&&(!i||BigInt(r.monotonicNs)>=BigInt(boundary[i-1].monotonicNs))));
+    assert.deepEqual(boundary.filter(v=>v.phase==='pre-send').map(v=>v.sha256),outbound.map(v=>v.sha256));
+    assert.deepEqual(boundary.filter(v=>v.phase==='raw-message').map(v=>v.sha256),inbound.map(v=>v.sha256));
+    for(const row of boundary.filter(v=>v.phase==='raw-message')){
+      const at=boundary.indexOf(row);
+      assert(boundary.slice(at+1).some(v=>v.phase==='consumer'&&v.direction==='inbound'&&v.sha256===row.sha256),'base public ingress precedes consumer');
+    }
+    const stages=boundary.filter(v=>v.requestId===6);
+    const index=phase=>stages.findIndex(v=>v.phase===phase);
+    assert(index('pre-send')>=0);
+    if(mode==='send-throw')assert(index('send-throw')>index('pre-send'));
+    else assert(index('send-return')>index('pre-send'));
+    const settlements=stages.filter(v=>v.direction==='settlement');assert.equal(settlements.length,1);
+    if(mode==='native-sync-ack')assert(stages.indexOf(settlements[0])<index('send-return'),'reentrant settlement before send return');
+    if(mode==='delayed-inbound'){
+      assert(index('raw-message')>index('send-return'));
+      assert(Number(BigInt(stages[index('raw-message')].monotonicNs)-BigInt(stages[index('send-return')].monotonicNs))/1e6>=400);
+      assert(boundary.some(v=>v.phase==='node-scheduling'&&v.delayMs>=50),'controlled Node stall observed separately');
+    }
+    assert(boundary.filter(v=>v.phase==='node-scheduling').length<=96);
+    assert(!JSON.stringify({diagnostic,boundary}).includes('OFFLINE_STOP_BEFORE_NAVIGATION'),'no protocol error text');
+    assert(diagnostic.every(v=>!('raw' in v)&&!('result' in v)&&!('params' in v)));
     const waited=JSON.parse(zlib.gunzipSync(fs.readFileSync(dir+'/browser-wait.json.gz')));
     assert.equal(waited.code,0);assert.equal(waited.signal,null);assert(waited.stdoutEOF&&waited.stderrEOF);
     assert(!fs.existsSync(runtime+'/chrome-profile'),'physical profile removed after close');
@@ -241,11 +327,13 @@ async function main(){
       'Target.setAutoAttach','Target.getTargets','Target.attachToTarget','Target.setAutoAttach'];
     assert.deepEqual(methods.slice(0,6),prefix);assert.deepEqual(peer.protocol.slice(0,6).map(q=>q.id),[1,2,3,4,5,6]);
     const timedOut=mode==='withheld-page-reply'||mode==='late-page-reply'||mode==='native-late-ack';
-    const terminal=mode==='page-protocol-error'||mode==='page-socket-close'||timedOut;
+    const terminal=['page-protocol-error','page-socket-close','send-throw','send-error-event'].includes(mode)||timedOut;
     assert.deepEqual(methods,terminal?[...prefix,'Browser.close']:[...prefix,'Page.enable','Runtime.enable','Page.addScriptToEvaluateOnNewDocument','Browser.close']);
     if(timedOut)assert.match(peer.firstFailure.error,/CDP UNKNOWN Target.setAutoAttach; no replay/);
     else if(mode==='page-socket-close')assert.match(peer.firstFailure.error,/CDP close/);
     else if(mode==='page-protocol-error')assert.match(peer.firstFailure.error,/OFFLINE_PAGE_REFUSAL/);
+    else if(mode==='send-throw')assert.match(peer.firstFailure.error,/OFFLINE_SEND_THROW/);
+    else if(mode==='send-error-event')assert.match(peer.firstFailure.error,/CDP error/);
     else assert.match(peer.firstFailure.error,/OFFLINE_STOP_BEFORE_NAVIGATION/);
     assert(!methods.includes('Page.navigate'));assert(!fs.existsSync(runtime+'/ready.json'));
     const result={mode,code,signal,methods,manualPageSession:peer.chainSession,

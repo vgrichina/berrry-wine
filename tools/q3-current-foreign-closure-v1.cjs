@@ -109,6 +109,13 @@ function runCaller(run,selected,digest){
    require('./q3-input-wire-observation.cjs');
   }finally{delete process.env.Q3_NATIVE_COMPOSITION;}
  }
+ // Install below the expression-transforming wrapper: hashes here identify
+ // the bytes actually handed to the native WHATWG send implementation.
+ const transportFile=process.env.Q3_EXECUTION_BOUNDARY_OUT.replace(/\.jsonl\.gz$/,'-transport.jsonl.gz');
+ const transportFD=fs.openSync(transportFile,'wx',0o600),zlib=require('node:zlib');
+ globalThis.WebSocket=require('./q3-current-module.cjs').installTransportDiagnostics({WebSocket:globalThis.WebSocket,
+  write:row=>fs.writeSync(transportFD,zlib.gzipSync(JSON.stringify(row)+'\n'))});
+ process.once('exit',()=>fs.closeSync(transportFD));
  require('./q3-execution-boundary.cjs');
  require(path.join(root,m.consumerPath));
 }
