@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedda4dd40e2 actualversioned901pin Redlinecaller/snapshot/stagedimports regression/build PASS once; root463physical SHA-size packed787records verified logical126validgzip22EMPTY4DAMAGED strictmagic; 38drains184/184reaped. NativeReadyFALSE historicala320 admission mismatches current3e491. Fresh redline-current-startup-admission-1615 OFFLINE actualversionedcurrentCPU admission+productioncaller regression; no box/native retry. Historical1505/1485 evidence-location mistakes retained no restoration claim.
+  Next: Reviewed44fc9a134 once actualCPUWebCrypto/owningcaller27controls productionCLI/outerpreflight7/7reaps lockedbuildPASS; root220SHA-size21validgzip24EMPTY_INVALID three7/7drains. Fresh redline-current-admitted-native-fixture-1635 offlinefullclosure then soleNEXT ONE comma600 nativefixture after finalpublishedRELEASE of actualincludedQ2/Q3 overlaps. Explicitpublication/currentstartup versions; preserve deadlines no originalretry/nativeReadyclaim.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
