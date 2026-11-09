@@ -9,7 +9,7 @@ The terminal is a concrete caller gate failure, not a module admission failure
 or a native-completion UNKNOWN.
 
 Evidence is `scratch/runs/20261109-drakan-qualified-flight-0635/`. Git base
-`75b1a18c358f91a32790eac85fe12bc1b0d9427d`, the relevant uncommitted binary diff,
+`ecb95f4a8eb91140ed58ccca1f1cb90f9048c99b`, the relevant uncommitted binary diff,
 and small run-input patches provide source recovery. Media and modules remain
 existing path/SHA references. No source-tree archive, media/module duplicate,
 production edit, Quake2/Warcraft provider edit, worker agent, local browser or
