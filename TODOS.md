@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: sealed observer gates pass offline; remote wrapper cwd and terminal cancellation need repair
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed a9d727ebf/a335e00dc: sealed phase layout and actual consumer review gates pass offline/build. Live wrapper resolved relative helper outside checkout and failed; autonomous fixture capture continued after failure, violating strict-stop invariant. Zero input, no original. All163 tasks reaped; root verified bx_4w352ebj stopped with exact unforced receipt. Fresh q3-observer-terminal-coupling-2305 tests actual wrapper from /home/user with absolute paths and immediate native cancellation before fixture and conditional original. Alive arena movement/fire remain open.
+  Next: Reviewed 1a797e0b2/bd37a6a0a/8ab7ba897: absolute wrapper and immediate native cancellation repaired; actual delayed-native controls, generated consumers and locked build pass. Sole live fixture hit unchanged 55s observer deadline with no screenshot request; native SIGTERM followed cancellation in 3.554ms, no input/original/retry. All164 tasks reaped; root verified bx_vfnf79c8 STOPPED with exact unforced receipt. Fresh q3-missing-fixture-image-cause-2325 traces actual startup/service transition offline before another runtime. Alive arena movement/fire remain open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
@@ -123,7 +123,7 @@
   status: done for pickup/equipment/action; target damage and kill remain unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published905dab22b records original Conjurer Jack acquiring Force of Nature Staff of Recharge, inventory fourth-slot/held-model/HUD change, then green action effects and charge3→2. Coordinator personally inspected six paired captures and independently verified490 artifact references plus normal nonforced archived-box shutdown. Worker ended143 during finalization, cause unknown, without outer final/result; recovered note explicitly preserves this interruption and the DOM recorder's missing mouse-up coverage. No emulator fix, target hit/kill, GL, FPS, audio or full-playability claim. Note: docs/re-notes/nox-native-equipment-20261108.md.
-  Next: Reviewed ca5880f011/f2c46566bd: real kernel race fails before repair and passes after durable-service creation rescan; missing-lineage and exec controls still refuse. Native fixture146/146 and original343/343 complete lineage. Original reached Bunker, then task-local omitted capture label caused terminal review refusal before staff pickup or shot. Root verified bx_6cre9386 STOPPED with exact normal receipt. Fresh nox-labeled-command-target-2255 validates generated labeled commands before one conditional original staff/target attempt. Prior accepted pickup/action evidence stands; target damage remains open.
+  Next: Reviewed c3f2602b7/f80090c3b: unique capture-label validation and exact returned-image review binding pass actual 47-command route plus focused tests/build. Native fixture148/148 and original340/340 complete. Root separately reviewed staff pickup/equipment HUD3 and LEFT150 green particles HUD2; northeast door intact, health appears full, target damage UNKNOWN. Root verified bx_mdcvk7mm STOPPED exact normal receipt. Fresh nox-destructible-target-progress-2325 seeks visible target impact with Jack alive using supported short controls.
 
 - [x] World Circuit v1.03 original installation and native driving
   id: NEW-GAME-WORLD-CIRCUIT-V103-20261107
