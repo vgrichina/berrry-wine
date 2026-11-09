@@ -6,6 +6,9 @@
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),Module=require('node:module'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..');
 const consumerPath='scratch/runs/20261109-quake2-observed-guard-route-0105/browser-run.cjs';
+// Tested bounded retirement provider, committed as c443739b5. Refuse drift
+// before compiling or starting either the native fixture or original consumer.
+const custodySha256='05b7fe42cf7ac09df5f12f0ea073ea066892efb598b64b05fae19a3492c9f32c';
 const providers=Object.freeze({
   "scratch/runs/20261109-quake2-observed-guard-route-0105/browser-run.cjs": "2016ceaf3373097e3068d19b17977c68603b021805b4590202bdf3e6ffa0afbb",
   "scratch/runs/20261109-quake2-observed-guard-route-0105/control.py": "6d9a2ba481bd4092494c2cec4d9a011d3aaedc43e5d137a803c536f336fcfe1f",
@@ -22,7 +25,9 @@ function replaceOnce(source,before,after){assert.equal(source.split(before).leng
 function compose(){
  const references=Object.entries(providers).map(([file,hash])=>{const b=fs.readFileSync(path.join(root,file));assert.equal(crypto.createHash('sha256').update(b).digest('hex'),hash,'Q2 provider changed: '+file);return {path:file,sha256:hash,size:b.length};});
  for(const file of ['tools/quake2-native-driver-composition.cjs','tools/quake2-passive-attack.cjs','lib/quake2-owning-load-core.js','tools/quake2-native-launch-client.py','tools/q3-native-launch-client.py','tools/quake2-native-input.cjs','tools/quake2-native-transport.cjs','tools/native-browser-close.cjs','tools/native-command-log.cjs','tools/native-devtools-ready.cjs','tools/native_kernel_custody.py']){
-  const b=fs.readFileSync(path.join(root,file));references.push({path:file,sha256:crypto.createHash('sha256').update(b).digest('hex'),size:b.length});
+  const b=fs.readFileSync(path.join(root,file)),sha256=crypto.createHash('sha256').update(b).digest('hex');
+  if(file==='tools/native_kernel_custody.py')assert.equal(sha256,custodySha256,'tested Q2 custody provider required');
+  references.push({path:file,sha256,size:b.length});
  }
  const retainedSource=fs.readFileSync(path.join(root,consumerPath),'utf8');let source=retainedSource;
  source=replaceOnce(source,"const run=__dirname,root=path.resolve(run,'../../..')",`const run=path.resolve(process.env.QUAKE2_NATIVE_RUN),root=${JSON.stringify(root)}`);

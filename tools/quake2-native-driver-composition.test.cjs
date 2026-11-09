@@ -407,6 +407,15 @@ sys.exit(status if status>=0 else 128-status)
 async function main(){
   const run=path.resolve(process.argv[2]);fs.mkdirSync(run,{recursive:true});
   const result=composition.compose();
+  const custody='tools/native_kernel_custody.py',read=fs.readFileSync;
+  assert.equal(result.references.find(v=>v.path===custody).sha256,'05b7fe42cf7ac09df5f12f0ea073ea066892efb598b64b05fae19a3492c9f32c');
+  try{
+    fs.readFileSync=function(file,...args){
+      const bytes=read.call(this,file,...args);
+      return file===path.join(root,custody)?Buffer.concat([bytes,Buffer.from('\n# untested drift\n')]):bytes;
+    };
+    assert.throws(()=>composition.compose(),/tested Q2 custody provider required/);
+  }finally{fs.readFileSync=read;}
   assert(result.source.includes("WINE_QUAKE2_LOAD_OBSERVATION=true;window.WINE_QUAKE2_NATIVE_WRITE_OBSERVATION=true;"));
   const gateStart=' // The ordinary DLL-loader call is parked';
   const gateEnd=" save('launch.json'";
