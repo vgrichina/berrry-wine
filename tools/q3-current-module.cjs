@@ -315,7 +315,7 @@ function send(method,params={},sessionId,captureProbe=null)`);
   once('screenshotCompletion.request(meta,params);try{',
     "startupOutbound(meta,params);screenshotCompletion.request(meta,params);ws?.q3Capture?.request(meta,params);try{");
   once('const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));',
-    'startupInbound(msg.data);const v=JSON.parse(msg.data);ws?.q3Capture?.receive(msg,v,pending.get(v.id));screenshotCompletion.receive(v,pending.get(v.id));');
+    'startupInbound(msg.data);const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));ws?.q3Capture?.receive(msg,v,pending.get(v.id));');
   once("screenshotCompletion.deadline(meta);pending.delete(n);",
     "screenshotCompletion.deadline(meta);ws?.q3Capture?.deadline(meta);if(startupRecording)startupRecord('deadline',{requestId:n,method:meta.method,sessionId:meta.sessionId});pending.delete(n);");
   once("screenshotCompletion.transport(event);if(!closing)",

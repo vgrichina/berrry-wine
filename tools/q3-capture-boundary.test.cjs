@@ -163,6 +163,12 @@ function sourceChecks(source){
  }
  assert.equal(erased,prior,'all generated non-observation semantics/deadlines/ownership byte identical');
  assert(source.includes("ws?.q3Transport?.stop('navigation settled')"));
+ // Native lifecycle installs the unchanged wire hook after startup/capture
+ // composition. Exercise that real hook too: a synthetic consumer alone
+ // misses its required contiguous parse/screenshot seam.
+ const wire=require('./q3-input-wire-observation.cjs').integrate(source);
+ assert(wire.includes('const v=JSON.parse(msg.data);inputWire.receive(v,pending.get(v.id));screenshotCompletion.receive(v,pending.get(v.id));ws?.q3Capture?.receive(msg,v,pending.get(v.id));'));
+ new vm.Script(wire);
 }
 async function main(){
  const out=path.resolve(process.argv[2]||'');assert(process.argv[2]&&out.startsWith(root+'/scratch/runs/'));
