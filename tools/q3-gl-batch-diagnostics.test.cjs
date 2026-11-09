@@ -247,11 +247,123 @@ function bitmapBoundaryPlumbing(){
     }finally{adapter.destroy();}
   }
 }
+function getErrorStages(){
+  // Actual adapter -> Stream -> bridge.call(12) -> _call -> _current,
+  // with controlled activation/draw and the real GPU context error facade.
+  // The device's native GL method is a stub: these are semantic/boundary
+  // controls, never evidence for the cause or duration of a native stall.
+  const {WebGLBackend}=require('../lib/gpu-backend');
+  for(const enabled of [false,true])for(const scenario of [
+    'backend','retained','frontend','flush-error-value','context-throw','flush-throw',
+    'frontend-throw','backend-throw','no-context','clock-throw','bounded']){
+    const capacity=scenario==='bounded'?4:128;
+    const host=new Bridge({renderer:{},glBatchDiagnostics:{enabled,maxRecords:capacity}});
+    const memory={buffer:new SharedArrayBuffer(4096)},events=[],sentinel={scenario};
+    let bridge,clockCalls=0,now=100,flushes=0,nativeCalls=0,partial;
+    const device=Object.create(WebGLBackend.prototype);
+    device.canvas={width:1,height:1};
+    let retained=[0x502,0];
+    device.gl={getError(){
+      nativeCalls++;events.push('native');
+      if(scenario==='backend-throw')throw sentinel;
+      if(scenario==='retained')return retained.shift()||0;
+      partial=host.diagnosticSnapshot();return 0x501;
+    }};
+    const backend=device.createContextBackend(1,1);
+    if(scenario==='retained'){backend.captureErrors();events.length=0;nativeCalls=0;}
+    const frontend=Object.assign(Object.create(GL.FixedFunctionGL.prototype),{
+      gl:device.gl,backend,lastError:scenario==='frontend'?0x504:0,
+      flushPendingDraw(){
+        flushes++;events.push('flush');
+        return GL.FixedFunctionGL.prototype.flushPendingDraw.call(this);
+      },
+      _drawGeometry(draw){
+        events.push('draw');assert.equal(draw.vertices.length,8);
+        if(scenario==='flush-throw')throw sentinel;
+        if(scenario==='flush-error-value')this.lastError=0x505;
+      }});
+    frontend.enqueuePacked(4,new Float32Array(4));
+    frontend.enqueuePacked(4,new Float32Array(4));
+    if(scenario==='frontend-throw')Object.defineProperty(frontend,'lastError',{get(){throw sentinel;}});
+    class ControlledBridge extends GL.OpenGLHostBridge{
+      constructor(options){super(options);bridge=this;}
+      _activateWebgl(){events.push('activate');if(scenario==='context-throw')throw sentinel;}
+    }
+    const context={OpenGLCompat:{OpenGLHostBridge:ControlledBridge},GLCommandStream:Stream,
+      SharedArrayBuffer,Atomics,Int32Array,Float64Array,performance:{now(){
+        clockCalls++;
+        if(!enabled||scenario==='clock-throw')throw Error('observer clock unavailable');
+        return now+=0.25;
+      }}};
+    vm.runInNewContext(fs.readFileSync(require.resolve('../lib/gl-render-worker'),'utf8'),context);
+    const adapter=context.GLRenderWorker.create({instance:{exports:{}},memory,backend:'webgl',endpointId:31,
+      options:enabled?{glBatchDiagnostics:{buffer:host.batchDiagnostics.buffer}}:undefined,sendFrame(){}});
+    if(scenario!=='no-context'){
+      bridge.contexts.set(9,{handle:9,hwnd:8,drawable:{},software:false,frontend,backend});
+      bridge.currentByOwner.set(7,9);
+    }
+    assert.equal(Object.hasOwn(bridge,'_getErrorStage'),enabled);
+    const b=batch(memory,[['glGetError',[],123]]);
+    const execute=()=>adapter.execute({memoryOffset:b.byteOffset,bytes:b.bytes,owner:7,frameToken:73,
+      windows:[{hwnd:8,w:1,h:1}]}).value;
+    try{
+      const throws=scenario.endsWith('-throw')&&scenario!=='clock-throw';
+      if(throws)assert.throws(execute,e=>e===sentinel,'original thrown value survives all wrappers');
+      else assert.equal(execute(),scenario==='no-context'?0:scenario==='frontend'?0x504:
+        scenario==='flush-error-value'?0x505:scenario==='retained'?0x502:0x501);
+      assert.equal(bridge._owner,0);assert.equal(bridge._capture,null);
+      if(scenario==='frontend')assert.equal(frontend.lastError,0);
+      if(['frontend','flush-error-value','retained','context-throw','flush-throw','frontend-throw','no-context'].includes(scenario))
+        assert.equal(nativeCalls,0,'frontend/retained errors and early failure must not query the device');
+      if(scenario!=='no-context')assert.equal(flushes,scenario==='context-throw'?1:2,
+        'original replay-finally flush follows opcode flush/failure');
+      if(scenario!=='no-context'){
+        assert.equal(frontend.pendingDraw,null,'real pending draw is consumed exactly once');
+        assert.equal(events.filter(e=>e==='draw').length,1);
+        if(nativeCalls)assert(events.indexOf('draw')<events.indexOf('native'),'pending draw precedes native query');
+      }
+      const snap=host.diagnosticSnapshot();
+      if(!enabled){assert.equal(clockCalls,0,'unarmed actual opcode12 never reads diagnostic clock');continue;}
+      if(scenario==='clock-throw'){assert(snap.render.errors>0);continue;}
+      assert(clockCalls>0);
+      const records=snap.render.records,stages=records.filter(r=>r.kind.startsWith('get-error-'));
+      if(scenario==='bounded'){
+        for(let n=0;n<200;n++)execute();
+        assert.equal(host.diagnosticSnapshot().render.records.length,capacity);
+        assert.equal(records.length,capacity);assert(snap.render.dropped>0);
+        assert.equal(host.batchDiagnostics.buffer.byteLength,(16+capacity*16)*4);continue;
+      }
+      const failed=scenario==='context-throw'?'context':scenario==='flush-throw'?'flush':
+        scenario==='frontend-throw'?'frontend':scenario==='backend-throw'?'backend':null;
+      const names=scenario==='no-context'||failed==='context'?['context']:
+        failed==='flush'?['context','flush']:failed==='frontend'||['frontend','flush-error-value'].includes(scenario)?
+          ['context','flush','frontend']:['context','flush','frontend','backend'];
+      assert.deepEqual(stages.map(r=>r.kind),names.flatMap(n=>[
+        `get-error-${n}-enter`,`get-error-${n}-${n===failed?'error':'exit'}`]));
+      for(const r of stages){
+        assert.equal(r.opcode,12);assert.equal(r.endpointId,31);assert.equal(r.owner,7);
+        assert.equal(r.context,scenario==='no-context'?0:9);assert.equal(r.frameToken,73);
+        assert.equal(r.aux,123);assert.equal(r.memoryOffset,b.byteOffset);assert.equal(r.bytes,b.bytes);
+        if(r.beginSequence){
+          const start=records.find(s=>s.sequence===r.beginSequence);
+          assert(start);assert.equal(r.durationMs,r.atMs-start.atMs);assert.equal(r.durationMs,0.25);
+        }
+      }
+      assert.equal(snap.render.boundaryErrors,throws?4:0,'stage/opcode/stream/batch error boundaries');
+      if(scenario==='backend')assert.equal(partial.render.records.at(-1).kind,'get-error-backend-enter',
+        'snapshot while backend is running retains committed enter marker');
+      if(scenario==='frontend'||scenario==='retained'){
+        assert.equal(execute(),scenario==='frontend'?0x501:0,'consumed error is cleared before next query');
+        assert.equal(nativeCalls,1,'next query reaches the real device method once');
+      }
+    }finally{bridge.contexts.clear();adapter.destroy();}
+  }
+}
 (async()=>{
   assert.deepEqual(await parity(false),await parity(true),'off/on commands, values, frames, ordering and memory parity');
   assert.deepEqual(await parity(false),await parity('configured'),'normal constructor module opt-in parity');
   assert.deepEqual(await transportErrorParity(false),await transportErrorParity(true),'off/on actual transport errors and owner retirement parity');
   assert.deepEqual(await ordering(false),await ordering(true),'off/on actual pending admission and owner ordering parity');
-  await pendingAndErrors();await boundedAndRejected();exactExceptionsAndOffPath();bitmapBoundaryPlumbing();
+  await pendingAndErrors();await boundedAndRejected();exactExceptionsAndOffPath();bitmapBoundaryPlumbing();getErrorStages();
   console.log('PASS production GL host/Endpoint/Manager/NodeWorker dispatcher + real Stream/bridge; pending independent snapshots, errors, late/rejected frames, ring bounds, off/on parity. Synthetic WASM exports/canvas only; no GPU/game claims.');
 })().catch(error=>{console.error(error);process.exitCode=1;});
