@@ -40,9 +40,11 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
     if (name === root + '/test/static-server.js') return {startStaticServer:async() => ({
       prependListener() {}, address:() => ({port:1}), closeAllConnections() {}, close:fn => fn()
     })};
-    if (parent?.filename === retained && name === './bound-input.cjs') return {createChain:() => ({
+    if (parent?.filename === retained && name === './bound-input.cjs') return {...(process.env.Q3_INPUT_CASE?load.call(this,name,parent,main):{}),createChain:() => ({
       establishReady:async() => ({fixture:'no guest'}),
-      capture:async label => ({png, before:{}, after:{}, capture:{label}})
+      capture:async label => ({png, before:{}, after:{}, capture:{label,sha256:require('node:crypto').createHash('sha256').update(png).digest('hex')}}),
+      admit:async(review,dispatch)=>dispatch({live:{identity:{fixture:'inert'}}}),
+      progress:async()=>{if(process.env.Q3_INPUT_CASE==='sample-error')throw Error('FIRST inert sample failure');return {fixture:'no guest'};}
     })};
     if (parent?.filename === retained && name === './readiness.cjs') return {ready:async() => ({fixture:'no guest'})};
     if (parent?.filename === retained && name === './local-controls.cjs' && (process.env.Q3_NATIVE_CANCEL_PROBE === '1'||process.env.Q3_NATIVE_JOINED_FIXTURE === '1')) return {run:async({out})=>{
@@ -78,6 +80,17 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
         // on terminal/EOF. It must never synthesize a successful CDP result.
         return;
       }
+      if (v.method === 'Input.dispatchKeyEvent' && process.env.Q3_INPUT_CASE) {
+        const mode=process.env.Q3_INPUT_CASE;
+        const reply=()=>{const message=new MessageEvent('message',{data:JSON.stringify({id:v.id,result:{}})});this.dispatchEvent(message);this.onmessage?.(message);};
+        const applied=()=>fs.appendFileSync(dir+'/application.jsonl',JSON.stringify({at:Date.now(),type:v.params.type,key:v.params.key})+'\n');
+        if(mode==='delayed-application')setTimeout(applied,650).unref();else applied();
+        if(mode==='stalled-down'&&v.params.type==='keyDown')return;
+        if(mode==='independent-up'&&v.params.type==='keyUp'&&v.params.key==='Control')return;
+        if(mode==='delayed-reply'||mode==='delayed-application')setTimeout(reply,650).unref();
+        else queueMicrotask(reply);
+        return;
+      }
       if (v.method === 'Runtime.evaluate' && fs.existsSync(dir + '/arm-terminal')) {
         fs.writeFileSync(dir + '/pending-cdp-at', String(Date.now()));
         if(process.env.Q3_FIXTURE_STALL_CDP==='1'){
@@ -100,6 +113,12 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
     close() { this.readyState = 3; }
   }
   globalThis.WebSocket = ProtocolSocket;
+  if(process.env.Q3_INPUT_OLD==='1'){
+    const control=new Module(path.join(__dirname,'q3-native-driver-composition.control.cjs'),module);
+    control.filename=path.join(__dirname,'q3-native-driver-composition.control.cjs');control.paths=module.paths;
+    control._compile(cp.execFileSync('git',['show',process.env.Q3_INPUT_BASE+':tools/q3-native-driver-composition.cjs'],{cwd:root}).toString(),control.filename);
+    control.exports.install();
+  }
   if (process.env.Q3_FIXTURE_OLD === '1') {
     const result = composition.compose(), ext = Module._extensions['.cjs'] || Module._extensions['.js'];
     fs.appendFileSync = result.append;
