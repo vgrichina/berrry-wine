@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed6e18a9865 sparsebindingfix461SHA46gzipPASS focused11composed buildPASS noBox actualbindingsUNKNOWN. Fresh quake2-sparse-native-combat-0517 PID1111584 thread01a1bebc-94a4-7bc0-b6f8-a46188811e96 prepares original gameplay after WC0512 PHYSICAL_DRAINED; strictcaps unchanged.
+  Next: Reviewed3bcdc8783 projectile+shatteredpane HP100 PNG personallyseen523SHA279gzipPASS; guard/passageUNKNOWN quitTERMfailed. Fresh quake2-shattered-pane-onward-0537 PID1136560 thread01a1becc-1708-78e3-8ee2-4be80d0cd8f0 preparesoffline waitsWAIT_WC0535_RELEASE allcapsunchanged.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -56,7 +56,7 @@
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed 16c496ca2 1041SHA PASS productioncode reviewed oldFAILnewPASS13composed5EOFcontrols buildPASS actualChromeunresolved. Fresh warcraft-native-current-objective-0512 PID1100184 thread01a1beb7-28ed-7522-a767-192b51bae6d6 prepares offline then one original objective after Super0512drain; allcapsunchanged.
+  Next: Reviewed838d4f0df privatequalification bootstrapfix491SHA144gzipPASS productiondiff reviewed; actualobjective unresolved creatorUNKNOWN. Fresh warcraft-qualified-native-objective-0535 PID1135484 thread01a1becb-7653-7442-8050-50b00f683265 preparesoffline waitsWAIT_SUPER0525_RELEASE allcapsunchanged.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
