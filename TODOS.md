@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed efdcad9a once345SHA161gzip; native inputs passed, ordinary quit escalated SIGTERM normalfalse. Box archived stop_f07c5c431fca7a35. Repair actual joined quit offline; no gameplay retry. Fresh quake2-joined-quit-repair-0832.
+  Next: Reviewed e7b666aa4 once1487SHA377gzip. Actual composed ordinary-quit reproduction identifies custody journal-service retirement dependency; historical syscall cause remains UNKNOWN. Fresh quake2-custody-retirement-repair-0844 explicitly repairs shared custody terminal service offline, preserving durable admission evidence and real waits; no caps extension.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
