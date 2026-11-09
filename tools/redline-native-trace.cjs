@@ -43,10 +43,27 @@ function launch({spawn,executable,argv,options,out,save,now=()=>performance.now(
   save('native-trace-spawn.json',{executable,argv:actual,pid:child.pid,nodeMonotonicMs:now(),spawnCallElapsedMs:now()-started});
   return child;
 }
-// Filesystem only, after existing actual browser wait + separate stream EOF.
+// Filesystem only, after existing cleanup reports actual wait and separate EOF.
 // Never send Tracing.end, read guest state, or extend a failed command.
 function retrieve(out,receipt,{maxBytes=64*1024*1024}={}){
   const file=path.join(out,'native-startup-trace.json');
+  // Retain a bounded byte observation even when cleanup/JSON validation fails.
+  // This snapshot is neither EOF nor a complete/valid trace, including when
+  // inherited writers can still append. Never parse or repair partial events.
+  let prefix;
+  let fd;
+  try{
+    fd=fs.openSync(file,fs.constants.O_RDONLY|fs.constants.O_NONBLOCK|fs.constants.O_NOFOLLOW);
+    const stat=fs.fstatSync(fd);assert(stat.isFile(),'regular trace required');
+    const buffer=Buffer.alloc(Math.min(stat.size,64*1024));let length=0;
+    while(length<buffer.length){const n=fs.readSync(fd,buffer,length,buffer.length-length,null);if(!n)break;length+=n;}
+    const bytes=buffer.subarray(0,length);
+    prefix={bytes:bytes.length,sha256:hash(bytes),dataBase64:bytes.toString('base64'),
+      observedFileSize:stat.size,byteCap:64*1024,capped:stat.size>buffer.length,
+      snapshotOnly:true,traceCompleteness:'UNKNOWN',streamEOF:receipt.streamEOF===true,
+      actualBrowserExit:receipt.actualBrowserExit??null};
+  }catch(error){prefix={snapshotOnly:true,error:String(error),traceCompleteness:'UNKNOWN'};}
+  finally{if(fd!==undefined)fs.closeSync(fd);}
   try{
     assert(receipt.actualBrowserExit&&receipt.streamEOF,'joined no-input cleanup required');
     const stat=fs.lstatSync(file);assert(stat.isFile()&&!stat.isSymbolicLink());assert(stat.size>0&&stat.size<=maxBytes,'bounded flushed trace required');
@@ -54,7 +71,7 @@ function retrieve(out,receipt,{maxBytes=64*1024*1024}={}){
     assert(Array.isArray(events),'Chrome JSON traceEvents required');
     const dispatch=events.filter(e=>e.name==='EventDispatch'&&['keydown','keyup'].includes(e.args?.data?.type)).map(e=>({pid:e.pid,tid:e.tid,ts:e.ts,dur:e.dur,ph:e.ph,type:e.args.data.type,args:e.args}));
     const clockSync=events.filter(e=>e.ph==='c'||/clock.?sync/i.test(e.name??''));
-    return {file,bytes:bytes.length,sha256:hash(bytes),flushedJSON:true,events:events.length,dispatch,clockSync,
+    return {file,prefix,bytes:bytes.length,sha256:hash(bytes),flushedJSON:true,events:events.length,dispatch,clockSync,
       traceClock:'raw Chrome trace microseconds; Node mapping UNKNOWN without clock sync',
       validationScope:'Keyboard dispatch pairs only, including startup preflight; comma event attribution UNKNOWN until raw latency flow/clock/target correlation',
       metadata:value.metadata??null,
@@ -62,7 +79,7 @@ function retrieve(out,receipt,{maxBytes=64*1024*1024}={}){
       inputLatencyEvents:events.filter(e=>/input|latency/i.test(e.cat??'')).length,
       taskEvents:events.filter(e=>/RunTask|ThreadController|ThreadPool_RunTask/.test(e.name??'')).length,
       cause:'UNKNOWN: correlate target pid/tid, input latency flow and retained delivery receipt before attribution'};
-  }catch(error){return {file,flushedJSON:false,validKeyboardBoundary:false,error:String(error),cause:'UNKNOWN'};}
+  }catch(error){return {file,prefix,flushedJSON:false,validKeyboardBoundary:false,error:String(error),cause:'UNKNOWN'};}
 }
 function integrate(source=generated()){
   source=replace(source,'for(const p of pins.files){',`for(const name of ${JSON.stringify(providers)})assert.equal(pins.files.filter(p=>p.path===name).length,1,'trace provider must be pinned: '+name);for(const p of pins.files){`);
