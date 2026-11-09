@@ -50,7 +50,7 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedbef7251a0 Super0350 readybeforehelperPASS but Return spelling rejectedbeforeinput;319SHA293gzip verified no newprogress boxarchiveddrained. Fresh supertux-validated-enter-gameplay-0400 PID984814 thread01a1be74-6057-7642-a2fa-a8ef4d42375f exactEnter/setup/Pause validation offline before ONEoriginal AFTER Q20350 release; explicitreviewclientinitialcapture and promptchoice unchangedcaps. Full27/parity/audioFPSopen.
+  Next: Super0400 validatedEnter reachedworldmap preexistingscore75coins3, mapdownUNKNOWN beforeadmission age12109ms innercausenotretained noPause/client/newgameplay. Reviewed509SHA gzipPASS boxarchiveddrained. Fresh supertux-menu-failure-cause-0415 PID1009456 thread01a1be83-c443-7fc3-ada8-696c3f197cec OFFLINE actualcause preservation and setup latency productionrepair; unchanged12scap no neworiginal authorized.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
