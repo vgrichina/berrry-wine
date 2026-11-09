@@ -5,6 +5,7 @@ const zlib=require('node:zlib'),{pipeline}=require('node:stream/promises');
 const {createLifecycle,observeChild}=require('./redline-fixture-shutdown.cjs');
 const root=path.resolve(__dirname,'..'),run=path.resolve(process.env.REDLINE_RUN||root+'/scratch/runs/20261108-redline-car-door-native');
 const fixture=process.env.REDLINE_NATIVE_FIXTURE==='1'?require('./redline-production-fixture.cjs'):null;
+const {observeHold}=require('./redline-key-delivery.cjs');
 if(fixture)assert(!process.env.NO_ORIGINAL&&!process.env.WEBGL_QUALIFY&&!process.env.TR2_GENERATED,'fixture requires the production startup route');
 const bound=require(run+'/bound-input.cjs');
 const out=run+'/'+(fixture?'native-fixture':process.env.NO_ORIGINAL?'production-preflight':process.env.WEBGL_QUALIFY?'webgl-qualify':process.env.TR2_GENERATED?'generated-v2':'original'),t=require(run+'/transport.cjs');
@@ -14,7 +15,7 @@ const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));
 for(const p of pins.files){const b=fs.readFileSync(root+'/'+p.path);assert.equal(sha(b),p.sha256,p.path);assert.equal(b.length,p.size);}
 if(fixture)for(const name of ['tools/redline-native-fixture.cjs','tools/redline-production-fixture.cjs','tools/redline-fixture-shutdown.cjs'])assert.equal(pins.files.filter(p=>p.path===name).length,1,'fixture provider must be in verified closure: '+name);
 if(!process.env.NO_ORIGINAL&&!process.env.WEBGL_QUALIFY&&!process.env.TR2_GENERATED){
-  for(const name of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','tools/redline-fixture-shutdown.cjs','lib/redline-startup-admission.js'])
+  for(const name of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','tools/redline-fixture-shutdown.cjs','tools/redline-key-delivery.cjs','lib/redline-startup-admission.js'])
   assert.equal(pins.files.filter(p=>p.path===name).length,1,'startup provider must be in verified closure: '+name);
 }
 const start=Date.now(),deadline=Number(process.env.BROWSER_DEADLINE);assert(Number.isFinite(deadline)&&deadline>start&&deadline-start<30*60000);if(process.env.DRIVER_PREFLIGHT==='1'){console.log(JSON.stringify({passed:true,start,deadline,remainingMs:deadline-start,strictLimitMs:30*60000,pins:pins.files.length,chromiumStarted:false,originalStarted:false}));process.exit(0);}fs.mkdirSync(out);fs.mkdirSync(out+'/commands');save('execution-window.json',{start:new Date(start).toISOString(),browserStop:new Date(deadline).toISOString(),replayAllowed:false});
@@ -73,7 +74,7 @@ async function execute(c,markDispatch){
  if(['click','doubleclick','drag'].includes(c.action)){const geometry=await evaluate(`(()=>{const r=document.getElementById('screen').getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height}})()`);const proof=await require(run+'/native-mouse.cjs').perform({send,session:pageSession,geometry,command:c});save('input-'+c.id+'-mouse.json',proof);}
  if(c.action==='key'||c.action==='combo'){
   const before=fixture?await fixture.poll(evaluate):null;
-  const held=await bound.hold({send,session:pageSession,keys:c.action==='combo'?c.keys:[c.key],holdMs:c.holdMs??100,
+  const held=await observeHold({hold:bound.hold,save:report=>save('input-'+c.id+'-delivery.json',report),send,session:pageSession,keys:c.action==='combo'?c.keys:[c.key],holdMs:c.holdMs??100,
    sample:async()=>{if(c.captureHeld&&!fs.existsSync(out+'/'+c.label+'-held.png')){const shot=await send('Page.captureScreenshot',{format:'png'},pageSession);fs.writeFileSync(out+'/'+c.label+'-held.png',Buffer.from(shot.data,'base64'),{flag:'wx'});}const progress=await chain.progress(receipt.live.identity);return fixture?{...progress,fixture:await fixture.poll(evaluate)}:progress;},saveSample:s=>log('input-'+c.id+'-samples.jsonl',s)});
   save('input-'+c.id+'-hold.json',held);
   if(fixture){const after=await fixture.poll(evaluate),i=[',','.'].indexOf(c.key);assert(i>=0,'fixture comma/period control required');assert(held.samples.some(s=>s.whollyDuringHold&&s.fixture.keys[i]===128),'owning native keyboard high read');assert.equal(after.keys[i],0,'native key released');assert(after.counts[i]>before.counts[i]);assert.equal(after.endpoint,before.endpoint);save('input-'+c.id+'-native.json',{before,after});}

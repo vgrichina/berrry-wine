@@ -157,7 +157,15 @@ async function composed(caller,mode='positive',liveRun=null) {
       if(mode==='detached')emit({method:'Target.detachedFromTarget',params:{sessionId:'worker-session'}});
       return {bytecode:bytes.toString('base64')};
     }
-    if(method==='Input.dispatchKeyEvent'&&[',','.'].includes(p.key)){page.keys[p.key===','?0:1]=p.type==='keyDown'?128:0;}
+    if(method==='Input.dispatchKeyEvent'&&[',','.'].includes(p.key)){
+      events.push(p.type+':'+p.key);
+      if(mode==='keydown-service-delay'&&p.type==='keyDown')await delay(750);
+      page.keys[p.key===','?0:1]=p.type==='keyDown'?128:0;
+      events.push('applied-'+p.type+':'+p.key);
+      if(mode==='keydown-response-delay'&&p.type==='keyDown')await delay(750);
+      if(mode==='keydown-stalled'&&p.type==='keyDown')return new Promise(()=>{});
+      if(mode==='release-failure'&&p.type==='keyUp')throw Error('inert keyUp service failure');
+    }
     if(method==='Page.captureScreenshot')return {data:Buffer.from('inert-png').toString('base64')};
     if(method==='Browser.close'){closed=true;events.push('browser-closed');if(liveRun){browser.stdin.end('close');if(mode==='close-no-ack')return new Promise(()=>{});}}
     return {};
@@ -171,7 +179,7 @@ async function composed(caller,mode='positive',liveRun=null) {
     close(){this.readyState=3;}
   }
   const pins={commit:'fixture',files:[{path:'build/wine-assembly.wasm',sha256:SELECTED.sha256,size:SELECTED.bytes}],httpPins:[]};
-  for(const p of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','lib/redline-startup-admission.js','tools/redline-fixture-shutdown.cjs']) {
+  for(const p of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','lib/redline-startup-admission.js','tools/redline-fixture-shutdown.cjs','tools/redline-key-delivery.cjs']) {
     const bytes=fs.readFileSync(path.join(ROOT,p));pins.files.push({path:p,sha256:sha(bytes),size:bytes.length});
   }
   if(liveRun)for(const p of ['tools/redline-native-fixture.cjs','tools/redline-production-fixture.cjs']){const bytes=fs.readFileSync(path.join(ROOT,p));pins.files.push({path:p,sha256:sha(bytes),size:bytes.length});}
@@ -223,7 +231,7 @@ async function composed(caller,mode='positive',liveRun=null) {
   // exercised too, without allocating a browser or issuing a game command.
   if(!closed)await vm.runInContext("closing=false;close('inert fixture complete')",driver);
   if(liveRun&&proc.exitCode){const before=events.length;await assert.rejects(vm.runInContext("send('Input.dispatchKeyEvent',{type:'keyDown',key:','},pageSession)",driver));await assert.rejects(vm.runInContext("capture('after-terminal')",driver));assert.equal(events.length,before,'terminal probes issue zero CDP');}
-  if(liveRun)fs.writeFileSync(path.join(liveRun,'inert-events.json'),JSON.stringify({events,exitCode:proc.exitCode,nativeQualified:false},null,2));
+  if(liveRun)fs.writeFileSync(path.join(liveRun,'inert-events.json'),JSON.stringify({events,exitCode:proc.exitCode,inertKeys:page.keys,nativeQualified:false},null,2));
   return {events,saved,page,closed,exitCode:proc.exitCode,
     probe:expression=>vm.runInContext(expression,driver)};
 }
@@ -331,11 +339,11 @@ async function suite(){
   console.log('PASS offline composition only; no native/custody/input qualification');
   await productionFixtureSuite();
 }
-async function productionFixtureSuite(){
+async function productionFixtureSuite(modes=['old-caller','positive','close-no-ack','wrong-live-bytes']){
   const base=process.env.REDLINE_PRODUCTION_TEST_RUN||path.join(ROOT,'scratch/runs/20261109-redline-production-fixture-repair-0832/controls');
   fs.mkdirSync(base,{recursive:true});
   const wrapper=fs.readFileSync(path.join(__dirname,'redline-native-fixture.cjs'),'utf8'),rows=[];
-  for(const mode of ['old-caller','positive','close-no-ack','wrong-live-bytes']){
+  for(const mode of modes){
     const dir=fs.mkdtempSync(path.join(base,mode+'-'));
     const childEnv={...process.env,REDLINE_RUN:dir,BROWSER_DEADLINE:String(Date.now()+120000),INERT_MODE:mode};
     const mockRequire=n=>{
@@ -367,11 +375,50 @@ async function productionFixtureSuite(){
       assert(!events.includes('fixture-loadExe'));assert(!events.includes('fixture-slice'));
       assert(events.includes('cleanup-joined'));assert(events.indexOf('cleanup-joined')<events.indexOf('browser-closed'));
       assert(events.includes('first-terminal-failure'));const tail=events.slice(events.indexOf('first-terminal-failure')+1);assert(!tail.some(e=>e==='Runtime.evaluate'||e==='Page.captureScreenshot'||e.startsWith('Input.')));
+    }else if(mode.includes('keydown-')||mode==='release-failure'){
+      assert(events.includes('fixture-preCPU-preDLLmain'));
+      assert(events.includes('first-terminal-failure'));
+      const tail=events.slice(events.indexOf('first-terminal-failure')+1);
+      assert(!tail.some(e=>e==='Runtime.evaluate'||e==='Page.captureScreenshot'||e.startsWith('Input.')));
+      assert.equal(events.filter(e=>e==='keyDown:,').length,1);
+      assert.equal(events.filter(e=>e==='keyUp:,').length,1,'independent single release');
+      assert(!events.includes('keyDown:.'),'no next command/retry');
+      assert.equal(events.filter(e=>e==='Page.captureScreenshot').length,1,'startup only');
+      if(mode.endsWith('response-delay')){
+        assert(events.indexOf('applied-keyDown:,')<events.indexOf('applied-keyUp:,'));
+        assert.equal(report.inertKeys[0],0,'down was applied before its delayed reply; release cleared it');
+      }
+      if(mode==='keydown-service-delay'){
+        assert(events.indexOf('applied-keyDown:,')>events.indexOf('applied-keyUp:,'));
+        assert.equal(report.inertKeys[0],128,'inert late service can apply down after release; cleanup only');
+      }
+      assert(!fs.existsSync(path.join(dir,'native-qualification.json')));
+      assert(!fs.existsSync(path.join(dir,'native-fixture/input-comma-hold.json')),'no successful hold receipt');
+      const proof=path.join(dir,'native-fixture/input-comma-delivery.json');
+      if(mode.startsWith('old-'))assert(!fs.existsSync(proof),'old caller loses holdReceipt');
+      else {
+        const report=JSON.parse(fs.readFileSync(proof));assert.equal(report.ok,false);
+        assert.equal(report.holdMs,600);assert.equal(report.events.length,2);
+        assert(report.receipt);assert.deepEqual(report.receipt.attempted,[',']);
+        if(mode.startsWith('keydown-')){
+          assert.equal(report.receipt.samples.length,0,'no fabricated held read');
+          const [down,up]=report.events;
+          assert(up.dispatch.elapsedMs>=550&&up.dispatch.elapsedMs<1000,'release remains on independent 600 ms timer');
+          assert(down.response.elapsedMs>up.dispatch.elapsedMs,'late response follows release dispatch');
+          if(mode==='keydown-stalled'){
+            assert(report.error.includes('runtime closed; no replay'));
+            const first=JSON.parse(fs.readFileSync(path.join(dir,'native-fixture/first-browser-failure.json')));
+            assert(first.error.includes('command work deadline; never resend'),'existing work cap wins before the later CDP timeout');
+          }else assert(report.error.includes('input delivery exceeded hold bound'));
+        }else assert(report.events[1].response.error.includes('inert keyUp service failure'));
+      }
+      assert(events.includes('actual-inert-browser-wait')&&events.includes('inert-browser-stdout-EOF')&&events.includes('inert-browser-stderr-EOF'));
     }else{assert(!events.includes('fixture-preCPU-preDLLmain'));assert(!events.includes('fixture-loadExe'));}
     rows.push({mode,passed:true,oldFAIL:mode==='old-caller',nativeQualified:false,joins,dir});
     console.log('PASS actual production fixture composition: '+mode);
   }
   fs.writeFileSync(path.join(base,'results.json'),JSON.stringify({passed:true,nativeQualified:false,rows},null,2));
 }
-if(process.argv[2]==='--fixture-runner')composed(process.env.INERT_MODE==='old-caller'?cp.execFileSync('git',['show','2045a98ee7695bd031392dc16965be2eaed0882c:tools/redline-browser-run.cjs'],{cwd:ROOT,encoding:'utf8'}):callerSource,process.env.INERT_MODE||'positive',process.env.REDLINE_RUN).then(r=>{process.exitCode=r.exitCode;}).catch(e=>{console.error(e);process.exitCode=1;});
-else suite().catch(e=>{console.error(e);process.exitCode=1;});
+if(process.argv[2]==='--fixture-runner')composed(process.env.INERT_MODE==='old-caller'?cp.execFileSync('git',['show','2045a98ee7695bd031392dc16965be2eaed0882c:tools/redline-browser-run.cjs'],{cwd:ROOT,encoding:'utf8'}):process.env.INERT_MODE?.startsWith('old-')?cp.execFileSync('git',['show','045c3905f9c050a790914ca201c0575cdcdefd38:tools/redline-browser-run.cjs'],{cwd:ROOT,encoding:'utf8'}):callerSource,(process.env.INERT_MODE||'positive').replace(/^old-keydown-/,'keydown-'),process.env.REDLINE_RUN).then(r=>{process.exitCode=r.exitCode;}).catch(e=>{console.error(e);process.exitCode=1;});
+else if(require.main===module)suite().catch(e=>{console.error(e);process.exitCode=1;});
+module.exports={productionFixtureSuite};
