@@ -22,6 +22,83 @@ spec.loader.exec_module(kernel)
 
 
 class ParentLineage(unittest.TestCase):
+    def test_native_nonleader_exec_identity_transition_still_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(os.environ.get('CUSTODY_RETIREMENT_EVIDENCE',tmp))
+            run=Path(tempfile.mkdtemp(prefix='nonleader-exec-',dir=base))
+            result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                '--cancel-creators-fixture',str(run),'exec','fixed'],capture_output=True,text=True,timeout=15)
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            receipt=json.loads((run/'creator-waits.json').read_text())
+            self.assertEqual(receipt['supervisorWait'],1)
+            self.assertEqual(receipt['watchdogWait'],-15)
+            drain=json.loads((run/'kernel-drain.json').read_text())
+            self.assertFalse(drain['complete'])
+            self.assertTrue(drain['unreaped'])
+            self.assertRegex(drain['failure'],'PID reused while in custody|nonleader exec identity transition')
+            self.assertEqual(drain['cancellation'],[])
+            rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+            children=[r for r in rows if r['kind']=='custody' and r['cause']=='clone']
+            self.assertEqual(len(children),2)
+            self.assertTrue(all(r['pid']!=r['tgid'] for r in children))
+            isolated=json.loads((run/'isolated-waits.json').read_text())
+            self.assertTrue(isolated['adoptedWaits'])
+            self.assertFalse((run/'watchdog-fired.json').exists())
+
+    def test_cancellation_cannot_resume_creator_ahead_of_other_pending_lineage(self):
+        for kind in ('clone', 'fork', 'signal'):
+            for version in ('before', 'fixed'):
+                with self.subTest(kind=kind, version=version), tempfile.TemporaryDirectory() as tmp:
+                    base=Path(os.environ.get('CUSTODY_RETIREMENT_EVIDENCE',tmp))
+                    run=Path(tempfile.mkdtemp(prefix=kind+'-'+version+'-',dir=base))
+                    result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                        '--cancel-creators-fixture',str(run),kind,version],capture_output=True,text=True,timeout=15)
+                    self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                    (run/'fixture-process.json').write_text(json.dumps(dict(wait=result.returncode,
+                        stdout=result.stdout,stderr=result.stderr,stdoutEOF=True,stderrEOF=True,
+                        witness='subprocess.run communicate returned with both captured pipes drained')))
+                    receipt=json.loads((run/'creator-waits.json').read_text())
+                    self.assertEqual(receipt['supervisorWait'],1) # cancellation is never normal
+                    self.assertEqual(receipt['watchdogWait'],-15)
+                    self.assertFalse((run/'watchdog-fired.json').exists())
+                    drain=json.loads((run/'kernel-drain.json').read_text())
+                    barrier=json.loads((run/'pending-creators.json').read_text())
+                    rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+                    self.assertEqual(drain['complete'],version=='fixed')
+                    self.assertEqual(drain['kernelForkLineageComplete'],version=='fixed')
+                    self.assertTrue(drain['cancellation'])
+                    self.assertEqual(drain['unreaped'],[])
+                    self.assertEqual(drain['remaining'],[])
+                    self.assertEqual(drain['unresolvedResumes'],[])
+                    self.assertEqual(drain['unresolvedPtrace'],[])
+                    self.assertTrue(drain['commandLog']['eof'])
+                    by_sequence={r['sequence']:r for r in rows}
+                    for reap in drain['reaped']:
+                        witness=by_sequence[reap['beforeReapSequence']]
+                        terminal=by_sequence[reap['sequence']]
+                        self.assertEqual((witness['pid'],witness['start']),(reap['pid'],reap['start']))
+                        self.assertLess(witness['sequence'],terminal['sequence'])
+                        self.assertEqual(terminal['status'],reap['status'])
+                    for name in ('journal','commandLog'):
+                        stream=drain[name];data=gzip.decompress((run/stream['path']).read_bytes())
+                        self.assertEqual(hashlib.sha256(data).hexdigest(),stream['originalSha256'])
+                        self.assertEqual(len(data),stream['originalBytes'])
+                        self.assertTrue(stream['closed'])
+                    child=barrier['secondChild']
+                    self.assertTrue(any(r['pid']==child for r in drain['reaped']))
+                    if version=='fixed':
+                        error=json.loads((run/'supervisor-error.json').read_text())['error']
+                        self.assertTrue(error.startswith('InterruptedError('),error)
+                        lineage=next(r for r in rows if r['kind'] in ('custody','fork-lineage') and
+                            r['pid']==child and r.get('parentCustodian')==barrier['secondCreator'])
+                        release=json.loads((run/'first-creator-resume.json').read_text())
+                        self.assertLess(lineage['at'],release['at'])
+                        signals=[r for r in rows if r['kind']=='cancellation-sent']
+                        self.assertTrue(signals)
+                        self.assertLess(lineage['sequence'],signals[0]['sequence'])
+                    else:
+                        self.assertIn(child,[r['pid'] for r in drain['unresolvedLineage']])
+
     def test_missing_proc_at_queued_resume_still_requires_actual_terminal_wait(self):
         identify=kernel.identity;calls=[]
         def observation(pid):
@@ -649,6 +726,128 @@ class CompressedCancellation(unittest.TestCase):
     def test_cleanup_deadline_is_incomplete_with_verified_prefix(self):self.run_case('no-waits')
     def test_sigkill_is_explicitly_incomplete_and_preserves_prefix(self):self.run_case('hard-kill')
     def test_original_supervisor_default_term_truncates_gzip(self):self.run_case('legacy-term')
+
+
+def cancel_creators_fixture(run, kind, version):
+    """Both creators have real pending messages when cancellation is latched.
+
+    Select a legal wait order and delay after CONT; never synthesize a status.
+    The first nonleader creator's exit_group can supersede the other's message.
+    """
+    run=Path(run).resolve()
+    source=r'''
+#include <pthread.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+static int fork_leaf, signal_mode, exec_mode;
+static void *leaf(void *p) { for (;;) pause(); }
+static void *creator(void *p) {
+  while(access("go",F_OK))usleep(1000);
+  if(close(creat(p?"ready-b":"ready-a",0600)))_exit(85);
+  while(access(p?"ready-a":"ready-b",F_OK))usleep(1000);
+  if(exec_mode) {
+    if(!p) { execl("/bin/true","true",(char *)0);_exit(86); }
+    for(;;)pause();
+  }
+  if(signal_mode) {
+    if(!p) { raise(SIGTERM);for(;;)pause(); }
+    while(access("signal-go",F_OK))usleep(1000);
+  }
+  if(fork_leaf) { pid_t c=syscall(SYS_fork);if(c<0)_exit(81);if(!c)for(;;)pause(); }
+  else { pthread_t t;if(pthread_create(&t,0,leaf,0))_exit(82); }
+  _exit(0);
+}
+int main(int argc,char **argv) {
+  if(chdir(argv[1]))return 80;
+  fork_leaf=argc>2 && !strcmp(argv[2],"fork");
+  signal_mode=argc>2 && !strcmp(argv[2],"signal");
+  exec_mode=argc>2 && !strcmp(argv[2],"exec");
+  pthread_t a,b;
+  if(pthread_create(&a,0,creator,0)||pthread_create(&b,0,creator,(void *)1))return 83;
+  if(close(creat("go",0600)))return 84;
+  for(;;)pause();
+}
+'''.replace('#include <sys/wait.h>','#include <sys/wait.h>\n#include <fcntl.h>\n#include <sys/syscall.h>\n#include <signal.h>\n#include <string.h>')
+    with tempfile.TemporaryDirectory() as tmp:
+        c=Path(tmp)/'fixture.c';binary=Path(tmp)/'fixture'
+        c.write_text(source)
+        subprocess.run(['cc','-O2','-pthread',str(c),'-o',str(binary)],check=True,timeout=10)
+        (run/'native-inputs.json').write_text(json.dumps(dict(inputs=[dict(name=p.name,
+            size=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in (c,binary)],
+            recovery='Regenerate cancel_creators_fixture source from Git; cc -O2 -pthread fixture.c -o fixture.')))
+        gate_read,gate_write=os.pipe()
+        supervisor=os.fork()
+        if supervisor==0:
+            os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
+            module=kernel
+            if version=='before':
+                import types
+                revision='dec33253ced7f76b850c63f7ad1137c7f214b1ef'
+                data=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+                module=types.ModuleType('before');exec(compile(data,revision,'exec'),module.__dict__)
+            waitid,waitpid,trace=os.waitid,os.waitpid,module.ptrace
+            creators=[];selected=[];released=[]
+            flags=os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|kernel.WALL
+            def consume(task,options):
+                result=waitpid(task,options)
+                creation=result[0] and os.WIFSTOPPED(result[1]) and result[1]>>16 in (1,3)
+                fatal=result[0] and os.WIFSTOPPED(result[1]) and os.WSTOPSIG(result[1])==signal.SIGTERM
+                if creation or (fatal and kind=='signal' and not selected):
+                    child=ctypes.c_ulong();trace(module.GETEVENTMSG,task,data=ctypes.addressof(child))
+                    if creation and len(creators)<2:
+                        creators.append(child.value)
+                    elif task in creators and not selected:
+                        if kind=='signal':(run/'signal-go').write_text('1')
+                        other=next(t for t in creators if t!=task)
+                        due=time.monotonic()+2
+                        while time.monotonic()<due:
+                            value=waitid(os.P_PID,other,flags)
+                            if value and value.si_code==os.CLD_TRAPPED and value.si_status in (261,773):
+                                second=ctypes.c_ulong();trace(module.GETEVENTMSG,other,data=ctypes.addressof(second))
+                                selected.append(task)
+                                (run/'pending-creators.json').write_text(json.dumps(dict(firstCreator=task,
+                                    firstChild=child.value,secondCreator=other,secondChild=second.value,
+                                    siStatus=value.si_status,at=time.time())))
+                                os.kill(os.getpid(),signal.SIGTERM)
+                                break
+                            time.sleep(.001)
+                        assert selected,'second native creator message absent'
+                return result
+            def resume(request,task,addr=0,data=0):
+                if request==module.CONT and selected and task==selected[0] and not released:
+                    released.append(task)
+                    (run/'first-creator-resume.json').write_text(json.dumps(dict(pid=task,at=time.time())))
+                    result=trace(request,task,addr,data)
+                    time.sleep(.03) # let real exit_group supersede the other stop
+                    return result
+                return trace(request,task,addr,data)
+            try:
+                with patch.object(module.os,'waitpid',side_effect=consume),patch.object(module,'ptrace',side_effect=resume):
+                    due=time.time()+6
+                    module.supervise(run,[str(binary),str(run),kind],
+                        deadline=due,cleanup_deadline=due+1,journal_compression='gzip',command_compression='gzip')
+            except BaseException as error:
+                (run/'supervisor-error.json').write_text(json.dumps(dict(error=repr(error))))
+                os._exit(1)
+            os._exit(0)
+        watchdog=os.fork()
+        if watchdog==0:
+            os.close(gate_read);os.close(gate_write)
+            start=kernel.identity(supervisor)['start']
+            (run/'watchdog-armed.json').write_text(json.dumps(dict(target=supervisor,start=start,deadline=time.time()+10)))
+            time.sleep(10)
+            try:
+                if kernel.identity(supervisor)['start']==start:os.kill(supervisor,9)
+            except (FileNotFoundError,ProcessLookupError):pass
+            (run/'watchdog-fired.json').write_text('{}');os._exit(0)
+        os.close(gate_read)
+        while not (run/'watchdog-armed.json').exists():time.sleep(.001)
+        os.write(gate_write,b'1');os.close(gate_write)
+        _,status=os.waitpid(supervisor,0)
+        os.kill(watchdog,15);_,watch_status=os.waitpid(watchdog,0)
+        (run/'creator-waits.json').write_text(json.dumps(dict(supervisorWait=os.waitstatus_to_exitcode(status),
+            watchdogWait=os.waitstatus_to_exitcode(watch_status))))
 
 
 def parent_lineage_fixture(run, mode):
@@ -1311,10 +1510,11 @@ if __name__=='__main__':
                 pid,status=os.waitpid(-1,0)
                 adopted.append(dict(pid=pid,status=status,exit=os.waitstatus_to_exitcode(status)))
             except ChildProcessError:break
-        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture','--parent-lineage-fixture'):
+        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture','--parent-lineage-fixture','--cancel-creators-fixture'):
             (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
                 fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
+    elif len(sys.argv)>1 and sys.argv[1]=='--cancel-creators-fixture':cancel_creators_fixture(sys.argv[2],sys.argv[3],sys.argv[4])
     elif len(sys.argv)>1 and sys.argv[1]=='--parent-lineage-fixture':parent_lineage_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--causality-fixture':causality_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--command-gzip-fixture':command_gzip_fixture(sys.argv[2],sys.argv[3])

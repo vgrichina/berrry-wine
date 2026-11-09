@@ -195,24 +195,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     cancel_at = time.monotonic()
                     log('cancellation', **cancellation[0], cleanupDeadline=cleanup_deadline)
             peek = priority_wait()
-            if peek is None and resumes and not cancellation:
-                # A linked child (or its creator) can immediately exit_group.
-                # Harvest other creators' already-pending kernel messages before
-                # admitting that userspace: group exit can replace their stops.
-                task, (start, deliver, parent) = next(iter(resumes.items()))
-                del resumes[task]
-                try:
-                    assert identity(task)['start'] == start, 'PID reused before resume'
-                except (ProcessLookupError, FileNotFoundError):
-                    # A dying thread can lose /proc before its terminal wait.
-                    # Keep the actual ptrace/terminal obligation, as below.
-                    log('identity-unavailable-before-resume', pid=task, start=start)
-                released = trace_task(CONT, task, deliver)
-                if parent is not None:
-                    log('parked-child-release' if released else 'parked-child-release-pending',
-                        pid=task, parent=parent)
-                continue
-            if peek is None:
+            if peek is None and not resumes:
                 pump_output()
                 try:
                     peek = os.waitid(os.P_ALL, 0, wait_flags)
@@ -242,6 +225,25 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     except (ProcessLookupError, FileNotFoundError):
                         log('cancellation-identity-unavailable', pid=target, start=registered['start'], signal=sig)
                     sent.add((target, sig))
+            if peek is None and resumes:
+                # Cancellation does not waive the creator barrier. A linked
+                # creator can immediately exit_group, and delivery of a fatal
+                # signal can replace other creators' pending kernel messages.
+                # Scan before every queued CONT, including signal delivery.
+                # Cancellation signals above also follow that same scan.
+                task, (start, deliver, parent) = next(iter(resumes.items()))
+                del resumes[task]
+                try:
+                    assert identity(task)['start'] == start, 'PID reused before resume'
+                except (ProcessLookupError, FileNotFoundError):
+                    # A dying thread can lose /proc before its terminal wait.
+                    # Keep the actual ptrace/terminal obligation, as below.
+                    log('identity-unavailable-before-resume', pid=task, start=start)
+                released = trace_task(CONT, task, deliver)
+                if parent is not None:
+                    log('parked-child-release' if released else 'parked-child-release-pending',
+                        pid=task, parent=parent)
+                continue
             if peek is None:
                 time.sleep(.001); continue
             task = peek.si_pid
@@ -360,7 +362,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 if not trace_task(GETEVENTMSG, task, ctypes.addressof(former)): continue
                 assert former.value in (0, task), ('nonleader exec identity transition', task, former.value)
             deliver = 0 if event or sig in (signal.SIGTRAP, signal.SIGSTOP) else sig
-            if event == 6 or cancellation:
+            if event == 6:
                 trace_task(CONT, task, deliver)
             else:
                 resumes[task] = (owned[task]['start'], deliver, None)
