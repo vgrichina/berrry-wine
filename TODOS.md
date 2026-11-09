@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Revieweddbd792e432 once30SHA-size14gzipCRC2expectedcorrupt controls verified; actualcount0xe8 writer402a9f beforedecode publication403527 mapped; no productionrepair justified historicalcauseUNKNOWN. Fresh quake2-frame-writer-order-witness-1335 OFFLINE reuseexistingCPUstore APIs correlate unchangedreader boundaries with realCPUcontrols; noacceptancewaiver nativeexperiment.
+  Next: Reviewed19f6794f4 once21SHA-size4validgzip1expectedINVALID; actualREPpublication403527/frameclear403342/clientclear409221 changebytes epoch0 confirmed gap. Fresh quake2-rep-store-observer-repair-1365 OFFLINE narrowarmedCPU REP coverage repair exactEXE oldFAIL/newPASS architectureparity. Nativequalificationfalse uncoveredpeerhostABA remains; noacceptancewaiver.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
