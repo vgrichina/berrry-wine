@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed26403670e once178SHA80gzip actualcaller ROOT=REMOTE rebind makes localhealthpreload.relative_to(ROOT) ValueError BEFOREremotespawn noChrome. UUIDd28d470b archivedstop_b39b expiry10:47:30. Fresh quake2-staged-health-path-repair-1030 OFFLINE minimalproviderpath correction actualmainnamespace oldFAILnewPASS before anothernativefixture; Redline1020 thenQ31025 runtime.
+  Next: Revieweda06c8e6ac once74SHA18gzip actualmain ROOTrebind oldFAILnewPASS eagerHEALTH_PROVIDER corrected; generatedvalid/missing/wrongroot/tamper checks all724pins buildPASS. Fresh quake2-corrected-health-native-1040 prepares repinned wholeactualfixture thenoriginal passivehealthhistory; soleRuntime AFTER Redline1035 exact archiveddrain stopreceipt. PriorQ21020 UUIDd28d470b archivedstopb39b expiry10:47:30 retained.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed11f0fbc7e once1424SHA817gzip actualdiff productionrenderer physicalinput commandedVK/sourceidentity high-release gate inertfullcontroller oldFAIL8newPASS buildPASS. Nativefixture/cancel NOT_PROVEN. Fresh q3-physical-fixture-native-gameplay-1025 preparesoffline then soleRuntime after exactQ21020 andRedline1020 archiveddrain; wholeactualfixture andactualBoatcancel beforeoriginal.
+  Next: Reviewedac3448466 once219SHA170gzip finalmanifest. Wholeactualfixture firstEnter100ms DOWNreplyUNKNOWN UPsubmitted99.843 no physicalsamples ACK0 cancellationprobe original. UUID33932372 bx_64q745zr ARCHIVEDPHYSICALDRAINED stop10dc completed10:30:10 expiry10:53:06 retained. Fresh q3-native-delivery-cause-1040 OFFLINE actualtransport cause and causal correction without capincrease or unchangednative retry.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
