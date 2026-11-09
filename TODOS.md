@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed17c842b69 once:636 physical SHA-size and87validgzip PASS; no box, queued fallback ended without gameplay. Actual generated caller returns0 after missingACK failure. Fresh redline-caller-failure-side-door-1634 owns narrow exit propagation repair and ONE conditional native car-door attempt after independent predecessor archival/drain checks. Historical startup cause/nativeReady/browserEOF UNKNOWN.
+  Next: Reviewed5295f2058: actual full caller failure exits1 correctly; preflight0 intentional. Regression and deterministic test deadline fix published; focused tests/locked build PASS. Actual generated offline launch timed out120s in closure validation; no box/gameplay. Fresh redline-validation-delay-repair-1648 diagnoses and fixes measured cause offline, runtime after Q2-reviewed1638.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Revieweda8aea2338 once:1483 physical SHA-size595gzip PASS. Actual generated caller now propagates first failure after cleanup/read-only join; actual CLI regressions and locked build PASS. Sole fixture timed out page-session Target.setAutoAttach; cause UNKNOWN, no original/input/capture. bx_t2ubq3yn ARCHIVED normalstop_eb076fca0d3c6cdf;132reaps3parentwaits/separateEOF watchdogJOIN0, browsernormalclose UNKNOWN. Fresh q3-page-attach-stall-repair-1638 diagnoses actual CDP sequencing offline; runtime after Redline1634 then Q2-reviewed1638.
+  Next: Reviewed1001ee965: nine actual-caller peer cases show duplicate sessions alone do not break Node routing; native request6 raw replies/target context missing, cause UNKNOWN. Tests/locked build PASS, no box. Fresh q3-raw-startup-evidence-1648 adds tested production CDP diagnostics and ONE changed diagnostic fixture after Q2-reviewed1638 then Redline1648; gameplay remains unverified.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
