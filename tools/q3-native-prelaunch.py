@@ -53,6 +53,14 @@ def require_composition(root, pins):
             raise ValueError('missing Q3 composition provider: ' + name)
         if by_path[name]['sha256'] != expected:
             raise ValueError('Q3 composition provider pin mismatch: ' + name)
+    # The retained caller resolves httpPins through its actual fixture server
+    # before spawning Chrome. A staged PE alone does not prove that URL works.
+    pe = by_path['test/binaries/calc.exe']
+    fixture_http = [pin for pin in pins.get('httpPins', [])
+                    if pin.get('url') == '/test/binaries/calc.exe']
+    if fixture_http != [dict(url='/test/binaries/calc.exe',
+                             size=pe['size'], sha256=pe['sha256'])]:
+        raise ValueError('missing/changed Q3 fixture PE HTTP pin')
 
 
 def main():

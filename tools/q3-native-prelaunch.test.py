@@ -62,7 +62,9 @@ providers += [ROOT / name for name in wrapper_functions['composition_providers']
               if ROOT / name not in providers]
 pins = {'files': [dict(path=str(p.relative_to(ROOT)), size=p.stat().st_size,
                       sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in providers]}
-for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing-provider', 'bad-import',
+pe = next(p for p in pins['files'] if p['path'] == 'test/binaries/calc.exe')
+pins['httpPins'] = [dict(url='/test/binaries/calc.exe', size=pe['size'], sha256=pe['sha256'])]
+for case in ('missing-fixture-http', 'changed-fixture-http', 'duplicate-fixture-http', 'check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing-provider', 'bad-import',
              'missing-screenshot', 'missing-composition', 'stale-composition-pin', 'missing-caller',
              'missing-startup', 'missing-fixture', 'missing-admission', 'retired-custody-pin',
              'missing-fixture-pe'):
@@ -70,6 +72,12 @@ for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing
     active.mkdir()
     selected = json.loads(json.dumps(pins))
     runtime = RUNTIME
+    if case == 'missing-fixture-http':
+        selected['httpPins'] = []
+    if case == 'changed-fixture-http':
+        selected['httpPins'][0]['sha256'] = '0' * 64
+    if case == 'duplicate-fixture-http':
+        selected['httpPins'] *= 2
     if case == 'retired-custody-pin':
         next(p for p in selected['files'] if p['path'] == 'tools/native_kernel_custody.py')['sha256'] = '5ec810c4d4704ff86afc367b38f7335edf1214e3450ebb98a62ce3df6386b5fe'
     if case == 'missing-fixture-pe':
@@ -112,7 +120,8 @@ for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing
         assert case in ('bad-pin', 'changed-generation', 'missing-provider', 'missing-screenshot',
                         'missing-composition', 'stale-composition-pin', 'missing-caller',
                         'missing-startup', 'missing-fixture', 'missing-admission', 'retired-custody-pin',
-                        'missing-fixture-pe'), error
+                        'missing-fixture-pe', 'missing-fixture-http', 'changed-fixture-http',
+                        'duplicate-fixture-http'), error
         print(case, str(error))
     except ModuleNotFoundError as error:
         assert case == 'bad-import' and error.name == 'q3_deliberately_absent_prelaunch_control'
@@ -123,7 +132,8 @@ for case in ('check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing
                       'missing-provider': [], 'bad-import': ['publish'], 'missing-screenshot': [],
                       'missing-composition': [], 'stale-composition-pin': [], 'missing-caller': [],
                       'missing-startup': [], 'missing-fixture': [], 'missing-admission': [],
-                      'retired-custody-pin': [], 'missing-fixture-pe': []}[case]), calls
+                      'retired-custody-pin': [], 'missing-fixture-pe': [], 'missing-fixture-http': [],
+                      'changed-fixture-http': [], 'duplicate-fixture-http': []}[case]), calls
     assert attempts == (['subprocess.Popen'] if case == 'spawn-refused' else [])
     assert (active / 'one-original-claim.json.gz').exists() == (case == 'spawn-refused')
     assert not (active / 'runtime-parent-actual-wait.json.gz').exists()
