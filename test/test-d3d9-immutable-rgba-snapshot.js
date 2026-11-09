@@ -206,7 +206,8 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
         }
         try {
           guardHeld=!['unguardedClear','unguardedDraw'].includes(m.t);
-          const value=m.t==='draw'||m.t==='unguardedDraw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):
+          const value=m.t==='upload'?built.imports.host.gpu_gl_call(0x30015,d.desc,0):
+            m.t==='draw'||m.t==='unguardedDraw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):
             m.t==='clear'||m.t==='unguardedClear'?built.imports.host.gpu_gl_call(0x30003,d.desc,0):built.readSnapshotState(7);
           parentPort.postMessage({t:'result',id:m.id,value});
         }catch(e){parentPort.postMessage({t:'result',id:m.id,error:e.stack});}
@@ -272,6 +273,19 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     assert.deepEqual(alias.resource,{id:99,width:2,height:2,format:21});
     assert.equal(alias.pixels,undefined,'renderer-owned texels are referenced, never copied from stale guest backing');
     f.set(drawColor+20,2);f.set(f.record+56,0);f.texture(0,f.record,f.texels);
+    const drawDesc=new Uint8Array(memory.buffer,f.desc,64).slice(),uploadCalls=rpcs;
+    for(const [offset,value]of [[24,drawColor],[28,94000],[32,12],[36,1],[44,0],[48,1],[52,2],[56,21]])f.set(f.desc+offset,value);
+    new Uint8Array(memory.buffer,94000,16).set([1,2,3,4,99,99,99,99,99,99,99,99,5,6,7,8]);
+    holdPublications=true;
+    assert.equal(await ask('upload'),1);assert.equal(rpcs,uploadCalls,'owned upload bypasses page capture');
+    new Uint8Array(memory.buffer,94000,16).fill(0xee);
+    holdPublications=false;await broker.drainPublications();await f.drain();
+    const uploaded=f.commands.filter(c=>c.opcode===OP.RESOURCE_UPDATE&&c.payload.kind==='color').at(-1).payload;
+    assert.deepEqual([...uploaded.pixels],[1,2,3,4,5,6,7,8]);assert.equal(uploaded.pitch,4);
+    assert.deepEqual(uploaded.rect,{x:1,y:0,width:1,height:2});
+    f.set(f.desc+36,2);assert.equal(await ask('upload'),-1,'invalid extent preserves broker result');
+    assert.equal(rpcs,uploadCalls+1);
+    new Uint8Array(memory.buffer,f.desc,64).set(drawDesc);
     const calls=rpcs;assert.deepEqual(await ask('read'),original);assert.equal(rpcs,calls,'read stays local');
     const saved=new Uint8Array(memory.buffer,f.desc,64).slice();
     f.set(f.desc+40,72000);f.set(72000+256+174*4,1);
@@ -515,6 +529,25 @@ test('native draw capture validates attachments and uses resolved target bounds'
     f.set(output+256+174*4,0);f.set(f.program+21752,80000);
     f.set(80012,0xd3d90005);f.set(80008,8);
     assert.throws(()=>producer.captureNativeDraw({...context,resolveColor}),/depth attachment identity/);
+  }finally{await f.bridge.close();}
+});
+
+test('native color upload packs RGB565 rows and rejects bounds before allocation',async()=>{
+  const f=fixture(),producer=new DrawProducer({getMemory:()=>f.memory,guestToWasm:p=>p});
+  try{
+    f.set(f.program+25600,23);
+    for(const [offset,value]of [[24,0],[28,94000],[32,4],[36,0],[44,0],[48,1],[52,2],[56,23]])f.set(f.desc+offset,value);
+    new Uint8Array(f.memory,94000,6).set([10,20,99,99,30,40]);
+    const captured=producer.captureNativeColorUpdate({address:f.desc});
+    new Uint8Array(f.memory,94000,6).fill(0);
+    assert.equal(captured.resource,null);assert.equal(captured.pitch,2);
+    assert.deepEqual([...captured.pixels],[10,20,30,40]);
+    producer.options.commandCapacityBytes=3;
+    assert.throws(()=>producer.captureNativeColorUpdate({address:f.desc}),/byte budget/);
+    producer.options.commandCapacityBytes=1024;
+    f.set(f.desc+32,1);assert.throws(()=>producer.captureNativeColorUpdate({address:f.desc}),/invalid UpdateSurface/);
+    f.set(f.desc+32,4);f.set(f.desc+28,f.memory.byteLength-4);
+    assert.throws(()=>producer.captureNativeColorUpdate({address:f.desc}),/invalid UpdateSurface/);
   }finally{await f.bridge.close();}
 });
 

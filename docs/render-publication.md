@@ -54,9 +54,10 @@ stale and mismatched references fail the process queue; transport failure wakes
 credit waiters and rejects pending payload waits. Worker links verify the
 message's owner against their routing slot.
 
-API4 references route to `Bridge.submitSnapshot` for D3D9 DRAW/CLEAR commands.
+API4 references route to `Bridge.submitSnapshot` for D3D9 DRAW/CLEAR commands
+and owned rectangular color RESOURCE_UPDATE commands.
 The receiving bridge checks device generation/liveness and consumes any pending
-admission token before releasing snapshot credit. Creation, resources, queries,
+admission token before releasing snapshot credit. Creation, retirement, queries,
 reset and presentation are not accepted through this entry point yet. A test
 drives the actual publication broker and neutral execution path with a payload
 larger than its test ring, a delayed consumer, source mutation and stale-device
@@ -65,7 +66,34 @@ publish owned API4 commands. The first call establishes the endpoint through
 the broker. Named color targets and render-target texture aliases use shared
 owner-admission metadata once their storage exists. Unknown resources,
 unavailable lifecycle state and missing guards retain ordered broker handling;
-resource creation/update/release publication remains open.
+resource creation/release and lock/unlock upload publication remain open.
+
+`DrawProducer.captureNativeColorUpdate` is the common page/guest decoder for
+the native UpdateSurface/StretchRect upload descriptor (opcode0x30015). It
+validates destination bounds, format, source stride/range and allocation budget,
+then owns only the requested rows with padding removed. The guest publishes
+under the native state guard and checks the endpoint epoch again after capture.
+The receiver consumes the neutral update result before retiring its publication
+reference. Subsequent readbacks remain ordered behind the upload. Opcode0x30011
+LockRect/UnlockRect synchronization retains its existing broker/result path.
+Invalid or unadmitted uploads fall back before publication; an accepted upload
+never carries a borrowed guest-memory view.
+
+Validation includes a held-consumer Worker upload with immediate source reuse,
+padded32-bit and RGB565 rows, invalid extents/ranges and allocation budget.
+Generated x86 public-COM tests (`--color-upload`) upload one pixel, overwrite
+the source, and check the original destination via LockRect alongside the
+independent geometry oracle. WebGL named-target and software implicit-backbuffer
+cases pass on normal/compat modules, diagnostics on/off, with nonzero actual
+upload-publication counters. Evidence is under
+`scratch/runs/20261108-d3d-upload-webgl` and
+`scratch/runs/20261108-d3d-upload-software-format` (`test-result.json`).
+The first software fixture rejected UpdateSurface because its hard-coded source
+format differed from the implicit destination; the fixture now uses public
+GetDesc to select the matching source format. Failed attempts are retained in
+the corresponding `-software` and `-software-diagnostic` evidence folders.
+Native direct/Worker color surface and shared GL protocol regressions also pass.
+These tests establish ownership and ordering, not a gameplay FPS improvement.
 
 OpenGL retains native `gl_object_leave` publication under the shared-object
 lock. Removing that native flush would break completed cross-thread texture

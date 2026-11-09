@@ -10,9 +10,10 @@ const {fixture}=require('./fixtures/d3d9-multiply-fixture');
 const baseline=process.argv.includes('--baseline'),out=process.env.D3D9_MULTIPLY_EVIDENCE;
 const defaultTarget=process.argv.includes('--default-target');
 const backend=process.argv.includes('--software')?'software':'webgl';
+const colorUpload=process.argv.includes('--color-upload');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 (async()=>{
- const f=fixture({defaultTarget}),evidence={startedAt:new Date().toISOString(),baseline,defaultTarget,backend,fixture:{bytes:f.bytes.length,sha256:sha(f.bytes),codeBytes:f.codeBytes},oracle:f.oracle,pixels:f.pixels,rows:[]};
+ const f=fixture({defaultTarget,colorUpload}),evidence={startedAt:new Date().toISOString(),baseline,defaultTarget,backend,colorUpload,fixture:{bytes:f.bytes.length,sha256:sha(f.bytes),codeBytes:f.codeBytes},oracle:f.oracle,pixels:f.pixels,rows:[]};
  if(out)fs.mkdirSync(out,{recursive:true});
  process.argv.push('--isolate');const server=require('../tools/dev-server').createServer({quiet:true});
  if(out)server.prependListener('request',(req,res)=>{
@@ -39,15 +40,16 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
   await page.waitForFunction(()=>typeof WineAssembly==='function'&&typeof D3D9Host==='object');
   for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm'])for(const enabled of [false,true]){
    const moduleBytes=fs.readFileSync(path.join(root,'build',name));
-   const row=await page.evaluate(async ({name,bytes,statusWasm,pixelWasm,pixelCount,frameWasm,allocationWasm,pteBase,enabled,baseline,defaultTarget,backend})=>{
+   const row=await page.evaluate(async ({name,bytes,statusWasm,pixelWasm,pixelCount,frameWasm,allocationWasm,pteBase,enabled,baseline,defaultTarget,backend,colorUpload})=>{
     const check=(v,m)=>{if(!v)throw Error(m);},sleep=ms=>new Promise(r=>setTimeout(r,ms));
     const moduleBytes=await(await fetch('/build/'+name)).arrayBuffer(),module=await WebAssembly.compile(moduleBytes);
     const digest=await crypto.subtle.digest('SHA-256',moduleBytes),hash=[...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
     const Base=D3D9Host.Bridge,getModule=WineAssembly.getWasmModule;
     D3D9Host.Bridge=class extends Base{
-     constructor(options){super({...options,worldProvenance:enabled});this.publishedDraws=0;}
+     constructor(options){super({...options,worldProvenance:enabled});this.publishedDraws=0;this.publishedUploads=0;}
      submitSnapshot(command){
       if(command.opcode===D3DCommandStream.OPCODES.DRAW)this.publishedDraws++;
+      if(command.opcode===D3DCommandStream.OPCODES.RESOURCE_UPDATE)this.publishedUploads++;
       return super.submitSnapshot(command);
      }
     };
@@ -71,15 +73,16 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
       frames:baseline?[]:Array.from({length:3},(_,c)=>Array.from({length:1024},(_,i)=>view.getUint32(frameWasm+c*4096+i*4,true))),
       module:{sha256:hash,bytes:moduleBytes.byteLength},enabled,guestSlot:wine.guestWorker.link.slot,
       guestEndpoint:wine.guestWorker.link.endpointIdentity,rendererPorts:[...(wine._renderWorkerManager?.ports?.values()||[])].map(p=>({id:p.id,options:p.options})),
-      publishedDraws:bridge.publishedDraws,
+      publishedDraws:bridge.publishedDraws,publishedUploads:bridge.publishedUploads,
       traceErrors:bridge.worldTraceErrors||0,tracePackets:bridge.worldTracePackets?.size||0,history:rows,logs,
       queueStates:[...bridge.devices].map(([id,e])=>({id,queue:e.queue?.snapshot(),lastError:String(e.queue?.error||'')}))};
      check(status,'bounded generated PE completion '+JSON.stringify(result));
      if(!baseline){
-      check(result.rendererPorts.some(p=>p.id>0&&p.options?.backend===backend),'actual production owning render Worker endpoint '+JSON.stringify(result.rendererPorts));
       check(status===1,'public COM/geometry assertion failed '+JSON.stringify(result));
+      check(result.rendererPorts.some(p=>p.id>0&&p.options?.backend===backend),'actual production owning render Worker endpoint '+JSON.stringify(result.rendererPorts));
       check(result.publishedDraws>0,
         'guest draws publish after default or named target admission');
+      if(colorUpload)check(result.publishedUploads>0,'actual guest color uploads publish');
       check(sparse.base&&sparse.first&&sparse.second&&sparse.second!==sparse.first+4096,'committed guest-adjacent pages have independently verified nonadjacent backing');
       check(sparse.missingBase&&sparse.missingFirst&&!sparse.missingSecond,'missing second page is a separate negative');
       check(result.queueStates.every(r=>!r.queue?.error&&!r.lastError),'owning renderer has no error');
@@ -89,7 +92,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
      }
      return result;
     }finally{const worker=wine.guestWorker;wine.stop();await worker?.stop();await wine._renderWorkerManager?.stop();canvas.remove();D3D9Host.Bridge=Base;WineAssembly.getWasmModule=getModule;}
-   },{name,bytes:[...f.bytes],statusWasm:f.statusWasm,pixelWasm:f.pixelWasm,pixelCount:f.pixels.length,frameWasm:f.frameWasm,allocationWasm:f.allocationWasm,pteBase:require('../lib/region-map.generated').BASE.GUEST_PAGE_TABLE,enabled,baseline,defaultTarget,backend});
+   },{name,bytes:[...f.bytes],statusWasm:f.statusWasm,pixelWasm:f.pixelWasm,pixelCount:f.pixels.length,frameWasm:f.frameWasm,allocationWasm:f.allocationWasm,pteBase:require('../lib/region-map.generated').BASE.GUEST_PAGE_TABLE,enabled,baseline,defaultTarget,backend,colorUpload});
    assert.equal(row.module.sha256,sha(moduleBytes),'actual owning module matches local shipped bytes');
    const check=f.checks.find(c=>c.id===row.status);row.failedCheck=check||null;
    if(baseline){assert.equal(check?.label,'product selector256 word0');assert.equal(row.actual,0x3f800000);assert.equal(row.expected,0x40c00000);}

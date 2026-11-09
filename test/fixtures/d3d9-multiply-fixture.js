@@ -10,7 +10,7 @@ function product(left,right){
  }
  return out;
 }
-function fixture({defaultTarget=false}={}){
+function fixture({defaultTarget=false,colorUpload=false}={}){
  const BASE=0x400000,b=Buffer.alloc(0x30200),raw=rva=>rva-0x1000+0x200,p=0x80,o=p+24,s=o+0xe0;
  b.writeUInt16LE(0x5a4d);b.writeUInt32LE(p,0x3c);b.writeUInt32LE(0x4550,p);
  b.writeUInt16LE(0x14c,p+4);b.writeUInt16LE(1,p+6);b.writeUInt16LE(0xe0,p+20);b.writeUInt16LE(0x010e,p+22);
@@ -130,13 +130,27 @@ function fixture({defaultTarget=false}={}){
   dev(28,[32,32,21,0,0,1,RT,0]);
   emit(0xa1,u32(RT),0x50);push(0);emit(0x56,0x8b,0x06,0xff,0x90,u32(37*4));expect(0,'SetRenderTarget explicit');
  }
+ const SRC=D+408,RECT=D+416,POINT=D+432;
+ if(colorUpload){
+  object(RT,12,[OUT],'GetDesc upload destination');
+  dev(36,[32,32,[OUT],2,SRC,0]); // Match the public backbuffer/target format.
+  [0,0,1,1].forEach((v,i)=>write(RECT+i*4,v));write(POINT,0);write(POINT+4,0);
+ }
  dev(89,[0x42]);for(const [state,value] of [[137,0],[7,0],[22,1]])dev(57,[state,value]);set(2,I);set(3,I);
  original.forEach((v,i)=>{v.slice(0,3).forEach((n,j)=>write(V+i*16+j*4,bits(n)));write(V+i*16+12,0xff28c864);});
  for(const [ci,c] of cases.entries()){
   dev(43,[0,0,1,0xff000000,bits(1),0]);
   if(c.multiply){set(256,scale);mul(256,translate,'rendered multiply');}else set(256,c.m);
   dev(83,[4,1,V,16]);matrix(Array(16).fill(0));dev(44,[256,M]); // immutable lowered draw, not live matrix reference
+  if(colorUpload){
+   object(SRC,13,[LR,0,0],'LockRect upload source');
+   emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xff112233));
+   object(SRC,14,[],'UnlockRect upload source');
+   dev(30,[[SRC],RECT,[RT],POINT]); // UpdateSurface, with later source reuse.
+   emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xffabcdef));
+  }
   object(RT,13,[LR,0,16],'LockRect rendered '+c.name);
+  if(colorUpload){emit(0x8b,0x15,u32(LR+4),0x8b,0x02);expect(0xff112233,'owned uploaded pixel '+c.name);}
   // Copy the actual public readback while locked, including row pitch. These
   // pixels produce evidence captures; they never supply the scalar oracle.
   for(let y=0;y<32;y++){
