@@ -186,6 +186,12 @@ function close(reason){
   let controlsSource=replaceOnce(fs.readFileSync(path.join(root, path.dirname(consumerPath), 'local-controls.cjs'),'utf8'),
     '__fixture.wine.renderer={...__oldRenderer}',
     '__fixture.wine.renderer=Object.assign(Object.create(Object.getPrototypeOf(__oldRenderer)),__oldRenderer)');
+  // The ACK watcher may reject while consume() is still awaiting the input
+  // command. Observe it immediately so Node cannot terminate before the real
+  // terminal cleanup joins. The later await still receives the same rejection.
+  controlsSource=replaceOnce(controlsSource,
+    " while(!fs.existsSync(out+'/commands/0.json'))",
+    " request.catch(()=>{});\n while(!fs.existsSync(out+'/commands/0.json'))");
   controlsSource=replaceOnce(controlsSource, " await negative('stale'", ` await negative('missing-reader',()=>evaluate('globalThis.__readerPrototype=Object.getPrototypeOf(__fixture.wine.renderer);Object.setPrototypeOf(__fixture.wine.renderer,null);true'),()=>evaluate('Object.setPrototypeOf(__fixture.wine.renderer,__readerPrototype);true'),/physical reader missing or malformed/);
  await negative('malformed-reader',()=>evaluate('__fixture.wine.renderer.peekKeyDownState=()=>null;true'),()=>evaluate('delete __fixture.wine.renderer.peekKeyDownState;true'),/physical reader missing or malformed/);
  await negative('stale'`);

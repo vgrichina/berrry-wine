@@ -8,12 +8,15 @@ const {once}=require('node:events'),{webcrypto}=require('node:crypto');
 const root=path.resolve(__dirname,'..'),composition=require('./q3-native-driver-composition.cjs');
 const base=path.dirname(path.join(root,composition.consumerPath));
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
-async function createPage(result) {
+async function createPage(result, {pageConsole=console}={}) {
   const listeners=new Map();let allocated=4096;
-  const scope={console,ArrayBuffer,Uint8Array,Int32Array,DataView,Set,WeakMap,Map,Date,
+  const scope={console:pageConsole,ArrayBuffer,Uint8Array,Int32Array,DataView,Set,WeakMap,Map,Date,
     performance,crypto:webcrypto,crossOriginIsolated:true,URL,RegionMap:{BASE:{THUNK_BASE:512}},
     document:{createElement:()=>({getBoundingClientRect:()=>({left:0,top:0,width:320,height:200}),getContext:()=>({drawImage(){}})}),body:{append(c){scope.canvas=c;}},getElementById:()=>scope.canvas},
-    addEventListener(type,fn){listeners.set(type,fn);},
+    addEventListener(type,fn,capture=false){
+      if(!listeners.has(type))listeners.set(type,[]);
+      listeners.get(type).push({fn,capture});
+    },
     WINE_REDLINE_STARTUP:{compile:async()=>({}),park:async()=>{},retired(){}},
     WebAssembly:{compile:async()=>({}),Memory:class{constructor(){this.buffer=new ArrayBuffer(1024*1024);}}},
     fetch:async url=>({arrayBuffer:async()=>new ArrayBuffer(128),json:async()=>url.includes('sigs')?{sigs:{}}:
@@ -56,8 +59,10 @@ async function createPage(result) {
       if(mode==='missing-key')return;
       const vk=mode==='wrong-key'?40:params.windowsVirtualKeyCode;
       if(mode==='release-stuck'&&params.type==='keyUp')return;
-      listeners.get(params.type==='keyDown'?'keydown':'keyup')?.({isTrusted:mode!=='untrusted',keyCode:vk,
-        code:params.code,preventDefault(){}});
+      const type=params.type==='keyDown'?'keydown':params.type==='keyUp'?'keyup':params.type;
+      const event={type,isTrusted:mode!=='untrusted',keyCode:vk,key:params.key,
+        code:params.code,preventDefault(){this.defaultPrevented=true;}};
+      for(const {fn} of [...(listeners.get(type)||[])].sort((a,b)=>!!b.capture-!!a.capture))fn(event);
     }};
 }
 module.exports={createPage};
