@@ -42,9 +42,13 @@ were actually reaped, with no remaining identities, FD holders or profile.
 No endpoint number was published, so this supplies no numbered-port connect
 proof. Historical separate Node-command EOF remains UNKNOWN.
 
-The concrete first allocation blocker is the missing final published
-`RELEASE STOP` from Redline1635; Q3-1705's required final published release is
-also absent. Q3-1705 remains ahead of this task. Thus no lease plan, final
+At that observation, both final published queue releases were absent.
+Redline1635 subsequently published its final `RELEASE STOP` at **15:46:43 UTC**
+on `801ed127f0ae9997912f7abce45f3b61edd92d71`. Its exact archive and physical
+drain are independently verified above. The remaining first allocation
+blocker is Q3-1705's required final published release and exact-UUID archive/
+drain or explicit NOT_CREATED. Q3-1705 remains ahead of this task.
+Thus no lease plan, final
 runtime pinset, allocation watchdog or box was created, and no local Chrome,
 native fixture or original attempt ran. Guard defeat and onward-door
 consequence remain **UNVERIFIED**. Box ID/state **NOT_CREATED**, UUID/expiry/
