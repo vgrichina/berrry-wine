@@ -74,14 +74,52 @@ function prepare(destination,options){
  const pins={commit:require('node:child_process').execFileSync('git',['rev-parse','HEAD'],{cwd:root}).toString().trim(),...closure,
   moduleVersion:closure.version,observationFlags:{WINE_QUAKE2_LOAD_OBSERVATION:true,WINE_QUAKE2_NATIVE_WRITE_OBSERVATION:true},
   runtimeEnvironment:{QUAKE2_CURRENT_BROWSER_COMPOSITION:'1',QUAKE2_BROWSER_POLICY_VERSION:policy.version,QUAKE2_NATIVE_CUSTODY_VERSION:'publishedf977ebf7c',QUAKE2_NATIVE_WRITER_WITNESS:'1'},
-  preload:'tools/quake2-current-browser-policy.cjs'};
+  preload:'tools/quake2-current-browser-policy.cjs',
+  consumerPreflight:{tool:'tools/quake2-staged-closure-gameplay.cjs',argument:'--consumer-preflight',input:'runtime-pins.json'}};
  fs.mkdirSync(destination,{recursive:true});
  fs.writeFileSync(path.join(destination,'runtime-pins.json'),JSON.stringify(pins,null,2),{flag:'wx',mode:0o444});
  return pins;
 }
-module.exports={validate,browserBinding,prepare,runtimeBinding};
+function consumerPreflight(manifest){
+ // The provisioner passes a manifest FILE, not its containing directory.
+ // Keep this boundary in the production CLI so preallocation and the staged
+ // check exercise the same consumer and argument contract.
+ manifest=path.resolve(manifest);
+ assert.equal(path.basename(manifest),'runtime-pins.json','explicit runtime-pins.json file required');
+ assert(fs.statSync(manifest).isFile(),'runtime manifest must be a file');
+ const run=path.dirname(manifest),pins=JSON.parse(fs.readFileSync(manifest));
+ runtimeBinding(pins);
+ assert.equal(pins.preload,'tools/quake2-current-browser-policy.cjs','explicit current browser preload required');
+ assert.equal(pins.runtimeEnvironment.QUAKE2_NATIVE_WRITER_WITNESS,'1');
+ assert.equal(pins.runtimeEnvironment.QUAKE2_NATIVE_CUSTODY_VERSION,'publishedf977ebf7c');
+ const loaded=current.writerClosure(pins.files);
+ assert(loaded.includes('tools/quake2-owning-load-witness.cjs'));
+ const composed=policy.compose({browserPolicyVersion:policy.version,custodyVersion:'publishedf977ebf7c'});
+ assert(composed.source.includes('q2BrowserPolicy'));
+ for(const p of composed.references)assert(pins.files.some(f=>f.path===p.path&&f.size===p.size&&f.sha256===p.sha256),'actual caller reference: '+p.path);
+ const helper='scratch/runs/20261109-quake2-current-policy-guard-door-1645/';
+ const hooks=['health-preload.cjs','native-fixture.cjs','observer-preload.cjs'].map(n=>helper+n);
+ for(const name of hooks)assert(pins.files.some(p=>p.path===name),'undeclared consumer hook: '+name);
+ const env={...process.env,...pins.runtimeEnvironment,QUAKE2_NATIVE_RUN:run,QUAKE2_STAGED_ROOT:root,Q2_INPUT_WIRE:'1',DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+90000)};
+ delete env.QUAKE2_NATIVE_COMPOSITION;delete env.NODE_OPTIONS;
+ const args=hooks.flatMap((name,i)=>i===1?['--require',root+'/'+pins.preload,'--require',root+'/'+name]:['--require',root+'/'+name]);
+ args.push(root+'/'+require('./quake2-native-driver-composition.cjs').consumerPath);
+ const result=require('node:child_process').spawnSync(process.execPath,args,{cwd:root,env,encoding:'utf8',timeout:15000});
+ fs.writeFileSync(run+'/consumer-preflight.stdout',result.stdout??'');fs.writeFileSync(run+'/consumer-preflight.stderr',result.stderr??'');
+ assert.equal(result.status,0,result.stderr||String(result.error));
+ const receipt=JSON.parse(result.stdout);assert(receipt.passed&&!receipt.chromiumStarted&&!receipt.originalStarted);
+ const observed=JSON.parse(fs.readFileSync(run+'/observed-composition.json'));
+ assert(observed.fixture&&observed.wire&&observed.health&&observed.preflight);
+ assert.equal(observed.flags.QUAKE2_BROWSER_POLICY_VERSION,policy.version);
+ return {passed:true,manifest,loaded,actualConsumer:receipt,observed,generatedSHA:hash(composed.source),chromeStarted:false,nativeQualification:false};
+}
+module.exports={validate,browserBinding,prepare,runtimeBinding,consumerPreflight};
 if(require.main===module){
  try{
+  if(process.argv[2]==='--consumer-preflight'){
+   assert.equal(process.argv.length,4,'one runtime manifest file required');
+   console.log(JSON.stringify(consumerPreflight(process.argv[3])));return;
+  }
   const args=process.argv.slice(2),preparing=args[0]==='--prepare';if(preparing)args.shift();
   const destination=preparing?args.shift():null,moduleVersion=args.shift(),browserPolicyVersion=args.shift();
   assert.equal(args.length,0,'unexpected Q2 preparation argument');
