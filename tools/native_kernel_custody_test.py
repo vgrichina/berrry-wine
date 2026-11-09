@@ -22,28 +22,95 @@ spec.loader.exec_module(kernel)
 
 
 class ParentLineage(unittest.TestCase):
-    def test_native_nonleader_exec_identity_transition_still_fails_closed(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            base=Path(os.environ.get('CUSTODY_RETIREMENT_EVIDENCE',tmp))
-            run=Path(tempfile.mkdtemp(prefix='nonleader-exec-',dir=base))
-            result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
-                '--cancel-creators-fixture',str(run),'exec','fixed'],capture_output=True,text=True,timeout=15)
-            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
-            receipt=json.loads((run/'creator-waits.json').read_text())
-            self.assertEqual(receipt['supervisorWait'],1)
-            self.assertEqual(receipt['watchdogWait'],-15)
-            drain=json.loads((run/'kernel-drain.json').read_text())
-            self.assertFalse(drain['complete'])
-            self.assertTrue(drain['unreaped'])
-            self.assertRegex(drain['failure'],'PID reused while in custody|nonleader exec identity transition')
-            self.assertEqual(drain['cancellation'],[])
-            rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
-            children=[r for r in rows if r['kind']=='custody' and r['cause']=='clone']
-            self.assertEqual(len(children),2)
-            self.assertTrue(all(r['pid']!=r['tgid'] for r in children))
-            isolated=json.loads((run/'isolated-waits.json').read_text())
-            self.assertTrue(isolated['adoptedWaits'])
-            self.assertFalse((run/'watchdog-fired.json').exists())
+    def test_native_nonleader_exec_transfers_only_kernel_bound_wait_obligation(self):
+        for version in ('exec-before', 'fixed', 'exec-cancel', 'exec-fork'):
+            with self.subTest(version=version), tempfile.TemporaryDirectory() as tmp:
+                base=Path(os.environ.get('CUSTODY_EXEC_EVIDENCE',tmp))
+                run=Path(tempfile.mkdtemp(prefix=version+'-',dir=base))
+                result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                    '--cancel-creators-fixture',str(run),'exec',version],capture_output=True,text=True,timeout=15)
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                (run/'fixture-process.json').write_text(json.dumps(dict(wait=result.returncode,
+                    stdout=result.stdout,stderr=result.stderr,stdoutEOF=True,stderrEOF=True,
+                    witness='subprocess.run communicate returned with both captured pipes drained')))
+                receipt=json.loads((run/'creator-waits.json').read_text())
+                self.assertEqual(receipt['supervisorWait'],1 if version in ('exec-before','exec-cancel') else 0)
+                self.assertEqual(receipt['watchdogWait'],-15)
+                drain=json.loads((run/'kernel-drain.json').read_text())
+                self.assertEqual(drain['complete'],version!='exec-before')
+                rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+                self.assertFalse((run/'watchdog-fired.json').exists())
+                if version=='exec-before':
+                    self.assertTrue(drain['unreaped'])
+                    self.assertRegex(drain['failure'],'PID reused while in custody|nonleader exec identity transition')
+                    self.assertTrue(json.loads((run/'isolated-waits.json').read_text())['adoptedWaits'])
+                    continue
+                self.assertEqual(len(drain['execTransfers']),1)
+                transfer=drain['execTransfers'][0]
+                by_sequence={r['sequence']:r for r in rows}
+                witness=by_sequence[transfer['beforeConsumeSequence']]
+                self.assertEqual(witness['siStatus'],1029)
+                leader_exit=by_sequence[transfer['leaderExitSequence']]
+                self.assertEqual(leader_exit['kind'],'pre-exit-stop')
+                self.assertEqual((leader_exit['pid'],leader_exit['start']),(transfer['pid'],transfer['start']))
+                barrier=json.loads((run/'exec-resume-barrier.json').read_text())
+                self.assertEqual(barrier['transferSequence'],transfer['sequence'])
+                self.assertEqual(drain['deadline'],json.loads((run/'kernel-armed.json').read_text())['deadline'])
+                self.assertEqual(transfer['formerPid'],transfer['kernelMessage'])
+                self.assertEqual(transfer['kernelEvent'],4)
+                self.assertEqual(transfer['waitStatus'],(4<<16)|(signal.SIGTRAP<<8)|0x7f)
+                self.assertNotEqual(transfer['formerPid'],transfer['pid'])
+                former=next(r for r in drain['owned'] if r['pid']==transfer['formerPid'])
+                self.assertEqual(former['start'],transfer['formerStart'])
+                self.assertEqual(former['registeredSequence'],transfer['formerCustodySequence'])
+                self.assertFalse(any(r['pid']==transfer['formerPid'] for r in drain['reaped']))
+                successor=next(r for r in drain['reaped'] if r['pid']==transfer['pid'])
+                self.assertEqual(successor['sequence'],transfer['reapSequence'])
+                self.assertEqual(successor['start'],transfer['start'])
+                self.assertLess(transfer['sequence'],successor['beforeReapSequence'])
+                # Every other identity still needs its own actual terminal wait.
+                self.assertEqual({r['pid'] for r in drain['owned']} - {transfer['formerPid']},
+                                 {r['pid'] for r in drain['reaped']})
+                for reap in drain['reaped']:
+                    before=by_sequence[reap['beforeReapSequence']]
+                    self.assertEqual((before['pid'],before['start']),(reap['pid'],reap['start']))
+                    self.assertEqual(by_sequence[reap['sequence']]['status'],reap['status'])
+                for key in ('unreaped','remaining','unresolvedPtrace','unresolvedResumes','unresolvedLineage'):
+                    self.assertEqual(drain[key],[])
+                self.assertEqual(bool(drain['cancellation']),version=='exec-cancel')
+                self.assertTrue(drain['commandLog']['eof'])
+                self.assertEqual(json.loads((run/'isolated-waits.json').read_text())['adoptedWaits'],[])
+                for name in ('journal','commandLog'):
+                    stream=drain[name];data=gzip.decompress((run/stream['path']).read_bytes())
+                    self.assertEqual(hashlib.sha256(data).hexdigest(),stream['originalSha256'])
+                    self.assertEqual(len(data),stream['originalBytes'])
+                    self.assertTrue(stream['closed'])
+                if version=='exec-fork':
+                    self.assertEqual(len(drain['owned']),4)
+                    self.assertTrue(any(r['status']==7<<8 for r in drain['reaped']))
+
+    def test_native_exec_binding_refuses_reuse_unbound_message_and_missing_wait(self):
+        for version, error in (('exec-reuse-former','former TID reused'),
+                               ('exec-reuse-leader','PID reused at exec binding'),
+                               ('exec-unbound','exec former TID not in custody'),
+                               ('exec-missing-wait','immutable cleanup deadline')):
+            with self.subTest(version=version), tempfile.TemporaryDirectory() as tmp:
+                base=Path(os.environ.get('CUSTODY_EXEC_EVIDENCE',tmp))
+                run=Path(tempfile.mkdtemp(prefix=version+'-',dir=base))
+                result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                    '--cancel-creators-fixture',str(run),'exec',version],capture_output=True,text=True,timeout=15)
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                drain=json.loads((run/'kernel-drain.json').read_text())
+                self.assertFalse(drain['complete'])
+                self.assertIn(error,drain['failure'])
+                self.assertTrue(drain['unreaped'])
+                self.assertEqual(json.loads((run/'creator-waits.json').read_text())['watchdogWait'],-15)
+                self.assertFalse((run/'watchdog-fired.json').exists())
+                if version=='exec-missing-wait':
+                    transfer=drain['execTransfers'][0]
+                    self.assertNotIn('reapSequence',transfer)
+                    self.assertTrue({transfer['pid'],transfer['formerPid']} <= {r['pid'] for r in drain['unreaped']})
+                else:self.assertEqual(drain['execTransfers'],[])
 
     def test_cancellation_cannot_resume_creator_ahead_of_other_pending_lineage(self):
         for kind in ('clone', 'fork', 'signal'):
@@ -510,9 +577,9 @@ class ContinueRace(unittest.TestCase):
                 self.assertTrue(drain['unreaped']);self.assertTrue(drain['unresolvedPtrace'])
                 self.assertIsNone(drain['exit'])
 
-    def test_nonleader_exec_transition_refuses_without_losing_custody(self):
+    def test_exec_with_unowned_former_tid_refuses_without_losing_custody(self):
         with tempfile.TemporaryDirectory() as run:
-            with self.assertRaisesRegex(AssertionError,'nonleader exec identity transition'):
+            with self.assertRaisesRegex(AssertionError,'exec former TID not in custody'):
                 self.model(kernel,run,mode='exec-reidentity')
             drain=json.loads((Path(run)/'kernel-drain.json').read_text())
             self.assertEqual(len(drain['unreaped']),2)
@@ -740,14 +807,22 @@ def cancel_creators_fixture(run, kind, version):
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-static int fork_leaf, signal_mode, exec_mode;
+static int fork_leaf, signal_mode, exec_mode, argc_fork;
 static void *leaf(void *p) { for (;;) pause(); }
 static void *creator(void *p) {
   while(access("go",F_OK))usleep(1000);
   if(close(creat(p?"ready-b":"ready-a",0600)))_exit(85);
   while(access(p?"ready-a":"ready-b",F_OK))usleep(1000);
   if(exec_mode) {
-    if(!p) { execl("/bin/true","true",(char *)0);_exit(86); }
+    if(!p) {
+      if(argc_fork)while(access("fork-ready",F_OK))usleep(1000);
+      execl("/bin/true","true",(char *)0);_exit(86);
+    }
+    if(argc_fork) {
+      pid_t c=syscall(SYS_fork);if(c<0)_exit(87);
+      if(!c) { usleep(50000);_exit(7); }
+      close(creat("fork-ready",0600));
+    }
     for(;;)pause();
   }
   if(signal_mode) {
@@ -762,7 +837,8 @@ int main(int argc,char **argv) {
   if(chdir(argv[1]))return 80;
   fork_leaf=argc>2 && !strcmp(argv[2],"fork");
   signal_mode=argc>2 && !strcmp(argv[2],"signal");
-  exec_mode=argc>2 && !strcmp(argv[2],"exec");
+  exec_mode=argc>2 && !strncmp(argv[2],"exec",4);
+  argc_fork=argc>2 && !strcmp(argv[2],"exec-fork");
   pthread_t a,b;
   if(pthread_create(&a,0,creator,0)||pthread_create(&b,0,creator,(void *)1))return 83;
   if(close(creat("go",0600)))return 84;
@@ -781,19 +857,41 @@ int main(int argc,char **argv) {
         if supervisor==0:
             os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
             module=kernel
-            if version=='before':
+            if version in ('before','exec-before'):
                 import types
-                revision='dec33253ced7f76b850c63f7ad1137c7f214b1ef'
+                revision='0cde26d0bc27794ce04408be3500d9e661a273e4' if version=='exec-before' else 'dec33253ced7f76b850c63f7ad1137c7f214b1ef'
                 data=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+                if version=='exec-before':assert hashlib.sha256(data).hexdigest()=='c7264650beb466176d4c5169aa50666805d7c53bc43b7a0404d93c462c72568b'
                 module=types.ModuleType('before');exec(compile(data,revision,'exec'),module.__dict__)
             waitid,waitpid,trace=os.waitid,os.waitpid,module.ptrace
-            creators=[];selected=[];released=[]
+            creators=[];selected=[];released=[];exec_binding=[];hide_wait=[];exec_stop=[];captured={}
+            identify=module.identity
+            def observation(task):
+                row=dict(captured[task]) if version=='exec-reuse-former' and exec_binding and task==exec_binding[0][1] else identify(task)
+                if exec_binding and ((version=='exec-reuse-former' and task==exec_binding[0][1]) or
+                                     (version=='exec-reuse-leader' and task==exec_binding[0][0])):
+                    row['start']+='-reused' # injection only: actual forced PID reuse is unsafe
+                return row
+            def peek(which,task,options):
+                value=waitid(which,task,options)
+                if hide_wait and value and value.si_pid==hide_wait[0] and value.si_code in (os.CLD_EXITED,os.CLD_KILLED,os.CLD_DUMPED):
+                    return None # keep the real kernel wait unconsumed
+                return value
             flags=os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|kernel.WALL
             def consume(task,options):
                 result=waitpid(task,options)
+                if result[0] and os.WIFSTOPPED(result[1]):
+                    exec_stop.clear()
+                    if result[1]>>16==4:exec_stop[:]=[task]
+                    if kind=='exec' and result[1]>>16==3:
+                        child=ctypes.c_ulong();trace(module.GETEVENTMSG,task,data=ctypes.addressof(child))
+                        captured[child.value]=identify(child.value)
+                if version=='exec-cancel' and result[0] and os.WIFSTOPPED(result[1]) and result[1]>>16==4:
+                    former=ctypes.c_ulong();trace(module.GETEVENTMSG,task,data=ctypes.addressof(former))
+                    if former.value!=task:os.kill(os.getpid(),signal.SIGTERM)
                 creation=result[0] and os.WIFSTOPPED(result[1]) and result[1]>>16 in (1,3)
                 fatal=result[0] and os.WIFSTOPPED(result[1]) and os.WSTOPSIG(result[1])==signal.SIGTERM
-                if creation or (fatal and kind=='signal' and not selected):
+                if kind!='exec' and (creation or (fatal and kind=='signal' and not selected)):
                     child=ctypes.c_ulong();trace(module.GETEVENTMSG,task,data=ctypes.addressof(child))
                     if creation and len(creators)<2:
                         creators.append(child.value)
@@ -821,11 +919,25 @@ int main(int argc,char **argv) {
                     result=trace(request,task,addr,data)
                     time.sleep(.03) # let real exit_group supersede the other stop
                     return result
-                return trace(request,task,addr,data)
+                if request==module.CONT and exec_binding and task==exec_binding[0][0]:
+                    durable=[json.loads(s) for s in zlib.decompressobj(31).decompress((run/'custody.ndjson.gz').read_bytes()).splitlines()]
+                    transfers=[r for r in durable if r['kind']=='exec-identity-transfer']
+                    if transfers and not (run/'exec-resume-barrier.json').exists():
+                        (run/'exec-resume-barrier.json').write_text(json.dumps(dict(
+                            transferSequence=transfers[-1]['sequence'],pid=task,at=time.time())))
+                    if version=='exec-missing-wait':hide_wait[:]=[task]
+                result=trace(request,task,addr,data)
+                if request==module.GETEVENTMSG and exec_stop==[task] and kind=='exec':
+                    former=ctypes.c_ulong.from_address(data).value
+                    if former and former!=task:
+                        exec_binding.append((task,former))
+                        if version=='exec-unbound':ctypes.c_ulong.from_address(data).value=999999999
+                return result
             try:
-                with patch.object(module.os,'waitpid',side_effect=consume),patch.object(module,'ptrace',side_effect=resume):
-                    due=time.time()+6
-                    module.supervise(run,[str(binary),str(run),kind],
+                with patch.object(module.os,'waitpid',side_effect=consume),patch.object(module,'ptrace',side_effect=resume), \
+                     patch.object(module,'identity',side_effect=observation),patch.object(module.os,'waitid',side_effect=peek):
+                    due=time.time()+(.5 if version=='exec-missing-wait' else 6)
+                    module.supervise(run,[str(binary),str(run),'exec-fork' if version=='exec-fork' else kind],
                         deadline=due,cleanup_deadline=due+1,journal_compression='gzip',command_compression='gzip')
             except BaseException as error:
                 (run/'supervisor-error.json').write_text(json.dumps(dict(error=repr(error))))

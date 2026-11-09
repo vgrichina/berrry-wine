@@ -2,6 +2,8 @@
 No /proc sampling is used to discover descendants. Autoattached tasks await their
 kernel fork/vfork/clone lineage before userspace resumes. Irreversible exit retirement
 can finish without that lineage; unresolved receipts remain explicit at drain.
+Nonleader exec retirement requires the consumed EXEC former-TID kernel message;
+the transferred obligation closes only on the successor's actual terminal wait.
 """
 import ctypes, errno, gzip, hashlib, json, os, signal, sys, time
 from pathlib import Path
@@ -64,6 +66,8 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     pending = {}
     exiting = set()
     resumes = {}
+    exec_transfers = {}
+    exit_stops = {}
     journal = Journal(run, journal_compression)
     def log(kind, **value):
         nonlocal sequence
@@ -72,6 +76,13 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
         return sequence
     def write(name, value):
         (run / name).write_text(json.dumps(value, indent=2))
+    def settled():
+        receipts = {(r['pid'], r['start']) for r in reaped}
+        # A former TID has no separate terminal wait after de_thread. Its
+        # obligation follows the explicit kernel binding to the TGID's *real*
+        # terminal receipt. Do not put a synthetic wait in reaped.
+        return receipts | {(t['formerPid'], t['formerStart']) for t in exec_transfers.values()
+                           if (t['pid'], t['start']) in receipts}
     def register(pid, parent, cause):
         if pid in owned:
             assert owned[pid]['cause'] == 'kernel-autoattach-stop', 'duplicate fork event'
@@ -151,6 +162,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             if value: return value
         if cancellation or parked or resumes:
             for task, row in list(owned.items()):
+                if task in exec_transfers: continue
                 if any(r['pid'] == task for r in reaped): continue
                 try: value = os.waitid(os.P_PID, task, wait_flags)
                 except ChildProcessError: continue
@@ -201,8 +213,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     peek = os.waitid(os.P_ALL, 0, wait_flags)
                 except ChildProcessError:
                     # ECHILD or /proc absence cannot retire a recorded identity.
-                    assert {(r['pid'], r['start']) for r in owned.values()} == {
-                        (r['pid'], r['start']) for r in reaped}, 'unreaped custody at ECHILD'
+                    assert {(r['pid'], r['start']) for r in owned.values()} == settled(), 'unreaped custody at ECHILD'
                     assert not pending, ('unresolved ptrace ESRCH', pending)
                     assert not resumes, ('unresolved queued resumes', resumes)
                     if command_log and not output_eof:
@@ -216,6 +227,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 sig = signal.SIGKILL if time.monotonic()-cancel_at >= .25 else signal.SIGTERM
                 retired = {r['pid'] for r in reaped}
                 for target, registered in list(owned.items()):
+                    if target in exec_transfers: continue
                     if target in retired or (target, sig) in sent: continue
                     try:
                         if identity(target)['start'] != registered['start']:
@@ -247,6 +259,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             if peek is None:
                 time.sleep(.001); continue
             task = peek.si_pid
+            assert task not in exec_transfers, ('unexpected wait for transferred TID', task)
             resumes.pop(task, None) # a newer real stop supersedes a queued CONT
             unlinked = task not in owned
             if unlinked:
@@ -305,6 +318,11 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                                    sequence=log('reaped', pid=task, start=row['start'], status=status,
                                                 terminalParent=row['ppid']), status=status,
                                    terminalParent=row['ppid']))
+                for transfer in exec_transfers.values():
+                    if (transfer['pid'], transfer['start']) == (task, row['start']):
+                        transfer['reapSequence'] = reaped[-1]['sequence']
+                        log('exec-transfer-reconciled', pid=task, start=row['start'],
+                            transferSequence=transfer['sequence'], reapSequence=transfer['reapSequence'])
                 if task in pending:
                     receipt = pending.pop(task)
                     log('ptrace-esrch-reconciled', pid=task, start=row['start'],
@@ -353,14 +371,41 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                         pid=child.value, parent=task)
                 log('fork-parent-release', pid=task, child=child.value)
             elif event == 6:
-                log('pre-exit-stop', **row, custodySequence=owned[task]['registeredSequence'])
+                exit_stops[task] = log('pre-exit-stop', **row, custodySequence=owned[task]['registeredSequence'])
                 exiting.add(task)
             elif event == 4:
-                # A nonleader exec changes TID to TGID; refuse rather than lose
-                # identity if this unsupported transition is ever encountered.
+                assert sig == signal.SIGTRAP, ('invalid EXEC stop', task, status)
                 former = ctypes.c_ulong()
                 if not trace_task(GETEVENTMSG, task, ctypes.addressof(former)): continue
-                assert former.value in (0, task), ('nonleader exec identity transition', task, former.value)
+                if former.value not in (0, task):
+                    old = owned.get(former.value)
+                    assert old is not None, ('exec former TID not in custody', task, former.value)
+                    assert (row['tgid'] == task and old['tgid'] == task and
+                            old['cause'] != 'kernel-autoattach-stop' and
+                            former.value not in exec_transfers and
+                            not any(r['pid'] in (task, former.value) for r in reaped) and
+                            task in exiting), ('unbound nonleader exec', task, former.value)
+                    # Linux keeps the leader's /proc start time when replacing
+                    # it with the execing thread. The ordinary identity check
+                    # above still applies; GETEVENTMSG never authorizes reuse.
+                    assert identity(task)['start'] == row['start'], 'PID reused at exec binding'
+                    try:
+                        assert identity(former.value)['start'] == old['start'], 'former TID reused at exec binding'
+                    except (ProcessLookupError, FileNotFoundError):
+                        pass # disappearance is not the binding evidence
+                    transfer = dict(pid=task, start=row['start'], formerPid=former.value,
+                        formerStart=old['start'], custodySequence=owned[task]['registeredSequence'],
+                        formerCustodySequence=old['registeredSequence'], beforeConsumeSequence=before,
+                        leaderExitSequence=exit_stops[task],
+                        kernelEvent=event, kernelMessage=former.value, waitStatus=status,
+                        pendingPtrace=pending.get(former.value), queuedResume=resumes.get(former.value))
+                    transfer['sequence'] = log('exec-identity-transfer', **transfer)
+                    exec_transfers[former.value] = transfer
+                    # Only these two kernel-bound identities change roles.
+                    # Sibling EXIT stops and terminal waits remain mandatory.
+                    pending.pop(former.value, None); resumes.pop(former.value, None)
+                    parked.discard(former.value); exiting.discard(former.value)
+                    exiting.discard(task)
             deliver = 0 if event or sig in (signal.SIGTRAP, signal.SIGSTOP) else sig
             if event == 6:
                 trace_task(CONT, task, deliver)
@@ -370,6 +415,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
         failure = repr(error)
         log('failure', error=repr(error))
         for task, row in owned.items():
+            if task in exec_transfers: continue
             try:
                 if identity(task)['start'] == row['start']: os.kill(task, signal.SIGKILL)
             except (ProcessLookupError, FileNotFoundError): pass
@@ -377,10 +423,11 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     finally:
         remaining=[]
         for task,row in owned.items():
+            if task in exec_transfers: continue
             try:
                 if identity(task)['start']==row['start']: remaining.append(identity(task))
             except (ProcessLookupError,FileNotFoundError): pass
-        unreaped=[row for row in owned.values() if not any(r['pid']==row['pid'] and r['start']==row['start'] for r in reaped)]
+        unreaped=[row for row in owned.values() if (row['pid'], row['start']) not in settled()]
         unresolved=[row for row in owned.values() if row['cause']=='kernel-autoattach-stop']
         complete = drained and not (unreaped or pending or parked or remaining or unresolved or resumes)
         journal_error = None
@@ -407,6 +454,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                   journal=dict(path=journal.path.name, closed=journal_error is None, error=journal_error,
                                originalBytes=journal.size, originalSha256=journal.sha.hexdigest()),
                   remaining=remaining,unreaped=unreaped,unresolvedPtrace=list(pending.values()),
+                  execTransfers=list(exec_transfers.values()),
                   unresolvedResumes=[dict(pid=task,start=value[0],signal=value[1]) for task,value in resumes.items()],
                   finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
                   custody='ptrace fork/vfork/clone barriers + waitid WNOWAIT before waitpid',
