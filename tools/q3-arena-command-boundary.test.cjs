@@ -11,12 +11,14 @@ fs.mkdirSync(out,{recursive:true});
 const baseCommit='8b91cbbc0836843d541e66da29549eaf6b5b91ab';
 const git=name=>cp.execFileSync('git',['show',baseCommit+':'+name],{cwd:root});
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+const foreignVersion=process.env.Q3_FOREIGN_CLOSURE_TEST_VERSION;
 // Another worker owns Redline admission. Authenticate the unchanged Q3 fixture
 // dependency from this test's recorded Git base; never accept its working drift
 // as a Q3 migration or alter its file. No fixture/native result is claimed.
 const redline=git('lib/redline-startup-admission.js');
 assert.equal(hash(redline),'afcb3bae5807a0b08e8d49262af33c1c64ecfa601717173b630658198de185e2');
 function compose(old){
+ if(!old&&foreignVersion)return require('./q3-current-foreign-closure-v1.cjs').composition(foreignVersion).compose().source;
  const name=path.join(root,'tools/q3-native-driver-composition.cjs');
  const m=new Module(name,module);m.filename=name;m.paths=module.paths;
  m._compile(old?git('tools/q3-native-driver-composition.cjs').toString():fs.readFileSync(name,'utf8'),name);
@@ -34,7 +36,8 @@ assert.equal(current.checkpointObserverVersion,'q3-checkpoint-b993419a5-v1');
 // Exercise the real versioned selector with only the two concurrently owned
 // foreign files read from Git, never by widening production acceptance.
 {
- const read=fs.readFileSync,foreign=new Map(['lib/redline-startup-admission.js','lib/quake2-browser-load-observer.js'].map(n=>[path.join(root,n),git(n)]));
+ const read=fs.readFileSync,foreign=new Map((foreignVersion?[]:['lib/redline-startup-admission.js','lib/quake2-browser-load-observer.js']).map(n=>[path.join(root,n),git(n)]));
+ const options={checkpointObserverVersion:current.checkpointObserverVersion,...foreignVersion?{foreignClosureVersion:foreignVersion}:{}};
  let corrupt=false;
  fs.readFileSync=function(file,...args){
   let b=foreign.get(String(file));
@@ -42,9 +45,9 @@ assert.equal(current.checkpointObserverVersion,'q3-checkpoint-b993419a5-v1');
   return b?(typeof args[0]==='string'?b.toString(args[0]):b):read.call(this,file,...args);
  };
  try{
-  const pins=current.validate({checkpointObserverVersion:current.checkpointObserverVersion});
+  const pins=current.validate(options);
   assert.equal(pins.files.find(p=>p.path==='tools/q3-native-driver-composition.cjs').sha256,current.migration['tools/q3-native-driver-composition.cjs']);
-  corrupt=true;assert.throws(()=>current.validate({checkpointObserverVersion:current.checkpointObserverVersion}),/Q3 migration provider/);
+  corrupt=true;assert.throws(()=>current.validate(options),/Q3 migration provider/);
   assert.throws(()=>current.validate({checkpointObserverVersion:'unknown'}),/explicit checkpoint observer version/);
   fs.writeFileSync(out+'/selector.json',JSON.stringify({passed:true,moduleVersion:pins.moduleVersion,compositionSHA256:current.migration['tools/q3-native-driver-composition.cjs'],foreignReads:[...foreign].map(([file,b])=>({path:path.relative(root,file),source:baseCommit,sha256:hash(b)})),corruptCompositionRefused:true,unknownVersionRefused:true}));
  }finally{fs.readFileSync=read;}

@@ -35,7 +35,10 @@ const read=n=>fs.readFileSync(path.join(root,n));
 const pin=(name,b)=>({path:name,size:b.length,sha256:hash(b)});
 const git=args=>cp.execFileSync('git',args,{cwd:root,maxBuffer:32*1024*1024});
 function validate(options={}){
-  assert(Object.keys(options).every(k=>k==='checkpointObserverVersion'),'explicit supported validation options');
+  assert(Object.keys(options).every(k=>['checkpointObserverVersion','foreignClosureVersion'].includes(k)),'explicit supported validation options');
+  const foreign=options.foreignClosureVersion!==undefined;
+  const foreignRoute=foreign?require('./q3-current-foreign-closure-v1.cjs'):undefined;
+  if(foreign)foreignRoute.optin(options.foreignClosureVersion);
   const checkpoint=options.checkpointObserverVersion!==undefined;
   if(checkpoint)assert.equal(options.checkpointObserverVersion,checkpointObserverVersion,'explicit checkpoint observer version');
   const raw=read(historical);assert.equal(hash(raw),historicalSHA,'historical pinset integrity');
@@ -45,17 +48,18 @@ function validate(options={}){
   const sources=git(['ls-tree','-r','--name-only',cpuCommit,'--','src','tools/watx-src','tools/watx.js','tools/watx-closure.js','tools/build-compile-wat.js']).toString().trim().split('\n');
   for(const name of sources)assert.equal(hash(read(name)),hash(git(['show',cpuCommit+':'+name])),'published build source: '+name);
   const expected={...modules};
+  if(foreign)Object.assign(expected,foreignRoute.providerPins());
   for(const [name,commit] of Object.entries(publishedProviders))expected[name]=pin(name,git(['show',commit+':'+name]));
   const selectedMigration={...migration};
-  if(checkpoint)selectedMigration['tools/q3-native-prelaunch.py']=checkpointPrelaunchSHA;
+  if(checkpoint||foreign)selectedMigration['tools/q3-native-prelaunch.py']=checkpointPrelaunchSHA;
   for(const [name,sha256] of Object.entries(selectedMigration)){
     assert.equal(hash(read(name)),sha256,'Q3 migration provider: '+name);expected[name]={sha256,size:read(name).length};
   }
-  for(const name of Object.keys(expected))assert(seen.has(name),'replacement requires historical provider');
+  for(const name of Object.keys(expected))assert(seen.has(name)||foreign&&foreignRoute.dependencies.includes(name),'replacement requires historical provider');
   const files=prior.files.filter(p=>!p.path.startsWith(path.dirname(historical)+'/')).map(p=>{
     const actual=pin(p.path,read(p.path)),want=expected[p.path]??p;
     assert.equal(actual.size,want.size,'provider size: '+p.path);assert.equal(actual.sha256,want.sha256,'provider SHA: '+p.path);
-    if(expected[p.path])explainedDrift.push({before:p,after:actual,reason:modules[p.path]?'Published 5c8780318 CPU mirror build':publishedProviders[p.path]?'Exact published '+publishedProviders[p.path]:checkpoint&&p.path==='tools/q3-native-prelaunch.py'?'1535 explicit checkpoint caller/prelaunch migration':'1475 tested Q3 preparer/admission/custody migration'});
+    if(expected[p.path])explainedDrift.push({before:p,after:actual,reason:foreign&&foreignRoute.authorities[p.path]?'Exact published '+foreignRoute.authorities[p.path][0]:modules[p.path]?'Published 5c8780318 CPU mirror build':publishedProviders[p.path]?'Exact published '+publishedProviders[p.path]:(checkpoint||foreign)&&p.path==='tools/q3-native-prelaunch.py'?'1535 explicit checkpoint caller/prelaunch migration':'1475 tested Q3 preparer/admission/custody migration'});
     return actual;
   });
   const httpPins=prior.httpPins.map(p=>{
@@ -64,7 +68,14 @@ function validate(options={}){
     return {...p,size:after.size,sha256:after.sha256};
   });
   files.push(pin('tools/q3-current-module.cjs',read('tools/q3-current-module.cjs')));
-  if(checkpoint){
+  if(foreign){
+    for(const name of foreignRoute.dependencies){
+      const actual=pin(name,read(name));assert.deepEqual(actual,expected[name],'published foreign dependency: '+name);files.push(actual);
+      httpPins.push({url:'/'+name,size:actual.size,sha256:actual.sha256});
+    }
+    files.push(pin('tools/q3-current-foreign-closure-v1.cjs',read('tools/q3-current-foreign-closure-v1.cjs')));
+  }
+  if(checkpoint||foreign){
     for(const target of ['HEAD','origin/main'])git(['merge-base','--is-ancestor',checkpointCommit,target]);
     for(const name of checkpointDependencies){
       const authenticated=pin(name,git(['show',checkpointCommit+':'+name]));
@@ -74,7 +85,8 @@ function validate(options={}){
       else files.push(authenticated);
     }
   }
-  return {files,httpPins,moduleVersion:checkpoint?checkpointObserverVersion:moduleVersion,
+  return {files,httpPins,moduleVersion:foreign?options.foreignClosureVersion:checkpoint?checkpointObserverVersion:moduleVersion,
+    ...(foreign?{foreignClosureVersion:options.foreignClosureVersion,publishedForeignProviders:foreignRoute.authorities}:{}),
     ...(checkpoint?{checkpointObserverVersion,publishedCheckpointCommit:checkpointCommit}:{}),
     publishedModuleCommit:cpuCommit,publishedCustodyCommit:custodyCommit,historicalPinset:{path:historical,sha256:historicalSHA,commit:prior.commit},explainedDrift};
 }
@@ -95,11 +107,14 @@ function composeCheckpointCaller(source,version){
 }
 function prepare(destination,{inputs=[]}={}){
   assert.equal(arguments.length<=2,true);const options=arguments[1]??{};
-  assert(Object.keys(options).every(k=>['inputs','checkpointObserverVersion','caller'].includes(k)),'explicit supported preparation options');
+  assert(Object.keys(options).every(k=>['inputs','checkpointObserverVersion','caller','foreignClosureVersion'].includes(k)),'explicit supported preparation options');
   const checkpoint=options.checkpointObserverVersion!==undefined;
   assert(checkpoint||options.caller===undefined,'caller requires explicit checkpoint observer version');
   destination=path.resolve(destination);assert(!fs.existsSync(destination),'fresh task-owned destination required');
-  const version=validate(checkpoint?{checkpointObserverVersion:options.checkpointObserverVersion}:{});
+  const validation={};
+  if(checkpoint)validation.checkpointObserverVersion=options.checkpointObserverVersion;
+  if(options.foreignClosureVersion!==undefined)validation.foreignClosureVersion=options.foreignClosureVersion;
+  const version=validate(validation);
   for(const name of inputs){
     assert(typeof name==='string'&&name.startsWith('scratch/runs/')&&name.endsWith('.py')&&!name.split('/').includes('..'),'small owned Python run input required');
     assert(path.resolve(root,name).startsWith(path.dirname(destination)+path.sep),'input must belong to destination parent');
@@ -122,11 +137,21 @@ function prepare(destination,{inputs=[]}={}){
     fs.writeFileSync(caller,source,{flag:'wx',mode:0o444});
   }
   version.files.sort((a,b)=>a.path.localeCompare(b.path));
+  let runtimeCaller,runtimeSource;
+  if(options.foreignClosureVersion!==undefined){
+    const route=require('./q3-current-foreign-closure-v1.cjs');
+    runtimeCaller=path.join(destination,'q3-runtime-caller.cjs');
+    runtimeSource=route.callerSource(destination,route.closureSHA(version.files));
+    version.runtimeCaller=path.relative(root,runtimeCaller);
+    version.files.push(pin(version.runtimeCaller,Buffer.from(runtimeSource)));
+    version.files.sort((a,b)=>a.path.localeCompare(b.path));
+  }
   const pins={commit:git(['rev-parse','HEAD']).toString().trim(),...version};
   const raw=Buffer.from(JSON.stringify(pins,null,2));
   fs.mkdirSync(destination,{recursive:true});
+  if(runtimeCaller)fs.writeFileSync(runtimeCaller,runtimeSource,{flag:'wx',mode:0o444});
   fs.writeFileSync(path.join(destination,'runtime-pins.json.gz'),zlib.gzipSync(raw),{flag:'wx',mode:0o444});
-  const seal={moduleVersion:version.moduleVersion,...(caller?{caller:version.checkpointCaller}:{}),manifestSHA256:hash(raw),providers:pins.files.length,publishedModuleCommit:cpuCommit,publishedCustodyCommit:custodyCommit,historicalPinset:version.historicalPinset,explainedDrift:version.explainedDrift};
+  const seal={moduleVersion:version.moduleVersion,...(caller?{caller:version.checkpointCaller}:{}),...(runtimeCaller?{runtimeCaller:version.runtimeCaller,foreignClosureVersion:version.foreignClosureVersion,offlinePrepared:true,nativeReady:false}:{}),manifestSHA256:hash(raw),providers:pins.files.length,publishedModuleCommit:cpuCommit,publishedCustodyCommit:custodyCommit,historicalPinset:version.historicalPinset,explainedDrift:version.explainedDrift};
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }
@@ -139,6 +164,7 @@ if(require.main===module){
     if(flag==='--input')options.inputs.push(value);
     else if(flag==='--caller'){assert(!options.caller,'duplicate caller');options.caller=value;}
     else if(flag==='--checkpoint-observer-version'){assert(!options.checkpointObserverVersion,'duplicate checkpoint version');options.checkpointObserverVersion=value;}
+    else if(flag==='--foreign-closure-version'){assert(!options.foreignClosureVersion,'duplicate foreign closure version');options.foreignClosureVersion=value;}
     else assert.fail('unsupported preparation flag: '+flag);
   }
   console.log(JSON.stringify(prepare(destination,options)));

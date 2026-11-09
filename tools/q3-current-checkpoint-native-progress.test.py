@@ -18,7 +18,8 @@ CODE = r'''
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const crypto=require('node:crypto'),cp=require('node:child_process');
 const root=process.cwd(),pins=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(process.argv[1])));
-assert.equal(pins.checkpointObserverVersion,'q3-checkpoint-b993419a5-v1');
+if(pins.foreignClosureVersion)assert.equal(pins.foreignClosureVersion,'q3-current-foreign-a16fc87d4-44fc9a134-v1');
+else assert.equal(pins.checkpointObserverVersion,'q3-checkpoint-b993419a5-v1');
 const by=new Map(pins.files.map(p=>[path.resolve(root,p.path),p]));
 const read=fs.readFileSync,seen=new Set(),target=process.argv[2],mode=process.argv[3];
 for(const name of ['spawn','spawnSync','exec','execSync','execFile','execFileSync','fork'])
@@ -40,7 +41,9 @@ fs.readFileSync=function(file,...args){
 };
 const entry='./tools/q3-native-driver-composition.cjs';
 try{
- const m=require(entry),result=m.compose({root});
+ const m=pins.foreignClosureVersion
+  ?require('./tools/q3-current-foreign-closure-v1.cjs').composition(pins.foreignClosureVersion)
+  :require(entry),result=m.compose({root});
  for(const n of ['q3-native-input-cause-diagnostic.cjs','q3-input-wire-observation.cjs',
                  'q3-execution-boundary.cjs','q3-menu-pointer-control.cjs'])require('./tools/'+n);
  const bound=path.join(root,'scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs');
