@@ -617,6 +617,19 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   correct queried values and untouched shadow globals. Empty values remain
   supported and null launch values remain rejected by the native export.
   Staging bounds and embedded NUL checks precede writes; owner errors propagate.
+  The Worker startup DLL reply now retains name, original PE base, entry point,
+  module index and generation alongside load address. The previous address-only
+  reply was insufficient for CLI module attribution and `setLoadedDlls`, which
+  filters entries without `dllMain`. Transaction-local temporary references and
+  prior-root rollback bookkeeping are excluded from the reply. Real PE tests on
+  normal/compat Node Workers verify the returned index against the owner's
+  module table and preserve attach failure, rollback and caller restoration
+  checks (`scratch/runs/20261109-worker-dll-metadata/`).
+  Startup DLL loading is not yet ready for full CLI owner migration: the browser
+  registers bitmap resources only after Worker `loadDlls` returns, although a
+  DLL initializer can need those resources. Worker startup also still uses the
+  synchronous loader driver. Both must be addressed while preserving loader
+  gate ownership and rollback; richer metadata alone does not fix them.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.

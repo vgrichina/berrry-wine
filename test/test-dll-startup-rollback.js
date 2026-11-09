@@ -81,6 +81,12 @@ async function transportControl(env) {
    const after={eip:await host.callExport('get_eip'),esp:await host.callExport('get_esp')};
    if(name==='success') {
     env.check(!error&&response.length===1,'successful real attach reaches response');
+    const row=response[0];
+    env.check(row.name==='success.dll'&&row.origBase===0x10000000,'module name and original PE base survive transport');
+    env.check(row.dllMain===row.loadAddr+0x1000,'actual DLL entry point survives transport');
+    env.check(row.index===await host.callExport('get_dll_index',row.loadAddr),'identity matches owner module table');
+    env.check(Number.isInteger(row.generation)&&row.generation>0,'module generation survives transport');
+    env.check(!('temporary' in row)&&!('priorExeRoot' in row),'startup transaction fields are not transferred');
     env.check(logs.some(x=>x.includes('DllMain returned, EAX=0x7')),'existing success trace forwarded');
    } else if(name==='rollback') {
     env.check(error?.name==='AggregateError'&&error.errors?.length===2,'aggregate startup/rollback retained');
