@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed3bcdc8783 projectile+shatteredpane HP100 PNG personallyseen523SHA279gzipPASS; guard/passageUNKNOWN quitTERMfailed. Fresh quake2-shattered-pane-onward-0537 PID1136560 thread01a1becc-1708-78e3-8ee2-4be80d0cd8f0 preparesoffline waitsWAIT_WC0535_RELEASE allcapsunchanged.
+  Next: Reviewed e84930b6f1417SHA481gzipPASS personallyviewed distinct redlitlowerpassage HP85 afterpaneRoom/hatch. Fresh quake2-lower-passage-guard-0600 PID1178003 thread01a1bee3-4156-7af1-92b2-49fabc4d519b prepares722pinnedproviders waitsWC0558exactdrain then beyondlowerpassage guard/door/onward; no guardkill/damagecause established.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
