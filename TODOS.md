@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed e84930b6f1417SHA481gzipPASS personallyviewed distinct redlitlowerpassage HP85 afterpaneRoom/hatch. Fresh quake2-lower-passage-guard-0600 PID1178003 thread01a1bee3-4156-7af1-92b2-49fabc4d519b prepares722pinnedproviders waitsWC0558exactdrain then beyondlowerpassage guard/door/onward; no guardkill/damagecause established.
+  Next: Reviewed5f3dfbd2f1534SHA522gzipPASS personallyviewed bindingsPNG a=stepLEFT SPACEorMOUSE2=upjump. No beyondlowerpassage/ladderascent or consumption established; boxarchived358actualreaps. Fresh quake2-moveup-observation-0625 extends actual owning passive binding coverage and nativeSpace composed controls offline; preserve nativeREVOKED allwriters/edictABAUNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: reviewed menu-only original; causal native parent-lineage repair published; flight unqualified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh drakan-current-flight-0618 prepares actual opt-in observer/release path with released custody5ec810c4 and CPUa320; waits exactWC0615 ARCHIVED PHYSICAL_DRAINED afterQ20600. One authorized T bounded physicalrelease, Up/heading only after actual native completion and visible takeoff. Preserve historical kernelcompleteFALSE/missingcreatorUNKNOWN; fullflight remains open.
+  Next: Reviewed95167032f once;56SHA45gzipPASS actuala320 CPU rejected strict4b45-only host/Worker admission beforeWorker. NoBox or input. Fresh drakan-current-module-admission-0625 repairs exactcurrent-module compatibility with actualnative/byteprovenance/release controls OFFLINE before separatelyauthorizedoriginal; no digest wildcard or CPU substitution.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
