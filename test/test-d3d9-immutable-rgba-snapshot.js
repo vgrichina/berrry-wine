@@ -209,6 +209,7 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
           const value=m.t==='surfaceUpload'?built.imports.host.gpu_gl_call(0x30011,90000,7):
             m.t==='retire'?built.imports.host.gpu_gl_call(0x3000f,90000,7):
             m.t==='fill'?built.imports.host.gpu_gl_call(0x30014,d.desc,0):
+            m.t==='copy'?built.imports.host.gpu_gl_call(0x30019,d.desc,0):
             m.t==='upload'?built.imports.host.gpu_gl_call(0x30015,d.desc,0):
             m.t==='draw'||m.t==='unguardedDraw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):
             m.t==='clear'||m.t==='unguardedClear'?built.imports.host.gpu_gl_call(0x30003,d.desc,0):built.readSnapshotState(7);
@@ -307,6 +308,18 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     const whole=f.commands.filter(c=>c.opcode===OP.RESOURCE_UPDATE&&c.payload.kind==='color').at(-1).payload;
     assert.equal(whole.rect,undefined);assert.equal(whole.pitch,8);
     assert.deepEqual([...whole.pixels],Array(16).fill(0x37));
+    const copyCalls=rpcs,copyPacket=100000;
+    for(const [offset,value]of [[0,2],[4,2],[8,21],[20,drawColor],[32,2],[36,2],[40,22],[60,1],
+      [64,0],[68,0],[72,2],[76,2],[80,0],[84,0],[88,2],[92,2],[96,2]])f.set(copyPacket+offset,value);
+    f.set(f.desc+24,copyPacket);
+    holdPublications=true;
+    assert.equal(await ask('copy'),1);assert.equal(rpcs,copyCalls,'owned COPY bypasses page capture');
+    f.set(copyPacket+72,77);f.set(copyPacket+96,0);
+    holdPublications=false;await broker.drainPublications();await f.drain();
+    const copied=f.commands.filter(c=>c.opcode===OP.COPY).at(-1).payload;
+    assert.equal(copied.source.id,99);assert.equal(copied.destination,null);assert.equal(copied.filter,2);
+    assert.deepEqual(copied.sourceRect,{x:0,y:0,width:2,height:2});
+    new Uint8Array(memory.buffer,f.desc,64).set(drawDesc);
     const calls=rpcs;assert.deepEqual(await ask('read'),original);assert.equal(rpcs,calls,'read stays local');
     const saved=new Uint8Array(memory.buffer,f.desc,64).slice();
     f.set(f.desc+40,72000);f.set(72000+256+174*4,1);

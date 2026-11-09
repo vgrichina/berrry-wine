@@ -136,6 +136,9 @@ function fixture({defaultTarget=false,colorUpload=false,surfaceUpload=false}={})
   emit(0xa1,u32(RT),0x50);push(0);emit(0x56,0x8b,0x06,0xff,0x90,u32(37*4));expect(0,'SetRenderTarget explicit');
  }
  const SRC=D+408,RECT=D+416,POINT=D+432;
+ const COPYTARGET=D+440;
+ object(RT,12,[OUT],'GetDesc copy target format');
+ dev(28,[32,32,[OUT],0,0,1,COPYTARGET,0]);
  if(colorUpload){
   object(RT,12,[OUT],'GetDesc upload destination');
   dev(36,[32,32,[OUT],2,SRC,0]); // Match the public backbuffer/target format.
@@ -160,7 +163,8 @@ function fixture({defaultTarget=false,colorUpload=false,surfaceUpload=false}={})
    object(RT,14,[],'UnlockRect writable target');
    emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xffabcdef));
   }
-  object(RT,13,[LR,0,16],'LockRect rendered '+c.name);
+  dev(34,[[RT],0,[COPYTARGET],0,1],0,'StretchRect renderer-owned geometry '+c.name);
+  object(COPYTARGET,13,[LR,0,16],'LockRect copied geometry '+c.name);
   if(colorUpload||surfaceUpload){emit(0x8b,0x15,u32(LR+4),0x8b,0x02);expect(surfaceUpload?0xff445566:0xff112233,'owned uploaded pixel '+c.name);}
   // Copy the actual public readback while locked, including row pitch. These
   // pixels produce evidence captures; they never supply the scalar oracle.
@@ -173,12 +177,14 @@ function fixture({defaultTarget=false,colorUpload=false,surfaceUpload=false}={})
    const expected=point.pattern[ci]==='1'?0xff28c864:0xff000000;
    emit(0xa3,u32(OBS+pixels.length*4));expect(expected,c.name+' pixel '+point.x+','+point.y);pixels.push({case:c.name,...point,expected});
   }
-  object(RT,14,[],'UnlockRect rendered');mark('rendered-'+c.name);
+  object(COPYTARGET,14,[],'UnlockRect copied geometry');mark('rendered-'+c.name);
  }
  if(!defaultTarget){
   dev(37,[0,[D+404]]);object(RT,2,[],'Release final unbound target');
   push(20);api('Sleep'); // Deliver the owned retirement before inspecting counters.
  }
+ object(COPYTARGET,2,[],'Release copy target');
+ push(20);api('Sleep');
  mark('PASS');write(STATUS,1);jump('sleep');
  for(const row of checks){labels.set('fail'+row.id,code.length);write(STATUS,row.id);emit(0xa3,u32(STATUS+4));write(STATUS+8,row.expected);jump('failure');}
  labels.set('abi-fail',code.length);write(STATUS,0xffff);emit(0xa3,u32(STATUS+4));

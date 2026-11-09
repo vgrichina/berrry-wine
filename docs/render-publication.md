@@ -126,17 +126,15 @@ normal/compatibility WASM checks also pass; evidence:
 `scratch/runs/20261109-d3d-retire-no-finish/test-result.json`. This removes a
 forced synchronization point; gameplay FPS impact has not been measured.
 
-**Copy migration remains open.** Native `d3d9_color_stretch` currently captures
-an invocation-owned 112-byte packet, reads back the source using color sync or
-backbuffer sync, runs `d3d9_stretch_pixels`, and uploads the destination rectangle
-through opcode0x30015. Opcode0x30016 is a CPU backbuffer readback, not a GPU copy.
-The neutral `COPY` opcode now has a renderer-owned implementation in both
-executors, described below. The remaining activation requires native dispatch
-that no longer mutates the canonical destination before publication and guest
-capture of its owned identities/rectangles. The existing nested StretchRect
-and pixel-center tests must remain valid. Merely publishing the current upload
-does not remove its earlier readback or CPU scaling. CPU LockRect/GetDC reads
-must still wait and materialize the latest renderer-owned contents.
+**Native copy publication is active.** `d3d9_color_stretch` captures an
+invocation-owned 112-byte packet and dispatches opcode0x30019. The common
+page/guest decoder owns resource identities, rectangles and filter selection;
+unseen resources carry initial definitions through the same publication path.
+There is no source readback, CPU resampling or canonical destination write.
+The invocation retains its packet across a broker park and nested calls restore
+the parent packet. Completion does not touch native resource dirty counters;
+the renderer updates its destination revision for texture alias sampling.
+CPU LockRect/GetDC reads still wait and materialize renderer-owned contents.
 
 `D3DCommandStream.colorCopy` validates and owns distinct source/destination
 identities, bounded top-left rectangles and point/linear filter selection;
@@ -166,8 +164,15 @@ the existing `4f` contract) and an incorrect test assumption about default A8
 backbuffer alpha. Build reconciliation reviewed the earlier DrawProducer factory
 addition to guest-worker and updated only its stale callback census hash/review;
 callback ownership remains pending. Evidence and source patch are recorded in
-`scratch/runs/20261109-d3d-copy-executors/`. Public guest StretchRect still uses
-the old path, and no game performance improvement is claimed yet.
+`scratch/runs/20261109-d3d-copy-executors/`.
+
+Activation validation additionally checks descriptor mutation before delayed
+publication, nested pending calls and absence of readback/upload host opcodes.
+The public x86 COM browser fixture copies each rendered geometry target before
+checking pixels and requires three published copies per run. WebGL and software
+run both WASM builds with diagnostics off/on; evidence is recorded under
+`scratch/runs/20261109-d3d-copy-activation-{webgl,software}/test-result.json`.
+No gameplay FPS improvement is claimed for this change.
 
 ColorFill (native opcode0x30014) uses `RenderClear.captureNativeColorFill` in
 both the guest producer and page bridge. It names its destination explicitly,
@@ -185,7 +190,7 @@ Native direct/Worker ColorFill tests cover bound-target independence, subrects,
 invalid extents, locks and RGB565 destinations. No new performance claim.
 
 `DrawProducer.captureNativeColorUpdate` is the common page/guest decoder for
-the native UpdateSurface/StretchRect upload descriptor (opcode0x30015). It
+the native UpdateSurface upload descriptor (opcode0x30015). It
 validates destination bounds, format, source stride/range and allocation budget,
 then owns only the requested rows with padding removed. The guest publishes
 under the native state guard and checks the endpoint epoch again after capture.

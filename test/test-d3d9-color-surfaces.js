@@ -9,6 +9,7 @@ const {WorkerConsumer}=require('../lib/d3d-command-stream');
 const sigs=require('../lib/host-import-sigs.generated.json').sigs;
 (async()=>{
   let bridge,productionImport,failRetire=false,delayedRetire=null,failTransfer=0;
+  const hostOps=[];
   const api={Device9:['SetRenderTarget','GetRenderTarget','GetBackBuffer','GetSwapChain','SetViewport','GetViewport',
     'SetScissorRect','GetScissorRect','GetRenderTargetData','ColorFill','UpdateSurface','UpdateTexture','SetFVF','SetRenderState','SetTexture','DrawPrimitiveUP','Present','Reset','Release'],
     Texture9:['GetSurfaceLevel','LockRect','UnlockRect','Release'],
@@ -17,6 +18,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     Surface9:['QueryInterface','GetDesc','AddRef','Release','GetDevice','LockRect','UnlockRect','GetDC','ReleaseDC']};
   const {exports:e,memory,module}=await bootRenderHarness({fonts:'none',
     extraHostOverrides:{gpu_gl_call:(op,p,a)=>{
+      hostOps.push(op);
       if(op===failTransfer)return 0;
       if(op===0x30004&&delayedRetire)return bridge._result(bridge.devices.get(a>>>0),delayedRetire.promise,()=>1,true);
       return failRetire&&op===0x30004?0:productionImport(op,p,a);
@@ -193,7 +195,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     ok(e.create_device(pp,out),'alias device');const ad=read(out);
     ok(e.Device9_GetRenderTarget(ad,0,out),'alias backbuffer');let ab=read(out);
     {
-    // Real executor readback -> native resampling -> executor upload, on both
+    // Renderer-owned copy, on both
     // synchronous and asynchronous backends. Four corners form a linear ramp.
     ok(e.color(ad,2,2,21,1,out));const stretchSource=read(out);
     ok(e.color(ad,6,6,21,1,out));const stretchDest=read(out);
@@ -205,13 +207,17 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     for(const filter of[0,1,2]){
       ok(await invoke(e.Device9_ColorFill,ad,stretchDest,0,0xff112233));
       write(sr,[0,0,2,2]);write(dr,[1,1,5,5]);
+      const copyStart=hostOps.length;
       let result=e.stretch(ad,stretchSource,sr,stretchDest,dr,filter);
       if(e.get_d3d_render_token()){
         assert.strictEqual(e.get_esp()>>>0,0x074ff000);
-        // Neither rectangle nor the filter is reread after either park.
+        // Neither rectangle nor the filter is reread after COPY parks.
         write(sr,[-1,0,999,999]);write(dr,[0,0,1,1]);
         result=await invoke(e.stretch,ad,stretchSource,sr,stretchDest,dr,99);
       }
+      assert(hostOps.slice(copyStart).includes(0x30019),'StretchRect submits an owned COPY');
+      assert(!hostOps.slice(copyStart).some(op=>[0x30010,0x30012,0x30015,0x30016].includes(op)),
+        'StretchRect has no source readback or destination upload');
       ok(result,'filtered subrectangle StretchRect');
       ok(await invoke(e.Surface9_LockRect,stretchDest,lock,0,16));
       const db=read(lock+4),dp=read(lock),linear=[0,20,60,80];
@@ -229,13 +235,12 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     ok(e.color(ad,2,2,21,1,out));const innerDest=read(out);
     ok(await invoke(e.Device9_ColorFill,ad,innerSource,0,0xffaabbcc));
     ok(e.color(ad,2,2,21,1,out));const outerSource=read(out);
-    for(const parkedStage of [0,1]) {
+    for(const parkedStage of [0]) {
       ok(await invoke(e.Device9_ColorFill,ad,outerSource,0,0xff334455));
       write(sr,[0,0,2,2]);write(dr,[0,0,2,2]);
       e.stretch_stack(0x074ff000);
       e.stretch(ad,outerSource,sr,stretchDest,dr,0);
       if(!e.get_d3d_render_token()) continue; // synchronous executor has no park
-      if(parkedStage===1){await bridge.wait(e.get_d3d_render_token());e.stretch(ad,outerSource,sr,stretchDest,dr,0);}
       const outerToken=e.get_d3d_render_token(),outerPacket=e.stretch_packet();
       assert(outerToken);assert.strictEqual(e.stretch_stage(),parkedStage);
       e.set_d3d_render_token(0);e.stretch_stack(0x074fe000);
@@ -436,7 +441,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     ok(await invoke(e.Surface9_LockRect,ab,lock,0,16));
     bad(await invoke(e.stretch_back,ad,stretchSource,ab));
     ok(await invoke(e.Surface9_UnlockRect,ab));
-    failTransfer=0x30015;
+    failTransfer=0x30019;
     bad(await invoke(e.stretch_back,ad,stretchSource,ab));
     failTransfer=0;
     ok(e.color(ad,2,2,22,1,out));const unrelatedTarget=read(out);
@@ -804,7 +809,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
     assert.strictEqual(await invoke(e.Surface9_Release,sys),0,'last child drives ordered final device release');
     assert.strictEqual(bridge.devices.size,0);
   }finally{await bridge.close();}
-  assert.strictEqual(nestedChecks,2,'nested copies exercised both readback and upload parks');
-  console.log('PASS nested StretchRect: both parks, invalid child cleanup, distinct source pixels and parent restoration');
+  assert.strictEqual(nestedChecks,1,'nested copies exercised the owned COPY admission park');
+  console.log('PASS nested StretchRect: COPY park, invalid child cleanup, distinct source pixels and parent restoration');
   console.log('PASS native D3D9 color surfaces: direct/worker UpdateTexture mip/cube/format/pool/lock/owner validation, StretchRect backbuffer uploads, ColorFill targets/subrects, texture aliases and sampling, Clear/Lock/upload/readback, implicit Present, Reset and lifetime');
 })().catch(error=>{console.error(error);process.exitCode=1;});

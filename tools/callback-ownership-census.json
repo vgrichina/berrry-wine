@@ -339,7 +339,8 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "2bb7386613a90f4785b41d47d8038aeb560b92e161f844ff7429bdc891bdc3e8",
+      "sha256": "cfa31fc1ef3774dcf7351d2f561b4d8cf8ade85704d305abbd05223938518628",
+      "reviewCopyDispatch20261109": "Only change from 664c32831 extends the existing D3D9 bridge opcode routing upper bound from 0x30017 to 0x30019. The earlier explicit 0x30018 native-guard handling still returns before this branch. New 0x30019 captures an owned renderer COPY via the existing bridge; no callback entry, guest export invocation, continuation restoration or lifecycle ownership is added in this host file. Broader invocation ownership remains pending.",
       "reviewSnapshotState20261108": "Delta from 157b7a991 adds a JS-only gpu_d3d9_snapshot_state adapter returning bridge-owned shared lifecycle metadata. It does not alter the WASM import ABI, invoke guest exports/callbacks or retain a guest context. Readiness is admission metadata, not a callback or retirement grant. Invocation ownership remains pending.",
       "reviewD3DStateWait20261108": "Delta from 846c511dd adds only an immediate zero result for private opcode0x30018. The page refuses to block on a native guard; it neither retains nor restores a guest callback/context. Worker-local atomic waiting lives in guest-rpc. Mixed local-main bounded callback retention remains unresolved; ownership stays pending.",
       "review20261108": "Delta from 7d2a9ec08: owned GL/Glide replay and D3D9 snapshot adapter; synchronous GL ownership clear runs only under empty-publication guard, with compositor duplicate clear disabled. The guard retains process queue metadata, not a guest invocation. Deferred D3D9 admission consumes its own result token; no guest context restore. GL/GDI ordering and real broker snapshot tests pass. Invocation ownership remains pending.",
