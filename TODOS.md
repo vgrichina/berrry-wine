@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedpublishedc588 passiveattackobserver actualdefaultsEnterattack Controlcrouch; 918SHA90gzip verified, consumption/weaponEffectUNKNOWN. Fresh quake2-live-attack-combat-0425 PID1022312 thread01a1be8b-6a1e-74d0-b90b-8a43b3046f8c ONEoriginal authorized afterexactWC0410 archiveddrained; livebindings beforeinterpreting and personallyreviewedPNG eachaction, no unchangeddeathreplay. Pin9ab snapshot beforeNative0420WIP allcaps strictflags unchanged.
+  Next: Reviewed0425 callerstdinEOF noinput/capture/guestexecutionestablished,134SHA96gzip verified; boxarchiveddrained. Fresh quake2-caller-lifetime-0435 PID1034531 thread01a1be92-4e98-7170-88ed-fc32d307dcdb OFFLINE production callerinput/bootstrap lifetime repair before nextoriginal.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -50,13 +50,13 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Super0400 validatedEnter reachedworldmap preexistingscore75coins3, mapdownUNKNOWN beforeadmission age12109ms innercausenotretained noPause/client/newgameplay. Reviewed509SHA gzipPASS boxarchiveddrained. Fresh supertux-menu-failure-cause-0415 PID1009456 thread01a1be83-c443-7fc3-ada8-696c3f197cec OFFLINE actualcause preservation and setup latency productionrepair; unchanged12scap no neworiginal authorized.
+  Next: Reviewedpublishedfddc9322a actualcause/timing repair; 1831SHA413gzip verified historical0400causeUNKNOWN. Fresh supertux-diagnostic-gameplay-0435 PID1034532 thread01a1be92-4ea0-7110-9a6d-9f7fed7e3710 preparesONEoriginal then waits exactWC0435physicalrelease; unchangedcaps personallyreviewednativechoices.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: ReviewedWC0410 295SHA76gzip Chrome151startupPASS cleanup18sFAIL terminalNULL neitherEOF and2unresolvedcreatorlineages despite110actualwaits; completeFALSE WIPunpublished boxarchiveddrained. Fresh native-chrome-creator-loss-0420 PID1017494 thread01a1be88-8f3b-7433-8dd4-c1c034b07d8e OFFLINE realnative creator-event-loss reproduction/repair, no newChrome. HistoricalUNKNOWN preserved.
+  Next: Reviewedpublished4341b877 actualpendingEXIT-before-CONT repair 691SHA100gzip verified; historical0410creatorUNKNOWN unchanged. Fresh warcraft-actual-close-0435 PID1034530 thread01a1be92-4e9a-7512-b21d-922bf3a63972 releasedstartupWIP plusONEsmallChrome actualstartup/normalclose integration, noWarcraftoriginal.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
