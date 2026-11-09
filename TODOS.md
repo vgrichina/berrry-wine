@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed7c953b676 once17SHA-size independentPASS. Actual1205 rawframecomparisoninputs absent fourcauses identicalUNKNOWN no justifiedlifetimefix. Fresh quake2-rejected-frame-values-1250 OFFLINE returnonlyalreadyreadvalues and rejectingpredicates with identicalreadcount acceptance firstHPterminal; noBoxbrowser.
+  Next: Reviewed6bc4d87eb once13SHA-size independentPASS code18oldmissing/newvalues controls exactreadorder unchangedacceptance healthterminal. Fresh quake2-rejected-frame-native-progress-1265 soleeligiblefiniteRuntime wholefixture beforeoriginal guarddoor aim; retain/decode existingfirstreject rawvalues nofollowupread waiver or retry.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedde81e4579 once633SHA-size125gzipCRC independentPASS. Actualnestedwrapper labelcollision fixed; firstcomma600ms DOWN1147.669 UP601.110/1148.158 terminal no samples/original;187reaps archived2049. Fresh redline-first-reply-cause-1250 OFFLINE actualconsumer causalrepair no timingwaiver or unchanged retry.
+  Next: Reviewedf53cb9a27 once533SHA-size independentPASS actualconsumer controls836samepins nojustifiedfix. Fresh redline-native-trace-preparation-1265 OFFLINE actualCDPboundary+boundedstartupEventDispatchtrace preparation, unchangedcaps independentUP noextraobserver or native retry.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
