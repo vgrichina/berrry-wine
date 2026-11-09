@@ -131,6 +131,7 @@ function fixture({defaultTarget=false,colorUpload=false,surfaceUpload=false}={})
  push(20);api('Sleep'); // Let the endpoint's shared-state message reach the CPU Worker.
  if(defaultTarget)dev(38,[0,RT]); // GetRenderTarget leaves implicit storage bound.
  else{
+  dev(38,[0,D+404]); // Keep the implicit target for final unbinding/retirement.
   dev(28,[32,32,21,0,0,1,RT,0]);
   emit(0xa1,u32(RT),0x50);push(0);emit(0x56,0x8b,0x06,0xff,0x90,u32(37*4));expect(0,'SetRenderTarget explicit');
  }
@@ -173,6 +174,10 @@ function fixture({defaultTarget=false,colorUpload=false,surfaceUpload=false}={})
    emit(0xa3,u32(OBS+pixels.length*4));expect(expected,c.name+' pixel '+point.x+','+point.y);pixels.push({case:c.name,...point,expected});
   }
   object(RT,14,[],'UnlockRect rendered');mark('rendered-'+c.name);
+ }
+ if(!defaultTarget){
+  dev(37,[0,[D+404]]);object(RT,2,[],'Release final unbound target');
+  push(20);api('Sleep'); // Deliver the owned retirement before inspecting counters.
  }
  mark('PASS');write(STATUS,1);jump('sleep');
  for(const row of checks){labels.set('fail'+row.id,code.length);write(STATUS,row.id);emit(0xa3,u32(STATUS+4));write(STATUS+8,row.expected);jump('failure');}

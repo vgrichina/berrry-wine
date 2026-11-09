@@ -207,6 +207,7 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
         try {
           guardHeld=!['unguardedClear','unguardedDraw'].includes(m.t);
           const value=m.t==='surfaceUpload'?built.imports.host.gpu_gl_call(0x30011,90000,7):
+            m.t==='retire'?built.imports.host.gpu_gl_call(0x3000f,90000,7):
             m.t==='upload'?built.imports.host.gpu_gl_call(0x30015,d.desc,0):
             m.t==='draw'||m.t==='unguardedDraw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):
             m.t==='clear'||m.t==='unguardedClear'?built.imports.host.gpu_gl_call(0x30003,d.desc,0):built.readSnapshotState(7);
@@ -326,7 +327,12 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     assert.equal(await ask('clear'),1);await broker.drainPublications();await f.drain();
     assert.equal(rpcs,calls+1,'admitted named color storage clears without page RPC');
     assert.equal(f.commands.filter(c=>c.opcode===OP.CLEAR).at(-1).payload.colorAttachment.id,99);
-    assert.equal(f.bridge.call(0x3000f,color,7),1);await f.drain();
+    holdPublications=true;
+    assert.equal(await ask('retire'),1);assert.equal(rpcs,calls+1,'retirement bypasses page capture');
+    f.set(color+36,777); // Guest allocation may be reused before owner admission.
+    holdPublications=false;await broker.drainPublications();await f.drain();
+    assert.deepEqual(f.commands.filter(c=>c.opcode===OP.RESOURCE_RELEASE).at(-1).payload,{kind:'color',id:99});
+    f.set(color+36,99);
     assert.equal(SnapshotState.readColor(oldChannel,original.snapshotEpoch,99),null,'release retires producer metadata');
     assert.equal(await ask('clear'),1);await broker.drainPublications();await f.drain();
     assert.equal(rpcs,calls+1,'released target republishes its initial definition');
@@ -549,6 +555,45 @@ test('native draw capture validates attachments and uses resolved target bounds'
     f.set(output+256+174*4,0);f.set(f.program+21752,80000);
     f.set(80012,0xd3d90005);f.set(80008,8);
     assert.throws(()=>producer.captureNativeDraw({...context,resolveColor}),/depth attachment identity/);
+  }finally{await f.bridge.close();}
+});
+
+test('published retirement waits for queue capacity without losing its owned ID',async()=>{
+  const f=fixture();let resume;
+  try{
+    f.draw();await f.drain();
+    const entry=f.bridge.devices.get(7);
+    resume=f.hold();assert.equal(f.draw(),1);await tick();
+    assert(entry.queue.bytes>0);
+    entry.queue.capacityBytes=entry.queue.bytes;
+    let completed=false;
+    const retiring=f.bridge.submitSnapshot({deviceId:7,generation:entry.queue.generation,
+      snapshotEpoch:entry.snapshotEpoch,opcode:OP.RESOURCE_RELEASE,payload:{kind:'depth',id:77}})
+      .then(value=>{completed=true;return value;});
+    await tick();assert.equal(completed,false,'full queue preserves retirement until preceding draw completes');
+    resume();resume=null;assert.equal(await retiring,1);await f.drain();
+    assert.deepEqual(f.commands.at(-1).payload,{kind:'depth',id:77});
+    assert.equal(f.bridge.requests.size,0);
+  }finally{resume?.();await f.bridge.close();}
+});
+
+test('native retirement owns complete color sets and rejects wrong device or storage',async()=>{
+  const f=fixture(),producer=new DrawProducer({getMemory:()=>f.memory,guestToWasm:p=>p});
+  try{
+    const address=90000,base=94000;
+    for(const [offset,value]of [[8,7],[12,5],[32,2],[56,base]])f.set(address+offset,value);
+    for(let i=0;i<12;i++)for(const [offset,value]of [[8,7],[12,0xd3d90006],[36,100+i]])f.set(base+i*80+offset,value);
+    const payload=producer.captureNativeRetirement({address,deviceId:7,opcode:0x30013});
+    f.set(base+36,999);
+    assert.deepEqual(payload,{kind:'color-set',ids:Array.from({length:12},(_,i)=>100+i)});
+    assert.throws(()=>producer.captureNativeRetirement({address,deviceId:8,opcode:0x30013}),/owner/);
+    f.set(base+80+8,8);
+    assert.throws(()=>producer.captureNativeRetirement({address,deviceId:7,opcode:0x30013}),/identity/);
+    f.set(address+32,13);
+    assert.throws(()=>producer.captureNativeRetirement({address,deviceId:7,opcode:0x30013}),/retirement/);
+    f.set(address+12,0xd3d90005);f.set(address+36,77);
+    assert.deepEqual(producer.captureNativeRetirement({address,deviceId:7,opcode:0x30008}),{kind:'depth',id:77});
+    assert.throws(()=>producer.captureNativeRetirement({address,deviceId:7,opcode:0x3000f}),/identity/);
   }finally{await f.bridge.close();}
 });
 

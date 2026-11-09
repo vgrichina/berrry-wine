@@ -58,7 +58,8 @@ API4 references route to `Bridge.submitSnapshot` for D3D9 DRAW/CLEAR commands
 and owned rectangular color RESOURCE_UPDATE commands.
 The receiving bridge checks device generation/liveness and consumes any pending
 admission token before releasing snapshot credit. Color creation can accompany
-an operation; retirement, queries, reset and presentation still use the broker. A test
+an operation; color/depth retirement also publishes owned API4 commands.
+Device teardown, queries, reset and presentation still use the broker. A test
 drives the actual publication broker and neutral execution path with a payload
 larger than its test ring, a delayed consumer, source mutation and stale-device
 rejection. Guarded D3D9 clears and draws now capture in the guest Worker and
@@ -67,7 +68,7 @@ the broker. Named color targets and render-target texture aliases use shared
 owner-admission metadata once their storage exists. Unseen color resources carry
 owned initial definitions alongside draws, clears and uploads. Unavailable
 lifecycle state and missing guards retain ordered broker handling; device
-creation and resource release publication remain open.
+creation and device teardown publication remain open.
 
 `captureNativeColorDefinition` shares canonical pixel capture between the page
 and guest producer. The native guard protects identity, dimensions, format,
@@ -78,8 +79,7 @@ Duplicate definitions are ignored, including their initial pixels: they must
 never overwrite renderer-owned content. Registry collisions can therefore
 cause redundant capture, but not resource replacement. A full neutral queue
 drains before retrying creation; ordinary creation needs no preceding drain.
-Release remains fenced and invalidates the registry, so a later operation can
-create the resource anew. Startup still needs the broker and delivery of its
+Release follows prior publications and invalidates the registry. Startup still needs the broker and delivery of its
 endpoint channel before this path becomes eligible.
 
 Validation: 21 immutable snapshot cases include held publication, two different
@@ -92,6 +92,25 @@ The earlier `-webgl-owned` fixture failed the new publication assertion because
 it did not yield to receive the endpoint channel; adding a public Sleep after
 the initial clear exercises the intended path. No gameplay FPS claim follows
 from these correctness tests.
+
+`captureNativeRetirement` owns color/depth IDs and complete texture color-set
+IDs under the same native state guard. Native collection requires the final
+external reference and binding to be gone; surface serials are nonrecycled.
+The guest can therefore free/reuse its record after publication without changing
+the queued retirement identity. The receiver accepts only color, color-set and
+depth release kinds, consumes the neutral result, and invalidates color admission
+metadata in publication order. It waits and retries on a full queue rather than
+dropping retirement. No guest writes the shared admission registry; the page
+remains its single writer. Missing endpoint state or guard still uses the broker.
+
+Retirement validation: 23 immutable snapshot cases include delayed record reuse,
+cube mip identity capture, wrong-owner rejection and an actually full queue held
+behind a draw. Native direct/Worker color-surface lifetime tests pass. Public COM
+browser tests restore the implicit target and release the final named target;
+the receiver must observe an API4 retirement. WebGL/software, normal/compatibility
+WASM and diagnostics off/on all pass with exact preceding geometry/upload pixels.
+Evidence: `scratch/runs/20261109-d3d-retire-{webgl,software}/test-result.json`.
+These do not prove gameplay performance or the remaining cross-API lifetimes.
 
 `DrawProducer.captureNativeColorUpdate` is the common page/guest decoder for
 the native UpdateSurface/StretchRect upload descriptor (opcode0x30015). It
