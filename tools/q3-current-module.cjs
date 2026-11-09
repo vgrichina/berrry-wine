@@ -200,6 +200,49 @@ function createCaptureDiagnostics({socket,write,now=monotonicNs,schedule=setTime
   get active(){return shots.size;}
  };
 }
+// Reserved readiness lane: unrelated startup traffic cannot exhaust it. Public
+// receipt is Node's MessageEvent entry, never proof of browser execution.
+function createReadinessDiagnostics({socket,write,now=monotonicNs,enabled=process.env.Q3_READINESS_WIRE==='1'}){
+ const requests=new Map(),ingress=new WeakMap();let rows=0,wireRows=0,passive=0,progress=0,errors=0,closed=!enabled;
+ const safe=fn=>{try{return fn();}catch{}};
+ const emit=(phase,fields={})=>safe(()=>{
+  if(closed)return;
+  if(phase!=='passive-event'&&wireRows++>=2048)return;
+  write({version:1,observation:'readiness',sequence:++rows,monotonicNs:now(),phase,...fields,
+   ...(phase!=='passive-event'&&wireRows===2048?{recordLimitReached:true}:{})});
+ });
+ const raw=event=>safe(()=>{
+  if(closed||!requests.size)return;
+  const at=now(),fields=protocolMetadata(event.data);
+  if(!requests.has(fields.requestId))return;
+  ingress.set(event,at);emit('public-message',{...fields,monotonicNs:at});
+ });
+ const dispose=()=>{emit('observation-stop',{pending:[...requests.keys()],completion:'UNKNOWN unless settled'});closed=true;requests.clear();safe(()=>socket.removeEventListener('message',raw));safe(()=>socket.removeEventListener('close',dispose));};
+ if(enabled){socket.addEventListener('message',raw);socket.addEventListener('close',dispose);}
+ return {
+  request(meta,params){safe(()=>{
+   if(closed||requests.size>=32||meta.method!=='Runtime.evaluate')return;
+   const expression=params.expression;
+   if(typeof expression!=='string'||!(/runningApps.*guestWorker/.test(expression)||['WINE_REDLINE_STARTUP','__q3StartupInstance','__generatedError','__q3Launch'].some(token=>expression.includes(token))))return;
+   requests.set(meta.requestId,{requestId:meta.requestId,sessionId:metadataToken(meta.sessionId)});
+   emit('request',{...requests.get(meta.requestId),stage:expression.includes('__q3StartupInstance')?'worker-identity':expression.includes('WINE_REDLINE_STARTUP')?'startup-admission':'guest-readiness',expressionSHA256:hash(Buffer.from(expression))});
+  });},
+  send(phase,data){safe(()=>{if(closed||!requests.size)return;const fields=protocolMetadata(data);if(requests.has(fields.requestId))emit(phase,fields);});},
+  receive(event,value,pending){safe(()=>{
+   if(closed)return;
+   if(requests.has(value.id))emit('consumer-delivery',{...requests.get(value.id),responseSessionId:metadataToken(value.sessionId),publicMonotonicNs:ingress.get(event)??null,routePending:!!pending,errorCode:value.error?.code??null,exception:!!value.result?.exceptionDetails,resultPhase:metadataToken(value.result?.result?.value?.phase),value:typeof value.result?.result?.value==='boolean'?value.result.result.value:null});
+   // Existing Runtime events only: no evaluate, polling or post-failure probe.
+   if(['Runtime.consoleAPICalled','Runtime.exceptionThrown','Target.attachedToTarget','Target.detachedFromTarget'].includes(value.method)){
+    const isProgress=value.params?.args?.some(a=>a.value==='Q3_READINESS_PASSIVE');
+    const isError=value.method==='Runtime.exceptionThrown'||value.params?.type==='error';
+    if(isProgress?progress++>=240:isError?errors++>=64:passive++>=256)return;
+    const text=JSON.stringify(value.params);emit('passive-event',{method:value.method,sessionId:metadataToken(value.sessionId),detail:text.length<=8192?text:text.slice(0,8192),truncated:text.length>8192});
+   }
+  });},
+  settlement(meta,outcome){safe(()=>{if(requests.has(meta.requestId)){emit('settlement',{...requests.get(meta.requestId),outcome});requests.delete(meta.requestId);}});},
+  dispose
+ };
+}
 function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=setTimeout,cancel=clearTimeout}){
  // Native revocation is authoritative even after diagnostic recording caps.
  // Check at the last synchronous boundary before ANY protocol send, including
@@ -211,6 +254,7 @@ function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=s
  return class TransportSocket extends WebSocket{
   constructor(...args){
    super(...args);
+   this.q3Readiness=createReadinessDiagnostics({socket:this,write,now});
    this.q3Capture=createCaptureDiagnostics({socket:this,write,now,schedule,cancel});
    let rows=0,samples=0,active=true,timer=null,armed=false;
    const record=(phase,fields={})=>{if(!active||rows>=512)return;try{
@@ -238,20 +282,21 @@ function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=s
    assert(!cancellationFile||!fs.existsSync(cancellationFile),'native owner cancelled; no later protocol');
    const capture=this.q3Capture;
    capture.send('pre-send',data);
+   this.q3Readiness.send('pre-send',data);
    const observer=this.q3Transport;
    if(!observer.active){
-    try{const result=super.send(data,...args);capture.send('send-return',data);return result;}
-    catch(error){capture.send('send-throw',data);throw error;}
+    try{const result=super.send(data,...args);capture.send('send-return',data);this.q3Readiness.send('send-return',data);return result;}
+    catch(error){capture.send('send-throw',data);this.q3Readiness.send('send-throw',data);throw error;}
    }
    const fields=protocolMetadata(data);
    observer.arm();observer.record('pre-send',fields);
    const forwarded=args.map(arg=>typeof arg!=='function'?arg:function(...values){
     observer.record('send-callback',{...fields,error:!!values[0]});return Reflect.apply(arg,this,values);
    });
-   try{const result=super.send(data,...forwarded);observer.record('send-return',fields);capture.send('send-return',data);return result;}
-   catch(error){observer.record('send-throw',fields);capture.send('send-throw',data);throw error;}
+   try{const result=super.send(data,...forwarded);observer.record('send-return',fields);capture.send('send-return',data);this.q3Readiness.send('send-return',data);return result;}
+   catch(error){observer.record('send-throw',fields);capture.send('send-throw',data);this.q3Readiness.send('send-throw',data);throw error;}
   }
-  close(...args){try{return super.close(...args);}finally{this.q3Transport.stop('socket close invoked');this.q3Capture.dispose();}}
+  close(...args){try{return super.close(...args);}finally{this.q3Transport.stop('socket close invoked');this.q3Capture.dispose();this.q3Readiness.dispose();}}
  };
 }
 // Instrument the authenticated consumer after its existing transforms. Keep
@@ -262,6 +307,15 @@ function composeStartupDiagnostics(source){
     assert.equal(source.split(before).length,2,'unique startup diagnostic seam: '+before);
     source=source.replace(before,after);
   };
+  // This script runs in the existing pre-navigation init script. It observes
+  // page-owned progress and errors from launch without diagnostic requests.
+  if(process.env.Q3_READINESS_WIRE==='1')once("Object.defineProperty(globalThis,'GLRenderHost'",`(()=>{
+ let count=0;const report=(kind,detail)=>{if(count++<240)try{console.debug('Q3_READINESS_PASSIVE',JSON.stringify({kind,pageNow:performance.now(),detail}));}catch{}};
+ addEventListener('error',e=>report('error',String(e.message).slice(0,1024)));
+ addEventListener('unhandledrejection',e=>report('rejection',String(e.reason).slice(0,1024)));
+ const timer=setInterval(()=>{try{report('progress',{generatedReady:globalThis.__generatedReady===true,generatedError:globalThis.__generatedError==null?null:String(globalThis.__generatedError).slice(0,2048),apps:(typeof runningApps==='undefined'?[]:runningApps).slice(0,4).map(a=>({name:a.name,running:a.wine?.running,stopped:a.wine?._stopped,guestWorker:!!a.wine?.guestWorker,slice:a.wine?._workerLastSlice})),log:document.getElementById('log')?.textContent?.slice(-2048)});}catch(e){report('observer-error',String(e));}if(count>=240)clearInterval(timer);},250);
+ addEventListener('pagehide',()=>clearInterval(timer),{once:true});
+})();Object.defineProperty(globalThis,'GLRenderHost'`);
   if(process.env.Q3_INPUT_SERVICE_REVIEW==='1')once("await require('./local-controls.cjs').run(",
     "await require(root+'/tools/q3-input-phase-service.cjs').run(require('./local-controls.cjs'),");
   // Only this authenticated diagnostic consumer arms the host. The page owner
@@ -315,6 +369,7 @@ function startupInbound(raw){
 }
 function startupSettlement(meta,outcome){
  ws?.q3Capture?.settlement(meta,outcome);
+ ws?.q3Readiness?.settlement(meta,outcome);
  if(!startupRecording)return;
  startupRecord('settlement',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId,outcome});
  if(meta.method==='Page.navigate'&&outcome==='resolve'){startupRecording=false;startupRequests.clear();startupTargets.clear();ws?.q3Transport?.stop('navigation settled');}
@@ -323,9 +378,9 @@ function send(method,params={},sessionId,captureProbe=null)`);
   once('new Promise((resolve,reject)=>{const timer=setTimeout',
     "new Promise((resolvePromise,rejectPromise)=>{let settled=false;const settle=(outcome,fn,value)=>{if(!settled){settled=true;startupSettlement(meta,outcome);}return fn(value);};const resolve=value=>settle('resolve',resolvePromise,value),reject=error=>settle('reject',rejectPromise,error);const timer=setTimeout");
   once('screenshotCompletion.request(meta,params);try{',
-    "startupOutbound(meta,params);screenshotCompletion.request(meta,params);ws?.q3Capture?.request(meta,params);try{");
+    "startupOutbound(meta,params);screenshotCompletion.request(meta,params);ws?.q3Readiness?.request(meta,params);ws?.q3Capture?.request(meta,params);try{");
   once('const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));',
-    'startupInbound(msg.data);const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));ws?.q3Capture?.receive(msg,v,pending.get(v.id));');
+    'startupInbound(msg.data);const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));ws?.q3Capture?.receive(msg,v,pending.get(v.id));ws?.q3Readiness?.receive(msg,v,pending.get(v.id));');
   once("screenshotCompletion.deadline(meta);pending.delete(n);",
     "screenshotCompletion.deadline(meta);ws?.q3Capture?.deadline(meta);if(startupRecording)startupRecord('deadline',{requestId:n,method:meta.method,sessionId:meta.sessionId});pending.delete(n);");
   once("screenshotCompletion.transport(event);if(!closing)",
@@ -456,7 +511,7 @@ function prepare(destination,{inputs=[]}={}){
         "from native_kernel_custody import identity\nimport runpy\nsupervise=runpy.run_path(str(root/'tools/q3-startup-custody.py'))['supervise']");
       if(file.path.endsWith('/cancellation/runtime.py')){
         assert.equal(source.split('os.environ.update(').length,2,'fixture service review environment seam');
-        source=source.replace('os.environ.update(',"os.environ.update(Q3_INPUT_SERVICE_REVIEW='1',");
+        source=source.replace('os.environ.update(',"os.environ.update(Q3_INPUT_SERVICE_REVIEW='1',Q3_READINESS_WIRE='1',");
       }
       return {...file,source};
     });
@@ -515,7 +570,7 @@ function prepare(destination,{inputs=[]}={}){
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }
-module.exports={composeTerminalCleanup,createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
+module.exports={createReadinessDiagnostics,composeTerminalCleanup,createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
 if(require.main===module){
   const args=process.argv.slice(2);assert.equal(args.shift(),'--prepare','explicit preparation only');
   const destination=args.shift(),options={inputs:[]};

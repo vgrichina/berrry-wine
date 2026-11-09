@@ -159,6 +159,10 @@ function sourceChecks(source){
  try{current.composeStartupDiagnostics=old.exports.composeStartupDiagnostics;prior=route.composition(route.version).compose().source;}
  finally{current.composeStartupDiagnostics=compose;}
  let erased=source;
+ for(const seam of ['ws?.q3Readiness?.settlement(meta,outcome);\n ',
+  'ws?.q3Readiness?.request(meta,params);','ws?.q3Readiness?.receive(msg,v,pending.get(v.id));']){
+  assert.equal(erased.split(seam).length,2,seam);erased=erased.replace(seam,'');
+ }
  for(const seam of ['ws?.q3Capture?.settlement(meta,outcome);\n ', 'ws?.q3Capture?.request(meta,params);',
   'ws?.q3Capture?.receive(msg,v,pending.get(v.id));','ws?.q3Capture?.deadline(meta);']){
   assert.equal(erased.split(seam).length,2,seam);erased=erased.replace(seam,'');
