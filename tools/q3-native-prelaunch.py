@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import re
+import runpy
 import subprocess
 import sys
 import time
@@ -85,7 +86,8 @@ def main():
     required = [Path(__file__).resolve(), runtime,
                 root / 'tools/native-startup-barrier.py',
                 root / 'tools/native_kernel_custody.py',
-                root / 'tools/q3-native-launch-client.py']
+                root / 'tools/q3-native-launch-client.py',
+                root / 'tools/q3-cancellation-stream-eof.py']
     paths = {p['path'] for p in pins['files']}
     for provider in required:
         if str(provider.relative_to(root)) not in paths:
@@ -103,6 +105,7 @@ def main():
                          type_ignores=[])
     exec(compile(imports, str(runtime), 'exec'), {'__name__': 'q3_prelaunch_imports'})
     barrier.require(root, manifest, receipt)
+    pump = runpy.run_path(str(root / 'tools/q3-cancellation-stream-eof.py'))
     if args.check_only:
         print(json.dumps(dict(checkOnly=True, importsBound=True, spawn=False)))
         return
@@ -110,18 +113,15 @@ def main():
         stream.write(json.dumps(dict(at=time.time(), **identity(os.getpid()))).encode())
     with gzip.open(run / 'runtime-parent.log.gz', 'xb') as log:
         process = subprocess.Popen(['python3', str(runtime)], cwd=root,
-                                   stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                    env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1'})
         target = identity(process.pid)
         with gzip.open(run / 'runtime-target.json.gz', 'xb') as stream:
             stream.write(json.dumps(target).encode())
-        while chunk := process.stdout.read(65536):
-            log.write(chunk)
-            log.flush()
-        status = process.wait()
+        waited = pump['drain_streams'](process, log)
+        status = waited['status']
     with gzip.open(run / 'runtime-parent-actual-wait.json.gz', 'xb') as stream:
-        stream.write(json.dumps(dict(**target, status=status,
-                                    stdioEOF=True, actualWait=True)).encode())
+        stream.write(json.dumps(dict(**target, **waited)).encode())
     raise SystemExit(status)
 
 
