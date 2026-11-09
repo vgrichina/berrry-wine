@@ -10,11 +10,12 @@ const { Worker } = require('node:worker_threads');
 const { WorkerLink, GuestThreadHost } = require('../lib/guest-thread-host');
 const RPC = require('../lib/guest-rpc');
 const regions = require('../lib/region-map.generated');
-const { Controller, installedPins, MODULE_SHA, readControl } = require('../lib/drakan-observer-worker');
+const { Controller, installedPins, verifiedModuleSha256, readControl } = require('../lib/drakan-observer-worker');
 const { sha256 } = require('../lib/drakan-passive-actor-observer');
 const sigs = require('../lib/host-import-sigs.generated.json').sigs;
 const ROOT = path.resolve(__dirname, '..');
-const bytes = fs.readFileSync(path.join(ROOT, 'build/wine-assembly.wasm'));
+const bytes = fs.readFileSync(process.env.WINE_ASSEMBLY_WASM || path.join(ROOT, 'build/wine-assembly.wasm'));
+const MODULE_SHA = require('node:crypto').createHash('sha256').update(bytes).digest('hex');
 const sourcePath = require.resolve('./test-drakan-passive-actor-observer');
 const source = fs.readFileSync(sourcePath, 'utf8');
 const cutoff = source.indexOf('(async () => {');
@@ -98,7 +99,10 @@ async function workerCase(mode = '', mutate = () => {}, useLink = false, lifecyc
   try {
     const initBytes = Buffer.from(bytes);
     if (mode === 'wrong-module') initBytes[100] ^= 1;
-    if (!link) worker.postMessage({ t: 'init', endpointIdentity: 2105, slot: 0, memory, sigs, drakanModuleBytes: initBytes });
+    if (!link) worker.postMessage({ t: 'init', endpointIdentity: 2105, slot: 0, memory, sigs,
+      // A supplied unrelated Module must neither replace verified bytes nor rescue wrong ones.
+      module: new WebAssembly.Module(Uint8Array.of(0, 97, 115, 109, 1, 0, 0, 0)),
+      drakanModuleBytes: initBytes });
     await (linkReady || ready);
     const invoke = (name, ...args) => request({ t: 'callExport', name, args });
     const exe = fs.readFileSync(path.join(ROOT, 'test/binaries/notepad.exe'));
@@ -308,11 +312,16 @@ async function releaseCase(outcome, trigger, useLink) {
     process.off('unhandledRejection', onUnhandled);
     return;
   }
-  assert.equal(await sha256(bytes), MODULE_SHA);
+  assert.equal(await verifiedModuleSha256(bytes), MODULE_SHA);
   const browser = { self: {}, crypto: require('node:crypto').webcrypto, Uint8Array };
   vm.runInNewContext(fs.readFileSync(require.resolve('../lib/drakan-passive-actor-observer'), 'utf8'), browser);
   assert.equal(await browser.self.DrakanActorObserver.sha256(bytes), MODULE_SHA);
-  pass('browser-safe adapter hash agrees on the complete pinned module without Chrome');
+  browser.self.RegionMap = regions;
+  vm.runInNewContext(fs.readFileSync(require.resolve('../lib/drakan-observer-worker'), 'utf8'), browser);
+  assert.equal(await browser.self.DrakanObserverWorker.verifiedModuleSha256(bytes), MODULE_SHA);
+  const wrongBrowserBytes = Uint8Array.from(bytes); wrongBrowserBytes[100] ^= 1;
+  await assert.rejects(browser.self.DrakanObserverWorker.verifiedModuleSha256(wrongBrowserBytes), /Drakan module identity/);
+  pass('browser-safe adapter and Worker admission agree on exact bytes; altered bytes refused without Chrome');
   const media = path.join(ROOT, 'test/binaries/win98-games-a-d/DrakanOrderOfTheFlameDemoD3D-installed/drakan demo');
   const exe = fs.readFileSync(path.join(media, 'drakan.exe')), rfl = fs.readFileSync(path.join(media, 'dragon.rfl'));
   const pins = await installedPins(exe, rfl, F.B);
@@ -331,6 +340,10 @@ async function releaseCase(outcome, trigger, useLink) {
     await workerCase(mode); pass('production Worker refuses ' + mode);
   }
   for (const [name, mutate] of [
+    ['wrong module owner', ({ controller }) => { controller.owner = { ...controller.owner, moduleSha256:
+      MODULE_SHA === '4b45bda53a90b665896cf3b85d9a157b7c3703563c88b6666e4ee2e4b346bcc3'
+        ? 'a320d4c85156644fd12b6134d66b11784f3100b9b135756206c087cdacd43295'
+        : '4b45bda53a90b665896cf3b85d9a157b7c3703563c88b6666e4ee2e4b346bcc3' }; }],
     ['wrong owner', ({ controller }) => { controller.owner = { ...controller.owner, process: 2000 }; }],
     ['wrong pins', ({ options }) => { options.pins.actor.bytes[0] ^= 1; }],
     ['wrong device', ({ options }) => { options.keyboardDevice += 32; }],

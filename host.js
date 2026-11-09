@@ -12,7 +12,11 @@ const HostMemUtils = (typeof window !== 'undefined' && window.memUtils) ||
 // Module or a caller-provided buffer cannot authenticate one another.
 const drakanCompiledBytes = new WeakMap();
 const drakanBrowserOwners = new WeakMap();
-const DRAKAN_BROWSER_MODULE_SHA = '4b45bda53a90b665896cf3b85d9a157b7c3703563c88b6666e4ee2e4b346bcc3';
+// Exact offline-qualified modules; the private compile record remains authoritative.
+const DRAKAN_BROWSER_MODULES = Object.freeze({
+  '4b45bda53a90b665896cf3b85d9a157b7c3703563c88b6666e4ee2e4b346bcc3': 2184500,
+  'a320d4c85156644fd12b6134d66b11784f3100b9b135756206c087cdacd43295': 2185596,
+});
 
 function drakanCompileSnapshot(bytes) {
   if (typeof window === 'undefined' || window.WINE_DRAKAN_OBSERVER !== true) return null;
@@ -3980,7 +3984,7 @@ class WineAssembly {
           throw new Error('Drakan selected compile bytes unavailable; opt in before compilation');
         const digest = await crypto.subtle.digest('SHA-256', bytes);
         const hash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
-        if (hash !== DRAKAN_BROWSER_MODULE_SHA) throw new Error('Drakan selected module SHA-256 mismatch');
+        if (DRAKAN_BROWSER_MODULES[hash] !== bytes.byteLength) throw new Error('Drakan selected module SHA-256 mismatch');
         // Give this owner a separate copy; never expose the private compile record.
         drakanModuleBytes = bytes.slice();
       }

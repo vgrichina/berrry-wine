@@ -11,7 +11,7 @@ const { GuestThreadHost } = require('../lib/guest-thread-host');
 const { REQUIRED_PINS } = require('../lib/drakan-passive-actor-observer');
 const regions = require('../lib/region-map.generated');
 const ROOT = path.resolve(__dirname, '..');
-const bytes = fs.readFileSync(path.join(ROOT, 'build/wine-assembly.wasm'));
+const bytes = fs.readFileSync(process.env.WINE_ASSEMBLY_WASM || path.join(ROOT, 'build/wine-assembly.wasm'));
 const sigs = require('../lib/host-import-sigs.generated.json').sigs;
 const hostSource = fs.readFileSync(path.join(ROOT, 'host.js'), 'utf8');
 // Reuse the existing independently assembled synthetic fixture in memory.
@@ -26,8 +26,8 @@ const now = () => performance.timeOrigin + performance.now();
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 let checks = 0;
 const pass = name => { checks++; console.log('PASS ' + name); };
-function realm({ optin = true, selected = bytes, source = false, failArtifact = false, shared = false } = {}) {
-  let moduleFetches = 0, sourceBuilds = 0;
+function realm({ optin = true, selected = bytes, source = false, failArtifact = false, shared = false, offset = false } = {}) {
+  let moduleFetches = 0, sourceBuilds = 0, sourceBytes;
   const messages = [];
   const context = {
     console: { log() {}, warn: (...args) => messages.push(args.join(' ')) },
@@ -46,15 +46,16 @@ function realm({ optin = true, selected = bytes, source = false, failArtifact = 
   };
   context.window.watxLauncher = { compileDetailed: async () => {
     sourceBuilds++;
-    const b = shared ? new Uint8Array(new SharedArrayBuffer(selected.length)) : Uint8Array.from(selected);
-    b.set(selected); return { bytes: b, layout: {} };
+    const b = shared ? new Uint8Array(new SharedArrayBuffer(selected.length)) :
+      offset ? new Uint8Array(selected.length + 8).subarray(4, selected.length + 4) : Uint8Array.from(selected);
+    b.set(selected); sourceBytes = b; return { bytes: b, layout: {} };
   }};
   vm.runInNewContext(hostSource + '\nglobalThis.WineAssembly = WineAssembly;', context);
   const Wine = context.WineAssembly;
   Wine.supportsWasmTailCalls = () => true;
   Wine.versionedUrl = file => path.join(ROOT, file);
   Wine._assertSourceBuildLayout = () => {}; // unrelated layout gate has its own tests
-  return { context, Wine, messages, get fetches() { return moduleFetches; }, get builds() { return sourceBuilds; } };
+  return { context, Wine, messages, get sourceBytes() { return sourceBytes; }, get fetches() { return moduleFetches; }, get builds() { return sourceBuilds; } };
 }
 async function start(r, fixture) {
   const module = await r.Wine.getWasmModule();
@@ -151,7 +152,7 @@ async function armedCase(mode) {
       assert.equal(c.stopped, true);
     } else {
       for (let i = 0; i < 60 && !c.completed && !c.stopped; i++) await gh.slice(1);
-      assert.equal(c.completed?.stage, 12, 'native exact-down completed enclosing RET');
+      assert.equal(c.completed?.stage, 12, 'native exact-down completed enclosing RET: ' + JSON.stringify({ completed: c.completed, stopped: c.stopped, control: require('../lib/drakan-observer-worker').readControl(c.buffer) }));
       assert.equal(c.completed?.status, 'COMPLETE');
       assert.equal(p.consumed, 1);
       assert.equal(released, 0);
@@ -179,8 +180,9 @@ async function armedCase(mode) {
   }
 }
 (async () => {
-  assert.equal(createHash('sha256').update(bytes).digest('hex'),
-    '4b45bda53a90b665896cf3b85d9a157b7c3703563c88b6666e4ee2e4b346bcc3');
+  assert.equal(await require('../lib/drakan-observer-worker').verifiedModuleSha256(bytes),
+    createHash('sha256').update(bytes).digest('hex'));
+  console.log(JSON.stringify({ moduleSha256: createHash('sha256').update(bytes).digest('hex'), size: bytes.length }));
   for (const optin of [false, 'true']) {
     const r = realm({ optin }), w = await start(r);
     try {
@@ -206,6 +208,37 @@ async function armedCase(mode) {
     assert(r.messages.some(m => m.includes('SHA-256 mismatch')));
     assert.equal(r.fetches, 1); assert.equal(r.builds, 0);
     await rejectedRelease(w); pass('actual compiled wrong bytes rejected before Worker construction');
+  }
+  {
+    const r = realm(), w = await start(r);
+    const memory = w.memory;
+    try {
+      w.memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+      assert.match((await rejectedRelease(w)).message, /stale owner/);
+      pass('different public memory cannot replace private compiled owner');
+    } finally { w.memory = memory; await stop(w); }
+  }
+  {
+    const r = realm(), w = await start(r);
+    try {
+      w.guestWorker.link.drakanModuleBytes = Uint8Array.from(bytes);
+      w.guestWorker.link.drakanModuleBytes[100] ^= 1;
+      assert.match((await rejectedRelease(w)).message, /Drakan module identity/);
+      assert.equal(w.guestWorker.link.drakanController, null);
+      pass('caller-altered bytes cannot forge an owning Controller digest');
+    } finally { await stop(w); }
+  }
+  {
+    const r = realm({ source: true, offset: true });
+    await r.Wine.getWasmModule();
+    r.sourceBytes.fill(0); // Public loader buffer no longer contains compiled bytes.
+    const w = await start(r);
+    try {
+      assert(w.guestWorker);
+      assert.deepEqual(Buffer.from(w.guestWorker.drakanModuleBytes), bytes);
+      assert.equal(r.builds, 1); assert.equal(r.fetches, 0);
+      pass('offset source compile snapshot remains private after loader mutation');
+    } finally { await stop(w); }
   }
   for (const fallback of [false, true]) {
     const r = realm({ source: !fallback, failArtifact: fallback }), w = await start(r);
