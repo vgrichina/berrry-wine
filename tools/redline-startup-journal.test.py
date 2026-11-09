@@ -30,6 +30,8 @@ def load(legacy=False, cap=2):
     if legacy:
         assert generated.count('defer=True)') == 1
         generated = generated.replace('defer=True)', 'defer=retirement or diagnostic)')
+        generated = generated.replace('        if actual_request == CONT:\n'
+            '            journal.flush_pending()\n            observer.flush_pending()\n', '')
     sys.modules['native_publication_observer'] = helper
     module = types.ModuleType('redline_actual_custody')
     exec(compile(generated, '<redline-actual-custody>', 'exec'), module.__dict__)
@@ -61,7 +63,7 @@ class StartupJournal(unittest.TestCase):
                         (run/'custody.ndjson.gz').read_bytes()).splitlines()]
                     status = last[pid]
                     if status >> 16 == 6:
-                        self.assertTrue(any(r['kind']=='custody' and r['pid']==pid for r in durable))
+                        self.assertEqual(durable, rows, 'full durable prefix before irreversible CONT too')
                         retiring.append(pid)
                     elif status == (0x85 << 8 | 0x7f):
                         pure.append(pid)
@@ -80,6 +82,20 @@ class StartupJournal(unittest.TestCase):
             drain = json.loads((run/'kernel-drain.json').read_text())
             self.assertTrue(drain['complete']); self.assertEqual(len(drain['owned']),len(drain['reaped']))
             (run/'barriers.json').write_text(json.dumps(dict(barriers=barriers, pureSyscallReleases=len(pure), irreversibleReleases=len(retiring))))
+
+    def test_first_observed_unlinked_exit_has_durable_custody(self):
+        # Actual kernel EXIT supersedes the new child's initial SIGSTOP before
+        # registration. Its delayed parent fork event is consumed after reaping.
+        run = OUT/'first-unlinked-exit'; run.mkdir()
+        result = subprocess.run([sys.executable, '-B', __file__, '--unlinked-exit', str(run)],
+                                capture_output=True, text=True, timeout=15)
+        (run/'actual-wait.json').write_text(json.dumps(dict(code=result.returncode,
+            stdout=result.stdout, stderr=result.stderr, actualWait=True, stdoutEOF=True, stderrEOF=True)))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        proof = json.loads((run/'first-exit-cont-barrier.json').read_text())
+        self.assertLess(proof['durableCustodySequence'], proof['recordedSequence'])
+        drain = json.loads((run/'kernel-drain.json').read_text())
+        self.assertTrue(drain['complete']); self.assertFalse(drain['remaining']); self.assertFalse(drain['unreaped'])
 
     def test_sticky_failure_final_sync_and_bounded_pressure(self):
         spec = importlib.util.spec_from_file_location('controls', ROOT/'native_kernel_custody_test.py')
@@ -117,4 +133,10 @@ class StartupJournal(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main(verbosity=2)
+    if len(sys.argv) > 1 and sys.argv[1] == '--unlinked-exit':
+        spec = importlib.util.spec_from_file_location('controls', ROOT/'native_kernel_custody_test.py')
+        controls = importlib.util.module_from_spec(spec); spec.loader.exec_module(controls)
+        controls.kernel = load()
+        controls.unseen_exit_fixture(Path(sys.argv[2]))
+    else:
+        unittest.main(verbosity=2)

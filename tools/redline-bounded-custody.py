@@ -41,9 +41,22 @@ def adapt(helper, source, **options):
             'actual_request = SYSCALL if request == CONT and task not in exiting and not observer.exhausted() else request')
     # helper.candidate first authenticates the exact shared provider. There is
     # no executable admission between these intermediate records and the
-    # existing full-prefix barrier below. Journal saturation still synchronously
-    # flushes; sticky errors, retirement and finalization remain byte identical.
+    # full-prefix barriers. Journal saturation still synchronously flushes;
+    # sticky errors and finalization remain byte identical.
     replace('defer=retirement or diagnostic)', 'defer=True)')
+    # First observation may already be an unlinked irreversible EXIT. Its new
+    # custody identity must be durable too, even though it cannot execute guest
+    # userspace. Flush every actual CONT outside the ESRCH-catching try block.
+    # Pure syscall stepping keeps the existing bounded diagnostic behavior.
+    replace('    def trace_task(request, task, data=0):\n'
+            '        try:\n'
+            '            actual_request = SYSCALL if request == CONT and task not in exiting and not observer.exhausted() else request\n',
+            '    def trace_task(request, task, data=0):\n'
+            '        actual_request = SYSCALL if request == CONT and task not in exiting and not observer.exhausted() else request\n'
+            '        if actual_request == CONT:\n'
+            '            journal.flush_pending()\n'
+            '            observer.flush_pending()\n'
+            '        try:\n')
     replace('                journal.flush_pending() # ordered durable prefix before executable userspace',
             '                # Pure syscall continuation admits no new owned identity.\n'
             '                # Every other release retains the published durable barrier.\n'
@@ -117,7 +130,8 @@ def launch(argv):
         json.dump(dict(version=VERSION, sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                        publishedLauncherSHA256=LAUNCHER_SHA, observerPendingBytes=64*1024,
                        observerPendingRecords=256, syscallCapReturnsToOrdinaryCustody=True,
-                       ownershipAdmissionDurable=True, custodyPrefixBatched=True), stream)
+                       ownershipAdmissionDurable=True, custodyPrefixBatched=True,
+                       everyActualContDurable=True), stream)
     return published.launch(argv)
 
 
