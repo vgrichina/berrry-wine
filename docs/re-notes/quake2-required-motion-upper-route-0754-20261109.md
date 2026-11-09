@@ -101,6 +101,11 @@ local runtime lock. PHYSICAL_DRAINED was posted promptly at **08:02:48Z**.
 
 Own outer logs are gzip drains from first byte. Retained caller/fixture-internal
 formats remain explicit, including the existing plain supervisor streams.
+The initial local board watcher exceeded its separate 600-second test watchdog:
+its controller was actually waited -9, but the tail-child wait receipt is missing
+and both watcher-internal gzip files lack final trailers. Those two streams are
+retained as truncated evidence; tail reaping and their complete EOF are UNKNOWN.
+This does not alter the separately verified runtime/caller/watchdog joins above.
 Recovery uses exact Git revisions, a small relevant-source patch and a small
 run-input patch, plus existing media/module path and SHA references. No source
 tree, media or module archive was created. Free /home stayed above 1.5 GB.
