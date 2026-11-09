@@ -3,6 +3,17 @@
 // Import does not select modules, prepare pins, allocate, or launch.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),cp=require('node:child_process'),assert=require('node:assert/strict'),vm=require('node:vm'),Module=require('node:module');
 const root=path.resolve(__dirname,'..'),version="quake2-1495-published-5c8780318-writer-e5eff70be-f977ebf7c-v2";
+const browserModuleVersion=version+'-browser-1605-v1';
+// Exact published narrow browser implementation. Historical v2 continues to
+// enforce its original provider pins and browser behavior.
+const browserPolicyCommit='a16fc87d477d8891a741e1a214cfc89f5a924ac4';
+// Runtime mirrors of the published browser implementation, never learned
+// from runtime pins. The preparer cross-checks them against the Git authority.
+const browserProviders=Object.freeze({
+ 'lib/quake2-browser-load-observer.js':'45cd7e009fa5718fff4ad6c8a7080f439eae993292fab63b920c2eb49a2f4fb6',
+ 'lib/quake2-current-browser-policy-v1.js':'3a5498e183a04444c5a55888a7cbfac482ef93dc209b7781c5f16633263ffbe2',
+ 'tools/quake2-current-browser-policy.cjs':'2a46d2471fdafcb4a685281ccf5aa4c1f6d43321df475207493089f1b33852a7'
+});
 const historical="scratch/runs/20261109-quake2-rejected-frame-native-progress-1265/runtime-pins.json",historicalSHA='af301be22ff45b1595eae654e5406f712152ef5ec80b524d3179c8f49d0b7553';
 const authorities=Object.freeze({
   "host.js": "5c8780318",
@@ -65,31 +76,44 @@ function writerClosure(files){
  const page=shared.pageSource({globalName:'__q2DeclaredWriterClosure',identity:{processId:1,endpoint:1},installationToken:'offline-closure-check'});
  new vm.Script(page);return [...cache.keys()];
 }
-function validate({moduleVersion}={}){
- assert.equal(moduleVersion,version,'explicit supported Q2 module version required');
+function validate(options={}){
+ assert(Object.keys(options).every(k=>['moduleVersion','browserPolicyVersion'].includes(k)),'unsupported Q2 module validation option');
+ const {moduleVersion,browserPolicyVersion}=options;
+ const browser=moduleVersion===browserModuleVersion;
+ assert(moduleVersion===version||browser,'explicit supported Q2 module version required');
+ const policy=browser?require('./quake2-current-browser-policy.cjs'):null;
+ if(browser)assert.equal(browserPolicyVersion,policy.version,'explicit Q2 browser policy version required');
+ else assert.equal(browserPolicyVersion,undefined,'browser policy requires explicit browser module version');
+ const selectedAuthorities={...authorities};
+ if(browser){
+  assert(browserPolicyCommit,'published Q2 browser policy authority required');
+  for(const name of [policy.observer,policy.provider,'tools/quake2-current-browser-policy.cjs'])selectedAuthorities[name]=browserPolicyCommit;
+ }
  const raw=read(historical);assert.equal(hash(raw),historicalSHA,'historical Q2 pinset integrity');
  const prior=JSON.parse(raw),seen=new Set(),changes=[],files=[];
  const cpuCommit=published('5c8780318');
  const sourcePaths=git(['ls-tree','-r','--name-only',cpuCommit,'--','src','tools/watx-src','tools/watx.js','tools/watx-closure.js','tools/build-compile-wat.js']).toString().trim().split('\n');
  for(const n of sourcePaths)assert.equal(hash(read(n)),hash(git(['show',cpuCommit+':'+n])),'published Q2 build source: '+n);
  const commits={};
- for(const c of new Set(Object.values(authorities)))commits[c]=published(c);
+ for(const c of new Set(Object.values(selectedAuthorities)))commits[c]=published(c);
  const pin=(name,b)=>({path:name,size:b.length,sha256:hash(b)});
  for(const before of prior.files){
   const n=before.path;assert(!seen.has(n),'duplicate historical Q2 provider');seen.add(n);
   const actual=pin(n,read(n));
-  if(authorities[n]){
-   const expected=git(['show',commits[authorities[n]]+':'+n]);
+  if(selectedAuthorities[n]){
+   const expected=git(['show',commits[selectedAuthorities[n]]+':'+n]);
    assert.equal(actual.size,expected.length,'published Q2 provider size: '+n);
    assert.equal(actual.sha256,hash(expected),'published Q2 provider SHA: '+n);
+   if(browserProviders[n]&&browser)assert.equal(actual.sha256,browserProviders[n],'published Q2 browser runtime mirror: '+n);
   }else if(modules[n])assert.equal(actual.sha256,modules[n],'published Q2 module SHA: '+n);
   else{assert.equal(actual.size,before.size,'unexplained Q2 provider size: '+n);assert.equal(actual.sha256,before.sha256,'unexplained Q2 provider SHA: '+n);}
-  if(actual.sha256!==before.sha256)changes.push({before,after:actual,publishedCommit:authorities[n]?commits[authorities[n]]:cpuCommit});
+  if(actual.sha256!==before.sha256)changes.push({before,after:actual,publishedCommit:selectedAuthorities[n]?commits[selectedAuthorities[n]]:cpuCommit});
   files.push(actual);
  }
- for(const [n,c] of Object.entries(authorities))if(!seen.has(n)){
+ for(const [n,c] of Object.entries(selectedAuthorities))if(!seen.has(n)){
   const b=read(n),expected=git(['show',commits[c]+':'+n]);
   assert.equal(hash(b),hash(expected),'new published Q2 provider: '+n);files.push(pin(n,b));seen.add(n);
+  if(browserProviders[n]&&browser)assert.equal(hash(b),browserProviders[n],'new published Q2 browser runtime mirror: '+n);
  }
  for(const n of Object.keys(modules))assert(seen.has(n),'missing historical Q2 module');
  const composed=require('./quake2-native-driver-composition.cjs').compose({custodyVersion:'publishedf977ebf7c'});
@@ -100,9 +124,17 @@ function validate({moduleVersion}={}){
   assert(before&&after,'HTTP Q2 provider required');assert.equal(p.sha256,before.sha256,'historical HTTP Q2 SHA');assert.equal(p.size,before.size,'historical HTTP Q2 size');
   return {...p,size:after.size,sha256:after.sha256};
  });
- return {version,files,httpPins,changes,writerDependencies,publishedModuleCommit:cpuCommit,historical:{path:historical,sha256:historicalSHA,commit:prior.commit},
+ if(browser){
+  const p=files.find(p=>p.path===policy.provider);
+  assert(!httpPins.some(p=>p.url==='/'+policy.provider),'duplicate Q2 browser policy HTTP pin');
+  httpPins.push({url:'/'+p.path,size:p.size,sha256:p.sha256});
+  for(const name of ['tools/quake2-current-module.cjs','tools/quake2-staged-closure-gameplay.cjs']){
+   assert(!files.some(p=>p.path===name),'duplicate Q2 preparer provider');files.push(pin(name,read(name)));
+  }
+ }
+ return {version:browser?browserModuleVersion:version,...(browser?{browserPolicyVersion,publishedBrowserPolicyCommit:commits[browserPolicyCommit]}:{}),files,httpPins,changes,writerDependencies,publishedModuleCommit:cpuCommit,historical:{path:historical,sha256:historicalSHA,commit:prior.commit},
   sourcePolicy:'Current bytes only; exact enumerated published changes. No historical Git provider substitution.',
   nativeQualification:false};
 }
-module.exports={validate,writerClosure,version,historical,historicalSHA,authorities,modules};
+module.exports={validate,writerClosure,version,browserModuleVersion,browserPolicyCommit,browserProviders,historical,historicalSHA,authorities,modules};
 
