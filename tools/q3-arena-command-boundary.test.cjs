@@ -90,7 +90,10 @@ async function scenario(source,label,{replyAt=31000,afterReplyAt=replyAt,fireDea
   close:async()=>{closed++;},event:async()=>{},screenshotCompletion:diagnostic,
   sha:hash,ws:{send:text=>{const r=JSON.parse(text);wire.push(r);if(r.method==='Input.dispatchMouseEvent')queueMicrotask(()=>context.receive({data:JSON.stringify({id:r.id,sessionId:r.sessionId,result:{}})}));}}});
  const terminal=slice(source,'let terminalFailure=',"\nlet browser,server");
- const send=slice(source,'function send(','\nasync function evaluate');
+ // Keep the complete generated send prelude, including versioned observer
+ // state/functions. Extracting only `function send` silently loses its lexical
+ // dependencies when the authenticated composition gains instrumentation.
+ const send=slice(source,source.includes('const startupDiagnostics=')?'const startupDiagnostics=':'function send(','\nasync function evaluate');
  const receive=slice(source,'ws.onmessage=','\n save(\'browser-version.json\'').slice(13);
  const capture=slice(source,'async function captureImpl(','\nlet closePromise;');
  const execute=slice(source,'async function executeImpl(','\n(async()=>{');
@@ -125,7 +128,7 @@ async function scenario(source,label,{replyAt=31000,afterReplyAt=replyAt,fireDea
  function respond(request,result){context.receive({data:JSON.stringify({id:request.id,sessionId:request.sessionId,...(error&&request.method==='Page.captureScreenshot'?{error:{code:-32000,message:'first screenshot failure'}}:{result})})});}
  await advance(0);if(!untimed)await advance(150);
  await advance(untimed?0:10150);await advance(untimed?6640:16640);
- const owner=wire.at(-1);assert.equal(owner.method,'Runtime.evaluate');respond(owner,{result:{value:{}}});await flush();
+ const owner=wire.at(-1);assert(owner,`${label}: no owner request; status=${status}; failure=${failure}`);assert.equal(owner.method,'Runtime.evaluate');respond(owner,{result:{value:{}}});await flush();
  const shot=wire.at(-1);assert.equal(shot.method,'Page.captureScreenshot');assert.equal(shot.sessionId,'page');assert.deepEqual(shot.params,{format:'png'});
  assert([...timers.values()].some(v=>v.ms===20000),'unchanged actual CDP timeout');
  if(fireDeadline&&!untimed)await advance(30000);
@@ -145,6 +148,19 @@ async function scenario(source,label,{replyAt=31000,afterReplyAt=replyAt,fireDea
  }
  const first=context.failure();
  if(first){await assert.rejects(context.input(),/terminal UNKNOWN/);assert.equal(context.failure(),first,'first terminal immutable');}
+ if(source.includes('const startupDiagnostics=')){
+  const diagnosticRows=records.filter(r=>r.n==='cdp-startup.jsonl').map(r=>r.v);
+  for(const request of wire){
+   const outbound=diagnosticRows.filter(r=>r.direction==='outbound'&&r.requestId===request.id);
+   assert.equal(outbound.length,1,'one actual diagnostic outbound per command request');
+   assert.equal(outbound[0].method,request.method);assert.equal(outbound[0].sessionId,request.sessionId??null);
+   assert.equal(outbound[0].sha256,hash(Buffer.from(JSON.stringify(request))),'actual command envelope identity');
+   const settled=diagnosticRows.filter(r=>r.direction==='settlement'&&r.requestId===request.id);
+   assert.equal(settled.length,1,'actual generated promise settles once');
+   assert.equal(settled[0].method,request.method);
+  }
+  fs.writeFileSync(dir+'/startup-diagnostics.json',JSON.stringify(diagnosticRows,null,2));
+ }
  const result={status,clientStatus,failure:failure??null,terminal:first?String(first):null,closed,
   afterScreenshot:after.map(r=>r.method),requests:wire.map(r=>({method:r.method,id:r.id})),
   png:fs.existsSync(dir+'/'+(untimed?'untimed':'arena')+'.png'),ack:fs.existsSync(dir+'/reply-0.json'),
