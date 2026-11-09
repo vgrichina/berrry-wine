@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed Q2close0244: actual Chrome launcher cat relays traced, both production candidates failed; driver restored, no committed repair.162indexedSHA sizes134gzipCRC PASS; box bx_ahbennnr archived stop_54426b99ce8846ab physicaldrained. Fresh quake2-launcher-teardown-repair-0300 PID900417 thread01a1be3c-2f0e-7df0-83c2-3b0bfdbe7e84 targets causal launcher/process/pipe repair with real Chrome fail-before/pass-after and unchanged caps. Prepares offline; ONE fixture after Warcraft0244 then Super0300 exact releases. Original guard/door progress remains open; strictflags/native REVOKED/allwriters/edictABA UNKNOWN preserved.
+  Next: Reviewed Q2close0244 actualChrome rejected candidates,162SHA134gzip PASS, production restored; bx_ahbennnr archived stop_54426b99ce8846ab physicaldrained.0300 four exact Bash relay controls PASS actualwaitpid and separateEOF; relays alone no deadlock, upstream writer and sampling cost UNKNOWN, no box. Fresh quake2-upstream-writer-repair-0301 PID907082 thread01a1be3f-21ef-7600-abf7-6487f16e6d9a maps upstream identities/observer cost then causal realChrome fail-before/pass-after under unchanged caps. ONEfixture after Warcraft0244 then Super0300 exact releases, active predecessors are normal waits. Original guard/door open, native REVOKED/allwriters/edictABA UNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
