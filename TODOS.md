@@ -56,7 +56,7 @@
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: ReviewedWC0350 closurefixed actual23.939sChrome startupPASS but18scleanup terminalNULL neitherEOF,123actualwaitscomplete later,283SHA66gzip verified WIPunpublished boxarchiveddrained. Fresh native-chrome-terminal-delay-0400 PID985898 thread01a1be75-0a87-7640-9b9b-1b6dae0c8b62 OFFLINE causal native/Node topology reproduction and concrete terminaldelayrepair preservingcaps realwaits separateEOF. No unchangedChrome/original retry; historicalUNKNOWN preserved.
+  Next: Native0400 published9ab pendingEXIT scheduling repair actualold19.019s/new2.6ms normal75ms; 95SHA18gzip verified. Fresh warcraft-custody-normal-close-0410 PID1001722 thread01a1be7f-175d-7031-8708-017cd2a8a671 offline WC integration then ONEsmallChrome after exactSuper0400 archived/drained, unchangedcaps actualnormalclose required before publish. Historical0244/0350causeUNKNOWN.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
