@@ -6,6 +6,17 @@ const current=require('./quake2-current-module.cjs'),root=path.resolve(__dirname
 const observerPath='lib/quake2-browser-load-observer.js';
 const policy=require('./quake2-current-browser-policy.cjs');
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+// The retained owning 1645 launch wrapper imports this after spawning its
+// remote parent. It is a runtime provider even though the Node consumer does
+// not import it. Authenticate it before any launch can reach that boundary.
+const parentWait={path:'scratch/runs/20261109-quake2-current-policy-guard-door-1645/pipe-wait.py',size:961,sha256:'5c67aa36ea6d6c5251129309f0cd532937bf855c5cecec46bb71d63c9804e933'};
+function validateParentWait(files,read=name=>fs.readFileSync(path.join(root,name))){
+ const pin=files.find(p=>p.path===parentWait.path);
+ assert.deepEqual(pin,parentWait,'retained Q2 parent wait provider required');
+ const bytes=read(pin.path);
+ assert.equal(bytes.length,parentWait.size,'retained Q2 parent wait size');
+ assert.equal(hash(bytes),parentWait.sha256,'retained Q2 parent wait SHA');
+}
 function browserBinding(files,read=name=>fs.readFileSync(path.join(root,name)),browserPolicyVersion){
  const declared=new Map(files.map(p=>[p.path,p]));
  function bytes(name){
@@ -69,6 +80,9 @@ function runtimeBinding(pins,read=name=>fs.readFileSync(path.join(root,name))){
 function prepare(destination,options){
  destination=path.resolve(destination);assert(!fs.existsSync(destination),'fresh task-owned destination required');
  const closure=validatePublished(options);
+ assert(!closure.files.some(p=>p.path===parentWait.path),'duplicate retained Q2 parent wait provider');
+ closure.files.push({...parentWait});
+ validateParentWait(closure.files);
  const composed=policy.compose({browserPolicyVersion:closure.browserPolicyVersion,custodyVersion:'publishedf977ebf7c'});
  for(const ref of composed.references)assert(closure.files.some(p=>p.path===ref.path&&p.sha256===ref.sha256&&p.size===ref.size),'staged actual Q2 caller provider required: '+ref.path);
  const pins={commit:require('node:child_process').execFileSync('git',['rev-parse','HEAD'],{cwd:root}).toString().trim(),...closure,
@@ -89,6 +103,7 @@ function consumerPreflight(manifest){
  assert(fs.statSync(manifest).isFile(),'runtime manifest must be a file');
  const run=path.dirname(manifest),pins=JSON.parse(fs.readFileSync(manifest));
  runtimeBinding(pins);
+ validateParentWait(pins.files);
  assert.equal(pins.preload,'tools/quake2-current-browser-policy.cjs','explicit current browser preload required');
  assert.equal(pins.runtimeEnvironment.QUAKE2_NATIVE_WRITER_WITNESS,'1');
  assert.equal(pins.runtimeEnvironment.QUAKE2_NATIVE_CUSTODY_VERSION,'publishedf977ebf7c');

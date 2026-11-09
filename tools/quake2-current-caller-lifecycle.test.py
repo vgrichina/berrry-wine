@@ -58,6 +58,21 @@ def parent(run):
 def boat(args):
     assert args[-3:-1] == ['python3', '-c']
     code = args[-1]
+    # The shared checkout must not hide an omitted generated-parent helper.
+    # Enforce the staged manifest at the actual Python runpy import boundary.
+    run = Path(os.environ['Q2_CURRENT_LIFECYCLE_RUN'])
+    helper = ROOT/'scratch/runs/20261109-quake2-current-policy-guard-door-1645/pipe-wait.py'
+    pins = json.loads((run/'runtime-pins.json').read_bytes())
+    declared = {str(ROOT/p['path']): p for p in pins['files'] if ROOT/p['path'] == helper}
+    audit = r'''import sys,os,json
+def staged_read(event,args):
+ if event=='open' and isinstance(args[0],(str,bytes)) and os.fsdecode(args[0])==HELPER:
+  assert HELPER in DECLARED,'undeclared generated-parent helper'
+  with open(AUDIT_OUTPUT,'a') as output:output.write(json.dumps(DECLARED[HELPER])+'\n')
+sys.addaudithook(staged_read)
+'''.replace('HELPER', repr(str(helper))).replace('DECLARED', repr(declared)).replace(
+        'AUDIT_OUTPUT', repr(str(run/'staged-parent-helper-read.jsonl')))
+    code = audit+code
     # Preserve the actual remote-parent selection; replace only its executable
     # boundary so that the explicit test-only supervisor seam is local.
     before = '["python3",root+"/tools/quake2-native-launch-client.py","--remote-parent",r]'
@@ -66,7 +81,6 @@ def boat(args):
         code = code.replace(before, repr([sys.executable, str(SELF), '--parent'])+'+[r]')
     p = subprocess.Popen([sys.executable, '-c', code], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = p.communicate(timeout=25)
-    run = Path(os.environ['Q2_CURRENT_LIFECYCLE_RUN'])
     (run/('executor-'+str(os.getpid())+'.json')).write_text(json.dumps(dict(
         child=p.pid, status=p.returncode, actualWait=True, stdoutEOF=True, stderrEOF=True)))
     print(json.dumps(dict(stdout=out.decode(), stderr=err.decode(), exitCode=p.returncode)), flush=True)
@@ -90,6 +104,10 @@ def harness(run):
 def test(run, pins):
     run.mkdir(parents=True, exist_ok=False)
     raw = pins.read_bytes()
+    helper = 'scratch/runs/20261109-quake2-current-policy-guard-door-1645/pipe-wait.py'
+    pin = next(p for p in json.loads(raw)['files'] if p['path'] == helper)
+    assert pin['sha256'] == hashlib.sha256((ROOT/helper).read_bytes()).hexdigest()
+    assert pin['size'] == (ROOT/helper).stat().st_size
     (run/'runtime-pins.json').write_bytes(raw)
     (run/'lifecycle.json').write_text(json.dumps(dict(browserDeadline=int((time.time()+60)*1000))))
     spec = importlib.util.spec_from_file_location('barrier', ROOT/'tools/native-startup-barrier.py')
@@ -168,6 +186,8 @@ def test(run, pins):
             assert (run/('executor-'+str(receipt['pid'])+'.json')).exists()
         node = json.loads((run/'caller-parent-wait.json').read_text())
         generated = json.loads((run/'generated-parent-actual-wait.json').read_text())
+        imported = [json.loads(line) for line in (run/'staged-parent-helper-read.jsonl').read_text().splitlines()]
+        assert imported and all(row == pin for row in imported)
         for receipt in [node, generated]:
             assert receipt['actualWait'] and receipt['stdoutEOF'] and receipt['stderrEOF']
             assert receipt['status'] == 0 and not Path('/proc', str(receipt['pid'])).exists()
@@ -178,6 +198,7 @@ def test(run, pins):
         result = dict(passed=True, actualProductionCLI=True, actualRetainedLaunch=True,
                       actualBarrier=True, actualRemoteParent=True, currentPolicyFixturePreflight=True,
                       pinsUnchanged=True, runtimeGitForbidden=True, outerActualWait=True, separateEOF=True,
+                      declaredParentWaitImported=True,
                       terminal=terminal, actualKernelDrain=kernel_mode, nativeCustody='NOT_TESTED', chromeStarted=False,
                       nativeQualification=False)
         (run/'result.json').write_text(json.dumps(result, indent=2))

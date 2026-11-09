@@ -52,8 +52,8 @@ def test(destination):
     expression = next(n for n in expressions if 'stage-closure.cjs' in ast.unparse(n))
     namespace = dict(BASE_RUN=RETAINED, ROOT=ROOT, REMOTE=str(ROOT), RUN=str(destination.relative_to(ROOT)), repr=repr, str=str)
     original = eval(compile(ast.Expression(expression), '<actual retained provision>', 'eval'), namespace)
-    old = run([sys.executable, '-c', original])
-    assert old['status'] != 0 and 'ENOTDIR' in old['stderr'], old
+    # Historical ENOTDIR is retained in the prior run. Never execute the old
+    # stage-closure route when qualifying fresh production preparation.
     # Fix only the executable/argument contract; retain the exact actual manifest.
     spec = pins['consumerPreflight']
     assert spec == dict(tool='tools/quake2-staged-closure-gameplay.cjs', argument='--consumer-preflight', input='runtime-pins.json')
@@ -79,6 +79,29 @@ def test(destination):
     controls.append(run(['node', cli, '--consumer-preflight', str(destination)], env))
     controls.append(run(['node', cli, '--consumer-preflight', str(destination/'missing/runtime-pins.json')], env))
     raw = manifest.read_bytes()
+    helper = 'scratch/runs/20261109-quake2-current-policy-guard-door-1645/pipe-wait.py'
+    helper_pin = next(p for p in pins['files'] if p['path'] == helper)
+    assert helper_pin == dict(path=helper, size=961, sha256='5c67aa36ea6d6c5251129309f0cd532937bf855c5cecec46bb71d63c9804e933')
+    damaged = json.loads(raw)
+    damaged['files'] = [p for p in damaged['files'] if p['path'] != helper]
+    manifest.write_text(json.dumps(damaged))
+    controls.append(run(['node', cli, '--consumer-preflight', str(manifest)], env))
+    assert 'retained Q2 parent wait provider required' in controls[-1]['stderr']
+    # Refuse damage during actual preparation, before a manifest is written.
+    for mode in ['missing', 'changed']:
+        script = '''const fs=require('node:fs'),path=require('node:path');
+const read=fs.readFileSync,helper=process.argv[1],mode=process.argv[2];
+fs.readFileSync=function(file,...args){if(path.resolve(String(file))===helper){
+ if(mode==='missing')throw Error('missing parent wait control');
+ const b=Buffer.from(read.call(this,file));b[b.length-1]^=1;return b;
+}return read.call(this,file,...args);};
+const g=require('./tools/quake2-staged-closure-gameplay.cjs'),m=require('./tools/quake2-current-module.cjs'),p=require('./tools/quake2-current-browser-policy.cjs');
+g.prepare(process.argv[3],{moduleVersion:m.browserModuleVersion,browserPolicyVersion:p.version});'''
+        refused = destination/('refused-helper-'+mode)
+        control = run(['node', '-e', script, str(ROOT/helper), mode, str(refused)])
+        assert control['status'] != 0 and not refused.exists(), control
+        assert ('missing parent wait control' if mode == 'missing' else 'retained Q2 parent wait SHA') in control['stderr']
+        controls.append(control)
     damaged = json.loads(raw)
     damaged['files'] = [p for p in damaged['files'] if not p['path'].endswith('/observer-preload.cjs')]
     manifest.write_text(json.dumps(damaged))
@@ -92,10 +115,11 @@ def test(destination):
     manifest.write_bytes(raw)
     assert all(r['status'] != 0 for r in controls)
     assert not list(destination.rglob('*.png'))
-    result = dict(passed=True, oldENOTDIR=True, actualRetainedProvisionExpression=True,
+    result = dict(passed=True, historicalCommandNotExecuted=True, actualRetainedProvisionExpression=True,
                   correctedProductionCLI=True, actualComposedConsumer=True,
+                  retainedParentWaitStaged=True, missingDamagedParentWaitRefused=True,
                   gitForbidden=True, chromeStarted=False, nativeQualification=False,
-                  preparation=preparation, old=old, corrected=good, controls=controls)
+                  preparation=preparation, corrected=good, controls=controls)
     with gzip.open(destination/'regression.json.gz', 'wb') as f:
         f.write(json.dumps(result, indent=2).encode())
     print(json.dumps({k: v for k, v in result.items() if isinstance(v, bool)}))
