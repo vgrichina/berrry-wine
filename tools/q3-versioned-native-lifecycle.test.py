@@ -4,7 +4,7 @@ DRIVER_PREFLIGHT is the consumer's existing pre-browser exit. No provider read,
 Git, import, runtime, supervisor or subprocess is replaced in the positive run.
 """
 from pathlib import Path
-import gzip, hashlib, json, os, runpy, signal, subprocess, sys, time
+import ast, gzip, hashlib, json, os, runpy, signal, subprocess, sys, time
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=Path(sys.argv[1]).resolve();OUT.mkdir()
@@ -71,6 +71,16 @@ try:
  (OUT/'prepared/lifecycle.json.gz').write_bytes(gzip.compress(json.dumps(dict(overallDeadline=time.time()+1500,manifestSHA256=seal['manifestSHA256'],immutable=True)).encode()))
  for phase in ['cancellation','original']:
   runtime=OUT/phase/'runtime.py';run=OUT/phase/'prepared';run.mkdir()
+  # Execute the generated caller's actual drain builder without contacting a
+  # box. Its physical predicates remain in the emitted program, unexecuted.
+  def drain_transport(label,code,timeout):
+   assert timeout==60 and 'out=Path('+repr(str(run/'runtime'))+')' in code
+   assert 'assert not writers,writers' in code and "k['commandLog']['eof']" in code
+   assert 'out=root/' not in code
+   return '{}'
+  fn=next(n for n in ast.parse(generated).body if isinstance(n,ast.FunctionDef) and n.name=='drain')
+  ns=dict(ROOT=ROOT,REMOTE=str(ROOT),phase=phase,phaseRun=str(run.relative_to(ROOT)),out=str(run/'runtime'),json=json,remote=drain_transport,save=lambda *_:None)
+  exec(compile(ast.Module(body=[fn],type_ignores=[]),seal['caller'],'exec'),ns);ns['drain']()
   (run/'runtime-pins.json.gz').write_bytes((OUT/'prepared/runtime-pins.json.gz').read_bytes())
   for pin in pins['files']:
    b=(ROOT/pin['path']).read_bytes();assert H(b)==pin['sha256'] and len(b)==pin['size']

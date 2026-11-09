@@ -29,6 +29,10 @@ function generate(run,selected){
  return files;
 }
 function caller(source){
- return once(source,"out=REMOTE+'/scratch/runs/20261108-q3-gl-readiness-gameplay/changed-control-1475-'+phase", "out=REMOTE+'/'+str((phasebase/'prepared/runtime').relative_to(ROOT))");
+ source=once(source,"out=REMOTE+'/scratch/runs/20261108-q3-gl-readiness-gameplay/changed-control-1475-'+phase", "out=REMOTE+'/'+str((phasebase/'prepared/runtime').relative_to(ROOT))");
+ // The independent retained drain constructs its output separately. Bind it
+ // to the same directory before its unchanged physical/kernel assertions.
+ return once(source," save(phase+'-drain',json.loads(remote(phase+'-drain',script,60)))",
+  " script=script.replace(\"out=root/'scratch/runs/20261108-q3-gl-readiness-gameplay/changed-control-1475-\"+phase+\"'\",\"out=Path(\"+repr(out)+\")\")\n save(phase+'-drain',json.loads(remote(phase+'-drain',script,60)))");
 }
 module.exports={version,generate,caller};
