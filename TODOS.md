@@ -56,7 +56,7 @@
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed ab052798e actual0224 startup failure: ten-second endpoint wait ENOENT before late DevTools; no Warcraft launch/page qualification/input. All129indexedSHA sizes79gzipCRC PASS and107actual kernel waits; box bx_gsub82ym archived stop_a53f73f5db637ea6 physically drained. Historical renderer linkage UNKNOWN. Fresh warcraft-startup-terminal-repair-0244 PID879100 thread01a1be30-5c2c-7833-b4e4-291514571695 repairs actual production startup and cancellation/cleanup with focused tests and one custodian Chrome fixture after Q2close0244 release; no original retry. Preserve0efee3bf1 exact-prefault helper38controls and identity/freshness limits; Thrall/tutorial/full27/parity/audio/FPS remain open.
+  Next: Reviewed0244 actual startup endpoint21.576s passes but cleanup18s terminalNULL bothEOFfalse rejected; production restored and540indexedSHA sizes104gzipCRC independentlyPASS. Box bx_6psgpzsk archived stop_0389de65a40207f8 physically drained. Fresh native-lineage-retirement-0312 PID922064 thread01a1be49-f73f-7a90-a0c7-1fd5e661a285 repairs custody autoattach lineage with actual browser-free fail-before/pass-after controls; no original/box. Q2upstream0301 separately owns shared Chrome shutdown repair. Historical renderer/lineage UNKNOWN remains; Prologue/tutorial/full27/parity/audio/FPS open.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
