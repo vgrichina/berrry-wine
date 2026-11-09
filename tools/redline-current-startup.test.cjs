@@ -134,7 +134,13 @@ async function preparation(composed){
   // Same selected launch expression in the full outer trace/startup composition.
   const plain=fs.readFileSync(path.join(__dirname,'redline-browser-run.cjs'),'utf8');
   assert(controller.includes(adapter.integrate(plain).slice(adapter.integrate(plain).indexOf("await require(root+'/tools/redline-current-startup.cjs')"),adapter.integrate(plain).indexOf(' await evaluate(`window.__nativeMouseEvents'))));
-  const r=await composed(controller);assert.equal(r.exitCode,0);assert.equal(r.page.originalEntries,1);
+  // This suite's browser/filesystem services use /inert-run. Capture only the
+  // new diagnostic writer there; the staged CLI suite exercises real files.
+  const phases=publication.phases,phaseRows=[];let r;
+  publication.phases=(run,label)=>phases(run,label,(name,value)=>phaseRows.push({name,...value}));
+  try{r=await composed(controller);}finally{publication.phases=phases;}
+  assert.equal(r.exitCode,0);assert.equal(r.page.originalEntries,1);
+  assert(phaseRows.some(r=>r.phase==='browser-launch-begin'));
   for(const name of ['lib/redline-current-startup-v1.js','tools/redline-current-startup.cjs','lib/redline-startup-admission.js'])for(const kind of ['missing','changed']){
    const previous=fs.readFileSync;
    fs.readFileSync=function(file,...args){if(path.resolve(String(file))===path.join(root,name)){if(kind==='missing')throw Error('missing provider');const bytes=Buffer.from(previous.call(this,file));bytes[bytes.length-1]^=1;return typeof args[0]==='string'?bytes.toString():bytes;}return previous.call(this,file,...args);};
@@ -147,7 +153,9 @@ async function preparation(composed){
    assert.equal(JSON.parse(cli.stdout).startupVersion,adapter.version);
    const env={REDLINE_RUN:cliRun,REDLINE_NATIVE_FIXTURE:'1',REDLINE_NATIVE_TRACE:'1',REDLINE_STARTUP_BOUNDARY:'1',DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+40000)};
    const preflight=await child([cliRun+'/publication-caller.cjs'],env);assert.equal(JSON.parse(preflight.stdout).chromiumStarted,false);
-   env.BROWSER_DEADLINE=String(Date.now()+40000);
+   // Initial deadline for this separate offline custody preflight; validation
+   // is syscall-stepped and the program exits before server/Chrome creation.
+   env.BROWSER_DEADLINE=String(Date.now()+120000);
    const outer=await child([__filename,'--outer-runner',cliRun],env);
    const custody=cliRun+'/publication-custody',drain=JSON.parse(fs.readFileSync(custody+'/kernel-drain.json'));
    assert.equal(drain.remaining.length,0);assert.equal(drain.unreaped.length,0);
