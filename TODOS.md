@@ -56,7 +56,7 @@
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: 0435reviewed210SHA40gzip offlineinvocationerror noBox WIPretained; Fresh warcraft-finish-startup-0445 PID1052665 thread01a1be9d-30f6-7040-b989-d57a194f692a OFFLINE_PREP_WAIT_SUPER_RELEASE. Routineofflineerrors fixedsameassignment; runtimefirstfailureSTOP unchanged. ExplicitNO_BOXdrained frees soleChrome slot; published4341 pin unchangedcaps historicalUNKNOWN.
+  Next: WC0445 actualChrome startupPASS normalcloseUNKNOWN runtimecap preemptedversionreply,53actualwaitsmissing boxarchived;171SHA114gzip verified. Fresh warcraft-startup-cancel-race-0500 PID1076728 thread01a1beaa-a2fa-7130-8498-88bcccdb293f OFFLINE fix late startupsuccess aftercancel oldFAILnewPASS actualNodecontrols; capsunchanged noChrome.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
