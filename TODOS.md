@@ -50,7 +50,7 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: 0435reviewed410SHA123gzip noBox; Fresh supertux-native-progress-0445 PID1052664 thread01a1be9d-30fa-71d0-be55-7e89910cfaf6 PREPARING_ONE_ORIGINAL. Routineofflineerrors fixedsameassignment; runtimefirstfailureSTOP unchanged. ExplicitNO_BOXdrained frees soleChrome slot; published4341 pin unchangedcaps historicalUNKNOWN.
+  Next: Reviewed0445 dd97b4345 unsupportedright-200 beforegameHTTP; PausePNG baseline125coins5 rootseen597SHA576outergzip verified boxarchived. Fresh supertux-enumerated-native-progress-0455 PID1068932 thread01a1bea7-914d-7ad3-8ed6-a129d3d00b39 validates exactenumeratedclientchoice offline thenoneoriginal afterQ20450drain; aimnewlevelconsequence.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
