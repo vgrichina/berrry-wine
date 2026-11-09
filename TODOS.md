@@ -56,7 +56,7 @@
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed ece4e9d08 once: 188 SHA-size/133 gzip PASS, all632 streamed uploads succeeded. Immutable cap interrupted page Target.setAutoAttach; 95 missing waits remain UNKNOWN; box archived/drained stop_407013aed3cf9a58. Fresh offline warcraft-page-handoff-repair-0628 PID1219335 thread01a1befc-d36e-7053-a601-748c31b7ac03 repairs actual composed handoff/custody with oldFAIL/newPASS; no original retry or cap changes.
+  Next: Reviewedfd8f1ea07 once245SHA-size8gzipPASS. Actual composed page/clone handoff and cancellation each63actualwaits PASS unchanged; proposed patch withdrawn, no causalrepair. Historical page-agent/native-task binding absent and95waits UNKNOWN; park unchanged original retry. Slot reassigned fresh Redline0642 gameplay.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
@@ -73,8 +73,8 @@
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: Qualify a reviewed path that clears the rear corner and exposes a side door before another entry attempt. Publishedcd78bb913 proves seven trusted pointer-locked relative moves each consumed once by the owning mouse-state buffer and later zero, with visible heading changes after settling. Initial forward129high/43slices reaches the car rear and native USE THE DOORS instruction. Later forward3500ms90high/32slices plus passive settle shows no displacement; no missed pulse, side door, vehicle HUD or driving proof. Collision is possible but cause unproved. Coordinator inspected rear/settled frames and independently verified362references/325hashes/254996024original bytes plus compressed transfer hashes.23exactACK/zeroUNKNOWN,65media pins and normal archived stop pass; final queue length unsampled. Note: docs/re-notes/redline-car-door-native-20261108.md. NFS3 current race/renderer prerequisite takes the released gameplay slot. Earlier native turn/firing stand; FPS/audio/parity/fullplayability remain open.
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
+  Next: Fresh redline-side-door-route-0642 PID1244007 thread01a1bf0a-9b51-7510-9bd7-05a9d57f840b prepares documented native side-route controls and frozen actualclosure offline; waits Drakan0635 then Q20635 exact archivedphysicalrelease before ONEoriginal. Goal clear rear corner expose side door enter and drive from fresh reviewed pixels. Acceptedcd78bb913 native relativeaim/forwardpolls remain; rearcollisioncause unproved, no unchanged forward retry or hold escalation.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
