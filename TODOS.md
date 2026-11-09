@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed50c5f6adf rootPNG onwardtunnel JacketArmor25 HP100;595SHA268gzip verified, abnormalquit preserved, boxarchiveddrained. Fresh quake2-tunnel-guard-progress-0350 PID968167 thread01a1be69-56b3-7e10-890c-201464a8d399 guard/door gameplay beyondpickup; runtime AFTER Warcraft0350 exactrelease. NativeREVOKED/allwriters/edictABAUNKNOWN full27/parity/audioFPSopen.
+  Next: ReviewedQ20350 root deathPNG HP0 outdoor afterarmor25, guarddoorNOTachieved. 547SHA verified localboardwatchstdoutgzip incomplete and wrapperEOFUNKNOWN retained; boxarchiveddrained. Fresh quake2-weapon-consumption-repair-0415 PID1004938 thread01a1be80-a2b4-78d2-9a01-b043627cd8b9 browserfreeOFFLINE actualattack mapping/delivery/consumption repair with productioncontrols beforeanothercombat. No neworiginal authorized; historicalUNKNOWN preserved.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
