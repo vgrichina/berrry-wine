@@ -35,9 +35,10 @@ function phases(run,label,write=(name,value)=>require('./redline-startup-boundar
    {phase,pid:process.pid,unixMs:Date.now(),elapsedMs:performance.now()-started,browserDeadline:Number(process.env.BROWSER_DEADLINE),...detail});
  };
 }
-function prebrowserSource(source){
+function prebrowserSource(source,{mouseService=false}={}){
  source=require('./redline-command-trace.cjs').integrate(source);
  source=require('./redline-menu-planning.cjs').integrate(source);
+ if(mouseService)source=require('./redline-mouse-service.cjs').integrate(source);
  const replace=(a,b)=>{assert.equal(source.split(a).length,2,'actual prebrowser phase seam: '+a);source=source.replace(a,b);};
  replace("if(ws?.readyState===1){const n=++id;","if(!firstFailure&&ws?.readyState===1){const n=++id;");
  replace("const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));","const prebrowserPhase=require('./redline-current-publication.cjs').phases(run,'browser');prebrowserPhase('provider-validation-begin');const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));");
@@ -52,12 +53,14 @@ function prebrowserSource(source){
 function optin(selected){assert.equal(selected,version,'unknown Redline current publication version');}
 function validate(selected,startupVersion){
  optin(selected);if(startupVersion!==undefined)require('./redline-current-startup.cjs').optin(startupVersion);
+ assert(process.env.REDLINE_MOUSE_SERVICE===undefined||process.env.REDLINE_MOUSE_SERVICE==='1','explicit mouse service observation opt-in');
  const legacy=require('./redline-current-module.cjs'),raw=read(legacy.historical);
  assert.equal(sha(raw),legacy.historicalSHA,'historical pinset integrity');
  const prior=JSON.parse(raw),expected=Object.fromEntries(Object.entries(builds).map(([name,p])=>[name,{path:name,...p}])),seen=new Set(),explainedDrift=[];
  if(startupVersion!==undefined)Object.assign(expected,require('./redline-current-startup.cjs').admissionPins());
  expected['tools/redline-menu-planning.cjs']=pin('tools/redline-menu-planning.cjs',read('tools/redline-menu-planning.cjs'));
  expected['tools/redline-command-trace.cjs']=pin('tools/redline-command-trace.cjs',read('tools/redline-command-trace.cjs'));
+ expected['tools/redline-mouse-service.cjs']=pin('tools/redline-mouse-service.cjs',read('tools/redline-mouse-service.cjs'));
  for(const p of prior.files){assert(!seen.has(p.path),'duplicate historical pin');seen.add(p.path);}
  for(const commit of new Set([cpu,...Object.values(published),'06a42152c','d7459f3f6','daa44c07c']))
   for(const target of ['HEAD','origin/main'])git(['merge-base','--is-ancestor',commit,target]);
@@ -83,7 +86,7 @@ function validate(selected,startupVersion){
  for(const name of ['tools/redline-current-module.cjs','tools/redline-current-publication.cjs','tools/redline-bounded-custody.py']){
   assert(!files.some(p=>p.path===name),'unique preparer pin');files.push(pin(name,read(name)));
  }
- return {files,httpPins,moduleVersion:version,publicationVersion:version,...(startupVersion!==undefined?{startupVersion}:{}),publishedModuleCommit:cpu,
+ return {files,httpPins,moduleVersion:version,publicationVersion:version,...(process.env.REDLINE_MOUSE_SERVICE==='1'?{mouseServiceVersion:require('./redline-mouse-service.cjs').version}:{}),...(startupVersion!==undefined?{startupVersion}:{}),publishedModuleCommit:cpu,
   historicalPinset:{path:legacy.historical,sha256:legacy.historicalSHA,commit:prior.commit},explainedDrift};
 }
 const bridges=['bound-input.cjs','ordinary-keys.cjs','native-mouse.cjs','relative-input.cjs','keyboard-bridge.cjs','transport.cjs'];
@@ -104,7 +107,7 @@ function prepare(run,selected,startupVersion){
   publicationVersion:version,...(startupVersion!==undefined?{startupVersion}:{}),providers:pins.files.length,manifestSHA256:sha(bytes),traceDurationSeconds:10,
   commands:[{key:',',holdMs:600,waitMs:0},'ordinary joined quit'],
   argv:[process.execPath,path.join(__dirname,'redline-current-publication.cjs'),'--fixture',run,version,...(startupVersion!==undefined?[startupVersion]:[])],
-  env:{REDLINE_RUN:run,REDLINE_NATIVE_TRACE:'1',REDLINE_STARTUP_BOUNDARY:'1',BROWSER_DEADLINE:'REQUIRED future immutable deadline; existing <30min cap'},
+  env:{REDLINE_RUN:run,REDLINE_NATIVE_TRACE:'1',REDLINE_STARTUP_BOUNDARY:'1',...(pins.mouseServiceVersion?{REDLINE_MOUSE_SERVICE:'1'}:{}),BROWSER_DEADLINE:'REQUIRED future immutable deadline; existing <30min cap'},
   prerequisite:'Separate native authorization and prearmed independent watchdog required',nativeReady:false};
  // All authentication and generation finish before any destination write.
  fixtureSource(selected,startupVersion);require('./redline-startup-boundary.cjs').integrate();
@@ -121,6 +124,7 @@ function prelaunch(run,selected,startupVersion){
  const seal=JSON.parse(fs.readFileSync(path.join(run,'replacement-pinset-seal.json')));
  assert.equal(seal.manifestSHA256,sha(raw),'sealed actual staged manifest');
  assert.equal(pins.publicationVersion,version);assert.equal(pins.moduleVersion,version);assert.equal(pins.startupVersion,startupVersion);
+ assert.equal(pins.mouseServiceVersion,versioned.mouseServiceVersion,'sealed mouse observation mode');
  const expected=[...versioned.files];
  const prior=path.dirname(require('./redline-native-trace.cjs').generatedPath);
  for(const name of bridges)expected.push(pin(path.relative(root,path.join(run,name)),Buffer.from("'use strict';\nmodule.exports=require("+JSON.stringify('./'+path.relative(run,path.join(root,prior,name)))+");\n")));
@@ -156,6 +160,7 @@ function stagedPrelaunch(run,selected,startupVersion,manifestSHA256){
  const pins=JSON.parse(raw),seal=JSON.parse(fs.readFileSync(path.join(run,'replacement-pinset-seal.json')));
  assert.equal(seal.manifestSHA256,manifestSHA256);assert.equal(seal.providers,pins.files.length);
  assert.equal(pins.publicationVersion,selected);assert.equal(pins.moduleVersion,selected);assert.equal(pins.startupVersion,startupVersion);
+ assert.equal(pins.mouseServiceVersion,process.env.REDLINE_MOUSE_SERVICE==='1'?require('./redline-mouse-service.cjs').version:undefined,'sealed mouse observation mode');
  const seen=new Set();for(const p of pins.files){assert(!seen.has(p.path),'unique staged provider');seen.add(p.path);assert.deepEqual(pin(p.path,read(p.path)),p,'staged production provider: '+p.path);}
  const caller=path.relative(root,path.join(run,'publication-caller.cjs'));
  assert(seen.has(caller),'prepared owning caller required');
@@ -210,7 +215,9 @@ function runCaller(run,selected,digest,startupVersion){
  assert.equal(path.resolve(process.env.REDLINE_RUN),path.resolve(run));
  assert.equal(process.env.REDLINE_NATIVE_FIXTURE,'1');assert.equal(process.env.REDLINE_NATIVE_TRACE,'1');assert.equal(process.env.REDLINE_STARTUP_BOUNDARY,'1');
  phase('source-composition-begin');const source=require('./redline-startup-boundary.cjs').integrate();
- const actual=prebrowserSource(startupVersion!==undefined?require('./redline-current-startup.cjs').integrate(source):source);
+ assert(process.env.REDLINE_MOUSE_SERVICE===undefined||process.env.REDLINE_MOUSE_SERVICE==='1','explicit mouse service observation opt-in');
+ assert.equal(pins.mouseServiceVersion,process.env.REDLINE_MOUSE_SERVICE==='1'?require('./redline-mouse-service.cjs').version:undefined,'sealed mouse observation mode');
+ const actual=prebrowserSource(startupVersion!==undefined?require('./redline-current-startup.cjs').integrate(source):source,{mouseService:!!pins.mouseServiceVersion});
  phase('source-composition-end');phase('browser-program-evaluation-begin');
  compile(actual,'redline-browser-run.cjs');phase('browser-program-evaluation-returned');
  }catch(e){try{require('./redline-startup-boundary.cjs').writeDiagnostic(path.join(run,'caller-first-error.json'),{error:e.stack??String(e),unixMs:Date.now(),browserDeadline:Number(process.env.BROWSER_DEADLINE)});}catch{}throw e;}
