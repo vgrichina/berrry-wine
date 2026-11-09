@@ -109,9 +109,59 @@ class Session:
         self.cleanup_thread = None
         self.receipts = []
         self.cancel_code = cancel_code
+        self.quit_label = None
+        self.quit_id = None
+        self.quit_active = False
+        self.launch_complete = threading.Event()
+        self.launch_caller_done = None
+        self.completed = False
+        self.request_number = 0
+
+    def request(self, value, invoke, prefix='command-'):
+        """Admit one actual quit sender, then join its ACK and launch result."""
+        with self.lock:
+            self.check()
+            if self.quit_label is not None or self.completed:
+                raise TerminalFailure('input closed after quit')
+            command = value['command']
+            quitting = command.get('action') == 'quit'
+            if quitting:
+                identifier = command.get('id')
+                if not isinstance(identifier, str) or not identifier or any(
+                        c not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-' for c in identifier):
+                    raise self.fail('invalid quit ID')
+                self.quit_id = identifier
+                self.quit_label = prefix+identifier
+        try:
+            result = invoke()
+            self.request_number += 1
+            if quitting:
+                # The sender's existing deadline includes ACK delivery. Joining
+                # may consume only the remainder of that same local deadline.
+                while not (self.launch_complete.wait(.01) and (
+                        self.launch_caller_done is None or self.launch_caller_done.is_set())):
+                    self.check()
+                    if time.monotonic() >= self.quit_due:
+                        raise self.fail('orderly launch completion deadline')
+                with self.lock:
+                    self.check()
+                    (self.evidence/'normal-completion.json').write_text(json.dumps(dict(
+                        id=self.quit_id, verifiedQuitACK=True, launchJoined=True,
+                        remoteCustody='UNKNOWN')))
+                    self.completed = True
+            return result
+        except BaseException as error:
+            raise self.fail(str(error)) from error
+
+    def observe_launch(self, child, reason):
+        with self.lock:
+            if not self.quit_active or child.process.poll() not in (None, 0):
+                self.fail(reason)
 
     def fail(self, reason):
         with self.lock:
+            if self.completed:
+                return TerminalFailure('input closed after normal completion')
             if self.terminal is None:
                 self.terminal = dict(at=time.time(), reason=reason, noReplay=True,
                                      remoteCustody='UNKNOWN')
@@ -125,9 +175,9 @@ class Session:
         with self.lock:
             # poll closes the gap before the waiter thread is scheduled.
             if self.launch is not None and self.launch.process.poll() is not None:
-                self.fail('owned launch transport terminated: '+str(self.launch.process.returncode))
+                self.observe_launch(self.launch, 'owned launch transport terminated: '+str(self.launch.process.returncode))
             if self.launch is not None and any(self.launch.eof):
-                self.fail('owned launch transport stdio EOF')
+                self.observe_launch(self.launch, 'owned launch transport stdio EOF')
             if self.terminal:
                 raise TerminalFailure(self.terminal['reason'])
 
@@ -139,13 +189,20 @@ class Session:
                 raise self.fail('command before owned launch')
             if launch and self.launch is not None:
                 raise self.fail('second launch forbidden')
+            if self.completed or (self.quit_label is not None and not launch and label != self.quit_label):
+                raise TerminalFailure('input closed after quit')
+            if self.quit_active and not launch:
+                raise TerminalFailure('second quit sender forbidden')
+            if label == self.quit_label:
+                self.quit_active = True
+                self.quit_due = time.monotonic()+timeout+15
             def exited(child):
                 if launch:
-                    self.fail('owned launch transport terminated: '+str(child.process.returncode))
+                    self.observe_launch(child, 'owned launch transport terminated: '+str(child.process.returncode))
                 self.changed.set()
             def eof(child, index):
                 if launch:
-                    self.fail('owned launch transport stdio EOF: '+str(index))
+                    self.observe_launch(child, 'owned launch transport stdio EOF: '+str(index))
                 self.changed.set()
             try:
                 child = Child(self.transport(code, timeout), self.evidence, label, exited, eof)
@@ -179,7 +236,24 @@ class Session:
             'stdout': ''.join(row.get('data', '') for row in rows if row.get('type') == 'stdout')}
         if not rows or value.get('exitCode', 0) != 0 or value.get('stdoutTruncated') or value.get('stderrTruncated'):
             raise self.fail('remote result UNKNOWN: '+label)
-        return value.get('stdout', '')
+        if (launch or label == self.quit_label) and (
+                type(value.get('exitCode')) is not int or value['exitCode'] != 0 or
+                value.get('signal') is not None or value.get('timedOut') or
+                value.get('oomKilled') or value.get('launcherFailed') or value.get('success') is False):
+            raise self.fail('orderly transport result UNKNOWN: '+label)
+        output = value.get('stdout', '')
+        if label == self.quit_label:
+            try:
+                ack = json.loads(output)
+                if not (ack.get('id') == self.quit_id and ack.get('ok') is True and
+                        type(ack.get('number')) is int and ack['number'] == self.request_number and
+                        not ack.get('status')):
+                    raise ValueError('exact successful numbered quit ACK required')
+            except (ValueError, AttributeError) as error:
+                raise self.fail('quit ACK UNKNOWN or stale') from error
+        if launch:
+            self.launch_complete.set()
+        return output
 
     def _cleanup(self):
         # This runs on the first observation, even if the owner's stdin stays
@@ -208,6 +282,16 @@ class Session:
             children=self.receipts, remoteCustody='UNKNOWN')))
 
     def close(self):
+        if self.completed and self.terminal is None:
+            due = time.monotonic()+self.cleanup_seconds
+            self.receipts = [child.finish(due) for child in self.children]
+            if not all(r['actualWait'] and r['stdioEOF'] and r['status'] == 0 for r in self.receipts):
+                self.completed = False
+                self.fail('normal completion waits incomplete')
+            else:
+                (self.evidence/'cleanup.json').write_text(json.dumps(dict(
+                    localComplete=True, children=self.receipts, remoteCustody='UNKNOWN')))
+                return self.receipts
         self.fail('session closed')
         self.cleanup_thread.join(self.cleanup_seconds+.3)
         if self.cleanup_thread.is_alive():
@@ -245,6 +329,7 @@ def run_input(session, launch, request, stream=None):
     reader = threading.Thread(target=read)
     reader.start()
     launcher = None
+    session.launch_caller_done = threading.Event()
     def next_line():
         while True:
             session.check()
@@ -259,6 +344,8 @@ def run_input(session, launch, request, stream=None):
             launch()
         except BaseException as error:
             session.fail(str(error))
+        finally:
+            session.launch_caller_done.set()
     try:
         print('OWNED_INPUT_READY', flush=True)
         if next_line() != {'start': True}:
@@ -276,6 +363,8 @@ def run_input(session, launch, request, stream=None):
             request(value)
             session.check()
             print(json.dumps(dict(commandComplete=True)), flush=True)
+            if session.completed:
+                break
     except BaseException as error:
         session.fail(str(error))
         print(json.dumps(dict(error=str(error), noReplay=True)), flush=True)
@@ -457,7 +546,8 @@ def main():
         '--', 'python3', '-c', code])
     bind_remote(task, session)
     return run_input(session, lambda: task['owned_launch'](['task.py', 'launch']),
-        lambda value: task['owned_command'](['task.py', 'command', json.dumps(value['command']), value.get('review')]))
+        lambda value: session.request(value, lambda: task['owned_command'](
+            ['task.py', 'command', json.dumps(value['command']), value.get('review')])))
 
 
 if __name__ == '__main__':

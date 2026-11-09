@@ -93,7 +93,8 @@ class Caller:
         # Before reading/publishing any review, requested-* record or command.
         self.session.check()
         try:
-            return self.task['owned_request'](['control.py', 'request', json.dumps(value['command']), value.get('review')])
+            return self.session.request(value, lambda: self.task['owned_request'](
+                ['control.py', 'request', json.dumps(value['command']), value.get('review')]), prefix='request-')
         except BaseException as error:
             raise self.session.fail(str(error)) from error
 
