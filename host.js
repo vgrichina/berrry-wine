@@ -3996,6 +3996,8 @@ class WineAssembly {
         memory: this.memory,
         module: wasmModule,
         drakanModuleBytes,
+        quake2LoadObservation: window.WINE_QUAKE2_LOAD_OBSERVATION === true,
+        quake2NativeWriteObservation: window.WINE_QUAKE2_NATIVE_WRITE_OBSERVATION === true,
         sigs,
         hostImports: this._mainImports.host,
         workerUrl: WineAssembly.versionedUrl('lib/guest-worker.js'),
