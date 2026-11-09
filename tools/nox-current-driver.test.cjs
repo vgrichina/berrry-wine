@@ -9,6 +9,7 @@ const save=(p,v)=>fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function child(){
  const dir=process.env.NOX_TEST_DIR,generated=process.env.NOX_TEST_GENERATED,mode=process.env.NOX_TEST_MODE;
  const consumer=path.join(generated,'browser-run.cjs'),protocol=[],deliveries=[];
+ const startupFailure=['missing-port','early-death','malformed-port'].includes(mode);
  const originalRead=fs.readFileSync,originalLoad=Module._load,originalSpawn=cp.spawn;
  let browser,compiled=false,firstMouseFault=false,workerAttached=false,stdoutEOF=false,stderrEOF=false;
  const faults={primary:'build/wine-assembly.wasm',compat:'build/wine-assembly.compat.wasm',source:'lib/renderer.js',media:'test/binaries/candidates/nox-demo/game/nox.exe',historical:current.HISTORY+'/browser-run.cjs',repin:'lib/renderer.js'};
@@ -24,13 +25,25 @@ async function child(){
  }
  const originalCompile=Module.prototype._compile;
  Module.prototype._compile=function(source,filename){if(filename===consumer){compiled=true;assert.equal(current.sha(Buffer.from(source)),JSON.parse(originalRead(path.join(generated,'runtime-pins.json'))).generated.find(p=>p.path==='browser-run.cjs').sha256);}return originalCompile.call(this,source,filename);};
- cp.spawn=(command,args)=>{
+ cp.spawn=(command,args,options)=>{
    assert.equal(command,'/usr/bin/google-chrome');assert(!faults[mode],'refusal must precede browser');
    const profile=args.find(a=>a.startsWith('--user-data-dir=')).slice(16);
-   browser=originalSpawn(process.execPath,['-e',"process.stdin.once('data',()=>{process.stdout.write('closed\\n');process.stderr.write('closed\\n');process.stdin.destroy();});",profile],{stdio:['pipe','pipe','pipe']});
+   const script=`const fs=require('node:fs'),profile=process.argv[1],mode=process.argv[2];
+     fs.mkdirSync(profile,{recursive:true});
+     if(mode==='early-death'){process.stderr.write('OFFLINE_CHILD_EARLY_DEATH\\n');process.exitCode=17;}
+     else {
+       process.stderr.write('OFFLINE_CHILD_STARTED\\n');
+       if(mode==='missing-port')process.stderr.write('DevTools listening on ws://127.0.0.1:1/devtools/browser/offline\\n');
+       else fs.writeFileSync(profile+'/DevToolsActivePort',mode==='malformed-port'?'bad-port\\n/devtools/browser/offline\\n':'1\\n/devtools/browser/offline\\n');
+       const timer=setInterval(()=>{},1000);
+       process.stdin.once('data',()=>{clearInterval(timer);process.stdout.write('closed\\n');process.stderr.write('closed\\n');process.stdin.destroy();});
+     }`;
+   browser=originalSpawn(process.execPath,['-e',script,profile,mode],{stdio:['pipe','pipe','pipe']});
+   browser.stdout.pipe(fs.createWriteStream('',{fd:options.stdio[1],autoClose:false}));
+   browser.stderr.pipe(fs.createWriteStream('',{fd:options.stdio[2],autoClose:false}));
    browser.stdout.resume();browser.stderr.resume();browser.stdout.on('end',()=>stdoutEOF=true);browser.stderr.on('end',()=>stderrEOF=true);
    browser.once('close',(code,signal)=>save(dir+'/child-wait.json',{code,signal,stdoutEOF,stderrEOF}));
-   fs.mkdirSync(profile,{recursive:true});fs.writeFileSync(profile+'/DevToolsActivePort','1\n/devtools/browser/offline\n');return browser;
+   return browser;
  };
  Module._load=function(name,parent,main){
    if(name===root+'/test/static-server.js')return {startStaticServer:async()=>({address:()=>({port:1}),prependListener(){},closeAllConnections(){},close:fn=>fn()})};
@@ -47,7 +60,7 @@ async function child(){
  }
  let page=context();const workerCtx=vm.createContext({endpointIdentity:1,workerSlot:0,instance,crypto:require('node:crypto').webcrypto});
  class Peer{
-   constructor(url){assert.equal(url,'ws://127.0.0.1:1/devtools/browser/offline');this.readyState=1;queueMicrotask(()=>this.onopen());}
+   constructor(url){new URL(url);assert.equal(url,'ws://127.0.0.1:1/devtools/browser/offline');this.readyState=1;queueMicrotask(()=>this.onopen());}
    deliver(v){this.onmessage({data:JSON.stringify(v)});}
    reply(q,result={},error){this.deliver({id:q.id,...(error?{error}:{result})});}
    send(raw){
@@ -87,7 +100,7 @@ async function child(){
  process.on('exit',code=>save(dir+'/peer.json',{mode,code,compiled,protocol,deliveries,chromeStarted:false,browserPeerOnly:true}));
  process.env.BROWSER_DEADLINE=String(Date.now()+120000);
  if(mode==='ordinary')process.env.NO_ORIGINAL='1';
- if(!faults[mode]&&mode!=='ordinary'){
+ if(!faults[mode]&&mode!=='ordinary'&&!startupFailure){
    (async()=>{
      const out=generated+'/original';while(!fs.existsSync(out+'/ready.json')){if(fs.existsSync(out+'/first-browser-failure.json'))return;await wait(20);}
      const transport=require(generated+'/transport.cjs');
@@ -107,7 +120,7 @@ async function main(){
  // The unchanged driver actually executes its full strict preflight.
  const pre=cp.spawnSync(process.execPath,[generated+'/browser-run.cjs'],{env:{...process.env,DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+120000)},encoding:'utf8'});
  assert.equal(pre.status,0,pre.stderr);results.push({mode:'current-preflight',status:pre.status,proof:JSON.parse(pre.stdout)});
- for(const mode of ['primary','compat','source','media','historical','repin','ordinary','drag','drag-failure']){
+ for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','ordinary','drag','drag-failure']){
    const dir=out+'/'+mode;fs.mkdirSync(dir);
    // The actual generated source is shared; move only its run-specific outputs
    // after each execution, retaining every failure and ordinary-close artifact.
@@ -116,12 +129,39 @@ async function main(){
    const peer=JSON.parse(fs.readFileSync(dir+'/peer.json'));assert(peer.compiled);assert.equal(peer.chromeStarted,false);
    if(['primary','compat','source','media','historical','repin'].includes(mode)){
      assert.equal(r.status,1,r.stderr);assert.equal(peer.protocol.length,0);assert.match(r.stderr,mode==='repin'?/immutable current plan/:/immutable input/);
+   }else if(['missing-port','early-death','malformed-port'].includes(mode)){
+     const source=generated+'/original';fs.renameSync(source,dir+'/runtime');
+     assert.equal(r.status,1,r.stderr);assert.equal(peer.protocol.length,0,'no CDP admission from stderr or malformed port');
+     const diagnostic=JSON.parse(fs.readFileSync(dir+'/runtime/native-startup-failure.json'));
+     const failure=JSON.parse(fs.readFileSync(dir+'/runtime/first-browser-failure.json'));
+     assert.equal(diagnostic.error.stack,failure.error,'original error reaches terminal handler unchanged');
+     assert.equal(failure.noReplay,true);assert.equal(diagnostic.pollLimit,100);assert.equal(diagnostic.pollIntervalMs,100);assert.equal(diagnostic.pollBoundMs,10000);
+     assert.equal(diagnostic.phase,'native-devtools-startup');assert(diagnostic.elapsedMs>=0);
+     const joined=JSON.parse(fs.readFileSync(dir+'/child-wait.json'));
+     assert.equal(joined.stdoutEOF,true);assert.equal(joined.stderrEOF,true);
+     if(mode==='malformed-port'){
+       assert.equal(diagnostic.error.name,'TypeError');assert.equal(diagnostic.portFile.readCompleted,true);assert.match(diagnostic.portFile.text,/bad-port/);
+       assert.equal(diagnostic.boundExhausted,false);assert.equal(diagnostic.process.liveness.present,true);
+     }else{
+       assert.equal(diagnostic.error.code,'ENOENT');assert.equal(diagnostic.portFile.readCompleted,false);assert.equal(diagnostic.portFile.existsAtFailure,false);
+       assert.equal(diagnostic.polls,100);assert.equal(diagnostic.boundExhausted,true);assert(diagnostic.elapsedMs>=10000);
+     }
+     if(mode==='early-death'){
+       assert.equal(diagnostic.process.exitCode,17);assert.equal(diagnostic.process.liveness.present,false);assert.match(diagnostic.stderr.tail,/OFFLINE_CHILD_EARLY_DEATH/);assert.equal(joined.code,17);
+     }else{
+       assert.equal(diagnostic.process.exitCode,null);assert.equal(diagnostic.process.signalCode,null);assert.equal(diagnostic.process.liveness.present,true);assert.equal(joined.signal,'SIGTERM');
+       if(mode==='missing-port')assert.match(diagnostic.stderr.tail,/DevTools listening/);
+     }
+     assert(!fs.existsSync(dir+'/runtime/chrome-profile'));assert(!fs.existsSync(dir+'/runtime/endpoint.json')||mode==='malformed-port');
+     assert(!fs.existsSync(dir+'/runtime/ready.json'));assert(!peer.protocol.some(q=>q.method==='Page.captureScreenshot'));
+     assert.equal(JSON.parse(fs.readFileSync(dir+'/runtime/close-reason.json')).reason,'first terminal failure');
    }else{
      const source=generated+'/'+(mode==='ordinary'?'production-preflight':'original');fs.renameSync(source,dir+'/runtime');
      const joined=JSON.parse(fs.readFileSync(dir+'/child-wait.json'));assert.deepEqual(joined,{code:0,signal:null,stdoutEOF:true,stderrEOF:true});
      assert.equal(r.status,mode==='drag-failure'?1:0,r.stderr);
      assert.equal(peer.protocol.filter(q=>q.method==='Browser.close').length,1);
      assert(!fs.existsSync(dir+'/runtime/chrome-profile'));
+     assert(!fs.existsSync(dir+'/runtime/native-startup-failure.json'),'successful startup emits no failure diagnostic');
      const mouse=peer.deliveries.filter(p=>p.type==='mousePressed'||p.type==='mouseReleased');
      if(mode!=='ordinary'){assert.deepEqual(mouse.map(p=>p.type),['mousePressed','mouseReleased']);assert(mouse.every(p=>p.button==='right'));}
      if(mode==='drag-failure'){

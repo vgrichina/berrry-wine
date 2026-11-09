@@ -92,6 +92,35 @@ function verify(root,manifest,generated,expectedPlan){
   assert.notEqual(manifest.modules[0].sha256,manifest.modules[1].sha256,'distinct primary and compat');
   return true;
 }
+function startupDiagnostics(source){
+  // Amend the actual retained native entrypoint, never the historical input.
+  source=exact(source," browser=cp.spawn('/usr/bin/google-chrome'", " const startupStarted=performance.now();\n browser=cp.spawn('/usr/bin/google-chrome'");
+  const begin=" const active=out+'/chrome-profile/DevToolsActivePort';";
+  const end=" save('browser-version.json',await send('Browser.getVersion'));";
+  const a=source.indexOf(begin),b=source.indexOf(end);
+  assert(a>=0&&b>a&&source.indexOf(begin,a+1)<0&&source.indexOf(end,b+1)<0,'unique native startup boundary');
+  let startup=source.slice(a,b);
+  startup=exact(startup,"const active=out+'/chrome-profile/DevToolsActivePort';",'');
+  startup=exact(startup,'i++)await wait(100);','i++){startupPolls++;await wait(100);}');
+  startup=exact(startup,"fs.readFileSync(active,'utf8').trim()","(startupPortText=fs.readFileSync(active,'utf8')).trim()");
+  return source.slice(0,a)+` const active=out+'/chrome-profile/DevToolsActivePort';let startupPolls=0,startupPortText=null;
+ try{
+${startup} }catch(error){
+  // Snapshot before terminal cleanup removes the profile. Observations only:
+  // stderr is never an endpoint source, and the original exception is rethrown.
+  try{
+   const observedAt=new Date().toISOString(),elapsedMs=performance.now()-startupStarted;
+   let liveness;try{process.kill(browser.pid,0);liveness={probe:'kill(pid,0)',present:true};}catch(e){liveness={probe:'kill(pid,0)',present:e.code==='ESRCH'?false:null,error:{code:e.code,message:e.message}};}
+   let stderr,fd;try{fd=fs.openSync(out+'/chrome.stderr','r');const size=fs.fstatSync(fd).size,bytes=Buffer.alloc(Math.min(size,8192));const read=fs.readSync(fd,bytes,0,bytes.length,Math.max(0,size-bytes.length));stderr={path:out+'/chrome.stderr',size,tail:bytes.subarray(0,read).toString('utf8'),truncated:size>bytes.length};}catch(e){stderr={error:{code:e.code,message:e.message}};}finally{if(fd!==undefined)fs.closeSync(fd);}
+   save('native-startup-failure.json',{version:1,phase:'native-devtools-startup',observedAt,elapsedMs,pollLimit:100,pollIntervalMs:100,pollBoundMs:10000,polls:startupPolls,boundExhausted:startupPolls===100,
+    error:{name:error.name,code:error.code??null,message:error.message,stack:error.stack},
+    process:{pid:browser.pid??null,exitCode:browser.exitCode,signalCode:browser.signalCode,liveness},
+    portFile:{path:active,existsAtFailure:fs.existsSync(active),readCompleted:startupPortText!==null,text:startupPortText===null?null:startupPortText.slice(0,1024),truncated:startupPortText!==null&&startupPortText.length>1024},stderr});
+  }catch(diagnosticError){console.error('native startup diagnostic failed:',diagnosticError);}
+  throw error;
+ }
+`+source.slice(b);
+}
 function generate(planFile,destination){
   const reviewed=json(planFile),{plan,patches}=inspect();
   assert.deepEqual(plan,reviewed,'current inputs differ from explicit reviewed plan');
@@ -107,6 +136,7 @@ function generate(planFile,destination){
   const relRoot=path.relative(destination,ROOT);
   source=exact(source,"root=path.resolve(run,'../../..')",'root=path.resolve(run,'+JSON.stringify(relRoot)+')');
   source=exact(source,"const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));","const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));\nrequire(root+'/tools/nox-current-driver.cjs').verify(root,pins,run,"+JSON.stringify(planHash(plan))+");");
+  source=startupDiagnostics(source);
   emit('browser-run.cjs',source);
   const generated=walk(destination).map(p=>pin(path.basename(p),fs.readFileSync(p))).sort((a,b)=>a.path.localeCompare(b.path));
   const provenance=Object.entries(patches).map(([name,b])=>pin(name,b));
