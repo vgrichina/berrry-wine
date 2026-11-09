@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed19f6794f4 once21SHA-size4validgzip1expectedINVALID; actualREPpublication403527/frameclear403342/clientclear409221 changebytes epoch0 confirmed gap. Fresh quake2-rep-store-observer-repair-1365 OFFLINE narrowarmedCPU REP coverage repair exactEXE oldFAIL/newPASS architectureparity. Nativequalificationfalse uncoveredpeerhostABA remains; noacceptancewaiver.
+  Next: Reviewed1f3bd16c1 once23SHA-size13gzipCRC; armedREPpublication/frameclear now60completions oldFAILnewPASS 66CPU240faultcases regressions/buildPASS unarmedbulkpreserved. Fresh quake2-rep-witness-native-progress-1405 actualreader integration + boundedgameplay QUEUEDbehindRedline1395; no acceptancewaiver allwritersparseABAUNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed14475fc9f once2462SHA-size1455unique872validgzip41expectedINVALID; actualexisting startupboundary retained fourteeninertcontrolsPASS noextra polls/deadlinechange. Fresh redline-observed-startup-fixture-1375 soleNEXTruntime ONEcomma600 reuse1355proofs/1325cleanup; nativecauseUNKNOWN untilactualevidence.
+  Next: Reviewedfdc651cf5 once12SHA-size; preparation refused historicalmodulepins BEFOREallocation due publishedQ2REPbuild. Fresh redline-current-module-startup-fixture-1395 explicitlycoherentCURRENTsource/modulepins narrowpreparerfix oldFAILnewPASS thenONEcomma600 soleNEXTruntime diagnostic/cleanup preserved.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
