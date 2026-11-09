@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current native fixture and Q3 level-selection menu verified; in-command capture deadline blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed da3d5f5b4 using unchanged published caller repair2b945315a: native fixturePASS, original ACK0-2 menu only; command3 terminal at20s work deadline after renderer-owner read12413ms and screenshot pending6911ms. Underlying renderer/compositor cause UNKNOWN; no firing/useful movement verified. Own box bx_hpghx7b2 ARCHIVED unforced normalstop_be8291f1bda93533; actual watchdog wait0 separateEOF verified. Fresh q3-renderer-read-latency-repair-1840 diagnoses actual generated capture path OFFLINE ONLY and fixes a reproduced causal defect with focused tests/build; no deadline/ownership relaxation or unchanged runtime retry. ReturnFire1822 runtime then Nox1828 remain independent gameplay lanes.
+  Next: Reviewed261fd51b1 actual trace: renderer opcode12 glGetError blocked12034.885ms, ending0.390ms before identity expression (only0.365ms). Context activation/pending draw flush/backend error-query substep UNKNOWN; screenshot408 pending separately UNKNOWN. Fresh gl-error-stage-timing-1850 implements opt-in bounded stage timings through actual opcode path OFFLINE ONLY, focused semantic/error/unarmed controls and locked build. Preserve GL behavior and all capture/ownership/deadline guards. Prior da3d5f5b4 native fixturePASS menuACK0-2 only; no original firing/useful movement claim. Own bx_hpghx7b2 archived unforced stop_be8291f1bda93533 watchdogwait0 separateEOF verified. ReturnFire1822 then Nox1828 gameplay queue unchanged.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
