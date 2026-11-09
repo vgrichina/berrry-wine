@@ -19,7 +19,10 @@ function create({trace, write, now = () => performance.now(), capacity = 32}) {
     if(reason==='command work deadline') for(const r of shots.values())
       if(r.status==='pending') r.commandUnknown=true;
     const value = {reason, dropped, observerErrors, events:[...events],
-      records:[...shots.values()].map(r => ({...r, elapsedMs:now()-r.sentNodeMs})),
+      records:[...shots.values()].map(r => {
+        const at=now();
+        return {...r, elapsedMs:(r.settledNodeMs??at)-r.sentNodeMs, ageMs:at-r.sentNodeMs};
+      }),
       limits:'Send is transport submission, not compositor entry. No readback/compositor completion is inferred from page or render-owner replies. Missing lifecycle events do not prove continuity. Node intervals only.'};
     emit({event:'snapshot', ...value}); return value;
   }
@@ -40,6 +43,7 @@ function create({trace, write, now = () => performance.now(), capacity = 32}) {
     sendFailed(meta, error) { safe(() => {
       const r=shots.get(meta.requestId);if(!r)return;
       r.status='send threw; UNKNOWN';r.sendError=String(error).slice(0,256);
+      r.settledNodeMs??=now();
       emit({event:'screenshot.sendFailed',...r});
     }); },
     receive(v, pending) { safe(() => {
@@ -63,6 +67,7 @@ function create({trace, write, now = () => performance.now(), capacity = 32}) {
           responseState:v.error?'CDP error':'response received', late:!pending||r.commandUnknown===true,
           errorCode:v.error?.code??null, base64Length:typeof encoded==='string'?encoded.length:null,
           dataSha256:typeof encoded==='string'?sha(encoded):null});
+        r.settledNodeMs??=r.responseNodeMs;
         emit({event:'screenshot.response', ...r, elapsedMs:now()-r.sentNodeMs});
       }
       if(meta?.method==='Runtime.evaluate' && ['page.owner','renderer.owner','guest.instance'].includes(meta.expression?.kind)) {
@@ -81,6 +86,7 @@ function create({trace, write, now = () => performance.now(), capacity = 32}) {
     deadline(meta) { safe(() => {
       const r=shots.get(meta.requestId);if(!r)return;
       r.deadlineNodeMs=now();r.status=r.status==='pending'?'CDP deadline; UNKNOWN':r.status;
+      r.settledNodeMs??=r.deadlineNodeMs;
       emit({event:'screenshot.deadline', ...r, elapsedMs:now()-r.sentNodeMs});
     }); },
     transport(event) { safe(() => emit({event:'transport.'+event,

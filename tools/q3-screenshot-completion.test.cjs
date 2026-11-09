@@ -157,6 +157,33 @@ async function main() {
   const bounded=tiny.snapshot('bounded');assert.equal(bounded.records.length,1);assert.equal(bounded.dropped,1);assert(bounded.observerErrors>0);tests++;
   tiny.sendFailed({requestId:2},Error('socket closed'));
   assert.equal(tiny.snapshot('failed send').records[0].status,'send threw; UNKNOWN');
+  // Reproduced in original0009: response300 took53ms, but a later deadline
+  // snapshot called its age39,546ms the screenshot elapsed time. Keep the
+  // settled interval separate from record age, including a late raw response
+  // after a CDP deadline. This clock belongs only to this diagnostic observer.
+  let clock=100;
+  const durations=create({trace:{snapshot(){}},write(){},now:()=>clock});
+  const meta=n=>({requestId:n,method:'Page.captureScreenshot',sessionId:'page'});
+  durations.request(meta(300),{format:'png'});clock=153;
+  durations.receive({id:300,sessionId:'page',result:{data:'cG5n'}},{meta:meta(300)});
+  clock=39699;
+  let completed=durations.snapshot('later command UNKNOWN').records[0];
+  assert.equal(completed.elapsedMs,53);assert.equal(completed.ageMs,39599);
+  durations.request(meta(343),{format:'png'});clock+=18208;
+  let active=durations.snapshot('command work deadline').records.at(-1);
+  assert.equal(active.elapsedMs,18208);assert.equal(active.ageMs,18208);
+  clock+=1792;durations.deadline(meta(343));clock+=4000;
+  durations.receive({id:343,sessionId:'page',result:{data:'bGF0ZQ=='}},undefined);
+  clock+=1000;active=durations.snapshot('late response').records.at(-1);
+  assert.equal(active.elapsedMs,20000);assert.equal(active.ageMs,25000);
+  assert.equal(active.responseNodeMs-active.sentNodeMs,24000);
+  assert.equal(active.status,'CDP deadline; UNKNOWN');assert.equal(active.late,true);
+  assert.equal(active.commandUnknown,true);
+  durations.request(meta(344),{});clock+=7;durations.sendFailed(meta(344),Error('send threw'));
+  clock+=100;assert.equal(durations.snapshot('send failed').records.at(-1).elapsedMs,7);
+  durations.request(meta(345),{});clock+=9;
+  durations.receive({id:345,sessionId:'page',error:{code:-32000}},{meta:meta(345)});
+  clock+=100;assert.equal(durations.snapshot('protocol error').records.at(-1).elapsedMs,9);tests++;
   assert.equal(require('node:crypto').createHash('sha256').update(fs.readFileSync(root+'/tools/q3-execution-boundary.cjs')).digest('hex'),composition.providers['tools/q3-execution-boundary.cjs']);
   console.log(JSON.stringify({passed:true,tests,localhostWebSocket:true,actualComposedSendReceive:true,actualNumberedTransport:true,browserStarted:false,gameStarted:false,unchangedCDPDeadlineMs:20000,noReplay:true,socketClosed:true,serverClosed:true,pending:pending.size,timers:timers.size,traceRows}));
 }

@@ -19,7 +19,7 @@ const providers = Object.freeze({
   'tools/native-browser-close.cjs': '1f4fe08b501ed27c90f4256e85574a788e7dd8adff60638f2c69d6a3ca2ea9b2',
   'tools/native-devtools-ready.cjs': '9ba9ae8b94ebd8a134045608074403d81f68d3cfdf6c0e3f9dbcb875e0632c1b',
   'tools/q3-execution-boundary.cjs': '1858eea7efb8875e44088ffe9f5ea434c3b22915444113204fb51673e4f5ac0d',
-  'tools/q3-screenshot-completion.cjs': '3178b45ddf608a432e70353eb0322153beb5466b62f1cbefd4b1aab0aaa7a8f0',
+  'tools/q3-screenshot-completion.cjs': 'df110773fc90f7c9dd259f1232f5a7fa985bce43faea1984cf0a9c32b047527b',
   'tools/native-command-log.cjs': '979b3a8bbd8625ef6bffb009650778736e20ade2d781918b83f59d9944c88f5e',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/transport.cjs': '54d7576d40df790ecf72153e289b25c6235b4e92b3f8b7332e480637bf07a9e8',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/trace.cjs': '6f440f2d1bdd9e02598a768ad041681ae1969245e9512939dff24a3970bb8b86',
