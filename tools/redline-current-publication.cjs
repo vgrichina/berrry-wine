@@ -112,11 +112,37 @@ function launch({run,publicationVersion,startupVersion,deadline,options,spawn}={
  const adapter=require('./redline-publication-caller.cjs');
  return adapter.launch({run:custody,observerVersion:adapter.version,argv:[process.execPath,path.join(run,'publication-caller.cjs')],options,...(spawn?{spawn}:{})});
 }
-function fixtureSource(selected,startupVersion){
+// The preparing parent authenticates Git provenance and passes this exact digest
+// independently of the staged files. Never derive the trusted digest from a
+// mutable manifest/seal inside the runtime. This also runs before each spawn.
+function stagedPrelaunch(run,selected,startupVersion,manifestSHA256){
+ optin(selected);require('./redline-current-startup.cjs').optin(startupVersion);
+ assert.match(manifestSHA256??'',/^[a-f0-9]{64}$/,'independent prepared manifest SHA required');
+ run=path.resolve(run);const raw=fs.readFileSync(path.join(run,'runtime-pins.json'));
+ assert.equal(sha(raw),manifestSHA256,'independent prepared manifest SHA mismatch');
+ const pins=JSON.parse(raw),seal=JSON.parse(fs.readFileSync(path.join(run,'replacement-pinset-seal.json')));
+ assert.equal(seal.manifestSHA256,manifestSHA256);assert.equal(seal.providers,pins.files.length);
+ assert.equal(pins.publicationVersion,selected);assert.equal(pins.moduleVersion,selected);assert.equal(pins.startupVersion,startupVersion);
+ const seen=new Set();for(const p of pins.files){assert(!seen.has(p.path),'unique staged provider');seen.add(p.path);assert.deepEqual(pin(p.path,read(p.path)),p,'staged production provider: '+p.path);}
+ const caller=path.relative(root,path.join(run,'publication-caller.cjs'));
+ assert(seen.has(caller),'prepared owning caller required');
+ assert.equal(fs.readFileSync(path.join(run,'publication-caller.cjs'),'utf8'),callerSource(run,closureSHA(pins.files.filter(p=>p.path!==caller)),startupVersion),'prepared owning caller digest');
+ require('./redline-publication-caller.cjs').verify();return pins;
+}
+function stagedLaunch({run,publicationVersion,startupVersion,manifestSHA256,deadline,options,spawn}={}){
+ stagedPrelaunch(run,publicationVersion,startupVersion,manifestSHA256);
+ assert(Number.isFinite(deadline)&&deadline>Date.now()&&deadline-Date.now()<30*60000,'original browser deadline');
+ const custody=path.join(run,'publication-custody');assert(!fs.existsSync(custody),'fresh custody run');
+ fs.mkdirSync(custody);fs.writeFileSync(path.join(custody,'lifecycle.json'),JSON.stringify({browserDeadline:deadline}),{flag:'wx'});
+ const adapter=require('./redline-publication-caller.cjs');
+ return adapter.launch({run:custody,observerVersion:adapter.version,argv:[process.execPath,path.join(run,'publication-caller.cjs')],options,...(spawn?{spawn}:{})});
+}
+function fixtureSource(selected,startupVersion,manifestSHA256){
  optin(selected);let source=require('./redline-startup-boundary.cjs').fixtureSource();
  const before="cp.spawn(process.execPath,[path.join(__dirname,'redline-startup-boundary.cjs'),'--caller'],{detached:true,env:{...process.env,REDLINE_NATIVE_FIXTURE:'1'},stdio:['ignore','pipe','pipe']})";
  assert.equal(source.split(before).length,2,'actual controller outer launch seam');
- source=source.replace(before,"require('./redline-current-publication.cjs').launch({run,publicationVersion:"+JSON.stringify(version)+(startupVersion!==undefined?",startupVersion:"+JSON.stringify(startupVersion):"")+",deadline,options:{detached:true,env:{...process.env,REDLINE_NATIVE_FIXTURE:'1'},stdio:['ignore','pipe','pipe']}})");
+ if(manifestSHA256!==undefined){require('./redline-current-startup.cjs').optin(startupVersion);assert.match(manifestSHA256,/^[a-f0-9]{64}$/);}
+ source=source.replace(before,"require('./redline-current-publication.cjs')."+(manifestSHA256!==undefined?'stagedLaunch':'launch')+"({run,publicationVersion:"+JSON.stringify(version)+(startupVersion!==undefined?",startupVersion:"+JSON.stringify(startupVersion):"")+(manifestSHA256!==undefined?",manifestSHA256:"+JSON.stringify(manifestSHA256):"")+",deadline,options:{detached:true,env:{...process.env,REDLINE_NATIVE_FIXTURE:'1'},stdio:['ignore','pipe','pipe']}})");
  const joined="assert.equal(watched.code,0,'independent watchdog must be explicitly disarmed and joined');";
  assert.equal(source.split(joined).length,2,'actual controller joined retrieval seam');
  source=source.replace(joined,joined+"save('publication-retrieval.json',require('./redline-publication-caller.cjs').retrieve(run+'/publication-custody'));");
@@ -139,9 +165,13 @@ function runCaller(run,selected,digest,startupVersion){
  compile(startupVersion!==undefined?require('./redline-current-startup.cjs').integrate(source):source,'redline-browser-run.cjs');
 }
 function compile(source,name){const Module=require('node:module'),filename=path.join(__dirname,name),m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(__dirname);m._compile(source,filename);}
-module.exports={version,published,builds,validate,prepare,prelaunch,launch,fixtureSource,runCaller};
+module.exports={version,published,builds,validate,prepare,prelaunch,launch,stagedPrelaunch,stagedLaunch,fixtureSource,runCaller};
 if(require.main===module){
- const [mode,run,selected,startupVersion]=process.argv.slice(2);optin(selected);
+ const [mode,run,selected,startupVersion,manifestSHA256]=process.argv.slice(2);optin(selected);
  if(mode==='--prepare')console.log(JSON.stringify(prepare(run,selected,startupVersion)));
+ else if(mode==='--staged-fixture'){
+  stagedPrelaunch(run,selected,startupVersion,manifestSHA256);assert.equal(path.resolve(process.env.REDLINE_RUN),path.resolve(run));
+  compile(fixtureSource(selected,startupVersion,manifestSHA256),'redline-native-fixture.cjs');
+ }
  else {assert.equal(mode,'--fixture','explicit fixture mode');prelaunch(run,selected,startupVersion);assert.equal(path.resolve(process.env.REDLINE_RUN),path.resolve(run));compile(fixtureSource(selected,startupVersion),'redline-native-fixture.cjs');}
 }
