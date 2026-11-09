@@ -50,13 +50,13 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed0445 dd97b4345 unsupportedright-200 beforegameHTTP; PausePNG baseline125coins5 rootseen597SHA576outergzip verified boxarchived. Fresh supertux-enumerated-native-progress-0455 PID1068932 thread01a1bea7-914d-7ad3-8ed6-a129d3d00b39 validates exactenumeratedclientchoice offline thenoneoriginal afterQ20450drain; aimnewlevelconsequence.
+  Next: Reviewed 8bec34aea 908SHA851outergzipPASS rootviewedPNG75coins3 no consequence; firstfreshnessfailure15781ms. Fresh supertux-native-block-jump-0512 PID1099947 thread01a1beb7-17e1-7471-afe0-f8813ce95375 seeks native block/jump consequence with prompt PNG review; runtime next.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: WC0445 actualChrome startupPASS normalcloseUNKNOWN runtimecap preemptedversionreply,53actualwaitsmissing boxarchived;171SHA114gzip verified. Fresh warcraft-startup-cancel-race-0500 PID1076728 thread01a1beaa-a2fa-7130-8498-88bcccdb293f OFFLINE fix late startupsuccess aftercancel oldFAILnewPASS actualNodecontrols; capsunchanged noChrome.
+  Next: Reviewed 16c496ca2 1041SHA PASS productioncode reviewed oldFAILnewPASS13composed5EOFcontrols buildPASS actualChromeunresolved. Fresh warcraft-native-current-objective-0512 PID1100184 thread01a1beb7-28ed-7522-a767-192b51bae6d6 prepares offline then one original objective after Super0512drain; allcapsunchanged.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
