@@ -59,6 +59,24 @@ with patch.object(kernel.Journal,'append',observed_append),patch.object(kernel.o
  kernel.supervise(run,[sys.executable,'-c',"import os;p=os.fork();os.execl('/bin/true','true') if p==0 else os.waitpid(p,0)"],deadline=time.time()+10,cleanup_deadline=time.time()+15,journal_compression='gzip')
 assert conts and len(exits)==2
 assert [json.loads(s) for s in gzip.decompress((run/'custody.ndjson.gz').read_bytes()).splitlines()]==rows
+# A real child's EXIT can precede its delayed fork registration. Exercise that
+# separate CONT path and require bytes from successful fsync, not page cache.
+run=out/'first-unlinked-exit';run.mkdir();durable_bytes=b'';unlinked_conts=[]
+def unlinked_sync(fd):
+ global durable_bytes
+ result=sync(fd)
+ if os.readlink('/proc/self/fd/'+str(fd))==str(run/'custody.ndjson'):
+  durable_bytes=(run/'custody.ndjson').read_bytes()
+ return result
+def unlinked_resume(request,pid,addr=0,data=0):
+ if request==kernel.CONT:
+  assert durable_bytes==(run/'custody.ndjson').read_bytes()
+  unlinked_conts.append(pid)
+ return trace(request,pid,addr,data)
+with patch.object(kernel.os,'fsync',unlinked_sync),patch.object(kernel,'ptrace',unlinked_resume):
+ controls.unseen_exit_fixture(run)
+drain=json.loads((run/'kernel-drain.json').read_text())
+assert unlinked_conts and drain['complete'] and not drain['remaining'] and not drain['unreaped']
 # Controlled storage comparison, identical real fork/exec/reap traffic.
 published=runpy.run_path(str(root/'tools/native_kernel_custody.py'))
 pressure=[]
