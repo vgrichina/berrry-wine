@@ -415,6 +415,7 @@ function prepare(destination,{inputs=[]}={}){
     // durable executable-CONT barriers. Shared providers remain immutable.
     const custodyAdapter='tools/q3-startup-custody.py';
     version.files.push(pin(custodyAdapter,read(custodyAdapter)));
+    version.files.push(pin('tools/q3-provider-upload.py',read('tools/q3-provider-upload.py')));
     generated=generated.map(file=>{
       const before='from native_kernel_custody import supervise,identity';
       assert.equal(file.source.split(before).length,2,'unique Q3 native custody import');

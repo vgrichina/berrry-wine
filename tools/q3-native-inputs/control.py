@@ -80,15 +80,17 @@ def allocate():
   so,se=w.communicate(timeout=max(1,life['overallDeadline']-time.time()+60));save('watchdog-actual-wait',dict(pid=w.pid,status=w.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=so.decode(),stderr=se.decode()));save('lifecycle-lock-released',dict(at=time.time(),actualWait=True))
 
 def provision():
- from concurrent.futures import ThreadPoolExecutor
+ import runpy
  pins=validate()
- def put(p):
-  b=(ROOT/p['path']).read_bytes();assert len(b)==p['size'] and H(b)==p['sha256'];c.upload(REMOTE+'/'+p['path'],b);return p
- with ThreadPoolExecutor(max_workers=8) as pool,gzip.open(R/'uploads.jsonl.gz','xb') as f:
-  for p in pool.map(put,pins['files']):f.write((json.dumps(p)+'\n').encode());f.flush()
- for n in ['runtime-pins.json.gz','lifecycle.json.gz']:
-  b=(BASE/n).read_bytes() if n=='runtime-pins.json.gz' else (R/n).read_bytes();c.upload(REMOTE+'/'+RUN+'/'+n,b)
- c.upload(REMOTE+'/'+str(BASE.relative_to(ROOT))+'/runtime-pins.json.gz',(BASE/'runtime-pins.json.gz').read_bytes())
+ files=list(pins['files'])
+ for path in [R/'runtime-pins.json.gz',R/'lifecycle.json.gz',BASE/'runtime-pins.json.gz']:
+  b=path.read_bytes();files.append(dict(path=str(path.relative_to(ROOT)),size=len(b),sha256=H(b)))
+ def url(path):
+  return c.access.api('POST','sandboxes/'+box()+'/files/upload-url',dict(path=path,ttlSeconds=900))['url']
+ with gzip.open(R/'uploads.jsonl.gz','xb') as f:
+  def record(event):
+   f.write((json.dumps(event)+'\n').encode());f.flush()
+  runpy.run_path(str(ROOT/'tools/q3-provider-upload.py'))['provision_files'](ROOT,files,REMOTE,url,record)
  for phase in ['cancellation','original']:
   phaseRun=str((BASE/phase/'prepared').relative_to(ROOT))
   code='from pathlib import Path\nimport subprocess,gzip,json\nr=Path('+repr(REMOTE+'/'+phaseRun)+');r.mkdir(parents=True);(r/"runtime-pins.json.gz").write_bytes(Path('+repr(REMOTE+'/'+RUN+'/runtime-pins.json.gz')+').read_bytes());p=subprocess.run(["python3","-B",'+repr(REMOTE+'/tools/q3-native-prelaunch.py')+','+repr(REMOTE)+',str(r/"preflight"),'+repr(REMOTE+'/'+str((BASE/phase/'runtime.py').relative_to(ROOT)))+',"--check-only"],cwd='+repr(REMOTE)+')'
