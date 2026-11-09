@@ -141,7 +141,10 @@ def transport(code, timeout):
 session = m.Session(directory/'session', transport)
 task['remote'] = task['c'].remote = session.remote
 launch_results = []
-launcher = threading.Thread(target=lambda: launch_results.append(task['owned_launch'](['task.py','launch'])))
+def successful_launch():
+    try: task['owned_launch'](['task.py','launch'])
+    except m.TerminalFailure as error: launch_results.append(str(error))
+launcher = threading.Thread(target=successful_launch)
 launcher.start()
 until(session.started.is_set)
 # Actual transport.consume writes the ACK; fixture execute marks ordinary dispatch.
@@ -160,7 +163,8 @@ finally:
     consumer.communicate(timeout=3)
     receipts = session.close()
     launcher.join(3)
-assert not launcher.is_alive() and launch_results == [None]
+assert not launcher.is_alive() and len(launch_results) == 1
+assert session.terminal, 'even successful transport exit closes admission before caller continuation'
 assert all(r['actualWait'] and r['stdioEOF'] for r in receipts)
 assert all(json.loads((runtime/f'reply-{n}.json').read_text())['ok'] for n in (0,1))
 print('success PASS two real numbered requests/ACKs; launch actual wait0 EOF; all children awaited')

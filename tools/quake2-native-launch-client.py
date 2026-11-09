@@ -2,8 +2,10 @@
 
 Use --task fresh/control.py --task-sha256 SHA --evidence fresh/client.
 The control caller is compiled from its actual launch/request branches, with
-its transport replaced by the reviewed shared owner. Feed command/review JSON
-lines. No allocation, retries, replay, route or remote custody claim.
+its transport replaced by the reviewed shared owner. Retain Popen(stdin=PIPE),
+await OWNED_INPUT_READY, send {"start":true}, flush, and keep the writer open
+through setup and command/review JSON lines. EOF revokes the run; it cannot
+detach the caller. No allocation, retries, replay, route or remote custody claim.
 Stage fresh run inputs and all production providers before a separate original.
 """
 import argparse
@@ -12,6 +14,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import signal
 from pathlib import Path
 import subprocess
 import sys
@@ -61,9 +64,9 @@ def compose_task(task, expected_sha):
 
 
 class Caller:
-    def __init__(self, task, evidence, transport):
+    def __init__(self, task, evidence, transport, cancel_code=None):
         self.task = task
-        self.session = Session(evidence, transport, launch_label='remote-launch')
+        self.session = Session(evidence, transport, launch_label='remote-launch', cancel_code=cancel_code)
         def remote(label, code, timeout=40):
             if label == 'remote-launch':
                 before = '["python3",r+"/remote-parent.py"]'
@@ -95,6 +98,54 @@ class Caller:
             raise self.session.fail(str(error)) from error
 
 
+def cancel_remote(run):
+    """Sticky run-scoped revocation; also works before the parent is spawned."""
+    run = Path(run).resolve()
+    if run == ROOT/'scratch/runs/20261109-quake2-observed-guard-route-0105':
+        raise ValueError('retained evidence is read-only')
+    with (run/'caller-cancelled.json').open('a') as output:
+        output.flush()
+        os.fsync(output.fileno())
+    # Wake an already spawned numbered ACK sender without fabricating an ACK.
+    # Preserve an earlier runtime fault; this record explicitly names the caller.
+    if (run/'original').is_dir():
+        try:
+            with (run/'original/first-failure.json').open('x') as output:
+                json.dump(dict(at=time.time(), source='caller input revocation',
+                               error='caller terminal; no replay', noReplay=True), output)
+                output.flush()
+                os.fsync(output.fileno())
+        except FileExistsError:
+            pass
+    return dict(cancelPublished=True, remoteCustody='UNKNOWN')
+
+
+def supervise_caller(run, command, deadline):
+    """Cancel the actual supervisor, whose existing kernel owner drains children.
+
+    Remote revocation is asynchronous; its marker forbids new bootstrap at the
+    remote observation, not retroactively at the local stdin timestamp.
+    """
+    run = Path(run)
+    cancelled = run/'caller-cancelled.json'
+    if cancelled.exists():
+        receipt = dict(prevented=True, children=[], remoteCustody='UNKNOWN')
+    else:
+        child = shared.Child(command, run, 'remote-supervisor', lambda _: None, lambda *_: None)
+        due = time.monotonic()+max(0, deadline-time.time())
+        while not child.waited.wait(.01):
+            if cancelled.exists() or time.monotonic() >= due:
+                # Send once; the supervisor's existing immutable cleanup cap
+                # owns descendant retirement. Do not kill its reaper early.
+                if child.process.poll() is None:
+                    child.process.send_signal(signal.SIGTERM)
+                child.waited.wait(max(0, due-time.monotonic()))
+                break
+        receipt = child.finish(due, terminate=not child.waited.is_set())
+    (run/'caller-parent-wait.json').write_text(json.dumps(receipt))
+    return receipt
+
+
 def remote_parent(run):
     """Retain actual launch.py custody, selecting the production consumer preload."""
     run = Path(run).resolve()
@@ -104,14 +155,11 @@ def remote_parent(run):
     os.environ['QUAKE2_NATIVE_RUN'] = str(run)
     os.environ['QUAKE2_NATIVE_COMPOSITION'] = '1'
     command = ['node', '--require', str(ROOT/'tools/quake2-native-driver-composition.cjs'), str(retained/'browser-run.cjs')]
-    child = shared.Child([sys.executable, str(retained/'launch.py'), '--consumer-control',
-                          str(run), json.dumps(command)], run, 'remote-supervisor', lambda _: None, lambda *_: None)
     deadline = json.loads((run/'lifecycle.json').read_text())['browserDeadline']/1000+30
-    due = time.monotonic()+max(0, deadline-time.time())
-    child.waited.wait(max(0, due-time.monotonic()))
-    receipt = child.finish(due, terminate=not child.waited.is_set())
+    receipt = supervise_caller(run, [sys.executable, str(retained/'launch.py'), '--consumer-control',
+                               str(run), json.dumps(command)], deadline)
     print(json.dumps(receipt), flush=True)
-    return receipt['status'] if receipt['actualWait'] and receipt['stdioEOF'] and receipt['status'] is not None else 1
+    return receipt.get('status', 1) if receipt.get('actualWait') and receipt.get('stdioEOF') else 1
 
 
 def main():
@@ -120,37 +168,23 @@ def main():
     parser.add_argument('--task-sha256')
     parser.add_argument('--evidence', type=Path)
     parser.add_argument('--remote-parent', type=Path)
+    parser.add_argument('--cancel-remote', type=Path)
     args = parser.parse_args()
     if args.remote_parent:
         return remote_parent(args.remote_parent)
+    if args.cancel_remote:
+        print(json.dumps(cancel_remote(args.cancel_remote)), flush=True)
+        return 0
     if not all((args.task, args.task_sha256, args.evidence)):
         parser.error('task, task-sha256 and evidence required')
     task = compose_task(args.task, args.task_sha256)
     # ROOT is the remote staged root in control.py, not this local checkout.
     task['ROOT'] = Path(task['REMOTE'])
+    cancel_code = 'import runpy,json;m=runpy.run_path('+repr(str(task['ROOT']/'tools/quake2-native-launch-client.py'))+');print(json.dumps(m["cancel_remote"]('+repr(str(task['ROOT']/task['RUN']))+')))'
     caller = Caller(task, args.evidence, lambda code, timeout: [
         'boat', '--no-update', '--json', 'exec', task['t'].box_id(), '--timeout', str(timeout),
-        '--', 'python3', '-c', code])
-    def launch():
-        try: caller.launch()
-        except BaseException as error: caller.session.fail(str(error))
-    thread = threading.Thread(target=launch)
-    thread.start()
-    try:
-        while not caller.session.started.wait(.01): caller.session.check()
-        print('OWNED_LAUNCH_STARTED', flush=True)
-        for line in sys.stdin:
-            try:
-                caller.request(json.loads(line))
-                print(json.dumps(dict(commandComplete=True)), flush=True)
-            except BaseException as error:
-                caller.session.fail(str(error))
-                print(json.dumps(dict(error=str(error), noReplay=True)), flush=True)
-    finally:
-        caller.session.close()
-        thread.join(caller.session.cleanup_seconds+.2)
-        if thread.is_alive(): raise TerminalFailure('launch caller did not settle at cap')
-    return 1 if caller.session.terminal else 0
+        '--', 'python3', '-c', code], cancel_code=cancel_code)
+    return shared.run_input(caller.session, caller.launch, caller.request)
 
 
 if __name__ == '__main__':

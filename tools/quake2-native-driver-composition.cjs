@@ -30,7 +30,10 @@ function compose(){
  source=replaceOnce(source,'chain=bound.createChain({evaluate,send,workers,pageSession,',"chain=require(root+'/tools/quake2-passive-attack.cjs').createChain(bound,{evaluate,send,workers,pageSession,");
  source=replaceOnce(source,'for(const p of pins.files){',`for(const ref of ${JSON.stringify(references)})assert(pins.files.some(p=>p.path===ref.path&&p.sha256===ref.sha256&&p.size===ref.size),'staged production Q2 provider required: '+ref.path);for(const p of pins.files){`);
  source=replaceOnce(source,'let diskTimer;',`let terminalFailure=null;const terminalAbort=new AbortController();
-function checkTerminal(){if(terminalFailure)throw terminalFailure;}
+function checkTerminal(){
+ if(!terminalFailure&&fs.existsSync(run+'/caller-cancelled.json'))observeTerminal('caller input revoked');
+ if(terminalFailure)throw terminalFailure;
+}
 function observeTerminal(reason){
  if(terminalFailure)return terminalFailure;
  terminalFailure=Error('Q2 terminal UNKNOWN; no replay: '+reason);
@@ -51,6 +54,11 @@ let diskTimer;`);
  source=replaceOnce(source,"ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));","try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));}catch(e){observeTerminal(e);reject(e);}");
  source=replaceOnce(source,'async function capture(label){','async function capture(label){checkTerminal();');
  source=replaceOnce(source,'async function execute(c,markDispatch){','async function execute(c,markDispatch){checkTerminal();');
+ // The caller revocation also gates automatic setup, rather than only the
+ // later numbered command loop. Independent keyUp/Browser.close still pass.
+ source=replaceOnce(source,'(async()=>{\n server=', '(async()=>{\n checkTerminal();\n server=');
+ source=replaceOnce(source,'const r=await fetch(', 'checkTerminal();const r=await fetch(');
+ source=replaceOnce(source,"browser=cp.spawn('/usr/bin/google-chrome'", "checkTerminal();browser=cp.spawn('/usr/bin/google-chrome'");
  source=replaceOnce(source,'const held=await bound.hold(','let held;try{held=await bound.hold(');
  source=replaceOnce(source,"  save('input-'+c.id+'-hold.json',held);","  }catch(e){if(e.holdReceipt)save('input-'+c.id+'-hold-unknown.json',e.holdReceipt);throw e;}\n  save('input-'+c.id+'-hold.json',held);");
  source=replaceOnce(source,"if(c.action==='quit'){await close('ordinary completion');return;}","if(c.action==='quit'){markDispatch();await close('ordinary completion',c.timing.workEnd);return;}");

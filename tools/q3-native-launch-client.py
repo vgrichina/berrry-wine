@@ -2,7 +2,8 @@
 
 Production entry: python3 -B tools/q3-native-launch-client.py --task TASK.py
 --task-sha256 SHA --evidence UNIQUE_DIRECTORY. Feed JSON lines containing
-{"command":{...},"review":"..."}; EOF requests local bounded cleanup only.
+{"start":true} first, then {"command":{...},"review":"..."}. Retain the
+stdin pipe throughout setup/commands; EOF is terminal bounded cancellation.
 This entry composes the actual retained task's launch/command branches, replacing
 its remote function (and c.remote) with the owned transport below. It never
 allocates, retries, replays, changes input/options/deadlines, or claims remote
@@ -13,11 +14,13 @@ import ast
 import hashlib
 import json
 import os
+import queue
 from pathlib import Path
 import selectors
 import subprocess
 import threading
 import time
+import sys
 
 
 class TerminalFailure(RuntimeError):
@@ -91,7 +94,7 @@ class Child:
 
 
 class Session:
-    def __init__(self, evidence, transport, cleanup_seconds=2, launch_label='sole-original-launch'):
+    def __init__(self, evidence, transport, cleanup_seconds=2, launch_label='sole-original-launch', cancel_code=None):
         self.evidence = Path(evidence)
         self.evidence.mkdir(exist_ok=False, parents=True)
         self.transport = transport
@@ -105,6 +108,7 @@ class Session:
         self.started = threading.Event()
         self.cleanup_thread = None
         self.receipts = []
+        self.cancel_code = cancel_code
 
     def fail(self, reason):
         with self.lock:
@@ -166,8 +170,7 @@ class Session:
             self.changed.wait(.01)
             self.changed.clear()
         receipt = child.finish(time.monotonic()+self.cleanup_seconds)
-        if not launch:
-            self.check()
+        self.check()  # A completed launch cannot resume bootstrap after terminal.
         if receipt['status'] != 0 or not receipt['actualWait'] or not receipt['stdioEOF']:
             raise self.fail('owned transport failed: '+label)
         rows = [json.loads(line) for line in child.output[0].decode().splitlines() if line.startswith('{')]
@@ -184,6 +187,20 @@ class Session:
         with self.lock:
             children = list(self.children)
         due = time.monotonic()+self.cleanup_seconds
+        # Only the Q2 caller supplies this run-scoped cancellation operation.
+        # It is cleanup, never an admitted command or another launch. A failed
+        # transport remains UNKNOWN; local waits do not prove remote custody.
+        if self.cancel_code is not None and self.launch is not None:
+            try:
+                child = Child(self.transport(self.cancel_code, 40), self.evidence,
+                              'terminal-cancel', lambda _: None, lambda *_: None)
+                with self.lock:
+                    self.children.append(child)
+                children.append(child)
+                child.waited.wait(max(0, due-time.monotonic()))
+                child.finish(due)
+            except BaseException as error:
+                (self.evidence/'cancel-unknown.json').write_text(json.dumps(dict(error=str(error))))
         self.receipts = [child.finish(due, terminate=child is not self.launch)
                          for child in children]
         (self.evidence/'cleanup.json').write_text(json.dumps(dict(
@@ -196,6 +213,81 @@ class Session:
         if self.cleanup_thread.is_alive():
             raise TerminalFailure('local cleanup thread did not settle at cap')
         return self.receipts
+
+
+def run_input(session, launch, request, stream=None):
+    """Own a live input pipe before launch; observe EOF during blocking work.
+
+    The controller must retain Popen(stdin=PIPE), await OWNED_INPUT_READY,
+    write {"start":true}\n and flush, then keep that same writer open through
+    setup and commands. Closing it is terminal cancellation, never detach.
+    """
+    stream = sys.stdin if stream is None else stream
+    lines = queue.Queue()
+    stop = threading.Event()
+    def read():
+        pending = b''
+        try:
+            with selectors.PollSelector() as poll:
+                poll.register(stream, selectors.EVENT_READ)
+                while not stop.is_set():
+                    if not poll.select(.02):
+                        continue
+                    chunk = os.read(stream.fileno(), 65536)
+                    if not chunk:
+                        raise TerminalFailure('caller stdin EOF')
+                    pending += chunk
+                    while b'\n' in pending:
+                        line, pending = pending.split(b'\n', 1)
+                        lines.put(line)
+        except BaseException as error:
+            session.fail(str(error))
+    reader = threading.Thread(target=read)
+    reader.start()
+    launcher = None
+    def next_line():
+        while True:
+            session.check()
+            try:
+                line = lines.get(timeout=.02)
+                session.check()
+                return json.loads(line)
+            except queue.Empty:
+                pass
+    def start():
+        try:
+            launch()
+        except BaseException as error:
+            session.fail(str(error))
+    try:
+        print('OWNED_INPUT_READY', flush=True)
+        if next_line() != {'start': True}:
+            raise session.fail('explicit start message required before launch')
+        session.check()
+        launcher = threading.Thread(target=start)
+        launcher.start()
+        while not session.started.wait(.01):
+            session.check()
+        session.check()
+        print('OWNED_LAUNCH_STARTED', flush=True)
+        while True:
+            value = next_line()
+            session.check()
+            request(value)
+            session.check()
+            print(json.dumps(dict(commandComplete=True)), flush=True)
+    except BaseException as error:
+        session.fail(str(error))
+        print(json.dumps(dict(error=str(error), noReplay=True)), flush=True)
+    finally:
+        stop.set()
+        reader.join(.1)
+        session.close()
+        if launcher:
+            launcher.join(session.cleanup_seconds+.2)
+            if launcher.is_alive():
+                raise TerminalFailure('launch caller did not settle at local cleanup cap')
+    return int(session.terminal is not None)
 
 
 def compose_task(task, expected_sha):
@@ -245,35 +337,8 @@ def main():
         'boat', '--no-update', '--json', 'exec', task['c'].box(), '--timeout', str(timeout),
         '--', 'python3', '-c', code])
     task['remote'] = task['c'].remote = session.remote
-    def launch():
-        try:
-            task['owned_launch'](['task.py', 'launch'])
-        except BaseException as error:
-            session.fail(str(error))
-    thread = threading.Thread(target=launch)
-    thread.start()
-    failed = False
-    try:
-        while not session.started.wait(.01):
-            session.check()
-        print('OWNED_LAUNCH_STARTED', flush=True)
-        for line in __import__('sys').stdin:
-            try:
-                session.check()  # Before requested-* evidence, review publication or request.
-                value = json.loads(line)
-                command = json.dumps(value['command'])
-                task['owned_command'](['task.py', 'command', command, value.get('review')])
-                print(json.dumps(dict(commandComplete=True)), flush=True)
-            except BaseException as error:
-                failed = True
-                session.fail(str(error))
-                print(json.dumps(dict(error=str(error), noReplay=True)), flush=True)
-    finally:
-        session.close()
-        thread.join(session.cleanup_seconds+.2)
-        if thread.is_alive():
-            raise TerminalFailure('launch caller did not settle at local cleanup cap')
-    return int(failed or session.launch.process.returncode != 0)
+    return run_input(session, lambda: task['owned_launch'](['task.py', 'launch']),
+        lambda value: task['owned_command'](['task.py', 'command', json.dumps(value['command']), value.get('review')]))
 
 
 if __name__ == '__main__':
