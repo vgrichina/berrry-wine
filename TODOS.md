@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed e7b666aa4 once1487SHA377gzip. Actual composed ordinary-quit reproduction identifies custody journal-service retirement dependency; historical syscall cause remains UNKNOWN. Fresh quake2-custody-retirement-repair-0844 explicitly repairs shared custody terminal service offline, preserving durable admission evidence and real waits; no caps extension.
+  Next: Reviewed c443739b5 once1376SHA342gzip. Bounded custody retirement service actual composed oldFAIL/newPASS normalquit72ms122realreaps; admission barriers caps unchanged46custody21caller10close buildPASS. Fresh quake2-current-custody-upper-route-0900 integrates current committed dependency offline then THIRD native+original after Redline0856 and Q30856 exact release.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed adf7145a once34SHA19gzip; tracked fixture bypasses production caller. Implement fixture through real production caller with terminal and startup controls offline. Fresh redline-production-fixture-repair-0832.
+  Next: Reviewed24dc417ef once1155SHA224gzip2initialtruncated retained. Actual production fixture integration oldFAILnewPASS startup/terminal/quit controls buildPASS. Fresh redline-production-side-door-0856 prepares offline waits committed custody0844 then FIRST native+original side-door same task.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed1665eff9 once51SHA36gzip; actual fixture and normal caller execute before owner authentication. Implement parked preCPU/preDLLmain gate in actual Q3 composition offline. Fresh q3-parked-startup-repair-0832.
+  Next: Reviewed0faf1af334 once4866SHA2023gzip. Actual production/fixture parked startup45controls buildPASS; oldcustody pin correctly refuses authorizedpeerWIP. Fresh q3-parked-visible-progress-0856 prepares current dependency aftercustodyrelease then SECOND native+original afterRedline0856 exactrelease.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
