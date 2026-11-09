@@ -104,7 +104,11 @@ bytes are retained through compressed recovery, not claimed to have originated
 compressed. Source recovery records exact Git SHA plus small owned patches and
 retained recipe references, without source archives or repeated media/module
 copies. The final inventory independently checks the exact local regular-file
-set and records original/stored hashes, sizes and CRC. Free-/home samples stayed
+set and records original/stored hashes, sizes and CRC. One preallocation-only
+exception is explicit: terminating the first watchdog interrupted
+`watchdog-heartbeat.jsonl.gz` before its gzip footer. Its exact damaged bytes are
+preserved, with CRC failure in the inventory and a separately recompressed
+readable prefix. This does not affect the 452-file remote recovery. Free-/home samples stayed
 above **1,500,000,000 bytes**; no continuous-floor claim or peer/old deletion.
 
 The task ends after publishing this note. No heavy runtime remains.
