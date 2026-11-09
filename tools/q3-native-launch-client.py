@@ -91,10 +91,11 @@ class Child:
 
 
 class Session:
-    def __init__(self, evidence, transport, cleanup_seconds=2):
+    def __init__(self, evidence, transport, cleanup_seconds=2, launch_label='sole-original-launch'):
         self.evidence = Path(evidence)
         self.evidence.mkdir(exist_ok=False, parents=True)
         self.transport = transport
+        self.launch_label = launch_label
         self.cleanup_seconds = cleanup_seconds
         self.lock = threading.RLock()
         self.terminal = None
@@ -121,11 +122,13 @@ class Session:
             # poll closes the gap before the waiter thread is scheduled.
             if self.launch is not None and self.launch.process.poll() is not None:
                 self.fail('owned launch transport terminated: '+str(self.launch.process.returncode))
+            if self.launch is not None and any(self.launch.eof):
+                self.fail('owned launch transport stdio EOF')
             if self.terminal:
                 raise TerminalFailure(self.terminal['reason'])
 
     def remote(self, label, code, timeout=40):
-        launch = label == 'sole-original-launch'
+        launch = label == self.launch_label
         with self.lock:
             self.check()
             if not launch and self.launch is None:

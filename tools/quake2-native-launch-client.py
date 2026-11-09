@@ -1,0 +1,157 @@
+"""Owned Q2 launch/request session. Offline import never launches anything.
+
+Use --task fresh/control.py --task-sha256 SHA --evidence fresh/client.
+The control caller is compiled from its actual launch/request branches, with
+its transport replaced by the reviewed shared owner. Feed command/review JSON
+lines. No allocation, retries, replay, route or remote custody claim.
+Stage fresh run inputs and all production providers before a separate original.
+"""
+import argparse
+import ast
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import threading
+import time
+
+ROOT = Path(__file__).resolve().parents[1]
+spec = importlib.util.spec_from_file_location('q2_owned_transport', ROOT/'tools/q3-native-launch-client.py')
+shared = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(shared)
+Session, TerminalFailure = shared.Session, shared.TerminalFailure
+
+
+def compose_task(task, expected_sha):
+    source = Path(task).read_bytes()
+    if hashlib.sha256(source).hexdigest() != expected_sha:
+        raise ValueError('retained control SHA mismatch')
+    tree = ast.parse(source, filename=str(task))
+    mains = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'main']
+    if len(mains) != 1:
+        raise ValueError('unique control main required')
+    selected = {}
+    branch = mains[0].body[1]
+    while isinstance(branch, ast.If):
+        for action in ('launch', 'request'):
+            if ast.unparse(branch.test) == 'action == '+repr(action):
+                selected[action] = branch.body
+        branch = branch.orelse[0] if len(branch.orelse) == 1 else None
+    if set(selected) != {'launch', 'request'}:
+        raise ValueError('actual launch/request branches required')
+    body = [n for n in tree.body if n is not mains[0] and not (
+        isinstance(n, ast.If) and ast.unparse(n.test) == "__name__ == '__main__'")]
+    namespace = {'__file__': str(Path(task).resolve()), '__name__': 'q2_owned_task'}
+    exec(compile(ast.Module(body=body, type_ignores=[]), str(task), 'exec'), namespace)
+    class Arguments(ast.NodeTransformer):
+        def visit_Attribute(self, node):
+            if ast.unparse(node) == 'sys.argv':
+                return ast.copy_location(ast.Name(id='argv', ctx=ast.Load()), node)
+            return self.generic_visit(node)
+    for action, body in selected.items():
+        function = ast.FunctionDef(name='owned_'+action, args=ast.arguments(
+            posonlyargs=[], args=[ast.arg(arg='argv')], kwonlyargs=[], kw_defaults=[], defaults=[]),
+            body=body, decorator_list=[])
+        module = ast.fix_missing_locations(Arguments().visit(ast.Module(body=[function], type_ignores=[])))
+        exec(compile(module, str(task), 'exec'), namespace)
+    return namespace
+
+
+class Caller:
+    def __init__(self, task, evidence, transport):
+        self.task = task
+        self.session = Session(evidence, transport, launch_label='remote-launch')
+        def remote(label, code, timeout=40):
+            if label == 'remote-launch':
+                before = '["python3",r+"/remote-parent.py"]'
+                if code.count(before) != 1:
+                    raise self.session.fail('actual remote parent call site changed')
+                code = code.replace(before, '["python3",root+"/tools/quake2-native-launch-client.py","--remote-parent",r]')
+            else:
+                before = "require(r+'/transport.cjs')"
+                tree = ast.parse(code)
+                sites = [n for n in ast.walk(tree) if isinstance(n, ast.Constant)
+                         and isinstance(n.value, str) and before in n.value]
+                if len(sites) != 1 or sites[0].value.count(before) != 1:
+                    raise self.session.fail('actual request transport call site changed')
+                sites[0].value = sites[0].value.replace(before, "require("+json.dumps(str(task['ROOT']/'tools/quake2-native-transport.cjs'))+")")
+                code = ast.unparse(tree)
+            return dict(stdout=self.session.remote(label, code, timeout), exitCode=0)
+        task['remote'] = task['t'].remote = remote
+
+    def launch(self):
+        self.session.check()
+        return self.task['owned_launch'](['control.py', 'launch'])
+
+    def request(self, value):
+        # Before reading/publishing any review, requested-* record or command.
+        self.session.check()
+        try:
+            return self.task['owned_request'](['control.py', 'request', json.dumps(value['command']), value.get('review')])
+        except BaseException as error:
+            raise self.session.fail(str(error)) from error
+
+
+def remote_parent(run):
+    """Retain actual launch.py custody, selecting the production consumer preload."""
+    run = Path(run).resolve()
+    retained = ROOT/'scratch/runs/20261109-quake2-observed-guard-route-0105'
+    if run == retained:
+        raise ValueError('retained evidence is read-only')
+    os.environ['QUAKE2_NATIVE_RUN'] = str(run)
+    os.environ['QUAKE2_NATIVE_COMPOSITION'] = '1'
+    command = ['node', '--require', str(ROOT/'tools/quake2-native-driver-composition.cjs'), str(retained/'browser-run.cjs')]
+    child = shared.Child([sys.executable, str(retained/'launch.py'), '--consumer-control',
+                          str(run), json.dumps(command)], run, 'remote-supervisor', lambda _: None, lambda *_: None)
+    deadline = json.loads((run/'lifecycle.json').read_text())['browserDeadline']/1000+30
+    due = time.monotonic()+max(0, deadline-time.time())
+    child.waited.wait(max(0, due-time.monotonic()))
+    receipt = child.finish(due, terminate=not child.waited.is_set())
+    print(json.dumps(receipt), flush=True)
+    return receipt['status'] if receipt['actualWait'] and receipt['stdioEOF'] and receipt['status'] is not None else 1
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--task', type=Path)
+    parser.add_argument('--task-sha256')
+    parser.add_argument('--evidence', type=Path)
+    parser.add_argument('--remote-parent', type=Path)
+    args = parser.parse_args()
+    if args.remote_parent:
+        return remote_parent(args.remote_parent)
+    if not all((args.task, args.task_sha256, args.evidence)):
+        parser.error('task, task-sha256 and evidence required')
+    task = compose_task(args.task, args.task_sha256)
+    # ROOT is the remote staged root in control.py, not this local checkout.
+    task['ROOT'] = Path(task['REMOTE'])
+    caller = Caller(task, args.evidence, lambda code, timeout: [
+        'boat', '--no-update', '--json', 'exec', task['t'].box_id(), '--timeout', str(timeout),
+        '--', 'python3', '-c', code])
+    def launch():
+        try: caller.launch()
+        except BaseException as error: caller.session.fail(str(error))
+    thread = threading.Thread(target=launch)
+    thread.start()
+    try:
+        while not caller.session.started.wait(.01): caller.session.check()
+        print('OWNED_LAUNCH_STARTED', flush=True)
+        for line in sys.stdin:
+            try:
+                caller.request(json.loads(line))
+                print(json.dumps(dict(commandComplete=True)), flush=True)
+            except BaseException as error:
+                caller.session.fail(str(error))
+                print(json.dumps(dict(error=str(error), noReplay=True)), flush=True)
+    finally:
+        caller.session.close()
+        thread.join(caller.session.cleanup_seconds+.2)
+        if thread.is_alive(): raise TerminalFailure('launch caller did not settle at cap')
+    return 1 if caller.session.terminal else 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
