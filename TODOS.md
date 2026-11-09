@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed Q2close0244 actualChrome rejected candidates,162SHA134gzip PASS, production restored; bx_ahbennnr archived stop_54426b99ce8846ab physicaldrained.0300 four exact Bash relay controls PASS actualwaitpid and separateEOF; relays alone no deadlock, upstream writer and sampling cost UNKNOWN, no box. Fresh quake2-upstream-writer-repair-0301 PID907082 thread01a1be3f-21ef-7600-abf7-6487f16e6d9a maps upstream identities/observer cost then causal realChrome fail-before/pass-after under unchanged caps. ONEfixture after Warcraft0244 then Super0300 exact releases, active predecessors are normal waits. Original guard/door open, native REVOKED/allwriters/edictABA UNKNOWN.
+  Next: Reviewed213d150b7 Q20301 unchangedactualChrome normal237ms/207ms delayedEOF1569ms all415kernelwaitscomplete,612indexedSHA166gzip PASS; historicalfailurecauseUNKNOWN no speculativefix, bx_m6w3a76f archived stop_c41c040c0474c08a drained. Fresh quake2-guard-door-onward-0325 PID939537 thread01a1be54-bd74-7af0-9b76-8a52c72948d9 ONEoriginal guard/door consequence after Super0320 exactrelease. Pin published0312 custody0cde26d0b, bounded personallyreviewed gameinput unchangedcaps. Native REVOKED/allwriters/edictABA UNKNOWN remains.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -56,7 +56,7 @@
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed0244 actual startup endpoint21.576s passes but cleanup18s terminalNULL bothEOFfalse rejected; production restored and540indexedSHA sizes104gzipCRC independentlyPASS. Box bx_6psgpzsk archived stop_0389de65a40207f8 physically drained. Fresh native-lineage-retirement-0312 PID922064 thread01a1be49-f73f-7a90-a0c7-1fd5e661a285 repairs custody autoattach lineage with actual browser-free fail-before/pass-after controls; no original/box. Q2upstream0301 separately owns shared Chrome shutdown repair. Historical renderer/lineage UNKNOWN remains; Prologue/tutorial/full27/parity/audio/FPS open.
+  Next: Reviewed0cde26d0b cancellationcreatorbarrier repair three actualoldFAILnewPASS pairs37tests+build,345indexedSHA52gzip PASS; historicalWarcraft lineage/ChromeEOFUNKNOWN remains. Fresh native-nonleader-exec-0325 PID939277 thread01a1be54-a3de-71c2-8e03-e7e538880b4e browserfree safe real nonleaderexec identitytransition repair with actualcontrols. No Warcraftoriginal until cleanup prerequisites concrete. Prior0244 endpoint21.576s but cleanuprejected; boxarchiveddrained. Prologue/tutorial/full27/parity/audio/FPS open.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
