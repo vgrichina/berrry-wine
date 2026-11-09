@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedfb4869ba3 once434SHA-size138gzipCRC and2preservedINVALID independentlyverified; tracednative startupdeadline beforeANYinput traceunflushed lateport noCDP causeUNKNOWN; boxf67904f5 archived98ca. Fresh redline-truncated-log-cleanup-repair-1325 OFFLINE actualcleanup/retrieval invalidgzip failure fix preservebadbytes EOF_FALSE nofixturewaiver.
+  Next: Reviewedb7537e798 once1232SHA-size105validgzip105expectedinvalid.gz controls verified; actualcleanup/retrieval now drainretain10B/empty/corrupt/absentlogs withoutEOF/passpromotion. Fresh redline-startup-boundary-diagnostic-1355 OFFLINE capture actualexisting readinessloop phases without extra polls deadlinechange or nativecauseclaim; no unchangedretry.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
