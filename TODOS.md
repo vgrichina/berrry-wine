@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed87f86964e once2250SHA489gzipCRC actualgenerated8startup oldmissing/newobserved pairs andsinkfailurePASS unchangedinputlimits lockedbuildPASS. Q21100 failureaboutblank50ms beforeappselection actualcauseUNKNOWN. Fresh quake2-observed-startup-native-1135 preparesOFFLINE authenticatedouterobserverhook; runtimeONLY after Q31130 exactUUID archiveddrain. Wholeactualfixture beforeoriginalguarddoor firstHPloss/UNKNOWNterminal.
+  Next: Reviewed1df867d1b once1098SHA-size339gzipCRC PASS. NativeTarget.setAutoAttach UNKNOWN beforeholdREADYauthoredcommands nooriginal;126actualreaps normalBrowsercloseACK0 separateEOF archivedUUID441ad5bf stopc13a36 expiry11:41 retained. Fresh quake2-autoattach-cause-repair-1150 OFFLINE actualrouting/startup causalrepair or testedminimaldiagnostic; no unchangednative retry.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed590c564ac once730SHA230gzipCRC actualcampaigngridPNG personallyviewed. Wholefixture187reapsPASS originalTrainingclickACK2 triggeredlock andcampaigngrid NOTTraining; firstmismatchterminal nofallback. Original278reaps separateEOF UUIDdf8a2f5b archivedstop55ad83 expiry11:31 retained. Fresh redline-menu-lock-transition-repair-1140 OFFLINE actualrouting diagnosis/narrowrepair withrealoldFAILnewPASS. BoardworkerHEAD11be60aa0 isrootTODO commit actualownnote590c564ac.
+  Next: Reviewed8f30fd206 once468SHA-size sealPASS actualgenerated5productionbridge controls12safety focusedlockedbuild26proofrefs PASS. Unlockedautorelative can discardhover whilebuttonpairhitsoldcursor; nativecause UNKNOWN no justifiedproductionfix. Fresh redline-keyboard-training-1150 derives supportedordinarykeyboardroute offline then wholeactualfixture before nativeTraining/gameplay; solebox after exactQ21135 archivedstopc13a36 APIverify.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
