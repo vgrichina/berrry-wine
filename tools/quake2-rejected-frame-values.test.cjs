@@ -143,8 +143,56 @@ async function main(){
   assert.equal(caught.holdReceipt.physicalRelease,upFailure?'UNKNOWN':'ACK');
   assert(h.logs.at(-1).row.attackInput.rejectedFrame);
  }
+ // Retain the real owning CPU's REP receipts through the same generated health
+ // sink on first loss, signed death and UNKNOWN. These are authored schedules,
+ // never an assertion about the historical native failure's writer/cause.
+ const writer=require('./quake2-frame-writer-witness.cjs'),cpu=new WebAssembly.Module(fs.readFileSync(root+'/build/wine-assembly.wasm'));
+ const writerHealth=[];
+ for(const terminal of ['loss','death','unknown'])for(const upFailure of [false,true]){
+  const f=fixture(true),host=new Proxy({memory:f.memory,log_i32:()=>{},log:()=>{}},{get:(o,k)=>k in o?o[k]:String(k).startsWith('beep_')?()=>0:()=>{throw Error('unexpected host import '+String(k));}});
+  const e=new WebAssembly.Instance(cpu,{host}).exports;
+  e.init_thread(0,0x400000,0x403527,0x7409000,0,0,0,0);e.set_esp(0x7408000);
+  e.set_instruction_watchpoint(0x440000);
+  const witness=writer.attach({enabled:true,getExports:()=>e,getMemory:()=>f.memory.buffer,maxBoundaries:48});
+  f.context.__writer=witness;
+  const read=()=>JSON.parse(JSON.stringify(vm.runInContext('('+passive.readPage.toString()+')('+JSON.stringify(f.identity)+','+JSON.stringify(passive.signatures())+',null,__writer)',f.context)));
+  publish(f,263,100);const h=consumer();h.control.retainHealth({attackInput:read()},'capture-after');
+  // Author the next current frame, then run the original publication REP on
+  // the actual CPU between the existing first/second copies. No reader retry.
+  publish(f,264,terminal==='loss'?98:terminal==='death'?-1:100);
+  const pc=0x403527,slot=0xa9cf8c+(264&15)*240;
+  new Uint8Array(f.memory.buffer,offset(pc),2).set(writer.binary().instruction(pc,2));
+  let executed=false;
+  f.renderer.peekKeyDownState=()=>{
+   if(!executed){
+    executed=true;
+    if(terminal==='unknown')f.put(0xa9ce98+0xe8,9);
+    e.set_eip(pc);e.set_esi(0xa9ce98);e.set_edi(slot);e.set_ecx(60);
+    for(let n=0;e.get_eip()!==pc+2;n++){assert(n<20);e.run(1);}
+   }
+   return 0;
+  };
+  const events=[];let caught,first,samples=0;
+  try{await input.hold({keys:['ArrowRight'],holdMs:50,session:'authored',
+   send:async(m,p)=>{events.push(p.type);if(upFailure&&p.type==='keyUp')throw Error('later UP failure');},
+   sample:async()=>{samples++;return {attackInput:read()};},
+   checkSample:r=>{try{h.control.retainHealth(r,'during-action');}catch(e){first=e;throw e;}},
+   saveSample:()=>{throw Error('post-terminal sink must not execute');}});}catch(e){caught=e;}
+  assert.equal(caught,first);assert.equal(caught,h.control.failure());assert.equal(samples,1);
+  assert.deepEqual(events,['keyDown','keyUp']);assert.equal(caught.holdReceipt.physicalRelease,upFailure?'UNKNOWN':'ACK');
+  const retained=h.logs.at(-1).row.attackInput,s=retained.frameWriterWitness;
+  assert.equal(s.status,'BOUNDED');assert.equal(s.nativeQualification,false);
+  const interval=s.intervals.find(i=>i.from===17&&i.to===18).ranges.publishedRing;
+  assert.equal(interval.delta,60);assert.equal(interval.last.pc,pc);assert.equal(interval.last.width,4);
+  assert.equal(interval.last.address,slot+236);assert.equal(interval.last.host,0);
+  if(terminal==='unknown'){assert(retained.rejectedFrame);assert.match(String(caught),/health\/motion UNKNOWN/);}
+  else{assert.equal(retained.damageFeedback.current.health,terminal==='loss'?98:-1);assert.match(String(caught),/first passive HP loss\/death/);}
+  let laterReads=0;h.control.setup({progress:async()=>{laterReads++;return {};}});await h.control.passiveHealthTick();assert.equal(laterReads,0);
+  writerHealth.push({terminal,upFailure,retained,physicalRelease:caught.holdReceipt.physicalRelease,laterReads});
+  witness.close();
+ }
  const result={passed:true,oldCommit,oldReaderSHA256:hash(oldSource),generatedHealthConsumerSHA256:hash(generated.source),
-  completeGeneratedConsumerWithInertStartup:true,nativeExperiment:false,terminalTickerReads:0,independentUPStickyFirstFailure:true,controls:results};
+  completeGeneratedConsumerWithInertStartup:true,nativeExperiment:false,terminalTickerReads:0,independentUPStickyFirstFailure:true,controls:results,writerHealth};
  fs.writeFileSync(path.join(out,'controls.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
  console.log('PASS '+results.length+' actual serialized old/new controls; exact shared read order/count; full generated1205 health sink; terminal ticker zero reads; independent UP/sticky first failure');
 }

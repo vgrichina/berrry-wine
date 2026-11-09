@@ -1,5 +1,7 @@
 'use strict';
-// Page-side shared-memory reads only: no Worker RPC, CPU export or guest write.
+// Page-side shared-memory reads only: no Worker RPC or guest write. An explicit
+// same-controller witness may observe the existing copies; never use a Worker
+// message timestamp as a synchronous copy boundary.
 const fs=require('node:fs'),assert=require('node:assert/strict');
 const core=require('../lib/quake2-owning-load-core');
 const WINDOWS=[[0x407650,0x83],[0x4076e0,0xa6],[0x407930,0x1e],
@@ -35,13 +37,38 @@ function signatures(){
 }
 // Serialized into the actual page. Identity tokens originate in the retained
 // admission chain; this reader neither creates nor repairs those tokens.
-function readPage(identity,windows,expectedMemory){
+function readPage(identity,windows,expectedMemory,writerWitness=null){
+ // The caller owns attachment/lifetime of the owning CPU observer. This
+ // optional object cannot cross CDP/Worker serialization. Default page reads
+ // call no CPU API. Observation failures never change acceptance or retry.
+ let writerError=null;
+ const boundary=(copy,edge)=>{
+  if(writerWitness)try{
+   const result=writerWitness.boundary(copy,edge);
+   if(result?.then){
+    Promise.resolve(result).catch(()=>{});
+    writerError ||= 'asynchronous writer boundary cannot order synchronous copies';
+   }
+  }catch(e){writerError ||= String(e.message);}
+ };
+ const writerEvidence=()=>{
+  if(!writerWitness)return {};
+  if(typeof writerWitness.boundary!=='function'||typeof writerWitness.snapshot!=='function')
+   return {frameWriterWitness:{status:'UNAVAILABLE',reason:'same-controller owning CPU witness unavailable',nativeQualification:false}};
+  try{
+   const evidence=writerWitness.snapshot();
+   if(evidence?.then)Promise.resolve(evidence).catch(()=>{});
+   if(!evidence||evidence.then)throw Error('synchronous writer snapshot required');
+   return {frameWriterWitness:{...evidence,
+   ...(writerError?{status:'INVALID',reason:writerError}:{}),nativeQualification:false}};}
+  catch(e){return {frameWriterWitness:{status:'INVALID',reason:writerError||String(e.message),nativeQualification:false}};}
+ };
  // Return only values already sampled by this invocation. Absent predicate
  // keys were short-circuited/not reached; booleans describe executed checks.
  // Raw point samples do not establish freshness, all-writers or lifetime.
  const rejectedFrame={motionFirst:null,motionSecond:null,damageFirst:null,damageSecond:null,predicates:{}};
  const checked=(key,value)=>{rejectedFrame.predicates[key]=!!value;return value;};
- const fail=reason=>({status:'UNKNOWN',reason,rejectedFrame,playerMotion:{status:'UNKNOWN',reason},damageFeedback:{status:'UNKNOWN',reason,cause:'UNKNOWN'},consumption:'UNKNOWN',weaponEffect:'UNKNOWN'});
+ const fail=reason=>({status:'UNKNOWN',reason,rejectedFrame,playerMotion:{status:'UNKNOWN',reason},damageFeedback:{status:'UNKNOWN',reason,cause:'UNKNOWN'},consumption:'UNKNOWN',weaponEffect:'UNKNOWN',...writerEvidence()});
  const all=typeof runningApps==='undefined'?[]:runningApps;
  const a=all[0],w=a?.wine,g=w?.guestWorker,l=g?.link,s=globalThis.__mcmPassiveIdentityV1;
  if(checked('ownerUnavailable',all.length!==1||a.name!=='quake2_demo'||!w?.running||w._stopped||!s))return fail('owner unavailable');
@@ -54,7 +81,7 @@ function readPage(identity,windows,expectedMemory){
  if(!s.ids.has(buffer))s.ids.set(buffer,s.epoch+':'+(++s.next));
  const memoryIdentity=s.ids.get(memory)+'/'+s.ids.get(buffer);
  if(checked('memoryIdentityChanged',expectedMemory&&expectedMemory!==memoryIdentity))return fail('owning memory changed');
- // The pinned CPUa320 ABI: direct EXE data stays conservative. Sparse
+ // The fixed direct/PTE ABI: direct EXE data stays conservative. Sparse
  // bindings follow $g2w_slow / $guest_page_translate (src/03-registers.wat),
  // never VA-as-offset, an RPC/export, or the allocation-record fallback.
  const view=new DataView(buffer),offset=va=>va-0x400000+0x12000;
@@ -111,23 +138,32 @@ function readPage(identity,windows,expectedMemory){
  // ParseFrame marks valid BEFORE parsing; compare the entire 240-byte frame
  // with its published ring slot, then repeat both. This rejects an unfinished
  // publication but is still point sampling, not an atomic/lifetime witness.
- function motionSample(){
+ function motionSample(label){
   const frame=0xa9ce98,size=240;
   if(!direct(0xa86a60,4)||!direct(frame,size))return null;
   const state=u32(0xa86a60),number=u32(frame+4);
   const slot=0xa9cf8c+(number&15)*size;
   if(!direct(slot,size))return null;
-  return {state,slot,current:Array.from(new Uint8Array(buffer,offset(frame),size)),
-   published:Array.from(new Uint8Array(buffer,offset(slot),size))};
+  boundary(label+'.current','before');
+  const current=Array.from(new Uint8Array(buffer,offset(frame),size));
+  boundary(label+'.current','after');
+  boundary(label+'.published','before');
+  const published=Array.from(new Uint8Array(buffer,offset(slot),size));
+  boundary(label+'.published','after');
+  return {state,slot,current,published};
  }
- const motionFirst=rejectedFrame.motionFirst=motionSample();
+ const motionFirst=rejectedFrame.motionFirst=motionSample('motionFirst');
  // Fixed executable-owned ring only: 16 * 240 bytes, read twice. No game
  // DLL/edict pointer traversal, RPC, export, hook or guest writes. Older slots
  // are evidence of received states, never a server-side damage event log.
- function damageRing(){
-  return direct(0xa9cf8c,16*240)?Array.from(new Uint8Array(buffer,offset(0xa9cf8c),16*240)):null;
+ function damageRing(label){
+  if(!direct(0xa9cf8c,16*240))return null;
+  boundary(label,'before');
+  const bytes=Array.from(new Uint8Array(buffer,offset(0xa9cf8c),16*240));
+  boundary(label,'after');
+  return bytes;
  }
- const damageFirst=rejectedFrame.damageFirst=damageRing();
+ const damageFirst=rejectedFrame.damageFirst=damageRing('damageFirst');
  const first=Array.from({length:5},(_,i)=>u32(0xac13a0+i*4));
  // Preserve attack rows/order. These are Q2 keycodes, not Win32 VKs:
  // Space, Mouse2, a/d, comma/period, left/right arrows and strafe modifier.
@@ -139,8 +175,8 @@ function readPage(identity,windows,expectedMemory){
  const physical=[13,17,37,38,39,40,32,65,68,188,190,18].map(key=>({key,state:w.renderer.peekKeyDownState?.(key)??null}));
  const again=keys.map(binding);
  const second=Array.from({length:5},(_,i)=>u32(0xac13a0+i*4));
- const motionSecond=rejectedFrame.motionSecond=motionSample();
- const damageSecond=rejectedFrame.damageSecond=damageRing();
+ const motionSecond=rejectedFrame.motionSecond=motionSample('motionSecond');
+ const damageSecond=rejectedFrame.damageSecond=damageRing('damageSecond');
  for(const [index,pte] of observed)if((Atomics.load(pages,index)>>>0)!==pte)translationChanged=true;
  if(checked('ownerOrMemoryChangedDuringRead',runningApps!==all||all.length!==1||all[0]!==a||a.wine!==w||a.name!=='quake2_demo'||
    !w.running||w._stopped||w.processId!==identity.processId||w.guestWorker!==g||g.link!==l||
@@ -212,13 +248,19 @@ function readPage(identity,windows,expectedMemory){
   physical,playerMotion,damageFeedback,
   ...(!stable||playerMotion.status!=='SNAPSHOT'||damageFeedback.status!=='SNAPSHOT'?{rejectedFrame}:{}),
   attack:{address:0xac13a0,first,second,down:second.slice(0,2),state:second[4],held:!!(second[4]&1),impulseDown:!!(second[4]&2)},
-  consumption:'UNKNOWN; latch snapshot only, no event history or usercmd execution witness',weaponEffect:'UNKNOWN'};
+  consumption:'UNKNOWN; latch snapshot only, no event history or usercmd execution witness',weaponEffect:'UNKNOWN',...writerEvidence()};
 }
 function createChain(bound,options){
+ // Explicit page-realm binding supplied by a synchronous owning controller.
+ // A Worker RPC/export proxy is asynchronous and cannot supply this contract.
+ // Missing opt-in bindings retain UNAVAILABLE evidence, never silently OFF.
+ const writerGlobal=options.writerWitnessGlobal;
+ if(writerGlobal!==undefined&&!(typeof writerGlobal==='string'&&/^[A-Za-z_$][\w$]{0,127}$/.test(writerGlobal)))throw Error('writer witness global name');
  const chain=bound.createChain(options),windows=signatures();
  let memoryIdentity;
  const observe=async identity=>{
-  const row=await options.evaluate('('+readPage.toString()+')('+JSON.stringify(identity)+','+JSON.stringify(windows)+','+JSON.stringify(memoryIdentity??null)+')');
+  const row=await options.evaluate('('+readPage.toString()+')('+JSON.stringify(identity)+','+JSON.stringify(windows)+','+JSON.stringify(memoryIdentity??null)+
+   (writerGlobal===undefined?'':',globalThis['+JSON.stringify(writerGlobal)+']||{}')+')');
   // An identified owner stays pinned even if its binding is unreadable.
   // A later memory replacement cannot repair an UNKNOWN sample's custody.
   if(row?.memoryIdentity)memoryIdentity??=row.memoryIdentity;

@@ -1,8 +1,11 @@
 'use strict';
 // Authored CPU scheduling, OFFLINE. Not the historical1265 native cause.
-const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),cp=require('node:child_process');
 const w=require('./quake2-frame-writer-witness.cjs'),{hash}=require('./quake2-owning-load-witness.cjs');
 const {fixture}=require('./quake2-passive-attack.test.cjs');
+const passive=require('./quake2-passive-attack.cjs');
+const before={exports:{}};
+vm.runInNewContext(cp.execFileSync('git',['show','1f3bd16c17cbdac9e47a441045f69a9b1157e103:tools/quake2-passive-attack.cjs'],{encoding:'utf8'}),{module:before,require,__dirname});
 const cpu=fs.readFileSync('build/wine-assembly.wasm'),mod=new WebAssembly.Module(cpu),exe=w.binary();
 const off=a=>a-0x400000+0x12000,stop=0x440000;
 function boot(memory){
@@ -20,7 +23,7 @@ function boot(memory){
  }
  return {e,execute};
 }
-function run(name,enabled){
+function run(name,enabled,reader=passive.readPage){
  const f=fixture(true),{e,execute}=boot(f.memory);
  // Authored stable published HP100 frame; same exact production reader.
  f.view.setInt16(off(w.FRAME)+0xaa,100,true);f.put(w.FRAME+0xe8,5);
@@ -48,10 +51,10 @@ function run(name,enabled){
   if(name==='memory')buffer=new SharedArrayBuffer(8);
   return 0;
  };
- // Test-only observation of the EXISTING six Array.from iterations. No
- // production source rewriting, extra guest byte read, or copy retry.
- f.context.__boundary=(copy,edge)=>witness.boundary(copy,edge);f.context.__copies=w.COPIES;
- vm.runInContext(`globalThis.__trace=[];globalThis.__copy=0;
+ // The serialized production reader supplies boundaries directly. The typed
+ // array adapter below records bytes only, never supplies witness boundaries.
+ f.context.__writerWitness=witness;
+ vm.runInContext(`globalThis.__trace=[];
  globalThis.DataView=class extends DataView {
   getUint8(...a){if(this.buffer instanceof SharedArrayBuffer)__trace.push(['u8',...a]);return super.getUint8(...a);}
   getUint32(...a){if(this.buffer instanceof SharedArrayBuffer)__trace.push(['u32',...a]);return super.getUint32(...a);}
@@ -59,23 +62,27 @@ function run(name,enabled){
  globalThis.Uint8Array=class extends Uint8Array {
   *[Symbol.iterator](){
    const shared=this.buffer instanceof SharedArrayBuffer;
-   const label=shared&&(this.length===240||this.length===3840)?__copies[__copy++]:null;
-   if(label)__boundary(label,'before');
    for(let i=0;i<this.length;i++){if(shared)__trace.push(['byte',this.byteOffset+i]);yield this[i];}
-   if(label)__boundary(label,'after');
   }
  };`,f.context);
- const row=JSON.parse(JSON.stringify(f.read())),trace=JSON.parse(JSON.stringify(f.context.__trace)),evidence=witness.snapshot();
+ const row=JSON.parse(JSON.stringify(vm.runInContext('('+reader.toString()+')('+JSON.stringify(f.identity)+','+JSON.stringify(passive.signatures())+',null,__writerWitness)',f.context))),trace=JSON.parse(JSON.stringify(f.context.__trace)),evidence=witness.snapshot();
+ if(reader===passive.readPage)assert.deepEqual(row.frameWriterWitness,{...JSON.parse(JSON.stringify(evidence)),nativeQualification:false},'actual reader retains witness');
  const state=Object.fromEntries(['eip','esp','eax','ebx','ecx','edx','esi','edi','ebp','flag_op','flag_a','flag_b','flag_res','yield_reason'].map(k=>[k,e['get_'+k]()>>>0]));
  return {row,trace,evidence,state,guestSHA:hash(new Uint8Array(f.memory.buffer,off(w.FRAME),240+3840))};
 }
 const results=[];
 for(const name of ['stable','increment','multi','sameByte','publication','rawHost','hostExport','peer','frameClear','clientClear','resetRearm','rearm','owner','memory','overflow']){
- const offRun=run(name,false),onRun=run(name,true);
+ const offRun=run(name,false),onRun=run(name,true),oldRun=run(name,true,before.exports.readPage);
  assert.deepEqual(onRun.state,offRun.state,name+' architecture/lazy flags parity');assert.equal(onRun.guestSHA,offRun.guestSHA,name+' frame/ring memory parity');
  assert.deepEqual(onRun.trace,offRun.trace,name+' exact guest read count/order');
- const strip=r=>{r=structuredClone(r);delete r.at;return r;};
+ const strip=r=>{r=structuredClone(r);delete r.at;delete r.frameWriterWitness;return r;};
  assert.deepEqual(strip(onRun.row),strip(offRun.row),name+' unchanged acceptance and predicates');
+ assert.deepEqual(strip(onRun.row),strip(oldRun.row),name+' previous actual reader acceptance and predicates');
+ assert.deepEqual(onRun.trace,oldRun.trace,name+' previous actual reader exact guest reads');
+ assert.deepEqual(onRun.state,oldRun.state,name+' previous actual reader architecture');
+ assert.equal(onRun.guestSHA,oldRun.guestSHA,name+' previous actual reader memory');
+ assert.equal(oldRun.row.frameWriterWitness,undefined,'old reader ignores supplied witness');
+ assert.equal(oldRun.evidence.points.length,0,'old actual reader has no copy boundary evidence');
  assert.equal(offRun.evidence.status,'OFF');
  const s=onRun.evidence,interval=s.intervals.find(i=>i.from===5&&i.to===6);
  assert.equal(s.points.length,12);assert.equal(s.limits.nativeQualification,false);assert.equal(s.limits.frameABA,'UNKNOWN');
@@ -101,7 +108,7 @@ for(const name of ['stable','increment','multi','sameByte','publication','rawHos
  if(name==='overflow')assert.equal(interval.ranges.current.status,'INVALID');
  assert.equal(offRun.evidence.points,undefined,'old/off missing witness');
  assert(s.points[6].raw,'new evidence retained independently of acceptance');
- results.push({name,readCount:onRun.trace.length,readSHA:hash(JSON.stringify(onRun.trace)),row:onRun.row,evidence:s});
+ results.push({name,oldReaderBoundaryPoints:oldRun.evidence.points.length,readCount:onRun.trace.length,readSHA:hash(JSON.stringify(onRun.trace)),row:onRun.row,evidence:s});
 }
 // Sticky reset retains earlier evidence, snapshots are detached, missing
 // boundaries cannot imply ordering, and disabled mode touches no APIs.
@@ -119,5 +126,5 @@ for(const name of ['stable','increment','multi','sameByte','publication','rawHos
  later.close();assert.equal(e.native_store_get(0),1,'close preserves replacement observer');
  e.native_store_arm(0,0,0,0,0);
 }
-console.log(JSON.stringify({pass:true,authoredScheduling:true,historicalNativeCause:'UNKNOWN',cpuSHA:hash(cpu),exe:exe.receipt,
+console.log(JSON.stringify({pass:true,authoredScheduling:true,oldReaderGitPin:'1f3bd16c17cbdac9e47a441045f69a9b1157e103',historicalNativeCause:'UNKNOWN',cpuSHA:hash(cpu),exe:exe.receipt,
  readerSHA:hash(fs.readFileSync('tools/quake2-passive-attack.cjs')),testSHA:hash(fs.readFileSync(__filename)),results}));
