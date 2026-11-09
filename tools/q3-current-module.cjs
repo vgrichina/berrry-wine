@@ -26,6 +26,10 @@ const publishedProviders=Object.fromEntries([
   'src/00-regions.wat','src/03-registers.wat','src/05b-string-ops.wat','src/13-exports.wat'
 ].map(name=>[name,cpuCommit]));
 publishedProviders['tools/native_kernel_custody.py']=custodyCommit;
+// Exact published opt-in stage recorder; never accept arbitrary GL drift.
+const glStageCommit='c6094c4edf87dcd7b80c4caa4225857bc3a5eb00';
+for(const name of ['lib/gl-compat.js','lib/gl-render-host.js','lib/gl-render-worker.js'])
+  publishedProviders[name]=glStageCommit;
 const migration={
   'tools/q3-startup.cjs':'215181583d550a38264b8ae7854101a5d2e7a71acf25dd487e78a203a5c3c1cb',
   'tools/q3-native-driver-composition.cjs':'841098edb5be7cb43ac7a6b2e22bfbc79efe1f2ecff1d2963216c3b97ca762f7',
@@ -45,7 +49,7 @@ function validate(options={}){
   const raw=read(historical);assert.equal(hash(raw),historicalSHA,'historical pinset integrity');
   const prior=JSON.parse(zlib.gunzipSync(raw)),seen=new Set(),explainedDrift=[];
   for(const p of prior.files){assert(!seen.has(p.path),'duplicate historical pin');seen.add(p.path);}
-  for(const commit of [cpuCommit,custodyCommit])for(const target of ['HEAD','origin/main'])git(['merge-base','--is-ancestor',commit,target]);
+  for(const commit of [cpuCommit,custodyCommit,glStageCommit])for(const target of ['HEAD','origin/main'])git(['merge-base','--is-ancestor',commit,target]);
   const sources=git(['ls-tree','-r','--name-only',cpuCommit,'--','src','tools/watx-src','tools/watx.js','tools/watx-closure.js','tools/build-compile-wat.js']).toString().trim().split('\n');
   for(const name of sources)assert.equal(hash(read(name)),hash(git(['show',cpuCommit+':'+name])),'published build source: '+name);
   const expected={...modules};
@@ -156,6 +160,27 @@ function composeStartupDiagnostics(source){
     assert.equal(source.split(before).length,2,'unique startup diagnostic seam: '+before);
     source=source.replace(before,after);
   };
+  // Only this authenticated diagnostic consumer arms the host. The page owner
+  // reads the existing shared ring even when renderer JS cannot service RPC.
+  // Missing exits remain UNKNOWN; these samples perform no GL/protocol work.
+  once("Object.defineProperty(globalThis,'GLRenderHost'",`let q3PartialStop=()=>{},q3PageHidden=false;
+addEventListener('pagehide',()=>{q3PageHidden=true;q3PartialStop();},{once:true});
+Object.defineProperty(globalThis,'GLRenderHost'`);
+  once('value.configureDiagnostics({enabled:true,maxRecords:64});this.__q3GLHost=value;',
+    `value.configureDiagnostics({enabled:true,maxRecords:64});this.__q3GLHost=value;
+q3PartialStop();
+if(!q3PageHidden){
+ let samples=0,active=true;
+ try{
+  const timer=setInterval(()=>{
+   if(!active)return;
+   ++samples;
+   try{console.debug('Q3_GL_INDEPENDENT_PARTIAL',JSON.stringify({version:1,sample:samples,pageNow:performance.now(),snapshot:value.diagnosticSnapshot()}));}catch{}
+   if(samples>=1024)q3PartialStop();
+  },500);
+  q3PartialStop=()=>{if(active){active=false;clearInterval(timer);}q3PartialStop=()=>{};};
+ }catch{/* Observation setup cannot prevent ordinary host imports. */}
+}`);
   once('function send(method,params={},sessionId,captureProbe=null)',`const startupDiagnostics=require(root+'/tools/q3-current-module.cjs');
 const startupRequests=new Map(),startupTargets=new Map();let startupRecording=true,startupRows=0;
 function startupRecord(direction,fields){
