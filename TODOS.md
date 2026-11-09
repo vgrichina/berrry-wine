@@ -50,7 +50,7 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed 0b4869749 actual native jump: 29 reviewed browser choices, final capture personally verified airborne beside first pillar; landing/onward/exit unverified. 1143 regular files including inventory independently hash/size/CRC exactset verified; bx_ntaeeze7 archived unforced and drained. Fresh supertux-reviewed-airborne-settle-0116 PID742790 thread01a1bde0-1d62-7152-a104-7b9a9c47b9b9 implements explicit personally reviewed neutral settling action offline, preserving freshness and firstUNKNOWN. Q3 owns sole heavy runtime then Q2. Historical2330local143 UNKNOWN retained; full27/parity/audio/FPS open.
+  Next: Reviewed 82d028903 explicit reviewed neutral-settle action: airborne=true grounded=false allows empty keys for exactly 200ms, then fresh Pause capture; ordinary choices still require grounded review. Controller30, client15 groups/14 children, actual composed transport checks and locked build PASS; all629 indexed files independently hash/size/CRC verified. Fresh supertux-airborne-landing-gameplay-0124 PID752994 thread01a1bde6-fabd-7c40-9b58-0c2ecf8909d5 prepares offline, waits Q2 physical release, then attempts native landing/onward with fresh personal review. Prior native jump personally verified airborne; landing/onward/exit unverified. Historical2330local143 UNKNOWN retained; full27/parity/audio/FPS open.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed 8f4053d5f: actual capture awaited screenshot before owner after-reads, now one bounded parallel page/guest/render/GLproducer probe batch while reply pending; nine real WebSocket transport controls and lockedbuild PASS. 51 regular includinginventory original/stored hashes sizes CRC exactset independently verified, actual waits EOF. Fresh q3-concurrent-owner-gameplay-0052 PID709382 thread01a1bdc9-056e-7161-8261-5da6e19b868f acquired sole heavy runtime bx_74fcszqf at01:09:10 after Super0046 archived/drained release; immutable watchdog deadline01:33:58 and finite TTL. Concurrent owner probes accompany one changed native attempt; Q2 waits its explicit archive/drain release. Historical four frames remain menus and343 cause UNKNOWN; marker1858eea7 and caps unchanged. Both-backend gameplay/full27/parity/FPS/audio open.
+  Next: Q3 concurrent-owner attempt0052 physically released bx_74fcszqf at01:22:29 archived unforced, allowing Q2 next. Worker709382 still finalizing; result not yet reviewed. Reported nine native menu captures and eight ACKs, movement/firing unverified; local helper SIGPIPE at01:12:12 noticed late and later menu input occurred. FirstUNKNOWN compliance not established. Historical317/350 waits leave33 missing, commandEOF false; physical absence does not establish those waits. Review final evidence once before assigning fresh worker to concrete terminal-failure monitoring repair. Prior8f4053d5f transport checks reviewed; marker1858eea7/caps unchanged. Both-backend gameplay/full27/parity/FPS/audio open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
