@@ -1,6 +1,7 @@
 'use strict';
-// Executes the retained and repaired whole fixture scripts in a CDP seam with
+// Executes retained fixture scripts against the current lifecycle helper with
 // real local HTTP, inert native Node children, and real gzip pipelines. No Chrome.
+// The current production caller/controller composition is in redline-startup.test.cjs.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -142,7 +143,7 @@ async function composition(name, source, mode) {
 (async()=>{
   fs.mkdirSync(out,{recursive:true});
   await composition('old-delay',oldSource(),'delay');
-  const source=fs.readFileSync(path.join(__dirname,'redline-native-fixture.cjs'),'utf8');
+  const source=cp.execFileSync('git',['show','2045a98ee7695bd031392dc16965be2eaed0882c:tools/redline-native-fixture.cjs'],{cwd:root,encoding:'utf8'});
   for(const mode of ['delay','delay-real','close-fail','close-reject','body-fail','cancel','stream-fail','normal']) await composition('new-'+mode,source,mode);
   // A stream rejection must not skip server/child cleanup or replace a prior error.
   let closed=0;const first=Error('stream failure');

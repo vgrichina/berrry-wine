@@ -23,6 +23,8 @@ const delay = ms => new Promise(r => setTimeout(r, ms));
 
 function pageFixture(mode, emit, events) {
   let wine, worker, compiles = 0, originalEntries = 0, cleanups = 0;
+  const keys=[0,0],counts=[0,0];
+  const canvas={focus(){},addEventListener(){},getBoundingClientRect:()=>({left:0,top:0,width:640,height:480})};
   class InertGuest {
     constructor(opts) { Object.assign(this, opts); this.d3dimLazySync = true; }
     async start() {
@@ -41,6 +43,8 @@ function pageFixture(mode, emit, events) {
       if (mode === 'missing-worker') this.link.worker=null;
     }
     async callExport() {}
+    async loadDlls(){events.push('fixture-loadDlls');}
+    async slice(){for(let i=0;i<2;i++)if(keys[i])counts[i]+=128;events.push('fixture-slice');return {};}
     stop() {
       if (!this.stopping) this.stopping = (async () => {
         events.push('cleanup-start'); await delay(15);
@@ -50,12 +54,14 @@ function pageFixture(mode, emit, events) {
       return this.stopping;
     }
   }
-  const exports = {set_lock_atomic_mode() {}};
+  const exports = {set_lock_atomic_mode() {},guest_read32:a=>({[0x401450]:keys[0],[0x401454]:keys[1],[0x401458]:counts[0],[0x40145c]:counts[1]})[a]??0};
   const scope = {
     console:{log(){},warn(){}}, URLSearchParams, ArrayBuffer, Uint8Array, TextDecoder,
     setTimeout, clearTimeout, crypto:webcrypto, crossOriginIsolated:true,
     location:{search:'?candidates&no-log&threads'},
-    document:{getElementById:()=>null},
+    document:{getElementById:id=>id==='screen'?canvas:null},
+    Win98Renderer:class {constructor(){this.canvas=canvas;}peekKeyDownState(){return 0;}},
+    browserInput:{wireCanvasInput(){}},
     RenderWorker:{observeInstance:i=>i}, GuestThreadHost:InertGuest,
     ThreadManager:class { recordInheritedWasmGlobal() {} },
     WebAssembly:{...WebAssembly, Module:WebAssembly.Module,
@@ -75,6 +81,9 @@ function pageFixture(mode, emit, events) {
   const context=vm.createContext(scope);
   vm.runInContext(hostSource+'\nglobalThis.WineAssembly=WineAssembly;',context);
   const Wine=scope.WineAssembly;
+  Object.assign(Wine.prototype,{ensureUiFontsReady:async()=>{},loadFiles:async()=>{},loadSubstituteFonts:async()=>{},
+    getImports:()=>({host:{}}),logToUI(){},_installProcessSendBroker(){},_schedArm:()=>false,
+    async loadExe(){wine=this;events.push('fixture-loadExe');originalEntries++;}});
   Wine.supportsWasmTailCalls=()=>true; Wine.versionedUrl=x=>x;
   if(mode==='source-compile') {
     scope.location.search='?compile-wat';
@@ -105,6 +114,7 @@ function pageFixture(mode, emit, events) {
         if(mode==='owner-race'&&events.includes('bytecode-read')) wine.memory={buffer:new ArrayBuffer(1)};
         return {endpoint:'fixture-endpoint',slot:0,instance:'instance'};
       }
+      if(expression===require('../scratch/runs/20261108-redline-car-door-native/bound-input.cjs').WORKER_READ)return {endpointIdentity:'fixture-endpoint',slot:0,instance:'instance'};
       return null;
     }
     if(expression==='exitProof') return [['keydown','Delete'],['keyup','Delete'],['keydown','PageDown'],['keyup','PageDown']].map(([type,key])=>({type,key,trusted:true}));
@@ -114,13 +124,14 @@ function pageFixture(mode, emit, events) {
     if(expression.includes('return {at:new Date().toISOString(),isolated:')) return {apps:[],owningRenderer:[]};
     if(expression.startsWith('({events:globalThis.__nativeMouseEvents')) return {events:[],locked:false};
     const result=await vm.runInContext(expression,context);
+    if(expression==='WINE_REDLINE_STARTUP.status()'&&result.phase==='parked'&&scope.fixtureEntry){assert.deepEqual(JSON.parse(JSON.stringify(scope.fixtureEntry)),{exe:false,dll:false,cpu:false});events.push('fixture-preCPU-preDLLmain');}
     return result===undefined?null:JSON.parse(JSON.stringify(result));
   }
-  return {scope,evaluate,get wine(){return wine;},get worker(){return worker;},
+  return {scope,evaluate,keys,get wine(){return wine;},get worker(){return worker;},
     get originalEntries(){return originalEntries;},get cleanups(){return cleanups;},get compiles(){return compiles;}};
 }
 
-async function composed(caller,mode='positive') {
+async function composed(caller,mode='positive',liveRun=null) {
   const events=[],saved=new Map(),pendingEvents=[];
   let socket,driver,page,closed=false;
   const emit=v=>socket?.onmessage?socket.onmessage({data:JSON.stringify(v)}):pendingEvents.push(v);
@@ -146,7 +157,9 @@ async function composed(caller,mode='positive') {
       if(mode==='detached')emit({method:'Target.detachedFromTarget',params:{sessionId:'worker-session'}});
       return {bytecode:bytes.toString('base64')};
     }
-    if(method==='Browser.close'){closed=true;events.push('browser-closed');}
+    if(method==='Input.dispatchKeyEvent'&&[',','.'].includes(p.key)){page.keys[p.key===','?0:1]=p.type==='keyDown'?128:0;}
+    if(method==='Page.captureScreenshot')return {data:Buffer.from('inert-png').toString('base64')};
+    if(method==='Browser.close'){closed=true;events.push('browser-closed');if(liveRun){browser.stdin.end('close');if(mode==='close-no-ack')return new Promise(()=>{});}}
     return {};
   }
   class Socket {
@@ -158,9 +171,10 @@ async function composed(caller,mode='positive') {
     close(){this.readyState=3;}
   }
   const pins={commit:'fixture',files:[{path:'build/wine-assembly.wasm',sha256:SELECTED.sha256,size:SELECTED.bytes}],httpPins:[]};
-  for(const p of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','lib/redline-startup-admission.js']) {
+  for(const p of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','lib/redline-startup-admission.js','tools/redline-fixture-shutdown.cjs']) {
     const bytes=fs.readFileSync(path.join(ROOT,p));pins.files.push({path:p,sha256:sha(bytes),size:bytes.length});
   }
+  if(liveRun)for(const p of ['tools/redline-native-fixture.cjs','tools/redline-production-fixture.cjs']){const bytes=fs.readFileSync(path.join(ROOT,p));pins.files.push({path:p,sha256:sha(bytes),size:bytes.length});}
   const fakeFs={...fs,existsSync:p=>String(p).endsWith('DevToolsActivePort'),mkdirSync(){},
     openSync:()=>99,appendFileSync(){},rmSync(){},writeFileSync(){},
     readFileSync:(p,...args)=>{
@@ -178,16 +192,25 @@ async function composed(caller,mode='positive') {
     assert.equal(page.originalEntries,1);events.push('capture');
     return {png:Buffer.from('inert-png'),capture:{label:'startup'},before:{},after:{}};
   }})};
-  const browser=new EventEmitter();browser.pid=123;browser.exitCode=0;
+  const browser=liveRun?cp.spawn(process.execPath,['-e',`process.stdout.write('inert browser ready\\n');process.stderr.write('inert browser stderr\\n');process.stdin.once('data',()=>{process.stdout.end('separate stdout EOF\\n');process.stderr.end('separate stderr EOF\\n');setTimeout(()=>process.exit(0),80)});`],{stdio:['pipe','pipe','pipe']}):new EventEmitter();
+  if(liveRun){browser.once('exit',()=>events.push('actual-inert-browser-wait'));browser.stdout.once('end',()=>events.push('inert-browser-stdout-EOF'));browser.stderr.once('end',()=>events.push('inert-browser-stderr-EOF'));}
+  if(!liveRun){browser.pid=123;browser.exitCode=0;}
   const server={address:()=>({port:123}),prependListener(){},closeAllConnections(){},close:r=>r()};
-  const proc={env:{BROWSER_DEADLINE:String(Date.now()+60000),REDLINE_RUN:'/inert-run'},pid:1234,exitCode:0};
+  const proc={env:{BROWSER_DEADLINE:String(Date.now()+120000),REDLINE_RUN:liveRun||'/inert-run',...(liveRun?{REDLINE_NATIVE_FIXTURE:'1'}:{})},pid:process.pid,exitCode:0,...(liveRun?{once:(signal,fn)=>process.once(signal,fn)}:{})};
+  const liveFs={...fs,writeFileSync:(p,...args)=>{if(/\/module-[a-f0-9]+\.wasm$/.test(String(p)))return;return fs.writeFileSync(p,...args);},existsSync:p=>String(p).endsWith('DevToolsActivePort')||fs.existsSync(p),readFileSync:(p,...args)=>{
+    if(String(p).endsWith('/runtime-pins.json'))return JSON.stringify(pins);
+    if(String(p).endsWith('/DevToolsActivePort'))return '1234\n/fixture';
+    if(String(p).endsWith('/input-observer.js'))return '';
+    return fs.readFileSync(p,...args);
+  }};
   const mockRequire=n=>{
-    if(n==='node:fs')return fakeFs;
+    if(n==='node:fs')return liveRun?liveFs:fakeFs;
     if(n==='node:child_process')return {spawn:()=>browser};
-    if(n.endsWith('/bound-input.cjs'))return bound;
-    if(n.endsWith('/transport.cjs'))return transport;
-    if(n.endsWith('/ordinary-keys.cjs'))return {hold:async()=>{}};
+    if(n.endsWith('/bound-input.cjs'))return liveRun?require('../scratch/runs/20261108-redline-car-door-native/bound-input.cjs'):bound;
+    if(n.endsWith('/transport.cjs')){if(!liveRun)return transport;const real=require('../scratch/runs/20261108-redline-car-door-native/transport.cjs');return {...real,publish:(p,v)=>{if(path.basename(p)==='first-browser-failure.json')events.push('first-terminal-failure');return real.publish(p,v);}};}
+    if(n.endsWith('/ordinary-keys.cjs'))return liveRun?require('../scratch/runs/20261108-redline-car-door-native/ordinary-keys.cjs'):{hold:async()=>{}};
     if(n.endsWith('/test/static-server.js'))return {startStaticServer:async()=>server};
+    if(n==='./redline-production-fixture.cjs'||n==='./redline-fixture-shutdown.cjs')return require(n);
     return require(n);
   };
   driver=vm.createContext({require:mockRequire,__dirname:path.join(ROOT,'tools'),
@@ -199,6 +222,8 @@ async function composed(caller,mode='positive') {
   // Successful fixture stops after first capture; real ordinary shutdown is
   // exercised too, without allocating a browser or issuing a game command.
   if(!closed)await vm.runInContext("closing=false;close('inert fixture complete')",driver);
+  if(liveRun&&proc.exitCode){const before=events.length;await assert.rejects(vm.runInContext("send('Input.dispatchKeyEvent',{type:'keyDown',key:','},pageSession)",driver));await assert.rejects(vm.runInContext("capture('after-terminal')",driver));assert.equal(events.length,before,'terminal probes issue zero CDP');}
+  if(liveRun)fs.writeFileSync(path.join(liveRun,'inert-events.json'),JSON.stringify({events,exitCode:proc.exitCode,nativeQualified:false},null,2));
   return {events,saved,page,closed,exitCode:proc.exitCode,
     probe:expression=>vm.runInContext(expression,driver)};
 }
@@ -213,7 +238,7 @@ function retainedCaller() {
     .replaceAll("require('./", "require('/inert-run/");
 }
 
-(async()=>{
+async function suite(){
   const results=[];
   const old=await composed(retainedCaller());
   assert.equal(old.page.originalEntries,1);
@@ -304,4 +329,49 @@ function retainedCaller() {
   if(process.env.REDLINE_STARTUP_RESULT)fs.writeFileSync(process.env.REDLINE_STARTUP_RESULT,
     JSON.stringify({passed:true,selected:SELECTED,nativeQualified:false,scenarios:results},null,2));
   console.log('PASS offline composition only; no native/custody/input qualification');
-})().catch(e=>{console.error(e);process.exitCode=1;});
+  await productionFixtureSuite();
+}
+async function productionFixtureSuite(){
+  const base=process.env.REDLINE_PRODUCTION_TEST_RUN||path.join(ROOT,'scratch/runs/20261109-redline-production-fixture-repair-0832/controls');
+  fs.mkdirSync(base,{recursive:true});
+  const wrapper=fs.readFileSync(path.join(__dirname,'redline-native-fixture.cjs'),'utf8'),rows=[];
+  for(const mode of ['old-caller','positive','close-no-ack','wrong-live-bytes']){
+    const dir=fs.mkdtempSync(path.join(base,mode+'-'));
+    const childEnv={...process.env,REDLINE_RUN:dir,BROWSER_DEADLINE:String(Date.now()+120000),INERT_MODE:mode};
+    const mockRequire=n=>{
+      if(n==='node:child_process')return {...cp,spawn:(bin,args,opts)=>args[0]===path.join(__dirname,'redline-browser-run.cjs')?
+        cp.spawn(process.execPath,[__filename,'--fixture-runner'],{...opts,env:{...opts.env,INERT_MODE:mode}}):cp.spawn(bin,args,opts)};
+      if(n.endsWith('/transport.cjs'))return require('../scratch/runs/20261108-redline-car-door-native/transport.cjs');
+      return require(n);
+    };
+    const proc={env:childEnv,execPath:process.execPath,pid:process.pid,exitCode:0};
+    const context=vm.createContext({require:mockRequire,__dirname,process:proc,console,Buffer,setTimeout,clearTimeout});
+    await vm.runInContext(wrapper,context);
+    const joins=JSON.parse(fs.readFileSync(path.join(dir,'fixture-process-joins.json')));
+    assert(joins.callerStdoutEOF&&joins.callerStderrEOF&&joins.watchdogStdoutEOF&&joins.watchdogStderrEOF);
+    assert.equal(joins.watchdog.code,mode==='old-caller'?1:0,'prearmed independent watchdog joined; missing shutdown receipt requires group containment');
+    for(const label of ['caller','watchdog'])for(const stream of ['stdout','stderr'])require('node:zlib').gunzipSync(fs.readFileSync(path.join(dir,'fixture-'+label+'-'+stream+'.gz')));
+    const report=JSON.parse(fs.readFileSync(path.join(dir,'inert-events.json'))),events=report.events;
+    const good=['positive','close-no-ack'].includes(mode);
+    assert.equal(proc.exitCode,good?0:1);
+    if(good){
+      for(let i=0;i<3;i++){const ack=JSON.parse(fs.readFileSync(path.join(dir,'native-fixture/reply-'+i+'.json')));assert(ack.ok);assert.equal(ack.id,['comma','period','quit'][i]);}
+      assert(events.includes('fixture-preCPU-preDLLmain'));
+      assert(events.indexOf('bytecode-read')<events.indexOf('fixture-loadExe'));
+      assert(events.indexOf('bytecode-read')<events.indexOf('fixture-loadDlls'));
+      const shutdown=JSON.parse(fs.readFileSync(path.join(dir,'native-fixture/shutdown.json')));assert(shutdown.streamEOF);assert.equal(shutdown.actualBrowserExit.code,0);assert(!shutdown.terminal);
+      assert(events.includes('actual-inert-browser-wait')&&events.includes('inert-browser-stdout-EOF')&&events.includes('inert-browser-stderr-EOF'),'actual exit and both EOF independently observed');
+      assert(require('node:zlib').gunzipSync(fs.readFileSync(path.join(dir,'native-fixture/chrome-stdout.gz'))).includes(Buffer.from('separate stdout EOF')));
+      assert(events.filter(e=>e==='Page.captureScreenshot').length===3);
+    }else if(mode==='wrong-live-bytes'){
+      assert(!events.includes('fixture-loadExe'));assert(!events.includes('fixture-slice'));
+      assert(events.includes('cleanup-joined'));assert(events.indexOf('cleanup-joined')<events.indexOf('browser-closed'));
+      assert(events.includes('first-terminal-failure'));const tail=events.slice(events.indexOf('first-terminal-failure')+1);assert(!tail.some(e=>e==='Runtime.evaluate'||e==='Page.captureScreenshot'||e.startsWith('Input.')));
+    }else{assert(!events.includes('fixture-preCPU-preDLLmain'));assert(!events.includes('fixture-loadExe'));}
+    rows.push({mode,passed:true,oldFAIL:mode==='old-caller',nativeQualified:false,joins,dir});
+    console.log('PASS actual production fixture composition: '+mode);
+  }
+  fs.writeFileSync(path.join(base,'results.json'),JSON.stringify({passed:true,nativeQualified:false,rows},null,2));
+}
+if(process.argv[2]==='--fixture-runner')composed(process.env.INERT_MODE==='old-caller'?cp.execFileSync('git',['show','2045a98ee7695bd031392dc16965be2eaed0882c:tools/redline-browser-run.cjs'],{cwd:ROOT,encoding:'utf8'}):callerSource,process.env.INERT_MODE||'positive',process.env.REDLINE_RUN).then(r=>{process.exitCode=r.exitCode;}).catch(e=>{console.error(e);process.exitCode=1;});
+else suite().catch(e=>{console.error(e);process.exitCode=1;});

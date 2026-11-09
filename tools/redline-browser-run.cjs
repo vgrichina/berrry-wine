@@ -1,19 +1,25 @@
 'use strict';
-// One native-CDP browser; no generated guest or substituted game assets.
+// One native-CDP browser. Only explicit fixture mode substitutes a small PE.
 const fs=require('node:fs'),cp=require('node:child_process'),crypto=require('node:crypto'),path=require('node:path'),assert=require('node:assert/strict');
+const zlib=require('node:zlib'),{pipeline}=require('node:stream/promises');
+const {createLifecycle,observeChild}=require('./redline-fixture-shutdown.cjs');
 const root=path.resolve(__dirname,'..'),run=path.resolve(process.env.REDLINE_RUN||root+'/scratch/runs/20261108-redline-car-door-native');
+const fixture=process.env.REDLINE_NATIVE_FIXTURE==='1'?require('./redline-production-fixture.cjs'):null;
+if(fixture)assert(!process.env.NO_ORIGINAL&&!process.env.WEBGL_QUALIFY&&!process.env.TR2_GENERATED,'fixture requires the production startup route');
 const bound=require(run+'/bound-input.cjs');
-const out=run+'/'+(process.env.NO_ORIGINAL?'production-preflight':process.env.WEBGL_QUALIFY?'webgl-qualify':process.env.TR2_GENERATED?'generated-v2':'original'),t=require(run+'/transport.cjs');
+const out=run+'/'+(fixture?'native-fixture':process.env.NO_ORIGINAL?'production-preflight':process.env.WEBGL_QUALIFY?'webgl-qualify':process.env.TR2_GENERATED?'generated-v2':'original'),t=require(run+'/transport.cjs');
 
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),save=(n,v)=>t.publish(out+'/'+n,v),log=(n,v)=>fs.appendFileSync(out+'/'+n,JSON.stringify(v)+'\n'),wait=ms=>new Promise(r=>setTimeout(r,ms));
 const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));
 for(const p of pins.files){const b=fs.readFileSync(root+'/'+p.path);assert.equal(sha(b),p.sha256,p.path);assert.equal(b.length,p.size);}
+if(fixture)for(const name of ['tools/redline-native-fixture.cjs','tools/redline-production-fixture.cjs','tools/redline-fixture-shutdown.cjs'])assert.equal(pins.files.filter(p=>p.path===name).length,1,'fixture provider must be in verified closure: '+name);
 if(!process.env.NO_ORIGINAL&&!process.env.WEBGL_QUALIFY&&!process.env.TR2_GENERATED){
- for(const name of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','lib/redline-startup-admission.js'])
+  for(const name of ['host.js','tools/redline-browser-run.cjs','tools/redline-startup.cjs','tools/redline-fixture-shutdown.cjs','lib/redline-startup-admission.js'])
   assert.equal(pins.files.filter(p=>p.path===name).length,1,'startup provider must be in verified closure: '+name);
 }
 const start=Date.now(),deadline=Number(process.env.BROWSER_DEADLINE);assert(Number.isFinite(deadline)&&deadline>start&&deadline-start<30*60000);if(process.env.DRIVER_PREFLIGHT==='1'){console.log(JSON.stringify({passed:true,start,deadline,remainingMs:deadline-start,strictLimitMs:30*60000,pins:pins.files.length,chromiumStarted:false,originalStarted:false}));process.exit(0);}fs.mkdirSync(out);fs.mkdirSync(out+'/commands');save('execution-window.json',{start:new Date(start).toISOString(),browserStop:new Date(deadline).toISOString(),replayAllowed:false});
 let browser,server,ws,pageSession,chain,closing=false,latest=null,timer;let cdpMousePoint=null;let id=0;const pending=new Map(),workers=new Map(),workerPromises=[];
+let browserExit,shutdown,serverAcquisition;const streams=[];
 function send(method,params={},sessionId){if(closing&&method!=='Browser.close')return Promise.reject(Error('runtime terminal; no further input/capture'));if(method==='Input.dispatchMouseEvent'&&Number.isFinite(params.x)&&Number.isFinite(params.y))cdpMousePoint={x:params.x,y:params.y};return new Promise((resolve,reject)=>{const n=++id;const timer=setTimeout(()=>{pending.delete(n);reject(Error('CDP UNKNOWN '+method+'; no replay'));},20000);pending.set(n,{resolve,reject,timer});ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));});}
 async function evaluate(expression,sessionId=pageSession){const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},sessionId);if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;}
 async function event(v){
@@ -41,9 +47,14 @@ async function state(){
 }
 async function traceSnapshot(label){for(const w of workers.values())if(!w.closed){try{const v=await evaluate('globalThis.__inputConsumption?.snapshot()',w.sessionId);if(v)save(label+'-trace-'+w.targetId+'.json',v)}catch(e){log('trace-errors.jsonl',{label,error:String(e)})}}}
 async function capture(label){assert(!closing,'runtime terminal; no further capture');assert(/^[a-z0-9-]+$/.test(label));assert(!fs.existsSync(out+'/'+label+'.png'));const s=await state();assert(!closing,'runtime terminal; no further capture');save(label+'-state.json',s);save(label+'-mouse-events.json',await evaluate('({events:globalThis.__nativeMouseEvents,locked:document.pointerLockElement===document.getElementById("screen")})'));const shot=await chain.capture(label);assert(!closing,'runtime terminal; discard unsettled capture');fs.writeFileSync(out+'/'+label+'.png',shot.png,{flag:'wx'});latest=shot.capture;save(label+'-binding.json',{before:shot.before,after:shot.after});save(label+'-capture.json',latest);save('latest.json',latest);await traceSnapshot(label);console.log('CAPTURE '+label);}
-async function close(reason){if(closing)return;closing=true;clearTimeout(timer);save('close-reason.json',{at:new Date().toISOString(),reason});try{if(ws?.readyState===1)await send('Browser.close');}catch(e){save('close-error.json',{error:String(e)});}if(browser){await Promise.race([new Promise(r=>browser.exitCode!==null?r():browser.once('exit',r)),wait(8000)]);if(browser.exitCode===null)browser.kill('SIGTERM');await Promise.race([new Promise(r=>browser.exitCode!==null?r():browser.once('exit',r)),wait(5000)]);if(browser.exitCode===null)browser.kill('SIGKILL');}
- for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error('runtime closed; no replay'));}pending.clear();
- ws?.close();if(server){server.closeAllConnections();await new Promise(r=>server.close(r));}fs.rmSync(out+'/chrome-profile',{recursive:true,force:true});t.closed(out,browser?.exitCode);console.log('TERMINAL '+reason);}
+function close(reason){if(shutdown)return shutdown;closing=true;clearTimeout(timer);save('close-reason.json',{at:new Date().toISOString(),reason});
+ const lifecycle=createLifecycle({resources:()=>({browser,server,exit:browserExit,streams,tasks:workerPromises}),
+  stopProtocol:()=>{for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error('runtime closed; no replay'));}pending.clear();if(ws)ws.onmessage=null;},
+  closeBrowser:onError=>{if(ws?.readyState===1){const n=++id;ws.onmessage=msg=>{const v=JSON.parse(msg.data);if(v.id===n&&v.error)onError(Error(JSON.stringify(v.error)));};ws.send(JSON.stringify({id:n,method:'Browser.close',params:{}}));}},
+  finalize:receipt=>{ws?.close();save('shutdown.json',{...receipt,firstFailure:receipt.firstFailure?String(receipt.firstFailure):null});assert(!browser||receipt.actualBrowserExit,'actual browser wait required');assert(receipt.streamEOF,'browser stream EOF required');if(browser)assert.equal(receipt.actualBrowserExit.code,0,'normal browser exit required');fs.rmSync(out+'/chrome-profile',{recursive:true,force:true});t.closed(out,browser?.exitCode);console.log('TERMINAL '+reason);}});
+ shutdown=lifecycle.run(async()=>{await serverAcquisition;});return shutdown;}
+function fail(error,reason='first terminal failure'){closing=true;process.exitCode=1;if(!fs.existsSync(out+'/first-browser-failure.json'))save('first-browser-failure.json',{at:new Date().toISOString(),error:error.stack??String(error),noReplay:true});return close(reason).catch(cleanupError=>{save('shutdown-failure.json',{error:String(cleanupError)});});}
+if(process.once)for(const signal of ['SIGTERM','SIGINT'])process.once(signal,()=>{fail(Error(signal),signal);});
 async function execute(c,markDispatch){
  if(c.action==='relative')require(run+'/relative-input.cjs').validate(c);
  if(c.action==='combo')require(run+'/ordinary-keys.cjs').validateCombo(c.keys,c.holdMs);
@@ -61,9 +72,11 @@ async function execute(c,markDispatch){
  if(c.action==='relative'){const locked=await evaluate("document.pointerLockElement===document.getElementById('screen')");const proof=await require(run+'/relative-input.cjs').perform({send,session:pageSession,command:c,point:cdpMousePoint,locked});save('input-'+c.id+'-relative.json',proof);}
  if(['click','doubleclick','drag'].includes(c.action)){const geometry=await evaluate(`(()=>{const r=document.getElementById('screen').getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height}})()`);const proof=await require(run+'/native-mouse.cjs').perform({send,session:pageSession,geometry,command:c});save('input-'+c.id+'-mouse.json',proof);}
  if(c.action==='key'||c.action==='combo'){
+  const before=fixture?await fixture.poll(evaluate):null;
   const held=await bound.hold({send,session:pageSession,keys:c.action==='combo'?c.keys:[c.key],holdMs:c.holdMs??100,
-   sample:async()=>{if(c.captureHeld&&!fs.existsSync(out+'/'+c.label+'-held.png')){const shot=await send('Page.captureScreenshot',{format:'png'},pageSession);fs.writeFileSync(out+'/'+c.label+'-held.png',Buffer.from(shot.data,'base64'),{flag:'wx'});}return chain.progress(receipt.live.identity)},saveSample:s=>log('input-'+c.id+'-samples.jsonl',s)});
+   sample:async()=>{if(c.captureHeld&&!fs.existsSync(out+'/'+c.label+'-held.png')){const shot=await send('Page.captureScreenshot',{format:'png'},pageSession);fs.writeFileSync(out+'/'+c.label+'-held.png',Buffer.from(shot.data,'base64'),{flag:'wx'});}const progress=await chain.progress(receipt.live.identity);return fixture?{...progress,fixture:await fixture.poll(evaluate)}:progress;},saveSample:s=>log('input-'+c.id+'-samples.jsonl',s)});
   save('input-'+c.id+'-hold.json',held);
+  if(fixture){const after=await fixture.poll(evaluate),i=[',','.'].indexOf(c.key);assert(i>=0,'fixture comma/period control required');assert(held.samples.some(s=>s.whollyDuringHold&&s.fixture.keys[i]===128),'owning native keyboard high read');assert.equal(after.keys[i],0,'native key released');assert(after.counts[i]>before.counts[i]);assert.equal(after.endpoint,before.endpoint);save('input-'+c.id+'-native.json',{before,after});}
  }
  if(c.action==='type'){await require(run+'/keyboard-bridge.cjs').type(send,pageSession,c.text);}
  };
@@ -71,13 +84,16 @@ async function execute(c,markDispatch){
  await wait(c.waitMs);await capture(c.label);
 }
 (async()=>{
- server=await require(root+'/test/static-server.js').startStaticServer({root,crossOriginIsolated:true,rewritePath:p=>p.startsWith('/binaries/')?'/test'+p:p});
+ serverAcquisition=require(root+'/test/static-server.js').startStaticServer({root,crossOriginIsolated:true,rewritePath:p=>p.startsWith('/binaries/')?'/test'+p:p}).then(value=>server=value);
+ await serverAcquisition;assert(!closing,'runtime terminal during server acquisition');
  server.prependListener('request',(req,res)=>{const h=crypto.createHash('sha256');let bytes=0;const add=b=>{if(b){b=Buffer.isBuffer(b)?b:Buffer.from(b);bytes+=b.length;h.update(b);}},write=res.write,end=res.end;res.write=function(b){add(b);return write.apply(this,arguments)};res.end=function(b){add(b);return end.apply(this,arguments)};res.once('finish',()=>log('served.jsonl',{at:new Date().toISOString(),url:req.url,status:res.statusCode,range:req.headers.range??null,contentRange:res.getHeader('Content-Range')??null,coop:res.getHeader('Cross-Origin-Opener-Policy'),coep:res.getHeader('Cross-Origin-Embedder-Policy'),bytes,sha256:h.digest('hex')}));});
  const port=server.address().port;
  const httpProof=[];for(const pin of pins.httpPins){const r=await fetch('http://127.0.0.1:'+port+pin.url),b=Buffer.from(await r.arrayBuffer());assert.equal(r.status,200,pin.url);assert.equal(sha(b),pin.sha256,pin.url);assert.equal(b.length,pin.size);httpProof.push({...pin,status:r.status,actualSha256:sha(b)});}save('http-resolver-pins.json',httpProof);
- browser=cp.spawn('/usr/bin/google-chrome',['--headless=new','--no-sandbox','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--remote-debugging-port=0','--user-data-dir='+out+'/chrome-profile','about:blank'],{stdio:['ignore',fs.openSync(out+'/chrome.stdout','w'),fs.openSync(out+'/chrome.stderr','w')]});
+ assert(!closing,'runtime terminal before browser creation');browser=cp.spawn('/usr/bin/google-chrome',['--headless=new','--no-sandbox','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--remote-debugging-port=0','--user-data-dir='+out+'/chrome-profile','about:blank'],{stdio:['ignore','pipe','pipe']});
+ browserExit=browser.exitCode!==null?Promise.resolve({code:browser.exitCode,signal:browser.signalCode??null}):observeChild(browser);if(browser.exitCode===null)browserExit.then(()=>{if(!closing)fail(Error('browser exited before ordinary shutdown'));},fail);
+ for(const [stream,name] of [[browser.stdout,'stdout'],[browser.stderr,'stderr']])if(stream){const joined=pipeline(stream,zlib.createGzip(),fs.createWriteStream(out+'/chrome-'+name+'.gz',{flags:'wx'}));joined.catch(fail);streams.push(joined);}
  browser.once('exit',(code,signal)=>save('chrome-exit.json',{at:new Date().toISOString(),code,signal}));save('process.json',{pid:process.pid,chromePid:browser.pid,port,profile:out+'/chrome-profile'});
- timer=setTimeout(()=>close('immutable runtime cap').catch(e=>console.error(e)),deadline-Date.now());
+ timer=setTimeout(()=>fail(Error('immutable runtime cap'),'immutable runtime cap'),deadline-Date.now());
  const active=out+'/chrome-profile/DevToolsActivePort';for(let i=0;i<100&&!fs.existsSync(active);i++)await wait(100);const [debugPort,debugPath]=fs.readFileSync(active,'utf8').trim().split('\n');save('endpoint.json',{debugPort:Number(debugPort),browserPath:debugPath});
  ws=new WebSocket('ws://127.0.0.1:'+debugPort+debugPath);await new Promise((r,j)=>{ws.onopen=r;ws.onerror=j;});ws.onmessage=msg=>{const v=JSON.parse(msg.data);if(v.id){const p=pending.get(v.id);if(!p)return;clearTimeout(p.timer);pending.delete(v.id);v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);}else event(v).catch(e=>log('event-errors.jsonl',{error:String(e)}));};
  save('browser-version.json',await send('Browser.getVersion'));await send('Target.setDiscoverTargets',{discover:true});await send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true});
@@ -100,15 +116,17 @@ async function execute(c,markDispatch){
  if(process.env.NO_ORIGINAL){for(let n=0;n<160;n++){if(await evaluate("typeof runningApps!=='undefined'"))break;await wait(100);}assert.equal(await evaluate('runningApps.length'),0);save('final-app-selection-boundary.json',{passed:true,originalLaunches:0});await close('preflight final app-selection boundary');return;}
  if(redlineOriginal){
   for(let n=0;n<160;n++){if(await evaluate("typeof apps!=='undefined' && typeof shell!=='undefined'"))break;await wait(100);}
+  if(fixture)await fixture.prepare(evaluate);
   await require(root+'/tools/redline-startup.cjs').launch({evaluate,send,workers,pageSession,
    source:fs.readFileSync(root+'/lib/redline-startup-admission.js','utf8'),
    selected:(()=>{const p=pins.files.find(p=>p.path==='build/wine-assembly.wasm');
     assert(p,'selected CPU pin required');return {sha256:p.sha256,bytes:p.size};})(),deadline,save});
  }
  await evaluate(`window.__nativeMouseEvents=[];for(const type of ['mousemove','mousedown','mouseup','pointerlockchange'])addEventListener(type,e=>{__nativeMouseEvents.push({at:Date.now(),type,trusted:e.isTrusted,x:e.clientX,y:e.clientY,dx:e.movementX,dy:e.movementY,button:e.button,buttons:e.buttons,locked:document.pointerLockElement===document.getElementById('screen')});if(__nativeMouseEvents.length>2048)__nativeMouseEvents.shift();},true);`);
- save('launch.json',{at:new Date().toISOString(),app:selectedApp,generated:!!process.env.TR2_GENERATED,commit:pins.commit,url,productionDirectRoute:!process.env.TR2_GENERATED});
+ save('launch.json',{at:new Date().toISOString(),app:selectedApp,generated:!!process.env.TR2_GENERATED,fixture:!!fixture,commit:pins.commit,url,productionDirectRoute:!process.env.TR2_GENERATED});
+ if(fixture){await fixture.ready(evaluate,Math.min(deadline,Date.now()+18000));const baseline=await fixture.poll(evaluate);assert(baseline.results.every(x=>x===0),'ordinary fixture COM setup');save('fixture-baseline.json',baseline);}
  if(process.env.TR2_GENERATED){await wait(12000);await evaluate(`(()=>{const a=runningApps[0],el=a.window?.element||a.window?.el;const w=document.getElementById('screen');if(!w)throw Error('fixture window absent');w.style.position='fixed';w.style.left='137px';w.style.top='83px';w.style.transformOrigin='top left';w.style.transform='scale(0.8)';return w.getBoundingClientRect().toJSON()})()`);}
- await wait(process.env.TR2_GENERATED?1000:15000);await capture('startup');
+ await wait(fixture?0:process.env.TR2_GENERATED?1000:15000);await capture('startup');
  if(process.env.WEBGL_QUALIFY){
  const first=await state();await wait(3000);const second=await state();
  const owner=s=>s.owningRenderer.flatMap(w=>w.endpoints||[]).filter(e=>e.options.api==='legacy'&&e.options.backend==='webgl');
@@ -117,4 +135,4 @@ async function execute(c,markDispatch){
  }
 if(process.env.TR2_GENERATED){assert((await state()).apps.length===1,'actual generated guest launch');save('generated-qualification.json',{guestLaunched:true});}save('ready.json',{at:new Date().toISOString()});
  for(let n=0;!closing;n++){while(!closing&&!fs.existsSync(out+'/commands/'+n+'.json'))await wait(100);if(closing)break;await t.consume(out,n,execute);}
-})().catch(async e=>{save('first-browser-failure.json',{at:new Date().toISOString(),error:e.stack,noReplay:true});process.exitCode=1;await close('first terminal failure');});
+})().catch(fail);
