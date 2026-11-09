@@ -92,8 +92,9 @@ the staging corruption negative control. The remote inventory's eight pinned
 providers were independently matched to the seal; there was no unique remote
 artifact requiring download. Exactly one delegated normal stop followed:
 `stop_f796a6a578fc9b77`, completed **unforced 2026-11-09T21:52:45.930Z**.
-Separate API/CLI reads confirmed **archived**, archiveAfter=null; no replacement
-expiry was returned. Actual watchdog PID2831388 waited0 with separate stdout
+Separate reads confirmed API **archived**, CLI **stopped**, archiveAfter=null
+and no IP/SSH endpoint; no replacement expiry was returned. Actual watchdog
+PID2831388 waited0 with separate stdout
 and stderr EOF; its immutable config hash remained unchanged. The allocator
 session also actually joined0. No owned live box remains.
 
