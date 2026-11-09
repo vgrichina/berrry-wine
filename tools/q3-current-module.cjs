@@ -400,6 +400,32 @@ function composeCheckpointCaller(source,version){
   cp.execFileSync('python3',['-B','-c',"import ast,sys;compile(ast.parse(sys.stdin.read()),'<q3-checkpoint-caller>','exec')"],{input:source});
   return source;
 }
+function composeFixtureObserverCaller(source){
+  // Extend the authenticated generated caller, keeping the retained source
+  // immutable and every existing checkpoint/lifecycle transform in force.
+  const seam="   ready=helper['observe_checkpoint'](task,session,session.remote);save('cancellation-native-checkpoint',ready)";
+  assert.equal(source.split(seam).length,2,'owning fixture observer seam');
+  const observation=`   observer=runpy.run_path(str(ROOT/'tools/q3-phase-observer.py'))
+   code=observer['remote_wrapper'](ROOT,R,'cancellation')
+   save('fixture-actual-wrapper',dict(code=code,sha256=H(code.encode()),cwd='/home/user'))
+   v=json.loads(session.remote('fixture-first-image-observation',code,60))
+   save('fixture-first-image',v)
+   data=gzip.decompress(c.download(v['download']))
+   assert len(data)==v['size'] and H(data)==v['sha256'],'downloaded fixture SHA'
+   (BASE/'fixture-startup.png').write_bytes(data)
+   print('FIXTURE_REVIEW_READY',flush=True)
+   due=time.monotonic()+55
+   while not (R/'fixture-separate-model-review.json.gz').exists():
+    session.check();assert time.monotonic()<due,'separate fixture model review unavailable';time.sleep(.02)
+   review=load('fixture-separate-model-review')
+   session.check()
+   code=observer['remote_wrapper'](ROOT,R,'cancellation','publish_review',review)
+   save('fixture-reviewed-publication',json.loads(session.remote('fixture-model-review-publication',code,10)))
+`;
+  source=source.replace(seam,observation+seam);
+  cp.execFileSync('python3',['-B','-c',"import ast,sys;compile(ast.parse(sys.stdin.read()),'<q3-fixture-observer-caller>','exec')"],{input:source});
+  return source;
+}
 function prepare(destination,{inputs=[]}={}){
   assert.equal(arguments.length<=2,true);const options=arguments[1]??{};
   assert(Object.keys(options).every(k=>['inputs','checkpointObserverVersion','caller','foreignClosureVersion','nativeLifecycleVersion'].includes(k)),'explicit supported preparation options');
@@ -460,7 +486,7 @@ function prepare(destination,{inputs=[]}={}){
       assert(inputs.includes(dependency),'missing caller transitive input: '+name);
     }
     let source=composeCheckpointCaller(read(options.caller).toString(),options.checkpointObserverVersion);
-    if(lifecycle)source=lifecycle.caller(source);
+    if(lifecycle)source=composeFixtureObserverCaller(lifecycle.caller(source));
     caller=path.join(path.dirname(destination),'q3-checkpoint-caller.py');
     assert(!fs.existsSync(caller),'fresh generated caller required');
     version.checkpointCaller=path.relative(root,caller);

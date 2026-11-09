@@ -7,6 +7,10 @@ cp.execFileSync('python3',['-B','tools/q3-native-phase-inputs.py',base],{cwd:roo
 const inputs=['control.py','phase-input.py','physical_gate.py','cancellation_gate.py'].map(n=>path.relative(root,path.join(base,n)));
 const seal=require('./q3-current-module.cjs').prepare(base+'/prepared',{inputs,caller:inputs[1],foreignClosureVersion:'q3-current-foreign-a16fc87d4-44fc9a134-v1',checkpointObserverVersion:'q3-checkpoint-b993419a5-v1',nativeLifecycleVersion:'q3-native-lifecycle-foreign-v1'});
 const original=JSON.parse(JSON.stringify(seal));
+const caller=fs.readFileSync(path.join(root,seal.caller),'utf8');
+assert(caller.includes("observer['remote_wrapper'](ROOT,R,'cancellation')"));
+assert(caller.includes("session.remote('fixture-first-image-observation',code,60)"));
+assert(caller.includes("session.remote('fixture-model-review-publication',code,10)"));
 process.env.Q3_INPUT_SERVICE_REVIEW='1';
 for(const plan of Object.values(seal.phaseLayout)){
  const consumer=require('./q3-current-foreign-closure-v1.cjs').composition('q3-current-foreign-a16fc87d4-44fc9a134-v1',base+'/prepared',path.join(root,plan.output)).compose({root});
