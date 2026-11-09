@@ -228,7 +228,7 @@ def verify(stream, pin):
 
 
 def provision_files(root, pins, remote_root, upload_url, record=lambda event: None,
-                    *, workers=2, timeout=30):
+                    *, workers=2, timeout=30, cancel=None):
     """Join every worker before return/raise; never publish a closure here.
 
     At most workers files/connections and workers*CHUNK body bytes are live.
@@ -291,12 +291,16 @@ def provision_files(root, pins, remote_root, upload_url, record=lambda event: No
                         connection.close()
                     return
             timer = response = None
+            cancel_done = threading.Event()
+            cancel_thread = None
             reusable = False
             phase, sent = 'local-pin', 0
             began = time.monotonic()
             expired = threading.Event()
             try:
                 with source(pin).open('rb') as stream:
+                    import os
+                    st=os.fstat(stream.fileno())
                     verify(stream, pin)
                     if stopped.is_set():
                         return
@@ -324,6 +328,13 @@ def provision_files(root, pins, remote_root, upload_url, record=lambda event: No
 
                     timer = threading.Timer(timeout, deadline)
                     timer.start()
+                    if cancel is not None:
+                        def cancelled():
+                            while not cancel_done.wait(.02):
+                                if cancel.is_set():
+                                    fail(InterruptedError('PUT cancellation/EOF; remote effects UNKNOWN; no retry'));return
+                        cancel_thread = threading.Thread(target=cancelled)
+                        cancel_thread.start()
                     phase = 'connect'
                     if connection.sock is None:
                         connection.connect()
@@ -331,7 +342,7 @@ def provision_files(root, pins, remote_root, upload_url, record=lambda event: No
                         active[connection] = connection.sock
 
                     def check():
-                        if expired.is_set() or stopped.is_set():
+                        if expired.is_set() or stopped.is_set() or (cancel is not None and cancel.is_set()):
                             raise OSError('PUT cancelled; remote effects UNKNOWN; no retry')
                         remaining = timeout - (time.monotonic() - began)
                         if remaining <= 0:
@@ -357,7 +368,8 @@ def provision_files(root, pins, remote_root, upload_url, record=lambda event: No
                         digest.update(block)
                         connection.send(block)
                         sent += len(block)
-                    if (size, digest.hexdigest()) != (pin['size'], pin['sha256']):
+                    after=os.fstat(stream.fileno())
+                    if (st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns,st.st_ctime_ns)!=(after.st_dev,after.st_ino,after.st_size,after.st_mtime_ns,after.st_ctime_ns) or (size, digest.hexdigest()) != (pin['size'], pin['sha256']):
                         raise ValueError('provider changed during PUT')
                     check()
                     phase = 'response-headers'
@@ -374,7 +386,7 @@ def provision_files(root, pins, remote_root, upload_url, record=lambda event: No
                             raise ValueError('PUT response exceeds 64KiB; remote effects UNKNOWN')
                         if time.monotonic() - began >= timeout or stopped.is_set():
                             raise TimeoutError('PUT response deadline; remote effects UNKNOWN; no retry')
-                    if expired.is_set() or stopped.is_set():
+                    if expired.is_set() or stopped.is_set() or (cancel is not None and cancel.is_set()):
                         raise OSError('PUT cancelled; remote effects UNKNOWN; no retry')
                     reusable = not response.will_close and connection.sock is not None
                     response.close()
@@ -386,6 +398,8 @@ def provision_files(root, pins, remote_root, upload_url, record=lambda event: No
                     record(dict(event='error', path=pin['path'], at=time.time(), error=str(error), phase=phase, completeChunksSent=sent, elapsed=time.monotonic()-began, remoteEffects='UNKNOWN'))
                 return
             finally:
+                cancel_done.set()
+                if cancel_thread is not None:cancel_thread.join()
                 if timer is not None:
                     timer.cancel()
                     timer.join()
@@ -403,3 +417,127 @@ def provision_files(root, pins, remote_root, upload_url, record=lambda event: No
             result.result()
     if failures:
         raise failures[0]
+
+
+# Raw file ranges, never an archive. Each PUT keeps the original absolute cap.
+HTTP_PART = 4 * 1024 * 1024
+
+
+def assembly_code(remote_root, pin, parts, part_root):
+    import json
+    return '''import os,json,hashlib
+from pathlib import Path
+root=Path(%r).resolve();pin=json.loads(%r);parts=json.loads(%r);directory=Path(%r)
+path=root/pin['path']
+assert not Path(pin['path']).is_absolute() and '..' not in Path(pin['path']).parts and path.resolve().is_relative_to(root)
+assert len(parts)>0 and len({p['path'] for p in parts})==len(parts)
+assert {p.name for p in directory.iterdir()}=={p['path'] for p in parts},'chunk coverage'
+offset=0
+for i,p in enumerate(parts):
+ assert p['path']==str(i) and p['offset']==offset and 0<p['size']<=4194304,'chunk order'
+ offset+=p['size']
+assert offset==pin['size'],'chunk coverage'
+path.parent.mkdir(parents=True,exist_ok=True);tmp=path.with_name(path.name+'.q3-assembly-'+directory.name)
+try:
+ whole=hashlib.sha256();size=0
+ with tmp.open('xb') as out:
+  for p in parts:
+   h=hashlib.sha256();n=0
+   with (directory/p['path']).open('rb') as f:
+    before=os.fstat(f.fileno())
+    while b:=f.read(65536):
+     n+=len(b);assert n<=p['size'],'chunk grew';h.update(b);whole.update(b);out.write(b);size+=len(b)
+    after=os.fstat(f.fileno())
+   assert (before.st_ino,before.st_size,before.st_mtime_ns,before.st_ctime_ns)==(after.st_ino,after.st_size,after.st_mtime_ns,after.st_ctime_ns),'chunk mutation'
+   assert (n,h.hexdigest())==(p['size'],p['sha256']),'chunk integrity'
+  out.flush();os.fsync(out.fileno())
+ assert (size,whole.hexdigest())==(pin['size'],pin['sha256']),'whole integrity'
+ os.replace(tmp,path)
+ fd=os.open(path.parent,os.O_RDONLY|os.O_DIRECTORY)
+ try:os.fsync(fd)
+ finally:os.close(fd)
+ h=hashlib.sha256();n=0
+ with path.open('rb') as f:
+  while b:=f.read(65536):h.update(b);n+=len(b)
+ assert (n,h.hexdigest())==(pin['size'],pin['sha256']),'published integrity'
+ print(json.dumps(pin,sort_keys=True))
+finally:tmp.unlink(missing_ok=True)
+''' % (remote_root, json.dumps(pin), json.dumps(parts), part_root)
+
+
+def provision_chunked_files(root, pins, remote_root, upload_url, remote,
+                            record=lambda event: None, *, timeout=30, cancel=None):
+    """No retry/resume. A remote error is terminal before any later operation.
+
+    Reopen-independent remote SHA/size ACKs precede every phase barrier. Source
+    descriptor identity/timestamps and whole hash cover the exact ordered ranges.
+    Only one bounded raw range is staged locally, removed before return/raise.
+    """
+    import json
+    import os
+    import tempfile
+    import uuid
+    if not 0 < timeout <= 30:
+        raise ValueError('chunk deadline exceeds strict cap')
+    root = Path(root).resolve()
+    pins = list(pins)
+    if len({p['path'] for p in pins}) != len(pins):
+        raise ValueError('duplicate provider')
+    def source(pin):
+        rel=Path(pin['path']);p=root/rel
+        if rel.is_absolute() or '..' in rel.parts or not p.resolve().is_relative_to(root):
+            raise ValueError('provider outside root')
+        return p
+    def stamp(stream):
+        s=os.fstat(stream.fileno())
+        return s.st_dev,s.st_ino,s.st_size,s.st_mtime_ns,s.st_ctime_ns
+    def check():
+        if cancel is not None and cancel.is_set():
+            raise InterruptedError('chunk cancelled/EOF; remote effects UNKNOWN; no retry')
+    for pin in pins:
+        with source(pin).open('rb') as f:verify(f,pin)
+    session=uuid.uuid4().hex
+    try:
+        for index,pin in enumerate(pins):
+            check()
+            if pin['size'] <= HTTP_PART:
+                continue
+            part_root=remote_root+'/.q3-chunks/'+session+'/'+str(index)
+            parts=[];whole=hashlib.sha256();offset=0
+            with source(pin).open('rb') as stream, tempfile.TemporaryDirectory(prefix='q3-raw-range-') as temp:
+                before=stamp(stream);verify(stream,pin)
+                record(dict(event='file-start',path=pin['path'],size=pin['size']))
+                while offset < pin['size']:
+                    check();n=min(HTTP_PART,pin['size']-offset);h=hashlib.sha256()
+                    part=dict(path=str(len(parts)),offset=offset,size=n)
+                    local=Path(temp)/part['path']
+                    with local.open('xb') as out:
+                        remaining=n
+                        while remaining:
+                            b=stream.read(min(CHUNK,remaining))
+                            if not b:raise EOFError('source truncated')
+                            h.update(b);whole.update(b);out.write(b);remaining-=len(b)
+                    part['sha256']=h.hexdigest()
+                    if stamp(stream)!=before:raise ValueError('source descriptor mutated')
+                    record(dict(event='chunk-ready',file=pin['path'],**part))
+                    provision_files(temp,[part],part_root,upload_url,record,workers=1,timeout=timeout,cancel=cancel)
+                    local.unlink();parts.append(part);offset+=n
+                if stream.read(1) or stamp(stream)!=before or whole.hexdigest()!=pin['sha256']:
+                    raise ValueError('source descriptor/whole integrity changed')
+            check()
+            reply=remote('chunk-assembly-'+str(index),assembly_code(remote_root,pin,parts,part_root),timeout)
+            if json.loads(reply)!=pin:raise ValueError('assembly pin refusal')
+            record(dict(event='assembled',path=pin['path'],parts=len(parts),size=offset,remoteVerified=True))
+        check()
+        small=[p for p in pins if p['size']<=HTTP_PART]
+        provision_files(root,small,remote_root,upload_url,record,workers=2,timeout=timeout,cancel=cancel)
+        # Independent fresh descriptor reads cover small PUTs and assembled files.
+        for index in range(0,len(pins),64):
+            check();batch=pins[index:index+64]
+            code='import json,hashlib\nfrom pathlib import Path\nroot=Path('+repr(remote_root)+')\npins=json.loads('+repr(json.dumps(batch))+')\nfor p in pins:\n h=hashlib.sha256();n=0\n with (root/p["path"]).open("rb") as f:\n  while b:=f.read(65536):h.update(b);n+=len(b)\n assert (n,h.hexdigest())==(p["size"],p["sha256"]),p["path"]\nprint(json.dumps(pins,sort_keys=True))'
+            if json.loads(remote('final-pin-reread-'+str(index),code,timeout))!=batch:
+                raise ValueError('final remote pin refusal')
+        record(dict(event='all-remote-verified',files=len(pins)))
+    except BaseException as error:
+        record(dict(event='error',error=str(error),remoteEffects='UNKNOWN',noRetry=True))
+        raise

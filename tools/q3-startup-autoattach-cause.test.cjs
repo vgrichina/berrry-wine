@@ -80,11 +80,12 @@ else:raise AssertionError('deliberate peer refusal lost')
 drain=json.loads((custody/'kernel-drain.json').read_text());assert drain['complete'];assert drain['exit']==1
 peer=json.loads(gzip.decompress((out/'peer.json.gz').read_bytes()))
 assert [q['method'] for q in peer['protocol']]==['Browser.getVersion','Target.setDiscoverTargets','Target.setAutoAttach',
- 'Target.getTargets','Target.attachToTarget','Target.setAutoAttach','Page.enable','Runtime.enable','Page.addScriptToEvaluateOnNewDocument','Browser.close']
+ 'Target.getTargets','Target.attachToTarget','Target.setAutoAttach','Page.enable','Runtime.enable','Page.addScriptToEvaluateOnNewDocument']
 assert 'OFFLINE_STOP_BEFORE_NAVIGATION' in peer['firstFailure']['error']
 assert json.loads(gzip.decompress((out/'installed-consumer.json.gz').read_bytes()))['inputWire']
 wait=json.loads(gzip.decompress((out/'browser-wait.json.gz').read_bytes()))
-assert wait['code']==0 and wait['stdoutEOF'] and wait['stderrEOF']
+assert wait['code'] is None and wait['signal']=='SIGTERM' and wait['stdoutEOF'] and wait['stderrEOF']
+assert not any(q['method']=='Browser.close' for q in peer['protocol'])
 print(json.dumps(dict(passed=True,generatedNativeCaller=True,pressure=pressure,unchangedDeadlineMs=20000,
  inputWire=True,causeHook=True,allOwnedReaped=len(drain['owned'])==len(drain['reaped']))))
 `;

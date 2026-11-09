@@ -257,7 +257,9 @@ class SSHProvisionTests(unittest.TestCase):
         from unittest.mock import patch
         from types import SimpleNamespace
         source=Path(__file__).with_name('q3-native-inputs')/'control.py'
-        fn=next(x for x in ast.parse(source.read_text()).body if isinstance(x,ast.FunctionDef) and x.name=='provision')
+        legacy=source.read_text();a=legacy.index(' def url(path):',legacy.index('def provision():'));b=legacy.index(' for phase in',a)
+        legacy=legacy[:a]+" with gzip.open(R/'uploads.jsonl.gz','xb') as f:\n  def record(event):f.write((json.dumps(event)+'\\n').encode());f.flush()\n  runpy.run_path(str(ROOT/'tools/q3-provider-upload.py'))['provision_ssh_files'](ROOT,files,REMOTE,box(),record)\n"+legacy[b:]
+        fn=next(x for x in ast.parse(legacy).body if isinstance(x,ast.FunctionDef) and x.name=='provision')
         receiver=runpy.run_path(str(Path(__file__).with_name('q3-provider-upload.py')))['SSH_RECEIVER']
         real_popen=subprocess.Popen
         before_ready=('heldready','refusal','wrapper','wrappedstdout','bigstdout','bigstderr')
@@ -352,6 +354,109 @@ class SSHProvisionTests(unittest.TestCase):
                       barriers=len(barriers),actualWait=events[-1]['actualWait'],
                       stdoutEOF=events[-1]['stdoutEOF'],stderrEOF=events[-1]['stderrEOF'],
                       lastReply=events[-1]['lastReply'],diagnosticsTruncated=events[-1]['diagnosticsTruncated'])),flush=True)
+
+
+class ChunkConsumerTests(unittest.TestCase):
+    def test_actual_consumer_chunks_integrity_and_terminal_controls(self):
+        import ast, gzip, json, re
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        source=Path(__file__).with_name('q3-native-inputs')/'control.py'
+        fn=next(x for x in ast.parse(source.read_text()).body if isinstance(x,ast.FunctionDef) and x.name=='provision')
+        actual=runpy.run_path(str(Path(__file__).with_name('q3-provider-upload.py')))['provision_chunked_files']
+        media=Path(__file__).resolve().parents[1]/'test/binaries/candidates/quake-3-arena-demo-installer/installed/demoq3/pak0.pk3'
+        for mode in ['actual-media','missing','duplicate','truncated','swapped','corrupt','order','coverage',
+                     'heldwriter','refusal','cancel','cancel-eof','mutation','wrong-final','source-mismatch']:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]/'scratch/runs') as directory:
+                root=Path(directory)/'local';root.mkdir();dest=Path(directory)/'remote';dest.mkdir()
+                run=root/'run';run.mkdir();(root/'tools').mkdir()
+                payload=root/'pak0.pk3'
+                if mode=='actual-media':os.link(media,payload)
+                else:
+                    with payload.open('wb') as f:
+                        for j in range(65):f.write(bytes([j])*65536)
+                h=hashlib.sha256()
+                with payload.open('rb') as f:
+                    while b:=f.read(65536):h.update(b)
+                pin=dict(path='pak0.pk3',size=payload.stat().st_size,sha256=h.hexdigest());pins=[pin]
+                for p in [root/'runtime-pins.json.gz',run/'runtime-pins.json.gz',run/'lifecycle.json.gz']:p.write_bytes(b'{}')
+                if mode=='source-mismatch':payload.write_bytes(b'bad')
+                requests=[];barriers=[];remote_calls=[];cancel=threading.Event();release=threading.Event()
+                class Handler(BaseHTTPRequestHandler):
+                    protocol_version='HTTP/1.1'
+                    def log_message(self,*args):pass
+                    def do_PUT(self):
+                        requests.append(self.path)
+                        if mode in ('heldwriter','cancel','cancel-eof'):
+                            if mode in ('cancel','cancel-eof'):cancel.set()
+                            release.wait(2);return
+                        if mode=='refusal':
+                            self.send_response(503);self.send_header('Content-Length','0');self.end_headers();return
+                        path=dest/self.path.lstrip('/');path.parent.mkdir(parents=True,exist_ok=True)
+                        remaining=int(self.headers['Content-Length'])
+                        with path.open('wb') as f:
+                            while remaining:
+                                b=self.rfile.read(min(65536,remaining))
+                                if not b:return
+                                f.write(b);remaining-=len(b)
+                        self.send_response(200);self.send_header('Content-Length','0');self.end_headers()
+                server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+                thread=threading.Thread(target=server.serve_forever,kwargs={'poll_interval':.01});thread.start()
+                base='http://127.0.0.1:'+str(server.server_port)
+                def remote(label,code,timeout):
+                    if label.startswith('fresh-remote-check-'):barriers.append(label);return ''
+                    remote_calls.append(label)
+                    if label.startswith('chunk-assembly'):
+                        chunkdir=next((dest/'.q3-chunks').glob('*/*'));files=sorted(chunkdir.iterdir(),key=lambda p:int(p.name))
+                        if mode=='missing':files[0].unlink()
+                        if mode=='truncated':files[0].write_bytes(b'')
+                        if mode=='corrupt':
+                            with files[0].open('r+b') as f:f.write(b'!')
+                        if mode=='swapped':
+                            tmp=chunkdir/'swap';files[0].rename(tmp);files[1].rename(files[0]);tmp.rename(files[1])
+                        if mode in ('duplicate','order','coverage'):
+                            match=re.search(r"parts=json.loads\((.*?)\);directory=",code)
+                            old=ast.literal_eval(match.group(1));parts=json.loads(old)
+                            if mode=='duplicate':parts.append(parts[0])
+                            if mode=='order':parts.reverse()
+                            if mode=='coverage':parts[-1]['offset']+=1
+                            code=code.replace(repr(old),repr(json.dumps(parts)))
+                    p=subprocess.run([sys.executable,'-B','-c',code],capture_output=True,text=True,timeout=timeout)
+                    if p.returncode:raise OSError('remote refusal: '+p.stderr[-400:])
+                    return '{}' if mode=='wrong-final' else p.stdout
+                original=runpy.run_path
+                def transfer(*args):
+                    observed=args[-1]
+                    def record(event):
+                        observed(event)
+                        if mode=='mutation' and event['event']=='chunk-ready':
+                            with payload.open('r+b') as f:f.write(b'!')
+                    return actual(*args[:-1],record,timeout=.2 if mode in ('heldwriter','cancel','cancel-eof') else 5,cancel=cancel)
+                def load(path):
+                    return {'provision_chunked_files':transfer} if str(path).endswith('q3-provider-upload.py') else original(path)
+                env=dict(Path=Path,ROOT=root,BASE=root,R=run,REMOTE=str(dest),RUN='run',H=lambda b:hashlib.sha256(b).hexdigest(),
+                         validate=lambda:dict(files=pins),box=lambda:'q3-local',gzip=gzip,json=json,os=os,remote=remote,
+                         c=SimpleNamespace(access=SimpleNamespace(api=lambda method,route,body:dict(url=base+body['path'][len(str(dest)):]))))
+                exec(compile(ast.Module(body=[fn],type_ignores=[]),str(source),'exec'),env)
+                began=time.monotonic()
+                try:
+                    with patch('runpy.run_path',load):
+                        if mode=='actual-media':env['provision']();self.assertEqual(len(barriers),2)
+                        else:
+                            with self.assertRaises((OSError,ValueError,EOFError)):env['provision']()
+                            self.assertEqual(barriers,[])
+                finally:release.set();server.shutdown();server.server_close();thread.join()
+                events=[json.loads(x) for x in gzip.decompress((run/'uploads.jsonl.gz').read_bytes()).splitlines()]
+                self.assertEqual(len(requests),len(set(requests)))
+                if mode=='actual-media':
+                    self.assertEqual(pin['size'],46853694);self.assertEqual(pin['sha256'],'e77abad2466f45a0a7ea018445528f9b95a0fe7789fa1abc1a7718bbf0754b08')
+                    self.assertEqual(len([e for e in events if e['event']=='chunk-ready']),12)
+                    self.assertTrue(all(e['size']<=4194304 for e in events if e['event']=='start'))
+                else:self.assertFalse(any(e['event']=='all-remote-verified' for e in events))
+                if mode in ('heldwriter','refusal','cancel','cancel-eof'):
+                    self.assertEqual(len(requests),1);self.assertEqual(remote_calls,[])
+                    self.assertLess(time.monotonic()-began,2)
+                print('CHUNK_ACTUAL_CONSUMER',json.dumps(dict(mode=mode,puts=len(requests),remote=remote_calls,barriers=barriers)),flush=True)
 
 
 if __name__ == '__main__':

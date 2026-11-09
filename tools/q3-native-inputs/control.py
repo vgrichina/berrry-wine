@@ -85,12 +85,13 @@ def provision():
  files=list(pins['files'])
  for path in [R/'runtime-pins.json.gz',R/'lifecycle.json.gz',BASE/'runtime-pins.json.gz']:
   b=path.read_bytes();files.append(dict(path=str(path.relative_to(ROOT)),size=len(b),sha256=H(b)))
+ def url(path):
+  return c.access.api('POST','sandboxes/'+box()+'/files/upload-url',dict(path=path,ttlSeconds=900))['url']
  with gzip.open(R/'uploads.jsonl.gz','xb') as f:
   def record(event):
    f.write((json.dumps(event)+'\n').encode());f.flush()
-   # Keep the bounded refusal envelope/status durable even if the caller exits.
-   if event['event'] in ('error','actual-wait'):os.fsync(f.fileno())
-  runpy.run_path(str(ROOT/'tools/q3-provider-upload.py'))['provision_ssh_files'](ROOT,files,REMOTE,box(),record)
+   if event['event']=='error':os.fsync(f.fileno())
+  runpy.run_path(str(ROOT/'tools/q3-provider-upload.py'))['provision_chunked_files'](ROOT,files,REMOTE,url,remote,record)
  for phase in ['cancellation','original']:
   phaseRun=str((BASE/phase/'prepared').relative_to(ROOT))
   code='from pathlib import Path\nimport subprocess,gzip,json\nr=Path('+repr(REMOTE+'/'+phaseRun)+');r.mkdir(parents=True);(r/"runtime-pins.json.gz").write_bytes(Path('+repr(REMOTE+'/'+RUN+'/runtime-pins.json.gz')+').read_bytes());p=subprocess.run(["python3","-B",'+repr(REMOTE+'/tools/q3-native-prelaunch.py')+','+repr(REMOTE)+',str(r/"preflight"),'+repr(REMOTE+'/'+str((BASE/phase/'runtime.py').relative_to(ROOT)))+',"--check-only"],cwd='+repr(REMOTE)+')'
