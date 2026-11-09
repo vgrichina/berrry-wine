@@ -34,13 +34,13 @@ function checkTerminal(){
  if(!terminalFailure&&fs.existsSync(run+'/caller-cancelled.json'))observeTerminal('caller input revoked');
  if(terminalFailure)throw terminalFailure;
 }
-function observeTerminal(reason){
+function observeTerminal(reason,deferClose=false){
  if(terminalFailure)return terminalFailure;
  terminalFailure=Error('Q2 terminal UNKNOWN; no replay: '+reason);
  save('first-transport-failure.json',{at:new Date().toISOString(),error:String(terminalFailure),noReplay:true});
  terminalAbort.abort(terminalFailure);
  for(const p of pending.values()){clearTimeout(p.timer);p.reject(terminalFailure);}pending.clear();
- if(!closing)close('first transport failure').catch(e=>{process.exitCode=1;console.error(e);});
+ if(!closing&&!deferClose)close('first transport failure').catch(e=>{process.exitCode=1;console.error(e);});
  return terminalFailure;
 }
 let diskTimer;`);
@@ -59,8 +59,16 @@ let diskTimer;`);
  source=replaceOnce(source,'(async()=>{\n server=', '(async()=>{\n checkTerminal();\n server=');
  source=replaceOnce(source,'const r=await fetch(', 'checkTerminal();const r=await fetch(');
  source=replaceOnce(source,"browser=cp.spawn('/usr/bin/google-chrome'", "checkTerminal();browser=cp.spawn('/usr/bin/google-chrome'");
+ // Motion dependence is explicit per reviewed command, never inferred from
+ // attack status or imposed on unrelated captures. Reject malformed policies.
+ source=replaceOnce(source," if(c.action==='combo')",` assert(c.requireMotion===undefined||typeof c.requireMotion==='boolean','boolean motion policy');
+ if(c.requireMotion)assert(['key','combo'].includes(c.action),'required held motion needs key/combo');
+ if(c.action==='combo')`);
+ source=replaceOnce(source,"sample:async()=>{if(c.captureHeld&&!fs.existsSync(out+'/'+c.label+'-held.png')){const shot=await send('Page.captureScreenshot',{format:'png'},pageSession);fs.writeFileSync(out+'/'+c.label+'-held.png',Buffer.from(shot.data,'base64'),{flag:'wx'});}return chain.progress(receipt.live.identity)},saveSample:s=>log('input-'+c.id+'-samples.jsonl',s)",`sample:()=>chain.progress(receipt.live.identity),
+   checkSample:s=>{checkTerminal();if(c.requireMotion){try{require(root+'/tools/quake2-passive-attack.cjs').requireMotion(s);}catch(e){throw observeTerminal(e,true);}}},
+   saveSample:async s=>{log('input-'+c.id+'-samples.jsonl',s);checkTerminal();if(c.captureHeld&&!fs.existsSync(out+'/'+c.label+'-held.png')){const shot=await send('Page.captureScreenshot',{format:'png'},pageSession);checkTerminal();fs.writeFileSync(out+'/'+c.label+'-held.png',Buffer.from(shot.data,'base64'),{flag:'wx'});}}`);
  source=replaceOnce(source,'const held=await bound.hold(','let held;try{held=await bound.hold(');
- source=replaceOnce(source,"  save('input-'+c.id+'-hold.json',held);","  }catch(e){if(e.holdReceipt)save('input-'+c.id+'-hold-unknown.json',e.holdReceipt);throw e;}\n  save('input-'+c.id+'-hold.json',held);");
+ source=replaceOnce(source,"  save('input-'+c.id+'-hold.json',held);","  }catch(e){if(e.holdReceipt)save('input-'+c.id+'-hold-unknown.json',e.holdReceipt);throw e;}\n  save('input-'+c.id+'-hold.json',held);\n  if(c.requireMotion&&!held.samples.length)throw observeTerminal('required playerMotion sample absent');");
  source=replaceOnce(source,"if(c.action==='quit'){await close('ordinary completion');return;}","if(c.action==='quit'){markDispatch();await close('ordinary completion',c.timing.workEnd);return;}");
  const begin=source.indexOf('let closePromise;'),end=source.indexOf('\nasync function execute(',begin);
  assert(begin>=0&&end>begin);

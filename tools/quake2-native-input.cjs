@@ -13,7 +13,7 @@ function validateCombo(keys, ms) {
   'forward plus one reviewed steering or crouch key');
   for(const key of keys)validate(key,ms);
 }
-async function hold({send,session,keys,holdMs,sample=async()=>({}),saveSample=()=>{}}) {
+async function hold({send,session,keys,holdMs,sample=async()=>({}),saveSample=()=>{},checkSample=()=>{}}) {
   if(keys?.length===1)validate(keys[0],holdMs);else validateCombo(keys,holdMs);
   const attempted=[],samples=[],releases=[];let error,releasePromise,releaseAt;
   const started=Date.now();
@@ -38,7 +38,12 @@ async function hold({send,session,keys,holdMs,sample=async()=>({}),saveSample=()
     }
     while(!releasePromise){
       const began=Date.now(),value=await sample();
-      const row={phase:'held',started:began,finished:Date.now(),...value};samples.push(row);await saveSample(row);
+      const row={phase:'held',started:began,finished:Date.now(),...value};samples.push(row);
+      // Latch a rejected required observation before persistence or more work.
+      // Preserve that first failure if saving or independent release also fails.
+      try{checkSample(row);}catch(e){error??=e;}
+      try{await saveSample(row);}catch(e){error??=e;}
+      if(error)throw error;
       if(!releasePromise)await new Promise(r=>setTimeout(r,Math.min(100,Math.max(1,holdMs-(Date.now()-started)))));
     }
   }catch(e){error??=e;}

@@ -176,4 +176,10 @@ function createChain(bound,options){
   capture:async label=>{const shot=await chain.capture(label);shot.after.attackInput=await observe(shot.capture.identity);return shot;},
   progress:async identity=>({...await chain.progress(identity),attackInput:await observe(identity)})};
 }
-module.exports={createChain,readPage,signatures,WINDOWS};
+// Opt-in command policy. Attack/binding status is a separate observation;
+// ordinary captures may legitimately carry unavailable motion.
+function requireMotion(sample){
+ if(sample?.attackInput?.playerMotion?.status!=='SNAPSHOT')
+  throw Error('required playerMotion UNKNOWN; no replay');
+}
+module.exports={createChain,readPage,signatures,WINDOWS,requireMotion};
