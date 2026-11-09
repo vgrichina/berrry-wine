@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed3af071d4/4954dc86 once1468SHA276gzip. Nativeholds+quitACK normal930ms173realreaps but fullcaller cleanEOF rejected; archivedstop6bb0. Fresh q2-q3-orderly-caller-repair-0924 repairs actualsharedclient completion OFFLINE preserving earlyEOF cancellation caps.
+  Next: Reviewed sharedcaller d90eb457c once4649SHA488gzip; exact quitACK plus launchwait/EOF handles orderly shutdown,26PIPEcontrols/buildPASS OFFLINE. Fresh quake2-orderly-upper-route-0940 integrates pins/actual invocation then native+original after Q30924 exact UUIDa35c3041 archivephysicaldrain. Preserve HP/motion terminal limits.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedd81e7524 once750SHA122gzip. Sixproductioncontrols preservefailedholdreceipt/timing unchanged600msbound; nativecauseUNKNOWN. Fresh redline-observed-key-gameplay-0924 FIRST native diagnostic thenoriginal onlyafterwholefixturePASS.
+  Next: Reviewed268f6401f once168SHA105gzip; one mutable task-result manifest mismatch recorded. Actual DevToolsActivePort ENOENT preinput,152reaps box63fe41f0 archivedstopb151. Fresh redline-startup-failure-repair-0940 OFFLINE implements bounded startup diagnostics/cleanup with actual inert child controls, no unchanged native retry.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
