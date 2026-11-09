@@ -11,6 +11,22 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 
 if(process.env.Q2_NODE_FIXTURE==='preload'){
   const dir=process.env.Q2_FIXTURE_DIR,read=fs.readFileSync,spawn=cp.spawn,load=Module._load;
+  const movement=['moveup','space-down-fail','space-up-fail'].includes(process.env.Q2_CLOSE_MODE);
+  let observed,renderer;
+  if(movement){
+    observed=require('./quake2-passive-attack.test.cjs').fixture(true);
+    class Probe{constructor(){this.inputQueue=[];this.windows={};this.wasm=null;this.mainWasm=null;this._exited=false;}}
+    require('../lib/renderer-input').installInputHandlers(Probe);renderer=new Probe();
+    observed.s.ids.set(renderer,observed.identity.pageRendererObject);observed.wine.renderer=renderer;
+    // Only authored fixture state: the real serialized reader resolves this
+    // owner's sparse PTE, never fabricated observation return values.
+    const pages=new Uint32Array(observed.memory.buffer,0x1bc00000,0x100000),back=0x08600000;
+    Atomics.store(pages,0x9000,back|0x804);
+    for(const [i,key,text] of [[0,32,'+moveup'],[1,97,'+moveleft']]){
+      observed.put(0x4d6c60+key*4,0x09000000+i*128);
+      new Uint8Array(observed.memory.buffer,back+i*128,text.length+1).set(Buffer.from(text+'\0'));
+    }
+  }
   let browser;
   fs.readFileSync=function(file,...args){
     if(file===process.env.QUAKE2_NATIVE_RUN+'/runtime-pins.json')return JSON.stringify({files:composition.compose().references,httpPins:[],commit:'OFFLINE_NODE_ONLY'});
@@ -27,8 +43,8 @@ if(process.env.Q2_NODE_FIXTURE==='preload'){
   Module._load=function(name,parent,main){
     if(name===root+'/test/static-server.js')return {startStaticServer:async()=>({prependListener(){},address:()=>({port:1}),closeAllConnections(){},close:fn=>fn?.()})};
     if(parent?.filename===retained&&name==='./bound-input.cjs')return {hold:input.hold,createChain:()=>({
-      capture:async label=>({png,before:{},after:{},capture:{label,sha256:sha(png),at:new Date().toISOString(),identity:{fixture:true}}}),
-      admit:async(review,dispatch)=>{assert(review.review.trim());return dispatch({live:{identity:{fixture:true}}});},
+      capture:async label=>({png,before:{},after:{},capture:{label,sha256:sha(png),at:new Date().toISOString(),identity:observed?.identity??{fixture:true}}}),
+      admit:async(review,dispatch)=>{assert(review.review.trim());return dispatch({live:{identity:observed?.identity??{fixture:true}}});},
       progress:async()=>({physical:'fixture'})
     })};
     return load.call(this,name,parent,main);
@@ -39,7 +55,7 @@ if(process.env.Q2_NODE_FIXTURE==='preload'){
       const v=JSON.parse(text);fs.appendFileSync(dir+'/protocol.jsonl',JSON.stringify({at:Date.now(),...v})+'\n');
       if(v.method==='Browser.close'){
         fs.writeFileSync(dir+'/close-at',String(Date.now()));
-        if(['normal','drain','combo','partial-input','missing-review'].includes(process.env.Q2_CLOSE_MODE))browser.stdin.end('close\n');
+        if(['normal','drain','combo','partial-input','missing-review','moveup','space-down-fail','space-up-fail'].includes(process.env.Q2_CLOSE_MODE))browser.stdin.end('close\n');
         else if(process.env.Q2_CLOSE_MODE==='ack-stall')queueMicrotask(()=>this.onmessage?.({data:JSON.stringify({id:v.id,result:{}})}));
         return; // Actual pending protocol close, never a fabricated ACK.
       }
@@ -49,10 +65,18 @@ if(process.env.Q2_NODE_FIXTURE==='preload'){
       if(v.method==='Input.dispatchKeyEvent'&&v.params.type==='keyDown'&&v.params.key==='Control'&&process.env.Q2_CLOSE_MODE==='partial-input'){
         queueMicrotask(()=>this.onmessage?.({data:JSON.stringify({id:v.id,error:{message:'injected after native DOWN'}})}));return;
       }
+      if(movement&&v.method==='Input.dispatchKeyEvent'){
+        const p=v.params;renderer[p.type==='keyDown'?'handleKeyDown':'handleKeyUp'](p.windowsVirtualKeyCode,{code:p.code});
+        fs.appendFileSync(dir+'/renderer.jsonl',JSON.stringify({event:renderer.takeInput(),state:renderer.peekKeyDownState(p.windowsVirtualKeyCode)})+'\n');
+        if(p.code==='Space'&&((p.type==='keyDown'&&process.env.Q2_CLOSE_MODE==='space-down-fail')||(p.type==='keyUp'&&process.env.Q2_CLOSE_MODE==='space-up-fail'))){
+          queueMicrotask(()=>this.onmessage?.({data:JSON.stringify({id:v.id,error:{message:'injected Space ACK failure after queue'}})}));return;
+        }
+      }
       let result={};
       if(v.method==='Target.getTargets')result={targetInfos:[{type:'page',targetId:'fixture-page'}]};
       if(v.method==='Target.attachToTarget')result={sessionId:'fixture-session'};
       if(v.method==='Runtime.evaluate')result={result:{value:{apps:[]}}};
+      if(observed&&v.method==='Runtime.evaluate'&&v.params.expression.startsWith('(function readPage('))result={result:{value:require('node:vm').runInContext(v.params.expression,observed.context)}};
       queueMicrotask(()=>this.onmessage?.({data:JSON.stringify({id:v.id,result})}));
     }
     close(){this.readyState=3;}
@@ -129,6 +153,55 @@ async function budgetCases(run){
   assert.equal(fs.readFileSync(out+'/first-failure.json','utf8'),first);
 }
 
+async function movementCaller(dir,runtime,mode){
+  // Actual composed Python launch/request branches and owned Session. Only
+  // remote transport is local Node and the launch transport is a live sleeper;
+  // all command publication/ACK and the driver's command loop stay real.
+  const source=`import ast,hashlib,importlib.util,json,sys,threading,time
+from pathlib import Path
+root,directory,runtime,mode=map(str,sys.argv[1:])
+root=Path(root);directory=Path(directory);runtime=Path(runtime)
+spec=importlib.util.spec_from_file_location('client',root/'tools/quake2-native-launch-client.py')
+m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+original=root/'scratch/runs/20261109-quake2-observed-guard-route-0105/control.py'
+task=m.compose_task(original,hashlib.sha256(original.read_bytes()).hexdigest())
+task['ROOT']=root;task['REMOTE']=str(root);task['RUN']=str(runtime.relative_to(root));task['R']=directory
+(directory/'review').mkdir()
+def transport(code,timeout):
+ if '--remote-parent' in code:return [sys.executable,'-c','import time;time.sleep(30)']
+ tree=ast.parse(code);call=tree.body[1].value
+ assert ast.unparse(call.func)=='subprocess.run'
+ argv=ast.literal_eval(call.args[0]);assert argv[:2]==['node','-e']
+ assert 'tools/quake2-native-transport.cjs' in argv[2]
+ return argv
+caller=m.Caller(task,directory/'caller',transport)
+errors=[]
+def launch():
+ try:caller.launch()
+ except BaseException as e:errors.append(str(e))
+thread=threading.Thread(target=launch);thread.start();assert caller.session.started.wait(3)
+try:
+ previous='startup'
+ for key,label in [('Space','space-result'),('a','lateral-result')]:
+  capture=(runtime/'original'/(previous+'-capture.json')).read_bytes()
+  (directory/'review'/(previous+'-capture.json')).write_bytes(capture)
+  try:caller.request(dict(command=dict(id=label,action='key',key=key,holdMs=50,waitMs=0,label=label,reviewRef=previous),review='personally inspected authored offline protocol fixture'))
+  except m.TerminalFailure:
+   assert mode!='moveup';break
+  assert mode=='moveup';previous=label
+ if mode=='moveup':caller.request(dict(command=dict(id='movement-quit',action='quit')))
+finally:
+ receipts=caller.session.close();thread.join(3);assert not thread.is_alive()
+ assert all(v['actualWait'] and v['stdioEOF'] for v in receipts)
+ (directory/'caller-waits.json').write_text(json.dumps(dict(receipts=receipts,launchErrors=errors,authoredOnly=True)))
+`;
+  const child=cp.spawn('python3',['-c',source,root,dir,runtime,mode],{stdio:['ignore','pipe','pipe']});
+  const output=[[],[]];child.stdout.on('data',b=>output[0].push(b));child.stderr.on('data',b=>output[1].push(b));
+  const [code,signal]=await once(child,'close');
+  fs.writeFileSync(dir+'/caller.stdout',Buffer.concat(output[0]));fs.writeFileSync(dir+'/caller.stderr',Buffer.concat(output[1]));
+  assert.equal(code,0,Buffer.concat(output[1]).toString());assert.equal(signal,null);
+}
+
 async function scenario(run,mode){
   const dir=path.join(run,mode),runtime=path.join(dir,'runtime'),out=runtime+'/original';fs.mkdirSync(runtime,{recursive:true});
   const logs=[fs.openSync(dir+'/driver.stdout','wx'),fs.openSync(dir+'/driver.stderr','wx')];
@@ -163,6 +236,26 @@ sys.exit(status if status>=0 else 128-status)
     assert.equal(child.exitCode,null,fs.readFileSync(dir+'/driver.stderr','utf8'));
     const transport=require('./quake2-native-transport.cjs');
     const began=Date.now();
+    if(['moveup','space-down-fail','space-up-fail'].includes(mode)){
+      await movementCaller(dir,runtime,mode);
+      const [code,signal]=await completed;assert.equal(code,mode==='moveup'?0:1);
+      const events=fs.readFileSync(dir+'/protocol.jsonl','utf8').trim().split('\n').map(JSON.parse).filter(v=>v.method==='Input.dispatchKeyEvent').map(v=>v.params);
+      assert.deepEqual(events.map(v=>[v.type,v.key,v.code,v.windowsVirtualKeyCode]),mode==='moveup'?
+        [['keyDown',' ','Space',32],['keyUp',' ','Space',32],['keyDown','a','KeyA',65],['keyUp','a','KeyA',65]]:
+        [['keyDown',' ','Space',32],['keyUp',' ','Space',32]]);
+      const delivered=fs.readFileSync(dir+'/renderer.jsonl','utf8').trim().split('\n').map(JSON.parse);
+      assert.deepEqual(delivered.slice(0,2).map(v=>[v.event.msg,v.event.wParam,v.event.lParam>>>0,v.state]),[[0x100,32,1|(0x39<<16),0x8000],[0x101,32,(0xc0000001|(0x39<<16))>>>0,0]]);
+      const startup=JSON.parse(fs.readFileSync(out+'/startup-binding.json')).after.attackInput;
+      assert.equal(startup.status,'SNAPSHOT');assert.equal(startup.bindings.find(v=>v.key===32).text,'+moveup');assert.equal(startup.bindings.find(v=>v.key===97).text,'+moveleft');
+      assert.equal(startup.weaponEffect,'UNKNOWN');assert.match(startup.consumption,/UNKNOWN/);
+      const hold=JSON.parse(fs.readFileSync(out+'/input-space-result-'+(mode==='moveup'?'hold':'hold-unknown')+'.json'));
+      assert.equal(hold.physicalRelease,mode==='space-up-fail'?'UNKNOWN':'ACK');
+      if(mode==='moveup'){
+        assert(hold.samples.length);for(const sample of hold.samples){assert.equal(sample.attackInput.status,'SNAPSHOT');assert.equal(sample.attackInput.memoryIdentity,startup.memoryIdentity);assert.equal(sample.attackInput.bindings.find(v=>v.key===97).text,'+moveleft');assert.equal(sample.attackInput.physical.find(v=>v.key===32).state,0x8000);}
+      }else{assert(!fs.existsSync(out+'/commands/1.json'));assert(fs.existsSync(out+'/first-transport-failure.json'));}
+      fs.writeFileSync(dir+'/result.json',JSON.stringify({code,signal,actualClose:true,events,delivered,authoredOnly:true}));
+      console.log(mode,'PASS actual composed Python caller / numbered Node transport / driver / serialized owning sparse reader / renderer Space and a, balanced release, UNKNOWN consumption');return;
+    }
     if(mode==='independent'){
       const [code,signal]=await completed;assert.equal(code,1);
       const receipt=JSON.parse(fs.readFileSync(out+'/browser-drain-unknown.json')).receipt;
@@ -243,5 +336,5 @@ async function main(){
   fs.writeFileSync(run+'/providers.json',JSON.stringify(result.references));
   await budgetCases(run);console.log('command20s / ACK22s / cleanup30s budget and tampered cap rejection PASS');
   await inputCases();console.log('native crouch-forward allowlist, partial DOWN, sample, UP failure, late DOWN and independent release PASS');
-  for(const mode of ['normal','combo','partial-input','missing-review','term','kill','ack-stall','drain','pending-capture','terminal-wait','independent'])await scenario(run,mode);
+  for(const mode of (process.env.Q2_COMPOSITION_MODES?.split(',')??['moveup','space-down-fail','space-up-fail','normal','combo','partial-input','missing-review','term','kill','ack-stall','drain','pending-capture','terminal-wait','independent']))await scenario(run,mode);
 }

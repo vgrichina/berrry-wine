@@ -41,7 +41,7 @@ function readPage(identity,windows,expectedMemory){
  const direct=(va,n)=>Number.isInteger(va)&&va>=0x400000&&va+n<=0x4000000&&offset(va)+n<=view.byteLength;
  const canonical=()=>windows.every(p=>direct(p.va,p.bytes.length)&&p.bytes.every((b,i)=>view.getUint8(offset(p.va)+i)===b));
  if(!canonical())return fail('attack executable window mismatch');
- if(!direct(0xac13a0,20)||!direct(0x4d6c60,804))return fail('attack data outside owning direct memory');
+ if(!direct(0xac13a0,20)||!direct(0x4d6c60,808))return fail('attack data outside owning direct memory');
  const u32=va=>view.getUint32(offset(va),true);
  // The table is a view of this exact owner's buffer, not a page global or a
  // cached table from a prior process. Publication/clear/protect use atomic i32.
@@ -86,9 +86,15 @@ function readPage(identity,windows,expectedMemory){
   return {key,pointer,text:null,status:'UNKNOWN unterminated binding'};
  }
  const first=Array.from({length:5},(_,i)=>u32(0xac13a0+i*4));
- const bindings=[13,133,200].map(binding); // Q2 Enter, K_CTRL, K_MOUSE1, not Win32 VKs.
- const physical=[13,17,37,38,39,40].map(key=>({key,state:w.renderer.peekKeyDownState?.(key)??null}));
- const again=[13,133,200].map(binding);
+ // Preserve attack rows/order. These are Q2 keycodes, not Win32 VKs:
+ // Space, Mouse2, a/d, comma/period, left/right arrows and strafe modifier.
+ // MapKey's pinned scan table supplies keyboard codes; the canonical EXE
+ // keynames table at 0x448ec8 identifies Mouse2 as 201. Never infer an action
+ // from a physical key name: saved live bindings can differ from defaults.
+ const keys=[13,133,200,32,201,97,100,44,46,130,131,132];
+ const bindings=keys.map(binding);
+ const physical=[13,17,37,38,39,40,32,65,68,188,190,18].map(key=>({key,state:w.renderer.peekKeyDownState?.(key)??null}));
+ const again=keys.map(binding);
  const second=Array.from({length:5},(_,i)=>u32(0xac13a0+i*4));
  for(const [index,pte] of observed)if((Atomics.load(pages,index)>>>0)!==pte)translationChanged=true;
  if(runningApps!==all||all.length!==1||all[0]!==a||a.wine!==w||a.name!=='quake2_demo'||

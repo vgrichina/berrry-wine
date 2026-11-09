@@ -7,6 +7,23 @@ const composition=require('./quake2-native-driver-composition.cjs');
 const bound=require('../scratch/runs/20261109-quake2-observed-guard-route-0105/bound-input.cjs');
 const {keyboardMessageLParam,installInputHandlers}=require('../lib/renderer-input');
 const windows=passive.signatures(),offset=va=>va-0x400000+0x12000;
+function canonicalKeynames(){
+ const core=require('../lib/quake2-owning-load-core'),b=fs.readFileSync(core.EXE);
+ assert.equal(core.hash(b),core.EXE_SHA);
+ const pe=b.readUInt32LE(60),table=pe+24+b.readUInt16LE(pe+20);
+ function raw(va){
+  for(let i=0;i<b.readUInt16LE(pe+6);i++){
+   const s=table+40*i,start=0x400000+b.readUInt32LE(s+12),size=b.readUInt32LE(s+16);
+   if(va>=start&&va<start+size)return b.readUInt32LE(s+20)+va-start;
+  }
+  throw Error('canonical keyname outside raw PE');
+ }
+ for(const [va,name,key] of [[0x448de8,'SPACE',32],[0x448e08,'LEFTARROW',130],[0x448e10,'RIGHTARROW',131],[0x448e18,'ALT',132],[0x448ec8,'MOUSE2',201]]){
+  const at=raw(va),string=raw(b.readUInt32LE(at));
+  assert.equal(b.subarray(string,b.indexOf(0,string)).toString('ascii'),name);
+  assert.equal(b.readUInt32LE(at+4),key);
+ }
+}
 function fixture(sparse=false){
  const memory=new WebAssembly.Memory({initial:sparse?8192:128,maximum:sparse?8192:128,shared:true}),view=new DataView(memory.buffer);
  for(const p of windows)new Uint8Array(memory.buffer,offset(p.va),p.bytes.length).set(p.bytes);
@@ -19,7 +36,7 @@ function fixture(sparse=false){
  }
  const context=vm.createContext({crossOriginIsolated:true,runningApps:[{name:'quake2_demo',wine}],document:{getElementById:()=>canvas},__mcmPassiveIdentityV1:s,SharedArrayBuffer});
  const put=(va,value)=>view.setUint32(offset(va),value,true);
- for(const [key,text] of [[13,'+attack'],[133,'+movedown'],[200,'+attack']]){
+ for(const [key,text] of [[13,'+attack'],[133,'+movedown'],[200,'+attack'],[32,'+moveup'],[201,'+moveup'],[97,'+moveleft'],[100,'+moveright'],[44,'+moveleft'],[46,'+moveright'],[130,'+left'],[131,'+right'],[132,'+strafe']]){
   const pointer=0x500000+key*128;put(0x4d6c60+key*4,pointer);
   new Uint8Array(memory.buffer,offset(pointer),text.length+1).set(Buffer.from(text+'\0'));
  }
@@ -41,7 +58,7 @@ async function sparseControls(){
  });
  const digest=()=>require('node:crypto').createHash('sha256').update(new Uint8Array(f.memory.buffer)).digest('hex');
  const before=digest(),row=f.read();
- assert.equal(row.status,'SNAPSHOT');assert.deepEqual(Array.from(row.bindings,v=>v.text),texts,'actual0450 pointers decode via owning PTE');
+ assert.equal(row.status,'SNAPSHOT');assert.deepEqual(Array.from(row.bindings.slice(0,3),v=>v.text),texts,'actual0450 pointers decode via owning PTE');
  assert.equal(digest(),before,'sparse reader has zero shared-memory writes');
  assert.equal(row.weaponEffect,'UNKNOWN');assert.match(row.consumption,/latch snapshot only/);
  const memoryIdentity=row.memoryIdentity;
@@ -111,6 +128,8 @@ async function sparseControls(){
  console.log('PASS sparse actual0450 pointer topology; noncontiguous page-cross, full128 unmapped, permissions, private/bounds, translation/pointer/bytes/owner races, ASCII/NUL, zero writes. Authored backing bytes only.');
 }
 async function main(){
+ canonicalKeynames();
+ await movementControls();
  await sparseControls();
  const f=fixture(),bytes=Buffer.from(f.memory.buffer).toString('hex');
  const old=await vm.runInContext(bound.PAGE_READ,f.context);
@@ -119,7 +138,9 @@ async function main(){
  const fresh=f.read();assert.equal(fresh.status,'SNAPSHOT');
  assert.equal(f.view.getUint8(offset(0x44d398)+0x1c),13);assert.equal(f.view.getUint8(offset(0x44d398)+0x1d),133,'original MapKey CTRL index');
  assert.equal(fresh.physical.find(v=>v.key===17).state,0x8000);
- assert.deepEqual(Array.from(fresh.bindings,v=>v.text),['+attack','+movedown','+attack']);
+ assert.deepEqual(Array.from(fresh.bindings.slice(0,3),v=>v.text),['+attack','+movedown','+attack']);
+ assert.deepEqual(Array.from(fresh.bindings.slice(3),v=>[v.key,v.text]),[[32,'+moveup'],[201,'+moveup'],[97,'+moveleft'],[100,'+moveright'],[44,'+moveleft'],[46,'+moveright'],[130,'+left'],[131,'+right'],[132,'+strafe']]);
+ for(const [scan,key] of [[0x39,32],[0x1e,97],[0x20,100],[0x33,44],[0x34,46],[0x4b,130],[0x4d,131],[0x38,132]])assert.equal(f.view.getUint8(offset(0x44d398)+scan),key,'canonical MapKey scan '+scan);
  assert.equal(fresh.attack.held,false);assert.match(fresh.consumption,/UNKNOWN/);
  assert.equal(Buffer.from(f.memory.buffer).toString('hex'),bytes,'reader makes no shared-memory writes');
  f.put(0xac13a0,13);f.put(0xac13b0,3);
@@ -142,7 +163,7 @@ async function main(){
  // old chain still owns identity/freshness/admission and all command caps.
  const rows=[],chain=passive.createChain({createChain:()=>({closed:false,capture:async()=>({capture:{identity:f.identity},after:{}}),progress:async()=>({slice:'existing'})})},{evaluate:async expression=>{rows.push(expression);return vm.runInContext(expression,f.context);}});
  assert.equal((await chain.capture('authored')).after.attackInput.status,'SNAPSHOT');assert.equal((await chain.progress(f.identity)).attackInput.status,'SNAPSHOT');assert.equal(rows.length,2);
- for(const key of ['Control','Enter'])for(const mode of ['normal','down-fail','sample-fail','up-fail']){
+ for(const key of ['Control','Enter','Space','a',',','.'])for(const mode of ['normal','down-fail','sample-fail','up-fail']){
   class Probe{constructor(){this.inputQueue=[];this.windows={};this.wasm=null;this.mainWasm=null;this._exited=false;}}
   installInputHandlers(Probe);const renderer=new Probe();
   const events=[],delivered=[];let receipt;
@@ -152,8 +173,9 @@ async function main(){
   },sample:async()=>{if(mode==='sample-fail')throw Error(mode);return {};}});}
   catch(e){assert.notEqual(mode,'normal');receipt=e.holdReceipt;}
   assert.deepEqual(events.map(v=>v.type),['keyDown','keyUp']);
-  const code=key==='Control'?'ControlLeft':'Enter',vk=key==='Control'?17:13,scan=key==='Control'?0x1d:0x1c;
+  const [code,vk,scan]=({Control:['ControlLeft',17,0x1d],Enter:['Enter',13,0x1c],Space:['Space',32,0x39],a:['KeyA',65,0x1e],',':['Comma',188,0x33],'.':['Period',190,0x34]})[key];
   assert.equal(events[0].code,code);assert.equal(events[0].windowsVirtualKeyCode,vk);
+  assert.equal(events[0].key,key==='Space'?' ':key);
   assert.equal(keyboardMessageLParam(vk,{code},false,false),1|(scan<<16));
   assert.deepEqual(delivered.map(v=>[v.msg,v.wParam]),[[0x100,vk],[0x101,vk]],'actual host renderer queue and consumption');
   assert.equal(delivered[0].lParam>>>0,1|(scan<<16));
@@ -162,4 +184,43 @@ async function main(){
  }
  console.log('PASS oldFAIL arrow-only observer / newPASS Control, Enter, live bindings and raw latch; canonical windows, owner/memory negatives, no memory writes, composed capture/progress, startup gate unchanged, physical UP on failures. Authored offline data only; actual attack consumption UNKNOWN.');
 }
-main().catch(e=>{console.error(e);process.exitCode=1;});
+async function movementControls(){
+ const f=fixture(true),pages=new Uint32Array(f.memory.buffer,0x1bc00000,0x100000);
+ const keys=[32,201,97,100,44,46,130,131,132],back=0x08500000,page=0x9000;
+ const pte=(back|0x804)>>>0;
+ Atomics.store(pages,page,pte);Atomics.store(pages,page+1,(back+0x1000)|0x804);
+ const expected=['+moveup','+moveup','+moveleft','+moveright','+moveleft','+moveright','+left','+right','+strafe'];
+ keys.forEach((key,i)=>{
+  const pointer=page*4096+i*256;f.put(0x4d6c60+key*4,pointer);
+  new Uint8Array(f.memory.buffer,back+i*256,128).fill(0);
+  new Uint8Array(f.memory.buffer,back+i*256,expected[i].length).set(Buffer.from(expected[i]));
+ });
+ const digest=()=>require('node:crypto').createHash('sha256').update(new Uint8Array(f.memory.buffer)).digest('hex');
+ const before=digest(),row=f.read();assert.equal(row.status,'SNAPSHOT');assert.equal(digest(),before,'movement sparse reader has zero writes');
+ const binding=(row,key)=>row.bindings.find(v=>v.key===key);
+ for(let i=0;i<keys.length;i++)assert.equal(binding(row,keys[i])?.text,expected[i],'move-up/lateral key must be observed '+keys[i]);
+ assert(row.physical.some(v=>v.key===32)&&row.physical.some(v=>v.key===65));
+ const memoryIdentity=row.memoryIdentity,savedPeek=f.renderer.peekKeyDownState;
+ for(const [i,key] of keys.entries()){
+  const address=0x4d6c60+key*4,pointer=page*4096+i*256,start=back+i*256;
+  const unknown=label=>assert.equal(f.read(memoryIdentity).status,'UNKNOWN',label+' key '+key);
+  function race(mutate,label){let done=false;f.renderer.peekKeyDownState=()=>{if(!done){done=true;mutate();}return 0;};unknown(label);f.renderer.peekKeyDownState=savedPeek;}
+  // Stable custom bindings are evidence, not a policy violation or an action
+  // inferred from Space/a. A change inside the double read must fail closed.
+  new Uint8Array(f.memory.buffer,start,128).fill(0);new Uint8Array(f.memory.buffer,start,9).set(Buffer.from('+movedown'));
+  assert.equal(binding(f.read(memoryIdentity),key).text,'+movedown');
+  race(()=>f.view.setUint8(start+5,88),'changed binding bytes');f.view.setUint8(start+5,100);
+  race(()=>f.put(address,pointer+128),'changed binding pointer');f.put(address,pointer);
+  race(()=>Atomics.store(pages,page,pte^2),'changed permission');Atomics.store(pages,page,pte);
+  race(()=>Atomics.store(pages,page,(back+0x2000)|0x804),'changed backing');Atomics.store(pages,page,pte);
+  f.put(address,0x04000000);unknown('direct ceiling unchanged');f.put(address,pointer);
+  Atomics.store(pages,page,0);unknown('unmapped');
+  for(const bad of [(back|0x801),(0x1bc00000|0x804),(0xfffff000|0x804)]){Atomics.store(pages,page,bad);unknown('permission/backing bounds');}
+  Atomics.store(pages,page,pte);
+  const worker=f.link.worker;race(()=>{f.link.worker={};},'wrong owner');f.link.worker=worker;
+ }
+ assert.equal(f.read(memoryIdentity).status,'SNAPSHOT');
+ console.log('PASS owning sparse Space32 Mouse2=201 a97 d100 comma44 period46 arrows130/131 Alt132; actual custom binding retained; each added key byte/pointer/PTE/owner race, missing mapping, permission/private/bounds/direct-ceiling negatives fail closed; consumption UNKNOWN.');
+}
+module.exports={fixture};
+if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
