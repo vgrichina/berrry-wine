@@ -1,5 +1,11 @@
 # Return Fire bunker calibration: blank capture terminal
 
+**Correction (2055 investigation):** the retained command5 PNG is byte-identical
+to the jeep-info PNG and independently decodes to a visible game window. The
+blank model-review presentation contradicts the captured bytes. The historical
+terminal decision below remains recorded, but guest window disappearance is
+not established. See [the causal boundary investigation](20261109-return-fire-jeep-blank-transition-cause-2055.md).
+
 Run: `scratch/runs/20261109-return-fire-bunker-entry-jeep-2045/`.
 Tested Git SHA: `a5f4d260838790605c1c0d62acc046884eeaf7fd`.
 
