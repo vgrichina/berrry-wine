@@ -125,6 +125,10 @@ function fixture({defaultTarget=false,colorUpload=false,surfaceUpload=false}={})
   }
   assert(point,'independent exclusive geometry control '+pattern);probes.push(point);
  }
+ // Establish the endpoint before introducing named storage, so its first
+ // Clear must publish an owned definition instead of using startup admission.
+ dev(43,[0,0,1,0,0,0]);
+ push(20);api('Sleep'); // Let the endpoint's shared-state message reach the CPU Worker.
  if(defaultTarget)dev(38,[0,RT]); // GetRenderTarget leaves implicit storage bound.
  else{
   dev(28,[32,32,21,0,0,1,RT,0]);

@@ -47,8 +47,9 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
     const digest=await crypto.subtle.digest('SHA-256',moduleBytes),hash=[...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
     const Base=D3D9Host.Bridge,getModule=WineAssembly.getWasmModule;
     D3D9Host.Bridge=class extends Base{
-     constructor(options){super({...options,worldProvenance:enabled});this.publishedDraws=0;this.publishedUploads=0;this.publishedSurfaceUploads=0;}
+     constructor(options){super({...options,worldProvenance:enabled});this.publishedDraws=0;this.publishedUploads=0;this.publishedSurfaceUploads=0;this.publishedColorDefinitions=0;}
      submitSnapshot(command){
+      this.publishedColorDefinitions+=(command.colorDefinitions||[]).length;
       if(command.opcode===D3DCommandStream.OPCODES.DRAW)this.publishedDraws++;
       if(command.opcode===D3DCommandStream.OPCODES.RESOURCE_UPDATE)this.publishedUploads++;
       if(command.opcode===D3DCommandStream.OPCODES.RESOURCE_UPDATE&&!command.payload.rect)this.publishedSurfaceUploads++;
@@ -76,6 +77,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
       module:{sha256:hash,bytes:moduleBytes.byteLength},enabled,guestSlot:wine.guestWorker.link.slot,
       guestEndpoint:wine.guestWorker.link.endpointIdentity,rendererPorts:[...(wine._renderWorkerManager?.ports?.values()||[])].map(p=>({id:p.id,options:p.options})),
       publishedDraws:bridge.publishedDraws,publishedUploads:bridge.publishedUploads,publishedSurfaceUploads:bridge.publishedSurfaceUploads,
+      publishedColorDefinitions:bridge.publishedColorDefinitions,
       traceErrors:bridge.worldTraceErrors||0,tracePackets:bridge.worldTracePackets?.size||0,history:rows,logs,
       queueStates:[...bridge.devices].map(([id,e])=>({id,queue:e.queue?.snapshot(),lastError:String(e.queue?.error||'')}))};
      check(status,'bounded generated PE completion '+JSON.stringify(result));
@@ -84,6 +86,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
       check(result.rendererPorts.some(p=>p.id>0&&p.options?.backend===backend),'actual production owning render Worker endpoint '+JSON.stringify(result.rendererPorts));
       check(result.publishedDraws>0,
         'guest draws publish after default or named target admission');
+      if(!defaultTarget)check(result.publishedColorDefinitions>0,'named storage is created through guest publication');
       if(colorUpload)check(result.publishedUploads>0,'actual guest color uploads publish');
       if(surfaceUpload)check(result.publishedSurfaceUploads===3,
         'three writable unlocks publish; readonly unlocks publish nothing');

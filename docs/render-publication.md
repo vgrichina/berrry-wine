@@ -57,16 +57,41 @@ message's owner against their routing slot.
 API4 references route to `Bridge.submitSnapshot` for D3D9 DRAW/CLEAR commands
 and owned rectangular color RESOURCE_UPDATE commands.
 The receiving bridge checks device generation/liveness and consumes any pending
-admission token before releasing snapshot credit. Creation, retirement, queries,
-reset and presentation are not accepted through this entry point yet. A test
+admission token before releasing snapshot credit. Color creation can accompany
+an operation; retirement, queries, reset and presentation still use the broker. A test
 drives the actual publication broker and neutral execution path with a payload
 larger than its test ring, a delayed consumer, source mutation and stale-device
 rejection. Guarded D3D9 clears and draws now capture in the guest Worker and
 publish owned API4 commands. The first call establishes the endpoint through
 the broker. Named color targets and render-target texture aliases use shared
-owner-admission metadata once their storage exists. Unknown resources,
-unavailable lifecycle state and missing guards retain ordered broker handling;
-resource creation/release publication remains open.
+owner-admission metadata once their storage exists. Unseen color resources carry
+owned initial definitions alongside draws, clears and uploads. Unavailable
+lifecycle state and missing guards retain ordered broker handling; device
+creation and resource release publication remain open.
+
+`captureNativeColorDefinition` shares canonical pixel capture between the page
+and guest producer. The native guard protects identity, dimensions, format,
+lock state and pixels during capture; the complete operation and definitions
+are copied and charged before publication. The serial API4 receiver creates
+each color ID once per device epoch before submitting its dependent operation.
+Duplicate definitions are ignored, including their initial pixels: they must
+never overwrite renderer-owned content. Registry collisions can therefore
+cause redundant capture, but not resource replacement. A full neutral queue
+drains before retrying creation; ordinary creation needs no preceding drain.
+Release remains fenced and invalidates the registry, so a later operation can
+create the resource anew. Startup still needs the broker and delivery of its
+endpoint channel before this path becomes eligible.
+
+Validation: 21 immutable snapshot cases include held publication, two different
+initial images before admission, post-capture source reuse, and release followed
+by re-creation. Generated public x86 COM tests assert that named color creation
+actually crosses API4, then check exact geometry and writable-unlock readback
+pixels on WebGL and software, normal and compatibility WASM, diagnostics off/on.
+Evidence: `scratch/runs/20261109-d3d-color-create-final-{webgl,software}/test-result.json`.
+The earlier `-webgl-owned` fixture failed the new publication assertion because
+it did not yield to receive the endpoint channel; adding a public Sleep after
+the initial clear exercises the intended path. No gameplay FPS claim follows
+from these correctness tests.
 
 `DrawProducer.captureNativeColorUpdate` is the common page/guest decoder for
 the native UpdateSurface/StretchRect upload descriptor (opcode0x30015). It
@@ -221,7 +246,7 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   Each record has an atomic 64-bit sequence; a reader returns unavailable on an
   odd/changed sequence without waiting for the page. Sequence exhaustion closes
   the channel rather than wrapping. Hash collisions only evict metadata and
-  cause broker fallback; they never retire renderer storage. Guest resolvers
+  cause repeated owned color-definition capture; they never retire renderer storage. Guest resolvers
   also check native ownership, lock state and matching layout under the native
   D3D guard. Already-admitted targets and aliases need no per-draw page RPC.
   A real-worker test

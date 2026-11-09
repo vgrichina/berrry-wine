@@ -258,16 +258,25 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     for(const [offset,value]of [[8,7],[12,0xd3d90006],[20,2],[24,2],[28,21],[36,99],[40,91000],[48,8],[52,16]])
       f.set(drawColor+offset,value);
     f.set(f.program+22020,drawColor);
-    assert.equal(await ask('draw'),1);await f.drain();assert.equal(rpcs,initialCalls+3,
-      'named render target uses endpoint-owned resource resolution');
+    holdPublications=true;
+    new Uint8Array(memory.buffer,91000,16).fill(0x19);
+    assert.equal(await ask('draw'),1);assert.equal(rpcs,initialCalls+2,
+      'unseen named target publishes its owned initial definition');
+    new Uint8Array(memory.buffer,91000,16).fill(0x39);
+    assert.equal(await ask('draw'),1); // A second definition is captured before owner admission.
+    new Uint8Array(memory.buffer,91000,16).fill(0x59);
+    holdPublications=false;await broker.drainPublications();await f.drain();
+    const creates=f.commands.filter(c=>c.opcode===OP.RESOURCE_CREATE&&c.payload.kind==='color');
+    assert.equal(creates.length,1,'duplicate initial definition does not overwrite renderer storage');
+    assert.deepEqual([...creates[0].payload.pixels],Array(16).fill(0x19),'creation owns bytes before source reuse');
     assert.equal(f.commands.filter(c=>c.opcode===OP.DRAW).at(-1).payload.colorAttachment.id,99);
     assert.equal(await ask('draw'),1);await broker.drainPublications();await f.drain();
-    assert.equal(rpcs,initialCalls+3,'admitted named target draw stays producer-local');
+    assert.equal(rpcs,initialCalls+2,'admitted named target draw stays producer-local');
     f.set(f.program+22020,0);
     f.texture(0,f.record,f.texels,2,2);f.set(f.record+56,drawColor);
     f.set(drawColor+72,f.record);f.set(drawColor+76,0);
     holdPublications=true;
-    assert.equal(await ask('draw'),1);assert.equal(rpcs,initialCalls+3,'admitted render-target alias stays producer-local');
+    assert.equal(await ask('draw'),1);assert.equal(rpcs,initialCalls+2,'admitted render-target alias stays producer-local');
     f.set(drawColor+20,7); // The queued alias owns the original resource metadata.
     holdPublications=false;await broker.drainPublications();await f.drain();
     const alias=f.commands.filter(c=>c.opcode===OP.DRAW).at(-1).payload.textures[0].levels[0];
@@ -319,11 +328,12 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     assert.equal(f.commands.filter(c=>c.opcode===OP.CLEAR).at(-1).payload.colorAttachment.id,99);
     assert.equal(f.bridge.call(0x3000f,color,7),1);await f.drain();
     assert.equal(SnapshotState.readColor(oldChannel,original.snapshotEpoch,99),null,'release retires producer metadata');
-    assert.equal(await ask('clear'),1);await f.drain();
-    assert.equal(rpcs,calls+2,'released target requires new owner admission');
+    assert.equal(await ask('clear'),1);await broker.drainPublications();await f.drain();
+    assert.equal(rpcs,calls+1,'released target republishes its initial definition');
+    assert.equal(f.commands.filter(c=>c.opcode===OP.RESOURCE_CREATE&&c.payload.kind==='color').length,2);
     f.set(f.program+22020,0);f.set(f.desc+56,65537);
     assert.equal(await ask('clear'),-1,'invalid clear retains broker error result');
-    assert.equal(rpcs,calls+3);
+    assert.equal(rpcs,calls+2);
     new Uint8Array(memory.buffer,f.desc,64).set(saved);f.set(f.program+22016,0);f.set(72000+256+174*4,0);
     f.set(232,2);f.set(236,2);f.set(240,22);
     const reset=f.bridge.call(0x30009,200,7);await f.bridge.wait(reset);
@@ -331,7 +341,7 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     assert.equal((await ask('read')).snapshotEpoch,original.snapshotEpoch+1);
     assert.equal(posts,1,'reset propagates through shared state');
     assert.equal(await ask('draw'),1);await broker.drainPublications();await f.drain();
-    assert.equal(rpcs,calls+3,'fresh reset epoch remains producer-local');
+    assert.equal(rpcs,calls+2,'fresh reset epoch remains producer-local');
     assert(f.commands.filter(c=>c.opcode===OP.DRAW).at(-1).payload.textures[0].levels[0].pixels,
       'reset epoch must republish a texture definition');
     const release=f.bridge.call(0x30004,0,7);await f.bridge.wait(release);assert.equal(f.bridge._poll(release),1);
@@ -557,6 +567,13 @@ test('native color upload packs RGB565 rows and rejects bounds before allocation
     new Uint8Array(f.memory,94000,8).set([10,20,99,99,30,40,99,99]);
     const full=producer.captureNativeSurfaceUpload({address:90000,deviceId:7});
     assert.equal(full.pitch,2);assert.deepEqual([...full.pixels],[10,20,30,40]);
+    assert.throws(()=>producer.captureNativeColorDefinition({address:90000,deviceId:7}),/locked/);
+    assert.deepEqual(producer.captureNativeColorDefinition({address:90000,deviceId:7,uploadLocked:true}),full);
+    f.set(90056,0);
+    assert.deepEqual(producer.captureNativeColorDefinition({address:90000,deviceId:7}),full);
+    f.set(90036,0);
+    assert.throws(()=>producer.captureNativeColorDefinition({address:90000,deviceId:7}),/extent/);
+    f.set(90036,99);
     assert.throws(()=>producer.captureNativeSurfaceUpload({address:90000,deviceId:8}),/invalid color surface/);
     f.set(90052,7);
     assert.throws(()=>producer.captureNativeSurfaceUpload({address:90000,deviceId:7}),/invalid canonical color range/);
