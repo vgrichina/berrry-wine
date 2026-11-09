@@ -9,7 +9,7 @@ const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWi
 const { inputEventHwnd } = require('../lib/host-window');
 const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
   startupShowCommand, startupShowArgs,
-  stageAndLoadPeOwned, configureExeOwned, exeDriveForPath, applyVirtualAllocTop,
+  stageAndLoadPeOwned, configureExeOwned, exeDriveForPath,
   setEnvironmentVariable, handleLoadLibraryYield, serviceLoadLibraryYieldSync,
   handleComDllYield, findVfsDllBytes } = require('../lib/process-boot');
 const {
@@ -5005,18 +5005,18 @@ async function main() {
   // paths also stop mutating the local instance's guest registers.
   const mainOwner = require('../lib/guest-main-owner').createGuestMainOwner({ localExports: instance.exports });
   ctx.exports = instance.exports;
-  instance.exports.set_hwnd_base(processDesktop.hwndBase);
+  await mainOwner.call('set_hwnd_base', processDesktop.hwndBase);
   // Quiet runs silence the per-call API log from the first instruction, DLL
   // initialization included. Applied only after DllMain ran, the early calls
   // were logged (and so counted twice, by h.log and by $api_calls) and a
   // --trace-api-paused run printed them before it was switched on.
-  if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);
+  if (apiLogOff) await mainOwner.optionalCall('set_api_log', 0);
   // Process ANSI code page (ANSI_CODE_PAGE above), applied before the PE
   // is staged below. The WAT setter validates the page; pages without
   // conversion tables keep the historical identity conversion, so this is
   // observable only for CP950 today.
-  if (ANSI_CODE_PAGE && instance.exports.set_ansi_code_page) {
-    instance.exports.set_ansi_code_page(ANSI_CODE_PAGE);
+  if (ANSI_CODE_PAGE && mainOwner.supports('set_ansi_code_page')) {
+    await mainOwner.call('set_ansi_code_page', ANSI_CODE_PAGE);
     console.log(`[run] ANSI code page: ${ANSI_CODE_PAGE}`);
   }
   // CreateProcess children run under the page this process actually has
@@ -5037,8 +5037,8 @@ async function main() {
         APP_ENTRY && APP_ENTRY.expandedWorkerCodeCache === true);
     const wantHeavy = hasFlag('worker-heavy-code-cache')
       || (!hasFlag('no-worker-heavy-code-cache') && APP_ENTRY && APP_ENTRY.workerHeavyCodeCache === true);
-    if ((wantExpanded || wantHeavy) && instance.exports.set_page_index_layout) {
-      instance.exports.set_page_index_layout(wantExpanded ? 2 : 1);
+    if ((wantExpanded || wantHeavy) && mainOwner.supports('set_page_index_layout')) {
+      await mainOwner.call('set_page_index_layout', wantExpanded ? 2 : 1);
       console.log(wantExpanded
         ? '[cache] expanded-worker page-index layout: main 512 slots, workers 32 (624KiB code)'
         : '[cache] worker-heavy page-index layout: main 256 slots, workers 32');
@@ -5201,33 +5201,32 @@ async function main() {
       if (signalExitWake) signalExitWake();
     });
   }
-  if (instance.exports.set_process_id) instance.exports.set_process_id(ctx.processId);
-  if (instance.exports.set_desktop_color_depth) instance.exports.set_desktop_color_depth(APP_ENTRY?.desktopColorDepth === 8 ? 8 : 32);
-  if (NO_MMX && instance.exports.set_cpu_mmx) instance.exports.set_cpu_mmx(0);
+  await mainOwner.optionalCall('set_process_id', ctx.processId);
+  await mainOwner.optionalCall('set_desktop_color_depth', APP_ENTRY?.desktopColorDepth === 8 ? 8 : 32);
+  if (NO_MMX) await mainOwner.optionalCall('set_cpu_mmx', 0);
   // timeSetEvent callbacks on a winmm timer guest thread (the Windows model)
   // instead of the main thread's message pump. Shared memory, so set once.
   // On by default, as in the browser; `--no-mm-timer-thread` or an app's
   // `mmTimerThread: false` keeps the old main-thread delivery.
-  if (!hasFlag('no-mm-timer-thread') && (hasFlag('mm-timer-thread') || APP_ENTRY?.mmTimerThread !== false) &&
-      instance.exports.set_mm_timer_thread_mode) {
-    instance.exports.set_mm_timer_thread_mode(1);
+  if (!hasFlag('no-mm-timer-thread') && (hasFlag('mm-timer-thread') || APP_ENTRY?.mmTimerThread !== false)) {
+    await mainOwner.optionalCall('set_mm_timer_thread_mode', 1);
   }
-  if ((hasFlag('sse') || APP_ENTRY?.cpuSSE === true) && instance.exports.set_cpu_sse) {
-    instance.exports.set_cpu_sse(1);
+  if (hasFlag('sse') || APP_ENTRY?.cpuSSE === true) {
+    await mainOwner.optionalCall('set_cpu_sse', 1);
   }
-  if (VLAN_IP && instance.exports.set_vlan_local_ip) {
+  if (VLAN_IP && mainOwner.supports('set_vlan_local_ip')) {
     const octets = VLAN_IP.split('.').map(Number);
     if (octets.length !== 4 || octets.some(o => !(o >= 0 && o <= 255))) {
       console.error(`--vlan-ip: not an IPv4 address: ${VLAN_IP}`);
       process.exit(2);
     }
-    instance.exports.set_vlan_local_ip(octets.reduce((a, o) => ((a << 8) | o) >>> 0, 0) | 0);
+    await mainOwner.call('set_vlan_local_ip', octets.reduce((a, o) => ((a << 8) | o) >>> 0, 0) | 0);
     if (TRACE_NET) console.log(`[net] room address ${VLAN_IP}`);
   }
   {
     const nagle = VLAN_NAGLE_ARG !== null ? (parseInt(VLAN_NAGLE_ARG, 10) || 0)
       : (Number.isFinite(APP_ENTRY?.vlanNagleMs) ? APP_ENTRY.vlanNagleMs : 0);
-    if (nagle > 0 && instance.exports.set_vlan_nagle_ms) instance.exports.set_vlan_nagle_ms(nagle | 0);
+    if (nagle > 0) await mainOwner.optionalCall('set_vlan_nagle_ms', nagle | 0);
   }
   if (PIPE_STD && instance.exports.pipe_attach_std) {
     const byPort = new Map();
@@ -5491,7 +5490,7 @@ async function main() {
   if (WORKER_THREADS) {
     // Real parallelism: LOCK-prefixed instructions must be atomic across the
     // worker_threads (07-decoder.wat $try_emit_locked, handler 499).
-    if (instance.exports.set_lock_atomic_mode) instance.exports.set_lock_atomic_mode(1);
+    await mainOwner.optionalCall('set_lock_atomic_mode', 1);
     const { GuestThreadHost } = require('../lib/guest-thread-host');
     const sigs = JSON.parse(fs.readFileSync(
       path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
@@ -5716,11 +5715,10 @@ async function main() {
     });
   }
   // MORROWIND_NAME_ATTACH_END
-  applyVirtualAllocTop(instance.exports, VIRTUAL_ALLOC_TOP_ARG !== null
-    ? Number(VIRTUAL_ALLOC_TOP_ARG) : (APP_ENTRY && APP_ENTRY.virtualAllocTop));
-  if (CS_STEAL_AFTER && instance.exports.set_cs_steal_after) {
-    instance.exports.set_cs_steal_after(CS_STEAL_AFTER);
-  }
+  const virtualAllocTop = VIRTUAL_ALLOC_TOP_ARG !== null
+    ? Number(VIRTUAL_ALLOC_TOP_ARG) : (APP_ENTRY && APP_ENTRY.virtualAllocTop);
+  if (virtualAllocTop) await mainOwner.optionalCall('set_virtual_alloc_top', virtualAllocTop >>> 0);
+  if (CS_STEAL_AFTER) await mainOwner.optionalCall('set_cs_steal_after', CS_STEAL_AFTER);
   if (Number.isFinite(SPIN_WORK_MAX)) inheritWasm('set_spin_work_max', SPIN_WORK_MAX);
   if (Number.isFinite(SPIN_REGS_CHECK)) inheritWasm('set_spin_regs_check', SPIN_REGS_CHECK);
   applyExeCompatibilityPatches(path.basename(EXE_PATH), instance.exports, memory.buffer);
@@ -5753,9 +5751,7 @@ async function main() {
   const requiredDlls = detectRequiredDlls(exeBytes);
 
   // Initialize DirectX COM vtable thunks (must be after load_pe sets image_base)
-  if (instance.exports.init_dx_com_thunks) {
-    instance.exports.init_dx_com_thunks();
-  }
+  await mainOwner.optionalCall('init_dx_com_thunks');
 
   // Queue environment overrides before loading DLLs: a CRT's DllMain snapshots
   // GetEnvironmentStrings while it initializes. The WAT export keeps this
@@ -5775,13 +5771,13 @@ async function main() {
   }
 
   // Set emulated Windows version
-  if (WINVER && instance.exports.set_winver) {
+  if (WINVER && mainOwner.supports('set_winver')) {
     const versions = { 'win98': 0xC0000A04, 'nt4': 0x05650004, 'win2k': 0x05650005, 'winxp': 0x0A280105 };
     const v = versions[WINVER.toLowerCase()] || parseInt(WINVER);
-    if (v) { instance.exports.set_winver(v); console.log('Windows version: ' + hex(v)); }
-  } else if (shouldReportNtForDlls(requiredDlls) && instance.exports.set_winver) {
+    if (v) { await mainOwner.call('set_winver', v); console.log('Windows version: ' + hex(v)); }
+  } else if (shouldReportNtForDlls(requiredDlls) && mainOwner.supports('set_winver')) {
     const v = 0x05650004;
-    instance.exports.set_winver(v);
+    await mainOwner.call('set_winver', v);
     console.log('Windows version: ' + hex(v) + ' (auto NT for MFC42U)');
   }
 

@@ -46,7 +46,21 @@ const root=path.resolve(__dirname,'..');
     assert.equal(view.getUint32(p+12,true),identity.drive);
     assert.equal(Buffer.from(h.memory.buffer,view.getUint32(p+4,true),view.getUint32(p+8,true)).toString(),identity.name);
     assert.equal(Buffer.from(h.memory.buffer,BASE.EXTRA_CMDLINE_BUFFER,identity.args.length).toString(),identity.args);
-    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state});
+    const shadowCpu=h.exports.get_cpu_mmx(),shadowVersion=h.exports.get_winver();
+    for(const [setter,value] of [['set_cpu_mmx',0],['set_cpu_sse',1],['set_ansi_code_page',950],
+      ['set_winver',0x05650004],['set_virtual_alloc_top',0x12345000]]){
+     assert(owner.supports(setter),setter+' exists on this owner');
+     await owner.optionalCall(setter,value);
+    }
+    assert.equal(owner.supports('nonexistent_owner_setting'),false);
+    await owner.optionalCall('nonexistent_owner_setting',1);
+    const settings=await owner.read(['get_cpu_mmx','get_cpu_sse','get_ansi_code_page','get_winver','get_virtual_alloc_top']);
+    assert.deepEqual(settings,{get_cpu_mmx:0,get_cpu_sse:1,get_ansi_code_page:950,get_winver:0x05650004,get_virtual_alloc_top:0x12345000});
+    if(remote){
+     assert.equal(h.exports.get_cpu_mmx(),shadowCpu,'CPU configuration is not applied to shadow');
+     assert.equal(h.exports.get_winver(),shadowVersion,'Windows version belongs to guest owner');
+    }
+    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings});
    }finally{await worker?.stop();}
   }
  }

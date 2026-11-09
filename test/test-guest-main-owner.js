@@ -11,18 +11,33 @@ const { createMainSchedulerObserver } = require('./main-scheduler-observer');
   local.run(7);
   assert.equal(register, 7, 'local host effects remain synchronous');
   await local.call('set', -1);
+  assert.equal(local.supports('set'),true);
+  assert.equal(local.supports('absent'),false);
+  assert.equal(await local.optionalCall('absent',9),undefined);
+  assert.equal(register,-1);
   assert.deepEqual(await local.read(['get','absent']), {get:0xffffffff,absent:null});
   assert.throws(() => local.call('absent'), /missing guest export/);
   assert.throws(() => createGuestMainOwner({}), /exactly one/);
   assert.throws(() => createGuestMainOwner({localExports:{},worker:{}}), /exactly one/);
 
   let release, reject, calls = [];
+  // Valid compiled module exporting set(i32), used as the endpoint's exact
+  // capability source. The transport below deliberately fails present calls.
+  const module=new WebAssembly.Module(Uint8Array.from([
+    0,97,115,109,1,0,0,0,1,5,1,96,1,127,0,3,2,1,0,
+    7,7,1,3,115,101,116,0,0,10,4,1,2,0,11,
+  ]));
   const remote = createGuestMainOwner({worker:{
+    module,
     callExport: async (name,...args) => { calls.push([name,...args]); throw new Error('owner retired'); },
     readExports: async names => { calls.push(names); return {get:12}; },
     slice: (steps,sync) => { calls.push([steps,sync]); return new Promise((r,j)=>{release=r;reject=j;}); },
   }});
   await assert.rejects(remote.call('set',9), /owner retired/);
+  assert.equal(remote.supports('set'),true);
+  assert.equal(remote.supports('absent'),false);
+  assert.equal(await remote.optionalCall('absent',8),undefined);
+  await assert.rejects(remote.optionalCall('set',7), /owner retired/,'optional does not swallow present-export failure');
   assert.equal(register,-1,'failed remote invocation never falls back to shadow registers');
   assert.deepEqual(await remote.read(['get']),{get:12});
 
@@ -38,6 +53,6 @@ const { createMainSchedulerObserver } = require('./main-scheduler-observer');
     observer.hostInput();
     assert.equal(JSON.parse(logs.at(-1).slice('[main-scheduler] '.length)).scope,'outside-observed-main-run');
   }
-  assert.deepEqual(calls,[['set',9],['get'],[100,{tickMs:20}],[100,{tickMs:20}]]);
+  assert.deepEqual(calls,[['set',9],['set',7],['get'],[100,{tickMs:20}],[100,{tickMs:20}]]);
   console.log('PASS guest main ownership: local ordering, remote failure isolation and asynchronous slice diagnostics');
 })().catch(error=>{console.error(error);process.exitCode=1;});

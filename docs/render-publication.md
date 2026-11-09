@@ -564,6 +564,20 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   The remaining startup setters, compatibility patches and DLL initialization,
   plus inspection/input/yield paths, still require migration before enabling
   a Worker-owned main thread in the full CLI runner.
+  Pre-DLL CLI configuration now routes window-handle base, API logging, code
+  page, cache layout, process identity, desktop depth, CPU feature switches,
+  multimedia-timer mode, network settings, atomic-lock mode, virtual allocation
+  limit, CS tuning, DirectX thunk initialization and Windows version through
+  the owner. `supports`/`optionalCall` use the selected Worker's compiled
+  function-export list, never a shadow instance or an RPC failure as a
+  capability signal. Missing module metadata throws; present-export failures
+  propagate. Actual local/Node Worker tests on both WASM builds read back CPU,
+  code-page, Windows-version and allocation settings, and verify that Worker
+  configuration leaves the host shadow's local globals unchanged. Evidence:
+  `scratch/runs/20261109-cli-owner-config/test-result.json`.
+  Graphics backend attachment, environment setup, compatibility patches,
+  experiment/debug configuration and DLL initialization still have local
+  paths; the CLI continues to select a local owner until all are migrated.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
