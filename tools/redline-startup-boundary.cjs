@@ -62,7 +62,7 @@ function integrate(source=trace.integrate()){
   return source;
 }
 function fixtureSource(){return replace(trace.fixtureSource(),"[path.join(__dirname,'redline-native-trace.cjs'),'--caller']","[path.join(__dirname,'redline-startup-boundary.cjs'),'--caller']");}
-function prepare(run){const plan=trace.prepare(run),file=path.join(path.resolve(run),'runtime-pins.json'),pins=JSON.parse(fs.readFileSync(file));
+function prepare(run,options={}){const plan=trace.prepare(run,options),file=path.join(path.resolve(run),'runtime-pins.json'),pins=JSON.parse(fs.readFileSync(file));
   const b=fs.readFileSync(__filename);pins.files.push({path:provider,size:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')});fs.writeFileSync(file,JSON.stringify(pins,null,2));
   plan.argv=[process.execPath,__filename,'--fixture'];plan.env.REDLINE_STARTUP_BOUNDARY='1';plan.providers=pins.files.length;plan.startupDiagnostic='Existing readiness attempts retained; no native cause inference';fs.writeFileSync(path.join(run,'experiment-plan.json'),JSON.stringify(plan,null,2));return plan;}
 module.exports={create,writeDiagnostic,readinessSource,portPublication,integrate,fixtureSource,prepare,readinessSHA,

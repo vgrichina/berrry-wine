@@ -85,11 +85,17 @@ function integrate(source=generated()){
 }
 // Materialize small run inputs and provider references only; never copy media,
 // modules or source trees. Existing 1235 providers must still match their pins.
-function prepare(run){
+function prepare(run,options={}){
   run=path.resolve(run);assert(!fs.existsSync(run),'fresh task-owned run required');
   const root=path.resolve(__dirname,'..'),prior=path.dirname(generatedPath);
   const pins=JSON.parse(fs.readFileSync(path.join(root,prior,'runtime-pins.json')));
-  for(const p of pins.files){const b=fs.readFileSync(path.join(root,p.path));assert.equal(hash(b),p.sha256,p.path);assert.equal(b.length,p.size,p.path);}
+  if(options.currentPublishedModules===true){
+    const replacement=require('./redline-current-module.cjs').validate();
+    pins.files=replacement.files;pins.httpPins=replacement.httpPins;pins.moduleVersion=replacement.moduleVersion;pins.historicalPinset=replacement.historicalPinset;pins.explainedDrift=replacement.explainedDrift;
+  }else{
+    assert.deepEqual(options,{},'explicit supported preparation option required');
+    for(const p of pins.files){const b=fs.readFileSync(path.join(root,p.path));assert.equal(hash(b),p.sha256,p.path);assert.equal(b.length,p.size,p.path);}
+  }
   fs.mkdirSync(run,{recursive:true});
   const inputs=[];
   for(const name of ['bound-input.cjs','ordinary-keys.cjs','native-mouse.cjs','relative-input.cjs','keyboard-bridge.cjs','transport.cjs']){
