@@ -88,6 +88,7 @@ def provision_ssh_files(root, pins, remote_root, sandbox, record=lambda event: N
     # its quoting. Never interpret the CLI's own JSON errors as remote stdout.
     argv = command if command is not None else ['boat', '--no-update', 'ssh', sandbox,
             '--', 'python3', '-B', '-c', SSH_RECEIVER, remote_root]
+    record(dict(event='command', argv=argv, transport='ssh', at=time.time()))
     p = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE, start_new_session=True)
     stderr = bytearray()
@@ -153,6 +154,7 @@ def provision_ssh_files(root, pins, remote_root, sandbox, record=lambda event: N
         phase = 'receiver-ready'
         if pump(reply=True) != {'q3StreamReady': 1}:
             raise ValueError('SSH receiver readiness refusal')
+        record(dict(event='receiver-ready', reply=last_reply.decode(), at=time.time()))
         for pin in pins:
             deadline = time.monotonic() + timeout
             began = time.monotonic()
@@ -176,12 +178,14 @@ def provision_ssh_files(root, pins, remote_root, sandbox, record=lambda event: N
                 phase = 'remote-sha-size'
                 if pump(reply=True) != pin:
                     raise ValueError('SSH remote final pin refusal')
+                record(dict(event='pin-ack', reply=last_reply.decode(), at=time.time()))
                 record(dict(event='end',path=pin['path'],sent=sent,elapsed=time.monotonic()-began,remoteVerified=True))
         deadline = time.monotonic() + timeout
         phase = 'session-eof'
         pump(b'{"done":true}\n')
         if pump(reply=True) != {'done': True}:
             raise ValueError('SSH missing session seal')
+        record(dict(event='session-seal', reply=last_reply.decode(), at=time.time()))
         sel.unregister(p.stdin);p.stdin.close();p.stdin=None
         so,se=p.communicate(timeout=max(.001,deadline-time.monotonic()))
         if p.returncode or so or stdout or len(stderr)+len(se)>CHUNK:

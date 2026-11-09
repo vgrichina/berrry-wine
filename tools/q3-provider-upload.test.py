@@ -326,6 +326,10 @@ class SSHProvisionTests(unittest.TestCase):
                 self.assertEqual(events[-1]['event'],'actual-wait')
                 self.assertTrue(events[-1]['stdoutEOF'] and events[-1]['stderrEOF'])
                 if mode=='large':
+                    self.assertEqual(events[0]['event'],'command')
+                    self.assertEqual([e['reply'] for e in events if e['event']=='receiver-ready'],['{"q3StreamReady":1}'])
+                    self.assertEqual(len([e for e in events if e['event']=='pin-ack']),4)
+                    self.assertEqual([e['reply'] for e in events if e['event']=='session-seal'],['{"done":true}'])
                     self.assertEqual(hashlib.sha256((dest/'pak0.pk3').read_bytes()).hexdigest(),pins[0]['sha256'])
                     self.assertEqual((dest/'pak0.pk3').stat().st_size,46853694)
                     self.assertEqual(len([e for e in events if e['event']=='end']),4)
