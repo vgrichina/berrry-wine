@@ -21,6 +21,8 @@
 // Single cases: --width= --df= --operand= --completed= --cached --straddle
 // --handler= --fault-mode= --engine=threaded|uop|block --continue-search;
 // --matrix, --zero-count, --code-write select those groups.
+// --observe checks native_store completions; --stos selects destination-fault
+// STOS cases (use --operand=destination without --matrix).
 // Source compilation appends setup exports only, never fault/REP transforms.
 const assert = require('assert');
 const fs = require('fs');
@@ -71,7 +73,9 @@ function options(argv) {
     engine: 'threaded', zeroCount: false, continueSearch: false, codeWrite: false,
     all: argv.length === 0 };
   for (const arg of argv) {
-    if (arg === '--matrix') o.matrix = true;
+    if (arg === '--observe') o.observe = true;
+    else if (arg === '--stos') o.stos = true;
+    else if (arg === '--matrix') o.matrix = true;
     else if (arg === '--zero-count') o.zeroCount = true;
     else if (arg === '--code-write') o.codeWrite = true;
     else if (arg === '--continue-search') o.continueSearch = true;
@@ -88,6 +92,7 @@ function options(argv) {
   assert([0, 1].includes(o.df), 'df must be 0/1');
   assert([0, 3].includes(o.completed), 'completed must be 0/3');
   assert(['source', 'destination'].includes(o.operand), 'operand');
+  if (o.stos) assert(o.matrix || o.operand === 'destination', 'STOS faults require destination operand');
   assert(['plain', 'mov-eax', 'scope-like'].includes(o.handler), 'handler');
   assert([0, 3, 5].includes(o.faultMode), 'fault-mode must be 0/3/5');
   assert(!o.straddle || o.width > 1, 'a byte cannot straddle pages');
@@ -101,7 +106,7 @@ function options(argv) {
 function matrix(o) {
   const out = [];
   for (const width of [1, 2, 4]) for (const df of [0, 1])
-    for (const operand of ['source', 'destination']) for (const cached of [false, true])
+    for (const operand of o.stos ? ['destination'] : ['source', 'destination']) for (const cached of [false, true])
       for (const completed of [0, 3]) for (const straddle of width === 1 ? [false] : [false, true])
         out.push({ ...o, width, df, operand, cached, completed, straddle });
   return out;
@@ -161,7 +166,7 @@ async function boot(bytes) {
 
 function runCase(machine, o) {
   const { e, state, memory } = machine;
-  const label = `w${o.width}/df${o.df}/${o.operand}/k${o.completed}/`
+  const label = `${o.stos ? 'STOS/' : ''}w${o.width}/df${o.df}/${o.operand}/k${o.completed}/`
     + `${o.cached ? 'cached' : 'cold'}/${o.straddle ? 'straddle' : 'aligned'}/${o.handler}/mode${o.faultMode}/${o.engine}`;
   console.log(`CASE ${label}`);
   const bytes = new Uint8Array(memory.buffer);
@@ -205,7 +210,7 @@ function runCase(machine, o) {
   const sourceCells = [];
   for (let i = 0; i < N; i++) for (let b = 0; b < o.width; b++) {
     sourceCells.push({ addr: src + i * step + b, value: pattern(i, b) });
-    destCells.push({ addr: dst + i * step + b, value: pattern(i, b), element: i });
+    destCells.push({ addr: dst + i * step + b, value: o.stos ? (0x12345678 >>> (8 * b)) & 255 : pattern(i, b), element: i });
   }
   const lo = Math.min(dst, dst + (N - 1) * step);
   const hi = Math.max(dst, dst + (N - 1) * step) + o.width;
@@ -217,8 +222,8 @@ function runCase(machine, o) {
   ].filter(c => !inHole(c.addr));
 
   const prefix = [0x68, ...le32(expectedFlags), 0x9d]; // push flags; popfd
-  const rep = o.width === 1 ? [0xf3, 0xa4]
-    : o.width === 2 ? [0x66, 0xf3, 0xa5] : [0xf3, 0xa5];
+  const rep = o.width === 1 ? [0xf3, o.stos ? 0xaa : 0xa4]
+    : o.width === 2 ? [0x66, 0xf3, o.stos ? 0xab : 0xa5] : [0xf3, o.stos ? 0xab : 0xa5];
   // A tier installed at REP must be entered through a guest transfer. Mere
   // fallthrough from this earlier prologue could run the first REP threaded,
   // then enter the tier only on SEH retry after the page was already repaired.
@@ -291,13 +296,25 @@ function runCase(machine, o) {
   };
   const arm = () => {
     poke(stack, 0); e.set_esp(stack); e.set_eip(code);
+    if (o.stos) e.set_eax(0x12345678);
     e.set_esi(src); e.set_edi(dst); e.set_ecx(N);
     e.set_ebx(0x11223344); e.set_edx(0x55667788); e.set_ebp(o.engine === 'uop' ? 1 : 0x12345678);
     e.rep_fixture_flags(expectedFlags);
   };
+  let faultObserved = false;
   const execute = () => {
-    for (let batch = 0; batch < 16; batch++) {
-      e.run(1000);
+    const single = o.observe && e.native_store_get(0) && o.faultMode === 3;
+    for (let batch = 0; batch < (single ? 4096 : 16); batch++) {
+      e.run(single ? 1 : 1000);
+      if (single && (e.get_eip() >>> 0) === handler) {
+        assert.strictEqual(e.native_store_get(7), o.completed, 'epoch at first fault excludes failed element');
+        if (o.completed) {
+          assert.strictEqual(e.native_store_get(9) >>> 0, repPC, 'partial completion REP PC');
+          assert.strictEqual(e.native_store_get(10) >>> 0, (dst + (o.completed - 1) * step) >>> 0);
+          assert.strictEqual(e.native_store_get(11), o.width);
+        }
+        faultObserved = true;
+      }
       if (!(e.get_eip() >>> 0) || state.exits.length) return;
     }
     assert.fail(`${label}: did not finish within 16 bounded run slices`);
@@ -333,7 +350,26 @@ function runCase(machine, o) {
   assert.strictEqual(e.rep_fixture_mapped(o.df ? boundary : boundary - 1), 1, 'neighbor remains mapped');
   const countersBefore = { block: e.get_block_exec_runs(), leaf: e.get_block_exec_leaf_runs(),
     leafFb: e.get_block_exec_leaf_fb_runs(), uop: e.uop_stats(4), deopt: e.uop_bulk_stats(1) };
+  if (o.observe) {
+    assert.strictEqual(o.engine, 'threaded', 'observer runs threaded under its tier guard');
+    const low = Math.min(dst, dst + (N - 1) * step);
+    e.native_store_arm(low, low + N * o.width, 0, 0, 0);
+  }
   arm(); execute();
+  if (o.observe) {
+    if (o.faultMode === 3) assert(faultObserved, 'observed first fault before handler repair');
+    const repairWrites = destCells.filter(c => inHole(c.addr)).length;
+    assert.strictEqual(e.native_store_get(7), N + repairWrites,
+      'completed REP elements plus actual guest handler sentinel-byte writes; no failed/retried duplicate');
+    assert.strictEqual(e.native_store_get(8), 0, 'no overflow');
+    assert.strictEqual(e.native_store_get(9) >>> 0, repPC, 'REP prefix PC after repair');
+    assert.strictEqual(e.native_store_get(10) >>> 0, (dst + (N - 1) * step) >>> 0, 'last completed destination');
+    assert.strictEqual(e.native_store_get(11), o.width, 'element width');
+    assert.strictEqual(e.native_store_get(12), 0, 'native PC, no standalone host write');
+    console.log('OBSERVER ' + JSON.stringify({epoch:e.native_store_get(7), pc:e.native_store_get(9) >>> 0,
+      address:e.native_store_get(10) >>> 0, width:e.native_store_get(11)}));
+    e.native_store_arm(0, 0, 0, 0, 0);
+  }
   const pathEvidence = { descriptorHandler,
     blockRuns: e.get_block_exec_runs() - countersBefore.block,
     leafRuns: e.get_block_exec_leaf_runs() - countersBefore.leaf,
@@ -359,14 +395,14 @@ function runCase(machine, o) {
     flagsSavedImmediatelyAfterREP: peek(finalFlags),
     repairResult: peek(allocResult), hole, holeMapped: e.rep_fixture_mapped(hole),
     expected: { repPC, faultAddress: firstAbsent, accessKind: o.operand === 'destination' ? 1 : 0,
-      esi: src + o.completed * step, edi: dst + o.completed * step, ecx: N - o.completed,
+      esi: src + (o.stos ? 0 : o.completed * step), edi: dst + o.completed * step, ecx: N - o.completed,
       eflags: expectedFlags },
   }));
   assert.strictEqual(peek(calls), o.continueSearch ? 2 : 1,
     `${label}: actual guest raw handler called once per offered frame`);
   assert.deepStrictEqual(state.exits, [], `${label}: no unhandled exit`);
   const expected = [0xc0000005, repPC, 2, o.operand === 'destination' ? 1 : 0,
-    firstAbsent, dst + o.completed * step, src + o.completed * step,
+    firstAbsent, dst + o.completed * step, src + (o.stos ? 0 : o.completed * step),
     N - o.completed, repPC, expectedFlags, 0x11223344, 0x55667788,
     o.engine === 'uop' ? 1 : 0x12345678, 1, 0];
   const names = ['code', 'ExceptionAddress', 'NumberParameters', 'access kind', 'first absent byte',
@@ -383,7 +419,7 @@ function runCase(machine, o) {
   assert.strictEqual(peek(after), 1, `${label}: post-REP instruction exactly once`);
   assert.strictEqual(peek(finalFlags), o.engine === 'uop' ? expectedFlags | 0x44 : expectedFlags,
     `${label}: REP flags/DF (uop loop subsequently DEC's EBP to zero)`);
-  for (const [reg, value] of [['esi', src + N * step], ['edi', dst + N * step], ['ecx', 0],
+  for (const [reg, value] of [['esi', src + (o.stos ? 0 : N * step)], ['edi', dst + N * step], ['ecx', 0],
     ['ebx', 0x11223344], ['edx', 0x55667788], ['ebp', o.engine === 'uop' ? 0 : 0x12345678]]) {
     assert.strictEqual(e[`get_${reg}`]() >>> 0, value >>> 0, `${label}: final ${reg}`);
   }

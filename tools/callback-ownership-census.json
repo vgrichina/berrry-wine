@@ -9390,9 +9390,9 @@
           "$saved_eip"
         ]
       ],
-      "sha256": "5011496c6c37a0f50ac8de822100bcd206bfcfba92ecab26ec4e772803f3cffe",
+      "sha256": "efbbe4aad2df33076fa7d16ed1000a4a509eb6c1613642bc291f8574caa8132d",
       "kind": "guest-control",
-      "reason": "Mode-5 REP absent byte: sets the REP prefix EIP for the record/CONTEXT, calls the existing $seh_fault_sync nested filter walk (which owns invocation/sync depth and restores registers), then restores the interrupted EIP. No new continuation or retained context; ownership remains pending.",
+      "reason": "Mode-5 REP absent byte: sets the REP prefix EIP for the record/CONTEXT, calls the existing $seh_fault_sync nested filter walk (which owns invocation/sync depth and restores registers), then restores the interrupted EIP. No new continuation or retained context; ownership remains pending. Armed native_store diagnostic PC is saved across the existing synchronous filter and restored only if its generation is unchanged and its invalid flag is clear. No guest EIP target, filter lifetime, register restoration or ownership qualification changes (20261109-quake2-rep-store-observer-repair-1365).",
       "ownership": "pending"
     },
     {

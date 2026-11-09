@@ -208,7 +208,9 @@
     ;; the copy moves toward reads bytes the same instruction already wrote
     ;; (the LZ pattern-replication idiom): those, and sparse spans whose
     ;; backing is not linear, take the element loop.
-    (if (i32.or
+    ;; Armed observations count completed guest elements through the existing
+    ;; scalar barriers, including same-byte writes. Unarmed keeps memory.copy.
+    (if (i32.or (global.get $native_store_on) (i32.or
           (if (result i32) (global.get $df)
             (then (i32.and
                     (i32.lt_u (local.get $dst) (local.get $src))
@@ -218,7 +220,7 @@
                     (i32.lt_u (local.get $dst) (i32.add (local.get $src) (local.get $bytes))))))
           (i32.or
             (i32.eqz (call $string_guest_range_contiguous (local.get $dst) (local.get $bytes)))
-            (i32.eqz (call $string_guest_range_contiguous (local.get $src) (local.get $bytes)))))
+            (i32.eqz (call $string_guest_range_contiguous (local.get $src) (local.get $bytes))))))
       (then
         (local.set $d (local.get $edi))
         (local.set $s (local.get $esi))
@@ -269,7 +271,9 @@
     (local.set $v (i64.and (local.get $v) (local.get $mask)))
     (local.set $b (i32.and (i32.wrap_i64 (local.get $v)) (i32.const 0xFF)))
     (call $invalidate_code_write (local.get $dst) (local.get $bytes))
-    (if (call $string_guest_range_contiguous (local.get $dst) (local.get $bytes))
+    ;; Match MOVS: only armed runs pay for per-element $gs completion notes.
+    (if (i32.and (i32.eqz (global.get $native_store_on))
+                 (call $string_guest_range_contiguous (local.get $dst) (local.get $bytes)))
       (then
         (local.set $wa (call $g2w (local.get $dst)))
         (if (i64.eq (local.get $v)
@@ -338,6 +342,7 @@
   ;; element from scratch (a filter may also have decommitted something).
   (func $rep_fault_sync (param $a i32) (param $write i32) (param $pc i32) (result i32)
     (local $saved_eip i32) (local $ok i32)
+    (local $store_pc i32) (local $store_generation i32)
     (if (i32.eqz (i32.and
           (i32.and (i32.ge_u (local.get $a) (i32.const 0x10000))
                    (i32.eqz (global.get $fault_raising)))
@@ -345,11 +350,20 @@
                    (i32.ne (call $virtual_reserved_contains (local.get $a)) (i32.const 0)))))
       (then (return (i32.const 0))))
     (local.set $saved_eip (global.get $eip))
+    (if (global.get $native_store_on) (then
+      (local.set $store_pc (global.get $native_store_pc))
+      (local.set $store_generation (global.get $native_store_generation))))
     (global.set $eip (local.get $pc))
     (global.set $rep_fault_write (local.get $write))
     (local.set $ok (call $seh_fault_sync (local.get $a)))
     (global.set $rep_fault_write (i32.const 0))
     (global.set $eip (local.get $saved_eip))
+    ;; A synchronous guest filter reenters run(), whose exit clears the PC.
+    ;; Resume the outer REP context only for the same valid armed observer.
+    (if (global.get $native_store_on) (then
+      (if (i32.and (i32.eqz (global.get $native_store_invalid))
+                   (i32.eq (global.get $native_store_generation) (local.get $store_generation)))
+        (then (global.set $native_store_pc (local.get $store_pc))))))
     (i32.and (i32.ne (local.get $ok) (i32.const 0))
              (i32.ne (call $guest_addr_mapped (local.get $a)) (i32.const 0))))
 

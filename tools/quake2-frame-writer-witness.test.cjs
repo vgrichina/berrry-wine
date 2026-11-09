@@ -87,14 +87,14 @@ for(const name of ['stable','increment','multi','sameByte','publication','rawHos
  }
  if(name==='publication'){
   assert.equal(onRun.row.rejectedFrame.predicates.motionEqual,false);
-  const b=interval.ranges.publishedRing;assert.equal(b.delta,0);assert.equal(b.last,null);
-  assert.equal(s.limits.bulkAndLockedStores,'UNKNOWN','real REP publication bypasses the gs witness');
+  const b=interval.ranges.publishedRing;assert.equal(b.delta,60);assert.equal(b.last.pc,0x403527);assert.equal(b.last.address,w.RING+(17&15)*240+236);assert.equal(b.last.width,4);
+  assert.equal(s.limits.bulkAndLockedStores,'UNKNOWN','remaining bulk/locked coverage is not generalized');
  }
  if(['stable','peer','rawHost'].includes(name)){
   assert.equal(interval.ranges.current.delta,0);assert.equal(interval.ranges.current.last,null);
   assert.equal(onRun.row.playerMotion.status,'SNAPSHOT');
  }
- if(['frameClear','clientClear'].includes(name)){assert.equal(interval.ranges.current.delta,0);assert.equal(onRun.row.rejectedFrame.predicates.motionEqual,false);}
+ if(['frameClear','clientClear'].includes(name)){const a=interval.ranges.current;assert.equal(a.delta,60);assert.equal(a.last.pc,name==='frameClear'?0x403342:0x409221);assert.equal(a.last.address,w.FRAME+236);assert.equal(a.last.width,4);assert.equal(onRun.row.rejectedFrame.predicates.motionEqual,false);}
  if(name==='sameByte'){assert.equal(interval.ranges.current.delta,1);assert.equal(onRun.row.playerMotion.status,'SNAPSHOT');}
  if(name==='hostExport'){assert.equal(interval.ranges.current.last.host,1);assert.equal(interval.ranges.current.nativePC,false);}
  if(name==='multi'){const a=interval.ranges.current;assert.equal(a.delta,2);assert.equal(a.last.pc,0x402bed);assert.match(a.history,/last completion only/);}
