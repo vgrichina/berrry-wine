@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed sharedcaller d90eb457c once4649SHA488gzip; exact quitACK plus launchwait/EOF handles orderly shutdown,26PIPEcontrols/buildPASS OFFLINE. Fresh quake2-orderly-upper-route-0940 integrates pins/actual invocation then native+original after Q30924 exact UUIDa35c3041 archivephysicaldrain. Preserve HP/motion terminal limits.
+  Next: Reviewed2df7262e/3c6a7ccd once1790SHA435gzip plus1truncated offline stream explicitly excluded. Whole fixture ordinaryjoinedquit PASS380reaps; originalpane brokenHP100 thenfirstHP98 terminal causeUNKNOWN336reaps. UUIDdd4d3a48 archivedstop7ef0 expiry10:06:42. Fresh quake2-frame-damage-cause-1005 OFFLINE exact original evidence/source diagnosis or bounded passive reader; no unchanged retry.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedb7cb69cb3/eca128b73 once439SHA372gzip. ParkedHTTPownerPASS then100msEnter lateDOWN3546msUP3547ms firstterminal;166reaps archivedUUIDa35c3041 stop7aee. Fresh q3-bounded-delivery-repair-0950 OFFLINE actualcomposedinput correction/diagnostics no capsrelaxation or native retry; actualBoatcancelNOTPROVEN.
+  Next: Reviewed1642990fe6cb once3089SHA2653gzipPASS. Actualcomposed4oldFAIL7newPASS boundedDOWN and independentUP failure receipt no cap/timerchange buildPASS OFFLINE. Fresh q3-bounded-native-progress-1005 integrates exacthelper and wholefixture, existingactualBoatcancel prerequisite beforeoriginal; sole runtime after Redline0955 UUID257e096f exactarchiveddrain. LatencyapplicationUNKNOWN.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
