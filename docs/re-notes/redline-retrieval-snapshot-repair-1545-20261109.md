@@ -65,3 +65,24 @@ unchanged. Per-stop fsync cost is unmeasured; native readiness is false.
 Next work requires separately authorized current Redline preparation, including
 the new memory adapter in its staged closure; no native authorization follows
 from these offline controls.
+
+Recovery 1565 used a fresh session after worker 1545 died without a final report.
+Inspection found its four files already committed as `d7459f3f6`; no unreported
+test result was accepted. Fresh evidence lives in
+`scratch/runs/20261109-redline-snapshot-recovery-1565/`, with its exact starting
+Git SHA and a small patch for the recovery changes. Added executable controls
+reject growth and truncation during fd capture, and check the explicit INVALID
+classification and matching snapshot hash for an empty command log.
+
+Before further testing, nine inherited raw journals were losslessly compressed,
+independently decompressed and compared byte for byte, recovering 14,124,822
+bytes. `lossless-compression.json` retains original and compressed SHA-256,
+sizes and the restoration recipe. No unique evidence was discarded. The four
+1515 invalid gzip files were independently rehashed and remain INVALID.
+The recovery reran the snapshot CLI suite, all nine original caller scenarios,
+four launcher tests, four observer tests, 46 kernel tests, eight reaper tests,
+14 readiness-boundary scenarios, and the required locked build; all passed.
+Fresh large journals were also compressed only after their tests completed,
+with byte-for-byte recovery verification and a separate manifest. Shared
+providers remain byte-identical to the initial repair baseline. No new runtime
+authorization or readiness conclusion follows from this recovery.

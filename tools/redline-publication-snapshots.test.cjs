@@ -81,6 +81,29 @@ async function main(){
   fs.writeFileSync(gz,bytes);assert.throws(()=>adapter.retrieve(invalid,{maxCustodyBytes:cap}),undefined,name);results.push({name,expected:'INVALID'});
  }
  fs.writeFileSync(gz,good);
+ // Race inside the fd capture as well as at the Python handoff. A short read
+ // or changed descriptor size must fail before any validation is attempted.
+ for(const mode of ['grow-during-read','truncate-during-read']){
+  const dir=path.join(base,mode);fixture(dir);
+  const read=fs.readSync,open=fs.openSync;let target,changed=false;
+  fs.openSync=function(file,...args){const fd=open.call(this,file,...args);if(file===path.join(dir,'kernel-command.log'))target=fd;return fd;};
+  fs.readSync=function(fd,...args){
+   if(fd===target&&!changed){changed=true;
+    if(mode==='grow-during-read')fs.appendFileSync(path.join(dir,'kernel-command.log'),'grew');
+    else fs.truncateSync(path.join(dir,'kernel-command.log'),0);
+   }
+   return read.call(this,fd,...args);
+  };
+  try{assert.throws(()=>adapter.retrieve(dir),/evidence (grew|changed)/);assert(changed);}
+  finally{fs.readSync=read;fs.openSync=open;}
+  results.push({name:mode,expected:'INVALID'});
+ }
+ const emptyLog=path.join(base,'empty-command-log');fixture(emptyLog);
+ fs.writeFileSync(path.join(emptyLog,'kernel-command.log'),'');
+ const emptyReport=adapter.retrieve(emptyLog);
+ assert.equal(emptyReport.commandLog.valid,false);assert.equal(emptyReport.commandLog.error,'empty evidence INVALID');
+ assert.equal(emptyReport.commandLog.sha256,emptyReport.artifacts['kernel-command.log'].sha256);
+ results.push({name:'empty-command-log',expected:'INVALID',report:emptyReport.commandLog});
  for(const mode of ['fifo','symlink','growth']){
   const dir=path.join(base,'initial-'+mode);fixture(dir);const f=path.join(dir,'kernel-command.log');
   if(mode==='growth')fs.truncateSync(f,64*1024*1024+1);
