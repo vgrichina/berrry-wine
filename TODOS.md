@@ -72,15 +72,15 @@
 
 - [ ] Redline vehicle entry: locate work delaying native keyboard polling
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
-  status: durable journal barriers repaired; final native fixture still fails startup before input
+  status: startup and locked menu selection pass; capture-trace repair under native garage test
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed eb97ea8a4/fb30cd15a: sealed final adapter and actual generated-consumer controls pass; native fixture fails unchanged DevToolsActivePort100x100ms at21:36:33Z, cause UNKNOWN. All97 owned tasks reaped; two incomplete browser gzip streams retained as failures. Root verified bx_94j9nfsm STOPPED after independent artifact verification and normal stop. Fresh redline-final-startup-service-repair-2145 investigates retained startup service evidence; no unchanged replay.
+  Next: Reviewed 9ec30be84/7c473d9fa: durable service repair passes native startup; current locked cursor selection reaches Stadium City. Capture-trace deadline remains open in that reviewed run; all owned tasks reaped and root verified normal stopped boxes. Fresh redline-command-trace-deadline-repair-2230 passes loading into the garage and is reviewing camera turns toward the car. Side-door contact, entry and driving remain unverified.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
-  status: native input fixture passes; original capture deadline and automatic terminal close need repair
+  status: bounded live pak provisioning passes; current fixture observer paths need correction before gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed c367007f7/86f26f1af: actual pending-stop and durable CONT controls pass; recoverable phase sources tracked. Native fixture raw input replies pass; original third relative click receives raw replies, then screenshot388 remains pending18.037s at first terminal deadline. Automatic Browser.close after that fault is a conformance gap. Root verified bx_bun9s6rz STOPPED with all owned tasks reaped and independent artifacts. Fresh q3-terminal-cleanup-capture-repair-2145 repairs terminal cleanup and investigates capture before conditional gameplay; unchanged guards.
+  Next: Reviewed 5cc350b5e/f4511c967: real 46.9MB pak transferred in 12 bounded HTTP chunks, independently verified remote SHA/size, assembly and both phase barriers. Fixture image produced but task-local observer watched obsolete paths; unchanged checkpoint failed before input or original launch. Terminal cleanup sent zero Browser.close; all161 tasks reaped. Root verified bx_7w69crw8 STOPPED with exact normal receipt. Fresh q3-current-observer-arena-2250 derives paths from generated phase layout and preflights review gating before fixture and conditional original movement/fire. Alive arena and both-backend progress remain open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
@@ -123,7 +123,7 @@
   status: done for pickup/equipment/action; target damage and kill remain unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published905dab22b records original Conjurer Jack acquiring Force of Nature Staff of Recharge, inventory fourth-slot/held-model/HUD change, then green action effects and charge3→2. Coordinator personally inspected six paired captures and independently verified490 artifact references plus normal nonforced archived-box shutdown. Worker ended143 during finalization, cause unknown, without outer final/result; recovered note explicitly preserves this interruption and the DOM recorder's missing mouse-up coverage. No emulator fix, target hit/kill, GL, FPS, audio or full-playability claim. Note: docs/re-notes/nox-native-equipment-20261108.md.
-  Next: Reviewed 3c1acf80f/0d1c4e88c: actual durable CONT barriers including first unlinked EXIT pass. Native original reacquired staff charge3 and full health; coordinator reviewed open-floor barrel aim. Request47 used unsupported action mouse and refused before firing; no target damage claim. Automatic evaluation/Browser.close after refusal needs repair. Root verified bx_7mwsptuf STOPPED after independent artifacts and all tasks reaped. Fresh nox-terminal-cleanup-valid-shot-2150 repairs terminal cleanup and validates supported click commands before conditional native shot.
+  Next: Reviewed ca5880f011/f2c46566bd: real kernel race fails before repair and passes after durable-service creation rescan; missing-lineage and exec controls still refuse. Native fixture146/146 and original343/343 complete lineage. Original reached Bunker, then task-local omitted capture label caused terminal review refusal before staff pickup or shot. Root verified bx_6cre9386 STOPPED with exact normal receipt. Fresh nox-labeled-command-target-2255 validates generated labeled commands before one conditional original staff/target attempt. Prior accepted pickup/action evidence stands; target damage remains open.
 
 - [x] World Circuit v1.03 original installation and native driving
   id: NEW-GAME-WORLD-CIRCUIT-V103-20261107
