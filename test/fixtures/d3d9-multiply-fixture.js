@@ -10,7 +10,7 @@ function product(left,right){
  }
  return out;
 }
-function fixture({defaultTarget=false,colorUpload=false}={}){
+function fixture({defaultTarget=false,colorUpload=false,surfaceUpload=false}={}){
  const BASE=0x400000,b=Buffer.alloc(0x30200),raw=rva=>rva-0x1000+0x200,p=0x80,o=p+24,s=o+0xe0;
  b.writeUInt16LE(0x5a4d);b.writeUInt32LE(p,0x3c);b.writeUInt32LE(0x4550,p);
  b.writeUInt16LE(0x14c,p+4);b.writeUInt16LE(1,p+6);b.writeUInt16LE(0xe0,p+20);b.writeUInt16LE(0x010e,p+22);
@@ -149,8 +149,14 @@ function fixture({defaultTarget=false,colorUpload=false}={}){
    dev(30,[[SRC],RECT,[RT],POINT]); // UpdateSurface, with later source reuse.
    emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xffabcdef));
   }
+  if(surfaceUpload){
+   object(RT,13,[LR,0,0],'LockRect writable target');
+   emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xff445566));
+   object(RT,14,[],'UnlockRect writable target');
+   emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xffabcdef));
+  }
   object(RT,13,[LR,0,16],'LockRect rendered '+c.name);
-  if(colorUpload){emit(0x8b,0x15,u32(LR+4),0x8b,0x02);expect(0xff112233,'owned uploaded pixel '+c.name);}
+  if(colorUpload||surfaceUpload){emit(0x8b,0x15,u32(LR+4),0x8b,0x02);expect(surfaceUpload?0xff445566:0xff112233,'owned uploaded pixel '+c.name);}
   // Copy the actual public readback while locked, including row pitch. These
   // pixels produce evidence captures; they never supply the scalar oracle.
   for(let y=0;y<32;y++){

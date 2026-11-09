@@ -206,7 +206,8 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
         }
         try {
           guardHeld=!['unguardedClear','unguardedDraw'].includes(m.t);
-          const value=m.t==='upload'?built.imports.host.gpu_gl_call(0x30015,d.desc,0):
+          const value=m.t==='surfaceUpload'?built.imports.host.gpu_gl_call(0x30011,90000,7):
+            m.t==='upload'?built.imports.host.gpu_gl_call(0x30015,d.desc,0):
             m.t==='draw'||m.t==='unguardedDraw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):
             m.t==='clear'||m.t==='unguardedClear'?built.imports.host.gpu_gl_call(0x30003,d.desc,0):built.readSnapshotState(7);
           parentPort.postMessage({t:'result',id:m.id,value});
@@ -286,6 +287,15 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     f.set(f.desc+36,2);assert.equal(await ask('upload'),-1,'invalid extent preserves broker result');
     assert.equal(rpcs,uploadCalls+1);
     new Uint8Array(memory.buffer,f.desc,64).set(drawDesc);
+    const surfaceCalls=rpcs;
+    f.set(drawColor+56,1);new Uint8Array(memory.buffer,91000,16).fill(0x37);
+    holdPublications=true;
+    assert.equal(await ask('surfaceUpload'),1);assert.equal(rpcs,surfaceCalls,'native locked upload captures without page RPC');
+    new Uint8Array(memory.buffer,91000,16).fill(0x55);f.set(drawColor+56,0);
+    holdPublications=false;await broker.drainPublications();await f.drain();
+    const whole=f.commands.filter(c=>c.opcode===OP.RESOURCE_UPDATE&&c.payload.kind==='color').at(-1).payload;
+    assert.equal(whole.rect,undefined);assert.equal(whole.pitch,8);
+    assert.deepEqual([...whole.pixels],Array(16).fill(0x37));
     const calls=rpcs;assert.deepEqual(await ask('read'),original);assert.equal(rpcs,calls,'read stays local');
     const saved=new Uint8Array(memory.buffer,f.desc,64).slice();
     f.set(f.desc+40,72000);f.set(72000+256+174*4,1);
@@ -542,6 +552,15 @@ test('native color upload packs RGB565 rows and rejects bounds before allocation
     new Uint8Array(f.memory,94000,6).fill(0);
     assert.equal(captured.resource,null);assert.equal(captured.pitch,2);
     assert.deepEqual([...captured.pixels],[10,20,30,40]);
+    for(const [offset,value]of [[8,7],[12,0xd3d90006],[20,1],[24,2],[28,23],[36,99],[40,94000],[48,4],[52,8],[56,1]])
+      f.set(90000+offset,value);
+    new Uint8Array(f.memory,94000,8).set([10,20,99,99,30,40,99,99]);
+    const full=producer.captureNativeSurfaceUpload({address:90000,deviceId:7});
+    assert.equal(full.pitch,2);assert.deepEqual([...full.pixels],[10,20,30,40]);
+    assert.throws(()=>producer.captureNativeSurfaceUpload({address:90000,deviceId:8}),/invalid color surface/);
+    f.set(90052,7);
+    assert.throws(()=>producer.captureNativeSurfaceUpload({address:90000,deviceId:7}),/invalid canonical color range/);
+    f.set(90052,8);
     producer.options.commandCapacityBytes=3;
     assert.throws(()=>producer.captureNativeColorUpdate({address:f.desc}),/byte budget/);
     producer.options.commandCapacityBytes=1024;

@@ -66,7 +66,7 @@ publish owned API4 commands. The first call establishes the endpoint through
 the broker. Named color targets and render-target texture aliases use shared
 owner-admission metadata once their storage exists. Unknown resources,
 unavailable lifecycle state and missing guards retain ordered broker handling;
-resource creation/release and lock/unlock upload publication remain open.
+resource creation/release publication remains open.
 
 `DrawProducer.captureNativeColorUpdate` is the common page/guest decoder for
 the native UpdateSurface/StretchRect upload descriptor (opcode0x30015). It
@@ -74,8 +74,7 @@ validates destination bounds, format, source stride/range and allocation budget,
 then owns only the requested rows with padding removed. The guest publishes
 under the native state guard and checks the endpoint epoch again after capture.
 The receiver consumes the neutral update result before retiring its publication
-reference. Subsequent readbacks remain ordered behind the upload. Opcode0x30011
-LockRect/UnlockRect synchronization retains its existing broker/result path.
+reference. Subsequent readbacks remain ordered behind the upload.
 Invalid or unadmitted uploads fall back before publication; an accepted upload
 never carries a borrowed guest-memory view.
 
@@ -94,6 +93,27 @@ GetDesc to select the matching source format. Failed attempts are retained in
 the corresponding `-software` and `-software-diagnostic` evidence folders.
 Native direct/Worker color surface and shared GL protocol regressions also pass.
 These tests establish ownership and ordering, not a gameplay FPS improvement.
+
+Writable surface UnlockRect uploads (opcode0x30011) now use the same owned
+RESOURCE_UPDATE publication path. `captureNativeSurfaceUpload` shares native
+identity/range validation between the broker and guest producer and packs full
+surface rows without padding. Only this upload resolver permits a locked native
+record: the native unlock handler holds the D3D guard and clears its lock after
+the import has captured/published the bytes. Draw and clear resolvers still
+reject locked resources. Read locks/readbacks retain their synchronous broker
+result, fenced behind all previous publications. Unadmitted surfaces retain the
+existing broker behavior, and a native read-only unlock issues no upload.
+
+The `--surface-upload` generated-PE fixture writes through LockRect, unlocks,
+reuses the old pixel storage, and reads back the original uploaded pixel. Every
+normal/compat WebGL/software run (diagnostics on/off) records exactly three
+published writable-unlock uploads, with no read-only unlock uploads. Evidence:
+`scratch/runs/20261109-d3d-unlock-webgl/test-result.json` and
+`scratch/runs/20261109-d3d-unlock-software/test-result.json`. Transport tests hold
+consumption during pixel reuse, check packed RGB565 rows, wrong-device rejection
+and inconsistent native size; all21 snapshot cases and native direct/Worker
+color-surface regressions pass. No gameplay FPS gain is inferred from these
+correctness checks.
 
 OpenGL retains native `gl_object_leave` publication under the shared-object
 lock. Removing that native flush would break completed cross-thread texture
