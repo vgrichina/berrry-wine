@@ -390,6 +390,16 @@ function prepare(destination,{inputs=[]}={}){
     assert.equal(options.nativeLifecycleVersion,lifecycle.version,'explicit native lifecycle version');
     assert.equal(path.basename(destination),'prepared','owning lifecycle prepared directory');
     generated=lifecycle.generate(destination,options.nativeLifecycleVersion);
+    // Q3 alone batches the authenticated custody journal at its existing
+    // durable executable-CONT barriers. Shared providers remain immutable.
+    const custodyAdapter='tools/q3-startup-custody.py';
+    version.files.push(pin(custodyAdapter,read(custodyAdapter)));
+    generated=generated.map(file=>{
+      const before='from native_kernel_custody import supervise,identity';
+      assert.equal(file.source.split(before).length,2,'unique Q3 native custody import');
+      return {...file,source:file.source.replace(before,
+        "from native_kernel_custody import identity\nimport runpy\nsupervise=runpy.run_path(str(root/'tools/q3-startup-custody.py'))['supervise']")};
+    });
     version.nativeLifecycleVersion=lifecycle.version;
     version.files.push(pin('tools/q3-versioned-native-lifecycle.cjs',read('tools/q3-versioned-native-lifecycle.cjs')));
     for(const file of generated)version.files.push(pin(file.path,Buffer.from(file.source)));
