@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed06a42152c once903 regular SHA-size65validgzipCRC; four inherited-writer stdout/stderr EMPTYgzip INVALID preserved despite seal labels. Actual optin caller CLI ninecases/buildPASS; cancellationbrowserwaitUNKNOWN no nativeReady claim. Fresh redline-retrieval-snapshot-repair-1545 fixes actual retrieval bounded-snapshot/reopen race with offline executable tests. Preserve1495frozenclosure no native retry.
+  Next: Reviewed06a42152c903SHA-size65validgzip fourEMPTYINVALID. Redline1545 stoppedexit1 sessionrecording threadnotfound nofinal/acceptance WIPpreserved. Fresh redline-snapshot-recovery-1565 recovers actualbounded snapshot/reopen repair ownnewhelper/test; executable actualretrieval race/cap/drift negatives controls/build publish required. Q21555soleNEXT Q31535closure frozen no native retry.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
