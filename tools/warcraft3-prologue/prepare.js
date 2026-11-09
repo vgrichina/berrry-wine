@@ -17,18 +17,19 @@ if(process.argv[2]==='--native'){
  for(const n of ['startup.js','native-composition.js','renderer-identity.js','staging.js']){
   const rel='tools/warcraft3-prologue/'+n,b=fs.readFileSync(path.join(root,rel));files.set(rel,{path:rel,size:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')});
  }
- // The native supervisor is part of the prepared production closure. Retain
- // the exact published EXIT-before-queued-CONT, cancellation and EXEC repair.
+ // Keep the published lineage/EXEC providers; pin the reviewed cancellation
+ // scheduling repair separately so existing prepared runtimes stay immutable.
  const custodyCommit='4341b87723a7d56bc98223215cca4cdc878fcae2';
+ const custodySha256='5ec810c4d4704ff86afc367b38f7335edf1214e3450ebb98a62ce3df6386b5fe';
  for(const rel of ['tools/native_kernel_custody.py','tools/native_custody_reaper.py','tools/native-startup-barrier.py']){
   const b=fs.readFileSync(path.join(root,rel)),published=cp.execFileSync('git',['show',custodyCommit+':'+rel],{cwd:root});
-  if(!b.equals(published))throw Error('published native custody drift '+rel);
+  if(rel==='tools/native_kernel_custody.py'?crypto.createHash('sha256').update(b).digest('hex')!==custodySha256:!b.equals(published))throw Error('published native custody drift '+rel);
   files.set(rel,{path:rel,size:b.length,sha256:crypto.createHash('sha256').update(b).digest('hex')});
  }
  new (require('node:vm').Script)(require('./native-composition').compose({root}));
  fs.mkdirSync(destination,{recursive:true});
  fs.writeFileSync(path.join(destination,'compose.cjs'),"require("+JSON.stringify(path.join(root,'tools/warcraft3-prologue/native-composition.js'))+").run(__dirname);\n",{flag:'wx'});
- const pins={...original,commit:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),custodyCommit,files:[...files.values()]};
+ const pins={...original,commit:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),custodyCommit,custodySha256,files:[...files.values()]};
  pins.httpPins=(original.httpPins||[]).map(p=>{const row=files.get(p.url.slice(1));if(!row)throw Error('missing HTTP provider '+p.url);return {...p,size:row.size,sha256:row.sha256}});
  require('./staging').validate(root,pins.files);
  fs.writeFileSync(path.join(destination,'runtime-pins.json'),JSON.stringify(pins,null,2),{flag:'wx'});

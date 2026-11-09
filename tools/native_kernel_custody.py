@@ -237,9 +237,11 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 # Never put up to sixteen output fsyncs ahead of that stop.
                 if peek is None:
                     pump_output()
-            fork_wait = peek and peek.si_code == os.CLD_TRAPPED and peek.si_status in (
-                (1 << 8)|signal.SIGTRAP, (2 << 8)|signal.SIGTRAP, (3 << 8)|signal.SIGTRAP)
-            if cancellation and not fork_wait:
+            # Consume an observed wait before issuing more cancellation work.
+            # A fatal group signal can make every sibling's EXIT stop ready;
+            # broadcasting (and durably logging) all remaining signals first
+            # can exhaust cleanup while withholding those real waits and EOF.
+            if cancellation and peek is None:
                 sig = signal.SIGKILL if time.monotonic()-cancel_at >= .25 else signal.SIGTERM
                 retired = {r['pid'] for r in reaped}
                 for target, registered in list(owned.items()):
@@ -253,6 +255,9 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     except (ProcessLookupError, FileNotFoundError):
                         log('cancellation-identity-unavailable', pid=target, start=registered['start'], signal=sig)
                     sent.add((target, sig))
+                    # Re-scan kernel stops/deadlines between signals, including
+                    # when one signal has already terminated the whole group.
+                    break
             if peek is None and resumes:
                 # Cancellation does not waive the creator barrier. A linked
                 # creator can immediately exit_group, and delivery of a fatal
