@@ -52,11 +52,12 @@ function attachPage(binding,{maxBoundaries=64,exe=null}={}) {
 function attach(binding,options={}){return attachPage(binding,{...options,exe:binary().receipt});}
 // Return executable source for the owning page realm. Setup may await the one
 // explicit arm command; the installed six-copy observer is entirely synchronous.
-function pageSource({globalName,identity,maxBoundaries=64,limit=0}={}){
+function pageSource({globalName,identity,maxBoundaries=64,limit=0,installationToken=null}={}){
  if(typeof globalName!=='string'||!/^[$A-Z_a-z][$\w]{0,127}$/.test(globalName))throw Error('writer witness global name');
  if(!Number.isInteger(maxBoundaries)||maxBoundaries<12||maxBoundaries>1024)throw Error('bounded witness capacity');
  if(!Number.isInteger(limit)||limit<0||limit>2147483647)throw Error('bounded writer limit');
  if(!identity||!Number.isInteger(identity.processId)||!Number.isInteger(identity.endpoint))throw Error('owning page identity');
+ if(installationToken!==null&&(typeof installationToken!=='string'||!installationToken))throw Error('installation token');
  const options={maxBoundaries,exe:binary().receipt};
  return `(async()=>{
   const a=runningApps.length===1&&runningApps[0],w=a&&a.wine,identity=${JSON.stringify(identity)};
@@ -66,10 +67,29 @@ function pageSource({globalName,identity,maxBoundaries=64,limit=0}={}){
   const objects={processObject:w,endpointObject:l,workerObject:l.worker,moduleObject:l.module,pageRendererObject:w.renderer,canvasObject:document.getElementById('screen')};
   if(!s||s.epoch!==identity.epoch||Object.entries(objects).some(([key,value])=>!value||s.ids.get(value)!==identity[key]))throw Error('owning page identity changed');
   if(globalThis[${JSON.stringify(globalName)}])throw Error('writer witness global already bound');
-  const binding=await w.armQuake2WriterObservation(${JSON.stringify({limit})});
-  if(runningApps.length!==1||runningApps[0]!==a||a.wine!==w)throw Error('owning page replaced during arm');
-  globalThis[${JSON.stringify(globalName)}]=(${attachPage.toString()})(binding,${JSON.stringify(options)});
-  return {status:'ARMED',generation:binding.receipt.generation,nativeQualification:false};
+  const key=${JSON.stringify(globalName)},token=${JSON.stringify(installationToken)};
+  let cancelled=false,binding,finish;
+  const settled=new Promise(resolve=>{finish=resolve;});
+  const pending={installationToken:token,close(){cancelled=true;return settled;}};
+  globalThis[key]=pending;
+  try{
+   binding=await w.armQuake2WriterObservation(${JSON.stringify({limit})});
+   if(cancelled||globalThis[key]!==pending||runningApps.length!==1||runningApps[0]!==a||a.wine!==w||!w.running||w._stopped||
+    w.processId!==identity.processId||w.guestWorker?.link!==l||l.endpointIdentity!==identity.endpoint||
+    globalThis.__mcmPassiveIdentityV1!==s||s.epoch!==identity.epoch||
+    Object.entries(objects).some(([key,value])=>!value||s.ids.get(value)!==identity[key])||
+    l.worker!==objects.workerObject||l.module!==objects.moduleObject||w.renderer!==objects.pageRendererObject||
+    document.getElementById('screen')!==objects.canvasObject)throw Error('owning page replaced during arm');
+   // Validate the actual host binding before installing any reader callback.
+   binding.snapshot();
+   const observer=(${attachPage.toString()})(binding,${JSON.stringify(options)});
+   globalThis[key]=Object.freeze({...observer,installationToken:token});
+   return {status:'ARMED',generation:binding.receipt.generation,nativeQualification:false};
+  }catch(e){
+   try{await binding?.close();}catch(_){} // Preserve the first setup failure.
+   if(globalThis[key]===pending)delete globalThis[key];
+   throw e;
+  }finally{finish();}
  })()`;
 }
 module.exports={attach,attachPage,pageSource};

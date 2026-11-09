@@ -27,20 +27,30 @@ const providers=Object.freeze({
   "scratch/runs/20261109-quake2-observed-guard-route-0105/keyboard-bridge.cjs": "b17df90ee4fa4fca0ba30ed576e69a7af9879c172cfe48ed093245272c25ed0f"
 });
 function replaceOnce(source,before,after){assert.equal(source.split(before).length,2,'missing/nonunique Q2 integration: '+before);return source.replace(before,after);}
-function compose(){
+function compose({custodyVersion=process.env.QUAKE2_NATIVE_CUSTODY_VERSION}={}){
+ // Separately selected diagnostic-retention revision. The historical default
+ // still refuses current bytes; unknown versions and unexplained drift fail.
+ // Selection only changes checked provider metadata, not generated behavior.
+ assert(custodyVersion===undefined||custodyVersion==="publishedf977ebf7c",'unknown Q2 custody version');
+ const selectedCustody=custodyVersion==="publishedf977ebf7c"?"3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240":custodySha256;
  const references=Object.entries(providers).map(([file,hash])=>{const b=fs.readFileSync(path.join(root,file));assert.equal(crypto.createHash('sha256').update(b).digest('hex'),hash,'Q2 provider changed: '+file);return {path:file,sha256:hash,size:b.length};});
- for(const file of ['tools/quake2-native-driver-composition.cjs','tools/quake2-passive-attack.cjs','lib/quake2-owning-load-core.js','tools/quake2-native-launch-client.py','tools/q3-native-launch-client.py','tools/quake2-native-input.cjs','tools/quake2-native-transport.cjs','tools/native-browser-close.cjs','tools/native-command-log.cjs','tools/native-devtools-ready.cjs','tools/native_kernel_custody.py']){
+ for(const file of ['tools/quake2-native-driver-composition.cjs','tools/quake2-passive-attack.cjs','tools/quake2-native-witness-install.cjs','tools/quake2-shared-writer-witness.cjs','tools/quake2-frame-writer-witness.cjs','lib/quake2-owning-load-core.js','tools/quake2-native-launch-client.py','tools/q3-native-launch-client.py','tools/quake2-native-input.cjs','tools/quake2-native-transport.cjs','tools/native-browser-close.cjs','tools/native-command-log.cjs','tools/native-devtools-ready.cjs','tools/native_kernel_custody.py']){
   const b=fs.readFileSync(path.join(root,file)),sha256=crypto.createHash('sha256').update(b).digest('hex');
-  if(file==='tools/native_kernel_custody.py')assert.equal(sha256,custodySha256,'tested Q2 custody provider required');
+  if(file==='tools/native_kernel_custody.py')assert.equal(sha256,selectedCustody,'tested Q2 custody provider required');
   if(orderlyCallers[file])assert.equal(sha256,orderlyCallers[file],'tested Q2 orderly caller required: '+file);
   references.push({path:file,sha256,size:b.length});
  }
  const retainedSource=fs.readFileSync(path.join(root,consumerPath),'utf8');let source=retainedSource;
  source=replaceOnce(source,"const run=__dirname,root=path.resolve(run,'../../..')",`const run=path.resolve(process.env.QUAKE2_NATIVE_RUN),root=${JSON.stringify(root)}`);
  source=replaceOnce(source,"t=require('./transport.cjs')","t=require(root+'/tools/quake2-native-transport.cjs')");
- source=replaceOnce(source,'chain=bound.createChain({evaluate,send,workers,pageSession,',"chain=require(root+'/tools/quake2-passive-attack.cjs').createChain(bound,{evaluate,send,workers,pageSession,");
+ source=replaceOnce(source,'chain=bound.createChain({evaluate,send,workers,pageSession,',"chain=require(root+'/tools/quake2-native-witness-install.cjs').createChain(bound,{writerWitnessSetup:process.env.QUAKE2_NATIVE_WRITER_WITNESS==='1',cleanupEvaluate:writerCleanup,evaluate,send,workers,pageSession,");
  source=replaceOnce(source,'for(const p of pins.files){',`for(const ref of ${JSON.stringify(references)})assert(pins.files.some(p=>p.path===ref.path&&p.sha256===ref.sha256&&p.size===ref.size),'staged production Q2 provider required: '+ref.path);for(const p of pins.files){`);
- source=replaceOnce(source,'let diskTimer;',`let terminalFailure=null;const terminalAbort=new AbortController();
+ source=replaceOnce(source,'let diskTimer;',`let writerTeardownExpression=null;
+async function writerCleanup(expression){
+ writerTeardownExpression=expression;
+ try{return await evaluate(expression);}finally{writerTeardownExpression=null;}
+}
+let terminalFailure=null;const terminalAbort=new AbortController();
 function checkTerminal(){
  if(!terminalFailure&&fs.existsSync(run+'/caller-cancelled.json'))observeTerminal('caller input revoked');
  if(terminalFailure)throw terminalFailure;
@@ -60,7 +70,7 @@ let diskTimer;`);
  const abort=()=>{clearTimeout(timer);terminalAbort.signal.removeEventListener('abort',abort);reject(terminalFailure);};
  const timer=setTimeout(done,ms);terminalAbort.signal.addEventListener('abort',abort,{once:true});
 })`);
- source=replaceOnce(source,'const n=++id;const timer=',"if(method!=='Browser.close'&&!(method==='Input.dispatchKeyEvent'&&params.type==='keyUp'))checkTerminal();const n=++id;const timer=");
+ source=replaceOnce(source,'const n=++id;const timer=',"if(method!=='Browser.close'&&!(method==='Input.dispatchKeyEvent'&&params.type==='keyUp')&&!(closing&&method==='Runtime.evaluate'&&writerTeardownExpression!==null&&params.expression===writerTeardownExpression))checkTerminal();const n=++id;const timer=");
  source=replaceOnce(source,"pending.delete(n);reject(Error('CDP UNKNOWN '+method+'; no replay'));","pending.delete(n);const error=Error('CDP UNKNOWN '+method+'; no replay');reject(error);if(method!=='Browser.close')observeTerminal(error);");
  source=replaceOnce(source,"ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));","try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));}catch(e){observeTerminal(e);reject(e);}");
  source=replaceOnce(source,'async function capture(label){','async function capture(label){checkTerminal();');
@@ -89,6 +99,7 @@ async function closeOnce(reason,workEnd){
  closing=true;clearTimeout(timer);clearInterval(diskTimer);save('close-reason.json',{at:new Date().toISOString(),reason});
  let receipt,failure;
  try{
+  if(chain?.closeWriterWitness)try{await chain.closeWriterWitness();}catch(e){process.exitCode=1;save('writer-teardown-unknown.json',{error:String(e),noReplay:true});observeTerminal(e);}
   if(browser){
    // Quit's close is nested inside command work, never an extra 30 seconds.
    // Leave 100ms for the numbered ACK; independent cleanup retains its 30s cap.
