@@ -50,7 +50,7 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed aa3913efc5 original score50 stomp and floorlanding PNG;33 accepted choices, no onward/exit.1453indexedSHA sizes pass with six original localgzip UNKNOWN retained; box bx_3zcmeteb archived stop_64e3904c896da4ae physicaldrained. First snowy pillars are background scenery; target actual interactive coin/block or exit.0251 stopped beforeallocation on diskfloor, now restored. Fresh supertux-interactive-onward-0300 PID901506 thread01a1be3c-c333-7173-bc3f-43bf7a51a175 waits Warcraft0244 exact release then ONE original, prompt personalreview aims<=8s under unchanged12s. Reuse unchanged prepared checks by hash; explicit airborne neutral200 only. Full27/parity/audio/FPS open.
+  Next: Reviewed0300 setup Pause PNG score50coins2 alreadypresent; no client initialcapture, firstchoice disabled beforeHTTP/input and no new progress.552indexedSHA sizes534gzipCRC PASS; box bx_bw4vg5br archived stop_063972e579437d2e physicallydrained. Fresh supertux-client-capture-onward-0320 PID933137 thread01a1be51-2ab9-7ce0-9222-f6e7207ccf1a explicitly requests/inspects reviewclients initialcapture before firstchoice, then new coin/block/exit. Q20301 release03:16:04 permits ONEoriginal; unchanged CPU/caps observationOFF df0932repair, prompt personalreview aims<=8s within12s. Full27/parity/audio/FPS open.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
