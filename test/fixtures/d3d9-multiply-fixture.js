@@ -144,7 +144,7 @@ function fixture({defaultTarget=false,colorUpload=false,surfaceUpload=false}={})
  dev(89,[0x42]);for(const [state,value] of [[137,0],[7,0],[22,1]])dev(57,[state,value]);set(2,I);set(3,I);
  original.forEach((v,i)=>{v.slice(0,3).forEach((n,j)=>write(V+i*16+j*4,bits(n)));write(V+i*16+12,0xff28c864);});
  for(const [ci,c] of cases.entries()){
-  dev(43,[0,0,1,0xff000000,bits(1),0]);
+  dev(35,[[RT],0,0xff000000],0,'ColorFill explicit geometry background');
   if(c.multiply){set(256,scale);mul(256,translate,'rendered multiply');}else set(256,c.m);
   dev(83,[4,1,V,16]);matrix(Array(16).fill(0));dev(44,[256,M]); // immutable lowered draw, not live matrix reference
   if(colorUpload){

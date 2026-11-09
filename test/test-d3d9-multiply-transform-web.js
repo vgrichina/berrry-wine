@@ -47,8 +47,9 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
     const digest=await crypto.subtle.digest('SHA-256',moduleBytes),hash=[...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,'0')).join('');
     const Base=D3D9Host.Bridge,getModule=WineAssembly.getWasmModule;
     D3D9Host.Bridge=class extends Base{
-     constructor(options){super({...options,worldProvenance:enabled});this.publishedDraws=0;this.publishedUploads=0;this.publishedSurfaceUploads=0;this.publishedColorDefinitions=0;this.publishedRetirements=0;}
+     constructor(options){super({...options,worldProvenance:enabled});this.publishedDraws=0;this.publishedUploads=0;this.publishedSurfaceUploads=0;this.publishedColorDefinitions=0;this.publishedRetirements=0;this.publishedClears=0;}
      submitSnapshot(command){
+      if(command.opcode===D3DCommandStream.OPCODES.CLEAR)this.publishedClears++;
       if(command.opcode===D3DCommandStream.OPCODES.RESOURCE_RELEASE)this.publishedRetirements++;
       this.publishedColorDefinitions+=(command.colorDefinitions||[]).length;
       if(command.opcode===D3DCommandStream.OPCODES.DRAW)this.publishedDraws++;
@@ -80,6 +81,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
       publishedDraws:bridge.publishedDraws,publishedUploads:bridge.publishedUploads,publishedSurfaceUploads:bridge.publishedSurfaceUploads,
       publishedColorDefinitions:bridge.publishedColorDefinitions,
       publishedRetirements:bridge.publishedRetirements,
+      publishedClears:bridge.publishedClears,
       traceErrors:bridge.worldTraceErrors||0,tracePackets:bridge.worldTracePackets?.size||0,history:rows,logs,
       queueStates:[...bridge.devices].map(([id,e])=>({id,queue:e.queue?.snapshot(),lastError:String(e.queue?.error||'')}))};
      check(status,'bounded generated PE completion '+JSON.stringify(result));
@@ -90,6 +92,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
         'guest draws publish after default or named target admission');
       if(!defaultTarget)check(result.publishedColorDefinitions>0,'named storage is created through guest publication');
       if(!defaultTarget)check(result.publishedRetirements>0,'final unbound target retires through guest publication');
+      check(result.publishedClears===3,'three ColorFill backgrounds publish through shared CLEAR commands');
       if(colorUpload)check(result.publishedUploads>0,'actual guest color uploads publish');
       if(surfaceUpload)check(result.publishedSurfaceUploads===3,
         'three writable unlocks publish; readonly unlocks publish nothing');

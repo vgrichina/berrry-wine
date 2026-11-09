@@ -208,6 +208,7 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
           guardHeld=!['unguardedClear','unguardedDraw'].includes(m.t);
           const value=m.t==='surfaceUpload'?built.imports.host.gpu_gl_call(0x30011,90000,7):
             m.t==='retire'?built.imports.host.gpu_gl_call(0x3000f,90000,7):
+            m.t==='fill'?built.imports.host.gpu_gl_call(0x30014,d.desc,0):
             m.t==='upload'?built.imports.host.gpu_gl_call(0x30015,d.desc,0):
             m.t==='draw'||m.t==='unguardedDraw'?built.imports.host.gpu_gl_call(0x30001,d.desc,0):
             m.t==='clear'||m.t==='unguardedClear'?built.imports.host.gpu_gl_call(0x30003,d.desc,0):built.readSnapshotState(7);
@@ -319,6 +320,18 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     holdPublications=false;await broker.drainPublications();await f.drain();
     assert.deepEqual(f.commands.filter(c=>c.opcode===OP.CLEAR).at(-1).payload,expected,'consumer sees owned pre-mutation clear');
     assert.deepEqual(expected.rects,[[1,0,2,2]]);
+    const clearDescriptor=new Uint8Array(memory.buffer,f.desc,64).slice();
+    // The draw scissor remains [1,0,2,2], but ColorFill names a full explicit target.
+    for(const [offset,value]of [[24,drawColor],[28,0xff204060],[32,0],[36,0],[44,2],[48,2]])f.set(f.desc+offset,value);
+    holdPublications=true;
+    assert.equal(await ask('fill'),1);assert.equal(rpcs,calls,'ColorFill captures in its guest producer');
+    f.set(f.desc+28,0xffffffff);f.set(f.desc+44,1);
+    holdPublications=false;await broker.drainPublications();await f.drain();
+    const filled=f.commands.filter(c=>c.opcode===OP.CLEAR).at(-1).payload;
+    assert.deepEqual(filled.rects,[[0,0,2,2]],'ColorFill ignores the draw scissor');
+    assert.deepEqual(filled.color,[32/255,64/255,96/255,1]);
+    assert.equal(filled.colorAttachment.id,99);assert.equal(filled.depthAttachment,null);
+    new Uint8Array(memory.buffer,f.desc,64).set(clearDescriptor);
     assert.equal(await ask('unguardedClear'),1);await f.drain();
     assert.equal(rpcs,calls+1,'missing native guard retains synchronous capture');
     const color=90000;

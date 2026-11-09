@@ -112,6 +112,21 @@ WASM and diagnostics off/on all pass with exact preceding geometry/upload pixels
 Evidence: `scratch/runs/20261109-d3d-retire-{webgl,software}/test-result.json`.
 These do not prove gameplay performance or the remaining cross-API lifetimes.
 
+ColorFill (native opcode0x30014) uses `RenderClear.captureNativeColorFill` in
+both the guest producer and page bridge. It names its destination explicitly,
+owns its rectangle/color, and ignores draw viewport, scissor, channel mask and
+depth attachment. It publishes ordinary API4 CLEAR commands, including an
+initial color definition when needed; startup fills also deliver the endpoint
+channel for subsequent publication. Invalid captures keep the broker's error
+path. Delayed-publication tests mutate the descriptor before admission and
+verify original pixels/rectangle metadata and scissor independence. The public
+x86 geometry fixture uses three ColorFill backgrounds and requires exactly
+three published clears before checking its readback pixels on both renderers
+and both WASM builds, diagnostics off/on. Evidence:
+`scratch/runs/20261109-d3d-colorfill-{webgl,software}/test-result.json`.
+Native direct/Worker ColorFill tests cover bound-target independence, subrects,
+invalid extents, locks and RGB565 destinations. No new performance claim.
+
 `DrawProducer.captureNativeColorUpdate` is the common page/guest decoder for
 the native UpdateSurface/StretchRect upload descriptor (opcode0x30015). It
 validates destination bounds, format, source stride/range and allocation budget,
@@ -188,8 +203,10 @@ Glide publishes ordinary batch packets; open/close, swap and readback retain
 their existing synchronous contracts. Each Glide packet's execution boundary
 is retained, including front-buffer publication. Direct3D publishes descriptors
 for already-leased buffers; those buffers still retire through its existing
-completion counters. No extra copy of D3D vertices is introduced. Direct3D9's
-separate validation/resource operations retain their existing synchronous path.
+completion counters. No extra copy of D3D vertices is introduced. Eligible
+Direct3D9 draws, clears, color uploads/definitions and resource retirement use
+API4 snapshots described above; result-bearing lifecycle/readback calls retain
+their existing synchronous contracts.
 
 Synchronous broker requests with graphics dependencies fence earlier shared publications before
 dispatch. Publication admission is not GPU completion. Existing render-worker
@@ -274,7 +291,8 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   Activation validation: production GuestRpc/WorkerLink tests hold publication,
   mutate texels, verify original pixels, reuse resident texture references,
   and require fresh definitions after reset. Missing native guards, invalid
-  draws and unknown color targets preserve broker handling. The generated x86
+  draws preserve broker handling. Unknown colors now carry initial definitions.
+  The generated x86
   multiply-transform fixture's `--default-target` mode exercises the implicit
   backbuffer; normal and compatibility builds each publish two draws without
   page-side draw capture, then public LockRect pixels match its independent
@@ -353,18 +371,19 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   no more messages, while a recreated device or reused thread slot receives
   a fresh delivery. A real-thread test drives the production RPC and WorkerLink
   and checks local reads, reset, recreation, stale generations and slot reuse.
-  Draw and named-color-target capture remain to be wired. Default-target clears
+  Draw and named-color-target capture are now wired as described above. Clears
   use `RenderClear.captureNative` in both the page and guest paths, so viewport,
   scissor, rectangle, depth/stencil and attachment validation have one decoder.
   Guest capture requires the current instance's `d3d_state_guard_held()` export,
-  a ready lifecycle channel and no independently bound color storage. It copies
+  a ready lifecycle channel. Named colors use admitted metadata or owned initial
+  definitions. Capture copies
   the complete descriptor, checks the epoch again, and publishes through API4.
-  Initial calls, older WASM without the guard export, unguarded calls, named
-  targets and rejected captures retain the ordinary broker. The receiver still
+  Initial calls, older WASM without the guard export, unguarded calls and
+  rejected captures retain the ordinary broker. The receiver still
   validates epoch/generation at admission. A real Worker/RPC test delays
   admission, mutates guest color/rectangles, verifies the original clipped clear
-  and checks that the eligible call adds no RPC. It also checks named-target,
-  missing-guard and invalid-input fallbacks. The transport fixture supplies a
+  and checks that the eligible call adds no RPC. It also checks named-target
+  publication, missing-guard and invalid-input fallbacks. The transport fixture supplies a
   guard test double; the separate native two-instance test proves the production
   export distinguishes the owner, a competing instance and nested/outer return.
   Native color-surface and depth/stencil regressions pass; both normal/compat
