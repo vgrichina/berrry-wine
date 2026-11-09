@@ -521,7 +521,25 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   cleanup. An owning guest-main Worker keeps this native stack alive using the
   existing local Worker wait and is the browser's current supported topology;
   extending that topology to the CLI is an alternative to a full native-caller
-  continuation migration, but neither is implemented by this diagnostic.
+  continuation migration. The probe now supports `--worker-main`, using the
+  production `GuestThreadHost`/`guest-worker.js` slot-0 transport under Node
+  rather than an imitation Worker import table. With `--require-preserved`,
+  this route passes the same independent 100ms hold and host-dependent release
+  cases: elapsed 101.615ms and 21.607ms, respectively, with return value 0x1234,
+  one pre-call increment, one completion and restored synchronous depth. The
+  host-dependent release is gated on the guest's pre-call side effect, then
+  delayed 20ms, so it cannot accidentally pass by releasing before dispatch.
+  Its order is `send entered -> callback entered while owner held -> host
+  serviced owner request -> send returned`. Evidence:
+  `scratch/runs/20261109-d3d-callback-owner-gated/probe.json`; the matching local
+  control remains a strict failure in `20261109-d3d-callback-local-gated`.
+  This validates the Node owning-Worker route for this callback case, not a
+  completed migration of `test/run.js`: that runner still supplies
+  `localMainExports`, runs local native slices and uses synchronous exports for
+  startup, inspection, input and DLL/yield handling. Those operations must move
+  to the owning endpoint together; making only its ordinary `run` asynchronous
+  would leave guest state mutations on the idle shadow. The production Node
+  probe also does not establish rendering throughput or full CLI flag parity.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
