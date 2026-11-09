@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed6bc4d87eb once13SHA-size independentPASS code18oldmissing/newvalues controls exactreadorder unchangedacceptance healthterminal. Fresh quake2-rejected-frame-native-progress-1265 soleeligiblefiniteRuntime wholefixture beforeoriginal guarddoor aim; retain/decode existingfirstreject rawvalues nofollowupread waiver or retry.
+  Next: Reviewed141057726 once796SHA-size359gzipCRC independentPASS personallyviewedHP100 lastPNG; nativefirstreject motionEqualFALSE current0xe8 byte5to9 sameframe586 HP100 published570unchanged after5ACK nofurtherinput; box73881327 archived22c9. Fresh quake2-frame-byte-writer-repair-1315 OFFLINE mapactualfield/writers ordering and provenrepair or concrete diagnostic; noacceptancewaiver retry.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
