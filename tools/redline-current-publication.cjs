@@ -36,6 +36,7 @@ function phases(run,label,write=(name,value)=>require('./redline-startup-boundar
  };
 }
 function prebrowserSource(source){
+ source=require('./redline-command-trace.cjs').integrate(source);
  source=require('./redline-menu-planning.cjs').integrate(source);
  const replace=(a,b)=>{assert.equal(source.split(a).length,2,'actual prebrowser phase seam: '+a);source=source.replace(a,b);};
  replace("if(ws?.readyState===1){const n=++id;","if(!firstFailure&&ws?.readyState===1){const n=++id;");
@@ -56,6 +57,7 @@ function validate(selected,startupVersion){
  const prior=JSON.parse(raw),expected=Object.fromEntries(Object.entries(builds).map(([name,p])=>[name,{path:name,...p}])),seen=new Set(),explainedDrift=[];
  if(startupVersion!==undefined)Object.assign(expected,require('./redline-current-startup.cjs').admissionPins());
  expected['tools/redline-menu-planning.cjs']=pin('tools/redline-menu-planning.cjs',read('tools/redline-menu-planning.cjs'));
+ expected['tools/redline-command-trace.cjs']=pin('tools/redline-command-trace.cjs',read('tools/redline-command-trace.cjs'));
  for(const p of prior.files){assert(!seen.has(p.path),'duplicate historical pin');seen.add(p.path);}
  for(const commit of new Set([cpu,...Object.values(published),'06a42152c','d7459f3f6','daa44c07c']))
   for(const target of ['HEAD','origin/main'])git(['merge-base','--is-ancestor',commit,target]);
