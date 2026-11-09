@@ -3939,22 +3939,35 @@ class WineAssembly {
   //
   // Only when the page asked for it AND the document is cross-origin isolated,
   // because a shared WebAssembly.Memory cannot reach a Worker otherwise. Any
-  // failure here falls back to the normal single-threaded path rather than
+  // failure here normally falls back to the single-threaded path rather than
   // taking the launch down with it — single-threaded is a supported mode, not a
-  // degraded one (docs/design-real-threads.md §3.6).
+  // degraded one (docs/design-real-threads.md §3.6). An explicit owning Quake II
+  // observation request requires that owner and must fail closed instead.
   async _maybeStartGuestWorker(wasmModule) {
-    if (this._watAppRequested) return;
     if (typeof window === 'undefined') return;
-    if (!window.WINE_THREADS) return;
+    // Capture the request before any await; changing a page flag during init
+    // cannot turn failed required observation into an unobserved launch.
+    const quake2ObservationRequired = window.WINE_QUAKE2_LOAD_OBSERVATION === true;
+    if (this._watAppRequested) {
+      if (quake2ObservationRequired) throw new Error('Quake II owning observation requires an x86 guest');
+      return;
+    }
+    if (!window.WINE_THREADS) {
+      if (quake2ObservationRequired) throw new Error('Quake II owning observation requires guest Workers');
+      return;
+    }
     if (this.threads === false) {
+      if (quake2ObservationRequired) throw new Error('Quake II owning observation conflicts with threads: false');
       this.logToUI('[threads] this app opts out (threads: false) — running single-threaded');
       return;
     }
     if (!(typeof crossOriginIsolated !== 'undefined' && crossOriginIsolated)) {
+      if (quake2ObservationRequired) throw new Error('Quake II owning observation requires cross-origin isolation');
       this.logToUI('[threads] not cross-origin isolated — running single-threaded');
       return;
     }
     if (typeof GuestThreadHost !== 'function') {
+      if (quake2ObservationRequired) throw new Error('Quake II owning observation requires GuestThreadHost');
       this.logToUI('[threads] lib/guest-thread-host.js not loaded — running single-threaded');
       return;
     }
@@ -3996,7 +4009,7 @@ class WineAssembly {
         memory: this.memory,
         module: wasmModule,
         drakanModuleBytes,
-        quake2LoadObservation: window.WINE_QUAKE2_LOAD_OBSERVATION === true,
+        quake2LoadObservation: quake2ObservationRequired,
         quake2NativeWriteObservation: window.WINE_QUAKE2_NATIVE_WRITE_OBSERVATION === true,
         sigs,
         hostImports: this._mainImports.host,
@@ -4067,6 +4080,11 @@ class WineAssembly {
       if (this._stopped) return;
       if (this.instance && this.instance.exports && this.instance.exports.set_lock_atomic_mode) {
         this.instance.exports.set_lock_atomic_mode(0);
+      }
+      // Owner retirement above remains mandatory on attachment failure. Keep
+      // the actual init error as the cause, and never admit cooperative boot.
+      if (quake2ObservationRequired) {
+        throw new Error(`Quake II owning observation startup failed: ${err.message}`, { cause: err });
       }
       this.logToUI(`[threads] worker start failed (${err.message}) — running single-threaded`);
     }
