@@ -7,6 +7,7 @@ scripts and evidence are inputs only; no allocation is performed here.
 import argparse
 import ast
 import gzip
+import hashlib
 import importlib.util
 import json
 import os
@@ -16,6 +17,44 @@ import runpy
 import subprocess
 import sys
 import time
+
+CHECKPOINT_VERSION = 'q3-checkpoint-b993419a5-v1'
+CHECKPOINT_PROVIDERS = {
+    'tools/q3-checkpoint-observer.py': 'c4e9a8fb96359877416be3268786199606270104efc8aacf00df305d8f8c2957',
+    'tools/q3-cancellation-stream-eof.py': '416dc166d4c92fb59ddb254bd4ffd312f02aea8a6ba244e8a5cd67aadf049f47',
+    'tools/q3-native-launch-client.py': 'd3b9927b17372e74ef0abc8f43b59e709b1822d4927d7793c0153b07cda6509d',
+}
+
+
+def require_checkpoint(root, pins):
+    """Explicit version only; verify and import the complete Python closure.
+
+    Imported providers define functions only. No child, custody supervisor or
+    browser is executed. Ordinary pinsets keep the existing separate EOF path.
+    """
+    version = pins.get('checkpointObserverVersion')
+    if version is None:
+        return
+    if version != CHECKPOINT_VERSION:
+        raise ValueError('unsupported Q3 checkpoint observer version')
+    by_path = {p['path']: p for p in pins['files']}
+    for name, expected in CHECKPOINT_PROVIDERS.items():
+        if name not in by_path or by_path[name]['sha256'] != expected:
+            raise ValueError('missing/stale Q3 checkpoint provider: ' + name)
+        data = (root/name).read_bytes()
+        if len(data) != by_path[name]['size'] or hashlib.sha256(data).hexdigest() != expected:
+            raise ValueError('changed Q3 checkpoint provider: ' + name)
+        namespace = runpy.run_path(str(root/name), run_name='q3_prelaunch_checkpoint_import')
+        # A runpy parse alone would miss the stream helper's deferred client.
+        if name.endswith('q3-cancellation-stream-eof.py'):
+            namespace['client'](root)
+    caller = pins.get('checkpointCaller')
+    if not isinstance(caller, str) or caller not in by_path:
+        raise ValueError('missing generated Q3 checkpoint caller')
+    for name in ('control.py', 'physical_gate.py', 'cancellation_gate.py'):
+        if str(Path(caller).with_name(name)) not in by_path:
+            raise ValueError('missing Q3 checkpoint caller transitive input: ' + name)
+    compile((root/caller).read_bytes(), caller, 'exec')
 
 
 def identity(pid):
@@ -94,6 +133,7 @@ def main():
         if str(provider.relative_to(root)) not in paths:
             raise ValueError('missing prelaunch provider: ' + str(provider))
     require_composition(root, pins)
+    require_checkpoint(root, pins)
     receipt = run / 'startup-barrier.json'
     barrier.publish(root, manifest, receipt)
     # Bind the actual runtime's top-level imports, including native custody,
