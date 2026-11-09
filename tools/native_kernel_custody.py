@@ -161,6 +161,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             value = exit_wait()
             if value: return value
         if cancellation or parked or resumes:
+            superseding = None
             for task, row in list(owned.items()):
                 if task in exec_transfers: continue
                 if any(r['pid'] == task for r in reaped): continue
@@ -170,6 +171,15 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                         (1 << 8)|signal.SIGTRAP, (2 << 8)|signal.SIGTRAP,
                         (3 << 8)|signal.SIGTRAP):
                     return value
+                if value and task in resumes and superseding is None:
+                    superseding = value
+            # A queued CONT belongs to the stop already consumed. Group exit
+            # or de_thread can replace it with a new EXIT/EXEC stop while the
+            # resume is queued. Consume that real status before CONT: otherwise
+            # we silently release an unrecorded stop (and lose EXEC's required
+            # leader EXIT binding). Pending creators still take precedence.
+            if superseding is not None:
+                return superseding
         return exit_wait() if cancellation else None
     # Parent never uses Popen.poll()/wait(): those can reap an unrecorded child.
     pid = os.fork()

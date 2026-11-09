@@ -617,6 +617,164 @@ class ContinueRace(unittest.TestCase):
             self.assertEqual(drain['unreaped'],[]);self.assertEqual(drain['remaining'],[])
 
 
+class SupersededResume(unittest.TestCase):
+    def test_real_group_exit_and_exec_replace_queued_stop(self):
+        for kind in ('normal', 'cancel', 'exec'):
+            for version in ('before', 'fixed'):
+                with self.subTest(kind=kind, version=version), tempfile.TemporaryDirectory() as tmp:
+                    base=Path(os.environ.get('CUSTODY_QUEUED_EVIDENCE',tmp))
+                    run=Path(tempfile.mkdtemp(prefix=kind+'-'+version+'-',dir=base))
+                    result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                        '--queued-stop-fixture',str(run),kind,version],capture_output=True,text=True,timeout=15)
+                    (run/'fixture-process.json').write_text(json.dumps(dict(wait=result.returncode,
+                        stdout=result.stdout,stderr=result.stderr,stdoutEOF=True,stderrEOF=True)))
+                    self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                    waits=json.loads((run/'queued-waits.json').read_text())
+                    self.assertEqual(waits['watchdogWait'],-15)
+                    self.assertFalse((run/'watchdog-fired.json').exists())
+                    barrier=json.loads((run/'queued-barrier.json').read_text())
+                    self.assertEqual(barrier['siStatus'],1541) # actual PTRACE_EVENT_EXIT
+                    drain=json.loads((run/'kernel-drain.json').read_text())
+                    rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+                    cont=json.loads((run/'queued-cont.json').read_text())
+                    self.assertEqual(cont['pendingStatus'],1541 if version=='before' else None)
+                    actual=json.loads((run/'actual-waits.json').read_text())
+                    exit_waits=[r for r in actual if r['pid']==barrier['pid'] and
+                        os.WIFSTOPPED(r['status']) and r['status']>>16==6 and r['at']<cont['at']]
+                    self.assertEqual(len(exit_waits),int(version=='fixed'))
+                    exits=[r for r in rows if r['kind']=='pre-exit-stop' and r['pid']==barrier['pid']]
+                    self.assertEqual(bool(exits),version=='fixed')
+                    self.assertEqual(drain['complete'],not(kind=='exec' and version=='before'))
+                    self.assertEqual(waits['supervisorWait'],int(kind=='cancel' or (kind=='exec' and version=='before')))
+                    if kind=='exec' and version=='before':
+                        self.assertIn('unbound nonleader exec',drain['failure'])
+                        self.assertTrue(drain['unreaped'])
+                        continue
+                    self.assertEqual(drain['unresolvedLineage'],[])
+                    for key in ('remaining','unreaped','unresolvedPtrace','unresolvedResumes'):
+                        self.assertEqual(drain[key],[])
+                    self.assertTrue(drain['commandLog']['eof'])
+                    self.assertEqual(bool(drain['cancellation']),kind=='cancel')
+                    self.assertEqual(len(drain['execTransfers']),int(kind=='exec'))
+                    by_sequence={r['sequence']:r for r in rows}
+                    for receipt in drain['reaped']:
+                        witness=by_sequence[receipt['beforeReapSequence']]
+                        self.assertEqual((receipt['pid'],receipt['start']),(witness['pid'],witness['start']))
+                        self.assertEqual(receipt['status'],by_sequence[receipt['sequence']]['status'])
+                    for key in ('journal','commandLog'):
+                        receipt=drain[key];data=gzip.decompress((run/receipt['path']).read_bytes())
+                        self.assertEqual(hashlib.sha256(data).hexdigest(),receipt['originalSha256'])
+                        self.assertEqual(len(data),receipt['originalBytes'])
+                        self.assertTrue(receipt['closed'])
+                    self.assertEqual(json.loads((run/'isolated-waits.json').read_text())['adoptedWaits'],[])
+
+
+def queued_stop_fixture(run,kind,version):
+    """Replace a consumed stop with a real EXIT before its queued CONT.
+
+    The parent forks a multithread child. Its running nonleader terminates the
+    group or execs while the leader is stopped; no wait result is synthesized.
+    """
+    run=Path(run).resolve()
+    source=r'''
+#include <pthread.h>
+#include <unistd.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <string.h>
+static int do_exec;
+static void *actor(void *p) {
+  close(creat("actor-ready",0600));
+  while(access("terminate",F_OK))usleep(1000);
+  if(do_exec) { execl("/bin/true","true",(char *)0);_exit(87); }
+  _exit(0);
+}
+int main(int argc,char **argv) {
+  if(chdir(argv[1]))return 80;
+  do_exec=!strcmp(argv[2],"exec");
+  pid_t child=fork();if(child<0)return 81;
+  if(child) { int status;return waitpid(child,&status,0)==child && status==0?0:82; }
+  pthread_t t;if(pthread_create(&t,0,actor,0))return 83;
+  while(access("actor-ready",F_OK))usleep(1000);
+  raise(SIGUSR1);
+  return 84;
+}
+'''
+    with tempfile.TemporaryDirectory() as tmp:
+        c=Path(tmp)/'fixture.c';binary=Path(tmp)/'fixture'
+        c.write_text(source)
+        subprocess.run(['cc','-O2','-pthread',str(c),'-o',str(binary)],check=True,timeout=10)
+        (run/'native-inputs.json').write_text(json.dumps(dict(inputs=[dict(name=p.name,
+            size=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest()) for p in (c,binary)],
+            recovery='Regenerate queued_stop_fixture from Git; cc -O2 -pthread fixture.c -o fixture.')))
+        gate_read,gate_write=os.pipe()
+        supervisor=os.fork()
+        if supervisor==0:
+            os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
+            module=kernel
+            if version=='before':
+                import types
+                revision='9ab247857d0f5b341d2502d8b7191a20b4dfd762'
+                data=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+                assert hashlib.sha256(data).hexdigest()=='a2d9ca6f74bdb193e017c3b340a450ee0b0b13736030e0d512ff500b26fda9b3'
+                module=types.ModuleType('before');exec(compile(data,revision,'exec'),module.__dict__)
+            waitpid,waitid,trace=os.waitpid,os.waitid,module.ptrace
+            selected=[];actual=[]
+            def consume(task,flags):
+                result=waitpid(task,flags)
+                if result[0]:actual.append(dict(pid=result[0],status=result[1],at=time.time()))
+                if result[0] and os.WIFSTOPPED(result[1]) and os.WSTOPSIG(result[1])==signal.SIGUSR1:
+                    assert not selected
+                    selected.append(task)
+                    (run/'terminate').write_text('1')
+                    due=time.monotonic()+2
+                    while time.monotonic()<due:
+                        value=waitid(os.P_PID,task,os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|kernel.WALL)
+                        if value and value.si_code==os.CLD_TRAPPED and value.si_status==1541:
+                            (run/'queued-barrier.json').write_text(json.dumps(dict(pid=task,
+                                siStatus=value.si_status,at=time.time(),consumedStatus=result[1])))
+                            if kind=='cancel':os.kill(os.getpid(),signal.SIGTERM)
+                            break
+                        time.sleep(.001)
+                    else:raise AssertionError('real replacement EXIT stop missing')
+                return result
+            def resume(request,task,addr=0,data=0):
+                if request==module.CONT and selected==[task] and not (run/'queued-cont.json').exists():
+                    value=waitid(os.P_PID,task,os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|kernel.WALL)
+                    (run/'queued-cont.json').write_text(json.dumps(dict(pid=task,signal=data,
+                        pendingStatus=value.si_status if value else None,at=time.time())))
+                return trace(request,task,addr,data)
+            try:
+                with patch.object(module.os,'waitpid',side_effect=consume),patch.object(module,'ptrace',side_effect=resume):
+                    due=time.time()+6
+                    module.supervise(run,[str(binary),str(run),kind],deadline=due,cleanup_deadline=due+1,
+                        journal_compression='gzip',command_compression='gzip')
+            except BaseException as error:
+                (run/'actual-waits.json').write_text(json.dumps(actual))
+                (run/'supervisor-error.json').write_text(json.dumps(dict(error=repr(error))))
+                os._exit(1)
+            (run/'actual-waits.json').write_text(json.dumps(actual))
+            os._exit(0)
+        watchdog=os.fork()
+        if watchdog==0:
+            os.close(gate_read);os.close(gate_write)
+            start=kernel.identity(supervisor)['start']
+            (run/'watchdog-armed.json').write_text(json.dumps(dict(target=supervisor,start=start,deadline=time.time()+10)))
+            time.sleep(10)
+            try:
+                if kernel.identity(supervisor)['start']==start:os.kill(supervisor,9)
+            except (FileNotFoundError,ProcessLookupError):pass
+            (run/'watchdog-fired.json').write_text('{}');os._exit(0)
+        os.close(gate_read)
+        while not (run/'watchdog-armed.json').exists():time.sleep(.001)
+        os.write(gate_write,b'1');os.close(gate_write)
+        _,status=os.waitpid(supervisor,0)
+        os.kill(watchdog,15);_,watch_status=os.waitpid(watchdog,0)
+        (run/'queued-waits.json').write_text(json.dumps(dict(supervisorWait=os.waitstatus_to_exitcode(status),
+            watchdogWait=os.waitstatus_to_exitcode(watch_status))))
+
+
 class PendingOutputWait(unittest.TestCase):
     def test_pending_native_exit_precedes_durable_command_output(self):
         for mode in ('before', 'fixed', 'nonzero'):
@@ -1762,11 +1920,12 @@ if __name__=='__main__':
                 pid,status=os.waitpid(-1,0)
                 adopted.append(dict(pid=pid,status=status,exit=os.waitstatus_to_exitcode(status)))
             except ChildProcessError:break
-        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture','--parent-lineage-fixture','--cancel-creators-fixture','--output-wait-fixture'):
+        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture','--parent-lineage-fixture','--cancel-creators-fixture','--output-wait-fixture','--queued-stop-fixture'):
             (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
                 fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
     elif len(sys.argv)>1 and sys.argv[1]=='--cancel-creators-fixture':cancel_creators_fixture(sys.argv[2],sys.argv[3],sys.argv[4])
+    elif len(sys.argv)>1 and sys.argv[1]=='--queued-stop-fixture':queued_stop_fixture(sys.argv[2],sys.argv[3],sys.argv[4])
     elif len(sys.argv)>1 and sys.argv[1]=='--parent-lineage-fixture':parent_lineage_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--causality-fixture':causality_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--command-gzip-fixture':command_gzip_fixture(sys.argv[2],sys.argv[3])
