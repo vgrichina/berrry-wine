@@ -27,7 +27,7 @@ const publishedProviders=Object.fromEntries([
 publishedProviders['tools/native_kernel_custody.py']=custodyCommit;
 const migration={
   'tools/q3-startup.cjs':'215181583d550a38264b8ae7854101a5d2e7a71acf25dd487e78a203a5c3c1cb',
-  'tools/q3-native-driver-composition.cjs':'61e0bbe3664bb30e28805813f3a9989284db199d9db998419599326d83dbbd30',
+  'tools/q3-native-driver-composition.cjs':'841098edb5be7cb43ac7a6b2e22bfbc79efe1f2ecff1d2963216c3b97ca762f7',
   'tools/q3-native-prelaunch.py':'2591af4d8222b727ae226898638ddb3016938474f7069c23e00815b6bf6a4dbc'
 };
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');

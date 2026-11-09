@@ -62,7 +62,7 @@ async function main() {
   server.listen(0,'127.0.0.1');await once(server,'listening');
   const ws=new WebSocket('ws://127.0.0.1:'+server.address().port);await once(ws,'open');
   scope=vm.createContext({trace,pending,workers:new Map(),pageSession:'page',id:0,ws,
-    fs,callerCancellation:path.join(out,'caller-cancelled.json'),terminalFailure:null,
+    fs,callerCancellation:path.join(out,'caller-cancelled.json'),terminalFailure:null,commandWorkEnd:null,
     observeTerminal(reason){throw Error(reason);},
     root,require(name){
       if(name===root+'/tools/q3-screenshot-completion.cjs')return {create(options){

@@ -65,6 +65,26 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
   extensions['.cjs']({_compile(s) { source = s; }}, path.join(root, consumerPath));
   assert.equal(typeof source, 'string');
   const retainedSource = source;
+  // The numbered transport owns the work timer. Its losing execute promise
+  // can still be awaiting a screenshot when consume rejects. Close admission
+  // through the same abort used for protocol failure before cleanup can wait.
+  source = replaceOnce(source, "t=require('./transport.cjs');", `t={...require('./transport.cjs'),consume:async(...args)=>{
+ checkTerminal();
+ try{return await require('./transport.cjs').consume(...args);}
+ catch(error){observeTerminal(error);throw error;}
+}};`);
+  // A response may run before an overdue timer callback. Check the actual
+  // work clock at protocol/persistence boundaries as well as the timer race.
+  source = replaceOnce(source, "async function execute(c,markDispatch){return trace.span('command.'+c.id,()=>executeImpl(c,markDispatch),c.timing);}",
+    `async function execute(c,markDispatch){return trace.span('command.'+c.id,async()=>{
+ const previous=commandWorkEnd;commandWorkEnd=c.timing?.workEnd??null;
+ try{checkTerminal();await executeImpl(c,markDispatch);checkTerminal();}
+ finally{commandWorkEnd=previous;}
+},c.timing);}`);
+  source = replaceOnce(source, "const s=await trace.span('capture.state',state);save(",
+    "const s=await trace.span('capture.state',state);checkTerminal();save(");
+  source = replaceOnce(source, "const shot=await trace.span('capture.chain',()=>chain.capture(label));fs.writeFileSync(",
+    "const shot=await trace.span('capture.chain',()=>chain.capture(label));checkTerminal();fs.writeFileSync(");
   source = replaceOnce(source, "const bound=require('./bound-input.cjs'),trace=", "const bound={...require('./bound-input.cjs'),hold:options=>require('./bound-input.cjs').hold({...options,onFailure:error=>observeTerminal(error)})},trace=");
   source = replaceOnce(source, "bound.hold({send,session:pageSession,keys:", "bound.hold({send,saveReceipt:value=>save('input-'+c.id+'-delivery.json',value),session:pageSession,keys:");
   source = replaceOnce(source, 'return chain.progress(receipt.live.identity)', "return chain.progress(receipt.live.identity,c.action==='combo'?c.keys:[c.key])");
@@ -98,9 +118,9 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
   // First terminal observation is immutable. Reject pending protocol work and
   // cancellable waits before cleanup, so a suspended command cannot later send.
   source = replaceOnce(source, 'let floorTimer,passive;', `let floorTimer,passive;
-let terminalFailure=null;const terminalAbort=new AbortController();
+let terminalFailure=null,commandWorkEnd=null;const terminalAbort=new AbortController();
 const callerCancellation=path.join(path.dirname(process.env.Q3_EXECUTION_BOUNDARY_OUT),'caller-cancelled.json');
-function checkTerminal(){if(!terminalFailure&&fs.existsSync(callerCancellation))observeTerminal('owning launch transport cancelled');if(terminalFailure)throw terminalFailure;}
+function checkTerminal(){if(!terminalFailure&&fs.existsSync(callerCancellation))observeTerminal('owning launch transport cancelled');if(!terminalFailure&&commandWorkEnd!==null&&Date.now()>=commandWorkEnd){trace.snapshot('command work deadline',{workEnd:commandWorkEnd});observeTerminal('command work deadline; never resend');}if(terminalFailure)throw terminalFailure;}
 const callerMonitor=setInterval(()=>{if(fs.existsSync(callerCancellation))observeTerminal('owning launch transport cancelled');},20);callerMonitor.unref();
 function observeTerminal(reason){
  if(terminalFailure)return terminalFailure;

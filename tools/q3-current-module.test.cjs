@@ -44,12 +44,13 @@ const shared=fs.readFileSync(path.join(root,'lib/redline-startup-admission.js'),
 assert(shared.includes('a320d4c85156644f'));assert(source.includes(current.SELECTED.sha256));
 const composed=require('./q3-native-driver-composition.cjs').compose(),oldProviders=old.exports.providers;
 for(const [file,sha] of Object.entries(oldProviders))if(!['tools/q3-startup.cjs','tools/native_kernel_custody.py'].includes(file))assert.equal(require('./q3-native-driver-composition.cjs').providers[file],sha);
-// Migrating validation pins does not alter generated transport/control source.
+// The command boundary now aborts the losing screenshot continuation. Fixture
+// and controls remain identical to the authenticated earlier composition.
 const read=fs.readFileSync;
 fs.readFileSync=function(file,...args){
   const relative=path.relative(root,String(file));
   if(['tools/q3-startup.cjs','tools/native_kernel_custody.py'].includes(relative))return cp.execFileSync('git',['show','bae02f6a1:'+relative],{cwd:root,encoding:args[0]==='utf8'?'utf8':undefined});
   return read.call(this,file,...args);
 };
-try{const prior=old.exports.compose();assert.equal(prior.source,composed.source);assert.equal(prior.controlsSource,composed.controlsSource);}finally{fs.readFileSync=read;}
-console.log(JSON.stringify({passed:true,oldPreparerFAIL:true,oldCompositionFAIL:true,newPASS:true,negativeControls:count,providers:pins.files.length,explainedDrift:pins.explainedDrift.length,historicalUnchanged:true,generatedControlByteIdentical:true}));
+try{const prior=old.exports.compose();assert.notEqual(prior.source,composed.source);assert(composed.source.includes('catch(error){observeTerminal(error);throw error;}'));assert.equal(prior.controlsSource,composed.controlsSource);assert.equal(prior.fixtureSource,composed.fixtureSource);}finally{fs.readFileSync=read;}
+console.log(JSON.stringify({passed:true,oldPreparerFAIL:true,oldCompositionFAIL:true,newPASS:true,negativeControls:count,providers:pins.files.length,explainedDrift:pins.explainedDrift.length,historicalUnchanged:true,generatedControlByteIdentical:true,commandTerminalAbort:true}));
