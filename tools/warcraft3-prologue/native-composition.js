@@ -48,7 +48,23 @@ replace("ws.onmessage=msg=>{","ws.onclose=()=>{for(const e of sessions.values())
 // Fail closed on worker setup failures, and never retry an owned command.
 replace("task.catch(e=>log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)}));", "task.catch(e=>{log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)});close('owned worker setup failure').catch(e=>console.error(e))});");
 // Apply after the retained renderer identity composition, without changing its caps.
-if(repair)source=require('./startup').adapt(source,{root});
+if(repair){
+ source=require('./startup').adapt(source,{root});
+ // Qualification creates the proof required by ordinary commands. Its own
+ // bounded metadata/trace requests use a private channel, while cancellation
+ // and sticky lifetime invalidation still guard dispatch and continuation.
+ replace("const {EventEmitter}=require('events');const sessions=new Map();", "const {EventEmitter}=require('events');const sessions=new Map();const qualificationToken=Symbol('renderer qualification');");
+ replace('e.send=(m,p)=>send(m,p,sid)', 'e.send=(m,p)=>send(m,p,sid,qualificationToken)');
+ replace('function send(method,params={},sessionId){', 'function send(method,params={},sessionId,token){');
+ replace("function check(){if(closing)throw Error(closeReason+'; UNKNOWN; no replay');custody?.check();if(guard)guard.check();}", `function check(){checkRequest();}
+function checkRequest(token){
+ if(closing)throw Error(closeReason+'; UNKNOWN; no replay');custody?.check();
+ if(guard){const state=guard.snapshot();if(token===qualificationToken&&!state.proof){if(state.unknown)throw Error(state.unknown)}else guard.check();}
+}`);
+ const guarded='if(!cleanup)check();';assert.equal(source.split(guarded).length,3,'dispatch and continuation guards');
+ source=source.replaceAll(guarded,'if(!cleanup)checkRequest(token);');
+ replace("const cleanup=method==='Browser.close'", "if(token===qualificationToken&&!['Target.getTargetInfo','Target.setDiscoverTargets','Page.enable','Inspector.enable','Page.getFrameTree','Target.getTargets','SystemInfo.getProcessInfo','Tracing.start','Tracing.end','IO.read','IO.close'].includes(method))throw Error('unsupported qualification request; UNKNOWN; no replay');\n const cleanup=method==='Browser.close'");
+}
 return source;
 }
 function run(directory,options={}){
