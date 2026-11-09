@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed5295f2058: actual full caller failure exits1 correctly; preflight0 intentional. Regression and deterministic test deadline fix published; focused tests/locked build PASS. Actual generated offline launch timed out120s in closure validation; no box/gameplay. Fresh redline-validation-delay-repair-1648 diagnoses and fixes measured cause offline, runtime after Q2-reviewed1638.
+  Next: Reviewed926c9e6d5 causal custody fsync/post-cap stepping repair; full generated launch passes original120s deadline, closure235ms with authentic bytes. Focused regressions/locked build PASS. Native provision stopped at offline/native write-once evidence-label collision before gameplay; own box ARCHIVED normalstop35784f4489ea758a. Fresh redline-distinct-run-side-door-1702 isolates paths and verifies actual sequence offline, then conditional original side-door runtime after Q3raw1648 and Pawn1655 final releases.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
