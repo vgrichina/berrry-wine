@@ -50,13 +50,13 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed0300 setup Pause PNG score50coins2 alreadypresent; no client initialcapture, firstchoice disabled beforeHTTP/input and no new progress.552indexedSHA sizes534gzipCRC PASS; box bx_bw4vg5br archived stop_063972e579437d2e physicallydrained. Fresh supertux-client-capture-onward-0320 PID933137 thread01a1be51-2ab9-7ce0-9222-f6e7207ccf1a explicitly requests/inspects reviewclients initialcapture before firstchoice, then new coin/block/exit. Q20301 release03:16:04 permits ONEoriginal; unchanged CPU/caps observationOFF df0932repair, prompt personalreview aims<=8s within12s. Full27/parity/audio/FPS open.
+  Next: Reviewed1e733b2fcc Super0320 no gameplay: initialcapture before ready timedout then automaticPNG7.312s after failure,277SHA253gzip verified; box archived/drained. Fresh supertux-startup-capture-latch-0335 PID952435 thread01a1be5e-373f-7990-8823-87cf0f96e576 OFFLINE production readiness-before-admission and sticky capture/input latch repair; unchangedcaps no original until concrete fix. Full27/parity/audio/FPS open.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed0cde26d0b cancellationcreatorbarrier repair three actualoldFAILnewPASS pairs37tests+build,345indexedSHA52gzip PASS; historicalWarcraft lineage/ChromeEOFUNKNOWN remains. Fresh native-nonleader-exec-0325 PID939277 thread01a1be54-a3de-71c2-8e03-e7e538880b4e browserfree safe real nonleaderexec identitytransition repair with actualcontrols. No Warcraftoriginal until cleanup prerequisites concrete. Prior0244 endpoint21.576s but cleanuprejected; boxarchiveddrained. Prologue/tutorial/full27/parity/audio/FPS open.
+  Next: Reviewed2df8d81b41 native nonleaderEXEC repair actualoldFAILnewPASS sibling/cancel/identity negatives,544SHA84gzip verified tests+buildPASS. Historical0244 lineageUNKNOWN remains. Fresh warcraft-production-startup-0335 PID952587 thread01a1be5e-3a8c-77f3-bbb0-48e1aeece0b2 actual production startup integration using released0244 WIP and publishedcustody2df8d81b; ONEsmallChrome after exactQ20325 runtime release, no original. Preserve caps actualwaits separateEOF; require startup and normal cleanup. Prologue/full27/parity/audio/FPS open.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
