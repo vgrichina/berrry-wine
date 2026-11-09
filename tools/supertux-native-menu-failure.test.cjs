@@ -33,7 +33,7 @@ const image=Buffer.from('offline menu fixture; never a native gameplay frame');
 const review={label:'menu',sha256:sha(image),identity:{offline:true},review:'Offline stale menu reproduction'};
 let effects=0,stale=true;
 const cause=Object.assign(Error('stale scene refused'),{code:'STALE_SCENE_BEFORE_DISPATCH'});
-const context={root,assert,Date,Number,JSON,Promise,Buffer,deadline:Date.now()+30000,latest:review,out:'/offline',sha,
+const context={session:{check:()=>{}},root,assert,Date,Number,JSON,Promise,Buffer,deadline:Date.now()+30000,latest:review,out:'/offline',sha,
  fs:{readFileSync:p=>p.endsWith('.png')?image:JSON.stringify(review)},
  require:require('node:module').createRequire(composed.filename),
  chain:{admit:async(r,fn)=>{if(stale)throw cause;return fn({offline:true});}},

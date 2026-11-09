@@ -148,7 +148,8 @@ if (require.main === module) {
   const ready = read(path.join(out, 'ready.json'));
   assert(ready.ready === true && ready.deadline > Date.now(), 'live driver readiness/deadline required');
   const lock = path.join(out, 'review-client.lock'); fs.mkdirSync(lock);
-  const client = createClient({out, deadline: ready.deadline, request: require(path.join(root, pins[0].path)).request,
+  const client = createClient({out, deadline: ready.deadline,
+    request: (...args) => require('./supertux-native-driver-composition.cjs').requestReady(require(path.join(root, pins[0].path)), ...args),
     save: row => fs.writeFileSync(path.join(out, 'review-client-' + crypto.randomUUID() + '.json.gz'), zlib.gzipSync(JSON.stringify(row)), {flag: 'wx'})});
   const {server, token} = serve(client, {port: Number(portArg)});
   const cap = setTimeout(() => server.close(), Math.max(0, ready.deadline - Date.now()));

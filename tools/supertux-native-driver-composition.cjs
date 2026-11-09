@@ -100,6 +100,55 @@ function replaceOnce(source, before, after) {
   return source.replace(before, after);
 }
 
+// Both legacy queued commands and asynchronous startup continuations share
+// this latch. Reading sticky records at each effect boundary also observes a
+// sender timeout while startup is still awaiting a browser/guest reply.
+function createSession({out, deadline, publish}) {
+  let ready = false, closed = false;
+  function stop(error) {
+    closed = true;
+    const file = path.join(out, 'transport-closed.json');
+    if (!fs.existsSync(file)) publish(file, {error: String(error), sticky: true, noReplay: true});
+  }
+  function check(command = false) {
+    try {
+      assert(!closed && Date.now() < deadline, 'session closed/expired; UNKNOWN; no replay');
+      for (const name of ['first-failure.json', 'transport-closed.json', 'cleanup.json', 'first-browser-failure.json'])
+        assert(!fs.existsSync(path.join(out, name)), 'session failure/closure; UNKNOWN; no replay');
+      if (!ready) assert(!fs.readdirSync(path.join(out, 'commands')).some(n => /^\d+\.json\.gz$/.test(n)),
+        'command queued before readiness; UNKNOWN; no replay');
+      if (command) assert(ready, 'command before readiness; UNKNOWN; no replay');
+    } catch (error) { stop(error); throw error; }
+  }
+  return {check, close: () => stop(Error('session closing; UNKNOWN; no replay')),
+    admit() { check(); ready = true; publish(path.join(out, 'ready.json'), {ready: true, deadline}); }};
+}
+
+// Readiness consumes the existing request budget, never the ACK budget plus
+// another startup allowance. No ID, lock or command is admitted before ready.
+async function requestReady(transport, out, id, command, timeout = 30000) {
+  const until = Date.now() + timeout;
+  try {
+    for (;;) {
+      for (const name of ['first-failure.json', 'transport-closed.json', 'cleanup.json', 'first-browser-failure.json'])
+        assert(!fs.existsSync(path.join(out, name)), 'session failure/closure; UNKNOWN; no replay');
+      const file = path.join(out, 'ready.json');
+      if (fs.existsSync(file)) {
+        const ready = JSON.parse(fs.readFileSync(file));
+        assert(ready.ready === true && ready.deadline > Date.now(), 'live readiness required');
+        assert(Date.now() < until, 'UNKNOWN command readiness deadline');
+        return await transport.request(out, id, command, Math.min(until - Date.now(), ready.deadline - Date.now()));
+      }
+      assert(Date.now() < until, 'UNKNOWN command readiness deadline');
+      await new Promise(resolve => setTimeout(resolve, Math.min(20, until - Date.now())));
+    }
+  } catch (error) {
+    const file = path.join(out, 'transport-closed.json');
+    if (!fs.existsSync(file)) transport.publish(file, {id, error: String(error), sticky: true, noReplay: true});
+    throw error;
+  }
+}
+
 // The generic retained transport allows a fresh capture after a zero-effect
 // stale refusal. The persistent Pause controller instead closes on that same
 // exception. Preserve the controller's stronger UNKNOWN across this boundary.
@@ -156,6 +205,16 @@ function compose({root, manifest}) {
       .map(name => 'scratch/runs/20261108-supertux-short-step-progression-2236/' + name)]) lookup(required);
   const base = manifest.base, patch = manifest.patch;
   let source = applyPatch(lookup(base), zlib.gunzipSync(lookup(patch)).toString());
+  source = replaceOnce(source, 'let pauseController;',
+    "const session=require(root+'/tools/supertux-native-driver-composition.cjs').createSession({out,deadline,publish:t.publish});let pauseController;");
+  source = replaceOnce(source, 'async function capture(label){', 'async function capture(label){session.check();');
+  source = replaceOnce(source, 'const shot=await chain.capture(label);', 'session.check();const shot=await chain.capture(label);session.check();');
+  source = replaceOnce(source, 'if(closing)return;closing=true;', 'session.close();if(closing)return;closing=true;');
+  source = replaceOnce(source, 'async function execute(c,markDispatch){', 'async function execute(c,markDispatch){session.check(true);');
+  source = replaceOnce(source, "await capture('startup');save('ready.json',{ready:true,deadline});",
+    "await capture('startup');session.admit();");
+  source = replaceOnce(source, "async function send(method,params={},sessionId){",
+    "async function send(method,params={},sessionId){if(method==='Page.captureScreenshot'||((method==='Input.dispatchKeyEvent'||method==='Input.dispatchMouseEvent')&&!['keyUp','mouseReleased'].includes(params.type)))session.check();");
   source = replaceOnce(source, 'await t.consume(out,n,execute)',
     "await require(root+'/tools/supertux-native-driver-composition.cjs').consumeTerminal(t,out,n,execute)");
   source = replaceOnce(source, 'let pauseController;', 'let pauseCommandId,pauseController;');
@@ -177,11 +236,13 @@ function compose({root, manifest}) {
   const begin = source.indexOf('return new Promise((resolve,reject)=>{const n=++id;');
   const end = source.indexOf('\nasync function evaluate', begin);
   assert(begin > 0 && end > begin);
-  source = source.slice(0, begin) + 'return cdp.send(method,params,sessionId);}' + source.slice(end);
+  source = source.slice(0, begin) + "if(method==='Page.captureScreenshot')session.check();return cdp.send(method,params,sessionId);}" + source.slice(end);
   source = replaceOnce(source,
     "if(v.id){const p=pending.get(v.id);if(!p)return;clearTimeout(p.timer);pending.delete(v.id);v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);}else",
     'if(v.id){cdp.receive(v);}else');
-  source = replaceOnce(source, "ws.onmessage=msg=>", "ws.onclose=()=>cdp.disconnect();ws.onmessage=msg=>");
+  source = replaceOnce(source, "ws.onmessage=msg=>", "ws.onclose=()=>{session.close();cdp.disconnect();};ws.onmessage=msg=>");
+  source = replaceOnce(source, "browser.once('exit',(code,signal)=>save('chrome-exit.json',",
+    "browser.once('exit',()=>session.close());browser.once('exit',(code,signal)=>save('chrome-exit.json',");
   source = replaceOnce(source,
     "for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error('runtime closed; no replay'));}pending.clear();",
     "cdp.disconnect(Error('browser terminal; unresolved CDP UNKNOWN; no replay'));await pauseController?.settle();await require('./input.cjs').drain();save('physical-terminal-drain.json',{pending:require('./input.cjs').physical.size,at:Date.now()});");
@@ -192,4 +253,4 @@ function compose({root, manifest}) {
   return {source, filename: path.resolve(root, base), sha256: sha(source), providers: manifest.files.length};
 }
 
-module.exports = {createTransport, compose, applyPatch, verify, runController, runBoundAction, consumeTerminal};
+module.exports = {createTransport, compose, applyPatch, verify, runController, runBoundAction, consumeTerminal, createSession, requestReady};

@@ -63,7 +63,7 @@ async function fixture() {
   };
   const productionRequire = name => name === './input.cjs' ? retained.input : require(name);
   const driver = new Function('assert', 'fs', 'out', 'root', 'require', 'chain', 'send', 'pageSession', 'deadline',
-    'bound', 'log', 'wait', 'capture', 'getLatest', 'sha', `let pauseCommandId,pauseController;
+    'bound', 'log', 'wait', 'capture', 'getLatest', 'sha', `const session={check:()=>{}};let pauseCommandId,pauseController;
     ${integrated.source.slice(begin, end).replace('assert(latest&&c.reviewRef===latest.label);', 'const latest=getLatest();assert(latest&&c.reviewRef===latest.label);')}
     return {execute,get controller(){return pauseController;}};`)(assert, fs, out, root, productionRequire, chain,
       send, 'page', deadline, binding, (name, row) => process.send({receipt: row}),
