@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed a8a8e0e11 fresh0219 original: six PNGs, four balanced native holds, crashroom102HP; diskfloor interrupted before tunnel/guard/door. Box bx_vqksz83y archived stop_22672e77df127f8c physically drained,316indexedSHA sizes187gzipCRC PASS. Actual closeACK then force exit0 without pipe drain at19.815s remains UNKNOWN. Fresh quake2-close-pipe-drain-0244 PID878776 thread01a1be30-2b42-79c0-91b9-f50aa0e30d51 investigates actual pipe ownership/teardown and repairs production with failing-before/passing-after tests, unchanged close/ACK/cleanup caps; one serialized Chrome fixture after Super0229 release, no original. Strictflags/trace/native REVOKED allwriters/edictABA UNKNOWN preserved.
+  Next: Reviewed Q2close0244: actual Chrome launcher cat relays traced, both production candidates failed; driver restored, no committed repair.162indexedSHA sizes134gzipCRC PASS; box bx_ahbennnr archived stop_54426b99ce8846ab physicaldrained. Fresh quake2-launcher-teardown-repair-0300 PID900417 thread01a1be3c-2f0e-7df0-83c2-3b0bfdbe7e84 targets causal launcher/process/pipe repair with real Chrome fail-before/pass-after and unchanged caps. Prepares offline; ONE fixture after Warcraft0244 then Super0300 exact releases. Original guard/door progress remains open; strictflags/native REVOKED/allwriters/edictABA UNKNOWN preserved.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -50,7 +50,7 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed publisheddf0932c1c actual production terminal-failure notification: real sender exits1 in24ms instead30s, laterrequest0effects, normalinput/capture unchanged; focused+lockedbuildPASS CPUa320.414indexedSHA sizes362gzipCRC exactsetPASS Slot1PNG personally inspected; no level landing/onward/exit. Original stopped on first UNKNOWN, bx_g7xyqr9c archived stop_5af07274747100b7 physicaldrained. Fresh supertux-prompt-choice-gameplay-0229 PID855204 thread01a1be21-e01e-7d20-957c-29ed68731443 prepares fast personalreview physicalkey path beforecapture, aims<=8s under unchanged12s, waits Warcraft0224 exact release after Q20219 before ONE original. Explicit airborne neutral200 only with freshreview; no autoroute/replay. Landing/exit/full27/parity/audio/FPS open.
+  Next: Reviewed aa3913efc5 original score50 stomp and floorlanding PNG;33 accepted choices, no onward/exit.1453indexedSHA sizes pass with six original localgzip UNKNOWN retained; box bx_3zcmeteb archived stop_64e3904c896da4ae physicaldrained. First snowy pillars are background scenery; target actual interactive coin/block or exit.0251 stopped beforeallocation on diskfloor, now restored. Fresh supertux-interactive-onward-0300 PID901506 thread01a1be3c-c333-7173-bc3f-43bf7a51a175 waits Warcraft0244 exact release then ONE original, prompt personalreview aims<=8s under unchanged12s. Reuse unchanged prepared checks by hash; explicit airborne neutral200 only. Full27/parity/audio/FPS open.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
