@@ -119,6 +119,24 @@ async function runBoundAction(chain, review, effect) {
   catch (cause) { throw Error('native menu action UNKNOWN; no replay', {cause}); }
 }
 
+// A terminal consumer failure has no success ACK. Notify the waiting sender
+// immediately instead of leaving it polling until its unchanged ACK deadline.
+async function consumeTerminal(transport, out, number, execute) {
+  try { return await transport.consume(out, number, execute); }
+  catch (cause) {
+    try {
+      const failure = JSON.parse(fs.readFileSync(path.join(out, 'first-failure.json')));
+      const command = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(out, 'commands', number + '.json.gz'))));
+      const reply = path.join(out, 'reply-' + number + '.json');
+      if (failure.number === number && typeof command.id === 'string' &&
+          /^[a-zA-Z0-9_-]+$/.test(command.id) && !fs.existsSync(reply)) {
+        transport.publish(reply, {ok: false, id: command.id, error: String(cause), noReplay: true});
+      }
+    } catch { /* Preserve the original terminal failure if notification fails. */ }
+    throw cause;
+  }
+}
+
 // manifest contains only PATH+HASH references. The caller pins its exact bytes
 // in the final startup barrier; compose rechecks every provider before launch.
 // No source/media/module copy is written, and this function starts no runtime.
@@ -138,6 +156,8 @@ function compose({root, manifest}) {
       .map(name => 'scratch/runs/20261108-supertux-short-step-progression-2236/' + name)]) lookup(required);
   const base = manifest.base, patch = manifest.patch;
   let source = applyPatch(lookup(base), zlib.gunzipSync(lookup(patch)).toString());
+  source = replaceOnce(source, 'await t.consume(out,n,execute)',
+    "await require(root+'/tools/supertux-native-driver-composition.cjs').consumeTerminal(t,out,n,execute)");
   source = replaceOnce(source, 'let pauseController;', 'let pauseCommandId,pauseController;');
   source = replaceOnce(source, "if(c.action==='pause-step'){", "if(c.action==='pause-step'){pauseCommandId=c.id;");
   source = replaceOnce(source, "save:r=>log('pause-composition.jsonl',{id:c.id,...r})",
@@ -172,4 +192,4 @@ function compose({root, manifest}) {
   return {source, filename: path.resolve(root, base), sha256: sha(source), providers: manifest.files.length};
 }
 
-module.exports = {createTransport, compose, applyPatch, verify, runController, runBoundAction};
+module.exports = {createTransport, compose, applyPatch, verify, runController, runBoundAction, consumeTerminal};
