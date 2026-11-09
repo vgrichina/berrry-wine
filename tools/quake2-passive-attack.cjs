@@ -36,27 +36,32 @@ function signatures(){
 // Serialized into the actual page. Identity tokens originate in the retained
 // admission chain; this reader neither creates nor repairs those tokens.
 function readPage(identity,windows,expectedMemory){
- const fail=reason=>({status:'UNKNOWN',reason,playerMotion:{status:'UNKNOWN',reason},damageFeedback:{status:'UNKNOWN',reason,cause:'UNKNOWN'},consumption:'UNKNOWN',weaponEffect:'UNKNOWN'});
+ // Return only values already sampled by this invocation. Absent predicate
+ // keys were short-circuited/not reached; booleans describe executed checks.
+ // Raw point samples do not establish freshness, all-writers or lifetime.
+ const rejectedFrame={motionFirst:null,motionSecond:null,damageFirst:null,damageSecond:null,predicates:{}};
+ const checked=(key,value)=>{rejectedFrame.predicates[key]=!!value;return value;};
+ const fail=reason=>({status:'UNKNOWN',reason,rejectedFrame,playerMotion:{status:'UNKNOWN',reason},damageFeedback:{status:'UNKNOWN',reason,cause:'UNKNOWN'},consumption:'UNKNOWN',weaponEffect:'UNKNOWN'});
  const all=typeof runningApps==='undefined'?[]:runningApps;
  const a=all[0],w=a?.wine,g=w?.guestWorker,l=g?.link,s=globalThis.__mcmPassiveIdentityV1;
- if(all.length!==1||a.name!=='quake2_demo'||!w?.running||w._stopped||!s)return fail('owner unavailable');
+ if(checked('ownerUnavailable',all.length!==1||a.name!=='quake2_demo'||!w?.running||w._stopped||!s))return fail('owner unavailable');
  const objects={processObject:w,endpointObject:l,workerObject:l?.worker,moduleObject:l?.module,pageRendererObject:w.renderer,canvasObject:document.getElementById('screen')};
- if(w.processId!==identity.processId||l?.endpointIdentity!==identity.endpoint||s.epoch!==identity.epoch||
-   Object.entries(objects).some(([key,value])=>!value||s.ids.get(value)!==identity[key]))return fail('owner identity changed');
+ if(checked('ownerIdentityChanged',w.processId!==identity.processId||l?.endpointIdentity!==identity.endpoint||s.epoch!==identity.epoch||
+   Object.entries(objects).some(([key,value])=>!value||s.ids.get(value)!==identity[key])))return fail('owner identity changed');
  const memory=w.memory,buffer=memory?.buffer;
- if(!memory||l.memory!==memory||!(buffer instanceof SharedArrayBuffer))return fail('owning shared memory unavailable');
+ if(checked('sharedMemoryUnavailable',!memory||l.memory!==memory||!(buffer instanceof SharedArrayBuffer)))return fail('owning shared memory unavailable');
  if(!s.ids.has(memory))s.ids.set(memory,s.epoch+':'+(++s.next));
  if(!s.ids.has(buffer))s.ids.set(buffer,s.epoch+':'+(++s.next));
  const memoryIdentity=s.ids.get(memory)+'/'+s.ids.get(buffer);
- if(expectedMemory&&expectedMemory!==memoryIdentity)return fail('owning memory changed');
+ if(checked('memoryIdentityChanged',expectedMemory&&expectedMemory!==memoryIdentity))return fail('owning memory changed');
  // The pinned CPUa320 ABI: direct EXE data stays conservative. Sparse
  // bindings follow $g2w_slow / $guest_page_translate (src/03-registers.wat),
  // never VA-as-offset, an RPC/export, or the allocation-record fallback.
  const view=new DataView(buffer),offset=va=>va-0x400000+0x12000;
  const direct=(va,n)=>Number.isInteger(va)&&va>=0x400000&&va+n<=0x4000000&&offset(va)+n<=view.byteLength;
  const canonical=()=>windows.every(p=>direct(p.va,p.bytes.length)&&p.bytes.every((b,i)=>view.getUint8(offset(p.va)+i)===b));
- if(!canonical())return fail('attack executable window mismatch');
- if(!direct(0xac13a0,20)||!direct(0x4d6c60,808))return fail('attack data outside owning direct memory');
+ if(checked('canonicalMismatch',!canonical()))return fail('attack executable window mismatch');
+ if(checked('attackBoundsRejected',!direct(0xac13a0,20)||!direct(0x4d6c60,808)))return fail('attack data outside owning direct memory');
  const u32=va=>view.getUint32(offset(va),true);
  // The table is a view of this exact owner's buffer, not a page global or a
  // cached table from a prior process. Publication/clear/protect use atomic i32.
@@ -115,14 +120,14 @@ function readPage(identity,windows,expectedMemory){
   return {state,slot,current:Array.from(new Uint8Array(buffer,offset(frame),size)),
    published:Array.from(new Uint8Array(buffer,offset(slot),size))};
  }
- const motionFirst=motionSample();
+ const motionFirst=rejectedFrame.motionFirst=motionSample();
  // Fixed executable-owned ring only: 16 * 240 bytes, read twice. No game
  // DLL/edict pointer traversal, RPC, export, hook or guest writes. Older slots
  // are evidence of received states, never a server-side damage event log.
  function damageRing(){
   return direct(0xa9cf8c,16*240)?Array.from(new Uint8Array(buffer,offset(0xa9cf8c),16*240)):null;
  }
- const damageFirst=damageRing();
+ const damageFirst=rejectedFrame.damageFirst=damageRing();
  const first=Array.from({length:5},(_,i)=>u32(0xac13a0+i*4));
  // Preserve attack rows/order. These are Q2 keycodes, not Win32 VKs:
  // Space, Mouse2, a/d, comma/period, left/right arrows and strafe modifier.
@@ -134,25 +139,27 @@ function readPage(identity,windows,expectedMemory){
  const physical=[13,17,37,38,39,40,32,65,68,188,190,18].map(key=>({key,state:w.renderer.peekKeyDownState?.(key)??null}));
  const again=keys.map(binding);
  const second=Array.from({length:5},(_,i)=>u32(0xac13a0+i*4));
- const motionSecond=motionSample();
- const damageSecond=damageRing();
+ const motionSecond=rejectedFrame.motionSecond=motionSample();
+ const damageSecond=rejectedFrame.damageSecond=damageRing();
  for(const [index,pte] of observed)if((Atomics.load(pages,index)>>>0)!==pte)translationChanged=true;
- if(runningApps!==all||all.length!==1||all[0]!==a||a.wine!==w||a.name!=='quake2_demo'||
+ if(checked('ownerOrMemoryChangedDuringRead',runningApps!==all||all.length!==1||all[0]!==a||a.wine!==w||a.name!=='quake2_demo'||
    !w.running||w._stopped||w.processId!==identity.processId||w.guestWorker!==g||g.link!==l||
    l.endpointIdentity!==identity.endpoint||l.worker!==objects.workerObject||l.module!==objects.moduleObject||
    w.renderer!==objects.pageRendererObject||document.getElementById('screen')!==objects.canvasObject||
    globalThis.__mcmPassiveIdentityV1!==s||s.epoch!==identity.epoch||
    Object.entries(objects).some(([key,value])=>s.ids.get(value)!==identity[key])||
-   w.memory!==memory||l.memory!==memory||memory.buffer!==buffer)return fail('owner/memory changed during read');
- if(!canonical())return fail('attack executable window changed during read');
- const motionEqual=motionFirst&&motionSecond&&JSON.stringify(motionFirst)===JSON.stringify(motionSecond);
+   w.memory!==memory||l.memory!==memory||memory.buffer!==buffer))return fail('owner/memory changed during read');
+ if(checked('canonicalChangedDuringRead',!canonical()))return fail('attack executable window changed during read');
+ const motionEqual=checked('motionFirstAvailable',motionFirst)&&checked('motionSecondAvailable',motionSecond)&&
+   checked('motionEqual',JSON.stringify(motionFirst)===JSON.stringify(motionSecond));
  let playerMotion={status:'UNKNOWN',reason:'received frame unavailable, inactive, unpublished, malformed or changed during read'};
  if(motionEqual){
   const bytes=Uint8Array.from(motionSecond.current),v=new DataView(bytes.buffer);
   const frameNumber=v.getInt32(4,true),pmType=v.getInt32(0x30,true);
-  if(motionSecond.state===4&&v.getUint32(0,true)===1&&frameNumber>0&&
-    v.getUint32(8,true)===(frameNumber*100>>>0)&&pmType>=0&&pmType<=255&&
-    motionSecond.current.every((b,i)=>b===motionSecond.published[i])){
+  if(checked('motionActive',motionSecond.state===4)&&checked('motionValid',v.getUint32(0,true)===1)&&
+    checked('motionPositiveFrame',frameNumber>0)&&checked('motionTimeMatches',v.getUint32(8,true)===(frameNumber*100>>>0))&&
+    checked('motionPmTypeLowerBound',pmType>=0)&&checked('motionPmTypeUpperBound',pmType<=255)&&
+    checked('motionPublishedMatches',motionSecond.current.every((b,i)=>b===motionSecond.published[i]))){
    const rawOrigin=[0,1,2].map(i=>v.getInt16(0x34+i*2,true));
    const rawVelocity=[0,1,2].map(i=>v.getInt16(0x3a+i*2,true));
    playerMotion={status:'SNAPSHOT',source:'received client frame pmove (prediction input)',
@@ -163,27 +170,30 @@ function readPage(identity,windows,expectedMemory){
     limits:'repeated point samples only; freshness between samples, consumption, contact, damage cause, all-writers and lifetime UNKNOWN'};
   }
  }
- const stable=first.every((v,i)=>v===second[i])&&!translationChanged&&
-   JSON.stringify(bindings)===JSON.stringify(again)&&bindings.every(v=>v.text!==null);
+ const stable=checked('attackEqual',first.every((v,i)=>v===second[i]))&&checked('translationStable',!translationChanged)&&
+   checked('bindingsEqual',JSON.stringify(bindings)===JSON.stringify(again))&&checked('bindingsReadable',bindings.every(v=>v.text!==null));
  let damageFeedback={status:'UNKNOWN',cause:'UNKNOWN',reason:'owning published frame/history unavailable, malformed or changed during read'};
- if(stable&&playerMotion.status==='SNAPSHOT'&&damageFirst&&damageSecond&&
-    damageFirst.every((b,i)=>b===damageSecond[i])){
+ if(checked('damageAttackStable',stable)&&checked('damageMotionSnapshot',playerMotion.status==='SNAPSHOT')&&
+    checked('damageFirstAvailable',damageFirst)&&checked('damageSecondAvailable',damageSecond)&&
+    checked('damageRingEqual',damageFirst.every((b,i)=>b===damageSecond[i]))){
   const ring=new DataView(Uint8Array.from(damageSecond).buffer),history=[];
-  function decode(v,at){
+  function decode(v,at,key){
    const blend=Array.from({length:4},(_,i)=>v.getFloat32(at+0x90+i*4,true));
    const kickAngles=Array.from({length:3},(_,i)=>v.getFloat32(at+0x64+i*4,true));
-   if(!blend.every(n=>Number.isFinite(n)&&n>=0&&n<=1)||!kickAngles.every(Number.isFinite))return null;
+   if(!checked(key+'BlendValid',blend.every(n=>Number.isFinite(n)&&n>=0&&n<=1))||
+      !checked(key+'KickFinite',kickAngles.every(Number.isFinite)))return null;
    return {frameNumber:v.getInt32(at+4,true),serverTimeMs:v.getUint32(at+8,true),
     health:v.getInt16(at+0xaa,true),blend,kickAngles,pmFlags:v.getUint8(at+0x40)};
   }
-  const current=decode(new DataView(Uint8Array.from(motionSecond.current).buffer),0);
+  const current=decode(new DataView(Uint8Array.from(motionSecond.current).buffer),0,'damageCurrent');
   for(let number=Math.max(1,playerMotion.frameNumber-15);number<=playerMotion.frameNumber;number++){
    const at=(number&15)*240;
-   if(ring.getUint32(at,true)!==1||ring.getInt32(at+4,true)!==number||
-      ring.getUint32(at+8,true)!==(number*100>>>0))continue;
-   const row=decode(ring,at);if(row)history.push(row);
+   const key='damageHistory'+number;
+   if(!checked(key+'Valid',ring.getUint32(at,true)===1)||!checked(key+'NumberMatches',ring.getInt32(at+4,true)===number)||
+      !checked(key+'TimeMatches',ring.getUint32(at+8,true)===(number*100>>>0)))continue;
+   const row=decode(ring,at,key);if(row)history.push(row);
   }
-  if(current&&JSON.stringify(history.at(-1))===JSON.stringify(current)){
+  if(checked('damageCurrentDecoded',current)&&checked('damageHistoryMatches',JSON.stringify(history.at(-1))===JSON.stringify(current))){
    const observedHealthDecreases=[];
    for(let i=1;i<history.length;i++){
     const a=history[i-1],b=history[i];
@@ -200,6 +210,7 @@ function readPage(identity,windows,expectedMemory){
  return {status:stable?'SNAPSHOT':'UNKNOWN',reason:stable?null:'attack/binding/translation invalid or changed during read',
   at:new Date().toISOString(),identity,memoryIdentity,bindings,
   physical,playerMotion,damageFeedback,
+  ...(!stable||playerMotion.status!=='SNAPSHOT'||damageFeedback.status!=='SNAPSHOT'?{rejectedFrame}:{}),
   attack:{address:0xac13a0,first,second,down:second.slice(0,2),state:second[4],held:!!(second[4]&1),impulseDown:!!(second[4]&2)},
   consumption:'UNKNOWN; latch snapshot only, no event history or usercmd execution witness',weaponEffect:'UNKNOWN'};
 }
