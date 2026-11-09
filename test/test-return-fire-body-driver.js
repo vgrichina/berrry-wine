@@ -1,5 +1,5 @@
 'use strict';
-// Actual sealed composed entry + synthetic CDP transport + real FS/HTTP bodies.
+// Production composition + tracked legacy entry contract + synthetic CDP transport.
 // The fixture's fetches are NOT browser evidence or original game execution.
 const assert = require('assert/strict'), fs = require('fs'), path = require('path');
 const vm = require('vm'), cp = require('child_process'), {createRequire} = require('module');
@@ -7,10 +7,10 @@ const {EventEmitter} = require('events');
 const {compose, sha} = require('../tools/return-fire-body-driver.cjs');
 const {Session} = require('./test-browser-response-body-collector.js');
 const ROOT = path.resolve(__dirname, '..');
-const PRIOR = path.join(ROOT, 'scratch/runs/20261105-return-fire-system-data-audio');
-const USED = path.join(PRIOR, 'used-composed-driver.cjs');
-const EXPECTED = '90f4d8f6d182b28aefe07744148452d5deb8590aaf12801a0313e137ca13b008';
-const RUN_PARENT = path.join(ROOT, 'scratch/runs/20261105-return-fire-browser-body-receipts');
+const support = require('./fixtures/return-fire-body-support.cjs');
+const USED = path.join(__dirname, 'fixtures/return-fire-body-entry.cjs');
+const EXPECTED = '9abf33bf8c2f29b7537717d756b6d36dadce4af2e028352a1d18f87ba769ac9f';
+const RUN_PARENT = path.join(ROOT, 'scratch/runs/return-fire-body-driver');
 fs.mkdirSync(RUN_PARENT, {recursive: true});
 const RUN = process.env.RF_BODY_TEST_RUN || fs.mkdtempSync(path.join(RUN_PARENT, 'test-'));
 assert(RUN.startsWith(path.join(ROOT, 'scratch/runs/')), 'fresh caller-owned evidence under scratch/runs required');
@@ -18,11 +18,10 @@ fs.mkdirSync(RUN, {recursive: true});
 const read = file => JSON.parse(fs.readFileSync(file));
 const priorSource = fs.readFileSync(USED, 'utf8');
 assert.equal(sha(priorSource), EXPECTED);
-assert.equal(sha(fs.readFileSync(path.join(PRIOR, 'runtime/first-failure.json'))),
-  '36714e00ab3f73679e6b1932f665cea6a71c4166353d3d76d94b676b523f9e48');
 assert.throws(() => compose({source: priorSource + '\n', expectedSHA256: EXPECTED, run: RUN}), /hash changed/);
-const events = read(path.join(ROOT, 'scratch/runs/20261105-return-fire-playback-observation/fixture.json'))
-  .cases.find(c => c.mode === 'running').snapshot.events;
+// Readiness belongs to the mock page; no historical audio/game transcript is
+// needed to verify response collection and composition.
+const events = [];
 const real = require('puppeteer');
 const disconnect = real.CDPSessionEvent.Disconnected;
 let publicAttempts = 0, nativeAttempts = 0;
@@ -51,10 +50,12 @@ async function run(name, mode) {
     '--label', 'b/used-composed-driver.cjs', USED, '-'], {input: source, encoding: 'utf8'});
   assert.equal(patch.status, 1, patch.stderr);
   fs.writeFileSync(path.join(runDir, 'driver-amendment.patch'), patch.stdout);
-  const base = path.join(ROOT, 'scratch/runs/20261105-return-fire-playback-observation/driver.cjs');
+  const base = USED;
   const m = {exports: {}};
   vm.runInThisContext('(function(require,module,exports,__dirname){' + source + '\n})',
     {filename: base})(createRequire(base), m, m.exports, runDir);
+  if (mode === 'positive') await assert.rejects(m.exports.main({mock: false}),
+    /permits no original browser retry/);
   let next = 0, closes = 0, controls = 0, awaiting = [];
   const session = new Session('page');
   const child = new Session('worker');
@@ -176,12 +177,12 @@ async function run(name, mode) {
         const resume = target.calls.findIndex(c => c.method === 'Runtime.runIfWaitingForDebugger');
         assert(enable >= 0 && resume > enable, 'attach collector before Worker resume');
       }
-      const system = read(path.join(PRIOR, 'system-data-ledger.json')).files;
+      const system = support.systemFiles();
       if (successful || mode.startsWith('optional-script-') || mode === 'missing-system-receipt' || mode.startsWith('font-')) {
         for (const file of system) await httpResponse(url, file.path, {
           omit: mode === 'missing-system-receipt'});
         await httpResponse(url, 'favicon.ico');
-        await require(path.join(PRIOR, 'host-fallback.cjs')).exercise({root: ROOT,
+        await support.exercise({root: ROOT,
           origin: new URL(url).origin, page, pinFiles: m.exports.pins().files});
         await Promise.all(awaiting);
         if (mode.startsWith('optional-script')) {
@@ -199,13 +200,13 @@ async function run(name, mode) {
           assert.equal((await fetch(missingURL)).status, 404);
           const missingLedger = {files: [{path: relative, exists: false,
             missingRequests: [relative, relative + '.part000']}]};
-          const {absent} = require(path.join(PRIOR, 'system-data.cjs'));
+          const {absent} = support;
           assert(absent(missingLedger, relative, missingURL, 404, 'GET', ROOT));
           for (const [status, method, query] of [[200, 'GET', ''], [500, 'GET', ''],
             [404, 'POST', ''], [404, 'GET', '?x']]) assert.equal(absent(missingLedger,
               relative, new URL(missingURL + query), status, method, ROOT), false);
           assert.equal(absent(missingLedger, relative + '.unknown', missingURL, 404, 'GET', ROOT), false);
-          const art = 'test/binaries/candidates/return-fire-demo/RFIRE/ART/1PSCREEN.~CR';
+          const art = 'test/fixtures/return-fire-body-entry.cjs';
           await Promise.all([httpResponse(url, art), httpResponse(url, art, {worker: true}),
             httpResponse(url, art, {nested: true})]);
           await httpResponse(url, 'index.html');
@@ -241,8 +242,8 @@ async function run(name, mode) {
     assert.equal(result.firstFailure, null); assert(receipts.complete); assert(collector.complete);
     assert.equal(controls, 1);
     assert.equal(receipts.receipts.filter(r => r.receipt === 'optional-fallback').length, 1);
-    assert.equal(receipts.receipts.filter(r => r.path.endsWith('ART/1PSCREEN.~CR') && r.verified).length, 3);
-    const ids = receipts.receipts.filter(r => r.path.endsWith('ART/1PSCREEN.~CR')).map(r => r.bodyIdentity.sessionId);
+    assert.equal(receipts.receipts.filter(r => r.path === 'test/fixtures/return-fire-body-entry.cjs' && r.verified).length, 3);
+    const ids = receipts.receipts.filter(r => r.path === 'test/fixtures/return-fire-body-entry.cjs').map(r => r.bodyIdentity.sessionId);
     assert.equal(new Set(ids).size, 3);
     if (mode === 'worker-network') {
       const worker = collector.sessions.find(s => s.sessionId === 'worker-session');
@@ -304,7 +305,7 @@ async function run(name, mode) {
     fs.writeFileSync(path.join(RUN, 'summary.json'), JSON.stringify({passed: true, cases,
       input: {path: USED, sha256: EXPECTED}, publicAttempts, nativeAttempts,
       ChromeLaunched: 0, originalGuestExecuted: false}, null, 2));
-    console.log('PASS actual composed entry ' + cases.length + ' synthetic CDP cases; real FS/HTTP, public/native no-spawn guards; ZERO Chrome. Evidence ' + RUN);
+    console.log('PASS production compose with tracked contract entry: ' + cases.length + ' synthetic CDP cases; real FS/HTTP, public/native no-spawn guards; ZERO Chrome. Evidence ' + RUN);
     suiteDone = true;
   } finally {cp.spawn = publicSpawn; cp.ChildProcess.prototype.spawn = nativeSpawn;}
 })().catch(error => {suiteDone = true; console.error(error); process.exitCode = 1;});
