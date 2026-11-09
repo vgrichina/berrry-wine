@@ -80,7 +80,7 @@
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed2c459a306 once1064SHA909gzipCRC positivePNG personallyviewed. ActualEnter physicalhigh/releasezero captureACK0PASS socketDOWN109UP113 rawsuccess; wholefixtureFAIL replacementcontrol losesinheritedreader TypeError noordinaryquit Boatcancel original retry.254actualreaps callerSeparateEOF wrappersCombinedONLY. UUIDe17486c0 archivedstop38df expiry11:19 retained. Fresh q3-replacement-control-repair-1110 OFFLINE actualgeneratedadmission/holdreceipt completecomposedsequence repair; wholeactualfixture actualBoatcancel remain beforeoriginal.
+  Next: Revieweddc66e5df4 once2405SHA2087gzipCRC actualgeneratedoldTypeErrorFAIL/newcomplete9controlsPASS physicalhigh/releasezero ACK0 ordinaryjoinedquitACK1 focusedlockedbuildPASS. Fresh q3-corrected-controls-native-1130 preparesOFFLINE; runtime onlyafter Redline1120 UUIDdf8a2f5b archiveddrain exactstop. Wholeactualnativefixture actualBoatcancel separateEOF remain beforeordinarymovement/fire/torch; no changedbounds.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
