@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed65452e47e/d0ecba843/e46911276 once actual remote-parent forcedlegacy and wiregate repairs; realNode baselineFAIL/currentPASS defaults/wrongpolicy/mixedpreload controls actualwait separateEOF,2226physicalSHA-size1840valid249EMPTYgzip lockedbuildPASS. No native allocated; fresh quake2-current-caller-guard-progress-1715 actual current staged nativefixture/conditional guarddoor queued AFTER1635 thenQ31705 exactARCHIVED physicaldrain finalpublishedRELEASE. Allwriters/aliases/ABA historicalseparateNodecommandEOF UNKNOWN.
+  Next: Reviewedf3dd734f1 once full actual owning CLI/current remote-parent Git-free preflight direct and kernel modes actualwait separateEOF complete reaps PASS;333physicalSHA-size51gzipCRC EMPTY_INVALID excluded, lockedbuildPASS. Q31705 finalrelease ARCHIVED170/170drain verified. Fresh quake2-current-native-guard-route-1607 owns soleNEXT runtime: fresh productionpins ONEfixture then conditional guarddoor original; localstdin/parentwait preflight first. Allwriters/aliases/ABA historicalNodecommandEOF UNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed44fc9a134 once actualCPUWebCrypto/owningcaller27controls productionCLI/outerpreflight7/7reaps lockedbuildPASS; root220SHA-size21validgzip24EMPTY_INVALID three7/7drains. Fresh redline-current-admitted-native-fixture-1635 offlinefullclosure then soleNEXT ONE comma600 nativefixture after finalpublishedRELEASE of actualincludedQ2/Q3 overlaps. Explicitpublication/currentstartup versions; preserve deadlines no originalretry/nativeReadyclaim.
+  Next: Reviewed801ed127f/df913d949 once full production staged fixture independentSHA Git-free negativecontrols/build PASS;306physicalSHA-size113nonemptygzip30emptygzip excluded. Actualnativefixture delayed1114s before executionwindow then originaldeadline before recordedbrowser; startup/nativeReady/browserEOF UNKNOWN. bx_ncb2wqug ARCHIVED normalstop_e0bd4a87ad595fc7 complete12/12reaps watchdogJOIN0 separateEOF. Fresh redline-prebrowser-first-error-repair-1603 OFFLINE actualprebrowser causalrepair and durablefirsterror; no native retry.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedb78876aa1 once actual production CLI934providers Git-free generatedcaller,28reads56refusals27negativecontrols sevenclock/ninesocket startup/fixture lockedbuild PASS;531physicalSHA-size gzipCRC independently verified sevenactualwait/separateEOF drains. Fresh q3-versioned-caller-arena-progress-1705 integrates actual owning launcher then authorized one native checkpoint/conditional original after1635 exactARCHIVED physicaldrain finalrelease. Defaults refuse drift; nativeReadyFALSE originalstallcause/movementfiringUNKNOWN.
+  Next: Reviewed4ff6f40c9/2af24dba1/3ed2ce544 once actual production942provider owninglifecycle CLI custody Git-free controls/build PASS;975physicalSHA-size435nonemptygzip45emptygzip excluded. NativeWebGL fixture captureACK0 rendererEnter heldHIGH/releasedZERO PASS; plannedcancellation170/170actualreaps threeparentwaits separateEOF physicaldrain. bx_tg6jmkr8 ARCHIVED normalstop_1f93513fb84c097d watchdogJOIN0. Originalparent stdinEPERM before launchclaim childwaitUNKNOWN; fresh q3-local-controller-stdin-wait-repair-1607 OFFLINE actualcontroller preflight/finallywait repair before anotheroriginal. Movement/firing/historicalstall UNKNOWN.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
