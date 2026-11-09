@@ -22,6 +22,8 @@ assert OUT.is_relative_to(ROOT/'scratch/runs')
 MODULE=ROOT/'tools/q3-local-interactive-controller.py'
 m=runpy.run_path(str(MODULE))
 RETAINED=ROOT/'scratch/runs/20261109-q3-versioned-caller-arena-progress-1705'
+CALLER=Path(sys.argv[2]).resolve() if len(sys.argv)>2 else RETAINED/'q3-checkpoint-caller.py'
+assert CALLER.is_relative_to(ROOT/'scratch/runs') and CALLER.is_file()
 processes=[]
 # Observable independent finite watchdog, armed before any fixture child.
 watch=OUT/'watch';watch.mkdir();(watch/'targets').write_text('[]')
@@ -79,6 +81,20 @@ def run_case(name,code,send=None,emit=None,terminal=False):
  return out
 
 try:
+ # Import the entire selected generated caller and its run-local inputs before
+ # exercising its exact launch body below. Any process/network effect is fatal.
+ imported=spawn([sys.executable,'-B','-c','''import runpy,sys
+from pathlib import Path
+p=Path(sys.argv[1]);sys.path.insert(0,str(p.parent));sys.argv=[str(p),'import-only','original']
+def audit(event,args):
+ if event in ('subprocess.Popen','socket.connect','os.fork','os.exec'):raise RuntimeError('OFFLINE caller import effect refused')
+sys.addaudithook(audit)
+m=runpy.run_path(str(p),run_name='q3_generated_import_test');assert callable(m['launch'])
+print('PASS full selected generated caller import; no process or network')
+''',str(CALLER)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+ so,se=imported.communicate(timeout=8)
+ (OUT/'selected-caller-import.json').write_text(json.dumps(dict(caller=str(CALLER.relative_to(ROOT)),sha256=hashlib.sha256(CALLER.read_bytes()).hexdigest(),status=imported.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=so.decode(),stderr=se.decode())))
+ assert imported.returncode==0,se.decode()
  # Execute the exact retained interactive parent in a namespace whose only
  # subprocess is inert. Real epoll on /dev/null raises AFTER that Popen.
  old=RETAINED/'interactive.py'
@@ -213,8 +229,8 @@ try:
  harness.write_text('''import ast,gzip,hashlib,json,os,runpy,subprocess,sys,threading,time,types
 from pathlib import Path
 ROOT=Path('''+repr(str(ROOT))+''');R=Path(__file__).parent/'retained-records';R.mkdir();phasebase=R/'original';phasebase.mkdir()
-source=Path('''+repr(str(RETAINED/'q3-checkpoint-caller.py'))+''')
-assert hashlib.sha256(source.read_bytes()).hexdigest()=='''+repr(hashlib.sha256((RETAINED/'q3-checkpoint-caller.py').read_bytes()).hexdigest())+'''
+source=Path('''+repr(str(CALLER))+''')
+assert hashlib.sha256(source.read_bytes()).hexdigest()=='''+repr(hashlib.sha256(CALLER.read_bytes()).hexdigest())+'''
 owner=runpy.run_path(str(ROOT/'tools/q3-native-launch-client.py'))
 H=lambda b:hashlib.sha256(b).hexdigest()
 def save(n,v):
@@ -269,7 +285,7 @@ except BaseException as e:
  # original .gz existence check, then is written through that explicit seam.
  assert json.loads((records/'actual-first-terminal.json').read_text())['noLaterGuestInputCaptureRetry']
  print('PASS actual retained original launch + real Session + actual retained command branch; sticky firstfailure no later capture',flush=True)
- (OUT/'result.json').write_text(json.dumps(dict(passed=True,actualRetainedCaller=True,nativeQualified=False,box='NOT_CREATED',remoteCustody='UNKNOWN')))
+ (OUT/'result.json').write_text(json.dumps(dict(passed=True,actualRetainedCaller=True,caller=str(CALLER.relative_to(ROOT)),callerSHA256=hashlib.sha256(CALLER.read_bytes()).hexdigest(),fullCallerImport=True,nativeQualified=False,box='NOT_CREATED',remoteCustody='UNKNOWN')))
 finally:
  for p in processes:
   if p.poll() is None:os.killpg(p.pid,signal.SIGKILL)
