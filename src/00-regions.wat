@@ -1112,3 +1112,7 @@
   ;; oversized call on its historical path instead of overflowing.
   (region.declare $TEXT_DX_SCRATCH (size 0x00040000) (align 0x00001000)
     (owner "10f-gdi-dc.wat:$gdi_native_ext_text_out"))
+
+  ;; Diagnostic main-CPU atomic mirror, one binding per instance lifetime.
+  (region.declare $NATIVE_STORE_SHARED (size 0x00000080) (align 128)
+    (owner "03-registers.wat:$native_store_share"))

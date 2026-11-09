@@ -363,7 +363,7 @@
     (if (global.get $native_store_on) (then
       (if (i32.and (i32.eqz (global.get $native_store_invalid))
                    (i32.eq (global.get $native_store_generation) (local.get $store_generation)))
-        (then (global.set $native_store_pc (local.get $store_pc))))))
+        (then (call $native_store_set_pc (local.get $store_pc))))))
     (i32.and (i32.ne (local.get $ok) (i32.const 0))
              (i32.ne (call $guest_addr_mapped (local.get $a)) (i32.const 0))))
 

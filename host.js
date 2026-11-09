@@ -5858,6 +5858,20 @@ class WineAssembly {
     return new D3DCommandStream.WorkerConsumer(await this._createRenderWorkerEndpoint(options));
   }
 
+  async armQuake2WriterObservation(options = {}) {
+    if (this._stopped || !this.running || !this.guestWorker)
+      throw new Error('live Quake II owning Worker required');
+    const guest = this.guestWorker, memory = this.memory, processId = this.processId;
+    const binding = await guest.link.armQuake2Writer(options);
+    if (this._stopped || this.guestWorker !== guest || this.memory !== memory || this.processId !== processId)
+      throw new Error('Quake II owner changed during arm');
+    return Object.freeze({...binding, snapshot: () => {
+      if (this._stopped || !this.running || this.guestWorker !== guest || guest.link !== binding.link || this.memory !== memory || this.processId !== processId)
+        throw new Error('Quake II owner retired/replaced');
+      return binding.snapshot();
+    }});
+  }
+
   async armD3dimPublicationObservation({ maxRecords = 256, boundaryTimeoutMs = 1000 } = {}) {
     if (this._d3dimPublicationJoin || this._d3dimPublicationArming || this._stopped ||
         !this.guestWorker || !this.renderer || !this.instance?.nativeInstance)

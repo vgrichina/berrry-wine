@@ -724,10 +724,10 @@
       ;; above waits, both of which used to be 1000 ops.
       (global.set $steps (i32.const 256))
       (if (global.get $native_store_on)
-        (then (global.set $native_store_pc (global.get $eip))))
+        (then (call $native_store_set_pc (global.get $eip))))
       (call $next)
       (if (global.get $native_store_on)
-        (then (global.set $native_store_pc (i32.const 0))))
+        (then (call $native_store_set_pc (i32.const 0))))
       (if (global.get $page_chunk_deferred)
         (then (call $page_chunk_reclaim_deferred)))
       (br $main)))
