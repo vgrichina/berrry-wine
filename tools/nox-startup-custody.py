@@ -1,7 +1,7 @@
-"""Nox-only, bounded observation of the unchanged published kernel supervisor.
+"""Nox-only authenticated batching at durable barriers, with bounded observation.
 
 Measure synchronous journal/fsync service and actual ptrace return times. No timers,
-extra waits, logger processes, or changes to custody/admission/deadlines. The
+extra waits, logger processes, or changes to identities/admission/deadlines. The
 measurements include descheduling during calls, not isolated device latency.
 """
 import hashlib
@@ -12,22 +12,42 @@ from pathlib import Path
 
 PROVIDER_SHA = '3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240'
 LIMIT = 4096
+VERSION = 'nox-durable-every-cont-prefix-v1'
+
+
+def candidate(source):
+    if hashlib.sha256(source).hexdigest() != PROVIDER_SHA:
+        raise ValueError('Nox published custody drift')
+    text = source.decode('utf-8')
+    seams = [
+        ('defer=retirement or diagnostic)', 'defer=True)'),
+        ('    def trace_task(request, task, data=0):\n',
+         '    def trace_task(request, task, data=0):\n'
+         '        if request == CONT: journal.flush_pending()\n'),
+    ]
+    for before, after in seams:
+        if text.count(before) != 1:
+            raise ValueError('Nox custody barrier seam')
+        text = text.replace(before, after)
+    # Keep the existing executable barrier too. The centralized barrier also
+    # covers both irreversible EXIT paths and runs outside ESRCH handling:
+    # failed durable service must never be mistaken for a kernel ESRCH.
+    return text
 
 
 def load():
     filename = Path(__file__).with_name('native_kernel_custody.py')
     source = filename.read_bytes()
-    if hashlib.sha256(source).hexdigest() != PROVIDER_SHA:
-        raise ValueError('Nox published custody drift')
     module = types.ModuleType('nox_observed_custody')
     module.__file__ = str(filename)
-    exec(compile(source, str(filename), 'exec'), module.__dict__)
+    exec(compile(candidate(source), str(filename), 'exec'), module.__dict__)
     return module
 
 
 def supervise(run, command, **options):
     module = load()
-    timing = dict(version=1, observationalOnly=True, providerSha256=PROVIDER_SHA,
+    timing = dict(version=1, observationalOnly=False, adapterVersion=VERSION,
+                  durableBeforeEveryCont=True, providerSha256=PROVIDER_SHA,
                   clock='Linux CLOCK_MONOTONIC / monotonic_ns',
                   startedNs=time.monotonic_ns(), wallTime=time.time(), limit=LIMIT,
                   writes=0, writeNs=0, maxWriteNs=0, writeSamples=[],
