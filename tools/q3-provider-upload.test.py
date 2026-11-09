@@ -260,7 +260,8 @@ class SSHProvisionTests(unittest.TestCase):
         fn=next(x for x in ast.parse(source.read_text()).body if isinstance(x,ast.FunctionDef) and x.name=='provision')
         receiver=runpy.run_path(str(Path(__file__).with_name('q3-provider-upload.py')))['SSH_RECEIVER']
         real_popen=subprocess.Popen
-        for mode in ['large','heldwriter','refusal','mutation','cancel','eof']:
+        before_ready=('heldready','refusal','wrapper','wrappedstdout','bigstdout','bigstderr')
+        for mode in ['large','heldwriter',*before_ready,'malformed','wrongack','exitstatus','mutation','cancel','eof']:
             with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
                 root=Path(directory)/'local';root.mkdir();dest=Path(directory)/'remote';dest.mkdir()
                 run=root/'run';run.mkdir();(root/'tools').mkdir()
@@ -272,10 +273,21 @@ class SSHProvisionTests(unittest.TestCase):
                 barriers=[];processes=[];cancel=threading.Event()
                 def spawn(argv,**kw):
                     self.assertEqual(argv[:4],['boat','--no-update','ssh','q3-local'])
+                    self.assertEqual(argv[4:9],['--','python3','-B','-c',receiver])
+                    self.assertEqual(argv[9],str(dest))
                     script=receiver
-                    if mode=='heldwriter':script='import time;time.sleep(20)'
+                    ready='print(\'{"q3StreamReady":1}\',flush=True);'
+                    if mode=='heldwriter':script=ready+'import time;time.sleep(20)'
+                    if mode=='heldready':script='import time;time.sleep(20)'
                     if mode=='refusal':script='raise SystemExit(23)'
-                    if mode=='eof':script='import sys;sys.stdin.buffer.read(1024)'
+                    if mode=='wrapper':script='import sys;print(\'{"event":"error","error":"authentication refused"}\',flush=True);print("CLI stderr marker",file=sys.stderr,flush=True);raise SystemExit(19)'
+                    if mode=='wrappedstdout':script='import json;print(json.dumps(dict(stdout=\'{"q3StreamReady":1}\\n\',exitCode=0)),flush=True)'
+                    if mode=='bigstdout':script='import sys;sys.stdout.write("X"*131072);sys.stdout.flush()'
+                    if mode=='bigstderr':script='import sys;sys.stderr.write("E"*131072);sys.stderr.flush()'
+                    if mode=='malformed':script=receiver.replace("print(json.dumps(pin,separators=(',',':')),flush=True)","print('malformed ack',flush=True)")
+                    if mode=='wrongack':script=receiver.replace("print(json.dumps(pin,separators=(',',':')),flush=True)","print('{}',flush=True)")
+                    if mode=='exitstatus':script=receiver+'\nraise SystemExit(7)'
+                    if mode=='eof':script=ready+'import sys;sys.stdin.buffer.read(1024)'
                     child=real_popen([sys.executable,'-B','-c',script,str(dest)],**kw);processes.append(child)
                     return child
                 actual=runpy.run_path(str(Path(__file__).with_name('q3-provider-upload.py')))['provision_ssh_files']
@@ -288,7 +300,7 @@ class SSHProvisionTests(unittest.TestCase):
                         if event['event']=='start' and mode=='cancel':cancel.set()
                     if mode=='large':tracemalloc.start()
                     try:
-                        return actual(*args[:4],observed,timeout=.3 if mode=='heldwriter' else 5,cancel=cancel)
+                        return actual(*args[:4],observed,timeout=.3 if mode in ('heldwriter','heldready') else 5,cancel=cancel)
                     finally:
                         if mode=='large':
                             _,peak=tracemalloc.get_traced_memory();tracemalloc.stop()
@@ -299,7 +311,7 @@ class SSHProvisionTests(unittest.TestCase):
                     if str(path).endswith('q3-provider-upload.py'):return {'provision_ssh_files':transfer}
                     return original_run(path)
                 env=dict(Path=Path,ROOT=root,BASE=root,R=run,REMOTE=str(dest),RUN='run',H=lambda b:hashlib.sha256(b).hexdigest(),
-                         validate=lambda:dict(files=pins),box=lambda:'q3-local',gzip=gzip,json=json,remote=lambda *args:barriers.append(args))
+                         validate=lambda:dict(files=pins),box=lambda:'q3-local',gzip=gzip,json=json,os=os,remote=lambda *args:barriers.append(args))
                 exec(compile(ast.Module(body=[fn],type_ignores=[]),str(source),'exec'),env)
                 began=time.monotonic()
                 with patch('subprocess.Popen',spawn),patch('runpy.run_path',load):
@@ -317,7 +329,25 @@ class SSHProvisionTests(unittest.TestCase):
                     self.assertEqual(hashlib.sha256((dest/'pak0.pk3').read_bytes()).hexdigest(),pins[0]['sha256'])
                     self.assertEqual((dest/'pak0.pk3').stat().st_size,46853694)
                     self.assertEqual(len([e for e in events if e['event']=='end']),4)
-                else:self.assertEqual(len([e for e in events if e['event']=='start']),1)
+                else:
+                    self.assertEqual(len([e for e in events if e['event']=='start']),0 if mode in before_ready else 4 if mode=='exitstatus' else 1)
+                    if mode!='exitstatus':self.assertFalse(any(e['event']=='end' for e in events))
+                    if mode=='exitstatus':self.assertEqual(events[-1]['status'],7)
+                    if mode=='wrapper':
+                        self.assertIn('authentication refused',events[-1]['lastReply'])
+                        self.assertIn('CLI stderr marker',events[-1]['stderr'])
+                        self.assertEqual(events[-1]['phase'],'receiver-ready')
+                    if mode=='malformed':self.assertEqual(events[-1]['lastReply'],'malformed ack')
+                    if mode=='wrongack':self.assertEqual(events[-1]['lastReply'],'{}')
+                    if mode in ('bigstdout','bigstderr'):
+                        self.assertTrue(events[-1]['diagnosticsTruncated'])
+                        self.assertLessEqual(len(events[-1]['stdoutRemainder']),4096)
+                        self.assertLessEqual(len(events[-1]['stderr']),65536)
+                print('SSH_CONTROL',json.dumps(dict(mode=mode,status=events[-1]['status'],
+                      phase=events[-1]['phase'],starts=sum(e['event']=='start' for e in events),
+                      barriers=len(barriers),actualWait=events[-1]['actualWait'],
+                      stdoutEOF=events[-1]['stdoutEOF'],stderrEOF=events[-1]['stderrEOF'],
+                      lastReply=events[-1]['lastReply'],diagnosticsTruncated=events[-1]['diagnosticsTruncated'])),flush=True)
 
 
 if __name__ == '__main__':

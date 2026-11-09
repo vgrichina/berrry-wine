@@ -88,6 +88,8 @@ def provision():
  with gzip.open(R/'uploads.jsonl.gz','xb') as f:
   def record(event):
    f.write((json.dumps(event)+'\n').encode());f.flush()
+   # Keep the bounded refusal envelope/status durable even if the caller exits.
+   if event['event'] in ('error','actual-wait'):os.fsync(f.fileno())
   runpy.run_path(str(ROOT/'tools/q3-provider-upload.py'))['provision_ssh_files'](ROOT,files,REMOTE,box(),record)
  for phase in ['cancellation','original']:
   phaseRun=str((BASE/phase/'prepared').relative_to(ROOT))

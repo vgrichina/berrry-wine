@@ -1,4 +1,4 @@
-"""Q3 pinned PUT service: two streaming lanes, no replay, terminal abort.
+"""Q3 pinned streaming services: no replay, terminal abort.
 
 The caller owns URL authorization and the final remote hash/closure barrier.
 An unsuccessful PUT has UNKNOWN remote effects, including on cancellation.
@@ -20,6 +20,7 @@ SSH_RECEIVER = r'''
 import sys,json,hashlib,os
 from pathlib import Path
 root=Path(sys.argv[1]).resolve()
+print('{"q3StreamReady":1}',flush=True)
 while True:
  line=sys.stdin.buffer.readline(4097)
  if not line or len(line)>4096: raise RuntimeError('missing/big frame')
@@ -64,7 +65,6 @@ def provision_ssh_files(root, pins, remote_root, sandbox, record=lambda event: N
     import json
     import os
     import selectors
-    import shlex
     import signal
     import subprocess
     if not 0 < timeout <= 30:
@@ -84,8 +84,10 @@ def provision_ssh_files(root, pins, remote_root, sandbox, record=lambda event: N
     for pin in pins:
         with source(pin).open('rb') as stream:
             verify(stream, pin)
+    # Documented argv form: -- terminates CLI flags; each command argument keeps
+    # its quoting. Never interpret the CLI's own JSON errors as remote stdout.
     argv = command if command is not None else ['boat', '--no-update', 'ssh', sandbox,
-            'python3 -B -c ' + shlex.quote(SSH_RECEIVER) + ' ' + shlex.quote(remote_root)]
+            '--', 'python3', '-B', '-c', SSH_RECEIVER, remote_root]
     p = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE, start_new_session=True)
     stderr = bytearray()
@@ -97,8 +99,11 @@ def provision_ssh_files(root, pins, remote_root, sandbox, record=lambda event: N
         sel.register(stream, event)
     deadline = time.monotonic() + timeout
     phase, sent = 'connect', 0
+    last_reply = b''
+    diagnostics_truncated = False
 
     def pump(data=None, reply=False):
+        nonlocal last_reply, diagnostics_truncated
         view = memoryview(data) if data is not None else None
         if reply:
             sel.unregister(p.stdin)
@@ -121,20 +126,33 @@ def provision_ssh_files(root, pins, remote_root, sandbox, record=lambda event: N
                         if stream is p.stdout:
                             raise EOFError('SSH peer EOF; remote effects UNKNOWN; no retry')
                     elif stream is p.stderr:
-                        stderr.extend(b)
-                        if len(stderr) > CHUNK:
+                        overflow = len(stderr) + len(b) > CHUNK
+                        stderr.extend(b[:CHUNK-len(stderr)])
+                        if overflow:
+                            diagnostics_truncated = True
                             raise ValueError('SSH stderr exceeds bound')
                     else:
-                        stdout.extend(b)
-                        if len(stdout) > 4096:
+                        overflow = len(stdout) + len(b) > 4096
+                        stdout.extend(b[:4096-len(stdout)])
+                        if overflow:
+                            diagnostics_truncated = True
                             raise ValueError('SSH response exceeds bound')
             if reply and b'\n' in stdout:
                 line, _, rest = stdout.partition(b'\n')
                 stdout[:] = rest
+                last_reply = bytes(line)
                 sel.register(p.stdin, selectors.EVENT_WRITE)
-                return json.loads(line)
+                value = json.loads(line)
+                if isinstance(value, dict) and ('error' in value or value.get('event') == 'error'):
+                    raise ValueError('Boat CLI/remote error envelope; remote effects UNKNOWN; no retry')
+                return value
 
     try:
+        # Admit no file body until the actual receiver has started. A CLI auth,
+        # status or session envelope cannot satisfy this exact remote greeting.
+        phase = 'receiver-ready'
+        if pump(reply=True) != {'q3StreamReady': 1}:
+            raise ValueError('SSH receiver readiness refusal')
         for pin in pins:
             deadline = time.monotonic() + timeout
             began = time.monotonic()
@@ -181,7 +199,13 @@ def provision_ssh_files(root, pins, remote_root, sandbox, record=lambda event: N
             p.stdin.close();p.stdin=None
         so,se=p.communicate()
         sel.close()
-        record(dict(event='actual-wait',status=p.returncode,stdoutEOF=True,stderrEOF=True,actualWait=True))
+        # Retain the returned envelope and independent stderr even on malformed
+        # JSON, early EOF, authentication refusal or kill. All fields are capped.
+        record(dict(event='actual-wait',status=p.returncode,stdoutEOF=True,stderrEOF=True,actualWait=True,
+                    phase=phase,lastReply=last_reply.decode('utf-8',errors='replace'),
+                    stdoutRemainder=(bytes(stdout)+so)[:4096].decode('utf-8',errors='replace'),
+                    stderr=(bytes(stderr)+se)[:CHUNK].decode('utf-8',errors='replace'),
+                    diagnosticsTruncated=diagnostics_truncated or len(stdout)+len(so)>4096 or len(stderr)+len(se)>CHUNK))
 
 
 def chunks(stream):
