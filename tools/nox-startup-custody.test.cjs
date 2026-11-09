@@ -20,6 +20,10 @@ with patch.object(Path,'read_bytes',return_value=source+b'\n'):
  else:raise AssertionError('provider drift admitted')
 kernel=adapter['load']()
 changed=adapter['candidate'](source)
+begin=changed.index('    def creation_wait():\n');end=changed.index('    def priority_wait():\n',begin)
+changed=changed[:begin]+changed[end:]
+begin=changed.index('                # Durable service may have blocked');end=changed.index('                released = trace_task(CONT, task, deliver)',begin)
+changed=changed[:begin]+changed[end:]
 assert changed.replace('defer=True)','defer=retirement or diagnostic)').replace(
  '        if request == CONT: journal.flush_pending()\n','')==source.decode()
 spec=importlib.util.spec_from_file_location('controls',root/'tools/native_kernel_custody_test.py')

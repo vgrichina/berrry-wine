@@ -12,7 +12,7 @@ from pathlib import Path
 
 PROVIDER_SHA = '3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240'
 LIMIT = 4096
-VERSION = 'nox-durable-every-cont-prefix-v1'
+VERSION = 'nox-durable-cont-creation-rescan-v2'
 
 
 def candidate(source):
@@ -24,6 +24,28 @@ def candidate(source):
         ('    def trace_task(request, task, data=0):\n',
          '    def trace_task(request, task, data=0):\n'
          '        if request == CONT: journal.flush_pending()\n'),
+        ('    def priority_wait():\n',
+         '    def creation_wait():\n'
+         '        # Only real pending kernel creation stops, never /proc ancestry.\n'
+         '        retired = {r["pid"] for r in reaped}\n'
+         '        for task in owned:\n'
+         '            if task in exec_transfers or task in retired: continue\n'
+         '            try: value = os.waitid(os.P_PID, task, wait_flags)\n'
+         '            except ChildProcessError: continue\n'
+         '            if value and value.si_code == os.CLD_TRAPPED and value.si_status in (261, 517, 773):\n'
+         '                return value\n'
+         '        return None\n\n'
+         '    def priority_wait():\n'),
+        ('                released = trace_task(CONT, task, deliver)\n',
+         '                # Durable service may have blocked while another admitted\n'
+         '                # thread entered clone. Re-scan AFTER that service, before\n'
+         '                # releasing a sibling that can replace the creator stop.\n'
+         '                # Observation only: normal consume + GETEVENTMSG still\n'
+         '                # supplies the sole lineage/admission proof.\n'
+         '                if creation_wait() is not None:\n'
+         '                    resumes[task] = (start, deliver, parent)\n'
+         '                    continue\n'
+         '                released = trace_task(CONT, task, deliver)\n'),
     ]
     for before, after in seams:
         if text.count(before) != 1:
