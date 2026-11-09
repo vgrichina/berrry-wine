@@ -14,6 +14,7 @@ const root = path.resolve(__dirname, '..');
 const retained = path.dirname(path.join(root, composition.consumerPath));
 const transport = require(retained+'/transport.cjs');
 const bound = require(retained+'/bound-input.cjs');
+const producer = require(retained+'/producer-ready.cjs');
 const pause = ms => new Promise(r => setTimeout(r, ms));
 async function until(fn) {
   const end=Date.now()+3000;
@@ -30,7 +31,7 @@ async function main() {
   const diagnosticRows=[], traceRows=[], pending=new Map(), timers=new Set();
   const trace={span:async(name,fn)=>fn(), expression:require(retained+'/trace.cjs').expression,
     snapshot:reason=>traceRows.push(reason)};
-  const diagnostic=create({trace,write:row=>diagnosticRows.push(row)});
+  let scope,diagnostic,probeEnabled=false;
   const server=http.createServer();let peer, buffered=Buffer.alloc(0), received=[];
   function response(value) {
     const data=Buffer.from(JSON.stringify(value));
@@ -59,11 +60,18 @@ async function main() {
   });
   server.listen(0,'127.0.0.1');await once(server,'listening');
   const ws=new WebSocket('ws://127.0.0.1:'+server.address().port);await once(ws,'open');
-  const scope=vm.createContext({trace,pending,workers:new Map(),pageSession:'page',id:0,ws,
-    process:{env:{}}, screenshotCompletion:diagnostic, event:async()=>{}, log(){},
+  scope=vm.createContext({trace,pending,workers:new Map(),pageSession:'page',id:0,ws,
+    root,require(name){
+      if(name===root+'/tools/q3-screenshot-completion.cjs')return {create(options){
+        return create({...options,probe:p=>probeEnabled?options.probe(p):undefined});
+      }};
+      return require(name);
+    },process:{env:{}},event:async()=>{},log(file,row){diagnosticRows.push(structuredClone(row));},
     setTimeout(fn,ms){assert.equal(ms,20000,'actual unchanged CDP cap');const timer=setTimeout(()=>{timers.delete(timer);fn();},ms);timers.add(timer);return timer;},
     clearTimeout(timer){timers.delete(timer);clearTimeout(timer);}});
-  vm.runInContext(sendSource+'\nglobalThis.send=send;globalThis.receive='+receiveSource,scope);
+  const initializer=source.match(/const screenshotCompletion=[^\n]+/)[0];
+  vm.runInContext(initializer+'\nglobalThis.diagnostic=screenshotCompletion;\n'+sendSource+'\nglobalThis.send=send;globalThis.receive='+receiveSource,scope);
+  diagnostic=scope.diagnostic;
   ws.onmessage=scope.receive;
   for(const event of ['close','error'])ws.addEventListener(event,()=>diagnostic.transport(event));
   let tests=0;
@@ -105,6 +113,7 @@ async function main() {
     fs.writeFileSync(commands+'/execution-window.json',JSON.stringify({browserStop:new Date(runEnd).toISOString()}));
     fs.writeFileSync(commands+'/commands/0.json',JSON.stringify({id:'pending_screenshot',timing:{runEnd,workEnd:Date.now()+100,ackEnd:Date.now()+2200}}));
     let actualShot,executeDone;
+    probeEnabled=true;
     const consume=transport.consume(commands,0,async(c,mark)=>{
       mark();actualShot=await request('Page.captureScreenshot',{format:'png'});
       await actualShot.promise;executeDone=true;
@@ -114,6 +123,9 @@ async function main() {
     actualTrace.snapshot=(reason,...args)=>{trace.snapshot(reason);return originalSnapshot(reason,...args);};
     try{
       await until(()=>actualShot);
+      await until(()=>diagnosticRows.some(r=>r.event==='owner.probe.request'&&r.screenshotId===actualShot.wire.id));
+      const commandProbe=received.find(r=>r.id>actualShot.wire.id&&r.method==='Runtime.evaluate');
+      response({id:commandProbe.id,sessionId:commandProbe.sessionId,result:{result:{value:render}}});
       response({method:'Page.frameNavigated',sessionId:'page',params:{frame:{id:'frame-2',loaderId:'loader-2'}}});
       response({method:'Runtime.executionContextsCleared',sessionId:'page',params:{}});
       response({method:'Target.detachedFromTarget',params:{sessionId:'render',targetId:'renderer-target'}});
@@ -130,18 +142,79 @@ async function main() {
       assert(diagnosticRows.some(r=>r.event==='owner.reply.duringScreenshot'&&r.kind==='page.owner'));
       assert(diagnosticRows.some(r=>r.event==='owner.reply.duringScreenshot'&&r.kind==='renderer.owner'&&r.value[0].control.completed===5));
       assert(diagnosticRows.some(r=>r.method==='Target.detachedFromTarget'));tests++;
-    }finally{actualTrace.snapshot=originalSnapshot;}
+    }finally{actualTrace.snapshot=originalSnapshot;probeEnabled=false;}
 
     // Real 20s cap; a subsequent raw response is visible before the retained
     // handler discards it for absence from pending. UNKNOWN remains terminal.
+    // Reproduce343's missing causal boundary with actual composed sends over
+    // the socket: owner reads must be submitted WHILE the screenshot promise
+    // remains unresolved, independently of each other. No browser/GPU claim.
+    const glValue=n=>[{id:'render-owner',control:null,gl:{adapter:'adapter-1',bridge:'bridge-1',
+      owners:[{owner:0,context:'context-1',draws:n,vertices:n*3,completed:n,presented:n,writeSeq:n}]}}];
+    const ownerExpressions=[['page',bound.PAGE_READ,{apps:[{epoch:'document-2'}]}],
+      ['render',bound.RENDER_READ,[{...render[0],control:null}]],
+      ['render',producer.READ,glValue(5)],
+      ['guest',bound.WORKER_READ,{endpointIdentity:'guest-owner',slot:0,instance:'guest-1'}]];
+    for(const [session,expression,value] of ownerExpressions){
+      const read=await request('Runtime.evaluate',{expression},session);
+      response({id:read.wire.id,sessionId:session,result:{result:{value}}});await read.promise;
+    }
+    probeEnabled=true;
     const timeout=await request('Page.captureScreenshot',{format:'png'});
+    await until(()=>received.filter(r=>r.id>timeout.wire.id).length===4);
+    const batch=received.filter(r=>r.id>timeout.wire.id);
+    assert.equal(batch.length,4,'one batch, no retries');
+    assert(batch.every(r=>r.method==='Runtime.evaluate'&&r.params.awaitPromise===false));
+    const pageProbe=batch.find(r=>r.sessionId==='page'),renderProbe=batch.find(r=>r.params.expression===bound.RENDER_READ);
+    const producerProbe=batch.find(r=>r.params.expression===producer.READ);
+    const guestProbe=batch.find(r=>r.sessionId==='guest');
+    response({id:pageProbe.id,sessionId:'page',result:{result:{value:ownerExpressions[0][2]}}});
+    response({id:renderProbe.id,sessionId:'render',result:{result:{value:ownerExpressions[1][2]}}});
+    response({id:producerProbe.id,sessionId:'render',result:{result:{value:glValue(6)}}});
+    await until(()=>diagnosticRows.some(r=>r.event==='owner.probe.response'&&r.requestId===producerProbe.id));
+    row=diagnostic.snapshot('missing screenshot; live renderer').records.at(-1);
+    assert.equal(row.status,'pending');assert.equal(row.probes.length,4);
+    assert.equal(row.probes.find(r=>r.kind==='renderer.owner').value[0].control,null);
+    assert.equal(row.ownerRepliesBefore.find(r=>r.kind==='renderer.producer').value[0].gl.owners[0].draws,5);
+    assert.equal(row.probes.find(r=>r.kind==='renderer.producer').value[0].gl.owners[0].draws,6);
+    assert.equal(row.probes.find(r=>r.kind==='guest.instance').status,'pending');
+    assert(!diagnosticRows.some(r=>r.event==='screenshot.response'&&r.requestId===timeout.wire.id));
+    // A detach/rebind must not silently reuse the old renderer session.
+    response({method:'Target.detachedFromTarget',params:{sessionId:'render',targetId:'renderer-target'}});
+    await until(()=>diagnosticRows.filter(r=>r.event==='lifecycle'&&r.method==='Target.detachedFromTarget').length===2);
+    const replacement=await request('Runtime.evaluate',{expression:bound.RENDER_READ},'render-new');
+    response({id:replacement.wire.id,sessionId:'render-new',result:{result:{value:[{...render[0],epoch:'epoch-2'}]}}});
+    await replacement.promise;
+    const replacementProducer=await request('Runtime.evaluate',{expression:producer.READ},'render-new');
+    response({id:replacementProducer.wire.id,sessionId:'render-new',result:{result:{value:glValue(1)}}});
+    await replacementProducer.promise;
     await assert.rejects(timeout.promise,/CDP UNKNOWN/);
+    await until(()=>!pending.has(guestProbe.id));
+    row=diagnostic.snapshot('owner read missing').records.at(-1);
+    assert.equal(row.probes.find(r=>r.kind==='guest.instance').status,'CDP deadline; UNKNOWN');
+    response({id:guestProbe.id,sessionId:'guest',result:{result:{value:{instance:'guest-1'}}}});
+    await until(()=>diagnosticRows.some(r=>r.event==='owner.probe.response'&&r.requestId===guestProbe.id));
+    row=diagnostic.snapshot('late owner reply').records.at(-1);
+    assert.equal(row.probes.find(r=>r.kind==='guest.instance').status,'CDP deadline; UNKNOWN');
+    assert.equal(row.probes.find(r=>r.kind==='guest.instance').routePending,false);
     assert(!pending.has(timeout.wire.id));
     response({id:timeout.wire.id,sessionId:'page',result:{data:'bGF0ZQ=='}});
     await until(()=>diagnosticRows.some(r=>r.event==='screenshot.response'&&r.requestId===timeout.wire.id));
     row=diagnostic.snapshot('late after CDP deadline').records.at(-1);
     assert.equal(row.status,'CDP deadline; UNKNOWN');assert.equal(row.routePending,false);assert.equal(row.late,true);tests++;
-    assert.equal(received.filter(r=>r.method==='Page.captureScreenshot').length,5,'no extra screenshot or retry');
+    const routed=await request('Page.captureScreenshot',{format:'png'});
+    await until(()=>received.filter(r=>r.id>routed.wire.id).length===4);
+    const rebound=received.filter(r=>r.id>routed.wire.id);
+    assert(rebound.some(r=>r.sessionId==='render-new'));assert(!rebound.some(r=>r.sessionId==='render'));
+    for(const r of rebound)response({id:r.id,sessionId:r.sessionId==='guest'?'wrong-guest':r.sessionId,
+      result:{result:{value:r.sessionId==='render-new'?[{...render[0],epoch:'epoch-2',control:{completed:1}}]:{epoch:'document-2'}}}});
+    response({id:routed.wire.id,sessionId:'page',result:{data:'cG5n'}});await routed.promise;
+    await until(()=>pending.size===0);
+    row=diagnostic.snapshot('routed screenshot; changed renderer; wrong guest route').records.at(-1);
+    assert.equal(row.status,'response received');assert.equal(row.routeSessionMatches,true);
+    assert.equal(row.probes.find(r=>r.kind==='guest.instance').routeSessionMatches,false);
+    assert.equal(row.probes.find(r=>r.kind==='renderer.owner').value[0].epoch,'epoch-2');tests++;
+    assert.equal(received.filter(r=>r.method==='Page.captureScreenshot').length,6,'only explicit test screenshots, no retry');
     assert.equal(timers.size,0);assert.equal(pending.size,0);
   } finally {
     for(const timer of timers)clearTimeout(timer);
@@ -184,6 +257,18 @@ async function main() {
   durations.request(meta(345),{});clock+=9;
   durations.receive({id:345,sessionId:'page',error:{code:-32000}},{meta:meta(345)});
   clock+=100;assert.equal(durations.snapshot('protocol error').records.at(-1).elapsedMs,9);tests++;
+  let probeCalls=0;
+  const isolatedRows=[];
+  const isolated=create({trace:{snapshot(){}},write:r=>isolatedRows.push(structuredClone(r)),
+    probe(){probeCalls++;return Promise.reject(Error('diagnostic transport rejected'));}});
+  const pageMeta={requestId:1,method:'Runtime.evaluate',sessionId:'page',expression:{kind:'page.owner'}};
+  isolated.request(pageMeta,{expression:bound.PAGE_READ});
+  isolated.receive({id:1,sessionId:'page',result:{result:{value:{apps:[]}}}},{meta:pageMeta});
+  isolated.request(meta(2),{});isolated.submitted(meta(2));isolated.snapshot('command work deadline');
+  await new Promise(setImmediate);assert.equal(probeCalls,0,'no diagnostic submission after first UNKNOWN');
+  isolated.request(meta(3),{});isolated.submitted(meta(3));await new Promise(setImmediate);
+  assert.equal(probeCalls,1);assert.equal(isolated.snapshot('probe rejected').records.at(-1).status,'pending');
+  assert(isolatedRows.some(r=>r.event==='owner.probe.rejected'));tests++;
   assert.equal(require('node:crypto').createHash('sha256').update(fs.readFileSync(root+'/tools/q3-execution-boundary.cjs')).digest('hex'),composition.providers['tools/q3-execution-boundary.cjs']);
   console.log(JSON.stringify({passed:true,tests,localhostWebSocket:true,actualComposedSendReceive:true,actualNumberedTransport:true,browserStarted:false,gameStarted:false,unchangedCDPDeadlineMs:20000,noReplay:true,socketClosed:true,serverClosed:true,pending:pending.size,timers:timers.size,traceRows}));
 }

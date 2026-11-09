@@ -19,11 +19,12 @@ const providers = Object.freeze({
   'tools/native-browser-close.cjs': '1f4fe08b501ed27c90f4256e85574a788e7dd8adff60638f2c69d6a3ca2ea9b2',
   'tools/native-devtools-ready.cjs': '9ba9ae8b94ebd8a134045608074403d81f68d3cfdf6c0e3f9dbcb875e0632c1b',
   'tools/q3-execution-boundary.cjs': '1858eea7efb8875e44088ffe9f5ea434c3b22915444113204fb51673e4f5ac0d',
-  'tools/q3-screenshot-completion.cjs': 'df110773fc90f7c9dd259f1232f5a7fa985bce43faea1984cf0a9c32b047527b',
+  'tools/q3-screenshot-completion.cjs': 'b0d8efd89e061d06b8ceb014e3eae7a3c42809f9360c47d86bfd6c61c25d85f9',
   'tools/native-command-log.cjs': '979b3a8bbd8625ef6bffb009650778736e20ade2d781918b83f59d9944c88f5e',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/transport.cjs': '54d7576d40df790ecf72153e289b25c6235b4e92b3f8b7332e480637bf07a9e8',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/trace.cjs': '6f440f2d1bdd9e02598a768ad041681ae1969245e9512939dff24a3970bb8b86',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs': '175033bc07bda95dd2d618511729d901908d60a9e8ec970cdbc8d7e2d61dcd70',
+  'scratch/runs/20261108-q3-gl-readiness-gameplay/producer-ready.cjs': 'e400a370c681974dd3b9cce294ac8853e9779d8922e15f8063b23e5ed84dc5e8',
   'tools/native_kernel_custody.py': 'fb670a47d4712aa44fd2fae3d2047587374c0e1c2bb4e927ff87572147dfcfff'
 });
 function replaceOnce(source, before, after) {
@@ -57,7 +58,13 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
   // Observe the exact transport send/receive/deadline boundaries. The retained
   // transport and screenshot options, work/CDP caps and ACK rules stay intact.
   source = replaceOnce(source, 'const pending=new Map(),workers=new Map(),workerPromises=[];',
-    "const pending=new Map(),workers=new Map(),workerPromises=[];const screenshotCompletion=require(root+'/tools/q3-screenshot-completion.cjs').create({trace,write:v=>log('screenshot-completion.jsonl',v)});");
+    "const pending=new Map(),workers=new Map(),workerPromises=[];const screenshotCompletion=require(root+'/tools/q3-screenshot-completion.cjs').create({trace,write:v=>log('screenshot-completion.jsonl',v),probe:({shotId,kind,sessionId,params})=>send('Runtime.evaluate',params,sessionId,{shotId,kind})});");
+  source = replaceOnce(source, 'function send(method,params={},sessionId)',
+    'function send(method,params={},sessionId,captureProbe=null)');
+  source = replaceOnce(source, 'meta={requestId:n,method,sessionId:',
+    'meta={captureProbe,requestId:n,method,sessionId:');
+  source = replaceOnce(source, 'expression:params.expression?trace.expression(params.expression):null',
+    "expression:params.expression?{...trace.expression(params.expression),...(params.expression===require(root+'/scratch/runs/20261108-q3-gl-readiness-gameplay/producer-ready.cjs').READ?{kind:'renderer.producer'}:{})}:null");
   source = replaceOnce(source, "trace.snapshot('CDP deadline',meta);pending.delete(n);",
     "trace.snapshot('CDP deadline',meta);screenshotCompletion.deadline(meta);pending.delete(n);");
   source = replaceOnce(source, 'ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));',
