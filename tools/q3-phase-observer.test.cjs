@@ -15,11 +15,12 @@ for(const plan of Object.values(seal.phaseLayout)){
 }
 
 const {run}=require('./q3-input-phase-service.cjs');
-const python=(prepared,mode,review)=>cp.spawnSync('python3',['-B','-c',`import runpy,time,json,sys
-m=runpy.run_path('tools/q3-phase-observer.py')
-if sys.argv[2]=='observe':v=m['observe'](sys.argv[1],sys.argv[3],'cancellation',time.monotonic()+.05)
-else:v=m['publish_review'](sys.argv[1],sys.argv[3],'cancellation',json.loads(sys.argv[4]))
-print(json.dumps(v))`,root,mode,prepared,JSON.stringify(review??{})],{cwd:root,encoding:'utf8'});
+const python=(prepared,mode,review)=>{
+ const generator=cp.execFileSync('python3',['-B','-c',`import runpy,json,sys
+m=runpy.run_path(sys.argv[1]+'/tools/q3-phase-observer.py')
+print(m['remote_wrapper'](sys.argv[1],sys.argv[2],'cancellation','observe' if sys.argv[3]=='observe' else 'publish_review',json.loads(sys.argv[4])))`,root,prepared,mode,JSON.stringify(review??{})],{cwd:'/home/user',encoding:'utf8'});
+ return cp.spawnSync('python3',['-B','-c',generator],{cwd:'/home/user',encoding:'utf8'});
+};
 (async()=>{
  for(const mode of ['positive','wrong-sha','wrong-identity','ambiguous','terminal','wrong-image']){
   const trial=base+'/'+mode;fs.mkdirSync(trial);const prepared=trial+'/prepared',phase=trial+'/cancellation/prepared',out=phase+'/runtime';fs.mkdirSync(out,{recursive:true});fs.mkdirSync(prepared);
@@ -49,6 +50,7 @@ print(json.dumps(v))`,root,mode,prepared,JSON.stringify(review??{})],{cwd:root,e
  }
  // Obsolete output/ready publications cannot satisfy the generated phase plan.
  const phase=base+'/cancellation/prepared';fs.mkdirSync(phase,{recursive:true});fs.writeFileSync(phase+'/runtime-input-service-review-ready.json','{}');
+ fs.writeFileSync(phase+'/caller-cancelled.json','{}');
  assert.notEqual(python(base+'/prepared','observe').status,0);
  console.log(JSON.stringify({passed:true,actualPreparation:true,actualConsumerGate:true,reviewControls:6,obsoletePathsRefused:true,browserStarted:false}));
 })().catch(e=>{console.error(e);process.exitCode=1;});

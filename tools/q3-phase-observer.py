@@ -1,9 +1,40 @@
-"""Read a sealed current phase's image gate; no browser/protocol/input work."""
+"""Observe sealed images and revoke their native owner on wrapper failure."""
 from pathlib import Path
 import gzip
 import hashlib
 import json
 import time
+
+
+def remote_wrapper(root, prepared, phase, operation='observe', review=None):
+    """The actual Boat payload. Resolve every helper before leaving the caller.
+
+    Keep the exception boundary outside runpy: a missing observer must revoke
+    the owner too. Cancellation uses the existing run-scoped native reaper,
+    never Browser.close, guest input, a retry, or another runtime budget.
+    """
+    assert operation in ('observe', 'publish_review')
+    root, prepared = Path(root).resolve(), Path(prepared).resolve()
+    plan = layout(root, prepared, phase)
+    helper = str(root/'tools/q3-phase-observer.py')
+    owner = str(root/'tools/q3-native-launch-client.py')
+    return ("import runpy,time,json,gzip,os\nfrom pathlib import Path\nowner=None\n"
+            "try:\n"
+            " owner=runpy.run_path("+repr(owner)+")\n"
+            " m=runpy.run_path("+repr(helper)+")\n"
+            " v=m["+repr(operation)+"]("+repr(str(root))+","+repr(str(prepared))+","+repr(phase)+","+
+            ("time.monotonic()+55" if operation == 'observe' else repr(review))+")\n"
+            " if "+repr(operation == 'observe')+":\n"
+            "  p=Path(v['image']);q=p.with_name(p.name+'.review.gz');q.write_bytes(gzip.compress(p.read_bytes(),mtime=0));v['download']=str(q)\n"
+            " print(json.dumps(v),flush=True)\n"
+            "except BaseException:\n"
+            " if owner is not None:owner['cancel_remote']("+repr(str(plan['prepared']))+","+repr(str(plan['output']))+")\n"
+            " else:\n"
+            "  try:\n"
+            "   with Path("+repr(str(plan['prepared']/'caller-cancelled.json'))+").open('x') as f:\n"
+            "    json.dump(dict(at=time.time(),reason='observer cancellation helper unavailable',noReplay=True,remoteCustody='UNKNOWN'),f);f.flush();os.fsync(f.fileno())\n"
+            "  except FileExistsError:pass\n"
+            " raise\n")
 
 
 def layout(root, prepared, phase):

@@ -201,6 +201,11 @@ function createCaptureDiagnostics({socket,write,now=monotonicNs,schedule=setTime
  };
 }
 function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=setTimeout,cancel=clearTimeout}){
+ // Native revocation is authoritative even after diagnostic recording caps.
+ // Check at the last synchronous boundary before ANY protocol send, including
+ // automatic startup/capture and cleanup. The native reaper still owns exit.
+ const cancellationFile=process.env.Q3_NATIVE_PHASE===undefined?null:
+  path.join(path.dirname(process.env.Q3_EXECUTION_BOUNDARY_OUT),'caller-cancelled.json');
  // WHATWG has no send callback. Wrap an existing callback only when the caller
  // supplied one; never infer callback support from function arity or inject one.
  return class TransportSocket extends WebSocket{
@@ -230,6 +235,7 @@ function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=s
    for(const event of ['error','close'])this.addEventListener(event,()=>record('transport-event',{event}));
   }
   send(data,...args){
+   assert(!cancellationFile||!fs.existsSync(cancellationFile),'native owner cancelled; no later protocol');
    const capture=this.q3Capture;
    capture.send('pre-send',data);
    const observer=this.q3Transport;
