@@ -60,7 +60,17 @@ const root=path.resolve(__dirname,'..');
      assert.equal(h.exports.get_cpu_mmx(),shadowCpu,'CPU configuration is not applied to shadow');
      assert.equal(h.exports.get_winver(),shadowVersion,'Windows version belongs to guest owner');
     }
-    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings});
+    const shadowUop=h.exports.get_uop_icg_mega();
+    const experiments=require('./runner-experiments').createRunnerExperiments({
+     hasFlag:flag=>flag==='no-uop-retry-ladder',
+     getArg:(flag,fallback)=>flag==='uop-icg-mega'?'3':fallback,env:{},log:()=>{},
+    });
+    await experiments.applyMainOwned(owner,{copySuperops:false,ctx:{}});
+    await owner.optionalCall('set_spin_park_k',0);
+    const postload=await owner.read(['get_uop','get_uop_retry_ladder','get_uop_icg_mega','get_spin_park_k']);
+    assert.deepEqual(postload,{get_uop:1,get_uop_retry_ladder:0,get_uop_icg_mega:3,get_spin_park_k:0});
+    if(remote)assert.equal(h.exports.get_uop_icg_mega(),shadowUop,'interpreter options do not target shadow');
+    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload});
    }finally{await worker?.stop();}
   }
  }

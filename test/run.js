@@ -6725,13 +6725,11 @@ async function main() {
 
   // Arm shadow call-stack (--trace-callstack). Gated WAT-side so off-runs pay
   // zero cost in the hot path.
-  if (TRACE_CALLSTACK && instance.exports.set_callstack_enabled) {
-    instance.exports.set_callstack_enabled(1);
-  }
+  if (TRACE_CALLSTACK) await mainOwner.optionalCall('set_callstack_enabled', 1);
   // Arm --fault-null. Same deal: the WAT check sits in the $g2w miss path, so
   // an off-run never reaches it.
-  if (FAULT_NULL_MODE && instance.exports.set_fault_unmapped) {
-    instance.exports.set_fault_unmapped(FAULT_NULL_MODE);
+  if (FAULT_NULL_MODE && mainOwner.supports('set_fault_unmapped')) {
+    await mainOwner.call('set_fault_unmapped', FAULT_NULL_MODE);
     console.log(`[fault] ${FAULT_NULL ? '--fault-null' : 'app page-fault option'} armed (mode=${FAULT_NULL_MODE}: `
       + `${FAULT_NULL_MODE === 2 ? 'log and trap'
           : FAULT_NULL_MODE === 3 ? 'log and raise a guest access violation'
@@ -6740,24 +6738,14 @@ async function main() {
           : 'log and continue'})`);
   }
   // Exclude PE/DLL load from the offline translation-path census.
-  if (GUEST_PAGE_STATS) instance.exports.reset_guest_page_stats();
-  if (TRACE_WIN16_DDE && instance.exports.set_win16_dde_trace) {
-    instance.exports.set_win16_dde_trace(1);
-  }
-  if (TRACE_WIN16 && instance.exports.set_win16_trace) {
-    instance.exports.set_win16_trace(1);
-  }
-  experiments.applyMain(instance, { copySuperops: COPY_SUPEROPS, ctx });
-  if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);
-  if (FLIP_VSYNC && instance.exports.set_flip_vsync) {
-    instance.exports.set_flip_vsync(1);
-  }
-  if (PRESENT_CAP && instance.exports.set_present_cap) {
-    instance.exports.set_present_cap(PRESENT_CAP);
-  }
-  if (instance.exports.set_present_pace_mode) {
-    instance.exports.set_present_pace_mode(PRESENT_PACE_MODE);
-  }
+  if (GUEST_PAGE_STATS) await mainOwner.call('reset_guest_page_stats');
+  if (TRACE_WIN16_DDE) await mainOwner.optionalCall('set_win16_dde_trace', 1);
+  if (TRACE_WIN16) await mainOwner.optionalCall('set_win16_trace', 1);
+  await experiments.applyMainOwned(mainOwner, { copySuperops: COPY_SUPEROPS, ctx });
+  if (apiLogOff) await mainOwner.optionalCall('set_api_log', 0);
+  if (FLIP_VSYNC) await mainOwner.optionalCall('set_flip_vsync', 1);
+  if (PRESENT_CAP) await mainOwner.optionalCall('set_present_cap', PRESENT_CAP);
+  await mainOwner.optionalCall('set_present_pace_mode', PRESENT_PACE_MODE);
   // --trace-win16 prints where the loader placed each task segment, so a
   // linear EIP or return address from the trace can be written as the
   // { seg, off } that lib/apps.js and other durable notes need.
@@ -6777,23 +6765,17 @@ async function main() {
         + 'is not a loaded Win16 segment; not marked');
     }
   }
-  if (LOGICAL_FRAME && LOGICAL_FRAME.address && instance.exports.set_logical_frame) {
-    instance.exports.set_logical_frame(LOGICAL_FRAME.address, LOGICAL_FRAME.pace);
+  if (LOGICAL_FRAME && LOGICAL_FRAME.address && mainOwner.supports('set_logical_frame')) {
+    await mainOwner.call('set_logical_frame', LOGICAL_FRAME.address, LOGICAL_FRAME.pace);
     console.log(`[present] ${LOGICAL_FRAME.label} step 0x${LOGICAL_FRAME.address.toString(16)} marked`
       + (LOGICAL_FRAME.pace ? `, cap ${PRESENT_CAP}/s paces once per step` : ', counted only'));
   }
-  if (instance.exports.set_spin_park_k) {
-    if (NO_SPIN_PARK) instance.exports.set_spin_park_k(0);
-    else if (Number.isFinite(SPIN_PARK_K)) instance.exports.set_spin_park_k(SPIN_PARK_K);
-  }
-  if (instance.exports.set_spin_work_max && Number.isFinite(SPIN_WORK_MAX)) instance.exports.set_spin_work_max(SPIN_WORK_MAX);
-  if (instance.exports.set_spin_regs_check && Number.isFinite(SPIN_REGS_CHECK)) instance.exports.set_spin_regs_check(SPIN_REGS_CHECK);
-  if (TRACE_FPU && instance.exports.set_fpu_trace) {
-    instance.exports.set_fpu_trace(1);
-  }
-  if (TRACE_CODE_WRITES && instance.exports.set_code_write_trace) {
-    instance.exports.set_code_write_trace(TRACE_CODE_WRITES_ALL ? 2 : 1);
-  }
+  if (NO_SPIN_PARK) await mainOwner.optionalCall('set_spin_park_k', 0);
+  else if (Number.isFinite(SPIN_PARK_K)) await mainOwner.optionalCall('set_spin_park_k', SPIN_PARK_K);
+  if (Number.isFinite(SPIN_WORK_MAX)) await mainOwner.optionalCall('set_spin_work_max', SPIN_WORK_MAX);
+  if (Number.isFinite(SPIN_REGS_CHECK)) await mainOwner.optionalCall('set_spin_regs_check', SPIN_REGS_CHECK);
+  if (TRACE_FPU) await mainOwner.optionalCall('set_fpu_trace', 1);
+  if (TRACE_CODE_WRITES) await mainOwner.optionalCall('set_code_write_trace', TRACE_CODE_WRITES_ALL ? 2 : 1);
   const dumpCallstack = (label, e) => {
     if (!TRACE_CALLSTACK || !e || !e.get_callstack_depth) return;
     const depth = e.get_callstack_depth() | 0;

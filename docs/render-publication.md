@@ -576,8 +576,23 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   configuration leaves the host shadow's local globals unchanged. Evidence:
   `scratch/runs/20261109-cli-owner-config/test-result.json`.
   Graphics backend attachment, environment setup, compatibility patches,
-  experiment/debug configuration and DLL initialization still have local
+  remaining debug hooks and DLL initialization still have local
   paths; the CLI continues to select a local owner until all are migrated.
+  Post-load interpreter options now share one `visitMain` setting policy
+  between synchronous compatibility callers and awaited owner application.
+  The owner route validates required exports before applying settings, preserves
+  flag precedence and zero values, awaits each call in order, and stops on
+  failure. It publishes enabled interpreter-reporting state only after success.
+  Presentation cap/vsync/mode, logical-frame registration, spin tuning and
+  post-load trace/fault setters also route to the owner. Tests compare local and
+  asynchronous command sequences, hold the first setting to detect overtaking,
+  and reject absent required exports and real call failures. Normal/compat Node
+  Worker tests read back interpreter options and zero spin thresholds while
+  proving shadow globals remain untouched. Evidence:
+  `scratch/runs/20261109-cli-owner-postload/test-result.json`.
+  This moves configuration ownership, not interpreter algorithms or rendering
+  throughput. Watchpoint/control callbacks and diagnostic reads still require
+  migration along with the remaining initialization and runtime paths.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
