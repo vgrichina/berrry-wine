@@ -11,6 +11,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import time
@@ -19,6 +20,39 @@ import time
 def identity(pid):
     stat = Path('/proc', str(pid), 'stat').read_text()
     return dict(pid=pid, start=stat[stat.rfind(')')+2:].split()[19])
+
+
+def composition_providers(root):
+    """Read the owning composition's literal pins without executing a runtime."""
+    source = (root / 'tools/q3-native-driver-composition.cjs').read_text()
+    declarations = dict(re.findall(r"const (consumerPath|adapterPath) = '([^']+)';", source))
+    blocks = re.findall(r'const providers = Object\.freeze\(\{\n(.*?)\n\}\);', source, re.S)
+    if len(blocks) != 1:
+        raise ValueError('unsupported Q3 composition provider declaration')
+    providers = {}
+    for line in blocks[0].splitlines():
+        match = re.fullmatch(r"\s*(?:'([^']+)'|\[(consumerPath|adapterPath)\]): '([0-9a-f]{64})',?", line)
+        if not match:
+            raise ValueError('unsupported Q3 composition provider entry')
+        name = match[1] or declarations[match[2]]
+        if name in providers:
+            raise ValueError('duplicate Q3 composition provider')
+        providers[name] = match[3]
+    if not providers:
+        raise ValueError('empty Q3 composition provider graph')
+    return providers
+
+
+def require_composition(root, pins):
+    by_path = {pin['path']: pin for pin in pins['files']}
+    composition = 'tools/q3-native-driver-composition.cjs'
+    if composition not in by_path:
+        raise ValueError('missing prelaunch provider: ' + composition)
+    for name, expected in composition_providers(root).items():
+        if name not in by_path:
+            raise ValueError('missing Q3 composition provider: ' + name)
+        if by_path[name]['sha256'] != expected:
+            raise ValueError('Q3 composition provider pin mismatch: ' + name)
 
 
 def main():
@@ -47,6 +81,7 @@ def main():
     for provider in required:
         if str(provider.relative_to(root)) not in paths:
             raise ValueError('missing prelaunch provider: ' + str(provider))
+    require_composition(root, pins)
     receipt = run / 'startup-barrier.json'
     barrier.publish(root, manifest, receipt)
     # Bind the actual runtime's top-level imports, including native custody,
