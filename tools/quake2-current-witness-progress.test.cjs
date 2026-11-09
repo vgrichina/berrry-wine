@@ -13,6 +13,16 @@ results.push({name:'actual old startup fingerprint',result:'REFUSED current sour
 const baseline=read(path.join(root,current.historical));
 const positive=current.validate(opts);
 assert.equal(positive.nativeQualification,false);assert.equal(positive.version,current.version);
+assert(positive.writerDependencies.includes('tools/quake2-owning-load-witness.cjs'));
+// Reproduce the actual native packaging failure without a directory copy,
+// browser, Worker, guest execution or access to undeclared checkout modules.
+const failedPins=positive.files.filter(p=>p.path!=='tools/quake2-owning-load-witness.cjs');
+assert.throws(()=>current.writerClosure(failedPins),/undeclared Q2 writer dependency: tools\/quake2-owning-load-witness.cjs/);
+assert(current.writerClosure(positive.files).includes('tools/quake2-owning-load-witness.cjs'));
+const cwd=process.cwd();
+try{process.chdir(path.dirname(root));assert(current.writerClosure(positive.files).includes('tools/quake2-owning-load-witness.cjs'));}finally{process.chdir(cwd);}
+assert.throws(()=>current.writerClosure(positive.files.filter(p=>p.path!==require('../lib/quake2-owning-load-core').EXE)),/undeclared Q2 writer file read/);
+results.push({name:'actual native missing transitive import',old:'REFUSED',new:'PASS',scope:'in-memory declared-provider loader; setup source compiled, never evaluated'});
 assert.equal(new Set(positive.files.map(p=>p.path)).size,positive.files.length);
 for(const p of positive.files){const b=read(path.join(root,p.path));assert.equal(p.sha256,hash(b));assert.equal(p.size,b.length);}
 for(const p of positive.httpPins){const f=positive.files.find(v=>v.path===p.url.slice(1));assert(f);assert.equal(p.sha256,f.sha256);assert.equal(p.size,f.size);}
@@ -32,6 +42,7 @@ reject('unpublished owning host drift','host.js',Buffer.concat([read(path.join(r
 reject('unknown custody drift','tools/native_kernel_custody.py',Buffer.concat([read(path.join(root,'tools/native_kernel_custody.py')),Buffer.from('\n')]),/published Q2 provider size/);
 reject('unknown retained provider drift','tools/native-browser-close.cjs',Buffer.concat([read(path.join(root,'tools/native-browser-close.cjs')),Buffer.from('\n')]),/unexplained Q2 provider size/);
 reject('new witness provider drift','tools/quake2-native-witness-install.cjs',Buffer.from('unexplained'),/new published Q2 provider/);
+reject('owning load transitive dependency drift','tools/quake2-owning-load-witness.cjs',Buffer.from('unexplained'),/new published Q2 provider/);
 assert.deepEqual(read(path.join(root,current.historical)),baseline);
 console.log(JSON.stringify({passed:true,version:current.version,results,noNativeRun:true}));
 
