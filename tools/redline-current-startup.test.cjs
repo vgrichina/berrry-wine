@@ -32,6 +32,20 @@ assert.equal(adapter.sha(bytes),adapter.SELECTED.sha256);assert.equal(bytes.leng
 function install(version=adapter.version,deadline=Date.now()+10000){const scope={crypto:webcrypto,WINE_THREADS:true,crossOriginIsolated:true};return admission.install({WineAssembly:{},scope,deadline,version});}
 function owner(module){const link={module,worker:{},endpointIdentity:'e',slot:0};return {_wasmModule:module,instance:{},memory:{},guestWorker:{module,link}};}
 function proof(api){return {...api.status(),...adapter.SELECTED,workerTarget:'t',workerInstance:'i'};}
+async function deadlineControl(){
+ // Compile the real selected CPU before advancing this isolated test clock.
+ // A 250ms wall budget can expire in compilation under shared-host load and
+ // never exercise the parked-owner deadline this control is meant to cover.
+ let now=Date.now(),expire;const deadline=now+10000,m={exports:{}};
+ vm.runInNewContext(candidate,{module:m,require:n=>require(path.resolve(root,'lib',n)),
+  Date:{now:()=>now},WebAssembly,ArrayBuffer,Uint8Array,
+  setTimeout(fn,ms){assert.equal(ms,deadline-now);expire=fn;return 1;},clearTimeout(){} });
+ const api=m.exports.install({WineAssembly:{},scope:{crypto:webcrypto,WINE_THREADS:true,crossOriginIsolated:true},deadline,version:adapter.version});
+ const module=await api.compile(bytes),parked=api.park(owner(module));
+ const observed=parked.catch(e=>e);assert.equal(api.status().phase,'parked');assert.equal(typeof expire,'function');
+ now=deadline;expire();assert.match((await observed).message,/deadline expired/);
+ assert.equal(api.status().phase,'refused');assert.throws(()=>api.release(proof(api)),/deadline expired/);
+}
 function fixtures(){
  let source=fs.readFileSync(path.join(__dirname,'redline-startup.test.cjs'),'utf8');
  source=source.replace("const pins={commit:'fixture',files:","const pins={startupVersion:"+JSON.stringify(adapter.version)+",commit:'fixture',files:");
@@ -72,8 +86,9 @@ async function main(){
  assert.throws(()=>install('wrong-version'),/unknown version/);
  assert.throws(()=>install(adapter.version,Date.now()+21000),/20000ms/);
  const rows=[];
- for(const mode of ['positive','wrong-hash','wrong-size','duplicate-compile','owner','endpoint','module','duplicate-release','deadline','sticky']){
-  const api=install(adapter.version,Date.now()+(mode==='deadline'?250:10000));
+ await deadlineControl();rows.push('deadline');console.log('PASS actual current CPU barrier deadline after parked owner');
+ for(const mode of ['positive','wrong-hash','wrong-size','duplicate-compile','owner','endpoint','module','duplicate-release','sticky']){
+  const api=install(adapter.version,Date.now()+10000);
   if(mode==='wrong-hash'||mode==='wrong-size'){
    const b=Buffer.from(bytes);if(mode==='wrong-hash')b[b.length-1]^=1;
    await assert.rejects(api.compile(mode==='wrong-size'?b.subarray(0,-1):b),/module mismatch/);
@@ -83,8 +98,7 @@ async function main(){
    else {
     const wine=owner(module),parked=api.park(wine),observed=parked.catch(e=>e);
     const p=proof(api);
-    if(mode==='deadline')assert(await observed instanceof Error);
-    else if(mode==='sticky'){
+    if(mode==='sticky'){
      api.abort('first-failure');api.abort('later');assert.throws(()=>api.release(p),/first-failure/);await observed;assert.match(api.status().failure,/first-failure/);
     }else if(['owner','endpoint','module'].includes(mode)){
      if(mode==='owner')wine.guestWorker.link.worker={};

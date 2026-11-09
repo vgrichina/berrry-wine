@@ -13,6 +13,7 @@ async function main(){
  if(process.argv.includes('--first-error-controls'))return firstErrorControls();
  if(process.argv.includes('--prebrowser-runner'))return prebrowserRunner(process.argv.at(-1));
  if(process.argv.includes('--prebrowser-controls'))return prebrowserControls();
+ const callerFailure=process.argv.includes('--caller-failure');
  const run=base+'/prepared',plan=publication.prepare(run,publication.version,startup);
  // Git-authenticated parent verification, then an independent expected digest.
  const pins=publication.prelaunch(run,publication.version,startup),digest=plan.manifestSHA256;
@@ -41,19 +42,32 @@ async function main(){
  const bin=base+'/bin';fs.mkdirSync(bin);fs.writeFileSync(bin+'/git','#!/bin/sh\necho forbidden > '+JSON.stringify(base+'/git-invoked')+'\nexit 99\n',{mode:0o755});
  // Offline custody single-steps every validation syscall. Give this test its
  // own initial deadline; no production deadline is changed or renewed.
- const child=cp.spawn(process.execPath,[__dirname+'/redline-current-publication.cjs','--staged-fixture',run,publication.version,startup,digest],{env:{...process.env,PATH:bin+':'+process.env.PATH,REDLINE_RUN:run,REDLINE_NATIVE_TRACE:'1',REDLINE_STARTUP_BOUNDARY:'1',DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+120000)},stdio:['ignore','pipe','pipe']});
+ // The failure control executes the real generated caller through custody.
+ // Its first HTTP read fails after real server acquisition, before Chrome.
+ const preload=base+'/offline-http-failure.cjs';
+ if(callerFailure)fs.writeFileSync(preload,"global.fetch=async()=>{throw Error('offline caller HTTP failure before Chrome');};\nconst cp=require('node:child_process'),spawn=cp.spawn;cp.spawn=function(exe,...args){if(exe==='/usr/bin/google-chrome')throw Error('offline regression refuses Chrome');return spawn.call(this,exe,...args);};\n",{flag:'wx'});
+ const child=cp.spawn(process.execPath,[__dirname+'/redline-current-publication.cjs','--staged-fixture',run,publication.version,startup,digest],{env:{...process.env,PATH:bin+':'+process.env.PATH,REDLINE_RUN:run,REDLINE_NATIVE_TRACE:'1',REDLINE_STARTUP_BOUNDARY:'1',DRIVER_PREFLIGHT:callerFailure?'0':'1',...(callerFailure?{NODE_OPTIONS:'--require='+JSON.stringify(preload)}:{}),BROWSER_DEADLINE:String(Date.now()+120000)},stdio:['ignore','pipe','pipe']});
  const exit=once(child,'exit'),close=once(child,'close');let stdout='',stderr='',stdoutEOF=false,stderrEOF=false;
  child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);child.stdout.once('end',()=>stdoutEOF=true);child.stderr.once('end',()=>stderrEOF=true);
  const [code,signal]=await exit;await close;assert.equal(code,1);assert.equal(signal,null);assert(stdoutEOF&&stderrEOF);assert(!fs.existsSync(base+'/git-invoked'));
  const joins=JSON.parse(fs.readFileSync(run+'/fixture-process-joins.json'));
- assert.equal(joins.caller.code,0);assert(joins.callerStdoutEOF&&joins.callerStderrEOF&&joins.watchdogStdoutEOF&&joins.watchdogStderrEOF);
  const drain=JSON.parse(fs.readFileSync(run+'/publication-custody/kernel-drain.json'));assert(drain.complete);assert.equal(drain.remaining.length,0);assert.equal(drain.unreaped.length,0);
+ fs.writeFileSync(base+'/caller-exit-observed.json',JSON.stringify({callerFailure,controllerCode:code,joins,actualRootExit:drain.exit},null,2));
+ assert.equal(drain.exit,callerFailure?1:0,'actual owning caller exit');
+ assert.equal(joins.caller.code,callerFailure?1:0,'custody launcher must preserve owning caller failure');assert(joins.callerStdoutEOF&&joins.callerStderrEOF&&joins.watchdogStdoutEOF&&joins.watchdogStderrEOF);
+ if(callerFailure){
+  const failure=JSON.parse(fs.readFileSync(run+'/native-fixture/first-browser-failure.json'));
+  assert.match(failure.error,/offline caller HTTP failure before Chrome/);
+  const phases=fs.readdirSync(run).filter(n=>n.startsWith('browser-phase-')).map(n=>JSON.parse(fs.readFileSync(run+'/'+n)));
+  assert(phases.some(p=>p.phase==='server-acquisition-end'));assert(!phases.some(p=>p.phase==='browser-launch-begin'));
+  assert(!fs.existsSync(run+'/native-fixture/ready.json'));
+ }
  for(const p of drain.owned)assert(drain.reaped.some(r=>r.pid===p.pid&&r.start===p.start));
  const retrieval=publicationHash(fs.readFileSync(run+'/publication-custody/kernel-command.log'));assert(!fs.existsSync(run+'/native-fixture/process.json'));
  const snapshot=require('./redline-publication-caller.cjs').retrieve(run+'/publication-custody');assert(snapshot.custodyComplete);assert.equal(snapshot.readiness,'UNKNOWN');
  fs.writeFileSync(base+'/actual-production-controller.json',JSON.stringify({passed:true,code,signal,stdout,stderr,actualWait:true,stdoutEOF,stderrEOF,joins,owned:drain.owned.length,reaped:drain.reaped.length,kernelCommandSHA256:retrieval,noChrome:true,gitForbidden:true},null,2));
  const journal=run+'/publication-custody/publication-syscalls.ndjson',b=fs.readFileSync(journal),z=require('node:zlib').gzipSync(b);fs.writeFileSync(journal+'.gz',z);assert.deepEqual(require('node:zlib').gunzipSync(fs.readFileSync(journal+'.gz')),b);fs.writeFileSync(base+'/journal-recovery.json',JSON.stringify({path:journal,sha256:publicationHash(b),size:b.length,gzipSHA256:publicationHash(z),gzipSize:z.length}));fs.unlinkSync(journal);
- console.log('PASS actual full staged production CLI/controller, independent digest, 16 missing/changed controls, forged repin refusal; no Git/server/Chrome; custody waits/reaps/separate EOF');
+ console.log('PASS actual full staged production CLI/controller, independent digest, 16 missing/changed controls, forged repin refusal; '+(callerFailure?'real HTTP failure retains caller/controller exit 1; no Chrome':'preflight caller exit 0/controller exit 1; no server/Chrome')+'; no Git; custody waits/reaps/separate EOF');
 }
 function publicationHash(b){return require('node:crypto').createHash('sha256').update(b).digest('hex');}
 async function firstErrorControls(){
