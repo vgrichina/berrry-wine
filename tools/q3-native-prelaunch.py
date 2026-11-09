@@ -86,6 +86,7 @@ def main():
     required = [Path(__file__).resolve(), runtime,
                 root / 'tools/native-startup-barrier.py',
                 root / 'tools/native_kernel_custody.py',
+                root / 'tools/q3-current-module.cjs',
                 root / 'tools/q3-native-launch-client.py',
                 root / 'tools/q3-cancellation-stream-eof.py']
     paths = {p['path'] for p in pins['files']}

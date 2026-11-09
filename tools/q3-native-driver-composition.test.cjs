@@ -285,7 +285,7 @@ async function main() {
     }
   } finally { fs.readFileSync = dependencyRead; }
   assert.equal(composition.providers['tools/native_kernel_custody.py'],
-    '05b7fe42cf7ac09df5f12f0ea073ea066892efb598b64b05fae19a3492c9f32c');
+    '3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240');
   fs.writeFileSync(run + '/dependency-controls.json.gz', zlib.gzipSync(JSON.stringify({
     passed:true, controls:dependencyControls, references:result.references,
     callerSHA256:require('node:crypto').createHash('sha256').update(result.source).digest('hex'),

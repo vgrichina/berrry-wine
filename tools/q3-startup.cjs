@@ -5,7 +5,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const {createHash} = require('node:crypto');
-const {SELECTED} = require('../lib/redline-startup-admission.js');
+// Q3 declares its current published CPU independently of the immutable shared
+// historical admission provider. Only this literal identity changes below.
+const {SELECTED} = require('./q3-current-module.cjs');
 const sha = b => createHash('sha256').update(b).digest('hex');
 function replace(source, before, after) {
   assert.equal(source.split(before).length, 2, 'Q3 startup provider seam changed');
@@ -13,6 +15,8 @@ function replace(source, before, after) {
 }
 function admissionSource(root = path.resolve(__dirname, '..')) {
   let s = fs.readFileSync(path.join(root, 'lib/redline-startup-admission.js'), 'utf8');
+  s = replace(s, "sha256: 'a320d4c85156644fd12b6134d66b11784f3100b9b135756206c087cdacd43295',\n    bytes: 2185596,",
+    `sha256: '${SELECTED.sha256}',\n    bytes: ${SELECTED.bytes},`);
   s = replace(s, 'function sameOwner() {', `function flags(l) { return {
     threads:scope.WINE_THREADS, isolated:scope.crossOriginIsolated,
     serial:!!scope.WINE_THREADS_SERIAL, gpu:!!l.d3dimGpu,

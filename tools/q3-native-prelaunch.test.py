@@ -55,6 +55,7 @@ assert not attempts
 print('retained actual wrapper: native_startup_barrier import failure reproduced')
 
 providers = [WRAPPER, RUNTIME, ROOT / 'tools/native-startup-barrier.py',
+             ROOT / 'tools/q3-current-module.cjs',
              ROOT / 'tools/native_kernel_custody.py', ROOT / 'tools/q3-native-launch-client.py',
              ROOT / 'tools/q3-cancellation-stream-eof.py']
 wrapper_functions = runpy.run_path(str(WRAPPER), run_name='q3_prelaunch_functions')
@@ -67,7 +68,7 @@ pe = next(p for p in pins['files'] if p['path'] == 'test/binaries/calc.exe')
 pins['httpPins'] = [dict(url='/test/binaries/calc.exe', size=pe['size'], sha256=pe['sha256'])]
 for case in ('missing-fixture-http', 'changed-fixture-http', 'duplicate-fixture-http', 'check', 'spawn-refused', 'bad-pin', 'changed-generation', 'missing-provider', 'bad-import',
              'missing-screenshot', 'missing-composition', 'stale-composition-pin', 'missing-caller',
-             'missing-startup', 'missing-fixture', 'missing-admission', 'retired-custody-pin',
+             'missing-startup', 'missing-current-module', 'missing-fixture', 'missing-admission', 'retired-custody-pin',
              'missing-fixture-pe', 'missing-stream-helper'):
     active = OUT / case
     active.mkdir()
@@ -94,6 +95,8 @@ for case in ('missing-fixture-http', 'changed-fixture-http', 'duplicate-fixture-
         selected['files'] = [p for p in selected['files'] if p['path'] != omitted]
     if case == 'missing-stream-helper':
         selected['files'] = [p for p in selected['files'] if p['path'] != 'tools/q3-cancellation-stream-eof.py']
+    if case == 'missing-current-module':
+        selected['files'] = [p for p in selected['files'] if p['path'] != 'tools/q3-current-module.cjs']
     if case == 'missing-provider':
         selected['files'] = [p for p in selected['files'] if p['path'] != 'tools/native_kernel_custody.py']
     if case in ('missing-screenshot', 'missing-composition'):
@@ -124,7 +127,7 @@ for case in ('missing-fixture-http', 'changed-fixture-http', 'duplicate-fixture-
                         'missing-composition', 'stale-composition-pin', 'missing-caller',
                         'missing-startup', 'missing-fixture', 'missing-admission', 'retired-custody-pin',
                         'missing-fixture-pe', 'missing-fixture-http', 'changed-fixture-http',
-                        'duplicate-fixture-http', 'missing-stream-helper'), error
+                        'duplicate-fixture-http', 'missing-stream-helper', 'missing-current-module'), error
         print(case, str(error))
     except ModuleNotFoundError as error:
         assert case == 'bad-import' and error.name == 'q3_deliberately_absent_prelaunch_control'
@@ -136,7 +139,8 @@ for case in ('missing-fixture-http', 'changed-fixture-http', 'duplicate-fixture-
                       'missing-composition': [], 'stale-composition-pin': [], 'missing-caller': [],
                       'missing-startup': [], 'missing-fixture': [], 'missing-admission': [],
                       'retired-custody-pin': [], 'missing-fixture-pe': [], 'missing-fixture-http': [],
-                      'changed-fixture-http': [], 'duplicate-fixture-http': [], 'missing-stream-helper': []}[case]), calls
+                      'changed-fixture-http': [], 'duplicate-fixture-http': [], 'missing-stream-helper': [],
+                      'missing-current-module': []}[case]), calls
     assert attempts == (['subprocess.Popen'] if case == 'spawn-refused' else [])
     assert (active / 'one-original-claim.json.gz').exists() == (case == 'spawn-refused')
     assert not (active / 'runtime-parent-actual-wait.json.gz').exists()

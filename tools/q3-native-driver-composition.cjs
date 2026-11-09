@@ -20,7 +20,7 @@ const providers = Object.freeze({
   'tools/q3-input-delivery.cjs': 'b0106da3fa7b2b806fe5c56d9aab940c5d9e235c1d3144195f8248db7af3a7c7',
   [fixturePath]: 'fb46f1b5f4aa6ad4f4c8874af4a1b507986dd8248f5abee086e09c2c061e89ec',
   'test/binaries/calc.exe': 'cb71fcc9726f756421519a215c39cf89efd930c9ae0fa5bbb59b64050faef52b',
-  'tools/q3-startup.cjs': 'b3c419924809e4e27a5f4119a0d401c81dff01f1f98538e68a5ce0b74ac11b1c',
+  'tools/q3-startup.cjs': '215181583d550a38264b8ae7854101a5d2e7a71acf25dd487e78a203a5c3c1cb',
   'lib/redline-startup-admission.js': 'afcb3bae5807a0b08e8d49262af33c1c64ecfa601717173b630658198de185e2',
   [consumerPath]: '689b05aed1724c2998131818a558dfc2d4e87605df579b97ce2ae3c598883416',
   [adapterPath]: '84c8419f7848fabc8f2c75a7949c6aa6d61a730cb72e71c5e3436f786ce3ac2a',
@@ -35,7 +35,7 @@ const providers = Object.freeze({
   'scratch/runs/20261108-q3-gl-readiness-gameplay/trace.cjs': '6f440f2d1bdd9e02598a768ad041681ae1969245e9512939dff24a3970bb8b86',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs': '175033bc07bda95dd2d618511729d901908d60a9e8ec970cdbc8d7e2d61dcd70',
   'scratch/runs/20261108-q3-gl-readiness-gameplay/producer-ready.cjs': 'e400a370c681974dd3b9cce294ac8853e9779d8922e15f8063b23e5ed84dc5e8',
-  'tools/native_kernel_custody.py': '05b7fe42cf7ac09df5f12f0ea073ea066892efb598b64b05fae19a3492c9f32c'
+  'tools/native_kernel_custody.py': '3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240'
 });
 function replaceOnce(source, before, after) {
   assert.equal(source.split(before).length, 2, 'missing/nonunique Q3 integration: ' + before.slice(0, 70));
