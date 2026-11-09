@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed75b1a18c3 production reader fix,1205 SHA-size116gzipPASS; live Space/Mouse2/lateral rows and balanced nativeSpace composed14 controls, lockedbuildPASS. Fresh quake2-bound-moveup-route-0635 PID1230881 thread01a1bf04-53ec-7f92-bf33-dca36ea9c7e8 prepares offline then waits exactDrakan0635 archivedphysicalrelease before original correct-bound ladder/onward attempt. No consumption/contact cause claimed; strictcaps custody4341 CPUa320 unchanged.
+  Next: Reviewed75b1a18c3 reader repair; current quake2-bound-moveup-route-0635 PID1230881 thread01a1bf04-53ec-7f92-bf33-dca36ea9c7e8 acquired sole runtime bx_zzxck5un UUIDd0f9ed07-5967-4d1b-93ac-ea79750df84b after exactDrakan archived drain. Initialexpiry07:16:45.168Z prearmedwatchdog07:16:45.264Z. Correct-bound Space ladder/onward attempt active; native consumption/contact remains unclaimed until actual result. Strictcaps custody4341 CPUa320 unchanged.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: reviewed menu-only original; causal native parent-lineage repair published; flight unqualified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Revieweda331104e9 exacta320 admission repair fourproductionfiles;78SHA-size48gzipdecodedPASS native54 browser20 Worker60 imports11 lockedbuild plus legacy20/60PASS. Fresh drakan-qualified-flight-0635 PID1230582 thread01a1bf04-3364-75e3-bae5-9d44c72f5a88 owns next ONEruntime after archivedWC0615, living mounted ONEboundedT takeoff then verifiedflight only if completed; custody5ec810c4 CPUa320 capsunchanged. Q20635 waits its exactrelease.
+  Next: Reviewed73a4112be once863SHA-size545gzipPASS and living mounted PNG personallyviewed; fresh identity compound assert failed before T, individual operand UNKNOWN. No T/up/heading or retry; 367actualreaps completeTRUE normal Chrome342ms, bx_yuspm6ar ARCHIVED PHYSICAL_DRAINED stop_0c5ed0ef9ded78e9. Fresh drakan-live-identity-repair-0700 PID1265777 thread01a1bf19-7e06-7152-a526-8740792ec316 OFFLINE actual caller schema/operand repair and composed regressions; no new original authorized. CPUa320 admissiona331 and custody5ec810c4 unchanged.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh redline-side-door-route-0642 PID1244007 thread01a1bf0a-9b51-7510-9bd7-05a9d57f840b prepares documented native side-route controls and frozen actualclosure offline; waits Drakan0635 then Q20635 exact archivedphysicalrelease before ONEoriginal. Goal clear rear corner expose side door enter and drive from fresh reviewed pixels. Acceptedcd78bb913 native relativeaim/forwardpolls remain; rearcollisioncause unproved, no unchanged forward retry or hold escalation.
+  Next: Reviewed1bdeeba45 once55SHA-size28gzipPASS. Actual retained startup reaches original navigation with zero prior flags/live module authentication and no preDLLmain barrier; offline stop, no box/game/input. Fresh redline-startup-barrier-repair-0700 PID1265603 thread01a1bf19-78e1-7102-85ff-746c72f18149 OFFLINE repairs actual composed launcher ordering with currenta320 ownership and zero-entry refusal tests. Side-door entry/driving remain open; oldf965 proof does not qualify current candidate, no unchanged retry.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
