@@ -208,7 +208,6 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     log('cancellation', **cancellation[0], cleanupDeadline=cleanup_deadline)
             peek = priority_wait()
             if peek is None and not resumes:
-                pump_output()
                 try:
                     peek = os.waitid(os.P_ALL, 0, wait_flags)
                 except ChildProcessError:
@@ -217,10 +216,17 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     assert not pending, ('unresolved ptrace ESRCH', pending)
                     assert not resumes, ('unresolved queued resumes', resumes)
                     if command_log and not output_eof:
+                        pump_output()
                         time.sleep(.001)
                         continue
                     drained = True
                     break
+                # Output durability can block on storage. Consume an already
+                # pending kernel stop first: an EXIT stop still holds the
+                # child's pipe writers open and withholds its parent's SIGCHLD.
+                # Never put up to sixteen output fsyncs ahead of that stop.
+                if peek is None:
+                    pump_output()
             fork_wait = peek and peek.si_code == os.CLD_TRAPPED and peek.si_status in (
                 (1 << 8)|signal.SIGTRAP, (2 << 8)|signal.SIGTRAP, (3 << 8)|signal.SIGTRAP)
             if cancellation and not fork_wait:

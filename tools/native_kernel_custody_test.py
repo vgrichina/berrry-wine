@@ -617,6 +617,146 @@ class ContinueRace(unittest.TestCase):
             self.assertEqual(drain['unreaped'],[]);self.assertEqual(drain['remaining'],[])
 
 
+class PendingOutputWait(unittest.TestCase):
+    def test_pending_native_exit_precedes_durable_command_output(self):
+        for mode in ('before', 'fixed', 'nonzero'):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as tmp:
+                base=Path(os.environ.get('CUSTODY_OUTPUT_WAIT_EVIDENCE',tmp))
+                run=Path(tempfile.mkdtemp(prefix=mode+'-',dir=base))
+                result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                    '--output-wait-fixture',str(run),mode],capture_output=True,text=True,timeout=65)
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                (run/'fixture-process.json').write_text(json.dumps(dict(wait=result.returncode,
+                    stdout=result.stdout,stderr=result.stderr,stdoutEOF=True,stderrEOF=True,
+                    witness='subprocess.run communicate returned with both captured pipes drained')))
+                self.assertEqual(json.loads((run/'isolated-waits.json').read_text())['adoptedWaits'],[])
+                drain=json.loads((run/'kernel-drain.json').read_text())
+                barrier=json.loads((run/'output-wait-barrier.json').read_text())
+                terminal=json.loads((run/'node-terminal.json').read_text())
+                close=json.loads((run/'node-close.json').read_text())
+                self.assertTrue(drain['complete'])
+                self.assertTrue(drain['commandLog']['eof'])
+                self.assertTrue(terminal['stdoutEOF']);self.assertTrue(terminal['stderrEOF'])
+                long_stall=barrier['stallSeconds']>18
+                if mode!='before' or not long_stall:
+                    self.assertEqual(terminal['code'],1 if mode=='nonzero' else 0)
+                    self.assertIsNone(terminal['signal'])
+                self.assertEqual(close['normal'],mode!='nonzero' and not (mode=='before' and long_stall))
+                if mode=='before' and long_stall:
+                    self.assertFalse(close['drained'])
+                    self.assertIsNone(close['terminal'])
+                    self.assertFalse(close['stdoutEOF']);self.assertFalse(close['stderrEOF'])
+                    self.assertEqual([r['signal'] for r in close['signals']],['SIGTERM','SIGKILL'])
+                else:self.assertTrue(close['drained'])
+                self.assertEqual(barrier['stalled'],mode=='before')
+                self.assertGreater(barrier['releaseDelay'],barrier['stallSeconds']*.9 if mode=='before' else 0)
+                if mode!='before':self.assertLess(barrier['releaseDelay'],.5)
+                rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+                reap=next(r for r in drain['reaped'] if r['pid']==barrier['pid'])
+                if mode!='before' or not long_stall:self.assertEqual(reap['status'],256 if mode=='nonzero' else 0)
+                before=next(r for r in rows if r['sequence']==reap['beforeReapSequence'])
+                self.assertEqual(before['pid'],barrier['pid'])
+                self.assertFalse((run/'watchdog-fired.json').exists())
+                self.assertEqual(json.loads((run/'output-wait-waits.json').read_text())['watchdogWait'],-15)
+                for key in ('journal','commandLog'):
+                    receipt=drain[key];data=gzip.decompress((run/receipt['path']).read_bytes())
+                    self.assertEqual(hashlib.sha256(data).hexdigest(),receipt['originalSha256'])
+
+
+def output_wait_fixture(run,mode):
+    # Real Node parent, native ELF child and separate child pipes. A fixed
+    # storage-stall injection starts only while a witnessed kernel EXIT stop
+    # still holds those writers open. No wait result or EOF is manufactured.
+    run=Path(run).resolve();gate_read,gate_write=os.pipe()
+    supervisor=os.fork()
+    if supervisor==0:
+        os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
+        module=kernel
+        if mode=='before':
+            import types
+            revision='2df8d81b41da78ac0ab846137cf4137f0f1c4a86'
+            source=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+            module=types.ModuleType('published');exec(compile(source,revision,'exec'),module.__dict__)
+        trace,waitpid,waitid=module.ptrace,os.waitpid,os.waitid
+        write=module.Journal.write;selected=[];last={};barrier={}
+        flags=os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|kernel.WALL
+        stall=float(os.environ.get('CUSTODY_OUTPUT_WAIT_STALL','0.25'))
+        def consume(task,options):
+            result=waitpid(task,options)
+            if result[0]:last[task]=result[1]
+            return result
+        def resume(request,task,addr=0,data=0):
+            status=last.get(task,0)
+            if request==module.CONT and status>>16==6 and selected and task==selected[0]:
+                barrier['releaseDelay']=time.monotonic()-barrier['pendingAt']
+                (run/'output-wait-barrier.json').write_text(json.dumps(barrier))
+            result=trace(request,task,addr,data)
+            if request==module.CONT and status>>16==4 and not selected:
+                try:exe=os.readlink('/proc/'+str(task)+'/exe')
+                except FileNotFoundError:exe=''
+                if exe in ('/usr/bin/true','/usr/bin/false'):
+                    selected.append(task)
+                    due=time.monotonic()+2
+                    while time.monotonic()<due:
+                        value=waitid(os.P_PID,task,flags)
+                        if value and value.si_code==os.CLD_TRAPPED and value.si_status==1541:break
+                        time.sleep(.001)
+                    else:raise AssertionError('native pending EXIT stop missing')
+                    # Let the running Node parent fill command output while
+                    # its child remains at the actual pre-exit barrier.
+                    time.sleep(.05)
+                    barrier.update(pid=task,pendingAt=time.monotonic(),stallSeconds=stall,stalled=False,
+                        siCode=value.si_code,siStatus=value.si_status)
+            return result
+        def durable(stream,data):
+            if selected and stream.path.name=='kernel-command.log.gz' and 'releaseDelay' not in barrier and not barrier['stalled']:
+                value=waitid(os.P_PID,selected[0],flags)
+                assert value and value.si_status==1541
+                barrier['stalled']=True
+                time.sleep(stall)
+            return write(stream,data)
+        script=r'''const fs=require('fs'),cp=require('child_process');
+const run=process.argv[1],child=cp.spawn(process.argv[2],[],{stdio:['ignore','pipe','pipe']});
+const began=Date.now(),state={stdoutEOF:false,stderrEOF:false};
+// The committed regression has no dependency on released Warcraft WIP. The
+// retained actual adapter can also be selected explicitly for the 18s control.
+const observer=process.argv[3]?require(process.argv[3]).observe(child,{deadline:Date.now()+45000,
+ record:r=>fs.appendFileSync(run+'/node-lifecycle.jsonl',JSON.stringify(r)+'\n')}):
+ {close:()=>new Promise(resolve=>child.once('close',(code,signal)=>resolve({normal:code===0&&signal===null,drained:true})))};
+child.stdout.resume();child.stderr.resume();
+child.stdout.on('end',()=>state.stdoutEOF=true);child.stderr.on('end',()=>state.stderrEOF=true);
+const load=setInterval(()=>process.stdout.write(Buffer.alloc(4096,120)),1);
+child.on('close',(code,signal)=>{clearInterval(load);fs.writeFileSync(run+'/node-terminal.json',JSON.stringify({...state,code,signal,elapsedMs:Date.now()-began}));});'''
+        script+="\nobserver.close(()=>Promise.resolve()).then(r=>fs.writeFileSync(run+'/node-close.json',JSON.stringify(r)));"
+        try:
+            with patch.object(module,'ptrace',side_effect=resume),patch.object(module.os,'waitpid',side_effect=consume),patch.object(module.Journal,'write',durable):
+                due=time.time()+50
+                module.supervise(run,['node','-e',script,str(run),'/bin/false' if mode=='nonzero' else '/bin/true',
+                    os.environ.get('CUSTODY_OUTPUT_WAIT_ADAPTER','')],
+                    deadline=due,cleanup_deadline=due+5,journal_compression='gzip',command_compression='gzip')
+        except BaseException as error:
+            (run/'supervisor-error.json').write_text(repr(error));os._exit(1)
+        os._exit(0)
+    watchdog=os.fork()
+    if watchdog==0:
+        os.close(gate_read);os.close(gate_write)
+        start=kernel.identity(supervisor)['start']
+        (run/'watchdog-armed.json').write_text(json.dumps(dict(pid=supervisor,start=start,deadline=time.time()+60)))
+        time.sleep(60)
+        try:
+            if kernel.identity(supervisor)['start']==start:os.kill(supervisor,9)
+        except (FileNotFoundError,ProcessLookupError):pass
+        (run/'watchdog-fired.json').write_text('{}');os._exit(0)
+    os.close(gate_read)
+    while not (run/'watchdog-armed.json').exists():time.sleep(.001)
+    os.write(gate_write,b'1');os.close(gate_write)
+    _,status=os.waitpid(supervisor,0)
+    os.kill(watchdog,15);_,watch_status=os.waitpid(watchdog,0)
+    (run/'output-wait-waits.json').write_text(json.dumps(dict(supervisorWait=os.waitstatus_to_exitcode(status),
+        watchdogWait=os.waitstatus_to_exitcode(watch_status))))
+    assert os.waitstatus_to_exitcode(status)==0
+
+
 class CompressedCommand(unittest.TestCase):
     def test_exact_selected_predecessor_cannot_compress_command_output(self):
         import types
@@ -1622,7 +1762,7 @@ if __name__=='__main__':
                 pid,status=os.waitpid(-1,0)
                 adopted.append(dict(pid=pid,status=status,exit=os.waitstatus_to_exitcode(status)))
             except ChildProcessError:break
-        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture','--parent-lineage-fixture','--cancel-creators-fixture'):
+        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture','--parent-lineage-fixture','--cancel-creators-fixture','--output-wait-fixture'):
             (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
                 fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
@@ -1630,6 +1770,7 @@ if __name__=='__main__':
     elif len(sys.argv)>1 and sys.argv[1]=='--parent-lineage-fixture':parent_lineage_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--causality-fixture':causality_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--command-gzip-fixture':command_gzip_fixture(sys.argv[2],sys.argv[3])
+    elif len(sys.argv)>1 and sys.argv[1]=='--output-wait-fixture':output_wait_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--gzip-fixture':gzip_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--terminal-fixture':terminal_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--cont-race-fixture':cont_race_fixture(sys.argv[2])
