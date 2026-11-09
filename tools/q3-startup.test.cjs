@@ -13,7 +13,7 @@ const plain=x=>x===undefined?null:JSON.parse(JSON.stringify(x));
 const composed=composition.compose();
 assert(composed.source.includes("},20000);pending.set"),'CDP cap unchanged');
 assert.equal(composition.providers['tools/q3-execution-boundary.cjs'],'1858eea7efb8875e44088ffe9f5ea434c3b22915444113204fb51673e4f5ac0d');
-assert.equal(composition.providers['tools/native_kernel_custody.py'],'5ec810c4d4704ff86afc367b38f7335edf1214e3450ebb98a62ce3df6386b5fe');
+assert.equal(composition.providers['tools/native_kernel_custody.py'],'05b7fe42cf7ac09df5f12f0ea073ea066892efb598b64b05fae19a3492c9f32c');
 assert(fs.readFileSync(base+'/transport.cjs','utf8').includes('WORK_MS=20000, ACK_MS=2000, CLEANUP_MS=30000'));
 // Exercise the production preload's generated.cjs interception itself, without
 // running either module or retaining global loader/fs hooks in this test.
