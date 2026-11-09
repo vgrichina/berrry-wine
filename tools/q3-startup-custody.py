@@ -96,21 +96,33 @@ def supervise(run, command, **options):
     trace, waitpid, sync = module.ptrace, module.os.waitpid, module.os.fsync
     def traced(request, pid, addr=0, data=0):
         active = arm.exists()
+        error = None
         if active and request == module.CONT:
             observe('CONT-entry', task=role(pid), signal=data)
         try:
             return trace(request, pid, addr, data)
+        except BaseException as failure:
+            error = repr(failure)
+            raise
         finally:
-            if active and request == module.CONT: observe('CONT-return', pid=pid)
+            if active and request == module.CONT: observe('CONT-return', pid=pid, error=error)
     def waited(pid, flags):
         result = waitpid(pid, flags)
         if result[0] and arm.exists():
             observe('waitpid-return', task=role(result[0]), status=result[1])
         return result
     def synced(fd):
+        start = time.monotonic_ns()
+        epoch = time.time_ns()
+        error = None
         observe('fsync-entry', fd=fd)
         try: return sync(fd)
-        finally: observe('fsync-return', fd=fd)
+        except BaseException as failure:
+            error = repr(failure)
+            raise
+        finally:
+            observe('fsync-return', fd=fd, startMonotonicNs=start, startEpochNs=epoch,
+                    elapsedNs=time.monotonic_ns()-start, error=error)
     module.ptrace = traced
     module.os.waitpid = waited
     module.os.fsync = synced
