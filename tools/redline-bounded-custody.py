@@ -4,7 +4,9 @@
 Ownership admission still persists the complete journal prefix before CONT.
 Syscall stops of already admitted tasks carry diagnostics, not new ownership.
 Those diagnostics use bounded batches; exhaustion returns to ordinary custody
-without claiming a complete syscall observation. No closure check is changed.
+without claiming a complete syscall observation. Intermediate custody records
+also batch until the existing executable-CONT barrier, as in the authenticated
+Q3 durable-prefix repair. No closure check or executable barrier is changed.
 """
 import hashlib
 import json
@@ -37,6 +39,11 @@ def adapt(helper, source, **options):
             "            kind == 'before-consume' and value.get('siStatus') == (signal.SIGTRAP | 128))")
     replace('actual_request = SYSCALL if request == CONT and task not in exiting else request',
             'actual_request = SYSCALL if request == CONT and task not in exiting and not observer.exhausted() else request')
+    # helper.candidate first authenticates the exact shared provider. There is
+    # no executable admission between these intermediate records and the
+    # existing full-prefix barrier below. Journal saturation still synchronously
+    # flushes; sticky errors, retirement and finalization remain byte identical.
+    replace('defer=retirement or diagnostic)', 'defer=True)')
     replace('                journal.flush_pending() # ordered durable prefix before executable userspace',
             '                # Pure syscall continuation admits no new owned identity.\n'
             '                # Every other release retains the published durable barrier.\n'
@@ -110,7 +117,7 @@ def launch(argv):
         json.dump(dict(version=VERSION, sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                        publishedLauncherSHA256=LAUNCHER_SHA, observerPendingBytes=64*1024,
                        observerPendingRecords=256, syscallCapReturnsToOrdinaryCustody=True,
-                       ownershipAdmissionDurable=True), stream)
+                       ownershipAdmissionDurable=True, custodyPrefixBatched=True), stream)
     return published.launch(argv)
 
 
