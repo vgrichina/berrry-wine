@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed5f3dfbd2f1534SHA522gzipPASS personallyviewed bindingsPNG a=stepLEFT SPACEorMOUSE2=upjump. No beyondlowerpassage/ladderascent or consumption established; boxarchived358actualreaps. Fresh quake2-moveup-observation-0625 extends actual owning passive binding coverage and nativeSpace composed controls offline; preserve nativeREVOKED allwriters/edictABAUNKNOWN.
+  Next: Reviewed75b1a18c3 production reader fix,1205 SHA-size116gzipPASS; live Space/Mouse2/lateral rows and balanced nativeSpace composed14 controls, lockedbuildPASS. Fresh quake2-bound-moveup-route-0635 PID1230881 thread01a1bf04-53ec-7f92-bf33-dca36ea9c7e8 prepares offline then waits exactDrakan0635 archivedphysicalrelease before original correct-bound ladder/onward attempt. No consumption/contact cause claimed; strictcaps custody4341 CPUa320 unchanged.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: reviewed menu-only original; causal native parent-lineage repair published; flight unqualified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed95167032f once;56SHA45gzipPASS actuala320 CPU rejected strict4b45-only host/Worker admission beforeWorker. NoBox or input. Fresh drakan-current-module-admission-0625 repairs exactcurrent-module compatibility with actualnative/byteprovenance/release controls OFFLINE before separatelyauthorizedoriginal; no digest wildcard or CPU substitution.
+  Next: Revieweda331104e9 exacta320 admission repair fourproductionfiles;78SHA-size48gzipdecodedPASS native54 browser20 Worker60 imports11 lockedbuild plus legacy20/60PASS. Fresh drakan-qualified-flight-0635 PID1230582 thread01a1bf04-3364-75e3-bae5-9d44c72f5a88 owns next ONEruntime after archivedWC0615, living mounted ONEboundedT takeoff then verifiedflight only if completed; custody5ec810c4 CPUa320 capsunchanged. Q20635 waits its exactrelease.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
