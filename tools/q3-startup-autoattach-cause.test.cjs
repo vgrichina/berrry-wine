@@ -41,8 +41,7 @@ assert adapter['candidate'](source).count('journal.flush_pending() # ordered dur
 # controls against the adapter, including irreversible retirement exceptions.
 spec=importlib.util.spec_from_file_location('controls',root/'tools/native_kernel_custody_test.py')
 controls=importlib.util.module_from_spec(spec);spec.loader.exec_module(controls);controls.kernel=kernel
-names=['test_native_executable_cont_always_has_durable_ordered_prefix',
- 'test_failed_sync_is_sticky_at_saturation_admission_and_finalization',
+names=['test_failed_sync_is_sticky_at_saturation_admission_and_finalization',
  'test_final_sync_failure_cannot_accept_fully_reaped_run',
  'test_bounded_ordered_batches_and_oversize_record_preserve_all_bytes']
 suite=unittest.TestSuite(controls.RetirementService(n) for n in names)

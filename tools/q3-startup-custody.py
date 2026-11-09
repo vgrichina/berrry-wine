@@ -1,7 +1,8 @@
-"""Q3's authenticated custody adapter: batch until the existing CONT barrier.
+"""Q3's authenticated custody adapter: batch until each actual CONT barrier.
 
 The published supervisor still owns all identities, waits and releases. Every
-executable CONT retains its complete, fsynced journal prefix. Logging each
+CONT retains its complete, fsynced journal prefix, including irreversible EXIT.
+Logging each
 intermediate stop separately used to fsync repeatedly with Chrome stopped.
 Irreversible retirement, saturation, failure and finalization stay unchanged.
 """
@@ -25,6 +26,10 @@ def candidate(source):
     # There is no userspace admission between these records. The unchanged
     # supervisor flushes the entire ordered prefix immediately before CONT.
     source = source.replace(before, 'defer=True)')
+    seam = '    def trace_task(request, task, data=0):\n'
+    if source.count(seam) != 1:
+        raise ValueError('Q3 common CONT barrier seam')
+    source = source.replace(seam, seam + '        if request == CONT: journal.flush_pending()\n')
     begin = source.index('        # Bound each pump')
     end = source.index('    wait_flags =', begin)
     # Command bytes have no admission semantics. Batch within the existing

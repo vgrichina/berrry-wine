@@ -13,6 +13,7 @@ import subprocess
 import sys
 import time
 import unittest
+import zlib
 from unittest.mock import patch
 
 root = Path(__file__).resolve().parents[1]
@@ -28,11 +29,52 @@ controls = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(controls)
 controls.kernel = adapter['load']()
 suite = unittest.TestSuite(controls.RetirementService(name) for name in (
-    'test_native_executable_cont_always_has_durable_ordered_prefix',
     'test_failed_sync_is_sticky_at_saturation_admission_and_finalization',
     'test_final_sync_failure_cannot_accept_fully_reaped_run',
     'test_bounded_ordered_batches_and_oversize_record_preserve_all_bytes'))
 assert unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful()
+
+# All actual CONTs, including irreversible death, must see the entire prefix.
+# Observe real append and ptrace operations without manufacturing a wait.
+kernel = adapter['load']()
+run = out / 'every-cont'
+run.mkdir()
+rows, probe = controls.journal_probe(kernel)
+trace, waitpid = kernel.ptrace, kernel.os.waitpid
+last, barriers = {}, []
+def consume(pid, flags):
+    result = waitpid(pid, flags)
+    if result[0]: last[pid] = result[1]
+    return result
+def resume(request, pid, addr=0, data=0):
+    if request == kernel.CONT:
+        stored = (zlib.decompressobj(31).decompress((run/'custody.ndjson.gz').read_bytes())
+                  if (run/'custody.ndjson.gz').exists() else (run/'custody.ndjson').read_bytes())
+        durable = [json.loads(line) for line in stored.splitlines()]
+        assert durable == rows, (pid, last.get(pid), 'missing durable prefix')
+        barriers.append(dict(pid=pid, status=last[pid], prefix=len(rows)))
+    return trace(request, pid, addr, data)
+with probe, patch.object(kernel, 'ptrace', resume), patch.object(kernel.os, 'waitpid', consume):
+    due = time.time()+8
+    kernel.supervise(run, [sys.executable, '-c',
+        "import os;p=os.fork();os.execl('/bin/true','true') if p==0 else os.waitpid(p,0)"],
+        deadline=due, cleanup_deadline=due+3, journal_compression='gzip')
+assert barriers and any(row['status']>>16 == 6 for row in barriers)
+assert json.loads((run/'kernel-drain.json').read_bytes())['complete']
+(out/'every-cont.json').write_text(json.dumps(barriers, indent=2))
+run = out / 'unlinked-exit'
+run.mkdir()
+kernel = adapter['load']()
+controls.kernel = kernel
+trace, waitpid = kernel.ptrace, kernel.os.waitpid
+rows, probe = controls.journal_probe(kernel)
+last, barriers = {}, []
+with probe, patch.object(kernel, 'ptrace', resume), patch.object(kernel.os, 'waitpid', consume):
+    controls.unseen_exit_fixture(run)
+assert not (run/'unlinked-userspace-ran').exists()
+assert json.loads((run/'kernel-drain.json').read_bytes())['complete']
+assert any(row['status']>>16 == 6 for row in barriers)
+(out/'unlinked-every-cont.json').write_text(json.dumps(barriers, indent=2))
 
 results = []
 for name, module in (('published', original), ('fixed', adapter['load']())):
