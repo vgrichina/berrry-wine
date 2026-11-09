@@ -59,6 +59,28 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
   // transport and screenshot options, work/CDP caps and ACK rules stay intact.
   source = replaceOnce(source, 'const pending=new Map(),workers=new Map(),workerPromises=[];',
     "const pending=new Map(),workers=new Map(),workerPromises=[];const screenshotCompletion=require(root+'/tools/q3-screenshot-completion.cjs').create({trace,write:v=>log('screenshot-completion.jsonl',v),probe:({shotId,kind,sessionId,params})=>send('Runtime.evaluate',params,sessionId,{shotId,kind})});");
+  // First terminal observation is immutable. Reject pending protocol work and
+  // cancellable waits before cleanup, so a suspended command cannot later send.
+  source = replaceOnce(source, 'let floorTimer,passive;', `let floorTimer,passive;
+let terminalFailure=null;const terminalAbort=new AbortController();
+function checkTerminal(){if(terminalFailure)throw terminalFailure;}
+function observeTerminal(reason){
+ if(terminalFailure)return terminalFailure;
+ terminalFailure=Error('Q3 terminal UNKNOWN; no replay: '+reason);
+ save('first-transport-failure.json',{at:new Date().toISOString(),error:String(terminalFailure),noReplay:true});
+ terminalAbort.abort(terminalFailure);
+ for(const p of pending.values()){clearTimeout(p.timer);p.reject(terminalFailure);}pending.clear();
+ if(!closing)close('first transport failure').catch(error=>{process.exitCode=1;console.error(error);});
+ return terminalFailure;
+}`);
+  source = replaceOnce(source, 'new Promise(r=>setTimeout(r,ms))', `new Promise((resolve,reject)=>{
+ checkTerminal();const done=()=>{clearTimeout(timer);terminalAbort.signal.removeEventListener('abort',abort);resolve();};
+ const abort=()=>{clearTimeout(timer);terminalAbort.signal.removeEventListener('abort',abort);reject(terminalFailure);};
+ const timer=setTimeout(done,ms);terminalAbort.signal.addEventListener('abort',abort,{once:true});
+})`);
+  source = replaceOnce(source, "const n=++id,w=workers.get(sessionId)", "if(method!=='Browser.close')checkTerminal();const n=++id,w=workers.get(sessionId)");
+  source = replaceOnce(source, 'async function executeImpl(c,markDispatch){', 'async function executeImpl(c,markDispatch){checkTerminal();');
+  source = replaceOnce(source, 'async function captureImpl(label){', 'async function captureImpl(label){checkTerminal();');
   source = replaceOnce(source, 'function send(method,params={},sessionId)',
     'function send(method,params={},sessionId,captureProbe=null)');
   source = replaceOnce(source, 'meta={requestId:n,method,sessionId:',
@@ -68,16 +90,17 @@ function compose({root = path.resolve(__dirname, '..')} = {}) {
   source = replaceOnce(source, "trace.snapshot('CDP deadline',meta);pending.delete(n);",
     "trace.snapshot('CDP deadline',meta);screenshotCompletion.deadline(meta);pending.delete(n);");
   source = replaceOnce(source, 'ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));',
-    'screenshotCompletion.request(meta,params);try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));screenshotCompletion.submitted(meta);}catch(error){screenshotCompletion.sendFailed(meta,error);throw error;}');
+    'screenshotCompletion.request(meta,params);try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));screenshotCompletion.submitted(meta);}catch(error){screenshotCompletion.sendFailed(meta,error);observeTerminal(error);throw error;}');
   source = replaceOnce(source, 'const v=JSON.parse(msg.data);if(v.id){',
     'const v=JSON.parse(msg.data);screenshotCompletion.receive(v,pending.get(v.id));if(v.id){');
   source = replaceOnce(source, "ws=new WebSocket('ws://127.0.0.1:'+debugPort+debugPath);",
-    "ws=new WebSocket('ws://127.0.0.1:'+debugPort+debugPath);for(const event of ['close','error'])ws.addEventListener(event,()=>screenshotCompletion.transport(event));");
+    "ws=new WebSocket('ws://127.0.0.1:'+debugPort+debugPath);for(const event of ['close','error'])ws.addEventListener(event,()=>{screenshotCompletion.transport(event);if(!closing)observeTerminal('CDP '+event);});");
   source = replaceOnce(source,
     "const active=out+'/chrome-profile/DevToolsActivePort';for(let i=0;i<100&&!fs.existsSync(active);i++)await wait(100);const [debugPort,debugPath]=fs.readFileSync(active,'utf8').trim().split('\\n');save('endpoint.json',{debugPort:Number(debugPort),browserPath:debugPath});",
     "const endpoint=await require(root+'/tools/supertux-native-lifecycle.cjs').ready({browser,profile:out+'/chrome-profile',deadline,record:v=>log('startup-browser.jsonl',v)});const debugPort=endpoint.debugPort,debugPath=endpoint.browserPath;save('endpoint.json',endpoint);");
   source = replaceOnce(source, "browser.once('exit',(code,signal)=>save('chrome-exit.json'",
-    "browser.once('error',error=>{browser.__q3SpawnError=error;save('chrome-error.json',{error:String(error),noReplay:true});});browser.once('exit',(code,signal)=>save('chrome-exit.json'");
+    "browser.once('error',error=>{browser.__q3SpawnError=error;if(!closing)observeTerminal(error);save('chrome-error.json',{error:String(error),noReplay:true});});browser.once('exit',(code,signal)=>save('chrome-exit.json'");
+  source = replaceOnce(source, "save('process.json',{pid:process.pid", "browser.once('exit',(code,signal)=>{if(!closing)observeTerminal('browser exit '+code+'/'+signal);});save('process.json',{pid:process.pid");
   // Check the actual launch error before and during readiness, rather than
   // allowing ChildProcess 'error' to become an unhandled event or success.
   source = replaceOnce(source, "const endpoint=await require(root+'/tools/supertux-native-lifecycle.cjs').ready(",

@@ -68,6 +68,11 @@ if (process.env.Q3_NODE_FIXTURE === 'preload') {
         // on terminal/EOF. It must never synthesize a successful CDP result.
         return;
       }
+      if (v.method === 'Runtime.evaluate' && fs.existsSync(dir + '/arm-terminal')) {
+        fs.writeFileSync(dir + '/pending-cdp-at', String(Date.now()));
+        setTimeout(() => browser.kill('SIGKILL'), 25);
+        return; // Real pending CDP promise; termination must cancel it promptly.
+      }
       let result = {};
       if (v.method === 'Target.getTargets') result = {targetInfos:[{type:'page', targetId:'node-protocol-page'}]};
       if (v.method === 'Target.attachToTarget') result = {sessionId:'node-protocol-session'};
@@ -144,7 +149,10 @@ async function main() {
     {name:'terminal-error', delay:100, terminal:true},
     {name:'pending-close', delay:100, close:'escalate'},
     {name:'drain-cap', delay:100, close:'drain-cap'},
-    {name:'missing-execution-preload', missingPreload:true, delay:100}
+    {name:'missing-execution-preload', missingPreload:true, delay:100},
+    {name:'terminal-pending-capture', delay:100, failPending:true},
+    {name:'terminal-command-wait', delay:100, failWait:true}
+
   ]) await scenario(run, options);
   console.log('PASS actual retained command consumer: old 10s failure; delayed actual publication; terminal error; pending CDP; unchanged 30s cap fails closed for exit before EOF; actual waits/EOF; GL/preload order; all Node children awaited');
 }
@@ -200,10 +208,28 @@ sys.exit(status if status>=0 else 128-status)
       await until(() => fs.existsSync(out + '/ready.json') || child.exitCode !== null);
       assert.equal(child.exitCode, null, 'actual consumer reaches command loop');
       const transport = require(base + '/transport.cjs');
-      const request = transport.request(out, 'quit_node_fixture', {action:'quit'}, 55000);
+      if(options.failPending)fs.writeFileSync(dir + '/arm-terminal','1');
+      const began=Date.now();
+      const request = transport.request(out, 'quit_node_fixture', options.failPending||options.failWait
+        ? {action:'capture',label:'pending-fixture',waitMs:options.failWait?10000:0}
+        : {action:'quit'}, 55000);
+      if(options.failWait){await until(()=>fs.existsSync(out+'/consumed-quit_node_fixture'));process.kill(Number(fs.readFileSync(dir+'/node-browser-pid')),'SIGKILL');}
+      if(options.failPending||options.failWait){
+        ack=await request.then(value=>({value}),error=>({error:String(error)}));
+        assert(ack.error,'terminal command cannot ACK');
+        assert(Date.now()-began<1500,'actual command/capture settles promptly');
+        assert(!fs.existsSync(out+'/reply-0.json'));
+        const terminal=fs.readFileSync(out+'/first-transport-failure.json','utf8');
+        await assert.rejects(transport.request(out,'later_down',{action:'key',key:'ArrowDown',holdMs:100,waitMs:0,label:'later'},55000));
+        await assert.rejects(transport.request(out,'later_capture',{action:'capture',waitMs:0,label:'later-capture'},55000));
+        assert(!fs.existsSync(out+'/commands/1.json'),'no later numbered request');
+        assert.equal(fs.readFileSync(out+'/first-transport-failure.json','utf8'),terminal,'first failure sticky');
+      }else{
+
       await until(() => fs.existsSync(dir + '/close-request-at'));
       assert(!fs.existsSync(out + '/reply-0.json'), 'pending close cannot ACK quit');
       ack = await request.then(value => ({value}), error => ({error:String(error)}));
+      }
     }
     const [code, signal] = await completed;
     await logs.drainStreams(); logs.close();
@@ -221,6 +247,13 @@ sys.exit(status if status>=0 else 128-status)
       assert.equal(code, 1);
       assert.match(fs.readFileSync(out + '/first-browser-failure.json', 'utf8'), /terminated before DevTools/);
       assert(!fs.existsSync(out + '/endpoint.json'));
+    } else if(options.failPending||options.failWait){
+      assert.equal(code,1);assert(ack.error);
+      assert(!fs.existsSync(out+'/pending-fixture.png'),'cancelled capture writes no result');
+      const protocol=zlib.gunzipSync(fs.readFileSync(dir+'/protocol.jsonl.gz')).toString().trim().split('\n').map(JSON.parse);
+      assert(!protocol.some(v=>v.method==='Input.dispatchKeyEvent'),'no later DOWN');
+      const waited=JSON.parse(zlib.gunzipSync(fs.readFileSync(dir+'/browser-actual-wait.json.gz')));
+      assert.equal(waited.signal,'SIGKILL');assert(waited.stdoutEOF&&waited.stderrEOF);
     } else if (options.close === 'drain-cap') {
       assert.equal(code, 1);
       assert(ack.error);
