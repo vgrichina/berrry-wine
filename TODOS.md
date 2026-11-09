@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed2d6b9e628 once238SHA38gzip oldFAILnewPASS passive16receivedframe healthblendkickreader buildPASS OFFLINE. RetainedHP100to98 spans287serverframes28.7s notlocalized100msaction causeUNKNOWN. Fresh quake2-health-history-native-1015 changedreader diagnostic wholefixture beforeoriginal firstlossHALT; exactQ31005 UUID744b133e archivedstop_e10f checked before soleRuntime.
+  Next: Reviewed5f8ea1811aaa once222SHA104gzip poststage disk1499811840 terminal beforeChrome no actualfixture/gameplay. UUIDa41ddbef archivedstop_d504 expiry10:40:16. Rootverified losslessduplicatecleanup restored2.24GB. Fresh quake2-health-history-gameplay-1020 soleNEXTnative wholefixture beforeoriginal firstHPloss diagnostic; causeUNKNOWN capsunchanged.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed062ecae23176 once621SHA318gzip; nativefixture fullPASS startup802ms187reaps originalstartup301ms362reaps. Trainingselection staysmenu despite3Down nativehighreads; consumptioncauseUNKNOWN no side-doorvehicle claim. UUID257e096f archivedstop65b7 expiry10:17:38; transientdiskfloor deviation restored via losslessgzip. Fresh redline-menu-input-cause-1010 OFFLINE actualclick coordinate/menu selection diagnosis before newruntime.
+  Next: Reviewed60157b614ae1 once37SHA25gzip actualdiff oldFAILnewPASS lockedCSSjump became native[-303,-231,0,128]; cursorOnly zero displacement corrects caller. No nativeTrainingPASS. Fresh redline-cursor-menu-gameplay-1020 integrate closure ordinary reviewedrelativecursor Training thenVehicle; runtime only after exactQ21020 archiveddrain receipt.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
