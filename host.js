@@ -3156,6 +3156,9 @@ class WineAssembly {
   }
 
   async init(canvas) {
+    // An explicitly armed Redline launch cannot drop its admission request
+    // across an await or silently continue through cooperative fallback.
+    const redlineStartup = typeof window !== 'undefined' && window.WINE_REDLINE_STARTUP;
     this._d3dimPublicationJoin?.retire('process-reinitialized');
     if (this._processObject.exited) {
       this._processObject = { wine: this, exited: false, exitCode: 259 };
@@ -3403,6 +3406,16 @@ class WineAssembly {
     // implementation of every host call, not two.
     this._mainImports = imports;
     await this._maybeStartGuestWorker(wasmModule);
+    if (redlineStartup) {
+      try {
+        await redlineStartup.park(this);
+      } catch (error) {
+        const retirement = await this._stopGuestRuntime();
+        redlineStartup.retired(retirement);
+        if (retirement && !retirement.ok) error.cleanupError = retirement.error;
+        throw error;
+      }
+    }
     // D3DIM (DX2-7) triangles on WebGL instead of the WAT software rasterizer.
     // The executor belongs to whichever thread owns the guest instance, so the
     // Worker builds its own (lib/guest-worker.js) and this is the cooperative
@@ -3723,11 +3736,14 @@ class WineAssembly {
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const bytes = await response.arrayBuffer();
             const observerBytes = drakanCompileSnapshot(bytes);
-            const module = await WebAssembly.compile(observerBytes || bytes);
+            const module = typeof window !== 'undefined' && window.WINE_REDLINE_STARTUP
+              ? await window.WINE_REDLINE_STARTUP.compile(bytes)
+              : await WebAssembly.compile(observerBytes || bytes);
             if (observerBytes) drakanCompiledBytes.set(module, observerBytes);
             await recordWasmIdentity(artifact, bytes);
             return module;
           } catch (error) {
+            if (typeof window !== 'undefined' && window.WINE_REDLINE_STARTUP) throw error;
             console.warn(`[host] unable to load ${artifact}; compiling WAT sources`, error);
           }
         }
@@ -3763,7 +3779,9 @@ class WineAssembly {
           });
           WineAssembly._assertSourceBuildLayout(built.layout);
           const observerBytes = drakanCompileSnapshot(built.bytes);
-          const module = await WebAssembly.compile(observerBytes || built.bytes);
+          const module = typeof window !== 'undefined' && window.WINE_REDLINE_STARTUP
+            ? await window.WINE_REDLINE_STARTUP.compile(built.bytes)
+            : await WebAssembly.compile(observerBytes || built.bytes);
           if (observerBytes) drakanCompiledBytes.set(module, observerBytes);
           await recordWasmIdentity('src/main.watx', built.bytes);
           return module;
