@@ -112,6 +112,33 @@ WASM and diagnostics off/on all pass with exact preceding geometry/upload pixels
 Evidence: `scratch/runs/20261109-d3d-retire-{webgl,software}/test-result.json`.
 These do not prove gameplay performance or the remaining cross-API lifetimes.
 
+Color/depth retirement does not call `glFinish` in either the local or Worker
+WebGL executor. Ordered GL object deletion preserves references needed by
+preceding commands; it does not require a CPU-visible completion boundary
+([WebGL deletion semantics](https://registry.khronos.org/webgl/specs/latest/1.0/)).
+Context-loss detection remains, as do explicit fences, readbacks, reset and
+device-teardown completion. The local/Worker protocol test verifies these
+boundaries separately. `test-d3d9-queued-texture-residency-web.js` queues a draw
+sampling a color resource and then deletes that resource (including its sampled
+texture composition) before readback. WebGL1 and WebGL2 both retain the expected
+pixels and record no added GPU finish between draw and retirement. Public COM
+normal/compatibility WASM checks also pass; evidence:
+`scratch/runs/20261109-d3d-retire-no-finish/test-result.json`. This removes a
+forced synchronization point; gameplay FPS impact has not been measured.
+
+**Copy migration remains open.** Native `d3d9_color_stretch` currently captures
+an invocation-owned 112-byte packet, reads back the source using color sync or
+backbuffer sync, runs `d3d9_stretch_pixels`, and uploads the destination rectangle
+through opcode0x30015. Opcode0x30016 is a CPU backbuffer readback, not a GPU copy.
+The neutral `COPY` opcode exists but neither D3D9 executor handles it. Moving
+this operation requires an owned source/destination identity and rectangle/filter
+contract, renderer-owned source pixels, equivalent point/linear sampling and
+format behavior in both executors, and native dispatch that no longer mutates
+the canonical destination before publication. The existing nested StretchRect
+and pixel-center tests must remain valid. Merely publishing the current upload
+does not remove its earlier readback or CPU scaling. CPU LockRect/GetDC reads
+must still wait and materialize the latest renderer-owned contents.
+
 ColorFill (native opcode0x30014) uses `RenderClear.captureNativeColorFill` in
 both the guest producer and page bridge. It names its destination explicitly,
 owns its rectangle/color, and ignores draw viewport, scissor, channel mask and

@@ -23,12 +23,14 @@ async function main(){
         const source=`importScripts(${files.map(f=>JSON.stringify(origin+'/lib/'+f+'.js')).join(',')});
           const devices=[];
           const adapter=D3D9RenderWorker.create({backend:'webgl',options:{GPUDevice:class extends D3D9Backend.Device{
-            constructor(canvas){super(canvas,{webglVersion:${version}});devices.push(this);}
+            constructor(canvas){super(canvas,{webglVersion:${version}});devices.push(this);
+              this.finishCount=0;const finish=this.gpu.finish.bind(this.gpu);
+              this.gpu.finish=()=>{this.finishCount++;return finish();};}
           }}});
           const receive=D3DCommandStream.createCommandReceiver(adapter,m=>postMessage(m));
           onmessage=e=>{
             if(e.data.inspect){postMessage({inspect:e.data.inspect,devices:devices.map(d=>({version:d.gpu.version,
-              resident:[...d.residentPixels.keys()],compositions:d.keyedTextures.size}))});return;}
+              resident:[...d.residentPixels.keys()],compositions:d.keyedTextures.size,finishes:d.finishCount}))});return;}
             receive(e.data);
           };postMessage({ready:true});`;
         const url=URL.createObjectURL(new Blob([source],{type:'text/javascript'}));
@@ -83,6 +85,15 @@ async function main(){
           const mipOffer=send(7,op.DRAW,draw({...top,levels:[top,bottom]},false));
           const mipUse=send(7,op.DRAW,draw({...level('bottom'),levels:[level('bottom')]}));
           const mips=[await done(mipOffer),await done(mipUse)],mipPixel=await read(7);
+          const resource={id:71,width:1,height:1,format:21};
+          await done(send(7,op.RESOURCE_CREATE,{kind:'color',resource,pitch:4,pixels:new Uint8Array([30,60,90,255])}));
+          const beforeRetire=await inspect('before-retire');
+          // Queue the consuming draw and deletion before either completes.
+          // Deletion also retires the sampled GPU texture composition.
+          const aliasDraw=send(7,op.DRAW,draw({width:1,height:1,resource}));
+          const aliasRetire=send(7,op.RESOURCE_RELEASE,{kind:'color',id:resource.id});
+          const retirement=[await done(aliasDraw),await done(aliasRetire)];
+          const afterRetire=await inspect('after-retire'),retirementPixel=await read(7);
           await done(send(7,op.DRAW,draw(level('never-sampled',[1,2,3,255]),false)));
           const beforeReset=await inspect('before-reset');
           await done(send(7,op.RESOURCE_UPDATE,{kind:'reset',width:8,height:8}));
@@ -93,7 +104,7 @@ async function main(){
           const otherPixel=await read(8);
           await done(send(9,op.RESOURCE_CREATE,{kind:'device',width:8,height:8}));
           const malformed=await done(send(9,op.DRAW,draw(level('bad-definition',[1,2,3]),false)));
-          return {initial,initialPixel,replaced,replacementPixel,mips,mipPixel,beforeReset,afterReset,missing,otherPixel,malformed};
+          return {initial,initialPixel,replaced,replacementPixel,mips,mipPixel,beforeRetire,afterRetire,retirement,retirementPixel,beforeReset,afterReset,missing,otherPixel,malformed};
         }finally{worker.terminate();URL.revokeObjectURL(url);}
       },{origin,version,op:Stream.OPCODES,streamVersion:Stream.VERSION});
       await page.close();
@@ -101,6 +112,9 @@ async function main(){
       assert.deepEqual(result.initialPixel.pixel,[120,80,40,255],'unused-stage definition survives queue copies');
       assert.deepEqual(result.replacementPixel.pixel,[40,80,160,255],'release precedes same-key redefinition');
       assert.deepEqual(result.mipPixel.pixel,[200,100,20,255],'an unused lower mip survives composition changes');
+      for(const r of result.retirement)assert.equal(r.phase,'completed',r.error?.message);
+      assert.equal(result.afterRetire[0].finishes,result.beforeRetire[0].finishes,'draw and resource retirement do not finish GPU');
+      assert.deepEqual(result.retirementPixel.pixel,[30,60,90,255],'queued sampled pixels survive deletion before readback');
       assert(result.beforeReset[0].resident.includes('never-sampled'));
       assert.equal(result.beforeReset[0].version,version);
       assert.deepEqual(result.afterReset[0].resident,[],'reset retires definitions without GL compositions too');
