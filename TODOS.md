@@ -44,13 +44,13 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: reviewed menu-only original; causal native parent-lineage repair published; flight unqualified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed951b4aee2 once;458nonselfrefs3925865storedB independently original/stored SHA size gzipCRC and full file set PASS. Canonical4b45 menu startup16387ms; shared disk floor stopped preparation before T/Up/heading/attack. Accepted0e2bd19d8 opt-in and physical-release integration stand. Normal quit ACK12, Chrome0 and356actualreaps remainingEMPTY; kernelcompleteFALSE outerWAIT1 retained, no drain PASS. All180remote regular4128392originalB recovered and independently hashed before normalSTOP. bx_dt4bhpk6 ARCHIVED archiveAfterNULL expiresAt FIELD NOT RETURNED; stop_d0d4f3398047361a completed22:19:04.685Z forcedFALSEerrorNULL. Reviewed dec33253c once:429nonself290894B plus sealed17746B inventory independently original/stored SHA size CRC PASS. Pending native fork/clone events now harvested before queued sibling resumes; three actual native oldFAIL/newPASS pairs and35custody tests plus lockedbuild PASS. Historical PID7411/start29590 creator and precise lost-event cause remain UNKNOWN; no retrospective complete claim. New Q3 original pins published custody helper before another Drakan attempt. No runtime restart. Full27/parity/audio/FPS/worldZ/sustainedflight open.
+  Next: Fresh drakan-current-flight-0618 prepares actual opt-in observer/release path with released custody5ec810c4 and CPUa320; waits exactWC0615 ARCHIVED PHYSICAL_DRAINED afterQ20600. One authorized T bounded physicalrelease, Up/heading only after actual native completion and visible takeoff. Preserve historical kernelcompleteFALSE/missingcreatorUNKNOWN; fullflight remains open.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Super0542 d0966026f firstDebugger.enableUNKNOWN before readiness;267SHA208gzipPASS133actualreaps archivedstop5684743e. Fresh supertux-debugger-readiness-repair-0605 PID1184686 thread01a1bee7-6cbc-7e51-93a5-373c5b393bc4 offline actualcomposed repair oldFAILnewPASS no runtime retry capsunchanged.
+  Next: Reviewed6acc3b3a7 once;651SHA108gzipPASS. Whole shipped composed first-page Debugger.enable peer controls pass but no production defect or causal repair established; browser-to-renderer-agent wire/session timing and actualCONT bindings missing. Park unchanged original retry; no gameplay/ready claim. Slot reassigned freshDrakan0618.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
