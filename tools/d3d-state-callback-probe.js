@@ -42,7 +42,8 @@ const extraWat=`
    forwardGuestLogs:true});
   await main.start();e.set_host_shadow(1);
  }
- const call=(name,...args)=>main?main.callExport(name,...args):Promise.resolve(e[name](...args));
+ const owner=require('../lib/guest-main-owner').createGuestMainOwner(main?{worker:main}:{localExports:e});
+ const call=(name,...args)=>Promise.resolve(owner.call(name,...args));
  const marker=await call('guest_alloc',8),entered=marker+4,
   thunk=await call('probe_thunk',api.findIndex(a=>a.name==='IDirect3DDevice9_GetAvailableTextureMem'));
  // Increment before the potentially parked API: replaying the whole callback

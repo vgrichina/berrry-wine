@@ -540,6 +540,14 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   to the owning endpoint together; making only its ordinary `run` asynchronous
   would leave guest state mutations on the idle shadow. The production Node
   probe also does not establish rendering throughput or full CLI flag parity.
+  The CLI's three ordinary/interleaved slice sites now await the shared
+  `guest-main-owner.js` execution boundary. Local calls remain inline; a Worker
+  owner delegates to `GuestThreadHost.slice`, `callExport` and `readExports`
+  without a shadow fallback. The same boundary drives the production Node
+  callback probe. Scheduler observation retains its admitted-main identity
+  until asynchronous completion or failure. The runner still explicitly selects
+  the local owner while startup, register inspection, input and yield handling
+  migrate; this preparatory change alone does not resolve its callback gap.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.

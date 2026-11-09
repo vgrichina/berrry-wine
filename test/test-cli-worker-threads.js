@@ -122,10 +122,13 @@ const checks = [
   // takes depends on where it was when the section it wanted came free.
   ['the exit was attributed to the thread that ended',
     !!exitEvent && exitEvent.tid === 1 && exitEvent.exitCode === 0],
-  // Asserted on the cooperative run, so a regression in ExitThread itself still
-  // has somewhere to show up.
-  ['ExitThread still ends the thread on the cooperative backend',
-    (coop.events.find(e => e.type === 'exit') || {}).reason === 'ExitThread'],
+  // ExitThread now records intent; the scheduler retires after thread detach
+  // and labels that completion postYield=2. Check the completed lifecycle,
+  // rather than requiring the older immediate-retirement diagnostic label.
+  ['the cooperative thread retires exactly once with its exit code',
+    coop.events.filter(e => e.type === 'exit').length === 1 &&
+    coop.events.some(e => e.type === 'exit' && e.tid === 1 && e.exitCode === 0) &&
+    /^ {2}T1 .*state=exited/m.test(coop.output)],
   // Both directions of cross-thread synchronisation, each parked in a different
   // OS thread and woken by the other.
   ['a wait parked on the main thread was woken by the worker\'s SetEvent',

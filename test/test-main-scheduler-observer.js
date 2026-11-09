@@ -10,6 +10,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const crypto = require('node:crypto');
 const { createMainSchedulerObserver } = require('./main-scheduler-observer');
+const { createGuestMainOwner } = require('../lib/guest-main-owner');
 const baseline = require('./fixtures/main-scheduler-original.json');
 const runSource = fs.readFileSync(path.join(__dirname, 'run.js'), 'utf8');
 const tmSource = fs.readFileSync(path.join(__dirname, '../lib/thread-manager.js'), 'utf8');
@@ -86,7 +87,7 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
       env: { WINE_RUN_EXTRA_ARGS: extra } },
     console: { error() {}, log() {} },
     require(name) { assert.equal(name, './main-scheduler-observer'); factoryCalls++; return { createMainSchedulerObserver }; },
-    h, wh, tid: 7, instance: { exports: ex }, threadManager: tm, tickState, logs,
+    h, wh, tid: 7, instance: { exports: ex }, mainOwner: createGuestMainOwner({localExports:ex}), threadManager: tm, tickState, logs,
     ctx: { waitD3DRender() { calls.push('wait-render'); }, d3d9Bridge: { requests: new Map() } },
     mainRenderWait: render ? { token: 123, done: false, polls: 0, since: 0 } : null,
     renderWaitAttribution: null, renderParkStats: { skippedBatches: 0 },
@@ -95,6 +96,7 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
     inputConsumptionTrace: { dequeue(evt, source) { dequeues.push([evt, source]); } },
     REAL_TICK_SLEEPS: real, BATCH_SIZE: 100, THREAD_BATCH_SIZE: 120, THREAD_SLICES: 3,
     THREADS_SERIAL: serial, stopped, slices: 3, workerStepsTotal: 0,
+    nativeFault: {capture: () => false, wait: async () => {}},
   };
   const context = vm.createContext(sandbox);
   const init = baselineMode ? 'const mainSchedulerObserver = null;' : parts.args + '\n' + parts.flag + '\n' + parts.getArg + '\n' + parts.window + '\n' + parts.init;
@@ -103,7 +105,9 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
     calls, logs, dequeues, context, tm, h, wh, ex, factoryCalls: () => factoryCalls,
     async dispatch(which = mode) {
       const key = which === 'worker' ? 'worker' : which === 'cooperative' ? 'cooperative' : 'ordinary';
-      return vm.runInContext('(async () => {\n' + parts[key] + '\n})()', context);
+      // The ordinary production excerpt can break the surrounding batch loop
+      // after fault retirement. Preserve that enclosing loop in this harness.
+      return vm.runInContext('(async () => { do {\n' + parts[key] + '\n} while(false); })()', context);
     },
     gate() { return vm.runInContext('mainExecutionSuspended()', context); },
     observer() { return vm.runInContext('mainSchedulerObserver', context); },
@@ -151,8 +155,16 @@ async function acceptance(parts) {
       const enabled = harness(parts, { ...config, enabled: true });
       const results = await Promise.allSettled([original.dispatch(), disabled.dispatch(), enabled.dispatch()]);
       assert.deepEqual(results.map(r => r.status), [results[0].status, results[0].status, results[0].status]);
-      assert.deepEqual(disabled.calls, original.calls, `default semantics ${mode} ${JSON.stringify(options)}`);
-      assert.deepEqual(enabled.calls, original.calls, `enabled semantics ${mode} ${JSON.stringify(options)}`);
+      if (mode === 'cooperative' && options.stopped) {
+        // The pinned pre-fault-lifecycle baseline ran all three sibling
+        // slices after stop. Current production retires after the first;
+        // assert that behavior explicitly rather than restoring old work.
+        assert.deepEqual(disabled.calls, [['slice',100]], 'stop retires before another cooperative slice');
+        assert.deepEqual(enabled.calls, disabled.calls, 'observer preserves stop retirement');
+      } else {
+        assert.deepEqual(disabled.calls, original.calls, `default semantics ${mode} ${JSON.stringify(options)}`);
+        assert.deepEqual(enabled.calls, original.calls, `enabled semantics ${mode} ${JSON.stringify(options)}`);
+      }
       assert.deepEqual(records(disabled.logs), []);
       const events = records(enabled.logs);
       const decisions = events.filter(r => r.event === 'decision');
@@ -264,7 +276,7 @@ async function acceptance(parts) {
   // than a helper-only assertion that merely checks the implementation shape.
   const controls = [
     ['default-on', { ...production, init: production.init.replace("hasFlag('trace-main-scheduler')", 'true') }],
-    ['lost-run-wiring', { ...production, ordinary: production.ordinary.replace("mainSchedulerObserver.run('ordinary', () => instance.exports.run(BATCH_SIZE))", 'instance.exports.run(BATCH_SIZE)') }],
+    ['lost-run-wiring', { ...production, ordinary: production.ordinary.replace("mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE))", 'mainOwner.run(BATCH_SIZE)') }],
     ['extra-consuming-sleep-getter', { ...production, gate: production.gate.replace('threadManager.noteMainSleep();', 'instance.exports.get_sleep_yielded(); threadManager.noteMainSleep();') }],
     ['extra-decision-clock', { ...production, sleep: production.sleep.replace('observe({ now, deadline, sleeping });', 'this._waitNow(); observe({ now, deadline, sleeping });') }],
     ['forced-main-wake', { ...production, gate: production.gate.replace("if (threadManager.isMainSleeping(observation?.sleep)) return finish(true, 'sleep');", "if (false) return finish(true, 'sleep');") }],

@@ -5000,6 +5000,10 @@ async function main() {
   }
   // MORROWIND_NAME_IMPORT_END
   const instance = await WebAssembly.instantiate(wasmModule, imports);
+  // Keep slice execution behind its owner before migrating the remaining
+  // startup/inspection/yield exports. Do not select a Worker here until those
+  // paths also stop mutating the local instance's guest registers.
+  const mainOwner = require('../lib/guest-main-owner').createGuestMainOwner({ localExports: instance.exports });
   ctx.exports = instance.exports;
   instance.exports.set_hwnd_base(processDesktop.hwndBase);
   // Quiet runs silence the per-call API log from the first instruction, DLL
@@ -10666,8 +10670,8 @@ async function main() {
       }
       if (!mainExecutionSuspended('ordinary')) {
         try {
-        if (mainSchedulerObserver) mainSchedulerObserver.run('ordinary', () => instance.exports.run(BATCH_SIZE));
-        else instance.exports.run(BATCH_SIZE);
+        if (mainSchedulerObserver) await mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE));
+        else await mainOwner.run(BATCH_SIZE);
         } catch (error) {
           if (!nativeFault.capture(error, instance.exports,
             { schedulerSlot: 0, main: true }, 'ordinary')) throw error;
@@ -11146,8 +11150,8 @@ async function main() {
           // awaiting the main slice and the thread slices together.
           try {
             try {
-            if (mainSchedulerObserver) mainSchedulerObserver.run('worker-interleaved', () => instance.exports.run(BATCH_SIZE));
-            else instance.exports.run(BATCH_SIZE);
+            if (mainSchedulerObserver) await mainSchedulerObserver.run('worker-interleaved', () => mainOwner.run(BATCH_SIZE));
+            else await mainOwner.run(BATCH_SIZE);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'worker-interleaved')) throw error;
@@ -11203,8 +11207,8 @@ async function main() {
             !mainExecutionSuspended('cooperative-interleaved')) {
           try {
             try {
-            if (mainSchedulerObserver) mainSchedulerObserver.run('cooperative-interleaved', () => instance.exports.run(BATCH_SIZE));
-            else instance.exports.run(BATCH_SIZE);
+            if (mainSchedulerObserver) await mainSchedulerObserver.run('cooperative-interleaved', () => mainOwner.run(BATCH_SIZE));
+            else await mainOwner.run(BATCH_SIZE);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'cooperative-interleaved')) throw error;
