@@ -6,6 +6,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
+const cp = require('node:child_process');
 const {webcrypto, createHash} = require('node:crypto');
 const {EventEmitter} = require('node:events');
 const {SELECTED, install} = require('../lib/redline-startup-admission.js');
@@ -170,6 +171,7 @@ async function composed(caller,mode='positive') {
     }};
   const transport={publish:(p,v)=>{
     saved.set(path.basename(p),v);
+    if(path.basename(p)==='first-browser-failure.json')events.push('first-terminal-failure');
     if(path.basename(p)==='ready.json')vm.runInContext('closing=true',driver);
   },closed(){events.push('transport-closed');}};
   const bound={createChain:()=>({capture:async()=>{
@@ -197,7 +199,8 @@ async function composed(caller,mode='positive') {
   // Successful fixture stops after first capture; real ordinary shutdown is
   // exercised too, without allocating a browser or issuing a game command.
   if(!closed)await vm.runInContext("closing=false;close('inert fixture complete')",driver);
-  return {events,saved,page,closed,exitCode:proc.exitCode};
+  return {events,saved,page,closed,exitCode:proc.exitCode,
+    probe:expression=>vm.runInContext(expression,driver)};
 }
 
 function retainedCaller() {
@@ -231,6 +234,26 @@ function retainedCaller() {
   results.push({scenario:'new',qualification:'PASS',events:ok.events,
     originalEntries:ok.page.originalEntries,admission:ok.saved.get('startup-admission.json')});
   console.log('NEW PASS: actual tracked caller compile -> parked live Worker authentication -> original entry');
+  // Run the whole pre-repair tracked caller against the same failing startup.
+  // Its catch publishes the terminal error, then close() reads guest trace state.
+  const terminalBaseline=cp.execFileSync('git',['show',
+    '2cc66eccbab3709cebe10014733ccbe34ee8cb69:tools/redline-browser-run.cjs'],{cwd:ROOT,encoding:'utf8'});
+  const beforeTerminal=await composed(terminalBaseline,'wrong-live-bytes');
+  const afterTerminal=await composed(callerSource,'wrong-live-bytes');
+  const afterFailure=r=>r.events.slice(r.events.indexOf('first-terminal-failure')+1);
+  assert(beforeTerminal.events.includes('first-terminal-failure'));
+  assert(afterFailure(beforeTerminal).includes('Runtime.evaluate'),'old actual caller reads guest after terminal');
+  assert(afterTerminal.events.includes('first-terminal-failure'));
+  assert(!afterFailure(afterTerminal).some(e=>e==='Runtime.evaluate'||e==='Page.captureScreenshot'||e.startsWith('Input.')),
+    'terminal caller issues only independent cleanup');
+  assert(afterFailure(afterTerminal).includes('Browser.close'));
+  const terminalEvents=afterTerminal.events.length;
+  await assert.rejects(afterTerminal.probe("send('Input.dispatchKeyEvent',{type:'keyDown',key:'ArrowUp'},pageSession)"),/runtime terminal/);
+  await assert.rejects(afterTerminal.probe("capture('after-terminal')"),/runtime terminal/);
+  assert.equal(afterTerminal.events.length,terminalEvents,'terminal input/capture perform zero CDP calls');
+  results.push({scenario:'terminal-boundary',qualification:'PASS',oldFAIL:true,
+    oldAfterFailure:afterFailure(beforeTerminal),newAfterFailure:afterFailure(afterTerminal)});
+  console.log('PASS old FAIL/new PASS whole caller: no guest read/input/capture after first terminal failure');
   for(const mode of ['wrong-compile-bytes','wrong-live-bytes','no-bytecode','wrong-endpoint',
     'owner-race','foreign-module','worker-failure','detached','cleanup-failure',
     'duplicate-module','wrong-slot','flag-race','missing-worker','late-arm','flags-conflict']) {
