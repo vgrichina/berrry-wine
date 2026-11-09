@@ -74,13 +74,13 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed06a42152c903SHA-size65validgzip fourEMPTYINVALID. Redline1545 stoppedexit1 sessionrecording threadnotfound nofinal/acceptance WIPpreserved. Fresh redline-snapshot-recovery-1565 recovers actualbounded snapshot/reopen repair ownnewhelper/test; executable actualretrieval race/cap/drift negatives controls/build publish required. Q21555soleNEXT Q31535closure frozen no native retry.
+  Next: Revieweddaa44c07c/d7459f3f6 actualsnapshotrepair tests/build once; root793regularSHA-size71validgzipCRC fourrawdamaged/emptyINVALID classified; 17EMPTYINVALID retained including compressed-empty. Fresh redline-current-closure-preparation-1595 integrates actualproduction versionedpreparer and transitive snapshotadapter with executable stagedcaller negatives/defaultOFF parity. OFFLINE Q21575 solebox Q31585next; no native readiness claim.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
   status: current WebGL menu and level selection verified; screenshot completion blocks gameplay
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedb993419a5 once1127 regular SHA-size500validgzipCRC PASS; five exact wait-gzip-damage negativefixtures INVALID preserved. Durable checkpoint observer actualcaller offline tests/buildPASS; historical1475cause/browserEOFUNKNOWN. Fresh q3-checkpoint-caller-integration-1535 integrates explicitoptin actuallaunch/caller and pinnedpreparer with executable controls; preserve1495 frozenclosure throughfinalpublishedRELEASE and archivedphysicaldrain. No native retry authorized.
+  Next: Reviewed29c7a9f725 actualversionedpreparer/checkpointcaller controls/build once2485SHA-size1209validgzipCRC FIVEINVALID (threeemptycommandlogs beyond two expectednegativefixtures) preserved. Fresh q3-current-checkpoint-native-progress-1585 offlinecurrentstaging then after1575 finalrelease exactUUIDarchivephysicaldrain ONE changedfixture/cancellation conditionalONEoriginal visiblegameplay. Historical1475cause/browserEOFUNKNOWN no deadline/readiness waiver.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
