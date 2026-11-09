@@ -22,9 +22,9 @@ function fullPeer(){
  cp.spawn=(command,args)=>{
   assert.equal(command,'/usr/bin/google-chrome');const profile=args.find(v=>v.startsWith('--user-data-dir=')).slice(16);
   browser=spawn(process.execPath,['-e',`const fs=require('node:fs'),p=process.argv[1];
-   const cap=setTimeout(()=>process.exit(9),35000);fs.mkdirSync(p,{recursive:true});
+   const cap=setTimeout(()=>process.exit(9),60000);fs.mkdirSync(p,{recursive:true});
    fs.writeFileSync(p+'/DevToolsActivePort','1\\n/devtools/browser/offline\\n');
-   process.stdin.once('data',()=>{clearTimeout(cap);process.stdout.write('stopped\\n');process.stderr.write('EOF\\n');process.stdin.destroy();});`,profile],{stdio:['pipe','pipe','pipe']});
+   const stop=()=>{clearTimeout(cap);process.stdout.write('stopped\\n');process.stderr.write('EOF\\n');process.stdin.destroy();};process.stdin.once('data',stop);process.once('SIGTERM',stop);`,profile],{stdio:['pipe','pipe','pipe']});
   browser.stdout.resume();browser.stderr.resume();
   browser.once('close',(code,signal)=>fs.writeFileSync(dir+'/browser-wait.json',JSON.stringify({code,signal,stdoutEOF:browser.stdout.readableEnded,stderrEOF:browser.stderr.readableEnded})));
   fs.writeFileSync(dir+'/stand-in-pid',String(browser.pid));return browser;
@@ -38,7 +38,8 @@ function fullPeer(){
    assert.equal((await send('Page.captureScreenshot',{format:'png'},pageSession)).data,'delayed');
    assert.equal((await send('Page.captureScreenshot',{format:'png'},pageSession)).data.length,2*1024*1024);
    // No consumer source transform, synthetic timeout or retry. The real
-   // generated promise rejects at its existing20s timer, then closes normally.
+   // generated promise rejects at its existing20s timer, then kernel cleanup
+   // contains the child without a post-terminal protocol close.
    await send('Page.captureScreenshot',{format:'png'},pageSession);assert.fail('absent reply resolved');
   }};
   return load.call(this,name,parent,main);
@@ -73,11 +74,12 @@ async function fullGenerated(out){
   cwd:root,env:{...process.env,Q3_CAPTURE_CHILD:dir,LOCAL_PRODUCTION_FIXTURE:'1',BROWSER_DEADLINE:String(Date.now()+90000),
    Q3_EXECUTION_BOUNDARY_OUT:dir+'/boundary.jsonl.gz'},stdio:['ignore','pipe','pipe']});
  const logs=require('./native-command-log.cjs').createLogs(dir);logs.attach('stdout',child.stdout);logs.attach('stderr',child.stderr);
- const guard=setTimeout(()=>{child.kill('SIGKILL');try{process.kill(Number(fs.readFileSync(dir+'/stand-in-pid')),'SIGKILL');}catch{}},40000);
+ const guard=setTimeout(()=>{child.kill('SIGKILL');try{process.kill(Number(fs.readFileSync(dir+'/stand-in-pid')),'SIGKILL');}catch{}},65000);
  let code,signal;try{[code,signal]=await once(child,'close');await logs.drainStreams();logs.close();}finally{clearTimeout(guard);}
  assert.equal(code,1);assert.equal(signal,null);assert(child.stdout.readableEnded&&child.stderr.readableEnded);
  const read=p=>JSON.parse(fs.readFileSync(p)),peer=read(dir+'/peer.json'),wait=read(dir+'/browser-wait.json');
  assert.equal(peer.shots,3);assert(!peer.protocol.some(q=>q.method.startsWith('Input.')));
+ assert(!peer.protocol.some(q=>q.method==='Browser.close'),'terminal failure forbids automatic quit');
  const runtime=prepared+'/runtime';assert.match(read(runtime+'/first-browser-failure.json').error,/CDP UNKNOWN Page.captureScreenshot; no replay/);
  assert(!fs.existsSync(runtime+'/ready.json'));assert.equal(wait.code,0);assert.equal(wait.signal,null);assert(wait.stdoutEOF&&wait.stderrEOF);
  assert(!fs.existsSync(runtime+'/chrome-profile'));
@@ -161,7 +163,7 @@ function sourceChecks(source){
   'ws?.q3Capture?.receive(msg,v,pending.get(v.id));','ws?.q3Capture?.deadline(meta);']){
   assert.equal(erased.split(seam).length,2,seam);erased=erased.replace(seam,'');
  }
- assert.equal(erased,prior,'all generated non-observation semantics/deadlines/ownership byte identical');
+ assert.equal(erased,current.composeTerminalCleanup(prior),'all generated semantics except explicit Q3 terminal cleanup byte identical');
  assert(source.includes("ws?.q3Transport?.stop('navigation settled')"));
  // Native lifecycle installs the unchanged wire hook after startup/capture
  // composition. Exercise that real hook too: a synthetic consumer alone

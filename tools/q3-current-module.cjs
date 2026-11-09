@@ -251,6 +251,7 @@ function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=s
 // Instrument the authenticated consumer after its existing transforms. Keep
 // protocol routing, debugger policy, terminal propagation and timers intact.
 function composeStartupDiagnostics(source){
+  source=composeTerminalCleanup(source);
   const once=(before,after)=>{
     assert.equal(source.split(before).length,2,'unique startup diagnostic seam: '+before);
     source=source.replace(before,after);
@@ -326,6 +327,23 @@ function send(method,params={},sessionId,captureProbe=null)`);
   once('screenshotCompletion.sendFailed(meta,error);observeTerminal(error);',
     "if(startupRecording)startupRecord('send-error',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId});screenshotCompletion.sendFailed(meta,error);observeTerminal(error);");
   return source;
+}
+// Q3 owns this policy; shared lifecycle providers only perform bounded kernel
+// containment and observe child exit plus stdio closure. Cancellation is an
+// explicit owner action, and can never reclassify an earlier runtime failure.
+function composeTerminalCleanup(source){
+ const once=(before,after)=>{assert.equal(source.split(before).length,2,'unique Q3 terminal cleanup seam: '+before);source=source.replace(before,after);};
+ once('let terminalFailure=null,commandWorkEnd=null;',
+  'let terminalFailure=null,commandWorkEnd=null,plannedCancellation=false;');
+ once("terminalFailure=Error('Q3 terminal UNKNOWN; no replay: '+reason);",
+  "plannedCancellation=reason==='owning launch transport cancelled';\n terminalFailure=Error('Q3 terminal UNKNOWN; no replay: '+reason);");
+ once("if(method!=='Browser.close')checkTerminal();",
+  "if(method!=='Browser.close'||!plannedCancellation)checkTerminal();");
+ once("requestClose:()=>ws?.readyState===1?send('Browser.close'):Promise.reject(Error('endpoint unavailable'))",
+  "requestClose:()=>{if(terminalFailure&&!plannedCancellation)throw terminalFailure;return ws?.readyState===1?send('Browser.close'):Promise.reject(Error('endpoint unavailable'));}");
+ once("})().catch(async e=>{save('first-browser-failure.json'",
+  "})().catch(async e=>{observeTerminal(e);save('first-browser-failure.json'");
+ return source;
 }
 function composeCheckpointCaller(source,version){
   assert.equal(version,checkpointObserverVersion,'explicit checkpoint observer version');
@@ -454,7 +472,7 @@ function prepare(destination,{inputs=[]}={}){
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }
-module.exports={createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
+module.exports={composeTerminalCleanup,createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
 if(require.main===module){
   const args=process.argv.slice(2);assert.equal(args.shift(),'--prepare','explicit preparation only');
   const destination=args.shift(),options={inputs:[]};
