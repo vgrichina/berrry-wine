@@ -1,0 +1,70 @@
+'use strict';
+// Explicit published Q2 CPU/caller version; retained manifests stay immutable.
+// Import does not select modules, prepare pins, allocate, or launch.
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),cp=require('node:child_process'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..'),version="quake2-1495-published-5c8780318-writer-e5eff70be-f977ebf7c-v1";
+const historical="scratch/runs/20261109-quake2-rejected-frame-native-progress-1265/runtime-pins.json",historicalSHA='af301be22ff45b1595eae654e5406f712152ef5ec80b524d3179c8f49d0b7553';
+const authorities=Object.freeze({
+  "host.js": "5c8780318",
+  "lib/drakan-observer-worker.js": "a331104e9",
+  "lib/guest-thread-host.js": "5c8780318",
+  "lib/guest-worker.js": "5c8780318",
+  "lib/region-map.generated.js": "5c8780318",
+  "src/00-regions.wat": "5c8780318",
+  "src/03-registers.wat": "5c8780318",
+  "src/05b-string-ops.wat": "5c8780318",
+  "src/13-exports.wat": "5c8780318",
+  "tools/native_kernel_custody.py": "f977ebf7c",
+  "tools/quake2-native-driver-composition.cjs": "e5eff70be",
+  "tools/quake2-passive-attack.cjs": "43ec0e8cd",
+  "tools/quake2-native-witness-install.cjs": "e5eff70be",
+  "tools/quake2-shared-writer-witness.cjs": "e5eff70be",
+  "tools/quake2-frame-writer-witness.cjs": "19f6794f4"
+});
+const modules=Object.freeze({'build/wine-assembly.wasm':'3e491c0840bb7771328738a0d160b4bbaa3d7ab72074cbd38a7b41e5d7e8ec18','build/wine-assembly.compat.wasm':'ecb45716b1ee7fc5218b1670dd270b19c7664ee30d000b3360a12786a1c21eaf'});
+const hash=b=>crypto.createHash('sha256').update(b).digest('hex'),read=n=>fs.readFileSync(path.join(root,n));
+const git=a=>cp.execFileSync('git',a,{cwd:root,maxBuffer:32*1024*1024});
+function published(commit){
+ const sha=git(['rev-parse',commit+'^{commit}']).toString().trim();
+ git(['merge-base','--is-ancestor',sha,'HEAD']);git(['merge-base','--is-ancestor',sha,'origin/main']);return sha;
+}
+function validate({moduleVersion}={}){
+ assert.equal(moduleVersion,version,'explicit supported Q2 module version required');
+ const raw=read(historical);assert.equal(hash(raw),historicalSHA,'historical Q2 pinset integrity');
+ const prior=JSON.parse(raw),seen=new Set(),changes=[],files=[];
+ const cpuCommit=published('5c8780318');
+ const sourcePaths=git(['ls-tree','-r','--name-only',cpuCommit,'--','src','tools/watx-src','tools/watx.js','tools/watx-closure.js','tools/build-compile-wat.js']).toString().trim().split('\n');
+ for(const n of sourcePaths)assert.equal(hash(read(n)),hash(git(['show',cpuCommit+':'+n])),'published Q2 build source: '+n);
+ const commits={};
+ for(const c of new Set(Object.values(authorities)))commits[c]=published(c);
+ const pin=(name,b)=>({path:name,size:b.length,sha256:hash(b)});
+ for(const before of prior.files){
+  const n=before.path;assert(!seen.has(n),'duplicate historical Q2 provider');seen.add(n);
+  const actual=pin(n,read(n));
+  if(authorities[n]){
+   const expected=git(['show',commits[authorities[n]]+':'+n]);
+   assert.equal(actual.size,expected.length,'published Q2 provider size: '+n);
+   assert.equal(actual.sha256,hash(expected),'published Q2 provider SHA: '+n);
+  }else if(modules[n])assert.equal(actual.sha256,modules[n],'published Q2 module SHA: '+n);
+  else{assert.equal(actual.size,before.size,'unexplained Q2 provider size: '+n);assert.equal(actual.sha256,before.sha256,'unexplained Q2 provider SHA: '+n);}
+  if(actual.sha256!==before.sha256)changes.push({before,after:actual,publishedCommit:authorities[n]?commits[authorities[n]]:cpuCommit});
+  files.push(actual);
+ }
+ for(const [n,c] of Object.entries(authorities))if(!seen.has(n)){
+  const b=read(n),expected=git(['show',commits[c]+':'+n]);
+  assert.equal(hash(b),hash(expected),'new published Q2 provider: '+n);files.push(pin(n,b));seen.add(n);
+ }
+ for(const n of Object.keys(modules))assert(seen.has(n),'missing historical Q2 module');
+ const composed=require('./quake2-native-driver-composition.cjs').compose({custodyVersion:'publishedf977ebf7c'});
+ for(const ref of composed.references)assert(files.some(p=>p.path===ref.path&&p.sha256===ref.sha256&&p.size===ref.size),'actual Q2 caller provider omitted: '+ref.path);
+ const httpPins=prior.httpPins.map(p=>{
+  const before=prior.files.find(f=>f.path===p.url.slice(1)),after=files.find(f=>f.path===p.url.slice(1));
+  assert(before&&after,'HTTP Q2 provider required');assert.equal(p.sha256,before.sha256,'historical HTTP Q2 SHA');assert.equal(p.size,before.size,'historical HTTP Q2 size');
+  return {...p,size:after.size,sha256:after.sha256};
+ });
+ return {version,files,httpPins,changes,publishedModuleCommit:cpuCommit,historical:{path:historical,sha256:historicalSHA,commit:prior.commit},
+  sourcePolicy:'Current bytes only; exact enumerated published changes. No historical Git provider substitution.',
+  nativeQualification:false};
+}
+module.exports={validate,version,historical,historicalSHA,authorities,modules};
+
