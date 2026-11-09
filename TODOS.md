@@ -44,7 +44,7 @@
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
   status: reviewed menu-only original; causal native parent-lineage repair published; flight unqualified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed73a4112be once863SHA-size545gzipPASS and living mounted PNG personallyviewed; fresh identity compound assert failed before T, individual operand UNKNOWN. No T/up/heading or retry; 367actualreaps completeTRUE normal Chrome342ms, bx_yuspm6ar ARCHIVED PHYSICAL_DRAINED stop_0c5ed0ef9ded78e9. Fresh drakan-live-identity-repair-0700 PID1265777 thread01a1bf19-7e06-7152-a526-8740792ec316 OFFLINE actual caller schema/operand repair and composed regressions; no new original authorized. CPUa320 admissiona331 and custody5ec810c4 unchanged.
+  Next: Reviewed59fb363bc once42SHA-size/gzipCRC PASS. Actual ten-operand diagnostic persistence and cleanup release-error fix published; no original operand tuple retained and no actor defect established. Park original retry; CPUa320 and custody unchanged. Slot reassigned nfs3-native-timer-cause-0724 OFFLINE fixture causal repair. See docs/re-notes/drakan-live-identity-repair-0700-20261109.md.
 
 - [ ] SuperTux first-level exit and world-map progression
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed1bdeeba45 once55SHA-size28gzipPASS. Actual retained startup reaches original navigation with zero prior flags/live module authentication and no preDLLmain barrier; offline stop, no box/game/input. Fresh redline-startup-barrier-repair-0700 PID1265603 thread01a1bf19-78e1-7102-85ff-746c72f18149 OFFLINE repairs actual composed launcher ordering with currenta320 ownership and zero-entry refusal tests. Side-door entry/driving remain open; oldf965 proof does not qualify current candidate, no unchanged retry.
+  Next: Reviewed0f0a3f100 once94SHA-size/gzipCRC PASS actual composed caller/host/service. Private compile authentication and preCPU/preDLLmain owner barrier repaired; offline negatives zero-entry and joined retirement pass, native Chrome proof still required. Fresh redline-admitted-side-door-0724 PID1296325 thread01a1bf31-1934-7e61-a21c-b0284ad63ff9 integrates current native qualification and changed side-door gameplay; ONE runtime authorized only after gates, no blocked-forward replay. See docs/re-notes/redline-startup-barrier-repair-0700-20261109.md.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
@@ -1233,10 +1233,10 @@ commit output — do not assume your hunks landed.**
   created: 2026-10-02T04:00:31.545Z
   created-by: user-request via ops-dashboard
   candidate: need-for-speed-3-demo
-  Next: Queue a separately bounded local native timer-init predicate/API/readiness trace against observer-off with the same executing module before any new NFS3 box. Published2ea85dd91 fixes canonical staging/missinghelper earlyexit and passes nativecatalogue/setup/realWorkerattachment, but local2 actual7ec49 game aborts INITTIMER; local3 debugger-order variation alsoaborts thencommand4UNKNOWN. No further runtime/BOX. Predicate562ae8zero is static; clearingbranch/APIreturns/clock or attachment cause unmeasured. Local3setupbytecodealone is not gameWorkeridentity; per-casehelper manifests incomplete. Coordinator verified391files13438371bytes and localdrain. Prior cockpit/scan48delivery stands, control consumption unmeasured. Fresh Quake2guard-door0701 takes slot. Note: docs/re-notes/nfs3-rehearsed-consumption-20261108.md. Full27/parity/audio/FPS open.
+  Next: Fresh nfs3-native-timer-cause-0724 PID1296502 thread01a1bf31-2c5b-7d22-99d8-f14825e4e414 OFFLINE actual native timer-init fixture and API-contract causal repair. No Chrome/original/box authorized. Prior INITTIMER clearing path and observer causation unmeasured; no clock/branch/API-success forcing. Same executing module observer-off comparison required; renderer benchmark remains open. See docs/re-notes/nfs3-rehearsed-consumption-20261108.md.
   Done: Report all three guest renderer paths on the same identified source/WASM/browser/CPU/GPU, resolution and controlled race/weather/input route. Separate original game software rendering from our software backend; verify no hidden GPU fallback or SwiftShader substitution. Save reviewed race images, repeated warmed-up FPS/frame-time median and p95, CPU profiles, draw/triangle/texture/upload/readback/fallback counters, sample counts and spread, plus same-path control. Report unavailable paths explicitly. Record bottlenecks and a predeclared performance acceptance budget; historical high-load FPS is not a current baseline.
   Evidence: ops/handoffs/nfs3-renderer-bench.md; scratch/nfs3-renderer-bench-20261002/closure-report.json; scratch/nfs3-renderer-bench-20261002/local-resource-preflight.json; ops/handoffs/nfs3-capacity-recheck.md; ops/handoffs/nfs3-software-prep.md
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   accepted: 2026-10-02T04:11:37.233064+00:00
   accepted-by: codex:01a0f9d8-c0cd-73b3-a357-fb3ff1c784c0
   Notes: Root34 downloaded hashes/cleanup/post-input checks pass; car/road image reviewed but no qualified timing. Failure occurred before qualification windows at backend identity gate. Host explicitly released for GTA2 then Unreal; all three original renderer paths remain required.
