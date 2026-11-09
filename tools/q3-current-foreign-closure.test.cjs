@@ -41,7 +41,7 @@ if(['--runtime-probe','--runtime-preflight'].includes(process.argv[2])){
  const out=path.resolve(process.argv[2]);assert(out.startsWith(root+'/scratch/runs/'));fs.mkdirSync(out,{recursive:true});
  const options={checkpointObserverVersion:current.checkpointObserverVersion,foreignClosureVersion:route.version};
  assert.throws(()=>current.validate(),/Q3 migration provider: tools\/q3-native-prelaunch.py/);
- assert.throws(()=>current.validate({checkpointObserverVersion:current.checkpointObserverVersion}),/provider size: lib\/quake2-browser-load-observer.js/);
+ assert.throws(()=>current.validate({checkpointObserverVersion:current.checkpointObserverVersion}),/Q3 migration provider: tools\/q3-native-prelaunch.py/);
  assert.throws(()=>require('./q3-native-driver-composition.cjs').compose(),/Q3 provider changed: lib\/redline-startup-admission.js/);
  let negatives=3;
  for(const option of [{foreignClosureVersion:'unknown'},{...options,checkpointObserverVersion:'unknown'},{...options,skipValidation:true}]){assert.throws(()=>current.validate(option));negatives++;}

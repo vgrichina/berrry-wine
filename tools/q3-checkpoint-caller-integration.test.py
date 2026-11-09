@@ -22,6 +22,7 @@ OUT = Path(sys.argv[1]).resolve()
 OUT.mkdir(exist_ok=False)
 assert OUT.is_relative_to(ROOT/'scratch/runs')
 VERSION = 'q3-checkpoint-b993419a5-v1'
+FOREIGN = 'q3-current-foreign-a16fc87d4-44fc9a134-v1' if '--foreign-closure' in sys.argv[2:] else None
 PHASE = ROOT/'scratch/runs/20261109-q3-changed-control-native-progress-1475/phase.py'
 H = lambda b: hashlib.sha256(b).hexdigest()
 owner = runpy.run_path(str(ROOT/'tools/q3-native-launch-client.py'))
@@ -101,10 +102,13 @@ def box():raise RuntimeError('OFFLINE no box')
     opts = dict(inputs=[str(p.relative_to(ROOT)) for p in (source,base/'control.py',base/'physical_gate.py',base/'cancellation_gate.py')])
     if version is not None:
         opts.update(checkpointObserverVersion=version, caller=str(source.relative_to(ROOT)))
+    if FOREIGN and version == VERSION:
+        opts['foreignClosureVersion'] = FOREIGN
     if version==VERSION:
         argv=['node','tools/q3-current-module.cjs','--prepare',str(base/'pins'),
               '--checkpoint-observer-version',version,'--caller',opts['caller']]
         for name in opts['inputs']:argv+=['--input',name]
+        if FOREIGN:argv+=['--foreign-closure-version',FOREIGN]
     else:argv=['node', '-e', js, str(base/'pins'), json.dumps(opts)]
     p = child(argv, cwd=ROOT)
     so, se = p.communicate(timeout=20)
@@ -157,6 +161,7 @@ print('PASS entire generated caller executable import; no process/network/native
         negative_js = r'''
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const m=require('./tools/q3-current-module.cjs'),base=process.argv[1],read=fs.readFileSync;
+const selected=process.argv[2]?{foreignClosureVersion:process.argv[2]}:{};
 const inputs=['phase-input.py','control.py','physical_gate.py','cancellation_gate.py'].map(n=>path.relative(process.cwd(),path.join(base,n)));
 for(const target of ['q3-checkpoint-observer.py','q3-cancellation-stream-eof.py','q3-native-launch-client.py']){
  for(const mode of ['stale','missing']){
@@ -167,17 +172,17 @@ for(const target of ['q3-checkpoint-observer.py','q3-cancellation-stream-eof.py'
     const data=Buffer.concat([read.call(this,file),Buffer.from('\n')]);return args[0]==='utf8'?data.toString():data;
    }return read.call(this,file,...args);
   };
-  try{assert.throws(()=>m.prepare(destination,{inputs,caller:inputs[0],checkpointObserverVersion:m.checkpointObserverVersion}));assert(!fs.existsSync(destination));}
+  try{assert.throws(()=>m.prepare(destination,{...selected,inputs,caller:inputs[0],checkpointObserverVersion:m.checkpointObserverVersion}));assert(!fs.existsSync(destination));}
   finally{fs.readFileSync=read;}
  }
 }
 const destination=path.join(base,'missing-run-transitive');
-assert.throws(()=>m.prepare(destination,{inputs:inputs.slice(0,-1),caller:inputs[0],checkpointObserverVersion:m.checkpointObserverVersion}),/missing caller transitive input/);
+assert.throws(()=>m.prepare(destination,{...selected,inputs:inputs.slice(0,-1),caller:inputs[0],checkpointObserverVersion:m.checkpointObserverVersion}),/missing caller transitive input/);
 assert(!fs.existsSync(destination));
 assert.throws(()=>m.composeCheckpointCaller('drift',m.checkpointObserverVersion),/authenticated retained1475/);
 console.log('PASS six stale/missing provider refusals, missing caller dependency and caller drift');
 '''
-        p=child(['node','-e',negative_js,str(b)],cwd=ROOT);so,se=p.communicate(timeout=20)
+        p=child(['node','-e',negative_js,str(b),FOREIGN or ''],cwd=ROOT);so,se=p.communicate(timeout=20)
         save(b/'preparer-refusals.json.gz',dict(status=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=so.decode(),stderr=se.decode()))
         assert p.returncode==0,se.decode()
         # Execute prelaunch itself, including the deferred observer dependency

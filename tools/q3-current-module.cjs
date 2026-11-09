@@ -14,6 +14,7 @@ const checkpointObserverVersion='q3-checkpoint-b993419a5-v1';
 const checkpointCommit='b993419a54d732a67696851d8f2dc50b574b625b';
 const checkpointCallerSHA='5b52e6438e2ec3f9676d11584dd52c5a435b1b17412c4ac2d5c1dec33301bb1e';
 const checkpointPrelaunchSHA='649c689aba21e8fca8325435a08be1f7181dd6380cfe843d64ce9f840c9dec1a';
+const foreignPrelaunchSHA='37d2cff7ce6f18eb19ff95bd5a94a234527353c902d6d1336bdbfca789eb20e8';
 const checkpointDependencies=['tools/q3-checkpoint-observer.py','tools/q3-cancellation-stream-eof.py','tools/q3-native-launch-client.py'];
 const SELECTED=Object.freeze({sha256:'3e491c0840bb7771328738a0d160b4bbaa3d7ab72074cbd38a7b41e5d7e8ec18',bytes:2186068});
 const modules={
@@ -52,6 +53,7 @@ function validate(options={}){
   for(const [name,commit] of Object.entries(publishedProviders))expected[name]=pin(name,git(['show',commit+':'+name]));
   const selectedMigration={...migration};
   if(checkpoint||foreign)selectedMigration['tools/q3-native-prelaunch.py']=checkpointPrelaunchSHA;
+  if(foreign)selectedMigration['tools/q3-native-prelaunch.py']=foreignPrelaunchSHA;
   for(const [name,sha256] of Object.entries(selectedMigration)){
     assert.equal(hash(read(name)),sha256,'Q3 migration provider: '+name);expected[name]={sha256,size:read(name).length};
   }
@@ -107,7 +109,7 @@ function composeCheckpointCaller(source,version){
 }
 function prepare(destination,{inputs=[]}={}){
   assert.equal(arguments.length<=2,true);const options=arguments[1]??{};
-  assert(Object.keys(options).every(k=>['inputs','checkpointObserverVersion','caller','foreignClosureVersion'].includes(k)),'explicit supported preparation options');
+  assert(Object.keys(options).every(k=>['inputs','checkpointObserverVersion','caller','foreignClosureVersion','nativeLifecycleVersion'].includes(k)),'explicit supported preparation options');
   const checkpoint=options.checkpointObserverVersion!==undefined;
   assert(checkpoint||options.caller===undefined,'caller requires explicit checkpoint observer version');
   destination=path.resolve(destination);assert(!fs.existsSync(destination),'fresh task-owned destination required');
@@ -115,6 +117,17 @@ function prepare(destination,{inputs=[]}={}){
   if(checkpoint)validation.checkpointObserverVersion=options.checkpointObserverVersion;
   if(options.foreignClosureVersion!==undefined)validation.foreignClosureVersion=options.foreignClosureVersion;
   const version=validate(validation);
+  const lifecycle=options.nativeLifecycleVersion===undefined?undefined:require('./q3-versioned-native-lifecycle.cjs');
+  let generated=[];
+  if(lifecycle){
+    assert(checkpoint&&options.foreignClosureVersion!==undefined,'native lifecycle requires explicit checkpoint and foreign versions');
+    assert.equal(options.nativeLifecycleVersion,lifecycle.version,'explicit native lifecycle version');
+    assert.equal(path.basename(destination),'prepared','owning lifecycle prepared directory');
+    generated=lifecycle.generate(destination,options.nativeLifecycleVersion);
+    version.nativeLifecycleVersion=lifecycle.version;
+    version.files.push(pin('tools/q3-versioned-native-lifecycle.cjs',read('tools/q3-versioned-native-lifecycle.cjs')));
+    for(const file of generated)version.files.push(pin(file.path,Buffer.from(file.source)));
+  }
   for(const name of inputs){
     assert(typeof name==='string'&&name.startsWith('scratch/runs/')&&name.endsWith('.py')&&!name.split('/').includes('..'),'small owned Python run input required');
     assert(path.resolve(root,name).startsWith(path.dirname(destination)+path.sep),'input must belong to destination parent');
@@ -127,7 +140,8 @@ function prepare(destination,{inputs=[]}={}){
       const dependency=path.relative(root,path.join(path.dirname(destination),name));
       assert(inputs.includes(dependency),'missing caller transitive input: '+name);
     }
-    const source=composeCheckpointCaller(read(options.caller).toString(),options.checkpointObserverVersion);
+    let source=composeCheckpointCaller(read(options.caller).toString(),options.checkpointObserverVersion);
+    if(lifecycle)source=lifecycle.caller(source);
     caller=path.join(path.dirname(destination),'q3-checkpoint-caller.py');
     assert(!fs.existsSync(caller),'fresh generated caller required');
     version.checkpointCaller=path.relative(root,caller);
@@ -149,6 +163,7 @@ function prepare(destination,{inputs=[]}={}){
   const pins={commit:git(['rev-parse','HEAD']).toString().trim(),...version};
   const raw=Buffer.from(JSON.stringify(pins,null,2));
   fs.mkdirSync(destination,{recursive:true});
+  for(const file of generated){fs.mkdirSync(path.dirname(path.join(root,file.path)),{recursive:true});fs.writeFileSync(path.join(root,file.path),file.source,{flag:'wx',mode:0o444});}
   if(runtimeCaller)fs.writeFileSync(runtimeCaller,runtimeSource,{flag:'wx',mode:0o444});
   fs.writeFileSync(path.join(destination,'runtime-pins.json.gz'),zlib.gzipSync(raw),{flag:'wx',mode:0o444});
   const seal={moduleVersion:version.moduleVersion,...(caller?{caller:version.checkpointCaller}:{}),...(runtimeCaller?{runtimeCaller:version.runtimeCaller,foreignClosureVersion:version.foreignClosureVersion,offlinePrepared:true,nativeReady:false}:{}),manifestSHA256:hash(raw),providers:pins.files.length,publishedModuleCommit:cpuCommit,publishedCustodyCommit:custodyCommit,historicalPinset:version.historicalPinset,explainedDrift:version.explainedDrift};
@@ -165,6 +180,7 @@ if(require.main===module){
     else if(flag==='--caller'){assert(!options.caller,'duplicate caller');options.caller=value;}
     else if(flag==='--checkpoint-observer-version'){assert(!options.checkpointObserverVersion,'duplicate checkpoint version');options.checkpointObserverVersion=value;}
     else if(flag==='--foreign-closure-version'){assert(!options.foreignClosureVersion,'duplicate foreign closure version');options.foreignClosureVersion=value;}
+    else if(flag==='--native-lifecycle-version'){assert(!options.nativeLifecycleVersion,'duplicate native lifecycle version');options.nativeLifecycleVersion=value;}
     else assert.fail('unsupported preparation flag: '+flag);
   }
   console.log(JSON.stringify(prepare(destination,options)));

@@ -88,7 +88,20 @@ def require_composition(root, pins):
     composition = 'tools/q3-native-driver-composition.cjs'
     if composition not in by_path:
         raise ValueError('missing prelaunch provider: ' + composition)
-    for name, expected in composition_providers(root).items():
+    providers = composition_providers(root)
+    foreign = pins.get('foreignClosureVersion')
+    if foreign is not None:
+        if foreign != 'q3-current-foreign-a16fc87d4-44fc9a134-v1' or pins.get('moduleVersion') != foreign:
+            raise ValueError('unsupported Q3 foreign closure version')
+        # The explicit published route changes this one composition literal.
+        # The full byte barrier below still verifies every staged provider.
+        providers.update({
+            'lib/redline-startup-admission.js': 'bd39c71fb2a331554d74568cca1916fb0750fa19a11bef1614d66456735a875f',
+            'lib/redline-current-startup-v1.js': '3b32d2e7c24fb0718f05022d47a8884bbe7e93ea0568c6868829563463cadd50',
+            'lib/quake2-browser-load-observer.js': '45cd7e009fa5718fff4ad6c8a7080f439eae993292fab63b920c2eb49a2f4fb6',
+            'lib/quake2-current-browser-policy-v1.js': '3a5498e183a04444c5a55888a7cbfac482ef93dc209b7781c5f16633263ffbe2',
+        })
+    for name, expected in providers.items():
         if name not in by_path:
             raise ValueError('missing Q3 composition provider: ' + name)
         if by_path[name]['sha256'] != expected:

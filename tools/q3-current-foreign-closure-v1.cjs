@@ -51,7 +51,7 @@ function staged(run,selected,manifestSHA256){
  assert.equal(read(caller).toString(),callerSource(run,closureSHA(pins.files.filter(p=>p.path!==caller))),'authenticated generated caller');
  return pins;
 }
-function composition(selected,run){
+function composition(selected,run,outputDirectory){
  optin(selected);
  const name='tools/q3-native-driver-composition.cjs',filename=path.join(root,name),source=read(name).toString();
  assert.equal(hash(Buffer.from(source)),require('./q3-current-module.cjs').migration[name],'authenticated Q3 command-boundary composition');
@@ -70,7 +70,7 @@ function composition(selected,run){
   const output="out=run+'/'+(process.env.CASE_TAG||(process.env.NO_ORIGINAL?'production-preflight':process.env.WEBGL_QUALIFY?'webgl-qualify':process.env.TR2_GENERATED?'generated-v2':'original'))";
   transformed=transformed.replace(seam,
    '  source=replaceOnce(source,'+JSON.stringify(pins)+','+JSON.stringify("const pins=JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync("+JSON.stringify(path.join(run,'runtime-pins.json.gz'))+")));")+');\n'+
-   '  source=replaceOnce(source,'+JSON.stringify(output)+','+JSON.stringify('out='+JSON.stringify(path.join(run,'runtime')))+');\n'+seam);
+   '  source=replaceOnce(source,'+JSON.stringify(output)+','+JSON.stringify('out='+JSON.stringify(outputDirectory??path.join(run,'runtime')))+');\n'+seam);
  }
  m._compile(transformed,filename);
  return m.exports;
@@ -85,9 +85,27 @@ function runCaller(run,selected,digest){
  assert.equal(read(caller).toString(),callerSource(run,digest),'generated relative import caller');
  assert.equal(process.env.Q3_NATIVE_COMPOSITION,undefined,'versioned route owns composition preload');
  assert(process.env.Q3_EXECUTION_BOUNDARY_OUT?.endsWith('.jsonl.gz'),'execution preload output required');
- const m=composition(selected,run);
+ let output;
+ if(process.env.Q3_NATIVE_PHASE!==undefined){
+  assert.equal(pins.nativeLifecycleVersion,'q3-native-lifecycle-foreign-v1','explicit owning native lifecycle');
+  assert(['cancellation','original'].includes(process.env.Q3_NATIVE_PHASE),'explicit native phase');
+  output=path.join(path.dirname(run),process.env.Q3_NATIVE_PHASE,'prepared/runtime');
+ }
+ const m=composition(selected,run,output);
  process.argv[1]=path.join(root,m.consumerPath);
  m.install();
+ if(output!==undefined){
+  // Cache the inert historical export before the legacy hook guard is set.
+  // Only the versioned composition above is installed; guards then bind the
+  // unchanged pointer/diagnostic/wire hooks to this genuine consumer.
+  require('./q3-native-driver-composition.cjs');
+  process.env.Q3_NATIVE_COMPOSITION='1';
+  try{
+   if(process.env.Q3_NATIVE_PHASE==='original')require('./q3-menu-pointer-control.cjs');
+   require('./q3-native-input-cause-diagnostic.cjs');
+   require('./q3-input-wire-observation.cjs');
+  }finally{delete process.env.Q3_NATIVE_COMPOSITION;}
+ }
  require('./q3-execution-boundary.cjs');
  require(path.join(root,m.consumerPath));
 }
