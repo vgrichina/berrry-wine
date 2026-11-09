@@ -8,7 +8,7 @@
   id: QUAKE2-NATIVE-GUARD-DOOR-20261108
   status: native load/use controls verified; trusted exact-source witness and lifetime coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed883c0385b once1021SHA-size118gzipCRC PASS. Offline actual driver initialmotionSNAPSHOT then heldmotionUNKNOWN still captured and ACKed; no original runtime created. Fresh quake2-motion-terminal-repair-0737 thread01a1bf3d-6007-7122-8dde-e452c3f8f259 fixes terminal boundary before dependent capture with actual composed regressions. CPUa320 custody4341 strict caps unchanged; prior death cause UNKNOWN.
+  Next: Reviewed4ba9f3a1b once2808SHA-size314gzipCRC PASS actual productiondiff plus oldFAILnewPASS. Explicit requireMotion:true makes heldUNKNOWN terminal before dependent capture wait ACK, reverseUP joined firstfailure sticky; unrelated motionless capture retained. Fresh quake2-required-motion-upper-route-0754 integrates changed native qualification then safe upper-route original only if whole gates pass. FIRST ONEruntime; first unexplained health decrease terminal, no blind descent. CPUa320 custody4341 unchanged nativeREVOKED damagecauseUNKNOWN.
 
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
@@ -74,7 +74,7 @@
   id: NEW-GAME-REDLINE-VEHICLE-CONSUMPTION-20261108
   status: native keyboard turn proved across held polls; car reacquisition/door entry/driving open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed63ce15d7c once140SHA-size93gzipCRC PASS plus actual stop/drain/watchdog receipts. Native privatea320 owningWorker startup and comma/period consumption pass, whole qualification FAIL at Chrome exit wait10s then controllerdeadlineSIGTERM. No original gameplay. bx_v83snewy UUIDa77bebaa-668a-4a93-be77-4970ab05f03d ARCHIVED unforced stop_b69594a88cb5297a complete07:32:20.484Z physicaldrain verified. Fresh redline-fixture-shutdown-repair-0740 thread01a1bf40-5cf4-71f2-9216-38926afff331 OFFLINE fixes finally-path server leak and joined shutdown; no original retry. LifetimeREVOKED allwriters/edictABAUNKNOWN.
+  Next: Reviewed2cc66eccb once412SHA-size103gzipCRC PASS tracked wholefixture/lifecycle oldFAILnewPASS nineinertcases lockedbuild. Independent server shutdown actualchildwait streams joined firstfailure preserved timeout10s unchanged; nativeChrome latencycauseUNKNOWN. Fresh redline-joined-side-door-0756 prepares OFFLINE SECOND waits Q20754 exactARCHIVEDPHYSICAL_DRAINED release beforeONEruntime. Invoke trackedfixture and pinboth files whole-native-PASS before changed side-door gameplay. Prior0724 lifecycleFAIL bx_v83snewy ARCHIVED stop_b69594a88cb5297a complete07:32:20.484Z; no partialPASS promotion. LifetimeREVOKED allwriters/edictABAUNKNOWN.
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
