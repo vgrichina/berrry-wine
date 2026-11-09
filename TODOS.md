@@ -50,13 +50,13 @@
   id: NEW-GAME-SUPERTUX-FIRST-EXIT-20261108
   status: fresh original stomp verified; level exit/unlock still open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedpublishedfddc9322a actualcause/timing repair; 1831SHA413gzip verified historical0400causeUNKNOWN. Fresh supertux-diagnostic-gameplay-0435 PID1034532 thread01a1be92-4ea0-7110-9a6d-9f7fed7e3710 preparesONEoriginal then waits exactWC0435physicalrelease; unchangedcaps personallyreviewednativechoices.
+  Next: 0435reviewed410SHA123gzip noBox; Fresh supertux-native-progress-0445 PID1052664 thread01a1be9d-30fa-71d0-be55-7e89910cfaf6 PREPARING_ONE_ORIGINAL. Routineofflineerrors fixedsameassignment; runtimefirstfailureSTOP unchanged. ExplicitNO_BOXdrained frees soleChrome slot; published4341 pin unchangedcaps historicalUNKNOWN.
 
 - [ ] Warcraft III current-browser Prologue gameplay and tutorial progress
   id: NEW-GAME-WARCRAFT3-CURRENT-OBJECTIVE-20261108
   status: producer readiness qualified; historical current-module cinematic renders; fresh page becomes unresponsive during loading, control unproved
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedpublished4341b877 actualpendingEXIT-before-CONT repair 691SHA100gzip verified; historical0410creatorUNKNOWN unchanged. Fresh warcraft-actual-close-0435 PID1034530 thread01a1be92-4e9a-7512-b21d-922bf3a63972 releasedstartupWIP plusONEsmallChrome actualstartup/normalclose integration, noWarcraftoriginal.
+  Next: 0435reviewed210SHA40gzip offlineinvocationerror noBox WIPretained; Fresh warcraft-finish-startup-0445 PID1052665 thread01a1be9d-30f6-7040-b989-d57a194f692a OFFLINE_PREP_WAIT_SUPER_RELEASE. Routineofflineerrors fixedsameassignment; runtimefirstfailureSTOP unchanged. ExplicitNO_BOXdrained frees soleChrome slot; published4341 pin unchangedcaps historicalUNKNOWN.
 
 - [x] Darkstone earned checkpoint restored across browser sessions
   id: NEW-GAME-DARKSTONE-CROSS-SESSION-RESTORE-20261108
