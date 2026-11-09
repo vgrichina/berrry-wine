@@ -111,6 +111,14 @@ async function runController(controller, command) {
   }
 }
 
+// The composed native session stops on its first failed menu action too.
+// Retained generic transports can refresh a zero-effect stale refusal, but
+// this session must reach its outer close handler without another command.
+async function runBoundAction(chain, review, effect) {
+  try { return await chain.admit(review, effect); }
+  catch (cause) { throw Error('native menu action UNKNOWN; no replay', {cause}); }
+}
+
 // manifest contains only PATH+HASH references. The caller pins its exact bytes
 // in the final startup barrier; compose rechecks every provider before launch.
 // No source/media/module copy is written, and this function starts no runtime.
@@ -134,6 +142,8 @@ function compose({root, manifest}) {
   source = replaceOnce(source, "if(c.action==='pause-step'){", "if(c.action==='pause-step'){pauseCommandId=c.id;");
   source = replaceOnce(source, "save:r=>log('pause-composition.jsonl',{id:c.id,...r})",
     "save:r=>log('pause-composition.jsonl',{id:pauseCommandId,...r})");
+  source = replaceOnce(source, '}else await chain.admit(review,async receipt=>{',
+    "}else await require(root+'/tools/supertux-native-driver-composition.cjs').runBoundAction(chain,review,async receipt=>{");
   source = replaceOnce(source,
     'await pauseController.run({id:c.id,review,observation:c.observation,keys:c.keys,holdMs:c.holdMs,markDispatch});',
     "await require(root+'/tools/supertux-native-driver-composition.cjs').runController(pauseController,{id:c.id,review,observation:c.observation,keys:c.keys,holdMs:c.holdMs,kind:c.kind,markDispatch});");
@@ -162,4 +172,4 @@ function compose({root, manifest}) {
   return {source, filename: path.resolve(root, base), sha256: sha(source), providers: manifest.files.length};
 }
 
-module.exports = {createTransport, compose, applyPatch, verify, runController};
+module.exports = {createTransport, compose, applyPatch, verify, runController, runBoundAction};
