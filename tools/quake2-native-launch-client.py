@@ -154,8 +154,16 @@ def remote_parent(run):
     if run == retained:
         raise ValueError('retained evidence is read-only')
     os.environ['QUAKE2_NATIVE_RUN'] = str(run)
-    os.environ['QUAKE2_NATIVE_COMPOSITION'] = '1'
-    command = ['node', '--require', str(ROOT/'tools/quake2-native-driver-composition.cjs'), str(retained/'browser-run.cjs')]
+    if os.environ.get('QUAKE2_CURRENT_BROWSER_COMPOSITION') == '1':
+        if os.environ.get('QUAKE2_NATIVE_COMPOSITION') == '1':
+            raise ValueError('use only the versioned Q2 browser preload')
+        if os.environ.get('QUAKE2_BROWSER_POLICY_VERSION') != 'quake2-current-primary-3e491c08-v1':
+            raise ValueError('explicit Q2 browser policy version required')
+        preload = 'tools/quake2-current-browser-policy.cjs'
+    else:
+        os.environ['QUAKE2_NATIVE_COMPOSITION'] = '1'
+        preload = 'tools/quake2-native-driver-composition.cjs'
+    command = ['node', '--require', str(ROOT/preload), str(retained/'browser-run.cjs')]
     deadline = json.loads((run/'lifecycle.json').read_text())['browserDeadline']/1000+30
     receipt = supervise_caller(run, [sys.executable, str(retained/'launch.py'), '--consumer-control',
                                str(run), json.dumps(command)], deadline)

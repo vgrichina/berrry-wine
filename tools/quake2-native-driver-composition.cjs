@@ -11,7 +11,7 @@ const consumerPath='scratch/runs/20261109-quake2-observed-guard-route-0105/brows
 const custodySha256='05b7fe42cf7ac09df5f12f0ea073ea066892efb598b64b05fae19a3492c9f32c';
 // d90eb457c: exact numbered owning quit, joined launch wait and both EOFs.
 const orderlyCallers=Object.freeze({
- 'tools/quake2-native-launch-client.py':'cd8b886512553a67a5fcc66dfc09e7932e5cde2e771f24daf3fcde64b920c338',
+ 'tools/quake2-native-launch-client.py':'2ebc4e6cb3ca3bc2704facb3c322bfdd3121055de7791c1480e02de6c8a24c18',
  'tools/q3-native-launch-client.py':'d3b9927b17372e74ef0abc8f43b59e709b1822d4927d7793c0153b07cda6509d'
 });
 const providers=Object.freeze({

@@ -122,7 +122,9 @@ function integrate(source){
 function install(){
   const Module=require('node:module'),path=require('node:path');
   const consumer=path.resolve(__dirname,'..',require('./quake2-native-driver-composition.cjs').consumerPath);
-  if(path.resolve(process.argv[1]||'')!==consumer||process.env.QUAKE2_NATIVE_COMPOSITION!=='1')throw Error('Q2 wire requires actual composed consumer');
+  const browser=process.env.QUAKE2_CURRENT_BROWSER_COMPOSITION==='1';
+  const selected=browser?process.env.QUAKE2_BROWSER_POLICY_VERSION==='quake2-current-primary-3e491c08-v1'&&process.env.QUAKE2_NATIVE_COMPOSITION!=='1':process.env.QUAKE2_NATIVE_COMPOSITION==='1';
+  if(path.resolve(process.argv[1]||'')!==consumer||!selected)throw Error('Q2 wire requires actual composed consumer');
   const extension=Module._extensions['.cjs'];
   Module._extensions['.cjs']=function(module,file){
     if(file!==consumer)return extension(module,file);
