@@ -32,10 +32,61 @@ The consumer's existing DRIVER_PREFLIGHT exit prevents Chrome creation in
 offline tests. These results do not establish native readiness or browser EOF.
 Initial harness errors and the retained depth defect are preserved as failures.
 
-The runtime prerequisite was freshly checked: exact Redline1635 API reports
-ARCHIVED with completed unforced `stop_e0bd4a87ad595fc7`. Its final published
-release and independent physical drain must be reread before allocation. One
-fixture/checkpoint and a conditional original are authorized only under the
-existing gates, with an independent immutable UUID watchdog before allocation.
-Native outcome is pending; screenshot-stall cause and movement/firing remain
-UNKNOWN.
+The final implementation commits are `2af24dba1` and `3ed2ce544`, both published
+with successful strict-SSH pull/push. The second also routes the independent
+retained physical drain to the actual phase output; its generated-program
+regression checks the unchanged physical and kernel assertions. The final
+manifest has 942 providers and records exact Git `3ed2ce54496860a39efa1eed500d1210dbfd69e0`.
+
+## Native fixture and first original-controller blocker
+
+Before allocation, the exact Redline1635 API reported ARCHIVED with completed
+unforced `stop_e0bd4a87ad595fc7`. Its genuine final publication/release and
+independent SHA/size/CRC reread confirmed 12/12 reaps, physical absence, no
+profile, FD holders or locks, and separate parent EOF. Its unpublished ports
+remain explicitly without an independent numbered-port connection probe.
+
+The new independent immutable 25-minute UUID watchdog was observable and
+heartbeating before allocation. The single new box was `bx_tg6jmkr8`, UUID
+`00af27f6-cc90-46c4-86e2-29793256e2dc`, initial expiry
+`2026-11-09T16:16:16.990Z`. Both actual remote Python prelaunch import gates
+passed before the single native generated fixture/checkpoint invocation.
+
+The fixture passed its negative controls, actual WebGL presentation/capture,
+ACK0 and actual owning-renderer Enter held-high/released-zero check. Its native
+checkpoint published at `2026-11-09T15:52:50.486Z` within the existing bounds.
+The planned owning cancellation passed all three distinct remote parent waits
+with separate stdout/stderr EOF and 170/170 actual kernel reaps. Independent
+physical inspection confirmed ports 44787/42553 closed, no profile, runtime FD
+holders or input writer lock, and the runtime lock drained. Normal browser-close
+EOF remains UNKNOWN; kernel reaping does not establish it.
+
+All existing fixture/checkpoint prerequisites passed, admitting one original.
+The retained local `interactive.py` parent then failed at line 8 with
+`PermissionError: [Errno 1] Operation not permitted` while registering stdin
+with its epoll selector. This worker should have preflighted that execution
+environment before spawning its child. The parent spawned the Python caller
+before the exception, but recorded no actual child wait: that wait remains
+UNKNOWN. No local original launch claim or remote original claim, runtime
+identity, kernel arm, output directory or runtime process was observed. The
+first process census matched its own diagnostic source text; the separate
+exact-argv census excludes the observer and found no original runtime or FD
+holders. That first census is not promoted as runtime presence or absence.
+
+The selector exception was terminal. No relaunch, later input, capture,
+screenshot retry or deadline extension was attempted. There is no original
+arena screenshot, movement/firing result, or resolution of the historical
+screenshot stall. The concrete next blocker is preflighting the local owning
+controller's stdin and ensuring its parent waits in a finally path before any
+separately authorized new original attempt.
+
+All 78 unique native fixture artifacts were retrieved and independently
+SHA/size checked with gzip CRC before delegated normal shutdown. Empty or
+invalid gzip sources are preserved and excluded from proof. Final box state:
+**ARCHIVED**, `archiveAfter:null`, `expiresAt:NOT_RETURNED`. Stop receipt
+**`stop_1f93513fb84c097d`** completed unforced without error at
+`2026-11-09T15:55:15.121Z`. The watchdog actually joined with status 0 and
+separate stdout/stderr EOF; its lifecycle parent also returned 0 and released
+the lock. Free `/home` stayed above 1.5 GB. Completed owned test duplicates were
+losslessly compressed with independent SHA/size/CRC verification and recovery
+recipes. No new agents/workers, public deployment or inherited-box mutation.
