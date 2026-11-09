@@ -11,7 +11,8 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 
 if(process.env.Q2_NODE_FIXTURE==='preload'){
   const dir=process.env.Q2_FIXTURE_DIR,read=fs.readFileSync,spawn=cp.spawn,load=Module._load;
-  const movement=['moveup','space-down-fail','space-up-fail'].includes(process.env.Q2_CLOSE_MODE);
+  const motionModes=['motion-torn','motion-wrong-module','motion-unpublished'];
+  const movement=['moveup','space-down-fail','space-up-fail',...motionModes].includes(process.env.Q2_CLOSE_MODE);
   let observed,renderer;
   if(movement){
     observed=require('./quake2-passive-attack.test.cjs').fixture(true);
@@ -25,6 +26,12 @@ if(process.env.Q2_NODE_FIXTURE==='preload'){
     for(const [i,key,text] of [[0,32,'+moveup'],[1,97,'+moveleft']]){
       observed.put(0x4d6c60+key*4,0x09000000+i*128);
       new Uint8Array(observed.memory.buffer,back+i*128,text.length+1).set(Buffer.from(text+'\0'));
+    }
+    if(process.env.Q2_CLOSE_MODE==='motion-wrong-module')observed.link.module={};
+    if(process.env.Q2_CLOSE_MODE==='motion-unpublished')observed.view.setInt16(0xa9cecc-0x400000+0x12000,8,true);
+    if(process.env.Q2_CLOSE_MODE==='motion-torn'){
+      const peek=renderer.peekKeyDownState.bind(renderer);let once=false;
+      renderer.peekKeyDownState=key=>{if(!once){once=true;require('./quake2-passive-attack.test.cjs').setMotion(observed,{frameNumber:18});}return peek(key);};
     }
   }
   let browser;
@@ -55,7 +62,7 @@ if(process.env.Q2_NODE_FIXTURE==='preload'){
       const v=JSON.parse(text);fs.appendFileSync(dir+'/protocol.jsonl',JSON.stringify({at:Date.now(),...v})+'\n');
       if(v.method==='Browser.close'){
         fs.writeFileSync(dir+'/close-at',String(Date.now()));
-        if(['normal','drain','combo','partial-input','missing-review','moveup','space-down-fail','space-up-fail'].includes(process.env.Q2_CLOSE_MODE))browser.stdin.end('close\n');
+        if(['normal','drain','combo','partial-input','missing-review','moveup','space-down-fail','space-up-fail',...motionModes].includes(process.env.Q2_CLOSE_MODE))browser.stdin.end('close\n');
         else if(process.env.Q2_CLOSE_MODE==='ack-stall')queueMicrotask(()=>this.onmessage?.({data:JSON.stringify({id:v.id,result:{}})}));
         return; // Actual pending protocol close, never a fabricated ACK.
       }
@@ -67,6 +74,11 @@ if(process.env.Q2_NODE_FIXTURE==='preload'){
       }
       if(movement&&v.method==='Input.dispatchKeyEvent'){
         const p=v.params;renderer[p.type==='keyDown'?'handleKeyDown':'handleKeyUp'](p.windowsVirtualKeyCode,{code:p.code});
+        // Authored fixture publication only. The real reader must carry fresh
+        // native bytes through held samples and capture output, not synthesize
+        // coordinates from an input key or promote this to game consumption.
+        if(p.type==='keyDown')require('./quake2-passive-attack.test.cjs').setMotion(observed,
+          {frameNumber:p.code==='Space'?18:19,rawOrigin:[80,-160,240],rawVelocity:[8,-16,24],pmFlags:4});
         fs.appendFileSync(dir+'/renderer.jsonl',JSON.stringify({event:renderer.takeInput(),state:renderer.peekKeyDownState(p.windowsVirtualKeyCode)})+'\n');
         if(p.code==='Space'&&((p.type==='keyDown'&&process.env.Q2_CLOSE_MODE==='space-down-fail')||(p.type==='keyUp'&&process.env.Q2_CLOSE_MODE==='space-up-fail'))){
           queueMicrotask(()=>this.onmessage?.({data:JSON.stringify({id:v.id,error:{message:'injected Space ACK failure after queue'}})}));return;
@@ -236,6 +248,15 @@ sys.exit(status if status>=0 else 128-status)
     assert.equal(child.exitCode,null,fs.readFileSync(dir+'/driver.stderr','utf8'));
     const transport=require('./quake2-native-transport.cjs');
     const began=Date.now();
+    if(['motion-torn','motion-wrong-module','motion-unpublished'].includes(mode)){
+      const startup=JSON.parse(fs.readFileSync(out+'/startup-binding.json')).after.attackInput;
+      assert.equal(startup.playerMotion?.status,'UNKNOWN','actual composed reader must reject '+mode);
+      assert.equal(startup.playerMotion.origin,undefined);
+      const ack=await transport.request(out,'motion-control-quit',{action:'quit'},50000);
+      const [code,signal]=await completed;assert.equal(code,0);assert.equal(ack.ok,true);
+      fs.writeFileSync(dir+'/result.json',JSON.stringify({code,signal,startup,authoredOnly:true}));
+      console.log(mode,'PASS actual composed capture rejects motion without usable coordinates');return;
+    }
     if(['moveup','space-down-fail','space-up-fail'].includes(mode)){
       await movementCaller(dir,runtime,mode);
       const [code,signal]=await completed;assert.equal(code,mode==='moveup'?0:1);
@@ -247,11 +268,19 @@ sys.exit(status if status>=0 else 128-status)
       assert.deepEqual(delivered.slice(0,2).map(v=>[v.event.msg,v.event.wParam,v.event.lParam>>>0,v.state]),[[0x100,32,1|(0x39<<16),0x8000],[0x101,32,(0xc0000001|(0x39<<16))>>>0,0]]);
       const startup=JSON.parse(fs.readFileSync(out+'/startup-binding.json')).after.attackInput;
       assert.equal(startup.status,'SNAPSHOT');assert.equal(startup.bindings.find(v=>v.key===32).text,'+moveup');assert.equal(startup.bindings.find(v=>v.key===97).text,'+moveleft');
+      assert.equal(startup.playerMotion?.status,'SNAPSHOT','regression: composed capture previously omitted native motion');
+      assert.deepEqual(startup.playerMotion.origin,[-4096,-1.125,4095.875]);
+      assert.deepEqual(startup.playerMotion.velocity,[-100.125,200,0.875]);assert.equal(startup.playerMotion.pmFlags,0x45);
       assert.equal(startup.weaponEffect,'UNKNOWN');assert.match(startup.consumption,/UNKNOWN/);
       const hold=JSON.parse(fs.readFileSync(out+'/input-space-result-'+(mode==='moveup'?'hold':'hold-unknown')+'.json'));
       assert.equal(hold.physicalRelease,mode==='space-up-fail'?'UNKNOWN':'ACK');
       if(mode==='moveup'){
-        assert(hold.samples.length);for(const sample of hold.samples){assert.equal(sample.attackInput.status,'SNAPSHOT');assert.equal(sample.attackInput.memoryIdentity,startup.memoryIdentity);assert.equal(sample.attackInput.bindings.find(v=>v.key===97).text,'+moveleft');assert.equal(sample.attackInput.physical.find(v=>v.key===32).state,0x8000);}
+        assert(hold.samples.length);for(const sample of hold.samples){assert.equal(sample.attackInput.status,'SNAPSHOT');assert.equal(sample.attackInput.memoryIdentity,startup.memoryIdentity);assert.equal(sample.attackInput.bindings.find(v=>v.key===97).text,'+moveleft');assert.equal(sample.attackInput.physical.find(v=>v.key===32).state,0x8000);
+          assert.equal(sample.attackInput.playerMotion?.status,'SNAPSHOT');assert.equal(sample.attackInput.playerMotion.frameNumber,18);
+          assert.deepEqual(sample.attackInput.playerMotion.origin,[10,-20,30]);assert.deepEqual(sample.attackInput.playerMotion.velocity,[1,-2,3]);assert.equal(sample.attackInput.playerMotion.pmFlags,4);
+        }
+        const after=JSON.parse(fs.readFileSync(out+'/lateral-result-binding.json')).after.attackInput;
+        assert.equal(after.memoryIdentity,startup.memoryIdentity);assert.equal(after.playerMotion.frameNumber,19);
       }else{assert(!fs.existsSync(out+'/commands/1.json'));assert(fs.existsSync(out+'/first-transport-failure.json'));}
       fs.writeFileSync(dir+'/result.json',JSON.stringify({code,signal,actualClose:true,events,delivered,authoredOnly:true}));
       console.log(mode,'PASS actual composed Python caller / numbered Node transport / driver / serialized owning sparse reader / renderer Space and a, balanced release, UNKNOWN consumption');return;
@@ -336,5 +365,5 @@ async function main(){
   fs.writeFileSync(run+'/providers.json',JSON.stringify(result.references));
   await budgetCases(run);console.log('command20s / ACK22s / cleanup30s budget and tampered cap rejection PASS');
   await inputCases();console.log('native crouch-forward allowlist, partial DOWN, sample, UP failure, late DOWN and independent release PASS');
-  for(const mode of (process.env.Q2_COMPOSITION_MODES?.split(',')??['moveup','space-down-fail','space-up-fail','normal','combo','partial-input','missing-review','term','kill','ack-stall','drain','pending-capture','terminal-wait','independent']))await scenario(run,mode);
+  for(const mode of (process.env.Q2_COMPOSITION_MODES?.split(',')??['moveup','motion-torn','motion-wrong-module','motion-unpublished','space-down-fail','space-up-fail','normal','combo','partial-input','missing-review','term','kill','ack-stall','drain','pending-capture','terminal-wait','independent']))await scenario(run,mode);
 }

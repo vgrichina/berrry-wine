@@ -3,7 +3,19 @@
 const fs=require('node:fs'),assert=require('node:assert/strict');
 const core=require('../lib/quake2-owning-load-core');
 const WINDOWS=[[0x407650,0x83],[0x4076e0,0xa6],[0x407930,0x1e],
-  [0x407de0,0x32],[0x41911a,7],[0x42fe10,0x2d],[0x44d398,0x80]];
+  [0x407de0,0x32],[0x41911a,7],[0x42fe10,0x2d],[0x44d398,0x80],
+  // Canonical native evidence, not offsets borrowed from a different Q2 build:
+  // ParsePlayerstate: frame+0x30; signed shorts +4/+10, flags byte +16.
+  [0x402eb0,0x138],
+  // ParseFrame: clear/read header, playerinfo call, publish 16 * 240 ring.
+  [0x403330,0x4d],[0x4034a5,0x91],
+  // PredictMovement: active state=4; copy seven dwords from 0xa9cec8.
+  [0x40ba40,0x18],[0x40baec,0x28],
+  // Pmove: signed origin/velocity * 1/8, command msec * .001;
+  // integration uses origin + velocity * that time. Raw flags have no names.
+  [0x4229b0,0xe9],[0x420da0,0x55],[0x4427c0,8],[0x4427e8,8],
+  // FinishMove converts client frame seconds to the command's msec byte.
+  [0x407e3c,0x1f],[0x442438,4]];
 function signatures(){
  const b=fs.readFileSync(require('node:path').resolve(__dirname,'..',core.EXE));
  assert.equal(core.hash(b),core.EXE_SHA,'canonical Q2 attack executable');
@@ -21,7 +33,7 @@ function signatures(){
 // Serialized into the actual page. Identity tokens originate in the retained
 // admission chain; this reader neither creates nor repairs those tokens.
 function readPage(identity,windows,expectedMemory){
- const fail=reason=>({status:'UNKNOWN',reason,consumption:'UNKNOWN',weaponEffect:'UNKNOWN'});
+ const fail=reason=>({status:'UNKNOWN',reason,playerMotion:{status:'UNKNOWN',reason},consumption:'UNKNOWN',weaponEffect:'UNKNOWN'});
  const all=typeof runningApps==='undefined'?[]:runningApps;
  const a=all[0],w=a?.wine,g=w?.guestWorker,l=g?.link,s=globalThis.__mcmPassiveIdentityV1;
  if(all.length!==1||a.name!=='quake2_demo'||!w?.running||w._stopped||!s)return fail('owner unavailable');
@@ -85,6 +97,22 @@ function readPage(identity,windows,expectedMemory){
   }
   return {key,pointer,text:null,status:'UNKNOWN unterminated binding'};
  }
+ // Fixed executable-owned received frame, never pm's transient global pointer
+ // (which can point into a stack or a game DLL). All ranges use the same
+ // conservative direct policy as attack data. No new pointer/PTE fallback.
+ // ParseFrame marks valid BEFORE parsing; compare the entire 240-byte frame
+ // with its published ring slot, then repeat both. This rejects an unfinished
+ // publication but is still point sampling, not an atomic/lifetime witness.
+ function motionSample(){
+  const frame=0xa9ce98,size=240;
+  if(!direct(0xa86a60,4)||!direct(frame,size))return null;
+  const state=u32(0xa86a60),number=u32(frame+4);
+  const slot=0xa9cf8c+(number&15)*size;
+  if(!direct(slot,size))return null;
+  return {state,slot,current:Array.from(new Uint8Array(buffer,offset(frame),size)),
+   published:Array.from(new Uint8Array(buffer,offset(slot),size))};
+ }
+ const motionFirst=motionSample();
  const first=Array.from({length:5},(_,i)=>u32(0xac13a0+i*4));
  // Preserve attack rows/order. These are Q2 keycodes, not Win32 VKs:
  // Space, Mouse2, a/d, comma/period, left/right arrows and strafe modifier.
@@ -96,6 +124,7 @@ function readPage(identity,windows,expectedMemory){
  const physical=[13,17,37,38,39,40,32,65,68,188,190,18].map(key=>({key,state:w.renderer.peekKeyDownState?.(key)??null}));
  const again=keys.map(binding);
  const second=Array.from({length:5},(_,i)=>u32(0xac13a0+i*4));
+ const motionSecond=motionSample();
  for(const [index,pte] of observed)if((Atomics.load(pages,index)>>>0)!==pte)translationChanged=true;
  if(runningApps!==all||all.length!==1||all[0]!==a||a.wine!==w||a.name!=='quake2_demo'||
    !w.running||w._stopped||w.processId!==identity.processId||w.guestWorker!==g||g.link!==l||
@@ -105,11 +134,31 @@ function readPage(identity,windows,expectedMemory){
    Object.entries(objects).some(([key,value])=>s.ids.get(value)!==identity[key])||
    w.memory!==memory||l.memory!==memory||memory.buffer!==buffer)return fail('owner/memory changed during read');
  if(!canonical())return fail('attack executable window changed during read');
+ const motionEqual=motionFirst&&motionSecond&&JSON.stringify(motionFirst)===JSON.stringify(motionSecond);
+ let playerMotion={status:'UNKNOWN',reason:'received frame unavailable, inactive, unpublished, malformed or changed during read'};
+ if(motionEqual){
+  const bytes=Uint8Array.from(motionSecond.current),v=new DataView(bytes.buffer);
+  const frameNumber=v.getInt32(4,true),pmType=v.getInt32(0x30,true);
+  if(motionSecond.state===4&&v.getUint32(0,true)===1&&frameNumber>0&&
+    v.getUint32(8,true)===(frameNumber*100>>>0)&&pmType>=0&&pmType<=255&&
+    motionSecond.current.every((b,i)=>b===motionSecond.published[i])){
+   const rawOrigin=[0,1,2].map(i=>v.getInt16(0x34+i*2,true));
+   const rawVelocity=[0,1,2].map(i=>v.getInt16(0x3a+i*2,true));
+   playerMotion={status:'SNAPSHOT',source:'received client frame pmove (prediction input)',
+    address:0xa9cec8,frameAddress:0xa9ce98,publishedFrameAddress:motionSecond.slot,
+    frameNumber,serverTimeMs:v.getUint32(8,true),pmType,pmFlags:v.getUint8(0x40),
+    rawOrigin,rawVelocity,origin:rawOrigin.map(n=>n/8),velocity:rawVelocity.map(n=>n/8),
+    originUnits:'world units',velocityUnits:'world units/second',
+    limits:'repeated point samples only; freshness between samples, consumption, contact, damage cause, all-writers and lifetime UNKNOWN'};
+  }
+ }
  const stable=first.every((v,i)=>v===second[i])&&!translationChanged&&
    JSON.stringify(bindings)===JSON.stringify(again)&&bindings.every(v=>v.text!==null);
+ // A rejected owner/binding sample must not carry apparently usable motion.
+ if(!stable)playerMotion={status:'UNKNOWN',reason:'owning attack/binding/translation sample rejected'};
  return {status:stable?'SNAPSHOT':'UNKNOWN',reason:stable?null:'attack/binding/translation invalid or changed during read',
   at:new Date().toISOString(),identity,memoryIdentity,bindings,
-  physical,
+  physical,playerMotion,
   attack:{address:0xac13a0,first,second,down:second.slice(0,2),state:second[4],held:!!(second[4]&1),impulseDown:!!(second[4]&2)},
   consumption:'UNKNOWN; latch snapshot only, no event history or usercmd execution witness',weaponEffect:'UNKNOWN'};
 }

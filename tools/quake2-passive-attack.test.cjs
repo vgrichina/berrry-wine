@@ -7,6 +7,18 @@ const composition=require('./quake2-native-driver-composition.cjs');
 const bound=require('../scratch/runs/20261109-quake2-observed-guard-route-0105/bound-input.cjs');
 const {keyboardMessageLParam,installInputHandlers}=require('../lib/renderer-input');
 const windows=passive.signatures(),offset=va=>va-0x400000+0x12000;
+function setMotion(f,{frameNumber=17,rawOrigin=[-32768,-9,32767],rawVelocity=[-801,1600,7],pmType=0,pmFlags=0x45}={}){
+ // Authored received frame + publication, not evidence of original movement.
+ const frame=offset(0xa9ce98),v=f.view;
+ new Uint8Array(f.memory.buffer,frame,240).fill(0);
+ f.put(0xa86a60,4);v.setUint32(frame,1,true);
+ v.setInt32(frame+4,frameNumber,true);v.setUint32(frame+8,frameNumber*100>>>0,true);
+ v.setInt32(frame+0x30,pmType,true);v.setUint8(frame+0x40,pmFlags);
+ rawOrigin.forEach((n,i)=>v.setInt16(frame+0x34+i*2,n,true));
+ rawVelocity.forEach((n,i)=>v.setInt16(frame+0x3a+i*2,n,true));
+ new Uint8Array(f.memory.buffer,offset(0xa9cf8c+(frameNumber&15)*240),240)
+  .set(new Uint8Array(f.memory.buffer,frame,240));
+}
 function canonicalKeynames(){
  const core=require('../lib/quake2-owning-load-core'),b=fs.readFileSync(core.EXE);
  assert.equal(core.hash(b),core.EXE_SHA);
@@ -36,6 +48,7 @@ function fixture(sparse=false){
  }
  const context=vm.createContext({crossOriginIsolated:true,runningApps:[{name:'quake2_demo',wine}],document:{getElementById:()=>canvas},__mcmPassiveIdentityV1:s,SharedArrayBuffer});
  const put=(va,value)=>view.setUint32(offset(va),value,true);
+ setMotion({view,put,memory});
  for(const [key,text] of [[13,'+attack'],[133,'+movedown'],[200,'+attack'],[32,'+moveup'],[201,'+moveup'],[97,'+moveleft'],[100,'+moveright'],[44,'+moveleft'],[46,'+moveright'],[130,'+left'],[131,'+right'],[132,'+strafe']]){
   const pointer=0x500000+key*128;put(0x4d6c60+key*4,pointer);
   new Uint8Array(memory.buffer,offset(pointer),text.length+1).set(Buffer.from(text+'\0'));
@@ -129,6 +142,7 @@ async function sparseControls(){
 }
 async function main(){
  canonicalKeynames();
+ await motionControls();
  await movementControls();
  await sparseControls();
  const f=fixture(),bytes=Buffer.from(f.memory.buffer).toString('hex');
@@ -222,5 +236,71 @@ async function movementControls(){
  assert.equal(f.read(memoryIdentity).status,'SNAPSHOT');
  console.log('PASS owning sparse Space32 Mouse2=201 a97 d100 comma44 period46 arrows130/131 Alt132; actual custom binding retained; each added key byte/pointer/PTE/owner race, missing mapping, permission/private/bounds/direct-ceiling negatives fail closed; consumption UNKNOWN.');
 }
-module.exports={fixture};
+async function motionControls(){
+ const f=fixture(),snapshot=f.read(),m=snapshot.playerMotion;
+ assert.equal(m?.status,'SNAPSHOT','regression: real serialized reader previously omitted native motion');
+ assert.equal(m.address,0xa9cec8);assert.equal(m.frameNumber,17);assert.equal(m.serverTimeMs,1700);
+ assert.deepEqual(Array.from(m.origin),[-4096,-1.125,4095.875]);
+ assert.deepEqual(Array.from(m.velocity),[-100.125,200,0.875]);assert.equal(m.pmFlags,0x45);
+ assert.match(m.source,/received client frame/);assert.match(m.limits,/contact.*damage cause.*lifetime UNKNOWN/);
+ // Constants and instruction operands are checked in the hash-authenticated
+ // PE, separately from the authored field values used by the reader tests.
+ const core=require('../lib/quake2-owning-load-core'),b=fs.readFileSync(core.EXE);
+ const pe=require('../lib/pe').readPE(b);
+ const original=(va,n)=>b.subarray(pe.va2off(va),pe.va2off(va)+n);
+ assert.equal(original(0x4427c0,8).readDoubleLE(),0.125);
+ assert.equal(original(0x4427e8,8).readDoubleLE(),0.001);
+ assert.equal(original(0x442438,4).readFloatLE(),1000);
+ assert.equal(original(0x4034b8,11).toString('hex'),'6898cea90056e8edf9ffff','actual frame argument to native playerinfo parser');
+ assert.equal(original(0x402eb7,3).toString('hex'),'8d6830','playerstate at frame+48');
+ assert.equal(original(0x40baf1,5).toString('hex'),'bec8cea900','prediction copies this exact pmove');
+ const digest=()=>require('node:crypto').createHash('sha256').update(new Uint8Array(f.memory.buffer)).digest('hex');
+ const before=digest();f.read();assert.equal(digest(),before,'motion reads perform no shared-memory writes');
+ const unknown=label=>{const row=f.read();assert.equal(row.playerMotion.status,'UNKNOWN',label);assert.equal(row.playerMotion.origin,undefined,label+' cannot expose accepted coordinates');};
+ // All ring indices, including a slot spanning a direct page boundary, use
+ // the fixed, bounded executable data range. No frame pointer is followed.
+ for(let i=0;i<16;i++){setMotion(f,{frameNumber:32+i});assert.equal(f.read().playerMotion.frameNumber,32+i);}
+ for(const [address,value] of [[0xa86a60,0],[0xa86a60,3],[0xa9ce98,0],[0xa9ce98,2],
+   [0xa9ce9c,0],[0xa9ce9c,0xffffffff],[0xa9cea0,0],[0xa9cec8,256],[0xa9cec8,0xffffffff]]){
+  setMotion(f);f.put(address,value);
+  // Match invalid data in the ring too: validation cannot rely on mismatch.
+  new Uint8Array(f.memory.buffer,offset(0xa9cf8c+240),240).set(new Uint8Array(f.memory.buffer,offset(0xa9ce98),240));
+  unknown('malformed/inactive native state '+address.toString(16));
+ }
+ setMotion(f);f.put(0xa9cf8c+240+4,1);unknown('retired ring slot');
+ setMotion(f);f.view.setInt16(offset(0xa9cecc),100,true);unknown('current parse not published');
+ const saved=f.renderer.peekKeyDownState;
+ for(const address of [0xa86a60,0xa9ce98,0xa9ce9c,0xa9cea0,0xa9cec8,0xa9cecc,0xa9cece,0xa9ced0,0xa9ced2,0xa9ced4,0xa9ced6,0xa9ced8,0xa9cf8c+240+0x40]){
+  setMotion(f);let changed=false;
+  f.renderer.peekKeyDownState=()=>{if(!changed){changed=true;const at=offset(address);f.view.setUint8(at,f.view.getUint8(at)^1);}return 0;};
+  unknown('torn native motion '+address.toString(16));f.renderer.peekKeyDownState=saved;
+ }
+ setMotion(f);
+ for(const field of ['running','_stopped']){
+  f.wine[field]=field==='_stopped';unknown('retired owner '+field);f.wine[field]=field==='running';
+ }
+ const module=f.link.module;f.link.module={};unknown('wrong native module object');f.link.module=module;
+ const worker=f.link.worker;f.link.worker={};unknown('wrong native worker object');f.link.worker=worker;
+ for(const [object,key,value] of [[f.wine,'processId',1001],[f.link,'endpointIdentity',2],[f.s,'epoch','retired'],[f.context.runningApps[0],'name','other']]){
+  const savedValue=object[key];object[key]=value;unknown('wrong identity '+key);object[key]=savedValue;
+  let changed=false;f.renderer.peekKeyDownState=()=>{if(!changed){changed=true;object[key]=value;}return 0;};
+  unknown('identity changed during motion read '+key);object[key]=savedValue;f.renderer.peekKeyDownState=saved;
+ }
+ assert.equal(f.read().playerMotion.status,'SNAPSHOT');
+ // Bounds fail closed before any motion decode even with valid identity and
+ // canonical code. Retain just enough direct storage for the code windows.
+ const small=new WebAssembly.Memory({initial:32,maximum:32,shared:true});
+ for(const p of windows)new Uint8Array(small.buffer,offset(p.va),p.bytes.length).set(p.bytes);
+ f.wine.memory=small;f.link.memory=small;unknown('unreadable owning data');
+ // Both production output paths retain the same memory identity and decode
+ // fresh values on each call; there is no cached motion result.
+ const g=fixture(),chain=passive.createChain({createChain:()=>({capture:async()=>({capture:{identity:g.identity},after:{}}),progress:async()=>({})})},{evaluate:async e=>vm.runInContext(e,g.context)});
+ const capture=(await chain.capture('motion')).after.attackInput;
+ setMotion(g,{frameNumber:18,rawOrigin:[8,16,-24],rawVelocity:[0,0,0],pmFlags:0});
+ const progress=(await chain.progress(g.identity)).attackInput;
+ assert.equal(progress.memoryIdentity,capture.memoryIdentity);assert.equal(progress.playerMotion.frameNumber,18);
+ assert.deepEqual(Array.from(progress.playerMotion.origin),[1,2,-3]);assert.equal(progress.playerMotion.pmFlags,0);
+ console.log('PASS native received pmove layout/scales, signed origin/velocity/raw flags, all16 published slots, malformed/inactive/retired/unpublished/torn/wrong owner/module/unreadable controls, zero writes and fresh composed capture/progress. Point snapshots only.');
+}
+module.exports={fixture,setMotion};
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
