@@ -1,5 +1,97 @@
 # Zuma Deluxe: current ordinary launch
 
+## Canonical initializer/caller static diagnosis, 2026-11-10
+
+No original startup was retried. Run
+`scratch/runs/20261110-zuma-initializer-static-cause-1412/` retains canonical
+file hashes, raw-backed disassembly, source SHA/diff and synthetic diagnostic
+tests. The requested `zuma.md` is named `zuma-deluxe.md` in this checkout.
+
+`DLL initializer did not return: module=0x989000` comes from
+`lib/dll-loader.js:finishDllInitialization`: **module is the mapped base**, not
+the failing EIP. The message alone does not identify a filename, instruction,
+trap, blocking wait, exit or exhausted budget. Its `error.outcome` has that
+distinction, but the dated note does not retain those fields.
+
+Canonical `Zuma.exe` and BASS hashes still match the November 3 identities
+below. EXE base/SizeOfImage are `0x400000/0x189000`, ending at `0x589000`.
+Current `get_next_dll_addr` chooses the greater of page-aligned image/retained
+DLL ends and the shared heap watermark; `load_dll` can move it again.
+`0x989000 = 0x589000 + 4 * 0x100000`, consistent with four current heap-arena
+chunks, but no observed watermark or load order proves that history.
+It is outside the canonical EXE image. No canonical candidate has preferred
+base `0x989000`; real DLLs are rebased. The manifest's sole DLL is BASS;
+the EXE imports native-loadable shared OLEAUT32 and BASS imports shared MSVCRT.
+If any were mapped at the reported base, their entry addresses would be:
+
+| Image | Preferred base | Entry RVA | Entry at base 0x989000 |
+| --- | --- | --- | --- |
+| bass.dll | 0x10000000 | 0x55043 | 0x9de043 |
+| shared msvcrt.dll | 0x78000000 | 0x3428 | 0x98c428 |
+| shared oleaut32.dll | 0x65340000 | 0xcf98 | 0x995f98 |
+
+These are candidates, not an authenticated assignment of the historical row.
+Dynamic DLL names reconstructed by a packer are not exhaustively known.
+
+The EXE's file-backed BASS caller is explicit: `0x49b4c2` pushes the
+`bass.dll` string at `0x508cd0`, then calls constructor `0x49b290`.
+At `0x49b2a0`, `call [0x4fe0cc]` imports `LoadLibraryA`; the real continuation
+is `0x49b2a6`, which tests the returned handle and stores it at object+4.
+`0x49b2be` calls imported `GetProcAddress` for `BASS_Init` (`0x508ca4`), storing
+the result at object+8. Only later does `0x49f5c5` call that pointer with
+`(-1,44100,0,[ebp+8])`, continuing at `0x49f5c8`. A DLL_PROCESS_ATTACH
+nonreturn during LoadLibrary precedes that BASS_Init call on this path.
+This establishes a canonical path, not which caller the historical failure used.
+
+BASS's actual raw-backed entry `0x10055043` loads `0x10055000`, executes
+16-bit PUSHF, PUSHAD, an indirect allocation call, and pushes preferred base
+`0x10000000`. Its PE relocation block contains HIGHLOW at RVAs `0x55044` and
+`0x5505e` for those two literals. The entry copies/decompresses blocks using
+the descriptor table at RVA `0x55174` (first tuple
+`18028,ef9,53000,220e,33e` in hex). At `0x100550aa`, the zero descriptor
+branches to `0x10026a72`. **RVA 0x26a72 has no file-backed bytes**: first
+section raw ends at RVA `0x18d34`, while virtual end is `0x55000`.
+The branch would target `0x9afa72` if BASS owned `0x989000`.
+Disassembling raw file bytes as that second-stage continuation would be false.
+The packed branch does not itself prove a relocation, flags, callback or
+instruction semantic defect; no guest repair is justified.
+
+Current host continuation: `process-boot.js:completeLoadLibrarySteps` maps and
+patches dependencies, orders initializers, then yields each entry to
+`callDllMain[Async]`. `dllMainSteps` saves the parked caller's EIP/ESP/registers,
+pushes `(return=0,hModule,reason=1,lpReserved=0)` for dynamic attach, and runs
+the actual initializer. Completion requires EIP zero **and** restored stdcall
+ESP with no fault/exit. It captures outcome before restoring caller state.
+An unfinished callback is quarantined and throws; only a successful load
+publishes its handle and runs `resumeAfterLoadLibraryYield` (which pops a
+validated guest return when parked at EIP zero). Therefore the host sentinel
+and the EXE's `0x49b2a6` continuation must be distinguished.
+
+Reusable narrow diagnostic: `tools/zuma-initializer-diagnostic.cjs` prints the
+static inventory without executing guests. `instrument(source)` returns a
+private loader source with three read-only observation calls: parked caller,
+entry frame and final outcome **before restoration**. Prepend
+`browserObserverSource()` to that private response after production mem-utils
+has loaded, in the actual owning Worker. It emits at most three JSON records
+for base `0x989000`; a future changed base must be specified explicitly.
+Exact anchors reject source drift. No production source is instrumented by
+running this tool; it contains no app launcher. A future original still needs
+separate authorization and its normal finite runtime lifecycle.
+
+Smallest missing observation: the matching row's path/generation/entry RVA,
+actual caller EIP/ESP and return stack, plus initializer final EIP/ESP/EAX,
+halt/yield/fault and 128 mapped bytes at final EIP before restoration.
+The helper also captures bounded entry/header/pointer bytes for attribution.
+This distinguishes wrong module, trap/unsupported instruction, genuine wait,
+terminal exit, budget exhaustion and bad return frame without guessing packed
+code. If the final bytes show an unresolved indirect target or erased relocation
+stream, a subsequent targeted pre-instruction observation may still be needed.
+Synthetic tests execute the instrumented **current loader JS** with tiny host
+fixtures, compare all outcomes/register writes/run counts against untouched
+source for TRUE/FALSE/trap/wait/exit, and cover throwing observers, source drift,
+module path/generation, caps, browser snippet and unmapped/wrapping reads.
+These validate the diagnostic, not game execution or an emulator fault.
+
 ## QueueUserAPC export repaired; initializer still fails, 2026-11-03
 
 Added the missing named KERNEL32 `QueueUserAPC` export at ordinal 595,
