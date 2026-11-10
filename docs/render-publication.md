@@ -652,8 +652,15 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   cancelling the registered resources. Real Node tests cover delayed success,
   rejection, wrong endpoint and stop with late completion on both WASM builds:
   `scratch/runs/20261109-worker-resource-barrier/`.
-  The special CARDS exported initializer remains synchronous. Browser visual
-  qualification and full CLI main-Worker migration remain open.
+  The same generated PE controls now pass in headed Chrome's production classic
+  Workers on normal and compatibility builds, including registration failure,
+  foreign acknowledgement, retirement and late completion. The browser test
+  reuses Node's control functions and PE templates; evidence and browser/module
+  identities are in `scratch/runs/20261109-browser-startup-barrier/test-result.json`.
+  This validates transport and lifecycle, not rendered application pixels or
+  gameplay performance. The special CARDS exported initializer remains
+  synchronous; app visual qualification and full CLI main-Worker migration
+  remain open.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.

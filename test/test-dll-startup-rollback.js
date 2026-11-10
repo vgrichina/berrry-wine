@@ -223,4 +223,8 @@ async function main(){
  finally{clearTimeout(guard);await worker.terminate();}
  console.log('PASS real PE sync/async startup rollback, resource barrier/rejection, original errors and mapping quarantine, main/Worker');
 }
-if(isMainThread)main().catch(error=>{console.error(error);process.exitCode=1;});else Promise.all([exercise(workerData.module),exercise(workerData.module,true),exercise(workerData.module,false,true),exercise(workerData.module,true,true)]).then(result=>parentPort.postMessage(result),error=>{throw error;});
+module.exports={transportControl,transportResources};
+if(require.main===module){
+ if(isMainThread)main().catch(error=>{console.error(error);process.exitCode=1;});
+ else Promise.all([exercise(workerData.module),exercise(workerData.module,true),exercise(workerData.module,false,true),exercise(workerData.module,true,true)]).then(result=>parentPort.postMessage(result),error=>{throw error;});
+}
