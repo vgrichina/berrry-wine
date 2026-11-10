@@ -27,7 +27,7 @@
   status: bounded persistent translation and separate heading verified on current WebGL and Software; broader gameplay open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published767dc5774 closes bounded current WebGL translation: separately reviewed Up1000 from settled downhill view changes Lara relative to the same rock/boulder/slope/stump, retained12s plus10s idle. Coordinator inspected paired frames and independently verified204refs14528997bytes.18ACK/zeroUNKNOWN actual7ec49 owningWebGL2,48modulechecks189HTTP603pins and normal archived stop/full drain pass. Together with78df2e4d9 current WebGL heading and Software translation/heading, this task is done at bounded visual scope. No firing/FPS/audio/parity/full27/level-clear claim. Note: docs/re-notes/tr3-webgl-terrain-translation-20261108.md. Fresh Forsaken native progress0613 takes the released gameplay slot; NFS3race and TR2frameidentity remain active.
-  Next: Fresh tr3-chrome-endpoint-cause-0625 diagnoses retained Chrome readiness-file failure offline before another native run. Published bac47b1ee repairs Alt admission/execution and terminal owning cancellation; emitted caller/current Worker controls and locked build pass. Native stopped before CDP/input; no new gameplay consequence. Historical translation/heading remain accepted.
+  Next: Fresh tr3-owned-stderr-readiness-0640 adds owning current-launch stderr endpoint observation within unchanged startup bound before one Jungle attempt. Published da47576de provides bounded read-only launcher diagnostics; actual Chrome binary entry verified, endpoint-file deadline still failed, no new gameplay. Alt and terminal cancellation bac47b1ee retained; focused controls and locked build pass.
 
 - [x] Quake II native health pickup on both current GL backends
   id: QUAKE2-PAIRED-NATIVE-PICKUP-20261108
@@ -39,7 +39,7 @@
   id: NEW-GAME-ASGHAN-NATIVE-ACTION-20261108
   status: movement/jumps and incoming enemy damage verified; outgoing hit/defeat/pickup open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh asghan-held-tab-inventory-0625 qualifies a supported held Tab before inventory/pickup. Prior 100ms Tab DOWN/UP reached guest after release with no sampled high; no guest-handler defect established. Seek visible actionable pickup after reviewed inventory; do not repeat ineffective frontal attacks. Historical movement/jumps/incoming damage remain accepted.
+  Next: Fresh asghan-onward-collectible-0640 explores beyond the first barrel view for an identifiable collectible before Space. VERIFIED original Tab1000ms sampled high in Asghan opens LOGBOOKS inventory ring and a second held Tab closes it; coordinator reviewed original full image. Evidence scratch/runs/20261110-asghan-held-tab-inventory-0625/report.md, current module79f0842e, 27 verified PNGs and normal stopped box. Pickup/outgoing attack remain open.
 
 - [ ] Drakan current-browser movement, flight and attack
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
