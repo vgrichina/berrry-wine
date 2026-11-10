@@ -15,6 +15,10 @@ spec.loader.exec_module(helper)
 
 
 class InspectionTests(unittest.TestCase):
+    def test_pause_template_drift_is_offline_error(self):
+        with self.assertRaisesRegex(ValueError, 'unsupported bound browser'):
+            helper.pause_workflow_source('unrecognized caller')
+
     def test_observer_selects_bound_owner_among_secondary_threads(self):
         source = """const assert=require('node:assert/strict');
 const workers=new Map([['owner',{targetId:'main',url:'guest-worker.js'}],

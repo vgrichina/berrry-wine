@@ -15,13 +15,13 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
  const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));
  const moduleBytes=fs.readFileSync(root+'/'+pins.files.find(p=>p.path==='build/wine-assembly.wasm').path);
  const browser=new events.EventEmitter();browser.pid=999999;browser.exitCode=null;
- browser.kill=()=>{throw Error('offline startup must close normally')};
+ browser.kill=()=>{if(process.env.LB_OFFLINE_PAUSE==='1'){browser.exitCode=-15;queueMicrotask(()=>browser.emit('exit',null,'SIGTERM'));return true;}throw Error('offline startup must close normally')};
  const page={name:'lbreakout2_251',running:true,stopped:false,guestWorker:true,processId:7,
   pageRendererObject:'renderer',canvasObject:'canvas',processObject:'process',endpoint:'endpoint',endpointObject:'link',
   guestEndpoint:'endpoint',slot:0,workerObject:'worker',moduleObject:'module',epoch:'epoch',renderEndpoint:'none',
   renderEndpointObject:'none',renderWorkerObject:'none'};
  let socket,workerAttached=false,spawned=false,closed=false;
- let armed=false;const input=[];
+ let armed=false;const input=[];const pauseControl=process.env.LB_OFFLINE_PAUSE==='1';
  function evaluated(s,session){
   if(s.includes('__mcmPassiveIdentityV1'))return {isolated:true,apps:[page]};
   if(s.includes('__mcmPassiveInstanceV1'))return session==='guest-session'?{endpointIdentity:'endpoint',slot:0,instance:'instance'}:{endpointIdentity:'secondary-'+session,slot:1,instance:session};
@@ -40,7 +40,7 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
    if(v.method==='Target.attachToTarget')result={sessionId:'page-session'};
    if(v.method==='Debugger.getScriptSource')result={bytecode:moduleBytes.toString('base64')};
    if(v.method==='Runtime.evaluate')result={result:{value:evaluated(v.params.expression,v.sessionId)}};
-   if(v.method==='Input.dispatchKeyEvent'){assert(armed,'arm precedes native input');input.push(v.params.type);}
+   if(v.method==='Input.dispatchKeyEvent'){assert(armed,'arm precedes native input');input.push(pauseControl?[v.params.type,v.params.key]:v.params.type);}
    if(v.method==='Page.getLayoutMetrics')result={cssContentSize:{x:0,y:0,width:1024,height:855}};
    if(v.method==='Page.captureScreenshot')result={data:Buffer.from('offline startup pixels; no visual acceptance').toString('base64')};
    queueMicrotask(()=>this.onmessage({data:JSON.stringify({id:v.id,result})}));
@@ -65,9 +65,32 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
    address:()=>({port:1234}),prependListener(){},closeAllConnections(){},close:fn=>fn()
   })};
   if(name==='./transport.cjs')return {...value,consume:async(p,n,execute)=>{
-   assert(n<=1);const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));
-   assert.equal(latest.label,n===0?'startup':'after-left');assert.equal(latest.identity.renderEndpoint,'none');
+   assert(n<=(pauseControl?2:1));const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));
+   assert.equal(latest.label,n===0?'startup':n===1?(pauseControl?'paused':'after-left'):'after-play');assert.equal(latest.identity.renderEndpoint,'none');
    value.publish(out+'/'+latest.label+'-review.json',{...latest,review:'offline adapter only; no real image review',decision:'continue'});
+   if(pauseControl){
+    if(n===0){await execute({id:'offline-pause',action:'key',key:'p',holdMs:80,waitMs:0,label:'paused',observe:true,reviewRef:'startup'},()=>{});assert.deepEqual(input,[['keyDown','p'],['keyUp','p']]);return true;}
+    if(n===1){
+     // Exercise the real generated consumer's binding checks before any edge.
+     const c={id:'offline-play',action:'play',key:'ArrowLeft',holdMs:40,playMs:80,waitMs:0,label:'after-play',reviewRef:'paused',pauseConfirmed:'paused'};
+     await assert.rejects(execute({...c,reviewRef:'foreign'},()=>{}),/review previous/);
+     const review=JSON.parse(fs.readFileSync(out+'/paused-review.json'));
+     value.publish(out+'/paused-review.json',{...review,sha256:'foreign'});
+     await assert.rejects(execute(c,()=>{}));
+     value.publish(out+'/paused-review.json',review);assert.equal(input.length,2);
+     await execute(c,()=>{});
+     assert.deepEqual(input,[['keyDown','p'],['keyUp','p'],['keyDown','p'],['keyUp','p'],['keyDown','ArrowLeft'],['keyUp','ArrowLeft'],['keyDown','p'],['keyUp','p']]);
+     // A visual terminal decision is sticky before any later native operation.
+     const after=JSON.parse(fs.readFileSync(out+'/latest.json'));
+     value.publish(out+'/after-play-review.json',{...after,review:'terminal offline negative',decision:'stop'});
+     const count=input.length;await assert.rejects(execute({...c,reviewRef:'after-play',label:'forbidden'},()=>{}),/terminal visual/);
+     await assert.rejects(execute({...c,reviewRef:'after-play',label:'forbidden'},()=>{}),/terminal: input closed/);
+     assert.equal(input.length,count);assert(!fs.existsSync(out+'/forbidden.png'));
+     value.publish(run+'/offline-pause-control.json',{passed:true,actualGeneratedConsumer:true,balancedPauseResumePlay:true,commandImageBinding:true,firstFailureTerminal:true,noLocalChrome:true});
+     // Terminal cancellation deliberately kills the fake Chrome; no quit.
+     browser.exitCode=-15;browser.emit('exit',null,'SIGTERM');return true;
+    }
+   }
    if(n===0){await execute({id:'offline-left',action:'key',key:'ArrowLeft',holdMs:80,waitMs:0,label:'after-left',observe:true,reviewRef:'startup'},()=>{});assert(armed);assert.deepEqual(input,['keyDown','keyUp']);return true;}
    await execute({action:'quit',reviewRef:'after-left'},()=>{});
    assert(spawned&&workerAttached&&closed&&socket.readyState===3);

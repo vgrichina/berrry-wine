@@ -6,6 +6,42 @@ availability must never mask passive terminal records.
 import json
 
 
+def pause_workflow_source(source):
+    """Extend the actual bound browser caller with ordinary local-game P input.
+
+    Original EXE cc1fd5c3: handle_default_key 0x41e474 tests SDLK_p;
+    0x41e75c..0x41e7ef toggles local states 8 and 20. No guest calls/writes.
+    A play command attests that its reviewed image visibly showed pause.
+    """
+    replacements = [
+        ("['capture','click','key','quit']", "['capture','click','key','play','quit']"),
+        ("'Enter','Space'].includes(c.key)", "'Enter','Space','p'].includes(c.key)"),
+        ("   await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});", """   if(c.action==='play'){
+    assert.equal(c.pauseConfirmed,latest.label,'reviewed visible pause required');
+    assert(['ArrowLeft','ArrowRight','Space'].includes(c.key),'supported play key');
+    assert(Number.isInteger(c.holdMs)&&c.holdMs>=0&&c.holdMs<=300,'short play hold');
+    assert(Number.isInteger(c.playMs)&&c.playMs>=c.holdMs&&c.playMs<=500,'short play interval');
+    const toggle=async phase=>{
+     assert(!terminal,'terminal: no later pause input');
+     const k=require('./input.cjs').key('p'),{text,...release}=k;
+     await pulse({down:()=>send('Input.dispatchKeyEvent',{type:'keyDown',...k},pageSession),up:()=>send('Input.dispatchKeyEvent',{type:'keyUp',...release},pageSession),deadline,onFailure:fail,holdMs:80,save:r=>save('input-'+c.id+'-'+phase+'.json',r)});
+    };
+    await toggle('resume');
+    assert(!terminal,'terminal: no later play input');
+    await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs,save:r=>save('input-'+c.id+'-pulse.json',r)});
+    await wait(c.playMs-c.holdMs);
+    await toggle('pause');
+   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});"""),
+    ]
+    # Check the complete template before changing any of it. Drift is offline.
+    for before, _ in replacements:
+        if source.count(before) != 1:
+            raise ValueError('unsupported bound browser template: ' + before)
+    for before, after in replacements:
+        source = source.replace(before, after)
+    return source
+
+
 def owning_worker_source():
     """Select the module-bound process owner, allowing real secondary threads."""
     return """async function owningWorker(){
