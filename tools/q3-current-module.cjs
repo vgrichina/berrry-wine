@@ -7,7 +7,7 @@ const crypto=require('node:crypto'),cp=require('node:child_process'),assert=requ
 const root=path.resolve(__dirname,'..');
 const historical='scratch/runs/20261109-q3-relative-menu-native-progress-1415/runtime-pins.json.gz';
 const historicalSHA='a6be3bee6fbf1c218a3982d8e991a44838abddc0a0b80c8bd4f45c3d6effe1dc';
-const moduleVersion='q3-published-cpu-5e8b6cb70-journal-ed941f156-native-a81554059-v1';
+const moduleVersion='q3-published-cpu-5e8b6cb70-journal-a3b8d03af-native-a81554059-v1';
 // 9bf37f769 preserves SEH redirects in gl32 AND the memory-shift caller;
 // c693e2b8b adds the complete-direct-window gl32 fast path. Authenticate the
 // entire published build closure, including the compiler, before using either
@@ -15,7 +15,7 @@ const moduleVersion='q3-published-cpu-5e8b6cb70-journal-ed941f156-native-a815540
 const cpuCommit='5e8b6cb70c6e7b14c746870894beac791befcc7b';
 // Published CPU closure includes the D3D9 nested-send depth field.
 // Journal clocks isolate the real sync; native custody includes group-exit repair.
-const journalObserverCommit='ed941f1569b8317b15248f4e1efe940462a157ef';
+const journalObserverCommit='a3b8d03af1eb5d649be829ca0c84057426054a8b';
 const custodyCommit='a815540593f9b3d5fb4982dfbe5f156f510812c8';
 const checkpointObserverVersion='q3-checkpoint-b993419a5-v1';
 const checkpointCommit='b993419a54d732a67696851d8f2dc50b574b625b';
