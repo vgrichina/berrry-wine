@@ -1672,3 +1672,37 @@ GPU commands. A future run-only `critical-repaired.cjs` uses it; it has not been
 browser-verified. Input stopped at the failure, without replay. Evidence was
 hash-verified before normal shutdown of `bx_2m7z48d8`, now archived with completed
 non-forced receipt `stop_964c8bcb4dfd647a` and no expiry.
+
+### 2026-11-10 repaired-diagnostic attempt: private harness lifecycle failure
+
+Run `20261110-mw3-repaired-loading-cockpit-1428` reused and independently
+rehash-checked the accepted e587 runtime graph. All seven scoped production
+Worker controls passed again. The newly prepared complete passive diagnostic
+integration then stopped before its real legacy-adapter setup: background CDP
+observation raced termination of a short-lived fixture Worker and rejected
+`Session with given id not found.` outside the awaiting owner's scope. Node
+exited 1 with both output streams drained; its Chrome child was orphaned, so a
+Chrome parent wait is unavailable. The checked harmless launch and original
+were never attempted. This supplies no new loading-map, cockpit, or firing
+observation, and does not privately verify `critical-repaired.cjs`.
+
+`tools/mw3-private-worker-tasks.cjs` repairs that harness failure path: explicit
+Worker selection excludes disposable scoped-control Workers; immediate rejection
+handlers retain the first failure and wake the awaiting owner to enter cleanup.
+The transport must call `check()` before each later CDP send. Worker module
+capture retains exact sessions and byte hashes; missing bytecode remains
+terminal. Focused controls cover the actual observed protocol error, an awaiting
+owner's cleanup path, synchronous transport errors, event-listener errors,
+module identity, and refusal of later work. A syntax-checked future run-only
+`isolation-control-repaired.cjs` applies the helper; it was not replayed in a
+browser. The production passive snapshot helper is unchanged.
+
+Eight unique control files were recovered and independently rehashed before
+normal delegated stop of `bx_q63vu74d`, then rehashed after stop. The owned
+orphan Chrome received SIGTERM during cleanup, without claiming a recovered
+parent wait. Box state is archived, expiry null, completed non-forced stop
+receipt `stop_b7ea4759c98f1944`. Initial expiry was 2026-11-10 14:53:44.898Z;
+an independent observable 25-minute watchdog was armed before allocation.
+The next separately authorized attempt must privately exercise the full repaired
+route and actual harmless checked start before an original. Historical
+186/2842 ms gaps remain UNKNOWN.
