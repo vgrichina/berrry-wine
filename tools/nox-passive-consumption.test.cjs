@@ -11,7 +11,7 @@ const current=require('./nox-current-driver.cjs');
 const plain=current.pointerObservations(current.captureLabels(current.terminalCleanup(current.startupDiagnostics(fs.readFileSync(current.HISTORY+'/browser-run.cjs','utf8')))));
 assert.equal(q.compose(plain),plain);const generated=process.env.NOX_CONSUMPTION_GENERATED?fs.readFileSync(process.env.NOX_CONSUMPTION_GENERATED+'/browser-run.cjs','utf8'):q.compose(plain,config);new vm.Script(Module.wrap(generated));
 if(process.env.NOX_CONSUMPTION_GENERATED)assert.equal(q.sha(fs.readFileSync(process.env.NOX_CONSUMPTION_GENERATED+'/nox-consumption.wasm')),config.sha256,'actual emitted compiled module');
-async function consumer(mode){
+async function consumer(mode,action='move'){
  const memory=new ArrayBuffer(0x8000000),e={nox_consumption_arm(){},get_eax:()=>7,get_esp:()=>0x401004};
  const o=q.recorder({getExports:()=>e,getMemory:()=>memory,bases:{DI_MOUSE_INPUT_STATE:0},sites:q.sites,api:{}});
  if(mode==='wrongbinding')o.begin(binding,owner);
@@ -29,10 +29,10 @@ async function consumer(mode){
   require:n=>n==='./native-mouse.cjs'?require(root+'/'+current.HISTORY+'/native-mouse.cjs'):require(n)};
  vm.createContext(context);vm.runInContext(generated.slice(begin,end)+';globalThis.run=execute',context);
  const run=async c=>{if(terminal)throw terminal;try{return await context.run(c,()=>marked++);}catch(e){terminal=e;context.terminalError=e;o.stop('firstfailure');throw e;}};
- const c={id:'move',action:'move',point:[.46,.427],waitMs:0,reviewRef:'startup',label:'after'};
- if(mode==='success'){await run(c);assert.equal(marked,1);assert.equal(sent,1);assert.equal(captured,1);}
+ const c={id:'move',action,point:[.46,.427],waitMs:0,reviewRef:'startup',label:'after'};
+ if(mode==='success'){await run(c);assert.equal(marked,1);assert.equal(sent,action==='click'?3:1);assert.equal(captured,1);}
  else {await assert.rejects(run(c));await assert.rejects(run({...c,id:'later'}));assert.equal(captured,0);assert.equal(sent,mode==='firstfailure'?1:0);assert.equal(marked,mode==='firstfailure'?1:0);}
- return {mode,marked,sent,captured,terminal:!!terminal};
+ return {mode,action,marked,sent,captured,terminal:!!terminal};
 }
 async function compiled(){
  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),ctx={exports:null,getMemory:()=>memory.buffer};
@@ -88,4 +88,63 @@ async function compiled(){
  fs.writeFileSync(out+'/instantiated-admission.json',JSON.stringify({passed:true,reproducedNativeTwoModuleRefusal:true,actualCompiledModules:true,authenticatedActualInstance:true,wrongBindings:5,changedBytes:true,missingDuplicateForeign:true,noLiveRetry:true},null,2));
  fs.writeFileSync(out+'/compiled-records.json',JSON.stringify(s,null,2));return {moduleHash:config.sha256,size:bytes.length,naturalCompiledCallEntryReturn:true,compiledDataAndStateReturns:true,defaultInert:true,fields:fields.length};
 }
-(async()=>{const controls=[];for(const m of ['wrongbinding','incomplete','success','firstfailure'])controls.push(await consumer(m));const native=await compiled();const result={passed:true,controls,native};fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));})().catch(e=>{console.error(e);process.exitCode=1;});
+async function workerTransport(){
+ const {Worker}=require('node:worker_threads');
+ // Execute the emitted installer in a real isolated Worker, with both modules
+ // compiled and the canonical launch argument intercepted by that installer.
+ const emitted=process.env.NOX_CONSUMPTION_GENERATED;
+ assert(emitted,'real Worker controls require the emitted original driver');
+ const source=fs.readFileSync(emitted+'/browser-run.cjs','utf8');
+ const installer=source.match(/await evaluate\(("(?:[^"\\]|\\.)*"),sessionId\);await send\('Runtime.runIfWaitingForDebugger'/);
+ assert(installer,'actual emitted newborn Worker installer');
+ const worker=new Worker(`
+ const {parentPort,workerData}=require('node:worker_threads'),vm=require('node:vm'),fs=require('node:fs');
+ const {createHostImports}=require(workerData.root+'/lib/host-imports');
+ (async()=>{
+  const bytes=fs.readFileSync(workerData.emitted+'/nox-consumption.wasm');
+  const canonical=await WebAssembly.compile(fs.readFileSync(workerData.root+'/build/wine-assembly.wasm'));
+  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),ctx={exports:null,getMemory:()=>memory.buffer};
+  const host=createHostImports(ctx).host;Object.assign(host,{memory,log(){},log_i32(){},exit(){}});
+  globalThis.fetch=async()=>({ok:true,arrayBuffer:async()=>bytes});globalThis.crypto=require('node:crypto').webcrypto;
+  globalThis.endpointIdentity=1;globalThis.workerSlot=0;
+  globalThis.launch=async()=>{globalThis.instance=await WebAssembly.instantiate(canonical,{host});ctx.exports=instance.exports;globalThis.__mcmPassiveInstanceV1={ids:new WeakMap([[instance,'transport-instance']])};return true;};
+  parentPort.on('message',async({id,expression})=>{try{parentPort.postMessage({id,value:await vm.runInThisContext(expression)});}catch(e){parentPort.postMessage({id,error:e.message});}});
+  parentPort.postMessage({ready:true});
+ })().catch(e=>{throw e;});`,{eval:true,workerData:{root,emitted,installer:JSON.parse(installer[1])}});
+ let serial=0;const pending=new Map();
+ worker.on('message',r=>{if(r.ready)return;const p=pending.get(r.id);pending.delete(r.id);r.error?p.reject(Error(r.error)):p.resolve(r.value);});
+ await new Promise((resolve,reject)=>{worker.once('message',r=>r.ready?resolve():reject(Error('Worker readiness')));worker.once('error',reject);});
+ const rpc=expression=>new Promise((resolve,reject)=>{const id=++serial;pending.set(id,{resolve,reject});worker.postMessage({id,expression});});
+ try{
+  const begin=source.indexOf('async function event(v)'),end=source.indexOf('\nasync function ',begin+1);
+  const workerPromises=[],workers=new Map(),wire=[];
+  const eventScope={workers,workerPromises,fs,Date,run:out,sha:q.sha,terminalError:null,log(){},save(){},observeTerminal:e=>{throw e;},
+   send:async(method,params,sessionId)=>{wire.push(JSON.parse(JSON.stringify({method,params,sessionId})));return {};},
+   evaluate:async(expression,sessionId)=>{const frame=JSON.parse(JSON.stringify({method:'Runtime.evaluate',params:{expression},sessionId}));wire.push(frame);return rpc(frame.params.expression);}};
+  vm.createContext(eventScope);vm.runInContext(source.slice(begin,end)+';globalThis.onEvent=event;',eventScope);
+  await eventScope.onEvent({method:'Target.attachedToTarget',params:{sessionId:'worker',targetInfo:{type:'worker',targetId:'transport-worker',url:'/lib/guest-worker.js'}}});await Promise.all(workerPromises);
+  const launchLine=source.split('\n').find(l=>l.includes("const url='http://127.0.0.1:'"));assert(launchLine);
+  const url=vm.runInNewContext(launchLine+';url',{port:1234,process:{env:{RENDER_BACKEND:'webgl'}},selectedApp:'nox_demo'});
+  assert.equal(url,'http://127.0.0.1:1234/index.html?candidates&no-log&threads&app=nox_demo&gl-renderer=webgl');
+  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
+  const pageScope={console:{log(){},warn(){},debug(){}},ArrayBuffer,Uint8Array,Int32Array,DataView,TextDecoder,URL,URLSearchParams,setTimeout,clearTimeout,crypto:require('node:crypto').webcrypto,crossOriginIsolated:true,WINE_THREADS:true,
+   location:{search:new URL(url).search},document:{getElementById:()=>null,createElement:()=>({}),body:{append(){}}},
+   WebAssembly:{Module:WebAssembly.Module,compile:WebAssembly.compile,Memory:class{constructor(){return memory;}},instantiate:async()=>({exports:{set_lock_atomic_mode(){}}})},
+   RenderWorker:{observeInstance:i=>i,Manager:class{constructor(){this.ready=Promise.resolve();}async stop(){}}},ThreadManager:class{recordInheritedWasmGlobal(){}},runningApps:[],createHostImports:()=>({host:{}}),GLRenderHost:{Bridge:class{}},GuestRpc:{createMainBroker:()=>({})},
+   fetch:async url=>url.includes('host-import-sigs')?{ok:true,json:async()=>({sigs:{}})}:url.includes('api_table')?{ok:true,json:async()=>[]}:{ok:true,arrayBuffer:async()=>Uint8Array.from(fs.readFileSync(root+'/build/wine-assembly.wasm')).buffer}};
+  pageScope.window=pageScope;
+  pageScope.GuestThreadHost=class{constructor(opts){Object.assign(this,opts);}async start(){await rpc('launch()');this.link={...this,worker:{},slot:0,endpointIdentity:1};}async callExport(){}async stop(){}};
+  vm.createContext(pageScope);vm.runInContext(fs.readFileSync(root+'/host.js','utf8')+'\nglobalThis.WineAssembly=WineAssembly;',pageScope);
+  const Wine=pageScope.WineAssembly;Wine.supportsWasmTailCalls=()=>true;Wine.versionedUrl=x=>x;
+  const wine=Object.create(Wine.prototype);Object.assign(wine,{_processObject:{exited:false},renderer:{},processId:1,ensureUiFontsReady:async()=>{},loadFiles:async()=>{},loadSubstituteFonts:async()=>{},getImports:()=>({host:{}}),logToUI(){},_installProcessSendBroker(){},_schedArm:()=>false});await wine.init(null);
+  const receipt=await rpc('__noxConsumption.owner()');assert.equal(receipt.sha256,config.sha256);assert.equal(receipt.size,bytes.length);assert.equal(receipt.workerInstance,'transport-instance');
+  const live={...owner,moduleSha256:config.sha256,endpoint:1,workerInstance:'transport-instance'},b={...binding,previous:{...image,identity:live}};
+  await rpc('__noxConsumption.begin('+JSON.stringify(b)+','+JSON.stringify(live)+');true');
+  assert.equal((await rpc('__noxConsumption.finish('+JSON.stringify(live)+')')).reason,null);
+  await assert.rejects(rpc('__noxConsumption.begin('+JSON.stringify(b)+','+JSON.stringify({...live,workerInstance:'foreign'})+');true'),/live Worker owner/);
+  await assert.rejects(rpc('__noxConsumption.begin('+JSON.stringify(b)+','+JSON.stringify(live)+');true'),/terminal/);
+  const result={passed:true,actualWorkerTransport:true,emittedOriginalInstaller:true,emittedWorkerHandler:true,actualHostInit:true,originalLaunchUrl:url,transportFrames:wire.length,canonicalLaunchModule:true,actualInstalledObservationInstance:receipt,firstFailureSticky:true};
+  fs.writeFileSync(out+'/worker-transport.json',JSON.stringify(result,null,2));return result;
+ }finally{await worker.terminate();}
+}
+(async()=>{const controls=[];for(const action of ['move','click'])for(const m of ['wrongbinding','incomplete','success','firstfailure'])controls.push(await consumer(m,action));const native=await compiled();const transport=process.env.NOX_CONSUMPTION_GENERATED?await workerTransport():null;const result={passed:true,controls,native,transport};fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));})().catch(e=>{console.error(e);process.exitCode=1;});
