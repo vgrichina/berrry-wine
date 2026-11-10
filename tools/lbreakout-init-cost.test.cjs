@@ -76,6 +76,27 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
  call(moving.exports,0x406990,[board,0]);
  assert.equal(moving.exports.run,e.run,'ordinary execution restores the inert path');
  e.set_bp(0x406990);assert.throws(()=>moving.trace(1,0x406990,0x406991),/debugger conflict/);e.clear_bp();
+ // Pause's actual full-screen surface_gray is outside every trace callback
+ // range, but range tracing still disables fast tiers throughout its work.
+ // Compare complete output and natural entry/return through original code.
+ const grayRecords=[];
+ for(let pair=0;pair<3;pair++)for(const mode of (pair%2?['target','trace','off']:['off','trace','target'])){
+  new Uint32Array(memory.buffer,wa(boardPixels),640*480).fill(0xff125a9c);
+  const points=[];
+  const d=context.create(e,pc=>{points.push(pc);const next=points.length===1?0x426dd1:0;d.trace(next?1:0,next,next?next+1:0);});
+  const before=hits;
+  if(mode==='trace')e.set_trace_eip_range(1,0x41e406,0x41e878);
+  if(mode==='target')d.trace(1,0x426bb0,0x426bb1);
+  const tierGuard=e.get_dbg_tier_guard(),start=performance.now();
+  const r=call(mode==='target'?d.exports:e,0x426bb0,[board,0,0,-1,-1,0]);
+  const ms=performance.now()-start;e.set_trace_eip_range(0,0,0);
+  const pixels=new Uint32Array(memory.buffer,wa(boardPixels),640*480);
+  assert(pixels.every(p=>(p&0xffffff)===0x585858),'every original grayscale pixel');
+  if(mode==='target')assert.deepEqual(points,[0x426bb0,0x426dd1]);
+  assert.equal(tierGuard,mode==='trace'?1:0);
+  assert.equal(e.get_bp_addr(),0);assert.equal(e.get_dbg_tier_guard(),0);
+  grayRecords.push({pair,mode,ms,tierGuard,traceCallbacks:hits-before,blocks:r.blocks,output:sha(Buffer.from(pixels.buffer,pixels.byteOffset,pixels.byteLength))});
+ }
  // The other substantial local-init task parses the complete original set
  // through original fopen/fgets/CRT, with the bytes already mounted in VFS as
  // they are in the registered app. Never replace file reads with a parser.
@@ -107,8 +128,15 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
  assert(arm.armed&&arm.active);assert.equal(e.get_bp_addr(),0x41f2ac);assert.equal(e.get_dbg_tier_guard(),0);
  context.__lbObserver.stop('offline-validated');assert.equal(e.get_bp_addr(),0);
  assert.equal(wrapped.instance.exports.run,e.run);
+ for(const expected of [20,8]){
+  const pause=await context.__lbArm({phase:'pause',token:'offline-pause-'+expected,expected});
+  assert(pause.armed&&pause.active);assert.equal(e.get_bp_addr(),sdl+0x19870);
+  assert.equal(e.get_dbg_tier_guard(),0,'pause arm preserves fast execution');
+  context.__lbObserver.stop('offline-validated');assert.equal(e.get_bp_addr(),0);
+  assert.equal(wrapped.instance.exports.run,e.run);
+ }
  const median=mode=>records.filter(r=>r.mode===mode).map(r=>r.ms).sort((a,b)=>a-b)[2];
- const result={passed:true,module:sha(wasm),exe:sha(pe),sdl:sha(dlls[0].bytes),crt:sha(dlls[1].bytes),levelset:sha(levelBytes),engine:process.version,scope:'25 actual original board-background calls per sample + original SDL/CRT, isolated surfaces; actual complete original levelset load; excludes other init and browser RPC',records,medianMs:{off:median('off'),trace:median('trace'),target:median('target')},levelRecords,targets:observed.length,movingTargets:actual};
+ const result={passed:true,module:sha(wasm),exe:sha(pe),sdl:sha(dlls[0].bytes),crt:sha(dlls[1].bytes),levelset:sha(levelBytes),engine:process.version,scope:'25 actual original board-background calls per sample + original SDL/CRT, isolated surfaces; actual complete original levelset load; full-screen original pause grayscale; excludes other init and browser RPC',records,medianMs:{off:median('off'),trace:median('trace'),target:median('target')},grayRecords,levelRecords,targets:observed.length,movingTargets:actual};
  if(process.env.LB_COST_OUTPUT)fs.writeFileSync(process.env.LB_COST_OUTPUT,JSON.stringify(result,null,2));
  console.log(JSON.stringify(result,null,2));
 })().catch(e=>{console.error(e.stack);process.exitCode=1});

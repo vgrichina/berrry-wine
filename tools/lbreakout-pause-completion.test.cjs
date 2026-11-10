@@ -22,7 +22,8 @@ const context={setTimeout,clearTimeout,Date,DataView};vm.createContext(context);
  }
  for(const expected of [8,20]){
   const s=await setup(expected);s.key(1);assert(s.o.snapshot().active,'SDL delivery alone is incomplete');
-  assert.deepEqual(s.trace(),[1,binding.exe+0x1e406,binding.exe+0x1e878]);s.enter();
+  assert.deepEqual(s.trace(),[1,binding.exe+0x1e406,binding.exe+0x1e407]);s.enter();
+  assert.deepEqual(s.trace(),[1,binding.exe+(expected===20?0x1e7b4:0x1e7ec),binding.exe+(expected===20?0x1e7b5:0x1e7ed)]);
   // More than the old 200001 boundaries in gray drawing do not reach JS:
   assert(binding.exe+0x26bb0>s.trace()[2]);
   s.display();assert(s.o.snapshot().active,'display return still needs handler/release completion');

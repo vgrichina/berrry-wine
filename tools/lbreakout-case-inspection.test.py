@@ -93,6 +93,35 @@ const chain={readLive:async()=>({worker:{sessionId:'owner'},identity:{workerTarg
 """
         subprocess.run(['node', '-e', source], check=True, timeout=3)
 
+    def test_separate_resume_requires_reviewed_pause_before_arming(self):
+        template = "\n".join([
+            "async function armObservation(){const s=await owningWorker();return evaluate('globalThis.__lbArm()',s);}",
+            "if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}",
+            "     const k=require('./input.cjs').key('p'),{text,...release}=k;",
+            "save:r=>save('input-'+c.id+'-'+phase+'.json',r)});",
+            "   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});",
+        ])
+        branch = helper.pause_completion_source(template).split(
+            'let completionArm;')[1].split('     const a=await armObservation')[0]
+        source = """const assert=require('node:assert/strict');
+let arms=0;const latest={label:'visible-pause'};
+async function armObservation(c){arms++;return c;}
+async function run(c){let completionArm;
+""" + branch + """
+return completionArm;}
+(async()=>{
+ const c={action:'key',key:'p',expected:8};
+ await assert.rejects(run(c),/reviewed visible pause/);assert.equal(arms,0);
+ await assert.rejects(run({...c,pauseConfirmed:'foreign'}));assert.equal(arms,0);
+ await assert.rejects(run({...c,expected:9}));assert.equal(arms,0);
+ const resume=await run({...c,pauseConfirmed:'visible-pause'});
+ assert.equal(resume.expected,8);assert.equal(arms,1);
+ const pause=await run({action:'key',key:'p'});
+ assert.equal(pause.expected,20);assert.equal(arms,2);
+})().catch(e=>{console.error(e);process.exitCode=1});
+"""
+        subprocess.run(['node', '-e', source], check=True, timeout=3)
+
     def test_case_specific_generated_consumer(self):
         for case in ('fixture', 'original'):
             with self.subTest(case=case), tempfile.TemporaryDirectory() as root:

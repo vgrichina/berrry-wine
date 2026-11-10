@@ -107,11 +107,11 @@ def level_start_completion_observer_source():
 
 
 def pause_completion_observer_source():
-    """Passive phase-specific trace; original media/module validator stays shared.
+    """Passive single-target boundaries using the compiled breakpoint driver.
 
-    The broad diagnostic's block budget can expire inside surface_gray. Trace
-    only keyboard entry/return, then the original handler, then its caller.
-    No instruction budget, clock, guest state or handler call is changed.
+    Range tracing disables fast execution globally, including surface_gray.
+    Move the target from keyboard entry/return to handler entry, display return,
+    and caller without changing guest work, clocks or instruction budgets.
     """
     return r'''async function installPauseCompletion({e,memory,binding,token,expected,now=()=>Date.now(),emit=()=>{}}){
  if(!token||![8,20].includes(expected))throw Error('completion command binding');
@@ -140,7 +140,7 @@ def pause_completion_observer_source():
    }
    if(phase==='keyboard-return'&&pc===frame.ret&&esp===frame.esp+4){
     record('sdl-p-return',{down:frame.down,state:u8(keys+112)});
-    if(frame.down){if(u8(keys+112)!==1)throw Error('SDL P down incomplete');down=true;phase='handler';trace(exe+0x1e406,exe+0x1e878);}
+    if(frame.down){if(u8(keys+112)!==1)throw Error('SDL P down incomplete');down=true;phase='handler';trace(exe+0x1e406);}
     else if(!complete()){phase='keyboard';trace(sdl+0x19870);}
     return;
    }
@@ -148,7 +148,8 @@ def pause_completion_observer_source():
     if(u32(esp+4)!==112)return;
     if(!down)throw Error('handler before SDL delivery');
     if(u32(exe+0x523b0)!==(expected===20?8:20))throw Error('unsupported original pause state');
-    frame={ret:u32(esp),esp};handler=true;record('pause-handler-entry',{state:u32(exe+0x523b0)});return;
+    frame={ret:u32(esp),esp};handler=true;record('pause-handler-entry',{state:u32(exe+0x523b0)});
+    trace(exe+(expected===20?0x1e7b4:0x1e7ec));return;
    }
    if(phase==='handler'&&handler&&pc===exe+(expected===20?0x1e7b4:0x1e7ec)){
     if(u32(exe+0x523b0)!==expected)throw Error('original pause transition incomplete');
@@ -176,7 +177,7 @@ def pause_completion_preload_source():
   const r=await instantiate.call(WebAssembly,source,imports),native=r.instance||r;
   const driver=createLevelStartDriver(native.exports,pc=>globalThis.__lbObserver?.boundary(pc));
   // A facade preserves the actual instance and its exports for all unarmed
-  // calls. Only the dedicated level-start observer uses targeted breakpoints.
+  // calls. Both dedicated completion observers use targeted breakpoints.
   const exports=driver.exports;
   const instance=new Proxy(native,{get:(o,k)=>k==='exports'?exports:Reflect.get(o,k,o)});
   globalThis.__lbNative={instance,memory:imports.host.memory,driver};
@@ -196,7 +197,7 @@ def pause_completion_preload_source():
    if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original pause instruction mismatch');
   if(c.phase==='level-start')for(const [rva,h] of [[0x1f2ac,'5589e55383ec14'],[0x1faa0,'5589e5575653'],[0x1faf2,'83c410'],[0x20475,'e87c5b0000']])
    if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original level-start instruction mismatch');
-  const observed=c.phase==='level-start'?{...e,set_trace_eip_range:globalThis.__lbNative.driver.trace}:e;
+  const observed={...e,set_trace_eip_range:globalThis.__lbNative.driver.trace};
   globalThis.__lbObserver=await (c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e:observed,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
   return {armed:true,...__lbObserver.snapshot()};
  };
@@ -237,7 +238,7 @@ async function completion(a){
   }
  }catch(e){fail(e);throw e;}
 }'''),
-        ("if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}", "let completionArm;\n   if(c.completion==='level-start'){assert(c.action==='key'&&c.key==='Enter','level-start requires native Enter');completionArm=await armObservation({...c,phase:'level-start',expected:8});}\n   else if(c.action==='key'&&c.key==='p')completionArm=await armObservation({...c,phase:'pause',expected:20});"),
+        ("if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}", "let completionArm;\n   if(c.completion==='level-start'){assert(c.action==='key'&&c.key==='Enter','level-start requires native Enter');completionArm=await armObservation({...c,phase:'level-start',expected:8});}\n   else if(c.action==='key'&&c.key==='p'){\n    const expected=c.expected??20;assert([8,20].includes(expected),'supported pause transition');\n    if(expected===8)assert.equal(c.pauseConfirmed,latest.label,'reviewed visible pause required');\n    completionArm=await armObservation({...c,phase:'pause',expected});\n   }"),
         ("     const k=require('./input.cjs').key('p'),{text,...release}=k;", "     const a=await armObservation({...c,phase,expected:phase==='resume'?8:20});\n     const k=require('./input.cjs').key('p'),{text,...release}=k;"),
         ("save:r=>save('input-'+c.id+'-'+phase+'.json',r)});", "save:r=>save('input-'+c.id+'-'+phase+'.json',r)});\n     await completion(a);"),
         ("   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});", "   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});\n   if(completionArm)await completion(completionArm);"),
