@@ -67,6 +67,10 @@ async function compiled(){
  vm.createContext(scope);vm.runInContext(outgoing.params.expression,scope);
  const instance=await scope.WebAssembly.instantiate(await WebAssembly.compile(bytes),{host}),e=ctx.exports=instance.exports;
  scope.instance=instance;scope.__mcmPassiveInstanceV1={ids:new WeakMap([[instance,'actual-fixture-instance']])};
+ assert.deepEqual(JSON.parse(JSON.stringify(scope.__q3MenuConsumption.moduleIdentity())),{sha256:moduleHash,bytes:bytes.length});
+ scope.instance={exports:{}};
+ assert.throws(()=>scope.__q3MenuConsumption.moduleIdentity(),/instance replaced/);
+ scope.instance=instance;
  const o=scope.__q3MenuConsumption,live={...owner,moduleSha256:moduleHash,endpoint:1,workerInstance:'actual-fixture-instance'};
  const liveBinding={...binding,previous:{...image,identity:live}};
  const mem=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),exe=fs.readFileSync(root+'/test/binaries/notepad.exe');
@@ -96,21 +100,43 @@ async function startupControl(){
  const selected=current.SELECTED,live={endpoint:1,slot:0,instance:'startup-instance',gpu:false};
  const status={phase:'parked',selected,flags:{threads:true,isolated:true,shared:true,gpu:false},endpoint:1,slot:0,token:'parked-token'};
  const workers=new Map([['worker',{url:'/lib/guest-worker.js',targetId:'worker',sessionId:'worker',scripts:[{scriptId:'module'}]}]]);
- const saved={};let releases=0;
+ const saved={};let releases=0,terminal=false,failuresObserved=0,actualModule={sha256:moduleHash,bytes:bytes.length};
+ const canonical=fs.readFileSync(root+'/build/wine-assembly.wasm');
+ assert.equal(q.sha(canonical),selected.sha256);
+ const scripts=workers.get('worker').scripts;
+ scripts.push({scriptId:'canonical'});
+ const scriptBytes=new Map([['module',bytes],['canonical',canonical]]);
  const options={fixture:true,deadline:Date.now()+60000,workers,pageSession:'page',save:(n,v)=>saved[n]=v,
+  onFailure:()=>{terminal=true;failuresObserved++;},
   evaluate:async expression=>{
+   assert.equal(terminal,false,'no startup protocol after first refusal');
    if(expression==='typeof WINE_REDLINE_STARTUP===\'undefined\'?null:WINE_REDLINE_STARTUP.status()'||expression==='WINE_REDLINE_STARTUP.status()')return status;
    if(expression===require('./q3-startup.cjs').WORKER_READ)return live;
+   if(expression==='globalThis.__q3MenuConsumption.moduleIdentity()')return actualModule;
    if(expression.startsWith('WINE_REDLINE_STARTUP.release(')){releases++;const proof=JSON.parse(expression.slice(29,-1));assert.equal(proof.sha256,selected.sha256);assert.equal(proof.bytes,selected.bytes);return {phase:'released',...proof};}
    if(expression.includes('abort('))return {phase:'refused'};
    throw Error('unexpected startup evaluation '+expression);
-  },send:async(method)=>{assert.equal(method,'Debugger.getScriptSource');return {bytecode:bytes.toString('base64')};}};
- await assert.rejects(require('./q3-startup.cjs').launch(options),/live selected CPU SHA/);
+  },send:async(method,params)=>{assert.equal(terminal,false);assert.equal(method,'Debugger.getScriptSource');return {bytecode:scriptBytes.get(params.scriptId)?.toString('base64')};}};
+ await assert.rejects(require('./q3-startup.cjs').launch(options),/unique actual Q3 Worker module/);
  assert.equal(releases,0);
  const result=await q.startup(config).launch(options);assert.equal(releases,1);
  assert.deepEqual(result.observationModule,{sha256:moduleHash,bytes:bytes.length});
  assert.equal(saved['startup-admission.json'].receipt.observationModule.sha256,moduleHash);
- return {canonicalAdmissionPreserved:true,actualObservationModuleVerified:true,deadlinesUnchanged:true};
+ const failures=[];
+ for(const mode of ['unknown','missing-bytecode','duplicate-observation','duplicate-canonical','canonical-only','extra-script','wrong-live-instance']){
+  terminal=false;
+  scripts.splice(0,scripts.length,{scriptId:'module'},{scriptId:'canonical'});
+  scriptBytes.set('module',bytes);scriptBytes.set('canonical',canonical);actualModule={sha256:moduleHash,bytes:bytes.length};
+  if(mode==='unknown')scriptBytes.set('canonical',Buffer.from('unknown'));
+  if(mode==='missing-bytecode')scriptBytes.delete('canonical');
+  if(mode==='duplicate-observation')scriptBytes.set('canonical',bytes);
+  if(mode==='duplicate-canonical')scriptBytes.set('module',canonical);
+  if(mode==='canonical-only')scripts.shift();
+  if(mode==='extra-script')scripts.push({scriptId:'extra'});
+  if(mode==='wrong-live-instance')actualModule={sha256:selected.sha256,bytes:selected.bytes};
+  const before=releases,observed=failuresObserved;await assert.rejects(q.startup(config).launch(options));assert.equal(releases,before);assert.equal(failuresObserved,observed+1);assert.equal(terminal,true);failures.push(mode);
+ }
+ return {canonicalAdmissionPreserved:true,actualObservationModuleVerified:true,deadlinesUnchanged:true,twoCompiledModules:true,refusals:failures,noProtocolAfterFirstRefusal:true};
 }
 async function workerFailure(){
  const start=generated.indexOf('async function event(v)'),end=generated.indexOf('\nasync function ',start+1);

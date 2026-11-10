@@ -105,6 +105,10 @@ function workerInstall(config,makeRecorder){
   for(const name of ['check_input','check_input_hwnd','check_input_lparam','check_input_wparam'])if(imports.host[name])imports.host[name]=observation.wrap(name,imports.host[name]);
   const result=await Reflect.apply(original,this,[await WebAssembly.compile(bytes),imports,...rest]);
   exports=(result.instance??result).exports;globalThis.__q3MenuConsumption=observation;
+  observation.moduleIdentity=()=>{
+   if(instance?.exports!==exports)throw Error('Q3 observation instance replaced');
+   return {sha256:digest,bytes:bytes.length};
+  };
   const begin=observation.begin;
   observation.begin=(b,identity)=>{
    if(identity?.moduleSha256!==config.sha256||identity.endpoint!==endpointIdentity||workerSlot!==0||
@@ -123,6 +127,37 @@ function startup(config){
  let source=fs.readFileSync(filename,'utf8');
  assert.equal(sha(Buffer.from(source)),require('./q3-current-module.cjs').migration['tools/q3-startup.cjs'],'canonical startup provider');
  const once=(a,b)=>{assert.equal(source.split(a).length,2,'observation startup seam');source=source.replace(a,b);};
+ once('  source = admissionSource()}) {','  source = admissionSource(), onFailure}) {\n  assert.equal(typeof onFailure,\'function\',\'Q3 owning terminal callback required\');');
+ const refusal=source.slice(source.indexOf('  } catch(error) {'),source.indexOf('\n}\nmodule.exports='));
+ assert(refusal.includes("WINE_REDLINE_STARTUP.abort('Q3 caller refusal')"),'canonical refusal cleanup seam');
+ once(refusal,`  } catch(error) {
+    onFailure(error);
+    save('startup-refusal.json',{error:String(error),noReplay:true,owningCancellation:true});
+    throw error;
+  }`);
+ // The Worker compiles the canonical page module before the installer compiles
+ // its replacement. Authenticate both scripts, then bind the replacement to
+ // the actual parked instance rather than counting every compiled script as live.
+ once(`    assert.equal(scripts.length,1,'unique actual Q3 Worker module required');
+    const r=await send('Debugger.getScriptSource',{scriptId:scripts[0].scriptId},w.sessionId);
+    assert(r.bytecode,'actual Q3 Worker bytecode required');
+    const bytes=Buffer.from(r.bytecode,'base64');`,
+ `    assert(scripts.length>=1&&scripts.length<=2,'bounded Q3 Worker modules required');
+    let bytes,canonical=0;
+    for(const script of scripts){
+      const r=await send('Debugger.getScriptSource',{scriptId:script.scriptId},w.sessionId);
+      assert(r.bytecode,'actual Q3 Worker bytecode required');
+      const candidate=Buffer.from(r.bytecode,'base64'),digest=sha(candidate);
+      if(digest===${JSON.stringify(config.sha256)}&&candidate.length===${config.size}){
+        assert(!bytes,'duplicate Q3 observation module');bytes=candidate;
+      }else{
+        assert(digest===SELECTED.sha256&&candidate.length===SELECTED.bytes,'unknown Q3 Worker module');
+        assert(++canonical===1,'duplicate Q3 canonical module');
+      }
+    }
+    assert(bytes,'actual Q3 observation module required');
+    assert.deepEqual(await evaluate('globalThis.__q3MenuConsumption.moduleIdentity()',w.sessionId),
+      ${JSON.stringify({sha256:config.sha256,bytes:config.size})},'actual parked Q3 observation instance');`);
  // Admission continues to authenticate the canonical page Module. Independently
  // authenticate the actual observation Worker module before releasing it.
  once("assert.equal(sha(bytes),SELECTED.sha256,'Q3 live selected CPU SHA-256');",`assert.equal(sha(bytes),${JSON.stringify(config.sha256)},'Q3 live observation CPU SHA-256');`);
@@ -134,7 +169,7 @@ function compose(source,config){
  if(!config)return source;
  const once=(a,b)=>{assert.equal(source.split(a).length,2,'Q3 menu generated seam: '+a);source=source.replace(a,b);};
  once("task.catch(e=>log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)}));", "task.catch(e=>{observeTerminal(e);log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)});});");
- once("await require(root+'/tools/q3-startup.cjs').launch({evaluate,send,workers,pageSession,deadline,wait,save});",`await require(root+'/tools/q3-menu-consumption.cjs').startup(${JSON.stringify(config)}).launch({evaluate,send,workers,pageSession,deadline,wait,save});`);
+ once("await require(root+'/tools/q3-startup.cjs').launch({evaluate,send,workers,pageSession,deadline,wait,save});",`await require(root+'/tools/q3-menu-consumption.cjs').startup(${JSON.stringify(config)}).launch({evaluate,send,workers,pageSession,deadline,wait,save,onFailure:observeTerminal});`);
  once("await send('Runtime.runIfWaitingForDebugger',{},sessionId);",`if(targetInfo.url.includes('guest-worker'))await evaluate(${JSON.stringify(workerSource(config))},sessionId);await send('Runtime.runIfWaitingForDebugger',{},sessionId);`);
  once(".map(p=>p.sha256)});",`.map(p=>p.sha256).concat(${JSON.stringify(config.sha256)})});`);
  once(' markDispatch();',` const menuWorker=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(menuWorker,'Q3 menu owning Worker');
