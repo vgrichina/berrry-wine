@@ -60,6 +60,17 @@ function admitOriginal({root, pins, requiredPaths, candidatePath, candidate,
     assert.equal(c.trace.reads.length, 1);
     assert.equal(c.trace.reads[0].eax, 0);
     assert.equal(c.trace.reads[0].state[12], 128);
+    const read = c.trace.reads[0];
+    assert.equal(read.size, 16, 'standard mouse request missing');
+    assert.equal(read.state.length, read.size, 'completed mouse buffer missing');
+    assert(Number.isInteger(read.buffer) && read.buffer > 0, 'request buffer missing');
+    assert(Number.isInteger(read.esp) && read.esp > 0, 'request stack missing');
+    assert.equal(read.completionEsp, read.esp + 16, 'completion does not match request stack');
+    assert(read.at >= read.requestAt && read.requestAt > 0, 'completion request timing missing');
+    assert(read.completionMono >= read.requestMono && read.requestMono > 0,
+      'completion monotonic request timing missing');
+    assert(c.capture.imports.some(i => i.module === 'host' && i.kind === 'function' &&
+      i.name === 'get_mouse_buttons_live'), 'actual module import capture missing');
     assert(c.trace.imports.some(i => i.name === 'get_mouse_buttons_live'));
   }
   return {passed: true, candidateSHA256: candidate.exactCandidateSHA256, moduleSHA256: expectedModule};
@@ -73,9 +84,13 @@ if (require.main === module) {
   const root = path.resolve(run, '../../..');
   const read = name => JSON.parse(fs.readFileSync(path.join(run, name)));
   const prefix = path.relative(root, run) + '/';
-  const requiredPaths = ['browser.cjs', 'isolation-control.cjs', 'isolation-page.html',
+  const routePaths = ['browser.cjs', 'isolation-control.cjs', 'isolation-page.html',
     'worker-prefix.js', 'worker-fixture.js', 'control-launch.py', 'launch.py'].map(n => prefix + n);
   const pins = read('runtime-pins.json');
+  // Include every pinned source/media dependency, with the immutable build
+  // modules staged by their separately pinned recovery paths.
+  const requiredPaths = [...new Set([...routePaths,
+    ...pins.files.filter(p => !p.path.startsWith('build/')).map(p => p.path)])];
   verifyInputs(root, pins, requiredPaths);
   const results = read('private-control-results.json');
   const proof = admitOriginal({root, pins, requiredPaths, candidatePath:prefix+'browser.cjs',

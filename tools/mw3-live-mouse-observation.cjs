@@ -55,7 +55,7 @@ if (typeof module !== 'undefined') module.exports = {attach};
 // Dispatch log hooks bracket the *handler*, not just the live button import.
 // The caller supplies the already verified standard-mouse decoder and layout.
 function attachDispatch(table, {getExports, memory, request, completion, layout,
-    capacity = 16384, readCapacity = 1024, depthCapacity = 64} = {}) {
+    capacity = 16384, readCapacity = 1024, depthCapacity = 64, importNames = null} = {}) {
   if (!Number.isInteger(capacity) || capacity < 1 || capacity > 65536 ||
       !Number.isInteger(readCapacity) || readCapacity < 1 || readCapacity > 8192 ||
       !Number.isInteger(depthCapacity) || depthCapacity < 1 || depthCapacity > 256)
@@ -64,10 +64,15 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
     if (typeof table[name] !== 'function') throw Error('dispatch import required: ' + name);
   if (!memory?.buffer || ![getExports, request, completion].every(f => typeof f === 'function'))
     throw Error('dispatch decoder binding required');
+  if (importNames !== null && (!Array.isArray(importNames) || !importNames.length ||
+      importNames.length > 512 || new Set(importNames).size !== importNames.length ||
+      importNames.some(name => typeof table[name] !== 'function')))
+    throw Error('explicit existing import names required');
+  const selectedImports = importNames === null ? null : new Set(importNames);
   const originals = new Map(), wrappers = new Map(), names = [];
   const data = new Float64Array(capacity * 6), frames = new Array(depthCapacity);
   let active = false, expires = 0, started = 0, count = 0, drops = 0,
-    reads = [], errors = [], depth = 0, marker = -1, priorLog = 0, ex;
+    reads = [], errors = [], depth = 0, marker = -1, priorLog = 0, excludedImports = 0, ex;
   function halt(reason) {
     if (reason && errors.length < 8) errors.push(String(reason));
     if (active) { active = false; try { ex.set_api_log(priorLog); } catch (error) { if (errors.length < 8) errors.push(String(error)); } }
@@ -104,17 +109,21 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
       if (!active) return original.apply(this, args);
       const begin = performance.now();
       if (begin >= expires) { halt(); return original.apply(this, args); }
-      if (count === capacity) { drops++; halt('import capacity'); return original.apply(this, args); }
-      const i = count++ * 6;
-      data[i] = index; data[i + 1] = Date.now(); data[i + 2] = begin;
+      // Filtering diagnostic rows must never filter the dispatch hooks below:
+      // every entry/exit still participates in matching completed mouse reads.
+      const record = selectedImports === null || selectedImports.has(name);
+      if (record && count === capacity) { drops++; halt('import capacity'); return original.apply(this, args); }
+      const i = record ? count++ * 6 : -1;
+      if (record) { data[i] = index; data[i + 1] = Date.now(); data[i + 2] = begin; }
+      else excludedImports++;
       try {
         if (name === 'log_i32' && ((args[0] >>> 16) === 0xc0de)) marker = args[0] & 65535;
         if (name === 'log') enter(args);
       } catch (error) { halt(error); }
       let value;
-      try { value = original.apply(this, args); data[i + 4] = typeof value === 'number' ? value : 0; }
-      catch (error) { data[i + 5] = 1; halt('original import threw: ' + name); throw error; }
-      finally { data[i + 3] = performance.now(); }
+      try { value = original.apply(this, args); if (record) data[i + 4] = typeof value === 'number' ? value : 0; }
+      catch (error) { if (record) data[i + 5] = 1; halt('original import threw: ' + name); throw error; }
+      finally { if (record) data[i + 3] = performance.now(); }
       if (active && name === 'log_api_exit') {
         try {
           if (!depth) throw Error('dispatch exit without entry');
@@ -131,7 +140,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
       if (active || !Number.isInteger(durationMs) || durationMs < 1 || durationMs > 45000 ||
           ![0, 1].includes(apiLogBefore)) throw Error('bounded start with known prior API log setting required');
       ex = getExports(); if (typeof ex?.set_api_log !== 'function') throw Error('dispatch log export required');
-      priorLog = apiLogBefore; count = drops = depth = 0; reads = []; errors = []; marker = -1;
+      priorLog = apiLogBefore; count = drops = depth = excludedImports = 0; reads = []; errors = []; marker = -1;
       frames.fill(null); started = performance.now(); expires = started + durationMs;
       ex.set_api_log(1); active = true;
     },
@@ -139,6 +148,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
       // Expiry is also checked on a passive snapshot when no imports run.
       if (active && performance.now() >= expires) halt();
       return {active, started, expires, drops, errors: errors.slice(), pending: depth,
+        importNames: selectedImports === null ? null : [...selectedImports], excludedImports,
         reads: reads.slice(), imports: Array.from({length: count}, (_, n) => {
           const i = n * 6; return {name: names[data[i]], at: data[i + 1], begin: data[i + 2],
             end: data[i + 3], value: data[i + 4], threw: !!data[i + 5]};

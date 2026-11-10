@@ -66,6 +66,42 @@ test('dispatch loss and original exceptions are terminal and preserve thrown ide
   assert.equal(g.o.snapshot().imports[0].threw, true); assert.equal(g.log(), 0);
   assert.throws(() => g.o.start({durationMs: 999999, apiLogBefore: 0}));
 });
+test('scoped import rows retain all dispatch matching under the observed menu log volume', () => {
+  const exercise = f => {
+    f.o.start({apiLogBefore: 0});
+    // The failed menu trace had 32,103 entry/exit pairs and 25 mouse reads.
+    // These hooks still execute even when excluded from diagnostic rows.
+    for (let n = 0; n < 32103; n++) {
+      f.table.log(0, 0); f.table.log_api_exit();
+      if (n < 25) { f.entry(); f.table.get_mouse_buttons_live(1); f.exit(); }
+      if (n < 1300) f.table.wait_single(0);
+    }
+    return f.o.stop();
+  };
+  const baseline = exercise(fixture({capacity: 65536}));
+  assert.deepEqual(baseline.errors, ['import capacity']); assert.equal(baseline.drops, 1);
+  const scoped = exercise(fixture({capacity: 65536, importNames: ['get_mouse_buttons_live']}));
+  assert.deepEqual(scoped.errors, []); assert.equal(scoped.drops, 0);
+  assert.equal(scoped.pending, 0); assert.equal(scoped.reads.length, 25);
+  assert.equal(scoped.imports.length, 25); assert.equal(scoped.excludedImports, 65581);
+  assert.deepEqual(scoped.importNames, ['get_mouse_buttons_live']);
+  assert(scoped.reads.every(r => r.eax === 0 && r.completionEsp === r.esp + 16 && r.state[12] === 128));
+});
+test('scoping cannot hide decoder faults, selected capacity loss or original exceptions', () => {
+  const f = fixture({capacity: 1, importNames: ['get_mouse_buttons_live']});
+  f.o.start({apiLogBefore: 0}); f.table.log_api_exit();
+  assert.deepEqual(f.o.snapshot().errors, ['Error: dispatch exit without entry']);
+  assert.equal(f.log(), 0);
+  const g = fixture({capacity: 1, importNames: ['wait_single']});
+  g.o.start({apiLogBefore: 0});
+  assert.throws(() => g.table.get_mouse_buttons_live(99), e => e === g.fault);
+  assert(g.o.snapshot().errors.includes('original import threw: get_mouse_buttons_live'));
+  const h = fixture({capacity: 1, importNames: ['get_mouse_buttons_live']});
+  h.o.start({apiLogBefore: 0}); h.table.get_mouse_buttons_live(1); h.table.get_mouse_buttons_live(2);
+  assert.equal(h.o.snapshot().drops, 1); assert.deepEqual(h.o.snapshot().errors, ['import capacity']);
+  for (const importNames of [[], ['missing'], ['log', 'log']])
+    assert.throws(() => fixture({importNames}), /explicit existing import names/);
+});
 test('instrumented Worker response inherits isolation policy before custom handler ends it', async () => {
   const {startStaticServer, closeServer} = require('../test/static-server.js');
   const server = await startStaticServer({root: __dirname, crossOriginIsolated: true,
