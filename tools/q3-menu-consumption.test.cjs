@@ -15,6 +15,25 @@ const plain=route.composition(route.version).compose().source;assert.equal(q.com
 process.env.Q3_BOUND_INPUT_OBSERVATION='1';
 const generated=q.compose(route.composition(route.version).compose().source,config);
 delete process.env.Q3_BOUND_INPUT_OBSERVATION;new vm.Script(Module.wrap(generated));
+function emittedPreflight(){
+ // Execute the entire generated caller through its production preflight exit,
+ // including top-level declarations. Syntax and extracted bodies missed TDZ.
+ const filename=path.join(root,require('./q3-native-driver-composition.cjs').consumerPath);
+ const nativeRequire=Module.createRequire(filename),manifest=path.join(path.dirname(filename),'runtime-pins.json');
+ const pins=current.validate({foreignClosureVersion:route.version}),exit=Error('offline preflight exit');
+ let effects=0,report;
+ const run=source=>vm.runInNewContext(source,{__dirname:path.dirname(filename),Buffer,console:{log:s=>{report=JSON.parse(s);}},
+  process:{env:{DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+60000)},exit:code=>{assert.equal(code,0);throw exit;}},
+  require:name=>name==='node:fs'?{...fs,readFileSync:(file,...args)=>path.resolve(String(file))===manifest?Buffer.from(JSON.stringify(pins)):fs.readFileSync(file,...args)}:
+   name==='node:child_process'?new Proxy({}, {get:()=>()=>{effects++;throw Error('process effect forbidden');}}):nativeRequire(name)});
+ const lazy="...require('./bound-input.cjs'),createChain:options=>require(root+'/tools/q3-menu-consumption.cjs').boundAdapter(require('./bound-input.cjs'),"+JSON.stringify(config)+",observeTerminal).createChain(options),hold:";
+ const eager="...require(root+'/tools/q3-menu-consumption.cjs').boundAdapter(require('./bound-input.cjs'),"+JSON.stringify(config)+",observeTerminal),hold:";
+ assert.equal(generated.split(lazy).length,2);
+ assert.throws(()=>run(generated.replace(lazy,eager)),/Cannot access 'root' before initialization/,'first native failure reproduced offline');
+ assert.throws(()=>run(generated),e=>e===exit);
+ assert.equal(effects,0);assert.equal(report.passed,true);assert.equal(report.pins,pins.files.length);assert.equal(report.chromiumStarted,false);
+ return {wholeGeneratedCaller:true,productionPreflight:true,pinsVerified:report.pins,rootInitializationRefusalReproduced:true,processEffects:effects};
+}
 // Extract the actual emitted command body via the retained exact harness.
 const filename=path.join(__dirname,'q3-input-observer.test.cjs');
 const harness=fs.readFileSync(filename,'utf8').split('\n(async()=>{')[0];
@@ -252,6 +271,6 @@ async function originalStartupControl(){
 }
 (async()=>{
  const controls=[];for(const mode of ['wrong-owner','incomplete','success','firstfailure'])controls.push(await consumer(mode));
- const native=await compiled(),startup=await startupControl(),workerTerminal=await workerFailure(),originalStartup=await originalStartupControl();const result={passed:true,controls,native,startup,workerTerminal,originalStartup,defaultInert:true};
+ const preflight=emittedPreflight(),native=await compiled(),startup=await startupControl(),workerTerminal=await workerFailure(),originalStartup=await originalStartupControl();const result={passed:true,controls,preflight,native,startup,workerTerminal,originalStartup,defaultInert:true};
  fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
 })().catch(e=>{console.error(e);process.exitCode=1;});

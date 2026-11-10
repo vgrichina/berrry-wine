@@ -202,7 +202,9 @@ function startup(config){
 function compose(source,config){
  if(!config)return source;
  const once=(a,b)=>{assert.equal(source.split(a).length,2,'Q3 menu generated seam: '+a);source=source.replace(a,b);};
- once("...require('./bound-input.cjs'),hold:","...require(root+'/tools/q3-menu-consumption.cjs').boundAdapter(require('./bound-input.cjs'),"+JSON.stringify(config)+",observeTerminal),hold:");
+ // The retained bound declaration precedes root. Resolve the adapter only
+ // when the initialized caller creates its chain, preserving other methods.
+ once("...require('./bound-input.cjs'),hold:","...require('./bound-input.cjs'),createChain:options=>require(root+'/tools/q3-menu-consumption.cjs').boundAdapter(require('./bound-input.cjs'),"+JSON.stringify(config)+",observeTerminal).createChain(options),hold:");
  once("task.catch(e=>log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)}));", "task.catch(e=>{observeTerminal(e);log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)});});");
  once("await require(root+'/tools/q3-startup.cjs').launch({evaluate,send,workers,pageSession,deadline,wait,save});",`await require(root+'/tools/q3-menu-consumption.cjs').startup(${JSON.stringify(config)}).launch({evaluate,send,workers,pageSession,deadline,wait,save,onFailure:observeTerminal});`);
  once("await send('Runtime.runIfWaitingForDebugger',{},sessionId);",`if(targetInfo.url.includes('guest-worker'))await evaluate(${JSON.stringify(workerSource(config))},sessionId);await send('Runtime.runIfWaitingForDebugger',{},sessionId);`);
