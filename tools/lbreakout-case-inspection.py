@@ -6,6 +6,70 @@ availability must never mask passive terminal records.
 import json
 
 
+def classify_startup_failure(receipt, failure_at):
+    """Decode retained state offline; sample time is never failure time.
+
+    The frame layout belongs to the hash-pinned original EXE, at its memcpy
+    import reached from stk_surface_gray's first copy. No live reads occur.
+    """
+    observation = receipt.get('lastObservation') or {}
+    sample = observation.get('lastSample') or {}
+    at = sample.get('at')
+    deadline = observation.get('deadline')
+    result = dict(kind='unknown', sampleAt=at, failureAt=failure_at,
+                  deadline=deadline, sampleAgeAtFailureMs=None,
+                  sampleBeforeDeadlineMs=None)
+    if not all(isinstance(n, (int, float)) for n in [at, failure_at, deadline]):
+        return result
+    result.update(sampleAgeAtFailureMs=failure_at-at,
+                  sampleBeforeDeadlineMs=deadline-at)
+    if at > failure_at or sample.get('error'):
+        return result
+    binding = observation.get('binding') or {}
+    if binding.get('exe') != 0x400000 or binding.get('media', {}).get('exe') != (
+            'cc1fd5c3d229cc1d4f910e658f5abefa80ef8ebf4b5e47801648f0be0e1ca244'):
+        return result
+    registers = sample.get('registers') or {}
+    stack = sample.get('stack') or {}
+    words = stack.get('words') or []
+    esp, ebp = registers.get('esp'), registers.get('ebp')
+    if (sample.get('pc') != 0x451ae0 or not isinstance(esp, int)
+            or not isinstance(ebp, int) or stack.get('address') != esp
+            or ebp-esp != 0x3c or len(words) != 24
+            or not all(isinstance(w, int) and 0 <= w <= 0xffffffff for w in words)):
+        return result
+    # Current return, original theme_load caller, then the gray arguments.
+    if words[0] != 0x426c59 or words[16] != 0x418687:
+        return result
+    surface, x0, y0, width, height, shift = words[17:23]
+    x, y, row_offset, column_offset = words[14], words[13], words[12], words[11]
+    destination, source, size = words[1:4]
+    if (not surface or not 0 < width <= 65535 or not 0 < height <= 65535
+            or not 0 <= x0 <= x < x0+width <= 65535
+            or not 0 <= y0 <= y < y0+height <= 65535
+            or size not in [1, 2, 3, 4] or shift > 29
+            or destination != ebp-0x14 or column_offset != x*size):
+        return result
+    pitch = row_offset//y if y else None
+    if y and (row_offset % y or pitch < (x0+width)*size or pitch > 65535):
+        return result
+    pixel_base = source-row_offset-column_offset
+    if not 0 < pixel_base <= source <= 0xffffffff:
+        return result
+    processed = (y-y0)*width+x-x0
+    result.update(kind='original-theme-grayscale', preMenu=sample.get('menu') == 0,
+                  menu=sample.get('menu'), dirtyCount=sample.get('dirtyCount'),
+                  surface=surface, screen=sample.get('screen'),
+                  rectangle=dict(x=x0, y=y0, width=width, height=height),
+                  pixel=dict(x=x, y=y), processedPixels=processed,
+                  remainingPixelsIncludingCurrent=width*height-processed,
+                  copy=dict(destination=destination, source=source, size=size),
+                  inferredPitch=pitch, inferredPixelBase=pixel_base,
+                  originalReturn=words[0], originalCaller=words[16],
+                  limit='one retained sample; no native return or completion-time claim')
+    return result
+
+
 def level_start_driver_source():
     """Use existing target-aware chain exits, without changing the module.
 
