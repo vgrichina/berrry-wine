@@ -9,7 +9,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
 const apis=require('../src/api_table.json');
 const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
 (async()=>{
-  let bridge,worker,consumer,waits=0;
+  let bridge,worker,consumer,waits=0,brokerShadow=false;
   const submissions=new Map();
   const {exports:e,memory,module}=await bootRenderHarness({fonts:'none',
     extraHostOverrides:{gpu_gl_call(op,p,a){
@@ -21,6 +21,9 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
       (i32.store offset=16 (global.get $reg_base) (i32.const 0x07000000))
       (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0))
       (global.set $eip (local.get $code)))
+    (func (export "nested_present") (param $hwnd i32) (result i32)
+      (call $wnd_send_message (local.get $hwnd) (i32.const 5) (i32.const 0) (i32.const 0)))
+    (func (export "send_completed") (result i32) (global.get $wnd_send_completed))
     (func (export "target_bits") (param $d i32) (result i32)
       (load.field DxObject misc1 (call $d3ddev_rt_entry (local.get $d))))
   `});
@@ -28,7 +31,7 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
   new Uint8Array(memory.buffer).set(pe,e.get_staging());assert.ok(e.load_pe(pe.length));
   e.init_dx_com_thunks();
   bridge=new Bridge({backend:'software',enableProgrammable:true,softwareQuadBudget:1,
-    getExports:()=>e,getMemory:()=>memory.buffer,guestToWasm:p=>e.guest_to_wasm(p)>>>0,
+    getExports:()=>brokerShadow?{get_sync_msg_depth:()=>0}:e,getMemory:()=>memory.buffer,guestToWasm:p=>e.guest_to_wasm(p)>>>0,
     createSoftwareWorker(){
       worker=new Worker(path.join(__dirname,'../lib/d3d-render-worker.js'));
       consumer=new WorkerConsumer(worker,{module,memory,sigs,imageBase:e.get_image_base()>>>0,
@@ -39,7 +42,7 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
   const alloc=n=>e.guest_alloc(n)>>>0,wa=p=>e.guest_to_wasm(p)>>>0;
   const read=p=>e.guest_read32(p)>>>0,marker=alloc(4),out=alloc(4);
   const callers=[]; // Keep executable bytes alive; do not recycle decoded code addresses.
-  async function call(name,args,onPending=()=>{}) {
+  async function call(name,args,onPending=()=>{},expected=0) {
     const code=alloc(128),id=apis.find(a=>a.name===name).id;
     callers.push(code);
     new Uint8Array(memory.buffer).set([
@@ -56,7 +59,7 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
       }
     }
     assert.strictEqual(e.get_esp()>>>0,0x07000004,name);
-    assert.strictEqual(read(marker),0,`${name}: ${bridge.lastError||''}`);
+    assert.strictEqual(read(marker),expected,`${name}: ${bridge.lastError||''}`);
   }
   try {
     const pp=alloc(64);new Uint8Array(memory.buffer,wa(pp),64).fill(0);
@@ -114,6 +117,45 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
     await call('IDirect3DDevice9_Release',[device]);
     assert.strictEqual(submissions.get(0x30004),1);
     assert(waits>=3,'actual asynchronous guest draw, Present and Release');
+    // A broker runs on a separate instance whose sync depth is zero. The
+    // packet must carry the actual WAT owner's nested-send context.
+    e.guest_write32(pp+44,1);
+    await call('IDirect3D9_CreateDevice',[0,0,1,1,0,pp,out]);const nestedDevice=read(out);
+    await call('IDirect3DDevice9_Clear',[nestedDevice,0,0,1,0xff123456,0x3f800000,0]);
+    assert(bridge.devices.get(nestedDevice)?.async,'actual async backend initialized before nested Present');
+    const proc=alloc(128),nestedMarker=alloc(4),getdcMarker=alloc(4);
+    const presentThunk=e.api_thunk(apis.find(a=>a.name==='IDirect3DDevice9_Present').id);
+    const presentCode=[...Array(4).fill(0).flatMap(v=>[0x68,...u32(v)]),
+      0x68,...u32(nestedDevice),0xb8,...u32(presentThunk),0xff,0xd0,
+      0xa3,...u32(nestedMarker),0xb8,...u32(0x1234),0xc2,16,0];
+    new Uint8Array(memory.buffer).set(presentCode,wa(proc));callers.push(proc);
+    e.test_wnd_table_set(0x10002,proc);e.guest_write32(nestedMarker,0xdeadbeef);
+    brokerShadow=true;e.start_inline(0);
+    assert.strictEqual(e.nested_present(0x10002),0x1234,'nested wndproc returns after Present');
+    assert.strictEqual(e.send_completed(),1,'nested Present cannot abandon its wndproc');
+    assert.strictEqual(read(nestedMarker),0,'nested Present HRESULT');
+    assert.strictEqual(e.get_d3d_render_token(),0,'nested Present leaves no token for GetDC to consume');
+    assert.strictEqual(e.get_sync_msg_depth(),0,'nested send unwinds');
+    await call('IDirect3DDevice9_GetBackBuffer',[nestedDevice,0,0,0,out]);const back=read(out);
+    const readbacksBefore=submissions.get(0x30016)||0;
+    await call('IDirect3DSurface9_GetDC',[back,out]);const hdc=read(out);
+    assert.strictEqual(submissions.get(0x30016),readbacksBefore+1,'GetDC issues its own readback');
+    assert(new Uint32Array(memory.buffer,e.target_bits(nestedDevice)>>>0,64).every(p=>p===0xff123456),
+      'GetDC sees the completed nested frame');
+    assert(hdc,'a fresh readback yields an actual DC');
+    // A real, legitimate rejection remains a rejection while that DC is held.
+    const badProc=alloc(128),badThunk=e.api_thunk(apis.find(a=>a.name==='IDirect3DSurface9_GetDC').id);
+    callers.push(badProc);new Uint8Array(memory.buffer).set([
+      0x68,...u32(out),0x68,...u32(back),0xb8,...u32(badThunk),0xff,0xd0,
+      0xa3,...u32(getdcMarker),0xc3],wa(badProc));
+    e.clear_yield();e.start_inline(badProc);e.run(1000);
+    assert.strictEqual(read(getdcMarker),0x8876086c,'held DC remains INVALIDCALL');
+    assert.strictEqual(read(out),0,'legitimate rejection clears output');
+    await call('IDirect3DSurface9_ReleaseDC',[back,hdc]);
+    await call('IDirect3DSurface9_Release',[back],()=>{},1);
+    await call('IDirect3DDevice9_Release',[nestedDevice]);
+    brokerShadow=false;
+    console.log('PASS owning nested-send Present with broker shadow, subsequent GetDC and legitimate held-DC rejection');
   } finally {await bridge.close();for(const code of callers)e.guest_free(code);}
   assert.strictEqual(worker.threadId,-1);
   assert(consumer.shutdownInfo.heapAdopted>0,'worker native heap returned after exit');

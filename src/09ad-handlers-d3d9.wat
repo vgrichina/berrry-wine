@@ -1325,6 +1325,9 @@
       (local.set $result (call $d3d_render_poll)) (br $issue)))
     (local.set $desc (call $d3d9_gpu_descriptor (local.get $arg0)))
     (if (local.get $desc) (then
+      ;; Present-only packet word: the broker's instance is not the guest
+      ;; owner and cannot read this invocation's synchronous-send depth.
+      (i32.store offset=60 (local.get $desc) (global.get $sync_msg_depth))
       (local.set $result (call $host_gpu_gl_call (i32.const 0x30002) (local.get $desc) (i32.const 0))))))
     (if (call $d3d_render_park (local.get $result) (i32.const 24)) (then (return)))
     ;; Past the park, this call completes whichever way it presents.
@@ -2734,6 +2737,7 @@
       (local.set $result (if (result i32) (global.get $d3d_render_token)
         (then (call $d3d_render_poll))
         (else (local.set $desc (call $d3d9_gpu_descriptor (local.get $device)))
+          (i32.store offset=60 (local.get $desc) (global.get $sync_msg_depth))
           (call $host_gpu_gl_call (i32.const 0x30002) (local.get $desc) (i32.const 0)))))
       (if (call $d3d_render_park (local.get $result) (i32.const 28)) (then (return)))
       (call $present_frame_end)

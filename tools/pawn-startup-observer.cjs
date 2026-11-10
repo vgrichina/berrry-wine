@@ -49,6 +49,33 @@ function installPawnObservation(scope, options = {}) {
         global, tlsIndex, tlsSlots, tls, factoryRefusal: u32(0x42380c), surface: u32(0x423fc0),
         stack: Array.from({length: 5}, (_, i) => u32(esp + i * 4))};
     }
+    // Resolve addresses from the generated map belonging to this Worker.
+    // DxObject is the frozen 32-byte layout; wrapper +4 is its slot.
+    function surfaceState() {
+      const base = scope.RegionMap?.BASE;
+      if (!base) return {unavailable:'owning-region-map-absent'};
+      const surface = u32(0x423fc0), token = e.get_d3d_render_token() >>> 0;
+      const raw = p => dv.getUint32(p >>> 0, true);
+      if (!surface) return {surface,token};
+      const header = Array.from({length:5},(_,i)=>u32(surface+i*4));
+      const slot = header[1] < 16384 ? header[1] : 0;
+      const entry = base.DX_OBJECTS + slot*32;
+      const words = Array.from({length:8},(_,i)=>raw(entry+i*4));
+      const owners = [];
+      for (let i=0;i<16384;i++) {
+        const p=base.DX_OBJECTS+i*32;
+        if(raw(p)===20 && raw(p+20)!==0 && raw(p+8)===slot) {
+          const device=(base.COM_WRAPPERS+i*8-base.GUEST_BASE+e.get_image_base())>>>0;
+          const state=raw(p+20);
+          owners.push({slot:i,device,state,words:Array.from({length:8},(_,j)=>raw(p+j*4)),
+            boundTarget:u32(state+22020)});
+        }
+      }
+      const flags=words[7];
+      return {surface,token,header,slot,entry,words,owners,
+        lockable:!!(flags&0x08000000),dcHeld:!!(flags&0x40000000),
+        dcReadPending:!!(flags&0x20000000),lockHeld:!!(flags&0x04000000)};
+    }
     function latch(message) {
       if (terminal) return terminal;
       try { terminal = {message, state: snapshot(), entered, seen}; }
@@ -88,6 +115,7 @@ function installPawnObservation(scope, options = {}) {
         const object = s.global || (pc === 0x41c0b4 ? u32(s.esp+4) :
           pc >= 0x41c0c0 && pc <= 0x41c0f9 ? s.esi : 0);
         record('boundary', {pc,...s,lifetimeChanged:previous!==lifetime,
+          surfaceState: [0x414ffe,0x415012,0x415021,0x41508b].includes(pc) ? surfaceState() : null,
           outputHdc: (pc===0x415021||pc===0x41508b) && s.ebp ? u32(s.ebp-4) : null,
           object: object ? {pointer:object,callback:u32(object+0x58),cleanup:u32(object+0x68),
             hdc:u32(object+0xb0),method:u32(object+0x20)} : null});
@@ -100,6 +128,17 @@ function installPawnObservation(scope, options = {}) {
       observe(args[0]>>>0);
       return Reflect.apply(old,this,args);
     }}};
+    if (imports.host.gpu_gl_call) {
+      const gpu = imports.host.gpu_gl_call;
+      replaced.host.gpu_gl_call = function(...args) {
+        const result = Reflect.apply(gpu,this,args);
+        if (active && entered && [0x30016,0x30015,0x30007].includes(args[0])) {
+          try { record('surface-transfer',{args,result,surfaceState:surfaceState()}); }
+          catch(error) { record('observer-error',{error:String(error)}); }
+        }
+        return result;
+      };
+    }
     const result = await Reflect.apply(instantiate,this,[module,replaced,...rest]);
     e = (result.exports ? result : result.instance).exports;
     owner = {records,stop,latch,observe,get active(){return active;},get terminal(){return terminal;}};
