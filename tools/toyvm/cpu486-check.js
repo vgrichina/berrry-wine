@@ -46,13 +46,15 @@ async function main() {
       });
       run(vm, cpu, probe.slice(0, -4), 0x202);
       check(`${tag} ${cpu} missing flags restore is detected`, () => assert.notEqual(vm.raw('flags'), 0x202));
+      run(vm, cpu, probe.slice(0, -2));
+      check(`${tag} ${cpu} missing POPFD leaves a detectable stack imbalance`, () => assert.equal(vm.get('sp'), SP - 4));
       run(vm, cpu, [...probe.slice(0, -4), 0x53, 0x9d]);
       check(`${tag} ${cpu} word restore balances a word, not a dword`, () => {
         assert.equal(vm.get('sp'), SP); assert.equal(vm.raw('flags') & AC, expectedAC);
         // On 486 the word POPF cannot restore the original upper EFLAGS.
         if (cpu === 486) assert.notEqual(vm.raw('flags'), 0x246);
       });
-      run(vm, cpu, [...loadFlags(0x24002a), ...readFlags]);
+      run(vm, cpu, [...loadFlags(0x27002a), ...readFlags]);
       check(`${tag} ${cpu} reserved/ID/VM/RF input does not become AC or defined state`, () => {
         assert.equal(vm.raw('dx'), expectedAC | 2);
         assert.equal(vm.get('sp'), SP);
