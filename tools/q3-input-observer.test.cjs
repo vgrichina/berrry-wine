@@ -19,6 +19,17 @@ assert(pinStart>0&&pinEnd>pinStart);
 harness=harness.slice(0,pinStart)+harness.slice(pinEnd);
 harness=harness.replace('const source=composition.compose().source;',"const source=require('./q3-current-foreign-closure-v1.cjs').composition('"+route.version+"').compose().source;");
 current.validate({checkpointObserverVersion:current.checkpointObserverVersion,foreignClosureVersion:route.version});
+// The current CRT authority must reject even one changed byte before staging.
+// Substitute reads only in this offline refusal control; never alter the tree.
+for(const name of ['src/09a6-handlers-crt.wat','build/wine-assembly.wasm','build/wine-assembly.compat.wasm']){
+ const read=fs.readFileSync,target=path.join(root,name);
+ fs.readFileSync=function(file,...args){
+  if(path.resolve(String(file))===target){const b=Buffer.from(read.call(this,file));b[b.length-1]^=1;return typeof args[0]==='string'?b.toString(args[0]):b;}
+  return read.call(this,file,...args);
+ };
+ try{assert.throws(()=>current.validate({foreignClosureVersion:route.version}),/published build source|provider SHA/);}
+ finally{fs.readFileSync=read;}
+}
 const seam='return {r,scope,canvas,document,words,index,events,send,evaluate,host,worker};';
 assert.equal(harness.split(seam).length,2);
 harness=harness.replace(seam,'return {r,scope,canvas,document,words,index,events,send,evaluate,host,worker,listeners,memory};');

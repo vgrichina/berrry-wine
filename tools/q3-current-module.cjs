@@ -7,8 +7,8 @@ const crypto=require('node:crypto'),cp=require('node:child_process'),assert=requ
 const root=path.resolve(__dirname,'..');
 const historical='scratch/runs/20261109-q3-relative-menu-native-progress-1415/runtime-pins.json.gz';
 const historicalSHA='a6be3bee6fbf1c218a3982d8e991a44838abddc0a0b80c8bd4f45c3d6effe1dc';
-const moduleVersion='q3-1475-published-5c8780318-f977ebf7c-v1';
-const cpuCommit='5c8780318afbbe0e5a4e7c64190f2e0abde21cd0';
+const moduleVersion='q3-published-crt-e7e0312bd-f977ebf7c-v1';
+const cpuCommit='e7e0312bd9a932ab2d3f0381e117e8158f2ee685';
 const custodyCommit='f977ebf7c28977d7d95eb404f43db2209d163dde';
 const checkpointObserverVersion='q3-checkpoint-b993419a5-v1';
 const checkpointCommit='b993419a54d732a67696851d8f2dc50b574b625b';
@@ -16,14 +16,14 @@ const checkpointCallerSHA='5b52e6438e2ec3f9676d11584dd52c5a435b1b17412c4ac2d5c1d
 const checkpointPrelaunchSHA='649c689aba21e8fca8325435a08be1f7181dd6380cfe843d64ce9f840c9dec1a';
 const foreignPrelaunchSHA='37d2cff7ce6f18eb19ff95bd5a94a234527353c902d6d1336bdbfca789eb20e8';
 const checkpointDependencies=['tools/q3-checkpoint-observer.py','tools/q3-cancellation-stream-eof.py','tools/q3-native-launch-client.py'];
-const SELECTED=Object.freeze({sha256:'3e491c0840bb7771328738a0d160b4bbaa3d7ab72074cbd38a7b41e5d7e8ec18',bytes:2186068});
+const SELECTED=Object.freeze({sha256:'4f2c69a1528e01a9ab5127201d5e8a222da2a35236377a1351f444f55fa5a7d9',bytes:2186099});
 const modules={
   'build/wine-assembly.wasm':{size:SELECTED.bytes,sha256:SELECTED.sha256},
-  'build/wine-assembly.compat.wasm':{size:2188714,sha256:'ecb45716b1ee7fc5218b1670dd270b19c7664ee30d000b3360a12786a1c21eaf'}
+  'build/wine-assembly.compat.wasm':{size:2188745,sha256:'5bf29fae3d0c6918df98973ef29297a77a81df0e0b0a917b8adac8bec256df69'}
 };
 const publishedProviders=Object.fromEntries([
   'host.js','lib/guest-thread-host.js','lib/guest-worker.js','lib/region-map.generated.js',
-  'src/00-regions.wat','src/03-registers.wat','src/05b-string-ops.wat','src/13-exports.wat'
+  'src/00-regions.wat','src/03-registers.wat','src/05b-string-ops.wat','src/09a6-handlers-crt.wat','src/13-exports.wat'
 ].map(name=>[name,cpuCommit]));
 publishedProviders['tools/native_kernel_custody.py']=custodyCommit;
 // Exact published opt-in stage recorder; never accept arbitrary GL drift.
@@ -65,7 +65,7 @@ function validate(options={}){
   const files=prior.files.filter(p=>!p.path.startsWith(path.dirname(historical)+'/')).map(p=>{
     const actual=pin(p.path,read(p.path)),want=expected[p.path]??p;
     assert.equal(actual.size,want.size,'provider size: '+p.path);assert.equal(actual.sha256,want.sha256,'provider SHA: '+p.path);
-    if(expected[p.path])explainedDrift.push({before:p,after:actual,reason:foreign&&foreignRoute.authorities[p.path]?'Exact published '+foreignRoute.authorities[p.path][0]:modules[p.path]?'Published 5c8780318 CPU mirror build':publishedProviders[p.path]?'Exact published '+publishedProviders[p.path]:(checkpoint||foreign)&&p.path==='tools/q3-native-prelaunch.py'?'1535 explicit checkpoint caller/prelaunch migration':'1475 tested Q3 preparer/admission/custody migration'});
+    if(expected[p.path])explainedDrift.push({before:p,after:actual,reason:foreign&&foreignRoute.authorities[p.path]?'Exact published '+foreignRoute.authorities[p.path][0]:modules[p.path]?'Published '+cpuCommit+' CPU mirror build':publishedProviders[p.path]?'Exact published '+publishedProviders[p.path]:(checkpoint||foreign)&&p.path==='tools/q3-native-prelaunch.py'?'1535 explicit checkpoint caller/prelaunch migration':'1475 tested Q3 preparer/admission/custody migration'});
     return actual;
   });
   const httpPins=prior.httpPins.map(p=>{

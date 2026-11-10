@@ -54,7 +54,11 @@ async function consumer(mode){
 async function compiled(){
  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),ctx={exports:null,getMemory:()=>memory.buffer};
  const host=createHostImports(ctx).host;Object.assign(host,{memory,log(){},log_i32(){},exit(){}});
- const scope={WebAssembly:{instantiate:WebAssembly.instantiate,compile:WebAssembly.compile},
+ let observedCallbacks=0;
+ const scope={WebAssembly:{instantiate:(m,i,...rest)=>{
+  const callback=i.host.q3_menu_event;i.host.q3_menu_event=(...args)=>{observedCallbacks++;return callback(...args);};
+  return WebAssembly.instantiate(m,i,...rest);
+ },compile:WebAssembly.compile},
   fetch:async()=>({ok:true,arrayBuffer:async()=>bytes}),crypto:require('node:crypto').webcrypto,performance,console:{debug(){}},memory,
   endpointIdentity:1,workerSlot:0};
  // Execute the emitted installer through the real transport decorator. The
@@ -85,7 +89,10 @@ async function compiled(){
  // This is a synthetic x86 fixture, never an original-game handler call.
  // Natural CALL/RET in the real generated module must supply the evidence.
  const before=Buffer.from(memory.buffer.slice(wa(0x401000),wa(0x401010)));
- o.begin(liveBinding,live);e.run(10);
+ const guard=e.get_dbg_tier_guard();e.run(10);
+ assert.equal(observedCallbacks,0,'unarmed observer never calls JS');assert.equal(e.get_eax(),123);assert.equal(e.get_dbg_tier_guard(),guard);
+ e.set_eip(0x401000);e.set_esp(0x74ff000);
+ o.begin(liveBinding,live);e.run(10);assert(observedCallbacks>0);assert.equal(e.get_dbg_tier_guard(),guard);
  const s=o.snapshot(live);assert.equal(s.reason,null);assert.equal(s.pendingFrames,0);
  assert.deepEqual(Array.from(s.records.filter(r=>r.kind.startsWith('guest-')),r=>r.kind),['guest-call','guest-entry','guest-return']);
  assert.equal(s.records.find(r=>r.kind==='guest-return').result,123);
@@ -96,7 +103,7 @@ async function compiled(){
  let calls=0;const original=function(x){calls++;assert.equal(this,host);return x;};
  assert.equal(o.wrap('check_input',original).call(host,0x000d0100),0x000d0100);assert.equal(calls,1);
  const sentinel=Error('original import');assert.throws(()=>o.wrap('check_input',()=>{throw sentinel;})(),x=>x===sentinel);assert.equal(o.snapshot(live).reason,'production-import-failure');
- return {moduleHash,size:bytes.length,realGeneratedWasm:true,naturalCallEntryReturn:true};
+ return {moduleHash,size:bytes.length,realGeneratedWasm:true,naturalCallEntryReturn:true,unarmedZeroCallbacks:true,tierGuardUnchanged:true};
 }
 async function startupControl(){
  const selected=current.SELECTED,live={endpoint:1,slot:0,instance:'startup-instance',gpu:false};
