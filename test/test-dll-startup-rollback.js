@@ -112,7 +112,7 @@ async function transportControl(env) {
 
 async function exerciseTransport(module) {
  const {GuestThreadHost}=require('../lib/guest-thread-host');
- return transportControl({pe,check:(value,message)=>assert.ok(value,message),create:async()=>{
+ const env={pe,check:(value,message)=>assert.ok(value,message),create:async()=>{
   const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),logs=[];
   const ctx={getMemory:()=>memory.buffer,resourceJson:{menus:{},dialogs:{},strings:{},bitmaps:{}},onExit(){}};
   const imports=createHostImports(ctx);imports.host.memory=memory;
@@ -120,7 +120,57 @@ async function exerciseTransport(module) {
   const host=new GuestThreadHost({memory,module,sigs,hostImports:imports.host,
    workerUrl:path.join(__dirname,'../lib/guest-worker.js'),clockIntervalMs:0,log:line=>logs.push(line)});
   return {host,logs};
- }});
+ }};
+ return [...await transportControl(env),...await transportResources(env)];
+}
+
+async function transportResources(env){
+ const results=[];
+ for(const mode of ['resources-success','resources-failure','resources-stop']){
+  const {host}=await env.create();let release;
+  try{
+   await host.start();await host.loadPe(env.pe([[0x2000,[0xc3]]]),'resource-control.exe',1);
+   const at=await host.callExport('guest_to_wasm',0x401404);
+   const gateAt=await host.callExport('get_dll_callback_lock');
+   const view=new DataView(host.memory.buffer),gate=new Int32Array(host.memory.buffer,gateAt,2);
+   let entered,signal,resourceMessage,calls=0;
+   const ready=new Promise(resolve=>{entered=resolve;});
+   const held=new Promise(resolve=>{release=resolve;});
+   const receive=host.link._onMessage.bind(host.link);
+   host.link._onMessage=msg=>{if(msg.t==='dllResources')resourceMessage=msg;return receive(msg);};
+   // Process attach increments a counter in the EXE image before returning.
+   const code=[0xff,0x05,4,0x14,0x40,0,0xb8,1,0,0,0,0xc2,12,0];
+   const loading=host.loadDlls([{name:'resource.dll',bytes:env.pe([[0x1000,code]],true)}],
+    env.pe([[0x2000,[0xc3]]]),{registerDllResources:async(configs,rows,control)=>{
+     calls++;signal=control.signal;
+     env.check(configs[0].name==='resource.dll'&&rows[0].dllMain===rows[0].loadAddr+0x1000,'resource registration gets mapped module');
+     entered();await held;if(mode==='resources-failure')throw new Error('host resource failure');
+    }});
+   const outcome=loading.then(rows=>({rows}),error=>({error}));
+   await ready;
+   env.check(view.getUint32(at,true)===0,'real Worker does not enter DLL before host registration');
+   env.check(Atomics.load(gate,1)===1,'Worker retains startup gate during host registration');
+   host.link.worker.postMessage({t:'dllResourcesResult',endpointIdentity:host.link.endpointIdentity+1,
+    lookup:resourceMessage.lookup});
+   await new Promise(resolve=>setTimeout(resolve,10));
+   env.check(view.getUint32(at,true)===0,'foreign endpoint acknowledgement cannot release initializer');
+   if(mode==='resources-stop'){
+    await host.stop();env.check(signal.aborted,'retirement cancels host registration signal');
+    release();await Promise.resolve();
+    env.check(view.getUint32(at,true)===0,'late registration cannot resurrect retired initializer');
+   }else release();
+   const result=await outcome;
+   if(mode==='resources-success'){
+    env.check(!result.error&&view.getUint32(at,true)===1,'attach runs once after acknowledgement');
+    env.check(!signal.aborted,'successful registration is not revoked on completion');
+   }
+   else env.check(result.error&&view.getUint32(at,true)===0,'failed or retired registration does not run attach');
+   env.check(Atomics.load(gate,0)===0&&Atomics.load(gate,1)===0,'startup gate unwinds');
+   env.check(calls===1,'one host resource registration per load');
+   results.push({name:mode,attach:view.getUint32(at,true),calls,error:result.error?.message||null});
+  }finally{release?.();await host.stop();}
+ }
+ return results;
 }
 
 async function resourceBarrier(module){

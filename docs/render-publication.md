@@ -625,11 +625,8 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   normal/compat Node Workers verify the returned index against the owner's
   module table and preserve attach failure, rollback and caller restoration
   checks (`scratch/runs/20261109-worker-dll-metadata/`).
-  Startup DLL loading is not yet ready for full CLI owner migration: the browser
-  registers bitmap resources only after Worker `loadDlls` returns, although a
-  DLL initializer can need those resources. Worker startup also still uses the
-  synchronous loader driver. Both must be addressed while preserving loader
-  gate ownership and rollback; richer metadata alone does not fix them.
+  Startup DLL loading requires bitmap resources before initializers can use
+  them, with loader gate ownership and rollback retained across host waits.
   The CLI now uses `loadDllsAsync`, backed by the same startup transaction
   generator as synchronous `loadDlls`. Mapping/import patching precede an
   awaited resource-registration step, then ordered DLL initializers. Errors
@@ -641,10 +638,22 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   Both drivers retain attach/rollback failure behavior in main and Node Worker
   tests on normal and compatibility builds. Evidence:
   `scratch/runs/20261109-dll-startup-await/`.
-  The production Worker command is still synchronous pending its reverse
-  resource-registration handshake and cancellation qualification. The special
-  CARDS exported initializer also remains synchronous. This is not completion
-  of startup callback ownership or full CLI main-Worker migration.
+  The production Worker command now uses the awaited driver. Resource callbacks
+  remain host-local; a numeric load ID and endpoint-bound request transport the
+  mapped module metadata, and DLL entry waits for the host acknowledgement.
+  The browser host passes registration through this barrier instead of waiting
+  until all initializers have run. Only typed resource/lookup replies bypass
+  the guest command queue; guest execution commands remain serialized.
+  Retirement aborts outstanding host requests, rejects the Worker wait and joins
+  loader unwind before termination. Late/foreign acknowledgements cannot resume
+  a retired initializer. Host callbacks that do asynchronous work receive an
+  AbortSignal and must honor it; they must not await owner-export commands queued
+  behind this startup transaction. Success releases callback references without
+  cancelling the registered resources. Real Node tests cover delayed success,
+  rejection, wrong endpoint and stop with late completion on both WASM builds:
+  `scratch/runs/20261109-worker-resource-barrier/`.
+  The special CARDS exported initializer remains synchronous. Browser visual
+  qualification and full CLI main-Worker migration remain open.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.

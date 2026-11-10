@@ -4704,10 +4704,7 @@ class WineAssembly {
       // Guest execution (DllMain runs) must happen on the thread that owns the
       // instance. registerDllResources stays here: it is host bookkeeping over
       // bytes this thread already has.
-      const register = opts.registerDllResources;
-      delete opts.registerDllResources;
       results = await this.guestWorker.loadDlls(readyConfigs, exeBytes, opts);
-      if (register) register(readyConfigs, results);
     } else {
       opts.advanceGuestTime = ms => this._advanceGuestTickMs(ms,
         this.hostCtx && this.hostCtx.sharedAudio);
