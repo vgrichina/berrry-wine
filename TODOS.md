@@ -20,7 +20,7 @@
   id: TR2-CURRENT-NATIVE-CONTROL-RATE-20261108
   status: linked original shot and target-health observer retained; visible-target attempt ended without shot
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewedaf323ab1d once;428refs7588870B295gzip independently original/stored SHA size CRC PASS. ONE original reached empty rising alley with no visible enemy; no Control/shot, target/damage fields NOT PRODUCED. Fourth navigation requested400ms measured401ms exceeds400 cap; no compliance claim and no unchanged retry. Normal ACK15/Chrome0EOF361actualreaps completeTRUE, bx_qh5rjhvx ARCHIVED expiryNULL stop_ebd5e1a09c2a6bc1. Prior8d1489d904 ammo1000->999 target0 and e850fc6a9 native observer stand. Next needs visible-target route plus timing margin and disk headroom; released slot used for Q3 offline causal repair. Renderer discrepancy and Full27/parity/audio/FPS open.
+  Next: Published9080aa9ca title-only verified capture packet replaces four downloads with one. Original first Left300 admitted at9232ms, release302ms and changed image; second command refused stale15172ms before dispatch, immediate cancellation and no enemy/shot. Root verified bx_xvaerjjt stopped unforced stop_e2da66f82d297b62. Park unchanged model-decision-latency retry under preserved12s fence; fresh BG2 Jaheira rescue takes slot. Historical shot/observer accepted; visible-target encounter open.
 
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
@@ -93,7 +93,7 @@
   status: done for live control and score2000; first-level clear remains unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published372c6f13b verifies two paddle rebounds before a second Space launch, substantial brick removal and score2000 after an ordinary continue. Coordinator inspected score950/1700 and final2000 frames, checked same-launch pixel reversals and independently hashed508 artifact references. Both all-lives-lost screens are preserved.17exactACK/114native pairs and independent releases pass; original fixture/HTTP pins pass and box normally archived. No emulator change, level clear, GL, FPS, audio or full-playability claim. Note: docs/re-notes/lbreakout2-sustained-first-level-20261108.md.
-  Next: Publishedd3651d790 original SDL/menu startup-completion composition;0343 original failed unchanged2s startup deadline before any image or display/menu return, immediate owning cancellation and no input. Publishedcead58dea retains last validated failure snapshot and refuses duplicate composition; compiled/fullcaller/installedWorker tests and lockedbuild pass. Root verified bx_azpsrme4 stopped unforced stop_cbe69a7349613dfd. Fresh lbreakout-startup-cause-0355 diagnoses original startup offline;080064edf refusals preserved. Historical score2000 accepted; level clear/audio/FPS open.
+  Next: Published515ad3b61 decodes original pre-menu grayscale sample at column240,row168 of640x480; menu/dirty0, actual menu-gate defect unsupported. Root verified bx_cm4px2vw stopped unforced stop_3dee994975a17bfe. Offline scalar4byte-copy candidate rejected15matchedgroups ratio1.0003 p0.488; no runtime change. Fresh lbreakout-zero-count-shift-cost-0435 isolates original memory-shift cost with full access/watch/fault/flag equivalence. Historical score2000 accepted; first-level clear/audio/FPS open.
 
 - [x] Redline native firing and ammunition consumption
   id: NEW-GAME-REDLINE-FIRING-20261108
@@ -124,7 +124,7 @@
   status: done for pickup/equipment/action; target damage and kill remain unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published905dab22b records original Conjurer Jack acquiring Force of Nature Staff of Recharge, inventory fourth-slot/held-model/HUD change, then green action effects and charge3→2. Coordinator personally inspected six paired captures and independently verified490 artifact references plus normal nonforced archived-box shutdown. Worker ended143 during finalization, cause unknown, without outer final/result; recovered note explicitly preserves this interruption and the DOM recorder's missing mouse-up coverage. No emulator fix, target hit/kill, GL, FPS, audio or full-playability claim. Note: docs/re-notes/nox-native-equipment-20261108.md.
-  Next: Command-scoped passive replies/capture-only interval verified natively: six intervals6932 records, seven reviewed images through Network. Host Game failed before input admission; owning cancellation39ms, zero later protocol. Publishedbe829146f adds bounded pending operation/target/expression attribution; underlying stall unresolved. Root verified bx_nqegprxh stopped unforced stop_bf7640830f2785fb. Fresh nox-attributed-host-game-0355 identifies exact stalled evaluation then ordinary Conjurer/Jack/staff if responsive, preserving reviewed anchors and cursor/button guard. Historical staff pickup/action accepted; target damage/kill open.
+  Next: Publishedca2989f62 adds actual wire/pending-predecessor attribution.0355 stopped before game commands at remote status IndentationError; exact emitted inspect.cleandoc correction compiled/executed offline. Root verified bx_yj92uu2d stopped unforced stop_d28853bac85c0736. Fresh nox-corrected-status-host-route-0423 passed corrected-source/Worker/pointer/ordinary27/build controls, pursues reviewed HostGame/Conjurer/Jack/staff. Historical staff pickup/action accepted; target damage/kill open.
 
 - [x] World Circuit v1.03 original installation and native driving
   id: NEW-GAME-WORLD-CIRCUIT-V103-20261107
@@ -2150,10 +2150,10 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 - [x] New-game lane: Baldurs Gate II demo
   id: NEW-GAME-BALDURS-GATE2-DEMO-20261009
   status: done
-  owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   candidate: baldurs-gate2-demo
   Update 2026-11-07: Published6e4578f03, ordinary Minsc recruitment yields three portraits and3000XP; Jaheira rescue journal and equipment-table approach reviewed. No opened loot panel, acquired item or combat. Evidence: scratch/runs/20261107-bg2-current-combat/, 1206 artifacts verified before normal box stop. Next ordinary equipment/key/encounter interaction.
-  Next: Gameplay qualification complete on main5aafa6658; current-main moduleb84324ed revalidates dialogue and floor movement. Apparent pointer mismatch was diagnostic Puppeteer.connect default viewport mutation; preserved viewport fixes mapping without runtime changes. Audio/FPS remain coverage follow-ups.
+  Next: Fresh bg2-jaheira-key-rescue-0442 pursues native weapons-room cage key and Jaheira release, using latest bounded chunk staging and ordinary reviewed pause/portrait/dialogue route. Historical Minsc recruitment3000XP and movement to Jaheira remain accepted; fresh key/rescue not established. Shared providers read-only; exact generated caller controls precede one conditional original.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
 
   Current evidence: docs/re-notes/alice-host-receipt-ground-route-20261103.md, published4ad02d281; coordinator full2060local-file SHA PASS (includes complete7456payload archive), native assessment and gnome screenshot reviewed. Own boat bx_974w85x2 STOPPED/nonforced/errornull20:00:35.847Z, snapshot completed/verified20:00:33.613Z. No native guest fault; optional input-state missing-flag host rejection retained.
