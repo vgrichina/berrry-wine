@@ -301,6 +301,62 @@ function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=s
 }
 // Instrument the authenticated consumer after its existing transforms. Keep
 // protocol routing, debugger policy, terminal propagation and timers intact.
+// Explicit fixture usability contract; shared render providers stay unchanged.
+function readableFixtureHTML(source){
+ const once=(before,after)=>{assert.equal(source.split(before).length,2,'readable fixture seam: '+before);source=source.replace(before,after);};
+ once('new Int32Array(memory.buffer,rect,4).set([0,0,8,8])','new Int32Array(memory.buffer,rect,4).set([0,0,320,200])');
+ once("'ctrl_set_geom',hwnd,0,0,8,8","'ctrl_set_geom',hwnd,0,0,320,200");
+ once("'test_gdi_client_rect_set',hwnd,0,0,8,8","'test_gdi_client_rect_set',hwnd,0,0,320,200");
+ once('hwnd,w:8,h:8,clientRect:{w:8,h:8}','hwnd,w:320,h:200,clientRect:{w:320,h:200}');
+ once("'glViewport',[0,0,8,8]","'glViewport',[0,0,320,200]");
+ once("onPresent:layer=>canvas.getContext('2d').drawImage(layer.canvas,0,0,320,200)","onPresent:layer=>{const ctx=canvas.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;ctx.drawImage(layer.canvas,0,0,320,200)}");
+ once(' globalThis.__draw=async()=>{',` let shifted=false;
+ const inputOwner={worker:link.worker,module:link.module,endpoint:link.endpointIdentity};
+ const sameInputOwner=()=>{check(!globalThis.__generatedError&&wine.running&&!wine._stopped&&wine.renderer===renderer&&wine.guestWorker.link===link&&!link._stopping&&link.worker===inputOwner.worker&&link.module===inputOwner.module&&link.endpointIdentity===inputOwner.endpoint&&link.slot===0,'readable fixture input owner changed');};
+ addEventListener('keydown',event=>{if(event.isTrusted&&event.keyCode===13&&!event.repeat){try{sameInputOwner();shifted=true;}catch(e){globalThis.__generatedError=String(e);}}});
+ globalThis.__draw=async()=>{`);
+ once("  await invoke('glViewport'",`  sameInputOwner();await invoke('glViewport'`);
+ once("  await invoke('glColor4f'",`  await invoke('glMatrixMode',[0x1700]);await invoke('glLoadIdentity');
+  await invoke('glTranslatef',[shifted?.5:0,0,0].map(f));
+  await invoke('glColor4f'`);
+ return source;
+}
+function readableFixtureHandler(generated){
+ return (req,res)=>generated.handle(req,new Proxy(res,{get(target,key){
+  if(key==='end')return html=>target.end(readableFixtureHTML(html));
+  const value=target[key];return typeof value==='function'?value.bind(target):value;
+ }}));
+}
+async function readableFixtureControls(controls,options){
+ const transport=require(root+'/scratch/runs/20261108-q3-gl-readiness-gameplay/transport.cjs');
+ return require('./q3-input-phase-service.cjs').run({run:async o=>{
+  const {evaluate,workers,wait,chain,save,capture,execute,out}=o;
+  const moduleHash=[...workers.values()].filter(w=>w.url.includes('guest-worker')&&!w.closed).flatMap(w=>w.scripts).find(s=>s.sha256)?.sha256;
+  assert(moduleHash,'actual instantiated module');
+  const draw=()=>evaluate('__draw()');await draw();
+  const ready=await chain.establishReady({stableMs:10,wait:async()=>{await draw();await wait(10)}});
+  save('renderer-readiness.json',ready);await capture('fixture-startup');
+  const c=JSON.parse(fs.readFileSync(out+'/fixture-startup-capture.json'));
+  transport.publish(out+'/fixture-startup-review.json',{...c,review:'Separately reviewed readable fixture.'});
+  const request=transport.request(out,'positive-'+process.env.RENDER_BACKEND,{action:'key',key:'Enter',holdMs:100,waitMs:0,label:'positive',reviewRef:'fixture-startup'},50000);
+  request.catch(()=>{});
+  while(!fs.existsSync(out+'/commands/0.json'))await wait(5);
+  await transport.consume(out,0,execute);assert((await request).ok);
+  const shot=JSON.parse(fs.readFileSync(out+'/positive-capture.json'));
+  const parent=path.dirname(process.env.Q3_EXECUTION_BOUNDARY_OUT);
+  fs.writeFileSync(parent+'/readable-input-review-ready.json',JSON.stringify({capture:shot,image:out+'/positive.png'}),{flag:'wx'});
+  const due=Date.now()+55000;
+  while(!fs.existsSync(parent+'/readable-input-model-review.json')){
+   assert(!fs.existsSync(parent+'/caller-cancelled.json'),'terminal owner');
+   assert(Date.now()<due,'separate input image review unavailable');await wait(20);
+  }
+  const review=JSON.parse(fs.readFileSync(parent+'/readable-input-model-review.json'));
+  assert.equal(review.sha256,shot.sha256);assert.deepEqual(review.identity,shot.identity);
+  assert.equal(review.clear,true);assert.equal(review.distinct,true);assert(review.review?.trim());
+  save('positive-control.json',{passed:true,actualProductionWorkers:true,ready,exactObserverAdmissionTransport:true});
+  save('local-controls.json',{passed:true,positive:true,rows:[],originalLaunches:0,independentCPUAndRenderModule:moduleHash,budgetsUnchanged:true});
+ }},options);
+}
 function composeStartupDiagnostics(source){
   source=composeTerminalCleanup(source);
   const once=(before,after)=>{
@@ -317,7 +373,9 @@ function composeStartupDiagnostics(source){
  addEventListener('pagehide',()=>clearInterval(timer),{once:true});
 })();Object.defineProperty(globalThis,'GLRenderHost'`);
   if(process.env.Q3_INPUT_SERVICE_REVIEW==='1')once("await require('./local-controls.cjs').run(",
-    "await require(root+'/tools/q3-input-phase-service.cjs').run(require('./local-controls.cjs'),");
+    "await require(root+'/tools/q3-current-module.cjs').readableFixtureControls(require('./local-controls.cjs'),");
+  once("require('./generated.cjs').handle","require(root+'/tools/q3-current-module.cjs').readableFixtureHandler(require('./generated.cjs'))");
+  once("await capture(c.label);","if(process.env.LOCAL_PRODUCTION_FIXTURE)await evaluate('__draw()');await capture(c.label);");
   // Only this authenticated diagnostic consumer arms the host. The page owner
   // reads the existing shared ring even when renderer JS cannot service RPC.
   // Missing exits remain UNKNOWN; these samples perform no GL/protocol work.
@@ -476,6 +534,18 @@ function composeFixtureObserverCaller(source){
    session.check()
    code=observer['remote_wrapper'](ROOT,R,'cancellation','publish_review',review)
    save('fixture-reviewed-publication',json.loads(session.remote('fixture-model-review-publication',code,10)))
+   plan=observer['layout'](ROOT,R,'cancellation')
+   code="from pathlib import Path\\nimport time,json,gzip,hashlib\\np=Path("+repr(str(plan['prepared']))+");due=time.monotonic()+55\\nwhile not (p/'readable-input-review-ready.json').exists():\\n assert time.monotonic()<due,'input image unavailable'\\n assert not (p/'caller-cancelled.json').exists(),'cancelled'\\n assert not (p/'runtime/first-browser-failure.json').exists(),'native failure'\\n time.sleep(.02)\\nv=json.loads((p/'readable-input-review-ready.json').read_bytes());data=Path(v['image']).read_bytes();assert hashlib.sha256(data).hexdigest()==v['capture']['sha256'];q=p/'readable-input.png.review.gz';q.write_bytes(gzip.compress(data,mtime=0));print(json.dumps(dict(ready=v,download=str(q),size=len(data),sha256=hashlib.sha256(data).hexdigest())))"
+   v=json.loads(session.remote('readable-input-image-observation',code,60));save('readable-input-image',v)
+   data=gzip.decompress(c.download(v['download']));assert len(data)==v['size'] and H(data)==v['sha256']
+   (BASE/'fixture-input.png').write_bytes(data);print('INPUT_REVIEW_READY',flush=True)
+   due=time.monotonic()+50
+   while not (R/'input-separate-model-review.json.gz').exists():
+    session.check();assert time.monotonic()<due,'separate input model review unavailable';time.sleep(.02)
+   review=load('input-separate-model-review');session.check()
+   assert review['sha256']==v['sha256'] and review['identity']==v['ready']['capture']['identity'] and review['clear'] and review['distinct']
+   code="from pathlib import Path\\nimport json\\np=Path("+repr(str(plan['prepared']))+");assert not (p/'caller-cancelled.json').exists();assert not (p/'runtime/first-browser-failure.json').exists();v=json.loads((p/'readable-input-review-ready.json').read_bytes());review="+repr(review)+";assert review['sha256']==v['capture']['sha256'] and review['identity']==v['capture']['identity'];(p/'readable-input-model-review.json').write_text(json.dumps(review));print(json.dumps(dict(published=True)))"
+   save('readable-input-reviewed-publication',json.loads(session.remote('readable-input-review-publication',code,10)))
 `;
   source=source.replace(seam,observation+seam);
   cp.execFileSync('python3',['-B','-c',"import ast,sys;compile(ast.parse(sys.stdin.read()),'<q3-fixture-observer-caller>','exec')"],{input:source});
@@ -570,7 +640,7 @@ function prepare(destination,{inputs=[]}={}){
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }
-module.exports={createReadinessDiagnostics,composeTerminalCleanup,createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
+module.exports={readableFixtureHTML,readableFixtureHandler,readableFixtureControls,createReadinessDiagnostics,composeTerminalCleanup,createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
 if(require.main===module){
   const args=process.argv.slice(2);assert.equal(args.shift(),'--prepare','explicit preparation only');
   const destination=args.shift(),options={inputs:[]};
