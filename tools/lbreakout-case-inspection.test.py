@@ -31,6 +31,13 @@ for(const key of ['ArrowLeft','ArrowRight','Space']){
 }
 for(const key of ['p','Space','Enter','ArrowDown','ArrowUp'])execute({action:'key',key});
 execute({action:'capture'});execute({action:'quit'});assert.equal(effects,7);
+for(const key of ['ArrowLeft','ArrowRight']){
+ const c={id:'paddle',action:'key',key,observe:true,completion:'paddle',reviewRef:'ready',holdMs:100};
+ execute(c);
+ for(const bad of [{observe:false},{holdMs:0},{holdMs:301},{reviewRef:null},{id:null}])
+  assert.throws(()=>execute({...c,...bad}),/guest-completion observer/);
+}
+assert.throws(()=>execute({action:'key',key:'Space',completion:'paddle'}),/one original direction/);
 """
         subprocess.run(['node', '-e', source], check=True, timeout=3)
 

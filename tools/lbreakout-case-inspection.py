@@ -168,8 +168,68 @@ def pause_completion_observer_source():
 }'''
 
 
+def paddle_completion_observer_source():
+    """Bound original SDL delivery/poll and one original paddle invocation."""
+    return r'''async function installPaddleCompletion({e,memory,binding,token,expected,reviewed,now=()=>Date.now(),emit=()=>{}}){
+ if(!token||![275,276].includes(expected)||!reviewed?.label||!/^[a-f0-9]{64}$/.test(reviewed.sha256))throw Error('paddle command/image binding');
+ const v=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p>>>0)>>>0;
+ const u32=p=>v.getUint32(wa(p),true),u8=p=>v.getUint8(wa(p)),x=p=>v.getFloat32(wa(p+8),true);
+ const {exe,sdl,index,generation,mappingState,keys}=binding;
+ const table=e.get_dll_table()>>>0,life=e.get_dll_lifecycle_table()>>>0,stride=e.get_dll_lifecycle_stride()>>>0;
+ const records=[],deadline=now()+2000;let active=true,reason=null,phase='delivery',frame,paddle,poll,returned=false;
+ const trace=pc=>e.set_trace_eip_range(1,pc,pc+1);
+ const record=(kind,data={})=>{const r={kind,token,at:now(),...data};records.push(r);emit(r);};
+ const valid=()=>{if(e.get_image_base()!==exe||e.get_current_thread_id()!==1||
+  v.getUint32(table+index*32,true)!==sdl||v.getUint32(life+index*stride+4,true)!==generation||
+  v.getUint32(life+index*stride,true)!==mappingState)throw Error('paddle module/owner changed');};
+ const stop=r=>{if(!active)return;active=false;reason=r;e.set_trace_eip_range(0,0,0);record('completion-stop',{reason:r});};
+ const complete=()=>{if(returned&&u8(keys+expected)===0){record('guest-complete',{symbol:expected,releaseState:0});stop('complete');return true;}return false;};
+ function boundary(pc=e.get_eip()>>>0){
+  if(!active)return;
+  try{
+   valid();if(now()>=deadline)return stop('deadline');
+   if(records.length>=48)return stop('record-limit');
+   const esp=e.get_esp()>>>0;
+   if((phase==='delivery'||phase==='release')&&pc===sdl+0x19870){
+    if(u32(u32(esp+8)+4)!==expected)return;
+    const down=u8(esp+4);if(down!==(phase==='delivery'?1:0))return;
+    frame={esp,ret:u32(esp),down};record('sdl-key-entry',{down,symbol:expected});phase='delivery-return';trace(frame.ret);return;
+   }
+   if(phase==='delivery-return'&&pc===frame.ret&&esp===frame.esp+4){
+    if(u8(keys+expected)!==frame.down)throw Error('original SDL key delivery incomplete');
+    record('sdl-key-return',{down:frame.down,symbol:expected});
+    if(frame.down){phase='paddle';trace(exe+0x5904);}else complete();return;
+   }
+   if(phase==='paddle'&&pc===exe+0x5904){
+    const pointer=u32(esp+4);
+    if(u32(exe+0x523b0)!==8||u8(keys+expected)!==1||u32(pointer+60)!==0)throw Error('paddle input not consumable');
+    paddle={pointer,esp,ret:u32(esp),before:x(pointer)};
+    if(!Number.isFinite(paddle.before))throw Error('paddle coordinate invalid');
+    record('paddle-entry',{...paddle,symbol:expected});phase='poll';trace(sdl+0x19810);return;
+   }
+   if(phase==='poll'&&pc===sdl+0x19810){
+    poll={esp,ret:u32(esp)};record('sdl-poll-entry');phase='poll-return';trace(poll.ret);return;
+   }
+   if(phase==='poll-return'&&pc===poll.ret&&esp===poll.esp+4){
+    if((e.get_eax()>>>0)!==keys||u8(keys+expected)!==1)throw Error('original SDL poll missed held key');
+    record('sdl-poll-return',{symbol:expected,held:1});phase='paddle-return';trace(paddle.ret);return;
+   }
+   if(phase==='paddle-return'&&pc===paddle.ret&&esp===paddle.esp+4){
+    const after=x(paddle.pointer),delta=after-paddle.before;
+    if(!Number.isFinite(after)||(expected===275?delta<=0:delta>=0))throw Error('original paddle movement incomplete');
+    returned=true;record('paddle-return',{pointer:paddle.pointer,before:paddle.before,after,delta});
+    if(!complete()){phase='release';trace(sdl+0x19870);}return;
+   }
+  }catch(error){record('completion-error',{error:String(error)});stop('failure');}
+ }
+ const timer=setTimeout(()=>stop('deadline'),2000);if(timer.unref)timer.unref();
+ valid();record('completion-arm',{binding,expected,reviewed,deadline});trace(sdl+0x19870);
+ return {boundary,stop:r=>{clearTimeout(timer);stop(r);},snapshot:()=>({token,binding,expected,reviewed,deadline,active,reason,phase,records:[...records]})};
+}'''
+
+
 def pause_completion_preload_source():
-    return level_start_driver_source() + '\n' + pause_completion_observer_source() + '\n' + level_start_completion_observer_source() + r'''
+    return level_start_driver_source() + '\n' + pause_completion_observer_source() + '\n' + level_start_completion_observer_source() + '\n' + paddle_completion_observer_source() + r'''
 (()=>{
  const instantiate=WebAssembly.instantiate;
  WebAssembly.instantiate=async function(source,imports){
@@ -189,7 +249,7 @@ def pause_completion_preload_source():
   const media='/binaries/candidates/lbreakout2-251/game/LBREAKOUT/';
   const [exeBytes,sdlBytes]=await Promise.all(['lbreakout2.exe','SDL.dll'].map(async n=>new Uint8Array(await(await fetch(media+n)).arrayBuffer())));
   const {instance,memory}=globalThis.__lbNative,e=instance.exports;
-  const validator=await LBreakoutInputObserver.install({enabled:true,exports:e,memory,exeBytes,sdlBytes,durationMs:2000});
+  const validator=await LBreakoutInputObserver.install({enabled:true,validateOnly:true,exports:e,memory,exeBytes,sdlBytes,durationMs:2000});
   const {binding}=validator.snapshot();validator.stop('validated');
   // Relocation-free instruction anchors from this exact original EXE.
   const bytes=new Uint8Array(memory.buffer),hex=(pc,n)=>Array.from(bytes.subarray(e.guest_to_wasm(pc),e.guest_to_wasm(pc)+n),x=>x.toString(16).padStart(2,'0')).join('');
@@ -198,7 +258,7 @@ def pause_completion_preload_source():
   if(c.phase==='level-start')for(const [rva,h] of [[0x1f2ac,'5589e55383ec14'],[0x1faa0,'5589e5575653'],[0x1faf2,'83c410'],[0x20475,'e87c5b0000']])
    if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original level-start instruction mismatch');
   const observed={...e,set_trace_eip_range:globalThis.__lbNative.driver.trace};
-  globalThis.__lbObserver=await (c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e:observed,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
+  globalThis.__lbObserver=await (c.phase==='paddle'?installPaddleCompletion:c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e:observed,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
   return {armed:true,...__lbObserver.snapshot()};
  };
 })();
@@ -211,9 +271,11 @@ def pause_completion_source(source):
         ("async function armObservation(){const s=await owningWorker();return evaluate('globalThis.__lbArm()',s);}", r'''async function armObservation(c){
  const s=await owningWorker(),owner=await evaluate(bound.WORKER_READ,s),token=c.id+'-'+c.phase;
  assert(owner?.instance&&owner?.endpointIdentity,'completion immutable instance binding');
- const arm=await evaluate('globalThis.__lbArm('+JSON.stringify({token,expected:c.expected,phase:c.phase})+')',s);
+ const reviewed=c.phase==='paddle'?{label:latest.label,sha256:latest.sha256}:undefined;
+ const arm=await evaluate('globalThis.__lbArm('+JSON.stringify({token,expected:c.expected,phase:c.phase,reviewed})+')',s);
  assert(arm.armed&&arm.token===token,'completion arm binding');
- return {session:s,owner,token,expected:c.expected,deadline:arm.deadline,binding:arm.binding};
+ if(reviewed){assert.equal(arm.expected,c.expected,'paddle arm key binding');assert.deepEqual(arm.reviewed,reviewed,'paddle arm image binding');}
+ return {session:s,owner,token,expected:c.expected,reviewed,deadline:arm.deadline,binding:arm.binding};
 }
 async function completion(a){
  try{
@@ -227,6 +289,7 @@ async function completion(a){
    const r=await evaluate('globalThis.__lbObserver.snapshot()',a.session);
    assert.equal(r.token,a.token,'completion command binding');assert.equal(r.expected,a.expected);
    assert.deepEqual(r.binding,a.binding,'completion module binding');
+   if(a.reviewed)assert.deepEqual(r.reviewed,a.reviewed,'completion reviewed image binding');
    if(!r.active){
     assert.equal(r.reason,'complete','guest completion incomplete');save('completion-'+a.token+'.json',r);
     const remaining=Math.min(deadline,a.deadline)-Date.now();assert(remaining>0,'presentation deadline');
@@ -238,7 +301,7 @@ async function completion(a){
   }
  }catch(e){fail(e);throw e;}
 }'''),
-        ("if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}", "let completionArm;\n   if(c.completion==='level-start'){assert(c.action==='key'&&c.key==='Enter','level-start requires native Enter');completionArm=await armObservation({...c,phase:'level-start',expected:8});}\n   else if(c.action==='key'&&c.key==='p'){\n    const expected=c.expected??20;assert([8,20].includes(expected),'supported pause transition');\n    if(expected===8)assert.equal(c.pauseConfirmed,latest.label,'reviewed visible pause required');\n    completionArm=await armObservation({...c,phase:'pause',expected});\n   }"),
+        ("if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}", "let completionArm;\n   if(c.completion==='paddle'){assertPaddleCompletion(c);completionArm=await armObservation({...c,phase:'paddle',expected:c.key==='ArrowRight'?275:276});}\n   else if(c.completion==='level-start'){assert(c.action==='key'&&c.key==='Enter','level-start requires native Enter');completionArm=await armObservation({...c,phase:'level-start',expected:8});}\n   else if(c.action==='key'&&c.key==='p'){\n    const expected=c.expected??20;assert([8,20].includes(expected),'supported pause transition');\n    if(expected===8)assert.equal(c.pauseConfirmed,latest.label,'reviewed visible pause required');\n    completionArm=await armObservation({...c,phase:'pause',expected});\n   }"),
         ("     const k=require('./input.cjs').key('p'),{text,...release}=k;", "     const a=await armObservation({...c,phase,expected:phase==='resume'?8:20});\n     const k=require('./input.cjs').key('p'),{text,...release}=k;"),
         ("save:r=>save('input-'+c.id+'-'+phase+'.json',r)});", "save:r=>save('input-'+c.id+'-'+phase+'.json',r)});\n     await completion(a);"),
         ("   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});", "   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});\n   if(completionArm)await completion(completionArm);"),
@@ -259,7 +322,10 @@ def paddle_key_admission_source():
     repeated pulses must not be treated as completed gameplay input.
     """
     return r'''function assertPaddleCompletion(c){
- if(c.action==='play'||(c.action==='key'&&['ArrowLeft','ArrowRight'].includes(c.key)))
+ if(c.completion==='paddle'&&(c.action!=='key'||!['ArrowLeft','ArrowRight'].includes(c.key)))
+  throw Error('paddle completion requires one original direction');
+ if(c.action==='play'||(c.action==='key'&&['ArrowLeft','ArrowRight'].includes(c.key)&&
+  (c.completion!=='paddle'||c.observe!==true||!c.id||!c.reviewRef||!Number.isInteger(c.holdMs)||c.holdMs<80||c.holdMs>300)))
   throw Error('paddle input lacks original guest-completion observer');
 }'''
 
