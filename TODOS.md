@@ -27,7 +27,7 @@
   status: bounded persistent translation and separate heading verified on current WebGL and Software; broader gameplay open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published767dc5774 closes bounded current WebGL translation: separately reviewed Up1000 from settled downhill view changes Lara relative to the same rock/boulder/slope/stump, retained12s plus10s idle. Coordinator inspected paired frames and independently verified204refs14528997bytes.18ACK/zeroUNKNOWN actual7ec49 owningWebGL2,48modulechecks189HTTP603pins and normal archived stop/full drain pass. Together with78df2e4d9 current WebGL heading and Software translation/heading, this task is done at bounded visual scope. No firing/FPS/audio/parity/full27/level-clear claim. Note: docs/re-notes/tr3-webgl-terrain-translation-20261108.md. Fresh Forsaken native progress0613 takes the released gameplay slot; NFS3race and TR2frameidentity remain active.
-  Next: Fresh tr3-owned-stderr-readiness-0640 adds owning current-launch stderr endpoint observation within unchanged startup bound before one Jungle attempt. Published da47576de provides bounded read-only launcher diagnostics; actual Chrome binary entry verified, endpoint-file deadline still failed, no new gameplay. Alt and terminal cancellation bac47b1ee retained; focused controls and locked build pass.
+  Next: Fresh tr3-retained-startup-obstruction-0655 diagnoses actual launcher/custody scheduling offline. Published043bc08b2 validates timestamped owning stderr readiness within unchanged100x100ms bound; controls/build pass. ONE native produced no readiness on either channel, zero CDP/gameplay; root verified bx_62hjrfyx stopped expiry null unforced stop_bd662741a759594c. No unchanged retry.
 
 - [x] Quake II native health pickup on both current GL backends
   id: QUAKE2-PAIRED-NATIVE-PICKUP-20261108
@@ -39,7 +39,7 @@
   id: NEW-GAME-ASGHAN-NATIVE-ACTION-20261108
   status: movement/jumps and incoming enemy damage verified; outgoing hit/defeat/pickup open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Fresh asghan-onward-collectible-0640 explores beyond the first barrel view for an identifiable collectible before Space. VERIFIED original Tab1000ms sampled high in Asghan opens LOGBOOKS inventory ring and a second held Tab closes it; coordinator reviewed original full image. Evidence scratch/runs/20261110-asghan-held-tab-inventory-0625/report.md, current module79f0842e, 27 verified PNGs and normal stopped box. Pickup/outgoing attack remain open.
+  Next: Fresh asghan-early-sidestep-route-0700 qualifies documented sidestep controls then attempts an early bypass before creature contact. Previous onward run blocked by pursuing creature; root inspected final full image with tiny health, no new landmark/pickup or outgoing damage. bx_wav2thng root-verified stopped expiry null unforced stop_a6cc42830fe2b5e8. Verified Tab1000 LOGBOOKS inventory remains accepted.
 
 - [ ] Drakan current-browser movement, flight and attack
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
@@ -126,7 +126,7 @@
   status: done for pickup/equipment/action; target damage and kill remain unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published905dab22b records original Conjurer Jack acquiring Force of Nature Staff of Recharge, inventory fourth-slot/held-model/HUD change, then green action effects and charge3→2. Coordinator personally inspected six paired captures and independently verified490 artifact references plus normal nonforced archived-box shutdown. Worker ended143 during finalization, cause unknown, without outer final/result; recovered note explicitly preserves this interruption and the DOM recorder's missing mouse-up coverage. No emulator fix, target hit/kill, GL, FPS, audio or full-playability claim. Note: docs/re-notes/nox-native-equipment-20261108.md.
-  Next: Fresh nox-preinput-owner-stall-cause-0650 diagnoses retained request264 page-owner20s timeout offline before another native alignment. Published9cb5a384c explicit menu settling reached Network and Host Game flag placement; all14029native rows exactly retained across old12000boundary. No Jack/Bunker/staff or later input after failure. Root API confirms sole unforced stop_d0b5d8668d054885 completed06:37:39.123Z, expiry null.
+  Next: Fresh nox-owner-lifecycle-terminal-0658 implements exact-owner lifecycle failure handling offline. Retained request264 expression has no supported defect; earlier SIGKILL cannot be bound to page. No unchanged native retry. Published9cb5a384c menu settling and14029 exact native rows remain accepted; bx_en77n2fh stopped expiry null. Target damage/kill remains open.
 
 - [x] World Circuit v1.03 original installation and native driving
   id: NEW-GAME-WORLD-CIRCUIT-V103-20261107
