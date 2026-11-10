@@ -66,7 +66,26 @@ const preflight=JSON.parse(cp.execFileSync(process.execPath,[path.join(__dirname
  env:{...process.env,DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+60000),
  Q3_EXECUTION_BOUNDARY_OUT:path.join(run,'cli-preflight.jsonl.gz')}}));
 assert(preflight.passed&&preflight.chromiumStarted===false&&preflight.pins===pins.files.length);
-const result={passed:true,built,negatives,runtime,preflight,manifestSHA256:seal.manifestSHA256,
+// The Python prelaunch gate independently carries exact native custody pins.
+// Exercise it too: a JS-only migration can pass the CPU/consumer checks above.
+const prelaunchMigration=JSON.parse(cp.execFileSync('python3',['-B','-c',`
+from pathlib import Path
+import gzip,json,runpy,sys
+root=Path.cwd();pins=json.loads(gzip.decompress((Path(sys.argv[1])/'runtime-pins.json.gz').read_bytes()))
+def audit(event,args):
+ if event in ('subprocess.Popen','os.fork','os.exec','socket.connect'):raise AssertionError(event)
+sys.addaudithook(audit)
+check=runpy.run_path(str(root/'tools/q3-native-prelaunch.py'))['require_composition']
+check(root,pins)
+native=next(p for p in pins['files'] if p['path']=='tools/native_kernel_custody.py')
+for stale in ['e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e','3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240','0'*64]:
+ native['sha256']=stale
+ try:check(root,pins)
+ except ValueError as error:assert 'tools/native_kernel_custody.py' in str(error)
+ else:raise AssertionError('stale custody accepted')
+print(json.dumps(dict(passed=True,refusals=3,noProcessOrNetwork=True)))
+`,run],{cwd:root,encoding:'utf8'}));
+const result={passed:true,built,negatives,runtime,preflight,prelaunchMigration,manifestSHA256:seal.manifestSHA256,
  publishedModuleCommit:pins.publishedModuleCommit,publishedCustodyCommit:pins.publishedCustodyCommit};
 fs.writeFileSync(path.join(out,'result.json'),JSON.stringify(result,null,2));
 console.log(JSON.stringify({passed:true,built,negativeControls:negatives.length,actualCLI:true,actualConsumer:true}));

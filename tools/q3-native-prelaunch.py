@@ -94,10 +94,10 @@ def require_composition(root, pins):
         if foreign != 'q3-current-foreign-a16fc87d4-44fc9a134-v1' or pins.get('moduleVersion') != foreign:
             raise ValueError('unsupported Q3 foreign closure version')
         # The explicit published route selects foreign policy and the published
-        # 4a814ed4f custody entry gate. No generic provider-drift exception.
+        # a81554059 custody group-exit repair. No generic provider-drift exception.
         # The full byte barrier below still verifies every staged provider.
         providers.update({
-            'tools/native_kernel_custody.py': 'e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e',
+            'tools/native_kernel_custody.py': 'f8e6e8be352a20f668185c907fdcf4308f5cb93f8c6b8297fada063fc8140b77',
             'lib/redline-startup-admission.js': 'bd39c71fb2a331554d74568cca1916fb0750fa19a11bef1614d66456735a875f',
             'lib/redline-current-startup-v1.js': '3b32d2e7c24fb0718f05022d47a8884bbe7e93ea0568c6868829563463cadd50',
             'lib/quake2-browser-load-observer.js': '45cd7e009fa5718fff4ad6c8a7080f439eae993292fab63b920c2eb49a2f4fb6',
