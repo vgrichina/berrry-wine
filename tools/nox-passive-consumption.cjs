@@ -32,7 +32,7 @@ function compile(){
 function recorder({getExports,getMemory,bases,sites,api,now=()=>performance.now(),emit=()=>{},limit=12000,eventLimit=2000000,durationMs=1440000}){
  const fields='processId processObject endpoint endpointObject workerObject workerTarget workerInstance moduleObject moduleSha256 epoch renderEndpoint renderEndpointObject renderWorkerObject rendererTarget rendererEpoch rendererModuleSha256 pageRendererObject canvasObject'.split(' ');
  const clone=v=>JSON.parse(JSON.stringify(v)),same=(a,b)=>fields.every(k=>a?.[k]!==undefined&&a[k]!==null&&a[k]!==''&&a[k]===b?.[k]);
- let owner=null,binding=null,terminal=null,deadline=null,sequence=0,events=0,pendingApi=null;const rows=[],frames=[];
+ let owner=null,binding=null,terminal=null,deadline=null,sequence=0,events=0,pendingApi=null,commandStart=0;const rows=[],frames=[];
  function stop(reason){if(!terminal)terminal=reason;try{getExports()?.nox_consumption_arm(0);}catch{}}
  function readW(p,n){const m=getMemory();if(!Number.isInteger(p)||p<0||!Number.isInteger(n)||n<0||n>1024||p+n>m.byteLength)throw Error('read bounds');return new Uint8Array(m,p,n);}
  function u32(p){const a=readW(p,4);return new DataView(a.buffer,a.byteOffset,4).getUint32(0,true);}
@@ -66,8 +66,8 @@ function recorder({getExports,getMemory,bases,sites,api,now=()=>performance.now(
   if(terminal)throw Error('Nox consumption terminal: '+terminal);
   if(!b?.id||!b.label||!/^[a-f0-9]{64}$/.test(b.previous?.sha256??'')||!same(b.previous.identity,identity)||owner&&!same(owner,identity)){stop('binding');throw Error('Nox consumption owner/image binding');}
   if(frames.length||pendingApi){stop('incomplete');throw Error('Nox consumption incomplete prior call');}
-  owner=clone(identity);binding=clone(b);if(deadline===null)deadline=now()+durationMs;getExports().nox_consumption_arm(1);const position=cursor();row('command-begin',{cursor:position});return {active:!terminal,cursor:position};
- },finish(identity){if(frames.length||pendingApi)stop('incomplete');getExports()?.nox_consumption_arm(0);binding=null;return this.snapshot(identity);},snapshot(identity){if(owner&&!same(owner,identity))stop('owner');if(deadline!==null&&now()>=deadline)stop('deadline');return {version:1,status:terminal?'UNKNOWN':'PASSIVE',reason:terminal,deadline,events,pendingApi:clone(pendingApi),frames:clone(frames),records:clone(rows)};}};
+  owner=clone(identity);binding=clone(b);commandStart=rows.length;if(deadline===null)deadline=now()+durationMs;getExports().nox_consumption_arm(1);const position=cursor();row('command-begin',{cursor:position});return {active:!terminal,cursor:position};
+ },finish(identity){if(frames.length||pendingApi)stop('incomplete');getExports()?.nox_consumption_arm(0);binding=null;return this.snapshot(identity,true);},snapshot(identity,commandOnly=false){if(owner&&!same(owner,identity))stop('owner');if(deadline!==null&&now()>=deadline)stop('deadline');return {version:1,status:terminal?'UNKNOWN':'PASSIVE',reason:terminal,deadline,events,totalRecords:rows.length,recordScope:commandOnly?'command':'session',firstRecordIndex:commandOnly?commandStart:0,pendingApi:clone(pendingApi),frames:clone(frames),records:clone(commandOnly?rows.slice(commandStart):rows)};}};
 }
 function workerInstall(config,makeRecorder){
  const original=WebAssembly.instantiate;let installed=false;
@@ -146,6 +146,12 @@ function compose(source,config){
   assert(pointer?.reference&&Number.isInteger(armed.cursor?.x)&&Number.isInteger(armed.cursor?.y)&&pointer.reference.x===armed.cursor.x&&pointer.reference.y===armed.cursor.y,'Nox relative pointer reference must match original cursor before button input');
  }
  markDispatch();`);
+ once(' await wait(c.waitMs);await capture(c.label);',` if(c.action==='capture'){
+  assert(latest&&c.reviewRef===latest.label,'capture observation requires prior image binding');
+  const cw=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(cw,'Nox capture observation Worker');
+  const armed=await evaluate('globalThis.__noxConsumption.begin('+JSON.stringify({id:c.id,label:c.label,previous:latest})+','+JSON.stringify(latest.identity)+')',cw.sessionId);assert.equal(armed?.active,true,'Nox capture observation arm');
+ }
+ await wait(c.waitMs);await capture(c.label);`);
  once("console.log('CAPTURE '+label);",`const cw=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(cw,'Nox consumption capture Worker');const consumption=await evaluate('globalThis.__noxConsumption.finish('+JSON.stringify(latest.identity)+')',cw.sessionId);save(label+'-consumption.json',consumption);assert.equal(consumption.reason,null,'Nox consumption observation incomplete');
  if(noxAnchor){
   assert.equal(label,noxAnchor.label,'anchor returns its own image');

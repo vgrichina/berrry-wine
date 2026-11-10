@@ -37,7 +37,7 @@ async function consumer(mode,action='move'){
  const c={id:'move',action,point:[.46,.427],waitMs:0,reviewRef:'startup',label:'after'};
  if(['anchor','anchorNoResponse','refMismatch','wrongAnchor','anchorButton'].includes(mode)){c.anchorOriginalCursor={x:0,y:0};c.point=[.5/640,.5/480];}
  if(mode==='wrongAnchor')c.point=[.5,.5];
- if(mode==='success'||mode==='anchor'){await run(c);assert.equal(marked,1);assert.equal(sent,action==='click'?3:1);assert.equal(captured,1);}
+ if(mode==='success'||mode==='anchor'){await run(c);assert.equal(marked,action==='capture'?0:1);assert.equal(sent,action==='capture'?0:action==='click'?3:1);assert.equal(captured,1);assert(o.snapshot(latest.identity).records.some(r=>r.kind==='command-begin'&&r.binding.id===c.id));}
  else {await assert.rejects(run(c));await assert.rejects(run({...c,id:'later'}));assert.equal(captured,mode==='anchorNoResponse'?1:0);assert.equal(sent,['firstfailure','anchorNoResponse'].includes(mode)?1:0);assert.equal(marked,['firstfailure','anchorNoResponse'].includes(mode)?1:0);}
  return {mode,action,marked,sent,captured,terminal:!!terminal};
 }
@@ -65,8 +65,16 @@ async function compiled(){
  ww(fifo,19);ww(fifo+4,-7);callApi(1093,[device,16,output]);s=o.snapshot(live);assert.equal(s.reason,null);const state=s.records.filter(r=>r.kind==='di-return').at(-1);assert.equal(state.api,'GetDeviceState');assert.equal(state.hresult,0);assert.equal(Buffer.from(state.returnedBytes).readInt32LE(0),19);assert.equal(Buffer.from(state.returnedBytes).readInt32LE(4),-7);
  const before=Buffer.from(mem.subarray(wa(output),wa(output)+256));o.finish(live);assert.deepEqual(Buffer.from(mem.subarray(wa(output),wa(output)+256)),before);
  const completed=o.snapshot(live).records.length;e.set_eip(0x42b325);e.run(10);assert.equal(o.snapshot(live).records.length,completed,'capture disarms until next command');
- o.begin({...b,id:'second'},live);e.set_eip(0x42b325);e.run(10);assert(o.finish(live).records.length>completed);
+ o.begin({...b,id:'second'},live);e.set_eip(0x42b325);e.run(10);const interval=o.finish(live);
+ assert(interval.records.length<completed);assert(interval.records.every(r=>r.binding.id==='second'));
+ assert.equal(interval.recordScope,'command');assert.equal(interval.firstRecordIndex,completed);assert.equal(interval.totalRecords,o.snapshot(live).records.length);
+ assert(o.snapshot(live).records.length>completed,'global record bound and retained history are unchanged');
+ assert(Buffer.byteLength(JSON.stringify(interval))<Buffer.byteLength(JSON.stringify(o.snapshot(live))),'live return omits earlier commands');
  let clock=0;const bounded=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api,now:()=>clock,durationMs:1});bounded.begin(binding,owner);clock=1;assert.equal(bounded.snapshot(owner).reason,'deadline');assert.throws(()=>bounded.begin(binding,owner),/terminal/);
+ const limited=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api,limit:2});
+ limited.begin(binding,owner);limited.finish(owner);limited.begin({...binding,id:'second'},owner);limited.finish(owner);
+ assert.equal(limited.begin({...binding,id:'third'},owner).active,false,'command finishes never replenish the session record limit');
+ assert.equal(limited.snapshot(owner).reason,'record-limit');assert.throws(()=>limited.begin(binding,owner),/terminal/);
  for(const field of fields){const r=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api});assert.throws(()=>r.begin(binding,{...owner,[field]:'wrong'}),/binding/);assert.throws(()=>r.begin(binding,owner),/terminal/);}
  // Reproduce the recovered native refusal with BOTH real compiled modules.
  // The repair must authenticate the installed instance before selecting its
@@ -154,4 +162,4 @@ async function workerTransport(){
   fs.writeFileSync(out+'/worker-transport.json',JSON.stringify(result,null,2));return result;
  }finally{await worker.terminate();}
 }
-(async()=>{const controls=[];for(const action of ['move','click'])for(const m of ['wrongbinding','incomplete','success','firstfailure'])controls.push(await consumer(m,action));for(const m of ['unprimed','desynchronized','anchorButton'])controls.push(await consumer(m,'click'));for(const m of ['firstMove','anchor','anchorNoResponse','refMismatch','wrongAnchor'])controls.push(await consumer(m,'move'));const native=await compiled();const transport=process.env.NOX_CONSUMPTION_GENERATED?await workerTransport():null;const result={passed:true,controls,native,transport};fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));})().catch(e=>{console.error(e);process.exitCode=1;});
+(async()=>{const controls=[];for(const action of ['move','click'])for(const m of ['wrongbinding','incomplete','success','firstfailure'])controls.push(await consumer(m,action));for(const m of ['unprimed','desynchronized','anchorButton'])controls.push(await consumer(m,'click'));for(const m of ['firstMove','anchor','anchorNoResponse','refMismatch','wrongAnchor'])controls.push(await consumer(m,'move'));controls.push(await consumer('success','capture'));controls.push(await consumer('wrongbinding','capture'));const native=await compiled();const transport=process.env.NOX_CONSUMPTION_GENERATED?await workerTransport():null;const result={passed:true,controls,native,transport};fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));})().catch(e=>{console.error(e);process.exitCode=1;});
