@@ -13,7 +13,7 @@ async function main(){
  assert.equal(install({enabled:false,get memory(){throw Error('disabled reads dependency');}}),null);
  const h=await bootRenderHarness({extraWat,fonts:'none'}),results=[];
  const native=require(process.argv[3]+'/native-mouse.cjs');
- for(const mode of ['absolute','pending','locked']){
+ for(const mode of ['absolute','pending','locked','anchored']){
   const memory=h.memory,words=new Int32Array(memory.buffer),index=base>>>2;
   // Test setup only, before installing observations. The live observer never stores.
   words.fill(0,index,index+72);
@@ -29,7 +29,7 @@ async function main(){
   r.wasm={exports:e};r.windows[7]={hwnd:7,visible:true,isChild:false,x:0,y:0,w:640,h:480,
    clientRect:{x:0,y:0,w:640,h:480},zOrder:1,wasm:r.wasm,wasmMemory:memory};
   r._exclusiveTransform={hwnd:7,srcX:0,srcY:0,srcW:640,srcH:480,dstX:0,dstY:0,dstW:640,dstH:480};
-  r.wantsRelativeMouse=()=>mode!=='absolute';r.setMousePosition(420,300);
+  r.wantsRelativeMouse=()=>!['absolute','anchored'].includes(mode);r.setMousePosition(420,300);
   const ctx={module:{exports:{}},console,performance,document,setInterval:()=>1,clearInterval(){},setTimeout,clearTimeout};
   ctx.window={addEventListener:(t,f)=>add(windowListeners,t,f),removeEventListener:(t,f)=>windowListeners.set(t,(windowListeners.get(t)||[]).filter(x=>x!==f)),MobileKeyboard:null};
   vm.runInNewContext(fs.readFileSync(root+'/lib/browser-input.js','utf8'),ctx);
@@ -40,19 +40,29 @@ async function main(){
   const previous={label:'before',sha256:'a'.repeat(64),identity:{owner:'actual-control'}};
   observer.begin({id:mode,label:mode+'-image',previous});
   const protocol=[];
-  await native.perform({session:'offline',geometry:canvas.getBoundingClientRect(),command:{action:'click',point:[.5,.794],holdMs:150},send:async(method,p)=>{
+  const send=async(method,p)=>{
     protocol.push({method,...p});const type=p.type==='mouseMoved'?'mousemove':p.type==='mousePressed'?'mousedown':'mouseup';
     const event={type,clientX:p.x,clientY:p.y,movementX:mode==='locked'?7:0,movementY:mode==='locked'?-3:0,
      isTrusted:false,button:0,buttons:p.buttons,preventDefault(){},stopPropagation(){}};
     for(const f of docListeners.get(type)||[])f(event);
     if(type==='mouseup'){for(const f of windowListeners.get(type)||[])f(event);}else canvas['on'+type](event);
-  }});
+  };
+  if(mode==='anchored'){
+   const command={action:'move',point:[.5/640,.5/480],anchorOriginalCursor:{x:0,y:0}};
+   require('./nox-passive-consumption.cjs').anchorPoint(command,observer.snapshot().state,{x:0,y:0});
+   await native.perform({session:'offline',geometry:canvas.getBoundingClientRect(),command,send});
+   assert.equal(words[index+3],0,'anchor emits no relative axes or buttons');
+   assert.deepEqual(observer.snapshot().state.reference,{x:0,y:0});
+   observer.image(previous); // Separate image boundary before dependent input.
+   observer.begin({id:mode,label:mode+'-image',previous});
+  }
+  await native.perform({session:'offline',geometry:canvas.getBoundingClientRect(),command:{action:'click',point:[.5,.794],holdMs:150},send});
   const queued=words[index+3]>>>0,consumed=[];
   while((words[index+2]>>>0)!==queued)consumed.push(h.exports.nox_observer_control_take()>>>0);
   tick();
   const capture={label:mode+'-image',sha256:'b'.repeat(64),identity:previous.identity};observer.image(capture);
   const snapshot=observer.snapshot(),rows=snapshot.records;
-  assert.equal(rows.filter(v=>v.kind==='dom').length,3);
+  assert.equal(rows.filter(v=>v.kind==='dom').length,mode==='anchored'?4:3);
   assert(rows.filter(v=>v.kind!=='observer-arm').every(v=>v.binding.id===mode));
   const moves=rows.filter(v=>v.kind==='renderer-entry'&&v.method==='handleMouseMove');
   const relative=rows.filter(v=>v.kind==='renderer-entry'&&v.method==='handleRelativeMouseMove');
@@ -66,6 +76,10 @@ async function main(){
    assert.deepEqual(snapshot.state.reference,{x:320,y:381});
   }
   if(mode==='pending'){assert.equal(moves.length,0);assert.equal(relative.length,0);}
+  if(mode==='anchored'){
+   assert.equal(moves.length,2);assert.deepEqual(consumed.map(word=>word>>>28),[5,6,1,2]);
+   assert.equal(snapshot.state.di.dx,320);assert.equal(snapshot.state.di.dy,381);
+  }
   if(mode==='locked'){assert.equal(relative.length,1);assert.equal(relative[0].args.x,7);assert.equal(relative[0].args.y,-3);}
   assert(queued>0,'actual production DI event delivery');
   assert.equal(consumed.length,queued);

@@ -17,21 +17,28 @@ async function consumer(mode,action='move'){
  if(mode==='wrongbinding')o.begin(binding,owner);
  if(mode==='incomplete'){o.begin(binding,owner);o.event(1,0x42b980,0x42b32a,0x401000);}
  const latest=mode==='wrongbinding'?{...image,identity:{...owner,epoch:'wrong'}}:image;
- let marked=0,sent=0,captured=0,terminal=null;
+ let marked=0,sent=0,captured=0,terminal=null,reference=['unprimed','firstMove','anchor','anchorNoResponse'].includes(mode)?null:['desynchronized','refMismatch'].includes(mode)?{x:351,y:295}:{x:0,y:0};
  const begin=generated.indexOf('async function execute('),end=generated.indexOf('\n(async()=>{',begin);assert(begin>0&&end>begin);
- const context={assert,deadline:Date.now()+60000,latest,out:'/offline',root,terminalError:null,pageSession:'page',pointerObserverInstalled:false,
+ const context={assert,noxAnchor:null,deadline:Date.now()+60000,latest,out:'/offline',root,terminalError:null,pageSession:'page',pointerObserverInstalled:false,
   workers:new Map([['worker',{targetId:owner.workerTarget,sessionId:'worker'}]]),
   validCaptureLabel(){},fs:{existsSync:()=>false,readFileSync:f=>f.endsWith('-review.json')?JSON.stringify({...latest,review:'offline model review'}):'image'},sha:()=>image.sha256,
-  evaluate:async(expression,session)=>session==='worker'?vm.runInNewContext(expression,{globalThis:{__noxConsumption:o}}):expression==='window.noxPointerObserver.snapshot().state'?{reference:mode==='unprimed'?null:mode==='desynchronized'?{x:351,y:295}:{x:0,y:0}}:{left:0,top:0,width:640,height:480},
-  save(){},wait:async()=>{},capture:async()=>{captured++;},
+  evaluate:async(expression,session)=>session==='worker'?vm.runInNewContext(expression,{globalThis:{__noxConsumption:o}}):expression==='window.noxPointerObserver.snapshot().state'?{locked:false,canvas:{width:640,height:480},reference}:{left:0,top:0,width:640,height:480},
+  save(){},wait:async()=>{},capture:async label=>{
+   captured++;context.label=label;
+   const start=generated.indexOf("const cw=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(cw,'Nox consumption capture Worker');");
+   const end=generated.indexOf("console.log('CAPTURE '+label);",start);assert(start>0&&end>start);
+   await vm.runInContext('(async()=>{'+generated.slice(start,end)+'})()',context);
+  },
   chain:{admit:async(_,f)=>f({live:{identity:latest.identity}})},
-  send:async()=>{assert(!terminal);sent++;if(mode==='firstfailure')throw Error('first native failure');return {};},
+  send:async()=>{assert(!terminal);sent++;if(mode==='firstfailure')throw Error('first native failure');if(mode==='anchor')reference={x:0,y:0};return {};},
   require:n=>n==='./native-mouse.cjs'?require(root+'/'+current.HISTORY+'/native-mouse.cjs'):require(n)};
  vm.createContext(context);vm.runInContext(generated.slice(begin,end)+';globalThis.run=execute',context);
  const run=async c=>{if(terminal)throw terminal;try{return await context.run(c,()=>marked++);}catch(e){terminal=e;context.terminalError=e;o.stop('firstfailure');throw e;}};
  const c={id:'move',action,point:[.46,.427],waitMs:0,reviewRef:'startup',label:'after'};
- if(mode==='success'){await run(c);assert.equal(marked,1);assert.equal(sent,action==='click'?3:1);assert.equal(captured,1);}
- else {await assert.rejects(run(c));await assert.rejects(run({...c,id:'later'}));assert.equal(captured,0);assert.equal(sent,mode==='firstfailure'?1:0);assert.equal(marked,mode==='firstfailure'?1:0);}
+ if(['anchor','anchorNoResponse','refMismatch','wrongAnchor','anchorButton'].includes(mode)){c.anchorOriginalCursor={x:0,y:0};c.point=[.5/640,.5/480];}
+ if(mode==='wrongAnchor')c.point=[.5,.5];
+ if(mode==='success'||mode==='anchor'){await run(c);assert.equal(marked,1);assert.equal(sent,action==='click'?3:1);assert.equal(captured,1);}
+ else {await assert.rejects(run(c));await assert.rejects(run({...c,id:'later'}));assert.equal(captured,mode==='anchorNoResponse'?1:0);assert.equal(sent,['firstfailure','anchorNoResponse'].includes(mode)?1:0);assert.equal(marked,['firstfailure','anchorNoResponse'].includes(mode)?1:0);}
  return {mode,action,marked,sent,captured,terminal:!!terminal};
 }
 async function compiled(){
@@ -147,4 +154,4 @@ async function workerTransport(){
   fs.writeFileSync(out+'/worker-transport.json',JSON.stringify(result,null,2));return result;
  }finally{await worker.terminate();}
 }
-(async()=>{const controls=[];for(const action of ['move','click'])for(const m of ['wrongbinding','incomplete','success','firstfailure'])controls.push(await consumer(m,action));for(const m of ['unprimed','desynchronized'])controls.push(await consumer(m,'click'));const native=await compiled();const transport=process.env.NOX_CONSUMPTION_GENERATED?await workerTransport():null;const result={passed:true,controls,native,transport};fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));})().catch(e=>{console.error(e);process.exitCode=1;});
+(async()=>{const controls=[];for(const action of ['move','click'])for(const m of ['wrongbinding','incomplete','success','firstfailure'])controls.push(await consumer(m,action));for(const m of ['unprimed','desynchronized','anchorButton'])controls.push(await consumer(m,'click'));for(const m of ['firstMove','anchor','anchorNoResponse','refMismatch','wrongAnchor'])controls.push(await consumer(m,'move'));const native=await compiled();const transport=process.env.NOX_CONSUMPTION_GENERATED?await workerTransport():null;const result={passed:true,controls,native,transport};fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -62,7 +62,7 @@ function recorder({getExports,getMemory,bases,sites,api,now=()=>performance.now(
    else if(kind===2){const f=frames.at(-1);if(f&&a===f.ret&&esp===f.esp){frames.pop();row('guest-return',{...f,result:getExports().get_eax()>>>0,returnEsp:getExports().get_esp()>>>0,cursor:cursor(),payload:f.target===0x481340?bytes(f.args[0],56):null});}}
   }catch(e){stop('observation-error: '+e.message);}
  }
- return {event,stop,begin(b,identity){
+ return {event,stop,position:cursor,begin(b,identity){
   if(terminal)throw Error('Nox consumption terminal: '+terminal);
   if(!b?.id||!b.label||!/^[a-f0-9]{64}$/.test(b.previous?.sha256??'')||!same(b.previous.identity,identity)||owner&&!same(owner,identity)){stop('binding');throw Error('Nox consumption owner/image binding');}
   if(frames.length||pendingApi){stop('incomplete');throw Error('Nox consumption incomplete prior call');}
@@ -96,6 +96,29 @@ function boundSource(source,config){
     const scripts=recovered.filter(s=>s.sha256===observation.sha256);`);
 }
 function configuration(bytes,url){const table=JSON.parse(fs.readFileSync(root+'/src/api_table.json'));return {version,url,size:bytes.length,sha256:sha(bytes),bases:require('../lib/region-map.generated').BASE,sites,api:Object.fromEntries(['GetDeviceData','GetDeviceState'].map(n=>[table.findIndex(r=>r.name==='IDirectInputDevice_'+n),n]))};}
+// Pure admission calculation over observations. Never calls renderer helpers
+// (some refresh presentation) or moves the pointer on the caller's behalf.
+function anchorPoint(c,p,cursor){
+ assert.equal(c.action,'move','cursor anchor is an ordinary move-only command');
+ assert(!c.to&&!c.button&&!c.captureHeld&&c.holdMs===undefined,'anchor has no button or held effects');
+ assert(c.anchorOriginalCursor&&c.anchorOriginalCursor.x===cursor.x&&c.anchorOriginalCursor.y===cursor.y,'anchor must name observed original cursor');
+ assert(Number.isInteger(cursor.x)&&Number.isInteger(cursor.y)&&!p.locked,'unlocked observed cursor required');
+ assert(!p.reference||p.reference.x===cursor.x&&p.reference.y===cursor.y,'anchor refuses mismatched existing reference');
+ assert(c.point?.length===2&&c.point.every(v=>Number.isFinite(v)&&v>0&&v<1),'explicit normalized anchor point');
+ const canvas=p.canvas;let x=Math.floor(c.point[0]*canvas.width),y=Math.floor(c.point[1]*canvas.height);
+ const t=p.transform,v=p.viewport;
+ if(t){
+  if(v&&v.outputW>0&&v.outputH>0&&v.dstW>0&&v.dstH>0&&v.nativeW>0&&v.nativeH>0){
+   x=Math.min(Math.max(Math.floor(v.nativeX+(x*v.outputW/canvas.width-v.dstX)*v.nativeW/v.dstW),v.nativeX),v.nativeX+v.nativeW-1);
+   y=Math.min(Math.max(Math.floor(v.nativeY+(y*v.outputH/canvas.height-v.dstY)*v.nativeH/v.dstH),v.nativeY),v.nativeY+v.nativeH-1);
+  }else{
+   x=Math.min(Math.max(Math.floor(t.srcX+(x-t.dstX)*t.srcW/Math.max(1,t.dstW)),t.srcX),t.srcX+t.srcW-1);
+   y=Math.min(Math.max(Math.floor(t.srcY+(y-t.dstY)*t.srcH/Math.max(1,t.dstH)),t.srcY),t.srcY+t.srcH-1);
+  }
+ }
+ assert.equal(x,cursor.x,'physical anchor X must map to original cursor');assert.equal(y,cursor.y,'physical anchor Y must map to original cursor');
+ return {x,y};
+}
 function compose(source,config){
  if(!config)return source;
  const once=(a,b)=>{assert.equal(source.split(a).length,2,'Nox consumption generated seam '+a);source=source.replace(a,b);};
@@ -106,15 +129,33 @@ function compose(source,config){
  source=source.replaceAll('waitForDebuggerOnStart:false','waitForDebuggerOnStart:true');
  once("const task=Promise.all([send('Debugger.enable',{},sessionId),send('Runtime.enable',{},sessionId)]);",`const task=(async()=>{await Promise.all([send('Debugger.enable',{},sessionId),send('Runtime.enable',{},sessionId)]);if(targetInfo.url.includes('guest-worker'))await evaluate(${JSON.stringify(workerSource(config))},sessionId);await send('Runtime.runIfWaitingForDebugger',{},sessionId);})();`);
  once(".map(p=>p.sha256)});",`.map(p=>p.sha256).concat(${JSON.stringify(config.sha256)})});`);
+ once('async function execute(c,markDispatch){','let noxAnchor=null;\nasync function execute(c,markDispatch){');
  once(' markDispatch();',` const cw=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(cw,'Nox consumption owning Worker');
  const armed=await evaluate('globalThis.__noxConsumption.begin('+JSON.stringify({id:c.id,label:c.label,previous:latest})+','+JSON.stringify(latest.identity)+')',cw.sessionId);assert.equal(armed?.active,true,'Nox consumption arm');
+ if(c.anchorOriginalCursor!==undefined){
+  const pointer=await evaluate('window.noxPointerObserver.snapshot().state');
+  const mapped=(${anchorPoint.toString()})(c,pointer,armed.cursor);
+  noxAnchor={id:c.id,label:c.label,previous:latest,cursor:armed.cursor,mapped,point:c.point};
+  save('input-'+c.id+'-anchor-admission.json',noxAnchor);
+ }else if(c.action==='move'){
+  const pointer=await evaluate('window.noxPointerObserver.snapshot().state');
+  assert(pointer?.reference,'first move requires explicit observed original cursor anchoring');
+ }
  if(['click','doubleclick','drag'].includes(c.action)){
   const pointer=await evaluate('window.noxPointerObserver.snapshot().state');
   assert(pointer?.reference&&Number.isInteger(armed.cursor?.x)&&Number.isInteger(armed.cursor?.y)&&pointer.reference.x===armed.cursor.x&&pointer.reference.y===armed.cursor.y,'Nox relative pointer reference must match original cursor before button input');
  }
  markDispatch();`);
  once("console.log('CAPTURE '+label);",`const cw=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(cw,'Nox consumption capture Worker');const consumption=await evaluate('globalThis.__noxConsumption.finish('+JSON.stringify(latest.identity)+')',cw.sessionId);save(label+'-consumption.json',consumption);assert.equal(consumption.reason,null,'Nox consumption observation incomplete');
+ if(noxAnchor){
+  assert.equal(label,noxAnchor.label,'anchor returns its own image');
+  const pointer=await evaluate('window.noxPointerObserver.snapshot().state');
+  const position=await evaluate('globalThis.__noxConsumption.position()',cw.sessionId);
+  assert.equal(position.x,noxAnchor.cursor.x,'anchor leaves original X unchanged');assert.equal(position.y,noxAnchor.cursor.y,'anchor leaves original Y unchanged');
+  assert(pointer.reference&&pointer.reference.x===position.x&&pointer.reference.y===position.y,'physical anchor established synchronized reference');
+  save(label+'-anchor.json',{...noxAnchor,capture:latest,position,reference:pointer.reference,requiresModelReviewBeforeNextInput:true});noxAnchor=null;
+ }
  console.log('CAPTURE '+label);`);
  return source;
 }
-module.exports={version,sites,compile,configuration,recorder,workerSource,boundSource,compose,sha};
+module.exports={version,sites,compile,configuration,recorder,workerSource,boundSource,compose,anchorPoint,sha};
