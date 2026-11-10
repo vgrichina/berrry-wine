@@ -52,8 +52,10 @@ def poll(plan, label, deadline, wait_seconds=20, *, clock=time.time,
             assert cap['label'] == label and isinstance(cap['identity'], dict), 'capture identity'
             assert hashlib.sha256(data).hexdigest() == cap['sha256'], 'capture SHA'
             state = json.loads((output / (label + '-state.json')).read_bytes())
+            observer = output / (label + '-observer.json')
+            input_observation = json.loads(observer.read_bytes()) if observer.exists() else None
             return dict(status='ready', capture=cap, size=len(data), state=state,
-                        owningDeadline=deadline)
+                        owningDeadline=deadline, inputObservation=input_observation)
         if monotonic() >= poll_end:
             return dict(status='pending', owningDeadline=deadline, noRuntimeFault=True)
         sleep(.02)

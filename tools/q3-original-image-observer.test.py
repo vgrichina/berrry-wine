@@ -93,6 +93,17 @@ class ObserverTest(unittest.TestCase):
         with self.assertRaisesRegex(AssertionError, 'capture SHA'):
             self.poll()
 
+    def test_captured_input_mode_is_returned_without_synthesizing_motion(self):
+        self.publish()
+        snapshot = dict(active=True, state=dict(mode='pending-relative', di=dict(dx=0, dy=0)))
+        path = self.o / 'startup-observer.json'
+        path.write_text(json.dumps(snapshot))
+        before = path.read_bytes()
+        self.assertEqual(self.poll()['inputObservation'], snapshot)
+        self.assertEqual(path.read_bytes(), before)
+        path.unlink()
+        self.assertIsNone(self.poll()['inputObservation'])
+
     def test_actual_payload_ready_and_layout_failure_cancel(self):
         root = self.p / 'source'
         tools = root / 'tools'
