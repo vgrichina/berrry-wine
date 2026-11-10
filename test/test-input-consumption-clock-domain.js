@@ -26,6 +26,7 @@ function fixture(code, { enabled = true, real = false, startup = true } = {}) {
   const c = vm.createContext({
     args: [],
     batchClock, tickState: batchClock.state, createStartupClock,
+    serviceClock: false, gameplayBench: null,
     STARTUP_CLOCK_CFG: startup
       ? { factor: 0.01, maxMs: 30000, endOn: 'firstPresent:directdraw' } : null,
     createGuestClockSource: options => {

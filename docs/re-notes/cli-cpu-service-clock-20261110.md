@@ -78,3 +78,54 @@ cooperative callbacks; 33,074 in the final Worker run), but recorded zero scene
 draws/vertices. No gameplay was observed. The accounting regression is repaired;
 abstract CPU throughput and original startup/audio progress still need separate
 investigation. Full27 remains open. No rate was selected from menu success.
+
+## Real-time CPU/device alternative
+
+`--real-ticks` is a separate, existing general policy: the guest CPU runs at
+the interpreter's available host throughput, while guest timers and headless
+devices use elapsed host time (1x unless an explicit time scale is selected).
+It makes no emulated Pentium frequency claim and gives no throughput guarantee
+on a busy host. It is suitable for measuring whether available execution can
+keep up with a real-time device. It does not calibrate the abstract service CPU.
+The deterministic service default and its aggregate 5,000-block rate remain
+unchanged. No GLTron-derived rate is introduced.
+
+An app-independent control exposed a defect in that alternative: the CLI bound
+headless audio to `batchClock.batchTicks()` even when guest threads selected
+wall time. One outer publication could consume 200ms of audio while the guest
+observed only 100ms; ten publications could consume 2,000ms at the same elapsed
+time. The repair binds shared audio to `guestClock.publish()`, the same selected,
+non-consuming clock already published to guest threads. Batch and service modes
+retain their existing source; real-time mode now also applies its selected
+scale/startup mapping to device consumption and completion eligibility.
+
+`node test/test-guest-clock-source.js` executes the actual CLI binding with
+production host imports, actual built WASM and a 22,048-byte waveOut buffer.
+It holds elapsed time and 4,000 retired x86 blocks fixed across 1/2/10/40 work
+partitions. At 100ms a 22,050Hz stereo 16-bit device has consumed 8,820 bytes
+and its buffer remains pending. The test also covers 3x time (completed), a
+half-speed elapsed mapping (pending), and non-consuming batch reads. The
+pre-repair binding fails the same clock equality assertion. The service-clock
+partition, actual Worker, idle and nested-counter regression remains separate.
+Evidence: `scratch/runs/20261110-gltron-independent-cpu-cost-cause-1820/`.
+
+One original cooperative run with this repaired real-time alternative used a
+predeclared 180-second CLI limit, 240-second total child deadline including
+setup/cleanup, and independently prearmed 270-second watchdog. It exited zero
+after 183.566 seconds, with actual parent waits, separate stream EOFs and no
+pending command. No guest setting/media change or CPU-rate search occurred.
+The original music refill returned 467 times; its first return had occupancy
+157,312, exceeding the original 155,648-byte exit requirement. All 10,243
+observed ring states conserve bytes: 1,944 decodes produced 7,962,624 bytes,
+355 reads consumed 7,827,040, leaving 135,584. Decodes still cost
+59,252–86,974 retired blocks; no decoder semantic repair was made or inferred.
+
+Full 640x480 captures were personally inspected: the original main menu, GAME
+submenu, then arena and yellow cycle with `GAME IS PAUSED`. Ordinary Return
+down/up navigated and started the game. A late `keypress:13` emits WM_CHAR,
+which did not unpause this SDL game; the final capture remains paused. Moving
+gameplay/input qualification and Full27 remain open. A requested A character
+arrived after normal CLI exit and was not submitted. The next input check is
+ordinary Return down/up to unpause, then the game's turn controls. This run
+establishes refill return and original scene/menu progress under the independently
+specified real-time policy; it does not change or qualify the default service CPU.

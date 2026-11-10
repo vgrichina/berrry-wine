@@ -4555,7 +4555,6 @@ async function main() {
   // before this line but only ever fires during the batch loop, long after it.
   DX_LOCK_PAUSE.clock = batchClock;
   VBLANK.clock = batchClock;
-  ctx.sharedAudio.audioClockMs = () => batchClock.batchTicks();
   // --real-ticks hands the guest the wall clock instead. Two emulator
   // processes in one room CANNOT share a batch-driven clock: a batch is not a
   // unit of time and each process runs them at its own rate, so an idle Hearts
@@ -4576,6 +4575,10 @@ async function main() {
     clockOrigin: CLOCK_ORIGIN,
     mapElapsed: startupClock.active && REAL_TICKS ? raw => startupClock.map(raw) : null,
   });
+  // Device consumption and completion eligibility use the same selected time
+  // as guest threads. Binding the raw batch clock here made --real-ticks audio
+  // race ahead at host publication speed while GetTickCount used wall time.
+  ctx.sharedAudio.audioClockMs = () => guestClock.publish();
   if (startupClock.active && REAL_TICKS) {
     ctx.startupClockRawNow = () => (Date.now() - CLOCK_ORIGIN) * TIME_SCALE;
   }

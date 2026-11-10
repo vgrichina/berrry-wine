@@ -105,3 +105,67 @@ const { createGuestClockSource } = require('../lib/guest-clock');
 }
 
 console.log('PASS  one guest clock for every thread');
+
+// Execute the runner's actual audio binding, then drive real x86 and waveOut.
+// A real-time guest must not consume a 250ms buffer merely because the host
+// published a batch. This fixture controls elapsed time independently of work,
+// and runs the same work in different partitions without changing the device.
+{
+  const fs = require('node:fs');
+  const vm = require('node:vm');
+  const { createHostImports } = require('../lib/host-imports');
+  const baseline = process.env.CLOCK_AUDIO_BASELINE_REV;
+  const source = baseline
+    ? require('node:child_process').execFileSync('git', ['show', `${baseline}:test/run.js`], { encoding: 'utf8' })
+    : fs.readFileSync(require.resolve('./run.js'), 'utf8');
+  const binding = source.match(/^  ctx\.sharedAudio\.audioClockMs = .*;$/m);
+  assert(binding, 'production CLI must bind the shared audio clock');
+  const module = new WebAssembly.Module(fs.readFileSync('build/wine-assembly.wasm'));
+  function evaluate(parts, options = {}) {
+    let elapsed = 0;
+    const batchClock = createBatchClock(200);
+    const guestClock = createGuestClockSource({ batchClock, realTicks: true,
+      clockOrigin: 0, now: () => elapsed, ...options });
+    const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+    const ctx = { getMemory: () => memory.buffer, sharedAudio: {},
+      guestNowMs: () => guestClock.ticks() };
+    vm.runInNewContext(binding[0], { ctx, batchClock, guestClock });
+    const imports = createHostImports(ctx);
+    imports.host.memory = memory;
+    const e = new WebAssembly.Instance(module, imports).exports;
+    ctx.exports = e;
+    e.guest_write32(0x401000, 0x00fdeb40); // inc eax; jmp back
+    e.set_eip(0x401000);
+    const h = imports.host;
+    const voice = h.wave_out_open(22050, 2, 16, 0);
+    h.wave_out_write(voice, 4096, 22048);
+    h.wave_out_schedule_done(voice, 128, 0x400080, 22048);
+    for (let i = 1; i <= parts; i++) {
+      batchClock.state.batch = i;
+      elapsed = 100 * i / parts;
+      e.run(4000 / parts);
+      ctx.pumpAudioCompletions();
+    }
+    const result = { guestMs: h.get_ticks(), audioMs: ctx.sharedAudio.audioClockMs(),
+      cursor: h.wave_out_get_pos(voice), pending: ctx.sharedAudio.waveDoneQueue.length,
+      eip: e.get_eip(), eax: e.get_eax(), blocks: e.get_blocks_now() };
+    assert.strictEqual(result.audioMs, result.guestMs, 'audio and guest must share the selected clock');
+    assert.strictEqual(result.cursor, Math.min(22048, Math.floor(result.guestMs * 88.2)),
+      'device advances by elapsed time, capped at submitted bytes');
+    assert.strictEqual(result.pending, result.guestMs < 22048 / 88.2 ? 1 : 0,
+      'completion requires elapsed buffer duration');
+    return result;
+  }
+  for (const options of [{}, { timeScale: 3 }, { mapElapsed: ms => ms / 2 }]) {
+    const one = evaluate(1, options);
+    for (const parts of [2, 10, 40]) assert.deepStrictEqual(evaluate(parts, options), one);
+  }
+  // Batch mode still binds its non-consuming publication, not ticks().
+  const batchClock = createBatchClock(200), guestClock = createGuestClockSource({ batchClock });
+  const ctx = { sharedAudio: {} };
+  vm.runInNewContext(binding[0], { ctx, batchClock, guestClock });
+  batchClock.state.batch = 3;
+  assert.strictEqual(ctx.sharedAudio.audioClockMs(), 600);
+  assert.strictEqual(batchClock.state.callsInBatch, 0);
+  console.log('PASS actual CLI audio binding, x86 work and waveOut: real/scaled/mapped 1/2/10/40 partitions');
+}
