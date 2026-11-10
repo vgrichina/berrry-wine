@@ -62,7 +62,7 @@ function inspect(){
     for(const child of mod.children)dependencies(child);
   }
   for(const name of ['./watx-closure.js','./watx.js','./region-layout-hash.js','../lib/dispatch-trampoline.js','../lib/apps.js'])dependencies(require.cache[require.resolve(name)]);
-  for(const p of ['index.html','host.js','test/static-server.js','ops/browser-native-input.cjs','tools/build.sh','tools/build-compile-wat.js','tools/nox-current-driver.cjs'])paths.add(p);
+  for(const p of ['index.html','host.js','test/static-server.js','ops/browser-native-input.cjs','tools/build.sh','tools/build-compile-wat.js','tools/nox-current-driver.cjs','tools/q3-startup-custody.py','tools/native_kernel_custody.py'])paths.add(p);
   const files=[...paths].sort().map(p=>pin(p)),before=new Map(prior.files.map(p=>[p.path,p]));
   const changes=[],patches={};
   for(const current of files){
@@ -305,6 +305,24 @@ function generate(planFile,destination){
   source=captureLabels(source);
   source=pointerObservations(source);
   emit('browser-run.cjs',source);
+  // Reuse the authenticated durable service, including its ready-stop scan.
+  // Keep Q3's app-specific observation wrapper out of the Nox process. Both
+  // executable Python inputs belong to the same reviewed source closure.
+  emit('custody-run.py',`import sys,json,hashlib,runpy
+from pathlib import Path
+root=Path(__file__).resolve().parent / ${JSON.stringify(relRoot)}
+root=root.resolve()
+manifest=json.loads(Path(__file__).with_name('runtime-pins.json').read_bytes())
+for name in ('tools/q3-startup-custody.py','tools/native_kernel_custody.py'):
+ pin=next(p for p in manifest['files'] if p['path']==name)
+ data=(root/name).read_bytes()
+ assert len(data)==pin['size'] and hashlib.sha256(data).hexdigest()==pin['sha256'],name
+adapter=runpy.run_path(str(root/'tools/q3-startup-custody.py'))
+assert adapter['VERSION']=='q3-startup-custody-release-cohorts-v3'
+supervise=adapter['load']().supervise
+if __name__=='__main__':
+ supervise(Path(sys.argv[1]),sys.argv[4:],deadline=float(sys.argv[2]),cleanup_deadline=float(sys.argv[3]),journal_compression='gzip',command_compression='gzip')
+`);
   const generated=walk(destination).map(p=>pin(path.basename(p),fs.readFileSync(p))).sort((a,b)=>a.path.localeCompare(b.path));
   const provenance=Object.entries(patches).map(([name,b])=>pin(name,b));
   const manifest={...plan,generated,provenance,httpPins:json(path.join(ROOT,HISTORY,'runtime-pins.json')).httpPins.map(p=>({...plan.files.find(f=>f.path===p.path),url:p.url}))};

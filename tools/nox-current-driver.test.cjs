@@ -57,6 +57,10 @@ async function child(){
        process.stderr.write('OFFLINE_CHILD_STARTED\\n');
        if(mode==='stopped-port'){process.stderr.write('OFFLINE_CHILD_STOPPED\\n');process.kill(process.pid,'SIGSTOP');}
        else if(mode==='missing-port')process.stderr.write('DevTools listening on ws://127.0.0.1:1/devtools/browser/offline\\n');
+       else if(mode==='delayed-port'){
+         const cp=require('node:child_process');let remaining=20;
+         for(let i=0;i<20;i++)cp.spawn('/bin/true').once('close',()=>{if(!--remaining)setTimeout(()=>fs.writeFileSync(profile+'/DevToolsActivePort','1\\n/devtools/browser/offline\\n'),423);});
+       }
        else fs.writeFileSync(profile+'/DevToolsActivePort',mode==='malformed-port'?'bad-port\\n/devtools/browser/offline\\n':'1\\n/devtools/browser/offline\\n');
        const timer=setInterval(()=>{},1000);
        process.stdin.once('data',()=>{clearInterval(timer);process.stdout.write('closed\\n');process.stderr.write('closed\\n');process.stdin.destroy();});
@@ -193,7 +197,7 @@ async function child(){
  globalThis.WebSocket=Peer;
  process.on('exit',code=>save(dir+'/peer.json',{mode,code,compiled,protocol,deliveries,terminalIndex,failurePublishedIndex,chromeStarted:false,browserPeerOnly:true}));
  process.env.BROWSER_DEADLINE=String(Date.now()+600000);
- if(mode==='ordinary'||fixtureControl)process.env.NO_ORIGINAL='1';
+ if(mode==='ordinary'||mode==='delayed-port'||fixtureControl)process.env.NO_ORIGINAL='1';
  if(fixtureControl){
   process.env.NOX_POINTER_OBSERVER='1';
   (async()=>{const out=generated+'/production-preflight';
@@ -207,7 +211,7 @@ async function child(){
    }
   })().catch(e=>{console.error(e);process.exitCode=3;});
  }
- if(!faults[mode]&&mode!=='ordinary'&&!fixtureControl&&!startupFailure){
+ if(!faults[mode]&&mode!=='ordinary'&&mode!=='delayed-port'&&!fixtureControl&&!startupFailure){
    (async()=>{
      const out=generated+'/original';while(!fs.existsSync(out+'/ready.json')){if(fs.existsSync(out+'/first-browser-failure.json'))return;await wait(20);}
      const transport=require(generated+'/transport.cjs');
