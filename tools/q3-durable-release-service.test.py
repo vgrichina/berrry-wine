@@ -150,9 +150,40 @@ def inner_controls(out):
     assert evidence['totals']['real']['calls'] == evidence['totals']['real']['errors'] == 1
 
 
+def phase_bound_controls(out, source=None):
+    for mode in ('expired', 'capacity'):
+        adapter = runpy.run_path(str(ADAPTER)) if source is None else dict(__file__=str(ADAPTER))
+        if source is not None: exec(compile(source, 'published-q3-adapter', 'exec'), adapter)
+        kernel = types.SimpleNamespace(os=os, CONT=7,
+            Journal=type('Journal', (), {'write': lambda self, data: None}),
+            q3_subcalls={}, ptrace=lambda *args, **kwargs: 0, identity=lambda pid: dict(pid=pid))
+        directory = out/mode; directory.mkdir(parents=True)
+        (directory/'input-service-arm.json').write_text(json.dumps(dict(
+            monotonicNs=time.monotonic_ns()-(6_000_000_000 if mode=='expired' else 0))))
+        def supervised(run, command, **options):
+            for _ in range(600): assert kernel.ptrace(kernel.CONT, os.getpid()) == 0
+            assert kernel.os.fsync(17) == 73
+        kernel.supervise = supervised
+        with patch.dict(adapter['supervise'].__globals__, load=lambda: kernel), \
+                patch.object(os, 'fsync', lambda fd: 73):
+            adapter['supervise'](directory, [])
+        evidence = json.loads((directory/'q3-custody-service.json').read_bytes())['inner']
+        phase = json.loads((directory/'q3-input-service.json').read_bytes())
+        roles = evidence['totals'].get('phase.role', {}).get('calls', 0)
+        assert evidence['totals']['fsync.real']['calls'] == 1
+        if mode == 'expired':
+            assert roles == 0 and not phase['records'], ('expired role collection', roles)
+        else:
+            assert len(phase['records']) == phase['limit'] == 512
+            assert roles == 256, ('role collection beyond capacity', roles)
+        (directory/'bound-proof.json').write_text(json.dumps(dict(passed=True,mode=mode,
+            roleCalls=roles,records=len(phase['records']),ptraceCalls=600,realSyncCalls=1)))
+
+
 def run(out):
     out.mkdir(parents=True, exist_ok=False)
     inner_controls(out)
+    phase_bound_controls(out)
     # Exercise the installed maker, including every failing service boundary.
     kernel = module()
     directory = out/'subcall-observer'; directory.mkdir()
@@ -295,6 +326,7 @@ if __name__=='__main__':
     if sys.argv[2:] == ['--inner-only']:
         out.mkdir(parents=True, exist_ok=False)
         inner_controls(out)
+        phase_bound_controls(out)
         print(json.dumps(dict(passed=True, innerControls=True, activeInactive=True)))
     else:
         assert not sys.argv[2:], 'unknown focused mode'

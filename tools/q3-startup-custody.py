@@ -158,7 +158,7 @@ def supervise(run, command, **options):
 
     phase = dict(limit=512, records=[], dropped=0, armed=None, error=None)
     arm = run / 'input-service-arm.json'
-    def observe(kind, **fields):
+    def observe(kind, task_pid=None, **fields):
         try:
             if phase['armed'] is None:
                 if not measured_call('phase.arm-exists', arm.exists): return
@@ -168,8 +168,13 @@ def supervise(run, command, **options):
             if len(phase['records']) >= phase['limit']:
                 phase['dropped'] += 1
                 return
+            # Resolve roles only for retained, in-window observations. A stale
+            # arm file is not permission to keep reading /proc after expiry.
+            if task_pid is not None:
+                fields['task'] = measured_call('phase.role', role, task_pid)
             phase['records'].append(dict(kind=kind, monotonicNs=now,
                                          epochNs=time.time_ns(), **fields))
+            return True
         except Exception as error:
             phase['error'] = phase['error'] or repr(error)
 
@@ -186,10 +191,10 @@ def supervise(run, command, **options):
 
     trace, waitpid, sync = module.ptrace, module.os.waitpid, module.os.fsync
     def traced(request, pid, addr=0, data=0):
-        active = measured_call('trace.arm-exists', arm.exists)
+        active = False
         error = None
-        if active and request == module.CONT:
-            observe('CONT-entry', task=measured_call('phase.role', role, pid), signal=data)
+        if request == module.CONT:
+            active = observe('CONT-entry', task_pid=pid, signal=data)
         try:
             return trace(request, pid, addr, data)
         except BaseException as failure:
@@ -199,8 +204,8 @@ def supervise(run, command, **options):
             if active and request == module.CONT: observe('CONT-return', pid=pid, error=error)
     def waited(pid, flags):
         result = waitpid(pid, flags)
-        if result[0] and measured_call('wait.arm-exists', arm.exists):
-            observe('waitpid-return', task=measured_call('phase.role', role, result[0]), status=result[1])
+        if result[0]:
+            observe('waitpid-return', task_pid=result[0], status=result[1])
         return result
     inner['syncCallable'] = dict(module=getattr(sync, '__module__', None),
         name=getattr(sync, '__qualname__', None), builtin=isinstance(sync, types.BuiltinFunctionType))
