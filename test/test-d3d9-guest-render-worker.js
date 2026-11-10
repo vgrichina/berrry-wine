@@ -103,16 +103,14 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
     // The draw is deferred: the guest is back before its batches retire, and
     // it is the Present that waits for them.
     assert.strictEqual(submissions.get(0x30001),2,'large native retry still submits only once');
-    // Present is pipelined one frame deep: this second Present returns at
-    // once with its frame in flight, and the third parks on it and publishes.
-    await call('IDirect3DDevice9_Present',[device,0,0,0,0]);
-    assert.deepStrictEqual(pixels,oldPixels,'the frame in flight is not published by its own Present');
+    // A final Present must publish its own completed frame. An idle app
+    // supplies no later Present to retire a one-frame presentation pipeline.
     await call('IDirect3DDevice9_Present',[device,0,0,0,0],()=>{
       assert.deepStrictEqual(pixels,oldPixels,'large completed draw remains hidden until Present poll');
     });
     for(let y=0;y<8;y++)for(let x=0;x<8;x++)
       assert.strictEqual(pixels[y*8+x],x+y<8?0xffff0000:0,`large pixel ${x},${y}`);
-    assert.strictEqual(submissions.get(0x30002),3);
+    assert.strictEqual(submissions.get(0x30002),2,'no extra Present needed to publish the final frame');
     e.guest_free(large);
     await call('IDirect3DDevice9_Release',[device]);
     assert.strictEqual(submissions.get(0x30004),1);
