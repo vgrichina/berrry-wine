@@ -29,6 +29,22 @@ async function child(){
    };
    process.env.DRIVER_PREFLIGHT='1';
  }
+ // Corrupt only external review/image publication reads; generated code stays pinned.
+ if(process.env.NOX_BINDING_FAULT){
+  const read=fs.readFileSync,fault=process.env.NOX_BINDING_FAULT;
+  fs.readFileSync=function(file,...args){
+   if(String(file)===generated+'/original/startup-review.json'){
+    if(fault==='missing-review'){const e=Error('offline missing review');e.code='ENOENT';throw e;}
+    const value=JSON.parse(read.call(this,file,...args));
+    if(fault==='wrong-sha')value.sha256='0'.repeat(64);
+    if(fault==='wrong-identity')value.identity.workerTarget='foreign-worker';
+    if(fault==='wrong-label')value.label='foreign-capture';
+    return JSON.stringify(value);
+   }
+   if(fault==='changed-png'&&String(file)===generated+'/original/startup.png')return Buffer.from('offline replaced capture');
+   return read.call(this,file,...args);
+  };
+ }
  const originalCompile=Module.prototype._compile;
  Module.prototype._compile=function(source,filename){if(filename===consumer){compiled=true;assert.equal(current.sha(Buffer.from(source)),JSON.parse(originalRead(path.join(generated,'runtime-pins.json'))).generated.find(p=>p.path==='browser-run.cjs').sha256);}return originalCompile.call(this,source,filename);};
  cp.spawn=(command,args,options)=>{
@@ -63,13 +79,43 @@ async function child(){
    return originalLoad.call(this,name,parent,main);
  };
  globalThis.fetch=async url=>{const u=new URL(url);assert.equal(u.origin,'http://127.0.0.1:1');const b=fs.readFileSync(root+u.pathname);return {status:200,arrayBuffer:async()=>b};};
+ const observerControl=process.env.NOX_TEST_OBSERVER==='1';
  const canvas={},instance={},worker={},link={endpointIdentity:1,slot:0,worker,module:{}};
  const wine={processId:7,running:true,_stopped:false,guestWorker:{link},renderer:{peekKeyDownState:()=>0},_workerLastSlice:{batch:1}};
  function context(){
    const listeners=new Map();const ctx={console,crypto:require('node:crypto').webcrypto,crossOriginIsolated:true,runningApps:[],performance,Set,WeakMap,Map,Atomics,
      document:{getElementById:id=>id==='screen'?Object.assign(canvas,{width:640,height:480,getBoundingClientRect:()=>({left:0,top:34,width:945,height:855})}):{textContent:''}},
-     addEventListener:(type,fn)=>{if(!listeners.has(type))listeners.set(type,[]);listeners.get(type).push(fn);}};
-   ctx.window=ctx;ctx.emit=(type,e)=>{for(const fn of listeners.get(type)||[])fn({type,isTrusted:true,...e});};return vm.createContext(ctx);
+     addEventListener:(type,fn)=>{if(!listeners.has(type))listeners.set(type,[]);if(!listeners.get(type).includes(fn))listeners.get(type).push(fn);},
+     removeEventListener:(type,fn)=>listeners.set(type,(listeners.get(type)||[]).filter(f=>f!==fn))};
+   ctx.window=ctx;ctx.emit=(type,e)=>{for(const fn of [...(listeners.get(type)||[])])fn({type,isTrusted:true,...e});};
+   if(observerControl){
+    const {Win98Renderer}=require('../lib/renderer'),{createCanvas}=require('../lib/canvas-compat');
+    const c=createCanvas(640,480),r=new Win98Renderer(c),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
+    Object.assign(c,{style:{},classList:{toggle(){}},getBoundingClientRect:()=>({left:0,top:34,width:945,height:855}),addEventListener(){},removeEventListener(){},setAttribute(){},focus(){}});
+    const docs=new Map();Object.assign(ctx.document,{pointerLockElement:null,body:{},documentElement:{},activeElement:c,visibilityState:'visible',
+     getElementById:id=>id==='screen'?c:null,querySelectorAll:()=>[],elementFromPoint:()=>null,
+     addEventListener:(type,fn)=>{if(!docs.has(type))docs.set(type,[]);if(!docs.get(type).includes(fn))docs.get(type).push(fn);},
+     removeEventListener:(type,fn)=>docs.set(type,(docs.get(type)||[]).filter(f=>f!==fn))});
+    r.wasmMemory=memory;r.wasm={exports:{clip_cursor_active:()=>0,post_message_q:()=>1,wnd_mouse_msg_origin_x:()=>0,wnd_mouse_msg_origin_y:()=>0}};
+    r.windows[7]={hwnd:7,visible:true,isChild:false,x:0,y:0,w:640,h:480,clientRect:{x:0,y:0,w:640,h:480},zOrder:1,wasm:r.wasm,wasmMemory:memory};
+    r._exclusiveTransform={hwnd:7,srcX:0,srcY:0,srcW:640,srcH:480,dstX:0,dstY:0,dstW:640,dstH:480};
+    Object.assign(wine,{memory,renderer:r});ctx.RegionMap=require('../lib/region-map.generated');
+    // Timers sample only on the offline test's explicit boundaries, keeping
+    // the protocol peer distinct from a native guest execution.
+    ctx.setInterval=()=>1;ctx.clearInterval=()=>{};ctx.setTimeout=setTimeout;ctx.clearTimeout=clearTimeout;
+    const context=vm.createContext(ctx);
+    vm.runInContext(fs.readFileSync(root+'/lib/browser-input.js','utf8'),context);
+    context.module=undefined;
+    context.browserInput.wireCanvasInput(c,r,{runningApps:[{name:'nox_demo',wine:{running:true},relativeMouse:false}]});
+    const emit=ctx.emit;ctx.emit=(type,e)=>{
+     const event={type,isTrusted:true,clientX:e.x,clientY:e.y,movementX:0,movementY:0,button:0,preventDefault(){},stopPropagation(){},...e};
+     for(const f of [...(docs.get(type)||[])])f(event);
+     if(['mousemove','mousedown'].includes(type))c['on'+type](event);
+     emit(type,event);
+    };
+    return context;
+   }
+   return vm.createContext(ctx);
  }
  let page=context();const workerCtx=vm.createContext({endpointIdentity:1,workerSlot:0,instance,crypto:require('node:crypto').webcrypto});
  class Peer{
@@ -145,6 +191,7 @@ async function main(){
  const generated=path.resolve(process.argv[2]||''),out=path.resolve(process.argv[3]||'');
  assert(process.argv[2]&&process.argv[3]&&out.startsWith(root+'/scratch/runs/'));assert(!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
  const manifest=JSON.parse(fs.readFileSync(generated+'/runtime-pins.json'));assert(current.verify(root,manifest,generated));
+ if(process.argv[4]==='--observer')return observerIntegration(generated,out);
  const results=[];
  // The unchanged driver actually executes its full strict preflight.
  const pre=cp.spawnSync(process.execPath,[generated+'/browser-run.cjs'],{env:{...process.env,DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+120000)},encoding:'utf8'});
@@ -223,6 +270,78 @@ async function main(){
  save(out+'/results.json',{passed:true,actualGeneratedConsumer:true,actualBoundChain:true,actualNativeHelper:true,chromiumTested:false,results});
  console.log(JSON.stringify({passed:true,results}));
 }
+async function observerIntegration(generated,out){
+ const r=cp.spawnSync(process.execPath,[__filename],{env:{...process.env,
+  NOX_TEST_CHILD:'1',NOX_TEST_MODE:'commands',NOX_TEST_DIR:out,NOX_TEST_GENERATED:generated,
+  NOX_POINTER_OBSERVER:'1',NOX_TEST_OBSERVER:'1'},encoding:'utf8',timeout:90000,maxBuffer:1024*1024});
+ fs.writeFileSync(out+'/stdout',r.stdout||'');fs.writeFileSync(out+'/stderr',r.stderr||'');
+ assert.equal(r.status,0,r.stderr);
+ const peer=JSON.parse(fs.readFileSync(out+'/peer.json')),joined=JSON.parse(fs.readFileSync(out+'/child-wait.json'));
+ assert(peer.compiled&&!peer.chromeStarted);assert.equal(joined.code,0);assert(joined.stdoutEOF&&joined.stderrEOF);
+ const runtime=generated+'/original',latest=JSON.parse(fs.readFileSync(runtime+'/latest.json'));
+ const observed=JSON.parse(fs.readFileSync(runtime+'/'+latest.label+'-pointer.json'));
+ assert.deepEqual(observed.capture,latest);assert(observed.observations.active);
+ const images=observed.observations.records.filter(r=>r.kind==='image-bound');assert.equal(images.length,12);
+ for(let n=1;n<images.length;n++){
+  assert.equal(images[n].binding.label,images[n].capture.label);
+  assert.deepEqual(images[n].binding.previous,images[n-1].capture);
+ }
+ assert(observed.observations.records.some(r=>r.kind==='renderer-return'&&r.method==='_queueDirectInputMouseEvent'));
+ fs.renameSync(runtime,out+'/runtime');
+ save(out+'/results.json',{passed:true,actualGeneratedConsumer:true,productionBridge:true,
+  productionRenderer:true,imageBindings:images.length,stdoutEOF:true,stderrEOF:true,nativeGuest:false});
+ console.log(JSON.stringify({passed:true,observerIntegration:true,imageBindings:images.length}));
+}
+async function observerControls(plan,out,selected){
+ assert(!fs.existsSync(out));assert(out.startsWith(root+'/scratch/runs/'));fs.mkdirSync(out,{recursive:true});
+ const accepted=JSON.parse(fs.readFileSync(root+'/scratch/runs/20261109-nox-menu-acceptance-cause-2348/route-sequence.json'));
+ const failedDir=root+'/scratch/runs/20261109-nox-destructible-target-progress-2325';
+ const failed=fs.readdirSync(failedDir).filter(n=>/^request-step-.*\.json$/.test(n)&&!n.includes('-remote-')).sort().map(n=>JSON.parse(fs.readFileSync(failedDir+'/'+n)).command);
+ assert.equal(accepted.length,37);assert.equal(failed.length,12);
+ const results=[],routes={};
+ const modes=['accepted-route','failed-route','missing-review','wrong-sha','wrong-identity','wrong-label','changed-png','label-missing','held-mouse','held-capture'];
+ if(selected)assert(selected.length&&new Set(selected).size===selected.length&&selected.every(m=>modes.includes(m)));
+ for(const mode of selected||modes){
+  const dir=out+'/'+mode;fs.mkdirSync(dir);const generated=dir+'/generated';
+  current.generate(plan,generated); // Generate at its real depth; never relocate a module.
+  const binding=['missing-review','wrong-sha','wrong-identity','wrong-label','changed-png'].includes(mode);
+  const sequence=mode==='accepted-route'?accepted:mode==='failed-route'?failed:null;
+  if(sequence)save(dir+'/sequence.json',sequence);
+  const r=cp.spawnSync(process.execPath,[__filename],{env:{...process.env,
+   NOX_POINTER_OBSERVER:'1',NOX_TEST_OBSERVER:'1',NOX_TEST_CHILD:'1',
+   NOX_TEST_MODE:binding?'drag-failure':sequence?'commands':mode,NOX_BINDING_FAULT:binding?mode:'',
+   NOX_TEST_DIR:dir,NOX_TEST_GENERATED:generated,...(sequence?{NOX_COMMAND_SEQUENCE:dir+'/sequence.json'}:{})},
+   encoding:'utf8',timeout:90000,maxBuffer:1024*1024});
+  fs.writeFileSync(dir+'/stdout',r.stdout||'');fs.writeFileSync(dir+'/stderr',r.stderr||'');
+  assert.equal(r.status,sequence?0:1,r.stderr);
+  const peer=JSON.parse(fs.readFileSync(dir+'/peer.json')),joined=JSON.parse(fs.readFileSync(dir+'/child-wait.json'));
+  assert(peer.compiled&&!peer.chromeStarted);assert(joined.stdoutEOF&&joined.stderrEOF);
+  const runtime=generated+'/original';assert(JSON.parse(fs.readFileSync(runtime+'/startup-pointer.json')).observations.active);
+  if(sequence){
+   const capture=JSON.parse(fs.readFileSync(runtime+'/latest.json')),snapshot=JSON.parse(fs.readFileSync(runtime+'/'+capture.label+'-pointer.json'));
+   assert.deepEqual(snapshot.capture,capture);
+   const images=snapshot.observations.records.filter(r=>r.kind==='image-bound');assert.equal(images.length,sequence.length+1);
+   for(let i=1;i<images.length;i++){assert.equal(images[i].binding.label,images[i].capture.label);assert.deepEqual(images[i].binding.previous,images[i-1].capture);}
+   const commands=snapshot.observations.records.filter(r=>r.kind==='command-begin');assert.equal(commands.length,sequence.length);
+   assert(snapshot.observations.records.some(r=>r.kind==='renderer-return'&&r.method==='_queueDirectInputMouseEvent'));
+   routes[mode]=commands.map(r=>({label:r.binding.label,cursor:r.state.cursor}));
+   // Both routes ACK in this peer. Observations must retain their divergent
+   // tenth destination; neither ACK is a menu-acceptance oracle.
+   const tenth=snapshot.observations.records.filter(r=>r.kind==='dom'&&r.type==='mousedown'&&r.binding?.label===sequence[9].label);
+   assert.equal(tenth.length,1);
+   assert.equal(tenth[0].clientX,sequence[9].point[0]*945);assert.equal(tenth[0].clientY,34+sequence[9].point[1]*855);
+   save(dir+'/route-observations.json',snapshot);
+  }else{
+   assert.equal(peer.protocol.length,peer.failurePublishedIndex);assert.equal(peer.protocol.filter(q=>q.method==='Browser.close').length,0);
+   if(binding||mode==='label-missing'){assert.equal(peer.deliveries.filter(e=>e.type==='mousePressed').length,0);assert.equal(peer.protocol.filter(q=>q.method==='Page.captureScreenshot').length,1);}
+  }
+  results.push({mode,passed:true,status:r.status,stdoutEOF:true,stderrEOF:true,actualGeneratedConsumer:true,productionBridge:true,productionRenderer:true,nativeGuest:false});
+  save(out+'/progress-'+mode+'.json',results.at(-1));
+ }
+ if(routes['accepted-route']&&routes['failed-route'])assert.notDeepEqual(routes['accepted-route'],routes['failed-route']);
+ save(out+'/results.json',{passed:true,results,peerAcceptanceIsNotGuestAcceptance:true});
+ console.log(JSON.stringify({passed:true,controls:results.length}));
+}
 async function chainControls(generated){
  const bound=require(generated+'/bound-input.cjs'),module=fs.readFileSync(root+'/build/wine-assembly.wasm');
  let now=Date.now(),png=Buffer.from('peer'),wrong=false;
@@ -243,4 +362,4 @@ async function chainControls(generated){
  assert.deepEqual(events,['mouseMoved','mousePressed','mouseReleased']);
 }
 if(process.env.NOX_TEST_CHILD==='1')child().catch(e=>{console.error(e);process.exitCode=1;});
-else if(require.main===module)main().catch(e=>{console.error(e.stack);process.exitCode=1;});
+else if(require.main===module)(process.argv[2]==='--observer-controls'?observerControls(path.resolve(process.argv[3]),path.resolve(process.argv[4]),process.argv[5]?.split(',')):main()).catch(e=>{console.error(e.stack);process.exitCode=1;});

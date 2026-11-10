@@ -173,9 +173,98 @@ async function capture(label){validCaptureLabel(label);`);
  assert(!c.captureHeld||!fs.existsSync(out+'/'+c.label+'-held.png'),'unique held capture label required');`);
   return source;
 }
+function pointerObservations(source){
+  // Disabled unless explicitly selected by the finite native experiment.
+  // Existing console delivery is the prearmed sink; terminal cleanup performs
+  // no diagnostic Runtime.evaluate or guest/input/capture operation.
+  source=exact(source,"async function capture(label){validCaptureLabel(label);",`async function capture(label){validCaptureLabel(label);
+ if(process.env.NOX_POINTER_OBSERVER==='1'&&!pointerObserverInstalled){
+  await evaluate(fs.readFileSync(root+'/lib/nox-pointer-observer.js','utf8')+\`\n;(()=>{
+   const a=runningApps.filter(a=>a.wine?.running&&!a.wine?._stopped);
+   if(a.length!==1)throw Error('unique Nox observer owner required');
+   const w=a[0].wine,r=w.renderer,c=document.getElementById('screen');
+   if(!r||r.wasmMemory!==w.memory)throw Error('Nox observer memory owner mismatch');
+   window.noxPointerObserver=NoxPointerObserver.install({enabled:true,canvas:c,renderer:r,memory:w.memory,
+    document,diBase:RegionMap.BASE.DI_MOUSE_INPUT_STATE,
+    emit:row=>console.log('NOX_POINTER_RECORD '+JSON.stringify(row))});return true;
+  })()\`);pointerObserverInstalled=true;
+ }
+`);
+  source=exact(source,'let browser,server,ws,pageSession,chain,closing=false,latest=null,timer;',
+    'let pointerObserverInstalled=false;let browser,server,ws,pageSession,chain,closing=false,latest=null,timer;');
+  source=exact(source,"save('latest.json',latest);console.log('CAPTURE '+label);",`save('latest.json',latest);
+ if(pointerObserverInstalled){
+  await evaluate('window.noxPointerObserver.image('+JSON.stringify(latest)+');true');
+  const records=await evaluate('window.noxPointerObserver.snapshot()');
+  assert(records.active,'Nox pointer observer exhausted');
+  save(label+'-pointer.json',{capture:latest,observations:records});
+ }
+ console.log('CAPTURE '+label);`);
+  source=exact(source,' const dispatch=async receipt=>{\n markDispatch();',` const dispatch=async receipt=>{
+ if(pointerObserverInstalled)await evaluate('window.noxPointerObserver.begin('+JSON.stringify({id:c.id,label:c.label,action:c.action,previous:latest})+');true');
+ markDispatch();`);
+  source=exact(source,' await wait(c.waitMs);await capture(c.label);',` if(c.action==='capture'&&pointerObserverInstalled)await evaluate('window.noxPointerObserver.begin('+JSON.stringify({id:c.id,label:c.label,action:c.action,previous:latest})+');true');
+ await wait(c.waitMs);await capture(c.label);`);
+  source=exact(source,"await close('preflight final app-selection boundary');return;",`if(process.env.NOX_POINTER_OBSERVER==='1')await nativePointerFixture();await close('preflight final app-selection boundary');return;`);
+  source=exact(source,'async function state(){',nativePointerFixture.toString()+'\nasync function state(){');
+  return source;
+}
+async function nativePointerFixture(){
+ // This is an explicit renderer/DOM fixture, with no guest or game acceptance.
+ // It uses the loaded production renderer and bridge and the generated mouse
+ // helper. Both returned images wait for separate external model reviews.
+ await evaluate(fs.readFileSync(root+'/lib/nox-pointer-observer.js','utf8')+`;(()=>{
+  if(runningApps.length||browserInput.isWired())throw Error('fixture requires unused production bridge');
+  const c=document.createElement('canvas');c.id='nox-pointer-fixture';c.width=640;c.height=480;
+  Object.assign(c.style,{position:'fixed',left:'20px',top:'40px',width:'640px',height:'480px',zIndex:2147483647});
+  document.body.append(c);const r=new Win98Renderer(c),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
+  r.wasmMemory=memory;r.wasm={exports:{clip_cursor_active:()=>0,post_message_q:()=>1,wnd_mouse_msg_origin_x:()=>0,wnd_mouse_msg_origin_y:()=>0}};
+  r.windows[7]={hwnd:7,visible:true,isChild:false,x:0,y:0,w:640,h:480,clientRect:{x:0,y:0,w:640,h:480},zOrder:1,wasm:r.wasm,wasmMemory:memory};
+  r._exclusiveTransform={hwnd:7,srcX:0,srcY:0,srcW:640,srcH:480,dstX:0,dstY:0,dstW:640,dstH:480};
+  r.setMousePosition(100,100);browserInput.wireCanvasInput(c,r,{runningApps:[],debugMode:false});
+  const paint=()=>{const x=c.getContext('2d');x.fillStyle='#102030';x.fillRect(0,0,640,480);
+   x.fillStyle='white';x.font='22px sans-serif';x.fillText('Nox pointer observation fixture',30,40);
+   x.font='18px sans-serif';x.fillText('Production DOM + renderer; no game guest',30,75);
+   x.fillStyle='#26c87a';x.fillRect(280,210,80,60);x.fillStyle='white';x.fillText('TARGET',284,248);
+   x.strokeStyle='#ffdf40';x.lineWidth=3;x.beginPath();x.moveTo(r._mouseX-12,r._mouseY);x.lineTo(r._mouseX+12,r._mouseY);
+   x.moveTo(r._mouseX,r._mouseY-12);x.lineTo(r._mouseX,r._mouseY+12);x.stroke();};
+  window.noxFixture={canvas:c,renderer:r,paint};
+  window.noxFixtureObserver=NoxPointerObserver.install({enabled:true,canvas:c,renderer:r,memory,document,
+   diBase:RegionMap.BASE.DI_MOUSE_INPUT_STATE,emit:row=>console.log('NOX_POINTER_RECORD '+JSON.stringify(row))});
+  paint();return true;
+ })()`);
+ const image=async label=>{
+  const shot=await send('Page.captureScreenshot',{format:'png'},pageSession),bytes=Buffer.from(shot.data,'base64');
+  fs.writeFileSync(out+'/'+label+'.png',bytes,{flag:'wx'});
+  const capture={label,sha256:sha(bytes),identity:{kind:'explicit-native-pointer-fixture',guest:false,productionCommit:pins.currentCommit,modules:pins.modules.map(m=>m.sha256)}};
+  save(label+'-capture.json',capture);
+  const reviewFile=out+'/'+label+'-review.json';
+  while(!fs.existsSync(reviewFile)){if(terminalError)throw terminalError;await wait(100);}
+  const review=JSON.parse(fs.readFileSync(reviewFile));
+  assert.equal(review.sha256,capture.sha256);assert.equal(review.label,capture.label);
+  assert.deepEqual(review.identity,capture.identity);assert(review.review?.trim());return capture;
+ };
+ const before=await image('fixture-before');
+ await evaluate('window.noxFixtureObserver.begin('+JSON.stringify({id:'native-fixture-click',label:'fixture-after',previous:before})+');true');
+ const geometry=await evaluate('(()=>{const r=noxFixture.canvas.getBoundingClientRect();return {left:r.left,top:r.top,width:r.width,height:r.height}})()');
+ const receipt=await require('./native-mouse.cjs').perform({send,session:pageSession,geometry,command:{action:'click',point:[.5,.5],holdMs:150}});
+ save('fixture-native-mouse.json',receipt);
+ const observed=await evaluate('(()=>{noxFixture.paint();return noxFixtureObserver.snapshot()})()');
+ save('fixture-pointer.json',observed);
+ assert(observed.active);assert.equal(observed.state.cursor.x,320);assert.equal(observed.state.cursor.y,240);
+ const dom=observed.records.filter(r=>r.kind==='dom'&&['mousedown','mouseup'].includes(r.type));
+ assert.equal(dom.length,2);assert(dom.every(r=>r.trusted));
+ assert(observed.records.some(r=>r.kind==='renderer-return'&&r.method==='_queueDirectInputMouseEvent'));
+ const after=await image('fixture-after');
+ save('native-pointer-fixture.json',{passed:true,before,after,productionDOM:true,productionRenderer:true,nativeMouse:true,guest:false});
+}
 function generate(planFile,destination){
-  const reviewed=json(planFile),{plan,patches}=inspect();
-  assert.deepEqual(plan,reviewed,'current inputs differ from explicit reviewed plan');
+  const reviewed=json(planFile),inspected=inspect(),patches=inspected.patches;
+  // Another worker may commit unrelated files in the shared main checkout.
+  // Keep the reviewed recovery base when its entire pinned closure is unchanged.
+  git('merge-base','--is-ancestor',reviewed.currentCommit,inspected.plan.currentCommit);
+  assert.deepEqual({...inspected.plan,currentCommit:reviewed.currentCommit},reviewed,'current inputs differ from explicit reviewed plan');
+  const plan=reviewed;
   assert(!fs.existsSync(destination),'fresh generated destination');fs.mkdirSync(destination,{recursive:true});
   const emit=(name,bytes)=>fs.writeFileSync(path.join(destination,name),bytes,{flag:'wx'});
   for(const name of HELPERS){
@@ -197,6 +286,7 @@ function generate(planFile,destination){
   source=startupDiagnostics(source);
   source=terminalCleanup(source);
   source=captureLabels(source);
+  source=pointerObservations(source);
   emit('browser-run.cjs',source);
   const generated=walk(destination).map(p=>pin(path.basename(p),fs.readFileSync(p))).sort((a,b)=>a.path.localeCompare(b.path));
   const provenance=Object.entries(patches).map(([name,b])=>pin(name,b));
@@ -205,7 +295,7 @@ function generate(planFile,destination){
   for(const [name,bytes] of Object.entries(patches))emit(name,bytes);
   verify(ROOT,manifest,destination);return manifest;
 }
-module.exports={ROOT,HISTORY,DRIVER_SHA,HELPERS,sha,pin,planHash,inspect,generate,verify,registry,checkPin};
+module.exports={ROOT,HISTORY,DRIVER_SHA,HELPERS,sha,pin,planHash,inspect,generate,verify,registry,checkPin,pointerObservations};
 if(require.main===module){
   try{
     if(process.argv[2]==='inspect'){
