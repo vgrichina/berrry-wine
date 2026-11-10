@@ -73,7 +73,7 @@ if(['--runtime-probe','--runtime-preflight'].includes(process.argv[2])){
   }finally{fs.readFileSync=read;}
  }
  const m=route.composition(route.version),result=m.compose();
- for(const [name,digest] of Object.entries(require('./q3-native-driver-composition.cjs').providers))assert.equal(m.providers[name],name==='lib/redline-startup-admission.js'?route.authorities[name][1]:name==='tools/native_kernel_custody.py'?'e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e':digest,'only exact published admission/custody pins change');
+ for(const [name,digest] of Object.entries(require('./q3-native-driver-composition.cjs').providers))assert.equal(m.providers[name],name==='lib/redline-startup-admission.js'?route.authorities[name][1]:name==='tools/native_kernel_custody.py'?'f8e6e8be352a20f668185c907fdcf4308f5cb93f8c6b8297fada063fc8140b77':digest,'only exact published admission/custody pins change');
  for(const source of [result.source,result.fixtureSource,result.controlsSource])new vm.Script(source);
  let bound;m.compileBoundInput(result,{_compile(source,name){bound=source;assert(name.endsWith('/bound-input.cjs'));new vm.Script(source);}},path.join(root,path.dirname(m.consumerPath),'bound-input.cjs'),out);
  assert(bound.includes('physicalSource:')&&bound.includes('peekKeyDownState'));

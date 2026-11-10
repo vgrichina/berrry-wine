@@ -16,11 +16,11 @@ const seal=JSON.parse(cp.execFileSync(process.execPath,[path.join(__dirname,'q3-
  '--prepare',run,'--foreign-closure-version',route.version],{cwd:root,encoding:'utf8'}));
 const pins=route.staged(run,route.version,seal.manifestSHA256);
 assert.equal(pins.publishedModuleCommit,'5e8b6cb70c6e7b14c746870894beac791befcc7b');
-assert.equal(pins.publishedCustodyCommit,'4a814ed4f7cfc84901d91b1c41f738f4fcd23441');
+assert.equal(pins.publishedCustodyCommit,'a815540593f9b3d5fb4982dfbe5f156f510812c8');
 for(const [name,digest] of Object.entries({
  'src/03-registers.wat':'ce6098280c94e48aa2a985f5e39b3df55f689dcb17eec951a0969b37b74e551d',
  'src/06b-core-handlers.wat':'895a65bde3588aedace99c2c0c219a0790d36f0a23e05510bf29a349d7622e17',
- 'tools/native_kernel_custody.py':'e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e'
+ 'tools/native_kernel_custody.py':'f8e6e8be352a20f668185c907fdcf4308f5cb93f8c6b8297fada063fc8140b77'
 }))assert.equal(pins.files.find(p=>p.path===name)?.sha256,digest);
 assert.equal(pins.files.find(p=>p.path==='build/wine-assembly.wasm').sha256,current.SELECTED.sha256);
 // Compile both CPU modes from the authenticated source in memory. This binds
