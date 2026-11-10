@@ -1,9 +1,10 @@
 'use strict';
 
 // Offline, read-only transition validator. This deliberately does not install a
-// production Worker hook: the caller must own continuous instruction stepping,
-// module/load epochs and the object's complete lifetime. A sampled block feed
-// is not sufficient. Native fixture results are not original-game diagnosis.
+// instruction driver: the caller must own continuous instruction stepping,
+// module/load epochs and the object's complete lifetime. The production callback
+// context feed can bridge supported context changes, but does not authenticate
+// writers or object lifetimes. Native fixture results are not game diagnosis.
 const crypto = require('node:crypto');
 const MEDIA = Object.freeze([
   {path:'test/binaries/gltron-0.70/gltron.exe',sha256:'85fb5184262490f0b5967c2b12ee27c77da058364e594b0fc86be7b5814e40ec'},
@@ -47,7 +48,7 @@ function loadedPins(files,base,read) {
   return ()=>{for(const [a,b]of ranges)if(!b.equals(Buffer.from(read(a,b.length))))throw Error('loaded original bytes changed');return true;};
 }
 const integer=(v,n='u32')=>{if(!Number.isInteger(v)||v<0||v>0xffffffff)throw Error('invalid '+n);return v;};
-function createValidator({owner,epoch,lifetime,verify,soundBase=0x765000,maxInstructions=20000,maxRecords=256}={}) {
+function createValidator({owner,epoch,lifetime,verify,callbackSession=null,soundBase=0x765000,maxInstructions=20000,maxRecords=256}={}) {
   if(!owner||!epoch||!lifetime)throw Error('owning identity/epoch/lifetime required');
   if(typeof verify!=='function'||verify()!==true)throw Error('loaded original verification required');
   integer(soundBase);if(soundBase>0xfff00000)throw Error('base overflow');
@@ -55,10 +56,70 @@ function createValidator({owner,epoch,lifetime,verify,soundBase=0x765000,maxInst
     if(!Number.isInteger(v)||v<1||v>max)throw Error('invalid '+n+' bound');
   let seq=0,serial=0,active=null,last=null,closed=false;
   const calls=[];
-  const report={version:1,status:'running',scope:'offline transition validation; production owning/lifetime hook unavailable',
+  const callbacks=[];
+  let callbackSeq=0, callbackRoot=callbackSession?.root ? [...callbackSession.root] : null;
+  const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+  const cpuEqual=(a,b,keys=['pc','esp','ebp','eax','ecx','edx','saved'])=>keys.every(k=>a[k]===b[k]);
+  const report={version:1,status:'running',scope:'offline transition validation with optional production callback contexts; writer enrollment and authenticated object lifetime OPEN',
     records:[],instructions:0,refills:0,decodeCalls:0,decodeReturns:0,writes:0,readChanges:0,loops:0,exits:0,pending:[],classification:'UNKNOWN'};
   const emit=(kind,data={})=>{if(report.records.length>=maxRecords)throw Error('record overflow');report.records.push({kind,sequence:seq,refillToken:active?.token??null,...data});};
   function fail(e){report.status='INVALID';report.error=String(e.message||e);report.classification='UNKNOWN';closed=true;return report;}
+  // Explicit context transitions from an owning production Worker session.
+  // Callback bodies are opaque here: this does NOT attest their writes or the
+  // interrupted object's lifetime. Instruction events alone cannot substitute.
+  function transition(record, observation) {
+    if(closed)return report;
+    try {
+      if(!callbackSession || !observation || observation.invalid || observation.session!==callbackSession.session ||
+        observation.endpointIdentity!==callbackSession.endpointIdentity || observation.slot!==callbackSession.slot ||
+        observation.sequence<record.sequence || record.session!==callbackSession.session ||
+        record.endpointIdentity!==callbackSession.endpointIdentity || record.slot!==callbackSession.slot)
+        throw Error('callback session lost/overflowed');
+      if(record.sequence!==callbackSeq+1)throw Error('callback transition sequence lost');
+      if(verify()!==true)throw Error('loaded original verification lost');
+      for(const k of ['context','root']) {
+        if(!Array.isArray(record[k])||record[k].length!==2)throw Error('callback context missing');
+        record[k].forEach(v=>integer(v));
+      }
+      for(const k of ['pc','esp','ebp','eax','ecx','edx','saved'])integer(record.cpu?.[k],k);
+      integer(record.depth);
+      if(callbackRoot&&!same(callbackRoot,record.root))throw Error('callback root changed');
+      callbackRoot ||= [...record.root];
+      callbackSeq++;
+      const s=record.cpu, f=callbacks.at(-1);
+      if(['suspend','dispatch-suspend'].includes(record.kind)) {
+        if(callbacks.length>=8 || f&&f.phase!=='admitted')throw Error('callback admission reordered');
+        if(!f&&last&&!cpuEqual(last,s))throw Error('CPU continuity lost');
+        if(f&&!same(record.context,f.child))throw Error('nested callback context changed');
+        if(record.depth!==callbacks.length)throw Error('callback depth lost');
+        callbacks.push({phase:'suspended',saved:structuredClone(s),parent:[...record.context],
+          dispatch:record.kind==='dispatch-suspend'});
+      } else if(record.kind==='admit') {
+        if(!f||f.phase!=='suspended'||same(f.parent,record.context)||
+          record.depth!==callbacks.length)throw Error('callback admission missing/reordered');
+        const esp=(f.saved.esp-(f.dispatch?56:64))>>>0;
+        if(s.esp!==esp||!s.saved)throw Error('callback admission stack mismatch');
+        f.phase='admitted';f.child=[...record.context];f.entry=structuredClone(s);
+      } else if(record.kind==='ret') {
+        if(!f||f.phase!=='admitted'||!same(f.child,record.context)||record.depth!==callbacks.length)
+          throw Error('callback RET missing/reordered');
+        if(s.pc!==f.entry.saved||s.esp!==f.entry.esp+24)throw Error('callback native RET mismatch');
+        f.phase='returned';
+      } else if(record.kind==='restore'||record.kind==='cancel') {
+        const cancel=record.kind==='cancel';
+        if(!f||f.phase!==(cancel?'suspended':'returned')||!same(f.parent,record.context)||
+          record.depth!==callbacks.length-1)throw Error('callback restoration missing/reordered');
+        const expected={...f.saved};
+        if(f.dispatch&&!cancel){expected.pc=expected.saved;expected.esp+=8;}
+        if(!cpuEqual(expected,s,f.dispatch&&!cancel?['pc','esp','ebp','eax','ecx','edx']:undefined))
+          throw Error('callback restored CPU mismatch');
+        callbacks.pop();
+      } else throw Error('unknown callback transition');
+      last=structuredClone(s);
+      emit('callback-'+record.kind,{callbackSequence:callbackSeq,context:[...record.context],depth:record.depth});
+    }catch(e){fail(e);}
+    return report;
+  }
   function push(name,b,a,ret,target) {
     if(calls.length>=8)throw Error('call depth overflow');
     if(a.pc!==target||a.esp!==((b.esp-4)>>>0)||a.saved!==ret)throw Error('CALL target/stack mismatch');
@@ -72,7 +133,9 @@ function createValidator({owner,epoch,lifetime,verify,soundBase=0x765000,maxInst
       if(event.owner!==owner||event.epoch!==epoch||event.lifetime!==lifetime)throw Error('owner/epoch/lifetime changed');
       if(verify()!==true)throw Error('loaded original verification lost');
       if(event.sequence!==seq+1||event.missed!==0||event.granularity!=='instruction')throw Error('missed/duplicate/non-instruction event');
+      if(callbackSession&&event.callbackSequence!==callbackSeq)throw Error('callback transition high-water lost');
       if(seq>=maxInstructions)throw Error('instruction overflow');
+      if(callbacks.length)throw Error('callback transition incomplete before refill instruction');
       seq++;report.instructions=seq;
       const {before:b,after:a}=event;
       for(const s of [b,a])for(const k of ['pc','esp','ebp','eax','ecx','edx'])integer(s[k],k);
@@ -138,7 +201,12 @@ function createValidator({owner,epoch,lifetime,verify,soundBase=0x765000,maxInst
     }catch(e){fail(e);}
     return report;
   }
-  function finish() {
+  function finish(observation) {
+    if(callbackSession&&report.status!=='INVALID'&&(!observation||observation.invalid||
+      observation.endpointIdentity!==callbackSession.endpointIdentity||observation.slot!==callbackSession.slot||
+      observation.session!==callbackSession.session||observation.sequence!==callbackSeq))
+      fail(Error('callback session final high-water lost/overflowed'));
+    if(!closed&&callbacks.length)fail(Error('callback restoration missing at bound'));
     if(!closed){report.status='BOUNDED';closed=true;}
     report.pending=calls.map(f=>({...f}));
     if(report.status!=='INVALID')report.classification=report.exits?'REFILL_RETURNED':
@@ -146,7 +214,7 @@ function createValidator({owner,epoch,lifetime,verify,soundBase=0x765000,maxInst
       calls.some(f=>f.name==='decode')?'DECODE_PENDING_AT_BOUND':'UNKNOWN';
     return structuredClone(report);
   }
-  return {step,finish};
+  return {step,transition,finish};
 }
 
 // Read-only bridge for an EXCLUSIVE offline CPU controller. A snapshot encloses

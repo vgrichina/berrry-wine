@@ -2841,7 +2841,7 @@
           (i32.ne (call $gl32 (i32.add (local.get $arg0) (i32.const 12))) (i32.const 0)))
     (then
     (call $mm_callback_begin
-      (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 32)) (i32.const 0))
+      (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 32)) (i32.const 2))
     (local.set $tmp (call $gl32 (i32.load offset=16 (global.get $reg_base))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
     ;; A real multimedia timer calls from a system-owned thread. Our
@@ -2871,6 +2871,7 @@
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $mm_timer_ret_thunk)) ;; return address
     (global.set $eip (call $gl32 (i32.add (local.get $arg0) (i32.const 12)))) ;; callback addr
+    (call $callback_feed_emit (i32.const 2))
     (global.set $steps (i32.const 0))
     (return)))
     ;; Thread messages have hwnd == NULL. Real DispatchMessage does not route

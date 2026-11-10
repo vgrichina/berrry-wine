@@ -1237,6 +1237,7 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $pending_pop (local.get $ret) (local.get $esp))
     (call $cs_pop)
+    (if (global.get $callback_feed_enabled) (then (call $callback_feed_ret (local.get $ret))))
     (return_call $branch_end))
   (func $th_ret_imm (param $op i32)
     (local $ret i32) (local $esp i32)
@@ -1250,6 +1251,7 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.add (i32.const 4) (local.get $op))))
     (call $pending_pop (local.get $ret) (local.get $esp))
     (call $cs_pop)
+    (if (global.get $callback_feed_enabled) (then (call $callback_feed_ret (local.get $ret))))
     (return_call $branch_end))
 
   ;; --- Stack runs (07-decoder.wat $try_emit_stack_run) ---
@@ -1448,6 +1450,7 @@
       (i32.add (local.get $cur) (i32.add (i32.const 4) (local.get $imm))))
     (call $pending_pop (local.get $ret) (local.get $cur))
     (call $cs_pop)
+    (if (global.get $callback_feed_enabled) (then (call $callback_feed_ret (local.get $ret))))
     (return_call $branch_end))
   ;; H43's operand word is emitted as 0 at all three decoder sites and read by
   ;; nothing, so it is the whole 32 bits of chain slot: epoch in the high half,

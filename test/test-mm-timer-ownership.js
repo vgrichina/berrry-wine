@@ -27,6 +27,14 @@ const ex = read('src/13-exports.wat'), regs = read('src/03-registers.wat');
 let ownership = cache.slice(cache.indexOf(';; BEGIN CALLBACK INVOCATION OWNERSHIP'),
   cache.indexOf(';; END CALLBACK INVOCATION OWNERSHIP'));
 const bodies = [];
+// Include the actual default-off private queue as well as its context hooks.
+// This source-closure test models RET; the production Worker probe separately
+// executes the shipped CPU's original-media RET 20.
+if(ex.includes(';; Bounded callback-context observations')) {
+  bodies.push(ex.slice(ex.indexOf(';; Bounded callback-context observations'),
+    ex.indexOf(';; Opt-in, per-instance, fixed-size observation only.')));
+  bodies.push('(export "callbackFeedRet" (func $callback_feed_ret))');
+}
 for (const n of ['save_caller_regs','restore_caller_regs','set_flags_inc','get_cf'])
   bodies.push(form(regs, `(func $${n}`));
 for (const n of ['fire_mm_timer','fire_audio_callback_bound','fire_wave_out_callback_bound',
@@ -48,7 +56,11 @@ const dispatcher = read('src/09b-dispatch.wat');
 if (dispatcher.includes(';; Reject an unauthenticated CACA000A')) {
   const preflight = form(dispatcher.slice(dispatcher.indexOf(';; Reject an unauthenticated CACA000A')), '(if ');
   const wrapper = form(dispatcher, '(func $win32_dispatch ');
-  assert.equal(wrapper.indexOf('(if '), wrapper.indexOf(preflight), 'preflight precedes dispatch effects');
+  const prior=wrapper.slice(0,wrapper.indexOf(preflight));
+  // The REP debugger rejection was added before this callback preflight.
+  // It is also effect-free; neither guard may follow a dispatch mutation.
+  assert(!/\((?:global\.set|i32\.store|call \$(?!mm_callback_check|mm_timer_thread_check))/.test(prior),
+    'preflight precedes dispatch effects');
   bodies.push(`(func (export "preflight") (param $thunk_idx i32) ${preflight})`);
 }
 let joined = bodies.join('\n');
@@ -72,11 +84,13 @@ const source = `(memory 2 2 shared) (export "memory" (memory 0))
   (func $host_get_ticks (result i32) (i32.const 1000))
   (func $host_set_event (param i32) (result i32) (i32.const 1))
   (func $host_reset_event (param i32) (result i32) (i32.const 1))
+  ;; The separate pending-context diagnostic is unarmed in this closure.
+  (func $pending_gap)
   (func $gl32 (param $p i32) (result i32) (i32.load (local.get $p)))
   (func $gs32 (param $p i32) (param $v i32) (i32.store (local.get $p) (local.get $v)))
   (func $thunk_metadata_addr (param i32) (result i32) (i32.const 0xb400))
   ${joined}
-  ${globals.map(g => `(export "${g}" (global $${g}))`).join('\n')}
+  ${globals.filter(g=>!['callback_feed_count','callback_feed_invalid'].includes(g)).map(g => `(export "${g}" (global $${g}))`).join('\n')}
   ${['invocation_process_begin','invocation_thread_begin','invocation_enter','invocation_leave',
     'invocation_current','mm_timer_thread_step','set_flags_inc','get_cf'].map(n => `(export "${n}" (func $${n}))`).join('\n')}`;
 const compiled = compileClosure({source, vfs: new Map()}, {tailCalls: false});
@@ -96,7 +110,7 @@ function setup() {
   const slot = (flags=1) => { [7,10,0x402000,33,0,flags].forEach((v,i)=>put(0xb100+i*4,v)); };
   slot();
   const sp = () => get(0xb010), ret = () => put(0xb010,sp()+24);
-  const snap = () => ({mem: Buffer.from(mem), globals: globals.map(g=>[g,e[g].value])});
+  const snap = () => ({mem: Buffer.from(mem), globals: globals.map(g=>[g,typeof e[g]==='function'?e[g]():e[g].value])});
   put(0xb400,0xcaca000a);
   const reject = (fn,label) => { const before=snap(); assert.throws(fn,WebAssembly.RuntimeError,label); assert.deepEqual(snap(),before,label+' unchanged'); };
   const dispatch = () => {const p=0xb300; [33,0x7ff0,7,0x402000].forEach((v,i)=>put(p+i*4,v)); put(sp(),0x405555); e.dispatchTimer(p);};
@@ -198,6 +212,39 @@ for(const mode of ['none','not-due','periodic','event']) {
   if(mode==='periodic') {assert.equal(fired,1); assert.equal(x.get(0xb110),993); x.ret(); e.finish(0xcaca000a);}
   else {assert.equal(fired,0); assert.equal(x.sp(),0x18000); assert.equal(e.mm_timer_in_cb.value,0);}
   assert.equal(e.invocation_current(),parent); assert.equal(e.mm_callback_depth.value,0);cases++;
+}
+// Observe two actual nested production callback frames, draining at explicit
+// boundaries. No callback instruction bytes are generated or patched here.
+if(ex.includes(';; Bounded callback-context observations')) {
+  const api=require('../tools/gltron-native-decode-ring.cjs');
+  const x=setup(),{e}=x,records=[],session={session:1,endpointIdentity:1520,slot:0};
+  assert.equal(e.callback_feed_arm(1),1);
+  const drain=()=>{
+    assert.equal(e.callback_feed_invalid(),0);
+    for(let i=0;i<e.callback_feed_count();i++){
+      const v=Array.from({length:15},(_,j)=>e.callback_feed_get(i,j)>>>0);
+      records.push({...session,sequence:v[1],kind:['','suspend','admit','ret','restore','cancel','dispatch-suspend'][v[0]],
+        context:[v[2],v[3]],root:[v[12],v[13]],depth:v[11],
+        cpu:Object.fromEntries(['pc','esp','ebp','eax','ecx','edx','saved'].map((k,j)=>[k,v[j+4]]))});
+    }
+    e.callback_feed_drain();
+  };
+  e.fire_wave_out_callback_bound(11,22,0x402000,33);drain();
+  const outerSP=x.sp();x.put(0xb010,outerSP-8);x.dispatch();drain();
+  x.ret();e.eip.value=0x500000;e.callbackFeedRet(0x500000);drain();e.finish(0xcaca000a);drain();
+  x.ret();e.eip.value=0x500000;e.callbackFeedRet(0x500000);drain();e.finish(0xcaca000a);drain();
+  assert.deepEqual(records.map(r=>r.kind),['suspend','admit','dispatch-suspend','admit','ret','restore','ret','restore']);
+  const make=()=>api.createValidator({owner:{},epoch:{},lifetime:{},verify:()=>true,callbackSession:session});
+  const observation={...session,sequence:records.length,invalid:null};
+  const v=make();for(const r of records)assert.notEqual(v.transition(r,observation).status,'INVALID');
+  assert.notEqual(v.finish(observation).status,'INVALID');
+  const bad=make();for(const r of records.filter((_,i)=>i!==5))bad.transition(r,observation);
+  assert.equal(bad.finish(observation).status,'INVALID');
+  // CPU queue loss cannot be hidden by draining or by a later valid restore.
+  const y=setup();assert.equal(y.e.callback_feed_arm(1),1);
+  for(let i=0;i<3;i++){y.e.fire_wave_out_callback_bound(11,22,0x402000,33);y.ret();y.e.finish(0xcaca000a);}
+  assert.equal(y.e.callback_feed_invalid(),1);y.e.callback_feed_drain();assert.equal(y.e.callback_feed_invalid(),1);
+  cases+=3;
 }
 console.log(`PASS mm timer ownership: ${cases} production-slice cases`);
 if(process.argv.includes('--controls')) {

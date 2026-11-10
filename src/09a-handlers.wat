@@ -291,6 +291,10 @@
     (local.set $depth (select (global.get $mm_callback_depth) (i32.const 0)
       (i64.eq (global.get $mm_callback_owner) (global.get $invocation_root))))
     (if (i32.ge_u (local.get $depth) (i32.const 64)) (then (unreachable)))
+    ;; Mode 2 is DispatchMessage's MM_TIMER adapter: its interrupted API frame
+    ;; completes before saving the callback return CPU.
+    (call $callback_feed_emit (select (i32.const 6) (i32.const 1)
+      (i32.eq (local.get $audio) (i32.const 2))))
     (local.set $child (call $invocation_enter))
     (local.set $frame (call $mm_callback_frame_at (local.get $depth)))
     (i64.store (local.get $frame) (local.get $child))
@@ -298,7 +302,7 @@
     (i32.store offset=12 (local.get $frame) (global.get $mm_timer_in_cb))
     (i32.store offset=16 (local.get $frame)
       (select (global.get $mm_timer_resume_yield) (i32.const 0) (global.get $mm_timer_in_cb)))
-    (i32.store offset=20 (local.get $frame) (local.get $audio))
+    (i32.store offset=20 (local.get $frame) (i32.eq (local.get $audio) (i32.const 1)))
     (i64.store offset=24 (local.get $frame) (global.get $invocation_root))
     (global.set $mm_callback_owner (global.get $invocation_root))
     (global.set $mm_callback_depth (i32.add (local.get $depth) (i32.const 1))))
@@ -319,7 +323,8 @@
     (local $frame i32)
     (local.set $frame (call $mm_callback_frame))
     (call $invocation_leave (i64.load (local.get $frame)))
-    (global.set $mm_callback_depth (i32.sub (global.get $mm_callback_depth) (i32.const 1))))
+    (global.set $mm_callback_depth (i32.sub (global.get $mm_callback_depth) (i32.const 1)))
+    (call $callback_feed_emit (i32.const 5)))
 
   (func $mm_callback_check (result i32)
     (local $frame i32)
@@ -344,7 +349,8 @@
         (global.set $steps (i32.const 0))))
     (global.set $mm_timer_in_cb (i32.load offset=12 (local.get $frame)))
     (global.set $mm_timer_resume_yield (i32.load offset=16 (local.get $frame)))
-    (global.set $mm_callback_depth (i32.sub (global.get $mm_callback_depth) (i32.const 1))))
+    (global.set $mm_callback_depth (i32.sub (global.get $mm_callback_depth) (i32.const 1)))
+    (call $callback_feed_emit (i32.const 4)))
   (func $mm_timer_thread_check
     (call $invocation_validate)
     (if (i32.and (i64.eq (global.get $mm_callback_owner) (global.get $invocation_root))
