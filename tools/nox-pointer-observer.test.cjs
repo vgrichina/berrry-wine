@@ -56,7 +56,15 @@ async function main(){
   assert(rows.filter(v=>v.kind!=='observer-arm').every(v=>v.binding.id===mode));
   const moves=rows.filter(v=>v.kind==='renderer-entry'&&v.method==='handleMouseMove');
   const relative=rows.filter(v=>v.kind==='renderer-entry'&&v.method==='handleRelativeMouseMove');
-  if(mode==='absolute'){assert.equal(moves.length,1);assert.equal(moves[0].args.x,320);assert.equal(moves[0].args.y,381);}
+  if(mode==='absolute'){
+   assert.equal(moves.length,1);assert.equal(moves[0].args.x,320);assert.equal(moves[0].args.y,381);
+   // Reproduce the original Nox nonresponse: an unprimed absolute move
+   // establishes the reference without returning any relative axis records.
+   assert.equal(moves[0].state.reference,null);
+   assert.deepEqual(consumed.map(word=>word>>>28),[1,2],'buttons only, no X/Y records');
+   assert.equal(snapshot.state.di.dx,0);assert.equal(snapshot.state.di.dy,0);
+   assert.deepEqual(snapshot.state.reference,{x:320,y:381});
+  }
   if(mode==='pending'){assert.equal(moves.length,0);assert.equal(relative.length,0);}
   if(mode==='locked'){assert.equal(relative.length,1);assert.equal(relative[0].args.x,7);assert.equal(relative[0].args.y,-3);}
   assert(queued>0,'actual production DI event delivery');

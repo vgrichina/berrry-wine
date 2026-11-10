@@ -66,7 +66,7 @@ function recorder({getExports,getMemory,bases,sites,api,now=()=>performance.now(
   if(terminal)throw Error('Nox consumption terminal: '+terminal);
   if(!b?.id||!b.label||!/^[a-f0-9]{64}$/.test(b.previous?.sha256??'')||!same(b.previous.identity,identity)||owner&&!same(owner,identity)){stop('binding');throw Error('Nox consumption owner/image binding');}
   if(frames.length||pendingApi){stop('incomplete');throw Error('Nox consumption incomplete prior call');}
-  owner=clone(identity);binding=clone(b);if(deadline===null)deadline=now()+durationMs;getExports().nox_consumption_arm(1);row('command-begin',{cursor:cursor()});return {active:!terminal};
+  owner=clone(identity);binding=clone(b);if(deadline===null)deadline=now()+durationMs;getExports().nox_consumption_arm(1);const position=cursor();row('command-begin',{cursor:position});return {active:!terminal,cursor:position};
  },finish(identity){if(frames.length||pendingApi)stop('incomplete');getExports()?.nox_consumption_arm(0);binding=null;return this.snapshot(identity);},snapshot(identity){if(owner&&!same(owner,identity))stop('owner');if(deadline!==null&&now()>=deadline)stop('deadline');return {version:1,status:terminal?'UNKNOWN':'PASSIVE',reason:terminal,deadline,events,pendingApi:clone(pendingApi),frames:clone(frames),records:clone(rows)};}};
 }
 function workerInstall(config,makeRecorder){
@@ -108,6 +108,10 @@ function compose(source,config){
  once(".map(p=>p.sha256)});",`.map(p=>p.sha256).concat(${JSON.stringify(config.sha256)})});`);
  once(' markDispatch();',` const cw=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(cw,'Nox consumption owning Worker');
  const armed=await evaluate('globalThis.__noxConsumption.begin('+JSON.stringify({id:c.id,label:c.label,previous:latest})+','+JSON.stringify(latest.identity)+')',cw.sessionId);assert.equal(armed?.active,true,'Nox consumption arm');
+ if(['click','doubleclick','drag'].includes(c.action)){
+  const pointer=await evaluate('window.noxPointerObserver.snapshot().state');
+  assert(pointer?.reference&&Number.isInteger(armed.cursor?.x)&&Number.isInteger(armed.cursor?.y)&&pointer.reference.x===armed.cursor.x&&pointer.reference.y===armed.cursor.y,'Nox relative pointer reference must match original cursor before button input');
+ }
  markDispatch();`);
  once("console.log('CAPTURE '+label);",`const cw=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(cw,'Nox consumption capture Worker');const consumption=await evaluate('globalThis.__noxConsumption.finish('+JSON.stringify(latest.identity)+')',cw.sessionId);save(label+'-consumption.json',consumption);assert.equal(consumption.reason,null,'Nox consumption observation incomplete');
  console.log('CAPTURE '+label);`);

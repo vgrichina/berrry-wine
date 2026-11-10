@@ -22,7 +22,7 @@ async function consumer(mode,action='move'){
  const context={assert,deadline:Date.now()+60000,latest,out:'/offline',root,terminalError:null,pageSession:'page',pointerObserverInstalled:false,
   workers:new Map([['worker',{targetId:owner.workerTarget,sessionId:'worker'}]]),
   validCaptureLabel(){},fs:{existsSync:()=>false,readFileSync:f=>f.endsWith('-review.json')?JSON.stringify({...latest,review:'offline model review'}):'image'},sha:()=>image.sha256,
-  evaluate:async(expression,session)=>session==='worker'?vm.runInNewContext(expression,{globalThis:{__noxConsumption:o}}):{left:0,top:0,width:640,height:480},
+  evaluate:async(expression,session)=>session==='worker'?vm.runInNewContext(expression,{globalThis:{__noxConsumption:o}}):expression==='window.noxPointerObserver.snapshot().state'?{reference:mode==='unprimed'?null:mode==='desynchronized'?{x:351,y:295}:{x:0,y:0}}:{left:0,top:0,width:640,height:480},
   save(){},wait:async()=>{},capture:async()=>{captured++;},
   chain:{admit:async(_,f)=>f({live:{identity:latest.identity}})},
   send:async()=>{assert(!terminal);sent++;if(mode==='firstfailure')throw Error('first native failure');return {};},
@@ -147,4 +147,4 @@ async function workerTransport(){
   fs.writeFileSync(out+'/worker-transport.json',JSON.stringify(result,null,2));return result;
  }finally{await worker.terminate();}
 }
-(async()=>{const controls=[];for(const action of ['move','click'])for(const m of ['wrongbinding','incomplete','success','firstfailure'])controls.push(await consumer(m,action));const native=await compiled();const transport=process.env.NOX_CONSUMPTION_GENERATED?await workerTransport():null;const result={passed:true,controls,native,transport};fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));})().catch(e=>{console.error(e);process.exitCode=1;});
+(async()=>{const controls=[];for(const action of ['move','click'])for(const m of ['wrongbinding','incomplete','success','firstfailure'])controls.push(await consumer(m,action));for(const m of ['unprimed','desynchronized'])controls.push(await consumer(m,'click'));const native=await compiled();const transport=process.env.NOX_CONSUMPTION_GENERATED?await workerTransport():null;const result={passed:true,controls,native,transport};fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));})().catch(e=>{console.error(e);process.exitCode=1;});
