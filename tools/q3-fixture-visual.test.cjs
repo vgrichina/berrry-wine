@@ -24,9 +24,9 @@ const source=html.slice(html.indexOf('async function fixture(backend)'),html.ind
 assert(source.endsWith('}\nfunction handle'));
 const body=source.slice(source.indexOf('async function fixture(backend)'),source.indexOf('\nfunction handle'));
 assert(body.startsWith('async function fixture'));
-const draws=[],canvases=[],calls=[],listeners=[];let bridge,memory,allocated=0x10000;
+const draws=[],canvases=[],calls=[],listeners=[],contextOptions=[];let bridge,memory,allocated=0x10000;
 const table=require('../src/api_table.json');
-function canvas(){const c={width:300,height:150,style:{},getContext(kind){assert.equal(kind,'2d');return ctx;}};
+function canvas(){const c={width:300,height:150,style:{},getContext(kind,options){assert.equal(kind,'2d');contextOptions.push({canvas:c,options});return ctx;}};
  const ctx={imageSmoothingEnabled:true,createImageData(w,h){return {data:new Uint8ClampedArray(w*h*4)};},
  putImageData(image,x,y){c.pixels=Uint8Array.from(image.data);assert.deepEqual([x,y],[0,0]);},
  drawImage(...args){draws.push({canvas:c,args,smoothing:this.imageSmoothingEnabled});}};canvases.push(c);return c;}
@@ -65,6 +65,9 @@ const context={WebAssembly:{Memory:class{constructor(){this.buffer=new ArrayBuff
  const float=n=>{const b=Buffer.alloc(4);b.writeUInt32LE(n);return b.readFloatLE();};
  const vertices=calls.filter(c=>c.api==='glVertex3f').map(c=>c.args.map(float));
  assert.deepEqual(vertices,[[-1,-1,0],[1,-1,0],[0,1,0]]);
+ assert.deepEqual(calls.find(c=>c.api==='glClearColor').args.map(float),[0,0,0,1]);
+ assert.deepEqual(calls.find(c=>c.api==='glColor4f').args.map(float),[1,0,0,1]);
+ assert.deepEqual(calls.find(c=>c.api==='glBegin').args,[4]);
  assert.deepEqual(calls.filter(c=>['glFinish','SwapBuffers'].includes(c.api)).map(c=>c.api),['glFinish','SwapBuffers']);
  const hwnd=65537,win=bridge.options.renderer.windows[hwnd];assert.equal(win.w,320);assert.equal(win.h,200);
  const historicalMask=[];for(let y=0;y<8;y++){let row='';for(let x=0;x<8;x++){
@@ -79,6 +82,7 @@ const context={WebAssembly:{Memory:class{constructor(){this.buffer=new ArrayBuff
  bridge.frameOwners.set(7,new Map([[hwnd,win]]));
  bridge._presentFrame({hwnd,width:320,height:200,pixels,frameToken:7});assert.equal(draws.length,1);
  const draw=draws[0];assert.equal(draw.canvas,canvases[0]);assert.equal(draw.smoothing,false);
+ assert.equal(contextOptions.find(c=>c.canvas===draw.canvas).options.alpha,false);
  assert.deepEqual(draw.args.slice(1),[0,0,320,200]);assert.deepEqual([draw.args[0].width,draw.args[0].height],[320,200]);
  assert.deepEqual([draw.canvas.width,draw.canvas.height],[320,200]);assert.deepEqual(Object.keys(draw.canvas.style),[]);
  assert.deepEqual(draw.args[0].pixels,pixels);assert.equal(win._gpuFrameLayer.canvas,draw.args[0]);
