@@ -1,7 +1,7 @@
 'use strict';
 
-const fs = require('node:fs');
-const { setTimeout: wait } = require('node:timers/promises');
+const path = require('node:path');
+const {waitForBrowserEndpoint} = require('./native-browser-endpoint.cjs');
 
 function parseActivePort(text) {
   const lines = text.replace(/\r\n/g, '\n').split('\n');
@@ -14,28 +14,17 @@ function parseActivePort(text) {
   return { debugPort, browserPath, url: `ws://127.0.0.1:${debugPort}${browserPath}` };
 }
 
-async function waitForEndpoint(file, browser, { deadline, timeoutMs = 10000, pollMs = 25 } = {}) {
-  const stop = Math.min(Date.now() + timeoutMs, deadline ?? Infinity);
-  let reason = 'file missing', attempts = 0;
-  while (Date.now() < stop) {
-    if (browser.exitCode !== null || browser.signalCode != null) {
-      throw new Error(`DevTools endpoint unavailable: Chrome exited (${browser.exitCode ?? browser.signalCode}); ${reason}`);
-    }
-    attempts++;
-    try {
-      // Chrome creates this file before both lines are necessarily visible.
-      // Reread a fresh snapshot; never serialize a partial endpoint or try it.
-      const endpoint = parseActivePort(fs.readFileSync(file, 'utf8'));
-      return { ...endpoint, attempts };
-    } catch (error) {
-      if (error.code && error.code !== 'ENOENT') {
-        throw new Error(`DevTools endpoint read failed (${file}): ${error.message}`, { cause: error });
-      }
-      reason = error.code === 'ENOENT' ? 'file missing' : error.message;
-    }
-    await wait(Math.min(pollMs, Math.max(0, stop - Date.now())));
-  }
-  throw new Error(`DevTools endpoint not ready (${file}): ${reason}; startup deadline reached after ${attempts} reads; no WebSocket attempted`);
+async function waitForEndpoint(file, browser, { deadline, timeoutMs = 10000, pollMs = 25, record = () => {} } = {}) {
+  if (path.basename(file) !== 'DevToolsActivePort') throw Error('expected DevToolsActivePort');
+  let publicationChanges = 0;
+  const endpoint = await waitForBrowserEndpoint({profile: path.dirname(file), browser,
+    deadline, startupTimeoutMs: timeoutMs, pollMs,
+    validateEndpoint: value => {
+      try { parseActivePort(`${value.debugPort}\n${value.browserPath}`); return true; }
+      catch { return false; }
+    },
+    record: row => { publicationChanges++; record(row); }});
+  return {...endpoint, url: `ws://127.0.0.1:${endpoint.debugPort}${endpoint.browserPath}`, publicationChanges};
 }
 
 module.exports = { parseActivePort, waitForEndpoint };
