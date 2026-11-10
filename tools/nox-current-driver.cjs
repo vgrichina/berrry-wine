@@ -232,7 +232,16 @@ async function nativePointerFixture(){
    if(publication.source!==c||publication.output!==c||publication.backend!=='direct-canvas')throw Error('fixture requires direct production publication');
    return publication.backend;};
   window.noxFixture={canvas:c,renderer:r,paint,owner:crypto.randomUUID()};
-  window.noxFixtureObserver=NoxPointerObserver.install({enabled:true,canvas:c,renderer:r,memory,document,
+  // The production drag bridge consumes mouseup at window capture and stops
+  // propagation. Observe at that same node, before it is armed by mousedown;
+  // document capture cannot see the release. Pointer-lock events stay on doc.
+  const fixtureDocument={
+   get pointerLockElement(){return document.pointerLockElement;},
+   get webkitPointerLockElement(){return document.webkitPointerLockElement;},
+   addEventListener(type,fn,capture){(type.startsWith('mouse')?window:document).addEventListener(type,fn,capture);},
+   removeEventListener(type,fn,capture){(type.startsWith('mouse')?window:document).removeEventListener(type,fn,capture);}
+  };
+  window.noxFixtureObserver=NoxPointerObserver.install({enabled:true,canvas:c,renderer:r,memory,document:fixtureDocument,
    diBase:RegionMap.BASE.DI_MOUSE_INPUT_STATE,emit:row=>console.log('NOX_POINTER_RECORD '+JSON.stringify(row))});
   paint();return true;
  })()`);

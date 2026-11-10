@@ -119,9 +119,14 @@ async function child(){
      }} };`,context);
     vm.runInContext(fs.readFileSync(root+'/lib/browser-input.js','utf8'),context);
     ctx.emit=(type,e)=>{const c=elements.get('nox-pointer-fixture');
-     const event={type,isTrusted:true,clientX:e.x,clientY:e.y,movementX:0,movementY:0,button:0,preventDefault(){},stopPropagation(){},...e};
-     for(const f of docs.get(type)||[])f(event);if(c?.['on'+type])c['on'+type](event);
-     for(const f of listeners.get(type)||[])f(event);
+     let stopped=false;
+     const event={type,isTrusted:true,clientX:e.x,clientY:e.y,movementX:0,movementY:0,button:0,preventDefault(){},stopPropagation(){stopped=true;},...e};
+     // Real capture order: window precedes document and target. Stopping
+     // propagation retains other listeners on the same node. In production
+     // the bridge owns mouseup at window and prevents document observation.
+     for(const f of [...(listeners.get(type)||[])])f(event);
+     if(!stopped)for(const f of [...(docs.get(type)||[])])f(event);
+     if(!stopped&&c?.['on'+type])c['on'+type](event);
     };return context;
    }
    if(observerControl){
@@ -182,7 +187,8 @@ async function child(){
            if(p.type==='keyDown'&&(p.text||p.key==='Enter'))page.emit('keypress',{key:p.key});
            if(mode==='held-identity'&&fs.existsSync(generated+'/original/ready.json')&&p.type==='keyDown')wine.running=false;
          }else if(q.method==='Input.dispatchMouseEvent'){
-           const p=q.params;deliveries.push(p);page.emit(p.type==='mousePressed'?'mousedown':p.type==='mouseReleased'?'mouseup':'mousemove',p);
+           const p=q.params;deliveries.push(p);
+           if(!(mode==='fixture-up-fault'&&p.type==='mouseReleased'))page.emit(p.type==='mousePressed'?'mousedown':p.type==='mouseReleased'?'mouseup':'mousemove',p);
            if(['drag-failure','held-mouse'].includes(mode)&&p.type==='mousePressed'&&!firstMouseFault){firstMouseFault=true;terminalIndex=protocol.length;if(mode==='held-mouse')return;return this.reply(q,{}, {code:-1,message:'OFFLINE_FIRST_DRAG_FAILURE'});}
          }else if(q.method==='Page.captureScreenshot'){if(mode==='held-capture'&&fs.existsSync(generated+'/original/ready.json')){terminalIndex=protocol.length;return;}if(fixtureControl){const f=page.noxFixture;assert.equal(f.canvas.style.opacity,'1','paint must publish through production renderer');assert(f.renderer._directPresentation);assert.equal(f.renderer.presentationCanvas.style.display,'none');}
           r={data:Buffer.from('offline screenshot bytes').toString('base64')};}
@@ -323,7 +329,7 @@ async function main(){
 }
 async function fixtureIntegration(generated,out){
  const results=[];
- for(const mode of ['fixture','fixture-owner-fault','fixture-image-fault']){
+ for(const mode of ['fixture','fixture-owner-fault','fixture-image-fault','fixture-up-fault']){
   const dir=out+'/'+mode;fs.mkdirSync(dir);
   const r=cp.spawnSync(process.execPath,[__filename],{env:{...process.env,NOX_TEST_CHILD:'1',NOX_TEST_MODE:mode,NOX_TEST_DIR:dir,NOX_TEST_GENERATED:generated},encoding:'utf8',timeout:30000,maxBuffer:1024*1024});
   fs.writeFileSync(dir+'/stdout',r.stdout||'');fs.writeFileSync(dir+'/stderr',r.stderr||'');
@@ -332,13 +338,16 @@ async function fixtureIntegration(generated,out){
   assert.equal(joined.stdoutEOF,true);assert.equal(joined.stderrEOF,true);
   assert.equal(r.status,mode==='fixture'?0:1,r.stderr+'\n'+r.stdout);
   const presses=peer.deliveries.filter(p=>p.type==='mousePressed');
-  assert.equal(presses.length,mode==='fixture'?1:0,'review binding must precede any click');
+  assert.equal(presses.length,['fixture','fixture-up-fault'].includes(mode)?1:0,'review binding must precede any click');
   if(mode==='fixture'){
    const proof=JSON.parse(fs.readFileSync(dir+'/runtime/native-pointer-fixture.json'));
    assert(proof.passed);assert.equal(proof.before.identity.fixtureOwner,proof.after.identity.fixtureOwner);
    assert.equal(proof.before.identity.canvasId,'nox-pointer-fixture');
    const pointer=JSON.parse(fs.readFileSync(dir+'/runtime/fixture-pointer.json'));
    assert(pointer.records.some(p=>p.kind==='dom'&&p.binding?.previous?.sha256===proof.before.sha256));
+   assert.deepEqual(pointer.records.filter(p=>p.kind==='dom'&&['mousedown','mouseup'].includes(p.type)).map(p=>p.type),['mousedown','mouseup']);
+   assert(pointer.records.some(p=>p.kind==='renderer-return'&&p.method==='handleMouseUp'));
+   assert.equal(pointer.state.cursor.buttons,0);
   }else assert.equal(peer.protocol.length,peer.failurePublishedIndex,'no protocol after first refusal');
   results.push({mode,passed:true,status:r.status});
  }
