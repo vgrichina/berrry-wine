@@ -202,6 +202,36 @@ async function acceptance(parts) {
     assert.equal(h.calls.some(x=>Array.isArray(x)&&x[0]==='run'),false,
       mode+': no guest slice after stop during admission');
   }
+  {
+    const h=harness(parts,{now:1000,deadline:77});
+    let release,reads=0;
+    const endpoint={optionalCall:async name=>{
+      if(name==='get_sleep_yielded'){reads++;return 1;}
+      return new Promise(resolve=>{release=resolve;});
+    }};
+    const pending=h.tm.noteMainSleepOwned(endpoint);
+    await new Promise(resolve=>setImmediate(resolve));
+    assert.equal(h.tm._mainSleepUntil,77,'no deadline change before timeout arrives');
+    release(25);await pending;
+    assert.equal(h.tm._mainSleepUntil,1025);assert.equal(reads,1);
+    await assert.rejects(h.tm.noteMainSleepOwned({optionalCall:async()=>{throw Error('retired');}}),/retired/);
+    assert.equal(h.tm._mainSleepUntil,1025);
+    await h.tm.noteMainSleepOwned({optionalCall:()=>{throw Error('must not re-read Worker flag');}},
+      {sleepYielded:true,sleepMs:0});
+    assert.equal(h.tm._mainSleepUntil,0,'Sleep(0) removes previous deadline');
+    await assert.rejects(h.tm.noteMainSleepOwned(endpoint,{}),/invalid main Worker sleep/);
+  }
+  for (const mode of ['ordinary','worker','cooperative']) {
+    const h=harness(parts,{mode,now:25025});
+    const owner=h.context.mainOwner;
+    h.context.mainOwner={...owner,kind:'worker',run:async size=>{
+      await owner.run(size);return {sleepYielded:true,sleepMs:77};
+    }};
+    await h.dispatch();
+    assert.equal(h.tm._mainSleepUntil,25102,mode+': slice-returned sleep recorded');
+    assert.equal(h.calls.filter(x=>Array.isArray(x)&&x[0]==='run').length,1,
+      mode+': consumed Worker sleep prevents another main slice');
+  }
   // No deadline means the existing short circuit spends no wait clock read.
   const noDeadline = harness(parts, { enabled: true, deadline: 0 }); await noDeadline.dispatch();
   assert.equal(noDeadline.calls.some(x => Array.isArray(x) && x[0] === 'wait-now'), false);
@@ -293,7 +323,7 @@ async function acceptance(parts) {
   const controls = [
     ['default-on', { ...production, init: production.init.replace("hasFlag('trace-main-scheduler')", 'true') }],
     ['lost-run-wiring', { ...production, ordinary: production.ordinary.replace("mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE))", 'mainOwner.run(BATCH_SIZE)') }],
-    ['extra-consuming-sleep-getter', { ...production, gate: production.gate.replace('threadManager.noteMainSleep();', 'instance.exports.get_sleep_yielded(); threadManager.noteMainSleep();') }],
+    ['extra-consuming-sleep-getter', { ...production, gate: production.gate.replace('await threadManager.noteMainSleepOwned(mainOwner);', 'instance.exports.get_sleep_yielded(); await threadManager.noteMainSleepOwned(mainOwner);') }],
     ['extra-decision-clock', { ...production, sleep: production.sleep.replace('observe({ now, deadline, sleeping });', 'this._waitNow(); observe({ now, deadline, sleeping });') }],
     ['forced-main-wake', { ...production, gate: production.gate.replace("if (threadManager.isMainSleeping(observation?.sleep)) return finish(true, 'sleep');", "if (false) return finish(true, 'sleep');") }],
     ['lost-worker-provenance', { ...production, workerInput: baseline.parts.workerInput }],

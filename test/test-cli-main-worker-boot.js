@@ -6,7 +6,8 @@ const {GuestThreadHost}=require('../lib/guest-thread-host');
 const {createGuestMainOwner}=require('../lib/guest-main-owner');
 const {configureExeOwned,stageAndLoadPeOwned}=require('../lib/process-boot');
 const {BASE}=require('../lib/region-map.generated');
-const {pe,u32}=require('./test-dll-lifecycle-real-pe');
+const {pe,u32,API}=require('./test-dll-lifecycle-real-pe');
+const {ThreadManager}=require('../lib/thread-manager');
 const {serviceMainTimingWait}=require('./main-timing-waits');
 const {serviceMainIoWait}=require('../lib/main-io-wait');
 const {VirtualFS}=require('../lib/filesystem');
@@ -164,7 +165,20 @@ const root=path.resolve(__dirname,'..');
     assert(vfs.readFile(file,ioBytes,4).ok);
     assert.deepEqual([...ioBytes],[9,8,7,6]);
     if(remote)assert.equal(h.exports.get_yield_reason(),shadowYield,'I/O completion leaves shadow unchanged');
-    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,dlls,registrations,retirement,timing:timing.vblank});
+    const sleepThunk=await owner.call('guest_read32',dlls[0].loadAddr+0x1900+API.indexOf('Sleep')*4);
+    const sleepCode=await owner.call('guest_alloc',32);
+    const sleepOffset=await owner.call('guest_to_wasm',sleepCode);
+    new Uint8Array(h.memory.buffer).set([0x68,...u32(77),0xb8,...u32(sleepThunk),0xff,0xd0,0xeb,0xfe],sleepOffset);
+    await owner.call('set_yield_state',0,0);await owner.call('set_eip',sleepCode);
+    const sleepSlice=await owner.run(100);
+    const sleepState={_mainSleepUntil:0,_sleepNow:()=>1000};
+    if(remote)assert.equal(sleepSlice.sleepMs,77,'actual Worker slice carries consumed Sleep');
+    await ThreadManager.prototype.noteMainSleepOwned.call(sleepState,owner,remote?sleepSlice:undefined);
+    assert.equal(sleepState._mainSleepUntil,1077,'native Sleep observed on selected owner '+JSON.stringify({sleepThunk,sleepCode,sleepSlice,state:await owner.read(['get_eip','get_esp','get_yield_reason','get_sleep_timeout','get_halted'])}));
+    await ThreadManager.prototype.noteMainSleepOwned.call(sleepState,owner);
+    assert.equal(sleepState._mainSleepUntil,1077,'consumed flag cannot reset existing deadline');
+    if(remote)assert.equal(h.exports.get_sleep_yielded(),0,'shadow has no guest sleep flag');
+    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,dlls,registrations,retirement,timing:timing.vblank,sleepUntil:sleepState._mainSleepUntil});
    }finally{await worker?.stop();}
   }
  }

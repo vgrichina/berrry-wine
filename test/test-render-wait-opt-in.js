@@ -21,7 +21,7 @@ function harness(args, old=false, mutate=x=>x) {
   ctx.waitD3DRender = t => {trace.push(['wait',t]); return pending;};
   const sandbox={args, ctx, mainSchedulerObserver:null, createRenderWaitAttribution:()=>{creates++; return createRenderWaitAttribution();},
     instance:{exports:{get_yield_reason:()=>reason,get_d3d_render_token:()=>token,clear_yield:()=>{reason=0;trace.push('clear');}}},
-    threadManager:{isMainNamedEventWaiting:()=>false,_renderSendTargets:new Set(),noteMainSleep:()=>trace.push('sleep'),isMainSleeping:()=>false,isMainThreadSuspended:()=>false},
+    threadManager:{isMainNamedEventWaiting:()=>false,_renderSendTargets:new Set(),noteMainSleep:()=>trace.push('sleep'),noteMainSleepOwned:async()=>trace.push('sleep'),isMainSleeping:()=>false,isMainThreadSuspended:()=>false},
     tickState:{batch:3,pausedMs:0},REAL_TICK_SLEEPS:true,Date:{now:()=>clock.now},
     console:{error:(...x)=>trace.push(['error',x[1].message]),log:x=>logs.push(x)},
     setTimeout:(fn,ms)=>{trace.push(['timer',ms]);timers.push(fn);}};

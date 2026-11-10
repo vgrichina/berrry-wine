@@ -45,7 +45,7 @@ function harness(transform = x => x, baseline = false) {
     console: { log: x => logs.push(x), error: (...x) => errors.push(x) },
     setTimeout: fn => { timers.push(fn); }, hasFlag: name => name === 'trace-render-wait', REAL_TICK_SLEEPS: true,
     threadManager: { isMainNamedEventWaiting: () => false, _renderSendTargets: new Set(),
-      noteMainSleep() {}, isMainSleeping: () => false, isMainThreadSuspended: () => false },
+      noteMainSleep() {}, async noteMainSleepOwned() {}, isMainSleeping: () => false, isMainThreadSuspended: () => false },
   };
   sandbox.mainOwner = {call: async (name,...args)=>sandbox.instance.exports[name](...args),
     optionalCall: async (name,...args)=>sandbox.instance.exports[name]?.(...args)};

@@ -587,6 +587,16 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   ThreadManager sleep/send state and remaining CLI runtime accesses still need
   migration before selecting a Worker main. Evidence:
   `scratch/runs/20261109-cli-render-gate-owner/`.
+  Admission's sleep observation now uses `noteMainSleepOwned`. It consumes
+  the selected owner's flag once and conditionally reads the timeout. Worker
+  slices already consume that flag before replying, so all three CLI slice
+  sites record their validated `sleepYielded`/`sleepMs` reply instead of losing
+  the sleep to a second query. Native x86 Sleep(77) tests on both WASM builds
+  verify identical local/Worker deadlines and an untouched shadow; exact CLI
+  tests check each slice site suppresses subsequent main execution. Delayed
+  owner queries, failures, Sleep(0) and already-consumed flags are covered.
+  Legacy `checkMainYield` and APC sleep callers still need migration.
+  Evidence: `scratch/runs/20261109-cli-sleep-owner/`.
   PE placement/loading and launch name/drive/arguments now use shared
   `stageAndLoadPeOwned`/`configureExeOwned` helpers in both the CLI and
   `GuestThreadHost.loadPe`. The existing `stagePe` still owns oversized PE/NE

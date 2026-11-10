@@ -7020,7 +7020,7 @@ async function main() {
     // instead (see mainSleepWallWait).
     // A Sleep main made earlier in this batch (between thread slices) has not
     // been through checkMainYield yet; record its deadline now.
-    threadManager.noteMainSleep();
+    await threadManager.noteMainSleepOwned(mainOwner);
     if (!REAL_TICK_SLEEPS && threadManager.isMainSleeping(observation?.sleep) &&
         !(observation ? observation.live(threadManager.hasLiveThreads()) : threadManager.hasLiveThreads())) {
       if (observation) observation.fastForward();
@@ -10659,8 +10659,10 @@ async function main() {
       if (!await mainExecutionSuspended('ordinary')) {
         if (stopped) break;
         try {
-        if (mainSchedulerObserver) await mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE));
-        else await mainOwner.run(BATCH_SIZE);
+        const slice = mainSchedulerObserver
+          ? await mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE))
+          : await mainOwner.run(BATCH_SIZE);
+        if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
         } catch (error) {
           if (!nativeFault.capture(error, instance.exports,
             { schedulerSlot: 0, main: true }, 'ordinary')) throw error;
@@ -11064,8 +11066,10 @@ async function main() {
           // awaiting the main slice and the thread slices together.
           try {
             try {
-            if (mainSchedulerObserver) await mainSchedulerObserver.run('worker-interleaved', () => mainOwner.run(BATCH_SIZE));
-            else await mainOwner.run(BATCH_SIZE);
+            const slice = mainSchedulerObserver
+              ? await mainSchedulerObserver.run('worker-interleaved', () => mainOwner.run(BATCH_SIZE))
+              : await mainOwner.run(BATCH_SIZE);
+            if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'worker-interleaved')) throw error;
@@ -11122,8 +11126,10 @@ async function main() {
           if (stopped) break;
           try {
             try {
-            if (mainSchedulerObserver) await mainSchedulerObserver.run('cooperative-interleaved', () => mainOwner.run(BATCH_SIZE));
-            else await mainOwner.run(BATCH_SIZE);
+            const slice = mainSchedulerObserver
+              ? await mainSchedulerObserver.run('cooperative-interleaved', () => mainOwner.run(BATCH_SIZE))
+              : await mainOwner.run(BATCH_SIZE);
+            if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'cooperative-interleaved')) throw error;
