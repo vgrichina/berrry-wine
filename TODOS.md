@@ -86,7 +86,7 @@
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
   status: done for obstacle jumps, coins10→17 and enemy stomp; first-level exit remains unverified
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published9b1ab25cd records original Welcome to Antarctica movement, raised-block/snow-pillar jumps, coins10→17, score250→475 and a flattened enemy. Coordinator inspected controls, progress summary and stomp captures, independently verified1682 artifact references/848 hashes and delivered Telegram2289. Both deaths/respawns remain recorded; final three-pillars action follows respawn.39exactACK/zeroUNKNOWN, original787file/786mapping verification and normal archived-box stop pass. SDL Canvas2D gameplay does not establish GL, FPS, audio or full playability. Note: docs/re-notes/supertux-current-browser-level-20261108.md. Fresh Redline input-consumption diagnostic replaces this worker alongside active Darkstone native-load exit tracing and Q3 current browser world coverage.
 
 - [x] LBreakout2 live-ball returns, brick removal and score progress
@@ -99,13 +99,13 @@
 - [x] Redline native firing and ammunition consumption
   id: NEW-GAME-REDLINE-FIRING-20261108
   status: done for muzzle/projectile and ammo200→150; vehicle entry and mission progress remain unverified
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published56d1ede3a verifies one ordinary Control action in textured Stadium City, visible muzzle/projectile effects and ammo150 persisting after release. Coordinator inspected before/action/settled captures, independently checked211 artifact references and delivered Telegram2286.15exactACK/zeroUNKNOWN,65originalpins/bootregression and normal archived-box shutdown pass. Requested held capture completed after key-up; no sampled-held or DirectInput polling claim. Actual backend is legacy WebGL2 SwiftShader, not hardware-GPU proof. Note: docs/re-notes/redline-ready-firstperson-action-20261108.md. VehicleTraining44aca66a0 later reached the car approach but entry/driving remain unproved; physical left windows have no reviewed turn and guest consumption is unresolved.
 
 - [x] Recoil aimed enemy destruction and score consequence
   id: NEW-GAME-RECOIL-TARGET-DESTRUCTION-20261108
   status: done for biped destruction; force-field power-control objective remains unverified
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published9e13be2f2 records green-reticle aim, pulse burst, orange explosion/debris, score0→1550 and the target absent afterward. Coordinator inspected aim/explosion/settled frames and independently checked234 retained artifacts.18exactACK/zeroUNKNOWN, focused checks/build and normal archived-box stop pass. Incoming health loss is separate; no exact postkill counter, mission completion, accelerated GL, FPS, audio or full-playability claim. Note: docs/re-notes/recoil-native-objective-20261108.md. Fresh power-control task pursues objective0/4 progression.
 
 - [x] Return Fire native deployment, steering and firing consequence
@@ -138,7 +138,7 @@
 - [ ] Formula One Grand Prix / World Circuit DOS demo startup and driving
   id: NEW-GAME-WORLD-CIRCUIT-DEMO-20261107
   status: demo limitation; 3a443a1c4 proves keys consumed/discarded, driving unverified; interactive v1.03 intake ready
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Continue the interactive v1.03 lane above. Published3a443a1c4 records original demo BIOS key reads discarding A/K/A+Space without control response; passive scene motion does not establish driving. Do not repeat demo input attempts without new evidence of interactivity. Published90e01588d repairs CPU saved-divide-fault-IP behavior;76 regressions/build pass and native cockpit/grid is reviewed. Notes: docs/re-notes/world-circuit-driving-20261107.md. No public deployment.
 
   Update 2026-11-07T22:11Z: Published53e1139dd budgets MW3 capture waits against immutable deadlines (8 timing tests and locked build pass); the original now acknowledges30s passivecapture and selects named enemy, encounter still in flight. Published74d173af4 fixes GetAsyncKeyState highbit to physicaldevice state while preserving pressed-since-query latch and queued message snapshots;55 focused tests, actual browserWorker and locked build pass. AVP2 original physicalrelease acknowledgement succeeds but white/black rendering remains under passive diagnosis. Published3b89643d3 completes12startup windows across6apps without classifiedcrashes; GLTroncooperative/Forsakenthreaded black captures remain. FreshWorldCircuit2206 owns next gameplay slot for Telegram177; nativeVGAstartup currentlystops at unsupportedCPU path, no racingclaim. GLTron presentation task ready after next slotrelease; threeworkers,5GBlaunchfloor.
@@ -260,7 +260,7 @@
   Update 2026-11-04T21:15:04.693464+00:00: Published e283a7a3a fixed render-sized continuous observer, first-fault abort and actual entry mkdir/receipt ordering. Both-module native parity/focused tests/locked build pass; 89 sealed artifacts 6025826B verified with main/origin ancestry. ZERO Chrome in completed task, setup/world unproved. Next actual original task prepared stronghold-complete-entry-gameplay-nov04 after MDK release; launch HELD below owner5GB disk gate. A shell fallthrough briefly launched worker01a1a866 despite failedgate; immediately terminated exit-15 before edits/runtime and will use fresh session. SHA-roundtrip gzip completed sessions/events and released GLframecounter logs plus fullhash/unused-check hardlink reclaimed ~68MB; root remains about4.98GB, 8GB target OPEN.
   Update 2026-11-04T20:50:54.111902+00:00: Stronghold d371d379f proves valid full render exceeds prior1M observer cap (1441804 native blocks); no new original or engine defect claimed. Fresh worker01a1a853-8313 session95635 stronghold-render-sized-observer-nov04 implements measured fixed budget with continuous history and unchanged safety checks, then one ordinary original after MDK release. GL e9aaa4634 publishes ACK steering/releasefloor/CLI trap fixes,76focused bothmodule lockedbuild PASS; retained software50enteredupdates/5553.09ms=9.004updates/s, displayFPS unknown. Fresh01a1a853-a64b session44186 gltron-repaired-live-backends-nov04 ordinary control/live interval after Stronghold release. MDK01a1a84c-65ba session79206 continues180s measured review window; actual Stronghold ZEROheavy release supplied. Newlaunch gates root5.143GB/Mem3.42GB thenroot5.142GB/Mem3.07GB PASS, threeproductionworkers; local runtime serialized MDK→Stronghold→GL, no snapshots.
   status: original UK v1.1 food production, spear delivery, recruitment and commanded movement published; hostile engagement active
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Result: Publisheda0522f78a demonstrates native wood delivery clears Poleturner NoWood, spears reach Armoury, and one Spearman recruited (gold7900to7892, spears15to14, peasants7to6). Inspected Spearmen portrait/count1 and commanded displacement distinguish actual recruitment/movement from construction. Food59/popularity100 sustained. Earlier cheese delivery d6b48b1527 and native Save/Load unavailable413afa3bb retained. Canvas2D/DirectDraw guestWorkers, not WebGL; combat/persistence/FPS open.
   Lifecycle 2026-11-04T20:08Z: Acceptedd26dfce99 rejected-firstscript diagnostics;418sealed10296719B fullSHA/size/mainoriginPASS. ONEoriginal stopped fourthWorker context/firstscript guard beforetitleEnter; exactsubcause UNKNOWN no gameplay. Mandatoryguards unchanged; focused/bothmodule/lockedbuildPASS normalChromeexit0null allownedruntimeclosed20:00:07. Fresh 01a1a82b-e164-7c93-aba3-689ff1ac03b9 session10414 taskstronghold-first-script-cause-onward-nov04 authorized ONEoriginal afterfreshMDK thenGL explicitrelease, exactfirstcause→offlinecausalrepair or ordinaryonwardworld. Policylaunchgatesroot5335613440 Mem3394478080 live2PASS; no snapshots.
   Update 2026-11-05T13:30Z: Published d2d4cfa994 (binding b4198ff6f): ONE original reached ChooseType/CustomGame hover; 138 exact 64-step acknowledgements, 21 captures reviewed and all eight requested reviews timely. Before CustomGameDOWN native coverage stopped with reason5/depth1; first invalidating site/time remains unknown. No setup/world/gameplay established. Focused contracts and locked build passed; predecessor eight runtime PIDs independently absent.
@@ -1410,7 +1410,7 @@ commit output — do not assume your hunks landed.**
   done: Publish run performance metadata with guest present counts, wall duration, per-sample p95 frame time, renderer/GPU, hardware-versus-SwiftShader, scene, build hash and measurement date; review playable route before measuring. No menu, browser rAF or CLI batch timing relabelled as gameplay FPS.
   Next: Reclaimed 2026-10-31 from released Codex owner. Select a verified evolving-gameplay route before measuring; retain unlaunched Ricochet board as diagnostic only. Heavy benchmarks run on a separate boat. Current UT2003/Pirates gameplay work keeps priority over benchmark dispatch.
   Notes: Ricochet root100hash/arithmetic audit and eight images reviewed: apparently unlaunched ball/full bricks/zero score, gameplay measurement unaccepted. Host released; NFS3 transferring. Collapse association preparation under root review/callsite proof assigned; Jazz route and Unreal package remain pending.
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   accepted: 2026-10-02T05:21:49.472399+00:00
   accepted-by: codex:01a0f9d8-c0cd-73b3-a357-fb3ff1c784c0
   Evidence: ops/handoffs/ops-game-fps-baseline.md; ops/handoffs/ops-fps-labels.md; ops/handoffs/ops-historical-fps-semantics.md; scratch/ops-gta2-fps-20261002/root-review.md; ops/handoffs/ops-unreal-fps-preparation.md; ops/handoffs/ops-jazz2-package.md; ops/handoffs/ops-collapse-v2-package.md; ops/handoffs/ops-ricochet-measurement.md
@@ -1835,7 +1835,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   Next: Recover the twelve named media/raw-log/patch prerequisites listed in scratch/runs/20261105-antara-emulator-owner-retry/source-and-prerequisites.json. Retry finished source-only exit0: current FAR_ADDR and named-module fixes already present; EIP19db02 has no authenticated segment mapping. No new mismatch, flag, code changes or execution. Preserve findings.md recovery recipe; old bx_fugmje42 remains stopped. No speculative repair or repeat archive search.
   candidate: win98-games-a-d/Betrayl-a-Antara-DEMO-SW (16-bit Sierra SETUP.EXE installs the game; local, no download)
   Prior evidence: WIP scratch/new-game-antara-20261006 and ops/handoffs/antara-security-hold-20261008.md; bx_fugmje42 stopped after expiry, retrieval incomplete; no installation/gameplay qualification.
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   created: 2026-10-06T04:51:54.000Z
   accepted-by: claude:80aa9e95-435b-4acb-aeea-8ae3d860613c
   Done: Working registered launch, ordinary player input visibly changes actual gameplay, reviewed gameplay screenshot with run/source identity, scoped fixes + tests on main. FPS, audio and browser separate.
@@ -1848,7 +1848,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   retry-order: 3 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Recover fourteen exact paths listed in scratch/runs/20261105-arx-emulator-owner-retry/prerequisite-inventory.json and follow findings.md recovery recipe. Retry source-only exit0: allocation placement repair already present; later0xC000DE05 lacks fault EIP/address/access/owning thread record. No demonstrated new mismatch, flag, code or execution. Authenticate media and raw fault evidence before diagnosis; no speculative lock bypass or repeat archive hunt.
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   candidate: test/binaries/win98-games-a-d/Arx_Fatalis-demo-D3D-Glide
   Prior evidence: scratch/runs/20261007-arx-diagnostic-interrupted preserved; remote cleaned, intro AV unresolved.
   Done: Original asset closure registered locally, ordinary reviewed player scene and control evidence, scoped tested fixes integrated on main; no FPS claim without separate measurement.
@@ -1900,7 +1900,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   retry-order: 1 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Restore or locate original SUN media matching f70dcf32a25fe63cde2dd16bcf60feea93a98c94fc371ee97446df247160414b and raw final trap/AddRef records. Retry 20261105-tiberian-emulator-owner-retry exited0 source-only: configured extracted media and 20261008T1227Z/1236Z runs absent; current source already contains historical registered-owner COM activation/unsigned AddRef fixes. No current mismatch, tests, build, repair or gameplay established. Findings scratch/runs/20261105-tiberian-emulator-owner-retry/findings.md; no renewed flag or automatic retry assigned.
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   candidate: test/binaries/win98-games-a-d/CnC-TiberianSun-demo-SW/extracted
   Prior evidence: Parent DirectDraw repaint and COM activation/AddRef fixes passed; first OleRun then trap EIP00d88176/ESP00d88168 in heap frame data remains. Tested AddRef build d8d4096 differs from browser ff3281; no gameplay qualification.
   Evidence: Shared historical task and fresh worker title audit2026-10-07. Darkstone already has controlledTown/camera evidence, so it is not rerun or counted as a new title. Tiberian Sun remains nonpublic and unqualified.
@@ -1913,7 +1913,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   retry-order: 4 of six coordinator retries: Tiberian Sun, Antara, Arx Fatalis, Winamp, CMR3, Lords2; one at a time. Owner correction 2026-11-05 gives MIG to claude-laptop and holds SAM pending its result.
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Owner-authorized retry completed 2026-11-05 without a renewed flag. Twelve recovered owning-worker outputs support IPC3015 reply1 and EIP1, not a demonstrated CPU/Win32 mismatch; seventeen named raw/preparation paths absent. Recover named fault/SEH records, exact module/source identity and semantic oracle before further diagnosis. Existing media hashes and recovery recipe: scratch/runs/20261105-winamp-emulator-owner-retry/findings.md. No code/tests/build/runtime occurred.
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Done: Demonstrated generic cause repaired with regression and ordinary original visualization reviewed; FPS/audio separate.
   Evidence: scratch/runs/20261007-winamp-milkdrop-complete-closure; ops/handoffs/winamp-milkdrop-ordinary-20261007.md
 
@@ -1974,7 +1974,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   status: done
 
   candidate: arcanum-demo
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   worker: none (software measurement accepted on main ab0f4ec508; stale backlog reconciled 2026-11-03)
   prev-owner: codex:01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 — Codex out of credits until 2026-10-12; its uncommitted shared-tree work is preserved on archive/codex-shared-tree-20261006 (see ops/handoffs/codex-release-review-20261006.md)
   created: 2026-10-03T08:42:45.967Z
@@ -2031,7 +2031,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 - [ ] New-game lane: Dungeon Siege demo
   id: NEW-GAME-DUNGEON-SIEGE-DEMO-20261008
   status: blocked (automatic review rejected follow-up source/dataflow diagnostic)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   worker: /root/dungeon_siege_thread_snapshot (reservedPageFaults registration and SEH control preparation)
   candidate: test/binaries/win98-games-a-d/DungeonSiege-demo-D3D.exe
   Next: Preserve recovered fault-context-2 evidence (first API-skipped outcome at EIP004178eb/address08407705, clean bounded exit). Automatic review rejected worker follow-up source/dataflow analysis as possible cybersecurity risk; narrower operation unspecified. Do not retry, rephrase or delegate that diagnostic. Original gameplay remains unqualified; Conan refills active lane.
@@ -2128,14 +2128,14 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   Update 2026-11-05T20:40Z: Published140a7fdf6 adds passive callback-reservation snapshots and matched host issuer/endpoint/request metadata to rejected errors and logs. Actual production Worker0/local regression demonstrates a possible releaseMainMessagePoint interleave, not original attribution; guards and scheduling unchanged. Four focused protocol suites, callback census and locked build PASS; coordinator verified60 artifact hashes and19 absent owned PIDs. ZERO original/browser runs; gameplay and original failure cause remain open. Evidence docs/re-notes/aow2-callback-reservation-20261105.md and run20261105-aow2-callback-reservation. Next capture joined metadata before causal repair; available slot assigned supported alpha16 render-target contract, with three new-game lanes continuing.
   Update 2026-11-05T19:45Z: Published eff3a6aa2, run20261105-aow2-current-browser-gameplay: ONE current original browser reached reviewed Scenario submenu, then Worker0 clear_yield rejected by callback reservation fence. Issuer/token/epoch unknown; no gameplay, actual WebGL/FPS/audio qualification. Coordinator verified137 artifact hashes,3 absent PIDs/2 refused ports/1 absent profile and inspected submenu screenshot. Fresh aow2-callback-reservation-1945 isolates host continuation with small real Worker regression, preserving guard; SOURCEONLY AoE3native1900 -> legacyframebuffer1925 -> Conanplayer1930 exactFINALcleanup. No original rerun in successor; native acceptance preserved.
   status: native acceptance retained; current browser two army moves verified, black ground and FPS/audio open
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Preserve reviewed current army movement and lower-panel clipping evidence. Logical gameplay FPS and audio need separate evidence; no browser/GPU/general-playability claim. Do not repeat accepted viewport9a438f1b9 or vblank918f25772 repairs.
   Evidence: mainebed72ce2055025648297c367d116a9aba8256f9; docs/re-notes/age-of-wonders2-demo.md; scratch/runs/20261101-aow2-current-original-control/. Two originals exit0; selected/settled/native-final PNGs reviewed20/20to5/20, fixed mountain patches and clean lower panel; five own PIDs independently absent, remote main MATCH. Control waiter timeouts and descriptor/stream read-hook limits retained.
 
 - [ ] New-game lane: American McGee's Alice demo
   id: NEW-GAME-ALICE-DEMO-20261009
   status: active (ordinary wind-brush crossing and dry landing reviewed; knife/attack pending)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   worker: Alice dialogue-qualified2211 PID945373 queued after Lords2892904 and Aranna935939; released dialogue-lifetime2158 preparation was never executed
   candidate: test/binaries/candidates/alice-demo/alice.exe
   Next: Published1188e9bf5 bounded phase/lifecycle diagnostic did not reproduce the original timeout; cause remains UNKNOWN, no causal repair. Root verified669 recovered files including BOTHcffca869/580f49f3 modules and inspected cap117 wooden walkway. No completed gnome dialogue/knife/attack claim. Inputs ended847.402s; idle retirement917.637s exceeded900s limit and is disclosed. Named alice-observed-timeout-20261104 snapshot verified, bx_u3jnuyts actual normal STOP01:43:15.853Z. Existing original wind crossing/dry landing evidence retained; future changed diagnosis must preserve first failure, no speculative timeout increase or unchanged retry.
@@ -2169,7 +2169,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   blocker: none for bounded launcher/deployment/movement scope; sustained play/audio/FPS remain separate.
   worker: none (generated source investigation1620 complete; no original authorized)
   status: bounded gameplay and visible native launcher accepted; broader coverage open
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   candidate: return-fire-demo
   priority: user-first
   Next: Transport prerequisite fixed cf5e9c163 (2026-11-05): owning Worker Network bytes collected only after the actual missing Fetch capability is established, with exact startup identity and required-byte guards. Collector91/composition33/real-browser12 plus optional404 controls and full build PASS; all owned runtime released. Evidence scratch/runs/20261105-return-fire-worker-body-transport/. The repair did not run the original game. ReturnFire1410 ended exit1 model-capacity error before tests/shared changes/browser; prepared explicit original binding remains UNEXECUTED. Coordinator stopped its exact orphan board tail and released the queue. Fresh return-fire-transport-recovery-1435 preserves the helper generated-only guard and validates prepared binding before one bounded ordinary original toward Play/deployment/movement and reviewed captures. Source-only behind Lords1355 -> Stronghold1425 -> formats1430 releases; no leased box; deadline Nov06 02Z. Historical launcher/deployment/movement acceptance remains; sustained play/audio/FPS open.
@@ -2205,13 +2205,13 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 - [ ] Revalidate original CMR3 menu-to-Stages progression
   id: CMR3-POST-SPLASH-NULL-20261010
   status: blocked (original diagnostic replay automatic-review hold)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: 85638 exact937466 original replay reached UK Warwick loading, then invalid native free list. Diagnostic729d3fc73 passed native suites, but original replay105999 was automatically rejected for possible cybersecurity risk (exact action unspecified) and stopped clean13:08:09. Do not retry/rephrase/delegate that diagnostic; no driving or cause established. Independent ordinary conformance remains permitted.
 
 - [ ] Validate merged DLL unload and CMR3 progression
   id: FREELIBRARY-EXITTHREAD-CMR3-20261010
   status: blocked (implementation merged; original diagnostic replay under automatic-review hold)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Main83947f6a6 plus57a148044/321e734aa integrate generation-aware unload/thread exit with recorded suites. Recovered original85638 progresses to UK Warwick loading then native free-list failure; this is not evidence of a new unload defect. CMR3 diagnostic replay105999 is held by automatic review; do not restart it. No driving qualification.
 
 
@@ -2223,7 +2223,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   retry-limit: If flagged again, stop; record exact flagged operation (or explicitly unknown) and UTC timestamp here, notify owner on Telegram; no further rewording or retry.
   Next: Owner retry completed2026-11-05 without renewed rejection or code/runtime:19 named evidence/media paths absent. Four recovered historical receipts lack damaged-node/arena/mapping/ownership data establishing producer mismatch. Existing diagnostic729d3fc73 and generation-aware unload remain integrated. Recover raw85638/105999 and authenticated original302/native12/registry/profile before further diagnosis. Findings: scratch/runs/20261105-cmr3-emulator-owner-retry/findings.md.
   runtime-revalidated: 2026-10-15 native recovery56105 terminal0; serialized remote runtime available, no transport blocker.
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   candidate: test/binaries/win98-games-a-d/ColinMcRay-Rally3-pcdemo-D3D.exe
   Prior evidence: Replay105999 preserved; ordinary quit and empty runtime verified historically. Diagnostic729d3fc73 merged, intended negative control/restored PASS104186; no driving or corruption cause established.
   Done: Original launch, player-controlled gameplay and reviewed screenshot with tested identity.
@@ -2286,7 +2286,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   blocker: Protected cold GetCommandLineA lacks resumable allocator/string/argv phases. Existing admission rejects before effects; the complete first-loss/script fixture remains unqualified.
   worker: none; service audit worker91088 terminal0, replaced by fresh MDK2 lane below
   status: blocked (technical service-continuation dependency; no owner hold)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Implement audited persistent allocator/dispatcher/string/argv phases from a2ae4283d before protected fixture admission. Do not remove guards or substitute an isolated opcode pass. Original CALL safety440403b4c remains accepted; no new native execution occurred in the service audit. Resume condition: concrete continuously armed real-import continuation and full native fixture pass. MDK2 replaces this blocked worker while Alice continues gameplay.
   Evidence: docs/re-notes/jedi-protected-service-continuity-20261103.md; scratch/runs/20261103-jedi-protected-service-continuity/ (13 payload SHA PASS); docs/re-notes/jedi-memory-call-protected-safety-20261103.md
   Done: Registered original launch, ordinary player-controlled gameplay and reviewed screenshot with exact source/run identity.
@@ -2306,7 +2306,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 - [ ] Improve and validate original .kkrieger control responsiveness
   id: KKRIEGER-CONTROL-LATENCY-20261015
   status: blocked (required unique diagnostics archived to laptop; no current browser attempt)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Read-only CS wait/main EIP/cooperative-owner samples merged0b95d3233,10focused testsPASS. Retained run118738 suggests audio critical-section/main-loop delay but owner/duration attribution unproved. TG90 authorizes persistent-box testing. Local attempt20261018-kkrieger-local-latency ended detached Frame before menu; no CS-owner samples. Host stderr/lifecycle diagnostics prepared; next serialized retry after AVP2 pair, inspect root cause before scheduler changes.
   Update 2026-11-05: kkrieger-control-diagnostics-1645 terminal0; no tests/build/browser/code change. Required24 unique payloads archived to /Users/vg/wine-boat-archive/scratch-runs-202610/ and absent here. Exact paths/hashes: scratch/runs/20261105-kkrieger-control-diagnostics/recovery-inventory.json against ARCHIVED-202610.boat.sha256. Recover diagnostics before another attempt; old SIGKILL sender/first-attempt cause unproved. Preparation note preserved uncommitted. Slot replaced by ShadowMan browser gameplay.
   Evidence: docs/kkrieger-position-capture-20261015.md; scratch/runs/20261015-kkrieger-position-capture
@@ -2389,7 +2389,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   Setup outcome 2026-11-05: publisheda239eaece3; ONE ordinary Install/System Test Yes/Wave No captured stackobject001f88a4=005f:869c and CALL operand001a8700=8b29:eb00. LES/address calculation agree with inputs; earlier object-pointer writer remains unknown. No proven emulator mismatch, repair, installation or gameplay. Evidence scratch/runs/20261105-lords2-prevalidated-setup/; FINAL15:35:30Z cleanup verified, actual Chrome exit unknown.
   Writer outcome 2026-11-05: Published7d15155129a6538466316d193b51eeb87389384b; correct CALL005f:8697 produces return005f:869c at001f88a4, later callback consumes reused stack storage. 503 writes corroborated; no demonstrated emulator mismatch, installation or gameplay. Generated both-module NE/far-fault tests and before/after locked builds PASS; temporary instrumentation removed, FINAL16:25:24Z cleanup verified.
   Callback lifetime outcome 2026-11-05: Published9026e21fd; retained pointer identifies a guest stack-local object kept in the guest HWND map. Both-module generated callback/stack/teardown regressions, far-fault tests and locked build PASS; no demonstrated emulator mismatch, implementation change or original run. First DestroyWindow(013b) result/handle cleanup notifications remain unobserved. Worker1635 FINAL16:55Z released runtime/files. Next bounded original diagnostic needs first USER53 handle/result plus destroy notifications and map attach/detach; no current Lords worker. Actual platform holds unchanged.
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   prev-owner: /root/new_demo_refill (released; coordinator reclaimed 2026-11-05)
   Done: Registered original launch, actual ordinary player control and reviewed gameplay screenshot with source/run identity.
 
@@ -2426,7 +2426,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 - [ ] AVP2 browser gameplay, audio and FPS follow-up
   id: AVP2-BROWSER-AUDIO-FPS-20261018
   status: blocked (listening/reference and runtime/device validation unavailable)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Existing gameplay/audio and offline signal review are complete at54325b3f1; do not repeat them. Remaining audiblequality needs listening plus a reference; no listening-capable tool is available in this session. LogicalFPS/device need a new measurement-capable run, held on safe diskheadroom (current2.297GB, recent dropbelow2GiB). Retain exact evidence20261018-avp2-audio-capture and20261018-avp2-audio-signal-review; no fresh success claim.
   Evidence: scratch/runs/20261018-avp2-browser-launch; scratch/runs/20261018-avp2-paired-plan
 
@@ -2434,7 +2434,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 - [~] Black & White 2 draw-layout provenance follow-up
   id: BW2-DRAW-LAYOUT-PROVENANCE-20261018
   status: blocked (live Worker placement/correlation and stopped runtime box)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Observer and capture adapters integrated through e6fd3b86f; independent review corrections201758750 and root12JS tests PASS. Live Worker logging/transport placement, matching region-map receipt and request correlation remain unverified. Savedbx_9ef2wdsw stopped; prior scopedresume403 unresolved. No producer attribution or current original draw evidence.
   Done: Identify actual producer with current evidence, then justified fix and meaningful regression; retain accepted camera controls.
 
@@ -2483,7 +2483,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   id: NEW-GAME-CIRCUS-LINUX-20261018
   worker: none (RichEdit source delivered; remaining prerequisites coordinator-owned)
   status: active (remaining callback source prerequisites; ICM native validation pending)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Property-page/CRT/qsort/bsearch fixes are already main. ICM ownership066436de plus real-x86 fixture1bae355 are off main pending fullVM. edit-stream-owner-oct20 delivered RichEdit edit_stream_call source3c01665c; its fullVM remains pending and remaining callback/JS/concurrency/SEH prerequisites keep jump APIs disabled. Runtime403 blocks native/gameplay evidence, not source work.
   Done: Original working launch, ordinary player-controlled gameplay and reviewed screenshot with exact run/source identity.
 
@@ -2519,7 +2519,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   Update 2026-11-05T13:41Z: Published 59ca0a456 explicit DX7 state144TRUE keyed mip filtering before spatial/trilinear interpolation. Same fixture ten baseline failures ->242 observations PASS across both modules/software/direct WebGL1+2/queued Workers; focused suites and locked build PASS. Seven browser PIDs and watcher independently absent, three ports refused, origin ancestry verified. FALSE/default membership, palette-alpha precedence and missing-child-key inheritance remain explicitly unsupported. Formats1345 ended before execution with a model-capacity error (exit1, no final); prepared fixture retained unexecuted and coordinator released its queue position after terminal verification. Fresh d3dim-keyed-mip-formats-recovery-1430 reuses and validates the fixture, audits supported native formats/perspective sampling through public COM and repairs demonstrated gaps. Source-only behind Lords1355 -> ReturnFire1410 -> Stronghold1425 releases; deadline Nov06 01Z. No original/nativeWindows/physicalGPU/historical27 claim.
   worker: accepted e541f9781217ae244c2febd218502a37d0b29761 main/origin; 101 sealed artifacts fullSHA/size verified. Bounded11line postview specular normal normalization fixes bothmodules uniformhalfVIEW red50 versus201;17cases9negativecontrols EACHmodule971publiccalls,10focused+lockedbuildPASS. NonuniformWORLD exactDX7 transport rule unresolved; no algorithmchange. Next stronger primary evidence before worldtransport changes; alpha/nativeWindowsGPU/gameplay unqualified. Fresh alpha worker6f2bfa79a finished documentation-only:11sealedfiles verified,67primarypins valid but no exactDX7computedoutputalphaauthority; no tests/production change/public alpha acceptance. Do not repeat retained-primary-only authority research. Stronghold callbackobserver and MDK local exact prerequisites are active game lanes. Empty-client predecessor e9e8ed890 documentation-only,11sealed15037B verified, no GL execution. Worker01a1a78f exited1 after platform possible cybersecurity-risk flag, no final/test/commit; terminal recorded once and not retried. Published8fe71d6f0 fixes native triangle framebuffer alpha0->116 both modules; eight64pixel readbacks each and visible DST_ALPHA witness PASS, focused regressions+lockedbuildPASS.22sealed100332B verified main/origin. Accepted9800e74b3 real queued native worker both modules:3draws6triangles0fallback, captured state/order/visibleDST_ALPHA PASS;18sealed114166B main/origin verified. Accepted5ae6ef0be actual public x86 GL producer bothmodules through GuestRpc/GLRenderHost physical browser Worker production endpoint WebGL1+2: all64RGBA8pixels at three stages and ImageBitmap witness PASS,101calls36sharedleases0copies each;31sealed240640B mainorigin verified. ANGLE SwiftShader, physicalGPU/gameplay not established. Lockedbuild+native/queued regressions PASS, own browser/server closed. Accepted0f25dff4a actual production factory six BOTHmodule default/webgl/software cases101publiccalls each, WebGL1 36leases0copies and nativeSoftware noWebGLcontext; all64RGBA pixels/DST_ALPHA/presentation/closure PASS.36sealed281326B mainorigin verified, focused regressions+lockedbuildPASS. No supported callerWebGL2 selector and no productiondefect found. Accepteddec72d70d offline nonzero-dt gameplay boundary investigation21tests/build;16manifest2673649B SHA/size verified mainorigin. No browser/FPS: rawcallback tracing disables executiontiers. Accepted0be601865 71manifest7691474B fullSHA/size/mainorigin verified;37focus actualoriginalnonzero-dt branch/all4tiers bothmodules plus50uopboundarychecks/module lockedbuildPASS. Existing productionmarker needs no rawcallbacktimestamps for average rate. Twooriginal launches stoppedpregame missingbootpins; repairedoffline365historicalHTTP allmatch, noFPS/backend/gameplayclaim;bothChromeexit0. Fresh 01a1a801-f766-7ce2-845b-c0e67130b881 session3732 fulltransitivepreflight then explicitlyauthorized ONElaunch/backend personallyreviewed gameplay+>=5s ownerboundcounterinterval,360browser180cleanup hard22:15/18; onlyAFTER freshMDK explicitrelease. Stronghold+MDK twooriginalgameplaylanes maintained.
   status: partial (capability corrections and public COM software/WebGL/queued Worker sampler rendering accepted; broader advertised behavior audit remains)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Do not reintegrate historical branch patches: current main includes cube122109793, BORDER93addaa3c and fixture-bootstrap682d0c824; common producer masks are texture0xF7DF/address0xF7. Retained actual public COM fixture passes47calls/45descriptors on pinned modulebc5412c1 (docs/re-notes/legacy-caps-early-exit-20261020.md), with current offline1053negative controls PASS. Existing Surface4/7 COM regression asserts failed cube creation, null output and intact guards; docs/legacy-surface47-abi-20261019.txt records both-dispatch historical candidate passes (a74ccff4/c0192423). That historical raw evidence is not currently located. Continue the advertised software/GPU behavior audit and current-runtime cube rejection/backend rendering coverage; do not create a duplicate source-only rejection test. Historical native pass does not prove current runtime or independent-face storage/backend/gameplay. Surface4/7 ABI already merged. Reconciliation evidence: scratch/runs/20261103-legacy-caps-main-reconcile/.
   Accepted 2026-11-04: be2fc974600230e15c1f05ee06c05890d2411dab; public DD7/QI D3D7/CreateSurface/CreateDevice real x86 vtable, software18/WebGL18/queued Worker26 exact pixels, same-device point/linear and wrap/clamp transitions, four held batches, nearest-only/stale-wrap negative controls rejected. Bothcanonicalcffca869/compat580f49f3 tested, locked build PASS;39 local indexed SHA256 checked. Snapshot verified and bx_5jkb55xs normal STOP23:59:07Z. Test test/test-legacy-texture-rendered-contract.js and note docs/re-notes/legacy-texture-rendered-contract-20261103.md. This bounded sampler contract does not establish full27/gameplay or all advertised capabilities.
   Accepted 2026-11-04:1329b1ba6 public DD7/D3D7 cube E_NOTIMPL/null/guards/descriptor integrity plus characterized unadvertised BORDER fallback (software WRAP/GPU CLAMP), both actual modules/software/WebGL/queued Worker; six negative controls rejected and locked build passed. Root verified14 recovered files/BOTH modules. Named snapshot verified, bx_46nt6vad normal STOP01:36:28.061Z. Genuine cube storage and BORDER-color support remain unimplemented/unadvertised. Evidence docs/re-notes/legacy-caps-cube-border-20261104.md.
@@ -2531,7 +2531,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   id: NEW-GAME-AOE3-DEMO-20261010
   blocker: Genuine DXSETUP now reaches missing wintrust!WinVerifyTrust export. Real policy-preserving trust/provider support or compatible genuine provider inputs are needed; no trust function ran or signature verdict occurred. DirectX installation and AoE3 gameplay remain unproved.
   status: blocked on WinTrust/provider support; runtime released to another gameplay lane
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   worker: none; aoe3-wow64-setup-1950 terminal and released
   Update 2026-11-05T20:45Z: Published findings7d4219df1: one genuine setup resolved both repaired kernel32 exports and actually called GetNativeSystemInfo, then missing WinVerifyTrust at API3027 led to guestExit-21 (runner0). Isolated actual-module PE/ABI probe confirms missing export; stale LastError is not missing-cab evidence. Existing dxupdate.cab pin passes. Only two log suffixes changed, registry73 unchanged; no installed files/restart/provider/gameplay. Focused controls and locked fullbuild PASS. Coordinator verified86 artifact hashes,14 absent PIDs/control19765 refused and teal capture. No second setup, trust bypass or fabricated installation state. Evidence docs/re-notes/aoe3-wow64-setup-20261105.md; scratch/runs/20261105-aoe3-wow64-setup/. Slot reassigned to changed-diagnostic AoW2 gameplay.
   Update 2026-11-05T19:50Z: Published4d1db138f adds real native x86 IsWow64Process with mapped kernel32 export, process authority/access/output validation and both-mode realPE/ABI regression; locked fullbuild PASS. Findingsd3ce00646: exactly one genuine setup resolved GetNativeSystemInfo but did not call it, then missing IsWow64Process error127 guestExit-9 runner0. Only2logs changed registry73unchanged, no installation/restart/provider/gameplay. Root verified96artifact hashes, teal capture and14 absent PIDs/control19765refused. Fresh1950 tests the changed implementation once using actual retained target behind existing runtime queue; no media copies or boxes.
@@ -2644,7 +2644,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   blocker: none for original launch, ordinary movement and reviewed gameplay screenshot criterion. Persistent corpus registration and longer play remain optional follow-up work.
   worker: shadow-man-recovered-browser-gameplay-1800 completed/released; slot assigned fresh legacy-advertised-decal-blend-1915.
   status: done (original CLI and browser menu-to-gameplay with ordinary movement/turning and reviewed screenshots)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Preserve accepted CLIdebc24bfc and browserd936d45df evidence. If assigned, qualify longer play/audio/save-load/normal exit or add a correctly pinned corpus entry using canonical media. Do not repeat the old disabled-Play investigation or accepted browser route unchanged.
   Accepted: acceptedInGuest=true observed2026-10-22T20:01:25.326828Z (ordinary Ja, batch1191279, destination screen follows); installer ExitProcess(0), all1959 original payload hashes match. Historical authorization JSON remains unchanged. On2026-10-23 one original launcher session/one ordinary Konfiguration1024 action opened Configuration HWND0x10006; both genuine PNGs independently reviewed. Canonical SHA256ccd5b0a8e4fcb84d06bf539c8a4af28b377472072f3422750122048e9339f553; source/main58e90870.
   Historical limits (2026-10-23): Spielen disabled; no settings accepted/saved, gameplay, normal configuration/game guest exit, Windows/browser/audio/FPS qualification. ABANDONED wndproc after64rounds/yield15 remains a limitation; parent OSexit-9 is not a guest exit. bx_vufrds5w snapshot-STOPPED2026-10-23T01:26:26.642Z; coordinator owns lifecycle.
@@ -2675,7 +2675,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
 - [x] Resolve original Mad Bomber SDL WinMM error-text dependency
   id: MADBOMBER-WINMM-ERROR-TEXT-20261019
   status: done (historical public API qualification and retained original SDL observation reconciled)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   worker: none (independent historical API review complete)
   Evidence: Implementation7fd352855 and source reviewfe540cf2; retained native qualification01dfb0d98 independently accepted in docs/re-notes/madbomber-winmm-native-independent-review-20261024.md. Exact historicalb41a7c5 normal module8fac3993: unchanged public A/W native fixture exit0, host exit0, wrong-hash rejection exit1 before compile/memory. This does not qualify the current-main module or original SDL.
   Original SDL criterion: Reviewed retained Oct20 original output.log.gz: waveOutGetErrorTextA resolves to07504c80 (lines4114-4115); SDL DllMain00b5a130 returns1 (lines36-37). The later SDL_mixer midiStreamStop failure is separate. See docs/re-notes/madbomber-error-text-reconciled-20261104.md for raw-log SHA and historical scope. Existing original gameplay acceptance under NEW-GAME-MADBOMBER-20261018 remains intact; no new execution or current-build qualification.
@@ -2701,7 +2701,7 @@ Coordinator 2026-11-04T20:37:41.271986+00:00: Accepted9707f9525 Stronghold554sea
 
 - [x] Implement documented D3D9 MultiplyTransform
   id: D3D9-MULTIPLY-TRANSFORM-20261105
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   worker: none; d3d9-multiply-transform-2320 completed and released
   Outcome 2026-11-06: Published983bda626a0e716e1f8e89d55216ed14992bed19 implements inputMatrix times existingState, per-device copied input, aliasing and complete split-sparse span handling. Both shipped modules pass ordinary x86 COM/owning browser Worker trace-on/off controls, 48 independent rendered pixels with reversed/no-op negatives, selector/stateblock/ABI neighbors and locked build. Evidence: scratch/runs/20261105-d3d9-multiply-transform/ and docs/re-notes/d3d9-multiply-transform-20261105.md. Generated screenshots reviewed and sent to owner; no Conan/gameplay claim.
   Completed follow-up, reconciled 2026-11-07: Published9d3349572 verifies public x86 COM/browser Worker Reset on both modules: resized redraw, peer isolation, supported recreation, old-device identity refusal,516 independent pixels and14 readbacks. Published53180a695 additionally verifies genuine same-identity device reuse and stale-generation refusal. Focused tests and locked builds pass; generated fixture repairs only, no production mismatch. Evidence: docs/re-notes/d3d9-public-reset-recovery-20261106.md and docs/re-notes/d3d9-public-device-reuse-20261106.md. These scoped gaps are closed; whole-corpus crash freedom remains open.
