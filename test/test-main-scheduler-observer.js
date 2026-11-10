@@ -86,6 +86,7 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
       env: { WINE_RUN_EXTRA_ARGS: extra } },
     console: { error() {}, log() {} },
     require(name) { assert.equal(name, './main-scheduler-observer'); factoryCalls++; return { createMainSchedulerObserver }; },
+    nativeFault: { capture: () => false, wait: async () => {}, isHeld: () => false },
     h, wh, tid: 7, instance: { exports: ex }, threadManager: tm, tickState, logs,
     ctx: { waitD3DRender() { calls.push('wait-render'); }, d3d9Bridge: { requests: new Map() } },
     mainRenderWait: render ? { token: 123, done: false, polls: 0, since: 0 } : null,
@@ -93,7 +94,7 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
     inputEvent: pending, crossThreadMsgs: [...cross], inputQueue: [...buttons], installingFiles: installing,
     renderer: { checkInput() { calls.push('renderer-input'); return renderEvent; } },
     inputConsumptionTrace: { dequeue(evt, source) { dequeues.push([evt, source]); } },
-    REAL_TICK_SLEEPS: real, BATCH_SIZE: 100, THREAD_BATCH_SIZE: 120, THREAD_SLICES: 3,
+    serviceClock: false, REAL_TICK_SLEEPS: real, BATCH_SIZE: 100, THREAD_BATCH_SIZE: 120, THREAD_SLICES: 3,
     THREADS_SERIAL: serial, stopped, slices: 3, workerStepsTotal: 0,
   };
   const context = vm.createContext(sandbox);
@@ -103,7 +104,12 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
     calls, logs, dequeues, context, tm, h, wh, ex, factoryCalls: () => factoryCalls,
     async dispatch(which = mode) {
       const key = which === 'worker' ? 'worker' : which === 'cooperative' ? 'cooperative' : 'ordinary';
-      return vm.runInContext('(async () => {\n' + parts[key] + '\n})()', context);
+      // The saved baseline predates the native-fault stop guard. Normalize
+      // that existing guard so this test compares observer behavior.
+      const snippet = baselineMode && key === 'cooperative'
+        ? parts[key].replace('const sliceStats = threadManager.runSlice(BATCH_SIZE);',
+          'const sliceStats = threadManager.runSlice(BATCH_SIZE); if (stopped) break;') : parts[key];
+      return vm.runInContext('(async () => { for (let fixtureTurn = 0; fixtureTurn < 1; fixtureTurn++) {\n' + snippet + '\n} })()', context);
     },
     gate() { return vm.runInContext('mainExecutionSuspended()', context); },
     observer() { return vm.runInContext('mainSchedulerObserver', context); },

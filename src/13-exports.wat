@@ -378,6 +378,7 @@
     (local $hc_i i32) (local $hc_slot i32) (local $hc_fp i32)
     (local $prev_eip i32) (local $prev_esp i32)
     (local $saved_budget i32) (local $saved_start i32) (local $shared_cache_generation i32)
+    (local $saved_running_outer i32)
     (local $saved_api_depth i32)
     (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION)) (then
       (drop (call $writer_check))
@@ -429,6 +430,10 @@
     ;; loop whatever the nested one left behind, and it would halt early.
     (local.set $saved_budget (global.get $block_budget))
     (local.set $saved_start (global.get $run_budget_start))
+    (local.set $saved_running_outer (global.get $blocks_running_outer))
+    (global.set $blocks_running_outer
+      (i32.add (local.get $saved_running_outer)
+        (i32.sub (local.get $saved_start) (local.get $saved_budget))))
     (local.set $saved_api_depth (global.get $api_handler_depth))
     (global.set $api_handler_depth (i32.const 0))
     (global.set $block_budget (local.get $max_blocks))
@@ -777,6 +782,7 @@
     (global.set $blocks_retired_base
       (i32.add (global.get $blocks_retired_base) (global.get $last_run_blocks)))
     (global.set $run_budget_start (local.get $saved_start))
+    (global.set $blocks_running_outer (local.get $saved_running_outer))
     (global.set $api_handler_depth (local.get $saved_api_depth))
     (global.set $block_budget (local.get $saved_budget))
     (global.set $pending_active (i32.const 0)))
@@ -785,7 +791,8 @@
   ;; progress so far. Wraps; only ever used as a difference.
   (func $blocks_now (result i32)
     (i32.add (global.get $blocks_retired_base)
-      (i32.sub (global.get $run_budget_start) (global.get $block_budget))))
+      (i32.add (global.get $blocks_running_outer)
+        (i32.sub (global.get $run_budget_start) (global.get $block_budget)))))
 
   ;; Blocks the last run() call retired, and the halt reason behind it (see the
   ;; $last_run_halt comment in 01-header.wat for the codes).

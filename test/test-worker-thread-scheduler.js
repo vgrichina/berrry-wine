@@ -80,6 +80,7 @@ async function retrySliceProtocol(){
   const replies=[],messages=[];
   const sandbox={URL,importScripts(){},location:{href:'https://example.invalid/guest-worker.js'},
     performance,setTimeout,clearTimeout,ThreadSendWaits:require('../lib/thread-send-waits'),
+    RenderWorker: require('../lib/render-worker'),
     GuestRpc:{readInputPending:()=>false},
     postMessage:message=>replies.push(message),
     fixture:{exports:{get_yield_reason:()=>yieldReason,get_eip:()=>0x401000,

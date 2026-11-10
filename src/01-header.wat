@@ -3489,6 +3489,9 @@
   ;; budget the running call started with. $blocks_now reads both.
   (global $blocks_retired_base (mut i32) (i32.const 0))
   (global $run_budget_start (mut i32) (i32.const 0))
+  ;; In-flight work of enclosing run() calls. Banked work excludes these
+  ;; active calls; nested entry must keep their progress visible to clocks.
+  (global $blocks_running_outer (mut i32) (i32.const 0))
   ;; The value a park was already taken for. One park per distinct millisecond,
   ;; ever: if the host hands the guest back with the clock still reading the
   ;; same thing, spinning is the honest answer until it moves. Without this the

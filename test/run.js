@@ -49,7 +49,7 @@ const { fontMounts, optionalFontMounts, BUNDLED_BITMAP_FONTS } = require('../lib
 const { APPS, resolveCopySuperops } = require('../lib/apps');
 const { CliVideoRecorder } = require('../lib/cli-recorder');
 const { renderTinySynthNotes } = require('../lib/tinysynth-offline');
-const { createBatchClock } = require('../lib/batch-clock');
+const { createBatchClock, createServiceClock } = require('../lib/batch-clock');
 const { createGuestClockSource } = require('../lib/guest-clock');
 const { createInputConsumptionTrace } = require('./input-consumption-trace');
 const { createStartupClock } = require('../lib/startup-clock');
@@ -4523,7 +4523,14 @@ async function main() {
   // headless slices. Batch transitions add a larger jump (~200ms) to keep
   // the overall simulated pace realistic.
   const tickCallStepMs = Math.max(1, parseInt(process.env.TICK_CALL_STEP_MS || '1', 10) || 1);
-  const batchClock = createBatchClock(TICK_MS_PER_BATCH, tickCallStepMs);
+  // Explicit legacy flags/registry settings retain their batch contract.
+  const clockMode = getArg('clock', args.some(a => a.startsWith('--tick-ms-per-batch=')) ||
+    Number.isFinite(APP_ENTRY?.cliTickMsPerBatch) ? 'batch' : 'service');
+  if (!['batch', 'service'].includes(clockMode)) throw new Error('Unknown --clock mode');
+  const serviceClock = !REAL_TICKS && clockMode === 'service';
+  const batchClock = serviceClock
+    ? createServiceClock(Number(getArg('cpu-blocks-per-second', '5000')))
+    : createBatchClock(TICK_MS_PER_BATCH, tickCallStepMs);
   const tickState = batchClock.state;
   if (gameplayBench) {
     const ticks = batchClock.getTicks, peek = batchClock.batchTicks;
@@ -4534,6 +4541,8 @@ async function main() {
   // so guest calls, worker threads, sleeps, audio and vblank all see one clock.
   // The raw batch reading is kept for ending it at the right raw instant.
   const startupClock = createStartupClock(STARTUP_CLOCK_CFG);
+  if (serviceClock && (startupClock.active || gameplayBench))
+    throw new Error('Scripted clock mappings require --clock=batch');
   ctx.startupClock = startupClock;
   if (startupClock.active && !REAL_TICKS) {
     const ticks = batchClock.getTicks, peek = batchClock.batchTicks;
@@ -5012,7 +5021,9 @@ async function main() {
     };
   }
   // MORROWIND_NAME_IMPORT_END
-  const instance = await WebAssembly.instantiate(wasmModule, imports);
+  if (serviceClock) batchClock.wrapImports(imports.host);
+  const nativeInstance = await WebAssembly.instantiate(wasmModule, imports);
+  const instance = serviceClock ? batchClock.wrapInstance(nativeInstance) : nativeInstance;
   ctx.exports = instance.exports;
   instance.exports.set_hwnd_base(processDesktop.hwndBase);
   // Quiet runs silence the per-call API log from the first instruction, DLL
@@ -5474,6 +5485,7 @@ async function main() {
     wh.has_dll_file = h.has_dll_file;
     processDesktop.attach(workerCtx, wh);
     const workerImports = { host: wh };
+    if (serviceClock) batchClock.wrapImports(wh);
     workerImports.__setInstance = value => { workerInstance = value; };
     return workerImports;
   };
@@ -5509,6 +5521,7 @@ async function main() {
     const sigs = JSON.parse(fs.readFileSync(
       path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
     guestThreadHost = new GuestThreadHost({
+      cpuService: batchClock.service,
       findDll: findRuntimeDllBytes,
       onDllMapped: record => {
         require('../lib/process-boot').registerMappedDll(ctx, instance.exports, memory.buffer, record, console.log);
@@ -5647,6 +5660,9 @@ async function main() {
   else if (Number.isFinite(SPIN_PARK_K)) inheritWasm('set_spin_park_k', SPIN_PARK_K);
 
   threadManager = new ThreadManager(wasmModule, memory, instance, makeWorkerImports, {
+    strictServiceTime: serviceClock,
+    instantiateCooperative: serviceClock ? (module, imports) =>
+      batchClock.wrapInstance(new WebAssembly.Instance(module, imports)) : undefined,
     hwndBase: () => processDesktop.hwndBase,
     threadSnapshotSystemComplete: () => !threadSnapshotSystemIncomplete,
     workerBackend: guestThreadHost,
@@ -7003,6 +7019,12 @@ async function main() {
     if (threadManager.isMainNamedEventWaiting()) return finish(true, 'named-event');
     let yieldReason = ex.get_yield_reason();
     if (observation) observation.yield(yieldReason);
+    if (serviceClock && (yieldReason === 13 || yieldReason === 14)) {
+      const deadline = yieldReason === 13 ? ex.get_vblank_deadline_ms() : ex.get_spin_deadline_ms();
+      if (batchClock.batchTicks() <= (deadline >>> 0)) return finish(true, 'clock-deadline');
+      ex.clear_yield();
+      yieldReason = 0;
+    }
     if (yieldReason === 16) {
       const token = ex.get_d3d_render_token() | 0;
       if (!mainRenderWait || mainRenderWait.token !== token) {
@@ -7045,7 +7067,7 @@ async function main() {
     // A Sleep main made earlier in this batch (between thread slices) has not
     // been through checkMainYield yet; record its deadline now.
     threadManager.noteMainSleep();
-    if (!REAL_TICK_SLEEPS && threadManager.isMainSleeping(observation?.sleep) &&
+    if (!serviceClock && !REAL_TICK_SLEEPS && threadManager.isMainSleeping(observation?.sleep) &&
         !(observation ? observation.live(threadManager.hasLiveThreads()) : threadManager.hasLiveThreads())) {
       if (observation) observation.fastForward();
       tickState.pausedMs += threadManager.mainSleepRemaining();
@@ -7827,6 +7849,7 @@ async function main() {
         lastSchedAt = batch;
       }
     }
+    const serviceAtBatchStart = serviceClock ? batchClock.retiredBlocks() : null;
     tickState.batch = batch;
     if (gameplayBench && batch === 0) gameplayBench.init(instance.exports, memory);
     tickStateRef.batch = batch;
@@ -10968,7 +10991,7 @@ async function main() {
     // parked with its stdcall frame intact and EIP on the thunk, so advancing
     // the clock past the boundary and clearing the yield re-enters the same
     // call, which then finds the vblank has happened and returns DD_OK.
-    if (instance.exports.get_yield_reason() === 13) {
+    if (!serviceClock && instance.exports.get_yield_reason() === 13) {
       const deadline = instance.exports.get_vblank_deadline_ms
         ? instance.exports.get_vblank_deadline_ms() >>> 0 : 0;
       // Charge against the batch BASE, not the last value handed out: the
@@ -11010,7 +11033,7 @@ async function main() {
     // (--tick-ms-per-batch=0), where nothing else would ever move the clock.
     {
       const spinYield = instance.exports.get_yield_reason();
-      if (spinYield === 14 || spinYield === 15) {
+      if (!serviceClock && (spinYield === 14 || spinYield === 15)) {
         const deadline = (spinYield === 14 && instance.exports.get_spin_deadline_ms)
           ? instance.exports.get_spin_deadline_ms() >>> 0 : 0;
         let owed = 0;
@@ -11323,6 +11346,24 @@ async function main() {
         console.log(`\n*** BREAKPOINT (POST-THREADS) hit at ${hex(eipPostThreads)} (batch ${batch}, eipBefore=${hex(eipBefore)})`);
         if (instance.exports.get_dbg_prev_eip) console.log('  dbg_prev_eip=' + hex(instance.exports.get_dbg_prev_eip()));
         if (instance.exports.get_bp_first_caller) console.log('  bp_first_caller=' + hex(instance.exports.get_bp_first_caller()));
+      }
+    }
+    // Advance only after every admitted sibling has had its turn and the
+    // scheduler has observed the waits. Require a no-work pass so a signal
+    // sent after a sibling was polled gets another scheduler turn first.
+    // Never consume a semaphore to ask
+    // whether the process is idle. Audio still decides completion by cursor.
+    if (serviceClock && batchClock.retiredBlocks() === serviceAtBatchStart) {
+      threadManager.checkMainYield();
+      const delay = threadManager.serviceIdleDelay();
+      if (delay > 0) {
+        const now = batchClock.batchTicks();
+        let until = now + delay;
+        for (const item of ctx.sharedAudio.waveDoneQueue || [])
+          if (item.dueMs > now) until = Math.min(until, Math.ceil(item.dueMs));
+        if (Number.isFinite(until)) batchClock.advanceIdle(until - now);
+        if (instance.exports.get_yield_reason() === 15) instance.exports.clear_yield();
+        if (ctx.pumpAudioCompletions) ctx.pumpAudioCompletions();
       }
     }
     // Check if main thread is waiting on an event
