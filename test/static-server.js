@@ -85,6 +85,13 @@ function createStaticHandler(options = {}) {
   const root = fs.realpathSync(options.root);
   return async function staticHandler(request, response) {
     try {
+      // Dynamic routes (including instrumented Worker scripts) need the same
+      // isolation policy as static files. Apply it before a handler can end
+      // the response; otherwise an isolated page cannot start its Worker.
+      if (options.crossOriginIsolated) {
+        response.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+        response.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+      }
       if (options.handleRequest) {
         const handled = await options.handleRequest(request, response);
         if (handled || response.writableEnded) return;

@@ -65,3 +65,19 @@ test('dispatch loss and original exceptions are terminal and preserve thrown ide
   assert.equal(g.o.snapshot().imports[0].threw, true); assert.equal(g.log(), 0);
   assert.throws(() => g.o.start({durationMs: 999999, apiLogBefore: 0}));
 });
+test('instrumented Worker response inherits isolation policy before custom handler ends it', async () => {
+  const {startStaticServer, closeServer} = require('../test/static-server.js');
+  const server = await startStaticServer({root: __dirname, crossOriginIsolated: true,
+    handleRequest(req, res) {
+      if (req.url !== '/worker.js') return false;
+      res.writeHead(200, {'Content-Type': 'text/javascript'});
+      res.end('postMessage(crossOriginIsolated)'); return true;
+    }});
+  try {
+    const response = await fetch('http://127.0.0.1:' + server.address().port + '/worker.js');
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('cross-origin-opener-policy'), 'same-origin');
+    assert.equal(response.headers.get('cross-origin-embedder-policy'), 'require-corp');
+    assert.equal(await response.text(), 'postMessage(crossOriginIsolated)');
+  } finally { await closeServer(server); }
+});
