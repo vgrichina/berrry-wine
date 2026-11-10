@@ -42,7 +42,7 @@ async function bounded({send,session,down,up,holdMs,sample=async()=>({}),saveSam
   }catch(e){error??=e;}
   finally{clearTimeout(timer);await release();}
   for(const s of samples)s.whollyDuringHold=s.started>=started&&s.finished<releaseAt;
-  const receipt={started,releaseAt,samples,attempted:attempted.map(b=>b.code??b.button),meaning:'physical host interval; passive reads do not prove guest input polls or simulation steps'};
+  const receipt={started,releaseAt,samples,attempted:attempted.map(b=>b.code??b.button),meaning:'command-attempt interval; samples do not prove trusted delivery, guest input polls or simulation steps'};
   if(error){error.holdReceipt=receipt;throw error;}
   return receipt;
 }
@@ -58,4 +58,29 @@ async function mouse(options) {
   const base={button,x,y,clickCount:1};
   return bounded({...options,down:{method:'Input.dispatchMouseEvent',bases:[base],params:b=>({type:'mousePressed',...b})},up:{method:'Input.dispatchMouseEvent',params:b=>({type:'mouseReleased',...b})}});
 }
-module.exports={KEYS,descriptor,validate,assertRequired,hold,mouse};
+// Correlate observations on the browser host's wall clock. CDP completion is
+// transport evidence only: it is neither the beginning of a hold nor a guest
+// read. In particular, a DOWN ACK can arrive after UP was submitted.
+function correlateMousePulse({pulse,events,records,button=0}) {
+  const a=pulse.downAttemptedAt,z=pulse.upAttemptedAt;
+  assert(pulse.down?.ack&&pulse.up?.ack,'known balanced command acknowledgements required');
+  assert([a,z,pulse.down.at,pulse.up.at].every(Number.isFinite)&&a<=z,'ordered attempt timestamps required');
+  const edges=events.filter(e=>e.button===button&&['mousedown','mouseup'].includes(e.type)&&e.at>=a&&e.at<=Math.max(pulse.down.at,pulse.up.at));
+  assert.equal(edges.length,2,'one observed mouse down/up pair required');
+  const [down,up]=edges;
+  assert(down.trusted===true&&up.trusted===true&&down.type==='mousedown'&&up.type==='mouseup'&&down.at<=up.at,'ordered trusted mouse delivery required');
+  assert(down.at<=pulse.down.at&&up.at>=z&&up.at<=pulse.up.at,'delivery must match command attempts and acknowledgements');
+  assert(records.every(r=>Number.isFinite(r.requestAt)&&Number.isFinite(r.at)&&r.requestAt<=r.at&&r.state?.length>=13),'complete guest read timestamps and state required');
+  const successful=records.filter(r=>r.eax===0);
+  const during=successful.filter(r=>r.requestAt>=down.at&&r.at<up.at);
+  const pressed=during.filter(r=>(r.state[12]&128)!==0);
+  const released=successful.filter(r=>r.requestAt>up.at&&(r.state[12]&128)===0);
+  return {down:down.at,up:up.at,downAttempt:a,upAttempt:z,
+    attemptedHoldMs:z-a,trustedHoldMs:up.at-down.at,downDeliveryDelayMs:down.at-a,
+    ackIntervalInverted:pulse.down.at>z,ackIsNotConsumption:true,
+    successfulCompletions:successful.length,readsWhollyDuringTrustedHold:during,
+    pressed,released,allPressed:successful.filter(r=>(r.state[12]&128)!==0),
+    actualPress:pressed.length>0,actualRelease:released.length>0,
+    meaning:'successful guest button-state reads wholly within observed trusted delivery; no simulation or weapon consequence inferred'};
+}
+module.exports={KEYS,descriptor,validate,assertRequired,hold,mouse,correlateMousePulse};
