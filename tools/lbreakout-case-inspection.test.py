@@ -18,6 +18,13 @@ class InspectionTests(unittest.TestCase):
     def test_pause_template_drift_is_offline_error(self):
         with self.assertRaisesRegex(ValueError, 'unsupported bound browser'):
             helper.pause_workflow_source('unrecognized caller')
+        with self.assertRaisesRegex(ValueError, 'unsupported completion template'):
+            helper.pause_completion_source('unrecognized caller')
+
+    def test_generated_completion_preload_parses(self):
+        subprocess.run(['node', '--check', '-'],
+                       input=helper.pause_completion_preload_source(),
+                       text=True, check=True, timeout=3)
 
     def test_observer_selects_bound_owner_among_secondary_threads(self):
         source = """const assert=require('node:assert/strict');

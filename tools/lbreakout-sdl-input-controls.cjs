@@ -22,10 +22,28 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
   renderEndpointObject:'none',renderWorkerObject:'none'};
  let socket,workerAttached=false,spawned=false,closed=false;
  let armed=false;const input=[];const pauseControl=process.env.LB_OFFLINE_PAUSE==='1';
+ let completionArm=null,completionPolls=0,completionReady=false;
+ const completionNegative=process.env.LB_OFFLINE_COMPLETION_NEGATIVE;
  function evaluated(s,session){
+  if(s.startsWith('new Promise((resolve,reject)=>')){assert(completionReady,'presentation follows original completion');return {presented:true};}
   if(s.includes('__mcmPassiveIdentityV1'))return {isolated:true,apps:[page]};
   if(s.includes('__mcmPassiveInstanceV1'))return session==='guest-session'?{endpointIdentity:'endpoint',slot:0,instance:'instance'}:{endpointIdentity:'secondary-'+session,slot:1,instance:session};
   if(s==='globalThis.__lbArm()'){assert.equal(session,'guest-session','observer must arm bound owning Worker');armed=true;return {armed:true};}
+  if(s.startsWith('globalThis.__lbArm(')){
+   assert.equal(session,'guest-session');armed=true;completionReady=false;completionPolls=0;
+   completionArm={...JSON.parse(s.slice('globalThis.__lbArm('.length,-1)),deadline:Date.now()+2000,binding:{exe:0x400000,sdl:0x5f0000,generation:1}};
+   return {armed:true,...completionArm};
+  }
+  if(s==='globalThis.__lbObserver.snapshot()'){
+   assert(armed&&input.length>=2,'balanced delivery precedes completion poll');
+   completionPolls++;
+   if(completionNegative==='binding')return {...completionArm,token:'foreign-command',active:false,reason:'complete'};
+   if(completionNegative==='module')return {...completionArm,binding:{generation:99},active:false,reason:'complete'};
+   if(completionNegative==='incomplete')return {...completionArm,active:false,reason:'deadline',records:[{kind:'sdl-p-return',down:1}]};
+   if(completionNegative==='failure')throw Error('offline observer failed');
+   completionReady=completionPolls>=3;
+   return {...completionArm,active:!completionReady,reason:completionReady?'complete':null,records:completionReady?[{kind:'guest-complete'}]:[{kind:'sdl-p-return',down:1}]};
+  }
   if(s.includes("getContext('2d')?.constructor"))return 'CanvasRenderingContext2D';
   if(s.includes('fixtureReturnedCoordinates'))return {apps:[page],backend:'CanvasRenderingContext2D'};
   if(s.startsWith('!!('))return true;
@@ -42,7 +60,10 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
    if(v.method==='Runtime.evaluate')result={result:{value:evaluated(v.params.expression,v.sessionId)}};
    if(v.method==='Input.dispatchKeyEvent'){assert(armed,'arm precedes native input');input.push(pauseControl?[v.params.type,v.params.key]:v.params.type);}
    if(v.method==='Page.getLayoutMetrics')result={cssContentSize:{x:0,y:0,width:1024,height:855}};
-   if(v.method==='Page.captureScreenshot')result={data:Buffer.from('offline startup pixels; no visual acceptance').toString('base64')};
+   if(v.method==='Page.captureScreenshot'){
+    if(completionArm)assert(completionReady,'FIRST screenshot requires guest completion, SDL alone insufficient');
+    result={data:Buffer.from('offline startup pixels; no visual acceptance').toString('base64')};
+   }
    queueMicrotask(()=>this.onmessage({data:JSON.stringify({id:v.id,result})}));
    if(v.method==='Page.navigate'&&!workerAttached){workerAttached=true;
     queueMicrotask(()=>this.onmessage({data:JSON.stringify({method:'Target.attachedToTarget',params:{sessionId:'guest-session',targetInfo:{type:'worker',targetId:'guest',url:'/guest-worker.js'}}})}));
@@ -69,7 +90,19 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
    assert.equal(latest.label,n===0?'startup':n===1?(pauseControl?'paused':'after-left'):'after-play');assert.equal(latest.identity.renderEndpoint,'none');
    value.publish(out+'/'+latest.label+'-review.json',{...latest,review:'offline adapter only; no real image review',decision:'continue'});
    if(pauseControl){
-    if(n===0){await execute({id:'offline-pause',action:'key',key:'p',holdMs:80,waitMs:0,label:'paused',observe:true,reviewRef:'startup'},()=>{});assert.deepEqual(input,[['keyDown','p'],['keyUp','p']]);return true;}
+    if(n===0){
+     const command={id:'offline-pause',action:'key',key:'p',holdMs:80,waitMs:0,label:'paused',observe:true,reviewRef:'startup'};
+     if(completionNegative){
+      await assert.rejects(execute(command,()=>{}));
+      assert(!fs.existsSync(out+'/paused.png'));assert(fs.existsSync(out+'/first-browser-failure.json'));
+      const count=input.length;
+      for(const action of ['key','capture','quit'])await assert.rejects(execute({...command,action},()=>{}),/terminal/);
+      assert.equal(input.length,count);assert.deepEqual(input,[['keyDown','p'],['keyUp','p']]);
+      value.publish(run+'/offline-completion-negative.json',{passed:true,negative:completionNegative,actualGeneratedConsumer:true,noFirstImage:true,stickyTerminal:true});return true;
+     }
+     await execute(command,()=>{});assert.deepEqual(input,[['keyDown','p'],['keyUp','p']]);
+     if(completionArm)assert.equal(completionPolls,3);return true;
+    }
     if(n===1){
      // Exercise the real generated consumer's binding checks before any edge.
      const c={id:'offline-play',action:'play',key:'ArrowLeft',holdMs:40,playMs:80,waitMs:0,label:'after-play',reviewRef:'paused',pauseConfirmed:'paused'};
@@ -131,7 +164,7 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
  const key=sym=>b[wa(keys+sym)];
  const event=(vk,down,scan=0)=>call(0x10a10,[0,0x10001,down?0x100:0x101,vk,((scan<<16)|(down?1:0xc0000001))>>>0]);
  const rows=[];
- for(const [name,vk,sym,scan] of [['Right',39,275,0x4d],['Left',37,276,0x4b],['Space',32,32,0x39]]){
+ for(const [name,vk,sym,scan] of [['Right',39,275,0x4d],['Left',37,276,0x4b],['Space',32,32,0x39],['Pause',80,112,0x19]]){
   assert.equal(key(sym),0);
   event(vk,true,scan);assert.equal(key(sym),1,name+' actual SDL DOWN');
   const held=key(sym);event(vk,false,scan);assert.equal(key(sym),0,name+' actual SDL UP');
@@ -164,6 +197,8 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
   edges.forEach(([dik,down],i)=>[dik,down?128:0,100+i,i+1].forEach((v,j)=>w32(records+i*16+j*4,v)));
   call(0x13070,[edges.length,records]);
  };
+ di([[25,true]]);assert.equal(key(112),1,'original DX5 P delivery');
+ di([[25,false]]);assert.equal(key(112),0,'original DX5 P release');
  f32(paddle+8,320);w32(paddle+12,320);
  di([[205,true],[205,false]]);const diCollapsed=frame();assert.equal(diCollapsed.x,320);
  di([[205,true]]);assert.equal(key(275),1);const diHeld=frame();assert.equal(diHeld.x,328);
