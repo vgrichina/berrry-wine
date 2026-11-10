@@ -86,6 +86,36 @@ def probe(kernel, run):
 
 def run(out):
     out.mkdir(parents=True, exist_ok=False)
+    # Exercise the installed maker, including every failing service boundary.
+    kernel = module()
+    directory = out/'subcall-observer'; directory.mkdir()
+    journal = kernel.Journal(directory, 'gzip')
+    journal.append(dict(kind='identity', pid=1))
+    journal.close()
+    rows = kernel.q3_subcalls['records']
+    assert [r['stage'] for r in rows] == ['stream.write','stream.flush','raw.flush','fsync']
+    assert all(r['wallNs'] >= 0 and r['cpuNs'] >= 0 and r['error'] is None for r in rows)
+    for stage in ('stream.write','stream.flush','raw.flush','fsync'):
+        kernel = module(); directory = out/('failed-'+stage); directory.mkdir()
+        journal = kernel.Journal(directory, 'gzip')
+        target, method = (journal.stream, stage.split('.')[1]) if stage.startswith('stream.') else (journal.raw, 'flush') if stage=='raw.flush' else (kernel.os, 'fsync')
+        with patch.object(target, method, side_effect=OSError('injected '+stage)):
+            try: journal.append(dict(kind='identity', pid=1))
+            except OSError: pass
+            else: raise AssertionError('service failure accepted: '+stage)
+        assert journal.size == 0 and journal.error and kernel.q3_subcalls['records'][-1]['error']
+        count = len(kernel.q3_subcalls['records'])
+        for operation in (journal.release_barrier, journal.close):
+            try: operation()
+            except OSError: pass
+            else: raise AssertionError('sticky service failure lost: '+stage)
+        assert len(kernel.q3_subcalls['records']) == count
+    kernel = module(); directory = out/'observer-cap'; directory.mkdir()
+    journal = kernel.Journal(directory, None)
+    kernel.q3_subcalls['limit'] = 4
+    journal.write(b'one'); journal.write(b'two'); journal.close()
+    assert len(kernel.q3_subcalls['records']) == 4 and kernel.q3_subcalls['dropped'] == 4
+    assert journal.path.read_bytes() == b'onetwo'
     sys.path.insert(0, str(ROOT/'tools'))
     spec = importlib.util.spec_from_file_location('controls', ROOT/'tools/native_kernel_custody_test.py')
     controls = importlib.util.module_from_spec(spec); spec.loader.exec_module(controls)

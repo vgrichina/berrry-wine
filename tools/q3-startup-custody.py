@@ -19,6 +19,33 @@ PROVIDER_SHA = 'e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e
 VERSION = 'q3-startup-custody-release-cohorts-v3'
 
 
+def subcall_observer():
+    """Bounded maker-side clocks; no telemetry I/O during journal service."""
+    evidence = dict(limit=8192, records=[], dropped=0,
+                    clocks=['monotonic_ns', 'thread_time_ns', 'time_ns'])
+
+    def call(journal, stage, function, *args):
+        start = time.monotonic_ns()
+        cpu = time.thread_time_ns()
+        epoch = time.time_ns()
+        error = None
+        try:
+            return function(*args)
+        except BaseException as failure:
+            error = repr(failure)
+            raise
+        finally:
+            end = time.monotonic_ns()
+            end_cpu = time.thread_time_ns()
+            if len(evidence['records']) < evidence['limit']:
+                evidence['records'].append(dict(journal=journal.path.name, stage=stage,
+                    startNs=start, startEpochNs=epoch, wallNs=end-start,
+                    cpuNs=end_cpu-cpu, error=error))
+            else:
+                evidence['dropped'] += 1
+    return evidence, call
+
+
 def candidate(source):
     if hashlib.sha256(source.encode()).hexdigest() != PROVIDER_SHA:
         raise ValueError('Q3 published custody drift')
@@ -32,6 +59,12 @@ def candidate(source):
         raise ValueError('Q3 common CONT barrier seam')
     source = source.replace(seam, seam + '        if request == CONT: journal.release_barrier()\n')
     replacements = {
+        '            self.stream.write(data); self.stream.flush()\n            self.raw.flush(); os.fsync(self.raw.fileno())\n':
+        """            _q3_subcall(self, 'stream.write', self.stream.write, data)
+            _q3_subcall(self, 'stream.flush', self.stream.flush)
+            _q3_subcall(self, 'raw.flush', self.raw.flush)
+            _q3_subcall(self, 'fsync', os.fsync, self.raw.fileno())
+""",
         '        self.error = None\n': '        self.error = None\n        self.release_required = False\n',
         "        data = (json.dumps(value)+'\\n').encode('utf-8')\n":
         """        # These are outcomes, never authority to run a stopped task. All
@@ -101,6 +134,7 @@ def load():
     filename = Path(__file__).with_name('native_kernel_custody.py')
     module = types.ModuleType('q3_startup_custody_prefix')
     module.__file__ = str(filename)
+    module.q3_subcalls, module._q3_subcall = subcall_observer()
     exec(compile(candidate(filename.read_text()), str(filename), 'exec'), module.__dict__)
     return module
 
@@ -177,7 +211,7 @@ def supervise(run, command, **options):
     # wire timing. Bound retained detail while retaining aggregate totals.
     write = module.Journal.write
     timing = dict(version=VERSION, clock='Python monotonic_ns', writes=0,
-                  totalNs=0, maxNs=0, samples=[])
+                  totalNs=0, maxNs=0, samples=[], subcalls=module.q3_subcalls)
 
     def measured(journal, data):
         start = time.monotonic_ns()
