@@ -32,7 +32,12 @@ const generated=helper.integrate(route.composition(route.version).compose().sour
 delete process.env.Q3_BOUND_INPUT_OBSERVATION;
 new vm.Script(Module.wrap(generated));
 assert(generated.includes('inputObservationPageSource()'));
-const image={label:'startup',sha256:'a'.repeat(64),identity:{process:'original',module:'authenticated-by-existing-chain'}};
+const ownerFields=['processId','processObject','endpoint','endpointObject','workerObject',
+ 'workerTarget','workerInstance','moduleObject','moduleSha256','epoch',
+ 'renderEndpoint','renderEndpointObject','renderWorkerObject','rendererContext',
+ 'rendererTarget','rendererEpoch','rendererModuleSha256','pageRendererObject','canvasObject'];
+const image={label:'startup',sha256:'a'.repeat(64),identity:{
+ ...Object.fromEntries(ownerFields.map(k=>[k,'controlled-original-'+k])),slice:{seq:1,eip:4562624}}};
 const reports=[];
 async function control(mode,key=false,publication=null) {
  const p=m.exports.page(mode==='locked'),dom=new Map(),rows=[],saved={};
@@ -49,7 +54,11 @@ async function control(mode,key=false,publication=null) {
  o.image(image);o.snapshot();assert.equal(Buffer.from(p.memory.buffer).subarray(p.index*4,p.index*4+288).toString('hex'),before);
  assert.throws(()=>o.begin({id:'bad',label:'bad',previous:{sha256:'bad',identity:{}}}),/binding/);
  assert.throws(()=>o.begin({id:'stale',label:'bad',previous:{...image,sha256:'c'.repeat(64)}}),/prior image mismatch/);
- assert.throws(()=>o.image({...image,identity:{process:'replaced'}}),/owner mismatch/);
+ for(const field of ownerFields) {
+  assert.throws(()=>o.image({...image,identity:{...image.identity,[field]:'replacement'}}),/owner mismatch/,field);
+  const missing={...image.identity};delete missing[field];
+  assert.throws(()=>o.image({...image,identity:missing}),/owner mismatch/,'missing '+field);
+ }
  let publishedReview={...image,review:'controlled offline review'};
  if(publication){
   let requested;
@@ -82,7 +91,8 @@ async function control(mode,key=false,publication=null) {
    save:(n,v)=>saved[n]=v,log(){},send,evaluate:p.evaluate,wait:async()=>{},trace:{span:(_,f)=>f()},
    bound:require('./q3-input-delivery.cjs'),chain:{admit:async(_,f)=>{admissions++;return f({live:{identity:image.identity}});},
      progress:async()=>{drain();return {physical:[{key:13,state:p.r.peekKeyDownState(13)}]};}},
-   capture:async()=>{captures++;drain();o.image({...image,label:command.label,sha256:'b'.repeat(64)});},
+   capture:async()=>{captures++;drain();o.image({...image,label:command.label,sha256:'b'.repeat(64),
+    identity:{...image.identity,slice:{seq:2,eip:4562720},d3dStats:{frames:2},physical:[{key:13,state:0}]}});},
    require:n=>['./native-mouse.cjs','./ordinary-keys.cjs'].includes(n)?require('../scratch/runs/20261108-q3-gl-readiness-gameplay/'+n.slice(2)):require(n)};
  await m.exports.body(generated,context)(command,()=>mark++);
  assert.equal(mark,1);assert.equal(captures,1);assert(admissions>0);assert(saved['input-'+command.id+'-observer-begin.json'].active);
@@ -90,6 +100,10 @@ async function control(mode,key=false,publication=null) {
  assert(rows.some(r=>r.kind==='command-begin'&&r.binding.previous.sha256===image.sha256));
  assert.throws(()=>o.image({...image,label:'unrequested'}),/command mismatch/);
  assert(rows.some(r=>r.kind==='image-bound'&&r.capture.sha256==='b'.repeat(64)));
+ const result=rows.filter(r=>r.kind==='image-bound').at(-1).capture;
+ assert.equal(result.identity.slice.seq,2,'changing execution slice accepted through generated command');
+ assert.throws(()=>o.begin({id:'altered-prior',label:'next',previous:{...result,identity:image.identity}}),/prior image mismatch/);
+ assert.throws(()=>o.begin({id:'wrong-sha',label:'next',previous:{...result,sha256:image.sha256}}),/prior image mismatch/);
  assert.equal(rows.find(r=>r.kind==='observer-arm').state.mode,mode);
  if(key) {
   assert.deepEqual(nativeKeys,['keyDown','keyUp']);
