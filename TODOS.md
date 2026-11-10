@@ -131,7 +131,8 @@
 - [x] World Circuit v1.03 original installation and native driving
   id: NEW-GAME-WORLD-CIRCUIT-V103-20261107
   status: done; authentic installation and 63 registered files; native acceleration and opposite steering verified
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
+  Next: Fresh world-circuit-phoenix-race-progress-1010 worker seeks a further Phoenix course landmark or lap using the installed original and balanced native keys; existing installation/driving completion remains verified.
   Evidence: Published e779ee0b9 verifies original installed Quick Race/Keys/Phoenix cockpit after BIOS IRQ/intercept fix6522e9c49. Actual A/comma/period/Z make/break scans set/clear guest control bits. Coordinator inspected stopped000 -> A063MPH second gear and opposite road-alignment captures; each release leaves held keys empty.52exactACK/zeroUNKNOWN,215 evidence references verified before normal box stop. Original three-disk installation and63files registered atfd948930f; DOS date5c54c4bb8 and native IRQ/INT15 tests/build pass. Note: docs/re-notes/world-circuit-keyboard-driving-20261107.md. Further lap/race completion, X-prefixed sound setup, audio quality, FPS and parity remain unverified; previous UNKNOWN records remain preserved. No public deployment.
 
 - [ ] Formula One Grand Prix / World Circuit DOS demo startup and driving
