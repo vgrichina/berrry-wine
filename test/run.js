@@ -2886,6 +2886,15 @@ async function main() {
       return bytes.length;
     },
   };
+  const waveCallbackRouting = require('./cli-wave-callback-owner').createCliWaveCallbackRouting({
+    getMainExports: () => ctx.exports,
+    getThreadManager: () => threadManager,
+    getBackend: () => guestThreadHost,
+  });
+  Object.defineProperty(ctx, 'waveCallbackOwner', {
+    get: () => waveCallbackRouting.owner(ctx.exports),
+  });
+  ctx.offerWaveCallback = waveCallbackRouting.offer;
   const base = createHostImports(ctx);
   closeD3DRender = () => {
     ctx.closeGlide();
@@ -5287,10 +5296,14 @@ async function main() {
       traceHost: traceHostNames,
       hostCensus: HOST_CENSUS,
       exports: workerExportsProxy,
+      offerWaveCallback: waveCallbackRouting.offer,
       _debugReadFile: TRACE_API && !QUIET_FS,
       ioTraceTag: ctx.ioTraceTag,
       sharedGdi: base.gdi,  // the live GDI table, not the copy in ctx
       g2w: (addr) => translateGuest(addr, instance.exports.get_image_base(), memory.buffer),
+    });
+    Object.defineProperty(workerCtx, 'waveCallbackOwner', {
+      get: () => waveCallbackRouting.owner(workerInstance?.exports, tid, WORKER_THREADS),
     });
     const workerBase = createHostImports(workerCtx);
     const wh = workerBase.host;
@@ -7818,7 +7831,9 @@ async function main() {
     if (gameplayBench && batch === 0) gameplayBench.init(instance.exports, memory);
     tickStateRef.batch = batch;
     tickState.callsInBatch = 0;
+    waveCallbackRouting.restoreMainWait();
     if (ctx.pumpAudioCompletions) ctx.pumpAudioCompletions();
+    if (ctx.pumpWaveCallbacks) await ctx.pumpWaveCallbacks();
     // --control: give the event loop a turn every batch so the control
     // server's socket callbacks fire and settled replies flush. Without this
     // the loop is synchronous end to end — the same mechanism that keeps
