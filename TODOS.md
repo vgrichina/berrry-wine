@@ -93,7 +93,7 @@
   status: done for live control and score2000; first-level clear remains unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published372c6f13b verifies two paddle rebounds before a second Space launch, substantial brick removal and score2000 after an ordinary continue. Coordinator inspected score950/1700 and final2000 frames, checked same-launch pixel reversals and independently hashed508 artifact references. Both all-lives-lost screens are preserved.17exactACK/114native pairs and independent releases pass; original fixture/HTTP pins pass and box normally archived. No emulator change, level clear, GL, FPS, audio or full-playability claim. Note: docs/re-notes/lbreakout2-sustained-first-level-20261108.md.
-  Next: Scalar4byte copy and zero-count shift bypass both rejected by matched original full640x480 timing; no performance change. Published9bf37f769 fixes decoded memory-shift read-fault delivery; 280fault/336mapped/8code-retirement cases and locked build pass. Failed arithmetic follow-up WIP preserved and withdrawn; published baseline retested. Fresh lbreakout-gray-translation-cost-0510 tests normal mapped translation/store cost offline. Historical score2000 accepted; first-level clear/audio/FPS open.
+  Next: Publishedc693e2b8b generic direct-window gl32 reduces authentic full640x480 matched offline median3.36–3.48%; all pixels/registers/flags identical, focused memory/fault/shift regressions and locked build pass. This is not browser performance proof. Fresh lbreakout-direct-load-native-progress-0530 attempts one original browser startup under unchanged completion bounds. Historical score2000 accepted; first-level clear/audio/FPS open.
 
 - [x] Redline native firing and ammunition consumption
   id: NEW-GAME-REDLINE-FIRING-20261108
@@ -116,8 +116,9 @@
 - [x] SimGolf native championship reload and controlled stroke
   id: NEW-GAME-SIMGOLF-CHAMPIONSHIP-STROKE-20261108
   status: done for retained course load and Sid-controlled stroke; Gary/career persistence remains unverified
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Publisheddc190257f verifies the actual production manifest-resolution path, exact retained86831byte CSE GET/nativeVFS hash and native Dolphin Coast MC127yardpar3 championship load. Coordinator inspected aim/scorecard captures showing controlled Sid Golf stroke1 and A.A.Slicer0.24exactACK/zeroUNKNOWN and259 artifacts verified before normal archived-box stop. Subsequent native22yard wedge text is game-resolved play, not another manual shot claim. Prior visitor scoring7d8dd962d remains separate. Notes: docs/re-notes/simgolf-native-championship-shot-20261108.md. No Gary career restoration, completed hole, tournament win, GL/FPS/audio/fullplayability claim.
+  Next: Publishedcb096fa88 makes full caller failure sticky and invokes supplied owning cancellation once; 23 focused controls and locked build pass. Actual wrong/missing request ACK still only closes transport, so fresh simgolf-request-cancel-hole-0528 wires requester through consumer to parent cancellation before any conditional native hole/score attempt. Historical Sid stroke and later22yard wedge accepted; completed hole/career/win unverified.
 
 - [x] Nox native staff pickup, equipment and weapon action
   id: NEW-GAME-NOX-EQUIPMENT-ACTION-20261108
@@ -2153,7 +2154,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   candidate: baldurs-gate2-demo
   Update 2026-11-07: Published6e4578f03, ordinary Minsc recruitment yields three portraits and3000XP; Jaheira rescue journal and equipment-table approach reviewed. No opened loot panel, acquired item or combat. Evidence: scratch/runs/20261107-bg2-current-combat/, 1206 artifacts verified before normal box stop. Next ordinary equipment/key/encounter interaction.
-  Next: Published6099a5c2b sealed lifecycle handoff verified native; a10d5fd0b rejects button-only image changes. Original NewGame stayed in submenu after acknowledged click; immediate owning cancellation, key/rescue unverified. Root verified bx_ky3ka57g stopped unforced stop_8e547cf3f1cd0a52. Fresh bg2-new-game-transition-cause-0515 investigates retained input/loading evidence offline; no unchanged native repeat solely for image predicate. Historical Minsc3000XP and movement remain accepted.
+  Next: a10d5fd0b rejects button-only image changes; original NewGame remained submenu after acknowledged click and owning cancellation. Offline0515 confirms native input consumed and ten later original HTTP200 asset responses totaling219706834B, but no handler/guest-read completion evidence. Park until that missing cause supports repair; no unchanged native repeat solely for image predicate. Root verified bx_ky3ka57g stopped unforced stop_8e547cf3f1cd0a52. Historical Minsc3000XP/movement accepted; key/rescue unverified.
   Done: Registered working launch, ordinary player input changes visible gameplay, reviewed screenshot linked to exact run/source. No installer/menu credit or public deployment.
 
   Current evidence: docs/re-notes/alice-host-receipt-ground-route-20261103.md, published4ad02d281; coordinator full2060local-file SHA PASS (includes complete7456payload archive), native assessment and gnome screenshot reviewed. Own boat bx_974w85x2 STOPPED/nonforced/errornull20:00:35.847Z, snapshot completed/verified20:00:33.613Z. No native guest fault; optional input-state missing-flag host rejection retained.
