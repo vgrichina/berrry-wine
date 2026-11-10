@@ -78,9 +78,9 @@
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
-  status: readiness delivery observed; fixture visual cause under investigation; original arena progress open
+  status: crisp native fixture and Enter movement verified; original main-menu input consumption and arena progress open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Reviewed bfe8fc174/dea6df03d: bounded readiness lane and actual caller controls/build pass; native replies false,false,false,true delivered. First fixture image visually unusable, immediate native cancellation with no input or original; earlier request347 cause remains unknown. Root independently verified bx_jrgbknzy STOPPED exact unforced receipt. Fresh q3-fixture-visual-cause-2348 compares intended fixture geometry with retained pixels before any new runtime; alive arena movement/fire remain open.
+  Next: b3d0207c8/c31e315a5 implement the authorized 320x200 opaque fixture; root inspected both native images, Enter translates80px, exact pixels and focused/build controls pass. Original Single Player click leaves main menu visible, immediate cancellation, no arena claim. Root API verified bx_t75wty3s STOPPED unforced stop_e77b60790eabf838. Fresh q3-bound-menu-input-0015 instruments actual input/guest consumption before causal menu repair and alive arena movement/fire; historical blurred-image STOP unchanged.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
@@ -91,8 +91,9 @@
 - [x] LBreakout2 live-ball returns, brick removal and score progress
   id: NEW-GAME-LBREAKOUT2-LIVE-PLAY-20261108
   status: done for live control and score2000; first-level clear remains unverified
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published372c6f13b verifies two paddle rebounds before a second Space launch, substantial brick removal and score2000 after an ordinary continue. Coordinator inspected score950/1700 and final2000 frames, checked same-launch pixel reversals and independently hashed508 artifact references. Both all-lives-lost screens are preserved.17exactACK/114native pairs and independent releases pass; original fixture/HTTP pins pass and box normally archived. No emulator change, level clear, GL, FPS, audio or full-playability claim. Note: docs/re-notes/lbreakout2-sustained-first-level-20261108.md.
+  Next: 95bcecef7 adds bounded default-inert authentic SDL/game handler observer;47offline and43native fixture calls pass. First live inspection requested nonexistent original.log, terminal before input/original; corrected CASE_TAG helper retained, no new score. Root API verified bx_e2rs3hqq STOPPED unforced stop_a8256789a9d15f27. Fresh lbreakout-observed-native-input-0015 tests both inspection paths before corrected fixture input and one conditional observed original; historical score2000 accepted, level clear open.
 
 - [x] Redline native firing and ammunition consumption
   id: NEW-GAME-REDLINE-FIRING-20261108
@@ -123,7 +124,7 @@
   status: done for pickup/equipment/action; target damage and kill remain unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published905dab22b records original Conjurer Jack acquiring Force of Nature Staff of Recharge, inventory fourth-slot/held-model/HUD change, then green action effects and charge3→2. Coordinator personally inspected six paired captures and independently verified490 artifact references plus normal nonforced archived-box shutdown. Worker ended143 during finalization, cause unknown, without outer final/result; recovered note explicitly preserves this interruption and the DOM recorder's missing mouse-up coverage. No emulator fix, target hit/kill, GL, FPS, audio or full-playability claim. Note: docs/re-notes/nox-native-equipment-20261108.md.
-  Next: Staff pickup/action c3f2602b7/f80090c3b remain accepted with door intact and damage UNKNOWN. Reviewed b8ad3a390: next original stopped on Conjurer acceptance before staff/gameplay; input ACK does not prove guest consumption. Root verified bx_exsx27u5 STOPPED exact unforced receipt. Fresh nox-menu-acceptance-cause-2348 compares accepted route, coordinates and actual input consumption offline before recovering visible target impact with Jack alive.
+  Next: Staff pickup/action c3f2602b7/f80090c3b remain accepted with door intact and target damage UNKNOWN. a80cb9880 establishes route divergence after nine identical commands/images; production bridge controls distinguish pointer modes, but offline peer passes successful and failed routes, exposing missing actual consumer coverage. No demonstrated driver regression or new runtime. Fresh nox-bound-pointer-consumption-0010 prearms native pointer/virtual cursor/DI consumption observations for one causal experiment before recovering staff target impact with Jack alive.
 
 - [x] World Circuit v1.03 original installation and native driving
   id: NEW-GAME-WORLD-CIRCUIT-V103-20261107
