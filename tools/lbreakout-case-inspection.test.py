@@ -15,6 +15,24 @@ spec.loader.exec_module(helper)
 
 
 class InspectionTests(unittest.TestCase):
+    def test_observer_selects_bound_owner_among_secondary_threads(self):
+        source = """const assert=require('node:assert/strict');
+const workers=new Map([['owner',{targetId:'main',url:'guest-worker.js'}],
+ ['secondary-1',{targetId:'thread-1',url:'guest-worker.js'}],
+ ['secondary-2',{targetId:'thread-2',url:'guest-worker.js'}]]);
+const chain={readLive:async()=>({worker:{sessionId:'owner'},identity:{workerTarget:'main'}})};
+""" + helper.owning_worker_source() + """
+(async()=>{
+ assert.equal(await owningWorker(),'owner');
+ workers.get('owner').closed=true;
+ await assert.rejects(owningWorker(),/live bound/);
+ workers.get('owner').closed=false;workers.get('owner').targetId='foreign';
+ await assert.rejects(owningWorker(),/bound owning Worker target/);
+ workers.delete('owner');await assert.rejects(owningWorker(),/live bound/);
+})().catch(e=>{console.error(e);process.exitCode=1});
+"""
+        subprocess.run(['node', '-e', source], check=True, timeout=3)
+
     def test_case_specific_generated_consumer(self):
         for case in ('fixture', 'original'):
             with self.subTest(case=case), tempfile.TemporaryDirectory() as root:

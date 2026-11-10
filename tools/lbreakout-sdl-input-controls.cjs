@@ -21,9 +21,11 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
   guestEndpoint:'endpoint',slot:0,workerObject:'worker',moduleObject:'module',epoch:'epoch',renderEndpoint:'none',
   renderEndpointObject:'none',renderWorkerObject:'none'};
  let socket,workerAttached=false,spawned=false,closed=false;
- function evaluated(s){
+ let armed=false;const input=[];
+ function evaluated(s,session){
   if(s.includes('__mcmPassiveIdentityV1'))return {isolated:true,apps:[page]};
-  if(s.includes('__mcmPassiveInstanceV1'))return {endpointIdentity:'endpoint',slot:0,instance:'instance'};
+  if(s.includes('__mcmPassiveInstanceV1'))return session==='guest-session'?{endpointIdentity:'endpoint',slot:0,instance:'instance'}:{endpointIdentity:'secondary-'+session,slot:1,instance:session};
+  if(s==='globalThis.__lbArm()'){assert.equal(session,'guest-session','observer must arm bound owning Worker');armed=true;return {armed:true};}
   if(s.includes("getContext('2d')?.constructor"))return 'CanvasRenderingContext2D';
   if(s.includes('fixtureReturnedCoordinates'))return {apps:[page],backend:'CanvasRenderingContext2D'};
   if(s.startsWith('!!('))return true;
@@ -37,13 +39,15 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
    if(v.method==='Target.getTargets')result={targetInfos:[{type:'page',targetId:'page'}]};
    if(v.method==='Target.attachToTarget')result={sessionId:'page-session'};
    if(v.method==='Debugger.getScriptSource')result={bytecode:moduleBytes.toString('base64')};
-   if(v.method==='Runtime.evaluate')result={result:{value:evaluated(v.params.expression)}};
+   if(v.method==='Runtime.evaluate')result={result:{value:evaluated(v.params.expression,v.sessionId)}};
+   if(v.method==='Input.dispatchKeyEvent'){assert(armed,'arm precedes native input');input.push(v.params.type);}
    if(v.method==='Page.getLayoutMetrics')result={cssContentSize:{x:0,y:0,width:1024,height:855}};
    if(v.method==='Page.captureScreenshot')result={data:Buffer.from('offline startup pixels; no visual acceptance').toString('base64')};
    queueMicrotask(()=>this.onmessage({data:JSON.stringify({id:v.id,result})}));
    if(v.method==='Page.navigate'&&!workerAttached){workerAttached=true;
     queueMicrotask(()=>this.onmessage({data:JSON.stringify({method:'Target.attachedToTarget',params:{sessionId:'guest-session',targetInfo:{type:'worker',targetId:'guest',url:'/guest-worker.js'}}})}));
     queueMicrotask(()=>this.onmessage({data:JSON.stringify({method:'Debugger.scriptParsed',sessionId:'guest-session',params:{scriptLanguage:'WebAssembly',scriptId:'wasm',url:'wasm://offline'}})}));
+    for(const n of [1,2])queueMicrotask(()=>this.onmessage({data:JSON.stringify({method:'Target.attachedToTarget',params:{sessionId:'thread-'+n,targetInfo:{type:'worker',targetId:'secondary-'+n,url:'/guest-worker.js'}}})}));
    }
    if(v.method==='Browser.close'){closed=true;browser.exitCode=0;queueMicrotask(()=>browser.emit('exit',0,null));}
   }
@@ -61,12 +65,13 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
    address:()=>({port:1234}),prependListener(){},closeAllConnections(){},close:fn=>fn()
   })};
   if(name==='./transport.cjs')return {...value,consume:async(p,n,execute)=>{
-   assert.equal(n,0);const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));
-   assert.equal(latest.label,'startup');assert.equal(latest.identity.renderEndpoint,'none');
-   value.publish(out+'/startup-review.json',{...latest,review:'offline adapter only; no real image review',decision:'continue'});
-   await execute({action:'quit',reviewRef:'startup'},()=>{});
+   assert(n<=1);const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));
+   assert.equal(latest.label,n===0?'startup':'after-left');assert.equal(latest.identity.renderEndpoint,'none');
+   value.publish(out+'/'+latest.label+'-review.json',{...latest,review:'offline adapter only; no real image review',decision:'continue'});
+   if(n===0){await execute({id:'offline-left',action:'key',key:'ArrowLeft',holdMs:80,waitMs:0,label:'after-left',observe:true,reviewRef:'startup'},()=>{});assert(armed);assert.deepEqual(input,['keyDown','keyUp']);return true;}
+   await execute({action:'quit',reviewRef:'after-left'},()=>{});
    assert(spawned&&workerAttached&&closed&&socket.readyState===3);
-   value.publish(run+'/offline-startup-control.json',{passed:true,entireBrowserEntryPoint:true,literalDeadline:true,noLocalChrome:true,fixtureRerun:false});return true;
+   value.publish(run+'/offline-startup-control.json',{passed:true,entireBrowserEntryPoint:true,literalDeadline:true,threeGuestWorkers:true,observedShortInput:true,independentRelease:true,noLocalChrome:true,fixtureRerun:false});return true;
   }};
   return value;
  };

@@ -6,6 +6,17 @@ availability must never mask passive terminal records.
 import json
 
 
+def owning_worker_source():
+    """Select the module-bound process owner, allowing real secondary threads."""
+    return """async function owningWorker(){
+ const live=await chain.readLive();
+ const owner=workers.get(live.worker.sessionId);
+ assert(owner&&!owner.closed&&owner.url.includes('guest-worker'),'live bound owning guest Worker');
+ assert.equal(owner.targetId,live.identity.workerTarget,'bound owning Worker target');
+ return live.worker.sessionId;
+}"""
+
+
 def inspection_source(root, run, case):
     if case not in ('fixture', 'original'):
         raise ValueError('unsupported LBreakout case')
