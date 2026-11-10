@@ -15,6 +15,25 @@ spec.loader.exec_module(helper)
 
 
 class InspectionTests(unittest.TestCase):
+    def test_unobserved_paddle_pulses_refuse_before_any_effect(self):
+        source = "const assert=require('node:assert/strict');\n" + helper.paddle_key_admission_source() + """
+let effects=0;
+function execute(c){assertPaddleCompletion(c);effects++;}
+for(const key of ['ArrowLeft','ArrowRight']){
+ for(const observe of [false,true]){
+  assert.throws(()=>execute({action:'key',key,observe}),/guest-completion observer/);
+  assert.equal(effects,0);
+ }
+}
+for(const key of ['ArrowLeft','ArrowRight','Space']){
+ assert.throws(()=>execute({action:'play',key}),/guest-completion observer/);
+ assert.equal(effects,0);
+}
+for(const key of ['p','Space','Enter','ArrowDown','ArrowUp'])execute({action:'key',key});
+execute({action:'capture'});execute({action:'quit'});assert.equal(effects,7);
+"""
+        subprocess.run(['node', '-e', source], check=True, timeout=3)
+
     def test_pause_template_drift_is_offline_error(self):
         with self.assertRaisesRegex(ValueError, 'unsupported bound browser'):
             helper.pause_workflow_source('unrecognized caller')

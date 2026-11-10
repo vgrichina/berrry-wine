@@ -251,6 +251,19 @@ async function completion(a){
     return source
 
 
+def paddle_key_admission_source():
+    """Fail closed until ordinary paddle pulses have guest completion evidence.
+
+    Native CDP down/up acknowledgements alone do not establish that the
+    original paddle consumed a pulse before the returned image. In particular,
+    repeated pulses must not be treated as completed gameplay input.
+    """
+    return r'''function assertPaddleCompletion(c){
+ if(c.action==='play'||(c.action==='key'&&['ArrowLeft','ArrowRight'].includes(c.key)))
+  throw Error('paddle input lacks original guest-completion observer');
+}'''
+
+
 def pause_workflow_source(source):
     """Extend the actual bound browser caller with ordinary local-game P input.
 
@@ -260,6 +273,7 @@ def pause_workflow_source(source):
     Pair this caller with pause_completion_preload_source().
     """
     replacements = [
+        (" if(c.action!=='capture'){", " assertPaddleCompletion(c);\n if(c.action!=='capture'){"),
         ("['capture','click','key','quit']", "['capture','click','key','play','quit']"),
         ("'Enter','Space'].includes(c.key)", "'Enter','Space','p'].includes(c.key)"),
         ("   await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});", """   if(c.action==='play'){
@@ -285,7 +299,7 @@ def pause_workflow_source(source):
             raise ValueError('unsupported bound browser template: ' + before)
     for before, after in replacements:
         source = source.replace(before, after)
-    return pause_completion_source(source)
+    return paddle_key_admission_source() + '\n' + pause_completion_source(source)
 
 
 def owning_worker_source():
