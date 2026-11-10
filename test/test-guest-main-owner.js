@@ -40,6 +40,7 @@ const { createMainSchedulerObserver } = require('./main-scheduler-observer');
   await assert.rejects(remote.optionalCall('set',7), /owner retired/,'optional does not swallow present-export failure');
   assert.equal(register,-1,'failed remote invocation never falls back to shadow registers');
   assert.throws(()=>remote.loadDlls(new Uint8Array(),[],null,{}),/missing Worker DLL loader/);
+  assert.throws(()=>remote.resumeMessageWait(false),/missing Worker message resume/);
   assert.deepEqual(await remote.read(['get']),{get:12});
 
   for(const fail of [false,true]) {
@@ -90,5 +91,26 @@ const { createMainSchedulerObserver } = require('./main-scheduler-observer');
       await assert.rejects(serviceMainTimingWait(selected,timing),/owner retired/);
     }
   }
+  const {ThreadManager}=require('../lib/thread-manager');
+  for(const pending of [false,true]) {
+    let eip=123,esp=400,yieldReason=7,resumes=0;
+    const messageOwner=createGuestMainOwner({localExports:{run(){},
+      get_yield_reason:()=>yieldReason,has_pending_message:()=>pending,
+      get_esp:()=>esp,guest_read32:p=>{assert.equal(p,400);return 0xf0123456;},
+      resume_message_wait:()=>{resumes++;esp+=4;yieldReason=0;return 1;},
+      set_eip:p=>{eip=p;},get_sleep_yielded:()=>0}});
+    const tm={_renderSendTargets:new Set(),mainInstance:{exports:{}},_mainSleepUntil:0,
+      _waitNow:()=>100,_hasPendingMessage:()=>false,
+      noteMainSleepOwned:ThreadManager.prototype.noteMainSleepOwned};
+    assert.equal(await ThreadManager.prototype.checkMainMessageWaitOwned.call(tm,messageOwner),!pending);
+    assert.equal(resumes,pending?1:0);assert.equal(esp,pending?404:400);
+    assert.equal(eip,pending?0xf0123456:123,'DLL return address retained without EXE bounds heuristic');
+  }
+  const transport={module,callExport(){},readExports(){},slice(){},
+    resumeMainMessageWait:async input=>{assert.equal(input,true);return {ownershipMismatch:true};}};
+  const messageWorker=createGuestMainOwner({worker:transport});
+  assert.deepEqual(await messageWorker.resumeMessageWait(true),{ownershipMismatch:true});
+  transport.resumeMainMessageWait=async()=>{throw Error('retired message owner');};
+  await assert.rejects(messageWorker.resumeMessageWait(true),/retired message owner/);
   console.log('PASS guest main ownership: local ordering, remote failure isolation and asynchronous slice diagnostics');
 })().catch(error=>{console.error(error);process.exitCode=1;});

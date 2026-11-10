@@ -10653,8 +10653,8 @@ async function main() {
       // first: the [input] markers are buffered, and output the guest prints
       // directly (--trace-host) while handling that input must follow them.
       flushLogs();
-      if (instance.exports.get_yield_reason && instance.exports.get_yield_reason() === 7) {
-        threadManager.checkMainYield();
+      if (await mainOwner.call('get_yield_reason') === 7) {
+        await threadManager.checkMainMessageWaitOwned(mainOwner);
       }
       if (!await mainExecutionSuspended('ordinary')) {
         if (stopped) break;
@@ -11232,7 +11232,9 @@ async function main() {
     }
     // Check if main thread is waiting on an event
     await threadManager.resolveMainThreadSend();
-    if (threadManager.checkMainYield()) {
+    if (await mainOwner.call('get_yield_reason') === 7
+        ? await threadManager.checkMainMessageWaitOwned(mainOwner)
+        : threadManager.checkMainYield()) {
       // Main thread still waiting — don't advance EIP check
     }
 

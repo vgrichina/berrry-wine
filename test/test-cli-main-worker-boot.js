@@ -178,6 +178,8 @@ const root=path.resolve(__dirname,'..');
     await ThreadManager.prototype.noteMainSleepOwned.call(sleepState,owner);
     assert.equal(sleepState._mainSleepUntil,1077,'consumed flag cannot reset existing deadline');
     if(remote)assert.equal(h.exports.get_sleep_yielded(),0,'shadow has no guest sleep flag');
+    assert.deepEqual(await owner.resumeMessageWait(false),{resumed:false},
+      'message resume does not touch a guest outside message wait');
     rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,dlls,registrations,retirement,timing:timing.vblank,sleepUntil:sleepState._mainSleepUntil});
    }finally{await worker?.stop();}
   }

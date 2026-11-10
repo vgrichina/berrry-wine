@@ -597,6 +597,17 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   owner queries, failures, Sleep(0) and already-consumed flags are covered.
   Legacy `checkMainYield` and APC sleep callers still need migration.
   Evidence: `scratch/runs/20261109-cli-sleep-owner/`.
+  CLI message waits before and after a batch now use the selected owner.
+  The Worker route reuses its existing atomic, frame-aware message-resume
+  command without a callback reservation token. It cannot borrow a nested
+  send's frame; the return address is taken from the actual stack even when
+  it points outside the EXE. Local resumption uses the same ordering after
+  ThreadManager's callback/sleep checks. Actual Worker stateful-Wasm tests
+  verify stack advancement, DLL-like return addresses and nested-frame refusal;
+  normal/compat owner tests verify an unrelated yield is untouched.
+  Other `checkMainYield` reasons still use the legacy path and must migrate
+  before enabling Worker main execution. Evidence:
+  `scratch/runs/20261109-cli-message-owner/`.
   PE placement/loading and launch name/drive/arguments now use shared
   `stageAndLoadPeOwned`/`configureExeOwned` helpers in both the CLI and
   `GuestThreadHost.loadPe`. The existing `stagePe` still owns oversized PE/NE
