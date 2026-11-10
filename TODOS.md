@@ -25,8 +25,9 @@
 - [x] Current TR3 Jungle translation and heading on both D3DIM backends
   id: NEW-GAME-TR3-CURRENT-GL-ACTIONS-20261108
   status: bounded persistent translation and separate heading verified on current WebGL and Software; broader gameplay open
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published767dc5774 closes bounded current WebGL translation: separately reviewed Up1000 from settled downhill view changes Lara relative to the same rock/boulder/slope/stump, retained12s plus10s idle. Coordinator inspected paired frames and independently verified204refs14528997bytes.18ACK/zeroUNKNOWN actual7ec49 owningWebGL2,48modulechecks189HTTP603pins and normal archived stop/full drain pass. Together with78df2e4d9 current WebGL heading and Software translation/heading, this task is done at bounded visual scope. No firing/FPS/audio/parity/full27/level-clear claim. Note: docs/re-notes/tr3-webgl-terrain-translation-20261108.md. Fresh Forsaken native progress0613 takes the released gameplay slot; NFS3race and TR2frameidentity remain active.
+  Next: Fresh tr3-jungle-new-consequence-0615 seeks a reviewed pickup, jump/landing terrain boundary or encounter response on one actual backend. Historical767dc5774 terrain-relative WebGL translation and78df2e4d9 heading/software controls remain accepted; broader gameplay open.
 
 - [x] Quake II native health pickup on both current GL backends
   id: QUAKE2-PAIRED-NATIVE-PICKUP-20261108
@@ -37,8 +38,8 @@
 - [ ] Asghan current-browser outgoing attack or pickup
   id: NEW-GAME-ASGHAN-NATIVE-ACTION-20261108
   status: movement/jumps and incoming enemy damage verified; outgoing hit/defeat/pickup open
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
-  Next: A future Asghan attempt must identify a visible actionable pickup or isolate an outgoing enemy reaction; do not repeat the same-plane fast/swipe sequence. Published6b38c6987 establishes broad same-ground frontal preparation and actual CtrlUp/CtrlLeft guestpollhigh/releasedzero, but standingorc/incominghealth160to120 supplies no outgoing consequence. Coordinator inspected frontal/swipe captures and independently verified198refs14737528bytes; currentcc438 differspriorf965 and was locallyqualified.15ACK/zeroUNKNOWN softwareCanvas2D, normal archived stop/settled drain pass. Slot reassigned to fresh Recoil forcefield objective0705. Note: docs/re-notes/asghan-frontal-target-20261108.md. No emulatorcause, GL/full27/parity/audio/FPS claim.
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
+  Next: Fresh asghan-visible-pickup-0615 seeks a visible actionable pickup or a distinct supported outgoing enemy consequence. Prior same-plane frontal fast/swipe did not prove outgoing damage; do not repeat. Historical movement/jumps/incoming damage remain accepted.
 
 - [ ] Drakan current-browser movement, flight and attack
   id: NEW-GAME-DRAKAN-CURRENT-ACTION-20261108
@@ -93,7 +94,7 @@
   status: done for live control and score2000; first-level clear remains unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published372c6f13b verifies two paddle rebounds before a second Space launch, substantial brick removal and score2000 after an ordinary continue. Coordinator inspected score950/1700 and final2000 frames, checked same-launch pixel reversals and independently hashed508 artifact references. Both all-lives-lost screens are preserved.17exactACK/114native pairs and independent releases pass; original fixture/HTTP pins pass and box normally archived. No emulator change, level clear, GL, FPS, audio or full-playability claim. Note: docs/re-notes/lbreakout2-sustained-first-level-20261108.md.
-  Next: Publishedc693e2b8b improves controlled offline gray conversion3.36–3.48%; current native startup instead sampled original DEFLATE match-copy before its deadline failure, no screenshot. Authentic original whole-inflate controls0547 now match output/registers/flags; fresh lbreakout-inflate-uop-cost-0600 profiles a concrete generic candidate offline. Historical score2000 accepted; first-level clear/audio/FPS open.
+  Next: Parked after0600: scratch LDX8U/MERGE8L dispatch fusion rejected because whole-inflate benefit failed independent repeat despite576 exact output/state matches. Existingc693e2b8b gray-conversion improvement retained; startup inflate caller/asset still unknown. Historical score2000 accepted; first-level clear/audio/FPS open.
 
 - [x] Redline native firing and ammunition consumption
   id: NEW-GAME-REDLINE-FIRING-20261108
@@ -118,14 +119,14 @@
   status: done for retained course load and Sid-controlled stroke; Gary/career persistence remains unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Publisheddc190257f verifies the actual production manifest-resolution path, exact retained86831byte CSE GET/nativeVFS hash and native Dolphin Coast MC127yardpar3 championship load. Coordinator inspected aim/scorecard captures showing controlled Sid Golf stroke1 and A.A.Slicer0.24exactACK/zeroUNKNOWN and259 artifacts verified before normal archived-box stop. Subsequent native22yard wedge text is game-resolved play, not another manual shot claim. Prior visitor scoring7d8dd962d remains separate. Notes: docs/re-notes/simgolf-native-championship-shot-20261108.md. No Gary career restoration, completed hole, tournament win, GL/FPS/audio/fullplayability claim.
-  Next: Publishedc8c83a07b wires actual requester failure to owning cancellation and rejects clock-only frame changes. Retained 0555 evidence proves active provider I/O behind unchanged Sid loading; eventual readiness unverified. Fresh simgolf-loading-aware-caller-0605 tests a supported loading-aware actual caller within existing deadlines, offline only. Historical Sid stroke and later22yard wedge accepted; completed hole/career/win open.
+  Next: Parked after0605 actual caller/Worker/VFS controls: read settlement cannot establish course readiness; failed and successful reads both settle. No supported loading-completion repair. Publishedc8c83a07b cancellation and guest-pixel guards retained; no repeated unchanged native attempt. Historical Sid stroke accepted; hole/career/win open.
 
 - [x] Nox native staff pickup, equipment and weapon action
   id: NEW-GAME-NOX-EQUIPMENT-ACTION-20261108
   status: done for pickup/equipment/action; target damage and kill remain unverified
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Evidence: Published905dab22b records original Conjurer Jack acquiring Force of Nature Staff of Recharge, inventory fourth-slot/held-model/HUD change, then green action effects and charge3→2. Coordinator personally inspected six paired captures and independently verified490 artifact references plus normal nonforced archived-box shutdown. Worker ended143 during finalization, cause unknown, without outer final/result; recovered note explicitly preserves this interruption and the DOM recorder's missing mouse-up coverage. No emulator fix, target hit/kill, GL, FPS, audio or full-playability claim. Note: docs/re-notes/nox-native-equipment-20261108.md.
-  Next: Published929ee1cc0 adds actual startup readiness barrier after cached pending status wrongly censored fetch. Fresh nox-readiness-barrier-staff-0547 tests ordinary reviewed Jack/Bunker staff route with bounded completed-command storage3af98942f; native target damage/kill remain open.
+  Next: Native0547 readiness barrier passed and4110 command-scoped records matched. Network target moved during menu animation; no Bunker/staff reached. Root independently verified normal box stop. Fresh nox-settled-network-staff-0610 fixes explicit passive settling before reviewed ordinary target selection; damage/kill remain open.
 
 - [x] World Circuit v1.03 original installation and native driving
   id: NEW-GAME-WORLD-CIRCUIT-V103-20261107
