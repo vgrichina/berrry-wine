@@ -5,7 +5,15 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('n
 const helper=require('./bg2-current-driver.cjs');
 const root=path.resolve(__dirname,'..'),run=path.resolve(process.argv[2]),source=helper.compose(root);
 assert.equal(fs.readFileSync(path.join(run,'browser-run.cjs'),'utf8'),source);
-const bound=require(path.join(run,'bound-input.cjs')),transport=require(path.join(run,'transport.cjs'));
+const bound=require(path.join(run,'bound-input.cjs'));
+// Fixtures may be nested below a native run to preserve its launched bytes.
+// Compile the exact emitted CommonJS bytes, resolving repository dependencies
+// at their production location without rewriting the fixture's source.
+const Module=require('node:module'),transportModule=new Module(path.join(run,'transport.cjs'),module);
+transportModule.filename=path.join(run,'transport.cjs');transportModule.paths=Module._nodeModulePaths(run);
+transportModule.require=n=>require(n.startsWith('../../../tools/')?path.join(root,'tools',n.slice('../../../tools/'.length)):n.startsWith('./')?path.join(run,n):n);
+transportModule._compile(fs.readFileSync(transportModule.filename,'utf8'),transportModule.filename);
+const transport=transportModule.exports;
 let checks=0;
 async function main(){
  for(const text of ['a','','A1','ABCDEFGHIJKLM']){assert.throws(()=>helper.validate({action:'type',text,waitMs:0}),/uppercase/);checks++;}
@@ -51,6 +59,35 @@ async function main(){
   const c={id:'control',label:'after',reviewRef:'before',action:mode==='type-invalid'?'type':'key',text:'a',key:'Space',holdMs:50,waitMs:0};
   if(mode==='changed')await scope.execute(c,()=>{});else await assert.rejects(scope.execute(c,()=>{}),mode==='unchanged'?/unchanged/:mode==='refused'?/stale/:/uppercase/);
   assert.deepEqual(events,['changed','unchanged'].includes(mode)?['keyDown','keyUp','capture']:[]);checks++;
+ }
+ // A pressed menu button can change pixels without leaving the menu. Execute
+ // the complete emitted caller against actual PNG comparison, then its terminal
+ // guard. Optional retained native captures exercise the same control offline.
+ const png=require('pngjs').PNG,diff=require('./png-diff.js').diffPng;
+ const authoredBefore=new png({width:640,height:480}),button=new png({width:640,height:480});
+ button.data[(200*640+100)*4]=255;
+ const world=new png({width:640,height:480});world.data[(200*640+400)*4]=255;
+ for(const r of [[0,0,0,1],[-.1,0,1,1],[0,0,2,1],[0,0,1,NaN]])assert.throws(()=>helper.validate({action:'click',waitMs:0,transitionRegion:r}),/transition region/);checks++;
+ const retained=process.argv[3]&&path.resolve(process.argv[3]),pairs=[{before:authoredBefore,after:button,rect:{left:0,top:0,width:640,height:480},region:[.5,0,.5,1]}];
+ pairs.push({before:authoredBefore,after:world,rect:{left:0,top:0,width:640,height:480},region:[.5,0,.5,1],transition:true});
+ if(retained){
+  const read=n=>JSON.parse(fs.readFileSync(path.join(retained,n)));
+  pairs.push({before:path.join(retained,'single-player.png'),after:path.join(retained,'new-game.png'),rect:read('new-game-state.json').canvas.rect,region:[.43,.05,.5,.85]});
+ }
+ for(const pair of pairs)for(const scoped of [false,true]){
+  const events=[];let cancellations=0;
+  const g=helper.terminalGuard({save(){},cancel(){cancellations++;}});
+  const c={id:'region',label:'after',reviewRef:'before',action:'click',point:[.235,.414],holdMs:100,waitMs:0,...(scoped?{transitionRegion:pair.region}:{})};
+  const scope={assert,bg2:helper,guard:g,Date,deadline:Date.now()+100000,latest:{label:'before',sha256:'a'},out:run,pageSession:'page',
+   fs:{readFileSync:n=>JSON.stringify(n.endsWith('-state.json')?{canvas:{rect:pair.rect}}:{sha256:'a',review:'OFFLINE image control'})},sha:()=> 'a',
+   save(){},log(){},wait:async()=>{},evaluate:async()=>pair.rect,send:async(m,p)=>{g.check();events.push(p.type);},
+   chain:{admit:async(r,f)=>f({live:{identity:{}}})},
+   require:n=>n==='../../../tools/png-diff.js'?{diffPng:(a,b,options)=>diff(pair.before,pair.after,options)}:require(path.join(run,n)),
+   capture:async()=>{events.push('capture');scope.latest={label:'after',sha256:'b'};}};
+  vm.createContext(scope);vm.runInContext(source.slice(start,end)+';globalThis.execute=execute;',scope);
+  if(scoped&&!pair.transition){await assert.rejects(scope.execute(c,()=>{}).catch(e=>{g.fail(e);throw e;}),/unchanged expected transition region/);assert.equal(cancellations,1);await assert.rejects(scope.execute({...c,id:'later'},()=>{}),/unchanged expected transition region/);}
+  else {await scope.execute(c,()=>{});assert.equal(cancellations,0);}
+  assert.deepEqual(events,['mouseMoved','mousePressed','mouseReleased','capture']);checks++;
  }
  // Sticky cancellation gates the exact emitted send body, including releases.
  const sendStart=source.indexOf('function send('),sendEnd=source.indexOf('\nasync function event(',sendStart);let cancelled=0;const after=[];
@@ -116,6 +153,7 @@ print(json.dumps(dict(passed=True,calls=calls,browserStarted=False)))`;
  put('lifecycle.json',{...life,box:'bx_wrong'});assert.throws(()=>helper.leaseInput(root,owned),/launcher box/);checks++;
  put('lifecycle.json',life);put('deadline.json',{...deadline,deadlineEpoch:deadline.deadlineEpoch+1});assert.throws(()=>helper.leaseInput(root,owned),/original browser deadline/);checks++;
  put('staging-window.json',{});assert.throws(()=>helper.sealLease(root,owned),/precede staging/);checks++;
- console.log(JSON.stringify({passed:true,checks,fullGeneratedCaller:true,actualInstalledWorker:true,cpuSha256:helper.sha(bytes),workerSha256:helper.sha(workerSource),independentRelease:true,stickyRefusal:true,leaseFailureReproduced:before,leaseRepairVerified:afterLease,originalLaunches:0,browser:false}));
+ for(const temporary of [fixture,out,wrong])fs.rmSync(temporary,{recursive:true,force:true});
+ console.log(JSON.stringify({passed:true,checks,fullGeneratedCaller:true,actualInstalledWorker:true,cpuSha256:helper.sha(bytes),workerSha256:helper.sha(workerSource),independentRelease:true,stickyRefusal:true,transitionRegion:true,retainedNativeImageControl:!!retained,leaseFailureReproduced:before,leaseRepairVerified:afterLease,originalLaunches:0,browser:false}));
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});

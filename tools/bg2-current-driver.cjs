@@ -17,6 +17,17 @@ function validate(c){
  assert(['capture','click','doubleclick','drag','key','type','quit'].includes(c.action),'BG2 ordinary action');
  if(c.action==='type')assert(typeof c.text==='string'&&/^[A-Z]{1,12}$/.test(c.text),'bounded uppercase name before publication');
  assert(Number.isInteger(c.waitMs)&&c.waitMs>=0&&c.waitMs<=10000,'bounded BG2 wait');
+ if(c.transitionRegion!==undefined){
+  assert(c.action!=='capture'&&c.action!=='quit','transition requires ordinary input');
+  const r=c.transitionRegion;
+  assert(Array.isArray(r)&&r.length===4&&r.every(Number.isFinite)&&r[0]>=0&&r[1]>=0&&r[2]>0&&r[3]>0&&r[0]+r[2]<=1&&r[1]+r[3]<=1,'bounded normalized transition region');
+ }
+}
+function transitionRegion(c,rect){
+ validate(c);
+ const [x,y,w,h]=c.transitionRegion??[0,0,1,1];
+ const region={x:Math.ceil(rect.left+rect.width*x),y:Math.ceil(rect.top+rect.height*y),w:Math.floor(rect.width*w),h:Math.floor(rect.height*h)};
+ assert(region.w>0&&region.h>0,'nonempty transition region');return region;
 }
 function terminalGuard({save,cancel,clear=()=>{}}){
  let error=null;
@@ -42,8 +53,9 @@ guard=bg2.terminalGuard({save:v=>save('terminal-error.json',v),clear:()=>{closin
  if(c.action!=='capture'){
   assert.notEqual(latest.sha256,previous,'unchanged expected image; terminal');
   const rect=JSON.parse(fs.readFileSync(out+'/'+c.label+'-state.json')).canvas.rect;
-  const difference=require('../../../tools/png-diff.js').diffPng(out+'/'+previousLabel+'.png',out+'/'+c.label+'.png',{region:{x:rect.left,y:rect.top,w:rect.width,h:rect.height}});
-  save('input-'+c.id+'-image-difference.json',difference);assert(!difference.sizeMismatch&&difference.changed>0,'unchanged game canvas; terminal');
+  const region=bg2.transitionRegion(c,rect);
+  const difference=require('../../../tools/png-diff.js').diffPng(out+'/'+previousLabel+'.png',out+'/'+c.label+'.png',{region});
+  save('input-'+c.id+'-image-difference.json',{...difference,region,transitionRegion:c.transitionRegion??null});assert(!difference.sizeMismatch&&difference.changed>0,'unchanged expected transition region; terminal');
  }`);
  s=exact(s,"v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result)","v.error?p.reject(fail(Error(JSON.stringify(v.error)))):p.resolve(v.result)");
  for(const name of ['worker-errors','event-errors'])s=s.replaceAll("log('"+name+".jsonl',","failAndLog('"+name+".jsonl',");
@@ -98,5 +110,5 @@ function sealLease(root,run){
  fs.writeFileSync(path.join(run,'lease-input-seal.json'),JSON.stringify({passed:true,lifecycle:p,manifestSha256:sha(fs.readFileSync(file))},null,2)+'\n',{flag:'wx'});
  return p;
 }
-module.exports={compose,helpers,generate,validate,terminalGuard,leaseInput,sealLease,PRIOR,sha};
+module.exports={compose,helpers,generate,validate,transitionRegion,terminalGuard,leaseInput,sealLease,PRIOR,sha};
 if(require.main===module){const root=path.resolve(__dirname,'..');console.log(JSON.stringify(process.argv[2]==='seal-lease'?sealLease(root,path.resolve(process.argv[3])):generate(root,path.resolve(process.argv[2]))));}
