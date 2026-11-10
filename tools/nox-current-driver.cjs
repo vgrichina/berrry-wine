@@ -172,7 +172,8 @@ function cdpRequest(n,method,params,sessionId){
 }`);
   source=exact(source,"error:error.stack||String(error),noReplay:true});", "error:error.stack||String(error),noReplay:true,command:noxCommand,lastCdpReply,pendingRequests:[...pending.values()].map(p=>p.request)});");
   source=exact(source,'const n=++id;const timer=setTimeout(', 'const n=++id,request=cdpRequest(n,method,params,sessionId);const timer=setTimeout(');
-  source=exact(source,'pending.set(n,{resolve,reject,timer});', 'pending.set(n,{resolve:value=>{lastCdpReply={...request,completedAt:new Date().toISOString()};resolve(value);},reject,timer,request});');
+  source=exact(source,'pending.set(n,{resolve,reject,timer});', 'pending.set(n,{resolve:value=>{lastCdpReply={...request,completedAt:new Date().toISOString()};if(request.command)log("cdp-requests.jsonl",{phase:"reply",...lastCdpReply});resolve(value);},reject,timer,request});');
+  source=exact(source,'try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));}', 'try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));if(request.command)log("cdp-requests.jsonl",{phase:"sent",at:new Date().toISOString(),...request});}');
   source=exact(source,'async function execute(c,markDispatch){\n if(terminalError)throw terminalError;', `async function execute(c,markDispatch){
  if(terminalError)throw terminalError;
  noxCommand={id:c.id,action:c.action,label:c.label??null,reviewRef:c.reviewRef??null};`);

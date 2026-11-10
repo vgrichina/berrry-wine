@@ -450,13 +450,14 @@ async function cdpControls(generated,out){
  const source=fs.readFileSync(generated+'/browser-run.cjs','utf8'),begin=source.indexOf('let terminalError=null,'),end=source.indexOf('async function event(v)',begin);
  assert(begin>=0&&end>begin);const emitted=source.slice(begin,end),results=[];
  for(const [expression,operation] of [['page-read','page-owner'],['worker-read','worker-owner'],['renderer-read','renderer-owner'],['globalThis.__noxConsumption.begin('+ 'x'.repeat(4096)+')','nox-consumption']]){
-  const frames=[],saved={},timers=new Map(),microtasks=[];let timerId=0,closed=0;
+  const frames=[],trace=[],saved={},timers=new Map(),microtasks=[];let timerId=0,closed=0;
   const pending=new Map(),ctx={pending,workers:new Map([['worker',{targetId:'actual-target'}]]),id:0,timer:0,pageSession:'page',
    bound:{PAGE_READ:'page-read',WORKER_READ:'worker-read',RENDER_READ:'renderer-read'},Buffer,Date,sha:current.sha,
-   process:{exitCode:0},save:(n,v)=>saved[n]=structuredClone(v),ws:{send:wire=>frames.push(JSON.parse(wire))},
+   process:{exitCode:0},save:(n,v)=>saved[n]=structuredClone(v),log:(n,v)=>{assert.equal(n,'cdp-requests.jsonl');trace.push(structuredClone(v));},ws:{send:wire=>frames.push(JSON.parse(wire))},
    setTimeout:(fn,ms)=>{assert.equal(ms,20000,'unchanged production timeout');timers.set(++timerId,fn);return timerId;},clearTimeout:n=>timers.delete(n),
    queueMicrotask:fn=>microtasks.push(fn),close:async()=>{closed++;},console};
   vm.createContext(ctx);vm.runInContext(emitted+';globalThis.api={send,evaluate};',ctx);
+  vm.runInContext("noxCommand={id:'host-game',action:'click',label:'host-game',reviewRef:'network'}",ctx);
   // Complete one real emitted request first; retain its metadata, not its reply.
   const successful=ctx.api.send('Browser.getVersion');const first=pending.get(1);pending.delete(1);ctx.clearTimeout(first.timer);first.resolve({product:'offline'});await successful;
   vm.runInContext("noxCommand={id:'host-game',action:'click',label:'host-game',reviewRef:'network'}",ctx);
@@ -465,12 +466,17 @@ async function cdpControls(generated,out){
   assert.match(error.message,/CDP UNKNOWN Runtime.evaluate; no replay/);assert.equal(pending.size,0);
   const record=saved['terminal-error.json'];assert(record.noReplay);assert.equal(record.command.id,'host-game');assert.equal(record.lastCdpReply.method,'Browser.getVersion');
   assert.equal(record.pendingRequests.length,2);const request=record.pendingRequests[0];
+  assert.deepEqual(trace.find(r=>r.phase==='reply'&&r.id===record.lastCdpReply.id),{phase:'reply',...record.lastCdpReply});
   assert.equal(request.operation,operation);assert.equal(request.sessionId,'worker');assert.equal(request.targetId,'actual-target');assert.equal(request.command.reviewRef,'network');
   assert.equal(request.expression.sha256,current.sha(Buffer.from(expression)));assert.equal(request.expression.bytes,Buffer.byteLength(expression));assert.equal(request.expression.prefix,expression.slice(0,256));
+  const sentRequest=trace.find(r=>r.phase==='sent'&&r.id===request.id);
+  assert(sentRequest);for(const k of ['id','method','operation','sessionId','targetId','expression','command'])assert.deepEqual(sentRequest[k],request[k]);
+  const wire=frames.find(r=>r.id===request.id);assert.equal(sentRequest.expression.sha256,current.sha(Buffer.from(wire.params.expression)));
+  assert.equal(trace.filter(r=>r.id===request.id&&r.phase==='reply').length,0,'pending request has no reply');
   const sent=frames.length;await assert.rejects(ctx.api.send('Input.dispatchMouseEvent'),/CDP UNKNOWN/);await assert.rejects(ctx.api.evaluate('later'),/CDP UNKNOWN/);
   for(const fn of microtasks)fn();await Promise.resolve();assert.equal(closed,1);assert.equal(frames.length,sent);assert.equal(ctx.process.exitCode,1);
-  assert(!frames.some(f=>f.method.startsWith('Input.')||f.method==='Page.captureScreenshot'||f.method==='Browser.close'));
-  results.push({operation,pendingRequests:record.pendingRequests.length,unchangedTimeoutMs:20000,sticky:true,zeroLaterProtocol:true});
+  assert(!frames.some(f=>f.method.startsWith('Input.')||f.method==='Page.captureScreenshot'||f.method==='Browser.close'));assert.equal(trace.length,4,'no later trace or protocol');
+  results.push({operation,pendingRequests:record.pendingRequests.length,unchangedTimeoutMs:20000,sticky:true,zeroLaterProtocol:true,actualWireTraceJoined:true});
  }
  save(out+'/results.json',{passed:true,actualEmittedSendEvaluate:true,results});console.log(JSON.stringify({passed:true,controls:results.length}));
 }
