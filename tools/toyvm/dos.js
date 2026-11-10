@@ -115,7 +115,9 @@ const EMS_PAGE = 0x4000;
 const EMS_TOTAL_PAGES = 512;  // 8MB of expanded memory, the usual EMM386 answer
 const XMS_ENTRY_SEG = 0x00C0; // three bytes below the PSP: int 2Dh; retf
 const XMS_INT = 0x2D;
-const XMS_TOTAL_KB = 8192;
+// Report the same pool that xmsAlloc actually backs. A separate 8MB ceiling
+// stranded nearly half of the configured 16MB guest RAM behind a false OOM.
+const XMS_TOTAL_KB = isa.XMS_SIZE >>> 10;
 // VBE's window-positioning far call, in the same free paragraph as the XMS
 // entry point and clear of its three bytes. See installIvt.
 const VESA_WIN_SEG = XMS_ENTRY_SEG;
