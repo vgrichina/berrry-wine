@@ -30,6 +30,7 @@ function compile(){
 // exactly the same recorder. Reads are bounded direct-window reads, never g2w
 // (which can service faults). All failures are sticky; original work proceeds.
 function recorder({getExports,getMemory,now=()=>performance.now(),emit=()=>{},limit=512,qvmSites={}}){
+ if(!Number.isInteger(limit)||limit<1||limit>512)throw Error('Q3 menu record bounds');
  const fields='processId processObject endpoint endpointObject workerObject workerTarget workerInstance moduleObject moduleSha256 epoch renderEndpoint renderEndpointObject renderWorkerObject rendererContext rendererTarget rendererEpoch rendererModuleSha256 pageRendererObject canvasObject'.split(' ');
  const copy=v=>JSON.parse(JSON.stringify(v));
  let binding=null,owner=null,deadline=0,terminal=null,sequence=0,events=0;
@@ -114,10 +115,26 @@ function workerInstall(config,makeRecorder){
   return result;
  };
 }
-function workerSource(config){return '('+workerInstall.toString()+')('+JSON.stringify(config)+','+recorder.toString()+');';}
+// Runtime.evaluate's existing execution-boundary transport nests this in an
+// expression. A trailing statement semicolon is invalid inside that wrapper.
+function workerSource(config){return '('+workerInstall.toString()+')('+JSON.stringify(config)+','+recorder.toString()+')';}
+function startup(config){
+ const Module=require('node:module'),filename=path.join(root,'tools/q3-startup.cjs');
+ let source=fs.readFileSync(filename,'utf8');
+ assert.equal(sha(Buffer.from(source)),require('./q3-current-module.cjs').migration['tools/q3-startup.cjs'],'canonical startup provider');
+ const once=(a,b)=>{assert.equal(source.split(a).length,2,'observation startup seam');source=source.replace(a,b);};
+ // Admission continues to authenticate the canonical page Module. Independently
+ // authenticate the actual observation Worker module before releasing it.
+ once("assert.equal(sha(bytes),SELECTED.sha256,'Q3 live selected CPU SHA-256');",`assert.equal(sha(bytes),${JSON.stringify(config.sha256)},'Q3 live observation CPU SHA-256');`);
+ once("assert.equal(bytes.length,SELECTED.bytes,'Q3 live selected CPU length');",`assert.equal(bytes.length,${config.size},'Q3 live observation CPU length');`);
+ once('sha256:sha(bytes),bytes:bytes.length,workerTarget:',`sha256:SELECTED.sha256,bytes:SELECTED.bytes,observationModule:${JSON.stringify({sha256:config.sha256,bytes:config.size})},workerTarget:`);
+ const m=new Module(filename,module);m.filename=filename;m.paths=Module._nodeModulePaths(path.dirname(filename));m._compile(source,filename);return m.exports;
+}
 function compose(source,config){
  if(!config)return source;
  const once=(a,b)=>{assert.equal(source.split(a).length,2,'Q3 menu generated seam: '+a);source=source.replace(a,b);};
+ once("task.catch(e=>log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)}));", "task.catch(e=>{observeTerminal(e);log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)});});");
+ once("await require(root+'/tools/q3-startup.cjs').launch({evaluate,send,workers,pageSession,deadline,wait,save});",`await require(root+'/tools/q3-menu-consumption.cjs').startup(${JSON.stringify(config)}).launch({evaluate,send,workers,pageSession,deadline,wait,save});`);
  once("await send('Runtime.runIfWaitingForDebugger',{},sessionId);",`if(targetInfo.url.includes('guest-worker'))await evaluate(${JSON.stringify(workerSource(config))},sessionId);await send('Runtime.runIfWaitingForDebugger',{},sessionId);`);
  once(".map(p=>p.sha256)});",`.map(p=>p.sha256).concat(${JSON.stringify(config.sha256)})});`);
  once(' markDispatch();',` const menuWorker=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(menuWorker,'Q3 menu owning Worker');
@@ -128,4 +145,4 @@ function compose(source,config){
  console.log('CAPTURE '+label);`);
  return source;
 }
-module.exports={version,compile,recorder,workerSource,compose,sha};
+module.exports={version,compile,recorder,workerSource,startup,compose,sha};

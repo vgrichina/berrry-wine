@@ -2,6 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),Module=require('node:module');
 const q=require('./q3-menu-consumption.cjs'),current=require('./q3-current-module.cjs'),route=require('./q3-current-foreign-closure-v1.cjs');
 const observer=require('../lib/q3-input-observer.js'),{createHostImports}=require('../lib/host-imports');
+const boundary=require('./q3-execution-boundary.cjs');
 const root=path.resolve(__dirname,'..'),out=process.env.Q3_MENU_TEST_OUT;
 assert(out&&path.resolve(out).startsWith(root+'/scratch/runs/'));fs.mkdirSync(out,{recursive:true});
 const owner=Object.fromEntries(observer.ownerFields.map(k=>[k,'offline-'+k]));
@@ -56,7 +57,14 @@ async function compiled(){
  const scope={WebAssembly:{instantiate:WebAssembly.instantiate,compile:WebAssembly.compile},
   fetch:async()=>({ok:true,arrayBuffer:async()=>bytes}),crypto:require('node:crypto').webcrypto,performance,console:{debug(){}},memory,
   endpointIdentity:1,workerSlot:0};
- vm.createContext(scope);vm.runInContext(q.workerSource(config),scope);
+ // Execute the emitted installer through the real transport decorator. The
+ // first native attempt exposed its expression nesting, absent in a raw VM.
+ let outgoing;class Socket{addEventListener(){}send(data){outgoing=JSON.parse(data);}}
+ const transport=boundary.install({WebSocket:Socket,trace:{snapshot(){}},write(){}}),socket=new transport.WebSocket();
+ socket.send(JSON.stringify({id:1,method:'Runtime.evaluate',params:{expression:q.workerSource(config)+';'}}));
+ assert.throws(()=>new vm.Script(outgoing.params.expression),/Unexpected token/,'retained native parser failure reproduced');
+ socket.send(JSON.stringify({id:2,method:'Runtime.evaluate',params:{expression:q.workerSource(config)}}));
+ vm.createContext(scope);vm.runInContext(outgoing.params.expression,scope);
  const instance=await scope.WebAssembly.instantiate(await WebAssembly.compile(bytes),{host}),e=ctx.exports=instance.exports;
  scope.instance=instance;scope.__mcmPassiveInstanceV1={ids:new WeakMap([[instance,'actual-fixture-instance']])};
  const o=scope.__q3MenuConsumption,live={...owner,moduleSha256:moduleHash,endpoint:1,workerInstance:'actual-fixture-instance'};
@@ -84,8 +92,40 @@ async function compiled(){
  const sentinel=Error('original import');assert.throws(()=>o.wrap('check_input',()=>{throw sentinel;})(),x=>x===sentinel);assert.equal(o.snapshot(live).reason,'production-import-failure');
  return {moduleHash,size:bytes.length,realGeneratedWasm:true,naturalCallEntryReturn:true};
 }
+async function startupControl(){
+ const selected=current.SELECTED,live={endpoint:1,slot:0,instance:'startup-instance',gpu:false};
+ const status={phase:'parked',selected,flags:{threads:true,isolated:true,shared:true,gpu:false},endpoint:1,slot:0,token:'parked-token'};
+ const workers=new Map([['worker',{url:'/lib/guest-worker.js',targetId:'worker',sessionId:'worker',scripts:[{scriptId:'module'}]}]]);
+ const saved={};let releases=0;
+ const options={fixture:true,deadline:Date.now()+60000,workers,pageSession:'page',save:(n,v)=>saved[n]=v,
+  evaluate:async expression=>{
+   if(expression==='typeof WINE_REDLINE_STARTUP===\'undefined\'?null:WINE_REDLINE_STARTUP.status()'||expression==='WINE_REDLINE_STARTUP.status()')return status;
+   if(expression===require('./q3-startup.cjs').WORKER_READ)return live;
+   if(expression.startsWith('WINE_REDLINE_STARTUP.release(')){releases++;const proof=JSON.parse(expression.slice(29,-1));assert.equal(proof.sha256,selected.sha256);assert.equal(proof.bytes,selected.bytes);return {phase:'released',...proof};}
+   if(expression.includes('abort('))return {phase:'refused'};
+   throw Error('unexpected startup evaluation '+expression);
+  },send:async(method)=>{assert.equal(method,'Debugger.getScriptSource');return {bytecode:bytes.toString('base64')};}};
+ await assert.rejects(require('./q3-startup.cjs').launch(options),/live selected CPU SHA/);
+ assert.equal(releases,0);
+ const result=await q.startup(config).launch(options);assert.equal(releases,1);
+ assert.deepEqual(result.observationModule,{sha256:moduleHash,bytes:bytes.length});
+ assert.equal(saved['startup-admission.json'].receipt.observationModule.sha256,moduleHash);
+ return {canonicalAdmissionPreserved:true,actualObservationModuleVerified:true,deadlinesUnchanged:true};
+}
+async function workerFailure(){
+ const start=generated.indexOf('async function event(v)'),end=generated.indexOf('\nasync function ',start+1);
+ assert(start>0&&end>start);const wire=[],workerPromises=[];let terminal=0;
+ const context={workers:new Map(),workerPromises,fs,run:'/offline',Date,
+  send:async method=>{assert.equal(terminal,0);wire.push(method);return {};},evaluate:async()=>{throw Error('first Worker installer failure');},
+  observeTerminal:()=>{terminal++;},log(){}};
+ vm.createContext(context);vm.runInContext(generated.slice(start,end)+'\nglobalThis.onEvent=event;',context);
+ await context.onEvent({method:'Target.attachedToTarget',params:{sessionId:'worker',targetInfo:{type:'worker',targetId:'owner',url:'/lib/guest-worker.js'}}});
+ await Promise.allSettled(workerPromises);await Promise.resolve();
+ assert.equal(terminal,1);assert.deepEqual(wire,['Debugger.enable','Runtime.enable']);
+ return {firstWorkerFailureTerminal:true,noResumeInputCaptureRetry:true};
+}
 (async()=>{
  const controls=[];for(const mode of ['wrong-owner','incomplete','success','firstfailure'])controls.push(await consumer(mode));
- const native=await compiled();const result={passed:true,controls,native,defaultInert:true};
+ const native=await compiled(),startup=await startupControl(),workerTerminal=await workerFailure();const result={passed:true,controls,native,startup,workerTerminal,defaultInert:true};
  fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
 })().catch(e=>{console.error(e);process.exitCode=1;});
