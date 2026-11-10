@@ -68,6 +68,8 @@ async function compiled(){
  const instance=await scope.WebAssembly.instantiate(await WebAssembly.compile(bytes),{host}),e=ctx.exports=instance.exports;
  scope.instance=instance;scope.__mcmPassiveInstanceV1={ids:new WeakMap([[instance,'actual-fixture-instance']])};
  assert.deepEqual(JSON.parse(JSON.stringify(scope.__q3MenuConsumption.moduleIdentity())),{sha256:moduleHash,bytes:bytes.length});
+ scope.instance={exports:instance.exports};
+ assert.throws(()=>scope.__q3MenuConsumption.moduleIdentity(),/instance replaced/,'a facade with identical exports is not the installed instance');
  scope.instance={exports:{}};
  assert.throws(()=>scope.__q3MenuConsumption.moduleIdentity(),/instance replaced/);
  scope.instance=instance;
@@ -150,8 +152,99 @@ async function workerFailure(){
  assert.equal(terminal,1);assert.deepEqual(wire,['Debugger.enable','Runtime.enable']);
  return {firstWorkerFailureTerminal:true,noResumeInputCaptureRetry:true};
 }
+async function originalStartupControl(){
+ const canonical=fs.readFileSync(root+'/build/wine-assembly.wasm'),scripts=[],wire=[],saved={};
+ const worker={WebAssembly:{instantiate:WebAssembly.instantiate,compile:async b=>{
+  const module=await WebAssembly.compile(b);scripts.push({scriptId:String(scripts.length),sha256:q.sha(b),bytecodeAvailable:true});return module;
+ }},crypto:require('node:crypto').webcrypto,performance,console:{debug(){}},
+ fetch:async()=>({ok:true,arrayBuffer:async()=>bytes}),endpointIdentity:'original-endpoint',workerSlot:0,d3dimGpuEnable:false,instance:null};
+ const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),ctx={exports:null,getMemory:()=>memory.buffer};
+ const host=createHostImports(ctx).host;Object.assign(host,{memory,log(){},log_i32(){},exit(){}});
+ vm.createContext(worker);
+ let outgoing;class Socket{addEventListener(){}send(raw){outgoing=JSON.parse(raw);}}
+ const socket=new (boundary.install({WebSocket:Socket,trace:{snapshot(){}},write(){}}).WebSocket)();
+ let terminal=false;
+ const workerEval=expression=>{
+  assert(!terminal,'zero protocol after first failure');wire.push(expression);
+  socket.send(JSON.stringify({id:wire.length,method:'Runtime.evaluate',params:{expression}}));
+  return vm.runInContext(outgoing.params.expression,worker);
+ };
+ // Use the emitted attached-Worker handler, including the real expression transport.
+ const begin=generated.indexOf('async function event(v)'),end=generated.indexOf('\nasync function ',begin+1);
+ const workers=new Map(),workerPromises=[];
+ const eventScope={workers,workerPromises,fs,run:out,Date,log(){},
+  send:async()=>{assert(!terminal);return {};},evaluate:async e=>workerEval(e),observeTerminal:e=>{terminal=true;throw e;}};
+ vm.createContext(eventScope);vm.runInContext(generated.slice(begin,end)+'\nglobalThis.onEvent=event;',eventScope);
+ await eventScope.onEvent({method:'Target.attachedToTarget',params:{sessionId:'worker',targetInfo:{type:'worker',targetId:'original-worker',url:'/lib/guest-worker.js'}}});
+ await Promise.all(workerPromises);
+ const scope={console:{log(){},warn(){},debug(){}},ArrayBuffer,Uint8Array,Int32Array,DataView,TextDecoder,URL,URLSearchParams,
+  setTimeout,clearTimeout,crypto:require('node:crypto').webcrypto,crossOriginIsolated:true,WINE_THREADS:true,
+  location:{search:'?candidates&no-log&threads&gl-renderer=webgl&d3d-renderer=webgl'},document:{getElementById:()=>null,createElement:()=>({}),body:{append(){}}},
+  WebAssembly:{Module:WebAssembly.Module,compile:WebAssembly.compile,Memory:class{constructor(){return memory;}},instantiate:async()=>({exports:{set_lock_atomic_mode(){}}})},
+  RenderWorker:{observeInstance:i=>i,Manager:class{constructor(){this.ready=Promise.resolve();}async stop(){}}},
+  ThreadManager:class{recordInheritedWasmGlobal(){}},runningApps:[],createHostImports:()=>({host:{}}),
+  GLRenderHost:{Bridge:class{}},GuestRpc:{createMainBroker:()=>({})},
+  fetch:async url=>url.includes('host-import-sigs')?{ok:true,json:async()=>({sigs:{}})}:url.includes('api_table')?{ok:true,json:async()=>[]}:{ok:true,arrayBuffer:async()=>Uint8Array.from(canonical).buffer}};
+ scope.window=scope;
+ scope.GuestThreadHost=class{
+  constructor(opts){Object.assign(this,opts);}
+  async start(){
+   const module=await worker.WebAssembly.compile(canonical);
+   worker.instance=await worker.WebAssembly.instantiate(module,{host});ctx.exports=worker.instance.exports;
+   this.link={...this,worker:{},slot:0,endpointIdentity:worker.endpointIdentity};
+   workers.get('worker').scripts=scripts;
+  }
+  async callExport(){} async stop(){}
+ };
+ const page=vm.createContext(scope);vm.runInContext(fs.readFileSync(root+'/host.js','utf8')+'\nglobalThis.WineAssembly=WineAssembly;',page);
+ const Wine=scope.WineAssembly;Wine.supportsWasmTailCalls=()=>true;Wine.versionedUrl=x=>x;
+ let passedBarrier=false;
+ scope.shell={launchApp:async app=>{
+  assert.equal(app,'quake3_demo');const wine=Object.create(Wine.prototype);
+  Object.assign(wine,{_processObject:{exited:false},renderer:{},processId:1,ensureUiFontsReady:async()=>{},loadFiles:async()=>{},loadSubstituteFonts:async()=>{},getImports:()=>({host:{}}),logToUI(){},_installProcessSendBroker(){},_schedArm:()=>false});
+  await wine.init(null);passedBarrier=true;
+ }};
+ const evaluate=async(e,s)=>{
+  assert(!terminal);return JSON.parse(JSON.stringify(await(s==='worker'?workerEval(e):vm.runInContext(e,page))));
+ };
+ const send=async(method,p)=>{assert(!terminal);assert.equal(method,'Debugger.getScriptSource');const s=scripts.find(s=>s.scriptId===p.scriptId);return {bytecode:(s.sha256===moduleHash?bytes:canonical).toString('base64')};};
+ // Exact emitted startup call, with the original (fixture=false) options.
+ const line=generated.split('\n').find(s=>s.includes(".startup(")&&s.includes('.launch({evaluate,send,workers'));
+ assert(line,'emitted original launch');
+ await vm.runInNewContext('(async()=>{'+line+'})()', {require,root,evaluate,send,workers,pageSession:'page',deadline:Date.now()+60000,wait:ms=>new Promise(r=>setTimeout(r,ms)),save:(n,v)=>saved[n]=v,observeTerminal:e=>{terminal=true;throw e;}});
+ await scope.__q3Launch.promise;assert(passedBarrier);assert.equal(scripts.length,2);
+ const base=require('../scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs');
+ let chainOptions;
+ const adapted=q.boundAdapter({...base,createChain:o=>{chainOptions=o;}},config,e=>{terminal=true;throw e;});adapted.createChain({workers,evaluate});
+ assert.equal([...chainOptions.workers.values()][0].scripts[0].sha256,moduleHash);
+ const live=await chainOptions.evaluate(base.WORKER_READ,'worker');
+ const identity={...owner,moduleSha256:moduleHash,endpoint:worker.endpointIdentity,workerInstance:live.instance};
+ assert.equal(worker.__q3MenuConsumption.begin({...binding,previous:{...image,identity}},identity).active,true);
+ worker.__q3MenuConsumption.stop('offline done');
+ const admitted=scripts.map(s=>({...s})),refusals=[];
+ for(const mode of ['unknown','missing-bytecode','duplicate-observation','duplicate-canonical','canonical-only','extra-script']){
+  const test=admitted.map(s=>({...s}));
+  if(mode==='unknown')test[0].sha256='0'.repeat(64);
+  if(mode==='missing-bytecode')test[0].bytecodeAvailable=false;
+  if(mode==='duplicate-observation')test[0].sha256=moduleHash;
+  if(mode==='duplicate-canonical')test[1].sha256=current.SELECTED.sha256;
+  if(mode==='canonical-only')test.pop();
+  if(mode==='extra-script')test.push({...test[0],scriptId:'extra'});
+  const w=workers.get('worker');w.scripts=test;
+  let callbacks=0;
+  q.boundAdapter({...base,createChain:o=>{chainOptions=o;}},config,()=>{callbacks++;}).createChain({workers,evaluate});
+  assert.throws(()=>[...chainOptions.workers.values()]);assert.equal(callbacks,1);refusals.push(mode);
+  w.scripts=scripts;
+ }
+ adapted.createChain({workers,evaluate});
+ // Demonstrate the retained original chain's mismatch with both real scripts.
+ assert.throws(()=>assert.equal(scripts.length,1,'unique recovered live Worker module required'),/unique recovered/);
+ worker.instance={exports:{}};
+ await assert.rejects(chainOptions.evaluate(base.WORKER_READ,'worker'),/instance replaced/);assert(terminal);
+ return {originalLaunch:true,actualHostInit:true,emittedStartup:true,emittedWorkerHandler:true,actualTransport:true,twoRealCompiledScripts:true,actualInstalledInstance:true,retainedChainMismatchReproduced:true,chainRefusals:refusals,noProtocolAfterFailure:true};
+}
 (async()=>{
  const controls=[];for(const mode of ['wrong-owner','incomplete','success','firstfailure'])controls.push(await consumer(mode));
- const native=await compiled(),startup=await startupControl(),workerTerminal=await workerFailure();const result={passed:true,controls,native,startup,workerTerminal,defaultInert:true};
+ const native=await compiled(),startup=await startupControl(),workerTerminal=await workerFailure(),originalStartup=await originalStartupControl();const result={passed:true,controls,native,startup,workerTerminal,originalStartup,defaultInert:true};
  fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));
 })().catch(e=>{console.error(e);process.exitCode=1;});

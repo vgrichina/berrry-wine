@@ -104,9 +104,10 @@ function workerInstall(config,makeRecorder){
   imports.host.q3_menu_event=observation.event;
   for(const name of ['check_input','check_input_hwnd','check_input_lparam','check_input_wparam'])if(imports.host[name])imports.host[name]=observation.wrap(name,imports.host[name]);
   const result=await Reflect.apply(original,this,[await WebAssembly.compile(bytes),imports,...rest]);
-  exports=(result.instance??result).exports;globalThis.__q3MenuConsumption=observation;
+  const installedInstance=result.instance??result;
+  exports=installedInstance.exports;globalThis.__q3MenuConsumption=observation;
   observation.moduleIdentity=()=>{
-   if(instance?.exports!==exports)throw Error('Q3 observation instance replaced');
+   if(instance!==installedInstance||instance?.exports!==exports)throw Error('Q3 observation instance replaced');
    return {sha256:digest,bytes:bytes.length};
   };
   const begin=observation.begin;
@@ -122,6 +123,39 @@ function workerInstall(config,makeRecorder){
 // Runtime.evaluate's existing execution-boundary transport nests this in an
 // expression. A trailing statement semicolon is invalid inside that wrapper.
 function workerSource(config){return '('+workerInstall.toString()+')('+JSON.stringify(config)+','+recorder.toString()+')';}
+// The retained chain predates the observation replacement. Keep its owner,
+// renderer, capture and input checks, but distinguish compiled from installed.
+function boundAdapter(base,config,onFailure){
+ return {...base,createChain(options){
+  const selected=require('./q3-current-module.cjs').SELECTED;
+  const workers={values:function*(){
+   try{
+    for(const w of options.workers.values()){
+     if(w.closed||!w.url.includes('guest-worker')){yield w;continue;}
+     const scripts=[...new Map(w.scripts.map(s=>[s.scriptId,s])).values()];
+     assert(scripts.length>=1&&scripts.length<=2,'bounded Q3 chain modules');
+     let canonical=0,observation;
+     for(const s of scripts){
+      assert(s.bytecodeAvailable&&!s.error,'Q3 chain bytecode metadata');
+      if(s.sha256===config.sha256){assert(!observation,'duplicate Q3 chain observation');observation=s;}
+      else {assert.equal(s.sha256,selected.sha256,'unknown Q3 chain module');assert(++canonical===1,'duplicate Q3 chain canonical');}
+     }
+     assert(observation,'Q3 chain observation missing');yield {...w,scripts:[observation]};
+    }
+   }catch(error){onFailure(error);throw error;}
+  }};
+  return base.createChain({...options,workers,evaluate:async(expression,session)=>{
+   try{
+    const value=await options.evaluate(expression,session);
+    if(expression===base.WORKER_READ&&value){
+     assert.deepEqual(await options.evaluate('globalThis.__q3MenuConsumption.moduleIdentity()',session),
+      {sha256:config.sha256,bytes:config.size},'Q3 chain installed instance');
+    }
+    return value;
+   }catch(error){onFailure(error);throw error;}
+  }});
+ }};
+}
 function startup(config){
  const Module=require('node:module'),filename=path.join(root,'tools/q3-startup.cjs');
  let source=fs.readFileSync(filename,'utf8');
@@ -168,6 +202,7 @@ function startup(config){
 function compose(source,config){
  if(!config)return source;
  const once=(a,b)=>{assert.equal(source.split(a).length,2,'Q3 menu generated seam: '+a);source=source.replace(a,b);};
+ once("...require('./bound-input.cjs'),hold:","...require(root+'/tools/q3-menu-consumption.cjs').boundAdapter(require('./bound-input.cjs'),"+JSON.stringify(config)+",observeTerminal),hold:");
  once("task.catch(e=>log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)}));", "task.catch(e=>{observeTerminal(e);log('worker-errors.jsonl',{at:new Date().toISOString(),error:String(e)});});");
  once("await require(root+'/tools/q3-startup.cjs').launch({evaluate,send,workers,pageSession,deadline,wait,save});",`await require(root+'/tools/q3-menu-consumption.cjs').startup(${JSON.stringify(config)}).launch({evaluate,send,workers,pageSession,deadline,wait,save,onFailure:observeTerminal});`);
  once("await send('Runtime.runIfWaitingForDebugger',{},sessionId);",`if(targetInfo.url.includes('guest-worker'))await evaluate(${JSON.stringify(workerSource(config))},sessionId);await send('Runtime.runIfWaitingForDebugger',{},sessionId);`);
@@ -180,4 +215,4 @@ function compose(source,config){
  console.log('CAPTURE '+label);`);
  return source;
 }
-module.exports={version,compile,recorder,workerSource,startup,compose,sha};
+module.exports={version,compile,recorder,workerSource,startup,boundAdapter,compose,sha};
