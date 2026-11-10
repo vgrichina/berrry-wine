@@ -32,9 +32,9 @@ const generated=helper.integrate(route.composition(route.version).compose().sour
 delete process.env.Q3_BOUND_INPUT_OBSERVATION;
 new vm.Script(Module.wrap(generated));
 assert(generated.includes('inputObservationPageSource()'));
-const image={label:'reviewed',sha256:'a'.repeat(64),identity:{process:'original',module:'authenticated-by-existing-chain'}};
+const image={label:'startup',sha256:'a'.repeat(64),identity:{process:'original',module:'authenticated-by-existing-chain'}};
 const reports=[];
-async function control(mode,key=false) {
+async function control(mode,key=false,publication=null) {
  const p=m.exports.page(mode==='locked'),dom=new Map(),rows=[],saved={};
  p.scope.Node=class Node {};
  p.scope.runningApps[0].relativeMouse=mode!=='absolute';
@@ -50,9 +50,19 @@ async function control(mode,key=false) {
  assert.throws(()=>o.begin({id:'bad',label:'bad',previous:{sha256:'bad',identity:{}}}),/binding/);
  assert.throws(()=>o.begin({id:'stale',label:'bad',previous:{...image,sha256:'c'.repeat(64)}}),/prior image mismatch/);
  assert.throws(()=>o.image({...image,identity:{process:'replaced'}}),/owner mismatch/);
- const command=key?{id:'key',action:'key',key:'Enter',holdMs:50,waitMs:0,reviewRef:'reviewed',label:'after'}:
-   {id:'mouse',action:'click',point:[.9,.86],holdMs:150,waitMs:0,reviewRef:'reviewed',label:'after',...(mode==='locked'?{relativeCounts:[198,2]}:{})};
- let mark=0,captures=0;
+ let publishedReview={...image,review:'controlled offline review'};
+ if(publication){
+  let requested;
+  const transport={publish:(file,value)=>{assert.equal(file,publication.output+'/startup-review.json');publishedReview=value;},
+   request:async(out,id,value,timeout)=>{assert.equal(out,publication.output);assert.equal(timeout,55000);requested=value;return {status:0};}};
+  const ctx={require:name=>name==='node:fs'?{readFileSync:()=>JSON.stringify(image)}:transport,console:{log(){}},process:{}};
+  vm.runInNewContext(publication.source,ctx);await Promise.resolve();
+  assert.equal(typeof publishedReview.review,'string');assert.equal(publishedReview.review,publication.value.review);
+  assert.deepEqual(JSON.parse(JSON.stringify(requested)),publication.value.command);
+ }
+ const command=publication?publication.value.command:key?{id:'key',action:'key',key:'Enter',holdMs:50,waitMs:0,reviewRef:'startup',label:'after'}:
+   {id:'mouse',action:'click',point:[.9,.86],holdMs:150,waitMs:0,reviewRef:'startup',label:'after',...(mode==='locked'?{relativeCounts:[198,2]}:{})};
+ let mark=0,captures=0,admissions=0;
  const delivered=[],nativeKeys=[];
  const drain=()=>{let event;while((event=p.r.takeInput()))delivered.push({...event});};
  const send=async(method,params,session)=>{
@@ -68,14 +78,14 @@ async function control(mode,key=false) {
  };
  const context={assert,root,deadline:Date.now()+60000,latest:image,out:'/controlled',pageSession:'page',
    process:{env:{}},checkTerminal(){},observeTerminal:e=>{throw e;},
-   fs:{readFileSync:f=>f.endsWith('-review.json')?JSON.stringify({...image,review:'controlled offline review'}):'image'},sha:()=>image.sha256,
+   fs:{readFileSync:f=>f.endsWith('-review.json')?JSON.stringify(publishedReview):'image'},sha:()=>image.sha256,
    save:(n,v)=>saved[n]=v,log(){},send,evaluate:p.evaluate,wait:async()=>{},trace:{span:(_,f)=>f()},
-   bound:require('./q3-input-delivery.cjs'),chain:{admit:async(_,f)=>f({live:{identity:image.identity}}),
+   bound:require('./q3-input-delivery.cjs'),chain:{admit:async(_,f)=>{admissions++;return f({live:{identity:image.identity}});},
      progress:async()=>{drain();return {physical:[{key:13,state:p.r.peekKeyDownState(13)}]};}},
-   capture:async()=>{captures++;drain();o.image({...image,label:'after',sha256:'b'.repeat(64)});},
+   capture:async()=>{captures++;drain();o.image({...image,label:command.label,sha256:'b'.repeat(64)});},
    require:n=>['./native-mouse.cjs','./ordinary-keys.cjs'].includes(n)?require('../scratch/runs/20261108-q3-gl-readiness-gameplay/'+n.slice(2)):require(n)};
  await m.exports.body(generated,context)(command,()=>mark++);
- assert.equal(mark,1);assert.equal(captures,1);assert(saved['input-'+command.id+'-observer-begin.json'].active);
+ assert.equal(mark,1);assert.equal(captures,1);assert(admissions>0);assert(saved['input-'+command.id+'-observer-begin.json'].active);
  assert(rows.every(r=>!r.binding||r.binding.id===command.id));
  assert(rows.some(r=>r.kind==='command-begin'&&r.binding.previous.sha256===image.sha256));
  assert.throws(()=>o.image({...image,label:'unrequested'}),/command mismatch/);
@@ -104,6 +114,12 @@ async function control(mode,key=false) {
   guestDecision:'UNKNOWN; no toy keyboard or authored menu-success proof'});
 }
 (async()=>{
+ if(process.env.Q3_OFFLINE_PUBLICATION){
+  const publication=JSON.parse(fs.readFileSync(process.env.Q3_OFFLINE_PUBLICATION));
+  assert.equal(publication.realSessionRequest,true);assert.equal(publication.value.command.holdMs,150);
+  assert.equal(publication.value.command.waitMs,1000);
+  await control('pending-relative',true,publication);
+ }
  await control('absolute');await control('pending-relative');await control('locked');await control('pending-relative',true);
  // Execute the exact pre-navigation script emitted by the generated consumer.
  const p=m.exports.page(false),intervals=[],consoleRows=[];
@@ -122,7 +138,7 @@ async function control(mode,key=false) {
    trace:{span:(_,f)=>f()},state:async()=>({}),save:(n,v)=>saves[n]=v,latest:null,
    chain:{capture:async()=>({png:Buffer.from('controlled'),capture:image})},evaluate:p.evaluate,console:{log(){}}};
  vm.createContext(ctx);vm.runInContext(generated.slice(captureStart,captureEnd)+';globalThis.run=captureImpl',ctx);
- await ctx.run(image.label);assert(saves['reviewed-observer.json'].active);
+ await ctx.run(image.label);assert(saves['startup-observer.json'].active);
  // Binding refusal happens before markDispatch/native input in the exact body.
  p.scope.__q3BoundInput.stop('test-owner-cancel');
  let marked=0,sent=0;
