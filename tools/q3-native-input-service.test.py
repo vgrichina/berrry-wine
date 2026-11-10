@@ -34,7 +34,8 @@ suite = unittest.TestSuite(controls.RetirementService(name) for name in (
     'test_bounded_ordered_batches_and_oversize_record_preserve_all_bytes'))
 assert unittest.TextTestRunner(verbosity=2).run(suite).wasSuccessful()
 
-# All actual CONTs, including irreversible death, must see the entire prefix.
+# All actual CONTs, including irreversible death, require the complete ordered
+# prefix through every required record. Only prior release outcomes may trail.
 # Observe real append and ptrace operations without manufacturing a wait.
 kernel = adapter['load']()
 run = out / 'every-cont'
@@ -51,7 +52,9 @@ def resume(request, pid, addr=0, data=0):
         stored = (zlib.decompressobj(31).decompress((run/'custody.ndjson.gz').read_bytes())
                   if (run/'custody.ndjson.gz').exists() else (run/'custody.ndjson').read_bytes())
         durable = [json.loads(line) for line in stored.splitlines()]
-        assert durable == rows, (pid, last.get(pid), 'missing durable prefix')
+        assert durable == rows[:len(durable)], (pid, 'unordered durable prefix')
+        assert all(r['kind'] in ('ptrace-cont-returned', 'parked-child-release',
+                                'parked-child-release-pending') for r in rows[len(durable):]), (pid, last.get(pid), 'missing required durable prefix')
         barriers.append(dict(pid=pid, status=last[pid], prefix=len(rows)))
     return trace(request, pid, addr, data)
 with probe, patch.object(kernel, 'ptrace', resume), patch.object(kernel.os, 'waitpid', consume):
@@ -61,6 +64,7 @@ with probe, patch.object(kernel, 'ptrace', resume), patch.object(kernel.os, 'wai
         deadline=due, cleanup_deadline=due+3, journal_compression='gzip')
 assert barriers and any(row['status']>>16 == 6 for row in barriers)
 assert json.loads((run/'kernel-drain.json').read_bytes())['complete']
+assert [json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')] == rows
 (out/'every-cont.json').write_text(json.dumps(barriers, indent=2))
 run = out / 'unlinked-exit'
 run.mkdir()
@@ -73,6 +77,7 @@ with probe, patch.object(kernel, 'ptrace', resume), patch.object(kernel.os, 'wai
     controls.unseen_exit_fixture(run)
 assert not (run/'unlinked-userspace-ran').exists()
 assert json.loads((run/'kernel-drain.json').read_bytes())['complete']
+assert [json.loads(s) for s in (run/'custody.ndjson').read_text().splitlines()] == rows
 assert any(row['status']>>16 == 6 for row in barriers)
 (out/'unlinked-every-cont.json').write_text(json.dumps(barriers, indent=2))
 

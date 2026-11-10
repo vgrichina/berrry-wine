@@ -36,7 +36,7 @@ try:adapter['candidate'](source+'\n')
 except ValueError:pass
 else:raise AssertionError('provider drift accepted')
 kernel=adapter['load']()
-assert adapter['candidate'](source).count('journal.flush_pending() # ordered durable prefix before executable userspace')==1
+assert adapter['candidate'](source).count('journal.release_barrier() # ordered durable prefix before executable userspace')==1
 # Reuse real durable-prefix-before-executable-CONT and sticky service failure
 # controls against the adapter, including irreversible retirement exceptions.
 spec=importlib.util.spec_from_file_location('controls',root/'tools/native_kernel_custody_test.py')

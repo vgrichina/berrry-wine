@@ -64,7 +64,7 @@ function retained(){
  const provider=fs.readFileSync(root+'/tools/native_kernel_custody.py','utf8');
  const adapter=fs.readFileSync(root+'/tools/q3-startup-custody.py','utf8');
  assert(provider.includes('self.raw.flush(); os.fsync(self.raw.fileno())'));
- assert(adapter.includes('if request == CONT: journal.flush_pending()'));
+ assert(adapter.includes('if request == CONT: journal.release_barrier()'));
  assert(journal.some(r=>r.kind==='ptrace-cont-returned'&&r.at>req6.epochMs/1000&&r.at<ack6.epochMs/1000));
  save('retained-attribution.json',{passed:true,evidence,clockOffsetSeconds:offset,
   totalJournalServiceSeconds:service.totalNs/1e9,maxJournalWriteSeconds:service.maxNs/1e9,

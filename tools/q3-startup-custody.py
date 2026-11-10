@@ -1,10 +1,10 @@
-"""Q3's authenticated custody adapter: batch until each actual CONT barrier.
+"""Q3's authenticated custody adapter: durable release cohorts.
 
 The published supervisor still owns all identities, waits and releases. Every
-CONT retains its complete, fsynced journal prefix, including irreversible EXIT.
-Logging each
-intermediate stop separately used to fsync repeatedly with Chrome stopped.
-Irreversible retirement, saturation, failure and finalization stay unchanged.
+CONT requires the ordered prefix through every admission/identity/wait record.
+Only results of already authorized releases may trail that durable frontier.
+They remain ordered, bounded, sticky on failure, and durable at the next
+required barrier or finalization. Ready stops share one durable release cohort.
 """
 import hashlib
 from pathlib import Path
@@ -14,7 +14,7 @@ import json
 import os
 
 PROVIDER_SHA = '3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240'
-VERSION = 'q3-startup-custody-input-service-v2'
+VERSION = 'q3-startup-custody-release-cohorts-v3'
 
 
 def candidate(source):
@@ -23,13 +23,44 @@ def candidate(source):
     before = 'defer=retirement or diagnostic)'
     if source.count(before) != 1:
         raise ValueError('Q3 custody log seam')
-    # There is no userspace admission between these records. The unchanged
-    # supervisor flushes the entire ordered prefix immediately before CONT.
+    # There is no userspace admission between these records.
     source = source.replace(before, 'defer=True)')
     seam = '    def trace_task(request, task, data=0):\n'
     if source.count(seam) != 1:
         raise ValueError('Q3 common CONT barrier seam')
-    source = source.replace(seam, seam + '        if request == CONT: journal.flush_pending()\n')
+    source = source.replace(seam, seam + '        if request == CONT: journal.release_barrier()\n')
+    replacements = {
+        '        self.error = None\n': '        self.error = None\n        self.release_required = False\n',
+        "        data = (json.dumps(value)+'\\n').encode('utf-8')\n":
+        """        # These are outcomes, never authority to run a stopped task. All
+        # consumed waits (including terminal), identity, lineage, intents and
+        # failures require a durable ordered prefix before another CONT.
+        required = value.get('kind') not in ('ptrace-cont-returned', 'parked-child-release',
+                                            'parked-child-release-pending')
+        data = (json.dumps(value)+'\\n').encode('utf-8')
+""",
+        '        self.pending.extend(data); self.pending_records += 1\n':
+        '        self.pending.extend(data); self.pending_records += 1\n        self.release_required |= required\n',
+        '    def flush_pending(self):\n':
+        """    def release_barrier(self):
+        # Always consult sticky failure, even when the cohort is certified.
+        if self.error is not None: raise OSError('journal service failed: '+self.error)
+        if self.release_required: self.flush_pending()
+
+    def flush_pending(self):
+""",
+        '            self.pending.clear(); self.pending_records = 0\n':
+        '            self.pending.clear(); self.pending_records = 0\n            self.release_required = False\n',
+        '            if peek is None and not resumes:\n':
+        '            if peek is None:\n',
+        '                if peek is None:\n                    pump_output()\n':
+        '                if peek is None and not resumes:\n                    pump_output()\n',
+        '                journal.flush_pending() # ordered durable prefix before executable userspace\n':
+        '                journal.release_barrier() # ordered durable prefix before executable userspace\n',
+    }
+    for old, new in replacements.items():
+        if source.count(old) != 1: raise ValueError('Q3 release cohort seam: '+repr(old))
+        source = source.replace(old, new)
     begin = source.index('        # Bound each pump')
     end = source.index('    wait_flags =', begin)
     # Command bytes have no admission semantics. Batch within the existing
