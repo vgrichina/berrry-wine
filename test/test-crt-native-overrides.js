@@ -38,7 +38,7 @@ const CRTS = [
 const EXE = 'calc.exe';
 
 const OVERRIDES = ['wcslen', 'wcscpy', 'wcscat', 'wcsstr', '_wcsicmp', '_wcsnicmp',
-  'floor', 'setlocale', '_wsetlocale', '_stricmp'];
+  'floor', 'setlocale', '_wsetlocale', '_stricmp', 'memcpy'];
 
 const EXTRA_WAT = `
   (func (export "t_fpu_pop") (result f64) (call $fpu_pop))
@@ -153,6 +153,19 @@ async function checkCrt(crt, exeBytes) {
   }
 
   const A = arena, B = arena + 0x800, C = arena + 0x1000;
+
+  // Original SDL drawing copies 1..4 bytes per pixel. Exercise those sizes,
+  // alignment/tails and a page crossing through the production import binding
+  // on each real CRT. Include the untouched canaries in the comparison.
+  for (const size of [0, 1, 2, 3, 4, 7, 16, 31, 255, 1024]) {
+    for (const offset of [0, 1, 3, 4094]) {
+      compare(`memcpy ${size}/${offset}`, 'memcpy', () => {
+        const bytes = Buffer.alloc(1024);
+        for (let i = 0; i < bytes.length; i++) bytes[i] = (i * 73 + (i >>> 4)) & 255;
+        put8(arena + 0x1800, bytes);
+      }, () => [arena + offset, arena + 0x1800, size]);
+    }
+  }
 
   // wcslen: empty, short, and one longer than the 32768 cap the old handler had.
   for (const s of ['', 'a', 'Hello, world', 'y'.repeat(700)]) {

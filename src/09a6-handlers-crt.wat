@@ -4089,6 +4089,12 @@
 
   ;; The CRT-only overrides: an api id when $name_wa is one, else -1.
   (func $crt_override_api_id (param $name_wa i32) (result i32)
+    ;; surface_gray in original LBreakout copies each pixel through memcpy
+    ;; twice. Keep the existing sparse-safe native copy when a real MSVCRT
+    ;; is present too; copying bytes owns no CRT locale, heap or FILE state.
+    ;; This list is consulted only for MSVCRT/MSVCR7x with a real export.
+    (if (call $str_eq (local.get $name_wa) "memcpy")
+      (then (return (call $lookup_api_id "memcpy"))))
     (if (i32.or
           (i32.or
             (i32.or (call $str_eq (local.get $name_wa) "wcslen")
