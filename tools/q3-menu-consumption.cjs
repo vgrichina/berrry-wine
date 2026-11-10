@@ -141,7 +141,7 @@ function recorder({getExports,getMemory,now=()=>performance.now(),emit=()=>{},li
   snapshot(identity){if(owner&&!same(owner,identity))stop('owner');return {version:1,status:terminal?'UNKNOWN':'PASSIVE',reason:terminal,pendingFrames:frames.length,frames:copy(frames),records:copy(rows)};}
  };
 }
-function workerInstall(config,makeRecorder){
+function workerInstall(config,makeRecorder,installWork){
  const original=WebAssembly.instantiate;
  let installed=false;
  WebAssembly.instantiate=async function(module,imports,...rest){
@@ -154,14 +154,18 @@ function workerInstall(config,makeRecorder){
   const observation=makeRecorder({getExports:()=>exports,getMemory:()=>imports.host.memory?.buffer??imports.env?.memory?.buffer??memory.buffer,qvmSites:config.qvmSites,
    emit:r=>console.debug(r.observation==='startup-console'?'Q3_STARTUP_CONSOLE':'Q3_MENU_CONSUMPTION',JSON.stringify(r))});
   imports.host.q3_menu_event=observation.event;
+  const work=config.startupWork===true?installWork(imports.host,{emit:r=>console.debug('Q3_STARTUP_WORK',JSON.stringify(r))}):null;
   for(const name of ['check_input','check_input_hwnd','check_input_lparam','check_input_wparam'])if(imports.host[name])imports.host[name]=observation.wrap(name,imports.host[name]);
   const result=await Reflect.apply(original,this,[await WebAssembly.compile(bytes),imports,...rest]);
   const installedInstance=result.instance??result;
   exports=installedInstance.exports;globalThis.__q3MenuConsumption=observation;
-  if(config.textureScan===true){
+  if(config.textureScan===true||work){
    const send=globalThis.postMessage;
    if(typeof send!=='function')throw Error('Q3 original Worker postMessage required');
-   globalThis.postMessage=function(message,...args){return Reflect.apply(send,this,[observation.textureSlice(message),...args]);};
+   globalThis.postMessage=function(message,...args){
+    if(work)work.slice(message);
+    return Reflect.apply(send,this,[config.textureScan===true?observation.textureSlice(message):message,...args]);
+   };
   }
   if(config.startupConsole===true)observation.startup();
   observation.moduleIdentity=()=>{
@@ -180,7 +184,8 @@ function workerInstall(config,makeRecorder){
 }
 // Runtime.evaluate's existing execution-boundary transport nests this in an
 // expression. A trailing statement semicolon is invalid inside that wrapper.
-function workerSource(config){return '('+workerInstall.toString()+')('+JSON.stringify(config)+','+recorder.toString()+')';}
+function workerSource(config){return '('+workerInstall.toString()+')('+JSON.stringify(config)+','+recorder.toString()+
+ (config.startupWork===true?','+require('./q3-startup-work.cjs').install.toString():'')+')';}
 // The retained chain predates the observation replacement. Keep its owner,
 // renderer, capture and input checks, but distinguish compiled from installed.
 function boundAdapter(base,config,onFailure){

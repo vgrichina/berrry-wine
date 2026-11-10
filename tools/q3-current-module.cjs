@@ -677,9 +677,11 @@ for pc in range(74762):
 print(json.dumps(sites))`],{cwd:root}).toString());
     const config={version:menu.version,url:'/'+path.relative(root,file),sha256:hash(bytes),size:bytes.length,qvmSites,
       ...(process.env.Q3_STARTUP_CONSOLE==='1'?{startupConsole:true}:{}),
+      ...(process.env.Q3_STARTUP_WORK==='1'?{startupWork:true}:{}),
       ...(process.env.Q3_TEXTURE_SCAN==='1'?{textureScan:true}:{})};
     fs.writeFileSync(file,bytes,{flag:'wx',mode:0o444});fs.writeFileSync(menuConfigPath,JSON.stringify(config),{flag:'wx',mode:0o444});
     for(const name of ['tools/q3-menu-consumption.cjs',path.relative(root,file),path.relative(root,menuConfigPath)])version.files.push(pin(name,read(name)));
+    if(config.startupWork)version.files.push(pin('tools/q3-startup-work.cjs',read('tools/q3-startup-work.cjs')));
     version.menuConsumptionVersion=menu.version;
   }
   if(lifecycle){
@@ -767,7 +769,17 @@ print(json.dumps(sites))`],{cwd:root}).toString());
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }
-module.exports={composeInputObservation,inputObservationPageSource,prearmInputObservation,readableFixtureHTML,readableFixtureHandler,readableFixtureControls,createReadinessDiagnostics,composeTerminalCleanup,createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
+// A lifecycle belongs to its prepared manifest, even when it inherits a box
+// and deadline. Never copy a parent's manifest SHA into a fresh preparation.
+function lifecycleSeal(prepared,life){
+  assert.equal(life.immutable,true,'immutable lifecycle required');
+  assert(Number.isFinite(life.overallDeadline)&&life.overallDeadline>0,'finite lifecycle deadline required');
+  const raw=zlib.gunzipSync(fs.readFileSync(path.join(prepared,'runtime-pins.json.gz')));
+  const seal=JSON.parse(fs.readFileSync(path.join(prepared,'replacement-pinset-seal.json')));
+  assert.equal(hash(raw),seal.manifestSHA256,'own prepared manifest SHA');
+  return {...life,manifestSHA256:seal.manifestSHA256};
+}
+module.exports={lifecycleSeal,composeInputObservation,inputObservationPageSource,prearmInputObservation,readableFixtureHTML,readableFixtureHandler,readableFixtureControls,createReadinessDiagnostics,composeTerminalCleanup,createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
 if(require.main===module){
   const args=process.argv.slice(2);assert.equal(args.shift(),'--prepare','explicit preparation only');
   const destination=args.shift(),options={inputs:[]};
