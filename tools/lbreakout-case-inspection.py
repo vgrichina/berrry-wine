@@ -288,8 +288,64 @@ def menu_completion_observer_source():
 }'''
 
 
+def startup_completion_observer_source():
+    """Read-only original menu display completion before the FIRST image.
+
+    Worker construction and page animation frames do not establish a guest
+    presentation. Follow the same original SDL and menu-manager display
+    returns as the Enter observer, without sending any input.
+    """
+    return r'''async function installStartupCompletion({e,memory,binding,token,expected,now=()=>Date.now(),emit=()=>{}}){
+ if(!token||expected!==0)throw Error('startup completion binding');
+ const v=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p>>>0)>>>0,u32=p=>v.getUint32(wa(p),true);
+ const {exe,sdl,index,generation,mappingState}=binding;
+ const table=e.get_dll_table()>>>0,life=e.get_dll_lifecycle_table()>>>0,stride=e.get_dll_lifecycle_stride()>>>0;
+ const deadline=now()+2000,records=[];let active=true,reason=null,phase='sdl-display-return',menu;
+ const trace=pc=>e.set_trace_eip_range(1,pc,pc+1);
+ const record=(kind,data={})=>{const r={kind,token,at:now(),...data};records.push(r);emit(r);};
+ const valid=()=>{if(e.get_image_base()!==exe||e.get_current_thread_id()!==1||
+  v.getUint32(table+index*32,true)!==sdl||v.getUint32(life+index*stride+4,true)!==generation||
+  v.getUint32(life+index*stride,true)!==mappingState)throw Error('startup module/owner changed');};
+ const stop=r=>{if(!active)return;active=false;reason=r;e.set_trace_eip_range(0,0,0);record('completion-stop',{reason:r});};
+ function boundary(pc=e.get_eip()>>>0){
+  if(!active)return;
+  try{
+   valid();if(now()>=deadline)return stop('deadline');
+   if(phase==='sdl-display-return'&&pc===exe+0x26026){
+    // A loading splash can present before the original menu exists.
+    menu=u32(exe+0x77150);if(!menu)return;
+    record('startup-sdl-display-return',{menu});phase='manager-display-return';trace(exe+0x10849);return;
+   }
+   if(phase==='manager-display-return'&&pc===exe+0x10849){
+    if(u32(exe+0x77150)!==menu)throw Error('startup menu changed during display');
+    const item=u32(menu+28);
+    if(!item||u32(item+4)!==6||!u32(item+72))throw Error('startup selected submenu unavailable');
+    record('startup-menu-display-return',{menu,item,target:u32(item+72)});
+    record('guest-complete');stop('complete');
+   }
+  }catch(error){record('completion-error',{error:String(error)});stop('failure');}
+ }
+ const timer=setTimeout(()=>stop('deadline'),2000);if(timer.unref)timer.unref();
+ valid();record('completion-arm',{binding,expected,deadline});trace(exe+0x26026);
+ return {boundary,stop:r=>{clearTimeout(timer);stop(r);},snapshot:()=>({token,binding,expected,deadline,active,reason,phase,records:[...records]})};
+}'''
+
+
+def startup_workflow_source(source):
+    """Apply to the full title caller; accepted fixture path stays unchanged."""
+    before=" await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({presented:true}))))');await capture('startup');"
+    if source.count(before) != 1:
+        raise ValueError('unsupported first-image startup template')
+    after=""" if(!process.env.LOCAL_PRODUCTION_FIXTURE){
+  const a=await armObservation({id:'startup',phase:'startup',expected:0});
+  await completion(a);
+ }
+""" + before
+    return source.replace(before, after)
+
+
 def pause_completion_preload_source():
-    return level_start_driver_source() + '\n' + pause_completion_observer_source() + '\n' + level_start_completion_observer_source() + '\n' + paddle_completion_observer_source() + '\n' + menu_completion_observer_source() + r'''
+    return level_start_driver_source() + '\n' + pause_completion_observer_source() + '\n' + level_start_completion_observer_source() + '\n' + paddle_completion_observer_source() + '\n' + menu_completion_observer_source() + '\n' + startup_completion_observer_source() + r'''
 (()=>{
  const instantiate=WebAssembly.instantiate;
  WebAssembly.instantiate=async function(source,imports){
@@ -318,9 +374,9 @@ def pause_completion_preload_source():
   if(c.phase==='level-start')for(const [rva,h] of [[0x1f2ac,'5589e55383ec14'],[0x1faa0,'5589e5575653'],[0x1faf2,'83c410'],[0x20475,'e87c5b0000']])
    if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original level-start instruction mismatch');
   const observed={...e,set_trace_eip_range:globalThis.__lbNative.driver.trace};
-  if(c.phase==='menu')for(const [rva,h] of [[0xc36a,'5589e583ec38'],[0xc4d6,'8b4508'],[0x105f1,'e84af90300'],[0x107ad,'e8b8bbffff'],[0x10844,'e8ad570100'],[0x26021,'e89aa00200']])
+  if(['menu','startup'].includes(c.phase))for(const [rva,h] of [[0xc36a,'5589e583ec38'],[0xc4d6,'8b4508'],[0x105f1,'e84af90300'],[0x107ad,'e8b8bbffff'],[0x10844,'e8ad570100'],[0x26021,'e89aa00200']])
    if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original menu instruction mismatch');
-  globalThis.__lbObserver=await (c.phase==='menu'?installMenuCompletion:c.phase==='paddle'?installPaddleCompletion:c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e:observed,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
+  globalThis.__lbObserver=await (c.phase==='startup'?installStartupCompletion:c.phase==='menu'?installMenuCompletion:c.phase==='paddle'?installPaddleCompletion:c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e:observed,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
   return {armed:true,...__lbObserver.snapshot()};
  };
 })();
