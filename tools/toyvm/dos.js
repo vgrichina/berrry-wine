@@ -5298,7 +5298,8 @@ class Machine {
         if ((al & 0xFF) === 0x00) { r.set('dx', (r.get('dx') & 0xFF00) | (this.breakFlag ? 1 : 0)); }
         else if ((al & 0xFF) === 0x01) { this.breakFlag = (r.get('dx') & 0xFF) !== 0; }
         else if ((al & 0xFF) === 0x05) { r.set('dx', (r.get('dx') & 0xFF00) | 3); }  // C:
-        else if ((al & 0xFF) === 0x06) { r.set('bx', 0x0600); r.set('dx', 0); }      // 6.00
+        // AX=3306h: BL is major, BH minor; DL revision, DH ROM/HMA flags.
+        else if ((al & 0xFF) === 0x06) { r.set('bx', 0x0006); r.set('dx', 0); }      // 6.00
         else return false;
         r.setResultCf(false);
         return true;
