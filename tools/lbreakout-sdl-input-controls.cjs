@@ -11,7 +11,9 @@ const loader=require(root+'/lib/dll-loader');
  assert.equal(hash(dll),'0b5aeef9054872cce11992679ad05a5bc96e5a4cfb515da8983e2e1f2ecbbbd8','original LBreakout SDL required');
  const module=await WebAssembly.compile(bytes),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
  const ctx={getMemory:()=>memory.buffer,renderer:null,resourceJson:{}};
+ let observer;
  const imports=createHostImports(ctx);imports.host.memory=memory;
+ imports.host.log_eip=pc=>observer?.boundary(pc>>>0);
  for(const x of WebAssembly.Module.imports(module))if(x.kind==='function'&&!imports.host[x.name])imports.host[x.name]=()=>{throw Error('unexpected import '+x.name)};
  const e=(await WebAssembly.instantiate(module,imports)).exports;ctx.exports=e;
  const b=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),pe=fs.readFileSync(root+'/test/binaries/candidates/lbreakout2-251/game/LBREAKOUT/lbreakout2.exe');assert.equal(hash(pe),'cc1fd5c3d229cc1d4f910e658f5abefa80ef8ebf4b5e47801648f0be0e1ca244','original LBreakout EXE required');b.set(pe,e.get_staging());assert(e.load_pe(pe.length));
@@ -21,9 +23,13 @@ const loader=require(root+'/lib/dll-loader');
   e.set_esp(stack);e.call_func(absolute?rva:base+rva,...Array.from({length:4},(_,i)=>args[i]||0));const entry=e.get_esp()>>>0;
   if(args.length>4)dv.setUint32(wa(entry+20),args[4]>>>0,true);
   for(let n=0;n<20000&&e.get_eip();n++){e.run(100);assert.equal(e.get_yield_reason(),0,'unexpected yield');}
+  observer?.boundary();
   assert.equal(e.get_eip(),0,'bounded native return');assert.equal(e.get_esp()>>>0,entry+4,'cdecl return');calls++;return e.get_eax()>>>0;
  }
  loader.patchExeImports(e,memory.buffer,pe,[{name:'SDL.dll'}]);
+ const observerModule=require(root+'/lib/lbreakout-input-observer');
+ assert.equal(await observerModule.install(),null,'default inert without dependencies');
+ observer=await observerModule.install({enabled:true,exports:e,memory,exeBytes:pe,sdlBytes:dll,limit:2048,durationMs:3000});
  // Execute the real WinDIB keymap initializer and key-message consumer; the
  // consumer calls TranslateKey and SDL_PrivateKeyboard in this same DLL.
  call(0x10c20);
@@ -71,5 +77,32 @@ const loader=require(root+'/lib/dll-loader');
  di([[203,true]]);const diLeft=frame();assert.equal(diLeft.x,320);di([[203,false]]);
  di([[57,true]]);const diFire=frame();assert.equal(diFire.rightFire,1);
  di([[57,false]]);const diFireUp=frame();assert.equal(diFireUp.rightFire,0);
- console.log(JSON.stringify({pass:true,scope:'original SDL WinDIB + DX5 keyboard consumers, SDL_GetKeyState, original game paddle handler; offline interpreter with isolated test objects/config',module:hash(bytes),sdl:hash(dll),exe:hash(pe),base,calls,rows,repeatIgnored:true,paddle:{collapsed,held,released,left,fire,fireUp,inhibited},directInput:{collapsed:diCollapsed,held:diHeld,released:diReleased,left:diLeft,fire:diFire,fireUp:diFireUp},priorOriginalCause:'unestablished'},null,2));
+ w32(paddle+60,1);di([[205,true]]);const diInhibited=frame();assert.equal(diInhibited.x,320);di([[205,false]]);
+ observer.stop('offline-complete');
+ const observation=observer.snapshot(),entries=observation.records.filter(r=>r.kind==='paddle-entry'),returns=observation.records.filter(r=>r.kind==='paddle-return');
+ assert.equal(entries.length,14,'every original paddle invocation observed');assert.equal(returns.length,entries.length,'actual original returns observed');
+ for(const offset of [0,7]){
+  assert.equal(entries[offset].keys.right,0,'collapsed state at actual handler');
+  assert.equal(returns[offset].paddle.x,320);
+  assert.equal(entries[offset+1].keys.right,1,'held state at actual handler');
+  assert.equal(returns[offset+1].paddle.x,328);
+  assert.equal(entries[offset+6].keys.right,1);assert.equal(entries[offset+6].paddle.inhibit,1);
+  assert.equal(returns[offset+6].paddle.x,320);
+ }
+ assert(observation.records.some(r=>r.kind==='dx5-entry'&&r.events.length===2));
+ assert(observation.records.some(r=>r.kind==='get-key-state-entry'));
+ assert(observation.records.some(r=>r.kind==='private-keyboard-return'&&r.keys.right===1));
+ assert(!observation.records.some(r=>r.kind==='observer-error'));
+ if(process.env.OBSERVER_OUTPUT)fs.writeFileSync(process.env.OBSERVER_OUTPUT,JSON.stringify(observation,null,2));
+ await assert.rejects(observerModule.install({enabled:true,exports:e,memory,exeBytes:Buffer.from(pe).fill(0,0,1),sdlBytes:dll}),/authentic/);
+ await assert.rejects(observerModule.install({enabled:true,limit:2049}),/bounds/);
+ let clock=100;
+ const expired=await observerModule.install({enabled:true,exports:e,memory,exeBytes:pe,sdlBytes:dll,now:()=>clock,durationMs:1});
+ clock=101;expired.boundary();assert.equal(expired.snapshot().active,false,'bounded expiry before guest observation');
+ let stopReason;
+ const bounded=await observerModule.install({enabled:true,exports:e,memory,exeBytes:pe,sdlBytes:dll,limit:8,durationMs:3000,emit:r=>{if(r.kind==='observer-stop')stopReason=r.reason}});
+ observer=bounded;for(let i=0;i<4;i++)event(39,Boolean(i%2),0x4d);
+ assert.equal(bounded.snapshot().active,false);assert.equal(stopReason,'record-limit');assert.equal(bounded.snapshot().records.length,8);
+
+ console.log(JSON.stringify({pass:true,scope:'original SDL WinDIB + DX5 keyboard consumers, SDL_GetKeyState, original game paddle handler; offline interpreter with isolated test objects/config',module:hash(bytes),sdl:hash(dll),exe:hash(pe),base,calls,observer:{paddleEntries:entries.length,paddleReturns:returns.length,records:observation.records.length,expiryAndRecordLimit:true,authenticMediaRejection:true},rows,repeatIgnored:true,paddle:{collapsed,held,released,left,fire,fireUp,inhibited},directInput:{collapsed:diCollapsed,held:diHeld,released:diReleased,left:diLeft,fire:diFire,fireUp:diFireUp,inhibited:diInhibited},priorOriginalCause:'unestablished'},null,2));
 })().catch(e=>{console.error(e.stack);process.exitCode=1});
