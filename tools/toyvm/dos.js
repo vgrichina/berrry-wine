@@ -1000,7 +1000,8 @@ class Machine {
     // Whether the guest's addresses still wrap at 1MB. They do until it takes
     // an extended-memory handle; see openBus.
     this.linFlat = false;
-    this.kbc = { output: 1, command: false, pending: null, reply: [] };
+    this.kbc = { output: 1, command: false, pending: null, reply: [], replyDevice: [] };
+    this.keyboard = { pending: null, leds: 0, typematic: 0x2b, scanning: true, lastByte: 0xfe };
     this.vmExports = null;
     this.sliceCut = -1;         // see endSlice
     this.emsHandles = new Map(); this.emsNext = 1; this.emsMaps = 0;
@@ -2563,6 +2564,7 @@ class Machine {
   // person at the keyboard, in the page, a demo reading the hardware directly
   // could never be sent anything at all.
   keyboardIrq() {
+    if (!this.keyboard.scanning || this.keyboard.pending) return 0;
     const bios = this.biosKeyboardIntercept();
     if (!this.hookedVector(0x09) && !bios) return 0;
     if (bios && (this.pic.imr[0] & 2)) return 0;
@@ -3265,15 +3267,20 @@ class Machine {
     // Writes are consumed synchronously, so IBF is clear. OBF describes an
     // actual controller response or keyboard byte, without consuming either.
     if (port === 0x64) return 0x04 | (this.kbc.command ? 8 : 0)
-      | (this.kbc.reply.length || this.kbFresh || this.kbQueue.length ? 1 : 0);
+      | (this.kbc.reply.length || (this.keyboard.scanning && !this.keyboard.pending && (this.kbFresh || this.kbQueue.length)) ? 1 : 0);
     // Keyboard data. A program with an INT 9 handler finds here what the IRQ
     // just delivered; one that polls the port with no handler at all -- BTW.EXE
     // makes zero INT 16h calls and hooks nothing -- drives the queue itself.
     if (port === 0x60) {
-      if (this.kbc.reply.length) return this.kbc.reply.shift();
-      if (this.kbFresh) { this.kbFresh = false; return this.kbScan; }
+      if (this.kbc.reply.length) {
+        const byte = this.kbc.reply.shift();
+        if (this.kbc.replyDevice.shift()) this.keyboard.lastByte = byte;
+        return byte;
+      }
+      if (!this.keyboard.scanning || this.keyboard.pending) return this.kbScan;
+      if (this.kbFresh) { this.kbFresh = false; this.keyboard.lastByte = this.kbScan; return this.kbScan; }
       if (!this.kbQueue.length && (this.kbReads++ & 0xFFF) === 0) this.kbFill();
-      if (this.kbQueue.length) this.kbScan = this.takeKeyboardScan();
+      if (this.kbQueue.length) this.keyboard.lastByte = this.kbScan = this.takeKeyboardScan();
       return this.kbScan;
     }
     // System control port B: the speaker gate and data bits a driver reads,
@@ -3349,6 +3356,49 @@ class Machine {
     return w === 16 ? 0xFFFF : 0xFF;
   }
 
+  // Keyboard-device commands are distinct from the controller's D1 data
+  // phase. Both phases can be pending: an output-port write must not consume
+  // a keyboard LED/typematic parameter or manufacture a keyboard ACK.
+  keyboardCommand(value) {
+    const k = this.keyboard;
+    const reply = (...bytes) => {
+      this.kbc.reply.push(...bytes);
+      this.kbc.replyDevice.push(...bytes.map(() => true));
+    };
+    const clearScans = () => {
+      this.kbQueue.length = 0; this.kbBiosQueue.length = 0;
+      this.kbFresh = false;
+    };
+    if (k.pending && value < 0xed) {
+      if (value > (k.pending === 'leds' ? 7 : 0x7f)) { reply(0xfe); return; }
+      if (k.pending === 'leds') k.leds = value & 7;
+      else k.typematic = value;
+      k.pending = null;
+      reply(0xfa);
+      return;
+    }
+    // A new recognized command interrupts the preceding parameter phase.
+    switch (value) {
+      case 0xed: k.pending = 'leds'; reply(0xfa); return;
+      case 0xee: k.pending = null; reply(0xee); return;
+      case 0xf2: k.pending = null; reply(0xfa, 0xab, 0x83); return;
+      case 0xf3: k.pending = 'typematic'; reply(0xfa); return;
+      case 0xf4: k.pending = null; k.scanning = true; clearScans(); reply(0xfa); return;
+      case 0xf5: case 0xf6: case 0xff:
+        k.pending = null; k.typematic = 0x2b;
+        k.scanning = value !== 0xf5;
+        clearScans();
+        if (value === 0xff) k.leds = 0;
+        reply(0xfa);
+        if (value === 0xff) reply(0xaa);
+        return;
+      case 0xfe: reply(k.lastByte); return;
+      default:
+        // Do not ACK functionality that this set-1 host does not implement.
+        throw new Error('Unsupported keyboard command 0x' + value.toString(16));
+    }
+  }
+
   portOut(port, value, w) {
     port = isaAlias(port);
     if (this.ioTrace && (!this.ioPorts || this.ioPorts.has(port))) {
@@ -3373,7 +3423,7 @@ class Machine {
         throw new Error('Unsupported 8042 controller command 0x' + value.toString(16));
       this.kbc.command = true;
       this.kbc.pending = value === 0xD1 ? 'output' : null;
-      if (value === 0xD0) this.kbc.reply.push(this.kbc.output);
+      if (value === 0xD0) { this.kbc.reply.push(this.kbc.output); this.kbc.replyDevice.push(false); }
       return;
     }
     if (port === 0x60 && this.kbc.pending === 'output') {
@@ -3382,6 +3432,11 @@ class Machine {
       this.kbc.command = false;
       this.kbc.output = value;
       this.setA20(!!(value & 2));
+      return;
+    }
+    if (port === 0x60) {
+      this.kbc.command = false;
+      this.keyboardCommand(value);
       return;
     }
     // --- 8259 PICs ----------------------------------------------------------

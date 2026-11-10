@@ -24,7 +24,8 @@ test('D1 consumes one data byte and D0 reads complete output latch', () => {
   assert.equal(m.portIn(0x64, 8) & 2, 0);
   m.portOut(0x60, 0xdf, 8); assert.equal(mask(), isa.LIN_MASK_FLAT);
   assert.equal(m.portIn(0x64, 8) & 8, 0);
-  m.portOut(0x60, 0xdd, 8); // no pending controller data: must not change its latch
+  // No pending controller data: this reaches the keyboard, never the latch.
+  assert.throws(() => m.portOut(0x60, 0xdd, 8), /Unsupported keyboard command/);
   assert.equal(readOutput(m), 0xdf);
   writeOutput(m, 0xdd); assert.equal(readOutput(m), 0xdd);
   assert.equal(mask(), isa.LIN_MASK_FLAT & ~(1 << 20));
