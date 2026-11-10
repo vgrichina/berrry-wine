@@ -18,7 +18,13 @@ function peer(){
  }
  let browser,socket,out,shots=0;const protocol=[],blocked=[],late=[];
  Module.prototype._compile=function(source,name){
-  if(name===consumer)fs.writeFileSync(dir+'/installed.json',JSON.stringify({sha256:hash(source),bytes:Buffer.byteLength(source),sourceCopied:false}));
+  if(name===consumer){
+   fs.writeFileSync(dir+'/installed.json',JSON.stringify({sha256:hash(source),bytes:Buffer.byteLength(source),sourceCopied:false}));
+   // The stand-in fixture has no native lifecycle manifest. Select the native
+   // cleanup policy only at actual consumer entry, after sealed caller checks.
+   // This offline context injection is never a native launch recipe.
+   if(mode==='cancel-native')process.env.Q3_NATIVE_PHASE='original';
+  }
   return compile.call(this,source,name);
  };
  cp.spawn=(command,args)=>{
@@ -45,7 +51,7 @@ function peer(){
   if(parent?.filename===consumer&&name==='./local-controls.cjs')return {run:async options=>{
    out=options.out;
    if(mode==='success'){await options.send('Page.captureScreenshot',{format:'png'},options.pageSession);return;}
-   if(mode==='cancel'){
+   if(mode==='cancel'||mode==='cancel-native'){
     fs.writeFileSync(dir+'/caller-cancelled.json','{}');
     await options.wait(10000);assert.fail('planned cancellation failed to interrupt wait');
    }
@@ -122,7 +128,11 @@ except AssertionError as e:
  const closes=p.protocol.filter(q=>q.method==='Browser.close'),after=p.protocol.filter(q=>q.terminal);
  if(['success','cancel','baseline'].includes(mode))assert.equal(closes.length,1);
  else{assert.equal(closes.length,0);assert.equal(after.length,0,'no protocol at all after first terminal');
-  assert.equal(p.blocked.length,4);assert(p.blocked.every(r=>r.rejected),'direct later protocol/capture attempts reject');}
+  if(mode!=='cancel-native'){assert.equal(p.blocked.length,4);assert(p.blocked.every(r=>r.rejected),'direct later protocol/capture attempts reject');}}
+ if(mode==='cancel-native'){
+  const trace=zlib.gunzipSync(fs.readFileSync(dir+'/prepared/runtime/await-trace.jsonl.gz')).toString().trim().split('\n').map(JSON.parse);
+  assert(!trace.some(r=>r.event==='entry'&&r.name==='cdp.request'&&r.method==='Browser.close'),'native cancellation refuses close before request allocation/trace');
+ }
  if(mode==='success')assert.equal(p.code,0);else assert.equal(p.code,1);
  if(['command','deadline'].includes(mode)){
   assert(p.late.some(r=>r.terminal),'late raw response actually delivered after terminal');
@@ -137,7 +147,7 @@ except AssertionError as e:
 }
 async function main(){
  const out=path.resolve(process.argv[2]||'');assert(process.argv[2]&&out.startsWith(root+'/scratch/runs/')&&!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
- const results=await Promise.allSettled(['baseline','command','deadline','refusal','cancel','success'].map(mode=>run(out,mode)));
+ const results=await Promise.allSettled(['baseline','command','deadline','refusal','cancel','cancel-native','success'].map(mode=>run(out,mode)));
  for(const r of results)if(r.status==='rejected')throw r.reason;
  fs.writeFileSync(out+'/result.json',JSON.stringify(results.map(r=>r.value),null,2));
  console.log('PASS baseline violation reproduced; actual generated held screenshot work/CDP deadlines and refusal admit zero later protocol; late reply stays terminal; planned cancellation and ordinary close PASS; actual kernel reaps and separate EOF');

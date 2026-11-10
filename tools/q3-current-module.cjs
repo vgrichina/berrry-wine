@@ -534,7 +534,7 @@ function composeTerminalCleanup(source){
  once('let terminalFailure=null,commandWorkEnd=null;',
   'let terminalFailure=null,commandWorkEnd=null,plannedCancellation=false;');
  once("terminalFailure=Error('Q3 terminal UNKNOWN; no replay: '+reason);",
-  "plannedCancellation=reason==='owning launch transport cancelled';\n terminalFailure=Error('Q3 terminal UNKNOWN; no replay: '+reason);");
+  "plannedCancellation=reason==='owning launch transport cancelled'&&process.env.Q3_NATIVE_PHASE===undefined;\n terminalFailure=Error('Q3 terminal UNKNOWN; no replay: '+reason);");
  once("if(method!=='Browser.close')checkTerminal();",
   "if(method!=='Browser.close'||!plannedCancellation)checkTerminal();");
  once("requestClose:()=>ws?.readyState===1?send('Browser.close'):Promise.reject(Error('endpoint unavailable'))",
