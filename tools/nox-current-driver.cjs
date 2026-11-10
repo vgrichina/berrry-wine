@@ -316,7 +316,10 @@ function generate(planFile,destination){
   if(process.env.NOX_PASSIVE_CONSUMPTION==='1'){
     const observer=require('./nox-passive-consumption.cjs'),bytes=observer.compile();
     emit('nox-consumption.wasm',bytes);
-    source=observer.compose(source,observer.configuration(bytes,'/'+path.relative(ROOT,destination)+'/nox-consumption.wasm'));
+    const config=observer.configuration(bytes,'/'+path.relative(ROOT,destination)+'/nox-consumption.wasm');
+    source=observer.compose(source,config);
+    const helper=path.join(destination,'bound-input.cjs');
+    fs.writeFileSync(helper,observer.boundSource(fs.readFileSync(helper,'utf8'),config));
   }
   emit('browser-run.cjs',source);
   // Reuse the authenticated durable service, including its ready-stop scan.

@@ -61,6 +61,31 @@ async function compiled(){
  o.begin({...b,id:'second'},live);e.set_eip(0x42b325);e.run(10);assert(o.finish(live).records.length>completed);
  let clock=0;const bounded=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api,now:()=>clock,durationMs:1});bounded.begin(binding,owner);clock=1;assert.equal(bounded.snapshot(owner).reason,'deadline');assert.throws(()=>bounded.begin(binding,owner),/terminal/);
  for(const field of fields){const r=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api});assert.throws(()=>r.begin(binding,{...owner,[field]:'wrong'}),/binding/);assert.throws(()=>r.begin(binding,owner),/terminal/);}
+ // Reproduce the recovered native refusal with BOTH real compiled modules.
+ // The repair must authenticate the installed instance before selecting its
+ // immutable bytecode. Merely compiling a module does not establish use.
+ const original=fs.readFileSync(root+'/'+current.HISTORY+'/bound-input.cjs','utf8'),canonical=fs.readFileSync(root+'/build/wine-assembly.wasm');
+ function load(text){const file=root+'/'+current.HISTORY+'/bound-input.cjs',m=new Module(file,module);m.filename=file;m.paths=Module._nodeModulePaths(path.dirname(file));m._compile(text,file);return m.exports;}
+ const adapted=process.env.NOX_CONSUMPTION_GENERATED?fs.readFileSync(process.env.NOX_CONSUMPTION_GENERATED+'/bound-input.cjs','utf8'):q.boundSource(original,config);assert.equal(adapted,q.boundSource(original,config),'actual emitted admission adapter');
+ const old=load(original),bound=load(adapted),scripts=[{scriptId:'canonical',bytecodeAvailable:true,sha256:q.sha(canonical)},{scriptId:'observation',bytecodeAvailable:true,sha256:config.sha256}];
+ let receipt=o.owner(),changed=false;
+ const page={isolated:true,apps:[{...live,name:'nox_demo',running:true,stopped:false,guestWorker:true,guestEndpoint:1,slot:0,renderEndpoint:'none'}]};
+ const workerRecord={targetId:live.workerTarget,url:'guest-worker.js',sessionId:'worker',closed:false,scripts};
+ const options={workers:new Map([['worker',workerRecord]]),expectedModules:[q.sha(canonical),config.sha256],pageSession:'page',
+  evaluate:async expression=>expression===bound.PAGE_READ?structuredClone(page):expression===bound.WORKER_READ?{endpointIdentity:1,slot:0,instance:'fixture-instance'}:receipt,
+  send:async(method,{scriptId})=>({bytecode:(changed?Buffer.from('changed'):scriptId==='canonical'?canonical:bytes).toString('base64')})};
+ await assert.rejects(old.createChain(options).readLive(),/unique recovered live Worker module/);
+ const authenticated=await bound.createChain(options).readLive();assert.equal(authenticated.identity.moduleSha256,config.sha256);
+ for(const [key,value] of [['sha256','0'.repeat(64)],['size',0],['endpointIdentity',2],['slot',1],['workerInstance','foreign']]){
+  receipt={...o.owner(),[key]:value};await assert.rejects(bound.createChain(options).readLive(),/Nox/);
+ }
+ receipt=o.owner();changed=true;await assert.rejects(bound.createChain(options).readLive(),/live module bytes changed/);changed=false;
+ workerRecord.scripts=[scripts[0]];await assert.rejects(bound.createChain(options).readLive(),/unique recovered/);
+ workerRecord.scripts=[...scripts,{scriptId:'foreign',bytecodeAvailable:true,sha256:'f'.repeat(64)}];await assert.rejects(bound.createChain(options).readLive(),/foreign compiled/);
+ workerRecord.scripts=[...scripts,{...scripts[1],scriptId:'duplicate'}];await assert.rejects(bound.createChain(options).readLive(),/unique recovered/);workerRecord.scripts=scripts;
+ scope.instance={};assert.throws(()=>o.owner(),/instantiated Worker owner changed/);scope.instance=instance;
+ assert.equal(o.owner().workerInstance,'fixture-instance');
+ fs.writeFileSync(out+'/instantiated-admission.json',JSON.stringify({passed:true,reproducedNativeTwoModuleRefusal:true,actualCompiledModules:true,authenticatedActualInstance:true,wrongBindings:5,changedBytes:true,missingDuplicateForeign:true,noLiveRetry:true},null,2));
  fs.writeFileSync(out+'/compiled-records.json',JSON.stringify(s,null,2));return {moduleHash:config.sha256,size:bytes.length,naturalCompiledCallEntryReturn:true,compiledDataAndStateReturns:true,defaultInert:true,fields:fields.length};
 }
 (async()=>{const controls=[];for(const m of ['wrongbinding','incomplete','success','firstfailure'])controls.push(await consumer(m));const native=await compiled();const result={passed:true,controls,native};fs.writeFileSync(out+'/controls.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));})().catch(e=>{console.error(e);process.exitCode=1;});

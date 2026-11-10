@@ -76,11 +76,25 @@ function workerInstall(config,makeRecorder){
   const response=await fetch(config.url),bytes=new Uint8Array(await response.arrayBuffer());const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),v=>v.toString(16).padStart(2,'0')).join('');
   if(!response.ok||digest!==config.sha256||bytes.length!==config.size)throw Error('Nox observation module integrity');
   let exports;const o=makeRecorder({getExports:()=>exports,getMemory:()=>imports.host.memory.buffer,bases:config.bases,sites:config.sites,api:config.api,emit:r=>console.debug('NOX_CONSUMPTION '+JSON.stringify(r))});imports.host.nox_consumption=o.event;
-  const result=await Reflect.apply(original,this,[await WebAssembly.compile(bytes),imports,...rest]);exports=(result.instance??result).exports;globalThis.__noxConsumption=o;
+  const result=await Reflect.apply(original,this,[await WebAssembly.compile(bytes),imports,...rest]),observed=result.instance??result;exports=observed.exports;globalThis.__noxConsumption=o;
+  o.owner=()=>{if(instance!==observed)throw Error('Nox instantiated Worker owner changed');return {sha256:config.sha256,size:config.size,endpointIdentity,slot:workerSlot,workerInstance:globalThis.__mcmPassiveInstanceV1?.ids.get(instance)};};
   const begin=o.begin;o.begin=(b,identity)=>{if(identity.moduleSha256!==config.sha256||identity.endpoint!==endpointIdentity||workerSlot!==0||globalThis.__mcmPassiveInstanceV1?.ids.get(instance)!==identity.workerInstance){o.stop('live Worker owner');throw Error('Nox consumption live Worker owner');}return begin(b,identity);};return result;
  };
 }
 const workerSource=config=>'('+workerInstall.toString()+')('+JSON.stringify(config)+','+recorder.toString()+');';
+function boundSource(source,config){
+ const seam='    const scripts = [...new Map(w.scripts.filter(s => s.bytecodeAvailable && s.sha256 && !s.error).map(s=>[s.scriptId,s])).values()];';
+ assert.equal(source.split(seam).length,2,'Nox instantiated-module admission seam');
+ return source.replace(seam,`    const observation=await evaluate('globalThis.__noxConsumption.owner()',w.sessionId);
+    assert.equal(observation.sha256,${JSON.stringify(config.sha256)},'Nox instantiated observation SHA');
+    assert.equal(observation.size,${config.size},'Nox instantiated observation size');
+    assert.equal(observation.endpointIdentity,live.endpointIdentity,'Nox observation endpoint');
+    assert.equal(observation.slot,live.slot,'Nox observation slot');
+    assert.equal(observation.workerInstance,live.instance,'Nox observation instance');
+    const recovered=[...new Map(w.scripts.filter(s=>s.bytecodeAvailable&&s.sha256&&!s.error).map(s=>[s.scriptId,s])).values()];
+    assert(expectedModules&&recovered.every(s=>expectedModules.includes(s.sha256)),'Nox foreign compiled module');
+    const scripts=recovered.filter(s=>s.sha256===observation.sha256);`);
+}
 function configuration(bytes,url){const table=JSON.parse(fs.readFileSync(root+'/src/api_table.json'));return {version,url,size:bytes.length,sha256:sha(bytes),bases:require('../lib/region-map.generated').BASE,sites,api:Object.fromEntries(['GetDeviceData','GetDeviceState'].map(n=>[table.findIndex(r=>r.name==='IDirectInputDevice_'+n),n]))};}
 function compose(source,config){
  if(!config)return source;
@@ -99,4 +113,4 @@ function compose(source,config){
  console.log('CAPTURE '+label);`);
  return source;
 }
-module.exports={version,sites,compile,configuration,recorder,workerSource,compose,sha};
+module.exports={version,sites,compile,configuration,recorder,workerSource,boundSource,compose,sha};
