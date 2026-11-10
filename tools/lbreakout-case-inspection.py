@@ -228,8 +228,68 @@ def paddle_completion_observer_source():
 }'''
 
 
+def menu_completion_observer_source():
+    """Original queued SDL Enter -> selected link -> menu display submission."""
+    return r'''async function installMenuCompletion({e,memory,binding,token,expected,reviewed,now=()=>Date.now(),emit=()=>{}}){
+ if(!token||expected!==13||!reviewed?.label||!/^[a-f0-9]{64}$/.test(reviewed.sha256))throw Error('menu command/image binding');
+ const v=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p>>>0)>>>0;
+ const u32=p=>v.getUint32(wa(p),true),u8=p=>v.getUint8(wa(p));
+ const {exe,sdl,index,generation,mappingState,keys}=binding;
+ const table=e.get_dll_table()>>>0,life=e.get_dll_lifecycle_table()>>>0,stride=e.get_dll_lifecycle_stride()>>>0;
+ const before=u32(exe+0x77150),item=before&&u32(before+28),target=item&&u32(item+72);
+ if(!item||u32(item+4)!==6||!target||target===before)throw Error('menu Enter requires selected original submenu link');
+ const records=[],deadline=now()+2000;let active=true,reason=null,phase='delivery',frame,event,handler;
+ const trace=pc=>e.set_trace_eip_range(1,pc,pc+1);
+ const record=(kind,data={})=>{const r={kind,token,at:now(),...data};records.push(r);emit(r);};
+ const valid=()=>{if(e.get_image_base()!==exe||e.get_current_thread_id()!==1||
+  v.getUint32(table+index*32,true)!==sdl||v.getUint32(life+index*stride+4,true)!==generation||
+  v.getUint32(life+index*stride,true)!==mappingState)throw Error('menu module/owner changed');};
+ const stop=r=>{if(!active)return;active=false;reason=r;e.set_trace_eip_range(0,0,0);record('completion-stop',{reason:r});};
+ const complete=()=>{if(u32(exe+0x77150)!==target)throw Error('menu target changed');record('guest-complete',{before,target,releaseState:0});stop('complete');};
+ function boundary(pc=e.get_eip()>>>0){
+  if(!active)return;
+  try{
+   valid();if(now()>=deadline)return stop('deadline');if(records.length>=48)return stop('record-limit');
+   const esp=e.get_esp()>>>0;
+   if((phase==='delivery'||phase==='release')&&pc===sdl+0x19870){
+    if(u32(u32(esp+8)+4)!==13||u8(esp+4)!==(phase==='delivery'?1:0))return;
+    frame={esp,ret:u32(esp),down:u8(esp+4)};record('sdl-enter-entry',{down:frame.down});phase='delivery-return';trace(frame.ret);return;
+   }
+   if(phase==='delivery-return'&&pc===frame.ret&&esp===frame.esp+4){
+    if(u8(keys+13)!==frame.down)throw Error('original SDL Enter delivery incomplete');
+    record('sdl-enter-return',{down:frame.down});
+    if(!frame.down){complete();return;}phase='poll-return';trace(exe+0x105f6);return;
+   }
+   if(phase==='poll-return'&&pc===exe+0x105f6){
+    event=u32(esp);if(e.get_eax()!==1||u8(event)!==2||u32(event+8)!==13)return;
+    record('menu-poll-return',{event,symbol:13});phase='handler';trace(exe+0xc36a);return;
+   }
+   if(phase==='handler'&&pc===exe+0xc36a){
+    if(u32(esp+4)!==before||u32(esp+8)!==event||u8(event)!==2||u32(event+8)!==13||u32(before+28)!==item||u32(item+72)!==target||u32(item+4)!==6||u32(exe+0x77150)!==before)throw Error('menu handler binding changed');
+    handler={esp,ret:u32(esp)};if(handler.ret!==exe+0x107b2)throw Error('menu caller changed');
+    record('menu-enter-handler',{before,item,target,event});phase='handler-return';trace(handler.ret);return;
+   }
+   if(phase==='handler-return'&&pc===handler.ret&&esp===handler.esp+4){
+    if(u32(exe+0x77150)!==target||e.get_eax()!==0)throw Error('original Enter link transition incomplete');
+    record('menu-handler-return',{target});phase='display';trace(exe+0x26026);return;
+   }
+   if(phase==='display'&&pc===exe+0x26026){
+    if(u32(exe+0x77150)!==target)throw Error('menu presentation target changed');
+    record('menu-sdl-display-return',{target});phase='display-return';trace(exe+0x10849);return;
+   }
+   if(phase==='display-return'&&pc===exe+0x10849){
+    record('menu-display-return',{target});if(u8(keys+13)===0)complete();else{phase='release';trace(sdl+0x19870);}return;
+   }
+  }catch(error){record('completion-error',{error:String(error)});stop('failure');}
+ }
+ const timer=setTimeout(()=>stop('deadline'),2000);if(timer.unref)timer.unref();
+ valid();record('completion-arm',{binding,expected,reviewed,before,item,target,deadline});trace(sdl+0x19870);
+ return {boundary,stop:r=>{clearTimeout(timer);stop(r);},snapshot:()=>({token,binding,expected,reviewed,deadline,active,reason,phase,records:[...records]})};
+}'''
+
+
 def pause_completion_preload_source():
-    return level_start_driver_source() + '\n' + pause_completion_observer_source() + '\n' + level_start_completion_observer_source() + '\n' + paddle_completion_observer_source() + r'''
+    return level_start_driver_source() + '\n' + pause_completion_observer_source() + '\n' + level_start_completion_observer_source() + '\n' + paddle_completion_observer_source() + '\n' + menu_completion_observer_source() + r'''
 (()=>{
  const instantiate=WebAssembly.instantiate;
  WebAssembly.instantiate=async function(source,imports){
@@ -258,7 +318,9 @@ def pause_completion_preload_source():
   if(c.phase==='level-start')for(const [rva,h] of [[0x1f2ac,'5589e55383ec14'],[0x1faa0,'5589e5575653'],[0x1faf2,'83c410'],[0x20475,'e87c5b0000']])
    if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original level-start instruction mismatch');
   const observed={...e,set_trace_eip_range:globalThis.__lbNative.driver.trace};
-  globalThis.__lbObserver=await (c.phase==='paddle'?installPaddleCompletion:c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e:observed,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
+  if(c.phase==='menu')for(const [rva,h] of [[0xc36a,'5589e583ec38'],[0xc4d6,'8b4508'],[0x105f1,'e84af90300'],[0x107ad,'e8b8bbffff'],[0x10844,'e8ad570100'],[0x26021,'e89aa00200']])
+   if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original menu instruction mismatch');
+  globalThis.__lbObserver=await (c.phase==='menu'?installMenuCompletion:c.phase==='paddle'?installPaddleCompletion:c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e:observed,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
   return {armed:true,...__lbObserver.snapshot()};
  };
 })();
@@ -271,7 +333,7 @@ def pause_completion_source(source):
         ("async function armObservation(){const s=await owningWorker();return evaluate('globalThis.__lbArm()',s);}", r'''async function armObservation(c){
  const s=await owningWorker(),owner=await evaluate(bound.WORKER_READ,s),token=c.id+'-'+c.phase;
  assert(owner?.instance&&owner?.endpointIdentity,'completion immutable instance binding');
- const reviewed=c.phase==='paddle'?{label:latest.label,sha256:latest.sha256}:undefined;
+ const reviewed=['paddle','menu'].includes(c.phase)?{label:latest.label,sha256:latest.sha256}:undefined;
  const arm=await evaluate('globalThis.__lbArm('+JSON.stringify({token,expected:c.expected,phase:c.phase,reviewed})+')',s);
  assert(arm.armed&&arm.token===token,'completion arm binding');
  if(reviewed){assert.equal(arm.expected,c.expected,'paddle arm key binding');assert.deepEqual(arm.reviewed,reviewed,'paddle arm image binding');}
@@ -301,7 +363,7 @@ async function completion(a){
   }
  }catch(e){fail(e);throw e;}
 }'''),
-        ("if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}", "let completionArm;\n   if(c.completion==='paddle'){assertPaddleCompletion(c);completionArm=await armObservation({...c,phase:'paddle',expected:c.key==='ArrowRight'?275:276});}\n   else if(c.completion==='level-start'){assert(c.action==='key'&&c.key==='Enter','level-start requires native Enter');completionArm=await armObservation({...c,phase:'level-start',expected:8});}\n   else if(c.action==='key'&&c.key==='p'){\n    const expected=c.expected??20;assert([8,20].includes(expected),'supported pause transition');\n    if(expected===8)assert.equal(c.pauseConfirmed,latest.label,'reviewed visible pause required');\n    completionArm=await armObservation({...c,phase:'pause',expected});\n   }"),
+        ("if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}", "let completionArm;\n   if(c.completion==='paddle'){assertPaddleCompletion(c);completionArm=await armObservation({...c,phase:'paddle',expected:c.key==='ArrowRight'?275:276});}\n   else if(c.completion==='level-start'){assert(c.action==='key'&&c.key==='Enter','level-start requires native Enter');completionArm=await armObservation({...c,phase:'level-start',expected:8});}\n   else if(c.action==='key'&&c.key==='Enter'){assert(c.id&&c.reviewRef&&Number.isInteger(c.holdMs)&&c.holdMs>=80&&c.holdMs<=300,'menu Enter command binding');completionArm=await armObservation({...c,phase:'menu',expected:13});}\n   else if(c.action==='key'&&c.key==='p'){\n    const expected=c.expected??20;assert([8,20].includes(expected),'supported pause transition');\n    if(expected===8)assert.equal(c.pauseConfirmed,latest.label,'reviewed visible pause required');\n    completionArm=await armObservation({...c,phase:'pause',expected});\n   }"),
         ("     const k=require('./input.cjs').key('p'),{text,...release}=k;", "     const a=await armObservation({...c,phase,expected:phase==='resume'?8:20});\n     const k=require('./input.cjs').key('p'),{text,...release}=k;"),
         ("save:r=>save('input-'+c.id+'-'+phase+'.json',r)});", "save:r=>save('input-'+c.id+'-'+phase+'.json',r)});\n     await completion(a);"),
         ("   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});", "   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});\n   if(completionArm)await completion(completionArm);"),

@@ -52,6 +52,35 @@ assert.throws(()=>execute({action:'key',key:'Space',completion:'paddle'}),/one o
                        input=helper.pause_completion_preload_source(),
                        text=True, check=True, timeout=3)
 
+    def test_every_ordinary_enter_arms_menu_before_input(self):
+        template = "\n".join([
+            "async function armObservation(){const s=await owningWorker();return evaluate('globalThis.__lbArm()',s);}",
+            "if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}",
+            "     const k=require('./input.cjs').key('p'),{text,...release}=k;",
+            "save:r=>save('input-'+c.id+'-'+phase+'.json',r)});",
+            "   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});",
+        ])
+        branch = helper.pause_completion_source(template).split(
+            'let completionArm;')[1].split('     const a=await armObservation')[0]
+        source = """const assert=require('node:assert/strict');
+let arms=0;
+async function armObservation(c){arms++;return c;}
+async function run(c){let completionArm;
+""" + branch + """
+return completionArm;}
+(async()=>{
+ const c={id:'local-menu',action:'key',key:'Enter',reviewRef:'reviewed-main',holdMs:80};
+ for(const observe of [undefined,false,true]){
+  const a=await run({...c,observe});assert.equal(a.phase,'menu');assert.equal(a.expected,13);
+ }
+ assert.equal(arms,3);
+ for(const bad of [{id:null},{reviewRef:null},{holdMs:0},{holdMs:301}])await assert.rejects(run({...c,...bad}),/menu Enter command binding/);
+ assert.equal(arms,3,'invalid Enter never arms or reaches input');
+ const a=await run({...c,completion:'level-start'});assert.equal(a.phase,'level-start');assert.equal(a.expected,8);
+})().catch(e=>{console.error(e);process.exitCode=1});
+"""
+        subprocess.run(['node', '-e', source], check=True, timeout=3)
+
     def test_generated_preload_preserves_native_unarmed_execution(self):
         source = """const assert=require('node:assert/strict');
 let calls=0;const nativeRun=n=>{calls++;return n+7;};
