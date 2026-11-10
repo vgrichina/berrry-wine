@@ -255,6 +255,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             if value: return value
         if cancellation or parked or resumes:
             superseding = None
+            retirement_wait = None
             for task, row in list(owned.items()):
                 if task in exec_transfers: continue
                 if any(r['pid'] == task for r in reaped): continue
@@ -266,6 +267,10 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     return value
                 if value and task in resumes and superseding is None:
                     superseding = value
+                if value and retirement_wait is None and (
+                        value.si_code in (os.CLD_EXITED, os.CLD_KILLED, os.CLD_DUMPED) or
+                        (value.si_code == os.CLD_TRAPPED and value.si_status == ((6 << 8)|signal.SIGTRAP))):
+                    retirement_wait = value
             # A queued CONT belongs to the stop already consumed. Group exit
             # or de_thread can replace it with a new EXIT/EXEC stop while the
             # resume is queued. Consume that real status before CONT: otherwise
@@ -273,6 +278,14 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             # leader EXIT binding). Pending creators still take precedence.
             if superseding is not None:
                 return superseding
+            # exit_group/de_thread can hold the gate owner's completion behind
+            # sibling EXIT stops. A queued gate entry suppresses P_ALL, so scan
+            # every owned task for irreversible retirement, not only tasks with
+            # a queued CONT or an EXIT stop already consumed. Keep the gate held:
+            # selecting a real wait does not admit another gated syscall. Pending
+            # creation messages above still precede every retirement/CONT.
+            if retirement_wait is not None:
+                return retirement_wait
         if gate_owner is not None:
             try: value = os.waitid(os.P_PID, gate_owner, wait_flags)
             except ChildProcessError: value = None

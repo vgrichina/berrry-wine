@@ -795,6 +795,206 @@ class ContinueRace(unittest.TestCase):
             self.assertEqual(drain['unreaped'],[]);self.assertEqual(drain['remaining'],[])
 
 
+class GateGroupExit(unittest.TestCase):
+    def test_native_leader_exit_drains_siblings_with_queued_gate_entry(self):
+        for actor, count, cancel in (('leader',4,False),('leader',1,False),
+                                     ('thread',4,False),('leader',4,True)):
+            with self.subTest(actor=actor,count=count,cancel=cancel), tempfile.TemporaryDirectory() as tmp:
+                base=Path(os.environ.get('CUSTODY_GROUP_EXIT_EVIDENCE',tmp))
+                run=Path(tempfile.mkdtemp(prefix=f'{actor}-{count}-{cancel}-',dir=base))
+                result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                    '--gate-group-exit-fixture',str(run),actor,str(count),str(int(cancel))],
+                    capture_output=True,text=True,timeout=14)
+                (run/'fixture-process.json').write_text(json.dumps(dict(wait=result.returncode,
+                    stdout=result.stdout,stderr=result.stderr,stdoutEOF=True,stderrEOF=True)))
+                self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+                barrier=json.loads((run/'group-exit-barrier.json').read_text())
+                if actor=='leader':
+                    self.assertEqual(barrier['leader']['state'],'Z')
+                    self.assertEqual(len(barrier['siblingStops']),count)
+                else:
+                    # The leader may already have consumed its own EXIT stop
+                    # before selection reaches the nonleader gate owner.
+                    self.assertIn(barrier['leader']['state'],('t','Z'))
+                    self.assertGreaterEqual(len(barrier['siblingStops']),count-1)
+                self.assertTrue(all(r['status']==1541 for r in barrier['siblingStops']))
+                drain=json.loads((run/'kernel-drain.json').read_text())
+                self.assertTrue(drain['complete'],drain.get('failure'))
+                self.assertEqual(bool(drain['cancellation']),cancel)
+                self.assertTrue(drain['commandLog']['eof'])
+                self.assertEqual(drain['syscallGate'],dict(owner=None,waiting=[]))
+                for key in ('unreaped','remaining','unresolvedLineage','unresolvedPtrace','unresolvedResumes'):
+                    self.assertEqual(drain[key],[])
+                waits=json.loads((run/'group-exit-waits.json').read_text())
+                self.assertEqual(waits,dict(supervisorWait=int(cancel),watchdogWait=-15))
+                self.assertFalse((run/'watchdog-fired.json').exists())
+                self.assertEqual(json.loads((run/'isolated-waits.json').read_text())['adoptedWaits'],[])
+                rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+                owner=barrier['owner'];waiter=barrier['waiter']
+                entry=next(r['sequence'] for r in rows if r['kind']=='syscall-gate-entry' and r['pid']==waiter
+                           and r['sequence']>barrier['acquiredSequence'])
+                terminal=next(r['sequence'] for r in rows if r['kind']=='syscall-gate-terminal' and r['pid']==owner)
+                acquired=next(r['sequence'] for r in rows if r['kind']=='syscall-gate-acquired' and r['pid']==waiter
+                              and r['sequence']>entry)
+                self.assertLess(entry,terminal);self.assertLess(terminal,acquired)
+                actual=json.loads((run/'actual-waits.json').read_text())
+                for receipt in drain['reaped']:
+                    self.assertTrue(any(r['pid']==receipt['pid'] and r['status']==receipt['status']
+                        and (os.WIFEXITED(r['status']) or os.WIFSIGNALED(r['status'])) for r in actual))
+                for key in ('journal','commandLog'):
+                    receipt=drain[key];data=gzip.decompress((run/receipt['path']).read_bytes())
+                    self.assertEqual(hashlib.sha256(data).hexdigest(),receipt['originalSha256'])
+                    self.assertEqual(len(data),receipt['originalBytes']);self.assertTrue(receipt['closed'])
+
+
+def gate_group_exit_fixture(run,actor,count,cancel):
+    """Real entry filter and waits; defer selection to queue a competing entry.
+
+    The shim withholds observations only until the competitor is consumed.
+    It never manufactures a stop, changes ptrace results, or bypasses seccomp.
+    """
+    run=Path(run).resolve();count=int(count);cancel=bool(int(cancel))
+    source=r'''
+#include <pthread.h>
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdatomic.h>
+#include <string.h>
+static atomic_int ready;
+static int from_thread;
+static void *sibling(void *arg) {
+  atomic_fetch_add(&ready,1);
+  if(from_thread && (long)arg==0) {
+    while(access("exit-now",F_OK))usleep(1000);
+    syscall(SYS_exit_group,0);
+  }
+  for(;;)usleep(1000);
+}
+int main(int argc,char **argv) {
+  if(chdir(argv[1]))return 80;
+  from_thread=!strcmp(argv[2],"thread");int n=atoi(argv[3]);
+  pid_t group=fork();if(group<0)return 81;
+  if(!group) {
+    pthread_t threads[8];
+    for(long i=0;i<n;i++)if(pthread_create(&threads[i],0,sibling,(void*)i))return 82;
+    while(atomic_load(&ready)!=n)usleep(1000);
+    close(creat("group-ready",0600));
+    while(access("exit-now",F_OK))usleep(1000);
+    if(!from_thread)syscall(SYS_exit_group,0);
+    for(;;)usleep(1000);
+  }
+  pid_t waiter=fork();if(waiter<0)return 83;
+  if(!waiter) {
+    while(access("compete-now",F_OK))usleep(1000);
+    pid_t p=fork();if(p<0)return 84;
+    if(!p)_exit(0);
+    int s;if(waitpid(p,&s,0)!=p || s)return 85;
+    write(1,"competitor finished\n",20);_exit(0);
+  }
+  while(access("group-ready",F_OK))usleep(1000);
+  FILE *f=fopen("fixture-ids.json","w");
+  fprintf(f,"{\"leader\":%d,\"waiter\":%d}",group,waiter);fclose(f);
+  close(creat("exit-now",0600));
+  int s;if(waitpid(group,&s,0)!=group || s)return 86;
+  if(waitpid(waiter,&s,0)!=waiter || s)return 87;
+  return 0;
+}
+'''
+    with tempfile.TemporaryDirectory() as tmp:
+        c=Path(tmp)/'fixture.c';binary=Path(tmp)/'fixture';c.write_text(source)
+        subprocess.run(['cc','-O2','-pthread',str(c),'-o',str(binary)],check=True,timeout=10)
+        (run/'native-inputs.json').write_text(json.dumps(dict(sourceSha256=hashlib.sha256(c.read_bytes()).hexdigest(),
+            binarySha256=hashlib.sha256(binary.read_bytes()).hexdigest(),recovery='gate_group_exit_fixture; cc -O2 -pthread')))
+        gate_read,gate_write=os.pipe();supervisor=os.fork()
+        if supervisor==0:
+            os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
+            waitid,waitpid,trace=os.waitid,os.waitpid,kernel.ptrace
+            rows,probe=journal_probe(kernel);owner=[];queued=[];actual=[];barrier=[]
+            flags=os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|kernel.WALL
+            def wait_for(task,status):
+                due=time.monotonic()+2
+                while time.monotonic()<due:
+                    value=waitid(os.P_PID,task,flags)
+                    if value and value.si_code==os.CLD_TRAPPED and value.si_status==status:return value
+                    time.sleep(.001)
+                raise AssertionError(('actual kernel stop missing',task,status))
+            def resume(request,task,addr=0,data=0):
+                result=trace(request,task,addr,data)
+                ids_path=run/'fixture-ids.json'
+                if request==kernel.SYSCALL and not owner and ids_path.exists():
+                    ids=json.loads(ids_path.read_text())
+                    row=kernel.identity(task)
+                    if row['tgid']==ids['leader'] and rows[-1]['kind']=='syscall-gate-acquired':
+                        owner.append(task)
+                        (run/'compete-now').touch()
+                        wait_for(task,1541);wait_for(ids['waiter'],1797)
+                if request==kernel.CONT and owner==[task] and rows[-1]['kind']=='pre-exit-stop' and not barrier:
+                    ids=json.loads(ids_path.read_text());leader=ids['leader']
+                    # Nonleader exit_group may leave its own terminal wait ready;
+                    # the other threads still cannot retire until their EXIT CONT.
+                    due=time.monotonic()+2
+                    while time.monotonic()<due:
+                        state=kernel.identity(leader)
+                        if actor=='thread' or state['state']=='Z':break
+                        time.sleep(.001)
+                    siblings=[]
+                    for p in (Path('/proc')/str(leader)/'task').iterdir():
+                        tid=int(p.name)
+                        if tid==task:continue
+                        value=waitid(os.P_PID,tid,flags)
+                        if value:siblings.append(dict(pid=tid,status=value.si_status))
+                    barrier.append(dict(owner=task,waiter=ids['waiter'],leader=state,siblingStops=siblings,
+                        acquiredSequence=next(r['sequence'] for r in reversed(rows)
+                            if r['kind']=='syscall-gate-acquired' and r['pid']==task)))
+                    (run/'group-exit-barrier.json').write_text(json.dumps(barrier[0]))
+                    if cancel:os.kill(os.getpid(),signal.SIGTERM)
+                return result
+            def peek(which,task,options):
+                if owner and not queued:
+                    waiter=json.loads((run/'fixture-ids.json').read_text())['waiter']
+                    if which==os.P_ALL or task==waiter:return waitid(os.P_PID,waiter,options)
+                    return None
+                return waitid(which,task,options)
+            def consume(task,options):
+                result=waitpid(task,options)
+                if result[0]:
+                    actual.append(dict(pid=result[0],status=result[1]))
+                    if owner and task==json.loads((run/'fixture-ids.json').read_text())['waiter']:
+                        if os.WIFSTOPPED(result[1]) and result[1]>>16==7:queued.append(task)
+                return result
+            try:
+                with probe,patch.object(kernel.os,'waitid',side_effect=peek),patch.object(kernel.os,'waitpid',side_effect=consume),patch.object(kernel,'ptrace',side_effect=resume):
+                    due=time.time()+4
+                    kernel.supervise(run,[str(binary),str(run),actor,str(count)],deadline=due,cleanup_deadline=due+1,
+                        journal_compression='gzip',command_compression='gzip')
+            except BaseException as error:
+                (run/'supervisor-error.json').write_text(json.dumps(dict(error=repr(error))))
+                code=1
+            else:code=0
+            (run/'actual-waits.json').write_text(json.dumps(actual));os._exit(code)
+        watchdog=os.fork()
+        if watchdog==0:
+            os.close(gate_read);os.close(gate_write)
+            start=kernel.identity(supervisor)['start']
+            (run/'watchdog-armed.json').write_text(json.dumps(dict(target=supervisor,start=start,deadline=time.time()+9)))
+            time.sleep(9)
+            try:
+                if kernel.identity(supervisor)['start']==start:os.kill(supervisor,9)
+            except (FileNotFoundError,ProcessLookupError):pass
+            (run/'watchdog-fired.json').write_text('{}');os._exit(0)
+        os.close(gate_read)
+        while not (run/'watchdog-armed.json').exists():time.sleep(.001)
+        os.write(gate_write,b'1');os.close(gate_write)
+        _,status=os.waitpid(supervisor,0)
+        os.kill(watchdog,15);_,watch_status=os.waitpid(watchdog,0)
+        (run/'group-exit-waits.json').write_text(json.dumps(dict(supervisorWait=os.waitstatus_to_exitcode(status),
+            watchdogWait=os.waitstatus_to_exitcode(watch_status))))
+
+
 class SupersededResume(unittest.TestCase):
     def test_real_group_exit_and_exec_replace_queued_stop(self):
         for kind in ('normal', 'cancel', 'exec'):
@@ -2342,10 +2542,11 @@ if __name__=='__main__':
                 pid,status=os.waitpid(-1,0)
                 adopted.append(dict(pid=pid,status=status,exit=os.waitstatus_to_exitcode(status)))
             except ChildProcessError:break
-        if sys.argv[2] in ('--gzip-fixture','--terminal-fixture','--parent-lineage-fixture','--cancel-creators-fixture','--output-wait-fixture','--queued-stop-fixture'):
+        if sys.argv[2] in ('--gate-group-exit-fixture','--gzip-fixture','--terminal-fixture','--parent-lineage-fixture','--cancel-creators-fixture','--output-wait-fixture','--queued-stop-fixture'):
             (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
                 fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
+    elif len(sys.argv)>1 and sys.argv[1]=='--gate-group-exit-fixture':gate_group_exit_fixture(*sys.argv[2:])
     elif len(sys.argv)>1 and sys.argv[1]=='--cancel-latch-fixture':cancel_latch_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--cancel-creators-fixture':cancel_creators_fixture(sys.argv[2],sys.argv[3],sys.argv[4])
     elif len(sys.argv)>1 and sys.argv[1]=='--queued-stop-fixture':queued_stop_fixture(sys.argv[2],sys.argv[3],sys.argv[4])
