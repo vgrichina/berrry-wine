@@ -486,7 +486,14 @@ function send(method,params={},sessionId,captureProbe=null)`);
     "screenshotCompletion.transport(event);if(startupRecording)startupRecord('transport',{event});if(!closing)");
   once('screenshotCompletion.sendFailed(meta,error);observeTerminal(error);',
     "if(startupRecording)startupRecord('send-error',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId});screenshotCompletion.sendFailed(meta,error);observeTerminal(error);");
-  return composeInputObservation(source);
+  source=composeInputObservation(source);
+  if(process.env.Q3_MENU_CONSUMPTION_CONFIG){
+    assert.equal(process.env.Q3_BOUND_INPUT_OBSERVATION,'1','menu observation requires bound input');
+    const config=JSON.parse(fs.readFileSync(process.env.Q3_MENU_CONSUMPTION_CONFIG));
+    assert.equal(config.version,require('./q3-menu-consumption.cjs').version);
+    source=require('./q3-menu-consumption.cjs').compose(source,config);
+  }
+  return source;
 }
 // Q3 owns this policy; shared lifecycle providers only perform bounded kernel
 // containment and observe child exit plus stdio closure. Cancellation is an
@@ -594,7 +601,7 @@ function composeFixtureObserverCaller(source){
 }
 function prepare(destination,{inputs=[]}={}){
   assert.equal(arguments.length<=2,true);const options=arguments[1]??{};
-  assert(Object.keys(options).every(k=>['inputs','checkpointObserverVersion','caller','foreignClosureVersion','nativeLifecycleVersion','inputObservationVersion'].includes(k)),'explicit supported preparation options');
+  assert(Object.keys(options).every(k=>['inputs','checkpointObserverVersion','caller','foreignClosureVersion','nativeLifecycleVersion','inputObservationVersion','menuConsumptionVersion'].includes(k)),'explicit supported preparation options');
   const checkpoint=options.checkpointObserverVersion!==undefined;
   assert(checkpoint||options.caller===undefined,'caller requires explicit checkpoint observer version');
   destination=path.resolve(destination);assert(!fs.existsSync(destination),'fresh task-owned destination required');
@@ -609,6 +616,32 @@ function prepare(destination,{inputs=[]}={}){
     version.inputObservationVersion=options.inputObservationVersion;
   }
   let generated=[];
+  let menuConfigPath;
+  if(options.menuConsumptionVersion!==undefined){
+    const menu=require('./q3-menu-consumption.cjs');
+    assert.equal(options.menuConsumptionVersion,menu.version,'explicit passive menu observation');
+    assert.equal(options.inputObservationVersion,'q3-bound-input-v1','passive menu command/image binding');
+    const bytes=menu.compile(),base=path.dirname(destination);
+    const file=path.join(base,'passive-menu.wasm');menuConfigPath=path.join(base,'passive-menu.json');
+    assert(!fs.existsSync(file)&&!fs.existsSync(menuConfigPath),'fresh observation artifacts');
+    // Decode the installed canonical UI member in place; retain offsets only.
+    const qvmSites=JSON.parse(cp.execFileSync('python3',['-B','-c',`import zipfile,struct,json,hashlib
+p='test/binaries/candidates/quake-3-arena-demo-installer/installed/demoq3/pak0.pk3'
+with zipfile.ZipFile(p) as z:b=z.read('vm/ui.qvm')
+assert hashlib.sha256(b).hexdigest()=='6903548472c2d95898c71c979304e07fbe966e9db2d22db5d9c1ee4f8ddeb88f'
+o=32;sites={};active=False
+for pc in range(74762):
+ op=b[o];start=o-32;o+=1
+ if op==3:active=pc in [4375,34954,34912,13938,45971]
+ if pc in [4375,34954,34912,13938,45971,35444] or active and op==4:sites[start]={'pc':pc,'op':op}
+ if op in [3,4,8,9,34] or 11<=op<=26:o+=4
+ elif op==33:o+=1
+print(json.dumps(sites))`],{cwd:root}).toString());
+    const config={version:menu.version,url:'/'+path.relative(root,file),sha256:hash(bytes),size:bytes.length,qvmSites};
+    fs.writeFileSync(file,bytes,{flag:'wx',mode:0o444});fs.writeFileSync(menuConfigPath,JSON.stringify(config),{flag:'wx',mode:0o444});
+    for(const name of ['tools/q3-menu-consumption.cjs',path.relative(root,file),path.relative(root,menuConfigPath)])version.files.push(pin(name,read(name)));
+    version.menuConsumptionVersion=menu.version;
+  }
   if(lifecycle){
     assert(checkpoint&&options.foreignClosureVersion!==undefined,'native lifecycle requires explicit checkpoint and foreign versions');
     assert.equal(options.nativeLifecycleVersion,lifecycle.version,'explicit native lifecycle version');
@@ -628,6 +661,7 @@ function prepare(destination,{inputs=[]}={}){
       if(options.inputObservationVersion!==undefined&&file.path.endsWith('/original/runtime.py')){
         assert.equal(source.split('os.environ.update(').length,2,'original observer environment seam');
         source=source.replace('os.environ.update(',"os.environ.update(Q3_BOUND_INPUT_OBSERVATION='1',");
+        if(menuConfigPath)source=source.replace('os.environ.update(',"os.environ.update(Q3_MENU_CONSUMPTION_CONFIG="+JSON.stringify(menuConfigPath)+",");
       }
       if(file.path.endsWith('/cancellation/runtime.py')){
         assert.equal(source.split('os.environ.update(').length,2,'fixture service review environment seam');
@@ -699,6 +733,7 @@ if(require.main===module){
     if(flag==='--input')options.inputs.push(value);
     else if(flag==='--caller'){assert(!options.caller,'duplicate caller');options.caller=value;}
     else if(flag==='--checkpoint-observer-version'){assert(!options.checkpointObserverVersion,'duplicate checkpoint version');options.checkpointObserverVersion=value;}
+    else if(flag==='--menu-consumption-version'){assert(!options.menuConsumptionVersion,'duplicate menu version');options.menuConsumptionVersion=value;}
     else if(flag==='--foreign-closure-version'){assert(!options.foreignClosureVersion,'duplicate foreign closure version');options.foreignClosureVersion=value;}
     else if(flag==='--native-lifecycle-version'){assert(!options.nativeLifecycleVersion,'duplicate native lifecycle version');options.nativeLifecycleVersion=value;}
     else if(flag==='--input-observation-version'){assert(!options.inputObservationVersion,'duplicate observation version');options.inputObservationVersion=value;}
