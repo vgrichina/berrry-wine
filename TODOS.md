@@ -13,7 +13,7 @@
 - [ ] Current Forsaken look/navigation beyond Volcano corridor
   id: NEW-GAME-FORSAKEN-CURRENT-NAVIGATION-20261108
   status: current WebGL movement and primary-fire ammo response verified; look/objective/beyond-corridor open
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   Next: Queue a defensible fresh owner-witness mechanism or direct internal attribution of original Evaluate575 before any new Forsaken original. Published707b0f5da serial21.839s and byte-overlap21.373s bothUNKNOWN under optimistic8085/9092ms timing prefix, so no remedy/BOX. Coordinator verified165files9310497bytes; negative owner/instance/module/stale/release/deadline controls and drain pass. Localmodulecc438 differsoriginal7ec49, explicit qualification limit. Earlier9ef46f315 current movement/PULS2000to1998 remains accepted; look/navigation open. Slot replaced by fresh Asghan frontal-target0654, not another unchanged helper retry. Note: docs/re-notes/forsaken-owner-observation-latency-20261108.md. Full27/parity/audio/FPS remain open.
 
 - [ ] Current TR2 native controls and qualified presentation rates
@@ -1794,7 +1794,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   status: blocked
   note: 2026-10-06T21:25Z parked at WIND-DOWN, not started. Next: page probe on MW3 menu wrapping the D3DIM executor's readPixels/fenceSync/getBufferSubData (lib/d3dim-gpu.js asyncFlip path) to find which PBO is written again before its readback; likely reuse of one PIXEL_PACK_BUFFER across flips while an earlier read is inflight -> ring of PBOs or wait on the fence before reuse.
   note: 2026-10-06T20:25Z claude:1863d2b5 claimed: code read finds no write-before-read path; next a page probe wrapping readPixels/fenceSync/getBufferSubData on MW3's live context (browser queue).
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   prev-owner: claude:1863d2b5-bc58-4c0b-9c15-00fc951f0256 (my change, fcfa4989) (fleet stopped)
   created: 2026-10-06T20:20:00Z
   Next: Warning isolated outside emulator: Chrome151 standalone4x4 WebGL2 yields six identical warnings despite8 correct pixel readbacks/GL_NO_ERROR. Matching browser source retains readback shadow allocation in GetBufferSubDataCHROMIUM path. Emulator trace216writes215reads has zero overwrite violations; one pending at capture end. No speculative renderer fix. Browser warning remains; no user input required. Recheck after browser-side correction; performance impact unmeasured. Receipt ops/handoffs/pbo-chrome151-reproduction-20261007.json.
@@ -2557,7 +2557,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   Update 2026-11-06T09:50Z: Published91323aed5, run20261106-conan-first-draw-lifetime. Both-module bounded lifetime/passivity controls and locked build PASS; coordinator verified2188 artifact hashes and438 absent owned PIDs. Sole original stopped before any input because command2 lacked required reviewRef; publisher splashes only, no first-draw causal chain or gameplay. Strict guard preserved, no emulator repair. Any future original needs validated review metadata before launch. Fresh freed slot assigned DisciplesII current gameplay; Conan remains open.
   blocker: Exact first failing draw world bits now match the zero source at world-state copy; earlier emulated stores constructing this source remain unobserved. Strict singular normal-transform failure persists before player control. Texture residency72768dcf8 remains repaired.
   status: queued (genuine installed state and rendered opening cinematic verified; player gameplay outstanding, historical identity unknown)
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   worker: conan-zero-world-origin1938 PID762850; queued read-only/run-local preparation behind legacy combined1918, explicit runtime grant required.
   Update 2026-11-06T08:21Z: Fresh Conan worker preserves relevant constructor/setup/time/weight lifetimes through the actual first draw within existing bounds; no unchanged rerun or quota increase. Generated address-reuse/loading-burst and both-module passivity controls precede at most one improved original with ordinary New Game/Warrior input and personally reviewed gameplay evidence. No emulator discrepancy or gameplay established yet.
   Update 2026-11-06T06:54Z: Published a15c7f867, run20261106-conan-burst-safe-writers. Sole original retained 2048 count103 admissions with 2048 exact returns, no open calls or transport rejection. Repeated temporary constructor epochs exhausted detail and invocation quotas before the first-draw target could be linked; no gameplay or demonstrated emulator divergence. Both-module producer/burst/pager/native controls and locked build passed; coordinator independently verified3826 artifact hashes and175 absentPIDs/10refusedports/10absentprofiles. Next distinct diagnostic must preserve relevant constructor epochs through first draw within existing bounds; do not repeat the exhausted observer unchanged. Current slot is assigned to D3D9 software clip status; Conan remains queued.
