@@ -227,22 +227,39 @@ async function nativePointerFixture(){
    x.font='18px sans-serif';x.fillText('Production DOM + renderer; no game guest',30,75);
    x.fillStyle='#26c87a';x.fillRect(280,210,80,60);x.fillStyle='white';x.fillText('TARGET',284,248);
    x.strokeStyle='#ffdf40';x.lineWidth=3;x.beginPath();x.moveTo(r._mouseX-12,r._mouseY);x.lineTo(r._mouseX+12,r._mouseY);
-   x.moveTo(r._mouseX,r._mouseY-12);x.lineTo(r._mouseX,r._mouseY+12);x.stroke();};
-  window.noxFixture={canvas:c,renderer:r,paint};
+   x.moveTo(r._mouseX,r._mouseY-12);x.lineTo(r._mouseX,r._mouseY+12);x.stroke();
+   const publication=r._presentDisplayCanvas();
+   if(publication.source!==c||publication.output!==c||publication.backend!=='direct-canvas')throw Error('fixture requires direct production publication');
+   return publication.backend;};
+  window.noxFixture={canvas:c,renderer:r,paint,owner:crypto.randomUUID()};
   window.noxFixtureObserver=NoxPointerObserver.install({enabled:true,canvas:c,renderer:r,memory,document,
    diBase:RegionMap.BASE.DI_MOUSE_INPUT_STATE,emit:row=>console.log('NOX_POINTER_RECORD '+JSON.stringify(row))});
   paint();return true;
  })()`);
+ const fixtureOwner=await evaluate('noxFixture.owner');
  const image=async label=>{
+  const publication=await evaluate(`new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+   const f=noxFixture,c=f.canvas,b=c.getBoundingClientRect(),s=getComputedStyle(c);
+   resolve({owner:f.owner,canvasId:c.id,opacity:s.opacity,display:s.display,visibility:s.visibility,
+    hit:document.elementFromPoint(b.left+b.width/2,b.top+b.height/2)===c,
+    rect:{left:b.left,top:b.top,width:b.width,height:b.height},direct:f.renderer._directPresentation,
+    target:Array.from(c.getContext('2d').getImageData(300,220,1,1).data)});
+  })))`);
+  assert.equal(publication.owner,fixtureOwner);assert.equal(publication.opacity,'1');
+  assert.equal(publication.direct,true);assert.equal(publication.hit,true);
+  assert.notEqual(publication.display,'none');assert.equal(publication.visibility,'visible');
+  assert.deepEqual(publication.target,[38,200,122,255]);
+  save(label+'-publication.json',publication);
   const shot=await send('Page.captureScreenshot',{format:'png'},pageSession),bytes=Buffer.from(shot.data,'base64');
   fs.writeFileSync(out+'/'+label+'.png',bytes,{flag:'wx'});
-  const capture={label,sha256:sha(bytes),identity:{kind:'explicit-native-pointer-fixture',guest:false,productionCommit:pins.currentCommit,modules:pins.modules.map(m=>m.sha256)}};
+  const capture={label,sha256:sha(bytes),identity:{kind:'explicit-native-pointer-fixture',guest:false,fixtureOwner,canvasId:publication.canvasId,productionCommit:pins.currentCommit,modules:pins.modules.map(m=>m.sha256)}};
   save(label+'-capture.json',capture);
   const reviewFile=out+'/'+label+'-review.json';
   while(!fs.existsSync(reviewFile)){if(terminalError)throw terminalError;await wait(100);}
   const review=JSON.parse(fs.readFileSync(reviewFile));
   assert.equal(review.sha256,capture.sha256);assert.equal(review.label,capture.label);
-  assert.deepEqual(review.identity,capture.identity);assert(review.review?.trim());return capture;
+  assert.deepEqual(review.identity,capture.identity);assert(review.review?.trim());
+  assert.equal(sha(fs.readFileSync(out+'/'+label+'.png')),capture.sha256,'reviewed fixture bytes unchanged');return capture;
  };
  const before=await image('fixture-before');
  await evaluate('window.noxFixtureObserver.begin('+JSON.stringify({id:'native-fixture-click',label:'fixture-after',previous:before})+');true');

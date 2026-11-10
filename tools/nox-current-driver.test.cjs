@@ -79,6 +79,7 @@ async function child(){
    return originalLoad.call(this,name,parent,main);
  };
  globalThis.fetch=async url=>{const u=new URL(url);assert.equal(u.origin,'http://127.0.0.1:1');const b=fs.readFileSync(root+u.pathname);return {status:200,arrayBuffer:async()=>b};};
+ const fixtureControl=mode.startsWith('fixture');
  const observerControl=process.env.NOX_TEST_OBSERVER==='1';
  const canvas={},instance={},worker={},link={endpointIdentity:1,slot:0,worker,module:{}};
  const wine={processId:7,running:true,_stopped:false,guestWorker:{link},renderer:{peekKeyDownState:()=>0},_workerLastSlice:{batch:1}};
@@ -88,6 +89,37 @@ async function child(){
      addEventListener:(type,fn)=>{if(!listeners.has(type))listeners.set(type,[]);if(!listeners.get(type).includes(fn))listeners.get(type).push(fn);},
      removeEventListener:(type,fn)=>listeners.set(type,(listeners.get(type)||[]).filter(f=>f!==fn))};
    ctx.window=ctx;ctx.emit=(type,e)=>{for(const fn of [...(listeners.get(type)||[])])fn({type,isTrusted:true,...e});};
+   if(fixtureControl){
+    const {createCanvas}=require('../lib/canvas-compat');const elements=new Map(),docs=new Map();
+    const decorate=c=>Object.assign(c,{style:{},classList:{toggle(){}},
+     getBoundingClientRect:()=>({left:20,top:40,width:640,height:480}),
+     addEventListener(){},removeEventListener(){},setAttribute(){},focus(){}});
+    const output=decorate(createCanvas(640,480));elements.set('screen-present',output);
+    Object.assign(ctx.document,{pointerLockElement:null,documentElement:{},visibilityState:'visible',
+     createElement:tag=>{assert.equal(tag,'canvas');return decorate(createCanvas(640,480));},
+     body:{append(c){elements.set(c.id,c);}},getElementById:id=>elements.get(id)||null,
+     querySelectorAll:()=>[],elementFromPoint:()=>elements.get('nox-pointer-fixture'),
+     addEventListener:(type,fn)=>{if(!docs.has(type))docs.set(type,[]);docs.get(type).push(fn);},
+     removeEventListener:(type,fn)=>docs.set(type,(docs.get(type)||[]).filter(f=>f!==fn))});
+    ctx.getComputedStyle=c=>({opacity:c.style.opacity??'1',display:c.style.display||'block',visibility:'visible'});
+    ctx.setTimeout=setTimeout;ctx.clearTimeout=clearTimeout;
+    ctx.requestAnimationFrame=fn=>setImmediate(fn);ctx.setInterval=()=>1;ctx.clearInterval=()=>{};
+    ctx.RegionMap=require('../lib/region-map.generated');
+    ctx.require=Module.createRequire(root+'/lib/renderer.js');
+    const context=vm.createContext(ctx);
+    vm.runInContext(fs.readFileSync(root+'/lib/renderer.js','utf8'),context);
+    // Retain the actual constructor's screen-present selection and opacity=0.
+    vm.runInContext(`const OriginalRenderer=Win98Renderer;Win98Renderer=class extends OriginalRenderer {
+     constructor(c){super(c);if(c.id==='nox-pointer-fixture'){
+      if(this.presentationCanvas!==document.getElementById('screen-present')||c.style.opacity!=='0')throw Error('production presentation constructor omitted');
+     }} };`,context);
+    vm.runInContext(fs.readFileSync(root+'/lib/browser-input.js','utf8'),context);
+    ctx.emit=(type,e)=>{const c=elements.get('nox-pointer-fixture');
+     const event={type,isTrusted:true,clientX:e.x,clientY:e.y,movementX:0,movementY:0,button:0,preventDefault(){},stopPropagation(){},...e};
+     for(const f of docs.get(type)||[])f(event);if(c?.['on'+type])c['on'+type](event);
+     for(const f of listeners.get(type)||[])f(event);
+    };return context;
+   }
    if(observerControl){
     const {Win98Renderer}=require('../lib/renderer'),{createCanvas}=require('../lib/canvas-compat');
     const c=createCanvas(640,480),r=new Win98Renderer(c),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
@@ -124,7 +156,7 @@ async function child(){
    reply(q,result={},error){this.deliver({id:q.id,...(error?{error}:{result})});}
    send(raw){
      const q=JSON.parse(raw);protocol.push(q);
-     queueMicrotask(()=>{
+     queueMicrotask(async()=>{
        try{
          let r={};
          if(q.method==='Browser.getVersion')r={product:'OFFLINE_NODE_PEER'};
@@ -137,7 +169,7 @@ async function child(){
              this.deliver({method:'Debugger.scriptParsed',sessionId:'worker-session',params:{scriptLanguage:'WebAssembly',url:'wasm://offline',scriptId:'1',hash:'offline'}});
            }
          }else if(q.method==='Runtime.evaluate'){
-           const value=vm.runInContext(q.params.expression,q.sessionId==='worker-session'?workerCtx:page);
+           const value=await vm.runInContext(q.params.expression,q.sessionId==='worker-session'?workerCtx:page);
            if(mode==='held-identity'&&!wine.running)terminalIndex=protocol.length;
            r={result:{value:JSON.parse(JSON.stringify(value===undefined?null:value))}};
          }else if(q.method==='Debugger.getScriptSource')r={bytecode:fs.readFileSync(root+'/build/wine-assembly.wasm').toString('base64')};
@@ -148,7 +180,8 @@ async function child(){
          }else if(q.method==='Input.dispatchMouseEvent'){
            const p=q.params;deliveries.push(p);page.emit(p.type==='mousePressed'?'mousedown':p.type==='mouseReleased'?'mouseup':'mousemove',p);
            if(['drag-failure','held-mouse'].includes(mode)&&p.type==='mousePressed'&&!firstMouseFault){firstMouseFault=true;terminalIndex=protocol.length;if(mode==='held-mouse')return;return this.reply(q,{}, {code:-1,message:'OFFLINE_FIRST_DRAG_FAILURE'});}
-         }else if(q.method==='Page.captureScreenshot'){if(mode==='held-capture'&&fs.existsSync(generated+'/original/ready.json')){terminalIndex=protocol.length;return;}r={data:Buffer.from('offline screenshot bytes').toString('base64')};}
+         }else if(q.method==='Page.captureScreenshot'){if(mode==='held-capture'&&fs.existsSync(generated+'/original/ready.json')){terminalIndex=protocol.length;return;}if(fixtureControl){const f=page.noxFixture;assert.equal(f.canvas.style.opacity,'1','paint must publish through production renderer');assert(f.renderer._directPresentation);assert.equal(f.renderer.presentationCanvas.style.display,'none');}
+          r={data:Buffer.from('offline screenshot bytes').toString('base64')};}
          else if(q.method==='Browser.close'){this.reply(q);browser.stdin.end('close\n');return;}
          else assert(['Target.setDiscoverTargets','Target.setAutoAttach','Page.enable','Runtime.enable','Debugger.enable'].includes(q.method),q.method);
          this.reply(q,r);
@@ -160,8 +193,21 @@ async function child(){
  globalThis.WebSocket=Peer;
  process.on('exit',code=>save(dir+'/peer.json',{mode,code,compiled,protocol,deliveries,terminalIndex,failurePublishedIndex,chromeStarted:false,browserPeerOnly:true}));
  process.env.BROWSER_DEADLINE=String(Date.now()+600000);
- if(mode==='ordinary')process.env.NO_ORIGINAL='1';
- if(!faults[mode]&&mode!=='ordinary'&&!startupFailure){
+ if(mode==='ordinary'||fixtureControl)process.env.NO_ORIGINAL='1';
+ if(fixtureControl){
+  process.env.NOX_POINTER_OBSERVER='1';
+  (async()=>{const out=generated+'/production-preflight';
+   for(const label of ['fixture-before','fixture-after']){
+    while(!fs.existsSync(out+'/'+label+'-capture.json')){if(fs.existsSync(out+'/first-browser-failure.json'))return;await wait(20);}
+    const capture=JSON.parse(fs.readFileSync(out+'/'+label+'-capture.json'));
+    if(mode==='fixture-owner-fault')capture.identity.fixtureOwner='foreign-owner';
+    if(mode==='fixture-image-fault')fs.writeFileSync(out+'/'+label+'.png','changed bytes');
+    save(out+'/'+label+'-review.json',{...capture,review:'Offline fixture publication and binding control only'});
+    if(mode!=='fixture')return;
+   }
+  })().catch(e=>{console.error(e);process.exitCode=3;});
+ }
+ if(!faults[mode]&&mode!=='ordinary'&&!fixtureControl&&!startupFailure){
    (async()=>{
      const out=generated+'/original';while(!fs.existsSync(out+'/ready.json')){if(fs.existsSync(out+'/first-browser-failure.json'))return;await wait(20);}
      const transport=require(generated+'/transport.cjs');
@@ -191,6 +237,7 @@ async function main(){
  const generated=path.resolve(process.argv[2]||''),out=path.resolve(process.argv[3]||'');
  assert(process.argv[2]&&process.argv[3]&&out.startsWith(root+'/scratch/runs/'));assert(!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
  const manifest=JSON.parse(fs.readFileSync(generated+'/runtime-pins.json'));assert(current.verify(root,manifest,generated));
+ if(process.argv[4]==='--fixture')return fixtureIntegration(generated,out);
  if(process.argv[4]==='--observer')return observerIntegration(generated,out);
  const results=[];
  // The unchanged driver actually executes its full strict preflight.
@@ -268,6 +315,30 @@ async function main(){
  }
  await chainControls(generated);
  save(out+'/results.json',{passed:true,actualGeneratedConsumer:true,actualBoundChain:true,actualNativeHelper:true,chromiumTested:false,results});
+ console.log(JSON.stringify({passed:true,results}));
+}
+async function fixtureIntegration(generated,out){
+ const results=[];
+ for(const mode of ['fixture','fixture-owner-fault','fixture-image-fault']){
+  const dir=out+'/'+mode;fs.mkdirSync(dir);
+  const r=cp.spawnSync(process.execPath,[__filename],{env:{...process.env,NOX_TEST_CHILD:'1',NOX_TEST_MODE:mode,NOX_TEST_DIR:dir,NOX_TEST_GENERATED:generated},encoding:'utf8',timeout:30000,maxBuffer:1024*1024});
+  fs.writeFileSync(dir+'/stdout',r.stdout||'');fs.writeFileSync(dir+'/stderr',r.stderr||'');
+  const runtime=generated+'/production-preflight';fs.renameSync(runtime,dir+'/runtime');
+  const peer=JSON.parse(fs.readFileSync(dir+'/peer.json')),joined=JSON.parse(fs.readFileSync(dir+'/child-wait.json'));
+  assert.equal(joined.stdoutEOF,true);assert.equal(joined.stderrEOF,true);
+  assert.equal(r.status,mode==='fixture'?0:1,r.stderr+'\n'+r.stdout);
+  const presses=peer.deliveries.filter(p=>p.type==='mousePressed');
+  assert.equal(presses.length,mode==='fixture'?1:0,'review binding must precede any click');
+  if(mode==='fixture'){
+   const proof=JSON.parse(fs.readFileSync(dir+'/runtime/native-pointer-fixture.json'));
+   assert(proof.passed);assert.equal(proof.before.identity.fixtureOwner,proof.after.identity.fixtureOwner);
+   assert.equal(proof.before.identity.canvasId,'nox-pointer-fixture');
+   const pointer=JSON.parse(fs.readFileSync(dir+'/runtime/fixture-pointer.json'));
+   assert(pointer.records.some(p=>p.kind==='dom'&&p.binding?.previous?.sha256===proof.before.sha256));
+  }else assert.equal(peer.protocol.length,peer.failurePublishedIndex,'no protocol after first refusal');
+  results.push({mode,passed:true,status:r.status});
+ }
+ save(out+'/fixture-controls.json',{passed:true,actualGeneratedFixture:true,productionRenderer:true,chromiumTested:false,results});
  console.log(JSON.stringify({passed:true,results}));
 }
 async function observerIntegration(generated,out){
