@@ -24,7 +24,9 @@ async function main() {
   const out=process.env.Q3_SCREENSHOT_TEST_OUT;
   assert(out && path.isAbsolute(out),'unique absolute Q3_SCREENSHOT_TEST_OUT required');
   fs.mkdirSync(out,{recursive:true});
-  const source=composition.compose().source;
+  const route=require('./q3-current-foreign-closure-v1.cjs');
+  const source=route.composition(route.version).compose().source;
+  const startupSource=source.slice(source.indexOf("const startupDiagnostics=require(root+'/tools/q3-current-module.cjs');"),source.indexOf('function send('));
   const sendSource=source.slice(source.indexOf('function send('),source.indexOf('\nasync function evaluate'));
   const terminalCheck=source.slice(source.indexOf('function checkTerminal()'),source.indexOf('const callerMonitor='));
   const receiveSource=source.slice(source.indexOf('ws.onmessage=')+13,source.indexOf('\n save(\'browser-version.json\''));
@@ -73,7 +75,7 @@ async function main() {
     setTimeout(fn,ms){assert.equal(ms,20000,'actual unchanged CDP cap');const timer=setTimeout(()=>{timers.delete(timer);fn();},ms);timers.add(timer);return timer;},
     clearTimeout(timer){timers.delete(timer);clearTimeout(timer);}});
   const initializer=source.match(/const screenshotCompletion=[^\n]+/)[0];
-  vm.runInContext(terminalCheck+initializer+'\nglobalThis.diagnostic=screenshotCompletion;\n'+sendSource+'\nglobalThis.send=send;globalThis.receive='+receiveSource,scope);
+  vm.runInContext(terminalCheck+initializer+'\n'+startupSource+'\nglobalThis.diagnostic=screenshotCompletion;\n'+sendSource+'\nglobalThis.send=send;globalThis.receive='+receiveSource,scope);
   diagnostic=scope.diagnostic;
   ws.onmessage=scope.receive;
   for(const event of ['close','error'])ws.addEventListener(event,()=>diagnostic.transport(event));

@@ -83,7 +83,7 @@ const readyLine=generated.split('\n').find(s=>s.includes("save('renderer-readine
 assert(initialize&&readyLine);
 // Execute the generated send/evaluate and delivery handler, not a diagnostic
 // facsimile. Only the remote peer is replaced; no browser or guest is started.
-function emittedTransport(peer,enabled=true,sink){
+function emittedTransport(peer,enabled=true,sink,production=false){
  const records=[],scope={root,require,Buffer,process:{env:{}},setTimeout,clearTimeout,
   trace:{span:(_n,fn)=>fn(),expression:()=>({}),snapshot(){}},
   screenshotCompletion:new Proxy({},{get:()=>()=>{}}),
@@ -93,12 +93,52 @@ function emittedTransport(peer,enabled=true,sink){
   const v={id:q.id,sessionId:q.sessionId,...peer(q)};
   const event=new MessageEvent('message',{data:JSON.stringify(v)});this.dispatchEvent(event);this.onmessage(event);
  });}}
- const socket=new Socket();socket.q3Readiness=current.createReadinessDiagnostics({socket,enabled,write:r=>{records.push(r);sink?.(r);}});
+ const write=r=>{records.push(r);sink?.(r);};
+ const socket=production?new (current.installTransportDiagnostics({WebSocket:Socket,write}))():new Socket();
+ if(!production)socket.q3Readiness=current.createReadinessDiagnostics({socket,enabled,write});
  scope.ws=socket;vm.createContext(scope);
  const begin=generated.indexOf("const startupDiagnostics=require(root+'/tools/q3-current-module.cjs');"),end=generated.indexOf('async function event(',begin);
  const handler=generated.slice(generated.indexOf('ws.onmessage='),generated.indexOf("\n save('browser-version.json'"));
- vm.runInContext("let id=0,pageSession='page';const workers=new Map([['render',{targetId:'original-render-target'}]]),pending=new Map();\n"+generated.slice(begin,end)+handler+'\nglobalThis.query=evaluate;',scope);
- return {query:scope.query,records,socket};
+ vm.runInContext("let id=0,pageSession='page';const workers=new Map([['render',{targetId:'original-render-target'}]]),pending=new Map();\n"+generated.slice(begin,end)+handler+'\nglobalThis.query=evaluate;globalThis.sendRequest=send;',scope);
+ return {query:scope.query,send:scope.sendRequest,records,socket};
+}
+async function normalRouteRetention(){
+ const old=process.env.Q3_READINESS_WIRE;delete process.env.Q3_READINESS_WIRE;
+ let t;
+ try{
+  const endpoint=[{id:1,options:{api:'gl',backend:'webgl'},failed:false,gl:{adapter:'a',bridge:'b',owners:[{
+   owner:0,context:'c',hwnd:65543,software:false,webgl:true,completed:5,presented:1,writeSeq:1,draws:3,vertices:9}]}}];
+  const app={slot:0,renderEndpoint:1},page={apps:[app]};
+  const pageRead=require(baseDir+'/bound-input.cjs').PAGE_READ;
+  const seen=[];
+  t=emittedTransport(q=>{seen.push(q.params.expression);return q.method==='Page.captureScreenshot'?{result:{data:'unchanged-image-base64'}}:{result:{result:{value:q.params.expression===producer.READ?endpoint:page}}};},false,null,true);
+  assert.deepEqual(JSON.parse(JSON.stringify(await t.query(pageRead,'page'))),page);
+  assert.deepEqual(JSON.parse(JSON.stringify(await t.query(producer.READ,'render'))),endpoint);
+  assert(seen[0].includes(pageRead)&&seen[0].includes('Q3_GL_PARTIAL'),'actual composed wrapped page query');
+  const rows=t.records.filter(r=>r.observation==='readiness');
+  assert.deepEqual(rows.map(r=>r.phase),['page-owner-reply','producer-reply']);
+  assert(rows.every(r=>r.routePending&&r.routeSessionMatches&&!r.reply.truncated));
+  assert(producer.select({a:rows[0].reply.value.result.value.apps[0],endpoints:rows[1].reply.value.result.value,target:'render',backend:'webgl'}));
+  for(const field of ['completed','presented','writeSeq','draws','vertices','context','hwnd','webgl']){
+   const failed=structuredClone(endpoint);failed[0].gl.owners[0][field]=0;
+   assert.equal(producer.select({a:app,endpoints:failed,target:'render',backend:'webgl'}),null,field);
+   // Exact missing predicate values survive the real generated response path.
+   const f=emittedTransport(()=>({result:{result:{value:failed}}}),false,null,true);
+   try{await f.query(producer.READ,'render');assert.equal(f.records.find(r=>r.phase==='producer-reply').reply.value.result.value[0].gl.owners[0][field],0);}
+   finally{f.socket.q3Readiness.dispose();f.socket.q3Capture.dispose();}
+  }
+  for(let i=0;i<70;i++){await t.query(pageRead,'page');await t.query(producer.READ,'render');}
+  assert.equal(t.records.filter(r=>r.phase==='producer-reply').length,64);
+  assert.equal(t.records.filter(r=>r.phase==='page-owner-reply').length,64);
+  assert.equal(seen.length,142,'observation adds no protocol requests');
+  const shot=await t.send('Page.captureScreenshot',{format:'png'},'page');
+  assert.equal(shot.data,'unchanged-image-base64');
+  assert.equal(seen.length,143,'successful capture sends once');
+  return {actualProductionSocketAndGeneratedDelivery:true,successfulCaptureUnchanged:true,verboseFlagAbsent:true,selectorInputsRetained:true,independentCaps:64,missingFields:['completed','presented','writeSeq','draws','vertices','context','hwnd','webgl'],noAddedRequests:true};
+ }finally{
+  t?.socket.q3Readiness.dispose();t?.socket.q3Capture.dispose();
+  if(old===undefined)delete process.env.Q3_READINESS_WIRE;else process.env.Q3_READINESS_WIRE=old;
+ }
 }
 async function replyRetention(){
  const endpoint=[{id:1,options:{api:'gl',backend:'webgl'},failed:false,gl:{adapter:'adapter',bridge:'bridge',owners:[{owner:0,context:'ctx',hwnd:65543,completed:3,presented:0,writeSeq:0,webgl:true,software:false,draws:0,vertices:0}]}}];
@@ -182,8 +222,12 @@ async function readinessControl(mode){
   if(session==='render'){renderModuleReads++;return {bytecode:fs.readFileSync(root+'/build/wine-assembly.wasm').toString('base64')};}
   assert.equal(params.scriptId,'observation');return {bytecode:bytes.toString('base64')};
  };
+ // The retained evidence manifest predates today's canonical CPU. Controlled
+ // renderer bytes and their advertised fixture pin must name the same module.
+ const fixturePins=structuredClone(manifest);
+ for(const p of fixturePins.files)if(p.path==='build/wine-assembly.wasm')p.sha256=canonical;
  const scope={assert,bound:menu.boundAdapter(base,config,()=>terminal++),evaluate,send,workers,pageSession:'page',
-  fs:{existsSync:()=>false},run:'/offline',process:{env:{}},pins:manifest,save:(n,v)=>saved[n]=v,
+  fs:{existsSync:()=>false},run:'/offline',process:{env:{}},pins:fixturePins,save:(n,v)=>saved[n]=v,
   log(){},wait:async()=>{waits++;if(waits===2&&mode!=='complete')throw Error('offline stop after two pending samples');}};
  vm.createContext(scope);
  const oldBackend=process.env.RENDER_BACKEND;process.env.RENDER_BACKEND='webgl';
@@ -201,7 +245,7 @@ async function readinessControl(mode){
  return {mode,producerReads,renderModuleReads,ready:!!saved['renderer-readiness.json'],wire};
 }
 (async()=>{
- const result={passed:true,offlineOnly:true,generatedSHA256:sha(Buffer.from(generated)),verifiedOriginalProviders:checked,ownedChanges,replyRetention:await replyRetention(),
+ const result={passed:true,offlineOnly:true,generatedSHA256:sha(Buffer.from(generated)),verifiedOriginalProviders:checked,ownedChanges,replyRetention:await replyRetention(),normalRouteRetention:await normalRouteRetention(),
   evidence:evidence(),originalRenderer:originalRenderer(),controls:[]};
  for(const mode of ['no-presentation','no-write','no-draw','wrong-owner','complete'])result.controls.push(await readinessControl(mode));
  result.nonIdentifiability='Four distinct missing producer conditions reproduce the same retained request branch; original response values are absent.';

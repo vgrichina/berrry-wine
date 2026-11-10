@@ -217,14 +217,18 @@ function createCaptureDiagnostics({socket,write,now=monotonicNs,schedule=setTime
 }
 // Reserved readiness lane: unrelated startup traffic cannot exhaust it. Public
 // receipt is Node's MessageEvent entry, never proof of browser execution.
-function createReadinessDiagnostics({socket,write,now=monotonicNs,enabled=process.env.Q3_READINESS_WIRE==='1'}){
+function createReadinessDiagnostics({socket,write,now=monotonicNs,enabled=process.env.Q3_READINESS_WIRE==='1',producerOnly=false}){
  const requests=new Map(),ingress=new WeakMap();let rows=0,wireRows=0,passive=0,progress=0,errors=0,closed=!enabled;
  const producerRead=enabled?require('../scratch/runs/20261108-q3-gl-readiness-gameplay/producer-ready.cjs').READ:null;
- let replies=0,consoleRows=0;
+ const pageRead=enabled?require('../scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs').PAGE_READ:null;
+ // The retained GL adapter wraps this query before the production send seam.
+ const pageReads=new Set([pageRead,`(()=>{const value=(${pageRead});try{console.debug("Q3_GL_PARTIAL",JSON.stringify(GLRenderHost.diagnosticSnapshot()));}catch(error){console.debug("Q3_GL_UNAVAILABLE",String(error));}return value;})()`]);
+ let replies=0,pageReplies=0,consoleRows=0;
  const safe=fn=>{try{return fn();}catch{}};
  const emit=(phase,fields={})=>safe(()=>{
   if(closed)return;
-  if(!['passive-event','producer-reply','startup-console'].includes(phase)&&wireRows++>=2048)return;
+  if(producerOnly&&!['producer-reply','page-owner-reply'].includes(phase))return;
+  if(!['passive-event','producer-reply','page-owner-reply','startup-console'].includes(phase)&&wireRows++>=2048)return;
   write({version:1,observation:'readiness',sequence:++rows,monotonicNs:now(),phase,...fields,
    ...(phase!=='passive-event'&&wireRows===2048?{recordLimitReached:true}:{})});
  });
@@ -240,9 +244,10 @@ function createReadinessDiagnostics({socket,write,now=monotonicNs,enabled=proces
   request(meta,params){safe(()=>{
    if(closed||requests.size>=32||meta.method!=='Runtime.evaluate')return;
    const expression=params.expression;
-   if(typeof expression!=='string'||!(expression===producerRead||/runningApps.*guestWorker/.test(expression)||['WINE_REDLINE_STARTUP','__q3StartupInstance','__generatedError','__q3Launch'].some(token=>expression.includes(token))))return;
+   if(producerOnly&&expression!==producerRead&&!pageReads.has(expression))return;
+   if(typeof expression!=='string'||!(expression===producerRead||pageReads.has(expression)||/runningApps.*guestWorker/.test(expression)||['WINE_REDLINE_STARTUP','__q3StartupInstance','__generatedError','__q3Launch'].some(token=>expression.includes(token))))return;
    requests.set(meta.requestId,{requestId:meta.requestId,sessionId:metadataToken(meta.sessionId),targetId:metadataToken(meta.targetId),
-    stage:expression===producerRead?'renderer-producer':expression.includes('__q3StartupInstance')?'worker-identity':expression.includes('WINE_REDLINE_STARTUP')?'startup-admission':'guest-readiness',expressionSHA256:hash(Buffer.from(expression))});
+    stage:expression===producerRead?'renderer-producer':pageReads.has(expression)?'page-owner':expression.includes('__q3StartupInstance')?'worker-identity':expression.includes('WINE_REDLINE_STARTUP')?'startup-admission':'guest-readiness',expressionSHA256:hash(Buffer.from(expression))});
    emit('request',requests.get(meta.requestId));
   });},
   send(phase,data){safe(()=>{if(closed||!requests.size)return;const fields=protocolMetadata(data);if(requests.has(fields.requestId))emit(phase,fields);});},
@@ -254,6 +259,14 @@ function createReadinessDiagnostics({socket,write,now=monotonicNs,enabled=proces
     routeSessionMatches:request.sessionId===metadataToken(value.sessionId),
     reply:boundedDiagnosticValue(value.result),protocolError:boundedDiagnosticValue(value.error),
     recordLimitReached:replies===64});
+   // The selector also reads slot/renderEndpoint/d3dStats from the existing
+   // page query. Retain that input independently, even before any screenshot.
+   if(request?.stage==='page-owner'&&pageReplies++<64)emit('page-owner-reply',{
+    ...request,responseSessionId:metadataToken(value.sessionId),routePending:!!pending,
+    routeSessionMatches:request.sessionId===metadataToken(value.sessionId),
+    reply:boundedDiagnosticValue(value.result),protocolError:boundedDiagnosticValue(value.error),
+    recordLimitReached:pageReplies===64});
+   if(producerOnly)return;
    if(value.method==='Runtime.consoleAPICalled'&&value.params?.args?.[0]?.value==='Q3_STARTUP_CONSOLE'&&consoleRows++<64)
     emit('startup-console',{sessionId:metadataToken(value.sessionId),detail:boundedDiagnosticValue(value.params),recordLimitReached:consoleRows===64});
    if(requests.has(value.id))emit('consumer-delivery',{...requests.get(value.id),responseSessionId:metadataToken(value.sessionId),publicMonotonicNs:ingress.get(event)??null,routePending:!!pending,errorCode:value.error?.code??null,exception:!!value.result?.exceptionDetails,resultPhase:metadataToken(value.result?.result?.value?.phase),value:typeof value.result?.result?.value==='boolean'?value.result.result.value:null});
@@ -300,7 +313,10 @@ function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=s
  return class TransportSocket extends WebSocket{
   constructor(...args){
    super(...args);
-   this.q3Readiness=createReadinessDiagnostics({socket:this,write,now});
+   // Producer readiness must remain diagnosable on the normal composed route,
+   // independently of the optional verbose startup/console observation lane.
+   this.q3Readiness=createReadinessDiagnostics({socket:this,write,now,enabled:true,
+    producerOnly:process.env.Q3_READINESS_WIRE!=='1'});
    this.q3Capture=createCaptureDiagnostics({socket:this,write,now,schedule,cancel});
    let rows=0,samples=0,active=true,timer=null,armed=false;
    const record=(phase,fields={})=>{if(!active||rows>=512)return;try{
