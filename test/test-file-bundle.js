@@ -10,6 +10,7 @@ const http = require('http');
 const os = require('os');
 const path = require('path');
 const vm = require('vm');
+const { startStaticServer } = require('./static-server');
 const { readBundle } = require('../lib/file-bundle');
 const { createServer } = require('../tools/dev-server');
 const { createEmulatorHandler, LOCAL_DESKTOP } = require('../ops/emulator-server');
@@ -104,10 +105,10 @@ const listen = server => new Promise(r => server.listen(0, '127.0.0.1', () => r(
       await fsp.writeFile(path.join(root, name), content);
     }
     const serve = createEmulatorHandler(root);
-    const server = http.createServer(async (req, res) => {
+    const server = await startStaticServer({ root, async handleRequest(req, res) {
       if (!await serve(req, res)) { res.writeHead(404); res.end(); }
-    });
-    const port = await listen(server);
+    } });
+    const port = server.address().port;
     try {
       const res = await get(port, '/emulator/__bundle?f=test%2Fbinaries%2Fgame%2Fdata.bin' +
         '&f=scratch%2Fsecret.txt&f=index.html&f=..%2Flib%2Fapps.js');

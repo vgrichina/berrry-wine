@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const http = require('http');
+const { startStaticServer } = require('./static-server');
 const { spawnSync } = require('child_process');
 const { recover, download } = require('../tools/fetch-dos-game-corpus');
 
@@ -21,7 +21,7 @@ async function main() {
     const packed = spawnSync('zip', ['-q', zip, 'GAME.EXE', 'DATA.DAT'], { cwd: input });
     assert.equal(packed.status, 0, 'test requires zip and unzip');
     const bytes = fs.readFileSync(zip);
-    server = http.createServer((request, response) => {
+    server = await startStaticServer({ root, handleRequest(request, response) {
       if (request.url === '/404') { response.writeHead(404); response.end(); return; }
       if (request.url === '/truncated') {
         response.writeHead(200, { 'Content-Length': bytes.length + 100 });
@@ -29,8 +29,7 @@ async function main() {
         return;
       }
       response.end(bytes);
-    });
-    await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+    } });
     const url = `http://127.0.0.1:${server.address().port}`;
     const game = { id: 'demo', executable: 'GAME.EXE', package: {
       file: 'demo.zip', url, size: bytes.length,

@@ -6,7 +6,7 @@
 // decoder and page-watch exports in Chrome against the production GPU backend.
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
+const { startStaticServer } = require('./static-server');
 const crypto = require('crypto');
 const launchControl = require('./helpers/palette-browser-launch');
 // Reject wrapper side effects before identity Git, compilation, server or browser.
@@ -48,9 +48,7 @@ const saveEvidence = evidence => {
     name.startsWith('test/') ? root : sourceRoot,name))]));
   evidence.scripts=Object.fromEntries(scripts.map(name=>[name,sha256(assets.get('/'+name))]));
   assets.set('/fixture.wasm',wasm);
-  const server = http.createServer((req,res) => {
-    res.setHeader('Cross-Origin-Opener-Policy','same-origin');
-    res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
+  const server = await startStaticServer({ root, crossOriginIsolated: true, handleRequest(req,res) {
     if (req.url === '/') {
       res.setHeader('Content-Type','text/html');
       res.end(scripts.map(name=>`<script src="/${name}"></script>`).join('\n')); return;
@@ -58,8 +56,7 @@ const saveEvidence = evidence => {
     const body=assets.get(req.url);
     if (!body) { res.statusCode=404; res.end(); return; }
     res.setHeader('Content-Type',req.url.endsWith('.wasm')?'application/wasm':'text/javascript'); res.end(body);
-  });
-  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  } });
   let browser,page;
   try {
     evidence.launchControl=launchConfig.checked;

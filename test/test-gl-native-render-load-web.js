@@ -7,7 +7,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
+const { startStaticServer } = require('./static-server');
 const os = require('os');
 const crypto = require('crypto');
 const {spawn} = require('child_process');
@@ -377,9 +377,7 @@ async function launchBrowser() {
     '/test/gl-load-producer-fixture.js':'('+producerWorker.toString()+')()',
     '/lib/gl-load-delay-fixture.js':'('+delayedRenderWorker.toString()+')()'
   };
-  const server=http.createServer((request,response)=>{
-    response.setHeader('Cross-Origin-Opener-Policy','same-origin');
-    response.setHeader('Cross-Origin-Embedder-Policy','require-corp');
+  const server=await startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(request,response){
     const url=new URL(request.url,'http://localhost'),name=url.pathname;
     if(name==='/'){
       response.setHeader('Content-Type','text/html');response.end('<!doctype html><title>Native GL real worker load fixture</title>');return;
@@ -394,8 +392,7 @@ async function launchBrowser() {
     try{response.setHeader('Content-Type',file.endsWith('.wasm')?'application/wasm':file.endsWith('.json')?'application/json':'text/javascript');
       const bytes=fs.readFileSync(file);served.push({path:name,bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')});
       response.end(bytes);}catch(error){response.writeHead(404);response.end(String(error));}
-  });
-  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+  }});
   const startedAt=new Date().toISOString(),report={startedAt,results:[]};
   let browser;
   try {
