@@ -64,7 +64,14 @@ function evidence(){
 const checked=['tools/q3-current-module.cjs','tools/q3-menu-consumption.cjs',
  'tools/q3-menu-pointer-control.cjs','tools/q3-native-input-cause-diagnostic.cjs','tools/q3-input-wire-observation.cjs','lib/gl-compat.js',
  'lib/gl-render-worker.js','lib/gl-command-stream.js',...['bound-input.cjs','producer-ready.cjs','worker-observe.js'].map(n=>path.relative(root,baseDir+'/'+n))];
-for(const name of checked){const p=manifest.files.find(p=>p.path===name);assert(p,name);assert.equal(sha(fs.readFileSync(root+'/'+name)),p.sha256,name);}
+const ownedChanges=[];
+for(const name of checked){const p=manifest.files.find(p=>p.path===name);assert(p,name);
+ if(['tools/q3-current-module.cjs','tools/q3-menu-consumption.cjs'].includes(name)){
+  const original=require('node:child_process').execFileSync('git',['show','12304c851:'+name],{cwd:root});
+  assert.equal(sha(original),p.sha256,name+' prior published authority');
+  ownedChanges.push({path:name,priorSHA256:p.sha256,currentSHA256:sha(fs.readFileSync(root+'/'+name))});
+ }else assert.equal(sha(fs.readFileSync(root+'/'+name)),p.sha256,name);
+}
 process.env.Q3_BOUND_INPUT_OBSERVATION='1';process.env.Q3_MENU_CONSUMPTION_CONFIG=prior+'/passive-menu.json';
 let generated=route.composition(route.version,prior+'/prepared',prior+'/original/prepared/runtime').compose().source;
 generated=require('./q3-menu-pointer-control.cjs').integrate(generated);
@@ -74,6 +81,49 @@ delete process.env.Q3_BOUND_INPUT_OBSERVATION;delete process.env.Q3_MENU_CONSUMP
 const initialize=generated.split('\n').find(s=>s.includes('chain=bound.createChain('));
 const readyLine=generated.split('\n').find(s=>s.includes("save('renderer-readiness.json',await chain.establishReady("));
 assert(initialize&&readyLine);
+// Execute the generated send/evaluate and delivery handler, not a diagnostic
+// facsimile. Only the remote peer is replaced; no browser or guest is started.
+function emittedTransport(peer,enabled=true,sink){
+ const records=[],scope={root,require,Buffer,process:{env:{}},setTimeout,clearTimeout,
+  trace:{span:(_n,fn)=>fn(),expression:()=>({}),snapshot(){}},
+  screenshotCompletion:new Proxy({},{get:()=>()=>{}}),
+  inputWire:require('./q3-input-wire-observation.cjs').create({write(){}}),
+  checkTerminal(){},observeTerminal:e=>{throw e;},log(){},event:async()=>{}};
+ class Socket extends EventTarget{send(raw){const q=JSON.parse(raw);queueMicrotask(()=>{
+  const v={id:q.id,sessionId:q.sessionId,...peer(q)};
+  const event=new MessageEvent('message',{data:JSON.stringify(v)});this.dispatchEvent(event);this.onmessage(event);
+ });}}
+ const socket=new Socket();socket.q3Readiness=current.createReadinessDiagnostics({socket,enabled,write:r=>{records.push(r);sink?.(r);}});
+ scope.ws=socket;vm.createContext(scope);
+ const begin=generated.indexOf("const startupDiagnostics=require(root+'/tools/q3-current-module.cjs');"),end=generated.indexOf('async function event(',begin);
+ const handler=generated.slice(generated.indexOf('ws.onmessage='),generated.indexOf("\n save('browser-version.json'"));
+ vm.runInContext("let id=0,pageSession='page';const workers=new Map([['render',{targetId:'original-render-target'}]]),pending=new Map();\n"+generated.slice(begin,end)+handler+'\nglobalThis.query=evaluate;',scope);
+ return {query:scope.query,records,socket};
+}
+async function replyRetention(){
+ const endpoint=[{id:1,options:{api:'gl',backend:'webgl'},failed:false,gl:{adapter:'adapter',bridge:'bridge',owners:[{owner:0,context:'ctx',hwnd:65543,completed:3,presented:0,writeSeq:0,webgl:true,software:false,draws:0,vertices:0}]}}];
+ const peer=q=>{assert.equal(q.params.expression,producer.READ);return {result:{result:{value:endpoint}}};};
+ const t=emittedTransport(peer),value=await t.query(producer.READ,'render');assert.deepEqual(JSON.parse(JSON.stringify(value)),endpoint);
+ const r=t.records.find(r=>r.phase==='producer-reply');assert(r);assert.equal(r.targetId,'original-render-target');assert.equal(r.sessionId,'render');assert.equal(r.responseSessionId,'render');assert(r.routePending&&r.routeSessionMatches);
+ assert.equal(r.reply.truncated,false);assert.deepEqual(JSON.parse(JSON.stringify(r.reply.value.result.value)),endpoint);assert.equal(r.expressionSHA256,sha(Buffer.from(producer.READ)));
+ assert.equal(producer.select({a:{slot:0,renderEndpoint:1},endpoints:r.reply.value.result.value,target:r.targetId,backend:'webgl'}),null);
+ const inert=emittedTransport(peer,false);assert.deepEqual(JSON.parse(JSON.stringify(await inert.query(producer.READ,'render'))),endpoint);assert.equal(inert.records.length,0);
+ // Sink errors cannot alter actual consumer delivery or the returned values.
+ const failed=emittedTransport(peer,true,()=>{throw Error('sink');});assert.deepEqual(JSON.parse(JSON.stringify(await failed.query(producer.READ,'render'))),endpoint);
+ const exception=emittedTransport(()=>({result:{exceptionDetails:{text:'original JS exception'}}}));await assert.rejects(exception.query(producer.READ,'render'),/original JS exception/);
+ assert.equal(exception.records.find(r=>r.phase==='producer-reply').reply.value.exceptionDetails.text,'original JS exception');
+ const protocol=emittedTransport(()=>({error:{code:-32000,message:'original protocol error'}}));await assert.rejects(protocol.query(producer.READ,'render'),/original protocol error/);
+ assert.equal(protocol.records.find(r=>r.phase==='producer-reply').protocolError.value.code,-32000);
+ const mismatched=emittedTransport(()=>({sessionId:'other-session',result:{result:{value:endpoint}}}));await mismatched.query(producer.READ,'render');
+ assert.equal(mismatched.records.find(r=>r.phase==='producer-reply').routeSessionMatches,false,'retained wire mismatch is never rewritten as ownership proof');
+ const large=emittedTransport(()=>({result:{result:{value:Array.from({length:10000},()=>({text:'x'.repeat(5000)}))}}}));await large.query(producer.READ,'render');
+ const limited=large.records.find(r=>r.phase==='producer-reply');assert(limited.reply.truncated);assert(JSON.stringify(limited).length<40000);
+ for(let i=0;i<70;i++)await t.query(producer.READ,'render');assert.equal(t.records.filter(r=>r.phase==='producer-reply').length,64);
+ for(let i=0;i<70;i++)t.socket.onmessage(new MessageEvent('message',{data:JSON.stringify({method:'Runtime.consoleAPICalled',sessionId:'guest',params:{args:[{value:'Q3_STARTUP_CONSOLE'},{value:'controlled text and caller'}]}})}));
+ assert.equal(t.records.filter(r=>r.phase==='startup-console').length,64);
+ for(const a of [t,inert,failed,exception,protocol,mismatched,large])a.socket.q3Readiness.dispose();
+ return {actualGeneratedSendEvaluateDelivery:true,exactQuery:true,sessionAndTarget:true,sessionMismatchExplicit:true,defaultInert:true,sinkFailurePreservesDelivery:true,exceptionsPreserved:true,boundedLargeReply:true,replyLimit:64,startupConsoleLaneLimit:64,controlledSample:r};
+}
 // The real original GL adapter, command stream and bridge, with a software
 // canvas-free consumer, reproduce setup-without-presentation. No guest runs.
 function originalRenderer(){
@@ -151,7 +201,7 @@ async function readinessControl(mode){
  return {mode,producerReads,renderModuleReads,ready:!!saved['renderer-readiness.json'],wire};
 }
 (async()=>{
- const result={passed:true,offlineOnly:true,generatedSHA256:sha(Buffer.from(generated)),verifiedOriginalProviders:checked,
+ const result={passed:true,offlineOnly:true,generatedSHA256:sha(Buffer.from(generated)),verifiedOriginalProviders:checked,ownedChanges,replyRetention:await replyRetention(),
   evidence:evidence(),originalRenderer:originalRenderer(),controls:[]};
  for(const mode of ['no-presentation','no-write','no-draw','wrong-owner','complete'])result.controls.push(await readinessControl(mode));
  result.nonIdentifiability='Four distinct missing producer conditions reproduce the same retained request branch; original response values are absent.';

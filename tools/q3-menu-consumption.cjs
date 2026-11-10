@@ -12,10 +12,12 @@ function compile(){
  function edit(name,before,after){const s=c.vfs.get(name);assert.equal(s.split(before).length,2,name+' observation seam');
   const v=s.replace(before,after);for(const key of [name,'src/'+name,'./'+name])c.vfs.set(key,v);}
  edit('01-header.wat','(import "host" "log_eip"',
-  '(import "host" "q3_menu_event" (func $q3_menu_event (param i32 i32 i32 i32)))\n  (global $q3_menu_on (mut i32) (i32.const 0))\n  (func (export "q3_menu_arm") (param $on i32) (global.set $q3_menu_on (local.get $on)))\n  (import "host" "log_eip"');
+  '(import "host" "q3_menu_event" (func $q3_menu_event (param i32 i32 i32 i32)))\n  (global $q3_menu_on (mut i32) (i32.const 0))\n  (global $q3_console_on (mut i32) (i32.const 0))\n  (func (export "q3_console_arm") (param $on i32) (global.set $q3_console_on (local.get $on)))\n  (func (export "q3_menu_arm") (param $on i32) (global.set $q3_menu_on (local.get $on)))\n  (import "host" "log_eip"');
  const call=(kind,a,b,d)=>`(if (global.get $q3_menu_on) (then (call $q3_menu_event (i32.const ${kind}) ${a} ${b} ${d})))`;
  edit('05-alu.wat','(func $pending_push (param $target i32) (param $ret i32) (param $esp i32)',
-  '(func $pending_push (param $target i32) (param $ret i32) (param $esp i32)\n'+call(1,'(local.get $target)','(local.get $ret)','(local.get $esp)'));
+  '(func $pending_push (param $target i32) (param $ret i32) (param $esp i32)\n'+
+  '(if (global.get $q3_console_on) (then (if (i32.eq (local.get $target) (i32.const 0x443840)) (then (call $q3_menu_event (i32.const 5) (local.get $target) (local.get $ret) (local.get $esp))))))\n'+
+  call(1,'(local.get $target)','(local.get $ret)','(local.get $esp)'));
  edit('05-alu.wat','(func $pending_pop (param $ret i32) (param $esp i32)\n    (local $p i32) (local $entry i32)',
   '(func $pending_pop (param $ret i32) (param $esp i32)\n    (local $p i32) (local $entry i32)\n'+call(2,'(local.get $ret)','(i32.const 0)','(local.get $esp)'));
  edit('05-alu.wat','(func $pending_entry (param $pc i32) (param $esp i32)\n    (local $p i32)',
@@ -35,8 +37,10 @@ function recorder({getExports,getMemory,now=()=>performance.now(),emit=()=>{},li
  const copy=v=>JSON.parse(JSON.stringify(v));
  let binding=null,owner=null,deadline=0,terminal=null,sequence=0,events=0;
  const rows=[],frames=[];
+ let startupOn=false,startupSequence=0;
+ const startupRows=[];
  const same=(a,b)=>fields.every(k=>a?.[k]!==undefined&&a[k]!==null&&a[k]!==''&&a[k]===b?.[k]);
- const stop=reason=>{if(!terminal)terminal=reason;try{getExports()?.q3_menu_arm?.(0);}catch{}};
+ const stop=reason=>{if(!terminal)terminal=reason;startupOn=false;try{getExports()?.q3_menu_arm?.(0);getExports()?.q3_console_arm?.(0);}catch{}};
  function read(p){
   const wa=(p>>>0)-0x400000+0x12000,m=getMemory();
   if(!Number.isSafeInteger(wa)||wa<0x12000||wa+4>Math.min(0x8000000,m.byteLength))throw Error('direct read bounds');
@@ -49,6 +53,22 @@ function recorder({getExports,getMemory,now=()=>performance.now(),emit=()=>{},li
   const r={kind,sequence:++sequence,binding:copy(binding),at:now(),...data};rows.push(r);try{emit(r);}catch{stop('sink');}
  }
  function event(kind,a,b,esp){
+  if(kind===5){
+   if(!startupOn)return;
+   let r;
+   try{
+    const pointer=read((esp>>>0)+4),wa=pointer-0x400000+0x12000,m=getMemory();
+    if(wa<0x12000||wa>=Math.min(0x8000000,m.byteLength))throw Error('console direct read bounds');
+    const bytes=new Uint8Array(m,wa,Math.min(2048,Math.min(0x8000000,m.byteLength)-wa));
+    let text='',terminated=false;
+    for(const byte of bytes){if(byte===0){terminated=true;break;}text+=String.fromCharCode(byte);}
+    r={kind:'console-call',at:now(),target:a>>>0,callerReturn:b>>>0,esp:esp>>>0,pointer,text,terminated,truncated:!terminated};
+   }catch{r={kind:'console-read-error',target:a>>>0,callerReturn:b>>>0,esp:esp>>>0};}
+   r.sequence=++startupSequence;startupRows.push(r);
+   try{emit({observation:'startup-console',...r});}catch{}
+   if(startupRows.length>=64){startupOn=false;try{getExports()?.q3_console_arm?.(0);}catch{}}
+   return;
+  }
   if(!binding||terminal)return;
   try{
    if(++events>500000){stop('event-limit');return;}
@@ -76,6 +96,8 @@ function recorder({getExports,getMemory,now=()=>performance.now(),emit=()=>{},li
   }catch{stop('observation-error');}
  }
  return {event,stop,
+  startup(){if(startupSequence||startupOn)throw Error('Q3 startup console already armed');startupOn=true;getExports()?.q3_console_arm?.(1);},
+  startupSnapshot(){return {version:1,active:startupOn,recordLimit:64,textByteLimit:2048,records:copy(startupRows)};},
   begin(b,identity){
    if(terminal)throw Error('Q3 menu observer terminal: '+terminal);
    if(!b?.id||!b.label||!/^[a-f0-9]{64}$/.test(b.previous?.sha256??'')||!same(b.previous.identity,identity)||owner&&!same(owner,identity)){
@@ -100,12 +122,13 @@ function workerInstall(config,makeRecorder){
   if(!response.ok||digest!==config.sha256||bytes.length!==config.size)throw Error('Q3 observation module integrity');
   let exports;
   const observation=makeRecorder({getExports:()=>exports,getMemory:()=>imports.host.memory?.buffer??imports.env?.memory?.buffer??memory.buffer,qvmSites:config.qvmSites,
-   emit:r=>console.debug('Q3_MENU_CONSUMPTION',JSON.stringify(r))});
+   emit:r=>console.debug(r.observation==='startup-console'?'Q3_STARTUP_CONSOLE':'Q3_MENU_CONSUMPTION',JSON.stringify(r))});
   imports.host.q3_menu_event=observation.event;
   for(const name of ['check_input','check_input_hwnd','check_input_lparam','check_input_wparam'])if(imports.host[name])imports.host[name]=observation.wrap(name,imports.host[name]);
   const result=await Reflect.apply(original,this,[await WebAssembly.compile(bytes),imports,...rest]);
   const installedInstance=result.instance??result;
   exports=installedInstance.exports;globalThis.__q3MenuConsumption=observation;
+  if(config.startupConsole===true)observation.startup();
   observation.moduleIdentity=()=>{
    if(instance!==installedInstance||instance?.exports!==exports)throw Error('Q3 observation instance replaced');
    return {sha256:digest,bytes:bytes.length};

@@ -205,10 +205,12 @@ function createCaptureDiagnostics({socket,write,now=monotonicNs,schedule=setTime
 // receipt is Node's MessageEvent entry, never proof of browser execution.
 function createReadinessDiagnostics({socket,write,now=monotonicNs,enabled=process.env.Q3_READINESS_WIRE==='1'}){
  const requests=new Map(),ingress=new WeakMap();let rows=0,wireRows=0,passive=0,progress=0,errors=0,closed=!enabled;
+ const producerRead=enabled?require('../scratch/runs/20261108-q3-gl-readiness-gameplay/producer-ready.cjs').READ:null;
+ let replies=0,consoleRows=0;
  const safe=fn=>{try{return fn();}catch{}};
  const emit=(phase,fields={})=>safe(()=>{
   if(closed)return;
-  if(phase!=='passive-event'&&wireRows++>=2048)return;
+  if(!['passive-event','producer-reply','startup-console'].includes(phase)&&wireRows++>=2048)return;
   write({version:1,observation:'readiness',sequence:++rows,monotonicNs:now(),phase,...fields,
    ...(phase!=='passive-event'&&wireRows===2048?{recordLimitReached:true}:{})});
  });
@@ -224,13 +226,22 @@ function createReadinessDiagnostics({socket,write,now=monotonicNs,enabled=proces
   request(meta,params){safe(()=>{
    if(closed||requests.size>=32||meta.method!=='Runtime.evaluate')return;
    const expression=params.expression;
-   if(typeof expression!=='string'||!(/runningApps.*guestWorker/.test(expression)||['WINE_REDLINE_STARTUP','__q3StartupInstance','__generatedError','__q3Launch'].some(token=>expression.includes(token))))return;
-   requests.set(meta.requestId,{requestId:meta.requestId,sessionId:metadataToken(meta.sessionId)});
-   emit('request',{...requests.get(meta.requestId),stage:expression.includes('__q3StartupInstance')?'worker-identity':expression.includes('WINE_REDLINE_STARTUP')?'startup-admission':'guest-readiness',expressionSHA256:hash(Buffer.from(expression))});
+   if(typeof expression!=='string'||!(expression===producerRead||/runningApps.*guestWorker/.test(expression)||['WINE_REDLINE_STARTUP','__q3StartupInstance','__generatedError','__q3Launch'].some(token=>expression.includes(token))))return;
+   requests.set(meta.requestId,{requestId:meta.requestId,sessionId:metadataToken(meta.sessionId),targetId:metadataToken(meta.targetId),
+    stage:expression===producerRead?'renderer-producer':expression.includes('__q3StartupInstance')?'worker-identity':expression.includes('WINE_REDLINE_STARTUP')?'startup-admission':'guest-readiness',expressionSHA256:hash(Buffer.from(expression))});
+   emit('request',requests.get(meta.requestId));
   });},
   send(phase,data){safe(()=>{if(closed||!requests.size)return;const fields=protocolMetadata(data);if(requests.has(fields.requestId))emit(phase,fields);});},
   receive(event,value,pending){safe(()=>{
    if(closed)return;
+   const request=requests.get(value.id);
+   if(request?.stage==='renderer-producer'&&replies++<64)emit('producer-reply',{
+    ...request,responseSessionId:metadataToken(value.sessionId),routePending:!!pending,
+    routeSessionMatches:request.sessionId===metadataToken(value.sessionId),
+    reply:boundedDiagnosticValue(value.result),protocolError:boundedDiagnosticValue(value.error),
+    recordLimitReached:replies===64});
+   if(value.method==='Runtime.consoleAPICalled'&&value.params?.args?.[0]?.value==='Q3_STARTUP_CONSOLE'&&consoleRows++<64)
+    emit('startup-console',{sessionId:metadataToken(value.sessionId),detail:boundedDiagnosticValue(value.params),recordLimitReached:consoleRows===64});
    if(requests.has(value.id))emit('consumer-delivery',{...requests.get(value.id),responseSessionId:metadataToken(value.sessionId),publicMonotonicNs:ingress.get(event)??null,routePending:!!pending,errorCode:value.error?.code??null,exception:!!value.result?.exceptionDetails,resultPhase:metadataToken(value.result?.result?.value?.phase),value:typeof value.result?.result?.value==='boolean'?value.result.result.value:null});
    // Existing Runtime events only: no evaluate, polling or post-failure probe.
    if(['Runtime.consoleAPICalled','Runtime.exceptionThrown','Target.attachedToTarget','Target.detachedFromTarget'].includes(value.method)){
@@ -243,6 +254,26 @@ function createReadinessDiagnostics({socket,write,now=monotonicNs,enabled=proces
   settlement(meta,outcome){safe(()=>{if(requests.has(meta.requestId)){emit('settlement',{...requests.get(meta.requestId),outcome});requests.delete(meta.requestId);}});},
   dispose
  };
+}
+// Already parsed CDP JSON only. Do not stringify or clone unbounded replies.
+// Limits cover keys, values, depth and string characters, with explicit loss.
+function boundedDiagnosticValue(value){
+ let nodes=1024,chars=16384,truncated=false;
+ const text=s=>{const n=Math.min(s.length,2048,chars);chars-=n;if(n<s.length)truncated=true;return s.slice(0,n);};
+ const visit=(v,depth)=>{
+  if(--nodes<0||depth>12){truncated=true;return null;}
+  if(typeof v==='string')return text(v);
+  if(v===null||typeof v==='number'||typeof v==='boolean')return v;
+  if(typeof v!=='object')return null;
+  const a=Array.isArray(v),out=a?[]:Object.create(null);let count=0;
+  for(const key in v){
+   if(!Object.prototype.hasOwnProperty.call(v,key))continue;
+   if(nodes<=0||chars<=0||count++>=128){truncated=true;break;}
+   const name=text(key),item=visit(v[key],depth+1);if(a)out.push(item);else out[name]=item;
+  }
+  return out;
+ };
+ return {value:visit(value,0),truncated};
 }
 function installTransportDiagnostics({WebSocket,write,now=monotonicNs,schedule=setTimeout,cancel=clearTimeout}){
  // Native revocation is authoritative even after diagnostic recording caps.
@@ -637,7 +668,8 @@ for pc in range(74762):
  if op in [3,4,8,9,34] or 11<=op<=26:o+=4
  elif op==33:o+=1
 print(json.dumps(sites))`],{cwd:root}).toString());
-    const config={version:menu.version,url:'/'+path.relative(root,file),sha256:hash(bytes),size:bytes.length,qvmSites};
+    const config={version:menu.version,url:'/'+path.relative(root,file),sha256:hash(bytes),size:bytes.length,qvmSites,
+      ...(process.env.Q3_STARTUP_CONSOLE==='1'?{startupConsole:true}:{})};
     fs.writeFileSync(file,bytes,{flag:'wx',mode:0o444});fs.writeFileSync(menuConfigPath,JSON.stringify(config),{flag:'wx',mode:0o444});
     for(const name of ['tools/q3-menu-consumption.cjs',path.relative(root,file),path.relative(root,menuConfigPath)])version.files.push(pin(name,read(name)));
     version.menuConsumptionVersion=menu.version;
@@ -662,6 +694,7 @@ print(json.dumps(sites))`],{cwd:root}).toString());
         assert.equal(source.split('os.environ.update(').length,2,'original observer environment seam');
         source=source.replace('os.environ.update(',"os.environ.update(Q3_BOUND_INPUT_OBSERVATION='1',");
         if(menuConfigPath)source=source.replace('os.environ.update(',"os.environ.update(Q3_MENU_CONSUMPTION_CONFIG="+JSON.stringify(menuConfigPath)+",");
+        if(menuConfigPath&&process.env.Q3_STARTUP_CONSOLE==='1')source=source.replace('os.environ.update(',"os.environ.update(Q3_READINESS_WIRE='1',");
       }
       if(file.path.endsWith('/cancellation/runtime.py')){
         assert.equal(source.split('os.environ.update(').length,2,'fixture service review environment seam');

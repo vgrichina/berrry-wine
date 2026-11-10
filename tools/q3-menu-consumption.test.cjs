@@ -73,12 +73,12 @@ async function consumer(mode){
 async function compiled(){
  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),ctx={exports:null,getMemory:()=>memory.buffer};
  const host=createHostImports(ctx).host;Object.assign(host,{memory,log(){},log_i32(){},exit(){}});
- let observedCallbacks=0;
+ let observedCallbacks=0;const consoleEvents=[];
  const scope={WebAssembly:{instantiate:(m,i,...rest)=>{
   const callback=i.host.q3_menu_event;i.host.q3_menu_event=(...args)=>{observedCallbacks++;return callback(...args);};
   return WebAssembly.instantiate(m,i,...rest);
  },compile:WebAssembly.compile},
-  fetch:async()=>({ok:true,arrayBuffer:async()=>bytes}),crypto:require('node:crypto').webcrypto,performance,console:{debug(){}},memory,
+  fetch:async()=>({ok:true,arrayBuffer:async()=>bytes}),crypto:require('node:crypto').webcrypto,performance,console:{debug:(...args)=>consoleEvents.push(args)},memory,
   endpointIdentity:1,workerSlot:0};
  // Execute the emitted installer through the real transport decorator. The
  // first native attempt exposed its expression nesting, absent in a raw VM.
@@ -110,6 +110,27 @@ async function compiled(){
  const before=Buffer.from(memory.buffer.slice(wa(0x401000),wa(0x401010)));
  const guard=e.get_dbg_tier_guard();e.run(10);
  assert.equal(observedCallbacks,0,'unarmed observer never calls JS');assert.equal(e.get_eax(),123);assert.equal(e.get_dbg_tier_guard(),guard);
+ // Synthetic CALL through the actual generated Worker/host and WAT seam.
+ // The original EXE's console function takes its text as the first cdecl arg.
+ const text='^1original console\r\nreadiness error',pointer=0x402000;
+ put(pointer,Buffer.from(text+'\0','latin1'));
+ put(0x401100,[0x68,...d32(pointer),0xe8,...d32(0x443840-0x40110a),0x83,0xc4,4,0xeb,0xfe]);
+ put(0x443840,[0xb8,...d32(456),0xc3]);
+ const runConsole=()=>{e.set_esp(0x74ff000);e.set_eip(0x401100);e.run(15);return {eax:e.get_eax(),esp:e.get_esp(),tier:e.get_dbg_tier_guard()};};
+ const unobserved=runConsole();assert.equal(o.startupSnapshot().records.length,0,'default startup console is inert');
+ o.startup();assert.throws(()=>o.startup(),/already armed/);const observed=runConsole();assert.deepEqual(observed,unobserved);
+ let startup=o.startupSnapshot();assert.equal(startup.records.length,1);
+ const record=startup.records[0];assert.equal(record.text,text);assert.equal(record.pointer,pointer);assert.equal(record.callerReturn,0x40110a);assert.equal(record.esp,0x74feff8);assert.equal(record.target,0x443840);assert(record.terminated&&!record.truncated);
+ assert.equal(consoleEvents.filter(a=>a[0]==='Q3_STARTUP_CONSOLE').length,1);
+ put(pointer,Buffer.alloc(4096,65));runConsole();startup=o.startupSnapshot();assert.equal(startup.records.at(-1).text.length,2048);assert(startup.records.at(-1).truncated);
+ for(let i=0;i<70;i++)runConsole();startup=o.startupSnapshot();assert.equal(startup.records.length,64);assert.equal(startup.active,false);
+ const callbacksAfterCap=observedCallbacks;runConsole();assert.equal(observedCallbacks,callbacksAfterCap,'WAT disables console callbacks at cap');
+ assert.deepEqual(observed,unobserved);assert.equal(e.get_dbg_tier_guard(),guard);
+ const readOnly=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,emit:()=>{throw Error('sink');}});
+ readOnly.startup();const savedState={eax:e.get_eax(),esp:e.get_esp()};
+ readOnly.event(5,0x443840,0x40110a,0xffffffff);
+ assert.equal(readOnly.startupSnapshot().records[0].kind,'console-read-error');
+ assert.deepEqual({eax:e.get_eax(),esp:e.get_esp()},savedState,'bad observation and sink leave guest unchanged');readOnly.stop('offline done');
  e.set_eip(0x401000);e.set_esp(0x74ff000);
  o.begin(liveBinding,live);e.run(10);assert(observedCallbacks>0);assert.equal(e.get_dbg_tier_guard(),guard);
  const s=o.snapshot(live);assert.equal(s.reason,null);assert.equal(s.pendingFrames,0);
@@ -122,7 +143,7 @@ async function compiled(){
  let calls=0;const original=function(x){calls++;assert.equal(this,host);return x;};
  assert.equal(o.wrap('check_input',original).call(host,0x000d0100),0x000d0100);assert.equal(calls,1);
  const sentinel=Error('original import');assert.throws(()=>o.wrap('check_input',()=>{throw sentinel;})(),x=>x===sentinel);assert.equal(o.snapshot(live).reason,'production-import-failure');
- return {moduleHash,size:bytes.length,realGeneratedWasm:true,naturalCallEntryReturn:true,unarmedZeroCallbacks:true,tierGuardUnchanged:true};
+ return {moduleHash,size:bytes.length,realGeneratedWasm:true,naturalCallEntryReturn:true,unarmedZeroCallbacks:true,tierGuardUnchanged:true,startupConsole:{actualWorkerAndHost:true,naturalCall:true,callerAndText:true,guestStateUnchanged:true,recordLimit:64,textByteLimit:2048,capDisablesWasmCallback:true}};
 }
 async function startupControl(){
  const selected=current.SELECTED,live={endpoint:1,slot:0,instance:'startup-instance',gpu:false};
@@ -179,6 +200,7 @@ async function workerFailure(){
  return {firstWorkerFailureTerminal:true,noResumeInputCaptureRetry:true};
 }
 async function originalStartupControl(){
+ const startupGenerated=q.compose(plain,{...config,startupConsole:true});
  const canonical=fs.readFileSync(root+'/build/wine-assembly.wasm'),scripts=[],wire=[],saved={};
  const worker={WebAssembly:{instantiate:WebAssembly.instantiate,compile:async b=>{
   const module=await WebAssembly.compile(b);scripts.push({scriptId:String(scripts.length),sha256:q.sha(b),bytecodeAvailable:true});return module;
@@ -196,11 +218,11 @@ async function originalStartupControl(){
   return vm.runInContext(outgoing.params.expression,worker);
  };
  // Use the emitted attached-Worker handler, including the real expression transport.
- const begin=generated.indexOf('async function event(v)'),end=generated.indexOf('\nasync function ',begin+1);
+ const begin=startupGenerated.indexOf('async function event(v)'),end=startupGenerated.indexOf('\nasync function ',begin+1);
  const workers=new Map(),workerPromises=[];
  const eventScope={workers,workerPromises,fs,run:out,Date,log(){},
   send:async()=>{assert(!terminal);return {};},evaluate:async e=>workerEval(e),observeTerminal:e=>{terminal=true;throw e;}};
- vm.createContext(eventScope);vm.runInContext(generated.slice(begin,end)+'\nglobalThis.onEvent=event;',eventScope);
+ vm.createContext(eventScope);vm.runInContext(startupGenerated.slice(begin,end)+'\nglobalThis.onEvent=event;',eventScope);
  await eventScope.onEvent({method:'Target.attachedToTarget',params:{sessionId:'worker',targetInfo:{type:'worker',targetId:'original-worker',url:'/lib/guest-worker.js'}}});
  await Promise.all(workerPromises);
  const scope={console:{log(){},warn(){},debug(){}},ArrayBuffer,Uint8Array,Int32Array,DataView,TextDecoder,URL,URLSearchParams,
@@ -235,10 +257,11 @@ async function originalStartupControl(){
  };
  const send=async(method,p)=>{assert(!terminal);assert.equal(method,'Debugger.getScriptSource');const s=scripts.find(s=>s.scriptId===p.scriptId);return {bytecode:(s.sha256===moduleHash?bytes:canonical).toString('base64')};};
  // Exact emitted startup call, with the original (fixture=false) options.
- const line=generated.split('\n').find(s=>s.includes(".startup(")&&s.includes('.launch({evaluate,send,workers'));
+ const line=startupGenerated.split('\n').find(s=>s.includes(".startup(")&&s.includes('.launch({evaluate,send,workers'));
  assert(line,'emitted original launch');
  await vm.runInNewContext('(async()=>{'+line+'})()', {require,root,evaluate,send,workers,pageSession:'page',deadline:Date.now()+60000,wait:ms=>new Promise(r=>setTimeout(r,ms)),save:(n,v)=>saved[n]=v,observeTerminal:e=>{terminal=true;throw e;}});
  await scope.__q3Launch.promise;assert(passedBarrier);assert.equal(scripts.length,2);
+ assert.equal(worker.__q3MenuConsumption.startupSnapshot().active,true,'actual original Worker installer arms opted-in console before readiness');
  const base=require('../scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs');
  let chainOptions;
  const adapted=q.boundAdapter({...base,createChain:o=>{chainOptions=o;}},config,e=>{terminal=true;throw e;});adapted.createChain({workers,evaluate});
