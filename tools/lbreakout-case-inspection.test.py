@@ -26,6 +26,24 @@ class InspectionTests(unittest.TestCase):
                        input=helper.pause_completion_preload_source(),
                        text=True, check=True, timeout=3)
 
+    def test_generated_preload_preserves_native_unarmed_execution(self):
+        source = """const assert=require('node:assert/strict');
+let calls=0;const nativeRun=n=>{calls++;return n+7;};
+const native={exports:{run:nativeRun,get_last_run_blocks:()=>3,get_last_run_halt:()=>1}};
+const WebAssembly={instantiate:async()=>({instance:native,module:'same module'})};
+""" + helper.pause_completion_preload_source() + """
+(async()=>{
+ const imports={host:{memory:{buffer:new ArrayBuffer(16)}}};
+ const r=await WebAssembly.instantiate('same bytes',imports);
+ assert.equal(r.module,'same module');assert.equal(r.instance.exports.run,nativeRun);
+ assert.equal(r.instance.exports.run(11),18);assert.equal(calls,1);
+ assert.equal(globalThis.__lbNative.instance,r.instance);
+ assert.equal(globalThis.__lbObserver,undefined);
+ assert.equal(r.instance.exports.set_trace_eip_range,undefined);
+})().catch(e=>{console.error(e);process.exitCode=1});
+"""
+        subprocess.run(['node', '-e', source], check=True, timeout=3)
+
     def test_observer_selects_bound_owner_among_secondary_threads(self):
         source = """const assert=require('node:assert/strict');
 const workers=new Map([['owner',{targetId:'main',url:'guest-worker.js'}],

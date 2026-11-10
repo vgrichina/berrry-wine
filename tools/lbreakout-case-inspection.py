@@ -6,6 +6,60 @@ availability must never mask passive terminal records.
 import json
 
 
+def level_start_driver_source():
+    """Use existing target-aware chain exits, without changing the module.
+
+    A breakpoint's skip-once belongs to its old address. Retire that one
+    original block before moving the breakpoint; otherwise the next target
+    would silently consume the skip. All blocks remain in the caller's budget.
+    """
+    return r'''function createLevelStartDriver(e,boundary){
+ let armed=false,target=0,next=0,advance=false,running=false,blocks=null,halt=null;
+ const facade={...e};
+ const restore=()=>Object.assign(facade,{run:e.run,get_last_run_blocks:e.get_last_run_blocks,get_last_run_halt:e.get_last_run_halt});
+ const trace=(flag,lo,hi)=>{
+  if(flag&&hi!==lo+1)throw Error('level-start requires one instruction target');
+  if(flag&&!armed){
+   if(e.get_bp_addr()||e.get_dbg_tier_guard())throw Error('level-start debugger conflict');
+   armed=true;e.set_benchmark_chain_bp(1);
+   Object.assign(facade,{run,get_last_run_blocks:()=>blocks===null?e.get_last_run_blocks():blocks,
+    get_last_run_halt:()=>halt===null?e.get_last_run_halt():halt});
+  }
+  next=flag?lo>>>0:0;
+  if(!advance){target=next;if(target)e.set_bp(target);else{e.clear_bp();e.set_benchmark_chain_bp(0);armed=false;if(!running)restore();}}
+ };
+ function run(n){
+   if(running)throw Error('level-start recursive run');
+   blocks=null;halt=null;
+   if(!armed&&!advance)return e.run(n);
+   running=true;let left=n;
+   try{
+    blocks=0;
+    while(left>0){
+     const stepping=advance;
+     e.run(stepping?1:left);
+     const ran=e.get_last_run_blocks()>>>0;blocks+=ran;left-=ran;
+     halt=e.get_last_run_halt();
+     if(stepping){
+      advance=false;target=next;
+      if(target)e.set_bp(target);else{e.clear_bp();e.set_benchmark_chain_bp(0);armed=false;}
+     }else if(armed&&halt===5&&(e.get_eip()>>>0)===target){
+      advance=true;boundary(target);halt=1;
+      continue;
+     }
+     if(e.get_yield_reason()||!e.get_eip()||halt!==1)break;
+    }
+   }finally{
+    running=false;
+    // Keep this call's aggregate metrics until the next ordinary run, then
+    // restore the exact native function identities on the unarmed path.
+    if(!armed&&!advance)facade.run=n=>{restore();return e.run(n);};
+   }
+  }
+ return {exports:facade,trace};
+}'''
+
+
 def level_start_completion_observer_source():
     """Original local init -> fade-in -> first gameplay SDL presentation return."""
     return r'''async function installLevelStartCompletion({e,memory,binding,token,expected,now=()=>Date.now(),emit=()=>{}}){
@@ -114,13 +168,19 @@ def pause_completion_observer_source():
 
 
 def pause_completion_preload_source():
-    return pause_completion_observer_source() + '\n' + level_start_completion_observer_source() + r'''
+    return level_start_driver_source() + '\n' + pause_completion_observer_source() + '\n' + level_start_completion_observer_source() + r'''
 (()=>{
  const instantiate=WebAssembly.instantiate;
  WebAssembly.instantiate=async function(source,imports){
   imports.host.log_eip=pc=>globalThis.__lbObserver?.boundary(pc>>>0);
-  const r=await instantiate.call(WebAssembly,source,imports);
-  globalThis.__lbNative={instance:r.instance||r,memory:imports.host.memory};return r;
+  const r=await instantiate.call(WebAssembly,source,imports),native=r.instance||r;
+  const driver=createLevelStartDriver(native.exports,pc=>globalThis.__lbObserver?.boundary(pc));
+  // A facade preserves the actual instance and its exports for all unarmed
+  // calls. Only the dedicated level-start observer uses targeted breakpoints.
+  const exports=driver.exports;
+  const instance=new Proxy(native,{get:(o,k)=>k==='exports'?exports:Reflect.get(o,k,o)});
+  globalThis.__lbNative={instance,memory:imports.host.memory,driver};
+  return r.instance?{...r,instance}:instance;
  };
  globalThis.__lbArm=async c=>{
   if(globalThis.__lbObserver?.snapshot().active)throw Error('completion already armed');
@@ -136,7 +196,8 @@ def pause_completion_preload_source():
    if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original pause instruction mismatch');
   if(c.phase==='level-start')for(const [rva,h] of [[0x1f2ac,'5589e55383ec14'],[0x1faa0,'5589e5575653'],[0x1faf2,'83c410'],[0x20475,'e87c5b0000']])
    if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original level-start instruction mismatch');
-  globalThis.__lbObserver=await (c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
+  const observed=c.phase==='level-start'?{...e,set_trace_eip_range:globalThis.__lbNative.driver.trace}:e;
+  globalThis.__lbObserver=await (c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e:observed,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
   return {armed:true,...__lbObserver.snapshot()};
  };
 })();
@@ -147,21 +208,27 @@ def pause_completion_source(source):
     """Apply to pause_workflow_source output; completion precedes FIRST image."""
     replacements = [
         ("async function armObservation(){const s=await owningWorker();return evaluate('globalThis.__lbArm()',s);}", r'''async function armObservation(c){
- const s=await owningWorker(),token=c.id+'-'+c.phase;
+ const s=await owningWorker(),owner=await evaluate(bound.WORKER_READ,s),token=c.id+'-'+c.phase;
+ assert(owner?.instance&&owner?.endpointIdentity,'completion immutable instance binding');
  const arm=await evaluate('globalThis.__lbArm('+JSON.stringify({token,expected:c.expected,phase:c.phase})+')',s);
  assert(arm.armed&&arm.token===token,'completion arm binding');
- return {session:s,token,expected:c.expected,deadline:arm.deadline,binding:arm.binding};
+ return {session:s,owner,token,expected:c.expected,deadline:arm.deadline,binding:arm.binding};
 }
 async function completion(a){
  try{
   while(true){
    assert(!terminal,'terminal: completion closed');assert(Date.now()<Math.min(deadline,a.deadline),'guest completion deadline');
-   assert.equal(await owningWorker(),a.session,'completion owner binding');
+   // The same immutable instance owns the same module bytes. Avoid fetching
+   // the entire Wasm over CDP on every snapshot. Full byte/owner validation
+   // still brackets the observation, and the observer checks DLL generation.
+   assert(workers.has(a.session)&&!workers.get(a.session).closed,'completion owner closed');
+   assert.deepEqual(await evaluate(bound.WORKER_READ,a.session),a.owner,'completion owner binding');
    const r=await evaluate('globalThis.__lbObserver.snapshot()',a.session);
    assert.equal(r.token,a.token,'completion command binding');assert.equal(r.expected,a.expected);
    assert.deepEqual(r.binding,a.binding,'completion module binding');
    if(!r.active){
     assert.equal(r.reason,'complete','guest completion incomplete');save('completion-'+a.token+'.json',r);
+    assert.equal(await owningWorker(),a.session,'completion final owner binding');
     const remaining=Math.min(deadline,a.deadline)-Date.now();assert(remaining>0,'presentation deadline');
     const presented=await evaluate(`new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('presentation deadline')),${remaining});requestAnimationFrame(()=>requestAnimationFrame(()=>{clearTimeout(timer);resolve({presented:true})}));})`);
     assert(presented?.presented&&Date.now()<Math.min(deadline,a.deadline),'presentation completion');
