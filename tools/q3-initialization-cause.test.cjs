@@ -79,7 +79,10 @@ async function main(){
  // Production adapter/stream/bridge writes GL_MAX_TEXTURE_SIZE into real CPU
  // memory. Canvas-free software consumer; no WebGL hardware claim.
  const GL=require('../lib/gl-compat'),Stream=require('../lib/gl-command-stream');
- const scope={OpenGLCompat:GL,GLCommandStream:Stream,OffscreenCanvas:class{getContext(){return null;}},console,Uint8ClampedArray};
+ let queryBridge;
+ const scope={OpenGLCompat:{...GL,OpenGLHostBridge:class extends GL.OpenGLHostBridge{
+  constructor(...args){super(...args);queryBridge=this;}
+ }},GLCommandStream:Stream,OffscreenCanvas:class{getContext(){return null;}},console,Uint8ClampedArray};
  vm.createContext(scope);vm.runInContext(fs.readFileSync(root+'/lib/gl-render-worker.js','utf8'),scope);
  const adapter=scope.GLRenderWorker.create({instance,memory,backend:'software',sendFrame(){assert.fail('query must not present');}});
  const command=g(0x1200000),query=0x1201000;
@@ -90,10 +93,11 @@ async function main(){
   args.forEach((a,i)=>d.setUint32(command+36+i*4,a,true));
   return adapter.execute({memoryOffset:command,bytes:size,owner:0,windows:[{hwnd:65543,w:16,h:16,clientSize:{w:16,h:16}}]});
  }
- let queryValue;
+ let queryValue,queryFrontend;
  try{
   assert.equal(execute('wglCreateContext',[],65543).value,1);
   assert.equal(execute('wglMakeCurrent',[0,1],65543).value,1);
+  queryFrontend=[...queryBridge.contexts.values()][0].frontend;
   d.setInt32(g(query),-123,true);execute('glGetIntegerv',[0xd33,query]);
   queryValue=d.getInt32(g(query),true);assert.equal(queryValue,2048);
   assert.equal(execute('glGetError').value,0);
@@ -104,7 +108,9 @@ async function main(){
   let requested;
   // Only the backend answer is controlled. This executes the production
   // query conversion/address writer; it does not instantiate native WebGL.
-  bridge._getIntegerv({backend:{getParameter:pname=>(requested=pname,value)}},0xd33,query);
+  const backend=queryFrontend.backend,originalQuery=backend.getParameter;
+  backend.getParameter=pname=>(requested=pname,value);
+  try{bridge._getIntegerv(queryFrontend,0xd33,query);}finally{backend.getParameter=originalQuery;}
   assert.equal(requested,0xd33);assert.equal(d.getInt32(g(query),true),value);
   backendQueries.push({controlledBackendValue:value,written:d.getInt32(g(query),true)});
  }

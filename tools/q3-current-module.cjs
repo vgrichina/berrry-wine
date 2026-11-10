@@ -669,7 +669,8 @@ for pc in range(74762):
  elif op==33:o+=1
 print(json.dumps(sites))`],{cwd:root}).toString());
     const config={version:menu.version,url:'/'+path.relative(root,file),sha256:hash(bytes),size:bytes.length,qvmSites,
-      ...(process.env.Q3_STARTUP_CONSOLE==='1'?{startupConsole:true}:{})};
+      ...(process.env.Q3_STARTUP_CONSOLE==='1'?{startupConsole:true}:{}),
+      ...(process.env.Q3_TEXTURE_SCAN==='1'?{textureScan:true}:{})};
     fs.writeFileSync(file,bytes,{flag:'wx',mode:0o444});fs.writeFileSync(menuConfigPath,JSON.stringify(config),{flag:'wx',mode:0o444});
     for(const name of ['tools/q3-menu-consumption.cjs',path.relative(root,file),path.relative(root,menuConfigPath)])version.files.push(pin(name,read(name)));
     version.menuConsumptionVersion=menu.version;

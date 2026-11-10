@@ -39,12 +39,42 @@ function recorder({getExports,getMemory,now=()=>performance.now(),emit=()=>{},li
  const rows=[],frames=[];
  let startupOn=false,startupSequence=0;
  const startupRows=[];
+ const scanRows=[];
+ let scanCount=0,scanPairAt=-Infinity;
  const same=(a,b)=>fields.every(k=>a?.[k]!==undefined&&a[k]!==null&&a[k]!==''&&a[k]===b?.[k]);
  const stop=reason=>{if(!terminal)terminal=reason;startupOn=false;try{getExports()?.q3_menu_arm?.(0);getExports()?.q3_console_arm?.(0);}catch{}};
  function read(p){
   const wa=(p>>>0)-0x400000+0x12000,m=getMemory();
   if(!Number.isSafeInteger(wa)||wa<0x12000||wa+4>Math.min(0x8000000,m.byteLength))throw Error('direct read bounds');
   return new DataView(m).getUint32(wa,true);
+ }
+ // Called synchronously at the existing sliceDone send. Never translate a
+ // sparse address, service a fault, change guest state, or add a request.
+ function textureSlice(message){
+  if(message?.t!=='sliceDone')return message;
+  const at=now(),nextPair=at-scanPairAt>=500;
+  if(scanCount<240 && (nextPair||scanRows.length===1) && message.eip>=0x456a7a && message.eip<=0x456af1){
+   if(nextPair){scanRows.length=0;scanPairAt=at;}
+   const r={seq:message.seq,eip:message.eip,kind:'texture-scan',at:now()};
+   try{
+    const e=getExports(),esp=e.get_esp()>>>0;
+    Object.assign(r,{esi:e.get_esi()>>>0,edi:e.get_edi()>>>0,ebp:e.get_ebp()>>>0,esp,
+     remaining:read(esp+0x24),callerReturn:read(esp+0x2038),source:read(esp+0x203c),
+     width:read(esp+0x2040),height:read(esp+0x2044),mipmap:read(esp+0x2048),picmip:read(esp+0x204c),
+     maxTextureSize:read(0x7cb1c0),callerStack:Array.from({length:48},(_,i)=>({offset:0x2028+i*4,value:read(esp+0x2028+i*4)}))});
+    const text=p=>{const m=getMemory(),wa=(p>>>0)-0x400000+0x12000;
+     if(wa<0x12000||wa+64>Math.min(0x8000000,m.byteLength))return null;
+     let value='';for(const b of new Uint8Array(m,wa,64)){if(!b)return {pointer:p>>>0,value,terminated:true};if(b<32||b>126)return null;value+=String.fromCharCode(b);}
+     return {pointer:p>>>0,value,terminated:false};};
+    // Image creation's caller return/name argument, beyond Upload32's nine
+    // arguments and the image creator's local/register frame. The original
+    // chkstk helper leaves scratch words near +2034; they are not saved EBP.
+    r.imageCallerReturn=read(esp+0x2074);r.imageNamePointer=read(esp+0x2078);
+    r.names=[r.imageNamePointer].map(text);
+   }catch(error){r.error=String(error);}
+   scanRows.push(r);scanCount++;
+  }
+  return scanRows.length?{...message,q3TextureScan:copy(scanRows)}:message;
  }
  function row(kind,data){
   if(!binding||terminal)return;
@@ -95,7 +125,7 @@ function recorder({getExports,getMemory,now=()=>performance.now(),emit=()=>{},li
    }
   }catch{stop('observation-error');}
  }
- return {event,stop,
+ return {event,stop,textureSlice,
   startup(){if(startupSequence||startupOn)throw Error('Q3 startup console already armed');startupOn=true;getExports()?.q3_console_arm?.(1);},
   startupSnapshot(){return {version:1,active:startupOn,recordLimit:64,textByteLimit:2048,records:copy(startupRows)};},
   begin(b,identity){
@@ -128,6 +158,11 @@ function workerInstall(config,makeRecorder){
   const result=await Reflect.apply(original,this,[await WebAssembly.compile(bytes),imports,...rest]);
   const installedInstance=result.instance??result;
   exports=installedInstance.exports;globalThis.__q3MenuConsumption=observation;
+  if(config.textureScan===true){
+   const send=globalThis.postMessage;
+   if(typeof send!=='function')throw Error('Q3 original Worker postMessage required');
+   globalThis.postMessage=function(message,...args){return Reflect.apply(send,this,[observation.textureSlice(message),...args]);};
+  }
   if(config.startupConsole===true)observation.startup();
   observation.moduleIdentity=()=>{
    if(instance!==installedInstance||instance?.exports!==exports)throw Error('Q3 observation instance replaced');

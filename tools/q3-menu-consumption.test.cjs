@@ -200,12 +200,14 @@ async function workerFailure(){
  return {firstWorkerFailureTerminal:true,noResumeInputCaptureRetry:true};
 }
 async function originalStartupControl(){
- const startupGenerated=q.compose(plain,{...config,startupConsole:true});
+ let scanClock=0;
+ const startupGenerated=q.compose(plain,{...config,startupConsole:true,textureScan:true});
  const canonical=fs.readFileSync(root+'/build/wine-assembly.wasm'),scripts=[],wire=[],saved={};
  const worker={WebAssembly:{instantiate:WebAssembly.instantiate,compile:async b=>{
   const module=await WebAssembly.compile(b);scripts.push({scriptId:String(scripts.length),sha256:q.sha(b),bytecodeAvailable:true});return module;
- }},crypto:require('node:crypto').webcrypto,performance,console:{debug(){}},
- fetch:async()=>({ok:true,arrayBuffer:async()=>bytes}),endpointIdentity:'original-endpoint',workerSlot:0,d3dimGpuEnable:false,instance:null};
+ }},crypto:require('node:crypto').webcrypto,performance:{now:()=>scanClock},console:{debug(){}},
+  fetch:async()=>({ok:true,arrayBuffer:async()=>bytes}),endpointIdentity:'original-endpoint',workerSlot:0,d3dimGpuEnable:false,instance:null,
+  postMessage(message){wire.push({sliceMessage:message});return 'original-send-return';}};
  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),ctx={exports:null,getMemory:()=>memory.buffer};
  const host=createHostImports(ctx).host;Object.assign(host,{memory,log(){},log_i32(){},exit(){}});
  vm.createContext(worker);
@@ -262,6 +264,26 @@ async function originalStartupControl(){
  await vm.runInNewContext('(async()=>{'+line+'})()', {require,root,evaluate,send,workers,pageSession:'page',deadline:Date.now()+60000,wait:ms=>new Promise(r=>setTimeout(r,ms)),save:(n,v)=>saved[n]=v,observeTerminal:e=>{terminal=true;throw e;}});
  await scope.__q3Launch.promise;assert(passedBarrier);assert.equal(scripts.length,2);
  assert.equal(worker.__q3MenuConsumption.startupSnapshot().active,true,'actual original Worker installer arms opted-in console before readiness');
+ const e=worker.instance.exports,mem=new Uint8Array(memory.buffer),dv=new DataView(memory.buffer),wa=a=>a-0x400000+0x12000;
+ const exe=fs.readFileSync(root+'/test/binaries/candidates/quake-3-arena-demo-installer/installed/quake3.exe');
+ mem.set(exe,e.get_staging());e.load_pe(exe.length);e.set_api_log(0);
+ const esp=0x74fabb4;e.set_esp(esp);e.set_esi(1024);e.set_edi(1024);e.set_ebp(0x500002);
+ for(let i=0;i<48;i++)dv.setUint32(wa(esp+0x2028+i*4),0,true);
+ for(const [off,v] of [[0x24,1048576],[0x2038,0x4566d4],[0x203c,0x500000],[0x2040,1024],[0x2044,1024],[0x2048,1],[0x204c,1],[0x2074,0x45829d],[0x2078,0x501000],[0x2034,0x45678a]])dv.setUint32(wa(esp+off),v,true);
+ mem.set(Buffer.from('textures/test/scan\0'),wa(0x501000));mem.set(Buffer.from('textures/test/scan\0'),wa(0x501100));dv.setUint32(wa(0x7cb1c0),2048,true);
+ const before=q.sha(Buffer.from(memory.buffer)),tier=e.get_dbg_tier_guard();
+ const sendSlice=seq=>worker.postMessage({t:'sliceDone',seq,eip:0x456a9a,esp});
+ assert.equal(worker.postMessage({t:'ready'}),'original-send-return');assert.equal(wire.at(-1).sliceMessage.q3TextureScan,undefined);
+ sendSlice(10);const first=wire.at(-1).sliceMessage.q3TextureScan;
+ assert.equal(first.length,1);assert.equal(first[0].remaining,1048576);assert.equal(first[0].source,0x500000);assert.equal(first[0].maxTextureSize,2048);assert.equal(first[0].names[0].value,'textures/test/scan');
+ assert.equal(q.sha(Buffer.from(memory.buffer)),before,'snapshot writes no byte');assert.equal(e.get_dbg_tier_guard(),tier);
+ e.set_ebp(0x501002);dv.setUint32(wa(esp+0x24),1047552,true);sendSlice(11);
+ const second=wire.at(-1).sliceMessage.q3TextureScan;assert.equal(second.length,2);assert.equal(second[1].remaining,1047552);assert.equal(second[1].ebp-first[0].ebp,4096);
+ sendSlice(12);assert.equal(wire.at(-1).sliceMessage.q3TextureScan.length,2,'two records only');assert.equal(first.length,1,'first reply remains immutable');
+ for(let pair=1;pair<120;pair++){scanClock=pair*500;sendSlice(12+pair*2);sendSlice(13+pair*2);}
+ const last=JSON.stringify(wire.at(-1).sliceMessage.q3TextureScan);scanClock+=500;sendSlice(300);
+ assert.equal(JSON.stringify(wire.at(-1).sliceMessage.q3TextureScan),last,'240 snapshots maximum in existing bounded lane');
+ const bad=q.recorder({getExports:()=>({...e,get_esp:()=>0xffffffff}),getMemory:()=>memory.buffer});assert(bad.textureSlice({t:'sliceDone',seq:1,eip:0x456a9a}).q3TextureScan[0].error);
  const base=require('../scratch/runs/20261108-q3-gl-readiness-gameplay/bound-input.cjs');
  let chainOptions;
  const adapted=q.boundAdapter({...base,createChain:o=>{chainOptions=o;}},config,e=>{terminal=true;throw e;});adapted.createChain({workers,evaluate});
@@ -290,7 +312,7 @@ async function originalStartupControl(){
  assert.throws(()=>assert.equal(scripts.length,1,'unique recovered live Worker module required'),/unique recovered/);
  worker.instance={exports:{}};
  await assert.rejects(chainOptions.evaluate(base.WORKER_READ,'worker'),/instance replaced/);assert(terminal);
- return {originalLaunch:true,actualHostInit:true,emittedStartup:true,emittedWorkerHandler:true,actualTransport:true,twoRealCompiledScripts:true,actualInstalledInstance:true,retainedChainMismatchReproduced:true,chainRefusals:refusals,noProtocolAfterFailure:true};
+ return {originalLaunch:true,actualHostInit:true,emittedStartup:true,emittedWorkerHandler:true,actualTransport:true,twoRealCompiledScripts:true,actualInstalledInstance:true,textureScan:{twoSuccessiveSlices:true,readOnly:true,originalSendOnce:true,boundedNames:true,invalidReadExplicit:true},retainedChainMismatchReproduced:true,chainRefusals:refusals,noProtocolAfterFailure:true};
 }
 (async()=>{
  const controls=[];for(const mode of ['wrong-owner','incomplete','success','firstfailure'])controls.push(await consumer(mode));
