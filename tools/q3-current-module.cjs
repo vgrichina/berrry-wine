@@ -75,6 +75,7 @@ function validate(options={}){
   });
   files.push(pin('tools/q3-current-module.cjs',read('tools/q3-current-module.cjs')));
   files.push(pin('tools/q3-input-phase-service.cjs',read('tools/q3-input-phase-service.cjs')));
+  files.push(pin('lib/q3-input-observer.js',read('lib/q3-input-observer.js')));
   if(foreign){
     for(const name of foreignRoute.dependencies){
       const actual=pin(name,read(name));assert.deepEqual(actual,expected[name],'published foreign dependency: '+name);files.push(actual);
@@ -357,6 +358,46 @@ async function readableFixtureControls(controls,options){
   save('local-controls.json',{passed:true,positive:true,rows:[],originalLaunches:0,independentCPUAndRenderModule:moduleHash,budgetsUnchanged:true});
  }},options);
 }
+function prearmInputObservation() {
+ let attempts=0,done=false;
+ const timer=setInterval(()=>{
+  if(done)return;
+  if(++attempts>6000){done=true;clearInterval(timer);console.debug('Q3_BOUND_INPUT',JSON.stringify({kind:'arm-timeout'}));return;}
+  const apps=typeof runningApps==='undefined'?[]:runningApps;
+  const app=apps.find(a=>a.name==='quake3_demo'),w=app?.wine,r=w?.renderer,c=document.getElementById('screen');
+  if(!w?.guestWorker?.link || !w.memory?.buffer || !r || r.canvas!==c || typeof RegionMap==='undefined')return;
+  done=true;clearInterval(timer);
+  try {
+   const link=w.guestWorker.link,module=link.module,worker=link.worker,memory=w.memory;
+   globalThis.__q3BoundInput=globalThis.Q3InputObserver.install({enabled:true,renderer:r,canvas:c,document,memory,
+    diBase:RegionMap.BASE.DI_MOUSE_INPUT_STATE,relative:()=>app.relativeMouse===true,
+    owner:()=>w.running&&!w._stopped&&w.renderer===r&&w.memory===memory&&w.guestWorker?.link===link&&link.module===module&&link.worker===worker&&!link._stopping,
+    emit:row=>console.debug('Q3_BOUND_INPUT',JSON.stringify(row))});
+   addEventListener('pagehide',()=>globalThis.__q3BoundInput.stop('pagehide'),{once:true});
+  }catch(error){console.debug('Q3_BOUND_INPUT',JSON.stringify({kind:'arm-error',error:String(error)}));}
+ },10);
+ addEventListener('pagehide',()=>{done=true;clearInterval(timer);},{once:true});
+}
+function inputObservationPageSource(){
+ return read('lib/q3-input-observer.js').toString()+'\n('+prearmInputObservation.toString()+')();\n';
+}
+function composeInputObservation(source){
+ if(process.env.Q3_BOUND_INPUT_OBSERVATION!=='1')return source;
+ const once=(before,after)=>{assert.equal(source.split(before).length,2,'unique Q3 bound input seam: '+before);source=source.replace(before,after);};
+ once("Object.defineProperty(globalThis,'GLRenderHost'",
+  "${require(root+'/tools/q3-current-module.cjs').inputObservationPageSource()}Object.defineProperty(globalThis,'GLRenderHost'");
+ once(' const dispatch=async receipt=>{\n markDispatch();',
+  ` const dispatch=async receipt=>{
+ const observerBegin=await evaluate('globalThis.__q3BoundInput.begin('+JSON.stringify({id:c.id,label:c.label,previous:latest})+')');
+ assert.equal(observerBegin?.active,true,'original observer prearmed');save('input-'+c.id+'-observer-begin.json',observerBegin);
+ markDispatch();`);
+ once("save('latest.json',latest);console.log('CAPTURE '+label);",
+  `save('latest.json',latest);
+ const observed=await evaluate('globalThis.__q3BoundInput.image('+JSON.stringify(latest)+')');
+ assert.equal(observed?.active,true,'original observer image binding');save(label+'-observer.json',observed);
+ console.log('CAPTURE '+label);`);
+ return source;
+}
 function composeStartupDiagnostics(source){
   source=composeTerminalCleanup(source);
   const once=(before,after)=>{
@@ -445,7 +486,7 @@ function send(method,params={},sessionId,captureProbe=null)`);
     "screenshotCompletion.transport(event);if(startupRecording)startupRecord('transport',{event});if(!closing)");
   once('screenshotCompletion.sendFailed(meta,error);observeTerminal(error);',
     "if(startupRecording)startupRecord('send-error',{requestId:meta.requestId,method:meta.method,sessionId:meta.sessionId});screenshotCompletion.sendFailed(meta,error);observeTerminal(error);");
-  return source;
+  return composeInputObservation(source);
 }
 // Q3 owns this policy; shared lifecycle providers only perform bounded kernel
 // containment and observe child exit plus stdio closure. Cancellation is an
@@ -553,7 +594,7 @@ function composeFixtureObserverCaller(source){
 }
 function prepare(destination,{inputs=[]}={}){
   assert.equal(arguments.length<=2,true);const options=arguments[1]??{};
-  assert(Object.keys(options).every(k=>['inputs','checkpointObserverVersion','caller','foreignClosureVersion','nativeLifecycleVersion'].includes(k)),'explicit supported preparation options');
+  assert(Object.keys(options).every(k=>['inputs','checkpointObserverVersion','caller','foreignClosureVersion','nativeLifecycleVersion','inputObservationVersion'].includes(k)),'explicit supported preparation options');
   const checkpoint=options.checkpointObserverVersion!==undefined;
   assert(checkpoint||options.caller===undefined,'caller requires explicit checkpoint observer version');
   destination=path.resolve(destination);assert(!fs.existsSync(destination),'fresh task-owned destination required');
@@ -562,6 +603,11 @@ function prepare(destination,{inputs=[]}={}){
   if(options.foreignClosureVersion!==undefined)validation.foreignClosureVersion=options.foreignClosureVersion;
   const version=validate(validation);
   const lifecycle=options.nativeLifecycleVersion===undefined?undefined:require('./q3-versioned-native-lifecycle.cjs');
+  if(options.inputObservationVersion!==undefined){
+    assert.equal(options.inputObservationVersion,'q3-bound-input-v1','explicit Q3 observation version');
+    assert(lifecycle,'input observation requires owning native lifecycle');
+    version.inputObservationVersion=options.inputObservationVersion;
+  }
   let generated=[];
   if(lifecycle){
     assert(checkpoint&&options.foreignClosureVersion!==undefined,'native lifecycle requires explicit checkpoint and foreign versions');
@@ -579,6 +625,10 @@ function prepare(destination,{inputs=[]}={}){
       assert.equal(file.source.split(before).length,2,'unique Q3 native custody import');
       let source=file.source.replace(before,
         "from native_kernel_custody import identity\nimport runpy\nsupervise=runpy.run_path(str(root/'tools/q3-startup-custody.py'))['supervise']");
+      if(options.inputObservationVersion!==undefined&&file.path.endsWith('/original/runtime.py')){
+        assert.equal(source.split('os.environ.update(').length,2,'original observer environment seam');
+        source=source.replace('os.environ.update(',"os.environ.update(Q3_BOUND_INPUT_OBSERVATION='1',");
+      }
       if(file.path.endsWith('/cancellation/runtime.py')){
         assert.equal(source.split('os.environ.update(').length,2,'fixture service review environment seam');
         source=source.replace('os.environ.update(',"os.environ.update(Q3_INPUT_SERVICE_REVIEW='1',Q3_READINESS_WIRE='1',");
@@ -640,7 +690,7 @@ function prepare(destination,{inputs=[]}={}){
   fs.writeFileSync(path.join(destination,'replacement-pinset-seal.json'),JSON.stringify(seal,null,2),{flag:'wx',mode:0o444});
   return seal;
 }
-module.exports={readableFixtureHTML,readableFixtureHandler,readableFixtureControls,createReadinessDiagnostics,composeTerminalCleanup,createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
+module.exports={composeInputObservation,inputObservationPageSource,prearmInputObservation,readableFixtureHTML,readableFixtureHandler,readableFixtureControls,createReadinessDiagnostics,composeTerminalCleanup,createCaptureDiagnostics,metadataToken,monotonicNs,protocolMetadata,installTransportDiagnostics,SELECTED,validate,prepare,moduleVersion,historical,historicalSHA,cpuCommit,custodyCommit,migration,checkpointObserverVersion,composeCheckpointCaller,composeStartupDiagnostics};
 if(require.main===module){
   const args=process.argv.slice(2);assert.equal(args.shift(),'--prepare','explicit preparation only');
   const destination=args.shift(),options={inputs:[]};
@@ -651,6 +701,7 @@ if(require.main===module){
     else if(flag==='--checkpoint-observer-version'){assert(!options.checkpointObserverVersion,'duplicate checkpoint version');options.checkpointObserverVersion=value;}
     else if(flag==='--foreign-closure-version'){assert(!options.foreignClosureVersion,'duplicate foreign closure version');options.foreignClosureVersion=value;}
     else if(flag==='--native-lifecycle-version'){assert(!options.nativeLifecycleVersion,'duplicate native lifecycle version');options.nativeLifecycleVersion=value;}
+    else if(flag==='--input-observation-version'){assert(!options.inputObservationVersion,'duplicate observation version');options.inputObservationVersion=value;}
     else assert.fail('unsupported preparation flag: '+flag);
   }
   console.log(JSON.stringify(prepare(destination,options)));
