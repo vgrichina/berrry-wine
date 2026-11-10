@@ -7,7 +7,7 @@ const root=path.resolve(__dirname,'..'),generated=path.resolve(process.argv[2]||
 assert(process.argv[2]&&process.argv[3]&&out.startsWith(root+'/scratch/runs/')&&!fs.existsSync(out));
 fs.mkdirSync(out,{recursive:true});
 const script=String.raw`
-import sys,runpy,os,time,json,importlib.util,unittest,zlib,gzip,subprocess
+import sys,runpy,os,time,json,importlib.util,unittest,zlib,gzip,subprocess,difflib,hashlib
 from pathlib import Path
 from unittest.mock import patch
 root,generated,out=map(Path,sys.argv[1:])
@@ -60,7 +60,14 @@ def apply_cancellation(text):
   text=text.replace(before,after)
  return text
 assert old.decode().count(queue_before)==1
-assert apply_cancellation(old.decode().replace(queue_before,queue_after))==source.decode()
+published=git_source('1c59017d5c9618cec221944fa86a5d236b19d061','native_kernel_custody.py')
+assert hashlib.sha256(published).hexdigest()=='e4c6b526b073ebd3d2b584b4b33ddfd40568787c23c45e4fd6537910ceb05bae'
+assert apply_cancellation(old.decode().replace(queue_before,queue_after))==published.decode()
+def delta(before,after):
+ a,b=before.splitlines(keepends=True),after.splitlines(keepends=True)
+ return [(a[i:j],b[k:l]) for op,i,j,k,l in difflib.SequenceMatcher(None,a,b,autojunk=False).get_opcodes() if op!='equal']
+provider_delta=delta(published.decode(),source.decode())
+assert provider_delta, 'kernel coordination delta missing'
 for name,rev in [('q3-startup-custody.py','17b39151e8aab8926e1ff8b69b017b5839ba4c0b'),
                  ('nox-startup-custody.py',revision)]:
  previous={};exec(compile(git_source(rev,name),name,'exec'),previous)
@@ -69,7 +76,23 @@ for name,rev in [('q3-startup-custody.py','17b39151e8aab8926e1ff8b69b017b5839ba4
  transformed=current['candidate'](source.decode() if is_q3 else source)
  prior=previous['candidate'](old.decode() if is_q3 else old)
  assert prior.count(queue_before)==1
- assert apply_cancellation(prior.replace(queue_before,queue_after))==transformed,name
+ expected=apply_cancellation(prior.replace(queue_before,queue_after))
+ if is_q3:
+  # Q3 now repeats its kernel-stop scan after potentially blocking durable
+  # service. Audit the complete delta, including retention of the queued task.
+  assert expected.count('                del resumes[task]\n')==1
+  expected=expected.replace('                del resumes[task]\n','')
+  seam='                journal.release_barrier() # ordered durable prefix before executable userspace\n'
+  assert expected.count(seam)==1
+  expected=expected.replace(seam,seam+'''                # Storage service may have blocked after the earlier scan.
+                # A running creator can now have a pending fork event, or this
+                # task's consumed stop can have been replaced by EXIT/EXEC.
+                # Keep this resume queued so priority_wait checks it too; only
+                # normal waitpid + GETEVENTMSG may bind the new kernel event.
+                if priority_wait() is not None: continue
+                del resumes[task]
+''')
+ assert delta(expected,transformed)==provider_delta,name
  compile(transformed,name,'exec')
  try:current['candidate']((source+b'\n').decode() if is_q3 else source+b'\n')
  except ValueError:pass

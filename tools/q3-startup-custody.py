@@ -15,7 +15,7 @@ import os
 
 # Retain deferred queue bookkeeping and cancellation recording verbatim.
 # No queue operation supplies authority to execute a task.
-PROVIDER_SHA = 'e4c6b526b073ebd3d2b584b4b33ddfd40568787c23c45e4fd6537910ceb05bae'
+PROVIDER_SHA = 'e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e'
 VERSION = 'q3-startup-custody-release-cohorts-v3'
 
 
@@ -57,8 +57,17 @@ def candidate(source):
         '            if peek is None:\n',
         '                if peek is None:\n                    pump_output()\n':
         '                if peek is None and not resumes:\n                    pump_output()\n',
+        '                del resumes[task]\n': '',
         '                journal.flush_pending() # ordered durable prefix before executable userspace\n':
-        '                journal.release_barrier() # ordered durable prefix before executable userspace\n',
+        '''                journal.release_barrier() # ordered durable prefix before executable userspace
+                # Storage service may have blocked after the earlier scan.
+                # A running creator can now have a pending fork event, or this
+                # task's consumed stop can have been replaced by EXIT/EXEC.
+                # Keep this resume queued so priority_wait checks it too; only
+                # normal waitpid + GETEVENTMSG may bind the new kernel event.
+                if priority_wait() is not None: continue
+                del resumes[task]
+''',
     }
     for old, new in replacements.items():
         if source.count(old) != 1: raise ValueError('Q3 release cohort seam: '+repr(old))

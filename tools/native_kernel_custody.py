@@ -8,8 +8,8 @@ the transferred obligation closes only on the successor's actual terminal wait.
 import ctypes, errno, gzip, hashlib, json, os, signal, sys, time
 from pathlib import Path
 
-TRACEME, CONT, SETOPTIONS, GETEVENTMSG = 0, 7, 0x4200, 0x4201
-OPTIONS = 2 | 4 | 8 | 16 | 64 | (1 << 20) # fork/vfork/clone/exec/exit/EXITKILL
+TRACEME, CONT, SYSCALL, SETOPTIONS, GETEVENTMSG = 0, 7, 24, 0x4200, 0x4201
+OPTIONS = 1 | 2 | 4 | 8 | 16 | 64 | 128 | (1 << 20) # TRACESYSGOOD/fork/vfork/clone/exec/exit/seccomp/EXITKILL
 WALL = 0x40000000
 libc = ctypes.CDLL(None, use_errno=True)
 libc.ptrace.restype = ctypes.c_long
@@ -20,6 +20,36 @@ def ptrace(request, pid, addr=0, data=0):
         e = ctypes.get_errno()
         raise OSError(e, os.strerror(e), str(pid))
     return result
+
+def install_creation_gate():
+    """Inherited kernel entry barriers, before any command code can execute.
+
+    Only clone/fork/vfork and destructive exec/exit_group enter the serial
+    gate. Other syscalls run normally. TRACE is inherited across exec/clone;
+    an unsupported ABI fails closed rather than bypassing coordination.
+    """
+    class Filter(ctypes.Structure):
+        _fields_ = [('code', ctypes.c_ushort), ('jt', ctypes.c_ubyte),
+                    ('jf', ctypes.c_ubyte), ('k', ctypes.c_uint)]
+    class Program(ctypes.Structure):
+        _fields_ = [('length', ctypes.c_ushort), ('filters', ctypes.POINTER(Filter))]
+    # Separate ABI paths avoid serializing unrelated blocking syscalls whose
+    # numbers overlap creation calls on the other ABI.
+    def calls(numbers):
+        block = [(0x20,0,0,0)]
+        for nr in numbers:
+            block += [(0x15,0,1,nr), (0x06,0,0,0x7ff00000)]
+        return block
+    compat = calls((2,11,120,190,252,358,435)) + [(0x06,0,0,0x7fff0000)]
+    native = calls((56,57,58,59,231,322,435))
+    native += [(0x45,0,1,0x40000000), (0x06,0,0,0x80000000),
+               (0x06,0,0,0x7fff0000)]
+    ins = [(0x20,0,0,4), (0x15,len(compat)+2,0,0xc000003e),
+           (0x15,1,0,0x40000003), (0x06,0,0,0x80000000)] + compat + native
+    filters = (Filter * len(ins))(*(Filter(*v) for v in ins))
+    program = Program(len(ins), filters)
+    assert libc.prctl(38, 1, 0, 0, 0) == 0, 'no_new_privs required'
+    assert libc.prctl(22, 2, ctypes.byref(program), 0, 0) == 0, 'seccomp gate required'
 
 def identity(pid):
     p = Path('/proc') / str(pid)
@@ -95,6 +125,8 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     pending = {}
     exiting = set()
     resumes = {}
+    gate_owner = None
+    gate_waiting = set()
     exec_transfers = {}
     exit_stops = {}
     consumed_waits = {} # one latest real wait per owned task, diagnostic only
@@ -148,7 +180,11 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
         row['registeredSequence'] = log('custody', **row)
     def trace_task(request, task, data=0):
         try:
-            ptrace(request, task, data=data)
+            # A gated syscall retains exclusive entry through its actual exit
+            # stop, including failed clone/exec. Creation events are consumed
+            # and bound before that exit; EXIT/EXEC retirement stays unchanged.
+            operation = SYSCALL if request == CONT and task == gate_owner and task not in exiting else request
+            ptrace(operation, task, data=data)
             if request == GETEVENTMSG:
                 log('kernel-event-message', pid=task, start=owned[task]['start'],
                     waitSequence=consumed_waits[task]['sequence'],
@@ -156,7 +192,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                     kernelMessage=ctypes.c_ulong.from_address(data).value)
             elif request == CONT:
                 log('ptrace-cont-returned', pid=task, start=owned[task]['start'],
-                    signal=data, waitSequence=consumed_waits[task]['sequence'])
+                    signal=data, operation=operation, waitSequence=consumed_waits[task]['sequence'])
             return True
         except OSError as error:
             if error.errno != errno.ESRCH:
@@ -237,6 +273,10 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             # leader EXIT binding). Pending creators still take precedence.
             if superseding is not None:
                 return superseding
+        if gate_owner is not None:
+            try: value = os.waitid(os.P_PID, gate_owner, wait_flags)
+            except ChildProcessError: value = None
+            if value and value.si_status not in (261, 517, 773): return value
         return exit_wait() if cancellation else None
     # Parent never uses Popen.poll()/wait(): those can reap an unrecorded child.
     pid = os.fork()
@@ -254,6 +294,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 fd = os.open(run / 'kernel-command.log', os.O_WRONLY|os.O_CREAT|os.O_TRUNC, 0o600)
             os.dup2(fd, 1); os.dup2(fd, 2); os.close(fd)
             ptrace(TRACEME, 0); os.kill(os.getpid(), signal.SIGSTOP)
+            install_creation_gate()
             os.execvp(command[0], command)
         except BaseException:
             os._exit(127)
@@ -297,7 +338,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             # A fatal group signal can make every sibling's EXIT stop ready;
             # broadcasting (and durably logging) all remaining signals first
             # can exhaust cleanup while withholding those real waits and EOF.
-            if cancellation and peek is None:
+            if cancellation and peek is None and gate_owner is None:
                 record_cancellation()
                 sig = signal.SIGKILL if time.monotonic()-cancel_at >= .25 else signal.SIGTERM
                 retired = {r['pid'] for r in reaped}
@@ -321,7 +362,15 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 # signal can replace other creators' pending kernel messages.
                 # Scan before every queued CONT, including signal delivery.
                 # Cancellation signals above also follow that same scan.
-                task, (start, deliver, parent) = next(iter(resumes.items()))
+                eligible = [(t,v) for t,v in resumes.items()
+                            if t not in gate_waiting or gate_owner in (None,t)]
+                if not eligible:
+                    time.sleep(.001)
+                    continue
+                task, (start, deliver, parent) = eligible[0]
+                if task in gate_waiting and gate_owner is None:
+                    gate_owner = task
+                    log('syscall-gate-acquired', pid=task)
                 del resumes[task]
                 try:
                     assert identity(task)['start'] == start, 'PID reused before resume'
@@ -401,6 +450,10 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 pid=task, start=row['start'], waitStatus=status,
                 beforeConsumeSequence=before, peekCode=peek.si_code, peekStatus=peek.si_status))
             if os.WIFEXITED(status) or os.WIFSIGNALED(status):
+                gate_waiting.discard(task)
+                if gate_owner == task:
+                    log('syscall-gate-terminal', pid=task)
+                    gate_owner = None
                 exiting.discard(task)
                 parked.discard(task)
                 previous = next((r for r in reaped if r['pid'] == task), None)
@@ -465,10 +518,25 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                       armedBeforeCustodian=True, command=command, custodySequence=owned[pid]['registeredSequence']))
                 log('watchdog-barrier-released', pid=pid)
                 armed = True
+            elif event == 7:
+                assert sig == signal.SIGTRAP, ('invalid SECCOMP stop', task, status)
+                gate_waiting.add(task)
+                log('syscall-gate-entry', pid=task)
+            elif sig == (signal.SIGTRAP | 0x80):
+                assert gate_owner == task, ('syscall exit without gate', task)
+                log('syscall-gate-exit', pid=task)
+                gate_waiting.discard(task)
+                gate_owner = None
             elif event in (1, 2, 3):
                 child = ctypes.c_ulong()
                 if not trace_task(GETEVENTMSG, task, ctypes.addressof(child)): continue
                 register(child.value, task, {1:'fork',2:'vfork',3:'clone'}[event])
+                if gate_owner == task:
+                    # Binding is now consumed. vfork must allow the child's
+                    # exec while its creator remains blocked in the syscall.
+                    log('syscall-gate-creation-bound', pid=task, child=child.value)
+                    gate_waiting.discard(task)
+                    gate_owner = None
                 if child.value in parked:
                     parked.remove(child.value)
                     resumes[child.value] = (owned[child.value]['start'], 0, task)
@@ -506,12 +574,20 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                         pendingPtrace=pending.get(former.value), queuedResume=resumes.get(former.value))
                     transfer['sequence'] = log('exec-identity-transfer', **transfer)
                     exec_transfers[former.value] = transfer
+                    if gate_owner == former.value:
+                        gate_owner = task
+                        gate_waiting.discard(former.value)
+                        gate_waiting.add(task)
                     # Only these two kernel-bound identities change roles.
                     # Sibling EXIT stops and terminal waits remain mandatory.
                     pending.pop(former.value, None); resumes.pop(former.value, None)
                     parked.discard(former.value); exiting.discard(former.value)
                     exiting.discard(task)
-            deliver = 0 if event or sig in (signal.SIGTRAP, signal.SIGSTOP) else sig
+                if gate_owner == task:
+                    log('syscall-gate-exec-bound', pid=task)
+                    gate_waiting.discard(task)
+                    gate_owner = None
+            deliver = 0 if event or sig in (signal.SIGTRAP, signal.SIGSTOP, signal.SIGTRAP | 0x80) else sig
             if event == 6:
                 trace_task(CONT, task, deliver)
             else:
@@ -537,7 +613,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             except (ProcessLookupError,FileNotFoundError): pass
         unreaped=[row for row in owned.values() if (row['pid'], row['start']) not in settled()]
         unresolved=[row for row in owned.values() if row['cause']=='kernel-autoattach-stop']
-        complete = drained and not (unreaped or pending or parked or remaining or unresolved or resumes)
+        complete = drained and not (unreaped or pending or parked or remaining or unresolved or resumes or gate_owner is not None or gate_waiting)
         journal_error = None
         command_error = None
         if command_log:
@@ -567,6 +643,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                   remaining=remaining,unreaped=unreaped,unresolvedPtrace=list(pending.values()),
                   execTransfers=list(exec_transfers.values()),
                   kernelEventEvidenceVersion=1,
+                  syscallGate=dict(owner=gate_owner, waiting=sorted(gate_waiting)),
                   unresolvedResumes=[dict(pid=task,start=value[0],signal=value[1]) for task,value in resumes.items()],
                   finishedAt=time.time(),deadline=deadline,cleanupDeadline=cleanup_deadline,
                   custody='ptrace fork/vfork/clone barriers + waitid WNOWAIT before waitpid',
@@ -581,6 +658,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     assert not parked, parked
     assert not remaining, remaining
     assert not unresolved, ('unresolved kernel lineage', unresolved)
+    assert gate_owner is None and not gate_waiting, ('unsettled syscall gate', gate_owner, gate_waiting)
     if cancellation: raise InterruptedError('supervised cancellation: '+repr(cancellation[0]))
     assert root_status == 0, root_status
 

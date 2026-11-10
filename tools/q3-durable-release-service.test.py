@@ -23,12 +23,30 @@ RESULT_ONLY = {'ptrace-cont-returned', 'parked-child-release', 'parked-child-rel
 
 
 def module(before=False):
+    if before == 'matched':
+        # Same kernel entry coordination, but the prior durability policy:
+        # every release result forces a fresh complete-prefix barrier. This
+        # isolates cohort service savings from the added kernel-stop workload.
+        kernel=runpy.run_path(str(ADAPTER))['load']()
+        append=kernel.Journal.append
+        def strict(journal,value,**options):
+            result=append(journal,value,**options)
+            journal.release_required=True
+            return result
+        kernel.Journal.append=strict
+        return kernel
     if not before: return runpy.run_path(str(ADAPTER))['load']()
     data = subprocess.check_output(['git', 'show', BASE+':tools/q3-startup-custody.py'])
     adapter = types.ModuleType('git_control')
     adapter.__file__ = str(ADAPTER)
     exec(compile(data, BASE+':tools/q3-startup-custody.py', 'exec'), adapter.__dict__)
-    return adapter.load()
+    # Recover the matching provider from the same publication. Its adapter
+    # authenticates this input; today's provider has a different contract.
+    provider = subprocess.check_output(['git', 'show', BASE+':tools/native_kernel_custody.py'])
+    kernel = types.ModuleType('git_control_provider')
+    exec(compile(adapter.candidate(provider.decode()), BASE+':tools/native_kernel_custody.py', 'exec'),
+         kernel.__dict__)
+    return kernel
 
 
 def probe(kernel, run):
@@ -48,7 +66,7 @@ def probe(kernel, run):
             durable[:] = [json.loads(line) for line in raw.splitlines()]
         return result
     def resumed(request, pid, addr=0, data=0):
-        if request == kernel.CONT:
+        if request in (kernel.CONT, getattr(kernel,'SYSCALL',kernel.CONT)):
             # Any missing suffix must consist exclusively of outcomes of
             # earlier certified releases. In particular every consumed wait,
             # lineage, identity and retirement record must already be durable.
@@ -101,8 +119,8 @@ def run(out):
     script='''const cp=require('node:child_process');let n=20;
 for(let i=0;i<20;i++)cp.spawn('/bin/true').once('close',()=>{if(!--n)process.exit(0)});
 '''
-    for name in ('before','after'):
-        kernel=module(name=='before'); directory=out/name; directory.mkdir()
+    for name in ('historical','before','after'):
+        kernel=module(True if name=='historical' else 'matched' if name=='before' else False); directory=out/name; directory.mkdir()
         sync=os.fsync; calls=[]
         def slow(fd):
             calls.append(time.monotonic_ns());time.sleep(.025);return sync(fd)
@@ -122,6 +140,8 @@ for(let i=0;i<20;i++)cp.spawn('/bin/true').once('close',()=>{if(!--n)process.exi
         assert len(drain['owned'])==len(drain['reaped'])>=21
         pressure.append(dict(mode=name,fsyncs=len(calls),seconds=elapsed,releases=releases,
                              actualOwned=len(drain['owned']),actualReaped=len(drain['reaped'])))
+    historical=pressure.pop(0)
+    (out/'historical-pressure.json').write_text(json.dumps(historical,indent=2))
     assert pressure[1]['fsyncs'] < pressure[0]['fsyncs']*.85, pressure
     assert pressure[1]['seconds'] < pressure[0]['seconds']*.9, pressure
     assert any(r['trailingResultRecords'] for r in pressure[1]['releases'])
