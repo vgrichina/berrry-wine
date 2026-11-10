@@ -79,9 +79,9 @@
 
 - [ ] Quake III current-browser movement, firing and torch on both GL backends
   id: Q3-CURRENT-GL-GAMEPLAY-20261108
-  status: crisp native fixture and Enter movement verified; original main-menu input consumption and arena progress open
+  status: native late-creation race repaired in 4a814ed4f; current-source consumer repair active; original browser arena progress and backend coverage open
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  Next: Published52b51b920 preserves29 actual matching WebGL producer replies: completed2->139 but presentation/write/draw/vertices zero; console64 exhausted. Published92907361d authentic compiled texture scan terminates, so runtime defect unsupported; original dimensions/count/caller absent. Fresh q3-original-texture-scan-state-0352 replaces bounded passive samples with that state under unchanged readiness/cancellation. Prior box independently stopped. Historical fixture/menu accepted; arena, both GL backends, FPS/audio open.
+  Next: Fresh q3-current-source-gameplay-1050 repairs tools/q3-current-module.cjs stale e7e0312bd source closure after published9bf37f769/c693e2b8b changes, preserving authenticated source/provider checks, then pursues original browser arena movement/fire if prerequisites pass. Native 4a814ed4f kernel-entry coordination passes 50 focused tests, six real race cases, locked build and actual Chrome normal 104/104 and delayed 93/93 complete waits/EOF. Evidence: scratch/runs/20261110-native-lineage-late-window-repair-1040/. Earlier 29 WebGL producer replies still prove no submitted scene; native Chrome control success does not prove original-game readiness or browser gameplay. Historical fixture/menu accepted; arena, both GL backends, FPS/audio remain open.
 
 - [x] SuperTux original browser jumps, coins and enemy stomp
   id: NEW-GAME-SUPERTUX-BROWSER-PROGRESS-20261108
