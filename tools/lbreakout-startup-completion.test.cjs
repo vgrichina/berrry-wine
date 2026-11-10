@@ -7,7 +7,7 @@ function setup(){
  const binding={exe:0x10000,sdl:0x100000,index:0,generation:7,mappingState:2},memory={buffer:new ArrayBuffer(0x190000)},v=new DataView(memory.buffer);
  const w=(p,n)=>v.setUint32(p,n,true);let clock=0,target;
  w(32,binding.sdl);w(64,2);w(68,7);w(binding.exe+0x77150,0x140000);w(0x14001c,0x140100);w(0x140104,6);w(0x140148,0x140200);
- const e={guest_to_wasm:p=>p,get_dll_table:()=>32,get_dll_lifecycle_table:()=>64,get_dll_lifecycle_stride:()=>16,get_image_base:()=>binding.exe,get_current_thread_id:()=>1,
+ const e={guest_to_wasm:p=>p,get_eip:()=>binding.exe+0x1234,get_dll_table:()=>32,get_dll_lifecycle_table:()=>64,get_dll_lifecycle_stride:()=>16,get_image_base:()=>binding.exe,get_current_thread_id:()=>1,
   set_trace_eip_range:(f,lo,hi)=>{assert(!f||hi===lo+1);target=f?lo:0;}};
  return {w,e,memory,binding,now:()=>clock,expire:()=>{clock=2000;},target:()=>target};
 }
@@ -15,6 +15,7 @@ function setup(){
  for(const mode of ['success','loading','manager-only','no-menu','module','thread','menu-change','unsupported-item']){
   const s=setup(),o=await scope.install({...s,token:'startup',expected:0}),hit=rva=>o.boundary(s.binding.exe+rva);
   assert.equal(s.target(),s.binding.exe+0x26026);
+  assert.equal(o.snapshot().lastPC,s.binding.exe+0x1234);
   hit(0x10849);assert(o.snapshot().active,'manager alone is insufficient');
   if(mode==='module')s.w(68,8);
   if(mode==='thread')s.e.get_current_thread_id=()=>2;

@@ -56,7 +56,7 @@ const bound=require(path.resolve(run,'bound-input.cjs'));
  const owner=JSON.parse(JSON.stringify(vm.runInContext(bound.WORKER_READ,worker)));
  let terminal=false,reads=0;
  const caller={assert,bound,workers,latest:{label:'main-menu',sha256:'a'.repeat(64)},deadline:Date.now()+2000,Date,
-  owningWorker:async()=> 'owner',save:()=>assert.fail('no completion or image on replacement'),wait:async()=>{},
+  owningWorker:async()=> 'owner',save:(name,value)=>{assert.equal(name,'completion-failure-menu-control-menu.json');assert.equal(value.lastObservation,null);},wait:async()=>{},
   evaluate:async expression=>{assert(!terminal,'terminal: no later protocol');reads++;const value=await vm.runInContext(expression,worker);return vm.runInContext('JSON.parse('+JSON.stringify(JSON.stringify(value))+')',caller);},
   fail:()=>{terminal=true;caller.terminal=true;},terminal:false};
  vm.createContext(caller);

@@ -327,12 +327,14 @@ def startup_completion_observer_source():
  }
  const timer=setTimeout(()=>stop('deadline'),2000);if(timer.unref)timer.unref();
  valid();record('completion-arm',{binding,expected,deadline});trace(exe+0x26026);
- return {boundary,stop:r=>{clearTimeout(timer);stop(r);},snapshot:()=>({token,binding,expected,deadline,active,reason,phase,records:[...records]})};
+ return {boundary,stop:r=>{clearTimeout(timer);stop(r);},snapshot:()=>({token,binding,expected,deadline,active,reason,phase,lastPC:e.get_eip()>>>0,records:[...records]})};
 }'''
 
 
 def startup_workflow_source(source):
     """Apply to the full title caller; accepted fixture path stays unchanged."""
+    if "phase:'startup',expected:0" in source:
+        raise ValueError('startup completion already composed')
     before=" await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({presented:true}))))');await capture('startup');"
     if source.count(before) != 1:
         raise ValueError('unsupported first-image startup template')
@@ -396,6 +398,7 @@ def pause_completion_source(source):
  return {session:s,owner,token,expected:c.expected,reviewed,deadline:arm.deadline,binding:arm.binding};
 }
 async function completion(a){
+ let lastObservation=null;
  try{
   while(true){
    assert(!terminal,'terminal: completion closed');assert(Date.now()<Math.min(deadline,a.deadline),'guest completion deadline');
@@ -408,6 +411,7 @@ async function completion(a){
    assert.equal(r.token,a.token,'completion command binding');assert.equal(r.expected,a.expected);
    assert.deepEqual(r.binding,a.binding,'completion module binding');
    if(a.reviewed)assert.deepEqual(r.reviewed,a.reviewed,'completion reviewed image binding');
+   lastObservation=r;
    if(!r.active){
     assert.equal(r.reason,'complete','guest completion incomplete');save('completion-'+a.token+'.json',r);
     const remaining=Math.min(deadline,a.deadline)-Date.now();assert(remaining>0,'presentation deadline');
@@ -417,7 +421,11 @@ async function completion(a){
    }
    await wait(10);
   }
- }catch(e){fail(e);throw e;}
+ }catch(e){
+  try{if(!terminal)save('completion-failure-'+a.token+'.json',{token:a.token,error:String(e),lastObservation});}
+  finally{fail(e);}
+  throw e;
+ }
 }'''),
         ("if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}", "let completionArm;\n   if(c.completion==='paddle'){assertPaddleCompletion(c);completionArm=await armObservation({...c,phase:'paddle',expected:c.key==='ArrowRight'?275:276});}\n   else if(c.completion==='level-start'){assert(c.action==='key'&&c.key==='Enter','level-start requires native Enter');completionArm=await armObservation({...c,phase:'level-start',expected:8});}\n   else if(c.action==='key'&&c.key==='Enter'){assert(c.id&&c.reviewRef&&Number.isInteger(c.holdMs)&&c.holdMs>=80&&c.holdMs<=300,'menu Enter command binding');completionArm=await armObservation({...c,phase:'menu',expected:13});}\n   else if(c.action==='key'&&c.key==='p'){\n    const expected=c.expected??20;assert([8,20].includes(expected),'supported pause transition');\n    if(expected===8)assert.equal(c.pauseConfirmed,latest.label,'reviewed visible pause required');\n    completionArm=await armObservation({...c,phase:'pause',expected});\n   }"),
         ("     const k=require('./input.cjs').key('p'),{text,...release}=k;", "     const a=await armObservation({...c,phase,expected:phase==='resume'?8:20});\n     const k=require('./input.cjs').key('p'),{text,...release}=k;"),
