@@ -658,17 +658,25 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   reuses Node's control functions and PE templates; evidence and browser/module
   identities are in `scratch/runs/20261109-browser-startup-barrier/test-result.json`.
   This validates transport and lifecycle, not rendered application pixels or
-  gameplay performance. The special CARDS exported initializer remains
-  synchronous; app visual qualification and full CLI main-Worker migration
-  remain open.
+  gameplay performance. App visual qualification and full CLI main-Worker
+  migration remain open.
   Exported startup initializers now require a complete return frame before
   reporting success: CARDS uses stdcall and MSVCRT's `_set_sbh_threshold` uses
   cdecl. Traps and unfinished returns propagate instead of returning stale EAX.
   The helper restores caller registers/control/yield/SEH after nonterminal
   success or failure, while preserving terminal guest exit. Native regression
   tests on both WASM builds cover valid returns, NULL jumps, traps, wrong stack
-  cleanup and ExitThread. This fixes completion/error semantics before moving
-  the remaining exported initializer execution onto an awaited path.
+  cleanup and ExitThread. CARDS and CRT startup now yield exported calls into
+  the shared transaction driver. The awaited route retains each exported
+  frame across nested DLL lookup or blocking-wait service and tracks its
+  generator/gate with the owning endpoint. Ownership is checked before and
+  after waits; rejection or retirement unwinds without running the following
+  guest instruction. Synchronous compatibility callers use the same generator
+  and reject asynchronous services. Real native tests on both builds hold an
+  actual LoadLibraryA lookup, verify the parked stack, and cover successful
+  resume, lookup rejection, cancellation, caller restoration and balanced
+  entered/unwound frames. Authentic Solitaire CARDS and WordPad CRT launches
+  are checked separately; evidence: `scratch/runs/20261109-export-init-await/`.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
