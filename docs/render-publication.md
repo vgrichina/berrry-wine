@@ -566,6 +566,14 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   untouched shadow and native completion after a display tick. Deterministic
   policy controls cover expired deadlines, clock wraparound and owner failure.
   Evidence: `scratch/runs/20261109-cli-timing-owner/`.
+  CLI lazy-read completion uses `serviceMainIoWait` with the selected owner.
+  It awaits VFS filling without advancing CLI batches, then clears that owner's
+  yield. VFS-latched faults resume to return ERROR_READ_FAULT; unexpected fill
+  exceptions and retired-owner errors propagate. Pending-slot cleanup stays
+  in the VFS's identity-guarded completion. Real provider delay/fault tests and
+  normal/compat local/Worker tests cover the service boundary; the latter
+  publish a pending read and yield explicitly, not through guest ReadFile.
+  Evidence: `scratch/runs/20261109-cli-io-owner/`. Browser polling is unchanged.
   PE placement/loading and launch name/drive/arguments now use shared
   `stageAndLoadPeOwned`/`configureExeOwned` helpers in both the CLI and
   `GuestThreadHost.loadPe`. The existing `stagePe` still owns oversized PE/NE

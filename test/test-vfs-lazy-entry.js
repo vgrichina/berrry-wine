@@ -1114,16 +1114,13 @@ test('browser and CLI io-wait completion blocks preserve a newer pending request
     ['browser worker', path.join(__dirname, '..', 'host.js'),
       'const pvfs = self._helpCtx && self._helpCtx.vfs;',
       '} else if (r.yield === 13) {'],
-    ['CLI', path.join(__dirname, 'run.js'),
-      'const pending = ctx.vfs && ctx.vfs.getPendingRead(1);',
-      'instance.exports.clear_yield();'],
   ];
   // The cooperative browser step no longer awaits an inline block: it parks
   // the main thread through lib/main-io-wait.js, so the same property is
   // checked on that module (fill = the VFS's own identity-guarded
   // fillPendingRead, which is what host.js's _fillParkedRead ends in).
-  {
-    const { createMainIoWait } = require('../lib/main-io-wait');
+  for (const cli of [false,true]) {
+    const { createMainIoWait, serviceMainIoWait } = require('../lib/main-io-wait');
     const vfs = new VirtualFS();
     let complete;
     vfs.setProviderFile(GUEST, { provider: {
@@ -1138,13 +1135,18 @@ test('browser and CLI io-wait completion blocks preserve a newer pending request
     let cleared = 0;
     const ex = { get_yield_reason: () => 12, clear_yield: () => { cleared++; } };
     const io = createMainIoWait({ fill: (v, p) => v.fillPendingRead(p) });
-    assert.strictEqual(io.poll(ex, vfs), true, 'main-io-wait: the park starts');
+    const running = cli ? serviceMainIoWait({
+      read: async()=>({get_yield_reason:12}),
+      call: async name=>{assert.strictEqual(name,'clear_yield');ex.clear_yield();},
+    },vfs) : null;
+    if (!cli) assert.strictEqual(io.poll(ex, vfs), true, 'main-io-wait: the park starts');
     await new Promise(resolve => setImmediate(resolve));   // the fill is now in flight
     vfs.pendingRead = pb;
     complete();
+    if (cli) assert.strictEqual(await running,true);
     for (let i = 0; i < 5 && io.inFlight; i++) await new Promise(resolve => setImmediate(resolve));
     assert.strictEqual(vfs.pendingRead, pb, 'main-io-wait: late A completion must not clear B');
-    assert.strictEqual(io.poll(ex, vfs), false, 'main-io-wait: the park releases');
+    if (!cli) assert.strictEqual(io.poll(ex, vfs), false, 'main-io-wait: the park releases');
     assert.strictEqual(cleared, 1);
   }
   for (const [name, filename, startMarker, endMarker] of blocks) {

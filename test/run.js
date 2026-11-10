@@ -5,6 +5,7 @@ const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
 const { createHostImports } = require('../lib/host-imports');
 const frameIntervals = require('../lib/frame-intervals');
 const {serviceMainTimingWait} = require('./main-timing-waits');
+const {serviceMainIoWait} = require('../lib/main-io-wait');
 const { createRenderWaitAttribution } = require('../lib/render-wait-attribution');
 const { callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
 const { inputEventHwnd } = require('../lib/host-window');
@@ -10919,21 +10920,7 @@ async function main() {
     // for a chunk the host has not read yet. ReadFile parked with its stdcall
     // frame restored and EIP on the thunk, so filling the chunk and clearing
     // the yield re-enters the same call, which then takes the cache hit.
-    if (instance.exports.get_yield_reason() === 12) {
-      const pending = ctx.vfs && ctx.vfs.getPendingRead(1);
-      if (TRACE_YIELD) {
-        console.log(`[yield] T0 reason=12 (io_wait) ` +
-          (pending ? `path=${pending.path} off=${pending.offset} len=${pending.length}` : 'no pending record'));
-      }
-      if (pending) {
-        // Fail loudly rather than spinning: a provider that cannot deliver is
-        // a mount bug, and a silent retry loop would look like a hang.
-        await ctx.vfs.fillPendingRead(pending);
-        // The VFS owns identity-guarded completion. A worker may have installed
-        // a newer pending request while the main guest awaited this fill.
-      }
-      instance.exports.clear_yield();
-    }
+    await serviceMainIoWait(mainOwner, ctx.vfs, TRACE_YIELD ? console.log : null);
     if (instance.exports.get_yield_reason() === 16) mainExecutionSuspended();
 
     await serviceMainTimingWait(mainOwner, {batchClock, tickState,

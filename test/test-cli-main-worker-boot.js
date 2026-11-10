@@ -8,6 +8,8 @@ const {configureExeOwned,stageAndLoadPeOwned}=require('../lib/process-boot');
 const {BASE}=require('../lib/region-map.generated');
 const {pe,u32}=require('./test-dll-lifecycle-real-pe');
 const {serviceMainTimingWait}=require('./main-timing-waits');
+const {serviceMainIoWait}=require('../lib/main-io-wait');
+const {VirtualFS}=require('../lib/filesystem');
 const {Worker}=require('node:worker_threads');
 const {CommandQueue,WorkerConsumer,OPCODES:OP}=require('../lib/d3d-command-stream');
 const sigs=require('../lib/host-import-sigs.generated.json').sigs;
@@ -150,6 +152,18 @@ const root=path.resolve(__dirname,'..');
     const resumed=await owner.call('test_vblank_wait_once');
     assert.equal(resumed&1,0,'native wait completes after display tick');
     assert(resumed&8,'native wait returns DD_OK');
+    const vfs=new VirtualFS(),ioBytes=new Uint8Array(4);
+    vfs.setProviderFile('c:\\owner-read.bin',{provider:{size:4,
+     readRange:async()=>new Uint8Array([9,8,7,6])}});
+    const file=vfs.createFile('c:\\owner-read.bin',0x80000000,3);
+    vfs.pendingRead=vfs.readFile(file,ioBytes,4).pending;
+    assert(vfs.pendingRead); // Host import publishes this alongside yield 12.
+    await owner.call('set_yield_state',12,1);
+    assert.equal(await serviceMainIoWait(owner,vfs),true);
+    assert.equal((await owner.read(['get_yield_reason'])).get_yield_reason,0);
+    assert(vfs.readFile(file,ioBytes,4).ok);
+    assert.deepEqual([...ioBytes],[9,8,7,6]);
+    if(remote)assert.equal(h.exports.get_yield_reason(),shadowYield,'I/O completion leaves shadow unchanged');
     rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,dlls,registrations,retirement,timing:timing.vblank});
    }finally{await worker?.stop();}
   }
