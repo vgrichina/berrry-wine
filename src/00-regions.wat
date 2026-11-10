@@ -1116,3 +1116,7 @@
   ;; Diagnostic main-CPU atomic mirror, one binding per instance lifetime.
   (region.declare $NATIVE_STORE_SHARED (size 0x00000080) (align 128)
     (owner "03-registers.wat:$native_store_share"))
+
+  ;; Process writer registry and bounded CPU store records. No object leases.
+  (region.declare $WRITER_SESSION (size 0x00004000) (align 128)
+    (owner "03-registers.wat:$writer_note"))

@@ -113,6 +113,11 @@
       (else
         (if (i32.eq (i32.load (call $thunk_metadata_addr (local.get $thunk_idx))) (i32.const 0xCACA003B))
           (then (call $mm_timer_thread_check)))))
+    ;; Only the already authenticated multimedia return has a supported
+    ;; context transition. Other services may use raw/bulk writers.
+    (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION)) (then
+      (if (i32.ne (i32.load (call $thunk_metadata_addr (local.get $thunk_idx))) (i32.const 0xCACA000A))
+        (then (call $writer_invalidate (i32.const 3))))))
     ;; Cached/direct calls must honor a hook installed since decoding.
     (if (call $thunk_patch_changed (local.get $thunk_idx)) (then
       (global.set $eip (i32.add (global.get $thunk_guest_base) (i32.shl (local.get $thunk_idx) (i32.const 3))))

@@ -251,6 +251,8 @@
 
   (func $g2w_miss (param $ga i32) (result i32)
     (local $wa i32)
+    ;; Page-in/filter execution and sentinel writes are outside this session.
+    (call $writer_invalidate (i32.const 3))
     ;; Windows' rule for reserved memory, also under the production default.
     ;; Mode 5 retains the same rule for explicit reserved-page diagnostics. A
     ;; read of a MEM_RESERVE page that was never committed is an access
@@ -678,6 +680,91 @@
     (if (i32.eqz (global.get $exe_size_of_image)) (then (return)))
     (call $invalidate_code_range (local.get $ga) (local.get $len)))
 
+  ;; Shared writer session ABI: 64 real CPU registrations (never arm/lifetime
+  ;; generations), command exclusion, and 256 immutable CPU-issued records.
+  ;; Worker guards own execution admission; a CPU bypass invalidates in gsN.
+  (global $WRITER_SESSION i32 (region.addr $WRITER_SESSION 0))
+  (global $WRITER_SESSION_SIZE i32 (i32.const 16384))
+  (global $writer_cpu (mut i32) (i32.const 0))
+  (global $writer_slot (mut i32) (i32.const 0))
+  (global $writer_row (mut i32) (i32.const 0))
+  (func (export "writer_session_base") (result i32) (global.get $WRITER_SESSION))
+  (func (export "writer_cpu_id") (result i32) (global.get $writer_cpu))
+  (func (export "writer_cpu_row") (result i32) (global.get $writer_row))
+  (func $writer_invalidate (export "writer_invalidate") (param $reason i32)
+    (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION)) (then
+      (drop (i32.atomic.rmw.cmpxchg offset=8 (global.get $WRITER_SESSION)
+        (i32.const 0) (local.get $reason))))))
+  (func (export "writer_cpu_register") (param $slot i32) (param $endpoint i32) (result i32)
+    (local $id i32) (local $row i32) (local $i i32)
+    (if (i32.ne (global.get $writer_cpu) (i32.const 0)) (then (unreachable)))
+    (local.set $id (i32.add (i32.atomic.rmw.add (global.get $WRITER_SESSION) (i32.const 1)) (i32.const 1)))
+    (if (i32.le_s (local.get $id) (i32.const 0)) (then
+      (i32.atomic.store offset=52 (global.get $WRITER_SESSION) (i32.const 1))
+      (call $writer_invalidate (i32.const 7)) (return (i32.const 0))))
+    ;; Slot reuse does not retire the old CPU. Stale and replacement Workers
+    ;; must both remain represented until their actual transports detach.
+    (block $claimed (loop $find
+      (local.set $row (i32.add (global.get $WRITER_SESSION)
+        (i32.add (i32.const 64) (i32.shl (local.get $i) (i32.const 5)))))
+      (br_if $claimed (i32.eqz (i32.atomic.rmw.cmpxchg (local.get $row) (i32.const 0) (local.get $id))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $find (i32.lt_u (local.get $i) (i32.const 64)))
+      ;; A diagnostic capacity bound must not stop observer-off execution.
+      ;; Persist loss so that a future arm cannot certify the missing CPU.
+      (i32.atomic.store offset=52 (global.get $WRITER_SESSION) (i32.const 1))
+      (call $writer_invalidate (i32.const 7)) (return (i32.const 0))))
+    (i32.atomic.store offset=4 (local.get $row) (local.get $endpoint))
+    (i32.atomic.store offset=12 (local.get $row) (i32.const 5))
+    (i32.atomic.store offset=16 (local.get $row) (local.get $slot))
+    ;; Registering another CPU after the membership set was committed is loss.
+    (if (i32.atomic.load offset=44 (global.get $WRITER_SESSION))
+      (then (call $writer_invalidate (i32.const 1))))
+    (global.set $writer_cpu (local.get $id))
+    (global.set $writer_slot (local.get $slot))
+    (global.set $writer_row (local.get $row))
+    (local.get $id))
+  (func $writer_check (result i32)
+    (if (i32.eqz (i32.atomic.load offset=4 (global.get $WRITER_SESSION)))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (i32.atomic.load offset=44 (global.get $WRITER_SESSION)))
+      (then (call $writer_invalidate (i32.const 1)) (return (i32.const 0))))
+    (if (i32.eqz (global.get $writer_cpu))
+      (then (call $writer_invalidate (i32.const 1)) (return (i32.const 0))))
+    (if (i32.or
+          (i32.ne (i32.atomic.load offset=8 (global.get $writer_row))
+                  (i32.atomic.load offset=4 (global.get $WRITER_SESSION)))
+          (i32.or
+            (i32.ne (i32.atomic.load offset=20 (global.get $writer_row))
+                    (i32.atomic.load offset=24 (global.get $WRITER_SESSION)))
+            (i32.or (i32.ne (i32.atomic.load (global.get $writer_row)) (global.get $writer_cpu))
+                    (i32.ne (i32.atomic.load offset=12 (global.get $WRITER_SESSION)) (global.get $writer_cpu)))))
+      (then (call $writer_invalidate (i32.const 1))))
+    (i32.eqz (i32.atomic.load offset=8 (global.get $WRITER_SESSION))))
+  (func $writer_note (param $ga i32) (param $len i32) (param $value i32)
+    (local $n i32) (local $at i32)
+    (if (i32.eqz (call $writer_check)) (then (return)))
+    (if (i32.eqz (i32.or
+          (call $native_store_overlap (local.get $ga) (local.get $len)
+            (i32.load offset=28 (global.get $WRITER_SESSION)) (i32.load offset=32 (global.get $WRITER_SESSION)))
+          (call $native_store_overlap (local.get $ga) (local.get $len)
+            (i32.load offset=36 (global.get $WRITER_SESSION)) (i32.load offset=40 (global.get $WRITER_SESSION)))))
+      (then (return)))
+    (local.set $n (i32.atomic.rmw.add offset=16 (global.get $WRITER_SESSION) (i32.const 1)))
+    (if (i32.ge_u (local.get $n) (i32.atomic.load offset=20 (global.get $WRITER_SESSION)))
+      (then (call $writer_invalidate (i32.const 2)) (return)))
+    (local.set $at (i32.add (global.get $WRITER_SESSION)
+      (i32.add (i32.const 2112) (i32.shl (local.get $n) (i32.const 5)))))
+    (i32.store offset=4 (local.get $at) (global.get $writer_cpu))
+    (i32.store offset=8 (local.get $at) (global.get $writer_slot))
+    (i32.store offset=12 (local.get $at) (global.get $native_store_pc))
+    (i32.store offset=16 (local.get $at) (local.get $ga))
+    (i32.store offset=20 (local.get $at) (local.get $len))
+    ;; Low 32 bits of the actual store operand, never a JS reconstructed value.
+    (i32.store offset=24 (local.get $at) (local.get $value))
+    (i32.store offset=28 (local.get $at) (i32.load offset=4 (global.get $writer_row)))
+    (i32.atomic.store (local.get $at) (i32.add (local.get $n) (i32.const 1))))
+
   ;; Opt-in exact-range store receipts. Instance-local, bounded and diagnostic.
   ;; gsN completions only: raw memory, bulk writers and other instances UNKNOWN.
   ;; Epochs count completions, not value changes or allocation identities.
@@ -762,7 +849,8 @@
         (i64.gt_u (local.get $end) (i64.extend_i32_u (local.get $lo))))
       (i64.gt_u (local.get $end)
         (i64.add (i64.const 4294967296) (i64.extend_i32_u (local.get $lo))))))
-  (func $native_store_note (param $ga i32) (param $len i32)
+  (func $native_store_note (param $ga i32) (param $len i32) (param $value i32)
+    (call $writer_note (local.get $ga) (local.get $len) (local.get $value))
     (if (call $native_store_overlap (local.get $ga) (local.get $len)
           (global.get $native_store_a_lo) (global.get $native_store_a_hi))
       (then
@@ -855,6 +943,9 @@
     (i32.const -1))
   (func $gs32 (param $ga i32) (param $v i32)
     (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32) (local $tries i32)
+    ;; Reject an unenrolled CPU before translation, filters or the store.
+    (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
+      (then (drop (call $writer_check))))
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFC))
       (then
@@ -870,7 +961,7 @@
                          (i32.const 7))))
           (then (call $code_write_hit (local.get $ga) (i32.const 4))))
         (i32.store (local.get $wa) (local.get $v))
-        (call $page_watch_write_one (local.get $wa)) (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 4)))) (return)))
+        (call $page_watch_write_one (local.get $wa)) (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 4) (local.get $v)))) (return)))
     ;; Sampled before $invalidate_code_write: its page-watch walk translates
     ;; the bytes too, and a fault filter it runs can move the page $wa names.
     (local.set $epoch (global.get $fault_sync_epoch))
@@ -879,7 +970,7 @@
     (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
           (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 3))))
       (then (i32.store (local.get $wa) (local.get $v))
-        (call $page_watch_write (local.get $wa) (i32.const 4)) (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 4)))) (return)))
+        (call $page_watch_write (local.get $wa) (i32.const 4)) (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 4) (local.get $v)))) (return)))
     ;; Byte by byte with fresh translations, again whenever a fault filter ran
     ;; during the pass: it may have decommitted a page already written, and the
     ;; restarted x86 store would write every byte again. Bounded; a filter that
@@ -901,11 +992,14 @@
       (br_if $again (i32.lt_u (local.get $tries) (i32.const 4)))))
     (call $page_watch_write_one (local.get $wa))
     (call $page_watch_write_one (local.get $end_wa))
-    (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 4)))))
+    (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 4) (local.get $v)))))
   ;; Common 64-bit guest store for x87/MMX. Translate once for the ordinary
   ;; same-page case; sparse guest neighbors need not be WASM neighbors.
   (func $gs64 (param $ga i32) (param $v i64)
     (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32) (local $tries i32)
+    ;; Reject an unenrolled CPU before translation, filters or the store.
+    (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
+      (then (drop (call $writer_check))))
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFF8))
       (then
@@ -921,14 +1015,14 @@
                          (i32.const 7))))
           (then (call $code_write_hit (local.get $ga) (i32.const 8))))
         (i64.store (local.get $wa) (local.get $v))
-        (call $page_watch_write_one (local.get $wa)) (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 8)))) (return)))
+        (call $page_watch_write_one (local.get $wa)) (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 8) (i32.wrap_i64 (local.get $v))))) (return)))
     (local.set $epoch (global.get $fault_sync_epoch))
     (call $invalidate_code_write (local.get $ga) (i32.const 8))
     (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 7))))
     (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
           (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 7))))
       (then (i64.store (local.get $wa) (local.get $v))
-        (call $page_watch_write (local.get $wa) (i32.const 8)) (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 8)))) (return)))
+        (call $page_watch_write (local.get $wa) (i32.const 8)) (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 8) (i32.wrap_i64 (local.get $v))))) (return)))
     ;; Both halves again if a fault filter ran between them (see $gs32).
     (block $stored (loop $again
       (local.set $epoch (global.get $fault_sync_epoch))
@@ -965,7 +1059,10 @@
     (local $wa i32) (local $g2w_wa i32) (local $epoch i32) (local $tries i32)
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFF0))
       (then
-        (local.set $wa (g2w-fast (local.get $ga)))
+        ;; Reject an unenrolled CPU before translation, filters or the store.
+    (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
+      (then (drop (call $writer_check))))
+    (local.set $wa (g2w-fast (local.get $ga)))
         ;; Unmapped: the miss is reported, and the write goes nowhere.
         (if (i32.eq (local.get $wa) (global.get $NULL_SENTINEL)) (then (return)))
         (if (i32.and ;; inline $code_page_test: slot = (ga>>12 ^ ga>>28 ^ (ga>>30)<<15) & 0xFFFF
@@ -980,7 +1077,7 @@
                          (i32.const 7))))
           (then (call $code_write_hit (local.get $ga) (i32.const 16))))
         (v128.store (local.get $wa) (local.get $v))
-        (call $page_watch_write_one (local.get $wa)) (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 16)))) (return)))
+        (call $page_watch_write_one (local.get $wa)) (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 16) (i32x4.extract_lane 0 (local.get $v))))) (return)))
     ;; Every lane again if a fault filter ran meanwhile (see $gs32).
     (block $stored (loop $again
       (local.set $epoch (global.get $fault_sync_epoch))
@@ -993,6 +1090,9 @@
       (br_if $again (i32.lt_u (local.get $tries) (i32.const 4))))))
   (func $gs16 (param $ga i32) (param $v i32)
     (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32) (local $tries i32)
+    ;; Reject an unenrolled CPU before translation, filters or the store.
+    (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
+      (then (drop (call $writer_check))))
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.ne (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFF))
       (then
@@ -1008,7 +1108,7 @@
                          (i32.const 7))))
           (then (call $code_write_hit (local.get $ga) (i32.const 2))))
         (i32.store16 (local.get $wa) (local.get $v))
-        (call $page_watch_write_one (local.get $wa)) (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 2)))) (return)))
+        (call $page_watch_write_one (local.get $wa)) (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 2) (i32.and (local.get $v) (i32.const 65535))))) (return)))
     ;; Sampled before $invalidate_code_write: its page-watch walk translates
     ;; the bytes too, and a fault filter it runs can move the page $wa names.
     (local.set $epoch (global.get $fault_sync_epoch))
@@ -1017,7 +1117,7 @@
     (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
           (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 1))))
       (then (i32.store16 (local.get $wa) (local.get $v))
-        (call $page_watch_write (local.get $wa) (i32.const 2)) (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 2)))) (return)))
+        (call $page_watch_write (local.get $wa) (i32.const 2)) (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 2) (i32.and (local.get $v) (i32.const 65535))))) (return)))
     ;; As $gs32.
     (block $stored (loop $again
       (local.set $epoch (global.get $fault_sync_epoch))
@@ -1030,9 +1130,12 @@
       (br_if $again (i32.lt_u (local.get $tries) (i32.const 4)))))
     (call $page_watch_write_one (local.get $wa))
     (call $page_watch_write_one (local.get $end_wa))
-    (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 2)))))
+    (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 2) (i32.and (local.get $v) (i32.const 65535))))))
   (func $gs8 (param $ga i32) (param $v i32)
     (local $wa i32) (local $g2w_wa i32)
+    ;; Reject an unenrolled CPU before translation, filters or the store.
+    (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
+      (then (drop (call $writer_check))))
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.and ;; inline $code_page_test: slot = (ga>>12 ^ ga>>28 ^ (ga>>30)<<15) & 0xFFFF
               (i32.load8_u (i32.add (global.get $CODE_PAGE_BITMAP)
@@ -1047,7 +1150,7 @@
       (then (call $code_write_hit (local.get $ga) (i32.const 1))))
     (i32.store8 (local.get $wa) (local.get $v))
     (call $page_watch_write_one (local.get $wa))
-    (if (global.get $native_store_on) (then (call $native_store_note (local.get $ga) (i32.const 1)))))
+    (if (i32.or (global.get $native_store_on) (i32.atomic.load offset=4 (global.get $WRITER_SESSION))) (then (call $native_store_note (local.get $ga) (i32.const 1) (i32.and (local.get $v) (i32.const 255))))))
 
   ;; ============================================================
   ;; LAZY FLAGS

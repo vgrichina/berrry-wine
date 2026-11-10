@@ -358,12 +358,38 @@
     (global.set $eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
 
+  (func $writer_opcode_check
+    (local $op i32)
+    (local.set $op (call $gl8 (global.get $eip)))
+    (if (i32.or
+          (i32.and (i32.ge_u (local.get $op) (i32.const 0x50)) (i32.le_u (local.get $op) (i32.const 0x5F)))
+          (i32.or
+            (i32.and (i32.ge_u (local.get $op) (i32.const 0x88)) (i32.le_u (local.get $op) (i32.const 0x8B)))
+            (i32.or
+              (i32.and (i32.ge_u (local.get $op) (i32.const 0xB0)) (i32.le_u (local.get $op) (i32.const 0xBF)))
+              (i32.or (i32.eq (local.get $op) (i32.const 0x90))
+                (i32.or (i32.eq (local.get $op) (i32.const 0xC2))
+                  (i32.eq (local.get $op) (i32.const 0xC3)))))))
+      (then (return)))
+    (call $writer_invalidate (i32.const 3)))
+
   (func $run (export "run") (param $max_blocks i32)
     (local $thread i32)
     (local $hc_i i32) (local $hc_slot i32) (local $hc_fp i32)
     (local $prev_eip i32) (local $prev_esp i32)
     (local $saved_budget i32) (local $saved_start i32) (local $shared_cache_generation i32)
     (local $saved_api_depth i32)
+    (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION)) (then
+      (drop (call $writer_check))
+      (if (i32.or (global.get $help_macro_frames) (global.get $help_vfs_phase))
+        (then (call $writer_invalidate (i32.const 3))))
+      ;; These entry services can execute outside the gsN barriers.
+      (if (i32.or (global.get $code16)
+            (i32.or (i32.eqz (global.get $native_store_on))
+              (i32.or (global.get $apc_alert_sleep)
+                (i32.or (global.get $anim_live_count)
+                  (i32.eq (global.get $eip) (global.get $WIN16_TASK_ENTRY))))))
+        (then (call $writer_invalidate (i32.const 3))))))
     (call $help_macro_resume_check)
     (call $help_document_vfs_resume_check)
     (if (global.get $pending_active) (then (call $pending_gap)))
@@ -672,7 +698,11 @@
       ;; A wndproc marker (0xFFFE____/0xFFFF____) called directly as code.
       (if (i32.ge_u (global.get $eip) (i32.const 0xFFFE0000))
         (then
+          (call $writer_invalidate (i32.const 3))
           (if (call $wndproc_marker_direct_call) (then (br $main)))))
+      ;; Invalidate unsupported instructions before any block can be emitted.
+      (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
+        (then (call $writer_opcode_check)))
       ;; $dbg_prev_eip is set to the block about to run, so anything reading it
       ;; *during* that block sees the block itself, not its predecessor. That
       ;; is what $bp_first_caller and the debug prompt want, because they run
