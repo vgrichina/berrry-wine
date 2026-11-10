@@ -177,3 +177,44 @@ Playable on both D3D9 backends: GPU (`--headless-gl`) and
 board is in the window. `test/test-pawn-directinput7-gameplay.js` runs both
 arms; `PAWN_BACKEND=software|webgl` picks one. The software arm needs 20000
 batches, because at 9000 the reply is still animating.
+
+## November 10 browser software move after native retirement repair
+
+Run `20261110-pawn-retirement-fixed-move-reply-1342` verified the actual
+software browser route in Chrome 151.0.7922.108. Source revision was
+`8e87f84b3e553d4385fbd6040767b9cee0fa0a36`, with the inherited untracked
+Wininit input retained as a patch. The guest and owning render Worker's CDP
+bytecode both hashed to
+`e587a07b7cbb9410fd52ec374c71f6c87a81e9f4bbd7404c3c64c7bb77253edd`.
+The closure differs from the accepted `20261110-pawn-final-frame-reply-1318`
+run only in published native custody repair `a815540593f9b3d5fb4982dfbe5f156f510812c8`.
+It includes D3D9 final-frame repair `35ecfae6c`; no additional runtime repair
+was needed.
+
+Ten real Chrome startup/interface controls passed before the single original.
+The actual guest's GetDC returned HRESULT 0 and HDC 2097156, and factory,
+callback, TLS and global initialization completed. The owning neutral software
+endpoint identified device 136454184, generation 1, adapter present and no
+failure. After an ordinary title-bar drag exposed the full starting board,
+the unchanged live-state guard passed and one ordinary e2–e4 drag was sent.
+Personally reviewed `retrieved/software/moved.png` shows the white move;
+`review/software/reply.png` shows the completed c7–c5 reply with yellow c7/c5
+outlines. The reply PNG SHA-256 is
+`8a82ce338345d697612806ec05fe73841d50494027d9b1728d3b6529a67de9ec`.
+No logical-board substitution, extra Present, forced repaint, guard bypass
+or original retry was used.
+
+The original supervisor waited 0, reaping all 334 owned tasks with command
+EOF and empty lineage/resume/ptrace/gate obligations. Chrome exited 0 and its
+profile was removed. All 96 remote evidence paths passed SHA/size verification
+and an independent reread before delegated normal shutdown of `bx_e7xhdvmm`;
+stop `stop_33c41c322dbaa08d` completed without force or error. The independent
+deadline watchdog also waited 0 with both output EOFs.
+
+Five observer tests, the final-frame Present regression, the real x86 COM to
+production render-Worker regression, and the locked build passed. This is
+bounded software-browser move/reply evidence. Custody used the accepted tmpfs
+route with unchanged deadlines; this run establishes neither a disk-latency
+repair, the prior original's inferred exit_group syscall, a new WebGL result,
+nor full-game acceptance. Evidence is in the named run directory; source
+recovery uses Git plus recorded patches, without source or media archives.
