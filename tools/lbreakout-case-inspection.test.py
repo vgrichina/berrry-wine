@@ -70,8 +70,9 @@ subprocess.Popen([sys.executable,'-c','import time;time.sleep(.3)'],stdout=subpr
             try:
                 close = [sys.executable, '-c',
                          "from pathlib import Path;Path('run/close-request').touch()"]
-                original = "from pathlib import Path;Path('run/original-created').touch()"
-                source = helper.handoff_source(root, 'run', original, close, 3)
+                (run / 'lifecycle.json').write_text('{"browserDeadline":1794271910767}')
+                original = "import os;from pathlib import Path;assert os.environ['BROWSER_DEADLINE']=='1794271910767';assert os.environ['CASE_TAG']=='original';Path('run/original-created').touch()"
+                source = helper.original_workflow_source(root, 'run', [sys.executable,'-c',original], close, 3)
                 gate = subprocess.Popen([sys.executable, '-c', source], stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE, text=True)
                 due = time.monotonic() + 3
@@ -89,6 +90,10 @@ subprocess.Popen([sys.executable,'-c','import time;time.sleep(.3)'],stdout=subpr
                     if (run / 'original-created').exists():break
                     time.sleep(.01)
                 self.assertTrue((run / 'original-created').exists())
+                for _ in range(100):
+                    if (run / 'launcher-stderr-eof.json').exists() and (run / 'launcher-wait.json').exists():break
+                    time.sleep(.01)
+                self.assertEqual(json.loads((run / 'launcher-wait.json').read_text())['code'],0)
                 wait = json.loads((run / 'fixture-launcher-wait.json').read_text())
                 for stream in ('stdout', 'stderr'):
                     eof = json.loads((run / ('fixture-launcher-'+stream+'-eof.json')).read_text())
@@ -123,8 +128,8 @@ subprocess.Popen([sys.executable,'-c','import time;time.sleep(.3)'],stdout=subpr
                 if negative == 'cleanup-failed':put('fixture/cleanup.json', {'closed':False})
                 if negative == 'browser-failure':put('fixture/first-browser-failure.json', {'error':'dead'})
                 if negative == 'transport-failure':put('fixture/first-failure.json', {'error':'refused'})
-                source = helper.handoff_source(root, 'run',
-                    "from pathlib import Path;Path('run/original-created').touch()", timeout=.1)
+                source = helper.original_workflow_source(root, 'run',
+                    [sys.executable,'-c',"from pathlib import Path;Path('run/original-created').touch()"], timeout=.1)
                 p = subprocess.run([sys.executable, '-c', source], capture_output=True, text=True, timeout=3)
                 self.assertNotEqual(p.returncode, 0)
                 self.assertFalse((run / 'original-created').exists())

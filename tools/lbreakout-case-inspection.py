@@ -24,7 +24,7 @@ print(json.dumps(dict(case=%s,files=sorted(f.name for f in out.iterdir()) if out
 ''' % tuple(json.dumps(v) for v in (root, run, case, case, case, case))
 
 
-def launcher_source(root, run, case, command, env=None):
+def launcher_source(root, run, case, command, env=None, deadline_from_lifecycle=False):
     """One parent owns wait and two independent pipe drains; publish atomically."""
     if case not in ('fixture', 'original'):
         raise ValueError('unsupported LBreakout case')
@@ -35,7 +35,9 @@ case=%r;prefix=%r
 
 def put(name,value):
  p=run/name;tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(value));tmp.replace(p)
-p=subprocess.Popen(%r,cwd=root,env=dict(os.environ,**%r),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+env=dict(os.environ,**%r)
+if %r:env['BROWSER_DEADLINE']=str(json.loads((run/'lifecycle.json').read_text())['browserDeadline'])
+p=subprocess.Popen(%r,cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 put(prefix+'.json',dict(pid=p.pid,parentPid=os.getpid()))
 def drain(stream,suffix):
  with (run/(case+('-stderr' if suffix=='stderr' else '')+'.log')).open('wb') as out:
@@ -49,7 +51,7 @@ for t in threads:t.start()
 code=p.wait()
 put(prefix+'-wait.json',dict(pid=p.pid,code=code,actualWait=True,at=time.time()))
 for t in threads:t.join()
-''' % (root, run, case, prefix, command, env or {})
+''' % (root, run, case, prefix, env or {}, deadline_from_lifecycle, command)
 
 
 def handoff_source(root, run, original_source, close_command=None, timeout=15):
@@ -91,3 +93,11 @@ p=subprocess.Popen([sys.executable,'-c',%r],cwd=root,stdin=subprocess.DEVNULL,st
 (run/'original-parent.json').write_text(json.dumps(dict(pid=p.pid,fixtureWait=value,stdoutEOF=True,stderrEOF=True)))
 print(json.dumps(dict(parentPid=p.pid,fixtureParentCompleted=True,separateEOF=True)))
 ''' % (root, run, close_command, timeout, timeout, original_source)
+
+
+
+def original_workflow_source(root, run, command, close_command=None, timeout=15):
+    """Compose the real original launcher without text substitution of env keys."""
+    parent = launcher_source(root, run, 'original', command,
+                             {'CASE_TAG': 'original'}, deadline_from_lifecycle=True)
+    return handoff_source(root, run, parent, close_command, timeout)
