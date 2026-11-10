@@ -15,7 +15,7 @@ sys.path.insert(0,str(root/'tools'))
 adapter=runpy.run_path(str(root/'tools/nox-startup-custody.py'))
 source=(root/'tools/native_kernel_custody.py').read_bytes()
 # Validate every adapter transformation against both exact provider versions.
-# The entire transformed-source delta must equal the provider's queue-only
+# The entire transformed-source delta must equal the provider's queue and cancellation
 # delta. This includes the output-pump replacement, common CONT barrier,
 # release cohorts and wait-priority changes; no unchecked remainder is allowed.
 revision='bce2b316f18923d3f781034dc6e5b2d6fd9b73cb'
@@ -31,8 +31,36 @@ queue_after="""                              'creation-peek-message', 'ptrace-co
         # Custody and before-consume remain durable; the full ordered prefix,
         # including these records, still flushes before every executable CONT.
 """
+# Keep an explicit complete-source audit of the cancellation repair as well.
+# Its helper must survive EVERY adapter transformation, including finalization.
+cancellation_seams = [('    handlers = {sig: signal.signal(sig, request_cancel)',
+  '    def record_cancellation():\n'
+  '        nonlocal cancel_at\n'
+  '        # A signal can latch at any bytecode boundary. Initialize and persist\n'
+  "        # at each use, rather than assuming the loop's earlier guard ran.\n"
+  '        if cancellation and cancel_at is None:\n'
+  '            cancel_at = time.monotonic()\n'
+  "            log('cancellation', **cancellation[0], cleanupDeadline=cleanup_deadline)\n"
+  '    handlers = {sig: signal.signal(sig, request_cancel)'),
+ ('            if cancellation:\n'
+  '                if cancel_at is None:\n'
+  '                    cancel_at = time.monotonic()\n'
+  "                    log('cancellation', **cancellation[0], cleanupDeadline=cleanup_deadline)\n",
+  '            record_cancellation()\n'),
+ ('            if cancellation and peek is None:\n',
+  '            if cancellation and peek is None:\n                record_cancellation()\n'),
+ ('            journal.close()\n',
+  '            # ECHILD/output finalization can observe a signal after the last\n'
+  '            # loop guard. Persist it even when no further signal is needed.\n'
+  '            record_cancellation()\n'
+  '            journal.close()\n')]
+def apply_cancellation(text):
+ for before,after in cancellation_seams:
+  assert text.count(before)==1,before
+  text=text.replace(before,after)
+ return text
 assert old.decode().count(queue_before)==1
-assert old.decode().replace(queue_before,queue_after)==source.decode()
+assert apply_cancellation(old.decode().replace(queue_before,queue_after))==source.decode()
 for name,rev in [('q3-startup-custody.py','17b39151e8aab8926e1ff8b69b017b5839ba4c0b'),
                  ('nox-startup-custody.py',revision)]:
  previous={};exec(compile(git_source(rev,name),name,'exec'),previous)
@@ -41,12 +69,12 @@ for name,rev in [('q3-startup-custody.py','17b39151e8aab8926e1ff8b69b017b5839ba4
  transformed=current['candidate'](source.decode() if is_q3 else source)
  prior=previous['candidate'](old.decode() if is_q3 else old)
  assert prior.count(queue_before)==1
- assert prior.replace(queue_before,queue_after)==transformed,name
+ assert apply_cancellation(prior.replace(queue_before,queue_after))==transformed,name
  compile(transformed,name,'exec')
  try:current['candidate']((source+b'\n').decode() if is_q3 else source+b'\n')
  except ValueError:pass
  else:raise AssertionError('provider drift admitted: '+name)
-print('PASS every current adapter transformation preserves exact queue-only source delta')
+print('PASS every current adapter transformation preserves exact queue and cancellation source delta')
 with patch.object(Path,'read_bytes',return_value=source+b'\n'):
  try:adapter['load']()
  except ValueError:pass

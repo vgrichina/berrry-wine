@@ -175,6 +175,13 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
     cancellation = []; cancel_at = None; sent = set(); failure = None; drained = False
     def request_cancel(signum, frame):
         if not cancellation: cancellation.append(dict(signal=signum, cause='supervisor-signal'))
+    def record_cancellation():
+        nonlocal cancel_at
+        # A signal can latch at any bytecode boundary. Initialize and persist
+        # at each use, rather than assuming the loop's earlier guard ran.
+        if cancellation and cancel_at is None:
+            cancel_at = time.monotonic()
+            log('cancellation', **cancellation[0], cleanupDeadline=cleanup_deadline)
     handlers = {sig: signal.signal(sig, request_cancel) for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP)}
     # Drain command output in this same event loop: no logger process outside
     # custody, no thread across fork, and no raw disk staging. The write end is
@@ -264,10 +271,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
                 raise TimeoutError('immutable cleanup deadline')
             if not cancellation and time.time() >= deadline:
                 cancellation.append(dict(signal=None, cause='runtime-deadline'))
-            if cancellation:
-                if cancel_at is None:
-                    cancel_at = time.monotonic()
-                    log('cancellation', **cancellation[0], cleanupDeadline=cleanup_deadline)
+            record_cancellation()
             peek = priority_wait()
             if peek is None and not resumes:
                 try:
@@ -294,6 +298,7 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             # broadcasting (and durably logging) all remaining signals first
             # can exhaust cleanup while withholding those real waits and EOF.
             if cancellation and peek is None:
+                record_cancellation()
                 sig = signal.SIGKILL if time.monotonic()-cancel_at >= .25 else signal.SIGTERM
                 retired = {r['pid'] for r in reaped}
                 for target, registered in list(owned.items()):
@@ -544,6 +549,9 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
             finally:
                 os.close(read_fd)
         try:
+            # ECHILD/output finalization can observe a signal after the last
+            # loop guard. Persist it even when no further signal is needed.
+            record_cancellation()
             journal.close()
         except BaseException as error:
             journal_error = repr(error)

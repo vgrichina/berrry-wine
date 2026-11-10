@@ -12,6 +12,7 @@ import subprocess
 import gzip
 import hashlib
 import signal
+import select
 import zlib
 import struct
 from unittest.mock import patch
@@ -1270,6 +1271,159 @@ class CompressedCancellation(unittest.TestCase):
     def test_original_supervisor_default_term_truncates_gzip(self):self.run_case('legacy-term')
 
 
+class CancellationLatch(unittest.TestCase):
+    def run_case(self, point):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(os.environ.get('CUSTODY_CANCEL_LATCH_EVIDENCE',tmp))
+            run=Path(tempfile.mkdtemp(prefix=point+'-',dir=base))
+            result=subprocess.run([sys.executable,__file__,'--cancel-latch-fixture',str(run),point],
+                capture_output=True,text=True,timeout=12,start_new_session=True)
+            (run/'fixture-process.json').write_text(json.dumps(dict(wait=result.returncode,
+                stdout=result.stdout,stderr=result.stderr,stdoutEOF=True,stderrEOF=True)))
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            barrier=json.loads((run/'barrier.json').read_text())
+            self.assertIsNone(barrier['cancelAt'])
+            self.assertEqual(barrier['cancellation'],[])
+            self.assertEqual(json.loads((run/'signals.json').read_text()),[15,2,1,15])
+            self.assertTrue((run/'watchdog-armed.json').exists())
+            self.assertFalse((run/'watchdog-fired.json').exists())
+            self.assertEqual(json.loads((run/'fixture-waits.json').read_text()),
+                dict(supervisorWait=1,watchdogWait=-15,adoptedWaits=[]))
+            drain=json.loads((run/'kernel-drain.json').read_text())
+            self.assertTrue(drain['complete'],drain['failure'])
+            self.assertIsNone(drain['failure'])
+            self.assertEqual(drain['cancellation'],[dict(signal=15,cause='supervisor-signal')])
+            self.assertIn('InterruptedError',json.loads((run/'supervisor-result.json').read_text())['error'])
+            for key in ('unreaped','remaining','unresolvedPtrace','unresolvedResumes','unresolvedLineage'):
+                self.assertEqual(drain[key],[])
+            self.assertEqual({(r['pid'],r['start']) for r in drain['owned']},
+                             {(r['pid'],r['start']) for r in drain['reaped']})
+            self.assertTrue(drain['commandLog']['eof'])
+            for metadata in (drain['journal'],drain['commandLog']):
+                data=gzip.decompress((run/metadata['path']).read_bytes())
+                self.assertTrue(metadata['closed'])
+                self.assertIsNone(metadata['error'])
+                self.assertEqual(len(data),metadata['originalBytes'])
+                self.assertEqual(hashlib.sha256(data).hexdigest(),metadata['originalSha256'])
+            rows=[json.loads(s) for s in gzip.open(run/drain['journal']['path'],'rt')]
+            self.assertEqual(len([r for r in rows if r['kind']=='cancellation']),1)
+            for receipt in drain['reaped']:
+                before=next(r for r in rows if r['sequence']==receipt['beforeReapSequence'])
+                self.assertIn(before['kind'],('before-reap','before-consume'))
+                self.assertLess(before['sequence'],receipt['sequence'])
+            if point=='idle':
+                self.assertEqual(len(drain['owned']),2)
+                sent=[r['signal'] for r in rows if r['kind']=='cancellation-sent']
+                # Durable recording can itself exceed the real .25s grace.
+                # In that case the first broadcast is already SIGKILL.
+                self.assertTrue(set(sent)<={15,9});self.assertIn(9,sent)
+                self.assertTrue(all(os.waitstatus_to_exitcode(r['status'])==-9 for r in drain['reaped']))
+            else:self.assertEqual(drain['exit'],0)
+
+    def test_actual_signal_after_loop_guard_initializes_timestamp(self):self.run_case('idle')
+    def test_actual_signal_at_echild_preserves_cancellation_record(self):self.run_case('drained')
+    def test_actual_signal_before_journal_close_preserves_cancellation_record(self):self.run_case('close')
+
+
+def cancel_latch_fixture(run, point, module=None, source=None):
+    module=module or kernel
+    run=Path(run).resolve()
+    source=source or Path(module.__file__).read_text()
+    assert module.libc.prctl(36,1,0,0,0)==0
+    gate_r,gate_w=os.pipe(); reached_r,reached_w=os.pipe(); release_r,release_w=os.pipe()
+    ack_r,ack_w=os.pipe()
+    child=os.fork()
+    if child==0:
+        os.close(gate_w);os.close(reached_r);os.close(release_w);os.close(ack_r)
+        install=module.signal.signal
+        def acknowledged_install(sig,handler):
+            if callable(handler) and handler.__name__=='request_cancel':
+                def acknowledged(signum,frame):
+                    handler(signum,frame)
+                    os.write(ack_w,bytes([signum]))
+                return install(sig,acknowledged)
+            return install(sig,handler)
+        module.signal.signal=acknowledged_install
+        assert os.read(gate_r,1)==b'G';os.close(gate_r)
+        fired=[]
+        targets={'idle':'            if cancellation and peek is None:',
+                 'drained':'                    drained = True',
+                 'close':'            journal.close()'}
+        if point=='close' and '            record_cancellation()' in source:
+            targets['close']='            record_cancellation()'
+        lines=[i+1 for i,text in enumerate(source.splitlines()) if text==targets[point]]
+        line=lines[-1] if point=='close' else lines[0]
+        def barrier(frame,event,arg):
+            if (event=='line' and frame.f_code is module.supervise.__code__ and
+                    frame.f_lineno==line and not fired and
+                    (point!='idle' or (frame.f_locals.get('peek') is None and
+                                       (run/'subject-ready').exists()))):
+                assert not frame.f_locals['cancellation']
+                fired.append(True)
+                (run/'barrier.json').write_text(json.dumps(dict(point=point,line=line,
+                    cancelAt=frame.f_locals['cancel_at'],cancellation=frame.f_locals['cancellation'])))
+                os.write(reached_w,b'R');assert os.read(release_r,1)==b'C'
+                assert len(frame.f_locals['cancellation'])==1
+            return barrier
+        command=[sys.executable,'-c',"import os,signal,time,pathlib;signal.signal(signal.SIGTERM,signal.SIG_IGN);os.fork();pathlib.Path("+repr(str(run/'subject-ready'))+").touch();os.write(1,b'subject-output\\n');time.sleep(30)"] if point=='idle' else ['/bin/true']
+        sys.settrace(barrier)
+        error=None
+        try:
+            module.supervise(run,command,deadline=time.time()+4,cleanup_deadline=time.time()+6,
+                             journal_compression='gzip',command_compression='gzip')
+        except BaseException as exc:error=repr(exc)
+        finally:sys.settrace(None)
+        (run/'supervisor-result.json').write_text(json.dumps(dict(error=error,barrierReached=bool(fired))))
+        os._exit(1 if error else 0)
+    os.close(gate_r);os.close(reached_w);os.close(release_r);os.close(ack_w)
+    watch=os.fork()
+    if watch==0:
+        for fd in (gate_w,reached_r,release_w,ack_r):os.close(fd)
+        start=module.identity(child)['start']
+        (run/'watchdog-armed.json').write_text(json.dumps(dict(pid=os.getpid(),target=child,
+            targetStart=start,armedNs=time.monotonic_ns(),seconds=8)))
+        time.sleep(8)
+        try:
+            if module.identity(child)['start']==start:os.kill(child,signal.SIGKILL)
+        except (ProcessLookupError,FileNotFoundError):pass
+        (run/'watchdog-fired.json').write_text('{}');os._exit(0)
+    status=None;parent_error=None
+    try:
+        until=time.monotonic()+2
+        while not (run/'watchdog-armed.json').exists():
+            assert time.monotonic()<until,'watchdog arming timeout';time.sleep(.001)
+        os.write(gate_w,b'G');os.close(gate_w)
+        assert select.select([reached_r],[],[],7)[0],'signal barrier timeout'
+        assert os.read(reached_r,1)==b'R'
+        delivered=[]
+        for sig in (signal.SIGTERM,signal.SIGINT,signal.SIGHUP,signal.SIGTERM):
+            os.kill(child,sig)
+            assert select.select([ack_r],[],[],1)[0],'real signal handler acknowledgement timeout'
+            assert os.read(ack_r,1)==bytes([sig])
+            delivered.append(sig)
+        (run/'signals.json').write_text(json.dumps(delivered))
+        os.write(release_w,b'C');os.close(release_w)
+        got,status=os.waitpid(child,0);assert got==child
+    except BaseException as exc:
+        parent_error=exc
+        try:os.kill(child,signal.SIGKILL)
+        except ProcessLookupError:pass
+        if status is None:_,status=os.waitpid(child,0)
+    finally:
+        for fd in (gate_w,reached_r,release_w,ack_r):
+            try:os.close(fd)
+            except OSError:pass
+        os.kill(watch,signal.SIGTERM);_,watch_status=os.waitpid(watch,0)
+    adopted=[]
+    while True:
+        try:
+            pid,status2=os.waitpid(-1,0);adopted.append(dict(pid=pid,status=status2))
+        except ChildProcessError:break
+    (run/'fixture-waits.json').write_text(json.dumps(dict(supervisorWait=os.waitstatus_to_exitcode(status),
+        watchdogWait=os.waitstatus_to_exitcode(watch_status),adoptedWaits=adopted)))
+    if parent_error:raise parent_error
+
+
 def cancel_creators_fixture(run, kind, version):
     """Both creators have real pending messages when cancellation is latched.
 
@@ -1669,6 +1823,9 @@ int main(int argc, char **argv) {
     for (int j=0;j<24;j++) {
       pid_t p=fork(); if(p<0)_exit(83); if(!p)_exit(0);
       int status; if(waitpid(p,&status,0)!=p || status)_exit(84);
+      /* Once the real observation exists, extra fork service cannot improve
+         the witness. Keep cleanup inside the unchanged fixture deadline. */
+      if (!access("native-observation.json",F_OK)) break;
     }
     _exit(0);
   }
@@ -1731,6 +1888,13 @@ int main(int argc, char **argv) {
                         except ChildProcessError:continue
                         if value:return value
                     time.sleep(.001)
+                if mode=='exit-before' and not (run/'native-observation.json').exists():
+                    # Keep the historical negative at its selected legal wait
+                    # order until the actual thread observation. A slow disk
+                    # must not let the P_ALL fallback accidentally reap our
+                    # selected thread between competing stops. This is still
+                    # a real per-PID kernel result, including a real no-status.
+                    return actual_waitid(os.P_PID,registered[0],flags)
             return actual_waitid(which,pid,flags)
         def consume(task,flags):
             result=actual_waitpid(task,flags)
@@ -2161,6 +2325,7 @@ if __name__=='__main__':
             (Path(sys.argv[3])/'isolated-waits.json').write_text(json.dumps(dict(
                 fixtureWait=result.returncode,adoptedWaits=adopted)))
         sys.exit(result.returncode)
+    elif len(sys.argv)>1 and sys.argv[1]=='--cancel-latch-fixture':cancel_latch_fixture(sys.argv[2],sys.argv[3])
     elif len(sys.argv)>1 and sys.argv[1]=='--cancel-creators-fixture':cancel_creators_fixture(sys.argv[2],sys.argv[3],sys.argv[4])
     elif len(sys.argv)>1 and sys.argv[1]=='--queued-stop-fixture':queued_stop_fixture(sys.argv[2],sys.argv[3],sys.argv[4])
     elif len(sys.argv)>1 and sys.argv[1]=='--parent-lineage-fixture':parent_lineage_fixture(sys.argv[2],sys.argv[3])

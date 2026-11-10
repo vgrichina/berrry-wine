@@ -11,7 +11,7 @@ import types
 from pathlib import Path
 
 # Retain the provider's deferred queue bookkeeping and mandatory CONT barriers.
-PROVIDER_SHA = 'd8dc020deb6859aa7a70736aaa686285be5d51083e0e00d22b1df37d8d3aa539'
+PROVIDER_SHA = 'e4c6b526b073ebd3d2b584b4b33ddfd40568787c23c45e4fd6537910ceb05bae'
 LIMIT = 4096
 VERSION = 'nox-durable-cont-creation-rescan-v2'
 
