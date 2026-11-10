@@ -62,7 +62,7 @@ function inspect(){
     for(const child of mod.children)dependencies(child);
   }
   for(const name of ['./watx-closure.js','./watx.js','./region-layout-hash.js','../lib/dispatch-trampoline.js','../lib/apps.js'])dependencies(require.cache[require.resolve(name)]);
-  for(const p of ['index.html','host.js','test/static-server.js','ops/browser-native-input.cjs','tools/build.sh','tools/build-compile-wat.js','tools/nox-current-driver.cjs','tools/q3-startup-custody.py','tools/native_kernel_custody.py'])paths.add(p);
+  for(const p of ['index.html','host.js','test/static-server.js','ops/browser-native-input.cjs','tools/build.sh','tools/build-compile-wat.js','tools/nox-current-driver.cjs','tools/nox-passive-consumption.cjs','tools/q3-startup-custody.py','tools/native_kernel_custody.py'])paths.add(p);
   const files=[...paths].sort().map(p=>pin(p)),before=new Map(prior.files.map(p=>[p.path,p]));
   const changes=[],patches={};
   for(const current of files){
@@ -313,6 +313,11 @@ function generate(planFile,destination){
   source=terminalCleanup(source);
   source=captureLabels(source);
   source=pointerObservations(source);
+  if(process.env.NOX_PASSIVE_CONSUMPTION==='1'){
+    const observer=require('./nox-passive-consumption.cjs'),bytes=observer.compile();
+    emit('nox-consumption.wasm',bytes);
+    source=observer.compose(source,observer.configuration(bytes,'/'+path.relative(ROOT,destination)+'/nox-consumption.wasm'));
+  }
   emit('browser-run.cjs',source);
   // Reuse the authenticated durable service, including its ready-stop scan.
   // Keep Q3's app-specific observation wrapper out of the Nox process. Both
@@ -339,7 +344,7 @@ if __name__=='__main__':
   for(const [name,bytes] of Object.entries(patches))emit(name,bytes);
   verify(ROOT,manifest,destination);return manifest;
 }
-module.exports={ROOT,HISTORY,DRIVER_SHA,HELPERS,sha,pin,planHash,inspect,generate,verify,registry,checkPin,pointerObservations};
+module.exports={ROOT,HISTORY,DRIVER_SHA,HELPERS,sha,pin,planHash,inspect,generate,verify,registry,checkPin,pointerObservations,startupDiagnostics,terminalCleanup,captureLabels};
 if(require.main===module){
   try{
     if(process.argv[2]==='inspect'){
