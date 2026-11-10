@@ -178,6 +178,16 @@ async function child(){
              this.deliver({method:'Debugger.scriptParsed',sessionId:'worker-session',params:{scriptLanguage:'WebAssembly',url:'wasm://offline',scriptId:'1',hash:'offline'}});
            }
          }else if(q.method==='Runtime.evaluate'){
+           if(mode.startsWith('lifecycle-')&&fs.existsSync(generated+'/original/ready.json')){
+            if(mode==='lifecycle-page'||mode==='lifecycle-worker'){
+             terminalIndex=protocol.length;
+             this.deliver({method:'Inspector.targetCrashed',sessionId:mode==='lifecycle-page'?'page-session':'worker-session',params:{}});
+             this.deliver({method:'Inspector.detached',sessionId:'page-session',params:{reason:'later detach'}});
+             return; // Leave the real request pending when the first event arrives.
+            }
+            this.deliver({method:'Inspector.targetCrashed',sessionId:'foreign-session',params:{}});
+            this.deliver({method:'Target.detachedFromTarget',params:{sessionId:'retired-session',targetId:'guest'}});
+           }
            const value=await vm.runInContext(q.params.expression,q.sessionId==='worker-session'?workerCtx:page);
            if(mode==='held-identity'&&!wine.running)terminalIndex=protocol.length;
            r={result:{value:JSON.parse(JSON.stringify(value===undefined?null:value))}};
@@ -193,7 +203,7 @@ async function child(){
          }else if(q.method==='Page.captureScreenshot'){if(mode==='held-capture'&&fs.existsSync(generated+'/original/ready.json')){terminalIndex=protocol.length;return;}if(fixtureControl){const f=page.noxFixture;assert.equal(f.canvas.style.opacity,'1','paint must publish through production renderer');assert(f.renderer._directPresentation);assert.equal(f.renderer.presentationCanvas.style.display,'none');}
           r={data:Buffer.from('offline screenshot bytes '+protocol.length).toString('base64')};}
          else if(q.method==='Browser.close'){this.reply(q);browser.stdin.end('close\n');return;}
-         else assert(['Target.setDiscoverTargets','Target.setAutoAttach','Page.enable','Runtime.enable','Debugger.enable'].includes(q.method),q.method);
+         else assert(['Target.setDiscoverTargets','Target.setAutoAttach','Page.enable','Runtime.enable','Debugger.enable','Inspector.enable'].includes(q.method),q.method);
          this.reply(q,r);
        }catch(e){this.reply(q,{}, {message:e.stack});}
      });
@@ -236,7 +246,7 @@ async function child(){
      for(let n=0;n<commands.length;n++){
        const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));const review=out+'/'+latest.label+'-review.json';if(!fs.existsSync(review))save(review,{...latest,review:'Offline actual consumer command admission'});
        try{await transport.request(out,'command-'+n,{...commands[n],waitMs:0,label:Object.hasOwn(invalidLabels,mode)?invalidLabels[mode]:(commands[n].label??'command-'+n),reviewRef:latest.label},30000);}
-       catch(e){if(!mode.startsWith('label-')&&!['drag-failure','held-mouse','held-capture','refusal','stale-refusal','held-identity'].includes(mode))throw e;return;}
+       catch(e){if(!mode.startsWith('label-')&&!['drag-failure','held-mouse','held-capture','refusal','stale-refusal','held-identity','lifecycle-page','lifecycle-worker'].includes(mode))throw e;return;}
      }
      await transport.request(out,'quit',{action:'quit'},3000);
    })().catch(e=>{console.error(e);process.exitCode=3;});
@@ -253,7 +263,7 @@ async function main(){
  // The unchanged driver actually executes its full strict preflight.
  const pre=cp.spawnSync(process.execPath,[generated+'/browser-run.cjs'],{env:{...process.env,DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+120000)},encoding:'utf8'});
  assert.equal(pre.status,0,pre.stderr);results.push({mode:'current-preflight',status:pre.status,proof:JSON.parse(pre.stdout)});
- for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','stopped-port','ordinary','drag','commands','drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture','label-missing','label-null','label-number','label-undefined','label-path','label-long','label-duplicate']){
+ for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','stopped-port','ordinary','drag','commands','lifecycle-page','lifecycle-worker','lifecycle-foreign','drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture','label-missing','label-null','label-number','label-undefined','label-path','label-long','label-duplicate']){
    const dir=out+'/'+mode;fs.mkdirSync(dir);
    // The actual generated source is shared; move only its run-specific outputs
    // after each execution, retaining every failure and ordinary-close artifact.
@@ -297,7 +307,7 @@ async function main(){
      assert.equal(JSON.parse(fs.readFileSync(dir+'/runtime/close-reason.json')).reason,mode==='early-death'?'browser exit':'first terminal failure');
    }else{
      const source=generated+'/'+(mode==='ordinary'?'production-preflight':'original');fs.renameSync(source,dir+'/runtime');
-     const failed=mode.startsWith('label-')||['drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture'].includes(mode);
+     const failed=mode.startsWith('label-')||['drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture','lifecycle-page','lifecycle-worker'].includes(mode);
      const joined=JSON.parse(fs.readFileSync(dir+'/child-wait.json'));assert.equal(joined.stdoutEOF,true);assert.equal(joined.stderrEOF,true);assert.equal(joined.signal,failed?'SIGTERM':null);
      assert.equal(r.status,failed?1:0,r.stderr);
      assert.equal(peer.protocol.filter(q=>q.method==='Browser.close').length,failed?0:1);
@@ -316,7 +326,14 @@ async function main(){
        }
        assert(!fs.existsSync(dir+'/runtime/native-events.json'),'terminal cleanup never evaluates native events');
        assert(!fs.existsSync(dir+'/runtime/command-0.png'),'no post-failure capture');
-       const failure=JSON.parse(fs.readFileSync(dir+'/runtime/first-browser-failure.json'));assert.match(failure.error,mode.startsWith('label-')?(mode==='label-duplicate'?/unique capture label required/:/valid capture label required/):mode==='drag-failure'?/OFFLINE_FIRST_DRAG_FAILURE/:mode==='refusal'?/known action/:mode==='stale-refusal'?/stale scene/:mode==='held-identity'?/AssertionError/:/CDP UNKNOWN/);
+       const failure=JSON.parse(fs.readFileSync(dir+'/runtime/first-browser-failure.json'));assert.match(failure.error,mode.startsWith('lifecycle-')?/current owner lifecycle loss/:mode.startsWith('label-')?(mode==='label-duplicate'?/unique capture label required/:/valid capture label required/):mode==='drag-failure'?/OFFLINE_FIRST_DRAG_FAILURE/:mode==='refusal'?/known action/:mode==='stale-refusal'?/stale scene/:mode==='held-identity'?/AssertionError/:/CDP UNKNOWN/);
+       if(mode.startsWith('lifecycle-')){
+        const terminal=JSON.parse(fs.readFileSync(dir+'/runtime/terminal-error.json'));
+        assert.equal(terminal.ownerLifecycle.event.method,'Inspector.targetCrashed');
+        assert.equal(terminal.ownerLifecycle.owner.sessionId,mode==='lifecycle-page'?'page-session':'worker-session');
+        assert.equal(terminal.pendingRequests.length,1);
+        assert.equal(peer.protocol.filter(q=>q.method==='Page.captureScreenshot').length,1);
+       }
        assert(!fs.existsSync(dir+'/runtime/drag.png'),'no later capture after first failure');
        assert(JSON.parse(fs.readFileSync(dir+'/runtime/first-failure.json')).noReplay);
      }
@@ -447,7 +464,7 @@ async function chainControls(generated){
 }
 async function cdpControls(generated,out){
  assert(out.startsWith(root+'/scratch/runs/')&&!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
- const source=fs.readFileSync(generated+'/browser-run.cjs','utf8'),begin=source.indexOf('let terminalError=null,'),end=source.indexOf('async function event(v)',begin);
+ const source=fs.readFileSync(generated+'/browser-run.cjs','utf8'),begin=source.indexOf('let pageOwner=null,'),end=source.indexOf('async function event(v)',begin);
  assert(begin>=0&&end>begin);const emitted=source.slice(begin,end),results=[];
  for(const [expression,operation] of [['page-read','page-owner'],['worker-read','worker-owner'],['renderer-read','renderer-owner'],['globalThis.__noxConsumption.begin('+ 'x'.repeat(4096)+')','nox-consumption']]){
   const frames=[],trace=[],saved={},timers=new Map(),microtasks=[];let timerId=0,closed=0;
@@ -479,6 +496,90 @@ async function cdpControls(generated,out){
   results.push({operation,pendingRequests:record.pendingRequests.length,unchangedTimeoutMs:20000,sticky:true,zeroLaterProtocol:true,actualWireTraceJoined:true});
  }
  save(out+'/results.json',{passed:true,actualEmittedSendEvaluate:true,results});console.log(JSON.stringify({passed:true,controls:results.length}));
+}
+async function lifecycleControls(generated,out){
+ assert(!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
+ const source=fs.readFileSync(generated+'/browser-run.cjs','utf8');
+ const begin=source.indexOf('let pageOwner=null,'),end=source.indexOf('async function state()',begin);
+ const caller=source.slice(source.indexOf('let settledMenu=null;'),source.indexOf('\n(async()=>{'));
+ assert(begin>0&&end>begin&&caller.includes('async function execute'));
+ const results=[];
+ const events=[
+  ['inspector-crash',o=>({method:'Inspector.targetCrashed',sessionId:o.sessionId,params:{}})],
+  ['inspector-detach',o=>({method:'Inspector.detached',sessionId:o.sessionId,params:{reason:'Render process gone.'}})],
+  ['detach',o=>({method:'Target.detachedFromTarget',...(o.parentSession?{sessionId:o.parentSession}:{}),params:{sessionId:o.sessionId,targetId:o.targetId}})],
+  ['detach-no-target',o=>({method:'Target.detachedFromTarget',...(o.parentSession?{sessionId:o.parentSession}:{}),params:{sessionId:o.sessionId}})],
+  ['crash',o=>({method:'Target.targetCrashed',params:{targetId:o.targetId,status:'crashed',errorCode:9}})],
+  ['destroy',o=>({method:'Target.targetDestroyed',params:{targetId:o.targetId}})],
+  ['context',o=>({method:'Runtime.executionContextDestroyed',sessionId:o.sessionId,params:{executionContextId:1,executionContextUniqueId:o.sessionId+'-current'}})],
+  ['contexts',o=>({method:'Runtime.executionContextsCleared',sessionId:o.sessionId,params:{}})]
+ ];
+ for(const role of ['page','guest','renderer'])for(const [kind,makeEvent] of events){
+  const pending=new Map(),workers=new Map(),frames=[],saved={},microtasks=[],timers=new Map();let seq=0,closed=0;
+  const ctx={pending,workers,id:0,timer:0,pageSession:'page',closing:false,latest:null,workerPromises:[],assert,Buffer,Date,sha:current.sha,
+   bound:{PAGE_READ:'page-read',WORKER_READ:'worker-read',RENDER_READ:'renderer-read'},process:{exitCode:0},
+   ws:{send:wire=>frames.push(JSON.parse(wire))},save:(n,v)=>{assert(!saved[n],'one publication '+n);saved[n]=structuredClone(v);},log(){},
+   setTimeout:(fn,ms)=>{assert.equal(ms,20000);timers.set(++seq,fn);return seq;},clearTimeout:n=>timers.delete(n),
+   queueMicrotask:fn=>microtasks.push(fn),close:async()=>{closed++;},console};
+  vm.createContext(ctx);vm.runInContext(source.slice(begin,end)+caller+`;globalThis.api={send,evaluate,event,execute,bindOwnerCapture};
+   pageOwner={sessionId:'page',targetId:'page-target',parentSession:null,generation:1,closed:false};`,ctx);
+  const guest={sessionId:'guest',targetId:'guest-target',parentSession:'page',generation:2,closed:false,url:'guest-worker.js',scripts:[]};
+  const renderer={sessionId:'renderer',targetId:'renderer-target',parentSession:null,generation:3,closed:false,url:'d3d-render-worker.js',scripts:[]};
+  workers.set('guest',guest);workers.set('renderer',renderer);
+  // Expected navigation before the first owner proof is harmless.
+  await ctx.api.event({method:'Runtime.executionContextsCleared',sessionId:'page',params:{}});
+  ctx.api.bindOwnerCapture({after:{worker:guest},capture:{identity:{rendererTarget:renderer.targetId}}});
+  const owners=[{sessionId:'page',targetId:'page-target',parentSession:null},guest,renderer];
+  await ctx.api.event({method:'Page.frameNavigated',sessionId:'page',params:{frame:{id:'main-frame'}}});
+  for(const o of owners){
+   const frameId=o.sessionId==='page'?'main-frame':o.targetId;
+   await ctx.api.event({method:'Runtime.executionContextCreated',sessionId:o.sessionId,params:{context:{id:1,uniqueId:o.sessionId+'-old',auxData:{isDefault:true,frameId}}}});
+   await ctx.api.event({method:'Runtime.executionContextCreated',sessionId:o.sessionId,params:{context:{id:1,uniqueId:o.sessionId+'-current',auxData:{isDefault:true,frameId}}}});
+   // Isolated/subframe worlds must not overwrite the page's current context.
+   if(o.sessionId==='page')await ctx.api.event({method:'Runtime.executionContextCreated',sessionId:'page',params:{context:{id:2,uniqueId:'subframe',auxData:{isDefault:true,frameId:'foreign-frame'}}}});
+  }
+  const owner=owners.find(o=>o.sessionId===role),original=makeEvent(owner);
+  // Same event type from a foreign or retired session/target is harmless.
+  await ctx.api.event(makeEvent({sessionId:'foreign',targetId:'foreign-target'}));
+  await ctx.api.event(makeEvent({sessionId:'retired',targetId:'retired-target'}));
+  await ctx.api.event({method:'Runtime.executionContextDestroyed',sessionId:role,params:{executionContextId:1,executionContextUniqueId:role+'-old'}});
+  await ctx.api.event({method:'Runtime.executionContextDestroyed',sessionId:role,params:{executionContextId:1}});
+  await ctx.api.event({method:'Target.detachedFromTarget',sessionId:role,params:{sessionId:'retired',targetId:owner.targetId}});
+  await ctx.api.event({method:'Target.detachedFromTarget',sessionId:'foreign-parent',params:{sessionId:owner.sessionId,targetId:owner.targetId}});
+  assert(!owner.closed,'foreign parent cannot retire the current Worker');
+  assert(!saved['terminal-error.json']);
+  const first=ctx.api.evaluate('page-read','page').catch(e=>e),second=ctx.api.send('Debugger.getScriptSource',{scriptId:'one'},'guest').catch(e=>e);
+  const before=frames.length;assert.equal(pending.size,2);
+  const replyRace=role==='page'&&kind==='inspector-crash';
+  if(replyRace){
+   const request=pending.get(1);pending.delete(1);ctx.clearTimeout(request.timer);
+   request.resolve({result:{value:'reply immediately before owner loss'}});
+  }
+  await ctx.api.event(original);
+  const error=await first;assert.strictEqual(await second,error);assert.match(error.message,/current owner lifecycle loss/);
+  assert.equal(pending.size,0);assert.equal(timers.size,0,'reject now without invoking the timeout');
+  const record=saved['terminal-error.json'];assert.deepEqual(record.ownerLifecycle.event,original);assert.equal(record.ownerLifecycle.owner.sessionId,role);
+  assert.equal(record.pendingRequests.length,replyRace?1:2);assert(record.ownerLifecycle.owner.generation>0);
+  await ctx.api.event({method:'Inspector.detached',sessionId:'page',params:{reason:'later event'}});
+  for(const command of [{action:'capture',label:'later'},{action:'quit'},{action:'key',key:'Space'}])await assert.rejects(ctx.api.execute(command,()=>assert.fail('dispatch after loss')),/current owner lifecycle loss/);
+  for(const method of ['Runtime.evaluate','Input.dispatchMouseEvent','Page.captureScreenshot','Browser.close'])await assert.rejects(ctx.api.send(method),/current owner lifecycle loss/);
+  for(const fn of microtasks)fn();await Promise.resolve();assert.equal(closed,1);assert.equal(frames.length,before);assert.equal(ctx.process.exitCode,1);
+  results.push({role,kind,passed:true,pendingRejected:replyRace?1:2,replyRace,cancels:closed,zeroLaterEffects:true});
+ }
+ // Reattachment to the same target retires the old session generation.
+ {
+  const workers=new Map(),ctx={workers,closing:false,terminalError:null,pageOwner:null,guestOwner:null,renderOwner:null};
+  // Reuse actual emitted selection/event functions, with a terminal spy.
+  vm.createContext(ctx);vm.runInContext(source.slice(begin,source.indexOf('let terminalError=null,',begin))+`;globalThis.api={bindOwnerCapture,ownerEvent};`,ctx);
+  const old={sessionId:'old',targetId:'same-target',generation:1},fresh={sessionId:'fresh',targetId:'same-target',generation:2};
+  workers.set('old',old);ctx.api.bindOwnerCapture({after:{worker:old},capture:{identity:{rendererTarget:'none'}}});
+  workers.set('fresh',fresh);ctx.api.bindOwnerCapture({after:{worker:fresh},capture:{identity:{rendererTarget:'none'}}});
+  ctx.terminal=()=>assert.fail('retired attachment must not cancel');
+  for(const method of ['Inspector.targetCrashed','Inspector.detached','Runtime.executionContextsCleared'])ctx.api.ownerEvent({method,sessionId:'old',params:{}});
+  ctx.api.ownerEvent({method:'Target.detachedFromTarget',params:{sessionId:'old',targetId:'same-target'}});
+  results.push({kind:'reattachment-same-target',passed:true});
+ }
+ save(out+'/results.json',{passed:true,actualEmittedCaller:true,nativeBrowser:false,results});console.log(JSON.stringify({passed:true,controls:results.length}));
 }
 async function menuControls(generated,out){
  assert(!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
@@ -536,4 +637,4 @@ async function menuControls(generated,out){
  save(out+'/results.json',{passed:true,actualEmittedCaller:true,actualEmittedMenuRegion:true,results});console.log(JSON.stringify({passed:true,results}));
 }
 if(process.env.NOX_TEST_CHILD==='1')child().catch(e=>{console.error(e);process.exitCode=1;});
-else if(require.main===module)(process.argv[2]==='--menu-controls'?menuControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--cdp-controls'?cdpControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--observer-controls'?observerControls(path.resolve(process.argv[3]),path.resolve(process.argv[4]),process.argv[5]?.split(',')):main()).catch(e=>{console.error(e.stack);process.exitCode=1;});
+else if(require.main===module)(process.argv[2]==='--lifecycle-controls'?lifecycleControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--menu-controls'?menuControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--cdp-controls'?cdpControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--observer-controls'?observerControls(path.resolve(process.argv[3]),path.resolve(process.argv[4]),process.argv[5]?.split(',')):main()).catch(e=>{console.error(e.stack);process.exitCode=1;});

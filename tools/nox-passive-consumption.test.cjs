@@ -155,10 +155,12 @@ async function workerTransport(){
  try{
   const begin=source.indexOf('async function event(v)'),end=source.indexOf('\nasync function ',begin+1);
   const workerPromises=[],workers=new Map(),wire=[];
-  const eventScope={workers,workerPromises,fs,Date,run:out,sha:q.sha,terminalError:null,log(){},save(){},observeTerminal:e=>{throw e;},
+  const eventScope={workers,workerPromises,fs,Date,run:out,sha:q.sha,terminalError:null,closing:false,log(){},save(){},observeTerminal:e=>{throw e;},
    send:async(method,params,sessionId)=>{wire.push(JSON.parse(JSON.stringify({method,params,sessionId})));return {};},
    evaluate:async(expression,sessionId)=>{const frame=JSON.parse(JSON.stringify({method:'Runtime.evaluate',params:{expression},sessionId}));wire.push(frame);return rpc(frame.params.expression);}};
-  vm.createContext(eventScope);vm.runInContext(source.slice(begin,end)+';globalThis.onEvent=event;',eventScope);
+  const lifecycle=source.slice(source.indexOf('let pageOwner=null,'),source.indexOf('let terminalError=null,'));
+  assert(lifecycle.includes('function ownerEvent(v)'));
+  vm.createContext(eventScope);vm.runInContext(lifecycle+source.slice(begin,end)+';globalThis.onEvent=event;',eventScope);
   await eventScope.onEvent({method:'Target.attachedToTarget',params:{sessionId:'worker',targetInfo:{type:'worker',targetId:'transport-worker',url:'/lib/guest-worker.js'}}});await Promise.all(workerPromises);
   const launchLine=source.split('\n').find(l=>l.includes("const url='http://127.0.0.1:'"));assert(launchLine);
   const url=vm.runInNewContext(launchLine+';url',{port:1234,process:{env:{RENDER_BACKEND:'webgl'}},selectedApp:'nox_demo'});

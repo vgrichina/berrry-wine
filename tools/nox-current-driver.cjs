@@ -189,6 +189,60 @@ async function capture(label){validCaptureLabel(label);`);
  assert(!c.captureHeld||!fs.existsSync(out+'/'+c.label+'-held.png'),'unique held capture label required');`);
   return source;
 }
+function ownerLifecycle(source){
+  // Flat CDP routes Inspector/Runtime by envelope sessionId; Target detach
+  // identifies the detached child in params.sessionId (not the envelope).
+  // Keep only current contexts and the three selected owners, never an event
+  // history. Target IDs alone cannot identify a detached attachment generation.
+  source=exact(source,'let terminalError=null,',`let pageOwner=null,guestOwner=null,renderOwner=null,ownerGeneration=0;
+function activeOwners(){return [pageOwner,guestOwner,renderOwner].filter(o=>o&&!o.closed&&(o===pageOwner||workers.get(o.sessionId)===o));}
+function bindOwnerCapture(shot){
+ if(terminalError)throw terminalError;
+ guestOwner=workers.get(shot.after.worker.sessionId);
+ renderOwner=[...workers.values()].find(w=>!w.closed&&w.targetId===shot.capture.identity.rendererTarget)??null;
+ for(const o of [pageOwner,guestOwner,renderOwner])if(o)o.contextArmed=true;
+}
+function ownerEvent(v){
+ if(terminalError||closing)return;
+ const p=v.params??{},session=v.sessionId;
+ if(pageOwner&&session===pageOwner.sessionId&&v.method==='Page.frameNavigated'&&p.frame?.id&&!p.frame.parentId)pageOwner.frameId=p.frame.id;
+ const observed=session===pageOwner?.sessionId?pageOwner:workers.get(session);
+ if(observed&&!observed.closed&&v.method==='Runtime.executionContextCreated'){
+  const c=p.context;
+  if(c&&(observed===pageOwner?c.auxData?.isDefault&&c.auxData?.frameId===(observed.frameId??observed.targetId):c.auxData?.isDefault!==false))
+   observed.context={id:c.id,uniqueId:c.uniqueId??null};
+ }
+ const owner=activeOwners().find(o=>{
+  if(v.method==='Target.detachedFromTarget')return (session??null)===o.parentSession&&p.sessionId===o.sessionId&&(!p.targetId||p.targetId===o.targetId);
+  if(v.method==='Target.targetCrashed'||v.method==='Target.targetDestroyed')return !session&&p.targetId===o.targetId;
+  if(session!==o.sessionId)return false;
+  if(v.method==='Inspector.targetCrashed'||v.method==='Inspector.detached')return true;
+  if(!o.contextArmed)return false; // Expected startup navigation is not owner loss.
+  if(v.method==='Runtime.executionContextsCleared')return true;
+  // Numeric context IDs may be reused across processes. Require the current
+  // system-unique ID; an ambiguous old-style event must not cancel a new owner.
+  return v.method==='Runtime.executionContextDestroyed'&&o.context?.uniqueId&&p.executionContextUniqueId===o.context.uniqueId;
+ });
+ if(owner){
+  const error=Error('current owner lifecycle loss: '+v.method+'; no replay');
+  error.ownerLifecycle={event:v,owner:{sessionId:owner.sessionId,targetId:owner.targetId,generation:owner.generation,context:owner.context??null}};
+  terminal(error);return;
+ }
+ if(observed&&v.method==='Runtime.executionContextsCleared')observed.context=null;
+}
+let terminalError=null,`);
+  source=exact(source,'noReplay:true,command:noxCommand,','noReplay:true,ownerLifecycle:error.ownerLifecycle??null,command:noxCommand,');
+  source=exact(source,'async function event(v){\n if(terminalError)return;', 'async function event(v){\n ownerEvent(v);\n if(terminalError||closing)return;');
+  source=exact(source,"workers.set(sessionId,{sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false});", "workers.set(sessionId,{sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false,parentSession:v.sessionId??null,generation:++ownerGeneration});\n   workerPromises.push(send('Inspector.enable',{},sessionId).catch(error=>{terminal(error);}));");
+  source=exact(source,"if(w)w.closed=true;", "if(w&&(v.sessionId??null)===w.parentSession&&(!v.params.targetId||v.params.targetId===w.targetId))w.closed=true;");
+  source=exact(source,"flatten:true})).sessionId;", "flatten:true})).sessionId;\n pageOwner={sessionId:pageSession,targetId:targets[0].targetId,parentSession:null,generation:++ownerGeneration,closed:false};\n await send('Inspector.enable',{},pageSession);");
+  source=exact(source,'function send(method,params={},sessionId){if(terminalError)return Promise.reject(terminalError);', `function send(method,params={},sessionId){if(terminalError)return Promise.reject(terminalError);
+ if(pageOwner&&sessionId===pageSession&&params.expression===bound.PAGE_READ)pageOwner.contextArmed=true;`);
+  source=exact(source,'latest=shot.capture;', 'latest=shot.capture;bindOwnerCapture(shot);');
+  // A reply and a loss event can arrive in one turn before evaluate resumes.
+  source=exact(source,'return r.result.value;', 'if(terminalError)throw terminalError;return r.result.value;');
+  return source;
+}
 function menuCaller(source){
   // Title caller policy only. Neither the Worker observer nor its absolute
   // deadline changes. Settling is passive, finite, and never retries input.
@@ -382,6 +436,7 @@ function generate(planFile,destination){
   source=exact(source,"const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));","const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));\nrequire(root+'/tools/nox-current-driver.cjs').verify(root,pins,run,"+JSON.stringify(planHash(plan))+");");
   source=startupDiagnostics(source);
   source=terminalCleanup(source);
+  source=ownerLifecycle(source);
   source=captureLabels(source);
   source=pointerObservations(source);
   if(process.env.NOX_PASSIVE_CONSUMPTION==='1'){
