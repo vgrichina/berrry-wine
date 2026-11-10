@@ -2,12 +2,42 @@
 // Keep the proven original TR3 route and its owner/freshness/module guards.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const prior='scratch/runs/20261108-tr3-webgl-terrain-translation';
+// Fire-and-forget filesystem observations only: startup and cancellation never
+// await diagnostics. Fixed read/process/entry caps also cover hostile proc data.
+function launcherDiagnostics(fs,path,crypto,out,pid,isTerminal){
+ const io=fs.promises,errors=[];let busy=false;
+ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+ async function attempt(f){try{return await f();}catch(e){errors.push({code:e.code||e.name});return null;}}
+ async function read(p){return attempt(async()=>{const f=await io.open(p,'r');try{const b=Buffer.alloc(65536);const {bytesRead}=await f.read(b,0,b.length,0);return b.subarray(0,bytesRead);}finally{await f.close();}});}
+ async function identity(p){return attempt(async()=>{const real=await io.realpath(p),s=await io.stat(real);const row={path:p,real,size:s.size,dev:s.dev,ino:s.ino};if(s.isFile()&&s.size<=65536){const b=await read(real);if(b&&b.length===s.size)row.sha256=sha(b);}return row;});}
+ async function write(n,v){if(!isTerminal())await attempt(()=>io.writeFile(out+'/'+n,JSON.stringify(v)));}
+ const launcher=(async()=>{
+  const links=[];let p='/usr/bin/google-chrome';for(let n=0;n<8;n++){const s=await attempt(()=>io.lstat(p));if(!s)break;const target=s.isSymbolicLink()?await attempt(()=>io.readlink(p)):null;links.push({path:p,target});if(!target)break;p=path.resolve(path.dirname(p),target);}
+  const main=await identity('/usr/bin/google-chrome'),helpers=[];
+  if(main){for(const p of [path.join(path.dirname(main.real),'betterchromium-timezone.sh'),path.join(path.dirname(main.real),'chrome'),'/bin/bash','/usr/bin/readlink','/usr/bin/dirname','/usr/bin/curl','/usr/bin/jq','/usr/bin/sha256sum','/usr/bin/cut'])helpers.push(await identity(p));}
+  await write('launcher-identity.json',{at:new Date().toISOString(),links,launcher:main,helpers,errors,readCap:65536,readOnly:true});
+ })().catch(()=>{});
+ return function observe(iteration){
+  if(isTerminal()||busy||![0,25,75].includes(iteration))return;busy=true;
+  (async()=>{const rows=[],queue=[pid],seen=new Set();while(queue.length&&rows.length<16&&!isTerminal()){
+   const p=queue.shift();if(!Number.isSafeInteger(p)||p<=0||seen.has(p))continue;seen.add(p);
+   const proc='/proc/'+p,stat=await read(proc+'/stat'),exe=await attempt(()=>io.readlink(proc+'/exe')),cmd=await read(proc+'/cmdline'),wchan=await read(proc+'/wchan'),children=await read(proc+'/task/'+p+'/children');
+   rows.push({pid:p,stat:stat?.toString(),exe,cmdline:cmd?.toString().split('\0').slice(0,32),wchan:wchan?.toString()});
+   if(children)queue.push(...children.toString().trim().split(/\s+/).slice(0,16).map(Number));
+  }
+  const profile=await attempt(()=>io.readdir(out+'/chrome-profile'));
+  await write('launcher-process-'+iteration+'.json',{at:new Date().toISOString(),iteration,rows,profile:profile?.slice(0,32),errors,readOnly:true});
+  })().catch(()=>{}).finally(()=>{busy=false;});
+ };
+}
 function exact(s,a,b){assert.equal(s.split(a).length,2,'unique TR3 seam: '+a);return s.replace(a,b);}
 function compose(root){
  let s=fs.readFileSync(path.join(root,prior,'browser-run.cjs'),'utf8');
  s=exact(s,'let browser,server,ws,pageSession,chain,closing=false,latest=null,timer;',`let terminalError=null;
 function fail(error){if(!terminalError){terminalError=error instanceof Error?error:Error(String(error));closing=true;process.exitCode=1;clearTimeout(timer);save('terminal-error.json',{at:new Date().toISOString(),error:String(error),noLaterProtocol:true});for(const p of pending.values()){clearTimeout(p.timer);p.reject(terminalError);}pending.clear();process.kill(process.ppid,'SIGTERM');}return terminalError;}
 let browser,server,ws,pageSession,chain,closing=false,latest=null,timer;`);
+ s=exact(s," browser=cp.spawn(",' '+launcherDiagnostics.toString()+"\n browser=cp.spawn(");
+ s=exact(s," const active=out+'/chrome-profile/DevToolsActivePort';for(let i=0;i<100&&!fs.existsSync(active);i++)await wait(100);", " const observeLauncher=launcherDiagnostics(fs,path,crypto,out,browser.pid,()=>!!terminalError);\n const active=out+'/chrome-profile/DevToolsActivePort';for(let i=0;i<100&&!fs.existsSync(active);i++){observeLauncher(i);await wait(100);}");
  s=exact(s,'function send(method,params={},sessionId){return new Promise','function send(method,params={},sessionId){if(terminalError)return Promise.reject(terminalError);return new Promise');
  s=exact(s,"if(!closing)close('first transport UNKNOWN; no replay').catch(e=>console.error(e));",'fail(e);');
  s=exact(s,"if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));","if(r.exceptionDetails)throw fail(Error(JSON.stringify(r.exceptionDetails)));");
