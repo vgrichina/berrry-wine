@@ -155,3 +155,30 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
   };
 }
 if (typeof module !== 'undefined') module.exports.attachDispatch = attachDispatch;
+
+// Call at reviewed input admission, after arming one recorder. An empty
+// startup sample says nothing about a menu that has not appeared yet. Await
+// that same passive stream; never restart the recorder or issue guest input.
+async function waitForReadStream({read, validate, deadline, wait,
+    now = Date.now, maxWaitMs = 5000} = {}) {
+  if (![read, validate, wait, now].every(f => typeof f === 'function') ||
+      !Number.isInteger(maxWaitMs) || maxWaitMs < 1 || maxWaitMs > 5000 ||
+      !Number.isFinite(deadline)) throw Error('bounded passive read admission required');
+  const end = Math.min(deadline, now() + maxWaitMs);
+  for (;;) {
+    if (now() >= end) throw Error('matched mouse read stream deadline; no input');
+    const snapshot = await read();
+    if (snapshot.drops !== 0 || !Array.isArray(snapshot.errors) || snapshot.errors.length)
+      throw Error('mouse read observation failed; no input');
+    if (!Array.isArray(snapshot.reads)) throw Error('mouse read stream missing; no input');
+    if (now() >= end) throw Error('matched mouse read stream deadline; no input');
+    if (snapshot.reads.length) {
+      await validate(snapshot);
+      if (now() >= end) throw Error('matched mouse read stream deadline; no input');
+      return snapshot;
+    }
+    if (!snapshot.active) throw Error('mouse read recorder inactive; no input');
+    await wait(Math.min(100, end - now()));
+  }
+}
+if (typeof module !== 'undefined') module.exports.waitForReadStream = waitForReadStream;

@@ -22,6 +22,7 @@ test('capacity and expiry restore the original; replacement ownership is preserv
   assert(o.stop().restoreConflict); assert.equal(table.get_mouse_buttons_live, newer);
 });
 const {attachDispatch} = require('./mw3-live-mouse-observation.cjs');
+const {waitForReadStream} = require('./mw3-live-mouse-observation.cjs');
 const decoder = require('./mw3-relative-motion.cjs');
 function fixture(options = {}) {
   const memory = {buffer: new ArrayBuffer(8192)}, d = new DataView(memory.buffer);
@@ -80,4 +81,38 @@ test('instrumented Worker response inherits isolation policy before custom handl
     assert.equal(response.headers.get('cross-origin-embedder-policy'), 'require-corp');
     assert.equal(await response.text(), 'postMessage(crossOriginIsolated)');
   } finally { await closeServer(server); }
+});
+
+test('passive admission awaits a delayed complete read in the same armed recorder', async () => {
+  const f = fixture(); f.o.start({apiLogBefore: 0});
+  let clock = 0, validations = 0;
+  const v = await waitForReadStream({read: () => f.o.snapshot(), deadline: 1000,
+    now: () => clock, wait: async ms => {
+      clock += ms;
+      // Beyond the failed original's 350ms startup sample, with no rearming.
+      if (clock === 400) { f.entry(); f.table.get_mouse_buttons_live(1); f.exit(); }
+    }, validate: s => { validations++; assert.equal(s.pending, 0); assert.equal(s.reads[0].state[12], 128); }});
+  assert.equal(clock, 400); assert.equal(validations, 1); assert.equal(v.reads.length, 1);
+  f.o.stop();
+});
+
+test('passive admission stops on expiry, loss, invalid reads or transport failure without replay', async () => {
+  const empty = {active: true, drops: 0, errors: [], reads: []};
+  let clock = 0, reads = 0;
+  const args = {read: () => { reads++; return empty; }, validate: () => assert.fail('empty stream'),
+    now: () => clock, deadline: 250, wait: async ms => { clock += ms; }};
+  await assert.rejects(() => waitForReadStream(args), /deadline/);
+  assert.equal(clock, 250); assert.equal(reads, 3);
+  for (const snapshot of [{...empty, drops: 1}, {...empty, errors: ['decoder']}, {...empty, active: false}]) {
+    let calls = 0;
+    await assert.rejects(() => waitForReadStream({...args, deadline: 1000,
+      read: () => { calls++; return snapshot; }, wait: () => assert.fail('must stop')}));
+    assert.equal(calls, 1);
+  }
+  const fault = Error('transport'); let calls = 0;
+  await assert.rejects(() => waitForReadStream({...args, deadline: 1000,
+    read: () => { calls++; throw fault; }}), e => e === fault);
+  assert.equal(calls, 1);
+  await assert.rejects(() => waitForReadStream({...args, deadline: 1000,
+    read: () => ({...empty, reads: [{}]}), validate: () => { throw fault; }}), e => e === fault);
 });
