@@ -71,6 +71,10 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
   const selectedImports = importNames === null ? null : new Set(importNames);
   const originals = new Map(), wrappers = new Map(), names = [];
   const data = new Float64Array(capacity * 6), frames = new Array(depthCapacity);
+  // Aggregate only: storage is bounded by the installed import table and 32
+  // dispatch categories, independent of the number of excluded hooks.
+  const excludedCounts = [], apiCounts = new Map();
+  let diagnostic;
   let active = false, expires = 0, started = 0, count = 0, drops = 0,
     reads = [], errors = [], depth = 0, marker = -1, priorLog = 0, excludedImports = 0, ex;
   function halt(reason) {
@@ -78,12 +82,24 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
     if (active) { active = false; try { ex.set_api_log(priorLog); } catch (error) { if (errors.length < 8) errors.push(String(error)); } }
   }
   function enter(args) {
+    diagnostic.entries++;
+    let category = marker >= 0 ? 'com:' + marker : 'unclassified';
+    if (marker < 0) {
+      try {
+        if (Number.isInteger(args[1]) && args[1] > 0 && args[1] <= 96)
+          category = 'name:' + String.fromCharCode(...new Uint8Array(memory.buffer, args[0], args[1]));
+      } catch (_) { diagnostic.categoryDecodeFailures++; }
+    }
+    if (apiCounts.has(category)) apiCounts.set(category, apiCounts.get(category) + 1);
+    else if (apiCounts.size < 32) apiCounts.set(category, 1);
+    else diagnostic.otherCategories++;
     if (depth === depthCapacity) { drops++; halt('dispatch depth capacity'); return; }
     let target = marker === 1093;
     if (marker < 0 && args[1] === 33) {
       const bytes = new Uint8Array(memory.buffer, args[0], 33);
       target = String.fromCharCode(...bytes) === 'IDirectInputDevice_GetDeviceState';
     }
+    if (!target) diagnostic.otherApi++;
     marker = -1;
     let r = null;
     if (target) {
@@ -92,10 +108,12 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
       const slot = u(u(esp + 4) + 4);
       if (slot >= layout.objectsSize / 32) throw Error('dispatch device slot');
       target = d.getUint32(layout.objectsBase + slot * 32 + 8, true) === 2;
+      if (!target) diagnostic.nonMouseDevice++;
     }
     if (target) {
       if (reads.length === readCapacity) { drops++; halt('read capacity'); return; }
       r = request(ex, memory, layout);
+      diagnostic.mouseRequests++;
       r.requestMono = performance.now();
     }
     frames[depth++] = r;
@@ -104,6 +122,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
     const original = table[name];
     if (typeof original !== 'function') continue;
     const index = names.push(name) - 1;
+    excludedCounts.push(0);
     originals.set(name, original);
     function wrapped(...args) {
       if (!active) return original.apply(this, args);
@@ -115,20 +134,21 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
       if (record && count === capacity) { drops++; halt('import capacity'); return original.apply(this, args); }
       const i = record ? count++ * 6 : -1;
       if (record) { data[i] = index; data[i + 1] = Date.now(); data[i + 2] = begin; }
-      else excludedImports++;
+      else { excludedImports++; excludedCounts[index]++; }
       try {
         if (name === 'log_i32' && ((args[0] >>> 16) === 0xc0de)) marker = args[0] & 65535;
         if (name === 'log') enter(args);
-      } catch (error) { halt(error); }
+      } catch (error) { diagnostic.entryFailures++; halt(error); }
       let value;
       try { value = original.apply(this, args); if (record) data[i + 4] = typeof value === 'number' ? value : 0; }
       catch (error) { if (record) data[i + 5] = 1; halt('original import threw: ' + name); throw error; }
       finally { if (record) data[i + 3] = performance.now(); }
       if (active && name === 'log_api_exit') {
+        diagnostic.exits++;
         try {
           if (!depth) throw Error('dispatch exit without entry');
           const r = frames[--depth]; frames[depth] = null;
-          if (r) reads.push({...completion(ex, memory, r), completionMono: performance.now()});
+          if (r) { reads.push({...completion(ex, memory, r), completionMono: performance.now()}); diagnostic.mouseCompletions++; }
         } catch (error) { halt(error); }
       }
       return value;
@@ -141,14 +161,28 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
           ![0, 1].includes(apiLogBefore)) throw Error('bounded start with known prior API log setting required');
       ex = getExports(); if (typeof ex?.set_api_log !== 'function') throw Error('dispatch log export required');
       priorLog = apiLogBefore; count = drops = depth = excludedImports = 0; reads = []; errors = []; marker = -1;
+      excludedCounts.fill(0); apiCounts.clear();
+      diagnostic = {entries: 0, exits: 0, otherApi: 0, nonMouseDevice: 0,
+        mouseRequests: 0, mouseCompletions: 0, entryFailures: 0,
+        categoryDecodeFailures: 0, otherCategories: 0};
       frames.fill(null); started = performance.now(); expires = started + durationMs;
       ex.set_api_log(1); active = true;
     },
     snapshot() {
       // Expiry is also checked on a passive snapshot when no imports run.
       if (active && performance.now() >= expires) halt();
+      const bindingMismatchReasons = [];
+      try { if (ex && getExports() !== ex) bindingMismatchReasons.push('exports object changed since start'); }
+      catch (_) { bindingMismatchReasons.push('exports object unavailable'); }
+      for (const [name, wrapped] of wrappers)
+        if (table[name] !== wrapped) bindingMismatchReasons.push('import table wrapper replaced: ' + name);
       return {active, started, expires, drops, errors: errors.slice(), pending: depth,
         importNames: selectedImports === null ? null : [...selectedImports], excludedImports,
+        diagnostic: {...diagnostic,
+          excludedByImport: names.flatMap((name, i) => excludedCounts[i] ? [{name, count: excludedCounts[i]}] : []),
+          apiCategories: Array.from(apiCounts, ([category, count]) => ({category, count})),
+          bindingMismatchReasons,
+          bindingScope: 'local exports/table checks only; owning Worker, instance and module identity require caller verification'},
         reads: reads.slice(), imports: Array.from({length: count}, (_, n) => {
           const i = n * 6; return {name: names[data[i]], at: data[i + 1], begin: data[i + 2],
             end: data[i + 3], value: data[i + 4], threw: !!data[i + 5]};

@@ -1706,3 +1706,40 @@ an independent observable 25-minute watchdog was armed before allocation.
 The next separately authorized attempt must privately exercise the full repaired
 route and actual harmless checked start before an original. Historical
 186/2842 ms gaps remain UNKNOWN.
+
+### 2026-11-10 absent matched reads: bounded passive diagnostic
+
+Offline run `20261110-mw3-absent-read-cause-1452` audited retained run
+`20261110-mw3-lifecycle-fixed-cockpit-1440`. The prefix contains exactly the
+`fb10afbdb` production `attachDispatch` function. Its seven private controls
+passed; the complete integration's same recorder retained 49 completed reads.
+The original capture binds Worker target `3D1EFDE5479E5D9EE85ED29F4F91D9AE`,
+instance `443a9544-853d-4cdd-84f1-7c64dc48734b:1`, endpoint 1 and module
+`e587a07b7cbb9410fd52ec374c71f6c87a81e9f4bbd7404c3c64c7bb77253edd`.
+The five-second admission failed before input with zero selected import rows,
+zero reads, zero drops/errors and 1,106,947 excluded hooks. Filtering stored
+rows does not filter dispatch matching. Wrapped-host activity is established;
+actual excluded APIs and the absence of mouse dispatch are not recoverable
+from this aggregate. Neither a selection/binding mismatch nor an engine cause
+is proven. EIP `0x540960` is only an indirect-jump trampoline.
+
+`tools/mw3-live-mouse-observation.cjs` now returns a passive `diagnostic` in
+the actual recorder snapshot/stop response: excluded counts per installed import,
+up to 32 COM-ID/named API categories (names at most 96 bytes), overflow-category
+entry count, dispatch entries/exits, other API/non-mouse selection counts,
+mouse requests/completions and decoder-entry failures. It retains no excluded
+hook rows. Local binding reasons identify changed exports or replaced import
+table wrappers; an empty list does not verify caller-owned Worker/module identity.
+The existing caller binding checks remain necessary. No admission rule, timing
+bound, dispatch matching, runtime/input implementation or guest state changed.
+
+Focused regressions exercise 1,106,947 excluded hooks, category overflow, named
+and COM dispatch, non-mouse rejection, export/table changes, unchanged refusal
+of empty streams, terminal failures and reset/inactive behavior. Function
+serialization, actual production WASM dispatch and production host imports are
+composed offline with 40,000 non-mouse dispatch attempts followed by a matched
+mouse handler. The production run budget can spend a batch on its periodic
+scheduler poll; the test counts actual dispatch entries rather than assuming
+every `run(1)` dispatches. Locked build and 28 focused tests passed. No box or
+original was launched. Next separately authorized observation must retain this
+response from the same bound recorder at first failure, preserving all gates.

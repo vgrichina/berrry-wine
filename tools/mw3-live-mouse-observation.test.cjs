@@ -102,6 +102,110 @@ test('scoping cannot hide decoder faults, selected capacity loss or original exc
   for (const importNames of [[], ['missing'], ['log', 'log']])
     assert.throws(() => fixture({importNames}), /explicit existing import names/);
 });
+
+test('absent reads expose bounded categories without inventing a binding failure or admitting input', async () => {
+  const f = fixture({importNames: ['get_mouse_buttons_live']});
+  f.o.start({apiLogBefore: 0});
+  for (let i = 0; i < 1106947; i++) f.table.wait_single(0);
+  let s = f.o.snapshot();
+  assert.equal(s.excludedImports, 1106947);
+  assert.deepEqual(s.diagnostic.excludedByImport, [{name: 'wait_single', count: 1106947}]);
+  assert.equal(s.diagnostic.entries, 0);
+  assert.deepEqual(s.diagnostic.bindingMismatchReasons, []);
+  for (let id = 0; id < 100; id++) {
+    f.table.log_i32(0xc0de0000 | id); f.table.log(0, 5); f.table.log_api_exit();
+  }
+  s = f.o.snapshot();
+  assert.equal(s.diagnostic.apiCategories.length, 32);
+  assert.equal(s.diagnostic.otherCategories, 68);
+  assert.equal(s.diagnostic.otherApi, 100);
+  assert.equal(s.diagnostic.entries, s.diagnostic.exits);
+  assert.deepEqual(s.imports, []); assert.deepEqual(s.reads, []);
+  let clock = 0;
+  await assert.rejects(waitForReadStream({read: () => f.o.snapshot(), deadline: 200,
+    now: () => clock, wait: async ms => { clock += ms; },
+    validate: () => assert.fail('diagnostics must never admit input')}), /deadline/);
+  f.o.stop();
+  const frozen = f.o.snapshot().diagnostic;
+  f.table.wait_single(); assert.deepEqual(f.o.snapshot().diagnostic, frozen);
+  f.o.start({apiLogBefore: 0});
+  assert.equal(f.o.snapshot().diagnostic.entries, 0);
+  assert.deepEqual(f.o.snapshot().diagnostic.excludedByImport, []);
+  f.o.stop();
+});
+
+test('dispatch selection and local binding failures have separate passive explanations', () => {
+  const f = fixture({importNames: ['get_mouse_buttons_live']});
+  f.o.start({apiLogBefore: 0});
+  f.put(4104, 1); f.entry(); f.exit();
+  let s = f.o.snapshot();
+  assert.equal(s.diagnostic.nonMouseDevice, 1);
+  assert.equal(s.diagnostic.mouseRequests, 0);
+  assert.deepEqual(s.diagnostic.apiCategories, [{category: 'com:1093', count: 1}]);
+  f.put(4104, 2); f.entry(); f.exit();
+  s = f.o.snapshot();
+  assert.equal(s.diagnostic.mouseRequests, 1); assert.equal(s.diagnostic.mouseCompletions, 1);
+  const apiName = 'IDirectInputDevice_GetDeviceState';
+  new Uint8Array(f.memory.buffer, 6000, apiName.length).set(Buffer.from(apiName));
+  f.ex.get_esp = () => 1024;
+  f.table.log(6000, apiName.length);
+  f.ex.get_esp = () => 1040; f.table.log_api_exit();
+  assert(f.o.snapshot().diagnostic.apiCategories.some(c => c.category === 'name:' + apiName && c.count === 1));
+  s.diagnostic.apiCategories[0].count = 999;
+  assert.equal(f.o.snapshot().diagnostic.apiCategories[0].count, 2);
+  f.table.log = () => {};
+  assert.deepEqual(f.o.snapshot().diagnostic.bindingMismatchReasons, ['import table wrapper replaced: log']);
+  f.o.stop();
+  let exportsObject;
+  const g = fixture({getExports: () => exportsObject}); exportsObject = g.ex;
+  g.o.start({apiLogBefore: 0}); exportsObject = {...g.ex};
+  assert.deepEqual(g.o.snapshot().diagnostic.bindingMismatchReasons, ['exports object changed since start']);
+  g.o.stop();
+});
+
+test('serialized actual recorder composes with production WASM dispatch and host imports', async () => {
+  const fs = require('node:fs'), vm = require('node:vm');
+  const {BASE, SIZE} = require('../lib/region-map.generated');
+  const {createHostImports} = require('../lib/host-imports');
+  const memory = new WebAssembly.Memory({initial: 8192, maximum: 8192, shared: true});
+  const ctx = {getMemory: () => memory.buffer, resourceJson: {}, onExit() {}};
+  const imports = createHostImports(ctx); imports.host.memory = memory;
+  // Same function serialization used by the browser pre-instantiation prefix.
+  const install = vm.runInNewContext('(' + attachDispatch.toString() + ')',
+    {performance, Date, Float64Array, Uint8Array, DataView});
+  let ex;
+  const o = install(imports.host, {getExports: () => ex, memory, ...decoder,
+    layout: {objectsBase: BASE.DX_OBJECTS, objectsSize: SIZE.DX_OBJECTS,
+      stateBase: BASE.DX_SURF_STATE}, importNames: ['get_mouse_buttons_live']});
+  const module = new WebAssembly.Module(fs.readFileSync(require('node:path').join(__dirname, '../build/wine-assembly.wasm')));
+  ex = new WebAssembly.Instance(module, imports).exports; ctx.exports = ex;
+  ex.init_thread(0, 0x400000, 0x400000, 0x600000, 0x7500000, 0x7500010, 2);
+  const d = new DataView(memory.buffer), put = (p, v) => d.setUint32(p, v >>> 0, true);
+  const g = a => ex.guest_to_wasm(a) >>> 0;
+  put(BASE.THUNK_BASE, 0x80000000);
+  [7, 0, 2, 0, 0x700, 16, 0, 0x400].forEach((v, i) => put(BASE.DX_OBJECTS + i * 4, v));
+  put(g(0x520004), 0);
+  new Uint8Array(memory.buffer, g(0x401000), 2).set([0xeb, 0xfe]);
+  const run = api => {
+    put(BASE.THUNK_BASE + 4, api); ex.set_esp(0x510000); ex.set_eip(0x7500000); ex.clear_yield();
+    [0x401000, 0x520000, 16, 0x530000].forEach((v, i) => put(g(0x510000 + i * 4), v));
+    ex.run(1);
+  };
+  ex.set_api_log(0); o.start({apiLogBefore: 0});
+  for (let i = 0; i < 40000; i++) run(338);
+  let s = o.snapshot();
+  assert.equal(s.reads.length, 0); assert.equal(s.imports.length, 0);
+  // run(1) may spend a batch on its periodic scheduler poll before dispatch.
+  assert(s.diagnostic.entries >= 39000 && s.diagnostic.entries <= 40000);
+  assert(s.diagnostic.apiCategories.some(c => c.category === 'com:338' && c.count === s.diagnostic.entries));
+  assert.equal(s.excludedImports, s.diagnostic.excludedByImport.reduce((n, c) => n + c.count, 0));
+  run(1093); s = o.stop();
+  assert.equal(s.errors.length, 0); assert.equal(s.drops, 0); assert.equal(s.pending, 0);
+  assert.equal(s.reads.length, 1); assert.equal(s.reads[0].eax, 0);
+  assert.equal(s.diagnostic.mouseRequests, 1); assert.equal(s.diagnostic.mouseCompletions, 1);
+  assert.equal(s.diagnostic.bindingMismatchReasons.length, 0);
+  assert(s.imports.some(i => i.name === 'get_mouse_buttons_live'));
+});
 test('instrumented Worker response inherits isolation policy before custom handler ends it', async () => {
   const {startStaticServer, closeServer} = require('../test/static-server.js');
   const server = await startStaticServer({root: __dirname, crossOriginIsolated: true,
