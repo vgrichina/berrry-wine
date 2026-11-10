@@ -5,6 +5,72 @@ const fs=require('fs'),assert=require('assert/strict'),crypto=require('crypto');
 const root=require('path').resolve(__dirname,'..'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const {createHostImports}=require(root+'/lib/host-imports');
 const loader=require(root+'/lib/dll-loader');
+// Preload only in an offline generated-workflow control. Run the unmodified
+// browser entry point through startup and ordinary close, with native services
+// replaced at their process/CDP boundary. Never launch local Chrome.
+if(process.env.LB_OFFLINE_STARTUP==='1'){
+ const Module=require('node:module'),events=require('node:events'),path=require('node:path');
+ const originalLoad=Module._load,originalTimeout=global.setTimeout;
+ const browserFile=path.resolve(process.argv[1]),run=path.dirname(browserFile),out=run+'/original';
+ const pins=JSON.parse(fs.readFileSync(run+'/runtime-pins.json'));
+ const moduleBytes=fs.readFileSync(root+'/'+pins.files.find(p=>p.path==='build/wine-assembly.wasm').path);
+ const browser=new events.EventEmitter();browser.pid=999999;browser.exitCode=null;
+ browser.kill=()=>{throw Error('offline startup must close normally')};
+ const page={name:'lbreakout2_251',running:true,stopped:false,guestWorker:true,processId:7,
+  pageRendererObject:'renderer',canvasObject:'canvas',processObject:'process',endpoint:'endpoint',endpointObject:'link',
+  guestEndpoint:'endpoint',slot:0,workerObject:'worker',moduleObject:'module',epoch:'epoch',renderEndpoint:'none',
+  renderEndpointObject:'none',renderWorkerObject:'none'};
+ let socket,workerAttached=false,spawned=false,closed=false;
+ function evaluated(s){
+  if(s.includes('__mcmPassiveIdentityV1'))return {isolated:true,apps:[page]};
+  if(s.includes('__mcmPassiveInstanceV1'))return {endpointIdentity:'endpoint',slot:0,instance:'instance'};
+  if(s.includes("getContext('2d')?.constructor"))return 'CanvasRenderingContext2D';
+  if(s.includes('fixtureReturnedCoordinates'))return {apps:[page],backend:'CanvasRenderingContext2D'};
+  if(s.startsWith('!!('))return true;
+  if(s.includes('innerWidth'))return {innerWidth:1024,innerHeight:855};
+  return [];
+ }
+ class Socket{
+  constructor(){socket=this;this.readyState=1;queueMicrotask(()=>this.onopen());}
+  close(){this.readyState=3;}
+  send(raw){const v=JSON.parse(raw);let result={};
+   if(v.method==='Target.getTargets')result={targetInfos:[{type:'page',targetId:'page'}]};
+   if(v.method==='Target.attachToTarget')result={sessionId:'page-session'};
+   if(v.method==='Debugger.getScriptSource')result={bytecode:moduleBytes.toString('base64')};
+   if(v.method==='Runtime.evaluate')result={result:{value:evaluated(v.params.expression)}};
+   if(v.method==='Page.getLayoutMetrics')result={cssContentSize:{x:0,y:0,width:1024,height:855}};
+   if(v.method==='Page.captureScreenshot')result={data:Buffer.from('offline startup pixels; no visual acceptance').toString('base64')};
+   queueMicrotask(()=>this.onmessage({data:JSON.stringify({id:v.id,result})}));
+   if(v.method==='Page.navigate'&&!workerAttached){workerAttached=true;
+    queueMicrotask(()=>this.onmessage({data:JSON.stringify({method:'Target.attachedToTarget',params:{sessionId:'guest-session',targetInfo:{type:'worker',targetId:'guest',url:'/guest-worker.js'}}})}));
+    queueMicrotask(()=>this.onmessage({data:JSON.stringify({method:'Debugger.scriptParsed',sessionId:'guest-session',params:{scriptLanguage:'WebAssembly',scriptId:'wasm',url:'wasm://offline'}})}));
+   }
+   if(v.method==='Browser.close'){closed=true;browser.exitCode=0;queueMicrotask(()=>browser.emit('exit',0,null));}
+  }
+ }
+ global.WebSocket=Socket;
+ global.setTimeout=(fn,ms,...args)=>originalTimeout(fn,ms===3000?0:ms,...args);
+ Module._load=function(name,parent,isMain){
+  const value=originalLoad.apply(this,arguments);
+  if(name==='node:child_process')return {...value,spawn:(exe,args)=>{
+   assert.equal(exe,'/usr/bin/google-chrome');assert(!spawned);spawned=true;
+   assert.equal(process.env.CASE_TAG,'original');assert(Number(process.env.BROWSER_DEADLINE)>Date.now());
+   fs.mkdirSync(out+'/chrome-profile');fs.writeFileSync(out+'/chrome-profile/DevToolsActivePort','1234\n/offline');return browser;
+  }};
+  if(name.endsWith('/test/static-server.js'))return {...value,startStaticServer:async()=>({
+   address:()=>({port:1234}),prependListener(){},closeAllConnections(){},close:fn=>fn()
+  })};
+  if(name==='./transport.cjs')return {...value,consume:async(p,n,execute)=>{
+   assert.equal(n,0);const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));
+   assert.equal(latest.label,'startup');assert.equal(latest.identity.renderEndpoint,'none');
+   value.publish(out+'/startup-review.json',{...latest,review:'offline adapter only; no real image review',decision:'continue'});
+   await execute({action:'quit',reviewRef:'startup'},()=>{});
+   assert(spawned&&workerAttached&&closed&&socket.readyState===3);
+   value.publish(run+'/offline-startup-control.json',{passed:true,entireBrowserEntryPoint:true,literalDeadline:true,noLocalChrome:true,fixtureRerun:false});return true;
+  }};
+  return value;
+ };
+} else {
 (async()=>{
  const bytes=fs.readFileSync(root+'/build/wine-assembly.wasm');
  const dll=fs.readFileSync(root+'/test/binaries/candidates/lbreakout2-251/game/LBREAKOUT/SDL.dll');
@@ -106,3 +172,4 @@ const loader=require(root+'/lib/dll-loader');
 
  console.log(JSON.stringify({pass:true,scope:'original SDL WinDIB + DX5 keyboard consumers, SDL_GetKeyState, original game paddle handler; offline interpreter with isolated test objects/config',module:hash(bytes),sdl:hash(dll),exe:hash(pe),base,calls,observer:{paddleEntries:entries.length,paddleReturns:returns.length,records:observation.records.length,expiryAndRecordLimit:true,authenticMediaRejection:true},rows,repeatIgnored:true,paddle:{collapsed,held,released,left,fire,fireUp,inhibited},directInput:{collapsed:diCollapsed,held:diHeld,released:diReleased,left:diLeft,fire:diFire,fireUp:diFireUp,inhibited:diInhibited},priorOriginalCause:'unestablished'},null,2));
 })().catch(e=>{console.error(e.stack);process.exitCode=1});
+}
