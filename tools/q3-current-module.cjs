@@ -7,12 +7,14 @@ const crypto=require('node:crypto'),cp=require('node:child_process'),assert=requ
 const root=path.resolve(__dirname,'..');
 const historical='scratch/runs/20261109-q3-relative-menu-native-progress-1415/runtime-pins.json.gz';
 const historicalSHA='a6be3bee6fbf1c218a3982d8e991a44838abddc0a0b80c8bd4f45c3d6effe1dc';
-const moduleVersion='q3-published-cpu-c693e2b8b-custody-4a814ed4f-v1';
+const moduleVersion='q3-published-cpu-5e8b6cb70-journal-b889a1ab3-v1';
 // 9bf37f769 preserves SEH redirects in gl32 AND the memory-shift caller;
 // c693e2b8b adds the complete-direct-window gl32 fast path. Authenticate the
 // entire published build closure, including the compiler, before using either
 // rebuilt CPU mirror. No current-HEAD fallback or inferred source acceptance.
-const cpuCommit='c693e2b8bef977b54398792e830dd1d0416e6ac3';
+const cpuCommit='5e8b6cb70c6e7b14c746870894beac791befcc7b';
+// Published current closure includes the D3D9 nested-send depth field.
+const journalObserverCommit='b889a1ab3bb7a056797449da90027f4a4fb8a7cb';
 const custodyCommit='4a814ed4f7cfc84901d91b1c41f738f4fcd23441';
 const checkpointObserverVersion='q3-checkpoint-b993419a5-v1';
 const checkpointCommit='b993419a54d732a67696851d8f2dc50b574b625b';
@@ -20,16 +22,20 @@ const checkpointCallerSHA='5b52e6438e2ec3f9676d11584dd52c5a435b1b17412c4ac2d5c1d
 const checkpointPrelaunchSHA='649c689aba21e8fca8325435a08be1f7181dd6380cfe843d64ce9f840c9dec1a';
 const foreignPrelaunchSHA='4d37a72679854f106c20db8a4be73d92f4f1b93884e9d08afae9ba5e04e8e207';
 const checkpointDependencies=['tools/q3-checkpoint-observer.py','tools/q3-cancellation-stream-eof.py','tools/q3-native-launch-client.py'];
-const SELECTED=Object.freeze({sha256:'79f0842ea1ab5fce5b5651540e726396f4ccbfa6e3cf046e9bc42ad7c4fa650f',bytes:2186163});
+const SELECTED=Object.freeze({sha256:'e587a07b7cbb9410fd52ec374c71f6c87a81e9f4bbd7404c3c64c7bb77253edd',bytes:2186179});
 const modules={
   'build/wine-assembly.wasm':{size:SELECTED.bytes,sha256:SELECTED.sha256},
-  'build/wine-assembly.compat.wasm':{size:2188809,sha256:'4694742d55373abd19f58bfa24666d1ac14cac3860e0a6a2548801592521d99b'}
+  'build/wine-assembly.compat.wasm':{size:2188825,sha256:'ad5ed62f0d6556094481288882163f9e9da835d2bc3216d12eece43439c07736'}
 };
 const publishedProviders=Object.fromEntries([
   'host.js','lib/guest-thread-host.js','lib/guest-worker.js','lib/region-map.generated.js',
   'src/00-regions.wat','src/03-registers.wat','src/05b-string-ops.wat','src/06b-core-handlers.wat','src/09a6-handlers-crt.wat','src/13-exports.wat'
 ].map(name=>[name,cpuCommit]));
 publishedProviders['tools/native_kernel_custody.py']=custodyCommit;
+publishedProviders['src/09ad-handlers-d3d9.wat']=cpuCommit;
+// Exact published foreign changes, required by the current shared checkout.
+publishedProviders['lib/d3d9-host.js']='35ecfae6c99b0ec39e6dc1ec11f2be5c6a3cc852';
+publishedProviders['test/static-server.js']='1ddbf74cf4168f8f0166dcda5b589e84712a1d45';
 // Exact published opt-in stage recorder; never accept arbitrary GL drift.
 const glStageCommit='c6094c4edf87dcd7b80c4caa4225857bc3a5eb00';
 for(const name of ['lib/gl-compat.js','lib/gl-render-host.js','lib/gl-render-worker.js'])
@@ -53,7 +59,7 @@ function validate(options={}){
   const raw=read(historical);assert.equal(hash(raw),historicalSHA,'historical pinset integrity');
   const prior=JSON.parse(zlib.gunzipSync(raw)),seen=new Set(),explainedDrift=[];
   for(const p of prior.files){assert(!seen.has(p.path),'duplicate historical pin');seen.add(p.path);}
-  for(const commit of [cpuCommit,custodyCommit,glStageCommit])for(const target of ['HEAD','origin/main'])git(['merge-base','--is-ancestor',commit,target]);
+  for(const commit of [cpuCommit,custodyCommit,glStageCommit,journalObserverCommit])for(const target of ['HEAD','origin/main'])git(['merge-base','--is-ancestor',commit,target]);
   const sources=git(['ls-tree','-r','--name-only',cpuCommit,'--','src','tools/watx-src','tools/watx.js','tools/watx-closure.js','tools/build-compile-wat.js','tools/region-layout-hash.js','tools/protected-writer-entries.js','lib/dispatch-trampoline.js']).toString().trim().split('\n');
   for(const name of sources)assert.equal(hash(read(name)),hash(git(['show',cpuCommit+':'+name])),'published build source: '+name);
   const expected={...modules};
@@ -692,9 +698,10 @@ print(json.dumps(sites))`],{cwd:root}).toString());
     // Q3 alone batches the authenticated custody journal at its existing
     // durable executable-CONT barriers. Shared providers remain immutable.
     const custodyAdapter='tools/q3-startup-custody.py';
-    const custodyPin=pin(custodyAdapter,git(['show',custodyCommit+':'+custodyAdapter]));
+    const custodyPin=pin(custodyAdapter,git(['show',journalObserverCommit+':'+custodyAdapter]));
     assert.deepEqual(pin(custodyAdapter,read(custodyAdapter)),custodyPin,'published Q3 custody adapter');
     version.files.push(custodyPin);
+    version.publishedJournalObserverCommit=journalObserverCommit;
     version.files.push(pin('tools/q3-provider-upload.py',read('tools/q3-provider-upload.py')));
     version.files.push(pin('tools/q3-phase-observer.py',read('tools/q3-phase-observer.py')));
     generated=generated.map(file=>{

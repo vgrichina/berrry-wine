@@ -15,7 +15,7 @@ const run=path.join(out,'prepared');
 const seal=JSON.parse(cp.execFileSync(process.execPath,[path.join(__dirname,'q3-current-module.cjs'),
  '--prepare',run,'--foreign-closure-version',route.version],{cwd:root,encoding:'utf8'}));
 const pins=route.staged(run,route.version,seal.manifestSHA256);
-assert.equal(pins.publishedModuleCommit,'c693e2b8bef977b54398792e830dd1d0416e6ac3');
+assert.equal(pins.publishedModuleCommit,'5e8b6cb70c6e7b14c746870894beac791befcc7b');
 assert.equal(pins.publishedCustodyCommit,'4a814ed4f7cfc84901d91b1c41f738f4fcd23441');
 for(const [name,digest] of Object.entries({
  'src/03-registers.wat':'ce6098280c94e48aa2a985f5e39b3df55f689dcb17eec951a0969b37b74e551d',
@@ -37,7 +37,7 @@ for(const tailCalls of [true,false]){
  built.push({path:name,size:bytes.length,sha256:hash(bytes)});
 }
 const negatives=[];
-for(const name of ['src/03-registers.wat','src/06b-core-handlers.wat','tools/watx-closure.js',
+for(const name of ['src/03-registers.wat','src/06b-core-handlers.wat','src/09ad-handlers-d3d9.wat','lib/d3d9-host.js','test/static-server.js','tools/watx-closure.js',
  'tools/native_kernel_custody.py','tools/q3-native-prelaunch.py','build/wine-assembly.wasm','build/wine-assembly.compat.wasm']){
  const actual=fs.readFileSync(path.join(root,name));
  const stale=name.startsWith('src/')?git(['show','e7e0312bd:'+name]):
