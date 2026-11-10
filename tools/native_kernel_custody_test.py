@@ -32,6 +32,42 @@ def journal_probe(module):
 
 
 class RetirementService(unittest.TestCase):
+    def test_competing_creators_queue_bookkeeping_uses_next_admission_barrier(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(os.environ.get('CUSTODY_QUEUE_EVIDENCE',tmp))
+            run=Path(tempfile.mkdtemp(prefix='queue-service-',dir=base))
+            result=subprocess.run([sys.executable,__file__,'--isolated-fixture',
+                '--cancel-creators-fixture',str(run),'fork','queue-service'],
+                capture_output=True,text=True,timeout=15)
+            (run/'fixture-process.json').write_text(json.dumps(dict(wait=result.returncode,
+                stdout=result.stdout,stderr=result.stderr,stdoutEOF=True,stderrEOF=True)))
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            service=json.loads((run/'queue-service.json').read_text())
+            self.assertTrue(service['writes'])
+            self.assertTrue(service['fsyncs'])
+            self.assertTrue(service['executableBarriers'])
+            self.assertEqual(service['queueAppendWrites'],[])
+            self.assertTrue((run/'pending-creators.json').exists())
+            drain=json.loads((run/'kernel-drain.json').read_text())
+            self.assertTrue(drain['complete'])
+            self.assertIsNone(drain['failure'])
+            self.assertTrue(drain['cancellation'])
+            self.assertTrue(drain['commandLog']['eof'])
+            for key in ('unreaped','remaining','unresolvedPtrace','unresolvedResumes','unresolvedLineage'):
+                self.assertEqual(drain[key],[])
+            self.assertEqual(json.loads((run/'creator-waits.json').read_text()),
+                dict(supervisorWait=1,watchdogWait=-15))
+            self.assertFalse((run/'watchdog-fired.json').exists())
+            self.assertEqual(json.loads((run/'isolated-waits.json').read_text())['adoptedWaits'],[])
+            competing=json.loads((run/'pending-creators.json').read_text())
+            rows=[json.loads(s) for s in gzip.open(run/'custody.ndjson.gz','rt')]
+            barrier=service['selectedBarrier']
+            self.assertEqual(barrier['pid'],competing['firstCreator'])
+            for child in (competing['firstChild'],competing['secondChild']):
+                admission=next(r for r in rows if r['kind'] in ('custody','fork-lineage') and
+                    r['pid']==child and r.get('parentCustodian') is not None)
+                self.assertLessEqual(admission['sequence'],barrier['throughSequence'])
+
     def test_bounded_ordered_batches_and_oversize_record_preserve_all_bytes(self):
         for compression in (None,'gzip'):
             with self.subTest(compression=compression),tempfile.TemporaryDirectory() as tmp:
@@ -113,7 +149,9 @@ class RetirementService(unittest.TestCase):
     def test_failed_admission_service_contains_owned_tasks_before_cont(self):
         write=kernel.Journal.write
         def failed(stream,data):
-            if b'fork-parent-release' in data:
+            # Fail actual durable child admission, rather than queue metadata
+            # which can also persist at final close without executable CONT.
+            if b'"kind": "custody", "pid": 18349' in data:
                 raise OSError('injected admission failure')
             return write(stream,data)
         # Reuse the wait model, including real ordered identity obligations;
@@ -1294,6 +1332,12 @@ int main(int argc,char **argv) {
         if supervisor==0:
             os.close(gate_write);assert os.read(gate_read,1)==b'1';os.close(gate_read)
             module=kernel
+            if version=='queue-service' and os.environ.get('CUSTODY_QUEUE_BASELINE')=='1':
+                import types
+                revision='7784a75794f5ff409a2a09fac94e8e9285314972'
+                data=subprocess.check_output(['git','show',revision+':tools/native_kernel_custody.py'])
+                assert hashlib.sha256(data).hexdigest()=='3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240'
+                module=types.ModuleType('queue_before');exec(compile(data,revision,'exec'),module.__dict__)
             if version in ('before','exec-before'):
                 import types
                 revision='0cde26d0bc27794ce04408be3500d9e661a273e4' if version=='exec-before' else 'dec33253ced7f76b850c63f7ad1137c7f214b1ef'
@@ -1302,6 +1346,35 @@ int main(int argc,char **argv) {
                 module=types.ModuleType('before');exec(compile(data,revision,'exec'),module.__dict__)
             waitid,waitpid,trace=os.waitid,os.waitpid,module.ptrace
             creators=[];selected=[];released=[];exec_binding=[];hide_wait=[];exec_stop=[];captured={}
+            service=dict(writes=[],fsyncs=[],events=[],queueAppendWrites=[],executableBarriers=[])
+            service_rows=[];last_status={};appending=[]
+            append_record,write_record=module.Journal.append,module.Journal.write
+            sync_record=os.fsync
+            def synced(fd):
+                begin=time.monotonic()
+                result=sync_record(fd)
+                if version=='queue-service':
+                    service['fsyncs'].append(dict(fd=fd,begin=begin,end=time.monotonic()))
+                return result
+            def record(stream,value,**options):
+                if version!='queue-service' or not stream.path.name.startswith('custody.ndjson'):
+                    return append_record(stream,value,**options)
+                service_rows.append(dict(value));appending.append(value['kind'])
+                service['events'].append(dict(sequence=value['sequence'],kind=value['kind'],
+                    pid=value.get('pid'),at=time.monotonic()))
+                try:return append_record(stream,value,**options)
+                finally:appending.pop()
+            def persist(stream,data):
+                begin=time.monotonic()
+                result=write_record(stream,data)
+                if version=='queue-service' and stream.path.name.startswith('custody.ndjson'):
+                    trigger=appending[-1] if appending else None
+                    measurement=dict(begin=begin,end=time.monotonic(),trigger=trigger,
+                        sequences=[json.loads(s)['sequence'] for s in bytes(data).splitlines()])
+                    service['writes'].append(measurement)
+                    if trigger in ('fork-parent-release','parked-child-release-queued','parked-child-release'):
+                        service['queueAppendWrites'].append(measurement)
+                return result
             identify=module.identity
             def observation(task):
                 row=dict(captured[task]) if version=='exec-reuse-former' and exec_binding and task==exec_binding[0][1] else identify(task)
@@ -1317,6 +1390,7 @@ int main(int argc,char **argv) {
             flags=os.WEXITED|os.WSTOPPED|os.WNOHANG|os.WNOWAIT|kernel.WALL
             def consume(task,options):
                 result=waitpid(task,options)
+                if result[0]:last_status[task]=result[1]
                 if result[0] and os.WIFSTOPPED(result[1]):
                     exec_stop.clear()
                     if result[1]>>16==4:exec_stop[:]=[task]
@@ -1350,12 +1424,18 @@ int main(int argc,char **argv) {
                         assert selected,'second native creator message absent'
                 return result
             def resume(request,task,addr=0,data=0):
+                if version=='queue-service' and request==module.CONT and last_status[task]>>16!=6:
+                    durable=[json.loads(s) for s in zlib.decompressobj(31).decompress((run/'custody.ndjson.gz').read_bytes()).splitlines()]
+                    assert durable==service_rows,'executable CONT without full durable prefix'
+                    service['executableBarriers'].append(dict(pid=task,at=time.monotonic(),
+                        throughSequence=durable[-1]['sequence']))
                 # The EXEC fault window ends at its actual CONT. A later
                 # observation-only GETEVENTMSG for a pending CLONE must not
                 # inject EXEC corruption before that CLONE is consumed.
                 if request==module.CONT and exec_stop==[task]:exec_stop.clear()
                 if request==module.CONT and selected and task==selected[0] and not released:
                     released.append(task)
+                    if version=='queue-service':service['selectedBarrier']=service['executableBarriers'][-1]
                     (run/'first-creator-resume.json').write_text(json.dumps(dict(pid=task,at=time.time())))
                     result=trace(request,task,addr,data)
                     time.sleep(.03) # let real exit_group supersede the other stop
@@ -1376,11 +1456,14 @@ int main(int argc,char **argv) {
                 return result
             try:
                 with patch.object(module.os,'waitpid',side_effect=consume),patch.object(module,'ptrace',side_effect=resume), \
-                     patch.object(module,'identity',side_effect=observation),patch.object(module.os,'waitid',side_effect=peek):
+                     patch.object(module,'identity',side_effect=observation),patch.object(module.os,'waitid',side_effect=peek), \
+                     patch.object(module.Journal,'append',record),patch.object(module.Journal,'write',persist), \
+                     patch.object(module.os,'fsync',side_effect=synced):
                     due=time.time()+(.5 if version=='exec-missing-wait' else 6)
                     module.supervise(run,[str(binary),str(run),'exec-fork' if version=='exec-fork' else kind],
                         deadline=due,cleanup_deadline=due+1,journal_compression='gzip',command_compression='gzip')
             except BaseException as error:
+                if version=='queue-service':(run/'queue-service.json').write_text(json.dumps(service,indent=2))
                 (run/'supervisor-error.json').write_text(json.dumps(dict(error=repr(error))))
                 os._exit(1)
             os._exit(0)

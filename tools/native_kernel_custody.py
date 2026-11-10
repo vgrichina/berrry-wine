@@ -106,7 +106,13 @@ def supervise(run, command, *, deadline, cleanup_deadline, journal_compression=N
         # Diagnostic records share the bounded journal batch. Existing
         # admission barriers still flush the full prefix before CONT.
         diagnostic = kind in ('wait-consumed', 'kernel-event-message',
-                              'creation-peek-message', 'ptrace-cont-returned')
+                              'creation-peek-message', 'ptrace-cont-returned',
+                              'fork-parent-release', 'parked-child-release-queued',
+                              'parked-child-release')
+        # Queue bookkeeping cannot execute a task. Avoid an extra synchronous
+        # write for each enqueue/release while other tasks await queue service.
+        # Custody and before-consume remain durable; the full ordered prefix,
+        # including these records, still flushes before every executable CONT.
         journal.append(dict(sequence=sequence, at=time.time(), kind=kind, **value),
                        defer=retirement or diagnostic)
         return sequence
