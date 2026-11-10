@@ -491,7 +491,7 @@ async function cdpControls(generated,out){
  assert(begin>=0&&end>begin);const emitted=source.slice(begin,end),results=[];
  for(const [expression,operation] of [['page-read','page-owner'],['worker-read','worker-owner'],['renderer-read','renderer-owner'],['globalThis.__noxConsumption.begin('+ 'x'.repeat(4096)+')','nox-consumption']]){
   const frames=[],trace=[],saved={},timers=new Map(),microtasks=[];let timerId=0,closed=0;
-  const pending=new Map(),ctx={pending,workers:new Map([['worker',{targetId:'actual-target'}]]),id:0,timer:0,pageSession:'page',
+  const pending=new Map(),ctx={root,require,pending,workers:new Map([['worker',{targetId:'actual-target'}]]),id:0,timer:0,pageSession:'page',
    bound:{PAGE_READ:'page-read',WORKER_READ:'worker-read',RENDER_READ:'renderer-read'},Buffer,Date,sha:current.sha,
    process:{exitCode:0},save:(n,v)=>saved[n]=structuredClone(v),log:(n,v)=>{assert.equal(n,'cdp-requests.jsonl');trace.push(structuredClone(v));},ws:{send:wire=>frames.push(JSON.parse(wire))},
    setTimeout:(fn,ms)=>{assert.equal(ms,20000,'unchanged production timeout');timers.set(++timerId,fn);return timerId;},clearTimeout:n=>timers.delete(n),
@@ -539,7 +539,7 @@ async function lifecycleControls(generated,out){
  ];
  for(const role of ['page','guest','renderer'])for(const [kind,makeEvent] of events){
   const pending=new Map(),workers=new Map(),frames=[],saved={},microtasks=[],timers=new Map();let seq=0,closed=0;
-  const ctx={pending,workers,id:0,timer:0,pageSession:'page',closing:false,latest:null,workerPromises:[],assert,Buffer,Date,sha:current.sha,
+  const ctx={root,require,pending,workers,id:0,timer:0,pageSession:'page',closing:false,latest:null,workerPromises:[],assert,Buffer,Date,sha:current.sha,
    bound:{PAGE_READ:'page-read',WORKER_READ:'worker-read',RENDER_READ:'renderer-read'},process:{exitCode:0},
    ws:{send:wire=>frames.push(JSON.parse(wire))},save:(n,v)=>{assert(!saved[n],'one publication '+n);saved[n]=structuredClone(v);},log(){},
    setTimeout:(fn,ms)=>{assert.equal(ms,20000);timers.set(++seq,fn);return seq;},clearTimeout:n=>timers.delete(n),
@@ -637,7 +637,7 @@ async function protocolControls(generated,out){
    for(let n=0;n<100&&!fs.existsSync(profile+'/DevToolsActivePort');n++)await wait(100);
    const [port,suffix]=fs.readFileSync(profile+'/DevToolsActivePort','utf8').trim().split('\n');
    ws=new WebSocket('ws://127.0.0.1:'+port+suffix);await new Promise((r,j)=>{ws.onopen=r;ws.onerror=j;});
-   const ctx={pending,workers,workerPromises:[],id:0,timer:0,pageSession:null,closing:false,latest:null,assert,Buffer,Date,sha:current.sha,
+   const ctx={root,require,pending,workers,workerPromises:[],id:0,timer:0,pageSession:null,closing:false,latest:null,assert,Buffer,Date,sha:current.sha,
     bound:{PAGE_READ:'page-read',WORKER_READ:'worker-read',RENDER_READ:'renderer-read'},process:{exitCode:0},console,setTimeout,clearTimeout,queueMicrotask,
     ws:{send:wire=>{frames.push(JSON.parse(wire));ws.send(wire);}},save:(n,v)=>{assert(!saved[n]);saved[n]=structuredClone(v);},log(){},close:async()=>{closes++;}};
    vm.createContext(ctx);vm.runInContext(source.slice(begin,end)+caller+handler+';globalThis.api={send,evaluate,event,execute,bindOwnerCapture};',ctx);
@@ -702,6 +702,9 @@ async function protocolControls(generated,out){
  save(out+'/results.json',{passed:true,actualLocalChrome:true,actualEmittedLifecycle:true,originalGameplay:false,results});console.log(JSON.stringify({passed:true,controls:results.length}));
 }
 async function menuControls(generated,out){
+ if(fs.readFileSync(generated+'/browser-run.cjs','utf8').includes('executePassiveMenu')){
+  cp.execFileSync(process.execPath,[path.join(root,'tools/nox-menu-admission.test.cjs'),generated,out],{stdio:'inherit'});return;
+ }
  assert(!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
  const source=fs.readFileSync(generated+'/browser-run.cjs','utf8');
  const begin=source.indexOf('let settledMenu=null;'),end=source.indexOf('\n(async()=>{',begin);
@@ -756,5 +759,37 @@ async function menuControls(generated,out){
  }
  save(out+'/results.json',{passed:true,actualEmittedCaller:true,actualEmittedMenuRegion:true,results});console.log(JSON.stringify({passed:true,results}));
 }
-if(process.env.NOX_TEST_CHILD==='1')child().catch(e=>{console.error(e);process.exitCode=1;});
+async function stagedMenuControls(generated,out){
+ // Mount only delivered inputs at the checkout path. tmpfs hides the real
+ // checkout, including node_modules; no source tree or media is archived.
+ assert(!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
+ const pins=JSON.parse(fs.readFileSync(generated+'/runtime-pins.json'));current.verify(root,pins,generated);
+ const fixtures=['20261110-nox-passive-menu-staff-target-0915/review/001-observe','20261110-nox-settled-network-staff-0610/review/main-menu-settled','20261110-nox-supported-worker-staff-target-0905/review/001-main','20261110-nox-settled-network-staff-0610/review/startup'];
+ const files=new Set(pins.files.map(p=>p.path));
+ for(const name of ['tools/nox-current-driver.test.cjs','tools/nox-menu-admission.test.cjs'])files.add(name);
+ for(const f of fixtures)for(const suffix of ['.png','-state.json'])files.add('scratch/runs/'+f+suffix);
+ const dirs=new Set();for(const f of files){let d=path.dirname(root+'/'+f);while(d.startsWith(root+'/')){dirs.add(d);d=path.dirname(d);}}
+ const base=['--ro-bind','/','/','--tmpfs',root,'--proc','/proc','--dev','/dev'];
+ for(const d of [...dirs].sort((a,b)=>a.length-b.length))base.push('--dir',d);
+ for(const f of files)base.push('--ro-bind',root+'/'+f,root+'/'+f);
+ base.push('--ro-bind',generated,generated,'--bind',out,out,'--chdir',root,'--unsetenv','NODE_PATH','--setenv','NODE_OPTIONS','--no-global-search-paths');
+ const run=(name,args,extra=[])=>{
+  const r=cp.spawnSync('bwrap',[...base,...extra,...args],{encoding:'utf8',timeout:120000,maxBuffer:4*1024*1024});
+  fs.writeFileSync(out+'/'+name+'.stdout',r.stdout||'');fs.writeFileSync(out+'/'+name+'.stderr',r.stderr||'');return r;
+ };
+ const pre=run('original-preflight',[process.execPath,generated+'/browser-run.cjs'],['--setenv','DRIVER_PREFLIGHT','1','--setenv','BROWSER_DEADLINE',String(Date.now()+120000)]);
+ assert.equal(pre.status,0,pre.stderr);
+ const caller=run('original-menu-caller',[process.execPath,root+'/tools/nox-menu-admission.test.cjs',generated,out+'/caller']);
+ assert.equal(caller.status,0,caller.stderr);
+ const missing=root+'/node_modules/pngjs/lib/parser-sync.js';
+ fs.writeFileSync(out+'/empty.cjs','');
+ const negative=run('missing-dependency-original-preflight',[process.execPath,generated+'/browser-run.cjs'],['--ro-bind',out+'/empty.cjs',missing,'--setenv','DRIVER_PREFLIGHT','1','--setenv','BROWSER_DEADLINE',String(Date.now()+120000)]);
+ assert.equal(negative.status,1);assert.match(negative.stderr,/immutable input node_modules\/pngjs\/lib\/parser-sync.js/);
+ const decode=run('native-decode-missing-dependency',[process.execPath,'-e',`const fs=require('fs'),s=require('./tools/nox-menu-state.cjs');const p='scratch/runs/${fixtures[0]}';s.reviewed(fs.readFileSync(p+'.png'),JSON.parse(fs.readFileSync(p+'-state.json')).canvas,{kind:'main',rect:[130,110,400,250],labels:s.MAIN_LABELS})`],['--tmpfs',root+'/node_modules/pngjs/lib']);
+ assert.equal(decode.status,1);assert.match(decode.stderr,/MODULE_NOT_FOUND/);
+ save(out+'/results.json',{passed:true,stagedOnly:true,checkoutNodeModulesHidden:true,noGlobalSearchPaths:true,actualOriginalEntrypointPreflight:JSON.parse(pre.stdout),actualEmittedMenuCaller:JSON.parse(fs.readFileSync(out+'/caller/results.json')),missingDependencyRefusedBeforeBrowser:true,nativeDecodeMissingDependency:true,packageFiles:current.decoderFiles().map(p=>pins.files.find(f=>f.path===p))});
+ console.log(JSON.stringify({passed:true,stagedOnly:true,controls:14,missingDependency:true}));
+}
+if(process.env.NOX_TEST_STAGED==='1')stagedMenuControls(path.resolve(process.argv[2]),path.resolve(process.argv[3])).catch(e=>{console.error(e);process.exitCode=1;});
+else if(process.env.NOX_TEST_CHILD==='1')child().catch(e=>{console.error(e);process.exitCode=1;});
 else if(require.main===module)(process.argv[2]==='--protocol-controls'?protocolControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--lifecycle-controls'?lifecycleControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--menu-controls'?menuControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--cdp-controls'?cdpControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--observer-controls'?observerControls(path.resolve(process.argv[3]),path.resolve(process.argv[4]),process.argv[5]?.split(',')):main()).catch(e=>{console.error(e.stack);process.exitCode=1;});

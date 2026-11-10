@@ -51,6 +51,26 @@ function historical(){
   for(const p of prior.files.filter(p=>p.path.startsWith(HISTORY+'/')))checkPin(ROOT,p);
   mediaCheck(ROOT,prior.files);registry();return prior;
 }
+// pngjs is the established native screenshot decoder. Pin its delivered
+// package, including lazy synchronous parser dependencies, rather than relying
+// on packages installed in the coordination checkout or NODE_PATH.
+function decoderFiles(){
+  const base='node_modules/pngjs',pkg=json(path.join(ROOT,base,'package.json'));
+  const lock=json(path.join(ROOT,'package-lock.json')).packages[base];
+  assert.equal(pkg.version,lock.version,'locked PNG decoder');
+  assert.equal(pkg.main,'./lib/png.js');
+  const files=[base+'/package.json',base+'/LICENSE',...walk(path.join(ROOT,base,'lib')).map(p=>path.relative(ROOT,p))];
+  const allowed=new Set(files),builtin=require('node:module').isBuiltin;
+  for(const file of files.filter(p=>p.endsWith('.js'))){
+    for(const [,name] of read(file).toString().matchAll(/require\(["']([^"']+)["']\)/g)){
+      if(builtin(name))continue;
+      assert(name.startsWith('.'),'unexpected decoder external dependency '+name);
+      const resolved=path.relative(ROOT,require.resolve(path.resolve(ROOT,path.dirname(file),name)));
+      assert(allowed.has(resolved),'undelivered decoder dependency '+resolved);
+    }
+  }
+  return files;
+}
 function inspect(){
   const prior=historical(),build=modules(),paths=new Set(prior.files.map(p=>p.path));
   // Current browser/source files include newly introduced dependencies too.
@@ -62,12 +82,17 @@ function inspect(){
     for(const child of mod.children)dependencies(child);
   }
   for(const name of ['./watx-closure.js','./watx.js','./region-layout-hash.js','../lib/dispatch-trampoline.js','../lib/apps.js'])dependencies(require.cache[require.resolve(name)]);
-  for(const p of ['index.html','host.js','test/static-server.js','ops/browser-native-input.cjs','tools/build.sh','tools/build-compile-wat.js','tools/nox-current-driver.cjs','tools/nox-passive-consumption.cjs','tools/q3-startup-custody.py','tools/native_kernel_custody.py'])paths.add(p);
+  for(const p of ['index.html','host.js','test/static-server.js','ops/browser-native-input.cjs','tools/build.sh','tools/build-compile-wat.js','tools/nox-current-driver.cjs','tools/nox-passive-consumption.cjs','tools/nox-menu-admission.cjs','tools/nox-menu-state.cjs','tools/q3-startup-custody.py','tools/native_kernel_custody.py'])paths.add(p);
+  paths.add('package-lock.json');
+  const decoder=new Set(decoderFiles());for(const file of decoder)paths.add(file);
   const files=[...paths].sort().map(p=>pin(p)),before=new Map(prior.files.map(p=>[p.path,p]));
   const changes=[],patches={};
   for(const current of files){
     const old=before.get(current.path);if(old?.sha256===current.sha256)continue;
     if(current.path.startsWith('build/')){changes.push({old,current,kind:'recompiled-module'});continue;}
+    // Recover npm bytes from the lockfile's exact URL/integrity, with every
+    // delivered file independently hash-pinned. Do not archive installed npm.
+    if(decoder.has(current.path)){changes.push({old:old??null,current,kind:'locked-runtime-package',lockfile:'package-lock.json'});continue;}
     if(current.path.startsWith(HISTORY+'/')||current.path.startsWith(MEDIA+'/'))throw Error('immutable historical/media input '+current.path);
     // A changed historical source must be exactly recoverable from its Git base.
     if(old)assert.equal(sha(git('show',prior.commit+':'+current.path)),old.sha256,'historical Git source '+current.path);
@@ -462,6 +487,7 @@ function generate(planFile,destination){
     fs.writeFileSync(helper,observer.boundSource(fs.readFileSync(helper,'utf8'),config));
   }
   source=menuCaller(source);
+  if(process.env.NOX_PASSIVE_CONSUMPTION==='1')source=require('./nox-menu-admission.cjs').apply(source);
   emit('browser-run.cjs',source);
   // Reuse the authenticated durable service, including its ready-stop scan.
   // Keep Q3's app-specific observation wrapper out of the Nox process. Both
@@ -488,7 +514,7 @@ if __name__=='__main__':
   for(const [name,bytes] of Object.entries(patches))emit(name,bytes);
   verify(ROOT,manifest,destination);return manifest;
 }
-module.exports={ROOT,HISTORY,DRIVER_SHA,HELPERS,sha,pin,planHash,inspect,generate,verify,registry,checkPin,pointerObservations,startupDiagnostics,terminalCleanup,captureLabels,menuCaller};
+module.exports={ROOT,HISTORY,DRIVER_SHA,HELPERS,sha,pin,planHash,inspect,generate,verify,registry,checkPin,decoderFiles,pointerObservations,startupDiagnostics,terminalCleanup,captureLabels,menuCaller};
 if(require.main===module){
   try{
     if(process.argv[2]==='inspect'){
