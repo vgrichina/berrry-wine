@@ -529,6 +529,13 @@
   ;; few x86 word/dword accesses that actually cross a non-contiguous boundary.
   (func $gl32 (param $ga i32) (result i32)
     (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32) (local $redirected i32)
+    ;; A complete direct-window dword cannot fault or run a mapping barrier.
+    ;; Guest page edges inside that window are still physically contiguous.
+    ;; Keep partial spans on the translating path below, including its SEH
+    ;; redirect checks and synchronous remap retries.
+    (local.set $wa (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE)))
+    (if (i32.le_u (local.get $wa) (i32.sub (region.end $DIRECT_WINDOW) (i32.const 4)))
+      (then (return (i32.load (local.get $wa)))))
     (local.set $redirected (global.get $eip_redirected))
     (local.set $wa (g2w-fast (local.get $ga)))
     ;; An asynchronous SEH redirect abandons this access. In particular, do

@@ -126,6 +126,32 @@ checks++;
     'gs32 on a direct-window heap address lands at the affine address');
   ok(e.guest_read8(heapGa + 3) === 0x01, 'gl8 on a direct-window address');
 
+  // Dwords wholly inside the direct window may cross a guest page without
+  // another translation. Partial spans at either window edge must instead
+  // assemble bytes from their actual mappings, never adjacent private memory.
+  const bytes = new Uint8Array(memory.buffer);
+  const savedEnd = bytes.slice(END - 8, END);
+  bytes.set([0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0], END - 8);
+  const stateNames = ['eax', 'ecx', 'edx', 'ebx', 'esp', 'ebp', 'esi', 'edi', 'eip',
+    'flag_op', 'flag_a', 'flag_b', 'flag_res', 'flag_sign_shift'];
+  const state = () => stateNames.map(n => e[`get_${n}`]() >>> 0);
+  const beforeReads = state();
+  try {
+    for (const edge of [0, 0x2000, END]) {
+      for (let offset = -5; offset <= 5; offset++) {
+        const ga = gaOf((edge + offset) >>> 0);
+        let expected = 0;
+        for (let i = 0; i < 4; i++) expected |= e.guest_read8((ga + i) >>> 0) << (i * 8);
+        ok((e.guest_read32(ga) >>> 0) === (expected >>> 0),
+          `gl32 span at ${hex(ga)} agrees with separately translated bytes`);
+      }
+    }
+    assert.deepStrictEqual(state(), beforeReads, 'direct and partial reads preserve registers and lazy flags');
+    checks++;
+  } finally {
+    bytes.set(savedEnd, END - 8);
+  }
+
   // 8. Unmapped: high, wrapped and just-past-the-window addresses all miss to
   //    the sentinel, exactly as the old chain did.
   for (const ga of [0xFFFFFFFF, 0xFFFFF000, 0x7FFFF000, justAbove]) {
