@@ -118,3 +118,61 @@ No box was assigned to this worker. The predecessor's **bx_ga6esek2** was alread
 archived, with `archiveAfter:null` and retained-data expiry unknown in its saved
 lifecycle record. This task performed no stop, delete, resume or other lifecycle
 action; no box ownership is retained.
+
+## Native16 render wait repair — 2026-11-10
+
+Run `20261110-mw3-native16-loaded-poll-repair-0040` isolates the later loaded
+failure in `20261110-mw3-direct-firefly-consequence-0020`: its 3822.65 ms real
+render wait spanned the unchanged two-second Space hold. Native16 storage took
+3064.92 ms over 2048 conversions; both buffered edges were consumed after UP.
+The input queue retained the edges correctly, but the compiled guest could not
+poll while its render completion was outstanding.
+
+Large unblended full-color native16 draws now submit ordered groups of at most
+32 primitives, with a full native conversion and real GL error check after
+each group. With blending disabled, fragment operations do not read destination
+color, so conversion commutes with later replacements, including overlaps,
+depth rejection, alpha testing and fog. Full stores also normalize untouched
+clear pixels. Blended, masked and small draws retain per-primitive conversion.
+An error stops submission at the failing storage boundary; a grouped draw does
+not promise a particular partially rendered image after a GL failure.
+
+The original e18abd221 native16 test passed unchanged before extension (96
+exact DIB/RGBA snapshots and real GL failure checks). The extended test also
+compares 128 snapshots against that exact Git control, including 67-primitive
+tails, textured alpha/fog, clipping, subsequent blending and a real error at
+the third grouped storage boundary. Run it with
+`NATIVE16_LARGE=1 NATIVE16_CONTROL=e18abd221 CHROME=... node test/test-d3dim-native16-storage-web.js`.
+Native point pixels and focused renderer/device/keyboard tests passed, as did
+the locked build.
+The separate NFS roof-edge browser test fails on both the candidate and the
+exact e18abd221 source with the same `65535 !== 0` top-edge assertion; its
+two-triangle blended draw never enters this repair's grouped path. That
+preexisting failure is retained, not counted as a passing renderer check.
+
+One private box, `bx_2du7xk6x`, ran normal, exact-e18 loaded and repaired loaded
+controls with the same 2048-triangle workload and independent two-second UP.
+Actual loaded render waits were 1335.14 ms before and 942.855 ms after; draw
+submission elapsed was 1208 ms before and 249 ms after, with 2048 versus 64
+stores. The compiled repaired poll returned `[57,128]` before UP; normal polls
+also consumed the press during the hold. The DIB SHA-256 for both versions
+and the earlier failing trace is
+`ecd459a013d9599b8b91c356abc9274a1aa422a0ace82f81bf2fc6199f83aae8`.
+The full compiled module remained SHA-256
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`.
+
+The fresh baseline was faster than the previous box and did not reproduce
+exclusion for the entire hold. These results prove the causal storage-work
+reduction and actual in-hold polling on the measured normal/loaded controls;
+they do not establish an upper latency bound under arbitrary host contention
+or original MW3 gameplay. No original game, guest edit or fabricated poll ran.
+The inherited normal harness initially rejected a valid poll that began after
+trusted DOWN but before its CDP acknowledgement; the corrected harness uses
+the actual trusted event timestamp, preserving the hold and consumption checks.
+
+All 37 recovered artifact mappings were independently reread and SHA-verified
+before delegated normal shutdown and rehashed after archive. The deadline
+watchdog was armed before allocation. Box state is archived, expiry null;
+`stop_01eae3e82195d507` completed at 2026-11-10T23:30:25.022Z, forced false,
+error null. No box is retained. Exact patches, small inputs, actual parent
+waits/EOF, before/after timing and pixel evidence are in the owned run.

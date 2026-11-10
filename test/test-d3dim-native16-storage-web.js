@@ -8,7 +8,10 @@ const puppeteer = require('puppeteer');
 
 // A captured control is supplied by Git, never by rewriting the shared tree.
 // Without NATIVE16_CONTROL, compare with the full-target storage path.
+// NATIVE16_LARGE=1 NATIVE16_CONTROL=e18abd221 also compares grouped opaque
+// streams with the original ordered implementation, including GL failures.
 (async () => {
+  if (process.env.NATIVE16_LARGE) assert(process.env.NATIVE16_CONTROL, 'large comparison requires the ordered Git control');
   const browser = await puppeteer.launch({ headless: true,
     executablePath: process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     args: ['--no-sandbox', '--enable-unsafe-swiftshader', '--disable-dev-shm-usage'] });
@@ -23,7 +26,7 @@ const puppeteer = require('puppeteer');
         ? cp.execFileSync('git', ['show', revision + ':lib/d3dim-gpu.js'], { encoding: 'utf8' })
         : fs.readFileSync(path.join(__dirname, '../lib/d3dim-gpu.js'), 'utf8');
       await page.addScriptTag({ content: source });
-      results.push(await page.evaluate((full) => {
+      results.push(await page.evaluate(({ full, large }) => {
         const output = [];
         for (const version of [1, 2]) for (const format of [1, 2, 3, 4]) for (const batchDraws of [false, true]) {
           const width = 64, height = 48, pitch = width * 2 + 8;
@@ -57,9 +60,9 @@ const puppeteer = require('puppeteer');
           };
           const check = v => { if (v !== 1) throw Error('rejected: ' + errors.join(';')); };
           function draw(primitive = 4, uncertain = false) {
-            const per = primitive === 4 ? 3 : primitive === 2 ? 2 : 1, count = per * 19;
+            const per = primitive === 4 ? 3 : primitive === 2 ? 2 : 1, primitives = large ? 67 : 19, count = per * primitives;
             [1,primitive,3,vertices,count].forEach((v,i) => dv.setUint32(call+i*4,v,true));
-            for (let n = 0; n < 19; n++) for (let k = 0; k < per; k++) {
+            for (let n = 0; n < primitives; n++) for (let k = 0; k < per; k++) {
               const p = vertices + (n*per+k)*32;
               const x = (n%5)*9-3.25, y = (n%4)*8-2.75;
               [x+(k===1?23:0),y+(k===2?21:0),n%3===0?.8:.2,
@@ -94,29 +97,39 @@ const puppeteer = require('puppeteer');
           set(22,4); set(23,4); set(41,2); set(42,0); set(43,2); set(44,0);
           set(24,3); set(25,3); set(45,2); set(46,2);
           draw(); draw(); snapshot();
+          if (large) {
+            // Exercise grouped storage with overlapping textured alpha/fog,
+            // depth rejects, scissor and a non-multiple-of-32 tail. Destination
+            // blending is the only state disabled; subsequent blended draws
+            // must still see canonical native color.
+            set(19,0); draw(); draw(4,true); snapshot();
+            set(19,1); draw(); snapshot();
+          }
           draw(2); if (format !== 4) draw(1); snapshot();
           const beforeFailure = stores;
           inject = 3; gpu.batchDraws = false;
-          dv.setUint32(call+4,4,true); dv.setUint32(call+16,9,true);
+          if (large) set(19,0);
+          dv.setUint32(call+4,4,true); dv.setUint32(call+16,large ? 97 * 3 : 9,true);
           const rejected = gpu.call(D3DIMGpu.OPCODES.DRAW,call);
           inject = false;
           const stats = gpu.snapshot(); gpu.stop();
           output.push({version,format,batchDraws,frames,copies,stores,beforeFailure,rejected,stats,errors});
         }
         return output;
-      }, control && !process.env.NATIVE16_CONTROL));
+      }, { full: control && !process.env.NATIVE16_CONTROL, large: !!process.env.NATIVE16_LARGE }));
       await page.close();
     }
     const [baseline, candidate] = results;
     for (let i = 0; i < candidate.length; i++) {
       const a = baseline[i], b = candidate[i];
       assert.deepEqual(b.frames, a.frames, `exact native DIB and RGBA: ${b.version}/${b.format}/${b.batchDraws}`);
-      assert.equal(b.stores, a.stores, 'retain every primitive store');
+      if (process.env.NATIVE16_LARGE) assert(b.stores < a.stores, 'large opaque streams amortize native conversion');
+      else assert.equal(b.stores, a.stores, 'retain every primitive store for small draws');
       assert.deepEqual(b.errors, a.errors, 'same GL failure');
       assert.equal(b.rejected, 0); assert.equal(b.stats.errors, 1);
-      assert.equal(b.stores-b.beforeFailure,3,'stop at the failing primitive');
+      assert.equal(b.stores-b.beforeFailure,3,'stop at the failing storage boundary');
       const pixels = c => c.copies.reduce((n,a) => n+a[4]*a[5],0);
-      assert(pixels(b) < pixels(a)*.65, 'bounded copies reduce actual converted area');
+      if (!process.env.NATIVE16_LARGE) assert(pixels(b) < pixels(a)*.65, 'bounded copies reduce actual converted area');
     }
     const summary = { passed: true, cases: candidate.length, snapshots: candidate.reduce((n,c)=>n+c.frames.length,0),
       baselinePixels: baseline.reduce((n,c)=>n+c.copies.reduce((s,a)=>s+a[4]*a[5],0),0),
