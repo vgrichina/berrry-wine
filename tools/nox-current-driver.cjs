@@ -161,6 +161,21 @@ function send(method,params={},sessionId){if(terminalError)return Promise.reject
   source=exact(source,"timer=setTimeout(()=>close('immutable runtime cap').catch(e=>console.error(e)),deadline-Date.now());","timer=setTimeout(()=>{terminal(Error('immutable runtime cap'));close('immutable runtime cap').catch(e=>console.error(e));},deadline-Date.now());");
   source=exact(source,"v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);","v.error?p.reject(terminal(Error(JSON.stringify(v.error)))):p.resolve(v.result);");
   source=exact(source,"})().catch(async e=>{save('first-browser-failure.json'","})().catch(async e=>{terminal(e);save('first-browser-failure.json'");
+  // A terminal Runtime.evaluate used to lose the request identity. Retain only
+  // bounded local metadata; never query a failed target or serialize its history.
+  source=exact(source,'let terminalError=null;',`let terminalError=null,noxCommand=null,lastCdpReply=null;
+function cdpRequest(n,method,params,sessionId){
+ const expression=params.expression,worker=workers.get(sessionId);
+ const operation=typeof expression!=='string'?method:expression===bound.PAGE_READ?'page-owner':expression===bound.WORKER_READ?'worker-owner':expression===bound.RENDER_READ?'renderer-owner':expression.startsWith('globalThis.__noxConsumption.')?'nox-consumption':expression.startsWith('window.noxPointerObserver.')?'nox-pointer':'evaluate';
+ return {id:n,method,operation,sessionId:sessionId??null,targetId:worker?.targetId??null,page:sessionId===pageSession,command:noxCommand?{...noxCommand}:null,
+  expression:typeof expression==='string'?{sha256:sha(Buffer.from(expression)),bytes:Buffer.byteLength(expression),prefix:expression.slice(0,256)}:null};
+}`);
+  source=exact(source,"error:error.stack||String(error),noReplay:true});", "error:error.stack||String(error),noReplay:true,command:noxCommand,lastCdpReply,pendingRequests:[...pending.values()].map(p=>p.request)});");
+  source=exact(source,'const n=++id;const timer=setTimeout(', 'const n=++id,request=cdpRequest(n,method,params,sessionId);const timer=setTimeout(');
+  source=exact(source,'pending.set(n,{resolve,reject,timer});', 'pending.set(n,{resolve:value=>{lastCdpReply={...request,completedAt:new Date().toISOString()};resolve(value);},reject,timer,request});');
+  source=exact(source,'async function execute(c,markDispatch){\n if(terminalError)throw terminalError;', `async function execute(c,markDispatch){
+ if(terminalError)throw terminalError;
+ noxCommand={id:c.id,action:c.action,label:c.label??null,reviewRef:c.reviewRef??null};`);
   return source;
 }
 function captureLabels(source){
