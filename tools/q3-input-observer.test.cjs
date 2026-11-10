@@ -132,6 +132,12 @@ async function control(mode,key=false) {
    require:n=>n==='./ordinary-keys.cjs'?require('../scratch/runs/20261108-q3-gl-readiness-gameplay/ordinary-keys.cjs'):require(n)};
  await assert.rejects(m.exports.body(generated,refuse)({id:'no',action:'key',key:'Enter',holdMs:50,waitMs:0,reviewRef:image.label,label:'after'},()=>marked++),/inactive/);
  assert.equal(marked,0);assert.equal(sent,0);
+ // The retained publication caller takes review TEXT and constructs the
+ // capture-bound object itself. The live malformed nested object must remain
+ // a refusal before observer binding, markDispatch or any native CDP input.
+ const malformed={...refuse,fs:{readFileSync:()=>JSON.stringify({...image,review:{...image,review:'nested object is invalid'}})}};
+ await assert.rejects(m.exports.body(generated,malformed)({id:'bad-review',action:'key',key:'Enter',holdMs:150,waitMs:1000,reviewRef:image.label,label:'after'},()=>marked++),/trim is not a function/);
+ assert.equal(marked,0);assert.equal(sent,0);
  // Real generated caller refuses missing/inactive observer before mark or input.
  process.env.Q3_BOUND_INPUT_OBSERVATION='1';
  assert.throws(()=>current.composeInputObservation('invalid'),/seam/);
