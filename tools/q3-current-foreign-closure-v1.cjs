@@ -62,6 +62,11 @@ function composition(selected,run,outputDirectory){
  // An explicit versioned loader, never filesystem/Git read substitution. All
  // command, physical admission, checkpoint, fixture and deadline code stays.
  let transformed=source.replace(before,"'lib/redline-startup-admission.js': '"+authorities['lib/redline-startup-admission.js'][1]+"'");
+ const custodyBefore="'tools/native_kernel_custody.py': '3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240'";
+ const custodySHA='e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e';
+ assert.equal(source.split(custodyBefore).length,2,'unique published custody pin seam');
+ assert.equal(hash(read('tools/native_kernel_custody.py')),custodySHA,'published Q3 custody');
+ transformed=transformed.replace(custodyBefore,"'tools/native_kernel_custody.py': '"+custodySHA+"'");
  const diagnosticSeam='  return {source, fixtureSource, controlsSource, retainedSource, references, hook:';
  assert.equal(transformed.split(diagnosticSeam).length,2,'unique current startup diagnostics seam');
  transformed=transformed.replace(diagnosticSeam,"  source=require('./q3-current-module.cjs').composeStartupDiagnostics(source);\n"+diagnosticSeam);

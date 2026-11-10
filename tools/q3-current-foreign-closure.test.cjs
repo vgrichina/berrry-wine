@@ -73,16 +73,16 @@ if(['--runtime-probe','--runtime-preflight'].includes(process.argv[2])){
   }finally{fs.readFileSync=read;}
  }
  const m=route.composition(route.version),result=m.compose();
- for(const [name,digest] of Object.entries(require('./q3-native-driver-composition.cjs').providers))assert.equal(m.providers[name],name==='lib/redline-startup-admission.js'?route.authorities[name][1]:digest,'only published admission pin changes');
+ for(const [name,digest] of Object.entries(require('./q3-native-driver-composition.cjs').providers))assert.equal(m.providers[name],name==='lib/redline-startup-admission.js'?route.authorities[name][1]:name==='tools/native_kernel_custody.py'?'e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e':digest,'only exact published admission/custody pins change');
  for(const source of [result.source,result.fixtureSource,result.controlsSource])new vm.Script(source);
  let bound;m.compileBoundInput(result,{_compile(source,name){bound=source;assert(name.endsWith('/bound-input.cjs'));new vm.Script(source);}},path.join(root,path.dirname(m.consumerPath),'bound-input.cjs'),out);
  assert(bound.includes('physicalSource:')&&bound.includes('peekKeyDownState'));
  assert(result.fixtureSource.includes('WINE_REDLINE_STARTUP'));
  assert(result.source.includes('catch(error){observeTerminal(error);throw error;}'));
  // Genuine dispatcher behavior: no selector still authenticates the old CPU
- // and refuses this current CPU before compilation. Explicit selection imports
- // the staged policy, hashes the actual EXE/CPU, then reaches inert compile/
- // attach seams. No browser, guest execution or readiness is implied.
+ // and refuses this current CPU before compilation. Q2's explicit historical
+ // policy also refuses the new Q3 CPU; this migration does not revise Q2.
+ // No browser, guest execution or readiness is implied.
  const legacy='a320d4c85156644fd12b6134d66b11784f3100b9b135756206c087cdacd43295';
  const core=require('../lib/quake2-owning-load-core.js');let compiled=0,attached=0,imported=0;
  const context=vm.createContext({URL,Uint8Array,crypto:crypto.webcrypto,
@@ -99,8 +99,8 @@ if(['--runtime-probe','--runtime-preflight'].includes(process.argv[2])){
  assert.equal(compiled,0);assert.equal(attached,0);assert.equal(imported,0);
  context.self.location.href+='?q2BrowserPolicy=wrong';await assert.rejects(context.Quake2BrowserLoadObserver.prepare(observation),/unsupported Q2/);
  context.self.location.href='https://inert/lib/guest-worker.js?q2BrowserPolicy=quake2-current-primary-3e491c08-v1';
- const observed=await context.Quake2BrowserLoadObserver.prepare(observation);assert.equal(observed.observer.snapshot().binding.sha256,current.SELECTED.sha256);
- assert.equal(compiled,1);assert.equal(attached,1);assert.equal(imported,1);
+ await assert.rejects(context.Quake2BrowserLoadObserver.prepare(observation),/canonical PATHHASH build\/wine-assembly.wasm/);
+ assert.equal(compiled,0);assert.equal(attached,0);assert.equal(imported,1);
  assert.equal(require('../lib/redline-startup-admission.js').SELECTED.sha256,legacy);
  const q3scope=vm.createContext({});vm.runInContext(require('./q3-startup.cjs').admissionSource(),q3scope);
  assert.equal(q3scope.RedlineStartupAdmission.SELECTED.sha256,current.SELECTED.sha256);
