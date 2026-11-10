@@ -4,6 +4,7 @@ const { execSync } = require('child_process');
 const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
 const { createHostImports } = require('../lib/host-imports');
 const frameIntervals = require('../lib/frame-intervals');
+const {serviceMainTimingWait} = require('./main-timing-waits');
 const { createRenderWaitAttribution } = require('../lib/render-wait-attribution');
 const { callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
 const { inputEventHwnd } = require('../lib/host-window');
@@ -10935,70 +10936,8 @@ async function main() {
     }
     if (instance.exports.get_yield_reason() === 16) mainExecutionSuspended();
 
-    // Handle the vertical-blank yield (yield_reason=13). A DirectDraw call
-    // parked with its stdcall frame intact and EIP on the thunk, so advancing
-    // the clock past the boundary and clearing the yield re-enters the same
-    // call, which then finds the vblank has happened and returns DD_OK.
-    if (instance.exports.get_yield_reason() === 13) {
-      const deadline = instance.exports.get_vblank_deadline_ms
-        ? instance.exports.get_vblank_deadline_ms() >>> 0 : 0;
-      // Charge against the batch BASE, not the last value handed out: the
-      // per-call step inside a batch is capped at the next base, so lifting
-      // only the last tick can leave the base short and re-park forever.
-      // +1 so the boundary is strictly passed rather than exactly met.
-      const owed = ((deadline + 1) - batchClock.batchTicks()) | 0;
-      if (owed > 0) {
-        tickState.pausedMs += owed;
-        VBLANK.guestMsAdded += owed;
-      }
-      VBLANK.waits++;
-      if (TRACE_YIELD) {
-        console.log(`[yield] T0 reason=13 (vblank_wait) due=${deadline} ` +
-          `now=${tickState.lastTick} charged=${Math.max(0, owed)}ms`);
-      }
-      instance.exports.clear_yield();
-    }
-
-    // Handle the spin parks (yield_reason 14 = clock, 15 = empty PeekMessage).
-    // Both parked with the stdcall frame intact and EIP on the thunk, so
-    // clearing the yield re-enters the same call.
-    //
-    // WHAT IS DELIBERATELY *NOT* DONE HERE: guest time is not charged by
-    // default. The headless clock already advances TICK_MS_PER_BATCH per batch
-    // and a park ends its batch, so the very next batch hands the guest a new
-    // millisecond -- the wait resolves on the schedule the run asked for, and
-    // the clock is left exactly as --tick-ms-per-batch defined it. Charging
-    // the way the vblank park does would be a real distortion here rather than
-    // a correction: a vblank deadline is ~17ms away and needs the lift, while
-    // a clock park's deadline is the NEXT MILLISECOND, which at
-    // --tick-ms-per-batch=1 is already where the next batch lands. Paying it
-    // anyway would run the guest clock at two to three times the requested
-    // rate and silently rewrite every GetTickCount-delta the app computes --
-    // exactly the kind of perturbation that would move GTA2's
-    // GetTickCount/Sleep/GetTickCount startup probe.
-    //
-    // The one case that does need a lift is a run with no batch step at all
-    // (--tick-ms-per-batch=0), where nothing else would ever move the clock.
-    {
-      const spinYield = instance.exports.get_yield_reason();
-      if (spinYield === 14 || spinYield === 15) {
-        const deadline = (spinYield === 14 && instance.exports.get_spin_deadline_ms)
-          ? instance.exports.get_spin_deadline_ms() >>> 0 : 0;
-        let owed = 0;
-        if (spinYield === 14 && batchClock.getTickMsPerBatch() <= 0) {
-          owed = ((deadline + 1) - batchClock.batchTicks()) | 0;
-          if (owed > 0) tickState.pausedMs += owed; else owed = 0;
-        }
-        if (spinYield === 14) SPIN_PARK.clockWaits++; else SPIN_PARK.peekWaits++;
-        SPIN_PARK.guestMsAdded += owed;
-        if (TRACE_YIELD) {
-          console.log(`[yield] T0 reason=${spinYield} `
-            + `(${spinYield === 14 ? 'clock_spin' : 'peek_spin'}) due=${deadline} `
-            + `now=${tickState.lastTick} charged=${owed}ms`);
-        }
-        instance.exports.clear_yield();
-      }
-    }
+    await serviceMainTimingWait(mainOwner, {batchClock, tickState,
+      vblank: VBLANK, spin: SPIN_PARK, trace: TRACE_YIELD ? console.log : null});
 
     // Handle the virtual LAN net_wait yield (yield_reason=8). The guest is
     // parked inside a blocking socket call with EIP still on the thunk, so

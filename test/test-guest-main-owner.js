@@ -67,5 +67,28 @@ const { createMainSchedulerObserver } = require('./main-scheduler-observer');
     [{name:'owned.dll',loadAddr:123,dllMain:456,index:2,generation:3}]);
   failed=true;
   await assert.rejects(dllOwner.loadDlls(exeBytes,configs,null,options),/DLL startup failed/);
+  const {serviceMainTimingWait}=require('./main-timing-waits');
+  for(const [reason,step,base,deadline,expected] of [
+    [13,1,100,117,18],[13,1,120,117,0],[14,1,100,101,0],
+    [14,0,100,101,2],[14,0,105,101,0],[15,0,100,101,0],[12,0,100,101,0],
+    [13,1,0xfffffff0,1,18],
+  ]){
+    let clears=0;
+    const timing={batchClock:{batchTicks:()=>base,getTickMsPerBatch:()=>step},
+      tickState:{pausedMs:0,lastTick:base},vblank:{waits:0,guestMsAdded:0},
+      spin:{clockWaits:0,peekWaits:0,guestMsAdded:0}};
+    const selected={read:async()=>({get_yield_reason:reason,get_vblank_deadline_ms:deadline,get_spin_deadline_ms:deadline}),
+      call:async name=>{assert.equal(name,'clear_yield');clears++;}};
+    assert.equal(await serviceMainTimingWait(selected,timing),reason!==12);
+    assert.equal(clears,reason===12?0:1);
+    assert.equal(timing.tickState.pausedMs,expected);
+    assert.equal(timing.vblank.waits,reason===13?1:0);
+    assert.equal(timing.spin.clockWaits,reason===14?1:0);
+    assert.equal(timing.spin.peekWaits,reason===15?1:0);
+    if(reason!==12){
+      selected.call=async()=>{throw new Error('owner retired');};
+      await assert.rejects(serviceMainTimingWait(selected,timing),/owner retired/);
+    }
+  }
   console.log('PASS guest main ownership: local ordering, remote failure isolation and asynchronous slice diagnostics');
 })().catch(error=>{console.error(error);process.exitCode=1;});

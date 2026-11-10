@@ -7,6 +7,7 @@ const {createGuestMainOwner}=require('../lib/guest-main-owner');
 const {configureExeOwned,stageAndLoadPeOwned}=require('../lib/process-boot');
 const {BASE}=require('../lib/region-map.generated');
 const {pe,u32}=require('./test-dll-lifecycle-real-pe');
+const {serviceMainTimingWait}=require('./main-timing-waits');
 const {Worker}=require('node:worker_threads');
 const {CommandQueue,WorkerConsumer,OPCODES:OP}=require('../lib/d3d-command-stream');
 const sigs=require('../lib/host-import-sigs.generated.json').sigs;
@@ -129,7 +130,27 @@ const root=path.resolve(__dirname,'..');
     assert(consumer.shutdownInfo.heapAdopted>0,'actual native renderer allocations reclaimed');
     if(remote)assert.equal(h.exports.get_free_list(),shadowFree,'host shadow allocator untouched');
     const retirement={adoptions,blocks:consumer.shutdownInfo.heapAdopted,pixels:64};
-    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,dlls,registrations,retirement});
+    const shadowYield=h.exports.get_yield_reason();
+    await owner.call('test_vblank_reset');
+    assert((await owner.call('test_vblank_wait_once'))&1,'native DirectDraw call parks');
+    // The native probe preserves its caller by clearing yield on return.
+    // Restore the observed park to exercise the CLI owner-service boundary.
+    await owner.call('set_yield_state',13,1);
+    const parked=await owner.read(['get_yield_reason','get_vblank_deadline_ms']);
+    assert.equal(parked.get_yield_reason,13);
+    const timing={batchClock:{batchTicks:()=>(parked.get_vblank_deadline_ms-5)>>>0,getTickMsPerBatch:()=>1},
+     tickState:{pausedMs:0,lastTick:0},vblank:{waits:0,guestMsAdded:0},
+     spin:{clockWaits:0,peekWaits:0,guestMsAdded:0}};
+    assert.equal(await serviceMainTimingWait(owner,timing),true);
+    assert.equal((await owner.read(['get_yield_reason'])).get_yield_reason,0);
+    assert.equal(timing.tickState.pausedMs,6);
+    assert.equal(timing.vblank.waits,1);
+    if(remote)assert.equal(h.exports.get_yield_reason(),shadowYield,'host shadow yield unchanged');
+    await owner.call('vblank_tick');
+    const resumed=await owner.call('test_vblank_wait_once');
+    assert.equal(resumed&1,0,'native wait completes after display tick');
+    assert(resumed&8,'native wait returns DD_OK');
+    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,dlls,registrations,retirement,timing:timing.vblank});
    }finally{await worker?.stop();}
   }
  }

@@ -556,6 +556,16 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   registration before exactly one attach, durable DLL metadata, restored
   EIP/ESP and an unloaded shadow on both WASM builds. Evidence:
   `scratch/runs/20261109-cli-dll-owner/test-result.json`.
+  CLI vblank and clock/PeekMessage spin waits now read their yield/deadlines
+  and clear the yield through the selected owner. `main-timing-waits.js`
+  preserves batch-clock policy: vblank charges past the boundary, clock spin
+  adds time only with a frozen batch clock, and empty PeekMessage adds none.
+  The scheduler must retain the stopped main across the read and clear.
+  Normal/compat owner tests use the native vblank probe, restore its observed
+  yield (the probe clears yield on return), then verify the shared CLI service,
+  untouched shadow and native completion after a display tick. Deterministic
+  policy controls cover expired deadlines, clock wraparound and owner failure.
+  Evidence: `scratch/runs/20261109-cli-timing-owner/`.
   PE placement/loading and launch name/drive/arguments now use shared
   `stageAndLoadPeOwned`/`configureExeOwned` helpers in both the CLI and
   `GuestThreadHost.loadPe`. The existing `stagePe` still owns oversized PE/NE
