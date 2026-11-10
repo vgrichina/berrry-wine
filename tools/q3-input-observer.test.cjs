@@ -129,6 +129,30 @@ async function control(mode,key=false,publication=null) {
   assert(!rows.some(r=>r.kind==='renderer-entry'&&r.method==='handleMouseMove'),'pending capture suppresses absolute move');
  }
  else assert.deepEqual([p.r._mouseX,p.r._mouseY],[576,447]);
+ if(key) {
+  // The actual run completed Enter, then a read-only refresh reached image()
+  // with Enter's old label still bound. Execute that exact command sequence.
+  const priorAdmissions=admissions,priorNative=nativeKeys.length;
+  const memoryBefore=Buffer.from(p.memory.buffer).subarray(p.index*4,p.index*4+288).toString('hex');
+  context.latest=result;
+  context.capture=async label=>{captures++;o.image({...result,label,sha256:'c'.repeat(64)});};
+  await m.exports.body(generated,context)({id:'refresh',action:'capture',label:'refresh',waitMs:0},()=>mark++);
+  assert.equal(mark,1,'read-only capture never dispatches input');
+  assert.equal(admissions,priorAdmissions,'capture retains its existing separate admission');
+  assert.equal(nativeKeys.length,priorNative,'no native input during refresh');
+  assert.equal(captures,2);
+  assert.equal(Buffer.from(p.memory.buffer).subarray(p.index*4,p.index*4+288).toString('hex'),memoryBefore);
+  const refreshed=o.snapshot().records.filter(r=>r.kind==='image-bound').at(-1);
+  assert.equal(refreshed.capture.label,'refresh');
+  assert.equal(refreshed.binding.id,'refresh');
+  assert.equal(refreshed.binding.previous.sha256,result.sha256);
+  assert(saved['input-refresh-observer-begin.json'].active);
+  context.latest=result;
+  await assert.rejects(m.exports.body(generated,context)({id:'stale-refresh',action:'capture',label:'stale-refresh',waitMs:0},()=>mark++),/prior image mismatch/);
+  assert.equal(captures,2,'stale capture refused before screenshot');
+  assert.equal(mark,1);assert.equal(nativeKeys.length,priorNative);
+  assert.throws(()=>o.image({...refreshed.capture,label:'unrequested-refresh'}),/command mismatch/);
+ }
  // Independently simulate the existing guest FIFO consumer, never the observer.
  const tail=p.words[p.index+3]>>>0;p.words[p.index+2]=tail;timer[0]();
  if(tail)assert(rows.some(r=>r.kind==='guest-fifo-drain'&&r.payloads===null));

@@ -445,13 +445,20 @@ function inputObservationPageSource(){
 function composeInputObservation(source){
  if(process.env.Q3_BOUND_INPUT_OBSERVATION!=='1')return source;
  const once=(before,after)=>{assert.equal(source.split(before).length,2,'unique Q3 bound input seam: '+before);source=source.replace(before,after);};
+ const begin=`const observerBegin=await evaluate('globalThis.__q3BoundInput.begin('+JSON.stringify({id:c.id,label:c.label,previous:latest})+')');
+ assert.equal(observerBegin?.active,true,'original observer prearmed');save('input-'+c.id+'-observer-begin.json',observerBegin);`;
  once("Object.defineProperty(globalThis,'GLRenderHost'",
   "${require(root+'/tools/q3-current-module.cjs').inputObservationPageSource()}Object.defineProperty(globalThis,'GLRenderHost'");
  once(' const dispatch=async receipt=>{\n markDispatch();',
   ` const dispatch=async receipt=>{
- const observerBegin=await evaluate('globalThis.__q3BoundInput.begin('+JSON.stringify({id:c.id,label:c.label,previous:latest})+')');
- assert.equal(observerBegin?.active,true,'original observer prearmed');save('input-'+c.id+'-observer-begin.json',observerBegin);
+ ${begin}
  markDispatch();`);
+ // Capture-only commands bypass input dispatch, but their returned image must
+ // still belong to their own label and the exact preceding captured owner.
+ // Keep input admission/release and capture readiness/deadlines unchanged.
+ once("if(c.action!=='capture')await trace.span('command.admission',()=>chain.admit(JSON.parse(fs.readFileSync(out+'/'+latest.label+'-review.json')),dispatch));",
+  `if(c.action!=='capture')await trace.span('command.admission',()=>chain.admit(JSON.parse(fs.readFileSync(out+'/'+latest.label+'-review.json')),dispatch));
+ else {${begin}}`);
  once("save('latest.json',latest);console.log('CAPTURE '+label);",
   `save('latest.json',latest);
  const observed=await evaluate('globalThis.__q3BoundInput.image('+JSON.stringify(latest)+')');
