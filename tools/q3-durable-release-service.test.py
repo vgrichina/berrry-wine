@@ -84,8 +84,75 @@ def probe(kernel, run):
                             patch.object(kernel, 'ptrace', side_effect=resumed))
 
 
+def inner_controls(out):
+    # Exercise the production wrapper, independently attributing arm checks and
+    # the actual sync call. No child or subprocess belongs to this observer.
+    for active in (False, True):
+        for failing in (False, True):
+            adapter = runpy.run_path(str(ADAPTER))
+            kernel = types.SimpleNamespace(os=os, CONT=7,
+                Journal=type('Journal', (), {'write': lambda self, data: None}),
+                q3_subcalls={}, ptrace=lambda *args, **kwargs: 0, identity=lambda pid: dict(pid=pid))
+            directory = out/('inner-%s-%s' % (active, failing)); directory.mkdir()
+            if active:
+                (directory/'input-service-arm.json').write_text(json.dumps(
+                    dict(monotonicNs=time.monotonic_ns())))
+            error = OSError('inner sync sentinel')
+            count = []
+            def sync(fd):
+                count.append(fd)
+                time.sleep(.01)
+                if failing: raise error
+                return 73
+            def supervised(run, command, **options):
+                # Calls the installed wrappers with their captured callables.
+                assert kernel.ptrace(kernel.CONT, os.getpid()) == 0
+                assert kernel.os.waitpid(-1, 0) == (os.getpid(), 0)
+                assert kernel.os.fsync(17) == 73
+                return 91
+            kernel.supervise = supervised
+            globals_ = adapter['supervise'].__globals__
+            exists = Path.exists
+            def checked(path):
+                if path.name == 'input-service-arm.json': time.sleep(.02)
+                return exists(path)
+            with patch.dict(globals_, load=lambda: kernel), patch.object(os, 'fsync', sync), \
+                    patch.object(Path, 'exists', checked), \
+                    patch.object(os, 'waitpid', lambda pid, flags: (os.getpid(), 0)), \
+                    patch.object(subprocess, 'Popen', side_effect=AssertionError('observer subprocess')):
+                try: result = adapter['supervise'](directory, [])
+                except OSError as observed:
+                    assert failing and observed is error
+                else: assert not failing and result == 91
+                assert kernel.os.fsync is sync, 'restore captured sync on every exit'
+            evidence = json.loads((directory/'q3-custody-service.json').read_bytes())['inner']
+            totals = evidence['totals']
+            assert count == [17] and totals['fsync.real']['calls'] == 1
+            assert totals['fsync.real']['wallNs'] >= 9_000_000
+            assert totals['fsync.real']['errors'] == int(failing)
+            assert totals['phase.arm-exists']['wallNs'] >= 19_000_000
+            if not active: assert totals['fsync.observe-entry']['wallNs'] >= 19_000_000
+            assert totals['fsync.observe-return']['calls'] == 1
+            phase = json.loads((directory/'q3-input-service.json').read_bytes())
+            assert bool(phase['records']) == active
+            assert totals.get('phase.role', {}).get('calls', 0) == (2 if active else 0)
+            assert not evidence['dropped']
+    # Aggregates remain complete at saturation and exceptions remain identical.
+    evidence, call = runpy.run_path(str(ADAPTER))['subcall_observer']()
+    evidence['limit'] = 0
+    journal = types.SimpleNamespace(path=Path('cap'))
+    error = KeyboardInterrupt('preserve BaseException')
+    def fail(): raise error
+    try: call(journal, 'real', fail)
+    except BaseException as observed: assert observed is error
+    else: raise AssertionError('exception lost')
+    assert evidence['records'] == [] and evidence['dropped'] == 1
+    assert evidence['totals']['real']['calls'] == evidence['totals']['real']['errors'] == 1
+
+
 def run(out):
     out.mkdir(parents=True, exist_ok=False)
+    inner_controls(out)
     # Exercise the installed maker, including every failing service boundary.
     kernel = module()
     directory = out/'subcall-observer'; directory.mkdir()
@@ -153,7 +220,9 @@ for(let i=0;i<20;i++)cp.spawn('/bin/true').once('close',()=>{if(!--n)process.exi
         kernel=module(True if name=='historical' else 'matched' if name=='before' else False); directory=out/name; directory.mkdir()
         sync=os.fsync; calls=[]
         def slow(fd):
-            calls.append(time.monotonic_ns());time.sleep(.025);return sync(fd)
+            # Fixed service pressure leaves headroom for real host fsync while
+            # keeping the same immutable 20-second test deadline and ratio gates.
+            calls.append(time.monotonic_ns());time.sleep(.01);return sync(fd)
         start=time.monotonic(); due=time.time()+20
         # Layer latency OUTSIDE probe's successful sync observer.
         with patch.object(os,'fsync',side_effect=slow):
@@ -221,4 +290,12 @@ getattr(c,sys.argv[2])(sys.argv[3],sys.argv[4],sys.argv[5])
     print(json.dumps(dict(passed=True,pressure=[{k:r[k] for k in ('mode','fsyncs','seconds')} for r in pressure])))
 
 
-if __name__=='__main__': run(Path(sys.argv[1]).resolve())
+if __name__=='__main__':
+    out = Path(sys.argv[1]).resolve()
+    if sys.argv[2:] == ['--inner-only']:
+        out.mkdir(parents=True, exist_ok=False)
+        inner_controls(out)
+        print(json.dumps(dict(passed=True, innerControls=True, activeInactive=True)))
+    else:
+        assert not sys.argv[2:], 'unknown focused mode'
+        run(out)

@@ -16,12 +16,12 @@ import os
 # Retain deferred queue bookkeeping and cancellation recording verbatim.
 # No queue operation supplies authority to execute a task.
 PROVIDER_SHA = 'e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e'
-VERSION = 'q3-startup-custody-release-cohorts-v3'
+VERSION = 'q3-startup-custody-release-cohorts-v4'
 
 
 def subcall_observer():
     """Bounded maker-side clocks; no telemetry I/O during journal service."""
-    evidence = dict(limit=8192, records=[], dropped=0,
+    evidence = dict(limit=8192, records=[], dropped=0, totals={},
                     clocks=['monotonic_ns', 'thread_time_ns', 'time_ns'])
 
     def call(journal, stage, function, *args):
@@ -37,6 +37,11 @@ def subcall_observer():
         finally:
             end = time.monotonic_ns()
             end_cpu = time.thread_time_ns()
+            total = evidence['totals'].setdefault(stage, dict(calls=0, wallNs=0, cpuNs=0, errors=0))
+            total['calls'] += 1
+            total['wallNs'] += end-start
+            total['cpuNs'] += end_cpu-cpu
+            total['errors'] += error is not None
             if len(evidence['records']) < evidence['limit']:
                 evidence['records'].append(dict(journal=journal.path.name, stage=stage,
                     startNs=start, startEpochNs=epoch, wallNs=end-start,
@@ -146,13 +151,18 @@ def supervise(run, command, **options):
     # No record capacity or role sampling is spent on startup. This observes
     # real waited tasks and syscall entries; it cannot establish a browser's
     # semantic request dependency by itself.
+    inner, inner_call = subcall_observer()
+    marker = types.SimpleNamespace(path=Path('input-service'))
+    def measured_call(stage, function, *args):
+        return inner_call(marker, stage, function, *args)
+
     phase = dict(limit=512, records=[], dropped=0, armed=None, error=None)
     arm = run / 'input-service-arm.json'
     def observe(kind, **fields):
         try:
             if phase['armed'] is None:
-                if not arm.exists(): return
-                phase['armed'] = json.loads(arm.read_bytes())
+                if not measured_call('phase.arm-exists', arm.exists): return
+                phase['armed'] = json.loads(measured_call('phase.arm-read', arm.read_bytes))
             now = time.monotonic_ns()
             if now > int(phase['armed']['monotonicNs']) + 5_000_000_000: return
             if len(phase['records']) >= phase['limit']:
@@ -176,10 +186,10 @@ def supervise(run, command, **options):
 
     trace, waitpid, sync = module.ptrace, module.os.waitpid, module.os.fsync
     def traced(request, pid, addr=0, data=0):
-        active = arm.exists()
+        active = measured_call('trace.arm-exists', arm.exists)
         error = None
         if active and request == module.CONT:
-            observe('CONT-entry', task=role(pid), signal=data)
+            observe('CONT-entry', task=measured_call('phase.role', role, pid), signal=data)
         try:
             return trace(request, pid, addr, data)
         except BaseException as failure:
@@ -189,21 +199,24 @@ def supervise(run, command, **options):
             if active and request == module.CONT: observe('CONT-return', pid=pid, error=error)
     def waited(pid, flags):
         result = waitpid(pid, flags)
-        if result[0] and arm.exists():
-            observe('waitpid-return', task=role(result[0]), status=result[1])
+        if result[0] and measured_call('wait.arm-exists', arm.exists):
+            observe('waitpid-return', task=measured_call('phase.role', role, result[0]), status=result[1])
         return result
+    inner['syncCallable'] = dict(module=getattr(sync, '__module__', None),
+        name=getattr(sync, '__qualname__', None), builtin=isinstance(sync, types.BuiltinFunctionType))
     def synced(fd):
         start = time.monotonic_ns()
         epoch = time.time_ns()
         error = None
-        observe('fsync-entry', fd=fd)
-        try: return sync(fd)
+        measured_call('fsync.observe-entry', lambda: observe('fsync-entry', fd=fd))
+        try: return measured_call('fsync.real', sync, fd)
         except BaseException as failure:
             error = repr(failure)
             raise
         finally:
-            observe('fsync-return', fd=fd, startMonotonicNs=start, startEpochNs=epoch,
-                    elapsedNs=time.monotonic_ns()-start, error=error)
+            measured_call('fsync.observe-return', lambda: observe('fsync-return', fd=fd,
+                startMonotonicNs=start, startEpochNs=epoch,
+                elapsedNs=time.monotonic_ns()-start, error=error))
     module.ptrace = traced
     module.os.waitpid = waited
     module.os.fsync = synced
@@ -211,7 +224,7 @@ def supervise(run, command, **options):
     # wire timing. Bound retained detail while retaining aggregate totals.
     write = module.Journal.write
     timing = dict(version=VERSION, clock='Python monotonic_ns', writes=0,
-                  totalNs=0, maxNs=0, samples=[], subcalls=module.q3_subcalls)
+                  totalNs=0, maxNs=0, samples=[], subcalls=module.q3_subcalls, inner=inner)
 
     def measured(journal, data):
         start = time.monotonic_ns()
