@@ -5,7 +5,7 @@ const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
 const { createHostImports } = require('../lib/host-imports');
 const frameIntervals = require('../lib/frame-intervals');
 const { createRenderWaitAttribution } = require('../lib/render-wait-attribution');
-const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
+const { loadDllsAsync, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
 const { inputEventHwnd } = require('../lib/host-window');
 const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
   startupShowCommand, startupShowArgs,
@@ -5897,7 +5897,7 @@ async function main() {
     }
   }
   // A LoadLibraryA from inside a DllMain (UBER.DLL loading Myth's
-  // modules\TCPIP.DLL) is serviced in place: callDllMain cannot await. So is
+  // modules\TCPIP.DLL) uses the resident-byte resolver below. So does
   // one from inside a nested synchronous send ($wnd_send_message asks through
   // the service_load_library import), which cannot return to this loop either.
   const onLoadLibraryYield = ex => serviceLoadLibraryYieldSync({
@@ -5908,7 +5908,7 @@ async function main() {
   threadManager._serviceDllYield = onLoadLibraryYield;
   if (dlls.length > 0) {
     mountLoadedDllFiles(ctx.vfs, dlls);
-    const dllResults = loadDlls(instance.exports, memory.buffer, exeBytes, dlls, console.log, {
+    const dllResults = await loadDllsAsync(instance.exports, memory.buffer, exeBytes, dlls, console.log, {
       onLoadLibraryYield,
       exeName: path.basename(EXE_PATH),
       extraArgs: EXTRA_ARGS || '',

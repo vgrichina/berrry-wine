@@ -7,7 +7,8 @@ const {createHostImports}=require('../lib/host-imports');
 const loader=require('../lib/dll-loader');
 const {X86,pe,u32,BASE,DATA}=require('./test-dll-lifecycle-real-pe');
 const {graphDll}=require('./test-dll-import-graph-lifecycle');
-async function exercise(module,detachFails=false){
+async function exercise(module,detachFails=false,asyncMode=false){
+ const load=asyncMode?loader.loadDllsAsync:loader.loadDlls;
  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
  const ctx={getMemory:()=>memory.buffer,resourceJson:{menus:{},dialogs:{},strings:{},bitmaps:{}},onExit(){}};
  const imports=createHostImports(ctx);imports.host.memory=memory;
@@ -30,7 +31,7 @@ async function exercise(module,detachFails=false){
   new X86().emit(0x83,0x7c,0x24,8,0).branch([0x0f,0x84],'detach')
    .emit(0x31,0xc0,0xc2,12,0).label('detach').emit(0x31,0xc0,0xff,0xe0).finish().copy(a,0x200);
   let failure;
-  try{loader.loadDlls(e,memory.buffer,exe,[{name:'graph-b.dll',bytes:b},{name:'graph-a.dll',bytes:a}],null);}catch(error){failure=error;}
+  try{await load(e,memory.buffer,exe,[{name:'graph-b.dll',bytes:b},{name:'graph-a.dll',bytes:a}],null);}catch(error){failure=error;}
   assert.ok(failure instanceof AggregateError);
   assert.match(failure.message,/DLL_PROCESS_ATTACH returned FALSE: module=0x.*rollback also failed: DllMain did not complete/);
   assert.equal(failure.cause,failure.errors[0]);
@@ -42,7 +43,7 @@ async function exercise(module,detachFails=false){
   assert.equal(e.get_dll_count(),3,'failed detach retains all mapped images');
   return {preservedAttachFailure:true,failedDetach:true};
  }
- assert.throws(()=>loader.loadDlls(e,memory.buffer,exe,[{name:'graph-b.dll',bytes:b},{name:'graph-a.dll',bytes:a}],null),/DLL.*initializ|DLL_PROCESS_ATTACH|DllMain/i);
+ await assert.rejects(async()=>load(e,memory.buffer,exe,[{name:'graph-b.dll',bytes:b},{name:'graph-a.dll',bytes:a}],null),/DLL.*initializ|DLL_PROCESS_ATTACH|DllMain/i);
  const read=off=>e.guest_read32(DATA+off)>>>0;
  assert.equal(read(4),1);assert.equal(read(0),1,'FALSE initializer receives process detach');
  assert.equal(read(0x14),1);assert.equal(read(0x10),1,'completed dependency attach is undone');
@@ -122,15 +123,54 @@ async function exerciseTransport(module) {
  }});
 }
 
+async function resourceBarrier(module){
+ for(const reject of [false,true]){
+  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
+  const ctx={getMemory:()=>memory.buffer,resourceJson:{menus:{},dialogs:{},strings:{},bitmaps:{}},onExit(){}};
+  const imports=createHostImports(ctx);imports.host.memory=memory;
+  const e=ctx.exports=(await WebAssembly.instantiate(module,imports)).exports;
+  const exe=pe([[0x2000,[0xc3]]]);
+  new Uint8Array(memory.buffer,e.get_staging(),exe.length).set(exe);e.load_pe(exe.length);
+  const code=new X86().emit(0x8b,0x44,0x24,8,0xff,0x04,0x85,u32(DATA),0xb8,1,0,0,0,0xc2,12,0).finish();
+  let entered,release,rows;
+  const registered=new Promise(resolve=>{entered=resolve;});
+  const pending=new Promise(resolve=>{release=resolve;});
+  const loading=loader.loadDllsAsync(e,memory.buffer,exe,[{name:'barrier.dll',bytes:pe([[0x1000,code]],true)}],null,{
+   registerDllResources:async(configs,results)=>{
+    rows=results;assert.equal(configs[0].name,'barrier.dll');entered();await pending;
+    if(reject)throw new Error('resource registration failed');
+   },
+  });
+  await registered;
+  assert.equal(e.guest_read32(DATA+4),0,'DllMain cannot overtake resource registration');
+  const gate=new Int32Array(memory.buffer,e.get_dll_callback_lock(),2);
+  assert.notEqual(Atomics.load(gate,0),0,'callback gate retained across host await');
+  assert.equal(Atomics.load(gate,1),1);
+  const failed=reject?assert.rejects(loading,/resource registration failed/):null;
+  release();
+  if(reject){
+   await failed;assert.equal(e.guest_read32(DATA+4),0,'failed registration never runs attach');
+   assert.equal(e.guest_read32(DATA),0,'uninitialized DLL does not get detach');
+   assert.equal(e.get_dll_index(rows[0].loadAddr),-1,'failed registration rolls back mapping');
+  }else{
+   const result=await loading;assert.equal(result[0].loadAddr,rows[0].loadAddr);
+   assert.equal(e.guest_read32(DATA+4),1,'one attach after successful registration');
+  }
+  assert.equal(Atomics.load(gate,0),0,'startup gate released on success or failure');
+  assert.equal(Atomics.load(gate,1),0);
+ }
+}
+
 async function main(){
  const module=await WebAssembly.compile(fs.readFileSync(process.env.WA_TEST_WASM||path.join(__dirname,'../build/wine-assembly.wasm')));
  const transport=await exerciseTransport(module);
+ await resourceBarrier(module);
  if(process.env.WA_LOADER_OUTCOME_ARTIFACTS)fs.writeFileSync(path.join(process.env.WA_LOADER_OUTCOME_ARTIFACTS,"transport-"+path.basename(process.env.WA_TEST_WASM||"standard")+".json"),JSON.stringify(transport,null,2));
- const run=async()=>[await exercise(module),await exercise(module,true)];
+ const run=async()=>[await exercise(module),await exercise(module,true),await exercise(module,false,true),await exercise(module,true,true)];
  const expected=await run(),worker=new Worker(__filename,{workerData:{module}});
  const guard=setTimeout(()=>worker.terminate(),20000);
  try{const result=await new Promise((resolve,reject)=>{worker.once('message',resolve);worker.once('error',reject);worker.once('exit',code=>reject(Error('worker exited before result '+code)));});assert.deepEqual(result,expected);}
  finally{clearTimeout(guard);await worker.terminate();}
- console.log('PASS real PE startup FALSE rollback, original/cleanup error preservation and mapping quarantine, main/Worker');
+ console.log('PASS real PE sync/async startup rollback, resource barrier/rejection, original errors and mapping quarantine, main/Worker');
 }
-if(isMainThread)main().catch(error=>{console.error(error);process.exitCode=1;});else Promise.all([exercise(workerData.module),exercise(workerData.module,true)]).then(result=>parentPort.postMessage(result),error=>{throw error;});
+if(isMainThread)main().catch(error=>{console.error(error);process.exitCode=1;});else Promise.all([exercise(workerData.module),exercise(workerData.module,true),exercise(workerData.module,false,true),exercise(workerData.module,true,true)]).then(result=>parentPort.postMessage(result),error=>{throw error;});

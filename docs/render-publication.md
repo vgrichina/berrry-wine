@@ -630,6 +630,21 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   DLL initializer can need those resources. Worker startup also still uses the
   synchronous loader driver. Both must be addressed while preserving loader
   gate ownership and rollback; richer metadata alone does not fix them.
+  The CLI now uses `loadDllsAsync`, backed by the same startup transaction
+  generator as synchronous `loadDlls`. Mapping/import patching precede an
+  awaited resource-registration step, then ordered DLL initializers. Errors
+  are thrown back into the transaction so original root restoration, rollback
+  and aggregate-error preservation apply to both drivers. The real callback
+  gate remains held until completion or cleanup, including host awaits.
+  Real PE tests hold resource registration and prove no attach runs early;
+  rejected registration unmaps the uninitialized module without detach.
+  Both drivers retain attach/rollback failure behavior in main and Node Worker
+  tests on normal and compatibility builds. Evidence:
+  `scratch/runs/20261109-dll-startup-await/`.
+  The production Worker command is still synchronous pending its reverse
+  resource-registration handshake and cancellation qualification. The special
+  CARDS exported initializer also remains synchronous. This is not completion
+  of startup callback ownership or full CLI main-Worker migration.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
