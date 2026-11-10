@@ -1090,7 +1090,8 @@ function genExtras() {
   h('popf', 1, `
   ${ops(1)}
   (call $flags_put (i32.or
-    (i32.and (call $pop16) ${DEFINED})
+    (i32.or (i32.and (call $flags_word) (i32.const 0xFFFF0000))
+      (i32.and (call $pop16) ${DEFINED}))
     ${RESERVED}))
   ${POPF_OWES}
     (then (global.set $gip (local.get $t0))
@@ -1104,17 +1105,16 @@ function genExtras() {
   // came out of that sequence with a misaligned stack, concluded it was on
   // something older than a 386, and took the exit.
   //
-  // The upper half is zero on the way out and ignored on the way in: this
-  // machine is a 386, so AC, VM and ID do not exist, and RF is never set.
-  // VM lives outside $flags (see the global), so PUSHFD has to put it back or
-  // a guest that saves and restores EFLAGS around anything loses the mode --
-  // and a V86 monitor reading the frame cannot tell where the trap came from.
-  h('pushf32', 0, `(call $push32 (i32.or (i32.and (call $flags_word) (i32.const 0xFFFF))
+  // AC (bit 18) is writable starting with the 486. Keep it in the actual
+  // EFLAGS state, including arithmetic, 16-bit POPF/IRET and checkpoints.
+  // The selected CPU's defined mask excludes it on a 386 and excludes ID on
+  // both models (the baseline 486 has no CPUID). VM is managed separately.
+  h('pushf32', 0, `(call $push32 (i32.or (call $flags_word)
                                          (i32.shl (global.get $vm86) (i32.const 17))))`);
   h('popf32', 1, `
   ${ops(1)}
   (call $flags_put (i32.or
-    (i32.and (i32.and (call $pop32) (i32.const 0xFFFF)) ${DEFINED})
+    (i32.and (call $pop32) ${DEFINED})
     ${RESERVED}))
   ${POPF_OWES}
     (then (global.set $gip (local.get $t0))
@@ -1330,7 +1330,7 @@ function genExtras() {
     const put = (x) => (lazy ? `(call $flags_put ${x})` : `(global.set $flags ${x})`);
     return put(v
       ? `(i32.or ${read} (i32.const ${1 << b}))`
-      : `(i32.and ${read} (i32.const ${(~(1 << b)) & 0xFFFF}))`);
+      : `(i32.and ${read} (i32.const ${~(1 << b)}))`);
   };
   h('clc', 0, setF(F.CF, 0));
   h('stc', 0, setF(F.CF, 1));
@@ -1353,7 +1353,7 @@ function genExtras() {
   // SAHF/LAHF move the low byte of FLAGS through AH.
   h('sahf', 0, `
   (call $flags_put (i32.or
-    (i32.and (call $flags_word) (i32.const 0xFF00))
+    (i32.and (call $flags_word) (i32.const -256))
     (i32.or (i32.and (i32.shr_u (global.get $ax) (i32.const 8)) (i32.const 0xD5))
             (i32.const 2))))
 `);
@@ -1426,7 +1426,7 @@ function genExtras() {
   (call $rset8 (i32.const 0) (i32.and (local.get $t0) (i32.const 0x0F)))
   (call $flags_put (i32.or
     (i32.and (call $flags_word)
-             (i32.const ${(~((1 << F.CF) | (1 << F.AF))) & 0xFFFF}))
+             (i32.const ${~((1 << F.CF) | (1 << F.AF))}))
     (i32.or (local.get $t2) (i32.shl (local.get $t2) (i32.const ${F.AF})))))
 `);
   }
@@ -1570,7 +1570,8 @@ function genExtras() {
   (global.set $gip (call $pop16))
   (call $sset (i32.const 1) (call $pop16))
   (call $flags_put (i32.or
-    (i32.and (call $pop16) ${DEFINED})
+    (i32.or (i32.and (call $flags_word) (i32.const 0xFFFF0000))
+      (i32.and (call $pop16) ${DEFINED}))
     ${RESERVED}))
   ;; Staying in wasm is only right when nothing is owed at this boundary: TF
   ;; asks for a trap after this instruction, and an IRQ the host is holding
@@ -1898,7 +1899,7 @@ function s_shift(kind, w, one, rotate, ofExpr, mask, msb) {
   ;; preceding compare set.
   (local.set $f (i32.and (call $flags_word)
     (i32.const ${(~((1 << isa.F.CF) | (1 << isa.F.OF) | (rotate ? 0
-      : ((1 << isa.F.SF) | (1 << isa.F.ZF) | (1 << isa.F.PF))))) & 0xFFFF})))
+      : ((1 << isa.F.SF) | (1 << isa.F.ZF) | (1 << isa.F.PF)))))})))
   (local.set $f (i32.or (local.get $f) (i32.and (local.get $cf) (i32.const 1))))
   (local.set $f (i32.or (local.get $f)
     (i32.shl (i32.and ${ofExpr} (i32.const 1)) (i32.const ${isa.F.OF}))))
@@ -2008,7 +2009,7 @@ function genDoubleShifts() {
   (local.set $q ${cat})
   (local.set $r (i32.and ${res} (i32.const ${mask})))
   (local.set $f (i32.and (call $flags_word) (i32.const ${(~((1 << isa.F.CF)
-    | (1 << isa.F.OF) | (1 << isa.F.SF) | (1 << isa.F.ZF) | (1 << isa.F.PF))) & 0xFFFF})))
+    | (1 << isa.F.OF) | (1 << isa.F.SF) | (1 << isa.F.ZF) | (1 << isa.F.PF)))})))
   (local.set $f (i32.or (local.get $f) (i32.and ${cf} (i32.const 1))))
   ;; OF is defined only for a count of one, as the sign changing.
   (local.set $f (i32.or (local.get $f) (i32.shl
@@ -2085,7 +2086,7 @@ const BIT_OPS = {
 };
 function genBitOps() {
   const CF_ONLY = (cf) => `(call $flags_put (i32.or
-    (i32.and (call $flags_word) (i32.const 0xFFFE)) (i32.and ${cf} (i32.const 1))))`;
+    (i32.and (call $flags_word) (i32.const -2)) (i32.and ${cf} (i32.const 1))))`;
 
   for (const w of [16, 32]) {
     const mask = WM(w);
@@ -2135,7 +2136,7 @@ function genBitOps() {
       const body = (src, dst) => `
   (local.set $t7 (i32.and ${src} (i32.const ${mask})))
   (call $flags_put (i32.or
-    (i32.and (call $flags_word) (i32.const ${(~(1 << isa.F.ZF)) & 0xFFFF}))
+    (i32.and (call $flags_word) (i32.const ${~(1 << isa.F.ZF)}))
     (i32.shl (i32.eqz (local.get $t7)) (i32.const ${isa.F.ZF}))))
   (if (local.get $t7) (then (call $rset${w} ${dst} ${scan})))
 `;
@@ -3015,7 +3016,7 @@ function gen386() {
   (local.set $t3 ${src})
   (local.set $t7 (call $descaddr (local.get $t3)))
   (call $flags_put (i32.or
-    (i32.and (call $flags_word) (i32.const ${(~(1 << F.ZF)) & 0xFFFF}))
+    (i32.and (call $flags_word) (i32.const ${~(1 << F.ZF)}))
     (i32.shl (i32.ne (local.get $t7) (i32.const 0)) (i32.const ${F.ZF}))))
   (if (local.get $t7) (then
     (local.set $t7 (i32.sub (local.get $t7) (i32.const 1)))
@@ -5103,7 +5104,7 @@ ${memAccessors()}
   (local.set $r (i32.and (local.get $s)
     (i32.sub (i32.shl (i32.const 1) (local.get $w)) (i32.const 1))))
   (local.set $msb (i32.sub (local.get $w) (i32.const 1)))
-  (local.set $f (i32.and (global.get $flags) (i32.const ${(~isa.FLAGS_ARITH) & 0xFFFF})))
+  (local.set $f (i32.and (global.get $flags) (i32.const ${~isa.FLAGS_ARITH})))
   ;; CF: the bit that fell off the top of the operand width.
   (local.set $f (i32.or (local.get $f)
     (i32.shl (i32.and (i32.shr_u (local.get $s) (local.get $w)) (i32.const 1))
@@ -5144,7 +5145,7 @@ ${memAccessors()}
   (local.set $r (i32.and (local.get $s)
     (i32.sub (i32.shl (i32.const 1) (local.get $w)) (i32.const 1))))
   (local.set $msb (i32.sub (local.get $w) (i32.const 1)))
-  (local.set $f (i32.and (global.get $flags) (i32.const ${(~isa.FLAGS_ARITH) & 0xFFFF})))
+  (local.set $f (i32.and (global.get $flags) (i32.const ${~isa.FLAGS_ARITH})))
   ;; CF is a borrow: a - b went negative, which leaves the bit set above the
   ;; operand width in the 32-bit difference.
   (local.set $f (i32.or (local.get $f)
@@ -5181,14 +5182,14 @@ ${memAccessors()}
   (local $cf i32)
   (local.set $cf ${CF_IN()})
   (call $flags_add (local.get $a) (i32.const 1) (local.get $s) (local.get $w))
-  (global.set $flags (i32.or (i32.and (global.get $flags) (i32.const 0xFFFE))
+  (global.set $flags (i32.or (i32.and (global.get $flags) (i32.const -2))
                              (local.get $cf))))
 
 (func $flags_dec (param $a i32) (param $s i32) (param $w i32)
   (local $cf i32)
   (local.set $cf ${CF_IN()})
   (call $flags_sub (local.get $a) (i32.const 1) (local.get $s) (local.get $w))
-  (global.set $flags (i32.or (i32.and (global.get $flags) (i32.const 0xFFFE))
+  (global.set $flags (i32.or (i32.and (global.get $flags) (i32.const -2))
                              (local.get $cf))))
 
 ;; AND/OR/XOR. CF and OF are architecturally cleared; AF is genuinely
@@ -5196,7 +5197,7 @@ ${memAccessors()}
 ;; gate masks AF for these mnemonics and says so in its output.
 (func $flags_logic (param $r i32) (param $w i32)
   (local $f i32)
-  (local.set $f (i32.and (global.get $flags) (i32.const ${(~isa.FLAGS_ARITH) & 0xFFFF})))
+  (local.set $f (i32.and (global.get $flags) (i32.const ${~isa.FLAGS_ARITH})))
   (local.set $f (i32.or (local.get $f)
     (i32.shl (i32.and (i32.shr_u (local.get $r)
         (i32.sub (local.get $w) (i32.const 1))) (i32.const 1))
@@ -5217,7 +5218,7 @@ ${memAccessors()}
 ;; comparison instead.
 (func $flags_add32 (param $a i32) (param $b i32) (param $cin i32) (param $r i32)
   (local $f i32)
-  (local.set $f (i32.and (global.get $flags) (i32.const ${(~isa.FLAGS_ARITH) & 0xFFFF})))
+  (local.set $f (i32.and (global.get $flags) (i32.const ${~isa.FLAGS_ARITH})))
   ;; With no carry in, a wrap shows up as r < a; with one, r == a is also a
   ;; wrap (b was all ones).
   (local.set $f (i32.or (local.get $f)
@@ -5247,7 +5248,7 @@ ${memAccessors()}
 
 (func $flags_sub32 (param $a i32) (param $b i32) (param $cin i32) (param $r i32)
   (local $f i32)
-  (local.set $f (i32.and (global.get $flags) (i32.const ${(~isa.FLAGS_ARITH) & 0xFFFF})))
+  (local.set $f (i32.and (global.get $flags) (i32.const ${~isa.FLAGS_ARITH})))
   (local.set $f (i32.or (local.get $f)
     (select (i32.le_u (local.get $a) (local.get $b))
             (i32.lt_u (local.get $a) (local.get $b))
@@ -5277,14 +5278,14 @@ ${memAccessors()}
   (local $cf i32)
   (local.set $cf ${CF_IN()})
   (call $flags_add32 (local.get $a) (i32.const 1) (i32.const 0) (local.get $r))
-  (global.set $flags (i32.or (i32.and (global.get $flags) (i32.const 0xFFFE))
+  (global.set $flags (i32.or (i32.and (global.get $flags) (i32.const -2))
                              (local.get $cf))))
 
 (func $flags_dec32 (param $a i32) (param $r i32)
   (local $cf i32)
   (local.set $cf ${CF_IN()})
   (call $flags_sub32 (local.get $a) (i32.const 1) (i32.const 0) (local.get $r))
-  (global.set $flags (i32.or (i32.and (global.get $flags) (i32.const 0xFFFE))
+  (global.set $flags (i32.or (i32.and (global.get $flags) (i32.const -2))
                              (local.get $cf))))
 
 ;; MUL/IMUL set CF and OF together from "the upper half carries information"
@@ -5296,7 +5297,7 @@ ${memAccessors()}
   ;; would be preserved from before the last ALU instruction instead of after.
   (call $flags_sync)
   (local.set $f (i32.and (global.get $flags)
-    (i32.const ${(~((1 << isa.F.CF) | (1 << isa.F.OF))) & 0xFFFF})))
+    (i32.const ${~((1 << isa.F.CF) | (1 << isa.F.OF))})))
   (local.set $nz (i32.ne (local.get $nz) (i32.const 0)))
   (global.set $flags (i32.or (i32.or (local.get $f)
     (i32.or (local.get $nz) (i32.shl (local.get $nz) (i32.const ${isa.F.OF}))))
@@ -5479,7 +5480,7 @@ ${memAccessors()}
 (func $flags_sync
   (local $f i32)
   (if (i32.eqz (global.get $fop)) (then (return)))
-  (local.set $f (i32.and (global.get $flags) (i32.const ${(~isa.FLAGS_ARITH) & 0xFFFF})))
+  (local.set $f (i32.and (global.get $flags) (i32.const ${~isa.FLAGS_ARITH})))
   (local.set $f (i32.or (local.get $f) (call $get_cf)))
   (local.set $f (i32.or (local.get $f) (i32.shl (call $get_pf) (i32.const ${F.PF}))))
   (local.set $f (i32.or (local.get $f) (i32.shl (call $get_af) (i32.const ${F.AF}))))
@@ -5571,8 +5572,8 @@ ${memAccessors()}
       ;; An interrupt gate clears IF; a trap gate (bit 0 of the type) leaves it
       ;; alone. Both clear TF.
       (global.set $flags (i32.and (global.get $flags)
-        (select (i32.const ${(~(1 << isa.F.TF)) & 0xFFFF})
-                (i32.const ${(~((1 << isa.F.IF) | (1 << isa.F.TF))) & 0xFFFF})
+        (select (i32.const ${~(1 << isa.F.TF)})
+                (i32.const ${~((1 << isa.F.IF) | (1 << isa.F.TF))})
                 (i32.and (i32.load8_u offset=5 (local.get $g)) (i32.const 1)))))
       (call $sset (i32.const 1) (i32.load16_u offset=2 (local.get $g)))
       (global.set $gip (local.get $v)))
@@ -5581,7 +5582,7 @@ ${memAccessors()}
       (call $push16 (call $sget (i32.const 1)))
       (call $push16 (local.get $ip))
       (global.set $flags (i32.and (global.get $flags)
-        (i32.const ${(~((1 << isa.F.IF) | (1 << isa.F.TF))) & 0xFFFF})))
+        (i32.const ${~((1 << isa.F.IF) | (1 << isa.F.TF))})))
       (local.set $v (i32.shl (local.get $vec) (i32.const 2)))
       (global.set $gip (call $rdphys16 (local.get $v)))
       (call $sset (i32.const 1) (call $rdphys16 (i32.add (local.get $v) (i32.const 2))))))
@@ -5680,8 +5681,8 @@ ${memAccessors()}
   ;; Same gate semantics as the ordinary path: a trap gate leaves IF alone, an
   ;; interrupt gate clears it, both clear TF.
   (global.set $flags (i32.and (global.get $flags)
-    (select (i32.const ${(~(1 << isa.F.TF)) & 0xFFFF})
-            (i32.const ${(~((1 << isa.F.IF) | (1 << isa.F.TF))) & 0xFFFF})
+    (select (i32.const ${~(1 << isa.F.TF)})
+            (i32.const ${~((1 << isa.F.IF) | (1 << isa.F.TF))})
             (i32.and (i32.load8_u offset=5 (local.get $g)) (i32.const 1)))))
   (call $sset (i32.const 1) (i32.load16_u offset=2 (local.get $g)))
   (global.set $gip (i32.or (i32.load16_u (local.get $g))
@@ -6608,10 +6609,14 @@ ${body})`).join('\n')}
   (if (i32.ge_u (local.get $level) (i32.const 386))
     (then
       (global.set $f_res (i32.const 2))
-      (global.set $f_def (i32.const ${isa.FLAGS_DEFINED | 0x7000})))
+      (global.set $f_def (i32.or (i32.const ${isa.FLAGS_DEFINED | 0x7000})
+        (select (i32.const 0x40000) (i32.const 0)
+          (i32.ge_u (local.get $level) (i32.const 486))))))
     (else
       (global.set $f_res (i32.const ${isa.FLAGS_RESERVED}))
       (global.set $f_def (i32.const ${isa.FLAGS_DEFINED}))))
+  ;; Re-selecting a lower model cannot retain an unavailable upper flag.
+  (global.set $flags (i32.or (i32.and (global.get $flags) (global.get $f_def)) (global.get $f_res)))
   ;; Shift-count masking arrived with the 186, one generation before the FLAGS
   ;; change above, so it gets its own threshold rather than sharing that one.
   (global.set $shmask (select (i32.const 31) (i32.const 0xFF)

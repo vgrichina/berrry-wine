@@ -151,7 +151,7 @@ function fpuReg(esc, b) {
 // recorded off an 8088, so conformance runs must stay at 8086 level or they
 // will "pass" instructions the real part does not have. Demos, on the other
 // hand, routinely assume a 186 or later, so the runner raises it.
-// Levels are the bare model numbers -- 86, 186, 386 -- so `cpuLevel < 186`
+// Levels are the bare model numbers -- 86, 186, 386, 486 -- so `cpuLevel < 186`
 // reads the way it should. (Writing 8086 for the base level made that test
 // false and let every 80186 encoding through.)
 let cpuLevel = 86;
@@ -884,11 +884,12 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
       // decoder, and refusing them stopped COLORS.EXE inside its own setup.
       // CLTS must really clear TS after a hardware task switch.
       if (op2 === 0x06) { words.push(H.clts); break; }
-      if (op2 === 0x08 || op2 === 0x09) { words.push(H.nop); break; }
+      if (op2 === 0x08 || op2 === 0x09) { if (cpuLevel < 486) return null; words.push(H.nop); break; }
       // CMPXCHG (486). Same shape as XADD below, and like it the memory form
       // is a read-modify-write, so writesMem has to be set or a program that
       // spins on one against its own code would not see the block invalidated.
       if (op2 === 0xB0 || op2 === 0xB1) {
+        if (cpuLevel < 486) return null;
         const w = (op2 & 1) ? opsize : 8;
         const m = modrm();
         if (m.isReg) words.push(H[`cmpxchg_rr${w}`], (m.rm & 7) | ((m.reg & 7) << 4));
@@ -897,6 +898,7 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
       }
       // XADD (486).
       if (op2 === 0xC0 || op2 === 0xC1) {
+        if (cpuLevel < 486) return null;
         const w = (op2 & 1) ? opsize : 8;
         const m = modrm();
         if (m.isReg) words.push(H[`xadd_rr${w}`], (m.rm & 7) | ((m.reg & 7) << 4));
@@ -907,7 +909,7 @@ function decodeOne(rd, cs, ip, base = (cs << 4), mask = 0xFFFFF, d32 = false, be
       // in a modrm byte. Only the 32-bit form is architecturally defined --
       // 66-prefixed BSWAP is undefined on real silicon and nothing emits it.
       if (op2 >= 0xC8 && op2 <= 0xCF) {
-        if (opsize !== 32) return null;
+        if (cpuLevel < 486 || opsize !== 32) return null;
         words.push(H.bswap32, op2 & 7);
         break;
       }

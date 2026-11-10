@@ -352,7 +352,7 @@ async function createMachineRunner(options) {
   const { DosSession } = require('./dos-loop');
   const { makeVm, buildModule } = require('./vm');
   const isa = require('./isa');
-  const allowed = ['image', 'name', 'args', 'machineOptions', 'sessionOptions', 'inputs', 'budget', 'files', 'directories', 'currentDirectory', 'floppies'];
+  const allowed = ['image', 'name', 'args', 'cpu', 'machineOptions', 'sessionOptions', 'inputs', 'budget', 'files', 'directories', 'currentDirectory', 'floppies'];
   if (!options || Object.keys(options).some(k => !allowed.includes(k)) || !(options.image instanceof Uint8Array)) throw Error('unsupported checkpoint runner options');
   // A detached, data-only recipe is both the fixture identity and fresh-process
   // recovery input. Reject arbitrary functions/host objects before instantiation.
@@ -364,9 +364,10 @@ async function createMachineRunner(options) {
   };
   plain(options);
   const recipe = v8.deserialize(v8.serialize({ image: Uint8Array.from(options.image), name: options.name || 'PROGRAM.COM',
-    args: options.args || '', machineOptions: options.machineOptions || {}, sessionOptions: options.sessionOptions || {},
+    args: options.args || '', cpu: options.cpu ?? 386, machineOptions: options.machineOptions || {}, sessionOptions: options.sessionOptions || {},
     inputs: options.inputs || [], files: options.files || [], directories: options.directories || [], floppies: options.floppies || [],
     currentDirectory: options.currentDirectory || '', budget: options.budget ?? 1000000 }));
+  if (![386, 486].includes(recipe.cpu)) throw Error('unsupported checkpoint CPU model');
   const bools = ['noCache', 'smcFlush', 'wasmDecode', 'fuse', 'deadFlags', 'crossFlags', 'traceBlocks',
     'spinLoops', 'regSpec', 'volatileCode', 'pitClock', 'latticeClock', 'irqSchedule', 'intFast', 'edgeLookup', 'smcCensus'];
   const counts = ['slice', 'irqEvery', 'dispatchesPerTick', 'tickScale', 'stuckLimit', 'stuckWork'];
@@ -418,7 +419,7 @@ async function createMachineRunner(options) {
   if (recipe.files.some(([n]) => dirs.has(n.toLowerCase())) || typeof recipe.currentDirectory !== 'string' ||
       !dirs.has(recipe.currentDirectory.toLowerCase())) throw Error('checkpoint directory/file collision or missing cwd');
   if (sourceKey() !== loadedSourceKey) throw Error('checkpoint sources changed since load');
-  require('./decode').setCpuLevel(386);
+  require('./decode').setCpuLevel(recipe.cpu);
   // Building also initializes the compiler's handler tables for this exact
   // default native ABI; cached archive bytes alone would skip that work.
   const module = await buildModule('tailcall', { exportAll: true });
@@ -429,7 +430,7 @@ async function createMachineRunner(options) {
   for (const [drive, image] of recipe.floppies) machine.changeDisk(drive, image);
   const vm = await makeVm('tailcall', { ...module,
     portIn: (p, w) => machine.portIn(p, w), portOut: (p, v, w) => machine.portOut(p, v, w) });
-  vm.exports.set_cpu(386); machine.setMemory(vm.mem, vm.exports);
+  vm.exports.set_cpu(recipe.cpu); machine.setMemory(vm.mem, vm.exports);
   machine.virtualDirectories = dirs;
   machine.currentDirectory = recipe.currentDirectory.toLowerCase();
   machine.syncVga(); // Match runDos power-on setup before the first guest slice.
@@ -456,7 +457,7 @@ async function createMachineRunner(options) {
       if (session.dispatched >= state.budget && !session.owesEnd(state.budget)) return 'done';
       meta.active = true;
       try {
-        require('./decode').setCpuLevel(386);
+        require('./decode').setCpuLevel(recipe.cpu);
         require('./compile').setPortSpin(true);
         while (state.inputIndex < state.inputs.length && state.inputs[state.inputIndex].at <= session.dispatched) {
           const e = state.inputs[state.inputIndex++]; machine.pushKey(e.ah, e.al);
