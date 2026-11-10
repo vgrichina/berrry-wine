@@ -83,4 +83,5 @@ function correlateMousePulse({pulse,events,records,button=0}) {
     actualPress:pressed.length>0,actualRelease:released.length>0,
     meaning:'successful guest button-state reads wholly within observed trusted delivery; no simulation or weapon consequence inferred'};
 }
-module.exports={KEYS,descriptor,validate,assertRequired,hold,mouse,correlateMousePulse};
+module.exports={KEYS,descriptor,validate,assertRequired,hold,mouse,correlateMousePulse,
+  pulse:require('../tools/native-input-pulse.cjs').pulse};
