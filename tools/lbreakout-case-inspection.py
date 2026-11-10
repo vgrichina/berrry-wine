@@ -220,7 +220,7 @@ async function completion(a){
    assert(!terminal,'terminal: completion closed');assert(Date.now()<Math.min(deadline,a.deadline),'guest completion deadline');
    // The same immutable instance owns the same module bytes. Avoid fetching
    // the entire Wasm over CDP on every snapshot. Full byte/owner validation
-   // still brackets the observation, and the observer checks DLL generation.
+   // precedes arming and brackets capture; the observer checks DLL generation.
    assert(workers.has(a.session)&&!workers.get(a.session).closed,'completion owner closed');
    assert.deepEqual(await evaluate(bound.WORKER_READ,a.session),a.owner,'completion owner binding');
    const r=await evaluate('globalThis.__lbObserver.snapshot()',a.session);
@@ -228,7 +228,6 @@ async function completion(a){
    assert.deepEqual(r.binding,a.binding,'completion module binding');
    if(!r.active){
     assert.equal(r.reason,'complete','guest completion incomplete');save('completion-'+a.token+'.json',r);
-    assert.equal(await owningWorker(),a.session,'completion final owner binding');
     const remaining=Math.min(deadline,a.deadline)-Date.now();assert(remaining>0,'presentation deadline');
     const presented=await evaluate(`new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('presentation deadline')),${remaining});requestAnimationFrame(()=>requestAnimationFrame(()=>{clearTimeout(timer);resolve({presented:true})}));})`);
     assert(presented?.presented&&Date.now()<Math.min(deadline,a.deadline),'presentation completion');

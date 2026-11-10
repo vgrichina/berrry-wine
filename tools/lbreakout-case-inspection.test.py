@@ -44,6 +44,37 @@ const WebAssembly={instantiate:async()=>({instance:native,module:'same module'})
 """
         subprocess.run(['node', '-e', source], check=True, timeout=3)
 
+    def test_completion_keeps_module_transfer_outside_presentation_budget(self):
+        # Exercise the emitted functions, including arm-time full validation.
+        template = "\n".join([
+            "async function armObservation(){const s=await owningWorker();return evaluate('globalThis.__lbArm()',s);}",
+            "if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}",
+            "     const k=require('./input.cjs').key('p'),{text,...release}=k;",
+            "save:r=>save('input-'+c.id+'-'+phase+'.json',r)});",
+            "   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});",
+        ])
+        emitted = helper.pause_completion_source(template).split("\nlet completionArm;")[0]
+        source = """const assert=require('node:assert/strict');
+const owner={instance:'immutable',endpointIdentity:'endpoint'},binding={exe:123};
+const bound={WORKER_READ:'identity'},workers=new Map([['owner',{closed:false}]]);
+let terminal=false,full=0,presented=false;const deadline=Date.now()+2000;
+async function owningWorker(){assert.equal(++full,1,'redundant full-module service');return 'owner';}
+async function evaluate(s){
+ if(s==='identity')return owner;
+ if(s.startsWith('globalThis.__lbArm('))return {armed:true,token:'test-pause',deadline,binding};
+ if(s==='globalThis.__lbObserver.snapshot()')return {token:'test-pause',expected:20,binding,active:false,reason:'complete'};
+ assert(s.startsWith('new Promise('));presented=true;return {presented:true};
+}
+function save(){}function fail(e){terminal=true;}async function wait(){}
+""" + emitted + """
+(async()=>{const a=await armObservation({id:'test',phase:'pause',expected:20});
+ await completion(a);assert.equal(full,1);assert(presented);assert(!terminal);
+ workers.get('owner').closed=true;presented=false;
+ await assert.rejects(completion(a),/owner closed/);assert(terminal);assert(!presented);
+})().catch(e=>{console.error(e);process.exitCode=1});
+"""
+        subprocess.run(['node', '-e', source], check=True, timeout=3)
+
     def test_observer_selects_bound_owner_among_secondary_threads(self):
         source = """const assert=require('node:assert/strict');
 const workers=new Map([['owner',{targetId:'main',url:'guest-worker.js'}],
