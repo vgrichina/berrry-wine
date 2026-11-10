@@ -40,13 +40,15 @@ function harness(transform = x => x, baseline = false) {
   const ex = { get_yield_reason: () => yieldReason, get_d3d_render_token: () => token,
     clear_yield: () => { cleared++; yieldReason = 0; } };
   const logs = [];
-  const sandbox = { ctx, _d3d9Bridge: bridge, createRenderWaitAttribution,
+  const sandbox = { ctx, _d3d9Bridge: bridge, createRenderWaitAttribution, mainSchedulerObserver:null,
     instance: { exports: ex }, tickState: { batch: 42 }, Date: fakeDate,
     console: { log: x => logs.push(x), error: (...x) => errors.push(x) },
     setTimeout: fn => { timers.push(fn); }, hasFlag: name => name === 'trace-render-wait', REAL_TICK_SLEEPS: true,
     threadManager: { isMainNamedEventWaiting: () => false, _renderSendTargets: new Set(),
       noteMainSleep() {}, isMainSleeping: () => false, isMainThreadSuspended: () => false },
   };
+  sandbox.mainOwner = {call: async (name,...args)=>sandbox.instance.exports[name](...args),
+    optionalCall: async (name,...args)=>sandbox.instance.exports[name]?.(...args)};
   vm.createContext(sandbox);
   vm.runInContext(`let stopped=false, deadlineMs=0;
     ${importHook} ${transform(baseline ? baselineHooks.hooks : hooks)}
@@ -86,7 +88,7 @@ async function compatibility() {
     const trace = baseline ? baselineTrace : candidateTrace;
     for (const state of ['complete', 'reject', 'deadline', 'stop', 'instant']) {
       const h = harness(x => x, baseline), r = h.request();
-      if (state === 'instant') { r.resolve(1); await flush(); h.check(); await flush(); }
+      if (state === 'instant') { r.resolve(1); await flush(); await h.check(); await flush(); }
       if (state === 'deadline') h.deadline(50);
       const p = h.park(); await flush();
       if (state === 'stop' || state === 'deadline') {
@@ -95,7 +97,7 @@ async function compatibility() {
         if (state === 'reject') r.reject(new Error('same error')); else r.resolve(1); }
       await p;
       trace.push({ state, waits: h.stats.waits, wallMs: h.stats.wallMs,
-        skippedBatches: h.stats.skippedBatches, parked: h.check(), cleared: h.cleared(),
+        skippedBatches: h.stats.skippedBatches, parked: await h.check(), cleared: h.cleared(),
         recordDone: r.record.done, recordError: !!r.record.error, errors: h.errors.length });
       // Resolve abandoned fixtures, without another park or guest call.
       r.resolve(1); await flush();
@@ -106,9 +108,9 @@ async function compatibility() {
 }
 async function delayedBoundary(transform) {
   const h = harness(transform), r = h.request();
-  assert.equal(h.check(), true);
+  assert.equal(await h.check(), true);
   const wait = h.getWait();
-  for (let i = 0; i < 10; i++) { h.check(); assert.equal(h.getWait(), wait); }
+  for (let i = 0; i < 10; i++) { await h.check(); assert.equal(h.getWait(), wait); }
   const parked = h.park(); await flush();
   assert.equal(h.ctx.renderWaitAttribution.requests, 1);
   assert.equal(h.ctx.renderWaitAttribution.pending, 1);
@@ -125,7 +127,7 @@ async function delayedBoundary(transform) {
   assert.equal(s.slowest[0].operation, 'DRAW');
   assert.equal(h.stats.waits, 1); assert.equal(h.stats.wallMs, 32);
   assert.equal(h.stats.skippedBatches, 0); assert.equal(h.cleared(), 0);
-  assert.equal(h.check(), false); assert.equal(h.cleared(), 1);
+  assert.equal(await h.check(), false); assert.equal(h.cleared(), 1);
   h.close(); assert(h.logs.some(x => x.startsWith('render attribution:')));
   return s;
 }
@@ -135,7 +137,7 @@ async function main() {
   await delayedBoundary(); console.log('PASS production CLI/import/bridge boundary delayed+repeat+partition');
   {
     const h = harness(), r = h.request('CLEAR'); r.resolve(1); await flush();
-    h.check(); await flush(); await h.park(); h.check();
+    await h.check(); await flush(); await h.park(); await h.check();
     assert.equal(h.ctx.renderWaitAttribution.completed, 1);
     assert.equal(h.ctx.renderWaitAttribution.parkMs, 0);
     assert.equal(h.stats.waits, 0);
@@ -171,15 +173,15 @@ async function main() {
     h.close(); h.close(); assert.equal(s[state], 1);
   }
   {
-    const h = harness(), r1 = h.request(); h.check();
-    const r2 = h.request(); h.check(); h.check();
+    const h = harness(), r1 = h.request(); await h.check();
+    const r2 = h.request(); await h.check(); await h.check();
     assert.equal(h.ctx.renderWaitAttribution.superseded, 1);
     r1.resolve(1); r2.resolve(1); await flush();
     assert.equal(h.ctx.renderWaitAttribution.requests, 2);
     assert.equal(h.ctx.renderWaitAttribution.completed, 1);
     assert.equal(h.ctx.renderWaitAttribution.lateSettlements, 1);
     h.bridge.requests.clear();
-    const r3 = h.request(); h.check(); h.close();
+    const r3 = h.request(); await h.check(); h.close();
     assert.equal(h.ctx.renderWaitAttribution.stopped, 1);
     r3.resolve(1); await flush();
   }
@@ -189,7 +191,7 @@ async function main() {
     for (let i = 0; i < 12000; i++) {
       const r = h.request(i % 2 ? 'READBACK' : 'not-a-source-operation');
       const p = h.park(); await flush(); h.clock.t += i % 11;
-      r.resolve(1); await p; h.check(); h.bridge.requests.delete(r.id);
+      r.resolve(1); await p; await h.check(); h.bridge.requests.delete(r.id);
       h.timers.length = 0;
       assert(s.slowest.length <= 8); assert.equal(s.latencyBuckets.length, 7);
     }

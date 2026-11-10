@@ -24,7 +24,7 @@ function extract(run, tm) {
     flag: run.match(/^const hasFlag = .*;$/m)[0],
     init: cut(run, '  const mainSchedulerObserver =', '  const inputConsumptionTrace ='),
     gate: cut(run, '  const mainExecutionSuspended =', '\n\n  // A main thread parked'),
-    ordinary: cut(run, '      if (!mainExecutionSuspended(', '\n    } catch (e) {'),
+    ordinary: cut(run, '      if (!await mainExecutionSuspended(', '\n    } catch (e) {'),
     worker: cut(run, '      let ran = 0;', '\n      if (TRACE_BATCH_TIMING)'),
     cooperative: cut(run, '      for (let s = 0; s < slices; s++) {', '\n      if (TRACE_BATCH_TIMING)'),
     input: cut(run, '  let lastInputEvent = null;', '\n  // Default hwnd routing:'),
@@ -161,6 +161,10 @@ async function acceptance(parts) {
         // assert that behavior explicitly rather than restoring old work.
         assert.deepEqual(disabled.calls, [['slice',100]], 'stop retires before another cooperative slice');
         assert.deepEqual(enabled.calls, disabled.calls, 'observer preserves stop retirement');
+      } else if (mode === 'ordinary' && options.stopped) {
+        assert.deepEqual(disabled.calls,original.calls.filter(x=>
+          !(Array.isArray(x)&&x[0]==='run') && x!=='renderer-input'));
+        assert.deepEqual(enabled.calls,disabled.calls,'stop after admission prevents guest entry');
       } else {
         assert.deepEqual(disabled.calls, original.calls, `default semantics ${mode} ${JSON.stringify(options)}`);
         assert.deepEqual(enabled.calls, original.calls, `enabled semantics ${mode} ${JSON.stringify(options)}`);
@@ -170,7 +174,7 @@ async function acceptance(parts) {
       const decisions = events.filter(r => r.event === 'decision');
       const runs = events.filter(r => r.event === 'main-run');
       const inputs = events.filter(r => r.event === 'host-check-input');
-      assert.equal(runs.length, original.calls.filter(x => Array.isArray(x) && x[0] === 'run').length);
+      assert.equal(runs.length, disabled.calls.filter(x => Array.isArray(x) && x[0] === 'run').length);
       assert.equal(inputs.length, runs.length);
       for (const run of runs) {
         const decision = decisions.find(d => d.id === run.decisionId);
@@ -185,6 +189,18 @@ async function acceptance(parts) {
         assert.equal(runs.length, 0);
       }
     }
+  }
+  for (const mode of ['ordinary','worker','cooperative']) {
+    const h=harness(parts,{mode,now:25025});
+    const owner=h.context.mainOwner;
+    h.context.mainOwner={...owner,call:async(name,...args)=>{
+      const value=await owner.call(name,...args);
+      h.context.stopped=true; // Shutdown arrives during owner admission RPC.
+      return value;
+    }};
+    await h.dispatch();
+    assert.equal(h.calls.some(x=>Array.isArray(x)&&x[0]==='run'),false,
+      mode+': no guest slice after stop during admission');
   }
   // No deadline means the existing short circuit spends no wait clock read.
   const noDeadline = harness(parts, { enabled: true, deadline: 0 }); await noDeadline.dispatch();

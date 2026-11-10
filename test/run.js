@@ -6972,15 +6972,15 @@ async function main() {
   const renderWaitAttribution = hasFlag('trace-render-wait') ? createRenderWaitAttribution() : null;
   if (renderWaitAttribution) ctx.renderWaitAttribution = renderWaitAttribution.stats;
   let mainRenderWait = null;
-  const mainExecutionSuspended = (path = 'probe') => {
+  const mainExecutionSuspended = async (path = 'probe') => {
     const observation = mainSchedulerObserver?.begin(path, tickState.batch);
     const finish = (value, reason) => observation ? observation.finish(value, reason) : value;
     const ex = instance.exports;
     if (threadManager.isMainNamedEventWaiting()) return finish(true, 'named-event');
-    let yieldReason = ex.get_yield_reason();
+    let yieldReason = await mainOwner.call('get_yield_reason');
     if (observation) observation.yield(yieldReason);
     if (yieldReason === 16) {
-      const token = ex.get_d3d_render_token() | 0;
+      const token = (await mainOwner.call('get_d3d_render_token')) | 0;
       if (!mainRenderWait || mainRenderWait.token !== token) {
         const wait = {token,done:false,polls:0,since:tickState.batch|0}; mainRenderWait = wait;
         renderWaitAttribution?.begin(wait, ctx.d3d9Bridge?.requests.get(token));
@@ -6999,10 +6999,10 @@ async function main() {
             `(since batch ${mainRenderWait.since}); the wait never observed it`);
         return finish(true, 'render');
       }
-      mainRenderWait = null; ex.clear_yield();
+      await mainOwner.call('clear_yield'); mainRenderWait = null;
     }
     if (threadManager._renderSendTargets.has(ex)) return finish(true, 'render-send');
-    yieldReason = ex.get_yield_reason();
+    yieldReason = await mainOwner.call('get_yield_reason');
     if (observation) observation.yield(yieldReason);
     if (yieldReason === 10 && (threadManager.backend === 'worker' ||
         !threadManager.resolveCooperativeThreadSend(ex))) return finish(true, 'thread-send');
@@ -7028,7 +7028,7 @@ async function main() {
     }
     if (threadManager.isMainSleeping(observation?.sleep)) return finish(true, 'sleep');
     if (!threadManager.isMainThreadSuspended()) return finish(false, 'runnable');
-    return finish(!(ex.is_mm_timer_callback_active && (ex.is_mm_timer_callback_active() | 0)),
+    return finish(!(await mainOwner.optionalCall('is_mm_timer_callback_active') | 0),
       'suspend-count-or-mm-timer');
   };
 
@@ -7050,9 +7050,8 @@ async function main() {
   const renderParkStats = ctx.renderParkStats = { waits: 0, wallMs: 0, skippedBatches: 0 };
   const awaitMainRenderPark = async () => {
     if (!RENDER_PARK_WAIT) return;
-    const ex = instance.exports;
-    if (ex.get_yield_reason() !== 16) return;
-    mainExecutionSuspended();
+    if (await mainOwner.call('get_yield_reason') !== 16) return;
+    await mainExecutionSuspended();
     const wait = mainRenderWait;
     if (!wait || wait.done) return;
     const started = Date.now();
@@ -10657,7 +10656,8 @@ async function main() {
       if (instance.exports.get_yield_reason && instance.exports.get_yield_reason() === 7) {
         threadManager.checkMainYield();
       }
-      if (!mainExecutionSuspended('ordinary')) {
+      if (!await mainExecutionSuspended('ordinary')) {
+        if (stopped) break;
         try {
         if (mainSchedulerObserver) await mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE));
         else await mainOwner.run(BATCH_SIZE);
@@ -10668,7 +10668,7 @@ async function main() {
         await nativeFault.wait();
         if (stopped) break;
       }
-      else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;
+      else if (await mainOwner.call('get_yield_reason') === 16) renderParkStats.skippedBatches++;
     } catch (e) {
       flushLogs();
       console.log(`\n*** CRASH at batch ${batch}: ${e.message}`);
@@ -10921,7 +10921,7 @@ async function main() {
     // frame restored and EIP on the thunk, so filling the chunk and clearing
     // the yield re-enters the same call, which then takes the cache hit.
     await serviceMainIoWait(mainOwner, ctx.vfs, TRACE_YIELD ? console.log : null);
-    if (instance.exports.get_yield_reason() === 16) mainExecutionSuspended();
+    if (await mainOwner.call('get_yield_reason') === 16) await mainExecutionSuspended();
 
     await serviceMainTimingWait(mainOwner, {batchClock, tickState,
       vblank: VBLANK, spin: SPIN_PARK, trace: TRACE_YIELD ? console.log : null});
@@ -11058,7 +11058,8 @@ async function main() {
         // --threads-serial means nothing runs beside a guest thread, main
         // included, or the switch would not answer the question it exists for.
         if (THREADS_SERIAL) await workerSlices;
-        else if (s < THREAD_SLICES - 1 && !stopped && !mainExecutionSuspended('worker-interleaved')) {
+        else if (s < THREAD_SLICES - 1 && !stopped && !await mainExecutionSuspended('worker-interleaved')) {
+          if (stopped) break;
           // Main keeps running WHILE they do — the CLI's version of host.js
           // awaiting the main slice and the thread slices together.
           try {
@@ -11117,7 +11118,8 @@ async function main() {
         // loop; repeatedly re-entering the main message pump here can drain
         // creation-time paints before an app has finished its first layout.
         if (s < slices - 1 && !stopped && threadManager.hasActiveThreads() &&
-            !mainExecutionSuspended('cooperative-interleaved')) {
+            !await mainExecutionSuspended('cooperative-interleaved')) {
+          if (stopped) break;
           try {
             try {
             if (mainSchedulerObserver) await mainSchedulerObserver.run('cooperative-interleaved', () => mainOwner.run(BATCH_SIZE));

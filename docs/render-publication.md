@@ -574,6 +574,19 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   normal/compat local/Worker tests cover the service boundary; the latter
   publish a pending read and yield explicitly, not through guest ReadFile.
   Evidence: `scratch/runs/20261109-cli-io-owner/`. Browser polling is unchanged.
+  Main admission is now asynchronous at all ordinary/interleaved CLI sites.
+  Render-token/yield queries, render completion's yield clear, and multimedia
+  timer activity queries go through the selected owner. The pending render
+  record is retained until the owner's clear completes; RPC failure propagates
+  without trying shadow exports. Every slice site rechecks stop after awaited
+  admission, preventing a late slice when shutdown arrives during an RPC.
+  Exact-production hook tests exercise delayed
+  reads/clears with throwing shadow getters and preserve the existing wait
+  accounting, stop/deadline behavior and scheduler observation. The real CLI
+  COM draw/Present regression still checks zero batches wasted on render waits.
+  ThreadManager sleep/send state and remaining CLI runtime accesses still need
+  migration before selecting a Worker main. Evidence:
+  `scratch/runs/20261109-cli-render-gate-owner/`.
   PE placement/loading and launch name/drive/arguments now use shared
   `stageAndLoadPeOwned`/`configureExeOwned` helpers in both the CLI and
   `GuestThreadHost.loadPe`. The existing `stagePe` still owns oversized PE/NE
