@@ -67,14 +67,31 @@ async function compiled(){
  const completed=o.snapshot(live).records.length;e.set_eip(0x42b325);e.run(10);assert.equal(o.snapshot(live).records.length,completed,'capture disarms until next command');
  o.begin({...b,id:'second'},live);e.set_eip(0x42b325);e.run(10);const interval=o.finish(live);
  assert(interval.records.length<completed);assert(interval.records.every(r=>r.binding.id==='second'));
- assert.equal(interval.recordScope,'command');assert.equal(interval.firstRecordIndex,completed);assert.equal(interval.totalRecords,o.snapshot(live).records.length);
- assert(o.snapshot(live).records.length>completed,'global record bound and retained history are unchanged');
- assert(Buffer.byteLength(JSON.stringify(interval))<Buffer.byteLength(JSON.stringify(o.snapshot(live))),'live return omits earlier commands');
+ assert.equal(interval.recordScope,'command');assert.equal(interval.firstRecordIndex,completed);assert.equal(interval.totalRecords,completed+interval.records.length);
+ assert.deepEqual(o.snapshot(live),interval,'only the complete latest command remains buffered');
  let clock=0;const bounded=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api,now:()=>clock,durationMs:1});bounded.begin(binding,owner);clock=1;assert.equal(bounded.snapshot(owner).reason,'deadline');assert.throws(()=>bounded.begin(binding,owner),/terminal/);
  const limited=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api,limit:2});
  limited.begin(binding,owner);limited.finish(owner);limited.begin({...binding,id:'second'},owner);limited.finish(owner);
- assert.equal(limited.begin({...binding,id:'third'},owner).active,false,'command finishes never replenish the session record limit');
+ assert.equal(limited.begin({...binding,id:'third'},owner).active,true,'completed intervals release bounded storage');
+ limited.event(1,0x42b980,0x42b32a,0x74ff000);limited.event(3,0x42b980,0,0x74ff000);
  assert.equal(limited.snapshot(owner).reason,'record-limit');assert.throws(()=>limited.begin(binding,owner),/terminal/);
+ assert.equal(limited.snapshot(owner).records.length,2,'same per-command storage bound');
+ const active=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api});active.begin(binding,owner);
+ assert.throws(()=>active.begin({...binding,id:'overwrite'},owner),/incomplete prior call/);assert.equal(active.snapshot(owner).records[0].binding.id,binding.id,'unfinished interval cannot be discarded');
+ let lifecycleClock=0;const lifetime=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api,now:()=>lifecycleClock,durationMs:10,eventLimit:2});
+ lifetime.begin(binding,owner);lifetime.event(0,0,0,0);const firstLifetime=lifetime.finish(owner);lifecycleClock=5;lifetime.begin({...binding,id:'second'},owner);lifetime.event(0,0,0,0);const secondLifetime=lifetime.finish(owner);
+ assert.equal(secondLifetime.deadline,firstLifetime.deadline);assert.equal(secondLifetime.events,2);lifetime.begin({...binding,id:'third'},owner);lifetime.event(0,0,0,0);assert.equal(lifetime.snapshot(owner).reason,'event-limit','event cap is lifetime, not replenished');
+ const absolute=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api,now:()=>lifecycleClock,durationMs:10});absolute.begin(binding,owner);const due=absolute.finish(owner).deadline;lifecycleClock=due;assert.throws(()=>absolute.begin({...binding,id:'late'},owner),/deadline/);
+ // Cross the recovered native lifetime count with complete compiled CALL/RET
+ // intervals. Every command must retain all four rows under the same capacity.
+ const beforeMany=interval.totalRecords;let afterMany;
+ for(let i=0;i<3001;i++){
+  const id='compiled-interval-'+i;o.begin({...b,id,label:id},live);e.set_esp(0x74ff000);e.set_eip(0x42b325);e.run(10);afterMany=o.finish(live);
+  assert.equal(afterMany.reason,null);assert.equal(afterMany.records.length,4);assert.equal(afterMany.firstRecordIndex,beforeMany+4*i);
+  assert(afterMany.records.every(r=>r.binding.id===id));assert.equal(afterMany.frames.length,0);assert.equal(afterMany.pendingApi,null);
+ }
+ assert.equal(afterMany.totalRecords,beforeMany+12004);assert.equal(o.snapshot(live).records.length,4);
+ fs.writeFileSync(out+'/bounded-intervals.json',JSON.stringify({passed:true,compiledCompleteCalls:3001,totalRecords:afterMany.totalRecords,retainedRecords:4,capacity:12000,eventLimit:2000000,deadlineUnchanged:true,unfinishedIntervalRefused:true,sameCommandOverflowTerminal:true,lifetimeEventLimitTerminal:true},null,2));
  for(const field of fields){const r=q.recorder({getExports:()=>e,getMemory:()=>memory.buffer,bases,sites:q.sites,api:config.api});assert.throws(()=>r.begin(binding,{...owner,[field]:'wrong'}),/binding/);assert.throws(()=>r.begin(binding,owner),/terminal/);}
  // Reproduce the recovered native refusal with BOTH real compiled modules.
  // The repair must authenticate the installed instance before selecting its
@@ -121,6 +138,8 @@ async function workerTransport(){
   const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),ctx={exports:null,getMemory:()=>memory.buffer};
   const host=createHostImports(ctx).host;Object.assign(host,{memory,log(){},log_i32(){},exit(){}});
   globalThis.fetch=async()=>({ok:true,arrayBuffer:async()=>bytes});globalThis.crypto=require('node:crypto').webcrypto;
+  globalThis.observedSink={count:0,lastSequence:0};const debug=console.debug;
+  console.debug=message=>{if(typeof message!=='string'||!message.startsWith('NOX_CONSUMPTION '))return debug(message);const row=JSON.parse(message.slice(16));if(row.sequence!==observedSink.lastSequence+1)throw Error('noncontiguous sink sequence');observedSink.count++;observedSink.lastSequence=row.sequence;};
   globalThis.endpointIdentity=1;globalThis.workerSlot=0;
   globalThis.launch=async()=>{globalThis.instance=await WebAssembly.instantiate(canonical,{host});ctx.exports=instance.exports;globalThis.__mcmPassiveInstanceV1={ids:new WeakMap([[instance,'transport-instance']])};return true;};
   parentPort.on('message',async({id,expression})=>{try{parentPort.postMessage({id,value:await vm.runInThisContext(expression)});}catch(e){parentPort.postMessage({id,error:e.message});}});
@@ -155,10 +174,12 @@ async function workerTransport(){
   const receipt=await rpc('__noxConsumption.owner()');assert.equal(receipt.sha256,config.sha256);assert.equal(receipt.size,bytes.length);assert.equal(receipt.workerInstance,'transport-instance');
   const live={...owner,moduleSha256:config.sha256,endpoint:1,workerInstance:'transport-instance'},b={...binding,previous:{...image,identity:live}};
   await rpc('__noxConsumption.begin('+JSON.stringify(b)+','+JSON.stringify(live)+');true');
-  assert.equal((await rpc('__noxConsumption.finish('+JSON.stringify(live)+')')).reason,null);
+  const firstInterval=await rpc('__noxConsumption.finish('+JSON.stringify(live)+')');assert.equal(firstInterval.reason,null);
+  const bounded=await rpc(`(()=>{const b=${JSON.stringify(b)},live=${JSON.stringify(live)};let s;for(let i=0;i<12001;i++){const id='transport-interval-'+i;__noxConsumption.begin({...b,id,label:id},live);s=__noxConsumption.finish(live);if(s.reason||s.records.length!==1||s.records[0].binding.id!==id)throw Error('bounded installed interval');}return {totalRecords:s.totalRecords,retainedRecords:s.records.length,firstRecordIndex:s.firstRecordIndex,deadline:s.deadline,sink:observedSink};})()`);
+  assert.equal(bounded.totalRecords,12002);assert.equal(bounded.retainedRecords,1);assert.equal(bounded.firstRecordIndex,12001);assert.equal(bounded.deadline,firstInterval.deadline);assert.equal(bounded.sink.count,bounded.totalRecords);assert.equal(bounded.sink.lastSequence,bounded.totalRecords);
   await assert.rejects(rpc('__noxConsumption.begin('+JSON.stringify(b)+','+JSON.stringify({...live,workerInstance:'foreign'})+');true'),/live Worker owner/);
   await assert.rejects(rpc('__noxConsumption.begin('+JSON.stringify(b)+','+JSON.stringify(live)+');true'),/terminal/);
-  const result={passed:true,actualWorkerTransport:true,emittedOriginalInstaller:true,emittedWorkerHandler:true,actualHostInit:true,originalLaunchUrl:url,transportFrames:wire.length,canonicalLaunchModule:true,actualInstalledObservationInstance:receipt,firstFailureSticky:true};
+  const result={passed:true,actualWorkerTransport:true,emittedOriginalInstaller:true,emittedWorkerHandler:true,actualHostInit:true,originalLaunchUrl:url,transportFrames:wire.length,canonicalLaunchModule:true,actualInstalledObservationInstance:receipt,boundedCommandStorage:bounded,firstFailureSticky:true};
   fs.writeFileSync(out+'/worker-transport.json',JSON.stringify(result,null,2));return result;
  }finally{await worker.terminate();}
 }

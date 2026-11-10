@@ -65,9 +65,13 @@ function recorder({getExports,getMemory,bases,sites,api,now=()=>performance.now(
  return {event,stop,position:cursor,begin(b,identity){
   if(terminal)throw Error('Nox consumption terminal: '+terminal);
   if(!b?.id||!b.label||!/^[a-f0-9]{64}$/.test(b.previous?.sha256??'')||!same(b.previous.identity,identity)||owner&&!same(owner,identity)){stop('binding');throw Error('Nox consumption owner/image binding');}
-  if(frames.length||pendingApi){stop('incomplete');throw Error('Nox consumption incomplete prior call');}
-  owner=clone(identity);binding=clone(b);commandStart=rows.length;if(deadline===null)deadline=now()+durationMs;getExports().nox_consumption_arm(1);const position=cursor();row('command-begin',{cursor:position});return {active:!terminal,cursor:position};
- },finish(identity){if(frames.length||pendingApi)stop('incomplete');getExports()?.nox_consumption_arm(0);binding=null;return this.snapshot(identity,true);},snapshot(identity,commandOnly=false){if(owner&&!same(owner,identity))stop('owner');if(deadline!==null&&now()>=deadline)stop('deadline');return {version:1,status:terminal?'UNKNOWN':'PASSIVE',reason:terminal,deadline,events,totalRecords:rows.length,recordScope:commandOnly?'command':'session',firstRecordIndex:commandOnly?commandStart:0,pendingApi:clone(pendingApi),frames:clone(frames),records:clone(commandOnly?rows.slice(commandStart):rows)};}};
+  if(binding||frames.length||pendingApi){stop('incomplete');throw Error('Nox consumption incomplete prior call');}
+  if(deadline!==null&&now()>=deadline){stop('deadline');throw Error('Nox consumption terminal: '+terminal);}
+  // Completed intervals have already been returned and emitted to the existing
+  // console sink. Retain only this command in the bounded Worker buffer. Keep
+  // lifetime indices, event count and the original absolute deadline unchanged.
+  owner=clone(identity);binding=clone(b);commandStart=sequence;rows.length=0;if(deadline===null)deadline=now()+durationMs;getExports().nox_consumption_arm(1);const position=cursor();row('command-begin',{cursor:position});return {active:!terminal,cursor:position};
+ },finish(identity){if(frames.length||pendingApi)stop('incomplete');getExports()?.nox_consumption_arm(0);binding=null;return this.snapshot(identity);},snapshot(identity){if(owner&&!same(owner,identity))stop('owner');if(deadline!==null&&now()>=deadline)stop('deadline');return {version:1,status:terminal?'UNKNOWN':'PASSIVE',reason:terminal,deadline,events,totalRecords:sequence,recordScope:'command',firstRecordIndex:commandStart,pendingApi:clone(pendingApi),frames:clone(frames),records:clone(rows)};}};
 }
 function workerInstall(config,makeRecorder){
  const original=WebAssembly.instantiate;let installed=false;
