@@ -1819,7 +1819,7 @@ Legacy VB update 2026-11-06T08:21Z: Published5726fdcdb extends ordinary public D
   id: TOYVM-DOS-NATIVE-GAMEPLAY-20261007
   status: active
   Browser input: absolute mouse position, button transitions and polling deltas wired through shared launchers; focused DOM/INT33-state fixtures only. No browser gameplay acceptance, pointer lock/relative input, wheel, guest-programmed ranges or mouse callbacks. Native gameplay and existing per-title blockers remain open.
-  owner: codex:01a19022-1426-76b3-ae98-6265fb15fd66
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
   worker: /root
   created: 2026-10-07T09:08:16.475Z
   requested-by: user via Telegram, dedicated DOS VM preferred over DOSBox inside Win98
