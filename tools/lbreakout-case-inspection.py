@@ -300,12 +300,35 @@ def startup_completion_observer_source():
  const v=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p>>>0)>>>0,u32=p=>v.getUint32(wa(p),true);
  const {exe,sdl,index,generation,mappingState}=binding;
  const table=e.get_dll_table()>>>0,life=e.get_dll_lifecycle_table()>>>0,stride=e.get_dll_lifecycle_stride()>>>0;
- const deadline=now()+2000,records=[];let active=true,reason=null,phase='sdl-display-return',menu;
+ const deadline=now()+2000,records=[];let active=true,reason=null,phase='sdl-display-return',menu,lastSample=null;
  const trace=pc=>e.set_trace_eip_range(1,pc,pc+1);
  const record=(kind,data={})=>{const r={kind,token,at:now(),...data};records.push(r);emit(r);};
  const valid=()=>{if(e.get_image_base()!==exe||e.get_current_thread_id()!==1||
   v.getUint32(table+index*32,true)!==sdl||v.getUint32(life+index*stride+4,true)!==generation||
   v.getUint32(life+index*stride,true)!==mappingState)throw Error('startup module/owner changed');};
+ // Only enrich the caller's existing snapshot. No extra protocol, tracing,
+ // timers, guest calls or writes. Keep the last sample after terminal stop.
+ const sample=()=>{
+  const r={at:now(),pc:e.get_eip()>>>0};
+  try{
+   valid();
+   const read=(p,n)=>{const a=wa(p);if(!p||a===0xf0||a+n>memory.buffer.byteLength)throw Error('startup sample unmapped');return a;};
+   const words=(p,n)=>{const a=read(p,n*4);return Array.from({length:n},(_,i)=>v.getUint32(a+i*4,true));};
+   r.registers={};for(const name of ['eax','ebx','ecx','edx','esi','edi','ebp','esp'])r.registers[name]=e['get_'+name]()>>>0;
+   r.stack={address:r.registers.esp,words:words(r.registers.esp,24)};
+   r.menu=u32(exe+0x77150);r.dirtyCount=u32(exe+0x52468);r.screen=u32(exe+0x52464);
+   if(r.menu){const a=read(r.menu,32),item=v.getUint32(a+28,true);r.selectedItem={pointer:item};if(item){const b=read(item,76);Object.assign(r.selectedItem,{type:v.getUint32(b+4,true),target:v.getUint32(b+72,true)});}}
+   const surface=p=>{if(!p)return null;const a=read(p,40);return {pointer:p,flags:v.getUint32(a,true),format:v.getUint32(a+4,true),width:v.getUint32(a+8,true),height:v.getUint32(a+12,true),pitch:v.getUint16(a+16,true),pixels:v.getUint32(a+20,true)};};
+   r.screenSurface=surface(r.screen);
+   // The retained prior PC is SDL_FillRect's 32-bit software row loop.
+   // Here ESI holds width/4; the surface is the local at ESP+0x1c.
+   if(r.pc>=sdl+0x208c8&&r.pc<sdl+0x2092a){
+    r.fillSurface=surface(r.stack.words[7]);
+    const a=read(r.registers.ebp,8);r.fillRect={pointer:r.registers.ebp,x:v.getInt16(a,true),y:v.getInt16(a+2,true),width:v.getUint16(a+4,true),height:v.getUint16(a+6,true)};
+   }
+  }catch(error){r.error=String(error);}
+  return r;
+ };
  const stop=r=>{if(!active)return;active=false;reason=r;e.set_trace_eip_range(0,0,0);record('completion-stop',{reason:r});};
  function boundary(pc=e.get_eip()>>>0){
   if(!active)return;
@@ -327,7 +350,10 @@ def startup_completion_observer_source():
  }
  const timer=setTimeout(()=>stop('deadline'),2000);if(timer.unref)timer.unref();
  valid();record('completion-arm',{binding,expected,deadline});trace(exe+0x26026);
- return {boundary,stop:r=>{clearTimeout(timer);stop(r);},snapshot:()=>({token,binding,expected,deadline,active,reason,phase,lastPC:e.get_eip()>>>0,records:[...records]})};
+ return {boundary,stop:r=>{clearTimeout(timer);stop(r);},snapshot:()=>{
+  if(active)lastSample=sample();
+  return {token,binding,expected,deadline,active,reason,phase,lastPC:lastSample?.pc??e.get_eip()>>>0,lastSample,records:[...records]};
+ }};
 }'''
 
 
