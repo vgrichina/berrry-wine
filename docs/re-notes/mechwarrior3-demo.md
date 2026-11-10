@@ -1645,3 +1645,30 @@ operations. The block executor is off on both guest instances. An isolated
 pure/mixed evaluator split passes randomized and copied-kernel parity and
 reaches batch 1150 with the same 4,423,912 API calls and identical cockpit
 pixels; this local run supplies correctness evidence, not an FPS comparison.
+
+### 2026-11-10 scoped recorder and ordinary menu route
+
+Run `20261110-mw3-scoped-recorder-cockpit-1400` privately verified the scoped
+pre-instantiation prefix in the actual isolated production Worker: unwrapped,
+inactive, active, compiled excluded-noise/delayed-read, selected overflow,
+excluded-import exception and decoder-failure controls passed. Node and Chrome
+parents actually waited with separate EOF. The checked launch refused missing
+results before any commands-API call and passed a harmless substituted launch.
+
+The single authorized e587 original reached ordinary Pilot Entry, registered
+pilot `a`, accepted the Instant Action Bushwacker defaults, and showed the loading
+map. The first measured cursor move consumed all `[-128,-23]` relative motion
+and reached `[160,212]`; the three menu selections each had matched pressed and
+released reads. No cockpit or firing was reached. Loading-map snapshots retained
+fence 1153/draw count 288 while guest slices advanced; their engine cause remains
+unclassified, and historical 186/2842 ms gaps remain UNKNOWN.
+
+The first passive profile failed before sampling because the legacy adapter
+exposes no public `targets` map: `adapter.targets.values()` threw. The supported
+repair, `tools/mw3-passive-render-snapshot.cjs`, represents unavailable target
+evidence explicitly and preserves render control words. Regressions construct
+the actual legacy WebGL adapter and execute the serialized replacement without
+GPU commands. A future run-only `critical-repaired.cjs` uses it; it has not been
+browser-verified. Input stopped at the failure, without replay. Evidence was
+hash-verified before normal shutdown of `bx_2m7z48d8`, now archived with completed
+non-forced receipt `stop_964c8bcb4dfd647a` and no expiry.

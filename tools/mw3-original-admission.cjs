@@ -24,6 +24,46 @@ function verifyInputs(root, pins, requiredPaths) {
   return true;
 }
 
+function verifyScopedControls(production) {
+  const modes = ['unwrapped', 'inactive', 'active', 'noise-delayed',
+    'selected-overflow', 'excluded-exception', 'decoder-failure'];
+  assert.deepEqual(production.controls.map(c => c.mode), modes, 'scoped production controls missing');
+  for (const c of production.controls) {
+    assert.equal(c.isolated, true);
+    if (c.mode === 'unwrapped') continue;
+    assert(c.installed && c.capture.beforeInstantiation, 'production recorder binding missing');
+    assert(Number.isFinite(c.capture.capturedAt) &&
+      c.capture.capturedAt <= c.capture.instantiateStartedAt &&
+      c.capture.instantiateStartedAt <= c.capture.instantiatedAt, 'actual pre-instantiation capture required');
+    assert(c.capture.imports.some(i => i.module === 'host' && i.kind === 'function' &&
+      i.name === 'get_mouse_buttons_live'), 'actual module import capture missing');
+    assert.deepEqual(c.trace.importNames, ['get_mouse_buttons_live'], 'scoped rows required');
+    assert(c.trace.imports.every(i => i.name === 'get_mouse_buttons_live'), 'excluded row stored');
+  }
+  const byMode = Object.fromEntries(production.controls.map(c => [c.mode,c]));
+  const noise = byMode['noise-delayed'];
+  assert(noise.beforeDelayed.active && !noise.beforeDelayed.reads.length &&
+    !noise.beforeDelayed.imports.length && noise.beforeDelayed.excludedImports >= 80000,
+    'compiled excluded noise did not precede delayed read');
+  assert(noise.delayedMs >= 450, 'delayed read control missing');
+  const overflow = byMode['selected-overflow'];
+  assert.equal(overflow.selectedRows, 65536, 'selected capacity changed');
+  assert.equal(overflow.trace.drops, 1);
+  assert.equal(overflow.trace.active, false);
+  assert.deepEqual(overflow.trace.errors, ['import capacity']);
+  assert.equal(overflow.trace.reads.length, 0);
+  const exception = byMode['excluded-exception'];
+  assert.match(exception.caught, /fixture excluded original exception/);
+  assert.equal(exception.trace.active, false);
+  assert.deepEqual(exception.trace.errors, ['original import threw: log']);
+  assert.equal(exception.trace.reads.length, 0);
+  const decoder = byMode['decoder-failure'];
+  assert.equal(decoder.trace.active, false);
+  assert(decoder.trace.errors.some(e => e.includes('standard mouse format')));
+  assert.equal(decoder.trace.reads.length, 0);
+  return true;
+}
+
 function admitOriginal({root, pins, requiredPaths, candidatePath, candidate,
     parent, production, chrome, expectedModule}) {
   verifyInputs(root, pins, requiredPaths);
@@ -50,8 +90,13 @@ function admitOriginal({root, pins, requiredPaths, candidatePath, candidate,
   assert.equal(production.fixtureOnly, true);
   assert.match(expectedModule, /^[a-f0-9]{64}$/);
   assert.equal(production.moduleSHA256, expectedModule, 'production module changed');
-  assert.deepEqual(production.controls.map(c => c.mode), ['unwrapped', 'inactive', 'active']);
-  for (const c of production.controls) {
+  for (const [name, field] of [['worker-prefix.js','prefixSHA256'], ['worker-fixture.js','fixtureSHA256']]) {
+    const input = path.posix.join(path.posix.dirname(candidatePath), name);
+    assert(requiredPaths.includes(input), 'control input missing: ' + input);
+    assert.equal(production[field], sha(fs.readFileSync(path.join(root,input))), 'control input changed: ' + name);
+  }
+  verifyScopedControls(production);
+  for (const c of production.controls.filter(c => ['unwrapped','inactive','active','noise-delayed'].includes(c.mode))) {
     assert.equal(c.isolated, true, 'production Worker isolation missing');
     assert.equal(c.state[12], 128, 'compiled pressed state missing');
     if (c.mode === 'unwrapped') continue;
@@ -76,7 +121,7 @@ function admitOriginal({root, pins, requiredPaths, candidatePath, candidate,
   return {passed: true, candidateSHA256: candidate.exactCandidateSHA256, moduleSHA256: expectedModule};
 }
 
-module.exports = {verifyInputs, admitOriginal};
+module.exports = {verifyInputs, verifyScopedControls, admitOriginal};
 
 if (require.main === module) {
   // A nonzero exit must stop the caller before its sandbox commands API call.
