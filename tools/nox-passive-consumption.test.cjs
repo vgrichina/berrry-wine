@@ -28,6 +28,9 @@ async function consumer(mode,action='move'){
    const start=generated.indexOf("const cw=[...workers.values()].find(w=>w.targetId===latest.identity.workerTarget&&!w.closed);assert(cw,'Nox consumption capture Worker');");
    const end=generated.indexOf("console.log('CAPTURE '+label);",start);assert(start>0&&end>start);
    await vm.runInContext('(async()=>{'+generated.slice(start,end)+'})()',context);
+   // A changed peer image satisfies the caller's transition guard. Stable
+   // settling is separately exercised through the emitted menu controls.
+   context.latest={...context.latest,sha256:'b'.repeat(64)};
   },
   chain:{admit:async(_,f)=>f({live:{identity:latest.identity}})},
   send:async()=>{assert(!terminal);sent++;if(mode==='firstfailure')throw Error('first native failure');if(mode==='anchor')reference={x:0,y:0};return {};},

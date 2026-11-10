@@ -189,6 +189,61 @@ async function capture(label){validCaptureLabel(label);`);
  assert(!c.captureHeld||!fs.existsSync(out+'/'+c.label+'-held.png'),'unique held capture label required');`);
   return source;
 }
+function menuCaller(source){
+  // Title caller policy only. Neither the Worker observer nor its absolute
+  // deadline changes. Settling is passive, finite, and never retries input.
+  source=exact(source,'async function execute(c,markDispatch){',`let settledMenu=null;
+async function menuRegion(rect){
+ assert(Array.isArray(rect)&&rect.length===4&&rect.every(Number.isInteger),'integer menu rectangle');
+ const [x,y,w,h]=rect;assert(x>=0&&y>=0&&w>0&&h>0&&x+w<=640&&y+h<=480,'menu rectangle bounds');
+ return evaluate('('+async function(rect){
+  const c=document.getElementById('screen');
+  if(!c||c.width!==640||c.height!==480)throw Error('original Nox canvas required');
+  const pixels=c.getContext('2d').getImageData(...rect).data;
+  return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',pixels)),v=>v.toString(16).padStart(2,'0')).join('');
+ }.toString()+')('+JSON.stringify(rect)+')');
+}
+async function execute(c,markDispatch){`);
+  source=exact(source," validCaptureLabel(c.label);",` validCaptureLabel(c.label);
+ assert(c.flow===undefined||['settle-menu','transition'].includes(c.flow),'known title caller flow');
+ assert(c.flow!=='settle-menu'||c.action==='capture','settling is passive only');
+ const previousImage=latest;
+ if(c.menuTarget){
+  assert(c.flow==='transition'&&c.action==='click','menu target requires ordinary transition click');
+  assert(settledMenu&&settledMenu.label===latest.label,'reviewed settled menu required');
+  const review=JSON.parse(fs.readFileSync(out+'/'+latest.label+'-review.json'));
+  assert(review.settledMenu===true,'full settled image model review required');
+  assert.deepEqual(c.menuTarget,settledMenu.rect,'reviewed target rectangle');
+  assert(c.point[0]*640>=c.menuTarget[0]&&c.point[0]*640<c.menuTarget[0]+c.menuTarget[2]&&c.point[1]*480>=c.menuTarget[1]&&c.point[1]*480<c.menuTarget[1]+c.menuTarget[3],'click inside reviewed target');
+ }`);
+  source=exact(source,' const dispatch=async receipt=>{',` const dispatch=async receipt=>{
+ if(c.menuTarget){
+  assert.equal(await menuRegion(c.menuTarget),settledMenu.sha256,'moving menu target refused before input');
+  assert(!terminalError&&Date.now()<deadline,'menu target cancelled or late');
+  assert(Date.now()-Date.parse(latest.at)<=bound.MAX_AGE_MS,'stale menu target refused before input');
+ }
+ settledMenu=null;`);
+  source=exact(source,' await wait(c.waitMs);await capture(c.label);',` await wait(c.waitMs);
+ let settlement=null;
+ if(c.flow==='settle-menu'){
+  assert(c.waitMs>=250,'finite explicit menu settling interval required');
+  const first=await menuRegion(c.settleTarget);await wait(250);
+  assert(!terminalError&&Date.now()<deadline,'settling cancelled or late');
+  const second=await menuRegion(c.settleTarget);
+  assert.equal(first,second,'menu still moving after explicit settling');
+  settlement={label:c.label,rect:c.settleTarget,sha256:second};
+ }
+ assert(!terminalError&&Date.now()<deadline,'caller cancelled or late before capture');
+ await capture(c.label);
+ assert(!terminalError&&Date.now()<deadline,'caller cancelled or late after capture');
+ if(c.flow!=='settle-menu')assert.notEqual(latest.sha256,previousImage.sha256,'required gameplay transition unchanged; terminal');
+ if(settlement){
+  assert.equal(await menuRegion(settlement.rect),settlement.sha256,'menu moved during settled capture');
+  assert(!terminalError&&Date.now()<deadline,'settled image reply cancelled or late');
+  settledMenu=settlement;save(c.label+'-settled-menu.json',{...settlement,capture:latest,requiresFullModelReview:true});
+ }`);
+  return source;
+}
 function pointerObservations(source){
   // Disabled unless explicitly selected by the finite native experiment.
   // Existing console delivery is the prearmed sink; terminal cleanup performs
@@ -337,6 +392,7 @@ function generate(planFile,destination){
     const helper=path.join(destination,'bound-input.cjs');
     fs.writeFileSync(helper,observer.boundSource(fs.readFileSync(helper,'utf8'),config));
   }
+  source=menuCaller(source);
   emit('browser-run.cjs',source);
   // Reuse the authenticated durable service, including its ready-stop scan.
   // Keep Q3's app-specific observation wrapper out of the Nox process. Both
@@ -363,7 +419,7 @@ if __name__=='__main__':
   for(const [name,bytes] of Object.entries(patches))emit(name,bytes);
   verify(ROOT,manifest,destination);return manifest;
 }
-module.exports={ROOT,HISTORY,DRIVER_SHA,HELPERS,sha,pin,planHash,inspect,generate,verify,registry,checkPin,pointerObservations,startupDiagnostics,terminalCleanup,captureLabels};
+module.exports={ROOT,HISTORY,DRIVER_SHA,HELPERS,sha,pin,planHash,inspect,generate,verify,registry,checkPin,pointerObservations,startupDiagnostics,terminalCleanup,captureLabels,menuCaller};
 if(require.main===module){
   try{
     if(process.argv[2]==='inspect'){

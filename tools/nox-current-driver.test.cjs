@@ -191,7 +191,7 @@ async function child(){
            if(!(mode==='fixture-up-fault'&&p.type==='mouseReleased'))page.emit(p.type==='mousePressed'?'mousedown':p.type==='mouseReleased'?'mouseup':'mousemove',p);
            if(['drag-failure','held-mouse'].includes(mode)&&p.type==='mousePressed'&&!firstMouseFault){firstMouseFault=true;terminalIndex=protocol.length;if(mode==='held-mouse')return;return this.reply(q,{}, {code:-1,message:'OFFLINE_FIRST_DRAG_FAILURE'});}
          }else if(q.method==='Page.captureScreenshot'){if(mode==='held-capture'&&fs.existsSync(generated+'/original/ready.json')){terminalIndex=protocol.length;return;}if(fixtureControl){const f=page.noxFixture;assert.equal(f.canvas.style.opacity,'1','paint must publish through production renderer');assert(f.renderer._directPresentation);assert.equal(f.renderer.presentationCanvas.style.display,'none');}
-          r={data:Buffer.from('offline screenshot bytes').toString('base64')};}
+          r={data:Buffer.from('offline screenshot bytes '+protocol.length).toString('base64')};}
          else if(q.method==='Browser.close'){this.reply(q);browser.stdin.end('close\n');return;}
          else assert(['Target.setDiscoverTargets','Target.setAutoAttach','Page.enable','Runtime.enable','Debugger.enable'].includes(q.method),q.method);
          this.reply(q,r);
@@ -480,5 +480,60 @@ async function cdpControls(generated,out){
  }
  save(out+'/results.json',{passed:true,actualEmittedSendEvaluate:true,results});console.log(JSON.stringify({passed:true,controls:results.length}));
 }
+async function menuControls(generated,out){
+ assert(!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
+ const source=fs.readFileSync(generated+'/browser-run.cjs','utf8');
+ const begin=source.indexOf('let settledMenu=null;'),end=source.indexOf('\n(async()=>{',begin);
+ assert(begin>0&&end>begin);const results=[];
+ for(const mode of ['stable-settle','implicit-stable','transition-unchanged','moving-settle','moving-target','unsettled-target','stale-target','cancel-settle','late-settle','cancel-reply','cancel-target-reply','late-target-reply','cancel-settled-reply','late-settled-reply']){
+  let now=1000,inputs=0,captures=0,reads=0,terminal=null;
+  const canvas=require('../lib/canvas-compat').createCanvas(640,480);
+  canvas.getContext('2d').fillRect(0,0,640,480);
+  const image={label:'before',sha256:'a'.repeat(64),at:new Date(now).toISOString(),identity:{workerTarget:'worker'}};
+  const ctx={assert,Date:class extends Date{static now(){return now;}},bound:{MAX_AGE_MS:120000},deadline:1000000,terminalError:null,noxAnchor:null,noxCommand:null,latest:image,
+   out:'/offline',root,pointerObserverInstalled:true,save(){},validCaptureLabel(){},pageSession:'page',workers:new Map([['worker',{targetId:'worker',sessionId:'worker'}]]),
+   sha:()=>image.sha256,fs:{existsSync:()=>false,readFileSync:p=>p.endsWith('-review.json')?JSON.stringify({...ctx.latest,review:'model full PNG review',settledMenu:true}):'image'},
+   wait:async ms=>{now+=ms;if(ms===250&&mode==='cancel-settle')ctx.terminalError=Error('cancelled');if(ms===250&&mode==='late-settle')now=ctx.deadline;},
+   capture:async label=>{captures++;ctx.latest={...image,label,at:new Date(now).toISOString()};if(mode==='cancel-reply')ctx.terminalError=Error('cancelled during capture');},
+   evaluate:async expression=>{
+    if(expression.includes('async function(rect)')){
+     reads++;
+     if(reads===4&&mode==='cancel-target-reply')ctx.terminalError=Error('cancelled target reply');
+     if(reads===4&&mode==='late-target-reply')now=ctx.deadline;
+     if(reads===3&&mode==='cancel-settled-reply')ctx.terminalError=Error('cancelled settled reply');
+     if(reads===3&&mode==='late-settled-reply')now=ctx.deadline;
+     if(['moving-settle','moving-target'].includes(mode)&&reads>(mode==='moving-target'?3:1)){
+      const painter=canvas.getContext('2d');painter.fillStyle='#ff0000';painter.fillRect(250,250,100,30);
+     }
+     return vm.runInNewContext(expression,{document:{getElementById:()=>canvas},crypto:require('node:crypto').webcrypto});
+    }
+    if(expression.includes('__noxConsumption.begin'))return {active:true,cursor:{x:0,y:0}};
+    if(expression==='window.noxPointerObserver.snapshot().state')return {reference:{x:0,y:0}};
+    return {left:0,top:0,width:640,height:480};
+   },send:async()=>{inputs++;return {};},require:n=>n==='./native-mouse.cjs'?{perform:async()=>{inputs++;return {};}}:require(n),
+   chain:{admit:async(review,dispatch)=>{assert(now-Date.parse(ctx.latest.at)<=120000,'stale scene refused');return dispatch({live:{identity:ctx.latest.identity}});}}};
+  vm.createContext(ctx);vm.runInContext(source.slice(begin,end)+';globalThis.run=execute;',ctx);
+  const run=async c=>{if(terminal)throw terminal;try{await ctx.run(c,()=>{});}catch(e){ctx.terminalError=terminal=e;throw e;}};
+  const settle={id:'settle',action:'capture',flow:'settle-menu',settleTarget:[250,250,100,30],reviewRef:'before',label:'settled',waitMs:1000};
+  if(mode==='implicit-stable'){
+   await assert.rejects(run({...settle,flow:undefined}),/transition unchanged/);
+  }else if(mode==='transition-unchanged'){
+   await assert.rejects(run({id:'input',action:'click',flow:'transition',point:[.5,.5],reviewRef:'before',label:'after',waitMs:0}),/transition unchanged/);assert.equal(inputs,1);
+  }else if(mode==='unsettled-target'){
+   await assert.rejects(run({id:'input',action:'click',flow:'transition',menuTarget:settle.settleTarget,point:[.45,.55],reviewRef:'before',label:'after',waitMs:0}),/settled menu required/);
+  }else if(['moving-settle','cancel-settle','late-settle','cancel-reply','cancel-settled-reply','late-settled-reply'].includes(mode))await assert.rejects(run(settle),/moving|cancelled|late/);
+  else{
+   await run(settle);assert.equal(inputs,0);assert.equal(captures,1);
+   if(mode!=='stable-settle'){
+    if(mode==='stale-target')now+=120001;
+    await assert.rejects(run({id:'input',action:'click',flow:'transition',menuTarget:settle.settleTarget,point:[.45,.55],reviewRef:'settled',label:'after',waitMs:0}),/moving menu target|stale|cancelled|late/);
+    assert.equal(inputs,0);
+   }
+  }
+  if(terminal){const before=[inputs,captures,reads];await assert.rejects(run(settle));assert.deepEqual([inputs,captures,reads],before,'sticky terminal rejects later capture/input/protocol');}
+  results.push({mode,passed:true,inputs,captures,reads,terminal:!!terminal});
+ }
+ save(out+'/results.json',{passed:true,actualEmittedCaller:true,actualEmittedMenuRegion:true,results});console.log(JSON.stringify({passed:true,results}));
+}
 if(process.env.NOX_TEST_CHILD==='1')child().catch(e=>{console.error(e);process.exitCode=1;});
-else if(require.main===module)(process.argv[2]==='--cdp-controls'?cdpControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--observer-controls'?observerControls(path.resolve(process.argv[3]),path.resolve(process.argv[4]),process.argv[5]?.split(',')):main()).catch(e=>{console.error(e.stack);process.exitCode=1;});
+else if(require.main===module)(process.argv[2]==='--menu-controls'?menuControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--cdp-controls'?cdpControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--observer-controls'?observerControls(path.resolve(process.argv[3]),path.resolve(process.argv[4]),process.argv[5]?.split(',')):main()).catch(e=>{console.error(e.stack);process.exitCode=1;});
