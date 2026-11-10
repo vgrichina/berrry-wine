@@ -9,6 +9,15 @@ const save=(p,v)=>fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function child(){
  const dir=process.env.NOX_TEST_DIR,generated=process.env.NOX_TEST_GENERATED,mode=process.env.NOX_TEST_MODE;
  const consumer=path.join(generated,'browser-run.cjs'),protocol=[],deliveries=[];
+ const startupMutant=process.env.NOX_TEST_STARTUP_MUTANT;
+ assert(!startupMutant||startupMutant==='skip-polls');
+ let barrierChecks=0;
+ const originalExists=fs.existsSync;
+ fs.existsSync=function(file){
+  if(mode==='barrier-port'&&String(file).endsWith('/chrome-profile/DevToolsActivePort')&&++barrierChecks===4)
+   fs.writeFileSync(dir+'/publish-port','four actual endpoint checks');
+  return originalExists.call(this,file);
+ };
  const realNow=Date.now;let clockOffset=0;
  if(mode==='stale-refusal')Date.now=()=>realNow()+clockOffset;
  const startupFailure=['missing-port','early-death','malformed-port','stopped-port'].includes(mode);
@@ -46,7 +55,13 @@ async function child(){
   };
  }
  const originalCompile=Module.prototype._compile;
- Module.prototype._compile=function(source,filename){if(filename===consumer){compiled=true;assert.equal(current.sha(Buffer.from(source)),JSON.parse(originalRead(path.join(generated,'runtime-pins.json'))).generated.find(p=>p.path==='browser-run.cjs').sha256);}return originalCompile.call(this,source,filename);};
+ Module.prototype._compile=function(source,filename){if(filename===consumer){compiled=true;assert.equal(current.sha(Buffer.from(source)),JSON.parse(originalRead(path.join(generated,'runtime-pins.json'))).generated.find(p=>p.path==='browser-run.cjs').sha256);
+  if(startupMutant){
+   const loop='for(let i=0;i<100&&!fs.existsSync(active);i++){startupPolls++;sampleStartup();await wait(100);}';
+   assert.equal(source.split(loop).length,2,'unique emitted readiness loop');
+   source=source.replace(loop,'/* offline negative control: readiness polls removed */');
+  }
+ }return originalCompile.call(this,source,filename);};
  cp.spawn=(command,args,options)=>{
    assert.equal(command,'/usr/bin/google-chrome');assert(!faults[mode],'refusal must precede browser');
    const profile=args.find(a=>a.startsWith('--user-data-dir=')).slice(16);
@@ -57,6 +72,11 @@ async function child(){
        process.stderr.write('OFFLINE_CHILD_STARTED\\n');
        if(mode==='stopped-port'){process.stderr.write('OFFLINE_CHILD_STOPPED\\n');process.kill(process.pid,'SIGSTOP');}
        else if(mode==='missing-port')process.stderr.write('DevTools listening on ws://127.0.0.1:1/devtools/browser/offline\\n');
+       else if(mode==='barrier-port'){
+         const timer=setInterval(()=>{if(fs.existsSync(process.argv[3]+'/publish-port')){
+           fs.writeFileSync(profile+'/DevToolsActivePort','1\\n/devtools/browser/offline\\n');clearInterval(timer);
+         }},10);
+       }
        else if(mode==='delayed-port'){
          const cp=require('node:child_process');let remaining=20;
          for(let i=0;i<20;i++)cp.spawn('/bin/true').once('close',()=>{if(!--remaining)setTimeout(()=>fs.writeFileSync(profile+'/DevToolsActivePort','1\\n/devtools/browser/offline\\n'),423);});
@@ -65,7 +85,7 @@ async function child(){
        const timer=setInterval(()=>{},1000);
        process.stdin.once('data',()=>{clearInterval(timer);process.stdout.write('closed\\n');process.stderr.write('closed\\n');process.stdin.destroy();});
      }`;
-   browser=originalSpawn(process.execPath,['-e',script,profile,mode],{stdio:['pipe','pipe','pipe']});
+   browser=originalSpawn(process.execPath,['-e',script,profile,mode,dir],{stdio:['pipe','pipe','pipe']});
    browser.stdout.pipe(fs.createWriteStream('',{fd:options.stdio[1],autoClose:false}));
    browser.stderr.pipe(fs.createWriteStream('',{fd:options.stdio[2],autoClose:false}));
    browser.stdout.resume();browser.stderr.resume();browser.stdout.on('end',()=>stdoutEOF=true);browser.stderr.on('end',()=>stderrEOF=true);
@@ -211,9 +231,9 @@ async function child(){
    close(){this.readyState=3;}
  }
  globalThis.WebSocket=Peer;
- process.on('exit',code=>save(dir+'/peer.json',{mode,code,compiled,protocol,deliveries,terminalIndex,failurePublishedIndex,chromeStarted:false,browserPeerOnly:true}));
+ process.on('exit',code=>save(dir+'/peer.json',{mode,code,compiled,startupMutant:startupMutant??null,barrierChecks,protocol,deliveries,terminalIndex,failurePublishedIndex,chromeStarted:false,browserPeerOnly:true}));
  process.env.BROWSER_DEADLINE=String(Date.now()+600000);
- if(mode==='ordinary'||mode==='delayed-port'||fixtureControl)process.env.NO_ORIGINAL='1';
+ if(mode==='ordinary'||mode==='delayed-port'||mode==='barrier-port'||fixtureControl)process.env.NO_ORIGINAL='1';
  if(fixtureControl){
   process.env.NOX_POINTER_OBSERVER='1';
   (async()=>{const out=generated+'/production-preflight';
@@ -227,7 +247,7 @@ async function child(){
    }
   })().catch(e=>{console.error(e);process.exitCode=3;});
  }
- if(!faults[mode]&&mode!=='ordinary'&&mode!=='delayed-port'&&!fixtureControl&&!startupFailure){
+ if(!faults[mode]&&mode!=='ordinary'&&mode!=='delayed-port'&&mode!=='barrier-port'&&!fixtureControl&&!startupFailure){
    (async()=>{
      const out=generated+'/original';while(!fs.existsSync(out+'/ready.json')){if(fs.existsSync(out+'/first-browser-failure.json'))return;await wait(20);}
      const transport=require(generated+'/transport.cjs');

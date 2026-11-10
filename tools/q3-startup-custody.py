@@ -13,7 +13,9 @@ import types
 import json
 import os
 
-PROVIDER_SHA = '3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240'
+# Provider e13d26c22 adds deferred queue bookkeeping. The transformations below
+# retain it verbatim; no queue operation supplies authority to execute a task.
+PROVIDER_SHA = 'd8dc020deb6859aa7a70736aaa686285be5d51083e0e00d22b1df37d8d3aa539'
 VERSION = 'q3-startup-custody-release-cohorts-v3'
 
 

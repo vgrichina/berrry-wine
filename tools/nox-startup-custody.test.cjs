@@ -7,13 +7,46 @@ const root=path.resolve(__dirname,'..'),generated=path.resolve(process.argv[2]||
 assert(process.argv[2]&&process.argv[3]&&out.startsWith(root+'/scratch/runs/')&&!fs.existsSync(out));
 fs.mkdirSync(out,{recursive:true});
 const script=String.raw`
-import sys,runpy,os,time,json,importlib.util,unittest,zlib,gzip
+import sys,runpy,os,time,json,importlib.util,unittest,zlib,gzip,subprocess
 from pathlib import Path
 from unittest.mock import patch
 root,generated,out=map(Path,sys.argv[1:])
 sys.path.insert(0,str(root/'tools'))
 adapter=runpy.run_path(str(root/'tools/nox-startup-custody.py'))
 source=(root/'tools/native_kernel_custody.py').read_bytes()
+# Validate every adapter transformation against both exact provider versions.
+# The entire transformed-source delta must equal the provider's queue-only
+# delta. This includes the output-pump replacement, common CONT barrier,
+# release cohorts and wait-priority changes; no unchecked remainder is allowed.
+revision='bce2b316f18923d3f781034dc6e5b2d6fd9b73cb'
+def git_source(rev,name):
+ return subprocess.check_output(['git','show',rev+':tools/'+name],cwd=root)
+old=git_source(revision,'native_kernel_custody.py')
+queue_before="                              'creation-peek-message', 'ptrace-cont-returned')\n"
+queue_after="""                              'creation-peek-message', 'ptrace-cont-returned',
+                              'fork-parent-release', 'parked-child-release-queued',
+                              'parked-child-release')
+        # Queue bookkeeping cannot execute a task. Avoid an extra synchronous
+        # write for each enqueue/release while other tasks await queue service.
+        # Custody and before-consume remain durable; the full ordered prefix,
+        # including these records, still flushes before every executable CONT.
+"""
+assert old.decode().count(queue_before)==1
+assert old.decode().replace(queue_before,queue_after)==source.decode()
+for name,rev in [('q3-startup-custody.py','17b39151e8aab8926e1ff8b69b017b5839ba4c0b'),
+                 ('nox-startup-custody.py',revision)]:
+ previous={};exec(compile(git_source(rev,name),name,'exec'),previous)
+ current=runpy.run_path(str(root/'tools'/name))
+ is_q3=name.startswith('q3')
+ transformed=current['candidate'](source.decode() if is_q3 else source)
+ prior=previous['candidate'](old.decode() if is_q3 else old)
+ assert prior.count(queue_before)==1
+ assert prior.replace(queue_before,queue_after)==transformed,name
+ compile(transformed,name,'exec')
+ try:current['candidate']((source+b'\n').decode() if is_q3 else source+b'\n')
+ except ValueError:pass
+ else:raise AssertionError('provider drift admitted: '+name)
+print('PASS every current adapter transformation preserves exact queue-only source delta')
 with patch.object(Path,'read_bytes',return_value=source+b'\n'):
  try:adapter['load']()
  except ValueError:pass
