@@ -548,6 +548,14 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   until asynchronous completion or failure. The runner still explicitly selects
   the local owner while startup, register inspection, input and yield handling
   migrate; this preparatory change alone does not resolve its callback gap.
+  DLL startup now also uses `mainOwner.loadDlls`: the local owner drives
+  `loadDllsAsync`, while the Worker owner delegates to the production
+  `GuestThreadHost.loadDlls` protocol. Resource callbacks remain on the host;
+  its acknowledgement precedes guest initialization. Loader execution and
+  rollback stay on the selected owner. The owner boot test verifies resource
+  registration before exactly one attach, durable DLL metadata, restored
+  EIP/ESP and an unloaded shadow on both WASM builds. Evidence:
+  `scratch/runs/20261109-cli-dll-owner/test-result.json`.
   PE placement/loading and launch name/drive/arguments now use shared
   `stageAndLoadPeOwned`/`configureExeOwned` helpers in both the CLI and
   `GuestThreadHost.loadPe`. The existing `stagePe` still owns oversized PE/NE

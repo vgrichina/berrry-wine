@@ -6,6 +6,7 @@ const {GuestThreadHost}=require('../lib/guest-thread-host');
 const {createGuestMainOwner}=require('../lib/guest-main-owner');
 const {configureExeOwned,stageAndLoadPeOwned}=require('../lib/process-boot');
 const {BASE}=require('../lib/region-map.generated');
+const {pe,u32}=require('./test-dll-lifecycle-real-pe');
 const {Worker}=require('node:worker_threads');
 const {CommandQueue,WorkerConsumer,OPCODES:OP}=require('../lib/d3d-command-stream');
 const sigs=require('../lib/host-import-sigs.generated.json').sigs;
@@ -72,6 +73,32 @@ const root=path.resolve(__dirname,'..');
     const postload=await owner.read(['get_uop','get_uop_retry_ladder','get_uop_icg_mega','get_spin_park_k']);
     assert.deepEqual(postload,{get_uop:1,get_uop_retry_ladder:0,get_uop_icg_mega:3,get_spin_park_k:0});
     if(remote)assert.equal(h.exports.get_uop_icg_mega(),shadowUop,'interpreter options do not target shadow');
+    const marker=await owner.call('guest_alloc',4);
+    assert(marker,'DLL attach marker allocation');
+    const markerOffset=await owner.call('guest_to_wasm',marker);
+    view.setUint32(markerOffset,0,true);
+    // Only PROCESS_ATTACH increments the marker; later detach cannot touch it.
+    const dllBytes=pe([[0x1000,[0x83,0x7c,0x24,0x08,0x01,0x75,0x06,
+     0xff,0x05,...u32(marker),0xb8,1,0,0,0,0xc2,0x0c,0]]],true);
+    const beforeDll=await owner.read(['get_eip','get_esp']);
+    let registrations=0;
+    const dlls=await owner.loadDlls(bytes,[{name:'owner-init.dll',bytes:dllBytes}],()=>{}, {
+     registerDllResources(configs,loaded){
+      registrations++;
+      assert.equal(configs[0].name,'owner-init.dll');
+      assert.equal(loaded[0].name,'owner-init.dll');
+      assert.equal(view.getUint32(markerOffset,true),0,'resources registered before guest attach');
+     },
+    });
+    assert.equal(registrations,1);
+    assert.equal(view.getUint32(markerOffset,true),1,'selected owner executed DLL attach exactly once');
+    assert.equal(dlls.length,1);
+    assert.equal(dlls[0].dllMain,dlls[0].loadAddr+0x1000);
+    assert.equal(dlls[0].index,await owner.call('get_dll_index',dlls[0].loadAddr));
+    assert(dlls[0].generation>0);
+    assert.deepEqual(await owner.read(['get_eip','get_esp']),beforeDll,'DLL startup restores owner registers');
+    if(remote)assert.equal(h.exports.get_image_base(),0,'DLL startup never loads the host shadow');
+    await owner.call('guest_free',marker);
     // The renderer owns another native allocator. Its retired blocks must be
     // adopted by the guest instance, after termination, not by the host shadow.
     const shadowFree=h.exports.get_free_list();
@@ -82,7 +109,8 @@ const root=path.resolve(__dirname,'..');
       assert.equal(renderWorker.threadId,-1,'renderer terminated before heap handoff');
       adoptions++;
       const count=await owner.call('d3d_render_adopt_free_list',head);
-      assert.equal((await owner.read(['get_free_list'])).get_free_list,head,
+      // get_free_list flushes bins and may prepend blocks freed during DLL startup.
+      assert.equal(await owner.call('d3d_render_free_list_diagnostic',1),head,
        'retired heap belongs to selected guest instance');
       return count;
      }});
@@ -101,7 +129,7 @@ const root=path.resolve(__dirname,'..');
     assert(consumer.shutdownInfo.heapAdopted>0,'actual native renderer allocations reclaimed');
     if(remote)assert.equal(h.exports.get_free_list(),shadowFree,'host shadow allocator untouched');
     const retirement={adoptions,blocks:consumer.shutdownInfo.heapAdopted,pixels:64};
-    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,retirement});
+    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,dlls,registrations,retirement});
    }finally{await worker?.stop();}
   }
  }

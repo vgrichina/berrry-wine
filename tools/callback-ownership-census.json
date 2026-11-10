@@ -4,7 +4,8 @@
     {
       "file": "lib/guest-main-owner.js",
       "name": "host-file",
-      "sha256": "fbb8040f9e73afdb6d65be2397671d7bafc2f5959d64cfef7e27de9ea38e9d92",
+      "sha256": "ae7dfb67e9dfc8301e1f2b3265b865f6c9c30d5bff1079fea4e5e9298dccfb50",
+      "reviewDllStartup20261109": "DLL startup delegates to local awaited loader or production Worker loadDlls on the selected endpoint. Worker transport retains host resource callback and owns reverse acknowledgement, startup gate, entry and rollback; no function cloning or shadow fallback. Actual local/Node Worker normal+compat tests verify pre-attach registration, once-only entry, durable metadata and restored owner registers. Full CLI runtime migration remains pending.",
       "reviewConfiguration20261109": "Capability checks use function exports of the selected compiled Worker module; absent module metadata fails explicitly. Optional calls skip absent exports only, propagating present-export transport/native errors unchanged. No host-shadow fallback, new guest entry type, continuation or cleanup path. Node normal/compat owner configuration and failure-isolation tests pass; broader ownership pending.",
       "kind": "host-entry",
       "reason": "Review 20261109: immutable explicit local-or-Worker endpoint adapter. Calls and reads delegate to the chosen owner; Worker errors never fall back to host-shadow exports. Local execution remains inline. No independent callback stack, replay, cancellation or generation implementation added; endpoint lifecycle remains the existing transport responsibility. Owner isolation/asynchronous observer tests and actual Node slot0 contended callback probe pass. CLI startup and other exports still migrating; broader ownership pending.",

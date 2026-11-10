@@ -39,6 +39,7 @@ const { createMainSchedulerObserver } = require('./main-scheduler-observer');
   assert.equal(await remote.optionalCall('absent',8),undefined);
   await assert.rejects(remote.optionalCall('set',7), /owner retired/,'optional does not swallow present-export failure');
   assert.equal(register,-1,'failed remote invocation never falls back to shadow registers');
+  assert.throws(()=>remote.loadDlls(new Uint8Array(),[],null,{}),/missing Worker DLL loader/);
   assert.deepEqual(await remote.read(['get']),{get:12});
 
   for(const fail of [false,true]) {
@@ -54,5 +55,17 @@ const { createMainSchedulerObserver } = require('./main-scheduler-observer');
     assert.equal(JSON.parse(logs.at(-1).slice('[main-scheduler] '.length)).scope,'outside-observed-main-run');
   }
   assert.deepEqual(calls,[['set',9],['set',7],['get'],[100,{tickMs:20}],[100,{tickMs:20}]]);
+  const configs=[{name:'owned.dll',bytes:new Uint8Array([1])}],exeBytes=new Uint8Array([2]);
+  const options={registerDllResources(){}};let failed=false;
+  const dllOwner=createGuestMainOwner({worker:{module,callExport(){},readExports(){},slice(){},
+    async loadDlls(actualConfigs,actualExe,actualOptions){
+      assert.equal(actualConfigs,configs);assert.equal(actualExe,exeBytes);assert.equal(actualOptions,options);
+      if(failed)throw new Error('DLL startup failed');
+      return [{name:'owned.dll',loadAddr:123,dllMain:456,index:2,generation:3}];
+    }}});
+  assert.deepEqual(await dllOwner.loadDlls(exeBytes,configs,null,options),
+    [{name:'owned.dll',loadAddr:123,dllMain:456,index:2,generation:3}]);
+  failed=true;
+  await assert.rejects(dllOwner.loadDlls(exeBytes,configs,null,options),/DLL startup failed/);
   console.log('PASS guest main ownership: local ordering, remote failure isolation and asynchronous slice diagnostics');
 })().catch(error=>{console.error(error);process.exitCode=1;});

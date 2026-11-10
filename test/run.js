@@ -5,7 +5,7 @@ const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
 const { createHostImports } = require('../lib/host-imports');
 const frameIntervals = require('../lib/frame-intervals');
 const { createRenderWaitAttribution } = require('../lib/render-wait-attribution');
-const { loadDllsAsync, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
+const { callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
 const { inputEventHwnd } = require('../lib/host-window');
 const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
   startupShowCommand, startupShowArgs,
@@ -5908,7 +5908,7 @@ async function main() {
   threadManager._serviceDllYield = onLoadLibraryYield;
   if (dlls.length > 0) {
     mountLoadedDllFiles(ctx.vfs, dlls);
-    const dllResults = await loadDllsAsync(instance.exports, memory.buffer, exeBytes, dlls, console.log, {
+    const dllResults = await mainOwner.loadDlls(exeBytes, dlls, console.log, {
       onLoadLibraryYield,
       exeName: path.basename(EXE_PATH),
       extraArgs: EXTRA_ARGS || '',
