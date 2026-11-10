@@ -24,13 +24,14 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
  let armed=false;const input=[];const pauseControl=process.env.LB_OFFLINE_PAUSE==='1';
  let completionArm=null,completionPolls=0,completionReady=false;
  const completionNegative=process.env.LB_OFFLINE_COMPLETION_NEGATIVE;
+ const levelControl=process.env.LB_OFFLINE_LEVEL_START==='1';let presented=false;
  function evaluated(s,session){
-  if(s.startsWith('new Promise((resolve,reject)=>')){assert(completionReady,'presentation follows original completion');return {presented:true};}
+  if(s.startsWith('new Promise((resolve,reject)=>')){assert(completionReady,'presentation follows original completion');if(completionNegative==='presentation')return {presented:false};presented=true;return {presented:true};}
   if(s.includes('__mcmPassiveIdentityV1'))return {isolated:true,apps:[page]};
   if(s.includes('__mcmPassiveInstanceV1'))return session==='guest-session'?{endpointIdentity:'endpoint',slot:0,instance:'instance'}:{endpointIdentity:'secondary-'+session,slot:1,instance:session};
   if(s==='globalThis.__lbArm()'){assert.equal(session,'guest-session','observer must arm bound owning Worker');armed=true;return {armed:true};}
   if(s.startsWith('globalThis.__lbArm(')){
-   assert.equal(session,'guest-session');armed=true;completionReady=false;completionPolls=0;
+   assert.equal(session,'guest-session');armed=true;completionReady=false;presented=false;completionPolls=0;
    completionArm={...JSON.parse(s.slice('globalThis.__lbArm('.length,-1)),deadline:Date.now()+2000,binding:{exe:0x400000,sdl:0x5f0000,generation:1}};
    return {armed:true,...completionArm};
   }
@@ -61,7 +62,7 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
    if(v.method==='Input.dispatchKeyEvent'){assert(armed,'arm precedes native input');input.push(pauseControl?[v.params.type,v.params.key]:v.params.type);}
    if(v.method==='Page.getLayoutMetrics')result={cssContentSize:{x:0,y:0,width:1024,height:855}};
    if(v.method==='Page.captureScreenshot'){
-    if(completionArm)assert(completionReady,'FIRST screenshot requires guest completion, SDL alone insufficient');
+    if(completionArm){assert(completionReady,'FIRST screenshot requires guest completion, SDL alone insufficient');assert(presented,'FIRST screenshot requires completed page presentation');}
     result={data:Buffer.from('offline startup pixels; no visual acceptance').toString('base64')};
    }
    queueMicrotask(()=>this.onmessage({data:JSON.stringify({id:v.id,result})}));
@@ -86,6 +87,25 @@ if(process.env.LB_OFFLINE_STARTUP==='1'){
    address:()=>({port:1234}),prependListener(){},closeAllConnections(){},close:fn=>fn()
   })};
   if(name==='./transport.cjs')return {...value,consume:async(p,n,execute)=>{
+   if(levelControl){
+    assert.equal(n,0);const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));
+    value.publish(out+'/startup-review.json',{...latest,review:'offline adapter only; no real image review',decision:'continue'});
+    const command={id:'offline-level-start',action:'key',key:'Enter',completion:'level-start',holdMs:80,waitMs:0,label:'level-start',reviewRef:'startup'};
+    if(completionNegative){
+     await assert.rejects(execute(command,()=>{}));assert(!fs.existsSync(out+'/level-start.png'));
+     assert(fs.existsSync(out+'/first-browser-failure.json'));const count=input.length;
+     for(const action of ['key','capture','quit'])await assert.rejects(execute({...command,action},()=>{}),/terminal/);
+     assert.equal(input.length,count);assert.deepEqual(input,[['keyDown','Enter'],['keyUp','Enter']]);
+    }else{
+     await execute(command,()=>{});assert.equal(completionArm.phase,'level-start');assert.equal(completionPolls,3);
+     assert(presented);assert(fs.existsSync(out+'/level-start.png'));
+     const after=JSON.parse(fs.readFileSync(out+'/latest.json'));
+     value.publish(out+'/level-start-review.json',{...after,review:'terminal offline negative',decision:'stop'});
+     await assert.rejects(execute({...command,reviewRef:'level-start'},()=>{}),/terminal visual/);
+    }
+    value.publish(run+'/offline-level-start-control.json',{passed:true,negative:completionNegative||null,actualGeneratedConsumer:true,firstImageGated:true,stickyTerminal:true});
+    browser.exitCode=-15;browser.emit('exit',null,'SIGTERM');return true;
+   }
    assert(n<=(pauseControl?2:1));const latest=JSON.parse(fs.readFileSync(out+'/latest.json'));
    assert.equal(latest.label,n===0?'startup':n===1?(pauseControl?'paused':'after-left'):'after-play');assert.equal(latest.identity.renderEndpoint,'none');
    value.publish(out+'/'+latest.label+'-review.json',{...latest,review:'offline adapter only; no real image review',decision:'continue'});

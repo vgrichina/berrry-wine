@@ -6,6 +6,52 @@ availability must never mask passive terminal records.
 import json
 
 
+def level_start_completion_observer_source():
+    """Original local init -> fade-in -> first gameplay SDL presentation return."""
+    return r'''async function installLevelStartCompletion({e,memory,binding,token,expected,now=()=>Date.now(),emit=()=>{}}){
+ if(!token||expected!==8)throw Error('level-start command binding');
+ const v=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p>>>0)>>>0;
+ const u32=p=>v.getUint32(wa(p),true),u8=p=>v.getUint8(wa(p));
+ const {exe,sdl,index,generation,mappingState,keys}=binding;
+ const table=e.get_dll_table()>>>0,life=e.get_dll_lifecycle_table()>>>0,stride=e.get_dll_lifecycle_stride()>>>0;
+ const records=[],deadline=now()+2000;let active=true,reason=null,phase='init',frame;
+ const trace=pc=>e.set_trace_eip_range(1,pc,pc+1);
+ const record=(kind,data={})=>{const r={kind,token,at:now(),...data};records.push(r);emit(r);};
+ const valid=()=>{if(e.get_image_base()!==exe||e.get_current_thread_id()!==1||
+  v.getUint32(table+index*32,true)!==sdl||v.getUint32(life+index*stride+4,true)!==generation||
+  v.getUint32(life+index*stride,true)!==mappingState)throw Error('level-start module/owner changed');};
+ const stop=r=>{if(!active)return;active=false;reason=r;e.set_trace_eip_range(0,0,0);record('completion-stop',{reason:r});};
+ function boundary(pc=e.get_eip()>>>0){
+  if(!active)return;
+  try{
+   valid();if(now()>=deadline)return stop('deadline');
+   const esp=e.get_esp()>>>0;
+   if(phase==='init'&&pc===exe+0x1f2ac){
+    frame={ret:u32(esp),esp};record('local-init-entry');phase='init-return';trace(frame.ret);return;
+   }
+   if(phase==='init-return'&&pc===frame.ret&&esp===frame.esp+4){
+    if(e.get_eax()!==1||u32(exe+0x523b0)!==8)throw Error('original local init failed');
+    record('local-init-return',{state:8});phase='run';trace(exe+0x1faa0);return;
+   }
+   if(phase==='run'&&pc===exe+0x1faa0){
+    record('game-run-entry');phase='fade-return';trace(exe+0x1faf2);return;
+   }
+   if(phase==='fade-return'&&pc===exe+0x1faf2){
+    if(u32(exe+0x523b0)!==8)throw Error('original fade state');
+    record('level-fade-return');phase='display-return';trace(exe+0x2047a);return;
+   }
+   if(phase==='display-return'&&pc===exe+0x2047a){
+    if(u32(exe+0x523b0)!==8||u8(keys+13)!==0)throw Error('original level presentation/release incomplete');
+    record('level-display-return',{state:8,releaseState:0});record('guest-complete',{state:8});stop('complete');
+   }
+  }catch(error){record('completion-error',{error:String(error)});stop('failure');}
+ }
+ const timer=setTimeout(()=>stop('deadline'),2000);if(timer.unref)timer.unref();
+ valid();record('completion-arm',{binding,expected,deadline});trace(exe+0x1f2ac);
+ return {boundary,stop:r=>{clearTimeout(timer);stop(r);},snapshot:()=>({token,binding,expected,deadline,active,reason,phase,records:[...records]})};
+}'''
+
+
 def pause_completion_observer_source():
     """Passive phase-specific trace; original media/module validator stays shared.
 
@@ -68,7 +114,7 @@ def pause_completion_observer_source():
 
 
 def pause_completion_preload_source():
-    return pause_completion_observer_source() + r'''
+    return pause_completion_observer_source() + '\n' + level_start_completion_observer_source() + r'''
 (()=>{
  const instantiate=WebAssembly.instantiate;
  WebAssembly.instantiate=async function(source,imports){
@@ -88,7 +134,9 @@ def pause_completion_preload_source():
   const bytes=new Uint8Array(memory.buffer),hex=(pc,n)=>Array.from(bytes.subarray(e.guest_to_wasm(pc),e.guest_to_wasm(pc)+n),x=>x.toString(16).padStart(2,'0')).join('');
   for(const [rva,h] of [[0x1e406,'5589e583ec18'],[0x1e7b4,'83c410eb36'],[0x7b2a,'e8c7e40100']])
    if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original pause instruction mismatch');
-  globalThis.__lbObserver=await installPauseCompletion({e,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
+  if(c.phase==='level-start')for(const [rva,h] of [[0x1f2ac,'5589e55383ec14'],[0x1faa0,'5589e5575653'],[0x1faf2,'83c410'],[0x20475,'e87c5b0000']])
+   if(hex(binding.exe+rva,h.length/2)!==h)throw Error('original level-start instruction mismatch');
+  globalThis.__lbObserver=await (c.phase==='level-start'?installLevelStartCompletion:installPauseCompletion)({e,memory,binding,...c,emit:r=>console.log('LB_OBSERVER',JSON.stringify(r))});
   return {armed:true,...__lbObserver.snapshot()};
  };
 })();
@@ -100,7 +148,7 @@ def pause_completion_source(source):
     replacements = [
         ("async function armObservation(){const s=await owningWorker();return evaluate('globalThis.__lbArm()',s);}", r'''async function armObservation(c){
  const s=await owningWorker(),token=c.id+'-'+c.phase;
- const arm=await evaluate('globalThis.__lbArm('+JSON.stringify({token,expected:c.expected})+')',s);
+ const arm=await evaluate('globalThis.__lbArm('+JSON.stringify({token,expected:c.expected,phase:c.phase})+')',s);
  assert(arm.armed&&arm.token===token,'completion arm binding');
  return {session:s,token,expected:c.expected,deadline:arm.deadline,binding:arm.binding};
 }
@@ -123,7 +171,7 @@ async function completion(a){
   }
  }catch(e){fail(e);throw e;}
 }'''),
-        ("if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}", "let completionArm;\n   if(c.action==='key'&&c.key==='p')completionArm=await armObservation({...c,phase:'pause',expected:20});"),
+        ("if(c.observe){save('observer-arm-'+c.id+'.json',await armObservation());}", "let completionArm;\n   if(c.completion==='level-start'){assert(c.action==='key'&&c.key==='Enter','level-start requires native Enter');completionArm=await armObservation({...c,phase:'level-start',expected:8});}\n   else if(c.action==='key'&&c.key==='p')completionArm=await armObservation({...c,phase:'pause',expected:20});"),
         ("     const k=require('./input.cjs').key('p'),{text,...release}=k;", "     const a=await armObservation({...c,phase,expected:phase==='resume'?8:20});\n     const k=require('./input.cjs').key('p'),{text,...release}=k;"),
         ("save:r=>save('input-'+c.id+'-'+phase+'.json',r)});", "save:r=>save('input-'+c.id+'-'+phase+'.json',r)});\n     await completion(a);"),
         ("   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});", "   }else await pulse({down,up,deadline,onFailure:fail,holdMs:c.holdMs??100,save:r=>save('input-'+c.id+'-pulse.json',r)});\n   if(completionArm)await completion(completionArm);"),
