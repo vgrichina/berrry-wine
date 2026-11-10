@@ -189,6 +189,7 @@ async function child(){
        try{
          let r={};
          if(q.method==='Browser.getVersion')r={product:'OFFLINE_NODE_PEER'};
+         else if(q.method==='Inspector.enable'&&q.sessionId==='worker-session')return this.reply(q,{}, {code:-32601,message:"'Inspector.enable' wasn't found"});
          else if(q.method==='Target.getTargets')r={targetInfos:[{type:'page',targetId:'page'}]};
          else if(q.method==='Target.attachToTarget')r={sessionId:'page-session'};
          else if(q.method==='Page.navigate'){
@@ -223,7 +224,7 @@ async function child(){
          }else if(q.method==='Page.captureScreenshot'){if(mode==='held-capture'&&fs.existsSync(generated+'/original/ready.json')){terminalIndex=protocol.length;return;}if(fixtureControl){const f=page.noxFixture;assert.equal(f.canvas.style.opacity,'1','paint must publish through production renderer');assert(f.renderer._directPresentation);assert.equal(f.renderer.presentationCanvas.style.display,'none');}
           r={data:Buffer.from('offline screenshot bytes '+protocol.length).toString('base64')};}
          else if(q.method==='Browser.close'){this.reply(q);browser.stdin.end('close\n');return;}
-         else assert(['Target.setDiscoverTargets','Target.setAutoAttach','Page.enable','Runtime.enable','Debugger.enable','Inspector.enable'].includes(q.method),q.method);
+         else assert(['Target.setDiscoverTargets','Target.setAutoAttach','Page.enable','Runtime.enable','Runtime.runIfWaitingForDebugger','Debugger.enable','Inspector.enable'].includes(q.method),q.method);
          this.reply(q,r);
        }catch(e){this.reply(q,{}, {message:e.stack});}
      });
@@ -283,13 +284,15 @@ async function main(){
  // The unchanged driver actually executes its full strict preflight.
  const pre=cp.spawnSync(process.execPath,[generated+'/browser-run.cjs'],{env:{...process.env,DRIVER_PREFLIGHT:'1',BROWSER_DEADLINE:String(Date.now()+120000)},encoding:'utf8'});
  assert.equal(pre.status,0,pre.stderr);results.push({mode:'current-preflight',status:pre.status,proof:JSON.parse(pre.stdout)});
- for(const mode of ['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','stopped-port','ordinary','drag','commands','lifecycle-page','lifecycle-worker','lifecycle-foreign','drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture','label-missing','label-null','label-number','label-undefined','label-path','label-long','label-duplicate']){
+ const modes=process.argv[4]==='--worker'?['ordinary','lifecycle-page','lifecycle-worker','lifecycle-foreign']:['primary','compat','source','media','historical','repin','missing-port','early-death','malformed-port','stopped-port','ordinary','drag','commands','lifecycle-page','lifecycle-worker','lifecycle-foreign','drag-failure','refusal','stale-refusal','held-identity','held-mouse','held-capture','label-missing','label-null','label-number','label-undefined','label-path','label-long','label-duplicate'];
+ for(const mode of modes){
    const dir=out+'/'+mode;fs.mkdirSync(dir);
    // The actual generated source is shared; move only its run-specific outputs
    // after each execution, retaining every failure and ordinary-close artifact.
    const r=cp.spawnSync(process.execPath,[__filename],{env:{...process.env,NOX_TEST_CHILD:'1',NOX_TEST_MODE:mode,NOX_TEST_DIR:dir,NOX_TEST_GENERATED:generated},encoding:'utf8',timeout:75000,maxBuffer:1024*1024});
    fs.writeFileSync(dir+'/stdout',r.stdout||'');fs.writeFileSync(dir+'/stderr',r.stderr||'');
    const peer=JSON.parse(fs.readFileSync(dir+'/peer.json'));assert(peer.compiled);assert.equal(peer.chromeStarted,false);
+   assert(!peer.protocol.some(q=>q.method==='Inspector.enable'&&q.sessionId==='worker-session'),'Worker capability absence must never become a swallowed protocol error');
    if(['primary','compat','source','media','historical','repin'].includes(mode)){
      assert.equal(r.status,1,r.stderr);assert.equal(peer.protocol.length,0);assert.match(r.stderr,mode==='repin'?/immutable current plan/:/immutable input/);
    }else if(['missing-port','early-death','malformed-port','stopped-port'].includes(mode)){
@@ -601,6 +604,103 @@ async function lifecycleControls(generated,out){
  }
  save(out+'/results.json',{passed:true,actualEmittedCaller:true,nativeBrowser:false,results});console.log(JSON.stringify({passed:true,controls:results.length}));
 }
+async function protocolControls(generated,out){
+ assert(!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
+ assert(current.verify(root,JSON.parse(fs.readFileSync(generated+'/runtime-pins.json')),generated));
+ const source=fs.readFileSync(generated+'/browser-run.cjs','utf8');
+ const begin=source.indexOf('let pageOwner=null,'),end=source.indexOf('async function state()',begin);
+ const handlerStart=source.indexOf('ws.onmessage=msg=>');
+ const handler=source.slice(handlerStart,source.indexOf('\n',handlerStart))+source.slice(source.indexOf(' ws.onclose='),source.indexOf(" save('browser-version.json'"));
+ const setup=source.slice(source.indexOf(" save('browser-version.json'"),source.indexOf('\n chain=bound.createChain'));
+ const caller=source.slice(source.indexOf('let settledMenu=null;'),source.indexOf('\n(async()=>{'));
+ assert(handler.includes('ws.onclose=')&&setup.includes("await send('Inspector.enable',{},pageSession)"));
+ const results=[];
+ for(const mode of ['capabilities','worker-detach','worker-destroy','page-crash','connection-loss','protocol-failure']){
+  const dir=out+'/'+mode;fs.mkdirSync(dir);const profile=dir+'/profile';
+  // Arm before Chrome. This separate process has an immutable 45s deadline
+  // and can terminate Chrome's process group if this test stops progressing.
+  const watchdog=cp.spawn(process.execPath,['-e',`
+   const fs=require('node:fs');let pgid=null;
+   const timer=setTimeout(()=>{fs.writeFileSync(process.argv[1],JSON.stringify({fired:true,pgid}));if(pgid)try{process.kill(-pgid,'SIGKILL');}catch{}process.exit(1);},45000);
+   fs.writeFileSync(process.argv[1]+'.armed',JSON.stringify({pid:process.pid,deadline:Date.now()+45000}));
+   process.stdin.once('data',b=>{pgid=Number(b.toString());});
+   process.stdin.once('end',()=>{clearTimeout(timer);fs.writeFileSync(process.argv[1],JSON.stringify({fired:false,pgid}));});
+  `,dir+'/watchdog.json'],{stdio:['pipe','pipe','pipe']});
+  const joined=p=>new Promise(resolve=>{let stdoutEOF=false,stderrEOF=false;p.stdout.resume();p.stderr.resume();p.stdout.on('end',()=>stdoutEOF=true);p.stderr.on('end',()=>stderrEOF=true);p.on('close',(code,signal)=>resolve({code,signal,stdoutEOF,stderrEOF}));});
+  const watchdogWait=joined(watchdog);
+  for(let n=0;n<100&&!fs.existsSync(dir+'/watchdog.json.armed');n++)await wait(10);
+  assert(fs.existsSync(dir+'/watchdog.json.armed'),'independent deadline armed before Chrome');
+  const browser=cp.spawn('/usr/bin/google-chrome',['--headless=new','--no-sandbox','--disable-gpu','--no-first-run','--no-default-browser-check','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{detached:true,stdio:['ignore','pipe','pipe']});
+  const browserWait=joined(browser);watchdog.stdin.write(String(browser.pid)+'\n');
+  const frames=[],events=[],saved={},workers=new Map(),pending=new Map(),rawPending=new Map();let ws,rawId=-1,closes=0;
+  try{
+   for(let n=0;n<100&&!fs.existsSync(profile+'/DevToolsActivePort');n++)await wait(100);
+   const [port,suffix]=fs.readFileSync(profile+'/DevToolsActivePort','utf8').trim().split('\n');
+   ws=new WebSocket('ws://127.0.0.1:'+port+suffix);await new Promise((r,j)=>{ws.onopen=r;ws.onerror=j;});
+   const ctx={pending,workers,workerPromises:[],id:0,timer:0,pageSession:null,closing:false,latest:null,assert,Buffer,Date,sha:current.sha,
+    bound:{PAGE_READ:'page-read',WORKER_READ:'worker-read',RENDER_READ:'renderer-read'},process:{exitCode:0},console,setTimeout,clearTimeout,queueMicrotask,
+    ws:{send:wire=>{frames.push(JSON.parse(wire));ws.send(wire);}},save:(n,v)=>{assert(!saved[n]);saved[n]=structuredClone(v);},log(){},close:async()=>{closes++;}};
+   vm.createContext(ctx);vm.runInContext(source.slice(begin,end)+caller+handler+';globalThis.api={send,evaluate,event,execute,bindOwnerCapture};',ctx);
+   const raw=(method,params={},sessionId)=>new Promise((resolve,reject)=>{const id=rawId--;rawPending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method,params,...(sessionId?{sessionId}:{})}));});
+   ws.onmessage=msg=>{const v=JSON.parse(msg.data);if(v.id<0){const p=rawPending.get(v.id);rawPending.delete(v.id);p.resolve(v);return;}if(!v.id)events.push(v);ctx.ws.onmessage(msg);};
+   ws.onclose=ctx.ws.onclose;ws.onerror=ctx.ws.onerror;
+   await vm.runInContext('(async()=>{'+setup+'})()',ctx);
+   await ctx.api.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:false,flatten:true},ctx.pageSession);
+   await ctx.api.send('Page.enable',{},ctx.pageSession);await ctx.api.send('Runtime.enable',{},ctx.pageSession);
+   // The capability probe is deliberately outside the consumer. Production
+   // must never send this unsupported Worker command or absorb its error.
+   let owner,probe;
+   if(mode!=='page-crash'){
+    await ctx.api.evaluate("globalThis.testWorker=new Worker(URL.createObjectURL(new Blob(['setInterval(()=>{},1000)'],{type:'text/javascript'})));true");
+    for(let n=0;n<100&&!workers.size;n++)await wait(20);
+    assert.equal(workers.size,1);await Promise.all(ctx.workerPromises);
+    owner=[...workers.values()][0];assert(owner.targetId&&owner.sessionId&&owner.generation>0);
+    assert(!frames.some(q=>q.method==='Inspector.enable'&&q.sessionId===owner.sessionId));
+    assert.equal(frames.filter(q=>q.method==='Inspector.enable'&&q.sessionId===ctx.pageSession).length,1);
+    probe=await raw('Inspector.enable',{},owner.sessionId);assert.equal(probe.error.code,-32601);assert.match(probe.error.message,/Inspector.enable/);
+    assert(!saved['terminal-error.json']);
+    // A detach during startup must cancel before any capture has bound owners.
+    if(mode!=='worker-detach')ctx.api.bindOwnerCapture({after:{worker:owner},capture:{identity:{rendererTarget:'none'}}});
+   }
+   if(mode==='capabilities'){
+    assert.equal(await ctx.api.evaluate('1+1',owner.sessionId),2);
+    results.push({mode,passed:true,product:saved['browser-version.json'].product,workerInspector:probe.error,pageInspector:true,workerRuntimeDebugger:true});
+   }else{
+    const request=ctx.api.evaluate('new Promise(()=>{})',mode==='page-crash'?ctx.pageSession:owner.sessionId).catch(e=>e);
+    await wait(20);assert.equal(pending.size,1);
+    if(mode==='worker-detach')await raw('Target.detachFromTarget',{sessionId:owner.sessionId},owner.parentSession??undefined);
+    if(mode==='worker-destroy')await raw('Runtime.evaluate',{expression:'testWorker.terminate();true'},ctx.pageSession);
+    if(mode==='page-crash')raw('Page.crash',{},ctx.pageSession); // crash intentionally has no reply
+    if(mode==='connection-loss')ws.close();
+    if(mode==='protocol-failure')await ctx.api.send('Runtime.noSuchNoxMethod',{},owner.sessionId).catch(()=>{});
+    const error=await request;
+    assert.match(error.message,mode==='connection-loss'?/CDP connection closed/:mode==='protocol-failure'?/-32601/:/current owner lifecycle loss/);
+    const record=saved['terminal-error.json'];assert(record);assert.equal(pending.size,0);
+    if(mode!=='connection-loss'&&mode!=='protocol-failure'){
+     assert.equal(record.ownerLifecycle.owner.sessionId,mode==='page-crash'?ctx.pageSession:owner.sessionId);
+     assert(record.ownerLifecycle.owner.generation>0);
+     assert(events.some(e=>e.method===record.ownerLifecycle.event.method));
+     if(mode==='page-crash')assert.equal(record.ownerLifecycle.event.method,'Inspector.targetCrashed');
+    }
+    const first=JSON.stringify(record),before=frames.length;
+    await ctx.api.event({method:'Inspector.detached',sessionId:ctx.pageSession,params:{reason:'later failure'}});
+    for(const command of [{action:'capture',label:'later'},{action:'key',key:'Space'},{action:'quit'}])await assert.rejects(ctx.api.execute(command,()=>assert.fail('later dispatch')));
+    for(const method of ['Input.dispatchMouseEvent','Page.captureScreenshot','Browser.close'])await assert.rejects(ctx.api.send(method));
+    assert.equal(frames.length,before);assert.equal(JSON.stringify(saved['terminal-error.json']),first);assert.equal(closes,1);
+    results.push({mode,passed:true,firstFailure:record,zeroLaterCommands:true,independentRelease:true});
+   }
+  }finally{
+   if(ws){ws.onclose=null;ws.onerror=null;ws.close();}
+   try{process.kill(-browser.pid,'SIGTERM');}catch(e){assert.equal(e.code,'ESRCH');}
+   const receipt=await browserWait;assert(receipt.stdoutEOF&&receipt.stderrEOF);save(dir+'/browser-wait.json',receipt);
+   assert.throws(()=>process.kill(browser.pid,0),{code:'ESRCH'});
+   watchdog.stdin.end();const receiptWatch=await watchdogWait;assert.equal(receiptWatch.code,0);assert(receiptWatch.stdoutEOF&&receiptWatch.stderrEOF);save(dir+'/watchdog-wait.json',receiptWatch);
+   assert.equal(JSON.parse(fs.readFileSync(dir+'/watchdog.json')).fired,false);
+   fs.rmSync(profile,{recursive:true,force:true});save(dir+'/wire.json',{frames,events,saved});
+  }
+ }
+ save(out+'/results.json',{passed:true,actualLocalChrome:true,actualEmittedLifecycle:true,originalGameplay:false,results});console.log(JSON.stringify({passed:true,controls:results.length}));
+}
 async function menuControls(generated,out){
  assert(!fs.existsSync(out));fs.mkdirSync(out,{recursive:true});
  const source=fs.readFileSync(generated+'/browser-run.cjs','utf8');
@@ -657,4 +757,4 @@ async function menuControls(generated,out){
  save(out+'/results.json',{passed:true,actualEmittedCaller:true,actualEmittedMenuRegion:true,results});console.log(JSON.stringify({passed:true,results}));
 }
 if(process.env.NOX_TEST_CHILD==='1')child().catch(e=>{console.error(e);process.exitCode=1;});
-else if(require.main===module)(process.argv[2]==='--lifecycle-controls'?lifecycleControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--menu-controls'?menuControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--cdp-controls'?cdpControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--observer-controls'?observerControls(path.resolve(process.argv[3]),path.resolve(process.argv[4]),process.argv[5]?.split(',')):main()).catch(e=>{console.error(e.stack);process.exitCode=1;});
+else if(require.main===module)(process.argv[2]==='--protocol-controls'?protocolControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--lifecycle-controls'?lifecycleControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--menu-controls'?menuControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--cdp-controls'?cdpControls(path.resolve(process.argv[3]),path.resolve(process.argv[4])):process.argv[2]==='--observer-controls'?observerControls(path.resolve(process.argv[3]),path.resolve(process.argv[4]),process.argv[5]?.split(',')):main()).catch(e=>{console.error(e.stack);process.exitCode=1;});

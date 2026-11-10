@@ -192,10 +192,16 @@ async function capture(label){validCaptureLabel(label);`);
 function ownerLifecycle(source){
   // Flat CDP routes Inspector/Runtime by envelope sessionId; Target detach
   // identifies the detached child in params.sessionId (not the envelope).
-  // Keep only current contexts and the three selected owners, never an event
-  // history. Target IDs alone cannot identify a detached attachment generation.
+  // Keep current attachment/context identities, never an event history.
+  // Target IDs alone cannot identify a detached attachment generation.
   source=exact(source,'let terminalError=null,',`let pageOwner=null,guestOwner=null,renderOwner=null,ownerGeneration=0;
-function activeOwners(){return [pageOwner,guestOwner,renderOwner].filter(o=>o&&!o.closed&&(o===pageOwner||workers.get(o.sessionId)===o));}
+function activeOwners(){
+ // Watch attachments before the first capture/READY too. A newer attachment
+ // to the same target retires the old generation; its delayed events cannot
+ // cancel the current owner. Context loss is armed separately after proof.
+ const attached=[...workers.values()].filter(o=>!o.closed);
+ return [pageOwner,...attached.filter(o=>!attached.some(w=>w.targetId===o.targetId&&w.generation>o.generation))].filter(o=>o&&!o.closed);
+}
 function bindOwnerCapture(shot){
  if(terminalError)throw terminalError;
  guestOwner=workers.get(shot.after.worker.sessionId);
@@ -233,7 +239,12 @@ function ownerEvent(v){
 let terminalError=null,`);
   source=exact(source,'noReplay:true,command:noxCommand,','noReplay:true,ownerLifecycle:error.ownerLifecycle??null,command:noxCommand,');
   source=exact(source,'async function event(v){\n if(terminalError)return;', 'async function event(v){\n ownerEvent(v);\n if(terminalError||closing)return;');
-  source=exact(source,"workers.set(sessionId,{sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false});", "workers.set(sessionId,{sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false,parentSession:v.sessionId??null,generation:++ownerGeneration});\n   workerPromises.push(send('Inspector.enable',{},sessionId).catch(error=>{terminal(error);}));");
+  // Chrome's Worker agents expose Runtime/Debugger, but not the browser
+  // Inspector domain. Root discovery and parent auto-attach already supply
+  // Target crash/destruction/detach; Runtime supplies selected context loss.
+  // Do not probe Inspector here or catch a protocol error as a capability test:
+  // every unexpected protocol failure must still terminate the consumer.
+  source=exact(source,"workers.set(sessionId,{sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false});", "workers.set(sessionId,{sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false,parentSession:v.sessionId??null,generation:++ownerGeneration});");
   source=exact(source,"if(w)w.closed=true;", "if(w&&(v.sessionId??null)===w.parentSession&&(!v.params.targetId||v.params.targetId===w.targetId))w.closed=true;");
   source=exact(source,"flatten:true})).sessionId;", "flatten:true})).sessionId;\n pageOwner={sessionId:pageSession,targetId:targets[0].targetId,parentSession:null,generation:++ownerGeneration,closed:false};\n await send('Inspector.enable',{},pageSession);");
   source=exact(source,'function send(method,params={},sessionId){if(terminalError)return Promise.reject(terminalError);', `function send(method,params={},sessionId){if(terminalError)return Promise.reject(terminalError);
@@ -241,6 +252,9 @@ let terminalError=null,`);
   source=exact(source,'latest=shot.capture;', 'latest=shot.capture;bindOwnerCapture(shot);');
   // A reply and a loss event can arrive in one turn before evaluate resumes.
   source=exact(source,'return r.result.value;', 'if(terminalError)throw terminalError;return r.result.value;');
+  source=exact(source," save('browser-version.json',await send('Browser.getVersion'));", ` ws.onclose=()=>{if(!closing)terminal(Error('CDP connection closed; no replay'));};
+ ws.onerror=()=>{if(!closing)terminal(Error('CDP connection error; no replay'));};
+ save('browser-version.json',await send('Browser.getVersion'));`);
   return source;
 }
 function menuCaller(source){
