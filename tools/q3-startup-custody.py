@@ -15,7 +15,7 @@ import os
 
 # Retain deferred queue bookkeeping and cancellation recording verbatim.
 # No queue operation supplies authority to execute a task.
-PROVIDER_SHA = 'e32418fcab89681c799c627353303a73e062e542c5391d978900c32385146b2e'
+PROVIDER_SHA = 'f8e6e8be352a20f668185c907fdcf4308f5cb93f8c6b8297fada063fc8140b77'
 VERSION = 'q3-startup-custody-release-cohorts-v4'
 
 
