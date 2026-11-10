@@ -31,13 +31,50 @@ function launcherDiagnostics(fs,path,crypto,out,pid,isTerminal){
  };
 }
 function exact(s,a,b){assert.equal(s.split(a).length,2,'unique TR3 seam: '+a);return s.replace(a,b);}
+// Only the current child's stderr stream supplies lines. Never read an old log
+// or query another debugging endpoint. Arrival uses a monotonic launch clock.
+function ownedStderrReadiness(browser,fs,out,save,isTerminal,started){
+ const fd=fs.openSync(out+'/chrome.stderr','w');let buffer='',discard=false,closed=false,endpoint=null,count=0;
+ function data(bytes){
+  const arrived=performance.now(),at=new Date().toISOString();
+  fs.writeSync(fd,bytes);
+  if(closed||isTerminal())return;
+  for(const part of bytes.toString('utf8').split(/(?<=\n)/)){
+   if(!discard)buffer+=part;
+   if(buffer.length>4096){buffer='';discard=true;}
+   if(!part.endsWith('\n'))continue;
+   const line=buffer.replace(/\r?\n$/,'');buffer='';const overflow=discard;discard=false;
+   if(overflow||!line.startsWith('DevTools listening on '))continue;
+   const match=/^DevTools listening on (ws:\/\/(127\.0\.0\.1|\[::1\]):([1-9][0-9]{0,4})(\/devtools\/browser\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}))$/.exec(line);
+   const valid=!!match&&Number(match[3])<=65535,elapsedMs=arrived-started(),timely=elapsedMs>=0&&elapsedMs<10000;
+   const row={at,elapsedMs,pid:browser.pid,source:'owned-chrome-stderr',valid,timely,line:line.slice(0,4096)};
+   if(count<32)save('stderr-readiness-'+(count++)+'.json',row);
+   if(valid&&timely&&!endpoint)endpoint={debugPort:Number(match[3]),browserPath:match[4],websocketUrl:match[1],...row};
+  }
+ }
+ browser.stderr.on('data',data);
+ browser.stderr.once('end',()=>fs.closeSync(fd));
+ return {get endpoint(){return endpoint;},close(){closed=true;buffer='';}};
+}
 function compose(root){
  let s=fs.readFileSync(path.join(root,prior,'browser-run.cjs'),'utf8');
  s=exact(s,'let browser,server,ws,pageSession,chain,closing=false,latest=null,timer;',`let terminalError=null;
 function fail(error){if(!terminalError){terminalError=error instanceof Error?error:Error(String(error));closing=true;process.exitCode=1;clearTimeout(timer);save('terminal-error.json',{at:new Date().toISOString(),error:String(error),noLaterProtocol:true});for(const p of pending.values()){clearTimeout(p.timer);p.reject(terminalError);}pending.clear();process.kill(process.ppid,'SIGTERM');}return terminalError;}
 let browser,server,ws,pageSession,chain,closing=false,latest=null,timer;`);
  s=exact(s," browser=cp.spawn(",' '+launcherDiagnostics.toString()+"\n browser=cp.spawn(");
- s=exact(s," const active=out+'/chrome-profile/DevToolsActivePort';for(let i=0;i<100&&!fs.existsSync(active);i++)await wait(100);", " const observeLauncher=launcherDiagnostics(fs,path,crypto,out,browser.pid,()=>!!terminalError);\n const active=out+'/chrome-profile/DevToolsActivePort';for(let i=0;i<100&&!fs.existsSync(active);i++){observeLauncher(i);await wait(100);}");
+ s=exact(s,"fs.openSync(out+'/chrome.stderr','w')","'pipe'");
+ s=exact(s,' browser=cp.spawn(', ' '+ownedStderrReadiness.toString()+'\n let readinessStarted;\n browser=cp.spawn(');
+ s=exact(s," browser.once('exit'", " const stderrReady=ownedStderrReadiness(browser,fs,out,save,()=>!!terminalError,()=>readinessStarted);\n browser.once('exit'");
+ s=exact(s," const active=out+'/chrome-profile/DevToolsActivePort';for(let i=0;i<100&&!fs.existsSync(active);i++)await wait(100);const [debugPort,debugPath]=fs.readFileSync(active,'utf8').trim().split('\\n');save('endpoint.json',{debugPort:Number(debugPort),browserPath:debugPath});", ` const observeLauncher=launcherDiagnostics(fs,path,crypto,out,browser.pid,()=>!!terminalError);
+ const active=out+'/chrome-profile/DevToolsActivePort';let endpoint;readinessStarted=performance.now();
+ try{
+  for(let i=0;i<100&&!terminalError&&!stderrReady.endpoint&&!fs.existsSync(active);i++){observeLauncher(i);await wait(100);}
+  if(terminalError)throw terminalError;
+  endpoint=stderrReady.endpoint;
+  if(!endpoint){const [port,p]=fs.readFileSync(active,'utf8').trim().split('\\n');assert(/^[1-9][0-9]{0,4}$/.test(port)&&Number(port)<=65535&&/^\\/devtools\\/browser\\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(p),'invalid current profile endpoint');endpoint={debugPort:Number(port),browserPath:p,websocketUrl:'ws://127.0.0.1:'+port+p,source:'current-profile-file'};}
+ }finally{stderrReady.close();}
+ const {debugPort,browserPath:debugPath}=endpoint;save('endpoint.json',endpoint);`);
+ s=exact(s,"new WebSocket('ws://127.0.0.1:'+debugPort+debugPath)","new WebSocket(endpoint.websocketUrl)");
  s=exact(s,'function send(method,params={},sessionId){return new Promise','function send(method,params={},sessionId){if(terminalError)return Promise.reject(terminalError);return new Promise');
  s=exact(s,"if(!closing)close('first transport UNKNOWN; no replay').catch(e=>console.error(e));",'fail(e);');
  s=exact(s,"if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));","if(r.exceptionDetails)throw fail(Error(JSON.stringify(r.exceptionDetails)));");
