@@ -528,12 +528,22 @@
   ;; normal aligned/page-local path to one translation; only gather/scatter the
   ;; few x86 word/dword accesses that actually cross a non-contiguous boundary.
   (func $gl32 (param $ga i32) (result i32)
-    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32)
+    (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32) (local $redirected i32)
+    (local.set $redirected (global.get $eip_redirected))
     (local.set $wa (g2w-fast (local.get $ga)))
+    ;; An asynchronous SEH redirect abandons this access. In particular, do
+    ;; not probe the other page and raise again against the unwound chain.
+    ;; SEH itself also reads through gl32 with the redirect already set;
+    ;; only a new redirect belongs to this access. Synchronous remap filters
+    ;; restore the caller's redirect state and still use the epoch retry below.
+    (if (i32.ne (global.get $eip_redirected) (local.get $redirected))
+      (then (return (i32.const 0))))
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFC))
       (then (return (i32.load (local.get $wa)))))
     (local.set $epoch (global.get $fault_sync_epoch))
     (local.set $end_wa (call $g2w (i32.add (local.get $ga) (i32.const 3))))
+    (if (i32.ne (global.get $eip_redirected) (local.get $redirected))
+      (then (return (i32.const 0))))
     (if (i32.and (i32.eq (local.get $epoch) (global.get $fault_sync_epoch))
           (i32.eq (local.get $end_wa) (i32.add (local.get $wa) (i32.const 3))))
       (then (return (i32.load (local.get $wa)))))

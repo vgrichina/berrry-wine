@@ -1207,6 +1207,10 @@
     (local.set $count (i32.and (local.get $info) (i32.const 0xFF)))
     (if (i32.eq (local.get $count) (i32.const 0xFF)) (then (local.set $count (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 31)))))
     (local.set $val (call $gl32 (local.get $addr)))
+    ;; The read may have selected an SEH handler or terminated the guest.
+    ;; Preserve that architectural state: neither update flags nor attempt
+    ;; the write half of this instruction against the already-unwound chain.
+    (if (global.get $eip_redirected) (then (return)))
     (call $gs32 (local.get $addr) (call $do_shift32 (local.get $stype) (local.get $val) (local.get $count)))
     (dispatch-next))
   ;; 140: call [base+disp]. op=ret_addr, w1=base, w2=disp.
