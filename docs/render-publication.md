@@ -661,6 +661,14 @@ requirements remain open; a passing GL gameplay run does not discharge them.
   gameplay performance. The special CARDS exported initializer remains
   synchronous; app visual qualification and full CLI main-Worker migration
   remain open.
+  Exported startup initializers now require a complete return frame before
+  reporting success: CARDS uses stdcall and MSVCRT's `_set_sbh_threshold` uses
+  cdecl. Traps and unfinished returns propagate instead of returning stale EAX.
+  The helper restores caller registers/control/yield/SEH after nonterminal
+  success or failure, while preserving terminal guest exit. Native regression
+  tests on both WASM builds cover valid returns, NULL jumps, traps, wrong stack
+  cleanup and ExitThread. This fixes completion/error semantics before moving
+  the remaining exported initializer execution onto an awaited path.
   It serializes capture
   across devices but leaves accepted renderer work asynchronous. No performance
   claim is made for the guard; device-level granularity remains a tuning option.
