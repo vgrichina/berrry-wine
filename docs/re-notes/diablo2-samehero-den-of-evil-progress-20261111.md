@@ -1,4 +1,4 @@
-# SAMEHERO: Den of Evil quest retained, Blood Moor reached
+# SAMEHERO accepts Den of Evil and retains a Blood Moor save
 
 Run: `scratch/runs/20261111-diablo2-samehero-den-of-evil-progress-1155/`.
 This continues the [native combat/save/load checkpoint](diablo2-same-character-combat-save-load-20261111.md).
@@ -11,8 +11,10 @@ write, or guest script/state mutation was used.
 
 Native conversation with Akara activated **Den of Evil**: “Look for the Den in
 the wilderness outside the Rogues’ Camp.” Akara also healed SAMEHERO to 66/66.
-Native Save & Exit and normal Load retained that objective (`review/activequest.png`,
-`review/retainedquest.png`, `review/retainedstats.png`). The quest checkpoint was
+`review/activequest.png` shows the accepted objective. Native Save & Exit and
+normal Load retained the healed character stats (`review/retainedstats.png`).
+`review/retainedquest.png` has the quest panel closed, so post-load quest-panel
+verification remains pending. The quest checkpoint was
 then exported, mounted in a fresh confirmed-exit relaunch, and loaded normally;
 `review/thirdstats.png` again shows SAMEHERO, level 1 Barbarian, XP 66, life 66/66.
 
