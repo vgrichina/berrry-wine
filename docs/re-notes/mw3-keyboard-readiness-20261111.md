@@ -291,3 +291,31 @@ A future run must also distinguish a pre-Chrome owner exit from a live browser
 when collecting lifecycle evidence, so a recoverable preparation failure does
 not consume the remaining fixed allocation through automatic box shutdown.
 Preserve the failure and actual Node/outer waits; never invent Chrome waits.
+
+## Normal preparation and recoverable pre-Chrome failures (0940)
+
+The ordinary `tools/mw3-retention-repair.py RETAINED_0500 OWNED_RUN` entry
+now installs prelaunch custody and a prepared `pin.py`. After staging the
+remaining small helpers, run that generated `pin.py`: it finalizes HTTP pins
+from the fresh files/uploadFiles graph through `mw3-preparation.cjs`. The
+controller still checks actual static HTTP responses before attempting Chrome.
+The owner child deadline is bounded by both allocation minus 600 seconds and
+now plus 1740 seconds, respecting owner.py's strict less-than-1800-second cap.
+
+On a failure inside the controller before any Chrome spawn attempt, the
+controller publishes `chrome-not-started.json` with its Node PID. Recovery
+requires real failed Node/outer waits, both EOFs, joined readers, matching PID,
+and no contradictory Chrome spawn/process/stream/endpoint/launch evidence.
+It retains the terminal manifests and returns `recoverablePreChrome:true`.
+The recovery supervisor writes `recoverable-prechrome.json` without requesting
+normal stop, so the worker can repair inputs and retry a confirmed exited job
+within the original fixed allocation. Preserve each failed runtime directory;
+never resend an uncertain command. Once Chrome was attempted, or without the
+explicit marker, all Chrome wait/stream requirements remain mandatory.
+
+Focused regressions: `node --test tools/mw3-preparation.test.cjs
+ tools/mw3-runtime-http-pins.test.cjs` tests actual static responses;
+`python3 -B tools/mw3-prelaunch-recovery-test.py OWNED_FIXTURE_DIR` runs two
+actual failed prepared controllers under one deadline, verifies real Node and
+outer waits/EOF, and refuses unknown/contradictory Chrome state and incomplete
+EOF. The fixture launches no Chrome or original game.

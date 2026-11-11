@@ -30,6 +30,12 @@ def repair(source, dest):
         for name in names[4:]:
             with (dest/name).open('x') as f:
                 f.write((source/name).read_text())
+        # Final preparation owns lifecycle distinctions and fresh HTTP metadata.
+        if (source/'pin.py').exists():
+            with (dest/'pin.py').open('x') as f:
+                f.write((source/'pin.py').read_text().replace(source.name,dest.name))
+        import runpy
+        runpy.run_path(str(Path(__file__).with_name('mw3-prelaunch-recovery.py')))['install'](dest)
         return
     old = "await wait(300);require('../20261110-mw3-complete-fixture-closure-combat-2135/dispatch-observer.cjs').validate(await menuObserver.read());"
     new = "await require(root+'/tools/mw3-preclick-readiness.cjs').ready({observer:menuObserver,validate:require('../20261110-mw3-complete-fixture-closure-combat-2135/dispatch-observer.cjs').validate,deadline:commandWorkEnd,wait,save,label:c.label,checkIdentity:async()=>bound.same(receipt.live.identity,(await chain.readLive()).identity)});"

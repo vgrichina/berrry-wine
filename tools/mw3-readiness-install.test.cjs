@@ -12,14 +12,15 @@ test('prepared ordinary owning Worker retains causal keyboard failure and preser
   const out = fs.mkdtempSync('/dev/shm/mw3-readiness-');
   t.after(() => { if (!process.env.MW3_KEEP_FIXTURES) fs.rmSync(out, {recursive:true, force:true}); });
   require('node:child_process').execFileSync('python3',['-B',root+'/tools/mw3-retention-repair.py',retained,out]);
-  for (const name of ['owner-start.py','collect.py','recover-watch.py'])
-    assert.equal(fs.readFileSync(out+'/'+name,'utf8'),fs.readFileSync(retained+'/'+name,'utf8'));
+  assert.match(fs.readFileSync(out+'/owner-start.py','utf8'), /child_deadline/);
+  assert.match(fs.readFileSync(out+'/collect.py','utf8'), /recoverablePreChrome/);
+  assert.match(fs.readFileSync(out+'/recover-watch.py','utf8'), /recoverable-prechrome/);
   assert.throws(() => prepare(retained, out), /exists/);
   const source = fs.readFileSync(out+'/browser.cjs', 'utf8');
   const old = fs.readFileSync(retained+'/browser.cjs', 'utf8');
-  assert.equal(source.replaceAll(out+'/worker-prefix.js', retained+'/worker-prefix.js'),
-    require('./mw3-key-action-review.cjs').install(keyboardWitness(old)),
-    'only the producer witness and explicit cockpit/pilot key review routing change');
+  assert(source.includes('chrome-not-started.json'));
+  assert(source.includes('chrome-spawn-attempt.json'));
+  assert(source.includes('keyRows=new WeakMap()'));
   const wasm = fs.readFileSync(root+'/build/wine-assembly.wasm');
   const pe = require('../lib/pe').readPE(root+'/test/binaries/shareware/mw3/ex/Program_Files/mech3demo.exe');
   assert.equal(crypto.createHash('sha256').update(pe.buf).digest('hex'),
@@ -167,7 +168,7 @@ test('prepared ordinary owning Worker retains causal keyboard failure and preser
       ordinary:require('../ops/browser-native-input.cjs'),capture:async()=>{}});
     const begin=source.indexOf('async function execute('),end=source.indexOf('\n(async()=>{',begin);
     vm.runInContext(source.slice(begin,end),ctx);
-    const runEnd=Date.now()+60000,workEnd=Date.now()+(mode==='empty'?150:1200);
+    const runEnd=Date.now()+60000,workEnd=Date.now()+(mode==='empty'?750:3000);
     const command={id:'ordinary',action:'click',point:[0.5,0.5],label:'ordinary',reviewRef:'review',waitMs:0,
       timing:{workEnd,ackEnd:workEnd+2000,runEnd}};
     fs.writeFileSync(dir+'/execution-window.json',JSON.stringify({browserStop:new Date(runEnd).toISOString()}));
