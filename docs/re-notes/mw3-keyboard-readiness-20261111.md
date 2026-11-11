@@ -319,3 +319,11 @@ Focused regressions: `node --test tools/mw3-preparation.test.cjs
 actual failed prepared controllers under one deadline, verifies real Node and
 outer waits/EOF, and refuses unknown/contradictory Chrome state and incomplete
 EOF. The fixture launches no Chrome or original game.
+
+The prepared owner embeds the pure deadline calculation, so moving the small
+owner input into a nested retention fixture does not change module lookup.
+Retention fixtures give that owner a 1000-second synthetic allocation and keep
+their independent 100-second watchdog; production allocation deadlines are
+unchanged. The retention runner selects the staged decision-sampling fixture
+when present. Actual successful and failed Node/Chrome/outer waits, both EOFs,
+the outer publication barrier, and missing-evidence refusal pass on this path.

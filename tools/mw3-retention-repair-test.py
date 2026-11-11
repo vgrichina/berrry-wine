@@ -25,9 +25,12 @@ F = R/('parent-fixture-'+str(time.time_ns()))
 F.mkdir()
 shutil.copyfile(R/'owner-start.py', F/'owner-start.py')
 shutil.copyfile(prior/'owner.py', F/'owner.py')
-(F/'browser.cjs').write_text("require("+json.dumps(str(ROOT/'tools/mw3-preclick-readiness.test.cjs'))+");\n")
+fixture = R/'sampled-readiness.test.cjs'
+if not fixture.is_file():
+    fixture = ROOT/'tools/mw3-preclick-readiness.test.cjs'
+(F/'browser.cjs').write_text("require("+json.dumps(str(fixture))+");\n")
 env = dict(os.environ, MW3_TEST_FIXTURE='1', MW3_REPAIR_RUN=str(R),
-           MW3_PARENT_RUNTIME=str(F/'runtime'), MW3_DEADLINE=str(time.time()+500))
+           MW3_PARENT_RUNTIME=str(F/'runtime'), MW3_DEADLINE=str(time.time()+1000))
 
 # Arm an independently scheduled, observable immutable local deadline first.
 deadline = time.time()+100

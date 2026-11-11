@@ -21,10 +21,11 @@ def install(dest):
     owner, count = re.subn(r'deadline=(?:float\(os.environ\[\'MW3_DEADLINE\'\]\)-360|min\(float\(os.environ\[\'MW3_DEADLINE\'\]\)-600,time.time\(\)\+1740\))',
         "from mw3_prelaunch_recovery import child_deadline\ndeadline=child_deadline(float(os.environ['MW3_DEADLINE']),time.time())", owner)
     assert count == 1, 'ordinary owner child deadline anchor'
-    owner = "import sys\nfrom pathlib import Path\nsys.path.insert(0,str(Path(__file__).resolve().parents[3]/'tools'))\n" + owner
-    # Importable adapter uses the same tracked implementation under its filename.
+    # Serialize the pure cap function: nested retention fixtures and arbitrary
+    # owned destinations must not infer repository location from directory depth.
+    import inspect
     owner = owner.replace('from mw3_prelaunch_recovery import child_deadline',
-        "import runpy\nchild_deadline=runpy.run_path(str(R.parents[2]/'tools/mw3-prelaunch-recovery.py'))['child_deadline']")
+        'import math\n'+inspect.getsource(child_deadline))
     (dest/'owner-start.py').write_text(owner)
     collect = (dest/'collect.py').read_text()
     start = collect.index('  required=', collect.index(' def validate_waits(self):'))
