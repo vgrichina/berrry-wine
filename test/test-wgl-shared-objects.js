@@ -196,7 +196,9 @@ async function run(){
   const bytes=Uint8Array.from(event.batch);
   Stream.replay(Stream.memoryBatch(bytes.buffer,0,bytes.length),(op,aux,c)=>{
    if(op===O._glTexSubImage2D)mutations.push({owner:event.owner,opcode:op,
-    pixels:Array.from(new Float32Array(c.buffer,c.pointerOffset,c.pointerLength/4))});return 0;
+    // One texel: unsigned-byte uploads are canonical RGBA8 (4 B), others RGBA float (16 B).
+    pixels:c.pointerLength===4?Array.from(new Uint8Array(c.buffer,c.pointerOffset,4),v=>v/255)
+     :Array.from(new Float32Array(c.buffer,c.pointerOffset,c.pointerLength/4))});return 0;
   });
  }
  assert.deepStrictEqual(mutations,[{owner:0,opcode:O._glTexSubImage2D,pixels:[0,1,1,1]}],
