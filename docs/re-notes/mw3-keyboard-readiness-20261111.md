@@ -133,3 +133,49 @@ clock, failed keyboard API, control-binding mode, or another branch. Only then
 can one justify an ordinary menu action or a specific emulator/control repair.
 Do not send an arbitrary key, change the game's gates, treat absent reads as
 a defect, or lengthen the admission timeout to conceal the unknown state.
+
+## Ordinary launch integration (0530)
+
+The existing small-input preparation command now recognizes the retained 0500
+ordinary controller and automatically regenerates its serialized Worker prefix:
+
+```sh
+python3 -B tools/mw3-retention-repair.py \
+  scratch/runs/20261111-mw3-complete-helper-cockpit-0500 OWNED_RUN
+```
+
+Use an owned destination with no colliding prepared files. This emits the
+browser, dispatch observer, Worker prefix and unchanged owner/collector/recovery
+inputs. Stage the remaining existing small launch dependencies as usual and
+regenerate runtime pins before any separately authorized original. The direct
+three-file installer is `node tools/mw3-readiness-install.cjs SOURCE OWNED_RUN`.
+Neither command launches anything. Historical source inputs remain untouched.
+
+The rebuilt prefix installs keyboard hooks before compiled instantiation, using
+the published sample/return decoder. `attachDispatch` forwards its three log
+hooks into a private keyboard hook table. Only the mouse recorder toggles API
+logging; the keyboard observer runs with `apiLogOwner:false`. It resets bounded
+storage on each mouse window and stops with that window. A keyboard diagnostic
+error remains in its snapshot without disabling mouse logging or changing mouse
+admission. The original standalone keyboard observer retains single-use logging
+ownership by default. Existing throttle observers remain separately inactive
+until their original controller route arms them.
+
+Every ordinary dispatch snapshot now carries `keyboard`. The controller also
+saves identity-bound `keyboard-readiness-last.json` before identity/validation
+checks, and `keyboard-readiness-final.json` on stop. Thus the initial matched-read
+failure's existing finally block preserves actual keyboard results, outer caller,
+node and first/last raw clocks without issuing input. Preclick refusals retain
+the same data in their existing refusal snapshot. No mouse validator, native
+input route, command deadline, five-second stream guard or observation duration
+was changed.
+
+`node --test tools/mw3-readiness-install.test.cjs` prepares through the existing
+Python entry point and executes the actual serialized prefix, compiled original
+drain/time/WAIT slices and exact ordinary controller `execute()` with real command
+transport. It proves causal retention with no mouse reads, failed HRESULT
+retention, one logging owner, reusable bounded windows, sticky refusal/no replay,
+and unchanged mouse move/press/release after a compiled completed mouse read.
+Caller objects, screenshot admission and native sends are labelled fixture
+substitutes; this is not an original-game readiness observation. Evidence:
+`scratch/runs/20261111-mw3-readiness-integration-0530/`.

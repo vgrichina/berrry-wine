@@ -1,10 +1,12 @@
 'use strict';
 
 // Serialize/install before instantiation in the verified owning Worker. This
-// diagnostic has its own single bounded API-log window; do not start/stop a
-// second API-log owner concurrently. It never authorizes or injects input.
+// diagnostic owns one bounded API-log window by default. With apiLogOwner:false
+// its enclosing mouse recorder owns logging and each start resets its bounded
+// window. Never run a second API-log owner. This never admits or injects input.
 function attach(table, {getExports, memory, sample, readCompletion, layout,
-    capacity = 64} = {}) {
+    capacity = 64, apiLogOwner = true} = {}) {
+  if (typeof apiLogOwner !== 'boolean') throw Error('explicit API log ownership required');
   if (![getExports, sample, readCompletion].every(f => typeof f === 'function') ||
       !memory?.buffer || !Number.isInteger(capacity) || capacity < 1 || capacity > 256)
     throw Error('bounded readiness binding required');
@@ -15,7 +17,7 @@ function attach(table, {getExports, memory, sample, readCompletion, layout,
   let frames = [], errors = [], drops = 0, entries = 0, exits = 0;
   const halt = error => {
     if (error && errors.length < 8) errors.push(String(error));
-    if (active) { active = false; ex.set_api_log(prior); }
+    if (active) { active = false; if (apiLogOwner) ex.set_api_log(prior); }
   };
   const p = (a, n = 4) => {
     if (!Number.isInteger(a) || a <= 0 || a + n > 0x100000000) throw Error('readiness guest address');
@@ -110,10 +112,11 @@ function attach(table, {getExports, memory, sample, readCompletion, layout,
   }
   return {
     start({durationMs=5000,apiLogBefore}={}) {
-      if (used || ![0,1].includes(apiLogBefore) || !Number.isInteger(durationMs) ||
+      if (active || (used && apiLogOwner) || ![0,1].includes(apiLogBefore) || !Number.isInteger(durationMs) ||
           durationMs<1 || durationMs>45000) throw Error('single bounded readiness start required');
       ex=getExports(); prior=apiLogBefore; used=true;
-      expires=performance.now()+durationMs; ex.set_api_log(1); active=true;
+      rows.clear(); frames=[]; errors=[]; drops=entries=exits=0; marker=-1;
+      expires=performance.now()+durationMs; if (apiLogOwner) ex.set_api_log(1); active=true;
     },
     snapshot() {
       if(active && performance.now()>=expires) halt();

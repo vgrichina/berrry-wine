@@ -1,11 +1,12 @@
 """Apply the narrow repair to exact retained MW3 controller inputs.
 
-Writes only five small executable inputs into an existing owned run directory.
+Writes five repaired inputs, or six integrated ordinary-0500 inputs, into an owned run.
 The source run remains untouched. Pin the resulting files with the other runtime
 inputs before use; this tool neither provisions nor starts an original/box.
 """
 from pathlib import Path
 import argparse
+import subprocess
 
 
 def replace_once(text, old, new):
@@ -17,6 +18,19 @@ def repair(source, dest):
     source, dest = Path(source).resolve(), Path(dest).resolve()
     assert source != dest and dest.is_dir()
     browser = (source / 'browser.cjs').read_text()
+    # The ordinary 0500 inputs already include the retention/readiness repair.
+    # Regenerate their pre-instantiation observer by default, rather than
+    # leaving a stale serialized function in the next original's prefix.
+    if "require('./dispatch-observer.cjs')" in browser and 'mw3-preclick-readiness.cjs' in browser:
+        names = ['browser.cjs', 'dispatch-observer.cjs', 'worker-prefix.js',
+                 'owner-start.py', 'collect.py', 'recover-watch.py']
+        assert all(not (dest / name).exists() for name in names), 'prepared input exists'
+        tool = Path(__file__).with_name('mw3-readiness-install.cjs')
+        subprocess.run(['node', str(tool), str(source), str(dest)], check=True)
+        for name in names[3:]:
+            with (dest/name).open('x') as f:
+                f.write((source/name).read_text())
+        return
     old = "await wait(300);require('../20261110-mw3-complete-fixture-closure-combat-2135/dispatch-observer.cjs').validate(await menuObserver.read());"
     new = "await require(root+'/tools/mw3-preclick-readiness.cjs').ready({observer:menuObserver,validate:require('../20261110-mw3-complete-fixture-closure-combat-2135/dispatch-observer.cjs').validate,deadline:commandWorkEnd,wait,save,label:c.label,checkIdentity:async()=>bound.same(receipt.live.identity,(await chain.readLive()).identity)});"
     browser = replace_once(browser, old, new)

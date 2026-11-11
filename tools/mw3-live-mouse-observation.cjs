@@ -56,7 +56,7 @@ if (typeof module !== 'undefined') module.exports = {attach};
 // The caller supplies the already verified standard-mouse decoder and layout.
 function attachDispatch(table, {getExports, memory, request, completion, layout,
     capacity = 16384, readCapacity = 1024, depthCapacity = 64, importNames = null,
-    decision = null, decisionCapacity = 64} = {}) {
+    decision = null, decisionCapacity = 64, keyboard = null} = {}) {
   if (!Number.isInteger(capacity) || capacity < 1 || capacity > 65536 ||
       !Number.isInteger(readCapacity) || readCapacity < 1 || readCapacity > 8192 ||
       !Number.isInteger(depthCapacity) || depthCapacity < 1 || depthCapacity > 256)
@@ -73,6 +73,14 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
       importNames.some(name => typeof table[name] !== 'function')))
     throw Error('explicit existing import names required');
   const selectedImports = importNames === null ? null : new Set(importNames);
+  // A private hook table avoids stacked wrappers on the real imports. Only
+  // this mouse recorder owns API logging; keyboard diagnostics cannot admit
+  // input or disable logging when their decoder fails.
+  const keyboardHooks = {log() {}, log_i32() {}, log_api_exit() {}};
+  const keyboardObserver = keyboard === null ? null : keyboard.attach(keyboardHooks, {
+    getExports, memory, layout, sample: keyboard.sample,
+    readCompletion: keyboard.readCompletion, apiLogOwner: false,
+  });
   const originals = new Map(), wrappers = new Map(), names = [];
   const data = new Float64Array(capacity * 6), frames = new Array(depthCapacity);
   // Aggregate only: storage is bounded by the installed import table and 32
@@ -83,6 +91,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
     reads = [], errors = [], depth = 0, marker = -1, priorLog = 0, excludedImports = 0, ex;
   function halt(reason) {
     if (reason && errors.length < 8) errors.push(String(reason));
+    keyboardObserver?.stop();
     if (active) { active = false; try { ex.set_api_log(priorLog); } catch (error) { if (errors.length < 8) errors.push(String(error)); } }
   }
   function enter(args) {
@@ -158,6 +167,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
       if (record) { data[i] = index; data[i + 1] = Date.now(); data[i + 2] = begin; }
       else { excludedImports++; excludedCounts[index]++; }
       try {
+        if (keyboardObserver && name !== 'log_api_exit' && keyboardHooks[name]) keyboardHooks[name](...args);
         if (name === 'log_i32' && ((args[0] >>> 16) === 0xc0de)) marker = args[0] & 65535;
         if (name === 'log') enter(args);
       } catch (error) { diagnostic.entryFailures++; halt(error); }
@@ -166,6 +176,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
       catch (error) { if (record) data[i + 5] = 1; halt('original import threw: ' + name); throw error; }
       finally { if (record) data[i + 3] = performance.now(); }
       if (active && name === 'log_api_exit') {
+        if (keyboardObserver) keyboardHooks.log_api_exit(...args);
         diagnostic.exits++;
         try {
           if (!depth) throw Error('dispatch exit without entry');
@@ -188,6 +199,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
         mouseRequests: 0, mouseCompletions: 0, entryFailures: 0,
         categoryDecodeFailures: 0, otherCategories: 0};
       frames.fill(null); started = performance.now(); expires = started + durationMs;
+      keyboardObserver?.start({durationMs, apiLogBefore});
       ex.set_api_log(1); active = true;
     },
     snapshot() {
@@ -199,6 +211,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
       for (const [name, wrapped] of wrappers)
         if (table[name] !== wrapped) bindingMismatchReasons.push('import table wrapper replaced: ' + name);
       return {active, started, expires, drops, errors: errors.slice(), pending: depth,
+        ...(keyboardObserver ? {keyboard: keyboardObserver.snapshot()} : {}),
         importNames: selectedImports === null ? null : [...selectedImports], excludedImports,
         decisions: Array.from(decisions.values(), row => ({...row, sample: {...row.sample}})),
         decisionEnabled: decision !== null,
