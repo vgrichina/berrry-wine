@@ -674,6 +674,25 @@ for (const mode of ['fit', 'zoom']) {
 // everything past x=400 -- danger meter, score, a third of the board -- stayed
 // black for the whole run ("Snood wasn't fully rendering game board").
 {
+  const desktop = makeRenderer(684, 570, 684, 570);
+  desktop.singleAppMode = false;
+  assert.deepStrictEqual(desktop.desktopBackingSize(684, 570), { w: 684, h: 570 });
+  desktop.minDesktop = require('../lib/apps').APPS.collapse_crunch.minDesktop;
+  const ordinary = desktop.desktopBackingSize(684, 570);
+  assert.ok(ordinary.w >= 800 && ordinary.h - 28 >= 600,
+    'ordinary Collapse startup has an 800x600 work area before window creation');
+  assert.ok(Math.abs(ordinary.w / ordinary.h - 684 / 570) < 0.01);
+  desktop._exclusiveFullscreen = true;
+  assert.deepStrictEqual(desktop.desktopBackingSize(640, 480), { w: 640, h: 480 },
+    'exclusive guest display remains authoritative');
+  desktop._exclusiveFullscreen = false;
+  desktop.minDesktop = null;
+  assert.deepStrictEqual(desktop.desktopBackingSize(684, 570), { w: 684, h: 570 },
+    'releasing the app restores the ordinary desktop size');
+  assert.ok(shellSource.includes('sharedRenderer.minDesktop = runningApps.reduce'),
+    'all running app minima reach the renderer before resize');
+  assert.ok(fs.readFileSync(require.resolve('../index.html'), 'utf8')
+    .includes('boardRenderer.desktopBackingSize(w, h)'), 'normal page applies desktop sizing');
   const r = makeRenderer(400, 711, 375, 667);
   r.singleAppMinDesktop = { w: 1024, h: 768 };
   const portrait = r.singleAppBackingSize(400, 711);

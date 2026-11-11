@@ -44,12 +44,39 @@ forward custom screen or input settings.
 
 ## Observations
 
+Collapse browser follow-up (2026-11-11): the original `Collapse3.exe` reaches
+the ordinary mode menu and Crunch level 1 (Normal), removes a highlighted
+green group with a native balanced click, and displays score **0 → 1,095**.
+The shipped high-score panel confirms `MODE: CRUNCH`, level 1, `NORMAL`, 1,095.
+The timed round subsequently failed while evidence was being reviewed; no
+round clear is claimed. Full before/after boards and the later retry prompt
+are retained in `scratch/runs/20261111-collapse3-usable-desktop-gameplay-0830/`.
+
+The preceding 0810 run's `Display Settings Too Small` was a launcher geometry
+failure: a 1024×768 debug viewport exposed only a 684×570 desktop. Collapse
+checks `SystemParametersInfoA(SPI_GETWORKAREA)` for at least 800×600, excluding
+the 28px taskbar. Its existing `singleAppMinDesktop` applied only to phones.
+The registry now also supplies `minDesktop`, which the ordinary shell applies
+before the first guest slice; simultaneous apps retain the largest requested
+minimum, and exclusive guest display modes keep their own dimensions.
+
+For the live run, a normal launcher with app autolaunch off in a 1440×1000
+viewport measured an actual 1100×834 guest desktop. A harmless compiled call
+to the real `spi_core` returned work RECT `(0,0,1100,806)` before each original
+entry. The first browser reached the menu but omitted the module-identity
+recording flag required by the input guard; it received no gameplay input
+and was closed normally, with independent process/profile/port absence
+verified. A corrected browser within the same fixed allocation recorded
+module `75ecda57…` and produced the gameplay evidence. No guest state was
+edited. The successful game exited through its own EXIT button with
+`ExitProcess code: 0`. This run did not perform an FPS benchmark.
+
 | Title | Furthest observed / blocker |
 | --- | --- |
 | Ricochet Xtreme | CLI and browser Worker/WebGL Round 1-1 gameplay verified: paddle movement, ball launch, brick destruction and score. Requires bundled IFC22.dll. Earlier splash captures ended during active asset decompression; a longer run reaches the menu without runtime changes. Local fixture includes 351 verified guest-generated cache files. See [Ricochet notes](ricochet-xtreme.md). |
 | Zuma Deluxe 1.0 | Plays (2026-10-10, CLI): title at ~180k batches -> click 318,452 -> New User, type a name, OK 240,243 -> Adventure 522,102 -> Play 590,460 -> Instructions OK 556,452 -> Level 1-1 at 210k. Aim follows the cursor; a shot needs press, gap, release (`mousedown`, ~20 batches, `mouseup`) -- a same-tick click only aims, and the first click after the intro starts play. A/B: aimed greens pop for +40, no input leaves score 0. One Blt + Flip per frame, ~146 batches per frame at both 200 and 20 ms ticks, so headless frame rate is interpreter-bound. Evidence `scratch/runs/20261010T0710Z-zuma_deluxe-control-frames-w6`. |
 | Crimsonland | Displays `DirectX8.1 or newer not detected`. Explicitly seeding grim/vorbis/vorbisfile/ogg DLLs does not resolve it. A per-run registry override of DirectX `Version` to `4.09.00.0904` also did not resolve it; the exact detection path remains untraced. Screenshot `crimsonland-dx9.png`. |
-| Collapse! Crunch | Default 640×480 is rejected. `--screen=800x600` renders the game's loading screen and starts guest threads. Initial 35-second run reaches batch 310 without an API trap (`collapse-800.png`). A longer run then reports a guest call through NULL at batch 317, ends after 41.836 seconds, and captures a black client area (`collapse-long.png`). Scheduled input starts at batch 500 and never fires. No gameplay confirmed. |
+| Collapse! Crunch | Browser Workers: Crunch level 1, Normal, native group removal and score 0→1,095 verified 2026-11-11 (follow-up above). Requires an actual usable guest desktop ≥800×600; the ordinary launcher now honors its explicit desktop minimum. The round later failed; no round clear claim. Historical CLI loading/NULL-call failures remain in `collapse-800.png` / `collapse-long.png`. |
 | Alien Shooter | Main menu verified with native WebGL and software rendering after implementing DirectSoundCreate8 and fixing the backbuffer owner's device identity. Mission 01, character/camera movement and aiming verified in a fresh software CLI run with `--tick-ms-per-batch=5`. Combat and browser gameplay remain unverified. See [Alien Shooter notes](alien-shooter.md). |
 
 Collapse performance follow-up: a real-GPU, headful browser with Threads enabled

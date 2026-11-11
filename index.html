@@ -3425,8 +3425,8 @@ Resource-aware Win98 emulator
         Math.max(MIN_BACKING_WIDTH, Math.round((displayW || 1) * scale)));
       let h = Math.min(MAX_BACKING,
         Math.max(MIN_BACKING_HEIGHT, Math.round(stageH * scale)));
-      if (SINGLE_APP_MODE && boardRenderer && boardRenderer.singleAppBackingSize) {
-        ({ w, h } = boardRenderer.singleAppBackingSize(w, h));
+      if (boardRenderer && boardRenderer.desktopBackingSize) {
+        ({ w, h } = boardRenderer.desktopBackingSize(w, h));
       }
       if (boardRenderer && boardRenderer.mobileCrop && boardRenderer.mobileCrop.contain) {
         for (const win of Object.values(boardRenderer.windows || {})) {
