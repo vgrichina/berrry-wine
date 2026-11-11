@@ -337,3 +337,69 @@ hashes, matching locked-build reuse, complete artifact/save recovery checks,
 and documentation diff checks. Audio, frame rate, full mission completion,
 enemy kill count and save reload remain unmeasured. No public deployment or
 additional runtime prerequisite follows from this completed interaction.
+
+## Authentic save reload and surviving enemy defeat, 2026-11-11
+
+Run `20261111-outlaws-authentic-save-enemy-defeat-0800` successfully reloaded
+the preceding run's unchanged `SAVE000.OSG`, then defeated an armed gunman
+while the player survived. The canonical registered `outlaws_demo`, original
+media, production guest Worker and software DirectDraw route were reused.
+The browser-loaded module and served response matched
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`.
+The tested source was main `25ac5466dac0b6a5194d953090ca0096ab400c77`
+plus the run's recorded tracked diff and new-file patches; concurrent renderer
+work was captured in those pins. This task changed no emulator code. Matching
+locked-build proof was reused after checking all WAT fragments and the module.
+Local and same-box trusted, balanced input checks passed before launch.
+
+The retained save's 186,861 raw bytes and SHA-256 `54f1291541668eae68189ece9f8bcf43ead63d53efbe4f2cc89f16c354023bf8`
+were verified before restoring through the ordinary VFS directory/create/write/
+close APIs at `C:\OUTDEMO\SAVE\SAVE000.OSG`. No save or guest-state bytes
+were edited. Original LOAD → slot `E` → Enter restored the living start state.
+Full browser images were personally reviewed before every native action.
+The decisive full captures in `retrieved/original-output/` are:
+
+- `frame-8.png`: original Load Game screen recognizes slot `E` and its thumbnail.
+- `frame-11.png`: loaded living state, six loaded rounds, 18 reserve and health.
+- `frame-27.png`: upright gunman aiming toward the player near the entrance,
+  after ordinary arrow movement and turning tracked him across Drygoods and
+  the Telegraph Office.
+- `frame-29.png`: following a balanced 1,000 ms Ctrl primary-fire burst, the
+  same gunman is prone on the ground; three rounds remain loaded, reserve
+  remains 18, and the player has remaining health.
+- `frame-30.png`: settled same-view capture retains the prone gunman and living
+  player, without further fire or movement.
+- `frame-44.png`: after the ordinary save flow, the gunman remains down and
+  the player remains alive in the same view with three loaded rounds.
+
+Escape → SAVE GAME → second slot → Enter → `f` → Enter wrote the authentic
+combat checkpoint `C:\OUTDEMO\SAVE\SAVE001.OSG`: 194,221 raw bytes,
+SHA-256 `dd041c9bd7f538ae0c5deff741e16c6aa8670bcc9b85c3f91bfd571e0a712750`.
+Both saves were retrieved unedited into `authentic-saves/`, with compressed
+and raw hashes verified; the first save still matches its predecessor hash.
+Reload of the new combat save, numeric kill count, audio, frame rate and full
+mission completion were not tested. The observed result is visible enemy
+defeat with player survival, rather than a kill-counter measurement.
+
+All 232 original runtime paths and 23 control paths were recovered and
+hash-verified before delegated shutdown; both saves were verified separately.
+`compact-recovery-local-map.json` maps every original runtime path to either
+its raw local artifact or a lossless gzip object and records its raw hash.
+Post-archive checks reverified the complete recovery. Browser, controller and
+parents returned actual wait code 0 with both EOFs; independent PID/profile/
+port checks confirmed absence. All 40 recorded native input events were
+trusted and key presses balanced. Menu document mouseup was unobserved, but
+both guest `WM_LBUTTONUP` messages carried zero buttons and native actions
+used a finally-release path.
+
+Private box `bx_9t365nv9` had an independently prearmed fixed 08:43:31 UTC
+watchdog and initial service expiry 08:43:32.100 UTC. Normal stop
+`stop_46e831b90a43713a` completed at 08:09:45.397 UTC, `forced:false`, error
+null. Independent box and stop GETs confirmed archived with current expiry
+null; the watchdog exited unfired with actual wait 0 and both EOFs. No worker,
+restart, resume, delete or deployment was performed.
+
+Validation: authentic filesystem restore and original Load UI, full reviewed
+before/after enemy and health/ammunition captures, native updated Save UI,
+source/media/module identity, local and same-box input checks, reused matching
+locked build, complete recovery/raw-hash checks, and documentation diff checks.
