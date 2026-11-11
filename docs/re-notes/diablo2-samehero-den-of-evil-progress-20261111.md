@@ -1,4 +1,51 @@
-# SAMEHERO accepts Den of Evil and retains a Blood Moor save
+# SAMEHERO: XP 163 retained after Blood Moor combat
+
+Latest run: `scratch/runs/20261111-diablo2-samehero-den-cave-entrance-1245/`.
+The preceding run's unedited final save was hash-checked, mounted through the
+ordinary launcher `app.files` URL/VFS route, and loaded through native Single
+Player. The character and quest panels confirmed SAMEHERO, level 1 Barbarian,
+XP 66, life 66/66, and the active Den of Evil wilderness objective.
+
+SAMEHERO exited camp, explored farther into the Blood Moor, and fought native
+Zombies and Quill Rats. The first visibly collapsed Zombie was followed by a
+native panel showing XP 99. Later combat raised XP to **163**, with life
+**36/66** (`review/finalstats.png`). Native Save & Exit returned to the title;
+the read-only exporter recovered all four game-written save files. A normal
+Load then confirmed SAMEHERO at **XP 163, life 36/66**, with Den of Evil still
+active (`review/retainedstats.png`, `review/retainedquest.png`). Load returned
+to camp. There was no fresh-browser restoration of this updated checkpoint.
+
+Use this latest run's `final-save-manifest.json` and `final-save/` for the next
+restore. The 813-byte D2S SHA-256 is
+`aa681cbf0eba7835be7665181652491113004b866b1f57bd3a99d757a71a412d`;
+the MA0 is now 5434 bytes. No save bytes were generated or edited, and no guest
+state, script, or configuration writes were used. The cave entrance was not
+found before the lease's recovery cutoff; cave entry and quest completion
+remain unverified. Next: restore this XP 163 checkpoint, heal natively, and
+continue searching the Blood Moor rather than repeat the waypoint enclosure.
+The gate is reachable through the dirt passage east of that enclosure; the
+current run's `endaround`, `throughgap`, and `gapright` images show the approach.
+
+The runtime reused the source/module/media identity recorded below, with
+`worker-observe.js` included in the initial provision. Composed-controller and
+native-export regressions passed before and after gameplay; the prior locked
+build log was rehashed. No shared production code changed. Every admitted
+input had a reviewed full current image and finite actual release/passive
+settling. A healing digit was rejected by the key schema before enqueue or
+effects; it was not replayed. The audit passed 77 command ACKs, 70 reviewed
+inputs, 191 balanced trusted events, and CRC/IDAT checks for 77 unique PNGs.
+
+All 862 remote references (40,637,392 logical bytes) were recovered and locally
+hash-checked, independently rehashed remotely before stop, and checked again
+locally afterward. `recovery-map.json` preserves the path/hash mapping; Git
+commit/patches and media references preserve source recovery without a source
+archive. Browser/controller and the unfired watchdog exited with actual parent
+wait and both output EOFs. Private box `bx_8jbxqvk6` was normally stopped at
+**13:20:38Z**, before **13:24:15Z** expiry. Stop
+`stop_2c7edd2c5cd8206c` completed, forced false, error null; independent GET
+confirmed archived with expiry null. No box remains running for this task.
+
+## Earlier quest checkpoint
 
 Run: `scratch/runs/20261111-diablo2-samehero-den-of-evil-progress-1155/`.
 This continues the [native combat/save/load checkpoint](diablo2-same-character-combat-save-load-20261111.md).
