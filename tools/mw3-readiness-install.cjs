@@ -31,6 +31,7 @@ function prepare(source, destination) {
     JSON.stringify(path.join(source, 'worker-prefix.js')).slice(1, -1),
     path.join(destination, 'worker-prefix.js'));
   browser = keyboardWitness(browser);
+  browser = require('./mw3-key-action-review.cjs').install(browser);
   let throttle = fs.readFileSync(path.join(source, 'throttle.cjs'), 'utf8');
   throttle = once(throttle, '{correlate}=', '{correlateEdges}=');
   const start = throttle.indexOf('  const down=edges.find(');

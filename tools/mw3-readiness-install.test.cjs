@@ -17,8 +17,9 @@ test('prepared ordinary owning Worker retains causal keyboard failure and preser
   assert.throws(() => prepare(retained, out), /exists/);
   const source = fs.readFileSync(out+'/browser.cjs', 'utf8');
   const old = fs.readFileSync(retained+'/browser.cjs', 'utf8');
-  assert.equal(source.replaceAll(out+'/worker-prefix.js', retained+'/worker-prefix.js'), keyboardWitness(old),
-    'controller admission, deadlines and native route byte-for-byte unchanged');
+  assert.equal(source.replaceAll(out+'/worker-prefix.js', retained+'/worker-prefix.js'),
+    require('./mw3-key-action-review.cjs').install(keyboardWitness(old)),
+    'only the producer witness and explicit cockpit/pilot key review routing change');
   const wasm = fs.readFileSync(root+'/build/wine-assembly.wasm');
   const pe = require('../lib/pe').readPE(root+'/test/binaries/shareware/mw3/ex/Program_Files/mech3demo.exe');
   assert.equal(crypto.createHash('sha256').update(pe.buf).digest('hex'),

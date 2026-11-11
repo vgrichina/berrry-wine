@@ -218,3 +218,34 @@ A trusted key ignored by the ordinary page-focus rules must fail and prohibit
 later transport input. An independent fixed local watchdog is armed before
 Chrome, and both children are actually waited with separate stdout/stderr EOF.
 Evidence: `scratch/runs/20261111-mw3-post-dispatch-key-witness-repair-0645/`.
+
+## Cockpit Enter review routing (0720)
+
+The single original in
+`scratch/runs/20261111-mw3-producer-witness-cockpit-response-0720/` reached the
+Bushwacker cockpit through ordinary pilot entry and Instant Action. Both Up
+Arrow and top-row 0 passed the synchronous producer witness and exact compiled
+GetDeviceData correlation (sequences 5/6 and 7/8 respectively). This establishes
+keyboard consumption; chassis displacement remains unproved.
+
+The next Enter request was intended to cycle weapons, as the shipped readme
+specifies. The retained controller instead applied its Pilot Entry guard to
+every Enter key. It failed before native dispatch with `actual full Pilot Entry
+review required`, closed the browser, and became terminal. No weapon fired,
+no ammunition response was observed, and the stopped original was not replayed.
+
+Ordinary preparation now installs `tools/mw3-key-action-review.cjs`. Pilot
+commands retain their existing dialog requirements. Cockpit weapon cycling
+requires `cockpitAction: 'cycle-weapon'`, key Enter, and separate review evidence
+with `scene: 'cockpit'`, `fullImageReviewed: true`, `selectedWeapon` naming the
+visible selection, and `cockpitControls: ['weapons', 'speed']`. A conflicting
+pilot flag, wrong scene, missing selection/controls or unknown purpose refuses
+before dispatch. Existing screenshot hash, live identity, admission, command
+deadline, balanced pulse and sticky failure checks remain in place.
+
+`node --test tools/mw3-key-action-review.test.cjs` executes the prepared ordinary
+controller with the production transport, pulse and key mapping, using labelled
+synthetic image/identity/CDP sinks. It verifies cockpit and pilot Enter pairs,
+the retained bare-Enter failure, and refusal/no replay for invalid reviews.
+This repair was qualified locally after archival; it was not applied to the
+terminal original. A future original must prepare fresh inputs and repin them.
