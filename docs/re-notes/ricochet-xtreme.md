@@ -192,3 +192,35 @@ verifies alias mounts, cloned metadata, invalid-value rejection, and exact
 source/cache GetFileTimes equality without reading lazy archive bytes.
 Runtime cache-hit acceptance after this change is recorded separately by the
 root investigation; the metadata unit test alone is not gameplay evidence.
+
+## Current browser gameplay and observer viewport repair (2026-11-11)
+
+One fresh private browser session on main `02d373b5d385` with module
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`
+followed Play Game → Anonymous Guest → Normal / Round 1-1. The actual backend
+was guest Worker / DirectDraw with `canvas-nearest` browser presentation;
+the shell's WebGL selector does not establish the presentation backend.
+Full captures 24 and 26 show ordinary mouse movement taking the paddle from
+the left toward the center. Capture 26 has score 0 and intact lower-right
+bricks. A balanced ordinary left click of 500 ms launches the ball; capture
+28 shows the silver brick near page pixel `(417,419)` missing, speed 18,
+one remaining ion sphere, and “Out of bounds penalty”. Score remains 0;
+this proves a brick consequence, not a retained positive score or a completed
+round. Evidence: `scratch/runs/20261111-ricochet-xtreme-current-paddle-score-0700/`.
+
+This run also exposed a control failure in its diagnostic attachment: default
+`puppeteer.connect()` applies an 800×600 viewport to existing pages. The
+original driver's screenshot retained its 1024×768 expectation while the live
+canvas shrank to x=10..470, so the attempted `(490,265)` menu click landed on
+the log pane. The full screenshots alone hid that mismatch. Restoring the
+original viewport recovered the same game session; the next mouse move
+highlighted Play Game and the next click opened Select Player.
+
+Use `connectObserver` from `tools/ricochet-browser-observer.cjs` for a second
+diagnostic client. It passes `defaultViewport: null`; enumerate/read pages
+through that connection and disconnect when done. The Chrome regression
+test reproduces the default viewport reset and verifies that the repaired
+attachment preserves viewport dimensions and canvas hit coordinates.
+No guest-state writes or emulator changes were needed. All unique evidence
+was retrieved and hash-verified before normal shutdown; box `bx_6qh8h23q`
+was archived unforced under stop `stop_646bd6b42c16f5c0`.
