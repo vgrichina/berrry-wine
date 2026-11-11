@@ -9,7 +9,7 @@ const interfaces = {
     20: ['SetCooperativeLevel', 3], 21: ['SetDisplayMode', null] },
   surface: { ...common, 9: ['EnumAttachedSurfaces', 3], 12: ['GetAttachedSurface', 3],
     14: ['GetCaps', 2], 22: ['GetSurfaceDesc', 2], 23: ['Initialize', 3],
-    25: ['Lock', 5], 32: ['Unlock', 2], 39: ['SetSurfaceDesc', 3] },
+    25: ['Lock', 5], 32: ['Unlock', 2], 39: ['SetSurfaceDesc', 3], 45: ['SetPriority', 2], 46: ['GetPriority', 2] },
   texture: { ...common },
 };
 function methodAt(family, slot, version) {
@@ -20,7 +20,7 @@ function methodAt(family, slot, version) {
     throw Error('SetDisplayMode needs an independently tracked DirectDraw version');
   const nargs = fixedCount ?? (version === 1 ? 4 : 6);
   const prefix = family === 'ddraw' ? 'IDirectDraw' : family === 'texture'
-    ? 'IDirect3DTexture2' : name === 'SetSurfaceDesc' ? 'IDirectDrawSurface3' : 'IDirectDrawSurface';
+    ? 'IDirect3DTexture2' : ['SetPriority', 'GetPriority'].includes(name) ? 'IDirectDrawSurface7' : name === 'SetSurfaceDesc' ? 'IDirectDrawSurface3' : 'IDirectDrawSurface';
   return { name: `${prefix}_${name}`, nargs, pop: 4 * (nargs + 1) };
 }
 function methodArity(apiName, version) {

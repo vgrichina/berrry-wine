@@ -38949,16 +38949,14 @@
     "name": "IDirectDrawSurface7_SetPriority",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 113613604,
-    "handler": "ftm_unimplemented"
+    "hash": 113613604
   },
   {
     "id": 4587,
     "name": "IDirectDrawSurface7_GetPriority",
     "nargs": 2,
     "convention": "stdcall",
-    "hash": 4222641480,
-    "handler": "ftm_unimplemented"
+    "hash": 4222641480
   },
   {
     "id": 4588,

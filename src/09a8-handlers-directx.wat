@@ -16206,7 +16206,7 @@
 ;; defaults PS_SOLID=0, width=1, foreground=0. Style/width setters remain
 ;; E_NOTIMPL; no unsupported state can silently alter these defaults.
 ;; The previously unused +12 word in declared16-byte DX_SURF_META owns an
-;; twelve-byte heap state {raw COLORREF,pen,texture caps2}. No global layout/capacity grows.
+;; sixteen-byte heap state {raw COLORREF,pen,texture caps2,priority}. No global layout/capacity grows.
 ;; Native creation already zeros all16bytes before publication. State is
 ;; shared by every interface view and freed on final surface retirement.
 (func $vbdd_draw_state_ptr (param $entry i32) (result i32)
@@ -16217,10 +16217,10 @@
  (local $state i32) (local $guest i32)
  (local.set $state (call $vbdd_draw_state_ptr (local.get $entry)))
  (if (local.get $state) (then (return (local.get $state))))
- (local.set $guest (call $heap_alloc (i32.const 12)))
+ (local.set $guest (call $heap_alloc (i32.const 16)))
  (if (i32.eqz (local.get $guest)) (then (return (i32.const 0))))
  (local.set $state (call $g2w (local.get $guest)))
- (call $zero_memory (local.get $state) (i32.const 12))
+ (call $zero_memory (local.get $state) (i32.const 16))
  (i32.store offset=12 (call $dx_surf_meta_ptr (local.get $entry)) (local.get $guest))
  (local.get $state))
 (func $dx_surface_caps2_get (param $entry i32) (result i32)
@@ -16494,3 +16494,30 @@
     (if (i32.eqz (local.get $obj)) (then (return (i32.const 0))))
     (i32.ne (i32.and (load.field DxObject misc2 (call $dx_from_this (local.get $obj)))
       (i32.const 0x400)) (i32.const 0)))
+
+;; Managed Surface7 priority is an unsigned eviction preference. CPU backing
+;; remains resident; preserve the preference across all native COM views.
+(func $dx_surface_priority (param $this i32) (param $value i32) (param $get i32) (result i32)
+ (local $entry i32) (local $state i32)
+ (local.set $entry (call $ddraw_surface_entry_checked (local.get $this)))
+ (if (i32.eqz (local.get $entry)) (then (return (i32.const 0x88760082))))
+ (if (i32.eqz (i32.and (call $dx_surface_caps2_get (local.get $entry)) (i32.const 0x20010)))
+  (then (return (i32.const 0x80070057))))
+ (if (local.get $get) (then
+  (if (i32.or (i32.eqz (local.get $value))
+       (i32.or (i32.gt_u (local.get $value) (i32.const -4))
+        (i32.or (i32.eqz (call $guest_addr_mapped (local.get $value)))
+         (i32.eqz (call $guest_addr_mapped (i32.add (local.get $value) (i32.const 3)))))))
+   (then (return (i32.const 0x80070057))))))
+ (local.set $state (call $vbdd_draw_state_ensure (local.get $entry)))
+ (if (i32.eqz (local.get $state)) (then (return (i32.const 0x8007000e))))
+ (if (local.get $get)
+  (then (call $gs32 (local.get $value) (i32.load offset=12 (local.get $state))))
+  (else (i32.store offset=12 (local.get $state) (local.get $value))))
+ (i32.const 0))
+(func $handle_IDirectDrawSurface7_SetPriority (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+ (i32.store (global.get $reg_base) (call $dx_surface_priority (local.get $arg0) (local.get $arg1) (i32.const 0)))
+ (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+(func $handle_IDirectDrawSurface7_GetPriority (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+ (i32.store (global.get $reg_base) (call $dx_surface_priority (local.get $arg0) (local.get $arg1) (i32.const 1)))
+ (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))

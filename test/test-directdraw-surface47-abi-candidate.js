@@ -290,6 +290,23 @@ const tailCalls = !process.argv.includes('--compat');
   // and mip allocation, independently of the game's rendering path.
   for (const managedCaps of [0x40090, 0x40014, 0x60004]) {
     const texture = create(desc(C.texture | C.complex | C.mip, managedCaps, 3));
+    const priority = guard(4);
+    ok(com(texture, 46, priority.p), 'managed default priority');
+    assert.strictEqual(read(priority.p), 0); priority.check();
+    ok(com(texture, 45, 0xfedcba98), 'managed SetPriority DWORD');
+    ok(com(texture, 0, iidSurface7, out.p), 'priority alias');
+    const priorityAlias = read(out.p);
+    ok(com(priorityAlias, 46, priority.p), 'priority shared across COM views');
+    assert.strictEqual(read(priority.p), 0xfedcba98); priority.check();
+    assert.strictEqual(com(texture, 46, 0), 0x80070057, 'null priority output');
+    assert.strictEqual(com(texture, 46, 0xfffffffe), 0x80070057, 'wrapping priority output');
+    assert.strictEqual(com(plain, 45, 1), 0x80070057, 'unmanaged priority rejected');
+    write(priority.p, POISON);
+    assert.strictEqual(com(plain, 46, priority.p), 0x80070057);
+    assert.strictEqual(read(priority.p), POISON); priority.check();
+    ok(com(texture, 45, 0), 'reset managed priority');
+    ok(com(priorityAlias, 46, priority.p), 'read reset priority');
+    assert.strictEqual(read(priority.p), 0); com(priorityAlias, 2);
     assert.strictEqual(caps(texture)[1], managedCaps, 'disposable managed caps retained');
     assert.strictEqual(read(describe(texture) + 108), managedCaps, 'disposable managed descriptor');
     pixels(texture, 0x51a7cd, true); pixels(texture, 0x51a7cd);
