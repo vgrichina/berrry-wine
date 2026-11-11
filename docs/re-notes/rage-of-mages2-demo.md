@@ -110,3 +110,45 @@ recorded run IDs, module hashes, limitations, and failed attempts above.
 The complete662108160-byte GS0999.iso was freshly downloaded from https://archive.org/download/gsscda1999/1999-09/GS0999.iso and SHA1 74d2f13d0ccb0e0a4091606b0771bb07ddf7bc44 verified locally. This supersedes the historical limitation that only metadata/ranges were verified. Recipe extraction uses7-Zip23.01 Joliet names. Copy Demos/Rage2 into game/, preserving all companion/installer files. Add unchanged uppercase ROM2.EXE,SCENARIO.DLL,SMACKW32.DLL aliases for existing registration. No configuration synthesis.
 
 Run `node tools/fetch-candidate-corpus.js --id=rage-of-mages2-demo`, then `node test/test-rage-of-mages2-demo-recovery.js`. All32 output files are pinned in test/candidate-corpus/rage-of-mages2-demo-files.json and compared byte-for-byte with the independently downloaded/extracted disc tree. Previously recorded executable SHA256 matches. Restored-fixture differences: none. Private-fixture restrictions remain; full-disc download needs roughly1.5GB temporary/free space and contains unrelated disc material. No new game launch/audio/FPS/deployment qualification.
+
+## Current Chromium player control and squirrel deaths, 2026-11-11
+
+Run `20261111-rage2-current-browser-player-consequence-0900` verifies the
+registered `rage_of_mages2_demo` through the normal browser shell and native
+mouse/key input. Installed `game/rom2.exe` and all32 recovery files pass their
+pinned hashes; uppercase aliases and both companion DLLs are present. Tested
+source is `0dcbfc19153cd7c34bedfd4e5db65351bbc9e197`, module SHA256
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`.
+Current runtime pins match the retained locked-build proof and the relevant
+source diff is empty. Chromium uses the guest worker and DirectDraw canvas,
+not a D3D render worker; viewport1440x1000, guest640x480 displayed at
+(10,162) with1100x800 canvas bounds. Local and fresh same-box harmless native
+input controls pass trusted/balanced mouse/key checks and five refusals;
+viewport-preserving observer tests pass. Actual game logs show mouse down/up
+and key down/up delivery, with trusted DOM down events. DOM mouseup is not
+asserted from the document listener alone.
+
+Personally reviewed complete frames19/21 show hero selection;23/25 show
+commanded displacement from approximately(210,282) to(313,382), with the
+pillars, road and sidebar fixed. The initial explicit A attack on the nearby
+armored unit targeted a **friendly King's soldier**: the proximity dialogue
+opened first, then the pending attack caused the native Mission Failed screen
+(frame41). Recover normally with Exit to Main Menu, New Game and the three
+intro OKs. This stays in the same guest process; it is not an emulator fault.
+
+Successful route: select the hero, use M and move to southeast ground past the
+guards; clear the three proximity-dialogue paragraphs. Follow the southeast
+road using ordinary minimap clicks to move the camera and ground clicks to
+move the hero. Do not attack the soldiers. Frame110 shows a live orange
+squirrel near(690,714); the move toward(650,650) brings the hero into automatic
+combat. Frames112/114 show the game's dialogue reporting the squirrels
+cleared from the road. After normal dismissal,116 shows the prone orange
+body and117 white skeletal remains near(695,740). Roadside rocks, trees,
+minimap and sidebar stay fixed across these combat frames. This establishes
+player control and visible target-death consequence; no numeric damage,
+exact kill count, pickup, victory, audio or FPS claim.
+
+Exact commands, fullframes, visual review with SHA256, source/module/media
+pins, failed first mission, recovery instructions, runtime waits and stop
+receipts are retained in the run directory. No production code change,
+guest-state patch, media/source archive or public deployment was needed.
