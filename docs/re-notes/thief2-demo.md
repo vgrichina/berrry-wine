@@ -355,3 +355,46 @@ independent checks confirmed PID/profile/port absence. Box `bx_4xb5wgpa` was
 normally archived at 06:59:15Z, stop `stop_3c0f88fb5858cf68`, completed without
 force/error and independently confirmed. Its initial expiry was 07:25:34.595Z;
 the prearmed fixed watchdog exited unfired. No resume, deletion or deployment.
+
+## 2026-11-11: saved rooftop water arrow extinguishes the torch
+
+Run `20261111-thief2-saved-arrow-world-interaction-0730` restored the unchanged
+1040 updated quicksave (raw SHA256 `10d98308157e3f3805eed90235fb812ba09477d4de6139b810ce57ec3e8ef178`)
+through normal filesystem create/write/close and the actual Load Game /
+Quick Save / Load UI. Original media and all 1,335 provisioning pins matched;
+the successful serial-thread browser configuration and module SHA256
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`
+were reused with matching locked-build evidence.
+
+Ordinary shipped lookcenter/turn/look controls aligned the torch. An initial
+off-center pointer press changed the camera without consuming ammo. Moving the
+pointer to the gameplay center, realigning with keyboard controls, and holding
+native mouse1 for three seconds then releasing succeeded. Full frame 70 shows
+the lit torch and Water Arrow **9**; frame 72 shows the same view with the flame
+gone, nearby wall/floor illumination reduced, and ammo **8**. Frame 74 confirms
+the dark torch after native F11. All three full images were personally reviewed.
+No guest-state changes, save editing, or production repair occurred.
+
+The new game-written `updated-authentic-saves/quick.sav.gz` is retained locally:
+raw 2,328,726 bytes, SHA256
+`5326f3a67f08c2677effb45527812ddcdd595fc04154139639eda4e1075bde6e`.
+Reload of this newest save remains untested. Fresh recovery (41 files),
+DirectInput, and same-box balanced-input/negative guard checks passed. This
+establishes torch extinction through authentic gameplay, not mission completion,
+audio/FPS validation, or DirectInput consumption.
+
+All 424 auxiliary paths and the saves were recovered and raw-hash verified
+**before** normal box stop; `recovery-local-map.json` resolves exact retained
+bytes through identity/gzip encodings. No source/media archive was made.
+Chrome/controller actual waits were zero with both EOFs, independently checked
+alongside absent processes/profile/port. The enclosing local execution session
+reported 143 and did not retain its parent stream terminal; its cause is unknown,
+and the original command was never replayed. This does not replace the retained
+remote child wait evidence. Shared disk growth caused transient dips below the
+1.5 GB floor; coordinator alerts and owned lossless compaction are recorded.
+
+Box `bx_ef3fprsg` was normally archived at 07:41:00.506Z, stop
+`stop_050bfe23cb1e0a64` completed without force/error and independently confirmed.
+Initial expiry was 08:12:07.684Z; current expiry is null. The fixed independent
+watchdog was prearmed before creation and exited unfired with actual wait zero
+and both EOFs. No workers, restart, resume, deletion, or deployment.
