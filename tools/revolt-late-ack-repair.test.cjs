@@ -24,8 +24,9 @@ function environment(bound) {
   let slow=false,sourceReads=0,shotReads=0,instance='instance',renderer='render-epoch';
   let hook=async()=>{};
   const events=[],trace=[];
-  const worker={sessionId:'guest',targetId:'guest-target',url:'guest-worker',scripts:[{scriptId:'guest-script',bytecodeAvailable:true,sha256:digest}],closed:false};
-  const render={sessionId:'render',targetId:'render-target',url:'d3d-render-worker',scripts:[{scriptId:'render-script',bytecodeAvailable:true,sha256:digest}],closed:false};
+  const record={bytecodeAvailable:true,sha256:digest,bytes:bytes.length,url:'wasm://fixture',cdpHash:'fixture-hash'};
+  const worker={sessionId:'guest',targetId:'guest-target',url:'guest-worker',scripts:[{...record,scriptId:'guest-script'}],closed:false};
+  const render={sessionId:'render',targetId:'render-target',url:'d3d-render-worker',scripts:[{...record,scriptId:'render-script'}],closed:false};
   const workers=new Map([['guest',worker],['render',render]]);
   const app={name:'re_volt_demo',running:true,stopped:false,guestWorker:true,guestEndpoint:1,slot:0};
   for(const f of bound.FIELDS)app[f]=f;
@@ -148,6 +149,79 @@ async function negatives() {
   assert.throws(()=>repair.boundSource('changed'),/unrecognized/);
   console.log('PASS cached proof retirement, inventory, instance and source-pin negatives');
 }
+async function duplicates() {
+  for (const owner of ['worker','render']) {
+    for (const phase of ['startup','cached','retrieval']) {
+      const f=environment(fixed);
+      const add=()=>f[owner].scripts.push({...f[owner].scripts[0]});
+      if(phase==='cached')await f.chain.establishReady({stableMs:0,wait:async()=>{}});
+      if(phase==='retrieval') {
+        let added=false;
+        f.hook(async({method,session})=>{
+          if(!added&&method==='Debugger.getScriptSource'&&session===f[owner].sessionId){added=true;add();}
+        });
+      } else add();
+      await f.chain.readLive();
+      if(phase!=='cached')await f.chain.establishReady({stableMs:0,wait:async()=>{}});
+      await f.chain.capture('duplicate');
+      assert.equal(f.counts().sourceReads,2,'one live proof per owner');
+    }
+    for (const phase of ['startup','cached']) {
+      for (const change of [
+        s=>{delete s.sha256;},s=>{delete s.bytes;},s=>{s.bytes=0;},
+        s=>{s.bytecodeAvailable=false;},s=>{s.error='failed';},
+        s=>{s.sha256='0'.repeat(64);},s=>{s.bytes++;},s=>{s.url+='changed';},
+        s=>{s.cdpHash+='changed';},
+      ]) {
+        const f=environment(fixed);
+        if(phase==='cached')await f.chain.establishReady({stableMs:0,wait:async()=>{}});
+        const duplicate={...f[owner].scripts[0]};change(duplicate);f[owner].scripts.push(duplicate);
+        await assert.rejects(f.chain.readLive(),/inventory|module/);
+      }
+    }
+    for (const field of ['sessionId','targetId']) {
+      const f=environment(fixed);f[owner].scripts.push({...f[owner].scripts[0]});
+      await f.chain.establishReady({stableMs:0,wait:async()=>{}});
+      f[owner][field]+='changed';
+      await assert.rejects(f.chain.readLive(),/owner|inventory|module/);
+    }
+    const f=environment(fixed);f[owner].scripts.push({...f[owner].scripts[0]});
+    await f.chain.establishReady({stableMs:0,wait:async()=>{}});
+    f[owner].scripts[0].bytes++;
+    await assert.rejects(f.chain.readLive(),/inventory|module/);
+    const added=environment(fixed);
+    await added.chain.establishReady({stableMs:0,wait:async()=>{}});
+    added[owner].scripts.push({...added[owner].scripts[0],scriptId:'new-script'});
+    await assert.rejects(added.chain.readLive(),/inventory|module/);
+    for (const retire of [
+      f=>{f[owner].closed=true;},
+      f=>{f.workers.set(f[owner].sessionId,{...f[owner]});},
+    ]) {
+      const f=environment(fixed);f[owner].scripts.push({...f[owner].scripts[0]});
+      await f.chain.establishReady({stableMs:0,wait:async()=>{}});
+      retire(f);
+      await assert.rejects(f.chain.readLive(),/owner|session|Worker|renderer/);
+    }
+    for (const phase of ['retrieval','cached-read']) {
+      const f=environment(fixed);
+      if(phase==='cached-read')await f.chain.establishReady({stableMs:0,wait:async()=>{}});
+      let added=false;
+      f.hook(async({method,expression,session})=>{
+        if(!added&&(phase==='retrieval'
+          ?method==='Debugger.getScriptSource'&&session===f[owner].sessionId
+          :expression===fixed.RENDER_READ)) {
+          added=true;
+          f[owner].scripts.push({...f[owner].scripts[0],bytes:bytes.length+1});
+        }
+      });
+      await assert.rejects(f.chain.readLive(),/inventory|module/);
+      assert(added);
+    }
+  }
+  const size=environment(fixed);size.worker.scripts[0].bytes++;
+  await assert.rejects(size.chain.readLive(),/byte length/);
+  console.log('PASS exact duplicate notifications and pending, conflicting, mutated and owner-change refusals');
+}
 async function safety() {
   const f=environment(fixed),out=path.join(evidence,'expired');fs.mkdirSync(out);fs.mkdirSync(out+'/commands');
   const deadline=Date.now()-1,ctx=controller(out,f,deadline);
@@ -163,4 +237,4 @@ async function safety() {
   base.writeJson(evidence+'/independent-release.json',receipt);
   console.log('PASS immutable expiry and independent UP after UNKNOWN DOWN');
 }
-(async()=>{await negatives();await safety();if(!process.argv.includes('--quick')) {await boundary('baseline',old);await boundary('repaired',fixed);}})().catch(e=>{console.error(e);process.exitCode=1;});
+(async()=>{await duplicates();await negatives();await safety();if(!process.argv.includes('--quick')) {await boundary('baseline',old);await boundary('repaired',fixed);}})().catch(e=>{console.error(e);process.exitCode=1;});

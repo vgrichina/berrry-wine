@@ -32,11 +32,20 @@ function proofCache() {
     assert(!w.closed && workers.get(w.sessionId) === w, 'module owner retired');
     if(owners.has(w.sessionId))assert.equal(owners.get(w.sessionId),w,'module session replaced');
     else owners.set(w.sessionId,w);
-    assert(w.scripts.length && w.scripts.every(s => s.bytecodeAvailable && s.sha256 && !s.error),
+    assert(w.scripts.length && w.scripts.every(s => s.bytecodeAvailable && s.sha256 && !s.error &&
+      Number.isSafeInteger(s.bytes) && s.bytes > 0),
       'complete recovered module inventory required');
-    assert.equal(new Set(w.scripts.map(s => s.scriptId)).size, w.scripts.length,
-      'duplicate module script ID');
-    return JSON.stringify([w.sessionId, w.targetId, w.scripts.map(s => [s.scriptId, s.sha256])]);
+    // Chrome can report a previously recovered script again. Each notification
+    // must finish recovering before deduplication.
+    // Script IDs are scoped to this exact live owner, never to the module hash.
+    const scripts = new Map();
+    for (const s of w.scripts) {
+      const record = JSON.stringify([s.scriptId, s.sha256, s.bytes, s.url, s.cdpHash]);
+      if (scripts.has(s.scriptId))
+        assert.equal(record, scripts.get(s.scriptId), 'conflicting duplicate module script ID');
+      else scripts.set(s.scriptId, record);
+    }
+    return JSON.stringify([w.sessionId, w.targetId, [...scripts.values()]]);
   }
   async function moduleHash(w, scripts) {
     const signature = inventory(w), previous = proofs.get(w);
@@ -46,8 +55,11 @@ function proofCache() {
     }
     const source = await send('Debugger.getScriptSource', {scriptId:scripts[0].scriptId}, w.sessionId);
     assert(source.bytecode, 'live module bytecode required');
-    const digest = sha(Buffer.from(source.bytecode, 'base64'));
+    const bytes = Buffer.from(source.bytecode, 'base64');
+    const digest = sha(bytes);
     assert.equal(digest, scripts[0].sha256, 'live module bytes changed');
+    assert.equal(bytes.length, scripts[0].bytes,
+      'live module byte length changed');
     assert.equal(inventory(w), signature, 'module inventory changed during retrieval');
     proofs.set(w, {signature, digest});
     return digest;
