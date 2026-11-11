@@ -6,6 +6,10 @@ collects its blue health flask with ordinary movement. The native message
 “HEALTH VIAL” appears, the flask disappears, and health rises from 25 to 35.
 Outgoing enemy damage, a kill and campaign objective completion remain unproved.
 
+Follow-up: the [original enemy hit/response run](heretic2-current-original-enemy-response-20261111.md)
+now establishes aimed flying-fist impacts and the humanoid falling in the alley.
+The pickup run's own combat claim remains unchanged.
+
 Run: `scratch/runs/20261111-heretic2-current-outgoing-hit-objective-0840/`
 (ignored). This extends the [previous browser route](heretic2-current-browser-backends-20261108.md)
 without repeating backend qualification. No emulator change was necessary.
