@@ -403,3 +403,74 @@ Validation: authentic filesystem restore and original Load UI, full reviewed
 before/after enemy and health/ammunition captures, native updated Save UI,
 source/media/module identity, local and same-box input checks, reused matching
 locked build, complete recovery/raw-hash checks, and documentation diff checks.
+
+## Combat-save onward route and retained Drygoods entry, 2026-11-11
+
+Run `20261111-outlaws-saved-combat-onward-1410` restored the preceding
+194,221-byte `SAVE001.OSG` unchanged through ordinary VFS file APIs, then
+loaded second slot `F` in the original Load Game UI. `frame-14.png` confirms
+the prone gunman, living player, three loaded rounds and 18 reserve. The
+canonical original-media `outlaws_demo`, tested source `25ac5466dac0b6a5194d953090ca0096ab400c77`
+plus the parent recorded patches, and module
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`
+were reused. The immutable module was resolved through
+`scratch/usage-watch/retained-module-restorations-20261111.json`; matching
+locked-build proof and all 1,324 provisioned files passed hash checks before
+and after gameplay. No emulator, media, map, script or save bytes were edited.
+
+Shipped controls establish `R` reload, Space “Nudge” for doors (also revival
+after death), and Enter inventory use. Native movement and interaction reached
+new consequences beyond the parent combat position:
+
+- `frame-32.png`: a further upright gunman near the Hotel; subsequent combat
+  attempts died without a verified defeat of that gunman.
+- `frame-87.png`: using the Bank door explicitly reports **“You need the brass
+  key.”** No brass key was acquired.
+- `frame-99.png`: Space opened the Drygoods entrance, revealing a counter and
+  a person behind it. The person's hostility was not established.
+- `frame-130.png`: the player entered the open Drygoods interior alive, with
+  six loaded rounds and 15 reserve. Escape paused the native game here.
+- `frame-149.png`: native Load Game recognizes newly saved first slot `B` and
+  its interior thumbnail. `frame-151.png` shows the normal load restored that
+  living interior position; `frame-153.png` shows a further turn into the room.
+  A second load likewise restored it in `frame-167.png`.
+
+Native Escape → SAVE GAME → first empty slot → Enter → `b` → Enter wrote
+`C:\OUTDEMO\SAVE\SAVE000.OSG`: 199,852 raw bytes, SHA-256
+`f88b8ec7ad54bb867224a33c67fd9af3d1e5f7529c783ef997b361cf8a2164d8`.
+The unedited export is retained as `authentic-saves/save000.osg.gz` with
+compressed and raw hash manifests. The original combat `SAVE001.OSG` remains
+byte-identical to its parent hash. Restore the new bytes through ordinary
+file APIs and select first slot `B`; second slot `F` remains the fallback.
+
+This is retained door/room-entry progress and a new combat encounter, not
+item acquisition or mission completion. Low-health exposure to gunfire caused
+repeated deaths, including after the save and after both loads. A later Space
+action led through a loading screen back to the starting courtyard with reset
+health/ammunition; it is not counted as a mission transition. Native Escape
+pause assistance was used for menus, saving and inspection. Full current
+images were reviewed before every bounded action, followed by actual release
+and passive settling. One move's transport returned blank stdout; its remote
+accepted acknowledgement was inspected without replaying the input. Legacy
+live-key readback was null; recorded trusted key events balanced, and every
+click has a guest mouse-up with zero buttons.
+
+All 860 original runtime paths, 23 same-box control paths and both saves were
+recovered and hash-verified before shutdown and again after archive. The
+lossless `compact-recovery-local-map.json` retains every runtime path/hash;
+175 PNGs passed CRC and IDAT checks, 80 inputs have current-image review/hash
+bindings, and all 167 recorded input events were trusted. Browser/controller
+and parents exited normally with actual waits and both EOFs; independent
+PID/profile/port checks confirmed absence. Private box `bx_n8ufhbqa` had an
+independently prearmed fixed 14:49:33.916 UTC deadline and initial service
+expiry 14:49:34.211 UTC. Normal stop `stop_d6e1e51335b5abe2` completed at
+14:29:15.578 UTC, non-forced with no error; independent GETs confirmed archived
+with current expiry null. The watchdog exited unfired with actual wait/EOFs.
+
+Validation: authentic restore, native Load/Save and repeat Load, shipped
+controls, full reviewed captures, local/same-box input qualification, reused
+matching locked build, provision/served-module/media hashes, complete recovery
+and documentation diff checks. No shared code changed. Next: use `B` for a
+faster protected interior route or resolve the remaining shooter from `F`,
+then find the brass key. Audio, frame rate, additional enemy defeat, item
+pickup and full mission completion remain unverified.
