@@ -27,16 +27,23 @@ function prepare(source, destination) {
   source = path.resolve(source); destination = path.resolve(destination);
   assert.notEqual(source, destination);
   assert(fs.statSync(destination).isDirectory());
-  const browser = once(fs.readFileSync(path.join(source, 'browser.cjs'), 'utf8'),
+  let browser = once(fs.readFileSync(path.join(source, 'browser.cjs'), 'utf8'),
     JSON.stringify(path.join(source, 'worker-prefix.js')).slice(1, -1),
     path.join(destination, 'worker-prefix.js'));
+  browser = keyboardWitness(browser);
+  let throttle = fs.readFileSync(path.join(source, 'throttle.cjs'), 'utf8');
+  throttle = once(throttle, '{correlate}=', '{correlateEdges}=');
+  const start = throttle.indexOf('  const down=edges.find(');
+  const end = throttle.indexOf('\n }};', start);
+  assert(start >= 0 && end > start, 'exact ordinary throttle correlation required');
+  throttle = throttle.slice(0, start) + '  return correlateEdges(raw,edges,pulse,code);' + throttle.slice(end);
   // Persist before identity checks and validation, including decoder failures.
   let observer = fs.readFileSync(path.join(source, 'dispatch-observer.cjs'), 'utf8');
   observer = once(observer, "save('dispatch-last-snapshot.json',v);",
     "save('dispatch-last-snapshot.json',v);save('keyboard-readiness-last.json',{identity,keyboard:v.keyboard});");
   observer = once(observer, "save('dispatch-trace-'+Date.now()+'.json',v);",
     "save('dispatch-trace-'+Date.now()+'.json',v);save('keyboard-readiness-final.json',{identity,keyboard:v.keyboard});");
-  const outputs = {'browser.cjs': browser, 'dispatch-observer.cjs': observer,
+  const outputs = {'browser.cjs': browser, 'throttle.cjs': throttle, 'dispatch-observer.cjs': observer,
     'worker-prefix.js': prefix(fs.readFileSync(path.join(source, 'worker-prefix.js'), 'utf8'))};
   // Refuse collisions before writing any prepared input.
   for (const name of Object.keys(outputs)) assert(!fs.existsSync(path.join(destination, name)), name + ' exists');
@@ -44,7 +51,15 @@ function prepare(source, destination) {
   return Object.keys(outputs);
 }
 
-module.exports = {prefix, prepare};
+function keyboardWitness(browser) {
+  browser = once(browser, "globalThis.__nativeEvidence=[];const inputSample=",
+    "globalThis.__nativeEvidence=[];const keyRows=new WeakMap(),keyRenderer=()=>typeof runningApps==='undefined'?null:runningApps[0]?.wine?.renderer,bindKey=(" +
+    require('./mw3-native-key-witness.cjs').install + ")( {getRenderer:keyRenderer,rowForEvent:e=>keyRows.get(e)} );const inputSample=");
+  return once(browser, '__nativeEvidence.push(row);queueMicrotask(',
+    '__nativeEvidence.push(row);if(type===\'keydown\'||type===\'keyup\'){keyRows.set(e,row);bindKey(keyRenderer());}queueMicrotask(');
+}
+
+module.exports = {prefix, prepare, keyboardWitness};
 if (require.main === module) {
   assert.equal(process.argv.length, 4, 'usage: node tools/mw3-readiness-install.cjs RETAINED_0500 OWNED_RUN');
   prepare(process.argv[2], process.argv[3]);

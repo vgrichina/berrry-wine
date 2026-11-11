@@ -145,10 +145,10 @@ python3 -B tools/mw3-retention-repair.py \
 ```
 
 Use an owned destination with no colliding prepared files. This emits the
-browser, dispatch observer, Worker prefix and unchanged owner/collector/recovery
+browser, throttle adapter, dispatch observer, Worker prefix and unchanged owner/collector/recovery
 inputs. Stage the remaining existing small launch dependencies as usual and
 regenerate runtime pins before any separately authorized original. The direct
-three-file installer is `node tools/mw3-readiness-install.cjs SOURCE OWNED_RUN`.
+four-file installer is `node tools/mw3-readiness-install.cjs SOURCE OWNED_RUN`.
 Neither command launches anything. Historical source inputs remain untouched.
 
 The rebuilt prefix installs keyboard hooks before compiled instantiation, using
@@ -179,3 +179,42 @@ and unchanged mouse move/press/release after a compiled completed mouse read.
 Caller objects, screenshot admission and native sends are labelled fixture
 substitutes; this is not an original-game readiness observation. Evidence:
 `scratch/runs/20261111-mw3-readiness-integration-0530/`.
+
+## Exact native key witness (0645)
+
+The 0600 original retained trusted ArrowUp DOWN/UP with stale capture-microtask
+samples 4/5, while compiled GetDeviceData consumed sequences 5/6. Chromium can
+checkpoint microtasks between native listeners, before the later window capture
+listener forwards the event into the renderer. A later timer's global sequence
+would also be ambiguous in the presence of unrelated input.
+
+The ordinary preparation command above now serializes
+`tools/mw3-native-key-witness.cjs` into that same early listener. Its read-only
+wrappers observe `_recordDirectInputKey` synchronously inside `handleKeyDown/Up`.
+Chromium's current DOM Event object connects that actual delivery to the early
+listener's WeakMap row. The receipt contains the producer's actual sequence,
+VK, direction, completion and errors. Missing current-event identity, suppressed
+or repeated input, conflicting wrappers, multiple producer records and producer
+exceptions cannot qualify. The wrappers preserve the original receiver,
+arguments, result and exception; they send no input and consume no buffer.
+
+The prepared `throttle.cjs` uses `correlateEdges`: exactly one trusted DOWN/UP
+pair, each with exactly one completed matching producer receipt, is required.
+The original `correlate` then matches exact sequences, direction, DIK, device,
+buffer, count pointer and caller in successful non-peek compiled completions.
+The old before/after samples remain raw diagnostics. No sequence is inferred by
+adding one or by matching timestamps alone. Sticky controller failures and
+original no-replay admission are unchanged. Stage remaining dependencies only
+when absent, preserving the newly prepared throttle adapter, and repin all inputs.
+
+`node --test tools/mw3-native-key-witness.test.cjs` uses local headless Chromium,
+the production browser bridge/renderer/host, compiled GetDeviceData, and the
+prepared serialized ordinary execute/transport/throttle/pulse/timed helpers.
+The synthetic device and owner identity are explicit; no original runs. Normal
+and loaded trusted ArrowUp pairs must qualify despite stale microtask samples;
+unrelated trusted ArrowLeft edges in the loaded hold make the target sequences
+nonconsecutive. Stale, wrong, duplicate and unrelated receipts/completions refuse.
+A trusted key ignored by the ordinary page-focus rules must fail and prohibit
+later transport input. An independent fixed local watchdog is armed before
+Chrome, and both children are actually waited with separate stdout/stderr EOF.
+Evidence: `scratch/runs/20261111-mw3-post-dispatch-key-witness-repair-0645/`.

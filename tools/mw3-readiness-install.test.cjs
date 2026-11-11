@@ -4,7 +4,7 @@ const fs = require('node:fs'), path = require('node:path'), vm = require('node:v
 const crypto = require('node:crypto');
 const root = path.resolve(__dirname, '..');
 const retained = path.join(root, 'scratch/runs/20261111-mw3-complete-helper-cockpit-0500');
-const {prepare} = require('./mw3-readiness-install.cjs');
+const {prepare, keyboardWitness} = require('./mw3-readiness-install.cjs');
 const {BASE, SIZE} = require('../lib/region-map.generated');
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -17,7 +17,7 @@ test('prepared ordinary owning Worker retains causal keyboard failure and preser
   assert.throws(() => prepare(retained, out), /exists/);
   const source = fs.readFileSync(out+'/browser.cjs', 'utf8');
   const old = fs.readFileSync(retained+'/browser.cjs', 'utf8');
-  assert.equal(source.replaceAll(out+'/worker-prefix.js', retained+'/worker-prefix.js'), old,
+  assert.equal(source.replaceAll(out+'/worker-prefix.js', retained+'/worker-prefix.js'), keyboardWitness(old),
     'controller admission, deadlines and native route byte-for-byte unchanged');
   const wasm = fs.readFileSync(root+'/build/wine-assembly.wasm');
   const pe = require('../lib/pe').readPE(root+'/test/binaries/shareware/mw3/ex/Program_Files/mech3demo.exe');

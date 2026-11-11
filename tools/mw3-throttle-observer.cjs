@@ -150,4 +150,22 @@ function correlate(snapshot, {code, downAt, upAt, downSequence, upSequence} = {}
   };
 }
 
-module.exports = {attach, correlate};
+// Ordinary DOM evidence must carry the exact synchronous producer receipt.
+// Historical before/after samples remain raw diagnostics, never admission.
+function correlateEdges(snapshot, edges, pulse, code) {
+  const selected = edges.filter(e => e.code === code && e.at >= pulse.downAttemptedAt);
+  if (selected.length !== 2 || selected[0].type !== 'keydown' || selected[1].type !== 'keyup')
+    throw Error('trusted balanced movement edges missing or duplicate');
+  const sequences = selected.map(e => {
+    const w = e.keyWitness, r = w?.records?.[0];
+    if (!e.trusted || !w?.trusted || !w.completed || w.kind !== 'synchronous-key-producer' ||
+        w.code !== e.code || w.type !== e.type || w.errors.length || w.records.length !== 1 ||
+        !r.emitted || r.vk !== w.vk || r.vk !== ({ArrowUp:38, Digit0:48})[code] ||
+        r.down !== (e.type === 'keydown')) throw Error('exact post-producer edge witness required');
+    return r.sequence;
+  });
+  return correlate(snapshot, {code, downAt:selected[0].at, upAt:selected[1].at,
+    downSequence:sequences[0], upSequence:sequences[1]});
+}
+
+module.exports = {attach, correlate, correlateEdges};

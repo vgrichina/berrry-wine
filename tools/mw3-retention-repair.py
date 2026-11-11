@@ -1,6 +1,6 @@
 """Apply the narrow repair to exact retained MW3 controller inputs.
 
-Writes five repaired inputs, or six integrated ordinary-0500 inputs, into an owned run.
+Writes five repaired inputs, or seven integrated ordinary-0500 inputs, into an owned run.
 The source run remains untouched. Pin the resulting files with the other runtime
 inputs before use; this tool neither provisions nor starts an original/box.
 """
@@ -23,11 +23,11 @@ def repair(source, dest):
     # leaving a stale serialized function in the next original's prefix.
     if "require('./dispatch-observer.cjs')" in browser and 'mw3-preclick-readiness.cjs' in browser:
         names = ['browser.cjs', 'dispatch-observer.cjs', 'worker-prefix.js',
-                 'owner-start.py', 'collect.py', 'recover-watch.py']
+                 'throttle.cjs', 'owner-start.py', 'collect.py', 'recover-watch.py']
         assert all(not (dest / name).exists() for name in names), 'prepared input exists'
         tool = Path(__file__).with_name('mw3-readiness-install.cjs')
         subprocess.run(['node', str(tool), str(source), str(dest)], check=True)
-        for name in names[3:]:
+        for name in names[4:]:
             with (dest/name).open('x') as f:
                 f.write((source/name).read_text())
         return
