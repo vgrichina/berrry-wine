@@ -807,7 +807,9 @@
       (local.set $arg (i32.const 8))
       (local.set $len (i32.shl (i32.mul
         (i32.load (i32.add (local.get $stack) (select (i32.const 20) (i32.const 16) (i32.eq (local.get $op) (i32.const 159)))))
-        (i32.load (i32.add (local.get $stack) (select (i32.const 24) (i32.const 20) (i32.eq (local.get $op) (i32.const 159)))))) (i32.const 4)))))
+        (i32.load (i32.add (local.get $stack) (select (i32.const 24) (i32.const 20) (i32.eq (local.get $op) (i32.const 159))))))
+        ;; RGBA8 canonical (unsigned-byte uploads) is 4 B/texel, float is 16.
+        (select (i32.const 2) (i32.const 4) (i32.eq (i32.load offset=32 (local.get $stack)) (i32.const 0x1401)))))))
     (if (i32.eq (local.get $op) (i32.const 147)) (then
       (local.set $arg (i32.const 2))
       (if (i32.eq (i32.load offset=4 (local.get $stack)) (i32.const 0x2300)) (then
