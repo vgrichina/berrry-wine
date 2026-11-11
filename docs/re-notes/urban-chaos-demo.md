@@ -1811,3 +1811,64 @@ N/A; Constructor and coordinator lifecycle ownership remain untouched.
 Only this note is committed. The assignment stops without held work; next
 requires separately restored sustained headroom and a fresh assignment.
 No gameplay, FPS, audio, full27 or allocator-causality claim follows.
+
+## 2026-11-11 current browser: player movement and melee damage
+
+Evidence: `scratch/runs/20261111-urban-chaos-current-player-consequence-1010/`.
+The original installed demo now reaches player control and a visible combat
+consequence through the normal `urban_chaos_demo` application configuration.
+No production source change was needed. Historical allocator and held-input
+failures did not reproduce on this route; this does not identify their cause.
+
+The tested source was `a603418dbf281e1f7844079a3b151b8b309d0d9e`.
+The actually loaded 2,189,363-byte module was SHA256
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`.
+The original `test/binaries/candidates/urban-chaos-demo/game/Fallen.exe`
+was SHA256 `8cc73044e19b423ef0f13858d8cb3bb3025ca023114cf87ff46c57838f4b2229`;
+the complete companion manifest passed `test/test-urban-chaos-recovery.js`
+(1,122 files). The matching locked build was reused with unchanged source and
+module pins (`reused-build-proof.json`), rather than rebuilt for this notes-only
+change. Chrome 151 used the live owning legacy/WebGL endpoint and a WebGL2
+render-worker context. The viewport was 1440×1000, game backing 640×480;
+observer attachment preserved the viewport with `defaultViewport: null`.
+
+Native Setup, Options/Keyboard, Start, map selection and briefing were navigated
+from reviewed full images. The shipped Keyboard screen is `retry/retrieved/
+original-output/frame-28.png`: numpad movement, Z punch, X kick, C action.
+Opening camera/loading images were excluded from player-motion evidence.
+HUD frames 50–51 establish an idle player beside the curb, with the police car
+and phone booths across the street. Balanced ArrowUp holds then move D’arci
+relative to the curb and scenery, with the follow camera moving as she advances
+into close melee (frames 53, 55, 60 and 67). Numpad8 was also tried; it is not
+claimed as independently conclusive movement. Z/X produce combat poses against
+an approaching hostile NPC. Frame 69, compared with idle frame 51, shows the
+fixed HUD health arc visibly depleted after the exchange. Enemy health-bar
+changes are also visible, but perspective and occlusion prevent exact HP claims.
+No arrest, kill, training completion or mission completion is claimed.
+
+The same sandbox passed harmless trusted, balanced input controls, including
+Z/X/C and numpad down/up, before their use in the game. Each action retained a
+fresh reviewed full-frame hash and live owner/module/backend checks. The first
+attempt refused Enter before dispatch because the scratch controller omitted
+`legacy` from its backend allow-list. Its normal exit, actual waits and absence
+checks were retained; the concrete allow-list correction and fresh same-box
+controls preceded the retry within the original fixed allocation. An initial
+extra-key qualification failed before input because its observer import was
+missing; the corrected direct connection retained viewport and identity guards.
+No uncertain command was replayed, guest state edited, or existing guard removed.
+
+Escape offered Resume/Restart/Abandon, with no save entry. Abandon and the normal
+main-menu Exit sequence returned the guest with `ExitProcess` code 0 (frame 93).
+Chrome, controller, owner and transport have actual waits and separate stdout/
+stderr EOF evidence. Independent checks found their PIDs, tmpfs profile and
+loopback server absent. All unique captures/logs and extra-key dispatch receipts
+were recovered and raw-SHA verified before shutdown; compressed JSON has a
+round-trip hash map and restore recipe in the run. Observer tests passed (2).
+
+Private box `bx_2m93xu6a` was independently confirmed **archived**, expiry null,
+with nonforced completed stop `stop_e1eefccb1f4c2c2b` at
+`2026-11-11T06:39:25.780Z`. Its original expiry was
+`2026-11-11T06:54:50.969Z`; the prearmed fixed watchdog was never extended and
+exited unfired with actual wait 0 and both EOFs. No box remains running or held.
+The assigned player-control-plus-consequence goal is complete; a later arrest
+or mission-completion route would be additional work.
