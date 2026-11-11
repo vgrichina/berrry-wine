@@ -796,3 +796,47 @@ shutdown. All three local Node runs returned0 with actual parent waits and both
 EOFs; independent checks found their PIDs absent and port18115 refusing
 connections. The fixed08:25:36UTC watchdogs exited unfired. No cloud box was
 created, resumed, or left running.
+
+
+## Controlled movement and console training consequence (2026-11-11, 0810)
+
+Run `scratch/runs/20261111-oni-current-training-objective-0810/` demonstrates
+original native movement and a completed training objective. It reuses the
+accepted module `75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`
+and renderer at `7519e3553`; all 33 canonical media hashes match. No runtime,
+game script, guest state or save contents were changed. The registered CLI
+uses software GL, default service clock and `--batch-size=200000`. Existing
+locked-build and focused regression evidence is matched by source/module hash
+and reused; no new production fix or build is claimed.
+
+The opening Kon script moves the camera even after the mouse prompt appears.
+Thus the preceding run's early camera changes alone do not establish mouse
+causality. Wait for `cm_reset` behind Konoko. In the new run, ordinary relative
+mouse motion then changes orientation and advances the prompt to WASD. Balanced
+W moves Konoko from open floor to the striped wall; released captures show her
+stationary and the next instruction names the yellow floor target and console.
+CapsLock plus S, using the game's generated walk binding, moves her backward.
+Mouse and WASD approach the marked console; the native prompt becomes
+"Press CTRL to use this CONSOLE". Balanced Control activates it, removes the
+yellow marker, and advances to **DASH training sequence initiated**, followed
+by the tap-W/hold-W instruction. The final input queue is empty and all used
+keys and mouse buttons are released. Full captures were reviewed before input.
+Fine console approach used the existing freeze/step control without changing
+clock cadence.
+
+Authentic game-written `persist.dat` (206496 bytes, SHA256
+`629795eb13defaee3050bc9201cff3885b815b3d830513e4d5bda5cc6d062acb`) and generated
+bindings are retained. No manual-save action was evident in this training;
+a resumable console-stage checkpoint or reload is not established. Audio,
+combat, browser/mobile parity, full tutorial completion and performance remain
+unqualified. Default-batch sampling sensitivity remains unexplained; native
+read-only diagnostics prove mouse deltas reached the game.
+
+The primary successful run acknowledged quit and wrote its final DASH capture,
+but its supervising terminal returned143 before recording the child wait.
+This anomaly is preserved; independent checks found no remaining PID or port.
+A safe detached repeat within the original fixed08:51:26UTC deadline again
+advanced mouse -> WASD -> console objective. It ended normally with actual
+runtime/watchdog waits0, both output EOFs, watchdog unfired, all three PIDs
+absent and port18116 refused. Unique evidence was recovered and hash-verified
+before stopping and verified again afterward. No cloud box was created.
