@@ -1,6 +1,78 @@
-# SAMEHERO: XP 163 retained after Blood Moor combat
+# SAMEHERO: healed, entered the Den of Evil, saved and loaded
 
-Latest run: `scratch/runs/20261111-diablo2-samehero-den-cave-entrance-1245/`.
+## Latest: native belt healing and Den entry, 13:30 run
+
+Run: `scratch/runs/20261111-diablo2-native-belt-healing-den-map-1330/`.
+The authentic 12:45 final save was hash-checked, mounted through ordinary
+launcher `app.files`, and loaded natively. SAMEHERO was verified at XP 163,
+life 36/66, with the active wilderness Den objective.
+
+The rejected healing key was a restriction in the owned scratch controller's
+`input.cjs` schema, not an owner prohibition or a game limitation. That helper
+now accepts native belt keys **1–4**, mapping them to `Digit1`–`Digit4` and
+VK 49–52. The focused composed regression exercises the actual command
+executor, reviewed-frame admission fixture, real bounded DOWN/UP pulse, all
+four descriptors, and unsupported-key rejection. Native **1** consumed slot 1;
+the panel showed life **36 → 60 → 66/66**, with XP 163 unchanged. No shared
+production code changed; the matching accepted locked-build proof was rehashed.
+
+The direct camp exit took the dirt lane northeast, then east below the
+palisade, through the visible gap and east into the Blood Moor. This avoided
+the waypoint enclosure. Retained `.map`/`.ma0` files and native Tab automap
+were used throughout. The eastern wall/river sweep did not find the Den.
+The useful feature was the **purple automap entrance symbol**, west of that
+sweep. Following it west led to the large rocky cave. Approach its open
+southern/front side; the northern rocks are an obstruction. `cavefront.png`
+shows the native **“To The Den of Evil”** label; `denentry.png` shows
+**“Entering The Den of Evil”** and the underground entrance. `denquest.png`
+shows the new objective: **“Kill all the monsters in the Den.”** The quest
+is not completed.
+
+Pursuit caused four life points of damage, measured inside the Den at 62/66.
+Native **2** consumed slot 2 and restored **66/66** (`denhealed.png`). No XP
+gain was verified in this run. Assistance was ordinary native run toggle,
+automap toggle/one arrow-key map inspection, panel/help dismissal, and two
+belt potions. No pause assistance for combat/travel, inventory/ground-loot
+action, generated/edited save, guest-memory/script/map/configuration mutation,
+or cheat was used. Escape was used for the ordinary Save & Exit menu.
+
+Native Save & Exit returned to the title. Both read-only exports, including
+one after confirmed title, were byte-identical. Use this run's
+`final-save-manifest.json` and `final-save/` next: D2S **783 bytes**, SHA-256
+`99262b3ed0fb8fb877bc20fd8963e53dde38196cdcecfd396114165af75f5778`;
+MA0 **6806 bytes**, SHA-256
+`2f5815137fe3729da970ba283180bf15e3b84a4b064ca00750f9e1546a97b791`.
+Normal Load returned to camp and verified SAMEHERO **XP 163, life 66/66**
+(`retainedstats.png`). The browser cutoff preceded the next quest request;
+post-load quest text and a fresh-browser restore of this checkpoint remain
+unverified. Do not claim that cave position persists through Load.
+
+Composed belt/schema and native-export regressions passed before gameplay and
+again after stop. The audit checks 82 command ACKs, 70 admitted inputs,
+192 balanced trusted events (from the final retained-stats state), and CRC/IDAT
+for 83 unique PNGs. One review gap is explicit: `reloadsingle` used the prior
+title-image review after `stableexport` had captured a new title image. Other
+admitted inputs had individual full current-image review and finite actual
+release/passive settling. The late quest request found the controller already
+exited and was not replayed. Browser/controller exited code 0 with actual
+parent wait and both EOFs at the immutable runtime cap; recovery independently
+found no browser processes. Hardware GPU performance is not claimed.
+
+All **909 remote references / 43,488,142 logical bytes** were recovered,
+locally hash-checked, independently rehashed remotely, and checked locally
+again after stop. `recovery-map.json`, Git SHA/patches and existing media
+path/hash references preserve recovery without source-tree archives. Private
+box **bx_6wg767t4** was normally stopped at **14:10:23.604Z**, before its
+**14:11:32.886Z** expiry. Stop **stop_a3e236d1d83f0ffc** completed, forced
+false, error null; independent GET confirmed **archived**, expiry null.
+The independent prearmed watchdog exited unfired, code 0, actual wait/EOF.
+No box remains running. Next: restore this checkpoint, verify the retained
+quest, take the direct gate exit, and follow the purple native entrance marker
+to resume clearing the Den.
+
+## Previous: XP 163 retained after Blood Moor combat, 12:45 run
+
+Run: `scratch/runs/20261111-diablo2-samehero-den-cave-entrance-1245/`.
 The preceding run's unedited final save was hash-checked, mounted through the
 ordinary launcher `app.files` URL/VFS route, and loaded through native Single
 Player. The character and quest panels confirmed SAMEHERO, level 1 Barbarian,
