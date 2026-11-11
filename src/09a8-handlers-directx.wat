@@ -1392,6 +1392,7 @@
   ;; appends into the same slot.
   (func $dx_get_wrapper_for_vtbl_locked (param $slot i32) (param $vtbl_guest i32) (result i32)
     (local $primary_wa i32) (local $aux_wa i32) (local $i i32) (local $n i32)
+    (local $owner i32)
     (local.set $primary_wa (i32.add (global.get $COM_WRAPPERS)
       (i32.mul (local.get $slot) (i32.const 8))))
     ;; Primary hit?
@@ -1414,6 +1415,28 @@
       (br $lp)))
     ;; Miss — bump allocate.
     (if (i32.ge_u (local.get $n) (global.get $COM_WRAPPERS_AUX_MAX)) (then
+      ;; Final Release retires the owner but leaves its wrappers addressable.
+      ;; Like DX_OBJECTS, this pool must recycle retired entries once full:
+      ;; Diablo II creates new texture views on each Load. A zero interface
+      ;; count alone is insufficient: other live views can still own the object.
+      (local.set $i (i32.const 0))
+      (block $no_retired (loop $retired
+        (br_if $no_retired (i32.ge_u (local.get $i) (local.get $n)))
+        (local.set $aux_wa (i32.add (global.get $COM_WRAPPERS_AUX)
+          (i32.shl (local.get $i) (i32.const 3))))
+        (local.set $owner (i32.load offset=4 (local.get $aux_wa)))
+        (if (i32.and (i32.ne (i32.load (local.get $aux_wa)) (i32.const 0))
+              (i32.lt_u (local.get $owner) (global.get $DX_MAX))) (then
+          (if (i32.eqz (load.field DxObject type
+                (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $owner) (i32.const 5))))) (then
+            (i32.store (local.get $aux_wa) (local.get $vtbl_guest))
+            (i32.store offset=4 (local.get $aux_wa) (local.get $slot))
+            (i32.atomic.store (i32.add (global.get $COM_AUX_REFS)
+              (i32.shl (local.get $i) (i32.const 2))) (i32.const 0))
+            (return (i32.add (i32.sub (local.get $aux_wa) (global.get $GUEST_BASE))
+              (global.get $image_base)))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $retired)))
       ;; Surface views have incompatible descriptor ABIs. Exhaustion must
       ;; never change an already published interface beneath its caller.
       (if (i32.eq (load.field DxObject type

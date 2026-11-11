@@ -450,43 +450,56 @@ const tailCalls = !process.argv.includes('--compat');
     'same garbage becomes unsupported when DDSD_CAPS is selected');
   assert.strictEqual(read(out.p), 0); out.check(); com(ignored, 2);
 
-  // Deterministic allocator fault injection, not pre-seeded COM objects:
-  // only the shared aux cursor is temporarily forced to its declared limit.
-  // Every surface, view and failing QI is created/called through guest COM.
-  // Derive the private field offset and limit from declarations; region bases
-  // always come from the generated map, never from a copied address literal.
-  const header = fs.readFileSync(path.join(__dirname, '../src/01-header.wat'), 'utf8');
+  // Fill the real pool through guest COM calls, keeping every published view
+  // alive. No cursor injection: retired wrappers from earlier cases must also
+  // be reclaimed before true exhaustion can be reported.
   const directx = fs.readFileSync(path.join(__dirname, '../src/09a8-handlers-directx.wat'), 'utf8');
-  const cursorDecl = header.match(/\(global \$COM_AUX_NEXT_SHARED i32 \(region\.addr \$([A-Z_]+) (0x[0-9A-Fa-f]+)\)\)/);
   const limitDecl = directx.match(/\(global \$COM_WRAPPERS_AUX_MAX i32 \(i32\.const (\d+)\)\)/);
-  assert(cursorDecl && limitDecl, 'allocator declarations found');
-  const cursorWa = regions.BASE[cursorDecl[1]] + Number(cursorDecl[2]);
-  const limit = Number(limitDecl[1]), savedCursor = dv.getUint32(cursorWa, true);
+  assert(limitDecl, 'allocator limit found');
+  const limit = Number(limitDecl[1]);
   const owner = create(desc(C.texture | C.system));
   ok(com(owner, 0, iidSurface4, out.p), 'retain view before exhaustion');
   const retained = read(out.p), ownerVtable = read(owner), retainedVtable = read(retained);
   pixels(retained, 0x314159, true);
   const retainedCount = com(retained, 1); com(retained, 2);
-  // Save after creating the retained view so restoring does not hide it.
-  const populatedCursor = dv.getUint32(cursorWa, true);
-  assert(populatedCursor >= savedCursor && populatedCursor < limit);
-  try {
-    dv.setUint32(cursorWa, limit, true);
-    write(out.p, POISON);
-    assert.strictEqual(com(owner, 0, iidSurface3, out.p), 0x8007000e, 'wrapper exhaustion fails QI');
-    assert.strictEqual(read(out.p), 0); out.check();
-    assert.strictEqual(read(owner), ownerVtable, 'primary vtable never mutates on exhaustion');
-    assert.strictEqual(read(retained), retainedVtable, 'retained vtable never mutates');
-    const countAfter = com(retained, 1); com(retained, 2);
-    assert.strictEqual(countAfter, retainedCount, 'failed QI adds no retained-view reference');
-    describe(owner); describe(retained); pixels(retained, 0x314159);
-    ok(com(owner, 0, iidSurface4, out.p), 'existing view lookup works with pool full');
-    assert.strictEqual(read(out.p), retained); com(retained, 2);
-    assert.strictEqual(com(owner, 2), 0, 'failed QI adds no primary-interface reference');
-    // Independently retained view survives owner release at the allocator limit.
-    describe(retained); pixels(retained, 0x314159);
-  } finally { dv.setUint32(cursorWa, populatedCursor, true); }
+  const fillers = [], fillDesc = desc(C.texture | C.system);
+  let exhausted = false;
+  for (let n = 0; n < limit && !exhausted; n++) {
+    const surface = create(fillDesc), refs = [surface];
+    fillers.push(refs);
+    for (const iid of [iidSurface1, iidSurface2, iidSurface3, iidSurface4, iidTexture2]) {
+      const hr = com(surface, 0, iid, out.p);
+      out.check();
+      if (hr) {
+        assert.strictEqual(hr, 0x8007000e, 'only real wrapper exhaustion ends fill');
+        assert.strictEqual(read(out.p), 0); exhausted = true; break;
+      }
+      refs.push(read(out.p));
+    }
+  }
+  assert(exhausted, 'bounded real interface pool fill');
+  write(out.p, POISON);
+  assert.strictEqual(com(owner, 0, iidSurface3, out.p), 0x8007000e, 'all-live wrapper exhaustion fails QI');
+  assert.strictEqual(read(out.p), 0); out.check();
+  assert.strictEqual(read(owner), ownerVtable, 'primary vtable never mutates on exhaustion');
+  assert.strictEqual(read(retained), retainedVtable, 'retained vtable never mutates');
+  const countAfter = com(retained, 1); com(retained, 2);
+  assert.strictEqual(countAfter, retainedCount, 'failed QI adds no retained-view reference');
+  describe(owner); describe(retained); pixels(retained, 0x314159);
+  ok(com(owner, 0, iidSurface4, out.p), 'existing view lookup works with pool full');
+  assert.strictEqual(read(out.p), retained); com(retained, 2);
+  assert.strictEqual(com(owner, 2), 0, 'failed QI adds no primary-interface reference');
   describe(retained); pixels(retained, 0x314159);
+  // Release only one filler completely. Its five retired wrappers must allow
+  // a new view even though the append cursor has reached its fixed limit.
+  const released = fillers.shift();
+  for (const ref of released) com(ref, 2);
+  ok(com(retained, 0, iidSurface3, out.p), 'final Release makes wrapper space reusable');
+  const recovered = read(out.p);
+  assert.strictEqual(read(retained), retainedVtable, 'recycling preserves live vtables');
+  describe(retained); pixels(retained, 0x314159);
+  com(recovered, 2);
+  for (const refs of fillers) for (const ref of refs) com(ref, 2);
   assert.strictEqual(com(retained, 2), 0, 'retained view releases its last ownership');
   write(out.p, POISON);
   assert(com(dd, 6, unsupported, out.p, 0) & 0x80000000, 'cube fails until storage is implemented');
