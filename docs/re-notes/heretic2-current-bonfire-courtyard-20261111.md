@@ -1,4 +1,66 @@
-# Heretic II bonfire courtyard pickups and onward vestibule, 2026-11-11
+# Heretic II courtyard pickups and vestibule gate activation, 2026-11-11
+
+The next follow-up **activated the vestibule wall panel and raised the inner
+timber gate** using the shipped Space/Action control. The decisive difference
+was reaching the panel face, releasing the approach keys, and making a fresh
+Action press. Passing through the raised gate and completing an objective
+remain unproved.
+
+Run: `scratch/runs/20261111-heretic2-vestibule-device-onward-1240/` (ignored).
+The final fresh original Game → Easy attempt used the same canonical media,
+accepted source `0db20330ccd6761a705eea70c5dd9bfc7704c147` and module
+`ce57f0ad80254b974a0d8bcd4e2c9cbf396d2357cbdc7874e6084e980e1e68e1`.
+No shared code, guest, map, script, save or configuration edits were made.
+
+## Confirmed inner gate activation
+
+All three decisive full images are under the follow-up run's `software2/`:
+
+| Capture | Established result |
+| --- | --- |
+| `fresh-vestibule-after.png` | Corvus reaches the panel face beyond the second opening; native caption: “Press ACTION to use buttons and levers.” The inner gate still extends to the floor. |
+| `fresh-device-action-after.png` | After release of the approach keys, a fresh 1,500 ms Space hold raises the gate. Its pointed lower edge is now visibly above the floor, leaving an opening beneath it. A pursuer partly obscures Corvus and the panel. |
+| `fresh-gate-turn-after.png` | The subsequent right-turn/attack ends at the native Load Game menu, showing “ENTERING” and “Silverspring Docks.” No crossing of the inner gate is established. This menu entry was neither loaded nor exported. |
+
+The successful fresh route uses the starting crate/jump approach to the dry
+timber corner, a right turn to follow the wall, then a left turn through the low
+passage. Forward movement with Flying-fist fire reaches the courtyard. From
+left of the blocking barrel, turn right toward the second opening; six seconds
+of forward + attack + jump + Action reaches the panel. **Release, then press
+Space again at the panel.** Exact finite holds and full-image reviews are in
+the run's numbered requests and `*-long-review.json` files. The earlier run's
+courtyard pickups are not prerequisites established by this attempt: they were
+not repeated on the successful fresh launch.
+
+Earlier attempts in this run ended in combat deaths. A later native Easy
+restart exited the guest before its next input; the controller then closed on
+its isolated-app identity check. All evidence was retained, and process/profile/
+port absence plus actual parent waits were confirmed before the fresh launch.
+An initial pre-game Chrome permission failure was also preserved; provisioning
+verification subsequently set the executable permissions before launch.
+
+The matching locked-build proof was rehashed; eight balanced-key helper checks,
+all 3,377 provisioned file pins and both postgame checks of 2,461 runtime pins
+passed. Recovery preserves 674 final artifact references / 524 unique contents,
+with raw size/SHA verification before stop and independent rechecks afterward.
+Validation passes 73 unique PNG CRC/IDAT checks, 63 image bindings, 62 exact
+numbered ACKs and 34 finite balanced direct holds. Git, relevant patches,
+run-input patches and original media path/SHA references preserve recovery
+without a source-tree or repeated-media archive.
+
+Final browser/controller and parent wrappers exited zero with actual waits and
+both EOFs; independent checks find their PIDs, profile and port absent. Private
+box `bx_naz2px8k` had a fixed 45-minute deadline of 13:22 UTC with an independent
+watchdog prearmed. Normal stop `stop_1331aff73ff76431` completed at
+13:03:42.061 UTC, forced=false, error=null. A separate GET confirms archived,
+completed stop and expiry null; the watchdog exited zero, unfired, with actual
+wait and both EOFs.
+
+Next: repeat the fresh panel press, manage the pursuers, and cross beneath the
+raised gate. Gate activation is established; onward traversal, objective
+completion and a retained progress save are not.
+
+The remainder records the preceding pickup and courtyard-route runs.
 
 The follow-up run **collected both courtyard stack items** and entered the
 stone vestibule beyond the second opening. Native captions identify the items
