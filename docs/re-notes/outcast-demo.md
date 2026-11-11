@@ -273,3 +273,44 @@ within the15-minute gate limit; minimum runtime free space2268737536bytes,
 above2GB. Native local box ID/state/expiry: N/A; shutdown was delegated.
 No browser/GPU/audio/FPS/full-playthrough qualification is claimed. Recovery
 final/result, cleanup and publication records are retained in the run directory.
+
+## Current browser movement and NPC conversation, 2026-11-11
+
+`scratch/runs/20261111-outcast-current-browser-player-interaction-1110/`
+reaches player control and initiates a native conversation with the friendly
+NPC beside the starting dock. This is current-browser evidence, using the
+registered `outcast_demo`, original `OC2.EXE game` and complete installed
+companions. Source Git was `dd73f62e5469d96fddaf2c34b0af856b47512215`;
+loaded module SHA256 was
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`.
+Matching locked build evidence was reused; all526 staged source/module/media
+pins matched afterward. No production code or installed game file changed.
+
+The normal briefing names Shamazaar and Talan Zeb. Dock idle frames6/7/14,
+Down3000 frame16 and released idle17 establish movement onto grass: dock
+posts and the nearby NPC recede. Up2100 and Up1000 return Cutter beside the
+NPC (frames19/21). Short holds that changed only pose are not movement proof.
+Tab shows the shipped map after the canvas has browser focus.
+
+The interaction control is **hold left mouse Use, select `GRÜSSEN` with Up,
+then release Use**. The held card is visible in frame67 and brightly selected
+in69. Releasing the button switches to the over-the-shoulder conversation
+camera in71, then the NPC close-up in72 and subsequent talking gestures in
+73–75. Escape returns to the normal player HUD in77; subsequent inventory,
+menu and turning controls remain responsive. No subtitle, spoken transcript,
+NPC name, quest update or combat damage is inferred from these images.
+The original configuration has subtitles disabled. Short Use clicks closed
+an unselected greeting card; Target/punch diagnostics did not prove damage.
+
+Native trusted events were qualified with balanced releases before original
+input, including a separately bounded held-Use controller. Every native
+action followed review of its full current1440x1000 image. Observers preserved
+the viewport with `defaultViewport:null`; the game used the browser software
+renderer and guest worker, not a D3D render-worker endpoint. The backpack was
+empty and no save item was visible; no save/load round trip is claimed.
+
+The ordinary Escape menu → BEENDEN → Ja sequence and closing-screen Escape
+returned to the desktop with `ExitProcess(0)` (frame104). Browser, controller
+and owner were then closed with actual process waits and EOF evidence.
+See the run's `REPORT.md` and `RECOVERY.md` for raw hashes, diagnostic failures,
+full recovery coverage and the independently confirmed delegated box stop.
