@@ -80,3 +80,77 @@ Final box **bx_9nwfkcya** is independently confirmed **ARCHIVED**, expiry null
 wait and both EOFs. No box remains billing; no resume, deletion, public
 deployment or workers occurred. Next useful work is ordinary race completion;
 timer-cause instrumentation is needed only if the native abort recurs.
+
+## Follow-up: native Hot Pursuit race ends in arrest
+
+`scratch/runs/20261111-nfs3-native-lap-finish-0910/` reaches a real losing
+race outcome: the original game displays **ARRESTED**, then its demo end card.
+This establishes native pursuit consequences and race termination, not a
+completed lap or finish-line crossing. The last cockpit image still says
+lap **1/1**, at **7:48.81**, with tickets **1/2** before the final arrest.
+
+The same catalogue → native setup → Direct3D Device 1 → original warning OK
+→ setup OK → reload → `nfs3_chosen_renderer` route was used. The canonical
+EXE hash above is unchanged. The served runtime is pinned at main
+`6fdf10b4697f1d63de4af581ae9239705692e336`; production WASM SHA-256 is
+`5512a65e2ce88cc76b39b3246d35f13919d9df060d3670a9a85cae9c4100f638`.
+The intervening Surface7 priority HRESULT fix has matching locked-build and
+normal/compat regression evidence in
+`20261111-surface7-unmanaged-priority-hresult-0900`. This worker changed no
+production code. Served closure pins, Git patches, and retained tested modules
+record identity; no executing-Worker/module census was attempted.
+
+Ordinary Up, Left/Right, Down and R controls produce sustained driving,
+roadside collisions, a rollover and native road recovery. The first race was
+restarted through page reload after a pause-menu navigation attempt stayed in
+the menu; those images and input attempts are retained. The second ordinary
+launch randomly selected Hot Pursuit without weather. No RNG, guest memory,
+clock, readiness, save or race state was edited. The page-only driver never
+attached to a guest Worker. Chrome uses the explicit SwiftShader route above.
+
+Review-boundary limitation: twelve R→Up command pairs were dispatched within
+one orchestration call. Their intermediate recovery images were inspected
+after dispatch, although the generated review annotations say “inspected.”
+Those annotations overstate pre-action review; the pairs were based on the
+preceding reviewed crash image. `review-audit.json` lists the exact pairs.
+The first `prerace` annotation also mistakenly called the introductory exterior
+view a cockpit; the following command explicitly corrects it. These limitations
+do not change the retained native arrest/end-card images or input ACKs.
+
+| Reviewed image under `recovered/` | Visible consequence |
+| --- | --- |
+| `drive12.png` | 87 MPH, 0:13.06, lap 1/1, second of two |
+| `drive49.png` | “Wild One arrested”; position changes to first of one, 52 MPH, 3:36.96 |
+| `drive56.png` | Native **TICKETED** cutscene |
+| `ticketsettled.png` | Cockpit resumes, tickets 1/2, 4:18.31, first of one |
+| `drive75.png` / `drive76.png` | Rollover, then ordinary R recovery to the road |
+| `drive78.png` / `drive79.png` | Lit tunnel traversal, then open road at 82 MPH, 7:11.40 |
+| `drive83.png` | Last cockpit context: 7:48.81, 1 MPH, lap 1/1, tickets 1/2 |
+| `drive84.png` / `drive85.png` | Native **ARRESTED** cutscene, then demo end card |
+
+No checkpoint counter change, completed lap, win, audio or FPS result is
+claimed. No save option was offered on the observed outcome/end card, and no
+save was obtained. Enter dismisses the end card to a black image; the page
+still reports a running process without a trap. Native ExitProcess after that
+dismissal is unverified. Browser/controller disposal subsequently completes
+normally; this is a distinct lifecycle observation.
+
+All **666 remote artifact paths** were recovered and size/SHA-256 checked before
+box stop; **109 PNGs** pass chunk CRC and complete IDAT inflation checks.
+The recovery and lossless-compression maps preserve original paths and hashes.
+All **726 runtime/media/driver pins** are unchanged at final recovery. An initial
+controller start failed before Chrome because its pin manifest was omitted;
+the actual exit was confirmed, the missing manifest uploaded, and a repaired
+start used the same fixed deadline. That failed start and the premature
+read-only shell check remain preserved without replaying an uncertain action.
+
+Chrome and controller exit 0 with actual parent wait and both EOFs. Independent
+checks find their PIDs absent, profile removed and server port closed. The
+watchdog was observable before allocation and retained its immutable
+**09:48:22 UTC** deadline. Delegated normal stop completes at **09:36:50.990 UTC**,
+forced=false, error=null, receipt **stop_13d04591d8c9db0c**. Box
+**bx_q9gvknan** is independently confirmed **ARCHIVED**, expiry null
+(initial expiry 09:48:23.104 UTC). The watchdog exits 0 unfired with an actual
+parent wait and both EOFs. No box remains billing. No workers or public
+deployment occurred. Next useful work is a finish-line crossing; lap completion
+remains open.
