@@ -876,12 +876,49 @@
         (i64.shl (i64.extend_i32_u (local.get $len)) (i64.const 32)))
       (i64.shl (i64.extend_i32_u (local.get $borrow)) (i64.const 63))))
 
+  ;; What the encoder calls of the current outermost lock section emitted:
+  ;; 0 nothing yet (or not known), 1 only context-local ops, 2 anything else.
+  ;; Reset at the outermost $gl_object_enter. Stream bytes come only from
+  ;; encoder calls, so state 1 means the section added nothing another
+  ;; producer could depend on.
+  (global $gl_section_local (mut i32) (i32.const 0))
+  ;; This instance has counted itself in the process-wide GL producer count
+  ;; at GL_MTX_BLOCKS+20 (sticky: a retired producer is never subtracted).
+  (global $gl_producer_registered (mut i32) (i32.const 0))
+
+  ;; Ops whose effect is confined to the current context: immediate-mode
+  ;; geometry and attributes, matrices, enables and fixed-function state,
+  ;; TexEnv and texture binding. None writes a shared list or texture object,
+  ;; so another producer has nothing of theirs to observe at completion and
+  ;; the commands may stay in this producer's stream until the next barrier,
+  ;; watermark or shared-object mutation. Clear, DrawBuffer and everything
+  ;; not listed keep the per-call flush.
+  ;; Below 64: 0,1,3-8,10,15,16,18-42,44,56-58,63 as a bit set.
+  (func $gl_op_context_local (param $op i32) (result i32)
+    (if (i32.lt_u (local.get $op) (i32.const 64)) (then
+      (return (i32.wrap_i64 (i64.and (i64.shr_u (i64.const 0x870017fffffd85fb)
+        (i64.extend_i32_u (local.get $op))) (i64.const 1))))))
+    ;; glTexEnvi, glRotated, glMultiTexCoord2fARB, glMultMatrixf, glColor3ub, glTexEnvfv.
+    (i32.or (i32.or (i32.or (i32.eq (local.get $op) (i32.const 82)) (i32.eq (local.get $op) (i32.const 90)))
+        (i32.or (i32.eq (local.get $op) (i32.const 107)) (i32.eq (local.get $op) (i32.const 109))))
+      (i32.or (i32.eq (local.get $op) (i32.const 111)) (i32.eq (local.get $op) (i32.const 147)))))
+
+  (func $gl_section_note (param $op i32)
+    (global.set $gl_section_local
+      (select (i32.const 1) (i32.const 2)
+        (i32.and (call $gl_op_context_local (local.get $op))
+          (i32.lt_u (global.get $gl_section_local) (i32.const 2))))))
+
   (func $gl_object_enter
     (call $gl_sw_private_state)
     (if (i32.eqz (global.get $gl_object_lock_depth)) (then
       (loop $claim
         (br_if $claim (i32.ne (i32.atomic.rmw.cmpxchg (region.addr $GL_MTX_BLOCKS 8)
-          (i32.const 0) (i32.const 1)) (i32.const 0))))))
+          (i32.const 0) (i32.const 1)) (i32.const 0))))
+      (global.set $gl_section_local (i32.const 0))))
+    (if (i32.eqz (global.get $gl_producer_registered)) (then
+      (drop (i32.atomic.rmw.add (region.addr $GL_MTX_BLOCKS 20) (i32.const 1)))
+      (global.set $gl_producer_registered (i32.const 1))))
     (global.set $gl_object_lock_depth (i32.add (global.get $gl_object_lock_depth) (i32.const 1))))
   (func $gl_object_leave
     ;; Native argument gather/texture conversion and list replay can hold an
@@ -893,7 +930,14 @@
       (call $gl_state_publish (global.get $gl_current_context))
       (if (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0))
         (then (call $gl_sw_context_publish)))
-      (drop (call $gl_wat_stream_flush))))
+      ;; Another producer may read this context's completed state (foreign
+      ;; wglCopyContext) or order its draws after ours, so with more than one
+      ;; producer every completed call publishes. The count only grows; the
+      ;; one unguarded moment is a second producer's very first call while
+      ;; the first still holds deferred context-local commands.
+      (if (i32.or (i32.ne (global.get $gl_section_local) (i32.const 1))
+          (i32.gt_u (i32.atomic.load (region.addr $GL_MTX_BLOCKS 20)) (i32.const 1)))
+        (then (drop (call $gl_wat_stream_flush))))))
     (global.set $gl_object_lock_depth (i32.sub (global.get $gl_object_lock_depth) (i32.const 1)))
     (if (i32.eqz (global.get $gl_object_lock_depth))
       (then (i32.atomic.store (region.addr $GL_MTX_BLOCKS 8) (i32.const 0)))))
@@ -902,8 +946,9 @@
   ;; glVertex2f/3f/3fv (29/30/31) are consumed by $gl_state_intercept; every
   ;; validator, query and observer ahead of it in $gl_wat_encode_call_locked
   ;; is gated on other opcodes. Vertices only append to this instance's
-  ;; private primitive and change no published server value, so they also
-  ;; skip the object lock and its publish; current-attribute setters keep it.
+  ;; private primitive and change no published server value, so they skip
+  ;; the nested object lock; current-attribute setters keep it. (Guest calls
+  ;; arrive with the dispatcher's outer lock already held.)
   ;; Returns 1 when the call was consumed, 0 to take the general path.
   (func $gl_imm_fast (param $op i32) (param $stack i32) (result i32)
     (local $ctx i32) (local $vertex i32)
@@ -918,6 +963,7 @@
       (then (return (i32.const 0))))
     (local.set $vertex (i32.ge_u (local.get $op) (i32.const 29)))
     (if (i32.eqz (local.get $vertex)) (then (call $gl_object_enter)))
+    (call $gl_section_note (local.get $op))
     (global.set $gl_sw_border_set_failed (i32.const 0))
     (global.set $gl_wat_stat_calls (i64.add (global.get $gl_wat_stat_calls) (i64.const 1)))
     (if (i32.eqz (call $gl_wat_init)) (then (unreachable)))
@@ -936,6 +982,7 @@
                  (i32.ne (global.get $gl_current_context) (i32.const 0)))
       (then (if (call $gl_imm_fast (local.get $op) (local.get $stack)) (then (return (i32.const 0))))))
     (call $gl_object_enter)
+    (call $gl_section_note (local.get $op))
     (local.set $result (call $gl_wat_encode_call_locked (local.get $op) (local.get $stack) (local.get $aux)))
     (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
         (i32.eq (local.get $op) (i32.const 77))) (then (call $gl_period_color)))
