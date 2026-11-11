@@ -666,7 +666,10 @@
     (local.set $ga (i32.add (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $base) (i32.const 2)))) (local.get $disp)))
     (local.set $v (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $src) (i32.const 2)))))
     (local.set $len (i32.shl (local.get $n) (i32.const 2)))
-    (if (call $store_span_touches_code (local.get $ga) (local.get $len))
+    ;; Stopping early needs the trailing checkpoint, which only exists when
+    ;; same-block SMC is on ($smc_same_block, 04-cache).
+    (if (i32.and (global.get $smc_same_block)
+          (call $store_span_touches_code (local.get $ga) (local.get $len)))
       (then
         (call $gs32 (local.get $ga) (local.get $v))
         (global.set $store_fused_resume_pc (local.get $first_pc))
@@ -817,7 +820,8 @@
       (then (local.set $r (i32.sub (i32.const 0) (local.get $old)))
             (call $set_flags_sub (i32.const 0) (local.get $old) (local.get $r))))
     (call $gs32 (local.get $addr) (local.get $r))
-    (if (call $store_span_touches_code (local.get $addr) (i32.const 4))
+    (if (i32.and (global.get $smc_same_block)
+          (call $store_span_touches_code (local.get $addr) (i32.const 4)))
       (then
         (global.set $store_fused_resume_pc (local.get $first_pc))
         (dispatch-next)))

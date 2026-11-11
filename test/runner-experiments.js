@@ -149,6 +149,10 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // page bit OR inside the sparse generated-code min..max span" (04-cache
   // $code_write_legacy). Default is page-exact over the whole guest space.
   const CODE_WRITE_LEGACY = hasFlag('code-write-legacy');
+  // --smc-same-block (or `smcSameBlock: true` on the app): decoder checkpoints
+  // so a store that rewrites a later instruction of its own running block is
+  // seen at once (04-cache $smc_same_block). Opt-in; costs a dispatch per store.
+  const smcWanted = () => hasFlag('smc-same-block') || (appPolicy() || {}).smcSameBlock === true;
   // --no-uop-nobump: turn off the page index's no-bump mark (01-header
   // PAGE_INDEX_NOBUMP) -- heads with a settled uop verdict stop counting
   // toward hotness and taken Jccs into them keep the inline fast path.
@@ -374,6 +378,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     }
     if (BRANCH_CLOCK) inheritWasm('set_branch_clock', 1);
     if (CODE_WRITE_LEGACY) inheritWasm('set_code_write_legacy', 1);
+    if (smcWanted()) inheritWasm('set_smc_same_block', 1);
     if (uopWanted()) inheritWasm('set_uop', 1);
     if (NO_UOP_NOBUMP) inheritWasm('set_uop_nobump', 0);
     if (aggrWanted()) inheritWasm('set_aggressive_stack', 1);
@@ -407,6 +412,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     let enablesUop = false;
     if (BRANCH_CLOCK && available('set_branch_clock')) set('set_branch_clock', 1);
     if (CODE_WRITE_LEGACY && available('set_code_write_legacy')) set('set_code_write_legacy', 1);
+    if (smcWanted() && available('set_smc_same_block')) set('set_smc_same_block', 1);
     if (NO_UOP_NOBUMP && available('set_uop_nobump')) set('set_uop_nobump', 0);
     if (uopWanted() && available('set_uop') && ctx) {
       if (UOP_CENSUS && available('set_uop_census')) set('set_uop_census', 1);

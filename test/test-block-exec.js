@@ -2963,10 +2963,14 @@ async function main() {
         const a = nextCode();
         return arm(smcBytes(a, newImm), blockExec, null, { addr: a });
       };
+      // Same-block SMC exits are opt-in (04-cache $smc_same_block); this case
+      // asserts one, so it runs with the checkpoints on.
+      e.set_smc_same_block(1);
       const ctlThreaded = runSmc(3, false);
       const ctlRegion = runSmc(3, true);
       const smcThreaded = runSmc(0x20, false);
       const smcRegion = runSmc(0x20, true);
+      e.set_smc_same_block(0);
       // Without this the case could "pass" on a build where nothing sees the
       // store at all -- the region would agree with a threaded run that was
       // equally stale.

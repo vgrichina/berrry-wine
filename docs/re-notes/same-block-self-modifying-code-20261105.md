@@ -101,3 +101,32 @@ Exact final module identities and publication SHA are in `result.json` and
 suites; no browser, game/media analysis, box, performance qualification or general
 cross-thread code-coherence claim is included. Arbitrary self-rewriting bodies of
 other specialized loop super-ops are outside this regression matrix.
+
+## Opt-in since 2026-11-10
+
+The checkpoints are now **off by default** (`$smc_same_block`, 04-cache). Turn them
+on per app with `smcSameBlock: true` in `lib/apps.js`, in the browser with
+`?smc-same-block`, or on the CLI with `--smc-same-block`. The setting is
+decode-time and every guest thread inherits it.
+
+Why: only the synthetic fixture above is known to need them, and every app paid
+for them anyway. With the flag on, H501 is 26% of all dispatches on Solitaire
+(50,665 of 195,374 over 200 batches). On Half-Life it is -8% fps on the desktop
+Worker bench: 51.7 -> 55.5 with emission off, average of 4 runs each.
+The cost is the extra dispatch per writer, plus the fusions and flag-liveness
+optimizations it blocks, not the check itself (0.15 of 1.36 ms/frame).
+
+When off, a block that rewrites a later instruction of itself finishes on its
+already-decoded ops (the release 422eba5a4 behaviour). Every later entry
+re-decodes the new bytes, because invalidation itself is unchanged. The writing
+fusions (PUSH runs, store spans, unary/ALU) run whole instead of stopping at
+their first instruction. The guarded byte-copy fold emits its plain form. The
+memory-counter loop fold no longer expects a checkpoint before its Jcc. The
+direct-transfer terminators (memory-ALU/Jcc, DEC/JNZ, PUSH/CALL) keep their
+checks; those cost nothing unless a store actually retired code.
+`test-same-block-self-modifying-code.js` runs with the flag on and asserts the
+default is off.
+
+`test-wat-decoder-runaway.js` fails with the flag on or off, and on release
+422eba5a4 too. 32-bit zero entries now decode to `$th_zero_entry` instead of
+trapping, so that test's premise is stale. It is unrelated to this flag.

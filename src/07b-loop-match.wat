@@ -3943,9 +3943,11 @@
     ;; so the counter has to be the last thing that set them.
     (local.set $p (call $loop_op_at (i32.sub (local.get $n) (i32.const 1))))
     (if (i32.ne (load.field LoopOp handler (local.get $p)) (i32.const 312)) (then (return (i32.const 0))))
-    ;; A memory counter has its own post-store checkpoint before the Jcc.
+    ;; A memory counter has its own post-store checkpoint before the Jcc,
+    ;; when same-block SMC checkpoints are emitted at all.
     (if (i32.ne (local.get $ctr_idx)
-          (i32.sub (local.get $n) (select (i32.const 3) (i32.const 2) (local.get $mem_cnt))))
+          (i32.sub (local.get $n) (select (i32.const 3) (i32.const 2)
+            (i32.and (i32.ne (local.get $mem_cnt) (i32.const 0)) (global.get $smc_same_block)))))
       (then (return (i32.const 0))))
 
     ;; Fold the cursor bumps into the displacements. The super-op bumps AFTER
@@ -3972,14 +3974,21 @@
     ;; offset survives page publication/relocation. A destination touching
     ;; code executes this stream, so every original instruction retains its
     ;; invalidation checkpoint instead of copying stale decoded iterations.
-    (local.set $original_bytes (i32.sub (global.get $thread_alloc) (local.get $tstart)))
-    (local.set $original (i32.add (global.get $thread_alloc) (i32.const 80)))
-    (memory.copy (local.get $original) (local.get $tstart) (local.get $original_bytes))
-    (local.set $original_end (i32.add (local.get $original) (local.get $original_bytes)))
+    ;; Without same-block SMC checkpoints there is no such stream to keep:
+    ;; operand 0 is the plain fold, as before 3a38eed05.
+    (if (global.get $smc_same_block)
+      (then
+        (local.set $original_bytes (i32.sub (global.get $thread_alloc) (local.get $tstart)))
+        (local.set $original (i32.add (global.get $thread_alloc) (i32.const 80)))
+        (memory.copy (local.get $original) (local.get $tstart) (local.get $original_bytes))
+        (local.set $original_end (i32.add (local.get $original) (local.get $original_bytes)))))
     (global.set $thread_alloc (local.get $tstart))
     (global.set $op_index_n (i32.const 0))
     (call $te (global.get $LOOP_SUPEROP_COPY)
-      (i32.sub (local.get $original) (i32.add (local.get $tstart) (i32.const 8))))
+      (select
+        (i32.sub (local.get $original) (i32.add (local.get $tstart) (i32.const 8)))
+        (i32.const 0)
+        (global.get $smc_same_block)))
     (call $te_raw (local.get $ld_base))
     (call $te_raw (local.get $src_stride))
     (call $te_raw (local.get $ld_disp))
@@ -3994,7 +4003,8 @@
     (call $te_raw (local.get $fall))
     (call $te_raw (local.get $start_eip))
     (call $te_raw (local.get $n))
-    (global.set $thread_alloc (local.get $original_end))
+    (if (global.get $smc_same_block)
+      (then (global.set $thread_alloc (local.get $original_end))))
     (i32.const 1))
 
   ;; Bytes a cursor can still touch before it leaves the 4 KB page it sits in,

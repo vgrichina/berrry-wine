@@ -1272,6 +1272,9 @@ class WineAssembly {
     // The tier's aggressive stack elision is opt-in: `aggressiveStack: true`
     // on an app or ?aggressive-stack (docs/uop-tier-design.md).
     this.aggressiveStack = false;
+    // Same-block self-modifying-code checkpoints (04-cache $smc_same_block) are
+    // opt-in: `smcSameBlock: true` on an app or ?smc-same-block.
+    this.smcSameBlock = false;
     // Worker threads follow the page (window.WINE_THREADS, on by default);
     // `threads: false` on an app keeps that app cooperative.
     this.threads = true;
@@ -3260,6 +3263,9 @@ class WineAssembly {
     const aggressiveStack = (uop && (this.aggressiveStack === true ||
       (window.WineSuperops && window.WineSuperops.aggressiveStack === true))) ? 1 : 0;
     if (this.instance.exports.set_aggressive_stack) this.instance.exports.set_aggressive_stack(aggressiveStack);
+    const smcSameBlock = (this.smcSameBlock === true ||
+      (window.WineSuperops && window.WineSuperops.smcSameBlock === true)) ? 1 : 0;
+    if (this.instance.exports.set_smc_same_block) this.instance.exports.set_smc_same_block(smcSameBlock);
     // Trace heads: hot heads with no back edge become forward traces
     // (07e $uc_form_trace) instead of no-backedge declines. On by default;
     // ?no-uop-trace-heads turns them off.
@@ -3344,6 +3350,9 @@ class WineAssembly {
       }
       if (this.instance.exports.set_aggressive_stack) {
         await this.guestWorker.callExport('set_aggressive_stack', aggressiveStack);
+      }
+      if (this.instance.exports.set_smc_same_block) {
+        await this.guestWorker.callExport('set_smc_same_block', smcSameBlock);
       }
       if (this.instance.exports.set_uop_trace_heads) {
         await this.guestWorker.callExport('set_uop_trace_heads', uopTraceHeads);
@@ -3529,6 +3538,7 @@ class WineAssembly {
     this.threadManager.recordInheritedWasmGlobal('set_x87_affine_fusion', x87Fusion);
     this.threadManager.recordInheritedWasmGlobal('set_uop', uop);
     this.threadManager.recordInheritedWasmGlobal('set_aggressive_stack', aggressiveStack);
+    this.threadManager.recordInheritedWasmGlobal('set_smc_same_block', smcSameBlock);
     this.threadManager.recordInheritedWasmGlobal('set_uop_trace_heads', uopTraceHeads);
     // The bisect mask has to reach every guest thread for the same reason the
     // fold flags do: a thread decodes in its own instance, so a mask set only
