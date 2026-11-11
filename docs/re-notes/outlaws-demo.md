@@ -274,3 +274,66 @@ Compact local receipts include `js-verification-api.json`, `js-postflight.json`,
 `js-release-handle.json` (the last records absence from live process inventory,
 not an independently recovered historical exit code). The ordinary launch
 recipe and all untested runtime prerequisites above remain unchanged.
+
+## Current browser enemy interaction and ordinary save, 2026-11-11
+
+Run `20261111-outlaws-current-browser-enemy-response-0740` supersedes the
+historical runtime-unknown statements above. It follows the successful
+`20261107-outlaws-worker-ne-lifecycle` movement/secondary-fire evidence and
+uses the canonical registered `outlaws_demo`: unchanged
+`test/binaries/candidates/outlaws-demo/game/OUTDEMO/oldemo.exe` and its browser
+manifest, empty arguments, normal `C:\OUTDEMO` working directory. No guest
+state, executable, media or save bytes were edited.
+
+Chrome 151.0.7922.71 loaded the current production guest Worker and software
+DirectDraw presentation. The browser's loaded-module identity and HTTP body
+hash both matched module
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`.
+Source identity is main `72e3f0c892b2a45f992898b76cdaadc3ae0523a0` plus the
+run's recorded relevant tracked diff and new-file patches. Matching locked
+build evidence was reused after checking the source fragments/module hashes;
+this task made no emulator change. Trusted, balanced native input controls
+passed locally and on the same leased box before the original launch.
+
+The ordinary MAIN GAME → GOOD route reached the level. Full current browser
+images were personally inspected before each native action. Arrow movement
+reached the alley door beside the hotel; Space opened it. The decisive retained
+full frames under `retrieved/original-output/` are:
+
+- `frame-44.png`: close black-hatted human and another human behind the counter,
+  before a 500 ms Ctrl primary-fire burst.
+- `frame-46.png`: loaded ammunition reduced and the close figure down at the
+  lower left; the farther sprite also changed pose. Enemy kill count is not
+  inferred from these images.
+- `frame-49.png`: an unambiguous armed gunman visibly firing toward the player,
+  after entering the room; native pickup text reports a canteen, three bullets
+  and one cartridge.
+- `frame-51.png`: explicit **“You got shot to death”**, fallen view and skull
+  health marker after engaging the gunman. This is the definitive enemy
+  consequence, beyond movement or muzzle flash.
+- `frame-85.png`: final gameplay checkpoint, dead outside the hotel with the
+  skull health marker, after the ordinary restart/save flow below.
+
+SAVE GAME while dead returned without writing a save. Documented Space
+restarted the level normally. While living, Escape → SAVE GAME → first slot →
+typed `e` → Enter created the original game's
+`C:\OUTDEMO\SAVE\SAVE000.OSG` (186,861 bytes, raw SHA-256
+`54f1291541668eae68189ece9f8bcf43ead63d53efbe4f2cc89f16c354023bf8`).
+The unchanged bytes were retrieved as `save000.osg.gz`; compressed and
+decompressed hashes were verified. It is a living start-of-level save after
+restart, not a saved combat/death state. Reloading it was not tested.
+
+All 396 original remote artifact paths and the save were recovered and
+hash-verified before stopping, then verified again after archive. Browser,
+controller and their parents exited normally with actual waits and both EOFs;
+an independent process/profile/port inspection confirmed absence. The private
+45-minute box `bx_2y3bv8qs` had a prearmed independent fixed deadline of
+08:23:27 UTC. Delegated normal stop `stop_c835a15f7de92793` completed at
+07:52:41 UTC, `forced:false`, error null; independent GET confirmed archived,
+current expiry null. The watchdog exited unfired with wait/EOF evidence.
+
+Validation: local and same-box native input controls, source/media/module
+hashes, matching locked-build reuse, complete artifact/save recovery checks,
+and documentation diff checks. Audio, frame rate, full mission completion,
+enemy kill count and save reload remain unmeasured. No public deployment or
+additional runtime prerequisite follows from this completed interaction.
