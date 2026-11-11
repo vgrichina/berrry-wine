@@ -897,6 +897,34 @@
     (global.set $gl_object_lock_depth (i32.sub (global.get $gl_object_lock_depth) (i32.const 1)))
     (if (i32.eqz (global.get $gl_object_lock_depth))
       (then (i32.atomic.store (region.addr $GL_MTX_BLOCKS 8) (i32.const 0)))))
+  ;; Immediate-mode attribute/vertex fast path. Inside Begin/End, outside
+  ;; display-list compilation, glColor3f/4f (23/25), glTexCoord2f (28) and
+  ;; glVertex2f/3f/3fv (29/30/31) are consumed by $gl_state_intercept; every
+  ;; validator, query and observer ahead of it in $gl_wat_encode_call_locked
+  ;; is gated on other opcodes. Vertices only append to this instance's
+  ;; private primitive and change no published server value, so they also
+  ;; skip the object lock and its publish; current-attribute setters keep it.
+  ;; Returns 1 when the call was consumed, 0 to take the general path.
+  (func $gl_imm_fast (param $op i32) (param $stack i32) (result i32)
+    (local $ctx i32) (local $vertex i32)
+    (if (i32.eqz (i32.or (i32.or (i32.eq (local.get $op) (i32.const 23)) (i32.eq (local.get $op) (i32.const 25)))
+        (i32.le_u (i32.sub (local.get $op) (i32.const 28)) (i32.const 3))))
+      (then (return (i32.const 0))))
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
+    ;; $gl_list_intercept captures exactly when a list is open and not replaying.
+    (if (i32.and (i32.ne (i32.load offset=12 (local.get $ctx)) (i32.const 0))
+                 (i32.eqz (i32.load offset=28 (local.get $ctx))))
+      (then (return (i32.const 0))))
+    (local.set $vertex (i32.ge_u (local.get $op) (i32.const 29)))
+    (if (i32.eqz (local.get $vertex)) (then (call $gl_object_enter)))
+    (global.set $gl_sw_border_set_failed (i32.const 0))
+    (global.set $gl_wat_stat_calls (i64.add (global.get $gl_wat_stat_calls) (i64.const 1)))
+    (if (i32.eqz (call $gl_wat_init)) (then (unreachable)))
+    (if (i32.eqz (call $gl_state_intercept (local.get $op) (local.get $stack))) (then (unreachable)))
+    (if (i32.eqz (local.get $vertex)) (then (call $gl_object_leave)))
+    (i32.const 1))
+
   ;; Publish completed outer server calls while still holding the process lock.
   ;; A later producer cannot drain this instance's private stream: admit its
   ;; completed prefix now, before the next producer acquires the lock. Nested
@@ -904,6 +932,9 @@
   ;; but legal current/material setters inside Begin are completed server state.
   (func $gl_wat_encode_call (param $op i32) (param $stack i32) (param $aux i32) (result i32)
     (local $result i32)
+    (if (i32.and (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+                 (i32.ne (global.get $gl_current_context) (i32.const 0)))
+      (then (if (call $gl_imm_fast (local.get $op) (local.get $stack)) (then (return (i32.const 0))))))
     (call $gl_object_enter)
     (local.set $result (call $gl_wat_encode_call_locked (local.get $op) (local.get $stack) (local.get $aux)))
     (if (i32.and (i32.ne (global.get $gl_current_context) (i32.const 0))
