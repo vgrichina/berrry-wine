@@ -748,3 +748,51 @@ available observations do not yet establish the failing API or guest branch.
 Normal CLI quit returns code 0 with actual parent waits and both EOFs; an
 independent check confirms the process is absent and its control port refuses
 connections. The fixed watchdog exits unfired. No cloud box was created.
+
+## Original menu selection and native training (2026-11-11, 0745)
+
+Run `20261111-oni-consumed-menu-input-cause-0745` resolves the apparent menu
+input failure above. Ordinary move/down/up at `(440,310)` reaches Oni's window
+procedure (`0x508b40`), its input queue (`0x403e40`/`0x403ee0`), and the menu
+consumer (`0x476189`). Executed hit-testing returns Load Game button
+`0x086096e0` (ID101). The game creates dialog ID151 with its level list and
+Load/Cancel controls. Later clicks reach that new list rather than the old
+menu. The unacquired DirectInput devices during menu handling are not evidence
+of lost input; they become acquired in the training level.
+
+The first demonstrated mismatch is presentation: the native software GL front
+and canonical window canvas already contain Load Game, while the ordinary
+capture still shows the main menu. An earlier non-GPU DirectDraw frame layer
+covers the canonical canvas. `attachWindowSurface` previously retired that
+layer only when the canvas object changed, but subsequent canonical uploads
+reuse the same canvas. The shared renderer now retires the older non-GPU layer
+on each canonical upload. Existing exclusive DirectDraw and GPU ownership paths
+remain intact. No original application memory, scripts, save data, or device
+acquisition flags were edited.
+
+A compiled integration regression draws two different software GL frames,
+presents through native GDI, interleaves an actual DirectDraw host upload, and
+checks the real compositor pixel. With the previous renderer it returns red
+instead of the newer green (exit1); with the repair it returns green (exit0).
+Both shipped modules pass, as do native-child/exclusive-overlay and deferred
+GDI presentation regressions. The locked `tools/build.sh` passes. Its native
+module remains SHA256 `75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`;
+the repair is shared host JavaScript. The callback census renderer row was
+resealed after reviewing the complete delta; ownership remains pending.
+
+A fresh original EXE run with the repair visibly opens Load Game, highlights
+TCTF Training via `(240,41)`, and loads it via `(185,445)`. Full ordinary
+captures show the loading bar, native training room, Konoko, and "To change
+your orientation, move the mouse." Normal mouse movement changes the camera.
+A balanced W hold/release is retained, but controlled walking and training
+objective completion are not certified by these frames. This establishes a
+current original-menu-to-level consequence, not just a consumed-message count.
+Audio, combat, browser/mobile parity, and performance remain untested here.
+
+Before/after full captures, native-front comparisons, executed traces, exact
+source patch/commit and module/media hash references are retained under the run
+above. Unique evidence was recovered and byte/hash checked before each normal
+shutdown. All three local Node runs returned0 with actual parent waits and both
+EOFs; independent checks found their PIDs absent and port18115 refusing
+connections. The fixed08:25:36UTC watchdogs exited unfired. No cloud box was
+created, resumed, or left running.
