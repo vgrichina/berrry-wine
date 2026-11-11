@@ -308,3 +308,50 @@ was retained, so sub-sample dips cannot be excluded. No RAM gate or foreign
 cleanup. Native local box ID/state/expiry N/A; own-process shutdown explicitly
 delegated. No tracked source/helper/test/config/backend/registration changes,
 build, browser, GPU, audio, FPS or full-suite claim.
+
+## 2026-11-11: authentic save restored; native water-arrow ammo consumed
+
+Run `20261111-thief2-save-mouse-weapon-response-1040` continued the 0940
+browser save with the original demo EXE, matching media/source pins and the
+successful serial WebGL renderer configuration. The unchanged predecessor
+`quick.sav.gz` decoded to SHA256
+`009d761b8b94b0511f2e9b2fc7ff6b97f4f332c4b6af0f2c20e69b5fc3cb4a57`.
+Normal filesystem create/write/close restored it, and the actual Load Game /
+QuickSave / Load UI restored the rooftop torch scene. No save editing occurred.
+
+The shipped `user.bnd` binds `mouse1` to `+use_weapon`. Key 4 selected Water
+Arrow; frame 20 shows ammo **10**. A native left-button press held for three
+seconds and released produced ammo **9**, visible in frames 22 and 23. Ordinary
+mouse input also changed the view; torch extinction and projectile impact were
+not established. The original command table points `use_weapon` at `0x542a20`;
+the existing passive execution counter changed from zero to two across that
+press/release. This establishes a native weapon/ammo consequence.
+
+DirectInput consumption was not established: renderer and guest memory objects
+and backing buffers were identical (512 MB), the generated-map mouse queue
+head stayed zero while its tail advanced 26 to 28, traced DirectInput calls
+were absent, and the final DX object census had no DirectInput root/device.
+WM messages alone are not evidence of DirectInput reads. This run demonstrated
+working game-handler dispatch without reproducing an emulator/control defect,
+so no production repair was made. Matching module SHA256 was
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`;
+the inherited locked-build proof matched, and fresh `test-thief2-recovery.js`
+(41 recovered files), `test-directinput-device.js`, and same-box control/guard
+checks passed.
+
+Native F11 generated an updated authentic save, retained under this run's
+`updated-authentic-saves/quick.sav.gz`; raw SHA256 is
+`10d98308157e3f3805eed90235fb812ba09477d4de6139b810ce57ec3e8ef178`.
+The before/after full captures, handler observation, save and full terminal
+are locally hash-verified. Auxiliary recovery was incomplete: the worker
+stopped the box after a compact-download failure before checking recovery
+success. Of 204 remote manifest paths, 85 exact raw hashes were retained or
+reconstructed locally; 119 (mostly passive captures) remain unavailable.
+`recovery-reconciliation.json` and `local-encoding-map.json` explicitly map
+retained bytes and missing paths; this is not a complete auxiliary archive.
+
+Browser/controller exits were normally waited with exit zero and both EOFs;
+independent checks confirmed PID/profile/port absence. Box `bx_4xb5wgpa` was
+normally archived at 06:59:15Z, stop `stop_3c0f88fb5858cf68`, completed without
+force/error and independently confirmed. Its initial expiry was 07:25:34.595Z;
+the prearmed fixed watchdog exited unfired. No resume, deletion or deployment.
