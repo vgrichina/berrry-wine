@@ -49,7 +49,7 @@ def worker(retained, root, action):
                         lambda stage: gate.read_frame(retained, stage))
 
 
-def main(retained, out):
+def main(retained, out, animation_retained=None):
     retained, out = Path(retained).resolve(), Path(out).resolve()
     out.mkdir(parents=True, exist_ok=False)
     records = []
@@ -132,6 +132,8 @@ def main(retained, out):
     case('unreviewed-hover', reviews[55], pending=reviews[55])
     unreviewed = copy.deepcopy(reviews[55]); unreviewed['personallyReviewed'] = False
     case('no-personal-review', unreviewed)
+    unnoted = copy.deepcopy(reviews[55]); unnoted['note'] = ''
+    case('no-review-note', unnoted)
     for classification in ['prohibited', 'water', 'fog']:
         v = copy.deepcopy(reviews[55]); v['classification'] = classification
         case('personal-' + classification, v)
@@ -162,7 +164,7 @@ def main(retained, out):
     case('original-pin-corrupt-frame', reviews[55], reader=lambda stage: (mutation, frames[55][1]))
     # Selection/menu gestures retain the same review and balanced-release
     # semantics without requiring a ground cursor at their non-ground targets.
-    for classification in ['selection', 'menu']:
+    for classification in ['selection', 'menu', 'visible-target']:
         v = copy.deepcopy(reviews[52]); v['classification'] = classification
         case('unchanged-' + classification, v, accept=True,
              args=dict(end=[450, 350]) if classification == 'selection' else None)
@@ -198,6 +200,52 @@ def main(retained, out):
             check(json.loads((root / f'{label}-{stream}-eof.json').read_text())['separateEOF'], 'missing separate EOF')
     # Reload after acceptance: the review is consumed and cannot replay.
     case('accepted-review-cannot-replay', reviews[55], index=58)
+    if animation_retained:
+        animation_retained = Path(animation_retained).resolve()
+        # This is the deployed durable perform adapter used by the newer run.
+        # Only its transport imports are inert; its actual pair/reload path runs.
+        sys.modules['remote'] = types.SimpleNamespace(t=types.SimpleNamespace(remote=forbidden), R=animation_retained)
+        animation_operate = load(animation_retained / 'operate.py', 'animation_operate')
+        animation_reviews = sorted(
+            (json.loads(p.read_text()) for p in (animation_retained / 'reviews').glob('review-*.json')),
+            key=lambda v: v['stage'])
+        # One native representative for each observed phase. Mutations are
+        # rehashed, written to disk, and reloaded through actual operate.perform.
+        representatives = {11: 5, 26: 6, 19: 7, 12: 8, 47: 9, 28: 10, 13: 11, 15: 12}
+        for v in animation_reviews:
+            if v['classification'] != 'valid-ground':
+                continue
+            n = v['stage']
+            frame, raw = gate.read_frame(animation_retained, n)
+            check(json.loads(raw) == v['state'], 'animation retained state drift')
+            check(len(frame) == v['capture']['size'] and
+                  hashlib.sha256(frame).hexdigest() == v['capture']['sha256'], 'animation retained frame drift')
+            reader = lambda stage, frame=frame, raw=raw: (frame, raw)
+            case(f'animation-actual-perform-{n}', v, caller=animation_operate.perform, reader=reader, accept=True)
+            case(f'animation-stale-{n}', v, reader=reader, index=n + 2)
+            shifted = copy.deepcopy(v)
+            shifted['x'] += 1
+            shifted['state']['mouse']['x'] += 1
+            shifted['state']['lastCommand']['x'] += 1
+            case(f'animation-repinned-target-{n}', shifted,
+                 reader=lambda stage, shifted=shifted, frame=frame: (frame, json.dumps(shifted['state']).encode()))
+            case(f'animation-swapped-frame-{n}', v, reader=lambda stage: frames[52])
+            if n in representatives:
+                radius = representatives[n]
+                for label, dx, channel, value in [('white', 1, 0, 0), ('black', 0, 0, 1), ('alpha', 1, 3, 254)]:
+                    mutate = ("const {PNG}=require('pngjs'),fs=require('fs');"
+                              "const p=PNG.sync.read(fs.readFileSync(0));"
+                              f"p.data[(({v['y']-radius})*640+{v['x']-radius+dx})*4+{channel}]={value};"
+                              "process.stdout.write(PNG.sync.write(p));")
+                    corrupted = subprocess.run(['node', '-e', mutate], input=frame,
+                                               capture_output=True, check=True).stdout
+                    changed = copy.deepcopy(v)
+                    changed['capture'].update(size=len(corrupted), sha256=hashlib.sha256(corrupted).hexdigest())
+                    changed['state']['capture'] = copy.deepcopy(changed['capture'])
+                    case(f'animation-actual-repinned-{label}-{n}', changed,
+                         caller=animation_operate.perform,
+                         reader=lambda stage, corrupted=corrupted, changed=changed:
+                         (corrupted, json.dumps(changed['state']).encode()))
     records.append(dict(case='actual-durable-caller-serialization', accepted=True,
                         activeWait=0, overlapWait=75, separateEOF=True, dispatchBatches=1))
     (out / 'verdicts.json').write_text(json.dumps(records, indent=2))
@@ -210,5 +258,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--retained', required=True)
     parser.add_argument('--out', required=True)
+    parser.add_argument('--animation-retained')
     args = parser.parse_args()
-    main(args.retained, args.out)
+    main(args.retained, args.out, args.animation_retained)
