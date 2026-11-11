@@ -208,6 +208,17 @@ try {
     assert.strictEqual(exits, 5, 'failed automatic request relinquishes ownership');
     unlock();
 
+    // Actual AVP2 native cadence after the three fast qualifying warps.
+    arm(); down(); acquire(); up();
+    const slowExits = exits;
+    for (const gap of [355, 354, 580, 317, 511, 314, 831, 818, 990, 347]) {
+      now += gap; renderer._noteCursorWarp(320, 240); tick();
+      assert.strictEqual(exits, slowExits, 'continuing native recentering retains owned lock');
+    }
+    now += 2000; tick();
+    assert.strictEqual(exits, slowExits + 1, 'stopping the slower loop still releases lock');
+    unlock();
+
     // Modern API, including loss of exclusive presentation or the live app.
     canvas.requestPointerLock = () => lockRequests.push(undefined);
     document.exitPointerLock = function() {

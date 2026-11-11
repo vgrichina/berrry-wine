@@ -64,6 +64,21 @@ for (let i = 0; i < 5; i++) { now += 1000; renderer.setMousePosition(320, 240); 
 assert.strictEqual(renderer.wantsRelativeMouse(320, 240, 'auto'), false,
   'a warp per second to one point is not a frame loop');
 
+// AVP2 native trace 20261111-1150: the loop continues through slower frames.
+// These consecutive gaps include the actual pointer-lock loss, with no 2 s pause.
+for (let i = 0; i < 3; i++) { now += 16; renderer.setMousePosition(320, 240); }
+for (const gap of [355, 354, 580, 317, 511, 314, 831, 818, 990, 347]) {
+  now += gap; renderer.setMousePosition(320, 240);
+  assert.strictEqual(renderer.wantsRelativeMouse(320, 240, 'auto'), true,
+    `established native recentering survives a ${gap} ms frame`);
+}
+now += 2000;
+assert.strictEqual(renderer.wantsRelativeMouse(320, 240, 'auto'), false,
+  'an established loop still expires when warps stop');
+now += 1; renderer.setMousePosition(320, 240);
+assert.strictEqual(renderer.wantsRelativeMouse(320, 240, 'auto'), false,
+  'one warp after expiry cannot revive the old loop');
+
 // 2. An exclusive DirectInput mouse arms it; the scan is polled at most every 250 ms.
 now += 5000;
 captureHint = 1;
