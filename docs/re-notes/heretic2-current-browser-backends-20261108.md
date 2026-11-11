@@ -7,6 +7,8 @@ Software GL additionally reaches the raised doorway threshold. Full interior
 traversal, outgoing enemy damage, a kill, pickup and objective completion remain
 unverified. This is browser world/progress evidence, not backend parity.
 
+Follow-up: [2026-11-11 interior traversal and health-vial pickup](heretic2-current-interior-pickup-20261111.md) establishes a native pickup and health 25→35; outgoing enemy damage remains open.
+
 Run: `scratch/runs/20261108-heretic2-current-browser-backends/` (ignored).
 Only this note is committed; no emulator repair or new build was needed.
 
