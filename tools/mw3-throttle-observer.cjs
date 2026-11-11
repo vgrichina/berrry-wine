@@ -107,7 +107,10 @@ function attach(table, {getExports, memory, readCompletion, objectsBase, objects
 
 // Do not turn a consumed DOWN/UP pair into a claim of held game state. A short
 // pulse can be drained in one poll after UP. Pair by exact device/buffer/caller
-// and monotonic sequence, and report its relation to the trusted native edges.
+// and exact native sequences, and report its relation to the trusted edges.
+// A poll may enter before DOWN and finish after it: consumption is established
+// at completion, not request entry. Worker/epoch/module verification remains
+// the caller's responsibility, as it is for attach/start.
 function correlate(snapshot, {code, downAt, upAt, downSequence, upSequence} = {}) {
   const offset = {ArrowUp: 0xc8, Digit0: 0x0b}[code];
   if (offset === undefined || !Number.isFinite(downAt) || !Number.isFinite(upAt) || upAt <= downAt)
@@ -117,26 +120,34 @@ function correlate(snapshot, {code, downAt, upAt, downSequence, upSequence} = {}
     throw Error('exact native edge buffer sequences required');
   if (snapshot.drops || snapshot.errors.length || snapshot.pending || snapshot.conflicts.length)
     throw Error('incomplete keyboard observation');
-  let press;
+  const presses = [], releases = [];
   for (const raw of snapshot.records) {
     const c = raw.decoded;
-    if (!c || c.eax !== 0 || c.flags !== 0 || raw.requestAt < downAt) continue;
+    if (!c || c.eax !== 0 || c.flags !== 0) continue;
+    if (!Number.isFinite(raw.requestAt) || !Number.isFinite(raw.at) || raw.at < raw.requestAt)
+      throw Error('invalid keyboard completion time');
+    if (raw.at < downAt) continue;
     const owner = [c.thisPtr, c.buffer, c.countPtr, c.returnAddress].join(':');
     for (const r of c.records) {
       if (r.offset !== offset) continue;
       if ((r.data & 0x80) && r.sequence === downSequence)
-        press = {record: r, at: raw.at, owner};
-      else if (!(r.data & 0x80) && r.sequence === upSequence && press && press.owner === owner) {
-        const distance = (r.sequence - press.record.sequence) >>> 0;
-        if (distance > 0 && distance < 0x80000000 && raw.at >= upAt) return {
-          code, offset, press, release: {record: r, at: raw.at, owner},
-          consumedDuringHold: press.at < upAt,
-          meaning: 'buffered consumption only; released neutral is not proof of absent earlier press',
-        };
-      }
+        presses.push({record: r, at: raw.at, owner});
+      else if (!(r.data & 0x80) && r.sequence === upSequence)
+        releases.push({record: r, at: raw.at, owner, followsPress: presses.length === 1});
     }
   }
-  throw Error('matching consumed press/release missing');
+  // Inspect the whole trace before accepting: even a duplicate after a valid
+  // pair is ambiguous. Peeks above never count as consumption.
+  if (presses.length !== 1 || releases.length !== 1)
+    throw Error('matching consumed press/release missing or duplicate');
+  const press = presses[0], {followsPress, ...release} = releases[0];
+  if (!followsPress || press.owner !== release.owner || release.at < upAt || release.at < press.at)
+    throw Error('matching consumed press/release missing');
+  return {
+    code, offset, press, release,
+    consumedDuringHold: press.at < upAt,
+    meaning: 'buffered consumption only; released neutral is not proof of absent earlier press',
+  };
 }
 
 module.exports = {attach, correlate};

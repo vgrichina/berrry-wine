@@ -8,6 +8,47 @@ const {Win98Renderer} = require('../lib/renderer');
 const {createWindowHost} = require('../lib/host-window');
 const {BASE, SIZE} = require('../lib/region-map.generated');
 
+// Deterministic in-flight regression: the request enters 1ms before DOWN,
+// while the actual completed return carries the exact newly consumed edge.
+{
+  const interval = {code:'ArrowUp', downAt:101, upAt:2101, downSequence:7, upSequence:8};
+  const raw = (requestAt, at, data, sequence) => ({requestAt, at, decoded:{
+    eax:0, flags:0, thisPtr:1, buffer:2, countPtr:3, returnAddress:4,
+    records:[{offset:0xc8, data, sequence}],
+  }});
+  const snapshot = {drops:0, errors:[], pending:0, conflicts:[],
+    records:[raw(100,102,128,7), raw(2102,2103,0,8)]};
+  const before = structuredClone(snapshot);
+  assert.equal(correlate(snapshot, interval).consumedDuringHold, true);
+  assert.deepEqual(snapshot, before, 'correlation preserves raw evidence');
+  const reject = mutate => {
+    const bad = structuredClone(snapshot); mutate(bad);
+    assert.throws(() => correlate(bad, interval), /missing|duplicate|completion time|incomplete/);
+  };
+  reject(s => s.records[0].at = 100); // stale completion, exact sequence alone is insufficient
+  reject(s => s.records[0].at = NaN);
+  reject(s => s.records[0].requestAt = 103);
+  reject(s => s.records[0].decoded.records[0].sequence = 5);
+  reject(s => s.records[1].decoded.records[0].sequence = 6);
+  reject(s => s.records[1].at = 2100); // release predates trusted UP
+  reject(s => s.records.reverse());
+  reject(s => s.records.push(structuredClone(s.records[0])));
+  reject(s => s.records.push(structuredClone(s.records[1])));
+  reject(s => s.records[0].decoded.records.push({...s.records[0].decoded.records[0]}));
+  reject(s => s.records[0].decoded.flags = 1);
+  reject(s => s.records[0].decoded.eax = 1);
+  for (const key of ['thisPtr','buffer','countPtr','returnAddress'])
+    reject(s => s.records[1].decoded[key]++);
+  reject(s => s.errors.push('raw decoder failure'));
+  const late = structuredClone(snapshot); late.records[0].at = 2101;
+  assert.equal(correlate(late, interval).consumedDuringHold, false,
+    'post-release consumption must never qualify as in-hold');
+  const wrapped = structuredClone(snapshot);
+  wrapped.records[0].decoded.records[0].sequence = 0xffffffff;
+  wrapped.records[1].decoded.records[0].sequence = 0;
+  assert.equal(correlate(wrapped, {...interval,downSequence:0xffffffff,upSequence:0}).consumedDuringHold, true);
+}
+
 (async () => {
   const bytes = fs.readFileSync(process.env.MW3_OBSERVER_WASM || 'build/wine-assembly.wasm');
   const module = await WebAssembly.compile(bytes);
@@ -105,6 +146,22 @@ const {BASE, SIZE} = require('../lib/region-map.generated');
   poll(); assert.equal(observer.snapshot().records.length, before, 'captured wrappers inert after stop');
   assert.throws(() => observer.start({apiLogBefore:0}), /single/);
   assert.deepEqual(observer.restore().conflicts, []); assert.equal(table.log, originalLog);
+  // A decoder failure retains the exact unsuccessful raw return and refuses
+  // correlation; repairing timing must not sanitize errors into a success.
+  const failing = attach(table, {getExports:() => ex, memory,
+    readCompletion:() => {throw Error('fixture decoder failure');},
+    objectsBase:BASE.DX_OBJECTS, objectsSize:SIZE.DX_OBJECTS, caller:0x401000});
+  ex = (await WebAssembly.instantiate(module, {host:table})).exports;
+  ex.init_thread(0, 0x400000, 0x400000, 0x600000, 0x7500000, 0x7500010, 2);
+  [7,0,1,128,0x700,256,0,0x100].forEach((v,i) => put(BASE.DX_OBJECTS + i*4, v));
+  call(1, [0x520000]);
+  failing.start({durationMs:1000, apiLogBefore:0}); poll();
+  const failed = failing.stop();
+  assert.equal(failed.records.length, 1, JSON.stringify(failed)); assert.equal(failed.records[0].eax, 0);
+  assert.equal(failed.records[0].decoded, undefined);
+  assert.match(failed.errors[0], /fixture decoder failure/);
+  assert.throws(() => correlate(failed, interval), /incomplete/);
+  assert.deepEqual(failing.restore().conflicts, []);
   console.log(JSON.stringify({passed:true, route:'full built WASM x86 COM dispatch -> production host/renderer -> matched compiled return',
     moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'), results, snapshot,
     limitation:'synthetic guest object/code; no MW3 execution, DOM event, chassis speed or game callback claim'}));
