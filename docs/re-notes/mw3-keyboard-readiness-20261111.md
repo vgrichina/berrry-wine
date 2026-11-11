@@ -327,3 +327,32 @@ their independent 100-second watchdog; production allocation deadlines are
 unchanged. The retention runner selects the staged decision-sampling fixture
 when present. Actual successful and failed Node/Chrome/outer waits, both EOFs,
 the outer publication barrier, and missing-evidence refusal pass on this path.
+
+
+2026-11-11 original gameplay consequence (0940 run): the repaired normal
+preparation launched the unchanged module `75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`
+through Pilot / Instant Action / Operation 1A / Launch. Full cockpit frames
+were personally reviewed before each action. The shipped Up and 0 controls
+produced matched compiled buffered consumption; the settled full-throttle
+frame showed speed 17 and OP Able 447 m, versus speed 0 and 449 m before.
+A later full frame showed speed 81, OP Able 341 m, and changed terrain.
+Enter selected the first M.Gun. A normal two-second Space hold produced
+an actual fire poll during the hold; the settled frame after release showed
+both M.Gun counts at 96, down from 100. No guest state was written.
+
+The first weapon-cycle request was refused before dispatch for a stale scene
+(`effects:0`, `refreshRequired:true`). Its acknowledgement and failed local
+attempt are retained. A fresh full capture was reviewed before a distinct
+new command; no uncertain command was resent. Ordinary Browser.close followed
+the ammo consequence. Raw captures, matched module identity, input receipts,
+consumption timestamps and parent wait/EOF evidence are retained under
+`scratch/runs/20261111-mw3-prelaunch-recovery-motion-fire-0940/`.
+
+The 312 runtime paths were double-SHA verified before normal delegated stop.
+Chrome, Node and outer owner waits and both EOFs passed; the independent
+watchdog was joined with actual wait 0 and both EOFs. Box `bx_xx8j6y4q` was
+independently confirmed archived at 06:21:12Z with expiry cleared. Stop
+`stop_0d476bc029074aa8` completed without force or error, before the fixed
+06:35:32Z watchdog deadline. The lifecycle supervisor finished with real
+wait 0 and both EOFs; its original terminal transport returned 143 with cause
+unknown, retained separately from the actual supervisor result.
