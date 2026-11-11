@@ -56,11 +56,12 @@ async function main() {
           (return (i64.reinterpret_f64 (call $x87_pipeline_load (call $w2g (local.get $wa)) (i32.const 1))))))
         (call $fpu_exec_mem (i32.const 5) (i32.const 0) (call $w2g (local.get $wa)))
         (i64.reinterpret_f64 (call $fpu_pop)))
-      (func (export "test_lazy_replace") (param $this i32) (param $dib i32) (param $pitch i32)
+      (func (export "test_lazy_replace") (param $this i32) (param $dib i32) (param $pitch i32) (param $size i32)
         (local $ga i32) (local $wa i32)
         (local.set $ga (call $heap_alloc (i32.const 108)))
         (local.set $wa (call $g2w (local.get $ga)))
         (memory.fill (local.get $wa) (i32.const 0) (i32.const 108))
+        (i32.store (local.get $wa) (local.get $size))
         (i32.store offset=4 (local.get $wa) (i32.const 0x808))
         (i32.store offset=16 (local.get $wa) (local.get $pitch))
         (i32.store offset=36 (local.get $wa) (call $w2g (local.get $dib)))
@@ -109,7 +110,7 @@ async function main() {
         (call $d3dim_worker_fence) (global.get $d3dim_worker_pending))
       (func (export "test_fence_surface") (result i32)
         (local $this i32) (local $entry i32)
-        (local.set $this (call $dx_create_com_obj (i32.const 2) (i32.const 0)))
+        (local.set $this (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF3)))
         (local.set $entry (call $dx_from_this (local.get $this)))
         (store.field DxObject width (local.get $entry) (i32.const 2))
         (store.field DxObject height (local.get $entry) (i32.const 1))
@@ -120,6 +121,8 @@ async function main() {
         (local.get $this))
       (func (export "test_fence_dib") (param $this i32) (result i32)
         (load.field DxObject misc1 (call $dx_from_this (local.get $this))))
+      (func (export "test_fence_pitch") (param $this i32) (result i32)
+        (load.field DxObject pitch (call $dx_from_this (local.get $this))))
       (func (export "test_fence_load") (param $dst i32) (param $src i32)
         (global.set $d3dim_gpu_on (i32.const 1))
         (global.set $d3dim_worker_pending (i32.const 1))
@@ -132,6 +135,12 @@ async function main() {
         (i32.load (global.get $reg_base)))
     ` });
   const { exports: ex, memory: wasmMemory } = harness;
+  // A zero vtable with uninitialized native tables accidentally compares equal
+  // to Surface4/7. Initialize COM and explicitly select Surface3 (108-byte ABI).
+  const pe = require('fs').readFileSync(require('path').join(__dirname, 'binaries/calc.exe'));
+  new Uint8Array(wasmMemory.buffer).set(pe, ex.get_staging());
+  assert(ex.load_pe(pe.length));
+  ex.init_dx_com_thunks();
   const other = (await WebAssembly.instantiate(harness.module, { host: harness.host, gdi: harness.gdi })).exports;
   assert.strictEqual(ex.test_surface_fence(1, 1), 1, 'scoped fence preserves global pending state');
   assert.deepStrictEqual(calls.pop(), [OPCODES.FENCE, 4096, 614400]);
@@ -253,13 +262,31 @@ async function main() {
   }
   calls.length = 0; lazyTarget.dirty = true; pixels.fill(0);
   ex.test_lazy_arm(lazy, 1); ex.test_lazy_unlock(lazy);
-  ex.test_lazy_replace(lazy, lazyDib + 4096, 8);
+  for (const size of [0, 124]) {
+    ex.test_lazy_replace(lazy, lazyDib + 4096, 8, size);
+    assert.equal(ex.get_eax() >>> 0, 0x80070057, 'invalid Surface3 descriptor size is rejected');
+    assert.deepStrictEqual(calls, [], 'invalid descriptor does not consume pending work');
+    assert.equal(ex.test_fence_dib(lazy), lazyDib);
+    assert.equal(ex.test_fence_pitch(lazy), 4);
+    assert(lazyTarget.dirty);
+    assert.deepStrictEqual(Array.from(pixels), [0, 0, 0, 0]);
+  }
+  const replacement = new Uint8Array(wasmMemory.buffer, lazyDib + 4096, 8);
+  replacement.set([0x1f, 0, 0xff, 0xff, 0xa5, 0xa5, 0xa5, 0xa5]);
+  ex.test_lazy_replace(lazy, lazyDib + 4096, 8, 108);
+  assert.equal(ex.get_eax() >>> 0, 0, 'valid Surface3 descriptor succeeds');
   assert.deepStrictEqual(calls, [[OPCODES.FENCE, lazyDib, 4]],
     'replacement fences the original backing and pitch before changing either');
+  assert.deepStrictEqual(Array.from(pixels), [0, 248, 224, 7], 'detached backing contains completed GPU pixels');
+  assert.equal(ex.test_fence_dib(lazy), lazyDib + 4096);
+  assert.equal(ex.test_fence_pitch(lazy), 8);
+  assert.deepStrictEqual(Array.from(replacement), [0x1f, 0, 0xff, 0xff, 0xa5, 0xa5, 0xa5, 0xa5],
+    'replacement preserves caller pixels and padded pitch');
   pixels.fill(0x34); ex.test_global_fence();
   assert.deepStrictEqual(Array.from(pixels), [0x34, 0x34, 0x34, 0x34],
     'later fence cannot overwrite the detached allocation after reuse');
-  ex.test_lazy_replace(lazy, lazyDib, 4);
+  ex.test_lazy_replace(lazy, lazyDib, 4, 108);
+  assert.equal(ex.get_eax() >>> 0, 0);
   calls.length = 0; lazyTarget.dirty = true; lazyTarget.dib = lazyDib + 1;
   ex.test_lazy_offset(lazy, 1);
   ex.test_lazy_arm(lazy, 1);
