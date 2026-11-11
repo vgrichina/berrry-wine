@@ -840,3 +840,50 @@ advanced mouse -> WASD -> console objective. It ended normally with actual
 runtime/watchdog waits0, both output EOFs, watchdog unfired, all three PIDs
 absent and port18116 refused. Unique evidence was recovered and hash-verified
 before stopping and verified again afterward. No cloud box was created.
+
+## Native dash accepted by training (2026-11-11, 0845)
+
+Run `scratch/runs/20261111-oni-native-dash-combat-training-0845/` advances the
+original tutorial beyond console activation: balanced tap-W/hold-W input
+produces a sprint and the native **Dash successful.** confirmation. The next
+instruction is **Go to the beginning of the perimeter track marked by the floor
+target.** Full current captures were reviewed before actions; the held capture
+shows the sprint pose and displacement, and the released capture shows Konoko
+stationary with the success message. This proves an accepted dash training
+consequence. The perimeter exercise, jumping and combat remain untested.
+
+The original menu route was replayed through Load Game and TCTF Training; no
+checkpoint restore was attempted. After the Kon opening camera reset, ordinary
+mouse motion advances orientation to WASD. W movement advances to the console
+objective. Mouse/WASD approach produces the native Press CTRL prompt, and
+balanced Control activates DASH training. After reviewing its tap-W/hold-W
+instruction, mouse input turns toward the room center. With the existing
+freeze/step control and unchanged service-clock cadence, W goes down at2559,
+up2561, down2563 and up2578. `dash-held.png` records batch2578;
+`dash-consequence.png` records the success at2593;
+`next-instruction.png` records the perimeter instruction at2638. Final read-only
+inspection at2638 shows all used keys false, mouse buttons0 and input queue0.
+The unsupported `input-state` diagnostic returned its explicit trace-option
+error; the subsequent existing read-only inspection establishes neutrality.
+
+The run reuses module SHA256
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`, the
+accepted7519e3553 renderer and72e3f0c89 CLI scheduler, with software GL,
+cooperative threads, default service clock and `--batch-size=200000`.
+Runtime/control file hashes and all33 canonical media hashes match the prior
+accepted evidence. Concurrent main contains AVP2 changes; the retained module
+is identified separately from checkout HEAD. No production repair or new build
+is claimed. Existing matching locked-build and focused regressions are reused.
+Original executable, media, scripts, guest state and save contents were not
+edited. Authentic game-written persistence was recovered unchanged at rawSHA
+`629795eb13defaee3050bc9201cff3885b815b3d830513e4d5bda5cc6d062acb`;
+checkpoint resumability remains unproved.
+
+All235 final native artifacts were recovered and byte/hash verified;
+228 were verified before normal quit.
+The detached supervisor records actual runtime and watchdog waits0 with both
+output EOFs. The fixed45-minute watchdog was prearmed before launch and exited
+unfired. Independent checks find supervisor1843387, runtime1843391 and
+watchdog1843389 absent and port18117 refusing connections. No cloud box was
+created; box ID/state/expiry are null/not-created/null. Audio, browser/mobile
+parity and performance are not qualified by this run.
