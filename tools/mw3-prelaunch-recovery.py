@@ -61,6 +61,6 @@ def install(dest):
         pin = (dest/'pin.py').read_text()
         if "n=='tools/mw3-key-action-review.cjs'" not in pin:
             pin = once(pin, "  if spec=='./':continue", "  if spec=='./':continue\n  if n=='tools/mw3-key-action-review.cjs' and spec=='../20261110-mw3-complete-fixture-closure-combat-2135/target.cjs':continue # installer literal; prepared browser resolves dependency")
-        pin = once(pin, 'edges=[];missing=[];', "paths.update(['tools/mw3-preparation.cjs','tools/mw3-prelaunch-recovery.py'])\nedges=[];missing=[];")
+        pin = once(pin, 'edges=[];missing=[];', "paths.update(['tools/mw3-preparation.cjs','tools/mw3-prelaunch-recovery.py','tools/mw3-native-key-witness.test.cjs','tools/mw3-readiness-install.test.cjs','tools/mw3-key-action-review.test.cjs'])\nedges=[];missing=[];")
         pin = once(pin, "(R/'source-commit.txt').write_text(head+'\\n')", "(R/'source-commit.txt').write_text(head+'\\n')\nsubprocess.run(['node',str(ROOT/'tools/mw3-preparation.cjs'),str(R/'runtime-pins.json'),str(ROOT)],check=True)")
         (dest/'pin.py').write_text(pin)

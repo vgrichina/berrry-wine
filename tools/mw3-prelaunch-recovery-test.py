@@ -7,6 +7,7 @@ S=ROOT/'scratch/runs/20261111-mw3-complete-helper-cockpit-0500'
 subprocess.run([sys.executable,'-B',str(ROOT/'tools/mw3-retention-repair.py'),str(S),str(R)],check=True)
 # Ordinary installer retains its small input contract and prepares the pin entry.
 assert 'mw3-preparation.cjs' in (R/'pin.py').read_text()
+assert 'tools/mw3-native-key-witness.test.cjs' in (R/'pin.py').read_text(), 'intended-key controls must stage with ordinary preparation'
 (R/'owner.py').write_bytes((ROOT/'scratch/runs/20261111-mw3-cockpit-motion-space-response-0840/owner.py').read_bytes())
 for name in ['transport.cjs','seal.cjs']:(R/name).write_bytes((S/name).read_bytes())
 # Nested fixture directory; production run itself remains at scratch/runs/<id>.
