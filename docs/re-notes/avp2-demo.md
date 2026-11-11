@@ -185,3 +185,44 @@ Browser exit0, Node exit0 and parent-observed controller exit0 are separately re
 ### Retained audio signal review, 2026-10-18
 
 Offline script and results: `scratch/runs/20261018-avp2-audio-signal-review/`. Input PCM SHA256 `b0c65e263a136f870d4ca8d014d0710843c113e1391c15b8eef0f9c63b36289d` matches the original artifact manifest. Decoded stereo48kHz duration is10.02s (distinct from recorder wall duration10.113s). No nonfinite or clipped samples; longest exact-zero span20ms; no identical full100ms PCM windows. Peak0.2445162/RMS0.05301665 match prior measurements, DC mean0.0000065754. These are signal checks, not listening review: lossy encoding may hide source repetition, and no timing reference exists. Audible quality, correct effects/music, logicalFPS and device behavior remain unqualified. No browser, guest execution or original artifact changes.
+
+### Current original Marine weapon consequence, 2026-11-11
+
+Run `scratch/runs/20261111-avp2-current-marine-encounter-0820/` reaches original
+`AVP2.exe` → launcher-generated command file → `lithtech.exe` → Marine →
+Unwelcome Guests / Normal in current Chrome/WebGL with workers. All eighteen
+original cabinet files and the manifest match their retained hashes; companions
+and configuration were not edited. Instantiated guest/render-worker bytecode
+matches module `d0481f03459ec4f612864c57a290a12afb1e22fb09cd476a190dca967a829a10`
+from main `820fb518d`.
+
+Two demonstrated shared DirectDraw defects were fixed and published:
+`0db20330c` accepts DONOTPERSIST on managed textures and matching mip queries
+(original renderer request caps2 `0x40090` previously returned E_NOTIMPL), and
+`820fb518d` implements Surface7 SetPriority/GetPriority with per-surface DWORD
+storage. After successful texture creation the original renderer had trapped
+at vtable slot `0xb4`, returning to `d3d.ren` preferred `100408b3`.
+Native x86 COM regressions fail before each fix, then pass with both normal and
+compat modules; locked builds pass. Tests cover descriptor/caps and mip pixels,
+priority defaults, full DWORD readback across COM views and invalid outputs.
+
+The baseline Marine was flat white. The repaired original menu, squad intro,
+weapon and world are textured. Personally reviewed full captures show pulse
+rifle selection, a bounded primary-fire burst at the unoccupied APC side, muzzle
+flash, and ammunition **99 → 94**; health **100** and armor **050** stay unchanged.
+W advances the viewpoint along the APC toward the door, with static geometry
+changing. Final Tab displays **Locate Sergeant Hall**. No enemy damage or
+objective completion is claimed. Key events are trusted and balanced; native
+mouse-UP acknowledges and ammunition stays94 afterward, but document capture
+omits mouseup following pointer-lock acquisition. That observation limit is
+retained in `native-input-proof.json`. The shipped readme explicitly excludes
+Save/Load, and no ordinary save was produced.
+
+Final184 evidence paths (153 unique contents) and all earlier recovered maps
+are locally hash-verified, with lossless gzip maps and no source/media archive.
+Browser, controller and supervising parent exit0 with actual waits/EOF;
+independent PID/profile/port absence is recorded. Private box `bx_thnvda9b`
+was normally stopped and independently confirmed archived at08:49:27Z,
+receipt `stop_fe089fd9a4dd4d4b`, before fixed09:03:03Z expiry. The independent
+watchdog exits0 unfired. Next gameplay step is the displayed Hall objective;
+this run ends at the measured weapon consequence.
