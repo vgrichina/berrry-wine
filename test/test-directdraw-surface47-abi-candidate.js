@@ -284,8 +284,23 @@ const tailCalls = !process.argv.includes('--compat');
     com(read(out.p), 2); com(opaque, 2);
   }
   com(opaqueDD4, 2);
+  // AVP2 requests TEXTUREMANAGE|OPAQUE|DONOTPERSIST (0x40090).
+  // DONOTPERSIST permits loss of managed storage; it does not require it.
+  // Keep the ordinary CPU backing and preserve the hint through COM views
+  // and mip allocation, independently of the game's rendering path.
+  for (const managedCaps of [0x40090, 0x40014, 0x60004]) {
+    const texture = create(desc(C.texture | C.complex | C.mip, managedCaps, 3));
+    assert.strictEqual(caps(texture)[1], managedCaps, 'disposable managed caps retained');
+    assert.strictEqual(read(describe(texture) + 108), managedCaps, 'disposable managed descriptor');
+    pixels(texture, 0x51a7cd, true); pixels(texture, 0x51a7cd);
+    const level = attached(texture, C.texture | C.mip, managedCaps);
+    assert.strictEqual(caps(level)[1], managedCaps, 'mip inherits loss permission');
+    pixels(level, 0x3175ab, true, 2); pixels(level, 0x3175ab, false, 2);
+    com(level, 2); com(texture, 2);
+  }
   for (const invalid of [desc(C.system, 0x14), desc(C.texture, 0x1c),
-    desc(C.system, 0x80), desc(C.texture, 0x84), desc(C.texture, 0x88)]) {
+    desc(C.system, 0x80), desc(C.texture, 0x84), desc(C.texture, 0x88),
+    desc(C.system, 0x40090)]) {
     write(out.p, POISON);
     assert.strictEqual(com(dd, 6, invalid, out.p, 0), 0x80070057);
     assert.strictEqual(read(out.p), 0);

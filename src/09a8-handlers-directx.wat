@@ -2660,7 +2660,7 @@
         (return)))
       (if (i32.and (call $gl32 (i32.add (local.get $arg1) (i32.const 4))) (i32.const 1)) (then
       (local.set $caps2 (call $gl32 (i32.add (local.get $arg1) (i32.const 108))))
-      (if (i32.or (i32.and (local.get $caps2) (i32.const -131229)) ;; allowed: 0x2009c
+      (if (i32.or (i32.and (local.get $caps2) (i32.const -393373)) ;; allowed: 0x6009c
             (i32.or (call $gl32 (i32.add (local.get $arg1) (i32.const 112)))
                     (call $gl32 (i32.add (local.get $arg1) (i32.const 116))))) (then
         (call $gs32 (local.get $arg2) (i32.const 0))
@@ -2672,6 +2672,9 @@
     ;; access and permits retiling/compression; retaining ordinary storage is
     ;; valid too. Like dynamic/static, it requires TEXTURE and excludes the
     ;; other access hints. Diablo II uses it for its debug-font textures.
+    ;; DONOTPERSIST (0x40000) permits a managed surface to be lost; keeping
+    ;; its CPU backing is valid. Preserve this hint with the other caps,
+    ;; including on mip children. AVP2 combines it with TEXTUREMANAGE|OPAQUE.
     (if (local.get $caps2) (then
       (if (i32.or
             (i32.eqz (i32.and (call $gl32 (i32.add (local.get $arg1) (i32.const 104))) (i32.const 0x1000)))
@@ -6517,7 +6520,7 @@
         (i32.eq (call $gl32 (local.get $creator)) (global.get $DX_VTBL_DDRAW7))
         (i32.eq (call $dx_native_desc_size (local.get $arg0)) (i32.const 124))))))
     (if (local.get $extended) (then
-      (if (i32.or (i32.and (call $gl32 (i32.add (local.get $arg1) (i32.const 4))) (i32.const -131229))
+      (if (i32.or (i32.and (call $gl32 (i32.add (local.get $arg1) (i32.const 4))) (i32.const -393373)) ;; same 0x6009c as CreateSurface
             (i32.or (call $gl32 (i32.add (local.get $arg1) (i32.const 8)))
                     (call $gl32 (i32.add (local.get $arg1) (i32.const 12))))) (then
         (call $gs32 (local.get $arg2) (i32.const 0))
