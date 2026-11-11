@@ -55,11 +55,15 @@ if (typeof module !== 'undefined') module.exports = {attach};
 // Dispatch log hooks bracket the *handler*, not just the live button import.
 // The caller supplies the already verified standard-mouse decoder and layout.
 function attachDispatch(table, {getExports, memory, request, completion, layout,
-    capacity = 16384, readCapacity = 1024, depthCapacity = 64, importNames = null} = {}) {
+    capacity = 16384, readCapacity = 1024, depthCapacity = 64, importNames = null,
+    decision = null, decisionCapacity = 64} = {}) {
   if (!Number.isInteger(capacity) || capacity < 1 || capacity > 65536 ||
       !Number.isInteger(readCapacity) || readCapacity < 1 || readCapacity > 8192 ||
       !Number.isInteger(depthCapacity) || depthCapacity < 1 || depthCapacity > 256)
     throw Error('bounded dispatch observation required');
+  if ((decision !== null && typeof decision !== 'function') ||
+      !Number.isInteger(decisionCapacity) || decisionCapacity < 1 || decisionCapacity > 256)
+    throw Error('bounded decision observation required');
   for (const name of ['log', 'log_i32', 'log_api_exit', 'get_mouse_buttons_live'])
     if (typeof table[name] !== 'function') throw Error('dispatch import required: ' + name);
   if (!memory?.buffer || ![getExports, request, completion].every(f => typeof f === 'function'))
@@ -73,7 +77,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
   const data = new Float64Array(capacity * 6), frames = new Array(depthCapacity);
   // Aggregate only: storage is bounded by the installed import table and 32
   // dispatch categories, independent of the number of excluded hooks.
-  const excludedCounts = [], apiCounts = new Map();
+  const excludedCounts = [], apiCounts = new Map(), decisions = new Map();
   let diagnostic;
   let active = false, expires = 0, started = 0, count = 0, drops = 0,
     reads = [], errors = [], depth = 0, marker = -1, priorLog = 0, excludedImports = 0, ex;
@@ -93,6 +97,24 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
     if (apiCounts.has(category)) apiCounts.set(category, apiCounts.get(category) + 1);
     else if (apiCounts.size < 32) apiCounts.set(category, 1);
     else diagnostic.otherCategories++;
+    // Optional read-only game gate decoder. Aggregate identical decisions so a
+    // busy keyboard pump cannot bury the mouse gate in the category limit.
+    // These are API-entry samples, never completion or input-admission proof.
+    if (decision) {
+      const sample = decision(category, ex, memory, layout);
+      if (sample !== null) {
+        const key = JSON.stringify(sample);
+        if (typeof key !== 'string' || key.length > 2048) throw Error('decision sample size');
+        const at = Date.now(), mono = performance.now();
+        if (decisions.has(key)) {
+          const row = decisions.get(key); row.count++; row.lastAt = at; row.lastMono = mono;
+        } else {
+          if (decisions.size === decisionCapacity) { drops++; halt('decision capacity'); return; }
+          decisions.set(key, {sample: JSON.parse(key), count: 1, firstAt: at, lastAt: at,
+            firstMono: mono, lastMono: mono});
+        }
+      }
+    }
     if (depth === depthCapacity) { drops++; halt('dispatch depth capacity'); return; }
     let target = marker === 1093;
     if (marker < 0 && args[1] === 33) {
@@ -161,7 +183,7 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
           ![0, 1].includes(apiLogBefore)) throw Error('bounded start with known prior API log setting required');
       ex = getExports(); if (typeof ex?.set_api_log !== 'function') throw Error('dispatch log export required');
       priorLog = apiLogBefore; count = drops = depth = excludedImports = 0; reads = []; errors = []; marker = -1;
-      excludedCounts.fill(0); apiCounts.clear();
+      excludedCounts.fill(0); apiCounts.clear(); decisions.clear();
       diagnostic = {entries: 0, exits: 0, otherApi: 0, nonMouseDevice: 0,
         mouseRequests: 0, mouseCompletions: 0, entryFailures: 0,
         categoryDecodeFailures: 0, otherCategories: 0};
@@ -178,6 +200,9 @@ function attachDispatch(table, {getExports, memory, request, completion, layout,
         if (table[name] !== wrapped) bindingMismatchReasons.push('import table wrapper replaced: ' + name);
       return {active, started, expires, drops, errors: errors.slice(), pending: depth,
         importNames: selectedImports === null ? null : [...selectedImports], excludedImports,
+        decisions: Array.from(decisions.values(), row => ({...row, sample: {...row.sample}})),
+        decisionEnabled: decision !== null,
+        decisionMeaning: 'bounded API-entry gate samples only; caller must verify game image and Worker identity; not completed reads or admission',
         diagnostic: {...diagnostic,
           excludedByImport: names.flatMap((name, i) => excludedCounts[i] ? [{name, count: excludedCounts[i]}] : []),
           apiCategories: Array.from(apiCounts, ([category, count]) => ({category, count})),

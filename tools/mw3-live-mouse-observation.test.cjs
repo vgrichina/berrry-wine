@@ -50,6 +50,37 @@ test('dispatch observations separate import returns from successful full handler
   assert.equal(s.reads[0].eax, 0); assert(s.imports.some(r => r.name === 'wait_single'));
   assert.equal(s.drops, 0); assert.deepEqual(s.errors, []);
 });
+test('decision samples aggregate by gate and caller without replacing completion proof', () => {
+  let gate = 1;
+  const f = fixture({importNames: ['get_mouse_buttons_live'],
+    decision: category => category === 'com:1093' ? {gate, caller: 999} : null});
+  f.o.start({apiLogBefore: 0});
+  for (let i = 0; i < 1000; i++) { f.entry(); f.exit(); }
+  gate = 3; f.entry(); f.exit();
+  const s = f.o.snapshot();
+  assert.equal(s.decisions.length, 2); assert.equal(s.decisions[0].count, 1000);
+  assert(s.decisions[0].firstMono <= s.decisions[0].lastMono);
+  assert.equal(s.reads.length, 1001); assert.equal(s.pending, 0);
+  s.decisions[0].sample.gate = 99;
+  assert.equal(f.o.snapshot().decisions[0].sample.gate, 1);
+  f.o.stop();
+  f.o.start({apiLogBefore: 0}); assert.deepEqual(f.o.snapshot().decisions, []); f.o.stop();
+});
+test('decision overflow and decoder faults stop the same recorder and restore logging', () => {
+  let gate = 1;
+  const f = fixture({decisionCapacity: 1, decision: () => ({gate})});
+  f.o.start({apiLogBefore: 0}); f.entry(); f.exit(); gate = 3; f.entry();
+  const s = f.o.snapshot(); assert.equal(s.active, false); assert.equal(s.drops, 1);
+  assert.deepEqual(s.errors, ['decision capacity']); assert.equal(f.log(), 0);
+  const g = fixture({decision: () => { throw Error('unverified gate'); }});
+  g.o.start({apiLogBefore: 0}); g.entry();
+  assert.equal(g.o.snapshot().active, false); assert.match(g.o.snapshot().errors[0], /unverified gate/);
+  assert.equal(g.log(), 0);
+  const h = fixture({decision: () => ({bad: 'x'.repeat(2049)})});
+  h.o.start({apiLogBefore: 0}); h.entry(); assert.match(h.o.snapshot().errors[0], /sample size/);
+  for (const options of [{decision: {}}, {decisionCapacity: 0}, {decisionCapacity: 257}])
+    assert.throws(() => fixture(options), /bounded decision/);
+});
 test('captured imports remain observable then inert across table restoration and expiry', async () => {
   const f = fixture(); const captured = f.table.get_mouse_buttons_live;
   f.o.start({apiLogBefore: 1, durationMs: 1}); await new Promise(r => setTimeout(r, 5));
