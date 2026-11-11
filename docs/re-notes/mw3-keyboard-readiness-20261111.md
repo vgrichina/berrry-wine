@@ -249,3 +249,45 @@ synthetic image/identity/CDP sinks. It verifies cockpit and pilot Enter pairs,
 the retained bare-Enter failure, and refusal/no replay for invalid reviews.
 This repair was qualified locally after archival; it was not applied to the
 terminal original. A future original must prepare fresh inputs and repin them.
+
+## Static HTTP pins must follow staged source (0840)
+
+`scratch/runs/20261111-mw3-cockpit-motion-space-response-0840/` did not launch
+the original game. Fresh same-box harmless fixtures qualified the regenerated
+Up/0 producer witnesses and actual prepared Enter/Space controller routes,
+including compiled key consumption and held-fire polling. These are fixtures,
+not chassis movement, weapon selection or ammunition evidence from MW3.
+
+The first supervisor refused before Node because its inherited six-minute
+reserve produced a child deadline beyond the owner's 30-minute cap under the
+45-minute allocation. Its actual exit was preserved. The corrected calculation
+is `min(allocationDeadline - 600, now + 1740)`; the allocation never moves.
+
+The retry reached the ordinary controller's HTTP guard before Chrome. Its
+fresh `files`/`uploadFiles` pins contained `/index.html` SHA
+`02d9b1e41b8e9de27eae289740ae799ff747527e2ba312ed07bc4dc17d276357`,
+while inherited `httpPins` still expected
+`fa81b9ebfd01d3fbfa2852bfec4503a87d4b5ce47cf4522cd4c134ac82cfb11c`.
+The guard correctly refused. The collector then treated absent Chrome receipts
+as terminal and performed the delegated normal stop. The box is archived;
+there was no cockpit, guest action or new movement/ammunition result.
+
+After generating the complete fresh runtime graph, regenerate HTTP pins too:
+
+```sh
+node tools/mw3-runtime-http-pins.cjs INPUT_PINS_JSON NEW_PINS_JSON
+```
+
+Do this before allocation/provisioning and freeze the resulting manifest as
+the run's `runtime-pins.json`. The helper checks every static route against
+exactly one `files` and `uploadFiles` entry and actual local bytes. It emits a
+new file exclusively, preserves source identity and the input graph, and
+refuses absent, duplicate, stale or nonliteral routes. It changes no runtime
+HTTP guard, native input, deadline or admission requirement. Its regression
+test serves changed staged files through the production static server and
+checks real response hashes, refusal cases and exclusive output publication.
+
+A future run must also distinguish a pre-Chrome owner exit from a live browser
+when collecting lifecycle evidence, so a recoverable preparation failure does
+not consume the remaining fixed allocation through automatic box shutdown.
+Preserve the failure and actual Node/outer waits; never invent Chrome waits.
