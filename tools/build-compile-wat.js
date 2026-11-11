@@ -219,6 +219,25 @@ function compileWatx(replicatedDispatch) {
   return out;
 }
 
+// Replacing the directory entry preserves retained hard-linked module bytes.
+async function publishArtifact(output, bytes) {
+  let mode;
+  try {
+    mode = (await fs.promises.stat(output)).mode & 0o777;
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+  }
+  const temporaryDirectory = await fs.promises.mkdtemp(
+    path.join(path.dirname(output), '.wine-build-'));
+  try {
+    const temporaryOutput = path.join(temporaryDirectory, path.basename(output));
+    await fs.promises.writeFile(temporaryOutput, Buffer.from(bytes), { mode });
+    await fs.promises.rename(temporaryOutput, output);
+  } finally {
+    await fs.promises.rm(temporaryDirectory, { recursive: true, force: true });
+  }
+}
+
 (async () => {
   const replicatedDispatch = parseReplicatedDispatch();
   const compiler = selectedCompiler();
@@ -245,8 +264,8 @@ function compileWatx(replicatedDispatch) {
 
   await fs.promises.mkdir(path.dirname(OUT), { recursive: true });
   await fs.promises.mkdir(path.dirname(COMPAT_OUT), { recursive: true });
-  await fs.promises.writeFile(OUT, Buffer.from(bytes));
-  await fs.promises.writeFile(COMPAT_OUT, Buffer.from(compatBytes));
+  await publishArtifact(OUT, bytes);
+  await publishArtifact(COMPAT_OUT, compatBytes);
   const st = await fs.promises.stat(OUT);
   const compatSt = await fs.promises.stat(COMPAT_OUT);
   console.log(`Build complete: ${path.relative(ROOT, OUT)} (${st.size} bytes)`);
@@ -256,7 +275,7 @@ function compileWatx(replicatedDispatch) {
     // the decoder refuses would otherwise only surface wherever it is loaded.
     new WebAssembly.Module(namedBytes);
     await fs.promises.mkdir(path.dirname(NAMED_OUT), { recursive: true });
-    await fs.promises.writeFile(NAMED_OUT, Buffer.from(namedBytes));
+    await publishArtifact(NAMED_OUT, namedBytes);
     const namedSt = await fs.promises.stat(NAMED_OUT);
     console.log(`Build complete: ${path.relative(ROOT, NAMED_OUT)} (${namedSt.size} bytes, ` +
       `with a wasm name section — NOT canonical, do not ship or hash-compare this one)`);
