@@ -11036,7 +11036,9 @@ async function main() {
     // (--tick-ms-per-batch=0), where nothing else would ever move the clock.
     {
       const spinYield = instance.exports.get_yield_reason();
-      if (!serviceClock && (spinYield === 14 || spinYield === 15)) {
+      // An empty PeekMessage has no clock deadline. Re-enter it under both
+      // clocks so newly queued input can reach the handler.
+      if (spinYield === 15 || (!serviceClock && spinYield === 14)) {
         const deadline = (spinYield === 14 && instance.exports.get_spin_deadline_ms)
           ? instance.exports.get_spin_deadline_ms() >>> 0 : 0;
         let owed = 0;

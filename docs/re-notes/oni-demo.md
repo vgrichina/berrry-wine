@@ -686,3 +686,65 @@ reproduces with all five changed native fragments restored in memory to
 sections pass. The optional fixed-function JavaScript test still reports 55
 uniform calls versus 53 expected. Neither failure is counted as a pass or
 claimed repaired by this implementation.
+
+### 2026-11-11: original GL startup passes; repair CLI empty-poll resume
+
+The retained NULL at return `0x4089d8` is superseded by an executed original
+startup trace using the verified installed `game/Oni.exe` (SHA-256
+`d1579b3a205bdb7771ac32ebf3af61f927d352fe2e3e35128207e84a2937a12d`).
+Current main already implements texture residency, including the shared-context
+object namespace, immediate queries during list compilation, validation and
+error behavior, and matching `GL_TEXTURE_RESIDENT` getters. No additional GL
+export was enabled for this attempt. The lifetime-backed, no-eviction policy
+is permitted by the [OpenGL 1.1 specification](https://registry.khronos.org/OpenGL/specs/gl/glspec11.pdf):
+textures in virtual memory are always resident; a successful all-resident
+query leaves the output array unchanged. The
+[Khronos reference](https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl2.1/glAreTexturesResident.xml)
+also specifies negative-count, invalid-name and Begin/End errors.
+
+The original executes **all 345 mandatory lookups successfully**. In this run,
+API531 `glAreTexturesResident` at the same return address resolves to
+`0x07504bd0`. Two optional 3DFX gamma-ramp lookups return NULL. This conclusion
+comes from executed calls and their returns, supported by aligned loader
+disassembly, rather than treating a static inventory as observed failures.
+The unchanged production module SHA-256 is
+`75ecda5701c15f6fe2c269455ead4e15457b90653733df15d35674b08e8849d5`.
+
+The original advances through intro movies to a fully rendered main menu in
+both WebGL and software GL. Browser worker identity confirms an actual WebGL 1
+context with no context loss. Harmless controls verify trusted, balanced native
+input and reject stale/unreviewed-frame and invalid-action requests. Browser
+capture/command timeouts remain explicit uncertain results; no uncertain click
+was resent. Every attempted browser was closed normally with actual parent
+waits, both output EOFs, and independent process/profile absence checks.
+
+The software CLI exposed a separate reproducible scheduler defect: service-clock
+mode left yield reason 15 (empty PeekMessage) armed indefinitely. The guest
+remained on the PeekMessage thunk at `0x07500460` while six balanced mouse
+messages stayed queued. The CLI now clears that park under either clock;
+clock-deadline parks retain their existing timing. A compiled normal dispatcher
+test reproduces the old failure, then proves the repaired CLI resumes the
+five-argument stdcall frame, delivers queued keyboard input, and charges no
+guest time. This changes host scheduling, without editing original guest state. The CLI
+attempt uses normal harness mouse/key events; browser trusted-input evidence
+is recorded separately.
+
+Native residency checks (27 query and eight image cases), queued software
+residency with zero fallbacks, actual WebGL 1/2 residency images, resolver
+availability, texture state, shared objects, 1D textures, frame state and
+copy/readback regressions pass. The 53 clock-spin checks, service-clock main and
+worker checks, idle-deadline checks, and locked build also pass. Compact raw-hash
+evidence, immutable production module, exact source SHA/patches, media path/hash
+references and lifecycle records are retained in
+`scratch/runs/20261111-oni-current-gl-residency-startup-1110/`.
+
+The repaired original reaches the main menu again and services **4,285**
+empty-PeekMessage parks, versus one unserviced park before the repair. Its
+queued mouse move/down/up at `(440,310)`, Down/Enter, and a held Enter all drain;
+the menu does not transition. Thus level rendering, movement and combat remain
+unproved. The next concrete dependency is tracing those consumed input messages
+through Oni's menu input handling, including its device/state polling; the
+available observations do not yet establish the failing API or guest branch.
+Normal CLI quit returns code 0 with actual parent waits and both EOFs; an
+independent check confirms the process is absent and its control port refuses
+connections. The fixed watchdog exits unfired. No cloud box was created.
