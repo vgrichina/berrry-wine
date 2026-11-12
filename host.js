@@ -1504,14 +1504,16 @@ class WineAssembly {
     if(!this.running || !owner || (registration.retired && !owner.link?._waveOffer)) return {status:'retired'};
     const tm=this.threadManager;
     if(owner.kind==='worker') {
-      if (item.midiMessage !== undefined) throw new Error('MIDI worker callback transport unsupported');
+      const midi=item.midiMessage !== undefined;
       const backend=owner.backend;
       if(this.guestWorker!==backend) return {status:'retired'};
       const live=owner.slot===0 ? backend.link : backend.threadLinks.get(owner.slot);
       if(!owner.link) owner.link=live || null;
       if(!owner.link) return {status:'busy'};
       if(live!==owner.link || !live.worker) return {status:'retired'};
-      const stream=live.waveRegistrations.get(registration.handle);
+      // The Worker announces a registration after its open returns, so an
+      // offer made during the open (MOM_OPEN) waits here as 'busy'.
+      const stream=(midi ? live.midiRegistrations : live.waveRegistrations).get(registration.handle);
       if(!stream && !live._waveOffer) return owner.stream ? {status:'retired'} : {status:'busy'};
       if(!owner.stream) {
         if(stream.callback!==registration.callback || stream.instance!==registration.instance) return {status:'retired'};
@@ -1526,7 +1528,8 @@ class WineAssembly {
       if(thread && (thread.inFlight || thread.freeRunPending || thread.parkedWaitDone)) return {status:'busy'};
       const state=thread || (tm ? (tm._mainWaitState || (tm._mainWaitState={})) : {});
       const saved={waitStartedAt:state.waitStartedAt||0,waitPolls:state.waitPolls||0,lastPollAt:state.lastPollAt||0};
-      const result=await live.offerWaveCallback(owner.stream,item.waveHdrGA,1000,registration.retired);
+      const result=await live.offerWaveCallback(owner.stream,item.waveHdrGA,1000,registration.retired,
+        midi ? item.midiMessage : undefined);
       if(result.status==='accepted') {
         if(!this.running || !live.worker || (thread && thread.state!=='active')) return {status:'retired'};
         // Only the accepted callback changes run eligibility; original WAT wait

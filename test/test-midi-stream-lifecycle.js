@@ -14,7 +14,7 @@ const sha = s => crypto.createHash('sha256').update(s).digest('hex');
 const files = ['src/09a3-handlers-audio.wat', 'src/01-header.wat', 'src/13-exports.wat',
   'src/03-registers.wat', 'src/10-helpers.wat', 'src/api_table.json',
   'src/01b-api-hashes.generated.wat', 'src/09b2-dispatch-table.generated.wat',
-  'lib/host-audio.js', 'host.js', 'src/09a-handlers.wat', 'src/04-cache.wat'];
+  'lib/host-audio.js', 'host.js', 'src/09a-handlers.wat', 'src/04-cache.wat', 'src/05-alu.wat'];
 const sources = Object.fromEntries(files.map(p => [p, read(p)]));
 const table = JSON.parse(sources['src/api_table.json']);
 const stop = table.find(r => r.name === 'midiStreamStop');
@@ -122,6 +122,8 @@ for (const n of ['save_caller_regs', 'restore_caller_regs', 'get_cf', 'set_flags
 for (const n of ['hash_api_name', 'lookup_api_id']) bodies.push(fn('src/10-helpers.wat', n));
 // Keep the actual callback admission/return and invocation identity closure.
 // Only its private storage is relocated into this two-page fixture.
+// mm_callback_begin reports a pending-callback gap through the real recorder.
+for (const n of ['pending_gap', 'pending_gap_at', 'pending_failure']) bodies.push(fn('src/05-alu.wat', n));
 for (const n of ['mm_callback_begin', 'mm_callback_frame_at', 'mm_callback_frame',
   'mm_callback_check', 'mm_callback_finish']) bodies.push(fn('src/09a-handlers.wat', n));
 for (const n of ['invocation_new_id', 'invocation_install', 'invocation_process_begin',
@@ -134,10 +136,21 @@ const dispatch = fn('src/09b2-dispatch-table.generated.wat', 'dispatch_api_table
 bodies.push(dispatch);
 // Unrelated dispatch branches are trap sentinels. The stop branch is the exact
 // generated call to the real production handler, never a successful stub.
-for (const n of new Set([...dispatch.matchAll(/\(call \$(handle_\S+)/g)].map(m => m[1]))) {
-  if (n === 'handle_midiStreamStop') continue;
-  const arity = n === 'handle_fallback' ? 2 : n === 'handle_gpu_api' ? 8 : 6;
-  bodies.push(`(func $${n} (param ${Array(arity).fill('i32').join(' ')}) (unreachable))`);
+// Every other handler, and the helpers the generated page wraps unrelated
+// branches in (GL/D3D object sections, COM vtable setup), is a trap with its
+// production signature. midiStreamStop's branch calls none of them.
+{
+  const defined = new Set([...bodies.join('\n').matchAll(/\(func \$([^\s)]+)/g)].map(m => m[1]));
+  const srcDir = path.join(root, 'src');
+  const watFiles = fs.readdirSync(srcDir).filter(f => f.endsWith('.wat')).map(f => 'src/' + f);
+  for (const n of new Set([...dispatch.matchAll(/\(call \$([^\s)]+)/g)].map(m => m[1]))) {
+    if (defined.has(n)) continue;
+    const file = watFiles.find(f => new RegExp(`\\(func \\$${n}(?=[\\s)])`).test(sources[f] ??= read(f)));
+    assert(file, `dispatch helper ${n} must exist in src`);
+    const header = fn(file, n).match(/^\(func \$[^\s)]+((?:\s*\((?:param|result)[^()]*\))*)/)[1];
+    bodies.push(`(func $${n}${header} (unreachable))`);
+    defined.add(n);
+  }
 }
 const globals = new Set([...bodies.join('\n').matchAll(/\(global\.(?:get|set) \$(\w+)/g)].map(m => m[1]));
 globals.delete('API_HASH_COUNT'); // supplied by the actual generated hash source
@@ -145,7 +158,7 @@ const initial = { reg_base: 64, API_HASH_TABLE: 65536, API_HASH_COUNT: table.len
   mm_timer_ret_thunk: 0xcaca000a, current_thread_id: 1, MM_CALLBACK_CONTEXTS: 32768 };
 const typedGlobals = new Map(['invocation_epoch', 'invocation_root', 'mm_callback_owner']
   .map(g => [g, form(sources[g === 'mm_callback_owner' ? 'src/09a-handlers.wat' : 'src/04-cache.wat'], `(global $${g} `)]));
-const imports = [...sources['src/01-header.wat'].matchAll(/\(import "host" "(midi_\w+|get_ticks|beep_process_begin|beep_thread_begin)"/g)]
+const imports = [...sources['src/01-header.wat'].matchAll(/\(import "host" "(midi_\w+|get_ticks|log_i32|beep_process_begin|beep_thread_begin)"/g)]
   .map(m => form(sources['src/01-header.wat'], m[0]));
 const wasmSource = `
  (import "host" "memory" (memory 2 2 shared))
@@ -203,7 +216,7 @@ function setup() {
   const ac = { get currentTime() { return now / 1000; }, state: 'running' };
   ctx._voices._ensureCtx = () => ac;
   const e = new WebAssembly.Instance(moduleUnderTest, { host: { ...audio.imports,
-    memory, get_ticks: () => now } }).exports;
+    memory, get_ticks: () => now, log_i32: () => {} } }).exports;
   ctx.exports = { ...e, post_message_q: (...args) => windows.push(args) };
   e.beginProcess();
   assert.notEqual(e.currentInvocation(), 0n, 'production initializer establishes root');
@@ -660,6 +673,45 @@ test('window callback backpressure preserves ordered open/done/close notificatio
   assert.equal(s.e.mm_timer_in_cb.value, 0);
   cases++;
   console.log('PASS actual browser cooperative owner/wait/busy/retirement gate');
+
+  // Threads mode: the guest main thread runs in a Worker. A CALLBACK_FUNCTION
+  // open must succeed (DX-Ball opened its soundtrack this way and the old
+  // refusal threw out of the host import, ending the app) and each MM_MOM_*
+  // notification must reach the Worker link with its message, waiting as
+  // busy until the Worker has announced the registration.
+  {
+    const w = setup(), wgate = new OwnerGate();
+    const offers = [];
+    const link = { worker: {}, waveRegistrations: new Map(), midiRegistrations: new Map(),
+      async offerWaveCallback(registration, header, timeoutMs, cancelled, midiMessage) {
+        offers.push([registration.handle, header, midiMessage]);
+        return { status: 'accepted' };
+      } };
+    const backend = { link, threadLinks: new Map() };
+    wgate.running = true;
+    wgate.guestWorker = backend;
+    wgate._workerLastSlice = 1;
+    wgate.threadManager = { isMainThreadSuspended: () => false };
+    wgate._wakeStep = () => {};
+    w.ctx.threadManager = { workerBackend: true };
+    w.ctx.waveCallbackOwner = { kind: 'worker', backend, slot: 0, link: null };
+    w.ctx.offerMidiCallback = new Function('self', 'return ' + expression)(wgate);
+    assert.throws(() => w.open(1, 77), /worker delivery unsupported/,
+      'window callbacks still have no Worker route');
+    w.ctx.waveCallbackOwner = { kind: 'worker', backend, slot: 0, link: null };
+    const wh = w.open(3, 0x4020c0, 0);
+    await w.audio.pumpWaveOutCallbacks();
+    assert.deepEqual(offers, [], 'no offer before the Worker registers the open');
+    assert.equal(w.ctx._midiOut.callbacks.length, 1, 'MOM_OPEN waits for the registration');
+    link.midiRegistrations.set(wh, Object.freeze({ handle: wh, generation: 1, callback: 0x4020c0, instance: 0 }));
+    w.queue(wh); w.call('midiStreamStop', wh);
+    await w.audio.pumpWaveOutCallbacks();
+    assert.deepEqual(offers, [[wh, 0, 0x3c7], [wh, 1024, 0x3c9]],
+      'MOM_OPEN then MOM_DONE reach the Worker link with their messages');
+    assert.equal(w.ctx._midiOut.callbacks.length, 0);
+    cases++;
+    console.log('PASS Worker-owned CALLBACK_FUNCTION open routes MM_MOM_* through the Worker link');
+  }
 assert(callbacksExecuted > 0, 'must execute real callback admission and return');
 console.log(JSON.stringify({ cases, callbacksExecuted, moduleBytes: compiled.wasmBinary.length,
   moduleSHA256: sha(compiled.wasmBinary), sourceSHA256: Object.fromEntries(files.map(f => [f, sha(sources[f])])),
