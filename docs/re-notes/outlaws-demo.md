@@ -10,6 +10,52 @@ That initial audit did not acquire bytes; the completed acquisition below supers
 its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
+## November 12 covered turn/release calibration; store entry still blocked
+
+Run `20261112-outlaws-covered-turn-east-stairs-health-0904` freshly restored
+all nine preferred0802 door files into an empty VFS, checked raw bytes, and
+loaded through native Enter after thumbnail hover. Living rendering stabilized
+for300ms; subsequent genuine movement kept health0.599999845. No healing,
+new mission consequence or new save was earned. All14 sets/126 files passed
+raw/gzip hash checks again.
+
+Original EXE trig routine0x4af8e0 masks its angle with0x3fff; actor-angle
+code0x432c50 also masks the high-word yaw at actor+0x32. Thus a full turn
+is16384 units, not65536. The old supposed-east target64500 reduces to15348
+(337.24 degrees, near +Z), not east4096. Run-local `native-nav.py` now
+records `yaw14=(rawYaw & 0x3fff)` and degrees; raw actor yaw is retained.
+Coordinate directions are +Z=0, +X=4096, -Z=8192, -X=12288. This is a
+helper interpretation correction, not an emulator patch.
+
+Covered Right180 moved raw yaw48673→49207 and Left600 moved49207→45668.
+Each release remained stable through1.8s idle with keys empty and HP/position
+unchanged. Separate native Escape resume/idle, unlocked mouse +100X,
+click-to-Resume and live left-click controls did not change yaw/position.
+Later Space100 and ordinary Up100 also preserved yaw49461 after release
+through1.8s idle. Full before/released/idle PNGs were individually reviewed;
+read-only sampled state is retained. Pointer lock stayed absent: relative
+mouse behavior and the0833 persistent-turn cause remain unisolated. No
+emulator regression is established by these controls.
+
+The changed eastern south-window attempt reached(126.992744,0,166.498993),
+yaw49461 (masked309,6.78955deg), then one native Shift+X+Up300 ended outside
+at(127.759369,0,165.881165), same HP. The frame remained a solid wall; this
+does not prove the window permanently impassable or jump height. Up100 later
+ended(127.936981,0,166.438568), same yaw/HP and released keys. The actual
+blocker is safe store entry: the eastern iron door near(133,202) connects
+inside the store to the stair landing, and neither this exterior window nor
+the previously attempted western entry has been demonstrated traversed.
+No further low-health crawl or repeated western exposure was attempted.
+Next work must establish a changed, native traversable store entry before
+claiming the eastern descent/canteen; the distant jail remains unattempted.
+
+All204 remote evidence paths/172 unique raw hashes were recovered and checked
+before normal stop. Runtime/Chrome closed normally; remote parent wait/EOF
+and process absence passed. Box bx_3tfqraze is archived, expiry cleared,
+stop_ab0b498fb1f8af22 completed unforced; watchdog exited0 without firing.
+The local long-running launcher tool returned143, separately recorded rather
+than substituted for the independently verified remote runtime-parent result.
+
 ## November 12 covered-health approach remains open
 
 Run `20261112-outlaws-door-open-covered-health-onward-0833` earned no new
