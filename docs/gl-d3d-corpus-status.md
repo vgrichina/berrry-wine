@@ -15,6 +15,16 @@
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Heretic II demo | Current8a834/04 living crate0400 Load, fresh movement and released interval | Current Easy docks; crate Load reproduces native ExitProcess8 | Full four-source reads pass on both; WebGL exit cause unresolved, no production fix or paired onward proof. | [Current load comparison](re-notes/heretic2-current-load-exit-cause-20261112.md), run `20261112-heretic2-current-load-exit-cause-1135` |
+| Half-Life Uplink | Current actual SoftwareGL living controls, stairs and scientist console | Current actual WebGL living controls and elevator onward | Health100/armour0 on both; native E opens/calls elevator, LOADING leads to distinct red crate bay with fresh WebGL movement. Paired onward, combat and native Save remain open. | [Current paired controls and onward route](re-notes/halflife-current-paired-onward-20261112.md), run `20261112-halflife-current-paired-onward-1220` |
+
+Half-Life uses original hldemo/PAK bytes on module`04c53419…`. The coordinator
+verified1,368 references/1,122 paths,870 decoded raw records,237 balanced trusted
+events and86 captures retaining all22 bound identity fields, and inspected
+both living scenes and the WebGL elevator/loading/bay consequence. The actual
+GL context proves software ownership despite the page dropdown. Both browsers,
+outer parents, manager and watchdog joined normally before normal box stop.
+No historical floor export was available; this run starts New Game Easy and
+claims no save continuity, old SIGKILL cause, parity, FPS or audio result.
 
 The GLTron software proof binds its actual GL software owner and completed
 raster work, with a legacy D3D WebGL transport. Its default cooperative CLI
