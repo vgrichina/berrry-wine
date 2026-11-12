@@ -15,7 +15,7 @@
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Heretic II demo | Current8a834/04 living crate0400 Load, fresh movement and released interval | Current Easy docks; crate Load reproduces native ExitProcess8 | Full four-source reads pass on both; WebGL exit cause unresolved, no production fix or paired onward proof. | [Current load comparison](re-notes/heretic2-current-load-exit-cause-20261112.md), run `20261112-heretic2-current-load-exit-cause-1135` |
-| Half-Life Uplink | Current actual SoftwareGL red bay, complete nine-file save restored in a fresh browser | Current actual WebGL living controls and elevator onward | Health100/armour0; SoftwareGL native bay Save/export/Load/fresh movement and fresh-browser continuity pass. Maintenance/crate exploration proves no onward weapon or encounter; paired onward/save parity and combat remain open. | [Fresh nine-file bay recovery](re-notes/halflife-bay-native-onward-20261112.md), run `20261112-halflife-bay-native-onward-1600`; [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
+| Half-Life Uplink | Current actual SoftwareGL maintenance room and equipped crowbar | Current actual WebGL living controls and elevator onward | Health100/armour0; eleven-file crowbar Save/export/Load/fresh movement passes in one browser. Earlier nine-file bay also restores in a fresh browser. Fresh-browser crowbar restoration, crate destruction, combat and paired onward/save parity remain open. | [Crowbar checkpoint](re-notes/halflife-bay-clearance-20261112.md), run `20261112-halflife-bay-clearance-1615`; [fresh bay recovery](re-notes/halflife-bay-native-onward-20261112.md); [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
 
 Half-Life uses original hldemo/PAK bytes on module`04c53419…`. The coordinator
 verified1,368 references/1,122 paths,870 decoded raw records,237 balanced trusted
@@ -42,6 +42,15 @@ checked422 references/36 full PNGs and the full load/movement frames. Play
 ended at an actual disk-floor crossing, without a new weapon, encounter,
 onward room or successor Save. See [the upper-deck checkpoint](re-notes/halflife-stable-load-onward-20261112.md)
 and [fresh bay recovery](re-notes/halflife-bay-native-onward-20261112.md).
+
+The1615 continuation then opens the maintenance supply room and collects the
+crowbar at health100/armour0. Its complete eleven-file1670445-byte save passes
+native Save00:56/export/move-away/Load/fresh movement in the same browser.
+Root checked526 references/46 PNGs and six full opening/pickup/persistence
+frames. Fresh-browser crowbar restoration, crate destruction and an encounter
+remain open. [Crowbar checkpoint](re-notes/halflife-bay-clearance-20261112.md),
+run `20261112-halflife-bay-clearance-1615`. Native shutdown and normal box stop
+passed; missing local starter143 manager/watchdog joins remain explicit.
 
 Diablo II's current original demo now heals through Akara to55/55 and earns
 outdoor XP380→401. Native Save & Exit, complete four-file export, normal Load,

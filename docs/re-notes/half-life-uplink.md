@@ -45,6 +45,19 @@ pickup or encounter. Actual free disk crossed1.5GB, ending native play; no
 successor Save was attempted. All actual parent waits/EOFs and normal box stop
 passed. Combat, paired onward/save parity, FPS and audio remain open.
 
+The [1615 continuation](halflife-bay-clearance-20261112.md), commit
+`ee8eea9da`, opens the maintenance door with E from a changed close, centered
+position and enters the white supply room. Advancing to the table collects
+the crowbar, visibly equipped at health100/armour0. Native Save00:56, complete
+eleven-file export, movement away, normal Load and fresh strafe pass in that
+browser. Preserve all1670445 bytes together, including autosave and the new
+hldemo2 auxiliaries; the earlier bay set remains unchanged and separate.
+Fresh-browser restoration, crate destruction and an enemy encounter remain
+next. Root review checked526 references,46 complete PNGs,22 bound fields and
+six full opening/pickup/persistence frames. Native Chrome/outer shutdown and
+normal box stop passed; local starter143 lacks actual manager/watchdog joins,
+whose cause remains unknown.
+
 ## Package and installed layout
 
 The local-only installer is
