@@ -1,4 +1,36 @@
-# LMarbles 1.0.8 Win32: original package and proposed launch
+# LMarbles 1.0.8 Win32: original package and browser Tutorial clear
+
+## Browser Tutorial cleared, 2026-11-12
+
+The registered original `lmarbles_108` cleared its Tutorial in **eleven ordinary
+moves, 18 → 7**. The native completion tally awarded **1,350**, and ordinary
+Enter advanced to **Tier 1, Puzzle 2**, showing Score 1350 and Moves 28.
+Root personally inspected the complete initial board, completion tally and next
+puzzle. The 1024×712 browser viewport contains the full 646×507 game window,
+resolving the earlier clipped CLI view.
+
+The run used module
+`04c534192ee3fe39e388536c2ce710c12c47a5cd2ca4d95c19f9d00b1e8f0a17`
+and the actual SDL/GDI window publisher. All 86 original package members remained
+unchanged. Pointer motion onto each marble, visible selection rings, arrow
+presses and independent releases produced the reviewed board consequences.
+Root rechecked 272 sealed file hashes, 289 embedded recovered contents and all
+18 retained full PNGs, including byte-preserving XZ storage. The worker verified
+22 independent releases and their actual parent waits with both output EOFs.
+
+The box `bx_23udbfdy` was normally archived; expiry is null and stop
+`stop_7a5872d12ee8a755` completed unforced. Browser and Chrome parents exited 0;
+local manager/watchdog parent joins remain UNKNOWN. This establishes the first
+browser Tutorial clear, without qualifying the full game, audio, FPS, GL backend
+parity or an additional 3D corpus application.
+
+See [the scoped run report](lmarbles-browser-tutorial-2240-20261112.md),
+[root review](../../scratch/runs/20261112-coordinator-lmarbles-clear-review-2305/root-review.json),
+[initial board](../../scratch/runs/20261112-lmarbles-browser-tutorial-2240/live-review/software/tutorial-board.png),
+[completion](../../scratch/runs/20261112-lmarbles-browser-tutorial-2240/live-review/software/completion-outcome.png)
+and [Puzzle 2](../../scratch/runs/20261112-lmarbles-browser-tutorial-2240/live-review/software/next-level.png).
+
+## Historical source inspection and CLI results
 
 Source-only inspection, 2026-10-18. No installer execution, guest run, build,
 browser session or gameplay qualification occurred. Root owns runtime admission
@@ -28,9 +60,9 @@ named Microsoft game is documented in `docs/re-notes/marbles.md`.
   `scratch/runs/20261018-lmarbles-source/original/lmarbles-1.0.8-win32/`.
 
 Recover by downloading that exact ZIP, checking its SHA-256, inspecting the ZIP
-paths and expanded size, then extracting the complete directory. Keep the ZIP
-and extraction together below 50 MB retained and require at least 2 GiB free
-after each operation. The official page advertises an installer-free Win32
+paths and expanded size, then extracting the complete directory. Current owner
+policy requires more than 1.5 GB free on `/home`; the older launch margins
+recorded below are historical. The official page advertises an installer-free Win32
 port; no installer or license-answer flow is needed. `COPYING.txt` contains GPL
 version 2; the bundled manual identifies the game as released under GPL. This
 inspection is not public-distribution or deployment approval.
