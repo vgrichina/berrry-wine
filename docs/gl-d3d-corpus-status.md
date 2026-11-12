@@ -7,7 +7,6 @@
 | GLTron | Moving trails and round outcome | Moving trails | Browser gameplay on module `1165f15c…`. Cooperative and actual Worker CLI gameplay also works with `--real-ticks`. | [Current scenes](re-notes/gltron-current-device-scenes-20261112.md), run `20261112-gltron-current-device-scene-repair-0015` |
 | Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
 | Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion and combat | Victories 9→10→11, native Save/normal Load alive. The newest tested character/map pair restores LIFE 9/35. | [Current gameplay and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-current-worker-gameplay-0119` |
-
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
 
 The GLTron software proof binds its actual GL software owner and completed
