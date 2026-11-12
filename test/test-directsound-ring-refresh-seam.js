@@ -61,12 +61,16 @@ class FakeAudioContext {
     this.destination = new FakeNode();
     this.state = 'running';
     this.started = [];
+    this.buffers = 0;
+    this.listeners = [];
   }
   createGain() { const n = new FakeNode(); n.gain = new FakeParam(1); return n; }
   createStereoPanner() { const n = new FakeNode(); n.pan = new FakeParam(0); return n; }
   createAnalyser() { throw new Error('analyser not needed'); }
   createBufferSource() { return new FakeSource(this); }
-  createBuffer(channels, length, rate) { return new FakeBuffer(channels, length, rate); }
+  createBuffer(channels, length, rate) { this.buffers++; return new FakeBuffer(channels, length, rate); }
+  addEventListener(type, fn) { if (type === 'statechange') this.listeners.push(fn); }
+  setState(state) { this.state = state; for (const fn of this.listeners) fn(); }
   resume() {}
 }
 
@@ -160,6 +164,47 @@ try {
   ok(Math.abs(fastSrc.starts[0].offset - fastExpected) < 1e-9,
     `a SetFrequency-resampled ring splices at its scaled position ` +
     `(${fastSrc.starts[0].offset.toFixed(6)}s)`);
+
+  // A suspended browser does not process scheduled stops/onended. Replacing
+  // its ring at currentTime+5ms on every Unlock retains every PCM allocation.
+  ac.setState('suspended');
+  let guestTime = 1000;
+  ctx.audioClockMs = () => guestTime;
+  const pendingVoice = host.voice_open(RATE, 1, 8);
+  host.voice_set_freq(pendingVoice, RATE * 2);
+  host.voice_play_ring(pendingVoice, PTR, RING_BYTES, 0, 1);
+  const pending = ctx._voices._map[pendingVoice];
+  const buffersBefore = ac.buffers, sourcesBefore = ac.started.length;
+  const guestOrigin = pending.snapshotStartMs;
+  for (let i = 0; i < 2000; i++) {
+    pcm[PTR] = i & 255;
+    guestTime++;
+    host.voice_play_ring(pendingVoice, PTR, RING_BYTES, 0, 2);
+  }
+  ok(ac.buffers === buffersBefore && ac.started.length === sourcesBefore,
+    '2000 suspended Unlocks allocate no PCM buffers or scheduled sources');
+  ok(pending.snapshotStartMs === guestOrigin && pending.snapshotPlaying,
+    'suspended refresh preserves guest playback and clock origin');
+  guestTime += 123;
+  const cursorAtResume = host.voice_get_pos(pendingVoice);
+  ac.setState('running');
+  const resumed = pending.currentSrc;
+  ok(ac.buffers === buffersBefore + 1 && ac.started.length === sourcesBefore + 1,
+    'resume coalesces pending refreshes into one replacement');
+  ok(Math.abs(resumed.buffer.getChannelData(0)[0] - ((1999 & 255) - 128) / 128) < 1e-6,
+    'resume decodes the latest guest PCM, not a suspended copy');
+  const resumeOffset = (cursorAtResume / RATE + 0.005 * 2) % 1;
+  ok(Math.abs(resumed.starts[0].offset - resumeOffset) < 1e-9,
+    'resume splices at the current guest cursor plus the scheduling lead');
+  const resumedBuffers = ac.buffers;
+  ac.setState('running');
+  ok(ac.buffers === resumedBuffers, 'duplicate state notification does not replay a refresh');
+  ac.setState('suspended');
+  host.voice_play_ring(pendingVoice, PTR, RING_BYTES, 0, 2);
+  host.voice_stop(pendingVoice);
+  ac.setState('running');
+  ok(ac.buffers === resumedBuffers && !pending.snapshotPlaying,
+    'Stop cancels a pending refresh before resume');
 
   console.log(`\nPASS  ${checks}/${checks} checks passed`);
 } finally {
