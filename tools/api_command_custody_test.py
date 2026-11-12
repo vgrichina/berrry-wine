@@ -90,6 +90,21 @@ class Control:
 
             def do_GET(self):
                 control.gets.append(self.path)
+                if control.mode == 'dribble-first' and len(control.gets) == 1:
+                    # No socket-idle timeout: the absolute request deadline
+                    # must interrupt a response which keeps sending bytes.
+                    data = b'{"padding":"' + b'x'*100 + b'"}'
+                    self.send_response(200)
+                    self.send_header('Content-Length', str(len(data)))
+                    self.end_headers()
+                    try:
+                        for byte in data:
+                            self.wfile.write(bytes([byte]))
+                            self.wfile.flush()
+                            time.sleep(.01)
+                    except (BrokenPipeError, ConnectionResetError):
+                        pass
+                    return
                 if control.mode == 'delayed-first' and len(control.gets) == 1:
                     time.sleep(.2)
                     self.disconnect()
@@ -159,7 +174,7 @@ class Checks(unittest.TestCase):
         self.assertEqual(len(c.posts), 1)
 
     def test_retained_delayed_status_authoritative_completion(self):
-        c = self.control('delayed-first')
+        c = self.control('dribble-first')
         rows = []
         t = c.transport(rows, timeout=.08, retain_status=True)
         self.assertEqual(t.remote('one', "import time; time.sleep(.3); print('once')", 2), 'once\n')
@@ -169,6 +184,7 @@ class Checks(unittest.TestCase):
         self.assertEqual(len(c.posts), 1)
         self.assertEqual(len(set(c.gets)), 1)
         self.assertTrue(any(r['event'] == 'command-observation-error' for r in rows))
+        self.assertTrue(any(r.get('detail') == 'API absolute deadline' for r in rows))
         self.assertEqual(t.remote('next', "print('after terminal')", 2), 'after terminal\n')
         retain('retained-delayed-status', dict(events=rows, posts=c.posts, gets=c.gets))
 
