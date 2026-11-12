@@ -14,7 +14,7 @@
 | MechWarrior 3 | Qualified moving scene publications | Qualified moving scene publications | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
-| Heretic II demo | Historical crate attack/pickups and living Load on30f/1165; current comparison pending | Current8a834/04 Easy docks at93 HP; crate Load exits8 | Four save files match; no current loaded-world or paired traversal proof. Historical crate0400 living proof remains. | [Current load-exit evidence](re-notes/heretic2-current-paired-crate-onward-20261112.md), run `20261112-heretic2-current-paired-crate-onward-1110` |
+| Heretic II demo | Current8a834/04 living crate0400 Load, fresh movement and released interval | Current Easy docks; crate Load reproduces native ExitProcess8 | Full four-source reads pass on both; WebGL exit cause unresolved, no production fix or paired onward proof. | [Current load comparison](re-notes/heretic2-current-load-exit-cause-20261112.md), run `20261112-heretic2-current-load-exit-cause-1135` |
 
 The GLTron software proof binds its actual GL software owner and completed
 raster work, with a legacy D3D WebGL transport. Its default cooperative CLI
@@ -78,16 +78,21 @@ local manager and watchdog joined0/EOF and the box stopped normally.
 Documentation54d1c903a is published. The fresh graphics worker targets current
 Heretic II's paired crate0400 checkpoint/traversal and onward living consequence.
 
-Heretic II current8a834/module04c53419 reaches the original Easy docks on its
-actual WebGL owner, with full upright HUD/world at93 HP. Exact four-file
-crate0400 resident VFS readback passes, but native loading remains black/Paused
-and then calls ExitProcess(8), before a completed saved world. The cause is
-unresolved; current SoftwareGL was not run and no emulator regression is proved.
-Historical30f/1165 SoftwareGL living crate Load remains accepted. Root checked
-155 references /127 unique encoded/raw hashes and full docks/loading images.
-The runtime parent exits1 with EOF, Chrome0, manager/watchdog actual0/EOF;
-the box stopped normally. Documentationb7340f5e5 is published. Fresh1135
-compares current backends and the preserved baseline to isolate this load exit.
+Heretic II current8a834/module04c53419 now restores the exact living
+crate0400 checkpoint on its actual SoftwareGL owner. Full upright loaded,
+fresh backward and released-interval frames verify native progress. WebGL
+reproduces ExitProcess(8) twice; all four source files are fully read in both
+arms. Current/game.ssv consumption is20480/62728 bytes in both, so no mismatch
+is established there. The512-call tail has successful swaps, PeekMessage0 and
+GetLastError0, without native error text or a demonstrated contract violation.
+Root checked761 references /538 unique compressed/raw hashes,61 bindings,
+three backend/process identities and full loaded/moved/released frames.
+No production fix, new save or current paired onward proof follows. All five
+browser parents/Chrome joined; the box stopped normally. Original manager143
+and absent original manager/watchdog parent joins remain explicit. b562925d8
+publishes the comparison. A permitted native diagnostic or reproducible API
+mismatch is needed before another WebGL retry; the graphics slot now targets
+current Half-Life Uplink living3D controls and onward use/navigation.
 
 Darkstone's latest WebGL continuation uses current8a834/module04c53419.
 Native food purchase/eating raised Food0→99 for120 gold; rest healed21→35.
