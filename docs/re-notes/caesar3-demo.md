@@ -411,3 +411,64 @@ repeated Chrome SIGKILL source or provide a browser lifetime that survives the
 growth window; native demo saves remain unavailable. The gameplay follow-up is
 still unlocked staffed protection, a verified Senate, and inspected population
 150 plus the assignment transition.
+
+## Current pinned private-box replay: population 76, staffed protection, riots (2026-11-12)
+
+Evidence: `scratch/runs/20261112-caesar3-current-population-assignment-0927/`,
+with the joined successful allocation under `fresh/`. This is an incomplete
+population/assignment attempt, not a new qualification: the previous 148 remains
+the highest demonstrated population. No emulator source changed or speculative
+repair was made. The original demo's disabled Save remains outside acceptance.
+
+The run verified the original installed EXE, SMACKW32, and 112 data files using
+the retained installer provenance manifest. Runtime source was pinned to
+`8a834a3dc7affc8c6e53245beab56e87a32b81e8`, excluding shared WIP; the actual
+compiled browser module was independently captured as
+`04c534192ee3fe39e388536c2ce710c12c47a5cd2ca4d95c19f9d00b1e8f0a17`.
+The approved expected-byte name profile was unchanged. All 684 remote input pins
+passed before browser launch and again after normal runtime closure.
+
+The original title → Start New Game → name C → Continue → Assignment 1 → To
+the city route was reviewed in full frames. Construction used native Space
+pause, individual balanced trusted clicks, sidebar cancellation, and the native
+speed dialog (90% to 100%). First fire and first collapse unlocked protection.
+Final native panels report **prefecture 6/6, out patrolling**, and **engineer
+5/5, out working**. The first prefecture had staffed successfully but collapsed
+before an engineer was available. The Senate unlocked; its attempted large
+footprints were rejected on uncleared land, so no Senate construction or
+employment is claimed.
+
+Cleared western housing grew the city to **76** in February–April 497 BC. A
+reviewed Small tent panel had **5 occupants** and reported poor desirability
+from a nearby Small tent. The native **Rioting in the city** message then cited
+desperate conditions; buildings were destroyed. The final paused June 497 BC
+frame shows **population 53, treasury 1545**. Initial fire losses, one accidental
+occupied-house clearing, uncleared vegetation, and delayed services/layout were
+play/construction errors. They do not establish an emulator failure. Population
+150 and the assignment transition remain unproved.
+
+The changed lifetime approach was a fresh private box with an independently
+prearmed immutable 55-minute watchdog, actual joined provisioning and full hash
+closure before browser launch. Chrome survived the play window and closed
+normally (code 0, no signal); no SIGKILL recurred. Actual runtime parent wait
+returned 0 with both EOFs, browser/Chrome/owner PIDs were absent, the profile was
+removed and its private port closed. Unique module/log evidence was compressed
+and hashed remotely before recovery. Local helper mistakes (prebrowser manifest
+mismatch, stale-frame refusal before input, duplicate capture label) are retained
+with their causal boundaries, not hidden or replayed blindly. See `RESULT.md`,
+`fresh/final-remote-summary.json`, recovery manifests, and lifecycle stop files.
+
+The actionable next replay needs cleared and watered early housing frontage,
+both protections immediately after their unlocks, a separate cleared Senate
+site connected to the road, and tent desirability/services addressed before
+years of growth. This attempt ended within its bounded lease after gameplay
+setbacks; it found no new emulator blocker.
+
+Recovery verified 1,085 file references (1,081 distinct hashes), with independent
+remote rereads and raw/compressed module validation. The successful box
+`bx_tk77y82n` is **archived**, stopped at `2026-11-12T10:23:37.243Z`, expiry
+NULL; receipt `stop_b25688f8b7c4698b` completed, unforced, error NULL. The
+initial prebrowser box `bx_55fgj8cg` was also archived normally. Watchdog parent
+wait returned 0 with EOF. The local long launcher returned 143 and its
+manager-parent wait record is absent; that manager exit remains unknown,
+separately from the verified remote runtime parent/Chrome normal exits.
