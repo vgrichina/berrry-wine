@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """One-shot API commands and a bounded local caller with actual child custody.
 
-Transport matches the retained provision.Transport interface. A recovered result
-is evidence on CommandObservationError, never permission to continue input.
+Transport matches the retained provision.Transport interface. By default a
+recovered result is evidence on CommandObservationError. retain_status=True
+keeps a failed status GET observational until the same command authoritatively
+exits; it never retries a POST or relaxes the caller's native ACK checks.
 Use this module's CLI as lifecycle-parent, with the existing manager argv after
 --. Deadlines use the local monotonic clock; they are never renewed by recovery.
 """
@@ -34,13 +36,17 @@ class CommandObservationError(RuntimeError):
 
 class Transport:
     def __init__(self, base, token, box, record, *, timeout=30, cancel=None,
-                 deadline=None):
+                 deadline=None, retain_status=False):
         if not 0 < timeout <= 30 or not math.isfinite(timeout):
             raise ValueError('API timeout exceeds strict cap')
         self.base, self.token, self.box = base.rstrip('/'), token, box
         self.record, self.timeout = record, timeout
         self.cancel = cancel if cancel is not None else threading.Event()
         self.deadline = deadline
+        # Opt-in: a failed observation is not a failed command. Keep custody
+        # until an authoritative outcome, bounded by the original caller due.
+        self.retain_status = retain_status
+        self.pending = None
         self.failure = None
         self.lock = threading.RLock()
 
@@ -105,6 +111,8 @@ class Transport:
     def api(self, method, route, body=None):
         with self.lock:
             self.check()
+            if self.pending is not None:
+                raise InterruptedError('retained command unresolved; no later API effects')
             due = min(time.monotonic()+self.timeout, self.deadline or float('inf'))
             try:
                 result = self._request(method, route, body, due)
@@ -138,7 +146,10 @@ class Transport:
         """
         with self.lock:
             self.check()
-            if not math.isfinite(timeout) or timeout <= 0 or not math.isfinite(deadline):
+            if self.pending is not None:
+                raise InterruptedError('retained command unresolved; no new command')
+            if (not math.isfinite(timeout) or not 1 <= timeout <= 600
+                    or int(timeout) != timeout or not math.isfinite(deadline)):
                 raise ValueError('invalid command timeout')
             due = min(deadline, self.deadline or float('inf'))
             route = 'sandboxes/' + self.box + '/commands'
@@ -153,6 +164,7 @@ class Transport:
                         or type(value.get('processId')) is not int or value['processId'] <= 0):
                     raise ValueError('detached command identity not acknowledged; no replay')
                 identity = {k: value[k] for k in ('processId', 'command', 'startedAt')}
+                self.pending = dict(identity, label=label, deadline=due)
                 self.record(dict(event='command-started', label=label, value=value))
                 poll = route + '/' + quote(str(identity['processId']), safe='') + '?tailBytes=1048576'
                 recovery_reads = 0
@@ -162,7 +174,12 @@ class Transport:
                     try:
                         state = self._request('GET', poll, None, min(due, time.monotonic()+self.timeout))
                     except (http.client.RemoteDisconnected, ConnectionError, TimeoutError) as error:
-                        self._fail(error, 'GET', poll)
+                        if self.retain_status:
+                            self.record(dict(event='command-observation-error', label=label,
+                                identity=identity, route=poll, error=type(error).__name__,
+                                detail=str(error), deadline=due, noReplay=True))
+                        else:
+                            self._fail(error, 'GET', poll)
                         # Three additional status GETs maximum; never a new POST.
                         recovery_reads += 1
                         if recovery_reads > 3:
@@ -183,6 +200,7 @@ class Transport:
                                              readOnly=True, inputTerminal=True))
                             raise CommandObservationError(self.failure, state)
                         self.check()
+                        self.pending = None
                         self.record(dict(event='command-complete', label=label, value=state))
                         return state['stdout']
                     if state.get('status') != 'running':

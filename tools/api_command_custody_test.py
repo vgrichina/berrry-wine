@@ -90,6 +90,10 @@ class Control:
 
             def do_GET(self):
                 control.gets.append(self.path)
+                if control.mode == 'delayed-first' and len(control.gets) == 1:
+                    time.sleep(.2)
+                    self.disconnect()
+                    return
                 if control.mode in ('disconnect', 'nonzero', 'mismatch', 'unknown', 'truncated') and len(control.gets) == 1:
                     self.disconnect()
                     return
@@ -153,6 +157,50 @@ class Checks(unittest.TestCase):
         self.assertEqual(t.remote('one', "print('real result')", 2), 'real result\n')
         self.assertIsNone(t.failure)
         self.assertEqual(len(c.posts), 1)
+
+    def test_retained_delayed_status_authoritative_completion(self):
+        c = self.control('delayed-first')
+        rows = []
+        t = c.transport(rows, timeout=.08, retain_status=True)
+        self.assertEqual(t.remote('one', "import time; time.sleep(.3); print('once')", 2), 'once\n')
+        self.assertIsNone(t.pending)
+        self.assertIsNone(t.failure)
+        self.assertFalse(t.cancel.is_set())
+        self.assertEqual(len(c.posts), 1)
+        self.assertEqual(len(set(c.gets)), 1)
+        self.assertTrue(any(r['event'] == 'command-observation-error' for r in rows))
+        self.assertEqual(t.remote('next', "print('after terminal')", 2), 'after terminal\n')
+        retain('retained-delayed-status', dict(events=rows, posts=c.posts, gets=c.gets))
+
+    def test_retained_bad_outcomes_stay_terminal(self):
+        for mode in ('nonzero', 'mismatch', 'unknown', 'truncated', 'post-disconnect', 'ack-mismatch', 'always-disconnect'):
+            with self.subTest(mode=mode):
+                c = self.control(mode)
+                rows = []
+                t = c.transport(rows, retain_status=True)
+                code = 'import sys; sys.exit(9)' if mode == 'nonzero' else "print('once')"
+                with self.assertRaises(CommandObservationError):
+                    t.remote('one', code, 2)
+                with self.assertRaises(InterruptedError):
+                    t.remote('forbidden', "print('replay')", 2)
+                self.assertEqual(len(c.posts), 1)
+                if mode in ('post-disconnect', 'ack-mismatch'):
+                    self.assertEqual(c.gets, [])
+                else:
+                    self.assertIsNotNone(t.pending)
+                retain('retained-'+mode, dict(events=rows, posts=c.posts, gets=c.gets))
+
+    def test_runtime_bounds_independent_of_lease(self):
+        c = self.control()
+        t = c.transport([], retain_status=True, deadline=time.monotonic()+3300)
+        for runtime in (0, -1, .5, 1.5, 601, 3300, float('inf')):
+            with self.assertRaises(ValueError):
+                t.execute('invalid', 'true', timeout=runtime, deadline=time.monotonic()+1)
+        self.assertEqual(c.posts, [])
+        for runtime in (1, 600):
+            self.assertEqual(t.execute('valid', 'true', timeout=runtime,
+                                      deadline=time.monotonic()+2), '')
+        self.assertEqual([r['timeoutSeconds'] for r in c.posts], [1, 600])
 
     def test_disconnect_recovers_same_identity_but_remains_terminal(self):
         c = self.control('disconnect')
