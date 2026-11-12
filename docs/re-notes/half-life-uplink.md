@@ -19,6 +19,18 @@ not invalidate the checkpoint or qualify new onward progress. Wait for renderer
 startup before establishing the initial gameplay capture, preserving identity
 checks. Paired onward play, combat, FPS and audio remain open.
 
+The [1510 continuation](halflife-stable-load-onward-20261112.md), commit
+`354ea2791`, adds passive renderer readiness before the first post-Load capture
+while retaining the same strict capture helper. It reaches the upper deck
+beside the scientist and guard at health100/armour0. A new native save at01:30
+passes export, movement away, normal Load and fresh movement in that browser.
+Its complete five-file export totals483845 bytes; retain it separately from the
+four-file chamber checkpoint. Coordinator review verified479 references,
+42 full captures,27 bound gameplay captures and83 trusted balanced events.
+Fresh-browser restoration of this successor is pending; the four-file parent
+already has that proof. Neither NPC activation nor the next elevator consequence
+is established by reaching the deck.
+
 ## Package and installed layout
 
 The local-only installer is

@@ -5,7 +5,7 @@
 | App | Software | WebGL | Native outcome | Evidence |
 | --- | --- | --- | --- | --- |
 | GLTron | Moving trails and round outcome | Moving trails | Browser gameplay on module `1165f15c…`. Cooperative and actual Worker CLI gameplay also works with `--real-ticks`. | [Current scenes](re-notes/gltron-current-device-scenes-20261112.md), run `20261112-gltron-current-device-scene-repair-0015` |
-| Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
+| Forsaken | Actual Worker combat, then persistent white viewport | Actual Worker combat, then persistent white viewport | Current module04 shows player damage/respawns on both owners; enemy hit/defeat remains unverified. Post-white WebGL observations show additive scene submissions, depth-only clears and sampled white uploads; the upstream transition remains unresolved. No sampled native crash. | [Current combat and rendering blocker](re-notes/forsaken-owner-enemy-20261112.md), run `20261112-forsaken-owner-enemy-1510`; [earlier threaded scenes](re-notes/forsaken-current-threaded-scenes-20261112.md) |
 | Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories11 retained; native food purchase/eating, rest to35/35 and sword purchase. New Save/Load restores Food82, gold393, equipped sword/AC6 and accepts fresh movement; Town bank0/service checks yield no gain, planned Ardyl quest/recovery next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-town-food-equipment-0925` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
 | Hexen II | Current courtyard/chamber traversal and living attack at50 HP | Current courtyard/chamber traversal and living attack at69 HP | Incoming player damage on both; SoftwareGL death/native restart retained. Enemy damage/kill unproved. | [Current paired traversal](re-notes/hexen2-api-envelope-paired-progress-20261112.md), run `20261112-hexen2-api-envelope-paired-progress-1040` |
@@ -32,6 +32,10 @@ by fresh movement. Coordinator review verified634 references,22 identity fields,
 use SoftwareGL; this adds no WebGL save-parity, FPS or audio claim. The1500 onward
 attempt stopped on a strict renderer transition during capture, leaving that
 checkpoint intact and onward progress unqualified.
+The1510 continuation now reaches the scientist/guard upper deck and qualifies a
+five-file483845-byte native successor through Save/export/move-away/Load/fresh
+movement in one browser. Its fresh-browser restoration is pending. See
+[the upper-deck checkpoint](re-notes/halflife-stable-load-onward-20261112.md).
 
 The GLTron software proof binds its actual GL software owner and completed
 raster work, with a legacy D3D WebGL transport. Its default cooperative CLI
