@@ -2,6 +2,35 @@
 
 App id `forsaken_demo`, candidate `forsaken-demo` (registered 2026-10-11, w5).
 
+## November 12: combat white viewport and joined state trace
+
+Current original combat on module`04c53419…` shows living movement and player
+damage/respawns, followed by a persistent white viewport on both recorded
+renderer owners. The [1645 WebGL trace](forsaken-paused-worker-20261112.md),
+commit `eec039872`, observes a complete state chain for the first retained
+post-corridor sampled-pixel transition to white. Live state before enqueue,
+owned and published packets, replay source/workspace and description all agree
+on additive ONE/ONE. Opaque restores reach live memory, then later natural
+writes enable additive state again before that draw. This excludes a state
+snapshot/replay mismatch for the joined witness; it does not establish why
+the guest writes those values or prove the intended rendering.
+
+Root independently rehashed326 recovered outputs, checked ten full PNGs and
+19 within-capture binding fields, inspected the corridor/respawn/white frames,
+and recomputed the190-drain analysis. All40263 observed next-boundary state
+readbacks match their requested values. There are no recorded boundary gaps,
+drops, errors or state mismatches. Startup CPU drops,15 ground-sample caps
+and two unjoined tail replay keys remain explicit. The sampled white transition
+precedes primary keydown; the later full-white frame follows primary/respawn,
+so no input-cause attribution follows. No rendering patch is justified.
+
+The observer's separate paused-worker startup failure is repaired in run-local
+helpers, with actual Chrome CPU/GPU bootstrap, encoder byte-identity and negative
+controls. That repair enables observation; it does not repair the white scene.
+Actual Chrome/browser/outer and local lifecycle waits/EOFs pass, and the box
+stops normally. Next: trace original Execute-buffer state commands before enqueue.
+Earlier paired evidence and limits: [combat and owner observations](forsaken-owner-enemy-20261112.md).
+
 ## Source and licence
 
 - archive.org item `FORSAKEN_201610`, `FORSAKEN.zip`: 42,762,069 bytes, SHA-1
