@@ -1,4 +1,4 @@
-# Darkstone: current Worker locomotion, two native victories, Save/Load
+# Darkstone: current Worker gameplay, Town healing and native Save/Load
 
 Run `scratch/runs/20261112-darkstone-current-worker-gameplay-0119/` continued
 the original registered installed demo on both normal browser backends. Software
@@ -140,3 +140,98 @@ expiry **null**, receipt **stop_12299660867789e2**, `forced:false`, `error:null`
 Lifecycle client, durable owner/watchdog, and expiry guard all completed actual
 wait/EOF; guards did not fire. No workers or public deployment were launched.
 Free/home space remained above the decimal1,500,000,000-byte floor.
+
+## Successor0907: native Town retreat, rest healing, new Save/Load and movement
+
+Run `scratch/runs/20261112-darkstone-native-healing-quest-successor-0907/`
+completed the healing objective on the original registered demo using the
+published `8a834a3dc7affc8c6e53245beab56e87a32b81e8` runtime closure. Actual
+guest and owning renderer Worker modules both matched
+`04c534192ee3fe39e388536c2ce710c12c47a5cd2ca4d95c19f9d00b1e8f0a17`
+(2,189,863 bytes). The original EXE hash above is unchanged. No emulator defect
+or production change was demonstrated; the older199cf/a3+1165 fallback was
+not substituted.
+
+All659 remote inputs passed complete raw size/hash readback and the provision
+process joined successfully before browser launch. The prior four-file union
+was mounted through production `loadFiles`; public VFS raw readback exactly
+matched the authentic current character and all three preserved maps. Native
+Load listed three slots with equal restored file dates. The initially selected
+bottom slot proved to be the older10-victory map; no floor movement or attack
+was issued from it. Native selection of the middle row showed the11-victory
+preview and loaded the actual newest51b49 position. `eleven-panel.png` proves
+**Victories11+0, LIFE8/35, MANA25/25, Food25, Gold1713, AC14**, helmet,
+sword, cape and shield. This replaces the historical9/35 and gold assumption
+with current native readings. A short southeast floor hover had no enemy name
+or health bar; one independently released floor click displaced the hero
+relative to the wall/timber (`fresh-floor-step.png`). No BAT attack was issued.
+
+Native **Escape → Restart in Town → OK** moved the living hero to the bright
+**Town** entrance. This has a material cost: the first Town panel showed
+**LIFE2/35, AC6**, empty weapon/cape/shield slots and the helmet remaining.
+Gold1713 and victories11 remained. These are observed consequences after the
+native restart; equipment recovery and a cost-free retreat are not claimed.
+No death screen was observed. Every older authentic save remains available.
+
+The native **To rest** tooltip identified the Z button. One ordinary click
+started rest. Full reviewed panels show **LIFE2 →24 →35/35** and
+**Food24 →7 →0**, with mana25/25, gold1713 and victories11 unchanged.
+No health, inventory, save, config, media, clock or private guest-state writes,
+forced guest calls or extra fight were used. `rest-completion.png` proves full
+native healing. Hunger subsequently caused a visible1-point loss; food0 is a
+real continuation constraint, not a fully supplied character.
+
+Native **Save a Game → New Save** created this complete successor:
+
+| Native file | Bytes | SHA-256 |
+|---|---:|---|
+| characters.lpl |1342348|`21c4f2d1b4b2e1b92e99e771a6220b1d7df7619a48eb8908021dd04a4a9d55cb`|
+| game641d_6af58371.sav |3204341|`4f638503d433e404f84156ee2a96e7b6d9ce4d563c72e4565fc53fd84a173710`|
+
+`earned-town-recovery.json` selects the new pair;
+`continuation-whole-file-set.json` references the current character plus all
+four maps, with raw and compressed hashes. All three older map hashes remained
+unchanged. Older character variants remain in the predecessor evidence; do
+not combine an older character index with the new map set. The entire five-file
+set was present during the successful ordinary native Load. The selected newest
+Town preview showed35/35; `town-reload-health.png` proves the living Town hero
+at **35/35, victories11, gold1713, food0, AC6** after normal Load, without any
+remount or restoration write. One fresh reviewed southeast floor click then
+visibly displaced the cave/trees/building (`town-fresh-walk.png`). Final native
+panel at that unsaved position shows **34/35**. The saved continuation remains
+the Town entrance; the later verification movement was not saved over it.
+
+The native backend was bound early and alongside complete scene captures to
+actual guest endpoint1/slot0 and its owning legacy WebGL renderer Worker. Live
+D3DIMGpu targets reported640×480/WebGL2RenderingContext with advancing
+renderer completions and zero native software completions. Native Load's live
+target replacements were accepted while owner/module replacement guards
+remained active. The page presentation canvas was2D. Reported Intel/Mesa
+strings do not establish physical GPU execution; no physical-GPU, FPS, audio,
+parity, second-backend or full27 qualification is claimed.
+
+Recovery independently reread remote files and locally verified **411
+references /373 unique hashes**, including **36 bound full captures,25
+balanced pulses,67 trusted input events**, executing module, native files and
+runtime disposal. Large unique output logs/module were gzip-compressed before
+transfer; source/media were not archived. The existing native-input focused
+suite passed6/6; `verify-recovery.py` passed. No production code changed, so
+no new build was required. A run-local prelaunch assertion initially omitted
+the provider's legitimate `idle` state; it refused before browser launch and
+was corrected only after the successful provision join and exact box readback.
+No unknown/failed native input was replayed.
+
+Private box **bx_jyjbmap2** had an initial55-minute lease, expiry
+**2026-11-12T10:00:26.653Z**, and an observable independently prearmed
+watchdog. Runtime and Chrome actual parent waits returned0 with separate
+stdout/stderr EOF and their processes absent. Following verified retrieval,
+normal delegated stop completed **09:19:02.054Z**: **archived**, expiry**null**,
+receipt **stop_d0c0df290c3671f7**, `forced:false`, `error:null`. Lifecycle
+client, durable owner and watchdog actual waits/EOF also completed0; the
+watchdog did not fire. No workers or public deployment were launched; free/home
+space stayed above1,500,000,000 bytes.
+
+Next: load the new Town successor, obtain native food with a fresh gold/UI
+reading, and address missing equipment or its recovery before returning to
+combat. The older51b49 equipped dungeon continuation is preserved as an
+alternative, with its original low-health risk.
