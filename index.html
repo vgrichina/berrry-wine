@@ -3218,7 +3218,16 @@ Resource-aware Win98 emulator
         img.removeAttribute('data-src');
       }
       refreshStartAccount();
-      restoreMediaLibrary();
+      const libraryRestored = restoreMediaLibrary();
+      // /?add-game is the site's "bring your own disc" link (the /compat/
+      // pages): open My Media, whose Import button is the click a file
+      // picker needs. Dropping a file on the desktop works without it.
+      const startUrl = new URL(location.href);
+      if (startUrl.searchParams.has('add-game')) {
+        startUrl.searchParams.delete('add-game');
+        history.replaceState(null, '', startUrl.pathname + startUrl.search + startUrl.hash);
+        Promise.resolve(libraryRestored).then(() => mediaUI.showLibrary());
+      }
       if (!DEBUG_MODE) initDesktop();
       // The page's chrome just changed shape under the canvas.
       if (wasDirect) resizeCanvas();
