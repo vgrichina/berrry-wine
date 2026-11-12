@@ -5,7 +5,17 @@ const { compileSrcWasm } = require('../compile-src');
 const { WorkerLink } = require('../../lib/guest-thread-host');
 const { createHostImports } = require('../../lib/host-imports');
 const RPC = require('../../lib/guest-rpc');
-const R = require('../../lib/render-worker');
+let R = require('../../lib/render-worker');
+if (process.env.D3DIM_SHARED_SCENE_BASELINE) {
+  const Module = require('node:module'), fs = require('node:fs');
+  const path = require.resolve('../../lib/render-worker');
+  const source = fs.readFileSync(path, 'utf8');
+  const guard = '(shared && !emptyShared)';
+  assert.equal(source.split(guard).length, 2, 'unique demonstrated scene disjunct');
+  const baseline = new Module(path, module); baseline.paths = module.paths;
+  baseline._compile(source.replace(guard, 'shared'), path);
+  R = baseline.exports;
+}
 const { Win98Renderer } = require('../../lib/renderer');
 const { createCanvas } = require('../../lib/raster-canvas');
 const { BASE } = require('../../lib/region-map.generated');
@@ -13,6 +23,8 @@ const { BASE } = require('../../lib/region-map.generated');
 module.exports = async function synchronousFlipControl() {
   const extra = `
     (global $sync_fixture_front (mut i32) (i32.const 0))
+    (func (export "sync_fixture_main")
+      (global.set $main_hwnd (i32.const 0x77)))
     (func (export "sync_fixture_init") (result i32)
       (local $back i32) (local $f i32) (local $b i32)
       (global.set $image_base (i32.const 0x400000))
@@ -64,10 +76,14 @@ module.exports = async function synchronousFlipControl() {
   for (const entry of WebAssembly.Module.imports(module))
     if (entry.kind === 'function') imports.host[entry.name] = host[entry.name] || (()=>0);
   ctx.exports = new WebAssembly.Instance(module, imports).exports;
+  ctx.exports.sync_fixture_main();
   const broker = RPC.createMainBroker(memory, imports.host, sigs);
   const link = new WorkerLink({slot:9,memory,module,sigs,broker,dxTraceLocal:true,
     workerUrl:require.resolve('../../lib/guest-worker')});
   const epoch = new R.WriterEpoch();
+  ctx.exports = R.observeInstance({ exports: ctx.exports }, () => epoch).exports;
+  renderer.windows[0x77].wasm = { exports: ctx.exports };
+  renderer.windows[0x77].wasmMemory = memory;
   const journal = new R.SurfaceVersionJournal(new SharedArrayBuffer(8 * 65536),
     new SharedArrayBuffer(4 * (16 + 2*1024*1024)));
   try {
@@ -93,8 +109,29 @@ module.exports = async function synchronousFlipControl() {
     assert.equal(record.sourceWriter.beforeRotation.epoch,record.sourceWriter.sealExit.epoch);
     assert(record.request.serial > 0); assert(record.batch > 0);
     assert(epoch.snapshot());
+    // Normal exclusive-mode GDI attachment retains a canvas even when there
+    // are no child rectangles to display. This is the original MW3 scene.
+    const overlayId = 0x610001;
+    host.gdi_surface_create(overlayId,2,2,32,BASE.DIB_BACKING_BASE+8192,8,1,0,0);
+    assert.equal(host.gdi_surface_attach(overlayId,0x77),1);
+    const window = renderer.windows[0x77], overlay = gdi.surfacePresentations.get(overlayId);
+    assert.equal(window._exclusiveGdiChildCanvas,overlay.canvas);
+    assert.equal(gdi.presentBestDxOffscreen(true), 1, 'actual full fallback decoder runs');
+    assert(window._dxFrameLayer?.canvas._waD3dimVersion,
+      'fallback decoder must bind its own DX layer token');
     renderer.repaint();
+    if (process.env.D3DIM_SYNC_EVIDENCE) {
+      const layer=window._dxFrameLayer,version=layer?.canvas._waD3dimVersion;
+      console.log('SYNC_SCENE_ADMISSION '+JSON.stringify({rows:join.rows.length,ledger:join.ledger,
+        failure:join.failure,epoch:[...epoch.words],cached:join.cacheSerial,
+        version:version&&{source:version.record.sourceVersion,host:version.record.hostVersion,
+          retained:join.retainedReads.has(version.record),unchanged:join.sourceUnchanged(version.record)},
+        composition:version&&join.compositionReads?.get(version),
+        shared:join.sharedOverlayReads?.get(window)&&{empty:join.sharedOverlayReads.get(window).empty},
+        regions:renderer._exclusiveSharedChildRegions(window)}));
+    }
     assert.equal(join.rows.length,1,'actual synchronous request must join canonical decode and compositor');
+    assert.deepEqual(join.rows[0].canonicalRead.sharedOverlayAdmission,{empty:true});
     assert.equal(join.rows[0].request.serial,record.request.serial);
     if (process.env.D3DIM_SYNC_EVIDENCE) console.log('SYNC_COMPLETED_SOURCE ' + JSON.stringify({record,
       retainedHex:Buffer.from(journal.readRetained(record)).toString('hex'), rows:join.rows}));
@@ -110,6 +147,30 @@ module.exports = async function synchronousFlipControl() {
     const next = journal.records()[1];
     assert(!next.versionRejected,JSON.stringify(next)); assert(next.request.serial > record.request.serial);
     assert(next.batch > record.batch); assert(journal.records()[0].superseded);
+    gdi.presentBestDxOffscreen(true);
+    window.isDialog = true;
+    host.gdi_surface_upload(overlayId,0,0,2,2);
+    renderer.repaint();
+    assert.equal(join.rows.length,1,'actual contributing shared overlay remains rejected');
+    window.isDialog = false;
+    renderer.repaint();
+    assert.equal(join.rows.length,1,'empty scene cannot rehabilitate a previously blocked cache');
+    const observeShared = join.sharedOverlay;
+    for (const missing of ['selection','canvas']) {
+      gdi.presentBestDxOffscreen(true);
+      join.sharedOverlay = missing === 'selection' ? () => {} : function(w,c,regions) {
+        return observeShared.call(this,w,createCanvas(2,2),regions);
+      };
+      renderer.repaint();
+      assert.equal(join.rows.length,1,missing+' proof must fail closed');
+      join.sharedOverlay = observeShared;
+      renderer.repaint();
+      assert.equal(join.rows.length,1,'prior composition proof never carries into a repaint');
+    }
+    gdi.presentBestDxOffscreen(true);
+    renderer.repaint();
+    assert.equal(join.rows.length,2,'fresh full decode and current empty selection qualify');
+    assert.equal(join.rows[1].request.serial,next.request.serial);
     const pending = epoch.begin();
     await link.callExport('sync_fixture_flip');
     assert.match(journal.records()[2].versionRejected,/not-sole/);

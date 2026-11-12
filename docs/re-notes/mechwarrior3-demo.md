@@ -1,5 +1,86 @@
 # MechWarrior 3 demo
 
+## November 12 native-source scene admission repair (0755)
+
+Run `20261112-mw3-native-source-composition-admission-0755`, with adjacent
+`-retest` and `-final` evidence, resolves the zero-row dependency from 0708.
+The exact failing disjunct was `windows[0]._exclusiveGdiChildCanvas` in
+`SurfacePublicationJoin.publication`: allocation of the retained shared-child
+canvas was treated as a contributing scene layer. The ordinary compositor
+selected **no shared-child regions**. It intentionally retains this canvas
+before children exist; deleting the canvas would change rendering behavior.
+
+The original WebGL before capture contains 15 complete native sources and
+zero qualified rows. For descriptor 24758268, serial 1, front 131805344,
+canonical selection returned source version 1 at read epoch 188, host version
+28, with complete 640×480 RGB565/pitch1280, identity gamma and no clipping.
+The post-`cacheDxLayer` outcome binds that exact source to the real DX canvas;
+25 cache proofs succeeded during the window. Composition-entry source proof
+and complete transfers reached the display output, but the allocated-canvas
+scene disjunct blocked publication. A passive wrapper around the actual
+compositor selection recorded 20 empty region selections with that canvas
+present. The separate null-HUD surface 4259859 did not erase the front binding.
+The earlier pre-cache `putImageData` token is not used as postdecode evidence.
+
+The repair reports the compositor's existing region selection once, without
+changing it. Qualification requires an empty selection in this composition,
+exact window/memory/shared canvas/DX layer/version and the existing source
+admission. Nonempty, missing, replaced or previous-composition proof rejects;
+a previously blocked cache still requires a fresh decode. Owner, writer,
+epoch, callback, lifetime, source pages, palette, gamma, clipping, scene and
+partial-HUD exclusions remain. No stale tags are restored and no queued path
+is forced. Observation remains default-off.
+
+The final original registered software and WebGL runs use baseline
+`2aa8833a40e4ea6cf0004a2c1772eb30b1d53d3e` plus only the two owned production
+file diffs, exact original media/helper pins and no shared WIP. Executing guest
+and render-worker WASM both remain
+`04c534192ee3fe39e388536c2ce710c12c47a5cd2ca4d95c19f9d00b1e8f0a17`.
+Full completed captures were reviewed before each dependent native input;
+independently released Digit5 produced moving cockpit/terrain on both.
+CDP identifies WebGL as SwiftShader Vulkan/SwANGLE 5.0.0 despite its Intel API
+string. Each backend has one all-writer arm: WebGL covers 167 commands and
+software 219, all on the admitted epoch.
+
+Both backends produce **10 exact-source qualified scene rows**. Every row
+binds its descriptor/serial/front to a full front upload, successful ordinary
+fallback decode, retained 614400-byte source, current composition admission,
+empty shared-overlay proof and complete transfer to 684×480 display output.
+The bounded instrumented timing samples are:
+
+| Backend | Observation window | Qualified intervals / first-to-last span | Mean interval | Source completion to publication |
+| --- | --- | --- | --- | --- |
+| Original software | 8084.93 ms | 9 / 5571.215 ms | 619.024 ms | 22.865–43.415 ms |
+| Original WebGL (SwiftShader) | 8346.63 ms | 9 / 7949.870 ms | 883.319 ms | 8.190–44.735 ms |
+
+Only qualified publication intervals yield sample rates of 1.615/s software
+and 1.132/s WebGL. These are instrumented sample results, not whole-window or
+steady-state game FPS, nor a backend comparison. Passive pixel probe overhead
+was 15.635/17.200 ms respectively; other diagnostic costs are not subtracted.
+Source/Flip/copy counts are not frame counts. Both traces are stable with no
+probe failure or source rejection ledger. WebGL's end snapshot happens during
+an active writer; earlier rows were individually admitted under exclusion.
+
+The actual WAT/production Worker/ordinary decoder/compositor control fails
+with the original canvas disjunct and passes with the repair. It also rejects
+real contributing shared pixels, missing selection, wrong canvas, carried
+proof and partial HUD. Producer identity, DirectX-layer, source-lifetime,
+transient-scene/writer and all three focused scheduler suites pass, as does
+`flock /tmp/wine-build.lock bash tools/build.sh`. The existing source-lifetime
+baseline test now anchors its mutation to the exact publication clause.
+
+Unique evidence was recovered by independent double GET and SHA verification.
+Both runtime parents and Chrome processes waited/EOF with status 0. All three
+0755 boxes are normally stopped/archived with cleared expiry; final box
+`bx_jxba5ryj` receipt `stop_27e893b4715aff67`. Initial missing-deadline launch,
+local capture preparation error and final refused parent-file-read command
+remain recorded and were not replayed. The final refusal occurred after both
+observation windows and normal quit acknowledgement; files-only recovery
+obtained the actual parent-wait records. Durable command/watchdog custody
+completed 0 with EOF; its outer local launcher returned 143, preserved as such.
+Prior 0708 custody failures remain terminal. Full 27-game, parity, audio,
+crash and broader performance coverage remain open.
+
 ## November 12 synchronous native Flip source witness (0708)
 
 Run `20261112-mw3-synchronous-flip-producer-witness-0708` adds an opt-in

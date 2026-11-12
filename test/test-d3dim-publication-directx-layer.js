@@ -35,8 +35,9 @@ const fullBaselineModule = new Module(root+'/lib/render-worker.js', module);
 fullBaselineModule.paths = module.paths;
 // Restore the preceding source-lifetime rule, without changing rendering or
 // the export facade, for an in-process baseline/fixed comparison.
-assert(apiSource.includes('this.compositionReads?.get(version)'));
-fullBaselineModule._compile(apiSource.replace('this.compositionReads?.get(version)', 'null'),root+'/lib/render-worker.js');
+const fullAdmission = 'const compositionRead = layer && version === layerProof.version &&\n          this.compositionReads?.get(version);';
+assert.equal(apiSource.split(fullAdmission).length, 2);
+fullBaselineModule._compile(apiSource.replace(fullAdmission, 'const compositionRead = null;'),root+'/lib/render-worker.js');
 async function fixture(corrected,variant='actual-layer',observed=false,nativeClientRect=false){
  const retained=variant.startsWith('retained-');
  const API=observed==='full-baseline'?fullBaselineModule.exports:observed==='menu-baseline'?menuBaselineModule.exports:corrected?productionAPI:baselineAPI;
