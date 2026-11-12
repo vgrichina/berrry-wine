@@ -116,6 +116,30 @@ failed allocation's historical effect and missing watchdog join remain
 explicit. The next native target is this separate back panel, after fresh
 Load and movement qualify the restored checkpoint.
 
+The [1825 native continuation](halflife-authored-back-panel-passage-20261112.md),
+commit `64e82c1ac`, restores the whole12 checkpoint in a fresh browser, strikes
+the rear panel, witnesses its removal and moves through the opening. Native
+movement continues south, east past the second crate and into a new corridor,
+where a headcrab is visible and later lunges at the player. The model45 identity
+uses matching geometry and full frames; no live entity-hit query was used.
+
+A native Save at03:18 adds `half-life-005.sav`. Preserve the entire thirteen-file
+set, including both maps' auxiliaries:2342063 decoded bytes,758472-byte export,
+SHA256 `df8d61b2fcdd285a6a28e2e180930e6ee60eff388cd9bf31c557d3409dd18e51`.
+Export, movement away, normal Load and fresh movement pass in the same browser.
+The close export has identical thirteen file records/data in a different order;
+its compressed hash therefore differs. Fresh-browser recovery of this new set
+remains open. The Saved frame shows40/0, the restored frame30/0, and the fresh
+headcrab-lunge frame20/0. Active combat continues; post-Load health is not frozen
+at the Saved value. No enemy kill is claimed.
+
+Root checked586 references,52 full PNGs,22 within-capture fields,35 anchored
+gameplay captures and102 trusted events with24 balanced key pairs and18 click
+pairs. Seven full route/save/Load frames were inspected. Actual Chrome/outer,
+manager and watchdog waits/EOFs pass,367 processes are reaped and the box stops
+normally. The next task is fresh-browser whole13 recovery, living headcrab
+combat and safer onward progress; earlier checkpoint generations remain intact.
+
 ## Package and installed layout
 
 The local-only installer is

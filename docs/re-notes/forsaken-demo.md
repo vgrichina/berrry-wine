@@ -63,6 +63,25 @@ observer retains at most four covering triangles out of60 submitted, and
 ideal four-hit arithmetic is not an actual GPU fragment oracle. Next: complete
 coverage, actual sampling and depth context for one natural submission. No
 new original execution or runtime patch occurred in1805.
+
+The [1815 complete-draw study](forsaken-complete-fragment-coverage-20261112.md),
+commit `793bbfd56`, captures a different natural draw:14 triangles,42 vertices
+and the complete131072-byte uploaded texture, identical to the decoded cache.
+Actual pinned GL sampling and per-triangle native565 stores preserve its
+already-white incoming pixel under all16384 conservative depth outcomes.
+This explains that submission; individual depth visibility remains unknown.
+Root independently recomputed the complete analysis, checked868 sealed hashes,
+577 recovered paths,19 full PNGs/identity fields and13 trusted balanced key pairs,
+and inspected the native room and bright combat frame. Remote parents and
+durable manager/watchdogs close normally; the initial local caller143 owner
+join remains unknown. No renderer defect is proved.
+
+The historical onset still lacks56 of60 triangles: a retained count180 is not
+the full5760 vertex bytes. Ideal four-triangle arithmetic also omits native565
+rounding between triangles. Next: an unsaturated incoming pixel that naturally
+turns white, or its preceding whitening submission, with complete coverage,
+uploaded texture and unchanged target/depth context. A saturated later draw
+does not qualify the earlier transition.
 Earlier paired evidence and limits: [combat and owner observations](forsaken-owner-enemy-20261112.md).
 
 ## Source and licence
