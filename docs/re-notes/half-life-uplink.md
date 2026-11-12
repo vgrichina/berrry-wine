@@ -140,6 +140,31 @@ manager and watchdog waits/EOFs pass,367 processes are reaped and the box stops
 normally. The next task is fresh-browser whole13 recovery, living headcrab
 combat and safer onward progress; earlier checkpoint generations remain intact.
 
+The [1850 fresh-browser continuation](halflife-whole13-headcrab-onward-20261112.md),
+commit `72bce87a9`, verifies all thirteen unchanged files in fresh VFS, native
+Load03:18 at40/0 and fresh movement on actual SoftwareGL/current04. A second
+approach exposes the open striped doorway, standing guard and multiple
+headcrabs beyond the bend. Traversal is not proved: the player dies, then a
+normal post-death Load restores the same corridor at40/0. No hit, enemy kill
+or new save is earned. Root checked484 references,43 full PNGs,22 fields and
+five full load/encounter/death/recovery frames. Remote Chrome/outer exit0 and
+352 reaped tasks pass; local caller143 lacks manager/watchdog parent-wait proof.
+The box stops normally. Whole13 now has fresh-browser recovery proof.
+
+The [1905 native-look check](halflife-native-look-pause-headcrab-20261112.md),
+commit `583dcdec5`, proves PageDown lowers the elevated view. End centering
+and Pause/resume remain unproved despite successful delivery tests. The player
+dies before attack; disk-floor interruptions are followed by a correctly
+refused capture-reference mismatch. Own compression/restoration changed local
+mtimes, and the operator chose old `n21-center` instead of remote latest
+`n24-align-crab`. This is a caller-selection defect, not an age-limit failure
+or a native-input defect. No post-death Load or closing export occurs in1905;
+the authoritative whole13 remains unchanged. Root checked287 references,
+25 PNGs/22 fields,21 consumer and21 real-Chrome/Worker-echo cases, and four
+full camera/death frames. Terminal cancellation reaps363 tasks; local manager
+and watchdog join0 and the box stops normally. Fix semantic latest-capture
+selection before another aimed-combat attempt; retain the remote guard.
+
 ## Package and installed layout
 
 The local-only installer is

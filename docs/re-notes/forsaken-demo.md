@@ -82,6 +82,21 @@ rounding between triangles. Next: an unsaturated incoming pixel that naturally
 turns white, or its preceding whitening submission, with complete coverage,
 uploaded texture and unchanged target/depth context. A saturated later draw
 does not qualify the earlier transition.
+
+The [1845 unsaturated transition](forsaken-unsaturated-whitening-20261112.md),
+commit `c458e7c51`, then captures a complete fresh28-triangle submission and its
+full uploaded texture. Original color changes115,65,33 →231,146,66 →white match
+actual GL sampling and native565 rounding in every step. The changes prove
+triangles1 and3 passed depth; triangle13 arrives after saturation and remains
+ambiguous, with either outcome preserving white. Root independently recomputed
+the analysis with zero mismatches and checked881 sealed hashes,498 recovered
+paths and20 complete PNGs/19 fields. The retry retains12 trusted balanced input
+edges; the first attempt lacks a final global native-input export. Its3500ms
+request was refused before DOWN by the2000ms cap. Both boxes stop normally and
+their new local lifecycle waits pass. No renderer patch is justified by this
+fresh explained transition. Historical missing56 triangles and the broader
+old white interval remain unresolved; no global-first-white or input-cause
+attribution follows. The final fresh combat frame remains a readable room.
 Earlier paired evidence and limits: [combat and owner observations](forsaken-owner-enemy-20261112.md).
 
 ## Source and licence
