@@ -1,5 +1,70 @@
 # MechWarrior 3 demo
 
+## November 12 moving-scene cost and native16 synchronization
+
+Run `20261112-mw3-moving-scene-frame-cost-0410` measures original cockpit motion
+on current main / canonical `1165f15c…`, serially on one private box with actual
+guest and render Workers. The documented original native route and released Digit5
+produce terrain progress and 40.5 km/h on the right HUD. CDP SystemInfo reports
+SwiftShader Vulkan / SwANGLE 5.0.0; the WebGL API reports an inconsistent Intel
+Mesa string, so these results do not establish hardware-GPU performance.
+
+The observer fingerprints existing decoded ImageData, follows ordinary canvas
+transfers, and timestamps successful display publications with the page's
+monotonic clock. Consecutive unchanged terrain and HUD-only updates are excluded.
+It adds no readback or pixel-buffer copy. These are **distinct displayed terrain
+update rates**, not raw Flip/draw rates. Ordinary HUD uploads discard the original
+request metadata; immutable completed guest-frame identity and strict gameplay
+FPS remain **UNKNOWN**. Software canonical uploads also lack a concurrent-writer
+proof. ROI weather/content changes can differ from logical game steps.
+
+Three 12-second moving windows per initial arm measured:
+
+| Backend | Terrain updates / window | Update Hz | Median interval ms | p95 interval ms |
+| --- | --- | --- | --- | --- |
+| Software Worker | 36 / 46 / 31 | 3.00 / 3.83 / 2.58 | 225 / 219 / 217 | 1237 / 320 / 1232 |
+| WebGL Worker, baseline | 21 / 24 / 25 | 1.75 / 2.00 / 2.08 | 591 / 502 / 482 | 654 / 584 / 528 |
+
+A separate six-second profile placed 3781 of 6607 sampled render-Worker wall
+milliseconds in `_storeNative16`'s synchronous `getError`, and 1365 ms in
+`readPixels`; the guest mostly waited for rendering. Native GL samples include
+GPU/driver waits, not just query overhead. Software's guest spent 4163/6604 ms
+in `_waitFor`, while its render Worker was mostly idle; per-draw transport waits
+remain a separate target.
+
+The renderer now queries accumulated GL errors on the final native16 conversion
+of each submitted draw. Every primitive conversion, region and ordering remains;
+standalone storage still checks by default. Errors reject the submission before
+success/publication, although later primitives inside a failed submission can
+execute before rejection. Exact native DIB/RGBA controls cover WebGL 1/2, all four
+16-bit formats, dependent blends, grouped tails and injected early GL failures.
+
+A live renderer-method A/B retained the same GPU instance/context, guest, Workers,
+module, driver and epoch. Independent source/method hashes bind baseline and
+candidate; common counters were present in both arms. Three A/B pairs followed
+by three reversed B/A pairs used 12-second windows with one-second warmups:
+
+| Arm | Timed seconds | Updates | Update Hz | Storage conversions | Storage error queries | Submission ms / conversion |
+| --- | --- | --- | --- | --- | --- | --- |
+| Baseline | 72.035 | 127 | 1.763 | 152242 | 152242 | 0.3217 |
+| Candidate | 72.037 | 135 | 1.874 | 155687 | 35021 | 0.2869 |
+
+Queries decreased 77.5%; submission time per conversion decreased 10.8%, with
+about 11% reductions in each run order. Aggregate update rate rose 6.3%, but the
+naturally evolving scene and overlapping per-window ranges limit causal/general
+FPS claims. This is not an identical-frame or cross-backend parity result.
+Callback/hash self-time was about 0.28% in both A/B arms; unmeasured dispatch,
+JIT/GC and common counter costs prevent a total observer-overhead bound.
+
+The locked build passed with both canonical module hashes unchanged; focused
+renderer and exact-pixel/error tests passed. Full cockpit images before/after
+candidate execution were reviewed separately. Existing transient HUD speckling
+also occurs in baseline captures and is not repaired here. Exact durations,
+sample counts, distributions, identities, failed observer attempts and recovery
+are retained in the run's `report.txt`, `timing-summary.json`, `ab-summary.json`
+and `profile-summary.json`. Strict frame-generation joins, full27, parity and
+audio remain open; this result does not close acceptance scope.
+
 ## November 12 native throttle and stop
 
 Run `20261112-mw3-native-cursor-throttle-stop-0345` reached the original

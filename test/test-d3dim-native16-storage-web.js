@@ -10,6 +10,8 @@ const puppeteer = require('puppeteer');
 // Without NATIVE16_CONTROL, compare with the full-target storage path.
 // NATIVE16_LARGE=1 NATIVE16_CONTROL=e18abd221 also compares grouped opaque
 // streams with the original ordered implementation, including GL failures.
+// NATIVE16_MATCHED=1 compares the same storage regions against a Git control,
+// requiring fewer error queries while retaining exact DIB/RGBA pixels.
 (async () => {
   if (process.env.NATIVE16_LARGE) assert(process.env.NATIVE16_CONTROL, 'large comparison requires the ordered Git control');
   const browser = await puppeteer.launch({ headless: true,
@@ -46,17 +48,21 @@ const puppeteer = require('puppeteer');
             createCanvas: (w,h) => { const c = document.createElement('canvas'); c.width=w; c.height=h; return c; },
             onError: e => errors.push(e) });
           const store = gpu._storeNative16;
-          let stores = 0, inject = false;
-          gpu._storeNative16 = function(t, bounds) {
+          let stores = 0, errorChecks = 0, inStore = false, inject = false;
+          gpu._storeNative16 = function(t, bounds, checkError) {
             stores++;
             const gl = t.device.gpu.gl;
             if (!gl.storageMeasured) {
               const copy = gl.copyTexSubImage2D.bind(gl);
               gl.copyTexSubImage2D = (...a) => { copies.push(a.slice(2)); return copy(...a); };
+              const getError = gl.getError.bind(gl);
+              gl.getError = () => { if (inStore) errorChecks++; return getError(); };
               gl.storageMeasured = true;
             }
             if (inject && --inject === 0) gl.enable(0xdead); // Real GL error at a bounded store.
-            return store.call(this, t, full ? undefined : bounds);
+            inStore = true;
+            try { return store.call(this, t, full ? undefined : bounds, checkError); }
+            finally { inStore = false; }
           };
           const check = v => { if (v !== 1) throw Error('rejected: ' + errors.join(';')); };
           function draw(primitive = 4, uncertain = false) {
@@ -107,13 +113,13 @@ const puppeteer = require('puppeteer');
           }
           draw(2); if (format !== 4) draw(1); snapshot();
           const beforeFailure = stores;
-          inject = 3; gpu.batchDraws = false;
+          inject = 1; gpu.batchDraws = false;
           if (large) set(19,0);
           dv.setUint32(call+4,4,true); dv.setUint32(call+16,large ? 97 * 3 : 9,true);
           const rejected = gpu.call(D3DIMGpu.OPCODES.DRAW,call);
           inject = false;
           const stats = gpu.snapshot(); gpu.stop();
-          output.push({version,format,batchDraws,frames,copies,stores,beforeFailure,rejected,stats,errors});
+          output.push({version,format,batchDraws,frames,copies,stores,errorChecks,beforeFailure,rejected,stats,errors});
         }
         return output;
       }, { full: control && !process.env.NATIVE16_CONTROL, large: !!process.env.NATIVE16_LARGE }));
@@ -123,13 +129,18 @@ const puppeteer = require('puppeteer');
     for (let i = 0; i < candidate.length; i++) {
       const a = baseline[i], b = candidate[i];
       assert.deepEqual(b.frames, a.frames, `exact native DIB and RGBA: ${b.version}/${b.format}/${b.batchDraws}`);
-      if (process.env.NATIVE16_LARGE) assert(b.stores < a.stores, 'large opaque streams amortize native conversion');
+      if (process.env.NATIVE16_MATCHED) {
+        assert.equal(b.beforeFailure,a.beforeFailure,'retain every successful native storage conversion');
+        assert.deepEqual(b.copies.slice(0,b.beforeFailure),a.copies.slice(0,a.beforeFailure),'retain exact conversion regions and order');
+        assert(b.errorChecks < a.errorChecks / 2,'reduce synchronous storage error checks');
+      } else if (process.env.NATIVE16_LARGE) assert(b.stores < a.stores, 'large opaque streams amortize native conversion');
       else assert.equal(b.stores, a.stores, 'retain every primitive store for small draws');
       assert.deepEqual(b.errors, a.errors, 'same GL failure');
       assert.equal(b.rejected, 0); assert.equal(b.stats.errors, 1);
-      assert.equal(b.stores-b.beforeFailure,3,'stop at the failing storage boundary');
+      assert.equal(b.stores-b.beforeFailure, process.env.NATIVE16_CONTROL ? (process.env.NATIVE16_LARGE ? 4 : 3) : 3,
+        'reject at the submission boundary after checking the accumulated GL error');
       const pixels = c => c.copies.reduce((n,a) => n+a[4]*a[5],0);
-      if (!process.env.NATIVE16_LARGE) assert(pixels(b) < pixels(a)*.65, 'bounded copies reduce actual converted area');
+      if (!process.env.NATIVE16_LARGE && !process.env.NATIVE16_MATCHED) assert(pixels(b) < pixels(a)*.65, 'bounded copies reduce actual converted area');
     }
     const summary = { passed: true, cases: candidate.length, snapshots: candidate.reduce((n,c)=>n+c.frames.length,0),
       baselinePixels: baseline.reduce((n,c)=>n+c.copies.reduce((s,a)=>s+a[4]*a[5],0),0),
