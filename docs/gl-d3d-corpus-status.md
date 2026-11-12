@@ -47,6 +47,21 @@ All four runtime parents exited normally, and the box stopped before expiry.
 These bounded scenes found no runtime defect; they do not prove general crash
 freedom, native-reference parity, strict FPS, audio or historical27 completion.
 
+Published `2aa8833a4` adds a completed synchronous native Flip source witness
+on the owning guest Worker, after association rotation and before present
+parking. Actual WAT/Worker/decoder/compositor controls fail on the old source
+and pass with the fix, including partial-HUD/stale/owner/concurrent rejection;
+the locked build passes. Original WebGL yielded11 accepted complete sources,
+each bound to its exact full front upload and fallback copy, but **zero
+qualified compositor rows**. Strict FPS remains unknown, and software original
+was not retested. The next dependency is the exact ordinary decoder/cache and
+composition admission failure, not a speculative guard relaxation. Executing
+module is `04c53419…`. The coordinator reviewed source/test changes,68 initial
+and184 final recovered references plus the full moving cockpit image. Both
+boxes stopped normally; the report retains missing initial runtime wait and
+deliberate retest cleanup exit1 separately from Chrome0 and outer transport143.
+Evidence: `20261112-mw3-synchronous-flip-producer-witness-0708/report.txt`.
+
 Published `29f6295a2` repairs writer-observer attachment at an actual completed
 boundary. Pending secondary Worker calls drain naturally while recorded main
 continuations wait; participant identity is checked through renderer
