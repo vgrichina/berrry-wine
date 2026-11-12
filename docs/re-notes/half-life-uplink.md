@@ -1,5 +1,24 @@
 # Half-Life Uplink demo
 
+## Qualified native checkpoint, November 12
+
+The original Uplink now has an earned four-file checkpoint at the damaged
+stair chamber entrance, health100/armour0, elapsed00:45. Native Save, movement
+away, normal Load and fresh movement passed; a fresh Chrome process then
+mounted the unchanged exported files and passed normal Load and fresh movement.
+Both checkpoint cases used actual SoftwareGL. The complete export totals
+324084 bytes; exact hashes and recovery instructions are in
+[the checkpoint note](halflife-earned-cross-session-save-20261112.md),
+commit `6a7d68ac5`, run `20261112-halflife-earned-cross-session-save-1430`.
+
+The coordinator verified634 artifact references, all22 binding fields and111
+trusted balanced input events, and inspected the Save/move-away/Load/movement
+frames. The later [onward attempt](halflife-earned-onward-20261112.md) refused
+a renderer endpoint transition during its first post-Load capture; it does
+not invalidate the checkpoint or qualify new onward progress. Wait for renderer
+startup before establishing the initial gameplay capture, preserving identity
+checks. Paired onward play, combat, FPS and audio remain open.
+
 ## Package and installed layout
 
 The local-only installer is

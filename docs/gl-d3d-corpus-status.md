@@ -15,7 +15,7 @@
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Heretic II demo | Current8a834/04 living crate0400 Load, fresh movement and released interval | Current Easy docks; crate Load reproduces native ExitProcess8 | Full four-source reads pass on both; WebGL exit cause unresolved, no production fix or paired onward proof. | [Current load comparison](re-notes/heretic2-current-load-exit-cause-20261112.md), run `20261112-heretic2-current-load-exit-cause-1135` |
-| Half-Life Uplink | Current actual SoftwareGL living controls, stairs and scientist console | Current actual WebGL living controls and elevator onward | Health100/armour0 on both; native E opens/calls elevator, LOADING leads to distinct red crate bay with fresh WebGL movement. Paired onward, combat and native Save remain open. | [Current paired controls and onward route](re-notes/halflife-current-paired-onward-20261112.md), run `20261112-halflife-current-paired-onward-1220` |
+| Half-Life Uplink | Current actual SoftwareGL living controls and qualified chamber save | Current actual WebGL living controls and elevator onward | Health100/armour0; WebGL elevator reaches the red crate bay. SoftwareGL native Save/export/Load/fresh movement also passes in a fresh browser. Paired onward and combat remain open. | [Paired controls](re-notes/halflife-current-paired-onward-20261112.md); [four-file checkpoint](re-notes/halflife-earned-cross-session-save-20261112.md), run `20261112-halflife-earned-cross-session-save-1430` |
 
 Half-Life uses original hldemo/PAK bytes on module`04c53419…`. The coordinator
 verified1,368 references/1,122 paths,870 decoded raw records,237 balanced trusted
@@ -25,6 +25,13 @@ GL context proves software ownership despite the page dropdown. Both browsers,
 outer parents, manager and watchdog joined normally before normal box stop.
 No historical floor export was available; this run starts New Game Easy and
 claims no save continuity, old SIGKILL cause, parity, FPS or audio result.
+The later1430 run qualifies its own earned four-file chamber checkpoint:
+324084 unchanged bytes restore through native Load in a fresh browser, followed
+by fresh movement. Coordinator review verified634 references,22 identity fields,
+111 trusted balanced events and the full persistence sequence. Both save cases
+use SoftwareGL; this adds no WebGL save-parity, FPS or audio claim. The1500 onward
+attempt stopped on a strict renderer transition during capture, leaving that
+checkpoint intact and onward progress unqualified.
 
 The GLTron software proof binds its actual GL software owner and completed
 raster work, with a legacy D3D WebGL transport. Its default cooperative CLI
