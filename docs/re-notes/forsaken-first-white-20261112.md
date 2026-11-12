@@ -89,9 +89,10 @@ The resulting command refusal is a harness deadline, not evidence of a native
 Forsaken fault. Caller outcome is known exit 1; both actual Enter edges are
 trusted in the retained menu-state record. Later admission is sticky-closed and
 no command was replayed. The run-local review text incorrectly calls the startup
-image a splash: the immutable PNG actually shows Single Player selected, and
-the next PNG shows its START menu. This labeling error is retained explicitly;
-no splash behavior or combat progress is inferred from it.
+image a splash: coordinator inspection of both immutable full PNGs shows
+Single Player selected on the main menu. The second capture does not establish
+entry to START. These labeling errors are retained explicitly; no splash,
+successful menu transition or combat progress is inferred from the input ACK.
 
 Next: remove diagnostic drains from the command ACK critical path and bound
 telemetry independently without weakening identity, hash, full-frame, freshness,
