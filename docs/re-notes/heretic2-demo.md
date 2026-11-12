@@ -41,6 +41,30 @@ commit was made. The box stopped normally before expiry with runtime parent
 wait/EOF; outer transport exit143 remains separate. WebGL parity, FPS and audio
 are not established by this route.
 
+## November 12 onward-room limit
+
+Run `20261112-heretic2-crate-successor-tavern-onward-0435` normal-loaded
+`crate0400` upright twice and verified fresh movement. Native traversal then
+climbed the north stairs to a cobbled room with crates, a red banner, a boarded
+arch and a close humanoid enemy. A bounded Flying Fist attack left it standing.
+No defeat, door opening or level transition was established.
+
+Both new whole-four saves are **experimental**. `onward0435` normal-loaded
+with explicit “Corvus died.” Saving earlier on the stairs as `landing0435`
+first rendered upright, but its first fresh backward check reached Load Game
+without movement. Neither replaces `crate0400`. Exact health, damage timing
+and internal death flags remain unknown; these observations do not establish
+an emulator defect. A future attempt needs different threat handling or a
+living lower-stair checkpoint. The active slot moved to another game.
+
+The coordinator verified 1,227 recovered references / 479 unique raw hashes,
+96 native-file references and the full room/death images. Tested source stayed
+`30f9318e6` / actual Worker `1165f15c…`, isolated from later renderer changes.
+No production code, build or task commit was needed. The box stopped normally
+before expiry; runtime and watchdog waits/EOF passed, while outer transport
+exit143 remains separate. Exact recovery and failed-save manifests remain in
+that run's `RESULT.md` and `RECOVERY.md`.
+
 ## Licence
 
 `license.txt` in `_user1.cab` is Activision's standard licence: personal use
