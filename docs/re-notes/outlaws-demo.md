@@ -10,6 +10,40 @@ That initial audit did not acquire bytes; the completed acquisition below supers
 its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
+## November 12 east gunman defeat and aperture limit
+
+Run `20261112-outlaws-east-corner-threat-supplies-0710` identified the armed
+east-corner gunman directly in view and defeated him with one aimed native
+shot: loaded ammunition4→3, health stayed2.2. Full upright/collapse images and
+authentic saved actor data establish the new corpse at (148.73146,0,157.70334).
+Attribution of the earlier unseen bullet remains an inference.
+
+Prefer **all nine** `east-threat-saves/` with `east-threat-save-pins.json`.
+Saved position (127.880249023,0,161.501007080), yaw37279, health2.2; ninth raw
+229741 bytes, SHA256
+`9e1b6f21a928ed066d7fd5919892d9c4bbf5aa93e0f4d3e484cbe852b801193f`.
+Normal Load of the explicitly highlighted ninth slot restored that exact
+rendered state stable300ms, with the corpse present. Fresh crouched movement
+reached (134.591629028,0,161.501007080), unchanged health; it was not resaved.
+Hover and review the ninth row before clicking: an initial bare click selected
+an older living slot, which failed exact-state validation and was paused.
+All99 ancestral save files remain unchanged.
+
+The cleared corner allowed a north approach without damage. Calibrated west
+movement entered floor.25 near (135.14352,149.57620); one settled crouch attempt
+stalled near x134.980 and ended x134.782, still health2.2. No x134 crossing,
+SteelKey pickup, door102 opening or healing follows. Native collision cause
+remains unknown; the fresh successor must isolate it or find a different
+authored approach before another attempt. Nearby street supplies were absent
+from the authentic saved state; global medical-item defaults are not possession.
+
+The coordinator verified464 references /372 unique raw hashes, complete new
+raw/gzip saves and full armed/collapse/reloaded-movement images. Exact source
+remains25ac5466d/WASM75ecda5701, with no code/build/commit. Runtime actual
+wait0/EOF and independent PID/profile/port closure passed; the box normally
+stopped before expiry. Outer transport143 is separate. See the run's
+`RESULT.md` and `RECOVERY.md` for exact pins and native input controls.
+
 ## November 12 two further defeats and frontage save
 
 Run `20261112-outlaws-frontage-threat-key-route-0630` defeated the bank
