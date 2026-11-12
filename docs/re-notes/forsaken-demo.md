@@ -28,7 +28,29 @@ The observer's separate paused-worker startup failure is repaired in run-local
 helpers, with actual Chrome CPU/GPU bootstrap, encoder byte-identity and negative
 controls. That repair enables observation; it does not repair the white scene.
 Actual Chrome/browser/outer and local lifecycle waits/EOFs pass, and the box
-stops normally. Next: trace original Execute-buffer state commands before enqueue.
+stops normally.
+
+The [1715 original-command trace](forsaken-native-additive-origin-20261112.md),
+commit `a51eacd69`, then matches all33723 observed state applications to
+explicit original Execute-buffer commands. The
+[1735 selector trace](forsaken-guest-state-selection-20261112.md), commit
+`9bae6e181`, shows that the original x87 compare deliberately selects the
+additive buffer when its float differs from zero. Root independently recomputed
+620 selected and1142 equal-restoration calls: CPU condition bits, branch,
+arguments and actual handle agree with zero mismatches. Static writers and
+vertex-color consumers support a death/respawn fade; live writer timing and
+intended visual duration remain unproved.
+
+Root checked297 recovered hashes, eleven full PNGs,19 identity fields and
+eight independently released trusted input pairs. The first retained sampled
+white draw precedes the first observed selector call and uses a different
+texture from the selected scene; preserve these as separate witnesses.
+Startup CPU drops,29 ground-sample caps and three unjoined tail keys preclude
+a global-first-white claim. Actual Chrome/browser and lifecycle waits pass;
+a separate unified wrapper exit143 remains unexplained. The box stops normally.
+Next: original texture provenance, uploaded/sampled texels and ordered prior
+target contents for one retained draw. No blend override or runtime patch is
+justified by the current evidence.
 Earlier paired evidence and limits: [combat and owner observations](forsaken-owner-enemy-20261112.md).
 
 ## Source and licence

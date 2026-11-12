@@ -85,6 +85,21 @@ is claimed. Control/chord input is unsupported by that frozen caller, so crouch
 was not dispatched. Extend and test native input support before trying the
 remaining clearance. Preserve all checkpoint generations separately.
 
+The [1730 continuation](halflife-native-crouch-clearance-20261112.md), commit
+`aaa653051`, adds run-local Control and finite native chords. Fifteen tests
+exercise the emitted requester/consumer, including partial or unknown DOWN,
+failed UP and independently prearmed per-key releases; actual Chrome/Worker
+controls also pass. The original fresh-browser whole12 Load remains qualified.
+Held/released full frames visibly confirm crouch, but central, side and
+crouch-jump approaches still end at wooden faces. No onward room, encounter
+or new save is earned; the close export preserves all twelve files unchanged.
+Root checked365 references,36 PNGs,22 binding fields and eight captures
+completed during held Control. Actual Chrome/outer shutdown,364 reaped
+processes, both local manager/watchdog joins and both normal box stops pass.
+Disk crossed below1.5GB after quit, with no later native input; continuous
+floor compliance is not claimed. Resolve the authored obstacle geometry and
+route before repeating these approaches.
+
 ## Package and installed layout
 
 The local-only installer is
