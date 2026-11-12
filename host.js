@@ -1964,7 +1964,7 @@ class WineAssembly {
       createRenderWorker: options => self._createRenderWorkerConsumer(options),
       get sharedRenderWorkerEnabled() { return !!self.guestWorker; },
       get writerObservation() { return self._d3dimWriterObservation || null; },
-      get d3dimPublicationJoin() { return self._d3dimPublicationJoin || null; },
+      get d3dimPublicationJoin() { return self._d3dimPublicationJoin?.synchronous || self._d3dimPublicationJoin || null; },
       apiTable: self.apiTable,
       get renderer() { return self.renderer; },
       get resourceJson() { return self.resourceJson; },
@@ -5882,7 +5882,7 @@ class WineAssembly {
     }});
   }
 
-  async armD3dimPublicationObservation({ maxRecords = 256, boundaryTimeoutMs = 1000 } = {}) {
+  async armD3dimPublicationObservation({ maxRecords = 256, boundaryTimeoutMs = 1000, synchronousSource = false } = {}) {
     if (this._d3dimPublicationJoin || this._d3dimPublicationArming || this._stopped ||
         !this.guestWorker || !this.renderer || !this.instance?.nativeInstance)
       throw new Error('publication observation requires an idle instrumented production process');
@@ -5941,6 +5941,15 @@ class WineAssembly {
       const sourceOwner = await endpoint.producerObservation('arm', { ownerGeneration: ownerScope,
         maxRecords, writerEpochBuffer: epoch.buffer, surfaceVersionBuffer: journal.buffer,
         retainedSurfaceBuffer: journal.retainedBuffer });
+      // A separate producer and journal belong to the actual main guest
+      // Worker. Renderer records cannot claim its synchronous native swaps.
+      const synchronousJournal = synchronousSource && new RenderWorker.SurfaceVersionJournal(new SharedArrayBuffer(maxRecords * 65536),
+        new SharedArrayBuffer(4 * (16 + 2 * 1024 * 1024)));
+      const synchronousOwner = { scope: ownerScope + ':synchronous', endpointId: link.endpointIdentity,
+        generation: link.endpointIdentity };
+      const synchronousArm = synchronousSource && await link._ask({ t: 'synchronousFlipObservation', action: 'arm',
+        endpointIdentity: link.endpointIdentity, owner: synchronousOwner, maxRecords,
+        journalBuffer: synchronousJournal.buffer, retainedBuffer: synchronousJournal.retainedBuffer });
       if (this._stopped || this.guestWorker !== guest || this.threadManager !== threads ||
           this.memory !== memory || this.processId !== processId ||
           this.instance !== instance || this.renderer !== renderer || guest.link !== link ||
@@ -5953,6 +5962,9 @@ class WineAssembly {
         ownerScope, renderer: this.renderer, workerSlot: link.slot, endpointId: endpoint.id,
         owner: sourceOwner.owner, observationGeneration: sourceOwner.generation });
       this._d3dimPublicationJoin = join;
+      if (synchronousSource) join.synchronous = new RenderWorker.SurfacePublicationJoin({ epoch, journal: synchronousJournal, memory,
+        ownerScope: synchronousOwner.scope, renderer, workerSlot: link.slot, endpointId: link.endpointIdentity,
+        owner: synchronousOwner, observationGeneration: synchronousArm.generation });
       endpoint.addEventListener('message', event => {
         if (event.data.t === 'legacy-producer-completed') join.receipt(event.data);
       });

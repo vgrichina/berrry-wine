@@ -1,5 +1,84 @@
 # MechWarrior 3 demo
 
+## November 12 synchronous native Flip source witness (0708)
+
+Run `20261112-mw3-synchronous-flip-producer-witness-0708` adds an opt-in
+completed-source observer to the actual synchronous native
+`handle_IDirectDrawSurface_Flip`. The begin boundary follows the real worker
+fence and precedes association writes. Completion follows the whole-chain
+rotation, before a present import can park the owning guest Worker. It uses a
+separate native descriptor/serial namespace and per-Worker journal. It does
+not select the queued fast path or infer completion from `dx_trace`.
+
+The source record binds the original command handoff, native instance,
+Worker/process incarnation and unchanged sole-writer epoch/host version across
+rotation and capture. Native page versions cover source metadata, format and the complete RGB565
+DIB; copied native descriptor words bind the request. A bounded generation-checked retained copy owns
+all pixels after guest storage is reused. The existing canonical decoder and
+compositor retain their request, lifetime, writer, scene and partial-upload
+guards. Null HUD requests stay null. The default rendering path remains
+unobserved; no guest code is skipped and no media, input configuration, clocks
+or interpreter/JIT choices change. The exact original queued-fast-path
+rejection guard is still unproven.
+
+The actual WAT/owning-Worker control fails with baseline `29f6295a2` because
+there is no completed synchronous source. With this change it captures the
+real rotated green RGB565 source and the existing decoder/compositor qualifies
+that same native request once. A native partial red HUD write still renders
+current pixels, clears the request and cannot qualify the older retained
+source. Duplicate completion/repaint, concurrent writers, epoch ABA, host
+version changes, stale serials and owner replacement remain rejected. The
+full producer/publication suite, both transient suites and locked build pass.
+The final locked rebuild reproduces the executing module SHA-256
+`04c534192ee3fe39e388536c2ce710c12c47a5cd2ca4d95c19f9d00b1e8f0a17`.
+
+The original registered WebGL retest is in the adjacent
+`20261112-mw3-synchronous-flip-producer-witness-0708-retest` run. It uses
+baseline `29f6295a2c0eadd6c8c5dfea9ed8c0e44dd28225` plus the seven owned
+production-file diffs, pinned original media/helpers, and excludes concurrent
+WIP. The full KeyI, pilot a/Enter, pointer-lock, Accept/Instant Action/Launch
+route was reviewed before each input. Independently released Digit5 reached
+40.5 km/h. Actual guest and renderer module identities match the SHA above. CDP pins
+SwiftShader Vulkan / SwANGLE 5.0.0, despite the Intel Mesa WebGL API string.
+One all-writer admission covers its sole live link and all 158 observed
+commands before/during the 8117.66 ms diagnostic; no repeated rate
+windows were collected. Its 12 synchronous native records include **11
+accepted complete 640×480, pitch-1280 RGB565 source copies** and one
+`source-writer-not-sole` rejection. Queued source records remain zero. Every
+accepted native descriptor/serial/front/DIB binds to its exact full front
+upload and at least one observed fallback copy; see
+`original-source-binding.json`. Source records are not displayed frames.
+
+**Completed gameplay FPS and frame times remain UNKNOWN.** There are zero
+qualified compositor rows despite genuine nonzero source membership. The
+trace contains 22 fallback copies and 22 publications, but neither count is a
+completed-frame count. In this window the full front uploads and fallback
+copies retain the exact new request; the null HUD uploads seen here target a
+separate surface. A `putImageData` token sample is taken before cache binding
+and cannot identify the failing guard. The newly exposed dependency is the
+exact canonical decoder/cache and composition admission for those native
+requests: capture its ordinary read stamp, source selection/cache outcome and
+scene/layer transfer without changing those guards. Clipping, gamma,
+concurrency or HUD composition must not be asserted as the cause without that
+capture. No old request was restored and no older image was selected to make
+the diagnostic qualify. The software original was not retested in this run;
+full27, parity, audio and historical cursor cause remain open.
+
+Both private boxes are stopped with expiry NULL and unforced completed
+receipts: `bx_cz9m22wz` / `stop_e89e5726de3f0562` at 07:28:49Z and
+`bx_p5tn9eda` / `stop_fd2bd1c39cb1d928` at 07:43:11Z, before the unchanged
+08:14:06Z deadline. The first attempt stopped after a zero-effect stale input
+refusal and malformed recovery-capture command. The retest completed its
+source diagnostic; a later failed read-only summary closed gameplay command
+custody. Explicitly delegated cleanup-only SIGUSR1 then produced actual
+runtime-parent wait/EOF (intentional status 1), Chrome status 0 and separate
+EOF; manager/watchdogs have actual successful waits. Retest outer lifecycle
+PTY returned 143 and its separate client/owner wait files are absent; it is
+not reported as an all-zero lifecycle. Raw source/trace/module evidence and
+13 full reviewed images were recovered and independently rehashed before
+stop. Reports and recovery recipes retain both command failures and limits.
+
+
 ## November 12 all-writer attachment repair (0625)
 
 Run `20261112-mw3-all-writer-observer-boundary-0625` repairs the generic

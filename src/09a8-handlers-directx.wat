@@ -6312,7 +6312,7 @@
     (local $entry i32) (local $back_guest i32) (local $back_entry i32)
     (local $tmp_dib i32) (local $cursor i32) (local $next i32)
     (local $count i32) (local $steps i32) (local $target i32) (local $found i32)
-    (local $hr i32)
+    (local $hr i32) (local $source_observed i32)
     (local.set $entry (call $ddraw_surface_entry_checked (local.get $arg0)))
     (block $validated
       (if (i32.eqz (local.get $entry))
@@ -6403,6 +6403,10 @@
     (if (local.get $back_guest)
       (then
         (local.set $back_entry (call $dx_from_this (local.get $back_guest)))
+        ;; Default-off source observation starts AFTER the real fence and
+        ;; BEFORE association writes. It never chooses the queued route.
+        (local.set $source_observed (call $host_gpu_gl_call (i32.const 0x20008)
+          (local.get $entry) (local.get $back_entry)))
         ;; A Flip rotates memory associations, not COM identities or role caps.
         ;; TargetOverride rotates by its distance from the front. Two members
         ;; still swap exactly as before; larger chains fence the two-surface
@@ -6428,7 +6432,9 @@
           (load.field DxObject misc1 (local.get $entry))
           (local.get $tmp_dib))
         ;; Present front buffer
-        (call $dx_present (local.get $entry))
+        (if (local.get $source_observed)
+          (then (call $d3dim_synchronous_flip_present (local.get $entry) (local.get $back_entry)))
+          (else (call $dx_present (local.get $entry))))
         (call $present_frame_end)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))

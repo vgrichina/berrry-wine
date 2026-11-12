@@ -22,6 +22,8 @@ const { Encoder } = require('../lib/d3d-command-stream');
 const RPC = require('../lib/guest-rpc');
 
 async function main() {
+  await require('./helpers/synchronous-flip-producer')();
+  if (process.env.D3DIM_SYNC_ONLY) return;
   require('./helpers/surface-journal-browser').checkSurfaceJournal(require('../lib/render-worker'));
   const hostSource = fs.readFileSync(require.resolve('../host'), 'utf8');
   const wrapper = hostSource.slice(hostSource.indexOf("    for (const [name, fn] of Object.entries(h))"),

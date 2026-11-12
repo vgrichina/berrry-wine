@@ -97,6 +97,34 @@
   (global $d3dim_flip_serial_exhausted (mut i32) (i32.const 0))
   (global $d3dim_present_serial (mut i32) (i32.const 0))
 
+  ;; Separate native request namespace for the synchronous association rotation.
+  ;; Allocated only for an armed observer; never reused as a queued request.
+  (global $d3dim_sync_flip_desc (mut i32) (i32.const 0))
+  (global $d3dim_sync_flip_serial (mut i32) (i32.const 0))
+  (global $d3dim_sync_flip_exhausted (mut i32) (i32.const 0))
+  (func $d3dim_synchronous_flip_present (param $front i32) (param $back i32)
+    (local $desc i32)
+    (local.set $desc (global.get $d3dim_sync_flip_desc))
+    (if (i32.eqz (local.get $desc)) (then
+      (local.set $desc (call $g2w (call $heap_alloc (i32.const 16))))
+      (global.set $d3dim_sync_flip_desc (local.get $desc))))
+    (if (i32.eqz (global.get $d3dim_sync_flip_exhausted)) (then
+      (global.set $d3dim_sync_flip_serial (i32.add (global.get $d3dim_sync_flip_serial) (i32.const 1)))
+      (if (i32.eqz (global.get $d3dim_sync_flip_serial))
+        (then (global.set $d3dim_sync_flip_exhausted (i32.const 1))))))
+    (i32.store (local.get $desc) (local.get $front))
+    (i32.store offset=4 (local.get $desc) (local.get $back))
+    (i32.store offset=8 (local.get $desc) (global.get $d3dim_sync_flip_serial))
+    (i32.store offset=12 (local.get $desc) (i32.const 0x44585032))
+    ;; This is the completed native boundary, after every chain member rotated
+    ;; and before the first present import can park the owning guest command.
+    (drop (call $host_gpu_gl_call (i32.const 0x20009) (local.get $desc) (i32.const 16)))
+    (call $host_dx_trace (i32.const 31) (call $dx_slot_of (local.get $front))
+      (local.get $desc) (global.get $d3dim_sync_flip_serial) (i32.const 1))
+    (call $dx_present (local.get $front))
+    (call $host_dx_trace (i32.const 31) (call $dx_slot_of (local.get $front))
+      (i32.const 0) (i32.const 0) (i32.const 0)))
+
   (func $d3dim_present_request (param $front i32)
     ;; kind 31 brackets this exact dx_present, including all of its early
     ;; returns. A zero serial explicitly means unsupported/unwitnessed.
