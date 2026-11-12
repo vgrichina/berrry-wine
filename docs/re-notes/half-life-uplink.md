@@ -67,8 +67,23 @@ load/attack/persistence frames. The taller wooden structure remains; no enemy
 encounter or passage beyond it is claimed. The
 [1655 attempt](halflife-cleared-bay-onward-20261112.md) preserves that whole set
 but fails before CDP or guest launch because Chrome never publishes its endpoint.
-It adds no fresh-browser proof for the twelve-file successor. Diagnose startup
-before another original continuation; retain the smaller checkpoints separately.
+It adds no fresh-browser proof for the twelve-file successor.
+
+The [1710 continuation](halflife-chrome-endpoint-repair-20261112.md), commit
+`765e7a16c`, first passes an actual blank Chrome endpoint/CDP/capture/clean-close
+control through the same frozen launch and custody path. The original then
+mounts all twelve unchanged files, verifies fresh VFS bytes and passes native
+Load01:48, crowbar/health100/armour0 and fresh strafe on actual SoftwareGL.
+Root checked474 references,41 full PNGs,22 within-capture fields and24 anchored
+captures, plus the full restored/movement frames. The twelve-file checkpoint
+therefore has fresh-browser recovery proof. The old endpoint timeout's cause
+remains unknown; successful startup is not a causal repair.
+
+Tall-structure and Space-jump probes establish no passage. Close native Tab
+reopens the familiar supply room; no new corridor, encounter or successor save
+is claimed. Control/chord input is unsupported by that frozen caller, so crouch
+was not dispatched. Extend and test native input support before trying the
+remaining clearance. Preserve all checkpoint generations separately.
 
 ## Package and installed layout
 

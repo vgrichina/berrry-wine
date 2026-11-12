@@ -15,7 +15,7 @@
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Heretic II demo | Current8a834/04 living crate0400 Load, fresh movement and released interval | Current Easy docks; crate Load reproduces native ExitProcess8 | Full four-source reads pass on both; WebGL exit cause unresolved, no production fix or paired onward proof. | [Current load comparison](re-notes/heretic2-current-load-exit-cause-20261112.md), run `20261112-heretic2-current-load-exit-cause-1135` |
-| Half-Life Uplink | Current actual SoftwareGL crowbar and small-crate destruction | Current actual WebGL living controls and elevator onward | Health100/armour0; eleven-file crowbar save restores in a fresh browser. Small-crate destruction and movement into cleared space persist through a new twelve-file Save/Load/fresh movement cycle. Taller obstruction, encounter and paired onward/save parity remain open. | [Crate consequence and save](re-notes/halflife-crowbar-obstruction-20261112.md), run `20261112-halflife-crowbar-obstruction-1635`; [startup blocker](re-notes/halflife-cleared-bay-onward-20261112.md); [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
+| Half-Life Uplink | Current actual SoftwareGL crowbar and small-crate destruction | Current actual WebGL living controls and elevator onward | Health100/armour0; complete twelve-file destruction checkpoint restores through native Load and fresh movement in a new browser. Taller obstruction, encounter and paired onward/save parity remain open; Ctrl/chord support is the next caller prerequisite. | [Fresh whole12 recovery](re-notes/halflife-chrome-endpoint-repair-20261112.md), run `20261112-halflife-chrome-endpoint-repair-1710-original`; [crate consequence](re-notes/halflife-crowbar-obstruction-20261112.md); [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
 
 Half-Life uses original hldemo/PAK bytes on module`04c53419…`. The coordinator
 verified1,368 references/1,122 paths,870 decoded raw records,237 balanced trusted
@@ -56,7 +56,14 @@ twelve-file2006166-byte save passes normal Load and fresh movement in that
 browser. Root checked627 references/56 PNGs and nine full sequence frames.
 The taller structure remains and no encounter is claimed. The1655 continuation
 stops before CDP/guest launch on a missing Chrome endpoint; the whole save
-remains unchanged and its fresh-browser restoration is still open.
+remains unchanged. The1710 continuation first passes an actual blank Chrome
+endpoint/CDP/capture/normal-close control, then restores the complete twelve
+files through native Load01:48 and fresh movement on actual SoftwareGL.
+Root checks474 references,41 PNGs and all22 within-capture identity fields.
+The old timeout remains causally unexplained; no production repair follows.
+Tall-side/jump inspection proves no passage, and crouch is not dispatched
+because the frozen key helper lacks Control/chord support. The close export
+retains all twelve save files unchanged. [Fresh whole12 recovery and limits](re-notes/halflife-chrome-endpoint-repair-20261112.md).
 [Crate destruction and complete recovery](re-notes/halflife-crowbar-obstruction-20261112.md),
 run `20261112-halflife-crowbar-obstruction-1635`.
 
