@@ -10,6 +10,33 @@ That initial audit did not acquire bytes; the completed acquisition below supers
 its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
+## November 12 healthier combat successor
+
+Prefer the **whole nine** `combat-saves/` and `combat-save-pins.json` from
+`20261112-outlaws-earlier-gunman-health-successor-0558`. Earlier close-range
+interception defeated the tracked doorway gunman while preserving health4.6,
+instead of0.2. The hit and continuous collapse were reviewed. Native Save
+recorded (105.79972,.25,183.37161), yaw45471, health4.5999999046; ninth raw
+229536 bytes, SHA256
+`3b4dcbb2caab03ea677d9bbb73124de7a37bf1709a2c0fdcae96dc069a05bbfc`.
+Normal Load restored the rendered exact state stable300ms and fallen attacker.
+Fresh crouched backward movement reached (108.70386,.25,182.90546) at unchanged
+health; it was not resaved. Parents and the older low-health combat set remain
+unchanged fallbacks. This is damage avoided, not healing.
+
+An unsaved outside branch still encountered the bank shooter and a further
+close attacker. It ended alive near (136.331,0,150.447), health2.2, without
+crossing x134 into aperture73. No SteelKey pickup or door102 opening follows.
+Original IDOCBAG COUNT3/MAX15 are item defaults, not current possession proof.
+The next worker addresses surviving threats from the healthier save.
+
+The coordinator verified631 recovered references /541 unique raw hashes,
+all nine raw/gzip saves and full hit/collapse/reload/movement images. Source
+remains25ac5466d/WASM75ecda5701, with no production change or build. Runtime
+parent wait0/EOF and normal box stop passed; outer transport143 is separate.
+The run's `RESULT.md` and `RECOVERY.md` retain exact continuation and the helper
+C-timer cleanup correction, which was not rerun against the original.
+
 ## November 12 gunman defeat and living combat save
 
 Run `20261112-outlaws-store-native-heal-shooter-0525` tracked the actual
