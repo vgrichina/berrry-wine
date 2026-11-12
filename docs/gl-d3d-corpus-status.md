@@ -1,5 +1,28 @@
 # OpenGL / Direct3D corpus status, reconciled 2026-11-08
 
+## November 12 current original-game progress
+
+| App | Software | WebGL | Native outcome | Evidence |
+| --- | --- | --- | --- | --- |
+| GLTron | Moving trails and round outcome | Moving trails | Browser gameplay on module `1165f15c…`. Cooperative and actual Worker CLI gameplay also works with `--real-ticks`. | [Current scenes](re-notes/gltron-current-device-scenes-20261112.md), run `20261112-gltron-current-device-scene-repair-0015` |
+| Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
+| Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion and combat | Victories 9→10→11, native Save/normal Load alive. The newest tested character/map pair restores LIFE 9/35. | [Current gameplay and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-current-worker-gameplay-0119` |
+
+The GLTron software proof binds its actual GL software owner and completed
+raster work, with a legacy D3D WebGL transport. Its default cooperative CLI
+still has a black scene and zero draws under the abstract CPU/device service
+model. The real-ticks results preserve that remaining limitation. Forsaken's
+later look capture shows a respawn, so controlled turning and enemy defeat
+remain unverified. Darkstone's newest tested save has low health. The preserved
+four-file continuation union was assembled but has no separate replay claim.
+
+The coordinator reviewed the full scenes and checked all raw artifact hashes
+for these three runs. The Forsaken repair has a failing old-source regression,
+passing focused lifecycle/publication/parity tests and a locked build. These
+app outcomes advance the corpus. Historical 27-app membership, remaining backend
+cells, reference parity, FPS and audio remain open.
+
+
 ## November 10: current-source paired Twist scene motion
 
 The registered original `dx_twist` now has personally reviewed software D3D
