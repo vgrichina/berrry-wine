@@ -430,3 +430,63 @@ exited1/EOF; Chrome parents exited0, and the box stopped normally before expiry
 with owner/client/watchdog wait0/EOF. No production change or build was made.
 Exact logs and failed CDP request IDs remain in the run's `RESULT.txt` and
 `retrieval-manifest.json`.
+
+## November 12 Chrome allocation repair and native day two
+
+Run `20261112-disciples2-chrome-growth-native-save-0602` locates the growing
+allocation and repairs it in published main commit `703015ea5`. The original
+DirectSound long-ring snapshot fallback repeatedly decoded PCM and created
+replacement Web Audio sources while AudioContext was suspended at time zero.
+Stopping the old source at `currentTime + 0.005` could not retire its acquired
+buffer while that clock remained frozen. Native allocation samples attributed
+3,064 MiB of 3,408 MiB to `blink::AudioBuffer::AudioBuffer`, reached through
+`BaseAudioContext::createBuffer`; the host path is `_decodePcm` / `playRing`.
+Independent per-PID sampling identifies the growing subprocess as renderer8564:
+885→4,340 MiB anonymous RSS over162 seconds. This connects the previous
+reproduced memory-limit failure to a concrete producer; it does not establish
+the inaccessible0510 box's cause.
+
+The fix coalesces suspended refreshes only for the nonqueued looping snapshot
+fallback. Resume rebuilds once from latest PCM at the current guest cursor;
+Stop cancels pending work. The bounded small-ring queue retains its existing
+behavior. A 2,000-refresh regression fails against exact `af0e208e9` and passes
+with the repair; resume, scaled guest cursor, duplicate state event and Stop
+cancellation are covered. Six focused audio suites and the locked full build
+pass. Neither guest code, module admission nor repeated source/owner checks
+were weakened.
+
+The controlled repaired menu arm remained approximately400 MiB renderer anonymous
+RSS over183 seconds; its native AudioBuffer sample was0.3125 MiB. The final
+source then ran the original quest for almost20 minutes, with renderer peak
+781 MiB during actual gameplay. Its forwarding-only allocation observer counted
+exactly two initial AudioBuffers through day two, and Wasm memory stayed512 MiB.
+AudioContext remained suspended, so audible playback is not claimed.
+
+The same surviving Canvas2D page completed Timmoria / Undead Hordes / default
+Warrior Lord, the five individually reviewed story panels, Escape→Options,
+native Save Game named `s`, and the **Game saved successfully** confirmation.
+The complete native `c:\savegame\s.sg` is208,644 bytes, SHA-256
+`ebfe38e5852b16c1c6bdefcb1d007abcda38877c4332944415ad6b5f527e12e8`.
+Two independent passive reads match; its whole-save manifest is
+`native-save-whole.json`. No partial save restoration or guest state writes
+were used. Space opened the native End Turn confirmation, Enter accepted it,
+the original game wrote AutoSave, and the Empire turn/message completed.
+The separately reviewed `day-two-income.png` shows **Beginning day2**;
+`income-two-accept.png` shows the returned map, day2 and Huunreh Move20/20.
+The earlier candidate mouse controls did not advance the day; Enter on the map
+opened chat and was closed normally. Only Space/confirmation earns the day claim.
+
+Runtime was exact `af0e208e9` plus the audio repair, canonical Worker
+`1165f15cb29fa4ff4b67621f3ce66f8df68fb50baea929d0b76e9b2f66118135`,
+registered original EXE `adba242a0a3563651baffa6ec7d9a6c0978b7ae844a1cccedb2a1f4e8eb7b1f8`,
+with parent724 pins through GitPinBytes; concurrent host-window/thread changes
+were excluded. Final754 pins match after completion. All three browser parents
+and their actual runtime parents exited0 with separate output EOFs; profiles,
+ports and process lifetimes closed. Independent recovery verified837 references.
+Box `bx_zfbgtfjv` stopped normally at06:36:12Z before its06:54:18Z lease;
+independent GET confirms archived, expiry null, stop
+`stop_39dce5560033bb34` completed / forced=false. The manager and independent
+watchdogs have actual wait0/EOF receipts; the outer submitting tool exited143,
+so no additional outer-client wait receipt is claimed. Next: native Load of the
+preserved whole save and fresh movement; day-two saving, healing and combat
+remain outside this run's claims.
