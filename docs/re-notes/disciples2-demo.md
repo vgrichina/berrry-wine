@@ -581,3 +581,57 @@ The coordinator checked1118 final references /1018 unique raw hashes, the whole
 f file, full victory/XP and fresh Please Wait images. Both game/Chrome parent
 pairs exited0 with separate EOFs; normal box stop passed. Outer transport143
 remains separate. Canvas2D supplies no GL/FPS/audio/parity claim.
+
+## November 12 postbattle Load: native AI stream version mismatch
+
+Run `20261112-disciples2-postbattle-native-load-cause-0836` compared ordinary
+native Load in two fresh processes on the exact af0+703 closure. Whole publicFS
+restore/readback matched authentic f and parent a. Parent a reached the day2
+quest/map; f again read all207944 bytes (31765 reads,223566 bytes including
+rereads,0 failures) and stalled. No battle was repeated and f remains unqualified
+for restored party or fresh movement. The prior qualified a fallback is unchanged.
+
+Passive samples of **loading thread4 / Worker slot3**, using mapped guest stack
+reads, identify `CAiStrategic` deserialization, not the main thread's wait-screen
+rendering. Native `0x445b86` reads a list count, then `0x445c00..0x445c39`
+constructs/inserts that many nodes. The captured count is `0x80630000`
+(2153971712). The `CStreamBits` source at guest184621808 has length292 and
+position292; its complete292 bytes equal original f offsets[2743,3035).
+The first player's obsolete tactic-tail count13 and special count2 were also
+read back from live native objects. The second player's strategic list grew
+through millions of entries while EOF reads failed; native entry helpers ignore
+those failures. A final full capture at08:57:17Z shows a SmartHeap out-of-memory
+Abort/Retry/Ignore dialog after that growth (11848767 nodes sampled). This is a
+later consequence of the identified count loop, not an assumed initial OOM cause.
+No input was sent to the loading guest or the heap dialog.
+
+Original EXE disassembly supplies the version mismatch without changing guest
+state: `0x5c160c` hardcodes header version2, whereas AI saving at `0x4206a3`
+passes `0x7fffffff` to the same serializer. Loading reads header offset16 through
+`0x5c17f6`, forwards it via `0x425d4b/0x425859` to server setter `0x41f4be`,
+and `0x41d3dc` passes it to AI reading. Live server version is2. Version2 skips
+states gated at32 and enables an obsolete tactic tail gated below34. The
+latest writer takes the other layout. Thus the original native reader consumes
+a packed object-ID value as a list count; complete host file reads cannot fix it.
+
+The read-only `audit-native-schema.py` checks original opcode bytes, both whole
+save hashes and this exact version2 walk. For f: strategic0, tactic0, obsolete
+tail13 at blob+8, special2 at+220, then second strategic count`0x80630000` at+256
+(file2999). For a: tail5, special13 at+92 requests through+304 beyond its272-byte
+blob. The original bounded stream reader leaves destinations unchanged on EOF;
+a freshly empty subsequent strategic list therefore retains count0. This explains
+why a can escape the pathological loop; that final a parsing explanation is an
+inference from the original reader/initializer, not a new full AI-state fidelity
+claim. The a control's full map was reviewed; no new a movement or roster proof
+is claimed in this diagnosis.
+
+The remaining dependency is a native save/read AI-schema compatibility decision
+for this original demo EXE. No emulator instruction/API defect was demonstrated,
+and no emulator patch, save edit, forced guest call or skipped code was applied.
+A guard that drops the huge list would conceal deserialization failure and cannot
+qualify f. Repair needs a demonstrated legitimate compatibility path or separately
+authorized native compatibility work, then original whole f ordinary Load and
+fresh movement. Do not enlarge the timeout or replay the battle. Evidence includes
+mapped thread stacks, original disassemblies, byte audit, full canonical Canvas2D
+frames and separate runtime/Chrome actual-parent EOFs. No GL/FPS/audio/parity
+claim follows; the run's RESULT/RECOVERY files bind lifecycle and recovery.
