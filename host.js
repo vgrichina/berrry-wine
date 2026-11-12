@@ -1931,6 +1931,10 @@ class WineAssembly {
     self._guestTickState(sharedAudio);
     const ctx = {
       getMemory: () => self.memory.buffer,
+      // Capture this process incarnation, not running/_stopped: imports exist
+      // before run(), and reinitializing this host creates a new process object.
+      // Detached thread contexts and retained publications share its exit edge.
+      windowLookupLifetime: self._processObject,
       cmosRtc: opts.cmosRtc,
       pitTimer: opts.pitTimer,
       pitNowMs: opts.pitNowMs,
@@ -2784,7 +2788,10 @@ class WineAssembly {
       if (self.renderer) {
         self.renderer.createWindow(hwnd, style, x, y, cx, cy, title, menuId, ownerInstance, self.memory);
         const win = self.renderer.windows && self.renderer.windows[hwnd];
-        if (win) win.processId = self.processId;
+        if (win) {
+          win.processId = self.processId;
+          win._lookupProcess = ctx.windowLookupLifetime;
+        }
       }
       return hwnd;
     };
@@ -2794,7 +2801,10 @@ class WineAssembly {
       if (self.renderer) {
         self.renderer.createDialog(hwnd, parentHwnd, ownerInstance, self.memory);
         const win = self.renderer.windows && self.renderer.windows[hwnd];
-        if (win) win.processId = self.processId;
+        if (win) {
+          win.processId = self.processId;
+          win._lookupProcess = ctx.windowLookupLifetime;
+        }
       }
     };
 

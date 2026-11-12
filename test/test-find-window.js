@@ -6,6 +6,9 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
+  (func (export "test_find_class") (param $class i32) (param $wc i32)
+    (drop (call $class_table_register_data
+      (call $class_name_key (local.get $class)) (call $g2w (local.get $wc)))))
   (func (export "test_find_setup")
       (param $hwnd i32) (param $parent i32)
       (param $class i32) (param $title i32) (result i32)
@@ -45,7 +48,7 @@ const extraWat = String.raw`
 `;
 
 (async () => {
-  const { exports: e, hostCtx } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const { exports: e, hostCtx, module: harnessModule } = await bootRenderHarness({ extraWat, fonts: 'none' });
   // Keep the renderer attached: native/dialog children also exist only in
   // WAT tables. The source-slice lifecycle suite separately covers no renderer.
 
@@ -143,6 +146,129 @@ const extraWat = String.raw`
   'FindWindowExA resumes below the reordered top-level window');
 
   console.log('PASS FindWindowA/W and FindWindowExA search live USER window trees');
+
+  // Use the actual browser host and shell, retaining old contexts explicitly:
+  // WeakRef collection must never be the process-exit protocol.
+  const fs = require('fs');
+  const vm = require('vm');
+  const { createHostImports } = require('../lib/host-imports');
+  const sandbox = { console, URLSearchParams, setTimeout, clearTimeout,
+    setInterval, clearInterval, window: {}, createHostImports };
+  vm.runInNewContext(fs.readFileSync(require.resolve('../host.js'), 'utf8') +
+    '\nglobalThis.WineAssembly = WineAssembly;', sandbox);
+  const shell = require('../lib/browser-shell').createBrowserShell({ apps: {} });
+  global.document = { getElementById: () => null };
+  global.window = { addEventListener() {}, removeEventListener() {} };
+  const renderer = hostCtx.renderer;
+  renderer.windows = {};
+  const retained = [];
+  async function actualHost(pid) {
+    const wine = new sandbox.WineAssembly();
+    wine.renderer = renderer;
+    wine.processId = pid;
+    wine._multiApp = true;
+    wine.logToUI = () => {};
+    wine.memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+    const imports = wine.getImports();
+    imports.host.memory = wine.memory;
+    wine._hostImports = imports.host;
+    wine.instance = await WebAssembly.instantiate(harnessModule, imports);
+    renderer.wasm = wine.instance;
+    renderer.wasmMemory = wine.memory;
+    const context = wine.hostCtx;
+    const ex = wine.instance.exports;
+    const str = value => {
+      const b = Buffer.from(value + '\0', 'latin1');
+      const p = ex.guest_alloc(b.length) >>> 0;
+      b.forEach((v, i) => ex.guest_write8(p + i, v));
+      return p;
+    };
+    const find = (cls, title = null, parent = 0, after = 0) =>
+      ex.test_find_window_ex_a(parent, after, cls === null ? 0 : str(cls),
+        title === null ? 0 : str(title)) >>> 0;
+    const make = (hwnd, cls, title, parent = 0, published = false) => {
+      const c = str(cls), t = str(title);
+      const wc = ex.guest_alloc(40);
+      ex.guest_write32(wc + 36, c);
+      ex.test_find_setup(hwnd, parent, c, t);
+      ex.test_find_class(c, wc);
+      if (published === 'native') {
+        imports.host.register_dialog_frame(hwnd, 0, ex.guest_to_wasm(t), 100, 100, 0);
+        imports.host.set_window_class(hwnd, ex.guest_to_wasm(c));
+      } else if (published) {
+        imports.host.create_window(hwnd, parent ? 0x50000000 : 0x90000000,
+          10, 10, 100, 100, ex.guest_to_wasm(t), 0);
+        imports.host.set_window_class(hwnd, ex.guest_to_wasm(c));
+      }
+    };
+    retained.push({ wine, context, imports, ex });
+    return { wine, context, imports, ex, make, find };
+  }
+  const old = await actualHost(4000);
+  const detached = old.wine.getImports({ detached: true, instance: old.wine.instance });
+  old.make(0x40001, 'RetiredApp', 'old native');
+  old.make(0x40002, 'RetiredSurface', 'old surface', 0, true);
+  const staleSurface = renderer.windows[0x40002];
+  old.make(0x40003, 'RetiredNativeFrame', 'old native frame', 0, 'native');
+  const staleNativeFrame = renderer.windows[0x40003];
+  const foreign = await actualHost(5000);
+  foreign.make(0x50001, 'LiveForeign', 'foreign native');
+  foreign.make(0x50002, 'LiveDialog', 'foreign child', 0x50001);
+  foreign.make(0x50003, 'LiveSurface', 'foreign surface', 0, true);
+  foreign.make(0x50005, 'LiveNativeFrame', 'foreign native frame', 0, 'native');
+  assert.strictEqual(old.find('LiveForeign'), 0x50001);
+  assert.strictEqual(old.find('LiveDialog', null, 0x50001), 0x50002);
+  const getForeignMemory = foreign.context.getMemory;
+  foreign.context.getMemory = () => { throw new Error('active owner failure'); };
+  assert.throws(() => old.find('LiveForeign'), /active owner failure/,
+    'active-owner errors must propagate, not become an empty lookup');
+  foreign.context.getMemory = getForeignMemory;
+  foreign.make(0x50004, 'Destroyed', 'removed surface', 0, true);
+  foreign.imports.host.destroy_window(0x50004);
+  assert.strictEqual(old.find('Destroyed'), 0,
+    'DestroyWindow retirement prevents a still-allocated WND from resurfacing');
+  shell.runningApps.push({ wine: old.wine, name: 'old' });
+  shell.stopAllApps();
+  await new Promise(resolve => setTimeout(resolve, 10));
+  assert.strictEqual(old.wine.memory, null, 'real stop releases old host memory');
+  const relaunched = await actualHost(6000);
+  assert.strictEqual(relaunched.find('RetiredApp'), 0,
+    'relaunch must not query the strongly retained stopped context');
+  assert.strictEqual(relaunched.find('LiveForeign'), 0x50001,
+    'another active process with no surface remains visible');
+  assert.strictEqual(relaunched.find('LiveDialog', null, 0x50001), 0x50002);
+  assert.strictEqual(relaunched.find('LiveSurface'), 0x50003);
+  assert.strictEqual(relaunched.find('LiveNativeFrame', 'foreign native frame'), 0x50005);
+  renderer.windows[0x40002] = staleSurface;
+  renderer.windows[0x40003] = staleNativeFrame;
+  assert.strictEqual(relaunched.find('RetiredSurface'), 0,
+    'retained stopped publications cannot resurrect their HWND');
+  assert.strictEqual(relaunched.find('RetiredNativeFrame'), 0,
+    'native register_dialog_frame publications also end at process exit');
+  relaunched.make(0x40002, 'NewLifetime', 'new native');
+  assert.strictEqual(relaunched.find('NewLifetime', 'new native'), 0x40002,
+    'a stopped publication cannot hide a new owner using the same HWND');
+  assert.strictEqual(relaunched.find('RetiredSurface'), 0);
+  assert.strictEqual(detached.host.find_window(0, 0, 0, 0, 0), 0,
+    'a retained detached thread context belongs to the exited process');
+  let retireWorker;
+  foreign.wine.guestWorker = { stop: () => new Promise(resolve => { retireWorker = resolve; }) };
+  foreign.wine.stop();
+  assert(foreign.wine.memory, 'worker retirement defers memory release');
+  assert.strictEqual(relaunched.find('LiveForeign'), 0,
+    'process exit ends native lookup before asynchronous memory release');
+  assert.strictEqual(relaunched.find('LiveSurface'), 0,
+    'process exit ends publication lookup before asynchronous memory release');
+  assert.strictEqual(relaunched.find('LiveNativeFrame'), 0);
+  retireWorker();
+  await new Promise(resolve => setTimeout(resolve, 10));
+  assert.strictEqual(foreign.wine.memory, null);
+  relaunched.wine.stop();
+  await new Promise(resolve => setTimeout(resolve, 10));
+  assert.strictEqual(retained.length, 3, 'old hosts and contexts remain strongly referenced');
+  delete global.document;
+  delete global.window;
+  console.log('PASS actualHost StopAll/stop/relaunch with retained contexts and live foreign owners');
 })().catch(error => {
   console.error(error && error.stack || error);
   process.exit(1);
