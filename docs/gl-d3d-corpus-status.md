@@ -92,7 +92,14 @@ the0959 Town checks found bank0, skills800>393, empty Repair and no visible
 Upgrade response even with the bagged sword. No new reward/save follows; all
 six files remain unchanged. The helmet graphic is not independently proved as
 an item. Root checked1101 references /998 raw hashes and full bank/final panel.
-Fresh1045 seeks a planned native Ardyl quest or equipment-recovery route.
+The1045 Ardyl route found no quest/dungeon/recovered kit before an unsupported
+Tab request failed the helper allowlist before native dispatch. No new save or
+final live-file readback follows; the six-file supplied fallback remains valid.
+Root checked996 references /905 raw hashes and the full visited-list/outdoor
+frames. Documentation4d5d3c884 records the route and runtime1/Chrome0 EOF,
+normal stopped box and unresolved outer143. This is a helper/operator failure,
+not a demonstrated emulator defect. The gameplay slot now targets SimGolf's
+unfinished native hole after its documented caller cancellation prerequisite.
 
 Outlaws' covered controls now use the original14-bit angle period16384.
 Eight native release/idle tests are stable, but relative mouse behavior and the
