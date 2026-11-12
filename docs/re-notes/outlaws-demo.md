@@ -10,6 +10,31 @@ That initial audit did not acquire bytes; the completed acquisition below supers
 its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
+## November 12 covered-health approach remains open
+
+Run `20261112-outlaws-door-open-covered-health-onward-0833` earned no new
+health, mission consequence or save. The western store approach died after
+turn/movement interpretation drift; native mouse effects and helper behavior
+were not isolated, so no emulator defect is established. The unchanged whole9
+door checkpoint then passed authentic restore/readback, native Enter Load,
+stable living rendering300ms and fresh Shift+Up180 to
+(120.999916,0,162.384171), unchanged health0.6. This position was not saved.
+All14 sets/126 files, including the1.4-health key alternative, remain intact.
+
+Read-only original data identifies a remaining basement canteen at
+(128.73,-10.75,193.27), reached through the store's eastern iron door near
+(133,202), then northbound stairs x134–143 descending to-10.75. Landing and
+basement BGY records do not establish whether those actors remain alive.
+This is a candidate route, not a safe-route result. JAILDOOR01–05 share
+OBJECT102 with the opened telegraph door and are another onward candidate.
+The fresh worker calibrates native turn/release from cover before exposure;
+it must not repeat consumed street-supply searches or assume western entry.
+
+The coordinator checked202 references /185 unique raw hashes, full attempt
+and reloaded movement images. Exact25ac/75ec remains pinned; no code/build/
+commit or healing claim. The box stopped normally with actual runtime/Chrome
+wait0/EOF; outer transport143 remains separate. See the run's recovery notes.
+
 ## November 12 authored shove, Steel Key and opened door102
 
 Run `20261112-outlaws-authored-vertical-use-key-route-0802` found original

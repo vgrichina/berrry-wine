@@ -47,6 +47,19 @@ All four runtime parents exited normally, and the box stopped before expiry.
 These bounded scenes found no runtime defect; they do not prove general crash
 freedom, native-reference parity, strict FPS, audio or historical27 completion.
 
+Disciples II's postbattle Load stall is now traced to original demo AI
+serialization, documented in `281713c5f`. The original save header writes
+version2 while AI saving requests the newest layout; loading that data as2
+reads0x80630000 as a list count and continues allocating after EOF until a
+native SmartHeap exhaustion dialog. The matched known-good a save reaches the
+map; its complete AI-state fidelity is not independently validated. Authentic
+f remains unqualified for Load/fresh movement, with no emulator fix or save
+rewrite claimed. The coordinator checked398 references /357 unique raw hashes,
+original opcode/blob audit and full SmartHeap/control-map images. That gameplay
+lane shifts to Darkstone native healing/quest progress while the compatibility
+dependency is preserved. This Canvas2D result adds no GL/D3D app coverage.
+Evidence: `20261112-disciples2-postbattle-native-load-cause-0836/RESULT.txt`.
+
 Published `8a834a3dc` resolves the remaining MW3 scene-admission cause:
 allocation of a shared-child canvas was mistaken for actual contributing
 content. The compositor now supplies an empty-region proof for that exact
