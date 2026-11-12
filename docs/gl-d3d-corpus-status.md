@@ -8,7 +8,7 @@
 | Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
 | Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion and combat | Victories 9→10→11, native Save/normal Load alive. The newest tested character/map pair restores LIFE 9/35. | [Current gameplay and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-current-worker-gameplay-0119` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
-| MechWarrior 3 | Current moving measurement pending | Actual Worker cockpit, motion and stop | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
+| MechWarrior 3 | Moving terrain updates measured | Actual Worker motion, stop and renderer cost improvement | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
 | Heretic II demo | Actual Worker crate attack and pickups | Current crate route unmeasured | Flying Fist broke the original crate; native HEALTH POTION and HELLORB pickups. Whole `crate0400` save passed normal Load, movement and released survival; exact health gain is unknown. | [Native crate successor](re-notes/heretic2-demo.md#november-12-health-crate-successor), run `20261112-heretic2-north-opening-health-crate-0400` |
 
 The GLTron software proof binds its actual GL software owner and completed
@@ -18,6 +18,22 @@ model. The real-ticks results preserve that remaining limitation. Forsaken's
 later look capture shows a respawn, so controlled turning and enemy defeat
 remain unverified. Darkstone's newest tested save has low health. The preserved
 four-file continuation union was assembled but has no separate replay claim.
+
+MW3 run `20261112-mw3-moving-scene-frame-cost-0410` measures distinct
+published terrain updates: software 2.58–3.83 Hz and WebGL 1.75–2.08 Hz.
+These are not strict completed-game-frame FPS: HUD uploads lose the required
+present-request identity, and observer self-time is only a partial overhead
+accounting. Driver-level diagnostics identify SwiftShader despite the page's
+Intel string; this is not a hardware GPU benchmark.
+
+Published `b54b1cbf8` keeps every native16 storage conversion and checks sticky
+GL errors once before each submitted draw can succeed. Exact DIB/RGBA controls
+on WebGL1/2 and early-error rejection pass, as does the locked build. Balanced
+moving A/B windows on the same guest, Workers, module, context and epoch show
+77.5% fewer storage error queries and 10.8% less submission time per conversion.
+Terrain updates rose 1.763→1.874 Hz; naturally evolving scenes limit attribution.
+The coordinator checked 822 recovered references and the full candidate scene.
+[Measurement, correctness controls and limits](re-notes/mechwarrior3-demo.md).
 
 The coordinator reviewed the full scenes and checked the raw hashes in the
 recovered-artifact inventories for these six runs. The Forsaken repair has a
