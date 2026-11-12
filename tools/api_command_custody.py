@@ -220,14 +220,14 @@ class Transport:
                            poll if 'poll' in locals() else route)
                 raise CommandObservationError(self.failure) from error
 
-    def provision(self, root, pins, remote_root):
+    def provision(self, root, pins, remote_root, *, stage_dir=None):
         """Compose with the existing production chunk assembler and final reread."""
         self.check()
         helper = Path(__file__).with_name('q3-provider-upload.py')
         try:
             runpy.run_path(str(helper))['provision_chunked_files'](
                 root, pins, remote_root, self.url, self.remote, self.record,
-                timeout=self.timeout, cancel=self.cancel)
+                timeout=self.timeout, cancel=self.cancel, stage_dir=stage_dir)
         except Exception as error:
             self._fail(error, 'provision', 'chunked-files')
             raise

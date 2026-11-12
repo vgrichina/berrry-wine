@@ -466,12 +466,14 @@ finally:tmp.unlink(missing_ok=True)
 
 
 def provision_chunked_files(root, pins, remote_root, upload_url, remote,
-                            record=lambda event: None, *, timeout=30, cancel=None):
+                            record=lambda event: None, *, timeout=30, cancel=None, stage_dir=None):
     """No retry/resume. A remote error is terminal before any later operation.
 
     Reopen-independent remote SHA/size ACKs precede every phase barrier. Source
     descriptor identity/timestamps and whole hash cover the exact ordered ranges.
     Only one bounded raw range is staged locally, removed before return/raise.
+    stage_dir explicitly selects an existing absolute working directory; None
+    preserves the platform tempfile default. No fallback or remote rollback.
     """
     import json
     import os
@@ -479,6 +481,13 @@ def provision_chunked_files(root, pins, remote_root, upload_url, remote,
     import uuid
     if not 0 < timeout <= 30:
         raise ValueError('chunk deadline exceeds strict cap')
+    if stage_dir is not None:
+        stage_dir = Path(stage_dir)
+        if not stage_dir.is_absolute():
+            raise ValueError('stage directory must be absolute')
+        stage_dir = stage_dir.resolve(strict=True)
+        if not stage_dir.is_dir():
+            raise ValueError('stage directory must exist')
     root = Path(root).resolve()
     pins = list(pins)
     if len({p['path'] for p in pins}) != len(pins):
@@ -504,7 +513,7 @@ def provision_chunked_files(root, pins, remote_root, upload_url, remote,
                 continue
             part_root=remote_root+'/.q3-chunks/'+session+'/'+str(index)
             parts=[];whole=hashlib.sha256();offset=0
-            with source(pin).open('rb') as stream, tempfile.TemporaryDirectory(prefix='q3-raw-range-') as temp:
+            with source(pin).open('rb') as stream, tempfile.TemporaryDirectory(prefix='q3-raw-range-', dir=stage_dir) as temp:
                 before=stamp(stream);verify(stream,pin)
                 record(dict(event='file-start',path=pin['path'],size=pin['size']))
                 while offset < pin['size']:
@@ -519,7 +528,7 @@ def provision_chunked_files(root, pins, remote_root, upload_url, remote,
                             h.update(b);whole.update(b);out.write(b);remaining-=len(b)
                     part['sha256']=h.hexdigest()
                     if stamp(stream)!=before:raise ValueError('source descriptor mutated')
-                    record(dict(event='chunk-ready',file=pin['path'],**part))
+                    record(dict(event='chunk-ready',file=pin['path'],localStagePath=str(local),**part))
                     provision_files(temp,[part],part_root,upload_url,record,workers=1,timeout=timeout,cancel=cancel)
                     local.unlink();parts.append(part);offset+=n
                 if stream.read(1) or stamp(stream)!=before or whole.hexdigest()!=pin['sha256']:

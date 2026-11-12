@@ -469,5 +469,73 @@ class ChunkConsumerTests(unittest.TestCase):
                 print('CHUNK_ACTUAL_CONSUMER',json.dumps(dict(mode=mode,puts=len(requests),remote=remote_calls,barriers=barriers)),flush=True)
 
 
+class ExplicitStageTests(unittest.TestCase):
+    def test_actual_transport_range_stage_and_terminal_cleanup(self):
+        import json
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from api_command_custody import Transport
+        for mode in ['success', 'portable-default', 'mutation', 'truncated-source', 'failed', 'lost-ack', 'cancel', 'truncated-command']:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory(dir='/dev/shm') as d:
+                root=Path(d); source=root/'source'; source.mkdir(); stage=root/'stage';stage.mkdir();dest=root/'dest';dest.mkdir()
+                sentinel=stage/'unrelated';sentinel.write_bytes(b'keep')
+                payload=bytes(range(256))*17000 # two real capped ranges
+                path=source/'large.dat';path.write_bytes(payload)
+                pin=dict(path=path.name,size=len(payload),sha256=hashlib.sha256(payload).hexdigest())
+                requests=[];staged=[];result={};uploaded=[];transport=None
+                class Handler(BaseHTTPRequestHandler):
+                    def log_message(self,*args):pass
+                    def reply(self,v,status=200):
+                        b=json.dumps(v).encode();self.send_response(status);self.send_header('Content-Length',str(len(b)));self.end_headers();self.wfile.write(b)
+                    def do_POST(self):
+                        body=json.loads(self.rfile.read(int(self.headers['Content-Length'])));requests.append(('POST',self.path))
+                        if mode=='failed':self.reply({},503);return
+                        if mode=='lost-ack':self.close_connection=True;return
+                        if self.path.endswith('/files/upload-url'):
+                            result['path']=body['path']
+                            self.reply(dict(method='PUT',path=body['path'],url=f'http://127.0.0.1:{server.server_port}/put'))
+                        else:
+                            proc=subprocess.run(body['command'],shell=True,capture_output=True,timeout=5)
+                            result['command']=dict(known=True,processId=71,command=body['command'],startedAt='fixture',status='exited',exitCode=proc.returncode,stdout=proc.stdout.decode(),stderr=proc.stderr.decode(),stdoutTruncated=mode=='truncated-command',stderrTruncated=False,signal=None,oomKilled=False)
+                            self.reply(dict(success=True,type='command.started',processId=71,command=body['command'],startedAt='fixture'))
+                    def do_PUT(self):
+                        requests.append(('PUT',self.path));b=self.rfile.read(int(self.headers['Content-Length']))
+                        p=Path(result['path']);assert p.is_relative_to(dest);p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b);uploaded.append(b)
+                        if mode=='cancel':transport.cancel.set()
+                        self.reply({})
+                    def do_GET(self):self.reply(result['command'])
+                def record(e):
+                    if e['event']=='chunk-ready':
+                        local=Path(e['localStagePath']);assert local.parent.parent==(Path(tempfile.gettempdir()) if mode=='portable-default' else stage)
+                        assert local.read_bytes()==payload[e['offset']:e['offset']+e['size']]
+                        staged.append(local)
+                        if mode=='mutation':
+                            with path.open('r+b') as f:f.write(b'!')
+                        if mode=='truncated-source':path.write_bytes(b'!')
+                server=ThreadingHTTPServer(('127.0.0.1',0),Handler)
+                thread=threading.Thread(target=server.serve_forever,kwargs={'poll_interval':.01});thread.start()
+                transport=Transport(f'http://127.0.0.1:{server.server_port}','','fixture',record,timeout=2)
+                try:
+                    if mode in ('success','portable-default'):
+                        transport.provision(source,[pin],str(dest),**({} if mode=='portable-default' else dict(stage_dir=stage)))
+                        self.assertEqual((dest/path.name).read_bytes(),payload)
+                        self.assertEqual(b''.join(uploaded),payload)
+                        self.assertEqual(len(staged),2)
+                    else:
+                        with self.assertRaises(Exception):transport.provision(source,[pin],str(dest),stage_dir=stage)
+                        before=len(requests)
+                        with self.assertRaises(Exception):transport.provision(source,[pin],str(dest),stage_dir=stage)
+                        self.assertEqual(before,len(requests))
+                    self.assertTrue(all(not p.exists() and not p.parent.exists() for p in staged))
+                    self.assertEqual(list(stage.iterdir()),[sentinel])
+                    self.assertEqual(len([x for x in requests if x[0]=='PUT']),len(uploaded))
+                    print('EXPLICIT_STAGE',json.dumps(dict(mode=mode,stage=str(stage),ranges=len(staged),requests=requests,clean=True,wholeSHA256=pin['sha256'],noReplay=True)),flush=True)
+                finally:server.shutdown();server.server_close();thread.join()
+
+    def test_stage_selection_failure_never_falls_back(self):
+        actual=runpy.run_path(str(Path(__file__).with_name('q3-provider-upload.py')))['provision_chunked_files']
+        for stage in ['relative', '/does-not-exist-c3-stage']:
+            with self.assertRaises((ValueError,FileNotFoundError)):
+                actual('.',[], '/unused',lambda p:self.fail('POST'),lambda *a:self.fail('command'),stage_dir=stage)
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
