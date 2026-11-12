@@ -402,3 +402,31 @@ No production code or build was changed. `RESULT.txt` and
 `retrieval-manifest.json` retain exact source, outputs and failed-request timing.
 A fresh task prearms independent page/debugger observations before reproducing
 the read, then resumes native menu/Save/day progression only if responsive.
+
+## November 12 reproduced kernel OOM before the stalled read
+
+Run `20261112-disciples2-page-read-stall-native-save-0534` establishes a cause
+for its two fresh reproductions, not retrospectively for the inaccessible0510
+box. Kernel logs show `CONSTRAINT_MEMCG` kills of owning-runtime Chrome
+PIDs7813 and12523 at05:38:55Z and05:46:23Z, before the unanswered page reads.
+Their anonymous RSS was approximately6.7 and6.6GB. `/user.slice` reached its
+7,789,871,104-byte limit with swap disabled. The exact Chrome subprocess role
+and allocation site were not captured; a page-renderer attribution is inference.
+
+During the second stall, independent browser version/target requests continued
+to answer. Trivial page evaluation, isolate lookup and debugger pause did not;
+no paused stack arrived. The earlier normal rendering stack preceded the kill
+and does not explain it. Increasing PAGE_READ timeout cannot recover the killed
+process. The next task records process roles and allocation growth before OOM,
+then repairs the demonstrated source or helper cause without weakening ownership
+checks. A larger allocation alone would not prove a repair.
+
+Native Escape did open the reviewed Options screen after five separately
+reviewed story panels. Save, day change, healing and Load/movement remain
+unproved. Source stayedaf0e208e9 / actual Worker1165f15c;724pins matched.
+The coordinator verified550 recovered references /489 unique raw hashes,
+the kernel kill records and the full Options image. Both runtime parents
+exited1/EOF; Chrome parents exited0, and the box stopped normally before expiry
+with owner/client/watchdog wait0/EOF. No production change or build was made.
+Exact logs and failed CDP request IDs remain in the run's `RESULT.txt` and
+`retrieval-manifest.json`.
