@@ -369,3 +369,36 @@ Static native modules now receive distinct, process-shared readable PE identity 
 With this change, the same original DLL closure reports TRUE from all five DllMain calls and starts executing the EXE. This is a startup regression check, not a new gameplay or Safari verification: only the EXE/DLL closure was available locally; the headless run had no renderer. Evidence runs: `20261019-disciples2-dll-control`, `20261019-disciples2-dll-native-images` under root scratch/runs.
 
 Validation: full candidate build gates pass; native image direct/sparse fixtures, cross-instance identity/reference release, allocation-failure retry, DLL rollback/completion and DirectX version chain (11/11) pass. The wide API suite retains four failures reproduced on baseline (older KERNEL32 identity expectations and manually inserted lifecycle-less DLL rows); the changed module identity and DSOUND ordinal cases pass. No deployment or full game rerun.
+
+## November 12 current map and page-read limit
+
+Run `20261112-disciples2-post-battle-healing-save-0510` used published runtime
+`af0e208e9` / actual Worker `1165f15c…`, with all721 source/helper/media pins
+verified. The original Canvas2D route reached day1 Huun’reh, and ordinary
+plotted/confirmed eastward movement reduced Move20/20→16/20. The passive
+capture after the northeast approach exceeded its20s controller budget;
+there was no completed encounter frame or battle input.
+
+A changed fresh attempt doubled the work budget to40s and sought a map save
+first. The reviewed image after the disk-icon click still showed the map,
+not a Save panel. Before the next Escape input, page-session `Runtime.evaluate`
+for the exact `bound-input.cjs` PAGE_READ owner expression received no reply
+for35s. Escape was never dispatched. This identifies the observed barrier
+as a page-owner read, not proven Save serialization or Escape consumption.
+No debugger stack was captured; the page, diagnostic getter, guest and protocol
+causes remain unresolved. A larger timeout alone did not resolve it.
+
+No new day, healing, recruitment, battle reward or native Save/load checkpoint
+was established. The prior November7 victory remains its separate evidence.
+MW3-specific guest mouse fields in the inherited helper were invalid for this
+app and excluded; only generic viewport/renderer fields mapped clicks.
+The request client's `oomKilled` flag is retained without a memory-cause claim.
+
+The coordinator verified641 recovered references /559 unique raw hashes and
+the full eastward-movement and unchanged-map images. Both actual runtime
+parents exited1 with separate output EOF; both Chrome parents exited0/EOF.
+The box stopped normally before expiry, with watchdog/manager/client wait0/EOF.
+No production code or build was changed. `RESULT.txt` and
+`retrieval-manifest.json` retain exact source, outputs and failed-request timing.
+A fresh task prearms independent page/debugger observations before reproducing
+the read, then resumes native menu/Save/day progression only if responsive.
