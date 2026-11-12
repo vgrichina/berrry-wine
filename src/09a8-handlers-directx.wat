@@ -2770,10 +2770,17 @@
     (local.set $pitch (i32.and
       (i32.add (i32.mul (local.get $w) (i32.div_u (local.get $bpp) (i32.const 8))) (i32.const 3))
       (i32.const 0xFFFFFFFC)))
-    ;; DDSD_PITCH: system-memory surfaces may have caller padding that every
-    ;; subsequent Lock must preserve.
+    ;; DDSD_PITCH: caller-backed (DDSD_LPSURFACE) surfaces may have caller
+    ;; padding that every subsequent Lock must preserve. Without LPSURFACE the
+    ;; pitch is DirectDraw's to choose and lPitch is ignored: DX-Ball fills
+    ;; its glyph descriptors with dwFlags=0xF (CAPS|HEIGHT|WIDTH|PITCH) and
+    ;; never writes lPitch, so honoring it sized a 13x10 font glyph from
+    ;; stack garbage (2.7 GB), CreateSurface failed with OUTOFVIDEOMEMORY and
+    ;; the high-score screen lost every line of text.
     (if (i32.and
-          (i32.ne (i32.and (local.get $ddsd_flags) (i32.const 0x00000008)) (i32.const 0))
+          (i32.and
+            (i32.ne (i32.and (local.get $ddsd_flags) (i32.const 0x00000008)) (i32.const 0))
+            (i32.ne (i32.and (local.get $ddsd_flags) (i32.const 0x00000800)) (i32.const 0)))
           (i32.ne (i32.load offset=16 (local.get $ddsd_wa)) (i32.const 0)))
       (then (local.set $pitch (i32.load offset=16 (local.get $ddsd_wa)))))
     ;; Allocate DIB, plus slack rows past the end.

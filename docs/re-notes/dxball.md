@@ -266,3 +266,15 @@ instructions, level, ball launched, bricks broken, score 116, app alive.
 0/191 changed pixels), on 422eba5a4 too: its fixed batch schedule now clicks
 during the level fade-in, which the game ignores. A later click launches the
 ball headless. The test's schedule needs re-timing; it is not this bug.
+
+## High-score screen had no text (fixed 2026-11-11)
+
+Game state `[0x431fd0]` 3 is the high-score screen (`0x409410` init, `0x409510`
+draw; enter it headless by poking `[0x431fc4]=3`, `[0x431fc8]=1` mid-level).
+Its text uses `mainmenu.sbk` and `sysfont.sbk`, loaded by `0x40c080(slot, video,
+name)`, which makes one DirectDraw surface per glyph with `dwFlags=0xF`
+(CAPS|HEIGHT|WIDTH|**PITCH**) and never writes `lPitch`. CreateSurface honored that
+stack garbage (bdf496fb4) and failed with DDERR_OUTOFVIDEOMEMORY. On failure the
+loader returns at `0x40c505` without fclose, so the slot has 0 glyphs and
+`0x40c720` draws nothing. CreateSurface now honors lPitch only with
+DDSD_LPSURFACE. Covered in test-directdraw-surface-caps.
