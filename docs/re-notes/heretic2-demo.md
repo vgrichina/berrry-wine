@@ -51,9 +51,42 @@ identifies the next observation gap. Each of54 zero-EAX ReadFile post-handler
 records is followed by matching re-entry and success within the ReadFile
 stream. The frozen source invokes that hook during internal lazy-I/O parking,
 but the observer did not retain yield/park state. These rows do not prove
-guest-visible read failures or an exit cause. Passive runtime park/completion
-correlation is needed; no speculative patch, extra GL/GetLastError query or
+guest-visible read failures or an exit cause. Ordinary-load-phase park/completion
+correlation remains needed; no speculative patch, extra GL/GetLastError query or
 guest reverse engineering follows from the audit.
+
+## November 12 observer limits and interrupted follow-up
+
+The later [payload-free observer](heretic2-payload-free-iat-observer-2245-20261112.md),
+`66d04d314`, removes inherited payload decoding from the future hooks. Its
+composed IAT/COM tests cover caller-to-thunk re-entry, bounded trace overflow and
+phase reset; payload guards report zero forbidden reads and zero decoder
+constructions. Actual original startup records **149 internal read parks and
+149 correlated retries in each recorder**. These are two observations of the
+same events, not 298 distinct parks. Guest returns remain UNKNOWN.
+
+That original reached Easy, verified all four save files and typed the sole
+`load crate0400` command. The newer settled screenshot label failed the driver's
+phase gate before observer reset or Enter. **No Load was submitted**, so this
+run neither reproduces Exit8 nor qualifies ordinary-load trace retention.
+Root checked 330 sealed file hashes, 134 opaque recovered blobs mapping 164
+paths, and all twelve unique full PNGs behind thirteen capture paths.
+
+The preceding [2230 staging attempt](heretic2-save-stage-correlation-2230-20261112.md)
+had retained an inherited WriteFile payload preview, violating the owner's
+no-decode restriction. Its evidence remains preserved and opaque; root did not
+inspect or use that payload. Its integrity checks are not a compliance claim.
+The later payload-free guards do not retroactively qualify it.
+
+A separate driver-gate follow-up ended during provisioning: launcher status1,
+missing final report, and automatic safety-review refusal. The rejected
+workflow was not retried. [Cleanup](heretic2-interrupted-provision-cleanup-2335-20261112.md),
+`1c86ee44c`, preserved eighteen opaque snapshots and normally archived
+`bx_ktb4h7k3`, expiry null, stop `stop_20860d58ccf62cab` completed unforced.
+Root verified all snapshot raw/encoded hashes and the stop receipt. Historical
+provision/manager/watchdog exit statuses and EOFs remain UNKNOWN; process
+absence is not a clean join or proof of a completed original run. No new cause,
+runtime repair, loaded-world survival or checkpoint is established.
 
 ## November 12 health-crate successor
 
