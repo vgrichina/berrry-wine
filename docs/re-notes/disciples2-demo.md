@@ -457,7 +457,7 @@ were weakened.
 
 The controlled repaired menu arm remained approximately400 MiB renderer anonymous
 RSS over183 seconds; its native AudioBuffer sample was0.3125 MiB. The final
-source then ran the original quest for almost20 minutes, with renderer peak
+source then ran the original quest for almost20 minutes, with sampled renderer peak
 781 MiB during actual gameplay. Its forwarding-only allocation observer counted
 exactly two initial AudioBuffers through day two, and Wasm memory stayed512 MiB.
 AudioContext remained suspended, so audible playback is not claimed.
@@ -473,6 +473,7 @@ were used. Space opened the native End Turn confirmation, Enter accepted it,
 the original game wrote AutoSave, and the Empire turn/message completed.
 The separately reviewed `day-two-income.png` shows **Beginning day2**;
 `income-two-accept.png` shows the returned map, day2 and Huunreh Move20/20.
+Day1 also showed20/20; this run does not prove replenishment from spent movement.
 The earlier candidate mouse controls did not advance the day; Enter on the map
 opened chat and was closed normally. Only Space/confirmation earns the day claim.
 

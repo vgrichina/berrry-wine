@@ -58,6 +58,17 @@ references /131 unique raw hashes and the final full scenes. This repairs a
 host lifecycle crash; it adds no general crash-freedom or FPS claim. Evidence:
 `20261112-host-window-retired-context-relaunch-0555/report.txt`.
 
+Published `703015ea5` repairs a generic DirectSound allocation leak exposed by
+original Disciples II. Suspended long-ring refreshes retained decoded buffers;
+coalescing them preserves latest PCM and the guest cursor on resume. The old
+source fails the allocation regression; six audio suites and the locked build
+pass. The repaired original page completed native Save and End Turn to day2,
+with a sampled renderer peak of781 MiB over almost20 minutes. The coordinator
+checked837 recovered references, the complete208,644-byte native save and full
+Save/day2 images. Native Load and fresh movement remain the next game action.
+This is Canvas2D gameplay; audible playback and GL backend coverage are separate.
+[Cause, repair and native save](re-notes/disciples2-demo.md).
+
 The coordinator reviewed the full scenes and checked the raw hashes in the
 recovered-artifact inventories for the six earlier runs and the additional
 paired Blood II/TR2 sweep. The Forsaken repair has a
