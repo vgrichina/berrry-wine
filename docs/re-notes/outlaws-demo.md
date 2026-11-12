@@ -10,6 +10,37 @@ That initial audit did not acquire bytes; the completed acquisition below supers
 its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
+## November 12 native aperture collision cause
+
+Run `20261112-outlaws-aperture-collision-key-route-0738` tested a changed
+southern approach with bounded passive native tracing. Blocking branches
+0x4e6825/0x4e6833 after recursive query0x4e6990 selected two walls: raised
+sector253 corner0x10d9414, floor4.25, and aperture73 southern lip0x1193374.
+Crouching reduces height5.99→2, fitting the opening's3-unit clearance, but
+keeps radius1.5. Original wall test0x4e80a0 expands the wall interval at each
+end by radius, rather than using the previously hypothesized circle-corner
+metric. The raised obstacle extends south149.5+1.5=151; aperture73 requires
+center z≤150.5 at its south boundary. These forbidden extents overlap0.5.
+This explains the horizontal stall for this approach; no emulator defect or
+global impossibility of earning the key follows.
+
+The unsaved diagnostic ended (134.760681,.25,150.270660), health2.2,
+without x134 crossing, SteelKey or door102. All nine restored VFS files remain
+byte-identical, and all12 ancestral sets/108 files remain preserved. Continue
+from the0710 east-threat whole9 save. The next investigation targets authored
+vertical/use behavior or a different access route; repeated horizontal crawls
+and unsupported counter jumps add no evidence. Actor+0x38 is a sector pointer;
+earlier helper fields calling it a descriptor do not prove actor metadata.
+
+The coordinator checked172 references /149 unique raw hashes, the full final
+native frame and causal trace summary. Runtime remains exact25ac/75ec, with
+no source change/build/commit. Tracing affects timing and is not a benchmark.
+Some initial intermediate captures were reviewed only at final audit; completed
+live/paused frames were reviewed before dependent actions, and later diagnostic
+frames were each reviewed before further action. Actual runtime owner wait0/EOF,
+Chrome0 and normal box stop passed. Outer client143/missing client wait remains
+separate. Exact findings/recovery are in the run's `RESULT.md`/`RECOVERY.md`.
+
 ## November 12 east gunman defeat and aperture limit
 
 Run `20261112-outlaws-east-corner-threat-supplies-0710` identified the armed
