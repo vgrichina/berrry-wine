@@ -6,7 +6,7 @@
 | --- | --- | --- | --- | --- |
 | GLTron | Moving trails and round outcome | Moving trails | Browser gameplay on module `1165f15c…`. Cooperative and actual Worker CLI gameplay also works with `--real-ticks`. | [Current scenes](re-notes/gltron-current-device-scenes-20261112.md), run `20261112-gltron-current-device-scene-repair-0015` |
 | Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
-| Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion and combat | Victories 9→10→11, native Save/normal Load alive. The newest tested character/map pair restores LIFE 9/35. | [Current gameplay and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-current-worker-gameplay-0119` |
+| Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories9→10→11 retained; native Town rest2→35/35 and new Save/Load/fresh movement. Food0, AC6, helmet only after costly retreat; food/equipment next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-native-healing-quest-successor-0907` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
 | NFS3 demo | Actual Worker acceleration, steering and recovery | Actual Worker acceleration, steering and recovery | Original software82 MPH and WebGL/SwiftShader48 MPH with road progress; lap/finish and FPS remain open. | [Current paired driving](re-notes/nfs3-current-paired-driving-20261112.md), run `20261112-nfs3-provision-gated-paired-driving-0840-fresh` |
 | MechWarrior 3 | Qualified moving scene publications | Qualified moving scene publications | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
@@ -47,6 +47,25 @@ RGB565 surface and completed software raster work. The coordinator checked
 All four runtime parents exited normally, and the box stopped before expiry.
 These bounded scenes found no runtime defect; they do not prove general crash
 freedom, native-reference parity, strict FPS, audio or historical27 completion.
+
+Darkstone's latest WebGL continuation uses current8a834/module04c53419.
+Native Town retreat removed sword/cape/shield, and rest healed2→24→35 while
+consuming food24→0. The new complete Town save restored35/35,11 victories,
+1713 gold and helmet-only AC6, then accepted fresh movement. Final unsaved
+life34 reflects hunger; no cost-free retreat or quest completion is claimed.
+The coordinator checked411 references /373 unique raw hashes, all five complete
+native files, full reloaded health/fresh movement images and6/6 input tests.
+All actual runtime/Chrome/lifecycle/watchdog waits reached0/EOF and the box
+stopped normally. Documentationeb8284954 records the exact successor. The
+fresh task seeks native food/equipment before combat.
+
+Outlaws' covered controls now use the original14-bit angle period16384.
+Eight native release/idle tests are stable, but relative mouse behavior and the
+prior turn drift remain unisolated. A changed eastern-window jump did not enter
+the store; no new health/consequence/save follows. Native14bit/helper correction
+is not an emulator fix. The safe-entry dependency and authentic checkpoints are
+preserved; that gameplay slot now targets Caesar III's unfinished population150
+assignment. Caesar III is2D and adds no GL/D3D coverage.
 
 Disciples II's postbattle Load stall is now traced to original demo AI
 serialization, documented in `281713c5f`. The original save header writes
