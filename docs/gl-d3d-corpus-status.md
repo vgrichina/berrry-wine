@@ -6,7 +6,7 @@
 | --- | --- | --- | --- | --- |
 | GLTron | Moving trails and round outcome | Moving trails | Browser gameplay on module `1165f15c…`. Cooperative and actual Worker CLI gameplay also works with `--real-ticks`. | [Current scenes](re-notes/gltron-current-device-scenes-20261112.md), run `20261112-gltron-current-device-scene-repair-0015` |
 | Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
-| Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories11 retained; native food purchase/eating, rest to35/35 and sword purchase. New Save/Load restores Food82, gold393, sword+helmet/AC6 and accepts fresh movement; Town quest/funding next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-town-food-equipment-0925` |
+| Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories11 retained; native food purchase/eating, rest to35/35 and sword purchase. New Save/Load restores Food82, gold393, equipped sword/AC6 and accepts fresh movement; Town bank0/service checks yield no gain, planned Ardyl quest/recovery next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-town-food-equipment-0925` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
 | Hexen II | Current courtyard/chamber movement and attack animation alive at8 HP | Current native GL owner and main menu; active world uncaptured | Enemy damage/kill unproved; later SoftwareGL death and WebGL screenshot timeout retained. | [Dialog bootstrap and bounded gameplay](re-notes/hexen2-dialog-bootstrap-paired-gameplay-20261112.md), run `20261112-hexen2-dialog-bootstrap-paired-gameplay-0953` |
 | Re-Volt demo | Actual Worker driving, steering and recovery | Actual Worker driving and steering | Software21/26 mph and WebGL Time Trial16 mph; no checkpoint/lap/finish. Unsupported helper action stopped later steering before dispatch. | [Current paired driving](re-notes/revolt-current-paired-driving-checkpoint-20261112.md), run `20261112-revolt-current-paired-driving-checkpoint-0911` |
@@ -78,13 +78,17 @@ Darkstone's latest WebGL continuation uses current8a834/module04c53419.
 Native food purchase/eating raised Food0→99 for120 gold; rest healed21→35.
 A native1200-gold sword purchase equipped the weapon and raised displayed
 Damage2–2→2–6. New native Save/Load restores35/35, Food82, gold393,
-11 victories and sword+helmet/AC6, followed by fresh movement. Shield1350
+11 victories and equipped sword/AC6, followed by fresh movement. Shield1350
 and rags900 remain unaffordable; no quest completion or further combat follows.
 The coordinator checked903 references /819 unique raw hashes, all six complete
 native files and full reload/fresh movement images. Actual runtime/Chrome waits
 reached0/EOF and the box stopped normally. Run
 `20261112-darkstone-town-food-equipment-0925` retains the exact recovery set;
-the fresh0959 task seeks native Town quests and equipment funding before combat.
+the0959 Town checks found bank0, skills800>393, empty Repair and no visible
+Upgrade response even with the bagged sword. No new reward/save follows; all
+six files remain unchanged. The helmet graphic is not independently proved as
+an item. Root checked1101 references /998 raw hashes and full bank/final panel.
+Fresh1045 seeks a planned native Ardyl quest or equipment-recovery route.
 
 Outlaws' covered controls now use the original14-bit angle period16384.
 Eight native release/idle tests are stable, but relative mouse behavior and the

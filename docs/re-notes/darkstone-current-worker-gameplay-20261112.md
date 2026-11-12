@@ -235,3 +235,209 @@ Next: load the new Town successor, obtain native food with a fresh gold/UI
 reading, and address missing equipment or its recovery before returning to
 combat. The older51b49 equipped dungeon continuation is preserved as an
 alternative, with its original low-health risk.
+
+## Successor0925: native food, sword purchase, supplied Town Save/Load
+
+Run `scratch/runs/20261112-darkstone-town-food-equipment-0925/` advanced the
+healed Town continuation through native purchases before any combat. Runtime
+remains `8a834a3dc7affc8c6e53245beab56e87a32b81e8`, executing module
+`04c534192ee3fe39e388536c2ce710c12c47a5cd2ca4d95c19f9d00b1e8f0a17`.
+Original EXE/media are unchanged. No production change or emulator defect was
+demonstrated. This evidence-only work required no build; the coordinator
+subsequently reviewed and published the completed documentation.
+
+All **664** inputs passed full remote size/hash readback and the provision
+process joined successfully before browser launch. Production `loadFiles`
+mounted the preferred current character and all four authentic maps. PublicFS
+raw readback matched all five whole files. Native fourth-slot Town preview,
+ordinary Load and live panel confirmed **LIFE35/35, Food0, Gold1713, AC6,
+Victories11+0**, helmet only. A fresh floor click displaced the hero before
+approaching town services. No older-map rollback was substituted.
+
+The native route passed Elmeric's counter and Larsac's storefront to **Perry
+the Publican**, beside the green cup sign. Elmeric's stock was inspected
+without purchase. Perry's Buy stock showed Gold1713 and hovered **Food
+(Gold120), Food20**. Purchase confirmation debited **1713→1593** and added
+roasted food to the empty bag. Current panel then showed **LIFE21/35, Food0**:
+hunger had continued during navigation. Native hover said **Right click to
+eat**. One balanced right click removed the purchased item and changed numeric
+**Food0→99**, with Life21/35 and Gold1593 unchanged. The stock's Food20 and
+observed99 are both retained; the discrepancy has no demonstrated cause or
+emulator fix. The permanent apple icon is not used as numeric food evidence.
+
+Native **To rest** healed **21→35/35**, consuming **Food99→88**, with
+Gold1593 unchanged and **You are in full health again** displayed. Later
+movement retained35/35 life as food declined normally.
+
+**Gunther the Blacksmith → Buy → Warrior** showed:
+
+| Item | Gold | Native properties |
+|---|---:|---|
+| Sword |1200|Damage1–5, durability10/10, required20STR|
+| Shield |1350|Armour4, durability15/15|
+| Rags |900|Armour2, durability20/20|
+| Axe |2250|Unaffordable with1593 gold|
+
+Two early review strings misread sword requirement10STR; the full stock and
+equipped images prove20STR, matching hero20STR. The **Buy Sword /1200 Gold
+Pieces** confirmation debited **1593→393**. Native panel proved automatic
+equipment: an equipped sword and helmet-shaped paperdoll graphic, empty bag,
+damage **2–2→2–6**,
+LIFE35/35, Food82, Gold393, Victories11+0 and AC6. No extra equip input or
+fight was used. **Shield and body armour remain absent**:393 gold cannot buy
+Shield1350 or Rags900. Full equipment recovery/combat readiness is not claimed;
+stay in Town for legitimate quest/funding/recovery before combat.
+
+Native **Save a Game → New Save** created:
+
+| Native file | Bytes | SHA-256 |
+|---|---:|---|
+| characters.lpl |1342356|`ef58a000a453f5917909f794552800a487337f781c8c2e9d5ff129696b2168f4`|
+| game641d_6af58b24.sav |3204385|`8032bfe798828bcd6b8f3a15b77b6ba1cf859c66ff7446707da541f6d7427131`|
+
+`earned-town-food-sword-recovery.json` selects the new pair;
+`continuation-whole-file-set.json` references current character plus all five
+maps with raw/compressed hashes. All four older maps, including healed Town
+58371, remained byte-identical. Older characters remain in predecessor runs;
+do not mix older character indexes with this map set. Native fifth/newest
+slot preview and ordinary Load, without remount, restored living Town by
+Gunther with **35/35 life, Food82, Gold393,11 victories,sword equipped,AC6**.
+The later0959 check could not establish the helmet graphic as an actual item.
+One fresh reviewed pavement click visibly displaced hero/shop/fence. Final
+unsaved capture retained **35/35 life, Food80**. Save precedes that walk.
+
+Early/per-capture binding identified actual guest endpoint1/slot0 and its
+owning legacy WebGL renderer Worker, both on the exact module above. Live
+640×480 targets reported WebGL2RenderingContext; renderer error0 and native
+software completions0. Normal Load's legitimate live GL target replacements
+were accepted with owner/module guards retained. Page canvas2D and reported
+Intel/Mesa strings do not establish physical GPU execution. No FPS/audio/
+parity/second-backend/full27 qualification is claimed.
+
+Recovery independently reread and locally verified **903 references /819
+unique hashes**, including **82 bound full captures,54 balanced pulses and
+165 trusted events**, executing module, native files and runtime disposal.
+Large unique output logs/module were compressed remotely before transfer;
+local exact duplicates were hardlinked without dropping unique evidence.
+Git commit/diff/helper patches provide source recovery; no source/media
+archive was created. Native-input tests passed6/6; `verify-recovery.py` passed.
+
+Private box **bx_q55uqfez** had an initial55-minute lease expiring
+**2026-11-12T10:19:37.383Z** and an independently prearmed watchdog. Runtime/
+Chrome actual parent waits returned0 with separate stdout/stderr EOF and
+owned PIDs absent. After verified retrieval, normal delegated stop completed
+**09:52:50.292Z**: **archived**, expiry **null**, receipt
+**stop_7ff1a4931f887b2f**, `forced:false`, `error:null`. Lifecycle client,
+durable owner and watchdog actual waits/EOF completed0; watchdog did not fire.
+No workers/public deployment; free/home stayed above1,500,000,000 bytes.
+
+
+## Successor0959: Town funding and service checks; consequence blocked
+
+Run `scratch/runs/20261112-darkstone-town-quest-equipment-funding-0959/`
+replayed the preferred0925 supplied checkpoint, then inspected native Town
+funding, dialogue and equipment-service options. **No new quest receipt,
+journal entry, funding gain or equipment improvement was demonstrated. No new
+Save was created.** This is a concrete Town-route blocker, not an earned new
+checkpoint. The prior food/sword purchases are not counted again.
+
+Runtime remains exact `8a834a3dc7affc8c6e53245beab56e87a32b81e8`, with
+actual guest and owning renderer modules both SHA-256
+`04c534192ee3fe39e388536c2ce710c12c47a5cd2ca4d95c19f9d00b1e8f0a17`.
+All666 provisioned inputs passed remote full raw size/hash readback and the
+provision call joined successfully before browser launch; exact box identity,
+idle state and lease were checked. GitPinBytes overrides were0. Original
+EXE/media pins are unchanged. No production change or emulator defect was
+shown; no build was required for this evidence-only documentation.
+
+Production `loadFiles` mounted current character ef58a000 and all five maps,
+and publicFS raw readback matched all six complete authentic files. Equal
+restored file dates made row position unreliable: the initially highlighted
+fifth row previewed the **older healed Town**, Gold1713, and fourth previewed
+a dungeon BAT. Neither was loaded. **Third row** previewed the actual newest
+suppliedTown by Gunther, Gold393, Food82, LIFE35/35,11 victories, AC6 and sword
+damage2–6. Ordinary Load and live inventory confirmed those values; a fresh
+pavement click visibly displaced hero/shop/fence before further exploration.
+Future workers must identify the newest state by preview and live readings,
+not assume a fifth-row position after remount.
+
+Native quill tooltip identified adventure history (H MODE). Opening it before
+and after dialogue produced no visible entry/panel. Gunther's **Talk to** and
+Larsac's **Talk to** each returned to services after native dialogue delay,
+without visible quest receipt or reward. Krym's performer interaction likewise
+demonstrated no quest change. No audio/dialogue-content claim is made.
+
+Master Dalsin's actual teaching panel offered **Trade Level1(800)** and
+**Repair Level1(800)** against Gold393. Larsac's coin-sign storefront led to
+**Bank Account → current balance0 gold pieces**, with Deposit/Withdraw/Exit;
+no transaction was made. This corrects the prior request-string label
+"Larsac the Sorcerer": the native heading is **Larsac the Usurer**. The
+[original manual](https://dsdb.it-taucher.at/attachments/212_Darkstone%20Manual.pdf)
+identifies Larsac's bank, describes blacksmith enhancement's durability cost,
+and directs initial quest exploration into Ardyl after leaving Town. Manual
+pages25,27,30 were individually reviewed; no quest beyond Town was attempted.
+
+Gunther's **Repair** grid was empty. **Upgrade** produced no visible
+transition, price or property change, both with sword equipped and after
+ordinary inventory clicks moved the same sword into the bag. Its tooltip
+proved **damage1–5, durability10/10, required20STR**. The bag-transfer check
+was made beside Gunther after a second ordinary Load of the **same supplied
+map**, discarding unsaved navigation only; no remount or older-map rollback
+occurred. Native inventory clicks then re-equipped the retained sword,
+restoring panel damage2–6 and leaving the bag empty. No sale, repurchase,
+resource edit, forced guest call, combat or new native Save occurred.
+
+The helmet-shaped paperdoll graphic from earlier notes did not yield item
+properties or respond to centered selection; this run cannot independently
+qualify it as a selectable retained helmet. The sword was positively selected,
+bagged and re-equipped with corresponding damage readings. Do not count the
+graphic alone as a recovered armour item. AC remained6 throughout.
+
+The observed blocker is **bank0 / carried393**, compared with previously
+observed Rags900 and Shield1350 and newly observed skills800; no repair
+candidate, no visible Upgrade response even with bagged pristine sword, and
+no visible Town quest receipt. The cause of Upgrade's unavailable response is
+unproven; no demo limitation or emulator defect is inferred. A native Ardyl
+quest/funding/recovery route remains a possible next task, requiring careful
+planning around absent armour/shield and the retained sword. Random combat
+alone is not a substitute for that objective.
+
+Final fresh native pavement movement again displaced the hero. The final
+unsaved panel showed **LIFE35/35, Food77, Gold393,11 victories, AC6,
+damage2–6**, sword equipped, empty bag. Final publicFS raw readback matched
+**all six input files byte-for-byte**, including the current character and all
+five older/newest maps; the saved supplied checkpoint still hasFood82.
+`continuation-whole-file-set.json` will describe that unchanged checkpoint,
+not a new earned save. Older character indexes remain separate in predecessor
+evidence and must not be mixed into this set.
+
+Recovery verified 1101 remote references /998 unique
+hashes,101 bound full captures,74 balanced pulses and223 trusted events. All
+six authentic files remained unchanged. The existing native-input suite passed
+6/6 and documentation diffcheck passed. Per-frame bindings retained actual
+guest endpoint1/slot0 and owning legacy WebGL renderer Worker/module identity,
+accepting native Load's legitimate live target replacements. No physical-GPU,
+FPS,audio,parity,second-backend or full27 qualification is inferred. Unique
+large outputs were remotely compressed before transfer; no source/media
+archive was created. Git SHA/diff/helper patches provide source recovery.
+
+Private box **bx_b3wyase6** began with55-minute expiry
+**2026-11-12T10:54:36.686Z**, with independently prearmed observable watchdog.
+After verified recovery, normal delegated stop completed
+**2026-11-12T10:40:27.175Z**: state**archived**, expiry**null**, receipt
+**stop_7e54932022b6490b**, `forced:false`, `error:null`. Remote runtime and
+Chrome actual parent waits were0 with separate output EOF and PIDs absent.
+Local durable command/watchdog actual parent-wait records and outer drains
+reported0/EOF; the independent deadline watchdog also joined0 and did not
+fire. **The outer tool launcher session55848 returned143**, with no
+`lifecycle-client-wait.json` or wrapper-owner wait record. Its cause and full
+outer-client wait are unproven; recorded lifecycle PIDs were absent. This
+local launcher discrepancy is preserved separately from the successful remote
+runtime waits and verified normal box stop. No worker/public deployment was
+launched; free/home remained above1,500,000,000 bytes.
+
+Main HEAD at handoff is `81e4c9b27cfba18286809236bbaa0bd600a14c0f`; no new commit was created under the explicit
+evidence-only constraint. RESULT.md, RECOVERY.md, retrieval-verified.json,
+SHA256SUMS.json and the unchanged continuation manifest are retained in the
+run. The coordinator subsequently verified the recovered references and full
+bank/final inventory images and adopted this whole-file documentation.
