@@ -47,6 +47,17 @@ All four runtime parents exited normally, and the box stopped before expiry.
 These bounded scenes found no runtime defect; they do not prove general crash
 freedom, native-reference parity, strict FPS, audio or historical27 completion.
 
+Published `d55e326c5` fixes Stop All → relaunch window lookup after process
+exit. Retained import contexts and window/native-dialog publications now end
+their lookup lifetime with the process; live foreign owners and reused HWNDs
+remain valid. The actual-host regression fails on the genuine old source,
+and focused lifecycle tests plus the locked build pass. Original TR2 stopped
+PID1000 and relaunched PID1001 on the same page, then rendered Venice and
+responded visibly to movement/turning. The coordinator checked154 recovered
+references /131 unique raw hashes and the final full scenes. This repairs a
+host lifecycle crash; it adds no general crash-freedom or FPS claim. Evidence:
+`20261112-host-window-retired-context-relaunch-0555/report.txt`.
+
 The coordinator reviewed the full scenes and checked the raw hashes in the
 recovered-artifact inventories for the six earlier runs and the additional
 paired Blood II/TR2 sweep. The Forsaken repair has a
