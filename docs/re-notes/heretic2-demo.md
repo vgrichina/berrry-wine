@@ -7,6 +7,30 @@ renderer (`ref_gl.dll` / `ref_soft.dll`), `SndDll.dll` and, under `Base\`,
 `gamex86.dll`, `Player.dll` and `Client Effects.dll` are `LoadLibrary`'d at
 runtime. Registered 274f69e21.
 
+## November 12 current checkpoint load comparison
+
+Current module `04c53419…` restores the complete unchanged `crate0400` set on
+the actual SoftwareGL owner. The latest control shows HUD health 31 after
+normal load, a 600 ms backward pulse followed by 3000 ms with the movement key
+released, and a separate 4500 ms neutral interval. These checks use native
+pause/resume cycles; their final screenshots display the paused banner.
+They establish bounded living movement, not sustained onward gameplay.
+
+WebGL again exits natively with code 8 during the same normal load. The new
+passive observer records successful context creation/current binding and zero
+at the existing startup error queries. There are no load-time error queries,
+so those results do not establish a clear error flag during loading. No
+runtime violation, repair or new checkpoint was proved. The final successful
+swap precedes exit by five milliseconds, but its completed pixels were not
+retained. The next permitted witness is that final frame before teardown.
+
+Published `8f68731a1`; [diagnosis, exact recovery and lifecycle limits](heretic2-runtime-boundary-20261112.md),
+run `20261112-heretic2-runtime-boundary-1910`. Coordinator review checked 364
+references, 30 full PNG identities and PNG CRCs, and four complete frames.
+The box stopped normally; original local manager/watchdog parent waits remain
+unknown. Further investigation uses runtime/API/renderer observations only,
+without guest reverse engineering or guest modifications.
+
 ## November 12 health-crate successor
 
 Run `20261112-heretic2-north-opening-health-crate-0400` reached the original

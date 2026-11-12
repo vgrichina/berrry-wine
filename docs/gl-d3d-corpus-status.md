@@ -14,7 +14,7 @@
 | MechWarrior 3 | Qualified moving scene publications | Qualified moving scene publications | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
-| Heretic II demo | Current8a834/04 living crate0400 Load, fresh movement and released interval | Current Easy docks; crate Load reproduces native ExitProcess8 | Full four-source reads pass on both; WebGL exit cause unresolved, no production fix or paired onward proof. | [Current load comparison](re-notes/heretic2-current-load-exit-cause-20261112.md), run `20261112-heretic2-current-load-exit-cause-1135` |
+| Heretic II demo | Current8a834/04 whole-four crate0400 Load at 31 HP; bounded movement/released intervals with native pause cycles | Current Easy docks; crate Load again exits natively with code 8 | Startup error queries return 0; load-time error state and final completed pixels remain unobserved. No runtime violation or paired onward proof. | [Latest runtime boundary](re-notes/heretic2-runtime-boundary-20261112.md), run `20261112-heretic2-runtime-boundary-1910` |
 | Half-Life Uplink | Actual SoftwareGL rear-panel destruction, corridor passage and headcrab encounter | Current actual WebGL living controls and elevator onward | The1825 run destroys the separate rear panel, passes south/east into the corridor and meets a headcrab. Complete thirteen-file03:18 save passes native export/move-away/Load/fresh movement in the same browser. Saved40/0 falls to30/0 restored and20/0 at the lunge. The1850 run verifies unchanged whole13 in a fresh browser and exposes the guard-room doorway, then preserves death and normal Load40/0. PageDown now visibly lowers aim; End/Pause remain unproved. Enemy defeat, safe onward and paired save parity remain open. | [Fresh whole13 and guarded doorway](re-notes/halflife-whole13-headcrab-onward-20261112.md), run `20261112-halflife-whole13-headcrab-onward-1850`; [native look and caller limitation](re-notes/halflife-native-look-pause-headcrab-20261112.md); [passage and checkpoint](re-notes/halflife-authored-back-panel-passage-20261112.md); [authored target](re-notes/halflife-authored-clearance-route-20261112.md); [native crouch](re-notes/halflife-native-crouch-clearance-20261112.md); [fresh whole12 recovery](re-notes/halflife-chrome-endpoint-repair-20261112.md); [crate consequence](re-notes/halflife-crowbar-obstruction-20261112.md); [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
 
 Half-Life uses original hldemo/PAK bytes on module`04c53419…`. The coordinator
@@ -185,8 +185,23 @@ No production fix, new save or current paired onward proof follows. All five
 browser parents/Chrome joined; the box stopped normally. Original manager143
 and absent original manager/watchdog parent joins remain explicit. b562925d8
 publishes the comparison. A permitted native diagnostic or reproducible API
-mismatch is needed before another WebGL retry; the graphics slot now targets
-current Half-Life Uplink living3D controls and onward use/navigation.
+mismatch is needed before another WebGL retry.
+
+The later [runtime-boundary comparison](re-notes/heretic2-runtime-boundary-20261112.md),
+published `8f68731a1`, repeats the living SoftwareGL load at 31 HP and WebGL
+native exit 8 on the same current04 module and complete four-file save. The
+SoftwareGL 600 ms backward/3000 ms released and separate 4500 ms neutral checks
+use native pause/resume cycles; their final frames are paused, not evidence
+of sustained gameplay. Root checked 364 references, 30 full identities/PNG
+CRCs and four full frames. Existing error queries return 0 only at startup;
+neither arm queries the backend error flag during loading. No context loss,
+renderer exception or runtime violation was proved. The final successful swap
+precedes native exit by five milliseconds, but its completed pixels were not
+retained. A fresh graphics worker targets that frame before teardown through
+permitted runtime/renderer observations, without guest reverse engineering.
+Both runtime parents have actual waits/EOF; original manager/watchdog parent
+waits remain unknown. The box stopped normally. No production fix or new save
+follows from this comparison.
 
 Darkstone's latest WebGL continuation uses current8a834/module04c53419.
 Native food purchase/eating raised Food0→99 for120 gold; rest healed21→35.
