@@ -592,6 +592,197 @@ async function main() {
     } });
   Object.assign(wine, { instance: observedMain, memory, guestWorker: guestHost,
     renderer, threadManager: localThreads, processId: 7123 });
+  {
+  // Scheduler reservations preserve each admitted continuation, including its
+  // original sync/size and order. Repeated release cannot replay it; replacement
+  // cannot inherit it. Existing command/RPC completions remain unconstrained.
+  const scheduler = Object.create(ThreadManager.prototype);
+  scheduler.threads = new Map();
+  const dispatches = [];
+  scheduler._freeRunDispatch = function(handle, thread, size, sync) {
+    if (this._writerObservationBoundary)
+      return ThreadManager.prototype._freeRunDispatch.call(this, handle, thread, size, sync);
+    dispatches.push([handle, size, sync]);
+  };
+  const first = { state:'active', link:{} }, second = { state:'active', link:{} };
+  scheduler.threads.set(1, first); scheduler.threads.set(2, second);
+  const releaseScheduler = scheduler.holdWriterObservationBoundary();
+  const sync1 = {}, sync2 = {};
+  scheduler._freeRunDispatch(1, first, 31, sync1);
+  scheduler._freeRunDispatch(1, first, 31, sync1);
+  scheduler._freeRunDispatch(2, second, 47, sync2);
+  assert.equal(dispatches.length, 0);
+  releaseScheduler(); releaseScheduler();
+  assert.deepEqual(dispatches, [[1,31,sync1],[2,47,sync2]]);
+  const releaseReplacement = scheduler.holdWriterObservationBoundary();
+  scheduler._freeRunDispatch(1, first, 53, sync1);
+  first.link = {};
+  releaseReplacement(); assert.equal(dispatches.length, 2);
+
+  // Admission guards cover changes while draining, with real production
+  // WorkerLinks below exercising native execution and bootstrap readiness.
+  const admissionHost = new GuestThreadHost({ memory });
+  const guardLink = new WorkerLink({ slot: 5, memory });
+  admissionHost.link = guardLink;
+  const emptyThreads = { threads: new Map(), setWriterObservation(epoch) { this.writerObservation = epoch; } };
+  for (const cause of ['timeout','replacement','new-link','stopping','host-write','starting']) {
+    admissionHost.link = guardLink; admissionHost.threadLinks.clear();
+    admissionHost._startingLinks.clear(); admissionHost._hostWritesInFlight = 0;
+    guardLink._stopping = false;
+    guardLink._pending.set(1, {command:'slice'});
+    const epoch = new WriterEpoch();
+    const waiting = admissionHost.attachWriterObservationAtBoundary(epoch,
+      { threads:emptyThreads, timeoutMs:15, validateOwner() {} });
+    if (cause === 'replacement') admissionHost.link = new WorkerLink({slot:5,memory});
+    if (cause === 'new-link') admissionHost.threadLinks.set(6, new WorkerLink({slot:6,memory}));
+    if (cause === 'stopping') guardLink._stopping = true;
+    if (cause === 'host-write') { guardLink._pending.clear(); admissionHost._hostWritesInFlight = 1; }
+    if (cause === 'starting') { guardLink._pending.clear(); admissionHost._startingLinks.add(guardLink); }
+    await assert.rejects(waiting, /timed out|retired\/replaced/);
+    assert.equal(admissionHost.writerObservation, null);
+    console.log('boundary-negative', cause, 'PASS');
+    guardLink._pending.clear(); epoch.invalidate();
+  }
+  guardLink._stopping = false;
+  }
+  // The MAIN completion is not an all-writer boundary: a real secondary
+  // guest-worker can still be between its native store and page notification.
+  const boundaryHost = new GuestThreadHost({ memory });
+  const boundaryLinks = [6, 7].map(slot => new WorkerLink({ slot, memory, module: bridgeModule,
+    sigs: require('../lib/host-import-sigs.generated.json').sigs,
+    workerUrl: require.resolve('../lib/guest-worker') }));
+  const boundaryControl = new Int32Array(memory.buffer, dibA + 8192, 2);
+  try {
+    boundaryHost.link = boundaryLinks[0];
+    boundaryHost._startingLinks.add(boundaryLinks[1]);
+    const starting = Promise.all(boundaryLinks.map(link => link.start()))
+      .finally(() => {
+        boundaryHost._startingLinks.delete(boundaryLinks[1]);
+        boundaryHost.threadLinks.set(7, boundaryLinks[1]);
+      });
+    const bootstrapEpoch = new WriterEpoch();
+    const bootstrap = boundaryHost.attachWriterObservationAtBoundary(bootstrapEpoch,
+      {threads:localThreads,timeoutMs:5000,validateOwner(){}});
+    assert.equal(boundaryHost.writerObservation, null, 'readiness cannot be covered retroactively');
+    await starting; await bootstrap;
+    assert(boundaryLinks.every(link => link.writerObservation === bootstrapEpoch));
+    boundaryHost.setWriterObservation(null); localThreads.setWriterObservation(null);
+    boundaryLinks[0]._renderLegacyEndpoint = owningLink._renderLegacyEndpoint;
+    await boundaryLinks[1].callExport('identity_pause_at', dibA + 8192);
+    boundaryControl.fill(0);
+    let writing, naturalDispatches = 0;
+    const naturalThreads = Object.create(ThreadManager.prototype);
+    const naturalThread = { state:'active', link:boundaryLinks[1], tid:77 };
+    Object.assign(naturalThreads, { mainInstance:observedMain, workerBackend:true,
+      threads:new Map([[77,naturalThread]]), workerFreeRun:true, serialSlices:false,
+      _freeRunStepAt:Date.now(), _freeRunSliceSize:31,
+      _waitNow:()=>Date.now(), _log:()=>{}, workerSyncState:()=>({}) });
+    naturalThreads._runWorkerThread = () => {
+      if (++naturalDispatches > 1) naturalThreads._freeRunStepAt = 0;
+      writing = boundaryLinks[1].callExport('guest_write32', 0x50000000, 0x12345678);
+      return writing;
+    };
+    naturalThreads._freeRunDispatch(77, naturalThread, 31, {});
+    const initialWriting = writing;
+    const until = Date.now() + 5000;
+    while (!Atomics.load(boundaryControl, 1) && Date.now() < until)
+      await new Promise(resolve => setTimeout(resolve, 1));
+    assert.equal(Atomics.load(boundaryControl, 1), 1);
+    wine.guestWorker = boundaryHost; wine.threadManager = naturalThreads; wine.running = true;
+    let resumed = 0;
+    wine._scheduleStep = (step, delay) => { resumed++; assert.equal(delay, 13); };
+    if (!process.env.D3DIM_BOUNDARY_EXPECT_REFUSAL) {
+      const timed = wine.armD3dimPublicationObservation({ maxRecords:2, boundaryTimeoutMs:15 });
+      wine._d3dimPublicationArmBoundary.enter(() => {}, 13);
+      await assert.rejects(timed, /all-writer observation boundary timed out/);
+      assert.equal(resumed, 1, 'timeout releases main while original secondary command remains live');
+      assert.equal(boundaryLinks[1]._pending.size, 1);
+      assert.equal(naturalThreads._writerObservationBoundary, null);
+      resumed = 0;
+    }
+    const arming = wine.armD3dimPublicationObservation({ maxRecords: 2 });
+    await boundaryLinks[0].callExport('get_image_base');
+    const state = { mainPending: boundaryLinks[0]._pending.size,
+      secondaryPending: [...boundaryLinks[1]._pending.values()].map(p => ({command:p.command,exportName:p.exportName})),
+      starting: boundaryHost._startingLinks.size, hostWrites: boundaryHost._hostWritesInFlight || 0,
+      ready: boundaryLinks.map(l => !!l._readyPromise), stopping: boundaryLinks.map(l => !!l._stopping) };
+    assert.equal(state.mainPending, 0); assert.equal(state.secondaryPending.length, 1);
+    console.log('actual-secondary-at-main-boundary', JSON.stringify(state));
+    wine._d3dimPublicationArmBoundary.enter(() => {}, 13);
+    if (process.env.D3DIM_BOUNDARY_EXPECT_REFUSAL) {
+      await assert.rejects(arming, /idle live GuestThreadHost/);
+      assert.equal(resumed, 1);
+      assert.equal(boundaryHost.writerObservation, null);
+      Atomics.store(boundaryControl, 0, 1); Atomics.notify(boundaryControl, 0);
+      await writing;
+    } else {
+      await new Promise(resolve => setTimeout(resolve, 10));
+      assert.equal(boundaryHost.writerObservation, null, 'pending writer has no retroactive epoch');
+      assert.equal(resumed, 0, 'main remains held while secondary finishes normally');
+      Atomics.store(boundaryControl, 0, 1); Atomics.notify(boundaryControl, 0);
+      await initialWriting;
+      const admitted = await arming;
+      await writing;
+      assert.equal(naturalDispatches, 2, 'natural free-run continuation is released exactly once');
+      assert.equal(resumed, 1, 'successful arm returns main continuation once');
+      assert.equal(boundaryLinks[0].writerObservation, admitted.epoch);
+      assert.equal(boundaryLinks[1].writerObservation, admitted.epoch);
+      const stable = admitted.epoch.snapshot(); assert(stable);
+      await boundaryLinks[1].callExport('identity_pause_at', 0);
+      await boundaryLinks[1].callExport('guest_write32', 0x50000000, 0x11223344);
+      assert.equal(admitted.epoch.unchanged(stable), false, 'new secondary command is covered');
+      admitted.retire();
+      await dispatch(1, { t: 'legacy-producer-observation', action: 'stop' });
+      wine._d3dimPublicationJoin = null; wine._d3dimWriterObservation = null;
+    }
+  } finally {
+    Atomics.store(boundaryControl, 0, 1); Atomics.notify(boundaryControl, 0);
+    boundaryLinks[0]._renderLegacyEndpoint = null;
+    await Promise.all(boundaryLinks.map(link => link.stop()));
+    wine.guestWorker = guestHost; wine.threadManager = localThreads; wine.running = false;
+    delete wine._scheduleStep;
+  }
+  // A failed renderer acknowledgement must release the same main boundary
+  // and every held secondary continuation, once, without admitting a join.
+  {
+    const endpoint = owningLink._renderLegacyEndpoint;
+    const originalArm = endpoint.producerObservation;
+    const originalDispatch = localThreads._freeRunDispatch;
+    const originalHold = localThreads.holdWriterObservationBoundary;
+    const heldThread = { state:'active', link:{}, instance:observedMain };
+    const resumed = [];
+    localThreads.threads.set(0xe1333, heldThread);
+    localThreads._freeRunDispatch = function(...args) {
+      if (this._writerObservationBoundary)
+        return ThreadManager.prototype._freeRunDispatch.apply(this, args);
+      resumed.push(args);
+    };
+    localThreads.holdWriterObservationBoundary = function() {
+      const release = originalHold.call(this);
+      this._freeRunDispatch(0xe1333, heldThread, 59, null);
+      return release;
+    };
+    endpoint.producerObservation = async () => { throw new Error('injected renderer acknowledgement failure'); };
+    let mainResumed = 0;
+    wine.running = true; wine._scheduleStep = () => mainResumed++;
+    try {
+      const failing = wine.armD3dimPublicationObservation({ maxRecords:2 });
+      wine._d3dimPublicationArmBoundary.enter(() => {}, 7);
+      await assert.rejects(failing, /injected renderer acknowledgement failure/);
+      assert.equal(mainResumed, 1);
+      assert.equal(resumed.length, 1);
+      assert.equal(resumed[0][2], 59);
+      assert.equal(localThreads._writerObservationBoundary, null);
+      assert.equal(wine._d3dimPublicationJoin, null);
+      assert.equal(wine._d3dimWriterObservation.snapshot(), null);
+    } finally {
+      endpoint.producerObservation = originalArm;
+      localThreads._freeRunDispatch = originalDispatch;
+      localThreads.holdWriterObservationBoundary = originalHold;
+      localThreads.threads.delete(0xe1333);
+      wine.running = false; delete wine._scheduleStep;
+    }
+  }
   const join = await wine.armD3dimPublicationObservation({ maxRecords: 32 });
   const joinEpoch = join.epoch, journal = join.journal;
   assert.equal(owningLink.writerObservation, joinEpoch);

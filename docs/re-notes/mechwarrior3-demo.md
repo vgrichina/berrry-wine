@@ -1,5 +1,68 @@
 # MechWarrior 3 demo
 
+## November 12 all-writer attachment repair (0625)
+
+Run `20261112-mw3-all-writer-observer-boundary-0625` repairs the generic
+attachment boundary in `host.js`, `lib/guest-thread-host.js` and
+`lib/thread-manager.js`. The main completed-step boundary now reserves the
+next secondary free-run continuations while already dispatched guest work,
+RPCs and bootstrap finish normally. Installation remains synchronous across
+all original participants; replacement, retirement, new links, host writes
+and bounded timeout remain fail closed. Release preserves admitted dispatch
+arguments/order and skips replaced owners. No work is covered retroactively.
+
+The actual two-Worker/Wasm regression captures the formerly missing
+participant state: main pending zero, secondary pending `callExport` /
+`guest_write32`, no starting links/host writes/readiness/stop. The old host
+fails the idle guard with this same control; the repaired host waits for that
+native store to finish, installs on both Workers, and resumes the next
+continuation once. Actual bootstrap, timeout, participant-change and renderer
+acknowledgement failure controls supplement publication/transient tests and
+the locked build. This identifies a concrete failing disjunct in the control,
+not retrospectively in the uncaptured 0518 attempts.
+
+Original registered MW3 software and WebGL both admitted once on runtime
+`d55e326c55acffe15c03edbd401197430dd614ba` plus the three owned source patches,
+canonical `1165f15c…`. Concurrent audio changes were excluded with exact Git
+bytes. Executing source/module/owner/driver pins and unchanged media hashes
+are retained. Reviewed KeyI, pilot a/Enter, native pointer lock,
+Accept/Instant Action/Launch and independently released Digit5 produced
+40.5 km/h motion. Each admission enrolled its sole live guest link before the
+bounded diagnostic; the secondary had already exited. All 151 WebGL and 282
+software observed commands carried the installed epoch. These are command
+counts, not frame counts. Epoch poison remained zero before intentional
+retirement; WebGL was transiently busy at the final snapshot.
+
+**Completed gameplay FPS/frame-time distributions remain UNKNOWN.** The
+8173.67 ms WebGL and 8039.43 ms software diagnostics produced zero source
+records and zero qualified join rows despite native Flip/present notifications
+and displayed updates. The newly located first dependency is earlier than
+the post-HUD join: the producer observer only consumes queued `RECORD_FLIP`,
+while original gameplay takes the synchronous guest Flip/present path. In
+these windows all 10/16 native Flip traces were followed by direct kind-5
+present with NULL request; no kind-31 request appeared. A separate passive
+render-worker probe saw 106 WebGL / 128 software replay batches, all ordinary
+kind-0 commands, active observation on every batch, and zero
+`completedProducer` calls. WebGL queued-flip lifetime counters stayed 535
+across the probe. Source inspection locates the synchronous metadata rotation
+and direct `dx_present` in `handle_IDirectDrawSurface_Flip`; the exact reason
+`d3dim_worker_try_flip` was not used remains uncaptured.
+
+The next repair needs a real source witness for that synchronous swap and a
+post-HUD identity that survives concurrent writes, duplicates, reorder, stale
+requests and owner replacement. A raw kind-6 trace or carried old request is
+not that witness. The 0518 partial-green/retained-red false qualification
+remains invalid; canvas paths, terrain changes and the earlier Hz ranges are
+not completed gameplay FPS. Full27, audio/parity and historical cursor cause
+remain open.
+
+Unique outputs were double-read remotely and rehashed locally (410 paths,
+17,812,201 raw bytes). Box `bx_5drn7qjj` stopped normally at 06:51:16Z,
+`stop_3e4ca9e97d9e0192`, before its 07:23:31Z deadline; archived, expiry NULL,
+forced false. Both runtime/Chrome parents and the lifecycle/watchdog have
+actual successful waits and separate EOF evidence. Recovery details are in
+the run's `report.txt`, `RECOVERY.txt` and `retrieval-manifest.json`.
+
 ## November 12 completed-generation measurement dependency
 
 Run `20261112-mw3-completed-frame-generation-0518` retested original moving

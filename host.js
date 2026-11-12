@@ -5908,7 +5908,7 @@ class WineAssembly {
     // Reserve admission through the render acknowledgement. A second arm must
     // not replace and invalidate the epoch the first request already installed.
     this._d3dimPublicationArming = true;
-    let boundary;
+    let boundary, releaseWriters;
     try {
       if (this.running) {
         // A live process normally has an unanswered slice. Do not attach to
@@ -5926,14 +5926,17 @@ class WineAssembly {
           this._d3dimPublicationArmBoundary = boundary;
         });
       }
-      if (this._stopped || this.guestWorker !== guest || this.threadManager !== threads ||
-          this.memory !== memory || this.processId !== processId ||
-          this.instance !== instance || this.renderer !== renderer || guest.link !== link ||
-          link._renderLegacyEndpoint !== endpoint || endpoint.closed || this._d3dimHostWritesInFlight ||
-          threads.mainInstance !== instance || (guest.localMainExports && guest.localMainExports() !== instance.exports))
-        throw new Error('owner changed before publication observation boundary');
-      this.guestWorker.setWriterObservation(epoch);
-      this.threadManager.setWriterObservation(epoch);
+      releaseWriters = threads.holdWriterObservationBoundary();
+      const validateOwner = () => {
+        if (this._stopped || this.guestWorker !== guest || this.threadManager !== threads ||
+            this.memory !== memory || this.processId !== processId ||
+            this.instance !== instance || this.renderer !== renderer || guest.link !== link ||
+            link._renderLegacyEndpoint !== endpoint || endpoint.closed || this._d3dimHostWritesInFlight ||
+            threads.mainInstance !== instance || (guest.localMainExports && guest.localMainExports() !== instance.exports))
+          throw new Error('owner changed before publication observation boundary');
+      };
+      const admission = await guest.attachWriterObservationAtBoundary(epoch, {
+        threads, timeoutMs: boundaryTimeoutMs, validateOwner });
       this._d3dimWriterObservation = epoch;
       const sourceOwner = await endpoint.producerObservation('arm', { ownerGeneration: ownerScope,
         maxRecords, writerEpochBuffer: epoch.buffer, surfaceVersionBuffer: journal.buffer,
@@ -5943,7 +5946,7 @@ class WineAssembly {
           this.instance !== instance || this.renderer !== renderer || guest.link !== link ||
           link._renderLegacyEndpoint !== endpoint || endpoint.closed || threads.mainInstance !== instance ||
           (guest.localMainExports && guest.localMainExports() !== instance.exports) ||
-          !epoch.snapshot() || sourceOwner?.owner?.scope !== ownerScope ||
+          !admission.sameParticipants() || !epoch.snapshot() || sourceOwner?.owner?.scope !== ownerScope ||
           sourceOwner.owner.endpointId !== endpoint.id || !Number.isSafeInteger(sourceOwner.owner.generation) ||
           !Number.isSafeInteger(sourceOwner.generation)) throw new Error('owner changed while arming publication observation');
       const join = new RenderWorker.SurfacePublicationJoin({ epoch, journal, memory,
@@ -5961,6 +5964,7 @@ class WineAssembly {
       throw error;
     } finally {
       this._d3dimPublicationArming = false;
+      releaseWriters?.();
       if (boundary && this._d3dimPublicationArmBoundary === boundary) {
         this._d3dimPublicationArmBoundary = null;
         const next = boundary.continuation;
