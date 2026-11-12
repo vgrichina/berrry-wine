@@ -51,6 +51,18 @@ a separate unified wrapper exit143 remains unexplained. The box stops normally.
 Next: original texture provenance, uploaded/sampled texels and ordered prior
 target contents for one retained draw. No blend override or runtime patch is
 justified by the current evidence.
+
+The [1805 retained-texture analysis](forsaken-texture-target-provenance-20261112.md),
+commit `aae90a9d0`, identifies `SMLEXPL.PPM` at all16 retained native RGB565
+coordinates and matches the four triangles' atlas rectangles to `smlexpl.off`.
+The immediate preceding opaque draw supplies the sampled destination color;
+the target is not already white. Root independently recomputed the70-input,
+nine-source-pin analysis. These are sampled content and immediate ordering
+proofs, not a complete DIB/upload or live loader-copy proof. The inherited
+observer retains at most four covering triangles out of60 submitted, and
+ideal four-hit arithmetic is not an actual GPU fragment oracle. Next: complete
+coverage, actual sampling and depth context for one natural submission. No
+new original execution or runtime patch occurred in1805.
 Earlier paired evidence and limits: [combat and owner observations](forsaken-owner-enemy-20261112.md).
 
 ## Source and licence

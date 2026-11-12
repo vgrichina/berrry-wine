@@ -100,6 +100,22 @@ Disk crossed below1.5GB after quit, with no later native input; continuous
 floor compliance is not claimed. Resolve the authored obstacle geometry and
 route before repeating these approaches.
 
+The [1800 original-map analysis](halflife-authored-clearance-route-20261112.md),
+commit `5ed39acac`, identifies the separate four-unit wooden back as
+`func_breakable` entity147/model45, health50. Its damaged shell, nearby sign
+and geometry match the retained native frames. Root independently recomputed
+the original PAK/BSP hashes, entity properties and1168 standing-hull samples.
+After hypothetical removal of that back, the sampled route continues south
+then east of the second crate; this is not a live pose or passage proof.
+The fresh original reached only Video Modes: a disk-floor refusal stopped
+the next command before publication, so native Load, attack and passage did
+not occur. All twelve save files remain unchanged. Root checked108 references,
+seven full PNGs and22 within-capture fields; the native runtime and fresh
+manager/watchdog joined normally and the box stopped normally. The first
+failed allocation's historical effect and missing watchdog join remain
+explicit. The next native target is this separate back panel, after fresh
+Load and movement qualify the restored checkpoint.
+
 ## Package and installed layout
 
 The local-only installer is
