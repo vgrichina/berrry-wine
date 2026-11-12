@@ -7,8 +7,17 @@ commit `0df107e3b`, restores the complete XP380 checkpoint, heals through Akara
 from27/55 to55/55, and earns21 outdoor combat XP. Native Save & Exit returns
 to the title; the complete four-file export then passes normal Load, native
 XP401/life53/55, fresh movement and the still-active Den objective. This
-qualifies the XP401 set in the same browser; fresh-browser restoration is
-pending. The Den remains uncleared, and exact monster species/count is unproved.
+qualifies the XP401 set in the same browser. The
+[1615 fresh-browser check](diablo2-xp401-fresh-load-den-20261112.md), commit
+`8c4ab88de`, mounts those unchanged four files in a genuinely new browser and
+verifies normal Load, XP401/life53/55, the Den objective and fresh movement.
+Root checked874 references,84 PNGs,18 binding fields and changed document,
+guest and renderer identities against1540. Later navigation stayed in camp;
+command83 was refused before dispatch after its reviewed frame became stale.
+There was no replay, new combat or successor save. The terminal close omitted
+the global input export;54 physical pulses retain acknowledged releases,
+without an all-event trust claim. The Den remains uncleared, and exact monster
+species/count is unproved.
 
 The coordinator checked811 artifact references,75 complete PNGs,18 binding
 fields and balanced trusted input, and inspected six full persistence-sequence

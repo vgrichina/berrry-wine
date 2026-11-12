@@ -15,7 +15,7 @@
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Heretic II demo | Current8a834/04 living crate0400 Load, fresh movement and released interval | Current Easy docks; crate Load reproduces native ExitProcess8 | Full four-source reads pass on both; WebGL exit cause unresolved, no production fix or paired onward proof. | [Current load comparison](re-notes/heretic2-current-load-exit-cause-20261112.md), run `20261112-heretic2-current-load-exit-cause-1135` |
-| Half-Life Uplink | Current actual SoftwareGL maintenance room and equipped crowbar | Current actual WebGL living controls and elevator onward | Health100/armour0; eleven-file crowbar Save/export/Load/fresh movement passes in one browser. Earlier nine-file bay also restores in a fresh browser. Fresh-browser crowbar restoration, crate destruction, combat and paired onward/save parity remain open. | [Crowbar checkpoint](re-notes/halflife-bay-clearance-20261112.md), run `20261112-halflife-bay-clearance-1615`; [fresh bay recovery](re-notes/halflife-bay-native-onward-20261112.md); [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
+| Half-Life Uplink | Current actual SoftwareGL crowbar and small-crate destruction | Current actual WebGL living controls and elevator onward | Health100/armour0; eleven-file crowbar save restores in a fresh browser. Small-crate destruction and movement into cleared space persist through a new twelve-file Save/Load/fresh movement cycle. Taller obstruction, encounter and paired onward/save parity remain open. | [Crate consequence and save](re-notes/halflife-crowbar-obstruction-20261112.md), run `20261112-halflife-crowbar-obstruction-1635`; [startup blocker](re-notes/halflife-cleared-bay-onward-20261112.md); [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
 
 Half-Life uses original hldemo/PAK bytes on module`04c53419…`. The coordinator
 verified1,368 references/1,122 paths,870 decoded raw records,237 balanced trusted
@@ -47,17 +47,30 @@ The1615 continuation then opens the maintenance supply room and collects the
 crowbar at health100/armour0. Its complete eleven-file1670445-byte save passes
 native Save00:56/export/move-away/Load/fresh movement in the same browser.
 Root checked526 references/46 PNGs and six full opening/pickup/persistence
-frames. Fresh-browser crowbar restoration, crate destruction and an encounter
-remain open. [Crowbar checkpoint](re-notes/halflife-bay-clearance-20261112.md),
+frames. [Crowbar checkpoint](re-notes/halflife-bay-clearance-20261112.md),
 run `20261112-halflife-bay-clearance-1615`. Native shutdown and normal box stop
 passed; missing local starter143 manager/watchdog joins remain explicit.
+The1635 run restores that eleven-file set in a fresh browser, destroys the
+small crate with native attacks and moves into the cleared space. Its new
+twelve-file2006166-byte save passes normal Load and fresh movement in that
+browser. Root checked627 references/56 PNGs and nine full sequence frames.
+The taller structure remains and no encounter is claimed. The1655 continuation
+stops before CDP/guest launch on a missing Chrome endpoint; the whole save
+remains unchanged and its fresh-browser restoration is still open.
+[Crate destruction and complete recovery](re-notes/halflife-crowbar-obstruction-20261112.md),
+run `20261112-halflife-crowbar-obstruction-1635`.
 
 Diablo II's current original demo now heals through Akara to55/55 and earns
 outdoor XP380→401. Native Save & Exit, complete four-file export, normal Load,
 retained XP401/Den quest and fresh movement pass in the same browser. Root
 review checked811 references/75 full PNGs and six persistence-sequence frames.
-Fresh-browser restoration is pending, the Den remains uncleared, and no
-exact species/count or runtime fix is claimed. [Earned XP401 save](re-notes/diablo2-native-menu-short-combat-20261112.md),
+The1615 run then verifies that unchanged four-file set through normal Load,
+native XP401 stats/Den objective and fresh movement in a new browser. Root
+checked874 references/84 PNGs and distinct document/guest/renderer identities.
+Later navigation stays in camp; a stale reviewed frame refuses command83
+before input, with no replay or new save. The Den remains uncleared, and no
+exact species/count or runtime fix is claimed. [Fresh XP401 qualification](re-notes/diablo2-xp401-fresh-load-den-20261112.md)
+and [earned XP401 save](re-notes/diablo2-native-menu-short-combat-20261112.md),
 run `20261112-diablo2-native-menu-short-combat-1540`.
 
 The GLTron software proof binds its actual GL software owner and completed

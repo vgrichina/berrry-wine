@@ -52,11 +52,23 @@ the crowbar, visibly equipped at health100/armour0. Native Save00:56, complete
 eleven-file export, movement away, normal Load and fresh strafe pass in that
 browser. Preserve all1670445 bytes together, including autosave and the new
 hldemo2 auxiliaries; the earlier bay set remains unchanged and separate.
-Fresh-browser restoration, crate destruction and an enemy encounter remain
-next. Root review checked526 references,46 complete PNGs,22 bound fields and
+Root review checked526 references,46 complete PNGs,22 bound fields and
 six full opening/pickup/persistence frames. Native Chrome/outer shutdown and
 normal box stop passed; local starter143 lacks actual manager/watchdog joins,
 whose cause remains unknown.
+
+The [1635 continuation](halflife-crowbar-obstruction-20261112.md), commit
+`241ff5570`, restores all eleven files in a fresh browser and verifies crowbar
+movement. Native attacks destroy the small bay crate, leaving visible fragments;
+forward movement enters its cleared space. A new native01:48 save passes complete
+twelve-file2006166-byte export, movement away, normal Load and fresh movement.
+Root checked627 references,56 PNGs,36 captures with22 bound fields and nine full
+load/attack/persistence frames. The taller wooden structure remains; no enemy
+encounter or passage beyond it is claimed. The
+[1655 attempt](halflife-cleared-bay-onward-20261112.md) preserves that whole set
+but fails before CDP or guest launch because Chrome never publishes its endpoint.
+It adds no fresh-browser proof for the twelve-file successor. Diagnose startup
+before another original continuation; retain the smaller checkpoints separately.
 
 ## Package and installed layout
 
