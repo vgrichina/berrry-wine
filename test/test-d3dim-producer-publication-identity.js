@@ -735,8 +735,9 @@ async function main() {
   const actualLink = new WorkerLink({ slot: 8, memory, module: bridgeModule,
     sigs: require('../lib/host-import-sigs.generated.json').sigs,
     workerUrl: require.resolve('../lib/guest-worker') });
-  await actualLink.start(); actualLink.setWriterObservation(joinEpoch);
   try {
+    assert.equal(actualLink.broker, undefined, 'standalone native exports need no RPC broker');
+    await actualLink.start(); actualLink.setWriterObservation(joinEpoch);
     const controlWa = dibA + 4096;
     const control = new Int32Array(memory.buffer, controlWa, 2);
     control.fill(0);
@@ -765,6 +766,7 @@ async function main() {
     const control = new Int32Array(memory.buffer, dibA + 4096, 2);
     Atomics.store(control, 0, 1); Atomics.notify(control, 0);
     await actualLink.stop();
+    assert.equal(actualLink.worker, null, 'brokerless standalone Worker terminates normally');
   }
   // Worker retirement invalidates the shared observation. Use a separate
   // epoch for request/timeout behavior; it cannot revive the retired Join.
