@@ -106,6 +106,8 @@
     ;; REP debugger mode has no resumable API continuation. Reject the entry
     ;; before hooks, resource pins, callbacks, argument cleanup or guest writes.
     (if (global.get $rep_store_step) (then (unreachable)))
+    ;; Immediate-mode glColor/glTexCoord/glVertex inside Begin/End (09a8c).
+    (if (call $gl_imm_dispatch (local.get $thunk_idx)) (then (return)))
     ;; Reject an unauthenticated CACA000A return before resource scope, thunk
     ;; hooks, diagnostics or wait bookkeeping can mutate the interrupted state.
     (if (i32.eq (i32.load (call $thunk_metadata_addr (local.get $thunk_idx))) (i32.const 0xCACA000A))

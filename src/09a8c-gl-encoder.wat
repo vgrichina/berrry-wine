@@ -971,6 +971,94 @@
     (if (i32.eqz (local.get $vertex)) (then (call $gl_object_leave)))
     (i32.const 1))
 
+  ;; The same calls, taken before $win32_dispatch's general machinery. Half-
+  ;; Life issues ~18k of them per frame through `call [qgl slot]`, and each
+  ;; one otherwise walks resource-pin save/restore, the ~60-marker CACA chain
+  ;; in $win32_dispatch_inner, five argument loads, the nonvolatile save,
+  ;; the paged br_table, the generated table's object lock + state publish,
+  ;; and $handle_gpu_api's opcode checks -- none of which applies to a
+  ;; stdcall setter that only writes this instance's current attributes or
+  ;; appends to its private primitive. Taken only when $gl_imm_fast's own
+  ;; preconditions hold and no diagnostic needs the general path (edge
+  ;; histogram, pending-context proof, a patched thunk, a deferred unload);
+  ;; API logging is preserved exactly. Returns 1 when the call completed.
+  (func $gl_imm_dispatch (param $thunk_idx i32) (result i32)
+    (local $meta i32) (local $name_rva i32) (local $route i32) (local $op i32)
+    (local $ctx i32) (local $esp i32) (local $vertex i32)
+    (if (i32.or (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0))
+                (i32.eqz (global.get $gl_current_context)))
+      (then (return (i32.const 0))))
+    (if (i32.or (i32.or (i32.ne (global.get $pending_armed) (i32.const 0))
+                        (i32.ne (global.get $dll_drain_pending) (i32.const 0)))
+                (i32.and (i32.ne (global.get $handler_hist_enabled) (i32.const 0))
+                         (i32.ne (global.get $edge_hist_enabled) (i32.const 0))))
+      (then (return (i32.const 0))))
+    (if (call $thunk_patch_changed (local.get $thunk_idx)) (then (return (i32.const 0))))
+    (local.set $meta (call $thunk_metadata_addr (local.get $thunk_idx)))
+    ;; CACA continuations and resolved ordinals have the high bit set; an
+    ;; unresolved ordinal ("ORD\0") reuses the id word for the ordinal.
+    (local.set $name_rva (i32.load (local.get $meta)))
+    (if (i32.or (i32.lt_s (local.get $name_rva) (i32.const 0))
+                (i32.eq (local.get $name_rva) (i32.const 0x4F524400)))
+      (then (return (i32.const 0))))
+    (local.set $route (call $gl_imm_dispatch_op (i32.load offset=4 (local.get $meta))))
+    (if (i32.eqz (local.get $route)) (then (return (i32.const 0))))
+    (local.set $op (i32.and (local.get $route) (i32.const 0xFF)))
+    (local.set $ctx (call $gl_list_context))
+    (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
+    ;; $gl_list_intercept captures exactly when a list is open and not replaying.
+    (if (i32.and (i32.ne (i32.load offset=12 (local.get $ctx)) (i32.const 0))
+                 (i32.eqz (i32.load offset=28 (local.get $ctx))))
+      (then (return (i32.const 0))))
+    ;; Committed. Per-call bookkeeping every Win32 call performs in
+    ;; $win32_dispatch_inner: thunk identity, spin-detector activity (a GL
+    ;; call is neither a clock read nor a message poll), alertable-wait reset,
+    ;; abandoned-park accounting, the call counter and the per-thread vtables.
+    (global.set $current_thunk_eip
+      (i32.add (global.get $thunk_guest_base) (i32.shl (local.get $thunk_idx) (i32.const 3))))
+    (global.set $spin_dispatch_seq (i32.add (global.get $spin_dispatch_seq) (i32.const 1)))
+    (global.set $spin_nonpoll_seq (i32.add (global.get $spin_nonpoll_seq) (i32.const 1)))
+    (global.set $spin_peek_activity_marked (i32.const 0))
+    (global.set $apc_alert_sleep (i32.const 0))
+    (global.set $wait_alertable (i32.const 0))
+    (if (global.get $cs_park_pending)
+      (then
+        (if (i32.ne (global.get $eip) (global.get $cs_park_eip))
+          (then
+            (global.set $cs_abandoned (i32.add (global.get $cs_abandoned) (i32.const 1)))
+            (global.set $cs_abandoned_eip (global.get $eip))
+            (global.set $cs_park_pending (i32.const 0))))))
+    (call $dx_sync_thread_vtables_if_needed)
+    (global.set $api_calls (i32.add (global.get $api_calls) (i32.const 1)))
+    (if (global.get $api_log_on)
+      (then
+        (local.set $name_rva (call $g2w (i32.add (global.get $image_base)
+          (i32.add (local.get $name_rva) (i32.const 2)))))
+        (call $host_log (local.get $name_rva) (call $strlen (local.get $name_rva)))))
+    (global.set $api_handler_depth (i32.add (global.get $api_handler_depth) (i32.const 1)))
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $vertex (i32.ge_u (local.get $op) (i32.const 29)))
+    ;; Vertices only append to this instance's private primitive and change
+    ;; no published value, so they take neither the lock nor its publish;
+    ;; current-attribute setters keep both (foreign wglCopyContext reads).
+    (if (i32.eqz (local.get $vertex)) (then
+      (call $gl_object_enter)
+      (call $gl_section_note (local.get $op))))
+    (global.set $gl_sw_border_set_failed (i32.const 0))
+    (global.set $gl_wat_stat_calls (i64.add (global.get $gl_wat_stat_calls) (i64.const 1)))
+    (if (i32.eqz (call $gl_wat_init)) (then (unreachable)))
+    (if (i32.eqz (call $gl_state_intercept (local.get $op) (call $g2w (local.get $esp))))
+      (then (unreachable)))
+    (if (i32.eqz (local.get $vertex)) (then (call $gl_object_leave)))
+    (global.set $api_handler_depth (i32.sub (global.get $api_handler_depth) (i32.const 1)))
+    ;; $handle_gpu_api's result and APIENTRY cleanup: EAX = 0, pop the return
+    ;; address and stack_dwords argument words. The caller resumes at it.
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp)
+      (i32.shl (i32.add (i32.shr_u (local.get $route) (i32.const 8)) (i32.const 1)) (i32.const 2))))
+    (if (global.get $api_log_on) (then (call $host_log_api_exit)))
+    (i32.const 1))
+
   ;; Publish completed outer server calls while still holding the process lock.
   ;; A later producer cannot drain this instance's private stream: admit its
   ;; completed prefix now, before the next producer acquires the lock. Nested
