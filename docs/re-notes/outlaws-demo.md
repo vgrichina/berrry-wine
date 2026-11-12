@@ -10,6 +10,33 @@ That initial audit did not acquire bytes; the completed acquisition below supers
 its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
+## November 12 two further defeats and frontage save
+
+Run `20261112-outlaws-frontage-threat-key-route-0630` defeated the bank
+redshirt and a separate western lightshirt through native firing, hit reaction
+and continuous collapse. Preserve **all nine** `frontage-saves/` files and
+`frontage-save-pins.json`. The ninth file is230345 bytes, SHA256
+`68f93d1bedf3643736e60bbba58c6f919bfbb1929297fb4d18c6afe02926ec32`.
+The saved position is (83.264503479,0,185.097595215), yaw41029, health2.2.
+Normal Load restored that rendered state stable300ms with the fallen attacker;
+fresh crouched forward movement reached (83.068260193,0,177.684265137)
+at unchanged health. That movement was not resaved. All11 ancestral whole sets
+(99 files) remain unchanged, including the earlier4.6-health alternative.
+
+An unsaved eastward branch reached (137.371292,0,160.434662), where an
+out-of-view attacker reduced health2.2 to1.0. This shooter remains unidentified;
+the western lightshirt defeat does not establish that it was the earlier
+aperture attacker. No aperture crossing, SteelKey pickup, door102 opening or
+healing was proved. The fresh successor investigates that threat or supplies
+before another exposed approach.
+
+The coordinator checked737 recovered references /610 unique raw hashes,
+complete new raw/gzip saves, full aftermath and reloaded movement images.
+Runtime remains exact25ac5466d/WASM75ecda5701; no code/build/commit was needed.
+The box stopped normally before expiry, with runtime parent/watchdog wait0/EOF;
+outer transport143 is reported separately. Exact recovery is in the run's
+`RECOVERY.md`.
+
 ## November 12 healthier combat successor
 
 Prefer the **whole nine** `combat-saves/` and `combat-save-pins.json` from

@@ -47,6 +47,17 @@ All four runtime parents exited normally, and the box stopped before expiry.
 These bounded scenes found no runtime defect; they do not prove general crash
 freedom, native-reference parity, strict FPS, audio or historical27 completion.
 
+Published `29f6295a2` repairs writer-observer attachment at an actual completed
+boundary. Pending secondary Worker calls drain naturally while recorded main
+continuations wait; participant identity is checked through renderer
+acknowledgement, and failure releases the holds. Actual Worker controls,
+scheduler/lifecycle regressions and the locked build pass. Original MW3 arms
+once before both backend windows, but its synchronous native Flip bypasses
+the queued producer observer, leaving zero qualified completed frames.
+Strict FPS remains unknown. The coordinator checked410 references /344 unique
+raw hashes and both full moving scenes. The next worker targets the missing
+synchronous Flip witness. Evidence: `20261112-mw3-all-writer-observer-boundary-0625`.
+
 Published `d55e326c5` fixes Stop All → relaunch window lookup after process
 exit. Retained import contexts and window/native-dialog publications now end
 their lookup lifetime with the process; live foreign owners and reused HWNDs

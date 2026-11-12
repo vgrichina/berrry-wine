@@ -491,3 +491,34 @@ watchdogs have actual wait0/EOF receipts; the outer submitting tool exited143,
 so no additional outer-client wait receipt is claimed. Next: native Load of the
 preserved whole save and fresh movement; day-two saving, healing and combat
 remain outside this run's claims.
+
+## November 12 native reload, replenishment and day-two save
+
+Run `20261112-disciples2-native-load-day2-progress-0648` restored the authentic
+whole day-one `s.sg` through public FS with independent byte/hash readback,
+then used normal Load and fresh map movement: Move20→10 with changed position.
+Native End Turn advanced to day2 and replenished the spent movement10→20.
+This adds the replenishment proof absent from the earlier0602 run; it is not
+healing or a new battle result.
+
+Native Save produced complete `c:\savegame\d.sg`,208157 bytes, SHA256
+`1c133e45c1066f838dba546ea395ba31971019fe48737347101992d83c81d912`.
+Use `day-two-native-whole.json` entry2 and `day-two-native-whole-2.bin`.
+Three whole exports match. After an unsaved move, normal Load discarded that
+move and restored the saved day2 position/20 movement. File-read coverage was
+exactly[0,208157), with zero failures. Fresh movement then changed position and
+spent20→10 again; it was **not resaved**. Future continuation must restore the
+whole authentic d.sg, verify readback, and use native Load.
+
+The coordinator checked660 references /610 unique raw hashes, whole save
+exports and full loaded/moved images. The successful parent runtime is exact
+af0e208e9 plus703015ea5 audio changes, canonical1165 Wasm and779 pinned files;
+do not substitute a later host closure wholesale. Sampled peak749.172MiB over
+994.916s, two AudioBuffers and no OOM were observed. Audio remained suspended;
+this is Canvas2D, with no GL/FPS/audio/parity claim. Runtime, Chrome, lifecycle
+owner/client and watchdog actual waits all reached0/EOF; the box stopped
+normally before expiry. No production change/build/commit was needed.
+
+The next bounded objective is native recruitment or new quest progress from
+the saved day2 state, preserving a living successor save and reload/movement.
+The earlier human-trio victory alone is already covered and is not new progress.
