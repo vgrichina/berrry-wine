@@ -122,8 +122,13 @@ Eight native release/idle tests are stable, but relative mouse behavior and the
 prior turn drift remain unisolated. A changed eastern-window jump did not enter
 the store; no new health/consequence/save follows. Native14bit/helper correction
 is not an emulator fix. The safe-entry dependency and authentic checkpoints are
-preserved; that gameplay slot now targets Caesar III's unfinished population150
-assignment. Caesar III is2D and adds no GL/D3D coverage.
+preserved. Caesar III completed the native population150 objective: Victory,
+promotion to Clerk, and Assignment2—Esquiline are captured in
+`20261112-caesar3-compact-senate-jobs-1135` (published `ed4a50e8a`).
+Root verified1,671 outputs and241 exact captures and inspected the transition
+and Senate30/30 staff. Exact final population was not captured. The fresh
+Assignment2 worker targets granary/wheat progress. Caesar III is2D and adds
+no GL/D3D coverage.
 
 Disciples II's postbattle Load stall is now traced to original demo AI
 serialization, documented in `281713c5f`. The original save header writes
