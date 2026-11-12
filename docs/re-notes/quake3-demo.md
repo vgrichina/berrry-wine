@@ -277,3 +277,17 @@ into `test/binaries/candidates/quake-3-arena-demo-installer/installed/`, and
 the whole-GET provider. All five simulated 10 MiB pak0.pk3 deployment parts
 are requested once each; no HTTP Range requests. Stable deployed WASM,
 cooperative Chrome/SwiftShader, not a timing or multiplayer benchmark.
+
+### Current native browser arena (2026-11-12)
+
+[Current native arena checkpoint](quake3-current-native-arena-20261112.md)
+records the original registered demo reaching Q3DM1 through Single Player,
+Fight and Difficulty on both software and WebGL with actual Workers and the
+current standard module. Separately reviewed world images show balanced W
+movement and native left-mouse firing (ammo 100→98 software, 100→96 WebGL).
+For this unchanged browser seed, MOUSE1 is attack and Ctrl is crouch; the
+older direct-map/CLI control observation above is historical. Both browser
+and runtime parents exited zero with stdout/stderr EOF. No production defect
+or runtime fix was demonstrated. FPS, visual parity, audio and full corpus
+coverage remain open. Evidence:
+`scratch/runs/20261112-quake3-current-native-arena-0204/`.
