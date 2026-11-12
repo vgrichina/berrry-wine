@@ -8,6 +8,7 @@
 | Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
 | Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion and combat | Victories 9→10→11, native Save/normal Load alive. The newest tested character/map pair restores LIFE 9/35. | [Current gameplay and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-current-worker-gameplay-0119` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
+| MechWarrior 3 | Current moving measurement pending | Actual Worker cockpit, motion and stop | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
 
 The GLTron software proof binds its actual GL software owner and completed
 raster work, with a legacy D3D WebGL transport. Its default cooperative CLI
@@ -18,7 +19,7 @@ remain unverified. Darkstone's newest tested save has low health. The preserved
 four-file continuation union was assembled but has no separate replay claim.
 
 The coordinator reviewed the full scenes and checked all raw artifact hashes
-for these four runs. The Forsaken repair has a failing old-source regression,
+for these five runs. The Forsaken repair has a failing old-source regression,
 passing focused lifecycle/publication/parity tests and a locked build. These
 app outcomes advance the corpus. Historical 27-app membership, remaining backend
 cells, reference parity, FPS and audio remain open.

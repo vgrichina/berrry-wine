@@ -1,5 +1,31 @@
 # MechWarrior 3 demo
 
+## November 12 native throttle and stop
+
+Run `20261112-mw3-native-cursor-throttle-stop-0345` reached the original
+cockpit on main `30f9318e6`, canonical module `1165f15c…`, with actual guest
+Workers and WebGL legacy D3D. Native `i` opens Pilot Entry; pilot `a`/Enter,
+ordinary pointer lock and guarded native Accept/Instant Action/Launch inputs
+then work. The earlier main-menu cursor freeze remains unexplained; this is
+a working original input route, not a causal emulator repair.
+
+The original readme binds Digit5 to 50% throttle, Digit1 to 0%, and Digit0
+to 100%. Digit5 produced persistent motion after its physical release.
+Separately reviewed full scenes show 40.5 km/h before Digit1, followed by
+24.9, 8.5 and 0.0 km/h. Read the **right-side** speed HUD; the earlier top-panel
+crops are not speed evidence. Waypoint distance is non-monotonic as the mech
+passes it and must not substitute for speed. Independent release timers and
+separate image review preceded dependent inputs. The parent's zero-speed
+precondition and two review-order gaps remain scoped to
+`20261112-mw3-current-cockpit-controls-0318`.
+
+The coordinator checked 309 recovered paths / 276 unique raw hashes and the
+full moving/stopped scenes plus the derived HUD strip. Focused tests passed
+14 with 3 skipped; the additional actual-renderer diagnostic repair control
+passed. No production code changed or new build was required. The box stopped
+normally with actual runtime parent waits/EOF; outer transport exit143 remains
+separate. Scene-qualified FPS, parity, audio and the full corpus remain open.
+
 ## Binary and runtime layout
 
 - App id: `mw3`
