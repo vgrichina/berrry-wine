@@ -554,3 +554,30 @@ or day advancement claim. No production change or task commit was needed.
 Actual runtime/Chrome parents and durable lifecycle/watchdogs reached0/EOF;
 outer transport143 and absent separate client/owner waits remain qualified.
 The box stopped normally before expiry. `RECOVERY.md` binds exact restoration.
+
+## November 12 three-unit victory and unqualified postbattle save
+
+Run `20261112-disciples2-recruited-party-quest-encounter-0758` used the recruited
+Hagog/Fighter/Initiate party to defeat two40-HP Peasants and a65-HP Thug.
+All survived and earned7 XP each. Victory health was131/150,92/120,45/45;
+native End Turn reached day3 with150/150,116/120,45/45 and Move20/20.
+No settlement or quest-clear result follows.
+
+Native Save acknowledged complete `c:\savegame\f.sg`,207944 bytes, SHA256
+`4f2b4ceadb0fd23a32128ce3798d02880b89843201f009615ce5eafb56b53184`;
+`postbattle-save-whole.json` entry2 binds the full file. Independent public
+readback and later exports match. **This successor is unqualified for Load.**
+Ordinary Load and a changed fresh-process Load both read all207944 bytes with
+zero failures, then remained Please Wait for over3 minutes. Captures stayed
+responsive and the canonical Worker lived. A passive PC/stack probe sampled
+rectangle/clipping arithmetic, but does not establish the cause. Do not call
+this corruption or a specific rendering defect without stronger evidence.
+
+Keep the known-good recruited-party a.sg as the recovery point, with d unchanged.
+The fresh task compares exact f and a loading and targets a demonstrated cause;
+it does not repeat the battle or promote f. Runtime remainsaf0+703/canonical1165,
+all779 parent pins plus32 helpers verified. No production change/build/commit.
+The coordinator checked1118 final references /1018 unique raw hashes, the whole
+f file, full victory/XP and fresh Please Wait images. Both game/Chrome parent
+pairs exited0 with separate EOFs; normal box stop passed. Outer transport143
+remains separate. Canvas2D supplies no GL/FPS/audio/parity claim.

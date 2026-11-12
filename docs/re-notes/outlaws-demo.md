@@ -10,6 +10,44 @@ That initial audit did not acquire bytes; the completed acquisition below supers
 its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
+## November 12 authored shove, Steel Key and opened door102
+
+Run `20261112-outlaws-authored-vertical-use-key-route-0802` found original
+sector253 named **SHOVE_ME**. TOWN.INF event32/MORPH_MOVE2 scripts it west4.
+Native crouched Space performed that shove, cleared the previously diagnosed
+collision, and allowed genuine entry. Steel Key pickup text and the acquired
+ISTEEKEY/GSTEEKEY inventory record were retained. Ordinary Space then opened
+TELEGRAPHDOOR02/door102, with its leaf moving west5 as authored.
+
+Preserve both new **whole-nine** sets and their pins:
+
+- `key-progress-saves/`: ninth230616 bytes, SHA256
+  `239ad3acb1bc1ffb79196b59f5fbdabde5187458df35e08dc520bb36f91d1b6f`;
+  key acquired, crate moved, door closed, health1.4.
+- `door-progress-saves/`: ninth231466 bytes, SHA256
+  `47960cef62b0b83ab459b17d2d01f9cc4c7725f9be190f8f9bed238fe95b3c83`;
+  key acquired, door102 open, health0.6, saved
+  (122.108231,.25,156.418686), yaw48673.
+
+Both sets passed fresh whole-nine VFS restoration/raw readback, ordinary Load,
+stable living rendering300ms and fresh movement. From the door save, native
+Shift+Up180 crossed the genuine doorway to (120.148949,0,166.426819), health0.6
+unchanged. This final outside position was not saved. Original108 ancestral
+files remain unchanged. No healing or mission completion is claimed.
+
+Two initial key-load checks incorrectly demanded exact yaw despite native
+menu mouse movement; those exposed attempts died. Saved living bytes remained
+unchanged. Corrected native Enter Load records yaw and verifies position,
+health and rendered stability, rather than enforcing the false yaw predicate.
+Both successful reload/movement results and failed attempts remain retained.
+
+The coordinator checked393 references /328 unique raw hashes, both complete
+raw/gzip save sets, full key/door/fresh-movement frames and original script/live
+geometry. Source remains exact25ac/75ec, with no emulator fix/build/commit.
+The box stopped normally; actual runtime owner/Chrome and watchdog waits passed,
+with outer transport143 separate. The next task seeks covered native health
+and onward progress from the door-open checkpoint, retaining the1.4 alternative.
+
 ## November 12 native aperture collision cause
 
 Run `20261112-outlaws-aperture-collision-key-route-0738` tested a changed

@@ -8,7 +8,7 @@
 | Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
 | Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion and combat | Victories 9→10→11, native Save/normal Load alive. The newest tested character/map pair restores LIFE 9/35. | [Current gameplay and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-current-worker-gameplay-0119` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
-| MechWarrior 3 | Moving terrain updates measured | Actual Worker motion, stop and renderer cost improvement | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
+| MechWarrior 3 | Qualified moving scene publications | Qualified moving scene publications | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Heretic II demo | Actual Worker crate attack and pickups | Current crate route unmeasured | Flying Fist broke the original crate; native HEALTH POTION and HELLORB pickups. Whole `crate0400` save passed normal Load, movement and released survival; exact health gain is unknown. | [Native crate successor](re-notes/heretic2-demo.md#november-12-health-crate-successor), run `20261112-heretic2-north-opening-health-crate-0400` |
@@ -46,6 +46,27 @@ RGB565 surface and completed software raster work. The coordinator checked
 All four runtime parents exited normally, and the box stopped before expiry.
 These bounded scenes found no runtime defect; they do not prove general crash
 freedom, native-reference parity, strict FPS, audio or historical27 completion.
+
+Published `8a834a3dc` resolves the remaining MW3 scene-admission cause:
+allocation of a shared-child canvas was mistaken for actual contributing
+content. The compositor now supplies an empty-region proof for that exact
+composition, window, memory, canvas, DX layer and source version. Nonempty,
+missing, replaced and stale proofs remain rejected; a blocked cache cannot be
+rehabilitated. Actual WAT/Worker/decoder/compositor fail-before/pass-after,
+source-lifetime/transient/scheduler tests and the locked build pass.
+
+Original software and WebGL each produced10 qualified exact-source moving
+scene rows in one instrumented window. Nine publication intervals averaged
+619ms software and883ms WebGL/SwiftShader, equivalent to1.615 and1.132
+qualified publications/s over first-to-last spans. These are bounded samples,
+not a broad benchmark or physical GPU result; observer costs and scene
+variation remain. Executing module stays `04c53419…`. The coordinator checked
+180 baseline and395 final references, source/test changes, both full moving
+scenes and timing JSON. All three boxes stopped normally. Refused terminal
+read15332 and outer transport143 remain disclosed; actual runtime/Chrome waits
+are0/EOF. Full27/parity/audio/crash work remains open. The fresh graphics lane
+now targets current original NFS3 driving on both backends.
+Evidence: `20261112-mw3-native-source-composition-admission-0755/report.txt`.
 
 Published `2aa8833a4` adds a completed synchronous native Flip source witness
 on the owning guest Worker, after association rotation and before present
