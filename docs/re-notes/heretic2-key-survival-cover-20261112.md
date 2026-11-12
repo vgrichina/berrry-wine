@@ -1,0 +1,11 @@
+# Heretic II gate and healing progress; key survival unfinished
+
+Run `scratch/runs/20261112-heretic2-key-survival-cover-0041/` used original Easy docks and restored the complete proven living courtyard2330 checkpoint on pinned runtime `0db20330ccd6761a705eea70c5dd9bfc7704c147`, module `ce57f0ad80254b974a0d8bcd4e2c9cbf396d2357cbdc7874e6084e980e1e68e1`. Native combat/defense defeated gate attackers, the lever raised the gate, and movement through the courtyard reached another native HEALTH VIAL in the southern arch recess. Native `save cover0041` printed Done; all four native files are preserved with verified hashes in the run manifest. No new Tavern Key or door opening was achieved.
+
+`cover0041` is experimental: normal reload reached the console/black Paused screen, without full-world reload, movement or released survival qualification before the fixed lease ended. Prefer the original courtyard2330 living recovery. The previous key0002 pickup/save remains proven but its initial escape and three normal reloads died; exact health/cause remains unknown. All historical review/death limits and the two invalid Pause preconditions remain unchanged.
+
+Run helpers now require an explicit reviewed full-world native Paused attestation before bounded cycles. The caller negative proved zero dispatch; finite-cycle, reverse-release and partial-delivery tests passed. An attestation is not automatic visual proof. A final proposed review incorrectly called the black reload rendered; that claim is withdrawn, and its requested Backquote input was rejected before dispatch. No production defect or causal runtime fix was established.
+
+All 60 original files were hash verified unchanged; 1,262 recovered references / 1,031 unique raw hashes were checked. No source archive, guest state edits, workers or deployment. Box `bx_fhkkh4dx` was normally archived at 01:27:11.172Z before its 01:28:50.770Z expiry; stop `stop_083ade44eac85d86` completed nonforced without error. Runtime and watchdog parents confirmed actual wait/EOF. Full evidence and recovery instructions are in the run's RESULT.md and RECOVERY.md.
+
+Next qualify cover0041 normally or replay from courtyard2330, then reduce threats, collect the native key, withdraw to cover before saving, prove reload/movement/released survival, and open the timber-room door.
