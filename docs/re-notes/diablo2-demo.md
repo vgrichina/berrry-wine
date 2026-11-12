@@ -1881,3 +1881,21 @@ supervisor, watcher and requester absent, ports closed, profile removed, held
 inputs empty and full flock available. FULLRELEASE was announced 16:48:03.
 Boat/test-box ID/state/expiry are N/A. Recovery and focused checks remain in
 the run directory. This was a docs-only change, with no full build or deployment.
+
+
+## November 12: Den entry and earned XP380 checkpoint
+
+[Current Den progression and complete recovery](diablo2-current-den-quest-20261112.md)
+records original field296 normal Load, two Blood Moor zombies, Den entry and its
+monster objective, and earned combat XP380. Native Save & Exit, the complete
+four-file export, normal Load, retained quest, and fresh movement all passed.
+The coordinator verified954 artifact references/793 unique contents,80 capture
+PNGs,80 command ACKs, balanced trusted input, all four save hashes, and the
+full Den/quest/post-Load stats/movement images. The Den remains uncleared;
+Akara healing is the next native objective. No causal SaveExit fix is claimed.
+
+The stylized digit5 was previously read as6: read-only original v71 save
+decoding gives initial life55/55, Vitality25 and next-level threshold500.
+The earned save restores XP380, life27/55 and gold3; no stats were edited.
+Published notes: `4b5002933`, `00aea67f3`. Tested module:`04c53419…`.
+All three private attempts stopped normally with actual parent joins.
