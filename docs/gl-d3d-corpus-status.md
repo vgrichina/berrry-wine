@@ -5,7 +5,7 @@
 | App | Software | WebGL | Native outcome | Evidence |
 | --- | --- | --- | --- | --- |
 | GLTron | Moving trails and round outcome | Moving trails | Browser gameplay on module `1165f15c…`. Cooperative and actual Worker CLI gameplay also works with `--real-ticks`. | [Current scenes](re-notes/gltron-current-device-scenes-20261112.md), run `20261112-gltron-current-device-scene-repair-0015` |
-| Forsaken | Actual Worker combat, then persistent white viewport | Actual Worker combat, then persistent white viewport | Current module04 shows player damage/respawns on both owners; enemy hit/defeat remains unverified. Post-white WebGL observations show additive scene submissions, depth-only clears and sampled white uploads; the upstream transition remains unresolved. No sampled native crash. | [Current combat and rendering blocker](re-notes/forsaken-owner-enemy-20261112.md), run `20261112-forsaken-owner-enemy-1510`; [earlier threaded scenes](re-notes/forsaken-current-threaded-scenes-20261112.md) |
+| Forsaken | Actual Worker combat, then persistent white viewport | Actual Worker combat, then persistent white viewport | Current module04 shows player damage/respawns on both owners. Fresh WebGL trace retains an additive draw turning a sampled pixel white, followed by additive scene geometry despite CPU opaque restores. Raw post-store/enqueue/replay state remains unobserved; no repair is proved. A white combat frame reads ENEMY KILLED001 without a verified baseline counter delta. | [First-white transition and limits](re-notes/forsaken-final-pinned-first-white-20261112.md), run `20261112-forsaken-final-pinned-first-white-1605`; [paired combat](re-notes/forsaken-owner-enemy-20261112.md) |
 | Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories11 retained; native food purchase/eating, rest to35/35 and sword purchase. New Save/Load restores Food82, gold393, equipped sword/AC6 and accepts fresh movement; Town bank0/service checks yield no gain, planned Ardyl quest/recovery next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-town-food-equipment-0925` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
 | Hexen II | Current courtyard/chamber traversal and living attack at50 HP | Current courtyard/chamber traversal and living attack at69 HP | Incoming player damage on both; SoftwareGL death/native restart retained. Enemy damage/kill unproved. | [Current paired traversal](re-notes/hexen2-api-envelope-paired-progress-20261112.md), run `20261112-hexen2-api-envelope-paired-progress-1040` |
@@ -15,7 +15,7 @@
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Heretic II demo | Current8a834/04 living crate0400 Load, fresh movement and released interval | Current Easy docks; crate Load reproduces native ExitProcess8 | Full four-source reads pass on both; WebGL exit cause unresolved, no production fix or paired onward proof. | [Current load comparison](re-notes/heretic2-current-load-exit-cause-20261112.md), run `20261112-heretic2-current-load-exit-cause-1135` |
-| Half-Life Uplink | Current actual SoftwareGL living controls and qualified chamber save | Current actual WebGL living controls and elevator onward | Health100/armour0; WebGL elevator reaches the red crate bay. SoftwareGL native Save/export/Load/fresh movement also passes in a fresh browser. Paired onward and combat remain open. | [Paired controls](re-notes/halflife-current-paired-onward-20261112.md); [four-file checkpoint](re-notes/halflife-earned-cross-session-save-20261112.md), run `20261112-halflife-earned-cross-session-save-1430` |
+| Half-Life Uplink | Current actual SoftwareGL red bay, complete nine-file save restored in a fresh browser | Current actual WebGL living controls and elevator onward | Health100/armour0; SoftwareGL native bay Save/export/Load/fresh movement and fresh-browser continuity pass. Maintenance/crate exploration proves no onward weapon or encounter; paired onward/save parity and combat remain open. | [Fresh nine-file bay recovery](re-notes/halflife-bay-native-onward-20261112.md), run `20261112-halflife-bay-native-onward-1600`; [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
 
 Half-Life uses original hldemo/PAK bytes on module`04c53419…`. The coordinator
 verified1,368 references/1,122 paths,870 decoded raw records,237 balanced trusted
@@ -34,8 +34,22 @@ attempt stopped on a strict renderer transition during capture, leaving that
 checkpoint intact and onward progress unqualified.
 The1510 continuation now reaches the scientist/guard upper deck and qualifies a
 five-file483845-byte native successor through Save/export/move-away/Load/fresh
-movement in one browser. Its fresh-browser restoration is pending. See
-[the upper-deck checkpoint](re-notes/halflife-stable-load-onward-20261112.md).
+movement in one browser. The1535 continuation verifies that set in a fresh
+browser, reaches the red bay and qualifies its nine-file997089-byte native
+successor. The1600 run restores that entire set in a fresh browser, selects
+UPLINK00:20 and verifies fresh movement on actual SoftwareGL. Root review
+checked422 references/36 full PNGs and the full load/movement frames. Play
+ended at an actual disk-floor crossing, without a new weapon, encounter,
+onward room or successor Save. See [the upper-deck checkpoint](re-notes/halflife-stable-load-onward-20261112.md)
+and [fresh bay recovery](re-notes/halflife-bay-native-onward-20261112.md).
+
+Diablo II's current original demo now heals through Akara to55/55 and earns
+outdoor XP380→401. Native Save & Exit, complete four-file export, normal Load,
+retained XP401/Den quest and fresh movement pass in the same browser. Root
+review checked811 references/75 full PNGs and six persistence-sequence frames.
+Fresh-browser restoration is pending, the Den remains uncleared, and no
+exact species/count or runtime fix is claimed. [Earned XP401 save](re-notes/diablo2-native-menu-short-combat-20261112.md),
+run `20261112-diablo2-native-menu-short-combat-1540`.
 
 The GLTron software proof binds its actual GL software owner and completed
 raster work, with a legacy D3D WebGL transport. Its default cooperative CLI

@@ -1,5 +1,24 @@
 # Diablo II Shareware demo
 
+## November 12: healing and earned XP401 save
+
+The [native short-combat run](diablo2-native-menu-short-combat-20261112.md),
+commit `0df107e3b`, restores the complete XP380 checkpoint, heals through Akara
+from27/55 to55/55, and earns21 outdoor combat XP. Native Save & Exit returns
+to the title; the complete four-file export then passes normal Load, native
+XP401/life53/55, fresh movement and the still-active Den objective. This
+qualifies the XP401 set in the same browser; fresh-browser restoration is
+pending. The Den remains uncleared, and exact monster species/count is unproved.
+
+The coordinator checked811 artifact references,75 complete PNGs,18 binding
+fields and balanced trusted input, and inspected six full persistence-sequence
+frames. Preserve all four files together from
+`20261112-diablo2-native-menu-short-combat-1540/earned-save/`; the D2S hash starts
+`8a55786b1923`. The older XP380 and death-outcome sets remain separate.
+Actual remote parent/Chrome exit and kernel drain passed; the local launcher
+returned143 without actual manager/watchdog join receipts, so those joins
+remain unknown. The private box stopped normally. No runtime fix is claimed.
+
 ## Package and installer
 
 The local package is Blizzard's `DiabloIIDemo.exe`:

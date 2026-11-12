@@ -27,9 +27,23 @@ passes export, movement away, normal Load and fresh movement in that browser.
 Its complete five-file export totals483845 bytes; retain it separately from the
 four-file chamber checkpoint. Coordinator review verified479 references,
 42 full captures,27 bound gameplay captures and83 trusted balanced events.
-Fresh-browser restoration of this successor is pending; the four-file parent
-already has that proof. Neither NPC activation nor the next elevator consequence
-is established by reaching the deck.
+The [1535 continuation](halflife-upperdeck-onward-20261112.md), commit
+`cc0e91124`, restores that five-file set in a fresh browser and verifies movement.
+Ordinary E and movement then reach a distinct red crate bay through Loading;
+the elevator was already open before E, so its opening is not attributed to Use.
+The bay successor at00:20 passes native Save/export/move-away/Load/fresh movement.
+Keep its complete nine-file997089-byte set together, including both maps' auxiliary
+files and all three slots. It supersedes neither older checkpoint's own evidence.
+
+The [1600 fresh-browser check](halflife-bay-native-onward-20261112.md), commit
+`e8231d035`, verifies all nine mounted/VFS hashes, native Load00:20 and fresh
+movement on actual SoftwareGL at health100/armour0. Coordinator review checked
+422 references,36 full PNGs,22 postbinding identity fields and31 balanced input
+pulses, and inspected selection, loaded bay, movement, door and crate frames.
+Maintenance-door Use and crate clearance established no onward room, weapon,
+pickup or encounter. Actual free disk crossed1.5GB, ending native play; no
+successor Save was attempted. All actual parent waits/EOFs and normal box stop
+passed. Combat, paired onward/save parity, FPS and audio remain open.
 
 ## Package and installed layout
 
