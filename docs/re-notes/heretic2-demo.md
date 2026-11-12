@@ -7,6 +7,40 @@ renderer (`ref_gl.dll` / `ref_soft.dll`), `SndDll.dll` and, under `Base\`,
 `gamex86.dll`, `Player.dll` and `Client Effects.dll` are `LoadLibrary`'d at
 runtime. Registered 274f69e21.
 
+## November 12 health-crate successor
+
+Run `20261112-heretic2-north-opening-health-crate-0400` reached the original
+tavern crate through the north opening, broke it with native Flying Fist, and
+recorded HEALTH POTION and HELLORB in the native console. Exact health gain
+and full-health status remain unmeasured. Staff strikes had not broken this
+crate; the neighboring small crate remained intact.
+
+The new preferred interior continuation is **all four** `crate0400` files in
+that run's `save-inputs/crate0400/`, with `crate0400-native-manifest.json` and
+`RECOVERY.md`. Initialize original Game → Easy, verify the complete unchanged
+VFS save readback, then use normal console `load crate0400`. It saves near
+(291.996,1623.636,−29.967), facing south. Normal reload returned upright;
+fresh movement reached (289.753,1675.588), followed by released survival.
+The large crate remained absent. Keep whole `tavern0237` and `key0136` as
+living fallbacks. `guard0330` and `door0136` remain experimental failed-reload
+sets; do not prefer them. No guard defeat or permanent safety is established.
+
+The actual route crossed near x526 through the opening at y1536–1568,
+continued north beyond the partition's y1632 end, then went west to the
+crate's north face. Native map geometry was guidance; the break and pickups
+were observed in the original game. Some movement completed in a later cycle;
+the run helper's neutral wait increased from 700 to 3000 ms without changing
+game clocks. These wall intervals do not establish exact input timing.
+
+The tested published baseline is `30f9318e6`, actual Worker module
+`1165f15c…`, software GL. Later shared `lib/d3dim-gpu.js` work was excluded
+from this isolated runtime. The coordinator checked 1,380 recovered references
+/ 541 unique raw hashes, 88 native-file references and the full break,
+pickup-console and loaded-survival images. No production change, build or task
+commit was made. The box stopped normally before expiry with runtime parent
+wait/EOF; outer transport exit143 remains separate. WebGL parity, FPS and audio
+are not established by this route.
+
 ## Licence
 
 `license.txt` in `_user1.cab` is Activision's standard licence: personal use
