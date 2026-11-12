@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 import sys
 
-COLLECTOR_SHA = '3448afd4c5ec4ea691c584a6cfde3a61b72f5c9143458189c1035f374c4c6240'
+COLLECTOR_SHA = 'f8e6e8be352a20f668185c907fdcf4308f5cb93f8c6b8297fada063fc8140b77'
 
 
 def launch(run, command):
