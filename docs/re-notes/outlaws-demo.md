@@ -10,6 +10,42 @@ That initial audit did not acquire bytes; the completed acquisition below supers
 its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
+## November 12 SteelKey route and living fallback
+
+Runs `20261112-outlaws-steel-key-telegraph-door-0418` and
+`20261112-outlaws-telegraph-counter-alternate-route-0458` identify original
+`GSTEEKEY` → `ISTEEKEY`, USE102, matching TELEGRAPHDOOR02/object102.
+The locked door visibly requires the steel key; pickup and opening remain
+unproved. Native Space opened the separate TELEGRAPHDOOR01.
+
+Original geometry offers a raised barred counter, the locked south door, or
+the low east aperture into the rear room. Counter jumping failed. A changed
+fresh crouch/settle approach reached (134.762,.25,149.806), consistent with the
+earlier blocked endpoint. The next resume produced explicit “You got shot to
+death!” before further movement. This proves neither aperture entry nor a new
+collision limit. A future attempt must address the shooter or verify native
+MedicalBag healing before another continuous crouched approach. Charges remain
+unknown; no kill or safe cover is inferred.
+
+Retain the **whole nine** `onward-saves/` from run0418 with
+`onward-save-pins.json`: saved store health5.4 at (105.800,.25,183.372),
+yaw43470, ninth raw SHA256
+`8f187147e1a189cdccef748f33a21875ae446f157651e4497144dc8150ea2c5d`.
+Run0458 actually restored all nine into a fresh empty matching VFS, verified
+all raw bytes, normal-loaded the rendered exact state stable300ms, then
+proved fresh movement alive at health4.6. Movement was not resaved. The
+whole `frontroom-saves/` at health3.8 also passed fresh restoration and living
+movement. Keep all parent sets; exclude both .2-health/dead branches.
+Run0458 `RECOVERY.md` contains the exact continuation recipe.
+
+Tested runtime remains Git `25ac5466d…` / WASM `75ecda5701…`; later shared
+renderer changes were excluded. No production change or build was made.
+The coordinator verified 430 recovered references / 344 unique raw hashes
+and the full death/living-store images. Actual runtime wait0/EOF and normal
+box stop passed; outer transport143 remains separate. A Stop All → relaunch
+null-memory `find_window` error occurred on this legacy host. A fresh host
+page worked; no current-main reproduction or generic cause is established.
+
 ## Selection and provenance
 
 Selected **Outlaws (LucasArts, 1997), updated original single-player demo**.
