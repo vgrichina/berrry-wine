@@ -8,6 +8,7 @@
 | Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
 | Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories9→10→11 retained; native Town rest2→35/35 and new Save/Load/fresh movement. Food0, AC6, helmet only after costly retreat; food/equipment next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-native-healing-quest-successor-0907` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
+| Re-Volt demo | Actual Worker driving, steering and recovery | Actual Worker driving and steering | Software21/26 mph and WebGL Time Trial16 mph; no checkpoint/lap/finish. Unsupported helper action stopped later steering before dispatch. | [Current paired driving](re-notes/revolt-current-paired-driving-checkpoint-20261112.md), run `20261112-revolt-current-paired-driving-checkpoint-0911` |
 | NFS3 demo | Actual Worker acceleration, steering and recovery | Actual Worker acceleration, steering and recovery | Original software82 MPH and WebGL/SwiftShader48 MPH with road progress; lap/finish and FPS remain open. | [Current paired driving](re-notes/nfs3-current-paired-driving-20261112.md), run `20261112-nfs3-provision-gated-paired-driving-0840-fresh` |
 | MechWarrior 3 | Qualified moving scene publications | Qualified moving scene publications | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
@@ -47,6 +48,21 @@ RGB565 surface and completed software raster work. The coordinator checked
 All four runtime parents exited normally, and the box stopped before expiry.
 These bounded scenes found no runtime defect; they do not prove general crash
 freedom, native-reference parity, strict FPS, audio or historical27 completion.
+
+Re-Volt now has current8a834/module04c53419 active driving on both owning
+backends. Software Single Race drove, steered and recovered, while WebGL Time
+Trial cleared the early fence and drove along the street. Wrong-way drain
+travel, native positions and authored route proximity are not checkpoint
+acceptance. No checkpoint/lap transition, finish, save or FPS was proved.
+The coordinator checked519 references/414 unique compressed and raw hashes,
+executing module/backend bindings, native SwiftShader reporting and both full
+driving scenes. Forty-four bound scenes and37 balanced pulses are retained.
+A caller used unsupported action:"keys" instead of action:"key"; it failed
+before dispatch and ended control without replay. Software owner wait0 and
+WebGL owner wait1/Chrome0 have separate EOFs. Local wrapper143 and unavailable
+actual parent wait for the reparented watchdog remain explicit; the box is
+independently stopped normally. No production change or build was needed.
+The next graphics worker targets current Hexen II on softwareGL/WebGL.
 
 Darkstone's latest WebGL continuation uses current8a834/module04c53419.
 Native Town retreat removed sword/cape/shield, and rest healed2→24→35 while
