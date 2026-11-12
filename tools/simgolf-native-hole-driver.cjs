@@ -48,6 +48,7 @@ function compose(root){
  s=exact(s,"const readiness=require('../20261107-boids-visible-flock/readiness.cjs');const bound=require('../20261107-boids-visible-flock/bound-input.cjs'),ordinary=require('../20261107-boids-visible-flock/ordinary-keys-fixed.cjs');ordinary.assertRequired();", "const readiness=require('../20261107-boids-visible-flock/readiness.cjs');const bound=require('./bound-input.cjs');");
  s=exact(s,"localStorage.setItem('wine-assembly.threads','1');",'');
  s=exact(s,'let browser,server,ws,pageSession,chain,closing=false,latest=null,timer;',`const simgolf=require('../../../tools/simgolf-native-hole-driver.cjs');
+let chromeEndpointReady=false;
 let guard,stopTerminalWatch=()=>{};
 function fail(e){return guard.fail(e);}
 let browser,server,ws,pageSession,chain,closing=false,latest=null,timer;`);
@@ -75,11 +76,15 @@ stopTerminalWatch=simgolf.observeTerminal(out,guard);`);
  s=exact(s,"const previous=latest?.sha256;",'const previous=latest?.guestPixels?.sha256??latest?.sha256;');
  s=exact(s,"if(c.action!=='capture')assert.notEqual(latest.sha256,previous,'unchanged expected transition; terminal');", "if(previous!==undefined)assert.notEqual(latest.guestPixels?.sha256??latest.sha256,previous,'unchanged expected transition; terminal');");
  s=exact(s,"v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result)","v.error?p.reject(fail(Error(JSON.stringify(v.error)))):p.resolve(v.result)");
- s=exact(s,"browser.once('exit',(code,signal)=>save('chrome-exit.json',{at:new Date().toISOString(),code,signal}));","browser.once('exit',(code,signal)=>{save('chrome-exit.json',{at:new Date().toISOString(),code,signal});if(!closing)fail(Error('browser exited'));});");
+ s=exact(s,"browser.once('exit',(code,signal)=>save('chrome-exit.json',{at:new Date().toISOString(),code,signal}));","browser.once('exit',(code,signal)=>{save('chrome-exit.json',{at:new Date().toISOString(),code,signal});if(!closing&&chromeEndpointReady)fail(Error('browser exited'));});");
  for(const n of ['worker-errors','event-errors'])s=exact(s,"log('"+n+".jsonl',{", "failAndLog('"+n+".jsonl',{");
  s=exact(s,'async function event(v){guard.check();',"function failAndLog(n,v){log(n,v);fail(Error(JSON.stringify(v)));}\nasync function event(v){guard.check();");
  s=exact(s,'row.error=String(e);','row.error=String(e);fail(e);');
  s=exact(s,"})().catch(async e=>{save('first-browser-failure.json',{at:new Date().toISOString(),error:e.stack,noReplay:true});process.exitCode=1;await close('first terminal failure');});","})().catch(e=>{fail(e);});");
+ // Bounded startup contract: retain launch and live observations before CDP.
+ s=exact(s,"browser=cp.spawn('/usr/bin/google-chrome',[", "const chromeArgs=[");
+ s=exact(s,"'about:blank'],{stdio:", "'about:blank'];save('chrome-launch.json',{at:new Date().toISOString(),executable:'/usr/bin/google-chrome',args:chromeArgs,budgetMs:60000});browser=cp.spawn('/usr/bin/google-chrome',chromeArgs,{stdio:");
+ s=exact(s,"const active=out+'/chrome-profile/DevToolsActivePort';for(let i=0;i<100&&!fs.existsSync(active);i++)await wait(100);const [debugPort,debugPath]=fs.readFileSync(active,'utf8').trim().split('\\n');save('endpoint.json',{debugPort:Number(debugPort),browserPath:debugPath});", "const {debugPort,debugPath}=await simgolf.waitChromeEndpoint({browser,profile:out+'/chrome-profile',deadline:Math.min(Date.now()+60000,deadline-120000),check:()=>guard.check(),record:v=>log('chrome-startup.jsonl',v)});chromeEndpointReady=true;save('endpoint.json',{debugPort,browserPath:debugPath});");
  // Run the very same generated caller in an effect-free import-only mode.
  // This branch precedes mkdir, clocks, parent identity, server and Chrome.
  const imports=`() => [require('../20261107-boids-visible-flock/readiness.cjs'),require('./bound-input.cjs'),require('./transport.cjs'),require('./input.cjs'),require('../../../test/static-server.js'),require('./mount.cjs'),require('../../../tools/native-clock-process-proof.cjs'),require('pngjs')]`;
@@ -90,6 +95,42 @@ if(process.argv.includes('--staged-import-check')) {
  return;
 }`);
  return s;
+}
+async function waitChromeEndpoint({browser,profile,deadline,check=()=>{},record=()=>{}}){
+ // The monotonic budget cannot be extended by a wall-clock adjustment.
+ const budget=deadline-Date.now();assert(budget>0&&budget<=60000,'startup budget 1..60000ms');
+ const start=performance.now(),remaining=()=>budget-(performance.now()-start);
+ let spawnError=null,last=null,attempt=0;
+ const onError=e=>{spawnError=e;};browser.on('error',onError);
+ const snapshot=()=>{
+  const read=n=>{try{return fs.readFileSync('/proc/'+browser.pid+'/'+n,'utf8');}catch(e){return {error:e.code};}};
+  return {pid:browser.pid??null,exitCode:browser.exitCode,signalCode:browser.signalCode,spawnError:spawnError?String(spawnError):null,status:read('status'),cmdline:read('cmdline')};
+ };
+ try{
+  record({phase:'waiting',budgetMs:budget,process:snapshot()});
+  while(remaining()>0){
+   check();if(spawnError)throw spawnError;
+   if(browser.exitCode!==null||browser.signalCode!==null)throw Error('Chrome exited before endpoint readiness');
+   attempt++;
+   try{
+    const raw=fs.readFileSync(path.join(profile,'DevToolsActivePort'),'utf8');
+    const lines=raw.trim().split('\n'),debugPort=Number(lines[0]),debugPath=lines[1];
+    assert(lines.length===2&&/^\d+$/.test(lines[0])&&Number.isInteger(debugPort)&&debugPort>=1&&debugPort<=65535&&/^\/devtools\/browser\/[A-Za-z0-9-]+$/.test(debugPath),'incomplete or invalid DevToolsActivePort');
+    const response=await fetch('http://127.0.0.1:'+debugPort+'/json/version',{signal:AbortSignal.timeout(Math.max(1,Math.min(1000,Math.floor(remaining())))),redirect:'error'});
+    assert.equal(response.status,200,'DevTools version HTTP status');const version=await response.json();
+    assert.equal(version.webSocketDebuggerUrl,'ws://127.0.0.1:'+debugPort+debugPath,'DevTools endpoint identity');
+    assert.equal(typeof version.Browser,'string','DevTools Browser version');
+    check();assert(remaining()>0,'Chrome endpoint startup deadline');
+    assert(browser.exitCode===null&&browser.signalCode===null&&!spawnError,'Chrome died during endpoint readiness');
+    record({phase:'ready',attempt,elapsedMs:performance.now()-start,debugPort,debugPath,version,process:snapshot()});
+    return {debugPort,debugPath};
+   }catch(e){last=String(e);}
+   record({phase:'poll',attempt,elapsedMs:performance.now()-start,last,process:snapshot()});
+   if(remaining()>0)await new Promise(r=>setTimeout(r,Math.min(250,remaining())));
+  }
+  throw Error('Chrome endpoint startup deadline; last='+last);
+ }catch(e){record({phase:'failed',attempt,elapsedMs:performance.now()-start,error:String(e),last,process:snapshot()});throw e;}
+ finally{browser.removeListener('error',onError);}
 }
 function checkImports(load,{permanent=false}={}){
  const undo=[],blocked=[];
@@ -143,7 +184,7 @@ function generate(root,out){
   fs.writeFileSync(path.join(out,name),text,{flag:'wx'});pins.push({path:name,size:Buffer.byteLength(text),sha256:sha(text)});
  }return pins;
 }
-module.exports={PRIOR,BOUND,compose,helpers,generate,terminalGuard,owningCanceller,observeTerminal,guestPixels,sha,checkImports};
+module.exports={PRIOR,BOUND,compose,helpers,generate,terminalGuard,owningCanceller,observeTerminal,guestPixels,sha,checkImports,waitChromeEndpoint};
 if(require.main===module){
  if(process.argv[2]==='owner-exec'){
   process.env.SIMGOLF_OWNER_IDENTITY=JSON.stringify(require('./native-clock-process-proof.cjs').identity(process.ppid));
