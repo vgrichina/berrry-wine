@@ -6,6 +6,11 @@ menus, unchanged default skill and media, and actual guest/render Workers.
 It does not measure FPS, establish visual parity or audio, or close the full
 GLD3D-CORPUS-27 scope.
 
+The [native Major encounter follow-up](quake3-native-major-encounter-20261112.md)
+adds reviewed visible opponents, pointer-lock aim/fire attempts and explicit
+player deaths to Major on both backends. Outgoing damage and a player frag
+remain unverified.
+
 ## Identity and route
 
 The served closure is pinned by `runtime-pins.json` and `runtime-pins-v2.json`
