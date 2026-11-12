@@ -1,5 +1,65 @@
 # MechWarrior 3 demo
 
+## November 12 completed-generation measurement dependency
+
+Run `20261112-mw3-completed-frame-generation-0518` retested original moving
+software and WebGL with actual guest/render Workers on runtime
+`b54b1cbf8d5269e22cb47922aab1a29d5417c15c`, canonical `1165f15c…`.
+622 source/media/helper pins and executing JavaScript/Wasm identities are
+retained. The ordinary KeyI, pilot a/Enter, pointer-lock, Accept/Instant
+Action/Launch route and independently released Digit5 again produced reviewed
+40.5 km/h motion. CDP identifies SwiftShader Vulkan / SwANGLE 5.0.0 despite
+the inconsistent Intel Mesa WebGL API string; this is not hardware-GPU evidence.
+
+**Completed gameplay FPS and frame times remain UNKNOWN.** Both live bounded
+join attempts failed with `writer observation requires an idle live
+GuestThreadHost`. `host.js` waits for the ordinary main completed-step boundary,
+but `GuestThreadHost.setWriterObservation` also requires every main/secondary
+link to have no pending request/readiness/stop, no starting link, and no host
+write in flight. The observed refusal does not identify which disjunct was
+active. No guard was weakened and neither attempt was retried for admission.
+The resulting journal/join was absent, rather than a valid zero-FPS sample.
+
+The source frontier is the render consumer's `RECORD_FLIP` after the natural
+backend fence, front/back swap, and sealed front descriptor/DIB page witness
+(or its exact retained copy). EndScene, draw, HUD upload and raw Flip notification
+are insufficient. A valid decode must retain owner/module/Worker/observation
+identity, request descriptor/serial, layout/allocation, writer/page or retained
+copy generation, then the exact decoded canvas through compositor publication.
+
+Passive 8.005-second WebGL and 8.003-second software windows traced respectively
+25 and 39 natural fallback-copy→canvas→output publication paths, with zero
+request-bearing copies. Separate failed-arm diagnostic windows traced 28 and
+67 paths over 8.520 and 8.676 seconds. These counts include duplicates and partial
+updates and are **not frames or FPS**. All four traces kept stable owners and
+reported no observer failure. Existing ImageData hashing added no pixel readback;
+measured callback/hash self-time was 13.91–34.16 ms (0.17–0.39%), a lower bound
+excluding dispatch, snapshots, allocation/GC, scheduling and debugger costs.
+No screenshot/profile capture overlapped these windows.
+
+Twelve focused production-path controls distinguish null HUD uploads, native
+watched writes, stale requests, wrong process/window owners, post-decode writes,
+retained-copy expiry/reservation and clear ordering. A new counterfactual is
+particularly decisive: after a genuine watched green pixel write and null HUD
+upload, normal decoding displays green and qualifies nothing; carrying the old
+request instead selects the retained **red pre-HUD image** and qualifies that
+older image. Without a retained copy, the same stale carry is rejected by page
+guards. Carrying the request therefore changes pixels or fails correctness;
+it cannot repair measurement. Existing producer identity, transient writer and
+transient scene suites also passed, including ABA/coalescing/lifetime controls.
+
+Next: add an actual-Worker control with a secondary request still pending at
+the main completed-step boundary, then implement observer attachment only after
+all relevant natural writer boundaries are covered, preserving their scheduled
+continuations and owner checks. Retest original admission before addressing
+post-HUD generation membership. That second step must distinguish a completed
+producer snapshot from later partial HUD writes without selecting old pixels or
+changing rendering. Only then admit repeated completed-frame timing windows.
+Exact traces, controls, rejected attempts and recovery are in `report.txt`,
+`trace-summary.json`, `natural-canvas-paths.json` and `RECOVERY.txt` in the run.
+No production code changed; full27, parity, audio and historical cursor cause
+remain open. The leased box was normally stopped after verified recovery.
+
 ## November 12 moving-scene cost and native16 synchronization
 
 Run `20261112-mw3-moving-scene-frame-cost-0410` measures original cockpit motion
