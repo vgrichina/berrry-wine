@@ -80,7 +80,35 @@ stopTerminalWatch=simgolf.observeTerminal(out,guard);`);
  s=exact(s,'async function event(v){guard.check();',"function failAndLog(n,v){log(n,v);fail(Error(JSON.stringify(v)));}\nasync function event(v){guard.check();");
  s=exact(s,'row.error=String(e);','row.error=String(e);fail(e);');
  s=exact(s,"})().catch(async e=>{save('first-browser-failure.json',{at:new Date().toISOString(),error:e.stack,noReplay:true});process.exitCode=1;await close('first terminal failure');});","})().catch(e=>{fail(e);});");
+ // Run the very same generated caller in an effect-free import-only mode.
+ // This branch precedes mkdir, clocks, parent identity, server and Chrome.
+ const imports=`() => [require('../20261107-boids-visible-flock/readiness.cjs'),require('./bound-input.cjs'),require('./transport.cjs'),require('./input.cjs'),require('../../../test/static-server.js'),require('./mount.cjs'),require('../../../tools/native-clock-process-proof.cjs'),require('pngjs')]`;
+ s=exact(s,"'use strict';",`'use strict';
+if(process.argv.includes('--staged-import-check')) {
+ const driver=require('../../../tools/simgolf-native-hole-driver.cjs');
+ console.log(JSON.stringify(driver.checkImports(${imports}, {permanent:true})));
+ return;
+}`);
  return s;
+}
+function checkImports(load,{permanent=false}={}){
+ const undo=[],blocked=[];
+ const deny=(object,names)=>{for(const name of names)if(typeof object[name]==='function'){
+  const old=object[name];object[name]=()=>{blocked.push(name);throw Error('import attempted effect: '+name);};undo.push(()=>object[name]=old);
+ }};
+ try{
+  deny(require('node:child_process'),['spawn','spawnSync','exec','execSync','execFile','execFileSync','fork']);
+  deny(fs,['mkdir','mkdirSync','writeFile','writeFileSync','appendFile','appendFileSync','createWriteStream','watch','unlink','unlinkSync','rename','renameSync']);
+  deny(fs.promises,['mkdir','writeFile','appendFile','unlink','rename']);
+  const open=fs.openSync;fs.openSync=(file,flags,...args)=>{assert(flags==='r'||flags===0,'import attempted writable open');return open(file,flags,...args);};undo.push(()=>fs.openSync=open);
+  deny(require('node:net').Server.prototype,['listen']);
+  deny(require('node:net'),['connect','createConnection']);
+  deny(require('node:http'),['request','get']);deny(require('node:https'),['request','get']);
+  deny(globalThis,['setTimeout','setInterval','fetch','WebSocket']);
+  const before=new Set(Object.keys(require.cache));load();
+  assert.equal(blocked.length,0,'import swallowed an effect rejection');
+  return {passed:true,importOnly:true,effects:blocked,loaded:Object.keys(require.cache).filter(p=>!before.has(p))};
+ }finally{if(!permanent)for(const restore of undo.reverse())restore();}
 }
 function helpers(root){
  let bound=fs.readFileSync(path.join(root,BOUND),'utf8');
@@ -115,7 +143,7 @@ function generate(root,out){
   fs.writeFileSync(path.join(out,name),text,{flag:'wx'});pins.push({path:name,size:Buffer.byteLength(text),sha256:sha(text)});
  }return pins;
 }
-module.exports={PRIOR,BOUND,compose,helpers,generate,terminalGuard,owningCanceller,observeTerminal,guestPixels,sha};
+module.exports={PRIOR,BOUND,compose,helpers,generate,terminalGuard,owningCanceller,observeTerminal,guestPixels,sha,checkImports};
 if(require.main===module){
  if(process.argv[2]==='owner-exec'){
   process.env.SIMGOLF_OWNER_IDENTITY=JSON.stringify(require('./native-clock-process-proof.cjs').identity(process.ppid));
