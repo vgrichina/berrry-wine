@@ -165,6 +165,35 @@ full camera/death frames. Terminal cancellation reaps363 tasks; local manager
 and watchdog join0 and the box stops normally. Fix semantic latest-capture
 selection before another aimed-combat attempt; retain the remote guard.
 
+The [1930 caller repair](halflife-semantic-capture-aimed-combat-20261112.md),
+commit `0f09c13ce`, selects the latest successful semantic capture ACK instead
+of local file mtimes. Full original frames still show player deaths and an
+untraversed guard doorway; no enemy hit or new save is earned. The complete
+thirteen-file checkpoint remains unchanged.
+
+The [2000 native Pause repair](halflife-native-pause-20261112.md), code
+`ae83f8d55`, fixes the general renderer mapping: Pause uses scan code0x45
+without the extended bit, while NumLock keeps that bit. Actual Chrome events
+and the owning Worker's Win32 messages distinguish the old zero scan code from
+the corrected message. Original SoftwareGL frames now show native PAUSED35 HP,
+with health and scene stable7.916 seconds. An ordinary resume/PageDown cycle
+changes the view at30 HP, followed by a verified native PAUSED30 HP frame.
+The browser Frozen control is unchecked. Root reviewed555 references,46 full
+PNG CRCs and six complete original frames; both closing exports retain all
+thirteen members/data. Native pause/resume is now qualified on SoftwareGL.
+End centering, WebGL Pause parity, enemy hit/kill, safe onward and a new save
+remain unproved. Normal shutdown passed; original local manager143/watchdog
+parent joins remain unknown rather than inferred from later cleanup.
+
+The later [bounded media caller](halflife-bounded-media-2125-20261112.md),
+published `0264ca075`, replaces a run-local whole-file PAK PUT with the existing
+qualified1 MiB range path. Local actual HTTP/assembly checks pass chunk/whole
+hashes, corruption refusal and actual child waits. These controls are local;
+the prior30-second PUT remains UNKNOWN/unreplayed and no successful new remote
+provisioning or gameplay follows from the adapter test alone. Continue from the
+unchanged whole13 through normal03:18 Load and visually reviewed pause cycles
+when actual disk headroom permits.
+
 ## Package and installed layout
 
 The local-only installer is

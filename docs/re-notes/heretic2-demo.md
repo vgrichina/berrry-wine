@@ -20,9 +20,9 @@ WebGL again exits natively with code 8 during the same normal load. The new
 passive observer records successful context creation/current binding and zero
 at the existing startup error queries. There are no load-time error queries,
 so those results do not establish a clear error flag during loading. No
-runtime violation, repair or new checkpoint was proved. The final successful
-swap precedes exit by five milliseconds, but its completed pixels were not
-retained. The next permitted witness is that final frame before teardown.
+runtime violation, repair or new checkpoint was proved. That comparison's final
+successful swap precedes exit by five milliseconds, but its completed pixels
+were not retained in that run. The2055 witness below fills this observation gap.
 
 Published `8f68731a1`; [diagnosis, exact recovery and lifecycle limits](heretic2-runtime-boundary-20261112.md),
 run `20261112-heretic2-runtime-boundary-1910`. Coordinator review checked 364
@@ -30,6 +30,30 @@ references, 30 full PNG identities and PNG CRCs, and four complete frames.
 The box stopped normally; original local manager/watchdog parent waits remain
 unknown. Further investigation uses runtime/API/renderer observations only,
 without guest reverse engineering or guest modifications.
+
+The later [original exit-frame witness](heretic2-exit-witness-2055-20261112.md),
+published `6e8c88fa2`, recovers the actual completed640×480 owning-WebGL image
+before teardown. The PNG's decoded RGBA equals the independent retained pixel
+hash, and all22 owner fields match. Completion is5 ms before native
+ExitProcess(8) entry and6 ms before host exit selection. The complete original
+frame shows the normal loading console and Paused over black; there is no
+visible error diagnostic. The final-frame objective is met. Exit cause,
+loaded-world survival and a new paired comparison remain unknown.
+
+Root verified136 encoded/raw blobs mapping161 paths,11 original full PNGs,
+42 balanced trusted input edges and seven independent releases. Whole-four
+VFS readback matches the unchanged save. The box stopped normally, expiry null;
+the browser parent1 after the pending post-exit capture is separate from
+Chrome0 and actual stop/manager/watchdog0 waits with both EOFs.
+
+The [retained API audit](heretic2-exit-api-2130-20261112.md), `a4420f289`,
+identifies the next observation gap. Each of54 zero-EAX ReadFile post-handler
+records is followed by matching re-entry and success within the ReadFile
+stream. The frozen source invokes that hook during internal lazy-I/O parking,
+but the observer did not retain yield/park state. These rows do not prove
+guest-visible read failures or an exit cause. Passive runtime park/completion
+correlation is needed; no speculative patch, extra GL/GetLastError query or
+guest reverse engineering follows from the audit.
 
 ## November 12 health-crate successor
 

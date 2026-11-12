@@ -7,15 +7,15 @@
 | GLTron | Moving trails and round outcome | Moving trails | Browser gameplay on module `1165f15c…`. Cooperative and actual Worker CLI gameplay also works with `--real-ticks`. | [Current scenes](re-notes/gltron-current-device-scenes-20261112.md), run `20261112-gltron-current-device-scene-repair-0015` |
 | Forsaken | Earlier actual Worker combat and white interval | Actual Worker combat; fresh sampled whitening explained | Current module04 shows player damage/respawns. Joined raw state for a sampled white draw is already additive before enqueue and agrees through packet/replay/description. Original raw commands and620 observed guest selections agree with additive state;1142 equal restores also match CPU flags. Sixteen retained explosion texels and atlas rectangles match the original asset; immediate prior target color also joins. A later complete14-triangle draw has an uploaded texture equal to cache and an actual GL/native565 white bound for all16384 depth outcomes, but its incoming pixel is already white. A fresh complete28-triangle unsaturated-to-white transition then matches actual GL/native565 at every step; color changes prove two depth passes. Historical missing56 triangles and the broader old white interval remain unresolved. No rendering repair is proved. | [Fresh unsaturated transition](re-notes/forsaken-unsaturated-whitening-20261112.md), run `20261112-forsaken-unsaturated-whitening-1845-retry`; [complete draw and limits](re-notes/forsaken-complete-fragment-coverage-20261112.md); [retained texture and target order](re-notes/forsaken-texture-target-provenance-20261112.md); [original selector](re-notes/forsaken-guest-state-selection-20261112.md); [joined state trace](re-notes/forsaken-paused-worker-20261112.md); [paired combat](re-notes/forsaken-owner-enemy-20261112.md) |
 | Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories11 retained; native food purchase/eating, rest to35/35 and sword purchase. New Save/Load restores Food82, gold393, equipped sword/AC6 and accepts fresh movement; Town bank0/service checks yield no gain, planned Ardyl quest/recovery next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-town-food-equipment-0925` |
-| Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Earlier module1165 Arena Gate ammo100→98 software/100→96 WebGL remains accepted. Current04 reaches native Difficulty but then a30s screenshot timeout blocks further input; no new arena or easier-skill proof. Enemy defeat remains open. | [Earlier paired native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204`; [current capture blocker](re-notes/quake3-controlled-major-frag-20261112.md) |
+| Quake III demo | Earlier module1165 Worker arena movement and firing | Current04 Worker arena movement, native I Can Win and shotgun firing | Current04 verifies I Can Win with the cursor away before Fight, actual owning WebGL and released movement/aim/fire. Shotgun ammo10→8; score0–0 and no proved hit or frag. The old capture-timeout cause remains unknown. A local command-publication race is reproduced and repaired; historical Quit21's exact cause remains unknown. | [Current encounter](re-notes/quake3-major-frag-2055-20261112.md), run `20261112-quake3-major-frag-2055`; [atomic command publication](re-notes/quake3-command-ingestion-2130-20261112.md); [reviewed target and pickup](re-notes/quake3-atomic-command-major-2135-20261112.md); [earlier paired arena](re-notes/quake3-current-native-arena-20261112.md) |
 | Hexen II | Current courtyard/chamber traversal and living attack at50 HP | Current courtyard/chamber traversal and living attack at69 HP | Incoming player damage on both; SoftwareGL death/native restart retained. Enemy damage/kill unproved. | [Current paired traversal](re-notes/hexen2-api-envelope-paired-progress-20261112.md), run `20261112-hexen2-api-envelope-paired-progress-1040` |
 | Re-Volt demo | Actual Worker driving, steering and recovery | Actual Worker driving and steering | Software21/26 mph and WebGL Time Trial16 mph; no checkpoint/lap/finish. Unsupported helper action stopped later steering before dispatch. | [Current paired driving](re-notes/revolt-current-paired-driving-checkpoint-20261112.md), run `20261112-revolt-current-paired-driving-checkpoint-0911` |
 | NFS3 demo | Actual Worker acceleration, steering and recovery | Actual Worker acceleration, steering and recovery | Earlier software82 MPH and WebGL/SwiftShader48 MPH road progress remain verified. The1705 attempt aborts on native INITTIMER;1725 reaches rendered Single Race and Hot Pursuit with actual SoftwareD3D and successful traced initialization. The earlier abort does not recur, so its cause remains unknown. No driving was attempted in1725. The1740 road attempt reaches a winding approach but has null CPU epoch binding and a missing local manager wait; it is not fully qualified driving. The1815 run qualifies full private22-field binding and independent release, reaches82 MPH, but repeatedly leaves the road; seven holds have full held frames and nine short commands do not. Successive bends, lap/finish and FPS remain open. | [Paired driving](re-notes/nfs3-current-paired-driving-20261112.md), run `20261112-nfs3-provision-gated-paired-driving-0840-fresh`; [later startup abort](re-notes/nfs3-native-race-lap-20261112.md); [real Worker observer and race startup](re-notes/nfs3-real-worker-observer-repair-20261112.md); [bounded road attempt and missing binding](re-notes/nfs3-qualified-caller-lap-20261112.md); [full binding and remaining cadence limit](re-notes/nfs3-full-owner-sustained-driving-20261112.md) |
 | MechWarrior 3 | Qualified moving scene publications | Qualified moving scene publications | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
 | Blood II BUILD109 | Actual Worker movement and firing | Actual Worker movement and firing | Original local demo, ammo 50→48 and health 100 on both routes; enemy hits remain unproved. | [Original pin and route](re-notes/blood2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
 | Tomb Raider II demo | Actual Worker Venice movement and turning | Actual Worker Venice movement and turning | Native options and original world. WebGL pistols drawn; firing remains unproved. | [Original route](re-notes/tomb-raider-2-demo.md), run `20261112-native16-original-crossapp-crash-sweep-0502` |
-| Heretic II demo | Current8a834/04 whole-four crate0400 Load at 31 HP; bounded movement/released intervals with native pause cycles | Current Easy docks; crate Load again exits natively with code 8 | Startup error queries return 0; load-time error state and final completed pixels remain unobserved. No runtime violation or paired onward proof. | [Latest runtime boundary](re-notes/heretic2-runtime-boundary-20261112.md), run `20261112-heretic2-runtime-boundary-1910` |
-| Half-Life Uplink | Actual SoftwareGL rear-panel destruction, corridor passage and headcrab encounter | Current actual WebGL living controls and elevator onward | The1825 run destroys the separate rear panel, passes south/east into the corridor and meets a headcrab. Complete thirteen-file03:18 save passes native export/move-away/Load/fresh movement in the same browser. Saved40/0 falls to30/0 restored and20/0 at the lunge. The1850 run verifies unchanged whole13 in a fresh browser and exposes the guard-room doorway, then preserves death and normal Load40/0. PageDown now visibly lowers aim; End/Pause remain unproved. Enemy defeat, safe onward and paired save parity remain open. | [Fresh whole13 and guarded doorway](re-notes/halflife-whole13-headcrab-onward-20261112.md), run `20261112-halflife-whole13-headcrab-onward-1850`; [native look and caller limitation](re-notes/halflife-native-look-pause-headcrab-20261112.md); [passage and checkpoint](re-notes/halflife-authored-back-panel-passage-20261112.md); [authored target](re-notes/halflife-authored-clearance-route-20261112.md); [native crouch](re-notes/halflife-native-crouch-clearance-20261112.md); [fresh whole12 recovery](re-notes/halflife-chrome-endpoint-repair-20261112.md); [crate consequence](re-notes/halflife-crowbar-obstruction-20261112.md); [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
+| Heretic II demo | Current8a834/04 whole-four crate0400 Load at31 HP; bounded movement/released intervals with native pause cycles | Current Easy docks; crate Load exits natively with code8 | Original completed640×480 owning-WebGL pixels are recovered5 ms before ExitProcess(8): loading console/Paused over black, no visible diagnostic. Exit cause remains unknown. Post-handler ReadFile logs lack park/completion state and do not establish guest-visible failures. No paired onward proof. | [Original exit frame](re-notes/heretic2-exit-witness-2055-20261112.md), run `20261112-heretic2-webgl-exit-witness-2055`; [API interpretation](re-notes/heretic2-exit-api-2130-20261112.md); [living SoftwareGL control](re-notes/heretic2-runtime-boundary-20261112.md) |
+| Half-Life Uplink | Actual SoftwareGL rear-panel destruction, corridor/headcrab encounter and repaired native Pause/resume | Current actual WebGL living controls and elevator onward | Complete thirteen-file03:18 checkpoint has fresh-browser Load/movement proof. General Pause scan-code repair now produces native PAUSED35 HP stable7.916 s, then ordinary resume/PageDown at30 HP and native PAUSED30 HP. Whole13 remains unchanged. End centering, enemy defeat, safe onward and paired save/pause parity remain open. | [Native Pause repair](re-notes/halflife-native-pause-20261112.md), run `20261112-halflife-native-pause-2000`; [fresh whole13 and guarded doorway](re-notes/halflife-whole13-headcrab-onward-20261112.md); [passage and checkpoint](re-notes/halflife-authored-back-panel-passage-20261112.md); [paired controls](re-notes/halflife-current-paired-onward-20261112.md) |
 
 Half-Life uses original hldemo/PAK bytes on module`04c53419…`. The coordinator
 verified1,368 references/1,122 paths,870 decoded raw records,237 balanced trusted
@@ -90,11 +90,26 @@ native Load03:18 and movement. It exposes the guard-room doorway with headcrabs,
 preserves player death and restores40/0 through normal Load; no hit or new save.
 The1905 continuation visibly lowers aim with PageDown, then dies before attack.
 Its caller selects an old capture after local compression changes mtimes; the
-remote exact-reference guard correctly refuses input. End centering/Pause remain
-unproved. Safe onward, enemy defeat and paired save parity remain open.
+remote exact-reference guard correctly refuses input. End centering remains
+unproved; the later native Pause repair is qualified below. Safe onward,
+enemy defeat and paired save parity remain open.
 [Fresh whole13 recovery and limits](re-notes/halflife-whole13-headcrab-onward-20261112.md),
 [native look and selection defect](re-notes/halflife-native-look-pause-headcrab-20261112.md).
 [Native passage, encounter and checkpoint](re-notes/halflife-authored-back-panel-passage-20261112.md).
+
+The2000 [native Pause repair](re-notes/halflife-native-pause-20261112.md),
+code `ae83f8d55`, maps Pause to scan code0x45 without the extended bit and
+keeps NumLock extended. Actual Chrome-to-owning-Worker Win32 messages and
+original SoftwareGL before/after frames verify the change. Native PAUSED35 HP
+and the scene stay stable7.916 seconds; ordinary resume/PageDown changes the
+view at30 HP, then native PAUSED30 HP is verified. Root checked555 references,
+46 full PNGs and six original frames. Both closing exports preserve whole13
+members/data. No attack, enemy hit/kill, new save or WebGL Pause parity follows.
+Normal stop passed; the original local manager143/watchdog joins remain unknown.
+The later [bounded-transfer caller](re-notes/halflife-bounded-media-2125-20261112.md)
+passes local chunk/whole-hash and corruption-refusal controls after a whole-PAK
+PUT timeout. That old operation remains UNKNOWN/unreplayed; no later remote
+transfer or new gameplay is claimed by those local controls.
 
 
 Diablo II's current original demo now heals through Akara to55/55 and earns
@@ -196,12 +211,32 @@ of sustained gameplay. Root checked 364 references, 30 full identities/PNG
 CRCs and four full frames. Existing error queries return 0 only at startup;
 neither arm queries the backend error flag during loading. No context loss,
 renderer exception or runtime violation was proved. The final successful swap
-precedes native exit by five milliseconds, but its completed pixels were not
-retained. A fresh graphics worker targets that frame before teardown through
-permitted runtime/renderer observations, without guest reverse engineering.
+precedes native exit by five milliseconds; that comparison did not retain its
+completed pixels. The later original exit-frame witness below fills that gap
+through permitted runtime/renderer observations, without guest reverse engineering.
 Both runtime parents have actual waits/EOF; original manager/watchdog parent
 waits remain unknown. The box stopped normally. No production fix or new save
 follows from this comparison.
+
+The2055 [original exit-frame witness](re-notes/heretic2-exit-witness-2055-20261112.md),
+published `6e8c88fa2`, recovers the final completed640×480 owning-WebGL image.
+Its decoded RGBA matches the independently retained pixel hash and all22 owner
+fields match. Completion precedes native ExitProcess(8) entry by5 ms and host
+exit selection by6 ms. The full original image shows normal loading-console
+text and Paused over black, without a visible error diagnostic. Root verified
+136 encoded/raw blobs mapping161 paths,11 original PNGs,42 balanced trusted
+edges and seven independent releases. The original final-frame objective is
+met; exit cause, loaded-world survival and a new paired comparison remain open.
+The box stopped normally; browser parent1 after the pending post-exit capture
+is distinct from Chrome0 and stop/manager/watchdog actual0 waits/EOFs.
+
+The [retained API audit](re-notes/heretic2-exit-api-2130-20261112.md) checks
+27,236 selected API rows. All54 zero-EAX ReadFile post-handler records have
+matching immediate re-entry/success within the ReadFile stream. The source
+hook also runs during internal lazy-I/O parking, and those original records
+omit yield state. They therefore do not prove54 guest-visible failures or an
+exit cause. Passive park/completion correlation is the next missing observation;
+no speculative runtime repair or guest reverse engineering is justified.
 
 Darkstone's latest WebGL continuation uses current8a834/module04c53419.
 Native food purchase/eating raised Food0→99 for120 gold; rest healed21→35.
