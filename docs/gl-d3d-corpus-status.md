@@ -8,6 +8,7 @@
 | Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
 | Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories11 retained; native food purchase/eating, rest to35/35 and sword purchase. New Save/Load restores Food82, gold393, sword+helmet/AC6 and accepts fresh movement; Town quest/funding next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-town-food-equipment-0925` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
+| Hexen II | Current courtyard/chamber movement and attack animation alive at8 HP | Current native GL owner and main menu; active world uncaptured | Enemy damage/kill unproved; later SoftwareGL death and WebGL screenshot timeout retained. | [Dialog bootstrap and bounded gameplay](re-notes/hexen2-dialog-bootstrap-paired-gameplay-20261112.md), run `20261112-hexen2-dialog-bootstrap-paired-gameplay-0953` |
 | Re-Volt demo | Actual Worker driving, steering and recovery | Actual Worker driving and steering | Software21/26 mph and WebGL Time Trial16 mph; no checkpoint/lap/finish. Unsupported helper action stopped later steering before dispatch. | [Current paired driving](re-notes/revolt-current-paired-driving-checkpoint-20261112.md), run `20261112-revolt-current-paired-driving-checkpoint-0911` |
 | NFS3 demo | Actual Worker acceleration, steering and recovery | Actual Worker acceleration, steering and recovery | Original software82 MPH and WebGL/SwiftShader48 MPH with road progress; lap/finish and FPS remain open. | [Current paired driving](re-notes/nfs3-current-paired-driving-20261112.md), run `20261112-nfs3-provision-gated-paired-driving-0840-fresh` |
 | MechWarrior 3 | Qualified moving scene publications | Qualified moving scene publications | Released Digit5 motion at 40.5 km/h; native Digit1 then 24.9→8.5→0.0 km/h. Native `i` supplies a working menu route; historical cursor-freeze cause remains unknown. | [Native controls](re-notes/mechwarrior3-demo.md#november-12-native-throttle-and-stop), run `20261112-mw3-native-cursor-throttle-stop-0345` |
@@ -63,7 +64,15 @@ before dispatch and ended control without replay. Software owner wait0 and
 WebGL owner wait1/Chrome0 have separate EOFs. Local wrapper143 and unavailable
 actual parent wait for the reparented watchdog remain explicit; the box is
 independently stopped normally. No production change or build was needed.
-The next graphics worker targets current Hexen II on softwareGL/WebGL.
+Hexen II now reaches the current SoftwareGL courtyard and spider chamber, with
+an attack frame while alive at8 HP. Enemy damage is unproved, and the next
+frame shows player death. WebGL reaches its actual GL owner and full main menu;
+a screenshot timeout after acknowledged Enter leaves active-world coverage open.
+Root checked287 references /226 unique compressed/raw hashes and the full
+software attack/WebGL menu frames. The native dialog-to-GL bootstrap and cleanup
+controls pass; this is a helper repair, with no emulator source change.
+The fresh graphics worker first tests delayed screenshot observation on the
+original CDP request, then pursues current paired gameplay and enemy consequence.
 
 Darkstone's latest WebGL continuation uses current8a834/module04c53419.
 Native food purchase/eating raised Food0→99 for120 gold; rest healed21→35.
