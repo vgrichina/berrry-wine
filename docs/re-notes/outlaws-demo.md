@@ -10,6 +10,38 @@ That initial audit did not acquire bytes; the completed acquisition below supers
 its unknown package identity. Runtime still requires a separate grant. Main integration
 of these notes is a coordinator action.
 
+## November 12 gunman defeat and living combat save
+
+Run `20261112-outlaws-store-native-heal-shooter-0525` tracked the actual
+black-hatted, light-shirted attacker firing and moving through the store
+doorway. Native centered revolver shots produced blood/hit reaction and a
+continuous collapse sequence. The fallen body persisted through normal Load
+and fresh movement. This establishes an enemy consequence beyond a single
+prone image. Other enemies and permanent safety are not ruled out.
+
+Preserve **all nine** `combat-saves/` with `combat-save-pins.json` from that
+run. The ninth raw file is230314 bytes, SHA256
+`386585cd8141512575b061c4f662b8de334825a82f0d994127dc477207605a4c`.
+Native Save recorded (105.79972,.25,183.37161), yaw42300, health0.199999869.
+Normal Load restored the exact rendered state stable300ms, with the attacker
+fallen; fresh crouched backward movement reached (107.00921,.25,185.51430)
+at unchanged health. That movement was not resaved. First eight files and all
+parents remain unchanged.
+
+This is a **living low-health combat checkpoint**, distinct from earlier dead
+.2 branches. Do not take it along the old exposed aperture approach. Healing
+remains unproved: inventory attempts showed Crowbar, with no reviewed
+MedicalBag label or use. A new attempt starts from whole store5.4 to reproduce
+the defeat earlier or obtain native health before further route exposure.
+No aperture traversal, SteelKey pickup/use or door102 opening is claimed.
+
+The coordinator checked570 recovered references /472 unique raw hashes, all
+nine save gzip/raw hashes, and the full upright/hit/collapse/reloaded-movement
+images. Tested source remains25ac5466d/WASM75ecda5701; no production code,
+build or task commit changed it. Runtime parent wait0/EOF and normal box stop
+passed; outer transport143 is separate. Exact whole-set recovery is in the
+run's `RECOVERY.md`.
+
 ## November 12 SteelKey route and living fallback
 
 Runs `20261112-outlaws-steel-key-telegraph-door-0418` and
