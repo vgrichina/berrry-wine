@@ -522,3 +522,35 @@ normally before expiry. No production change/build/commit was needed.
 The next bounded objective is native recruitment or new quest progress from
 the saved day2 state, preserving a living successor save and reload/movement.
 The earlier human-trio victory alone is already covered and is not new progress.
+
+## November 12 recruited party and reloadable army save
+
+Run `20261112-disciples2-day2-party-quest-progress-0723` restored only the
+whole authentic d.sg and used native capital management to hire Death Knight
+Hagog for500 gold and a Fighter for50. Trusted native mouse drags moved the
+new Fighter and existing garrison Initiate into Hagog's party. The completed
+and reloaded roster shows Hagog150/150, Fighter120/120, Initiate45/45,
+leadership2/3. Gold fell600→100→50. Original Huun'reh remains a separate
+party10/20 near the capital; Hagog exited with20/20. No building was bought.
+Helper labels mentioning Ghoul were wrong; completed unit frames show Fighter.
+
+Native Save wrote separate `c:\savegame\a.sg`,209429 bytes, SHA256
+`10b106e180c9d8fe76da441a103edac1acdaf398593f505f19de471ac6213811`.
+Use `party-successor-whole.json` entry1 / `party-successor-whole-1.bin`.
+Independent public readback and post-reload whole export match. Normal Load
+discarded unsaved movement and restored the saved position, full roster and
+20/20. Native read coverage spans every209429 byte, zero failures. Fresh map
+plot/confirm then changed position and spent20→10; it was not resaved.
+The preferred a therefore retains Hagog20/20 at the capital entrance.
+Parent d and all779 inherited pins remain unchanged. The next task uses this
+expanded party for a new quest encounter; no new combat occurred here.
+
+The coordinator checked1135 references /1050 unique raw hashes, both complete
+successor exports, full reloaded roster and fresh-movement images. Runtime
+remains exactaf0e208e9 plus703015ea5 audio, canonical1165/compat048fd50c;
+Git source compiled in memory reproduced both pinned modules after current
+build bytes changed. This is Canvas2D, with no new GL/FPS/audio/parity/healing
+or day advancement claim. No production change or task commit was needed.
+Actual runtime/Chrome parents and durable lifecycle/watchdogs reached0/EOF;
+outer transport143 and absent separate client/owner waits remain qualified.
+The box stopped normally before expiry. `RECOVERY.md` binds exact restoration.
