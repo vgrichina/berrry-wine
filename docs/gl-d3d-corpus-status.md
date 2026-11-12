@@ -6,7 +6,7 @@
 | --- | --- | --- | --- | --- |
 | GLTron | Moving trails and round outcome | Moving trails | Browser gameplay on module `1165f15c…`. Cooperative and actual Worker CLI gameplay also works with `--real-ticks`. | [Current scenes](re-notes/gltron-current-device-scenes-20261112.md), run `20261112-gltron-current-device-scene-repair-0015` |
 | Forsaken | Actual Worker movement and firing | Actual Worker movement and firing | Entered the corridor, PULS 2000→1996, enemy visible. Commit `199cf5b4e` fixes optional broker writer hooks during standalone Worker start and termination. | [Threaded scenes and fix](re-notes/forsaken-current-threaded-scenes-20261112.md), run `20261112-forsaken-current-threaded-scenes-0048` |
-| Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories9→10→11 retained; native Town rest2→35/35 and new Save/Load/fresh movement. Food0, AC6, helmet only after costly retreat; food/equipment next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-native-healing-quest-successor-0907` |
+| Darkstone | Actual Worker locomotion and combat | Actual Worker locomotion, combat and Town healing | Victories11 retained; native food purchase/eating, rest to35/35 and sword purchase. New Save/Load restores Food82, gold393, sword+helmet/AC6 and accepts fresh movement; Town quest/funding next. | [Current gameplay, healing and saves](re-notes/darkstone-current-worker-gameplay-20261112.md), run `20261112-darkstone-town-food-equipment-0925` |
 | Quake III demo | Actual Worker arena movement and firing | Actual Worker arena movement and firing | Native Arena Gate through Single Player menus; ammo 100→98 software and 100→96 WebGL. Enemy defeat remains open. | [Current native arena](re-notes/quake3-current-native-arena-20261112.md), run `20261112-quake3-current-native-arena-0204` |
 | Re-Volt demo | Actual Worker driving, steering and recovery | Actual Worker driving and steering | Software21/26 mph and WebGL Time Trial16 mph; no checkpoint/lap/finish. Unsupported helper action stopped later steering before dispatch. | [Current paired driving](re-notes/revolt-current-paired-driving-checkpoint-20261112.md), run `20261112-revolt-current-paired-driving-checkpoint-0911` |
 | NFS3 demo | Actual Worker acceleration, steering and recovery | Actual Worker acceleration, steering and recovery | Original software82 MPH and WebGL/SwiftShader48 MPH with road progress; lap/finish and FPS remain open. | [Current paired driving](re-notes/nfs3-current-paired-driving-20261112.md), run `20261112-nfs3-provision-gated-paired-driving-0840-fresh` |
@@ -20,8 +20,9 @@ raster work, with a legacy D3D WebGL transport. Its default cooperative CLI
 still has a black scene and zero draws under the abstract CPU/device service
 model. The real-ticks results preserve that remaining limitation. Forsaken's
 later look capture shows a respawn, so controlled turning and enemy defeat
-remain unverified. Darkstone's newest tested save has low health. The preserved
-four-file continuation union was assembled but has no separate replay claim.
+remain unverified. Darkstone's latest native save restores full health, food
+and an equipped sword. Its current character index and all five map files
+are preserved as a complete six-file continuation set.
 
 MW3 run `20261112-mw3-moving-scene-frame-cost-0410` measures distinct
 published terrain updates: software 2.58–3.83 Hz and WebGL 1.75–2.08 Hz.
@@ -65,15 +66,16 @@ independently stopped normally. No production change or build was needed.
 The next graphics worker targets current Hexen II on softwareGL/WebGL.
 
 Darkstone's latest WebGL continuation uses current8a834/module04c53419.
-Native Town retreat removed sword/cape/shield, and rest healed2→24→35 while
-consuming food24→0. The new complete Town save restored35/35,11 victories,
-1713 gold and helmet-only AC6, then accepted fresh movement. Final unsaved
-life34 reflects hunger; no cost-free retreat or quest completion is claimed.
-The coordinator checked411 references /373 unique raw hashes, all five complete
-native files, full reloaded health/fresh movement images and6/6 input tests.
-All actual runtime/Chrome/lifecycle/watchdog waits reached0/EOF and the box
-stopped normally. Documentationeb8284954 records the exact successor. The
-fresh task seeks native food/equipment before combat.
+Native food purchase/eating raised Food0→99 for120 gold; rest healed21→35.
+A native1200-gold sword purchase equipped the weapon and raised displayed
+Damage2–2→2–6. New native Save/Load restores35/35, Food82, gold393,
+11 victories and sword+helmet/AC6, followed by fresh movement. Shield1350
+and rags900 remain unaffordable; no quest completion or further combat follows.
+The coordinator checked903 references /819 unique raw hashes, all six complete
+native files and full reload/fresh movement images. Actual runtime/Chrome waits
+reached0/EOF and the box stopped normally. Run
+`20261112-darkstone-town-food-equipment-0925` retains the exact recovery set;
+the fresh0959 task seeks native Town quests and equipment funding before combat.
 
 Outlaws' covered controls now use the original14-bit angle period16384.
 Eight native release/idle tests are stable, but relative mouse behavior and the
