@@ -33,7 +33,7 @@ const apis = require('../src/api_table.json');
   const stack = alloc(8192) + 4096, code = alloc(256), result = alloc(8);
   const thunkWa = regions.BASE.THUNK_BASE;
   const thunk = (thunkWa - e.get_guest_base() + e.get_image_base()) >>> 0;
-  let calls = 0, cases = 0;
+  let calls = 0, cases = 0, predecessorCases = 0;
   const failures = [];
   function api(name, ...args) {
     const saved = dv.getUint32(thunkWa + 4, true), ops = [];
@@ -80,18 +80,20 @@ const apis = require('../src/api_table.json');
   }
   function verify(label, dst, src, args, clip, stretch, scale = [1, 1, 1, 1], origin = [0, 0]) {
     const before = bytes.slice(dst.wa, dst.wa + dst.size + dst.guard);
-    const source = bytes.slice(src.wa, src.wa + src.size);
+    const source = bytes.slice(src.wa, src.wa + src.size + src.guard);
     const expected = before.slice();
     const [dx, dy, dw, dh, sx, sy, sw = dw, sh = dh] = args;
     const [vx, vy, ux, uy] = scale;
     const tx = dx * vx + origin[0], ty = dy * vy + origin[1];
     const width = dw * vx, height = dh * vy;
-    for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
-      const px = tx + x, py = ty + y;
+    for (let y = 0; y < Math.abs(height); y++) for (let x = 0; x < Math.abs(width); x++) {
+      const px = tx + Math.sign(width) * x, py = ty + Math.sign(height) * y;
       if (px < 0 || py < 0 || px >= W || py >= H ||
           px < clip[0] || py < clip[1] || px >= clip[2] || py >= clip[3]) continue;
-      const ax = sx * ux + (origin[2] || 0) + Math.floor(x * sw * ux / width);
-      const ay = sy * uy + (origin[3] || 0) + Math.floor(y * sh * uy / height);
+      const ax = sx * ux + (origin[2] || 0) +
+        Math.sign(sw * ux) * Math.floor(x * Math.abs(sw * ux) / Math.abs(width));
+      const ay = sy * uy + (origin[3] || 0) +
+        Math.sign(sh * uy) * Math.floor(y * Math.abs(sh * uy) / Math.abs(height));
       assert(ax >= 0 && ax < W && ay >= 0 && ay < H, 'fixture source in bounds');
       const dp = dst.offset(px, py), sp = src.offset(ax, ay);
       for (let b = 0; b < dst.bpp / 8; b++) expected[dp + b] = source[sp + b];
@@ -109,12 +111,14 @@ const apis = require('../src/api_table.json');
       const message = `${label}: byte ${mismatch}, expected ${expected[mismatch]}, got ${got[mismatch]}`;
       failures.push(message); console.log('FAIL', message);
     }
-    if (src !== dst) assert.deepEqual(bytes.slice(src.wa, src.wa + src.size), source, 'source unchanged');
+    if (src !== dst) assert.deepEqual(bytes.slice(src.wa, src.wa + src.size + src.guard), source,
+      'source pixels/padding/tail canaries unchanged');
     api('SelectClipRgn', dst.hdc, 0); api('SelectClipRgn', src.hdc, 0);
     assert(api('DeleteObject', region)); assert(api('DeleteObject', empty));
     cases++; if (mismatch < 0) console.log('PASS', label);
   }
   for (const bpp of [24, 32]) for (const topDown of [true, false]) {
+    const startCases = cases;
     const a = surface(bpp, topDown), b = surface(bpp, !topDown);
     const label = `${bpp}bpp ${topDown ? 'top' : 'bottom'}-down`;
     for (const [name, args, clip, stretch] of [
@@ -146,10 +150,73 @@ const apis = require('../src/api_table.json');
     assert(api('SetViewportOrgEx', b.hdc, 2, 2, 0));
     verify(`${label} mapped source negative origin`, a, b,
       [0, 0, 8, 6, -1, -1, 4, 3], [1, 1, 8, 6], true, [1, 1, 2, 2], [0, 0, 2, 2]);
+    predecessorCases += cases - startCases;
+    assert(api('SetMapMode', b.hdc, 1));
+    api('SetViewportOrgEx', b.hdc, 0, 0, 0);
+    // New public-API frontier beyond the original 40 positive-extent cases.
+    // Raster origins are inclusive (as used by Paint's width-1 mirror).
+    // Different source/destination signs mirror an axis; equal negative
+    // signs cancel. Use coordinate-coloured pixels and a snapshot oracle,
+    // checking the entire native allocation rather than only the clip box.
+    for (let signs = 1; signs < 16; signs++) {
+      const [xd, yd, xs, ys] = [0, 1, 2, 3].map(bit => signs & (1 << bit) ? -1 : 1);
+      for (const [dw, dh, sw, sh] of [[7, 5, 5, 3], [5, 3, 7, 5], [5, 3, 5, 3]]) {
+        const args = [xd < 0 ? 7 : 1, yd < 0 ? 5 : 1, xd * dw, yd * dh,
+          xs < 0 ? 7 : 1, ys < 0 ? 5 : 1, xs * sw, ys * sh];
+        for (const clip of [[0, 0, W, H], [2, 2, 6, 5], [0, 0, 0, 0]]) {
+          paint(a, 1); paint(b, 25);
+          verify(`${label} signed ${signs} ${sw}x${sh}->${dw}x${dh} clip=${clip}`, a, b,
+            args, clip, true);
+        }
+      }
+      // Same-bitmap mirrors must read the original pixels even when writes
+      // overlap later reads; both physical DIB orientations are exercised.
+      paint(a, 1);
+      verify(`${label} signed ${signs} overlap`, a, a,
+        [xd < 0 ? 7 : 1, yd < 0 ? 5 : 1, xd * 7, yd * 5,
+          xs < 0 ? 7 : 1, ys < 0 ? 5 : 1, xs * 5, ys * 3], [2, 2, 6, 5], true);
+      paint(a, 1); paint(b, 25);
+      verify(`${label} signed ${signs} off-surface destination`, a, b,
+        [xd < 0 ? 3 : 6, yd < 0 ? 2 : 5, xd * 7, yd * 5,
+          xs < 0 ? 7 : 1, ys < 0 ? 5 : 1, xs * 5, ys * 3], [1, 1, 8, 6], true);
+      // The predecessor's endpoint fix must preserve signed logical extents
+      // when both DCs scale, before clipping in device coordinates.
+      for (const s of [a, b]) {
+        assert(api('SetMapMode', s.hdc, 8));
+        assert(api('SetWindowExtEx', s.hdc, 1, 1, 0));
+        assert(api('SetViewportExtEx', s.hdc, 2, 2, 0));
+      }
+      paint(a, 1); paint(b, 25);
+      verify(`${label} signed ${signs} mapped 2x`, a, b,
+        [xd < 0 ? 3 : 1, yd < 0 ? 2 : 1, xd * 3, yd * 2,
+          xs < 0 ? 2 : 1, ys < 0 ? 3 : 0, xs * 2, ys * 3],
+        [1, 1, 7, 6], true, [2, 2, 2, 2]);
+      for (const s of [a, b]) assert(api('SetMapMode', s.hdc, 1));
+    }
+    // Negative viewport scales exercise independently transformed DC axes,
+    // with positive API extents and known in-bounds device-space origins.
+    for (let signs = 0; signs < 16; signs++) {
+      const [xd, yd, xs, ys] = [0, 1, 2, 3].map(bit => signs & (1 << bit) ? -1 : 1);
+      const origin = [xd < 0 ? 6 : 1, yd < 0 ? 5 : 1, xs < 0 ? 6 : 1, ys < 0 ? 5 : 0];
+      for (const [s, vx, vy, ox, oy] of [[a, xd, yd, ...origin.slice(0, 2)],
+        [b, xs, ys, ...origin.slice(2)]]) {
+        assert(api('SetMapMode', s.hdc, 8));
+        assert(api('SetWindowExtEx', s.hdc, 1, 1, 0));
+        assert(api('SetViewportExtEx', s.hdc, vx * 2, vy * 2, 0));
+        assert(api('SetViewportOrgEx', s.hdc, ox, oy, 0));
+      }
+      paint(a, 1); paint(b, 25);
+      verify(`${label} viewport signs ${signs}`, a, b, [0, 0, 3, 2, 0, 0, 2, 3],
+        [1, 1, 7, 6], true, [xd * 2, yd * 2, xs * 2, ys * 2], origin);
+      for (const s of [a, b]) {
+        assert(api('SetMapMode', s.hdc, 1)); api('SetViewportOrgEx', s.hdc, 0, 0, 0);
+      }
+    }
     for (const s of [a, b]) {
       api('SelectObject', s.hdc, s.old); assert(api('DeleteObject', s.bitmap)); assert(api('DeleteDC', s.hdc));
     }
   }
   assert.equal(failures.length, 0, failures.join('\n'));
   console.log(`PASS ${cases} public DIB blits, ${calls} stdcall API calls; pixels/padding/tail canaries`);
+  console.log(`Coverage: ${predecessorCases} predecessor controls; ${cases - predecessorCases} new signed/viewport cases`);
 })().catch(err => { console.error(err); process.exit(1); });
