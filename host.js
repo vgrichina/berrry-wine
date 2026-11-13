@@ -399,8 +399,13 @@ const frozenRecorder = {
     return summary;
   },
 
+  // Returns the unregister. The set is page-lifetime and each pump closes over
+  // its host's audio scope, which reaches the guest memory: a pump left behind
+  // by a closed app pinned that app's whole 512MB.
   registerPump(fn) {
-    if (typeof fn === 'function') frozenRecorder._pumps.add(fn);
+    if (typeof fn !== 'function') return () => {};
+    frozenRecorder._pumps.add(fn);
+    return () => { frozenRecorder._pumps.delete(fn); };
   },
 
   pumpAudio() {
@@ -2082,6 +2087,8 @@ class WineAssembly {
       };
     }
     const base = createHostImports(ctx);
+    // One per getImports() call: a Threads launch makes two import scopes.
+    (self._importMemoryReleases || (self._importMemoryReleases = [])).push(base.releaseMemoryCaches);
     ctx.sharedGdi = base.gdi;
     const h = base.host;
 
@@ -2375,7 +2382,7 @@ class WineAssembly {
     // The renderer stamps queued DirectInput edges with this same clock, so a
     // pause -- which stops _guestTickMs but not Date.now() -- cannot make an
     // edge queued before it look like it happened minutes ago.
-    if (self.renderer) self.renderer._guestNowMs = h.get_ticks;
+    if (self.renderer) self.renderer._guestNowMs = self._rendererGuestNowMs = h.get_ticks;
     // Browser-only Open/Save common-dialog hooks. has_dom returns 1 so
     // $create_open_dialog renders the Upload / Download button.
     h.has_dom = () => 1;
@@ -5570,13 +5577,32 @@ class WineAssembly {
       // windows left the last app to hold focus keeps its instance alive.
       if (renderer._keyboardInputWasm === this.instance) renderer._keyboardInputWasm = null;
       if (renderer._keyboardInputMemory === this.memory) renderer._keyboardInputMemory = null;
+      // The DirectInput edge clock is a closure over a getImports() scope, and
+      // that scope reaches the guest memory (dx_trace -> _dxMemoryBuffer). A
+      // Threads launch calls getImports() twice, so the hook the renderer
+      // holds is not necessarily from _hostImports: compare against the one
+      // this host last installed. Heap snapshot after a Threads-mode close:
+      // TouchControls._renderer._guestNowMs -> ... -> Memory, 512MB per app.
+      if (renderer._guestNowMs && renderer._guestNowMs === this._rendererGuestNowMs) {
+        renderer._guestNowMs = null;
+      }
     }
+    this._rendererGuestNowMs = null;
+    for (const release of this._importMemoryReleases || []) {
+      try { if (typeof release === 'function') release(); } catch (_) {}
+    }
+    this._importMemoryReleases = null;
     // The two paths a heap snapshot actually blamed after everything above
     // was already cleared: window's "unlock" audio listener -> _readVfsFile's
     // scope -> host imports -> .memory, and wineShell.stopAllApps -> a stale
     // WineAssembly -> _presentDxIfDirty -> the same host imports object.
     if (this._hostImports) this._hostImports.memory = null;
     this._hostImports = null;
+    // The whole imports object (host + gdi + ...), kept for the guest worker.
+    // The shell holds the last-launched host after it closes, and every gdi
+    // closure in here scopes the guest memory: wineShell.selectedRunSlice ->
+    // wine._mainImports.gdi.getClientOrigin -> _dxMemoryBuffer -> Memory.
+    this._mainImports = null;
     // Holds the same memory and instance plus one per worker thread.
     this.threadManager = null;
     this.guestWorker = null;
