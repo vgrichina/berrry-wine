@@ -219,6 +219,40 @@ const drainTimer = () => { const t = timers.shift(); if (t) t.fn(); return t; };
   check('negative host floor: no press hold either', p4 && p4.msg === 0x0201);
 }
 
+{
+  // One renderer serves independent guest pumps. Another window's click or
+  // empty poll cannot stand in for this window processing its hover.
+  const a = 0x10001, b = 0x20001;
+  const at = (hwnd, msg) => ({ hwnd, msg, wParam: msg === 0x201 ? 1 : 0,
+    lParam: (40 << 16) | 30, mouseX: 30, mouseY: 40 });
+  const ownsA = e => e.hwnd === a;
+  const ownsB = e => e.hwnd === b;
+  for (const interference of ['same-point', 'other-press', 'other-empty-poll']) {
+    const r = renderer();
+    r._buttonHoldFloorMs = 0;
+    timers.length = 0;
+    if (interference === 'same-point') {
+      r.inputQueue.push(at(b, 0x200));
+      r.takeInput(ownsB);
+      r.takeInput(ownsB);
+    }
+    r.inputQueue.push(at(a, 0x200), at(a, 0x201), at(a, 0x202));
+    r.takeInput(ownsA);
+    if (interference === 'other-press') {
+      r.inputQueue.push(at(b, 0x201));
+      r.takeInput(ownsB);
+    } else if (interference === 'other-empty-poll') {
+      r.takeInput(ownsB);
+    }
+    check(`${interference}: target press waits for its own hover pump`, r.takeInput(ownsA) === null);
+    check(`${interference}: target queue preserves press then release`,
+      r.inputQueue.filter(ownsA).map(e => e.msg).join(',') === '513,514');
+    check(`${interference}: next target poll delivers press`, r.takeInput(ownsA)?.msg === 0x201);
+    check(`${interference}: release still ends the press pump`, r.takeInput(ownsA) === null);
+    check(`${interference}: release follows on the next target poll`, r.takeInput(ownsA)?.msg === 0x202);
+  }
+}
+
 performance.now = realNow;
 global.setTimeout = realSetTimeout;
 delete global.window;
