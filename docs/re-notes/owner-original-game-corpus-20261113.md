@@ -40,7 +40,7 @@ and capture the actual result. Neither startup nor gameplay has been tested.
 
 The complete 578,432,064-byte mixed-mode CD candidate and 401-byte cue are now verified. Image SHA-256: `e353ccf735d26f2c56d87614ab26f700f2ee5dfb79dd1848c18208276ff5d888`. All 68 ordinary files, 14 directories and nine raw track spans were inspected; retain the eight audio tracks. WORMS.EXE/WRMS.EXE establish the DOS/protected-mode candidate route. See [complete identity and recovery recipe](worms-original-cd-intake-20261113.md).
 
-No media was installed or executed. Publisher authenticity and full retail identity remain unproven. Next: a recoverable original DOS corpus entry and actual original-game turn. Worms 2 and Armageddon demos do not satisfy this request.
+No media was installed or executed. Publisher authenticity and full retail identity remain unproven. The [original DOS launch contract](worms-original-dos-launch-contract-20261113.md) now identifies the generated SETUP.CFG and MZ/overlay-to-DOS4GW/LE chain. Current ToyVM has MZ/overlay paths but lacks MSCDEX, CD mounting and CDDA; extracted files alone do not establish the required CD semantics. These are static capability findings, not observed startup failure. Next: the original installation contract and required device support, then a recoverable DOS corpus entry and actual original-game turn. Worms 2 and Armageddon demos do not satisfy this request.
 
 ## The Neverhood
 
