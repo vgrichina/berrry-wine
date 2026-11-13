@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T13:27Z):
+Current dispatch (updated 2026-11-13T13:30Z):
 
 - neverhood-original-dsetup-export-path-2220, fresh launcher PID1815045; original DSETUP DirectXSetupA export/dependency path, static only.
-- worms-original-setup-first-screen-config-path-2200, fresh launcher PID1809701; original SETUP first-screen and configuration service path.
+- worms-original-setup-fp-startup-path-2300, fresh launcher PID1825457; original pre-main FP detection and lazy INT37 patching boundary.
 - guest-main-start-ownership-cleanup-repair-2240, fresh launcher PID1821025; actual slot-0 startup ownership, overlapping start and clock cleanup.
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Worms SETUP2200 published8d46bf562: original mode2/directB800 first-screen drawing precedes SETUP.CFG open;94-byte read/save edges established. Saving existing config reaches DOS AH40/CX0 truncation; actual host incorrectly retained length. General fix with six new tests (three baseline failures) plus three prior tests passes;183 static/pure checks, three controls,65 artifact and12 source pins matched. Preserve scratch/runs/20261113-worms-setup-screen-2200/. Code remains uncommitted pending focused runtime and locked build; no screen/config persistence execution is claimed. Fresh2300 resolves pre-main floating-point initialization.
 
 Bootstrap2200 reproduced primitive/frozen/proxy rejection values skipping retirement and a throwing logger creating an orphaned rejection. Actual cleanup now precedes annotation; mutable errors retain identity, other values retain exact cause, failed owners stay retained.51 new tests,72 adjacent checks/broker pass; five controls reject;34 artifact/eighteen source pins matched. Preserve scratch/runs/20261113-guest-bootstrap-cleanup-2200/. Code remains uncommitted; fresh2240 handles separate slot-0 startup ownership.
 
