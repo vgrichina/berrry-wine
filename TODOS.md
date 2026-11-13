@@ -1,7 +1,9 @@
-Current dispatch (updated 2026-11-13T05:20Z):
-- Input: focus-key-release-input-repair-2110, launcher PID1242966; actual held-key/focus-transition failures after the published keyboard and pointer lifetime fixes.
-- DirectDraw: directdraw-blt-rectangle-render-repair-2110, launcher PID1242967; real COM clipping, overlapping copies and rectangle-boundary rendering faults after the Lock repair.
-- GDI: gdi-dib-signed-blit-render-repair-2110, launcher PID1242968; real native BitBlt/StretchBlt clipping and overlapping DIB pixels, with signed coordinates and memory canaries.
+Current dispatch (updated 2026-11-13T05:27Z):
+- Input: wheel-input-owner-coordinate-repair-2140, launcher PID1256306; actual DOM-to-native wheel delivery, signed screen coordinates and process/auxiliary ownership.
+- DirectDraw: directdraw-keyed-clipped-sprite-repair-2140, launcher PID1256307; real COM color keys and explicit clip regions, beyond the repaired plain overlapping copy.
+- GDI: gdi-mirrored-stretch-render-repair-2130, launcher PID1254154; signed extents, mirrored bitmap pixels and clipping. No production defect found in its bounded new cases; final validation pending.
+
+Further root-reviewed fixes:641550a9b reverses rows for downward same-surface plain Blt copies; identical native fixture changes120 wrong-pixel cases to740 passing cases/815 COM calls, with29 evidence hashes verified. 1d1bd5173 maps StretchBlt logical extents into device space before clipping/sampling; eight wrong-pixel cases become40 passing public DIB cases/428 calls, with28 evidence hashes verified. 49802f197 uses physical key state for the next press's previous-state flag after release/focus cancellation; five isolated native failures become passing cancellation/auxiliary/relaunch controls, with38 evidence hashes verified. Each passed focused suites and locked build. Original games, screenshots and27-app acceptance remain open.
 
 Root-reviewed results: pointer38f69001a fixes retired queued moves, delayed releases and stale capture reaching reused HWNDs; native lifecycle regression, four controls and locked build pass, with42 evidence hashes verified. DirectDraw2bd8c32c6 rejects600 invalid offscreen Lock rectangles while preserving200 valid subrectangles, pitch/padding, empty rectangles and texture compatibility; native ABI/blits and locked build pass, with23 evidence hashes verified. These are fixture results; original-game confirmation remains open.
 
