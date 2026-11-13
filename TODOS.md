@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T13:43Z):
+Current dispatch (updated 2026-11-13T13:44Z):
 
-- neverhood-original-dsetupe-attach-setup-path-2320, fresh launcher PID1831438; original DSETUPE attach/iDirectXSetup dependency, static only.
+- neverhood-original-dsetup6e-thunk-contract-2460, fresh launcher PID1845850; original 16-bit thunk connection/selector ABI, static only.
 - worms-text-render-terminal-recovery-2420, fresh launcher PID1843434; unfinished actual text-page/OEM render component task in fresh session.
 - callback-loader-retirement-result-repair-2440, fresh launcher PID1843435; actual loader cancellation result versus retirement acknowledgement.
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Neverhood DSETUPE2320 publisheddd873f868: original attach/iDirectXSetup ord3, selected config/dialog/return paths and selectors1/2 established. Actual ThunkConnect32 source returnsTRUE without binding dsetup6e.dll; ten imported LS map/unmap names absent API table. These are concrete source gaps, not observed runtime failures.113 RAM-present/87 offline/four source checks and rejecting controls pass;51 artifact/fourteen source pins matched. Supervised recovery exited0, RAM member removed; preserve scratch/runs/20261113-neverhood-dsetupe-2320/. Fresh2460 traces original45104-byte DSETUP6E; no installation success or native execution claimed.
 
 Text-worker2400 exited101 before final report/run directory/test existed; cause UNKNOWN, event stream truncated during read command. No success or defect result. Its uncreated ownership was reclaimed for fresh2420. Broker2340 now settles synchronous/promise responses before throwing observers and drains async sibling calls/accounting before surfacing errors;21 new tests/seven controls and adjacent Host/WorkerLink/Manager/bootstrap/startup/broker suites pass.44 artifact/29 source pins matched; preserve scratch/runs/20261113-guest-rpc-error-2340/. Code remains uncommitted pending actual focused runtime and locked build. Fresh2440 investigates the separate cancel-result retirement boundary.
 
