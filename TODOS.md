@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T14:06Z):
+Current dispatch (updated 2026-11-13T14:10Z):
 
-- ne-win9x-notification-ownership-implementation-2600, fresh launcher PID1875081; actual owned NE version4 notification primitive, guard retained pending runtime.
+- recent-terminal-codex-rollout-headroom-recovery-2620, fresh launcher PID1878502; finite exact reversible compression of newly terminal session rollouts only.
 - dos-exec-parent-return-flags-repair-2540, fresh launcher PID1867561; actual successful EXEC return CF/parent flag preservation needed by original launcher.
 - newly-closed-worker-log-headroom-recovery-2580, fresh launcher PID1872085; finite exact reversible compression of newly closed text logs since12:00Z only.
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Notification2600 stopped before implementation at166,924,288 available bytes; no source/test edit, verification child, test, build or runtime. Guard/incomingWIP unchanged; preserve scratch/runs/20261113-ne-win9x-notify-2600/. Fresh2620 recovers distinct newly terminal Codexrollouts, excluding active sessions/DBs and concurrent2580 worker/runlog paths. New-game implementation/runtime lanes remain pending capacity, while the existing DOSflags worker continues its assigned bounded task. Resource workers must stop after actual finite recovery; no reserve adjustment is authorized/applied.
 
 Kernel2520 published5bdda557d: actual inspector rejects original NE0400 before mapping because Win9x notification lifecycle is missing. Owned LS connection/table/relay and scoped map/unmap also absent; existing far/QT machinery is reusable.96 checks/six controls/two pure existing tests,28 artifacts/20 source pins pass. Preserve scratch/runs/20261113-neverhood-thunk-kernel-2520/. No narrow production defect was repaired. Fresh2600 implements bounded notification ownership/order/failure semantics while retaining admission guard until actual runtime/build proves safe composition; no substitute bridge or installation-success claim.
 
