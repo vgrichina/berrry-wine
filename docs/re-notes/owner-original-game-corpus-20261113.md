@@ -46,7 +46,7 @@ No media was installed or executed. Publisher authenticity and full retail ident
 
 The complete 651,438,080-byte ISO is now stream-verified, including all 257 ordinary files and seven DATA BLBs totaling 638,122,574 bytes. Image SHA-256: `94de724bb47eb2aa588ac4eff28ddc6fd10edebcf2be4dd131ef76875ef5ffd3`; provider SHA-1/MD5 match. See [complete identity, executable/asset closure and recovery recipe](neverhood-original-cd-intake-20261113.md).
 
-SETUP/NHC.EXE is the x86 native game candidate; root SETUP.EXE is an NE installer. The matching Smacker DLL is fully hashed. README requires installation and CD access during play. No installer/game ran, no media was staged, and installed configuration/asset behavior remains unverified. Next: establish that contract, add the recoverable corpus entry and test original-game interaction.
+The [installed/CD contract](neverhood-original-installed-asset-contract-20261113.md) is now decoded from original SETUP95.EXE/NHC.EXE: NHC.EXE, matching SMACKW32.DLL and local HD.BLB belong in the selected installed directory; HKLM Data Drive points at the source CD root. Eight actual Smacker ordinal exports match. AUTORUN chooses the PE SETUP95 installer; root SETUP.EXE is NE. README requires installation and CD access during play. No installer/game ran, no media was staged, and runtime configuration/asset behavior remains unverified. Next: observe ordinary original installation, preserve its output/configuration, add the recoverable corpus entry and test native interaction.
 
 ## Capacity and completion
 
