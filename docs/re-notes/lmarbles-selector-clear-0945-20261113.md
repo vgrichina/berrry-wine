@@ -10,6 +10,15 @@ bytes including that worker's evidence. Reported available space afterward was
 1,488,596,992 bytes, 11,403,009 bytes short of strictly above 1,500,000,000.
 The remaining eligible pool was exhausted at that inventory snapshot.
 
+Before publication finished, two additional streams became eligible after new
+coordinator reviews. Observed the resource worker's completed second phase
+without waiting for Pawn completion, and verified both full compressed/decoded
+hash pairs. Phase two reported another 548,864 bytes net recovered and
+1,486,884,864 bytes available. Shared capacity changes are not attributed to
+this task. Its final inventory has twenty raw streams, zero eligible bytes:
+eleven without canonical completion, eight current/pending and one unsuccessful.
+The six-stream recovery still did not provide native-input headroom.
+
 Evidence: `scratch/runs/20261113-lmarbles-selector-clear-0945/`.
 `dependency-resource-outcome.json` records the phase result, inventory, observed
 live dependency, source evidence hashes and four full decoded gzip checks.
