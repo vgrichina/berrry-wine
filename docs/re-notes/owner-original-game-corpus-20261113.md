@@ -32,9 +32,9 @@ tree. The run's `tim-package-listing.json`, `tim-floppy-layout.json`, and
 `tim-executable-identity.json` record the inspected bytes and release notes.
 Temporary RAM copies are disposable; the package recipe is the recovery source.
 
-Next: once host capacity permits, stage the complete original tree, add its
-verified DOS corpus entry and recovery checks, then test original puzzle input
-and capture the actual result. Neither startup nor gameplay has been tested.
+The [original DOS launch contract](incredible-machine-original-dos-launch-contract-20261113.md) now establishes INSTALL.COM configuration/copy followed by EXEC of the unchanged packed TIM.EXE and all 159 resource records. ToyVM has the underlying COM/MZ/EXEC and FAT12 mechanisms; an initial A: installer route is being prepared as unexecuted WIP.
+
+Next: once capacity permits, observe ordinary original installation and its generated configuration, preserve the full installed output and recovery checks, then test original puzzle input and capture the actual result. L1 identifies basketball-through-hoop, but neither startup nor gameplay has been tested.
 
 ## Worms (original)
 
