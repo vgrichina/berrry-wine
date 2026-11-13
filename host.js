@@ -2786,6 +2786,8 @@ class WineAssembly {
       self.logToUI(`[CreateWindow] "${title}"`);
       const ownerInstance = ctx.instance || self.instance;
       if (self.renderer) {
+        const owners = self.renderer._pointerProcessOwners ||= new WeakMap();
+        if (ownerInstance) owners.set(ownerInstance, ctx.windowLookupLifetime);
         self.renderer.createWindow(hwnd, style, x, y, cx, cy, title, menuId, ownerInstance, self.memory);
         const win = self.renderer.windows && self.renderer.windows[hwnd];
         if (win) {
@@ -2799,6 +2801,8 @@ class WineAssembly {
       if (self.verbose) console.log(`[CreateDialog] hwnd=0x${hwnd.toString(16)} parent=0x${parentHwnd.toString(16)}`);
       const ownerInstance = ctx.instance || self.instance;
       if (self.renderer) {
+        const owners = self.renderer._pointerProcessOwners ||= new WeakMap();
+        if (ownerInstance) owners.set(ownerInstance, ctx.windowLookupLifetime);
         self.renderer.createDialog(hwnd, parentHwnd, ownerInstance, self.memory);
         const win = self.renderer.windows && self.renderer.windows[hwnd];
         if (win) {
@@ -2861,6 +2865,9 @@ class WineAssembly {
           return !win || !win.wasm || win.wasm === ownerInstance;
         };
       const owns = e => {
+        if (e && e.pointerProcess) {
+          return e.pointerProcess === ctx.windowLookupLifetime && !e.pointerProcess.exited;
+        }
         if (e && e.type === 'key') {
           if (e.keyboardProcess) return e.keyboardProcess === ctx.windowLookupLifetime && !e.keyboardProcess.exited;
           if (e.keyboardProcessId) return e.keyboardProcessId === self.processId;
@@ -5527,13 +5534,14 @@ class WineAssembly {
 
   stop(options = {}) {
     this._d3dimPublicationJoin?.retire('process-retired');
-    // Drop only this incarnation's queued keyboard input, in place: publishers
-    // retain the queue array. A reused HWND/PID must never replay these keys.
+    // Drop this incarnation's queued input in place: publishers retain the
+    // queue array. A reused HWND/PID must never replay its keys or pointer edges.
     const queue = this.renderer && this.renderer.inputQueue;
     if (queue) {
       let write = 0;
       for (const event of queue) {
-        if (event && event.keyboardProcess === this._processObject) continue;
+        if (event && (event.keyboardProcess === this._processObject ||
+            event.pointerProcess === this._processObject)) continue;
         queue[write++] = event;
       }
       queue.length = write;
