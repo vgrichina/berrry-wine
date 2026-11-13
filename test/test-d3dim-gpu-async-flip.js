@@ -25,7 +25,7 @@ function loadExecutor() {
 }
 const { D3DIMGpu, OPCODES } = loadExecutor();
 
-function fixture({ asyncFlip = true, version = 2, own = true } = {}) {
+function fixture({ asyncFlip = true, version = 2, own = true, bpp = 32 } = {}) {
   const memory = new ArrayBuffer(0x10000), dv = new DataView(memory), u8 = new Uint8Array(memory);
   const front = 0x1000, back = 0x1040, flipDesc = 0x1100, dibA = 0x8000, dibB = 0x9000;
   dv.setUint32(front + 20, dibB, true);   // front entry's DIB
@@ -80,11 +80,12 @@ function fixture({ asyncFlip = true, version = 2, own = true } = {}) {
   };
   const gpu = new D3DIMGpu({ getMemory: () => memory, getExports: () => exports,
     createCanvas: () => null, asyncFlip, onError: () => {} });
-  const target = { rt: back, width: 4, height: 4, bpp: 32, pitch: 16, format: 1,
+  const target = { rt: back, width: 4, height: 4, bpp, pitch: bpp / 2, format: 1,
     dib: dibA, dirty: true, colorDirtyBounds: null, check: false, textureKeys: new Set(),
     device: { gpu: { version, gl, bindImplicitTarget() {} }, destroy() { destroyed = true; } } };
   if (own) gpu.targets.set(back, target);
   return { gpu, dv, u8, events, lifecycle, gl, flipDesc, front, back, dibA, dibB, target,
+    get packBound() { return packBound; },
     setFrame(value) { frame = value; }, setLive(value) { live = value; },
     get destroyed() { return destroyed; } };
 }
@@ -188,6 +189,49 @@ const PIXEL = [0x30, 0x20, 0x10, 0xff];
   assert.deepEqual(Array.from(f.u8.subarray(f.dibA, f.dibA + 4)), [0x11, 0x11, 0x11, 0x11]);
   assert.equal(f.gpu.call(OPCODES.FLIP, f.flipDesc), 0);
   assert.equal(f.lifecycle.filter(x => x[0] === 'write').length, 1);
+}
+
+// Collection and writeback can throw after a Flip has already been accepted.
+// Retain the exact frame/PBO until both finish: a retry must never report a
+// clean fence over stale bytes, and a later Flip must not overwrite that PBO.
+// Controlled exceptions exercise the actual executor, not a replacement fence.
+for (const bpp of [16, 32]) for (const stage of ['collect', 'writeback']) {
+  const f = fixture({ bpp });
+  f.gpu.call(OPCODES.FLIP, f.flipDesc);
+  const pending = f.target.inflight, pbo = f.target.pbo;
+  const failure = new Error(`${stage} exception`);
+  const owner = stage === 'collect' ? f.gl : f.gpu.getExports();
+  const method = stage === 'collect' ? 'getBufferSubData' : 'page_watch_write';
+  const original = owner[method];
+  owner[method] = () => { throw failure; };
+  for (let attempt = 0; attempt < 2; attempt++) {
+    assert.throws(() => f.gpu.call(OPCODES.FENCE, f.dibA, 64), e => e === failure);
+    assert.equal(f.target.inflight, pending, 'failed collection retains the accepted frame');
+    assert.equal(f.packBound, null, 'exception restores client-memory readback binding');
+    assert.equal(f.events.filter(e => e === 'delete-sync').length, 0);
+    assert.equal(f.gpu.stats.syncs, 0, 'failed writeback is not a completed synchronization');
+  }
+  if (stage === 'collect') assert.deepEqual([...f.u8.slice(f.dibA, f.dibA + 4)], [17,17,17,17]);
+  // Prepare the next back buffer exactly as a subsequent draw does. Its Flip
+  // must also refuse while collection fails, without overwriting frame one.
+  f.target.dib = f.dibB; f.target.dirty = true;
+  f.setFrame([0x40, 0x50, 0x60, 0xff]);
+  assert.throws(() => f.gpu.call(OPCODES.FLIP, f.flipDesc), e => e === failure);
+  assert.equal(f.lifecycle.filter(e => e[0] === 'write').length, 1);
+  assert.equal(f.events.filter(e => e === 'swap').length, 1);
+  owner[method] = original;
+  assert.equal(f.gpu.call(OPCODES.FLIP, f.flipDesc), 1);
+  const first = bpp === 16 ? [0x06, 0x11] : PIXEL;
+  const second = bpp === 16 ? [0x8c, 0x42] : [0x60, 0x50, 0x40, 0xff];
+  for (let i = 0; i < 16; i++)
+    assert.deepEqual([...f.u8.slice(f.dibA + i * first.length, f.dibA + (i + 1) * first.length)], first);
+  assert.equal(f.target.pbo, pbo, 'retry reuses the original PBO only after writing its frame');
+  assert.equal(f.gpu.call(OPCODES.FENCE, 0, 0), 1);
+  for (let i = 0; i < 16; i++)
+    assert.deepEqual([...f.u8.slice(f.dibB + i * second.length, f.dibB + (i + 1) * second.length)], second);
+  assert.equal(f.target.inflight, null);
+  assert.equal(f.events.filter(e => e === 'delete-sync').length, 2);
+  assert.equal(f.gpu.stats.syncs, 2);
 }
 
 // Everything else keeps the synchronous Flip: WAT fences and swaps itself.
