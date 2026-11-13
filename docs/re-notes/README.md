@@ -476,3 +476,4 @@ not replace a newer main finding. Preparation-only and superseded notes are omit
 | Tux Racer title poll stall: causal observation blocked by provider transport | [tuxracer-title-poll-stall-causal-runtime-oct30-preserved-headroom.md](tuxracer-title-poll-stall-causal-runtime-oct30-preserved-headroom.md) |
 | WinHelp qualified-path native/fullVM requalification — 2026-10-20 | [winhelp-native-qualified-path-20261020.md](winhelp-native-qualified-path-20261020.md) |
 | Zuma Deluxe: current ordinary launch | [zuma-deluxe.md](zuma-deluxe.md) |
+| WordPad (Win98): initial frame placement, MFC load base | [wordpad.md](wordpad.md) |
