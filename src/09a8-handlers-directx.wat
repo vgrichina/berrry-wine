@@ -6912,11 +6912,33 @@
   (func $handle_IDirectDrawSurface_Lock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $wa i32) (local $dib_wa i32) (local $dib_guest i32)
     (local $left i32) (local $top i32) (local $bpp i32)
+    (local $right i32) (local $bottom i32)
     (if (i32.eqz (call $dx_surface_desc_valid (local.get $arg0) (local.get $arg2))) (then
       (i32.store (global.get $reg_base) (i32.const 0x80070057))
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
       (return)))
     (local.set $entry (call $dx_from_this (local.get $arg0)))
+    ;; Native offscreen Lock rejects rectangles outside the allocation with
+    ;; DDERR_INVALIDPARAMS and clears only lpSurface. Empty rectangles remain
+    ;; valid. Compare endpoints before arithmetic: signed negatives become
+    ;; large unsigned values, so even INT_MIN/overflow-shaped inputs fail.
+    ;; Keep texture behavior separate: native system-memory/managed textures
+    ;; permissively accept invalid rectangles (ddraw7:test_lockrect_invalid).
+    (if (local.get $arg1) (then
+      (local.set $left (call $gl32 (local.get $arg1)))
+      (local.set $top (call $gl32 (i32.add (local.get $arg1) (i32.const 4))))
+      (if (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $entry))) (i32.const 0x40)) (then
+        (local.set $right (call $gl32 (i32.add (local.get $arg1) (i32.const 8))))
+        (local.set $bottom (call $gl32 (i32.add (local.get $arg1) (i32.const 12))))
+        (if (i32.or
+              (i32.or (i32.gt_u (local.get $left) (local.get $right))
+                      (i32.gt_u (local.get $top) (local.get $bottom)))
+              (i32.or (i32.gt_u (local.get $right) (load.field DxObject width (local.get $entry)))
+                      (i32.gt_u (local.get $bottom) (load.field DxObject height (local.get $entry))))) (then
+          (call $gs32 (i32.add (local.get $arg2) (i32.const 36)) (i32.const 0))
+          (i32.store (global.get $reg_base) (i32.const 0x80070057))
+          (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+          (return)))))))
     (call $host_dx_trace (i32.const 1) (call $dx_slot_of (local.get $entry))
       (load.field DxObject flags (local.get $entry))
       (load.field DxObject misc1 (local.get $entry))
@@ -6936,8 +6958,6 @@
     (local.set $dib_wa (load.field DxObject misc1 (local.get $entry)))
     (if (local.get $arg1)
       (then
-        (local.set $left (call $gl32 (local.get $arg1)))
-        (local.set $top (call $gl32 (i32.add (local.get $arg1) (i32.const 4))))
         (local.set $bpp (load.field DxObject bpp (local.get $entry)))
         (local.set $dib_wa
           (i32.add (local.get $dib_wa)
