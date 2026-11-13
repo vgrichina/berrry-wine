@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T13:44Z):
+Current dispatch (updated 2026-11-13T13:48Z):
 
 - neverhood-original-dsetup6e-thunk-contract-2460, fresh launcher PID1845850; original 16-bit thunk connection/selector ABI, static only.
-- worms-text-render-terminal-recovery-2420, fresh launcher PID1843434; unfinished actual text-page/OEM render component task in fresh session.
+- worms-original-launcher-child-return-path-2480, fresh launcher PID1851297; original helper returns/config-to-WRMS handoff and DOS child ownership.
 - callback-loader-retirement-result-repair-2440, fresh launcher PID1843435; actual loader cancellation result versus retirement acknowledgement.
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Text2420 finished after fresh-session recovery: four actual-source component tests pass for mode2/page0/B8000, real OEM glyphs,7F/17/1B attributes and render selection; no concrete production defect reproduced.113 prior artifacts plus20 own artifacts/21 source pins verified. Preserve scratch/runs/20261113-worms-text-render-2420/. New test remains uncommitted; no actual initializer return/SETUP screen/config execution is claimed. Fresh2480 traces original WORMS.EXE helper outcomes and ordinary WRMS child handoff.
 
 Neverhood DSETUPE2320 publisheddd873f868: original attach/iDirectXSetup ord3, selected config/dialog/return paths and selectors1/2 established. Actual ThunkConnect32 source returnsTRUE without binding dsetup6e.dll; ten imported LS map/unmap names absent API table. These are concrete source gaps, not observed runtime failures.113 RAM-present/87 offline/four source checks and rejecting controls pass;51 artifact/fourteen source pins matched. Supervised recovery exited0, RAM member removed; preserve scratch/runs/20261113-neverhood-dsetupe-2320/. Fresh2460 traces original45104-byte DSETUP6E; no installation success or native execution claimed.
 
