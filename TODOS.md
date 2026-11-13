@@ -1,7 +1,9 @@
-Current dispatch (updated 2026-11-13T11:25Z):
-- tim-original-bitmap-resource-decoder-1220, fresh launcher PID1645843; bounded source implementation and pure tests only; original/native execution remains held.
+Current dispatch (updated 2026-11-13T11:28Z):
+- tim-original-palette-mapping-1300, fresh launcher PID1657235; establish exact original palette association and RGB mapping; pure byte/resource tests only, no native screenshot claim.
 - worms-readonly-iso-data-volume-1200, fresh launcher PID1644320; bounded source implementation and pure tests only; original/native execution remains held.
 - worms-mixed-mode-sector-reader-1240, fresh launcher PID1652837; bounded source implementation and pure tests only; original/native execution remains held.
+
+TIM bitmap1220 implemented exact SCN indexed frames/emission masks: 13 pure tests passed, 77 original frames decoded within exact resource boundaries, and all 19 evidence hashes matched. Palette/RGB and BIN/RLE decoding remain explicitly unsupported; source WIP is uncommitted. Preserve scratch/runs/20261113-tim-bitmap-decoder-1220/. Fresh palette1300 traces original palette loading and VGA mapping before enabling resource previews. Original installer execution, L1 native input and verified gameplay screenshots remain open.
 
 Drakan passive-target1220 now exposes immutable adapter-owned target/context inventory. Nine pure tests and 38 observer checks passed; all 11 evidence hashes matched. Local allocation/context identity is not guest lifetime or successful pixel publication. Production WIP remains uncommitted pending real focused rendering tests and locked build. Preserve scratch/runs/20261113-drakan-passive-target-1220/. The GL/D3D 27-app and crash-sweep goals remain open; stop adding attribution-only tasks while native work is held. Fresh Worms mixed-mode reader implements a demonstrated missing CD prerequisite alongside the existing ISO/DOS lane; no MSCDEX/CDDA playback, installer, extender or turn result is claimed.
 
