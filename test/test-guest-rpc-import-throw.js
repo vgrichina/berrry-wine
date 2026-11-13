@@ -47,7 +47,8 @@ console.log('PASS  a host import that throws in Worker mode stops its caller, no
 assert.strictEqual(worker.imports.host.gpu_gl_call(0x30017, 0, 23), 1);
 assert.strictEqual(worker.imports.host.gpu_gl_call(0x30017, 0, 0), 0x800);
 assert.deepStrictEqual(gpuCalls, [[0x30017, 0, 23], [0x30017, 0, 0]]);
-assert.throws(() => worker.imports.host.gpu_gl_call(0x30018, 0, 0),
+// 0x30018 is now the Worker-local D3D state wait; use an opcode nothing owns.
+assert.throws(() => worker.imports.host.gpu_gl_call(0x3ffff, 0, 0),
   /unexpected direct OpenGL worker call/, 'unknown calls still fail loudly');
 console.log('PASS D3D9 format capability query reaches the page broker');
 {
