@@ -1,7 +1,9 @@
-Current dispatch (updated 2026-11-13T11:31Z):
+Current dispatch (updated 2026-11-13T11:37Z):
 - tim-original-palette-mapping-1300, fresh launcher PID1657235; establish exact original palette association and RGB mapping; pure byte/resource tests only, no native screenshot claim.
-- worms-runner-cd-mount-integration-1320, fresh launcher PID1660347; bounded original-CD capability and pure tests; no native installation/gameplay claim.
+- worms-original-install-batch-cd-route-1420, fresh launcher PID1670092; support original INSTALL.BAT extensionless setup/CD lifetime; pure tests only, native results open.
 - worms-mscdex-discovery-data-services-1320, fresh launcher PID1660348; bounded original-CD capability and pure tests; no native installation/gameplay claim.
+
+Worms runner1320 wires explicit ISO or original CUE/BIN before guest execution, retains borrowed providers/original disc identity and closes owned descriptors. Its 28 pure tests and 25 evidence hashes passed; source WIP remains uncommitted. CD+batch is currently rejected, so fresh batch1420 implements the actual original INSTALL.BAT route. Preserve scratch/runs/20261113-worms-runner-cd-1320/. Coordinator also reproduced an actual browser-wrapper import failure through new MSCDEX/CD code and repaired node:fs to canonical fs in cdrom-media.js: both wrapper-root load checks and 8 sector tests passed. That narrow fix/new regression remain uncommitted in scratch/runs/20261113-coordinator-toyvm-browser-load-1400/. No native/browser execution or locked build occurred.
 
 Worms ISO1200 implemented actual read-only D:-Z: data volumes: 10 pure tests plus shared ISO extent checks passed, including copied-buffer alias repair. All 15 evidence hashes matched. Mixed-mode1240 implemented canonical CUE/BIN raw sector and logical MODE1 providers with audio/index metadata preserved; 8 pure tests and all 8 evidence hashes passed. Both remain uncommitted WIP. Preserve scratch/runs/20261113-worms-iso-data-prep-1200/ and scratch/runs/20261113-worms-cd-sector-1240/. Fresh workers own separate runner/readonly-ISO and DOS/MSCDEX paths; original full-disc install, extender, gameplay and audio playback remain untested.
 
