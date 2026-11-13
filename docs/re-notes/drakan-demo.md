@@ -31,9 +31,12 @@ No emulator fixes were needed for the install or the game.
   D3D bug and is neither. The registered app gets the right paths from its
   manifest's `vfsPath`s.
 - **First run opens "Riot Engine Options"** (a property sheet) and writes
-  `HKLM\SOFTWARE\Surreal\Riot Engine\Settings100` (REG_BINARY, 84 bytes:
+  `HKLM\SOFTWARE\Surreal\Riot Engine\Settings100` (REG_BINARY, 92 bytes:
   primary display driver, 640x480x16, dithering, shadows, bilinear) on OK.
   The app's `startupRegistry` carries that value, so launches skip the sheet.
+  [Original reader/writer inspection](drakan-original-startup-dialog-route-20261113.md)
+  confirms `0x5c` bytes and corrects the earlier 84-byte description; the seed
+  does not prove successful current device enumeration.
 - A **"Drakan Beta Demo Warning"** message box comes up first every launch
   (`--input=40:dlg-cmd:1`).
 - dragon.rfl is the game-logic DLL (base 0x10000000), loaded with LoadLibrary
