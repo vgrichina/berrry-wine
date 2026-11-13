@@ -1,6 +1,6 @@
-Current dispatch (updated 2026-11-13T02:58Z):
-- GL/D3D and recovery: closed-outlaws-text-recovery-webgl-1400, launcher PID1069356; qualify lossless storage of exactly two closed 16.6MB Outlaws text files, then execute the prepared actual-WebGL context-loss baseline if the floor permits. Text payloads remain opaque.
-- Pawn: pawn-native-save-after-outlaws-recovery-1405, launcher PID1069357; wait for the distinct resource phase, then authentic native history/Save As filename and guest-file witness for second-move commitment.
+Current dispatch (updated 2026-11-13T03:08Z):
+- GL/D3D: webgl-lost-context-readback-fix-1435, launcher PID1079263; repair the actual-browser lost-context false fence success/DIB corruption, isolate restoration timeout, rerun six cases.
+- Pawn: pawn-modal-input-guard-save-witness-1445, launcher PID1082155; qualify the modal-input guard that refused Save confirmation, then retrieve authentic history/save bytes before assigning second-turn commitment.
 - LMarbles: lmarbles-native-clear-after-outlaws-recovery-1410, launcher PID1069358; wait for that resource phase, then native pointer-first selector/hover and individually reviewed moves through CLEAR+next/tally.
 
 The two gameplay lanes are active objectives again. Serialize actual heavy runtimes through /tmp/wine-heavy-runtime.lock and actual child-process checks; a live resource/game worker is not a completed runtime. A prepared descriptor, fixture or floor refusal supplies no gameplay screenshot or native acceptance.
@@ -19,13 +19,21 @@ Later resource outcome: the existing 64MB /tmp/gallinelle-original.iso.gz was cl
 
 Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backup 18 expires 2026-11-27T01:05:39.765Z. Their recovery instructions are in `scratch/runs/20261113-closed-six-nine-offload-lmarbles-0500/RECOVERY.md` and `scratch/runs/20261113-dense-backup-puzzle2-0650/RECOVERY.md`. Recover before expiry; these snapshots are not permanent archives. Native captures/saves remain local.
 
+- [ ] GL/D3D actual context-loss readback failure
+  id: GL-D3D-CONTEXT-LOSS-READBACK-20261113
+  Update 2026-11-13T03:08Z: Root reviewed 65dbc2e75, 45 sealed files, two full opaque artifact decodes and browser streams. Two closed Outlaws text artifacts recovered 28,106,752 bytes net at phase announcement; preserve both sibling gzip/index/pointer files and scratch/runs/20261113-closed-outlaws-webgl-1400/restore.py, restore RAW before historical consumers. Above-floor actual Chrome151/WebGL2 baseline first RGB565 queued case observed context loss, fence return1, accepted DIB overwrite and pending-frame clear. Restoration event timed out: five remaining cases and fresh restored pixels UNKNOWN. Node parent1/bothEOF, Chrome close0, watchdog0/disarmed/profile gone. This is a demonstrated defect, not a passing fixture or 27-app gameplay result.
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
+  worker: webgl-lost-context-readback-fix-1435 PID1079263
+  Next: Isolate restoration-timeout cause, retain truthful lost-frame ownership/error semantics, repair demonstrated readback failure, qualify all six actual WebGL cases with fresh pixels and focused checks/locked build. No fake-GL-only substitute or automatic recovery claim for lost frames.
+
 - [ ] Pawn current original opening progression
   id: PAWN-CURRENT-TWO-MOVE-20261113
+  Update 2026-11-13T03:08Z: Root reviewed ea908859f,149 sealed files/four decoded native-supervisor streams, personally viewed d4/e4-Nf6 board and native C:\ Save As filename pawn-1405-secondmove.gam. New filename-entry milestone only. Save confirmation KNOWN UNSENT: helper refused pending WM_MOUSEMOVE hwnd65545/postqueue3 while owner/render healthy. Extraction after quit met closed port, no file-presence evidence. Commitment/second reply remain UNKNOWN/UNPROVED. Native/watchdog/supervisor0bothEOF; boardwatch parent wait UNKNOWN. Fresh1445 qualifies actual modal-input guard without discarding events or weakening freshness from a snapshot.
   Update 2026-11-13T02:27Z: Root reviewed b4548db48/43d713cde full boards and input evidence: e4/Nf6 accepted, d4 displayed; commitment UNKNOWN, second reply/save UNPROVED. Latest533bbba95 refused before native launch at1486729216B; local helper port mismatch corrected but unexercised in Pawn. Fresh native-dialog1115 investigates concrete public dialog behavior while floor unavailable.
   Update 2026-11-13T01:00Z: ROOT29eb68d2d 26sealedSHA/current04fullstartingboard personallyviewed/normalquit0bothEOF; frozenneutralowner guard refused legacyasyncSoftwarebridge beforeinput. Fresh0600 binds actual route/owner before new two-move attempt; no current moves/replies yet.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: pawn-native-save-after-outlaws-recovery-1405 PID1069357
-  Next: Current04 owning D3D9 route, two ordinary player moves with native AI replies and fresh full-board screenshots. Historical November10 GetDC/factory/callback/TLS fix and single move/reply are closed; no obsolete NULL-crash replay.
+  worker: pawn-modal-input-guard-save-witness-1445 PID1082155
+  Next: Current qualified D3D9 software-owner route and actual published module, safe native modal input consumption then authentic history/save witness before any third move; two ordinary player moves with native AI replies remain the gameplay target. Historical November10 GetDC/factory/callback/TLS fix is closed; no obsolete NULL-crash replay.
 
 - [ ] LMarbles next original puzzle progression
   id: LMARBLES-NEXT-PUZZLE-20261113
@@ -63,7 +71,7 @@ Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backu
   Update 2026-11-12T23:37Z: ROOT8dceb243e 127sealedSHA/8uniquePNGCRC/BoidsactualproductionChromecontrols verified integrity.1500msHELD292mscapture/1025msobservation;200msUNKNOWN275mscapture/1060msobservationoverlapsrelease. NOToriginalNFS/nonativePause/bends/lap. Fresh0020PID803855alreadyrunning/no duplicate, oldUNKNOWNsretained.
   Update 2026-11-12T23:35Z: Parent8dceb243e runlocal1500msheldframePASS/200msframe275msreleaseoverlapUNKNOWNterminal/no original. Freshnative-pause-reviewed-driving0020PID803855 demonstratesdocumentedactualnativePausebeforefiniteunpause-drive-pauseintervals; no heldpredicateweakening/retry200ms/no blindpath. Fullrootparentreviewpending.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: NFS parked after e647330fd; closed-outlaws-text-recovery-webgl-1400 PID1069356 covers current GL/D3D crash work
+  worker: NFS parked after e647330fd; webgl-lost-context-readback-fix-1435 PID1079263 covers current GL/D3D crash work
   Next: After resource worker closes, fresh original NFS native Pause with two settled stable frames, then one reviewed >=1500ms held drive/independent UP/Escape. No repeat floor-only task, mock Pause promotion or200ms UNKNOWN replay.
 
 - [ ] GLTron two ordinary turns and native round outcome
