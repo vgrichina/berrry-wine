@@ -1,7 +1,9 @@
-Current dispatch (updated 2026-11-13T11:28Z):
+Current dispatch (updated 2026-11-13T11:31Z):
 - tim-original-palette-mapping-1300, fresh launcher PID1657235; establish exact original palette association and RGB mapping; pure byte/resource tests only, no native screenshot claim.
-- worms-readonly-iso-data-volume-1200, fresh launcher PID1644320; bounded source implementation and pure tests only; original/native execution remains held.
-- worms-mixed-mode-sector-reader-1240, fresh launcher PID1652837; bounded source implementation and pure tests only; original/native execution remains held.
+- worms-runner-cd-mount-integration-1320, fresh launcher PID1660347; bounded original-CD capability and pure tests; no native installation/gameplay claim.
+- worms-mscdex-discovery-data-services-1320, fresh launcher PID1660348; bounded original-CD capability and pure tests; no native installation/gameplay claim.
+
+Worms ISO1200 implemented actual read-only D:-Z: data volumes: 10 pure tests plus shared ISO extent checks passed, including copied-buffer alias repair. All 15 evidence hashes matched. Mixed-mode1240 implemented canonical CUE/BIN raw sector and logical MODE1 providers with audio/index metadata preserved; 8 pure tests and all 8 evidence hashes passed. Both remain uncommitted WIP. Preserve scratch/runs/20261113-worms-iso-data-prep-1200/ and scratch/runs/20261113-worms-cd-sector-1240/. Fresh workers own separate runner/readonly-ISO and DOS/MSCDEX paths; original full-disc install, extender, gameplay and audio playback remain untested.
 
 TIM bitmap1220 implemented exact SCN indexed frames/emission masks: 13 pure tests passed, 77 original frames decoded within exact resource boundaries, and all 19 evidence hashes matched. Palette/RGB and BIN/RLE decoding remain explicitly unsupported; source WIP is uncommitted. Preserve scratch/runs/20261113-tim-bitmap-decoder-1220/. Fresh palette1300 traces original palette loading and VGA mapping before enabling resource previews. Original installer execution, L1 native input and verified gameplay screenshots remain open.
 
