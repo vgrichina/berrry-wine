@@ -36,7 +36,8 @@ function fixture() {
     'handle_GetModuleHandleA_locked', 'handle_GetProcAddress_pinned', 'dll_name_match',
     'tolower', 'str_eq', 'freelib_mark_loaded', 'dll_synthetic_reference',
     'resolve_static_module_ordinal', 'gl_dynamic_api_unsupported'];
-  for (const n of ['static_sys_dll_names', 'loadlib_builtin_only', 'loadlib_name_is_qualified'])
+  for (const n of ['static_sys_dll_names', 'loadlib_builtin_only', 'loadlib_name_is_qualified',
+    'loadlib_emulated_when_absent'])
     if (sources.some(s=>s.includes('(func $' + n + ' '))) names.push(n);
   let body = names.map(extract).join('\n');
   // Fixture-local layout, not a copy of any engine-allocated address.

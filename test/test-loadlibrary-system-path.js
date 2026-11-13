@@ -84,6 +84,11 @@ async function main() {
   assert(load('d3d9.dll'), 'a component we dispatch by API name still loads by bare name');
   for (const api of ['LoadLibraryA', 'LoadLibraryW', 'LoadLibraryExA', 'LoadLibraryExW']) {
     assert.strictEqual(load('VENDOR-UNINSTALLED', api), 0, api + ' absent bare stem');
+    // Native-preferred system DLLs we also emulate by API name: a public
+    // deploy never ships their files, and WordPad delay-loads SHELL32.
+    for (const name of ['SHELL32.dll', 'shlwapi', 'C:\\WINDOWS\\SYSTEM\\setupapi.dll'])
+      assert(load(name, api), api + ' emulated ' + name + ' loads without its file');
+    assert.strictEqual(load('C:\\Vendor\\shell32.dll', api), 0, api + ' private path to a missing shell32');
     assert.strictEqual(e.test_get_last_error(), 126, api + ' ERROR_MOD_NOT_FOUND');
     assert.strictEqual(load('KERNEL32', api), bare, api + ' builtin normalization');
   }
