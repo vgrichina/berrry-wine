@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T13:22Z):
+Current dispatch (updated 2026-11-13T13:27Z):
 
 - neverhood-original-dsetup-export-path-2220, fresh launcher PID1815045; original DSETUP DirectXSetupA export/dependency path, static only.
 - worms-original-setup-first-screen-config-path-2200, fresh launcher PID1809701; original SETUP first-screen and configuration service path.
-- guest-thread-bootstrap-error-cleanup-repair-2200, fresh launcher PID1809028; actual Host bootstrap rejection/retirement cleanup.
+- guest-main-start-ownership-cleanup-repair-2240, fresh launcher PID1821025; actual slot-0 startup ownership, overlapping start and clock cleanup.
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Bootstrap2200 reproduced primitive/frozen/proxy rejection values skipping retirement and a throwing logger creating an orphaned rejection. Actual cleanup now precedes annotation; mutable errors retain identity, other values retain exact cause, failed owners stay retained.51 new tests,72 adjacent checks/broker pass; five controls reject;34 artifact/eighteen source pins matched. Preserve scratch/runs/20261113-guest-bootstrap-cleanup-2200/. Code remains uncommitted; fresh2240 handles separate slot-0 startup ownership.
 
 Reviewed outer Host stop2140: cache/admission fence precede callbacks; audio, broker, local cleanup, clock and genuine link stops fan out independently. Failed retirements remain owned for explicit retry; scoped-loader/DLL receipts and CPU/renderer completion gates are preserved. Fifteen new tests,25 WorkerLink,32 Manager and broker checks pass; six negative controls reject. All36 artifact and17 source pins matched. Preserve scratch/runs/20261113-guest-host-stop-2140/. Code remains UNCOMMITTED pending focused runtime and locked build. Reset-host2140 published dd0ae5c7b: conditional original empty-IDT/reset bridge meets a real host boundary (FE rejects; nonpaged fallback retains PE; paged terminal fault; no firmware return).108 pure checks/four controls,33 seals/eight source pins pass; original selected runtime state remains unknown. Preserve scratch/runs/20261113-worms-reset-host-2140/. No new original gameplay or screenshots are claimed.
 
