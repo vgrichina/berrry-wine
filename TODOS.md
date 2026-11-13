@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T13:51Z):
+Current dispatch (updated 2026-11-13T13:54Z):
 
-- neverhood-original-dsetup6e-thunk-contract-2460, fresh launcher PID1845850; original 16-bit thunk connection/selector ABI, static only.
+- neverhood-thunk-kernel-loader-boundary-2520, fresh launcher PID1858863; actual loader/selector/mode-bridge primitive boundary for original thunk connection.
 - worms-original-launcher-child-return-path-2480, fresh launcher PID1851297; original helper returns/config-to-WRMS handoff and DOS child ownership.
 - local-host-loader-retirement-retry-repair-2500, fresh launcher PID1855775; proven local Host frame/pin retention and cancellation retry.
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Neverhood DSETUP6E2460 publishedd65793724: original NE startup/notification, data16 connection stack and selectors1 EXECUTEINF/2 driver targets plus far/flat argument/return contracts established.50 contract/twenty window checks,14 byte/custody and three source controls pass;42 artifacts/seven source pins matched. Recovery child exited0 with RAM deletion observed. Preserve scratch/runs/20261113-neverhood-dsetup6e-2460/. Real kernel thunk connection/SETUPX outputs remain unimplemented/unobserved; fresh2520 maps required primitives to actual loaders/mode bridge. No installation/gameplay success claimed.
 
 Loader2440 excluded proposed cancelling-status gap: actual callback frame transactions are process-boot scoped void-or-throw cancellation; cancelling status belongs separate thread notifications. Eighteen new tests/eight adjacent suites/seven controls pass;51 artifact/30 source pins matched, production unchanged. Distinct actual local Host.stop defect reproduced: cancellation throws, graph is cleared, second stop resolves with pin/gate held. Preserve scratch/runs/20261113-callback-loader-retire-2440/. Fresh2500 repairs caller retention/retry using actual scoped transactions; original hypothesis is not labelled a repaired defect.
 
