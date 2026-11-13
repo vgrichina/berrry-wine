@@ -48,8 +48,9 @@ async function main() {
     await host.loadDlls(configs, exeBytes, opts);
     assert.deepStrictEqual(Object.keys(message.configs[0]).sort(), ['bytes', 'name', 'path']);
     assert.deepStrictEqual(message.opts, {
-      exeName: 'WEP16_RODENT.EXE', extraArgs: '-test', maxBlocks: 1234,
+      exeName: 'WEP16_RODENT.EXE', extraArgs: '-test', maxBlocks: 1234, resourceId: 1,
     });
+    assert.strictEqual(host.link._dllResourceRequests.size, 0, 'completed request releases callback reference');
     assert.strictEqual(message.configs[0].bytes, bytes);
     assert.strictEqual(message.exeBytes, exeBytes);
     assert.strictEqual(configs[0].provider.read instanceof Function, true,

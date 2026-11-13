@@ -1365,6 +1365,8 @@
   (func $stack_run_smc_first (param $op i32) (param $extra i32) (param $pc i32) (result i32)
     (local $cur i32) (local $len i32) (local $n i32) (local $k i32)
     (local $code i32) (local $v i32) (local $first i32)
+    ;; Without checkpoints nothing would consume the resume PC: run the whole run.
+    (if (i32.eqz (global.get $smc_same_block)) (then (return (i32.const 0))))
     (local.set $cur (i32.load offset=16 (global.get $reg_base)))
     (local.set $len
       (i32.shl (i32.add (i32.shr_u (local.get $op) (i32.const 28)) (local.get $extra)) (i32.const 2)))

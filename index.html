@@ -2704,6 +2704,9 @@ Resource-aware Win98 emulator
     // ?aggressive-stack: the uop tier also elides push/pop pairs nothing can
     // observe (opt-in, compile-time; read at launch, host.js).
     if (new URLSearchParams(location.search).has('aggressive-stack')) window.WineSuperops.aggressiveStack = true;
+    // ?smc-same-block: decoder checkpoints for a store that rewrites its own
+    // running block (opt-in, decode-time; read at launch, host.js).
+    if (new URLSearchParams(location.search).has('smc-same-block')) window.WineSuperops.smcSameBlock = true;
     // Trace heads: hot heads with no back edge become forward traces (on by
     // default, compile-time; read at launch, host.js). ?no-uop-trace-heads
     // turns them off; ?uop-trace-heads is still accepted and changes nothing.
@@ -3215,7 +3218,16 @@ Resource-aware Win98 emulator
         img.removeAttribute('data-src');
       }
       refreshStartAccount();
-      restoreMediaLibrary();
+      const libraryRestored = restoreMediaLibrary();
+      // /?add-game is the site's "bring your own disc" link (the /compat/
+      // pages): open My Media, whose Import button is the click a file
+      // picker needs. Dropping a file on the desktop works without it.
+      const startUrl = new URL(location.href);
+      if (startUrl.searchParams.has('add-game')) {
+        startUrl.searchParams.delete('add-game');
+        history.replaceState(null, '', startUrl.pathname + startUrl.search + startUrl.hash);
+        Promise.resolve(libraryRestored).then(() => mediaUI.showLibrary());
+      }
       if (!DEBUG_MODE) initDesktop();
       // The page's chrome just changed shape under the canvas.
       if (wasDirect) resizeCanvas();

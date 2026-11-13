@@ -16,7 +16,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs,cases=require(
    if(name==='worker')await send(O.RESOURCE_CREATE,{kind:'device',width:8,height:8});
    const api={create:(resource)=>send(O.RESOURCE_CREATE,{kind:'color',resource}),update:(resource,pixels,pitch,rect)=>send(O.RESOURCE_UPDATE,{kind:'color',resource,pixels,pitch,rect}),
     clear:(color,flags,depth,rects,depthAttachment,stencil,colorAttachment)=>send(O.CLEAR,{color,flags,depth,rects,depthAttachment,stencil,colorAttachment}),
-    draw:p=>send(O.DRAW,p),read:resource=>send(O.READBACK,{resource}),present:()=>send(O.PRESENT,{}),release:id=>send(O.RESOURCE_RELEASE,{kind:'color',id})};
+    copy:p=>send(O.COPY,p),draw:p=>send(O.DRAW,p),read:resource=>send(O.READBACK,{resource}),present:()=>send(O.PRESENT,{}),release:id=>send(O.RESOURCE_RELEASE,{kind:'color',id})};
    console.log(name+' independent color cases PASS '+await cases.run(api));
    await send(O.RESOURCE_RELEASE,{kind:'device'});
   }

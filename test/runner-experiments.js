@@ -149,6 +149,10 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // page bit OR inside the sparse generated-code min..max span" (04-cache
   // $code_write_legacy). Default is page-exact over the whole guest space.
   const CODE_WRITE_LEGACY = hasFlag('code-write-legacy');
+  // --smc-same-block (or `smcSameBlock: true` on the app): decoder checkpoints
+  // so a store that rewrites a later instruction of its own running block is
+  // seen at once (04-cache $smc_same_block). Opt-in; costs a dispatch per store.
+  const smcWanted = () => hasFlag('smc-same-block') || (appPolicy() || {}).smcSameBlock === true;
   // --no-uop-nobump: turn off the page index's no-bump mark (01-header
   // PAGE_INDEX_NOBUMP) -- heads with a settled uop verdict stop counting
   // toward hotness and taken Jccs into them keep the inline fast path.
@@ -374,6 +378,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     }
     if (BRANCH_CLOCK) inheritWasm('set_branch_clock', 1);
     if (CODE_WRITE_LEGACY) inheritWasm('set_code_write_legacy', 1);
+    if (smcWanted()) inheritWasm('set_smc_same_block', 1);
     if (uopWanted()) inheritWasm('set_uop', 1);
     if (NO_UOP_NOBUMP) inheritWasm('set_uop_nobump', 0);
     if (aggrWanted()) inheritWasm('set_aggressive_stack', 1);
@@ -403,166 +408,188 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
 
   }
 
-  function applyMain(instance, { copySuperops: COPY_SUPEROPS, ctx = null }) {
-    if (BRANCH_CLOCK && instance.exports.set_branch_clock) instance.exports.set_branch_clock(1);
-    if (CODE_WRITE_LEGACY && instance.exports.set_code_write_legacy) instance.exports.set_code_write_legacy(1);
-    if (NO_UOP_NOBUMP && instance.exports.set_uop_nobump) instance.exports.set_uop_nobump(0);
-    if (uopWanted() && instance.exports.set_uop && ctx) {
-      if (UOP_CENSUS && instance.exports.set_uop_census) instance.exports.set_uop_census(1);
-      instance.exports.set_uop(1);
-      if (UOP_WIN_CENSUS && instance.exports.set_uop_win_census) instance.exports.set_uop_win_census(1);
-      if (UOP_REGUARD_SPAN !== null && instance.exports.set_uop_reguard_span) instance.exports.set_uop_reguard_span(Number(UOP_REGUARD_SPAN) | 0);
-      if (UOP_POOR_WORK !== null && instance.exports.set_uop_poor_work) instance.exports.set_uop_poor_work(Number(UOP_POOR_WORK) | 0);
-      if (NO_UOP_TRACE_CUT && instance.exports.set_uop_trace_cut) instance.exports.set_uop_trace_cut(0);
-      if (NO_UOP_MCOPY && instance.exports.set_uop_mcopy) instance.exports.set_uop_mcopy(0);
-      if (NO_UOP_HOT_STICKY && instance.exports.set_uop_hot_sticky) instance.exports.set_uop_hot_sticky(0);
-      if (UOP_HOT_AGE !== null && instance.exports.set_uop_hot_age) instance.exports.set_uop_hot_age(Number(UOP_HOT_AGE) | 0);
-      if (UOP_ICG_MEGA !== null && instance.exports.set_uop_icg_mega) instance.exports.set_uop_icg_mega(Number(UOP_ICG_MEGA) | 0);
-      if (UOP_RETRY_LADDER !== null && instance.exports.set_uop_retry_ladder) instance.exports.set_uop_retry_ladder(UOP_RETRY_LADDER);
-      if (aggrWanted() && instance.exports.set_aggressive_stack) instance.exports.set_aggressive_stack(1);
-      for (const [setter, wanted] of WIDEN) if (wanted() && instance.exports[setter]) instance.exports[setter](1);
-      if (instance.exports.set_uop_trace_heads) instance.exports.set_uop_trace_heads(traceWanted() ? 1 : 0);
-      if (instance.exports.set_uop_mmx) instance.exports.set_uop_mmx(mmxWanted() ? 1 : 0);
-      if (instance.exports.set_uop_rep) instance.exports.set_uop_rep(repWanted() ? 1 : 0);
-      if (traceWanted() && instance.exports.set_uop_trace_limits) {
-        if (TRACE_LIMITS[0] || TRACE_LIMITS[1]) instance.exports.set_uop_trace_limits(TRACE_LIMITS[0], TRACE_LIMITS[1]);
+  function visitMain(available, set, { copySuperops: COPY_SUPEROPS, ctx = null }) {
+    let enablesUop = false;
+    if (BRANCH_CLOCK && available('set_branch_clock')) set('set_branch_clock', 1);
+    if (CODE_WRITE_LEGACY && available('set_code_write_legacy')) set('set_code_write_legacy', 1);
+    if (smcWanted() && available('set_smc_same_block')) set('set_smc_same_block', 1);
+    if (NO_UOP_NOBUMP && available('set_uop_nobump')) set('set_uop_nobump', 0);
+    if (uopWanted() && available('set_uop') && ctx) {
+      if (UOP_CENSUS && available('set_uop_census')) set('set_uop_census', 1);
+      set('set_uop', 1);
+      if (UOP_WIN_CENSUS && available('set_uop_win_census')) set('set_uop_win_census', 1);
+      if (UOP_REGUARD_SPAN !== null && available('set_uop_reguard_span')) set('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
+      if (UOP_POOR_WORK !== null && available('set_uop_poor_work')) set('set_uop_poor_work', Number(UOP_POOR_WORK) | 0);
+      if (NO_UOP_TRACE_CUT && available('set_uop_trace_cut')) set('set_uop_trace_cut', 0);
+      if (NO_UOP_MCOPY && available('set_uop_mcopy')) set('set_uop_mcopy', 0);
+      if (NO_UOP_HOT_STICKY && available('set_uop_hot_sticky')) set('set_uop_hot_sticky', 0);
+      if (UOP_HOT_AGE !== null && available('set_uop_hot_age')) set('set_uop_hot_age', Number(UOP_HOT_AGE) | 0);
+      if (UOP_ICG_MEGA !== null && available('set_uop_icg_mega')) set('set_uop_icg_mega', Number(UOP_ICG_MEGA) | 0);
+      if (UOP_RETRY_LADDER !== null && available('set_uop_retry_ladder')) set('set_uop_retry_ladder', UOP_RETRY_LADDER);
+      if (aggrWanted() && available('set_aggressive_stack')) set('set_aggressive_stack', 1);
+      for (const [setter, wanted] of WIDEN) if (wanted() && available(setter)) set(setter, 1);
+      if (available('set_uop_trace_heads')) set('set_uop_trace_heads', traceWanted() ? 1 : 0);
+      if (available('set_uop_mmx')) set('set_uop_mmx', mmxWanted() ? 1 : 0);
+      if (available('set_uop_rep')) set('set_uop_rep', repWanted() ? 1 : 0);
+      if (traceWanted() && available('set_uop_trace_limits')) {
+        if (TRACE_LIMITS[0] || TRACE_LIMITS[1]) set('set_uop_trace_limits', TRACE_LIMITS[0], TRACE_LIMITS[1]);
       }
-      uopOn = true;
+      enablesUop = true;
     }
-    if (TRACE_LOOPMATCH && instance.exports.set_loop_trace) {
-      instance.exports.set_loop_trace(1, TRACE_LOOPMATCH_EIP);
+    if (TRACE_LOOPMATCH && available('set_loop_trace')) {
+      set('set_loop_trace', 1, TRACE_LOOPMATCH_EIP);
     }
-    if (LOOP_SUPEROPS && instance.exports.set_loop_emit) {
-      instance.exports.set_loop_emit(1);
+    if (LOOP_SUPEROPS && available('set_loop_emit')) {
+      set('set_loop_emit', 1);
     }
-    if (NO_LOOP_SUPEROPS && instance.exports.set_loop_emit) {
-      instance.exports.set_loop_emit(0);
+    if (NO_LOOP_SUPEROPS && available('set_loop_emit')) {
+      set('set_loop_emit', 0);
     }
-    if (LUT_SUPEROPS && instance.exports.set_loop_lut_emit) {
-      instance.exports.set_loop_lut_emit(1);
+    if (LUT_SUPEROPS && available('set_loop_lut_emit')) {
+      set('set_loop_lut_emit', 1);
     }
-    if (NO_LUT_SUPEROPS && instance.exports.set_loop_lut_emit) {
-      instance.exports.set_loop_lut_emit(0);
+    if (NO_LUT_SUPEROPS && available('set_loop_lut_emit')) {
+      set('set_loop_lut_emit', 0);
     }
-    if (COPY_SUPEROPS && instance.exports.set_loop_copy_emit) {
-      instance.exports.set_loop_copy_emit(1);
+    if (COPY_SUPEROPS && available('set_loop_copy_emit')) {
+      set('set_loop_copy_emit', 1);
     }
-    if (NO_COPY_SUPEROPS && instance.exports.set_loop_copy_emit) {
-      instance.exports.set_loop_copy_emit(0);
+    if (NO_COPY_SUPEROPS && available('set_loop_copy_emit')) {
+      set('set_loop_copy_emit', 0);
     }
-    if (BLOCK_CHAIN && instance.exports.set_block_chain) {
-      instance.exports.set_block_chain(1);
+    if (BLOCK_CHAIN && available('set_block_chain')) {
+      set('set_block_chain', 1);
     }
-    if (BLOCK_EXEC && instance.exports.set_block_exec) {
-      instance.exports.set_block_exec(1);
+    if (BLOCK_EXEC && available('set_block_exec')) {
+      set('set_block_exec', 1);
     }
-    if (BLOCK_EXEC_MIN_UOPS && instance.exports.set_block_exec_min_uops) {
-      instance.exports.set_block_exec_min_uops(BLOCK_EXEC_MIN_UOPS);
+    if (BLOCK_EXEC_MIN_UOPS && available('set_block_exec_min_uops')) {
+      set('set_block_exec_min_uops', BLOCK_EXEC_MIN_UOPS);
     }
-    if (BLOCK_EXEC_MAX_UOPS && instance.exports.set_block_exec_max_uops) {
-      instance.exports.set_block_exec_max_uops(BLOCK_EXEC_MAX_UOPS);
+    if (BLOCK_EXEC_MAX_UOPS && available('set_block_exec_max_uops')) {
+      set('set_block_exec_max_uops', BLOCK_EXEC_MAX_UOPS);
     }
-    if (BLOCK_EXEC_TRACE && instance.exports.set_block_exec_trace) {
-      instance.exports.set_block_exec_trace(1);
+    if (BLOCK_EXEC_TRACE && available('set_block_exec_trace')) {
+      set('set_block_exec_trace', 1);
     }
-    if (NO_BLOCK_EXEC_REGIONS && instance.exports.set_block_exec_regions) {
-      instance.exports.set_block_exec_regions(0);
-    } else if (BLOCK_EXEC_REGION_MAX && instance.exports.set_block_exec_regions) {
-      instance.exports.set_block_exec_regions(BLOCK_EXEC_REGION_MAX);
+    if (NO_BLOCK_EXEC_REGIONS && available('set_block_exec_regions')) {
+      set('set_block_exec_regions', 0);
+    } else if (BLOCK_EXEC_REGION_MAX && available('set_block_exec_regions')) {
+      set('set_block_exec_regions', BLOCK_EXEC_REGION_MAX);
     }
-    if (BLOCK_EXEC_WALK_K && instance.exports.set_block_exec_walk_k) {
-      instance.exports.set_block_exec_walk_k(BLOCK_EXEC_WALK_K);
+    if (BLOCK_EXEC_WALK_K && available('set_block_exec_walk_k')) {
+      set('set_block_exec_walk_k', BLOCK_EXEC_WALK_K);
     }
-    if (BLOCK_EXEC_WALK_BUDGET && instance.exports.set_block_exec_walk_budget) {
-      instance.exports.set_block_exec_walk_budget(BLOCK_EXEC_WALK_BUDGET);
+    if (BLOCK_EXEC_WALK_BUDGET && available('set_block_exec_walk_budget')) {
+      set('set_block_exec_walk_budget', BLOCK_EXEC_WALK_BUDGET);
     }
-    if (NO_BLOCK_EXEC_SPLIT && instance.exports.set_block_exec_split) {
-      instance.exports.set_block_exec_split(0);
+    if (NO_BLOCK_EXEC_SPLIT && available('set_block_exec_split')) {
+      set('set_block_exec_split', 0);
     }
-    if (BLOCK_EXEC_X87 && instance.exports.set_block_exec_x87) {
-      instance.exports.set_block_exec_x87(1);
+    if (BLOCK_EXEC_X87 && available('set_block_exec_x87')) {
+      set('set_block_exec_x87', 1);
     }
-    if (NO_BLOCK_EXEC_X87_REGIONS && instance.exports.set_block_exec_x87_regions) {
-      instance.exports.set_block_exec_x87_regions(0);
+    if (NO_BLOCK_EXEC_X87_REGIONS && available('set_block_exec_x87_regions')) {
+      set('set_block_exec_x87_regions', 0);
     }
-    if (NO_BLOCK_EXEC_CARRY && instance.exports.set_block_exec_carry) {
-      instance.exports.set_block_exec_carry(0);
+    if (NO_BLOCK_EXEC_CARRY && available('set_block_exec_carry')) {
+      set('set_block_exec_carry', 0);
     }
-    if (NO_BLOCK_EXEC_RMW && instance.exports.set_block_exec_rmw) {
-      instance.exports.set_block_exec_rmw(0);
+    if (NO_BLOCK_EXEC_RMW && available('set_block_exec_rmw')) {
+      set('set_block_exec_rmw', 0);
     }
-    if (NO_BLOCK_EXEC_LEAF && instance.exports.set_block_exec_leaf) {
-      instance.exports.set_block_exec_leaf(0);
+    if (NO_BLOCK_EXEC_LEAF && available('set_block_exec_leaf')) {
+      set('set_block_exec_leaf', 0);
     }
-    if (NO_BLOCK_EXEC_LEAF_FB && instance.exports.set_block_exec_leaf_fb) {
-      instance.exports.set_block_exec_leaf_fb(0);
+    if (NO_BLOCK_EXEC_LEAF_FB && available('set_block_exec_leaf_fb')) {
+      set('set_block_exec_leaf_fb', 0);
     }
-    if (NO_BLOCK_EXEC_TAIL_EXITS && instance.exports.set_block_exec_tail_exits) {
-      instance.exports.set_block_exec_tail_exits(0);
+    if (NO_BLOCK_EXEC_TAIL_EXITS && available('set_block_exec_tail_exits')) {
+      set('set_block_exec_tail_exits', 0);
     }
-    if (PAGE_DESC_RG_RESERVE != null && instance.exports.set_page_desc_rg_reserve) {
-      instance.exports.set_page_desc_rg_reserve(PAGE_DESC_RG_RESERVE);
+    if (PAGE_DESC_RG_RESERVE != null && available('set_page_desc_rg_reserve')) {
+      set('set_page_desc_rg_reserve', PAGE_DESC_RG_RESERVE);
     }
-    if (NO_AOE_FILL && instance.exports.set_loop_aoe_fill_emit) {
-      instance.exports.set_loop_aoe_fill_emit(0);
+    if (NO_AOE_FILL && available('set_loop_aoe_fill_emit')) {
+      set('set_loop_aoe_fill_emit', 0);
     }
-    if (NO_AOE_SPAN && instance.exports.set_loop_aoe_span_emit) {
-      instance.exports.set_loop_aoe_span_emit(0);
+    if (NO_AOE_SPAN && available('set_loop_aoe_span_emit')) {
+      set('set_loop_aoe_span_emit', 0);
     }
-    if (NO_MMX_FILL && instance.exports.set_loop_mmx_fill_emit) {
-      instance.exports.set_loop_mmx_fill_emit(0);
+    if (NO_MMX_FILL && available('set_loop_mmx_fill_emit')) {
+      set('set_loop_mmx_fill_emit', 0);
     }
     // Per-instance, not once: worker threads are separate WASM instances over
     // one shared memory, so a mut global set only on the main instance leaves
     // every worker decoding with the other setting and makes the A/B meaningless.
-    if (NO_SIB_FUSION && instance.exports.set_sib_fusion) {
-      instance.exports.set_sib_fusion(0);
+    if (NO_SIB_FUSION && available('set_sib_fusion')) {
+      set('set_sib_fusion', 0);
     }
-    if (NO_STACK_FUSION && instance.exports.set_stack_fusion) {
-      instance.exports.set_stack_fusion(0);
+    if (NO_STACK_FUSION && available('set_stack_fusion')) {
+      set('set_stack_fusion', 0);
     }
-    if (NO_X87_ISLAND_PREDECODE && instance.exports.set_x87_island_predecode) {
-      instance.exports.set_x87_island_predecode(0);
+    if (NO_X87_ISLAND_PREDECODE && available('set_x87_island_predecode')) {
+      set('set_x87_island_predecode', 0);
     }
-    if (NO_JUMP_TABLE && instance.exports.set_jump_table) {
-      instance.exports.set_jump_table(0);
+    if (NO_JUMP_TABLE && available('set_jump_table')) {
+      set('set_jump_table', 0);
     }
-    if (NO_RLE_RUN && instance.exports.set_rle_run) {
-      instance.exports.set_rle_run(0);
+    if (NO_RLE_RUN && available('set_rle_run')) {
+      set('set_rle_run', 0);
     }
-    if (ALU8_SIB && instance.exports.set_alu8_sib) instance.exports.set_alu8_sib(1);
-    if (IMPLODE_CMP_RUN && instance.exports.set_implode_cmp_run) instance.exports.set_implode_cmp_run(1);
+    if (ALU8_SIB && available('set_alu8_sib')) set('set_alu8_sib', 1);
+    if (IMPLODE_CMP_RUN && available('set_implode_cmp_run')) set('set_implode_cmp_run', 1);
     for (const s of FOLD_OFF_SETTERS) {
-      if (!instance.exports[s]) throw new Error(`--no-fold: this module has no ${s}`);
-      instance.exports[s](0);
+      if (!available(s)) throw new Error(`--no-fold: this module has no ${s}`);
+      set(s, 0);
     }
-    if (FOLD_OFF_MASK) instance.exports.set_fold_off_mask(FOLD_OFF_MASK);
+    if (FOLD_OFF_MASK) set('set_fold_off_mask', FOLD_OFF_MASK);
     // Per-instance, like every other decode-time setting: a guest thread decodes
     // in its own instance, so arming only the main one would leave the workers
     // running the scalar x87 handlers and make the share unreadable.
-    if (x87Wanted() && instance.exports.set_x87_pipeline4_fusion) {
-      instance.exports.set_x87_pipeline4_fusion(1);
-      instance.exports.set_x87_affine_fusion(1);
+    if (x87Wanted() && available('set_x87_pipeline4_fusion')) {
+      set('set_x87_pipeline4_fusion', 1);
+      set('set_x87_affine_fusion', 1);
     }
-    if (X87_FUSE_DEBUG && instance.exports.set_x87_fuse_debug) {
+    if (X87_FUSE_DEBUG && available('set_x87_fuse_debug')) {
       const [mask, lo = '0', hi = '0xFFFFFFFF'] = X87_FUSE_DEBUG.split(',');
-      instance.exports.set_x87_fuse_debug(Number(mask) | 0, Number(lo) | 0, Number(hi) | 0);
+      set('set_x87_fuse_debug', Number(mask) | 0, Number(lo) | 0, Number(hi) | 0);
     }
-    if ((TREE_FOLD || TRACE_TREE_FOLD) && instance.exports.set_tree_fold) {
-      instance.exports.set_tree_fold(1);
+    if ((TREE_FOLD || TRACE_TREE_FOLD) && available('set_tree_fold')) {
+      set('set_tree_fold', 1);
     }
-    if (TRACE_TREE_FOLD && instance.exports.set_tree_trace) {
-      instance.exports.set_tree_trace(1);
+    if (TRACE_TREE_FOLD && available('set_tree_trace')) {
+      set('set_tree_trace', 1);
     }
     // The floor applies whether or not the fold is armed: with it off, the
     // matcher still counts what it WOULD have taken, and that census is only
     // meaningful if both arms use the same threshold.
-    if (TREE_FOLD_MIN_OPS !== null && instance.exports.set_tree_fold_min_ops) {
-      instance.exports.set_tree_fold_min_ops(TREE_FOLD_MIN_OPS);
+    if (TREE_FOLD_MIN_OPS !== null && available('set_tree_fold_min_ops')) {
+      set('set_tree_fold_min_ops', TREE_FOLD_MIN_OPS);
     }
-    if (TREE_FOLD_MAX_OPS !== null && instance.exports.set_tree_fold_max_ops) {
-      instance.exports.set_tree_fold_max_ops(TREE_FOLD_MAX_OPS);
+    if (TREE_FOLD_MAX_OPS !== null && available('set_tree_fold_max_ops')) {
+      set('set_tree_fold_max_ops', TREE_FOLD_MAX_OPS);
     }
+    return enablesUop;
+  }
+
+  function applyMain(instance, options) {
+    const enabled = visitMain(name => typeof instance.exports[name] === 'function',
+      (name, ...args) => instance.exports[name](...args), options);
+    if (enabled) uopOn = true;
+  }
+
+  async function applyMainOwned(owner, options) {
+    // One policy and order for both routes. Planning never enters the guest;
+    // only the selected owner applies commands, sequentially, after validation.
+    const calls = [];
+    const enabled = visitMain(name => owner.supports(name),
+      (name, ...args) => {
+        if (!owner.supports(name)) throw new Error('missing required experiment export: ' + name);
+        calls.push([name, ...args]);
+      }, options);
+    for (const [name, ...args] of calls) await owner.call(name, ...args);
+    if (enabled) uopOn = true;
   }
 
   function report(instance, threadManager, verbose, log = console.log) {
@@ -625,7 +652,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   }
 
   return { traceLoopmatch: TRACE_LOOPMATCH, uopCensus: UOP_CENSUS, copySuperopsRequested: COPY_SUPEROPS_ARG,
-    noCopySuperops: NO_COPY_SUPEROPS, recordInherited, applyMain, report };
+    noCopySuperops: NO_COPY_SUPEROPS, recordInherited, applyMain, applyMainOwned, report };
 }
 
 module.exports = { createRunnerExperiments };

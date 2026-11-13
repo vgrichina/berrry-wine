@@ -626,7 +626,7 @@
 
 ;; Center-sampled BGRA8 POINT/NONE and bilinear LINEAR. Coordinates clamp to
 ;; the captured source rectangle, not adjacent pixels outside that rectangle.
-(func $d3d9_stretch_pixels (param $p i32)
+(func $d3d9_stretch_pixels (export "d3d_software_copy_color") (param $p i32)
   (local $src i32) (local $dst i32) (local $sp i32) (local $dp i32)
   (local $sw i32) (local $sh i32) (local $dw i32) (local $dh i32)
   (local $x i32) (local $y i32) (local $x0 i32) (local $x1 i32) (local $y0 i32) (local $y1 i32)
@@ -759,35 +759,19 @@
   (i32.store offset=96 (local.get $p) (local.get $filter))))
   (local.set $p (call $g2w (global.get $d3d9_stretch_packet)))
   (local.set $d (i32.add (local.get $p) (i32.const 32)))
-  (if (i32.eqz (global.get $d3d9_stretch_stage)) (then
-    (if (i32.load offset=28 (local.get $p)) (then
-      (local.set $result (call $d3d9_backbuffer_dc_sync (local.get $device) (i32.const 0)))
-      (if (call $d3d_render_park (local.get $result) (i32.const 0)) (then (return))))
-    (else (local.set $result (call $d3d9_color_sync (i32.load offset=20 (local.get $p)) (i32.const 0)))))
-    (if (global.get $d3d_render_token) (then (return)))
-    (br_if $done (i32.ne (local.get $result) (i32.const 1)))
-    (call $d3d9_stretch_pixels (local.get $p))
-    (global.set $d3d9_stretch_stage (i32.const 1))))
+  ;; Capture renderer-owned identities and rectangles while the D3D guard is
+  ;; held. No CPU source readback, resampling, or canonical destination write.
+  ;; A parked broker result still retains this invocation's packet for nested
+  ;; guest calls; completion never dereferences a potentially retired resource.
   (local.set $result (if (result i32) (global.get $d3d_render_token)
     (then (call $d3d_render_poll))
     (else
       (local.set $desc (call $d3d9_gpu_descriptor (local.get $device)))
-      (i32.store offset=24 (local.get $desc) (i32.load offset=20 (local.get $d)))
-      (i32.store offset=28 (local.get $desc) (i32.add (i32.load offset=12 (local.get $d))
-        (i32.add (i32.mul (i32.load offset=84 (local.get $p)) (i32.load offset=16 (local.get $d)))
-          (i32.mul (i32.load offset=80 (local.get $p)) (i32.const 4)))))
-      (i32.store offset=32 (local.get $desc) (i32.load offset=16 (local.get $d)))
-      (i32.store offset=36 (local.get $desc) (i32.load offset=80 (local.get $p)))
-      (i32.store offset=44 (local.get $desc) (i32.load offset=84 (local.get $p)))
-      (i32.store offset=48 (local.get $desc) (i32.load offset=88 (local.get $p)))
-      (i32.store offset=52 (local.get $desc) (i32.load offset=92 (local.get $p)))
-      (i32.store offset=56 (local.get $desc) (i32.load offset=8 (local.get $d)))
-      (call $host_gpu_gl_call (i32.const 0x30015) (local.get $desc) (i32.const 0)))))
+      (i32.store offset=24 (local.get $desc) (local.get $p))
+      (call $host_gpu_gl_call (i32.const 0x30019) (local.get $desc) (i32.const 0)))))
   (if (call $d3d_render_park (local.get $result) (i32.const 0)) (then (return)))
   (if (i32.eq (local.get $result) (i32.const 1)) (then
-    (if (i32.load offset=24 (local.get $d)) (then
-      (local.set $rt (i32.load offset=24 (local.get $d)))
-      (i32.store (local.get $rt) (i32.add (i32.load (local.get $rt)) (i32.const 1)))))
+    ;; The renderer increments destination revision for texture alias sampling.
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))))
   )
   (local.set $parent (i32.load offset=108 (call $g2w (global.get $d3d9_stretch_packet))))

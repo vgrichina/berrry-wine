@@ -82,6 +82,7 @@ exports/
 # Static site pages rendered by tools/gen-site-pages.js at deploy time
 # (story.html is the one committed output so a local http.server has it).
 apps/*.html
+compat/*.html
 articles/*.html
 design/*.html
 docs/*.html

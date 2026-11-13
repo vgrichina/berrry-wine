@@ -116,7 +116,10 @@ const names = ['midiStreamOpen', 'midiStreamOut', 'midiStreamPause',
 const bodies = names.map(n => fn(audioFile, 'handle_' + n));
 bodies.push(fn(audioFile, 'midi_stream_service'));
 for (const n of ['fire_midi_out_callback_bound', 'fire_wave_out_callback_bound',
-  'fire_audio_callback_bound', 'wave_callback_restore_wait']) bodies.push(fn('src/13-exports.wat', n));
+  'fire_audio_callback_bound', 'wave_callback_restore_wait',
+  // The callback-context feed recorder runs on every admission; unarmed it
+  // returns at once, so its real body costs nothing here.
+  'callback_feed_emit']) bodies.push(fn('src/13-exports.wat', n));
 for (const n of ['save_caller_regs', 'restore_caller_regs', 'get_cf', 'set_flags_inc', 'set_flags_dec'])
   bodies.push(fn('src/03-registers.wat', n));
 for (const n of ['hash_api_name', 'lookup_api_id']) bodies.push(fn('src/10-helpers.wat', n));
@@ -149,6 +152,26 @@ for (const n of new Set([...dispatch.matchAll(/\(call \$(handle_[^\s()]+)/g)].ma
     else if (ch === ')') depth--;
   }
   bodies.push(`(func $${n} (param ${Array(arity).fill('i32').join(' ')}) (unreachable))`);
+}
+// Any other function the real bodies above call but this fixture does not
+// carry (diagnostic recorders on failure paths, GL/D3D object sections, COM
+// setup) is a trap with its production signature: reaching one fails the test.
+{
+  const defined = new Set([...bodies.join('\n').matchAll(/\(func \$([^\s()]+)/g)].map(m => m[1]));
+  for (const n of ['g2w', 'gl32', 'gs32']) defined.add(n);
+  const srcDir = path.join(root, 'src');
+  const watFiles = fs.readdirSync(srcDir).filter(f => f.endsWith('.wat')).map(f => 'src/' + f);
+  for (let added = true; added;) {
+    added = false;
+    for (const n of new Set([...bodies.join('\n').matchAll(/\(call \$([^\s()]+)/g)].map(m => m[1]))) {
+      if (defined.has(n) || n.startsWith('host_')) continue;
+      const file = watFiles.find(f => new RegExp(`\\(func \\$${n}(?=[\\s)])`).test(sources[f] ??= read(f)));
+      assert(file, `fixture helper ${n} must exist in src`);
+      const header = fn(file, n).match(/^\(func \$[^\s()]+((?:\s*\((?:param|result)[^()]*\))*)/)[1];
+      bodies.push(`(func $${n}${header} (unreachable))`);
+      defined.add(n); added = true;
+    }
+  }
 }
 const globals = new Set([...bodies.join('\n').matchAll(/\(global\.(?:get|set) \$(\w+)/g)].map(m => m[1]));
 globals.delete('API_HASH_COUNT'); // supplied by the actual generated hash source
@@ -702,6 +725,44 @@ test('window callback backpressure preserves ordered open/done/close notificatio
   assert.equal(s.e.mm_timer_in_cb.value, 0);
   cases++;
   console.log('PASS actual browser cooperative owner/wait/busy/retirement gate');
+
+  // Threads mode: the guest main thread runs in a Worker. A CALLBACK_FUNCTION
+  // open must succeed (DX-Ball opened its soundtrack this way and the old
+  // refusal threw out of the host import, ending the app) and each MM_MOM_*
+  // notification must reach the Worker link with its message, waiting as
+  // busy until the Worker has announced the registration. Window callbacks
+  // take the same fenced link (test-midi-worker-callback covers real Workers).
+  {
+    const w = setup(), wgate = new OwnerGate();
+    const offers = [];
+    const link = { worker: {}, endpointIdentity: 1, midiCallbacks: true,
+      waveRegistrations: new Map(), midiRegistrations: new Map(),
+      async offerWaveCallback(registration, header, timeoutMs, cancelled, midiMessage) {
+        offers.push([registration.handle, header, midiMessage]);
+        return { status: 'accepted' };
+      } };
+    const backend = { link, threadLinks: new Map() };
+    wgate.running = true;
+    wgate.guestWorker = backend;
+    wgate._workerLastSlice = 1;
+    wgate.threadManager = { isMainThreadSuspended: () => false };
+    wgate._wakeStep = () => {};
+    w.ctx.threadManager = { workerBackend: true };
+    w.ctx.waveCallbackOwner = { kind: 'worker', backend, slot: 0, link: null };
+    w.ctx.offerMidiCallback = new Function('self', 'return ' + expression)(wgate);
+    const wh = w.open(3, 0x4020c0, 0);
+    await w.audio.pumpWaveOutCallbacks();
+    assert.deepEqual(offers, [], 'no offer before the Worker registers the open');
+    assert.equal(w.ctx._midiOut.callbacks.length, 1, 'MOM_OPEN waits for the registration');
+    link.midiRegistrations.set(wh, Object.freeze({ kind: 'midi', type: 3, handle: wh, generation: 1, callback: 0x4020c0, instance: 0 }));
+    w.queue(wh); w.call('midiStreamStop', wh);
+    await w.audio.pumpWaveOutCallbacks();
+    assert.deepEqual(offers, [[wh, 0, 0x3c7], [wh, 1024, 0x3c9]],
+      'MOM_OPEN then MOM_DONE reach the Worker link with their messages');
+    assert.equal(w.ctx._midiOut.callbacks.length, 0);
+    cases++;
+    console.log('PASS Worker-owned CALLBACK_FUNCTION open routes MM_MOM_* through the Worker link');
+  }
 assert(callbacksExecuted > 0, 'must execute real callback admission and return');
 console.log(JSON.stringify({ cases, callbacksExecuted, moduleBytes: compiled.wasmBinary.length,
   moduleSHA256: sha(compiled.wasmBinary), sourceSHA256: Object.fromEntries(files.map(f => [f, sha(sources[f])])),

@@ -44,7 +44,15 @@ function createMainSchedulerObserver({ logs, limit = 256, isOpen = () => true })
       last = null;
       emit({ event: 'main-run', decisionId: active ? active.id : null, path,
         batch: active ? active.batch : null });
-      try { return run(); } finally { active = previous; }
+      let pending = false;
+      try {
+        const result = run();
+        if (result && typeof result.then === 'function') {
+          pending = true;
+          return Promise.resolve(result).finally(() => { active = previous; });
+        }
+        return result;
+      } finally { if (!pending) active = previous; }
     },
     hostInput() {
       emit({ event: 'host-check-input', decisionId: workerTid === null && active ? active.id : null,

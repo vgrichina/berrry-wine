@@ -10,6 +10,19 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
+  (func (export "test_repeat_show") (param $visible i32) (param $cmd i32)
+      (param $active i32) (param $started i32) (param $minimized i32) (param $secondary i32)
+    (call $wnd_table_set (i32.const 0x10040) (global.get $WNDPROC_BUILTIN))
+    (drop (call $wnd_set_style (i32.const 0x10040)
+      (select (i32.const 0x10000000) (i32.const 0) (local.get $visible))))
+    (global.set $main_hwnd (select (i32.const 0x10041) (i32.const 0x10040) (local.get $secondary)))
+    (global.set $active_hwnd (select (i32.const 0x10040) (i32.const 0) (local.get $active)))
+    (global.set $show_window_activated (local.get $started))
+    (call $wnd_apply_show_state (i32.const 0x10040)
+      (select (i32.const 2) (i32.const 1) (local.get $minimized)))
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x074fd000))
+    (drop (call $show_window_core (i32.const 0x10040) (local.get $cmd)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))))
   (func (export "test_explicit_show") (param $hwnd i32) (param $stack i32) (param $kind i32)
     (call $wnd_table_set (local.get $hwnd) (i32.const 0x401234))
     (drop (call $wnd_set_style (local.get $hwnd) (i32.const 0)))
@@ -204,7 +217,23 @@ const extraWat = String.raw`
   e.test_explicit_return(0x10032,0);
   assert.strictEqual(e.get_eax(),1,'placement success survives the show callback');
   assert.strictEqual(e.get_esp()>>>0,0x074fd000+12);
-  console.log('PASS  created dialog activation and indirect visibility');
+  for (const [visible, cmd, active, started, minimized, hostCalls, secondary = 0] of [
+    [0, 0, 0, 1, 0, 0], // already hidden
+    [1, 5, 1, 1, 0, 0], // gameplay reassertion
+    [1, 5, 1, 1, 0, 0, 1], // active viewport separate from main HWND
+    [1, 5, 0, 1, 0, 1], // must activate/raise
+    [1, 5, 1, 0, 0, 1], // first show needs client size
+    [1, 5, 1, 1, 1, 1], // restoration needs renderer
+    [0, 5, 1, 1, 0, 1], // real show
+    [1, 0, 1, 1, 0, 1], // real hide
+    [1, 3, 1, 1, 0, 1], // maximize unchanged
+  ]) {
+    shown.length = 0;
+    e.test_repeat_show(visible, cmd, active, started, minimized, secondary);
+    assert.strictEqual(shown.length, hostCalls, `host update for ${[visible,cmd,active,started,minimized]}`);
+    assert.strictEqual(e.get_eax(), visible, 'ShowWindow returns prior visibility');
+  }
+  console.log('PASS  created dialog activation, indirect visibility and redundant show host calls');
 })().catch(error => {
   console.error(error && error.stack || error);
   process.exit(1);

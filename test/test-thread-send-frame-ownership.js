@@ -30,6 +30,7 @@ async function fixture() {
     (func (export "get_sync_table") (result i32)
       (i32.const ${require('../lib/region-map.generated').BASE.SYNC_TABLE}))
     (func (export "guest_read32") (param $p i32) (result i32) (i32.load (local.get $p)))
+    (func (export "guest_write32") (param $p i32) (param $v i32) (i32.store (local.get $p) (local.get $v)))
     (func (export "has_pending_message") (result i32) (i32.const 1))
     (func (export "resume_message_wait") (result i32)
       (global.set $yield_reason (i32.const 0))
@@ -76,6 +77,10 @@ async function controls(link) {
   const first = await link.dispatchThreadSend(args(1));
   assert(first.nested);
   const outer = await state();
+  const ordinaryHost = new GuestThreadHost({}); ordinaryHost.link = link;
+  const ordinary = await ordinaryHost.resumeMainMessageWait(true);
+  assert(!ordinary.resumed,'ordinary message wake cannot borrow callback-owned frame');
+  assert.deepStrictEqual(await state(),outer);
   const second = await link.dispatchThreadSend(args(2));
   assert(second.nested);
   const inner = await state();
@@ -146,6 +151,13 @@ async function main() {
     workerUrl: path.resolve(__dirname, '../lib/guest-worker.js') });
   try {
     await link.start();
+    const mainHost = new GuestThreadHost({}); mainHost.link = link;
+    await link.callExport('set_esp',512);
+    await link.callExport('guest_write32',512,0xf0123456);
+    await link.callExport('set_yield_state',7,1);
+    assert.deepStrictEqual(await mainHost.resumeMainMessageWait(false),{resumed:true});
+    assert.strictEqual((await link.callExport('get_eip'))>>>0,0xf0123456);
+    assert.strictEqual(await link.callExport('get_esp'),516);
     await controls(link);
     link.nextThreadSendFrameToken = 4;
     await driverControls(new GuestThreadHost({}), link);

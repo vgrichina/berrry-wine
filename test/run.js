@@ -4,13 +4,15 @@ const { execSync } = require('child_process');
 const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
 const { createHostImports } = require('../lib/host-imports');
 const frameIntervals = require('../lib/frame-intervals');
+const {serviceMainTimingWait} = require('./main-timing-waits');
+const {serviceMainIoWait} = require('../lib/main-io-wait');
 const { createRenderWaitAttribution } = require('../lib/render-wait-attribution');
-const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
+const { callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
 const { inputEventHwnd } = require('../lib/host-window');
 const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
-  applyStartupShow, startupShowArgs,
-  stageAndLoadPe, applyVirtualAllocTop, setExeName, setExeDrive, setExtraCmdline,
-  setEnvironmentVariable, handleLoadLibraryYield, serviceLoadLibraryYieldSync,
+  startupShowCommand, startupShowArgs,
+  stageAndLoadPeOwned, configureExeOwned, exeDriveForPath,
+  setEnvironmentVariableOwned, handleLoadLibraryYield, serviceLoadLibraryYieldSync,
   handleComDllYield, findVfsDllBytes } = require('../lib/process-boot');
 const {
   applyExeCompatibilityPatches: applyProfilePatches,
@@ -2758,6 +2760,10 @@ async function main() {
 
   const apiTable = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'api_table.json'), 'utf8'));
   const apiByName = new Map(apiTable.map(e => [e.name, e]));
+  // Process image base is fixed after load_pe. Capture it from the owning
+  // instance before DLL initializers can create a renderer; a host shadow has
+  // its own (unloaded) image-base global and is not a metadata fallback.
+  let renderImageBase = null;
   const ctx = {
     getMemory: () => ctx._memory ? ctx._memory.buffer : null,
     // Without --headless-gl the WebGL backend has no context, CreateDevice fails
@@ -2773,12 +2779,15 @@ async function main() {
     glideBackend: GLIDE_RENDERER,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
     createD3DRenderWorker: () => {
+      if (renderImageBase === null) throw new Error('render worker requested before guest image metadata is ready');
       const {Worker} = require('worker_threads');
       const {WorkerConsumer} = require('../lib/d3d-command-stream');
       const sigs = JSON.parse(fs.readFileSync(path.join(ROOT,'lib','host-import-sigs.generated.json'),'utf8')).sigs;
       return new WorkerConsumer(new Worker(path.join(ROOT,'lib','d3d-render-worker.js')),
-        {module:wasmModule,memory,sigs,imageBase:instance.exports.get_image_base() >>> 0,
-          reclaimHeap:head=>instance.exports.d3d_render_adopt_free_list(head)});
+        {module:wasmModule,memory,sigs,imageBase:renderImageBase,
+          // Retirement awaits adoption after the renderer has terminated.
+          // The free list belongs to the guest owner, never its host shadow.
+          reclaimHeap:head=>mainOwner.call('d3d_render_adopt_free_list',head)});
     },
     renderer,
     // --headless-gl: give the OpenGL bridge a drawable factory so wglCreateContext
@@ -5027,19 +5036,23 @@ async function main() {
   if (serviceClock) batchClock.wrapImports(imports.host);
   const nativeInstance = await WebAssembly.instantiate(wasmModule, imports);
   const instance = serviceClock ? batchClock.wrapInstance(nativeInstance) : nativeInstance;
+  // Keep slice execution behind its owner before migrating the remaining
+  // startup/inspection/yield exports. Do not select a Worker here until those
+  // paths also stop mutating the local instance's guest registers.
+  const mainOwner = require('../lib/guest-main-owner').createGuestMainOwner({ localExports: instance.exports });
   ctx.exports = instance.exports;
-  instance.exports.set_hwnd_base(processDesktop.hwndBase);
+  await mainOwner.call('set_hwnd_base', processDesktop.hwndBase);
   // Quiet runs silence the per-call API log from the first instruction, DLL
   // initialization included. Applied only after DllMain ran, the early calls
   // were logged (and so counted twice, by h.log and by $api_calls) and a
   // --trace-api-paused run printed them before it was switched on.
-  if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);
+  if (apiLogOff) await mainOwner.optionalCall('set_api_log', 0);
   // Process ANSI code page (ANSI_CODE_PAGE above), applied before the PE
   // is staged below. The WAT setter validates the page; pages without
   // conversion tables keep the historical identity conversion, so this is
   // observable only for CP950 today.
-  if (ANSI_CODE_PAGE && instance.exports.set_ansi_code_page) {
-    instance.exports.set_ansi_code_page(ANSI_CODE_PAGE);
+  if (ANSI_CODE_PAGE && mainOwner.supports('set_ansi_code_page')) {
+    await mainOwner.call('set_ansi_code_page', ANSI_CODE_PAGE);
     console.log(`[run] ANSI code page: ${ANSI_CODE_PAGE}`);
   }
   // CreateProcess children run under the page this process actually has
@@ -5060,8 +5073,8 @@ async function main() {
         APP_ENTRY && APP_ENTRY.expandedWorkerCodeCache === true);
     const wantHeavy = hasFlag('worker-heavy-code-cache')
       || (!hasFlag('no-worker-heavy-code-cache') && APP_ENTRY && APP_ENTRY.workerHeavyCodeCache === true);
-    if ((wantExpanded || wantHeavy) && instance.exports.set_page_index_layout) {
-      instance.exports.set_page_index_layout(wantExpanded ? 2 : 1);
+    if ((wantExpanded || wantHeavy) && mainOwner.supports('set_page_index_layout')) {
+      await mainOwner.call('set_page_index_layout', wantExpanded ? 2 : 1);
       console.log(wantExpanded
         ? '[cache] expanded-worker page-index layout: main 512 slots, workers 32 (624KiB code)'
         : '[cache] worker-heavy page-index layout: main 256 slots, workers 32');
@@ -5224,33 +5237,32 @@ async function main() {
       if (signalExitWake) signalExitWake();
     });
   }
-  if (instance.exports.set_process_id) instance.exports.set_process_id(ctx.processId);
-  if (instance.exports.set_desktop_color_depth) instance.exports.set_desktop_color_depth(APP_ENTRY?.desktopColorDepth === 8 ? 8 : 32);
-  if (NO_MMX && instance.exports.set_cpu_mmx) instance.exports.set_cpu_mmx(0);
+  await mainOwner.optionalCall('set_process_id', ctx.processId);
+  await mainOwner.optionalCall('set_desktop_color_depth', APP_ENTRY?.desktopColorDepth === 8 ? 8 : 32);
+  if (NO_MMX) await mainOwner.optionalCall('set_cpu_mmx', 0);
   // timeSetEvent callbacks on a winmm timer guest thread (the Windows model)
   // instead of the main thread's message pump. Shared memory, so set once.
   // On by default, as in the browser; `--no-mm-timer-thread` or an app's
   // `mmTimerThread: false` keeps the old main-thread delivery.
-  if (!hasFlag('no-mm-timer-thread') && (hasFlag('mm-timer-thread') || APP_ENTRY?.mmTimerThread !== false) &&
-      instance.exports.set_mm_timer_thread_mode) {
-    instance.exports.set_mm_timer_thread_mode(1);
+  if (!hasFlag('no-mm-timer-thread') && (hasFlag('mm-timer-thread') || APP_ENTRY?.mmTimerThread !== false)) {
+    await mainOwner.optionalCall('set_mm_timer_thread_mode', 1);
   }
-  if ((hasFlag('sse') || APP_ENTRY?.cpuSSE === true) && instance.exports.set_cpu_sse) {
-    instance.exports.set_cpu_sse(1);
+  if (hasFlag('sse') || APP_ENTRY?.cpuSSE === true) {
+    await mainOwner.optionalCall('set_cpu_sse', 1);
   }
-  if (VLAN_IP && instance.exports.set_vlan_local_ip) {
+  if (VLAN_IP && mainOwner.supports('set_vlan_local_ip')) {
     const octets = VLAN_IP.split('.').map(Number);
     if (octets.length !== 4 || octets.some(o => !(o >= 0 && o <= 255))) {
       console.error(`--vlan-ip: not an IPv4 address: ${VLAN_IP}`);
       process.exit(2);
     }
-    instance.exports.set_vlan_local_ip(octets.reduce((a, o) => ((a << 8) | o) >>> 0, 0) | 0);
+    await mainOwner.call('set_vlan_local_ip', octets.reduce((a, o) => ((a << 8) | o) >>> 0, 0) | 0);
     if (TRACE_NET) console.log(`[net] room address ${VLAN_IP}`);
   }
   {
     const nagle = VLAN_NAGLE_ARG !== null ? (parseInt(VLAN_NAGLE_ARG, 10) || 0)
       : (Number.isFinite(APP_ENTRY?.vlanNagleMs) ? APP_ENTRY.vlanNagleMs : 0);
-    if (nagle > 0 && instance.exports.set_vlan_nagle_ms) instance.exports.set_vlan_nagle_ms(nagle | 0);
+    if (nagle > 0) await mainOwner.optionalCall('set_vlan_nagle_ms', nagle | 0);
   }
   if (PIPE_STD && instance.exports.pipe_attach_std) {
     const byPort = new Map();
@@ -5519,7 +5531,7 @@ async function main() {
   if (WORKER_THREADS) {
     // Real parallelism: LOCK-prefixed instructions must be atomic across the
     // worker_threads (07-decoder.wat $try_emit_locked, handler 499).
-    if (instance.exports.set_lock_atomic_mode) instance.exports.set_lock_atomic_mode(1);
+    await mainOwner.optionalCall('set_lock_atomic_mode', 1);
     const { GuestThreadHost } = require('../lib/guest-thread-host');
     const sigs = JSON.parse(fs.readFileSync(
       path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
@@ -5721,14 +5733,16 @@ async function main() {
   // MSVCRT data imports (__argc/__argv) can be resolved while load_pe walks
   // the executable import table. Seed process identity first so a lazy argv
   // block built during import resolution sees the real launcher metadata.
-  setExeDrive(instance.exports, EXE_GUEST_PATH || MEDIA_EXE);
-  setExeName(instance.exports, memory.buffer, EXE_PROCESS_NAME);
-  if (EXTRA_ARGS) {
-    setExtraCmdline(instance.exports, memory.buffer, EXTRA_ARGS);
-  }
+  await configureExeOwned(mainOwner, memory.buffer, {name: EXE_PROCESS_NAME,
+    drive: exeDriveForPath(EXE_GUEST_PATH || MEDIA_EXE), args: EXTRA_ARGS});
 
-  applyStartupShow(instance.exports, getArg('startup-show', undefined));
-  const { entry } = stageAndLoadPe(instance.exports, memory.buffer, exeBytes, console.log);
+  const startupShow = startupShowCommand(getArg('startup-show', undefined));
+  if (startupShow !== undefined) await mainOwner.call('set_startup_show', startupShow);
+  const { entry } = await stageAndLoadPeOwned(mainOwner, memory.buffer, exeBytes, console.log);
+  const imageMetadata = await mainOwner.read(['get_image_base']);
+  if (!Number.isInteger(imageMetadata.get_image_base) || imageMetadata.get_image_base < 0 ||
+      imageMetadata.get_image_base > 0xffffffff) throw new Error('invalid guest image metadata for render worker');
+  renderImageBase = imageMetadata.get_image_base;
   // MORROWIND_NAME_ATTACH_BEGIN: loaded image, before any guest initializer.
   if (hasFlag('observe-morrowind-name')) {
     morrowindNameObserver = require('../lib/morrowind-name-observer').install({
@@ -5750,11 +5764,10 @@ async function main() {
     });
   }
   // MORROWIND_NAME_ATTACH_END
-  applyVirtualAllocTop(instance.exports, VIRTUAL_ALLOC_TOP_ARG !== null
-    ? Number(VIRTUAL_ALLOC_TOP_ARG) : (APP_ENTRY && APP_ENTRY.virtualAllocTop));
-  if (CS_STEAL_AFTER && instance.exports.set_cs_steal_after) {
-    instance.exports.set_cs_steal_after(CS_STEAL_AFTER);
-  }
+  const virtualAllocTop = VIRTUAL_ALLOC_TOP_ARG !== null
+    ? Number(VIRTUAL_ALLOC_TOP_ARG) : (APP_ENTRY && APP_ENTRY.virtualAllocTop);
+  if (virtualAllocTop) await mainOwner.optionalCall('set_virtual_alloc_top', virtualAllocTop >>> 0);
+  if (CS_STEAL_AFTER) await mainOwner.optionalCall('set_cs_steal_after', CS_STEAL_AFTER);
   if (Number.isFinite(SPIN_WORK_MAX)) inheritWasm('set_spin_work_max', SPIN_WORK_MAX);
   if (Number.isFinite(SPIN_REGS_CHECK)) inheritWasm('set_spin_regs_check', SPIN_REGS_CHECK);
   applyExeCompatibilityPatches(path.basename(EXE_PATH), instance.exports, memory.buffer);
@@ -5787,9 +5800,7 @@ async function main() {
   const requiredDlls = detectRequiredDlls(exeBytes);
 
   // Initialize DirectX COM vtable thunks (must be after load_pe sets image_base)
-  if (instance.exports.init_dx_com_thunks) {
-    instance.exports.init_dx_com_thunks();
-  }
+  await mainOwner.optionalCall('init_dx_com_thunks');
 
   // Queue environment overrides before loading DLLs: a CRT's DllMain snapshots
   // GetEnvironmentStrings while it initializes. The WAT export keeps this
@@ -5798,7 +5809,7 @@ async function main() {
     (ASSET_ENTRY && ASSET_ENTRY.environment) || {}));
   for (const [name, value] of PROCESS_ENVIRONMENT) processEnvironment.set(name, value);
   for (const [name, value] of processEnvironment) {
-    if (!setEnvironmentVariable(instance.exports, memory.buffer, name, value)) {
+    if (!await setEnvironmentVariableOwned(mainOwner, memory.buffer, name, value)) {
       throw new Error(`failed to set guest process environment variable ${name}`);
     }
     console.log(`Guest environment: ${name}=${JSON.stringify(value)}`);
@@ -5809,13 +5820,13 @@ async function main() {
   }
 
   // Set emulated Windows version
-  if (WINVER && instance.exports.set_winver) {
+  if (WINVER && mainOwner.supports('set_winver')) {
     const versions = { 'win98': 0xC0000A04, 'nt4': 0x05650004, 'win2k': 0x05650005, 'winxp': 0x0A280105 };
     const v = versions[WINVER.toLowerCase()] || parseInt(WINVER);
-    if (v) { instance.exports.set_winver(v); console.log('Windows version: ' + hex(v)); }
-  } else if (shouldReportNtForDlls(requiredDlls) && instance.exports.set_winver) {
+    if (v) { await mainOwner.call('set_winver', v); console.log('Windows version: ' + hex(v)); }
+  } else if (shouldReportNtForDlls(requiredDlls) && mainOwner.supports('set_winver')) {
     const v = 0x05650004;
-    instance.exports.set_winver(v);
+    await mainOwner.call('set_winver', v);
     console.log('Windows version: ' + hex(v) + ' (auto NT for MFC42U)');
   }
 
@@ -5924,7 +5935,7 @@ async function main() {
     }
   }
   // A LoadLibraryA from inside a DllMain (UBER.DLL loading Myth's
-  // modules\TCPIP.DLL) is serviced in place: callDllMain cannot await. So is
+  // modules\TCPIP.DLL) uses the resident-byte resolver below. So does
   // one from inside a nested synchronous send ($wnd_send_message asks through
   // the service_load_library import), which cannot return to this loop either.
   const onLoadLibraryYield = ex => serviceLoadLibraryYieldSync({
@@ -5935,7 +5946,7 @@ async function main() {
   threadManager._serviceDllYield = onLoadLibraryYield;
   if (dlls.length > 0) {
     mountLoadedDllFiles(ctx.vfs, dlls);
-    const dllResults = loadDlls(instance.exports, memory.buffer, exeBytes, dlls, console.log, {
+    const dllResults = await mainOwner.loadDlls(exeBytes, dlls, console.log, {
       onLoadLibraryYield,
       exeName: path.basename(EXE_PATH),
       extraArgs: EXTRA_ARGS || '',
@@ -6763,13 +6774,11 @@ async function main() {
 
   // Arm shadow call-stack (--trace-callstack). Gated WAT-side so off-runs pay
   // zero cost in the hot path.
-  if (TRACE_CALLSTACK && instance.exports.set_callstack_enabled) {
-    instance.exports.set_callstack_enabled(1);
-  }
+  if (TRACE_CALLSTACK) await mainOwner.optionalCall('set_callstack_enabled', 1);
   // Arm --fault-null. Same deal: the WAT check sits in the $g2w miss path, so
   // an off-run never reaches it.
-  if (FAULT_NULL_MODE && instance.exports.set_fault_unmapped) {
-    instance.exports.set_fault_unmapped(FAULT_NULL_MODE);
+  if (FAULT_NULL_MODE && mainOwner.supports('set_fault_unmapped')) {
+    await mainOwner.call('set_fault_unmapped', FAULT_NULL_MODE);
     console.log(`[fault] ${FAULT_NULL ? '--fault-null' : 'app page-fault option'} armed (mode=${FAULT_NULL_MODE}: `
       + `${FAULT_NULL_MODE === 2 ? 'log and trap'
           : FAULT_NULL_MODE === 3 ? 'log and raise a guest access violation'
@@ -6778,24 +6787,14 @@ async function main() {
           : 'log and continue'})`);
   }
   // Exclude PE/DLL load from the offline translation-path census.
-  if (GUEST_PAGE_STATS) instance.exports.reset_guest_page_stats();
-  if (TRACE_WIN16_DDE && instance.exports.set_win16_dde_trace) {
-    instance.exports.set_win16_dde_trace(1);
-  }
-  if (TRACE_WIN16 && instance.exports.set_win16_trace) {
-    instance.exports.set_win16_trace(1);
-  }
-  experiments.applyMain(instance, { copySuperops: COPY_SUPEROPS, ctx });
-  if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);
-  if (FLIP_VSYNC && instance.exports.set_flip_vsync) {
-    instance.exports.set_flip_vsync(1);
-  }
-  if (PRESENT_CAP && instance.exports.set_present_cap) {
-    instance.exports.set_present_cap(PRESENT_CAP);
-  }
-  if (instance.exports.set_present_pace_mode) {
-    instance.exports.set_present_pace_mode(PRESENT_PACE_MODE);
-  }
+  if (GUEST_PAGE_STATS) await mainOwner.call('reset_guest_page_stats');
+  if (TRACE_WIN16_DDE) await mainOwner.optionalCall('set_win16_dde_trace', 1);
+  if (TRACE_WIN16) await mainOwner.optionalCall('set_win16_trace', 1);
+  await experiments.applyMainOwned(mainOwner, { copySuperops: COPY_SUPEROPS, ctx });
+  if (apiLogOff) await mainOwner.optionalCall('set_api_log', 0);
+  if (FLIP_VSYNC) await mainOwner.optionalCall('set_flip_vsync', 1);
+  if (PRESENT_CAP) await mainOwner.optionalCall('set_present_cap', PRESENT_CAP);
+  await mainOwner.optionalCall('set_present_pace_mode', PRESENT_PACE_MODE);
   // --trace-win16 prints where the loader placed each task segment, so a
   // linear EIP or return address from the trace can be written as the
   // { seg, off } that lib/apps.js and other durable notes need.
@@ -6815,23 +6814,17 @@ async function main() {
         + 'is not a loaded Win16 segment; not marked');
     }
   }
-  if (LOGICAL_FRAME && LOGICAL_FRAME.address && instance.exports.set_logical_frame) {
-    instance.exports.set_logical_frame(LOGICAL_FRAME.address, LOGICAL_FRAME.pace);
+  if (LOGICAL_FRAME && LOGICAL_FRAME.address && mainOwner.supports('set_logical_frame')) {
+    await mainOwner.call('set_logical_frame', LOGICAL_FRAME.address, LOGICAL_FRAME.pace);
     console.log(`[present] ${LOGICAL_FRAME.label} step 0x${LOGICAL_FRAME.address.toString(16)} marked`
       + (LOGICAL_FRAME.pace ? `, cap ${PRESENT_CAP}/s paces once per step` : ', counted only'));
   }
-  if (instance.exports.set_spin_park_k) {
-    if (NO_SPIN_PARK) instance.exports.set_spin_park_k(0);
-    else if (Number.isFinite(SPIN_PARK_K)) instance.exports.set_spin_park_k(SPIN_PARK_K);
-  }
-  if (instance.exports.set_spin_work_max && Number.isFinite(SPIN_WORK_MAX)) instance.exports.set_spin_work_max(SPIN_WORK_MAX);
-  if (instance.exports.set_spin_regs_check && Number.isFinite(SPIN_REGS_CHECK)) instance.exports.set_spin_regs_check(SPIN_REGS_CHECK);
-  if (TRACE_FPU && instance.exports.set_fpu_trace) {
-    instance.exports.set_fpu_trace(1);
-  }
-  if (TRACE_CODE_WRITES && instance.exports.set_code_write_trace) {
-    instance.exports.set_code_write_trace(TRACE_CODE_WRITES_ALL ? 2 : 1);
-  }
+  if (NO_SPIN_PARK) await mainOwner.optionalCall('set_spin_park_k', 0);
+  else if (Number.isFinite(SPIN_PARK_K)) await mainOwner.optionalCall('set_spin_park_k', SPIN_PARK_K);
+  if (Number.isFinite(SPIN_WORK_MAX)) await mainOwner.optionalCall('set_spin_work_max', SPIN_WORK_MAX);
+  if (Number.isFinite(SPIN_REGS_CHECK)) await mainOwner.optionalCall('set_spin_regs_check', SPIN_REGS_CHECK);
+  if (TRACE_FPU) await mainOwner.optionalCall('set_fpu_trace', 1);
+  if (TRACE_CODE_WRITES) await mainOwner.optionalCall('set_code_write_trace', TRACE_CODE_WRITES_ALL ? 2 : 1);
   const dumpCallstack = (label, e) => {
     if (!TRACE_CALLSTACK || !e || !e.get_callstack_depth) return;
     const depth = e.get_callstack_depth() | 0;
@@ -7015,12 +7008,12 @@ async function main() {
   const renderWaitAttribution = hasFlag('trace-render-wait') ? createRenderWaitAttribution() : null;
   if (renderWaitAttribution) ctx.renderWaitAttribution = renderWaitAttribution.stats;
   let mainRenderWait = null;
-  const mainExecutionSuspended = (path = 'probe') => {
+  const mainExecutionSuspended = async (path = 'probe') => {
     const observation = mainSchedulerObserver?.begin(path, tickState.batch);
     const finish = (value, reason) => observation ? observation.finish(value, reason) : value;
     const ex = instance.exports;
     if (threadManager.isMainNamedEventWaiting()) return finish(true, 'named-event');
-    let yieldReason = ex.get_yield_reason();
+    let yieldReason = await mainOwner.call('get_yield_reason');
     if (observation) observation.yield(yieldReason);
     if (serviceClock && (yieldReason === 13 || yieldReason === 14)) {
       const deadline = yieldReason === 13 ? ex.get_vblank_deadline_ms() : ex.get_spin_deadline_ms();
@@ -7029,7 +7022,7 @@ async function main() {
       yieldReason = 0;
     }
     if (yieldReason === 16) {
-      const token = ex.get_d3d_render_token() | 0;
+      const token = (await mainOwner.call('get_d3d_render_token')) | 0;
       if (!mainRenderWait || mainRenderWait.token !== token) {
         const wait = {token,done:false,polls:0,since:tickState.batch|0}; mainRenderWait = wait;
         renderWaitAttribution?.begin(wait, ctx.d3d9Bridge?.requests.get(token));
@@ -7048,10 +7041,10 @@ async function main() {
             `(since batch ${mainRenderWait.since}); the wait never observed it`);
         return finish(true, 'render');
       }
-      mainRenderWait = null; ex.clear_yield();
+      await mainOwner.call('clear_yield'); mainRenderWait = null;
     }
     if (threadManager._renderSendTargets.has(ex)) return finish(true, 'render-send');
-    yieldReason = ex.get_yield_reason();
+    yieldReason = await mainOwner.call('get_yield_reason');
     if (observation) observation.yield(yieldReason);
     if (yieldReason === 10 && (threadManager.backend === 'worker' ||
         !threadManager.resolveCooperativeThreadSend(ex))) return finish(true, 'thread-send');
@@ -7069,7 +7062,7 @@ async function main() {
     // instead (see mainSleepWallWait).
     // A Sleep main made earlier in this batch (between thread slices) has not
     // been through checkMainYield yet; record its deadline now.
-    threadManager.noteMainSleep();
+    await threadManager.noteMainSleepOwned(mainOwner);
     if (!serviceClock && !REAL_TICK_SLEEPS && threadManager.isMainSleeping(observation?.sleep) &&
         !(observation ? observation.live(threadManager.hasLiveThreads()) : threadManager.hasLiveThreads())) {
       if (observation) observation.fastForward();
@@ -7077,7 +7070,7 @@ async function main() {
     }
     if (threadManager.isMainSleeping(observation?.sleep)) return finish(true, 'sleep');
     if (!threadManager.isMainThreadSuspended()) return finish(false, 'runnable');
-    return finish(!(ex.is_mm_timer_callback_active && (ex.is_mm_timer_callback_active() | 0)),
+    return finish(!(await mainOwner.optionalCall('is_mm_timer_callback_active') | 0),
       'suspend-count-or-mm-timer');
   };
 
@@ -7099,9 +7092,8 @@ async function main() {
   const renderParkStats = ctx.renderParkStats = { waits: 0, wallMs: 0, skippedBatches: 0 };
   const awaitMainRenderPark = async () => {
     if (!RENDER_PARK_WAIT) return;
-    const ex = instance.exports;
-    if (ex.get_yield_reason() !== 16) return;
-    mainExecutionSuspended();
+    if (await mainOwner.call('get_yield_reason') !== 16) return;
+    await mainExecutionSuspended();
     const wait = mainRenderWait;
     if (!wait || wait.done) return;
     const started = Date.now();
@@ -10767,13 +10759,16 @@ async function main() {
       // first: the [input] markers are buffered, and output the guest prints
       // directly (--trace-host) while handling that input must follow them.
       flushLogs();
-      if (instance.exports.get_yield_reason && instance.exports.get_yield_reason() === 7) {
-        threadManager.checkMainYield();
+      if (await mainOwner.call('get_yield_reason') === 7) {
+        await threadManager.checkMainMessageWaitOwned(mainOwner);
       }
-      if (!mainExecutionSuspended('ordinary')) {
+      if (!await mainExecutionSuspended('ordinary')) {
+        if (stopped) break;
         try {
-        if (mainSchedulerObserver) mainSchedulerObserver.run('ordinary', () => instance.exports.run(BATCH_SIZE));
-        else instance.exports.run(BATCH_SIZE);
+        const slice = mainSchedulerObserver
+          ? await mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE))
+          : await mainOwner.run(BATCH_SIZE);
+        if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
         } catch (error) {
           if (!nativeFault.capture(error, instance.exports,
             { schedulerSlot: 0, main: true }, 'ordinary')) throw error;
@@ -10781,7 +10776,7 @@ async function main() {
         await nativeFault.wait();
         if (stopped) break;
       }
-      else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;
+      else if (await mainOwner.call('get_yield_reason') === 16) renderParkStats.skippedBatches++;
     } catch (e) {
       flushLogs();
       console.log(`\n*** CRASH at batch ${batch}: ${e.message}`);
@@ -11033,89 +11028,11 @@ async function main() {
     // for a chunk the host has not read yet. ReadFile parked with its stdcall
     // frame restored and EIP on the thunk, so filling the chunk and clearing
     // the yield re-enters the same call, which then takes the cache hit.
-    if (instance.exports.get_yield_reason() === 12) {
-      const pending = ctx.vfs && ctx.vfs.getPendingRead(1);
-      if (TRACE_YIELD) {
-        console.log(`[yield] T0 reason=12 (io_wait) ` +
-          (pending ? `path=${pending.path} off=${pending.offset} len=${pending.length}` : 'no pending record'));
-      }
-      if (pending) {
-        // Fail loudly rather than spinning: a provider that cannot deliver is
-        // a mount bug, and a silent retry loop would look like a hang.
-        await ctx.vfs.fillPendingRead(pending);
-        // The VFS owns identity-guarded completion. A worker may have installed
-        // a newer pending request while the main guest awaited this fill.
-      }
-      instance.exports.clear_yield();
-    }
-    if (instance.exports.get_yield_reason() === 16) mainExecutionSuspended();
+    await serviceMainIoWait(mainOwner, ctx.vfs, TRACE_YIELD ? console.log : null);
+    if (await mainOwner.call('get_yield_reason') === 16) await mainExecutionSuspended();
 
-    // Handle the vertical-blank yield (yield_reason=13). A DirectDraw call
-    // parked with its stdcall frame intact and EIP on the thunk, so advancing
-    // the clock past the boundary and clearing the yield re-enters the same
-    // call, which then finds the vblank has happened and returns DD_OK.
-    if (!serviceClock && instance.exports.get_yield_reason() === 13) {
-      const deadline = instance.exports.get_vblank_deadline_ms
-        ? instance.exports.get_vblank_deadline_ms() >>> 0 : 0;
-      // Charge against the batch BASE, not the last value handed out: the
-      // per-call step inside a batch is capped at the next base, so lifting
-      // only the last tick can leave the base short and re-park forever.
-      // +1 so the boundary is strictly passed rather than exactly met.
-      const owed = ((deadline + 1) - batchClock.batchTicks()) | 0;
-      if (owed > 0) {
-        tickState.pausedMs += owed;
-        VBLANK.guestMsAdded += owed;
-      }
-      VBLANK.waits++;
-      if (TRACE_YIELD) {
-        console.log(`[yield] T0 reason=13 (vblank_wait) due=${deadline} ` +
-          `now=${tickState.lastTick} charged=${Math.max(0, owed)}ms`);
-      }
-      instance.exports.clear_yield();
-    }
-
-    // Handle the spin parks (yield_reason 14 = clock, 15 = empty PeekMessage).
-    // Both parked with the stdcall frame intact and EIP on the thunk, so
-    // clearing the yield re-enters the same call.
-    //
-    // WHAT IS DELIBERATELY *NOT* DONE HERE: guest time is not charged by
-    // default. The headless clock already advances TICK_MS_PER_BATCH per batch
-    // and a park ends its batch, so the very next batch hands the guest a new
-    // millisecond -- the wait resolves on the schedule the run asked for, and
-    // the clock is left exactly as --tick-ms-per-batch defined it. Charging
-    // the way the vblank park does would be a real distortion here rather than
-    // a correction: a vblank deadline is ~17ms away and needs the lift, while
-    // a clock park's deadline is the NEXT MILLISECOND, which at
-    // --tick-ms-per-batch=1 is already where the next batch lands. Paying it
-    // anyway would run the guest clock at two to three times the requested
-    // rate and silently rewrite every GetTickCount-delta the app computes --
-    // exactly the kind of perturbation that would move GTA2's
-    // GetTickCount/Sleep/GetTickCount startup probe.
-    //
-    // The one case that does need a lift is a run with no batch step at all
-    // (--tick-ms-per-batch=0), where nothing else would ever move the clock.
-    {
-      const spinYield = instance.exports.get_yield_reason();
-      // An empty PeekMessage has no clock deadline. Re-enter it under both
-      // clocks so newly queued input can reach the handler.
-      if (spinYield === 15 || (!serviceClock && spinYield === 14)) {
-        const deadline = (spinYield === 14 && instance.exports.get_spin_deadline_ms)
-          ? instance.exports.get_spin_deadline_ms() >>> 0 : 0;
-        let owed = 0;
-        if (spinYield === 14 && batchClock.getTickMsPerBatch() <= 0) {
-          owed = ((deadline + 1) - batchClock.batchTicks()) | 0;
-          if (owed > 0) tickState.pausedMs += owed; else owed = 0;
-        }
-        if (spinYield === 14) SPIN_PARK.clockWaits++; else SPIN_PARK.peekWaits++;
-        SPIN_PARK.guestMsAdded += owed;
-        if (TRACE_YIELD) {
-          console.log(`[yield] T0 reason=${spinYield} `
-            + `(${spinYield === 14 ? 'clock_spin' : 'peek_spin'}) due=${deadline} `
-            + `now=${tickState.lastTick} charged=${owed}ms`);
-        }
-        instance.exports.clear_yield();
-      }
-    }
+    await serviceMainTimingWait(mainOwner, {batchClock, tickState, serviceClock,
+      vblank: VBLANK, spin: SPIN_PARK, trace: TRACE_YIELD ? console.log : null});
 
     // Handle the virtual LAN net_wait yield (yield_reason=8). The guest is
     // parked inside a blocking socket call with EIP still on the thunk, so
@@ -11249,13 +11166,16 @@ async function main() {
         // --threads-serial means nothing runs beside a guest thread, main
         // included, or the switch would not answer the question it exists for.
         if (THREADS_SERIAL) await workerSlices;
-        else if (s < THREAD_SLICES - 1 && !stopped && !mainExecutionSuspended('worker-interleaved')) {
+        else if (s < THREAD_SLICES - 1 && !stopped && !await mainExecutionSuspended('worker-interleaved')) {
+          if (stopped) break;
           // Main keeps running WHILE they do — the CLI's version of host.js
           // awaiting the main slice and the thread slices together.
           try {
             try {
-            if (mainSchedulerObserver) mainSchedulerObserver.run('worker-interleaved', () => instance.exports.run(BATCH_SIZE));
-            else instance.exports.run(BATCH_SIZE);
+            const slice = mainSchedulerObserver
+              ? await mainSchedulerObserver.run('worker-interleaved', () => mainOwner.run(BATCH_SIZE))
+              : await mainOwner.run(BATCH_SIZE);
+            if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'worker-interleaved')) throw error;
@@ -11308,11 +11228,14 @@ async function main() {
         // loop; repeatedly re-entering the main message pump here can drain
         // creation-time paints before an app has finished its first layout.
         if (s < slices - 1 && !stopped && threadManager.hasActiveThreads() &&
-            !mainExecutionSuspended('cooperative-interleaved')) {
+            !await mainExecutionSuspended('cooperative-interleaved')) {
+          if (stopped) break;
           try {
             try {
-            if (mainSchedulerObserver) mainSchedulerObserver.run('cooperative-interleaved', () => instance.exports.run(BATCH_SIZE));
-            else instance.exports.run(BATCH_SIZE);
+            const slice = mainSchedulerObserver
+              ? await mainSchedulerObserver.run('cooperative-interleaved', () => mainOwner.run(BATCH_SIZE))
+              : await mainOwner.run(BATCH_SIZE);
+            if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'cooperative-interleaved')) throw error;
@@ -11433,7 +11356,9 @@ async function main() {
     }
     // Check if main thread is waiting on an event
     await threadManager.resolveMainThreadSend();
-    if (threadManager.checkMainYield()) {
+    if (await mainOwner.call('get_yield_reason') === 7
+        ? await threadManager.checkMainMessageWaitOwned(mainOwner)
+        : threadManager.checkMainYield()) {
       // Main thread still waiting — don't advance EIP check
     }
 

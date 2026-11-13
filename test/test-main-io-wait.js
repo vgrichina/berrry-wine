@@ -2,15 +2,16 @@
 'use strict';
 
 // A main-thread ReadFile parked on a lazy chunk (yield 12) must block only the
-// main guest thread. lib/main-io-wait.js is the one implementation host.js and
-// test/run.js share: poll() starts the fill in the background, answers "parked"
+// main guest thread. The browser's poll() starts the fill in the background, answers "parked"
 // while it is in flight so the host keeps running everyone else, and clears the
 // yield exactly once when it lands. Before this the hosts awaited the fill
 // inside the step: Heroes III's sound thread stopped refilling DirectSound for
 // the length of every fetch and the ring looped audibly.
+// The CLI instead awaits the fill to preserve its batch-based guest clock.
 
 const assert = require('assert');
-const { createMainIoWait } = require('../lib/main-io-wait');
+const { createMainIoWait, serviceMainIoWait } = require('../lib/main-io-wait');
+const {VirtualFS} = require('../lib/filesystem');
 
 function fakeGuest() {
   return {
@@ -90,5 +91,51 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
     assert.strictEqual(ex2.cleared, 1);
   }
 
-  console.log('PASS  a parked main-thread lazy read blocks only the main guest thread');
+  // CLI policy awaits a real provider fill without clearing the parked owner
+  // early. VFS failures become guest read errors; transport retirement cannot
+  // accidentally resume a replacement or host-shadow instance.
+  for (const mode of ['success', 'fault', 'retired']) {
+    const vfs = new VirtualFS(), ex = fakeGuest();
+    let release, entered, retired = false;
+    const ready = new Promise(resolve => { entered = resolve; });
+    const provider = {size:4, readRange() {
+      entered(); return new Promise((resolve,reject) => { release = () => mode === 'fault'
+        ? reject(new Error('network failed')) : resolve(new Uint8Array([1,2,3,4])); });
+    }};
+    const name = 'c:\\owner-read.bin';
+    vfs.setProviderFile(name, {provider});
+    const handle = vfs.createFile(name, 0x80000000, 3), bytes = new Uint8Array(4);
+    vfs.pendingRead = vfs.readFile(handle, bytes, 4).pending;
+    assert(vfs.pendingRead); // Publish the park as fs_read_file_result does.
+    const owner = {read:async()=>({get_yield_reason:ex.yieldReason}), call:async name=>{
+      assert.strictEqual(name,'clear_yield');
+      if(retired) throw new Error('owner retired');
+      ex.clear_yield();
+    }};
+    let settled = false;
+    const outcome = serviceMainIoWait(owner,vfs).then(value=>({value}),error=>({error}));
+    outcome.then(()=>{settled=true;});
+    const timer = setTimeout(()=>{throw new Error('provider did not start');},5000);
+    await ready; clearTimeout(timer);
+    assert.strictEqual(ex.cleared,0);
+    assert.strictEqual(settled,false);
+    retired = mode === 'retired'; release();
+    const result = await outcome;
+    if(retired) {
+      assert.match(result.error.message,/owner retired/);
+      assert.strictEqual(ex.cleared,0);
+    } else {
+      assert.strictEqual(result.value,true);
+      assert.strictEqual(ex.cleared,1);
+      const read = vfs.readFile(handle,bytes,4);
+      if(mode === 'fault') {assert.strictEqual(read.error,30); assert(read.faulted);}
+      else {assert(read.ok); assert.deepStrictEqual([...bytes],[1,2,3,4]);}
+    }
+  }
+  const broken = fakeGuest();
+  await assert.rejects(serviceMainIoWait({read:async()=>({get_yield_reason:12}),
+    call:async()=>broken.clear_yield()}, {getPendingRead:()=>({}),
+    fillPendingRead:async()=>{throw new Error('unexpected fill error');}}),/unexpected fill error/);
+  assert.strictEqual(broken.cleared,0);
+  console.log('PASS main I/O waits: browser polling and CLI owner-directed fill/fault/retirement');
 })().catch(error => { console.error(error); process.exit(1); });

@@ -94,6 +94,24 @@ const extraWat = String.raw`
     assert.strictEqual(wat.guest_read32(queryDesc + 12), 5);
     assert.strictEqual(wat.test_dx_caps_release(surface) >>> 0, 0);
   }
+  // DX-Ball sets DDSD_PITCH (dwFlags=0xF) on its glyph surfaces without
+  // LPSURFACE and leaves lPitch as stack garbage. DirectDraw picks the pitch
+  // then; honoring the garbage failed CreateSurface and blanked its text.
+  for (const caps of [0x40, 0x840]) {
+    wat.guest_write32(createDesc + 4, 0xf);
+    wat.guest_write32(createDesc + 8, 10);
+    wat.guest_write32(createDesc + 12, 13);
+    wat.guest_write32(createDesc + 16, 0xa3c28833);
+    wat.guest_write32(createDesc + 104, caps);
+    assert.strictEqual(wat.test_dx_caps_create(createDesc, primaryOut) >>> 0, 0,
+      `DDSD_PITCH without LPSURFACE ignores lPitch (caps=0x${caps.toString(16)})`);
+    const surface = wat.guest_read32(primaryOut) >>> 0;
+    assert.strictEqual(wat.test_dx_caps_desc(surface, queryDesc) >>> 0, 0);
+    assert.strictEqual(wat.guest_read32(queryDesc + 16), 16,
+      'pitch is DirectDraw-chosen, not the caller garbage');
+    assert.strictEqual(wat.test_dx_caps_release(surface) >>> 0, 0);
+  }
+  wat.guest_write32(createDesc + 16, 0);
   for (let i = 0; i < 108; i += 4) wat.guest_write32(createDesc + i, 0);
   wat.set_desktop_color_depth(32);
   wat.guest_write32(createDesc, 108);

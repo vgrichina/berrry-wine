@@ -61,8 +61,6 @@ const extraWat = String.raw`
     (call $wnd_min_get (local.get $hwnd)))
   (func (export "test_set_last_error") (param $value i32)
     (global.set $last_error (local.get $value)))
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
   (func (export "test_show_window_async_api_id") (result i32)
     (call $lookup_api_id "ShowWindowAsync"))
 `;

@@ -245,3 +245,36 @@ only cause of the particular iPhone OOM. Device retest remains required.
 - **"Our `WaitForVerticalBlank` is a stub that returns instantly."** It is not —
   it parks and is charged guest time. The calibration still comes in under
   400 ms; the mechanism is open (see above).
+
+## Browser exit on the first click under Threads (fixed 2026-11-11, ecf066f38)
+
+Symptom: in the browser the game shows the title, and the first click (which
+starts the soundtrack) ends the app instead of reaching a level. The CLI never
+showed it because the CLI runs the guest cooperatively.
+
+Cause: `midiStreamOpen(..., callback=0x004020c0, flags=0x30000)` is a
+CALLBACK_FUNCTION open (API call at `ret=0x00401f18`). With Threads on, the
+guest main thread is in a Worker, and `lib/host-audio.js` refused a Worker
+owner at open with "MIDI callback requires cooperative owning VM; worker
+delivery unsupported". The throw escaped the host import and ended the app.
+
+Fix: MIDI function callbacks now take the same Worker offer path as waveOut
+callbacks. Browser probe (Threads on, `crossOriginIsolated`): title,
+instructions, level, ball launched, bricks broken, score 116, app alive.
+
+`test/test-dxball-candidate.js` fails separately ("ball did not animate",
+0/191 changed pixels), on 422eba5a4 too: its fixed batch schedule now clicks
+during the level fade-in, which the game ignores. A later click launches the
+ball headless. The test's schedule needs re-timing; it is not this bug.
+
+## High-score screen had no text (fixed 2026-11-11)
+
+Game state `[0x431fd0]` 3 is the high-score screen (`0x409410` init, `0x409510`
+draw; enter it headless by poking `[0x431fc4]=3`, `[0x431fc8]=1` mid-level).
+Its text uses `mainmenu.sbk` and `sysfont.sbk`, loaded by `0x40c080(slot, video,
+name)`, which makes one DirectDraw surface per glyph with `dwFlags=0xF`
+(CAPS|HEIGHT|WIDTH|**PITCH**) and never writes `lPitch`. CreateSurface honored that
+stack garbage (bdf496fb4) and failed with DDERR_OUTOFVIDEOMEMORY. On failure the
+loader returns at `0x40c505` without fclose, so the slot has 0 glyphs and
+`0x40c720` draws nothing. CreateSurface now honors lPitch only with
+DDSD_LPSURFACE. Covered in test-directdraw-surface-caps.

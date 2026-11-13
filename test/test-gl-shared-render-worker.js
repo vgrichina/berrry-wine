@@ -169,18 +169,33 @@ async function queuedOwnerInvalidation(){
   await f.bridge.close();
 }
 async function queuedPackedPayload(){
-  const f=await queuedFixture(),at=128,bytes=32+Stream.VERTEX_FLOATS*4;
+  for(const [opcode,stride] of [[Stream.PACKED_DRAW_OPCODE,Stream.VERTEX_FLOATS],
+    [Stream.EXACT_DRAW_OPCODE,Stream.EXACT_VERTEX_FLOATS],
+    [Stream.EDGE_DRAW_OPCODE,Stream.EXACT_VERTEX_FLOATS+1]]) {
+  const f=await queuedFixture(),at=128,bytes=32+stride*4;
   const v=new DataView(f.memory,at,bytes);
-  v.setUint32(0,bytes,true);v.setUint32(4,Stream.PACKED_DRAW_OPCODE,true);v.setUint32(8,4,true);
-  v.setUint32(20,Stream.VERTEX_FLOATS*4,true);v.setUint32(24,32,true);
+  v.setUint32(0,bytes,true);v.setUint32(4,opcode,true);v.setUint32(8,4,true);
+  v.setUint32(20,stride*4,true);v.setUint32(24,32,true);
   v.setUint32(28,Stream.FLAG_POINTER_COPY,true);v.setFloat32(32,42.5,true);
   await f.bridge.replay(Stream.memoryBatch(f.memory,at,bytes),1);await tick();
   v.setFloat32(32,-1,true);let position;
   Stream.replay(Stream.memoryBatch(f.requests[1].message.commandBuffer,0,bytes),(op,aux,capture)=>{
-    position=new Float32Array(capture.buffer,capture.pointerOffset,Stream.VERTEX_FLOATS)[0];return 0;
+    position=new Float32Array(capture.buffer,capture.pointerOffset,stride)[0];return 0;
   });
   assert.strictEqual(position,42.5,'packed vertex payload is copied with its relative pointer intact');
-  f.complete(1);await f.bridge.close();
+  f.complete(1);await f.bridge.drain();
+  for(const borrowed of [false,true]) {
+    v.setUint32(20,(stride-(borrowed?0:1))*4,true);
+    v.setUint32(28,borrowed?Stream.FLAG_POINTER_BORROW:Stream.FLAG_POINTER_COPY,true);
+    let acknowledged=false;
+    const index=f.requests.length;
+    const pending=f.bridge.replay(Stream.memoryBatch(f.memory,at,bytes),1).then(()=>{acknowledged=true;});
+    await tick();assert(!acknowledged,'borrowed or incomplete vertices retain the producer lease');
+    assert.strictEqual(f.requests[index].message.commandBuffer,undefined);
+    f.complete(index);await pending;
+  }
+  await f.bridge.close();
+  }
 }
 async function queuedCopiedVectors(){
   const f=await queuedFixture(),pointer=0x30000000;
@@ -384,6 +399,52 @@ function workerSoftwareResponseClone(){
     assert.deepStrictEqual(released.producerConfig,[0,0,0,0]);
   }finally{adapter.destroy();}
 }
+async function nullRendererProtocol(){
+  const memory={buffer:new SharedArrayBuffer(4096)},frames=[];
+  const adapter=require('../lib/gl-render-worker').create({instance:{exports:{
+    guest_to_wasm:p=>p,gl_sw_set_enabled(){throw Error('null enabled native rasterization');}
+  }},memory,backend:'null',sendFrame:frame=>frames.push(frame)});
+  const execute=(name,aux,args=[])=>{
+    const input=scalarBatch(memory.buffer,0,name,args);
+    new DataView(memory.buffer).setUint32(8,aux,true);
+    return adapter.execute({memoryOffset:0,bytes:input.bytes,owner:0,frameToken:17,
+      windows:[{hwnd:1,w:16,h:16,clientRect:{w:16,h:16}}]});
+  };
+  try {
+    const context=execute('wglCreateContext',1,[1]).value;
+    assert(context);
+    assert.deepStrictEqual(execute('wglMakeCurrent',1,[1,context]).producerConfig,[0,0,0,0],
+      'null never requests software rasterization in the guest');
+    execute('glEnable',0,[0xb71]);
+    assert.strictEqual(execute('glIsEnabled',0,[0xb71]).value,1,'state queries survive');
+    execute('glViewport',0,[2,3,7,9]);
+    execute('glGetIntegerv',0,[0xba2,1024]);
+    assert.deepStrictEqual(Array.from(new Int32Array(memory.buffer,1024,4)),[2,3,7,9]);
+    const bytes=32+Stream.VERTEX_FLOATS*4,v=new DataView(memory.buffer);
+    v.setUint32(0,bytes,true);v.setUint32(4,Stream.PACKED_DRAW_OPCODE,true);v.setUint32(8,4,true);
+    v.setUint32(12,0,true);v.setUint32(20,Stream.VERTEX_FLOATS*4,true);
+    v.setUint32(24,32,true);v.setUint32(28,Stream.FLAG_POINTER_COPY,true);
+    const draw=()=>adapter.execute({memoryOffset:0,bytes,owner:0});
+    assert.strictEqual(draw().value,0,'packed geometry is discarded without a rasterizer');
+    v.setUint32(20,Stream.VERTEX_FLOATS*4-4,true);
+    assert.throws(draw,/invalid packed GL vertex payload/,'null still rejects malformed vertex records');
+    assert.strictEqual(execute('glFinish',0).value,0);
+    assert.strictEqual(execute('gpuPresent',0).value,1);
+    assert(frames.length);assert(frames.every(f=>f.nullRender&&f.hwnd===1&&f.frameToken===17&&!f.pixels&&!f.bitmap));
+    assert.throws(()=>execute('glReadPixels',0,[0,0,1,1,0x1908,0x1401,1024]),/null renderer cannot answer/);
+    assert.throws(()=>execute('wglCreateContext',0x80000001,[1]),/bitmap drawables/);
+  } finally {adapter.destroy();}
+  let counted=0;
+  const f=await queuedFixture({backend:'null',onPresent:()=>counted++,createCanvas(){throw Error('null allocated canvas');}});
+  await f.bridge.replay(scalarBatch(f.memory,128,'glClear',[0x4000]),1);
+  await tick();
+  let finished=false;
+  const finish=f.bridge.replay(batch(f.memory,256,GL.CALL_INDEX.glFinish),1).then(()=>finished=true);
+  await tick();assert(!finished,'null retains synchronization behind queued work');
+  f.complete(1);await tick();f.complete(2);await finish;
+  f.bridge._present({hwnd:8,nullRender:true});assert.strictEqual(counted,1);
+  await f.bridge.close();
+}
 async function hostProtocol(){
   // Same-sized frames retain storage; bitmap replacement must include alpha.
   {
@@ -460,6 +521,142 @@ async function brokerProtocol(){
   assert.strictEqual(Atomics.load(v.i32,RPC.SLOT.STATUS),RPC.STATUS_RESP);assert.strictEqual(v.i32[RPC.SLOT.RESULT],73);
   assert.strictEqual(new DataView(memory.buffer).getUint32(1024,true),17);assert.strictEqual(errors.length,0);
 }
+async function pointerReadWithoutRenderFence(){
+  const {PublicationQueue}=require('../lib/render-worker'),{Worker}=require('worker_threads');
+  const queue=new PublicationQueue(new SharedArrayBuffer(64+4096));
+  const memory={buffer:new SharedArrayBuffer(RPC.RPC_BASE+RPC.RPC_STRIDE*RPC.RPC_MAX_SLOTS)};
+  const sigs={set_mouse_position:{params:['i32','i32'],results:[]},get_mouse_position:{params:[],results:['i32']},
+    invalidate:{params:[],results:['i32']}};
+  const events=[];let mouse=0;
+  const broker=RPC.createMainBroker(memory,{
+    set_mouse_position(x,y){events.push('warp');mouse=(Math.max(0,y)<<16)|Math.min(100,x);},
+    get_mouse_position(){events.push('pointer');return mouse;},
+    invalidate(){events.push('invalidate');return 1;},
+    glide_batch(){events.push('render');return 1;},
+  },sigs,{renderPublication:queue.buffer});
+  const worker=new Worker(`const {parentPort,workerData:d}=require('worker_threads');
+    const R=require(d.rpc),Q=require(d.transport).PublicationQueue,queue=new Q(d.queue);
+    const built=R.createWorkerImports({buffer:d.memory},d.sigs,m=>parentPort.postMessage(m),{renderPublication:d.queue});
+    try{
+      queue.publish(2,0,new Uint8Array([1]),()=>parentPort.postMessage({t:'renderPublished'}));
+      built.imports.host.set_mouse_position(400,-50);
+      const pointer=built.imports.host.get_mouse_position();
+      if(pointer!==100)throw Error('pointer lost authoritative clipping/warp ordering');
+      built.imports.host.set_mouse_position(42,8);
+      if(built.imports.host.get_mouse_position()!==((8<<16)|42))throw Error('second warp reused cached position');
+      parentPort.postMessage({pointer});
+      if(built.imports.host.invalidate()!==1)throw Error('invalidate failed');
+      queue.fail();Atomics.add(R.views({buffer:d.memory},0).pub,R.SLOT.GEN,1);let failed=false;
+      try{built.imports.host.get_mouse_position();}catch(e){failed=true;}
+      if(!failed)throw Error('pointer RPC ignored publication failure');
+      parentPort.postMessage({done:true});
+    }catch(e){parentPort.postMessage({error:e.stack});}
+  `,{eval:true,workerData:{rpc:require.resolve('../lib/guest-rpc'),transport:require.resolve('../lib/render-worker'),
+    queue:queue.buffer,memory:memory.buffer,sigs}});
+  const timeout=setTimeout(()=>queue.fail(),5000);
+  try{await new Promise((resolve,reject)=>{
+    worker.on('error',reject);worker.on('message',msg=>{
+      if(msg.error)return reject(Error(msg.error));if(msg.done)return resolve();
+      if(msg.t==='calls')broker.serveCalls(msg);
+      else if(msg.t==='call')broker.serveCall(msg);
+      else if(msg.t==='rpc')broker.serveRpc(msg.slot);
+      else if(msg.pointer!==undefined){
+        try{assert.deepStrictEqual(events,['warp','pointer','warp','pointer']);}catch(e){return reject(e);}
+        setTimeout(()=>{
+          try{assert.deepStrictEqual(events,['warp','pointer','warp','pointer'],'graphics RPC must remain blocked behind held publication');}
+          catch(e){return reject(e);}
+          broker.drainPublications().catch(reject);
+        },30);
+      }
+    });
+  });assert.deepStrictEqual(events,['warp','pointer','warp','pointer','render','invalidate']);}
+  finally{clearTimeout(timeout);queue.fail();await worker.terminate();}
+}
+async function publishedBrokerProtocol(){
+  const {PublicationQueue}=require('../lib/render-worker'),{Worker}=require('worker_threads');
+  const queue=new PublicationQueue(new SharedArrayBuffer(64+4096));
+  const memory={buffer:new SharedArrayBuffer(RPC.RPC_BASE+RPC.RPC_STRIDE*RPC.RPC_MAX_SLOTS)};
+  const sigs={gpu_gl_call:{params:['i32','i32','i32'],results:['i32']},
+    glide_submit:{params:['i32','i32','i32'],results:['i32']}};
+  const events=[],marks=new Int32Array(new SharedArrayBuffer(4));
+  const broker=RPC.createMainBroker(memory,{
+    glide_submit(op){events.push(op===1?'glide-open':'glide-read');return 1;},
+    async glide_batch(bytes){await new Promise(resolve=>setTimeout(resolve,10));events.push([...bytes]);return 1;},
+    gpu_gl_batch(desc,owner){
+    assert.strictEqual(desc.pool,undefined,'publication must not mix with native buffer leases');
+    return Stream.replay(Stream.memoryBatch(desc.commandBuffer||memory.buffer,desc.memoryOffset,desc.bytes),(op,aux,capture)=>{
+      if(op===51){events.push('bind');return 1;}
+      if(op===GL.CALL_INDEX.glTexEnvfv){
+        assert.strictEqual(Atomics.load(marks,0),1,'window marked before asynchronous replay');
+        events.push(new DataView(capture.buffer).getFloat32(capture.pointerOffset,true));return 0;
+      }
+      if(op===12){events.push('query');return 73;}
+      throw Error('unexpected published opcode '+op);
+    });
+  }},sigs,{renderPublication:queue.buffer,onRenderSnapshot:async value=>{
+    await tick();assert.deepStrictEqual([...value.vertices],[33,44]);events.push('neutral');
+  }});
+  const code=`const {parentPort,workerData:d}=require('worker_threads');
+    const RPC=require(d.rpc),S=require(d.stream),m={buffer:d.memory},v=new DataView(d.memory);
+    const softwareConfig=new Int32Array(new SharedArrayBuffer(16));
+    const built=RPC.createWorkerImports(m,d.sigs,msg=>parentPort.postMessage(msg),{
+      slot:0,renderPublication:d.queue,publishOpenGL:true,softwareGLConfig:softwareConfig,getExports:()=>({
+        gl_wat_stream_pool_version:()=>1,gl_wat_stream_pool_base:i=>512+i*2097152,gl_wat_stream_capacity:()=>2097152,
+        gl_window_set_gpu_owned:(hwnd,value)=>{if(hwnd!==8)throw Error('bad drawable');Atomics.store(new Int32Array(d.marks),0,value);return 1;}
+      })});
+    function make(op,args,aux=0,floats=[]){
+      new Uint8Array(d.memory,512,128).fill(0);const n=36+args.length*4+floats.length*4;
+      v.setUint32(512,n,true);v.setUint32(516,op,true);v.setUint32(520,aux,true);v.setUint32(524,4+args.length*4,true);
+      args.forEach((x,i)=>v.setUint32(548+i*4,x,true));
+      if(floats.length){const off=36+args.length*4;v.setUint32(528,1234,true);v.setUint32(532,floats.length*4,true);v.setUint32(536,off,true);v.setUint32(540,1,true);floats.forEach((x,i)=>v.setFloat32(512+off+i*4,x,true));}
+      return built.imports.host.gpu_gl_call(S.WAT_STREAM_FLUSH_OPCODE,512,n);
+    }
+    try{if(make(51,[10,20],8)!==1)throw Error('bind failed');
+      make(147,[0x2300,0x2200,1234],0,[0.25]);make(147,[0x2300,0x2200,1234],0,[0.75]);
+      const publication=new (require(d.transport).PublicationQueue)(d.queue),vertices=new Uint8Array([33,44]);
+      publication.publishSnapshot(4,0,{value:{vertices},bytes:64},m=>parentPort.postMessage(m),
+        ()=>parentPort.postMessage({t:'renderPublished',slot:0}));vertices.fill(99);
+      const value=make(12,[]),glide=built.imports.host.glide_submit;
+      softwareConfig[0]=1;const asyncBefore=built.stats.async;
+      make(147,[0x2300,0x2200,1234],0,[0.5]);
+      if(built.stats.async!==asyncBefore)throw Error('software GL metadata bypassed');
+      glide(1,900,0);new Uint8Array(d.memory,900,3).set([7,8,9]);
+      glide(0,900,3);new Uint8Array(d.memory,900,3).fill(99);glide(9,900,3);
+      new Uint8Array(d.memory,900,3).set([4,5,6]);glide(0,900,3);
+      built.fencePublications();
+      parentPort.postMessage({done:true,value,stats:built.stats});
+    }catch(error){parentPort.postMessage({error:error.stack});}`;
+  const worker=new Worker(code,{eval:true,workerData:{rpc:require.resolve('../lib/guest-rpc'),stream:require.resolve('../lib/gl-command-stream'),transport:require.resolve('../lib/render-worker'),memory:memory.buffer,queue:queue.buffer,marks:marks.buffer,sigs}});
+  const timeout=setTimeout(()=>queue.fail(),5000);
+  try{
+    const result=await new Promise((resolve,reject)=>{
+      worker.on('error',reject);worker.on('message',msg=>{
+        if(msg.done)resolve(msg);else if(msg.error)reject(new Error(msg.error));
+        else if(msg.t==='renderPublished')broker.drainPublications().catch(reject);
+        else if(msg.t==='renderSnapshot')broker.receiveRenderSnapshot(msg);
+        else if(msg.t==='glBatch')broker.serveGlBatch(msg);
+        else if(msg.t==='rpc')broker.serveRpc(msg.slot);
+      });
+    });
+    assert.strictEqual(result.value,73,'query keeps synchronous result');
+    assert.deepStrictEqual(events,['bind',0.25,0.75,'neutral','query',0.5,'glide-open',[7,8,9],'glide-read',[4,5,6]],
+      'GL and Glide own their inputs and synchronous queries/readbacks cannot overtake publications');
+    assert.strictEqual(result.stats.async,4);assert.strictEqual(result.stats.sync,5);
+  }finally{clearTimeout(timeout);queue.fail();await worker.terminate();}
+  const packed=new SharedArrayBuffer(512);
+  assert(Stream.publicationSafe(scalarBatch(packed,0,'glEnable',[0x0de1])));
+  assert(!Stream.publicationSafe(scalarBatch(packed,0,'glFinish',[])));
+  assert(!Stream.publicationSafe(scalarBatch(packed,0,'glGetError',[])));
+  const borrowed=vectorBatch(packed,0,'glTexEnvfv',[0x2300,0x2200,1234],[1]);
+  new DataView(packed).setUint32(28,Stream.FLAG_POINTER_BORROW,true);
+  assert(!Stream.publicationSafe(borrowed),'borrowed data retains synchronous fallback');
+  const f=await queuedFixture(),owned=vectorBatch(new ArrayBuffer(128),0,'glTexEnvfv',[0x2300,0x2200,1234],[0.5]);
+  owned.owned=true;
+  const done=f.bridge.replay(owned,1);await tick();
+  assert.strictEqual(f.requests[1].message.commandBuffer,owned.buffer,
+    'owned publications retain their buffer on synchronous adapter fallback');
+  f.complete(1);await done;await f.bridge.close();
+}
 function bitmapWorkerCoherence(){
   // Exercise the production endpoint surface adapter without a GPU: a bitmap
   // publish followed by a seed in one batch must read the just-written bytes.
@@ -518,7 +715,7 @@ function legacyUnavailableFallback(){
   adapter.destroy();
 }
 const watchdog=setTimeout(()=>{console.error('GL shared render worker protocol timed out');process.exitCode=1;},10000);
-(async()=>{await hostProtocol();await brokerProtocol();bitmapWorkerCoherence();
+(async()=>{await nullRendererProtocol();await hostProtocol();await brokerProtocol();await pointerReadWithoutRenderFence();await publishedBrokerProtocol();bitmapWorkerCoherence();
   await queuedSnapshotsAndOrder();await queuedBarriersAndFallbacks();await queuedFailure();await queuedClose();
   await queuedSynchronization();await queuedOwnerInvalidation();await queuedPackedPayload();await queuedWindowLifetime();
   await queuedCopiedVectors();await queuedMalformedVectors();

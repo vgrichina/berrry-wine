@@ -432,8 +432,13 @@ const frozenRecorder = {
     return summary;
   },
 
+  // Returns the unregister. The set is page-lifetime and each pump closes over
+  // its host's audio scope, which reaches the guest memory: a pump left behind
+  // by a closed app pinned that app's whole 512MB.
   registerPump(fn) {
-    if (typeof fn === 'function') frozenRecorder._pumps.add(fn);
+    if (typeof fn !== 'function') return () => {};
+    frozenRecorder._pumps.add(fn);
+    return () => { frozenRecorder._pumps.delete(fn); };
   },
 
   pumpAudio() {
@@ -1305,6 +1310,9 @@ class WineAssembly {
     // The tier's aggressive stack elision is opt-in: `aggressiveStack: true`
     // on an app or ?aggressive-stack (docs/uop-tier-design.md).
     this.aggressiveStack = false;
+    // Same-block self-modifying-code checkpoints (04-cache $smc_same_block) are
+    // opt-in: `smcSameBlock: true` on an app or ?smc-same-block.
+    this.smcSameBlock = false;
     // Worker threads follow the page (window.WINE_THREADS, on by default);
     // `threads: false` on an app keeps that app cooperative.
     this.threads = true;
@@ -2135,6 +2143,8 @@ class WineAssembly {
       };
     }
     const base = createHostImports(ctx);
+    // One per getImports() call: a Threads launch makes two import scopes.
+    (self._importMemoryReleases || (self._importMemoryReleases = [])).push(base.releaseMemoryCaches);
     ctx.sharedGdi = base.gdi;
     const h = base.host;
 
@@ -2428,7 +2438,7 @@ class WineAssembly {
     // The renderer stamps queued DirectInput edges with this same clock, so a
     // pause -- which stops _guestTickMs but not Date.now() -- cannot make an
     // edge queued before it look like it happened minutes ago.
-    if (self.renderer) self.renderer._guestNowMs = h.get_ticks;
+    if (self.renderer) self.renderer._guestNowMs = self._rendererGuestNowMs = h.get_ticks;
     // Browser-only Open/Save common-dialog hooks. has_dom returns 1 so
     // $create_open_dialog renders the Upload / Download button.
     h.has_dom = () => 1;
@@ -3355,6 +3365,9 @@ class WineAssembly {
     const aggressiveStack = (uop && (this.aggressiveStack === true ||
       (window.WineSuperops && window.WineSuperops.aggressiveStack === true))) ? 1 : 0;
     if (this.instance.exports.set_aggressive_stack) this.instance.exports.set_aggressive_stack(aggressiveStack);
+    const smcSameBlock = (this.smcSameBlock === true ||
+      (window.WineSuperops && window.WineSuperops.smcSameBlock === true)) ? 1 : 0;
+    if (this.instance.exports.set_smc_same_block) this.instance.exports.set_smc_same_block(smcSameBlock);
     // Trace heads: hot heads with no back edge become forward traces
     // (07e $uc_form_trace) instead of no-backedge declines. On by default;
     // ?no-uop-trace-heads turns them off.
@@ -3449,6 +3462,9 @@ class WineAssembly {
       }
       if (this.instance.exports.set_aggressive_stack) {
         await this.guestWorker.callExport('set_aggressive_stack', aggressiveStack);
+      }
+      if (this.instance.exports.set_smc_same_block) {
+        await this.guestWorker.callExport('set_smc_same_block', smcSameBlock);
       }
       if (this.instance.exports.set_uop_trace_heads) {
         await this.guestWorker.callExport('set_uop_trace_heads', uopTraceHeads);
@@ -3634,6 +3650,7 @@ class WineAssembly {
     this.threadManager.recordInheritedWasmGlobal('set_x87_affine_fusion', x87Fusion);
     this.threadManager.recordInheritedWasmGlobal('set_uop', uop);
     this.threadManager.recordInheritedWasmGlobal('set_aggressive_stack', aggressiveStack);
+    this.threadManager.recordInheritedWasmGlobal('set_smc_same_block', smcSameBlock);
     this.threadManager.recordInheritedWasmGlobal('set_uop_trace_heads', uopTraceHeads);
     // The bisect mask has to reach every guest thread for the same reason the
     // fold flags do: a thread decodes in its own instance, so a mask set only
@@ -4930,10 +4947,7 @@ class WineAssembly {
       // Guest execution (DllMain runs) must happen on the thread that owns the
       // instance. registerDllResources stays here: it is host bookkeeping over
       // bytes this thread already has.
-      const register = opts.registerDllResources;
-      delete opts.registerDllResources;
       results = await this.guestWorker.loadDlls(readyConfigs, exeBytes, opts);
-      if (register) register(readyConfigs, results);
     } else {
       opts.advanceGuestTime = ms => this._advanceGuestTickMs(ms,
         this.hostCtx && this.hostCtx.sharedAudio);
@@ -5374,11 +5388,32 @@ class WineAssembly {
     if (!this.renderer || !this._hwndBase) return;
     const lo = this._hwndBase;
     const hi = lo + 0x10000;
+    const removed = new Set();
     for (const hwnd of Object.keys(this.renderer.windows)) {
       const h = Number(hwnd);
       if (h >= lo && h < hi) {
+        removed.add(this.renderer.windows[hwnd]);
         delete this.renderer.windows[hwnd];
       }
+    }
+    this._dropRendererWindowRefs(removed);
+  }
+
+  // A window record carries its app's wasm and wasmMemory, and the renderer
+  // keeps single-window pointers (_foregroundWindow, drag/hover/capture
+  // state, ...) that only the guest's own DestroyWindow clears. A stop from
+  // the shell (the phone's close button) removes the records without that, so
+  // any such field left pointing at one pinned the app's whole 512MB: heap
+  // snapshot after closing Quake III, TouchControls._renderer.
+  // _foregroundWindow.wasmMemory. Null every renderer field that holds a
+  // removed record rather than naming them.
+  _dropRendererWindowRefs(removed) {
+    const r = this.renderer;
+    if (!r || !removed || !removed.size) return;
+    for (const key of Object.keys(r)) {
+      if (key === 'windows') continue;
+      const v = r[key];
+      if (v && typeof v === 'object' && removed.has(v)) r[key] = null;
     }
   }
 
@@ -5547,6 +5582,20 @@ class WineAssembly {
     // close over this WineHost, and a WineHost owns a 512MB shared memory.
     // Same leak the DX rAF chain had.
     this._cancelDelayedStep();
+    // The step channel's listener captures this host, and a port with a
+    // listener stays alive while its channel is open, so an unclosed channel
+    // kept every stopped host (and, after an OpenGL app, its guest memory)
+    // reachable from the browser forever. Null, not undefined: _postStep then
+    // falls back to setTimeout rather than opening a new channel.
+    this._pendingStep = null;
+    if (this._stepListenPort) {
+      try { this._stepListenPort.onmessage = null; this._stepListenPort.close(); } catch (_) {}
+    }
+    if (this._stepPort) {
+      try { this._stepPort.close(); } catch (_) {}
+    }
+    this._stepListenPort = null;
+    this._stepPort = null;
     this._cancelVblankWait();
     this._frozenUnregister();
     this._pausedStep = null;
@@ -5586,7 +5635,9 @@ class WineAssembly {
         this._removeAppWindows();
       } else {
         this.renderer._exited = true;
+        const removed = new Set(Object.values(this.renderer.windows));
         this.renderer.windows = {};
+        this._dropRendererWindowRefs(removed);
       }
     }
     // Notify whether or not `running` was still set. The listener is
@@ -5787,13 +5838,32 @@ class WineAssembly {
       // windows left the last app to hold focus keeps its instance alive.
       if (renderer._keyboardInputWasm === this.instance) renderer._keyboardInputWasm = null;
       if (renderer._keyboardInputMemory === this.memory) renderer._keyboardInputMemory = null;
+      // The DirectInput edge clock is a closure over a getImports() scope, and
+      // that scope reaches the guest memory (dx_trace -> _dxMemoryBuffer). A
+      // Threads launch calls getImports() twice, so the hook the renderer
+      // holds is not necessarily from _hostImports: compare against the one
+      // this host last installed. Heap snapshot after a Threads-mode close:
+      // TouchControls._renderer._guestNowMs -> ... -> Memory, 512MB per app.
+      if (renderer._guestNowMs && renderer._guestNowMs === this._rendererGuestNowMs) {
+        renderer._guestNowMs = null;
+      }
     }
+    this._rendererGuestNowMs = null;
+    for (const release of this._importMemoryReleases || []) {
+      try { if (typeof release === 'function') release(); } catch (_) {}
+    }
+    this._importMemoryReleases = null;
     // The two paths a heap snapshot actually blamed after everything above
     // was already cleared: window's "unlock" audio listener -> _readVfsFile's
     // scope -> host imports -> .memory, and wineShell.stopAllApps -> a stale
     // WineAssembly -> _presentDxIfDirty -> the same host imports object.
     if (this._hostImports) this._hostImports.memory = null;
     this._hostImports = null;
+    // The whole imports object (host + gdi + ...), kept for the guest worker.
+    // The shell holds the last-launched host after it closes, and every gdi
+    // closure in here scopes the guest memory: wineShell.selectedRunSlice ->
+    // wine._mainImports.gdi.getClientOrigin -> _dxMemoryBuffer -> Memory.
+    this._mainImports = null;
     // Holds the same memory and instance plus one per worker thread.
     this.threadManager = null;
     this.guestWorker = null;

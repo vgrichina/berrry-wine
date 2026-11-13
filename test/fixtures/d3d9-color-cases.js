@@ -37,6 +37,39 @@
   check(Array.from(back.pixels.slice(60,64)).join()==='5,4,3,255','implicit second row upload');
   check(Array.from((await api.read(null)).pixels.slice(0,4)).join()==='255,0,0,64','implicit outside pixels including alpha survive');
   check((await api.read(a)).pixels.every((v,i)=>v===patched.pixels[i]),'implicit upload preserves explicit target');
+  const sourcePixels=new Uint8Array(a.width*a.height*4);
+  for(let y=0;y<a.height;y++)for(let x=0;x<a.width;x++)sourcePixels.set([x*40+y*10,y*60,x*50,40+x*20+y*30],(y*a.width+x)*4);
+  await api.update(a,sourcePixels,a.width*4);
+  for(const [sr,dr]of [
+    [{x:1,y:0,width:2,height:3},{x:2,y:1,width:3,height:3}],
+    [{x:0,y:0,width:4,height:3},{x:1,y:1,width:2,height:2}],
+    [{x:3,y:2,width:1,height:1},{x:0,y:0,width:6,height:5}],
+  ]){
+  for(const filter of[0,1,2]){
+    await api.clear([0,0,1,1],1,1,null,null,0,b);
+    await api.copy({source:a,destination:b,sourceRect:sr,destinationRect:dr,filter});
+    const copied=await api.read(b);
+    for(let y=0;y<b.height;y++)for(let x=0;x<b.width;x++)for(let c=0;c<4;c++){
+      let want=c===0||c===3?255:0;
+      if(x>=dr.x&&x<dr.x+dr.width&&y>=dr.y&&y<dr.y+dr.height){
+        const px=(x-dr.x+.5)*sr.width/dr.width,py=(y-dr.y+.5)*sr.height/dr.height;
+        const at=(sx,sy)=>sourcePixels[((sy+sr.y)*a.width+sx+sr.x)*4+c];
+        if(filter===2){
+          const fx=Math.max(0,Math.min(sr.width-1,px-.5)),fy=Math.max(0,Math.min(sr.height-1,py-.5));
+          const x0=Math.floor(fx),y0=Math.floor(fy),x1=Math.min(sr.width-1,x0+1),y1=Math.min(sr.height-1,y0+1);
+          const wx=fx-x0,wy=fy-y0;
+          want=Math.round(at(x0,y0)*(1-wx)*(1-wy)+at(x1,y0)*wx*(1-wy)+at(x0,y1)*(1-wx)*wy+at(x1,y1)*wx*wy);
+        }else want=at(Math.floor(px),Math.floor(py));
+        if(c===3)want=255;
+      }
+      check(Math.abs(copied.pixels[(y*b.width+x)*4+c]-want)<=1,'copy pixel/filter '+[filter,x,y,c,want,copied.pixels[(y*b.width+x)*4+c]]);
+    }
+  }
+  }
+  await api.copy({source:a,destination:null,sourceRect:{x:0,y:0,width:4,height:3},destinationRect:{x:1,y:2,width:4,height:3},filter:1});
+  await api.copy({source:null,destination:a,sourceRect:{x:1,y:2,width:4,height:3},destinationRect:{x:0,y:0,width:4,height:3},filter:1});
+  const roundtrip=await api.read(a);
+  check(roundtrip.pixels.every((v,i)=>v===sourcePixels[i]),'explicit/implicit copy orientation and A8 alpha');
   await api.clear([0,0,1,1],1,1,null,null,0);
   await api.clear([0,0,0,1],7,1,null,depth,0,a);await api.draw(draw(a,depth,.25));
   await api.clear([0,1,0,1],1,1,null,depth,0,b);await api.draw(draw(b,depth,.75));
