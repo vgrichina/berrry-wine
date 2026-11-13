@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T14:10Z):
+Current dispatch (updated 2026-11-13T14:12Z):
 
 - recent-terminal-codex-rollout-headroom-recovery-2620, fresh launcher PID1878502; finite exact reversible compression of newly terminal session rollouts only.
 - dos-exec-parent-return-flags-repair-2540, fresh launcher PID1867561; actual successful EXEC return CF/parent flag preservation needed by original launcher.
-- newly-closed-worker-log-headroom-recovery-2580, fresh launcher PID1872085; finite exact reversible compression of newly closed text logs since12:00Z only.
+- Third replacement pending capacity restoration: closedlog2580 finished; fresh game implementation will be dispatched once the disk floor is restored. Two actual workers remain (rollout recovery and DOSflags).
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Closedlog2580 recovered11,010,048 bytes net from29 newlyclosed logs. Root independently verified every compressed archive and complete decompressed raw SHA/size; restore real raw paths before old consumers using scratch/runs/20261113-new-closed-log-recovery-2580/restore.py and index.json. Pool exhausted; measured166,518,784 available/1,333,481,216 stillshort. Do not rescan it. No native/build/resourcefloor acceptance follows. Reserve741196 remains unchanged on ext4/dev/vda1, revalidatedreadonly; exact341196 proposal/rollback remains pending explicit approval. Question re-presented in UI after finitecleanup failed; noelapsedtimeapproval. Thirdslot awaitingcapacity rather than repeating stoppedimplementation assignments; other2workers remainlive.
 
 Notification2600 stopped before implementation at166,924,288 available bytes; no source/test edit, verification child, test, build or runtime. Guard/incomingWIP unchanged; preserve scratch/runs/20261113-ne-win9x-notify-2600/. Fresh2620 recovers distinct newly terminal Codexrollouts, excluding active sessions/DBs and concurrent2580 worker/runlog paths. New-game implementation/runtime lanes remain pending capacity, while the existing DOSflags worker continues its assigned bounded task. Resource workers must stop after actual finite recovery; no reserve adjustment is authorized/applied.
 
