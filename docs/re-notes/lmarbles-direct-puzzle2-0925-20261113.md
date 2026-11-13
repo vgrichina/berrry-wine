@@ -44,8 +44,8 @@ Native1001548 and guard1001547 have separate actual parent wait0 receipts;
 outer session50215 completed0. All 12 native/guard/control PIDs were absent in
 postflight, and the deadline never fired. All 88 media/module hashes passed
 both launch and postflight checks. Helper syntax, stream integrity and sealed
-evidence rereads passed. The byte-identical automatic final capture was removed
-in favor of the retained settled board capture, with its hash/reference recorded.
+evidence rereads passed. Four distinct PNG byte streams are retained, including
+the native automatic final capture, which also shows the unchanged board.
 
 Git SHA, relevant binary diffs including the untracked runtime patch, owned
 helper patches and media path/SHA references retain provenance without source
