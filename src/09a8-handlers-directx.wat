@@ -5254,6 +5254,54 @@
         (i32.store8 offset=2 (local.get $p) (i32.shr_u (local.get $v) (i32.const 16))))
       (else (i32.store (local.get $p) (local.get $v)))))
 
+  ;; Equal-size keyed/region copies need memmove ordering too. Both axes
+  ;; walk away from unread source pixels; clip holes do not change that order.
+  ;; Called only for identical backing/pitch and intersecting rectangles.
+  (func $dx_blt_overlap_pixels
+      (param $dib i32) (param $pitch i32) (param $bps i32)
+      (param $dx i32) (param $dy i32) (param $sx i32) (param $sy i32)
+      (param $w i32) (param $h i32) (param $keyed i32) (param $key i32)
+      (param $clip_entry i32) (param $clip_data i32)
+    (local $i i32) (local $j i32) (local $x i32) (local $y i32)
+    (local $src i32) (local $dst i32) (local $col i32)
+    (block $done (loop $rows
+      (br_if $done (i32.ge_u (local.get $i) (local.get $h)))
+      (local.set $y (local.get $i))
+      (if (i32.gt_u (local.get $dy) (local.get $sy))
+        (then (local.set $y (i32.sub (i32.sub (local.get $h) (i32.const 1)) (local.get $i)))))
+      (local.set $j (i32.const 0))
+      (block $row_done (loop $cols
+        (br_if $row_done (i32.ge_u (local.get $j) (local.get $w)))
+        (local.set $x (local.get $j))
+        (if (i32.gt_u (local.get $dx) (local.get $sx))
+          (then (local.set $x (i32.sub (i32.sub (local.get $w) (i32.const 1)) (local.get $j)))))
+        (if (call $dx_clipper_contains (local.get $clip_entry) (local.get $clip_data)
+              (i32.add (local.get $dx) (local.get $x)) (i32.add (local.get $dy) (local.get $y)))
+          (then
+            (local.set $src (i32.add (local.get $dib)
+              (i32.add (i32.mul (i32.add (local.get $sy) (local.get $y)) (local.get $pitch))
+                (i32.mul (i32.add (local.get $sx) (local.get $x)) (local.get $bps)))))
+            (local.set $dst (i32.add (local.get $dib)
+              (i32.add (i32.mul (i32.add (local.get $dy) (local.get $y)) (local.get $pitch))
+                (i32.mul (i32.add (local.get $dx) (local.get $x)) (local.get $bps)))))
+            (local.set $col
+              (if (result i32) (i32.eq (local.get $bps) (i32.const 1))
+                (then (i32.load8_u (local.get $src)))
+                (else (if (result i32) (i32.eq (local.get $bps) (i32.const 2))
+                  (then (i32.load16_u (local.get $src)))
+                  (else (call $dx_blt_wide_load (local.get $src) (local.get $bps)))))))
+            (if (i32.or (i32.eqz (local.get $keyed)) (i32.ne (local.get $col) (local.get $key)))
+              (then
+                (if (i32.eq (local.get $bps) (i32.const 1))
+                  (then (i32.store8 (local.get $dst) (local.get $col)))
+                  (else (if (i32.eq (local.get $bps) (i32.const 2))
+                    (then (i32.store16 (local.get $dst) (local.get $col)))
+                    (else (call $dx_blt_wide_store (local.get $dst) (local.get $col) (local.get $bps))))))))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br $cols)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $rows))))
+
   ;; Blt(this, lpDestRect, lpDDSrcSurface, lpSrcRect, dwFlags, lpDDBltFx)
   ;; Note: 6 args but we only get 5 from dispatch; 6th is at ESP+24
   (func $handle_IDirectDrawSurface_Blt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -5609,6 +5657,34 @@
           (then (local.set $dh (i32.sub (local.get $src_full_h) (local.get $sy)))))
         (local.set $sw (local.get $dw))
         (local.set $sh (local.get $dh))
+        (if (i32.and
+              (i32.or (i32.ne (local.get $src_keyed) (i32.const 0))
+                      (i32.ne (local.get $clip_entry) (i32.const 0)))
+              (i32.and
+                (i32.and (i32.eq (local.get $src_dib) (local.get $dst_dib))
+                         (i32.eq (local.get $src_pitch) (local.get $dst_pitch)))
+                (i32.and
+                  (i32.and (i32.lt_u (local.get $dx) (i32.add (local.get $sx) (local.get $dw)))
+                           (i32.lt_u (local.get $sx) (i32.add (local.get $dx) (local.get $dw))))
+                  (i32.and (i32.lt_u (local.get $dy) (i32.add (local.get $sy) (local.get $dh)))
+                           (i32.lt_u (local.get $sy) (i32.add (local.get $dy) (local.get $dh)))))))
+          (then
+            (call $dx_blt_overlap_pixels
+              (local.get $dst_dib) (local.get $dst_pitch) (local.get $bps)
+              (local.get $dx) (local.get $dy) (local.get $sx) (local.get $sy)
+              (local.get $dw) (local.get $dh) (local.get $src_keyed) (local.get $ckey)
+              (local.get $clip_entry) (local.get $clip_data))
+            (call $dx_surf_note_copy
+              (local.get $dst_entry) (local.get $src_entry)
+              (local.get $dx) (local.get $dy) (local.get $sx) (local.get $sy)
+              (local.get $dw) (local.get $dh) (local.get $drblt_flags))
+            (if (i32.and (load.field DxObject flags (local.get $dst_entry)) (i32.const 1))
+              (then
+                (call $dx_present (local.get $dst_entry))
+                (call $present_pace_full_blit (local.get $dst_entry) (local.get $dw) (local.get $dh))))
+            (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+            (return)))
         (if (local.get $src_keyed)
           (then
             ;; Without a region list every pixel is inside the clip; the
