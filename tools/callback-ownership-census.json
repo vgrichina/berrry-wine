@@ -278,7 +278,8 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "33d9540a61f4651227cc5a53ecac947e051925ded5468ba062759b7a77ba4f17",
+      "sha256": "a2fa15753d937b3fa2d6ddd9f4a0e315a8cb35d80b7a387e3ada3018b70ffeec",
+      "shellCloseReleaseReview": "2026-11-12: stop() closes the step MessageChannel and drops pending step; removed window records cleared from renderer fields; audio unlock listeners removed in stopAudio. No new long-lived callbacks.",
       "reviewThreadsCloseLeak20261112": "2026-11-12 Threads-mode app-close leak: releases references that outlived a closed app (deferred repaint queued at Worker slice end; renderer _guestNowMs, recorder audio-tap pump, _mainImports, import-scope _dxMemoryBuffer cache cleared at guest-memory release; shell keeps the stopped host weakly). No new callback owner or lifetime.",
       "reviewMidiWorker20261111": "MIDI Worker transport 20261111: CALLBACK_FUNCTION midiOutOpen/midiStreamOpen owned by a Worker interpreter are no longer refused at open (the throw escaped the host import and ended DX-Ball under Threads). The Worker records the registration after its open returns (midiRegistered/midiRetired, separate namespace from wave); the host offers MM_MOM_* through the existing wave offer token/ambiguity protocol with the message, and the Worker admits it with fire_midi_out_callback_bound under the same guards as wave. Offers before registration stay busy. Window callbacks owned by a Worker still refuse. Covered by test-midi-stream-lifecycle Worker case and a Threads-mode browser probe; ownership remains pending.",
       "reviewSmcOptIn20261110": "Adds the set_smc_same_block decode-time config setter (app smcSameBlock / ?smc-same-block), applied with and inherited like set_aggressive_stack; data only, no guest callback, invocation or context restoration. Ownership remains pending.",
@@ -360,7 +361,8 @@
     {
       "file": "lib/host-audio.js",
       "name": "host-file",
-      "sha256": "262312818eb69aa3719bc37c0ce1409c6faa841bdb6c5d8bd3a0d616bba78ba8",
+      "sha256": "c08ca848ccdbb8455581659f1dd20e8c3759734295ccd993d770c71b59c85670",
+      "shellCloseReleaseReview": "2026-11-12: stop() closes the step MessageChannel and drops pending step; removed window records cleared from renderer fields; audio unlock listeners removed in stopAudio. No new long-lived callbacks.",
       "reviewThreadsCloseLeak20261112": "2026-11-12 Threads-mode app-close leak: releases references that outlived a closed app (deferred repaint queued at Worker slice end; renderer _guestNowMs, recorder audio-tap pump, _mainImports, import-scope _dxMemoryBuffer cache cleared at guest-memory release; shell keeps the stopped host weakly). No new callback owner or lifetime.",
       "reviewMidiWorker20261111": "MIDI Worker transport 20261111: CALLBACK_FUNCTION midiOutOpen/midiStreamOpen owned by a Worker interpreter are no longer refused at open (the throw escaped the host import and ended DX-Ball under Threads). The Worker records the registration after its open returns (midiRegistered/midiRetired, separate namespace from wave); the host offers MM_MOM_* through the existing wave offer token/ambiguity protocol with the message, and the Worker admits it with fire_midi_out_callback_bound under the same guards as wave. Offers before registration stay busy. Window callbacks owned by a Worker still refuse. Covered by test-midi-stream-lifecycle Worker case and a Threads-mode browser probe; ownership remains pending.",
       "kind": "host-entry",

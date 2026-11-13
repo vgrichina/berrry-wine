@@ -5165,11 +5165,32 @@ class WineAssembly {
     if (!this.renderer || !this._hwndBase) return;
     const lo = this._hwndBase;
     const hi = lo + 0x10000;
+    const removed = new Set();
     for (const hwnd of Object.keys(this.renderer.windows)) {
       const h = Number(hwnd);
       if (h >= lo && h < hi) {
+        removed.add(this.renderer.windows[hwnd]);
         delete this.renderer.windows[hwnd];
       }
+    }
+    this._dropRendererWindowRefs(removed);
+  }
+
+  // A window record carries its app's wasm and wasmMemory, and the renderer
+  // keeps single-window pointers (_foregroundWindow, drag/hover/capture
+  // state, ...) that only the guest's own DestroyWindow clears. A stop from
+  // the shell (the phone's close button) removes the records without that, so
+  // any such field left pointing at one pinned the app's whole 512MB: heap
+  // snapshot after closing Quake III, TouchControls._renderer.
+  // _foregroundWindow.wasmMemory. Null every renderer field that holds a
+  // removed record rather than naming them.
+  _dropRendererWindowRefs(removed) {
+    const r = this.renderer;
+    if (!r || !removed || !removed.size) return;
+    for (const key of Object.keys(r)) {
+      if (key === 'windows') continue;
+      const v = r[key];
+      if (v && typeof v === 'object' && removed.has(v)) r[key] = null;
     }
   }
 
@@ -5337,6 +5358,20 @@ class WineAssembly {
     // close over this WineHost, and a WineHost owns a 512MB shared memory.
     // Same leak the DX rAF chain had.
     this._cancelDelayedStep();
+    // The step channel's listener captures this host, and a port with a
+    // listener stays alive while its channel is open, so an unclosed channel
+    // kept every stopped host (and, after an OpenGL app, its guest memory)
+    // reachable from the browser forever. Null, not undefined: _postStep then
+    // falls back to setTimeout rather than opening a new channel.
+    this._pendingStep = null;
+    if (this._stepListenPort) {
+      try { this._stepListenPort.onmessage = null; this._stepListenPort.close(); } catch (_) {}
+    }
+    if (this._stepPort) {
+      try { this._stepPort.close(); } catch (_) {}
+    }
+    this._stepListenPort = null;
+    this._stepPort = null;
     this._cancelVblankWait();
     this._frozenUnregister();
     this._pausedStep = null;
@@ -5376,7 +5411,9 @@ class WineAssembly {
         this._removeAppWindows();
       } else {
         this.renderer._exited = true;
+        const removed = new Set(Object.values(this.renderer.windows));
         this.renderer.windows = {};
+        this._dropRendererWindowRefs(removed);
       }
     }
     // Notify whether or not `running` was still set. The listener is

@@ -34,8 +34,17 @@ const { startStaticServer: startSharedStaticServer } = require('./static-server'
 
 const ROOT = path.join(__dirname, '..');
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-// Alternate apps, as a user does: open one, close it, open another.
-const APPS = ['notepad', 'sol', 'notepad'];
+// Alternate apps, as a user does: open one, close it, open another. 'frame'
+// closes through the window's own close box, so the guest destroys its
+// windows; 'shell' is the shell stopping the app (the phone's close button),
+// which drops the window records without a DestroyWindow -- that path left
+// renderer._foregroundWindow, and the host's step channel, holding the app.
+const CYCLES = [
+  { app: 'notepad', close: 'frame' },
+  { app: 'sol', close: 'frame' },
+  { app: 'notepad', close: 'shell' },
+  { app: 'sol', close: 'shell' },
+];
 const VIEWPORT = { width: 390, height: 664, deviceScaleFactor: 2, isMobile: true, hasTouch: true };
 
 if (!fs.existsSync(CHROME)) {
@@ -67,7 +76,7 @@ const COUNTER = () => {
   WebAssembly.Memory = Counted;
 };
 
-async function launchAndClose(page, APP) {
+async function launchAndClose(page, APP, close) {
   await page.evaluate(app => {
     const icon = [...document.querySelectorAll('.desktop-icon')].find(el => el.dataset.app === app);
     if (!icon) throw new Error(`no ${app} icon on the desktop`);
@@ -84,7 +93,8 @@ async function launchAndClose(page, APP) {
   }, { timeout: 120000 }, APP);
   const threads = await page.evaluate(app =>
     !!runningApps.find(item => item && item.name === app).wine.guestWorker, APP);
-  await page.evaluate(app => {
+  if (close === 'shell') await page.evaluate(() => wineShell.stopAllApps());
+  else await page.evaluate(app => {
     const entry = runningApps.find(item => item && item.name === app);
     const lo = entry.wine._hwndBase || 0;
     const hwnd = Object.keys(sharedRenderer.windows).map(Number)
@@ -133,9 +143,10 @@ async function runMode(threadsMode) {
       return false;
     }
 
-    for (let cycle = 1; cycle <= APPS.length; cycle++) {
-      const counts = await launchAndClose(page, APPS[cycle - 1]);
-      console.log(`${label} cycle ${cycle} (${APPS[cycle - 1]}): ${counts.made} guest memories made, ` +
+    for (let cycle = 1; cycle <= CYCLES.length; cycle++) {
+      const { app, close } = CYCLES[cycle - 1];
+      const counts = await launchAndClose(page, app, close);
+      console.log(`${label} cycle ${cycle} (${app}, ${close} close): ${counts.made} guest memories made, ` +
         `${counts.live} still live`);
       assert.strictEqual(counts.threads, threadsMode,
         `${label}: the app ran ${counts.threads ? 'with' : 'without'} a guest Worker`);
