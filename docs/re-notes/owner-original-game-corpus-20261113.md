@@ -40,8 +40,10 @@ Candidate listing: <https://archive.org/details/worms_team17>, titled
 “Worms (EN-US) (MSDOS) (1995)”. Metadata names `CDWORMS.bin` (578,432,064 bytes,
 SHA-1 `a7c9b3adee3a9fe8d8cdffb858d70f9d6a775cc6`) and `CDWORMS.cue` (401 bytes,
 SHA-1 `ad14316f962fd862209c1b6780c220a1b3937223`). These are provider assertions;
-the media and executable have not been downloaded or verified. Inspect the cue
-and full media layout before choosing a route; preserve any audio tracks.
+the full media and executable have not been downloaded or verified. The complete
+401-byte cue was subsequently downloaded and hash-verified: it describes track 1
+as MODE1/2352 and tracks 2–9 as AUDIO. Preserve the mixed-mode layout and all
+eight audio tracks; a data-only ISO would discard part of this candidate.
 
 Next: verify original release identity, executable and complete data/audio tree,
 then add a recoverable corpus entry and test an actual original-game turn.
@@ -53,10 +55,33 @@ currently lacks all seven declared local paths.
 Candidate listing: <https://archive.org/details/neverhood_202508>, titled
 “The Neverhood, (1996) Install CD”. Metadata names `Neverhood.iso`, 651,438,080
 bytes, SHA-1 `4e4314440c98083cd4477f806525a0182f01f2c2`.
-This is an unverified provider assertion. The image, installer, native game
-executable and required asset layout have not been inspected or staged.
+The whole-image hash remains an unverified provider assertion. Bounded HTTP range
+reads subsequently inspected the ISO-9660 volume `Neverhood`: 272 directory
+entries and executable prefixes consumed 77,824 bytes. Every response's exact
+Content-Range and length were checked. Root `SETUP.EXE` has an NE header;
+`SETUP/NHC.EXE` has an x86 PE header. This distinguishes the installer from the
+native game.
 
-Next: verify the original install media and native executable/asset closure, add
+The complete `SETUP/NHC.EXE` was also read into RAM: 810,496 bytes, SHA-256
+`82bf1e31ad6c811a4915f49da1a5ea841cc23b37b0ee212c6d90fddbba97d011`.
+Its import table names KERNEL32, USER32, GDI32, ADVAPI32, SMACKW32, DDRAW,
+DSOUND, WINMM and MSVFW32. The image includes `SETUP/SMACKW32.DLL` (66,048 bytes).
+The seven `DATA/*.BLB` directory records total 638,122,574 bytes:
+`A.BLB`, `C.BLB`, `HD.BLB`, `I.BLB`, `M.BLB`, `S.BLB`, `T.BLB`.
+Those asset bytes have not been downloaded or hash-verified.
+
+The complete bundled `README.TXT` was inspected and hashed as
+`67d23ea0523aaf4fbc7de528f646a677b29d1c365fca3ba2311d9b7e71d26c0c`.
+It requires installation rather than running from CD alone, and requires the CD
+during play. Do not turn the discovered EXE path into an incomplete direct-launch
+entry. Installation paths, registry/configuration and the original data access
+contract still need verification. No executable has been run.
+
+Additional evidence and reproducible bounded ISO directory reader:
+`scratch/runs/20261113-coordinator-owner187-cd-layout/` (`neverhood-layout.json`,
+`neverhood-complete-small-files.json`, `worms-cue.json`, `inspect-iso.py`).
+
+Next: verify the full original install media and installed executable/asset closure, add
 the corpus entry with a recovery recipe, then test original-game interaction.
 An engine reimplementation would not establish native EXE compatibility.
 
