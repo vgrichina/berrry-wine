@@ -33,6 +33,9 @@ markers `CSZE`/`CMOV`); `test/test-create-window-failure.js` asserts the order.
 - A CLI `--png` of WordPad shows the frame with the toolbars, ruler and edit
   area still gray at 15-25 s; the browser at the same point is fully drawn.
   Do not read the gray as a regression.
-- The mobile sweep can catch WordPad at its startup size when several apps run
-  in parallel (`--jobs>1`): the shell's maximizer can lose a race with
-  WordPad's own `SetWindowPlacement`. Re-run solo before calling it a bug.
+- On a slow start (phone, `--cpu=4`, or a parallel `mobile-app-sweep --jobs=4`)
+  the shell's maximize could land between `SetWindowPlacement`'s show and
+  WordPad's own `ShowWindow(SW_SHOWNORMAL)`, which restores it. Since
+  2026-11-12 `maximizeForSingleApp` (`lib/browser-shell.js`) starts its budget
+  only once a top-level window is visible, and watches for ~2 s afterwards,
+  maximizing again (at most twice) if the app restores itself.
