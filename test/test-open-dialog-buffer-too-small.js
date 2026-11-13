@@ -63,6 +63,15 @@ const extraWat = String.raw`
     (global.get $modal_dlg_hwnd))
   (func (export "test_filename_edit") (param $dlg i32) (result i32)
     (call $ctrl_find_by_id (local.get $dlg) (i32.const 0x442)))
+  (func (export "test_open_public") (param $ofn i32) (param $wide i32) (result i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x00120000))
+    (call $gs32 (i32.const 0x00120000) (i32.const 0x00401000))
+    (if (local.get $wide)
+      (then (call $handle_GetOpenFileNameW (local.get $ofn) (i32.const 0)
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+      (else (call $handle_GetOpenFileNameA (local.get $ofn) (i32.const 0)
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))))
+    (global.get $modal_dlg_hwnd))
 `;
 
 function writeAscii(exports, memory, text) {
@@ -82,6 +91,84 @@ async function makePair() {
 }
 
 (async () => {
+  // Native controls store process-ANSI bytes. The W API must measure the
+  // decoded result in WCHARs, including its offsets and its sole terminator.
+  // Exercise public Open and Save, a renderer shadow, failure then retry,
+  // and canaries beyond the declared capacity (not just the allocation).
+  for (const wide of [0, 1]) for (const save of [false, true])
+    for (const [name, encoded] of [['細', [0xB2, 0xD3]], ['么', [0xA4, 0x5C]]]) {
+    const { guest, ui } = await makePair();
+    guest.set_ansi_code_page(950);
+    ui.set_ansi_code_page(950);
+    const ofn = guest.guest_alloc(76) >>> 0;
+    const buf = guest.guest_alloc(128) >>> 0;
+    const text = guest.guest_alloc(32) >>> 0;
+    // 么's Big5 trail byte is '\\'; it must not move nFileOffset.
+    const leaf = Buffer.from([...encoded, 0x2E, 0x70, 0x67, 0x6E, 0]);
+    leaf.forEach((b, i) => guest.guest_write8(text + i, b));
+    const expected = wide ? Buffer.from(`C:\\${name}.pgn\0`, 'utf16le')
+      : Buffer.concat([Buffer.from('C:\\'), leaf]);
+    const required = expected.length / (wide ? 2 : 1);
+    const snapshot = () => Buffer.from(Array.from({ length: 128 }, (_, i) => guest.guest_read8(buf + i)));
+    const begin = save ? guest.test_save_public : guest.test_open_public;
+    const label = `${save ? 'Save' : 'Open'} ${wide ? 'W' : 'A'} ${name}`;
+    // An unterminated initial filename is scanned only within nMaxFile;
+    // sentinel data following it must not become the edit's proposed name.
+    for (const max of [0, 1, 4]) {
+      for (let i = 0; i < 76; i++) guest.guest_write8(ofn + i, 0);
+      for (let i = 0; i < 128; i++) guest.guest_write8(buf + i, 0x41);
+      guest.guest_write32(ofn, 76);
+      guest.guest_write32(ofn + 28, buf);
+      guest.guest_write32(ofn + 32, max);
+      const before = snapshot();
+      const dlg = begin(ofn, wide) >>> 0;
+      const edit = ui.test_filename_edit(dlg) >>> 0;
+      assert.strictEqual(ui.send_message(edit, 0x000E, 0, 0), 0,
+        `${label} does not initialize from an unterminated ${max}-slot buffer`);
+      ui.dialog_handle_key(dlg, 27, 0);
+      assert.strictEqual(guest.test_open_pump(), 0);
+      assert.strictEqual(guest.test_open_result(), 0);
+      assert.strictEqual(guest.test_open_error(), 0);
+      assert.deepStrictEqual(snapshot(), before, `${label} unterminated-input Cancel preserves all bytes`);
+    }
+    for (const max of [required - 1, required, 32]) {
+      for (let i = 0; i < 76; i++) guest.guest_write8(ofn + i, 0);
+      for (let i = 0; i < 128; i++) guest.guest_write8(buf + i, 0xA5);
+      guest.guest_write8(buf, 0);
+      if (wide) guest.guest_write8(buf + 1, 0);
+      guest.guest_write32(ofn, 76);
+      guest.guest_write32(ofn + 28, buf);
+      guest.guest_write32(ofn + 32, max);
+      const before = snapshot();
+      let dlg = begin(ofn, wide) >>> 0;
+      assert.strictEqual(guest.test_open_error(), 0, `${label} clears preceding error on retry`);
+      // Edit then Cancel must preserve every byte, including canaries.
+      const edit = ui.test_filename_edit(dlg) >>> 0;
+      ui.send_message(edit, 0x000C, 0, text);
+      ui.dialog_handle_key(dlg, 27, 0);
+      assert.strictEqual(guest.test_open_pump(), 0);
+      assert.strictEqual(guest.test_open_result(), 0);
+      assert.strictEqual(guest.test_open_error(), 0);
+      assert.deepStrictEqual(snapshot(), before, `${label} Cancel preserves all caller bytes`);
+      dlg = begin(ofn, wide) >>> 0;
+      ui.test_open_accept(dlg, text);
+      assert.strictEqual(guest.test_open_pump(), 0);
+      const want = Buffer.from(before);
+      if (max < required) {
+        assert.strictEqual(guest.test_open_result(), 0, `${label} rejects short capacity`);
+        assert.strictEqual(guest.test_open_error(), 0x3003);
+        want.writeUInt16LE(required);
+      } else {
+        assert.strictEqual(guest.test_open_result(), 1, `${label} accepts ${max} slots for ${required} required`);
+        assert.strictEqual(guest.test_open_error(), 0);
+        expected.copy(want);
+        assert.strictEqual(guest.guest_read8(ofn + 56), 3, `${label} leaf offset`);
+        assert.strictEqual(guest.guest_read8(ofn + 58), wide ? 5 : 6, `${label} extension offset`);
+      }
+      assert.deepStrictEqual(snapshot(), want, `${label} changes only result bytes`);
+    }
+  }
+
   // lpstrFile is input as well as output. A caller's proposed save name must
   // appear in the native edit, survive Cancel unchanged, and be accepted by
   // Save without having to retype it. Exercise the public A/W handlers and
@@ -187,7 +274,7 @@ async function makePair() {
     assert.strictEqual(guest.test_open_extension_offset(), 10);
   }
 
-  console.log('PASS  Open/Save proposed names, cancellation, and atomic overflow cross the Worker modal bridge');
+  console.log('PASS  public A/W Open/Save bounds, DBCS conversion/offsets, retry, proposed names, and Cancel preservation');
 })().catch(error => {
   console.error(error && error.stack || error);
   process.exit(1);

@@ -344,6 +344,7 @@
     (local $file_offset i32) (local $extension_offset i32) (local $i i32) (local $path_char i32)
     (local $dst_g i32) (local $dst_w i32) (local $max_len i32)
     (local $required_w i32) (local $is_wide i32)
+    (local $output_len i32) (local $char_bytes i32) (local $decoded i32) (local $cp i32)
     (local $filter_cb i32) (local $filter_sel i32)
 
     (if (i32.eq (local.get $msg) (i32.const 0x0085))   ;; WM_NCPAINT
@@ -446,6 +447,44 @@
                     (local.set $sep_len (i32.const 0))))
                 (local.set $file_offset (i32.add (local.get $dir_len) (local.get $sep_len)))
                 (local.set $path_len (i32.add (local.get $file_offset) (local.get $text_len)))
+                (local.set $path_g (call $heap_alloc (i32.add (local.get $path_len) (i32.const 1))))
+                (local.set $path_w (call $g2w (local.get $path_g)))
+                (if (local.get $dir_len)
+                  (then (call $memcpy (local.get $path_w) (local.get $dir_src_w) (local.get $dir_len))))
+                (if (local.get $sep_len)
+                  (then (i32.store8 (i32.add (local.get $path_w) (local.get $dir_len)) (i32.const 0x5C))))
+                (if (local.get $text_len)
+                  (then
+                    (call $memcpy (i32.add (local.get $path_w) (local.get $file_offset))
+                      (local.get $text_src_w) (local.get $text_len))))
+                (i32.store8 (i32.add (local.get $path_w) (local.get $path_len)) (i32.const 0))
+                ;; Controls hold process-ANSI bytes. Walk whole characters so
+                ;; a DBCS trail byte cannot become a path separator. A results
+                ;; use byte offsets; W results use decoded WCHAR offsets and
+                ;; capacity. Do not modify any caller bytes during this pass.
+                (local.set $cp (call $resolve_code_page (i32.const 0)))
+                (local.set $file_offset (i32.const 0))
+                (local.set $extension_offset (i32.const 0))
+                (block $ext_done (loop $ext_scan
+                  (br_if $ext_done (i32.ge_u (local.get $i) (local.get $path_len)))
+                  (local.set $decoded (call $ansi_char_decode_wa (local.get $cp)
+                    (i32.add (local.get $path_w) (local.get $i))
+                    (i32.sub (local.get $path_len) (local.get $i))))
+                  (local.set $char_bytes
+                    (i32.shr_u (i32.and (local.get $decoded) (i32.const 0xFF0000)) (i32.const 16)))
+                  (local.set $path_char (i32.and (local.get $decoded) (i32.const 0xFFFF)))
+                  (local.set $output_len (i32.add (local.get $output_len)
+                    (select (i32.const 1) (local.get $char_bytes) (local.get $is_wide))))
+                  (if (i32.or (i32.eq (local.get $path_char) (i32.const 92))
+                              (i32.eq (local.get $path_char) (i32.const 47)))
+                    (then
+                      (local.set $file_offset (local.get $output_len))
+                      (local.set $extension_offset (i32.const 0)))
+                    (else
+                      (if (i32.eq (local.get $path_char) (i32.const 46))
+                        (then (local.set $extension_offset (local.get $output_len))))))
+                  (local.set $i (i32.add (local.get $i) (local.get $char_bytes)))
+                  (br $ext_scan)))
                 ;; OPENFILENAME.nMaxFile counts characters including the NUL.
                 ;; Never truncate a successful selection: USER's documented
                 ;; failure writes the required character count into the first
@@ -453,60 +492,25 @@
                 ;; FNERR_BUFFERTOOSMALL. The tagged modal result carries that
                 ;; error from a renderer shadow back to the parked guest
                 ;; instance without confusing it with an ordinary Cancel.
-                (if (i32.ge_u (local.get $path_len) (local.get $max_len))
+                (if (i32.ge_u (local.get $output_len) (local.get $max_len))
                   (then
                     (local.set $required_w
                       (call $g2w_affine_span (local.get $dst_g) (i32.const 2)))
                     (if (i32.ne (local.get $required_w) (global.get $NULL_SENTINEL))
                       (then
                         (i32.store16 (local.get $required_w)
-                          (i32.add (local.get $path_len) (i32.const 1)))))
+                          (i32.add (local.get $output_len) (i32.const 1)))))
+                    (call $heap_free (local.get $path_g))
                     (call $modal_done (i32.const 0xFFFF3003))
                     (return (i32.const 0))))
-                (local.set $path_g (call $heap_alloc (i32.add (local.get $path_len) (i32.const 1))))
-                (local.set $path_w (call $g2w (local.get $path_g)))
-                (if (local.get $dir_len)
-                  (then (call $memcpy (local.get $path_w) (local.get $dir_src_w) (local.get $dir_len))))
-                (if (local.get $sep_len)
-                  (then (i32.store8 (i32.add (local.get $path_w) (local.get $dir_len)) (i32.const 0x5C))))
                 (local.set $dst_w (call $g2w (local.get $dst_g)))
-                (if (load.field EditState text_buf_ptr (local.get $edit_sw))
-                  (then
-                    (local.set $text_src_w (call $g2w (load.field EditState text_buf_ptr (local.get $edit_sw))))
-                    (if (local.get $text_len)
-                      (then
-                        (call $memcpy (i32.add (local.get $path_w) (local.get $file_offset))
-                          (local.get $text_src_w) (local.get $text_len))))))
-                (i32.store8 (i32.add (local.get $path_w) (local.get $path_len)) (i32.const 0))
                 (if (local.get $is_wide)
                   (then
                     (drop (call $ansi_to_wide (local.get $path_g) (local.get $dst_g)
                       (local.get $max_len))))
                   (else
-                    (call $memcpy (local.get $dst_w) (local.get $path_w) (local.get $path_len))))
-                (if (local.get $is_wide)
-                  (then (i32.store16 (i32.add (local.get $dst_w)
-                          (i32.shl (local.get $path_len) (i32.const 1))) (i32.const 0)))
-                  (else (i32.store8 (i32.add (local.get $dst_w) (local.get $path_len)) (i32.const 0))))
-                ;; nFileOffset names the leaf within the returned full path;
-                ;; nFileExtension names the first character after the last
-                ;; dot, or zero when the leaf has no extension.
-                (local.set $file_offset (i32.const 0))
-                (local.set $extension_offset (i32.const 0))
-                (local.set $i (i32.const 0))
-                (block $ext_done (loop $ext_scan
-                  (br_if $ext_done (i32.ge_u (local.get $i) (local.get $path_len)))
-                  (local.set $path_char (i32.load8_u (i32.add (local.get $path_w) (local.get $i))))
-                  (if (i32.or (i32.eq (local.get $path_char) (i32.const 92))
-                              (i32.eq (local.get $path_char) (i32.const 47)))
-                    (then
-                      (local.set $file_offset (i32.add (local.get $i) (i32.const 1)))
-                      (local.set $extension_offset (i32.const 0)))
-                    (else
-                      (if (i32.eq (local.get $path_char) (i32.const 46))
-                        (then (local.set $extension_offset (i32.add (local.get $i) (i32.const 1)))))))
-                  (local.set $i (i32.add (local.get $i) (i32.const 1)))
-                  (br $ext_scan)))
+                    (call $memcpy (local.get $dst_w) (local.get $path_w)
+                      (i32.add (local.get $path_len) (i32.const 1)))))
                 (i32.store16 offset=56 (local.get $ofn_w) (local.get $file_offset))
                 (i32.store16 offset=58 (local.get $ofn_w) (local.get $extension_offset))
                 (call $heap_free (local.get $path_g))))))
