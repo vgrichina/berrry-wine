@@ -115,6 +115,12 @@ node tools/gen_big5_table.js --check
 node tools/gen_dispatch.js --check
 node tools/gen-kernel32-image.js --check
 node tools/check-hash-table.js > /dev/null || { node tools/check-hash-table.js; exit 1; }
+# lib/app-file-sizes.generated.js declares the size of every large inline app
+# file, and a streamed (httpRange) read rejects a response whose length
+# disagrees, so a file replaced on disk without regenerating fails to launch
+# (Quake II/III and Moorhuhn, 2026-11-12). Only files present here are judged;
+# absent corpus files keep their recorded size.
+node tools/gen-app-file-sizes.js --check
 # Hardcoded data-segment offsets in the ordinal-import tables vs. what those
 # addresses actually hold.
 node tools/check-data-strings.js

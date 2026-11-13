@@ -42,7 +42,8 @@
     {
       "file": "lib/browser-shell.js",
       "name": "host-file",
-      "sha256": "678d1c506746d1ada6944c5e85e7deb985b329a613b4aa690644cc7bb030ae17",
+      "sha256": "272fae673d0ebc76b90b0c309be6ddf2ba9345ce111913b5dd6f83f5a493493f",
+      "maximizerSettleReview20261112": "maximizeForSingleApp interval now lives up to 40 more ticks after maximizing; cleared on app exit or tick cap; same single timer, no new ownership",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Startup review a339395: pending queue retains launch options; only bypassSingleApp tracked children bypass parent-exit scheduling. Entire delta from seal at 2ae81e402 to 80f8278a is nullish launchOpts normalization (52c165ee): supplied object/callback identity and showCmd zero survive; queue, restart, cancellation, beforeRun and onExit paths unchanged. No new guest continuation identity or ownership certification. See docs/reviews/army-host-census-reconcile-20261021.md. Review 20261025: complete delta from seal 8b6d676c to 27e2a785 moves manifest validation before init, revalidates pinned launches, retains checked EXE/DLL/required-file bytes, and scopes temporary Blob URLs to awaited loadFiles with finally revocation. Abort checkpoints precede publication; queue/restart options, beforeRun/onExit and guest entry ordering reviewed, without an ownership-complete claim. See docs/reviews/host-census-four-row-reconcile-oct25.md; ownership remains pending. Shell endpoint review 20261030: obsolete DXSETUP policy completes tracked launches synchronously with onExit(null, already-satisfied), without creating a child or invoking beforeRun. Existing War Wind queued handoff is preserved. Completion releases the reserved endpoint through the owning process_spawn callback; no guest invocation/restoration added. Ownership remains pending; focused production-shell regression evidence scratch/runs/20261030-shell-lifecycle/. Screensaver recovery 20261030: marks fresh host applet intent before init, skips guest system files, checks cancellation after loadWatApp before registration/run. Existing createdWine/failLaunch and onStopped own cleanup; Preview launches a separate registered process. Invocation ownership remains pending. CP950 optional fonts review 20261031: copies the registry entry's ansiCodePage onto the host before init; data only, no callback or restoration. Ownership remains pending. CP950 child inheritance review 20261031 (PR #27 follow-up): installedAppEntry copies the caller's ansiCodePage onto the child registry entry, data only, read at launch like any registered app's; no guest callback, invocation or context restoration added. Ownership remains pending. Release integration: Review 20261030 c98d17dd6: renderer slice metadata and existing per-wine frame/context/registry callbacks choose scheduler budget; restored registry is read synchronously, manual slice overrides retained. Closures retain the same wine/app/log lifetime; no guest entry, async continuation or context restoration added. Ownership remains pending. Integration 20261106: merged the previously reviewed Half-Life cursor/startup/popup and launch-policy changes with current-main behavior; retained both callback lifetime contracts and pending ownership status. No additional retained invocation introduced by conflict resolution. Review 20261107 Rune child mounted CRT: bare import lookup now materializes the application-directory sibling before selecting a global URL; explicit DLL paths retain exact selection. The awaited VFS materialization, host/app/log closure, cancellation, DLL graph and initialization lifecycle are unchanged. No callback producer or guest invocation/restoration added; broader ownership remains pending. Production shell child mount/resolver/graph regression fails before and passes after. See docs/re-notes/rune-child-mounted-crt-20261107.md. Review 20261111 Collapse desktop minimum: registry dimensions are copied into each running app, reduced synchronously before the existing resize, and applied by pure backing-size arithmetic. No guest callback, retained invocation, async continuation, scheduling or restoration change; ownership remains pending. See docs/re-notes/reflexive.md and run 20261111-collapse3-usable-desktop-gameplay-0830.",
@@ -5179,7 +5180,7 @@
     {
       "file": "src/09b-dispatch.wat",
       "name": "$win32_dispatch_inner",
-      "writes": 66,
+      "writes": 69,
       "boundaryCalls": [
         "$crt_callback_continue",
         "$crt_callback_continue",
@@ -5242,6 +5243,30 @@
               "i32.const",
               "4"
             ]
+          ]
+        ],
+        [
+          "local.get",
+          "$arg0"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$show_hwnd"
           ]
         ],
         [
@@ -5679,10 +5704,11 @@
           ]
         ]
       ],
-      "sha256": "f33425da38a40d611694bd6c447586f57d01a28b0f1d53e1f797708af1743a51",
+      "sha256": "ef33f2885e316e2c3b1935bcd408b49a1754ac8941d695d377cca17e5b2dcad0",
       "kind": "mixed-dispatch",
       "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending. Shadow Man exact-candidate source review 2026-10-28: CACA0005 remains intentional EIP=0 nested-run completion with handler_set_eip=1, no ESP pop here. Added kind1 snapshot precedes zero assignment, requires run thunk-entry route and matching current EIP/thunk in helper. Other EIP targets and lifetime boundaries unchanged; sender context restoration still belongs to enclosing synchronous caller, not this diagnostic record. Ownership remains pending. Release integration: Implicit-show correction 2026-11-01: guest-stack CSHW marker retains target/caller across yielding WM_SHOWWINDOW; activation follows completion, destruction returns NULL. Ordering, nested-main replacement and frame cleanup regression passes. Broader ownership remains pending. Nested child returns leave the main implicit-show latch pending. Review 20261105: explicit SWND frame retains target, resolved show command, return convention and prior visibility across callbacks. Resume validates HWND before host mutation. Legacy cdecl return normalizes four arguments only when the owned marker, WM_SHOWWINDOW and retained HWND agree; stdcall layout unchanged. No new shared continuation state; broader ownership remains pending. Integration 20261106: merged the previously reviewed Half-Life cursor/startup/popup and launch-policy changes with current-main behavior; retained both callback lifetime contracts and pending ownership status. No additional retained invocation introduced by conflict resolution.",
-      "ownership": "pending"
+      "ownership": "pending",
+      "createSizeMoveReview20261112": "Review 20261112 creation-time WM_SIZE/WM_MOVE: after a successful WM_CREATE on a hidden top-level window with a guest wndproc, CACA0001 sends WM_SIZE then WM_MOVE through owned guest-stack frames (CSZE/CMOV markers above saved_ret/saved_hwnd), the same shape as the CSHW implicit-show callback. New EIP targets are only the created HWND's own wndproc and the saved return; each callback revalidates its HWND and creation returns NULL on destruction. No receiver, memory or continuation ownership change beyond that frame. Broader ownership pending."
     },
     {
       "file": "src/09b2-dispatch-table.generated.wat",

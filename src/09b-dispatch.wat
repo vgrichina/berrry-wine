@@ -411,7 +411,73 @@
             ;; stays on its guest frame across both creation callbacks.
             (call $startup_create_show
               (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
-            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+            ;; USER sends WM_SIZE then WM_MOVE before CreateWindowEx returns
+            ;; (Wine: WIN_CreateWindowEx after WM_CREATE). A hidden frame used
+            ;; to get its first WM_SIZE only at ShowWindow or the message pump,
+            ;; too late for WordPad: its OnSize records the restored frame rect
+            ;; that ActivateFrame hands SetWindowPlacement before showing, so it
+            ;; placed a 0x0 rect and opened as a 112x27 frame. Visible windows
+            ;; keep the implicit-show chain, which already sends both.
+            (local.set $show_hwnd
+              (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+            (local.set $arg0 (call $wnd_table_get (local.get $show_hwnd)))
+            (if (i32.and
+                  (i32.and
+                    (i32.eqz (i32.and (call $wnd_get_style (local.get $show_hwnd)) (i32.const 0x50000000)))
+                    (i32.ne (local.get $arg0) (i32.const 0)))
+                  (i32.and
+                    (i32.ne (local.get $arg0) (global.get $WNDPROC_DIALOG))
+                    (i32.lt_u (local.get $arg0) (i32.const 0xFFFF0000))))
+              (then
+                (call $defwndproc_do_nccalcsize (local.get $show_hwnd))
+                (local.set $esp (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+                (call $gs32 (local.get $esp) (global.get $createwnd_ret_thunk))
+                (call $gs32 (i32.add (local.get $esp) (i32.const 4)) (local.get $show_hwnd))
+                (call $gs32 (i32.add (local.get $esp) (i32.const 8)) (i32.const 0x0005))   ;; WM_SIZE
+                (call $gs32 (i32.add (local.get $esp) (i32.const 12)) (i32.const 0))       ;; SIZE_RESTORED
+                (call $gs32 (i32.add (local.get $esp) (i32.const 16))
+                  (call $client_rect_wh_packed (local.get $show_hwnd)))
+                (call $gs32 (i32.add (local.get $esp) (i32.const 20)) (i32.const 0x43535A45)) ;; "CSZE"
+                (i32.store offset=16 (global.get $reg_base) (local.get $esp))
+                (global.set $eip (local.get $arg0))
+                (global.set $steps (i32.const 0))
+                (return)))))
+        ;; Creation-time WM_SIZE returned: send WM_MOVE next. Either callback
+        ;; can destroy the window, and creation then returns NULL.
+        (if (i32.or
+              (i32.eq (call $gl32 (i32.load offset=16 (global.get $reg_base))) (i32.const 0x43535A45)) ;; "CSZE"
+              (i32.eq (call $gl32 (i32.load offset=16 (global.get $reg_base))) (i32.const 0x434D4F56))) ;; "CMOV"
+          (then
+            (local.set $arg1 (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+            (local.set $show_hwnd
+              (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+            (if (i32.lt_s (call $wnd_table_find (local.get $show_hwnd)) (i32.const 0))
+              (then
+                (global.set $eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+                (i32.store (global.get $reg_base) (i32.const 0))
+                (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+                (return)))
+            (if (i32.eq (local.get $arg1) (i32.const 0x43535A45))
+              (then
+                (local.set $arg0 (call $paint_scratch_take))
+                (call $host_get_window_rect (local.get $show_hwnd) (local.get $arg0))
+                (local.set $arg2
+                  (i32.or
+                    (i32.and (load.field PaintRect left (local.get $arg0)) (i32.const 0xFFFF))
+                    (i32.shl (load.field.memarg PaintRect top (local.get $arg0)) (i32.const 16))))
+                (local.set $esp (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+                (call $gs32 (local.get $esp) (global.get $createwnd_ret_thunk))
+                (call $gs32 (i32.add (local.get $esp) (i32.const 4)) (local.get $show_hwnd))
+                (call $gs32 (i32.add (local.get $esp) (i32.const 8)) (i32.const 0x0003))   ;; WM_MOVE
+                (call $gs32 (i32.add (local.get $esp) (i32.const 12)) (i32.const 0))
+                (call $gs32 (i32.add (local.get $esp) (i32.const 16)) (local.get $arg2))
+                (call $gs32 (i32.add (local.get $esp) (i32.const 20)) (i32.const 0x434D4F56)) ;; "CMOV"
+                (i32.store offset=16 (global.get $reg_base) (local.get $esp))
+                (global.set $eip (call $wnd_table_get (local.get $show_hwnd)))
+                (global.set $steps (i32.const 0))
+                (return)))))
         ;; CreateDialogParamA's DLGPROC just returned from WM_INITDIALOG.
         ;; Its nonzero return accepts the candidate passed in wParam. Keep the
         ;; marker/candidate on the guest stack so nested modeless dialogs each
