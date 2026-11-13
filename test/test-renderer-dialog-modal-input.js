@@ -76,6 +76,7 @@ assert.deepStrictEqual(renderer.inputQueue[0], {
   mouseX: 55,
   mouseY: 70,
   mouseButtons: 0,
+  cursorWarpSerial: 0,
 });
 
 console.log('PASS  captured dialog mouse-up is queued for modal-loop dispatch');
@@ -226,6 +227,7 @@ assert.deepStrictEqual(nativeDialogRenderer.inputQueue, [{
   mouseX: 132,
   mouseY: 79,
   mouseButtons: 1,
+  cursorWarpSerial: 0,
 }], 'registered x86 dialog child should receive DOWN through the guest queue');
 assert.deepStrictEqual(nativeDialogRenderer._directMouseDown, {
   win: nativeDialog,
