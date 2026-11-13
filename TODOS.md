@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T13:40Z):
+Current dispatch (updated 2026-11-13T13:43Z):
 
 - neverhood-original-dsetupe-attach-setup-path-2320, fresh launcher PID1831438; original DSETUPE attach/iDirectXSetup dependency, static only.
-- worms-first-text-screen-render-contract-2400, fresh launcher PID1839565; actual text-page/OEM glyph/attribute rendering needed by original first screen.
-- guest-rpc-error-observer-settlement-repair-2340, fresh launcher PID1832996; actual broker error observer/response settlement and sibling fanout.
+- worms-text-render-terminal-recovery-2420, fresh launcher PID1843434; unfinished actual text-page/OEM render component task in fresh session.
+- callback-loader-retirement-result-repair-2440, fresh launcher PID1843435; actual loader cancellation result versus retirement acknowledgement.
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Text-worker2400 exited101 before final report/run directory/test existed; cause UNKNOWN, event stream truncated during read command. No success or defect result. Its uncreated ownership was reclaimed for fresh2420. Broker2340 now settles synchronous/promise responses before throwing observers and drains async sibling calls/accounting before surfacing errors;21 new tests/seven controls and adjacent Host/WorkerLink/Manager/bootstrap/startup/broker suites pass.44 artifact/29 source pins matched; preserve scratch/runs/20261113-guest-rpc-error-2340/. Code remains uncommitted pending actual focused runtime and locked build. Fresh2440 investigates the separate cancel-result retirement boundary.
 
 Worms FP2300 published3342bb4ed: NO87/control-word selection, ten vector exchanges, pre-main lazy INT37 hardware rewind and software parser return established.769 static/pure checks,924 overlap comparisons/four controls,48 artifact/six source pins pass. No proven narrow host defect or production edit. Preserve scratch/runs/20261113-worms-setup-fp-2300/. Actual environment/probe branch/software arithmetic and executed first screen remain unproved; fresh2400 checks the necessary text renderer components without original execution.
 
