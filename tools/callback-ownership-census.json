@@ -30,7 +30,9 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "25fff702aaa3d7b6f60b8aa754bd66806096ad80cfc873b3af2db818bc60f7a8",
+      "sha256": "329f5240dacc31f1aad7ebd5191c9baa9a15278a27b46e4dc9e5f61f58f58065",
+      "hexen2ModernControlsReview20261113": "Hexen II demo gains Quake-style config/autoexec mounts, relativeMouse and WASD touch layout; no callback ownership change",
+      "hexen2ModernControlsReview20261113": "Hexen II demo gains Quake-style config/autoexec mounts, relativeMouse and WASD touch layout; no callback ownership change",
       "screensaverLaunchesReview20261113": "APPS.screensavers.launches lists the scr_* ids the catalog applet reaches via ShellExecute; deploy data only, no callback, invocation or ownership change",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
