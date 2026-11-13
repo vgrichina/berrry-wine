@@ -721,6 +721,39 @@
     (call $host_file_download (local.get $path_w))
     (call $heap_free (local.get $path_g)))
 
+  ;; OPENFILENAME.lpstrFile also supplies the proposed filename on entry.
+  ;; Give the EDIT its own ANSI copy (including for the W API), so editing
+  ;; and Cancel never change the caller's output buffer before acceptance.
+  (func $opendlg_initial_filename (param $ofn i32) (result i32)
+    (local $src i32) (local $max i32) (local $len i32) (local $ch i32)
+    (local $copy i32) (local $cap i32)
+    (if (i32.eqz (local.get $ofn)) (then (return (i32.const 0))))
+    (local.set $src (call $gl32 (i32.add (local.get $ofn) (i32.const 28))))
+    (local.set $max (call $gl32 (i32.add (local.get $ofn) (i32.const 32))))
+    (if (i32.or (i32.eqz (local.get $src)) (i32.eqz (local.get $max)))
+      (then (return (i32.const 0))))
+    (block $end (loop $scan
+      ;; An unterminated input must not read beyond the caller's capacity.
+      (if (i32.ge_u (local.get $len) (local.get $max))
+        (then (return (i32.const 0))))
+      (local.set $ch
+        (if (result i32) (global.get $opendlg_wide)
+          (then (call $gl16 (i32.add (local.get $src) (i32.shl (local.get $len) (i32.const 1)))))
+          (else (call $gl8 (i32.add (local.get $src) (local.get $len))))))
+      (br_if $end (i32.eqz (local.get $ch)))
+      (local.set $len (i32.add (local.get $len) (i32.const 1)))
+      (br $scan)))
+    (if (i32.eqz (local.get $len)) (then (return (i32.const 0))))
+    ;; A process ANSI character can occupy two bytes.
+    (local.set $cap (i32.add (i32.shl (local.get $len) (i32.const 1)) (i32.const 1)))
+    (local.set $copy (call $heap_alloc (local.get $cap)))
+    (if (global.get $opendlg_wide)
+      (then (drop (call $wide_to_ansi (local.get $src) (local.get $copy) (local.get $cap))))
+      (else
+        (call $memcpy (call $g2w (local.get $copy)) (call $g2w (local.get $src)) (local.get $len))
+        (call $gs8 (i32.add (local.get $copy) (local.get $len)) (i32.const 0))))
+    (local.get $copy))
+
   ;; ---- Build the open/save dialog ----
   ;;
   ;;   $kind: 0 = Open, 1 = Save As (controls title + IDOK button label)
@@ -729,6 +762,7 @@
   (func $create_open_dialog (param $dlg i32) (param $owner i32) (param $kind i32) (param $ofn i32)
     (local $w i32) (local $h i32) (local $title_wa i32) (local $btn_g i32)
     (local $lb i32) (local $ofn_w i32) (local $filter_g i32) (local $filter_cb i32)
+    (local $filename_g i32)
     (local.set $w (i32.const 360))
     (local.set $h (i32.const 240))
     ;; Title goes to JS (WASM offset). Button text goes through
@@ -787,9 +821,11 @@
             (i32.const 0x50000000)
             (call $wat_str_to_heap (region.addr $USER_DIALOG_STRINGS 0x49) (i32.const 10))))
     ;; Filename edit (id 0x442)
+    (local.set $filename_g (call $opendlg_initial_filename (local.get $ofn)))
     (drop (call $ctrl_create_child (local.get $dlg) (i32.const 2) (i32.const 0x442)
             (i32.const 76) (i32.const 166) (i32.const 200) (i32.const 18)
-            (i32.const 0x50810000) (i32.const 0)))
+            (i32.const 0x50810000) (local.get $filename_g)))
+    (call $heap_free (local.get $filename_g))
     (if (local.get $ofn)
       (then
         (local.set $ofn_w (call $g2w (local.get $ofn)))
