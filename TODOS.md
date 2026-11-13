@@ -1,7 +1,12 @@
-Current dispatch (updated 2026-11-13T10:55Z):
-- The Incredible Machine: tim-original-persistent-reviewed-session-1120, fresh launcher PID1590747; extend the one-action WIP controller to a bounded persistent session with fresh per-action review, release and consequence observation. Preserve canonical loader/defaults and overall watchdog; pure control tests only, no VM/game/native qualification.
-- The Neverhood: neverhood-stage-controller-lifecycle-repair-1100, fresh launcher PID1574860; add pure controller/persistence/process regressions and repair demonstrated adapter defects with harmless stand-ins. Test-local mocks only; real hold/falseguards stay unchanged and unit artifacts never count as installed/native proof.
-- Drakan graphics continuation: drakan-owning-frame-observer-implementation-1140, fresh launcher PID1607075; integrate repaired lease/supervisor and implement passive actual CPU/app/window/renderer-to-published-frame attribution. Pure observer tests only; reject selectors/GDI/counters/stale targets as backend proof, no native runtime acceptance.
+Current dispatch (updated 2026-11-13T11:20Z):
+- tim-original-bitmap-resource-decoder-1220, fresh launcher PID1645843; bounded source implementation and pure tests only; original/native execution remains held.
+- worms-readonly-iso-data-volume-1200, fresh launcher PID1644320; bounded source implementation and pure tests only; original/native execution remains held.
+- drakan-passive-owning-target-interface-1220, fresh launcher PID1645844; bounded source implementation and pure tests only; original/native execution remains held.
+
+Neverhood1100 repaired nonzero-exit false completion, watchdog identity/deadline and zombie liveness checks, and export-error validation. Its 29 pure controller/process tests passed; 1,227 evidence hashes matched and 360 owned process identities were stopped/reaped. Native installation and first-room interaction remain open. Preserve scratch/runs/20261113-neverhood-stage-repair-1100/.
+
+TIM1120 implemented persistent reviewed actions with post-release execution/consequence gating and an immutable watchdog. Both pure test files passed, including 11 termination cases; 24 evidence hashes matched. Source WIP remains uncommitted, with native input/floppy tests and full build outstanding. Drakan1140 passed 38 pure checks and 25 own evidence hashes; its observer correctly remains unsupported because source-to-published-pixels and adapter-owned GL evidence are missing. The new Drakan task implements the concrete passive adapter interface prerequisite; no backend/gameplay acceptance follows.
+
 
 NFS2350 and LM2350 were explicitly ended after preparation because capacity remained blocked; both launcher exits0 reviewed. NFS36seals/helper-process census and LM38seals/watcherwait143/bothEOF/absence verified. Preserve scratch/runs/20261113-nfs3-current-input-2350/ and scratch/runs/20261113-lmarbles-current-input-2350/ for fresh workers when capacity returns. No original runtime, fresh screenshot, NFS driving or LM CLEAR/tally/next result was produced. Fresh runtime queue remains NFS first, then LM, then D3D9 browser work after actual FINAL releases.
 
