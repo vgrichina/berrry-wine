@@ -10944,6 +10944,17 @@
   (global $DIDEV_ACQUIRED i32 (i32.const 0x00000400))
 
   (func $di_device_is_acquired (param $entry i32) (result i32)
+    ;; The renderer loses foreground acquisition when activation changes, not
+    ;; when a device happens to poll. Synchronize that sticky loss into the
+    ;; native lifecycle bit; an unpolled away/back must still be unacquired.
+    (if (i32.and
+          (i32.ne (i32.and (load.field DxObject flags (local.get $entry))
+                           (global.get $DIDEV_ACQUIRED)) (i32.const 0))
+          (i32.eq (load.field DxObject misc0 (local.get $entry)) (i32.const 1)))
+      (then
+        (if (call $host_di_keyboard_buffer (local.get $entry) (i32.const 11) (i32.const 0))
+          (then (store.field DxObject flags (local.get $entry)
+            (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 0xFFFFFBFF)))))))
     (i32.ne
       (i32.and (load.field DxObject flags (local.get $entry))
                (global.get $DIDEV_ACQUIRED))
@@ -11196,9 +11207,20 @@
   ;; Acquire is deliberately not reference-counted. A second call succeeds
   ;; with S_FALSE, and one Unacquire releases the device, matching DirectInput.
   (func $handle_IDirectInputDevice_Acquire (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $entry i32) (local $flags i32)
+    (local $entry i32) (local $flags i32) (local $foreground i32) (local $result i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
+    (drop (call $di_device_is_acquired (local.get $entry)))
     (local.set $flags (load.field DxObject flags (local.get $entry)))
+    (if (i32.and
+          (i32.eq (load.field DxObject misc0 (local.get $entry)) (i32.const 1))
+          (i32.ne (i32.and (local.get $flags) (i32.const 4)) (i32.const 0)))
+      (then
+        (local.set $foreground (load.field DxObject misc2 (local.get $entry)))
+        (if (i32.ne (call $host_foreground_window) (local.get $foreground))
+          (then
+            (i32.store (global.get $reg_base) (i32.const 0x80070005)) ;; DIERR_OTHERAPPHASPRIO
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+            (return)))))
     (if (i32.ne
           (i32.and (local.get $flags) (global.get $DIDEV_ACQUIRED))
           (i32.const 0))
@@ -11226,15 +11248,19 @@
         (call $di_kbd_buffer_format (local.get $entry))
         ;; Registration RPCs build an inactive selection. Publish it only once
         ;; complete; the host call is the acquisition's input linearization point.
-        ;; Zero-sized immediate devices have no host FIFO to activate.
-        (if (i32.load offset=12 (local.get $entry))
+        ;; Immediate-only devices also need a host acquisition record so an
+        ;; unobserved focus interval loses their acquisition, too.
+        (local.set $result
+          (call $host_di_keyboard_buffer (local.get $entry) (i32.const 10) (local.get $foreground)))
+        (if (local.get $result)
           (then
-            (if (call $host_di_keyboard_buffer (local.get $entry) (i32.const 10) (i32.const 0))
-              (then
-                (drop (call $host_di_keyboard_buffer (local.get $entry) (i32.const 1) (i32.const 0)))
-                (i32.store (global.get $reg_base) (i32.const 0x8007000E)) ;; DIERR_OUTOFMEMORY
-                (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
-                (return)))))))
+            (drop (call $host_di_keyboard_buffer (local.get $entry) (i32.const 1) (i32.const 0)))
+            (i32.store (global.get $reg_base)
+              (if (result i32) (i32.eq (local.get $result) (i32.const 2))
+                (then (i32.const 0x80070005)) ;; DIERR_OTHERAPPHASPRIO
+                (else (i32.const 0x8007000E)))) ;; DIERR_OUTOFMEMORY
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+            (return)))))
     (store.field DxObject flags (local.get $entry)
       (i32.or (local.get $flags) (global.get $DIDEV_ACQUIRED)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)) ;; DI_OK
