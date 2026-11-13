@@ -747,10 +747,42 @@
 
   ;; Per-surface creation metadata, 16 bytes a slot:
   ;;   +0 creation caps +4 parent slot+1 +8 billed vidmem bytes
-  ;;   +12 owned VB drawing-state guest heap pointer (0 until needed).
+  ;;   +12 owned auxiliary-state guest heap pointer (0 until needed).
   (func $dx_surf_meta_ptr (param $entry_wa i32) (result i32)
     (i32.add (global.get $DX_SURF_META)
       (i32.shl (call $dx_slot_of (local.get $entry_wa)) (i32.const 4))))
+
+  ;; +0 source high, +4 destination low, +8 destination high, +12 presence:
+  ;; bit 0 = explicit source high, bit 1 = destination key. Surface creation
+  ;; owns this tail of its auxiliary heap state; retirement frees it.
+  (func $dx_surf_blit_keys_ptr (param $entry_wa i32) (result i32)
+    (local $state i32)
+    (local.set $state (call $vbdd_draw_state_ptr (local.get $entry_wa)))
+    (if (result i32) (local.get $state)
+      (then (i32.add (local.get $state) (i32.const 16))) (else (i32.const 0))))
+
+  (func $dx_surf_source_key_high (param $entry i32) (result i32)
+    (local $keys i32)
+    (local.set $keys (call $dx_surf_blit_keys_ptr (local.get $entry)))
+    (if (i32.eqz (local.get $keys))
+      (then (return (load.field DxObject misc2 (local.get $entry)))))
+    (if (result i32) (i32.and (i32.load offset=12 (local.get $keys)) (i32.const 1))
+      (then (i32.load (local.get $keys)))
+      (else (load.field DxObject misc2 (local.get $entry)))))
+
+  (func $dx_blt_extended_keys (param $dst i32) (param $src i32) (param $flags i32) (result i32)
+    (local $keys i32) (local $dest i32)
+    (local.set $keys (call $dx_surf_blit_keys_ptr (local.get $dst)))
+    (if (local.get $keys) (then (local.set $dest
+      (i32.ne (i32.and (i32.load offset=12 (local.get $keys)) (i32.const 2)) (i32.const 0)))))
+    (i32.or
+      (i32.and (i32.ne (i32.and (local.get $flags) (i32.const 0x2000)) (i32.const 0))
+        (local.get $dest))
+      (i32.and
+        (i32.and (i32.ne (i32.and (local.get $flags) (i32.const 0x8000)) (i32.const 0))
+          (i32.ne (i32.and (load.field DxObject flags (local.get $src)) (i32.const 0x100)) (i32.const 0)))
+        (i32.ne (load.field DxObject misc2 (local.get $src))
+          (call $dx_surf_source_key_high (local.get $src))))))
 
   ;; What this surface added to $dx_vidmem_used when it was created, and so
   ;; exactly what its release must give back. Kept out of the DxObject record
@@ -5311,6 +5343,123 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $rows))))
 
+  ;; Range/destination keys use this scalar path; the common single source
+  ;; key retains its SIMD path. Each destination is considered once, against
+  ;; its pre-write value. Equal-size aliasing walks away from unread source;
+  ;; a stretched alias needs a temporary immutable source image instead.
+  (func $dx_blt_range_copy
+      (param $dst_entry i32) (param $src_entry i32)
+      (param $src_dib i32) (param $src_pitch i32)
+      (param $dx i32) (param $dy i32) (param $dw i32) (param $dh i32)
+      (param $sx i32) (param $sy i32) (param $sw i32) (param $sh i32)
+      (param $flags i32) (param $clip_entry i32) (param $clip_data i32) (result i32)
+    (local $dst_dib i32) (local $dst_pitch i32) (local $bps i32)
+    (local $src_on i32) (local $dst_on i32) (local $src_low i32) (local $src_high i32)
+    (local $dst_low i32) (local $dst_high i32) (local $keys i32)
+    (local $left i32) (local $right i32) (local $top i32) (local $bottom i32)
+    (local $x i32) (local $y i32) (local $ix i32) (local $iy i32)
+    (local $source_x i32) (local $source_y i32) (local $s i32) (local $d i32)
+    (local $col i32) (local $old i32) (local $reverse i32) (local $snapshot i32)
+    (local $src_width i32) (local $src_height i32) (local $end i64)
+    (if (i32.or
+          (i32.or (i32.le_s (local.get $dw) (i32.const 0)) (i32.le_s (local.get $dh) (i32.const 0)))
+          (i32.or (i32.le_s (local.get $sw) (i32.const 0)) (i32.le_s (local.get $sh) (i32.const 0))))
+      (then (return (i32.const 0))))
+    (local.set $dst_dib (load.field DxObject misc1 (local.get $dst_entry)))
+    (local.set $dst_pitch (load.field DxObject pitch (local.get $dst_entry)))
+    (local.set $bps (i32.div_u (load.field DxObject bpp (local.get $dst_entry)) (i32.const 8)))
+    (local.set $src_width (load.field DxObject width (local.get $src_entry)))
+    (local.set $src_height (load.field DxObject height (local.get $src_entry)))
+    (local.set $left (select (local.get $dx) (i32.const 0) (i32.gt_s (local.get $dx) (i32.const 0))))
+    (local.set $top (select (local.get $dy) (i32.const 0) (i32.gt_s (local.get $dy) (i32.const 0))))
+    (local.set $right (load.field DxObject width (local.get $dst_entry)))
+    (local.set $end (i64.add (i64.extend_i32_s (local.get $dx)) (i64.extend_i32_s (local.get $dw))))
+    (if (i64.lt_s (local.get $end) (i64.extend_i32_u (local.get $right)))
+      (then (local.set $right (i32.wrap_i64 (local.get $end)))))
+    (local.set $bottom (load.field DxObject height (local.get $dst_entry)))
+    (local.set $end (i64.add (i64.extend_i32_s (local.get $dy)) (i64.extend_i32_s (local.get $dh))))
+    (if (i64.lt_s (local.get $end) (i64.extend_i32_u (local.get $bottom)))
+      (then (local.set $bottom (i32.wrap_i64 (local.get $end)))))
+    (if (i32.or (i32.ge_s (local.get $left) (local.get $right))
+          (i32.ge_s (local.get $top) (local.get $bottom))) (then (return (i32.const 0))))
+    (local.set $src_on (i32.and
+      (i32.ne (i32.and (local.get $flags) (i32.const 0x8000)) (i32.const 0))
+      (i32.ne (i32.and (load.field DxObject flags (local.get $src_entry)) (i32.const 0x100)) (i32.const 0))))
+    (local.set $src_low (load.field DxObject misc2 (local.get $src_entry)))
+    (local.set $src_high (call $dx_surf_source_key_high (local.get $src_entry)))
+    (local.set $keys (call $dx_surf_blit_keys_ptr (local.get $dst_entry)))
+    (if (local.get $keys)
+      (then
+        (local.set $dst_on (i32.and
+          (i32.ne (i32.and (local.get $flags) (i32.const 0x2000)) (i32.const 0))
+          (i32.ne (i32.and (i32.load offset=12 (local.get $keys)) (i32.const 2)) (i32.const 0))))
+        (local.set $dst_low (i32.load offset=4 (local.get $keys)))
+        (local.set $dst_high (i32.load offset=8 (local.get $keys)))))
+    (if (i32.eq (local.get $src_dib) (local.get $dst_dib))
+      (then
+        (if (i32.or (i32.ne (local.get $sw) (local.get $dw))
+              (i32.or (i32.ne (local.get $sh) (local.get $dh))
+                (i32.ne (local.get $src_pitch) (local.get $dst_pitch))))
+          (then
+            (local.set $snapshot (call $heap_alloc (i32.mul (local.get $src_pitch) (local.get $src_height))))
+            (if (i32.eqz (local.get $snapshot)) (then (return (i32.const 0x8007000E))))
+            (memory.copy (call $g2w (local.get $snapshot)) (local.get $src_dib)
+              (i32.mul (local.get $src_pitch) (local.get $src_height)))
+            (local.set $src_dib (call $g2w (local.get $snapshot))))
+          (else (local.set $reverse (i32.or (i32.gt_s (local.get $dy) (local.get $sy))
+            (i32.and (i32.eq (local.get $dy) (local.get $sy)) (i32.gt_s (local.get $dx) (local.get $sx)))))))))
+    (local.set $iy (local.get $top))
+    (block $done (loop $rows
+      (br_if $done (i32.ge_s (local.get $iy) (local.get $bottom)))
+      (local.set $y (select
+        (i32.sub (i32.sub (local.get $bottom) (i32.const 1)) (i32.sub (local.get $iy) (local.get $top)))
+        (local.get $iy) (local.get $reverse)))
+      (local.set $source_y (i32.add (local.get $sy) (i32.wrap_i64 (i64.div_u
+        (i64.mul (i64.extend_i32_u (i32.sub (local.get $y) (local.get $dy))) (i64.extend_i32_u (local.get $sh)))
+        (i64.extend_i32_u (local.get $dh))))))
+      (local.set $ix (local.get $left))
+      (block $row_done (loop $cols
+        (br_if $row_done (i32.ge_s (local.get $ix) (local.get $right)))
+        (local.set $x (select
+          (i32.sub (i32.sub (local.get $right) (i32.const 1)) (i32.sub (local.get $ix) (local.get $left)))
+          (local.get $ix) (local.get $reverse)))
+        (local.set $source_x (i32.add (local.get $sx) (i32.wrap_i64 (i64.div_u
+          (i64.mul (i64.extend_i32_u (i32.sub (local.get $x) (local.get $dx))) (i64.extend_i32_u (local.get $sw)))
+          (i64.extend_i32_u (local.get $dw))))))
+        (if (i32.and
+              (i32.and (i32.lt_u (local.get $source_x) (local.get $src_width)) (i32.lt_u (local.get $source_y) (local.get $src_height)))
+              (call $dx_clipper_contains (local.get $clip_entry) (local.get $clip_data) (local.get $x) (local.get $y)))
+          (then
+            (local.set $s (i32.add (local.get $src_dib) (i32.add
+              (i32.mul (local.get $source_y) (local.get $src_pitch)) (i32.mul (local.get $source_x) (local.get $bps)))))
+            (local.set $d (i32.add (local.get $dst_dib) (i32.add
+              (i32.mul (local.get $y) (local.get $dst_pitch)) (i32.mul (local.get $x) (local.get $bps)))))
+            (local.set $col (if (result i32) (i32.eq (local.get $bps) (i32.const 1))
+              (then (i32.load8_u (local.get $s)))
+              (else (if (result i32) (i32.eq (local.get $bps) (i32.const 2))
+                (then (i32.load16_u (local.get $s))) (else (call $dx_blt_wide_load (local.get $s) (local.get $bps)))))))
+            (local.set $old (if (result i32) (i32.eq (local.get $bps) (i32.const 1))
+              (then (i32.load8_u (local.get $d)))
+              (else (if (result i32) (i32.eq (local.get $bps) (i32.const 2))
+                (then (i32.load16_u (local.get $d))) (else (call $dx_blt_wide_load (local.get $d) (local.get $bps)))))))
+            (if (i32.and
+                  (i32.or (i32.eqz (local.get $src_on)) (i32.or
+                    (i32.lt_u (local.get $col) (local.get $src_low)) (i32.gt_u (local.get $col) (local.get $src_high))))
+                  (i32.or (i32.eqz (local.get $dst_on)) (i32.and
+                    (i32.ge_u (local.get $old) (local.get $dst_low)) (i32.le_u (local.get $old) (local.get $dst_high)))))
+              (then
+                (if (i32.eq (local.get $bps) (i32.const 1))
+                  (then (i32.store8 (local.get $d) (local.get $col)))
+                  (else (if (i32.eq (local.get $bps) (i32.const 2))
+                    (then (i32.store16 (local.get $d) (local.get $col)))
+                    (else (call $dx_blt_wide_store (local.get $d) (local.get $col) (local.get $bps))))))))))
+        (local.set $ix (i32.add (local.get $ix) (i32.const 1)))
+        (br $cols)))
+      (local.set $iy (i32.add (local.get $iy) (i32.const 1)))
+      (br $rows)))
+    (if (local.get $snapshot) (then (call $heap_free (local.get $snapshot))))
+    (i32.const 0))
+
   ;; Blt(this, lpDestRect, lpDDSrcSurface, lpSrcRect, dwFlags, lpDDBltFx)
   ;; Note: 6 args but we only get 5 from dispatch; 6th is at ESP+24
   (func $handle_IDirectDrawSurface_Blt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -5607,6 +5756,25 @@
                      (i32.eq (local.get $sh) (i32.const 32)))))
       (then (call $dx_cursor_save_background
         (local.get $dst_entry) (local.get $dx) (local.get $dy))))
+    (if (call $dx_blt_extended_keys (local.get $dst_entry) (local.get $src_entry) (local.get $drblt_flags))
+      (then
+        (local.set $col (call $dx_blt_range_copy
+          (local.get $dst_entry) (local.get $src_entry) (local.get $src_dib) (local.get $src_pitch)
+          (local.get $dx) (local.get $dy) (local.get $dw) (local.get $dh)
+          (local.get $sx) (local.get $sy) (local.get $sw) (local.get $sh)
+          (local.get $drblt_flags) (local.get $clip_entry) (local.get $clip_data)))
+        (if (i32.eqz (local.get $col))
+          (then
+            (call $dx_surf_note_copy (local.get $dst_entry) (local.get $src_entry)
+              (local.get $dx) (local.get $dy) (local.get $sx) (local.get $sy)
+              (local.get $dw) (local.get $dh) (local.get $drblt_flags))
+            (if (i32.and (load.field DxObject flags (local.get $dst_entry)) (i32.const 1))
+              (then (call $dx_present (local.get $dst_entry))
+                (call $present_pace_full_blit (local.get $dst_entry) (local.get $dw) (local.get $dh))))))
+        (i32.store (global.get $reg_base) (local.get $col))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+        (return)))
     ;; If dst rect == src rect, fast row-copy; otherwise nearest-neighbor stretch.
     (if (i32.and (i32.eq (local.get $dw) (local.get $sw))
                  (i32.eq (local.get $dh) (local.get $sh)))
@@ -6218,6 +6386,29 @@
         (call $dx_dxt_decode_to (local.get $src_entry) (local.get $dst_entry)
           (local.get $src_dib) (local.get $src_pitch)
           (i32.mul (local.get $bps) (i32.const 8)))))
+    ;; Translate BltFast's key bits into the common Blt key selection.
+    (local.set $reverse (i32.or
+      (select (i32.const 0x8000) (i32.const 0) (i32.and (local.get $trans) (i32.const 1)))
+      (select (i32.const 0x2000) (i32.const 0) (i32.and (local.get $trans) (i32.const 2)))))
+    (if (call $dx_blt_extended_keys (local.get $dst_entry) (local.get $src_entry) (local.get $reverse))
+      (then
+        (local.set $reverse (call $dx_blt_range_copy
+          (local.get $dst_entry) (local.get $src_entry) (local.get $src_dib) (local.get $src_pitch)
+          (local.get $arg1) (local.get $arg2) (local.get $sw) (local.get $sh)
+          (local.get $sx) (local.get $sy) (local.get $sw) (local.get $sh)
+          (local.get $reverse) (i32.const 0) (i32.const 0)))
+        (if (i32.eqz (local.get $reverse))
+          (then
+            (call $dx_surf_note_copy (local.get $dst_entry) (local.get $src_entry)
+              (local.get $arg1) (local.get $arg2) (local.get $sx) (local.get $sy)
+              (local.get $sw) (local.get $sh) (local.get $trans))
+            (if (i32.and (load.field DxObject flags (local.get $dst_entry)) (i32.const 1))
+              (then (call $dx_present (local.get $dst_entry))
+                (call $present_pace_full_blit (local.get $dst_entry) (local.get $sw) (local.get $sh))))))
+        (i32.store (global.get $reg_base) (local.get $reverse))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+        (return)))
     ;; DDBLTFAST_SRCCOLORKEY = 0x1, DDBLTFAST_DESTCOLORKEY = 0x2
     (if (i32.and (local.get $trans) (i32.const 0x01))
       (then
@@ -6792,12 +6983,34 @@
 
   ;; GetColorKey(this, dwFlags, lpDDColorKey)
   (func $handle_IDirectDrawSurface_GetColorKey (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $entry i32)
+    (local $entry i32) (local $keys i32) (local $found i32) (local $low i32) (local $high i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
-    (if (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 0x100))
+    (if (i32.or (i32.eqz (local.get $arg2))
+          (i32.and (i32.ne (local.get $arg1) (i32.const 8)) (i32.ne (local.get $arg1) (i32.const 2))))
       (then
-        (call $gs32 (local.get $arg2) (load.field DxObject misc2 (local.get $entry)))
-        (call $gs32 (i32.add (local.get $arg2) (i32.const 4)) (load.field DxObject misc2 (local.get $entry)))
+        (i32.store (global.get $reg_base)
+          (select (i32.const 0x80004001) (i32.const 0x80070057)
+            (i32.and (i32.ne (local.get $arg2) (i32.const 0))
+              (i32.or (i32.eq (local.get $arg1) (i32.const 4)) (i32.eq (local.get $arg1) (i32.const 16))))))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
+    (if (i32.eq (local.get $arg1) (i32.const 8))
+      (then
+        (local.set $found (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 0x100)))
+        (local.set $low (load.field DxObject misc2 (local.get $entry)))
+        (local.set $high (call $dx_surf_source_key_high (local.get $entry))))
+      (else
+        (local.set $keys (call $dx_surf_blit_keys_ptr (local.get $entry)))
+        (if (local.get $keys)
+          (then
+            (local.set $found (i32.and (i32.load offset=12 (local.get $keys)) (i32.const 2)))
+            (local.set $low (i32.load offset=4 (local.get $keys)))
+            (local.set $high (i32.load offset=8 (local.get $keys)))))))
+    (if (local.get $found)
+      (then
+        (call $gs32 (local.get $arg2) (local.get $low))
+        (call $gs32 (i32.add (local.get $arg2) (i32.const 4)) (local.get $high))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
       (else
         ;; No key set: DDERR_NOCOLORKEY. Daytona USA Deluxe tolerates exactly
@@ -7146,22 +7359,74 @@
 
   ;; SetColorKey(this, dwFlags, lpDDColorKey)
   (func $handle_IDirectDrawSurface_SetColorKey (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $entry i32) (local $ck i32) (local $bpp i32)
+    (local $entry i32) (local $ck i32) (local $high i32) (local $bpp i32)
+    (local $keys i32) (local $direction i32) (local $mask i32)
     (call $d3dim_worker_fence)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
+    (local.set $keys (call $dx_surf_blit_keys_ptr (local.get $entry)))
+    (local.set $direction (i32.and (local.get $arg1) (i32.const -2)))
+    (if (i32.and (i32.ne (local.get $direction) (i32.const 8))
+          (i32.ne (local.get $direction) (i32.const 2)))
+      (then
+        ;; Overlay keys have no implemented overlay operation to consume them.
+        ;; Do not silently turn them into source blit keys.
+        (i32.store (global.get $reg_base)
+          (select (i32.const 0x80004001) (i32.const 0x80070057)
+            (i32.or (i32.eq (local.get $direction) (i32.const 4))
+              (i32.eq (local.get $direction) (i32.const 16)))))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
+    (if (i32.eqz (local.get $arg2))
+      (then
+        (if (i32.eq (local.get $direction) (i32.const 8))
+          (then
+            (store.field DxObject flags (local.get $entry)
+              (i32.and (load.field DxObject flags (local.get $entry)) (i32.const -257)))
+            (if (local.get $keys) (then (i32.store offset=12 (local.get $keys)
+              (i32.and (i32.load offset=12 (local.get $keys)) (i32.const -2))))))
+          (else (if (local.get $keys) (then (i32.store offset=12 (local.get $keys)
+            (i32.and (i32.load offset=12 (local.get $keys)) (i32.const -3)))))))
+        (i32.store (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
+    (local.set $keys (call $vbdd_draw_state_ensure (local.get $entry)))
+    (if (i32.eqz (local.get $keys))
+      (then
+        (i32.store (global.get $reg_base) (i32.const 0x8007000E))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
+    (local.set $keys (i32.add (local.get $keys) (i32.const 16)))
     ;; DDCKEY_SRCBLT = 0x8, DDCKEY_DESTBLT = 0x2
     ;; Mask the key to the surface bit-depth: apps sometimes pass 0x0000FFFF
     ;; on 8bpp surfaces, but per-pixel compares load only `bpp` bits, so an
     ;; un-masked key would never match → no transparency.
     (local.set $ck (call $gl32 (local.get $arg2)))
     (local.set $bpp (load.field DxObject bpp (local.get $entry)))
-    (if (i32.eq (local.get $bpp) (i32.const 8))
-      (then (local.set $ck (i32.and (local.get $ck) (i32.const 0xFF))))
-      (else (if (i32.eq (local.get $bpp) (i32.const 16))
-        (then (local.set $ck (i32.and (local.get $ck) (i32.const 0xFFFF)))))))
-    (store.field DxObject misc2 (local.get $entry) (local.get $ck)) ;; dwColorSpaceLowValue
-    ;; Set has_colorkey flag
-    (store.field DxObject flags (local.get $entry) (i32.or (load.field DxObject flags (local.get $entry)) (i32.const 0x100)))
+    (local.set $mask (i32.const -1))
+    (if (i32.lt_u (local.get $bpp) (i32.const 32))
+      (then (local.set $mask (i32.sub
+        (i32.shl (i32.const 1) (local.get $bpp)) (i32.const 1)))))
+    (local.set $ck (i32.and (local.get $ck) (local.get $mask)))
+    (local.set $high (local.get $ck))
+    (if (i32.and (local.get $arg1) (i32.const 1))
+      (then (local.set $high (i32.and (call $gl32
+        (i32.add (local.get $arg2) (i32.const 4))) (local.get $mask)))))
+    (if (i32.eq (local.get $direction) (i32.const 8))
+      (then
+        (store.field DxObject misc2 (local.get $entry) (local.get $ck))
+        (i32.store (local.get $keys) (local.get $high))
+        (i32.store offset=12 (local.get $keys)
+          (i32.or (i32.load offset=12 (local.get $keys)) (i32.const 1)))
+        (store.field DxObject flags (local.get $entry)
+          (i32.or (load.field DxObject flags (local.get $entry)) (i32.const 0x100))))
+      (else
+        (i32.store offset=4 (local.get $keys) (local.get $ck))
+        (i32.store offset=8 (local.get $keys) (local.get $high))
+        (i32.store offset=12 (local.get $keys)
+          (i32.or (i32.load offset=12 (local.get $keys)) (i32.const 2)))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
@@ -16350,7 +16615,8 @@
 ;; defaults PS_SOLID=0, width=1, foreground=0. Style/width setters remain
 ;; E_NOTIMPL; no unsupported state can silently alter these defaults.
 ;; The previously unused +12 word in declared16-byte DX_SURF_META owns an
-;; sixteen-byte heap state {raw COLORREF,pen,texture caps2,priority}. No global layout/capacity grows.
+;; 32-byte heap state: {raw COLORREF,pen,texture caps2,priority}, then
+;; {source key high,destination key low/high,key presence}. No global layout grows.
 ;; Native creation already zeros all16bytes before publication. State is
 ;; shared by every interface view and freed on final surface retirement.
 (func $vbdd_draw_state_ptr (param $entry i32) (result i32)
@@ -16361,10 +16627,10 @@
  (local $state i32) (local $guest i32)
  (local.set $state (call $vbdd_draw_state_ptr (local.get $entry)))
  (if (local.get $state) (then (return (local.get $state))))
- (local.set $guest (call $heap_alloc (i32.const 16)))
+ (local.set $guest (call $heap_alloc (i32.const 32)))
  (if (i32.eqz (local.get $guest)) (then (return (i32.const 0))))
  (local.set $state (call $g2w (local.get $guest)))
- (call $zero_memory (local.get $state) (i32.const 16))
+ (call $zero_memory (local.get $state) (i32.const 32))
  (i32.store offset=12 (call $dx_surf_meta_ptr (local.get $entry)) (local.get $guest))
  (local.get $state))
 (func $dx_surface_caps2_get (param $entry i32) (result i32)

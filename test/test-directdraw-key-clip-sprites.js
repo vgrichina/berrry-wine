@@ -3,8 +3,8 @@
 
 // Real shipped WASM and published COM vtables; caller-owned guarded pixel storage.
 // Default: regression for equal-size keyed/clipped Blt self-overlap.
-// --frontier: diagnostic for known separate range/destination-key defects;
-// intentionally exits nonzero until those semantics are implemented.
+// --frontier retains the original distinct-surface range/destination subset.
+// Default additionally covers directional keys together, aliasing and stretch.
 // RGNDATA valid lists never overlap; overlapping-list controls only preserve
 // the emulator's existing extension, without claiming Windows conformance.
 const assert = require('assert/strict');
@@ -46,7 +46,7 @@ const apis = require('../src/api_table.json');
       const wa=(target-e.get_image_base()+e.get_guest_base())>>>0;
       const view=new DataView(memory.buffer);
       assert.equal(view.getUint32(wa,true),0xcaca0010,'public COM dispatch thunk');
-      const names={0:'QueryInterface',2:'Release',4:'CreateClipper',5:'Blt',6:'CreateSurface',7:'SetClipList',20:'SetCooperativeLevel',25:'Lock',28:'SetClipper',29:'SetColorKey',32:'Unlock'};
+      const names={0:'QueryInterface',2:'Release',4:'CreateClipper',5:'Blt',6:'CreateSurface',7:args.length===6?'BltFast':'SetClipList',16:'GetColorKey',20:'SetCooperativeLevel',25:'Lock',28:'SetClipper',29:'SetColorKey',32:'Unlock'};
       assert.equal(apis[view.getUint32(wa+4,true)].name.split('_').pop(),names[slot],'published slot identity');
       code.push(0xb8); word(object);
       code.push(0x8b, 0x00, 0xff, 0x90); word(slot * 4);
@@ -124,9 +124,9 @@ const apis = require('../src/api_table.json');
     // SetClipList must own its copy, independent of later caller mutation.
     fill(p,32+16*clips.length,0xcc);
   }
-  function check(dst,src,obj,dr,sr,name,clips,mode) {
+  function check(dst,src,obj,dr,sr,name,clips,mode,fast=false) {
     dst.seed(113); if(src!==dst)src.seed();
-    if(frontier) for(const [surface,low] of [[src,32],[dst,64]]) {
+    if(frontier || !['plain','source'].includes(mode)) for(const [surface,low] of [[src,32],[dst,64]]) {
       // Exercise below/low/interior/high/above endpoints at every pixel depth.
       // High 32-bit values also keep unsigned comparisons observable.
       const bias=surface.bps===4?0x80000000:0;
@@ -139,21 +139,31 @@ const apis = require('../src/api_table.json');
     const source=src===dst?before:snapshot(src.base,src.size+guard*2), want=before.slice();
     const keyAt=guard+src.pitch+src.bps;
     const value=pixel(source,keyAt,src.bps), mask=src.bps===4?0xffffffff:2**(8*src.bps)-1;
-    const range=mode==='range'||mode==='dest-range';
-    const sk=mode==='source'||mode==='range'?[value, range?Math.min(mask,value+3):value]:null;
+    const sourceRange=['range','both-range'].includes(mode);
+    const destRange=['dest-range','both-range'].includes(mode);
+    const sk=['source','range','both','both-range'].includes(mode)?[value, sourceRange?Math.min(mask,value+3):value]:null;
     const dv=pixel(before,keyAt,dst.bps);
-    const dk=mode==='dest'||mode==='dest-range'?[dv,range?Math.min(mask,dv+3):dv]:null;
-    if(sk||dk){const p=alloc(8), k=sk||dk;write(p,k[0]);write(p+4,k[1]);ok(com(sk?src.obj:dst.obj,29,(sk?8:2)|(range?1:0),p));}
+    const dk=['dest','dest-range','both','both-range'].includes(mode)?[dv,destRange?Math.min(mask,dv+3):dv]:null;
+    // Independent updates on the same surface must not overwrite one another.
+    // The caller buffer is immediately poisoned to require an owned key copy.
+    for(const [surface,key,flags,range] of [[src,sk,8,sourceRange],[dst,dk,2,destRange]]) {
+      if(!key)continue;
+      const p=alloc(8);write(p,key[0]);write(p+4,range?key[1]:0xdeadbeef);
+      ok(com(surface.obj,29,flags|(range?1:0),p));fill(p,8,0xcc);
+    }
     for(let y=0;y<height;y++)for(let x=0;x<width;x++) {
       if(x<dr[0]||x>=dr[2]||y<dr[1]||y>=dr[3])continue;
       if(clips&&!clips.some(r=>x>=r[0]&&x<r[2]&&y>=r[1]&&y<r[3]))continue;
-      const sx=sr[0]+x-dr[0],sy=sr[1]+y-dr[1];
+      const sx=sr[0]+Math.floor((x-dr[0])*(sr[2]-sr[0])/(dr[2]-dr[0]));
+      const sy=sr[1]+Math.floor((y-dr[1])*(sr[3]-sr[1])/(dr[3]-dr[1]));
       if(sx<0||sx>=width||sy<0||sy>=height)continue;
       const si=guard+sy*src.pitch+sx*src.bps,di=guard+y*dst.pitch+x*dst.bps;
       if(!allowed(pixel(source,si,src.bps),pixel(before,di,dst.bps),sk,dk))continue;
       for(let b=0;b<dst.bps;b++)want[di+b]=source[si+b];
     }
-    const hr=com(obj,5,rect(dr),src===dst?obj:src.obj,rect(sr),0x1000000|(sk?0x8000:0)|(dk?0x2000:0),0);
+    const hr=fast
+      ?com(obj,7,dr[0],dr[1],src===dst?obj:src.obj,rect(sr),(sk?1:0)|(dk?2:0))
+      :com(obj,5,rect(dr),src===dst?obj:src.obj,rect(sr),0x1000000|(sk?0x8000:0)|(dk?0x2000:0),0);
     ok(hr);
     const got=snapshot(dst.base,dst.size+guard*2), i=got.findIndex((v,i)=>v!==want[i]);
     if(i!==-1)failures.push({name,mode,bpp:dst.bps*8,hr,byte:i,actual:got[i],expected:want[i]});
@@ -173,7 +183,7 @@ const apis = require('../src/api_table.json');
         ['full',[[0,0,7,6]]],['overlapping-extension',[[0,0,5,4],[2,2,7,6]]],
       ]) {
         clipsFor(s,clips);
-        for(const mode of frontier?['range','dest','dest-range']:['plain','source']) {
+        for(const mode of frontier?['range','dest','dest-range']:['plain','source','range','dest','dest-range','both','both-range']) {
           for(const [name,dr,sr] of [
             ['right',[1,0,7,6],[0,0,6,6]], ['left',[0,0,6,6],[1,0,7,6]],
             ['down',[0,1,7,6],[0,0,7,5]], ['up',[0,0,7,5],[0,1,7,6]],
@@ -186,7 +196,42 @@ const apis = require('../src/api_table.json');
             check(s,s,obj,dr,sr,version+'/'+clipName+'/'+name,clips,mode);
           }
           check(s,other,obj,[0,0,7,6],[0,0,7,6],version+'/'+clipName+'/distinct',clips,mode);
+          if(!frontier && !['plain','source'].includes(mode)) {
+            for(const [name,dr,sr] of [
+              ['stretch-up',[0,0,7,6],[1,1,4,4]],
+              ['stretch-down',[1,1,4,4],[0,0,7,6]],
+            ]) {
+              check(s,s,obj,dr,sr,version+'/'+clipName+'/'+name+'/alias',clips,mode);
+              check(s,other,obj,dr,sr,version+'/'+clipName+'/'+name+'/distinct',clips,mode);
+            }
+            if(!clips) {
+              check(s,s,obj,[1,0,7,6],[0,0,6,6],version+'/fast/right',null,mode,true);
+              check(s,other,obj,[0,0,7,6],[0,0,7,6],version+'/fast/distinct',null,mode,true);
+            }
+          }
         }
+      }
+      if(!frontier) {
+        const key=alloc(8), answer=alloc(16);
+        write(key,11);write(key+4,13);ok(com(obj,29,9,key));
+        write(key,21);write(key+4,23);ok(com(obj,29,3,key));
+        const get=(direction,expected,missing=0x887600d7)=>{
+          fill(answer,16,0xa5);const hr=com(obj,16,direction,answer+4);
+          if(expected) {ok(hr);assert.deepEqual([read(answer+4),read(answer+8)],expected);}
+          else {assert.equal(hr,missing);assert.deepEqual(snapshot(answer+4,8),Array(8).fill(0xa5));}
+          assert.deepEqual(snapshot(answer,4),Array(4).fill(0xa5));
+          assert.deepEqual(snapshot(answer+12,4),Array(4).fill(0xa5));
+        };
+        get(8,[11,13]);get(2,[21,23]);
+        ok(com(obj,29,8,0));get(8,null);get(2,[21,23]);
+        write(key,17);write(key+4,0xdeadbeef);ok(com(obj,29,8,key));
+        get(8,[17,17]);get(2,[21,23]);
+        assert.equal(com(obj,29,4,key),0x80004001,'unsupported overlay must not replace blit keys');
+        assert.equal(com(obj,29,0,key),0x80070057,'missing direction is invalid');
+        get(8,[17,17]);get(2,[21,23]);
+        get(4,null,0x80004001);get(0,null,0x80070057);
+        ok(com(obj,29,2,0));get(2,null);get(8,[17,17]);
+        ok(com(obj,29,8,0));get(8,null);
       }
       ok(com(s.obj,28,0)); com(obj,2);
     }
