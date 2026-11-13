@@ -2823,19 +2823,22 @@ class WineAssembly {
     // --- Input ---
     h.check_input = () => {
       if (!self.renderer) return 0;
+      // Retained main/auxiliary imports may still be polled after Stop or
+      // reinitialization. Their captured process incarnation is authoritative.
+      if (ctx.windowLookupLifetime.exited || ctx.windowLookupLifetime !== self._processObject) return 0;
       const clearInactiveInput = () => {
         self._lastInputEvent = null;
         self.renderer._activeInputEvent = null;
       };
       // Which queued events are this instance's to take. In multi-app mode
       // that is its own hwnd range; otherwise it is any window this WASM
-      // instance owns. An event with no hwnd belongs to whoever asks first.
+      // instance owns. Legacy CLI events without an owner keep first-poll routing.
       // The dequeue itself, and the async-key/repaint bookkeeping that has to
       // follow it, live in the renderer (renderer-input.js takeInput) -- this
       // used to be a second transcription of them that had already lost the
       // GetAsyncKeyState press bit.
       const ownerInstance = ctx.instance || self.instance;
-      const owns = (self._hwndBase && self._multiApp)
+      const ownsWindow = (self._hwndBase && self._multiApp)
         ? (e) => {
           if (!e || !e.hwnd) return true;
           const win = self.renderer.windows && self.renderer.windows[e.hwnd];
@@ -2857,6 +2860,14 @@ class WineAssembly {
           if (win && win.processId) return win.processId === self.processId;
           return !win || !win.wasm || win.wasm === ownerInstance;
         };
+      const owns = e => {
+        if (e && e.type === 'key') {
+          if (e.keyboardProcess) return e.keyboardProcess === ctx.windowLookupLifetime && !e.keyboardProcess.exited;
+          if (e.keyboardProcessId) return e.keyboardProcessId === self.processId;
+          if (e.keyboardOwner) return e.keyboardOwner === ownerInstance;
+        }
+        return ownsWindow(e);
+      };
       const evt = self.renderer.takeInput(owns);
       if (!evt) {
         if (self.renderer.inputQueue.length === 0) clearInactiveInput();
@@ -5516,6 +5527,18 @@ class WineAssembly {
 
   stop(options = {}) {
     this._d3dimPublicationJoin?.retire('process-retired');
+    // Drop only this incarnation's queued keyboard input, in place: publishers
+    // retain the queue array. A reused HWND/PID must never replay these keys.
+    const queue = this.renderer && this.renderer.inputQueue;
+    if (queue) {
+      let write = 0;
+      for (const event of queue) {
+        if (event && event.keyboardProcess === this._processObject) continue;
+        queue[write++] = event;
+      }
+      queue.length = write;
+    }
+    this._lastInputEvent = null;
     if (!this._processObject.exited) {
       this._processObject.exited = true;
       this._processObject.exitCode = (this._exitCode ?? 0) >>> 0;
