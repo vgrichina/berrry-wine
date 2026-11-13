@@ -3664,6 +3664,14 @@
       (br $draw_lines)))
     (drop (call $gdi_dc_set_field (local.get $hdc) (i32.const 32)
       (local.get $saved_align) (i32.const 0)))
+    ;; Vertically aligned single-line text reports the distance from the
+    ;; rectangle top to the rendered cell bottom, including its top margin.
+    ;; device_y now follows the last cell; convert the complete span back to
+    ;; logical units once, so DC origins and scaling do not alter the offset.
+    (if (i32.and (local.get $single_line)
+          (i32.ne (i32.and (local.get $format) (i32.const 12)) (i32.const 0)))
+      (then (return (call $gdi_bitmap_text_device_y_delta
+        (local.get $desc) (i32.sub (local.get $device_y) (local.get $top_device))))))
     (local.get $total_height))
 
   (func (export "test_gdi_bitmap_font_count") (result i32)

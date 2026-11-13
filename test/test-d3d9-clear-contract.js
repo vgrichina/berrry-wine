@@ -35,13 +35,33 @@ function extract(source,name){
   throw Error('unterminated function '+name);
 }
 function native(){
+  // Historical excerpt compiler identities, not moving build compiler pins.
+  // Recover its five Git objects in memory instead of copying an old checkout.
+  const compilerCommit='f6571101e38985b3fa34d328f2ccadd9735a7573';
   const compiler=path.resolve(process.env.WINE_CLEAR_COMPILER||path.join(root,'tools/watx.js'));
   const pins=require('./support/d3d9-clear-excerpt-pins.json');
-  const compilerRoot=path.dirname(path.dirname(compiler));
+  const compilerRoot=path.dirname(path.dirname(compiler)),inputs=new Map();
   for(const [file,pin]of Object.entries(pins.compiler)){
-    const bytes=fs.readFileSync(path.join(compilerRoot,file));
+    const bytes=process.env.WINE_CLEAR_COMPILER
+      ?fs.readFileSync(path.join(compilerRoot,file))
+      :require('child_process').execFileSync('git',['show',compilerCommit+':'+file],
+        {cwd:root,maxBuffer:1048576});
     assert.strictEqual(bytes.length,pin.bytes,file);assert.strictEqual(sha(bytes),pin.sha256,file);
+    assert.strictEqual(crypto.createHash('sha1').update('blob '+bytes.length)
+      .update(Buffer.from([0])).update(bytes).digest('hex'),pin.blob,file);
+    inputs.set(path.join(compilerRoot,file),bytes);
   }
+  assert(inputs.has(compiler),'compiler override must name the pinned tools/watx.js');
+  // Execute the pinned loader with reads restricted to those verified bytes.
+  // Keep this private: no global require/fs replacement or source-tree archive.
+  const Module=require('module'),loader=new Module(compiler,module);
+  const nativeRequire=Module.createRequire(compiler);
+  loader.filename=compiler;
+  loader.require=id=>id==='fs'?{readFileSync(file,encoding){
+    const bytes=inputs.get(path.resolve(file));assert(bytes,'unpinned compiler input: '+file);
+    return encoding?bytes.toString(encoding):bytes;
+  }}:nativeRequire(id);
+  loader._compile(inputs.get(compiler).toString('utf8'),compiler);
   const parts=[['src/09ag-d3d-shader-vm.wat','d3d_shader_vm_range'],
     ...['d3d_software_clear','d3d_software_clear_masked','d3d_software_clear_stencil','d3d_software_quantize_depth']
       .map(n=>['src/09ah-d3d-software.wat',n])];
@@ -49,11 +69,11 @@ function native(){
   for(const s of slices){const pin=pins.functions[s.name];assert.strictEqual(sha(s.text),pin.sha256,s.name);assert.strictEqual(Buffer.byteLength(s.text),pin.bytes,s.name);}
   const source='(memory 1 1)\n(export "memory" (memory 0))\n'+slices.map(s=>s.text).join('\n')+'\n';
   assert(Buffer.byteLength(source)<8192,'bounded native excerpt');
-  const r=require(compiler).compile(source,new Map(),{mode:'production',standardWat:true,runtimeBuiltins:false,strictDeclarations:true});
+  const r=loader.exports.compile(source,new Map(),{mode:'production',standardWat:true,runtimeBuiltins:false,strictDeclarations:true});
   assert(r.success,r.error||r.message);const bytes=Buffer.from(r.wasmBinary);
   const e=new WebAssembly.Instance(new WebAssembly.Module(bytes)).exports;
   for(const name of parts.slice(1).map(p=>p[1]))assert.strictEqual(typeof e[name],'function',name);
-  return {e,receipt:{compiler,sourceBytes:Buffer.byteLength(source),sourceSHA256:sha(source),moduleBytes:bytes.length,moduleSHA256:sha(bytes)}};
+  return {e,receipt:{compiler,compilerCommit,compilerSource:process.env.WINE_CLEAR_COMPILER?'verified override':'Git objects in memory',sourceBytes:Buffer.byteLength(source),sourceSHA256:sha(source),moduleBytes:bytes.length,moduleSHA256:sha(bytes)}};
 }
 const {e,receipt}=native(),memory=e.memory.buffer;
 const color={id:7,width:4,height:4,format:21},other={...color,id:8};

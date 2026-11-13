@@ -289,7 +289,9 @@ const extraWat = `
   writeFormat(keyboardFormat, keyboardObjects, 'keyboard');
   assert.strictEqual(wat.test_di_set_data_format(keyboard, keyboardFormat) >>> 0, 0,
     'SetDataFormat accepts the standard 256-byte keyboard layout');
-  assert.strictEqual(wat.test_di_set_cooperative_level(keyboard, 0x10000, 6) >>> 0, 0);
+  // This format fixture has no activated guest window; use a legitimate
+  // background desktop device. Foreground ownership has a real-host fixture.
+  assert.strictEqual(wat.test_di_set_cooperative_level(keyboard, 0x10000, 10) >>> 0, 0);
   assert.strictEqual(wat.test_di_acquire(keyboard) >>> 0, 0);
 
   // Win98-era DirectInput enumerates the system mouse and keyboard through
@@ -709,7 +711,7 @@ const extraWat = `
   assert.strictEqual(setLithFormat([[guidKey, 0x04 | (DIK_UP << 8)], [0, 0x0c | (DIK_LCONTROL << 8)]]), 0);
   assert.strictEqual(setLithFormat([[0, 0x01 | (DIK_UP << 8)]]), 0x80070057,
     'an axis type never matches a key');
-  assert.strictEqual(wat.test_di_set_cooperative_level(lith, 0x10000, 6) >>> 0, 0);
+  assert.strictEqual(wat.test_di_set_cooperative_level(lith, 0x10000, 10) >>> 0, 0);
   wat.guest_write32(property + 16, 9);
   assert.strictEqual(wat.test_di_set_buffer_size(lith, 1, property) >>> 0, 0);
   assert.strictEqual(wat.test_di_acquire(lith) >>> 0, 0,

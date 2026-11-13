@@ -8,7 +8,19 @@ const { bootRenderHarness } = require('./render-helper');
 const RegionMap = require('../lib/region-map.generated.js');
 
 (async () => {
-  const { exports: wat, memory, hostCtx } = await bootRenderHarness();
+  const { exports: wat, memory, hostCtx } = await bootRenderHarness({ extraWat: `
+    (func (export "test_drawtext_scaled_origin") (param $hdc i32)
+      (call $handle_SetMapMode (local.get $hdc) (i32.const 8)
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+      (call $handle_SetWindowExtEx (local.get $hdc) (i32.const 1) (i32.const 1)
+        (i32.const 0) (i32.const 0) (i32.const 0))
+      (call $handle_SetViewportExtEx (local.get $hdc) (i32.const 1) (i32.const 2)
+        (i32.const 0) (i32.const 0) (i32.const 0))
+      (call $handle_SetWindowOrgEx (local.get $hdc) (i32.const 0) (i32.const 1)
+        (i32.const 0) (i32.const 0) (i32.const 0))
+      (call $handle_SetViewportOrgEx (local.get $hdc) (i32.const 0) (i32.const 4)
+        (i32.const 0) (i32.const 0) (i32.const 0)))
+  ` });
   const bytes = new Uint8Array(memory.buffer);
   const imageBase = wat.get_image_base() >>> 0;
   const wa = guest => RegionMap.g2w(guest, imageBase);
@@ -130,7 +142,8 @@ const RegionMap = require('../lib/region-map.generated.js');
   clear();
   const bottom = allocZero(16);
   writeRect(bottom, 0, 30, 20, 46);
-  assert.strictEqual(wat.test_call_DrawTextA(hdc, textAA, 2, bottom, 0x8 | 0x20), 8);
+  assert.strictEqual(wat.test_call_DrawTextA(hdc, textAA, 2, bottom, 0x8 | 0x20), 16,
+    'DT_BOTTOM returns the offset from rectangle top to text bottom');
   assert.strictEqual(pixel(3, 35), 0xffffff, 'DT_BOTTOM must leave the upper margin clear');
   assert.strictEqual(pixel(3, 41), 0, 'DT_BOTTOM must anchor the bitmap baseline block');
 
@@ -143,6 +156,40 @@ const RegionMap = require('../lib/region-map.generated.js');
     'DT_VCENTER without DT_SINGLELINE must be ignored and start at the top');
   assert.strictEqual(pixel(3, 38), 0xffffff,
     'ignored DT_VCENTER must not shift a multiline layout down');
+
+  // The return value is not simply the font height when single-line vertical
+  // alignment adds a top margin. ANSI and UTF-16 share the native contract.
+  const wideAA = allocZero(6);
+  wat.guest_write16(wideAA, 65);
+  wat.guest_write16(wideAA + 2, 65);
+  const verticalRect = allocZero(16);
+  for (const scale of [1, 2]) {
+    if (scale === 2) wat.test_drawtext_scaled_origin(hdc);
+    for (const [draw, text] of [
+      [wat.test_call_DrawTextA, textAA], [wat.test_call_DrawTextW, wideAA],
+    ]) {
+      for (const [flags, expected, firstRow] of [
+        [0x20, 8, 4], [0x24, 14, 10], [0x28, 20, 16],
+        [0x4, 8, 4], [0x8, 8, 4],
+      ]) {
+        clear();
+        writeRect(verticalRect, 2, 4, 26, 24);
+        assert.strictEqual(draw(hdc, text, 2, verticalRect, flags), expected,
+          `DrawText vertical return flags=${flags}`);
+        const deviceRow = scale * firstRow + (scale === 2 ? 2 : 0);
+        assert.strictEqual(pixel(3, deviceRow), 0, 'aligned glyph row remains correct');
+        assert.deepStrictEqual([0, 4, 8, 12].map(offset =>
+          wat.guest_read32(verticalRect + offset)), [2, 4, 26, 24]);
+
+        clear();
+        writeRect(verticalRect, 2, 4, 26, 24);
+        assert.strictEqual(draw(hdc, text, 2, verticalRect, flags | 0x400), 8,
+          'DT_CALCRECT reports cell height independently of vertical alignment');
+        assert.strictEqual(wat.guest_read32(verticalRect + 12), 12);
+        assert.strictEqual(pixel(3, deviceRow), 0xffffff, 'DT_CALCRECT does not paint');
+      }
+    }
+  }
 
   assert.strictEqual(wat.test_call_RemoveFontResourceA(path), 1);
   console.log('PASS  WAT bitmap ExtTextOut and DrawText honor native layout semantics');
