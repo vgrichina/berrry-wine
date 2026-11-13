@@ -5265,6 +5265,7 @@
     (local $dx i32) (local $dy i32) (local $dw i32) (local $dh i32)
     (local $sx i32) (local $sy i32) (local $sw i32) (local $sh i32)
     (local $bpp i32) (local $bps i32) (local $row i32)
+    (local $reverse i32) (local $copy_row i32)
     (local $ckey i32) (local $col i32)
     (local $drblt_flags i32) (local $src_keyed i32)
     (local $clipper i32) (local $clip_entry i32) (local $clip_data i32)
@@ -5744,15 +5745,24 @@
               (local.set $row (i32.add (local.get $row) (i32.const 1)))
               (br $clip_blit_row))))
           (else
+            ;; memory.copy preserves horizontal overlap within each row;
+            ;; downward self-copies must also preserve unread source rows.
+            (local.set $reverse
+              (i32.and (i32.eq (local.get $dst_dib) (local.get $src_dib))
+                (i32.and (i32.gt_u (local.get $dy) (local.get $sy))
+                  (i32.lt_u (local.get $dy) (i32.add (local.get $sy) (local.get $dh))))))
             (local.set $row (i32.const 0))
             (block $blit_done (loop $blit_row
               (br_if $blit_done (i32.ge_u (local.get $row) (local.get $dh)))
+              (local.set $copy_row
+                (select (i32.sub (i32.sub (local.get $dh) (i32.const 1)) (local.get $row))
+                  (local.get $row) (local.get $reverse)))
               (call $memcpy
                 (i32.add (local.get $dst_dib)
-                  (i32.add (i32.mul (i32.add (local.get $dy) (local.get $row)) (local.get $dst_pitch))
+                  (i32.add (i32.mul (i32.add (local.get $dy) (local.get $copy_row)) (local.get $dst_pitch))
                            (i32.mul (local.get $dx) (local.get $bps))))
                 (i32.add (local.get $src_dib)
-                  (i32.add (i32.mul (i32.add (local.get $sy) (local.get $row)) (local.get $src_pitch))
+                  (i32.add (i32.mul (i32.add (local.get $sy) (local.get $copy_row)) (local.get $src_pitch))
                            (i32.mul (local.get $sx) (local.get $bps))))
                 (i32.mul (local.get $dw) (local.get $bps)))
               (local.set $row (i32.add (local.get $row) (i32.const 1)))
