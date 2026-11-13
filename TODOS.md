@@ -47,6 +47,13 @@ PROTECTED RECOVERY LAYER (completed c3335ce9b, root reviewed): keep the entire s
 
 Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backup 18 expires 2026-11-27T01:05:39.765Z. Their recovery instructions are in `scratch/runs/20261113-closed-six-nine-offload-lmarbles-0500/RECOVERY.md` and `scratch/runs/20261113-dense-backup-puzzle2-0650/RECOVERY.md`. Recover before expiry; these snapshots are not permanent archives. Native captures/saves remain local.
 
+- [ ] Owner186: reconcile linked games with EXE corpus and full Worms editions
+  id: EXE-CORPUS-OWNER-POST-20261113
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
+  Source: https://x.com/idanbeck/status/2121121791066403028 (fetch returned403; public search supplied no exact post contents). Owner asked to forward the titles or screenshot; reply2521 delivered and follow-up2522 sent. The corpus request does not approve the pending host reserve change.
+  Audit: current manifest has Worms2Demo and WormsArmageddonDemo, no full Worms edition. Worms2Demo's149 declared local paths are present and hashed; native gamePE SHA256 cfb393c9ae72764dd4ff85b3e679671d28017d59d5c4b852d64bee7597447caa. ArmageddonDemo's executable, local manifest and fiveDLL paths are all missing locally; its pinned667-file recovery recipe and historical demo gameplay notes remain available. SDK Wormhole is unrelated. No new download/game/browser run or full-version qualification. Evidence scratch/runs/20261113-coordinator-owner186-corpus/worms-audit.json.
+  Next: obtain the post's exact titles/editions; map every title to current corpus entry, complete local route, provenance and actual gameplay evidence. Recover/add the requested editions with verified original packages when capacity permits; demo availability does not establish full-version coverage.
+
 - [x] GL/D3D actual context-loss readback failure
   id: GL-D3D-CONTEXT-LOSS-READBACK-20261113
   Update 2026-11-13T03:39Z: Root reviewed8321c5172,110 sealed files/32 full gzip identities, exact8x8 DIB/RGBA and padding in all six real Chrome151/WebGL2 routes; browser-loaded production files match published Git. Truthful fault retains accepted pending frame, no false sync completion, restored old frame rejects, explicit invalidated cleanup avoids1282 and fresh executor draws exact pixels. Seven focused checks and locked build pass. Timing probe observed microtask restore timeout versus later-task success in this Chrome. Scoped defect repaired; broader27-app gameplay remains open. Evidence scratch/runs/20261113-coordinator-webgl1500-review-1540/.
