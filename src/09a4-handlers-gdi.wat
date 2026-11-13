@@ -3032,6 +3032,7 @@
   ;; 450: StretchBlt(hdcDest, xDest, yDest, wDest, hDest, hdcSrc, xSrc, ySrc, wSrc, hSrc, dwRop)
   (func $handle_StretchBlt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $dst i32) (local $src i32) (local $src_hdc i32)
+    (local $dw i32) (local $dh i32)
     (local $sx i32) (local $sy i32) (local $sw i32) (local $sh i32)
     (local $rop i32) (local $rop3 i32)
     (local $dx i32) (local $dy i32) (local $pattern i32) (local $ok i32)
@@ -3048,12 +3049,27 @@
       (then
         (local.set $dx (call $gdi_line_map_x (local.get $dst) (local.get $arg1)))
         (local.set $dy (call $gdi_line_map_y (local.get $dst) (local.get $arg2)))
+        ;; Both origins and extents are logical units. Map the endpoints before
+        ;; raster clipping/sampling; transforming only the origin leaves a
+        ;; scaled viewport with the wrong footprint and source sampling ratio.
+        (local.set $dw (i32.sub
+          (call $gdi_line_map_x (local.get $dst) (i32.add (local.get $arg1) (local.get $arg3)))
+          (local.get $dx)))
+        (local.set $dh (i32.sub
+          (call $gdi_line_map_y (local.get $dst) (i32.add (local.get $arg2) (local.get $arg4)))
+          (local.get $dy)))
         (if (local.get $src_hdc)
           (then
             (if (i32.eqz (call $gdi_surface_descriptor (local.get $src_hdc) (local.get $src)))
               (then (local.set $src (i32.const 0))))
             (if (local.get $src)
               (then
+                (local.set $sw (i32.sub
+                  (call $gdi_line_map_x (local.get $src) (i32.add (local.get $sx) (local.get $sw)))
+                  (call $gdi_line_map_x (local.get $src) (local.get $sx))))
+                (local.set $sh (i32.sub
+                  (call $gdi_line_map_y (local.get $src) (i32.add (local.get $sy) (local.get $sh)))
+                  (call $gdi_line_map_y (local.get $src) (local.get $sy))))
                 (local.set $sx (call $gdi_line_map_x (local.get $src) (local.get $sx)))
                 (local.set $sy (call $gdi_line_map_y (local.get $src) (local.get $sy))))))
           (else (local.set $src (i32.const 0))))
@@ -3066,14 +3082,14 @@
           (else
             (local.set $ok (call $gdi_raster_stretch_blt
               (local.get $arg0) (local.get $src_hdc) (local.get $dst) (local.get $dx) (local.get $dy)
-              (local.get $arg3) (local.get $arg4) (local.get $src)
+              (local.get $dw) (local.get $dh) (local.get $src)
               (local.get $sx) (local.get $sy) (local.get $sw) (local.get $sh)
               (local.get $pattern) (local.get $rop)))))
         (if (local.get $ok)
           (then (call $gdi_geometry_present (local.get $arg0) (local.get $dst)
             (local.get $dx) (local.get $dy)
-            (i32.add (local.get $dx) (local.get $arg3))
-            (i32.add (local.get $dy) (local.get $arg4))))))
+            (i32.add (local.get $dx) (local.get $dw))
+            (i32.add (local.get $dy) (local.get $dh))))))
       (else (local.set $ok (i32.const 0))))
     (i32.store offset=0 (global.get $reg_base) (local.get $ok))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 48)))  ;; stdcall, 11 args
