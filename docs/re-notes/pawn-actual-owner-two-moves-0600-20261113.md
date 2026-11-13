@@ -52,7 +52,8 @@ board, historical GetDC reinvestigation or startup matrix occurred.
 All canonical0450 source and six original media pins matched before freezing
 and after the refusal. The current module remains
 `04c534192ee3fe39e388536c2ce710c12c47a5cd2ca4d95c19f9d00b1e8f0a17`.
-Frozen Git revision is `5ea2b93725c957be7034a03b0b78db33b005f7fa`.
+Frozen Git revision is `29eb68d2d5cf61dd9a0ae2014bdb790c11ca4703`
+(the shared main advanced afterward; the frozen source pins still matched).
 Evidence includes exact relevant binary diff, relevant untracked source patch,
 owned helper patch, path/SHA pins, parent references, freeze and decision.
 No source archive, media copy or old matrix rerun was made. No production
