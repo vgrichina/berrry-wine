@@ -239,4 +239,43 @@ assert.equal(fixture({ asyncFlip: false }).gpu.call(OPCODES.FLIP, 0x1100), 0, 'n
 assert.equal(fixture({ version: 1 }).gpu.call(OPCODES.FLIP, 0x1100), 0, 'WebGL1 has no pixel-pack buffer');
 assert.equal(fixture({ own: false }).gpu.call(OPCODES.FLIP, 0x1100), 0, 'a back buffer this executor does not own');
 
-console.log('PASS  D3DIM WebGL2 Flip queues its readback and collects it at the next fence of those bytes');
+// Context loss makes WebGL reads silent no-ops rather than JS exceptions.
+// Detect both a preexisting loss and a loss during collection, before any
+// native bytes, shadow, completion counts or accepted ownership can change.
+for (const bpp of [16,32]) for (const queued of [false,true]) for (const during of [false,true]) {
+  const f=fixture({bpp});
+  let lost=false;
+  f.gl.isContextLost=()=>lost;
+  if(queued)f.gpu.call(OPCODES.FLIP,f.flipDesc);
+  const pending=f.target.inflight,before=f.u8.slice(),shadow=f.target.shadow;
+  if(during) {
+    const method=queued?'getBufferSubData':'readPixels';
+    f.gl[method]=()=>{lost=true;};
+  } else lost=true;
+  assert.throws(()=>f.gpu.fence(),/readback context lost/);
+  assert.deepEqual(f.u8,before,'native memory including canaries remains exact');
+  assert.equal(f.target.inflight,pending,'accepted frame is retained');
+  assert.equal(f.target.shadow,shadow);
+  assert.equal(f.gpu.stats.syncs,0);
+  lost=false; // Public restoration cannot revalidate old GL objects/frame.
+  assert.throws(()=>f.gpu.fence(),/recreate executor/);
+  assert.throws(()=>f.gpu.call(OPCODES.FLIP,f.flipDesc),/recreate executor/);
+  assert.throws(()=>f.gpu.stop(),/recreate executor/);
+  assert.equal(f.gpu.targets.size,0);assert(f.destroyed);
+}
+
+(async()=>{
+  for(const bpp of [16,32]) for(const stage of ['poll','collect']) {
+    const f=fixture({bpp});let lost=false;
+    f.gl.isContextLost=()=>lost;
+    Object.assign(f.gl,{ALREADY_SIGNALED:7,CONDITION_SATISFIED:8,TIMEOUT_EXPIRED:9});
+    f.gl.clientWaitSync=()=>{if(stage==='poll')lost=true;return 7;};
+    if(stage==='collect')f.gl.getBufferSubData=()=>{lost=true;};
+    const before=f.u8.slice();
+    await assert.rejects(f.gpu.fenceFlip(),/readback context lost/);
+    assert.deepEqual(f.u8,before);assert(f.target.dirty);assert.equal(f.gpu.stats.syncs,0);
+    lost=false;await assert.rejects(f.gpu.fenceFlip(),/recreate executor/);
+    assert.throws(()=>f.gpu.stop(),/recreate executor/);assert(f.destroyed);
+  }
+  console.log('PASS D3DIM queued ownership, retry exceptions and native16/32 silent loss before/during sync/async readback');
+})().catch(e=>{console.error(e);process.exitCode=1;});

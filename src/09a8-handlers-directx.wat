@@ -5263,6 +5263,54 @@
         (i32.store8 offset=2 (local.get $p) (i32.shr_u (local.get $v) (i32.const 16))))
       (else (i32.store (local.get $p) (local.get $v)))))
 
+  ;; Equal-size keyed/region copies need memmove ordering too. Both axes
+  ;; walk away from unread source pixels; clip holes do not change that order.
+  ;; Called only for identical backing/pitch and intersecting rectangles.
+  (func $dx_blt_overlap_pixels
+      (param $dib i32) (param $pitch i32) (param $bps i32)
+      (param $dx i32) (param $dy i32) (param $sx i32) (param $sy i32)
+      (param $w i32) (param $h i32) (param $keyed i32) (param $key i32)
+      (param $clip_entry i32) (param $clip_data i32)
+    (local $i i32) (local $j i32) (local $x i32) (local $y i32)
+    (local $src i32) (local $dst i32) (local $col i32)
+    (block $done (loop $rows
+      (br_if $done (i32.ge_u (local.get $i) (local.get $h)))
+      (local.set $y (local.get $i))
+      (if (i32.gt_u (local.get $dy) (local.get $sy))
+        (then (local.set $y (i32.sub (i32.sub (local.get $h) (i32.const 1)) (local.get $i)))))
+      (local.set $j (i32.const 0))
+      (block $row_done (loop $cols
+        (br_if $row_done (i32.ge_u (local.get $j) (local.get $w)))
+        (local.set $x (local.get $j))
+        (if (i32.gt_u (local.get $dx) (local.get $sx))
+          (then (local.set $x (i32.sub (i32.sub (local.get $w) (i32.const 1)) (local.get $j)))))
+        (if (call $dx_clipper_contains (local.get $clip_entry) (local.get $clip_data)
+              (i32.add (local.get $dx) (local.get $x)) (i32.add (local.get $dy) (local.get $y)))
+          (then
+            (local.set $src (i32.add (local.get $dib)
+              (i32.add (i32.mul (i32.add (local.get $sy) (local.get $y)) (local.get $pitch))
+                (i32.mul (i32.add (local.get $sx) (local.get $x)) (local.get $bps)))))
+            (local.set $dst (i32.add (local.get $dib)
+              (i32.add (i32.mul (i32.add (local.get $dy) (local.get $y)) (local.get $pitch))
+                (i32.mul (i32.add (local.get $dx) (local.get $x)) (local.get $bps)))))
+            (local.set $col
+              (if (result i32) (i32.eq (local.get $bps) (i32.const 1))
+                (then (i32.load8_u (local.get $src)))
+                (else (if (result i32) (i32.eq (local.get $bps) (i32.const 2))
+                  (then (i32.load16_u (local.get $src)))
+                  (else (call $dx_blt_wide_load (local.get $src) (local.get $bps)))))))
+            (if (i32.or (i32.eqz (local.get $keyed)) (i32.ne (local.get $col) (local.get $key)))
+              (then
+                (if (i32.eq (local.get $bps) (i32.const 1))
+                  (then (i32.store8 (local.get $dst) (local.get $col)))
+                  (else (if (i32.eq (local.get $bps) (i32.const 2))
+                    (then (i32.store16 (local.get $dst) (local.get $col)))
+                    (else (call $dx_blt_wide_store (local.get $dst) (local.get $col) (local.get $bps))))))))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br $cols)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $rows))))
+
   ;; Blt(this, lpDestRect, lpDDSrcSurface, lpSrcRect, dwFlags, lpDDBltFx)
   ;; Note: 6 args but we only get 5 from dispatch; 6th is at ESP+24
   (func $handle_IDirectDrawSurface_Blt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -5274,6 +5322,7 @@
     (local $dx i32) (local $dy i32) (local $dw i32) (local $dh i32)
     (local $sx i32) (local $sy i32) (local $sw i32) (local $sh i32)
     (local $bpp i32) (local $bps i32) (local $row i32)
+    (local $reverse i32) (local $copy_row i32)
     (local $ckey i32) (local $col i32)
     (local $drblt_flags i32) (local $src_keyed i32)
     (local $clipper i32) (local $clip_entry i32) (local $clip_data i32)
@@ -5617,6 +5666,34 @@
           (then (local.set $dh (i32.sub (local.get $src_full_h) (local.get $sy)))))
         (local.set $sw (local.get $dw))
         (local.set $sh (local.get $dh))
+        (if (i32.and
+              (i32.or (i32.ne (local.get $src_keyed) (i32.const 0))
+                      (i32.ne (local.get $clip_entry) (i32.const 0)))
+              (i32.and
+                (i32.and (i32.eq (local.get $src_dib) (local.get $dst_dib))
+                         (i32.eq (local.get $src_pitch) (local.get $dst_pitch)))
+                (i32.and
+                  (i32.and (i32.lt_u (local.get $dx) (i32.add (local.get $sx) (local.get $dw)))
+                           (i32.lt_u (local.get $sx) (i32.add (local.get $dx) (local.get $dw))))
+                  (i32.and (i32.lt_u (local.get $dy) (i32.add (local.get $sy) (local.get $dh)))
+                           (i32.lt_u (local.get $sy) (i32.add (local.get $dy) (local.get $dh)))))))
+          (then
+            (call $dx_blt_overlap_pixels
+              (local.get $dst_dib) (local.get $dst_pitch) (local.get $bps)
+              (local.get $dx) (local.get $dy) (local.get $sx) (local.get $sy)
+              (local.get $dw) (local.get $dh) (local.get $src_keyed) (local.get $ckey)
+              (local.get $clip_entry) (local.get $clip_data))
+            (call $dx_surf_note_copy
+              (local.get $dst_entry) (local.get $src_entry)
+              (local.get $dx) (local.get $dy) (local.get $sx) (local.get $sy)
+              (local.get $dw) (local.get $dh) (local.get $drblt_flags))
+            (if (i32.and (load.field DxObject flags (local.get $dst_entry)) (i32.const 1))
+              (then
+                (call $dx_present (local.get $dst_entry))
+                (call $present_pace_full_blit (local.get $dst_entry) (local.get $dw) (local.get $dh))))
+            (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+            (return)))
         (if (local.get $src_keyed)
           (then
             ;; Without a region list every pixel is inside the clip; the
@@ -5753,15 +5830,24 @@
               (local.set $row (i32.add (local.get $row) (i32.const 1)))
               (br $clip_blit_row))))
           (else
+            ;; memory.copy preserves horizontal overlap within each row;
+            ;; downward self-copies must also preserve unread source rows.
+            (local.set $reverse
+              (i32.and (i32.eq (local.get $dst_dib) (local.get $src_dib))
+                (i32.and (i32.gt_u (local.get $dy) (local.get $sy))
+                  (i32.lt_u (local.get $dy) (i32.add (local.get $sy) (local.get $dh))))))
             (local.set $row (i32.const 0))
             (block $blit_done (loop $blit_row
               (br_if $blit_done (i32.ge_u (local.get $row) (local.get $dh)))
+              (local.set $copy_row
+                (select (i32.sub (i32.sub (local.get $dh) (i32.const 1)) (local.get $row))
+                  (local.get $row) (local.get $reverse)))
               (call $memcpy
                 (i32.add (local.get $dst_dib)
-                  (i32.add (i32.mul (i32.add (local.get $dy) (local.get $row)) (local.get $dst_pitch))
+                  (i32.add (i32.mul (i32.add (local.get $dy) (local.get $copy_row)) (local.get $dst_pitch))
                            (i32.mul (local.get $dx) (local.get $bps))))
                 (i32.add (local.get $src_dib)
-                  (i32.add (i32.mul (i32.add (local.get $sy) (local.get $row)) (local.get $src_pitch))
+                  (i32.add (i32.mul (i32.add (local.get $sy) (local.get $copy_row)) (local.get $src_pitch))
                            (i32.mul (local.get $sx) (local.get $bps))))
                 (i32.mul (local.get $dw) (local.get $bps)))
               (local.set $row (i32.add (local.get $row) (i32.const 1)))
@@ -6921,11 +7007,33 @@
   (func $handle_IDirectDrawSurface_Lock (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $wa i32) (local $dib_wa i32) (local $dib_guest i32)
     (local $left i32) (local $top i32) (local $bpp i32)
+    (local $right i32) (local $bottom i32)
     (if (i32.eqz (call $dx_surface_desc_valid (local.get $arg0) (local.get $arg2))) (then
       (i32.store (global.get $reg_base) (i32.const 0x80070057))
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
       (return)))
     (local.set $entry (call $dx_from_this (local.get $arg0)))
+    ;; Native offscreen Lock rejects rectangles outside the allocation with
+    ;; DDERR_INVALIDPARAMS and clears only lpSurface. Empty rectangles remain
+    ;; valid. Compare endpoints before arithmetic: signed negatives become
+    ;; large unsigned values, so even INT_MIN/overflow-shaped inputs fail.
+    ;; Keep texture behavior separate: native system-memory/managed textures
+    ;; permissively accept invalid rectangles (ddraw7:test_lockrect_invalid).
+    (if (local.get $arg1) (then
+      (local.set $left (call $gl32 (local.get $arg1)))
+      (local.set $top (call $gl32 (i32.add (local.get $arg1) (i32.const 4))))
+      (if (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $entry))) (i32.const 0x40)) (then
+        (local.set $right (call $gl32 (i32.add (local.get $arg1) (i32.const 8))))
+        (local.set $bottom (call $gl32 (i32.add (local.get $arg1) (i32.const 12))))
+        (if (i32.or
+              (i32.or (i32.gt_u (local.get $left) (local.get $right))
+                      (i32.gt_u (local.get $top) (local.get $bottom)))
+              (i32.or (i32.gt_u (local.get $right) (load.field DxObject width (local.get $entry)))
+                      (i32.gt_u (local.get $bottom) (load.field DxObject height (local.get $entry))))) (then
+          (call $gs32 (i32.add (local.get $arg2) (i32.const 36)) (i32.const 0))
+          (i32.store (global.get $reg_base) (i32.const 0x80070057))
+          (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+          (return)))))))
     (call $host_dx_trace (i32.const 1) (call $dx_slot_of (local.get $entry))
       (load.field DxObject flags (local.get $entry))
       (load.field DxObject misc1 (local.get $entry))
@@ -6945,8 +7053,6 @@
     (local.set $dib_wa (load.field DxObject misc1 (local.get $entry)))
     (if (local.get $arg1)
       (then
-        (local.set $left (call $gl32 (local.get $arg1)))
-        (local.set $top (call $gl32 (i32.add (local.get $arg1) (i32.const 4))))
         (local.set $bpp (load.field DxObject bpp (local.get $entry)))
         (local.set $dib_wa
           (i32.add (local.get $dib_wa)

@@ -148,8 +148,13 @@ function u32(value) {
   e.run(1);
   assert.strictEqual(e.get_eip() >>> 0, proc,
     'targeted host input enters the retained DLGPROC on the guest continuation');
-  assert.strictEqual(e.get_esp() >>> 0, stack - 20,
+  // The four callback args and return address sit below USER's extra
+  // cleanup sentinel. The modal continuation consumes that sentinel after
+  // the callback returns; it is still live at this scheduler boundary.
+  assert.strictEqual(e.get_esp() >>> 0, stack - 24,
     'host input leaves the callback frame live across scheduler slices');
+  assert.strictEqual(view.getUint32(toWasm(stack - 4), true), 0xDCBAABCD,
+    'host input preserves the modal callback cleanup sentinel');
   assert.strictEqual(view.getUint32(seenWa, true), 0,
     'host input must not synchronously execute the callback inside the modal pump');
   assert.strictEqual(e.get_sync_msg_depth(), 0,
