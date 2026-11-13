@@ -333,8 +333,12 @@ function desktopAssetPaths() {
 
   // index.html offers exactly these three lists and nothing else, so an APPS
   // entry no icon and no selector row can reach is not a live-site asset.
+  // A listed applet that only launches other entries (the Screen Savers
+  // catalog) names them in `launches`; those are reachable, so they ship too.
   const listed = [...DESKTOP_APPS, ...LOCAL_CANDIDATE_APPS, ...DEBUG_ONLY_APPS];
-  for (const [id] of listed) {
+  const ids = new Set(listed.map(([id]) => id));
+  for (const id of [...ids]) for (const child of (APPS[id] && APPS[id].launches) || []) ids.add(child);
+  for (const id of ids) {
     const app = APPS[id];
     if (!app) continue;
     add(app.exe);
