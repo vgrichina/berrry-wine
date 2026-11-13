@@ -1,7 +1,9 @@
-Current dispatch (updated 2026-11-13T11:20Z):
+Current dispatch (updated 2026-11-13T11:25Z):
 - tim-original-bitmap-resource-decoder-1220, fresh launcher PID1645843; bounded source implementation and pure tests only; original/native execution remains held.
 - worms-readonly-iso-data-volume-1200, fresh launcher PID1644320; bounded source implementation and pure tests only; original/native execution remains held.
-- drakan-passive-owning-target-interface-1220, fresh launcher PID1645844; bounded source implementation and pure tests only; original/native execution remains held.
+- worms-mixed-mode-sector-reader-1240, fresh launcher PID1652837; bounded source implementation and pure tests only; original/native execution remains held.
+
+Drakan passive-target1220 now exposes immutable adapter-owned target/context inventory. Nine pure tests and 38 observer checks passed; all 11 evidence hashes matched. Local allocation/context identity is not guest lifetime or successful pixel publication. Production WIP remains uncommitted pending real focused rendering tests and locked build. Preserve scratch/runs/20261113-drakan-passive-target-1220/. The GL/D3D 27-app and crash-sweep goals remain open; stop adding attribution-only tasks while native work is held. Fresh Worms mixed-mode reader implements a demonstrated missing CD prerequisite alongside the existing ISO/DOS lane; no MSCDEX/CDDA playback, installer, extender or turn result is claimed.
 
 Neverhood1100 repaired nonzero-exit false completion, watchdog identity/deadline and zombie liveness checks, and export-error validation. Its 29 pure controller/process tests passed; 1,227 evidence hashes matched and 360 owned process identities were stopped/reaped. Native installation and first-room interaction remain open. Preserve scratch/runs/20261113-neverhood-stage-repair-1100/.
 
