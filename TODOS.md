@@ -1,7 +1,11 @@
-Current dispatch (updated 2026-11-13T01:14:49.338524+00:00):
-- NFS III: nfs3-snapshot-headroom-native-driving-0700, launcher PID927843.
-- Pawn: pawn-qualified-owner-native-two-moves-0730, launcher PID935087.
-- LMarbles and backup: released-dense-backup-puzzle2-0650, launcher PID926718.
+Current dispatch (updated 2026-11-13T02:27Z):
+- GL/D3D crash work: graphics-native16-writer-regression-repair-1105, launcher PID1022693; repairing a reproduced lost Flip after collection throws.
+- Pawn support: native-dialog-input-regression-repair-1115, launcher PID1024369; native Save As filename/cancellation investigation.
+- LMarbles support: sdl-pointer-consumption-regression-repair-1120, launcher PID1024370; reproduced cross-window pointer/input ordering investigation.
+
+Original gameplay remains open. Pawn repeatedly shows e4/Nf6 and displayed d4, but second-turn commitment and the second reply remain UNKNOWN/UNPROVED; obtain ordinary history and a native save witness. LMarbles Puzzle2 red Up (Moves28 to27, Score1350) is accepted; pointer-first selector availability and CLEAR+next/tally remain unproved. NFS local catalogue/setup/renderer dropdown works, and explicit guarded consumption shipped in 418099fe9; native selection/race/Pause/driving still await proof. These two game-support lanes return to verified gameplay screenshots when original launches can proceed.
+
+Actual /home availability was 1,478,504,448 bytes at this dispatch check, below the owner-required 1.5GB floor. The scoped closed-event pools and eight recent canonical transcript targets have been recovered; final net savings were 18,153,472 + 1,159,168 + 8,351,744 bytes. Recovery did not sustain the floor. Do not repeat unchanged floor-only gameplay tasks or infer broader cleanup eligibility. Preserve encoded data and restore recipes; restore raw logs before old consumers. Current workers pursue concrete production defects with focused fixtures, without claiming native game progress.
 
 `/tmp/wine-coordinator-current-launches.json` records the current external worker processes. Older worker/PID and "review pending" entries below are dated history; they do not authorize duplicate dispatch or imply a process is still live. Completion processing is recorded in `scratch/usage-watch/completion-dedup.json`.
 
@@ -9,23 +13,26 @@ Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backu
 
 - [ ] Pawn current original opening progression
   id: PAWN-CURRENT-TWO-MOVE-20261113
+  Update 2026-11-13T02:27Z: Root reviewed b4548db48/43d713cde full boards and input evidence: e4/Nf6 accepted, d4 displayed; commitment UNKNOWN, second reply/save UNPROVED. Latest533bbba95 refused before native launch at1486729216B; local helper port mismatch corrected but unexercised in Pawn. Fresh native-dialog1115 investigates concrete public dialog behavior while floor unavailable.
   Update 2026-11-13T01:00Z: ROOT29eb68d2d 26sealedSHA/current04fullstartingboard personallyviewed/normalquit0bothEOF; frozenneutralowner guard refused legacyasyncSoftwarebridge beforeinput. Fresh0600 binds actual route/owner before new two-move attempt; no current moves/replies yet.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: pawn-qualified-owner-native-two-moves-0730 PID935087
+  worker: native-dialog-input-regression-repair-1115 PID1024369
   Next: Current04 owning D3D9 route, two ordinary player moves with native AI replies and fresh full-board screenshots. Historical November10 GetDC/factory/callback/TLS fix and single move/reply are closed; no obsolete NULL-crash replay.
 
 - [ ] LMarbles next original puzzle progression
   id: LMARBLES-NEXT-PUZZLE-20261113
+  Update 2026-11-13T02:27Z: Root reviewed ec8fb9df4 Tutorial18/Score0 capture; Puzzle2 pointer motion known unsent below floor. Later69a2c14ec/de7326a43 launched no native run. Earlier missing pointer motion proves no selector lock/prerequisite. Fresh SDL1120 repairs a reproduced cross-window pointer ordering defect; no new Puzzle2 clear claim.
   Update 2026-11-13T01:00Z: ROOTaccepted5ea2b9372 NEWPuzzle2 red upward move, personally compared Moves28->27/Score1350/Tier1Puzzle2;95sealedSHA/native+guard0bothEOF. Tutorial replay prerequisite only. Fresh0620 targets earned Puzzle2 clear/next/tally; clear stillUNPROVED.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: released-dense-backup-puzzle2-0650 PID926718
+  worker: sdl-pointer-consumption-regression-repair-1120 PID1024370
   Next: New Tier1Puzzle2 board/move/clear using ordinary native UI and individually reviewed captures, preferably existing local media. Prior Tutorial first-clear/TotalScore1350 is accepted and must not be claimed again as new progress.
 
 - [ ] Closed canonical worker rollout logs: local lossless recovery
   id: CLOSED-WORKER-ROLLOUT-RECOVERY-20261112
+  Update 2026-11-13T02:27Z: Root verified e647330fd eight full raw/encoded transcript hashes and24 unchanged proofs; net8351744B, assigned eight-session pool exhausted. Events43d713cde/f5627b773 net18153472B/1159168B; final scoped event inventory empty. One API0830 advance ownership claim was missed in0940 and corrected after encoding; integrity checks passed but this does not retroactively satisfy the ownership rule. No further resource worker currently assigned.
   Update 2026-11-13T00:19Z: Fresh0140 reports23 closed non-Diablo rollouts losslessly encoded; actual free1519116288B then root1516113920B above floor. Full final review pending. Prior0120 correctly refused contradictory proof access; corrected narrow result/final proofs and current registry supplied.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: nfs3-snapshot-headroom-native-driving-0700 PID927843
+  worker: none; scoped recovery complete, floor remains unmet
   Next: Finish current recovery evidence and publication; then replace this slot with fresh native NFS driving. Preserve local encoded bytes and restore recipes; no active/root/history-DB mutations.
 
 - [ ] Diablo II XP401 camp exit and native quest/save progress
@@ -40,6 +47,7 @@ Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backu
 
 - [ ] NFS III reviewed successive bends with held/released capture
   id: NFS3-HELD-CAPTURE-BENDS-20261112
+  Update 2026-11-13T02:27Z: Root verified b8ac865a5 native renderer dropdown;198090574 actual CLI expired/duplicate DOWN failures;418099fe9 explicit consumption guard with22checks9regressions and locked build. Later1e43a88fc/4c3aed5f5/e647330fd refused original launch below floor. Fixture held-frame is Solitaire, not native NFS Pause. Next native renderer selection/OK/export, race, two settled Pause/Continue frames and one reviewed>=1500ms held interval before UP/Escape remain open.
   Update 2026-11-13T00:19Z: ROOT16359a939 controller105sealed/35proofrefs and 19+4+5 receiptcases reviewed; ROOT4b820486e initial-Escape observer fix inspected/simulated consumer checks PASS. Fresh0140 8ca2c377d stopped before allocation at1474871296B; no native Pause/positive driving. Resource now reports floor restored.
   Update 2026-11-13T00:01Z: Parent16359a939finitecontroller19+4+5tests/stale-refusalqualified, positiveactualpathNOTqualified. Freshpositive-native-pause0120PID840788 exercisespositiveonactualoriginalafterPause/neverfakeBoidsPauseproof; old200msUNKNOWNretained. FullparentreviewPENDINGregistry/no duplicate.
   Update 2026-11-12T23:52Z: ROOT260adb999 11sealedSHA/44retainedproofs/135media-reference rowsrehashed; old1815PAUSE-CONTINUEframe personallyviewed. Historicalcontrolonly/nofreshPause-resume-stability/bends/lap/currentcontroller at1495482368floor. Freshfinitecontroller0040PID810324alreadyrunning; 200msUNKNOWNunchanged.
@@ -47,7 +55,7 @@ Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backu
   Update 2026-11-12T23:37Z: ROOT8dceb243e 127sealedSHA/8uniquePNGCRC/BoidsactualproductionChromecontrols verified integrity.1500msHELD292mscapture/1025msobservation;200msUNKNOWN275mscapture/1060msobservationoverlapsrelease. NOToriginalNFS/nonativePause/bends/lap. Fresh0020PID803855alreadyrunning/no duplicate, oldUNKNOWNsretained.
   Update 2026-11-12T23:35Z: Parent8dceb243e runlocal1500msheldframePASS/200msframe275msreleaseoverlapUNKNOWNterminal/no original. Freshnative-pause-reviewed-driving0020PID803855 demonstratesdocumentedactualnativePausebeforefiniteunpause-drive-pauseintervals; no heldpredicateweakening/retry200ms/no blindpath. Fullrootparentreviewpending.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: nfs3-snapshot-headroom-native-driving-0700 PID927843
+  worker: parked after e647330fd; graphics-native16-writer-regression-repair-1105 PID1022693 covers current GL/D3D crash work
   Next: After resource worker closes, fresh original NFS native Pause with two settled stable frames, then one reviewed >=1500ms held drive/independent UP/Escape. No repeat floor-only task, mock Pause promotion or200ms UNKNOWN replay.
 
 - [ ] GLTron two ordinary turns and native round outcome
