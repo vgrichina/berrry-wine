@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T14:00Z):
+Current dispatch (updated 2026-11-13T14:03Z):
 
 - neverhood-thunk-kernel-loader-boundary-2520, fresh launcher PID1858863; actual loader/selector/mode-bridge primitive boundary for original thunk connection.
 - dos-exec-parent-return-flags-repair-2540, fresh launcher PID1867561; actual successful EXEC return CF/parent flag preservation needed by original launcher.
-- thread-exit-callback-cleanup-repair-2560, fresh launcher PID1868237; actual ThreadManager exit cleanup/cancellation failure fanout, guarded pure JS.
+- newly-closed-worker-log-headroom-recovery-2580, fresh launcher PID1872085; finite exact reversible compression of newly closed text logs since12:00Z only.
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Thread-exit2560 stopped before reproduction at160,575,488 free bytes, below the1.5GB floor; no source/test edits, tests, child processes, build or behavioral result. Preserve scratch/runs/20261113-thread-exit-cleanup-2560/. Hypothesis remains open. Fresh2580 performs authorized bounded cleanup of newly closed recent worker logs only, with exact roundtrip recovery; live databases/Git/media/protected archives and active outputs are excluded. No reserve adjustment authorized or applied.
 
 Launcher2480 published0499d4079: exact CFG consumer, drive/CWD, tails/environment and BLACK/PLAY/PLAY/WRMS chain traced; original main ignores every returned outcome. Ten pure host groups/seven controls pass;46 artifacts/fifteen reconstructed dependency pins matched. Actual DOS helper reproduction shows childCF1 leaking to successful parentEXEC AX0 continuation; no original child failure observed. Preserve scratch/runs/20261113-worms-launcher-child-2480/. Fresh2540 repairs general flags seam. Localretry2500 repaired actual cancellation retry to pin0/gate0 while retaining graph on failure;13 new cases/nine adjacent pure suites/nine controls,66 artifacts/31 source pins pass. Preserve scratch/runs/20261113-local-host-loader-retry-2500/. Four extra Worker/Wasm suites were run contrary to task exclusion; all exited0, disclosed in out-of-scope.json and excluded from pure claims. Guarded rerun rejects Worker/Wasm; no runtime/build gate credit. Code remains uncommitted. Fresh2560 checks actual scheduler exit fanout with mandatory guards.
 
