@@ -9642,6 +9642,14 @@
       "kind": "continuation",
       "ownership": "pending",
       "reason": "Review 20261110 callback-transition-feed-1520: default-off private global queue reads current invocation context/root and architectural state only; sticky overflow, no guest-memory writes, allocation or execution. Not lifetime authentication."
+    },
+    {
+      "file": "lib/cli-observation-lease.js",
+      "name": "host-file",
+      "sha256": "73fe8b603c5cdc5619ae7e11a9fdc6e3868416cb5dc26d82e7e7a80bc48189a0",
+      "kind": "host-entry",
+      "reason": "Opt-in CLI cooperative admission/drain constructs actual instances and supplies invocation-owned native observation exports; allocation/pointer and raw-store lifetimes remain pending. No nonlocal API or protected policy change.",
+      "ownership": "pending"
     }
   ]
 }

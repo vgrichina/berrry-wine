@@ -169,6 +169,8 @@ const argHas = name => args.some(a => a.startsWith(`--${name}=`));
 const ENV_WASM = process.env.WINE_ASSEMBLY_WASM || '';
 const NO_BUILD = hasFlag('no-build') || !!ENV_WASM; // --no-build: skip auto-build
 const NO_CLOSE = hasFlag('no-close');      // --no-close: don't inject WM_CLOSE
+const CLI_NATIVE_OBSERVATION = hasFlag('cli-native-observation');
+if (CLI_NATIVE_OBSERVATION) require('../lib/cli-observation-lease').validateObservationArgs(args);
 const NO_RENDERER = hasFlag('no-renderer'); // --no-renderer: skip CLI canvas/renderer (guest-state diagnostics)
 // Experimental programmable D3D9 software path; no DOM or GL provider needed.
 // Keep capability opt-in separate: the implementation is not a full SM profile.
@@ -5025,8 +5027,16 @@ async function main() {
   }
   // MORROWIND_NAME_IMPORT_END
   if (serviceClock) batchClock.wrapImports(imports.host);
-  const nativeInstance = await WebAssembly.instantiate(wasmModule, imports);
-  const instance = serviceClock ? batchClock.wrapInstance(nativeInstance) : nativeInstance;
+  const cliObservation = CLI_NATIVE_OBSERVATION ? new (require('../lib/cli-observation-lease').CliObservationLease)({
+    memory, module: wasmModule,
+    paused: () => !stopped && controlFrozen && controlRunCredits === 0 && !controlStepWaiter,
+    threads: () => threadManager,
+  }) : null;
+  if (cliObservation) cliObservation.wrapImports(imports);
+  const nativeInstance = cliObservation ? cliObservation.instantiate(wasmModule, imports)
+    : await WebAssembly.instantiate(wasmModule, imports);
+  const instance = cliObservation ? nativeInstance
+    : serviceClock ? batchClock.wrapInstance(nativeInstance) : nativeInstance;
   ctx.exports = instance.exports;
   instance.exports.set_hwnd_base(processDesktop.hwndBase);
   // Quiet runs silence the per-call API log from the first instruction, DLL
@@ -5664,7 +5674,10 @@ async function main() {
 
   threadManager = new ThreadManager(wasmModule, memory, instance, makeWorkerImports, {
     strictServiceTime: serviceClock,
-    instantiateCooperative: serviceClock ? (module, imports) =>
+    instantiateCooperative: cliObservation ? (module, imports) => {
+      cliObservation.wrapImports(imports);
+      return cliObservation.instantiate(module, imports);
+    } : serviceClock ? (module, imports) =>
       batchClock.wrapInstance(new WebAssembly.Instance(module, imports)) : undefined,
     hwndBase: () => processDesktop.hwndBase,
     threadSnapshotSystemComplete: () => !threadSnapshotSystemIncomplete,
@@ -7398,9 +7411,12 @@ async function main() {
   const waitForControlBatch = async () => {
     while (controlFrozen && controlRunCredits <= 0 && !stopped) {
       const pausedAt = deadlineMs ? Date.now() : 0;
-      await new Promise(resolve => {
-        controlWake = resolve;
-      });
+      if (cliObservation) cliObservation.parked = true;
+      try {
+        await new Promise(resolve => { controlWake = resolve; });
+      } finally {
+        if (cliObservation) cliObservation.parked = false;
+      }
       if (deadlineMs) deadlineMs += Date.now() - pausedAt;
     }
     if (!stopped) controlPreviousBatchRan = true;
@@ -7496,6 +7512,7 @@ async function main() {
     },
     persist: require('../lib/native-fault-latch').persistNativeFault,
   });
+  if (cliObservation) cliObservation.bindThreads(threadManager);
   threadManager.nativeFaultLatch = nativeFault;
   const terminateNativeFault = cmd => {
     const result = nativeFault.terminate(cmd);
@@ -7534,7 +7551,17 @@ async function main() {
     else if (ev.action === 'mouseup') renderer.handleMouseUp(ev.x, ev.y, 1);
     else throw new Error('unsupported guarded input');
   };
-  const handleControlCommand = (cmdIn) => {
+  const handleControlCommand = cmdIn => {
+    if (!cliObservation) return executeControlCommand(cmdIn);
+    if (cliObservation.state !== 'open') throw new Error('observation command admission closed');
+    // Observation must not count its own boundary wait as an outstanding command.
+    if (cmdIn?.action === 'native-observe') return executeControlCommand(cmdIn);
+    const action = typeof cmdIn === 'object' && cmdIn?.action;
+    if (action && !['ping', 'snapshot', 'frozen', 'step', 'quit'].includes(action))
+      throw new Error('command unsupported in CLI native observation mode');
+    return cliObservation.command(() => executeControlCommand(cmdIn));
+  };
+  const executeControlCommand = (cmdIn) => {
     const cmd = typeof cmdIn === 'string' ? { cmd: cmdIn } : (cmdIn || {});
     if (cmd.action === 'fault-status') return nativeFault.status();
     if (cmd.action === 'fault-arm') {
@@ -7562,6 +7589,12 @@ async function main() {
     // the native action, not as an input entry that would fail to parse.
     if (!cmd.action && /^(ping|snapshot|quit)$/.test(native)) {
       cmd.action = native;
+    }
+    if (cliObservation) {
+      if (!['ping', 'snapshot', 'frozen', 'step', 'quit', 'native-observe'].includes(cmd.action))
+        throw new Error('command unsupported in CLI native observation mode');
+      if (cmd.action === 'native-observe') return cliObservation.run(instance, (exports, owned) =>
+        require('../tools/pawn-cli-observation.cjs').observeNative(exports, memory, owned, cmd));
     }
     if (cmd.action === 'guarded-bind') return guardedInput.bind();
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
@@ -7917,11 +7950,13 @@ async function main() {
       await new Promise(resolve => setImmediate(resolve));
     }
     if (control) {
+      if (cliObservation) cliObservation.finishBatch();
       finishPreviousControlBatch();
       await new Promise(resolve => setImmediate(resolve));
       liveLogsStart = logs.length;
       await waitForControlBatch();
       if (stopped) break;
+      if (cliObservation) cliObservation.enterBatch();
     }
     batchesRun = batch + 1;
     let injectedInputThisBatch = false;
