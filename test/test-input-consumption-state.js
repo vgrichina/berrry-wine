@@ -25,7 +25,7 @@ function fixture(enabled = true, factory = createInputConsumptionTrace, controlC
   const renderer = { windows: {}, canvas: { width: 800, height: 600 },
     inputQueue: [], _asyncKeys: {32: true}, _physicalKeys: {32: false},
     _asyncPressedKeys: {32: true}, checkInput: fail, getAsyncKeyState: fail };
-  const c = vm.createContext({ createInputConsumptionTrace: factory, inputEventHwnd,
+  const c = vm.createContext({ require, mainSchedulerObserver: null, createInputConsumptionTrace: factory, inputEventHwnd,
     TRACE_INPUT_DISPATCH: enabled, logs: [], h: {}, renderer,
     instance: { exports }, threadManager: { backend: 'cooperative', threads: new Map(),
       _mainThreadState: { state: 'active', suspendCount: 0 }, _mainSleepUntil: 150,
@@ -130,7 +130,7 @@ if (process.argv.includes('--gap')) {
   assert.strictEqual(routed.counters.dispatched, 0);
 
   // Execute actual production DispatchMessage trace hook against a MSG fixture.
-  const dispatch = region("    if (TRACE_INPUT_DISPATCH && (t === 'DispatchMessageA'", '    for (const spec of TRACE_API_MEM)');
+  const dispatch = region("    if (TRACE_INPUT_DISPATCH && (t === 'DispatchMessageA'", '    for (const spec of (!TRACE_API || traceApiOn) ? TRACE_API_MEM : [])');
   f.c.memory = {buffer:new ArrayBuffer(128)};
   const dv = new DataView(f.c.memory.buffer);
   f.exports.get_esp = () => 0; f.exports.get_image_base = () => 0;

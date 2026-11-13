@@ -7488,6 +7488,7 @@ async function main() {
       return out;
     },
     releaseInput: () => {
+      guardedInput.abandon('native fault retained');
       const state = { renderer, inputQueue, inputEvent, scheduledInput, crossThreadMsgs };
       const result = require('../lib/cli-fault-input').releaseFaultInput(state);
       inputEvent = state.inputEvent;
@@ -7508,6 +7509,40 @@ async function main() {
     }
     wakeControlLoop();
     return result;
+  };
+  const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
+    snapshot: () => {
+      const we = instance.exports, hwnd = we.get_main_hwnd();
+      const device = ctx.d3dCommands, win = renderer?.windows[hwnd];
+      const refs = { instance, exports: we, memory, buffer: memory.buffer, renderer,
+        queue: renderer?.inputQueue, canvas: renderer?.canvas, window: win, hwnd,
+        width: renderer?.canvas?.width, height: renderer?.canvas?.height,
+        device, adapter: device?.worker, module: device?.module,
+        control: device?.control, controlBuffer: device?.controlBuffer,
+        down: renderer?.handleKeyDown, up: renderer?.handleKeyUp,
+        mouseDown: renderer?.handleMouseDown, mouseUp: renderer?.handleMouseUp };
+      if (device?.buffers) device.buffers.forEach((b, i) => { refs['deviceBuffer' + i] = b.buffer; });
+      return { refs, healthy: !!(win?.visible && !we.get_quit_flag() && we.get_eip() &&
+        (!device || (typeof device.snapshot === 'function' && device.snapshot().ready))) };
+    },
+    cleanup: (refs, ev) => {
+      if (ev.action === 'keydown') refs.up.call(refs.renderer, ev.code);
+      if (ev.action === 'mousedown') refs.mouseUp.call(refs.renderer, ev.x, ev.y, 1);
+    },
+  });
+  // takeInput itself publishes async key state. Guard queued delivery before
+  // that effect, including callers other than h.check_input.
+  if (renderer) {
+    const take = renderer.takeInput;
+    renderer.takeInput = function(...args) { guardedInput.sweep(); return take.apply(this, args); };
+  }
+  const applyGuardedInput = ev => {
+    if (ev.action === 'keydown') renderer.handleKeyDown(ev.code);
+    else if (ev.action === 'keyup') renderer.handleKeyUp(ev.code);
+    else if (ev.action === 'mousemove') renderer.handleMouseMove(ev.x, ev.y);
+    else if (ev.action === 'mousedown') renderer.handleMouseDown(ev.x, ev.y, 1);
+    else if (ev.action === 'mouseup') renderer.handleMouseUp(ev.x, ev.y, 1);
+    else throw new Error('unsupported guarded input');
   };
   const handleControlCommand = (cmdIn) => {
     const cmd = typeof cmdIn === 'string' ? { cmd: cmdIn } : (cmdIn || {});
@@ -7537,6 +7572,26 @@ async function main() {
     // the native action, not as an input entry that would fail to parse.
     if (!cmd.action && /^(ping|snapshot|quit)$/.test(native)) {
       cmd.action = native;
+    }
+    if (cmd.action === 'guarded-bind') return guardedInput.bind();
+    if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
+    if (cmd.action === 'guarded-release') return guardedInput.release(cmd.owner);
+    if (cmd.action === 'guarded-input') {
+      const evs = parseInputEntries([`${tickState.batch | 0}:${String(cmd.cmd || '')}`]);
+      if (evs.length !== 1 || !/^(keydown|keyup|mousemove|mousedown|mouseup)$/.test(evs[0].action))
+        throw new Error('unsupported guarded input; use one key or pointer edge');
+      const ev = evs[0];
+      if (['keydown', 'keyup'].includes(ev.action) ?
+          !Number.isInteger(ev.code) || ev.code < 1 || ev.code > 255 :
+          !Number.isFinite(ev.x) || !Number.isFinite(ev.y)) throw new Error('invalid guarded input arguments');
+      const ticket = guardedInput.prepare(cmd.guard, ev);
+      if (ticket.state === 'QUEUED') {
+        ev.guardedTicket = ticket;
+        let at = scheduledInput.findIndex(e => e.batch > ev.batch);
+        if (at < 0) at = scheduledInput.length;
+        scheduledInput.splice(at, 0, ev);
+      }
+      return controlFrozen ? guardedInput.receipt(ticket) : guardedInput.wait(ticket);
     }
     if (cmd.action === 'ping') {
       return {
@@ -7752,6 +7807,7 @@ async function main() {
   let controlClosed = false;
   const closeControl = () => {
     if (control && !controlClosed) {
+      guardedInput.close();
       control.close();
       controlClosed = true;
     }
@@ -7882,6 +7938,10 @@ async function main() {
     // Inject scheduled input events at the right batch
     while (scheduledInput.length && scheduledInput[0].batch <= batch) {
       const ev = scheduledInput.shift();
+      if (ev.guardedTicket) {
+        guardedInput.consume(ev.guardedTicket, applyGuardedInput);
+        continue;
+      }
       diagnosticActionSequence++;
       inputConsumptionTrace.schedule(ev);
       injectedInputThisBatch = true;
