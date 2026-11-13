@@ -29,7 +29,7 @@ performance.now = () => fakeNow;
 const timers = [];
 const realSetTimeout = global.setTimeout;
 global.setTimeout = (fn, ms) => { timers.push({ fn, ms }); return timers.length; };
-global.window = {};
+global.window = { addEventListener() {}, removeEventListener() {} };
 
 function renderer() {
   const r = new FakeRenderer();
@@ -251,6 +251,91 @@ const drainTimer = () => { const t = timers.shift(); if (t) t.fn(); return t; };
     check(`${interference}: release still ends the press pump`, r.takeInput(ownsA) === null);
     check(`${interference}: release follows on the next target poll`, r.takeInput(ownsA)?.msg === 0x202);
   }
+}
+
+// Use the real renderer and unchanged browser host import closures: each
+// process polls one shared queue with its own HWND ownership predicate.
+{
+  const fs = require('fs');
+  const vm = require('vm');
+  const { Win98Renderer } = require('../lib/renderer');
+  const { createHostImports } = require('../lib/host-imports');
+  const { inputEventHwnd } = require('../lib/host-window');
+  const context = { console, createHostImports, inputEventHwnd };
+  vm.runInNewContext(fs.readFileSync(require.resolve('../host.js'), 'utf8') +
+    '\n;globalThis.WineAssembly = WineAssembly;', context);
+  const a = 0x10001, b = 0x20001;
+  const edge = (hwnd, msg) => ({ hwnd, msg, wParam: msg === 0x201 ? 1 : 0,
+    lParam: (73 << 16) | 29, mouseX: 29, mouseY: 73 });
+  function fixture(multiApp) {
+    const canvas = { width: 640, height: 480, style: {}, getContext: () => ({}) };
+    const r = new Win98Renderer(canvas);
+    r._inputNowMs = () => fakeNow;
+    const hosts = [a, b].map((hwnd, i) => {
+      const wine = new context.WineAssembly();
+      wine.memory = { buffer: new ArrayBuffer(65536) };
+      wine.instance = { exports: {} };
+      wine.processId = i + 1;
+      wine._multiApp = multiApp;
+      wine._hwndBase = hwnd & 0xffff0000;
+      wine.logToUI = () => {};
+      wine.renderer = r;
+      r.windows[hwnd] = { hwnd, processId: wine.processId, wasm: wine.instance };
+      return wine.getImports().host;
+    });
+    timers.length = 0;
+    return { r, A: hosts[0], B: hosts[1] };
+  }
+  for (const multiApp of [false, true]) {
+    for (const interference of ['empty', 'press', 'release', 'press-release']) {
+      const { r, A, B } = fixture(multiApp);
+      r.inputQueue.push(edge(a, 0x201));
+      A.check_input();
+      fakeNow += 120; // Normal floor has elapsed; target pump has NOT ended.
+      r.inputQueue.push(edge(a, 0x202));
+      if (interference.includes('press')) r.inputQueue.push(edge(b, 0x201));
+      if (interference.includes('release')) r.inputQueue.push(edge(b, 0x202));
+      if (interference === 'empty') B.check_input();
+      if (interference.includes('press')) B.check_input();
+      if (interference.includes('release')) {
+        // End B's own pump if its release is held, without polling A.
+        if (!B.check_input()) B.check_input();
+      }
+      const label = `host multiApp=${multiApp} other=${interference}`;
+      check(`${label}: target release ends target press pump`, A.check_input() === 0);
+      check(`${label}: target release stays queued`, r.inputQueue.some(e => e.hwnd === a && e.msg === 0x202));
+      check(`${label}: target release follows on next poll`, (A.check_input() & 0xffff) === 0x202);
+      check(`${label}: native target and coordinates survive`,
+        A.check_input_hwnd(a) === a && A.check_input_lparam() === ((73 << 16) | 29));
+    }
+    // A new press on B must not impose B's fresh floor on A's mature release.
+    const { r, A, B } = fixture(multiApp);
+    r.inputQueue.push(edge(a, 0x201));
+    A.check_input();
+    A.check_input();
+    fakeNow += 120;
+    r.inputQueue.push(edge(b, 0x201), edge(a, 0x202));
+    B.check_input();
+    check(`host multiApp=${multiApp}: another press cannot suppress mature target release`,
+      (A.check_input() & 0xffff) === 0x202);
+    // An unmatched UP has no hold even while a different window holds DOWN.
+    const f = fixture(multiApp);
+    f.r.inputQueue.push(edge(b, 0x201), edge(a, 0x202));
+    f.B.check_input();
+    check(`host multiApp=${multiApp}: independent UP passes immediately`,
+      (f.A.check_input() & 0xffff) === 0x202);
+  }
+  const { r, A } = fixture(true);
+  r.inputQueue.push(edge(a, 0x201));
+  A.check_input();
+  const fault = new Error('ownership predicate fault');
+  let caught;
+  try { r.takeInput(() => { throw fault; }); } catch (error) { caught = error; }
+  check('empty ownership poll preserves predicate exception', caught === fault);
+  fakeNow += 120;
+  r.inputQueue.push(edge(a, 0x202));
+  check('faulting poll cannot observe target press', A.check_input() === 0);
+  check('target release recovers after fault without consuming queue', (A.check_input() & 0xffff) === 0x202);
 }
 
 performance.now = realNow;
