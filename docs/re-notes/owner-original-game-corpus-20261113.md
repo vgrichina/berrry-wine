@@ -45,6 +45,17 @@ the full media and executable have not been downloaded or verified. The complete
 as MODE1/2352 and tracks 2–9 as AUDIO. Preserve the mixed-mode layout and all
 eight audio tracks; a data-only ISO would discard part of this candidate.
 
+Bounded reads of the raw MODE1 track subsequently confirmed ISO volume `CDWORMS`
+and the root executable layout. The complete `WORMS.EXE` launcher is 14,368 bytes,
+SHA-256 `7dd42f1d5d719912855c567e95570423cd4c816500c754ff8628dd84f67d46ec`.
+The complete `WRMS.EXE` is 426,117 bytes, SHA-256
+`483f9f2376f76224602e67fc608f19ea13c218c0ef66643de30f2daf18d51ada`, with
+an LE header at offset 10,832. `DOS4GW.EXE` is present in the root directory.
+This candidate needs the DOS/protected-mode route, rather than the Windows PE
+launcher. `DATA`, `FMV`, configuration and audio contents remain unverified.
+Read receipts and full small-file identities are in
+`scratch/runs/20261113-coordinator-owner187-worms-layout/`.
+
 Next: verify original release identity, executable and complete data/audio tree,
 then add a recoverable corpus entry and test an actual original-game turn.
 The local Worms 2 demo does not satisfy this request. Armageddon's registered demo
@@ -66,6 +77,10 @@ The complete `SETUP/NHC.EXE` was also read into RAM: 810,496 bytes, SHA-256
 `82bf1e31ad6c811a4915f49da1a5ea841cc23b37b0ee212c6d90fddbba97d011`.
 Its import table names KERNEL32, USER32, GDI32, ADVAPI32, SMACKW32, DDRAW,
 DSOUND, WINMM and MSVFW32. The image includes `SETUP/SMACKW32.DLL` (66,048 bytes).
+All 121 named imports occur in the inspected current API table (SHA-256
+`0522ee56adeed79597fac6a6a7ab28bcd52c4adf543f43ffef5ef0aa0b52bda1`).
+This establishes name registration only, not behavioral compatibility. Eight
+Smacker imports use ordinals and still require the actual matching DLL.
 The seven `DATA/*.BLB` directory records total 638,122,574 bytes:
 `A.BLB`, `C.BLB`, `HD.BLB`, `I.BLB`, `M.BLB`, `S.BLB`, `T.BLB`.
 Those asset bytes have not been downloaded or hash-verified.
