@@ -7511,20 +7511,10 @@ async function main() {
     return result;
   };
   const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
-    snapshot: () => {
-      const we = instance.exports, hwnd = we.get_main_hwnd();
-      const device = ctx.d3dCommands, win = renderer?.windows[hwnd];
-      const refs = { instance, exports: we, memory, buffer: memory.buffer, renderer,
-        queue: renderer?.inputQueue, canvas: renderer?.canvas, window: win, hwnd,
-        width: renderer?.canvas?.width, height: renderer?.canvas?.height,
-        device, adapter: device?.worker, module: device?.module,
-        control: device?.control, controlBuffer: device?.controlBuffer,
-        down: renderer?.handleKeyDown, up: renderer?.handleKeyUp,
-        mouseDown: renderer?.handleMouseDown, mouseUp: renderer?.handleMouseUp };
-      if (device?.buffers) device.buffers.forEach((b, i) => { refs['deviceBuffer' + i] = b.buffer; });
-      return { refs, healthy: !!(win?.visible && !we.get_quit_flag() && we.get_eip() &&
-        (!device || (typeof device.snapshot === 'function' && device.snapshot().ready))) };
-    },
+    snapshot: require('../lib/cli-input-owner').createCliInputSnapshot({
+      instance, memory, renderer, getDevice: () => ctx.d3dCommands,
+      getThreadManager: () => threadManager,
+    }),
     cleanup: (refs, ev) => {
       if (ev.action === 'keydown') refs.up.call(refs.renderer, ev.code);
       if (ev.action === 'mousedown') refs.mouseUp.call(refs.renderer, ev.x, ev.y, 1);
