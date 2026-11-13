@@ -1,7 +1,8 @@
-Current dispatch (updated 2026-11-13T14:10Z):
+Current dispatch (updated 2026-11-13T14:12Z):
 
-- recent-terminal-codex-rollout-headroom-recovery-2620, launcher PID1878502; finite exact reversible compression of newly terminal session rollouts only.
-- DOSflags2540 and closedlog2580 are terminal and reviewed; replacement implementation/runtime workers await restored disk capacity. One actual worker remains; no three-live claim.
+All registered workers are terminal and reviewed. No workers are currently running. Fresh game and crash/build assignments await restored disk capacity; do not claim three live or repeat tasks stopped at the unchanged floor. Notification2600 and threadexit2560 made no implementation/test progress before stopping. Original gameplay/GL27 remain open.
+
+Finite NEW cleanup is complete:2580 recovered11,010,048 net bytes from29closedlogs;2620 recovered24,719,360 net bytes from33terminalrollouts. Root independently verified all compressed and fullraw SHA/size checks. Both pools are exhausted. Restore real rawfiles BEFORE old consumers via each run's restore.py/index: scratch/runs/20261113-new-closed-log-recovery-2580/ and scratch/runs/20261113-recent-terminal-rollout-recovery-2620/. Last worker measurement187,006,976 available;1,312,993,024 stillshort of1.5GB. No liveDB/Git/media/reserve modified. Owner update2543 and UI approval request pending; exact reserved-block proposal341196/rollback741196 remains unapplied. Resume with fresh workers after actualfloor restoration, including new-game original startup, NE notification implementation and integration/crash validation, with heavy work serialized.
 
 DOSflags2540 implements explicit successful parent return FLAGS0202h (DOS-backed normalization, not preservation of arbitrary parent arithmetic flags), applied after childIRET. ChildCF no longer leaks to parentAX0; separate childcode/type remains.12 focused cases/78 pure adjacent tests/nine controls pass,101 artifact hashes/three owned current pins matched; all75 nonowned pins preserved by worker. Preserve scratch/runs/20261113-dos-exec-parent-flags-2540/. Production/test WIP uncommitted; actual original helpers/flags/gameplay and lockedbuild remain unrun. Source/task patches and exact policy references retained.
 
