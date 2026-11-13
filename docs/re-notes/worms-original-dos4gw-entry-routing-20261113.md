@@ -1,6 +1,6 @@
 # Original DOS4GW: entry and interrupt-routing context boundary
 
-2026-11-13 — **NO_NATIVE_RESULT**. The exact root DOS4GW.EXE was recovered
+2026-11-13 — **NO_NATIVE_RESULT**. Follow-up [BW mapping](worms-original-bw-payload-selector-map-20261113.md) corrected the original prose gate label: INT21 is `0070:0C9E`; `0070:05EB` is INT23 at DS:01D8. The gate labels below are corrected; the original byte windows are unchanged. That later note establishes the initial embedded-block mapping and records the remaining placement/runtime limits. The exact root DOS4GW.EXE was recovered
 into RAM and verified before static analysis. Its actual MZ entry is ordinary
 16-bit startup. Original bytes establish a conditional external-DPMI entry
 path, a separate path constructing its own interrupt gates, and a real-mode
@@ -91,7 +91,7 @@ neighboring banners/data are not traversed by linear disassembly.
 | `2382 → 23FC` | Relocated stack/data setup; INT21/AH4A at 23B0, AH30 at 23CA; AX4400 handle probes at 23D5; CALL 2460 then CALL 2D9C. These are extender **real-mode startup** services, distinct from WRMS's protected AH30. |
 | `2460 → 25EA` | Parses PSP/environment/arguments; saves the caller's return offset in DS:0D10 and jumps through it at 25EA. The unusual POP/JMP return does not turn the following data into code. |
 | `2D9C → 2EAA → 3ED8`, then `2EC2 → 627F` | Main chooses environment-dependent initialization, then restores SP, records SMSW at 6283, and tests state byte DS:002E. Earlier helper effects and branches are not assumed successful. |
-| `627F`, state nonzero | Calls 199A (descriptor base preparation), conditional 641D/64B7, then **016C**, which fills 256 eight-byte interrupt gates at DS:00C0, selector 0070 and attributes 8E00h. It overrides specific entries: **INT21**'s offset at DS:01C8 becomes **05EBh**, with default selector 0070. INT31's offset at DS:0248 becomes **44D6h**. INT20 at DS:01C0 becomes 0018:0C80. This is extender-owned gate construction, not a request for an external host to supply its default handlers. |
+| `627F`, state nonzero | Calls 199A (descriptor base preparation), conditional 641D/64B7, then **016C**, which fills 256 eight-byte interrupt gates at DS:00C0, selector 0070 and attributes 8E00h. It overrides specific entries: **INT21**'s offset at DS:01C8 becomes **0C9Eh**, with default selector 0070. INT31's offset at DS:0248 becomes **44D6h**. INT20 at DS:01C0 becomes 0018:0C80. This is extender-owned gate construction, not a request for an external host to supply its default handlers. |
 | `627F → 62C6 → 1280` | Copies 4Eh words from real-mode address 0000:0020 (vectors 08h–2Eh inclusive) into the supplied SS-relative buffer. This snapshots existing real-mode vectors; copying alone does not install new vectors. |
 | `62E2`, state zero → `7290` | Conditional external-host lane. Saves a selected existing real-mode vector with INT21/AH35 at 72D3 and installs CS:7273 using AH25 at 72E4. The vector number comes from DS:0034, not a hardcoded claim about INT21/33. Calls **6E20** at 72EE. |
 | `3ED8` environment selection → `41FA → 6D9C` | AX1687h/INT2F; on successful AX=0 stores SI at CS:6D64 and returned ES:DI into the **far CALL operands at CS:6E86/6E88**. Its returned processor/version state participates in selection. This is evidence of a DPMI-host probe, not a mandatory host requirement. |
@@ -118,7 +118,7 @@ mutation/loader context before following further.
 
 ## Exact next context boundary
 
-The nonzero-state IDT setup gives **INT21 = 0070:05EB** (not 0084h; DS:01B8 is
+The nonzero-state IDT setup gives **INT21 = 0070:0C9E** (not 0084h; DS:01B8 is
 INT1F's entry). Its selector-0070 offsets advance by four initially; a routine
 at **2081h**, called from gate setup, itself far-jumps **0070:5593**. These
 addresses do not map by `200h + 1BD0h + offset`.
@@ -130,7 +130,7 @@ even begin with an unrelated inline byte, a concrete warning against guessing.
 The next static work is to validate the BW loader's header/segment/relocation
 mapping through **304Fh**, **31B3h** and the file-opening/reading helpers, and
 connect **DS:0A10**, helper **1F24h**, descriptor selector 0070 and the replacement
-DPMI CX to exact payload bytes. Then trace handlers **0070:05EB**, **0070:44D6**,
+DPMI CX to exact payload bytes. Then trace handlers **0070:0C9E**, **0070:44D6**,
 **CX:0C9E**, plus the INT33 route. Packing of appended bytes is unresolved;
 there is no reason to assume a decompressed address map from the MZ entry alone.
 A runtime continuation would additionally need selected state DS:002E, GDT/IDT
