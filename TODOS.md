@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-13T13:54Z):
+Current dispatch (updated 2026-11-13T14:00Z):
 
 - neverhood-thunk-kernel-loader-boundary-2520, fresh launcher PID1858863; actual loader/selector/mode-bridge primitive boundary for original thunk connection.
-- worms-original-launcher-child-return-path-2480, fresh launcher PID1851297; original helper returns/config-to-WRMS handoff and DOS child ownership.
-- local-host-loader-retirement-retry-repair-2500, fresh launcher PID1855775; proven local Host frame/pin retention and cancellation retry.
+- dos-exec-parent-return-flags-repair-2540, fresh launcher PID1867561; actual successful EXEC return CF/parent flag preservation needed by original launcher.
+- thread-exit-callback-cleanup-repair-2560, fresh launcher PID1868237; actual ThreadManager exit cleanup/cancellation failure fanout, guarded pure JS.
 
 Neverhood Install2140 published966714191: exact original Install route through DirectX, directory/copy/COM/registry/completion has194 static checks/seven rejecting mutants,73 artifact seals and19 source pins matched. Preserve scratch/runs/20261113-neverhood-install-command-2140/. Fresh2220 traces the original DSETUP export; native installation and first-room gameplay remain open.
+
+Launcher2480 published0499d4079: exact CFG consumer, drive/CWD, tails/environment and BLACK/PLAY/PLAY/WRMS chain traced; original main ignores every returned outcome. Ten pure host groups/seven controls pass;46 artifacts/fifteen reconstructed dependency pins matched. Actual DOS helper reproduction shows childCF1 leaking to successful parentEXEC AX0 continuation; no original child failure observed. Preserve scratch/runs/20261113-worms-launcher-child-2480/. Fresh2540 repairs general flags seam. Localretry2500 repaired actual cancellation retry to pin0/gate0 while retaining graph on failure;13 new cases/nine adjacent pure suites/nine controls,66 artifacts/31 source pins pass. Preserve scratch/runs/20261113-local-host-loader-retry-2500/. Four extra Worker/Wasm suites were run contrary to task exclusion; all exited0, disclosed in out-of-scope.json and excluded from pure claims. Guarded rerun rejects Worker/Wasm; no runtime/build gate credit. Code remains uncommitted. Fresh2560 checks actual scheduler exit fanout with mandatory guards.
 
 Neverhood DSETUP6E2460 publishedd65793724: original NE startup/notification, data16 connection stack and selectors1 EXECUTEINF/2 driver targets plus far/flat argument/return contracts established.50 contract/twenty window checks,14 byte/custody and three source controls pass;42 artifacts/seven source pins matched. Recovery child exited0 with RAM deletion observed. Preserve scratch/runs/20261113-neverhood-dsetup6e-2460/. Real kernel thunk connection/SETUPX outputs remain unimplemented/unobserved; fresh2520 maps required primitives to actual loaders/mode bridge. No installation/gameplay success claimed.
 
