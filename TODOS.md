@@ -1,7 +1,15 @@
-Current dispatch (updated 2026-11-13T05:43Z):
-- Input: directinput-wheel-button-device-owner-repair-2250, launcher PID1281356; ordinary physical wheel/button routing across independent native process memories, without manually pinning the target memory in the fixture.
-- Gameplay capacity: retired-deleted-log-handle-game-capacity-2240, launcher PID1280099; distinct deleted-but-open log inodes held only by proved retired auxiliary watchers. Live processes and unique unrecovered data are excluded.
-- D3D9: d3d9-clear-compiler-provenance-repair-2230, launcher PID1274861; historical compiler pins are correct, but the clear-contract test selects the current compiler. Exact pinned Git blobs reconstructed in RAM already pass the unchanged historical test; automatic reconstruction remains pending.
+Current dispatch (updated 2026-11-13T06:03Z):
+- NFS3: nfs3-current-input-fixes-visible-driving-2350, launcher PID1306835; prepare current helpers and frozen inputs, then original cockpit, native Pause/Continue and reviewed driving screenshots.
+- LMarbles: lmarbles-current-input-fixes-puzzle2-clear-2350, launcher PID1306836; prepare current helpers and frozen inputs, then fresh native Puzzle2 board, individually reviewed slides and CLEAR/next/tally screenshots.
+- D3D9: d3d9-current-public-context-loss-rendering-2350, launcher PID1306837; prepare retained public context-loss fixture for actual Chrome/WebGL loss/fault/readback testing after both game runs release the heavy-runtime slot.
+
+All three workers prepare before allocation and wait for the coordinator's capacity-ready message. Heavy runtimes remain held below the sustained 1.5 GB floor. Reserve proposal2518 was revalidated and resurfaced as an owner approval question; it remains unapplied. Current settings741196 reserved blocks would become485196 only after explicit approval, adding1,048,576,000 available bytes while retaining1,987,362,816 reserved bytes. Evidence and reversal: scratch/runs/20261113-coordinator-capacity-revalidate-2350/proposal.json. No elapsed-time approval or floor-only runtime retry.
+
+Latest accepted repair: f9e73a8ab, published through merged main b0689451e, sends physical DirectInput wheel records to foreground memory while preserving the original held button's release owner. Native DOM/device regression, predecessor controls and both locked builds pass after the incoming host-lifecycle merge;40 evidence hashes verified. Original-game confirmation remains open.
+
+Unimplemented repairs awaiting capacity: DirectInput foreground keyboard acquisition remains active across focus loss and consumes the other app's physical keys, including an unpolled away/back interval (2330 report; polling-only guard is insufficient). DrawTextA/W centered/bottom single-line return values are13 instead of36/59 in24 valid cases (2300 report). The historical clear compiler pins are correct; a tested, unapplied in-memory Git reconstruction patch restores the original755-byte module without refreshing pins (2230 proposed-test.patch). DirectDraw's240 source-range/destination-key failures also remain open. None is claimed fixed or published.
+
+Additional bounded rendering results:4176 supported texture-address cases and9216 supported depth cases pass exact native public-COM pixel checks. BORDER and stencil operations were unadvertised and excluded; no GPU, original-game or27-app acceptance follows. No source changes or fresh-build equivalence are claimed for these retained-module diagnostics.
 
 Latest root-reviewed fixes:ac253b480 repairs wheel foreign-process delivery, scaled screen coordinates and MK flags; six native DOM/GetMessage cases, focused controls and locked build pass, with27 evidence hashes verified. f94122eb3 repairs keyed and region-clipped self-overlap:560 wrong-pixel failures become1420 passing cases/2575 COM calls, with28 hashes verified. 71389a693 repairs captured relative-camera counts reaching a covering sibling's DirectInput device; native warp/message/auxiliary/clip/button controls and locked build pass, with29 hashes verified. Original-game confirmation remains open.
 
@@ -38,6 +46,13 @@ PROTECTED RECOVERY LAYER (completed c3335ce9b, root reviewed): keep the entire s
 `/tmp/wine-coordinator-current-launches.json` records the current external worker processes. Older worker/PID and "review pending" entries below are dated history; they do not authorize duplicate dispatch or imply a process is still live. Completion processing is recorded in `scratch/usage-watch/completion-dedup.json`.
 
 Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backup 18 expires 2026-11-27T01:05:39.765Z. Their recovery instructions are in `scratch/runs/20261113-closed-six-nine-offload-lmarbles-0500/RECOVERY.md` and `scratch/runs/20261113-dense-backup-puzzle2-0650/RECOVERY.md`. Recover before expiry; these snapshots are not permanent archives. Native captures/saves remain local.
+
+- [ ] Owner186: reconcile linked games with EXE corpus and full Worms editions
+  id: EXE-CORPUS-OWNER-POST-20261113
+  owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
+  Source: https://x.com/idanbeck/status/2121121791066403028 (fetch returned403; public search supplied no exact post contents). Owner asked to forward the titles or screenshot; reply2521 delivered and follow-up2522 sent. The corpus request does not approve the pending host reserve change.
+  Audit: current manifest has Worms2Demo and WormsArmageddonDemo, no full Worms edition. Worms2Demo's149 declared local paths are present and hashed; native gamePE SHA256 cfb393c9ae72764dd4ff85b3e679671d28017d59d5c4b852d64bee7597447caa. ArmageddonDemo's executable, local manifest and fiveDLL paths are all missing locally; its pinned667-file recovery recipe and historical demo gameplay notes remain available. SDK Wormhole is unrelated. No new download/game/browser run or full-version qualification. Evidence scratch/runs/20261113-coordinator-owner186-corpus/worms-audit.json.
+  Next: obtain the post's exact titles/editions; map every title to current corpus entry, complete local route, provenance and actual gameplay evidence. Recover/add the requested editions with verified original packages when capacity permits; demo availability does not establish full-version coverage.
 
 - [x] GL/D3D actual context-loss readback failure
   id: GL-D3D-CONTEXT-LOSS-READBACK-20261113
