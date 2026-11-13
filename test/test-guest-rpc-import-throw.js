@@ -47,9 +47,38 @@ console.log('PASS  a host import that throws in Worker mode stops its caller, no
 assert.strictEqual(worker.imports.host.gpu_gl_call(0x30017, 0, 23), 1);
 assert.strictEqual(worker.imports.host.gpu_gl_call(0x30017, 0, 0), 0x800);
 assert.deepStrictEqual(gpuCalls, [[0x30017, 0, 23], [0x30017, 0, 0]]);
-assert.throws(() => worker.imports.host.gpu_gl_call(0x30018, 0, 0),
+// 0x30018 is now the Worker-local D3D state wait; use an opcode nothing owns.
+assert.throws(() => worker.imports.host.gpu_gl_call(0x3ffff, 0, 0),
   /unexpected direct OpenGL worker call/, 'unknown calls still fail loudly');
 console.log('PASS D3D9 format capability query reaches the page broker');
+{
+  const events=[],messages=[];
+  const traceSigs={
+    ctrl_paint_trace:{params:Array(7).fill('i32'),results:[]},
+    ctrl_sb_trace:{params:Array(10).fill('i32'),results:[]},
+    fs_get_file_size:{params:['i32'],results:['i32']},
+  };
+  const broker=RPC.createMainBroker(memory,{
+    ctrl_paint_trace:(...args)=>events.push(['paint',...args]),
+    ctrl_sb_trace:(...args)=>events.push(['scroll',...args]),
+    fs_get_file_size:h=>{events.push(['fence',h]);return 42;},
+  },traceSigs);
+  const traces=RPC.createWorkerImports(memory,traceSigs,msg=>{
+    messages.push(msg.t);
+    if(msg.t==='calls')broker.serveCalls(msg);else broker.serveRpc(msg.slot);
+  },{slot:4});
+  const args=[0x10001,0x301,-20,30,640,961,0x4000001];
+  traces.imports.host.ctrl_paint_trace(...args);args[2]=999;
+  traces.imports.host.ctrl_sb_trace(2,-3,4,5,6,1,8,-9,10,11);
+  assert.strictEqual(traces.stats.sync,0,'diagnostic records never park the guest');
+  assert.strictEqual(traces.imports.host.fs_get_file_size(7),42);
+  assert.deepStrictEqual(events,[['paint',0x10001,0x301,-20,30,640,961,0x4000001],
+    ['scroll',2,-3,4,5,6,1,8,-9,10,11],['fence',7]],
+    'trace snapshots arrive in order before the following synchronous call');
+  assert.strictEqual(messages.at(-1),'rpc');
+  assert.strictEqual(traces.stats.async,2);
+  console.log('PASS control trace snapshots are asynchronous and ordered');
+}
 assert.strictEqual(worker.imports.host.gpu_gl_call(0x10002, 0x10001, 0), 0x800);
 assert.deepStrictEqual(gpuCalls.at(-1), [0x10002, 0x10001, 0],
   'OpenGL pre-GDI readback synchronizes through the page broker');

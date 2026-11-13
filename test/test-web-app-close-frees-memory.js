@@ -34,8 +34,17 @@ const { startStaticServer: startSharedStaticServer } = require('./static-server'
 
 const ROOT = path.join(__dirname, '..');
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const APP = 'notepad';
-const CYCLES = 2;
+// Alternate apps, as a user does: open one, close it, open another. 'frame'
+// closes through the window's own close box, so the guest destroys its
+// windows; 'shell' is the shell stopping the app (the phone's close button),
+// which drops the window records without a DestroyWindow -- that path left
+// renderer._foregroundWindow, and the host's step channel, holding the app.
+const CYCLES = [
+  { app: 'notepad', close: 'frame' },
+  { app: 'sol', close: 'frame' },
+  { app: 'notepad', close: 'shell' },
+  { app: 'sol', close: 'shell' },
+];
 const VIEWPORT = { width: 390, height: 664, deviceScaleFactor: 2, isMobile: true, hasTouch: true };
 
 if (!fs.existsSync(CHROME)) {
@@ -43,8 +52,8 @@ if (!fs.existsSync(CHROME)) {
   process.exit(0);
 }
 
-function startStaticServer() {
-  return startSharedStaticServer({ root: ROOT });
+function startStaticServer(crossOriginIsolated) {
+  return startSharedStaticServer({ root: ROOT, crossOriginIsolated });
 }
 
 // Count only guest-sized memories: the page makes small ones of its own (the
@@ -67,7 +76,7 @@ const COUNTER = () => {
   WebAssembly.Memory = Counted;
 };
 
-async function launchAndClose(page) {
+async function launchAndClose(page, APP, close) {
   await page.evaluate(app => {
     const icon = [...document.querySelectorAll('.desktop-icon')].find(el => el.dataset.app === app);
     if (!icon) throw new Error(`no ${app} icon on the desktop`);
@@ -82,7 +91,10 @@ async function launchAndClose(page) {
     return Object.keys(sharedRenderer.windows)
       .some(hwnd => Number(hwnd) >= lo && Number(hwnd) < lo + 0x10000);
   }, { timeout: 120000 }, APP);
-  await page.evaluate(app => {
+  const threads = await page.evaluate(app =>
+    !!runningApps.find(item => item && item.name === app).wine.guestWorker, APP);
+  if (close === 'shell') await page.evaluate(() => wineShell.stopAllApps());
+  else await page.evaluate(app => {
     const entry = runningApps.find(item => item && item.name === app);
     const lo = entry.wine._hwndBase || 0;
     const hwnd = Object.keys(sharedRenderer.windows).map(Number)
@@ -99,17 +111,24 @@ async function launchAndClose(page) {
     await page.evaluate(() => { if (window.gc) window.gc(); });
     await new Promise(resolve => setTimeout(resolve, 250));
   }
-  return page.evaluate(() => ({ ...window.__guestMemoryCount }));
+  const counts = await page.evaluate(() => ({ ...window.__guestMemoryCount }));
+  return { ...counts, threads };
 }
 
-async function main() {
-  const server = process.env.BASE_URL ? null : await startStaticServer();
+// Threads mode (the default wherever the page is cross-origin isolated, so
+// every phone on the deployed site) has its own release path: a guest Worker,
+// a second getImports() scope, and repaints deferred while a Worker slice is
+// running. It leaked every closed app's 512MB while the cooperative run of
+// this test stayed green, because the test page was never isolated.
+async function runMode(threadsMode) {
+  const server = process.env.BASE_URL ? null : await startStaticServer(threadsMode);
   const base = process.env.BASE_URL || `http://127.0.0.1:${server.address().port}`;
   const browser = await puppeteer.launch({
     executablePath: CHROME,
     headless: true,
     args: ['--disable-gpu', '--no-sandbox', '--no-first-run', '--js-flags=--expose-gc'],
   });
+  const label = threadsMode ? 'threads' : 'cooperative';
   try {
     const page = await browser.newPage();
     await page.setViewport(VIEWPORT);
@@ -121,12 +140,16 @@ async function main() {
     const collectable = await page.evaluate(() => typeof window.gc === 'function');
     if (!collectable) {
       console.log('SKIP  no window.gc (needs --js-flags=--expose-gc); a memory count without it proves nothing');
-      return;
+      return false;
     }
 
-    for (let cycle = 1; cycle <= CYCLES; cycle++) {
-      const counts = await launchAndClose(page);
-      console.log(`cycle ${cycle}: ${counts.made} guest memories made, ${counts.live} still live`);
+    for (let cycle = 1; cycle <= CYCLES.length; cycle++) {
+      const { app, close } = CYCLES[cycle - 1];
+      const counts = await launchAndClose(page, app, close);
+      console.log(`${label} cycle ${cycle} (${app}, ${close} close): ${counts.made} guest memories made, ` +
+        `${counts.live} still live`);
+      assert.strictEqual(counts.threads, threadsMode,
+        `${label}: the app ran ${counts.threads ? 'with' : 'without'} a guest Worker`);
       assert.strictEqual(counts.made, cycle,
         `cycle ${cycle} should have instantiated exactly one guest memory`);
       // Zero, not "no more than one": every launch here is followed by a
@@ -136,11 +159,17 @@ async function main() {
         'are still reachable -- something took a reference to the instance, the memory, ' +
         'the host imports object or one of the app\'s GDI surfaces and never let go');
     }
-    console.log('PASS  closing an app releases its guest memory');
+    return true;
   } finally {
     await browser.close();
     if (server) server.close();
   }
+}
+
+async function main() {
+  if (!await runMode(false)) return;
+  await runMode(true);
+  console.log('PASS  closing an app releases its guest memory (cooperative and threads)');
 }
 
 main().catch(error => { console.error(error); process.exit(1); });

@@ -761,6 +761,22 @@
   ;; so that is a real case.
   (global $store_invalidation_pending (mut i32) (i32.const 0))
 
+  ;; Same-block self-modifying code (3a38eed05): a store that rewrites a later
+  ;; instruction of the block it is running in. OPT-IN per app (lib/apps.js
+  ;; `smcSameBlock: true`, ?smc-same-block, --smc-same-block). When on, the
+  ;; decoder puts an H501 checkpoint after every potential writer and writing
+  ;; fusions stop at their first instruction on a code destination. That costs
+  ;; every app an extra dispatch per store: -8% fps on Half-Life (2026-11-10,
+  ;; desktop Worker bench, 51.7 -> 55.5 with it off), and only a synthetic case
+  ;; is known to need it. When off, a running block finishes on its decoded
+  ;; ops after rewriting itself (the release behaviour); every later entry
+  ;; still re-decodes the new bytes, since invalidation itself is unchanged.
+  ;; Decode-time: set it before the first block is decoded.
+  (global $smc_same_block (mut i32) (i32.const 0))
+  (func (export "set_smc_same_block") (param $on i32)
+    (global.set $smc_same_block (i32.ne (local.get $on) (i32.const 0))))
+  (func (export "get_smc_same_block") (result i32) (global.get $smc_same_block))
+
   (func $invalidate_code_range (param $ga i32) (param $len i32)
     (local $end i32) (local $page i32) (local $slot i32)
     (local $off i32) (local $stop i32) (local $hits0 i32) (local $kills0 i32)
@@ -2515,8 +2531,10 @@
 
   ;; Thread emit helpers
   (func $te (param $fn i32) (param $op i32)
-    (if (i32.eqz (call $decode_handler_readonly (local.get $fn) (local.get $op)))
-      (then (global.set $d_store_boundary (i32.const 1))))
+    (if (global.get $smc_same_block)
+      (then
+        (if (i32.eqz (call $decode_handler_readonly (local.get $fn) (local.get $op)))
+          (then (global.set $d_store_boundary (i32.const 1))))))
     ;; Backstop only: $decode_block reserves far more headroom than a single
     ;; block needs, so reaching this mid-emit means something unusual. Never
     ;; recycle from here — $tstart is already captured and a reset would leave

@@ -756,7 +756,12 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     assert.strictEqual(constrained.target,old);assert.strictEqual(constrained.format,23);
     assert.deepStrictEqual(constrained.readPixels(),pixels,'failed allocation retains565 rendering storage');
     constrained.reset({width:8,height:8,format:22,depthAttachment:null});
-    assert.strictEqual(constrained.format,21,'32-bit reset retains historical output behavior');
+    assert.strictEqual(constrained.format,22,'reset preserves X8 format for renderer-owned copies');
+    const resource={id:901,width:1,height:1,format:21},rect={x:0,y:0,width:1,height:1};
+    constrained.createColor(resource,new Uint8Array([10,20,30,40]),4);
+    constrained.copyColor({source:resource,destination:null,sourceRect:rect,destinationRect:rect,filter:1});
+    constrained.copyColor({source:null,destination:resource,sourceRect:rect,destinationRect:rect,filter:1});
+    assert.deepStrictEqual([...constrained.readColor(resource).pixels],[10,20,30,255],'X8 copy roundtrip discards alpha');
   }finally{constrained.destroy();}
   // BW2-RASTER-BUDGET-LATCH: each split batch keeps its native context (~1.15 KB
   // per triangle) until the draw ends, so one large draw beside B&W2's resident

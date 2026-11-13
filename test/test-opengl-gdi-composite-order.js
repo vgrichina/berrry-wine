@@ -241,6 +241,17 @@ async function asynchronousGdiFence() {
   requests[1].resolve({ value: 1, activeWindows: [[1, hwnd]], contexts: 1 });
   await fence;
   assert.strictEqual(ownership.at(-1), 0, 'successful GDI fence releases GPU ownership');
+  // A producer can publish while the page finishes an older GDI readback.
+  // Its newer dirty mark must survive even when no new frame has arrived yet.
+  const {PublicationQueue}=require('../lib/render-worker');
+  const publications=new PublicationQueue(new SharedArrayBuffer(64+128));
+  ctx.renderPublicationGuard=action=>publications.withEmpty(action);
+  publications.publish(1,0,new Uint8Array([1]),()=>{},()=>wasm.exports.gl_window_set_gpu_owned(hwnd,1));
+  await host.gpu_gl_call(0x10002,hwnd,0);
+  assert.strictEqual(ownership.at(-1),1,'readback cannot clear a newer unpublished-to-renderer mark');
+  await publications.drain(()=>{});
+  await host.gpu_gl_call(0x10002,hwnd,0);
+  assert.strictEqual(ownership.at(-1),0,'empty publication queue permits ownership clear');
   assert.deepStrictEqual(order, ['GL frame', 'GDI readback']);
   assert.deepStrictEqual(Array.from(surface.rgbaRect(9, 9, 1, 1)), [255, 0, 0, 255],
     'fence publishes delayed terrain into canonical storage');

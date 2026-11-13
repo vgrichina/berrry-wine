@@ -24,13 +24,17 @@
   (local.set $state (call $d3d9_program_state (local.get $device)))
   (if (i32.eqz (local.get $state)) (then (return)))
   (local.set $old (call $g2w (local.get $state)))
+  ;; Only the creating thread owns this transaction and its render token.
+  ;; Validate before reading a pending plan: another thread must not poll its
+  ;; own unrelated token, dispose the owner's plan, or change lost state.
+  (if (i32.ne (i32.load offset=21780 (local.get $old)) (global.get $current_thread_id))
+    (then (return)))
   (local.set $plan (i32.load offset=21768 (local.get $old)))
   (block $issue
     (if (local.get $plan) (then
       (local.set $result (call $d3d_render_poll)) (br $issue)))
     (i32.store offset=21776 (local.get $old) (i32.const 1))
-    (if (i32.or (i32.eqz (local.get $pp))
-      (i32.ne (i32.load offset=21780 (local.get $old)) (global.get $current_thread_id))) (then (return)))
+    (if (i32.eqz (local.get $pp)) (then (return)))
     (if (i32.gt_u (local.get $pp) (i32.const 0xffffffc8)) (then (return)))
     (local.set $ppwa (call $g2w (local.get $pp)))
     (if (i32.or (i32.eqz (call $d3d_shader_vm_range (local.get $ppwa) (i32.const 56)))

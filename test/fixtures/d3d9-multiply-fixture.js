@@ -10,7 +10,7 @@ function product(left,right){
  }
  return out;
 }
-function fixture(){
+function fixture({defaultTarget=false,colorUpload=false,surfaceUpload=false}={}){
  const BASE=0x400000,b=Buffer.alloc(0x30200),raw=rva=>rva-0x1000+0x200,p=0x80,o=p+24,s=o+0xe0;
  b.writeUInt16LE(0x5a4d);b.writeUInt32LE(p,0x3c);b.writeUInt32LE(0x4550,p);
  b.writeUInt16LE(0x14c,p+4);b.writeUInt16LE(1,p+6);b.writeUInt16LE(0xe0,p+20);b.writeUInt16LE(0x010e,p+22);
@@ -63,6 +63,7 @@ function fixture(){
  for(const a of [0,0,0,0,64,64,0,0,0x10000000,title,klass,0])push(a);
  api('CreateWindowExA');emit(0x89,0xc3,0xa3,u32(D+20));
  write(PP,32);write(PP+4,32);write(PP+8,21);write(PP+12,1);write(PP+24,1);emit(0x89,0x1d,u32(PP+28));write(PP+32,1);write(PP+52,0x80000000);
+ if(defaultTarget)write(PP+44,1); // Public LockRect on the implicit backbuffer.
  push(32);api('Direct3DCreate9');emit(0x89,0xc7,0xa3,u32(D+12));
  for(const output of [D,D+8]){
   push(output);push(PP);push(0);emit(0x53);push(1);push(0);emit(0x57,0x8b,0x07,0xff,0x50,64);expect(0,'CreateDevice');
@@ -124,15 +125,47 @@ function fixture(){
   }
   assert(point,'independent exclusive geometry control '+pattern);probes.push(point);
  }
- dev(28,[32,32,21,0,0,1,RT,0]); // Bind actual explicit target below.
- emit(0xa1,u32(RT),0x50);push(0);emit(0x56,0x8b,0x06,0xff,0x90,u32(37*4));expect(0,'SetRenderTarget explicit');
+ // Establish the endpoint before introducing named storage, so its first
+ // Clear must publish an owned definition instead of using startup admission.
+ dev(43,[0,0,1,0,0,0]);
+ push(20);api('Sleep'); // Let the endpoint's shared-state message reach the CPU Worker.
+ if(defaultTarget)dev(38,[0,RT]); // GetRenderTarget leaves implicit storage bound.
+ else{
+  dev(38,[0,D+404]); // Keep the implicit target for final unbinding/retirement.
+  dev(28,[32,32,21,0,0,1,RT,0]);
+  emit(0xa1,u32(RT),0x50);push(0);emit(0x56,0x8b,0x06,0xff,0x90,u32(37*4));expect(0,'SetRenderTarget explicit');
+ }
+ const SRC=D+408,RECT=D+416,POINT=D+432;
+ const COPYTARGET=D+440;
+ object(RT,12,[OUT],'GetDesc copy target format');
+ dev(28,[32,32,[OUT],0,0,1,COPYTARGET,0]);
+ if(colorUpload){
+  object(RT,12,[OUT],'GetDesc upload destination');
+  dev(36,[32,32,[OUT],2,SRC,0]); // Match the public backbuffer/target format.
+  [0,0,1,1].forEach((v,i)=>write(RECT+i*4,v));write(POINT,0);write(POINT+4,0);
+ }
  dev(89,[0x42]);for(const [state,value] of [[137,0],[7,0],[22,1]])dev(57,[state,value]);set(2,I);set(3,I);
  original.forEach((v,i)=>{v.slice(0,3).forEach((n,j)=>write(V+i*16+j*4,bits(n)));write(V+i*16+12,0xff28c864);});
  for(const [ci,c] of cases.entries()){
-  dev(43,[0,0,1,0xff000000,bits(1),0]);
+  dev(35,[[RT],0,0xff000000],0,'ColorFill explicit geometry background');
   if(c.multiply){set(256,scale);mul(256,translate,'rendered multiply');}else set(256,c.m);
   dev(83,[4,1,V,16]);matrix(Array(16).fill(0));dev(44,[256,M]); // immutable lowered draw, not live matrix reference
-  object(RT,13,[LR,0,16],'LockRect rendered '+c.name);
+  if(colorUpload){
+   object(SRC,13,[LR,0,0],'LockRect upload source');
+   emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xff112233));
+   object(SRC,14,[],'UnlockRect upload source');
+   dev(30,[[SRC],RECT,[RT],POINT]); // UpdateSurface, with later source reuse.
+   emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xffabcdef));
+  }
+  if(surfaceUpload){
+   object(RT,13,[LR,0,0],'LockRect writable target');
+   emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xff445566));
+   object(RT,14,[],'UnlockRect writable target');
+   emit(0x8b,0x15,u32(LR+4),0xc7,0x02,u32(0xffabcdef));
+  }
+  dev(34,[[RT],0,[COPYTARGET],0,1],0,'StretchRect renderer-owned geometry '+c.name);
+  object(COPYTARGET,13,[LR,0,16],'LockRect copied geometry '+c.name);
+  if(colorUpload||surfaceUpload){emit(0x8b,0x15,u32(LR+4),0x8b,0x02);expect(surfaceUpload?0xff445566:0xff112233,'owned uploaded pixel '+c.name);}
   // Copy the actual public readback while locked, including row pitch. These
   // pixels produce evidence captures; they never supply the scalar oracle.
   for(let y=0;y<32;y++){
@@ -144,8 +177,14 @@ function fixture(){
    const expected=point.pattern[ci]==='1'?0xff28c864:0xff000000;
    emit(0xa3,u32(OBS+pixels.length*4));expect(expected,c.name+' pixel '+point.x+','+point.y);pixels.push({case:c.name,...point,expected});
   }
-  object(RT,14,[],'UnlockRect rendered');mark('rendered-'+c.name);
+  object(COPYTARGET,14,[],'UnlockRect copied geometry');mark('rendered-'+c.name);
  }
+ if(!defaultTarget){
+  dev(37,[0,[D+404]]);object(RT,2,[],'Release final unbound target');
+  push(20);api('Sleep'); // Deliver the owned retirement before inspecting counters.
+ }
+ object(COPYTARGET,2,[],'Release copy target');
+ push(20);api('Sleep');
  mark('PASS');write(STATUS,1);jump('sleep');
  for(const row of checks){labels.set('fail'+row.id,code.length);write(STATUS,row.id);emit(0xa3,u32(STATUS+4));write(STATUS+8,row.expected);jump('failure');}
  labels.set('abi-fail',code.length);write(STATUS,0xffff);emit(0xa3,u32(STATUS+4));

@@ -3039,3 +3039,569 @@ committed module passed the renderer-switch sequence, while the later dirty
 startup/ShowWindow candidate failed Video Modes navigation after the driver
 advice popup. Do not silently include those unqualified edits or describe this
 as a fully qualified release. Safari is intentionally excluded by the user.
+
+### 2026-11-06: Android live gameplay CPU profile
+
+Run `20261106-uplink-android-adb` controls the user's attached A142 Android
+phone through ADB/Chrome CDP. Production build `422eba5a4+ 2026-11-06 04:57`,
+native WASM SHA-256 `999a42bfe60981e6e40cb1f41d7f1b9676229eeb5552849fc7d58e521cd57e22`
+was verified by fetching the page's exact versioned resource. Chrome
+156.0.8078.79 / V8 15.6.75.27, OpenGL EngineType 2, 1024x768, WebGL host,
+cross-origin-isolated Worker mode. New Game/Easy reached a textured corridor
+and shaped HUD. A separate 27.76-second gameplay counter interval averaged
+8.14 presents/s; scene/player movement was not fixed for this diagnostic.
+
+`node scratch/android-profile-puppeteer.cjs` captured the page and three
+Workers simultaneously at 1ms sampling for approximately 30 seconds. Direct
+Target.attachToTarget Worker requests timed out; Puppeteer's existing Worker
+clients succeeded. No game code or resolution was changed for profiling.
+
+Main guest Worker sampled 17.93s in WASM, 2.49s in guest-rpc.js, 1.76s in
+other code, 0.04s GC, and 7.98s idle. Leading WASM self samples mapped against
+the matching release combined.wat: uop_fast 3.09s, branch_end_at 1.02s,
+x87_island_fast 0.89s, win32_dispatch_inner 0.64s, th_load32_rop 0.52s,
+run 0.43s, th_uop_enter 0.40s, th_fpu_mem_ro 0.38s, and
+gl_finish_immediate 0.32s. RPC waitForResponse alone accounts for 1.18s;
+sampled waits are not equivalent to CPU execution time.
+
+Render Worker: 23.91s idle, 6.24s non-idle; flushPendingDraw self 1.78s,
+bufferData 0.72s, command-stream replay 0.53s. Only 0.007s WASM was sampled
+there, inconsistent with a dominant software-rasterization fallback. Page:
+20.86s idle, 9.44s non-idle, including messaging and the enabled diagnostic
+HUD. Secondary guest Worker was effectively entirely idle. CPU sampling does
+not measure GPU execution, and non-idle samples may include native waits;
+do not present these as GPU utilization or summed physical CPU percentages.
+The strongest observed optimization target is guest instruction execution,
+followed by RPC overhead and draw preparation; allocation/GC is minor here.
+
+### 2026-11-06: repeated ShowWindow caller, Android and desktop
+
+Live Android stack/byte capture identifies hldemo.exe 0x40b0bb calling
+ShowWindow(gameplay HWND, SW_SHOW), returning to 0x40b0c1. It next calls
+wrapper 0x45a54a with SW_HIDE; the wrapper calls ShowWindow at 0x45a558,
+returning to 0x45a55e. The hide result reaches 0x40b0cc, which immediately
+calls 0x40afd0 and tests that function's result, not either ShowWindow result.
+Thus this pair is not a retry caused by an incorrect ShowWindow BOOL.
+The emulator's show_window_result returns prior WS_VISIBLE for ordinary
+ShowWindow; host_show_window's packed client size is an internal result.
+
+Confirmed with headed local Chrome/Puppeteer, release 422eba5a4, isolated
+guest Workers and OpenGL: 386 presents in 10.002 seconds, with exactly 386
+SW_SHOW calls on the already-visible gameplay window and 386 SW_HIDE calls
+on the already-hidden menu window. Caller return addresses match Android.
+The menu also repeats a visibility pair (202 show-normal and 202 hide in
+10 seconds), with the window roles reversed. Screenshot reviewed at the
+textured initial corridor with HUD. Evidence:
+scratch/runs/20261106-uplink-showwindow-local-isolated. The first nonisolated
+run's fixed delays mislabeled intro/menu as menu/gameplay; exclude it from
+gameplay claims. No runtime optimization applied by this investigation.
+
+### Redundant ShowWindow host-call fix and frame-cost limits
+
+The subsequent fix elides host_show_window for SW_HIDE with prior visibility
+false, and SW_SHOW on an established active, visible, non-minimized top-level
+window that does not replace a utility main. It does not return early from the guest handler: visibility bookkeeping,
+paint, activation and prior-visibility BOOL paths remain. First show, other
+windows and restoration retain the host call. Focused tests assert both elision
+and preserved startup/restoration/activation/return behavior.
+
+The Android RPC sample has a simultaneous denominator: 294 presents over
+30.021545 seconds, or 102.114 ms/frame. Average blocking waits per frame:
+render batches 4.906 ms; window rectangles 2.047; ShowWindow 1.930; mouse
+0.994; network peek 0.788; control paint trace 0.386; invalidate 0.239;
+foreground query 0.166; window info 0.159; audio 0.021. These sum to about
+11.64 ms/frame. The remaining 90.48 ms is not all guest CPU: it includes
+execution, scheduling, pacing and unmeasured waits. Render-worker work can
+overlap these intervals; do not add its CPU samples to the frame wall time.
+
+The separate earlier CPU profile had no simultaneous frame counter, so it
+cannot provide exact CPU milliseconds per frame. Main guest samples were
+59.4% WASM, 8.2% RPC JavaScript, 26.4% idle and roughly 6% other/GC; render
+worker non-idle was 20.7% of its sampled interval. WASM includes API/graphics
+handlers as well as x86 execution. GPU time was not captured. A fresh combined
+Android profile/frame-count attempt was blocked by the phone disconnecting;
+do not report a measured Android FPS improvement from this fix yet.
+
+Final candidate local evidence: scratch/runs/20261106-uplink-showwindow-fixed-final,
+headed Chrome, isolated Workers, integration 457f25f30 plus this patch, native
+WASM e49dbb3241327a0fcf74da39af963355c3bc3379bba24796c02572303dfcf4ab.
+Reviewed corridor/HUD screenshot; zero show_window host calls in 56 presents
+over 10.000315 seconds. Six regression scripts pass (created-dialog/main
+promotion including redundant-call cases, active-window, owned-form activation,
+child size, secondary top-level size, and ShowWindowAsync); native/compat build
+and gates pass. Removed the async test's duplicate test_get_last_error export;
+the same helper already exists in src/13-exports.wat.
+
+The profiled local integration run is much slower than the earlier release
+run, so these are not matched performance A/B results. Its 178.58 ms/frame
+sample-normalized main guest breakdown is approximately 40.2 ms WASM,
+120.7 ms RPC JS (predominantly waitForResponse, including blocked time),
+13.5 ms other JS/native and 4.2 ms idle. Render Worker non-idle corresponds
+to about 83.1 ms/frame and page non-idle to 71.6 ms/frame, overlapping the
+guest interval; neither may be added to it. Profiles slightly bracket the
+frame-counter window, so these are sampled estimates, not exact timings.
+Do not attribute the integration/release performance difference to this patch
+without a matched control. Investigation of integration RPC/render scheduling
+is a follow-up; this commit proves redundant call elimination, not an FPS gain.
+
+### 2026-11-07: Android matched release-source ShowWindow comparison
+
+ADB reconnected to A142, Chrome 157.0.8103.46 / V8 15.7.112.23. To avoid
+confounding integration rendering changes, compiled two modules from release
+422eba5a4 with test/compile-src.js: unchanged control e7135cb1dfd54a4bf1144a716265d3f10caab66355d302dd1f5e26713414fe1b,
+and only the committed ShowWindow guard inserted, fixed fc9fa56ccc385e12015785e9c031c448541c8ff1c4f33e616d78d7e80cd1cb59.
+Puppeteer served the selected module through request interception; all other
+files were identical at localhost:52675 via adb reverse, isolated Workers,
+OpenGL 1024x768. The old background production game was stopped before timing.
+Reviewed screenshots show the same fresh-game corridor/camera and HUD.
+Diagnostic graph remained enabled in all runs (start({draw:false}) alone did
+not hide an already-running graph). Loading was excluded; 60-second samples:
+
+| Run order | Presents | FPS | ShowWindow host calls/frame |
+|---|---:|---:|---:|
+| Control | 612 | 10.200 | 2 |
+| Fixed | 555 | 9.250 | 0 |
+| Control repeat | 541 | 9.016 | 2 |
+
+Battery temperature rose from 35C before testing to 41C by the end of the
+first control, and remained 41C at subsequent checks. Control drift exceeds
+the expected small optimization benefit: no reliable FPS gain or regression
+is established. The zero redundant host-call result is confirmed on Android.
+An initial diagnostic timed out because its 30-second CDP timeout was shorter
+than the 60-second sample; discarded, then remeasured the loaded control with
+a 120-second timeout. This gave the first control additional warmup time.
+
+A separate fixed-build CPU profile included simultaneous counters: 257 frames
+in 30.010945 seconds (116.77 ms/frame, profiler enabled). Sample-normalized
+main guest: 66.13 ms WASM, 9.21 ms RPC JS including waits, 7.04 ms other JS/native,
+0.13 ms GC, 34.26 ms idle. Render Worker non-idle about 19.42 ms/frame, page
+non-idle 39.24 ms/frame; these overlap guest time and must not be added to it.
+GPU time is unknown. Native idle/wait samples are not physical CPU usage.
+Evidence scratch/runs/20261107-uplink-android-showwindow includes both modules,
+three run JSONs/screenshots and profile/window.json with the frame denominator.
+Phone returned to fixed module after testing; production unchanged.
+
+### 2026-11-07: Null OpenGL diagnostic
+
+Implemented `?debug&perf&gl-renderer=null` behind the existing GL render endpoint.
+It retains command generation, transport, queue ordering, fences, texture
+decoding and GL state/query handling, discarding packed geometry and publishing
+completion tokens without pixels. Neither WebGL nor the native software
+rasterizer runs. Bitmap drawables and framebuffer read/copy operations fail
+explicitly. This is OpenGL-only; Direct3D/Glide are unchanged. Capability
+queries use the existing software mirror, including its 2048 texture limit.
+
+Protocol regression covers state/viewport queries, valid and malformed packed
+geometry, producer rasterizer disablement, frame tokens, no display canvas,
+readback rejection, and a glFinish barrier behind queued work. Existing command
+stream ordering/overflow/texture tests and browser cache-version check pass.
+
+For phone comparison, used release 422eba5a4 plus the null JS changes and the
+same ShowWindow-fixed native module fc9fa56ccc385e12015785e9c031c448541c8ff1c4f33e616d78d7e80cd1cb59
+for both renderers. The implementation lives on the integration branch, whose
+other renderer changes are deliberately excluded from these benchmark files.
+Evidence: scratch/runs/20261107-uplink-android-null, including tested WASM and
+release-null.patch. Android A142 / Chrome 157, isolated Workers, 1024x768, graph
+enabled, one foreground game; fresh New Game / Easy, 120 seconds loading then
+60-second sample. Null intentionally retains the last GDI loading picture;
+gameplay window visibility, ongoing swaps, renderer endpoint options and CPU
+profiles provide evidence of continued execution, not visual correctness.
+
+Unprofiled repeat null sample: 656 presents / 60.00143s = 10.933 FPS;
+WebGL: 604 / 60.00179s = 10.066 FPS (91.47 vs 99.34 ms/present).
+An earlier null sample was 12.499 FPS; retain it as diagnostic evidence, not
+the selected comparison, since profiler startup was adjacent to its end and
+the repeat explicitly followed profiler shutdown. This spread means the
+8.6% difference in the selected pair is not a precise causal speedup estimate.
+Battery was 35C during WebGL warmup; no matched null temperature was recorded.
+
+Separate null profile: 286 frames / 30.043s, main guest about 49.07 ms/frame
+WASM, 12.68 RPC JS (including waits), 6.53 other/GC and 36.76 idle. Renderer
+about 7.87 ms/frame non-idle, 92.51% idle. Page non-idle about 36.40 ms/frame,
+including the diagnostic HUD. Thread numbers overlap and must not be added;
+these are sample-normalized occupancies, not hardware CPU/GPU timings.
+Rendering-free execution is still slow: prioritize guest emulation and RPC
+profiling over assuming GPU rasterization is the dominant limit. Further
+controlled repetitions are needed to quantify the renderer's FPS contribution.
+
+Matching WebGL profile (separate from the FPS sample): 290 frames / 30.0211s,
+guest 50.04 ms/frame WASM, 11.36 RPC, 6.50 other/GC, 35.62 idle. Renderer
+non-idle 19.27 ms/frame vs null 7.87; page 37.51 vs null 36.40. The guest
+emulation cost remains nearly identical while render-worker work falls, which
+supports using this mode to isolate renderer changes. Phone left in WebGL.
+
+### 2026-11-07: Gameplay RPC attribution and control-trace batching
+
+Instrumented the real Android guest Worker's outgoing messages and blocking
+Atomics.wait calls for 30 seconds in the stationary corridor, WebGL1024x768,
+same release-based module as the null comparison. Counted 279 presents:
+
+| Operation | Calls/frame | Blocked ms/frame |
+|---|---:|---:|
+| GL command batch | 4.99 | 5.280 |
+| Window rectangle | 7.38 | 1.507 |
+| Mouse position | 4.00 | 1.504 |
+| Network frame peek | 3.00 | 0.648 |
+| Control paint trace | 3.00 | 0.521 |
+| Invalidate | 1.00 | 0.204 |
+| Window info | 1.00 | 0.166 |
+| Foreground window | 1.00 | 0.159 |
+
+These waits include scheduling/service latency, not just host-function CPU.
+Also observed 37.97 sliceDone messages/frame. An initial probe attributed
+glBatch waits to the stale RPC function slot; discarded that attribution and
+fixed the probe to track the actual outgoing message type before repeating.
+Both files are retained in scratch/runs/20261107-uplink-android-rpc.
+
+Control paint tracing defaults to a no-op, yet these records made synchronous
+round trips and invalidated the rectangle cache. Both ctrl_paint_trace and
+ctrl_sb_trace take only scalar snapshots and return void. Added them to the
+existing asynchronous allowlist: preserve logging when enabled, preserve
+argument values, and flush FIFO before later synchronous calls. No guest
+pointers are deferred. Tests check the two records and subsequent RPC order,
+plus existing import error, caller-stack and nested-wait behavior. This removes
+a measured source of blocking; it does not establish an FPS improvement.
+
+The first 10k/50k slice trial produced 9.40/7.57 FPS but lost screenshot/CDP
+responsiveness after the 50k sample, and lacked visibility tracking. Do not use
+that pair as a performance conclusion. Repeated without intervening screenshots,
+recording any visibility loss throughout each 60-second window, with 10 seconds
+settling per setting. All three stayed visible in the same stationary corridor:
+
+| Slice ceiling | Presents / 60s | FPS | Retired blocks/frame |
+|---|---:|---:|---:|
+| 10k control | 625 | 10.416 | 362747 |
+| 50k | 995 | 16.583 | 308436 |
+| 10k repeated | 612 | 10.199 | 366101 |
+
+50k is about 61% faster than the mean of the two controls here. The endpoint
+adaptive budget was 50k for the larger-ceiling sample. Fewer scheduler handoffs
+and fewer retired blocks per presented frame accompany the improvement; the
+block reduction's exact cause has not been established. No instruction handler
+or renderer changed between these samples. This is an idle-corridor benchmark,
+not a combat/interaction-latency or desktop-browser claim.
+
+Added an explicit `openglWorker: 50000` renderer policy for Half-Life only.
+OpenGL cooperative retains 10k; Direct3D Worker retains 10k; software retains
+1k. The generic Worker controller still adapts down from the ceiling based on
+its 12ms target, and manual dropdown settings win. Callback tests cover GL/D3D
+switches, the confirmed Worker check, cooperative behavior and manual overrides.
+
+Fresh release-based launch with both fixes selects 50k automatically and
+renders the same corridor/HUD; 1090 presents / 60.0022s = 18.166 FPS, no page
+errors. This later run is not the matched estimate of the trace fix alone.
+A separate 30-second instrumented interval confirms zero synchronous control
+paint-trace calls (previously three/frame). 3198 sliceDone messages / 521 frames
+= 6.14 handoffs/frame, versus 37.97 previously. Window-rectangle round trips
+fell to 6.24/frame; both scheduling and trace batching changed, so attribution
+of that reduction is not isolated. Installed-payload menu test passes with
+local socket access; its initial sandboxed ECONNECTION run is discarded.
+
+Requested higher-ceiling sweep on the updated build: 50k control17.316 FPS,
+100k18.565 FPS, both 60-second windows continuously visible. Actual adaptive
+budgets sampled once/second: 50k min40k/median50k/max50k; 100k
+min43k/median82k/max100k. The phone disappeared from `adb devices` during the
+500k run and CDP closed, so no valid 500k measurement or final50k control was
+obtained. This is a disconnected-device interruption, not evidence of a
+500k-induced game crash. 100k is promising but lacks the planned repeated
+control; keep the verified50k default pending a completed comparison.
+
+### 2026-11-07: Integration Android launch and queue regressions
+
+Evidence: `scratch/runs/20261107-uplink-integration-perf`. Integration
+`cd9722da4`, native module
+`e49dbb3241327a0fcf74da39af963355c3bc3379bba24796c02572303dfcf4ab`,
+Chrome157 on Android A142, isolated Workers, fresh OpenGL1024x768 corridor.
+The initial launch reached the menu but rejected the OpenGL gameplay mode.
+A caught-exception debugger probe identified
+`GL drawable buffers require WEBGL_draw_buffers`: the bridge forced WebGL1,
+and this phone does not expose that extension there. Prefer the backend's
+existing automatic WebGL2 selection, retaining WebGL1 fallback and explicit
+version overrides. The phone then rendered the textured corridor and HUD.
+Drawable pixel tests pass for default, simulated WebGL2 unavailability,
+explicit WebGL1/2, and the actual browser Worker.
+
+With only API selection changed, the visible 60-second gameplay sample was
+53 presents / 60.000335s = 0.883 FPS, Auto50k, no page errors. This is a real
+integration regression relative to the earlier release-based results, but
+not a matched alternating build comparison or an isolated estimate of its
+cause. The failed launch's zero presents are excluded. A subsequent RPC
+probe did not complete; after debug-connection interruptions the host logged
+`worker 0 did not answer slice in 60000ms`. The later CPU capture contained
+only the stopped page, so it is not a gameplay profile. Preserve these
+limitations rather than attributing idle-page samples to the game.
+
+Source inspection found two transport issues. Native `gl_object_leave`
+publishes the stream on every outer call to preserve cross-producer shared
+object ordering. Simply deleting that flush breaks the documented shared
+texture visibility contract. Separately, the host's async eligibility check
+recognized only the old 19-float packed vertices: the newer exact-color and
+edge records fell back to synchronous rendering despite owning their inputs.
+Extend the existing bounded queue to these 28/29-float records. Regression
+coverage checks early acknowledgement, payload survival after producer reuse,
+and synchronous fallback for borrowed or incomplete vertices. Existing queue
+ordering, backpressure, query and finish-fence tests remain passing.
+
+Fresh launch with the queue change: 49 presents / 60.00393s = 0.817 FPS,
+continuously visible, Auto50k, no page errors, matching textured corridor/HUD.
+This change did not recover integration performance. These single successive
+samples lack an alternating control, so neither a small speedup nor slowdown
+is established; the protocol correction alone is insufficient.
+
+Per-call publication and per-pixel texture-decoder array allocation remain
+investigation targets, not fixes in this change. The earlier local integration
+profile implicated messaging and `_decodeTexture`.
+
+A valid 30-second Android profile after the queue change captured 23 presents.
+Main guest Worker: 68.08% `waitForResponse`, 69.51% all RPC JS, 24.06% WASM.
+Render Worker: 54.46% idle; `self.onmessage`8.84%, `postMessage`4.83%,
+`sharedMessage`4.55%, `execute`3.49%, `messageBytes`2.35%,
+`_decodeTexture`2.19%. Page: 58.47% idle, with message admission/replies
+prominent in its active samples. These are sample shares including waits,
+not hardware CPU/GPU utilization, and overlapping threads must not be summed.
+The immediate priority is command publication/round-trip overhead, not raising
+the slice ceiling again or assuming GPU fill rate is the main limit. Any
+batching repair must preserve the completed cross-producer prefix documented
+in `gl-shared-texture-visibility-20261103.md`; simply reverting that flush is
+not a correct fix. Source-text function index tools did not match this compiled
+module's function count, so no individual native hotspot names are inferred.
+
+Fresh release-based control afterward: 988 presents / approximately60s =
+16.466 FPS, visible throughout, Auto50k, no page errors. Loaded module
+`fc9fa56ccc385e12015785e9c031c448541c8ff1c4f33e616d78d7e80cd1cb59`
+is the previously tested release422eba5a4 plus ShowWindow guard, with the null
+diagnostic and scheduling JS patches. Same phone, resolution and camera route;
+the scripted ceiling/light animation has progressed further in the faster
+build. Release uses its WebGL1 path, integration now uses WebGL2. Thus this
+confirms a substantial build discrepancy, not an isolated optimization ratio
+or an identical-frame comparison. Phone left on the faster release-based
+local build. Neither these fixes nor the integration build were deployed.
+
+### 2026-11-07: Per-call GL publication defeats stream batching
+
+Evidence: `scratch/runs/20261107-uplink-gl-roundtrips`. Page-side
+`serveGlBatch` counters on integration `b8a3bfc94`, Android Chrome157,
+OpenGL1024x768/WebGL2, isolated Workers, Auto50k. The first 60-second sample
+still showed the intro overlay and is excluded from gameplay comparisons.
+The subsequent visible corridor sample produced 28 frames in 60.000605s
+(0.467 FPS), 61,734 batches and exactly 61,734 command records: one command
+per batch, 2,204.79 blocking admissions per frame. Average batch size was
+766.66 bytes; the normal 512 KiB stream threshold was effectively bypassed.
+There were 1,481.61 packed draws, 156.07 texture binds, 96.89 disables and
+91.57 depth-mask changes per frame. The scene has animated lighting and
+ceiling debris; its later phase and counting overhead mean this is not an
+exact repeat of the earlier 0.817 FPS interval.
+
+`gl_object_leave` flushes every completed outer GL call before releasing
+the process object lock. Each flush enters `guest-rpc.js`'s `glBatch`
+`waitForResponse`, even if the render queue acknowledges before GPU work
+finishes. Therefore extending async draw eligibility cannot remove these
+thousands of page admissions. Initial eager publication entered with
+`a08985c2b2`; the later outer-lock placement fixed the real shared-texture
+visibility failure documented in `gl-shared-texture-visibility-20261103.md`.
+Do not simply revert it: another producer cannot drain private WASM globals,
+and completed texture uploads must precede the other producer's draw.
+
+The diagnostic variant removes only the outer `gl_wat_stream_flush` call,
+retaining state publication, locks, threshold flushes and explicit barriers.
+It is deliberately not safe for general cross-producer GL sharing and must
+not ship. The canonical rebuilt control, including the original region stamp,
+is byte-identical to the tested native module (`e49dbb3241327a0fcf74da39af963355c3bc3379bba24796c02572303dfcf4ab`).
+Diagnostic SHA256: `b7f92d00449b26c3423614541ac206cae600cd9d1077c615ca24a4e33ce983cc`.
+CDP response interception serves it for this browser launch only; the dev
+server's normal module is unchanged.
+
+Native function attribution is now resolved by a compiler name-section build
+whose non-custom sections match that control byte-for-byte. In the previous
+valid integration profile, `uop_fast` accounts for 3.09% of all guest samples,
+`gl_list_intercept`1.16%, `run`1.04%, `win32_dispatch_inner`0.96% and
+`gl_wat_encode_call_locked`0.94%; no individual instruction handler explains
+the 69.51% RPC share. These are sampling shares including waits, not hardware
+CPU utilization. Source-text function indices were not sufficient because
+the compiler inserts additional functions.
+
+The isolated no-outer-flush run produced 491 frames / 60.003165s = 8.183 FPS,
+2,178 batches, 995,755 commands: 4.44 batches/frame and 457.19 commands/batch.
+The loaded response hash matches the diagnostic module above. Both gameplay
+windows remained visible, with no page errors, and before/after captures show
+the same textured corridor/HUD. Lighting animation differs; commands/frame
+also differ (2,205 control versus 2,028 diagnostic). This is strong causal
+evidence for the per-call admission regression, not an exact universal 17.5x
+speedup estimate or a correctness-approved optimization. The earlier intro
+window (1.817 FPS) is preserved separately and excluded.
+
+A separate 30-second diagnostic profile captured 195 frames; profiler overhead
+means its 6.50 FPS must not replace the unprofiled benchmark. Main guest:
+43.48% WASM, 45.21% RPC JS, 8.62% idle; `waitForResponse` alone41.27%.
+All sampled wait stacks pass through `gl_wat_stream_flush`: 26.64% of all
+guest samples from `gl_finish_immediate`, 11.23% from `gl_emit_record`, 3.40%
+from the encoder directly. These are remaining coarse batch waits, not the
+removed per-call flush. Render Worker: 63.78% idle, `_decodeTexture`19.63%,
+`flushPendingDraw`2.45%, `drawBuffers`1.65%. Page75.0% idle; sound Worker100%
+idle. `_decodeTexture` constructs component arrays and maps/clamps every
+texel; canonical texture upload conversion is now a concrete secondary target.
+The remaining gap to the earlier release-based16.47FPS control is not fully
+isolated by this experiment; API paths, other native changes and run timing
+differ. Do not attribute all of it to decoding without another controlled test.
+
+Correct repair direction: make completed command prefixes visible in an
+ordered shared queue without a blocking page RPC per GL call, coalesce consumer
+notifications, and retain immutable payload ownership/backpressure plus real
+query/readback/finish barriers. Another producer must see prior completed
+uploads before its own draw. Simply coalescing messages after page admission
+does not eliminate the already-paid producer round trips. No runtime fix was
+shipped from this diagnostic; the normal server WASM was never replaced.
+
+### 2026-11-07: Shared publication implementation
+
+The follow-up uses a process-wide 4 MiB shared publication ring for GL command
+bytes, Glide packets and D3D leased-buffer descriptors. See
+[`../render-publication.md`](../render-publication.md) for the ownership and
+barrier contract. Native outer-call publication and shared-object locks remain
+unchanged. The page groups adjacent GL packets up to 512 KiB; this is a maximum,
+not a threshold that delays the first packet. Queries and readbacks still fence
+prior publications. This removes the per-call acknowledgement dependency rather
+than removing publication itself. No native interpreter variant was introduced.
+
+Two implementation defects were caught before acceptance: owned GL bytes must
+remain attached even when an opcode takes synchronous adapter replay; and native
+GL stream leases cannot coexist with publication's independent slot rotation.
+The latter caused `invalid GL command length` during a longer headed run despite
+small protocol tests passing. Publication-enabled fallback packets now snapshot
+their data before an early acknowledgement, rather than leasing native slots.
+Regression checks also keep software GL control metadata on the synchronous
+route; software raster batches use the common D3D encoder queue.
+
+Evidence is in `scratch/runs/20261107-uplink-shared-publication`. The first two
+Android timing attempts were backgrounded (`hidden:true`) and are excluded from
+performance claims. One also timed out after the page was backgrounded. The
+first desktop publication attempt failed with the lease conflict above and is
+not a performance result. Headed desktop testing uses one game at a time, a
+two-minute corridor warmup, then 60 seconds of presentation-counter deltas,
+visibility tracking, loaded response hashes and before/after screenshots. The
+control intercepts only queue creation to disable publication; WASM and all
+other source are held constant within the pair. This is a stationary animated
+corridor workload, not a full playthrough or an exact animation-frame match.
+
+The fixed headed Chrome156 pair completed without page errors or visibility
+loss: control192 presents /60.004465s =3.199762FPS; publication1239 presents
+/60.002560s =20.649119FPS (6.45x in this pair). Both use the unchanged normal
+WASM above, Workers and Auto50k. Reviewed captures show the same corridor camera,
+textures and HUD with different lighting phases. No profiler was active during
+measurement. This is one sequential pair, not a statistical confidence interval.
+Publication counters for the measured minute:2,505,240 packets,184,732 adapter
+groups,31,264 notifications and1,657,562,432 payload bytes. That is about80
+packets per notification; it demonstrates notification coalescing, not GPU/guest
+execution overlap. Copies and decoder work remain potential costs. No valid
+foreground Android speedup or cross-renderer FPS comparison is claimed here.
+
+### 2026-11-08: Foreground Android publication and release comparison
+
+Evidence: `scratch/runs/20261108-android-publication`. Android A142,
+Chrome157, isolated guest Workers, Auto50k, one game at a time. Actual drawable
+640x480: the harness requested1024x768 through registry entries but the observed
+transform remained640x480 on every build. All samples lasted60seconds and
+remained visible; counts are presentation deltas, not page refreshes.
+
+| Build / route | Presents | Seconds | FPS |
+| --- | ---: | ---: | ---: |
+| Current shared publication | 577 | 60.004030 | 9.616 |
+| Current publication disabled | 25 | 60.001325 | 0.417 |
+| Disabled repeat | 29 | 60.002970 | 0.483 |
+| Shared publication repeat | 533 | 60.002640 | 8.883 |
+| Earlier release-based build | 973 | 60.002075 | 16.216 |
+
+The current pair serves identical WASM and source except queue creation in
+guest-thread-host. Current module SHA256 is
+`6d2b8ef07e867641b26b3b6762f66ab8a605bcdca4970a9860d108709d422cfd`.
+The earlier release module was captured from its browser response and matches
+the previous16.466FPS run:
+`fc9fa56ccc385e12015785e9c031c448541c8ff1c4f33e616d78d7e80cd1cb59`.
+Disabling the new queue does NOT reproduce the earlier release; it retains the
+integration's per-call publication and other native changes. The remaining
+release-to-integration regression is unresolved. This GL workload does not
+exercise the pending D3D9 guest-side CLEAR capture optimization.
+
+Captures show textured corridor/HUD, but not an exact deterministic replay:
+the slow control still has debris from the opening animation; camera/lighting
+phases differ. The phone changed from portrait to landscape before the current
+repeat; current repeat and release use the same871x309 CSS viewport and2.625DPR.
+Battery temperature rose from28C initially to32C after first current/control,
+then36C before release. These are sequential samples, not confidence intervals
+or an isolated WebGL1-versus-WebGL2 performance test. The release remains faster
+despite running later. The original current60s sample published1,169,834 packets,
+930,761,776 bytes and4,350 notifications; this is transport throughput, not a
+measurement of actual GPU/guest overlap. No new CPU profile was collected.
+
+Backend recommendation: keep one queue/ownership/resource model with WebGL2
+preferred in browsers and capability-checked WebGL1 for the native CLI provider.
+Actual `test-headless-gl.js` passes on Apple M1/WebGL1. A separate provider probe
+confirms `getContext('webgl2')` returnsnull, WEBGL_draw_buffers is available and
+enableDrawableBuffers succeeds. Thus current CLI GPU rendering is not WebGL2,
+but can retain the shared renderer through WebGL1 extensions. This is a provider
+smoke check, not a full CLI Half-Life playthrough. Software remains a separate
+raster backend. Do not attribute the regression to WebGL2 without holding the
+command stream and other runtime changes constant.
+
+Follow-up30-second CPU profiles in the same evidence folder separate this
+regression from API-version speculation. Release main guest: waitForResponse
+8.09% of samples; render Worker idle74.07%. Current main guest: WASM53.72%,
+RPC JS29.65% (waitForResponse28.51%), idle10.86%. Current render Worker:
+idle48.76%, `_decodeTexture`23.05%, `drawBuffers`2.11%, GC1.18%; page idle58.42%,
+`joinPublished`1.83%. These are per-thread sample shares including waits, not
+hardware utilization or additive CPU totals. Profiled presentation rates are
+13.96FPS release and6.70FPS current; do not substitute them for unprofiled FPS.
+Current capture tracks visibility and stayed visible; the earlier collector
+did not track visibility transitions, a limitation of the release profile.
+This supports investigating redundant per-texel conversion alongside remaining
+producer waits, not blaming WebGL2 itself.
+
+The first identity-RGBA-byte fast path did not target the observed workload:
+a5-second temporary Worker wrapper counted83 uploads/1,359,872 pixels, all
+canonical RGBA/GL_FLOAT with identity pixel transfer. The wrapper was removed
+before subsequent timing. Native capture already expands these source pixels
+to floats. Final decoding therefore handles identity RGBA bytes by owned row
+copies and floats by direct scalar clamp/round loops; nonidentity transfer/maps
+retain the generic path. No producer ownership or barrier was relaxed.
+
+The byte-only run measured441/60.003650s=7.350FPS. The float-path run measured
+518/60.003585s=8.633FPS, foreground640x480 with matching corridor route. Phone
+temperature reached39C; these sequential samples do not establish a precise
+speedup relative to earlier cooler runs. More decisive supporting evidence is
+the second30-second profile: decoder2.19% of render-worker samples versus23.05%,
+render idle62.29% versus48.76%, guest waitForResponse19.53% versus28.51%.
+Profiled FPS7.998 versus6.699 is diagnostic only. The release gap remains.
+
+Validation: owned byte output after producer mutation; padded rows, skips,
+canonical unpack override; float clamp/round, NaN/infinity, byte swapping,
+nonidentity alpha transfer, enabled maps and short-input rejection; packed
+fixed-function suite and935 native/host pixel-map checks pass. Exact source
+snapshots/patches, format probe, screenshots, timing JSON and raw CPU profiles
+are retained in the same run folder. D3D9 clear publication is separately
+committed as7a05ea3f8; this OpenGL decoder optimization is shared by both browser
+WebGL versions and the CLI frontend, not a WebGL2-specific workaround.
+
+The next transport change exempts only `get_mouse_position` from the shared
+render admission fence. The query still reaches the page after queued cursor
+warps, preserving clipping and active-input-event semantics; a warp now also
+invalidates the local pointer cache. This fixes consecutive same-epoch warps
+returning stale coordinates. Queue failures still reject uncached queries.
+A real Worker test holds a Glide publication, completes two pointer queries,
+then verifies a graphics-dependent invalidate remains blocked until admission.
+GL/GDI canonical-pixel ordering tests also pass.
+
+Android `pointer-independent.json` records595 presents/60.001995s =9.916FPS,
+visible throughout at640x480, following120 seconds of gameplay warmup.
+The corridor screenshot is textured and visually intact. The preceding
+float-decoder sample was8.633FPS; sequential thermal/animation differences
+prevent attributing the entire difference to this change. The older release's
+16.216FPS remains an unresolved performance gap. Exact guest-rpc source,
+working patch, loaded WASM hash and captures accompany this sample in
+`scratch/runs/20261108-android-publication`.
+
+The follow-up30-second profile (`profile-pointer-independent`) stayed visible:
+main guest waitForResponse9.43% versus19.53% in the preceding float-decoder
+profile, WASM70.75%, render Worker idle54.09%. Profiled throughput9.062FPS is
+separate from the unprofiled9.916FPS sample. Samples include idle and waits;
+these percentages are per thread and are not GPU utilization or a direct
+measurement of execution overlap.

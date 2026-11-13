@@ -10,7 +10,7 @@
 // to 2x2, alignment left at 4) drew a black page on the WebGL renderer.
 
 const assert = require('assert');
-const { OpenGLHostBridge, CALL_INDEX, constants: GL } = require('../lib/gl-compat');
+const { FixedFunctionGL, OpenGLHostBridge, CALL_INDEX, constants: GL } = require('../lib/gl-compat');
 
 const memory = new ArrayBuffer(8192);
 const view = new DataView(memory);
@@ -85,4 +85,34 @@ u = uploads.pop();
 assert.strictEqual(u.kind, 'mipmaps');
 assert.strictEqual(u.pixels.length, 14, 'GLU reads its source with the unpack alignment too');
 
-console.log('PASS  OpenGL client images honour GL_UNPACK_ALIGNMENT (1/4/8): TexImage2D, TexSubImage2D, gluBuild2DMipmaps');
+// Exercise the production decoder's owned RGBA path and the transfer fallback.
+const decoder=Object.create(FixedFunctionGL.prototype);
+decoder.pixelStore={0xcf0:0,0xcf2:0,0xcf3:0,0xcf4:0,0xcf5:8};
+decoder.pixelTransfer=new Float32Array(14);
+for(const i of [4,8,10,12])decoder.pixelTransfer[i]=1;
+const padded=new Uint8Array([99,99,10,20,30,40,99,99,99,99,50,60,70,80,99]);
+const input=padded.subarray(2,14);
+const decoded=decoder._decodeTexture(input,1,2,GL.RGBA,GL.UNSIGNED_BYTE);
+assert.deepStrictEqual(Array.from(decoded),[10,20,30,40,50,60,70,80]);
+input.fill(0);assert.deepStrictEqual(Array.from(decoded),[10,20,30,40,50,60,70,80], 'decoded bytes own their storage');
+decoder.pixelStore[0xcf2]=3;decoder.pixelStore[0xcf3]=1;decoder.pixelStore[0xcf4]=1;
+const skipped=new Uint8Array(40);skipped.set([1,2,3,4],20);skipped.set([5,6,7,8],36);
+assert.deepStrictEqual(Array.from(decoder._decodeTexture(skipped,1,2,GL.RGBA,GL.UNSIGNED_BYTE)),[1,2,3,4,5,6,7,8]);
+const tight=new Uint8Array([20,40,60,80,100,120,140,160]);
+assert.deepStrictEqual(decoder._decodeTexture(tight,1,2,GL.RGBA,GL.UNSIGNED_BYTE,true),tight,'canonical input ignores unpack state');
+decoder.pixelTransfer[4]=0.5;
+assert.deepStrictEqual(Array.from(decoder._decodeTexture(tight,1,2,GL.RGBA,GL.UNSIGNED_BYTE,true)),[10,40,60,80,50,120,140,160]);
+decoder.pixelTransfer[4]=1;decoder.pixelTransfer[0]=1;
+decoder.pixelMaps=Array.from({length:10},()=>new Float32Array([0,1]));
+assert.deepStrictEqual(Array.from(decoder._decodeTexture(tight,1,2,GL.RGBA,GL.UNSIGNED_BYTE,true)),[0,0,0,0,0,0,255,255],'enabled maps retain component conversion');
+decoder.pixelTransfer[0]=0;
+assert.throws(()=>decoder._decodeTexture(tight.subarray(0,7),1,2,GL.RGBA,GL.UNSIGNED_BYTE,true),RangeError,'short input is not silently padded');
+const floats=new Float32Array([-1,0,0.5,1,2,NaN,Infinity,-Infinity]);
+assert.deepStrictEqual(Array.from(decoder._decodeTexture(floats,1,2,GL.RGBA,GL.FLOAT,true)),[0,0,128,255,255,0,255,0],'native canonical float upload clamps and rounds');
+decoder.pixelStore={0xcf0:1,0xcf2:0,0xcf3:0,0xcf4:0,0xcf5:4};
+const swapped=new Uint8Array(16),swappedView=new DataView(swapped.buffer);
+[0,0.5,1,2].forEach((v,i)=>swappedView.setFloat32(i*4,v,false));
+assert.deepStrictEqual(Array.from(decoder._decodeTexture(swapped,1,1,GL.RGBA,GL.FLOAT)),[0,128,255,255],'float byte swapping');
+decoder.pixelTransfer[12]=0.5;
+assert.deepStrictEqual(Array.from(decoder._decodeTexture(floats,1,1,GL.RGBA,GL.FLOAT,true)),[0,0,128,128],'float alpha transfer retains generic conversion');
+console.log('PASS OpenGL unpack alignment, owned RGBA decoding, canonical rows and transfer fallback');

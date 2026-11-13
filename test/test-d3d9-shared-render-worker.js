@@ -83,5 +83,35 @@ function adapterProtocol(){
   assert.throws(()=>call(OP.DRAW,{},2),/stale/);
   adapter.destroy();assert.strictEqual(destroys,1);assert.throws(()=>call(OP.DRAW),/closed/);
 }
-(async()=>{adapterProtocol();await hostProtocol('software');await hostProtocol('webgl');
+function retirementCompletion(worker){
+  const events=[];let lost=false;
+  class GPUDevice{
+    constructor(){this.gpu={gl:{isContextLost:()=>lost},finish(){events.push('finish');}};}
+    draw(){events.push('draw');}releaseColor(id){events.push('color:'+id);}
+    releaseDepth(id){events.push('depth:'+id);}destroy(){events.push('destroy');}
+    readColor(){events.push('readback');return {pixels:new Uint8Array(4)};}
+  }
+  const endpoint=worker?create({backend:'webgl',options:{GPUDevice,createCanvas:()=>({})}}):null;
+  const bridge=worker?null:new Bridge({});
+  const entry={kind:'webgl',device:new GPUDevice()};
+  const call=(opcode,payload={})=>{
+    const command={deviceId:9,generation:1,opcode,payload};
+    return worker?endpoint.execute(command):bridge._execute(entry,command);
+  };
+  if(worker)call(OP.RESOURCE_CREATE,{kind:'device',width:1,height:1});
+  call(OP.DRAW);
+  call(OP.RESOURCE_RELEASE,{kind:'color',id:1});
+  call(OP.RESOURCE_RELEASE,{kind:'color-set',ids:[2,3]});
+  call(OP.RESOURCE_RELEASE,{kind:'depth',id:4});
+  call(OP.DRAW);
+  assert.deepStrictEqual(events,['draw','color:1','color:2','color:3','depth:4','draw'],
+    'ordered retirement permits more work without forcing GPU completion');
+  call(OP.FENCE);assert.strictEqual(events.at(-1),'finish');
+  call(OP.READBACK);assert.deepStrictEqual(events.slice(-2),['readback','finish']);
+  lost=true;assert.throws(()=>call(OP.RESOURCE_RELEASE,{kind:'color',id:5}),/context lost/);
+  lost=false;call(OP.RESOURCE_RELEASE,{kind:'device'});
+  assert.deepStrictEqual(events.slice(-2),['finish','destroy'],'device teardown retains completion boundary');
+  endpoint?.destroy();
+}
+(async()=>{adapterProtocol();retirementCompletion(false);retirementCompletion(true);await hostProtocol('software');await hostProtocol('webgl');
   console.log('D3D9 shared render worker protocol PASS');})().catch(error=>{console.error(error);process.exitCode=1;});

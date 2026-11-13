@@ -20,6 +20,11 @@ async function workerLoad(exports, buffer, bytes) {
   const calls = [];
   const entry = await GuestThreadHost.prototype.loadPe.call({
     memory: { buffer },
+    async readExports(names) {
+      const result = {};
+      for (const name of names) result[name] = await this.callExport(name);
+      return result;
+    },
     async callExport(name, ...args) {
       calls.push(name);
       if (name === 'init_dx_com_thunks') return;

@@ -42,6 +42,8 @@ async function boot(wasm) {
   new Uint8Array(memory.buffer).set(pe, e.get_staging());
   assert(e.load_pe(pe.length) >= 0, 'generated PE loads');
   e.set_api_log(0);
+  assert.strictEqual(e.get_smc_same_block(), 0, 'same-block SMC checkpoints are opt-in (default off)');
+  e.set_smc_same_block(1); // opt-in (04-cache $smc_same_block); every case here needs it
   return { e, memory, exits };
 }
 

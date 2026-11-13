@@ -26,6 +26,8 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
     (func (export "send_completed") (result i32) (global.get $wnd_send_completed))
     (func (export "target_bits") (param $d i32) (result i32)
       (load.field DxObject misc1 (call $d3ddev_rt_entry (local.get $d))))
+    (func (export "state_guard_held") (result i32)
+      (i32.atomic.load offset=36 (global.get $DX_PROCESS_STATE)))
   `});
   const pe=fs.readFileSync(path.join(__dirname,'binaries/calc.exe'));
   new Uint8Array(memory.buffer).set(pe,e.get_staging());assert.ok(e.load_pe(pe.length));
@@ -52,6 +54,7 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
     e.guest_write32(marker,0xdeadbeef);e.clear_yield();e.start_inline(code);
     for(let slices=0;e.get_eip();slices++) {
       assert(slices<100,'bounded guest continuation');e.run(1000);
+      assert.strictEqual(e.state_guard_held(),0,'native guard released before render waits and guest continuation');
       if(e.get_yield_reason()===16) {
         const token=e.get_d3d_render_token();assert(token<=-2);
         assert.strictEqual(read(marker),0xdeadbeef,'guest cannot return early');
@@ -68,6 +71,9 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
     for(const [state,value] of [[137,0],[7,0],[22,1]])
       await call('IDirect3DDevice9_SetRenderState',[device,state,value]);
     await call('IDirect3DDevice9_SetFVF',[device,0x44]);
+    // Pin the untouched pixels through the public API. The backbuffer is
+    // xRGB, so its unused alpha reads opaque, not transparent black.
+    await call('IDirect3DDevice9_Clear',[device,0,0,1,0xff112233,0x3f800000,0]);
     const vertices=alloc(60),v=new DataView(memory.buffer);
     [[0,0,.5,1],[8,0,.5,.5],[0,8,.5,.25]].forEach((p,i)=>{
       p.forEach((n,j)=>v.setFloat32(wa(vertices)+20*i+4*j,n,true));
@@ -83,7 +89,7 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
       assert(pixels.every(p=>p===0xff123456),'canonical pixels wait for Present poll');
     });
     for(let y=0;y<8;y++)for(let x=0;x<8;x++)
-      assert.strictEqual(pixels[y*8+x],x+y<8?0xff00ff00:0,`pixel ${x},${y}`);
+      assert.strictEqual(pixels[y*8+x],x+y<8?0xff00ff00:0xff112233,`pixel ${x},${y}`);
     assert.strictEqual(submissions.get(0x30001),1,'native retry submits once');
     assert.strictEqual(submissions.get(0x30002),1,'Present retry submits once');
     // Actual game-sized UP draw, beyond both per-batch triangle and vertex
@@ -109,7 +115,7 @@ const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24&255];
       assert.deepStrictEqual(pixels,oldPixels,'large completed draw remains hidden until Present poll');
     });
     for(let y=0;y<8;y++)for(let x=0;x<8;x++)
-      assert.strictEqual(pixels[y*8+x],x+y<8?0xffff0000:0,`large pixel ${x},${y}`);
+      assert.strictEqual(pixels[y*8+x],x+y<8?0xffff0000:0xff112233,`large pixel ${x},${y}`);
     assert.strictEqual(submissions.get(0x30002),2,'no extra Present needed to publish the final frame');
     e.guest_free(large);
     await call('IDirect3DDevice9_Release',[device]);

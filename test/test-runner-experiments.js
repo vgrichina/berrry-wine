@@ -62,3 +62,39 @@ reporting.report({ exports: loopExports(7) },
 assert(lines.some(line => line.includes('M ') && line.includes('7')));
 assert(lines.some(line => line.includes('T1') && line.includes('11')));
 console.log('PASS runner experiments: defaults, overrides, worker inheritance, optional exports, per-thread reports');
+
+(async()=>{
+  for(const args of [[],['--no-x87-fusion'],['--no-uop-retry-ladder','--uop-icg-mega=3'],
+    ['--loop-superops','--no-loop-superops','--tree-fold-min-ops=0','--no-rle-run']]){
+    const sync=config(args).experiments,asyncConfig=config(args).experiments;
+    const expected=[],actual=[];
+    sync.applyMain({exports:new Proxy({}, {get:(_,name)=>(...values)=>expected.push([name,...values])})},
+      {copySuperops:true,ctx:{}});
+    await asyncConfig.applyMainOwned({supports:()=>true,call:async(name,...values)=>{
+      await Promise.resolve();actual.push([name,...values]);
+    }},{copySuperops:true,ctx:{}});
+    assert.deepStrictEqual(actual,expected,'identical order and zero-valued overrides: '+args);
+  }
+  let resume;
+  const calls=[];
+  const pending=config([]).experiments.applyMainOwned({supports:()=>true,call:(name,...values)=>{
+    calls.push([name,...values]);
+    if(calls.length===1)return new Promise(resolve=>{resume=resolve;});
+  }},{copySuperops:false});
+  assert.strictEqual(calls.length,1,'second setting cannot overtake a pending first setting');
+  resume();await pending;assert.strictEqual(calls.length,2);
+  let attempts=0;
+  const failing=config([]).experiments;
+  await assert.rejects(failing.applyMainOwned({supports:()=>true,call:async()=>{
+    attempts++;throw new Error('owner failed');
+  }},{copySuperops:false,ctx:{}}),/owner failed/);
+  assert.strictEqual(attempts,1,'failure prevents later settings');
+  assert.doesNotThrow(()=>failing.report({exports:{}},null,false,()=>{}),
+    'failed application does not publish enabled uop reporting state');
+  await config([]).experiments.applyMainOwned({supports:()=>false,call:()=>assert.fail('absent optional export called')},
+    {copySuperops:false,ctx:{}});
+  await assert.rejects(config([]).experiments.applyMainOwned({
+    supports:name=>name==='set_x87_pipeline4_fusion',call:()=>assert.fail('partial configuration before validation'),
+  },{copySuperops:false}),/missing required experiment export: set_x87_affine_fusion/);
+  console.log('PASS owned experiments: local parity, ordered awaits, absent exports and failure propagation');
+})().catch(error=>{console.error(error);process.exitCode=1;});

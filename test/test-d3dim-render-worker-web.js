@@ -42,22 +42,18 @@ async function runBoids(browser, base, query) {
     if (/UNIMPLEMENTED API:|RuntimeError|D3D render Worker|FATAL:|trapped/i.test(text)) problems.push(text);
   });
   await page.goto(`${base}?debug&no-log${query}`, { waitUntil: 'load', timeout: 60000 });
-  await page.waitForFunction(() => typeof launchApp === 'function' &&
-    document.querySelector('#app-select option[value="dx_boids"]'), { timeout: 30000 });
+  await page.waitForFunction(() => window.wineShell && window.wineApps?.APPS.dx_boids, { timeout: 30000 });
   assert(await page.evaluate(() => crossOriginIsolated), 'server must be cross-origin isolated');
   await page.evaluate(async () => {
-    const box = document.getElementById('threads-toggle');
-    box.checked = true;
-    await setThreads(true);
-    document.getElementById('app-select').value = 'dx_boids';
-    await launchApp();
-    if (!runningApps.some(app => app?.name === 'dx_boids')) throw new Error('Boids did not launch; inspect startup logs');
+    window.WINE_THREADS=true;
+    await wineShell.launchApp('dx_boids');
+    if (!wineShell.runningApps.some(app => app?.name === 'dx_boids')) throw new Error('Boids did not launch: '+document.body.innerText.slice(-6000));
   });
   // Stats ride back with every guest slice; wait until the flock has drawn.
   const observe = () => page.evaluate(() => {
-    const app = runningApps.find(item => item && item.name === 'dx_boids');
+    const app = wineShell.runningApps.find(item => item && item.name === 'dx_boids');
     const worker = app && app.wine && app.wine.guestWorker;
-    return { apps: runningApps.filter(Boolean).map(item => item.name),
+    return { apps: wineShell.runningApps.filter(Boolean).map(item => item.name),
       running: !!(app && app.wine && app.wine.running), worker: !!worker,
       slices: worker && worker.sliceStats ? worker.sliceStats.slices : 0,
       d3d: worker ? worker.d3dStats || null : null,
@@ -65,7 +61,7 @@ async function runBoids(browser, base, query) {
   });
   try {
     await page.waitForFunction(() => {
-      const app = runningApps.find(item => item && item.name === 'dx_boids');
+      const app = wineShell.runningApps.find(item => item && item.name === 'dx_boids');
       const worker = app && app.wine && app.wine.guestWorker;
       if (!worker || !worker.sliceStats || worker.sliceStats.slices < 50) return false;
       return !!(worker.d3dStats && worker.d3dStats.queued > 200);
@@ -86,12 +82,13 @@ async function runBoids(browser, base, query) {
       `workers ${JSON.stringify(scopes)}\nproblems ${JSON.stringify(problems)}\nlogs ${logs.join('\n')}`);
   }
   const stats = await page.evaluate(() => {
-    const wine = runningApps.find(item => item && item.name === 'dx_boids').wine;
+    const wine = wineShell.runningApps.find(item => item && item.name === 'dx_boids').wine;
     const worker = wine.guestWorker;
     window.__boidsWine = wine;
     return { threads: window.WINE_THREADS, renderWorker: window.WINE_D3D_RENDER_WORKER,
       d3d: worker.d3dStats || null, starts: window.__renderWorkerStarts,
       manager: !!wine._renderWorkerManager,
+      publication: new RenderWorker.PublicationQueue(worker.renderPublication).snapshot(),
       endpoints: [...(wine._renderWorkerManager?.ports.values() || [])].map(p => p.options) };
   });
   stats.physicalWorkers = page.workers().filter(w => w.url().includes('d3d-render-worker.js')).length;
@@ -104,7 +101,8 @@ async function runBoids(browser, base, query) {
 (async () => {
   const wasm = compileSrcWasm();
   const server = await startStaticServer({ root: ROOT, cacheControl: 'no-cache', crossOriginIsolated: true,
-    allowedRealRoots: ['test/binaries', 'fonts'].map(dir => path.join(ROOT, dir)),
+    allowedRealRoots: ['test/binaries', 'test/binaries/dx-sdk', 'test/binaries/dlls', 'fonts']
+      .map(dir => path.join(ROOT, dir)).filter(dir => fs.existsSync(dir)),
     rewritePath: pathname => pathname.startsWith('/binaries/') ? '/test' + pathname : pathname,
     handleRequest(request, response) {
       if (!request.url.startsWith('/build/wine-assembly.wasm')) return false;
@@ -135,6 +133,7 @@ async function runBoids(browser, base, query) {
       assert(stats.d3d?.ready, JSON.stringify(stats));
       assert.strictEqual(stats.d3d.fallbacks, 0, 'no guest-local rendering fallback');
       assert(stats.d3d.fences > 0, 'presents fence the shared renderer');
+      assert(stats.publication.packets>0,'D3D descriptors use the common publication queue');
       if (backend === 'webgl') assert(stats.d3d.glRenderer, 'actual worker GL renderer reported');
       console.log(`PASS ${name}: one shared Worker, ${stats.d3d.queued} draws, ${stats.d3d.fences} fences; retired cleanly`);
     }

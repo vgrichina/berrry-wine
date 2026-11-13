@@ -165,6 +165,24 @@ get(T2,2,[11,22,33,44,55,66,77,88],'independent level2');
 call('glBindTexture',[T1,72]);write(input,[12,23,34,45,56,67,78,89]);
 call('glTexImage1D',[T1,1,RGBA,2,0,RGBA,U8,input]);
 get(T1,1,[12,23,34,45,56,67,78,89],'current uploaded1D');
+// Unsigned-byte 2D uploads canonicalize as RGBA8: BGR/BGRA swizzle, RGB
+// alpha fill and unpack row length/skips/alignment must match the float path.
+call('glBindTexture',[T2,73]);write(input,[1,2,3,4,5,6,7,8]);
+call('glTexImage2D',[T2,0,RGBA,2,1,0,0x80e1,U8,input]);
+get(T2,0,[3,2,1,4,7,6,5,8],'BGRA unsigned-byte upload');
+write(input,[9,10,11,12]);
+call('glTexSubImage2D',[T2,0,1,0,1,1,0x80e1,U8,input]);
+get(T2,0,[3,2,1,4,11,10,9,12],'BGRA unsigned-byte subimage');
+write(input,[1,2,3,4,5,6]);
+call('glTexImage2D',[T2,0,RGBA,2,1,0,0x80e0,U8,input]);
+get(T2,0,[3,2,1,255,6,5,4,255],'BGR unsigned-byte upload');
+write(input,Array.from({length:48},(_,i)=>i));
+call('glPixelStorei',[0xcf5,4]);call('glPixelStorei',[0xcf2,4]);
+call('glPixelStorei',[0xcf3,1]);call('glPixelStorei',[0xcf4,1]);
+// Row pitch ceil(4*3/4)*4 = 12, first texel at 1*12 + 1*3 = 15.
+call('glTexImage2D',[T2,0,RGBA,2,2,0,0x1907,U8,input]);
+call('glPixelStorei',[0xcf2,0]);call('glPixelStorei',[0xcf3,0]);call('glPixelStorei',[0xcf4,0]);call('glPixelStorei',[0xcf5,1]);
+get(T2,0,[15,16,17,255,18,19,20,255,27,28,29,255,30,31,32,255],'RGB unsigned-byte unpack row length/skips/alignment');
 // GL1.1 table6.1: unlike sampler expansion, G/B of L/LA/I are zero.
 for(const [internal,data,want] of [
  [0x1909,[64,23,34,128],[64,0,0,255]],

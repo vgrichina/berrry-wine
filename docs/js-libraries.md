@@ -11,6 +11,7 @@
 | `dll-loader.js` | DLL loading, relocation, import patching |
 | `hlp-parser.js` | Windows HLP file parser (B+tree, Hall phrase decompression) |
 | `thread-manager.js` | Multi-thread support via separate WASM instances |
+| `guest-main-owner.js` | Explicit local or Worker main-guest execution, export calls and snapshots; callers await operations and never fall back to the host shadow |
 | `storage.js` | localStorage-backed registry and INI file persistence |
 | `filesystem.js` | Virtual filesystem for file operations |
 | `vfs-host-files.js` | Expands explicit CLI `--vfs-include` globs within their bounded host roots |

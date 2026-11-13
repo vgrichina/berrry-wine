@@ -15,7 +15,9 @@ function packetOwnership(EncoderClass = Encoder) {
   Atomics.store(encoder.control, CTRL.READY, 1);
   const [first, second] = encoder.buffers;
   first.used = 32; first.commands = 1; first.bytes[0] = 91;
-  const seq1 = encoder._submit();
+  const seq1 = encoder.publish();
+  assert.equal(Atomics.load(encoder.control, CTRL.COMPLETED), 0,
+    'exit publication admits buffered draws without waiting for GPU completion');
   assert.strictEqual(first.lease.buffer, first.buffer, 'pool adopts the existing SAB without copying');
   assert.equal(first.lease.bytes, 32);
   assert.equal(new Uint8Array(first.lease.buffer)[0], 91);
@@ -24,7 +26,7 @@ function packetOwnership(EncoderClass = Encoder) {
   const seq2 = encoder._submit();
   assert.equal(seq2, seq1 + 1);
   assert.equal(messages.filter(m => m.t === 'batch').length, 2);
-  assert.equal(encoder._submit(), seq2, 'rotated stale slot is not resubmitted');
+  assert.equal(encoder.publish(), seq2, 'exit publication does not resubmit a rotated stale slot');
   const lease1 = first.lease;
   Atomics.store(encoder.control, CTRL.ERROR, 1);
   assert.equal(encoder._acquire(), null, 'failed incomplete consumer cannot return write storage');

@@ -60,7 +60,7 @@ assert.strictEqual(halfLifeRegistry.get('EngineGLDriver'), 'Default',
 assert.strictEqual(halfLifeRegistry.get('EngineType'), 2,
   'Half-Life persists the OpenGL renderer rather than the black software path');
 assert.deepStrictEqual(APPS.halflife_uplink.rendererRunSlices,
-  { software: 1000, opengl: 10000, direct3dWorker: 10000 },
+  { software: 1000, opengl: 10000, openglWorker: 50000, direct3dWorker: 10000 },
   'Half-Life keeps OpenGL fed while letting its software renderer yield');
 assert(browserShell.includes('wine.onOpenGLContextCountChange = count =>'),
   'browser scheduler follows in-process OpenGL context replacement');

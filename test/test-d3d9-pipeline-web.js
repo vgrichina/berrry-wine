@@ -10,7 +10,7 @@ const { compileSrcWasm } = require('./compile-src');
     'SetVertexShaderConstantF','SetPixelShaderConstantF','SetFVF','SetRenderState','SetTexture',
     'CreateVertexDeclaration','SetVertexDeclaration','GetVertexDeclaration','GetFVF','GetDeviceCaps',
     'SetStreamSource','SetIndices','DrawPrimitive','DrawPrimitiveUP','Present','GetViewport','SetViewport',
-    'SetTransform','SetTextureStageState'];
+    'SetTransform','SetTextureStageState','SetSamplerState'];
   const extra = `
     (func (export "clear_target") (param $d i32) (param $color i32) (result i32)
       (i32.store offset=16 (global.get $reg_base) (i32.const 0x00300000))
@@ -272,6 +272,9 @@ const { compileSrcWasm } = require('./compile-src');
         calls.push(e.cube_unlock(cube,face,level));
       }
       calls.push(e.SetFVF(device,0x14102),e.SetTexture(device,0,cube)); // FLOAT3 texcoord
+      // Cube LOD/bias uses the atlas path, whose supported address contract
+      // is CLAMP. Both stages later alternate between cube and 2D textures.
+      for(const stage of [0,1])calls.push(e.SetSamplerState(device,stage,1,3),e.SetSamplerState(device,stage,2,3));
       floats(cptr,[1,1,1,1]);calls.push(e.SetVertexShaderConstantF(device,0,cptr,1));
       const cubePixels=[];
       const directions=[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
@@ -284,11 +287,11 @@ const { compileSrcWasm } = require('./compile-src');
       const cubeMipPixel=px((8*16+8));
       calls.push(e.sampler_state(device,4,0xff123456),e.sampler_state(device,8,0xbf400000),e.sampler_state(device,9,1));
       const badMipBias=e.sampler_state(device,8,0x7fc00000)>>>0;
-      // One visible level makes bias/MAXMIPLEVEL neutral when MIN and MAG
-      // agree (e24a8bcfb), so split them: bias can then pick min against mag,
-      // which WebGL cannot express. MINFILTER (6) LINEAR, then back to POINT.
+      // The cube atlas now implements bias/MAXMIPLEVEL even when MIN and MAG
+      // differ. Retain the native float-bit state and verify actual pixels.
       e.sampler_state(device,6,2);
-      const unsupportedMipState=e.DrawPrimitiveUP(device,4,1,vptr,28)>>>0;
+      const biasedMipState=e.DrawPrimitiveUP(device,4,1,vptr,28)>>>0;
+      const biasedMipPixel=px(8*16+8);
       e.sampler_state(device,6,1);
       // Reset both guest resource/sampler state after submission: retained draw
       // metadata must still describe the earlier SetLOD and float-bit states.
@@ -450,7 +453,7 @@ const { compileSrcWasm } = require('./compile-src');
         cubePixels,cubeMipPixel,restored2DPixel,mixedPixels,initialViewport,viewport,invalidViewport,viewportPixels,
         declarationPixel,declarationIdentity,declarationFVF,badBufferRange,badIndexRange,lockedDraw,
         queryFinishes,eventComplete,beforePresent,presents,hasLayer:!!layer,lastError:invalidMessage,
-        initialQueue,nativeIRDraws,bumpFormat,bumpPitch,bumpPixel,bumpCaptured,badBump,capturedMip,badMipBias,unsupportedMipState,clearSamples,clearDepthValue};
+        initialQueue,nativeIRDraws,bumpFormat,bumpPitch,bumpPixel,bumpCaptured,badBump,capturedMip,badMipBias,biasedMipState,biasedMipPixel,clearSamples,clearDepthValue};
       bridge.call(0x30004,0,device);
       result.queue=commandQueue.snapshot();result.queueOpcodes=queueOpcodes;result.gpuFinishes=eventFinishes;result.commandFinishes=commandFinishes;
       return result;
@@ -526,7 +529,8 @@ const { compileSrcWasm } = require('./compile-src');
     assert.deepStrictEqual(result.capturedMip,{originalWidth:2,originalHeight:2,baseLOD:1,width:1,height:1,levels:1,
       borderColor:0xff123456,lodBias:-.75,maxMipLevel:1});
     assert.strictEqual(result.badMipBias,0x8876086c,'native sampler rejects nonfinite bias without replacing previous state');
-    assert.strictEqual(result.unsupportedMipState,0x8876086c,'WebGL rejects unimplemented LOD state rather than ignoring it');
+    assert.strictEqual(result.biasedMipState,0,'cube atlas implements mixed-filter LOD state');
+    assert.deepStrictEqual(result.biasedMipPixel,[32,64,128,255],'biased cube draw samples retained mip pixels');
     console.log('PASS full WAT D3D9 shaders/textures + UP/buffer INDEX16/32 draw/present + native bump snapshot -> canonical BGRA pixels');
   } finally { if(browser) await browser.close(); await new Promise(resolve=>server.close(resolve)); }
 })().catch(error=>{console.error(error);process.exitCode=1;});

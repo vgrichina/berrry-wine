@@ -19,19 +19,22 @@ function harness(args, old=false, mutate=x=>x) {
   let reason=16, token=-2, creates=0, resolve, reject;
   const pending=new Promise((a,b)=>{resolve=a;reject=b;});
   ctx.waitD3DRender = t => {trace.push(['wait',t]); return pending;};
-  const sandbox={args, ctx, createRenderWaitAttribution:()=>{creates++; return createRenderWaitAttribution();},
+  const sandbox={args, ctx, mainSchedulerObserver:null, createRenderWaitAttribution:()=>{creates++; return createRenderWaitAttribution();},
     instance:{exports:{get_yield_reason:()=>reason,get_d3d_render_token:()=>token,clear_yield:()=>{reason=0;trace.push('clear');}}},
-    threadManager:{isMainNamedEventWaiting:()=>false,_renderSendTargets:new Set(),noteMainSleep:()=>trace.push('sleep'),isMainSleeping:()=>false,isMainThreadSuspended:()=>false},
-    tickState:{batch:3,pausedMs:0},REAL_TICK_SLEEPS:true,Date:{now:()=>clock.now},
+    threadManager:{isMainNamedEventWaiting:()=>false,_renderSendTargets:new Set(),noteMainSleep:()=>trace.push('sleep'),noteMainSleepOwned:async()=>trace.push('sleep'),isMainSleeping:()=>false,isMainThreadSuspended:()=>false},
+    tickState:{batch:3,pausedMs:0},serviceClock:false,REAL_TICK_SLEEPS:true,Date:{now:()=>clock.now},
     console:{error:(...x)=>trace.push(['error',x[1].message]),log:x=>logs.push(x)},
     setTimeout:(fn,ms)=>{trace.push(['timer',ms]);timers.push(fn);}};
+  sandbox.mainOwner = {call: async (name,...args)=>sandbox.instance.exports[name](...args),
+    optionalCall: async (name,...args)=>sandbox.instance.exports[name]?.(...args)};
   vm.createContext(sandbox);
   vm.runInContext(`${parser}\nlet stopped=false,deadlineMs=0;
     ${old ? baseline.hooks : mutate(hooks)}
     globalThis.api={check:mainExecutionSuspended,park:awaitMainRenderPark,wait:()=>mainRenderWait,
       stop:()=>{stopped=true;},deadline:n=>{deadlineMs=n;},
       close:()=>{${old?'':mutate(terminal)}},stats:renderParkStats};`,sandbox);
-  return {...sandbox.api,ctx,clock,trace,timers,logs,resolve,reject,creates:()=>creates};
+  return {...sandbox.api,ctx,clock,trace,timers,logs,resolve,reject,creates:()=>creates,
+    owner:sandbox.mainOwner,shadow:sandbox.instance.exports};
 }
 async function schedule(args, kind, old=false, mutate=x=>x) {
   const h=harness(args,old,mutate);
@@ -42,7 +45,7 @@ async function schedule(args, kind, old=false, mutate=x=>x) {
     h.close(); assert.deepEqual(h.logs,[]); return h;
   }
   const record={renderWaitOperation:'DRAW',renderWaitReadyAt:null};h.ctx.d3d9Bridge.requests.set(-2,record);
-  assert.equal(h.check(),true); assert.equal(h.check(),true);
+  assert.equal(await h.check(),true); assert.equal(await h.check(),true);
   const wait=h.wait();
   assert.equal(Object.hasOwn(wait,'attribution'),enabled,'begin must be opt-in');
   if(enabled) assert.equal(h.ctx.renderWaitAttribution.requests,1);
@@ -56,7 +59,7 @@ async function schedule(args, kind, old=false, mutate=x=>x) {
   } else {
     h.clock.now=25;record.renderWaitReadyAt=20;
     if(kind==='reject')h.reject(new Error('controlled rejection'));else h.resolve(7);
-    await park;await micro();assert.equal(h.check(),false);h.close();
+    await park;await micro();assert.equal(await h.check(),false);h.close();
     if(enabled) {
       const s=h.ctx.renderWaitAttribution;
       assert.equal(s[kind==='reject'?'rejected':'completed'],1);
@@ -70,6 +73,33 @@ async function schedule(args, kind, old=false, mutate=x=>x) {
   return h;
 }
 async function main() {
+  // Delayed owning endpoint, with a host shadow that cannot be read or run.
+  // Neither admission nor clearing the pending wait may finish ahead of RPC.
+  {
+    const h=harness([]);
+    const native={...h.shadow};
+    for(const name of Object.keys(h.shadow)) h.shadow[name]=()=>{throw Error('shadow access');};
+    let release;
+    h.owner.call=(name,...args)=>name==='get_yield_reason'
+      ? new Promise(resolve=>{release=()=>resolve(native[name](...args));})
+      : Promise.resolve(native[name](...args));
+    let settled=false;
+    const pending=h.check().then(value=>{settled=true;return value;});
+    await micro(); assert.equal(settled,false); assert.equal(h.wait(),null);
+    release(); assert.equal(await pending,true);
+    h.resolve(7); await micro();
+    h.owner.call=async(name,...args)=>native[name](...args);
+    let clear;
+    h.owner.call=(name,...args)=>name==='clear_yield'
+      ? new Promise(resolve=>{clear=()=>resolve(native[name](...args));})
+      : Promise.resolve(native[name](...args));
+    const wait=h.wait();settled=false;
+    const resuming=h.check().then(value=>{settled=true;return value;});
+    await micro();assert.equal(settled,false);assert.equal(h.wait(),wait);
+    clear();assert.equal(await resuming,false);assert.equal(h.wait(),null);
+    h.owner.call=async()=>{throw Error('owner retired');};
+    await assert.rejects(h.check(),/owner retired/);
+  }
   const flags=[[],['--trace'],['--trace-render-wait=1'],['--trace-render-wait-extra'],['--trace-render-wait']];
   let count=0;
   for(const args of flags)for(const kind of ['idle','success','reject','deadline','stop']) {
@@ -79,8 +109,8 @@ async function main() {
   }
   // no-render-park-wait is independent from diagnostic opt-in.
   for(const args of [['--no-render-park-wait'],['--trace-render-wait','--no-render-park-wait']]) {
-    const h=harness(args),b=harness(args,true);h.check();b.check();await h.park();await b.park();
-    h.resolve(7);b.resolve(7);await micro();h.check();b.check();h.close();b.close();
+    const h=harness(args),b=harness(args,true);await h.check();await b.check();await h.park();await b.park();
+    h.resolve(7);b.resolve(7);await micro();await h.check();await b.check();h.close();b.close();
     assert.equal(h.stats.waits,0);assert.deepEqual(h.trace,b.trace);count++;
   }
   console.log(`PASS ${count} actual CLI-parser/init/hooks/summary cases; baseline return/error/order/100ms/deadline/waits unchanged`);

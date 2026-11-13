@@ -1770,6 +1770,20 @@
   ;; - a3d.dll: Aureal's A3D audio driver, installed only with an Aureal card.
   ;;   Trespasser loads it, finds no A3dCreate in our handle, frees it and
   ;;   calls through NULL; with a NULL module it uses DirectSound.
+  ;; Windows system DLLs that lib/dll-registry.js prefers to load from a real
+  ;; file (so they have no static identity slot) but whose exports we also
+  ;; dispatch by API name. Those files are not redistributable and never ship
+  ;; on a public deploy, so there the bare name must still load: WordPad and
+  ;; MSPaint 98 delay-load SHELL32 and raise 0xC06D007E on a NULL handle.
+  ;; They keep the legacy image-base handle GetProcAddress resolves by name.
+  (func $loadlib_emulated_when_absent (param $name i32) (result i32)
+    (if (i32.and (call $loadlib_name_is_qualified (local.get $name))
+          (i32.eqz (call $loadlib_path_in_system_dirs (local.get $name))))
+      (then (return (i32.const 0))))
+    (i32.or (call $dll_name_match (local.get $name) "shell32.dll")
+      (i32.or (call $dll_name_match (local.get $name) "shlwapi.dll")
+              (call $dll_name_match (local.get $name) "setupapi.dll"))))
+
   (func $loadlib_absent_on_win98 (param $name i32) (result i32)
     (i32.or (call $dll_name_match (local.get $name) "msi.dll")
             (call $dll_name_match (local.get $name) "a3d.dll")))
@@ -1890,7 +1904,8 @@
     ;; No native file and no implemented system module: LoadLibrary fails
     ;; with ERROR_MOD_NOT_FOUND, even for a bare .dll name. A nonzero EXE
     ;; handle would suppress the caller's own optional-driver retry path.
-    (if (i32.eqz (local.get $tmp))
+    (if (i32.and (i32.eqz (local.get $tmp))
+          (i32.eqz (call $loadlib_emulated_when_absent (local.get $arg0))))
       (then
         (i32.store (global.get $reg_base) (i32.const 0))
         (global.set $last_error (i32.const 126))
