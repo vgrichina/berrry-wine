@@ -7,7 +7,7 @@ The two original-game workers wait for the coordinator's capacity-ready message.
 
 Latest published repairs:3215e7a2f fixes DirectDraw directional key ranges (240failures→0;7220copy cases/16915COMcalls, eight adjacent checks and lockedbuild PASS);70082cd28 fixes DrawText vertical returns (24failures→0;fivefocused checks and lockedbuild PASS) and stale95app-size build inputs. Earlier f9e73a8ab/b0689451e sends physical DirectInput wheel records to foreground memory while preserving the held button's release owner. Original-game confirmation remains open. Owner188's screenshot request was answered: retained LMarbles Puzzle2/Moves16 and NFS3 cockpit0MPH delivered as2532/2533, explicitly not fresh runs or puzzle/driving acceptance.
 
-Open repairs: DirectInput foreground keyboard acquisition remains active across focus loss and consumes the other app's physical keys, including an unpolled away/back interval (2330 report; polling-only guard is insufficient); fresh0740 now owns the repair. The historical clear compiler pins are correct; a tested, unapplied in-memory Git reconstruction patch restores the original755-byte module without refreshing pins (2230 proposed-test.patch). DrawText's separate12 one-pixel centering differences remain unqualified.
+Open repairs: DirectInput foreground keyboard acquisition remains active across focus loss and consumes the other app's physical keys, including an unpolled away/back interval (2330 report; polling-only guard is insufficient); fresh0740 now owns the repair. Historical clear-test compiler retrieval is repaired below without refreshing pins. DrawText's separate12 one-pixel centering differences remain unqualified.
 
 Additional bounded rendering results:4176 supported texture-address cases and9216 supported depth cases pass exact native public-COM pixel checks. BORDER and stencil operations were unadvertised and excluded; no GPU, original-game or27-app acceptance follows. No source changes or fresh-build equivalence are claimed for these retained-module diagnostics.
 
@@ -46,6 +46,10 @@ PROTECTED RECOVERY LAYER (completed c3335ce9b, root reviewed): keep the entire s
 `/tmp/wine-coordinator-current-launches.json` records the current external worker processes. Older worker/PID and "review pending" entries below are dated history; they do not authorize duplicate dispatch or imply a process is still live. Completion processing is recorded in `scratch/usage-watch/completion-dedup.json`.
 
 Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backup 18 expires 2026-11-27T01:05:39.765Z. Their recovery instructions are in `scratch/runs/20261113-closed-six-nine-offload-lmarbles-0500/RECOVERY.md` and `scratch/runs/20261113-dense-backup-puzzle2-0650/RECOVERY.md`. Recover before expiry; these snapshots are not permanent archives. Native captures/saves remain local.
+
+- [x] Restore the historical D3D9 clear-test compiler loader
+  id: D3D9-CLEAR-HISTORICAL-COMPILER-LOADER-20261113
+  Update: Default test failed on moving2711B loader vs pinned2663B. It now retrieves five exact historical Git objects into memory, verifies size/SHA256/Gitblob identity, and executes only those verified inputs through a private loader; production functions/pins/pixel assertions unchanged. Default and exactoverride pass with original755B module SHA61cf1906c68d4cd76ca8a3c3ad7c76aad06bed2728e105cee5943adc085c8b4b. Each of five same-size one-byte compiler corruptions, movingcompiler override and historicalpixelbug reject;3adjacentclear checks and requiredlockedbuild PASS. Build includes concurrentDI0740WIP; no clean-main/original/browser/27-app qualification. Evidence scratch/runs/20261113-coordinator-clear-loader-repair/; docs/re-notes/d3d9-clear-historical-loader-20261113.md.
 
 - [x] DirectDraw directional blit color keys and ranges
   id: DIRECTDRAW-DIRECTIONAL-KEY-RANGES-20261113
