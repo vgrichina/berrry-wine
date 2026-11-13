@@ -1,11 +1,15 @@
-Current dispatch (updated 2026-11-13T02:27Z):
-- GL/D3D crash work: graphics-native16-writer-regression-repair-1105, launcher PID1022693; repairing a reproduced lost Flip after collection throws.
-- Pawn support: native-dialog-input-regression-repair-1115, launcher PID1024369; native Save As filename/cancellation investigation.
-- LMarbles support: sdl-pointer-consumption-regression-repair-1120, launcher PID1024370; reproduced cross-window pointer/input ordering investigation.
+Current dispatch (updated 2026-11-13T02:42Z):
+- GL/D3D crash work: webgl-loss-after-packet-recovery-1250, launcher PID1050237; prepare actual WebGL context-loss/readback reproduction, wait for the distinct packet-recovery phase before browser launch.
+- Pawn and disk recovery: caesar-temp-packet-recovery-pawn-witness-1240, launcher PID1048347; prove complete Git/diff/non-Git recovery of the released 48MB /tmp/caesar3-packet.tgz before any removal, then authentic native history/Save As witness if the floor permits.
+- Game input support: renderer-worker-menu-escape-repair-1225, launcher PID1045377; repair the reproduced Worker menu-Escape failure, then return this slot to LMarbles selection/clear after resources permit.
+
+Published and root-reviewed fixes: 62b4e8266 retains accepted Flip ownership through collection/writeback exceptions (RGB565/32-bit, nine focused checks, locked build); a0c82b37c scopes hover consumption by HWND (15 new failures before, 50 assertions pass after); 8ab452913 scopes button holds by HWND/button (27 failures before, 89 assertions pass after); 81a430d50 initializes native A/W Save As proposed filenames while preserving caller bytes on Cancel; 56327d542 fixes DBCS result capacity, exact-fit acceptance, terminators and filename offsets. Each input/dialog repair passed its focused checks and locked build. These fixtures do not establish native game progress. 8f6ac447d found no new D3D reset race in its controlled two-module late-result/fault probes; actual browser context loss remains untested.
 
 Original gameplay remains open. Pawn repeatedly shows e4/Nf6 and displayed d4, but second-turn commitment and the second reply remain UNKNOWN/UNPROVED; obtain ordinary history and a native save witness. LMarbles Puzzle2 red Up (Moves28 to27, Score1350) is accepted; pointer-first selector availability and CLEAR+next/tally remain unproved. NFS local catalogue/setup/renderer dropdown works, and explicit guarded consumption shipped in 418099fe9; native selection/race/Pause/driving still await proof. These two game-support lanes return to verified gameplay screenshots when original launches can proceed.
 
 Actual /home availability was 1,478,504,448 bytes at this dispatch check, below the owner-required 1.5GB floor. The scoped closed-event pools and eight recent canonical transcript targets have been recovered; final net savings were 18,153,472 + 1,159,168 + 8,351,744 bytes. Recovery did not sustain the floor. Do not repeat unchanged floor-only gameplay tasks or infer broader cleanup eligibility. Preserve encoded data and restore recipes; restore raw logs before old consumers. Current workers pursue concrete production defects with focused fixtures, without claiming native game progress.
+
+Later resource outcome: the existing 64MB /tmp/gallinelle-original.iso.gz was claimed and checked unused, but private backup19 scp was denied with SSH403. No transfer, unlink or reclaim occurred. The archive remains byte-identical locally; empty bx_45fqmp47 is confirmed normally stopped, receipt stop_7ad3245f28ee6216, forced=false/error=null. No recovery data depends on that box. Evidence: scratch/runs/20261113-coordinator-media-backup19-1215/. Do not retry denied SSH or remove either temporary archive without the required recovery proof.
 
 `/tmp/wine-coordinator-current-launches.json` records the current external worker processes. Older worker/PID and "review pending" entries below are dated history; they do not authorize duplicate dispatch or imply a process is still live. Completion processing is recorded in `scratch/usage-watch/completion-dedup.json`.
 
@@ -16,7 +20,7 @@ Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backu
   Update 2026-11-13T02:27Z: Root reviewed b4548db48/43d713cde full boards and input evidence: e4/Nf6 accepted, d4 displayed; commitment UNKNOWN, second reply/save UNPROVED. Latest533bbba95 refused before native launch at1486729216B; local helper port mismatch corrected but unexercised in Pawn. Fresh native-dialog1115 investigates concrete public dialog behavior while floor unavailable.
   Update 2026-11-13T01:00Z: ROOT29eb68d2d 26sealedSHA/current04fullstartingboard personallyviewed/normalquit0bothEOF; frozenneutralowner guard refused legacyasyncSoftwarebridge beforeinput. Fresh0600 binds actual route/owner before new two-move attempt; no current moves/replies yet.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: native-dialog-input-regression-repair-1115 PID1024369
+  worker: caesar-temp-packet-recovery-pawn-witness-1240 PID1048347
   Next: Current04 owning D3D9 route, two ordinary player moves with native AI replies and fresh full-board screenshots. Historical November10 GetDC/factory/callback/TLS fix and single move/reply are closed; no obsolete NULL-crash replay.
 
 - [ ] LMarbles next original puzzle progression
@@ -24,7 +28,7 @@ Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backu
   Update 2026-11-13T02:27Z: Root reviewed ec8fb9df4 Tutorial18/Score0 capture; Puzzle2 pointer motion known unsent below floor. Later69a2c14ec/de7326a43 launched no native run. Earlier missing pointer motion proves no selector lock/prerequisite. Fresh SDL1120 repairs a reproduced cross-window pointer ordering defect; no new Puzzle2 clear claim.
   Update 2026-11-13T01:00Z: ROOTaccepted5ea2b9372 NEWPuzzle2 red upward move, personally compared Moves28->27/Score1350/Tier1Puzzle2;95sealedSHA/native+guard0bothEOF. Tutorial replay prerequisite only. Fresh0620 targets earned Puzzle2 clear/next/tally; clear stillUNPROVED.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: sdl-pointer-consumption-regression-repair-1120 PID1024370
+  worker: renderer-worker-menu-escape-repair-1225 PID1045377; native Puzzle2 continuation remains open
   Next: New Tier1Puzzle2 board/move/clear using ordinary native UI and individually reviewed captures, preferably existing local media. Prior Tutorial first-clear/TotalScore1350 is accepted and must not be claimed again as new progress.
 
 - [ ] Closed canonical worker rollout logs: local lossless recovery
@@ -55,7 +59,7 @@ Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backu
   Update 2026-11-12T23:37Z: ROOT8dceb243e 127sealedSHA/8uniquePNGCRC/BoidsactualproductionChromecontrols verified integrity.1500msHELD292mscapture/1025msobservation;200msUNKNOWN275mscapture/1060msobservationoverlapsrelease. NOToriginalNFS/nonativePause/bends/lap. Fresh0020PID803855alreadyrunning/no duplicate, oldUNKNOWNsretained.
   Update 2026-11-12T23:35Z: Parent8dceb243e runlocal1500msheldframePASS/200msframe275msreleaseoverlapUNKNOWNterminal/no original. Freshnative-pause-reviewed-driving0020PID803855 demonstratesdocumentedactualnativePausebeforefiniteunpause-drive-pauseintervals; no heldpredicateweakening/retry200ms/no blindpath. Fullrootparentreviewpending.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: parked after e647330fd; graphics-native16-writer-regression-repair-1105 PID1022693 covers current GL/D3D crash work
+  worker: NFS parked after e647330fd; webgl-loss-after-packet-recovery-1250 PID1050237 covers current GL/D3D crash work
   Next: After resource worker closes, fresh original NFS native Pause with two settled stable frames, then one reviewed >=1500ms held drive/independent UP/Escape. No repeat floor-only task, mock Pause promotion or200ms UNKNOWN replay.
 
 - [ ] GLTron two ordinary turns and native round outcome
