@@ -1,7 +1,11 @@
-Current dispatch (updated 2026-11-13T05:10Z):
-- Input: pointer-window-incarnation-input-repair-2010, launcher PID1217828; actual stale pointer/capture delivery across retirement and HWND reuse, following published keyboard fix99e55c57c.
-- Rendering: directdraw-lock-rectangle-render-repair-2040, launcher PID1227321; actual DirectDraw Lock/Unlock rectangle, pitch and output-canary failures, using real WASM/COM controls before a scoped fix.
-- Capacity/NFS: older-closed-transcript-exact-recovery-nfs-2030, launcher PID1225508; distinct older encoded transcripts with PRIOR closure/recovery proofs, excluding active root/liveDB/current/protected data; material exact-reconstruction proof before removal, then NFS gameplay if actual capacity permits.
+Current dispatch (updated 2026-11-13T05:20Z):
+- Input: focus-key-release-input-repair-2110, launcher PID1242966; actual held-key/focus-transition failures after the published keyboard and pointer lifetime fixes.
+- DirectDraw: directdraw-blt-rectangle-render-repair-2110, launcher PID1242967; real COM clipping, overlapping copies and rectangle-boundary rendering faults after the Lock repair.
+- GDI: gdi-dib-signed-blit-render-repair-2110, launcher PID1242968; real native BitBlt/StretchBlt clipping and overlapping DIB pixels, with signed coordinates and memory canaries.
+
+Root-reviewed results: pointer38f69001a fixes retired queued moves, delayed releases and stale capture reaching reused HWNDs; native lifecycle regression, four controls and locked build pass, with42 evidence hashes verified. DirectDraw2bd8c32c6 rejects600 invalid offscreen Lock rectangles while preserving200 valid subrectangles, pitch/padding, empty rectangles and texture compatibility; native ABI/blits and locked build pass, with23 evidence hashes verified. These are fixture results; original-game confirmation remains open.
+
+Older transcript trial0ede45b34 reconstructs39 gzip files exactly in RAM but saves only20,217,856 allocated bytes before costs. All38 evidence hashes pass; no files were removed and no new recovery layer was created. Even zero-cost removal of the entire61.6MB pool cannot bridge the current capacity gap. No further unchanged capacity retry is assigned.
 
 Native screenshot lanes are capacity-blocked, not completed: NFS live actor/Pause/driving and LMarbles Puzzle2 CLEAR/continuation remain the next original-game targets. The D3D9 public context-loss fixture stays uncommitted and browser-unvalidated. Supporting input/render work continues while host-capacity request2518 awaits explicit owner approval; no filesystem reserve has been changed.
 
