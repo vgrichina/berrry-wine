@@ -272,15 +272,26 @@ s=importlib.util.spec_from_file_location('c',sys.argv[1]);c=importlib.util.modul
 c.pulse('dead',['keydown:40'],1800,'fresh','independent UP survives parent death')
 """
    p=subprocess.Popen([sys.executable,'-B','-c',code,str(ROOT/'tools/forsaken-controller.py')],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-   waitfile(self.out/'dead-release-cap.json');waitfile(self.out/'dead-receipt.json')
+   waitfile(self.out/'dead-release-cap.json')
+   nonce=waitfile(self.out/'dead-intent.json')['nonces'][0]
+   end=time.monotonic()+5
+   while True:
+    try:receipt=control.call({'action':'guarded-status','nonce':nonce})
+    except RuntimeError as error:
+     if 'unknown guarded nonce' not in str(error):raise
+     receipt={'consumed':False}
+    if receipt.get('consumed'):break
+    assert time.monotonic()<end,'actual guarded consumption deadline'
+    time.sleep(.01)
    arm=control.read('dead-armed.json');cap=control.read('dead-release-cap.json')
    p.kill();a,b=p.communicate(timeout=5)
    control.save('killed-parent-wait.json',dict(exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True))
    self.assertEqual(p.returncode,-9)
    waitfile(self.out/'dead-up.json')
    self.assertTrue(cap['beforeFirstDown'])
-   self.assertLess(cap['at']-2,control.read('dead-receipt.json')['consumedAt']/1000)
-   self.assertLessEqual(control.read('dead-up.json')['at']-control.read('dead-receipt.json')['consumedAt']/1000,2)
+   self.assertLess(cap['at']-2,receipt['consumedAt']/1000)
+   self.assertLessEqual(control.read('dead-up.json')['at']-receipt['consumedAt']/1000,2)
+   control.save('observed-consumed-status.json',receipt)
    # The killed parent cannot supply a release-child wait. Keep that absence
    # explicit instead of manufacturing an actual wait for an orphan.
    self.assertFalse((self.out/'dead-release-wait.json').exists())

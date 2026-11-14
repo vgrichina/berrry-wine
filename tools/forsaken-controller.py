@@ -90,36 +90,51 @@ def exited_owner(expected):
         return None
     return wait
 
-def release(name,owner,deadline,final=False):
+def release(name,owner,deadline,final=False,channel=False):
     target=read('native-pid.json')
     print(json.dumps(dict(armed=True,pid=os.getpid(),deadline=deadline,owner=owner,target=target,at=time.time())),flush=True)
     # Already armed at the immutable fallback. A consumed ACK can only shorten it.
-    due=deadline; source='fallback'
+    due=deadline; source='fallback';pending=b'';channelEOF=False;downReceipts=[];schedules=[]
     while time.time()<due:
         cap=R/(name+'-release-cap.json')
         if cap.exists():due=min(due,read(cap.name)['at'])
         schedule=R/(name+'-release-at.json')
-        if schedule.exists():
+        if not channel and schedule.exists():
             v=read(schedule.name);due=min(due,v['at']);source='consumed-pulse'
+        if channel and not channelEOF and select.select([sys.stdin.buffer],[],[],0)[0]:
+            data=os.read(sys.stdin.fileno(),4096)
+            if not data:channelEOF=True
+            pending+=data
+            while b'\n' in pending:
+                line,pending=pending.split(b'\n',1);v=json.loads(line)
+                due=min(due,v['at']);source='consumed-pulse'
+                downReceipts.append(v['receipt']);schedules.append(v)
         time.sleep(min(.005,max(0,due-time.time())))
-    save(name+'-release-fired.json',dict(at=time.time(),due=due,source=source,fallback=deadline))
-    try:save(name+'-up.json',dict(state='ACK',reply=call({'action':'guarded-release','owner':owner}),at=time.time()))
+    fired=dict(at=time.time(),due=due,source=source,fallback=deadline,channelEOF=channelEOF,schedules=schedules)
+    # No durable write may precede the physical release request. In particular,
+    # a slow release-fired fsync used to delay UP even with a timely schedule.
+    try:
+        reply=call({'action':'guarded-release','owner':owner})
+        up=dict(state='ACK',reply=reply,at=time.time())
     except Exception as e:
         # A reviewed final choice can retire the native before the finite UP.
         # Port closure alone never proves that. Preserve failed/signal waits
         # and unresolved DOWN as UNKNOWN, without replay or a fabricated ACK.
-        if final and (R/(name+'-down.json')).exists():
-            down=read(name+'-down.json')
+        if final and (downReceipts or (R/(name+'-down.json')).exists()):
+            down=downReceipts or read(name+'-down.json')
             if down and all(r.get('state')=='CONSUMED' and r.get('consumed') and r.get('owner')==owner for r in down):
                 end=min(deadline,read(name+'-release-cap.json')['at'])
                 while time.time()<end:
                     wait=exited_owner(target)
                     if wait is not None:
-                        save(name+'-up.json',dict(state='OWNER_EXITED',physicalUpACK=False,
-                             nativeWait=wait,target=target,error=str(e),at=time.time()))
+                        up=dict(state='OWNER_EXITED',physicalUpACK=False,
+                             nativeWait=wait,target=target,error=str(e),at=time.time())
+                        save(name+'-release-fired.json',fired);save(name+'-up.json',up)
                         return
                     time.sleep(.01)
+        save(name+'-release-fired.json',fired)
         save(name+'-up.json',dict(state='UNKNOWN',error=str(e),at=time.time()));raise
+    save(name+'-release-fired.json',fired);save(name+'-up.json',up)
 def pulse(name,keys,ms,review,description,final=False,maxSceneAge=30):
     assert maxSceneAge in (5,30),'only bounded menu or aimed scene windows'
     if any(k in ('keydown:65','keydown:90','keydown:17','keydown:32','keydown:18') for k in keys):
@@ -155,7 +170,9 @@ def pulse(name,keys,ms,review,description,final=False,maxSceneAge=30):
         intentDeadline=dict(deadline=deadline,pulseMilliseconds=ms,operationWindowSeconds=6.0)
         save(name+'-operation.json',intentDeadline)
         assert deadline+2<read('launch.json')['deadline'],'operation exceeds fixed runtime'
-        child=subprocess.Popen([sys.executable,'-B',__file__,'release',name,owner['owner'],str(deadline),*(['final'] if final else [])],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        child=subprocess.Popen([sys.executable,'-B',__file__,'release',name,owner['owner'],str(deadline),'channel',*(['final'] if final else [])],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        os.set_blocking(child.stdin.fileno(),False)
+        receipts=[];timings=[];schedules=[]
         sent=False
         try:
             ready,_,_=select.select([child.stdout],[],[],1.5);assert ready,'independent release child arm deadline'
@@ -167,27 +184,39 @@ def pulse(name,keys,ms,review,description,final=False,maxSceneAge=30):
             # Persist an independent absolute cap BEFORE the first DOWN.
             capAt=time.time()+2.0
             save(name+'-release-cap.json',dict(at=capAt,beforeFirstDown=True,maximumHoldMilliseconds=2000))
-            receipts=[]
             for key,nonce in zip(keys,nonces):
+                assert time.time()<capAt,'pre-DOWN cap expired during persistence; no DOWN'
                 assert time.time()-rr['at']<maxSceneAge and time.time()-reviewed['at']<30,'capture/review expired before edge'
                 sent=True
                 receipt=call({'action':'guarded-input','cmd':key,'guard':{**owner,'nonce':nonce,'reviewed':True,'deadline':int(min(deadline,capAt)*1000)}},timeout=1.0)
                 returnedAt=time.time()
-                save(name+'-ack-timing-'+str(len(receipts))+'.json',dict(returnedAt=returnedAt,consumedAt=receipt.get('consumedAt'),transportAndHandlerMilliseconds=(returnedAt*1000-receipt['consumedAt']) if receipt.get('consumedAt') else None))
+                timings.append(dict(returnedAt=returnedAt,consumedAt=receipt.get('consumedAt'),transportAndHandlerMilliseconds=(returnedAt*1000-receipt['consumedAt']) if receipt.get('consumedAt') else None))
                 receipts.append(receipt)
-                save(name+('-receipt.json' if len(keys)==1 else '-receipt-'+str(keys.index(key))+'.json'),receipt)
                 assert receipt['state']=='CONSUMED' and receipt['consumed'],receipt
-            save(name+'-down.json',receipts)
+                # Atomic, nonblocking control message on an already armed
+                # independent pipe BEFORE any synchronous audit persistence.
+                schedule=dict(at=receipt['consumedAt']/1000+ms/1000,
+                              immutableOperationDeadline=deadline,receipt=receipt,ackTiming=timings[-1],sentAt=time.time())
+                payload=(json.dumps(schedule,separators=(',',':'))+'\n').encode()
+                assert len(payload)<=4096,'release schedule must fit atomic PIPE_BUF'
+                assert os.write(child.stdin.fileno(),payload)==len(payload),'incomplete independent schedule'
+                schedules.append(schedule)
             releaseAt=min(x['consumedAt'] for x in receipts)/1000+ms/1000
             # A known late ACK must shorten UP before any refusal can unwind.
-            save(name+'-release-at.json',dict(at=releaseAt,immutableOperationDeadline=deadline))
             assert releaseAt+.25<deadline,'finite pulse cannot fit original operation deadline'
-            assert time.time()<releaseAt,'ACK arrived too late for complete pulse'
+            assert all(t['returnedAt']<releaseAt for t in timings),'ACK arrived too late for complete pulse'
             if ms>=1500:
                 time.sleep(.15)
                 capture(name+'-midpress')
         finally:
             out,err=child.communicate(timeout=15)
+            # The child has attempted physical UP and reached both EOFs. Audit
+            # can now take arbitrarily slow fsyncs without extending the hold.
+            for i,(receipt,timing) in enumerate(zip(receipts,timings)):
+                save(name+'-ack-timing-'+str(i)+'.json',timing)
+                save(name+('-receipt.json' if len(keys)==1 else '-receipt-'+str(i)+'.json'),receipt)
+            if receipts:save(name+'-down.json',receipts)
+            if schedules:save(name+'-release-at.json',dict(at=min(v['at'] for v in schedules),immutableOperationDeadline=deadline,channelSchedules=schedules))
             save(name+'-release-wait.json',dict(pid=child.pid,exit=child.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=out.decode(),stderr=err.decode()))
             assert child.returncode==0,'independent release failed; stop'
         up=read(name+'-up.json')
@@ -223,5 +252,5 @@ if __name__=='__main__':
     elif sys.argv[1]=='capture':print(capture(sys.argv[2]))
     elif sys.argv[1]=='bind':
         bind()
-    elif sys.argv[1]=='release':release(sys.argv[2],sys.argv[3],float(sys.argv[4]),len(sys.argv)>5 and sys.argv[5]=='final')
+    elif sys.argv[1]=='release':release(sys.argv[2],sys.argv[3],float(sys.argv[4]),'final' in sys.argv[5:],'channel' in sys.argv[5:])
     elif sys.argv[1] in ('pulse','aim'):print(pulse(sys.argv[2],sys.argv[3].split(','),int(sys.argv[4]),sys.argv[5],sys.argv[6],len(sys.argv)>7 and sys.argv[7]=='final',5 if sys.argv[1]=='aim' else 30))

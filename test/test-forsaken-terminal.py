@@ -30,7 +30,16 @@ class Terminal(base.Controller):
 
         def terminate():
             try:
-                base.waitfile(self.out/'final-receipt.json')
+                intent=base.waitfile(self.out/'final-intent.json')
+                end=time.monotonic()+5
+                while True:
+                    try:status=c.call({'action':'guarded-status','nonce':intent['nonces'][0]})
+                    except RuntimeError as error:
+                        if 'unknown guarded nonce' not in str(error):raise
+                        status={'consumed':False}  # Intent precedes actual guard registration.
+                    if status.get('consumed'):break
+                    assert time.monotonic()<end,'actual guarded consumption deadline'
+                    time.sleep(.01)
                 info = c.read('native-pid.json')
                 self.assertEqual(base.supervise.token(info['pid']), info['startToken'])
                 if mode in ('normal', 'nonfinal'):
