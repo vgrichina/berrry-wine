@@ -1,10 +1,12 @@
-Current dispatch (updated 2026-11-14T10:30Z):
+Current dispatch (updated 2026-11-14T10:43Z):
 
 Capacity restored (>15GB at latest runtime cleanup); no reserve adjustment. Three fresh workers are active:
 
 - tim-original-puzzle1-native-solve-20261114 PID3288952: ordinary original Puzzle1 placement/simulation/CLEAR-next after published real callback and coordinate-range repair. Lower-screen wrap remains.
-- lbreakout-original-native-level-progress-20261114 PID3285939: verified220-file original closure, fresh LocalGame/level/paddle/brick-score/normalQuit actions; no historical ACK-only promotion.
-- quake3-native-gl-startup-arena-progress-20261114 PID3278626: nativeGL fresh ordinary route toward arena/enemy interaction. First300s run reached Fight/Connecting localhost, no arena/defect proof; next actual attempt after fairturn.
+- lbreakout-original-reviewed-play-native-quit-20261114 PID3302456: fresh fixed360s original level play, reserving time for actual application Quit after the predecessor's bounded partial result below.
+- quake3-native-gl-startup-arena-progress-20261114 PID3278626: nativeGL ordinary Major match route. Separate300s/420s runs reached Connecting localhost but no arena/shot/frag; final fresh600s attempt follows TIM's next heavy-lock turn. Loading backdrop alone is not a demonstrated defect.
+
+LBREAKOUT ORIGINAL LEVEL PARTIAL: published74ee84f47, scratch/runs/20261114-lbreakout-level-progress/result.json. Reviewed LocalGame -> StartOriginalSet, paddle center400->472 and separate Space ball launch; one tile DARKENED, destruction unproved, score0/no levelclear. P-only pause causality unproved; separate P removed visible Pause. Escape -> actual QuitGame y/n -> Y reached menu fade, but immutable240s CLI guard stopped before application Quit; nativeQuitFALSE. Coordinator checked all11selectedPNG hashes, viewed launchedball and delivered Telegram2575. Original220files/219mappings+CRT and320runtimepins unchanged; eightcontrols/twowatchdogchecks/ownlockedfullbuild PASS, wait0/bothEOF/watchdog0. Fresh worker above continues reviewed play with time reserved for actual native Quit. TIM gets the next runtime turn after this active LBreakout run; Q3 was queued that coordination message, consumption remains unverified.
 
 TIM REAL CALLBACK REPAIR PUBLISHED4afebb5f4: native INT33/0Ch registration/deferred FAR delivery, fullcontext/stack/RETF/nonrecursivequeue,0Bh accumulated counters/reset,14hex exchange, driver virtual ranges now work. Corrected finalABI native RED/GREEN+negativecontrol/adjacentloader/FCB/CD/floppy/shortDMA/control regressions and bothlockedfullbuild PASS; bundlesfresh. Released older ToyVM dependencies coherently reviewed/adopted in38path commit, replacing their historicalWIP state. Coordinator verified164artifact hashes+all38currentownedpins, viewed FINALsource session4 Puzzle1 after3ordinarymanualanswers in85.4s/noheldinput/zerooverlay/13filesunchanged; actualwait0/bothEOF/noneleft. scratch/runs/20261114-tim-int33-callback/result.json; session1+3reviewtimeouts retained/excluded. OriginalPuzzle1not solved; lowerduplicatevideo strip stillpresent. Fresh gameplay worker owns next task.
 
