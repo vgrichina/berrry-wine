@@ -1,7 +1,7 @@
 # GLTron current-display capture, 2026-11-14
 
 The distinct current-display API passed real Chrome and focused regression
-checks plus the locked full build. A conditional original remains pending.
+checks plus the locked full build. The sole conditional original then stopped at a required held-paint refusal.
 Evidence belongs to
 `scratch/runs/20261114-gltron-current-display-capture/result.json` when final.
 
@@ -100,8 +100,59 @@ wait remains explicitly unknown (invoking tool 143); it is not fabricated into
 a completed wait. FreeCell recorded actual native, watchdog, outer-child and
 outer waits, all zero with both EOFs. See `prior-terminal-gate.json`.
 
-The conditional sole 600/620-second original will use the published fix,
-exact 92 existing local media files, launch-only 1,000-block default and real
-clock. No original has launched by this task at this publication. No gameplay,
-corners, natural outcome, native Quit, FPS/audio/parity/full-27 or physical GPU
-claim follows from these capture fixtures. No box was created.
+## Sole conditional original: honest missing proof
+
+The tested fix was published first as
+`9baf6cec8122baa5698e1934240db8abe1617f84` (strict pull/push zero). Its committed
+census passes against HEAD Git objects, and the restored shared census passes.
+Only the eight owned paths were committed, including the two owned census rows;
+all six foreign census rows remained byte-exact in the shared tree.
+
+The one fresh local original launched at 21:11:51 UTC with its independent
+watchdog already armed for the fixed 600+20-second bound. Its pins identify
+677 input files, exactly 92 existing local media files (no copies/downloads),
+the published helper/runtime, and all relevant foreign uncommitted patches.
+The executing guest and renderer module SHA-256 was
+`c94ccf1b179f18bd4b47867445afed8cef2f1393b19aabfd259c7f3b94a7be09`.
+The host used exactly 1,000 blocks per slice and normal real clock.
+
+The **first** current-display scene request refused `held/in-flight paint`
+during startup. This was before a personally reviewed permanent input binding
+or any DOWN. The mandatory first-failure rule closed the chain. There was no
+retry, rebind, old-run reopen, hold release, forced render/swap, timeout change,
+raw-slot read, guest configuration write or later original. The personally
+reviewed diagnostic `original/first-failure.png` shows the full browser shell,
+a black startup game surface and native loader log; it is not an admitted
+current-display game scene.
+
+Passive observations identify the original GL endpoint (`api: gl`, selected
+`backend: webgl`), actual current WebGL2 context/800×600 device and one transfer/
+present. Frontend draws were **zero**; the one observed backend draw does not
+establish a rendered game scene. SoftwareGL selection was zero. The reported
+ANGLE/Mesa Intel renderer does not prove physical GPU execution. No StartGame,
+Pause or Quit topology was personally observed in this original. No intact-cycle
+corner, natural round outcome or native Quit is established. No PLAYER3WINS or
+human-win claim is made. Browser host teardown is not native Quit.
+
+The original controller's actual wait was exit 1 at 4.45 seconds; Chrome exit 0,
+watchdog exit 0 (unfired), outer child exit 0 and outer caller exit 0 all have
+actual waits and both EOFs. The supervisor's zero reports its own successful
+custody/waits, not game success. The heavy lock was released; all four recorded
+runtime/browser/outer/supervisor PIDs are absent, the HTTP port is closed and
+the Chrome profile was removed. `postflight.json` verifies all 677 source/media
+pins unchanged, including all 92 original media files. The task's own board
+watcher was stopped by exact PID/start token; its tool exit 143 was observed,
+while separate tool pipe EOF flags are unavailable and remain null.
+
+Both predecessor runs remain closed: all 289 and 356 files respectively retain
+the exact pre-task names, sizes and SHA-256 values. The retained initial queue
+stop has tool exit 143 with unavailable separate EOF evidence; it launched no
+heavy browser/original. It is not replaced by invented waits. Runtime proof for
+the actual checks/original is recorded separately.
+
+The result is a published capture fix with real Chrome causal proof, plus an
+honestly incomplete game objective. This bounded task stops here. A future task
+would need a separately authorized original and a safely admitted initialized,
+unheld scene; this session will not retry. No FPS, audio, parity, full-27 or
+physical GPU claim is made. No box was created: ID/expiry null, state
+`NOT_CREATED`, stop receipt `N/A`.
