@@ -181,7 +181,34 @@ async function browser(out,backend) {
       if(ready?.length===1&&ready[0].running&&ready[0].worker&&ready[0].slice&&ready[0].glPorts===1)break;
       assert(!ready?.some(a=>a.stopped),'original stopped during startup');assert(Date.now()<startupEnd,'bounded original startup readiness');await wait(250);
     }
-    await Promise.all(tasks);await capture('startup');
+    await Promise.all(tasks);
+    // Pin the first identifiable owner before waiting for scene production.
+    // It cannot be replaced with a similar-looking initialized owner later.
+    const binding=require(ROOT+'/'+HELPER),startupOwner=(await evaluate(binding.PAGE_READ)).apps[0];
+    const startupFields=binding.FIELDS.filter(k=>!['outputCanvasObject','workerTarget','workerInstance','moduleSha256','rendererTarget','rendererEpoch','rendererModuleSha256'].includes(k));
+    record('startup-owner-observation.json',{identity:startupOwner,outputSelected:false,permanentBound:false});
+    for(;;){
+      const live=(await evaluate(binding.PAGE_READ)).apps;
+      assert(live.length===1&&live[0].running&&!live[0].stopped,'startup owner stopped');
+      for(const k of startupFields){assert(startupOwner[k]!==undefined&&startupOwner[k]!==null,'missing startup identity '+k);assert.equal(live[0][k],startupOwner[k],'startup identity changed '+k);}
+      const renderers=[...workers.values()].filter(w=>!w.closed&&w.url.includes('d3d-render-worker'));
+      const observations=await Promise.all(renderers.map(w=>evaluate('globalThis.__gltronObserver?.snapshot?.()??null',w.sessionId)));
+      log('startup-gl-observations.jsonl',{at:Date.now(),observations});
+      // A context/first clear/present is not an initialized game scene.
+      // These are necessary producer observations only; personal review of
+      // the subsequent complete display still precedes permanent binding.
+      assert(Date.now()<startupEnd,'bounded original startup readiness');
+      if(observations.length===1&&observations[0]?.frontendDraws>0&&observations[0]?.frontendPresents>0&&observations[0]?.draws>0&&observations[0]?.transfers>0)break;
+      await wait(25);
+    }
+    // Output choice is unknown before the first ordinary valid display (the
+    // normal compositor can select direct or filtered presentation). Select
+    // it exactly once from that receipt; all subsequent reads pin it.
+    const selected=await binding.awaitStartupReady({evaluate,identity:startupOwner,deadline:startupEnd,selectOutput:true,onObservation:s=>log('startup-initial-display.jsonl',s)});
+    const selectedOwner=await chain.readLive();assert.equal(selectedOwner.identity.outputCanvasObject,selected.outputCanvasObject,'selected startup output replaced');
+    const startupReadiness=await chain.prepareStartup(startupEnd,s=>log('startup-readiness.jsonl',s));
+    record('startup-prebind-ready.json',{...startupReadiness,permanentBound:false,inputDowns:0});
+    await capture('startup');
     // Permanent binding waits for personally reviewed nonblack submitted WebGL scene.
     record('startup-ready.json',{at:Date.now(),backend,permanentBound:false});
     await evaluate(`(()=>{if(Object.hasOwn(globalThis,'__gltronPassiveOwner'))throw Error('owner reference already bound');Object.defineProperty(globalThis,'__gltronPassiveOwner',{value:runningApps[0].wine});return true;})()`);
@@ -238,7 +265,7 @@ async function browser(out,backend) {
       record('receipt-'+n+'.json',{state:attempted?'ACK':'NOT_SENT',effects:attempted?cmd.keys.length:0,noReplay:true,at:Date.now()});
     }
   }catch(e){
-    record('failure.json',{error:e.stack,noReplay:true,at:Date.now()});process.exitCode=1;
+    record('failure.json',{error:e.stack,code:e.code??null,inputState:e.inputState??null,noReplay:true,at:Date.now()});process.exitCode=1;
     if(c&&session)try{const shot=await c.send('Page.captureScreenshot',{format:'png'},session);fs.writeFileSync(out+'/first-failure.png',Buffer.from(shot.data,'base64'),{flag:'wx'});record('first-failure-state.json',await state());}catch(captureError){record('failure-capture-error.json',{error:String(captureError)});}
     await close('first causal failure');
   }

@@ -36,6 +36,26 @@ const PAGE_READ = `(() => {
       if(s.display==='none'||s.visibility!=='visible'||Number(s.opacity)!==1)return false;
       if(e!==c&&((/(hidden|clip|scroll|auto)/.test(s.overflowX)&&(b.left<r.left||b.right>r.right))||(/(hidden|clip|scroll|auto)/.test(s.overflowY)&&(b.top<r.top||b.bottom>r.bottom))))return false;
     }
+    // Canvas readback cannot depict HTML siblings, including overlays with
+    // pointer-events:none. Conservatively refuse every visible intersecting
+    // painted light-DOM box, even if it might paint behind the opaque canvas.
+    for(const e of document.querySelectorAll('*')){
+      if(e===c||e.contains(c))continue;
+      const r=e.getBoundingClientRect();
+      if(!(r.width>0&&r.height>0&&r.left<b.right&&r.right>b.left&&r.top<b.bottom&&r.bottom>b.top))continue;
+      let paints=true;
+      for(let p=e;p;p=p.parentElement){const s=getComputedStyle(p);if(s.display==='none'||s.visibility!=='visible'||Number(s.opacity)===0){paints=false;break;}}
+      if(paints){
+        const s=getComputedStyle(e),transparent=v=>!v||v==='transparent'||v.replaceAll(' ','')==='rgba(0,0,0,0)';
+        const ownText=[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());
+        const replaced=/^(CANVAS|IMG|SVG|VIDEO|IFRAME|INPUT|TEXTAREA|SELECT|BUTTON|OBJECT|EMBED)$/.test(e.tagName)||e.namespaceURI==='http://www.w3.org/2000/svg';
+        const decoration=!transparent(s.backgroundColor)||s.backgroundImage!=='none'||s.boxShadow!=='none'||s.backdropFilter!=='none'||
+          ['Top','Right','Bottom','Left'].some(k=>parseFloat(s['border'+k+'Width'])>0&&!transparent(s['border'+k+'Color']))||
+          (s.outlineStyle!=='none'&&parseFloat(s.outlineWidth)>0&&!transparent(s.outlineColor));
+        const pseudo=['::before','::after'].some(p=>{const x=getComputedStyle(e,p);return x.content!=='none'&&x.content!=='normal';});
+        if(ownText||replaced||decoration||pseudo)return false;
+      }
+    }
     return true;
   };
   return {isolated:crossOriginIsolated, apps:(typeof runningApps==='undefined'?[]:runningApps).map(a=>{
@@ -61,6 +81,39 @@ const PAGE_READ = `(() => {
   })};
 })()`;
 
+// No ticket, pixel read, publication, repaint, hold release or guest command.
+// Reuse the production receipt validator with an ephemeral request; its only
+// write is selectedOwner on this local object. No renderer state is changed.
+function readinessExpression(identity,selectOutput=false,allowPendingDamage=false) { return `(() => {
+  const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
+  if(!p.isolated||p.apps.length!==1||!a.running||a.stopped||!a.outputVisible)throw Error('startup owner/output not live and fully visible');
+  for(const k of ${JSON.stringify(FIELDS.filter(k=>!['workerTarget','workerInstance','moduleSha256','rendererTarget','rendererEpoch','rendererModuleSha256',...(selectOutput?['outputCanvasObject']:[])].includes(k)))})if(a[k]!==want[k])throw Error('startup identity changed '+k);
+  const w=runningApps[0].wine,r=w.renderer;
+  const pending=[];
+  if(w._dxDirty||w._dxLockDeferred||w._presentFrameDue)pending.push('host surface publication');
+  if(r._workerPublicationHeld()||r._workerGdiPaintDepth>0||r._repainting)pending.push('held/in-flight paint');
+  if(!${allowPendingDamage}&&(r._repaintScheduled||r._repaintPending||r._workerRepaintDeferred))pending.push('ordinary damage');
+  if(!r._currentDisplayRecord)pending.push('no ordinary complete display');
+  if(pending.length)return {ready:false,pending,at:Date.now(),publication:a.publication};
+  const record=r._validateCurrentDisplayCapture({owner:{hwnd:a.windowHwnd,window:r.windows[a.windowHwnd],processId:w.processId,instance:w.instance}});
+  return {ready:true,at:Date.now(),publication:a.publication,displayedAt:record.displayedAt,outputCanvasObject:a.outputCanvasObject};
+})()`; }
+function precondition(reason) {
+  const error=Error('capture precondition refused: '+reason+'; no retry');
+  error.code='CAPTURE_PRECONDITION_REFUSED';error.inputState='NOT_SENT';return error;
+}
+async function awaitStartupReady({evaluate,identity,deadline,now=Date.now,onObservation=()=>{},selectOutput=false}) {
+  assert(Number.isFinite(deadline)&&deadline>now(),'bounded PREBIND startup deadline');
+  for(;;){
+    const state=await evaluate(readinessExpression(identity,selectOutput));onObservation(state);
+    if(now()>=deadline)throw precondition('bounded PREBIND startup readiness expired');
+    if(state.ready)return state;
+    // Poll pacing is not readiness evidence. Only the ordinary receipt and
+    // current owner/output/paint checks above can admit the first ticket.
+    await wait(Math.min(25,deadline-now()));
+  }
+}
+
 // Public current-display ticket: existing complete output, or ordinary pending
 // damage publication. Request time measures observation age, never render age.
 // Original publication/display timestamps remain separately attached to bytes.
@@ -72,17 +125,20 @@ async function captureScene({evaluate, identity, now=Date.now}) {
       const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
       if(!p.isolated||p.apps.length!==1||!a.running||a.stopped||!a.outputVisible)throw Error('capture owner/output not live and fully visible');
       for(const k of ['processId','processObject','pageRendererObject','canvasObject','windowHwnd','windowObject','windowInstance','outputCanvasObject'])if(a[k]!==want[k])throw Error('capture identity changed '+k);
+      const readiness=(${readinessExpression(identity,false,true)});
+      if(!readiness.ready)return {refused:readiness.pending.join(', ')};
       if(globalThis.${key})throw Error('capture already armed');
       const w=runningApps[0].wine,r=w.renderer,t=w.requestCurrentDisplayCapture({hwnd:a.windowHwnd});
       const h={nonce:${JSON.stringify(nonce)},ticket:t,publication:a.publication,renderer:r};
       globalThis.${key}=h;
       return {at:Date.now(),publication:a.publication};
     })()`);
+    if(arm.refused)throw precondition(arm.refused);
     armed=true;stages.armMs=now()-at;stages.arm=arm;
     while(now()-at<3000) {
       result=await evaluate(`(() => {
         const h=globalThis.${key};if(!h||h.nonce!==${JSON.stringify(nonce)})throw Error('capture ticket replaced');
-        const t=h.ticket;if(t.status==='failed')throw Error(t.error);
+        const t=h.ticket;if(t.status==='failed')return {refused:t.error};
         if(t.status==='cancelled')throw Error('capture cancelled; no replay');
         if(t.status!=='complete')return null;
         const readStart=performance.now(),r=t.read(),m=r.metadata;
@@ -96,6 +152,7 @@ async function captureScene({evaluate, identity, now=Date.now}) {
         const data=c.toDataURL('image/png');
         return {metadata:m,data,publishedAt:m.publicationAt,encodedAt:Date.now(),readAndCopyMs:start-readStart,encodeMs:performance.now()-start};
       })()`);
+      if(result?.refused){const reason=result.refused;result=null;throw precondition(reason);}
       if(result)break;
       await wait(10);
     }
@@ -253,7 +310,14 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
     }
     return {at:new Date(now()).toISOString(), slice:a.slice, d3dStats:a.d3dStats, physical:a.physical, render};
   }
-  return {capture, admit, readLive, progress, get closed(){return closed;}};
+  async function prepareStartup(deadline,onObservation) {
+    assert(!closed&&!busy&&!latest,'PREBIND startup only');busy=true;
+    try {
+      const live=await readLive();
+      return await awaitStartupReady({evaluate,identity:live.identity,deadline,now,onObservation});
+    }catch(e){closed=true;throw e;}finally{busy=false;}
+  }
+  return {capture, admit, readLive, progress, prepareStartup, get closed(){return closed;}};
 }
 
-module.exports={createChain,captureScene,same,sha,FIELDS,MAX_AGE_MS,PAGE_READ,WORKER_READ,RENDER_READ};
+module.exports={createChain,captureScene,same,sha,FIELDS,MAX_AGE_MS,PAGE_READ,WORKER_READ,RENDER_READ,readinessExpression,awaitStartupReady};

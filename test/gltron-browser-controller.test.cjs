@@ -99,6 +99,7 @@ async function main(){
    fs.writeFileSync(root+'/causal-before.json',JSON.stringify({beforePatch:process.env.GLTRON_BEFORE_PATCH,unknownClosed:false,lateReplyReceived:true,postUnknownRequestSent:true,realLoopbackEndpoint:true,originalLaunched:false}));
    old.ws.close();lateCapture=false;
   }
+  await startupControls();
   await chainControls();
   const {FIELDS,same}=require('../'+controller.HELPER),identity=Object.fromEntries(FIELDS.map(k=>[k,'original:'+k]));same(identity,{...identity});for(const k of FIELDS)assert.throws(()=>same(identity,{...identity,[k]:'replacement'}));
   console.log('PASS reserve/irreversible Quit/finite keys, permanent identity replacement, independent actual child scheduled/EOF/pair UP; no game or renderer proof');
@@ -111,7 +112,7 @@ async function main(){
 async function browserCaptureControls(){
  const root=process.env.GLTRON_TEST_OUT;assert(root&&path.isAbsolute(root));fs.mkdirSync(root,{recursive:true});
  const {startStaticServer,closeServer}=require('./static-server');
- const {captureScene,PAGE_READ}=require('../'+controller.HELPER);
+ const {captureScene,PAGE_READ,awaitStartupReady}=require('../'+controller.HELPER);
  const server=await startStaticServer({root:path.resolve(__dirname,'..'),crossOriginIsolated:true});
  let browser;const report={originalLaunched:false,startedAt:new Date().toISOString()};
  try{
@@ -130,7 +131,9 @@ async function browserCaptureControls(){
   const page={waitForFunction:async expression=>{const end=Date.now()+10000;while(true){const r=await cdp.send('Runtime.evaluate',{expression:'!!('+expression+')',returnByValue:true});if(r.result?.value)return;assert(Date.now()<end,'bounded fixture readiness');await pause(20);}}};
   await cdp.send('Runtime.enable',{});await cdp.send('Page.enable',{});await cdp.send('Page.navigate',{url:'http://127.0.0.1:'+server.address().port+'/index.html?debug'});
   await page.waitForFunction('typeof Win98Renderer!=="undefined"&&typeof runningApps!=="undefined"');
-  const evaluate=async expression=>{const r=await cdp.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+  const evaluate=async expression=>{const r=await cdp.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails){
+    const diagnostic=await cdp.send('Runtime.evaluate',{expression:`(() => {const r=fixture.r,c=!r.presentationFilter||r._directPresentation?r.canvas:r.presentationCanvas||r.canvas,b=c.getBoundingClientRect();return {output:c.id,direct:r._directPresentation,box:b.toJSON(),overlap:[...document.querySelectorAll('*')].filter(e=>e!==c&&!e.contains(c)).map(e=>{const s=getComputedStyle(e),x=e.getBoundingClientRect();return {id:e.id,tag:e.tagName,box:x.toJSON(),display:s.display,visibility:s.visibility,opacity:s.opacity,parent:e.parentElement?.id,backgroundColor:s.backgroundColor,backgroundImage:s.backgroundImage,boxShadow:s.boxShadow,backdropFilter:s.backdropFilter,pseudo:[getComputedStyle(e,'::before').content,getComputedStyle(e,'::after').content],text:e.textContent,border:s.border,outline:s.outline};}).filter(e=>e.box.width>0&&e.box.height>0&&e.box.left<b.right&&e.box.right>b.left&&e.box.top<b.bottom&&e.box.bottom>b.top)}})()`,returnByValue:true});
+    report.failureDOM=diagnostic.result?.value;throw Error(JSON.stringify(r.exceptionDetails));}return r.result.value;};
   report.setup=await evaluate(`(() => {
     if(runningApps.length)throw Error('no originals permitted');
     const screen=document.getElementById('screen');screen.width=1024;screen.height=768;const r=new Win98Renderer(screen),instance={exports:{}},w=Object.assign(Object.create(WineAssembly.prototype),{renderer:r,instance,processId:991,running:true,guestWorker:{link:{endpointIdentity:'fixture',slot:0,worker:{},module:{}}}});
@@ -146,18 +149,40 @@ async function browserCaptureControls(){
       const p=g.createProgram();g.attachShader(p,vs);g.attachShader(p,fs);g.linkProgram(p);if(!g.getProgramParameter(p,g.LINK_STATUS))throw Error(g.getProgramInfoLog(p));g.useProgram(p);const blue=g.getUniformLocation(p,'blue');g.uniform1f(blue,0.7);onmessage=({data:m})=>g.uniform1f(blue,m.blue);
       let n=0;setInterval(()=>{for(let i=0;i<32;i++)g.drawArrays(g.TRIANGLES,0,3);const b=c.transferToImageBitmap();postMessage({bitmap:b,n:++n,version:g.getParameter(g.VERSION)},[b]);},30);\`;
     const url=URL.createObjectURL(new Blob([source],{type:'text/javascript'})),worker=new Worker(url);
-    globalThis.fixture={r,w,win,canvas,worker,url,frames:0,publications:[],keys:[]};
-    const observe=r.observePresentationPublication;r.observePresentationPublication=function(d,n){observe.call(this,d,n);fixture.publications.push({n,at:Date.now()});if(fixture.publications.length>10)fixture.publications.shift();};
-    worker.onerror=e=>{fixture.workerError=e.message;};worker.onmessage=({data:m})=>{canvas.getContext('2d').drawImage(m.bitmap,0,0,canvas.width,canvas.height);m.bitmap.close();fixture.frames=m.n;fixture.version=m.version;r.scheduleRepaint();};
+    globalThis.fixture={r,w,win,canvas,worker,url,frames:0,publications:[],keys:[],captureCalls:[],startupEvents:[]};
+    const request=w.requestCurrentDisplayCapture;w.requestCurrentDisplayCapture=function(o){fixture.captureCalls.push({at:Date.now(),frames:fixture.frames,held:r._workerPublicationHeld()});return request.call(this,o);};
+    const observe=r.observePresentationPublication;r.observePresentationPublication=function(d,n){observe.call(this,d,n);fixture.publications.push({n,at:Date.now()});if(fixture.publications.length>10)fixture.publications.shift();if(!fixture.startupEvents.length){r.beginWorkerGuestSlice();fixture.startupEvents.push({event:'ordinary-producer-begin',at:Date.now()});}};
+    worker.onerror=e=>{fixture.workerError=e.message;};worker.onmessage=({data:m})=>{canvas.getContext('2d').drawImage(m.bitmap,0,0,canvas.width,canvas.height);m.bitmap.close();fixture.frames=m.n;fixture.version=m.version;if(m.n===20){r.endWorkerGuestSlice();fixture.startupEvents.push({event:'ordinary-producer-end',at:Date.now(),frames:m.n});}r.scheduleRepaint();};
     for(const type of ['keydown','keyup'])addEventListener(type,e=>fixture.keys.push({type,key:e.key,at:Date.now(),trusted:e.isTrusted}));
     return {hwnd:win.hwnd,processId:win.processId};
   })()`);
-  await page.waitForFunction('fixture.frames>3&&fixture.r._immutablePublicationSequence>3');
+  await page.waitForFunction('fixture.startupEvents.length>0&&fixture.r._workerPublicationHeld()');
+  // Reproduce the predecessor's premature ticket in a synthetic control,
+  // never by reopening its closed original. Compile exact committed source
+  // in memory; Git remains the source archive.
+  const Module=require('node:module'),old=new Module(path.resolve(__dirname,'../tools/gltron-browser-binding.cjs'),module);
+  old.filename=path.resolve(__dirname,'../tools/gltron-browser-binding.cjs');old.paths=module.paths;
+  const oldSource=cp.execFileSync('git',['show','9baf6cec8122baa5698e1934240db8abe1617f84:tools/gltron-browser-binding.cjs'],{encoding:'utf8'});
+  old._compile(oldSource,old.filename);
+  report.startupPredecessor={commit:'9baf6cec8122baa5698e1934240db8abe1617f84',path:'tools/gltron-browser-binding.cjs',sha256:controller.sha(oldSource),sourceRecoveredFromGit:true,oldOriginalReopened:false};
+  const startupIdentity=(await evaluate(PAGE_READ)).apps[0];
+  await assert.rejects(old.exports.captureScene({evaluate,identity:startupIdentity}),/held|in-flight/);
+  report.startupRed=await evaluate('({calls:fixture.captureCalls.slice(),held:fixture.r._workerPublicationHeld(),ticketAbsent:!globalThis.__gltronCaptureTicketV1,keys:fixture.keys.slice()})');
+  assert.equal(report.startupRed.calls.length,1);assert(report.startupRed.calls[0].held&&report.startupRed.held&&report.startupRed.ticketAbsent);assert.equal(report.startupRed.keys.length,0);
+  const startupObservations=[];
+  report.startupGreen={...await awaitStartupReady({evaluate,identity:startupIdentity,deadline:Date.now()+10000,onObservation:s=>startupObservations.push(s)})};
+  report.startupGreen.observations=startupObservations;
+  assert(startupObservations.some(s=>!s.ready),'held startup must actually be observed');
+  const beforeFirst=await evaluate('({calls:fixture.captureCalls.length,keys:fixture.keys.length,events:fixture.startupEvents})');
+  assert.equal(beforeFirst.calls,1,'new PREBIND wait must create zero tickets');assert.equal(beforeFirst.keys,0);
+  assert(beforeFirst.events.some(e=>e.event==='ordinary-producer-end'));report.startupGreen.beforeFirst=beforeFirst;
+  await page.waitForFunction('fixture.frames>=20&&fixture.r._immutablePublicationSequence>0');
   const identity=(await evaluate(PAGE_READ)).apps[0];
   const begin=Date.now();
   const shot=await captureScene({evaluate,identity});report.capture={at:shot.at,elapsedMs:Date.now()-begin,stages:shot.stages,metadata:shot.metadata,sha256:controller.sha(shot.png)};
   for(const w of shot.metadata.composition.windows){assert(w.x>=0&&w.y>=0&&w.x+w.width<=shot.metadata.output.width&&w.y+w.height<=shot.metadata.output.height,'complete owner window inside output');}
   fs.writeFileSync(root+'/complete-scene.png',shot.png,{flag:'wx'});
+  const first=await evaluate('fixture.captureCalls.slice()');assert.equal(first.length,2);assert(!first[1].held&&first[1].frames>=20);report.startupGreen.firstCapture=first[1];
   // Compare the currently displayed complete output while the synthetic
   // producer continues publishing identical pixels, never a raw source slot.
   await pause(100);
@@ -220,13 +245,24 @@ async function browserCaptureControls(){
   report.cancelled=await evaluate(`(() => {const r=fixture.r;r.scheduleRepaint();const t=fixture.w.requestCurrentDisplayCapture({hwnd:65537});fixture.cancelledTicket=t;return {pending:t.status,cancelled:t.cancel(),damage:r._repaintScheduled};})()`);
   assert.equal(report.cancelled.pending,'pending');assert(report.cancelled.cancelled&&report.cancelled.damage);
   await pause(100);assert(await evaluate("fixture.cancelledTicket.status==='cancelled'&&fixture.cancelledTicket.read()===null&&!fixture.r._immutableCaptureRequest"));
-  // A held compositor is refused, never released by the API.
+  // A late hold after successful readiness is a known pre-effect refusal.
   await evaluate('fixture.r.beginWorkerGuestSlice();true');
-  const heldAt=Date.now();await assert.rejects(captureScene({evaluate,identity:(await evaluate(PAGE_READ)).apps[0]}),/held|in-flight/);
+  const heldCalls=await evaluate('fixture.captureCalls.length');
+  const heldAt=Date.now();await assert.rejects(captureScene({evaluate,identity:(await evaluate(PAGE_READ)).apps[0]}),e=>e.code==='CAPTURE_PRECONDITION_REFUSED'&&e.inputState==='NOT_SENT');
   report.held={elapsedMs:Date.now()-heldAt,ticketAbsent:await evaluate('!globalThis.__gltronCaptureTicketV1'),pending:await evaluate('!!fixture.r._immutableCaptureRequest'),depth:await evaluate('fixture.r._workerGuestSliceDepth')};
   assert(report.held.ticketAbsent&&!report.held.pending&&report.held.depth===1);
+  assert.equal(await evaluate('fixture.captureCalls.length'),heldCalls,'atomic late hold must refuse before ticket');
+  const timeoutAt=Date.now();await assert.rejects(awaitStartupReady({evaluate,identity:(await evaluate(PAGE_READ)).apps[0],deadline:Date.now()+125}),e=>e.code==='CAPTURE_PRECONDITION_REFUSED');
+  report.startupTimeout={elapsedMs:Date.now()-timeoutAt,ticketCalls:await evaluate('fixture.captureCalls.length')};assert(report.startupTimeout.elapsedMs>=125);assert.equal(report.startupTimeout.ticketCalls,heldCalls);
   await evaluate('fixture.r.endWorkerGuestSlice();fixture.r.scheduleRepaint();true');await pause(100);
   assert(await evaluate('!globalThis.__gltronCaptureTicketV1'),'late publication cannot promote cancelled capture');
+  // Visible HTML siblings cannot appear in canvas bytes, including a
+  // pointer-events:none overlay. Admission refuses their overlapping boxes.
+  await evaluate(`(() => {const c=fixture.r._directPresentation?fixture.r.canvas:fixture.r.presentationCanvas,b=c.getBoundingClientRect(),e=document.createElement('div');e.id='fixture-dom-overlay';e.textContent='HTML OVERLAY';Object.assign(e.style,{position:'fixed',left:(b.left+10)+'px',top:(b.top+10)+'px',width:'140px',height:'50px',background:'red',zIndex:'2147483647',pointerEvents:'none'});document.body.append(e);return true;})()`);
+  const overlayOwner=(await evaluate(PAGE_READ)).apps[0];assert(!overlayOwner.outputVisible);
+  await assert.rejects(captureScene({evaluate,identity:overlayOwner}),/visible/);
+  report.domOverlay={pointerEventsNone:true,admissionRefused:true,canvasDoesNotDepictHTML:true};
+  await evaluate("document.getElementById('fixture-dom-overlay').remove();true");
   // CSS output hiding/clipping and output object replacement are refusals.
   report.outputNegatives=[];
   for(const kind of ['hidden','clipped','replacement']){
@@ -244,7 +280,20 @@ async function browserCaptureControls(){
   await assert.rejects(captureScene({evaluate,identity:current}),/changed|selected/);
   assert(await evaluate('!globalThis.__gltronCaptureTicketV1'));
   report.replacementRefused=true;report.version=await evaluate('fixture.version');report.frames=await evaluate('fixture.frames');report.keys=await evaluate('fixture.keys');assert.equal(report.keys.length,0);
-  await evaluate('URL.revokeObjectURL(fixture.url);true');report.passed=true;
+  // Owner replacement during passive startup closes readiness rather than
+  // waiting for a similar-looking replacement owner to become ready.
+  await evaluate('fixture.r.windows[65537]=fixture.win;fixture.w._presentFrameDue=true;setTimeout(()=>{fixture.r.windows[65537]={...fixture.win};},50);true');
+  await assert.rejects(awaitStartupReady({evaluate,identity:(await evaluate(PAGE_READ)).apps[0],deadline:Date.now()+1000}),/identity changed/);
+  report.startupOwnerReplacementRefused=true;
+  await evaluate('URL.revokeObjectURL(fixture.url);true');
+  // Actual Chrome delayed response: fixed 3s UNKNOWN closes transport, and
+  // neither its late reply nor any subsequent call can send input/replay.
+  const unknownAt=Date.now();
+  await assert.rejects(cdp.send('Runtime.evaluate',{expression:'new Promise(r=>setTimeout(()=>r(17),3150))',returnByValue:true,awaitPromise:true}),/UNKNOWN/);
+  await pause(250);assert(c.closed);
+  for(const method of ['Input.dispatchKeyEvent','Runtime.evaluate'])await assert.rejects(cdp.send(method,{}),/UNKNOWN/);
+  report.chromeUnknown={elapsedMs:Date.now()-unknownAt,closed:c.closed,lateReplyCannotReopen:true,inputDispatches:0};
+  report.passed=true;
  }catch(e){report.error=String(e.stack);throw e;}
  finally{
   if(browser){const p=browser.process();await browser.close();report.chrome={code:p.exitCode,signal:p.signalCode,stdoutEOF:p.stdout?.readableEnded??null,stderrEOF:p.stderr?.readableEnded??null};}
@@ -265,7 +314,7 @@ async function chainControls(){
     return {isolated:true,apps:[{...a}]};
    }
    if(expression===binding.WORKER_READ){if(kind==='hidden-during-validation')a.outputVisible=false;return {endpointIdentity:'guest',slot:0,instance:'worker-instance'};}
-   if(expression.includes('t=w.requestCurrentDisplayCapture')){readback=false;shifted=false;return {at:clock,publication:7};}
+   if(expression.includes('t=w.requestCurrentDisplayCapture')){readback=false;shifted=false;return kind==='late-hold'?{refused:'held/in-flight paint'}:{at:clock,publication:7};}
    if(expression.includes('r=t.read()')){if(kind==='cancelled')throw Error('capture cancelled; no replay');readback=true;return {data:'data:image/png;base64,eA==',encodeMs:0,metadata:{publication:8,observation:'current-display',content:'already-displayed',completion:'canvas2d-readback',captureOwner:{hwnd:65537,processId:991},composition:{windows:[{hwnd:65537,processId:991}]},output:{width:1,height:1}}};}
    if(expression.includes('h.ticket.cancel()')){a.publication=8;return {status:'complete'};}
    throw Error('unexpected fixture expression');
@@ -273,10 +322,10 @@ async function chainControls(){
   const chain=binding.createChain({evaluate,send:async()=>({bytecode:bytes.toString('base64')}),workers,pageSession:'page',app:'gltron',expectedModules:[hash],now:()=>clock});
   return {chain,now:()=>clock,replace:()=>{a.windowObject='replacement-between-captures';}};
  }
- for(const kind of ['old-menu','old-play','replacement','unknown','cancelled','between-captures','no-replay','hidden-during-validation']){
+ for(const kind of ['old-menu','old-play','replacement','unknown','cancelled','between-captures','no-replay','hidden-during-validation','late-hold']){
   const f=fixture(kind);let effects=0;
-  if(kind==='replacement'||kind==='cancelled'||kind==='hidden-during-validation'){
-   await assert.rejects(f.chain.capture('scene'),/identity changed|cancelled|hidden or clipped/);assert(f.chain.closed);await assert.rejects(f.chain.capture('again'),/closed/);continue;
+  if(kind==='replacement'||kind==='cancelled'||kind==='hidden-during-validation'||kind==='late-hold'){
+   await assert.rejects(f.chain.capture('scene'),/identity changed|cancelled|hidden or clipped|precondition refused/);assert(f.chain.closed);await assert.rejects(f.chain.capture('again'),/closed/);continue;
   }
   const shot=await f.chain.capture('scene');
   if(kind==='between-captures'){
@@ -297,4 +346,45 @@ async function chainControls(){
    assert(f.chain.closed);await assert.rejects(f.chain.capture('again'),/closed/);assert.equal(effects,1);
   }
  }
+}
+
+async function startupControls(){
+ const binding=require('../'+controller.HELPER),vm=require('node:vm');
+ function fixture(){
+  const rect={left:0,top:0,right:640,bottom:480,width:640,height:480},style={display:'block',visibility:'visible',opacity:'1'};
+  const canvas={isConnected:true,getBoundingClientRect:()=>rect,contains:()=>false};
+  const win={visible:true,w:640,h:480,processId:1,hwnd:65537,wasm:{}},r={canvas,windows:{65537:win},_workerPublicationHeld:()=>r.held,held:true,_immutablePublicationSequence:1,_currentDisplayRecord:{displayedAt:Date.now()},peekKeyDownState:()=>0,_validateCurrentDisplayCapture(req){assert.equal(req.owner.window,win);return this._currentDisplayRecord;}};
+  const w={running:true,renderer:r,processId:1,instance:win.wasm,guestWorker:{link:{endpointIdentity:'guest',worker:{},module:{}}}};
+  const context=vm.createContext({crypto,crossOriginIsolated:true,document:{visibilityState:'visible',getElementById:()=>canvas,querySelectorAll:()=>[canvas]},getComputedStyle:()=>style,innerWidth:800,innerHeight:600,runningApps:[{name:'gltron',wine:w}]});
+  const evaluate=async s=>vm.runInContext(s,context),identity=vm.runInContext(binding.PAGE_READ,context).apps[0];
+  return {r,w,evaluate,identity,context};
+ }
+ {
+  const f=fixture(),observations=[];setTimeout(()=>{f.r.held=false;f.r._immutablePublicationSequence++;},50);
+  const result=await binding.awaitStartupReady({...f,deadline:Date.now()+1000,onObservation:s=>observations.push(s)});
+  assert(result.ready&&observations.some(s=>!s.ready));assert.equal(result.publication,2);
+  assert(!f.context.__gltronCaptureTicketV1,'passive startup creates no ticket');
+ }
+ {
+  const f=fixture(),at=Date.now();
+  await assert.rejects(binding.awaitStartupReady({...f,deadline:at+75}),e=>e.code==='CAPTURE_PRECONDITION_REFUSED'&&e.inputState==='NOT_SENT');
+  assert(Date.now()-at>=75,'actual bounded timeout, no fake clock');
+ }
+ {
+  const f=fixture();setTimeout(()=>{f.r.windows[65537]={...f.r.windows[65537]};},25);
+  await assert.rejects(binding.awaitStartupReady({...f,deadline:Date.now()+500}),/identity changed/);
+ }
+ {
+  const f=fixture();
+  await assert.rejects(binding.captureScene(f),e=>e.code==='CAPTURE_PRECONDITION_REFUSED'&&e.inputState==='NOT_SENT'&&!e.message.includes('UNKNOWN'));
+  assert(!f.context.__gltronCaptureTicketV1,'late hold refuses before first ticket');
+ }
+ {
+  const f=fixture();f.r.held=false;
+  const unselected={...f.identity,outputCanvasObject:'not-yet-selected'};
+  const selected=await binding.awaitStartupReady({...f,identity:unselected,selectOutput:true,deadline:Date.now()+500});
+  assert.equal(selected.outputCanvasObject,f.identity.outputCanvasObject,'select output once from actual ordinary display');
+  await assert.rejects(binding.awaitStartupReady({...f,identity:unselected,deadline:Date.now()+500}),/identity changed outputCanvasObject/);
+ }
+ console.log('PASS passive PREBIND natural readiness, actual timeout, owner replacement and atomic known late-hold refusal');
 }
