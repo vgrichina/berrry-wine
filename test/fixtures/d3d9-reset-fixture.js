@@ -2,7 +2,8 @@
 // Generated ordinary PE; every API method dereferences its public x86 COM vtable.
 // Independent literal colors and scalar triangle coverage; no production oracle.
 const assert=require('node:assert/strict');
-function fixture({reuseIdentity=false}={}){
+function fixture({reuseIdentity=false,contextLoss=false}={}){
+ assert(!(reuseIdentity&&contextLoss));
  const BASE=0x400000,b=Buffer.alloc(0x30200),raw=rva=>rva-0x1000+0x200,p=0x80,o=p+24,s=o+0xe0;
  b.writeUInt16LE(0x5a4d);b.writeUInt32LE(p,0x3c);b.writeUInt32LE(0x4550,p);
  b.writeUInt16LE(0x14c,p+4);b.writeUInt16LE(1,p+6);b.writeUInt16LE(0xe0,p+20);b.writeUInt16LE(0x010e,p+22);
@@ -46,12 +47,12 @@ function fixture({reuseIdentity=false}={}){
  const create=dest=>{calls.push({iface:'IDirect3D9',slot:16,args:6,label:'CreateDevice'});saveAbi();push(dest);push(PP);push(0x20);push([D+20]);push(1);push(0);push([D+12]);emit(0xa1,u32(D+12),0x8b,0x00,0xff,0x50,64);expect(0,'CreateDevice');checkAbi();};
  const select=address=>emit(0x8b,0x35,u32(address));
  const identity=()=>{for(let i=0;i<16;i++)write(M+i*4,bits(i%5===0?1:0));for(const selector of [256,2,3])dev(44,[selector,M]);};
- const draw=(name,w,h,color,reverse=false)=>{
+ const draw=(name,w,h,color,reverse=false,acceptOnly=false)=>{
   identity();dev(89,[0x42]);for(const [state,value] of [[137,0],[7,0],[22,1]])dev(57,[state,value]);
   dev(43,[0,0,1,0xff214365,bits(1),0]);
   const points=reverse?[[1,-1,.5],[-1,-1,.5],[1,1,.5]]:[[-1,1,.5],[1,1,.5],[-1,-1,.5]];
   points.forEach((point,i)=>{point.forEach((n,j)=>write(V+i*16+j*4,bits(n)));write(V+i*16+12,color);});
-  dev(41,[],0,'BeginScene');dev(83,[4,1,V,16]);dev(42,[],0,'EndScene');dev(18,[0,0,0,RT],0,'GetBackBuffer');object(RT,12,[OUT]);
+  dev(41,[],0,'BeginScene');dev(83,[4,1,V,16]);dev(42,[],0,'EndScene');if(acceptOnly)return;dev(18,[0,0,0,RT],0,'GetBackBuffer');object(RT,12,[OUT]);
   readCheck(OUT+24,w,name+' width');readCheck(OUT+28,h,name+' height');
   object(RT,13,[LR,0,16]);
   const offset=frames.length*2048,probes=[{x:1,y:1,expected:reverse?0xff214365:color},{x:w-2,y:h-2,expected:reverse?color:0xff214365}];
@@ -98,6 +99,22 @@ function fixture({reuseIdentity=false}={}){
   chain(5,[0,0,RT],0,label+' valid chain');same(RT,IMPLICIT,label+' implicit chain identity');
   object(RT,2,[],null,label+' valid chain surface Release');
  };
+ if(contextLoss){
+  select(D);draw('healthy',8,8,0xffc17935);
+  // Keep the successful LockRect's actual guest DIB pointer for canary checks.
+  copy(LR+4,D+720);copy(LR,D+724);
+  select(D+8);draw('peer-before',8,8,0xff3b91d7,true);
+  select(D);draw('accepted-before-loss',8,8,0xff28c864,false,true);checkpoint(2);
+  dev(18,[0,0,0,RT]);write(LR,0x76543210);write(LR+4,0x12345678);
+  object(RT,13,[LR,0,16],0x8876086c,'actual loss LockRect refusal');
+  object(RT,2,[],1,'failed LockRect surface Release');checkpoint(3);
+  params(12,10);dev(16,[PP],0x88760868,'Reset preserves actual loss');
+  dev(3,[],0x88760868,'lost cooperative level');checkpoint(4);
+  dev(2,[],0,'lost device Release');checkpoint(5);
+  params(12,10);create(D);select(D);draw('fresh-changed',12,10,0xff8d27b9,true);
+  select(D+8);draw('peer-after',8,8,0xff3b91d7,true);checkpoint(6);
+  select(D);dev(2,[],0,'fresh Release');select(D+8);dev(2,[],0,'peer Release');
+ }else{
  select(D+8);dev(43,[0,0,1,0xff5c7d9e,bits(1),0],0,'peer clear before selectors');
  select(D);dev(15,[],1,'one actual swap chain');dev(14,[0,SWAP],0,'GetSwapChain');
  dev(18,[0,0,0,IMPLICIT]);object(IMPLICIT,2,[],1,'initial selector reference Release');
@@ -211,6 +228,7 @@ function fixture({reuseIdentity=false}={}){
  // The browser runs the separate malformed-protocol old-lifetime control
  // at checkpoint7, after recovery pixels. The guest only releases afterward.
  select(D);dev(2,[],0,'recreated device Release');select(D+8);draw('peer-after-stale-control',8,8,0xff79a531);dev(2,[],0,'peer Release');
+ }
  object(D+12,2,[],0,'IDirect3D9 Release');write(STATUS,1);jump('sleep');
  for(const row of checks){labels.set('fail'+row.id,code.length);write(STATUS,row.id);emit(0xa3,u32(STATUS+4));write(STATUS+8,row.expected);jump('sleep');}
  labels.set('allocation-fail',code.length);write(STATUS,0xfffe);jump('sleep');
@@ -218,7 +236,7 @@ function fixture({reuseIdentity=false}={}){
  labels.set('sleep',code.length);push(1000);api('Sleep');jump('sleep');
  const bytes=Buffer.from(code);for(const [at,target] of fixups){assert(labels.has(target),target);bytes.writeInt32LE(labels.get(target)-at-4,at);}
  assert(bytes.length<0x24000);bytes.copy(b,raw(0x2000));
- return {bytes:b,checks,frames,calls,selectors,reuse:reuseIdentity?{limit:REUSE_LIMIT,wasm:0x12000+PAD-BASE}:null,selectorWasm:0x12000+REPORT-BASE,codeBytes:bytes.length,statusWasm:0x12000+STATUS-BASE,controlWasm:0x12000+CONTROL-BASE,frameWasm:0x12000+FRAMES-BASE,deviceWasm:0x12000+D-BASE};
+ return {bytes:b,checks,frames,calls,selectors,lossReceiptWasm:contextLoss?0x12000+D+720-BASE:null,lockWasm:0x12000+LR-BASE,reuse:reuseIdentity?{limit:REUSE_LIMIT,wasm:0x12000+PAD-BASE}:null,selectorWasm:0x12000+REPORT-BASE,codeBytes:bytes.length,statusWasm:0x12000+STATUS-BASE,controlWasm:0x12000+CONTROL-BASE,frameWasm:0x12000+FRAMES-BASE,deviceWasm:0x12000+D-BASE};
 }
 
 // D3D9 integer pixel centers, with a margin excluding every edge and tie.
