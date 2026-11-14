@@ -230,7 +230,12 @@ function testShortBlockWaitsForDma() {
   dsp(m, 0x14, 9, 0);                                     // 10 samples
   assert.strictEqual(m.sbIrq(), 0, 'a short block completed with every channel masked');
   m.portOut(0x0A, 1, 8);                                  // unmask channel 1
-  assert.strictEqual(m.sbIrq(), 0x0F, 'unmasking a channel did not complete the short block');
+  assert.strictEqual(m.sbIrq(), 0, 'unmask is the start, not the end of the transfer');
+  const end = m.sbProbeDeadline(1e-7);
+  m.completeSbProbe(end - 1, 1e-7);
+  assert.strictEqual(m.sbIrq(), 0, 'the short block completed before its sample deadline');
+  m.completeSbProbe(end, 1e-7);
+  assert.strictEqual(m.sbIrq(), 0x0F, 'the elapsed short block did not interrupt');
   assert.strictEqual(m.sb.chan, 1, `the block was credited to channel ${m.sb.chan}`);
   assert.strictEqual(m.sbIrq(), 0, 'the short block interrupted twice');
   // A block after a pause is a new block: ENDPART.EXE paused (D0) at the end

@@ -1476,6 +1476,9 @@ class DosSession {
       // wins over the exiting child's.
       if (t.regs) for (const k of Object.keys(t.regs)) vm.set(k, t.regs[k]);
       if (t.ax !== undefined) vm.set('ax', t.ax);
+      // A completed EXEC owns its return flags independently of the exiting
+      // child's IRET. Other transfers retain their existing flag behavior.
+      if (t.flags !== undefined) vm.set('flags', t.flags);
     }
   }
 
@@ -1485,6 +1488,7 @@ class DosSession {
     const { vm, machine } = this;
     if (this.done) return 'done';
 
+    if (require('./mouse-callback').handback(this)) return 'int';
     const cs = vm.get('cs'), ip = vm.get('gip');
     if (cs === STUB_SEG && ip >= STUB_OFF && ip < STUB_OFF + 256) {
       if (vm.exports.get_cr0() < 0) {
@@ -1683,6 +1687,8 @@ class DosSession {
     // sample is where the slice should end, and the next slice is cut again.
     const sbLeft = machine.sbSecondsLeft ? machine.sbSecondsLeft() : 0;
     const sbInterval = sbLeft > 0 ? Math.max(200, Math.ceil(sbLeft / this.guestSeconds(1))) : Infinity;
+    const probeDeadline = machine.sbProbeDeadline ? machine.sbProbeDeadline(this.guestSeconds(1)) : Infinity;
+    const probeInterval = Math.max(1, probeDeadline - this.dispatched);
     // THE QUANTUM IS ANCHORED TO THE ABSOLUTE DISPATCH COUNT, NOT TO THE LAST
     // HANDBACK. Everything a slice boundary decides -- when an armed IRQ is
     // delivered, which guest instant the Sound Blaster's DMA is read at, where
@@ -1798,11 +1804,12 @@ class DosSession {
     // ran their timers at different rates from there on.
     const tickUnit = this.dispatchesPerTick / (this.tickScale || 1);
     due(Math.round(Math.ceil(from / tickUnit) * tickUnit));
+    due(probeDeadline);
     const budget = this.irqSchedule
       ? Math.max(1, Math.min(this.slice, stopAt - this.dispatched))
-      : (this.latticeClock
+      : Math.min(probeInterval, (this.latticeClock
         ? Math.min(quantum - (this.dispatched % quantum), sbInterval)
-        : Math.min(quantum, sbInterval));
+        : Math.min(quantum, sbInterval)));
     // So a port write inside the slice can say when it happened (audioNow).
     machine.sliceStart = this.dispatched;
     machine.sliceBudget = budget;
@@ -2126,6 +2133,7 @@ class DosSession {
     }
     // A rate, so it moves on the clock and not on the grid.
     if (atStop) {
+      require('./mouse-callback').enqueue(machine.mouse, machine.mouse.x, machine.mouse.y, machine.mouse.buttons, this.mouse[0], this.mouse[1]);
       machine.mouse.dx += this.mouse[0];
       machine.mouse.dy += this.mouse[1];
     }
@@ -2177,6 +2185,7 @@ class DosSession {
     // the guest's own store, Machine.endSlice already cut the slice at it to
     // get the interrupt out with a card's latency rather than a slice's, and it
     // is at the same dispatch count in every arm because the guest put it there.
+    if (machine.completeSbProbe) machine.completeSbProbe(this.dispatched, this.guestSeconds(1));
     const svec = (vm.get('flags') & 0x200)
       && (machine.sbForced() || (atStop && (machine.sbDue ? machine.sbDue() : true)
         && clockAt - this.lastSbIrq >= this.irqEvery))

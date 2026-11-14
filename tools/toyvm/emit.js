@@ -5727,7 +5727,7 @@ ${memAccessors()}
   (call $fault (local.get $vec) (local.get $next)))
 
 ;; Host calls answered without leaving wasm: INT 21h AH=2Ch (get time), INT
-;; 33h AX=0 (mouse reset) and INT 33h AX=3 (position and buttons). Returns 1
+;; 33h AX=3 (position and buttons). Reset uses the host to clear callbacks. Returns 1
 ;; when it answered, 0 to take the ordinary path to the stub.
 ;;
 ;; The contract is that the guest cannot tell which way the call went, so this
@@ -5742,7 +5742,7 @@ ${memAccessors()}
 ;;    handback, so the value cannot go stale inside a slice. The mouse is the
 ;;    same: $mousex/$mousey/$mousebtn are the host's mouse state, and the reads
 ;;    are counted into $mousereads for it to add back to its own count;
-;;  - $intfast is a bit set: 1 = time and reset, 2 = the position read. The host
+;;  - $intfast is a bit set: 1 = time, 2 = the position read. The host
 ;;    withholds 2 while a scripted click is held, because it releases the button
 ;;    by counting reads BETWEEN slices and must see each one.
 ;; Only where the stub path is the plain real-mode one: PE off (V86 goes
@@ -5765,12 +5765,9 @@ ${memAccessors()}
   (if (i32.eqz (i32.or
         (i32.and (i32.eq (local.get $vec) (i32.const 0x21))
                  (i32.eq (local.get $ah) (i32.const 0x2C)))
-        (i32.or
-          (i32.and (i32.eq (local.get $vec) (i32.const 0x33))
-                   (i32.eqz (i32.and (global.get $ax) (i32.const 0xFFFF))))
-          (i32.and (i32.and (i32.eq (local.get $vec) (i32.const 0x33))
+        (i32.and (i32.and (i32.eq (local.get $vec) (i32.const 0x33))
                             (i32.eq (i32.and (global.get $ax) (i32.const 0xFFFF)) (i32.const 3)))
-                   (i32.ne (i32.and (global.get $intfast) (i32.const 2)) (i32.const 0))))))
+                   (i32.ne (i32.and (global.get $intfast) (i32.const 2)) (i32.const 0)))))
     (then (return (i32.const 0))))
   (call $push16 (call $flags_word))
   (call $push16 (call $sget (i32.const 1)))
@@ -5789,15 +5786,11 @@ ${memAccessors()}
         (i32.shl (i32.wrap_i64 (i64.rem_u (i64.div_u (local.get $t) (i64.const 1000)) (i64.const 60)))
                  (i32.const 8))
         (i32.wrap_i64 (i64.rem_u (i64.div_u (local.get $t) (i64.const 10)) (i64.const 100))))))
-    (else (if (i32.eq (i32.and (global.get $ax) (i32.const 0xFFFF)) (i32.const 3))
-      (then
-        (global.set $bx (global.get $mousebtn))
-        (global.set $cx (global.get $mousex))
-        (global.set $dx (global.get $mousey))
-        (global.set $mousereads (i32.add (global.get $mousereads) (i32.const 1))))
-      (else
-        (global.set $ax (i32.const 0xFFFF))
-        (global.set $bx (i32.const 2))))))
+    (else
+      (global.set $bx (global.get $mousebtn))
+      (global.set $cx (global.get $mousex))
+      (global.set $dx (global.get $mousey))
+      (global.set $mousereads (i32.add (global.get $mousereads) (i32.const 1)))))
   (global.set $sp (i32.and (i32.add (global.get $sp) (i32.const 6)) (i32.const 0xFFFF)))
   (global.set $intfastn (i32.add (global.get $intfastn) (i32.const 1)))
   (i32.const 1))

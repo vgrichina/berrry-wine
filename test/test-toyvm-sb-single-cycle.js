@@ -212,10 +212,9 @@ const irqs = (log) => +(/sb .*?(\d+) irq\(s\)/.exec(log) || [0, 0])[1];
 // the block completes off the sample clock once the channel is finally open.
 // DSMI does NOT wait that long: it gives the probe a short `loopz` and moves
 // on to the next candidate. So what has to hold is that unmasking the channel
-// completes the block *there*, at the port write, the way a real card's DREQ
-// does -- which is what the arms above cannot tell apart and what channel 5
-// never got.
-function testWideChannelHuntIsImmediate() {
+// starts the sample clock there. Completion follows the sample deadline,
+// rather than preempting the guest at the unmask instruction.
+function testWideChannelHuntUsesSampleDeadline() {
   const mem = new Uint8Array(1 << 20);
   const m = new Machine(new Uint8Array(0), { log: () => {} });
   m.setMemory(mem, null);
@@ -237,8 +236,12 @@ function testWideChannelHuntIsImmediate() {
   m.portOut(0x8B, 0, 8);
   m.portOut(0xD4, 0x01, 8);
 
-  assert.strictEqual(m.sbIrq(), 0x0F,
-    'unmasking channel 5 did not complete the 16-bit short block');
+  assert.strictEqual(m.sbIrq(), 0, 'unmasking channel 5 completed the block before any sample time');
+  const end = m.sbProbeDeadline(1e-7);
+  m.completeSbProbe(end - 1, 1e-7);
+  assert.strictEqual(m.sbIrq(), 0, '16-bit short block completed before its sample deadline');
+  m.completeSbProbe(end, 1e-7);
+  assert.strictEqual(m.sbIrq(), 0x0F, 'elapsed 16-bit short block did not interrupt');
   assert.strictEqual(m.sb.chan, 5, `the block was credited to channel ${m.sb.chan}`);
   assert.strictEqual(m.sbIrq(), 0, 'the short block interrupted twice');
   // A 16-bit block's interrupt is bit 1 of mixer register 82h, and an ISR
@@ -261,7 +264,9 @@ function testWideChannelHuntIsImmediate() {
   assert.strictEqual(m8.sbIrq(), 0,
     'a 16-bit channel completed an 8-bit block');
   m8.portOut(0x0A, 0x01, 8);
-  assert.strictEqual(m8.sbIrq(), 0x0F, 'unmasking channel 1 did not complete the 8-bit block');
+  assert.strictEqual(m8.sbIrq(), 0, '8-bit block completed at unmask before its sample deadline');
+  m8.completeSbProbe(m8.sbProbeDeadline(1e-7), 1e-7);
+  assert.strictEqual(m8.sbIrq(), 0x0F, 'elapsed 8-bit short block did not interrupt');
   assert.strictEqual(m8.sb.chan, 1, `the block was credited to channel ${m8.sb.chan}`);
   m8.portOut(0x224, 0x82, 8);
   assert.strictEqual(m8.portIn(0x225, 8) & 3, 1, 'an 8-bit block latched the wrong interrupt bit');
@@ -270,7 +275,7 @@ function testWideChannelHuntIsImmediate() {
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'toyvm-sb-single-cycle-'));
 const out = [];
 
-testWideChannelHuntIsImmediate();
+testWideChannelHuntUsesSampleDeadline();
 out.push('channel hunt: an open channel completes the block at the port write, per width');
 
 {

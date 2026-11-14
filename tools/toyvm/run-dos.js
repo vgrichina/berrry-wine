@@ -7,6 +7,7 @@
 //   node tools/toyvm/run-dos.js mars.exe --png=/tmp/mars.png --dispatches=200m
 //   node tools/toyvm/run-dos.js mars.exe --variant=switch --mouse=6:0 --shots=/tmp/m
 //   node tools/toyvm/run-dos.js mars.exe --trace-int --report
+//   node tools/toyvm/run-dos.js --initial-floppy=disk.img --program=A:/SETUP.COM --seconds=30
 //   node tools/toyvm/run-dos.js x.exe --trace-entry=1013400-1013560   # a window
 //   node tools/toyvm/run-dos.js DASH.EXE --chain4    # pretend it never unchained
 //
@@ -24,6 +25,12 @@
 // Importable: `require('./run-dos').runDos({ variant, exe, budget })` returns
 // the same numbers the CLI prints, which is what tools/toyvm/bench-dos.js uses
 // to alternate arms inside one process.
+// CD data: --cd-iso=original.iso [--cd-drive=D] or
+// --cd-cue=original.cue --cd-bin=original.bin. Providers close when runDos settles;
+// returned Machine is inspection-only for CD reads after settlement.
+// Floppy entry: runDos({ initialFloppy: imageBytesOrPath, program: 'A:/SETUP.COM' }).
+// This selects A: with cwd at its root (or currentDirectory), leaves C: as an
+// empty writable overlay unless fileRoot is explicit, and uses the same loader.
 
 const fs = require('fs');
 const path = require('path');
@@ -178,7 +185,142 @@ function mountedRelative(root, file) {
 }
 
 // ---------------------------------------------------------------------------
+const CONTROL = Symbol('owned ordinary input');
+
+const CD_MOUNT = Symbol('runner owned CD mount');
+const BATCH_PROGRAM = Symbol('resolved batch program');
+
+// Explicit, read-only media options. cdIso is a path/bytes/synchronous provider.
+// Mixed mode requires cdBin plus exactly one of cdCue (host path) / cdCueText.
+// CUE FILE names never select a host path; cdBin is always supplied explicitly.
+// cdDrive defaults to D:. No media is inferred from the executable or directory.
+function runnerCdOptions(o) {
+  const has = key => o[key] !== undefined;
+  const iso = has('cdIso'), mixed = has('cdCue') || has('cdCueText') || has('cdBin');
+  if (!iso && !mixed) {
+    if (has('cdDrive')) throw Error('cdDrive requires explicit CD media');
+    return null;
+  }
+  if (iso && mixed) throw Error('use cdIso or original cdCue/cdBin, not both');
+  if (mixed && (!has('cdBin') || has('cdCue') === has('cdCueText'))) {
+    throw Error('mixed-mode CD requires cdBin and exactly one of cdCue/cdCueText');
+  }
+  const drive = o.cdDrive === undefined ? 'D' : o.cdDrive;
+  if (typeof drive !== 'string' || !/^[d-z]:?$/i.test(drive)) throw Error('CD drive must be D: through Z:');
+  if (o.pre) throw Error('CD mount does not support pre');
+  return { kind: iso ? 'iso' : 'mixed', drive: drive[0].toUpperCase() };
+}
+
+function openRunnerCd(o) {
+  const options = runnerCdOptions(o);
+  if (!options) return null;
+  let close = () => {};
+  try {
+    let source, disc;
+    if (options.kind === 'mixed') {
+      if (o.cdCue !== undefined && (typeof o.cdCue !== 'string' || !o.cdCue)) throw Error('cdCue must be a host path');
+      const cue = o.cdCue === undefined ? o.cdCueText : fs.readFileSync(o.cdCue, 'utf8');
+      const cd = require('./cdrom-media');
+      disc = typeof o.cdBin === 'string' ? cd.openCdromMedia(cue, o.cdBin) : cd.createCdromMedia(cue, o.cdBin);
+      if (typeof o.cdBin === 'string') close = () => disc.close();
+      const data = disc.tracks.filter(t => !t.isAudio);
+      if (data.length !== 1) throw Error('runner CD requires exactly one MODE1 data track');
+      source = disc.dataTrack(data[0].number);
+    } else if (typeof o.cdIso === 'string') {
+      const fd = fs.openSync(o.cdIso, 'r');
+      let closed = false;
+      close = () => { if (!closed) { closed = true; fs.closeSync(fd); } };
+      const stat = fs.fstatSync(fd);
+      if (!stat.isFile()) throw Error('cdIso must be a regular file');
+      source = { size: stat.size, readRange(offset, length) {
+        if (closed) throw Error('runner CD is closed');
+        if (!Number.isSafeInteger(offset) || !Number.isSafeInteger(length) || offset < 0 || length < 0 ||
+            !Number.isSafeInteger(offset + length) || offset + length > stat.size) throw Error('runner CD read outside bounds');
+        const bytes = new Uint8Array(length);
+        let done = 0;
+        while (done < length) {
+          const n = fs.readSync(fd, bytes, done, length - done, offset + done);
+          if (!n) throw Error('runner CD short file read');
+          done += n;
+        }
+        return bytes;
+      } };
+    } else source = o.cdIso;
+    let closed = false;
+    return Object.freeze({ ...options, source, disc,
+      mount(machine) {
+        if (closed) throw Error('runner CD is closed');
+        // Machine exists with placeholder memory; mount parses all namespace
+        // metadata here, before makeVm/loadExe or any execution handoff.
+        return machine.mountIso(source, { format: 'iso', drive: options.drive, cdromMedia: disc });
+      },
+      close() { if (!closed) { closed = true; close(); } },
+    });
+  } catch (error) { close(); throw error; }
+}
+
+// Shared by the real entry and pure filesystem/lifetime tests. Caller-owned
+// byte/provider sources are borrowed; only descriptors opened here are closed.
+async function withRunnerCd(o, run) {
+  // Descendants borrow the exact outer mount. Only its opening boundary owns
+  // cleanup, including when a later batch command/parser/checkpoint fails.
+  if (o[CD_MOUNT]) return run(o[CD_MOUNT], o);
+  const cd = openRunnerCd(o);
+  try { return await run(cd, cd ? { ...o, [CD_MOUNT]: cd } : o); }
+  finally { cd?.close(); }
+}
+
 async function runDos(o) {
+  return withRunnerCd(o, (_cd, options) => runDosControlled(options));
+}
+
+
+
+// Optional Node-only controller. Run this option in a dedicated disposable
+// process: its independently armed watchdog owns termination of that process.
+// No default/CLI behavior changes, and no alternate loader is introduced.
+// Persistent opt-in: controlledInput: { mode:'persistent', dedicatedProcess:true,
+// deadline, at, maxActions, review: async frame => ({targetId, programId,
+// frameId, digest, action}), observe: async consequence => ({targetId, programId,
+// frameId, digest}) }. Each callback gets a fresh actual frame; review may
+// return the same binding with stop:true (finish) or wait:true (one input-free
+// step) and no action. maxReviews defaults to maxActions*4, capped at 1000.
+// There is one overall
+// watchdog, never renewed. No next review until execution after owned release
+// and acknowledged consequence; a terminal wait before that is UNKNOWN.
+async function runDosControlled(o) {
+  if (!o.controlledInput) return runDosInner(o);
+  o = { ...o, keys: o.keys?.slice(), autoKeys: o.autoKeys?.slice(),
+    clicks: o.clicks?.slice(), mouse: o.mouse?.slice() };
+  if (o.pre || /\.bat$/i.test(o.exe) || o.autoKey || o.keys?.length || o.autoKeys?.length
+      || o.clicks?.length || o.checkpoint || o.checkpoints || o.mouse?.some(n => n !== 0)
+      || !Number.isFinite(o.budget) || o.controlledInput.at >= o.budget
+      || !Number.isFinite(o.seconds) || o.seconds <= 0) {
+    throw new Error('controlled input requires one direct program, finite budget/seconds, and exclusive ordinary input');
+  }
+  const persistent = o.controlledInput.mode === 'persistent';
+  if (o.controlledInput.mode !== undefined && !persistent) throw new Error('unsupported control mode');
+  const controls = require('./controlled-input');
+  const control = await (persistent ? controls.createPersistentController : controls.createController)(o.controlledInput);
+  let result;
+  try {
+    result = await runDosInner({ ...o, [CONTROL]: control });
+  }
+  finally { await control.close(); }
+  if (persistent) result.controlledSession = control.result;
+  return result;
+}
+
+async function runDosInner(o) {
+  // Floppy startup is explicit: the image is media, never an executable.
+  // `program` is a DOS path on A:, while fileRoot (if supplied) mounts C:.
+  const floppyStart = o.initialFloppy !== undefined && o.initialFloppy !== null;
+  if (floppyStart !== (typeof o.program === 'string' && o.program.length > 0)
+      || (floppyStart && (o.exe || o.pre))) {
+    throw new Error('initialFloppy requires program on A: and no exe/pre');
+  }
+  if (!floppyStart && o.program !== undefined) throw new Error('program requires initialFloppy');
+  if (floppyStart && /\.bat$/i.test(o.program)) throw new Error('initial floppy program must be COM or MZ, not a batch');
   if (/\.bat$/i.test(o.exe)) return runDosBatch(o);
   const {
     variant = 'tailcall', exe, budget = 200e6, slice = 2e6, seconds = 0,
@@ -387,7 +529,7 @@ async function runDos(o) {
   // The CLI and the sweeps both come through here, so a program that needs a
   // different load address gets it whether it is being photographed, diffed or
   // run by hand -- one place, not three.
-  const cfg = require('./program-config').programConfig(exe) || {};
+  const cfg = require('./program-config').programConfig(floppyStart ? o.program : exe) || {};
   const wantPsp = pspSeg !== null ? pspSeg : (cfg.pspSeg || 0);
   const wantLoad = loadSeg !== null ? loadSeg : (cfg.loadSeg || (wantPsp ? wantPsp + 0x10 : 0));
 
@@ -408,9 +550,26 @@ async function runDos(o) {
     ioPorts: traceIo && traceIo.length ? new Set(traceIo) : null,
     // A DOS program's data sits next to it, and that directory is the whole of
     // the filesystem it gets.
-    fileRoot: fileRoot || path.dirname(path.resolve(exe)),
+    fileRoot: floppyStart ? fileRoot : (fileRoot || path.dirname(path.resolve(exe))),
   });
-  if (fileRoot) {
+  if (o[CD_MOUNT]) o[CD_MOUNT].mount(machine);
+  let floppyProgram = null, floppyImage = null;
+  if (floppyStart) {
+    const media = typeof o.initialFloppy === 'string' ? fs.readFileSync(o.initialFloppy) : o.initialFloppy;
+    machine.changeDisk('A', media);
+    machine.currentDrive = 0;
+    const directory = machine.resolvePath('A:\\' + currentDirectory, true);
+    if (directory === null || !machine.isDirectory(directory)) throw new Error('invalid DOS working directory');
+    machine.currentDirectory = directory.slice(3);
+    machine.driveDirectories.set(0, machine.currentDirectory);
+    const key = machine.fileKey(o.program);
+    if (key === null || machine.keyDrive(key) !== 0) throw new Error('initial floppy program must select a file on A:');
+    floppyProgram = machine.absolutePath(o.program);
+    floppyImage = machine.readWholeFile(floppyProgram);
+    if (!floppyImage || !floppyImage.length) throw new Error(`DOS floppy program not found or empty: ${o.program}`);
+  } else if (o[BATCH_PROGRAM]) {
+    restoreLauncherProgramDirectory(machine, o);
+  } else if (fileRoot) {
     const directory = machine.resolvePath('\\' + currentDirectory, true);
     if (directory === null || !machine.isDirectory(directory)) throw new Error('invalid DOS working directory');
     machine.currentDirectory = directory;
@@ -463,8 +622,9 @@ async function runDos(o) {
   machine.setTicks(0, { force: true });
   machine.syncVga();     // the VM's buffer, not the throwaway one from before
 
-  const mountedExe = fileRoot ? mountedRelative(fileRoot, exe) : null;
-  const image = fileRoot
+  const batchProgram = o[BATCH_PROGRAM]?.program;
+  const mountedExe = !floppyStart && !batchProgram && fileRoot ? mountedRelative(fileRoot, exe) : null;
+  const image = floppyStart ? floppyImage : batchProgram ? machine.readWholeFile(batchProgram) : fileRoot
     ? machine.readWholeFile('\\' + mountedExe.replace(/\//g, '\\'))
     : fs.readFileSync(exe);
   if (!image) throw new Error(`DOS executable not found: ${exe}`);
@@ -475,7 +635,7 @@ async function runDos(o) {
   // everything" default.
   if (info.allocTop !== undefined) machine.allocTop = info.allocTop;
   machine.imageTop = info.minTop;
-  machine.installEnvironment(mountedExe === null ? path.basename(exe) : mountedExe.replace(/\//g, '\\'), guestArgs);
+  machine.installEnvironment(floppyProgram || batchProgram || (mountedExe === null ? path.basename(exe) : mountedExe.replace(/\//g, '\\')), guestArgs);
   // After the environment and after allocTop: the chain names both.
   machine.installArena();
   // IF set, because that is what DOS hands a program. The flags global starts at
@@ -870,7 +1030,67 @@ async function runDos(o) {
   // The budget is a date on the schedule, so the run ends at the same guest
   // instant whatever handed back on the way there (dos-loop.js `endAt`).
   session.endAt = budget;
-  while ((session.dispatched < budget || session.owesEnd(budget)) && !session.done) {
+  const control = o[CONTROL];
+  const persistent = control?.persistent === true;
+  let controlledAction = null;
+  let ordinaryTarget;
+  let controlledSteps = 0, programEpoch = 0;
+  const keyboardWaitViable = () => machine.blockedOnKey
+    && !machine.exited && !machine.stopHit && session.stuckAt === null
+    && session.blockedOn32 === undefined && session.badSelector === undefined
+    && session.protectedTransferStop === undefined;
+  const waitingForControl = () => control && (persistent ? control.ready : !controlledAction) && keyboardWaitViable();
+  if (control) {
+    // Reuse the released live frontend's public mouse API, including edge
+    // accounting and ordinary host keyboard-wait resumption. The adapter never
+    // exposes Machine, memory or session to the reviewer.
+    const { LiveRun } = require('./live');
+    const live = Object.create(LiveRun.prototype);
+    Object.assign(live, { machine, inputStopped: false, running: true });
+    if (persistent) {
+      // Existing public interrupt hook, before the transfer is applied. Every
+      // EXEC/overlay or termination request gets a new epoch, even if DOS later
+      // rejects it. Returning to the same PSP cannot reuse a child's review.
+      const onInt = session.hooks.onInt;
+      session.hooks.onInt = event => {
+        if (event.vec === 0x21 && [0x4b, 0x4c, 0x00, 0x31].includes((event.before[0] >>> 8) & 0xff)) programEpoch++;
+        if (onInt) onInt(event);
+      };
+    }
+    ordinaryTarget = {
+      progress: () => controlledSteps,
+      programIdentity: () => `${floppyProgram || exe}:${machine.curPsp}:${programEpoch}`,
+      capture: () => {
+        const surface = screenSurface(machine);
+        const frame = surface.text ? rgbaConsole(machine.con, terminalFont())
+          : rgbaFrame(vm.mem, machine.palette, surface.geom);
+        return { ...frame, text: surface.text };
+      },
+      ownsTarget: () => live.machine === machine && !machine.exited
+        && (!session.done || (persistent ? keyboardWaitViable() : waitingForControl())),
+      keyDown: (key, code) => live.keyDown({ key, code, repeat: false }),
+      mouseInput: (x, y, buttons) => {
+        const surface = screenSurface(machine);
+        const width = surface.text ? 640 : Math.max(640, surface.geom.width);
+        const height = surface.text ? 200 : surface.geom.height;
+        const [mx, my, dx, dy] = require('./mouse-callback').screenInput(machine.mouse,
+          x, y, width, height, x - machine.mouse.x, y - machine.mouse.y);
+        live.mouseInput(mx, my, buttons, dx, dy);
+      },
+      releaseKeys: () => live.releaseKeys(),
+      releaseMouse: () => live.releaseMouse(),
+    };
+  }
+  while ((session.dispatched < budget || session.owesEnd(budget)) && (!session.done || waitingForControl())) {
+    if (control) {
+      control.check();
+      if (persistent && control.done) break;
+      if ((persistent ? control.ready : !controlledAction) && (session.dispatched >= control.at || waitingForControl())) {
+        controlledAction = await control.act(ordinaryTarget);
+        if (persistent && control.done) break;
+      }
+      if (session.done) { if (!persistent) control.release(); break; }
+    }
     const nextCheckpoint = inputCheckpoints[checkpointResults.length];
     if (stopAt && process.hrtime.bigint() >= stopAt) { ranOutOfTime = true; break; }
     if (nextCheckpoint && session.dispatched >= nextCheckpoint.at) {
@@ -917,7 +1137,10 @@ async function runDos(o) {
       checkpointResult.delivered = true;
       if (inputCheckpoints[checkpointResults.length]?.at <= session.dispatched) continue;
     }
-    try { session.step(); }
+    try {
+      const stepResult = session.step();
+      if (persistent && (stepResult === 'ran' || stepResult === 'int')) controlledSteps++;
+    }
     catch (err) {
       if (err.pagingException) {
         if (traceFault) log(`paged exception failure: ${JSON.stringify(err.pagingException)}`);
@@ -933,6 +1156,14 @@ async function runDos(o) {
       throw err;
     }
     // Between slices, never inside one: installing swaps the wasm instance.
+    // Release at the first actual handback; the wrapper also releases on any
+    // error/early exit. A blocked native call is bounded by the external killer.
+    if (control) {
+      if (persistent) {
+        if (control.awaitingExecution) await control.afterStep(ordinaryTarget);
+      }
+      else control.release();
+    }
     // Headless, the pipeline is simply awaited -- a one-second pause between
     // two slices costs a batch run nothing, and the page (which cannot afford
     // it) hands the same pipeline to a worker instead.
@@ -976,6 +1207,8 @@ async function runDos(o) {
       if (c.done) continue;
       if (session.dispatched < c.at * budget) continue;
       if (c.held === undefined) {
+        require('./mouse-callback').enqueue(machine.mouse, c.x, c.y, 1,
+          c.x - machine.mouse.x, c.y - machine.mouse.y);
         machine.mouse.x = c.x;
         machine.mouse.y = c.y;
         machine.mouse.buttons = 1;
@@ -985,6 +1218,7 @@ async function runDos(o) {
         log(`click at ${c.x},${c.y}`);
       } else if (++c.held > 200
           && (machine.mouse.reads - c.reads >= 2 || c.held > 100000)) {
+        require('./mouse-callback').enqueue(machine.mouse, machine.mouse.x, machine.mouse.y, 0);
         machine.mouse.buttons = 0;
         machine.mouse.released[0]++;
         c.done = true;
@@ -1022,10 +1256,11 @@ async function runDos(o) {
   const surface = screenSurface(machine);
   if (sliceLog) fs.writeFileSync(sliceLogFile, sliceLog.join('\n') + '\n');
   return {
+    controlledAction,
     checkpoint: checkpointResults[0] || null,
     checkpoints: checkpointResults,
     bestScore, bestContent, bestSurface, bestText, saidText,
-    variant, exe, vm, machine, jtab,
+    variant, exe: floppyProgram || exe, vm, machine, jtab,
     audioChunks, audioRate,
     // Read before the caller can touch guest memory again. The census lives in
     // the same linear memory the guest runs in, so it is only meaningful while
@@ -1114,6 +1349,67 @@ async function runDos(o) {
   };
 }
 
+function parseLauncherBatchLine(line) {
+  const text = line.trim().replace(/^@/, '');
+  if (!text || /^rem(?:\s|$)/i.test(text) || /^echo\s+off$/i.test(text)) return null;
+  if (/[\x00-\x1f%&|<>^!"*?]/.test(text)) throw Error('unsupported launcher batch syntax');
+  const [, command, args = ''] = /^(\S+)(?:\s+(.*))?$/.exec(text);
+  // Drive-qualified program names are ordinary paths; labels, drive switches
+  // and colon-bearing arguments remain outside this bounded shell.
+  if (/:/.test(args) || /:/.test(command.replace(/^[a-z]:/i, '')) || /^[a-z]:$/i.test(command)) {
+    throw Error('unsupported launcher batch syntax');
+  }
+  if (/^(?:break|chcp|chdir|cls|copy|ctty|date|del|dir|echo|erase|exit|for|goto|if|lh|loadhigh|md|mkdir|path|pause|prompt|rd|ren|rename|rmdir|set|shift|time|type|ver|verify|vol)$/i.test(command)) {
+    throw Error('unsupported launcher batch internal command');
+  }
+  return { command, args };
+}
+
+// COMMAND.COM searches each directory in turn, COM then EXE then BAT, current
+// directory before PATH. An explicit path suppresses PATH search. Microsoft
+// Press, MS-DOS Encyclopedia, section II, "The MS-DOS shell":
+// https://www.pcjs.org/documents/books/mspl13/msdos/encyclopedia/section2/
+// A discovered BAT must stop the search; silently skipping it would select a
+// different program. Non-CALL batch chaining remains explicitly unsupported.
+function resolveLauncherExternal(disk, command, env = []) {
+  if (typeof command !== 'string' || !command || /[\s%&|<>^!"*?\x00-\x1f]/.test(command)) {
+    throw Error('unsupported launcher executable name');
+  }
+  const base = command.split(/[\\/:]/).pop();
+  const explicit = base.includes('.');
+  if (explicit && !/\.(?:com|exe)$/i.test(base)) throw Error('unsupported launcher executable extension');
+  const searchPath = Array.from(env).map(String).filter(s => /^PATH=/i.test(s)).pop()?.slice(5) ?? 'C:\\';
+  if (/[\x00-\x1f%&|<>^!"*?]/.test(searchPath)) throw Error('unsupported launcher PATH');
+  const directories = /[\\/:]/.test(command) ? [''] : ['', ...searchPath.split(';').filter(Boolean)];
+  for (const dir of directories) {
+    const stem = dir ? dir + (/[\\/:]$/.test(dir) ? '' : '\\') + command : command;
+    for (const suffix of explicit ? [''] : ['.COM', '.EXE', '.BAT']) {
+      const candidate = stem + suffix, key = disk.fileKey(candidate);
+      if (key === null || disk.isDirectory(key)) continue;
+      if (disk.readWholeFile(candidate) === null) continue;
+      if (/\.bat$/i.test(candidate)) throw Error('unsupported launcher batch chaining without CALL');
+      return { executable: key, program: disk.absolutePath(candidate) };
+    }
+  }
+  throw Error(`launcher executable not found: ${command}`);
+}
+
+function launcherProgramOptions(o, disk, resolved) {
+  return { ...o, exe: path.join(o.fileRoot, resolved.executable),
+    currentDirectory: disk.currentDirectory, tempFiles: disk.tempFiles,
+    [BATCH_PROGRAM]: { program: resolved.program, currentDrive: disk.currentDrive,
+      currentDirectory: disk.currentDirectory, driveDirectories: new Map(disk.driveDirectories),
+      virtualDirectories: new Set(disk.virtualDirectories) } };
+}
+
+function restoreLauncherProgramDirectory(machine, options) {
+  const state = options[BATCH_PROGRAM];
+  machine.currentDrive = state.currentDrive;
+  machine.currentDirectory = state.currentDirectory;
+  machine.driveDirectories = new Map(state.driveDirectories);
+  machine.virtualDirectories = new Set(state.virtualDirectories);
+}
+
 // Deliberately bounded launcher batches: no expansion, pipes, redirection,
 // conditions or interactive shell. Read each CALL from the live overlay only
 // when reached: a preceding guest may have just generated it.
@@ -1121,6 +1417,7 @@ async function runDosBatch(o) {
   if (o.pre) throw new Error('batch launcher does not support --pre');
   const root = path.resolve(o.fileRoot || path.dirname(path.resolve(o.exe)));
   const disk = new Machine(new Uint8Array(0), { fileRoot: root, tempFiles: o.tempFiles });
+  if (o[CD_MOUNT]) o[CD_MOUNT].mount(disk);
   const budget = o.budget ?? 200e6, seconds = o.seconds ?? 0;
   if (!Number.isFinite(budget) || budget <= 0 || !Number.isFinite(seconds) || seconds <= 0) {
     throw new Error('batch launcher requires positive finite budget and seconds');
@@ -1153,11 +1450,12 @@ async function runDosBatch(o) {
     const lines = bytes.toString('latin1').split(/\r\n|\n|\r/);
     for (let i = 0; i < lines.length && !halted; i++) {
       if (++count > 256) throw new Error('launcher command limit exceeded');
-      const text = lines[i].trim().replace(/^@/, '');
-      if (!text || /^rem(?:\s|$)/i.test(text) || /^echo\s+off$/i.test(text)) continue;
-      if (/[\x00-\x1f%&|<>^!":]/.test(text)) fail(key, i + 1, text);
+      let parsed;
+      try { parsed = parseLauncherBatchLine(lines[i]); }
+      catch { fail(key, i + 1, lines[i]); }
+      if (!parsed) continue;
       if (remaining() <= 0 || dispatched >= budget) { halted = true; break; }
-      const [, command, args = ''] = /^(\S+)(?:\s+(.*))?$/.exec(text);
+      const { command, args } = parsed, text = lines[i];
       commands.push({ batch: key, line: i + 1, command, args, currentDirectory: disk.currentDirectory });
       if (/^cd$/i.test(command)) {
         const dir = disk.resolvePath(args, true);
@@ -1167,14 +1465,13 @@ async function runDosBatch(o) {
         if (!/^[^\s]+\.bat$/i.test(args)) fail(key, i + 1, text);
         await batch(args, depth + 1);
       } else {
-        if (!/\.(exe|com)$/i.test(command) || /\.(bat)$/i.test(command)) fail(key, i + 1, text);
-        const executable = disk.fileKey(command);
-        if (!executable || !disk.readWholeFile(command)) throw new Error(`launcher executable not found: ${command}`);
+        const resolved = resolveLauncherExternal(disk, command, o.env);
+        const { executable } = resolved;
         const offset = dispatched;
         const pauses = checkpoints.filter(c => c.at >= offset).map(c => ({ ...c, at: c.at - offset,
           pause: (s, signal) => c.pause(Object.freeze({ ...s, at: c.at, index: c.index, dispatched: s.dispatched + offset }), signal),
         }));
-        last = await runDos({ ...o, exe: path.join(root, executable), guestArgs: args,
+        last = await runDos({ ...launcherProgramOptions({ ...o, fileRoot: root }, disk, resolved), guestArgs: args,
           fileRoot: root, currentDirectory: disk.currentDirectory, tempFiles: disk.tempFiles,
           checkpoint: null, checkpoints: pauses, budget: budget - offset, seconds: Math.max(0.001, remaining()), batchStopAt,
         });
@@ -1184,6 +1481,9 @@ async function runDosBatch(o) {
         runs.push({ executable, args, dispatched: last.dispatched, exited: last.machine.exited,
           exitCode: last.machine.exitCode });
         disk.currentDirectory = last.machine.currentDirectory;
+        disk.currentDrive = last.machine.currentDrive;
+        disk.driveDirectories = new Map(last.machine.driveDirectories);
+        disk.virtualDirectories = new Set(last.machine.virtualDirectories);
         halted = !last.machine.exited || last.ranOutOfTime || last.checkpoints.some(s => s.stopped);
       }
     }
@@ -1212,6 +1512,8 @@ async function runDosBatch(o) {
 // prerequisite gets a small budget and the answerer, because a configurator
 // that needs more than a few million dispatches is not one.
 async function runDosWithPre(o) {
+  runnerCdOptions(o);
+  if (o.initialFloppy !== undefined && o.initialFloppy !== null) throw new Error('initialFloppy cannot be used with pre');
   const pre = path.resolve(path.dirname(path.resolve(o.exe)), o.pre);
   if (!fs.existsSync(pre)) throw new Error(`--pre: no such program: ${o.pre}`);
   const first = await runDos({
@@ -1354,9 +1656,11 @@ function cliCheckpoints() {
 }
 
 async function main() {
-  const exe = process.argv[2];
-  if (!exe || exe.startsWith('--')) {
-    console.log('usage: node tools/toyvm/run-dos.js <file.exe> [--variant=] [--png=] [--dispatches=]');
+  const exe = process.argv[2]?.startsWith('--') ? undefined : process.argv[2];
+  const initialFloppy = arg('initial-floppy');
+  if (!exe && initialFloppy === undefined) {
+    console.log('usage: node tools/toyvm/run-dos.js <file.exe> [options]\n'
+      + '   or: node tools/toyvm/run-dos.js --initial-floppy=DISK.IMG --program=A:/FILE.COM [--file-root=CROOT] [--current-directory=SUB] [options]');
     process.exit(2);
   }
   const report = flag('report');
@@ -1367,7 +1671,9 @@ async function main() {
   // turns every collapse off. A compile-time switch, like `--no-fusecond`.
   require('./compile').setPortSpin(!flag('no-port-spin'));
   const r = await (pre ? runDosWithPre : runDos)({
-    exe,
+    exe, initialFloppy, program: arg('program'),
+    cdIso: arg('cd-iso'), cdCue: arg('cd-cue'), cdBin: arg('cd-bin'), cdDrive: arg('cd-drive'),
+    fileRoot: arg('file-root', null), currentDirectory: arg('current-directory', ''),
     checkpoints: cliCheckpoints(),
     // `--pre=SETUP.EXE`, resolved next to the executable, with `--pre-keys=`
     // for a configurator that needs more than the auto-key rotation.
@@ -1763,7 +2069,7 @@ async function main() {
       + `${ex.get_vm86() ? ' -- virtual-8086' : ''}`);
   }
 
-  console.log(`\n${path.basename(exe)}  variant=${r.variant}  ${r.secs.toFixed(2)}s`
+  console.log(`\n${path.basename(exe || r.exe)}  variant=${r.variant}  ${r.secs.toFixed(2)}s`
     + (r.uopInitSecs ? ` (uop engine init ${(1000 * r.uopInitSecs).toFixed(0)}ms,`
       + ` build ${(1000 * r.uopBuildSecs).toFixed(0)}ms)` : ''));
   if (r.uop && r.uop.fallbacks) {
@@ -2297,6 +2603,8 @@ module.exports = {
   resumeMachineRunner: bytes => require('./checkpoint').resumeMachineRunner(bytes),
   createBatchMachineRunner: options => require('./batch-checkpoint').createBatchMachineRunner(options),
   resumeBatchMachineRunner: bytes => require('./batch-checkpoint').resumeBatchMachineRunner(bytes),
+  runnerCdOptions, openRunnerCd, withRunnerCd,
+  parseLauncherBatchLine, resolveLauncherExternal, launcherProgramOptions, restoreLauncherProgramDirectory,
   runDos, runDosWithPre, writePng, writeConsolePng, nonBlack, frameHash, conText,
   screenSurface, conCells,
   readFrame: require('./framebuffer').readFrame,

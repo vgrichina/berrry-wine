@@ -2708,6 +2708,7 @@
     (local $back_obj i32) (local $back_entry i32) (local $vidmem_bytes i32)
     (local $back_count i32) (local $back_index i32) (local $prev_entry i32)
     (local $back_flags i32) (local $back_bytes i32) (local $chain_hr i32) (local $caps2 i32)
+    (local $keys i32) (local $key_mask i32)
     ;; Native v4/v7 descriptors must not silently discard extended caps.
     ;; Cube/storage semantics are a subsequent implementation slice.
     (if (i32.eq (call $dx_native_desc_size (local.get $arg0)) (i32.const 124)) (then
@@ -2979,6 +2980,37 @@
       (i32.store (global.get $reg_base) (i32.const 0x8007000e))
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
       (return)))
+    ;; Both native descriptor sizes share these key fields. Copy only valid
+    ;; directions into the same owned state and native-depth mask as SetColorKey;
+    ;; the caller may reuse its descriptor as soon as CreateSurface returns.
+    (if (i32.and (local.get $ddsd_flags) (i32.const 0x14000)) (then
+      (local.set $keys (call $vbdd_draw_state_ensure (local.get $entry)))
+      (if (i32.eqz (local.get $keys)) (then
+        (drop (call $dx_surface_release (local.get $obj)))
+        (i32.store (global.get $reg_base) (i32.const 0x8007000e))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
+      (local.set $keys (i32.add (local.get $keys) (i32.const 16)))
+      (local.set $key_mask (i32.const -1))
+      (if (i32.lt_u (local.get $bpp) (i32.const 32))
+        (then (local.set $key_mask (i32.sub
+          (i32.shl (i32.const 1) (local.get $bpp)) (i32.const 1)))))
+      (if (i32.and (local.get $ddsd_flags) (i32.const 0x10000)) (then ;; DDSD_CKSRCBLT
+        (store.field DxObject misc2 (local.get $entry)
+          (i32.and (i32.load offset=64 (local.get $ddsd_wa)) (local.get $key_mask)))
+        (i32.store (local.get $keys)
+          (i32.and (i32.load offset=68 (local.get $ddsd_wa)) (local.get $key_mask)))
+        (i32.store offset=12 (local.get $keys)
+          (i32.or (i32.load offset=12 (local.get $keys)) (i32.const 1)))
+        (store.field DxObject flags (local.get $entry)
+          (i32.or (load.field DxObject flags (local.get $entry)) (i32.const 0x100)))))
+      (if (i32.and (local.get $ddsd_flags) (i32.const 0x4000)) (then ;; DDSD_CKDESTBLT
+        (i32.store offset=4 (local.get $keys)
+          (i32.and (i32.load offset=48 (local.get $ddsd_wa)) (local.get $key_mask)))
+        (i32.store offset=8 (local.get $keys)
+          (i32.and (i32.load offset=52 (local.get $ddsd_wa)) (local.get $key_mask)))
+        (i32.store offset=12 (local.get $keys)
+          (i32.or (i32.load offset=12 (local.get $keys)) (i32.const 2)))))))
     ;; DDSCAPS_MIPMAP=0x400000. Build the rest of the pyramid now, while the
     ;; level-0 geometry and format are still in hand. DDSD_MIPMAPCOUNT=0x20000
     ;; makes dwMipMapCount at +24 the caller's declared total level count;

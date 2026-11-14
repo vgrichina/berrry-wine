@@ -4,14 +4,13 @@
 // Actual Node Workers own the fixture; no browser, game or full VM is started.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const path = require('node:path');
 const vm = require('node:vm');
-const Module = require('node:module');
 const { Worker, isMainThread, parentPort, workerData } = require('node:worker_threads');
 const RPC = require('../lib/guest-rpc');
 const SIGS = { fixture_rpc: { params: ['i32'], results: ['i32'] } };
 const GATE = 0x1800, LIFE = 0x2000, STACK = 0x80000;
-const DIAG = { runs: 64, child: 65, rpcReturned: 66, mapped: 67 };
+const DIAG = { runs: 64, child: 65, rpcReturned: 66, mapped: 67, attach: 68, detach: 70 };
+const FLAGS = 0x1100;
 const liveWorkers = new Set();
 function image() {
   const bytes = new Uint8Array(1024), d = new DataView(bytes.buffer);
@@ -34,7 +33,7 @@ function fixtureWorker() {
     get_dll_lifecycle_table: () => LIFE, get_dll_lifecycle_stride: () => 64,
     get_dll_table: () => 0x1000, get_dll_count: () => count,
     has_shared_dll_registry: () => 1, get_dll_index: addr => (addr - 0x20000) / 0x10000,
-    get_current_thread_id: () => 6, dll_thread_notifications_enabled: () => 1,
+    get_current_thread_id: () => 6, dll_thread_notifications_enabled: addr => !(d.getUint32(FLAGS + ((addr - 0x20000) / 0x10000) * 4, true) & 2),
     init_thread() {}, guest_stack_alloc: () => STACK,
     guest_alloc: size => { const p = heap; heap += size; return p; },
     ensure_tls_slots() { if (workerData.mode === 'tls-failure') return 0; return 0x91000; },
@@ -60,6 +59,15 @@ function fixtureWorker() {
     },
     run() {
       words[DIAG.runs]++;
+      if (workerData.mode === 'notifications' && (state.eip === 0x21000 || state.eip === 0x31000)) {
+        const reason = d.getUint32(state.esp + 8, true);
+        assert(reason === 2 || reason === 3, 'real Worker builds a thread notification frame');
+        const index = state.eip === 0x21000 ? 0 : 1;
+        assert.equal(d.getUint32(state.esp + 4, true), 0x20000 + index * 0x10000, 'notification names its actual module');
+        assert.equal(d.getUint32(state.esp + 12, true), 0, 'dynamic thread notification has null reserved argument');
+        words[(reason === 2 ? DIAG.attach : DIAG.detach) + index]++;
+        state.esp += 16; state.eip = 0; state.eax = 1; state.last_run_halt = 2; return;
+      }
       if (state.eip === 0x21000 && !rootStarted) {
         rootStarted = true;
         // LoadLibrary's sentinel continuation remains on the DllMain stack.
@@ -95,12 +103,21 @@ function fixtureWorker() {
   }
   d.setUint32(0x1000, 0x20000, true); d.setUint32(0x1004, 65536, true);
   row(0, 0, 2); row(0, 4, 101); row(0, 8, 1); row(0, 24, 0x21000); row(0, 28, 1); row(0, 48, 1);
+  if (workerData.mode === 'notifications') {
+    count = 2;
+    d.setUint32(0x1020, 0x30000, true); d.setUint32(0x1024, 65536, true);
+    row(1, 0, 2); row(1, 4, 102); row(1, 8, 1); row(1, 24, 0x31000); row(1, 28, 2); row(1, 48, 1);
+    d.setUint32(FLAGS, 2, true);
+  }
   new Uint8Array(memory.buffer, 0x600, 10).set(Buffer.from('child.dll\0'));
   d.setUint32(0x80c, 1, true);
   if (workerData.mode === 'gate-wait') { words[GATE / 4] = 7; words[GATE / 4 + 1] = 1; }
   const context = { URL, performance, setTimeout, clearTimeout, importScripts() {},
     location: { href: 'https://fixture.invalid/lib/guest-worker.js' },
     postMessage: msg => parentPort.postMessage(msg),
+    // The VM selects the browser bootstrap. Supply its real eagerly used
+    // dependencies; an empty importScripts does not install browser globals.
+    GuestRpc: RPC, RenderWorker: require('../lib/render-worker'),
     ThreadSendWaits: require('../lib/thread-send-waits'),
     memUtils: require('../lib/mem-utils'), workerImports: require('../lib/worker-imports'),
     DllLoader: loader, processBoot: boot, fixture: { exports: ex },
@@ -124,16 +141,6 @@ function fixtureWorker() {
   parentPort.postMessage({ t: 'fixtureReady' });
 }
 
-function productionHost() {
-  const filename = require.resolve('../lib/guest-thread-host');
-  if (!process.env.WA_RETIREMENT_OLD_HOST) return require(filename);
-  // Retained bytes compile at the production filename, preserving real sibling
-  // imports. A missing module or syntax failure is not an old-source rejection.
-  const mod = new Module(filename, module); mod.filename = filename;
-  mod.paths = Module._nodeModulePaths(path.dirname(filename));
-  mod._compile(fs.readFileSync(process.env.WA_RETIREMENT_OLD_HOST, 'utf8'), filename);
-  return mod.exports;
-}
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function until(predicate, label) {
   const deadline = Date.now() + 2500;
@@ -144,7 +151,7 @@ async function until(predicate, label) {
 }
 async function main() {
   console.log('retirement-test-process ' + process.pid);
-  const { WorkerLink, GuestThreadHost } = productionHost();
+  const { WorkerLink, GuestThreadHost } = require('../lib/guest-thread-host');
   const { ThreadManager } = require('../lib/thread-manager');
   async function context(mode, opts = {}) {
     const memory = { buffer: new SharedArrayBuffer(512 * 1024 * 1024) };
@@ -161,17 +168,11 @@ async function main() {
     };
     const worker = new Worker(__filename, { workerData: { buffer: memory.buffer, mode, endpointIdentity: link.endpointIdentity } });
     liveWorkers.add(worker); worker.once('exit', () => liveWorkers.delete(worker));
-    if (process.env.WA_RETIREMENT_OLD_HOST) {
-      // Old host bytes predate the lookup identity field. Adapt only that
-      // transport envelope so the control reaches the same real nested attach;
-      // stop(), its admission flag and its missing handshake remain original.
-      const post = worker.postMessage.bind(worker);
-      worker.postMessage = msg => post(msg.t === 'dllLookupResult'
-        ? { ...msg, endpointIdentity: link.endpointIdentity } : msg);
-    }
     link.worker = worker;
     const exited = new Promise(resolve => { worker.once('exit', resolve); });
-    worker.on('error', error => { link._transportFailed(error); });
+    let startupError, startupExit;
+    worker.once('exit', code => { startupExit = code; });
+    worker.on('error', error => { startupError = error; link._transportFailed(error); });
     let discardReceipt = !!opts.discardReceipt;
     worker.on('message', msg => {
       messages.push(msg);
@@ -179,7 +180,11 @@ async function main() {
       else if (msg.t === 'scopedLoadersRetired' && discardReceipt) {}
       else if (!msg.t.startsWith('fixture')) link._onMessage(msg);
     });
-    await until(() => messages.some(m => m.t === 'fixtureReady'), 'own Worker ready');
+    await until(() => {
+      if (startupError) throw startupError;
+      if (startupExit !== undefined) throw Error('fixture Worker exited before readiness: ' + startupExit);
+      return messages.some(m => m.t === 'fixtureReady');
+    }, 'own Worker ready');
     const spec = { tid: 5, stackSize: 0x4000, imageBase: 0x1000, startAddr: 0x12345 };
     const start = () => link.initGuestThread(spec);
     const gate = () => [d.getInt32(GATE, true), d.getInt32(GATE + 4, true)];
@@ -207,8 +212,27 @@ async function main() {
       releaseLookup() { releaseLookup?.(image()); }, exited };
   }
 
-  // This first case is also the retained old-host control. Observe an actual
-  // orphaned shared gate/pin after termination, not merely a missing API/ACK.
+  {
+    const c = await context('notifications');
+    try {
+      const ready = await c.start();
+      assert.equal(ready.eip, 0x12345, 'attach restores the real thread start frame');
+      assert.deepEqual([...c.words.slice(DIAG.attach, DIAG.attach + 2)], [0, 1],
+        'Worker attach skips the disabled shared row');
+      const d = new DataView(c.memory.buffer);
+      d.setUint32(FLAGS, 0, true); d.setUint32(FLAGS + 4, 2, true);
+      await c.link.slice(100);
+      assert.deepEqual([...c.words.slice(DIAG.detach, DIAG.detach + 2)], [1, 0],
+        'Worker detach rereads shared flags instead of caching attach eligibility');
+      assert.deepEqual(c.pins(), [0, 0]); assert.deepEqual(c.gate(), [0, 0]);
+      await c.link.stop(); await c.exited;
+      assert(c.link._loaderRetirementReceipt?.dllCallbacksRetired, 'termination requires real loader retirement proof');
+      assert.equal(c.link._pending.size, 0);
+      console.log('PASS real Worker attach/detach consult live shared notification flags');
+    } finally { await c.close(); }
+  }
+
+  // Observe actual shared gate/pin ownership across endpoint termination.
   async function cancellation(mode) {
     const c = await context(mode);
     try {
@@ -255,7 +279,6 @@ async function main() {
     } finally { await c.close(); }
   }
   await cancellation('cs');
-  if (process.env.WA_RETIREMENT_OLD_HOST) return;
   await cancellation('lookup');
 
   {

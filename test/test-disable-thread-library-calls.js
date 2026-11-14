@@ -12,7 +12,8 @@ const ROOT = path.join(__dirname, '..');
 
 const extraWat = String.raw`
   (func (export "test_seed_dll_thread_flags")
-    (global.set $dll_count (i32.const 2))
+    ;; Registry length is process-shared, as read by get_dll_count.
+    (i32.atomic.store (global.get $DLL_SHARED) (i32.const 2))
     (memory.fill (global.get $DLL_TABLE) (i32.const 0) (global.get $DLL_TABLE_SIZE))
     (memory.fill (global.get $DLL_FLAGS_TABLE) (i32.const 0) (global.get $DLL_FLAGS_TABLE_SIZE))
     (i32.store (global.get $DLL_TABLE) (i32.const 0x00600000))
@@ -29,8 +30,9 @@ const extraWat = String.raw`
 `;
 
 async function main() {
-  const { exports: e } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const { exports: e, memory, instance } = await bootRenderHarness({ extraWat, fonts: 'none' });
   e.test_seed_dll_thread_flags();
+  assert.equal(e.get_dll_count(), 2, 'fixture publishes two real shared registry rows');
 
   assert.strictEqual(e.dll_thread_notifications_enabled(0x00600000), 1,
     'an ordinary loaded DLL initially receives thread notifications');
@@ -60,7 +62,7 @@ async function main() {
       'invalid module failure reports ERROR_INVALID_PARAMETER');
   }
 
-  const manager = Object.create(ThreadManager.prototype);
+  const manager = new ThreadManager(null, memory, instance, null);
   const dll = { loadAddr: 0x00600000 };
   assert.strictEqual(manager._dllWantsThreadNotifications({}, dll), true,
     'an older external WASM module retains notify-all compatibility');
@@ -75,14 +77,37 @@ async function main() {
   ], (_exports, loadAddr, dllMain, _log, options) => {
     detachCalls.push({ loadAddr, dllMain, reason: options.reason });
   });
-  const thread = { instance: { exports: {
-    dll_thread_notifications_enabled: module => module === 0x00700000,
-  } } };
+  // Notification snapshots now read live generation/attachment metadata,
+  // rather than the legacy entry-point fallback. Seed that actual ABI through
+  // its exported base/stride; keep an ordinary mapping reference on each row.
+  const view = new DataView(memory.buffer);
+  const life = e.get_dll_lifecycle_table(), stride = e.get_dll_lifecycle_stride();
+  for (let i = 0; i < e.get_dll_count(); i++) {
+    const row = life + i * stride;
+    for (const [field, value] of [[0, 2], [4, i + 1], [8, 1],
+      [24, 0x00601000 + i * 0x100000], [28, i + 1], [48, 1]])
+      view.setUint32(row + field, value, true);
+  }
+  const thread = { instance };
+  assert.equal(manager._dllWantsThreadNotifications(e, dll), false,
+    'manager queries the actual disabled WAT row');
   manager._notifyThreadDetach(thread);
   manager._notifyThreadDetach(thread);
   assert.deepStrictEqual(detachCalls, [
     { loadAddr: 0x00700000, dllMain: 0x00701000, reason: 3 },
   ], 'detach runs once, in reverse load order, and skips disabled DLLs');
+
+  assert.equal(view.getUint32(life + 12, true), 0);
+  assert.equal(view.getUint32(life + stride + 12, true), 0,
+    'completed notification releases its actual generation pin');
+  // Reseeding changes shared flags, so the same manager must see both rows
+  // again, in reverse order, rather than caching the earlier disabled state.
+  e.test_seed_dll_thread_flags();
+  manager._notifyThreadDetach({ instance });
+  assert.deepEqual(detachCalls.slice(1), [
+    { loadAddr: 0x00700000, dllMain: 0x00701000, reason: 3 },
+    { loadAddr: 0x00600000, dllMain: 0x00601000, reason: 3 },
+  ], 'live shared flags and reverse notification ordering are observed');
 
   const threadManagerSource = fs.readFileSync(
     path.join(ROOT, 'lib', 'thread-manager.js'), 'utf8');
@@ -90,10 +115,10 @@ async function main() {
     path.join(ROOT, 'lib', 'guest-worker.js'), 'utf8');
   assert(threadManagerSource.includes('loadedDlls: this._loadedDlls.map'),
     'real Worker creation receives the loaded DLL entry-point list');
-  assert(guestWorkerSource.includes('reason: 2, lpReserved: 0, advanceGuestTime'),
+  assert(guestWorkerSource.includes('}, 2, guestThreadDlls)'),
     'real Workers deliver DLL_THREAD_ATTACH with dynamic-load context');
-  assert(guestWorkerSource.includes('ex.dll_thread_notifications_enabled(dll.loadAddr | 0)'),
-    'real Workers suppress only DLLs disabled in shared loader state');
+  assert(guestWorkerSource.includes('await L.notifyDllThreadAsync('),
+    'real Workers use the shared loader notification driver (runtime skip coverage in test-worker-bootstrap-retirement)');
   assert(guestWorkerSource.includes('notifyGuestThreadDetach(ex)'),
     'real Workers deliver DLL_THREAD_DETACH before natural teardown');
 

@@ -574,19 +574,20 @@ class LiveRun {
     if (this.pressedKeys) this.pressedKeys.clear();
   }
 
-  // Host absolute input feeds the existing INT33 polling state. No callback
-  // interrupts, pointer lock, wheel, sensitivity or custom range emulation.
+  // Host input updates polling state and queues deferred INT33 callbacks.
   mouseInput(x, y, buttons, dx = 0, dy = 0) {
     if (!this.machine || this.machine.exited || this.inputStopped) return;
     const m = this.machine.mouse;
+    require('./mouse-callback').enqueue(m, x, y, buttons & 7, dx, dy);
     m.x = x; m.y = y; m.dx += dx; m.dy += dy;
-    this.mouseButtons(buttons);
+    this.mouseButtons(buttons, true);
   }
 
-  mouseButtons(buttons) {
+  mouseButtons(buttons, queued = false) {
     const m = this.machine && this.machine.mouse;
     if (!m) return;
     buttons &= 7; // DOM buttons and INT33 both use left=1, right=2, middle=4.
+    if (!queued) require('./mouse-callback').enqueue(m, m.x, m.y, buttons);
     const changed = m.buttons ^ buttons;
     for (let b = 0; b < 3; b++) {
       if (changed & (1 << b)) (buttons & (1 << b) ? m.pressed : m.released)[b]++;
@@ -722,7 +723,6 @@ function bindInput(canvas, getRun, win = globalThis, doc = win.document) {
     if (!(rect.width > 0 && rect.height > 0) || !Number.isFinite(e.clientX) || !Number.isFinite(e.clientY)) return;
     // INT33's conventional low-resolution grid has 640 horizontal units even
     // for mode 13h's 320 pixels; text uses 640x200 regardless of glyph size.
-    // dos.js does not implement guest-programmed ranges (07h/08h).
     const text = r.machine.vga.bpp === 0 && !(r.machine.vesa && r.machine.vesa.mode);
     const width = text ? 640 : Math.max(640, canvas.width);
     const height = text ? 200 : canvas.height;
@@ -740,7 +740,8 @@ function bindInput(canvas, getRun, win = globalThis, doc = win.document) {
     held = kind === 'down' ? (e.buttons & 7) : (held & e.buttons & 7) | chord;
     activePointer = held && pointer ? e.pointerId : null;
     if (kind === 'down') canvas.focus();
-    r.mouseInput(x, y, held, dx, dy);
+    const [mx, my, mdx, mdy] = require('./mouse-callback').screenInput(r.machine.mouse, x, y, width, height, dx, dy);
+    r.mouseInput(mx, my, held, mdx, mdy);
     last = { x, y, width, height };
     e.preventDefault();
   };

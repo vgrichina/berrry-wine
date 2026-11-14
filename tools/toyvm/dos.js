@@ -27,6 +27,10 @@ const isa = require('./isa');
 const { Sound, PIT_HZ } = require('./audio');
 const { Gus } = require('./gus');
 const { readFat12 } = require('./fat12');
+const { readReadonlyIso } = require('./readonly-iso');
+const { int2fMscdex } = require('./mscdex');
+const { selectPalettePage } = require('./vga-palette-page');
+const { fcbSearch } = require('./fcb-search');
 
 const VGA_BASE = 0xA0000;
 const STUB_SEG = 0xF000;      // dedicated host entries occupy F000:0100-01FF
@@ -166,7 +170,11 @@ const DEFAULT_ALLOC_TOP = 0x9F00;
 // Relocations are the whole reason this cannot be a flat read: an EXE's far
 // pointers are stored relative to the load segment and have to be fixed up
 // before anything far runs.
-function loadExe(mem, buf, { loadSeg = LOAD_SEG, pspSeg = PSP_SEG } = {}) {
+class DosImageError extends Error {}
+
+// Format-only preflight, shared by direct loads and public EXEC. No guest
+// accesses or writes belong here: only these errors become DOS bad format.
+function parseMz(buf) {
   // Dispatch on the signature, not on the file extension. A .COM is a flat
   // image with no header and no relocations -- it loads at PSP:0x100 with every
   // segment register equal, which is why it needs no fixups at all. The corpus
@@ -176,7 +184,8 @@ function loadExe(mem, buf, { loadSeg = LOAD_SEG, pspSeg = PSP_SEG } = {}) {
   // program in this corpus (CAVEIRA.COM) is a real EXE carrying it, and read as
   // a .COM it entered at its own MZ header and ran off into the weeds.
   const mz = (buf[0] === 0x4D && buf[1] === 0x5A) || (buf[0] === 0x5A && buf[1] === 0x4D);
-  if (!mz) return loadCom(mem, buf, { pspSeg });
+  if (!mz) return null;
+  if (buf.length < 28) throw new DosImageError('invalid MZ: truncated header');
   const u16 = (o) => buf.readUInt16LE(o);
   const lastPage = u16(0x02), pages = u16(0x04);
   const relocCount = u16(0x06), headerParas = u16(0x08);
@@ -186,17 +195,40 @@ function loadExe(mem, buf, { loadSeg = LOAD_SEG, pspSeg = PSP_SEG } = {}) {
   const relocOff = u16(0x18);
 
   const headerBytes = headerParas * 16;
-  let imageBytes = pages * 512 - headerBytes;
-  if (lastPage) imageBytes -= (512 - lastPage);
-  const image = buf.subarray(headerBytes, headerBytes + imageBytes);
+  const fileBytes = pages * 512 - (lastPage ? 512 - lastPage : 0);
+  if (!pages || lastPage >= 512 || headerBytes < 28 || headerBytes > fileBytes
+      || fileBytes > buf.length || (relocCount && relocOff + relocCount * 4 > headerBytes)) {
+    throw new DosImageError('invalid MZ: image or relocation table bounds');
+  }
+  const imageBytes = fileBytes - headerBytes;
+  const image = buf.subarray(headerBytes, fileBytes);
 
-  const loadLin = loadSeg << 4;
+  // Read and validate all fixup positions before publishing the image or PSP.
+  // Preserve duplicate fixups: DOS applies each relocation in table order.
+  const spots = [];
+  for (let i = 0; i < relocCount; i++) {
+    const spot = u16(relocOff + i * 4) + u16(relocOff + i * 4 + 2) * 16;
+    if (spot + 1 >= imageBytes) throw new DosImageError('invalid MZ: relocation outside image');
+    spots.push(spot);
+  }
+  return { image, imageBytes, spots, minAlloc, maxAlloc, ss, sp, ip, cs };
+}
+
+function loadExe(mem, buf, { loadSeg = LOAD_SEG, pspSeg = PSP_SEG } = {}) {
+  const parsed = parseMz(buf);
+  if (!parsed) return loadCom(mem, buf, { pspSeg });
+  const { image, imageBytes, spots, minAlloc, maxAlloc, ss, sp, ip, cs } = parsed;
+  if (![loadSeg, pspSeg].every(v => Number.isInteger(v) && v >= 0 && v <= 0xffff)) {
+    throw new Error('invalid MZ: load or PSP segment');
+  }
+  const loadLin = loadSeg * 16, psp = pspSeg * 16;
+  if (loadLin + imageBytes > mem.length || psp + 0x82 > mem.length) {
+    throw new Error('invalid MZ: destination outside memory');
+  }
   mem.set(image, loadLin);
 
-  for (let i = 0; i < relocCount; i++) {
-    const off = u16(relocOff + i * 4);
-    const seg = u16(relocOff + i * 4 + 2);
-    const at = loadLin + (seg << 4) + off;
+  for (const spot of spots) {
+    const at = loadLin + spot;
     const v = (mem[at] | (mem[at + 1] << 8)) + loadSeg;
     mem[at] = v & 0xFF;
     mem[at + 1] = (v >> 8) & 0xFF;
@@ -215,7 +247,6 @@ function loadExe(mem, buf, { loadSeg = LOAD_SEG, pspSeg = PSP_SEG } = {}) {
   const own = loadSeg + imageParas;
   const allocTop = Math.max(Math.min(own + maxAlloc, DEFAULT_ALLOC_TOP), own + minAlloc);
 
-  const psp = pspSeg << 4;
   mem[psp] = 0xCD; mem[psp + 1] = 0x20;
   mem[psp + 2] = allocTop & 0xFF;
   mem[psp + 3] = (allocTop >> 8) & 0xFF;
@@ -564,6 +595,7 @@ function vgaGeometry(v) {
     // The attribute palette, so the renderer can turn a 4-bit pixel into the
     // DAC entry the hardware would have looked it up in.
     attr: Array.from(v.attr.subarray(0, 16)),
+    attrMode: v.attr[0x10], colorSelect: v.attr[0x14],
   };
 }
 
@@ -959,6 +991,7 @@ class Machine {
     this.currentDrive = 2;
     this.driveDirectories = new Map([[0, ''], [1, ''], [2, '']]);
     this.floppyVolumes = new Map();
+    this.isoVolumes = new Map();
     this.mediaChanges = [];
     this.directorySearches = new Map();
     this.directorySearchIds = new Map();
@@ -1030,6 +1063,8 @@ class Machine {
     this.sb = {
       out: [], cmd: 0, args: [], expect: 0, speaker: 0, block: 0,
       pending: false, autoInit: false, paused: false, forced: false, shortWait: false,
+      probeAt: null,
+      probePauseAt: null,
       // The width a forced IRQ answers for -- F2h/F3h, or a short block that
       // was waiting on its DMA channel -- which picks the mixer 0x82 bit and
       // so the port the ISR acknowledges on. See sbIrq.
@@ -1290,11 +1325,30 @@ class Machine {
     return directory || parts.length ? (disk === 2 ? '' : String.fromCharCode(97 + disk) + ':/') + parts.join('/') : null;
   }
 
-  driveAvailable(drive) { return drive === 2 || this.floppyVolumes.has(drive); }
+  driveAvailable(drive) { return drive === 2 || this.floppyVolumes.has(drive) || !!this.isoVolumes?.has(drive); }
   driveDirectory(drive) { return drive === this.currentDrive ? this.currentDirectory : this.driveDirectories.get(drive) || ''; }
-  keyDrive(key) { return /^[ab]:\//.test(key || '') ? key.charCodeAt(0) - 97 : 2; }
+  keyDrive(key) { return /^[a-z]:\//.test(key || '') ? key.charCodeAt(0) - 97 : 2; }
   readOnlyKey(key) { return key !== null && this.keyDrive(key) !== 2; }
-  volumeEntry(key) { return this.floppyVolumes.get(this.keyDrive(key))?.entries.get(key.slice(3)); }
+  dataVolume(drive) { return this.floppyVolumes.get(drive) || this.isoVolumes?.get(drive); }
+  volumeEntry(key) { return key === null ? undefined : this.dataVolume(this.keyDrive(key))?.entries.get(key.slice(3)); }
+
+  // Public read-only mount, between runner steps. Bounded MSCDEX data services
+  // discover these volumes; no resident device driver or CDDA is supplied.
+  // A:/B: remain FAT12 and C: remains the writable overlay. A failed parse or
+  // collision never changes the namespace, cwd or existing open handles.
+  mountIso(source, opts = {}) {
+    const letter = opts.drive ?? 'D';
+    const drive = typeof letter === 'string' && /^[d-z]:?$/i.test(letter)
+      ? letter.toUpperCase().charCodeAt(0) - 65 : -1;
+    if (drive < 3) throw Error('ISO data drive must be D: through Z:');
+    if (this.driveAvailable(drive)) throw Error('ISO data drive is already mounted');
+    const volume = readReadonlyIso(source, opts);
+    if (!this.isoVolumes) this.isoVolumes = new Map();
+    this.isoVolumes.set(drive, volume);
+    this.driveDirectories.set(drive, '');
+    this.mediaChanges.push({ drive, label: volume.label, mounted: true, kind: volume.kind });
+    return { drive, label: volume.label, mounted: true, kind: volume.kind };
+  }
 
   // Call between runner steps. Failed parsing leaves old media and cwd intact.
   // Open handles retain old bytes; new opens and searches use the inserted disk.
@@ -1341,7 +1395,7 @@ class Machine {
   hostPath(name) { return this.hostKey(this.fileKey(name)); }
 
   isDirectory(key) {
-    if (this.readOnlyKey(key)) return this.floppyVolumes.get(this.keyDrive(key))?.directories.has(key.slice(3)) || false;
+    if (this.readOnlyKey(key)) return this.dataVolume(this.keyDrive(key))?.directories.has(key.slice(3)) || false;
     // An unmounted machine still has an empty virtual C: root for temp files.
     if (key === '' || this.virtualDirectories?.has(key)) return true;
     const at = this.hostKey(key);
@@ -1352,24 +1406,25 @@ class Machine {
   parentExists(key) {
     if (key === null) return false;
     let parent = key.includes('/') ? key.slice(0, key.lastIndexOf('/')) : '';
-    if (/^[ab]:$/.test(parent)) parent += '/';
+    if (/^[a-z]:$/.test(parent)) parent += '/';
     return this.isDirectory(parent);
   }
 
   // Where the DTA is: wherever AH=1Ah last put it, else the PSP's own at +80h,
   // which is where DOS starts every program's.
   dtaAddr() {
-    return this.dta || ((this.curPsp << 4) + 0x80);
+    return this.dta ?? ((this.curPsp << 4) + 0x80);
   }
 
   // Immediate children only, merging guest overlays with immutable host files.
   dirEntries(directory = this.resolvePath('.', true)) {
     if (this.readOnlyKey(directory)) {
-      const volume = this.floppyVolumes.get(this.keyDrive(directory));
+      const volume = this.dataVolume(this.keyDrive(directory));
       if (!volume) return [];
       const prefix = directory.slice(3), lead = prefix ? prefix + '/' : '', out = [];
       for (const [key, e] of volume.entries) if (key.startsWith(lead) && !key.slice(lead.length).includes('/'))
-        out.push({ name: key.slice(lead.length).toUpperCase(), size: e.size, attributes: e.attributes, time: e.time, date: e.date });
+        out.push({ name: key.slice(lead.length).toUpperCase(), size: e.size, attributes: e.attributes, time: e.time, date: e.date,
+          directoryEntry: e.directoryEntry, directoryOrder: e.directoryOrder });
       for (const key of volume.directories) if (key && key.startsWith(lead) && !key.slice(lead.length).includes('/'))
         out.push({ name: key.slice(lead.length).toUpperCase(), size: 0, ...volume.directoryMetadata.get(key) });
       return out;
@@ -1462,8 +1517,11 @@ class Machine {
     if (this.readOnlyKey(key)) {
       const entry = this.volumeEntry(key);
       if (!entry) { this.filesMissed.push(name); return 0; }
+      let buf;
+      try { buf = entry.read ? entry.read() : Uint8Array.from(entry.data); }
+      catch { this.filesMissed.push(name); return 0; }
       const h = this.nextFileHandle(); if (!h) return 0;
-      this.files.set(h, { buf: Uint8Array.from(entry.data), pos: 0, name, key, readOnly: true, time: entry.time, date: entry.date });
+      this.files.set(h, { buf, pos: 0, name, key, readOnly: true, isoData: this.dataVolume(this.keyDrive(key)).kind === 'iso9660', time: entry.time, date: entry.date });
       this.filesOpened.push(name); return h;
     }
     if (key && this.tempFiles.has(key)) {
@@ -1491,7 +1549,8 @@ class Machine {
     if (this.readOnlyKey(key)) {
       const entry = this.volumeEntry(key);
       if (!entry) { this.filesMissed.push(name); return null; }
-      return Buffer.from(entry.data);
+      try { return Buffer.from(entry.read ? entry.read() : entry.data); }
+      catch { this.filesMissed.push(name); return null; }
     }
     if (key && this.tempFiles.has(key)) {
       const rec = this.tempFiles.get(key);
@@ -1553,7 +1612,8 @@ class Machine {
     }
     for (let i = 0; i < n; i++) rec.data[f.pos + i] = source ? source[i] : this.mem[(src + i) & 0xFFFFF];
     f.pos = end;
-    if (end > rec.len) rec.len = end;
+    // DOS AH=40h with CX=0 sets EOF to the current file pointer.
+    if (n === 0 || end > rec.len) rec.len = end;
     f.buf = rec.data.subarray(0, rec.len);
     if (rec.temporary) {
       for (const handle of this.files.values()) {
@@ -2835,14 +2895,15 @@ class Machine {
       // SB16 forms put it after the mode byte.
       const len = (v >= 0xB0 && v <= 0xCF) ? (args[1] | (args[2] << 8))
         : (args.length >= 2 ? (args[0] | (args[1] << 8)) : this.sb.block);
-      // A *tiny* block completes on a real card in microseconds -- far sooner
+      // A tiny block completes on a real card in microseconds -- far sooner
       // than any driver's timeout spin -- so waiting for the periodic IRQ
       // cadence is not "slow", it is wrong. MIDAS (BLAND.EXE) finds its DMA
       // channel by programming the 8237 for a single byte, kicking off a
       // one-sample transfer and giving the IRQ a short `loopz` to arrive; at
       // cadence it never did for any channel, and the driver reported
       // "failed to load MSE" for a card it had already identified twice.
-      // Anything long enough to actually be audio keeps the cadence.
+      // Schedule short blocks at their sample deadline, without the cadence
+      // floor used for longer streaming buffers.
       this.sb.len = len + 1;                // the count is one less, as in DMA
       // What audio.js pulls through the DMA channel from here on. The 8-bit
       // commands are unsigned mono on channel 1; the SB16 forms carry a mode
@@ -2854,6 +2915,9 @@ class Machine {
       this.sb.chan = this.sb.bits === 16 ? this.audio.dma.recent16 : this.audio.dma.recent8;
       this.sb.left = this.sb.len;
       this.sb.irqDue = false;
+      this.sb.probeAt = null;
+      this.sb.probePauseAt = null;
+      this.sb.shortWait = false;
       this.audio.sbSide = 0;
       // A new transfer is not the paused one. D0h stops the transfer in
       // flight; the command that follows starts another, and the card plays
@@ -2862,14 +2926,14 @@ class Machine {
       // them: 55 DSP commands, one interrupt, 25 seconds of digital silence
       // over a buffer that held the music.
       this.sb.paused = false;
-      // A tiny block completes as soon as the DMA controller lets it through,
-      // and not before: ACT1.EXE finds its DMA channel by kicking off an
+      // A tiny block starts its sample clock once DMA lets it through:
+      // ACT1.EXE finds its DMA channel by kicking off an
       // 11-byte transfer with every channel masked, then unmasking candidates
       // one at a time to see which one makes the interrupt come. Fired at the
       // command, the interrupt arrived before any channel was open and the
       // hunt never found one. So it waits on the mask -- see sbDmaWritten.
       if (len <= SB_SHORT_BLOCK) {
-        if (this.sbChannelOpen(this.sb.chan)) { this.sb.forced = true; this.endSlice(); }
+        if (this.sbChannelOpen(this.sb.chan)) { this.sb.probeAt = this.audioNow(); this.endSlice(); }
         else this.sb.shortWait = true;
       }
       return;
@@ -2892,8 +2956,14 @@ class Machine {
       this.endSlice();
       return;
     }
-    if (v === 0xD0) { this.sb.paused = true; this.sb.pending = false; return; }
-    if (v === 0xD4) { this.sb.paused = false; this.sb.pending = true; return; }
+    if (v === 0xD0) {
+      this.sb.paused = true; this.sb.pending = false; this.sbProbeClock(); return;
+    }
+    if (v === 0xD4) {
+      this.sb.paused = false; this.sb.pending = true;
+      this.sbProbeClock();
+      return;
+    }
     // DAh stops an auto-init transfer for good.
     if (v === 0xDA || v === 0xD9) { this.sb.autoInit = false; this.sb.pending = false; }
   }
@@ -2922,6 +2992,7 @@ class Machine {
   // which is the screen that says "It is not possible to run the demo without
   // music". Channel 4 is the cascade and never carries data.
   sbDmaWritten() {
+    if (this.sb.probeAt != null) { this.sbProbeClock(); return; }
     if (!this.sb.shortWait || !this.sb.pending) return;
     const dma = this.audio.dma;
     const wide = this.sb.bits === 16;
@@ -2933,9 +3004,39 @@ class Machine {
     if (c < 0) return;
     this.sb.chan = c;
     this.sb.shortWait = false;
-    this.sb.forced = true;
-    this.sb.forcedBits = this.sb.bits;
+    this.sb.probeAt = this.audioNow();
     this.endSlice();
+  }
+
+  sbProbeClock() {
+    const sb = this.sb;
+    if (sb.probeAt == null) return;
+    if (sb.paused || !this.sbChannelOpen(sb.chan)) {
+      if (sb.probePauseAt == null) sb.probePauseAt = this.audioNow();
+    } else if (sb.probePauseAt != null) {
+      sb.probeAt += this.audioNow() - sb.probePauseAt;
+      sb.probePauseAt = null;
+    }
+  }
+
+  // Short DMA probes still take len/rate seconds. An immediate interrupt can
+  // preempt the driver's initialization before it clears its completion flag.
+  // Keep their sample deadline separate from the coarse audio render lattice;
+  // it begins at the command/unmask, never at the preceding render's date.
+  sbProbeDeadline(secondsPerDispatch) {
+    const sb = this.sb;
+    if (sb.probeAt == null || !sb.pending || sb.paused || !this.sbChannelOpen(sb.chan)) return Infinity;
+    return sb.probeAt + Math.ceil(sb.left / sb.rate / secondsPerDispatch);
+  }
+
+  completeSbProbe(at, secondsPerDispatch) {
+    if (at < this.sbProbeDeadline(secondsPerDispatch)) return;
+    const sb = this.sb, n = sb.left;
+    sb.probeAt = null;
+    for (let i = 0; i < n; i++) this.audio.sbNext();
+    sb.irqDue = false; // this completion is delivered through the prompt path once
+    sb.forced = true;
+    sb.forcedBits = sb.bits;
   }
 
   // The vector for the Sound Blaster's IRQ, if a block is finished and the
@@ -3058,6 +3159,7 @@ class Machine {
   // hole is a click at every block boundary, five times a second.
   sbSecondsLeft() {
     const sb = this.sb;
+    if (sb.shortWait || sb.probeAt != null) return 0;
     if (!sb.pending || sb.paused || !sb.rate || sb.left <= 0) return 0;
     return sb.left / sb.rate;
   }
@@ -3481,6 +3583,11 @@ class Machine {
       else if (this.sb.resetting) {
         this.sb.resetting = false;
         this.sb.out.length = 0;
+        if (this.sb.probeAt != null || this.sb.shortWait) {
+          this.sb.probeAt = null; this.sb.pending = false;
+          this.sb.probePauseAt = null;
+          this.sb.forced = false; this.sb.irqDue = false;
+        }
         this.sb.shortWait = false;
         // A reset is the documented way out of high-speed mode, and it is the
         // only way out of a block this card is reloading off the 8237's
@@ -4062,6 +4169,9 @@ class Machine {
     if (ah === 0x10 && al === 0x07) {       // read one palette register
       r.set('bx', (r.get('bx') & 0xFF) | ((this.vga.attr[r.get('bx') & 0x1F]) << 8));
       return true;
+    }
+    if (ah === 0x10 && al === 0x13 && this.videoMode !== 0x13) {
+      return selectPalettePage(this.vga.attr, r.get('bx'));
     }
     if (ah === 0x10 && al === 0x10) {       // set one DAC register
       this.dacWrites++;
@@ -4765,6 +4875,12 @@ class Machine {
 
   int21Call(ah, al, r) {
     switch (ah) {
+      // Disk reset flushes filesystem buffers without closing file handles.
+      // This namespace is write-through to the guest overlay: writes and
+      // directory changes are already visible, and there is no deferred disk
+      // cache to flush/invalidate. Keep handles, positions, cwd and searches.
+      case 0x0D: return true;
+      case 0x11: case 0x12: return fcbSearch(this, ah, r);
       case 0x4C: case 0x00: case 0x31: {
         // Exit, and -- AH=31h -- exit keeping memory. That distinction matters
         // as soon as EXEC exists: CATWALK.EXE runs a music player that goes
@@ -5041,6 +5157,11 @@ class Machine {
           }
         }
         if (!img) { r.setResultCf(true); r.set('ax', 2); return true; }   // not found
+        let parsed;
+        try { parsed = parseMz(img); } catch (error) {
+          if (!(error instanceof DosImageError)) throw error;
+          r.set('ax', 11); r.setResultCf(true); return true; // bad format
+        }
 
         // The child goes directly above the parent's IMAGE, not above the
         // parent's allocation: a loader stub declares max-alloc 0xFFFF, owns all
@@ -5073,25 +5194,23 @@ class Machine {
         const envParas = Math.ceil(envBytes / 16);
         
         // Check the minimum image/BSS footprint before any guest memory write.
-        const mz = img[0] === 0x4D && img[1] === 0x5A || img[0] === 0x5A && img[1] === 0x4D;
-        if (mz && img.length < 28) { r.setResultCf(true); r.set('ax', 11); return true; }
-        const imageSize = mz ? img.readUInt16LE(4) * 512 - (img.readUInt16LE(2) ? 512 - img.readUInt16LE(2) : 0) - img.readUInt16LE(8) * 16 : Math.min(img.length, 0xFEFE);
-        const minParas = mz ? 0x10 + Math.ceil(imageSize / 16) + img.readUInt16LE(10) : 0x1000;
-        if (imageSize < 0) { r.setResultCf(true); r.set('ax', 8); return true; }
+        const minParas = parsed ? 0x10 + Math.ceil(parsed.imageBytes / 16) + parsed.minAlloc : 0x1000;
         // allocTop is a high-water mark, not proof that memory above the
         // parent's image is unoccupied. AH48 allocations in lower free holes
         // remain live even when a held block pins that mark to the DOS ceiling.
         // Find a complete environment + PSP/image gap before writing any byte.
         const held = [...this.memBlocks].map(([seg, size]) => [seg - 1, seg + size])
           .sort((a, b) => a[0] - b[0]);
-        let start = frontier, ceiling = DEFAULT_ALLOC_TOP, found = false;
+        const memoryTop = Math.min(DEFAULT_ALLOC_TOP, Math.floor(this.mem.length / 16));
+        let start = frontier, ceiling = memoryTop, found = false;
         const required = envParas + 2 + minParas;
-        for (const [lo, hi] of [...held, [DEFAULT_ALLOC_TOP, DEFAULT_ALLOC_TOP]]) {
+        for (const [heldLo, heldHi] of [...held, [memoryTop, memoryTop]]) {
+          const lo = Math.min(heldLo, memoryTop), hi = Math.min(heldHi, memoryTop);
           if (hi <= start) continue;
           if (lo - start >= required) { ceiling = lo; found = true; break; }
           start = Math.max(start, hi);
         }
-        if (!found) { r.setResultCf(true); r.set('ax', 8); return true; }
+        if (!found) { r.set('ax', 8); r.setResultCf(true); return true; }
         const childEnv = start + 1;
         const pspSeg = childEnv + envParas + 1;
         const info = loadExe(this.mem, img, { loadSeg: pspSeg + 0x10, pspSeg });
@@ -5160,6 +5279,13 @@ class Machine {
         this.execStack.push({
           cs: r.ret.cs, ip: r.ret.ip, ss: r.get('ss'), sp: r.ret.sp,
           ds: r.get('ds'), es: r.get('es'), ax: 0,
+          // Successful EXEC returns through DOS termination, not the child's
+          // IRET flags. MS-DOS 4.0 CTRLC.ASM reset_return uses F202h; FreeDOS
+          // task.c return_user uses 0200h. CF/TF/DF and arithmetic status are
+          // clear, IF is set. Keep bit 1 fixed for our 386, without the 8086's
+          // reserved high bits. Parent arithmetic flags are not preserved by
+          // this DOS path either; copying all parent flags would revive TF.
+          flags: 0x202,
           allocTop: this.allocTop, imageTop: this.imageTop, psp: this.curPsp,
         });
         this.curPsp = pspSeg;
@@ -5397,7 +5523,8 @@ class Machine {
           this.driveDirectories.set(this.currentDrive, this.currentDirectory);
           this.currentDirectory = this.driveDirectory(drive); this.currentDrive = drive;
         }
-        r.set('ax', (r.get('ax') & 0xFF00) | 3); return true;
+        const last = Math.max(2, ...(this.isoVolumes?.keys() || []));
+        r.set('ax', (r.get('ax') & 0xFF00) | (last + 1)); return true;
       }
       case 0x39: {                              // mkdir, writable C: only
         const key = this.resolvePath(this.guestPath(r), true);
@@ -5487,6 +5614,7 @@ class Machine {
         const dirKey = this.resolvePath(directory, true);
         if (!/[\\/]$/.test(directory) || dirKey === null || !this.isDirectory(dirKey)
           || this.guestRd(at + directory.length) !== 0) return fail(3);
+        if (this.readOnlyKey(dirKey)) return fail(5);
         const attr = r.get('cx') & 0xFFFF;
         if (attr & ~0x27) return fail(5);
         const end = at + directory.length + 9; // eight-character name and NUL
@@ -5569,6 +5697,7 @@ class Machine {
         const from = parse(source), to = parse(target);
         if (!from || !to) return fail(3);
         if (from.drive !== to.drive) return fail(17);
+        if (from.key !== null && this.isoVolumes?.has(this.keyDrive(from.key))) return fail(5);
         if (from.drive !== 'C' || !from.key || !to.key || !this.parentExists(from.key) || !this.parentExists(to.key)) return fail(3);
         const rec = this.tempFiles.get(from.key);
         // Corpus files are read-only. A rename must never mutate the host or
@@ -5585,7 +5714,7 @@ class Machine {
       case 0x36: {                              // free disk space
         const requested = r.get('dx') & 255, drive = requested ? requested - 1 : this.currentDrive;
         if (!this.driveAvailable(drive)) { r.set('ax', 0xffff); return true; }
-        const volume = this.floppyVolumes.get(drive);
+        const volume = this.dataVolume(drive);
         if (volume) {
           r.set('ax', volume.spc); r.set('cx', volume.bps); r.set('dx', volume.clusters); r.set('bx', volume.freeClusters); return true;
         }
@@ -5645,7 +5774,10 @@ class Machine {
         if (!f) { r.setResultCf(true); r.set('ax', 6); return true; }
         const off = (((r.get('cx') & 0xFFFF) << 16) | (r.get('dx') & 0xFFFF)) | 0;
         const from = al === 1 ? f.pos : (al === 2 ? f.buf.length : 0);
-        f.pos = Math.max(0, Math.min(f.buf.length, from + off));
+        if (f.isoData) {
+          if (al > 2 || from + off < 0 || from + off > 0xffffffff) { r.setResultCf(true); r.set('ax', 1); return true; }
+          f.pos = from + off; // DOS permits seeks past EOF; reads return zero.
+        } else f.pos = Math.max(0, Math.min(f.buf.length, from + off));
         r.set('ax', f.pos & 0xFFFF);
         r.set('dx', (f.pos >>> 16) & 0xFFFF);
         r.setResultCf(false);
@@ -5665,7 +5797,9 @@ class Machine {
         const p = this.hostKey(key);
         if (!p && !rec && !directory && !entry) { r.setResultCf(true); r.set('ax', 2); return true; }
         if (al !== 0) { r.setResultCf(true); r.set('ax', 5); return true; }
-        r.set('cx', directory ? 0x10 : entry ? entry.attributes : 0x20);
+        const volume = directory && this.dataVolume(this.keyDrive(key));
+        const directoryAttrs = volume?.kind === 'iso9660' ? (volume.directoryMetadata.get(key.slice(3))?.attributes ?? 0x11) : 0x10;
+        r.set('cx', directory ? (directoryAttrs ?? 0x10) : entry ? entry.attributes : 0x20);
         r.setResultCf(false);
         return true;
       }
@@ -5855,7 +5989,11 @@ class Machine {
         r.setResultCf(false);
         return true;
       }
-      case 0x1A: this.dta = this.lin(r, 'ds', r.get('dx')); return true;
+      case 0x1A:
+        this.dta = this.lin(r, 'ds', r.get('dx'));
+        this.fcbDta = { at: this.dta, offset: r.get('dx') & 0xffff,
+          realLinear: ((r.get('ds') & 0xffff) * 16) + (r.get('dx') & 0xffff) };
+        return true;
       case 0x2F:                                // get DTA -> ES:BX
         r.set('es', (this.dtaAddr() >> 4) & 0xFFFF); r.set('bx', this.dtaAddr() & 0xF);
         return true;
@@ -5916,6 +6054,7 @@ class Machine {
   // there" and the answer is AL=80h; AX=4310 hands back the far pointer the
   // program will CALL for everything after that.
   int2f(ah, al, r) {
+    if (ah === 0x15) return int2fMscdex(this, al, r);
     if (ah === 0x43) {
       if (al === 0x00) { r.set('ax', (r.get('ax') & 0xFF00) | 0x80); return true; }
       if (al === 0x10) {
@@ -6207,21 +6346,48 @@ class Machine {
   int33(r) {
     const fn = r.get('ax') & 0xFFFF;
     switch (fn) {
-      case 0x00: r.set('ax', 0xFFFF); r.set('bx', 2); return true;   // present, 2 buttons
+      case 0x00: case 0x21:
+        require('./mouse-callback').install(this.mouse, 0, 0, 0);
+        this.mouse.dx = this.mouse.dy = 0;
+        this.mouse.pressed.fill(0); this.mouse.released.fill(0);
+        delete this.mouse.rangeX; delete this.mouse.rangeY;
+        this.mouse.ratioX = 8; this.mouse.ratioY = 16;
+        r.set('ax', 0xFFFF); r.set('bx', 2); return true; // present, 2 buttons
       case 0x01: case 0x02: return true;                             // show/hide cursor
+      case 0x0C: case 0x14: {
+        const old = require('./mouse-callback').install(this.mouse, r.get('cx'), r.get('es'), r.get('dx'));
+        if (fn === 0x14) { r.set('cx', old.mask); r.set('es', old.segment); r.set('dx', old.offset); }
+        return true;
+      }
       case 0x03:
         this.mouse.reads++;
         r.set('bx', this.mouse.buttons);
         r.set('cx', this.mouse.x); r.set('dx', this.mouse.y);
         return true;
-      case 0x04: this.mouse.x = r.get('cx'); this.mouse.y = r.get('dx'); return true;
+      case 0x04: {
+        const clamp = (v, range) => range ? Math.max(range[0], Math.min(range[1], v)) : v;
+        this.mouse.x = clamp(r.get('cx'), this.mouse.rangeX);
+        this.mouse.y = clamp(r.get('dx'), this.mouse.rangeY);
+        return true;
+      }
       case 0x0B:
         // Read motion counters. These are DELTAS and are cleared by the read,
         // which is what makes a "move the mouse to fly" demo work at all.
         r.set('cx', this.mouse.dx & 0xFFFF); r.set('dx', this.mouse.dy & 0xFFFF);
         this.mouse.dx = 0; this.mouse.dy = 0;
         return true;
-      case 0x07: case 0x08: case 0x0F: case 0x10: return true;       // ranges, mickeys
+      case 0x07: case 0x08: {
+        const range = [r.get('cx'), r.get('dx')].sort((a, b) => a - b);
+        const axis = fn === 7 ? 'x' : 'y';
+        this.mouse[fn === 7 ? 'rangeX' : 'rangeY'] = range;
+        this.mouse[axis] = Math.max(range[0], Math.min(range[1], this.mouse[axis]));
+        return true;
+      }
+      case 0x0F:
+        if (r.get('cx')) this.mouse.ratioX = r.get('cx');
+        if (r.get('dx')) this.mouse.ratioY = r.get('dx');
+        return true;
+      case 0x10: return true;
       // Button press/release info: how many transitions since the last ask, and
       // where the last one was. BL selects the button. The counters are real --
       // a program that polls these instead of AX=03h is asking for the clicks
@@ -6252,15 +6418,13 @@ class Machine {
         }
         return true;
       }
-      // Cursor shape (09h graphics, 0Ah text), event handlers (0Ch, 14h), light
-      // pen (0Dh/0Eh), speed and sensitivity (0Bh's siblings 13h, 1Ah, 1Bh),
-      // and the software reset 21h. None of them has hardware behind it here:
-      // there is no drawn cursor and no interrupt to call a handler from, so
+      // Cursor shape (09h graphics, 0Ah text), light
+      // pen (0Dh/0Eh), speed and sensitivity (13h, 1Ah, 1Bh).
+      // These have no drawn cursor behind them here, so
       // "accepted, nothing to do" is what this driver actually does.
-      case 0x09: case 0x0A: case 0x0C: case 0x0D: case 0x0E:
-      case 0x13: case 0x14: case 0x1A: case 0x1B:
+      case 0x09: case 0x0A: case 0x0D: case 0x0E:
+      case 0x13: case 0x1A: case 0x1B:
         return true;
-      case 0x21: r.set('ax', 0xFFFF); r.set('bx', 2); return true;
       // Driver version, type and IRQ. 8.00 is late enough that nothing in this
       // corpus asks for a function newer than what is above.
       case 0x24: r.set('bx', 0x0800); r.set('cx', 0x0400); return true;
