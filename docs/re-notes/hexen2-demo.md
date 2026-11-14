@@ -42,7 +42,9 @@ and runtime behaviour only.
 
 No notice since the seeded `Flag`; the main menu is up by about b600. Enter at
 900/1000/1100/1200/1300 goes Single Player → New Mission → class (Paladin) →
-difficulty. The first load then shows "Meshing models/…" until about b7500:
+difficulty. Send each Enter as a `keydown:13` / `keyup:13` pair 20 batches
+apart: bare keydowns open Single Player and then stall (2026-11-13). Gameplay
+is up by b8100; `scratch/runs/20261113-hexen2-site-shot/` is the site shot. The first load then shows "Meshing models/…" until about b7500:
 GLQuake-style triangle-strip building for every model, very slow under
 emulation (its `.ms2` cache would make later loads faster if it persisted).
 First person as the Paladin by b8000; Right turns, Up walks. Evidence:

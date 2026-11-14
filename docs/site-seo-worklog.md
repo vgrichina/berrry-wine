@@ -55,6 +55,12 @@ Link policy, decided with the site owner: a store link whenever the game is sold
 
 Keeping it true: `tools/site-compat.json` is hand-maintained, nothing re-derives it from the notes. When an RE note moves a title (new route, new edition, a fix or a regression), edit that title's edition row in the same commit: `status`, `statusDate`, `works`, `issues`. A title added to `DESKTOP_APPS` gets its Play button on the next generate without a JSON change; a new title needs a new entry. Statuses that rest on CLI runs only, never a browser run (Outlaws, Nox, Die Hard: Nakatomi Plaza), and Solitaire's unconfirmed iPhone debug box are the first rows to re-check. The list names local-only titles (Half-Life, Caesar III) with no Play button; it is a status page, not launch material.
 
+## Hexen II and Half-Life pages (2026-11-13)
+
+Both games reached the public desktop with the fallback blurb, no screenshot and a "How it runs here" that credited the software GDI with every pixel. Each now has a blurb sized for the "Plays in your browser" description tail, an "About the game" section (new optional `_about` in `tools/site-app-blurbs.json`: what the game is, what this copy contains, what the site sets up, and any wait the player should expect), a controls answer from the shipped bindings (`valve/default.cfg`; `lib/hexen2-modern-controls.ini`) and a sound answer from evidence: Hexen II from a `--trace-api` run on DirectSound/MCI (effects stream, the cdaudio open fails, so no music), Half-Life from the 2026-10-29 audio-window run in its RE note. Ids in the new `_opengl` list (both, plus the two Quake demos) say their 3D goes through the OpenGL frontend. The data-file count now includes a `localFileManifest`'s files, so Hexen II reads 16, not 2. Hosted titles' compat pages already redirect to the app page, which carries the compat table and the store links.
+
+Screenshots: Half-Life is a crop of the reviewed browser capture `scratch/runs/20261028-uplink-release-gl/gameplay.png`; Hexen II was shot headless (`scratch/runs/20261113-hexen2-site-shot/`, `--headless-gl --batch-size=50000`, Enter as keydown/keyup pairs at 900-1300, gameplay at b8100). Bare keydowns only open the first submenu.
+
 ## Remaining
 
 Ranked by search value per hour. The first two need a machine that is not running other sweeps; the rest are the site owner's.
