@@ -59,6 +59,12 @@ function fixtureWorker() {
     },
     run() {
       words[DIAG.runs]++;
+      // This export fixture tests shared notification flags, not x86 RET.
+      // End its root through the explicit terminal yield; manufactured EIP=0
+      // without a consuming RET record must not certify ThreadProc return.
+      if (workerData.mode === 'notifications' && state.eip === 0x12345) {
+        state.eip = 0; state.yield_reason = 2; state.last_run_halt = 3; return;
+      }
       if (workerData.mode === 'notifications' && (state.eip === 0x21000 || state.eip === 0x31000)) {
         const reason = d.getUint32(state.esp + 8, true);
         assert(reason === 2 || reason === 3, 'real Worker builds a thread notification frame');
