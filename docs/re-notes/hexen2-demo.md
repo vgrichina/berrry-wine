@@ -50,5 +50,14 @@ emulation (its `.ms2` cache would make later loads faster if it persisted).
 First person as the Paladin by b8000; Right turns, Up walks. Evidence:
 `scratch/runs/20261011T0830Z-hexen2_demo-gameplay-claude1863`.
 
+`-width 1024` (via `?app-args=-width%201024`), 2026-11-13: the CLI and a
+headful Chrome on the real GPU both reach the title menu at 1024x768. Headless
+Chrome with `--gpu` (SwiftShader) loses the whole tab ("Target closed", no JS
+error) within about 1,400 slices of the 1024x768 canvas resize, in any
+viewport; the same probe at 640 runs. Without `--gpu` there is no WebGL and
+the game stops at "wglCreateContext failed", as at any size. So it is the
+software GPU giving out at 1024, not the emulator; untested on a machine whose
+Chrome falls back to SwiftShader. Evidence: `scratch/runs/20261113-hexen2-1024/`.
+
 Not looked at: the browser, combat, sound, the software build, why meshing
 is so slow (worth a profile; Kingpin's level load has the same shape).
