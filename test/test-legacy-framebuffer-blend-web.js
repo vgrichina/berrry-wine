@@ -309,7 +309,10 @@ async function runtime() {
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   const config={...base.plan(),immediate:true,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
-    factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
+    factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
+    // The dependent oracle is the bit-exact per-primitive native16 storage
+    // contract; production keeps full colour (lib/d3dim-gpu.js exactNative16).
+    exactNative16:dependent};
   const evidence={startedAt:new Date().toISOString(),source:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim(),
     fixture:hash(fs.readFileSync(__filename)),calc:hash(pe),results:[],controls:[],
     productionJS:Object.fromEntries(fs.readdirSync(path.join(ROOT,'lib')).filter(n=>/\.(js|json)$/.test(n)).map(n=>['lib/'+n,hash(fs.readFileSync(path.join(ROOT,'lib',n)))]))};

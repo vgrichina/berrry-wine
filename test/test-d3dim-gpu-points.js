@@ -3,16 +3,18 @@
 const assert = require('assert');
 const { D3DIMGpu, OPCODES } = require('../lib/d3dim-gpu');
 
-function fixture({ bpp = 16, format = 1, clip = null, boundedReadback = true } = {}) {
+// Depth is off unless asked for: d3dim_gpu_describe reports ZENABLE 0 for a
+// device without depth, and the other states here must still be ignored.
+function fixture({ bpp = 16, format = 1, clip = null, boundedReadback = true, depth = null } = {}) {
   const memory = new ArrayBuffer(65536), dv = new DataView(memory), draws = [], reads = [];
   const desc = { rt: 4096, width: 8, height: 8, dib: 32768, bpp, format, pitch: 8 * bpp / 8,
     clip, texture: 1, texDib: 24576, texWidth: 2, texHeight: 2, texPitch: 8,
-    zenable: 1, zwrite: 1, zfunc: 1, blend: 1, srcblend: 5, dstblend: 6,
-    fog: 1, alphaFunc: 1, alphaRef: 255, cull: 3 };
+    zenable: 0, zwrite: 1, zfunc: 1, blend: 1, srcblend: 5, dstblend: 6,
+    fog: 1, alphaFunc: 1, alphaRef: 255, cull: 3, ...(depth || {}) };
   const target = { ...desc, check: false, textureKeys: new Set(), device: {
     draw: d => draws.push(d), gpu: { bindImplicitTarget() {}, updateColorResource() {}, gl: { RGBA: 1, UNSIGNED_BYTE: 2,
       readPixels: (...args) => { reads.push(args.slice(0, 4)); args[6].fill(255); } } } } };
-  const gpu = new D3DIMGpu({ getMemory: () => memory,
+  const gpu = new D3DIMGpu({ getMemory: () => memory, exactNative16: true,
     getExports: () => ({ guest_to_wasm: a => a }), createCanvas: () => null, boundedReadback });
   // This unit isolates point lowering from WebGL. The browser companion
   // exercises native storage; retain its per-primitive boundary here.
@@ -22,9 +24,9 @@ function fixture({ bpp = 16, format = 1, clip = null, boundedReadback = true } =
   gpu._texture = () => { throw new Error('points must not decode textures'); };
   const draw = points => {
     [1, 1, 3, 8192, points.length].forEach((v, i) => dv.setUint32(12288 + i * 4, v, true));
-    points.forEach(([x, y, color = 0x00123456], i) => {
+    points.forEach(([x, y, color = 0x00123456, z = NaN], i) => {
       const p = 8192 + i * 32;
-      [x, y, NaN, -1].forEach((v, j) => dv.setFloat32(p + j * 4, v, true));
+      [x, y, z, -1].forEach((v, j) => dv.setFloat32(p + j * 4, v, true));
       dv.setUint32(p + 16, color, true);
     });
     return gpu.call(OPCODES.DRAW, 12288);
@@ -84,4 +86,21 @@ assert.equal(alpha.draw([0,127,128,255].map((a,i)=>[i*2,2,(a*0x1000000+0x4a92d3)
 assert.deepEqual(alpha.draws.filter((_,i)=>i%2===0).map(d=>new DataView(d.vertices.buffer,d.vertices.byteOffset,d.vertices.byteLength).getUint32(16,true)),
   [0x00d3924a,0x7fd3924a,0x80d3924a,0xffd3924a], 'A1 point lowering retains complete diffuse alpha');
 assert(alpha.draws.every(d=>!d.state.blend&&!d.state.zenable&&!d.state.zwrite&&!d.fixedFunction.alphaTest));
+// ZENABLE: points are depth-tested and written like triangles. Thief II's
+// sky stars (sz=0.99995, LESSEQUAL, ZWRITE) must not show through walls.
+// NaN depth is dropped, as the software depth test rejects it; other depth
+// clamps to [0,1]. Blend, fog and alpha test are still ignored.
+const deep = fixture({ depth: { zenable: 1, zfunc: 4, zwrite: 1 } });
+assert.equal(deep.draw([[1, 1, 0x00ff0000, 0.99995], [3, 3, 0x0000ff00, NaN],
+  [5, 5, 0x000000ff, 2], [6, 1, 0x00ffffff, -1]]), 1);
+const deepBytes = new Uint8Array(deep.draws.reduce((n, d) => n + d.vertices.byteLength, 0));
+deep.draws.reduce((o, d) => (deepBytes.set(d.vertices, o), o + d.vertices.byteLength), 0);
+const dz = new DataView(deepBytes.buffer);
+assert.equal(deepBytes.length, 3 * 6 * 32, 'NaN-depth point dropped');
+assert.deepEqual([0, 6, 12].map(n => dz.getFloat32(n * 32 + 8, true)), [Math.fround(0.99995), 1, 0]);
+assert(deep.draws.every(d => d.state.zenable === true && d.state.zwrite === true && d.state.zfunc === 4
+  && !d.state.blend && !d.fixedFunction.alphaTest && !d.fixedFunction.fog));
+const readOnly = fixture({ depth: { zenable: 1, zfunc: 2, zwrite: 0 } });
+assert.equal(readOnly.draw([[1, 1, 0x00ff0000, 0.5]]), 1);
+assert(readOnly.draws.every(d => d.state.zenable === true && d.state.zwrite === false && d.state.zfunc === 2));
 console.log('PASS D3DIM point lowering, clipping, immutable batches, state independence and explicit fallbacks');

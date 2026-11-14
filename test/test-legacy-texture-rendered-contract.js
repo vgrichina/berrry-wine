@@ -100,7 +100,7 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
         manager=new RenderWorker.Manager({module,memory,sigs,imageBase:config.imageBase,
           workerUrl:'/lib/d3d-render-worker.js',sourceVersion:'legacy-texture-public-com',
           reclaimHeap:head=>raw('d3d_render_adopt_free_list',head)});
-        await manager.ready;port=manager.createEndpoint(options);await port.ready;
+        await manager.ready;port=manager.createEndpoint(config.exactNative16===true?{...options,exactNative16:true}:options);await port.ready;
         port.addEventListener('message',event=>{if(event.data.t==='stats')lastStats=event.data;});
         const post=port.postMessage.bind(port);
         port.postMessage=message=>{
@@ -119,7 +119,7 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     host.memory=memory;host.gpu_gl_call=(...args)=>gpu?gpu.call(...args):0;
     e=new WebAssembly.Instance(module,{host}).exports;
     raw=async(name,...args)=>e[name](...args);
-    if(mode==='webgl')gpu=new D3DIMGpu.D3DIMGpu({getExports:()=>e,getMemory:()=>memory.buffer,
+    if(mode==='webgl')gpu=new D3DIMGpu.D3DIMGpu({exactNative16:config.exactNative16===true,getExports:()=>e,getMemory:()=>memory.buffer,
       createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;document.body.append(c);return c;},
       onError:s=>evidence.logs.push(s)});
   }

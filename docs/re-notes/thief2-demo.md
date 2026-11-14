@@ -398,3 +398,21 @@ Box `bx_ef3fprsg` was normally archived at 07:41:00.506Z, stop
 Initial expiry was 08:12:07.684Z; current expiry is null. The fixed independent
 watchdog was prearmed before creation and exited unfired with actual wait zero
 and both EOFs. No workers, restart, resume, deletion, or deployment.
+
+## 2026-11-14: "white sparkles" on walls were sky stars drawn without depth
+
+The scattered grey/white dots over the opening arch's ceiling and walls are
+the mission's 19 sky stars, not rasterization cracks. The game draws them as
+one TL `POINTLIST` (19 vertices, sz=0.999949, rhw 0.0041, colours
+0x7b7b7b..0xdddddd) **after** ~1,600 world draws per frame, with ZENABLE=1,
+ZFUNC=LESSEQUAL, ZWRITE=1, and relies on the walls' depth to hide them. Both
+D3DIM point paths (WebGL `_drawPoints` and WAT software) ignored depth and
+plotted 2x2 dots, so all 19 showed through geometry; they are static across
+frames (snow would move), which is the quick tell. Fixed by depth-testing TL
+points (`$d3dim_plot_point`, `_drawPoints`); the 2x2 footprint is unchanged.
+Before: `scratch/runs/20261114-thief2-sparkle-gpu3/` (20 dots); state probe:
+`20261114-thief2-sparkle-points-probe3/`; after: `20261114-thief2-sparkle-fix/`
+(2 stars left, both in the visible sky). Route: clicks 310,240@400,
+330,238@800, 392,444@1400, 530,456@3400 and @3700 with --batch-size=100000;
+gameplay is on screen by ~3800. The software rasterizer additionally leaves a
+few single coloured pixels near the far window (not present on WebGL).

@@ -6400,7 +6400,20 @@
       (local.set $row (i32.add (local.get $row) (i32.const 1)))
       (br $rlp))))
 
+  ;; Depth-tested rect fill. Like $viewport_fill_rect, the RGB contract forces
+  ;; opaque native16 storage; $viewport_fill_rect_z_rgba stores the complete
+  ;; diffuse RGBA, as POINTLIST does ($d3dim_plot_point).
   (func $viewport_fill_rect_z
+    (param $rt_entry i32) (param $zbuf_guest i32)
+    (param $x i32) (param $y i32) (param $w i32) (param $h i32)
+    (param $zval f32) (param $color i32) (param $zfunc i32) (param $zwrite i32)
+    (call $viewport_fill_rect_z_rgba (local.get $rt_entry) (local.get $zbuf_guest)
+      (local.get $x) (local.get $y) (local.get $w) (local.get $h) (local.get $zval)
+      (select (i32.or (local.get $color) (i32.const 0xFF000000)) (local.get $color)
+        (i32.eq (load.field DxObject bpp (local.get $rt_entry)) (i32.const 16)))
+      (local.get $zfunc) (local.get $zwrite)))
+
+  (func $viewport_fill_rect_z_rgba
     (param $rt_entry i32) (param $zbuf_guest i32)
     (param $x i32) (param $y i32) (param $w i32) (param $h i32)
     (param $zval f32) (param $color i32) (param $zfunc i32) (param $zwrite i32)
@@ -6410,7 +6423,7 @@
     (local $zpitch i32) (local $zbpp i32) (local $zraw i32) (local $pass i32)
     (local $ztest f32)
     (if (i32.eqz (local.get $zbuf_guest)) (then
-      (call $viewport_fill_rect
+      (call $viewport_fill_rect_rgba
         (local.get $rt_entry) (local.get $x) (local.get $y)
         (local.get $w) (local.get $h) (local.get $color))
       (return)))
@@ -6460,7 +6473,7 @@
     (call $d3dim_exec_extent_draw (local.get $rt_entry)
       (local.get $x) (local.get $y) (local.get $w) (local.get $h))
     (local.set $px16 (call $d3dim_encode_surface_pixel (local.get $rt_entry)
-      (i32.or (local.get $color) (i32.const 0xFF000000)) (i32.const 16)))
+      (local.get $color) (i32.const 16)))
     (local.set $row (i32.const 0))
     (block $rdone (loop $rlp
       (br_if $rdone (i32.ge_s (local.get $row) (local.get $h)))
@@ -8655,16 +8668,13 @@
               (local.set $i (i32.add (local.get $i) (i32.const 1)))
               (br $vlp)))))))
     (if (i32.eq (local.get $primType) (i32.const 1)) (then
-      ;; POINTLIST — keep prior dot-plot behavior
+      ;; POINTLIST — 2x2 dots, depth-tested ($d3dim_plot_point)
       (local.set $i (i32.const 0))
       (block $pdone (loop $plp
         (br_if $pdone (i32.ge_u (local.get $i) (local.get $dwVertexCount)))
         (local.set $v0 (i32.add (local.get $v_wa) (i32.mul (local.get $i) (call $d3dim_tl_stride))))
-        (call $viewport_fill_rect_rgba (local.get $rt)
-          (call $d3dim_coord_i (f32.load (local.get $v0)))
-          (call $d3dim_coord_i (f32.load (i32.add (local.get $v0) (i32.const 4))))
-          (i32.const 2) (i32.const 2)
-          (i32.load (i32.add (local.get $v0) (i32.const 16))))
+        (call $d3dim_plot_point (local.get $this) (local.get $rt) (local.get $state_guest)
+          (local.get $v0))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br $plp)))
       (return)))
@@ -9152,11 +9162,40 @@
           (local.get $state_guest) (local.get $vbase_wa) (local.get $ibase_wa)
           (local.get $dwVertexCount) (local.get $vtxType) (local.get $idx0) (local.get $t0)))
       (then (return)))
+    (call $d3dim_plot_point (local.get $this) (local.get $rt) (local.get $state_guest)
+      (local.get $t0)))
+
+  ;; One TL POINTLIST vertex: the 2x2 diffuse dot, depth-tested and written
+  ;; like a triangle under ZENABLE/ZFUNC/ZWRITEENABLE (state +284/+348/+312).
+  ;; Thief II plots its sky stars last at sz=0.99995 with depth on and relies
+  ;; on the walls to hide them; plotting without the test sprinkled them over
+  ;; the brickwork. The D3DIM GPU executor's _drawPoints follows this rule.
+  (func $d3dim_plot_point
+    (param $this i32) (param $rt i32) (param $state_guest i32) (param $v i32)
+    (local $zbuf i32) (local $zfunc i32) (local $zwrite i32)
+    (if (local.get $state_guest) (then
+      (if (call $gl32 (i32.add (local.get $state_guest) (i32.const 284))) (then
+        (local.set $zbuf (call $d3dim_ensure_zbuffer (local.get $this)))
+        (local.set $zfunc (call $gl32 (i32.add (local.get $state_guest) (i32.const 348))))
+        (local.set $zwrite (call $gl32 (i32.add (local.get $state_guest) (i32.const 312))))))))
+    (if (i32.eqz (local.get $zfunc)) (then (local.set $zfunc (i32.const 4))))
+    ;; ALWAYS without a write is no depth work, as for triangles.
+    (if (i32.and (i32.eq (local.get $zfunc) (i32.const 8)) (i32.eqz (local.get $zwrite)))
+      (then (local.set $zbuf (i32.const 0))))
+    (if (local.get $zbuf) (then
+      (call $viewport_fill_rect_z_rgba (local.get $rt) (local.get $zbuf)
+        (call $d3dim_coord_i (f32.load (local.get $v)))
+        (call $d3dim_coord_i (f32.load (i32.add (local.get $v) (i32.const 4))))
+        (i32.const 2) (i32.const 2)
+        (f32.load (i32.add (local.get $v) (i32.const 8)))
+        (i32.load (i32.add (local.get $v) (i32.const 16)))
+        (local.get $zfunc) (i32.ne (local.get $zwrite) (i32.const 0)))
+      (return)))
     (call $viewport_fill_rect_rgba (local.get $rt)
-      (call $d3dim_coord_i (f32.load (local.get $t0)))
-      (call $d3dim_coord_i (f32.load (i32.add (local.get $t0) (i32.const 4))))
+      (call $d3dim_coord_i (f32.load (local.get $v)))
+      (call $d3dim_coord_i (f32.load (i32.add (local.get $v) (i32.const 4))))
       (i32.const 2) (i32.const 2)
-      (i32.load (i32.add (local.get $t0) (i32.const 16)))))
+      (i32.load (i32.add (local.get $v) (i32.const 16)))))
 
   (func $d3dim_draw_indexed_primitive
     (param $this i32) (param $primType i32) (param $vtxType i32)

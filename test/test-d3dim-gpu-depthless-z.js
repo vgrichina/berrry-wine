@@ -32,6 +32,7 @@ function run(zenable, zwrite, zs, primitive = 4, vertexType = 3) {
   dv.setUint32(CALL + 16, zs.length, true);
   const draws = [];
   const gpu = new D3DIMGpu({
+    exactNative16: true,
     getExports: () => ({ d3dim_gpu_describe: () => DESC, guest_to_wasm: a => a }),
     getMemory: () => memory,
     createCanvas: () => null,

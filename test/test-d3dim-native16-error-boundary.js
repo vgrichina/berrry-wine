@@ -15,7 +15,7 @@ for (const [primitive, count, blend] of [[1,7,true],[2,5,true],[4,9,true],[4,67,
     const g={gl,renderHeight:48,_stateValues:state,bindImplicitTarget(){},bindTexture(){},
       setScissor(){},setCapability(){},setColorMask(){},setViewport(){},setUniform(){},draw(){}};
     const errors=[];
-    const executor=new D3DIMGpu({getExports:()=>({}),getMemory:()=>new ArrayBuffer(0),onError:e=>errors.push(e)});
+    const executor=new D3DIMGpu({exactNative16:true,getExports:()=>({}),getMemory:()=>new ArrayBuffer(0),onError:e=>errors.push(e)});
     const target={bpp:16,width:64,height:48,format:1,nativeStorage:{texture:{},program:{},buffer:{}},
       device:{gpu:g,draw(){draws++;events.push('draw');}}};
     executor._markColorDirty=()=>events.push('success');

@@ -226,6 +226,7 @@ function gpu(wrap, us) {
   dv.setUint32(CALL + 16, us.length, true);
   const draws = [], submissions = [];
   const exec = new D3DIMGpu({
+    exactNative16: true,
     getExports: () => ({ d3dim_gpu_describe: () => DESC, guest_to_wasm: a => a }),
     getMemory: () => memory,
     createCanvas: () => null,

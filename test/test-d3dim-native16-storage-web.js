@@ -41,7 +41,7 @@ const puppeteer = require('puppeteer');
           dv.setUint32(rt+20,dib,true);
           for (let i = 0; i < pitch * height; i++) u8[dib+i] = (i * 73 + 19) & 255;
           const errors = [], copies = [], frames = [];
-          const gpu = new D3DIMGpu.D3DIMGpu({ webglVersion: version, batchDraws,
+          const gpu = new D3DIMGpu.D3DIMGpu({ webglVersion: version, batchDraws, exactNative16: true,
             getMemory: () => memory, getExports: () => ({ guest_to_wasm: a => a,
               d3dim_gpu_describe: () => desc, d3dim_gpu_surface_fmt: () => format,
               d3dim_gpu_decode_texture: () => 98304 }),
