@@ -31,6 +31,15 @@ and **zero** function 0Bh motion-counter reads. The complete counts are in
 Changing the public mouse state therefore cannot reach this original game's
 callback-driven cursor and button handling.
 
+`callback-blocker.cjs` reproduces that missing behavior with a generated real
+COM, independently of TIM's packed program. It registers mask 7 and a valid
+far handler at `0100:0124` before the controlled event. The ordinary mouse
+event is delivered, with one press and one release and no held button left.
+The handler flag never changes: the guest exits through its failure path with
+code 1 after 196,614 dispatches. This is an expected diagnostic failure,
+not a passing callback implementation. Its watchdog is closed and absent;
+`callback-blocker.json` records the fixture/module hashes and input binding.
+
 An exploratory host-adapter repair supplied relative motion as well as
 absolute position. A generated real DOS COM demonstrates a genuine polling
 defect: the previous adapter fails the nonzero motion check, the repair passes,
