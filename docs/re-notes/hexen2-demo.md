@@ -31,7 +31,8 @@ and runtime behaviour only.
   `LoadLibrary("opengl32.dll")` reaches our GL. (Like Heretic II and Kingpin,
   that load answers `0x00400000`, the exe's own handle; harmless so far.)
   It opens with an informational OK box ("GLHexen is a special, accelerated
-  version…").
+  version…") only while `HKLM\Software\Hexen2` `Flag` (REG_BINARY) is
+  absent, writing it as it shows; the registry seeds `Flag` so it never shows.
 - **`h2.exe`** (software) loads SciTech WinDirect / PM Pro (`wdir32.dll`,
   `pmpro32.dll`, with 16-bit partners `wdir16.dll`/`pmpro16.dll`); both
   stop with MessageBox "Unable to link to KERNEL32.DLL!", presumably the
@@ -39,7 +40,7 @@ and runtime behaviour only.
 
 ## Route (headless, `--batch-size=50000`, `--headless-gl`)
 
-Enter at 50 dismisses the notice; the main menu is up by about b600. Enter at
+No notice since the seeded `Flag`; the main menu is up by about b600. Enter at
 900/1000/1100/1200/1300 goes Single Player → New Mission → class (Paladin) →
 difficulty. The first load then shows "Meshing models/…" until about b7500:
 GLQuake-style triangle-strip building for every model, very slow under

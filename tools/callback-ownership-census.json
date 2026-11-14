@@ -30,7 +30,8 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "0cccb6b08bc69fac6cbf260fee8a6959d168287baa760f0dbb3807dd23b90d4d",
+      "sha256": "022557506e95a07f501c3397cd409e240a8420b0bae350b3ce530edd62cbe1e7",
+      "hexen2GlWarningFlagReview20261113": "Hexen II demo seeds HKLM Software\\Hexen2 Flag via startupRegistry so the GLHexen notice is skipped; data only, no callback ownership change",
       "hexen2DesktopPublishReview20261113": "Hexen II demo moves from LOCAL_CANDIDATE_APPS to DESKTOP_APPS; list membership only, no callback ownership change",
       "hexen2ModernControlsReview20261113": "Hexen II demo gains Quake-style config/autoexec mounts, relativeMouse and WASD touch layout; no callback ownership change",
       "hexen2ModernControlsReview20261113": "Hexen II demo gains Quake-style config/autoexec mounts, relativeMouse and WASD touch layout; no callback ownership change",
