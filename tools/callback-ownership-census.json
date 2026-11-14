@@ -202,7 +202,8 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "09065127a4a659380ee65f6289198d7ab9a501e64de857e9ce3c94335fc627aa",
+      "sha256": "66617a62811b5048f178c0c647da5925de234b8387dbf0b7879794472f134c79",
+      "gpuStreamV2Review20261114": "2026-11-14 GPU stream v2: glide_submit/glide_batch replaced by gpu_stream_kick(ring, mode), which drains a WAT-written ring in shared memory into an executor; Glide bridge also receives the --gpu-stream-dump path. Frames reach the compositor exactly as before; no guest invocation, callback owner, continuation or retained guest reference added.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "windowLookupRetirementReview20261112": "Native register_dialog_frame publications retain the calling context's captured process incarnation, just like create_window/dialog_loaded. The existing instance/memory/receiver and WND generation identity remain unchanged. FindWindow excludes the publication once that process exits, before export queries. Original TR2 owner inspection identified this separate native-popup publication path; actualHost regression covers it alongside surface-less WND trees. No guest invocation or continuation change; broader callback ownership remains pending.",

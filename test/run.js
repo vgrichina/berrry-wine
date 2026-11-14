@@ -184,8 +184,13 @@ const D3D9_PROGRAMMABLE = hasFlag('d3d9-programmable');
 // the surface like any DX primary. The browser twin is ?gl-renderer=software.
 const GL_RENDERER = getArg('gl-renderer', null);
 const GLIDE_RENDERER = getArg('glide-renderer', 'webgl');
-if (!['software', 'webgl'].includes(GLIDE_RENDERER))
-  throw new Error('--glide-renderer must be software or webgl');
+// null: the GPU stream null executor (validates records, draws nothing).
+if (!['software', 'webgl', 'null'].includes(GLIDE_RENDERER))
+  throw new Error('--glide-renderer must be software, webgl or null');
+// --gpu-stream-dump=FILE: the host bridge tees every GPU stream v2 record
+// (with its arena inputs) into a lib/gpu-stream.js DumpWriter at FILE, for
+// tools/gpu-stream.js list|stats|replay.
+const GPU_STREAM_DUMP = getArg('gpu-stream-dump', null);
 if (GL_RENDERER !== null && GL_RENDERER !== 'software' && GL_RENDERER !== 'webgl') {
   throw new Error('--gl-renderer must be software or webgl');
 }
@@ -312,6 +317,10 @@ const TRACE_API_FILTER = (TRACE_API_RAW && TRACE_API_RAW.includes('='))
 const TRACE_API_PAUSED = hasFlag('trace-api-paused');
 const TRACE_API_DEDUP = hasFlag('trace-api-dedup'); // --trace-api-dedup: collapse N consecutive identical lines into "(xN)"
 const TRACE_API_COUNTS = hasFlag('trace-api-counts'); // --trace-api-counts: print histogram of API call names at end
+// --api-thread-census: per-guest-thread census of graphics/sync API calls,
+// COM objects touched by several threads, multi-thread frames and Lock spans
+// (lib/api-thread-census.js). Honours --trace-from/--trace-to.
+const API_THREAD_CENSUS = hasFlag('api-thread-census');
 const TRACE_MOUSE_STATE = hasFlag('trace-mouse-state'); // --trace-mouse-state: log renderer mouse state changes seen by host imports
 const TRACE_INPUT_DISPATCH = hasFlag('trace-input-dispatch'); // bounded schedule/dequeue/route/DispatchMessage timing
 // --trace-stack[=N|=Name1,Name2|=Name:N,...]: walk EBP chain on matched API calls
@@ -1846,6 +1855,21 @@ async function main() {
   const apiTotal = () => (apiLogOff && instance && instance.exports.get_api_calls)
     ? apiCount + ((instance.exports.get_api_calls() >>> 0) - apiWatSeen) : apiCount;
   const apiCounts = TRACE_API_COUNTS ? new Map() : null;
+  const apiThreadCensus = API_THREAD_CENSUS
+    ? require('../lib/api-thread-census').createApiThreadCensus({ threadName }) : null;
+  const censusRecord = (exportsOf, fallbackTid, name) => {
+    if (!traceWindowOpen()) return;
+    const e = exportsOf;
+    const tid = e && e.get_current_thread_id ? e.get_current_thread_id() >>> 0 : fallbackTid;
+    let self = 0;
+    if (e && e.get_esp && name.includes('_')) {
+      try { self = new DataView(memory.buffer).getUint32(translateGuest((e.get_esp() + 4) >>> 0, e.get_image_base(), memory.buffer), true) >>> 0; } catch (_) { self = 0; }
+    }
+    const readArg = i => {
+      try { return new DataView(memory.buffer).getUint32(translateGuest((e.get_esp() + 4 + 4 * i) >>> 0, e.get_image_base(), memory.buffer), true); } catch (_) { return 0; }
+    };
+    apiThreadCensus.record(tid, name, traceGateBatch, self, e && e.get_esp ? readArg : null);
+  };
   let lastApiName = null;  // track last API name for return value correlation
   let lastApiEntry = null; // typed metadata for last API (for return formatting)
   let lastApiArgs = null;  // raw dword args captured at entry, used for out-param dump on return
@@ -2779,6 +2803,7 @@ async function main() {
       || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl'),
     glBackend: GL_RENDERER || 'webgl',
     glideBackend: GLIDE_RENDERER,
+    gpuStreamDump: GPU_STREAM_DUMP,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
     createD3DRenderWorker: () => {
       if (renderImageBase === null) throw new Error('render worker requested before guest image metadata is ready');
@@ -3400,7 +3425,7 @@ async function main() {
   // The list is every reader of an API name or exit below, plus --esp-audit,
   // which wraps a worker's log. --quiet-api-fast is now an alias of this.
   const apiLogRequired = traceOn => !QUIET_API || traceOn ||
-    TRACE_API_COUNTS || TRACE_CRITICAL || TRACE_INPUT_DISPATCH || ESP_DELTA ||
+    TRACE_API_COUNTS || API_THREAD_CENSUS || TRACE_CRITICAL || TRACE_INPUT_DISPATCH || ESP_DELTA ||
     ESP_AUDIT || breakApis.length || hasFlag('observe-morrowind-name') ||
     // Memory dumps accompany a paused API trace; they must not force its
     // dispatch logger on before the explicit trace-api control command.
@@ -3432,6 +3457,7 @@ async function main() {
     if (morrowindNameObserver) morrowindNameObserver.apiEnter(t);
     apiCount++;
     if (apiCounts) apiCounts.set(t, (apiCounts.get(t) || 0) + 1);
+    if (apiThreadCensus) censusRecord(instance.exports, 1, t);
     if (TRACE_API) {
       // A filtered/new call must never inherit an earlier call's metadata.
       lastApiTraced = false;
@@ -5445,6 +5471,7 @@ async function main() {
       },
       onCall: (name) => {
         if (apiCounts) apiCounts.set(name, (apiCounts.get(name) || 0) + 1);
+        if (apiThreadCensus) censusRecord(workerExports(), (tid | 0) + 1, name);
       },
       resolveComName: (id) => {
         const entry = apiTable[id];
@@ -11927,6 +11954,7 @@ if (VERBOSE) {
   reportPresentFrames();
   reportMmx();
   reportGuestPageStats();
+  if (apiThreadCensus) console.log(apiThreadCensus.report());
 
   // --reg-export writes what the run left in the registry/INI store, which is
   // what a browser tab would have kept in localStorage. Feed it back with
@@ -12339,7 +12367,6 @@ if (VERBOSE) {
       console.log(`  ${String(c.count).padStart(pad)}  T${c.slot}  ${c.name}`);
     }
   }
-
   if (apiCounts) {
     const sorted = [...apiCounts.entries()].sort((a, b) => b[1] - a[1]);
     const shown = sorted.slice(0, API_COUNTS_TOP);

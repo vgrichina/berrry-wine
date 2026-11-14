@@ -348,8 +348,13 @@ Proposed new modules are a Glide WAT frontend/state fragment, a host resource
 adapter, and shared Glide shader lowering. Final filenames follow source
 ordering conventions. API IDs must be appended, generated
 dispatch/hash files regenerated, and new WAT fragments included in
-`src/main.watx`. The first implementation uses `src/09a8h-glide.wat`,
+`src/main.watx`. The first implementation used `src/09a8h-glide.wat`,
 `lib/glide-host.js`, `lib/glide-backend.js` and `lib/glide-software.js`.
+Since GPU stream v2 ([gpu-stream-v2.md](gpu-stream-v2.md#glide-lowering))
+all Glide lowering is in `src/09a8h-glide.wat`, which writes byte records
+that `lib/gpu-stream-webgl.js` and `lib/gpu-stream-software.js` execute;
+`lib/glide-host.js` only drains the ring and presents. The two old JS
+backends are deleted.
 
 ## Semantic differences to implement explicitly
 

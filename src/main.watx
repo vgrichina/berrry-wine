@@ -93,6 +93,7 @@
 (include "09a8e-gl-state.wat")
 (include "09a8f-gl-matrix.wat")
 (include "09a8g-gl-raster.wat")
+(include "09a8gs-gpu-stream.wat")
 (include "09a8h-glide.wat")
 (include "09a9-comctl32.wat")
 (include "09aa-handlers-d3dim.wat")

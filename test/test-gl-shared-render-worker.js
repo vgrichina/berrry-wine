@@ -532,13 +532,13 @@ async function pointerReadWithoutRenderFence(){
     set_mouse_position(x,y){events.push('warp');mouse=(Math.max(0,y)<<16)|Math.min(100,x);},
     get_mouse_position(){events.push('pointer');return mouse;},
     invalidate(){events.push('invalidate');return 1;},
-    glide_batch(){events.push('render');return 1;},
+    gpu_stream_kick(){events.push('render');return 1;},
   },sigs,{renderPublication:queue.buffer});
   const worker=new Worker(`const {parentPort,workerData:d}=require('worker_threads');
     const R=require(d.rpc),Q=require(d.transport).PublicationQueue,queue=new Q(d.queue);
     const built=R.createWorkerImports({buffer:d.memory},d.sigs,m=>parentPort.postMessage(m),{renderPublication:d.queue});
     try{
-      queue.publish(2,0,new Uint8Array([1]),()=>parentPort.postMessage({t:'renderPublished'}));
+      queue.publish(2,0,new Uint8Array(new Int32Array([4096,0]).buffer),()=>parentPort.postMessage({t:'renderPublished'}));
       built.imports.host.set_mouse_position(400,-50);
       const pointer=built.imports.host.get_mouse_position();
       if(pointer!==100)throw Error('pointer lost authoritative clipping/warp ordering');
@@ -577,11 +577,15 @@ async function publishedBrokerProtocol(){
   const queue=new PublicationQueue(new SharedArrayBuffer(64+4096));
   const memory={buffer:new SharedArrayBuffer(RPC.RPC_BASE+RPC.RPC_STRIDE*RPC.RPC_MAX_SLOTS)};
   const sigs={gpu_gl_call:{params:['i32','i32','i32'],results:['i32']},
-    glide_submit:{params:['i32','i32','i32'],results:['i32']}};
+    gpu_stream_kick:{params:['i32','i32'],results:['i32']}};
   const events=[],marks=new Int32Array(new SharedArrayBuffer(4));
   const broker=RPC.createMainBroker(memory,{
-    glide_submit(op){events.push(op===1?'glide-open':'glide-read');return 1;},
-    async glide_batch(bytes){await new Promise(resolve=>setTimeout(resolve,10));events.push([...bytes]);return 1;},
+    // GPU stream v2: ASYNC kicks (mode 0) are published and may complete late;
+    // a SYNC kick (mode 1) must not overtake any earlier published one.
+    async gpu_stream_kick(ring,mode){
+      if(mode===0){await new Promise(resolve=>setTimeout(resolve,10));events.push(['kick',ring]);return 1;}
+      events.push(['sync',ring]);return 1;
+    },
     gpu_gl_batch(desc,owner){
     assert.strictEqual(desc.pool,undefined,'publication must not mix with native buffer leases');
     return Stream.replay(Stream.memoryBatch(desc.commandBuffer||memory.buffer,desc.memoryOffset,desc.bytes),(op,aux,capture)=>{
@@ -616,13 +620,13 @@ async function publishedBrokerProtocol(){
       const publication=new (require(d.transport).PublicationQueue)(d.queue),vertices=new Uint8Array([33,44]);
       publication.publishSnapshot(4,0,{value:{vertices},bytes:64},m=>parentPort.postMessage(m),
         ()=>parentPort.postMessage({t:'renderPublished',slot:0}));vertices.fill(99);
-      const value=make(12,[]),glide=built.imports.host.glide_submit;
+      const value=make(12,[]),kick=built.imports.host.gpu_stream_kick;
       softwareConfig[0]=1;const asyncBefore=built.stats.async;
       make(147,[0x2300,0x2200,1234],0,[0.5]);
       if(built.stats.async!==asyncBefore)throw Error('software GL metadata bypassed');
-      glide(1,900,0);new Uint8Array(d.memory,900,3).set([7,8,9]);
-      glide(0,900,3);new Uint8Array(d.memory,900,3).fill(99);glide(9,900,3);
-      new Uint8Array(d.memory,900,3).set([4,5,6]);glide(0,900,3);
+      if(kick(900,1)!==1)throw Error('sync kick failed');
+      if(kick(900,0)!==1)throw Error('async kick did not answer at once');
+      kick(904,1);kick(908,0);
       built.fencePublications();
       parentPort.postMessage({done:true,value,stats:built.stats});
     }catch(error){parentPort.postMessage({error:error.stack});}`;
@@ -639,8 +643,8 @@ async function publishedBrokerProtocol(){
       });
     });
     assert.strictEqual(result.value,73,'query keeps synchronous result');
-    assert.deepStrictEqual(events,['bind',0.25,0.75,'neutral','query',0.5,'glide-open',[7,8,9],'glide-read',[4,5,6]],
-      'GL and Glide own their inputs and synchronous queries/readbacks cannot overtake publications');
+    assert.deepStrictEqual(events,['bind',0.25,0.75,'neutral','query',0.5,['sync',900],['kick',900],['sync',904],['kick',908]],
+      'GL publications and GPU stream kicks keep order; SYNC kicks/queries cannot overtake published ASYNC kicks');
     assert.strictEqual(result.stats.async,4);assert.strictEqual(result.stats.sync,5);
   }finally{clearTimeout(timeout);queue.fail();await worker.terminate();}
   const packed=new SharedArrayBuffer(512);

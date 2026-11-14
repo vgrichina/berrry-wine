@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 'use strict';
-// SDK-derived ABI tests. The host only records bytes: neither rendering backend
-// participates in the expected values. All guest outputs/vertices can be sparse.
+// SDK-derived ABI tests. The host only records GPU stream v2 records
+// (test/glide-gps-recorder.js): neither rendering backend participates in the
+// expected values. All guest outputs/vertices can be sparse.
 const assert = require('assert');
 const { compileSrcWasm } = require('./compile-src');
 const regions = require('../lib/region-map.generated');
+const { createGpsRecorder, primitives, ringWord, GS } = require('./glide-gps-recorder');
+const KICK = GS.CONST, KIND = GS.KIND;
 const arities = {
   grGlideInit: 0, glide3_grGlideInit: 0, grGlideShutdown: 0,
   grSstWinOpen: 7, glide3_grSstWinClose: 1, grSelectContext: 1,
@@ -31,12 +34,9 @@ const imports = {host: {memory}};
 for (const imp of WebAssembly.Module.imports(module_))
   if (imp.kind === 'function') (imports[imp.module] ||= {})[imp.name] = () => 0;
 imports.host.math_pow2 = x => 2 ** x;
-const submissions = [];
-let rejectLfb = false;
-imports.host.glide_submit = (op, ptr, len) => {
-  submissions.push({op, bytes: Buffer.from(new Uint8Array(memory.buffer, ptr, len))});
-  return op === 9 && rejectLfb ? 0 : 1;
-};
+imports.host.math_pow = Math.pow;
+const rec = createGpsRecorder(memory);
+imports.host.gpu_stream_kick = rec.kick;
 const a = new WebAssembly.Instance(module_, imports).exports;
 const b = new WebAssembly.Instance(module_, imports).exports;
 a.init_thread(0, 0x400000, 0, 0, 0, 0, 0);
@@ -57,23 +57,58 @@ function call(name, args = [], instance = a) {
   assert.strictEqual(instance.get_esp()>>>0, stackGuest+4+4*arities[name], name+' stdcall cleanup');
   return instance.get_eax()>>>0;
 }
-function records() {
-  call('grFlush');
-  const result = [];
-  for (const {op,bytes} of submissions.splice(0)) {
-    if (op !== 0) continue;
-    for (let p=0;p<bytes.length;) {
-      const kind=bytes.readUInt32LE(p), n=bytes.readUInt32LE(p+4);
-      const payload=bytes.subarray(p+8,p+8+n);
-      if (kind>=15 && kind<=17) result.push({op:[5,11,12][kind-15],wireOp:kind,
-        tmu1:payload.subarray(256,336),bytes:Buffer.concat([payload.subarray(0,256),payload.subarray(336)])});
-      else if(kind===18) result.push({op:6,wireOp:kind,tmu:payload.readUInt32LE(),bytes:payload.subarray(4)});
-      else result.push({op:kind,bytes:payload});
-      p += 8+((n+3)&~3);
-    }
-  }
-  return result;
+// The 64-byte GPS vertex (16 floats) is the canonical 60-byte SDK GrVertex
+// (x y z r g b ooz a oow sow0 tow0 oow0 sow1 tow1 oow1, offsets 0..56)
+// converted with the current Glide state: colour / 255, ST / texture size,
+// ooz -> clamp((ooz + bias) / 65535) depth (only when depth is consumed),
+// q0 = oow0 under the GR_STWHINT_W_DIFF_TMU0 hint else oow, q1 = oow1. The
+// canonical clip-space z (offset 8) is not carried. Glide 3 draws are dual.
+const S = regions.BASE.GLIDE_STATE + 256;
+const sw = o => view.getUint32(S + o, true);
+const ext = () => wa(view.getUint32(regions.BASE.GLIDE_STATE + 116, true));
+const dimW = (lod, aspect) => { let n = 256 >> lod; if (aspect > 3) n >>= aspect - 3; return n || 1; };
+const dimH = (lod, aspect) => { let n = 256 >> lod; if (aspect < 3) n >>= 3 - aspect; return n || 1; };
+function vertexContext() {
+  const a0 = sw(140), a1 = view.getUint32(ext() + 2368 + 12, true);
+  return {
+    s0: dimW(0, a0), t0: dimH(0, a0), s1: dimW(0, a1), t1: dimH(0, a1),
+    hintQ0: (sw(216) & 2) !== 0,
+    needsZ: sw(44) !== 2 || (sw(88) & 255) === 3 || sw(8) === 2 || sw(28) === 2,
+    bias: (sw(176) << 16) >> 16,
+  };
 }
+// GPS vertex -> canonical offsets (bytes) it still carries.
+function canonical(g, c) {
+  const out = new Map([[0, g[0]], [4, g[1]], [12, g[4] * 255], [16, g[5] * 255], [20, g[6] * 255], [28, g[7] * 255],
+    [32, g[10]], [36, g[8] * c.s0], [40, g[9] * c.t0], [44, g[11]], [48, g[12] * c.s1], [52, g[13] * c.t1], [56, g[15]]]);
+  if (c.needsZ) out.set(24, g[2] * 65535 - c.bias);
+  return out;
+}
+// Canonical -> exact GPS vertex (f32 arithmetic as the WAT does it).
+function toGps(v, c) {
+  const f = Math.fround, d = (x, n) => f(f(x) / n);
+  const z = c.needsZ ? f(Math.min(1, Math.max(0, (f(v[6]) + c.bias) / 65535))) : 0;
+  return [f(v[0]), f(v[1]), z, 1, d(v[3], 255), d(v[4], 255), d(v[5], 255), d(v[7], 255),
+    d(v[9], c.s0), d(v[10], c.t0), f(v[8]), f(c.hintQ0 ? v[11] : v[8]), d(v[12], c.s1), d(v[13], c.t1), 0, f(v[14])];
+}
+// grFlush, then every primitive executed since the last call. Each carries
+// its GPS vertices (`gps`) and their canonical view (`v[i].get(offset)`).
+let streamMark = null;
+function stream() {
+  call('grFlush');
+  const out = rec.recordsSince(streamMark || { records: 0 }); streamMark = rec.mark(); return out;
+}
+function records() {
+  const c = vertexContext();
+  return primitives(stream()).map(p => ({ ...p, gps: p.verts, v: p.verts.map(g => canonical(g, c)) }));
+}
+// The texture a textured draw samples from TMU `slot` (BIND state) with
+// its decoded RGBA levels.
+const bound = (p, slot) => {
+  const e = p.state.bind.find(x => x.slot === slot);
+  return e && Object.assign({ sampler: e.samplerFields }, rec.textures.get(e.texture));
+};
+const ring = name => ringWord(memory, rec.ringAddr, name);
 const sparse=0x38000000, neighbor=sparse+0x10000;
 for (const p of [sparse,neighbor,sparse+4096]) a.test_virtual_map_commit(p,4096);
 assert.notStrictEqual(wa(sparse+4096),wa(sparse)+4096,'physically noncontiguous fixture');
@@ -109,46 +144,53 @@ assert.strictEqual(call('grSstWinOpen',[0,7,0,0,0,2,1]),1);
 assert.strictEqual(call('grSelectContext',[1]),1);
 assert.strictEqual(call('grSelectContext',[2]),0,'no fabricated second context');
 // FIFO_FULLNESS is free PCI entries plus status, after actual ordered drain.
-records();
+stream();
+// The gamma ramp is WAT state; it reaches the stream at the next present as
+// an UPLOAD of the 256-entry LUT (then MARK + PRESENT naming it).
+const gammaFrame = recs => recs.filter(r => ['UPLOAD', 'MARK', 'PRESENT'].includes(r.name)).map(r => r.name);
+let m = rec.mark();
 call('guGammaCorrectionRGB',[fbits(1),fbits(1),fbits(1)]);
-const fifoPending=view.getUint32(regions.BASE.GLIDE_STATE+20,true);
-assert.ok(fifoPending>0);
+assert.strictEqual(rec.kicksSince(m).length, 0, 'the gamma call stays queued in WAT');
 put(output,Buffer.alloc(12,0xa6));
-const beforeInvalidFifo=submissions.length;
 assert.strictEqual(call('grGet',[3,4,output]),0);
-assert.strictEqual(submissions.length,beforeInvalidFifo,'wrong length does not submit');
-assert.strictEqual(view.getUint32(regions.BASE.GLIDE_STATE+20,true),fifoPending);
+assert.strictEqual(rec.kicksSince(m).length,0,'wrong length does not submit');
 assert.deepStrictEqual(get(output,12),Buffer.alloc(12,0xa6));
 assert.strictEqual(call('grGet',[3,8,output]),8);
 const fifoStatus=get(output+4,4).readUInt32LE();
 assert.strictEqual(get(output,4).readUInt32LE(),31,'PCI entry count, not queue bytes');
 assert.strictEqual(fifoStatus&31,31);
 assert.strictEqual(fifoStatus&~64,31,'only retrace may vary after completion');
-assert.strictEqual(view.getUint32(regions.BASE.GLIDE_STATE+20,true),0);
-assert.deepStrictEqual(submissions.slice(beforeInvalidFifo).map(x=>x.op),[0,19],
-  'pending commands reach backend before completion barrier');
-assert.strictEqual(submissions[beforeInvalidFifo].bytes.readUInt32LE(),14,'queued gamma precedes fence');
+assert.strictEqual(ring('read_pos'),ring('write_pos'),'everything published has executed');
+{
+  const kicks = rec.kicksSince(m);
+  assert.deepStrictEqual(kicks.map(k=>k.mode),[KICK.KICK_ASYNC,KICK.KICK_SYNC],
+    'pending commands reach backend before completion barrier');
+  assert.deepStrictEqual(gammaFrame(kicks[0].records),['UPLOAD','MARK','PRESENT'],'queued gamma precedes fence');
+  const present = kicks[0].records.find(r => r.name === 'PRESENT');
+  assert.strictEqual(present.fields.gamma, kicks[0].records.find(r => r.name === 'UPLOAD').fields.id, 'the present applies the uploaded LUT');
+  assert.strictEqual(kicks[1].records.length, 0, 'the barrier itself adds no records');
+}
 assert.deepStrictEqual(get(output+8,4),Buffer.alloc(4,0xa6),'query writes exactly eight bytes');
-submissions.splice(0);
 
 // Completion is distinct from queue submission, including an empty queue.
+m = rec.mark();
 call('guGammaCorrectionRGB',[fbits(1),fbits(1),fbits(1)]);
 call('grFlush');
-assert.deepStrictEqual(submissions.map(x=>x.op),[0],'Flush submits without waiting for GPU completion');
-assert.strictEqual(submissions[0].bytes.readUInt32LE(),14);
-submissions.splice(0);
+assert.deepStrictEqual(rec.kicksSince(m).map(k=>k.mode),[KICK.KICK_ASYNC],'Flush submits without waiting for GPU completion');
+assert.deepStrictEqual(gammaFrame(rec.kicksSince(m)[0].records),['UPLOAD','MARK','PRESENT']);
+m = rec.mark();
 call('grFlush');
-assert.strictEqual(submissions.length,0,'empty Flush has no completion fence');
+assert.strictEqual(rec.kicksSince(m).length,0,'empty Flush has no completion fence');
 call('grFinish');
-assert.deepStrictEqual(submissions.map(x=>x.op),[19],'empty Finish still waits for previously issued GPU work');
-assert.strictEqual(submissions[0].bytes.length,0);
-submissions.splice(0);
+assert.deepStrictEqual(rec.kicksSince(m).map(k=>k.mode),[KICK.KICK_SYNC],'empty Finish still waits for previously issued GPU work');
+assert.strictEqual(rec.kicksSince(m)[0].records.length,0);
+m = rec.mark();
 call('guGammaCorrectionRGB',[fbits(1),fbits(1),fbits(1)]);
 call('grFinish');
-assert.deepStrictEqual(submissions.map(x=>x.op),[0,19],'Finish submits pending commands before waiting');
-assert.strictEqual(submissions[0].bytes.readUInt32LE(),14);
-assert.strictEqual(view.getUint32(regions.BASE.GLIDE_STATE+20,true),0);
-submissions.splice(0);
+assert.deepStrictEqual(rec.kicksSince(m).map(k=>k.mode),[KICK.KICK_ASYNC,KICK.KICK_SYNC],'Finish submits pending commands before waiting');
+assert.deepStrictEqual(gammaFrame(rec.kicksSince(m)[0].records),['UPLOAD','MARK','PRESENT']);
+assert.strictEqual(ring('read_pos'),ring('write_pos'));
+streamMark = rec.mark();
 
 call('grViewport',[3,5,320,200]);
 assert.strictEqual(call('grGet',[38,16,output]),16);
@@ -170,21 +212,26 @@ const pointers=0x410000;
 put(pointers,words([vptr]));
 call('grDrawVertexArray',[0,1,pointers],b);
 let r=records(); assert.strictEqual(r.length,1); assert.strictEqual(r[0].op,12);
-let v=r[0].bytes.subarray(256);
-assert.deepStrictEqual(Array.from({length:12},(_,i)=>v.readFloatLE(i*4)),
-  [17,19,0,64,32,16,0,128,0.5,64,32,0.25], 'Glide3 to SDK GrVertex byte offsets');
-assert.strictEqual(r[0].bytes.readUInt32LE(216)&2,2,'independent TMU Q is consumed');
+let ctx=vertexContext();
+assert.strictEqual(ctx.hintQ0,true,'independent TMU Q is consumed');
+// Canonical SDK GrVertex x y z r g b ooz a oow sow0 tow0 oow0, then TMU1's
+// disabled sow1 tow1 (0) and oow1 (defaults to oow, as checked below).
+assert.deepStrictEqual(r[0].gps[0],toGps([17,19,0,64,32,16,0,128,0.5,64,32,0.25,0,0,0.5],ctx),
+  'Glide3 to SDK GrVertex fields');
+assert.strictEqual(r[0].gps[0][11],0.25,'q0 is the independent TMU0 Q, not 1/W');
 // Independent second-stage coordinates retain their declared Q.
 call('grVertexLayout',[0x41,28,1]); call('grVertexLayout',[0x51,36,1]);
 put(vptr+28,words([fbits(96),fbits(48),fbits(0.125)]));
-call('grDrawVertexArray',[0,1,pointers]); v=records()[0].bytes.subarray(256);
-assert.deepStrictEqual([48,52,56].map(i=>v.readFloatLE(i)),[96,48,0.125]);
+call('grDrawVertexArray',[0,1,pointers]); r=records(); ctx=vertexContext();
+assert.deepStrictEqual(r[0].gps[0].slice(12),toGps([17,19,0,64,32,16,0,128,0.5,64,32,0.25,96,48,0.125],ctx).slice(12));
+assert.deepStrictEqual([48,52,56].map(o=>r[0].v[0].get(o)),[96,48,0.125]);
+let v;
 call('grGet',[19,4,0x410100]);assert.strictEqual(get(0x410100,4).readUInt32LE(),2);
 call('grVertexLayout',[0x41,0,0]);call('grVertexLayout',[0x51,0,0]);
 call('grFinish'); // Finish retains exactly one stdcall cleanup.
 const verts=0x411000;
 for(let i=0;i<7;++i)put(verts+i*28,vertex(i,10+i,0xff112233,1,0,0,1));
-const triangleXs = recs => recs.filter(r=>r.op===5).map(r=>[0,1,2].map(i=>r.bytes.readFloatLE(256+i*60)));
+const triangleXs = recs => recs.filter(r=>r.op===5).map(r=>r.gps.map(g=>g[0]));
 call('grDrawVertexArrayContiguous',[4,4,verts,28]);
 assert.deepStrictEqual(triangleXs(records()),[[0,1,2],[2,1,3]],'strip winding alternates');
 call('grDrawVertexArrayContiguous',[7,2,verts+4*28,28]);
@@ -195,41 +242,91 @@ assert.deepStrictEqual(triangleXs(records()),[[0,1,2],[0,2,3],[0,3,4]],'fan cont
 call('grDrawVertexArrayContiguous',[6,6,verts,28]);
 assert.deepStrictEqual(triangleXs(records()),[[0,1,2],[3,4,5]],'triangle list');
 call('grDrawVertexArrayContiguous',[2,4,verts,28]);
-r=records();assert.deepStrictEqual(r.map(x=>[x.op,x.bytes.readFloatLE(256),x.bytes.readFloatLE(316)]),[[11,0,1],[11,2,3]],'line pairs');
+r=records();assert.deepStrictEqual(r.map(x=>[x.op,x.gps[0][0],x.gps[1][0]]),[[11,0,1],[11,2,3]],'line pairs');
 call('grDrawVertexArrayContiguous',[1,3,verts,28]);assert.strictEqual(records().length,2,'line strip');
 // Float color mode replaces packed color selection; disabled Q defaults1.
 call('grVertexLayout',[0x20,8,1]);call('grVertexLayout',[0x10,20,1]);
 call('grVertexLayout',[4,0,0]);call('grVertexLayout',[0x40,0,0]);call('grVertexLayout',[0x50,0,0]);
 put(vptr,words([fbits(1),fbits(2),fbits(7),fbits(11),fbits(13),fbits(17)]));
-call('grDrawVertexArray',[0,1,pointers]);v=records()[0].bytes.subarray(256);
-assert.deepStrictEqual([12,16,20,28,32,44].map(i=>v.readFloatLE(i)),[7,11,13,17,1,1]);
+call('grDrawVertexArray',[0,1,pointers]);r=records();ctx=vertexContext();
+// r g b a at canonical 12 16 20 28 are 7 11 13 17; oow and oow0 default to 1.
+assert.deepStrictEqual([4,5,6,7,10,11].map(i=>r[0].gps[0][i]),[7,11,13,17,1,1].map((x,i)=>i<4?Math.fround(x/255):x));
 // GrTexInfo G3 log2/ signed aspect canonicalizes independently of guest layout.
 const info=sparse+4090, data=0x412000;
 put(info,words([4,5,-1,0,data])); // 32x? aspect1:2 =>16x32 base +8x16 =640B.
 assert.strictEqual(call('grTexTextureMemRequired',[3,info]),640);
 assert.strictEqual(call('grTexCalcMemRequired',[4,5,-1,0]),640);
 put(data,Buffer.alloc(640,0x5c));
+// Downloads fill TMU RAM in WAT; a draw that samples the chain makes the
+// stream CREATE and UPLOAD it, decoded. Sample with a texture-only combine,
+// restoring every Glide state word afterwards.
+const sampleState=0x415000;
+function sample(tmu,start,infoPtr) {
+  call('grGlideGetState',[sampleState]);
+  stream();
+  call('grColorCombine',[3,8,0,1,0]);                       // other = texture
+  if (tmu===0) call('grTexCombine',[0,1,0,1,0,0,0]);         // TMU0 local
+  else { call('grTexCombine',[0,3,8,3,8,0,0]); call('grTexCombine',[1,1,0,1,0,0,0]); } // TMU0 passes TMU1
+  call('grTexSource',[tmu,start,3,infoPtr]);
+  call('grDrawPoint',[vptr]);
+  const recs=stream(), p=primitives(recs).at(-1);
+  call('grGlideSetState',[sampleState]);
+  assert(p,'the sampling point is drawn');
+  const t=bound(p,tmu);
+  assert(t,'the point binds TMU'+tmu);
+  return Object.assign(t,{records:recs});
+}
+const level=(t,l)=>Array.from(t.data[l]);
+const fill=(n,x)=>Array(n).fill(x>>>0);
 call('grTexDownloadMipMap',[0,0,3,info]);call('grTexSource',[0,0,3,info]);
-r=records();assert.deepStrictEqual(Array.from({length:7},(_,i)=>r[0].bytes.readUInt32LE(i*4)),[0,4,3,4,0,3,640]);
-assert.deepStrictEqual(r[0].bytes.subarray(28),Buffer.alloc(640,0x5c));
+assert.strictEqual(stream().length,0,'download and source alone emit nothing');
+let tex=sample(0,0,info);
+assert.deepStrictEqual([tex.kind,tex.width,tex.height,tex.levels],[KIND.TEX2D,16,32,2],'G3 log2 16x32 aspect 1:2 chain of two levels');
+// RGB332 0x5c: r 2 -> 73, g 7 -> 255, b 0.
+assert.deepStrictEqual(level(tex,0),fill(16*32,0xff00ff49),'every downloaded byte reaches level 0');
+assert.deepStrictEqual(level(tex,1),fill(8*16,0xff00ff49),'and the 8x16 level packed after it');
 // The maximum is an aligned start address, not the final texture RAM byte.
 const maxTexture=call('grTexMaxAddress',[0]);assert.strictEqual(maxTexture,4194304-8);
 assert.strictEqual(call('grTexMaxAddress',[1]),maxTexture);
 assert.strictEqual(call('grTexCalcMemRequired',[0,0,0,0]),8);
 const boundaryInfo=0x419000;put(boundaryInfo,words([0,0,0,0,data]));
 for(const tmu of [0,1]) call('grTexDownloadMipMap',[tmu,maxTexture,3,boundaryInfo]);
-r=records();assert.deepStrictEqual(r.map(x=>[x.tmu,x.bytes.readUInt32LE(0),x.bytes.readUInt32LE(24)]),[[0,maxTexture,1],[1,maxTexture,1]]);
+for(const tmu of [0,1]) {
+  // The one 1x1 texel at the last aligned address of each TMU's own RAM.
+  tex=sample(tmu,maxTexture,boundaryInfo);
+  assert.deepStrictEqual([tex.width,tex.height,tex.levels,level(tex,0)],[1,1,1,[0xff00ff49]],
+    'boundary download on TMU'+tmu);
+}
 const palette=0x413000;put(palette,words(Array.from({length:256},(_,i)=>0xff000000+i)));
+// A 2x2 P8 texture indexing entries 3 and 4 samples the palette as it was
+// when the draw executed: a decoded texture does not outlive a table change.
+const p8Info=0x419100, p8Data=0x419200;
+put(p8Data,Buffer.from([3,4,3,4]));put(p8Info,words([1,1,0,5,p8Data]));
+call('grTexDownloadMipMap',[0,0x1000,3,p8Info]);
 call('glide3_grTexDownloadTable',[2,palette]);
+tex=sample(0,0x1000,p8Info);
+assert.deepStrictEqual(level(tex,0),[0xff030000,0xff040000,0xff030000,0xff040000],'full table entries 3 and 4');
 put(palette+12,words([0xffabcdef]));call('grTexDownloadTablePartial',[2,palette,3,3]);
-r=records();assert.strictEqual(r[0].bytes.readUInt32LE(12),0xff000003);
-assert.strictEqual(r[1].bytes.readUInt32LE(12),0xffabcdef);
-assert.strictEqual(r[1].bytes.readUInt32LE(16),0xff000004,'partial palette preserves other entries');
+const palAt=i=>view.getUint32(ext()+128+i*4,true)&0xffffff;
+assert.deepStrictEqual([palAt(2),palAt(3),palAt(4)],[2,0xabcdef,4],'partial download replaces exactly entry 3');
+tex=sample(0,0x1000,p8Info);
+assert.deepStrictEqual(level(tex,0),[0xffefcdab,0xff040000,0xffefcdab,0xff040000],'partial palette preserves other entries');
 call('guGammaCorrectionRGB',[fbits(1),fbits(2),fbits(3)]);
 put(data,words([0,0x123]));put(data+16,words([7,8]));put(data+32,words([255,254]));
-call('grLoadGammaTable',[2,data,data+16,data+32]);r=records();
-assert.deepStrictEqual(r.map(x=>x.op),[14,13]);
-assert.deepStrictEqual([...r[1].bytes],[2,0,0,0,0,0x23,7,8,255,254],'partial gamma byte-mask semantics');
+call('grLoadGammaTable',[2,data,data+16,data+32]);
+{
+  // One present-time LUT: the RGB ramps (exponents 1, 1/2, 1/3) applied
+  // first, then the two-entry table on top with byte-mask semantics (0x123 -> 0x23).
+  const recs=stream(), ups=recs.filter(x=>x.name==='UPLOAD');
+  assert.deepStrictEqual(gammaFrame(recs),['UPLOAD','MARK','PRESENT'],'both gamma calls reach one present');
+  const present=recs.find(x=>x.name==='PRESENT');
+  assert.strictEqual(present.fields.gamma,ups[0].fields.id);
+  assert.deepStrictEqual([ups[0].fields.w,ups[0].fields.h],[256,1]);
+  const ramp=(i,g)=>Math.floor(255*Math.pow(i/255,1/g)+0.5);
+  const lut=Array.from({length:256},(_,i)=>i<2?[0xffff0700,0xfffe0823][i]
+    :(ramp(i,1)|ramp(i,2)<<8|ramp(i,3)<<16|0xff<<24)>>>0);
+  assert.deepStrictEqual(level(rec.textures.get(ups[0].fields.id),0),lut,'partial gamma byte-mask semantics over the RGB ramp');
+}
 // SDK gu.c exact float intermediates; float-return ABI uses x87 ST(0).
 const f=Math.fround, fogW=i=>f(2**(3+(i>>2))/(8-(i&3)));
 for (const i of [0,3,31,63]) { call('guFogTableIndexToW',[i]); assert.strictEqual(a.test_fpu_get(0),fogW(i)); }
@@ -245,17 +342,32 @@ call('grGet',[38,16,output]);assert.deepStrictEqual(get(output,16),words([3,5,32
 // Two independent texture RAM namespaces and immutable queued TMU snapshots.
 put(info,words([4,5,1,0,data]));put(data,Buffer.alloc(640,0xa3));
 call('grTexDownloadMipMap',[1,0,3,info]);call('grTexSource',[1,0,3,info]);
+// The draws sample TMU1 through TMU0 (TMU0 passes OTHER), so the stream
+// shows TMU1's own texture and sampler on BIND slot 1 per draw.
+call('grColorCombine',[3,8,0,1,0]);call('grTexCombine',[0,3,8,3,8,0,0]);
 call('grTexCombine',[1,1,0,1,0,0,0]);call('grTexClampMode',[1,1,0]);
 call('grDrawPoint',[vptr]);call('grTexClampMode',[1,0,1]);call('grDrawPoint',[vptr]);
-r=records();assert.strictEqual(r[0].wireOp,18);assert.strictEqual(r[0].tmu,1);
-assert.deepStrictEqual(r[0].bytes.subarray(28),Buffer.alloc(640,0xa3));
-assert.strictEqual(r[1].wireOp,17);assert.strictEqual(r[1].bytes.readUInt32LE(140),4);
-assert.strictEqual(r[1].tmu1.readUInt32LE(12),2,'independent aspect');
-assert.deepStrictEqual([24,28,48,56].map(i=>r[1].tmu1.readUInt32LE(i)),[1,0,1,1]);
-assert.deepStrictEqual([24,28].map(i=>r[2].tmu1.readUInt32LE(i)),[0,1]);
+assert.strictEqual(sw(140),4,'TMU0 keeps its 1:2 aspect');
+assert.strictEqual(view.getUint32(ext()+2368+12,true),2,'independent aspect');
+r=records();assert.strictEqual(r.length,2);
+{
+  const t1=bound(r[0],1), clampAddr=x=>[x.address_u,x.address_v];
+  assert(t1,'TMU1 is bound to slot 1');
+  assert.strictEqual(bound(r[0],0),undefined,'TMU0 samples nothing of its own');
+  assert.deepStrictEqual([t1.width,t1.height,t1.levels],[32,16,2],'TMU1 texture has its own 2:1 aspect');
+  // RGB332 0xa3: r 5 -> 182, g 0, b 3 -> 255; TMU1 RAM is its own namespace.
+  assert.deepStrictEqual(level(t1,0),fill(32*16,0xffff00b6));
+  assert.deepStrictEqual(level(t1,1),fill(16*8,0xffff00b6));
+  assert.deepStrictEqual(clampAddr(t1.sampler),[3,1],'first draw: S clamp, T wrap');
+  assert.deepStrictEqual(clampAddr(bound(r[1],1).sampler),[1,3],'second draw keeps its own (immutable) clamp snapshot');
+  const ctxNow=vertexContext();
+  assert.deepStrictEqual([ctxNow.s0,ctxNow.t0,ctxNow.s1,ctxNow.t1],[128,256,256,128],
+    'per-TMU ST normalisation: SDK ST spans 256 on the long side of each TMU\'s own aspect');
+}
 call('grGet',[6,4,output]);assert.strictEqual(get(output,4).readUInt32LE(),464);
 call('grGlideGetState',[state]);call('grTexClampMode',[1,1,1]);call('grGlideSetState',[state]);
-call('grDrawPoint',[vptr]);r=records();assert.deepStrictEqual([24,28].map(i=>r[0].tmu1.readUInt32LE(i)),[0,1]);
+call('grDrawPoint',[vptr]);r=records();
+assert.deepStrictEqual([bound(r[0],1).sampler.address_u,bound(r[0],1).sampler.address_v],[1,3],'SetState restores TMU1 clamp');
 // CLIP_COORDS uses homogeneous clipping before division, then SDK viewport,
 // depth, normalized float color, and independent texture-aspect conversion.
 for(const [param,offset] of [[1,0],[2,8],[3,12],[4,16],[0x20,20],[0x10,32],
@@ -267,46 +379,55 @@ put(info,words([4,5,0,0,data]));call('grTexSource',[0,0,3,info]);
 const clip=0x417000;
 const clipVertex=(x,y,z,w=1,color=[.25,.5,.75])=>words([x,y,z,w,.75,...color,.5,.5,.25,.5,.2,.4,.25].map(fbits));
 const near=(actual,expected,label)=>assert.ok(Math.abs(actual-expected)<.002,`${label}: ${actual} != ${expected}`);
-put(clip,clipVertex(-.5,.5,0,2));call('grDrawPoint',[clip]);r=records();v=r[0].bytes.subarray(256);
+// Canonical field `offset` of vertex i of primitive p (see canonical()).
+const at=(p,i=0)=>offset=>{
+  const x=p.v[i].get(offset);
+  assert.notStrictEqual(x,undefined,'canonical offset '+offset+' is carried');
+  return x;
+};
+// ooz reaches the stream normalised to f32 depth (ooz / 65535), whose ulp
+// at 0.5 is 65535 * 2^-24 ~ 0.0039 ooz: compare it within one depth ulp.
+const nearOoz=(actual,expected,label)=>assert.ok(Math.abs(actual-expected)<=65535*2**-24+1e-9,`${label}: ${actual} != ${expected}`);
+const finite=p=>p.gps.every(g=>g.every(Number.isFinite));
+put(clip,clipVertex(-.5,.5,0,2));call('grDrawPoint',[clip]);r=records();v=at(r[0]);
 for(const [offset,expected] of [[0,47.5],[4,70],[24,32767.5],[12,63.75],[16,127.5],
   [20,191.25],[28,127.5],[32,.375],[36,64],[40,32],[44,.25],[48,25.6],[52,25.6],[56,.125]])
-  near(v.readFloatLE(offset),expected,'projected '+offset);
+  (offset===24?nearOoz:near)(v(offset),expected,'projected '+offset);
 call('grVertexLayout',[0x51,0,0]);call('grDrawPoint',[clip]);
-near(records()[0].bytes.readFloatLE(256+56),.5,'disabled Q1 uses reciprocal W');
+near(at(records()[0])(56),.5,'disabled Q1 uses reciprocal W');
 call('grVertexLayout',[0x51,56,1]);
 for(const xyz of [[-2,0,0],[2,0,0],[0,-2,0],[0,2,0],[0,0,-2],[0,0,2]]) {
   put(clip,clipVertex(...xyz));call('grDrawPoint',[clip]);assert.strictEqual(records().length,0,'clip plane rejects '+xyz);
 }
 put(clip,clipVertex(0,0,0,-1));call('grDrawPoint',[clip]);assert.strictEqual(records().length,0,'negative W point rejected');
 put(clip,clipVertex(-2,0,0,1,[0,0,0]));put(clip+60,clipVertex(0,0,0,1,[1,1,1]));
-call('grDrawLine',[clip,clip+60]);r=records();v=r[0].bytes.subarray(256);
-near(v.readFloatLE(0),10,'line clipped left');near(v.readFloatLE(60),60,'line endpoint');
-near(v.readFloatLE(12),127.5,'line intersection color');
+call('grDrawLine',[clip,clip+60]);r=records();v=at(r[0]);
+near(v(0),10,'line clipped left');near(at(r[0],1)(0),60,'line endpoint');
+near(v(12),127.5,'line intersection color');
 put(clip,clipVertex(-.5,-.5,-2));put(clip+60,clipVertex(.5,-.5,0));put(clip+120,clipVertex(0,.5,0));
 call('grDrawTriangle',[clip,clip+60,clip+120]);r=records();assert.strictEqual(r.length,2,'near-clipped quad triangulates');
-const projected=r.flatMap(rec=>[0,1,2].map(i=>[0,4,24].map(j=>rec.bytes.readFloatLE(256+i*60+j))));
+const oozTol=65535*2**-24+1e-9;
+const projected=r.flatMap(p=>[0,1,2].map(i=>[0,4,24].map(at(p,i))));
 for(const point of projected) {
   assert.ok(point.every(Number.isFinite));assert.ok(point[0]>=10&&point[0]<=110&&point[1]>=20&&point[1]<=100);
-  assert.ok(point[2]>=16383.75&&point[2]<=49151.25);
+  assert.ok(point[2]>=16383.75-oozTol&&point[2]<=49151.25+oozTol);
 }
-assert.ok(projected.some(p=>Math.abs(p[0]-47.5)<.002&&Math.abs(p[1]-60)<.002&&Math.abs(p[2]-16383.75)<.002),'CA near intersection');
-assert.ok(projected.some(p=>Math.abs(p[0]-60)<.002&&Math.abs(p[1]-40)<.002&&Math.abs(p[2]-16383.75)<.002),'AB near intersection');
+assert.ok(projected.some(p=>Math.abs(p[0]-47.5)<.002&&Math.abs(p[1]-60)<.002&&Math.abs(p[2]-16383.75)<=oozTol),'CA near intersection');
+assert.ok(projected.some(p=>Math.abs(p[0]-60)<.002&&Math.abs(p[1]-40)<.002&&Math.abs(p[2]-16383.75)<=oozTol),'AB near intersection');
 // Crossing the eye clips to a finite visible polygon; no divide-by-zero
 // reaches the packet, including interpolated Q and both texture coordinates.
 put(clip,clipVertex(0,0,0,-1));put(clip+60,clipVertex(.5,-.5,0));put(clip+120,clipVertex(-.5,-.5,0));
 call('grDrawTriangle',[clip,clip+60,clip+120]);r=records();assert.ok(r.length>0);
-for(const rec of r) for(let offset=256;offset<rec.bytes.length;offset+=4)
-  assert.ok(Number.isFinite(rec.bytes.readFloatLE(offset)),'eye crossing output finite');
+for(const p of r) assert.ok(finite(p),'eye crossing output finite');
 // The smallest accepted W keeps zero/tiny enabled ST finite, even though
 // reciprocalW*256 alone would overflow f32. Exercise both independent units.
 const minimumW=2**-126, tiny=clipVertex(0,0,0,minimumW);
 for(const offset of [36,40,48,52]) tiny.writeFloatLE(offset===40||offset===52?minimumW:0,offset);
 put(clip,tiny);call('grDrawPoint',[clip]);r=records();
 assert.strictEqual(r.length,1);
-for(let offset=256;offset<r[0].bytes.length;offset+=4)
-  assert.ok(Number.isFinite(r[0].bytes.readFloatLE(offset)),'minimum-W output finite');
+assert.ok(finite(r[0]),'minimum-W output finite');
 for(const [offset,value] of [[36,0],[40,256],[48,0],[52,128]])
-  near(r[0].bytes.readFloatLE(256+offset),value,'minimum-W texture '+offset);
+  near(at(r[0])(offset),value,'minimum-W texture '+offset);
 // Original Hitman Pack.SPK contains NaN UVs. Preserve the textured triangle
 // and finite components; undefined NaN S/T selects deterministic coordinate 0.
 for (const mode of [1,0]) {
@@ -319,14 +440,16 @@ for (const mode of [1,0]) {
   }
   call('grDrawTriangle',[clip,clip+60,clip+120]);r=records();
   assert.strictEqual(r.length,1,'NaN UV triangle retained');
-  assert.strictEqual(r[0].wireOp,15,'both texture units retained');
-  assert.strictEqual(r[0].bytes.length,256+180,'all three vertices retained');
+  assert.strictEqual(r[0].op,5,'a triangle');
+  assert.deepStrictEqual(r[0].state.bind.map(e=>e.slot),[0,1],'both texture units retained');
+  assert.strictEqual(r[0].gps.length,3,'all three vertices retained');
+  assert.ok(finite(r[0]),'finite components');
   for(let i=0;i<3;i++) {
-    const out=r[0].bytes.subarray(256+i*60);
+    const out=at(r[0],i);
     for(const [offset,value] of [[36,0],[40,mode?32:.25],[48,mode?25.6:.2],[52,0],
-      [44,mode?.25:.5],[56,mode?.125:.25]]) near(out.readFloatLE(offset),value,'NaN policy '+mode+'/'+offset);
-    near(out.readFloatLE(0),mode?[47.5,72.5,60][i]:[-.5,.5,0][i],'preserved geometry X');
-    near(out.readFloatLE(12),mode?63.75:.25,'preserved color');
+      [44,mode?.25:.5],[56,mode?.125:.25]]) near(out(offset),value,'NaN policy '+mode+'/'+offset);
+    near(out(0),mode?[47.5,72.5,60][i]:[-.5,.5,0][i],'preserved geometry X');
+    near(out(12),mode?63.75:.25,'preserved color');
   }
 }
 call('grCoordinateSpace',[1]);
@@ -337,25 +460,27 @@ call('grColorCombine',[1,0,0,2,0]);call('grAlphaCombine',[1,0,0,2,0]);
 const inactive=clipVertex(0,0,0,1);
 [36,40,44,48,52,56].forEach((offset,i)=>inactive.writeFloatLE(i%2?NaN:3e38,offset));
 put(clip,inactive);call('grDrawPoint',[clip]);r=records();
-assert.deepStrictEqual([36,40,44,48,52,56].map(offset=>r[0].bytes.readFloatLE(256+offset)),[0,0,1,0,0,1]);
+assert.deepStrictEqual([36,40,44,48,52,56].map(at(r[0])),[0,0,1,0,0,1]);
+assert.deepStrictEqual(r[0].state.bind,[],'an untextured draw binds nothing');
 // A texture 'other' selector is still dead when the function is LOCAL.
 call('grColorCombine',[1,4,0,1,0]);call('grDrawPoint',[clip]);
-assert.strictEqual(records()[0].bytes.readFloatLE(256+36),0);
+assert.strictEqual(at(records()[0])(36),0);
 // TMU0 can consume its local texture while unused TMU1 remains unread.
 call('grColorCombine',[3,8,0,1,0]);call('grTexCombine',[0,1,0,1,0,0,0]);
 [36,40,44].forEach((offset,i)=>inactive.writeFloatLE([.25,.5,1][i],offset));
 put(clip,inactive);call('grDrawPoint',[clip]);r=records();
-near(r[0].bytes.readFloatLE(256+36),64,'live TMU0 ST preserved');
-assert.deepStrictEqual([48,52,56].map(offset=>r[0].bytes.readFloatLE(256+offset)),[0,0,1]);
+near(at(r[0])(36),64,'live TMU0 ST preserved');
+assert.deepStrictEqual([48,52,56].map(at(r[0])),[0,0,1]);
+assert.deepStrictEqual(r[0].state.bind.map(e=>e.slot),[0],'only TMU0 is sampled');
 // Chroma consumes RGB OTHER before LOCAL replaces framebuffer color.
 call('grColorCombine',[1,0,0,1,0]);call('grChromakeyMode',[1]);
 call('grDrawPoint',[clip]);r=records();
-near(r[0].bytes.readFloatLE(256+36),64,'texture OTHER remains live for chroma');
+near(at(r[0])(36),64,'texture OTHER remains live for chroma');
 // Changing chroma OTHER to iterated/constant makes texture fields dead again.
 for(const other of [0,2]) {
   call('grColorCombine',[1,0,0,other,0]);
   inactive.writeFloatLE(NaN,36);put(clip,inactive);call('grDrawPoint',[clip]);
-  assert.strictEqual(records()[0].bytes.readFloatLE(256+36),0,'nontexture chroma ignores ST');
+  assert.strictEqual(at(records()[0])(36),0,'nontexture chroma ignores ST');
 }
 call('grGlideSetState',[state]);call('grCoordinateSpace',[0]);
 
@@ -366,7 +491,8 @@ a.glide_lfb_metrics_enable(1);
 const lfbInfo=0x416000, returnAddress=0x12345678;
 view.setUint32(stack,returnAddress,true);
 put(lfbInfo,words([20,0,0,0,0]));
-const readsBefore=submissions.filter(x=>x.op===9).length;
+const readbacks=from=>rec.recordsSince(from).filter(x=>x.name==='READBACK');
+const readsBefore=rec.mark();
 assert.strictEqual(call('grLfbLock',[0,1,0,0,0,lfbInfo]),1);
 assert.strictEqual(call('grLfbUnlock',[0,1]),1);
 assert.strictEqual(call('grLfbLock',[1,1,0,0,0,lfbInfo]),1);
@@ -380,13 +506,20 @@ assert.deepStrictEqual(metrics(1),[1,fullPixels,fullPixels,1,640,480,returnAddre
 assert.deepStrictEqual(metrics(2),[1,6,fullPixels,0,2,3,returnAddress]);
 assert.deepStrictEqual(metrics(3),[1,6,fullPixels,0,3,2,returnAddress]);
 assert.deepStrictEqual(metrics(4),[1,8,fullPixels,0,4,2,returnAddress]);
-assert.strictEqual(submissions.filter(x=>x.op===9).length-readsBefore,5,'same full staging submissions');
+{
+  const rb=readbacks(readsBefore);
+  assert.strictEqual(rb.length,5,'same full staging submissions');
+  assert.ok(rb.every(x=>x.fields.w===640&&x.fields.h===480),'each stages the whole 640x480 buffer');
+}
+let beforeInvalid=rec.mark();
 assert.strictEqual(call('grLfbReadRegion',[1,0,0,0,3,4,data]),0);
 assert.strictEqual(metrics(2)[0],1,'invalid API call never reached staging');
-rejectLfb=true;
-assert.strictEqual(call('grLfbReadRegion',[1,0,0,1,1,2,data]),0);
-rejectLfb=false;
-assert.deepStrictEqual(metrics(2),[2,7,fullPixels*2,0,1,1,returnAddress],'backend-rejected staging is still attempted readback');
+assert.strictEqual(readbacks(beforeInvalid).length,0,'and issued no READBACK');
+// A READBACK has no graceful failure in the stream (a failed drain traps),
+// so the second staging is an ordinary successful 1x1 read.
+assert.strictEqual(call('grLfbReadRegion',[1,0,0,1,1,2,data]),1);
+assert.strictEqual(get(data,2).readUInt16LE(),0x5a5a,'the drained readback is what the guest reads');
+assert.deepStrictEqual(metrics(2),[2,7,fullPixels*2,0,1,1,returnAddress],'every staging is an attempted full readback');
 a.glide_lfb_metrics_enable(0);
 const stopped=metrics(2);
 assert.strictEqual(call('grLfbReadRegion',[1,0,0,1,1,2,data]),1);
@@ -426,7 +559,8 @@ for(const offset of [0,4,8,12,20,44]) {
   assert.throws(()=>a.test_glide3_vertex(wa(0x418000),clip),WebAssembly.RuntimeError,'non-UV NaN remains fatal '+offset);
 }
 const extreme=clipVertex(0,0,0,minimumW);extreme.writeFloatLE(1,36);put(clip,extreme);
-const pendingBefore=view.getUint32(regions.BASE.GLIDE_STATE+20,true);
+const pendingBefore=rec.mark(), writeBefore=ring('write_pos');
 assert.throws(()=>call('grDrawPoint',[clip]),WebAssembly.RuntimeError,'unrepresentable ST fails explicitly');
-assert.strictEqual(view.getUint32(regions.BASE.GLIDE_STATE+20,true),pendingBefore,'invalid projection publishes no command');
+assert.strictEqual(ring('write_pos'),writeBefore,'invalid projection publishes no command');
+assert.strictEqual(rec.kicksSince(pendingBefore).length,0,'and kicks nothing');
 console.log('PASS Glide3 native ABI, layouts, topology, sparse memory, textures, gamma and context');

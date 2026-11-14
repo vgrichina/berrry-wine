@@ -53,7 +53,7 @@ function changed(a, b, worldOnly = false) {
     page.on('console', message => {
       const line = message.text(); logs.push(line);
       fs.appendFileSync(path.join(output, 'live.log'), line + '\n');
-      if (/UNIMPLEMENTED API:|RuntimeError|LinkError|FATAL:|\[launchApp\] failed|(?:worker thread|Thread) \d+ (?:trapped|crashed)|host import glide_submit threw/i.test(line)) {
+      if (/UNIMPLEMENTED API:|RuntimeError|LinkError|FATAL:|\[launchApp\] failed|(?:worker thread|Thread) \d+ (?:trapped|crashed)|host import gpu_stream_kick threw/i.test(line)) {
         errors.push(line); failure ||= new Error(line);
       }
       if (/d2glide|UNIMPLEMENTED|Glide|FATAL/i.test(line)) console.log(line);

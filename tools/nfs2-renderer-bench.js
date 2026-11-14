@@ -22,7 +22,6 @@ if (process.argv.includes('--help')) {
   --seconds=30 --samples=2 --accelerate (default: stationary)
   --trace-api=LoadLibraryA,GetProcAddress (diagnostics only, not timing)
   --capture-frame [--capture-min-blue=N] (up to 30 frames/60 seconds; blue pixels below y=200)
-  --glide-source=path/to/glide-backend.js (diagnostic page override only)
   --glide-lfb-metrics (opt-in WAT LFB reasons, 5 x 7 counter snapshot; diagnostic timing)
   --swiftshader (explicit software WebGL; results are not hardware-GPU performance)
   --cpu-profile [--cpu-profile-top=15] (V8 profile of page + every Worker per sample; diagnostic timing)
@@ -58,8 +57,6 @@ const cpuProfileTop = Number(arg('cpu-profile-top', '15')) || 15;
 // on (broker round trips), read as before/after deltas.
 const rpcCensus = process.argv.includes('--rpc-census');
 const captureMinBlue = Number(arg('capture-min-blue', '0'));
-const glideSource = arg('glide-source', '');
-const glideOverride = glideSource ? fs.readFileSync(path.resolve(ROOT, glideSource), 'utf8') : null;
 const stage = arg('stage', 'measure');
 assert(['menu', 'race', 'measure'].includes(stage));
 const continueFile = arg('continue-file', '');
@@ -182,14 +179,27 @@ if (traceApiNames.length) {
 }
 
 // Installed only in the benchmark page, before the original guest launches.
+// GPU stream v2: wraps GpuStreamWebGL.Executor.prototype.execute(rec). Every
+// executor keeps a "prelude" of the records that define its live resources
+// (CREATE/SHADER/LAYOUT/SAMPLER and texture UPLOADs, minus RELEASEd ids and
+// uploads a later full-level upload replaced) plus the last sticky TARGETS/
+// RASTER/BIND/CONSTS. An armed capture starts at a PRESENT and ends at the
+// next one; the frame is written as a self-contained GPSD dump (prelude,
+// sticky state, frame records) that `node tools/gpu-stream.js replay
+// capture-frame.gpsd --executor=webgl --png=OUT.png` reproduces.
 function installFrameCapture() {
-  const original = GlideBackend.Device.prototype.execute;
+  const GS = GpuStream, OP = GS.OP, KIND = GS.KIND;
   const encode = bytes => {
     let text = '';
     for (let i = 0; i < bytes.length; i += 8192)
       text += String.fromCharCode(...bytes.subarray(i, i + 8192));
     return btoa(text);
   };
+  // One record in GPSD dump framing (record bytes + its arena inputs).
+  let chunk = null;
+  const dump = new GS.DumpWriter(bytes => { chunk = bytes; });
+  const dumpHeader = chunk;
+  const recordBytes = rec => { dump.writeRecord(rec); return chunk.slice(); };
   const range = () => ({ finite: 0, nonfinite: 0, min: null, max: null });
   const add = (r, n) => {
     if (!Number.isFinite(n)) { r.nonfinite++; return; }
@@ -197,67 +207,123 @@ function installFrameCapture() {
     r.min = r.min === null ? n : Math.min(r.min, n);
     r.max = r.max === null ? n : Math.max(r.max, n);
   };
-  let active = null, device = null;
+  const PRELUDE_LIMIT = 64 * 1024 * 1024;
+  const perExecutor = new WeakMap();
+  const track = executor => {
+    let t = perExecutor.get(executor);
+    if (!t) perExecutor.set(executor, t = { defs: new Map(), uploads: new Map(), sticky: {}, kinds: new Map(), bytes: 0 });
+    return t;
+  };
+  const dropUploads = (t, key) => {
+    for (const u of t.uploads.get(key) || []) t.bytes -= u.bytes.length;
+    t.uploads.delete(key);
+  };
+  let active = null, owner = null;
   window.__nfs2CaptureArm = false;
   window.__nfs2CapturedFrame = null;
-  GlideBackend.Device.prototype.execute = function(op, bytes) {
-    if (active && device === this && op !== 0) {
-      try {
+  const original = GpuStreamWebGL.Executor.prototype.execute;
+  GpuStreamWebGL.Executor.prototype.execute = function(rec) {
+    const t = track(this), f = rec.fields;
+    try {
+      switch (rec.op) {
+        case OP.CREATE: case OP.SHADER: case OP.LAYOUT: case OP.SAMPLER: {
+          const bytes = recordBytes(rec);
+          (t.defs.get(f.id) || t.defs.set(f.id, []).get(f.id)).push({ seq: rec.seq, bytes });
+          if (rec.op === OP.CREATE) t.kinds.set(f.id, { kind: f.kind, width: f.width, height: f.height });
+          t.bytes += bytes.length;
+          break;
+        }
+        case OP.UPLOAD: {
+          const k = t.kinds.get(f.id);
+          if (!k || k.kind !== KIND.TEX2D) break; // RT (LFB) contents are not carried across frames
+          const key = f.id + ':' + f.level;
+          const lw = Math.max(1, k.width >> f.level), lh = Math.max(1, k.height >> f.level);
+          if (f.x === 0 && f.y === 0 && f.w === lw && f.h === lh) dropUploads(t, key);
+          const bytes = recordBytes(rec);
+          (t.uploads.get(key) || t.uploads.set(key, []).get(key)).push({ seq: rec.seq, bytes });
+          t.bytes += bytes.length;
+          break;
+        }
+        case OP.RELEASE:
+          for (const d of t.defs.get(f.id) || []) t.bytes -= d.bytes.length;
+          t.defs.delete(f.id); t.kinds.delete(f.id);
+          for (const key of [...t.uploads.keys()]) if (key.startsWith(f.id + ':')) dropUploads(t, key);
+          break;
+        case OP.TARGETS: case OP.RASTER: case OP.BIND: case OP.CONSTS:
+          t.sticky[rec.op] = { seq: rec.seq, bytes: recordBytes(rec), fields: { ...f },
+            bind: rec.op === OP.BIND ? GS.decodeBind(rec).map(e => ({ ...e })) : undefined };
+          break;
+      }
+      if (t.bytes > PRELUDE_LIMIT) throw new Error('frame capture prelude exceeded 64 MiB');
+      if (active && owner === this && rec.op !== OP.PRESENT) {
+        const bytes = recordBytes(rec);
         active.byteLength += bytes.length;
-        if (active.byteLength > 32 * 1024 * 1024 || active.commands.length >= 100000)
-          throw new Error('frame capture exceeded 32 MiB/100000-command bound');
-        active.commands.push([op, encode(bytes)]);
-        if ([5, 11, 12].includes(op)) {
-          const v = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-          const state = Array.from({length:64}, (_, i) => v.getUint32(i * 4, true));
-          const key = state.join(',');
+        if (active.byteLength > 32 * 1024 * 1024 || active.records.length >= 100000)
+          throw new Error('frame capture exceeded 32 MiB/100000-record bound');
+        active.records.push(bytes);
+        active.counts[rec.name] = (active.counts[rec.name] || 0) + 1;
+        if (rec.op === OP.DRAW_UP) {
+          const raster = t.sticky[OP.RASTER]?.fields || null, bind = t.sticky[OP.BIND]?.bind || [];
+          const key = JSON.stringify([f.ps, raster, bind]);
           let item = active.drawStates.find(item => item.key === key);
-          if (!item) active.drawStates.push(item = {key, state, draws:0, vertices:0, ooz:range(), oow:range()});
-          const modeKey = state[11] + ':' + state[22];
-          const mode = active.vertexSummary[modeKey] ||= {depthMode:state[11], fogMode:state[22], ooz:range(), oow:range()};
+          if (!item) active.drawStates.push(item = { key, ps: f.ps, raster, bind, draws: 0, vertices: 0, z: range(), oow: range() });
+          const modeKey = (raster?.depth_mode ?? '?') + ':' + (raster?.fog_mode ?? '?');
+          const mode = active.vertexSummary[modeKey] ||= { depthMode: raster?.depth_mode, fogMode: raster?.fog_mode, z: range(), oow: range() };
           item.draws++;
-          for (let offset = 256; offset + 60 <= bytes.length; offset += 60) {
-            const ooz = v.getFloat32(offset + 24, true), oow = v.getFloat32(offset + 32, true);
+          const v = rec.arena(f.voff, f.count * f.stride), dv = new DataView(v.buffer, v.byteOffset, v.byteLength);
+          for (let o = 0; o + 64 <= v.length; o += f.stride) {
+            const z = dv.getFloat32(o + 8, true), oow = dv.getFloat32(o + 40, true); // POSITIONT.z, TEXCOORD0.z
             item.vertices++;
-            add(item.ooz, ooz); add(item.oow, oow); add(mode.ooz, ooz); add(mode.oow, oow);
+            add(item.z, z); add(item.oow, oow); add(mode.z, z); add(mode.oow, oow);
           }
         }
-      } catch (error) {
-        window.__nfs2CaptureError = String(error);
-        active = null; window.__nfs2CaptureArm = false;
       }
+    } catch (error) {
+      window.__nfs2CaptureError = String(error);
+      active = null; window.__nfs2CaptureArm = false;
     }
-    const result = original.call(this, op, bytes);
-    if (op === 4 && active && device === this) {
-      active.endSwap = this.stats.swaps;
+    const result = original.call(this, rec);
+    if (rec.op !== OP.PRESENT) return result;
+    if (active && owner === this) {
+      active.records.push(recordBytes(rec));
+      active.endPresent = this.stats().presents;
       active.completedAt = performance.now();
+      const parts = [dumpHeader, ...active.prelude, ...active.records];
+      const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+      let o = 0;
+      for (const p of parts) { out.set(p, o); o += p.length; }
+      active.gpsd = encode(out);
+      active.gpsdBytes = out.length;
+      active.preludeRecords = active.prelude.length;
+      active.frameRecords = active.records.length;
+      delete active.prelude; delete active.records;
       try {
         const surface = this.backend.getPresentationSurface();
+        const w = f.w, h = f.h;
+        active.width = w; active.height = h;
         active.drawablePng = surface.toDataURL('image/png');
         const context = surface.getContext('2d');
         if (context) {
-          const y = Math.min(200, this.height), pixels = context.getImageData(0, y, this.width, this.height - y).data;
+          const y = Math.min(200, h), pixels = context.getImageData(0, y, w, h - y).data;
           let blue = 0;
           for (let p = 0; p < pixels.length; p += 4)
             if (Math.abs(pixels[p] - 74) <= 12 && Math.abs(pixels[p+1] - 164) <= 12 && Math.abs(pixels[p+2] - 207) <= 12) blue++;
           active.clearBluePixels = blue;
-          active.bluePixelSelection = {rgb:[74,164,207], tolerance:12, minY:y};
+          active.bluePixelSelection = { rgb: [74, 164, 207], tolerance: 12, minY: y };
         }
-      }
-      catch (error) { active.drawableError = String(error); }
+      } catch (error) { active.drawableError = String(error); }
       for (const item of active.drawStates) delete item.key;
       window.__nfs2CapturedFrame = active;
       active = null;
       window.__nfs2CaptureArm = false;
-    } else if (op === 4 && window.__nfs2CaptureArm && !active) {
-      device = this;
-      active = { schemaVersion:1, startSwap:this.stats.swaps, startedAt:performance.now(),
-        width:this.width, height:this.height, colorFormat:this.colorFormat, origin:this.origin,
-        ram:encode(this.ram), ranges:this.ranges.map(r => r.slice()),
-        palette:encode(new Uint8Array(this.palette.buffer, this.palette.byteOffset, this.palette.byteLength)),
-        fogTable:this.fogTable ? encode(this.fogTable) : null,
-        commands:[], byteLength:0, drawStates:[], vertexSummary:{},
-        note:'Resources captured after start swap; commands end with next swap. Prior color/depth buffer contents are not serialized.' };
+    } else if (window.__nfs2CaptureArm && !active) {
+      owner = this;
+      // Prelude in original order: definitions, texture contents, sticky state.
+      const prelude = [...[...t.defs.values()].flat(), ...[...t.uploads.values()].flat(),
+        ...Object.values(t.sticky)].sort((a, b) => a.seq - b.seq).map(r => r.bytes);
+      active = { schemaVersion: 2, format: 'gpsd', startPresent: this.stats().presents, startedAt: performance.now(),
+        prelude, records: [], byteLength: 0, counts: {}, drawStates: [], vertexSummary: {},
+        note: 'GPSD dump: live resource definitions, texture uploads and sticky state, then one frame of records ending with its PRESENT. Prior render-target (color/LFB) and depth contents are not serialized.' };
     }
     return result;
   };
@@ -267,8 +333,13 @@ async function observe(page) {
   return page.evaluate(metricsEnabled => {
     const wine = runningApps.find(app => app.name === window.__nfs2App)?.wine;
     const ex = wine?.instance?.exports;
-    const glide = wine?.hostCtx?.glideBridge?.device;
-    const gl = glide?.backend?.gl;
+    // GPU stream v2: local route = the bridge's executor (maybe a dump tee);
+    // Worker route = the counters the render Worker replies with.
+    const bridge = wine?.hostCtx?.glideBridge;
+    const executor = bridge?.executor && (bridge.executor.inner || bridge.executor);
+    const glideStats = executor?.stats ? executor.stats() : bridge?.device?.stats || null;
+    const glide = { stats: glideStats, glRenderer: bridge?.device?.glRenderer || null };
+    const gl = executor?.gl;
     const ext = gl?.getExtension('WEBGL_debug_renderer_info');
     const draw = wine?.guestWorker?.d3dStats;
     const renderer = wine?.renderer;
@@ -290,9 +361,14 @@ async function observe(page) {
     }
     return { at: performance.now(), running: !!wine?.running,
       backend: wine?.threadManager?.backend, hidden: document.hidden,
-      flips: window.__nfsBenchFlips, primaryPresents: window.__nfsBenchPrimaryPresents, swaps: glide?.stats.swaps,
-      glide: glide?.stats, d3d: draw, glideLfb,
-      glideEndpoint: wine?.hostCtx?.glideBridge?.endpoint?.options || null,
+      flips: window.__nfsBenchFlips, primaryPresents: window.__nfsBenchPrimaryPresents,
+      swaps: glideStats?.presents ?? bridge?.stats?.presents,
+      glide: glideStats, d3d: draw, glideLfb,
+      glideEndpoint: bridge?.endpoint?.options || null,
+      glideRoute: bridge ? { route: bridge.endpoint ? 'worker' : bridge.executor ? 'local' : 'closed',
+        backend: bridge.options?.backend || null,
+        executor: executor ? (window.GpuStreamWebGL && executor instanceof GpuStreamWebGL.Executor ? 'webgl'
+          : window.GpuStreamSoftware && executor instanceof GpuStreamSoftware.Executor ? 'software' : 'other') : null } : null,
       glRenderer: ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : glide?.glRenderer || null,
       surface: surface ? { width: surface.width, height: surface.height } : null,
       display: ex ? { width: ex.get_display_mode_w?.(), height: ex.get_display_mode_h?.() } : null,
@@ -313,9 +389,18 @@ async function observe(page) {
   }, glideLfbMetrics);
 }
 
+// Either the render-Worker endpoint, or the page-local executor, must be the
+// requested backend (a WebGL request that fell back to software fails).
 function assertGlideBackend(state, expected) {
-  assert(state.glideEndpoint?.api === 'glide' && state.glideEndpoint.backend === expected,
-    `requested Glide ${expected}, actual endpoint ${JSON.stringify(state.glideEndpoint)}`);
+  if (state.glideEndpoint) {
+    assert(state.glideEndpoint.api === 'glide' && state.glideEndpoint.backend === expected,
+      `requested Glide ${expected}, actual endpoint ${JSON.stringify(state.glideEndpoint)}`);
+    return;
+  }
+  const route = state.glideRoute;
+  assert(route?.route === 'local' && route.backend === expected
+    && (expected === 'webgl') === (route.executor === 'webgl'),
+    `requested Glide ${expected}, actual route ${JSON.stringify(route)}`);
 }
 
 // The page session sees only the page thread; with ?threads the guest's main
@@ -509,6 +594,11 @@ async function runCase(server, name) {
         fs.writeFileSync(path.join(dir, 'capture-drawable.png'), Buffer.from(frame.drawablePng.split(',')[1], 'base64'));
         delete frame.drawablePng;
       }
+      if (frame.gpsd) {
+        // Replay: node tools/gpu-stream.js replay capture-frame.gpsd --executor=webgl --png=OUT.png
+        fs.writeFileSync(path.join(dir, 'capture-frame.gpsd'), Buffer.from(frame.gpsd, 'base64'));
+        delete frame.gpsd;
+      }
       fs.writeFileSync(path.join(dir, 'capture-frame.json'), JSON.stringify(frame));
       await page.screenshot({path:path.join(dir, 'capture-page.png')});
       report.capture = {path:'capture-frame.json', commands:frame.commands.length,
@@ -601,11 +691,6 @@ async function runCase(server, name) {
     allowedRealRoots: [fixtureRoot, seRoot, fs.realpathSync(path.join(ROOT, 'fonts'))].filter(Boolean),
     handleRequest(req, res) {
       const pathname = new URL(req.url, 'http://localhost').pathname;
-      if (glideOverride && pathname === '/lib/glide-backend.js') {
-        res.writeHead(200, {'Content-Type':'application/javascript', 'Cache-Control':'no-store',
-          'Cross-Origin-Resource-Policy':'same-origin'});
-        res.end(glideOverride); return true;
-      }
       if (tracedWorker && pathname === '/lib/guest-worker.js') {
         res.writeHead(200, {'Content-Type':'application/javascript', 'Cache-Control':'no-store',
           'Cross-Origin-Resource-Policy':'same-origin', 'Cross-Origin-Embedder-Policy':'require-corp'});
@@ -620,7 +705,7 @@ async function runCase(server, name) {
       return true;
     } });
   const meta = { startedAt: new Date().toISOString(), commit: execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim(),
-    wasmSha256: hash(path.join(ROOT,'build/wine-assembly.wasm')), headful:true, stage, seconds, samples, accelerate, traceApiNames, captureFrame, captureMinBlue, glideSource,
+    wasmSha256: hash(path.join(ROOT,'build/wine-assembly.wasm')), headful:true, stage, seconds, samples, accelerate, traceApiNames, captureFrame, captureMinBlue,
     comparisonCaveat: "Original software versus SE Glide uses different editions and supplied tracks (TR03 versus TR04); this is not a renderer-only or same-scene A/B.",
     machine: { platform:os.platform(), arch:os.arch(), cpus:os.cpus().length, model:os.cpus()[0].model },
     fixtureSha256: { original: cases.includes('originalsoftware')
