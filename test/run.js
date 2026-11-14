@@ -4648,7 +4648,12 @@ async function main() {
   // of the release's own posted follow-ups. Paint's tool buttons PostMessage
   // their clicks to the toolbox, so the toolbox's release landed after the
   // canvas press and took its capture. Floor 0 alone was not enough.
-  if (renderer) renderer._buttonHoldFloorMs = -1;
+  if (renderer) {
+    renderer._buttonHoldFloorMs = -1;
+    // Preserve a distinct hover pump for coordinate presses even though the
+    // CLI script/controller owns button release timing.
+    renderer._coordinatePressHoverMs = 30;
+  }
   // --wall-clock-ms pins the calendar's ORIGIN; the calendar then advances
   // with GUEST time. Freezing it outright was deterministic but not a clock:
   // GetSystemTime returned one instant for the whole run, so anything that

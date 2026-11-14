@@ -28,7 +28,7 @@ if (process.env.CLI_SCOPE_PRELOAD === '1') {
    for (const mode of ['main', 'worker']) {
     const evidence = process.env.CLI_SCOPE_EVIDENCE && process.env.CLI_SCOPE_EVIDENCE+'.'+mode;
     const session = startControlSession(['--require', __filename, 'test/run.js',
-      '--app=sol', '--no-build', '--threads', '--control-stdin', '--frozen',
+      '--app=sol', '--no-build', '--threads', '--control-stdin', '--frozen', '--tick-ms-per-batch=200',
       '--max-seconds=60', '--quiet-api', '--quiet-blocks'], {
       spawnOptions: { env: { ...process.env, CLI_SCOPE_PRELOAD: '1' } },
     });
@@ -63,6 +63,17 @@ if (process.env.CLI_SCOPE_PRELOAD === '1') {
         assert((await send({ action: 'guarded-status', nonce: ticket.nonce })).consumed);
       }
       await produce('mousedown:354:330');
+      // Coordinate delivery now gives hover a pump before its button. Drain
+      // that arrival through the real broker, then advance the CLI guest clock
+      // with polling suspended; the scope assertions below still bind DOWN.
+      const arrival = await ev(`renderer.checkInput=realCheck;
+        broker.publish({inputPending:1});
+        globalThis.arrival=[];let packed;
+        while((packed=a.check_input()))arrival.push(packed&65535);
+        renderer.checkInput=()=>null;arrival`);
+      assert(arrival.includes(0x200), 'actual CLI coordinate arrival delivered');
+      assert(!arrival.includes(0x201), 'coordinate button waits for arrival pump');
+      await send({ action: 'step', n: 1 });
       const first = await ev(`renderer.checkInput=realCheck;
         broker.publish({inputPending:1});
         globalThis.read=w=>({lp:w.check_input_lparam(),wp:w.check_input_wparam(),

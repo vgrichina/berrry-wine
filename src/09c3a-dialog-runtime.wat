@@ -817,6 +817,14 @@
         (call $modal_finish_local
           (i32.atomic.load (global.get $SHARED_MODAL_RESULT)))))
     (if (i32.eqz (global.get $modal_dlg_hwnd)) (then (return (i32.const 0))))
+    ;; Like GetMessage in a native modal loop, an explicit WM_QUIT ends
+    ;; this wait. Leave it pending for the outer caller instead of turning
+    ;; it into a button command. Flag 1 is only a window-recreation marker.
+    ;; https://devblogs.microsoft.com/oldnewthing/20101008-01/?p=12573
+    (if (i32.eq (global.get $quit_flag) (i32.const 2))
+      (then
+        (call $modal_finish_local (i32.const 0))
+        (return (i32.const 0))))
     ;; Drain nc_flags for the dialog hwnd only: child controls have no
     ;; non-client chrome and would leave spurious fragments.
     (if (global.get $nc_flags_count)
