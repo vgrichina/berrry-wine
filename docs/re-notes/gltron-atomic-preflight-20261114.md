@@ -9,6 +9,13 @@ no-original alternative and root confirmation. Process absence and the root's
 22:13 dependency-release note do not reconstruct that fourth wait. No original,
 Chrome control, full build or game input was launched by this worker.
 
+At 22:18 the coordinator announced a prerequisite amendment and a new
+Pegdrag → GLatomic → threadSentinel queue. The new Pegdrag task explicitly
+removes its ancillary fourth-wait gate. This worker's GLatomic task file still
+contains the four-wait requirement, matching the direct task instruction; no
+missing wait was manufactured or counted as passed. That later note is retained
+in the evidence for the next assignment's gate decision.
+
 Evidence is `scratch/runs/20261114-gltron-atomic-preflight/result.json`. Code is
 **uncommitted WIP** in the shared main checkout and recoverable from the exact
 Git SHA and binary patches there. Only this report is published. The required
