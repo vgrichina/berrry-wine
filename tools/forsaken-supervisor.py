@@ -80,7 +80,7 @@ def run(out,recipe):
         time.sleep(.02)
     rc=p.wait()
     for t in threads:t.join()
-    save(out,'native-wait.json',dict(pid=p.pid,exit=rc,actualWait=True,stdoutEOF=eof.get('stdout',False),stderrEOF=eof.get('stderr',False),drainErrors=errors,at=time.time()))
+    save(out,'native-wait.json',dict(pid=p.pid,startToken=info['startToken'],exit=rc,actualWait=True,stdoutEOF=eof.get('stdout',False),stderrEOF=eof.get('stderr',False),drainErrors=errors,at=time.time()))
     a,b=w.communicate()
     save(out,'watchdog-wait.json',dict(pid=w.pid,exit=w.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode(),at=time.time()))
     if lock:fcntl.flock(lock,fcntl.LOCK_UN);lock.close()

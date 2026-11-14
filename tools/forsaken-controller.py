@@ -34,12 +34,14 @@ def endpoint_identity(info):
     assert len(inodes)==1 and 'socket:['+inodes[0]+']' in sockets,'control socket is not exclusively owned by actual native PID'
 def opened():
     assert not (R/'terminal-input-failure.json').exists(),'sticky UNKNOWN/closed; no replay'
+    assert not (R/'terminal-owner-exited.json').exists(),'native owner exited; no replay'
     assert not (R/'native-wait.json').exists(),'native terminal'
     assert time.time()+2<read('launch.json')['deadline'],'immutable runtime deadline'
     info=read('native-pid.json');s=pathlib.Path('/proc/'+str(info['pid'])+'/stat').read_text()
     assert s[s.rindex(')')+2:].split()[19]==info['startToken'],'native identity changed'
     endpoint_identity(info)
 def fail(error,name):
+    if (R/'terminal-owner-exited.json').exists():return
     if not (R/'terminal-input-failure.json').exists():save('terminal-input-failure.json',dict(name=name,error=str(error),noReplay=True,at=time.time()))
 def bind():
     try:
@@ -72,8 +74,25 @@ def capture(name):
         save(name+'.json',dict(at=start,completedAt=end,snapshot=s,image=im,pngSHA256=hashlib.sha256(p.read_bytes()).hexdigest(),target=read('native-pid.json')))
         return str(p)
     except BaseException as e:fail(e,name);raise
-def release(name,owner,deadline):
-    print(json.dumps(dict(armed=True,pid=os.getpid(),deadline=deadline,owner=owner,at=time.time())),flush=True)
+def exited_owner(expected):
+    """A successful actual harness wait, not a guest exit-code or physical UP claim."""
+    try:
+        info=read('native-pid.json');wait=read('native-wait.json')
+    except (FileNotFoundError,ValueError):
+        return None
+    if any(info.get(k)!=expected.get(k) or wait.get(k)!=expected.get(k) for k in ('pid','startToken')):
+        return None
+    if not isinstance(expected.get('startToken'),str) or not expected['startToken']:
+        return None
+    if not all(wait.get(k) is True for k in ('actualWait','stdoutEOF','stderrEOF')):
+        return None
+    if wait.get('exit')!=0 or wait.get('drainErrors')!=[] or wait.get('at',0)<info['at']:
+        return None
+    return wait
+
+def release(name,owner,deadline,final=False):
+    target=read('native-pid.json')
+    print(json.dumps(dict(armed=True,pid=os.getpid(),deadline=deadline,owner=owner,target=target,at=time.time())),flush=True)
     # Already armed at the immutable fallback. A consumed ACK can only shorten it.
     due=deadline; source='fallback'
     while time.time()<due:
@@ -85,7 +104,22 @@ def release(name,owner,deadline):
         time.sleep(min(.005,max(0,due-time.time())))
     save(name+'-release-fired.json',dict(at=time.time(),due=due,source=source,fallback=deadline))
     try:save(name+'-up.json',dict(state='ACK',reply=call({'action':'guarded-release','owner':owner}),at=time.time()))
-    except Exception as e:save(name+'-up.json',dict(state='UNKNOWN',error=str(e),at=time.time()));raise
+    except Exception as e:
+        # A reviewed final choice can retire the native before the finite UP.
+        # Port closure alone never proves that. Preserve failed/signal waits
+        # and unresolved DOWN as UNKNOWN, without replay or a fabricated ACK.
+        if final and (R/(name+'-down.json')).exists():
+            down=read(name+'-down.json')
+            if down and all(r.get('state')=='CONSUMED' and r.get('consumed') and r.get('owner')==owner for r in down):
+                end=min(deadline,read(name+'-release-cap.json')['at'])
+                while time.time()<end:
+                    wait=exited_owner(target)
+                    if wait is not None:
+                        save(name+'-up.json',dict(state='OWNER_EXITED',physicalUpACK=False,
+                             nativeWait=wait,target=target,error=str(e),at=time.time()))
+                        return
+                    time.sleep(.01)
+        save(name+'-up.json',dict(state='UNKNOWN',error=str(e),at=time.time()));raise
 def pulse(name,keys,ms,review,description,final=False,maxSceneAge=30):
     assert maxSceneAge in (5,30),'only bounded menu or aimed scene windows'
     if any(k in ('keydown:65','keydown:90','keydown:17','keydown:32','keydown:18') for k in keys):
@@ -121,7 +155,7 @@ def pulse(name,keys,ms,review,description,final=False,maxSceneAge=30):
         intentDeadline=dict(deadline=deadline,pulseMilliseconds=ms,operationWindowSeconds=6.0)
         save(name+'-operation.json',intentDeadline)
         assert deadline+2<read('launch.json')['deadline'],'operation exceeds fixed runtime'
-        child=subprocess.Popen([sys.executable,'-B',__file__,'release',name,owner['owner'],str(deadline)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        child=subprocess.Popen([sys.executable,'-B',__file__,'release',name,owner['owner'],str(deadline),*(['final'] if final else [])],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         sent=False
         try:
             ready,_,_=select.select([child.stdout],[],[],1.5);assert ready,'independent release child arm deadline'
@@ -156,7 +190,17 @@ def pulse(name,keys,ms,review,description,final=False,maxSceneAge=30):
             out,err=child.communicate(timeout=15)
             save(name+'-release-wait.json',dict(pid=child.pid,exit=child.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=out.decode(),stderr=err.decode()))
             assert child.returncode==0,'independent release failed; stop'
-        up=read(name+'-up.json');assert up['state']=='ACK' and up['at']<deadline,'release ACK exceeded operation window'
+        up=read(name+'-up.json')
+        if final and up['state']=='OWNER_EXITED':
+            assert up['target']==armed['target']==read('native-pid.json'),'terminal native identity changed'
+            assert up['nativeWait']==exited_owner(armed['target']),'actual normal native wait/EOF required'
+            assert up['at']<deadline and all(up['at']-r['consumedAt']/1000<=2.0 for r in receipts),'terminal evidence exceeded two-second bound'
+            save('terminal-owner-exited.json',dict(name=name,owner=owner,nonces=nonces,
+                 target=armed['target'],nativeWait=up['nativeWait'],physicalUpACK=False,
+                 nativeQuitClaim=False,noReplay=True,at=time.time()))
+            save(name+'-final-choice.json',dict(nativeQuitClaim=False,ownerExited=True,physicalUpACK=False))
+            return 'Native owner exited with actual wait and both EOFs; physical UP unacknowledged'
+        assert up['state']=='ACK' and up['at']<deadline,'release ACK exceeded operation window'
         assert all(up['at']-r['consumedAt']/1000<=2.0 for r in receipts),'physical release completion exceeded two-second hold bound'
         # Append-only link instead of overwriting old intent records.
         old=R/'last-intent.json'
@@ -179,5 +223,5 @@ if __name__=='__main__':
     elif sys.argv[1]=='capture':print(capture(sys.argv[2]))
     elif sys.argv[1]=='bind':
         bind()
-    elif sys.argv[1]=='release':release(sys.argv[2],sys.argv[3],float(sys.argv[4]))
+    elif sys.argv[1]=='release':release(sys.argv[2],sys.argv[3],float(sys.argv[4]),len(sys.argv)>5 and sys.argv[5]=='final')
     elif sys.argv[1] in ('pulse','aim'):print(pulse(sys.argv[2],sys.argv[3].split(','),int(sys.argv[4]),sys.argv[5],sys.argv[6],len(sys.argv)>7 and sys.argv[7]=='final',5 if sys.argv[1]=='aim' else 30))
