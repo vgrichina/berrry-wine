@@ -2925,6 +2925,10 @@
       "verified": "2026-11-04",
       "store": [
         {
+          "name": "GOG",
+          "url": "https://www.gog.com/en/game/hexen_ii"
+        },
+        {
           "name": "Steam",
           "url": "https://store.steampowered.com/app/9060/"
         }

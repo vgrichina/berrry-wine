@@ -482,6 +482,12 @@ cannot delete an uploaded file. The reverse-engineering clause still binds
 this tree: debug Hexen II from traces and runtime behaviour only. The
 installer and `sources/` stay local, and the files are still ignored by git.
 
+**Buy the full game.** Hexen II is sold on
+[GOG](https://www.gog.com/en/game/hexen_ii) (with the Portal of Praevus
+mission pack) and [Steam](https://store.steampowered.com/app/9060/); the
+compat page
+(`tools/site-compat.json`, slug `hexen-ii`) links both.
+
 ## Candidate corpus (`candidates/`)
 
 The optional CLI-only candidate pool is described by
