@@ -4675,7 +4675,11 @@ async function main() {
     } else if (inputQueue && inputQueue.length > 0) {
       source = 'button-queue';
       // Delay button clicks while on "Installing Files" page (let extraction thread work)
-      if (installingFiles) return 0;
+      if (installingFiles) {
+        lastInputEvent = null;
+        if (renderer) renderer._activeInputEvent = null;
+        return 0;
+      }
       const id = inputQueue.shift();
       if (typeof id === 'object') { evt = id; } // allow full event objects in queue
       // Button-id form: WM_COMMAND from a menu, hwnd=0 → WAT routes to main_hwnd.
@@ -4686,8 +4690,13 @@ async function main() {
       source = 'renderer';
       evt = renderer.checkInput();
     }
-    if (!evt) return 0;
+    if (!evt) {
+      lastInputEvent = null;
+      if (renderer) renderer._activeInputEvent = null;
+      return 0;
+    }
     lastInputEvent = evt;
+    if (renderer) renderer._activeInputEvent = evt;
     inputConsumptionTrace.dequeue(evt, source);
     const packed = (evt.wParam << 16) | (evt.msg & 0xFFFF);
     logs.push(`[check_input] msg=0x${evt.msg.toString(16)} wParam=0x${evt.wParam.toString(16)} lParam=0x${(evt.lParam >>> 0).toString(16)} packed=0x${packed.toString(16)}`);
@@ -4712,6 +4721,18 @@ async function main() {
   };
   h.check_input_lparam = () => (lastInputEvent ? (lastInputEvent.lParam || 0) : 0);
   h.check_input_wparam = () => (lastInputEvent ? (lastInputEvent.wParam || 0) : 0);
+  // Match the browser host contract: the broker restores both metadata and
+  // renderer pointer/button snapshots around a slot's follow-up reads.
+  Object.defineProperty(h, 'inputEventScope', {
+    enumerable: false,
+    value: {
+      save: () => [lastInputEvent, renderer ? renderer._activeInputEvent || null : null],
+      restore: saved => {
+        lastInputEvent = saved[0];
+        if (renderer) renderer._activeInputEvent = saved[1];
+      },
+    },
+  });
   let lastMouseTracePos = -1;
   let lastMouseTraceButtons = -1;
   const lastAsyncMouseTrace = Object.create(null);
@@ -5370,6 +5391,10 @@ async function main() {
     wh.check_input_lparam = h.check_input_lparam;
     wh.check_input_wparam = h.check_input_wparam;
     wh.check_input_hwnd = h.check_input_hwnd;
+    Object.defineProperty(wh, 'inputEventScope', {
+      enumerable: false,
+      value: h.inputEventScope,
+    });
     // Child processes belong to the process, not to the thread that started
     // them: Windows Installer runs its custom-action EXEs (msiexec /D, /Y)
     // from its engine thread, and waits on them from there.
