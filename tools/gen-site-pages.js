@@ -409,7 +409,30 @@ const ARTICLE_FOR_FORMAT = {
   '32-bit Windows (PE)': ['/articles/loading-real-windows-dlls-in-the-browser.html', 'how the program and its DLLs are loaded'],
 };
 
-function appPageMd(app, siblings, qa) {
+// A hosted title's compat data lives on its app page: the app page is the one
+// answer to "does X run in the browser", and compat/<slug>.html only points
+// at it (see generatePages). `compat` is { t, affiliate } or null.
+function appCompatMd(app, compat) {
+  if (!compat) return [];
+  const { t, affiliate } = compat;
+  const st = COMPAT_STATUS[t.status] || COMPAT_STATUS.unknown;
+  const L = [];
+  L.push(`## Does ${esc(t.title)} run in the browser?`);
+  L.push('');
+  const who = [t.developer, t.year].filter(Boolean).join(', ');
+  L.push(`**${st.mark} ${st.label}.** ${esc(t.title)}${who ? ` (${esc(who)})` : ''}, measured edition by edition:`);
+  L.push('');
+  L.push(...compatTableMd(t));
+  const unhosted = t.editions.some(e => !e.playId) || (t.store || []).length;
+  if (unhosted) {
+    // The section heads one level down: they belong to this game, not the page.
+    L.push(...bringYourOwnMd().map(l => l.replace(/^## /, '### ')));
+  }
+  L.push(...whereToGetMd(t, affiliate).map(l => l.replace(/^## /, '### ')));
+  return L;
+}
+
+function appPageMd(app, siblings, qa, compat = null) {
   const L = [];
   L.push(`# ${appHeading(app)}`);
   L.push('');
@@ -421,6 +444,7 @@ function appPageMd(app, siblings, qa) {
     L.push(`<img class="app-shot" src="/${app.shot}" alt="${esc(app.name)} running in Wine-Assembly" ${sizeAttrs(app.shotSize)}>`);
     L.push('');
   }
+  L.push(...appCompatMd(app, compat));
   L.push('## About this program');
   L.push('');
   L.push('| Detail | |');
@@ -533,7 +557,9 @@ function loadCompat(desktopIds) {
       playId: (e.appIds || []).find(id => desktopIds.has(id)) || null,
     }));
     const best = editions.reduce((b, e) => (COMPAT_STATUS[e.status] || COMPAT_STATUS.unknown).rank > (COMPAT_STATUS[b] || COMPAT_STATUS.unknown).rank ? e.status : b, 'unknown');
-    return { ...t, editions, status: best };
+    // The desktop app whose page stands for the whole title, if the site hosts one.
+    const hostId = (editions.find(e => e.playId) || {}).playId || null;
+    return { ...t, editions, status: best, hostId };
   });
   titles.sort((a, b) => a.title.localeCompare(b.title));
   return { affiliate: data._affiliate || {}, titles };
@@ -547,6 +573,55 @@ function storeLink(store, affiliate) {
   return { href, sponsored: !!tpl };
 }
 
+// The pieces of a title's compat page that an app page reuses when the site
+// hosts that title: the measured status per edition, how to try your own
+// copy, and where to buy it. Each returns markdown lines ending in a blank.
+function compatTableMd(t) {
+  const L = [];
+  L.push('| Edition | Status | Tested | What works | Not yet |');
+  L.push('|---|---|---|---|---|');
+  const cell = s => esc(s || '').replace(/\|/g, '\\|');
+  for (const e of t.editions) {
+    const es = COMPAT_STATUS[e.status] || COMPAT_STATUS.unknown;
+    L.push(`| ${cell(EDITION_LABEL[e.edition] || e.edition)} | ${es.mark} ${es.label} | ${e.statusDate || '—'} | ${cell(e.works)} | ${cell(e.issues)} |`);
+  }
+  L.push('');
+  return L;
+}
+
+function bringYourOwnMd() {
+  return [
+    '## Bring your own copy',
+    '',
+    `Have the CD or the installer? Drop the \`.iso\`, \`.zip\` or \`setup.exe\` on the [desktop](/), or use Start → Add a Game. ` +
+      `The disc stays in your browser and is never uploaded; only small save files can sync, and only if you sign in. ` +
+      `Retail discs are not hosted here, so this is how the full game is tried.`,
+    '',
+    `<a class="app-launch" href="/?add-game">Add your copy &rarr;</a>`,
+    '',
+  ];
+}
+
+function whereToGetMd(t, affiliate) {
+  const L = [];
+  const stores = t.store || [];
+  if (!(stores.length || t.demo || t.archive || t.bundled)) return L;
+  L.push(`## Where to get ${esc(t.title)}`);
+  L.push('');
+  if (t.bundled) L.push(`- It came with ${esc(t.bundled)}.`);
+  let sponsored = false;
+  for (const s of stores) {
+    const { href, sponsored: sp } = storeLink(s, affiliate);
+    sponsored = sponsored || sp;
+    L.push(`- Buy the full game: <a href="${esc(href)}" rel="${sp ? 'sponsored ' : ''}noopener">${esc(s.name)}</a>${sp ? ' ¹' : ''}`);
+  }
+  if (t.demo) L.push(`- ${esc(t.demo.label || 'Demo')}: <a href="${esc(t.demo.url)}" rel="noopener">${esc(new URL(t.demo.url).hostname)}</a>`);
+  if (t.archive && !stores.length) L.push(`- Not sold today. A preservation copy is on the <a href="${esc(t.archive)}" rel="noopener">Internet Archive</a>.`);
+  if (sponsored) { L.push(''); L.push('¹ Affiliate link: a purchase through it supports this project at no extra cost to you.'); }
+  L.push('');
+  return L;
+}
+
 function compatPageMd(t, affiliate) {
   const st = COMPAT_STATUS[t.status] || COMPAT_STATUS.unknown;
   const L = [];
@@ -558,38 +633,9 @@ function compatPageMd(t, affiliate) {
   const play = t.editions.find(e => e.playId);
   if (play) L.push(`<a class="app-launch" href="/apps/${play.playId}.html">Play the ${esc((EDITION_LABEL[play.edition] || 'hosted').toLowerCase())} here &rarr;</a>`);
   L.push('');
-  L.push('| Edition | Status | Tested | What works | Not yet |');
-  L.push('|---|---|---|---|---|');
-  const cell = s => esc(s || '').replace(/\|/g, '\\|');
-  for (const e of t.editions) {
-    const es = COMPAT_STATUS[e.status] || COMPAT_STATUS.unknown;
-    L.push(`| ${cell(EDITION_LABEL[e.edition] || e.edition)} | ${es.mark} ${es.label} | ${e.statusDate || '—'} | ${cell(e.works)} | ${cell(e.issues)} |`);
-  }
-  L.push('');
-  L.push('## Bring your own copy');
-  L.push('');
-  L.push(`Have the CD or the installer? Drop the \`.iso\`, \`.zip\` or \`setup.exe\` on the [desktop](/), or use Start → Add a Game. ` +
-    `The disc stays in your browser and is never uploaded; only small save files can sync, and only if you sign in. ` +
-    `Retail discs are not hosted here, so this is how the full game is tried.`);
-  L.push('');
-  L.push(`<a class="app-launch" href="/?add-game">Add your copy &rarr;</a>`);
-  L.push('');
-  const stores = t.store || [];
-  if (stores.length || t.demo || t.archive || t.bundled) {
-    L.push(`## Where to get ${esc(t.title)}`);
-    L.push('');
-    if (t.bundled) L.push(`- It came with ${esc(t.bundled)}.`);
-    let sponsored = false;
-    for (const s of stores) {
-      const { href, sponsored: sp } = storeLink(s, affiliate);
-      sponsored = sponsored || sp;
-      L.push(`- Buy the full game: <a href="${esc(href)}" rel="${sp ? 'sponsored ' : ''}noopener">${esc(s.name)}</a>${sp ? ' ¹' : ''}`);
-    }
-    if (t.demo) L.push(`- ${esc(t.demo.label || 'Demo')}: <a href="${esc(t.demo.url)}" rel="noopener">${esc(new URL(t.demo.url).hostname)}</a>`);
-    if (t.archive && !stores.length) L.push(`- Not sold today. A preservation copy is on the <a href="${esc(t.archive)}" rel="noopener">Internet Archive</a>.`);
-    if (sponsored) { L.push(''); L.push('¹ Affiliate link: a purchase through it supports this project at no extra cost to you.'); }
-    L.push('');
-  }
+  L.push(...compatTableMd(t));
+  L.push(...bringYourOwnMd());
+  L.push(...whereToGetMd(t, affiliate));
   const notes = [...new Set(t.editions.map(e => e.note).filter(Boolean))];
   if (notes.length) {
     L.push('## Technical notes');
@@ -632,9 +678,11 @@ function compatIndexMd(titles) {
     L.push('| Game | Year | Tested editions |');
     L.push('|---|---|---|');
     for (const t of list) {
-      const play = t.editions.some(e => e.playId) ? ' ▶' : '';
+      // A hosted title's page is its app page; compat/<slug>.html only points there.
+      const play = t.hostId ? ' ▶' : '';
+      const href = t.hostId ? `/apps/${t.hostId}.html` : `/compat/${t.slug}.html`;
       const eds = t.editions.map(e => EDITION_LABEL[e.edition] || e.edition).join(', ');
-      L.push(`| [${esc(t.title)}](/compat/${t.slug}.html)${play} | ${t.year || ''} | ${esc(eds)} |`);
+      L.push(`| [${esc(t.title)}](${href})${play} | ${t.year || ''} | ${esc(eds)} |`);
     }
     L.push('');
   }
@@ -749,10 +797,22 @@ function generatePages({ progress = () => {} } = {}) {
   const apps = loadDesktopApps();
   const blurbDates = { published: gitDate(APP_BLURBS_REL, 'first'), modified: gitDate(APP_BLURBS_REL) };
   const faq = fs.existsSync(path.join(ROOT, APP_FAQ_REL)) ? JSON.parse(fs.readFileSync(path.join(ROOT, APP_FAQ_REL), 'utf-8')) : {};
+  const compat = loadCompat(new Set(apps.map(a => a.id)));
+  // Every desktop app that plays an edition of a compat title carries that
+  // title's status, own-copy route and store links on its own page.
+  const compatFor = new Map();
+  for (const t of (compat ? compat.titles : [])) {
+    for (const e of t.editions) {
+      if (e.playId && !compatFor.has(e.playId)) compatFor.set(e.playId, { t, affiliate: compat.affiliate });
+    }
+  }
   for (const app of apps) {
     const siblings = apps.filter(s => s.group === app.group && s.id !== app.id);
     const qa = appFaq(app, faq);
-    const md = appPageMd(app, siblings, qa);
+    const md = appPageMd(app, siblings, qa, compatFor.get(app.id) || null);
+    // Its compat data changes the page too: the later of the two edits.
+    const appDates = compatFor.has(app.id) && gitDate(COMPAT_REL) > (blurbDates.modified || "")
+      ? { ...blurbDates, modified: gitDate(COMPAT_REL) } : blurbDates;
     // The app's own 1200x630 link-preview card, built from its screenshot.
     // Generated beside the pages (screenshots/og/ is not committed) and
     // uploaded by deploy-berrry.js with the other binary directories.
@@ -771,7 +831,7 @@ function generatePages({ progress = () => {} } = {}) {
         // in the page body only pads a snippet.
         description: appDescription(app),
         urlPath: `apps/${app.id}.html`, sourceRel: APP_BLURBS_REL,
-        dates: blurbDates,
+        dates: appDates,
         ogImage,
         ldMore: [faqLd(qa)],
         ldExtra: {
@@ -781,7 +841,7 @@ function generatePages({ progress = () => {} } = {}) {
         },
       }),
     });
-    urls.push({ loc: `${SITE}/apps/${app.id}.html`, lastmod: blurbDates.modified, priority: '0.7', changefreq: 'monthly' });
+    urls.push({ loc: `${SITE}/apps/${app.id}.html`, lastmod: appDates.modified, priority: '0.7', changefreq: 'monthly' });
   }
   const appsIndex = appsIndexMd(apps);
   pages.push({
@@ -796,10 +856,14 @@ function generatePages({ progress = () => {} } = {}) {
   });
   urls.push({ loc: `${SITE}/apps/`, lastmod: blurbDates.modified, priority: '0.8', changefreq: 'monthly' });
 
-  const compat = loadCompat(new Set(apps.map(a => a.id)));
   if (compat) {
     const compatDates = { published: gitDate(COMPAT_REL, 'first'), modified: gitDate(COMPAT_REL) };
     for (const t of compat.titles) {
+      // A hosted title is answered by its app page. Its compat URL is already
+      // indexed and the deploy cannot delete a file, so it keeps serving the
+      // same content but names the app page canonical and forwards visitors
+      // there, like the articles folded into design/; it leaves the sitemap.
+      const host = t.hostId ? `apps/${t.hostId}.html` : null;
       pages.push({
         name: `compat/${t.slug}.html`,
         content: pageHtml({
@@ -808,6 +872,7 @@ function generatePages({ progress = () => {} } = {}) {
           description: compatDescription(t),
           urlPath: `compat/${t.slug}.html`, sourceRel: COMPAT_REL,
           dates: compatDates,
+          ...(host ? { canonical: host, extraHead: `\n  <meta http-equiv="refresh" content="0; url=/${host}">` } : {}),
           ldExtra: {
             '@type': 'WebPage',
             about: {
@@ -819,7 +884,7 @@ function generatePages({ progress = () => {} } = {}) {
           },
         }),
       });
-      urls.push({ loc: `${SITE}/compat/${t.slug}.html`, lastmod: compatDates.modified, priority: '0.6', changefreq: 'monthly' });
+      if (!host) urls.push({ loc: `${SITE}/compat/${t.slug}.html`, lastmod: compatDates.modified, priority: '0.6', changefreq: 'monthly' });
     }
     const indexMd = compatIndexMd(compat.titles);
     pages.push({

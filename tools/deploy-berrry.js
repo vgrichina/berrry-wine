@@ -300,6 +300,12 @@ const PUBLISHABLE_OUTSIDE_BINARIES = [
   // it is the owner's decision (2026-09-28, test/binaries/SOURCES.md). The
   // sequels and Winter/3/Tennis siblings stay local-only.
   'test/binaries/candidates/moorhuhn/',
+  // Hexen II demo 1.11: its bundled Activision sublicence says no copies or
+  // distribution; publishing it as a promotional demo anyway is the owner's
+  // decision (2026-11-13, test/binaries/SOURCES.md). Only its manifest's 14
+  // installed files ship, the sublicence among them; installer and sources
+  // stay local.
+  'test/binaries/candidates/hexen-2-demo/',
   // Need for Speed II (original), II Special Edition and III: Hot Pursuit
   // demos: EA's own promotional demos, given away on magazine discs and
   // download sites. Their packaging grants no redistribution right either
@@ -333,8 +339,12 @@ function desktopAssetPaths() {
 
   // index.html offers exactly these three lists and nothing else, so an APPS
   // entry no icon and no selector row can reach is not a live-site asset.
+  // A listed applet that only launches other entries (the Screen Savers
+  // catalog) names them in `launches`; those are reachable, so they ship too.
   const listed = [...DESKTOP_APPS, ...LOCAL_CANDIDATE_APPS, ...DEBUG_ONLY_APPS];
-  for (const [id] of listed) {
+  const ids = new Set(listed.map(([id]) => id));
+  for (const id of [...ids]) for (const child of (APPS[id] && APPS[id].launches) || []) ids.add(child);
+  for (const id of ids) {
     const app = APPS[id];
     if (!app) continue;
     add(app.exe);

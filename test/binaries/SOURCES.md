@@ -461,6 +461,33 @@ ship; Moorhuhn 2, Winter-Edition, 3, Tennis, the puzzles, the Best Of extras and
 Gallinelle remain local-only candidates, and the files are still ignored by
 git.
 
+## Hexen II demo (`candidates/hexen-2-demo/`)
+
+Source: archive.org `win-98-games-e-j.-7z`, member
+`Win98_Games-E-J.7z/Hexen2 demo-SW-OpenGL.exe` (15,334,912 bytes, SHA-1
+`dcb5ab7c…`), a collector's WinZip SFX holding Raven/Activision's 1997 demo
+1.11 installer plus an installed tree; details in
+`docs/re-notes/hexen2-demo.md` and the directory's `.candidate-source.json`.
+The published copy is exactly the 14 files `installed/` lists in
+`.wine-assembly-browser.json`, unmodified, among them `data1/pak0.pak`
+(SHA-1 `a8cfd8790819c47998141adb97c14d1680cf8738`), `glh2.exe` (SHA-1
+`0b0a9fbb307070a11f4926381075f20f8246f07f`) and the bundled
+`HEXEN II SUBLICENSE.doc`, which ships beside them.
+
+**Terms and the publishing decision.** That sublicence is Activision's: personal
+use of one copy, no copies, distribution or reverse engineering. On
+2026-11-13 the project owner decided to publish the demo on the desktop
+anyway, as a promotional demo, knowing those terms and that the deploy API
+cannot delete an uploaded file. The reverse-engineering clause still binds
+this tree: debug Hexen II from traces and runtime behaviour only. The
+installer and `sources/` stay local, and the files are still ignored by git.
+
+**Buy the full game.** Hexen II is sold on
+[GOG](https://www.gog.com/en/game/hexen_ii) (with the Portal of Praevus
+mission pack) and [Steam](https://store.steampowered.com/app/9060/); the
+compat page
+(`tools/site-compat.json`, slug `hexen-ii`) links both.
+
 ## Candidate corpus (`candidates/`)
 
 The optional CLI-only candidate pool is described by
