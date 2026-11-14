@@ -5234,7 +5234,11 @@
     ;; Final teardown and queued software rendering retain their global fence.
     (if (i32.or (i32.eqz (global.get $d3dim_gpu_on))
                 (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
-      (then (call $d3dim_worker_fence)))
+      (then
+        ;; A parked GPU frame must land before its DIB can be freed.
+        (if (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 1))
+          (then (call $d3dim_gpu_unpark (local.get $entry))))
+        (call $d3dim_worker_fence)))
     (local.set $rc (i32.sub (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
     (store.field DxObject refcount (local.get $entry) (local.get $rc))
     (if (i32.le_s (local.get $rc) (i32.const 0))
@@ -5520,6 +5524,17 @@
         (else (i32.const -1)))
       (load.field DxObject misc1 (local.get $dst_entry))
       (local.get $arg4))
+    ;; Back buffer -> primary straight from GPU memory, ahead of the fences
+    ;; that would read the frame back (docs/d3dim-gpu-present.md).
+    (if (call $d3dim_gpu_try_present (local.get $dst_entry)
+          (if (result i32) (local.get $arg2)
+            (then (call $dx_from_this (local.get $arg2))) (else (i32.const 0)))
+          (local.get $arg1) (local.get $arg3) (local.get $arg4))
+      (then
+        (call $dx_surf_note_write (local.get $dst_entry))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+        (return)))
     (call $d3dim_surface_fence (local.get $dst_entry))
     (if (local.get $arg2) (then
       (call $d3dim_surface_fence (call $dx_from_this (local.get $arg2)))))
@@ -6326,6 +6341,9 @@
     (local $reverse i32) (local $copy_row i32)
     (call $d3dim_worker_fence)
     (local.set $dst_entry (call $dx_from_this (local.get $arg0)))
+    ;; Either side may be a primary whose DIB holds a parked GPU frame.
+    (call $d3dim_gpu_unpark (local.get $dst_entry))
+    (if (local.get $arg3) (then (call $d3dim_gpu_unpark (call $dx_from_this (local.get $arg3)))))
     ;; Microsoft explicitly excludes clipping from BltFast. The receiver is
     ;; the destination surface, so any attached clipper makes this call fail;
     ;; callers that need clipping must use Blt.
@@ -7057,6 +7075,7 @@
     ;; GDI reads and writes the surface bits directly.
     (call $d3dim_worker_fence)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
+    (call $d3dim_gpu_unpark (local.get $entry))
     (local.set $slot (i32.div_u
       (i32.sub (local.get $entry) (global.get $DX_OBJECTS))
       (i32.const 32)))
@@ -7884,6 +7903,10 @@
     (local $surface_id i32) (local $target_hwnd i32) (local $shared i32)
     (local $cl i32) (local $ct i32) (local $cx i32) (local $cy i32)
     (local $cw i32) (local $ch i32) (local $offset i32) (local $client_rel i32)
+    ;; A CPU present reads this DIB and supersedes any GPU-presented layer
+    ;; (docs/d3dim-gpu-present.md): land a parked frame, then retire layers.
+    (call $d3dim_gpu_unpark (local.get $entry_wa))
+    (call $d3dim_cpu_present_note)
     (local.set $w (i32.load16_u (i32.add (local.get $entry_wa) (i32.const 12))))
     (local.set $h (i32.load16_u (i32.add (local.get $entry_wa) (i32.const 14))))
     (local.set $bpp (i32.load16_u (i32.add (local.get $entry_wa) (i32.const 16))))

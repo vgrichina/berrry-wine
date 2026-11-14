@@ -85,13 +85,15 @@ else (async () => {
       const results = await page.evaluate(({ cases, version }) => cases.map(c => {
         const memory = new ArrayBuffer(65536), dv = new DataView(memory), u8 = new Uint8Array(memory);
         const desc = 4096, vertices = 8192, call = 12288, dib = 32768;
+        // ZENABLE (field 16) off: these cases pin coordinates and storage;
+        // points now obey depth, which the transition case below covers.
         const fields = [16384, 8, 8, c.bpp, c.pitch, dib, c.format,
-          24576, 2, 2, 32, 8, 28672, 1, 0, 0, 1, 1, 1, 1, 5, 6, 4, 4, 1, 1, 1, 3, 1, 1, 255, 1, 0xff654321, 3,
+          24576, 2, 2, 32, 8, 28672, 1, 0, 0, 0, 1, 1, 1, 5, 6, 4, 4, 1, 1, 1, 3, 1, 1, 255, 1, 0xff654321, 3,
           c.clip ? 1 : 0, ...(c.clip || [0,0,8,8])];
         fields.forEach((v, i) => dv.setUint32(desc + i * 4, v, true));
         u8.set(c.initial, dib);
         const errors = [], contexts = [];
-        const gpu = new D3DIMGpu.D3DIMGpu({ getMemory: () => memory, batchDraws: c.batchDraws,
+        const gpu = new D3DIMGpu.D3DIMGpu({ getMemory: () => memory, batchDraws: c.batchDraws, exactNative16: true,
           boundedReadback: c.boundedReadback !== false,
           getExports: () => ({ d3dim_gpu_describe: () => desc, guest_to_wasm: a => a,
             d3dim_gpu_decode_texture: () => { throw new Error('POINTLIST decoded an ignored texture'); } }),
@@ -161,10 +163,10 @@ else (async () => {
           if (gpu.call(D3DIMGpu.OPCODES.DRAW,call) !== 1) throw new Error('transition draw rejected');
         };
         draw(4,0xffff0000,.25); // Establish near red geometry and its depth.
-        draw(1,0xff0000ff,0); // Points ignore depth test/write: overwrite blue.
-        draw(4,0xff00ff00,.5); // Far green still fails against original .25.
+        draw(1,0xff0000ff,.2); // Points obey depth: .2 passes LESS and writes .2.
+        draw(4,0xff00ff00,.5); // Far green fails against the point's .2.
         gpu.fence(); const retained = dv.getUint16(dib+2*16+2*2,true);
-        draw(4,0xff00ff00,.1); // Near green wins: depth state restored after point.
+        draw(4,0xff00ff00,.1); // Near green wins over the point's written depth.
         gpu.fence(); const replaced = dv.getUint16(dib+2*16+2*2,true);
         set(16,0); set(18,0); set(19,1);
         draw(1,0x00ff0000,1); // Alpha zero still overwrites red, no blending.
@@ -178,7 +180,7 @@ else (async () => {
       evidence.versions.push({ version, results, transitions });
       if (process.env.POINTLIST_EVIDENCE)
         fs.writeFileSync(process.env.POINTLIST_EVIDENCE, JSON.stringify(evidence, null, 2) + '\n');
-      console.log(`${process.env.POINTLIST_BASELINE ? 'BASELINE' : 'PASS'} WebGL${version}: ${results.length} independent native point pixel cases; texture/depth/blend/fog/alpha ignored, clipping, overlap, batching, padding and neighboring alpha`);
+      console.log(`${process.env.POINTLIST_BASELINE ? 'BASELINE' : 'PASS'} WebGL${version}: ${results.length} independent native point pixel cases; texture/blend/fog/alpha ignored, depth obeyed, clipping, overlap, batching, padding and neighboring alpha`);
     }
   } finally { await browser.close(); }
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });
@@ -251,12 +253,13 @@ async function pointPublicFixture(c,targetName,baseline=false) {
   await rs(15,0);await rs(27,0);
   expected=await seed();await clip([3,3,2,2]);await draw(1,false,0x00123456);
   fill(expected,[3,3,4,4],0x00123456);await observe('viewport intersection retains all other words',expected);await clip([0,0,8,8]);
-  // Near triangle creates depth, zero-alpha point overwrites without changing
-  // depth, farther triangle must fail. Then a closer triangle proves restore.
+  // Near triangle creates depth; a nearer zero-alpha point passes LESS and
+  // writes its depth; a farther triangle fails over both. Then a closer
+  // triangle proves the triangle depth state is restored after the point.
   await seed();await rs(7,1);await rs(14,1);await rs(23,2);await rs(27,0);await rs(9,1);
   await ok(com('Clear2 point initial depth',viewport,20,0,0,2,0,bits(1),0));
   const triangle=[[-8,-8],[24,-8],[-8,24]];
-  await draw(4,false,0xffff0000,.25,triangle);await draw(1,false,0x000000ff,.75);
+  await draw(4,false,0xffff0000,.25,triangle);await draw(1,false,0x000000ff,.2);
   await draw(4,false,0xff00ff00,.5,triangle);expected=Array(64).fill(encode(0xffff0000));fill(expected,[2,2,4,4],0x000000ff);
   await observe('point leaves near triangle depth intact',expected);
   await draw(4,false,0xff00ff00,.1,triangle);await observe('next near triangle depth restored',Array(64).fill(encode(0xff00ff00)));

@@ -99,3 +99,11 @@ while the ring is up to open the passport on New Game, wait ~6 s for the
 passport to finish opening (a press 3 s in is swallowed by the animation),
 Enter again, and Jungle loads with its Controls overlay; one key dismisses
 it and Up runs Lara forward.
+
+## Performance (2026-11-14)
+
+Same root cause as TR2 (see `tomb-raider-2-demo.md`, "Performance"): on the
+WebGL path the per-primitive `_storeNative16` pass in `lib/d3dim-gpu.js`
+costs whole-run `drawMs` 7.1 s vs 2.1 s without it (title ring, attract
+demo and INDIA load, 30000 batches, `scratch/runs/20261114-tr-perf/t3-*.log`).
+Jungle gameplay (batch ~45000+) was not profiled: it is past the 60 s run limit.

@@ -2777,6 +2777,9 @@ Resource-aware Win98 emulator
       window.addEventListener('load', syncD3DSelect);
       // Lazy surface sync is on unless ?no-lazy-sync; the toolbar box follows.
       window.WINE_D3DIM_LAZY_SYNC = !q.has('no-lazy-sync');
+      // D3DIM frames go straight from the GPU to the page unless
+      // ?no-d3dim-gpu-present (docs/d3dim-gpu-present.md).
+      window.WINE_D3DIM_GPU_PRESENT = !q.has('no-d3dim-gpu-present');
       window.addEventListener('load', () => {
         const box = document.getElementById('lazy-sync-toggle');
         if (box) box.checked = window.WINE_D3DIM_LAZY_SYNC;

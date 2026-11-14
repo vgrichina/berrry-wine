@@ -2910,9 +2910,9 @@
             "hexen2_demo"
           ],
           "status": "issues",
-          "statusDate": "2026-10-11",
-          "works": "The OpenGL version reaches the main menu, starts a new Paladin mission, and the player can turn and walk in first person.",
-          "issues": "The first level load spends a very long time building models before play starts; combat, sound and the software version were not checked."
+          "statusDate": "2026-11-13",
+          "works": "The OpenGL version opens on the title menu, starts a new Paladin mission and plays in first person with WASD and mouse look; sound effects play through DirectSound, and settings are kept between visits.",
+          "issues": "The first level load spends a long time building models before play starts, there is no CD music, and the software version (h2.exe) stops at a SciTech driver error."
         }
       ],
       "year": 1997,

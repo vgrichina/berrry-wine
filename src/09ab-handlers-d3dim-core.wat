@@ -240,6 +240,7 @@
   ;; The software render Worker and deferred presentation retain global ordering.
   (func $d3dim_surface_fence (param $entry i32)
     (local $dib i32) (local $length i32) (local $synchronized i32)
+    (if (local.get $entry) (then (call $d3dim_gpu_unpark (local.get $entry))))
     (if (global.get $d3dim_gpu_on) (then (call $d3dim_gpu_present_owed)))
     (if (local.get $entry) (then
       (local.set $synchronized (call $d3dim_lazy_fence (load.field DxObject misc1 (local.get $entry))
@@ -297,6 +298,164 @@
     (global.set $d3dim_present_pending (local.get $front))
     (i32.const 1))
   (global $d3dim_flip_desc (mut i32) (i32.const 0))
+
+  ;; ── GPU present (docs/d3dim-gpu-present.md) ──────────────────────
+  ;; A Blt from the GPU render target to the primary is presented by the
+  ;; executor straight from GPU memory (opcode 0x2000A) instead of a readback
+  ;; into the back DIB, a CPU copy into the primary DIB and a DIB decode on the
+  ;; page. The primary's DIB is then stale: the executor parks a GPU copy of
+  ;; the presented pixels and writes them into the DIB only when a CPU reader
+  ;; asks for that surface ($d3dim_gpu_unpark, from the surface's ranged fence
+  ;; sites). Shared slots in $D3DIM_LAZY_SHARED, beside the lazy-Lock words:
+  ;; +20 parked primary entry (0 = none), +24 CPU present sequence (bumped by
+  ;; every $dx_present, so the page drops a GPU layer a later CPU frame
+  ;; replaced), +28 the DIB the parked frame belongs to.
+  ;; Default on; ?no-d3dim-gpu-present clears it (inherited by every thread).
+  (global $d3dim_gpu_present_on (mut i32) (i32.const 1))
+  ;; The render target of the newest GPU-accepted draw or clear. Only a Blt
+  ;; from this surface qualifies: a plain DirectDraw offscreen surface never
+  ;; reaches the GPU executor and keeps the CPU path.
+  (global $d3dim_gpu_last_rt (mut i32) (i32.const 0))
+  (global $d3dim_gpu_present_desc (mut i32) (i32.const 0))
+  (func (export "set_d3dim_gpu_present") (param $on i32)
+    (global.set $d3dim_gpu_present_on (i32.ne (local.get $on) (i32.const 0))))
+  (func (export "get_d3dim_gpu_present") (result i32) (global.get $d3dim_gpu_present_on))
+  (func (export "get_d3dim_gpu_parked_slot") (result i32)
+    (local $entry i32)
+    (local.set $entry (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 20)))
+    (if (result i32) (local.get $entry)
+      (then (call $dx_slot_of (local.get $entry))) (else (i32.const -1))))
+  (func (export "get_d3dim_cpu_present_seq") (result i32)
+    (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 24)))
+  (func $d3dim_cpu_present_note
+    (drop (i32.atomic.rmw.add (region.addr $D3DIM_LAZY_SHARED 24) (i32.const 1))))
+
+  ;; Bring the parked frame back into its DIB before a CPU reader or writer
+  ;; uses $entry (0: whichever surface is parked). A ranged fence over the
+  ;; parked DIB makes the executor write the parked GPU copy into it. Every
+  ;; thread that sees the slot fences; the slot is cleared only afterwards,
+  ;; so no thread can read the DIB while another is still materializing it.
+  (func $d3dim_gpu_unpark (param $entry i32)
+    (local $parked i32)
+    (local.set $parked (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 20)))
+    (if (i32.eqz (local.get $parked)) (then (return)))
+    (if (i32.and (i32.ne (local.get $entry) (i32.const 0))
+                 (i32.ne (local.get $entry) (local.get $parked))) (then (return)))
+    (if (i32.eq (call $host_gpu_gl_call (i32.const 0x20001)
+          (i32.load (region.addr $D3DIM_LAZY_SHARED 28))
+          (i32.mul (load.field DxObject pitch (local.get $parked))
+                   (load.field DxObject height (local.get $parked)))) (i32.const 1))
+      (then (global.set $d3dim_worker_pending (i32.const 0))))
+    (drop (i32.atomic.rmw.cmpxchg (region.addr $D3DIM_LAZY_SHARED 20)
+      (local.get $parked) (i32.const 0))))
+
+  ;; Blt(primary <- GPU render target) with nothing but a plain same-size
+  ;; copy: no keys, effects, region clipper, stretch or clipping, same pixel
+  ;; format, a top-level window that DirectDraw owns alone. Result 1 means the
+  ;; executor queued the present and the caller must not touch either DIB.
+  (func $d3dim_gpu_try_present (param $dst i32) (param $src i32)
+      (param $dst_rect i32) (param $src_rect i32) (param $flags i32) (result i32)
+    (local $dx i32) (local $dy i32) (local $dw i32) (local $dh i32)
+    (local $sx i32) (local $sy i32) (local $sw i32) (local $sh i32)
+    (local $hwnd i32) (local $clipper i32) (local $clip_entry i32) (local $d i32)
+    (if (i32.eqz (global.get $d3dim_gpu_present_on)) (then (return (i32.const 0))))
+    (if (i32.eqz (global.get $d3dim_gpu_on)) (then (return (i32.const 0))))
+    (if (global.get $d3dim_gpu_cooperative) (then (return (i32.const 0))))
+    (if (i32.eqz (local.get $src)) (then (return (i32.const 0))))
+    (if (i32.ne (local.get $src) (global.get $d3dim_gpu_last_rt)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.and (load.field DxObject flags (local.get $dst)) (i32.const 1)))
+      (then (return (i32.const 0))))
+    (if (i32.and (load.field DxObject flags (local.get $src)) (i32.const 1))
+      (then (return (i32.const 0))))
+    ;; DDBLT_WAIT | DDBLT_ASYNC | DDBLT_DONOTWAIT only.
+    (if (i32.and (local.get $flags) (i32.const 0xF6FFFDFF)) (then (return (i32.const 0))))
+    (if (i32.ne (load.field DxObject type (local.get $src)) (i32.const 2)) (then (return (i32.const 0))))
+    (if (i32.ne (load.field DxObject bpp (local.get $dst)) (load.field DxObject bpp (local.get $src)))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (i32.or (i32.eq (load.field DxObject bpp (local.get $dst)) (i32.const 16))
+                         (i32.eq (load.field DxObject bpp (local.get $dst)) (i32.const 32))))
+      (then (return (i32.const 0))))
+    (if (i32.ne (call $dx_surf_fmt_get (local.get $dst)) (call $dx_surf_fmt_get (local.get $src)))
+      (then (return (i32.const 0))))
+    (if (i32.or (i32.eqz (load.field DxObject misc1 (local.get $dst)))
+                (i32.eqz (load.field DxObject misc1 (local.get $src))))
+      (then (return (i32.const 0))))
+    (if (i32.eq (global.get $dx_scroll_hold_wa) (local.get $dst)) (then (return (i32.const 0))))
+    ;; Only an HWND clipper (the compositor clips to the window); a region
+    ;; list clips pixels and stays on the CPU path.
+    (local.set $clipper (call $dx_surface_clipper_get (local.get $dst)))
+    (if (local.get $clipper) (then
+      (local.set $clip_entry (call $dx_from_this (local.get $clipper)))
+      (if (i32.eqz (local.get $clip_entry)) (then (return (i32.const 0))))
+      (if (i32.ne (load.field DxObject type (local.get $clip_entry)) (i32.const 10))
+        (then (return (i32.const 0))))
+      (if (i32.eqz (load.field DxObject misc0 (local.get $clip_entry)))
+        (then (return (i32.const 0))))))
+    (local.set $hwnd (call $dx_surface_target_hwnd (local.get $dst)))
+    (if (i32.eqz (local.get $hwnd)) (then (return (i32.const 0))))
+    (if (call $dx_window_surface_shared (local.get $hwnd)) (then (return (i32.const 0))))
+    (if (i32.ne (call $wnd_top_level (local.get $hwnd)) (local.get $hwnd)) (then (return (i32.const 0))))
+    (if (call $d3d9_present_client_relative (local.get $hwnd)) (then (return (i32.const 0))))
+    (if (local.get $dst_rect)
+      (then
+        (local.set $dx (call $gl32 (local.get $dst_rect)))
+        (local.set $dy (call $gl32 (i32.add (local.get $dst_rect) (i32.const 4))))
+        (local.set $dw (i32.sub (call $gl32 (i32.add (local.get $dst_rect) (i32.const 8))) (local.get $dx)))
+        (local.set $dh (i32.sub (call $gl32 (i32.add (local.get $dst_rect) (i32.const 12))) (local.get $dy))))
+      (else
+        (local.set $dw (load.field DxObject width (local.get $dst)))
+        (local.set $dh (load.field DxObject height (local.get $dst)))))
+    (if (local.get $src_rect)
+      (then
+        (local.set $sx (call $gl32 (local.get $src_rect)))
+        (local.set $sy (call $gl32 (i32.add (local.get $src_rect) (i32.const 4))))
+        (local.set $sw (i32.sub (call $gl32 (i32.add (local.get $src_rect) (i32.const 8))) (local.get $sx)))
+        (local.set $sh (i32.sub (call $gl32 (i32.add (local.get $src_rect) (i32.const 12))) (local.get $sy))))
+      (else
+        (local.set $sw (load.field DxObject width (local.get $src)))
+        (local.set $sh (load.field DxObject height (local.get $src)))))
+    (if (i32.or (i32.ne (local.get $dw) (local.get $sw)) (i32.ne (local.get $dh) (local.get $sh)))
+      (then (return (i32.const 0))))
+    (if (i32.or (i32.le_s (local.get $dw) (i32.const 0)) (i32.le_s (local.get $dh) (i32.const 0)))
+      (then (return (i32.const 0))))
+    (if (i32.or
+          (i32.or (i32.lt_s (local.get $dx) (i32.const 0)) (i32.lt_s (local.get $dy) (i32.const 0)))
+          (i32.or (i32.lt_s (local.get $sx) (i32.const 0)) (i32.lt_s (local.get $sy) (i32.const 0))))
+      (then (return (i32.const 0))))
+    (if (i32.or
+          (i32.or (i32.gt_s (i32.add (local.get $dx) (local.get $dw)) (load.field DxObject width (local.get $dst)))
+                  (i32.gt_s (i32.add (local.get $dy) (local.get $dh)) (load.field DxObject height (local.get $dst))))
+          (i32.or (i32.gt_s (i32.add (local.get $sx) (local.get $sw)) (load.field DxObject width (local.get $src)))
+                  (i32.gt_s (i32.add (local.get $sy) (local.get $sh)) (load.field DxObject height (local.get $src)))))
+      (then (return (i32.const 0))))
+    ;; One parked surface at a time: retire another surface's first.
+    (if (i32.and (i32.ne (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 20)) (i32.const 0))
+                 (i32.ne (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 20)) (local.get $dst)))
+      (then (call $d3dim_gpu_unpark (i32.const 0))))
+    (local.set $d (global.get $d3dim_gpu_present_desc))
+    (if (i32.eqz (local.get $d)) (then
+      (local.set $d (call $g2w (call $heap_alloc (i32.const 64))))
+      (global.set $d3dim_gpu_present_desc (local.get $d))))
+    (i32.store offset=0 (local.get $d) (i32.const 0x44585033))
+    (i32.store offset=4 (local.get $d) (local.get $dst))
+    (i32.store offset=8 (local.get $d) (local.get $src))
+    (i32.store offset=12 (local.get $d) (local.get $dx))
+    (i32.store offset=16 (local.get $d) (local.get $dy))
+    (i32.store offset=20 (local.get $d) (local.get $dw))
+    (i32.store offset=24 (local.get $d) (local.get $dh))
+    (i32.store offset=28 (local.get $d) (local.get $sx))
+    (i32.store offset=32 (local.get $d) (local.get $sy))
+    (i32.store offset=36 (local.get $d) (local.get $hwnd))
+    (i32.store offset=40 (local.get $d) (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 24)))
+    (i32.store offset=44 (local.get $d) (call $dx_exclusive_get))
+    (if (i32.ne (call $host_gpu_gl_call (i32.const 0x2000A) (local.get $d) (i32.const 48)) (i32.const 1))
+      (then (return (i32.const 0))))
+    (i32.store (region.addr $D3DIM_LAZY_SHARED 28) (load.field DxObject misc1 (local.get $dst)))
+    (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 20) (local.get $dst))
+    (call $host_dx_trace (i32.const 32) (call $dx_slot_of (local.get $dst))
+      (call $dx_slot_of (local.get $src)) (local.get $dw) (local.get $dh))
+    (call $present_pace_full_blit (local.get $dst) (local.get $dw) (local.get $dh))
+    (i32.const 1))
 
   ;; The render Worker's half of a queued Flip: the same DIB swap
   ;; $handle_IDirectDrawSurface_Flip does synchronously, run after every draw
@@ -460,6 +619,8 @@
     (i32.store offset=20 (local.get $desc) (local.get $state))
     (if (i32.eqz (call $host_gpu_gl_call (i32.const 0x20000) (local.get $desc) (i32.const 0)))
       (then (return (i32.const 0))))
+    (if (global.get $d3dim_gpu_on)
+      (then (global.set $d3dim_gpu_last_rt (call $d3ddev_rt_entry (local.get $this)))))
     (global.set $d3dim_worker_pending (i32.const 1))
     (i32.const 1))
 
@@ -728,6 +889,7 @@
     (i32.store offset=28 (local.get $d) (local.get $h))
     (if (i32.eqz (call $host_gpu_gl_call (i32.const 0x20004) (local.get $d) (i32.const 0)))
       (then (return (i32.const 0))))
+    (global.set $d3dim_gpu_last_rt (local.get $rt))
     (global.set $d3dim_worker_pending (i32.const 1))
     (i32.const 1))
 
@@ -6400,7 +6562,20 @@
       (local.set $row (i32.add (local.get $row) (i32.const 1)))
       (br $rlp))))
 
+  ;; Depth-tested rect fill. Like $viewport_fill_rect, the RGB contract forces
+  ;; opaque native16 storage; $viewport_fill_rect_z_rgba stores the complete
+  ;; diffuse RGBA, as POINTLIST does ($d3dim_plot_point).
   (func $viewport_fill_rect_z
+    (param $rt_entry i32) (param $zbuf_guest i32)
+    (param $x i32) (param $y i32) (param $w i32) (param $h i32)
+    (param $zval f32) (param $color i32) (param $zfunc i32) (param $zwrite i32)
+    (call $viewport_fill_rect_z_rgba (local.get $rt_entry) (local.get $zbuf_guest)
+      (local.get $x) (local.get $y) (local.get $w) (local.get $h) (local.get $zval)
+      (select (i32.or (local.get $color) (i32.const 0xFF000000)) (local.get $color)
+        (i32.eq (load.field DxObject bpp (local.get $rt_entry)) (i32.const 16)))
+      (local.get $zfunc) (local.get $zwrite)))
+
+  (func $viewport_fill_rect_z_rgba
     (param $rt_entry i32) (param $zbuf_guest i32)
     (param $x i32) (param $y i32) (param $w i32) (param $h i32)
     (param $zval f32) (param $color i32) (param $zfunc i32) (param $zwrite i32)
@@ -6410,7 +6585,7 @@
     (local $zpitch i32) (local $zbpp i32) (local $zraw i32) (local $pass i32)
     (local $ztest f32)
     (if (i32.eqz (local.get $zbuf_guest)) (then
-      (call $viewport_fill_rect
+      (call $viewport_fill_rect_rgba
         (local.get $rt_entry) (local.get $x) (local.get $y)
         (local.get $w) (local.get $h) (local.get $color))
       (return)))
@@ -6460,7 +6635,7 @@
     (call $d3dim_exec_extent_draw (local.get $rt_entry)
       (local.get $x) (local.get $y) (local.get $w) (local.get $h))
     (local.set $px16 (call $d3dim_encode_surface_pixel (local.get $rt_entry)
-      (i32.or (local.get $color) (i32.const 0xFF000000)) (i32.const 16)))
+      (local.get $color) (i32.const 16)))
     (local.set $row (i32.const 0))
     (block $rdone (loop $rlp
       (br_if $rdone (i32.ge_s (local.get $row) (local.get $h)))
@@ -8655,16 +8830,13 @@
               (local.set $i (i32.add (local.get $i) (i32.const 1)))
               (br $vlp)))))))
     (if (i32.eq (local.get $primType) (i32.const 1)) (then
-      ;; POINTLIST — keep prior dot-plot behavior
+      ;; POINTLIST — 2x2 dots, depth-tested ($d3dim_plot_point)
       (local.set $i (i32.const 0))
       (block $pdone (loop $plp
         (br_if $pdone (i32.ge_u (local.get $i) (local.get $dwVertexCount)))
         (local.set $v0 (i32.add (local.get $v_wa) (i32.mul (local.get $i) (call $d3dim_tl_stride))))
-        (call $viewport_fill_rect_rgba (local.get $rt)
-          (call $d3dim_coord_i (f32.load (local.get $v0)))
-          (call $d3dim_coord_i (f32.load (i32.add (local.get $v0) (i32.const 4))))
-          (i32.const 2) (i32.const 2)
-          (i32.load (i32.add (local.get $v0) (i32.const 16))))
+        (call $d3dim_plot_point (local.get $this) (local.get $rt) (local.get $state_guest)
+          (local.get $v0))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br $plp)))
       (return)))
@@ -9152,11 +9324,40 @@
           (local.get $state_guest) (local.get $vbase_wa) (local.get $ibase_wa)
           (local.get $dwVertexCount) (local.get $vtxType) (local.get $idx0) (local.get $t0)))
       (then (return)))
+    (call $d3dim_plot_point (local.get $this) (local.get $rt) (local.get $state_guest)
+      (local.get $t0)))
+
+  ;; One TL POINTLIST vertex: the 2x2 diffuse dot, depth-tested and written
+  ;; like a triangle under ZENABLE/ZFUNC/ZWRITEENABLE (state +284/+348/+312).
+  ;; Thief II plots its sky stars last at sz=0.99995 with depth on and relies
+  ;; on the walls to hide them; plotting without the test sprinkled them over
+  ;; the brickwork. The D3DIM GPU executor's _drawPoints follows this rule.
+  (func $d3dim_plot_point
+    (param $this i32) (param $rt i32) (param $state_guest i32) (param $v i32)
+    (local $zbuf i32) (local $zfunc i32) (local $zwrite i32)
+    (if (local.get $state_guest) (then
+      (if (call $gl32 (i32.add (local.get $state_guest) (i32.const 284))) (then
+        (local.set $zbuf (call $d3dim_ensure_zbuffer (local.get $this)))
+        (local.set $zfunc (call $gl32 (i32.add (local.get $state_guest) (i32.const 348))))
+        (local.set $zwrite (call $gl32 (i32.add (local.get $state_guest) (i32.const 312))))))))
+    (if (i32.eqz (local.get $zfunc)) (then (local.set $zfunc (i32.const 4))))
+    ;; ALWAYS without a write is no depth work, as for triangles.
+    (if (i32.and (i32.eq (local.get $zfunc) (i32.const 8)) (i32.eqz (local.get $zwrite)))
+      (then (local.set $zbuf (i32.const 0))))
+    (if (local.get $zbuf) (then
+      (call $viewport_fill_rect_z_rgba (local.get $rt) (local.get $zbuf)
+        (call $d3dim_coord_i (f32.load (local.get $v)))
+        (call $d3dim_coord_i (f32.load (i32.add (local.get $v) (i32.const 4))))
+        (i32.const 2) (i32.const 2)
+        (f32.load (i32.add (local.get $v) (i32.const 8)))
+        (i32.load (i32.add (local.get $v) (i32.const 16)))
+        (local.get $zfunc) (i32.ne (local.get $zwrite) (i32.const 0)))
+      (return)))
     (call $viewport_fill_rect_rgba (local.get $rt)
-      (call $d3dim_coord_i (f32.load (local.get $t0)))
-      (call $d3dim_coord_i (f32.load (i32.add (local.get $t0) (i32.const 4))))
+      (call $d3dim_coord_i (f32.load (local.get $v)))
+      (call $d3dim_coord_i (f32.load (i32.add (local.get $v) (i32.const 4))))
       (i32.const 2) (i32.const 2)
-      (i32.load (i32.add (local.get $t0) (i32.const 16)))))
+      (i32.load (i32.add (local.get $v) (i32.const 16)))))
 
   (func $d3dim_draw_indexed_primitive
     (param $this i32) (param $primType i32) (param $vtxType i32)

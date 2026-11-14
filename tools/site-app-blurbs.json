@@ -6,6 +6,23 @@
   "_not_games": ["winamp"],
   "_titles_comment": "Page name for an id whose short desktop label is not what people search for. Used in the title, H1, FAQ and JSON-LD; the desktop icon keeps its label.",
   "_titles": { "pinball": "3D Pinball Space Cadet" },
+  "_opengl_comment": "Desktop ids whose 3D goes through the emulator's OpenGL frontend; their 'How it runs here' says so instead of crediting the software GDI with every pixel.",
+  "_opengl": ["quake2_demo", "quake3_demo", "halflife_uplink", "hexen2_demo"],
+  "_about_comment": "Optional 'About the game' paragraphs (markdown, one string per paragraph) for titles a one-line blurb undersells. Same rule as the blurbs: only what is in the files or has been seen running here.",
+  "_about": {
+    "hexen2_demo": [
+      "Hexen II is the third game in Raven Software's Heretic and Hexen series, published by Activision in 1997 and built on a modified Quake engine. Where Quake was a straight run-and-gun, Hexen II adds character classes that level up, an inventory of artifacts to carry and use, and hubs of levels you travel back and forth between to solve their puzzles.",
+      "This is the official 1.11 demo, running `glh2.exe`, the game's OpenGL build. Its data holds three single-player levels and a deathmatch map, and the models for all four classes: Paladin, Crusader, Necromancer and Assassin. The Paladin is the class tested here, from New Mission through first-person play with the full HUD.",
+      "The site sets it up for a modern keyboard and mouse instead of the 1997 arrow-key layout: W, A, S and D move, the mouse looks, and the left button attacks. Changes you make in Options are saved in this browser. The notice the OpenGL build shows on its first start is skipped, so Launch goes straight to the title menu.",
+      "The first load of a level shows a column of \"Meshing models\" lines before play starts: the OpenGL build prepares every model once, and under emulation that takes a while. Leave it running; the level starts when it finishes.",
+      "The full game is still sold, on GOG together with its Portal of Praevus expansion and on Steam; the links are under \"Where to get Hexen II\" below."
+    ],
+    "halflife_uplink": [
+      "Uplink is the second Half-Life demo, released by Valve and Sierra in 1999. Rather than the start of the game it is a short standalone episode set in a damaged section of the Black Mesa research facility, built from material that did not make it into the retail release, so it is worth playing even if you know Half-Life well.",
+      "Here it runs `hldemo.exe` and the GoldSrc engine unmodified. The site selects the OpenGL renderer at 1024×768 on first launch; the Direct3D and software renderers reach gameplay as well, but switching renderer from inside the game currently freezes it, so pick one and start again.",
+      "The shipped demo forgets to load its own default key bindings, which left a fresh install unable to move. The site installs that same `default.cfg` as the first-run config, so the standard Half-Life keys work from the first frame: W, A, S and D, mouse look and the left button to fire."
+    ]
+  },
 
   "notepad": "The Windows 98 text editor, and the first program this emulator ever ran. Typing, selection, word wrap, Find and Replace, the Font and Open/Save dialogs and the help file all work.",
   "calc": "The Windows 98 Calculator in standard and scientific modes. It needs the real msvcrt.dll, which is loaded beside it.",
@@ -48,6 +65,8 @@
   "diablo_shareware": "Blizzard's 1996 Diablo shareware: create a Warrior and walk into Tristram, the town above the dungeon. Characters are saved in this browser.",
   "quake2_demo": "id Software's Quake II demo, version 3.14: the 1997 shooter's first levels on its OpenGL renderer, plus network games over the emulator's virtual LAN.",
   "quake3_demo": "The Quake III Arena 1.11 demo from id Software: arena deathmatch on its OpenGL renderer, hosted or joined over the emulator's virtual LAN.",
+  "hexen2_demo": "Raven Software's 1997 Hexen II demo: dark-fantasy first-person action on the Quake engine, set up for WASD and the mouse.",
+  "halflife_uplink": "Half-Life: Uplink, Valve's 1999 standalone demo episode set in Black Mesa, on the GoldSrc engine's OpenGL renderer.",
   "nfs2se_glide_demo": "Electronic Arts' Need for Speed II Special Edition demo from 1997, racing on its 3dfx Glide renderer, which the emulator implements itself.",
   "nfs3_glide_demo": "The September 1998 Need for Speed III: Hot Pursuit demo, a Corvette on Rocky Pass, drawn by its 3dfx Glide renderer on the emulator's own Glide.",
   "simcity2000_demo": "Maxis's SimCity 2000 interactive demo for Windows 95: load the demo city or start a new one. As in the original demo, there is no saving and it ends after 30 minutes.",

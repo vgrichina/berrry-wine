@@ -360,6 +360,16 @@ function exeFormat(rel) {
   } catch (_) { return null; }
 }
 
+// An app that streams its data from a browser manifest mounts those files
+// too; counting only `files` made a whole game look like two INI files.
+function manifestFileCount(app) {
+  if (!app.localFileManifest) return 0;
+  try {
+    const m = JSON.parse(fs.readFileSync(path.join(ROOT, app.localFileManifest), 'utf-8'));
+    return Array.isArray(m.files) ? m.files.length : 0;
+  } catch (_) { return 0; }
+}
+
 function loadDesktopApps() {
   const { APPS, DESKTOP_APPS, appFileUrl } = require(path.join(ROOT, 'lib', 'apps.js'));
   const blurbs = JSON.parse(fs.readFileSync(path.join(ROOT, APP_BLURBS_REL), 'utf-8'));
@@ -393,7 +403,9 @@ function loadDesktopApps() {
       exe: exe ? path.posix.basename(exe) : null,
       format: exe ? exeFormat(exe) : null,
       dlls: (app.dlls || []).map(d => path.posix.basename(d)),
-      files: (app.files || []).map(appFileUrl).filter(Boolean).length,
+      files: (app.files || []).map(appFileUrl).filter(Boolean).length + manifestFileCount(app),
+      about: (blurbs._about && blurbs._about[id]) || null,
+      opengl: (blurbs._opengl || []).includes(id),
       args: app.args || '',
       lan: !!app.lan,
       touch: !!app.touchControls,
@@ -444,6 +456,13 @@ function appPageMd(app, siblings, qa, compat = null) {
     L.push(`<img class="app-shot" src="/${app.shot}" alt="${esc(app.name)} running in Wine-Assembly" ${sizeAttrs(app.shotSize)}>`);
     L.push('');
   }
+  // `_about` in site-app-blurbs.json: a few paragraphs on what the program
+  // is and what this copy contains, for titles a one-line blurb undersells.
+  if (app.about) {
+    L.push(`## About ${app.game ? 'the game' : 'the program'}`);
+    L.push('');
+    for (const p of [].concat(app.about)) { L.push(p); L.push(''); }
+  }
   L.push(...appCompatMd(app, compat));
   L.push('## About this program');
   L.push('');
@@ -462,7 +481,10 @@ function appPageMd(app, siblings, qa, compat = null) {
   L.push('');
   const fmt = ARTICLE_FOR_FORMAT[app.format];
   L.push(`The x86 code is interpreted by [threaded code written in WebAssembly Text](/articles/x86-interpreter-in-webassembly-text.html); ` +
-    `windows, controls, menus and dialogs are the emulator's own [Win32 layer](/articles/win32-api-in-webassembly.html), and every pixel is drawn by a [software GDI](/articles/software-gdi-in-webassembly.html) in the same module.` +
+    `windows, controls, menus and dialogs are the emulator's own [Win32 layer](/articles/win32-api-in-webassembly.html)` +
+    (app.opengl
+      ? `, and the 3D world goes through the emulator's [OpenGL 1.x frontend](/articles/directdraw-direct3d-in-the-browser.html), which hands its draw calls to WebGL.`
+      : `, and every pixel is drawn by a [software GDI](/articles/software-gdi-in-webassembly.html) in the same module.`) +
     (fmt ? ` See [${fmt[1]}](${fmt[0]}).` : ''));
   L.push('');
   if (app.notes.length) {
