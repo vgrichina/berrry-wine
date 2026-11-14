@@ -35,7 +35,7 @@ function readFat12(source) {
     parts.forEach((p, i) => bytes.set(p, i * spc * bps));
     return bytes;
   }
-  let label = '';
+  let label = '', labelEntry = null, labelOrder = 0;
   function directory(bytes, prefix, depth = 0) {
     if (depth > 64) throw Error('FAT12 directory depth');
     const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
@@ -45,14 +45,18 @@ function readFat12(source) {
       if (bytes[at] === 0xe5 || attr === 0x0f) continue;
       const text = (p, n) => Array.from(bytes.subarray(p, p + n), b => String.fromCharCode(b)).join('').trimEnd();
       const base = text(at, 8), ext = text(at + 8, 3);
-      if (attr & 8) { if (!prefix) label = text(at, 11); continue; }
+      if (attr & 8) {
+        if (!prefix) { label = text(at, 11); labelEntry = bytes.slice(at, at + 32); labelOrder = at / 32; }
+        continue;
+      }
       if (base === '.' || base === '..') continue;
       const name = base + (ext ? '.' + ext : '');
       if (!base || /[\\/:\x00-\x20]/.test(name)) throw Error('invalid FAT12 name');
       const key = prefix + name.toLowerCase();
       if (entries.has(key) || directories.has(key)) throw Error('duplicate FAT12 name');
       const first = dv.getUint16(at + 26, true), size = dv.getUint32(at + 28, true);
-      const metadata = { attributes: attr, time: dv.getUint16(at + 22, true), date: dv.getUint16(at + 24, true) };
+      const metadata = { attributes: attr, time: dv.getUint16(at + 22, true), date: dv.getUint16(at + 24, true),
+        directoryEntry: bytes.slice(at, at + 32), directoryOrder: at / 32 };
       if (attr & 0x10) {
         directories.add(key); directoryMetadata.set(key, metadata); directory(chain(first), key + '/', depth + 1);
       } else {
@@ -63,7 +67,7 @@ function readFat12(source) {
     }
   }
   directory(image.subarray(rootSector * bps, rootSector * bps + roots * 32), '');
-  return { entries, directories, directoryMetadata, label, bps, spc, clusters, freeClusters: Array.from({ length: clusters }, (_, i) => {
+  return { entries, directories, directoryMetadata, label, labelEntry, labelOrder, bps, spc, clusters, freeClusters: Array.from({ length: clusters }, (_, i) => {
     const c = i + 2, at = c + (c >> 1), pair = fat[at] | fat[at + 1] << 8;
     return (c & 1 ? pair >>> 4 : pair & 0xfff) === 0;
   }).filter(Boolean).length };

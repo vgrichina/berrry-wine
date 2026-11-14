@@ -11,6 +11,7 @@
 
 const isa = require('./isa');
 const { vgaGeometry, VGA_BASE } = require('./dos');
+const { paletteDacIndex } = require('./vga-palette-page');
 
 // Chained mode 13h is the easy half: A000 is the picture, one byte per pixel.
 // Unchained mode X is not addressable that way at all -- pixel (x, y) is byte
@@ -259,7 +260,7 @@ function readFrame(mem, video = LINEAR) {
         for (let p = 0; p < 4; p++) {
           c |= ((mem[isa.VGA_PLANES + (p << 16) + at] >> bit) & 1) << p;
         }
-        out[y * width + x] = attr ? (attr[c] & 0x3F) : c;
+        out[y * width + x] = paletteDacIndex(attr ? attr[c] : c, g.attrMode, g.colorSelect);
       }
     }
     return { width, height, pixels: out };

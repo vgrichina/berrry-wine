@@ -266,7 +266,7 @@ class Sound {
     const sb = this.m.sb, gus = this.m.gus;
     if (!this.rate || !this.sink) {
       if (gus) gus.advance(dt, false);
-      if (sb.pending && !sb.paused) {
+      if (sb.pending && !sb.paused && !sb.shortWait && sb.probeAt == null) {
         this.sbAcc += dt * sb.rate;
         const n = Math.floor(this.sbAcc);
         this.sbAcc -= n;
@@ -320,7 +320,7 @@ class Sound {
       }
       // The sample stream, held between source samples (a 22kHz 8-bit stream
       // is not improved by interpolating it).
-      if (sb.pending && !sb.paused) {
+      if (sb.pending && !sb.paused && !sb.shortWait && sb.probeAt == null) {
         this.sbPos += step;
         while (this.sbPos >= 1 && sb.pending) { this.sbPos -= 1; this.sbNext(); }
       }
