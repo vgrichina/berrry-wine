@@ -1,8 +1,11 @@
 # Tut’s Tomb: reviewed original deal, 2026-11-14
 
 Evidence directory: `scratch/runs/20261114-tutstomb-reviewed-outcome/`.
-This report is prepared before the one original and will record its actual
-visible outcome, including partial progress when native evidence is absent.
+One registered original default deal produced thirteen visibly verified removal
+events: ten pairs and three single Kings. It ended through native Game → Exit
+with fifteen pyramid cards remaining. This is a partial result, not a native
+win, loss, or exhausted-deal claim. Final review identified a missed legal
+10D + waste 3H pairing; the original was not restarted.
 
 The route uses registered `wep16_tutstomb`, the existing local
 `test/binaries/wep16/WEP2/TUTSTOMB.EXE`, its help file, imported CARDS, and
@@ -73,3 +76,104 @@ parent-death check raced the release child's terminal-audit write. Both were
 corrected and their failed logs retained. The older JavaScript HLP helpers
 did not decode this help format correctly; the built native parser above
 provides the complete readable rules instead.
+
+
+## Actual original and visible evidence
+
+The published controller/test route was commit
+`69a3e19980fbc6fdbfe7bf7307a378a1620d5a65` before launch. The original ran
+once, with real ticks, default 1000 batch size, 800×600 screen, fixed
+1200-second limit and independently prearmed 1220-second watchdog. Its native
+runtime was 809.740 seconds. No configuration, clock, private card memory,
+seed, solver, undo, Deal or New session was used. The untouched original
+showed draw-three and Casino scoring. The complete actual board was reviewed
+and permanently bound to PID 4159762/start token 274682277/main HWND 0x10001
+before the first card action. Each actual pair first selection was separately
+reviewed as visibly inverted before its second member was chosen. Freshness
+refusals happened before sending input and required a new personal scene.
+
+Selected before/result PNGs are named by action in `selected-captures.json`;
+the second-member before images show the actual first selection. Removal
+claims come from the visible cards disappearing and the native score, never
+from a transport ACK. Every pair below totals thirteen, and each King is
+single. A net +12 reflects the native timer crossing a ten-second boundary.
+
+| Event | Removed | Native score before → after | Newly free pyramid cards |
+| --- | --- | --- | --- |
+| king1 | KC | -38 → -25 | — |
+| pair1 | 10C + 3S | -44 → -32 | 4H |
+| king2 | KS, top waste | -33 → -21 | — |
+| pair2 | AH + QD | -29 → -17 | JD |
+| king3 | KH, top waste | -17 → -4 | — |
+| pair3 | JD + 2H | -7 → 6 | JC |
+| pair4 | JC + 2S | -3 → 10 | — |
+| pair5 | 8D + 5H | 8 → 21 | — |
+| pair6 | 4H + 9C | 12 → 24 | 10H, 6C |
+| pair7 | 6C + 7H | 4 → 17 | — |
+| pair8 | 10H + 3C | -4 → 9 | 3D |
+| pair9 | 3D + 10S | 8 → 20 | 7C, 10D |
+| pair10 | 7C + 6S | 8 → 21 | JH |
+
+The sixth removal event was pair3. Total removed cards were 23; thirteen
+came from the pyramid, leaving fifteen there. Nineteen ordinary stock-draw
+clicks and three visible green-circle recycles occurred. Native help permits
+reuse in draw-three mode. After the third recycle the stock was face-down
+and the waste empty; no further draw occurred before Quit. The last visible
+native score was -23 at time 804 in `native-exit-visible.png`.
+
+The help documents -5 per recycle. The actual selected recycle images show
+-10, apart from timer deductions: 15 → 5 on the first recycle, 19 → 8 on
+the second (one timer point), and -9 → -19 on the third. This discrepancy is
+unresolved; the observed UI values take precedence over an assumed formula.
+
+This was not exhaustive play. At scene s54 the top waste was 3H and 10D
+was already exposed by pair9. I overlooked that legal pair and drew again,
+incorrectly recording that no ten was free. The transient s54 PNG was pruned
+before this final review; its original capture metadata/hash remains, and
+selected pair9/final-board PNGs show the exposed 10D. The third recycle also
+occurred before deciding to stop. No native outcome dialog appeared. The
+result therefore preserves the missed opportunity and partial status rather
+than claiming an unwinnable or completed deal.
+
+## Closure, provenance and shutdown
+
+Imports and runner auto-resolution were inspected before launch. The actual
+native module log loaded CARDS and registered WEPUTIL for LoadLibrary; no
+unexpected external dynamic module appeared. System modules and win87em are
+implemented internally. Exact complete known media sizes/SHA-256 values below
+were equal before and after; the HLP is included as a registered dependency.
+
+| Existing local WEP2 media | Bytes | SHA-256 before = after |
+| --- | ---: | --- |
+| TUTSTOMB.EXE | 101472 | d02dd9ce2e6bbead9e9464691b6db08c20a4158b09b93be5a414606f9d1476e8 |
+| TUTSTOMB.HLP | 15527 | 7616f28c70beb61d94128eb8284e8154b44b00e5b0a5837440bdb54b173f0b0b |
+| WEPUTIL.DLL | 19200 | 7bd426e4d1ca0afea88e5ad22d9add44d4df79432cdc4b5cb165c10c6023e6bd |
+| CARDS.DLL | 148528 | bcc968e7c8b376eae9dc91dad9dc43a40502fd91df1663c6dc82fb6c50b10a0f |
+
+`launch-pins.json` records 361 exact source/runtime/built-artifact and local
+WEP2 candidate-media hashes. `release-pins.json` verified all 361 unchanged
+before releasing the runtime slot. Git commit plus the 58821-byte
+`relevant-uncommitted.patch` preserves relevant uncommitted source hunks,
+including new files. No source tree, WASM, game media or frame bundle was
+copied into evidence. Thirty-five selected decision/result PNGs remain;
+redundant transient PNGs were removed with their hashes recorded.
+
+Q2 then JezzBall predecessor actual native/watchdog/supervisor waits, both
+EOF, heavy release and absent PIDs were personally checked before this run;
+their ancillary outer UNKNOWN fields remain unchanged. On this run, the
+personally reviewed native Game menu showed Exit. Selecting it produced
+`[Exit] code=0`, native actual wait 0 with both EOF, watchdog actual wait 0,
+and supervisor actual wait 0 with both EOF and `heavyReleased=true`. All
+four original lifecycle PIDs were absent and port 8633 closed. There was no
+host-close gesture. Final transport completion itself claims neither removal
+nor native Quit; actual UI choice plus native termination establishes Quit.
+The ancillary caller tool ended 143 before writing its own wrapper receipt,
+so that wrapper's actual wait/EOF remain UNKNOWN. No restart or rebind was
+made. Runtime release was announced immediately; all later work was report
+and evidence cleanup. No box was created: ID/expiry null, state NOT_CREATED,
+stop receipt not applicable. Free disk was 12 GB, above the 1.5 GB floor.
+
+Machine-readable removal/exposure/score/stock/partial/nativeQuit evidence is
+`scratch/runs/20261114-tutstomb-reviewed-outcome/result.json`. No browser,
+FPS, audio, deployment, full-27 or new-title-win claim is made. The earlier
+TicTactics MSVCRT before-hash gap is not repaired by this run.
