@@ -230,6 +230,8 @@ function readFrame(mem, video = LINEAR) {
     ? { ...LINEAR, ...video } : LINEAR;
   if (DIRECT_BPP.has(g.bpp)) return readDirect(mem, g);
   const { width, height, stride, start, planar } = g;
+  const planeRow = (y, bytes) => Number.isInteger(g.splitRow) && y >= g.splitRow
+    ? (y - g.splitRow) * bytes : start + y * bytes;
   const out = new Uint8Array(width * height);
   if (!planar) {
     // `base` is set only by a VESA surface, which is a whole picture somewhere
@@ -252,7 +254,7 @@ function readFrame(mem, video = LINEAR) {
     const rowBytes = stride >> 3;
     const attr = g.attr || null;
     for (let y = 0; y < height; y++) {
-      const row = start + y * rowBytes;
+      const row = planeRow(y, rowBytes);
       for (let x = 0; x < width; x++) {
         const at = (row + (x >> 3)) & 0xFFFF;
         const bit = 7 - (x & 7);
@@ -267,7 +269,7 @@ function readFrame(mem, video = LINEAR) {
   }
   const rowBytes = stride >> 2;
   for (let y = 0; y < height; y++) {
-    const row = start + y * rowBytes;
+    const row = planeRow(y, rowBytes);
     for (let x = 0; x < width; x++) {
       out[y * width + x] =
         mem[isa.VGA_PLANES + ((x & 3) << 16) + ((row + (x >> 2)) & 0xFFFF)];
