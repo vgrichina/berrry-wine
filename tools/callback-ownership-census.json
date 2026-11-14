@@ -31,7 +31,8 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "219bf5b0df4a891cba57810cdac612385edbe21cf01b7771cca0234fbb1fa80b",
+      "sha256": "7e09a0f0f8a4214af59c7d6a5286855d05e72e73ca9d8971a5b699a503bf5765",
+      "utGlideComment20261114": "UT348 apps.js comment: GlideDrv needs fullscreen",
       "utOpenGlTr2TrueColour20261114": "apps.js: ut348_demo OpenGL default via iniSet (FirstRun skip); tomb_raider_2_demo startupRegistry FullScreenBPP=32. Registry data only, no new callbacks.",
       "heretic2ModernControlsReview20261114": "Heretic II demo gains a modern config.cfg mount (c:\\Base), persistFiles (c:\\user\\config.cfg), relativeMouse and WASD touch layout; static app-registry data only, no callback ownership change",
       "hexen2GlWarningFlagReview20261113": "Hexen II demo seeds HKLM Software\\Hexen2 Flag via startupRegistry so the GLHexen notice is skipped; data only, no callback ownership change",

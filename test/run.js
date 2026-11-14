@@ -6028,16 +6028,6 @@ async function main() {
       addFile(file.guestPath, file.hostPath, size);
       addFontAlias(file.guestPath, file.hostPath, size);
     }
-    for (const spec of VFS_MOUNT) {
-      const eq = spec.lastIndexOf('=');
-      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);
-      const hostPath = appAsset(spec.slice(0, eq).trim());
-      const guestPath = spec.slice(eq + 1).trim();
-      if (!guestPath) throw new Error(`--vfs-mount needs a guest path: ${spec}`);
-      const size = fs.statSync(hostPath).size;
-      addFile(guestPath, hostPath, size);
-      addFontAlias(guestPath, hostPath, size);
-    }
     for (const lib of WIN16_LIBS) {
       const guestPath = `c:\\windows\\system\\${path.basename(lib).toLowerCase()}`;
       addFile(guestPath, lib, fs.statSync(lib).size);
@@ -6206,6 +6196,19 @@ async function main() {
         if (ASSET_ENTRY.requiredFiles) throw new Error(msg);
         console.log('[app] ' + msg);
       }
+    }
+    // Explicit --vfs-mount files go last, so one can replace a single file of
+    // a registered app's manifest for this run (e.g. a test INI over the
+    // app's own) without touching the files on disk.
+    for (const spec of VFS_MOUNT) {
+      const eq = spec.lastIndexOf('=');
+      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);
+      const hostPath = appAsset(spec.slice(0, eq).trim());
+      const guestPath = spec.slice(eq + 1).trim();
+      if (!guestPath) throw new Error(`--vfs-mount needs a guest path: ${spec}`);
+      const size = fs.statSync(hostPath).size;
+      addFile(guestPath, hostPath, size);
+      addFontAlias(guestPath, hostPath, size);
     }
     if (VFS_DRIVE) {
       const drive = VFS_DRIVE.replace(/:$/, '').toLowerCase();

@@ -1946,3 +1946,54 @@ PID/port/profile absence afterward. The board watcher was also stopped.
 Free disk stayed above 2 GB. No Boat/test box was allocated
 (ID/state/expiry N/A), public deployment or successor launch occurred.
 `RECOVERY.md`, `result.json` and `final.txt` retain replay and limitations.
+
+## UT 348 on GlideDrv: RenDev assertion is windowed Glide on a Voodoo Graphics (2026-11-14, UT348-GLIDE-RENDEV)
+
+Symptom: with all three `[Engine.Engine]` devices set to
+`GlideDrv.GlideRenderDevice` and `StartupFullscreen=False`, UT dies with
+`Assertion failed: RenDev [File:E:\unreal220\WinDrv\Src\WinViewport.cpp]
+[Line: 343]` (OpenWindow <- UGameEngine::Init). GlideDrv.dll *does* load and
+Glide initializes; `System\UnrealTournament.log` (get it with
+`--save-vfs=DIR --save-vfs-suffix=.log`) shows, twice (Game- then
+WindowedRenderDevice):
+
+    Init: Found Glide: 2.43 Wine Assembly
+    Init: Glide info: Type=0, fbRam=4 fbiRev=2 nTexelfx=1 Sli=0
+    Init: grSstOpen Res=7 Ref=0 Buffers=2
+    Init: Glide tmu 0: tmuRev=1 tmuRam=4 Space=4194296
+    Log: Flushed Glide TMU 0
+    Log: 3d hardware initialization failed
+
+GlideDrv (image base 0x10700000, unrelocated in this run) copies
+`GrHwConfiguration` to `this+0xbc` (so `this+0xc0` = `SSTs[0].type`). Its
+SetRes (0x10702d00; the tail at 0x10702ff0) does: if Fullscreen ->
+`Viewport->ResizeViewport(BLIT_Fullscreen..)`; else if `type == 1`
+(`GR_SSTTYPE_SST96`, Voodoo Rush) -> windowed `ResizeViewport`; **else
+return 0**. So on a Voodoo Graphics board GlideDrv refuses a window, exactly
+as on real hardware; the stock INI only gets away with it because
+WindowedRenderDevice is SoftDrv. `-window` does **not** force windowed in
+348 -- only `StartupFullscreen` matters. Nothing in our Glide is wrong here.
+
+With the same INI but `StartupFullscreen=True` (with or without `-window`) UT
+plays DM-MorpheusDEMO on Glide on the CLI (Glide asks for 3 colour buffers,
+gets FXFALSE, falls back to 2, as Deus Ex does). The emulator-side
+alternative -- answering `grSstQueryHardware` as a Voodoo Rush -- would make
+windowed GlideDrv work but changes the board identity (and the
+`SST96Config` struct layout) for every Glide 2 app, so it was not done.
+Fix for the registry: when GlideDrv is selected, set
+`WinDrv.WindowsClient StartupFullscreen=True` like `deusExIniSet`.
+
+CLI repro (`--vfs-mount` now applies after the app manifest, so it can
+replace one manifest file for a run):
+
+    node test/run.js --app=ut348_demo --args="DM-MorpheusDEMO -window" \
+      --quiet-api --max-seconds=55 --max-batches=1000000 --batch-size=100000 \
+      --stuck-after=1000000 \
+      --vfs-mount="INI=c:\System\UnrealTournament.ini" \
+      --vfs-mount="INI=c:\UnrealTournament.ini" \
+      --save-vfs=DIR --save-vfs-suffix=.log --png=OUT.png --no-close
+
+Without `--max-batches` the CLI stops at 200 batches inside UT's CPU-speed
+loop (exe+0x10903523), and without `--stuck-after` it reports STUCK there.
+Evidence: `scratch/runs/20261114-ut348-glide` (run3 = failure + log, run5 =
+fullscreen Glide gameplay `fullscreen.png`, run6 = fullscreen INI + `-window`).
