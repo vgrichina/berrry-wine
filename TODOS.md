@@ -1,12 +1,14 @@
-Current dispatch (updated 2026-11-14T09:12Z):
+Current dispatch (updated 2026-11-14T09:22Z):
 
 Capacity restored (>15GB at latest runtime cleanup); no reserve adjustment. Three fresh workers are active:
 
-- tim-installed-original-black-startup-repair-20261114 PID3161506: first causal startup divergence of genuinely installed original TIM; no guessed input or longer unchanged timeout.
+- tim-original-manual-to-puzzle1-gameplay-20261114 PID3197407: ordinary manual UI using scanned original manual, then original Puzzle1 frame and placement/run consequence. Title repair predecessor is terminal.
 - lmarbles-original-puzzle2-visible-clear-20261114 PID3193564: fresh original Puzzle2 board, individually reviewed native slides toward CLEAR/next tally; no historical checkpoint import.
 - d3d9-current-real-context-loss-rendering-20261114 PID3189464: actual Chrome/WebGL public context-loss rendering regression and any concrete valid-resource repair. Preparation alone does not establish browser results.
 
-TIM NEW VISIBLE PROGRESS: coordinator viewed scratch/runs/20261114-tim-black-startup/fixed-frame-screen.png and single-key/terminal-screen.png, both named in result.json. Original title now renders and Enter reaches the manual-verification prompt. Photos2560/2561 delivered to owner. Timed sound-DMA repair is still being finalized/tested; no manual answer, puzzle gameplay or publication claim. Prior black timeout below is the baseline.
+LMARBLES NATIVE PUZZLE2 CLEAR: coordinator viewed fresh tally.png (TotalScore1650, Moves13) and next.png (Tier1Puzzle3, Moves34, Score1650), both named in scratch/runs/20261114-lmarbles-puzzle2-clear/result.json. Worker reports15 individually reviewed native slides, ordinary Enter transition, quit0/wait/bothEOF and heavylock release. Photos2562/2563 delivered. Final artifact/cleanup review awaits worker terminal; no source repair/27-app claim.
+
+TIM STARTUP REPAIRED: premature shortDMA IRQ7 arrives before original completion-flag clear, causing failed probe then timer-vector zeroing. Sample-deadline repair reaches original animated title; reviewed Enter reaches manual-verification prompt. Coordinator matched215 runartifact hashes and current6ToyVMsource/test pins, viewed final-original-screen.png and manual screen;83tests/audio/lockedfullbuild pass, all13installed files/floppy unchanged. Docs f63dd0d9b published, combined source repair WIP remains uncommitted. Only3final keyPNGs retained; visible lower-screen wrap remains. Original manual PDF SHA25616115f62a074f1dfb5fb80a6c34e4162d717fa74c12c078d35655b11296cb196 visually reviewed at printedpage1 (PDFindex2); provenance scratch/runs/20261114-tim-manual-source/result.json. Fresh successor authorized ordinary manual UI/Puzzle1 attempt; no puzzle frame yet. Prior black timeout below is baseline.
 
 TIM ORIGINAL INSTALL VERIFIED: actual Smart Start copied11 original files, generatedTIM.BAT and RESOURCE.CFG020200, preserved under scratch/game-state/tim-20261114/C/. Coordinator matched all13 hashes and35 runartifact hashes and viewed copy-selector/return-menu frames. Installed originalTIM then timed out105s on black640x480planar screen after680Mdispatches; no gameplay/keywait/unimplemented result. Both stages joinedexit0/bothEOF/ownedcleanup. Docs6741a8249, scratch/runs/20261114-tim-ordinary-install/result.json. Fresh installer/copy photos delivered2555–2558; no gameframe claimed. Prior first-menuDown input proof remains valid.
 
