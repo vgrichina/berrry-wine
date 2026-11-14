@@ -125,7 +125,7 @@ async function awaitStartupReady({evaluate,identity,deadline,now=Date.now,onObse
 // Public current-display ticket: existing complete output, or ordinary pending
 // damage publication. Request time measures observation age, never render age.
 // Original publication/display timestamps remain separately attached to bytes.
-async function captureScene({evaluate, identity, now=Date.now}) {
+async function captureScene({evaluate, identity, now=Date.now, precheckDeadline=null}) {
   const nonce=crypto.randomUUID(),key='__gltronCaptureTicketV1',at=now(),stages={};
   let result,armed=false;
   try {
@@ -133,21 +133,32 @@ async function captureScene({evaluate, identity, now=Date.now}) {
       const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
       if(!p.isolated||p.apps.length!==1||!a.running||a.stopped||!a.outputVisible)throw Error('capture owner/output not live and fully visible');
       for(const k of ['processId','processObject','pageRendererObject','canvasObject','windowHwnd','windowObject','windowInstance','outputCanvasObject'])if(a[k]!==want[k])throw Error('capture identity changed '+k);
-      const readiness=(${readinessExpression(identity,false,true)});
-      if(!readiness.ready)return {refused:readiness.pending.join(', ')};
       if(globalThis.${key})throw Error('capture already armed');
-      const w=runningApps[0].wine,r=w.renderer,t=w.requestCurrentDisplayCapture({hwnd:a.windowHwnd});
+      const w=runningApps[0].wine,r=w.renderer;
+      if(r._immutableCaptureRequest)throw Error('capture already pending; no retry');
+      const readiness=(${readinessExpression(identity,false,true)});
+      if(${JSON.stringify(precheckDeadline)}!==null&&Date.now()>=${JSON.stringify(precheckDeadline)})throw Error('bounded PREBIND startup readiness expired before ticket');
+      if(!readiness.ready)return {state:'NOT_READY',nonce:${JSON.stringify(nonce)},requestCalled:false,ticketCreated:false,inputDispatched:false,...readiness};
+      const t=w.requestCurrentDisplayCapture({hwnd:a.windowHwnd});
       const h={nonce:${JSON.stringify(nonce)},ticket:t,publication:a.publication,renderer:r};
       globalThis.${key}=h;
-      return {at:Date.now(),publication:a.publication};
+      return {state:'ARMED',nonce:${JSON.stringify(nonce)},requestCalled:true,ticketCreated:true,at:Date.now(),publication:a.publication};
     })()`);
-    if(arm.refused)throw precondition(arm.refused);
+    if(arm.state==='NOT_READY'){
+      assert.equal(arm.nonce,nonce,'precheck nonce changed');
+      assert(arm.requestCalled===false&&arm.ticketCreated===false&&arm.inputDispatched===false,'passive precheck effects');
+      assert(arm.ready===false&&Array.isArray(arm.pending)&&arm.pending.length,'known passive readiness refusal required');
+      return arm;
+    }
+    assert(arm.state==='ARMED'&&arm.nonce===nonce&&arm.requestCalled===true&&arm.ticketCreated===true,'ambiguous capture arm; no retry');
     armed=true;stages.armMs=now()-at;stages.arm=arm;
     while(now()-at<3000) {
       result=await evaluate(`(() => {
         const h=globalThis.${key};if(!h||h.nonce!==${JSON.stringify(nonce)})throw Error('capture ticket replaced');
         const t=h.ticket;if(t.status==='failed')return {refused:t.error};
         if(t.status==='cancelled')throw Error('capture cancelled; no replay');
+        const readiness=(${readinessExpression(identity,false,true)});
+        if(!readiness.ready)throw Error('post-ticket readiness changed: '+readiness.pending.join(', ')+'; no retry');
         if(t.status!=='complete')return null;
         const readStart=performance.now(),r=t.read(),m=r.metadata;
         const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
@@ -160,7 +171,7 @@ async function captureScene({evaluate, identity, now=Date.now}) {
         const data=c.toDataURL('image/png');
         return {metadata:m,data,publishedAt:m.publicationAt,encodedAt:Date.now(),readAndCopyMs:start-readStart,encodeMs:performance.now()-start};
       })()`);
-      if(result?.refused){const reason=result.refused;result=null;throw precondition(reason);}
+      if(result?.refused){const reason=result.refused;result=null;const e=Error('capture ticket failed: '+reason+'; no retry');e.code='CAPTURE_TICKET_FAILED';e.requestCalled=true;e.ticketCreated=true;throw e;}
       if(result)break;
       await wait(10);
     }
@@ -246,7 +257,7 @@ function reviewHostBootstrap(scene,review,live,now=Date.now()){
 }
 
 function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo', expectedModules = null, now = Date.now}) {
-  let latest = null, pinnedIdentity = null, busy = false, closed = false;
+  let latest = null, pinnedIdentity = null, busy = false, closed = false, startup = null;
   const consumed = new Set();
   async function readLive() {
     assert(!closed,'closed chain');
@@ -290,7 +301,16 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
     same(identity, identity);
     if (pinnedIdentity) same(pinnedIdentity, identity);
     else pinnedIdentity = {...identity};
-    // Recheck page references after asynchronous Worker reads.
+    // Module recovery awaits Chrome and can span ordinary producer work.
+    // Recheck the actual instance as well as the page references afterward;
+    // the final synchronous page arm separately checks paint/readiness.
+    assert.deepEqual(await evaluate(WORKER_READ,w.sessionId),live,'Worker instance changed during module validation');
+    if(rendererTarget!=='none'){
+      const r=[...workers.values()].find(r=>r.targetId===rendererTarget&&!r.closed);
+      assert(r,'renderer detached during module validation');
+      const endpoints=await evaluate(RENDER_READ,r.sessionId);
+      assert(endpoints.some(e=>e.id===a.renderEndpoint&&e.epoch===rendererEpoch&&!e.failed&&!e.control?.error),'renderer changed during module validation');
+    }
     const after = await evaluate(PAGE_READ);
     assert(after.apps.length === 1 && after.apps[0].running && !after.apps[0].stopped &&
       after.apps[0].outputVisible, 'owner/output hidden or clipped during identity validation');
@@ -308,10 +328,22 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
   async function capture(label) {
     assert(!closed && !busy, 'closed or concurrent chain'); busy = true;
     try {
-      const before = await readLive();
+      let before,shot;
+      for(;;){
+        if(startup)assert(now()<startup.deadline,'bounded PREBIND startup readiness expired');
+        before=await readLive();
+        shot=await captureScene({evaluate,identity:before.identity,now,precheckDeadline:startup?.deadline??null});
+        if(shot.state!=='NOT_READY')break;
+        // Only this positive, nonce-bound, pre-request result can stay in
+        // startup. Exceptions/UNKNOWN and every ticket outcome close below.
+        if(!startup)throw precondition(shot.pending.join(', '));
+        startup.onObservation(shot);
+        assert(now()<startup.deadline,'bounded PREBIND startup readiness expired');
+        await wait(Math.min(25,startup.deadline-now()));
+      }
+      startup=null;
       // Validation after a screenshot can be slow on a busy renderer. It must
       // not make the reviewed pixels appear younger than their capture.
-      const shot = await captureScene({evaluate,identity:before.identity,now});
       const after = await readLive(); same(before.identity, after.identity);
       assert(shot.metadata.publication<=after.identity.publication,'publication regressed');
       const png = shot.png;
@@ -361,6 +393,9 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
   async function prepareStartup(deadline,onObservation) {
     assert(!closed&&!busy&&!latest,'PREBIND startup only');busy=true;
     try {
+      assert(!startup,'startup deadline already fixed');
+      assert(Number.isFinite(deadline)&&deadline>now(),'bounded PREBIND startup deadline');
+      startup={deadline,onObservation:onObservation??(()=>{})};
       const live=await readLive();
       return await awaitStartupReady({evaluate,identity:live.identity,deadline,now,onObservation});
     }catch(e){closed=true;throw e;}finally{busy=false;}

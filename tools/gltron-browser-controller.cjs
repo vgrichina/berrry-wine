@@ -268,7 +268,9 @@ async function browser(out,backend) {
     const selected=await binding.awaitStartupReady({evaluate,identity:startupOwner,deadline:startupEnd,selectOutput:true,onObservation:s=>log('startup-initial-display.jsonl',s)});
     const selectedOwner=await chain.readLive();assert.equal(selectedOwner.identity.outputCanvasObject,selected.outputCanvasObject,'selected startup output replaced');
     const startupReadiness=await chain.prepareStartup(startupEnd,s=>log('startup-readiness.jsonl',s));
-    record('startup-prebind-ready.json',{...startupReadiness,permanentBound:false,inputDowns:0});
+    // This is a passive observation, not a promise that paint stays idle
+    // across the asynchronous module reads preceding the final arm.
+    record('startup-prebind-ready.json',{...startupReadiness,passiveOnly:true,captureRequested:false,permanentBound:false,inputDowns:0,startupDeadline:startupEnd});
     await capture('startup');
     // Permanent binding waits for personally reviewed nonblack submitted WebGL scene.
     record('startup-ready.json',{at:Date.now(),backend,permanentBound:false});
