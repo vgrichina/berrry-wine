@@ -3,7 +3,8 @@
 Evidence directory: `scratch/runs/20261114-jezzball-reviewed-wall-progress/`.
 The task permits one original registered `wep16_jezzball` default game,
 after TicTactics and then Quake II browser actually release their runtimes.
-Preparation does not establish original gameplay or native Quit.
+Result: partial. One original reached natural timeout loss and native Exit, but
+no wall placement was admitted because the native orientation cursor remained unknown.
 
 The existing registry uses local WEP4 JEZZBALL.EXE (49,664 bytes, SHA-256
 `0450d0559fa5957d813bdd7be1f71122bf23047869b610802386320f109cb705`),
@@ -115,5 +116,53 @@ outcomes. Their ancillary outer tool exits 143 and separate UNKNOWN waits
 remain explicit, without imposing an extra wrapper gate. Source/runtime pins
 are taken only after these releases.
 
-The bounded original result will be recorded after explicit publication.
-No box, browser, worker or deployment is needed.
+## Original result
+
+The tested route was published as `bf1e170a102163f5bc6df89963f4c1a1093a3abc`
+before launch. `launch-pins.json` records that commit, 420 exact file hashes,
+three system-tool hashes and `relevant-uncommitted.patch` (58,821 bytes of
+relevant shared-tree changes). All 25 registered media files matched their
+before sizes and SHA-256 afterward; all 420 runtime pins had zero drift.
+No source, media or WASM copies were staged.
+
+One native process ran with real ticks, default batch 1,000, a 1,200-second
+limit and independently prearmed 1,220-second watchdog. The complete initial
+board opened automatically: level one, two red atoms, two lives, score 0,
+area 0%. It was bound once to PID 4151724/start token 274639749 and the same
+window. No New Game was needed. Two five-second reviews expired before policy
+admission; another had insufficient remaining freshness. All were refused
+before intent/prearm/input. A newly reviewed pointer-only hover was then
+consumed with its independent release ACK. The public native cursor output
+still read `default`, with no orientation image. The active board was therefore
+never admitted for wall input. No wall DOWN, right-button event, guessed
+orientation or retry of an uncertain gesture occurred. The specific missing
+native cursor display path remains unresolved; retaining canvas style alone
+was insufficient in this original.
+
+The same game continued naturally. `natural-timeout.png` personally proves
+Time Left 0 and a modal “Game Over” asking whether to start a new game.
+This is timeout loss, with no wall collision, zero persistent walls, area 0%,
+score 0 and lives 2. It is neither first-level completion nor a win. The modal
+No button was selected once to decline restart. `declined.png` shows the same
+window with an ended blank client. The current Game menu was opened and its
+visible Exit selected once (`game-menu.png`, `native-exit-receipt.json`).
+No second game, reset, second level, Next Level or completion dismissal occurred.
+
+Native Quit is supported by the consumed visible native Exit plus actual
+normal native exit 0 and both EOFs, not host closure. The native owner exited
+before the independently scheduled final release: its record is OWNER_EXITED,
+physical UP ACK false. Earlier hover, No and menu events have actual UP ACKs.
+Native PID 4151724, watchdog 4151723 and supervisor 4151721 all have actual
+zero waits, both EOFs and absent exact PIDs. Heavy ownership was released and
+the HTTP endpoint closed. The watchdog exited on actual native wait without
+firing. The ancillary invoking tool returned 143; its separate outer wait file
+is absent and remains UNKNOWN. It does not replace the actual supervisor wait.
+No host teardown or cancellation was used.
+
+The requested two completed persistent walls and increased area/score were
+not achieved. Next work requires a separately authorized run after resolving
+and testing current native wall-orientation display; this task does not start
+another original. `result.json` names the five retained complete scene PNGs,
+compact receipts, waits, media and pin evidence. No box was created (ID/expiry
+null, state NOT_CREATED, stop not applicable), and no browser, worker or
+public deployment was used.
