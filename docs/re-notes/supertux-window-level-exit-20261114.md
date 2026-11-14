@@ -2,6 +2,13 @@
 
 Evidence: `scratch/runs/20261114-supertux-window-level-exit/`.
 
+**Controller repair passed and was published as `36a768709937f296de674714ff04f068b4c04aaf`.
+Welcome to Antarctica completion, map unlock and next-level entry remain
+unproved.** One fresh original reached the first pit/wooden platforms, lost
+four lives across native traversals, then completed ordinary Abort Level,
+map Quit Game and title Quit with `[Exit] code=0` at **758.292 seconds**.
+Full27 remains unproved. No second original followed.
+
 The predecessor's terminal failure is retained unchanged. Its 170.560 ms
 remaining scene window could not fit an 850 ms pulse, and independent release
 armed 58.125 ms beyond the deadline. Zero recorded DOWNs do not reclassify
@@ -54,11 +61,6 @@ verify the server PID before binding, so simultaneous workers do not share
 their guarded owner. The pulse-longer-than-window case waits for a real
 scene age above eleven seconds rather than substituting controller time.
 
-The single bounded original is pending its fair heavy turn after the Forsaken
-exit and LMarbles SDL diagnostics. No level exit, map unlock, next-level entry,
-native Quit or full27 claim is made yet. No box, network dependency, worker or
-public deployment is used.
-
 Both preceding diagnostic supervisors recorded actual waits and released their
 heavy locks. The first full build refused a stale review hash for another
 worker's `lib/renderer-input.js` change. That failure is retained. After its
@@ -67,3 +69,67 @@ build locks, with zero drift across 1,637 checked build inputs. All 22 guarded
 CLI controls, input-owner, media and real-clock checks passed. All 789 media
 and native settings pins match the accepted Space Jump/Left Control Run
 bindings. Foreign source and census WIP remain uncommitted by this worker.
+
+The sole original launched at **16:12:12 UTC**, directly on production port
+8465 with registered `supertux_013`, unchanged media/settings, real ticks,
+fixed 1,200-second runtime and independently prearmed 1,220-second watchdog.
+Launch Git SHA is the repair commit above. The launch gate checked both file
+membership and hashes, with no source/media drift. Module SHA-256 is
+`c94ccf1b179f18bd4b47867445afed8cef2f1393b19aabfd259c7f3b94a7be09`.
+`source-pins.json` records 1,706 files; launch Git patches retain relevant WIP.
+Postflight found zero source/media drift and an identical module.
+
+This run's actual map baseline was **75 score / 3 coins / four lives**.
+The initial grounded level scene shows timer 291. Short early jumps reached
+the opening row and cleared both first pillars. The first traversal reached
+325/11/four lives, passed the later pillars and approached the first pit.
+`pit-approach-jump.png` shows Tux above the gap between the left and right
+ground edges, below the first wooden platform. The following reviewed scene
+shows a native respawn, three lives and a reset timer: that crossing failed.
+
+Later native traversals lost lives near the second row and the enemy/tall
+platform approach. Exact collision instants were not captured; enemy contact
+is an inference from proximity followed by respawn, not a proved emulator
+physics defect. A native pause preserved level time for inspection; further
+personally chosen shorter approaches still failed. The final reviewed respawn
+shows **625/23 and no life icons**. Those counters include repeated traversals
+and do not establish completion or unique forward progress. The concrete
+gameplay blocker is failure to sustain safe landings and avoid enemies while
+reviewing finite gestures. The controller remained healthy throughout.
+
+All **54 consumed pulses / 84 DOWN receipts** used one permanent owner and
+unique nonces; maximum consumed scene age was **9.273 seconds**. Every full
+pulse and release ACK fit its unchanged operation deadline. All 54 independent
+release children were actually waited with exit 0 and separate EOFs. All 53
+nonfinal pulses had postrelease batch progress; the final choice was checked
+against actual native exit. Seven choices were positively NOT_SENT/VALID
+before arming: five expired scenes and **two insufficient complete windows**.
+Fresh captures and new unique intents followed. No rejected intent was armed,
+sent or replayed, and there was no sticky terminal failure/UNKNOWN.
+
+Native Abort returned to the unchanged Welcome node; map Quit returned to the
+title; the personally reviewed highlighted title Quit produced the actual
+guest exit. Native, watchdog and supervisor-child waits were **0**, each with
+separate stdout/stderr EOF receipts. The watchdog exited on the native-wait
+receipt without firing, and the heavy lock was released. No timeout or signal
+is counted as native Quit.
+
+The invoking execution tool separately returned **143**, and the additional
+`outer-wait.json` is absent. Its cause is unknown. The actual supervisor wait
+0 is independently retained in `outer-child-wait.json`; an additional outer
+wait 0 is not inferred or fabricated. The tool exposes combined output, so
+its separate stdout/stderr EOF flags remain unknown. This lifecycle evidence
+gap is retained alongside the proved guest Quit.
+
+Twenty selected personally reviewed PNGs passed dimensions, CRC, inflate and
+SHA checks. Unselected captures were removed with hashes retained. Run-local
+operational scripts are recoverable as verified Git patches; no source-tree,
+module or media copies are retained. Recorded runtime/release PIDs are absent
+and port 8465 is closed. Disk remained above 1.5 GB (about 13 GB free).
+
+No boxes, additional workers, dependency downloads or public deployment were
+used. Box ID **none**, state **NOT_CREATED**, expiry **null**, stop receipt
+**not applicable**. No further input or original is authorized by this report.
+Next work would require a new assignment for safe pit/platform traversal and
+the missing additional outer-wait cause; repeating the earlier stomp is not
+level completion.
