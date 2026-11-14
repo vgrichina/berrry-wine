@@ -311,8 +311,9 @@ Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backu
   worker: closed-application-log-exact-xz-nfs-1830 PID1161264
   Next: After resource worker closes, fresh original NFS native Pause with two settled stable frames, then one reviewed >=1500ms held drive/independent UP/Escape. No repeat floor-only task, mock Pause promotion or200ms UNKNOWN replay.
 
-- [ ] GLTron two ordinary turns and native round outcome
+- [x] GLTron two ordinary turns and native round outcome
   id: GLTRON-TWO-TURN-ROUND-20261112
+  Update 2026-11-14: Completed by85d1ddc92217807757bbebe718be01317940d6bf, docs/re-notes/gltron-native-gl-turns-20261114.md. Two personally reviewed live A turns in the final fresh native-GL round, then natural PLAYER3WINS at237.984s. Coordinator previously verified258artifact hashes and viewed both intact-cycle corners plus result. This closes the two-turn/natural-outcome task, not a controlled-player win, browser parity, physicalGPU or full27 claim. Earlier second-corner gaps below are historical.
   Update 2026-11-13T00:30Z: ROOTfcdde27ce95sealed+focused5testreceipt checked; personally viewed one yellow native corner and WINNER3/PLAYER3WINS. Second controlled corner remains UNPROVED: S ACKs show already-crashed player. Fresh second-visible-corner0300PID880255 targets this gap, exact current04/local SoftwareGL; production crash not reproduced/runtime EOF UNKNOWN.
   Update 2026-11-13T00:19Z: Fresh graphics0150 runs one local current GLTron SoftwareGL real-ticks smoke while other lanes prepare original gameplay. ROOT72c1b42ef 68 archives intact but active Diablo parent dependency exclusion FAILED and caused reader ENOENT; later875726057 fixes reader. No two-turn/outcome claim.
   Update 2026-11-13T00:01Z: Manifest0050parent72c1b42ef68closedmanifests15740928Ballocatedrecovery/final1495371776NOgame. Freshclosedworkerrolloutresource0120PID840786 oncanonicalterminal logs; fullparentrootreviewpending/no originalturnclaim. FullparentreviewPENDINGregistry/no duplicate.
@@ -322,8 +323,8 @@ Recovery deadlines: closed-log backup 17 expires 2026-11-27T00:48:52.416Z; backu
   Update 2026-11-12T23:40Z: Parentba0cebc31current17paths+738remoteprovisioncomplete butfloor1498628096beforegamestart. Freshfinal-frozen-two-turns0030PID808055 reusesalreadyqualifiedcontroller/no17matrixrerun/2actualnativecorners+outcomeifactualfloor. Parentfullrootreviewpending. Caesar5c2c410a5/c1edb0402 stage-consumerfixpublished/foodnotreached/normalarchived; fullparentrootreviewpending.
   Update 2026-11-12T23:28Z: Parent88c64a6ef729localpaths/112media/28helpers/17runtimechanges notqualified, belowfloorNOallocation. Freshcurrent-source-native-turns2355PID784251 addressesactual17changedpaths/callerbeforeoriginal/notrepeatbarehashmatrix; parentfullrootreviewpending.
   owner: codex:01a1ba23-0e03-7ef3-9b07-c08de15542d3
-  worker: parked after 6aa74c8fd; second live corner remains open; current slots listed above
-  Next: Use bounded local smoke to expose concrete current crash; preserve original two-turn/native-round objective for next gameplay continuation. Do not repeat existing qualification matrices.
+  worker: completed native turns/outcome85d1ddc922; no worker assigned
+  Next: Preserve this completed native evidence. Any further GLTron assignment must address a distinct remaining browser/backend gap or demonstrated regression; do not repeat the completed two-turn task.
 
 - [ ] Caesar III compact provision/audit and native wheat
   id: CAESAR3-COMPACT-PROVISION-20261112
