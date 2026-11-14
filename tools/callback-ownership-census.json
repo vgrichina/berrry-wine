@@ -47,7 +47,8 @@
     {
       "file": "lib/browser-shell.js",
       "name": "host-file",
-      "sha256": "272fae673d0ebc76b90b0c309be6ddf2ba9345ce111913b5dd6f83f5a493493f",
+      "sha256": "5030664c5f20b52173226f01dc805fc380c036e4cc868a68c0cd05efbf9c371f",
+      "appArgsUrlReview20261113": "?app=ID&app-args= overrides one app's launch command line; string only, no callback ownership change",
       "maximizerSettleReview20261112": "maximizeForSingleApp interval now lives up to 40 more ticks after maximizing; cleared on app exit or tick cap; same single timer, no new ownership",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
