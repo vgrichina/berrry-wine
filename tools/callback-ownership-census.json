@@ -4,7 +4,8 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "58b48f4b9b2af7ec76b36143e4fc8e1b0a1697f7a2e638fa50de4149b1d60adf",
+      "sha256": "0584c3940357246a301e159ede63c095f510bd24b0f0bdc470ca6dbe8e2afdea",
+      "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "spinParkUrlReview20261114": "?spin-park=N applies set_spin_park_k at launch on the main instance, the guest Worker (callExport) and every inherited thread (table entry added in worker-imports); no callback, timer or lifetime change. renderer.js reseal covers d576f57ce's exclusive-mode test, read-only WAT getters, no new callbacks.",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "windowLookupRetirementReview20261112": "Imports capture the existing process object, shared by detached thread contexts. Window/dialog publications retain that same process incarnation. FindWindow excludes exited contexts before accessing memory/exports and excludes their publications before owner reconciliation; init already creates a new object after exit. Stop's exit edge and deferred memory/worker retirement remain unchanged. No guest invocation, callback, continuation, receiver or memory ownership changes. ActualHost StopAll/stop/relaunch retains strong old context/host references and checks live foreign native/dialog owners, publication retirement, HWND reuse and active-owner error propagation. Broader callback ownership remains pending.",
@@ -147,7 +148,8 @@
     {
       "file": "lib/guest-thread-host.js",
       "name": "host-file",
-      "sha256": "0c62443ea023dd68659c17404db3959885bff22a04bd0ced8d19b26088138ece",
+      "sha256": "4a8cac465283d4f646996fe33e8b88b81c6d27702b7966652aace17b2faca898",
+      "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "quake2Review20261109": "Strict default-off quake2LoadObservation and quake2NativeWriteObservation options now survive GuestThreadHost -> slot-0 WorkerLink -> existing NodeWorker init. Secondary threads remain uncovered. Owning snapshot query delegates through the existing sequenced request transport, preserving retired records; it never reads shared memory on the main thread. No callback admission, clock/input, timeout, run, context restoration, retirement or termination policy changes. Actual Host startup reproduced missing observation on prior source; six native conversion/startup/headnode off/on pairs retain range epochs, UUID, actual PCs, lazy flags and direct/sparse memory parity, with actual Worker exit awaited. Other writers, edict ABA and browser support remain unqualified.",
       "drakanReview20261108": "Optional verified-byte init and external action controller; no guest call, callback admission, context restoration or retirement policy added. Fresh original action deadline includes setup and is capped at 2000ms. Controller observes actual Worker messages; retirement and transport errors initiate input release once. Release-promise repair 2127: cache and reuse the external release result, immediately handle setup-timer rejection, propagate settlement/error through Controller and setup failure releasePromise/releaseError, refuse Controller creation after setup release/retirement. Worker and retirement never await physical release. Production WorkerLink/GuestThreadHost full-module synthetic tests cover delayed success/rejection, synchronous throw, deadline/setup/retirement, duplicate stops and no rearm; delayed dependency-loading tests exercise the unchanged browser method against a live production Worker. General ownership remains pending.",
@@ -167,7 +169,8 @@
     {
       "file": "lib/guest-worker.js",
       "name": "host-file",
-      "sha256": "059668265c7417c643353ac142c239e4ca265b6c51ce78755d668d2ffe9f1202",
+      "sha256": "72b010c62fca0dbbf78ead5d532f11905dda8a5a8a885ea6a5f1b086d28c34a3",
+      "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
       "ownership": "pending",
@@ -199,7 +202,8 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "88113f651130a4d8a30cae4e81d81c307b9c6a4b2cec41fcaf4d3bc94b5026de",
+      "sha256": "09065127a4a659380ee65f6289198d7ab9a501e64de857e9ce3c94335fc627aa",
+      "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "windowLookupRetirementReview20261112": "Native register_dialog_frame publications retain the calling context's captured process incarnation, just like create_window/dialog_loaded. The existing instance/memory/receiver and WND generation identity remain unchanged. FindWindow excludes the publication once that process exits, before export queries. Original TR2 owner inspection identified this separate native-popup publication path; actualHost regression covers it alongside surface-less WND trees. No guest invocation or continuation change; broader callback ownership remains pending.",
       "kind": "host-entry",
@@ -278,7 +282,8 @@
     {
       "file": "lib/renderer.js",
       "name": "host-file",
-      "sha256": "dfc2ef101012ba994b29d8da1448e5effa8cfaefc88818ae6bb4d21680db6da0",
+      "sha256": "8713f112d44e99744c43a30c4aa8ce69735bfe48e8ea27d133ee55e2f9855f5e",
+      "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "spinParkUrlReview20261114": "?spin-park=N applies set_spin_park_k at launch on the main instance, the guest Worker (callExport) and every inherited thread (table entry added in worker-imports); no callback, timer or lifetime change. renderer.js reseal covers d576f57ce's exclusive-mode test, read-only WAT getters, no new callbacks.",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
@@ -320,7 +325,8 @@
     {
       "file": "lib/worker-imports.js",
       "name": "host-file",
-      "sha256": "4dd4c6dbc032c1168b755e47be9c3ba36010f18943bda7744e66f02edad29717",
+      "sha256": "53d6f5370385dcd23c45d263c7cc08a02f46f2d1e82ed08dcb24f97b8ee59d05",
+      "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "spinParkUrlReview20261114": "?spin-park=N applies set_spin_park_k at launch on the main instance, the guest Worker (callExport) and every inherited thread (table entry added in worker-imports); no callback, timer or lifetime change. renderer.js reseal covers d576f57ce's exclusive-mode test, read-only WAT getters, no new callbacks.",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
