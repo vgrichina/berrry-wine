@@ -187,7 +187,8 @@ def dismiss_outcome(name, scene):
     assert (c.R/'natural-outcome.json').exists(), 'record actual natural outcome first'
     rr, r = a.reviewed(scene, 30)
     assert r.get('mode') == 'dismiss-outcome' and r.get('visibleOutcomeDismissal') is True
-    assert r.get('dialogCaption') in ('You Win!', 'Game Over')
+    assert r.get('dialogCaption') == 'Pegged', 'actual native dialog title'
+    assert r.get('dialogMessage') in ('You Win!', 'Game Over'), 'actual native result message'
     assert r.get('dismissLabel') == 'OK', 'only the native result OK button'
     g = r['pixelGeometry']
     assert g['source']=='current-full-scene' and g['target']==c.read('native-pid.json')

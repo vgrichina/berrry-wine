@@ -69,14 +69,23 @@ class Policy(unittest.TestCase):
             with self.assertRaises(AssertionError):n.resolve('gesture','after')
         self.assertFalse((n.c.R/'gesture-resolution.json').exists())
     def test_outcome_acknowledgement_requires_actual_record_and_ok(self):
-        self.scene(mode='dismiss-outcome',visibleOutcomeDismissal=True,dialogCaption='Game Over',dismissLabel='OK',pixelGeometry=dict(source='current-full-scene',target=n.c.read('native-pid.json'),chosenCenter=[300,300]))
+        self.scene(mode='dismiss-outcome',visibleOutcomeDismissal=True,dialogCaption='Pegged',dialogMessage='Game Over',dismissLabel='OK',pixelGeometry=dict(source='current-full-scene',target=n.c.read('native-pid.json'),chosenCenter=[300,300]))
         with patch.object(n.c,'pulse') as sent:
             with self.assertRaisesRegex(AssertionError,'natural outcome'):n.dismiss_outcome('ok','scene')
             sent.assert_not_called()
             n.c.save('natural-outcome.json',dict(outcome='no-moves'))
             n.dismiss_outcome('ok','scene')
             self.assertEqual(sent.call_args.args[1],['mousedown:300:300'])
-        self.scene('restart',mode='dismiss-outcome',visibleOutcomeDismissal=True,dialogCaption='Game Over',dismissLabel='New Game',pixelGeometry=dict(source='current-full-scene',target=n.c.read('native-pid.json'),chosenCenter=[300,300]))
+        self.scene('restart',mode='dismiss-outcome',visibleOutcomeDismissal=True,dialogCaption='Pegged',dialogMessage='Game Over',dismissLabel='New Game',pixelGeometry=dict(source='current-full-scene',target=n.c.read('native-pid.json'),chosenCenter=[300,300]))
         with self.assertRaisesRegex(AssertionError,'OK button'):n.dismiss_outcome('restart','restart')
+
+    def test_native_result_title_and_message_are_distinct(self):
+        n.c.save('natural-outcome.json',dict(outcome='no-moves'))
+        geometry=dict(source='current-full-scene',target=n.c.read('native-pid.json'),chosenCenter=[300,300])
+        for name,title,message in [('wrongtitle','Game Over','Game Over'),('wrongmessage','Pegged','New Game')]:
+            self.scene(name,mode='dismiss-outcome',visibleOutcomeDismissal=True,dialogCaption=title,dialogMessage=message,dismissLabel='OK',pixelGeometry=geometry)
+            with patch.object(n.c,'pulse') as sent:
+                with self.assertRaises(AssertionError):n.dismiss_outcome(name,name)
+                sent.assert_not_called()
 
 if __name__=='__main__':unittest.main()
