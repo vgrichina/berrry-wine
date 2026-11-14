@@ -7538,11 +7538,20 @@ async function main() {
     const take = renderer.takeInput;
     renderer.takeInput = function(...args) { guardedInput.sweep(); return take.apply(this, args); };
   }
+  // Coordinate presses move the pointer before the button edge. SDL records
+  // button coordinates without emitting motion, so DOWN followed by a move to
+  // the same point cannot update a game's hover-selected widget. Keep both
+  // effects inside guarded consumption; di-mousedown remains state-only.
+  const applyPointerDown = (x, y, button, opts) => {
+    if (renderer.handleMenuHover) renderer.handleMenuHover(x, y);
+    renderer.handleMouseMove(x, y);
+    renderer.handleMouseDown(x, y, button, opts);
+  };
   const applyGuardedInput = ev => {
     if (ev.action === 'keydown') renderer.handleKeyDown(ev.code);
     else if (ev.action === 'keyup') renderer.handleKeyUp(ev.code);
     else if (ev.action === 'mousemove') renderer.handleMouseMove(ev.x, ev.y);
-    else if (ev.action === 'mousedown') renderer.handleMouseDown(ev.x, ev.y, 1);
+    else if (ev.action === 'mousedown') applyPointerDown(ev.x, ev.y, 1);
     else if (ev.action === 'mouseup') renderer.handleMouseUp(ev.x, ev.y, 1);
     else throw new Error('unsupported guarded input');
   };
@@ -10588,23 +10597,23 @@ async function main() {
           logs.push(`[input] caption-click ${ev.part} hwnd=0x${hwnd.toString(16)} at ${x},${y} at batch ${batch}`);
         }
       } else if (ev.action === 'click' && renderer && renderer.handleMouseDown) {
-        renderer.handleMouseDown(ev.x, ev.y, 1);
+        applyPointerDown(ev.x, ev.y, 1);
         if (renderer.handleMouseUp) renderer.handleMouseUp(ev.x, ev.y, 1);
         logs.push(`[input] click ${ev.x},${ev.y} at batch ${batch}`);
       } else if (ev.action === 'mousedown' && renderer && renderer.handleMouseDown) {
-        renderer.handleMouseDown(ev.x, ev.y, 1);
+        applyPointerDown(ev.x, ev.y, 1);
         logs.push(`[input] mousedown ${ev.x},${ev.y} at batch ${batch}`);
       } else if (ev.action === 'rclick' && renderer && renderer.handleMouseDown) {
-        renderer.handleMouseDown(ev.x, ev.y, 2);
+        applyPointerDown(ev.x, ev.y, 2);
         renderer.handleMouseUp(ev.x, ev.y, 2);
         logs.push(`[input] rclick ${ev.x},${ev.y} at batch ${batch}`);
       } else if (ev.action === 'dblclick' && renderer && renderer.handleMouseDown) {
         // Two consecutive clicks at the same spot. handleMouseDown's
         // built-in timing check folds the second DOWN into WM_LBUTTONDBLCLK
         // so it reaches WAT-native dialog children via dialog_route_mouse.
-        renderer.handleMouseDown(ev.x, ev.y, 1);
+        applyPointerDown(ev.x, ev.y, 1);
         renderer.handleMouseUp(ev.x, ev.y, 1);
-        renderer.handleMouseDown(ev.x, ev.y, 1, { doubleClick: true });
+        applyPointerDown(ev.x, ev.y, 1, { doubleClick: true });
         renderer.handleMouseUp(ev.x, ev.y, 1);
         logs.push(`[input] dblclick ${ev.x},${ev.y} at batch ${batch}`);
       } else if (ev.action === 'mouseup' && renderer && renderer.handleMouseUp) {
