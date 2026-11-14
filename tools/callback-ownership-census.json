@@ -31,7 +31,8 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "022557506e95a07f501c3397cd409e240a8420b0bae350b3ce530edd62cbe1e7",
+      "sha256": "06bc9cbbfd6a6ebd17ced04c1e27dfbbe423ec703e6aa5071253e005c75722f8",
+      "heretic2ModernControlsReview20261114": "Heretic II demo gains a modern config.cfg mount (c:\\Base), persistFiles (c:\\user\\config.cfg), relativeMouse and WASD touch layout; static app-registry data only, no callback ownership change",
       "hexen2GlWarningFlagReview20261113": "Hexen II demo seeds HKLM Software\\Hexen2 Flag via startupRegistry so the GLHexen notice is skipped; data only, no callback ownership change",
       "hexen2DesktopPublishReview20261113": "Hexen II demo moves from LOCAL_CANDIDATE_APPS to DESKTOP_APPS; list membership only, no callback ownership change",
       "hexen2ModernControlsReview20261113": "Hexen II demo gains Quake-style config/autoexec mounts, relativeMouse and WASD touch layout; no callback ownership change",
