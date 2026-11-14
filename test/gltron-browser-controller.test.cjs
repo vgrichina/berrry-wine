@@ -15,6 +15,20 @@ assert.equal(controller.gameplayCutoff(launch),(launch.deadline-180)*1000);
 assert.throws(()=>controller.policy(cmd,launch,false,now+717001));
 assert.throws(()=>controller.policy({...cmd,mode:'quit',keys:['Enter'],route:'select-quit'},launch,true,now));
 assert.throws(()=>controller.policy({...cmd,mode:'quit',keys:['Escape'],route:'open-menu'},launch,true,now+900001));
+{
+ const b=require('../'+controller.HELPER),owner=Object.fromEntries(b.HOST_FIELDS.map(k=>[k,'owner:'+k]));
+ Object.assign(owner,{name:'gltron',running:true,stopped:false,guestWorker:true,outputVisible:false});
+ const live={page:{isolated:true,apps:[owner]},wrap:'wrap',fullscreen:null,viewport:{width:1024,height:900,scale:1},strip:{object:'strip',visible:true,text:'App is using the full page'},button:{object:'button',label:'Use browser fullscreen',box:{x:400,y:0,width:180,height:34},x:490,y:17,enabled:true,visible:true,hit:true,contained:true}};
+ const scene={at:now,sha256:'png-sha',observation:structuredClone(live)},review={sha256:'png-sha',observation:'personally reviewed full host strip and button',hostOnly:true};
+ assert.deepEqual(b.reviewHostBootstrap(scene,review,live,now),{x:490,y:17});
+ for(const patch of [{hit:false},{visible:false},{enabled:false},{contained:false},{label:'Quit'},{object:'replacement'},{x:491}]){
+  const changed=structuredClone(live);Object.assign(changed.button,patch);assert.throws(()=>b.reviewHostBootstrap(scene,review,changed,now));
+ }
+ for(const patch of [{fullscreen:'wrap'},{viewport:{width:1200,height:900,scale:1}},{strip:{...live.strip,object:'replacement'}}])assert.throws(()=>b.reviewHostBootstrap(scene,review,{...live,...patch},now));
+ assert.throws(()=>b.reviewHostBootstrap(scene,review,live,now+30000));
+ assert.throws(()=>b.reviewHostBootstrap(scene,{...review,hostOnly:false},live,now));
+ const changed=structuredClone(live);changed.page.apps[0].processObject='replacement';assert.throws(()=>b.reviewHostBootstrap(scene,review,changed,now));
+}
 class RendererProbe{constructor(){this.inputQueue=[];this.windows={};this._exited=false;}}
 {
  const vm=require('node:vm'),renderer={peekKeyDownState:()=>0},canvas={},link={endpointIdentity:'guest-1',slot:0,worker:{},module:{}},legacy={id:1,options:{api:'legacy'}},gl={id:2,options:{api:'gl'}};
@@ -57,15 +71,18 @@ async function main(){
  server.listen(0,'127.0.0.1');await once(server,'listening');
  const stat=fs.readFileSync('/proc/'+process.pid+'/stat','utf8'),startToken=stat.slice(stat.lastIndexOf(')')+2).split(' ')[19];
  try {
-  for(const kind of ['scheduled','parent-eof','pair','late-eof']){
+  for(const kind of ['scheduled','parent-eof','pair','late-eof','mouse-scheduled','mouse-parent-eof']){
    const out=path.join(root,kind);fs.mkdirSync(out);const keys=kind==='pair'?['a','s']:['Enter'];
-   const file=out+'/config.json';fs.writeFileSync(file,JSON.stringify({pid:process.pid,startToken,url:'ws://127.0.0.1:'+server.address().port,targetId:'exact-page',keys,name:'pulse'}));
+   const mouse=kind.startsWith('mouse-')?{button:'left',x:490,y:17}:null;
+   const file=out+'/config.json';fs.writeFileSync(file,JSON.stringify({pid:process.pid,startToken,url:'ws://127.0.0.1:'+server.address().port,targetId:'exact-page',keys,name:'pulse',...(mouse?{mouse}:{})}));
    const child=cp.spawn(process.execPath,[path.resolve(__dirname,'../tools/gltron-browser-controller.cjs'),'release',out,file],{stdio:['pipe','pipe','pipe']});let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
    const end=Date.now()+2000;while(!stdout.includes('\n')){assert(Date.now()<end);await pause(5);}const armed=JSON.parse(stdout.trim());assert(armed.armed);assert.equal(armed.fallback-armed.at,1750);
-   if(kind!=='parent-eof')child.stdin.write(JSON.stringify({at:armed.at+150})+'\n');if(kind==='late-eof')setTimeout(()=>child.stdin.end(),1900);else child.stdin.end();
+   if(!kind.endsWith('parent-eof'))child.stdin.write(JSON.stringify({at:armed.at+150})+'\n');if(kind==='late-eof')setTimeout(()=>child.stdin.end(),1900);else child.stdin.end();
    const result=await joined;assert.equal(result.code,0,stderr);assert(child.stdout.readableEnded&&child.stderr.readableEnded);
    const up=JSON.parse(fs.readFileSync(out+'/pulse-up.json'));assert.equal(up.state,'ACK');assert(up.ack>=up.due&&up.ack-up.armed<=2000);
-   const ups=events.filter(e=>e.method==='Input.dispatchKeyEvent'&&e.at>=armed.at&&e.at<=up.ack);assert.deepEqual(ups.map(e=>e.params.key),[...keys].reverse());assert(ups.every(e=>e.params.type==='keyUp'&&e.sessionId==='fixture-page'));
+   const ups=events.filter(e=>e.method===(mouse?'Input.dispatchMouseEvent':'Input.dispatchKeyEvent')&&e.at>=armed.at&&e.at<=up.ack);
+   if(mouse){assert.equal(ups.length,1);assert.deepEqual(ups[0].params,{type:'mouseReleased',button:'left',buttons:0,x:490,y:17,clickCount:1});assert.equal(ups[0].sessionId,'fixture-page');}
+   else{assert.deepEqual(ups.map(e=>e.params.key),[...keys].reverse());assert(ups.every(e=>e.params.type==='keyUp'&&e.sessionId==='fixture-page'));}
    fs.writeFileSync(out+'/wait.json',JSON.stringify({...result,stdoutEOF:true,stderrEOF:true,actualWait:true,stdout,stderr,events:ups}));
   }
   for(const kind of ['wrong-start','wrong-owner','unknown-up']){
@@ -273,6 +290,49 @@ async function browserCaptureControls(){
     await assert.rejects(captureScene({evaluate,identity:before}),/visible|hidden|clipped|changed/);
     report.outputNegatives.push({kind,refused:true,direct});
     await evaluate(`(() => {const f=fixture;f.r.canvas=f.logical;f.r.presentationCanvas=f.present;if(f.outputStyle===null)f.output.removeAttribute('style');else f.output.setAttribute('style',f.outputStyle);return true;})()`);
+  }
+  if(process.env.GLTRON_FULLSCREEN_BOOTSTRAP==='1'){
+    // Synthetic owner uses the real page viewport and input wiring. The
+    // ordinary compositor enters exclusive mode; no CSS/DOM dismissal exists.
+    await evaluate(`(() => {const f=fixture;Object.defineProperty(window,'sharedRenderer',{configurable:true,value:f.r});Object.defineProperty(window,'wine',{configurable:true,value:f.w});browserInput.wireCanvasInput(f.r.canvas,f.r,{runningApps,debugMode:true});f.mouseCalls=[];for(const k of ['handleMouseDown','handleMouseUp']){const fn=f.r[k];f.r[k]=function(...a){f.mouseCalls.push({method:k,args:a,at:Date.now()});return fn.apply(this,a);};}f.w.instance.exports.get_dx_exclusive_hwnd=()=>65537;f.r.scheduleRepaint();return true;})()`);
+    await page.waitForFunction('fixture.r._exclusiveFullscreen');await pause(100);
+    const binding=require('../'+controller.HELPER),red=await evaluate(binding.HOST_READ);
+    binding.consentButton(red);assert.notEqual(red.fullscreen,red.wrap,'host fullscreen requirement is not yet satisfied');
+    const beforeCalls=await evaluate('fixture.captureCalls.length');
+    if(!red.page.apps[0].outputVisible)await assert.rejects(captureScene({evaluate,identity:red.page.apps[0]}),/visible/);
+    assert.equal(await evaluate('fixture.captureCalls.length'),beforeCalls,'consent refusal before ticket');
+    report.fullscreenRed={observation:red,ticketCount:beforeCalls,guestMouseCalls:await evaluate('fixture.mouseCalls'),visibilityRefused:!red.page.apps[0].outputVisible,qualification:'Actual production strip present. Synthetic geometry may place the complete canvas below it; no invented occlusion refusal.'};
+    const stat=fs.readFileSync('/proc/'+p.pid+'/stat','utf8'),startToken=stat.slice(stat.lastIndexOf(')')+2).split(' ')[19];
+    await controller.hostBootstrap({out:root,evaluate,send:c.send,session,owner:red.page.apps[0],browserIdentity:{pid:p.pid,startToken,targetId:target[0].targetId,url:'ws://127.0.0.1:'+port+endpoint},deadline:Date.now()+40000});
+    assert.equal(await evaluate('fixture.captureCalls.length'),beforeCalls,'host setup emits no game ticket');
+    assert.deepEqual(await evaluate('fixture.mouseCalls'),[],'host button sends no guest mouse edge');
+    const previous=new Module(path.resolve(__dirname,'../tools/gltron-browser-binding.cjs'),module);previous.filename=path.resolve(__dirname,'../tools/gltron-browser-binding.cjs');previous.paths=module.paths;
+    const previousSource=cp.execFileSync('git',['show','f6931d34b7ada7386d335624fe77f41803a2ea4f:tools/gltron-browser-binding.cjs'],{encoding:'utf8'});previous._compile(previousSource,previous.filename);
+    const oldFullscreen=await evaluate(previous.exports.PAGE_READ),newFullscreen=await evaluate(PAGE_READ);
+    assert(!oldFullscreen.apps[0].outputVisible&&newFullscreen.apps[0].outputVisible,'causal fullscreen red/green on same actual browser without repaint or ticket');
+    report.fullscreenScopeCausal={commit:'f6931d34b7ada7386d335624fe77f41803a2ea4f',sourceSHA256:controller.sha(previousSource),oldOutputVisible:false,newOutputVisible:true,sameBrowser:true,noTicketOrRepaint:true};
+    await binding.awaitStartupReady({evaluate,identity:red.page.apps[0],selectOutput:true,deadline:Date.now()+5000});
+    const green=await captureScene({evaluate,identity:(await evaluate(PAGE_READ)).apps[0]});
+    fs.writeFileSync(root+'/fullscreen-scene.png',green.png,{flag:'wx'});
+    const bounds=await evaluate(`(() => {const r=fixture.r,c=!r.presentationFilter||r._directPresentation?r.canvas:r.presentationCanvas||r.canvas,b=c.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height,scale:1};})()`);
+    const displayed=await cdp.send('Page.captureScreenshot',{format:'png',clip:bounds,captureBeyondViewport:false});
+    const a=PNG.sync.read(green.png),b=PNG.sync.read(Buffer.from(displayed.data,'base64'));assert.equal(a.width,b.width);assert.equal(a.height,b.height);assert(a.data.equals(b.data),'fullscreen current output equals actual Chrome compositor pixels');
+    assert(green.metadata.displayedAt<green.metadata.requestedAt,'old publication age retained');
+    report.fullscreenGreen={metadata:green.metadata,stages:green.stages,browserCompositorPixelMatch:true,guestMouseCalls:[],hostOnlyUntilCapture:true};
+    // Fullscreen scope must retain HTML occlusion refusal. These are explicit
+    // synthetic negative fixtures, added only after successful normal setup.
+    await evaluate(`(() => {const e=document.createElement('div');e.id='fullscreen-negative-overlay';e.textContent='SYNTHETIC OCCLUSION';Object.assign(e.style,{position:'fixed',left:'10px',top:'10px',width:'180px',height:'50px',background:'red',pointerEvents:'none',zIndex:99999});document.fullscreenElement.append(e);return true;})()`);
+    const overlay=(await evaluate(PAGE_READ)).apps[0];assert(!overlay.outputVisible);assert.equal(overlay.outputVisibility.element.id,'fullscreen-negative-overlay');await assert.rejects(captureScene({evaluate,identity:overlay}),/visible/);
+    await evaluate("document.getElementById('fullscreen-negative-overlay').remove();true");
+    report.fullscreenNegativeOverlayRefused=true;
+    for(const kind of ['modal','popover']){
+      await evaluate(`(() => {const e=document.createElement('${kind==='modal'?'dialog':'div'}');e.id='fullscreen-negative-layer';e.textContent='SYNTHETIC TOP LAYER';document.body.append(e);if('${kind}'==='modal')e.showModal();else{e.popover='manual';e.showPopover();}return true;})()`);
+      const top=(await evaluate(PAGE_READ)).apps[0];assert(!top.outputVisible);assert.equal(top.outputVisibility.reason,'modal/popover top layer over fullscreen');await assert.rejects(captureScene({evaluate,identity:top}),/visible/);
+      await evaluate(`(() => {const e=document.getElementById('fullscreen-negative-layer');if('${kind}'==='modal')e.close();else e.hidePopover();e.remove();return true;})()`);
+    }
+    report.fullscreenModalAndPopoverRefused=true;
+    await assert.rejects(controller.hostBootstrap({out:root,evaluate,send:c.send,session,owner:red.page.apps[0],browserIdentity:{pid:p.pid,startToken},deadline:Date.now()+1000}),/never replay/);
+    report.hostNoReplay=true;
   }
   // Actual replacement while a ticket waits for ordinary damage.
   const current=(await evaluate(PAGE_READ)).apps[0];

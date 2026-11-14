@@ -27,20 +27,27 @@ const PAGE_READ = `(() => {
     if (!state.ids.has(o)) state.ids.set(o, state.epoch+':'+(++state.next));
     return state.ids.get(o);
   };
-  const visible=c=>{
-    if(!c||!c.isConnected||document.visibilityState!=='visible')return false;
+  const visibility=c=>{
+    const refuse=(reason,e)=>({visible:false,reason,element:e?{tag:e.tagName,id:e.id,box:e.getBoundingClientRect().toJSON()}:null});
+    if(!c||!c.isConnected||document.visibilityState!=='visible')return refuse('output disconnected or document not visible');
     const b=c.getBoundingClientRect();
-    if(!(b.width>0&&b.height>0&&b.left>=0&&b.top>=0&&b.right<=innerWidth&&b.bottom<=innerHeight))return false;
+    if(!(b.width>0&&b.height>0&&b.left>=0&&b.top>=0&&b.right<=innerWidth&&b.bottom<=innerHeight))return refuse('output outside viewport',c);
     for(let e=c;e;e=e.parentElement){
       const s=getComputedStyle(e),r=e.getBoundingClientRect();
-      if(s.display==='none'||s.visibility!=='visible'||Number(s.opacity)!==1)return false;
-      if(e!==c&&((/(hidden|clip|scroll|auto)/.test(s.overflowX)&&(b.left<r.left||b.right>r.right))||(/(hidden|clip|scroll|auto)/.test(s.overflowY)&&(b.top<r.top||b.bottom>r.bottom))))return false;
+      if(s.display==='none'||s.visibility!=='visible'||Number(s.opacity)!==1)return refuse('output ancestor hidden or translucent',e);
+      if(e!==c&&((/(hidden|clip|scroll|auto)/.test(s.overflowX)&&(b.left<r.left||b.right>r.right))||(/(hidden|clip|scroll|auto)/.test(s.overflowY)&&(b.top<r.top||b.bottom>r.bottom))))return refuse('output ancestor clips canvas',e);
     }
     // Canvas readback cannot depict HTML siblings, including overlays with
     // pointer-events:none. Conservatively refuse every visible intersecting
     // painted light-DOM box, even if it might paint behind the opaque canvas.
+    // A real fullscreen element is in the browser top layer: ordinary DOM
+    // outside it cannot paint above it. Modal/popover top layers still can;
+    // refuse those globally, including their potentially full-page backdrops.
+    const fullscreen=document.fullscreenElement,fullscreenOutput=fullscreen?.contains(c);
+    if(fullscreenOutput){const top=document.querySelector('dialog:modal, :popover-open');if(top)return refuse('modal/popover top layer over fullscreen',top);}
     for(const e of document.querySelectorAll('*')){
       if(e===c||e.contains(c))continue;
+      if(fullscreenOutput&&!fullscreen.contains(e))continue;
       const r=e.getBoundingClientRect();
       if(!(r.width>0&&r.height>0&&r.left<b.right&&r.right>b.left&&r.top<b.bottom&&r.bottom>b.top))continue;
       let paints=true;
@@ -53,10 +60,10 @@ const PAGE_READ = `(() => {
           ['Top','Right','Bottom','Left'].some(k=>parseFloat(s['border'+k+'Width'])>0&&!transparent(s['border'+k+'Color']))||
           (s.outlineStyle!=='none'&&parseFloat(s.outlineWidth)>0&&!transparent(s.outlineColor));
         const pseudo=['::before','::after'].some(p=>{const x=getComputedStyle(e,p);return x.content!=='none'&&x.content!=='normal';});
-        if(ownText||replaced||decoration||pseudo)return false;
+        if(ownText||replaced||decoration||pseudo)return refuse('intersecting painted DOM box',e);
       }
     }
-    return true;
+    return {visible:true,reason:null,element:null};
   };
   return {isolated:crossOriginIsolated, apps:(typeof runningApps==='undefined'?[]:runningApps).map(a=>{
     const w=a.wine, g=w?.guestWorker, l=g?.link;
@@ -67,9 +74,10 @@ const PAGE_READ = `(() => {
     const windows=Object.values(w?.renderer?.windows||{}).filter(v=>v.visible&&!v.isChild&&v.w>0&&v.h>0&&v.processId===w.processId&&v.wasm===w.instance);
     const win=windows.length===1?windows[0]:null;
     const output=w?.renderer&&(!w.renderer.presentationFilter||w.renderer._directPresentation?w.renderer.canvas:w.renderer.presentationCanvas||w.renderer.canvas);
+    const outputVisibility=visibility(output);
     return {name:a.name,running:!!w?.running,stopped:!!w?._stopped,guestWorker:!!g,
       windowHwnd:win?.hwnd,windowObject:token(win),windowInstance:token(win?.wasm),
-      outputVisible:visible(output),
+      outputVisible:outputVisibility.visible,outputVisibility,
       outputCanvasObject:token(w?.renderer&&(!w.renderer.presentationFilter||w.renderer._directPresentation?w.renderer.canvas:w.renderer.presentationCanvas||w.renderer.canvas)),publication:w?.renderer?._immutablePublicationSequence||0,
       pageRendererObject:token(w?.renderer),canvasObject:token(document.getElementById('screen')),processId:w?.processId,processObject:token(w),endpoint:l?.endpointIdentity,endpointObject:token(l),
       renderEndpoint:p?.id??'none',renderEndpointObject:p?token(p):'none',
@@ -197,6 +205,46 @@ const RENDER_READ = `(() => {
   });
 })()`;
 
+// Separate host UI observation. These browser pixels are never game admission.
+const HOST_FIELDS=FIELDS.filter(k=>!['outputCanvasObject','workerTarget','workerInstance','moduleSha256','rendererTarget','rendererEpoch','rendererModuleSha256'].includes(k));
+const HOST_READ=`(() => {
+  const page=(${PAGE_READ}),s=globalThis.__mcmPassiveIdentityV1;
+  const token=o=>{if(!o)return null;if(!s.ids.has(o))s.ids.set(o,s.epoch+':'+(++s.next));return s.ids.get(o);};
+  const strip=document.getElementById('browser-fullscreen-consent'),buttons=strip?.querySelectorAll('button');
+  const button=buttons?.length===1?buttons[0]:null,wrap=document.getElementById('screen-wrap');
+  const r=button?.getBoundingClientRect(),box=r?{x:r.x,y:r.y,width:r.width,height:r.height}:null;
+  const x=r?r.x+r.width/2:null,y=r?r.y+r.height/2:null;
+  const visible=e=>{if(!e?.isConnected||document.visibilityState!=='visible')return false;const b=e.getBoundingClientRect();for(let p=e;p;p=p.parentElement){const c=getComputedStyle(p),r=p.getBoundingClientRect();if(c.display==='none'||c.visibility!=='visible'||Number(c.opacity)!==1)return false;if(p!==e&&((/(hidden|clip|scroll|auto)/.test(c.overflowX)&&(b.left<r.left||b.right>r.right))||(/(hidden|clip|scroll|auto)/.test(c.overflowY)&&(b.top<r.top||b.bottom>r.bottom))))return false;}return true;};
+  return {at:Date.now(),page,fullscreen:token(document.fullscreenElement),wrap:token(wrap),
+    viewport:{width:innerWidth,height:innerHeight,scale:devicePixelRatio},
+    strip:{object:token(strip),text:strip?.textContent.trim(),visible:visible(strip)},
+    button:{object:token(button),label:button?.textContent.trim(),box,x,y,
+      enabled:!!button&&!button.disabled,visible:visible(button),
+      hit:!!button&&document.elementFromPoint(x,y)===button,
+      contained:!!r&&r.width>0&&r.height>0&&r.left>=0&&r.top>=0&&r.right<=innerWidth&&r.bottom<=innerHeight}};
+})()`;
+function sameHostOwner(want,observed){
+  assert(observed.page.isolated&&observed.page.apps.length===1,'one isolated host owner');
+  const a=observed.page.apps[0];assert(a.name==='gltron'&&a.running&&!a.stopped&&a.guestWorker,'live host owner');
+  for(const k of HOST_FIELDS){assert(want[k]!==undefined&&want[k]!==null,'missing host identity '+k);assert.equal(a[k],want[k],'host owner changed '+k);}
+}
+function consentButton(observed){
+  assert(!observed.fullscreen,'already fullscreen; no consent click');
+  assert(observed.wrap&&observed.strip.visible&&observed.strip.text.includes('App is using the full page'),'visible exact consent strip');
+  const b=observed.button;
+  assert(b.object&&b.label==='Use browser fullscreen'&&b.enabled&&b.visible&&b.hit&&b.contained,'visible complete enabled consent button');
+}
+function reviewHostBootstrap(scene,review,live,now=Date.now()){
+  assert(review?.sha256===scene.sha256&&review.observation?.trim()&&review.hostOnly===true,'personal raw-browser host review required');
+  assert(now-scene.at>=0&&now-scene.at<30000,'fresh host menu geometry review');
+  sameHostOwner(scene.observation.page.apps[0],live);consentButton(scene.observation);consentButton(live);
+  for(const k of ['object','label','x','y'])assert.equal(live.button[k],scene.observation.button[k],'consent button changed '+k);
+  assert.deepEqual(live.button.box,scene.observation.button.box,'consent geometry changed');
+  assert.equal(live.wrap,scene.observation.wrap);assert.equal(live.strip.object,scene.observation.strip.object);
+  assert.deepEqual(live.viewport,scene.observation.viewport,'host viewport changed');
+  return {x:live.button.x,y:live.button.y};
+}
+
 function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo', expectedModules = null, now = Date.now}) {
   let latest = null, pinnedIdentity = null, busy = false, closed = false;
   const consumed = new Set();
@@ -320,4 +368,4 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
   return {capture, admit, readLive, progress, prepareStartup, get closed(){return closed;}};
 }
 
-module.exports={createChain,captureScene,same,sha,FIELDS,MAX_AGE_MS,PAGE_READ,WORKER_READ,RENDER_READ,readinessExpression,awaitStartupReady};
+module.exports={createChain,captureScene,same,sha,FIELDS,MAX_AGE_MS,PAGE_READ,WORKER_READ,RENDER_READ,readinessExpression,awaitStartupReady,HOST_READ,HOST_FIELDS,sameHostOwner,consentButton,reviewHostBootstrap};

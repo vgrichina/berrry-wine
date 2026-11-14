@@ -83,17 +83,68 @@ async function release(out,file) {
     assert(!live.exceptionDetails);const apps=live.result.value.apps;assert.equal(apps.length,1);assert.equal(apps[0].name,'gltron');
     for(const key of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','pageRendererObject','canvasObject','windowHwnd','windowObject','windowInstance','outputCanvasObject'])assert.equal(apps[0][key],cfg.owner[key],'independent release owner mismatch '+key);
   }}
+  async function checkHost(){if(cfg.hostOwner){
+    const stat=fs.readFileSync('/proc/'+cfg.pid+'/stat','utf8');assert.equal(stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],cfg.startToken);
+    const live=await c.send('Runtime.evaluate',{expression:require(ROOT+'/'+HELPER).HOST_READ,returnByValue:true},session);
+    assert(!live.exceptionDetails);require(ROOT+'/'+HELPER).sameHostOwner(cfg.hostOwner,live.result.value);
+  }}
   await checkOwner();
+  await checkHost();
   const armed=Date.now(),fallback=armed+1750;let due=fallback,pending='';
   process.stdin.on('data',b=>{pending+=b;let i;while((i=pending.indexOf('\n'))>=0){const v=JSON.parse(pending.slice(0,i));pending=pending.slice(i+1);assert(v.at>=armed&&v.at<=fallback);due=Math.min(due,v.at);}});
   process.stdout.write(JSON.stringify({armed:true,at:armed,fallback,session,pid:process.pid})+'\n');
   while(Date.now()<due)await wait(Math.min(5,due-Date.now()));
   await checkOwner();
+  await checkHost();
   const fired=Date.now(),receipts=[];
-  for(const key of [...cfg.keys].reverse())receipts.push(await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:key==='Space'?' ':key,code:key==='a'?'KeyA':key==='s'?'KeyS':key,windowsVirtualKeyCode:KEYS[key]},session));
+  if(cfg.mouse){assert.equal(cfg.mouse.button,'left');receipts.push(await c.send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',buttons:0,x:cfg.mouse.x,y:cfg.mouse.y,clickCount:1},session));}
+  else for(const key of [...cfg.keys].reverse())receipts.push(await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:key==='Space'?' ':key,code:key==='a'?'KeyA':key==='s'?'KeyS':key,windowsVirtualKeyCode:KEYS[key]},session));
   const ack=Date.now();save(out,cfg.name+'-up.json',{armed,fallback,due,fired,ack,receipts,state:'ACK',independent:true});
   await c.send('Target.detachFromTarget',{sessionId:session});
   } finally {c.ws.close();process.stdin.destroy();}
+}
+async function hostBootstrap({out,evaluate,send,session,owner,browserIdentity,deadline}){
+  const binding=require(ROOT+'/'+HELPER),record=(n,v)=>save(out,n,v);
+  const checkBrowser=()=>{const s=fs.readFileSync('/proc/'+browserIdentity.pid+'/stat','utf8');assert.equal(s.slice(s.lastIndexOf(')')+2).split(' ')[19],browserIdentity.startToken,'host browser process replaced');};
+  assert(!fs.existsSync(out+'/host-bootstrap-attempt.json'),'one host bootstrap; never replay');
+  record('host-bootstrap-attempt.json',{at:Date.now(),hostOnly:true,noReplay:true});
+  await evaluate(`(() => {if(globalThis.__gltronHostUIEvents)throw Error('host observer already installed');const events=[];Object.defineProperty(globalThis,'__gltronHostUIEvents',{value:events});for(const type of ['mousedown','mouseup','click'])document.addEventListener(type,e=>events.push({type,trusted:e.isTrusted,at:Date.now(),consent:e.target===document.querySelector('#browser-fullscreen-consent button'),canvas:e.target?.tagName==='CANVAS',target:e.target?.id||e.target?.tagName}),true);return true;})()`);
+  checkBrowser();const before=await evaluate(binding.HOST_READ);binding.sameHostOwner(owner,before);binding.consentButton(before);
+  const at=Date.now(),shot=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session),png=Buffer.from(shot.data,'base64');
+  assert(Date.now()-at<3000,'host screenshot deadline');
+  const scene={at,sha256:sha(png),nonce:crypto.randomUUID(),observation:before,browser:browserIdentity,hostOnly:true,gameAdmission:false};
+  binding.reviewHostBootstrap(scene,{sha256:scene.sha256,observation:'geometry consistency only; personal review still required',hostOnly:true},await evaluate(binding.HOST_READ));
+  fs.writeFileSync(out+'/host-bootstrap.png',png,{flag:'wx'});record('host-bootstrap.json',scene);
+  const reviewFile=out+'/host-review.json';
+  while(!fs.existsSync(reviewFile)){assert(Date.now()<Math.min(deadline,at+30000),'bounded personal host review expired');await wait(10);}
+  const review=JSON.parse(fs.readFileSync(reviewFile));assert(!review.cancelled,'host review cancelled; permanently closed');assert.equal(review.nonce,scene.nonce,'current host nonce');
+  assert.equal(sha(fs.readFileSync(out+'/host-bootstrap.png')),scene.sha256);
+  checkBrowser();const point=binding.reviewHostBootstrap(scene,review,await evaluate(binding.HOST_READ));
+  record('host-bootstrap-used.json',{nonce:scene.nonce,at:Date.now(),noReplay:true,guestClickAuthorized:false,review});
+  const config={...browserIdentity,name:'host-consent',mouse:{...point,button:'left'},hostOwner:owner};record('host-release-config.json',config);
+  const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/host-release-config.json'],{stdio:['pipe','pipe','pipe']});
+  let stdout='',stderr='',error,down;
+  child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
+  try{
+    const armed=await new Promise((r,j)=>{const timer=setTimeout(()=>j(Error('host independent release arm timeout')),1000);child.stdout.on('data',b=>{stdout+=b;if(stdout.includes('\n')){clearTimeout(timer);r(JSON.parse(stdout.split('\n')[0]));}});child.once('exit',code=>{if(!stdout){clearTimeout(timer);j(Error('host release child exit '+code));}});});assert(armed.armed);
+    checkBrowser();binding.reviewHostBootstrap(scene,review,await evaluate(binding.HOST_READ));
+    assert(Date.now()<deadline&&Date.now()<armed.fallback-250,'finite host DOWN window');
+    down=Date.now();await send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',buttons:1,x:point.x,y:point.y,clickCount:1},session);
+    child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,down+120)})+'\n');
+  }catch(e){error=e;}
+  finally{child.stdin.end();const result=await joined;record('host-release-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr});if(result.code!==0)error??=Error('independent host UP failed');}
+  record('host-down.json',{at:down??null,error:error?String(error):null,hostOnly:true});if(error)throw error;
+  const up=JSON.parse(fs.readFileSync(out+'/host-consent-up.json'));assert(up.ack-down<=2000,'bounded independent host UP');
+  const events=await evaluate('__gltronHostUIEvents');record('host-events.json',{events,canvasMouseEventObserved:events.some(e=>e.canvas)});
+  assert.deepEqual(events.map(e=>e.type),['mousedown','mouseup','click'],'one ordinary host click');assert(events.every(e=>e.trusted&&e.consent&&!e.canvas),'trusted host button edges only');
+  for(;;){
+    checkBrowser();const live=await evaluate(binding.HOST_READ);binding.sameHostOwner(owner,live);
+    assert.equal(live.wrap,scene.observation.wrap,'fullscreen target replaced');
+    recordObservation(live);
+    if(live.fullscreen===live.wrap&&!live.strip.visible&&live.page.apps[0].outputVisible){record('host-fullscreen.json',{at:Date.now(),observation:live,hostOnly:true,gameAdmission:false});return live;}
+    assert(Date.now()<Math.min(deadline,up.ack+5000),'trusted consent did not produce visible complete fullscreen scene');await wait(25);
+  }
+  function recordObservation(v){fs.appendFileSync(out+'/host-fullscreen-observations.jsonl',JSON.stringify(v)+'\n');}
 }
 async function browser(out,backend) {
   assert(['webgl','controls'].includes(backend));
@@ -171,7 +222,16 @@ async function browser(out,backend) {
         const result=await joined;record(name+'-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr});assert.equal(result.code,0,stderr);
       }
       const proof=await evaluate('keyProof');assert.equal(proof.length,cases.length*2);assert(proof.every(e=>e.trusted));for(let i=0;i<proof.length;i+=2){assert.equal(proof[i].type,'keydown');assert.equal(proof[i+1].type,'keyup');assert.equal(proof[i].key,proof[i+1].key);assert(proof[i+1].at-proof[i].at<=2000);}
-      record('native-controls.json',{passed:true,proof,originalLaunched:false});await close('blank-page native input controls complete');return;
+      await evaluate(`globalThis.mouseProof=[];for(const type of ['mousedown','mouseup'])addEventListener(type,e=>mouseProof.push({type,trusted:e.isTrusted,at:Date.now()}));`);
+      for(const [i,ms] of [1500,null].entries()){
+        const name='mouse-control-'+i,config={url,pid:browser.pid,startToken,targetId,mouse:{button:'left',x:20,y:20},name};record(name+'-release-config.json',config);
+        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});let stdout='',stderr='';child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
+        const armed=await new Promise((r,j)=>{const t=setTimeout(()=>j(Error('native mouse release arm timeout')),1500);child.stdout.on('data',b=>{stdout+=b;if(stdout.includes('\n')){clearTimeout(t);r(JSON.parse(stdout.trim()));}});});assert(armed.armed);
+        const before=Date.now();await c.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',buttons:1,x:20,y:20,clickCount:1},session);child.stdin.end(ms===null?'':JSON.stringify({at:before+ms})+'\n');
+        const result=await joined;record(name+'-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr});assert.equal(result.code,0,stderr);
+      }
+      const mouseProof=await evaluate('mouseProof');assert.equal(mouseProof.length,4);assert(mouseProof.every(e=>e.trusted));for(let i=0;i<4;i+=2){assert.equal(mouseProof[i].type,'mousedown');assert.equal(mouseProof[i+1].type,'mouseup');assert(mouseProof[i+1].at-mouseProof[i].at<=2000);}
+      record('native-controls.json',{passed:true,proof,mouseProof,originalLaunched:false});await close('blank-page native input controls complete');return;
     }
     await c.send('Page.addScriptToEvaluateOnNewDocument',{source:`document.addEventListener('DOMContentLoaded',()=>{const s=document.getElementById('slice-size-select');s.add(new Option('1k task budget','1000'));s.value='1000';},{once:true});`},session);
     await c.send('Page.navigate',{url:'http://127.0.0.1:'+port+'/index.html?debug&threads&gl-renderer=webgl&app=gltron'},session);
@@ -204,6 +264,7 @@ async function browser(out,backend) {
     // Output choice is unknown before the first ordinary valid display (the
     // normal compositor can select direct or filtered presentation). Select
     // it exactly once from that receipt; all subsequent reads pin it.
+    await hostBootstrap({out,evaluate,send:c.send,session,owner:startupOwner,browserIdentity:{url,pid:browser.pid,startToken,targetId},deadline:startupEnd});
     const selected=await binding.awaitStartupReady({evaluate,identity:startupOwner,deadline:startupEnd,selectOutput:true,onObservation:s=>log('startup-initial-display.jsonl',s)});
     const selectedOwner=await chain.readLive();assert.equal(selectedOwner.identity.outputCanvasObject,selected.outputCanvasObject,'selected startup output replaced');
     const startupReadiness=await chain.prepareStartup(startupEnd,s=>log('startup-readiness.jsonl',s));
@@ -271,4 +332,4 @@ async function browser(out,backend) {
   }
 }
 if(require.main===module){const [mode,out,arg]=process.argv.slice(2);(mode==='release'?release(out,arg):browser(out,arg)).catch(e=>{console.error(e);process.exitCode=1;});}
-module.exports={policy,gameplayCutoff,KEYS,HELPER,sha,connection,release,GL_OBSERVER};
+module.exports={policy,gameplayCutoff,KEYS,HELPER,sha,connection,release,GL_OBSERVER,hostBootstrap};
