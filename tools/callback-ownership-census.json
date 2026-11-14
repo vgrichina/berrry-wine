@@ -31,7 +31,8 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "06bc9cbbfd6a6ebd17ced04c1e27dfbbe423ec703e6aa5071253e005c75722f8",
+      "sha256": "219bf5b0df4a891cba57810cdac612385edbe21cf01b7771cca0234fbb1fa80b",
+      "utOpenGlTr2TrueColour20261114": "apps.js: ut348_demo OpenGL default via iniSet (FirstRun skip); tomb_raider_2_demo startupRegistry FullScreenBPP=32. Registry data only, no new callbacks.",
       "heretic2ModernControlsReview20261114": "Heretic II demo gains a modern config.cfg mount (c:\\Base), persistFiles (c:\\user\\config.cfg), relativeMouse and WASD touch layout; static app-registry data only, no callback ownership change",
       "hexen2GlWarningFlagReview20261113": "Hexen II demo seeds HKLM Software\\Hexen2 Flag via startupRegistry so the GLHexen notice is skipped; data only, no callback ownership change",
       "hexen2DesktopPublishReview20261113": "Hexen II demo moves from LOCAL_CANDIDATE_APPS to DESKTOP_APPS; list membership only, no callback ownership change",
