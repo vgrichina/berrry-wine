@@ -300,6 +300,12 @@ const PUBLISHABLE_OUTSIDE_BINARIES = [
   // it is the owner's decision (2026-09-28, test/binaries/SOURCES.md). The
   // sequels and Winter/3/Tennis siblings stay local-only.
   'test/binaries/candidates/moorhuhn/',
+  // Hexen II demo 1.11: its bundled Activision sublicence says no copies or
+  // distribution; publishing it as a promotional demo anyway is the owner's
+  // decision (2026-11-13, test/binaries/SOURCES.md). Only its manifest's 14
+  // installed files ship, the sublicence among them; installer and sources
+  // stay local.
+  'test/binaries/candidates/hexen-2-demo/',
   // Need for Speed II (original), II Special Edition and III: Hot Pursuit
   // demos: EA's own promotional demos, given away on magazine discs and
   // download sites. Their packaging grants no redistribution right either

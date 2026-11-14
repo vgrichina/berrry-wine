@@ -30,7 +30,8 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "329f5240dacc31f1aad7ebd5191c9baa9a15278a27b46e4dc9e5f61f58f58065",
+      "sha256": "0cccb6b08bc69fac6cbf260fee8a6959d168287baa760f0dbb3807dd23b90d4d",
+      "hexen2DesktopPublishReview20261113": "Hexen II demo moves from LOCAL_CANDIDATE_APPS to DESKTOP_APPS; list membership only, no callback ownership change",
       "hexen2ModernControlsReview20261113": "Hexen II demo gains Quake-style config/autoexec mounts, relativeMouse and WASD touch layout; no callback ownership change",
       "hexen2ModernControlsReview20261113": "Hexen II demo gains Quake-style config/autoexec mounts, relativeMouse and WASD touch layout; no callback ownership change",
       "screensaverLaunchesReview20261113": "APPS.screensavers.launches lists the scr_* ids the catalog applet reaches via ShellExecute; deploy data only, no callback, invocation or ownership change",

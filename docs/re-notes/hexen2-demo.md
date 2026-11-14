@@ -1,6 +1,9 @@
 # Hexen II Demo (Raven Software / Activision, 1997)
 
-App `hexen2_demo` (candidate `hexen-2-demo`, localOnly), demo 1.11.
+App `hexen2_demo` (candidate `hexen-2-demo`), demo 1.11. On the public
+desktop since 2026-11-13 by the owner's decision (`test/binaries/SOURCES.md`).
+Starts with Quake-style controls: `lib/hexen2-modern-controls.ini` mounts as
+`data1\config.cfg` and `lib/hexen2-autoexec.ini` (`+mlook`) as `autoexec.cfg`.
 Registered 75a71cc30. Quake-engine game: data in `data1/pak0.pak` and
 `progs.dat`.
 
@@ -17,7 +20,8 @@ and runtime behaviour only.
   setup plus an already installed `Install/Hexen2/` tree. The fetcher copies
   that tree to `installed/`.
 - `HEXEN II SUBLICENSE.doc`: Activision, personal use of one copy, no
-  copies, distribution or reverse engineering. Hence localOnly.
+  copies, distribution or reverse engineering. It was localOnly for that
+  reason until the owner chose to publish it anyway (2026-11-13).
 
 ## Two executables
 
