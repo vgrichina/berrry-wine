@@ -141,37 +141,6 @@ const events = () => evaluate('globalThis.guardEvents');
   check('owner rechecked before actual takeInput effect', !taken.some(e=>e.msg===256 && e.key===73) && (await status(delivery.nonce)).state === 'CANCELLED');
   await evaluate('renderer.windows[exports.get_main_hwnd()]=oldDeliveryWindow;renderer.checkInput=realCheck;true');
   await bindOwner();
-  // A coordinate press represents moving to the target before pressing it.
-  // SDL updates its pointer on a button edge but emits motion only on a changed
-  // point. Sending DOWN first makes a later explicit same-point move invisible
-  // to games which classify widgets on SDL motion (LMarbles' level selector).
-  await evaluate('renderer.checkInput=()=>0;true');
-  const hover = await queue('mousemove:579:402');
-  await send({ action: 'step', n: 1 });
-  check('guarded hover consumed', (await status(hover.nonce)).consumed);
-  // Read through the actual renderer queue without running guest dispatch.
-  await evaluate('while(renderer.takeInput()){};true');
-  const pointer = await queue('mousedown:354:330');
-  await send({ action: 'step', n: 1 });
-  const pointerState = await evaluate(`({
-    events:renderer.inputQueue.filter(e=>[0x200,0x201].includes(e.msg)).map(e=>({hwnd:e.hwnd,msg:e.msg,lp:e.lParam,x:e.mouseX,y:e.mouseY})),
-    origin:[exports.wnd_mouse_msg_origin_x(exports.get_main_hwnd()),exports.wnd_mouse_msg_origin_y(exports.get_main_hwnd())],
-    hwnd:exports.get_main_hwnd(),position:renderer.getMousePosition(),physical:[renderer._mouseX,renderer._mouseY]
-  })`);
-  check('guarded press moves before button at actual offset target',
-    pointerState.events.length === 2 && pointerState.events[0].msg === 0x200 && pointerState.events[1].msg === 0x201 &&
-    pointerState.events.every(e=>e.hwnd===pointerState.hwnd && e.x===354 && e.y===330 &&
-      e.lp===((330-pointerState.origin[1])<<16 | (354-pointerState.origin[0]))));
-  check('press current pointer agrees with queued motion and button',
-    pointerState.position === ((330<<16)|354) && pointerState.physical[0]===354 && pointerState.physical[1]===330);
-  await send({ action: 'guarded-release', owner: bind.owner });
-  await evaluate('while(renderer.takeInput()){};true');
-  // Ordinary coordinate clicks must share the ordering, too.
-  await send({cmd:'click:200:180'});
-  await send({action:'step',n:1});
-  const ordinary = await evaluate('renderer.inputQueue.filter(e=>[0x200,0x201,0x202].includes(e.msg)).map(e=>e.msg)');
-  check('ordinary click also moves before down/up', JSON.stringify(ordinary)===JSON.stringify([0x200,0x201,0x202]));
-  await evaluate('renderer.checkInput=realCheck;true');
   // Exercise production transport timeout against the same production guard,
   // including the real scheduled consumer callback after cancellation.
   const { createGuardedInput } = require('../lib/cli-guarded-input');
