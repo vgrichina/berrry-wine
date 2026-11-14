@@ -169,6 +169,126 @@ assert.strictEqual(rp[last + 2], 255, 'right edge stale: drawing buffer was not 
 
 hgl.destroyContext(gl2);
 
+// Fixed grow/shrink matrix: pending old-size work, both axes, non-power-of-two
+// row strides, all edge pixels, and repeated native window lifetimes. These
+// are independent assertions, never retries of an earlier failed case.
+for (let lifetime = 0; lifetime < 4; lifetime++) {
+  const c = createCanvas(32, 16);
+  const g = c.getContext('webgl', { alpha: false });
+  try {
+    const texture = g.createTexture();
+    for (const [w, h] of [[64, 16], [17, 9], [96, 48], [9, 60], [65, 17], [32, 16]]) {
+      g.clearColor(0, 1, 0, 1);
+      g.clear(g.COLOR_BUFFER_BIT); // deliberately no finish before resize
+      c.width = w;
+      c.height = h;
+      assert.strictEqual(c.getContext('webgl'), g, 'resize replaced the context');
+      g.bindTexture(g.TEXTURE_2D, texture);
+      assert.deepStrictEqual(g.getParameter(g.TEXTURE_BINDING_2D), texture,
+        'resize lost native resource ownership');
+      g.clearColor(1, 0, 1, 0);
+      g.clear(g.COLOR_BUFFER_BIT);
+      c.markGlPresented();
+      const pixels = c._data;
+      assert.strictEqual(pixels.length, w * h * 4);
+      for (let i = 0; i < pixels.length; i += 4) {
+        assert.deepStrictEqual(Array.from(pixels.subarray(i, i + 4)), [255, 0, 255, 255],
+          `lifetime ${lifetime}, ${w}x${h}, pixel ${i / 4}`);
+      }
+      const copy = createCanvas(w, h);
+      copy.getContext('2d').drawImage(c, 0, 0);
+      assert.deepStrictEqual(copy._data, pixels, 'resized compositor source differs');
+    }
+    g.deleteTexture(texture);
+  } finally { c.releaseWebGLContext(); }
+  assert.strictEqual(hgl.liveContextCount(), 0);
+}
+
+// Retain delayed native-extent and timeout controls. Cached Document.width is
+// already the requested size while the native extent is still outstanding.
+// A swap must not run during that interval. The real driver still performs
+// every resize, swap and readback; only completion reporting is delayed here.
+{
+  const provider = require('@node-3d/glfw'), glfw = provider.glfw;
+  let remaining = 3, confirmed = false, swaps = 0;
+  let getSize = win => {
+    if (remaining-- > 0) return { width: 32, height: 16 };
+    const size = glfw.getFramebufferSize(win);
+    confirmed = size.width === 64 && size.height === 16;
+    return size;
+  };
+  // Native exports are immutable. Load the exact production modules with a
+  // forwarding provider, rather than pretending assignments patched the addon.
+  const controlGlfw = new Proxy({}, { get: (_, key) => {
+    if (key === 'getFramebufferSize') return win => getSize(win);
+    if (key === 'swapBuffers') return win => {
+      assert.ok(confirmed, 'swapped before native resize completion');
+      swaps++;
+      return glfw.swapBuffers(win);
+    };
+    return glfw[key];
+  } });
+  function loadControl(file, overrides) {
+    const filename = path.join(__dirname, '..', 'lib', file);
+    const req = require('module').createRequire(filename), mod = { exports: {} };
+    new Function('require', 'module', 'exports', fs.readFileSync(filename, 'utf8'))(
+      name => Object.hasOwn(overrides, name) ? overrides[name] : req(name), mod, mod.exports);
+    return mod.exports;
+  }
+  const controlHgl = loadControl('headless-gl.js', {
+    '@node-3d/glfw': { ...provider, glfw: controlGlfw },
+  });
+  const c = loadControl('raster-canvas.js', { './headless-gl': controlHgl }).createCanvas(32, 16);
+  const g = c.getContext('webgl');
+  try {
+    c.width = 64;
+    assert.strictEqual(swaps, 1, 'resize must refresh the completed drawable once');
+    g.clearColor(0, 0, 1, 1); g.clear(g.COLOR_BUFFER_BIT);
+    c.markGlPresented();
+    assert.strictEqual(c._data[(64 * 16 - 1) * 4 + 2], 255);
+    getSize = () => ({ width: 64, height: 16 });
+    const start = performance.now();
+    assert.throws(() => { c.height = 31; }, /native canvas resize failed/);
+    const elapsed = performance.now() - start;
+    assert.ok(elapsed >= 900 && elapsed < 2000, `resize timeout ${elapsed}ms`);
+    assert.strictEqual(swaps, 1, 'failed resize swapped an unconfirmed extent');
+    assert.strictEqual(controlHgl.liveContextCount(), 0, 'failed resize leaked its window');
+    assert.strictEqual(controlHgl.resizeContext(g, 4, 4), false);
+    assert.strictEqual(controlHgl.readPixelsInto(g, 4, 4, new Uint8Array(64)), false);
+    assert.throws(() => g.clear(g.COLOR_BUFFER_BIT), /destroyed/);
+  } finally {
+    c.releaseWebGLContext();
+  }
+}
+
+// The provider dispatch object is a singleton. Canvas ownership must not be:
+// another canvas's creation, resize, readback or release cannot steal it.
+{
+  const a = createCanvas(8, 8), b = createCanvas(11, 7);
+  const ga = a.getContext('webgl', { alpha: false });
+  const gb = b.getContext('webgl', { alpha: true });
+  try {
+    assert.notStrictEqual(ga, gb, 'canvases alias the native dispatch singleton');
+    ga.clearColor(1, 0, 0, 0); ga.clear(ga.COLOR_BUFFER_BIT);
+    gb.clearColor(0, 0, 1, 0); gb.clear(gb.COLOR_BUFFER_BIT);
+    a.markGlPresented(); b.markGlPresented();
+    assert.deepStrictEqual(Array.from(a._data.slice(0, 4)), [255, 0, 0, 255]);
+    assert.deepStrictEqual(Array.from(b._data.slice(0, 4)), [0, 0, 255, 0]);
+    a.width = 23;
+    ga.clearColor(0, 1, 0, 1); ga.clear(ga.COLOR_BUFFER_BIT);
+    a.markGlPresented();
+    assert.deepStrictEqual(Array.from(a._data.slice(-4)), [0, 255, 0, 255]);
+    a.releaseWebGLContext();
+    hgl.destroyContext(ga); // idempotent, including after another context exists
+    assert.strictEqual(hgl.liveContextCount(), 1);
+    assert.strictEqual(hgl.makeCurrent(ga), false);
+    gb.clearColor(1, 1, 0, 1); gb.clear(gb.COLOR_BUFFER_BIT);
+    b.markGlPresented();
+    assert.deepStrictEqual(Array.from(b._data.slice(-4)), [255, 255, 0, 255]);
+  } finally { a.releaseWebGLContext(); b.releaseWebGLContext(); }
+  assert.strictEqual(hgl.liveContextCount(), 0);
+}
+
 // D3D9 uses this same factory in Node. Its capability probe must not require a
 // browser document, and its short-lived probe context must be released before
 // the real device asks the singleton native GL provider for another drawable.
