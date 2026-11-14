@@ -4,7 +4,8 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "0584c3940357246a301e159ede63c095f510bd24b0f0bdc470ca6dbe8e2afdea",
+      "sha256": "e62a0dbcb7201acd60d32673d2cb066cef8d77771a0b3389983cf2224d2ed4a1",
+      "reviewCurrentDisplay20261114": "20261114 current-display capture: synchronous host wrapper derives PID/instance from this live host and refuses stopped/pending-surface state. No guest invocation, export, input, clock, callback, timer, context restoration or hold release added. The existing renderer ticket owns cancellation/readback and next-publication semantics remain distinct. Ownership remains pending; run 20261114-gltron-current-display-capture.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "spinParkUrlReview20261114": "?spin-park=N applies set_spin_park_k at launch on the main instance, the guest Worker (callExport) and every inherited thread (table entry added in worker-imports); no callback, timer or lifetime change. renderer.js reseal covers d576f57ce's exclusive-mode test, read-only WAT getters, no new callbacks.",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
@@ -283,7 +284,8 @@
     {
       "file": "lib/renderer.js",
       "name": "host-file",
-      "sha256": "8713f112d44e99744c43a30c4aa8ce69735bfe48e8ea27d133ee55e2f9855f5e",
+      "sha256": "42cfc02c59fb2b7178a2becec3b34f781050122c23293a12045f6b5027be38b9",
+      "reviewCurrentDisplay20261114": "20261114 current-display capture: ordinary completed composition retains weak window/instance identity plus display canvas/geometry/timestamp receipt, with no cached bytes or guest-context callback. Current requests reuse the existing single cancellable ticket slot; synchronous request-local readback or next ordinary damage publication, refusing in-flight paint, replaced/hidden/clipped identity, unsupported crop and nonopaque output. Failed/display-only updates invalidate the receipt; public byte reads copy arrays. No repaint scheduling, guest callback/invocation, EIP/stack/clock/input write, extra swap, hold release or context restoration added. Weak receipt refs cannot retain a closed guest. Existing broader ownership remains pending; run 20261114-gltron-current-display-capture.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "spinParkUrlReview20261114": "?spin-park=N applies set_spin_park_k at launch on the main instance, the guest Worker (callExport) and every inherited thread (table entry added in worker-imports); no callback, timer or lifetime change. renderer.js reseal covers d576f57ce's exclusive-mode test, read-only WAT getters, no new callbacks.",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
