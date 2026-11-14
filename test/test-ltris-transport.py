@@ -15,6 +15,31 @@ t=load('terminal', 'test/test-forsaken-terminal.py'); t.c=c; t.base.control=c
 p=load('production', 'test/test-controller-production.py'); p.c=c; p.p.c=c; p.b.control=c
 
 class BackTransport(r.Refusal):
+    def end_game_case(self, ambiguous):
+        self.start('ltris-end-game-'+('unknown' if ambiguous else 'consumed'))
+        original=c.call
+        def call(command,timeout=10):
+            reply=original(command,timeout)
+            if ambiguous and command.get('action')=='guarded-input':reply['state']='UNKNOWN'
+            return reply
+        try:
+            c.capture('endscene')
+            c.save('endscene-review.json',dict(at=time.time(),pngSHA256=c.read('endscene.json')['pngSHA256'],
+                   mode='quit',quitRoute='confirm-end-game',endGamePrompt=True))
+            with patch.object(c,'call',call),patch.object(a,'cutoff',return_value=time.time()+10):
+                if ambiguous:
+                    with self.assertRaises(Exception):a.pulse('end',['keydown:89'],400,'endscene','fixture End Game y/n','quit','confirm-end-game')
+                    self.assertTrue(c.read('terminal-input-failure.json')['noReplay'])
+                    with self.assertRaisesRegex(AssertionError,'sticky'):c.capture('neverreplay')
+                else:
+                    a.pulse('end',['keydown:89'],400,'endscene','fixture End Game y/n','quit','confirm-end-game')
+                    self.assertEqual(c.read('end-up.json')['state'],'ACK')
+                    self.assertTrue((self.out/'end-progress.json').exists())
+            self.assertFalse((self.out/'end-final-choice.json').exists())
+        finally:self.finish()
+    # The released HTTP fixture deliberately stalls key Y for 2250ms;
+    # positive Y delivery belongs to the actual CLI fixture below.
+    def test_end_game_unknown_stays_closed(self):self.end_game_case(True)
     def test_reviewed_back_is_consumed_nonfinal(self):
         self.start('ltris-back-consumed')
         try:
@@ -53,6 +78,31 @@ class BackTransport(r.Refusal):
         finally: self.finish()
 
 class Production(p.Production):
+    def test_end_game_policy_uses_actual_cli_nonfinal_transport(self):
+        bind=c.bind
+        def bind_without_synthetic_y_stall():
+            # The inherited busy-server negative deliberately stalls Y.
+            # Install this positive fixture's observer BEFORE permanent bind,
+            # preserving production renderer dispatch and all negative tests.
+            self.assertTrue(c.call(dict(action='eval',code="""(() => {
+const down=Object.getPrototypeOf(renderer).handleKeyDown;
+if(typeof down!=='function') throw Error('renderer prototype key handler missing');
+renderer.handleKeyDown=function(k){const v=down.call(this,k);persistenceEffects.push({kind:'DOWN',at:Date.now(),key:k});return v};
+return true;
+})()""")))
+            bind()
+        with patch.object(c,'bind',bind_without_synthetic_y_stall):
+            self.start('ltris-end-game-policy-cli')
+        try:
+            c.capture('endscene')
+            c.save('endscene-review.json',dict(at=time.time(),pngSHA256=c.read('endscene.json')['pngSHA256'],
+                   mode='quit',quitRoute='confirm-end-game',endGamePrompt=True))
+            with patch.object(a,'cutoff',return_value=time.time()+10):
+                a.pulse('end',['keydown:89'],400,'endscene','synthetic End Game y/n review on actual CLI transport','quit','confirm-end-game')
+            self.assertTrue((self.out/'end-progress.json').exists())
+            self.assertFalse((self.out/'end-final-choice.json').exists())
+            self.assertEqual(c.read('end-up.json')['state'],'ACK')
+        finally:self.finish()
     def test_back_policy_uses_actual_cli_nonfinal_transport(self):
         self.start('ltris-back-policy-cli')
         try:

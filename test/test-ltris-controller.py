@@ -39,6 +39,37 @@ class Policy(unittest.TestCase):
         with patch.object(a.time, 'time', return_value=901):
             with self.assertRaisesRegex(AssertionError, 'separate'):
                 a.policy(['keydown:13'], 'scene', 'quit', 'select-back')
+    def test_end_game_prompt_has_distinct_nonfinal_yes(self):
+        a.c.save('end.json',dict(at=900))
+        a.c.save('end-review.json',dict(at=900,mode='quit',quitRoute='confirm-end-game',endGamePrompt=True))
+        with patch.object(a.time,'time',return_value=901),patch.object(a.c,'pulse',return_value='fixture') as p:
+            a.pulse('end',['keydown:89'],400,'end','Native End Game y/n prompt','quit','confirm-end-game')
+            self.assertFalse(p.call_args.kwargs['final'])
+    def test_end_game_yes_requires_fresh_prompt_not_quit_label(self):
+        a.c.save('end.json',dict(at=900))
+        a.c.save('end-review.json',dict(at=900,mode='quit',quitRoute='confirm-end-game',selectedQuit=True))
+        with patch.object(a.time,'time',return_value=901),patch.object(a.c,'pulse') as p:
+            with self.assertRaisesRegex(AssertionError,'End Game'):
+                a.pulse('end',['keydown:89'],400,'end','Wrong Quit label','quit','confirm-end-game')
+            p.assert_not_called()
+    def test_end_game_expired_prompt_refused(self):
+        a.c.save('end.json',dict(at=900))
+        a.c.save('end-review.json',dict(at=900,mode='quit',quitRoute='confirm-end-game',endGamePrompt=True))
+        with patch.object(a.time,'time',return_value=931),patch.object(a.c,'pulse') as p:
+            with self.assertRaisesRegex(AssertionError,'expired'):
+                a.pulse('end',['keydown:89'],400,'end','Old prompt','quit','confirm-end-game')
+            p.assert_not_called()
+    def test_end_game_wrong_key_or_route_refused(self):
+        a.c.save('end-review.json',dict(at=900,mode='quit',quitRoute='confirm-end-game',endGamePrompt=True))
+        with patch.object(a.time,'time',return_value=901):
+            for key,route in [('keydown:13','confirm-end-game'),('keydown:89','select-quit')]:
+                with self.assertRaises(AssertionError): a.policy([key],'end','quit',route)
+    def test_end_game_prompt_cannot_also_be_back_or_quit(self):
+        for route,flag in [('select-back','selectedBack'),('select-quit','selectedQuit')]:
+            a.c.save(route+'-review.json',dict(mode='quit',quitRoute=route,endGamePrompt=True,**{flag:True}))
+            with patch.object(a.time,'time',return_value=901):
+                with self.assertRaisesRegex(AssertionError,'separate'):
+                    a.policy(['keydown:13'],route,'quit',route)
     def test_expired_back_review_refused_before_transport(self):
         self.review('quit', 'select-back', back=True)
         a.c.save('scene.json', dict(at=900))

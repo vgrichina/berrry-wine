@@ -8,7 +8,7 @@ PLAY = {'keydown:' + str(k) for k in (37, 39, 38, 34, 40, 35, 46, 80)}
 MENU = {'keydown:' + str(k) for k in (13, 27, 37, 38, 39, 40)}
 QUIT = {'open-menu': 'keydown:27', 'menu-up': 'keydown:38',
         'menu-down': 'keydown:40', 'select-back': 'keydown:13', 'select-quit': 'keydown:13',
-        'confirm-quit': 'keydown:13'}
+        'confirm-quit': 'keydown:13', 'confirm-end-game': 'keydown:89'}
 
 def cutoff():
     launch = c.read('launch.json')
@@ -28,10 +28,12 @@ def policy(keys, review, mode, route=None, beforeArm=False):
     if mode == 'quit':
         assert route in QUIT and keys == [QUIT[route]], 'ordinary Quit route only'
         assert r['quitRoute'] == route, 'exact reviewed Quit route required'
+        if route == 'confirm-end-game':
+            assert r.get('endGamePrompt') is True and not r.get('selectedQuit') and not r.get('selectedBack'), 'personally visible End Game y/n prompt required, separate from Back and Quit'
         if route == 'select-back':
-            assert r.get('selectedBack') is True and not r.get('selectedQuit'), 'personally visible Back selection required, separate from Quit'
+            assert r.get('selectedBack') is True and not r.get('selectedQuit') and not r.get('endGamePrompt'), 'personally visible Back selection required, separate from End Game and Quit'
         if route in ('select-quit', 'confirm-quit'):
-            assert r.get('selectedQuit') is True and not r.get('selectedBack'), 'personally visible Quit selection required, separate from Back'
+            assert r.get('selectedQuit') is True and not r.get('selectedBack') and not r.get('endGamePrompt'), 'personally visible Quit selection required, separate from End Game and Back'
     else:
         assert not (c.R / 'quit-phase.json').exists(), 'irreversible Quit phase'
         assert time.time() + (8 if beforeArm else 0) < end, 'gameplay cutoff'
@@ -57,9 +59,9 @@ def bind(review):
 def pulse(name, keys, ms, review, observation, mode, route=None):
     assert 40 <= ms <= 1500, '1500ms pulse maximum with 1750ms independent fallback'
     policy(keys, review, mode, route, True)
-    if mode == 'quit' and route == 'select-back':
+    if mode == 'quit' and route in ('select-back', 'confirm-end-game'):
         assert all(0 <= time.time() - record['at'] < 30 for record in
-                   (c.read(review + '.json'), c.read(review + '-review.json'))), 'Back scene/review expired'
+                   (c.read(review + '.json'), c.read(review + '-review.json'))), 'Back/End Game scene/review expired'
     original = c.call
     def checked(command, timeout=10):
         if command.get('action') == 'guarded-input':
@@ -88,7 +90,8 @@ if __name__ == '__main__':
         rr = c.read(review + '.json')
         c.save(review + '-review.json', dict(at=time.time(), pngSHA256=rr['pngSHA256'],
                observation=observation, mode=mode, quitRoute=route,
-               selectedQuit='selected-quit' in flags, selectedBack='selected-back' in flags))
+               selectedQuit='selected-quit' in flags, selectedBack='selected-back' in flags,
+               endGamePrompt='end-game-prompt' in flags))
         print(pulse(name, key.split(','), int(ms), review, observation, mode, route))
     else:
         raise ValueError(mode)
