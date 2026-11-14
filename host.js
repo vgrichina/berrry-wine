@@ -1323,6 +1323,7 @@ class WineAssembly {
     // primary) are paced to at most this many per second; 0 = unpaced. A rate
     // cap, not vsync: see $present_pace. lib/browser-shell.js sets it.
     this.presentCap = 0;
+    this.spinParkK = null;
     // How $present_pace spends the cap: 'smooth' (default) or 'deadline'.
     this.presentPace = 'smooth';
     // What the cap paces when the app names its game step (lib/apps.js
@@ -3410,6 +3411,8 @@ class WineAssembly {
     if (this.instance.exports.set_cpu_sse) this.instance.exports.set_cpu_sse(cpuSSE);
     const presentCap = Math.max(0, this.presentCap | 0);
     if (this.instance.exports.set_present_cap) this.instance.exports.set_present_cap(presentCap);
+    const spinParkK = Number.isInteger(this.spinParkK) ? this.spinParkK : null;
+    if (spinParkK !== null && this.instance.exports.set_spin_park_k) this.instance.exports.set_spin_park_k(spinParkK);
     const presentPaceMode = this.presentPace === 'deadline' ? 0 : 1;
     if (this.instance.exports.set_present_pace_mode) {
       this.instance.exports.set_present_pace_mode(presentPaceMode);
@@ -3496,6 +3499,9 @@ class WineAssembly {
       }
       if (this.instance.exports.set_present_cap) {
         await this.guestWorker.callExport('set_present_cap', presentCap);
+      }
+      if (spinParkK !== null && this.instance.exports.set_spin_park_k) {
+        await this.guestWorker.callExport('set_spin_park_k', spinParkK);
       }
       if (this.instance.exports.set_present_pace_mode) {
         await this.guestWorker.callExport('set_present_pace_mode', presentPaceMode);
@@ -3680,6 +3686,7 @@ class WineAssembly {
     }
     this.threadManager.recordInheritedWasmGlobal('set_cpu_sse', cpuSSE);
     this.threadManager.recordInheritedWasmGlobal('set_present_cap', presentCap);
+    if (spinParkK !== null) this.threadManager.recordInheritedWasmGlobal('set_spin_park_k', spinParkK);
     this.threadManager.recordInheritedWasmGlobal('set_present_pace_mode',
       this.presentPace === 'deadline' ? 0 : 1);
 
