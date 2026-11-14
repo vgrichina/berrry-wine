@@ -16,8 +16,8 @@ profile helper `0x01001f70`: key index 4 (`Game`) defaults to 2, range 0–2
 width 3 / one layer, 1 to width 3 / three layers, and 2 to width 4 / four
 layers. It computes cells per layer as width squared and total cells as that
 product times layers (`0x01003631`–`0x0100364e`). Thus the absent-profile
-default is a 64-cell cube. The original's actual visible shape still needs
-personal review before gameplay.
+default is a 64-cell cube. The original's complete initial pixels confirmed all four 4×4 layers empty
+before gameplay.
 
 Native pixel-to-cell mapping is `0x010014c0`; `0x010015c0` accepts a mapped
 cell only when it is not -1 and its native occupancy is zero. Mouse-down
@@ -44,7 +44,7 @@ The native menu IDs further establish color identity without assuming X/O:
 “Blue always starts” is `0x71`. The unchanged start-option handler at
 `0x01001827` subtracts `0x6f`, so native player 1 is Red and player 2 Blue.
 The commit path invokes the computer on player 1, making the human Blue.
-Actual initial occupancy and next turn still require the original pixels;
+The complete initial original pixels showed all 64 cells empty and Blue to move;
 these static menu labels are not a reason to change the starting preference.
 
 ## Guarded controller
@@ -73,4 +73,84 @@ it; waiting for that terminal record fixes the test-side race.
 
 GLtron ticket-lifetime and Golf actual waits, both EOFs, heavy release and
 absent exact PIDs have been personally checked before starting heavy work.
-The sole original follows the full locked build and explicit publication.
+The sole original followed the full locked build and explicit publication.
+
+
+## Original result: partial game, native Close
+
+Code was published on main as `b2210743410396469c7b6cbd30f2bedecd2b82e6`
+before the sole original. Its launch Git SHA was
+`b06f21ddba0086afb4dc0a878138d1ad1e61799a`; relevant dirty source hunks are
+retained as `relevant-uncommitted.patch`, and the initial owned new files as
+`owned-initial.patch`. No registry or runtime source change was warranted.
+The locked build passed in 38.410 seconds. It overlapped the final synthetic
+CLI controls briefly; the built regular and compat module hashes exactly
+matched the released Golf modules, and the original began after both waits.
+
+The native process was permanently bound as PID 4122226, start token
+`274486002`, main window `0x10001`, screen 800×600. The fixed launch was
+1200 seconds, real ticks and default batch size 1000, with an independent
+1220-second watchdog and an irreversible final 180-second Quit reserve.
+No ordinary Start was needed: the initial native window already contained
+the untouched default game. No second game, restart, option change or rebind
+occurred.
+
+Layer numbers run top to bottom; rows run back to front, columns left to
+right. Every unlisted cell remained empty. The model personally chose each
+placement after reviewing its complete current scene; there was no board
+reader, solver, tracking process or queued action list.
+
+| Input | Own persistent effect | Separate computer reply | Evidence |
+| --- | --- | --- | --- |
+| Blue L2 row 2 column 2, pixel (266,175) | Blue appears at that cell | Red L4 row 4 column 4 | `choice8` review, `move1.png`, consumed receipt and UP ACK |
+| Blue L2 row 2 column 3, pixel (287,175) | Both Blue pieces persist | Red L4 row 1 column 4; earlier Red persists | `choice12` review, `move2.png`, consumed receipt and UP ACK |
+
+Final complete board, `B` Blue/human and `R` Red/computer:
+
+```text
+L1: .... / .... / .... / ....
+L2: .... / .BB. / .... / ....
+L3: .... / .... / .... / ....
+L4: ...R / .... / .... / ...R
+```
+
+Blue was next. No native win, loss or draw was visible. Further placement
+proposals expired before intent creation or input, so a third move was never
+sent. Complete-scene presentation and tool turnaround repeatedly consumed
+the five-second freshness allowance. Some image presentations appeared
+blank despite byte identity with the complete retained PNG; this was not
+claimed as a blank native board or a new board state. Rather than relax
+freshness, the run ended as partial.
+
+The complete native caption Close was personally reviewed from `move2.png`,
+which `cmp` proved byte-identical to the fresh `quit2.png` scene. The one
+Close click at (367,41) was consumed; its independently prearmed physical UP
+received ACK. The original then returned `[Exit] code=0`. Native PID
+4122226, watchdog 4122225 and supervisor 4122223 have actual waits, both EOFs,
+and absent exact PIDs. The supervisor recorded heavy release, port 8627 was
+closed, and the independent deadline watchdog did not fire. This establishes
+native Close separately from host teardown. The outer interactive tool
+session returned 143; that ancillary value is preserved, not substituted for
+the actual native/supervisor waits. Native exit reported one held main
+critical section, so no all-thread-clean claim is made.
+
+## Evidence limits and retained artifacts
+
+The 339 launch pins matched at final readback, including the registered
+28,432-byte executable and unchanged SHA-256 above. The registered route has
+no explicit DLL closure. The runner nevertheless auto-loaded
+`test/binaries/dlls/msvcrt.dll` (278,581 bytes, SHA-256
+`887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1`).
+It was omitted from the before-run pins: its post-run identity is recorded,
+but its before hash remains UNKNOWN. Thus the complete dynamically loaded
+media closure is not claimed to have a proved before/after match.
+
+The synthetic parent-death orphan's unavailable wait remains UNKNOWN in the
+control evidence. It is not original-game outcome evidence. Redundant
+passive PNGs are removed with their hashes and selected-image aliases kept;
+only the initial scene, first reply and final partial board PNGs remain.
+The run contains compact logs, actual wait records, result JSON and Git
+patches; no source tree, media, WASM copy or frame bundle. No box was created
+(box ID/expiry null, state NOT_CREATED, stop receipt NOT_APPLICABLE), and
+/home retained over 1.5 GB free. The next heavy worker was explicitly released;
+this bounded task makes no further original input or launch.
