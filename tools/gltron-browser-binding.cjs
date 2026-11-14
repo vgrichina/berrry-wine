@@ -125,9 +125,10 @@ async function awaitStartupReady({evaluate,identity,deadline,now=Date.now,onObse
 // Public current-display ticket: existing complete output, or ordinary pending
 // damage publication. Request time measures observation age, never render age.
 // Original publication/display timestamps remain separately attached to bytes.
-async function captureScene({evaluate, identity, now=Date.now, precheckDeadline=null}) {
+async function captureScene({evaluate, identity, now=Date.now, precheckDeadline=null,onTicketObservation=()=>{}}) {
   const nonce=crypto.randomUUID(),key='__gltronCaptureTicketV1',at=now(),stages={};
-  let result,armed=false;
+  let result,failure,armed=false,lastTicket={status:'UNKNOWN',at:now(),metadata:null};
+  const observe=o=>{lastTicket={...o,...(o.metadata?{displayAgeMs:o.at-o.metadata.displayedAt,readbackAgeMs:o.at-o.metadata.readbackCompletedAt}: {})};onTicketObservation({nonce,...lastTicket});};
   try {
     const arm=await evaluate(`(() => {
       const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
@@ -139,10 +140,13 @@ async function captureScene({evaluate, identity, now=Date.now, precheckDeadline=
       const readiness=(${readinessExpression(identity,false,true)});
       if(${JSON.stringify(precheckDeadline)}!==null&&Date.now()>=${JSON.stringify(precheckDeadline)})throw Error('bounded PREBIND startup readiness expired before ticket');
       if(!readiness.ready)return {state:'NOT_READY',nonce:${JSON.stringify(nonce)},requestCalled:false,ticketCreated:false,inputDispatched:false,...readiness};
-      const t=w.requestCurrentDisplayCapture({hwnd:a.windowHwnd});
-      const h={nonce:${JSON.stringify(nonce)},ticket:t,publication:a.publication,renderer:r};
-      globalThis.${key}=h;
-      return {state:'ARMED',nonce:${JSON.stringify(nonce)},requestCalled:true,ticketCreated:true,at:Date.now(),publication:a.publication};
+      const requestCallAt=Date.now(),t=w.requestCurrentDisplayCapture({hwnd:a.windowHwnd});
+      const output=!r.presentationFilter||r._directPresentation?r.canvas:r.presentationCanvas||r.canvas;
+      const h={nonce:${JSON.stringify(nonce)},ticket:t,requestCallAt,publication:a.publication,renderer:r,
+        output,width:output.width,height:output.height,
+        windows:Object.values(r.windows).filter(v=>v.visible&&!v.isChild&&v.w>0&&v.h>0).map(window=>({window,values:Object.fromEntries(['hwnd','processId','wasm','x','y','w','h','z','style','region'].map(k=>[k,window[k]]))}))};
+      globalThis.${key}=Object.freeze(h);
+      return {state:'ARMED',nonce:${JSON.stringify(nonce)},requestCalled:true,ticketCreated:true,at:Date.now(),requestCallAt,publication:a.publication,ticketStatus:t.status};
     })()`);
     if(arm.state==='NOT_READY'){
       assert.equal(arm.nonce,nonce,'precheck nonce changed');
@@ -152,26 +156,43 @@ async function captureScene({evaluate, identity, now=Date.now, precheckDeadline=
     }
     assert(arm.state==='ARMED'&&arm.nonce===nonce&&arm.requestCalled===true&&arm.ticketCreated===true,'ambiguous capture arm; no retry');
     armed=true;stages.armMs=now()-at;stages.arm=arm;
+    observe({status:arm.ticketStatus??'UNKNOWN',at:arm.at,requestCallAt:arm.requestCallAt,metadata:null,phase:'arm'});
     while(now()-at<3000) {
       result=await evaluate(`(() => {
         const h=globalThis.${key};if(!h||h.nonce!==${JSON.stringify(nonce)})throw Error('capture ticket replaced');
-        const t=h.ticket;if(t.status==='failed')return {refused:t.error};
-        if(t.status==='cancelled')throw Error('capture cancelled; no replay');
-        const readiness=(${readinessExpression(identity,false,true)});
-        if(!readiness.ready)throw Error('post-ticket readiness changed: '+readiness.pending.join(', ')+'; no retry');
-        if(t.status!=='complete')return null;
-        const readStart=performance.now(),r=t.read(),m=r.metadata;
+        const t=h.ticket,status=t.status,readStart=performance.now();
+        // Complete is terminal in the production ticket closure: read() copies
+        // retained arrays, never the live canvas. A newer ordinary paint cannot
+        // invalidate these observed bytes or refresh their original timestamps.
+        const r=status==='complete'?t.read():null,m=r?.metadata??null;
+        const ticketObservation={status,at:Date.now(),requestCallAt:h.requestCallAt,metadata:m,phase:'poll',
+          paint:{held:h.renderer._workerPublicationHeld(),gdiDepth:h.renderer._workerGdiPaintDepth??0,repainting:!!h.renderer._repainting}};
+        try {
+        if(status==='failed')return {refused:'capture ticket failed: '+t.error,code:'CAPTURE_TICKET_FAILED',ticketObservation};
+        if(status==='cancelled')throw Error('capture cancelled; no replay');
+        if(!['pending','complete'].includes(status))throw Error('UNKNOWN capture ticket status; no replay');
+        if(status==='pending'){
+          const readiness=(${readinessExpression(identity,false,true)});
+          if(!readiness.ready)throw Error('post-ticket readiness changed while pending: '+readiness.pending.join(', ')+'; no retry');
+          return {pending:true,ticketObservation};
+        }
+        if(!r||!m)throw Error('complete ticket has no immutable bytes');
         const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
         if(p.apps.length!==1||!a.running||a.stopped||!a.outputVisible)throw Error('capture owner/output hidden or clipped');
         for(const k of ['processId','processObject','pageRendererObject','canvasObject','windowHwnd','windowObject','windowInstance','outputCanvasObject'])if(a[k]!==want[k])throw Error('capture identity changed '+k);
+        const liveWindows=Object.values(h.renderer.windows).filter(v=>v.visible&&!v.isChild&&v.w>0&&v.h>0);
+        if(h.output.width!==h.width||h.output.height!==h.height||liveWindows.length!==h.windows.length||h.windows.some(pin=>!liveWindows.includes(pin.window)||Object.keys(pin.values).some(k=>pin.window[k]!==pin.values[k])))throw Error('capture output/owner geometry changed');
         if(m.observation!=='current-display'||m.publication<h.publication)throw Error('capture display/publication binding changed');
-        if(!Number.isFinite(m.displayedAt)||m.displayedAt>m.readbackCompletedAt||m.requestedAt>m.readbackStartedAt)throw Error('capture display timing invalid');
+        if(!['displayedAt','requestedAt','readbackStartedAt','readbackCompletedAt'].every(k=>Number.isFinite(m[k]))||m.displayedAt>m.readbackStartedAt||m.requestedAt>m.readbackStartedAt||m.readbackStartedAt>m.readbackCompletedAt||m.readbackCompletedAt>Date.now())throw Error('capture display timing invalid');
         const c=document.createElement('canvas');c.width=m.output.width;c.height=m.output.height;
         const start=performance.now();c.getContext('2d').putImageData(new ImageData(r.outputRGBA,c.width,c.height),0,0);
         const data=c.toDataURL('image/png');
-        return {metadata:m,data,publishedAt:m.publicationAt,encodedAt:Date.now(),readAndCopyMs:start-readStart,encodeMs:performance.now()-start};
+        return {metadata:m,data,ticketObservation,publishedAt:m.publicationAt,encodedAt:Date.now(),readAndCopyMs:start-readStart,encodeMs:performance.now()-start};
+        }catch(e){return {refused:e.message,ticketObservation};}
       })()`);
-      if(result?.refused){const reason=result.refused;result=null;const e=Error('capture ticket failed: '+reason+'; no retry');e.code='CAPTURE_TICKET_FAILED';e.requestCalled=true;e.ticketCreated=true;throw e;}
+      if(result?.ticketObservation)observe(result.ticketObservation);
+      if(result?.refused){const e=Error(result.refused+'; no retry');e.code=result.code??'CAPTURE_TICKET_REFUSED';result=null;e.requestCalled=true;e.ticketCreated=true;throw e;}
+      if(result?.pending)result=null;
       if(result)break;
       await wait(10);
     }
@@ -187,10 +208,20 @@ async function captureScene({evaluate, identity, now=Date.now, precheckDeadline=
     assert(/^data:image\/png;base64,/.test(result.data));
     stages.readAndEncodeMs=now()-at;stages.encodeMs=result.encodeMs;stages.readAndCopyMs=result.readAndCopyMs;stages.publishedAt=result.publishedAt;
     return {png:Buffer.from(result.data.split(',')[1],'base64'),metadata:m,at:new Date(at).toISOString(),stages,nonce};
+  } catch(e) {
+    if(/UNKNOWN/.test(e.message)&&!e.code)observe({status:'UNKNOWN',at:now(),metadata:null,phase:'transport',lastObserved:lastTicket});
+    failure=e;e.ticketObservation=lastTicket;e.captureNonce=nonce;throw e;
   } finally {
     // A terminal transport refuses this cleanup too. In that case the whole
     // document is destroyed by host teardown, never reused or rebound.
-    if(armed)await evaluate(`(() => {const h=globalThis.${key};if(!h||h.nonce!==${JSON.stringify(nonce)})throw Error('capture cancellation identity changed');const status=h.ticket.status;h.ticket.cancel();delete globalThis.${key};return {status};})()`);
+    if(armed)try{
+      const terminal=await evaluate(`(() => {const h=globalThis.${key};if(!h||h.nonce!==${JSON.stringify(nonce)})throw Error('capture cancellation identity changed');const status=h.ticket.status,metadata=status==='complete'?h.ticket.read().metadata:null;const cancelled=h.ticket.cancel();delete globalThis.${key};return {status,metadata,at:Date.now(),requestCallAt:h.requestCallAt,phase:'cleanup',cancelled,statusAfterCancel:h.ticket.status};})()`);
+      if(terminal.phase==='cleanup')observe(terminal);
+    }catch(e){
+      if(!failure){e.ticketObservation=lastTicket;e.captureNonce=nonce;throw e;}
+      failure.cleanupError=String(e);
+    }
+    if(failure)failure.ticketObservation=lastTicket;
     if(result)assert(now()-at<3000,'late complete-scene capture cleanup refused');
   }
 }
@@ -256,7 +287,7 @@ function reviewHostBootstrap(scene,review,live,now=Date.now()){
   return {x:live.button.x,y:live.button.y};
 }
 
-function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo', expectedModules = null, now = Date.now}) {
+function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo', expectedModules = null, now = Date.now,onTicketObservation=()=>{}}) {
   let latest = null, pinnedIdentity = null, busy = false, closed = false, startup = null;
   const consumed = new Set();
   async function readLive() {
@@ -332,7 +363,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
       for(;;){
         if(startup)assert(now()<startup.deadline,'bounded PREBIND startup readiness expired');
         before=await readLive();
-        shot=await captureScene({evaluate,identity:before.identity,now,precheckDeadline:startup?.deadline??null});
+        shot=await captureScene({evaluate,identity:before.identity,now,precheckDeadline:startup?.deadline??null,onTicketObservation});
         if(shot.state!=='NOT_READY')break;
         // Only this positive, nonce-bound, pre-request result can stay in
         // startup. Exceptions/UNKNOWN and every ticket outcome close below.
@@ -361,6 +392,11 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
       assert([5000,30000].includes(maxAgeMs),'unchanged precision/menu freshness required');
       same(latest.identity, review.identity); fresh(latest,maxAgeMs);
       const live = await readLive(); same(latest.identity, live.identity); const ageMs = fresh(latest,maxAgeMs);
+      // Reading historical immutable bytes grants no input privilege while a
+      // current writer is active. Keep live owner/output/paint admission here.
+      const ready=await evaluate(readinessExpression(latest.identity,false,true));
+      assert(ready.ready,'input current display not ready: '+ready.pending?.join(', '));
+      fresh(latest,maxAgeMs);
       consumed.add(latest.nonce);
       effects = true;
       return await dispatch({ageMs, capture:structuredClone(latest), live});

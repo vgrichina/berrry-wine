@@ -181,7 +181,7 @@ async function browserCaptureControls(){
     const url=URL.createObjectURL(new Blob([source],{type:'text/javascript'})),worker=new Worker(url+'#guest-worker');
     globalThis.fixture={r,w,win,canvas,worker,url,frames:0,publications:[],keys:[],captureCalls:[],startupEvents:[],paintEvents:[]};
     const request=w.requestCurrentDisplayCapture;w.requestCurrentDisplayCapture=function(o){fixture.captureCalls.push({at:Date.now(),frames:fixture.frames,held:r._workerPublicationHeld()});return request.call(this,o);};
-    const observe=r.observePresentationPublication;r.observePresentationPublication=function(d,n){observe.call(this,d,n);fixture.publications.push({n,at:Date.now()});if(fixture.publications.length>10)fixture.publications.shift();if(!fixture.startupEvents.length){r.beginWorkerGuestSlice();fixture.startupEvents.push({event:'ordinary-producer-begin',at:Date.now()});}};
+    const observe=r.observePresentationPublication;r.observePresentationPublication=function(d,n){observe.call(this,d,n);fixture.publications.push({n,at:Date.now()});if(fixture.publications.length>10)fixture.publications.shift();if(!fixture.startupEvents.length){r.beginWorkerGuestSlice();fixture.startupEvents.push({event:'ordinary-producer-begin',at:Date.now()});}if(fixture.onPublication){const f=fixture.onPublication;fixture.onPublication=null;queueMicrotask(f);}};
     worker.onerror=e=>{fixture.workerError=e.message;};worker.onmessage=({data:m})=>{if(m.begin){r.beginWorkerGuestSlice();fixture.paintEvents.push({event:'begin',at:Date.now(),frame:m.n});}if(m.end){r.endWorkerGuestSlice();fixture.paintEvents.push({event:'end',at:Date.now(),frame:m.n});}canvas.getContext('2d').drawImage(m.bitmap,0,0,canvas.width,canvas.height);m.bitmap.close();fixture.frames=m.n;fixture.version=m.version;if(m.n===20){r.endWorkerGuestSlice();fixture.startupEvents.push({event:'ordinary-producer-end',at:Date.now(),frames:m.n});}r.scheduleRepaint();if(fixture.onFrame){const f=fixture.onFrame;fixture.onFrame=null;f();}};
     for(const type of ['keydown','keyup'])addEventListener(type,e=>fixture.keys.push({type,key:e.key,at:Date.now(),trusted:e.isTrusted}));
     return {hwnd:win.hwnd,processId:win.processId};
@@ -352,14 +352,23 @@ async function browserCaptureControls(){
   await evaluate('fixture.r.windows[65537]=fixture.win;fixture.w._presentFrameDue=true;setTimeout(()=>{fixture.r.windows[65537]={...fixture.win};},50);true');
   await assert.rejects(awaitStartupReady({evaluate,identity:(await evaluate(PAGE_READ)).apps[0],deadline:Date.now()+1000}),/identity changed/);
   report.startupOwnerReplacementRefused=true;
+  await evaluate('fixture.r.windows[65537]=fixture.win;fixture.w._presentFrameDue=false;true');
+  await page.waitForFunction('!fixture.r._workerPublicationHeld()&&!fixture.r._repaintScheduled');
   await evaluate('URL.revokeObjectURL(fixture.url);true');
   // Actual Chrome delayed response: fixed 3s UNKNOWN closes transport, and
   // neither its late reply nor any subsequent call can send input/replay.
-  const unknownAt=Date.now();
-  await assert.rejects(cdp.send('Runtime.evaluate',{expression:'new Promise(r=>setTimeout(()=>r(17),3150))',returnByValue:true,awaitPromise:true}),/UNKNOWN/);
+  const unknownAt=Date.now(),unknownBefore=await evaluate('fixture.captureCalls.length'),unknownObservations=[];
+  // The synthetic producer has retired normally above. Exercise the ticket
+  // helper directly on its still-live idle display; never invent a Worker.
+  const unknownIdentity=(await evaluate(PAGE_READ)).apps[0];
+  const unknownCapture=captureScene({evaluate:async(expression,workerSession)=>{
+    if(!workerSession&&expression.includes('const t=h.ticket,status'))await evaluate('new Promise(r=>setTimeout(()=>r(17),3150))');
+    return evaluate(expression,workerSession);
+  },identity:unknownIdentity,onTicketObservation:o=>unknownObservations.push(o)});
+  await assert.rejects(unknownCapture,e=>/UNKNOWN/.test(e.message)&&e.ticketObservation.status==='UNKNOWN');
   await pause(250);assert(c.closed);
   for(const method of ['Input.dispatchKeyEvent','Runtime.evaluate'])await assert.rejects(cdp.send(method,{}),/UNKNOWN/);
-  report.chromeUnknown={elapsedMs:Date.now()-unknownAt,closed:c.closed,lateReplyCannotReopen:true,inputDispatches:0};
+  report.chromeUnknown={elapsedMs:Date.now()-unknownAt,closed:c.closed,lateReplyCannotReopen:true,inputDispatches:0,unknownBefore,observations:unknownObservations,helperTerminal:true};
   report.passed=true;
  }catch(e){report.error=String(e.stack);throw e;}
  finally{
@@ -376,6 +385,7 @@ async function atomicBrowserControls({evaluate,send,workers,pageSession,page,roo
  old.filename=path.resolve(__dirname,'../tools/gltron-browser-binding.cjs');old.paths=module.paths;old._compile(oldSource,old.filename);
  const snapshot=()=>evaluate('({calls:fixture.captureCalls.slice(),held:fixture.r._workerPublicationHeld(),events:fixture.paintEvents.slice(),keys:fixture.keys.slice(),ticketAbsent:!globalThis.__gltronCaptureTicketV1})');
  const naturalEnd=()=>page.waitForFunction('!fixture.r._workerPublicationHeld()&&!fixture.r._repaintScheduled&&!fixture.r._repaintPending');
+ const armAfterPublication=expression=>evaluate(`new Promise(resolve=>{fixture.onPublication=()=>resolve((${expression}));})`);
  const restoreSyntheticOwner=async()=>{
   const frame=await evaluate('fixture.r.windows[65537]=fixture.win;fixture.frames');
   await page.waitForFunction('fixture.frames>'+frame);await naturalEnd();
@@ -461,13 +471,67 @@ async function atomicBrowserControls({evaluate,send,workers,pageSession,page,roo
   report.atomic.replacementBeforeArm={before,final,closed:f.closed,reads};
   await restoreSyntheticOwner();
  }
- // A new hold after the ticket call cannot be classified as a passive
- // precheck. This complete ticket is terminal and cannot admit input.
- {
-  let inject=false;const before=await snapshot();
-  const f=binding.createChain({evaluate:async(...args)=>{const v=await evaluate(...args);if(inject&&args[0].includes('t=w.requestCurrentDisplayCapture')){inject=false;await plan({frames:10});}return v;},send,workers,pageSession,app:'gltron'});
-  await f.prepareStartup(Date.now()+3000);inject=true;await assert.rejects(f.capture('postticket-hold'),/post-ticket readiness changed/);assert(f.closed);await assert.rejects(f.capture('no-reopen'),/closed/);
-  const final=await snapshot();assert.equal(final.calls.length,before.calls.length+1);assert(final.ticketAbsent);report.atomic.postTicketHold={before,final,closed:f.closed};await naturalEnd();
+ // Causal lifetime control: exact a918 helper and candidate each get ONE
+ // already-complete production ticket, then normal Worker begin before read.
+ // No hold release, new publication, repaint, guest input or retry is forced.
+ const lifetimeSource=cp.execFileSync('git',['show','a918f0b61854121fddce5d9d5671b9f0f6d1fc08:tools/gltron-browser-binding.cjs'],{encoding:'utf8'});
+ const prior=new Module(old.filename,module);prior.filename=old.filename;prior.paths=module.paths;prior._compile(lifetimeSource,prior.filename);
+ report.atomic.ticketLifetime=[];
+ for(const candidate of [false,true]){
+  await naturalEnd();const before=await snapshot(),observations=[];let receipt;
+  const identity=(await evaluate(binding.PAGE_READ)).apps[0];
+  const wrapped=async expression=>{
+   const v=expression.includes('t=w.requestCurrentDisplayCapture')?await armAfterPublication(expression):await evaluate(expression);
+   if(expression.includes('t=w.requestCurrentDisplayCapture')){
+    receipt=await evaluate(`(async()=>{const t=globalThis.__gltronCaptureTicketV1.ticket;fixture.lifetimeTicket=t;const r=t.read();if(t.status!=='complete'||!r)throw Error('lifetime control requires completed ticket');fixture.lifetimeMetadata=r.metadata;const hash=async b=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',b)),x=>x.toString(16).padStart(2,'0')).join('');const outputSha256=await hash(r.outputRGBA);r.outputRGBA.fill(0);return {status:t.status,at:Date.now(),metadata:r.metadata,outputSha256,copyIsolated:outputSha256===await hash(t.read().outputRGBA)};})()`);
+    assert.equal(receipt.status,'complete');assert(receipt.copyIsolated);
+    await plan({frames:20});receipt.afterBegin=await evaluate('({status:fixture.lifetimeTicket.status,at:Date.now(),held:fixture.r._workerPublicationHeld(),metadata:fixture.lifetimeTicket.read().metadata})');
+    assert(receipt.afterBegin.held);assert.equal(receipt.afterBegin.status,'complete');
+   }
+   return v;
+  };
+  if(!candidate)await assert.rejects(prior.exports.captureScene({evaluate:wrapped,identity}),/post-ticket readiness changed/);
+  else{
+   const shot=await binding.captureScene({evaluate:wrapped,identity,onTicketObservation:o=>observations.push(o)});
+   assert.deepEqual(shot.metadata,receipt.metadata);assert.equal(controller.sha(PNG.sync.read(shot.png).data),receipt.outputSha256);
+   assert(observations.some(o=>o.status==='complete'&&o.paint?.held),'actual complete read while later Worker paint held');
+   assert(Date.parse(shot.at)<=shot.metadata.requestedAt,'original observation age retained');
+   fs.writeFileSync(root+'/completed-ticket.png',shot.png,{flag:'wx'});
+  }
+  const final=await snapshot();assert.equal(final.calls.length,before.calls.length+1);assert(final.ticketAbsent);
+  await naturalEnd();const retained=await evaluate(`(async()=>{const t=fixture.lifetimeTicket,r=t.read();return {status:t.status,metadata:r.metadata,outputSha256:Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',r.outputRGBA)),x=>x.toString(16).padStart(2,'0')).join(''),publication:fixture.r._immutablePublicationSequence};})()`);
+  assert.equal(retained.outputSha256,receipt.outputSha256);assert.deepEqual(retained.metadata,receipt.metadata);assert(retained.publication>retained.metadata.publication);
+  report.atomic.ticketLifetime.push({candidate,before,receipt,observations,final,retained});
+ }
+ // Immutable read is separate from current owner/output and input authority.
+ for(const kind of ['owner','output','pending','failed']){
+  await naturalEnd();const before=await snapshot(),identity=(await evaluate(binding.PAGE_READ)).apps[0],observations=[];let armed=false,receipt;
+  const wrapped=async expression=>{
+   if(!armed&&expression.includes('t=w.requestCurrentDisplayCapture')){
+    armed=true;
+    let value;
+    if(kind==='pending'||kind==='failed'){
+     value=await evaluate(`new Promise(resolve=>{fixture.onFrame=()=>{const v=(${expression}),h=globalThis.__gltronCaptureTicketV1;fixture.negativeTicket=h.ticket;fixture.negativeArm={status:h.ticket.status,at:Date.now()};${kind==='failed'?'fixture.r.windows[65537]={...fixture.win};':''}resolve(v);};})`);
+     assert.equal((await evaluate('fixture.negativeArm')).status,'pending');
+     if(kind==='failed')await page.waitForFunction("fixture.negativeTicket.status==='failed'");
+    }else{
+     value=await armAfterPublication(expression);
+     await evaluate(kind==='owner'?'fixture.r.windows[65537]={...fixture.win};true':'fixture.r.canvas.width+=1;true');
+    }
+    receipt=await evaluate('(() => {const h=globalThis.__gltronCaptureTicketV1,t=h.ticket;return {status:t.status,at:Date.now(),metadata:t.status===\'complete\'?t.read().metadata:null};})()');
+    return value;
+   }
+   return evaluate(expression);
+  };
+  const transaction=binding.captureScene({evaluate:wrapped,identity,onTicketObservation:o=>observations.push(o)});
+  if(kind==='pending'){const shot=await transaction;assert.equal(shot.metadata.content,'ordinary-publication-after-request');}
+  else await assert.rejects(transaction,e=>{assert(e.ticketObservation);return /changed|failed/.test(e.message);});
+  const final=await snapshot();assert.equal(final.calls.length,before.calls.length+1);assert(final.ticketAbsent);
+  assert.equal(receipt.status,kind==='failed'?'failed':kind==='pending'?receipt.status:'complete');
+  assert.equal(observations.at(-1).status,kind==='pending'?'complete':receipt.status);
+  report.atomic['ticketNegative-'+kind]={before,receipt,observations,final};
+  if(kind==='output')await evaluate('fixture.r.canvas.width-=1;true');
+  await restoreSyntheticOwner();
  }
  {
   const before=await snapshot();let cancel=false;
@@ -515,8 +579,8 @@ async function chainControls(){
     if(kind==='startup-ambiguous')return {state:'NOT_READY',nonce,ready:false,pending:['held'],requestCalled:true,ticketCreated:true,inputDispatched:false};
     return {state:'ARMED',nonce,requestCalled:true,ticketCreated:true,at:tick(),publication:7};
    }
-   if(expression.includes('const pending=[]')&&!expression.includes('r=t.read()'))return {ready:true,at:tick(),publication:7};
-   if(expression.includes('r=t.read()')){if(kind==='failed-ticket'||kind==='startup-failed')return {refused:'actual request already called'};if(kind==='cancelled')throw Error('capture cancelled; no replay');readback=true;return {data:'data:image/png;base64,eA==',encodeMs:0,metadata:{publication:8,observation:'current-display',content:'already-displayed',completion:'canvas2d-readback',captureOwner:{hwnd:65537,processId:991},composition:{windows:[{hwnd:65537,processId:991}]},output:{width:1,height:1}}};}
+   if(expression.includes('const pending=[]')&&!expression.includes('const t=h.ticket,status'))return {ready:true,at:tick(),publication:7};
+   if(expression.includes('const t=h.ticket,status')){if(kind==='failed-ticket'||kind==='startup-failed')return {refused:'capture ticket failed: actual request already called',code:'CAPTURE_TICKET_FAILED'};if(kind==='cancelled')throw Error('capture cancelled; no replay');readback=true;return {data:'data:image/png;base64,eA==',encodeMs:0,metadata:{publication:8,observation:'current-display',content:'already-displayed',completion:'canvas2d-readback',captureOwner:{hwnd:65537,processId:991},composition:{windows:[{hwnd:65537,processId:991}]},output:{width:1,height:1}}};}
    if(expression.includes('h.ticket.cancel()')){a.publication=8;return {status:'complete'};}
    throw Error('unexpected fixture expression');
   };
@@ -569,7 +633,7 @@ async function startupControls(){
   const canvas={isConnected:true,getBoundingClientRect:()=>rect,contains:()=>false};
   const win={visible:true,w:640,h:480,processId:1,hwnd:65537,wasm:{}},r={canvas,windows:{65537:win},_workerPublicationHeld:()=>r.held,held:true,_immutablePublicationSequence:1,_currentDisplayRecord:{displayedAt:Date.now()},peekKeyDownState:()=>0,_validateCurrentDisplayCapture(req){assert.equal(req.owner.window,win);return this._currentDisplayRecord;}};
   const w={running:true,renderer:r,processId:1,instance:win.wasm,guestWorker:{link:{endpointIdentity:'guest',worker:{},module:{}}}};
-  const context=vm.createContext({crypto,crossOriginIsolated:true,document:{visibilityState:'visible',getElementById:()=>canvas,querySelectorAll:()=>[canvas]},getComputedStyle:()=>style,innerWidth:800,innerHeight:600,runningApps:[{name:'gltron',wine:w}]});
+  const context=vm.createContext({crypto,performance,crossOriginIsolated:true,document:{visibilityState:'visible',getElementById:()=>canvas,querySelectorAll:()=>[canvas]},getComputedStyle:()=>style,innerWidth:800,innerHeight:600,runningApps:[{name:'gltron',wine:w}]});
   const evaluate=async s=>vm.runInContext(s,context),identity=vm.runInContext(binding.PAGE_READ,context).apps[0];
   return {r,w,evaluate,identity,context};
  }
@@ -606,5 +670,17 @@ async function startupControls(){
   assert.equal(selected.outputCanvasObject,f.identity.outputCanvasObject,'select output once from actual ordinary display');
   await assert.rejects(binding.awaitStartupReady({...f,identity:unselected,deadline:Date.now()+500}),/identity changed outputCanvasObject/);
  }
- console.log('PASS passive PREBIND natural readiness, actual timeout, owner replacement and atomic known late-hold refusal');
+ for(const status of ['pending','failed','cancelled','UNKNOWN']){
+  const f=fixture(),observations=[];f.r.held=false;let calls=0,reads=0,cancels=0;
+  f.w.requestCurrentDisplayCapture=()=>{calls++;return {status,error:'fixture readback failed',read(){reads++;return null;},cancel(){cancels++;return status==='pending';}};};
+  const evaluate=async expression=>{const v=await f.evaluate(expression);if(expression.includes('t=w.requestCurrentDisplayCapture'))f.r.held=true;return v;};
+  await assert.rejects(binding.captureScene({...f,evaluate,onTicketObservation:o=>observations.push(o)}),e=>{
+   assert.equal(e.ticketObservation.status,status);assert.equal(e.ticketObservation.metadata,null);
+   assert.equal(observations.find(o=>o.phase==='poll').paint.held,true);
+   return status==='pending'?/while pending/.test(e.message):status==='failed'?e.code==='CAPTURE_TICKET_FAILED':/cancelled|UNKNOWN/.test(e.message);
+  });
+  assert.equal(calls,1);assert.equal(reads,0,'non-complete bytes must never be read');assert.equal(cancels,1);
+  assert(!f.context.__gltronCaptureTicketV1);assert.equal(observations[0].status,status);
+ }
+ console.log('PASS passive PREBIND readiness and status-specific post-ticket pending/failed/cancelled/UNKNOWN refusal without reads or second request');
 }

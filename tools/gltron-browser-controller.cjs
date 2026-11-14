@@ -209,7 +209,7 @@ async function browser(out,backend) {
     const tabs=(await c.send('Target.getTargets')).targetInfos.filter(t=>t.type==='page');assert.equal(tabs.length,1);
     const targetId=tabs[0].targetId;session=(await c.send('Target.attachToTarget',{targetId,flatten:true})).sessionId;
     await c.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true},session);await c.send('Page.enable',{},session);await c.send('Runtime.enable',{},session);
-    chain=require(ROOT+'/'+HELPER).createChain({evaluate,send:c.send,workers,pageSession:session,app:'gltron',expectedModules:pins.modules});
+    chain=require(ROOT+'/'+HELPER).createChain({evaluate,send:c.send,workers,pageSession:session,app:'gltron',expectedModules:pins.modules,onTicketObservation:o=>log('capture-ticket-observations.jsonl',o)});
     record('page-target.json',{targetId,session});
     if(backend==='controls'){
       await evaluate(`globalThis.keyProof=[];for(const type of ['keydown','keyup'])addEventListener(type,e=>keyProof.push({type,key:e.key,trusted:e.isTrusted,at:Date.now()}));`);
@@ -316,6 +316,8 @@ async function browser(out,backend) {
         const armed=await new Promise((r,j)=>{let timer=setTimeout(()=>j(Error('release prearm timeout')),1000);child.stdout.on('data',b=>{output+=b;if(output.includes('\n')){clearTimeout(timer);r(JSON.parse(output.split('\n')[0]));}});child.once('exit',code=>{if(!output)j(Error('release child exit '+code));});});assert(armed.armed);
         const events=[];let error;
         try {
+          const ready=await evaluate(require(ROOT+'/'+HELPER).readinessExpression(bound,false,true));
+          assert(ready.ready,'input current display not ready after prearm: '+ready.pending?.join(', '));
           if(Date.now()-Date.parse(latest.at)>=maxAge){record(cmd.name+'-unsent.json',{downEffects:0,state:'CLOSED_BEFORE_DOWN',reason:'expired after prearm; independent UP remains armed'});throw Error('expired after release prearm; permanently close input');}
           for(const key of cmd.keys){assert(Date.now()<armed.fallback-250);attempted=true;const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='a'?'KeyA':key==='s'?'KeyS':key,windowsVirtualKeyCode:KEYS[key]},session);events.push({key,before,ack:Date.now()});}
           child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,events[0].before+cmd.ms)})+'\n');
@@ -328,7 +330,7 @@ async function browser(out,backend) {
       record('receipt-'+n+'.json',{state:attempted?'ACK':'NOT_SENT',effects:attempted?cmd.keys.length:0,noReplay:true,at:Date.now()});
     }
   }catch(e){
-    record('failure.json',{error:e.stack,code:e.code??null,inputState:e.inputState??null,noReplay:true,at:Date.now()});process.exitCode=1;
+    record('failure.json',{error:e.stack,code:e.code??null,inputState:e.inputState??null,ticketObservation:e.ticketObservation??null,captureNonce:e.captureNonce??null,noReplay:true,at:Date.now()});process.exitCode=1;
     if(c&&session)try{const shot=await c.send('Page.captureScreenshot',{format:'png'},session);fs.writeFileSync(out+'/first-failure.png',Buffer.from(shot.data,'base64'),{flag:'wx'});record('first-failure-state.json',await state());}catch(captureError){record('failure-capture-error.json',{error:String(captureError)});}
     await close('first causal failure');
   }
