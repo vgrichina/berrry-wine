@@ -67,3 +67,38 @@ and matching COMMCTRL (155136 bytes, SHA-256
 The original LS01/LB01 checksum is 7834, the NE data export is
 `Cctl1632_ThunkData16` and PE data export is `Cctl1632_ThunkData32`.
 Its observed result will be appended after that one run; no installer is run.
+
+## Published result and one genuine attach
+
+Implementation `601bc085935d18894fbd6ca8bb89354a74bf9932` is on main,
+strict pull/push successful. Published compiled controls repeat successfully;
+the qualified/published WAT pins, test module SHA-256 and 170 runtime-file pins
+match exactly. Both complete HEAD-plus-feature and shared-tree full flock
+builds pass. All 18 focused regression suites pass, including 12 native quit
+cases. Incoming foreign WIP was excluded and restored byte-for-byte.
+
+The single genuine run used published production WASM SHA-256
+`e2c1402a9c0c0e4d0b2dded69ccade1c792fea8469e113e2f5b127c2646c5596`.
+Normal COMCTL32 DllMain at `0x51d1cd` called the original six-argument import,
+header `0x56b2ec`, checksum 7834. Normal source resolution requested only
+`commctrl.dll`; the untouched companion's LibEntry, attach, matching detach and
+WEP executed. Native pairing returned token 5 for module 13 and actual FAR
+header `0x00670010`; its original words include LS01, checksum 7834, relocated
+FAR table and unchanged first-time zero. Native release returned 1. The service
+reported `established: true, retired: true` at the unsupported FT prolog guard.
+All recorded PE caller registers, segment selectors and sync depth were
+restored exactly. Both media hashes remain unchanged.
+
+ThunkConnect32 did not return success; DLL attach/publication, QT/FT execution
+and UI are unproved. The ordinary loader marks the incomplete DLL FAILED and
+retains its preexisting quarantine pin; the pairing's extra pin and temporary
+NE reference were retired. No installer or unchanged genuine retry occurred.
+
+The next primitive is the native LS FT prolog relay: select the original FAR
+target by the byte-sized index, establish the documented 64-byte frame while
+preserving the caller, then implement its FT_Thunk conversion/invocation and
+FT_Exit cleanup under an owned lifetime. Wine `_write_ftprolog`,
+`__regs_FT_Prolog`, `__regs_FT_Thunk` and FT_ExitNN in the pinned primary are the
+implementation reference. Pairing alone must not open the existing FT guard.
+The exact run and cleanup proof are in `result.json`, `genuine-result.json`
+and `runtime-release.json` under the run directory above. No boxes were created.
