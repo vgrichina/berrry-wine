@@ -3,13 +3,13 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),http=require('node:http'),crypto=require('node:crypto'),cp=require('node:child_process'),{once}=require('node:events');
 const controller=require('../tools/gta2-paired-controller.cjs');
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
-const now=Date.now(),launch={deadline:now/1000+900},cmd={mode:'play',keys:['ArrowUp'],ms:400,observation:'personally reviewed road and curb'};
+const now=Date.now(),launch={deadline:now/1000+900},cmd={mode:'play',keys:['ArrowUp'],ms:400,nonce:'fixture-unique-001',intent:'manual forward gesture',observation:'personally reviewed road and curb'};
 assert.equal(controller.policy(cmd,launch,false,now),5000);
 assert.equal(controller.policy({...cmd,keys:['ArrowUp','ArrowLeft']},launch,false,now),5000);
 assert.throws(()=>controller.policy({...cmd,keys:['Control','Enter']},launch,false,now));
 assert.equal(controller.policy({...cmd,mode:'menu',keys:['Enter']},launch,false,now),30000);
 assert.equal(controller.policy({...cmd,mode:'quit',keys:['Enter'],route:'select-quit',selectedQuit:'Quit'},launch,true,now),30000);
-for(const patch of [{ms:0},{ms:49},{ms:1501},{ms:2001},{ms:NaN},{ms:100.5},{keys:['Cheat']},{keys:['ArrowUp','ArrowUp']},{observation:''},{mode:'quit',route:''},{mode:'menu',keys:['Control']}])assert.throws(()=>controller.policy({...cmd,...patch},launch,false,now));
+for(const patch of [{ms:0},{ms:79},{ms:1401},{ms:2001},{ms:NaN},{nonce:''},{intent:''},{ms:100.5},{keys:['Cheat']},{keys:['ArrowUp','ArrowUp']},{observation:''},{mode:'quit',route:''},{mode:'menu',keys:['Control']}])assert.throws(()=>controller.policy({...cmd,...patch},launch,false,now));
 assert.throws(()=>controller.policy(cmd,launch,true,now));
 assert.throws(()=>controller.policy(cmd,launch,false,now+717001));
 assert.throws(()=>controller.policy({...cmd,mode:'quit',keys:['Enter'],route:'select-quit'},launch,true,now));
@@ -37,10 +37,10 @@ async function main(){
    const out=path.join(root,kind);fs.mkdirSync(out);const keys=kind==='pair'?['ArrowUp','ArrowLeft']:['Enter'];
    const file=out+'/config.json';fs.writeFileSync(file,JSON.stringify({pid:process.pid,startToken,url:'ws://127.0.0.1:'+server.address().port,targetId:'exact-page',keys,name:'pulse'}));
    const child=cp.spawn(process.execPath,[path.resolve(__dirname,'../tools/gta2-paired-controller.cjs'),'release',out,file],{stdio:['pipe','pipe','pipe']});let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
-   const end=Date.now()+2000;while(!stdout.includes('\n')){assert(Date.now()<end);await pause(5);}const armed=JSON.parse(stdout.trim());assert(armed.armed);assert.equal(armed.fallback-armed.at,1750);
+   const end=Date.now()+2000;while(!stdout.includes('\n')){assert(Date.now()<end);await pause(5);}const armed=JSON.parse(stdout.trim());assert(armed.armed);assert.equal(armed.fallback-armed.at,1500);
    if(kind!=='parent-eof')child.stdin.write(JSON.stringify({at:armed.at+150})+'\n');child.stdin.end();
    const result=await joined;assert.equal(result.code,0,stderr);assert(child.stdout.readableEnded&&child.stderr.readableEnded);
-   const up=JSON.parse(fs.readFileSync(out+'/pulse-up.json'));assert.equal(up.state,'ACK');assert(up.ack>=up.due&&up.ack-up.armed<=2000);
+   const up=JSON.parse(fs.readFileSync(out+'/pulse-up.json'));assert.equal(up.state,'ACK');assert(up.ack>=up.due&&up.ack-up.armed<=1750);
    const ups=events.filter(e=>e.method==='Input.dispatchKeyEvent'&&e.at>=armed.at&&e.at<=up.ack);assert.deepEqual(ups.map(e=>e.params.key),[...keys].reverse());assert(ups.every(e=>e.params.type==='keyUp'&&e.sessionId==='fixture-page'));
    fs.writeFileSync(out+'/wait.json',JSON.stringify({...result,stdoutEOF:true,stderrEOF:true,actualWait:true,stdout,stderr,events:ups}));
   }
@@ -51,6 +51,13 @@ async function main(){
    const requests=events.slice(start).filter(e=>e.method==='Input.dispatchKeyEvent');assert.equal(requests.length,kind==='unknown-up'?1:0,'no replay after UNKNOWN or changed owner');assert(!requests.some(e=>e.params.type==='keyDown'));
    fs.writeFileSync(out+'/wait.json',JSON.stringify({...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr,requests}));
   }
+  // A timed-out request seals the transport, including all later non-input requests.
+  failUp=true;const start=events.length,unknown=[];
+  const connection=controller.connection('ws://127.0.0.1:'+server.address().port,v=>unknown.push(v));await connection.ready;
+  await assert.rejects(connection.send('Input.dispatchKeyEvent',{type:'keyUp'}),/UNKNOWN/);
+  for(const method of ['Input.dispatchKeyEvent','Runtime.evaluate','Browser.close'])await assert.rejects(connection.send(method),/permanently closed/);
+  await pause(20);assert.equal(events.length-start,1);assert.equal(unknown.length,1);assert.equal(unknown[0].laterRequestsAllowed,0);
+  fs.writeFileSync(root+'/permanent-UNKNOWN.json',JSON.stringify({unknown,requests:events.slice(start),laterRequests:0}));
   const {FIELDS,same}=require('../'+controller.HELPER),identity=Object.fromEntries(FIELDS.map(k=>[k,'original:'+k]));same(identity,{...identity});for(const k of FIELDS)assert.throws(()=>same(identity,{...identity,[k]:'replacement'}));
   console.log('PASS reserve/irreversible Quit/finite keys, permanent identity replacement, independent actual child scheduled/EOF/pair UP; no game or renderer proof');
  } finally {for(const socket of sockets)socket.destroy();await new Promise(r=>server.close(r));}

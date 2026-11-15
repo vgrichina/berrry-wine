@@ -12,9 +12,11 @@ function policy(c,launch,phase,now=Date.now()) {
   assert(Array.isArray(c.keys)&&c.keys.length>=1&&c.keys.length<=2&&new Set(c.keys).size===c.keys.length);
   assert(c.keys.every(k=>Object.hasOwn(KEYS,k)));
   if(c.keys.length===2)assert(c.mode==='play'&&c.keys[0]==='ArrowUp'&&['ArrowLeft','ArrowRight'].includes(c.keys[1]),'ordinary throttle plus manual steering only');
-  assert(Number.isInteger(c.ms)&&c.ms>=50&&c.ms<=1500,'finite hold leaves independent UP margin');
+  assert(Number.isInteger(c.ms)&&c.ms>=80&&c.ms<=1400,'finite hold leaves independent UP margin');
   assert(now<launch.deadline*1000,'immutable deadline');
   assert(c.observation?.trim(),'personal scene review required');
+  assert(/^[a-z0-9-]{8,100}$/.test(c.nonce||''),'fresh gesture nonce required');
+  assert(c.intent?.trim(),'explicit manual intent required');
   if(c.mode!=='play')assert(c.keys.length===1&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Escape','y','n'].includes(c.keys[0]));
   if(c.mode==='quit'){
     assert(Object.hasOwn(QUIT,c.route)&&c.keys.length===1&&c.keys[0]===QUIT[c.route],'reviewed native Quit route required');
@@ -23,39 +25,53 @@ function policy(c,launch,phase,now=Date.now()) {
   else assert(!phase&&now+3000<(launch.deadline-180)*1000,'irreversible 180 second Quit reserve');
   return c.mode==='play'?5000:30000;
 }
-function connection(url) {
-  const ws=new WebSocket(url),pending=new Map();let id=0;
-  const ready=new Promise((r,j)=>{ws.onopen=r;ws.onerror=j;});
-  ws.onmessage=msg=>{const v=JSON.parse(msg.data);if(v.id){const p=pending.get(v.id);if(p){clearTimeout(p.timer);pending.delete(v.id);v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);}}else api.event(v);};
-  const api={ws,ready,event:()=>{},send(method,params={},sessionId){return new Promise((resolve,reject)=>{const n=++id,timer=setTimeout(()=>{pending.delete(n);reject(Error('UNKNOWN '+method+'; never replay'));},3000);pending.set(n,{resolve,reject,timer});ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));});}};
+function connection(url,onUnknown=()=>{}) {
+  const ws=new WebSocket(url),pending=new Map();let id=0,terminal=null,readyResolve,readyReject;
+  const ready=new Promise((r,j)=>{readyResolve=r;readyReject=j;});
+  const api={ws,ready,event:()=>{},get closed(){return terminal!==null;},stop(){if(terminal)return;terminal='deliberate host teardown';clearTimeout(openTimer);for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error(terminal));}pending.clear();ws.onclose=null;ws.close();},seal(reason){
+    if(terminal)return;terminal=String(reason);clearTimeout(openTimer);
+    const error=Error('UNKNOWN '+terminal+'; permanently closed; never replay');
+    onUnknown({state:'UNKNOWN',reason:terminal,at:Date.now(),permanentClose:true,laterRequestsAllowed:0});
+    readyReject(error);for(const p of pending.values()){clearTimeout(p.timer);p.reject(error);}pending.clear();ws.close();
+  },send(method,params={},sessionId){
+    if(terminal)return Promise.reject(Error('permanently closed '+terminal));
+    return new Promise((resolve,reject)=>{const n=++id,timer=setTimeout(()=>api.seal(method+' timeout'),3000);pending.set(n,{resolve,reject,timer});
+      try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));}catch(e){api.seal(method+' send '+e);}
+    });
+  }};
+  const openTimer=setTimeout(()=>api.seal('connection timeout'),3000);
+  ws.onopen=()=>{clearTimeout(openTimer);readyResolve();};
+  ws.onerror=()=>api.seal('transport error');ws.onclose=()=>api.seal('transport closed');
+  ws.onmessage=msg=>{if(terminal)return;try{const v=JSON.parse(msg.data);if(v.id){const p=pending.get(v.id);if(p){clearTimeout(p.timer);pending.delete(v.id);v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);}}else api.event(v);}catch(e){api.seal('invalid message '+e);}};
   return api;
 }
 function save(out,n,v){const p=path.join(out,n);assert(!fs.existsSync(p),n);fs.writeFileSync(p+'.pending',JSON.stringify(v,null,2)+'\n',{flag:'wx'});fs.renameSync(p+'.pending',p);}
 async function release(out,file) {
   const cfg=JSON.parse(fs.readFileSync(file));
   const s=fs.readFileSync('/proc/'+cfg.pid+'/stat','utf8');assert.equal(s.slice(s.lastIndexOf(')')+2).split(' ')[19],cfg.startToken);
-  const c=connection(cfg.url);try {await c.ready;
+  const c=connection(cfg.url,v=>save(out,cfg.name+'-UNKNOWN.json',v));try {await c.ready;
   const session=(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;
   if(cfg.owner){
     const live=await c.send('Runtime.evaluate',{expression:require(ROOT+'/'+HELPER).PAGE_READ,returnByValue:true},session);
     assert(!live.exceptionDetails);const apps=live.result.value.apps;assert.equal(apps.length,1);assert.equal(apps[0].name,'gta2_demo');
     for(const key of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','pageRendererObject','canvasObject'])assert.equal(apps[0][key],cfg.owner[key],'independent release owner mismatch '+key);
   }
-  const armed=Date.now(),fallback=armed+1750;let due=fallback,pending='';
+  const armed=Date.now(),fallback=armed+1500;let due=fallback,pending='';
   process.stdin.on('data',b=>{pending+=b;let i;while((i=pending.indexOf('\n'))>=0){const v=JSON.parse(pending.slice(0,i));pending=pending.slice(i+1);assert(v.at>=armed&&v.at<=fallback);due=Math.min(due,v.at);}});
   process.stdout.write(JSON.stringify({armed:true,at:armed,fallback,session,pid:process.pid})+'\n');
   while(Date.now()<due)await wait(Math.min(5,due-Date.now()));
   const fired=Date.now(),receipts=[];
   for(const key of [...cfg.keys].reverse())receipts.push(await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session));
-  const ack=Date.now();save(out,cfg.name+'-up.json',{armed,fallback,due,fired,ack,receipts,state:'ACK',independent:true});
+  const ack=Date.now();if(ack-armed>1750){c.seal('independent UP acknowledgement exceeded 1750ms');throw Error('late independent UP');}save(out,cfg.name+'-up.json',{armed,fallback,due,fired,ack,receipts,state:'ACK',independent:true});
   await c.send('Target.detachFromTarget',{sessionId:session});
-  } finally {c.ws.close();process.stdin.destroy();}
+  } finally {c.stop();process.stdin.destroy();}
 }
 async function browser(out,backend) {
   assert(['software','webgl','controls'].includes(backend));
   const launch=JSON.parse(fs.readFileSync(out+'/launch.json'));
   const pins=JSON.parse(fs.readFileSync(out+'/pins.json'));
-  for(const p of pins.files)assert.equal(sha(fs.readFileSync(ROOT+'/'+p.path)),p.sha256,p.path);
+  function verifyPins(){for(const p of pins.files)assert.equal(sha(fs.readFileSync(ROOT+'/'+p.path)),p.sha256,p.path);}
+  verifyPins();const pinMap=new Map(pins.files.map(p=>['/'+p.path,p.sha256]));
   let server,browser,chromeWait,c,session,chain,latest,bound,closing=false,phase=false;
   const workers=new Map(),tasks=[];
   const record=(n,v)=>save(out,n,v),log=(n,v)=>fs.appendFileSync(out+'/'+n,JSON.stringify(v)+'\n');
@@ -67,7 +83,7 @@ async function browser(out,backend) {
     return {...page,owners,workers:[...workers.values()]};
   }
   async function capture(name){
-    assert(/^[a-z0-9-]+$/.test(name));assert(!fs.existsSync(out+'/'+name+'.png'));
+    verifyPins();assert(/^[a-z0-9-]+$/.test(name));assert(!fs.existsSync(out+'/'+name+'.png'));
     const captured=await chain.capture(name);fs.writeFileSync(out+'/'+name+'.png',captured.png,{flag:'wx'});
     latest=captured.capture;record(name+'.json',{...captured,png:undefined});const observed=await state();record(name+'-state.json',observed);
     if(latest.identity.renderEndpoint!=='none'){
@@ -78,13 +94,13 @@ async function browser(out,backend) {
   }
   async function close(reason){
     if(closing)return;closing=true;record('close-reason.json',{reason,at:Date.now(),hostOnly:true});
-    if(c)try{await c.send('Browser.close');}catch(e){record('browser-close-error.json',{error:String(e)});}
-    if(browser){let timer;try{await Promise.race([chromeWait,new Promise((_,j)=>{timer=setTimeout(()=>j(Error('browser close timeout')),5000);})]);}catch(e){browser.kill('SIGTERM');await chromeWait;}finally{clearTimeout(timer);}}
+    if(c){c.event=()=>{};c.stop();} // Host teardown uses OS signals; no later CDP request after failure.
+    if(browser){browser.kill('SIGTERM');let timer;try{await Promise.race([chromeWait,new Promise((_,j)=>{timer=setTimeout(()=>j(Error('browser close timeout')),3000);})]);}catch(e){browser.kill('SIGKILL');await chromeWait;}finally{clearTimeout(timer);}}
     c?.ws.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));fs.rmSync(out+'/profile',{recursive:true,force:true});record('closed.json',{at:Date.now(),nativeQuitClaim:false});
   }
   try {
     server=await require(ROOT+'/test/static-server.js').startStaticServer({root:ROOT,crossOriginIsolated:true,rewritePath:p=>p.startsWith('/binaries/')?'/test'+p:p});
-    server.prependListener('request',(req,res)=>{const h=crypto.createHash('sha256');let size=0;const add=b=>{if(b){b=Buffer.isBuffer(b)?b:Buffer.from(b);size+=b.length;h.update(b);}},wr=res.write,en=res.end;res.write=function(b){add(b);return wr.apply(this,arguments);};res.end=function(b){add(b);return en.apply(this,arguments);};res.once('finish',()=>log('http.jsonl',{url:req.url,status:res.statusCode,size,sha256:h.digest('hex')}));});
+    server.prependListener('request',(req,res)=>{const h=crypto.createHash('sha256');let size=0;const add=b=>{if(b){b=Buffer.isBuffer(b)?b:Buffer.from(b);size+=b.length;h.update(b);}},wr=res.write,en=res.end;res.write=function(b){add(b);return wr.apply(this,arguments);};res.end=function(b){add(b);return en.apply(this,arguments);};res.once('finish',()=>{const hash=h.digest('hex'),url=new URL(req.url,'http://localhost').pathname,file=url.startsWith('/binaries/')?'/test'+url:url;log('http.jsonl',{url:req.url,status:res.statusCode,size,sha256:hash});if(res.statusCode===200&&pinMap.has(file)&&pinMap.get(file)!==hash)c?.seal('HTTP pin mismatch '+file);});});
     const port=server.address().port;
     for(const p of pins.http){const r=await fetch('http://127.0.0.1:'+port+p.url);assert.equal(r.status,200);assert.equal(sha(Buffer.from(await r.arrayBuffer())),p.sha256);}
     record('http-dependency-check.json',{passed:true,pins:pins.http});
@@ -94,7 +110,7 @@ async function browser(out,backend) {
     const stat=fs.readFileSync('/proc/'+browser.pid+'/stat','utf8'),startToken=stat.slice(stat.lastIndexOf(')')+2).split(' ')[19];
     record('browser-pid.json',{pid:browser.pid,startToken,port,at:Date.now()});
     const active=out+'/profile/DevToolsActivePort';for(let n=0;n<100&&!fs.existsSync(active);n++){assert(browser.exitCode===null);await wait(100);}
-    const [dp,wp]=fs.readFileSync(active,'utf8').trim().split('\n'),url='ws://127.0.0.1:'+dp+wp;c=connection(url);await c.ready;
+    const [dp,wp]=fs.readFileSync(active,'utf8').trim().split('\n'),url='ws://127.0.0.1:'+dp+wp;c=connection(url,v=>record('UNKNOWN.json',v));await c.ready;
     record('endpoint.json',{url,pid:browser.pid,startToken});
     c.event=v=>{
       if(v.method==='Target.attachedToTarget'&&v.params.targetInfo.type==='worker'){
@@ -121,17 +137,18 @@ async function browser(out,backend) {
         const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session);child.stdin.end(JSON.stringify({at:before+120})+'\n');
         const result=await joined;record(name+'-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr});assert.equal(result.code,0,stderr);
       }
-      const proof=await evaluate('keyProof');assert.equal(proof.length,Object.keys(KEYS).length*2);assert(proof.every(e=>e.trusted));for(let i=0;i<proof.length;i+=2){assert.equal(proof[i].type,'keydown');assert.equal(proof[i+1].type,'keyup');assert.equal(proof[i].key,proof[i+1].key);assert(proof[i+1].at-proof[i].at<=2000);}
+      const proof=await evaluate('keyProof');assert.equal(proof.length,Object.keys(KEYS).length*2);assert(proof.every(e=>e.trusted));for(let i=0;i<proof.length;i+=2){assert.equal(proof[i].type,'keydown');assert.equal(proof[i+1].type,'keyup');assert.equal(proof[i].key,proof[i+1].key);assert(proof[i+1].at-proof[i].at<=1750);}
       record('native-controls.json',{passed:true,proof,originalLaunched:false});await close('blank-page native input controls complete');return;
     }
     await c.send('Page.navigate',{url:'http://127.0.0.1:'+port+'/index.html?debug&threads&d3d-renderer='+backend+'&app=gta2_demo'},session);
     const startupEnd=Math.min(Date.now()+60000,(launch.deadline-180)*1000);
     for(;;){
+      const fatal=await evaluate(`!!document.getElementById('wine-crash-report')`);if(fatal){const shot=await c.send('Page.captureScreenshot',{format:'png'},session);const png=Buffer.from(shot.data,'base64');fs.writeFileSync(out+'/startup-failure.png',png,{flag:'wx'});record('startup-failure.json',{at:Date.now(),sha256:sha(png),diagnostic:true,nativeQuit:false});throw Error('original fatal launch report');}
       const ready=await evaluate(`typeof runningApps==='undefined'?null:runningApps.map(a=>({name:a.name,running:a.wine?.running,stopped:a.wine?._stopped,worker:!!a.wine?.guestWorker,slice:!!a.wine?._workerLastSlice}))`);
       if(ready?.length===1&&ready[0].running&&ready[0].worker&&ready[0].slice)break;
       assert(!ready?.some(a=>a.stopped),'original stopped during startup');assert(Date.now()<startupEnd,'bounded original startup readiness');await wait(250);
     }
-    await Promise.all(tasks);await capture('startup');
+    await Promise.all(tasks);record('executed-sources.json',{workers:[...workers.values()]});await capture('startup');
     bound=latest.identity;record('permanent-owner.json',{identity:bound,browser:{pid:browser.pid,startToken},backend,noReplay:true});
     await evaluate(`(()=>{if(Object.hasOwn(globalThis,'__gta2PassiveOwner'))throw Error('owner reference already bound');Object.defineProperty(globalThis,'__gta2PassiveOwner',{value:runningApps[0].wine});return true;})()`);
     record('ready.json',{at:Date.now(),backend});
@@ -144,7 +161,7 @@ async function browser(out,backend) {
         const at=Date.now(),shot=await c.send('Page.captureScreenshot',{format:'png'},session),png=Buffer.from(shot.data,'base64');assert(/^[a-z0-9-]+$/.test(cmd.name));fs.writeFileSync(out+'/'+cmd.name+'.png',png,{flag:'wx'});record(cmd.name+'.json',{at,terminal,pngSHA256:sha(png),nativeQuitClaim:false});record('receipt-'+n+'.json',{state:'ACK',at:Date.now()});continue;
       }
       if(cmd.action==='capture'){await capture(cmd.name);record('receipt-'+n+'.json',{state:'ACK',capture:latest});continue;}
-      assert.equal(cmd.action,'pulse');const maxAge=policy(cmd,launch,phase);
+      assert.equal(cmd.action,'pulse');verifyPins();const maxAge=policy(cmd,launch,phase);assert(!fs.existsSync(out+'/nonce-'+cmd.nonce+'.json'),'gesture nonce cannot be reused');record('nonce-'+cmd.nonce+'.json',{intent:cmd.intent,name:cmd.name,at:Date.now()});
       if(cmd.mode==='quit'){phase=true;if(!fs.existsSync(out+'/quit-phase.json'))record('quit-phase.json',{at:Date.now(),cutoff:(launch.deadline-180)*1000,irreversible:true,route:cmd.route});}
       assert.equal(cmd.review,latest.label);assert(!fs.existsSync(out+'/'+latest.label+'-used.json'),'fresh full scene before each gesture');const review={...latest,review:cmd.observation};record(cmd.name+'-review.json',{...review,mode:cmd.mode,route:cmd.route});
       assert.equal(sha(fs.readFileSync(out+'/'+latest.label+'.png')),latest.sha256,'reviewed fullscene bytes changed');
@@ -165,12 +182,12 @@ async function browser(out,backend) {
         }catch(e){error=e;}
         finally {child.stdin.end();const joinedValue=await joined;record(cmd.name+'-release-wait.json',{...joinedValue,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout:output,stderr:errors});assert.equal(joinedValue.code,0);}
         record(cmd.name+'-delivery.json',{events,admission,attempted,error:error?String(error):null});if(error)throw error;
-        const up=JSON.parse(fs.readFileSync(out+'/'+cmd.name+'-up.json'));assert(events.every(e=>up.ack-e.before<=2000),'UP acknowledgement exceeded maximum hold');
+        const up=JSON.parse(fs.readFileSync(out+'/'+cmd.name+'-up.json'));assert(events.every(e=>up.ack-e.before<=1750),'UP acknowledgement exceeded maximum hold');
         const physical=await evaluate(`runningApps.map(a=>({name:a.name,keys:${JSON.stringify(cmd.keys.map(k=>KEYS[k]))}.map(k=>({key:k,down:a.wine?.renderer?.peekKeyDownState(k)}))}))`);record(cmd.name+'-physical.json',{physical,at:Date.now()});assert(physical.every(a=>a.keys.every(k=>k.down===false||k.down===0)),'released physical key state');
       });
       record('receipt-'+n+'.json',{state:attempted?'ACK':'NOT_SENT',effects:attempted?cmd.keys.length:0,noReplay:true,at:Date.now()});
     }
-  }catch(e){record('failure.json',{error:e.stack,noReplay:true,at:Date.now()});process.exitCode=1;await close('first causal failure');}
+  }catch(e){if(!fs.existsSync(out+'/executed-sources.json'))record('executed-sources.json',{workers:[...workers.values()]});if(c&&!c.closed)c.seal('first causal failure: '+e);record('failure.json',{error:e.stack,noReplay:true,at:Date.now()});process.exitCode=1;await close('first causal failure');}
 }
 if(require.main===module){const [mode,out,arg]=process.argv.slice(2);(mode==='release'?release(out,arg):browser(out,arg)).catch(e=>{console.error(e);process.exitCode=1;});}
 module.exports={policy,KEYS,HELPER,sha,connection,release};
