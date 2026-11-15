@@ -1,6 +1,6 @@
 # Sims type-library and child-export boundary, 2026-11-15
 
-Work in progress. Evidence: `scratch/runs/20261115-sims-typelib-child-export-boundary/`.
+Evidence: `scratch/runs/20261115-sims-typelib-child-export-boundary/`.
 Predecessor order is TIMcritical994115, Q3schedule1037509, then this worker.
 Both predecessors released, and personal actual-wait/both-EOF/PID-group checks
 passed before existing source changes or any native run. No foreign WIP is adopted.
@@ -152,3 +152,100 @@ partial write or merge. No producer normalization is changed without an actual
 rejected original key. A fresh original is justified by the qualified standard
 library repair and exact native dismissal repair, with additional discriminating
 helper/API traces; it is not an unchanged retry.
+
+## One ordinary original, permanently closed
+
+Feature `b95d0c8bc6fd128af1c1b56befe15f04c18b5ee2` was committed on main
+and strict-pulled/pushed before the one fresh authorized ownerNova original.
+Exact Worker-safe preloads and real authority Workers pass; removing either
+source or host-map hook is refused. The qualified module/source match was
+verified against that published commit. An independent watchdog was armed
+before launch: 900-second native limit, 920-second independent deadline,
+180-second Quit reserve, real ticks and unchanged original defaults.
+
+The original's genuine child trace now shows LoadTypeLib returning S_OK at
+`0x4324e1`, without taking the `.tlb` fallback, then RegisterTypeLib returning
+S_OK at `0x432611`. Genuine OLEAUT32 reads the installed IKernel PE resource
+and `C:\Windows\System\stdole32.tlb`. Its ordinary `-RegServer` child
+completes one real TreatAs call and exits zero, advancing past the previous
+typelib failure. The newly bounded diagnostic rejects exactly `d:\maxis.ini`,
+length 12, resident provenance, readonly-drive false. No completion record or
+child state is merged; parent still shows `0x80040154`. This is not installed
+state or a successful ordinary installation.
+
+The stored full images show the fatal error, native main and same-process,
+same-thread NULL-owner native MessageBox. During the run the conversation
+review of later images appeared teal, so no current visible target authorized
+input. That review failure was written UNKNOWN, with zero binding/input gestures
+and zero later control requests, and permanently closed by an orderly supervisor
+host stop. Subsequent offline review of the unchanged PNG base64 with explicit
+`image/png` MIME correctly shows the error dialog. All four original PNGs have
+the same SHA-256; **blank native pixels are not proved**. The earlier
+`view_image` data URL used `application/octet-stream`. This correction does not
+reopen the run or authorize input. Actual harness wait zero is **not native
+Quit**. No original is retried. Native OK/X/Cancel fixture exits remain separate
+from this original outcome. A newly authorized run needs correct image MIME
+and fresh current-scene review before any genuine installer UI gesture.
+
+Actual parent/child consumed-source pins match the published commit; every
+nonempty parent/child/Worker mapped-host receipt is hash-verified. All 3,172
+launch pins match after closure, including original Setup, exact nativepartial
+overlay index and 614,532-byte IKernel. Personal direct closure establishes
+399 actual waits with both EOFs, 622 recorded PIDs/groups absent, and both
+locks free before any follow-up source edits. No box was created.
+
+## Readonly profile producer
+
+The actual offending file is the existing disc's 16-byte root `maxis.ini`,
+SHA-256 `d00adbd56f1dc99a9bf5652035f0b56e8531e31aea7d9ebe25e512011aaed7ed`.
+The real media mount plan eagerly materializes INI/LID files for synchronous
+profile APIs. Baseline `materializeEntry` assigns through the provider data
+setter, which discards provider provenance even on a read-only drive. A direct
+read has the same promotion. The general parent snapshot therefore emits
+`d:/maxis.ini`; the real include-tree producer remounts it as resident D data
+without the source drive's readonly metadata, and completion correctly rejects
+it. The pinned-media test reproduces this exact producer before the repair.
+
+The filesystem repair caches reads from read-only drives without relinquishing
+the borrowed provider. Its private nonenumerable cache setter is used only by
+successful async materialization after the existing source-identity/range check.
+The ordinary data setter remains a write. Reads and copies on writable drives
+keep their prior resident behavior, even for files with the readonly attribute;
+changing a drive back to writable likewise restores that behavior. Adoption
+retargets each provider read policy to the new active filesystem; a focused
+ownership-transfer test caught and prevents consulting the old drive policy. The child
+completion guard is unchanged, including direct rejection of untrusted resident
+D entries on a readonly drive. No path is sanitized, made trusted by its name,
+or manufactured into a completion record.
+
+A generated native parent on a generated 60-KB ISO reads the readonly INI,
+uses ordinary ReadFile/WriteFile to stage its generated child on C, spawns it,
+waits, and checks the child's actual C-file and registry value. The old producer
+reproduces the exact `d:\maxis.ini` rejection and parent exit 25. The repaired
+control exits zero in parent and child, with one real file and 78 registry/INI
+keys merged; the parent verifies its child-written file bytes and DWORD. VFS,
+lazy-entry, export, adoption and media-autorun regressions pass, as do shared
+and committed-HEAD-plus-whole-owned full flock builds. The media CLI suite
+contains a stale source-text assertion for `setExeDrive`; it fails identically
+without the filesystem repair and is retained as a baseline limitation. This is a native control, not another
+original or an installed-game claim. Two earlier fixture setup errors (omitted
+explicit EXE, then a provider-backed unstaged child EXE) are retained as
+unsuccessful preparation diagnostics and do not count as causal controls.
+
+The inherited-D-cwd generated control also exposes a separate existing boundary:
+when all source files remain borrowed, file-only child snapshots do not carry
+empty source directories. Its child refuses the absent `d:\` working directory;
+the independent watchdog drained this unsuccessful control. This is retained as
+a next-boundary limitation, not a successful merge. The positive producer control
+passes explicit existing `C:\` as the ordinary CreateProcess working directory,
+while still reading the readonly D profile and preserving the same completion
+guard. No source directory or installed state is fabricated. Propagating genuine
+readonly source directories/media to children remains separate necessary work
+before claiming ordinary installation can proceed beyond this boundary.
+
+The explicit-C-cwd control isolates mutable file/registry transport only. It does
+**not qualify the genuine inherited-readonly-D-cwd Sims route**. The concrete
+handoff is to preserve the genuine readonly mount/directory context across
+CreateProcess without exporting cached disc bytes or fabricating D state, then
+prove that exact inherited-D-cwd parent/child control. The current task leaves
+that boundary unresolved and consumes no further original authorization.
