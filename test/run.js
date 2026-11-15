@@ -4279,7 +4279,21 @@ async function main() {
       const childDllSeeds = [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED]
         .map(appAsset).filter(p => fs.existsSync(p))
         .map(p => childDllSeedPath(p, written));
+      // VFS trees are mounted after DLL initializers. Forward only explicit
+      // files into the child's early mount pass, using the exported native
+      // state when present. Never replace guest writes with the original host
+      // input, resurrect a deleted file, or materialize unrelated lazy media.
+      const childMountArgs = VFS_MOUNT.flatMap(spec => {
+        const eq = spec.lastIndexOf('=');
+        if (eq <= 0) throw new Error(`invalid explicit mount: ${spec}`);
+        const guest = spec.slice(eq + 1).trim();
+        const normalized = vfs._resolvePath(/^[a-z]:/i.test(guest) ? guest : 'c:\\' + guest.replace(/^\\+/, ''));
+        if (!vfs.files.has(normalized)) return [];
+        const row = written.find(row => String(row.guestPath).toLowerCase() === normalized);
+        return [`--vfs-mount=${row ? row.outputPath : appAsset(spec.slice(0, eq).trim())}=${guest}`];
+      });
       const args = [
+        ...childMountArgs,
         `--exe=${exeRow.outputPath}`, `--vfs-tree=${inDir}`, `--exe-guest-path=${guestExe}`,
         `--cwd=${cwd}`, `--args=${parsed.params.trim()}`,
         '--no-build', `--wasm=${WASM_PATH}`, '--quiet-api', '--quiet-blocks',
@@ -7484,18 +7498,36 @@ async function main() {
   };
   const controlSnapshot = () => {
     const we = instance.exports;
-    const windows = renderer ? Object.values(renderer.windows).map(w => ({
+    const windows = renderer ? Object.values(renderer.windows).map(w => {
+      const e = w.wasm?.exports || we;
+      return ({
       hwnd: '0x' + ((w.hwnd >>> 0) || 0).toString(16),
       x: w.x | 0, y: w.y | 0, w: w.w | 0, h: w.h | 0,
       visible: !!w.visible, isChild: !!w.isChild, title: w.title || '',
-    })) : [];
+      live: !!e.wnd_lookup_live?.(w.hwnd),
+      generation: String(e.wnd_lookup_generation?.(w.hwnd) || 0),
+      processId: e.get_process_id?.() >>> 0,
+      owner: '0x' + ((e.wnd_get_owner?.(w.hwnd) || 0) >>> 0).toString(16),
+      parent: '0x' + ((e.wnd_get_parent?.(w.hwnd) || 0) >>> 0).toString(16),
+    }); }) : [];
     return {
       batch: tickState.batch | 0,
       eip: '0x' + (we.get_eip() >>> 0).toString(16),
       quit: we.get_quit_flag ? !!we.get_quit_flag() : false,
       yieldReason: we.get_yield_reason ? we.get_yield_reason() | 0 : 0,
       focus: '0x' + ((we.get_focus_hwnd ? we.get_focus_hwnd() : 0) >>> 0).toString(16),
+      focusTopLevel: '0x' + ((we.wnd_top_level?.(we.get_focus_hwnd?.() || 0) || 0) >>> 0).toString(16),
+      focusWindow: {
+        hwnd: '0x' + ((we.get_focus_hwnd?.() || 0) >>> 0).toString(16),
+        generation: String(we.wnd_lookup_generation?.(we.get_focus_hwnd?.() || 0) || 0),
+        live: !!we.wnd_lookup_live?.(we.get_focus_hwnd?.() || 0),
+        processId: we.get_process_id?.() >>> 0,
+      },
       mainHwnd: '0x' + ((we.get_main_hwnd ? we.get_main_hwnd() : 0) >>> 0).toString(16),
+      capture: '0x' + ((we.get_capture_hwnd?.() || 0) >>> 0).toString(16),
+      modalHwnd: '0x' + ((we.modal_dialog_hwnd?.() || we.dialogbox_hwnd?.() || 0) >>> 0).toString(16),
+      physicalUp: !(renderer?._mouseButtonsMask || Object.values(renderer?._physicalKeys || {}).some(Boolean)),
+      nativeProcess: { pid: process.pid, executable: EXE_PROCESS_GUEST_PATH || EXE_PATH },
       screen: renderer && renderer.canvas
         ? { w: renderer.canvas.width | 0, h: renderer.canvas.height | 0 } : null,
       frozen: {
@@ -7568,11 +7600,41 @@ async function main() {
     wakeControlLoop();
     return result;
   };
-  const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
-    snapshot: require('../lib/cli-input-owner').createCliInputSnapshot({
+  let reviewedSceneBindAttempted = false, reviewedSceneLease = null;
+  const cliInputSnapshot = require('../lib/cli-input-owner').createCliInputSnapshot({
       instance, memory, renderer, getDevice: () => ctx.d3dCommands,
       getThreadManager: () => threadManager,
-    }),
+    });
+  const reviewedWindow = (s, hwnd) => s.windows.find(w => w.hwnd === hwnd);
+  const sameReviewedWindow = (a, b) => a && b &&
+    ['hwnd', 'generation', 'processId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
+      .every(k => a[k] === b[k]);
+  const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
+    snapshot: () => {
+      const current = cliInputSnapshot();
+      if (reviewedSceneLease) {
+        const s = controlSnapshot(), lease = reviewedSceneLease;
+        const main = reviewedWindow(s, lease.main.hwnd), modal = lease.modal && reviewedWindow(s, lease.modal.hwnd);
+        const insideModal = value => {
+          let h = parseInt(value, 16) >>> 0;
+          const e = instance.exports, seen = new Set();
+          while (h && !seen.has(h)) {
+            if (h === parseInt(lease.modal.hwnd, 16)) return true;
+            seen.add(h); h = e.wnd_get_parent(h) >>> 0;
+          }
+          return false;
+        };
+        current.healthy = current.healthy && sameReviewedWindow(main, lease.main) &&
+          (!lease.modal || (sameReviewedWindow(modal, lease.modal) && s.modalHwnd === modal.hwnd &&
+            insideModal(s.focus) && (s.capture === '0x0' || insideModal(s.capture))));
+        // Native generations protect against recycled HWNDs even if a renderer
+        // window object survives. The original physical-release refs stay exact.
+        current.refs.reviewedMainGeneration = main?.generation;
+        current.refs.reviewedModalGeneration = modal?.generation;
+        current.refs.reviewedModalWindow = lease.modal ? renderer?.windows[parseInt(lease.modal.hwnd, 16)] : null;
+      }
+      return current;
+    },
     cleanup: (refs, ev) => {
       if (ev.action === 'keydown') refs.up.call(refs.renderer, ev.code);
       if (ev.action === 'mousedown') refs.mouseUp.call(refs.renderer, ev.x, ev.y, 1);
@@ -7637,7 +7699,34 @@ async function main() {
       if (cmd.action === 'native-observe') return cliObservation.run(instance, (exports, owned) =>
         require('../tools/pawn-cli-observation.cjs').observeNative(exports, memory, owned, cmd));
     }
-    if (cmd.action === 'guarded-bind') return guardedInput.bind();
+    if (cmd.action === 'guarded-bind') {
+      if (reviewedSceneBindAttempted) throw new Error('reviewed scene binding is permanent; no replay/rebind');
+      if (cmd.reviewedScene) {
+        reviewedSceneBindAttempted = true;
+        const expected = cmd.reviewedScene, s = controlSnapshot();
+        const main = reviewedWindow(s, s.mainHwnd), modal = expected.modal && reviewedWindow(s, expected.modal.hwnd);
+        const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+        if (!main?.live || !main.visible || main.isChild || main.generation === '0' || !main.processId ||
+            !sameReviewedWindow(main, expected.main) || !same(s.nativeProcess, expected.nativeProcess) ||
+            !same(s.screen, expected.screen) || s.mainHwnd !== expected.main.hwnd ||
+            !s.physicalUp || s.capture !== '0x0' || s.focus !== expected.focus ||
+            !same(s.focusWindow, expected.focusWindow) || s.quit || s.eip === '0x0')
+          throw new Error('reviewed native main/process/window/focus/physical state changed');
+        if (!main.title.trim()) {
+          if (!modal?.live || !modal.visible || modal.isChild || !modal.title.trim() ||
+              modal.hwnd === main.hwnd || modal.generation === '0' || modal.processId !== main.processId ||
+              modal.owner !== main.hwnd || s.modalHwnd !== modal.hwnd ||
+              s.focusTopLevel !== modal.hwnd || !s.focusWindow.live ||
+              s.focusWindow.generation === '0' || s.focusWindow.processId !== main.processId ||
+              !sameReviewedWindow(modal, expected.modal))
+            throw new Error('untitled main requires the exact current native owned modal');
+        } else if (expected.modal) throw new Error('unexpected reviewed modal binding');
+        const paint = require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
+        if (paint !== expected.pngSHA256) throw new Error('reviewed native paint changed');
+        reviewedSceneLease = { main: { ...main }, modal: modal ? { ...modal } : null };
+      }
+      return guardedInput.bind();
+    }
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
     if (cmd.action === 'guarded-release') return guardedInput.release(cmd.owner);
     if (cmd.action === 'guarded-input') {

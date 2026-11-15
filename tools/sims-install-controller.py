@@ -52,14 +52,16 @@ class Transport:
         if (c.R/'terminal-owner-exited.json').exists():return
         if not (c.R/'terminal-input-failure.json').exists():c.save('terminal-input-failure.json',dict(name=name,error=str(error),noReplay=True,at=time.time()))
     @staticmethod
-    def bind():
+    def bind(reviewedScene=None):
         try:
             c.opened()
             # Reserve before HTTP evaluation: c.save(name, c.call(bind)) would rebind
             # first and only then notice that the permanent owner file exists.
             assert not (c.R/'input-owner.json').exists(),'permanent owner already bound; no rebind'
             c.save('bind-intent.json',dict(at=time.time(),permanent=True))
-            c.save('input-owner.json',c.call({'action':'guarded-bind'}))
+            command = {'action':'guarded-bind'}
+            if reviewedScene is not None: command['reviewedScene'] = reviewedScene
+            c.save('input-owner.json',c.call(command))
             s=c.call({'action':'snapshot'})
             c.save('lease-snapshot.json',{k:s[k] for k in ('mainHwnd','screen')})
         except BaseException as e:c.fail(e,'bind');raise
@@ -133,11 +135,28 @@ def bind(scene):
     cutoff(); rr, r = reviewed(scene, 30)
     assert r.get('sceneType') in ('installer', 'startup'), 'complete original bootstrap required'
     assert r.get('exactReleaseReviewed') is True and r.get('completeBootstrapReviewed') is True
-    assert r.get('nativeTitle', '').strip()
-    assert any(w['hwnd'] == rr['snapshot']['mainHwnd'] and w.get('visible') is True
-               and not w.get('isChild') and w.get('title') == r['nativeTitle']
-               for w in rr['snapshot'].get('windows', [])), 'reviewed native title differs'
-    c.bind()
+    s = rr['snapshot']
+    mains = [w for w in s.get('windows', []) if w['hwnd'] == s['mainHwnd']]
+    assert len(mains) == 1
+    main = mains[0]
+    assert main.get('visible') is True and not main.get('isChild') and main.get('title') == r['nativeTitle']
+    expected = None
+    if not r['nativeTitle'].strip():
+        modal = r['reviewedOwnedModal']
+        assert modal in s['windows'] and modal['hwnd'] != main['hwnd']
+        assert modal.get('visible') is True and not modal.get('isChild') and modal.get('title', '').strip()
+        assert main.get('processId') and main.get('generation') not in (None, 0, '0')
+        assert modal.get('generation') not in (None, 0, '0') and main.get('live') is True and modal.get('live') is True
+        assert modal.get('processId') == main['processId'] and modal.get('owner') == main['hwnd']
+        assert s.get('modalHwnd') == modal['hwnd']
+        assert s.get('focusTopLevel') == modal['hwnd'] and s.get('capture') == '0x0' and s.get('physicalUp') is True
+        focus = s['focusWindow']
+        assert focus['hwnd'] == s['focus'] and focus['live'] is True
+        assert focus['generation'] not in (None, 0, '0') and focus['processId'] == main['processId']
+        assert s['nativeProcess']['pid'] == rr['target']['pid'] and s['nativeProcess']['executable']
+        expected = dict(main=main, modal=modal, nativeProcess=s['nativeProcess'], screen=s['screen'],
+                        focus=s['focus'], focusWindow=focus, pngSHA256=rr['pngSHA256'])
+    c.bind(reviewedScene=expected) if expected else c.bind()
     assert c.read('lease-snapshot.json') == {k: rr['snapshot'][k] for k in ('mainHwnd', 'screen')}
     c.save('binding-scene.json', dict(scene=scene, nativeTitle=r['nativeTitle'],
            target=rr['target'], mainHwnd=rr['snapshot']['mainHwnd'], at=time.time()))
