@@ -1,7 +1,89 @@
 # Quake III startup operation attribution, 2026-11-15
 
-Pre-original qualification passed; no new original has launched. Evidence belongs to
+The ONE diagnostic original is closed with an attributed startup partial. Evidence belongs to
 `scratch/runs/20261115-quake3-startup-operation-cause/`.
+
+Code `505619b19602525512ef7a471340c8ed4e6cea59` was explicitly published on
+main before launch. No emulator/game repair is causally established. The generic
+change adds operation attribution, avoids commands on an already terminal route,
+and bounds the entire host capture transaction. The three-second transport bound,
+registered args/configuration and cooperative 10000 scheduling remain unchanged.
+
+## Diagnostic result and exact remaining boundary
+
+The diagnostic launched at 01:35:04 UTC with fixed 1800/1820-second bounds and
+an independently prearmed watchdog. The triggering operation was:
+
+| Field | Recorded value |
+| --- | --- |
+| CDP request | 1574, Runtime.evaluate |
+| Target | 97012ADB48A78A3445DAE9BAB8740FF4, actual d3d-render-worker |
+| Session | C463DFCA3684D3852B6F3CBF1987471E |
+| Expression label | startup-gl-snapshot |
+| Expression | `globalThis.__gltronObserver?.snapshot?.()??null` |
+| SHA-256 | 000ba5e8856b8d2a95512815f84b8ee419cdcb73dbe015ee87dc832cc883f31c |
+| Length | 47 characters / 47 UTF-8 bytes |
+| Request wall timestamp | 1794706537863 |
+| Nominal deadline | request monotonic start + 3000 ms |
+| Terminal decision | 1794706540875, deadline trigger ID 1574 |
+| Late response | 1794706542308, elapsed 4445.490118 ms |
+| Late response status | matching session, object result, no protocol error or expression exception |
+
+Only request 1574 was outstanding at the terminal decision. The immediately
+preceding page PAGE_READ (1573) returned in 4.359 ms. Previous render-Worker
+snapshots 1565/1568/1571 returned in 3.050/8.858/5.379 ms. There was no observed
+Worker detach, replacement, crash or execution-context destruction before the
+deadline. The same Worker's Debugger.scriptParsed notification arrived at
+1794706542307, immediately before the late response. No additional script-source
+request went onto the wire after closure.
+
+This establishes a render-Worker snapshot latency overrun with a successful late
+terminal response, rather than a failed expression, vanished target or observed
+socket disconnection. It does **not** establish whether the Worker queued the
+evaluation behind a long startup task, or execution of snapshot itself consumed
+the delay. The observer has no in-target evaluation-start timestamp or task-duration
+trace. The old dd42351/8e8241 original has no recoverable request attribution, so
+its precise operation remains unknown; the new original reproduces its outward
+startup UNKNOWN with this specifically identified cause.
+
+No original menu or host-consent scene was personally viewed. There is no
+original PNG, capture ticket, consent, input, permanent owner binding, frag,
+score claim or native Quit. Zero requests were sent after the terminal record,
+including during late-response observation. The route was not revived. There
+was no second original, restart, rebind, timeout enlargement, game override,
+private-memory inspection or forced guest call.
+
+Further causal work would need a separately authorized, bounded public Worker
+task/evaluation timing trace that distinguishes queue delay from execution time.
+The current evidence does not warrant changing game scheduling, rendering or
+the transport timeout. This task stops at that boundary.
+
+## Closure and shutdown
+
+All 1009 prelaunch source/media/known-autoimport pins and 96 host pins retained
+their hashes before runtime release. The host pins include the actual resolved
+PATH Node `/home/user/.nvm/versions/node/v24.18.1/bin/node`, Python, Chrome and
+known library dependencies; no complete live process-map inventory is claimed.
+All 680 successful served responses matched prelaunch pins, with no unpinned
+response. In particular, stdole2.tlb was pinned **before** launch at 15088 bytes,
+SHA-256 `db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895`.
+The historical omission is not retroactively repaired.
+
+CDP-received bytecode from the actual guest and renderer Workers matched
+`build/wine-assembly.wasm`, 2202536 bytes, SHA-256
+`f866c8a9247f51fabd296b012d5b963c51afb97fc29f786b22798c39d4e2cff0`.
+The triggering target's received script bytes matched `lib/d3d-render-worker.js`,
+46288 bytes, SHA-256
+`94f9d3ee76a6a0707f4e7169974751343c2f464fef5be0e5896b450aa715da18`.
+Only hashes/lengths were retained, without source/WASM/media copies.
+
+Actual controller 88424 exited 1, Chrome 88448 exited 0, watchdog 88423 exited 0,
+supervisor 88420 exited 0, and outer waiter 88404 exited 0. Actual waits and both
+EOF are recorded, heavyReleased is true, all listed PIDs are absent, HTTP is
+closed and the profile is gone. This is host teardown, not native Quit. Runtime
+was released for JezzBall after postflight pin/served/module verification.
+No box was created: ID/expiry null, state NOT_CREATED, stop receipt not applicable.
+No workers were spawned or public deployment performed; /home stayed above 1.5 GB.
 
 The original qualified by `dd42351da84be1e99602e36df4b6ca9f02ae9899`
 and reported by `8e8241de015dab19946212051df5620da136fdd9` stays closed.
@@ -91,20 +173,18 @@ queued-native control PNG is a purple rectangle on teal, with no original game.
 The current module is 2,202,536 bytes, SHA-256
 `f866c8a9247f51fabd296b012d5b963c51afb97fc29f786b22798c39d4e2cff0`.
 
-## Dispatch and remaining gates
+## Launch gates applied
 
 Chips then Rodent actual runtime/source releases were verified before heavy work.
-The source/module
-closure must use the current published cursor work, rather than old c5d48 bytes.
-The existing original-qualification guard pins the old control report directory
-and exact helper/test/module bytes. A current-module requalification must retain
-all queued-input, immutable-capture and terminal-UNKNOWN assertions; it cannot
-reuse old module evidence as current evidence.
+The source/module closure used the current published cursor work, rather than
+old c5d48 bytes. The original guard initially pinned the old control report
+directory and exact helper/test/module bytes. The current-module requalification
+retained all queued-input, immutable-capture and terminal-UNKNOWN assertions.
 
-Before any diagnostic original: run real Chrome operation controls, focused
-tests and locked full build; publish explicit owned paths; pin the complete
-registered and known autoimport closure including stdole2.tlb; check actual
-served hashes and actual module. One registered original only, unchanged args,
+Before the diagnostic original: real Chrome operation controls, focused
+tests and locked full build passed; explicit owned paths were published; the complete
+registered and known autoimport closure including stdole2.tlb was pinned. Actual
+served hashes and actual module were checked. One registered original only, unchanged args,
 cooperative 10000, actual WorkerWebGL, real ticks, fixed 1800/1820 deadline and
 irreversible 180-second Quit reserve. No restart, rebind, UNKNOWN query/retry,
 game configuration override or fixture gameplay claim is allowed.
