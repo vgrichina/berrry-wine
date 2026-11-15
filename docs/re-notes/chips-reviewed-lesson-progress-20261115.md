@@ -1,61 +1,108 @@
-# Original WEP4 Chip’s Challenge: reviewed lesson progress
+# Original WEP4 Chip’s Challenge: reviewed Lesson 1 partial
 
-Run: `scratch/runs/20261115-chips-reviewed-lesson-progress/`.
+Exactly one registered `wep16_chips` original was launched, from untouched
+Lesson 1, after publication of controller commit
+`7461d0319f2b8d6f26bcb655c1309e18ddb7fdef`. I personally reviewed the complete
+bootstrap before permanent binding. Ordinary Enter dismissed its overlay.
+Two individually reviewed Left presses moved Chip toward a visible chip and
+collected it: **Chips Left changed from 11 to 10**. The selected full scenes
+show the adjacent chip before that second press and Chip on its former tile
+afterward. The camera scrolled with Chip; no old board coordinates were used.
 
-The bounded task permits one registered `wep16_chips` instance, starting with
-untouched Lesson 1. It forbids level selection, passwords, skip, reset,
-restart and a second original. The original has not yet been launched.
+The native lesson countdown expired before a key or door consequence was
+achieved. The visible result was “Ooops! Out of time!” No ordinary lesson exit
+was reached. A single click on the visible Game menu was blocked by that native
+modal: the input trace explicitly records the outside-modal drop, and the
+complete scene stayed unchanged. Native Quit was **not achieved**. I left the
+timeout dialog undismissed, did not restart, and requested supervised shutdown.
+The native log records SIGTERM orderly shutdown. Its zero exit is a host
+shutdown result, not proof of Game → Exit.
 
-`tools/chips-controller.py` contains its own finite transport derivative.
-Each personally chosen arrow press or native menu click requires a complete
-current scene and an image-bound review. Gameplay scenes expire after five
-seconds; menu scenes expire after thirty. A keyboard choice requires the
-reviewed main-window consumer and unchanged focus. A board click is not used
-to dismiss the lesson: ordinary Enter is the one permitted overlay dismissal.
+The complete result and evidence are in
+`scratch/runs/20261115-chips-reviewed-lesson-progress/result.json`.
+Only four selected, personally viewed PNGs remain:
+`result-bootstrap.png`, `result-chip-before.png`, `result-chip-after.png`, and
+`result-timeout.png`. Their original capture names and SHA-256 values are in
+`selected-images.json`. Unselected captures were removed; no media, source-tree
+archive or WASM copy was placed in the run directory.
 
-The controller permanently binds the native PID/start token, loopback socket,
-native input owner, window and canvas. Each action reserves a unique nonce
-and prearms an independent UP subprocess before DOWN. The physical gesture
-has a 1,500 ms deadline and a 1,750 ms independent fallback. A late ACK,
-UNKNOWN or failed identity check closes input without replay. Captures and
-durable response logs follow release. The last 180 seconds are an irreversible
-native Quit reserve. Host teardown does not establish native Quit.
+The collection conclusion comes from native pixels plus the attributable
+Left DOWN/UP trace, not a transport ACK. The optional live consequence receipt
+was not admitted: its post-action scene was already more than five seconds old,
+and its supplied before-description also differed from the exact prior review.
+No Up intent was reserved or delivered. `play-observation.json` is explicitly
+retrospective. Several earlier choices also expired before input. The extra
+review-to-input round trips consumed most of the lesson's continuing countdown;
+the limits were not relaxed and no game clock was changed. No runtime defect
+warranting a causal source repair was established by this partial play.
 
-Collection, key inventory, door/socket changes and lesson exit require their
-own personally reviewed native pixels after UP. A consumed transport receipt
-never establishes any of those outcomes. The older scripted fake-tick WEP4
-regression remains a transport fixture and supplies no original-play evidence.
+`tools/chips-controller.py` is a self-contained finite controller. It binds the
+actual PID/start token, exclusively owned loopback socket, native input owner,
+window and canvas once. Complete board scenes expire after five seconds and
+menu scenes after thirty. Keyboard movement requires the reviewed main-window
+consumer and unchanged focus. No gameplay mouse click was used. Each physical
+press reserves a unique nonce and prearms an independent UP child before DOWN,
+with a 1,500 ms gesture deadline and 1,750 ms fallback. Late ACK or UNKNOWN closes
+input without replay or rebind. Captures and durable response audits follow UP.
+The four delivered gestures were Enter, Left, Left, and the Game-menu click;
+each requested 100 ms and has an actual zero release-child wait with both EOFs.
 
-Light preparation passed 28 policy tests and nine HTTP controls. TetraVex16
-and the cursor repair have now released source and runtime ownership. Their
-actual native, watchdog and supervisor waits, both EOFs and absent PIDs were
-personally verified; unrelated outer-wrapper UNKNOWN remains separate.
+The original used real ticks and the default batch size of 1,000, a fixed
+1,200-second native deadline, an independently prearmed 1,220-second watchdog,
+and an irreversible 180-second Quit reserve. It entered Quit phase early after
+the timeout. No level selection, password, skip, reset, restart, second original,
+solver, tile reader, private game-memory access, seed/config/clock write, box,
+worker or public deployment was used.
 
-The installed `CHIPS.HLP` decoded successfully through the built native parser:
-all thirteen topics were personally read. They define the required chip count,
-socket and exit square, matching-color keys and doors, reusable green keys,
-and the continuing countdown while reading hints. Mouse clicks request actual
-movement. Game → Exit quits at any time. The permitted route uses arrows and
-ordinary Enter; it does not invoke the documented reset, restart, password,
-level-selection or skip commands. The old JavaScript Help parser returned no
-topics for this file, so it supplied no rules evidence.
+Before play, all thirteen installed `CHIPS.HLP` topics were decoded through the
+built native parser and personally read. They specify required chips, socket
+and exit square, matching-color keys and doors, green-key reuse, arrow or mouse
+movement, continuing time during hints, and Game → Exit. No level data was read
+for routing. Earlier scripted fake-tick regressions remain transport fixtures
+and supply no original-play evidence. The actual Help-parser wait was zero with
+both EOFs; the old JavaScript parser's empty result supplied no rules evidence.
 
-The full `flock /tmp/wine-build.lock bash tools/build.sh` passed. Eleven actual
-CLI controls also passed against the real compiled runtime and HTTP endpoint,
-using a separate Solitaire fixture. The native trace verifies Right DOWN and
-UP dispatched to the reviewed main HWND. Other controls cover changed focus,
-native menu opening, late ACK, UNKNOWN after consumption, cancellation,
-window identity, release-child death before DOWN, the independent fallback,
-capture after UP and parent death. All eleven fixture native, watchdog,
-supervisor and outer waits returned zero with both EOFs. The deliberately
-killed action parent cannot supply its orphan release-child wait; that UNKNOWN
-is retained separately and does not replace an actual native wait.
+Qualification passed **28 policy tests, nine HTTP controls, eleven real CLI
+controls, and the full locked build**. The CLI controls used a separate
+Solitaire fixture and the actual compiled runtime and HTTP endpoint. Native
+traces verify Right DOWN/UP dispatched to the reviewed HWND. Other controls cover
+changed-focus refusal, native menu opening, late ACK, UNKNOWN after consumption,
+cancellation, identity, release-child death before DOWN, independent fallback,
+no capture while held and parent death. The qualification aggregate records
+52 actual zero waits with both EOFs; the deliberately orphaned release-child
+wait remains UNKNOWN separately. None of these fixtures claims original Chips
+collection or completion.
 
-The tested WASM SHA-256 is
-`f866c8a9247f51fabd296b012d5b963c51afb97fc29f786b22798c39d4e2cff0`.
-The compatible module is
+TetraVex and cursor repair released source/runtime first; their actual terminal
+waits and absent PIDs were verified. `flock /tmp/wine-build.lock bash tools/build.sh`
+passed before commit and publication. Tested WASM SHA-256:
+`f866c8a9247f51fabd296b012d5b963c51afb97fc29f786b22798c39d4e2cff0`;
+compatible module:
 `b01e44cb043acba2b8ed1109a806176760d277ae525e5eb4d955d26fd40190a4`.
-These equal the cursor worker’s final shared modules. File mapping metadata
-from the actual CLI fixtures supplies the host-library pin closure; no process
-memory was read. Original play starts only after explicit publication and
-before-launch pins. No original instance or box has yet been created.
+
+All **491 launch pins matched after shutdown**, including the existing WEP4
+EXE/DAT, registered MID/WAV files, WEP4UTIL, dependency candidates, source,
+controller, run inputs, modules and actual host libraries. The original log
+confirms WEP4UTIL loaded; all eight actually mapped host files match the
+before-launch closure. These mappings are file metadata, not process-memory
+reads. Exact paths, sizes and SHA-256 values are in `launch-pins.json` and
+`release-pins.json`. Key existing media hashes are:
+
+| File under `test/binaries/wep16/WEP4/` | SHA-256 |
+| --- | --- |
+| `CHIPS.EXE` | `8e26acd67cf120bd5b512de4b4e78b80aca1579413cd04f3b2b68909a375866c` |
+| `CHIPS.DAT` | `b0a68f21642447385512e0ed9386a4a13a4f7e9a38f909da772104d8e6b5c1fb` |
+| `WEP4UTIL.DLL` | `40a405813946caac1aa2ec3e31fa570de1c418f8db43182d614e0bac4e1978cb` |
+
+Git supplies source recovery: the launch SHA is the published controller commit;
+`relevant-uncommitted.patch` records relevant shared uncommitted hunks.
+`prepublication-owned.patch` and its base SHA preserve the owned new files as a
+binary Git patch. No source snapshot was made.
+
+Native PID 70253, watchdog 70252, and supervisor 70249 have actual zero waits,
+both EOFs, and are absent. The supervisor recorded heavy release; port 8641 is
+closed. The ancillary invoking tool returned 143 without the launcher's own
+outer-wait file; that outer wait remains UNKNOWN, separate from all three actual
+waits. Runtime ownership was released to Rodent after pin verification. No box
+was created: ID null, state NOT_CREATED, expiry null, stop receipt NOT_APPLICABLE.
+The bounded task stops here with honest partial progress and no second attempt.
