@@ -73,7 +73,7 @@ async function createFiniteEngine({directory,session,deadline,review,observe,at=
  wire.on('error',e=>guard.emit('exit',null,e.message));
  const guardClosed=new Promise(resolve=>wire.on('close',()=>{guard.connected=false;guard.exitCode=0;guard.emit('exit',0,null);record('guard-socket-close',{at:Date.now(),socketEOF:true,actualChildWait:'supervisor-owned'});resolve()}));
  let seq=0,phase='STARTING',target=null,programId=null,targetId=crypto.randomUUID(),held=false,releaseAttempted=false;
- let active=null,command=null,changedAt=0,next=0,unknown=null,upProgress=0;
+ let active=null,command=null,changedAt=0,next=0,unknown=null,upProgress=0,recoveryFrom=null;
  const pending=[];
  const wait=(kind,nonce)=>new Promise((resolve,reject)=>{const w={kind,nonce,resolve,reject};pending.push(w);w.timer=setTimeout(()=>{reject(Error('guard ACK timeout '+kind))},1000)});
  const ready=wait('READY');
@@ -86,7 +86,7 @@ async function createFiniteEngine({directory,session,deadline,review,observe,at=
  guard.on('exit',(c,s)=>{for(const w of pending.splice(0)){clearTimeout(w.timer);w.reject(Error('guard lost '+c+'/'+s))}});
  await ready;record('guard-start',{owner:process.pid,deadline,upMs:independentUpMs,prearmedBeforeInput:true,directWatchdogWait:'supervisor-owned'});phase='READY';
  const check=()=>{if(unknown||Date.now()>=deadline||guard.exitCode!==null||guard.signalCode!==null)throw fail(Error(unknown||'native deadline/guard lost'))};
- const snapshot=()=>{if(held)throw fail(Error('capture while held refused'));const f=target.capture();const id=target.programIdentity();if(programId!==id){programId=id;targetId=crypto.randomUUID()}return Object.freeze({...bind({session,targetId,programId}),frameId:crypto.randomUUID(),digest:imageHash(f),capturedAt:Date.now(),deadline,progress:target.progress(),width:f.width,height:f.height,text:f.text,rgba:Buffer.from(f.rgba)})};
+ const snapshot=()=>{if(held)throw fail(Error('capture while held refused'));const f=target.capture();const id=target.programIdentity();if(programId!==id){programId=id;targetId=crypto.randomUUID()}return Object.freeze({...bind({session,targetId,programId}),frameId:crypto.randomUUID(),digest:imageHash(f),capturedAt:Date.now(),deadline,admission:Object.freeze({phase,held,delivery:'NONE',token:crypto.randomUUID(),recoveryFrom}),progress:target.progress(),width:f.width,height:f.height,text:f.text,rgba:Buffer.from(f.rgba)})};
  const matches=(s,c)=>['session','targetId','programId','frameId','digest'].every(k=>s[k]===c[k]);
  const arm=async()=>{active={nonce:command.nonce,deadline:Math.min(deadline,Date.now()+independentUpMs)};const ack=wait('ARMED',active.nonce);guard.send({kind:'ARM',...active});await ack;check();record('arm-'+active.nonce,{...active,at:Date.now()})};
  const disarm=async()=>{const ack=wait('RELEASED',active.nonce);guard.send({kind:'RELEASED',nonce:active.nonce});await ack;active=null};
@@ -94,13 +94,23 @@ async function createFiniteEngine({directory,session,deadline,review,observe,at=
   get ready(){return phase==='READY'&&Date.now()>=next},get awaitingExecution(){return ['PREMOVE','HELD','HOVER','RELEASED'].includes(phase)},get done(){return ['STOPPED','UNKNOWN'].includes(phase)},
   get result(){return {status:phase,held,failure:unknown,deadline,actions:seq}},check,
   async act(a){try{
-   check();if(target&&target!==a)throw Error('adapter changed');target=a;if(!a.ownsTarget())throw Error('target lost');phase='REVIEWING';
-   let s=snapshot();command=await review(s,()=>{check();s=snapshot();return s});check();
+   check();if(held)throw Error('capture while held refused');if(phase!=='READY')throw Error('review while input pending');command=null;recoveryFrom=null;if(target&&target!==a)throw Error('adapter changed');target=a;if(!a.ownsTarget())throw Error('target lost');phase='REVIEWING';
+   let s=snapshot();command=await review(s,refusal=>{
+    check();if(phase!=='REVIEWING'||held||active||command)throw Error('not positively all-unsent');
+    if(refusal){
+     if(refusal.status!=='REFUSED_UNSENT'||!matches(s,refusal)||refusal.token!==s.admission.token||refusal.delivery!=='NONE')throw Error('invalid unsent refusal');
+     const decision=JSON.parse(fs.readFileSync(path.join(dir,'decision-'+s.frameId+'.json'),'utf8'));
+     if(JSON.stringify(decision)!==JSON.stringify(refusal)||fs.existsSync(path.join(dir,'command-'+s.frameId+'.json')))throw Error('written or conflicting intent');
+     record('unsent-confirmed-'+refusal.refusalId,{refusalId:refusal.refusalId,frameId:s.frameId,token:s.admission.token,zeroSend:true,at:Date.now()});
+     recoveryFrom=refusal.refusalId;
+    }
+    s=snapshot();return s;
+   });check();
    if(!matches(s,command)||!a.ownsTarget()||a.programIdentity()!==s.programId||a.progress()!==s.progress||imageHash(a.capture())!==s.digest)throw Error('binding/capture/ownership changed');
    if(!command.nonce||fs.existsSync(path.join(dir,'consumed-'+command.nonce+'.json')))throw Error('duplicate nonce');
    const q=command.action;const max=command.review?.mode==='game'?5000:30000;
    if(Date.now()-s.capturedAt>max)throw Error('review expired');
-   if(q.holdMs!==undefined&&(!Number.isInteger(q.holdMs)||q.holdMs<1||q.holdMs>1500))throw Error('hold bound');
+   if(q.holdMs!==undefined&&(!Number.isInteger(q.holdMs)||q.holdMs<1||q.holdMs>=1500))throw Error('hold bound');
    if(!['click','drag','hover','key','wait','stop'].includes(q.kind))throw Error('gesture kind');
    for(const xy of q.kind==='drag'?[[q.x,q.y],[q.toX,q.toY]]:['click','hover'].includes(q.kind)?[[q.x,q.y]]:[]){if(!xy.every(Number.isInteger)||xy[0]<0||xy[1]<0||xy[0]>=s.width||xy[1]>=s.height)throw Error('frame coordinates')}
    if(['click','drag'].includes(q.kind)&&![1,2].includes(q.button))throw Error('button');
@@ -129,8 +139,11 @@ async function createFiniteEngine({directory,session,deadline,review,observe,at=
    if(a.progress()%100===0)await new Promise(r=>setImmediate(r));
   }catch(e){throw fail(e)}},
   finish(){if(!['READY','STOPPED','UNKNOWN'].includes(phase))fail(Error('native ended before postrelease consequence'));else if(phase==='READY')phase='STOPPED'},
-  cancel(reason){fail(Error(reason));release()},
-  async close(){if(!['READY','STOPPED','UNKNOWN'].includes(phase))fail(Error('native ended before postrelease consequence'));else if(phase==='READY')phase='STOPPED';try{release();if(active)await disarm()}catch(e){fail(e)}
+  cancel(reason){fail(Error(reason))},
+  async close(){if(!['READY','STOPPED','UNKNOWN'].includes(phase))fail(Error('native ended before postrelease consequence'));else if(phase==='READY')phase='STOPPED';// UNKNOWN admits no new cleanup input. Only the already armed independent
+   // UP may release a held gesture; RELEASED/CLOSE below are host bookkeeping.
+   if(unknown&&held){const end=Date.now()+1800;while(held&&guard.connected&&Date.now()<end)await new Promise(r=>setTimeout(r,10))}
+   try{if(!unknown)release();if(active&&!held)await disarm()}catch(e){fail(e)}
    if(guard.connected&&!held){guard.send({kind:'CLOSE'});await guardClosed}
   }
  });
@@ -154,7 +167,7 @@ ORIGINAL_JS = r'''
  const publish=s=>{
   const p=new PNG({width:s.width,height:s.height});p.data.set(s.rgba);const bytes=PNG.sync.write(p),name='scene-'+s.frameId+'.png';
   fs.writeFileSync(dir+'/'+name,bytes,{flag:'wx'});
-  latest={...bind(s),width:s.width,height:s.height,capturedAt:s.capturedAt/1000,progress:s.progress,png:name,pngSHA256:sha(bytes)};
+  latest={...bind(s),width:s.width,height:s.height,capturedAt:s.capturedAt/1000,progress:s.progress,admission:s.admission,png:name,pngSHA256:sha(bytes)};
   save('scene-'+s.frameId,latest);fs.writeFileSync(dir+'/latest.tmp',JSON.stringify(latest)+'\n');fs.renameSync(dir+'/latest.tmp',dir+'/latest.json');
   console.log('SCENE',s.frameId,name);
  };
@@ -166,7 +179,13 @@ ORIGINAL_JS = r'''
     for(;;){
      if(fs.existsSync(dir+'/UNKNOWN.json'))throw Error('terminal UNKNOWN; no replay/rebind');
      const command=dir+'/command-'+latest.frameId+'.json';
-     if(fs.existsSync(command))return JSON.parse(fs.readFileSync(command,'utf8'));
+     const decisionPath=dir+'/decision-'+latest.frameId+'.json';
+     if(fs.existsSync(decisionPath)){
+      const decision=JSON.parse(fs.readFileSync(decisionPath,'utf8'));
+      if(decision.status==='REFUSED_UNSENT'){s=refresh(decision);publish(s);continue}
+      if(decision.status!=='INPUT'||Date.now()-decision.at>1000&&!fs.existsSync(command))throw Error('ambiguous command transport');
+      if(fs.existsSync(command)){const input=JSON.parse(fs.readFileSync(command,'utf8'));if(input.nonce!==decision.nonce)throw Error('command decision mismatch');return input}
+     }else if(fs.existsSync(command))throw Error('command without decision');
      const request=dir+'/refresh-'+latest.frameId+'.json';
      if(fs.existsSync(request)){s=refresh();publish(s)}
      if(Date.now()>=deadline)throw Error('native deadline');
@@ -283,6 +302,17 @@ def exclusive(path, value):
         temporary.unlink(missing_ok=True)
 
 
+class UnsentReviewRefusal(Exception):
+    """A burned review, positively refused before its command could be written.
+
+    This carries no gesture. Recovery needs native confirmation, a new capture
+    and a new independently chosen review; it never resubmits an old intent.
+    """
+    def __init__(self, receipt):
+        self.receipt = receipt
+        super().__init__('REFUSED_UNSENT: fresh complete capture and independent review required')
+
+
 class Policy:
     def __init__(self, directory, lease):
         from types import MappingProxyType
@@ -291,7 +321,7 @@ class Policy:
         assert self.lease['nativeSeconds'] == 900
         assert self.lease['watchdogSeconds'] == 920
         assert self.lease['quitReserveSeconds'] == 180
-        assert self.lease['maximumHoldMs'] <= 1500
+        assert self.lease['maximumHoldMs'] < 1500
         assert self.lease['independentUpMs'] <= 1750
         assert self.lease['independentUpMs'] >= self.lease['maximumHoldMs']
         assert all(math.isfinite(self.lease[k]) for k in ('startedAt', 'deadline'))
@@ -318,7 +348,6 @@ class Policy:
                 assert review['pauseEvidence'].strip(), 'native pause requires visible evidence'
             mode = review['mode']
             assert mode in ('game', 'menu', 'quit')
-            assert 0 <= now - capture['capturedAt'] <= (5 if mode == 'game' else 30), 'current scene expired'
             assert capture['capturedAt'] <= review['reviewedAt'] <= now
             cutoff = self.lease['deadline'] - 180
             if now >= cutoff and not (self.root / 'quit-phase.json').exists():
@@ -343,11 +372,47 @@ class Policy:
                     assert action['button'] in (1, 2), 'left/right only'
             if action['kind'] == 'key':
                 assert action['key'] in ('Enter', 'Escape', 'Space'), 'ordinary visible menu keys only'
+            # A frame has exactly one atomic decision, shared with native review.
+            # A command decision burns recovery even if later writing fails.
+            admission = capture.get('admission')
+            assert isinstance(admission, dict), 'missing native zero-send attestation'
+            assert admission.get('phase') == 'REVIEWING' and admission.get('held') is False
+            assert admission.get('delivery') == 'NONE' and admission.get('token'), 'not proven zero-send'
+            assert review['intentSource'] == 'independently-chosen-for-this-complete-scene'
+            assert review['intentId'].strip(), 'new independent intent required'
+            assert not (self.root / 'native-wait.json').exists(), 'native has closed'
+            frame = capture['frameId']
+            assert not (self.root / ('command-' + frame + '.json')).exists(), 'command already written'
+            decision = self.root / ('decision-' + frame + '.json')
+            assert not decision.exists(), 'frame already decided; new capture required'
+            recovery = admission.get('recoveryFrom')
+            if recovery:
+                confirmed = json.loads((self.root / ('unsent-confirmed-' + recovery + '.json')).read_text())
+                assert confirmed['refusalId'] == recovery and confirmed['zeroSend'] is True
+                refused = json.loads((self.root / ('decision-' + confirmed['frameId'] + '.json')).read_text())
+                assert refused['status'] == 'REFUSED_UNSENT' and refused['refusalId'] == recovery
+                assert confirmed['token'] == refused['token']
+                assert frame != refused['frameId'] and admission['token'] != refused['token']
+                assert capture['capturedAt'] >= confirmed['at'] / 1000
+                assert review['intentId'] != refused['refusedIntentId'], 'old intent cannot be reused'
+            age = now - capture['capturedAt']
+            assert age >= 0, 'future capture'
+            if age > (5 if mode == 'game' else 30):
+                receipt = {k: capture[k] for k in ('session', 'frameId', 'digest', 'programId', 'targetId')}
+                receipt.update(status='REFUSED_UNSENT', delivery='NONE', token=admission['token'],
+                               refusalId=str(uuid.uuid4()), refusedIntentId=review['intentId'],
+                               at=now * 1000, reviewAgeSeconds=age, freshCaptureRequired=True,
+                               newIndependentIntentRequired=True)
+                exclusive(decision, receipt)
+                raise UnsentReviewRefusal(receipt)
             command = dict(session=capture['session'], frameId=capture['frameId'], digest=capture['digest'],
                            programId=capture['programId'], targetId=capture['targetId'], nonce=str(uuid.uuid4()),
                            action=dict(action), review=dict(review), submittedAt=now)
+            exclusive(decision, dict(status='INPUT', nonce=command['nonce'], at=now * 1000))
             exclusive(self.root / ('command-' + capture['frameId'] + '.json'), command)
             return command
+        except UnsentReviewRefusal:
+            raise
         except Exception as error:
             self.unknown(error)
             raise
@@ -361,8 +426,9 @@ def start_original(directory):
     directory = Path(directory).resolve()
     proof = json.loads((directory / 'route-qualified.json').read_text())
     assert proof['routeSHA256'] == digest(__file__)
+    assert proof['testSHA256'] == digest(Path(__file__).resolve().parents[1] / 'test/test-tim-smart-handle-controller.py')
     assert proof['fullLockedBuildExit'] == 0
-    assert proof['nativeModes'] == ['hover', 'click', 'right', 'drag', 'cancel', 'watchdog', 'parentdeath']
+    assert proof['nativeModes'] == ['hover', 'click', 'right', 'drag', 'cancel', 'watchdog', 'parentdeath', 'unsent', 'lateack', 'dropack', 'heldinput', 'writtenstale', 'quitreserve']
     assert proof['actualNativeCallbacks'] and proof['directWaitsBothEOF']
     assert subprocess.check_output(['git', 'branch', '--show-current'], text=True).strip() == 'main'
     subprocess.run(['git', 'merge-base', '--is-ancestor', proof['publishedCommit'], 'origin/main'], check=True)
@@ -395,7 +461,9 @@ def refresh_scene(directory):
             return root / current['png']
         assert not (root / 'UNKNOWN.json').exists(), 'terminal UNKNOWN'
         time.sleep(.01)
-    raise RuntimeError('capture request not acknowledged; no gesture delivered')
+    if not (root / 'UNKNOWN.json').exists():
+        exclusive(root / 'UNKNOWN.json', dict(reason='capture transport acknowledgment lost', at=time.time(), irreversible=True))
+    raise RuntimeError('capture request not acknowledged; terminal UNKNOWN; no replay/rebind')
 
 
 def operate(directory, mode, scene, target, consequence, action, keep=None):
@@ -408,11 +476,24 @@ def operate(directory, mode, scene, target, consequence, action, keep=None):
     review = {k: capture[k] for k in ('session', 'frameId', 'digest', 'programId', 'targetId')}
     review.update(mode=mode, source='personally-viewed-current-full-scene', completeScene=scene,
                   visibleTarget=target, expectedVisibleConsequence=consequence,
-                  pauseState='not-observed', reviewedAt=time.time())
+                  pauseState='not-observed', reviewedAt=time.time(), intentId=str(uuid.uuid4()),
+                  intentSource='independently-chosen-for-this-complete-scene')
     if mode == 'quit':
         review['visibleQuitControl'] = target
     policy = Policy(root, json.loads((root / 'lease.json').read_text()))
-    command = policy.admit(capture, review, action)
+    try:
+        command = policy.admit(capture, review, action)
+    except UnsentReviewRefusal as refused:
+        # No command exists. Require native zero-send confirmation before
+        # returning recovery status; transport uncertainty still closes UNKNOWN.
+        confirmation = root / ('unsent-confirmed-' + refused.receipt['refusalId'] + '.json')
+        until = time.monotonic() + 2
+        while not confirmation.exists():
+            if (root / 'UNKNOWN.json').exists() or (root / 'native-wait.json').exists() or time.monotonic() >= until:
+                policy.unknown('unsent refusal confirmation lost; no replay/rebind')
+                raise RuntimeError('unsent refusal confirmation lost')
+            time.sleep(.01)
+        return refused.receipt
     if keep:
         exclusive(root / ('kept-' + keep + '.json'), dict(label=keep, capture=capture,
                   description=scene, personallyViewed=True))
