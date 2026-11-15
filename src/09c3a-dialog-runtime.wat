@@ -825,6 +825,20 @@
       (then
         (call $modal_finish_local (i32.const 0))
         (return (i32.const 0))))
+    ;; MessageBox is parked here rather than in an application's GetMessage
+    ;; loop. Dispatch its own posted messages in the owning instance: NC
+    ;; release posts WM_NCLBUTTONDOWN, which otherwise stays queued forever.
+    ;; Only the built-in MessageBox procedure is safe here; guest dialog
+    ;; procedures retain their existing dispatch/continuation machinery.
+    (if (i32.eq (call $ctrl_table_get_class (global.get $modal_dlg_hwnd)) (i32.const 16))
+      (then
+        (if (call $shared_post_queue_peek (i32.const 0)
+              (global.get $modal_dlg_hwnd) (i32.const 0) (i32.const 0) (i32.const 1))
+          (then
+            (drop (call $wnd_send_message
+              (global.get $user_queue_probe_hwnd) (global.get $user_queue_probe_msg)
+              (global.get $user_queue_probe_wparam) (global.get $user_queue_probe_lparam)))
+            (if (i32.eqz (global.get $modal_dlg_hwnd)) (then (return (i32.const 0))))))))
     ;; Drain nc_flags for the dialog hwnd only: child controls have no
     ;; non-client chrome and would leave spurious fragments.
     (if (global.get $nc_flags_count)

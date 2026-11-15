@@ -38,7 +38,7 @@ async function main() {
         assert(identity.preloads.some(p => p.path === file && p.sha256 === hash(fs.readFileSync(file))),
           `${role} does not prove exact preload ${file}`);
       }
-      const maps = path.join(path.dirname(hooks[1]),
+      const maps = path.join(process.env.SIMS_EVIDENCE_DIR || path.dirname(hooks[1]),
         `${process.env.SIMS_MAP_LABEL || 'original'}-host-startup-${process.pid}-thread${identity.threadId}.json`);
       const receipt = JSON.parse(fs.readFileSync(maps));
       assert.equal(receipt.pid, process.pid);

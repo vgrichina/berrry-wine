@@ -5,8 +5,8 @@
       "file": "lib/storage.js",
       "name": "host-file",
       "baseSHA256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053",
-      "sha256": "096799259a8e175a277dbabec88473a19e9fc2cd03aecf3303c70e56c6f582d2",
-      "reason": "CoTreatAsClass registry operations and activation resolution are synchronous under the existing storage owner/import bridge. GUID reads/writes use only caller-owned memory. No guest invocation, callback, retained factory or scheduling transition is added; existing COM factory lifetimes and pending invocation ownership remain unchanged."
+      "sha256": "c8fef61ea94928cda701202802478874cc516131751443207bb6cb1deaa36f95",
+      "reason": "CoTreatAsClass registry operations and activation resolution are synchronous under the existing storage owner/import bridge. GUID reads/writes use only caller-owned memory. No guest invocation, callback, retained factory or scheduling transition is added; existing COM factory lifetimes and pending invocation ownership remain unchanged. Adds the stock OLE Automation 1.0 type-library path alongside 2.0. This data-only default introduces no guest callback, interface pointer, HRESULT substitution, scheduling or lifetime change. Genuine OLEAUT32 native registration/reload/refcount controls qualify the exact standard dependency."
     },
     {
       "file": "src/09b-dispatch.wat",
@@ -14,6 +14,20 @@
       "baseSHA256": "5a9f6a834b9ad5a58d4090c18f714961416dc9583908990087503ebbf715f25b",
       "sha256": "682ab78e7e3f03d7a784f6552a8dd57de56bd637c2874de1d4fbb8a3930ab92f",
       "reason": "TreatAs activation uses the existing COM jump/continuation mechanism with a private guest-stack frame. Marker CACA0041 restores the original stdcall frame after ordinary activation completes, including DLL-load yields and native class-factory callbacks. No foreign activation frame, global GUID scratch, callback admission or nonlocal ownership assertion is added; native guest-DLL, builtin-chain, cycle and unchanged activation regressions qualify the bounded route; ownership remains pending."
+    },
+    {
+      "file": "lib/process-boot.js",
+      "name": "host-file",
+      "baseSHA256": "7e3a7abc458b1049f6873e89ed6c2bf0b1e3d80f8626292cb47fd8d2e9665be7",
+      "sha256": "c7ce37ccd97973522e89cfc03dd59b40e7a4e1ffda90eec01ac85a8877eec6ee",
+      "reason": "Stock OLE Automation 1.0 data is mounted through the unchanged shared system-data list and localOnly policy. The pinned resource-only Microsoft file is not executed. No boot callback, invocation, owner admission, retention or asynchronous control flow changes. Native genuine OLEAUT32 LoadTypeLib/RegisterTypeLib/LoadRegTypeLib and interface-release controls qualify the dependency; ownership remains pending."
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_pump_step",
+      "baseSHA256": "dc12e4d662a9a2c5ad3e0f181a744d7b487f0666c204df515c105dd22dd63da0",
+      "sha256": "799ed01516e1441d54a457b1daabca35849a5609185553cae4e9ce442c66191c",
+      "reason": "The owning parked MessageBox pump retrieves and synchronously dispatches one posted message filtered to its current HWND through its built-in USER procedure. Class 16 only: no guest dialog procedure, foreign continuation, callback admission, new EIP write or retained interface is introduced. Completion uses existing modal_finish_local and owning continuation splice; general ownership remains pending. Exact native NULL-owner error OK/X, OKCANCEL and strict guarded-input opposition controls qualify the route."
     }
   ]
 }
