@@ -1,6 +1,7 @@
 # USER.281 GetSysColorBrush — 2026-11-15
 
-Implementation and evidence are in progress. No Sims installer or household
+General API support is published on main as
+`62f6d74131add14aec745718e3a59d6cb8440591`. No Sims installer or household
 success is established. The genuine COMMCTRL companion remains unmodified:
 155136 bytes, SHA-256
 `39bbfafa8b759ebfcf6a00ee878fa494581a9144891bbd788bded61441de13f9`.
@@ -50,7 +51,8 @@ screen bitmap; that is excluded from the brush census.
 The actual imported ordinal fails before this change at key 0x20119 and
 returns through the caller's preserved context. Afterward the general compiled
 controls pass. Fifteen existing GDI/system-color/NE/Win4/ownership suites and the
-full locked shared-tree build pass. The new GDI helper attributions and existing
+full locked shared-tree build pass. All twelve nested Win16 quit cases pass
+through local and Worker owners. The new GDI helper attributions and existing
 delete-dispatch line references are recorded in the union gate; its checks are
 preserved. The callback ownership census remains unchanged at 437 boundaries.
 Released foreign NE operation-5/data-span WIP and mixed census changes remain
@@ -63,7 +65,26 @@ incorrectly expected to return BOOL instead of preserving EAX as a void API.
 The first build correctly refused missing variant attributions; the subsequent
 locked build passes with the necessary reviewed rows.
 
-The single genuine post-publication resolver retest is still pending at this
-code publication. The prior USER.281 boundary above remains the last genuine
-observation until its actual result is recorded. No Sims installer is run.
+The single genuine post-publication resolver retest used a clean published-HEAD
+module, 2203225 bytes, SHA-256
+`5a655a34e90b6ef9e16f39fd7c1d984e0849d2b5dcb9cc6bed6779cb30e380cb`.
+Every compiled source pin matches the qualified feature module except the
+latter's test-only exports. The ordinary compiled LoadLibrary16 resolver loaded
+the unchanged media, completed eight actual USER.281 calls, returned from
+LibMain2:0000, and entered exported DLLENTRYPOINT300 at 2:0176. It then trapped
+`RuntimeError: unreachable` at KERNEL.651/key `0x1028b`. The trace also records
+rollback WEP entry 2:0168. Caller EIP/ESP/CS/DS/SS/depth are restored; COMMCTRL
+is not published. This is failed initialization at the next unsupported
+primitive, not native-connection or registration success. KERNEL.651, native
+LS/QT/FT connection and Sims installer/household progress remain unimplemented
+or unproved. No further genuine retry or Sims installer is run.
+
+The independent deadline watchdog was armed before each supervised command.
+The runtime release records 29 actual child waits with both output EOFs and
+87 exact recorded native/watchdog/supervisor PIDs absent, with process groups
+absent. Heavy order Q3 -> StarCraft -> this task was checked against the actual
+predecessor release receipts. Source/build/runtime access is released; only
+this report and evidence finish afterward. Git SHAs and binary patches retain
+source recovery without source/media/WASM/frame bundles. The final result names
+all module/source pins, logs, patches and publication records.
 No box was created: ID and expiry are null; stop receipt is not applicable.
