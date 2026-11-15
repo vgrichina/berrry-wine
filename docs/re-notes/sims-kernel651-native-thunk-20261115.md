@@ -4,7 +4,9 @@ The general native LS16 registration primitive is implemented and passes
 compiled local, cooperative and actual Worker controls. This establishes
 owned registration and checked execution of relocated LS targets. PE LS32
 pairing, generated QT/FT relays and Sims installer UI remain unimplemented or
-unproved. The single genuine post-publication resolver retest is pending.
+unproved. Implementation commit `f51ce2e1d897d96b8f80a8beaaed0bdad2fec40a` is
+published on main with strict pull/push. The single genuine post-publication
+resolver retest succeeded through DLL publication and normal caller return.
 Evidence: `scratch/runs/20261115-sims-kernel651-implemented/result.json`.
 The original blocked report remains unchanged in
 `scratch/runs/20261115-sims-kernel651-native-thunk/result.json`.
@@ -62,3 +64,36 @@ available named SC waits were personally read with actual wait and both EOFs;
 the heavy lock was available. The two missing historical detached-tool outer
 waits and previous Sims light-watcher wait remain UNKNOWN. They are not claimed
 complete or recovered from absence. No box or worker was created.
+
+## Single genuine result and remaining boundary
+
+A clean module compiled from published `f51ce2e1d` is 2205191 bytes, SHA-256
+`e1ecdcccd21b26b6de866eb6110d7354c25527c36ff9a1ff382c8f67c56d7767`.
+Its production source pins match the independently qualified feature module;
+only the latter's test exports differ. This is a fresh module, not an older
+substitute. The separate mixed shared-tree locked build is 2205447 bytes.
+
+Exactly one ordinary compiled LoadLibrary16 resolution consumed the genuine
+unchanged COMMCTRL bytes. It completed eight USER.281 calls and LibMain
+2:0000, reached DLLENTRYPOINT 2:0176, made one actual KERNEL.651 call and
+committed the native attach transaction. LoadLibrary16 returned handle 268;
+the module is ready in the native module table. The parked PE frame advanced
+through its ordinary eight-byte API cleanup, preserved CS/DS/SS/depth, then
+executed its return with the expected ESP. There was no unsupported-API trap
+in this bounded load. This proves successful genuine DLL initialization and
+publication, separately from LS32 pairing or relay execution.
+
+Stop here: a real native LS32 connection and its QT/FT relay prerequisites
+remain unimplemented/unproved. The preexisting ThunkConnect32 scalar success
+is not evidence of such a connection; released foreign inspection/guard WIP
+was not adopted. The existing FT guard remains closed. No original Sims
+installer was launched or bypassed and no UI/household progress is claimed.
+
+The independent deadline watchdog was armed before each command gate opened.
+The release names 37 actual wait records with both EOFs and 108 absent recorded
+PIDs/process groups; the genuine supervisor-child wait directly collected
+both pipes. Launching-tool APIs report completion without exposing separate
+pipe EOF, so no stronger all-parent-EOF claim is made. Historical outer proof
+gaps remain explicit. Source/build/runtime access was released after the one
+genuine run; finalization only changes this note and compact evidence. No box
+was created: ID/expiry are null, state NOT_CREATED, stop receipt not applicable.
