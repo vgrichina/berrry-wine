@@ -1,9 +1,11 @@
 # Q3 debugger source inventory, 2026-11-15
 
-The source-inventory correction is implemented and the actual Chrome control
-passes. Current native qualification, publication and the conditional one fresh
-original remain pending at this stage. Heavy work followed TIM smart handles
-and LS32 implementation releases; expected predecessor waiting was completed.
+The warranted source-inventory correction was published as `ac8fb9b43` on main
+after actual Chrome, current native qualification and the full flock build passed.
+The single authorized changed-route original demonstrated verified source reuse
+but closed at a required snapshot evaluation deadline before consent. No further
+original is authorized on this route. Heavy work followed personally verified
+TIM smart handles and LS32 source/build/runtime releases.
 
 Evidence: `scratch/runs/20261115-quake3-source-inventory/`.
 
@@ -77,6 +79,46 @@ are verified. An initial successful control and rejected fixture iterations
 remain explicit; a delayed Worker bootstrap exposed and corrected a baseline
 fixture assumption rather than being labeled a controller script.
 
-Current native queued input, immutable capture, visibility, independent release,
-final full build, publication and the conditional one fresh original remain
-pending. No boxes, workers or deployment were created.
+The current native qualification passed queued key and Mouse1 input, independent
+UP, immutable capture, complete visibility transitions and sticky UNKNOWN with
+zero postterminal requests. Its direct native/watchdog/supervisor-child and Chrome
+actual waits/EOF completed; all 20 recorded PIDs were absent. Eight visibility
+tests, the browser helper tests and `flock /tmp/wine-build.lock bash tools/build.sh`
+passed. The correction was committed and immediately strict-pulled/pushed before
+original admission. The complete native fixture consent image was personally
+reviewed before its finite host-only click.
+
+## Single original: exact partial result
+
+The fresh original used the unchanged registered arguments, real ticks and
+cooperative 10000, with current source/module/media/import/TLB/font/resolved-PATH
+and native closure pins. The independent 1820-second watchdog was armed around
+the 1800-second native deadline; the 180-second Quit reserve remained unchanged.
+No additional original was launched.
+
+Actual original inventory records 397 scripts: 33 actual source/bytecode fetches
+and 364 verified reuses. The exact 47-byte snapshot expression was fetched once
+and reused for 364 later script IDs in the same live context, preserving each
+script's attribution. Both actual WASM scripts were fetched: 2,209,708 bytes,
+SHA-256 `47fbf18303efc59192ed3b5dbfcb48c0f27e5d70ee7ccc969fc6321f7ff72efa`.
+Public WASM metadata was not substituted for those bytes.
+
+The required render Worker `Runtime.evaluate` request 808 reached the fixed
+three-second UNKNOWN. Its already-arriving response was logged passively at
+3605.703 ms; it did not reopen the route. The last preterminal public GL snapshot
+showed one nonsoftware WebGL2 context, zero draws and zero presents. No consent
+image was produced, no host click or game input occurred, and menu, arena, frag
+and native Quit are all unproved. This is a source-inspection correction with an
+exact partial gameplay outcome, not a demonstrated gameplay fix. The residual
+queue/body/inspector/native-occupancy cause remains UNKNOWN.
+
+The route remained permanently closed with zero postterminal requests. Host
+teardown completed and direct native (exit 1), watchdog (exit 0), supervisor child
+(exit 0) and Chrome actual waits/EOF were verified; all 13 recorded original PIDs
+were absent, with no pin drift or HTTP byte mismatches and no remaining profile.
+Across this task, 54 named actual wait receipts and 109 recorded PIDs were checked;
+historical/ancillary detached-outer gaps remain explicitly UNKNOWN. Runtime and
+build locks were released before this report update. Evidence is indexed in
+`result.json`, including selected screenshots and `original-terminal-analysis.json`.
+No boxes, workers or deployment were created. Next work would require a new
+causal investigation and authorization; this assignment stops without retry.
