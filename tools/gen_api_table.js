@@ -104,6 +104,8 @@ const seen = new Set(existing.map(e => e.name));
 
 // APIs from sub-dispatchers (not in main dispatch comment pattern)
 const extra = [
+  { name: 'CoMarshalHresult', nargs: 2 },
+  { name: 'CoUnmarshalHresult', nargs: 2 },
   { name: 'CoFreeAllLibraries', nargs: 0 },
   { name: 'CoFreeLibrary', nargs: 1 },
   { name: 'CoTreatAsClass', nargs: 2 },

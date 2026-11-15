@@ -928,6 +928,70 @@
   ;; In-process inter-thread marshaling. The interpreted processes share one
   ;; linear memory, so a one-shot stream only needs to retain and transfer the
   ;; interface pointer; no proxy wire format is required.
+  ;; HRESULT marshaling is a single native four-byte IStream transfer, with
+  ;; no transferred-count output and the stream's own HRESULT propagated.
+  ;; The stream is borrowed. A DLL-private stream executes on this guest's
+  ;; real stack, including yields and nested callbacks; no host shadow call.
+  (func $handle_CoMarshalHresult (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $ctx i32) (local $ret i32)
+    (if (i32.eqz (local.get $arg0))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80030009))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (if (call $ole_interface_is_local (local.get $arg0))
+      (then
+        (i32.store offset=0 (global.get $reg_base)
+          (if (result i32) (i32.eq (call $gl32 (local.get $arg0)) (global.get $DX_VTBL_OLE_STREAM))
+            (then (call $ole_stream_write (local.get $arg0)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))
+              (i32.const 4) (i32.const 0)))
+            (else (i32.const 0x80030009))))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (if (i32.eqz (call $ole_guest_method_addr (local.get $arg0) (i32.const 4)))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80030009))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (local.set $ret (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+    (local.set $ctx (call $ole_guest_callback_context
+      (i32.const 38) (i32.const 0) (local.get $ret)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))
+      (local.get $arg0) (local.get $arg1) (i32.const 0) (i32.const 0) (i32.const 0)))
+    ;; p1 is invocation-owned storage for the HRESULT, live until Write returns.
+    (drop (call $ole_guest_callback_invoke4 (local.get $ctx) (local.get $arg0)
+      (i32.const 4) (i32.add (local.get $ctx) (i32.const 24)) (i32.const 4) (i32.const 0))))
+
+  (func $handle_CoUnmarshalHresult (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $ctx i32) (local $ret i32)
+    (if (i32.or (i32.eqz (local.get $arg0)) (i32.eqz (local.get $arg1)))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80030009))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (if (call $ole_interface_is_local (local.get $arg0))
+      (then
+        (i32.store offset=0 (global.get $reg_base)
+          (if (result i32) (i32.eq (call $gl32 (local.get $arg0)) (global.get $DX_VTBL_OLE_STREAM))
+            (then (call $ole_stream_read (local.get $arg0) (local.get $arg1) (i32.const 4) (i32.const 0)))
+            (else (i32.const 0x80030009))))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (if (i32.eqz (call $ole_guest_method_addr (local.get $arg0) (i32.const 3)))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80030009))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (local.set $ret (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+    (local.set $ctx (call $ole_guest_callback_context
+      (i32.const 38) (i32.const 0) (local.get $ret)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))
+      (local.get $arg0) (local.get $arg1) (i32.const 0) (i32.const 0) (i32.const 0)))
+    ;; Read directly into the caller's output, preserving partial transfers.
+    (drop (call $ole_guest_callback_invoke4 (local.get $ctx) (local.get $arg0)
+      (i32.const 3) (local.get $arg1) (i32.const 4) (i32.const 0))))
+
   (func $handle_CoMarshalInterThreadInterfaceInStream (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $stream i32)
     (if (local.get $arg2) (then (call $gs32 (local.get $arg2) (i32.const 0))))
@@ -8946,6 +9010,7 @@
   ;; 35: CoGetState returned-reference AddRef.
   ;; 36: DoDragDrop source/target modal callback sequence.
   ;; 37: COMCTL32 ImageList_Read through a DLL-private IStream (09a9).
+  ;; 38: CoMarshalHresult/CoUnmarshalHresult IStream transfer completion.
   (func $ole_guest_callback_continue
     (local $ctx i32) (local $operation i32) (local $stage i32)
     (local $root i32) (local $p1 i32) (local $p2 i32) (local $p3 i32) (local $p4 i32)
@@ -8958,6 +9023,10 @@
     (local.set $p2 (call $gl32 (i32.add (local.get $ctx) (i32.const 28))))
     (local.set $p3 (call $gl32 (i32.add (local.get $ctx) (i32.const 32))))
     (local.set $p4 (call $gl32 (i32.add (local.get $ctx) (i32.const 36))))
+    (if (i32.eq (local.get $operation) (i32.const 38))
+      (then
+        (call $ole_guest_callback_finish (local.get $ctx) (i32.load offset=0 (global.get $reg_base)))
+        (return)))
     (if (i32.eq (local.get $operation) (i32.const 36))
       (then
         (call $ole_drag_continue (local.get $ctx) (local.get $root))

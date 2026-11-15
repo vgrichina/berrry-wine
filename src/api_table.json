@@ -39231,5 +39231,19 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 729723280
+  },
+  {
+    "id": 4626,
+    "name": "CoMarshalHresult",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1369931112
+  },
+  {
+    "id": 4627,
+    "name": "CoUnmarshalHresult",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 817163475
   }
 ]
