@@ -3527,25 +3527,9 @@ Resource-aware Win98 emulator
       const wrap = document.getElementById('screen-wrap');
       const { fullscreen, displayW, displayH, w, h, dpr } = screenCanvasSize();
       const presentation = document.getElementById('screen-present');
-      if (fullscreen) {
-        wrap.style.width = displayW + 'px';
-        wrap.style.height = displayH + 'px';
-        wrap.style.position = 'fixed';
-        wrap.style.inset = '0';
-        canvas.style.width = displayW + 'px';
-        canvas.style.height = displayH + 'px';
-        canvas.style.position = 'fixed';
-        canvas.style.inset = '0';
-      } else {
-        wrap.style.width = '';
-        wrap.style.height = '';
-        wrap.style.position = '';
-        wrap.style.inset = '';
-        canvas.style.width = '';
-        canvas.style.height = '';
-        canvas.style.position = '';
-        canvas.style.inset = '';
-      }
+      // Fullscreen geometry belongs to the :fullscreen CSS rules. Inline
+      // pixel sizes survive browser exit until JS handles fullscreenchange,
+      // leaving a stale oversized box when rendering delays that handler.
       if (w > 0 && h > 0 && (canvas.width !== w || canvas.height !== h)) {
         const oldW = canvas.width;
         const oldH = canvas.height;
