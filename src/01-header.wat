@@ -531,6 +531,9 @@
   ;; a nested synchronous send, which cannot return to the host's event loop.
 
   ;; COM host imports
+  (import "host" "com_interface_operation" (func $host_com_interface_operation (param i32 i32 i32) (result i32)))
+  (import "host" "com_interface_result" (func $host_com_interface_result (param i32 i32) (result i32)))
+  (import "host" "com_proxy_stub" (func $host_com_proxy_stub (param i32 i32 i32) (result i32)))
   (import "host" "com_create_instance" (func $host_com_create_instance (param i32 i32 i32 i32 i32) (result i32)))
   ;; com_create_instance(rclsidWA, pUnkOuterGA, dwClsContext, riidWA, ppvGA) → HRESULT
   (import "host" "com_register_class_object" (func $host_com_register_class_object (param i32 i32 i32 i32) (result i32)))

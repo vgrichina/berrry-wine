@@ -3027,6 +3027,23 @@ async function main() {
   const processDesktop = new ProcessDesktop();
   ctx.processDesktop = processDesktop;
   ctx.processId = processDesktop.processId;
+  // Guest Workers authenticate their own connection and execute their own
+  // callbacks. Never broker a Worker COM callback through this local CPU.
+  process.env.WINE_PROCESS_DESKTOP = JSON.stringify(processDesktop.endpoint);
+  process.env.WINE_COM_MODULE_SHA256 = require('node:crypto').createHash('sha256').update(wasmBytes).digest('hex');
+  const { ComInterfaceRuntime, comRuntimeSourcePin } = require('../lib/com-interface-runtime');
+  ctx.comInterfaces = new ComInterfaceRuntime({
+    getExports: () => ctx.exports, getMemory: () => memory.buffer, desktop: processDesktop,
+    modulePin: process.env.WINE_COM_MODULE_SHA256, sourcePin: comRuntimeSourcePin(),
+    serviceYield: async ({ reason }) => {
+      const options = { exports: ctx.exports, memoryBuffer: memory.buffer,
+        exeBytes: new Uint8Array(exeBytes), resourceHost: ctx, log: console.log,
+        findDll: findRuntimeDllBytes, findDllSync: findRuntimeDllBytes, onDllCallbackGateWait };
+      if (reason === 3) { await handleComDllYield(options); return true; }
+      if (reason === 5 || reason === 18) { await handleLoadLibraryYield(options); return true; }
+      return false;
+    },
+  });
   onFailure(() => processDesktop.close());
   // --latency-stats: how long an injected event takes to reach pixels. The
   // blit is the moment GDI hands a dirty rect to the presentation surface,
@@ -8082,6 +8099,7 @@ async function main() {
   const executionStartedAt = performance.now();
   for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {
     processDesktop.poll();
+    if (mainOwner.kind === 'local') await ctx.comInterfaces.drain();
     traceGateBatch = batch;
     if (deadlineMs && Date.now() >= deadlineMs) {
       traceGateBatch = -1; // why the run stopped is not per-batch trace output
@@ -11012,6 +11030,8 @@ async function main() {
         const slice = mainSchedulerObserver
           ? await mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE))
           : await mainOwner.run(BATCH_SIZE);
+        if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
+          await ctx.comInterfaces.service();
         if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
         } catch (error) {
           if (!nativeFault.capture(error, instance.exports,
@@ -11419,6 +11439,8 @@ async function main() {
             const slice = mainSchedulerObserver
               ? await mainSchedulerObserver.run('worker-interleaved', () => mainOwner.run(BATCH_SIZE))
               : await mainOwner.run(BATCH_SIZE);
+            if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
+              await ctx.comInterfaces.service();
             if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,
@@ -11479,6 +11501,8 @@ async function main() {
             const slice = mainSchedulerObserver
               ? await mainSchedulerObserver.run('cooperative-interleaved', () => mainOwner.run(BATCH_SIZE))
               : await mainOwner.run(BATCH_SIZE);
+            if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
+              await ctx.comInterfaces.service();
             if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,

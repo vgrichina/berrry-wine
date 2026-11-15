@@ -39245,5 +39245,117 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 817163475
+  },
+  {
+    "id": 4628,
+    "name": "CoMarshalInterface",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 3994981338
+  },
+  {
+    "id": 4629,
+    "name": "CoUnmarshalInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3027935373
+  },
+  {
+    "id": 4630,
+    "name": "CoReleaseMarshalData",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3846356354
+  },
+  {
+    "id": 4631,
+    "name": "CoGetPSClsid",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1214597209
+  },
+  {
+    "id": 4632,
+    "name": "CoRegisterPSClsid",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 47606764
+  },
+  {
+    "id": 4633,
+    "name": "ComOwnedUnknown_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3990298903
+  },
+  {
+    "id": 4634,
+    "name": "ComOwnedUnknown_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1397812476
+  },
+  {
+    "id": 4635,
+    "name": "ComOwnedUnknown_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 686428573
+  },
+  {
+    "id": 4636,
+    "name": "ComOwnedChannel_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 867504100
+  },
+  {
+    "id": 4637,
+    "name": "ComOwnedChannel_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3345165055
+  },
+  {
+    "id": 4638,
+    "name": "ComOwnedChannel_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 69513224
+  },
+  {
+    "id": 4639,
+    "name": "ComOwnedChannel_GetBuffer",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 918417931
+  },
+  {
+    "id": 4640,
+    "name": "ComOwnedChannel_SendReceive",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2161129018
+  },
+  {
+    "id": 4641,
+    "name": "ComOwnedChannel_FreeBuffer",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1575862935
+  },
+  {
+    "id": 4642,
+    "name": "ComOwnedChannel_GetDestCtx",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2137586526
+  },
+  {
+    "id": 4643,
+    "name": "ComOwnedChannel_IsConnected",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2303014306
   }
 ]

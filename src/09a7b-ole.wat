@@ -932,6 +932,101 @@
   ;; no transferred-count output and the stream's own HRESULT propagated.
   ;; The stream is borrowed. A DLL-private stream executes on this guest's
   ;; real stack, including yields and nested callbacks; no host shadow call.
+  ;; Standard interface remoting parks the original stdcall frame while its
+  ;; actual owning scheduler executes guest COM/stream/proxy callbacks.
+  (func $com_interface_bridge (param $operation i32) (param $arguments i32)
+    (local $esp i32) (local $pending i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $pending (call $host_com_interface_operation
+      (local.get $operation) (local.get $esp) (global.get $current_thread_id)))
+    (if (local.get $pending)
+      (then
+        (global.set $eip (global.get $current_thunk_eip))
+        (global.set $handler_set_eip (i32.const 1))
+        (global.set $yield_reason (i32.const 23))
+        (global.set $yield_flag (i32.const 1))
+        (global.set $steps (i32.const 0)))
+      (else
+        (i32.store offset=0 (global.get $reg_base)
+          (call $host_com_interface_result (local.get $esp) (global.get $current_thread_id)))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (local.get $esp) (i32.mul (i32.add (local.get $arguments) (i32.const 1)) (i32.const 4)))))))
+
+  (func (export "com_owner_root") (result i64)
+    (call $invocation_validate) (global.get $invocation_root))
+  (func (export "com_owner_epoch") (result i64)
+    (call $invocation_validate) (global.get $invocation_epoch))
+
+  (func (export "com_bridge_vtable") (param $first_api i32) (param $count i32) (result i32)
+    (local $table i32) (local $index i32) (local $thunk i32)
+    (if (i32.or (i32.le_s (local.get $count) (i32.const 0))
+                (i32.gt_u (local.get $count) (i32.const 32))) (then (unreachable)))
+    (local.set $table (call $heap_alloc (i32.mul (local.get $count) (i32.const 4))))
+    (if (i32.eqz (local.get $table)) (then (return (i32.const 0))))
+    (block $done (loop $next
+      (br_if $done (i32.ge_u (local.get $index) (local.get $count)))
+      (local.set $thunk (call $com_cont_thunk (i32.const 0xCACA0010)))
+      (call $gs32 (i32.add (local.get $thunk) (i32.const 4))
+        (i32.add (local.get $first_api) (local.get $index)))
+      (call $gs32 (i32.add (local.get $table) (i32.mul (local.get $index) (i32.const 4))) (local.get $thunk))
+      (local.set $index (i32.add (local.get $index) (i32.const 1))) (br $next)))
+    (local.get $table))
+
+  (func $handle_CoGetPSClsid (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (if (result i32) (i32.or (i32.eqz (local.get $arg0)) (i32.eqz (local.get $arg1)))
+        (then (i32.const 0x80070057))
+        (else (call $host_com_proxy_stub (i32.const 0) (call $g2w (local.get $arg0)) (call $g2w (local.get $arg1))))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  (func $handle_CoRegisterPSClsid (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (if (result i32) (i32.or (i32.eqz (local.get $arg0)) (i32.eqz (local.get $arg1)))
+        (then (i32.const 0x80070057))
+        (else (call $host_com_proxy_stub (i32.const 1) (call $g2w (local.get $arg0)) (call $g2w (local.get $arg1))))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  (func $handle_CoMarshalInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 1) (i32.const 6)))
+
+  (func $handle_CoUnmarshalInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 2) (i32.const 3)))
+
+  (func $handle_CoReleaseMarshalData (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 3) (i32.const 1)))
+
+  (func $handle_ComOwnedUnknown_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 4) (i32.const 3)))
+
+  (func $handle_ComOwnedUnknown_AddRef (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 5) (i32.const 1)))
+
+  (func $handle_ComOwnedUnknown_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 6) (i32.const 1)))
+
+  (func $handle_ComOwnedChannel_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 7) (i32.const 3)))
+
+  (func $handle_ComOwnedChannel_AddRef (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 8) (i32.const 1)))
+
+  (func $handle_ComOwnedChannel_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 9) (i32.const 1)))
+
+  (func $handle_ComOwnedChannel_GetBuffer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 10) (i32.const 3)))
+
+  (func $handle_ComOwnedChannel_SendReceive (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 11) (i32.const 3)))
+
+  (func $handle_ComOwnedChannel_FreeBuffer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 12) (i32.const 2)))
+
+  (func $handle_ComOwnedChannel_GetDestCtx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 13) (i32.const 3)))
+
+  (func $handle_ComOwnedChannel_IsConnected (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 14) (i32.const 1)))
   (func $handle_CoMarshalHresult (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $ctx i32) (local $ret i32)
     (if (i32.eqz (local.get $arg0))

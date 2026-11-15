@@ -5,8 +5,8 @@
       "file": "lib/storage.js",
       "name": "host-file",
       "baseSHA256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053",
-      "sha256": "48292a94b1787d9863c3124fc0894fb7057d17665e2516b927216e72267e3780",
-      "reason": "CoTreatAsClass registry operations and activation resolution are synchronous under the existing storage owner/import bridge. GUID reads/writes use only caller-owned memory. No guest invocation, callback, retained factory or scheduling transition is added; existing COM factory lifetimes and pending invocation ownership remain unchanged. Adds the stock OLE Automation 1.0 type-library path alongside 2.0. This data-only default introduces no guest callback, interface pointer, HRESULT substitution, scheduling or lifetime change. Genuine OLEAUT32 native registration/reload/refcount controls qualify the exact standard dependency. Class-registration lookup now selects independent live cookies by execution context, retains older registrations after revocation, and removes SINGLEUSE from public view without releasing its cookie. Existing actual AddRef/Release and owner-side CoCreateInstance continuations are unchanged. No cross-process registration, factory pointer, callback carrier, or marshalling is introduced; genuine local-server activation remains unqualified. Registered class-only owner resolution returns the existing borrowed-factory status for the public caller-side QI continuation; direct synchronous bridge lookup invokes actual QueryInterface under existing callback ownership. Unsupported interfaces are not synthesized."
+      "sha256": "10d077cc87cb8b2ced93d3f131a25e6097504217b11183eebb16fd7939dbe4ac",
+      "reason": "Standard interface host imports only enqueue or retrieve the caller-owned parked frame; actual guest callbacks run later on its scheduler. Proxy/stub CLSID resolution reads actual public registration or process CoRegisterPSClsid state and never synthesizes a factory or success. Existing synchronous class activation callback paths are unchanged."
     },
     {
       "file": "src/09b-dispatch.wat",
@@ -42,6 +42,80 @@
       "baseSHA256": "79026e9016ade1a709c29a9449590bbd60b36991acdab582eeec2059c3486019",
       "sha256": "c9c8453fd9f3935f7f65ef95b4df2fab71053dcd052015a75ed7f5e8ed3f74af",
       "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
+    },
+    {
+      "file": "lib/guest-worker.js",
+      "name": "host-file",
+      "baseSHA256": "3e09b9aa06b86ffa52bb00d4052a2b4393952ed61f2821ced4871dfbec0498ec",
+      "sha256": "74527d6aad06a616f74b933e998aba2a22f8b1d4a1cd935167b76d09e655fac6",
+      "reason": "Standard COM interface frames and callbacks run on this actual owning Worker instance. Callback imports are never forwarded to the parent CPU; authenticated byte transport has separate connection, source/module pin and full root generation. Explicit scoped retirement closes that transport after actual callback unwinds. Browser Workers return honest E_NOTIMPL for this Node-only channel."
+    }
+  ],
+  "additions": [
+    {
+      "file": "lib/com-guest-continuation.js",
+      "name": "host-file",
+      "sha256": "f8cfed9c5a0c97886749116fa479acb0eb2b992ddbfcaaf06cd2abd3375f5afb",
+      "kind": "host-entry",
+      "reason": "Actual owner-only COM callbacks retain full i64 child tokens and validate source/process/thread/generation before and after suspension. All registers, private IP/thunk, handler, SEH and parent yield are restored only after a complete native stdcall return and ABI checks. Trap, unsupported wait or replacement leaves the child live for explicit retirement; no shadow CPU or finally resurrection.",
+      "ownership": "pending"
+    },
+    {
+      "file": "lib/com-interface-runtime.js",
+      "name": "host-file",
+      "sha256": "79b77c02c8e2c1944de03bdaa6549982dc1b059971d3bbf7099b57e5df0ca434",
+      "kind": "host-entry",
+      "reason": "The original caller stdcall frame parks on yield 23. Only its owning instance scheduler runs actual QI, reference, stream and registered proxy/stub callbacks; nested service remains under the full token. Completion validates exact frame and lifetime before publishing a result. Byte-channel incoming calls execute on the exporter owner, including Worker-local instances.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "$com_interface_bridge",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "global.get",
+          "$current_thunk_eip"
+        ]
+      ],
+      "sha256": "7377ce8aba18065b539e4f78b563d454c257eaada7b59b82b2e5190f55c42ea9",
+      "kind": "continuation",
+      "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "export:com_owner_epoch",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [
+        "com_owner_epoch"
+      ],
+      "targets": [],
+      "sha256": "2c2590aad9f2059b9cb83e9eb49e9ab1970d3017e284cfe818cde2ac008f1ae5",
+      "kind": "continuation",
+      "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "export:com_owner_root",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [
+        "com_owner_root"
+      ],
+      "targets": [],
+      "sha256": "d4e464b828542fb3c3e9fa8b5e7640eb752e8fef3fc908f29b34adfaf0806ced",
+      "kind": "continuation",
+      "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
     }
   ]
 }

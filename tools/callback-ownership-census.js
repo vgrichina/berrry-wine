@@ -131,7 +131,12 @@ function check(entries, census, revisions = { version: 1, revisions: [] }) {
   const errors = [];
   if (census.version !== 1) errors.push('unsupported census version');
   const expected = new Map();
-  for (const entry of census.entries || []) {
+  // Feature-owned new producers can be reviewed without adopting unrelated
+  // shared-worktree edits to the base census. They undergo every existing
+  // kind, lifetime, hash and producer-shape check, including duplicate refusal.
+  const additions = revisions.additions === undefined ? [] : revisions.additions;
+  if (!Array.isArray(additions)) errors.push('invalid producer additions');
+  for (const entry of [...(census.entries || []), ...(Array.isArray(additions) ? additions : [])]) {
     const id = key(entry);
     if (expected.has(id)) errors.push(`duplicate inventory entry ${id}`);
     expected.set(id, entry);
