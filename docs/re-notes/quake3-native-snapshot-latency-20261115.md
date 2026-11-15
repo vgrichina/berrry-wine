@@ -163,3 +163,76 @@ It uses the existing qualification guards as a separate prelaunch precheck.
 Only qualified, published, materially changed diagnostics can admit the single
 unused original authorization. Fixed 1800/1820 deadlines, the 180-second Quit
 reserve, three-second operations and independent UP remain unchanged.
+
+## Qualified publication and the single original
+
+Feature `dfd7a8935` was published on main with strict pull/push before original
+admission. The final focused suite passed 60 tests with one expected native
+opt-in skip; helper regressions and the final unmodified locked full build
+passed. Current real Chrome source qualification passed 16 checks, including
+actual WASM bytes and verified same-context source reuse. Native qualification
+passed finite key and Mouse1 gestures with separate acknowledged independent UP,
+immutable captures, cancellation, fullscreen/viewport/ancestor visibility,
+owner replacement refusal and irreversible UNKNOWN with zero later requests.
+The host-only qualification consent image was personally reviewed.
+
+All five causal Chrome controls passed with current prelaunch host/source pins.
+The queue control measured 3393.921 ms before entry and 0.175 ms body; slow body
+measured 3400.605 ms body; delayed delivery measured 3403.375 ms after completion.
+Each intentional timeout remained closed. The actual idle Worker inspector
+control required submitting its single snapshot before waiting for the paused
+event: `Debugger.pause` pauses an idle Worker on its next task. After a real
+pause/resume, entry followed resume, with 159.679 ms before entry. Internal
+inspector dispatch remains UNKNOWN. Ordinary native WebGL control also passed.
+Rejected runs retain the omitted-marker, idle-pause and newly discovered host
+mapping failures. Five newly observed graphics libraries were pre-pinned before
+the successful rerun; no renderer or WASM implementation was changed.
+
+The one fresh original was admitted with exact current qualification pins,
+registered arguments/realticks/cooperative 10000, fixed 1800/1820 deadlines,
+three-second operations and the 180-second Quit reserve. The complete host
+consent image showed actual Quake III textured loading output and was personally
+reviewed. Its finite host gesture received independent UP acknowledgement.
+
+The original's 325 exact 47-byte snapshot requests returned before the first
+native-event overflow marker. Snapshot 728 returned in 2383.853 ms. The unchanged
+qualified analyzer, applied offline to the immutable trace prefix strictly
+before that marker, measures 2361.780 ms before Worker entry, 0.025 ms snapshot
+body, and 20.710 ms after wrapper completion. Observed returned synchronous GL
+intervals overlap 2347.189 ms of the enqueue-to-entry interval. The largest calls
+were `getShaderParameter` at 1276.815 and 1090.590 ms. This is current-run
+evidence of waiting behind observed synchronous GL work, with the analyzer's
+two-millisecond cross-clock tolerance. It does not establish GPU execution,
+driver-internal cause, a general renderer defect, or the cause of old request 808.
+
+The full-run analyzer conservatively refuses native attribution after the
+30,000-event limit and therefore reports all 325 as unattributed when given the
+entire trace. The separately named pre-overflow analysis preserves the narrower
+valid evidence without removing the marker or reopening the route. Later
+native occupancy remains UNKNOWN. Actual source inventory retained one snapshot
+source fetch plus 324 verified reuses, and both actual Worker WASM receipts
+matched `62605b62…` (2,217,109 bytes).
+
+The original then closed on a different boundary: page-session
+`Runtime.evaluate` 1113, expression SHA-256 `80d3a42e85dd4d08558f618014f815a071d35cf954627708124e5fb085d5662b`,
+590,905 bytes, exceeded the fixed three-second deadline during passive startup
+readiness. The last observation reported held/in-flight paint and ordinary
+damage. No late response or cause for this page evaluation was established.
+There were zero requests after terminal, no permanent game binding or game DOWN,
+and no menu, arena, enemy consequence or native Quit claim. No retry occurred;
+the single authorization is consumed.
+
+At runtime release all 1026 source/input pins and 1394 host pins matched, 176
+successful original HTTP responses matched their pins, 85 named actual waits
+had both EOF, 277 recorded PIDs and matching groups were absent, both locks were
+free, and the board watcher was stopped. Thirteen incoming foreign code/census
+paths were unchanged. Direct original native/watchdog/supervisor-child/launcher
+exits were 1/0/0/0. One superseded source-Chrome ancillary launcher receipt stays
+UNKNOWN after a filename collision; its direct waits were retained, and the
+successful repeated qualification has complete direct and launcher closure.
+Historical ancillary gaps remain UNKNOWN. No box was created.
+
+Source/build/runtime and tool/test paths were explicitly released for the next
+worker; only this report remained for doc-only publication. The next concrete
+boundary is the page readiness evaluation and bounded diagnostic saturation.
+Further original work requires fresh authorization; request 808 remains closed.
