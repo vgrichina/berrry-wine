@@ -478,11 +478,19 @@
           "stride": 4
         },
         {
-          "name": "reserved",
+          "name": "consumer",
           "type": "i32",
           "offset": 160,
-          "size": 32,
-          "count": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "reserved",
+          "type": "i32",
+          "offset": 164,
+          "size": 28,
+          "count": 7,
           "stride": 4
         }
       ]

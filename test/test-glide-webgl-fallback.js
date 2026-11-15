@@ -16,7 +16,7 @@ const regions = require('../lib/region-map.generated');
 const { makeProducer } = require('./gpu-stream-fixture');
 const { bootRenderHarness } = require('./render-helper');
 const { Bridge } = require('../lib/glide-host');
-const GlideRenderWorker = require('../lib/glide-render-worker');
+const GlideRenderWorker = require('../lib/gpu-stream-render-worker');
 
 const { KIND, FMT, CONST } = GS;
 const W = 16, H = 8;
@@ -69,7 +69,7 @@ const W = 16, H = 8;
     assert.strictEqual(sent.length, 1, 'the Worker sent the software frame');
     assert.deepStrictEqual(Array.from(sent[0].pixels.subarray(0, 4)), [0x33, 0x66, 0x99, 0xff]);
     await endpoint.execute({ t: 'gps-kick', ring: base, mode: CONST.KICK_CLOSE });
-    assert.throws(() => endpoint.execute({ t: 'glide-command', op: 1 }), /Unknown Glide render message/,
+    assert.throws(() => endpoint.execute({ t: 'glide-command', op: 1 }), /Unknown GPU stream render message/,
       'the retired packet protocol is refused');
     endpoint.destroy();
   } finally { console.warn = warn; }

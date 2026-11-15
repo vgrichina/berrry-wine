@@ -84,7 +84,8 @@ u32 fields shared with the consumer are accessed with Atomics.
 | 56 | u32 api (1 = Glide: which host bridge consumes it) | producer |
 | 60 | u32 seq_counter (wasm address of the device-wide seq counter) | producer |
 | 64–127 | 16 completion slots: FENCE/READBACK store their seq here | consumer |
-| 128– | producer-private: seq storage, last_present, owner, producer_lock, handoffs, guest block pointers | producer |
+| 160 | u32 consumer (non-zero = a render Worker armed this ring; WAT never reads it) | consumer |
+| 128– | producer-private (except 160): seq storage, last_present, owner, producer_lock, handoffs, guest block pointers | producer |
 
 `lib/gpu-stream.generated.js` is the authoritative offset list.
 
@@ -117,13 +118,29 @@ The return value is 1 when an executor exists, 0 when none can (the open
 fails). After a SYNC/CLOSE kick the producer checks `read_pos == write_pos`
 and traps otherwise. Hosts:
 
-- **Local** (`lib/glide-host.js`): the kick drains the ring synchronously.
-- **Render Worker**: the bridge posts `{t:'gps-kick', ring, mode}`; the
-  Worker (`lib/glide-render-worker.js`) drains the same shared ring. ASYNC is
-  not awaited, SYNC/CLOSE park the guest until the reply.
-- **Guest thread → main** (`lib/guest-rpc.js`): an ASYNC kick publishes an
-  8-byte `{ring, mode}` packet on render-publication API 2 and returns 1;
-  SYNC/CLOSE are broker calls, so they cannot overtake published kicks.
+- **Local** (`lib/gpu-stream-host.js` Bridge; `lib/glide-host.js` is a shim
+  that only names the API): the kick drains the ring synchronously. This is
+  cooperative mode, where the page main thread cannot block for a SYNC kick.
+- **Render Worker** (`lib/gpu-stream-render-worker.js`, API-neutral): the
+  first `{t:'gps-kick', ring, mode}` message *arms* the ring by writing the
+  ring's `consumer` word. From then on the Worker drains with
+  `Atomics.waitAsync(write_pos)`.
+- **Doorbell** (`lib/gpu-stream-doorbell.js`): on an armed ring an ASYNC
+  kick is only `Atomics.notify(write_pos)`, with no message. A SYNC kick
+  `Atomics.wait`s on `done_seq` until `read_pos == write_pos`, checks
+  `error_code`, and gives up after 30 s with no progress. An unarmed ring
+  falls back to the page bridge.
+- **Guest thread** (`lib/guest-rpc.js`): in Threads mode the guest Worker
+  rings the render Worker's doorbell directly. Only CLOSE, and kicks before
+  the ring is armed, go through the page.
+
+The executor contract is `open` / `execute(record)` / present sink / `close`
+/ stats. The Worker selects a backend by name (webgl, or software when there
+is no OffscreenCanvas or WebGL). Only the ring attach, the doorbell, the sync
+reply, frames and `gps-error` cross the Worker boundary. PRESENT reaches the
+page as an ImageBitmap drawn into the window's `{kind:'gpu'}` frame layer,
+the same layer as the D3DIM GPU present, so nothing is read back. CPU pixel
+frames are sent only by the software backend.
 
 ## Resources
 

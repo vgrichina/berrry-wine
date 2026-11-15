@@ -25,7 +25,7 @@ const {startStaticServer,closeServer}=require('./static-server');
     page.on('console',message=>{if(message.type()==='error')console.error('browser console:',message.text());});
     await page.goto(`http://127.0.0.1:${server.address().port}/shared-render-test`);
     for(const file of ['region-map.generated','render-worker','d3d-command-stream','gl-command-stream','gpu-backend','mem-utils','gl-compat',
-      'gpu-stream.generated','gpu-stream','glide-host'])
+      'gpu-stream.generated','gpu-stream','gpu-stream-doorbell','gpu-stream-host','glide-host'])
       await page.addScriptTag({url:`/lib/${file}.js`});
     // test/gpu-stream-fixture.js (CommonJS) writes the ring the WAT would.
     await page.addScriptTag({content:`(function(){var module={exports:{}};var require=function(){return globalThis.GpuStream;};\n${
@@ -109,7 +109,9 @@ const {startStaticServer,closeServer}=require('./static-server');
           same(await bridge.kick(base,C.KICK_CLOSE),1,backend+' Glide close kick');
           if(bridge.endpoint||renderer.windows[7]._gpuFrameLayer||adoptions||terminations)
             throw new Error('Glide close failed endpoint/window retirement or retired peer endpoints');
-          return {backend,kicks:kicks.length,readbacks,presents:presented.length};
+          // The upload's ASYNC kick came after the endpoint armed the ring's
+          // doorbell: one Atomics.notify, no request message.
+          return {backend,kicks:kicks.length,readbacks,presents:presented.length,doorbells:bridge.stats.doorbells};
         }finally{await bridge.close();}
       }
       try{
@@ -262,8 +264,8 @@ const {startStaticServer,closeServer}=require('./static-server');
     assert.strictEqual(result.workers,1);assert.strictEqual(result.adoptions,1);assert.strictEqual(result.frames,2);
     assert.strictEqual(result.softwareGlFrames,2);
     assert.strictEqual(result.gpuTexturedDraws,2);
-    assert.deepStrictEqual(result.glide.map(run=>[run.backend,run.kicks,run.readbacks,run.presents]),
-      [['webgl',9,2,2],['software',9,2,2]]);
+    assert.deepStrictEqual(result.glide.map(run=>[run.backend,run.kicks,run.readbacks,run.presents,run.doorbells]),
+      [['webgl',8,2,2,1],['software',8,2,2,1]]);
     console.log('PASS actual shared worker GL + D3D9 + Glide WebGL/native software:',JSON.stringify(result));
   }finally{if(browser)await browser.close();await closeServer(server);}
 })().catch(error=>{console.error(error);process.exitCode=1;});

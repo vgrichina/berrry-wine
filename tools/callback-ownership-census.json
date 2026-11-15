@@ -148,7 +148,8 @@
     {
       "file": "lib/guest-thread-host.js",
       "name": "host-file",
-      "sha256": "4a8cac465283d4f646996fe33e8b88b81c6d27702b7966652aace17b2faca898",
+      "sha256": "08be3bbfb8e0819b5f3f4a7345cea7fa2d9a115fcc5ce4f6db3e97fc791fca7c",
+      "gpuStreamDoorbellReview20261114": "2026-11-14 GPU stream doorbell: slice results copy the guest-rpc gps counters into sliceStats. Diagnostic data only; no guest invocation, callback owner, continuation or retained guest reference added.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "quake2Review20261109": "Strict default-off quake2LoadObservation and quake2NativeWriteObservation options now survive GuestThreadHost -> slot-0 WorkerLink -> existing NodeWorker init. Secondary threads remain uncovered. Owning snapshot query delegates through the existing sequenced request transport, preserving retired records; it never reads shared memory on the main thread. No callback admission, clock/input, timeout, run, context restoration, retirement or termination policy changes. Actual Host startup reproduced missing observation on prior source; six native conversion/startup/headnode off/on pairs retain range epochs, UUID, actual PCs, lazy flags and direct/sparse memory parity, with actual Worker exit awaited. Other writers, edict ABA and browser support remain unqualified.",
@@ -169,7 +170,8 @@
     {
       "file": "lib/guest-worker.js",
       "name": "host-file",
-      "sha256": "72b010c62fca0dbbf78ead5d532f11905dda8a5a8a885ea6a5f1b086d28c34a3",
+      "sha256": "9da0ca84b4eb804232ee0fa04c53eeba27a6caf71d7d698313d5b9751396d7c2",
+      "gpuStreamDoorbellReview20261114": "2026-11-14 GPU stream doorbell: the Worker loads gpu-stream.generated.js + gpu-stream-doorbell.js so guest-rpc can notify/wait on a ring's shared header words, and slice results carry the gps counters. No guest invocation, callback owner, continuation or retained guest reference added.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
@@ -202,7 +204,8 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "66617a62811b5048f178c0c647da5925de234b8387dbf0b7879794472f134c79",
+      "sha256": "10bff8f58edf93428288e9caadb360b2b4d7c92b4d09b3cb96ab8c291d952f26",
+      "gpuStreamDoorbellReview20261114": "2026-11-14 GPU stream doorbell: gpu_stream_kick picks its consumer bridge from GpsRing.api (Glide only today) instead of assuming Glide. Same synchronous/promise results as before; no guest invocation, callback owner, continuation or retained guest reference added.",
       "gpuStreamV2Review20261114": "2026-11-14 GPU stream v2: glide_submit/glide_batch replaced by gpu_stream_kick(ring, mode), which drains a WAT-written ring in shared memory into an executor; Glide bridge also receives the --gpu-stream-dump path. Frames reach the compositor exactly as before; no guest invocation, callback owner, continuation or retained guest reference added.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",

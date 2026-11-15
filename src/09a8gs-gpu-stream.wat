@@ -161,7 +161,13 @@
     (field handoffs i32)        ;; owner changes (diagnostic)
     (field ring_guest i32)      ;; guest blocks behind ring_data/arena_data (heap_free)
     (field arena_guest i32)
-    (field reserved i32 8))
+    ;; consumer: nonzero while a render Worker drains this ring on its own
+    ;; (a doorbell consumer). Host producers then hand ASYNC work over with
+    ;; Atomics.notify on write_pos and wait for SYNC on done_seq themselves;
+    ;; 0 = kick through the host bridge. WAT never reads it: the alloc/free
+    ;; memory.fill clears it, the consumer sets and clears it.
+    (field consumer i32)
+    (field reserved i32 7))
 
   ;; Record header; the payload follows at (size-of GpsRecord).
   (layout GpsRecord

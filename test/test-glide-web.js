@@ -19,7 +19,7 @@ const puppeteer = require('puppeteer');
 
 const LIB = path.join(__dirname, '../lib');
 const LIB_SCRIPTS = ['surface.js', 'renderer.js', 'gpu-backend.js', 'gpu-stream.generated.js', 'gpu-stream.js',
-  'd3d-shader-ir.js', 'd3d9-shader.js', 'gpu-stream-webgl.js', 'glide-host.js'];
+  'd3d-shader-ir.js', 'd3d9-shader.js', 'gpu-stream-webgl.js', 'gpu-stream-doorbell.js', 'gpu-stream-host.js', 'glide-host.js'];
 // test/gpu-stream-fixture.js is a CommonJS module; give it the page's GpuStream.
 const FIXTURE = `(function(){var module={exports:{}};var require=function(){return globalThis.GpuStream;};\n${
   fs.readFileSync(path.join(__dirname, 'gpu-stream-fixture.js'), 'utf8')}\nglobalThis.GpsFixture=module.exports;})();`;
