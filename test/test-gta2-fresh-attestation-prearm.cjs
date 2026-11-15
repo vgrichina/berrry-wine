@@ -45,7 +45,8 @@ function sourcePins(controller){
   return {files:files.map(p=>({path:p,sha256:sha(fs.readFileSync(path.join(ROOT,p)))})),
     modules:[sha(fs.readFileSync(path.join(ROOT,'build/wine-assembly.wasm')))]};
 }
-async function browserFixture(out,mode,{dlls=false,prepareDebugger=false,tamperSource=false}={}){
+async function browserFixture(out,mode,{dlls=false,prepareDebugger=false,tamperSource=false,
+  fixtureFactory=authoredPE,extraPins=[],captureWitness=null}={}){
   assert(path.isAbsolute(out));assert(['main','worker'].includes(mode));
   fs.mkdirSync(out,{recursive:true});
   const watch=JSON.parse(fs.readFileSync(path.join(out,'..','watchdog-armed.json')));
@@ -63,10 +64,19 @@ async function browserFixture(out,mode,{dlls=false,prepareDebugger=false,tamperS
   // game-media archive. Native counters use public SetWindowTextA, so no
   // private counter reads or foreign OutputDebugString implementation is used.
   const fixtureFile=path.resolve(out,'..','..','authored-native-input.exe');
-  const fixture=path.relative(ROOT,fixtureFile),fixtureBytes=authoredPE();
+  const fixture=path.relative(ROOT,fixtureFile),fixtureBytes=fixtureFactory();
   if(!fs.existsSync(fixtureFile))fs.writeFileSync(fixtureFile,fixtureBytes,{flag:'wx'});
   assert.equal(sha(fs.readFileSync(fixtureFile)),sha(fixtureBytes));
-  const pins=sourcePins(controller);pins.files.push({path:fixture,sha256:sha(fixtureBytes)});record('pins.json',pins);
+  const pins=sourcePins(controller);pins.files.push({path:fixture,sha256:sha(fixtureBytes)});
+  if(dlls)for(const [file,expected] of [
+    ['test/binaries/dlls/comctl32.dll','28a41e6a35c4509924a32a99841a815cf49e1d3ee6912ec26a823e45472edfa4'],
+    ['test/binaries/dlls/commctrl.dll','39bbfafa8b759ebfcf6a00ee878fa494581a9144891bbd788bded61441de13f9']]){
+    const digest=sha(fs.readFileSync(path.join(ROOT,file)));assert.equal(digest,expected,'genuine installed library');
+    pins.files.push({path:file,sha256:digest});
+  }
+  for(const file of extraPins){assert(!path.isAbsolute(file)&&!file.split('/').includes('..'));
+    pins.files.push({path:file,sha256:sha(fs.readFileSync(path.join(ROOT,file)))});}
+  record('pins.json',pins);
   const app='fresh_attestation_native_fixture',workers=new Map(),tasks=[],http=[],scripts=new Map(),consoleEvents=[],pageScripts=[];
   let server,browser,joined,c,session,bridgeOptions,latest,owner,url,targetId,startToken;
   const evaluate=(expression,s=session)=>native.evaluate(c,s,expression);
@@ -92,6 +102,7 @@ async function browserFixture(out,mode,{dlls=false,prepareDebugger=false,tamperS
     fs.writeFileSync(path.join(out,label+'.png'),png,{flag:'wx'});
     latest={label,review:{...after,capturedAt,pngSHA256:sha(png)},diagnostic:await diagnostic()};
     record(label+'.json',latest);owner??={processId:latest.review.native.context.processId};
+    if(captureWitness)await captureWitness({label,png,evaluate,record});
     return latest;
   }
   async function authoredFault(name,intent){
@@ -113,9 +124,24 @@ async function browserFixture(out,mode,{dlls=false,prepareDebugger=false,tamperS
       const script=list.find(s=>s.url.includes(mode==='worker'?'/lib/guest-worker.js':'/lib/renderer-input.js'));
       assert(script,'current executed fixture source');
       const source=await c.send('Debugger.getScriptSource',{scriptId:script.scriptId},target.sessionId);
-      const result=await c.send('Debugger.setScriptSource',{scriptId:script.scriptId,
-        scriptSource:source.scriptSource+'\n// authored fresh-attestation source replacement\n'},target.sessionId);
-      assert(!result.exceptionDetails&&(!result.status||result.status==='Ok'));return result;
+      const changed=source.scriptSource+'\n// authored fresh-attestation source replacement\n';
+      let result;
+      try {
+        result=await c.send('Debugger.setScriptSource',{scriptId:script.scriptId,scriptSource:changed},target.sessionId);
+        assert(!result.exceptionDetails&&(!result.status||result.status==='Ok'));
+        record('source-mutation.json',{method:'Debugger.setScriptSource',url:script.url,sha256:sha(Buffer.from(changed))});
+      } catch(error) {
+        // Chrome 151 removed live editing. Execute a distinctly authored script
+        // under the actual pinned HTTP URL instead. This is an additional
+        // executed-source mutation, not evidence that live editing succeeded.
+        assert(String(error).includes('setScriptSource functionality no longer available'));
+        const expression='globalThis.__gta2AuthoredSourceMutation = "actual additional executed script";\n//# sourceURL='+script.url;
+        result=await c.send('Runtime.evaluate',{expression,returnByValue:true},target.sessionId);
+        assert(!result.exceptionDetails);
+        record('source-mutation.json',{method:'Runtime.evaluate additional named HTTP source',
+          liveEditSupported:false,url:script.url,sha256:sha(Buffer.from(expression)),result});
+      }
+      return result;
     }
     if(name==='focus-change'){
       const expression='instance.exports.set_focus(instance.exports.get_main_hwnd());true';
@@ -219,12 +245,17 @@ async function browserFixture(out,mode,{dlls=false,prepareDebugger=false,tamperS
     // COMCTL32 is the PE seed; its genuine COMMCTRL NE companion must be
     // resolved through the installed-name native lookup, never PE-preloaded.
     const installedDlls=dlls?['binaries/dlls/comctl32.dll']:[];
+    // Main-thread DllMain is synchronous. Install its genuine named NE
+    // companion as an ordinary resident file before entering that callback;
+    // it remains a native NE load, never a PE seed or substituted module.
+    const installedFiles=dlls?[{url:'/binaries/dlls/commctrl.dll',vfsPath:'C:\\commctrl.dll',loadMode:'required',
+      size:fs.statSync(path.join(ROOT,'test/binaries/dlls/commctrl.dll')).size}]:[];
     // Use the built-in selective trace before Worker creation so its existing
     // forwarding protocol carries these three authored public debug strings.
     await evaluate(`window.__waTraceApiNames=new Set(['AUTHORED_NATIVE_KEY_DOWN',
       'AUTHORED_NATIVE_KEY_UP','AUTHORED_NATIVE_QUIT']);true`);
     await evaluate(`(()=>{apps.${app}={label:'Fresh attestation native fixture',exe:${JSON.stringify('/'+fixture)},
-      dlls:${JSON.stringify(installedDlls)},files:[]};shell.launchApp('${app}').catch(e=>console.error(e));return true;})()`);
+      dlls:${JSON.stringify(installedDlls)},files:${JSON.stringify(installedFiles)},requiredFiles:true};shell.launchApp('${app}').catch(e=>console.error(e));return true;})()`);
     const nativeEnd=Date.now()+20000;
     for(;;){
       const state=await evaluate(`runningApps.map(a=>({running:a.wine.running,stopped:a.wine._stopped,
@@ -283,7 +314,7 @@ async function browserFixture(out,mode,{dlls=false,prepareDebugger=false,tamperS
         let faultDone=false;
         const actualSpawn=cp.spawn;
         if(cmd.childFault)cp.spawn=function(exe,args,options){
-          assert(args[0]===path.join(ROOT,'tools/gta2-paired-controller.cjs')&&args[1]==='release');
+          assert(args[0]===path.join(ROOT,'tools/gta2-paired-controller.cjs')&&args[1]==='release-preinit');
           const child=actualSpawn(cmd.childFault==='start-failure'?out+'/missing-authored-node':exe,args,options);
           if(cmd.childFault==='early-eof')child.stdin.end();
           if(cmd.childFault==='late-ack'){
@@ -335,4 +366,4 @@ if(require.main===module){
     console.error(error);process.exitCode=1;
   });
 }
-module.exports={authoredPE,sourcePins,browserFixture};
+module.exports={authoredPE,sourcePins,browserFixture,FIXTURE_WITNESS_VERSION:1};

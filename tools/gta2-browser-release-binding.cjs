@@ -89,7 +89,14 @@ function workerBridge(readNative) {
     }
     check(armed && msg.nonce === armed.nonce && msg.childToken === armed.childToken, 'native intent/child changed');
     if (msg.action === 'cancel') {closed = 'cancelled native intent';return {state:'CANCELLED',nonce:msg.nonce};}
+    if (msg.action === 'confirm') {
+      check(!armed.leaseToken && !armed.consumed.length && msg.leaseToken,'one fresh native lease confirmation');
+      check(Date.now()-armed.startedAt<=500,'native confirmation exceeded 500ms');
+      const actual=validate();armed.leaseToken=msg.leaseToken;
+      return {state:'CONFIRMED',nonce:msg.nonce,childToken:msg.childToken,leaseToken:msg.leaseToken,native:actual};
+    }
     if (msg.action === 'consume') {
+      check(armed.leaseToken && msg.leaseToken===armed.leaseToken,'current independently confirmed native lease required');
       check(Date.now() < armed.fallback-250 && Date.now()-bound.capturedAt < bound.maxAgeMs, 'native lease expired');
       check(armed.keys.includes(msg.key) && !armed.consumed.includes(msg.key), 'unarmed or duplicate native edge');
       const actual = validate();
@@ -179,11 +186,19 @@ function pageBridge(options, readNative) {
     }
     check(mainArm && body.nonce === mainArm.nonce && body.childToken === mainArm.childToken,'main intent/child changed');
     if (action === 'cancel') {seal('main intent cancelled');return {state:'CANCELLED',nonce:body.nonce};}
+    if (action === 'confirm') {
+      check(!mainArm.leaseToken && !mainArm.consumed.length && body.leaseToken,'one fresh main lease confirmation');
+      check(Date.now()-mainArm.startedAt<=500,'main confirmation exceeded 500ms');
+      const actual=mainNative();check(same(actual,mainBound.native),'main native context changed before confirmation');
+      mainArm.leaseToken=body.leaseToken;
+      return {state:'CONFIRMED',nonce:body.nonce,childToken:body.childToken,leaseToken:body.leaseToken,native:actual};
+    }
     if (action === 'finish') {
       check(mainArm.consumed.length === mainArm.keys.length,'main finish before consumption');
       mainArm=null;mainBound=null;return {state:'RELEASED',nonce:body.nonce,noReplay:true};
     }
     check(action === 'consume' && mainArm.keys.includes(body.key) && !mainArm.consumed.includes(body.key),'unique main native edge');
+    check(mainArm.leaseToken && body.leaseToken===mainArm.leaseToken,'current independently confirmed main lease required');
     check(Date.now() < mainArm.fallback-250 && Date.now()-mainBound.capturedAt < mainBound.maxAgeMs,'main lease expired');
     const actual = mainNative();check(same(actual,mainBound.native),'main native context changed');
     mainArm.consumed.push(body.key);
@@ -301,10 +316,10 @@ function pageBridge(options, readNative) {
   function down(key, info) {
     if (closed) return;
     try {
-      check(active && active.keys.includes(key) && !active.pendingInfo.has(key),'DOWN without unique independent native arm');
+      check(active && active.leaseToken && active.keys.includes(key) && !active.pendingInfo.has(key),'DOWN without unique independently confirmed native arm');
       active.pendingInfo.set(key,info || {});
       const commit = new SharedArrayBuffer(8);
-      const work=request('consume',{nonce:active.nonce,childToken:active.childToken,key,commit,deadline:Date.now()+3000})
+      const work=request('consume',{nonce:active.nonce,childToken:active.childToken,leaseToken:active.leaseToken,key,commit,deadline:Date.now()+3000})
         .then(receipt => {receipts.set(receipt.nonce+':'+key,receipt);return receipt;});
       active.promises.set(key,work);work.catch(seal);
     } catch (error) {seal(error);}
@@ -323,9 +338,14 @@ function pageBridge(options, readNative) {
   }
   renderer.handleKeyDown = down;renderer.handleKeyUp = up;renderer.handleKeyPress = press;
   const api = Object.freeze({epoch,app:options.app,
-    sourceProof() {
+    async sourceProof({compactHost=false}={}) {
       page();
-      return {bridge:pageBridge.toString(),nativeContext:readNative.toString(),host:WineAssembly.toString(),
+      const host=WineAssembly.toString();
+      const hostSHA256=compactHost?Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',
+        new TextEncoder().encode(host))),byte=>byte.toString(16).padStart(2,'0')).join(''):undefined;
+      page();
+      return {bridge:pageBridge.toString(),nativeContext:readNative.toString(),
+        ...(compactHost?{hostSHA256}:{host}),
         down:originalDown.toString(),up:originalUp.toString(),press:originalPress.toString()};
     },
     async read() {
@@ -362,9 +382,23 @@ function pageBridge(options, readNative) {
         const result = await request('arm',intent);
         check(same(page().identity,binding.review.pageIdentity),'owner changed during native arm');
         check(same(result.native,binding.review.native),'independent native arm scene changed');
-        active = {...clone(result),keys:[...intent.keys],pendingInfo:new Map(),physical:new Set(),upSeen:new Set(),promises:new Map()};
+        active = {...clone(result),startedAt:intent.startedAt,keys:[...intent.keys],pendingInfo:new Map(),physical:new Set(),upSeen:new Set(),promises:new Map()};
         return clone({...result,pageIdentity:binding.review.pageIdentity});
       } catch (error) {seal(error);throw error;}
+    },
+    async confirm({nonce,childToken,leaseToken}) {
+      try {
+        open();check(active && active.nonce===nonce && active.childToken===childToken && !active.leaseToken &&
+          !active.pendingInfo.size && page().physicalUp,'fresh unconsumed physical UP lease required');
+        check(typeof leaseToken==='string' && leaseToken.length>=16 && Date.now()-active.startedAt<=500,'bounded fresh lease token');
+        const result=await request('confirm',{nonce,childToken,leaseToken});
+        check(same(page().identity,binding.review.pageIdentity) && same(result.native,binding.review.native),
+          'current source/page/native lease changed before confirmation');
+        for(const record of [binding.review.native.context.main,binding.review.native.context.focus,binding.review.native.context.modal])
+          validateWindow(record,binding.windows);
+        check(page().physicalUp && Date.now()-active.startedAt<=500,'physical UP confirmation exceeded 500ms');
+        active.leaseToken=leaseToken;return clone({...result,pageIdentity:binding.review.pageIdentity});
+      } catch(error) {seal(error);throw error;}
     },
     async consumed({nonce,key}) {
       open();check(active?.nonce === nonce && active.promises.has(key),'no pending armed key');
@@ -450,15 +484,18 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
   assert(Array.isArray(cfg.pins.files)&&cfg.pins.files.length);
   for(const p of cfg.pins.files)assert(typeof p.path==='string'&&!path.isAbsolute(p.path)&&!p.path.split('/').includes('..'));
   checkPID(cfg.pid,cfg.startToken);checkPID(cfg.parentPID,cfg.parentStartToken);
-  const scripts=new Map(),workers=new Map(),sessions=cfg.owner?.workerTarget?[]:[pageSession];
+  const scripts=new Map(),workers=new Map(),sessions=[pageSession];
   const pinMap=new Map(cfg.pins.files.map(p=>['/'+p.path,p.sha256])),rows=[],sourceTasks=[];
-  let pageBody=true,workerBody=!cfg.owner?.workerTarget,invalid=null,sealed=false;
+  let pageBody=false,workerBody=!cfg.owner?.workerTarget,invalid=null,sealed=false;
   const previous=c.event;
   const current=()=>assert(!invalid,invalid);
   function source(session,script){
     let pathname=null;try{pathname=new URL(script.url).pathname;}catch{}
     const isPage=script.url===PAGE_URL,isWorker=script.url===WORKER_URL;
-    if(!isPage&&!isWorker&&!script.url.startsWith('wasm:')&&!pinMap.has(pathname))return;
+    if(!isPage&&!isWorker&&!script.url.startsWith('wasm:')&&!pinMap.has(pathname)){
+      if(/^https?:/.test(script.url))invalid='unrecorded executed HTTP source '+script.url;
+      return;
+    }
     const list=scripts.get(session)||new Map();scripts.set(session,list);
     // A script ID is scoped to this new debugger session and execution context.
     // Repeated identical inventory events may share one in-flight recovery only.
@@ -530,20 +567,42 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
     }
   }
   trace('attached-actual-targets');
+  // These are fresh observations on this child's current sessions, independent
+  // of recovering immutable script/module bodies. Keep their before/after
+  // owner ordering while overlapping the large wire-byte transfers.
+  const helper=cfg.owner?.workerTarget?require(path.join(ROOT,HELPER)):null;
+  const ownerTask=helper?(async()=>{
+    const page=await evaluate(c,pageSession,helper.PAGE_READ);
+    const actuals=new Map(await Promise.all([...workers].map(async([sid,w])=>[sid,
+      await evaluate(c,sid,w.url.includes('guest-worker')?helper.WORKER_READ:helper.RENDER_READ)])));
+    const after=await evaluate(c,pageSession,helper.PAGE_READ);return {page,actuals,after};
+  })():null;
+  ownerTask?.catch(()=>{});
+  const nativeTask=evaluate(c,pageSession,`__gta2NativeReleasePageV1.attest(${JSON.stringify({bindingToken:cfg.bindingToken,review:cfg.review})})`);
+  nativeTask.catch(()=>{});
   const inventory=Promise.all(sessions.flatMap(session=>[c.send('Runtime.enable',{},session),c.send('Debugger.enable',{},session)]));
   // This fresh function-body proof and the engine's fresh source recoveries are
   // independent observations and can run together on this child's transport.
-  const proofTask=evaluate(c,pageSession,'__gta2NativeReleasePageV1.sourceProof()');
+  const proofTask=evaluate(c,pageSession,'__gta2NativeReleasePageV1.sourceProof({compactHost:true})');
   proofTask.catch(()=>{});
   await inventory;current();trace('debugger-source-inventory');
   trace('current-process-identities-and-expected-pins');
   const proof=await proofTask;
   assert.equal(proof.bridge,pageBridge.toString(),'actual page bridge function body');
   assert.equal(proof.nativeContext,nativeContext.toString(),'actual page native guard function body');
-  assert(fs.readFileSync(path.join(ROOT,'host.js'),'utf8').includes(proof.host),'current actual WineAssembly class body');
+  // The installed engine's current function body is freshly hashed in-page,
+  // avoiding a second 400KB transfer while recovering the actual module wire
+  // bytes. The expected class is selected conservatively from current source;
+  // an ambiguous layout refuses rather than accepting a shortened body.
+  const hostText=fs.readFileSync(path.join(ROOT,'host.js'),'utf8');
+  const hostStart=hostText.indexOf('\nclass WineAssembly {')+1;
+  assert(hostStart>0&&hostText.indexOf('\nclass WineAssembly {',hostStart)===-1,'one current host class');
+  const hostEnd=hostText.indexOf('\n}',hostStart)+2;assert(hostEnd>hostStart);
+  const hostBody=hostText.slice(hostStart,hostEnd);
+  assert.equal(proof.hostSHA256,sha(Buffer.from(hostBody)),'current actual WineAssembly class body');
   for(const key of ['down','up','press'])assert(fs.readFileSync(path.join(ROOT,'lib/renderer-input.js'),'utf8').includes(proof[key]),'current actual original physical '+key+' body');
   const pageProof={bridgeSHA256:sha(Buffer.from(proof.bridge)),nativeContextSHA256:sha(Buffer.from(proof.nativeContext)),
-    hostClassSHA256:sha(Buffer.from(proof.host)),physicalBodies:Object.fromEntries(['down','up','press'].map(key=>[key,sha(Buffer.from(proof[key]))]))};
+    hostClassSHA256:proof.hostSHA256,physicalBodies:Object.fromEntries(['down','up','press'].map(key=>[key,sha(Buffer.from(proof[key]))]))};
   trace('actual-page-and-original-handler-bodies');
   let recoveredCount=0;
   for(;recoveredCount!==sourceTasks.length;){recoveredCount=sourceTasks.length;await Promise.all(sourceTasks);current();}
@@ -554,16 +613,15 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
     assert(rows.some(r=>{try{return new URL(r.url).pathname==='/'+file;}catch{return false;}}),'required actual executed source '+file);
   let live=null;
   if(cfg.owner?.workerTarget){
-    const helper=require(path.join(ROOT,HELPER));
     // Same current identity predicates as the imported passive chain, using
     // the module bytes recovered above on this child's own debugger sessions.
     // Fetching those same large byte arrays twice would waste the 500ms arm.
-    const page=await evaluate(c,pageSession,helper.PAGE_READ);
+    const observed=await ownerTask,page=observed.page;
     assert(page.isolated&&page.apps.length===1);const app=page.apps[0];
     assert(app.name===cfg.bridgeOptions.app&&app.running&&!app.stopped&&app.guestWorker);
     const matches=[];
     for(const w of workers.values())if(w.url.includes('guest-worker')&&!w.closed){
-      const actual=await evaluate(c,w.sessionId,helper.WORKER_READ);
+      const actual=observed.actuals.get(w.sessionId);
       if(actual?.endpointIdentity===app.guestEndpoint&&actual.slot===app.slot)matches.push({w,actual});
     }
     assert.equal(matches.length,1,'independent unique actual CPU');const {w,actual}=matches[0];
@@ -572,7 +630,7 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
     if(app.renderEndpoint!=='none'){
       const owners=[];
       for(const r of workers.values())if(r.url.includes('d3d-render-worker')&&!r.closed){
-        const endpoints=await evaluate(c,r.sessionId,helper.RENDER_READ);
+        const endpoints=observed.actuals.get(r.sessionId);
         for(const endpoint of endpoints)if(endpoint.id===app.renderEndpoint)owners.push({r,endpoint});
       }
       assert.equal(owners.length,1);const {r,endpoint}=owners[0];assert(!endpoint.failed&&!endpoint.control?.error);
@@ -581,7 +639,7 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
     }
     const identity={...app,workerTarget:w.targetId,workerInstance:actual.instance,moduleSha256:modules[0].sha256,...rendererIdentity};
     helper.same(cfg.owner,identity);
-    const after=await evaluate(c,pageSession,helper.PAGE_READ);assert(after.apps.length===1&&after.apps[0].running&&!after.apps[0].stopped);
+    const after=observed.after;assert(after.apps.length===1&&after.apps[0].running&&!after.apps[0].stopped);
     helper.same(identity,{...after.apps[0],workerTarget:w.targetId,workerInstance:actual.instance,moduleSha256:modules[0].sha256,...rendererIdentity});
     assert(!w.closed);live={identity};trace('actual-native-owner-and-renderer-identity');
     if(live.identity.renderEndpoint!=='none'){
@@ -592,7 +650,7 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
     }
   }else assert(rows.some(r=>r.bytecodeAvailable&&cfg.pins.modules.includes(r.sha256)),'actual main module required');
   trace('current-owning-backend');
-  const native=await evaluate(c,pageSession,`__gta2NativeReleasePageV1.attest(${JSON.stringify({bindingToken:cfg.bindingToken,review:cfg.review})})`);
+  const native=await nativeTask;
   assert.equal(native.bindingToken,cfg.bindingToken);assert.deepEqual(native.native,cfg.review.native);
   assert.deepEqual(native.pageIdentity,cfg.review.pageIdentity);assert.equal(native.reviewedPNG,cfg.review.pngSHA256);
   trace('current-final-file-bodies-begin');

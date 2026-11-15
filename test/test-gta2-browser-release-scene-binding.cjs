@@ -218,7 +218,8 @@ async function candidateBridgeModel() {
   const results = [];
   for (const fault of ['none','changed-native-context','late-prearm','duplicate-arm','binding-after-arm',
     'changed-endpoint','retired-owner','changed-handler','stale-lease','changed-nonce','dead-native',
-    'changed-instance','active-writer','nested-send']) {
+    'changed-instance','active-writer','nested-send','confirm-missing','confirm-duplicate',
+    'confirm-wrong-nonce','confirm-late','confirm-native-change']) {
     let native = {healthy:true,context:{main:{hwnd:1,generation:'1'},focus:{hwnd:1,generation:'1'}}};
     let reads = 0, commits = 0, forwarded = 0;
     const messages = [], self = {onmessage:() => forwarded++,postMessage:message => {
@@ -253,7 +254,20 @@ async function candidateBridgeModel() {
       assert(arm.result?.armed);
       if (fault === 'duplicate-arm') assert((await send('arm',intent)).error);
       else if(fault==='binding-after-arm')assert((await send('bind',{review})).error);
+      else if(fault.startsWith('confirm-')) {
+        const lease={nonce:intent.nonce,childToken:intent.childToken,leaseToken:'authored-lease-token'};
+        if(fault==='confirm-missing')assert((await send('consume',{...lease,key:38,commit:new SharedArrayBuffer(8),deadline:tick+3000})).error);
+        else {
+          if(fault==='confirm-duplicate')assert.equal((await send('confirm',lease)).result.state,'CONFIRMED');
+          if(fault==='confirm-wrong-nonce')lease.nonce='wrong-current-nonce';
+          if(fault==='confirm-late')tick+=501;
+          if(fault==='confirm-native-change')native.context.focus.generation='changed-before-confirmation';
+          assert((await send('confirm',lease)).error);
+        }
+      }
       else {
+        const confirmed=await send('confirm',{nonce:intent.nonce,childToken:intent.childToken,leaseToken:'authored-lease-token'});
+        assert.equal(confirmed.result.state,'CONFIRMED');
         if (fault === 'changed-native-context') native.context.focus.generation = 'changed';
         if (fault === 'changed-endpoint') context.endpointIdentity=99;
         if (fault === 'retired-owner') context.scopedRetiring=true;
@@ -263,7 +277,8 @@ async function candidateBridgeModel() {
         if (fault === 'changed-instance') context.instance={exports:{}};
         if (fault === 'active-writer') context.writerActive=()=>1;
         if (fault === 'nested-send') context.threadSendFrames.push({});
-        const receipt = await send('consume',{nonce:fault==='changed-nonce'?'changed-nonce':intent.nonce,childToken:intent.childToken,key:38,
+        const receipt = await send('consume',{nonce:fault==='changed-nonce'?'changed-nonce':intent.nonce,childToken:intent.childToken,
+          leaseToken:'authored-lease-token',key:38,
           commit:new SharedArrayBuffer(8),deadline:tick+3000});
         if (fault !== 'none') assert(receipt.error);
         else {
@@ -286,7 +301,9 @@ async function candidateBridgeModel() {
 async function candidatePageModel() {
   const vm = require('node:vm'), results = [];
   for (const fault of ['none','changed-context','changed-window-generation','changed-backend',
-    'changed-handler','duplicate-down','duplicate-arm','binding-after-arm']) {
+    'changed-handler','duplicate-down','duplicate-arm','binding-after-arm',
+    'confirm-missing','confirm-duplicate','confirm-wrong-nonce','confirm-late',
+    'confirm-native-change','confirm-physical-held']) {
     let native = {healthy:true,context:{processId:3,main:{hwnd:1,generation:'1',threadId:7},focus:{hwnd:1,generation:'1',threadId:7},modal:null}};
     let generation = '1', reads = 0, effects = 0, ups = 0;
     const ex = {wnd_lookup_generation:() => generation,wnd_lookup_live:() => 1,get_window_thread:() => 7};
@@ -296,24 +313,35 @@ async function candidatePageModel() {
       handleKeyUp(key) {ups++;this._physicalKeys[key]=false;},handleKeyPress() {throw Error('unexpected character');},
       peekKeyDownState(key) {return !!this._physicalKeys[key];}};
     const wine = {running:true,processId:3,renderer,memory:{buffer:new SharedArrayBuffer(128)},instance:renderer.windows[1].wasm,_wasmModule:{}};
-    const sandbox = {runningApps:[{name:'authored-model',wine}],crypto,SharedArrayBuffer,Int32Array,Atomics,Date,
+    let tick=Date.now();class ModelDate extends Date {static now(){return tick;}}
+    const sandbox = {runningApps:[{name:'authored-model',wine}],crypto,SharedArrayBuffer,Int32Array,Atomics,Date:ModelDate,
       setTimeout,clearTimeout,readNative:() => {reads++;return structuredClone(native);}};
     const context = vm.createContext(sandbox);
     vm.runInContext('('+candidatePageBridge.toString()+')({app:"authored-model",backend:"software",nativeOwner:{epoch:"authored-main",endpointIdentity:"main"}},readNative)',context);
     const api = sandbox.__gta2NativeReleasePageV1;
     const observed = await api.read();
     const review = {...observed,reviewed:true,observation:'AUTHORED MAIN PAGE MODEL ONLY',pngSHA256:'d'.repeat(64),
-      capturedAt:Date.now(),maxAgeMs:5000};
+      capturedAt:tick,maxAgeMs:5000};
     const binding = await api.bind(review);
     await api.attest(binding);
     const intent = {bindingToken:binding.bindingToken,nonce:'authored-page-001',intent:'model edge',keys:[38],
-      childToken:'authored-child',startedAt:Date.now()};
+      childToken:'authored-child',startedAt:tick};
     await api.arm(intent);
+    const lease={nonce:intent.nonce,childToken:intent.childToken,leaseToken:'authored-page-lease-token'};
+    if(!fault.startsWith('confirm-')||fault==='confirm-duplicate')await api.confirm(lease);
+    if(fault.startsWith('confirm-')&&fault!=='confirm-missing') {
+      if(fault==='confirm-wrong-nonce')lease.nonce='wrong-current-nonce';
+      if(fault==='confirm-late')tick+=501;
+      if(fault==='confirm-native-change')native.context.focus.generation='changed-before-confirmation';
+      if(fault==='confirm-physical-held')renderer._physicalKeys[38]=true;
+      await assert.rejects(api.confirm(lease));
+    }
     if (fault === 'changed-context') native.context.focus.generation='2';
     if (fault === 'changed-window-generation') generation='2';
     if (fault === 'changed-backend') wine._renderWorkerManager={ports:new Map([[1,{id:1,options:{backend:'webgl'}}]])};
     if (fault === 'changed-handler') renderer.handleKeyDown=()=>{};
-    if (fault === 'duplicate-arm') await assert.rejects(api.arm(intent));
+    if(fault.startsWith('confirm-')&&fault!=='confirm-missing'){}
+    else if (fault === 'duplicate-arm') await assert.rejects(api.arm(intent));
     else if (fault === 'binding-after-arm') await assert.rejects(api.bind(review));
     else {
       // Retain the installed handler for the changed-function fault: actual

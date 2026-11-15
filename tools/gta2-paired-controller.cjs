@@ -60,7 +60,46 @@ async function boundedOperation(c,label,work) {
     })]);
   } finally {clearTimeout(timer);}
 }
-async function release(out,file) {
+async function releasePreinit(out,file,loadedSources=null) {
+  if(!loadedSources){
+    // Bootstrap only: execute each helper from the very Buffer whose digest
+    // is reported. Reading its file after require() would not prove which
+    // bytes Node compiled if the file changed between loading and hashing.
+    const Module=require('node:module'),compiled=[];let current;
+    for(const relative of ['tools/gta2-browser-release-binding.cjs','tools/gta2-paired-controller.cjs']){
+      const filename=path.join(ROOT,relative),bytes=fs.readFileSync(filename);
+      const exact=new Module(filename,module);exact.filename=filename;
+      exact.paths=Module._nodeModulePaths(path.dirname(filename));
+      exact._compile(bytes.toString('utf8'),filename);exact.loaded=true;require.cache[filename]=exact;
+      compiled.push({path:relative,sha256:sha(bytes)});current=exact;
+    }
+    return current.exports.releasePreinit(out,file,Object.freeze(compiled));
+  }
+  const setup=JSON.parse(fs.readFileSync(file)),native=require('./gta2-browser-release-binding.cjs');
+  native.checkPID(setup.pid,setup.startToken);
+  const c=connection(setup.url,v=>save(out,setup.name+'-UNKNOWN.json',v));let timer;
+  try {
+    const configFile=await Promise.race([(async()=>{
+      await c.ready;
+      const stat=fs.readFileSync('/proc/'+process.pid+'/stat','utf8');
+      process.stdout.write(JSON.stringify({state:'INITIALIZED',pid:process.pid,
+        startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],at:Date.now(),loadedSources,loadedFromExactBytes:true,
+        nativeObservationsCached:false,sourceInventoriesCached:false,moduleBytesCached:false})+'\n');
+      return await new Promise((resolve,reject)=>{
+        if(process.stdin.readableEnded)return reject(Error('parent EOF before current guard configuration'));
+        let text='';const data=b=>{text+=b;const end=text.indexOf('\n');if(end<0)return;
+          process.stdin.off('data',data);process.stdin.off('end',eof);
+          try{assert.equal(end,text.length-1,'one initial configuration');resolve(JSON.parse(text.slice(0,end)).file);}catch(e){reject(e);}};
+        const eof=()=>reject(Error('parent EOF before current guard configuration'));
+        process.stdin.on('data',data);process.stdin.once('end',eof);
+      });
+    })(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('release initialization exceeded aggregate 3000ms')),
+      Math.max(0,3000-(Date.now()-setup.operationStartedAt)));})]);
+    clearTimeout(timer);
+    await release(out,configFile,{c,loadedSources,operationStartedAt:setup.operationStartedAt});
+  } finally {clearTimeout(timer);c.stop();process.stdin.destroy();}
+}
+async function release(out,file,initialized=null) {
   const cfg=JSON.parse(fs.readFileSync(file)),native=require('./gta2-browser-release-binding.cjs');
   native.checkPID(cfg.pid,cfg.startToken);
   assert(Array.isArray(cfg.keys)&&cfg.keys.length>=1&&cfg.keys.length<=2&&new Set(cfg.keys).size===cfg.keys.length&&cfg.keys.every(k=>Object.hasOwn(KEYS,k)));
@@ -68,14 +107,26 @@ async function release(out,file) {
   const phases=[];
   const trace=(phase,detail)=>{const at=Date.now();phases.push({phase,at,sinceStarted:at-cfg.startedAt,...(detail?{detail}:{})});};
   trace('release-program-entry',{programEnteredAt:PROGRAM_ENTERED_AT,entryMs:PROGRAM_ENTERED_AT-cfg.startedAt,pid:process.pid});
-  const c=connection(cfg.url,v=>save(out,cfg.name+'-UNKNOWN.json',v));
+  if(initialized){
+    assert.equal(cfg.operationStartedAt,initialized.operationStartedAt);
+    for(const loaded of initialized.loadedSources)assert.equal(loaded.sha256,
+      cfg.pins.files.find(p=>p.path===loaded.path)?.sha256,'initialized executed helper source changed');
+  }
+  const c=initialized?.c??connection(cfg.url,v=>save(out,cfg.name+'-UNKNOWN.json',v));
   c.protocol=v=>trace('protocol',v);
-  const operationTimer=setTimeout(()=>c.seal('independent release operation exceeded 3000ms'),Math.max(0,3000-(Date.now()-cfg.startedAt)));
-  let pending='',scheduled=false,ended=false,due=Infinity,armed,session,prearmTimer;
+  const operationTimer=setTimeout(()=>c.seal('independent release operation exceeded 3000ms'),Math.max(0,3000-(Date.now()-(cfg.operationStartedAt??cfg.startedAt))));
+  let pending='',scheduled=false,ended=false,due=Infinity,armed,session,prearmTimer,attestation,
+    confirmation=null,confirmed=false;
   process.stdin.on('data',b=>{
     pending+=b;let i;
     while((i=pending.indexOf('\n'))>=0){
       try {const v=JSON.parse(pending.slice(0,i));pending=pending.slice(i+1);
+        if(v.action==='confirm'){
+          assert(cfg.mode==='native'&&armed&&!confirmation&&!confirmed&&v.nonce===cfg.nonce&&
+            v.childToken===armed.childToken&&typeof v.leaseToken==='string'&&v.leaseToken.length>=16,
+            'one current independent source/native confirmation');
+          confirmation=v;continue;
+        }
         assert(armed&&Number.isSafeInteger(v.at)&&v.at>=armed.at&&v.at<=armed.fallback,'finite release schedule');
         scheduled=true;due=Math.min(due,v.at);
       }catch(error){ended=true;due=Date.now();}
@@ -85,7 +136,7 @@ async function release(out,file) {
   try {
     const prepare=(async()=>{
       await c.ready;trace('independent-transport-connected');session=(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;trace('independent-page-attached');
-      let attestation=null;
+      attestation=null;
       if(cfg.mode==='blank-control'){
         assert(!cfg.owner&&!cfg.review&&!cfg.bindingToken,'blank controls cannot admit a native owner');
         const actual=await native.evaluate(c,session,`({url:location.href,apps:typeof runningApps==='undefined'?0:runningApps.length})`);
@@ -114,7 +165,35 @@ async function release(out,file) {
     })();
     await Promise.race([prepare,new Promise((_,reject)=>{prearmTimer=setTimeout(()=>{c.seal('release prearm exceeded 500ms');reject(Error('release prearm exceeded 500ms'));},Math.max(0,500-(Date.now()-cfg.startedAt)));})]);
     clearTimeout(prearmTimer);
-    while(Date.now()<due)await wait(Math.min(5,due-Date.now()));
+    while(Date.now()<due){
+      if(confirmation){
+        assert(!ended&&!confirmed,'cancelled or duplicate confirmation');
+        attestation.assertCurrent();
+        const resultTask=native.evaluate(c,session,`__gta2NativeReleasePageV1.confirm(${JSON.stringify(confirmation)})`);
+        resultTask.catch(()=>{});
+        native.verifyPins(cfg.pins);
+        const result=await resultTask;
+        // The protocol round trip is also a barrier for this independent
+        // debugger's preceding live-edit/context/target invalidations.
+        attestation.assertCurrent();
+        native.checkPID(cfg.pid,cfg.startToken);native.checkPID(cfg.parentPID,cfg.parentStartToken);
+        assert(Date.now()-cfg.startedAt<=500,'current lease confirmation exceeded 500ms');
+        assert.equal(result.state,'CONFIRMED');assert.equal(result.leaseToken,confirmation.leaseToken);
+        assert.deepEqual(result.native,cfg.review.native);assert.deepEqual(result.pageIdentity,cfg.review.pageIdentity);
+        confirmed=true;confirmation=null;trace('current-source-native-lease-confirmed');
+        const receipt={...result,at:Date.now(),pid:process.pid,startedAt:cfg.startedAt};
+        save(out,cfg.name+'-confirmation.json',receipt);process.stdout.write(JSON.stringify(receipt)+'\n');
+      }
+      await wait(Math.min(5,Math.max(0,due-Date.now())));
+    }
+    if(cfg.mode==='native'&&!confirmed){
+      // The installed physical handler requires the independent confirmation
+      // token. Without it no original DOWN can have been consumed, so EOF or
+      // cancellation closes positively UNSENT without issuing cleanup input.
+      save(out,cfg.name+'-unsent.json',{state:'UNSENT',nonce:cfg.nonce,at:Date.now(),
+        independent:true,confirmed:false,physicalRequests:0,permanentClose:true});
+      throw Error('unconfirmed native intent closed UNSENT');
+    }
     const fired=Date.now(),receipts=[];
     for(const key of [...cfg.keys].reverse())receipts.push(await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session));
     const ack=Date.now();assert(ack-armed.at<=1750,'independent UP acknowledgement exceeded 1750ms');
@@ -130,31 +209,73 @@ async function release(out,file) {
     }
     save(out,cfg.name+'-up.json',{armed:armed.at,fallback:armed.fallback,due,fired,ack,receipts,released,nonce:cfg.nonce??null,state:'ACK',independent:true});
     await c.send('Target.detachFromTarget',{sessionId:session});
-  }catch(error){if(!c.closed)c.seal(error);throw error;}
+  }catch(error){
+    if(cfg.mode==='native'&&armed&&!confirmed&&!fs.existsSync(out+'/'+cfg.name+'-unsent.json'))
+      save(out,cfg.name+'-unsent.json',{state:'UNSENT',nonce:cfg.nonce,at:Date.now(),independent:true,
+        confirmed:false,physicalRequests:0,permanentClose:true,reason:String(error)});
+    if(!c.closed)c.seal(error);throw error;
+  }
   finally {clearTimeout(prearmTimer);clearTimeout(operationTimer);c.stop();process.stdin.destroy();
     fs.writeFileSync(out+'/'+cfg.name+'-prearm-phases.jsonl',phases.map(row=>JSON.stringify(row)).join('\n')+'\n',{flag:'wx'});}
 }
 async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},onAttempt=()=>{}}) {
   assert(Number.isInteger(ms)&&ms>=80&&ms<=1400);
   const native=require('./gta2-browser-release-binding.cjs'),stat=fs.readFileSync('/proc/'+process.pid+'/stat','utf8');
-  const config={...cfg,name,keys,mode:'native',parentPID:process.pid,parentStartToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],startedAt:Date.now()};
-  save(out,name+'-release-config.json',config);
-  const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});
-  let output='',errors='',error,armTimer,armed,childError;
+  const operationStartedAt=Date.now();let messageDeadline=operationStartedAt+3000,config;
+  save(out,name+'-release-initialization.json',{name,operationStartedAt,url:cfg.url,pid:cfg.pid,startToken:cfg.startToken});
+  const child=cp.spawn(process.execPath,[__filename,'release-preinit',out,out+'/'+name+'-release-initialization.json'],{stdio:['pipe','pipe','pipe']});
+  let output='',errors='',error,armTimer,armed,childError,messageBuffer='',messageWaiter;
+  const messages=[];
+  child.stdout.on('data',b=>{
+    output+=b;messageBuffer+=b;let end;
+    while((end=messageBuffer.indexOf('\n'))>=0){
+      const line=messageBuffer.slice(0,end);messageBuffer=messageBuffer.slice(end+1);
+      try{const value=JSON.parse(line);if(messageWaiter){const waiter=messageWaiter;messageWaiter=null;waiter.resolve(value);}else messages.push(value);}
+      catch(e){if(messageWaiter){messageWaiter.reject(e);messageWaiter=null;}else childError=e;}
+    }
+  });
+  const nextMessage=()=>new Promise((resolve,reject)=>{
+    if(messages.length)return resolve(messages.shift());
+    if(childError)return reject(childError);
+    const timer=setTimeout(()=>{messageWaiter=null;reject(Error('release initialization/prearm/confirmation timeout'));},Math.max(0,messageDeadline-Date.now()));
+    messageWaiter={resolve:v=>{clearTimeout(timer);resolve(v);},reject:e=>{clearTimeout(timer);reject(e);}};
+  });
   child.stderr.on('data',b=>errors+=b);child.stdin.on('error',e=>{childError=e;});
-  const joined=new Promise(resolve=>{child.once('error',e=>{childError=e;});child.once('close',(code,signal)=>resolve({pid:child.pid??null,code,signal}));});
+  const joined=new Promise(resolve=>{child.once('error',e=>{childError=e;messageWaiter?.reject(e);messageWaiter=null;});
+    child.once('close',(code,signal)=>{messageWaiter?.reject(Error('release child exit '+code));messageWaiter=null;resolve({pid:child.pid??null,code,signal});});});
   const events=[];
+  const aggregateTimer=setTimeout(()=>{c.seal('release gesture exceeded aggregate 3000ms');
+    messageWaiter?.reject(Error('aggregate release timeout'));messageWaiter=null;child.stdin.end();},3000);
   try {
-    armed=await new Promise((resolve,reject)=>{
-      armTimer=setTimeout(()=>reject(Error('release prearm timeout')),Math.max(0,500-(Date.now()-config.startedAt)));
-      child.stdout.on('data',b=>{output+=b;if(output.includes('\n')){try{resolve(JSON.parse(output.split('\n')[0]));}catch(e){reject(e);}}});
-      child.once('error',reject);child.once('exit',code=>{if(!output.includes('\n'))reject(Error('release child exit '+code));});
-    });
+    const initialized=await nextMessage();assert.equal(initialized.state,'INITIALIZED');
+    native.checkPID(initialized.pid,initialized.startToken);assert.equal(initialized.pid,child.pid);
+    assert(initialized.loadedFromExactBytes===true);
+    assert(initialized.nativeObservationsCached===false&&initialized.sourceInventoriesCached===false&&initialized.moduleBytesCached===false);
+    for(const loaded of initialized.loadedSources)assert.equal(loaded.sha256,cfg.pins.files.find(p=>p.path===loaded.path)?.sha256);
+    native.verifyPins(cfg.pins);native.checkPID(cfg.pid,cfg.startToken);
+    save(out,name+'-initialized.json',initialized);
+    config={...cfg,name,keys,mode:'native',parentPID:process.pid,parentStartToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],
+      operationStartedAt,initializedAt:initialized.at,startedAt:Date.now()};
+    messageDeadline=config.startedAt+500;save(out,name+'-release-config.json',config);
+    child.stdin.write(JSON.stringify({file:out+'/'+name+'-release-config.json'})+'\n');
+    armed=await nextMessage();
     clearTimeout(armTimer);assert(armed.armed&&armed.nonce===cfg.nonce&&Date.now()-config.startedAt<=500,'actual independent child arm within 500ms');
     assert.equal(armed.bindingToken,cfg.bindingToken);assert.deepEqual(armed.native,cfg.review.native);assert.deepEqual(armed.pageIdentity,cfg.review.pageIdentity);
     native.checkPID(armed.pid,armed.startToken);
     for(const key of keys){
-      await beforeDown();native.verifyPins(cfg.pins);native.checkPID(cfg.pid,cfg.startToken);
+      await beforeDown();native.checkPID(cfg.pid,cfg.startToken);
+      if(!events.length){
+        const leaseToken=crypto.randomUUID();
+        child.stdin.write(JSON.stringify({action:'confirm',nonce:cfg.nonce,childToken:armed.childToken,leaseToken})+'\n');
+        native.verifyPins(cfg.pins);
+        const current=await nextMessage();
+        assert.equal(current.state,'CONFIRMED');assert.equal(current.nonce,cfg.nonce);
+        assert.equal(current.childToken,armed.childToken);assert.equal(current.leaseToken,leaseToken);
+        assert.equal(current.pid,armed.pid);assert.equal(current.startedAt,config.startedAt);
+        assert.deepEqual(current.native,cfg.review.native);assert.deepEqual(current.pageIdentity,cfg.review.pageIdentity);
+        assert(Date.now()-config.startedAt<=500,'all independent current gates within 500ms');
+        native.checkPID(armed.pid,armed.startToken);
+      }else native.verifyPins(cfg.pins);
       assert(Date.now()<armed.fallback-250,'native release lease expired');
       const before=Date.now();onAttempt();
       await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session);
@@ -165,7 +286,7 @@ async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},
     child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,events[0].consumed.at+ms)})+'\n');
   }catch(e){error=e;}
   finally {
-    clearTimeout(armTimer);child.stdin.end();const result=await joined;
+    clearTimeout(armTimer);child.stdin.end();const result=await joined;clearTimeout(aggregateTimer);
     save(out,name+'-release-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout:output,stderr:errors});
     if(result.code!==0)error??=Error('release child failed '+result.code+' '+errors);
     error??=childError;
@@ -217,7 +338,18 @@ async function browser(out,backend) {
     c?.ws.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));fs.rmSync(out+'/profile',{recursive:true,force:true});record('closed.json',{at:Date.now(),nativeQuitClaim:false});
   }
   try {
-    server=await require(ROOT+'/test/static-server.js').startStaticServer({root:ROOT,crossOriginIsolated:true,rewritePath:p=>p.startsWith('/binaries/')?'/test'+p:p});
+    const staticServer=require(ROOT+'/test/static-server.js');
+    server=await staticServer.startStaticServer({root:ROOT,crossOriginIsolated:true,
+      rewritePath:p=>p.startsWith('/binaries/')?'/test'+p:p,
+      handleRequest:async(req,res)=>{
+        const name=new URL(req.url,'http://127.0.0.1').pathname;
+        if(!process.env.GTA2_VIEW_HEAD||! /\.(?:js|html|json|css|wat|watx)$/.test(name))return false;
+        const resolved=await staticServer.resolveStaticPath(ROOT,req.url);
+        if(resolved.status!==200)return false;
+        const body=fs.readFileSync(resolved.file);
+        res.writeHead(200,{'Content-Type':staticServer.mimeType(resolved.file),'Cache-Control':'no-store'});
+        res.end(body);return true;
+      }});
     server.prependListener('request',(req,res)=>{const h=crypto.createHash('sha256');let size=0;const add=b=>{if(b){b=Buffer.isBuffer(b)?b:Buffer.from(b);size+=b.length;h.update(b);}},wr=res.write,en=res.end;res.write=function(b){add(b);return wr.apply(this,arguments);};res.end=function(b){add(b);return en.apply(this,arguments);};res.once('finish',()=>{const hash=h.digest('hex'),url=new URL(req.url,'http://localhost').pathname,file=url.startsWith('/binaries/')?'/test'+url:url;log('http.jsonl',{url:req.url,status:res.statusCode,size,sha256:hash});if(res.statusCode===200&&pinMap.has(file)&&pinMap.get(file)!==hash)c?.seal('HTTP pin mismatch '+file);});});
     const port=server.address().port;
     for(const p of pins.http){const r=await fetch('http://127.0.0.1:'+port+p.url);assert.equal(r.status,200);assert.equal(sha(Buffer.from(await r.arrayBuffer())),p.sha256);}
@@ -311,5 +443,5 @@ async function browser(out,backend) {
     }
   }catch(e){if(!fs.existsSync(out+'/executed-sources.json'))record('executed-sources.json',{workers:[...workers.values()]});if(c&&!c.closed)c.seal('first causal failure: '+e);if(!fs.existsSync(out+'/UNKNOWN.json'))record('UNKNOWN.json',{state:'UNKNOWN',reason:String(e),at:Date.now(),permanentClose:true,laterRequestsAllowed:0});record('failure.json',{error:e.stack,noReplay:true,at:Date.now()});process.exitCode=1;await close('first causal failure');}
 }
-if(require.main===module){const [mode,out,arg]=process.argv.slice(2);(mode==='release'?release(out,arg):browser(out,arg)).catch(e=>{console.error(e);process.exitCode=1;});}
-module.exports={policy,KEYS,HELPER,sha,connection,release,releaseGesture,boundedOperation,devtoolsEndpoint};
+if(require.main===module){const [mode,out,arg]=process.argv.slice(2);(mode==='release'?release(out,arg):mode==='release-preinit'?releasePreinit(out,arg):browser(out,arg)).catch(e=>{console.error(e);process.exitCode=1;});}
+module.exports={policy,KEYS,HELPER,sha,connection,release,releasePreinit,releaseGesture,boundedOperation,devtoolsEndpoint};
