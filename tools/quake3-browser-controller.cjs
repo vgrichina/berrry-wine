@@ -556,23 +556,26 @@ function policy(c,launch,phase,now=Date.now()) {
   else assert(!phase&&now+3000<gameplayCutoff(launch),'irreversible 180 second gameplay cutoff');
   return c.mode==='play'?5000:30000;
 }
-function connection(url) {
+function connection(url,observer=require('./quake3-startup-observer.cjs').fromEnvironment({PAGE_READ:binding.PAGE_READ,HOST_READ:binding.HOST_READ,GL_OBSERVER})) {
   const ws=new WebSocket(url),pending=new Map();let id=0,terminal=null;
-  function fail(error){
+  if(observer)Object.defineProperty(ws,'startupObserver',{value:observer});
+  function fail(error,cause='transport-failure',trigger=null){
     terminal??=error;
+    observer?.markTerminal(cause,trigger);
     for(const p of pending.values()){clearTimeout(p.timer);p.reject(terminal);}
     pending.clear();
   }
   const ready=new Promise((r,j)=>{ws.onopen=r;ws.onerror=j;});
-  ws.addEventListener('close',()=>fail(Error('UNKNOWN CDP closed; never replay')));
-  ws.addEventListener('error',()=>fail(Error('UNKNOWN CDP error; never replay')));
-  ws.onmessage=msg=>{const v=JSON.parse(msg.data);if(v.id){const p=pending.get(v.id);if(p){
-    if(v.sessionId!==p.sessionId){fail(Error('UNKNOWN CDP response session changed; never replay'));return;}
+  ws.addEventListener('open',()=>observer?.socketEvent('open'));
+  ws.addEventListener('close',()=>{observer?.socketEvent('close');fail(Error('UNKNOWN CDP closed; never replay'),'socket-close');});
+  ws.addEventListener('error',()=>{observer?.socketEvent('error');fail(Error('UNKNOWN CDP error; never replay'),'socket-error');});
+  ws.onmessage=msg=>{observer?.received(msg.data);const v=JSON.parse(msg.data);if(v.id){const p=pending.get(v.id);if(p){
+    if(v.sessionId!==p.sessionId){fail(Error('UNKNOWN CDP response session changed; never replay'),'session-mismatch',{id:v.id});return;}
     clearTimeout(p.timer);pending.delete(v.id);v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);
   }}else api.event(v);};
   const api={ws,ready,event:()=>{},get closed(){return !!terminal;},send(method,params={},sessionId){
     if(terminal)return Promise.reject(terminal);
-    return new Promise((resolve,reject)=>{const n=++id,timer=setTimeout(()=>fail(Error('UNKNOWN '+method+'; never replay')),3000);pending.set(n,{resolve,reject,timer,sessionId});try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));}catch(e){fail(e);}});
+    return new Promise((resolve,reject)=>{const n=++id,start=performance.now(),startedAt=Date.now(),timer=setTimeout(()=>fail(Error('UNKNOWN '+method+'; never replay'),'deadline',{id:n,method,sessionId:sessionId??null}),3000);pending.set(n,{resolve,reject,timer,sessionId});try{const wire=JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})});observer?.sent(wire,{start,startedAt,deadline:start+3000});ws.send(wire);}catch(e){fail(e,'send-failed',{id:n,method});}});
   }};
   return api;
 }
@@ -612,12 +615,15 @@ async function hostBootstrap({out,evaluate,send,session,owner,browserIdentity,de
   const checkBrowser=()=>{const s=fs.readFileSync('/proc/'+browserIdentity.pid+'/stat','utf8');assert.equal(s.slice(s.lastIndexOf(')')+2).split(' ')[19],browserIdentity.startToken,'host browser process replaced');};
   assert(!fs.existsSync(out+'/host-bootstrap-attempt.json'),'one host bootstrap; never replay');
   record('host-bootstrap-attempt.json',{at:Date.now(),hostOnly:true,noReplay:true});
+  const at=Date.now(),captureDeadline=at+3000;
   await evaluate(`(() => {if(globalThis.__gltronHostUIEvents)throw Error('host observer already installed');const events=[];Object.defineProperty(globalThis,'__gltronHostUIEvents',{value:events});for(const type of ['mousedown','mouseup','click'])document.addEventListener(type,e=>events.push({type,trusted:e.isTrusted,at:Date.now(),consent:e.target===document.querySelector('#browser-fullscreen-consent button'),canvas:e.target?.tagName==='CANVAS',target:e.target?.id||e.target?.tagName}),true);return true;})()`);
   checkBrowser();const before=await evaluate(binding.HOST_READ);binding.sameHostOwner(owner,before);binding.consentButton(before);
-  const at=Date.now(),shot=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session),png=Buffer.from(shot.data,'base64');
-  assert(Date.now()-at<3000,'host screenshot deadline');
+  assert(Date.now()<captureDeadline,'host capture passive precheck deadline; no screenshot requested');
+  const shot=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session),png=Buffer.from(shot.data,'base64');
+  assert(Date.now()<captureDeadline,'host screenshot deadline');
   const scene={at,sha256:sha(png),nonce:crypto.randomUUID(),observation:before,browser:browserIdentity,hostOnly:true,gameAdmission:false};
   binding.reviewHostBootstrap(scene,{sha256:scene.sha256,observation:'geometry consistency only; personal review still required',hostOnly:true},await evaluate(binding.HOST_READ));
+  assert(Date.now()<captureDeadline,'host capture transaction validation deadline; no retry');
   fs.writeFileSync(out+'/host-bootstrap.png',png,{flag:'wx'});record('host-bootstrap.json',scene);
   const reviewFile=out+'/host-review.json';
   while(!fs.existsSync(reviewFile)){assert(Date.now()<Math.min(deadline,at+30000),'bounded personal host review expired');await wait(10);}
@@ -652,7 +658,7 @@ async function hostBootstrap({out,evaluate,send,session,owner,browserIdentity,de
 }
 function assertOriginalQualification(pins){
  const q=pins.qualification;assert(q,'original requires frozen causal Chrome qualification');
- const read=p=>{assert(typeof p.path==='string'&&p.path.startsWith('scratch/runs/20261114-quake3-browser-current-frag/')&&!p.path.includes('..'));const b=fs.readFileSync(ROOT+'/'+p.path);assert.equal(sha(b),p.sha256,'qualification bytes changed');return JSON.parse(b);};
+ const read=p=>{assert(typeof p.path==='string'&&['scratch/runs/20261114-quake3-browser-current-frag/','scratch/runs/20261115-quake3-startup-operation-cause/'].some(root=>p.path.startsWith(root))&&!p.path.includes('..'));const b=fs.readFileSync(ROOT+'/'+p.path);assert.equal(sha(b),p.sha256,'qualification bytes changed');return JSON.parse(b);};
  const report=read(q.report),source=read(q.pins),native=report.queuedNative;
  assert(report.passed&&report.originalLaunched===false&&report.chromeUnknown?.helperTerminal&&report.chromeWait?.actualWait&&report.chromeWait.stdoutEOF&&report.chromeWait.stderrEOF,'complete causal Chrome controls required');
  assert(report.passiveInput?.length===3&&report.passiveInputRed?.dispatches===0&&report.passiveInputLateACK?.chainClosed,'production baseline and terminal input controls required');
@@ -699,7 +705,7 @@ async function browser(out,backend) {
   }
   async function close(reason){
     if(closing)return;closing=true;clearTimeout(cutoffTimer);record('close-reason.json',{reason,at:Date.now(),hostOnly:true});
-    if(c)try{await c.send('Browser.close');}catch(e){record('browser-close-error.json',{error:String(e)});}
+    if(c&&!c.closed)try{await c.send('Browser.close');}catch(e){record('browser-close-error.json',{error:String(e)});}
     if(browser){let timer;try{await Promise.race([chromeWait,new Promise((_,j)=>{timer=setTimeout(()=>j(Error('browser close timeout')),5000);})]);}catch(e){browser.kill('SIGTERM');await chromeWait;}finally{clearTimeout(timer);}}
     c?.ws.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));fs.rmSync(out+'/profile',{recursive:true,force:true});record('closed.json',{at:Date.now(),nativeQuitClaim:false});
   }
@@ -857,7 +863,7 @@ async function browser(out,backend) {
     }
   }catch(e){
     record('failure.json',{error:e.stack,code:e.code??null,inputState:e.inputState??null,ticketObservation:e.ticketObservation??null,captureNonce:e.captureNonce??null,noReplay:true,at:Date.now()});process.exitCode=1;
-    if(c&&session)try{const shot=await c.send('Page.captureScreenshot',{format:'png'},session);fs.writeFileSync(out+'/first-failure.png',Buffer.from(shot.data,'base64'),{flag:'wx'});record('first-failure-state.json',await state());}catch(captureError){record('failure-capture-error.json',{error:String(captureError)});}
+    if(c&&!c.closed&&session)try{const shot=await c.send('Page.captureScreenshot',{format:'png'},session);fs.writeFileSync(out+'/first-failure.png',Buffer.from(shot.data,'base64'),{flag:'wx'});record('first-failure-state.json',await state());}catch(captureError){record('failure-capture-error.json',{error:String(captureError)});}
     await close('first causal failure');
   }
 }
