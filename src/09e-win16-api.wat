@@ -9281,6 +9281,8 @@
       (then (call $win16_SetMenu) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 180))
       (then (call $win16_GetSysColor) (return (i32.const 1))))
+    (if (i32.eq (local.get $ordinal) (i32.const 281))
+      (then (call $win16_GetSysColorBrush) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 181))
       (then (call $win16_SetSysColors) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 6))
@@ -12763,6 +12765,13 @@
     (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
     (call $win16_api_return (i32.const 2)))
 
+  ;; USER.281 GetSysColorBrush: one WORD, FAR PASCAL, HBRUSH16 in AX.
+  ;; Share the real system-owned cache with USER32, then narrow its handle.
+  (func $win16_GetSysColorBrush
+    (i32.store (global.get $reg_base) (call $win16_h16
+      (call $gdi_system_brush (call $win16_arg16 (i32.const 0)))))
+    (call $win16_api_return (i32.const 2)))
+
   ;; USER.181 SetSysColors(nChanges, lpSysColor, lpColorValues). The 16-bit
   ;; shape is not the 32-bit one: lpSysColor is an array of *ints*, two bytes
   ;; each, while lpColorValues is an array of COLORREFs, four bytes each. So
@@ -14862,9 +14871,11 @@
     ;; way. Reading it after meant the forget below never ran, and every
     ;; CreateBrush/DeleteObject pair burned a slot of the 4096-entry Win16
     ;; handle map — IdleWild filled it and trapped after ~400 batches.
-    (local.set $dynamic (i32.or
-      (i32.ne (call $gdi_object_record (local.get $h)) (i32.const 0))
-      (i32.ne (call $gdi_rgn_record (local.get $h)) (i32.const 0))))
+    (local.set $dynamic (i32.and
+      (i32.eqz (call $gdi_system_brush_owned (local.get $h)))
+      (i32.or
+        (i32.ne (call $gdi_object_record (local.get $h)) (i32.const 0))
+        (i32.ne (call $gdi_rgn_record (local.get $h)) (i32.const 0)))))
     (call $win16_call32_begin (i32.const 1))
     (call $handle_DeleteObject (local.get $h)
       (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
