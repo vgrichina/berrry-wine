@@ -100,6 +100,78 @@ UP while another verifies refusal during an unresolved physical gesture. All
 thirteen actual CLI controls pass on retest. Failed logs are retained. No
 original was used to discover or retry this controller defect.
 
-The full locked build passes. Publication and the single bounded original
-installer attempt follow media verification. No original executable has yet
-run in this task, and no emulator repair has yet been justified.
+The full locked build passes. Controller publication on main was
+`b2be3338631c40fb68bdb1bc4515b1d4de440fa0`, with strict pull/push both 0,
+before the single original attempt. All four compressed archives and four
+raw BINs have now been verified. The remaining archive SHA-256 values are:
+
+| Disc | Archive SHA-256 | Raw BIN SHA-256 |
+| --- | --- | --- |
+| 2 | 8383c8eab1bf19a3415a383ac7d1594d573835c5d8ee1fc6c6c877136fd025e9 | c5f8c47cc608f2ef01fe086615080033f2989bee07fc62751d5e27f74c461ec4 |
+| 3 | 6f75eeb48156c63b5430534ebae47aee48e7d4cd50bfcd1e02ec1db0c47e03ca | f6c6e3e97d55658e618e875420d12fb9c6369ec6d7b6487c83ce09e64680b597 |
+| 4 | bdfa703a34cf6d60cf1495a400b548c88182cf63d7d0b9dea6d9f497b8f035a0 | e8c24e5bb4658b5344cbfb8540afd625208327216e681cd312e597526e1b9479 |
+
+Disc 2/3 raw images are each 800112768 bytes; Disc 4 is 323703408 bytes.
+All raw SHA-1s match the item description. CUE sizes, hashes, exact absolute
+paths and download URLs are recorded in `acquisition.json`. Acquisition used
+no artwork or other compilation. Archives and extracted originals remain
+outside the run. Final `/home` free space exceeded 6 GB.
+
+One supervised original attempt targeted `D:\Setup\Setup.exe`, using the
+existing CUE/BIN media mount, real installer child-process support, an empty
+ordinary writable overlay, real ticks, default batch size, 900-second native
+bound, independent prearmed 920-second watchdog, and final 180-second native
+Quit reserve. No installation files or registry values were fabricated.
+
+The first demonstrated failure occurs **before installer entry/UI**, while
+initializing the automatically loaded local Win98 `COMCTL32.dll`:
+
+```text
+DLL: comctl32.dll at 0x52c000, DllMain=0x5461cd
+DllMain trapped: Missing NE image COMMCTRL
+crash EIP=0x5585d2 ESP=0x74fffcc EAX=0x0
+yield=18 halt=3
+Error: DLL initializer did not return: module=0x52c000
+```
+
+The exact request is `ThunkConnect32`, LS01/LB01, checksum 7834, data export
+`Cctl1632_ThunkData16`, companion `commctrl.dll`, source `comctl32.dll`,
+reason 1, QT offset 36, FT offset 68. The loader's normal NE source resolver
+cannot find the original companion. A full existing local binary-tree search
+found no `COMMCTRL.DLL`. The real 577808-byte COMCTL32 has SHA-256
+`28a41e6a35c4509924a32a99841a815cf49e1d3ee6912ec26a823e45472edfa4`.
+The other loaded PE was 598288-byte OLEAUT32, SHA-256
+`baeb2f7c1b8be56738d34e1d1ddf8e0eebd3a633215dc1575e14656be38b939d`.
+
+`lib/ne-guest-bridge.js` additionally has an explicit closed prerequisite
+after companion inspection: native connection lifetime and FT prolog are
+required before LS relay publication. That later guard was **not executed**
+in this run. Supplying a random alternate COMCTL32, forcing DllMain success,
+or skipping the native initializer would not establish real thunk behavior.
+No emulator repair, source adoption, native DLL substitution, original retry,
+or bypass was made. The foreign NE/thunk WIP remains unchanged. The earlier
+InstallShield local-COM hypothesis was not reached or demonstrated.
+
+The preflight records 3135 file pins, exact resolved PATH Node/Python, ldd and
+prelaunch native mappings, media/installer/game identities, source SHA above,
+and a 442951-byte Git binary patch for relevant WIP. The explicitly selected
+2202536-byte canonical module has SHA-256
+`f866c8a9247f51fabd296b012d5b963c51afb97fc29f786b22798c39d4e2cff0`.
+Postflight before source release found zero drift. No source tree, media or
+WASM copy was placed in the run.
+
+Native PID 161451 / start token 275768454 exited **1** after 0.346 seconds.
+Watchdog 161450, supervisor 161376 and outer 161375 each actually waited 0
+with both EOF. Launcher 161374 and all recorded runtime PIDs are absent;
+`heavyReleased` is true. This is a host startup failure, not native Quit or
+an installer result. No binding, input gesture, installer UI, serial prompt,
+media check, household, Sim selection or action occurred. Serial and media
+requirements therefore remain unknown. The overlay is empty.
+
+The process exited before live host mapping inspection; that check captured
+zero rows and establishes no actual mapping coverage. The prelaunch map pins
+do not fill this gap. `--png` was not reached, so there are zero screenshots
+and no visual review claim. These missing proofs are explicit in the run
+result. No box was created: ID/expiry/stop receipt are null, state NOT_CREATED.
+Source/runtime/build were released to the next assigned worker after actual
+waits and zero-drift verification. This single task stops after publication.
