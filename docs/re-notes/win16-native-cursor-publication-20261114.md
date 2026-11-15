@@ -4,6 +4,8 @@ The generic cursor path now resolves supported predefined system IDs and module-
 
 NE group entries select an actual child image, whose LOCALHEADER supplies the hotspot. The existing bounded classic DIB decoder copies the AND/XOR planes into owned bitmap records. Loaded cursors retain module ownership, survive DestroyCursor/DestroyIcon, and retire when their module unloads. Unload clears threads selecting those retired records. A shared NE cursor resends its pixels to each selecting host instance because the host CSS cache is private to that instance. Private cursor caching and destruction remain covered by the adjacent cursor/icon suite. Unsupported image encodings fail instead of returning a fabricated cursor.
 
+The existing browser rasterizer represents the monochrome AND=1/XOR=1 desktop-invert combination as opaque black. This fix preserves that policy; the evidence establishes mask transparency and decoded visible pixels, not desktop-XOR parity. System cursor pixels are supplied by the browser from the observed CSS shape; no system-cursor PNG was fabricated.
+
 The real native baseline completed its far-Pascal calls but returned handle 257 for both system IDs and published no cursor event. Its assertion failed on actual distinct-handle semantics. The repaired native fixture executes imported USER/KERNEL calls through the production WASM, not test-only WAT API wrappers. It proves:
 
 - System 0x7f84 and 0x7f85 produce distinct handles and actual host `ew-resize` and `ns-resize` output; previous-handle and NULL results agree with those selections.
