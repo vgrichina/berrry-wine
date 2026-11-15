@@ -201,7 +201,9 @@ fmt:
 | 15 | A8B8G8R8 (bytes R,G,B,A — what WebGL and the software rasterizer take without a swizzle) |
 
 Further formats are appended to this list. Codes 1–4 match the existing
-native16 format codes in `lib/d3dim-gpu.js`. Resources start zeroed.
+native16 format codes in `lib/d3dim-gpu.js`. Resources start zeroed, except
+a DS, which starts at depth 1.0 (far) and stencil 0 in every executor, so a
+draw before the first CLEAR passes a LESS test.
 
 The **required** formats are A8B8G8R8 (TEX2D and RT), D16 and D24S8 (DS).
 Every other code exists only so WAT can name what it converts from; WAT
@@ -306,8 +308,11 @@ and the generated layouts alone (`lib/gpu-stream.js` `validateLayout`,
 - **Readback and present.** READBACK writes A8B8G8R8 rows top-down at the
   given pitch. PRESENT hands the page a frame with `dstX`, `dstY` and
   `stamp`; the page shows a frame only if its stamp is not older (serial
-  arithmetic) than the last one shown. A non-zero dst is refused until
-  windowed present lands (migration slice D2).
+  arithmetic) than the last one shown. `dstX`/`dstY` are relative to the
+  window's client origin: a non-zero one (a windowed or child-window Blt
+  present) places the frame there in a client-sized layer; a frame that
+  covers the client replaces the layer, a partial one replaces only its
+  rect and keeps the rest of the previous frame.
 - **Fail fast.** Anything outside this section, or anything an executor
   cannot do exactly, throws a `GpsError`; `drain()` stores it in
   `error_seq`/`error_code` and the producer traps on its next SYNC kick.

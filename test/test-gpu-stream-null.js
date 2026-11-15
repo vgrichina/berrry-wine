@@ -147,8 +147,7 @@ expectFail((p) => { p.emit('CREATE', { id: 1, kind: KIND.RT }); p.emit('READBACK
   assert.strictEqual(ex.stats().records, 2);
 }
 // The page Presenter (the PRESENT sink): an older stamp is dropped, equal
-// and newer stamps are shown (with u32 wrap), and a nonzero dst is refused
-// until D2 implements window-relative presents.
+// and newer stamps are shown (with u32 wrap).
 {
   const { Presenter } = require('../lib/gpu-stream-host');
   const shown = [];
@@ -158,8 +157,63 @@ expectFail((p) => { p.emit('CREATE', { id: 1, kind: KIND.RT }); p.emit('READBACK
   pr.stamp = 0xfffffffe; pr.present({ surface, hwnd: 1, stamp: 1 });
   assert.deepStrictEqual(shown, [5, 6, 6, 1]);
   assert.strictEqual(pr.stale, 2, 'stamps 4 and 0xfffffff0 after 6 were dropped');
-  assert.throws(() => pr.present({ surface, hwnd: 1, stamp: 7, dstX: 2, dstY: 0 }), /dst offset/);
-  assert.throws(() => pr.present({ surface, hwnd: 1, stamp: 7, dstX: 0, dstY: 3 }), /dst offset/);
+}
+// A window-relative dst (windowed / child Blt present): the frame lands at
+// dstX,dstY in a client-sized layer; a partial frame keeps the rest of the
+// previous one, a covering frame replaces it, and pixel and bitmap frames
+// place identically. A fake 2D context keeps one RGBA buffer per canvas.
+{
+  const { Presenter } = require('../lib/gpu-stream-host');
+  const fakeCanvas = (w, h) => {
+    const c = { width: w, height: h, px: null };
+    const buf = () => (c.px && c.px.length === c.width * c.height * 4) ? c.px : (c.px = new Uint8Array(c.width * c.height * 4));
+    const put = (src, sw, sh, sx, sy, dx, dy, w2, h2) => {
+      const d = buf();
+      for (let y = 0; y < h2; y++) for (let x = 0; x < w2; x++) {
+        const tx = dx + x, ty = dy + y;
+        if (tx < 0 || ty < 0 || tx >= c.width || ty >= c.height) continue;
+        const s = ((sy + y) * sw + sx + x) * 4;
+        d.set(src.subarray(s, s + 4), (ty * c.width + tx) * 4);
+      }
+    };
+    c.getContext = () => ({
+      save() {}, restore() {}, imageSmoothingEnabled: true,
+      clearRect(x, y, w2, h2) { put(new Uint8Array(w2 * h2 * 4), w2, h2, 0, 0, x, y, w2, h2); },
+      createImageData: (w2, h2) => ({ width: w2, height: h2, data: new Uint8ClampedArray(w2 * h2 * 4) }),
+      putImageData(img, x, y) { put(new Uint8Array(img.data.buffer), img.width, img.height, 0, 0, x, y, img.width, img.height); },
+      drawImage(src, sx, sy, sw, sh, dx, dy) { put(src.px, src.width, src.height, sx, sy, dx, dy, sw, sh); },
+    });
+    return c;
+  };
+  const solid = (w, h, rgba) => { const a = new Uint8Array(w * h * 4); for (let i = 0; i < w * h; i++) a.set(rgba, i * 4); return a; };
+  const win = { hwnd: 1, w: 10, h: 8, clientRect: { x: 0, y: 0, w: 8, h: 6 }, _backCanvas: {} };
+  const renderer = { windows: { 1: win }, scheduleRepaint() {} };
+  for (const kind of ['pixels', 'bitmap']) {
+    const pr = new Presenter({ api: 'test', renderer, createCanvas: fakeCanvas });
+    const frame = (w, h, rgba, dstX, dstY, stamp) => {
+      const px = solid(w, h, rgba);
+      return kind === 'pixels' ? { pixels: px, width: w, height: h, hwnd: 1, dstX, dstY, stamp }
+        : { bitmap: { width: w, height: h, px, close() {} }, width: w, height: h, hwnd: 1, dstX, dstY, stamp };
+    };
+    const at = (x, y) => Array.from(pr.layer.canvas.px.subarray((y * 8 + x) * 4, (y * 8 + x) * 4 + 4));
+    pr.present(frame(4, 3, [255, 0, 0, 255], 2, 1, 1));
+    assert.strictEqual(pr.layer.canvas.width, 8, `${kind}: layer is client-sized`);
+    assert.strictEqual(pr.layer.canvas.height, 6);
+    assert.strictEqual(win._gpuFrameLayer, pr.layer, `${kind}: layer attached to the window`);
+    assert.deepStrictEqual(at(2, 1), [255, 0, 0, 255], `${kind}: frame placed at dst`);
+    assert.deepStrictEqual(at(5, 3), [255, 0, 0, 255]);
+    assert.deepStrictEqual(at(1, 1), [0, 0, 0, 0], `${kind}: left of dst is clear`);
+    assert.deepStrictEqual(at(6, 4), [0, 0, 0, 0], `${kind}: past the frame is clear`);
+    pr.present(frame(2, 2, [0, 255, 0, 255], 3, 2, 2));
+    assert.deepStrictEqual(at(3, 2), [0, 255, 0, 255], `${kind}: partial frame drawn`);
+    assert.deepStrictEqual(at(2, 1), [255, 0, 0, 255], `${kind}: partial frame keeps the previous one`);
+    pr.present(frame(9, 7, [0, 0, 255, 255], -1, -1, 3));
+    assert.deepStrictEqual(at(0, 0), [0, 0, 255, 255], `${kind}: covering frame (negative dst) replaces`);
+    assert.deepStrictEqual(at(7, 5), [0, 0, 255, 255]);
+    pr.present(frame(2, 2, [9, 9, 9, 255], 1, 1, 2));
+    assert.strictEqual(pr.stale, 1, `${kind}: stale stamp dropped before placement`);
+    assert.deepStrictEqual(at(1, 1), [0, 0, 255, 255]);
+  }
 }
 
 console.log('test-gpu-stream-null: PASS');
