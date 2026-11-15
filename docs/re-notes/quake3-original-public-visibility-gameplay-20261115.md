@@ -29,7 +29,17 @@ menu/arena images. Game gestures require fresh complete five-second scenes
 UNKNOWN permanently closes the route; only passive already-arriving events and
 independent host teardown remain allowed.
 
-## Concrete blocker and preserved preparation
+## Initial blocker and subsequent gate clarification
+
+The initial stop below was superseded by the coordinator's 04:56:20 UTC
+clarification, read during finalization: actual native/watchdog/supervisor-child
+waits with both EOF, explicit release and absent PIDs suffice for new work.
+Missing detached launching-tool outer receipts and ancillary watcher waits remain
+historical UNKNOWN and do not bar future work. The initial blocker report remains
+in Git at `30db2ed90` and `light-blocked-result.json` preserves its evidence.
+The same assignment continues light, waiting for the fresh Sims651 implementation
+run `20261115-sims-kernel651-implemented` to release. No original authorization
+has been used. The final outcome remains pending.
 
 Execution stopped before heavy work. StarCraft posted its explicit source/build/
 runtime release at 04:51:05 UTC. I personally read all 326 available named actual

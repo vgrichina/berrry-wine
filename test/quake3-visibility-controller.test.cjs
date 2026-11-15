@@ -65,3 +65,20 @@ test('native qualification is only composed; it preserves complete independent i
  assert(changed.includes("Runtime.addBinding"));assert(changed.includes("visibility-operands.jsonl"));
  assert.throws(()=>diagnostic.qualificationSource(source.replace('  c.event=v=>{','  c.event = v => {')),/anchor/);
 });
+test('fresh original uses the same diagnostic controller and unchanged launch/input/capture rules',()=>{
+ const source=fs.readFileSync('tools/quake3-browser-controller.cjs','utf8'),changed=diagnostic.compose(source);
+ // Reverse only the declared binding additions. The browser body, including
+ // registered URL, one-time owner, finite UP and UNKNOWN close, is identical.
+ const begin='async function browser(out,backend) {',end='if(require.main===module)';
+ const old=source.slice(source.indexOf(begin),source.indexOf(end));
+ const fresh=changed.slice(changed.indexOf(begin),changed.indexOf(end))
+  .replace("      if(v.method==='Runtime.bindingCalled'&&v.params.name==='"+diagnostic.BINDING+"'){log('visibility-operands.jsonl',{at:Date.now(),sessionId:v.sessionId,observation:JSON.parse(v.params.payload)});return;}\n",'')
+  .replace("    await c.send('Runtime.addBinding',{name:'"+diagnostic.BINDING+"'},session);\n",'');
+ assert.equal(fresh,old);
+ assert(changed.includes(diagnostic.ORIGINAL_RUN));
+ assert.throws(()=>diagnostic.compose(source.replace("'scratch/runs/20261115-quake3-startup-operation-cause/']",'[]')),/anchor/);
+ assert.throws(()=>diagnostic.assertPublicQualification({qualification:{report:{path:diagnostic.RUN+'native-controls-2/report.json'}}}),/fresh public/);
+});
+test('original entry refuses other destinations before any runtime request',async()=>{
+ await assert.rejects(diagnostic.original('/tmp/quake3-original'),/one fixed fresh original destination/);
+});

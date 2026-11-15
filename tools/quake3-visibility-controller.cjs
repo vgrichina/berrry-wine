@@ -3,6 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),Module=require('node:module'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'..');
 const RUN='scratch/runs/20261115-quake3-fullscreen-visibility/';
+const ORIGINAL_RUN='scratch/runs/20261115-quake3-original-public-visibility/';
 const HELPER=path.join(__dirname,'quake3-browser-controller.cjs');
 const BINDING='__q3VisibilityOperands';
 function publicOperands(output) {
@@ -38,7 +39,8 @@ function publicOperands(output) {
 }
 function replaceOnce(source,needle,replacement){assert.equal(source.split(needle).length,2,'visibility anchor changed: '+needle.slice(0,80));return source.replace(needle,replacement);}
 function compose(source){
-  let value=replaceOnce(source,'const outputVisibility=visibility(output);','const outputVisibility=visibility(output);outputVisibility.operands=('+publicOperands.toString()+')(output);outputVisibility.physicalAll=Array.from({length:256},(_,key)=>({key,state:w?.renderer?.peekKeyDownState(key)??null}));');
+  let value=replaceOnce(source,"'scratch/runs/20261115-quake3-startup-operation-cause/']","'scratch/runs/20261115-quake3-startup-operation-cause/','"+ORIGINAL_RUN+"']");
+  value=replaceOnce(value,'const outputVisibility=visibility(output);','const outputVisibility=visibility(output);outputVisibility.operands=('+publicOperands.toString()+')(output);outputVisibility.physicalAll=Array.from({length:256},(_,key)=>({key,state:w?.renderer?.peekKeyDownState(key)??null}));');
   value=replaceOnce(value,'const PAGE_READ = `(() => {','const PAGE_READ = `(() => { const result=(() => {');
   value=replaceOnce(value,'  })};\n})()`;',"  })};\n})();globalThis."+BINDING+"(JSON.stringify(result));return result;})()`;");
   value=replaceOnce(value,"c.event=v=>{\n      if(v.method==='Target.attachedToTarget'","c.event=v=>{\n      if(v.method==='Runtime.bindingCalled'&&v.params.name==='"+BINDING+"'){log('visibility-operands.jsonl',{at:Date.now(),sessionId:v.sessionId,observation:JSON.parse(v.params.payload)});return;}\n      if(v.method==='Target.attachedToTarget'");
@@ -104,7 +106,7 @@ function installServer(out){
   };
 }
 function qualified(out){
-  assert(path.resolve(out).startsWith(ROOT+'/'+RUN));
+  assert([RUN,ORIGINAL_RUN].some(root=>path.resolve(out).startsWith(ROOT+'/'+root)));
   const pins=JSON.parse(fs.readFileSync(out+'/pins.json')),sha=require('node:crypto').createHash;
   for(const p of [...pins.files,...pins.hostFiles])assert.equal(sha('sha256').update(fs.readFileSync(path.resolve(ROOT,p.path))).digest('hex'),p.sha256,'prelaunch dependency drift: '+p.path);
   installServer(out);
@@ -115,5 +117,44 @@ function qualified(out){
   fs.writeFileSync(out+'/qualification-composition.json',JSON.stringify({sourcePath:path.relative(ROOT,filename),originalSha256:controller().sha(fs.readFileSync(filename)),composedSha256:controller().sha(Buffer.from(source)),sourceCopy:false})+'\n',{flag:'wx'});
   m._compile(source,filename);
 }
-module.exports={BINDING,RUN,publicOperands,replaceOnce,compose,controller,qualificationSource,fullscreenTransitions,installServer,qualified};
-if(require.main===module){const [mode,out]=process.argv.slice(2);assert.equal(mode,'qualified');qualified(out);}
+function assertPublicQualification(pins){
+  const q=pins.qualification,api=controller(),hash=api.sha;
+  const read=p=>{assert(p?.path.startsWith(ORIGINAL_RUN+'native-controls/')&&!p.path.includes('..'),'fresh public visibility qualification required');const b=fs.readFileSync(ROOT+'/'+p.path);assert.equal(hash(b),p.sha256,'qualification bytes changed');return JSON.parse(b);};
+  const report=read(q?.report),tested=read(q?.pins),folder=path.dirname(ROOT+'/'+q.report.path);
+  api.assertOriginalQualification(pins);
+  assert(report.fullscreenGreen?.browserCompositorPixelMatch&&report.fullscreenNegativeOverlayRefused&&report.fullscreenModalAndPopoverRefused&&report.hostNoReplay);
+  assert(report.replacementRefused&&report.startupOwnerReplacementRefused);
+  for(const name of ['productionResize','browserFullscreenExitAndReentry','browserViewportResizeAndRestore','actualAncestorClippingRefused'])assert.equal(report.visibilityTransitions?.[name],true,name);
+  for(const name of ['tools/quake3-visibility-controller.cjs','test/quake3-visibility-controller.test.cjs','tools/quake3-browser-controller.cjs','test/quake3-browser-controller.test.cjs','host.js','lib/d3d-render-worker.js','lib/render-worker.js','build/wine-assembly.wasm'])assert(tested.files.some(p=>p.path===name),'missing qualified dependency: '+name);
+  for(const p of tested.files){const live=pins.files.find(v=>v.path===p.path);assert(live&&live.sha256===p.sha256,'qualified dependency drift: '+p.path);assert.equal(hash(fs.readFileSync(ROOT+'/'+p.path)),p.sha256,p.path);}
+  for(const p of tested.hostFiles){assert(pins.hostFiles.some(v=>v.path===p.path&&v.sha256===p.sha256));assert.equal(hash(fs.readFileSync(p.path)),p.sha256,p.path);}
+  assert.equal(tested.compositions.controller,hash(Buffer.from(compose(fs.readFileSync(HELPER,'utf8')))));
+  assert.equal(tested.compositions.qualification,hash(Buffer.from(qualificationSource(fs.readFileSync(ROOT+'/test/quake3-browser-controller.test.cjs','utf8')))));
+  assert.deepEqual(pins.compositions,tested.compositions);
+  const post=JSON.parse(fs.readFileSync(folder+'/postflight.json'));
+  assert(!post.pinDrift.length&&!post.httpMismatches.length&&post.requestsAfterTerminal===0&&post.allPIDsAbsent&&post.profileAbsent);
+  for(const name of ['native-wait.json','watchdog-wait.json','outer-child-wait.json']){const w=JSON.parse(fs.readFileSync(folder+'/'+name));assert(w.exit===0&&w.actualWait&&w.stdoutEOF&&w.stderrEOF);assert(!fs.existsSync('/proc/'+w.pid));}
+  const released=JSON.parse(fs.readFileSync(folder+'/supervisor-complete.json'));assert(released.heavyReleased&&released.bothEOF&&released.actualChildWaits);
+  const dependencies=JSON.parse(fs.readFileSync(folder+'/native-dependencies.json'));assert(dependencies.nativeFiles.length&&dependencies.nativeFiles.every(p=>p.prelaunchPinned));assert(dependencies.processes.length&&dependencies.processes.every(p=>!fs.existsSync('/proc/'+p.pid)));
+  const rows=fs.readFileSync(folder+'/visibility-operands.jsonl','utf8').trim().split('\n').map(JSON.parse);
+  assert(rows.some(r=>r.observation.apps.some(a=>a.outputVisibility.operands.fullscreenContainsOutput&&a.outputVisible)));
+  assert(rows.some(r=>r.observation.apps.some(a=>a.outputVisibility.reason==='output ancestor clips canvas'&&a.outputVisibility.physicalAll.length===256)));
+  return true;
+}
+async function original(out){
+  assert.equal(path.resolve(out),ROOT+'/'+ORIGINAL_RUN+'original','one fixed fresh original destination');
+  assert(!fs.existsSync(out+'/browser-pid.json')&&!fs.existsSync(out+'/original-admission.json'),'original cannot replay');
+  const watchdog=JSON.parse(fs.readFileSync(out+'/watchdog-armed.json')),launch=JSON.parse(fs.readFileSync(out+'/launch.json'));
+  assert(watchdog.independent&&fs.existsSync('/proc/'+watchdog.pid)&&watchdog.deadline*1000>Date.now());
+  assert.equal(JSON.parse(fs.readFileSync(out+'/heavy-lock.json')).pid,process.ppid,'supervisor must own runtime');
+  assert(launch.deadline-launch.at>1798&&launch.deadline-launch.at<=1800&&watchdog.deadline-launch.deadline===20,'fixed 1800/1820 transaction');
+  const pins=JSON.parse(fs.readFileSync(out+'/pins.json'));assertPublicQualification(pins);
+  const api=controller();
+  for(const p of [...pins.files,...pins.hostFiles])assert.equal(api.sha(fs.readFileSync(path.resolve(ROOT,p.path))),p.sha256,'prelaunch dependency drift: '+p.path);
+  fs.writeFileSync(out+'/original-admission.json',JSON.stringify({at:Date.now(),qualification:pins.qualification,composition:pins.compositions.controller,authorization:'20261115 new public visibility assignment; one registered original',productionCorrection:false})+'\n',{flag:'wx'});
+  // The original browser already hashes its served HTTP responses. No fixture,
+  // transformed production script, UI mutation or synthetic scene is installed.
+  await api.browser(out,'webgl');
+}
+module.exports={BINDING,RUN,ORIGINAL_RUN,publicOperands,replaceOnce,compose,controller,qualificationSource,fullscreenTransitions,installServer,qualified,assertPublicQualification,original};
+if(require.main===module){const [mode,out]=process.argv.slice(2);assert(['qualified','original'].includes(mode));Promise.resolve(mode==='qualified'?qualified(out):original(out)).catch(e=>{console.error(e);process.exitCode=1;});}
