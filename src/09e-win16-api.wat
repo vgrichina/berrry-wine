@@ -33,6 +33,9 @@
   ;; which under Pascal is every byte the caller pushed.
   (func $win16_api_return (param $argbytes i32)
     (local $ip i32) (local $sel i32)
+    ;; Process/task termination has no far return. Keep its terminal EIP and
+    ;; stack instead of resuming the callback that called DOS3Call.
+    (if (i32.eq (global.get $yield_reason) (i32.const 2)) (then (return)))
     (local.set $ip  (call $gl16 (i32.load offset=16 (global.get $reg_base))))
     (local.set $sel (call $gl16 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 2))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.add (i32.const 4) (local.get $argbytes))))
@@ -1718,6 +1721,7 @@
   ;; is over either way and the marker is what names it in a capture.
   (func $win16_TerminateApp
     (call $host_log_i32 (i32.const 0xCA16A99D))   ;; TOOLHELP TerminateApp
+    (global.set $yield_reason (i32.const 2))
     (call $host_exit (i32.const 1))
     (global.set $eip (i32.const 0))
     (global.set $steps (i32.const 0)))
@@ -4686,6 +4690,7 @@
         (return)))
     (if (i32.eq (local.get $ah) (i32.const 0x4C))
       (then
+        (global.set $yield_reason (i32.const 2))
         (call $host_exit (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFF)))
         (global.set $eip (i32.const 0))
         (global.set $steps (i32.const 0))

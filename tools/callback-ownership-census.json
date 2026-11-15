@@ -7020,9 +7020,9 @@
           ]
         ]
       ],
-      "sha256": "07ca997e43c199a35fad829cce7a68efb2de663f9b5582b010f547b020ea9661",
+      "sha256": "6fc4609101658b2cb42f57eba4966842cc55267263ea53bea7639bf2c4238269",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261115 native Win16 termination: root AH4Ch and TerminateApp mark existing terminal yield 2; the shared API far-return helper preserves terminal EIP/stack instead of resuming the terminated callback. Ordinary nested returns retain the original path. Actual compiled nested SendMessage controls cover process 0/37, child 37 cleanup, TerminateApp 1, ordinary stack restoration and genuine trap classification through local and Worker main owners. No new invocation or retained context; broader ownership pending.",
       "ownership": "pending"
     },
     {
@@ -7387,9 +7387,9 @@
           "0"
         ]
       ],
-      "sha256": "0df962ef1cb10f49406b4a811babdb84a16a016e204ffe4b15036aee9df845c4",
+      "sha256": "74b68b5a4622448b787861a562e7c1332b44f2a736891bb677126fb23cb09687",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261115 native Win16 termination: root AH4Ch and TerminateApp mark existing terminal yield 2; the shared API far-return helper preserves terminal EIP/stack instead of resuming the terminated callback. Ordinary nested returns retain the original path. Actual compiled nested SendMessage controls cover process 0/37, child 37 cleanup, TerminateApp 1, ordinary stack restoration and genuine trap classification through local and Worker main owners. No new invocation or retained context; broader ownership pending.",
       "ownership": "pending"
     },
     {
@@ -7818,9 +7818,9 @@
           "0"
         ]
       ],
-      "sha256": "39a3340e99f9c5ff2f137be64c656d02de0421096088ddcd669a22e122ba85ca",
+      "sha256": "49a70d8a9fe53d9c422096b9a81f11e9e44a92f393a4e51906a1bdc43eebcb62",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261115 native Win16 termination: root AH4Ch and TerminateApp mark existing terminal yield 2; the shared API far-return helper preserves terminal EIP/stack instead of resuming the terminated callback. Ordinary nested returns retain the original path. Actual compiled nested SendMessage controls cover process 0/37, child 37 cleanup, TerminateApp 1, ordinary stack restoration and genuine trap classification through local and Worker main owners. No new invocation or retained context; broader ownership pending.",
       "ownership": "pending"
     },
     {
