@@ -6738,6 +6738,13 @@
       (i32.shl (i32.add (local.get $count) (i32.const 3)) (i32.const 2))))
 
   (func $win16_kernel (param $ordinal i32) (result i32)
+    ;; KERNEL.651: FAR PASCAL str,str,WORD,DWORD,ptr,str,WORD (24 bytes).
+    ;; UINT is returned through DX:AX, including a cleared DX on failure.
+    (if (i32.eq (local.get $ordinal) (i32.const 651))
+      (then
+        (i32.store (global.get $reg_base) (call $win16_ls_connect))
+        (i32.store offset=8 (global.get $reg_base) (i32.const 0))
+        (call $win16_api_return (i32.const 24)) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 92))
       (then (call $win16_GetTempDrive) (return (i32.const 1))))
     ;; Windows 95 generic thunks, resolved by name through GetProcAddress.

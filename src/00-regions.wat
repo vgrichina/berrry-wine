@@ -491,6 +491,9 @@
   (region.declare $GDI_NEAREST_CACHE (size 0x00008000) (align 0x00001000)
     (stride 0x8 (count $GDI_NEAREST_CACHE_SLOTS)) (size-is-power-of-2)
     (owner "10g-gdi-raster.wat:$GDI_NEAREST_CACHE"))
+  ;; Process-owned LS registrations: 24 notification transactions, 128 pairs.
+  (region.declare $WIN16_LS_CONNECTIONS (size 0x00012200) (align 0x00000010)
+    (owner "08c-ne-loader.wat:$win16_ls_record"))
   (region.declare $WIN16_PROCESS_ARENA (size 0x000000D0) (align 0x00000004)
     (owner "08c-ne-loader.wat:$win16_arena_base"))
   (region.declare $WIN16_THUNK_TABLE (size 0x00002000) (align 0x00001000)
