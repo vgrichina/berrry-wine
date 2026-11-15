@@ -130,7 +130,7 @@ function fixture(route, source = storageSource) {
   if (route === 'registered') {
     // No lifetime callback in this activation-only fixture: its vtable slot is
     // absent. Registration still uses the real public registration entry.
-    storage.com_register_class_object(A.clsid, A.factory, 1, 0);
+    storage.com_register_class_object(A.clsid, A.factory, 1, 1);
     assert.equal(acquired.length, 0);
   } else {
     module.exports.setRegValue('HKCR\\CLSID\\{00000000-0000-0000-0000-000000000000}\\InprocServer32',

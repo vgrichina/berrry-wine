@@ -4171,6 +4171,7 @@ async function main() {
   // wire. This process becomes the hub of that wire. 0 = "cannot", and the
   // guest falls back to its old CreateProcess path.
   const pipeChildren = [];
+  const pipeChildClosures = [];
   const pipeChildByPid = new Map();
   const livePipeChildren = new Set();
   // Browser aliases require a target-owned table; CLI IPC is unsupported.
@@ -4197,9 +4198,10 @@ async function main() {
     if (op === 8) return rec.exited ? 0 : 0x102;
     if (op === 1 || op === 5) {
       if (rec.exited) return -5;
-      rec.exitCode = arg >>> 0;
-      rec.exited = true;
-      rec.child.kill();
+      // A signal request is not process completion. Keep STILL_ACTIVE and
+      // the wait unsignaled until the native child has closed both pipes.
+      if (!rec.child.kill()) return -5;
+      rec.terminationCode = arg >>> 0;
       return 1;
     }
     return -1;
@@ -4332,6 +4334,7 @@ async function main() {
       const pid = nextChildPid();
       relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
       pipeChildren.push(child);
+      pipeChildClosures.push(new Promise(resolve => child.once('close', resolve)));
       const rec = { child, ready: false, exited: false, exitCode: 259 };
       livePipeChildren.add(rec);
       pipeChildByPid.set(pid, rec);
@@ -4340,14 +4343,15 @@ async function main() {
         if (msg && msg.t === 'process-input-ready') rec.ready = true;
         if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0;
       });
-      child.on('exit', code => {
+      child.on('close', code => {
         try {
           mergeChildState(vfs, storage, before, outDir, regOut, completion, token);
         } catch (e) {
           console.log(`[spawn] merging ${path.win32.basename(guestExe)}'s files back failed: ${e.message}`);
         }
         fs.rmSync(tmp, { recursive: true, force: true });
-        if (!rec.exited) rec.exitCode = (guestCode != null ? guestCode : (code == null ? 1 : code)) >>> 0;
+        rec.exitCode = (rec.terminationCode != null ? rec.terminationCode :
+          (guestCode != null ? guestCode : (code == null ? 1 : code))) >>> 0;
         rec.exited = true;
         livePipeChildren.delete(rec);
       });
@@ -4425,20 +4429,20 @@ async function main() {
     }
     ctx.vlanWire.addChild(child, ip);
     pipeChildren.push(child);
+    pipeChildClosures.push(new Promise(resolve => child.once('close', resolve)));
     const pid = (0x4000 + pipeChildren.length * 4) & 0xFFFF;
     const rec = { child, exited: false, exitCode: 259 };
     livePipeChildren.add(rec);
     pipeChildByPid.set(pid, rec);
+    let guestCode = null;
     child.on('message', msg => {
-      if (msg && msg.t === 'child-exit' && !rec.exited) {
-        rec.exitCode = msg.code >>> 0;
-        rec.exited = true;
-      }
+      if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0;
     });
     // An emulator that ends without a guest ExitProcess (a crash, a
     // --max-seconds stop) still ends the child process: report it as exited.
-    child.on('exit', code => {
-      if (!rec.exited) rec.exitCode = (code == null ? 1 : code) >>> 0;
+    child.on('close', code => {
+      rec.exitCode = (rec.terminationCode != null ? rec.terminationCode :
+        (guestCode != null ? guestCode : (code == null ? 1 : code))) >>> 0;
       rec.exited = true;
       livePipeChildren.delete(rec);
     });
@@ -11555,7 +11559,10 @@ async function main() {
     // The same for a --spawn-processes child: its end (and the merge of what
     // it left behind) arrives as a child-process event, so a parent parked in
     // WaitForSingleObject on it would otherwise spin until its own run ended.
-    else if ((batch & 63) === 0 && ctx.hasLiveChildren && ctx.hasLiveChildren()) {
+    // The child also owes its parent a turn for termination signals and IPC,
+    // even when it has no children, wire or asynchronous render requests.
+    else if ((batch & 63) === 0 && (SPAWNED_CHILD ||
+        (ctx.hasLiveChildren && ctx.hasLiveChildren()))) {
       await new Promise(resolve => setImmediate(resolve));
     }
     if (AUDIO_EXIT_BYTES > 0 && ctx._audioOutFd !== undefined) {
@@ -13197,15 +13204,14 @@ if (VERBOSE) {
   processDesktop.retire();
   // The launcher guest can exit while real child hosts still use its desktop.
   // Keep the authority until those OS processes close their transports.
-  await Promise.all(pipeChildren.filter(c => c.exitCode === null && c.signalCode === null)
-    .map(c => new Promise(resolve => c.once('exit', resolve))));
+  await Promise.all(pipeChildClosures);
   await processDesktop.close();
   // A --vlan-wire run is a forked child, and an open IPC channel keeps node
   // alive after everything else has finished: the run printed its Stats, hit
   // --max-seconds, and then sat resident forever with its 512 MiB guest until
   // the parent killed it. Every two-process test used to kill its seats for
   // exactly this reason. The run is over, so hang up the wire.
-  if (VLAN_WIRE && process.connected) process.disconnect();
+  if ((VLAN_WIRE || SPAWNED_CHILD) && process.connected) process.disconnect();
   });
 }
 

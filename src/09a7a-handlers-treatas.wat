@@ -62,5 +62,27 @@
   (if (call $com_treatas_redirect (local.get $arg0) (local.get $arg4)) (then (return)))
   (call $handle_CoCreateInstance (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
 (func $handle_CoGetClassObject_TreatAs (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (local $hr i32) (local $factory i32) (local $frame i32)
   (if (call $com_treatas_redirect (local.get $arg0) (local.get $arg4)) (then (return)))
+  ;; Resolve only the current process's registration. The actual requested
+  ;; QueryInterface runs on the calling CPU, with its own activation frame,
+  ;; so a blocking factory never borrows an idle host shadow's registers.
+  (if (i32.and (i32.and (i32.ne (local.get $arg0) (i32.const 0)) (i32.ne (local.get $arg3) (i32.const 0))) (i32.ne (local.get $arg4) (i32.const 0)))
+    (then
+      (local.set $hr (call $host_com_create_instance
+        (call $g2w (local.get $arg0)) (local.get $arg2)
+        (i32.or (local.get $arg1) (i32.const 0xE0000000))
+        (call $g2w (local.get $arg3)) (local.get $arg4)))
+      (if (i32.eq (local.get $hr) (i32.const 3))
+        (then
+          (local.set $factory (call $gl32 (local.get $arg4)))
+          (local.set $frame (call $com_activate_frame_begin (local.get $arg4)))
+          ;; The existing class-only return frame owns QI's output at F.
+          (call $gs32 (i32.add (local.get $frame) (i32.const 4)) (i32.const 0))
+          (call $io_apc_push (local.get $frame))
+          (call $io_apc_push (local.get $arg3))
+          (call $io_apc_push (local.get $factory))
+          (call $io_apc_push (global.get $com_gco_thunk))
+          (call $com_jump (call $gl32 (call $gl32 (local.get $factory))))
+          (return)))))
   (call $handle_CoGetClassObject (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))

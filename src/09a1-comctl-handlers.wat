@@ -506,12 +506,18 @@
   ;; object, including when registration and activation occur on different
   ;; cooperative WASM thread instances.
   (func $handle_CoRegisterClassObject (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (local.get $arg4)
-      (then (call $gs32 (local.get $arg4)
-        (call $host_com_register_class_object
+    (local $cookie i32)
+    (if (local.get $arg4) (then (call $gs32 (local.get $arg4) (i32.const 0))))
+    (if (i32.and (i32.and (i32.ne (local.get $arg0) (i32.const 0)) (i32.ne (local.get $arg1) (i32.const 0))) (i32.ne (local.get $arg4) (i32.const 0)))
+      (then
+        (local.set $cookie (call $host_com_register_class_object
           (call $g2w (local.get $arg0)) (local.get $arg1)
           (local.get $arg2) (local.get $arg3)))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))  ;; S_OK
+    (if (local.get $cookie)
+      (then
+        (call $gs32 (local.get $arg4) (local.get $cookie))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+      (else (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
   )
 
