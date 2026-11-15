@@ -60,10 +60,24 @@
 
 (func $handle_CoCreateInstance_TreatAs (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
   (if (call $com_treatas_redirect (local.get $arg0) (local.get $arg4)) (then (return)))
+  (if (i32.and (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+                           (i32.ne (local.get $arg3) (i32.const 0)))
+                (i32.ne (local.get $arg4) (i32.const 0)))
+    (then
+      (if (call $host_com_localserver_information (call $g2w (local.get $arg0))
+            (local.get $arg2) (i32.const 0) (i32.const 0))
+        (then (call $com_interface_bridge (i32.const 17) (i32.const 5)) (return)))))
   (call $handle_CoCreateInstance (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
 (func $handle_CoGetClassObject_TreatAs (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
   (local $hr i32) (local $factory i32) (local $frame i32)
   (if (call $com_treatas_redirect (local.get $arg0) (local.get $arg4)) (then (return)))
+  (if (i32.and (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+                           (i32.ne (local.get $arg3) (i32.const 0)))
+                (i32.ne (local.get $arg4) (i32.const 0)))
+    (then
+      (if (call $host_com_localserver_information (call $g2w (local.get $arg0))
+            (local.get $arg1) (i32.const 0) (i32.const 0))
+        (then (call $com_interface_bridge (i32.const 18) (i32.const 5)) (return)))))
   ;; Resolve only the current process's registration. The actual requested
   ;; QueryInterface runs on the calling CPU, with its own activation frame,
   ;; so a blocking factory never borrows an idle host shadow's registers.

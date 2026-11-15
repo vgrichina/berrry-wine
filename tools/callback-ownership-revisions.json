@@ -5,8 +5,8 @@
       "file": "lib/storage.js",
       "name": "host-file",
       "baseSHA256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053",
-      "sha256": "10d077cc87cb8b2ced93d3f131a25e6097504217b11183eebb16fd7939dbe4ac",
-      "reason": "Standard interface host imports only enqueue or retrieve the caller-owned parked frame; actual guest callbacks run later on its scheduler. Proxy/stub CLSID resolution reads actual public registration or process CoRegisterPSClsid state and never synthesizes a factory or success. Existing synchronous class activation callback paths are unchanged."
+      "sha256": "e5e76aad020c40a050b08057fc2f4454cda0dfd62ce51761f19fdcaf4e051254",
+      "reason": "LocalServer metadata reads the real class registration and copies a bounded command into the caller buffer. It never enters a guest callback or transfers a guest pointer. Public launch and factory work are scheduled later by the actual owner continuation; existing synchronous callbacks are unchanged. Native qualification is recorded separately."
     },
     {
       "file": "src/09b-dispatch.wat",
@@ -47,8 +47,8 @@
       "file": "lib/guest-worker.js",
       "name": "host-file",
       "baseSHA256": "3e09b9aa06b86ffa52bb00d4052a2b4393952ed61f2821ced4871dfbec0498ec",
-      "sha256": "74527d6aad06a616f74b933e998aba2a22f8b1d4a1cd935167b76d09e655fac6",
-      "reason": "Standard COM interface frames and callbacks run on this actual owning Worker instance. Callback imports are never forwarded to the parent CPU; authenticated byte transport has separate connection, source/module pin and full root generation. Explicit scoped retirement closes that transport after actual callback unwinds. Browser Workers return honest E_NOTIMPL for this Node-only channel."
+      "sha256": "6800563bf95fd87cce6cc5448d34c189b7c4a436761d4a2a089c64c67da98925",
+      "reason": "The Worker COM runtime receives a metadata-only import closure. Class publication, actual factory calls and marshaling use that Worker instance and its existing guarded ComGuestContinuation; no host shadow or foreign CPU is entered. Existing retirement and callback scope checks remain authoritative."
     }
   ],
   "additions": [
@@ -63,9 +63,9 @@
     {
       "file": "lib/com-interface-runtime.js",
       "name": "host-file",
-      "sha256": "79b77c02c8e2c1944de03bdaa6549982dc1b059971d3bbf7099b57e5df0ca434",
+      "sha256": "aa8be2a637ea45c16615e11f81e7b54a380eb778ae3803f3af14340b700f008d",
       "kind": "host-entry",
-      "reason": "The original caller stdcall frame parks on yield 23. Only its owning instance scheduler runs actual QI, reference, stream and registered proxy/stub callbacks; nested service remains under the full token. Completion validates exact frame and lifetime before publishing a result. Byte-channel incoming calls execute on the exporter owner, including Worker-local instances.",
+      "reason": "LocalServer bridge operations retain the parked public stdcall frame and dispatch registration, revoke and activation on the actual owning continuation. Draining class tickets precedes existing stub tickets under the same owner and generation checks. Registered object addresses remain private to the runtime; only authenticated opaque identities and copied bytes cross the channel.",
       "ownership": "pending"
     },
     {

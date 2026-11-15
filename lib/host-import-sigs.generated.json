@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 298,
+  "count": 299,
   "sigs": {
     "log": {
       "params": [
@@ -2129,6 +2129,17 @@
     },
     "service_load_library": {
       "params": [],
+      "results": [
+        "i32"
+      ]
+    },
+    "com_localserver_information": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
       "results": [
         "i32"
       ]

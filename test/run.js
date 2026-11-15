@@ -3035,6 +3035,7 @@ async function main() {
   ctx.comInterfaces = new ComInterfaceRuntime({
     getExports: () => ctx.exports, getMemory: () => memory.buffer, desktop: processDesktop,
     modulePin: process.env.WINE_COM_MODULE_SHA256, sourcePin: comRuntimeSourcePin(),
+    information: (...args) => base.host.com_localserver_information(...args),
     serviceYield: async ({ reason }) => {
       const options = { exports: ctx.exports, memoryBuffer: memory.buffer,
         exeBytes: new Uint8Array(exeBytes), resourceHost: ctx, log: console.log,
@@ -4353,6 +4354,22 @@ async function main() {
       pipeChildren.push(child);
       pipeChildClosures.push(new Promise(resolve => child.once('close', resolve)));
       const rec = { child, ready: false, exited: false, exitCode: 259 };
+      // Optional run observability records real OS-child waits, not a signal
+      // request or a guest ExitProcess message. It also covers grandchildren.
+      const waitDirectory = process.env.WINE_COM_PROTOCOL_DIR;
+      const childWait = { pid: child.pid, parent: process.pid, guestPid: pid, guestExe,
+        actualWait: false, stdoutEOF: false, stderrEOF: false, closed: false };
+      const saveChildWait = () => {
+        if (!waitDirectory) return;
+        try {
+          fs.mkdirSync(waitDirectory, { recursive: true });
+          fs.writeFileSync(path.join(waitDirectory, `native-child-${process.pid}-${child.pid}-wait.json`), JSON.stringify(childWait, null, 2) + '\n');
+        } catch (error) { console.error('[spawn] child wait evidence failed: ' + error.message); }
+      };
+      child.once('exit', (code, signal) => { Object.assign(childWait, { actualWait: true, exit: code, signal }); saveChildWait(); });
+      child.stdout.once('end', () => { childWait.stdoutEOF = true; saveChildWait(); });
+      child.stderr.once('end', () => { childWait.stderrEOF = true; saveChildWait(); });
+      saveChildWait();
       livePipeChildren.add(rec);
       pipeChildByPid.set(pid, rec);
       let guestCode = null;
@@ -4362,10 +4379,12 @@ async function main() {
       });
       child.on('close', code => {
         try {
-          mergeChildState(vfs, storage, before, outDir, regOut, completion, token);
+          childWait.guardedMerge = mergeChildState(vfs, storage, before, outDir, regOut, completion, token);
         } catch (e) {
+          childWait.guardedMerge = { merged: false, reason: String(e.message) };
           console.log(`[spawn] merging ${path.win32.basename(guestExe)}'s files back failed: ${e.message}`);
         }
+        childWait.closed = true;saveChildWait();
         fs.rmSync(tmp, { recursive: true, force: true });
         rec.exitCode = (rec.terminationCode != null ? rec.terminationCode :
           (guestCode != null ? guestCode : (code == null ? 1 : code))) >>> 0;

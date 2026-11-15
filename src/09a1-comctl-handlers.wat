@@ -496,6 +496,9 @@
 
   ;; 952: CoRevokeClassObject(dwRegister) — 1 arg stdcall.
   (func $handle_CoRevokeClassObject (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (i32.and (i32.ge_u (local.get $arg0) (i32.const 0x40000000))
+                 (i32.lt_u (local.get $arg0) (i32.const 0x80000000)))
+      (then (call $com_interface_bridge (i32.const 16) (i32.const 1)) (return)))
     (i32.store offset=0 (global.get $reg_base) (call $host_com_revoke_class_object (local.get $arg0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
@@ -507,6 +510,8 @@
   ;; cooperative WASM thread instances.
   (func $handle_CoRegisterClassObject (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $cookie i32)
+    (if (i32.ne (i32.and (local.get $arg2) (i32.const 4)) (i32.const 0))
+      (then (call $com_interface_bridge (i32.const 15) (i32.const 5)) (return)))
     (if (local.get $arg4) (then (call $gs32 (local.get $arg4) (i32.const 0))))
     (if (i32.and (i32.and (i32.ne (local.get $arg0) (i32.const 0)) (i32.ne (local.get $arg1) (i32.const 0))) (i32.ne (local.get $arg4) (i32.const 0)))
       (then
