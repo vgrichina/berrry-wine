@@ -113,10 +113,43 @@ scoped-loader retirement times out at its 25 ms test limit after both owned
 callback-loader groups pass. These failures are retained, not reported as passes.
 The shared-tree scoped-loader suite passes all retirement, scheduler-drop,
 termination-retry and bootstrap-ownership checks.
-Publication remains pending at this checkpoint. All fourteen
+Feature published on main as `7c8ca48353b0917b8fdf73a491b0f999d098dd22`.
+All fourteen
 foreign WIP pins are unchanged. Git SHA and relevant binary diffs are the source
 archive; this run archives no source tree, real media or WASM.
 
-The ordinary original is unused until material bootstrap and genuine cleanup
-qualification publish. Historical UNKNOWN receipts remain closed. No workers
-or boxes were created; box ID/state/expiry and stop receipt are not applicable.
+## One qualified ordinary original
+
+After publication, one unchanged exact Nova Disc1 D:\Setup\Setup.exe ran with
+the retained real partial overlay, existing genuine DLLs/TLB, exactly two
+Worker-safe source/map preloads, published committed source, the qualified HEAD
+module, real ticks, native 900-second/independent 920-second deadlines and the
+180-second Quit reserve. All 3177 launch pins matched immediately beforehand.
+Parent and child consumed source and mapped-host hashes were verified afterward.
+
+This original newly demonstrates genuine registration: CreateProcessA and
+Setup's 10000 ms wait precede the real child's CoTreatAsClass, guest exit zero
+and guarded merge of 298 registry/INI keys. No child files changed because the
+retained overlay already had the engine. Only after that merge does the parent
+call COM activation. The host bridge returns 80040154, followed by the visible
+"The InstallShield Engine (iKernel.exe) could not be launched" error. The current
+bridge's InprocServer32-only resolver remains the next activation boundary;
+LocalServer32 registration is not a cross-process class factory or object.
+
+The complete current error scene was personally reviewed. One fresh titlebar X
+gesture at 570,250 lasted 120 ms; independent physical UP was acknowledged.
+The parent then exits zero, native wait is zero with both EOFs, and watchdog,
+supervisor and this run's own outer-launcher actual waits are retained.
+The former unimplemented-CoFreeAllLibraries exit-one failure does not recur.
+No installation success, native Cancel or native Quit is claimed; host stop
+was unnecessary. The final saved preparing-wizard image is stale post-exit UI,
+not a live or installed state.
+
+The native overlay flush reports four records. Post-run comparison of all
+3177 pins finds only installed-overlay/index.json changed; source, real media,
+engine blobs and native modules match. Guest-created overlay metadata is kept.
+The single original is closed, with no later requests/input, rebind, replay or
+second original. All historical UNKNOWN receipts remain closed and unchanged.
+No workers or boxes were created; box ID null, state NOT_CREATED, expiry null,
+stop receipt NOT_APPLICABLE. Closure and explicit release are recorded in the
+run's result.json/runtime-release.json after final personal verification.
