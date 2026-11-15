@@ -30,7 +30,7 @@ The final retained page observation's outputVisibility alone serializes to
 578,581 bytes. This directly demonstrates diagnostic operand inflation; it does
 not measure transport, V8 compile or page execution delay in request 1113.
 
-The new focused test prepares an in-memory candidate that serializes only
+The implemented route, checked against an in-memory candidate, serializes only
 `FIELDS`, with a 256-character maximum per string, finite scalar operands and an
 8,192-byte encoded operand limit.
 It retains the full page read and every comparison, owner generation token,
@@ -41,38 +41,20 @@ page helper, installation lifecycle or source-reuse exception is necessary for
 this minimal reduction. The emitted readiness size has a fixed bound independent
 of diagnostic DOM size. Invalid oversized or structured identity fields refuse
 before any request. Production renderer, WASM, native limits and input/capture
-admission are unchanged in the candidate.
+admission are unchanged.
 
-Six prepared Node/VM tests pass: large unused operands, ready/pending/held-paint/
+Seven focused Node/VM tests cover large unused operands, ready/pending/held-paint/
 damage/missing/error combinations, every compared identity and selection exception,
-replacement/overlay/visibility refusal, exact guard-source preservation and
-one-call propagation of UNKNOWN, plus bounded nested capture expressions and
-passive deadline refusal without a ticket or input. These are preparation fixtures, not real Chrome
-semantic or delay qualification. Candidate implementation edits remain in the new test only. The additional new
-fixture helper prepares atomic real Chrome comparisons and separate
-`Runtime.compileScript`/`Runtime.runScript` roundtrips. Body samples use the page
-monotonic clock; compilation roundtrip includes transport and inspector cost,
-so pure V8 compilation and transport remain separately unresolved.
+replacement/overlay/visibility refusal, exact guard-source preservation, one-call
+UNKNOWN propagation, bounded nested capture expressions, passive deadline refusal
+without a ticket or input, and the fresh-run admission gate. The broader focused
+suite passed 67 tests with one expected opt-in skip. The helper suite and exact
+`flock /tmp/wine-build.lock bash tools/build.sh` passed. The resulting WASM stayed
+2,217,109 bytes; no renderer or WASM change was made.
 
-## Required continuation
-
-Heavy order is TIM663766, Sims677879, then this task. Shared source, helper,
-controller, build, native, browser and original work await explicit releases
-and personal verification of direct native/watchdog/supervisor-child actual waits
-with both EOF and absent PIDs/groups. Expected waiting is normal. Foreign WIP
-must be preserved.
-
-After release, apply only necessary owned serialization changes and qualify
-real Chrome semantic equivalence, timing boundaries, source identity, native
-finite key/Mouse1 independent UP, immutable capture, visibility and permanent
-UNKNOWN. Run the full locked build and publish coherent owned files on main
-before the single newly authorized materially changed original. Retain fixed
-1800/1820 deadlines, 180-second Quit reserve and three-second operations. This
-note makes no claim that reducing bytes solves the historical timeout.
-
-Evidence destination: `scratch/runs/20261115-quake3-compact-readiness-gameplay/`.
-Use Git SHA plus binary patches and compact logs/pins; reference existing media
-by path/hash. No source/media/WASM/capture bundles. No box or worker created.
+Evidence: `scratch/runs/20261115-quake3-compact-readiness-gameplay/`.
+Git commits plus binary patches preserve source; existing media is pinned by
+path and hash. No source/media/WASM bundles, workers or boxes were created.
 
 ## Implementation after release
 
@@ -96,3 +78,78 @@ original outcome will be recorded in this run's final result. Pure transport
 and compiler-internal duration are not separately observable from a CDP compile
 roundtrip. Body timing is independently sampled; no historical timeout cause is
 claimed solved by either fewer request bytes or fixture timings.
+
+## Qualified and published route
+
+Feature `ec4644fddbafd2d332905daa73ff933fc22791a2` was committed on main and
+immediately strict-pulled/pushed before the original. The final qualification
+used 1,031 source/media/dependency pins and 1,398 host pins. Incomplete dependency
+manifests and a subsequently discovered Vulkan mapping gap were refused and
+retained. A partial DevTools port read and a partial PID-file read in separate
+causal fixtures were also retained as rejected attempts. The final complete
+source, native and five-case causal qualifications passed without changing the
+controller after the full build.
+
+Real Chrome compared legacy and compact expressions atomically across ready,
+held paint, pending publication, damage, owner replacement, overlay, validator
+error and output selection. All eight results/errors matched, with no changes
+to publication, capture or held-paint state. Native current-source inventory,
+independent key/Mouse1 UP, immutable capture, visibility transitions and permanent
+UNKNOWN checks passed. Arm-to-UP upper bounds were 137 and 132 ms respectively.
+
+The final fixture emitted 667,961 versus 10,630 expression bytes. Legacy/compact
+JSON serialization took 0.627/0.017 ms, compile roundtrip 8.059/1.056 ms,
+run roundtrip 6.102/4.917 ms and sampled body 3.865/3.230 ms. Compile roundtrip
+includes transport and inspector work; pure compile and pure transport remain
+unresolved. These fixture observations do not solve historical request 1113.
+
+## One original and exact next boundary
+
+The one newly authorized ordinary original used unchanged registered media,
+arguments, real clocks, cooperative 10,000 scheduling, 1800-second native and
+1820-second independent deadlines, 180-second Quit reserve and three-second
+operations. Before host consent I personally viewed the complete native textured
+Quake III startup background and actual host fullscreen strip/button. Host
+consent remained distinct from game binding; its independent mouse UP was
+acknowledged 139 ms after DOWN.
+
+Host fullscreen was observed active at 09:43:23.886Z, with viewport 1920×996 and
+fully visible output. The later public observation at 09:43:27.444Z had
+`fullscreen: null`, viewport 1024×757 and output `(0,34,1920,962)`, so the
+unchanged guard correctly refused `output outside viewport`. The cause of the
+fullscreen exit/layout mismatch is not established. No resize/reentry/input
+recovery was attempted.
+
+Page `Runtime.evaluate` 753 emitted 10,654 bytes, SHA-256
+`63c4e9f5b1f8bc7840a675bc48ab110de712447380bbc8da9d097722dafb03a1`,
+and returned a visibility exception in 58.241 ms. It did not time out. The
+ordinary failure-capture request 754 then reached its fixed three-second
+`Page.captureScreenshot` UNKNOWN boundary. There were zero requests after
+terminal. No permanent game binding, game DOWN, ready menu, arena, enemy
+consequence or native Quit occurred. Host shutdown is separate from native Quit.
+The authorization is consumed: no retry, replay or old-run rebind is allowed.
+
+The new full latency trace contains an overflow marker and all 324 snapshot
+attributions are refused. No cap was increased, overflow removed, or bounded
+prefix substituted to imply full attribution. The predecessor's separately
+valid immutable prefix of 325 snapshots retains only its original narrower
+meaning. No production shader/renderer rewrite follows from these traces.
+
+Next work must qualify the fullscreen-exit/viewport/layout convergence boundary
+while retaining exact current owner/output and visibility guards. Any further
+ordinary original requires fresh authorization after a material qualified fix.
+
+## Closure
+
+Release receipt SHA-256
+`66bff2972b41eeab2e8058442c2fb3c94482f6239a41fe161c49bb68e71906c0`
+indexes 103 actual wait records with both EOF and 340 absent PIDs/groups.
+Direct native/watchdog/supervisor-child/launcher exits were 1/0/0/0.
+All 2,429 original source/media/host pins and 13 foreign WIP code paths were
+unchanged at closure, both locks were free, the browser profile was absent,
+and shared source/build/runtime was explicitly released at 09:45:24Z.
+The ancillary board watcher parent returned 143 through the terminal tool;
+its parent and child are absent, but EOF flags were unavailable and remain
+UNKNOWN. This does not reclassify any direct runtime wait.
+
+Box ID null; state NOT_CREATED; expiry null; stop receipt NOT_APPLICABLE.
