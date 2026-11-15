@@ -184,12 +184,14 @@ async function compiledControls() {
     const owner={...e,win16_bridge_ls32_pair(...a){const result=e.win16_bridge_ls32_pair(...a);events.push(['pair',result]);return result;},
       win16_bridge_ls32_release(...a){const result=e.win16_bridge_ls32_release(...a);events.push(['release',result]);return result;}};
     const opts={exports:owner,memoryBuffer:memory.buffer,findDllSync:()=>f.ne,findDll:async()=>f.ne,checkNeOwner:()=>{}};
-    let error;try{if(asynchronous)await bridge.serviceNeGuestYield(opts);else bridge.serviceNeGuestYieldSync(opts);}catch(failure){error=failure;}
-    assert.match(error?.message??'',/pairing established.*FT prolog/);
-    assert.deepEqual(error.nativePairing,{established:true,retired:true});
-    assert.equal(events.length,2);assert(events[0][1]>0);assert.deepEqual(events[1],['release',1]);
-    assert.deepEqual(state(e),before);assert(e.win16_guest_request_valid(request));
-    assert.equal(createNeLifecycle(e,memory,[]).liveModule(f.names.module16),false,'service rollback retired its temporary companion');
+    if(asynchronous)await bridge.serviceNeGuestYield(opts);else bridge.serviceNeGuestYieldSync(opts);
+    assert.equal(events.length,1);assert(events[0][1]>0,'normal service established the native pair');
+    assert.equal(e.win16_guest_request_valid(request),0,'native FT connection settlement consumed exactly its parked request');
+    assert.equal(e.get_eax(),1);assert.notEqual(e.guest_read32(f.data+8),0,'native relay published a real target table');
+    assert.equal(createNeLifecycle(e,memory,[]).liveModule(f.names.module16),true,'connection owns its companion');
+    bridge.retireNativeFtConnections(opts);
+    assert.equal(e.guest_read32(f.data+8),0);assert.equal(e.guest_read8(f.data+68),0xcc,'retirement restores the original FT guard');
+    assert.equal(createNeLifecycle(e,memory,[]).liveModule(f.names.module16),false,'native retirement releases the connection companion');
     e.win16_guest_request_cancel();
   }
   {

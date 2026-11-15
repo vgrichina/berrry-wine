@@ -1905,9 +1905,15 @@
     ;; Delegate to generated br_table
     (call $dispatch_api_table (local.get $api_id) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
 
+    ;; FT register entries implement compiler frames, including EBP and
+    ;; saved EBX/ESI/EDI at Exit. Ordinary Win32 handlers retain their ABI.
+    (if (i32.eqz (i32.or
+      (i32.eq (local.get $api_id) (global.get $API_ID_FT_Prolog))
+      (i32.and (i32.ge_u (local.get $api_id) (global.get $API_ID_FT_Exit0))
+        (i32.le_u (local.get $api_id) (global.get $API_ID_FT_Exit56))))) (then
     (call $restore_win32_nonvolatile
       (local.get $saved_ebx) (local.get $saved_esi)
-      (local.get $saved_edi) (local.get $saved_ebp))
+      (local.get $saved_edi) (local.get $saved_ebp))))
 
     ;; Post-handler ESP hook for --esp-delta audit
     (if (global.get $api_log_on) (then (call $host_log_api_exit)))

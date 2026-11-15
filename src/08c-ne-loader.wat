@@ -2459,7 +2459,7 @@
       (then (return (i32.const 0))))
     (call $win16_h16 (i32.or (i32.const 0x00D10000) (local.get $id))))
 
-  (func (export "win16_bridge_module_resolve") (param $handle i32) (result i32)
+  (func $win16_bridge_module_resolve (export "win16_bridge_module_resolve") (param $handle i32) (result i32)
     (local $id i32) (local $mapped i32) (local $slot i32)
     (local.set $handle (i32.and (local.get $handle) (i32.const 0xFFFF)))
     (if (i32.or (i32.eqz (local.get $handle)) (i32.eq (local.get $handle) (i32.const 0xFFFF)))
@@ -2525,8 +2525,11 @@
   ;; Owned original descriptor span. mode 0=code, 1=data, 2=either. Aliases,
   ;; API thunks and another module's selectors never count as image ownership.
   (func $win16_ls_span (param $id i32) (param $far i32) (param $size i32) (param $mode i32) (result i32)
-    (local $index i32) (local $first i32) (local $rec i32) (local $limit i32) (local $sel i32)
     (if (i32.eqz (call $win16_bridge_module_record (local.get $id))) (then (return (i32.const 0))))
+    (call $win16_image_span (local.get $id) (local.get $far) (local.get $size) (local.get $mode)))
+  (func $win16_image_span (param $id i32) (param $far i32) (param $size i32) (param $mode i32) (result i32)
+    (local $index i32) (local $first i32) (local $rec i32) (local $limit i32) (local $sel i32)
+    (if (i32.eqz (call $win16_dll_path_id_valid (local.get $id))) (then (return (i32.const 0))))
     (if (i32.eqz (call $win16_dll_loaded (local.get $id))) (then (return (i32.const 0))))
     (local.set $sel (i32.shr_u (local.get $far) (i32.const 16)))
     (if (i32.eq (local.get $mode) (i32.const 2))
@@ -2866,10 +2869,12 @@
       (br_if $scan (i32.lt_u (local.get $i) (i32.const 128)))) (i32.const 0))
   (func $win16_ls32_drop_locked (param $p i32)
     (local $r i32) (local $pins i32)
+    (call $win16_ft_unpublish (local.get $p))
     (local.set $r (i32.load offset=208 (local.get $p)))
     (if (i32.eqz (i32.load offset=24 (local.get $r))) (then (unreachable)))
     (i32.store offset=24 (local.get $r) (i32.sub (i32.load offset=24 (local.get $r)) (i32.const 1)))
-    (if (i32.load offset=20 (local.get $p)) (then
+    (if (i32.and (i32.ne (i32.load offset=20 (local.get $p)) (i32.const 0))
+      (i32.eqz (i32.load offset=240 (local.get $p)))) (then
       (local.set $r (call $dll_lifecycle_row (i32.sub (i32.load offset=20 (local.get $p)) (i32.const 1))))
       (if (i32.ne (i32.load offset=4 (local.get $r)) (i32.load offset=24 (local.get $p))) (then (unreachable)))
       (local.set $pins (i32.load offset=12 (local.get $r)))
@@ -3074,6 +3079,7 @@
     (if (i32.eqz (local.get $p)) (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))
     (if (i32.or (i32.ne (i32.load offset=44 (local.get $p)) (call $lock_owner_id))
       (i64.ne (i64.load offset=216 (local.get $p)) (i64.const 0))) (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))
+    (if (i32.load offset=224 (local.get $p)) (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))
     (i32.store offset=40 (local.get $p) (i32.sub (i32.load offset=40 (local.get $p)) (i32.const 1)))
     (if (i32.eqz (i32.load offset=40 (local.get $p))) (then (call $win16_ls32_drop_locked (local.get $p))))
     (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 1))

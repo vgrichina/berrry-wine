@@ -690,7 +690,9 @@
     (param $token i64) (param $base i32) (param $backing i32) (result i32)
     (local $i i32) (local $rec i32) (local $free i32) (local $offset i32) (local $fixed i32)
     (if (i32.eqz (call $win16_bridge_frame_valid (local.get $token))) (then (return (i32.const 0))))
-    (if (i32.eqz (i32.load offset=268 (i32.wrap_i64 (local.get $token)))) (then (return (i32.const 0))))
+    (if (i32.and (i32.eqz (i32.load offset=268 (i32.wrap_i64 (local.get $token))))
+      (i32.ne (i32.load offset=408 (i32.wrap_i64 (local.get $token))) (i32.const 0x46545052)))
+      (then (return (i32.const 0))))
     (if (i32.or (i32.ne (i32.and (local.get $base) (i32.const 0xFFFF)) (i32.const 0))
       (i32.gt_u (local.get $base) (i32.const 0xFFFE0000))) (then (return (i32.const 0))))
     (if (i32.or (i32.eq (local.get $backing) (global.get $NULL_SENTINEL))
@@ -737,7 +739,7 @@
       (br_if $slots (i32.lt_u (local.get $i) (i32.const 16))))
     (call $lock_release (global.get $LOCK_VIRTUAL_MAP)))
 
-  (func $win16_bridge_frame_end (export "win16_bridge_frame_end") (param $token i64) (result i32)
+  (func $win16_bridge_frame_close (param $token i64) (param $restore i32) (result i32)
     (local $frame i32) (local $previous i64)
     (if (i32.eqz (call $win16_bridge_frame_valid (local.get $token))) (then (return (i32.const 0))))
     (local.set $frame (i32.wrap_i64 (local.get $token)))
@@ -748,6 +750,7 @@
           (i32.add (i32.load offset=256 (local.get $frame)) (i32.const 1)))
           (then (return (i32.const 0))))))
     (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (call $win16_ft_frame_end (local.get $token) (local.get $restore))
     (call $win16_ls32_frame_end (local.get $token))
     ;; QT owns the overwritten PE return slot until this exact frame ends.
     ;; Scratch writes are already visible through the alias; never copy a
@@ -763,6 +766,7 @@
     (call $win16_arena_give (i32.load offset=12 (local.get $frame)) (i32.const 2))
     (i32.store (call $win16_task_shared (i32.const 36))
       (i32.sub (i32.load (call $win16_task_shared (i32.const 36))) (i32.const 1)))
+    (if (local.get $restore) (then
     (memory.copy (global.get $reg_base) (i32.add (local.get $frame) (i32.const 32)) (i32.const 32))
     (global.set $eip (i32.load offset=64 (local.get $frame)))
     (global.set $ip (i32.load offset=68 (local.get $frame)))
@@ -815,6 +819,7 @@
     (memory.copy (global.get $fpu_base) (i32.add (local.get $frame) (i32.const 512)) (i32.const 128))
     (memory.copy (global.get $mmx_base) (i32.add (local.get $frame) (i32.const 640)) (i32.const 128))
     (memory.copy (global.get $xmm_base) (i32.add (local.get $frame) (i32.const 768)) (i32.const 128))
+    ))
     (if (i32.load offset=24 (local.get $frame))
       (then
         (call $sync_depth_leave)
@@ -835,6 +840,9 @@
     (global.set $win16_bridge_frame (local.get $previous))
     (call $lock_release (global.get $DLL_LOAD_LOCK))
     (i32.const 1))
+
+  (func $win16_bridge_frame_end (export "win16_bridge_frame_end") (param $token i64) (result i32)
+    (call $win16_bridge_frame_close (local.get $token) (i32.const 1)))
 
   (func $win16_bridge_abort (export "win16_bridge_abort") (result i32)
     (local $count i32)
@@ -1109,6 +1117,9 @@
       (i32.eqz (call $win16_bridge_frame_valid (global.get $win16_bridge_frame))))
       (then (unreachable)))
     (local.set $frame (i32.wrap_i64 (global.get $win16_bridge_frame)))
+    (if (i32.eq (i32.load offset=408 (local.get $frame)) (i32.const 0x46545448))
+      (then (call $win16_ft_capture_return (local.get $frame)))
+      (else
     (if (i32.load offset=352 (local.get $frame))
       (then
         (if (i32.or (i32.ne (i32.load offset=24 (local.get $frame)) (i32.const 1))
@@ -1129,6 +1140,7 @@
       (i32.or (i32.ne (global.get $sreg_ss) (call $win16_index_to_sel (i32.load offset=12 (local.get $frame))))
         (i32.ne (i32.load offset=16 (global.get $reg_base)) (i32.load offset=260 (local.get $frame)))))
       (then (unreachable)))))
+    ))
     (i32.store offset=28 (local.get $frame)
       (i32.or (i32.and (i32.load (global.get $reg_base)) (i32.const 0xFFFF))
         (i32.shl (i32.load offset=8 (global.get $reg_base)) (i32.const 16))))

@@ -144,6 +144,7 @@
 (include "09d6-wininet.wat")
 (include "09d7-pipes.wat")
 (include "09e-win16-api.wat")
+(include "09e1-native-ft-relay.wat")
 (include "09e2-win16-dialog.wat")
 (include "09f-win16-ddeml.wat")
 (include "10-helpers.wat")

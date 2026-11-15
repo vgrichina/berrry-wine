@@ -39082,5 +39082,124 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 3224646603
+  },
+  {
+    "id": 4605,
+    "name": "FT_Prolog",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 1735308931
+  },
+  {
+    "id": 4606,
+    "name": "FT_Thunk",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 699430900
+  },
+  {
+    "id": 4607,
+    "name": "FT_Exit0",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3477706216
+  },
+  {
+    "id": 4608,
+    "name": "FT_Exit4",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3544816692
+  },
+  {
+    "id": 4609,
+    "name": "FT_Exit8",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3343485264
+  },
+  {
+    "id": 4610,
+    "name": "FT_Exit12",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 752429035
+  },
+  {
+    "id": 4611,
+    "name": "FT_Exit16",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 819539511
+  },
+  {
+    "id": 4612,
+    "name": "FT_Exit20",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3034332314
+  },
+  {
+    "id": 4613,
+    "name": "FT_Exit24",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2967221838
+  },
+  {
+    "id": 4614,
+    "name": "FT_Exit28",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2900111362
+  },
+  {
+    "id": 4615,
+    "name": "FT_Exit32",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2631816553
+  },
+  {
+    "id": 4616,
+    "name": "FT_Exit36",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2698927029
+  },
+  {
+    "id": 4617,
+    "name": "FT_Exit40",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2699074124
+  },
+  {
+    "id": 4618,
+    "name": "FT_Exit44",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2631963648
+  },
+  {
+    "id": 4619,
+    "name": "FT_Exit48",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2833295076
+  },
+  {
+    "id": 4620,
+    "name": "FT_Exit52",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 618899631
+  },
+  {
+    "id": 4621,
+    "name": "FT_Exit56",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 551789155
   }
 ]
