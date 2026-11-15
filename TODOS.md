@@ -1,3 +1,5 @@
+TUTS TOMB PARTIAL / NATIVE EXIT5dd07bdff (code69a3e199): coordinator readreport/verified648artifactSHA+size/personallyVIEWED pair10 selected7C+top6S -> removal/newlyexposedJH/score8->21 and final15pyramidcards. ONEdefaultdeal10pairs+3Kings=13removals/23cards; missedlegal10D+3H explicitlyretained/no win/loss/exhausteddeal claim, helprecycle5 vs observed10 unresolved. NativeGameExit0/809.740s; native4159762/watchdog4159761/supervisor4159759actual0bothEOF/heavyReleased/PIDsabsent/portclosed; finalOWNER_EXITEDphysicalUPACKfalse/ancillaryouter143actualwrapperwaitEOFUNKNOWN.25policy9HTTP11actualCLI/fullLOCKEDbuild49.081PASS/361pins0drift/4mediaexact/35selectedPNG. Run20261114-tutstomb-reviewed-outcome; slot alreadyfreshWin16cursor4179708/lightonly, heavyQ3browser->Tetravex16->cursor. No browser/full27/FPS/audio/nativewin claim.
+
 Current dispatch (2026-11-14):
 
 Three fresh workers are active. Heavy runtimes and builds remain serialized; keep more than1.5GB free on /home, with no RAM gate.
