@@ -2343,7 +2343,8 @@
   ;; slot 0 still produces the non-zero handle callers test for.
   (global $CURSOR_TABLE i32 (region.addr $CURSOR_TABLE 0))
   (global $CURSOR_TABLE_SIZE i32 (region.size $CURSOR_TABLE))
-  (global $CURSOR_TABLE_STRIDE i32 (i32.const 24))
+  ;; +24/+28 identify a shared NE resource's module and type/NAMEINFO id.
+  (global $CURSOR_TABLE_STRIDE i32 (i32.const 32))
   (global $MAX_CURSORS i32 (i32.const 32))
   (global $CURSOR_HANDLE_TAG i32 (i32.const 0x00CC0000))
   ;; Two private surface descriptors: compositing a cursor reads the mask and
