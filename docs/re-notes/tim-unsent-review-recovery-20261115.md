@@ -55,8 +55,9 @@ native/watchdog/supervisor-child closure, 109 absent PIDs and 96 absent recorded
 groups. Historical missing outer/ancillary EOFs stay UNKNOWN. Both locks were
 observed free. No workers or boxes are created.
 
-The locked full build passes. Route publication and the one newly authorized
-original remain pending; native transport controls do not prove a TIM handle.
+The locked full build passes. The correction was published on main as
+`7d27c1d28928ac2460aad7e61bf1cd6a166cb6c0` before the one newly authorized
+original. Native transport controls do not prove a TIM handle.
 
 The prior smart-handle, direction/belt and construction notes were read.
 Actual manual printed pages 12–16 and six selected original prior gameplay
@@ -65,3 +66,48 @@ click and then a handle click; attachment belts use separate endpoints. Prior
 images prove floating/anchored/picked-up/invalid cage states, not a flip. Each
 new original action will require its own complete current scene. Native Quit,
 host shutdown, input acknowledgment and visible puzzle completion are distinct.
+
+
+The one changed-route original is now closed, with an exact partial outcome.
+Its 900-second native deadline, independent 920-second watchdog and irreversible
+180-second Quit reserve were prearmed. All 436 launch source, ToyVM, host,
+controller, test and media pins remained unchanged. The installed game used the
+same thirteen original files, with no imported configuration or game state.
+
+Personal full-scene reviews passed the title and printed-page-one manual check,
+then selected Puzzle 1 PLAY. Three motors were dragged onto the editable board
+and separately clicked for placement. Later scenes show the first two persisting
+without their handles when another object is active. The final complete scene
+shows the upper motor with handles still visible after its placement click;
+that alone does not prove a handle-ready or direction state. Six stale reviews
+were refused before command write and independently confirmed by native code;
+fresh complete captures and newly chosen intents then admitted operations.
+These refusals did not reopen the earlier closed UNKNOWN original.
+
+I then supplied a malformed belt gesture using `from`/`to`, while this CLI
+requires `x`, `y`, `toX`, `toY`. Policy validation raised `KeyError: 'x'` and
+permanently closed this new original UNKNOWN. There is no command for that
+last reviewed frame. This is an operator schema error, not an engine bug or a
+stale-review recovery. I sent no further input and did not reclassify, rebind,
+retry or open another original. Twelve operations had been consumed, including
+one standalone hover. Chosen held operations were 100 ms. No belt endpoint,
+ramp, Run, puzzle clear, Continue/Advance, Puzzle 2, direction change or native
+Quit was reached. Gameplay beyond these visible placements remains unproved.
+
+The native host closed with exit 1, independent watchdog 0, supervisor child 1
+and launcher child 1; all four have actual waits and both EOFs. Native Quit
+was not delivered. `nativeExited:false` with a default exit code of zero is
+not native-Quit evidence. The outer tool returned 143 and exposes no separate
+pipe EOF; that outer uncertainty remains UNKNOWN. Closure audit records 96
+named actual waits with both EOFs and 97 absent PIDs and matching groups,
+including qualification controls. Both locks were observed free before the
+explicit source/build/runtime release. No boxes were created (ID and expiry
+null; stop receipt not applicable).
+
+Evidence is `scratch/runs/20261115-tim-unsent-review-puzzle2/result.json`.
+It references exact Git and relevant binary patches, pin manifests, tests,
+actual waits and release verification. Only four selected result-named PNGs
+remain; discarded captures have a filename/hash receipt. No source tree,
+media, WASM or capture bundle is archived. The final PNG is the exact partial
+Puzzle 1 scene. This task stops here; another original would require a new
+explicit assignment.
