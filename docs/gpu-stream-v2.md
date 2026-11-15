@@ -316,6 +316,12 @@ this needs requires sign-off first.
 
 ## Rollout
 
+The order is now **D3DIM, then D3D9 together with D3D8, then GL**, with D1
+executor growth first. The plan per API, with slices, tests and readback
+sites, is in [gpu-stream-v2-migration.md](gpu-stream-v2-migration.md). It
+replaces the order listed below where they differ.
+
+
 0. Spec, generator, ring, null executor and dump tool. **Done.**
 1. Glide. **Done.**
 2. D3D9.
