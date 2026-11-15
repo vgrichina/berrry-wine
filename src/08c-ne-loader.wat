@@ -2356,12 +2356,75 @@
       (then (return (i32.const 0))))
     (call $win16_dll_data_sel (local.get $id)))
 
+  ;; Win4's six-argument FAR PASCAL export is distinct from LibEntry.
+  ;; Read the retained image, including on a coordinator with no source map.
+  ;; field 0 target, 1 DS, 2 heap, 3 instance. State 2 also holds a repeated
+  ;; notification transaction: no public export/load/free can reenter it.
+  (func $win16_bridge_module_notify (export "win16_bridge_module_notify")
+    (param $id i32) (param $field i32) (result i32)
+    (local $ne i32) (local $name i32) (local $ordinal i32) (local $ds i32)
+    (if (i32.eqz (i32.or
+      (call $win16_bridge_module_readable (local.get $id) (i32.const 2))
+      (i32.or (call $win16_bridge_module_readable (local.get $id) (i32.const 3))
+              (call $win16_bridge_module_readable (local.get $id) (i32.const 4)))))
+      (then (return (i32.const 0))))
+    (local.set $ne (i32.load (call $win16_dll_rec (local.get $id))))
+    (if (i32.lt_u (i32.load16_u offset=62 (local.get $ne)) (i32.const 0x400))
+      (then (return (i32.const 0))))
+    (if (i32.eq (local.get $field) (i32.const 4)) (then (return (i32.const 1))))
+    (local.set $ds (call $win16_dll_data_sel (local.get $id)))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (local.get $ds))))
+    (if (i32.eq (local.get $field) (i32.const 2))
+      (then (return (select (call $win16_dll_heap_size (local.get $id)) (i32.const 0) (local.get $ds)))))
+    (if (i32.eq (local.get $field) (i32.const 3))
+      (then (if (local.get $ds) (then (return (local.get $ds))))
+        (return (call $win16_h16 (i32.or (i32.const 0x00D10000) (local.get $id))))))
+    (if (local.get $field) (then (return (i32.const 0))))
+    (local.set $name (i32.add (i32.wrap_i64 (global.get $win16_bridge_frame)) (i32.const 1024)))
+    (i32.store8 (local.get $name) (i32.const 13))
+    (i64.store offset=1 (local.get $name) (i64.const 0x5952544E454C4C44)) ;; DLLENTRY
+    (i32.store offset=9 (local.get $name) (i32.const 0x4E494F50)) ;; POIN
+    (i32.store8 offset=13 (local.get $name) (i32.const 0x54)) ;; T
+    (local.set $ordinal (call $win16_dll_ordinal (local.get $id) (local.get $name)))
+    (if (i32.eqz (local.get $ordinal)) (then (return (i32.const 0))))
+    (call $win16_dll_entry (local.get $id) (local.get $ordinal)))
+
+  ;; The enclosing scope owns the process execution lease. Move ready ->
+  ;; initializing while a repeated usage notification runs, without holding
+  ;; the mutex over guest instructions or changing any reference count.
+  (func (export "win16_bridge_module_notify_begin") (param $id i32) (result i32)
+    (local $rec i32)
+    (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 3)))
+      (then (return (i32.const 0))))
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (if (i32.or (i32.ne (i32.load (local.get $rec)) (i32.const 3))
+                (i32.ne (i32.load offset=24 (local.get $rec)) (i32.const 0)))
+      (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))
+    (i32.store offset=4 (local.get $rec) (call $lock_owner_id))
+    (i32.store (local.get $rec) (i32.const 2))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 1))
+
+  (func (export "win16_bridge_module_notify_end") (param $id i32) (result i32)
+    (local $rec i32)
+    (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 2)))
+      (then (return (i32.const 0))))
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (if (i32.load offset=24 (local.get $rec))
+      (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))
+    (i32.store (local.get $rec) (i32.const 3))
+    (i32.store offset=4 (local.get $rec) (i32.const 0))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 1))
+
   ;; WEP is resolved by its export name, not by a presumed ordinal. The four
   ;; byte Pascal name lives in the owning frame, clear of arguments and CPU files.
   (func $win16_bridge_module_termination (export "win16_bridge_module_termination")
     (param $id i32) (param $field i32) (result i32)
     (local $name i32) (local $ordinal i32)
-    (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 4)))
+    (if (i32.eqz (i32.or
+      (call $win16_bridge_module_readable (local.get $id) (i32.const 4))
+      (call $win16_bridge_module_readable (local.get $id) (i32.const 2))))
       (then (return (i32.const 0))))
     (if (i32.eq (local.get $field) (i32.const 1)) (then (return (call $win16_dll_data_sel (local.get $id)))))
     (if (local.get $field) (then (return (i32.const 0))))

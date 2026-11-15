@@ -238,9 +238,9 @@
     {
       "file": "lib/ne-lifecycle.js",
       "name": "host-file",
-      "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4",
+      "sha256": "2fee814a228c42885c3fc66f806adb80728b41a0eb8476123600aa24e610f6b2",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261115 Win4 DllEntryPoint: retained native metadata resolves the separate executable resident export; each semantic usage increment/decrement runs the six-argument Pascal entry synchronously under the process scope. Repeated notifications temporarily make the record initializing to reject loader reentry, and active pins reject premature free. Attach AX zero rolls back only this acquisition; trapped detach retains the reference; final detach precedes WEP and dependency release. LibMain failure/trap, notification failure/cancellation, retry, stack cleanup, repeated references and local/cooperative/Worker/retired-owner controls test restoration. Internal inspections do not send notifications. No native thunk registration, LS/QT/FT publication or asynchronous guest execution added; broader ownership remains pending.",
       "ownership": "pending"
     },
     {
