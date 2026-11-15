@@ -61,4 +61,69 @@ The deliberately orphaned fixture release remains UNKNOWN. Q3's sealed
 85-wait/277-PID release and TIM's 236-wait/238-PID direct closure were also
 personally verified before this task took the runtime.
 
-No new original has run as of qualification. No box or worker has been created.
+The qualified test and this preparation were published on main in
+`a30b71d01319966199754dc2812465f61d1a6e4d` before the original. No box or worker
+was created.
+
+## One ordinary original: real UI and bootstrap files, then child failure
+
+The single authorized run began at 09:11:19 UTC. The ordinary Setup reached
+its genuine Sims splash, InstallShield progress window and error dialog:
+“The InstallShield Engine (iKernel.exe) could not be launched. (0x80040154)”.
+Both selected complete screenshots were personally reviewed; the initial
+capture is `result-installer-start.png` in the evidence run. This is real
+installer UI, beyond the predecessor's authority startup failure.
+
+Setup created its engine directories and installed a native 614,532-byte
+`C:\Program Files\Common Files\InstallShield\Engine\6\Intel 32\IKernel.exe`,
+then invoked it with `-RegServer` through ordinary CreateProcess. The retained
+overlay index SHA-256 is
+`209641d4b739f61d44a2c6b4085995e16699912d9e06e5a44d617afb6e85d9b2`;
+the installed engine blob SHA-256 is
+`985eb55ecb750da812876b8569d5f1999a30a24bcc54f9bab4d3fc44dfedb931`.
+`native-output-manifest.json` names their existing recovery paths. These are
+actual bootstrap installation consequences, not a completed game installation.
+The exact partial overlay remains in place.
+
+The child reached selected COMCTL32 DllMain but failed with
+`Missing NE image COMMCTRL` at EIP `0x5d85d2`; the parent reported
+CoCreateInstance `0x80040154`. The parent had the explicit genuine installed-name
+COMMCTRL mount. At published source `test/run.js:4266`, `spawnVfsChild` exports
+writable VFS state and supplies `--vfs-tree`, but does not forward the explicit
+parent mounts. `lib/vfs-export.js:54` deliberately skips lazy provider entries.
+The demonstrated next prerequisite is child propagation of the resolved
+explicit system-file mount before initialization, while retaining the lazy
+media exclusion. No source fix, fake installation, registry fabrication or
+unsupported thunk change was made after this consumed original.
+
+The main splash's native title was empty, while the visible owned progress
+and modal windows had titles. The current controller requires a nonempty title
+matching the main HWND, so it could not honestly bind this scene. No binding
+or input was attempted. Native Cancel/Quit was therefore not achieved; fixing
+that guarded untitled-main/modal case is a separate demonstrated prerequisite.
+Genuine FT execution was not measured, and no game or household was reached.
+
+## Closure and next work
+
+An independent 920-second watchdog was armed before launch. On the concrete
+failure, host cancellation sent SIGTERM; cleanup did not finish, so the verified
+owned process group received SIGKILL. Native exit was -9, watchdog, supervisor
+child and launcher exits were zero, all with actual waits and both EOF. This
+was host shutdown, not native Quit. All 3,160 launch pins remained unchanged,
+as did the eleven foreign WIP paths. Startup mapped-host receipts cover both
+parent and child Workers. Their exit source-consumption inventories remain
+UNKNOWN because of forced termination; pinned hooks and startup receipts do
+not substitute for those missing exit observations.
+
+The sealed runtime release names 183 actual waits with both EOF and verifies
+245 observed PIDs/groups absent, the board watcher stopped and both locks free.
+Its SHA-256 is
+`b508c54e77afdb1977d3c7d152be5cbfe6da7122d5e30d4bd2fb0ab4c67d0c4f`.
+Source/build/runtime were explicitly released to the next worker. Historical
+and fixture ancillary UNKNOWN records stay UNKNOWN. No second original or
+unchanged retry occurred. Box ID and expiry are null; state NOT_CREATED and
+stop receipt NOT_APPLICABLE.
+
+Next: qualify explicit child-mount propagation and guarded binding of this
+observed UI, publish necessary changes, then obtain fresh authorization for
+another original. The current attempt is permanently consumed and closed.
