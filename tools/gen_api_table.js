@@ -104,6 +104,10 @@ const seen = new Set(existing.map(e => e.name));
 
 // APIs from sub-dispatchers (not in main dispatch comment pattern)
 const extra = [
+  { name: 'CoTreatAsClass', nargs: 2 },
+  { name: 'CoGetTreatAsClass', nargs: 2 },
+  { name: 'CoCreateInstance', nargs: 5, handler: 'CoCreateInstance_TreatAs' },
+  { name: 'CoGetClassObject', nargs: 5, handler: 'CoGetClassObject_TreatAs' },
   { name: 'remove', nargs: 1, convention: 'cdecl' },
   { name: 'gluScaleImage', nargs: 9 },
   { name: 'waveOutGetErrorTextA', nargs: 3 },

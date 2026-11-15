@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/storage.js",
+      "name": "host-file",
+      "baseSHA256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053",
+      "sha256": "096799259a8e175a277dbabec88473a19e9fc2cd03aecf3303c70e56c6f582d2",
+      "reason": "CoTreatAsClass registry operations and activation resolution are synchronous under the existing storage owner/import bridge. GUID reads/writes use only caller-owned memory. No guest invocation, callback, retained factory or scheduling transition is added; existing COM factory lifetimes and pending invocation ownership remain unchanged."
+    },
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "baseSHA256": "5a9f6a834b9ad5a58d4090c18f714961416dc9583908990087503ebbf715f25b",
+      "sha256": "682ab78e7e3f03d7a784f6552a8dd57de56bd637c2874de1d4fbb8a3930ab92f",
+      "reason": "TreatAs activation uses the existing COM jump/continuation mechanism with a private guest-stack frame. Marker CACA0041 restores the original stdcall frame after ordinary activation completes, including DLL-load yields and native class-factory callbacks. No foreign activation frame, global GUID scratch, callback admission or nonlocal ownership assertion is added; native guest-DLL, builtin-chain, cycle and unchanged activation regressions qualify the bounded route; ownership remains pending."
+    }
+  ]
+}

@@ -127,7 +127,7 @@ function scanSources(sources) {
 const key = entry => `${entry.file}:${entry.name}`;
 const kinds = new Set(['guest-control', 'lifecycle', 'callback', 'continuation',
   'mixed-dispatch', 'context-restore', 'host-entry', 'test-entry']);
-function check(entries, census) {
+function check(entries, census, revisions = { version: 1, revisions: [] }) {
   const errors = [];
   if (census.version !== 1) errors.push('unsupported census version');
   const expected = new Map();
@@ -137,6 +137,25 @@ function check(entries, census) {
     expected.set(id, entry);
     if (!kinds.has(entry.kind) || !entry.reason) errors.push(`unreviewed producer ${id}`);
     if (entry.ownership !== 'pending') errors.push(`unsupported ownership assertion ${id}`);
+  }
+  // Independent hash-anchored reviews let a feature revise its own producers
+  // without absorbing unrelated shared-worktree inventory edits. These do not
+  // grant invocation ownership or change any producer shape/lifetime assertion.
+  if (revisions.version !== 1 || !Array.isArray(revisions.revisions)) {
+    errors.push('unsupported producer review revisions');
+  } else {
+    const revised = new Set();
+    for (const review of revisions.revisions) {
+      const id = key(review), known = expected.get(id);
+      if (revised.has(id) || !known || review.baseSHA256 !== known.sha256 ||
+          !/^[a-f0-9]{64}$/.test(review.sha256 || '') || (typeof review.reason !== 'string' || !review.reason.trim()) ||
+          Object.keys(review).some(k => !['file', 'name', 'baseSHA256', 'sha256', 'reason'].includes(k))) {
+        errors.push(`invalid anchored producer review ${id}`);
+        continue;
+      }
+      revised.add(id);
+      expected.set(id, { ...known, sha256: review.sha256 });
+    }
   }
   for (const entry of entries) {
     const id = key(entry), known = expected.get(id);
@@ -179,7 +198,8 @@ function main() {
     return;
   }
   const api = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/api_table.json'), 'utf8'));
-  const errors = check(entries, JSON.parse(fs.readFileSync(CENSUS, 'utf8')))
+  const reviews = JSON.parse(fs.readFileSync(path.join(__dirname, 'callback-ownership-revisions.json'), 'utf8'));
+  const errors = check(entries, JSON.parse(fs.readFileSync(CENSUS, 'utf8')), reviews)
     .concat(checkNonlocalAPIs(sources, api));
   if (errors.length) {
     console.error(errors.join('\n'));

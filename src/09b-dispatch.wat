@@ -1638,6 +1638,10 @@
     (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0040))
       (then (call $beep_continue) (return)))
 
+    ;; Redirected TreatAs activation completed on its private API stack.
+    (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0041))
+      (then (call $com_treatas_after) (return)))
+
     ;; In-proc CoCreateInstance steps (see $com_activate_begin).
     (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0033))
       (then (call $com_activate_after_gco) (return)))

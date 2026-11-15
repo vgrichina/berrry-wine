@@ -117,14 +117,15 @@ const root = path.resolve(__dirname, '..');
 const real = { entries: scanSources(sourceFiles(root).map(file => ({ file,
   src: fs.readFileSync(path.join(root, file), 'utf8') }))) };
 const reviewed = require('../tools/callback-ownership-census.json');
-assert.deepStrictEqual(check(real.entries, reviewed), [], 'real source must match reviewed manifest');
+const revisions = require('../tools/callback-ownership-revisions.json');
+assert.deepStrictEqual(check(real.entries, reviewed, revisions), [], 'real source must match reviewed manifest');
 const hostSource = fs.readFileSync(path.join(root, 'host.js'), 'utf8');
 const retirement = 'this._processObject.wine = null;';
 assert(hostSource.includes(retirement));
 const changedHost = scanSources([{file: 'host.js', src: hostSource.replace(retirement, 'void this;')}]);
 assert.equal(changedHost.length, 1);
 const changedReal = real.entries.map(e => e.file === 'host.js' ? changedHost[0] : e);
-assert.deepStrictEqual(check(changedReal, reviewed),
+assert.deepStrictEqual(check(changedReal, reviewed, revisions),
   ['changed producer host.js:host-file (sha256); review its lifetime'],
   'removing process-host retirement must reject with an exact producer diagnostic');
 const workerSource = fs.readFileSync(path.join(root, 'lib/guest-worker.js'), 'utf8');
@@ -132,7 +133,7 @@ const guard = '!namedWaitTransport?.consumeNamedWait(msg.namedWaitSequence)';
 assert(workerSource.includes(guard));
 const changedWorker = scanSources([{file: 'lib/guest-worker.js', src: workerSource.replace(guard, 'false')}]);
 assert.equal(changedWorker.length, 1);
-assert.deepStrictEqual(check(real.entries.map(e => e.file === 'lib/guest-worker.js' ? changedWorker[0] : e), reviewed),
+assert.deepStrictEqual(check(real.entries.map(e => e.file === 'lib/guest-worker.js' ? changedWorker[0] : e), reviewed, revisions),
   ['changed producer lib/guest-worker.js:host-file (sha256); review its lifetime'],
   'removing single-completion ownership must reject');
 // Startup integration: pin transport, first-show selection and saved invocation
@@ -172,7 +173,7 @@ for (const [file, name, before, after] of startupMutations) {
   const replacement = scanned.find(e => e.file === file && e.name === name);
   assert(replacement, `producer survives: ${name}`);
   assert.deepStrictEqual(check(real.entries.map(e =>
-    e.file === file && e.name === name ? replacement : e), reviewed),
+    e.file === file && e.name === name ? replacement : e), reviewed, revisions),
     [`changed producer ${file}:${name} (sha256); review its lifetime`],
     `startup semantic mutation must reject: ${name} in ${file}`);
 }
@@ -200,7 +201,7 @@ for (const [file, before, after] of hostReviewMutations) {
   const scanned = scanSources([...watSources, {file, src: original.replace(before, after)}]);
   const replacement = scanned.find(e => e.file === file && e.name === 'host-file');
   assert(replacement, `host producer survives: ${file}`);
-  assert.deepStrictEqual(check(real.entries.map(e => e.file === file ? replacement : e), reviewed),
+  assert.deepStrictEqual(check(real.entries.map(e => e.file === file ? replacement : e), reviewed, revisions),
     [`changed producer ${file}:host-file (sha256); review its lifetime`]);
 }
 console.log('callback ownership census mutation tests PASS (fixtures, two lifetime, nine startup and nine host review mutations; source inventory only)');

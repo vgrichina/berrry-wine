@@ -7507,6 +7507,7 @@ async function main() {
       live: !!e.wnd_lookup_live?.(w.hwnd),
       generation: String(e.wnd_lookup_generation?.(w.hwnd) || 0),
       processId: e.get_process_id?.() >>> 0,
+      threadId: e.get_window_thread?.(w.hwnd) >>> 0,
       owner: '0x' + ((e.wnd_get_owner?.(w.hwnd) || 0) >>> 0).toString(16),
       parent: '0x' + ((e.wnd_get_parent?.(w.hwnd) || 0) >>> 0).toString(16),
     }); }) : [];
@@ -7522,10 +7523,21 @@ async function main() {
         generation: String(we.wnd_lookup_generation?.(we.get_focus_hwnd?.() || 0) || 0),
         live: !!we.wnd_lookup_live?.(we.get_focus_hwnd?.() || 0),
         processId: we.get_process_id?.() >>> 0,
+        threadId: we.get_window_thread?.(we.get_focus_hwnd?.() || 0) >>> 0,
       },
       mainHwnd: '0x' + ((we.get_main_hwnd ? we.get_main_hwnd() : 0) >>> 0).toString(16),
       capture: '0x' + ((we.get_capture_hwnd?.() || 0) >>> 0).toString(16),
       modalHwnd: '0x' + ((we.modal_dialog_hwnd?.() || we.dialogbox_hwnd?.() || 0) >>> 0).toString(16),
+      // Only the native common-dialog pump plus the actual USER control class
+      // identify a live MessageBox. An arbitrary ownerless renderer window
+      // cannot manufacture this record or the HWND generation/thread identity.
+      nativeMessageBox: (() => {
+        const h = we.modal_dialog_hwnd?.() || 0;
+        if (!h || we.ctrl_get_class?.(h) !== 16 || !we.wnd_lookup_live?.(h)) return null;
+        return { hwnd: '0x' + (h >>> 0).toString(16),
+          generation: String(we.wnd_lookup_generation(h)), processId: we.get_process_id() >>> 0,
+          threadId: we.get_window_thread(h) >>> 0, controlClass: 16 };
+      })(),
       physicalUp: !(renderer?._mouseButtonsMask || Object.values(renderer?._physicalKeys || {}).some(Boolean)),
       nativeProcess: { pid: process.pid, executable: EXE_PROCESS_GUEST_PATH || EXE_PATH },
       screen: renderer && renderer.canvas
@@ -7607,7 +7619,7 @@ async function main() {
     });
   const reviewedWindow = (s, hwnd) => s.windows.find(w => w.hwnd === hwnd);
   const sameReviewedWindow = (a, b) => a && b &&
-    ['hwnd', 'generation', 'processId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
+    ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
       .every(k => a[k] === b[k]);
   const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
     snapshot: () => {
@@ -7626,7 +7638,10 @@ async function main() {
         };
         current.healthy = current.healthy && sameReviewedWindow(main, lease.main) &&
           (!lease.modal || (sameReviewedWindow(modal, lease.modal) && s.modalHwnd === modal.hwnd &&
-            insideModal(s.focus) && (s.capture === '0x0' || insideModal(s.capture))));
+            insideModal(s.focus) && (s.capture === '0x0' || insideModal(s.capture)) &&
+            (!lease.nativeMessageBox || (JSON.stringify(s.nativeMessageBox) === JSON.stringify(lease.nativeMessageBox) &&
+              s.focusWindow.live && s.focusWindow.processId === main.processId &&
+              s.focusWindow.threadId === main.threadId))));
         // Native generations protect against recycled HWNDs even if a renderer
         // window object survives. The original physical-release refs stay exact.
         current.refs.reviewedMainGeneration = main?.generation;
@@ -7712,18 +7727,27 @@ async function main() {
             !s.physicalUp || s.capture !== '0x0' || s.focus !== expected.focus ||
             !same(s.focusWindow, expected.focusWindow) || s.quit || s.eip === '0x0')
           throw new Error('reviewed native main/process/window/focus/physical state changed');
+        const nullOwnerMessageBox = expected.modalRoute === 'null-owner-message-box';
+        const nativeBox = s.nativeMessageBox;
+        const preciseNativeBox = nullOwnerMessageBox && modal?.owner === '0x0' &&
+          nativeBox && same(nativeBox, expected.nativeMessageBox) && nativeBox.controlClass === 16 &&
+          nativeBox.hwnd === modal.hwnd && nativeBox.generation === modal.generation &&
+          nativeBox.processId === main.processId && nativeBox.threadId > 0 &&
+          nativeBox.threadId === main.threadId && nativeBox.threadId === modal.threadId &&
+          nativeBox.threadId === s.focusWindow.threadId;
         if (!main.title.trim()) {
           if (!modal?.live || !modal.visible || modal.isChild || !modal.title.trim() ||
               modal.hwnd === main.hwnd || modal.generation === '0' || modal.processId !== main.processId ||
-              modal.owner !== main.hwnd || s.modalHwnd !== modal.hwnd ||
+              (nullOwnerMessageBox ? !preciseNativeBox : modal.owner !== main.hwnd) || s.modalHwnd !== modal.hwnd ||
               s.focusTopLevel !== modal.hwnd || !s.focusWindow.live ||
               s.focusWindow.generation === '0' || s.focusWindow.processId !== main.processId ||
               !sameReviewedWindow(modal, expected.modal))
             throw new Error('untitled main requires the exact current native owned modal');
-        } else if (expected.modal) throw new Error('unexpected reviewed modal binding');
+        } else if (expected.modal || expected.modalRoute) throw new Error('unexpected reviewed modal binding');
         const paint = require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
         if (paint !== expected.pngSHA256) throw new Error('reviewed native paint changed');
-        reviewedSceneLease = { main: { ...main }, modal: modal ? { ...modal } : null };
+        reviewedSceneLease = { main: { ...main }, modal: modal ? { ...modal } : null,
+          nativeMessageBox: nullOwnerMessageBox ? { ...nativeBox } : null };
       }
       return guardedInput.bind();
     }

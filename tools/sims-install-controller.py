@@ -142,12 +142,21 @@ def bind(scene):
     assert main.get('visible') is True and not main.get('isChild') and main.get('title') == r['nativeTitle']
     expected = None
     if not r['nativeTitle'].strip():
-        modal = r['reviewedOwnedModal']
+        null_owner = 'reviewedOwnedModal' not in r and 'reviewedNativeMessageBox' in r
+        modal = r['reviewedNativeMessageBox'] if null_owner else r['reviewedOwnedModal']
         assert modal in s['windows'] and modal['hwnd'] != main['hwnd']
         assert modal.get('visible') is True and not modal.get('isChild') and modal.get('title', '').strip()
         assert main.get('processId') and main.get('generation') not in (None, 0, '0')
         assert modal.get('generation') not in (None, 0, '0') and main.get('live') is True and modal.get('live') is True
-        assert modal.get('processId') == main['processId'] and modal.get('owner') == main['hwnd']
+        assert modal.get('processId') == main['processId']
+        if null_owner:
+            box = s['nativeMessageBox']
+            assert modal.get('owner') == '0x0' and box['controlClass'] == 16
+            assert box['hwnd'] == modal['hwnd'] and box['generation'] == modal['generation']
+            assert box['processId'] == main['processId'] and box['threadId'] > 0
+            assert box['threadId'] == main['threadId'] == modal['threadId'] == s['focusWindow']['threadId']
+        else:
+            assert modal.get('owner') == main['hwnd']
         assert s.get('modalHwnd') == modal['hwnd']
         assert s.get('focusTopLevel') == modal['hwnd'] and s.get('capture') == '0x0' and s.get('physicalUp') is True
         focus = s['focusWindow']
@@ -156,6 +165,8 @@ def bind(scene):
         assert s['nativeProcess']['pid'] == rr['target']['pid'] and s['nativeProcess']['executable']
         expected = dict(main=main, modal=modal, nativeProcess=s['nativeProcess'], screen=s['screen'],
                         focus=s['focus'], focusWindow=focus, pngSHA256=rr['pngSHA256'])
+        if null_owner:
+            expected.update(modalRoute='null-owner-message-box', nativeMessageBox=s['nativeMessageBox'])
     c.bind(reviewedScene=expected) if expected else c.bind()
     assert c.read('lease-snapshot.json') == {k: rr['snapshot'][k] for k in ('mainHwnd', 'screen')}
     c.save('binding-scene.json', dict(scene=scene, nativeTitle=r['nativeTitle'],

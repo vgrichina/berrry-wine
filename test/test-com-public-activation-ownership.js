@@ -34,6 +34,13 @@ const compiled = compileClosure({ source: `
   (import "host" "thread" (func $host_beep_thread_begin (param i32 i32 i32 i32 i32) (result i32)))
   (region.declare-fixed $CALLBACK_OWNERSHIP (base 0) (size 0x2110) (align 16))
   ${globals.map(g => `(global $${g} (mut i32) (i32.const 0))`).join('\n')}
+  ;; Compile the real diagnostic-off boundary. This activation closure has no
+  ;; armed CPU observer; an unexpected armed/failing path must trap.
+  ${['pending_seen', 'pending_armed', 'pending_reason', 'dao_status'].map(g =>
+    `(global $${g} (mut i32) (i32.const 0))`).join('\n')}
+  (func $dao_fail (param i32) (unreachable))
+  (func $pending_failure (param i32 i32 i32 i32 i32 i32 i32 i32) (unreachable))
+  ${functions(read('src/05-alu.wat'), ['$pending_gap_at', '$pending_gap'])}
   (func $dbg_recompute)
   ${ownership}
   ${functions(cache, ['$sync_depth_enter', '$sync_depth_leave'])}

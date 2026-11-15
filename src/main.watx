@@ -70,6 +70,7 @@
 (include "09a5d-handlers-windowpos.wat")
 (include "09a6-handlers-crt.wat")
 (include "09a7-handlers-dispatch.wat")
+(include "09a7a-handlers-treatas.wat")
 (include "09a7b-ole.wat")
 (include "09a7c-mixer.wat")
 (include "09a7d-handlers-shell-file.wat")

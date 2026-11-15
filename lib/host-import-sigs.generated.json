@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 294,
+  "count": 295,
   "sigs": {
     "log": {
       "params": [
@@ -2727,6 +2727,16 @@
     },
     "net_link_open": {
       "params": [
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "com_treat_as_class": {
+      "params": [
+        "i32",
+        "i32",
         "i32"
       ],
       "results": [

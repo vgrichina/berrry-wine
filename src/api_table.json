@@ -301,7 +301,8 @@
     "name": "CoCreateInstance",
     "nargs": 5,
     "convention": "stdcall",
-    "hash": 2716892748
+    "hash": 2716892748,
+    "handler": "CoCreateInstance_TreatAs"
   },
   {
     "id": 35,
@@ -21459,7 +21460,8 @@
     "name": "CoGetClassObject",
     "nargs": 5,
     "convention": "stdcall",
-    "hash": 1401680208
+    "hash": 1401680208,
+    "handler": "CoGetClassObject_TreatAs"
   },
   {
     "id": 2512,
@@ -39201,5 +39203,19 @@
     "nargs": 0,
     "convention": "stdcall",
     "hash": 551789155
+  },
+  {
+    "id": 4622,
+    "name": "CoTreatAsClass",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2870905131
+  },
+  {
+    "id": 4623,
+    "name": "CoGetTreatAsClass",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2144012897
   }
 ]
