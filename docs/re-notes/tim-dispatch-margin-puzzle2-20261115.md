@@ -38,5 +38,39 @@ mechanism or engine-fix evidence.
 All 443 qualification pins and all thirteen foreign tracked WIP files remained
 unchanged at closure. Source recovery uses the exact Git SHA and binary patches;
 no source, media or module bundle was made. One fresh unchanged ordinary original
-is authorized after publication. Ordinary puzzle selection will be attempted
-from a personally viewed current scene; there is no queued solution or retry.
+was consumed after publication of feature `712384ad61d56882ba07620afd08eef63f5ef18b`.
+
+The fresh original result is **PARTIAL**. Ordinary chooser selection of Puzzle2
+displayed NEED PASSWORD; no password was entered or guessed. Puzzle1 was rebuilt
+manually with three mouse motors, three visibly connected belts and a ramp.
+The first Run did not chain. Moving the lower motor under the loose ball and
+running again moved the basketball into the air near the hoop, with other balls
+also displaced. No Puzzle1 clear, Puzzle2 cage direction, Puzzle2 belt endpoints,
+Puzzle2 Run or Puzzle2 clear was established in this fresh original. The older
+run's Puzzle1 bonus and cage progress are not evidence of this run's completion.
+
+Twelve gameplay attempts were positively refused UNSENT and independently
+confirmed by native, including attempts inside native's five-second limit.
+Each subsequent attempt used another complete personally reviewed scene and
+independent intent. The resulting review overhead exhausted the construction
+window. Gameplay stopped for the irreversible Quit reserve; right-button native
+navigation returned to the control panel. The visible red octagonal Quit was
+then clicked at approximately elapsed 896.9 seconds. A preliminary button-zero
+candidate was rejected by the strict schema before any CLI/input delivery;
+the actual Quit used the valid left button. Native ended before a postrelease
+consequence, leaving permanent UNKNOWN. Its final record says
+`nativeExited: false`, `nativeExitCode: 0`; **native Quit is unproved**, and host
+termination is not substituted for native Quit. No further input or recovery
+was attempted. The margin change is a transport admission fix, not an engine
+or game fix.
+
+All 443 original source/build/media pins and thirteen foreign tracked WIP hashes
+were unchanged before source/build/runtime release. Original native, watchdog,
+supervisor-child and launcher each have actual waits and both EOFs; 236 named
+waits and 238 recorded PIDs and matching groups were closed/absent at release.
+The release is `runtime-release.json`, linking `original-closure.json` with SHA
+`82e717d81e6f3bc675cc329c4b1333903e0c07fffc24cb4d63ff9558a499be0d`.
+Only selected result-named PNGs are retained alongside compact logs, pins and
+Git patches. No box was created: ID/expiry null, state NOT_CREATED, stop receipt
+not applicable. No second original or unchanged retry is authorized by this
+task. Completing Puzzle2 and proving native Quit require fresh authorization.
