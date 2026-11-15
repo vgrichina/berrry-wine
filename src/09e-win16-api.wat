@@ -428,17 +428,20 @@
   (global $win16_guest_esp (mut i32) (i32.const 0))
   (global $win16_guest_eip (mut i32) (i32.const 0))
   (global $win16_guest_return (mut i32) (i32.const 0))
+  (global $win16_ls32_request_generation (mut i32) (i32.const 0))
 
   (func $win16_guest_request_begin (export "win16_guest_request_begin")
     (param $op i32) (param $arg0 i32) (param $arg1 i32) (result i64)
     (local $esp i32) (local $pop i32) (local $i i32)
     (if (i32.or (global.get $is_win16) (global.get $yield_reason)) (then (return (i64.const 0))))
     (if (i64.ne (global.get $win16_guest_pending) (i64.const 0)) (then (return (i64.const 0))))
-    (if (i32.or (i32.lt_u (local.get $op) (i32.const 1)) (i32.gt_u (local.get $op) (i32.const 4)))
+    (if (i32.or (i32.lt_u (local.get $op) (i32.const 1)) (i32.ge_u (local.get $op) (i32.const 6)))
       (then (return (i64.const 0))))
     (local.set $esp (i32.load offset=16 (global.get $reg_base)))
     (local.set $pop (select (i32.const 12) (i32.const 8) (i32.eq (local.get $op) (i32.const 3))))
     (if (i32.eq (local.get $op) (i32.const 4)) (then (local.set $pop (i32.const 4))))
+    ;; Native LS32 pairing parks six arguments; relay settlement stays closed.
+    (if (i32.eq (local.get $op) (i32.const 5)) (then (local.set $pop (i32.const 28))))
     (if (i32.gt_u (local.get $esp) (i32.sub (i32.const -1) (local.get $pop)))
       (then (return (i64.const 0))))
     (loop $stack_bytes
@@ -446,6 +449,11 @@
         (then (return (i64.const 0))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $stack_bytes (i32.lt_u (local.get $i) (local.get $pop))))
+    (if (i32.eq (local.get $op) (i32.const 5)) (then
+      (local.set $i (call $dll_index_from_module (call $gl32 (i32.add (local.get $esp) (i32.const 20)))))
+      (global.set $win16_ls32_request_generation (i32.const 0))
+      (if (i32.ge_s (local.get $i) (i32.const 0)) (then
+        (global.set $win16_ls32_request_generation (i32.atomic.load offset=4 (call $dll_lifecycle_row (local.get $i))))))))
     (if (i64.eq (global.get $win16_guest_serial) (i64.const 0xFFFFFFFF)) (then (unreachable)))
     (global.set $win16_guest_serial (i64.add (global.get $win16_guest_serial) (i64.const 1)))
     (global.set $win16_guest_owner (call $lock_owner_id))
@@ -485,6 +493,8 @@
     (local $pop i32)
     (if (i32.eqz (call $win16_guest_request_valid (local.get $serial))) (then (return (i32.const 0))))
     (if (i32.eq (global.get $win16_guest_op) (i32.const 4)) (then (return (i32.const 0))))
+    ;; Pairing alone cannot complete a guest ThunkConnect32 attach.
+    (if (i32.eq (global.get $win16_guest_op) (i32.const 5)) (then (return (i32.const 0))))
     (local.set $pop (select (i32.const 12) (i32.const 8) (i32.eq (global.get $win16_guest_op) (i32.const 3))))
     (if (i32.gt_u (global.get $win16_guest_esp) (i32.sub (i32.const -1) (local.get $pop)))
       (then (return (i32.const 0))))
@@ -499,6 +509,7 @@
     (i32.const 1))
   (func $win16_guest_request_cancel (export "win16_guest_request_cancel")
     ;; Process reset/retirement invalidates old completions without resuming.
+    (call $win16_ls32_cancel)
     (global.set $win16_guest_pending (i64.const 0)))
 
   ;; QT settlement owns a completed native frame, never a host-supplied result.
@@ -737,6 +748,7 @@
           (i32.add (i32.load offset=256 (local.get $frame)) (i32.const 1)))
           (then (return (i32.const 0))))))
     (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (call $win16_ls32_frame_end (local.get $token))
     ;; QT owns the overwritten PE return slot until this exact frame ends.
     ;; Scratch writes are already visible through the alias; never copy a
     ;; private BP frame over them. Restore the return before dropping the lease.

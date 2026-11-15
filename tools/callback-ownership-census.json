@@ -221,25 +221,25 @@
     {
       "file": "lib/ne-guest-bridge.js",
       "name": "host-file",
-      "sha256": "25e7c3778236e90bfc6cb030712104b4b5cc605bc61a7579fba48cfbd1b368ca",
+      "sha256": "1200a47971d94caf173501d839e21af5b0a1abc7f8dbf6fb28e8a5ee387821b2",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261107 Outlaws Worker NE lifecycle: source closure preflight awaits only after native temporary scopes unwind, under the existing callback gate and serialized owning Worker command. Request token/frame and live endpoint are checked before and after I/O. Existing synchronous NE transaction/invocation owns LibEntry, exports, WEP and exactly-once settlement; no asynchronous NE guest execution added. Slice and nested PE callbacks use that same service. Stop joins existing endpoint cancellation/generator retirement before termination; failed or cancelled initializers retain quarantine pins. Actual production Worker original-style nested DLL regression fails on prior source and covers success, parked I/O, transitive imports, typed errors, LibEntry/import/WEP failures and cancellation. Broader invocation ownership remains pending; see docs/re-notes/outlaws-worker-ne-lifecycle-20261107.md.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261107 Outlaws Worker NE lifecycle: source closure preflight awaits only after native temporary scopes unwind, under the existing callback gate and serialized owning Worker command. Request token/frame and live endpoint are checked before and after I/O. Existing synchronous NE transaction/invocation owns LibEntry, exports, WEP and exactly-once settlement; no asynchronous NE guest execution added. Slice and nested PE callbacks use that same service. Stop joins existing endpoint cancellation/generator retirement before termination; failed or cancelled initializers retain quarantine pins. Actual production Worker original-style nested DLL regression fails on prior source and covers success, parked I/O, transitive imports, typed errors, LibEntry/import/WEP failures and cancellation. Broader invocation ownership remains pending; see docs/re-notes/outlaws-worker-ne-lifecycle-20261107.md. Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed.",
       "ownership": "pending"
     },
     {
       "file": "lib/ne-invoke.js",
       "name": "host-file",
-      "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5",
+      "sha256": "f1c548295ca671c73d7fbedca1ff5306e43e27933237f0e91b32dc8723c3463d",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed.",
       "ownership": "pending"
     },
     {
       "file": "lib/ne-lifecycle.js",
       "name": "host-file",
-      "sha256": "916c16412bf315cd9bcae70f3c4ebb20553f3b37222bc1b428fe2efd19c18386",
+      "sha256": "fb942d16967fc4a2f8afa60f30b52bbc0325e3d491f3d329ba68eef138feba63",
       "kind": "host-entry",
-      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261115 Win4 DllEntryPoint: retained native metadata resolves the separate executable resident export; each semantic usage increment/decrement runs the six-argument Pascal entry synchronously under the process scope. Repeated notifications temporarily make the record initializing to reject loader reentry, and active pins reject premature free. Attach AX zero rolls back only this acquisition; trapped detach retains the reference; final detach precedes WEP and dependency release. LibMain failure/trap, notification failure/cancellation, retry, stack cleanup, repeated references and local/cooperative/Worker/retired-owner controls test restoration. Internal inspections do not send notifications. No native thunk registration, LS/QT/FT publication or asynchronous guest execution added; broader ownership remains pending. Review 20261115 KERNEL.651: bracket each existing synchronous notification with native LS begin/end in the same process execution scope; commit only after AX success and cancellation check, restore registration refs on failure. Existing invoke driver pins/restores CPU state and releases frames in finally; callLs resolves native pairing and invokes under an uninterrupted scope. No async guest execution, PE relay publication or FT guard change. Compiled local/cooperative/Worker and rollback/detach/cancel checks in 20261115-sims-kernel651-implemented; broader invocation ownership remains pending.",
+      "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261115 Win4 DllEntryPoint: retained native metadata resolves the separate executable resident export; each semantic usage increment/decrement runs the six-argument Pascal entry synchronously under the process scope. Repeated notifications temporarily make the record initializing to reject loader reentry, and active pins reject premature free. Attach AX zero rolls back only this acquisition; trapped detach retains the reference; final detach precedes WEP and dependency release. LibMain failure/trap, notification failure/cancellation, retry, stack cleanup, repeated references and local/cooperative/Worker/retired-owner controls test restoration. Internal inspections do not send notifications. No native thunk registration, LS/QT/FT publication or asynchronous guest execution added; broader ownership remains pending. Review 20261115 KERNEL.651: bracket each existing synchronous notification with native LS begin/end in the same process execution scope; commit only after AX success and cancellation check, restore registration refs on failure. Existing invoke driver pins/restores CPU state and releases frames in finally; callLs resolves native pairing and invokes under an uninterrupted scope. No async guest execution, PE relay publication or FT guard change. Compiled local/cooperative/Worker and rollback/detach/cancel checks in 20261115-sims-kernel651-implemented; broader invocation ownership remains pending. Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed.",
       "ownership": "pending"
     },
     {
@@ -2476,9 +2476,9 @@
           "$entry_point"
         ]
       ],
-      "sha256": "9b30acb45b46a596e6ea1709b5f10046cb71af3b7918cf1086b4f0e5145f6ac4",
+      "sha256": "9f3547626c8598daf65356e18ce615221af62cf43acfb144ce4f74facb9d0df5",
       "kind": "lifecycle",
-      "reason": "Process or task entry; must establish a fresh lifetime before nonlocal contexts can be registered. Pending-context v1 invalidates post-execution context replacement without changing process/thread entry behavior; broader callback ownership remains pending (20261105-mdk2-native-pending-context).",
+      "reason": "Process or task entry; must establish a fresh lifetime before nonlocal contexts can be registered. Pending-context v1 invalidates post-execution context replacement without changing process/thread entry behavior; broader callback ownership remains pending (20261105-mdk2-native-pending-context). Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed.",
       "ownership": "pending",
       "quake2NativeStoreReview20261108": "Default-off native gsN completion epochs add no retained guest invocation. Enabled mode uses existing instruction-granularity decoding and disables block/tier shortcuts to retain the writing instruction PC. init_thread/load_pe invalidate receipts. Node observation binds actual instance and memory, compares derived model/table epochs, and keeps raw source release REVOKED. Shared, host, bulk/locked and other-instance writers plus edict ABA remain UNKNOWN; broader callback ownership pending. Offline shipped-module and NodeWorker native same-byte/write-restore, widths/page crossings, reset/reload/replacement and parity controls: scratch/runs/20261108-quake2-native-write-epoch-2358."
     },
@@ -2516,6 +2516,22 @@
     },
     {
       "file": "src/08c-ne-loader.wat",
+      "name": "$win16_ls32_pair",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_new_id"
+      ],
+      "exports": [
+        "win16_bridge_ls32_pair"
+      ],
+      "targets": [],
+      "sha256": "b4044ab43998db1f92a213efa4e3c50498185e01004f4828a7c5785dabac3b6c",
+      "kind": "lifecycle",
+      "ownership": "pending",
+      "reason": "Native LS32 prepublication pairing. Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed."
+    },
+    {
+      "file": "src/08c-ne-loader.wat",
       "name": "$win16_task_setup",
       "writes": 1,
       "boundaryCalls": [],
@@ -2537,6 +2553,28 @@
       "kind": "lifecycle",
       "reason": "Process or task entry; must establish a fresh lifetime before nonlocal contexts can be registered.",
       "ownership": "pending"
+    },
+    {
+      "file": "src/08c-ne-loader.wat",
+      "name": "export:win16_bridge_ls32_invoke_begin",
+      "writes": 0,
+      "boundaryCalls": [
+        "$win16_bridge_scope_begin",
+        "$win16_ls32_find",
+        "$win16_ls32_matches",
+        "$win16_bridge_ls_target",
+        "$win16_bridge_invoke_module",
+        "$win16_bridge_module_data",
+        "$win16_bridge_invoke_begin"
+      ],
+      "exports": [
+        "win16_bridge_ls32_invoke_begin"
+      ],
+      "targets": [],
+      "sha256": "b168eaaad063915bc2c525ca6b725848418c5306cb6e56c1cb98b1ac395b4b8c",
+      "kind": "lifecycle",
+      "ownership": "pending",
+      "reason": "Native LS32 prepublication pairing. Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed."
     },
     {
       "file": "src/09a-handlers.wat",
@@ -7081,9 +7119,9 @@
           ]
         ]
       ],
-      "sha256": "f4313294be7ade6f819685e0685b7fa1d78d8ed58c3594cd4e162dac4c637a51",
+      "sha256": "1bf5fa6fd92d31376262e02004364aea1bd4d6a3c53d045bcc236cb84c2c02a3",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed.",
       "ownership": "pending"
     },
     {
@@ -8013,9 +8051,9 @@
           "$win16_guest_return"
         ]
       ],
-      "sha256": "64403554fd7fea281aa96a13809fda310461030e931a3f81007406906abab8ee",
+      "sha256": "dbd6a20937c6188eed874786e4f0bae03b847bed9920b4aad43aa7df530125e9",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed.",
       "ownership": "pending"
     },
     {
