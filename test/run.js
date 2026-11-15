@@ -7647,7 +7647,8 @@ async function main() {
     wakeControlLoop();
     return result;
   };
-  let reviewedSceneBindAttempted = false, reviewedSceneLease = null;
+  let reviewedSceneBindAttempted = false, reviewedSceneLease = null, nativeSceneLease = null;
+  const nativeScene = require('../lib/cli-native-scene');
   const cliInputSnapshot = require('../lib/cli-input-owner').createCliInputSnapshot({
       instance, memory, renderer, getDevice: () => ctx.d3dCommands,
       getThreadManager: () => threadManager,
@@ -7657,8 +7658,16 @@ async function main() {
     ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
       .every(k => a[k] === b[k]);
   const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
+    validateIntent: intent => !nativeSceneLease || nativeScene.matches(controlSnapshot(), intent),
     snapshot: () => {
       const current = cliInputSnapshot();
+      if (nativeSceneLease) {
+        const s=controlSnapshot(), main=reviewedWindow(s,s.mainHwnd);
+        current.healthy=current.healthy && sameReviewedWindow(main,nativeSceneLease.main) &&
+          JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
+          JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
+        current.refs.nativeSceneMainGeneration=main?.generation;
+      }
       if (reviewedSceneLease) {
         const s = controlSnapshot(), lease = reviewedSceneLease;
         const main = reviewedWindow(s, lease.main.hwnd), modal = lease.modal && reviewedWindow(s, lease.modal.hwnd);
@@ -7751,6 +7760,15 @@ async function main() {
     }
     if (cmd.action === 'guarded-bind') {
       if (reviewedSceneBindAttempted) throw new Error('reviewed scene binding is permanent; no replay/rebind');
+      if (cmd.reviewedScene?.route === 'native-scene-v1') {
+        reviewedSceneBindAttempted=true;
+        const expected=cmd.reviewedScene, s=controlSnapshot();
+        if (!nativeScene.matches(s,expected.snapshot)) throw new Error('reviewed native scene changed before binding');
+        const paint=require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
+        if (paint!==expected.pngSHA256) throw new Error('reviewed native paint changed');
+        nativeSceneLease=nativeScene.context(s);
+        return guardedInput.bind();
+      }
       if (cmd.reviewedScene) {
         reviewedSceneBindAttempted = true;
         const expected = cmd.reviewedScene, s = controlSnapshot();
