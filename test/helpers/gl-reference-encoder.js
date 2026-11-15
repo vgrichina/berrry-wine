@@ -288,6 +288,7 @@ const stats = {
       this.commands = 0;
       this.submissions = 0;
       this.currentContext = 0;
+      this.knownContexts = new Set();
       this.immediateStates = new Map();
       this.immediate = null;
       // Reused across glBegin/glEnd spans. Immediate-mode games submit many
@@ -846,6 +847,9 @@ const stats = {
         return 0;
       }
       if (this.immediate) throw new RangeError(`GL opcode ${opcode} inside glBegin/glEnd`);
+      // An unknown WGL handle is rejected by the native namespace before
+      // host publication; it must not flush pending geometry as a barrier.
+      if (opcode === 49 && !this.knownContexts.has(u32At(memoryView, stackWa, 0))) return 0;
       const pointer = pointerSpec(opcode, memoryView, stackWa);
 
       // OpenGL promises that client pixels have been consumed when a texture
@@ -872,9 +876,16 @@ const stats = {
         throw new RangeError(`GL command ${opcode} does not fit command buffer`);
       }
       const result = BARRIERS.has(opcode) ? this.flush() : 0;
-      if (opcode === 51 && result) this.currentContext = u32At(memoryView, stackWa, 1);
+      if (opcode === 48 && result) this.knownContexts.add(result >>> 0);
+      if (opcode === 51) {
+        // WGL failure detaches the previous current context (Microsoft WGL
+        // contract), while preserving that context's saved attributes.
+        this.currentContext = result ? u32At(memoryView, stackWa, 1) : 0;
+        if (result) this.knownContexts.add(this.currentContext);
+      }
       if (opcode === 49 && result) {
         const deleted = u32At(memoryView, stackWa, 0);
+        this.knownContexts.delete(deleted);
         this.immediateStates.delete(deleted);
         if (this.currentContext === deleted) this.currentContext = 0;
       }
