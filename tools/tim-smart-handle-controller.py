@@ -333,7 +333,8 @@ class Policy:
             exclusive(p, dict(reason=str(reason), at=time.time(), irreversible=True))
 
     def admit(self, capture, review, action, now=None):
-        now = time.time() if now is None else now
+        live_clock = now is None
+        now = time.time() if live_clock else now
         try:
             assert not (self.root / 'UNKNOWN.json').exists(), 'terminal UNKNOWN; no replay/rebind'
             assert now < self.lease['deadline'], 'native deadline reached'
@@ -395,18 +396,28 @@ class Policy:
                 assert frame != refused['frameId'] and admission['token'] != refused['token']
                 assert capture['capturedAt'] >= confirmed['at'] / 1000
                 assert review['intentId'] != refused['refusedIntentId'], 'old intent cannot be reused'
+            # Reserve dispatch time immediately before the atomic INPUT claim.
+            # This cannot guarantee arbitrary delivery latency; once written,
+            # native expiry is still permanent UNKNOWN, never UNSENT.
+            nonce = str(uuid.uuid4())
+            if live_clock:
+                now = time.time()
             age = now - capture['capturedAt']
             assert age >= 0, 'future capture'
-            if age > (5 if mode == 'game' else 30):
+            maximum_age = 5 if mode == 'game' else 30
+            minimum_dispatch = 1
+            if maximum_age - age < minimum_dispatch:
                 receipt = {k: capture[k] for k in ('session', 'frameId', 'digest', 'programId', 'targetId')}
                 receipt.update(status='REFUSED_UNSENT', delivery='NONE', token=admission['token'],
                                refusalId=str(uuid.uuid4()), refusedIntentId=review['intentId'],
-                               at=now * 1000, reviewAgeSeconds=age, freshCaptureRequired=True,
+                               at=now * 1000, reviewAgeSeconds=age, maximumReviewAgeSeconds=maximum_age,
+                               minimumDispatchSeconds=minimum_dispatch, remainingDispatchSeconds=maximum_age-age,
+                               freshCaptureRequired=True,
                                newIndependentIntentRequired=True)
                 exclusive(decision, receipt)
                 raise UnsentReviewRefusal(receipt)
             command = dict(session=capture['session'], frameId=capture['frameId'], digest=capture['digest'],
-                           programId=capture['programId'], targetId=capture['targetId'], nonce=str(uuid.uuid4()),
+                           programId=capture['programId'], targetId=capture['targetId'], nonce=nonce,
                            action=dict(action), review=dict(review), submittedAt=now)
             exclusive(decision, dict(status='INPUT', nonce=command['nonce'], at=now * 1000))
             exclusive(self.root / ('command-' + capture['frameId'] + '.json'), command)
@@ -432,9 +443,11 @@ def start_original(directory):
     assert proof['actualNativeCallbacks'] and proof['directWaitsBothEOF']
     assert proof['schemaTestSHA256'] == digest(Path(__file__).resolve().parents[1] / 'test/test-tim-gesture-schema.py')
     assert proof['schemaExactCLIAndNativeZeroDelivery'] is True
+    assert proof['marginTestSHA256'] == digest(Path(__file__).resolve().parents[1] / 'test/test-tim-dispatch-margin.py')
+    assert proof['marginNativeZeroDeliveryAndWrittenUnknown'] is True
     assert subprocess.check_output(['git', 'branch', '--show-current'], text=True).strip() == 'main'
     subprocess.run(['git', 'merge-base', '--is-ancestor', proof['publishedCommit'], 'origin/main'], check=True)
-    for path in ('tools/tim-smart-handle-controller.py', 'test/test-tim-smart-handle-controller.py', 'test/test-tim-gesture-schema.py'):
+    for path in ('tools/tim-smart-handle-controller.py', 'test/test-tim-smart-handle-controller.py', 'test/test-tim-gesture-schema.py', 'test/test-tim-dispatch-margin.py'):
         assert not subprocess.check_output(['git', 'status', '--porcelain', '--', path]), 'route must be published and clean'
     exclusive(directory / 'ONE-original-intent.json', dict(at=time.time(), routeSHA256=digest(__file__),
               publishedCommit=proof['publishedCommit'], nativeSeconds=900, watchdogSeconds=920, quitReserveSeconds=180))
