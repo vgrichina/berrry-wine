@@ -428,7 +428,13 @@ async function install({c,pageSession,workers,app,backend}){
     assert.equal(matches.length,1,'one actual owning CPU Worker');
     const actual=await evaluate(c,matches[0].sessionId,workerSource());
     nativeOwner={epoch:actual.epoch,endpointIdentity:actual.endpointIdentity,slot:actual.slot};
-  }else nativeOwner={epoch:crypto.randomUUID(),endpointIdentity:'main',slot:0};
+  }else {
+    // Pay the engine's first debugger transition before personal scene review.
+    // Each release child still opens its own session and recovers fresh bodies
+    // and module wire bytes; no source/hash or scene is retained here.
+    await c.send('Debugger.enable',{},pageSession);
+    nativeOwner={epoch:crypto.randomUUID(),endpointIdentity:'main',slot:0};
+  }
   const options={app,backend,nativeOwner};
   await evaluate(c,pageSession,pageSource(options));
   return options;
@@ -436,16 +442,83 @@ async function install({c,pageSession,workers,app,backend}){
 // This runs in the release child on its own CDP transport. The expected source
 // bodies are generated from this child's current helper, not copied from ACKs.
 async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
-  verifyPins(cfg.pins);checkPID(cfg.pid,cfg.startToken);checkPID(cfg.parentPID,cfg.parentStartToken);
-  trace('current-pins-and-processes');
+  trace('current-pins-and-processes-begin');
+  // The fresh final verifyPins below proves current disk bodies before arm.
+  // Re-reading and hashing this same mutable set during connection setup adds
+  // no predicate: executed bodies must match cfg, and every current file must
+  // still match cfg immediately before arm. No body/hash cache is retained.
+  assert(Array.isArray(cfg.pins.files)&&cfg.pins.files.length);
+  for(const p of cfg.pins.files)assert(typeof p.path==='string'&&!path.isAbsolute(p.path)&&!p.path.split('/').includes('..'));
+  checkPID(cfg.pid,cfg.startToken);checkPID(cfg.parentPID,cfg.parentStartToken);
   const scripts=new Map(),workers=new Map(),sessions=cfg.owner?.workerTarget?[]:[pageSession];
+  const pinMap=new Map(cfg.pins.files.map(p=>['/'+p.path,p.sha256])),rows=[],sourceTasks=[];
+  let pageBody=true,workerBody=!cfg.owner?.workerTarget,invalid=null,sealed=false;
   const previous=c.event;
+  const current=()=>assert(!invalid,invalid);
+  function source(session,script){
+    let pathname=null;try{pathname=new URL(script.url).pathname;}catch{}
+    const isPage=script.url===PAGE_URL,isWorker=script.url===WORKER_URL;
+    if(!isPage&&!isWorker&&!script.url.startsWith('wasm:')&&!pinMap.has(pathname))return;
+    const list=scripts.get(session)||new Map();scripts.set(session,list);
+    // A script ID is scoped to this new debugger session and execution context.
+    // Repeated identical inventory events may share one in-flight recovery only.
+    // Live edits or changed descriptors invalidate the entire fresh attestation.
+    const key=script.executionContextId+':'+script.scriptId;
+    const descriptor=JSON.stringify(script);
+    if(script.isLiveEdit){invalid='executed source live edited';return;}
+    if(list.has(key)){
+      if(list.get(key)!==descriptor)invalid='executed script/context identity changed';
+      return;
+    }
+    if(sealed){invalid='new executed source after attestation';return;}
+    list.set(key,descriptor);
+    const task=(async()=>{
+      const began=Date.now();
+      // CDP's JavaScript script hash is SHA256 of the immutable engine source
+      // (qualified against raw getScriptSource on the installed browser). A
+      // fresh session/context/script inventory proves the same body without
+      // transferring every HTTP file again. Never use the WASM metadata hash:
+      // that engine reports an empty hash; recover its wire bytecode below.
+      const digestOnly=!isPage&&!isWorker&&!script.url.startsWith('wasm:');
+      if(digestOnly){
+        assert(/^[a-f0-9]{64}$/.test(script.hash),'engine JavaScript source digest');
+        assert(Number.isSafeInteger(script.executionContextId)&&script.executionContextId>0);
+        let expected=pinMap.get(pathname);
+        if(pathname.endsWith('.html')){
+          const text=fs.readFileSync(path.join(ROOT,pathname.slice(1)),'utf8'),lines=text.split('\n');
+          assert(Number.isSafeInteger(script.startLine)&&Number.isSafeInteger(script.endLine));
+          let inline=lines.slice(script.startLine,script.endLine+1);
+          if(inline.length===1)inline=[inline[0].slice(script.startColumn,script.endColumn)];
+          else {inline[0]=inline[0].slice(script.startColumn);inline[inline.length-1]=inline.at(-1).slice(0,script.endColumn);}
+          expected=sha(Buffer.from(inline.join('\n')));
+        }
+        assert.equal(script.hash,expected,'actual executed source changed '+pathname);
+        const row={url:script.url,scriptId:script.scriptId,executionContextId:script.executionContextId,
+          sha256:script.hash,size:script.length,bytecodeAvailable:false,proof:'fresh-engine-immutable-source-digest'};
+        rows.push(row);if(workers.has(session))workers.get(session).scripts.push(row);
+        trace('actual-source-engine-digest',{...row,session,began,ms:Date.now()-began});return;
+      }
+      const value=await c.send('Debugger.getScriptSource',{scriptId:script.scriptId},session);
+      current();
+      const bytes=value.bytecode?Buffer.from(value.bytecode,'base64'):Buffer.from(value.scriptSource||'');
+      const hash=sha(bytes),row={url:script.url,scriptId:script.scriptId,
+        executionContextId:script.executionContextId,sha256:hash,size:bytes.length,bytecodeAvailable:!!value.bytecode};
+      rows.push(row);trace(value.bytecode?'actual-module-bytes':'actual-source-body',{...row,session,began,ms:Date.now()-began});
+      if(workers.has(session))workers.get(session).scripts.push(row);
+      if(isPage){assert.equal(session,pageSession);assert.equal(hash,sha(Buffer.from(pageSource(cfg.bridgeOptions))),'actual page binding body changed');pageBody=true;}
+      else if(isWorker){assert.equal(hash,sha(Buffer.from(workerSource())),'actual owning native bridge body changed');workerBody=true;}
+      else assert(value.bytecode&&cfg.pins.modules.includes(hash),'current actual module wire bytes required');
+    })();
+    // Recover immediately as the inventory arrives, overlapping protocol work;
+    // every task is still joined and checked before native arm can be accepted.
+    sourceTasks.push(task);task.catch(()=>{});
+  }
   c.event=v=>{
     previous(v);
-    if(v.method==='Debugger.scriptParsed'){
-      const list=scripts.get(v.sessionId)||[];list.push({...v.params});scripts.set(v.sessionId,list);
-    }
-    if(v.method==='Target.detachedFromTarget')for(const w of workers.values())if(w.sessionId===v.params.sessionId)w.closed=true;
+    if(v.method==='Debugger.scriptParsed'&&sessions.includes(v.sessionId))source(v.sessionId,v.params);
+    if(v.method==='Runtime.executionContextDestroyed'&&sessions.includes(v.sessionId))invalid='executed context destroyed';
+    if(v.method==='Runtime.executionContextsCleared'&&sessions.includes(v.sessionId))invalid='executed contexts cleared';
+    if(v.method==='Target.detachedFromTarget')for(const w of workers.values())if(w.sessionId===v.params.sessionId){w.closed=true;invalid='owning target detached';}
   };
   if(cfg.owner?.workerTarget){
     const ids=[cfg.owner.workerTarget,...(cfg.owner.rendererTarget!=='none'?[cfg.owner.rendererTarget]:[])];
@@ -457,9 +530,14 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
     }
   }
   trace('attached-actual-targets');
-  await Promise.all(sessions.map(session=>c.send('Debugger.enable',{},session)));trace('debugger-source-inventory');
-  const pinMap=new Map(cfg.pins.files.map(p=>['/'+p.path,p.sha256])),rows=[];
-  const proof=await evaluate(c,pageSession,'__gta2NativeReleasePageV1.sourceProof()');
+  const inventory=Promise.all(sessions.flatMap(session=>[c.send('Runtime.enable',{},session),c.send('Debugger.enable',{},session)]));
+  // This fresh function-body proof and the engine's fresh source recoveries are
+  // independent observations and can run together on this child's transport.
+  const proofTask=evaluate(c,pageSession,'__gta2NativeReleasePageV1.sourceProof()');
+  proofTask.catch(()=>{});
+  await inventory;current();trace('debugger-source-inventory');
+  trace('current-process-identities-and-expected-pins');
+  const proof=await proofTask;
   assert.equal(proof.bridge,pageBridge.toString(),'actual page bridge function body');
   assert.equal(proof.nativeContext,nativeContext.toString(),'actual page native guard function body');
   assert(fs.readFileSync(path.join(ROOT,'host.js'),'utf8').includes(proof.host),'current actual WineAssembly class body');
@@ -467,36 +545,10 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
   const pageProof={bridgeSHA256:sha(Buffer.from(proof.bridge)),nativeContextSHA256:sha(Buffer.from(proof.nativeContext)),
     hostClassSHA256:sha(Buffer.from(proof.host)),physicalBodies:Object.fromEntries(['down','up','press'].map(key=>[key,sha(Buffer.from(proof[key]))]))};
   trace('actual-page-and-original-handler-bodies');
-  let pageBody=true,workerBody=!cfg.owner?.workerTarget;
-  const sourceTasks=[];
-  for(const session of sessions){
-    for(const script of scripts.get(session)||[]){
-      let pathname=null;try{pathname=new URL(script.url).pathname;}catch{}
-      const isPage=script.url===PAGE_URL,isWorker=script.url===WORKER_URL;
-      if(!isPage&&!isWorker&&!script.url.startsWith('wasm:')&&!pinMap.has(pathname))continue;
-      sourceTasks.push((async()=>{
-      const source=await c.send('Debugger.getScriptSource',{scriptId:script.scriptId},session);
-      const bytes=source.bytecode?Buffer.from(source.bytecode,'base64'):Buffer.from(source.scriptSource||'');
-      const hash=sha(bytes),row={url:script.url,scriptId:script.scriptId,sha256:hash,size:bytes.length,bytecodeAvailable:!!source.bytecode};rows.push(row);
-      if(workers.has(session))workers.get(session).scripts.push(row);
-      if(isPage){assert.equal(session,pageSession);assert.equal(hash,sha(Buffer.from(pageSource(cfg.bridgeOptions))),'actual page binding body changed');pageBody=true;}
-      else if(isWorker){assert.equal(hash,sha(Buffer.from(workerSource())),'actual owning native bridge body changed');workerBody=true;}
-      else if(source.bytecode)assert(cfg.pins.modules.includes(hash),'current actual module bytes');
-      else if(pathname.endsWith('.html')){
-        // Debugger returns an inline script body, not its enclosing HTML.
-        // Compare the exact current file range at the engine's source offsets;
-        // the whole HTML also remains pinned before and after attestation.
-        const text=fs.readFileSync(path.join(ROOT,pathname.slice(1)),'utf8'),lines=text.split('\n');
-        assert(Number.isSafeInteger(script.startLine)&&Number.isSafeInteger(script.endLine));
-        let inline=lines.slice(script.startLine,script.endLine+1);
-        if(inline.length===1)inline=[inline[0].slice(script.startColumn,script.endColumn)];
-        else {inline[0]=inline[0].slice(script.startColumn);inline[inline.length-1]=inline.at(-1).slice(0,script.endColumn);}
-        assert.equal(hash,sha(Buffer.from(inline.join('\n'))),'actual executed inline source changed '+pathname);
-      }else assert.equal(hash,pinMap.get(pathname),'actual executed source changed '+pathname);
-      })());
-    }
-  }
-  await Promise.all(sourceTasks);trace('actual-source-bodies-and-modules');
+  let recoveredCount=0;
+  for(;recoveredCount!==sourceTasks.length;){recoveredCount=sourceTasks.length;await Promise.all(sourceTasks);current();}
+  sealed=true;
+  trace('actual-source-bodies-and-modules');
   assert(pageBody&&workerBody,'actual injected binding source bodies required');
   for(const file of (cfg.owner?.workerTarget?['lib/guest-worker.js']:[]))
     assert(rows.some(r=>{try{return new URL(r.url).pathname==='/'+file;}catch{return false;}}),'required actual executed source '+file);
@@ -543,8 +595,10 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
   const native=await evaluate(c,pageSession,`__gta2NativeReleasePageV1.attest(${JSON.stringify({bindingToken:cfg.bindingToken,review:cfg.review})})`);
   assert.equal(native.bindingToken,cfg.bindingToken);assert.deepEqual(native.native,cfg.review.native);
   assert.deepEqual(native.pageIdentity,cfg.review.pageIdentity);assert.equal(native.reviewedPNG,cfg.review.pngSHA256);
+  trace('current-final-file-bodies-begin');
   verifyPins(cfg.pins);checkPID(cfg.pid,cfg.startToken);checkPID(cfg.parentPID,cfg.parentStartToken);
-  trace('fresh-native-scene-and-final-pins');
-  return {native,live:live?.identity??null,sources:rows,pageProof};
+  assert.equal(sourceTasks.length,recoveredCount,'new executed script after source recovery');
+  current();trace('fresh-native-scene-and-final-pins');
+  return {native,live:live?.identity??null,sources:rows,pageProof,assertCurrent:current};
 }
 module.exports={nativeContext,workerBridge,pageBridge,workerSource,pageSource,install,attestExecuted,evaluate,verifyPins,checkPID};

@@ -1,4 +1,5 @@
 'use strict';
+const PROGRAM_ENTERED_AT=Date.now();
 // Manual browser controller. No gameplay selection, guest writes, or retries.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'..');
@@ -33,21 +34,21 @@ function policy(c,launch,phase,now=Date.now()) {
 function connection(url,onUnknown=()=>{}) {
   const ws=new WebSocket(url),pending=new Map();let id=0,terminal=null,readyResolve,readyReject;
   const ready=new Promise((r,j)=>{readyResolve=r;readyReject=j;});
-  const api={ws,ready,event:()=>{},get closed(){return terminal!==null;},stop(){if(terminal)return;terminal='deliberate host teardown';clearTimeout(openTimer);for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error(terminal));}pending.clear();ws.onclose=null;ws.close();},seal(reason){
+  const api={ws,ready,event:()=>{},protocol:()=>{},get closed(){return terminal!==null;},stop(){if(terminal)return;terminal='deliberate host teardown';clearTimeout(openTimer);for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error(terminal));}pending.clear();ws.onclose=null;ws.close();},seal(reason){
     if(terminal)return;terminal=String(reason);clearTimeout(openTimer);
     const error=Error('UNKNOWN '+terminal+'; permanently closed; never replay');
     onUnknown({state:'UNKNOWN',reason:terminal,at:Date.now(),permanentClose:true,laterRequestsAllowed:0});
     readyReject(error);for(const p of pending.values()){clearTimeout(p.timer);p.reject(error);}pending.clear();ws.close();
   },send(method,params={},sessionId){
     if(terminal)return Promise.reject(Error('permanently closed '+terminal));
-    return new Promise((resolve,reject)=>{const n=++id,timer=setTimeout(()=>api.seal(method+' timeout'),3000);pending.set(n,{resolve,reject,timer});
-      try{ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));}catch(e){api.seal(method+' send '+e);}
+    return new Promise((resolve,reject)=>{const n=++id,timer=setTimeout(()=>api.seal(method+' timeout'),3000);pending.set(n,{resolve,reject,timer,method,sessionId,scriptId:params.scriptId,at:Date.now()});
+      try{api.protocol({event:'sent',method,session:sessionId??null,at:Date.now(),type:params.type??null});ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));}catch(e){api.seal(method+' send '+e);}
     });
   }};
   const openTimer=setTimeout(()=>api.seal('connection timeout'),3000);
   ws.onopen=()=>{clearTimeout(openTimer);readyResolve();};
   ws.onerror=()=>api.seal('transport error');ws.onclose=()=>api.seal('transport closed');
-  ws.onmessage=msg=>{if(terminal)return;try{const v=JSON.parse(msg.data);if(v.id){const p=pending.get(v.id);if(p){clearTimeout(p.timer);pending.delete(v.id);v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);}}else api.event(v);}catch(e){api.seal('invalid message '+e);}};
+  ws.onmessage=msg=>{if(terminal)return;try{const v=JSON.parse(msg.data);if(v.id){const p=pending.get(v.id);if(p){clearTimeout(p.timer);pending.delete(v.id);api.protocol({method:p.method,session:p.sessionId??null,scriptId:p.scriptId??null,at:p.at,ack:Date.now(),ms:Date.now()-p.at,responseBytes:msg.data.length,error:v.error??null});v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);}}else api.event(v);}catch(e){api.seal('invalid message '+e);}};
   return api;
 }
 function save(out,n,v){const p=path.join(out,n);assert(!fs.existsSync(p),n);fs.writeFileSync(p+'.pending',JSON.stringify(v,null,2)+'\n',{flag:'wx'});fs.renameSync(p+'.pending',p);}
@@ -64,7 +65,11 @@ async function release(out,file) {
   native.checkPID(cfg.pid,cfg.startToken);
   assert(Array.isArray(cfg.keys)&&cfg.keys.length>=1&&cfg.keys.length<=2&&new Set(cfg.keys).size===cfg.keys.length&&cfg.keys.every(k=>Object.hasOwn(KEYS,k)));
   assert(Number.isSafeInteger(cfg.startedAt),'immutable prearm launch time');
+  const phases=[];
+  const trace=(phase,detail)=>{const at=Date.now();phases.push({phase,at,sinceStarted:at-cfg.startedAt,...(detail?{detail}:{})});};
+  trace('release-program-entry',{programEnteredAt:PROGRAM_ENTERED_AT,entryMs:PROGRAM_ENTERED_AT-cfg.startedAt,pid:process.pid});
   const c=connection(cfg.url,v=>save(out,cfg.name+'-UNKNOWN.json',v));
+  c.protocol=v=>trace('protocol',v);
   const operationTimer=setTimeout(()=>c.seal('independent release operation exceeded 3000ms'),Math.max(0,3000-(Date.now()-cfg.startedAt)));
   let pending='',scheduled=false,ended=false,due=Infinity,armed,session,prearmTimer;
   process.stdin.on('data',b=>{
@@ -79,7 +84,7 @@ async function release(out,file) {
   process.stdin.on('end',()=>{ended=true;if(!scheduled){due=Date.now();if(!armed)c.seal('parent EOF before independent arm');}});
   try {
     const prepare=(async()=>{
-      await c.ready;session=(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;
+      await c.ready;trace('independent-transport-connected');session=(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;trace('independent-page-attached');
       let attestation=null;
       if(cfg.mode==='blank-control'){
         assert(!cfg.owner&&!cfg.review&&!cfg.bindingToken,'blank controls cannot admit a native owner');
@@ -87,15 +92,17 @@ async function release(out,file) {
         assert.equal(actual.url,'about:blank');assert.equal(actual.apps,0);
       }else{
         assert.equal(cfg.mode,'native');assert(cfg.nonce&&cfg.review&&cfg.owner&&cfg.bindingToken);
-        attestation=await native.attestExecuted({c,pageSession:session,cfg,trace:phase=>fs.appendFileSync(out+'/'+cfg.name+'-prearm-phases.jsonl',JSON.stringify({phase,at:Date.now(),sinceStarted:Date.now()-cfg.startedAt})+'\n')});
+        attestation=await native.attestExecuted({c,pageSession:session,cfg,trace});
       }
       assert(!ended,'parent EOF/cancel before arm');native.checkPID(cfg.pid,cfg.startToken);
       const startedAt=cfg.startedAt;assert(Number.isSafeInteger(startedAt)&&Date.now()>=startedAt&&Date.now()-startedAt<=500,'release prearm exceeded 500ms');
       let result;
       if(cfg.mode==='native'){
+        attestation.assertCurrent();
         const childToken=crypto.randomUUID();
         result=await native.evaluate(c,session,`__gta2NativeReleasePageV1.arm(${JSON.stringify({
           bindingToken:cfg.bindingToken,nonce:cfg.nonce,intent:cfg.intent,keys:cfg.keys.map(k=>KEYS[k]),childToken,startedAt})})`);
+        attestation.assertCurrent();
         assert(result.armed&&result.nonce===cfg.nonce&&result.childToken===childToken);
         assert.deepEqual(result.native,cfg.review.native);assert.deepEqual(result.pageIdentity,cfg.review.pageIdentity);
         save(out,cfg.name+'-attestation.json',{...attestation,nonce:cfg.nonce,childToken,currentHelperSHA256:sha(fs.readFileSync(require.resolve('./gta2-browser-release-binding.cjs')))});
@@ -103,7 +110,7 @@ async function release(out,file) {
       assert(Date.now()-startedAt<=500,'release ACK exceeded 500ms');
       const stat=fs.readFileSync('/proc/'+process.pid+'/stat','utf8');
       armed={...result,pid:process.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],session};
-      due=Math.min(due,armed.fallback);process.stdout.write(JSON.stringify(armed)+'\n');
+      due=Math.min(due,armed.fallback);trace('arm-ack-ready');process.stdout.write(JSON.stringify(armed)+'\n');
     })();
     await Promise.race([prepare,new Promise((_,reject)=>{prearmTimer=setTimeout(()=>{c.seal('release prearm exceeded 500ms');reject(Error('release prearm exceeded 500ms'));},Math.max(0,500-(Date.now()-cfg.startedAt)));})]);
     clearTimeout(prearmTimer);
@@ -124,7 +131,8 @@ async function release(out,file) {
     save(out,cfg.name+'-up.json',{armed:armed.at,fallback:armed.fallback,due,fired,ack,receipts,released,nonce:cfg.nonce??null,state:'ACK',independent:true});
     await c.send('Target.detachFromTarget',{sessionId:session});
   }catch(error){if(!c.closed)c.seal(error);throw error;}
-  finally {clearTimeout(prearmTimer);clearTimeout(operationTimer);c.stop();process.stdin.destroy();}
+  finally {clearTimeout(prearmTimer);clearTimeout(operationTimer);c.stop();process.stdin.destroy();
+    fs.writeFileSync(out+'/'+cfg.name+'-prearm-phases.jsonl',phases.map(row=>JSON.stringify(row)).join('\n')+'\n',{flag:'wx'});}
 }
 async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},onAttempt=()=>{}}) {
   assert(Number.isInteger(ms)&&ms>=80&&ms<=1400);
@@ -146,7 +154,7 @@ async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},
     assert.equal(armed.bindingToken,cfg.bindingToken);assert.deepEqual(armed.native,cfg.review.native);assert.deepEqual(armed.pageIdentity,cfg.review.pageIdentity);
     native.checkPID(armed.pid,armed.startToken);
     for(const key of keys){
-      beforeDown();native.verifyPins(cfg.pins);native.checkPID(cfg.pid,cfg.startToken);
+      await beforeDown();native.verifyPins(cfg.pins);native.checkPID(cfg.pid,cfg.startToken);
       assert(Date.now()<armed.fallback-250,'native release lease expired');
       const before=Date.now();onAttempt();
       await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session);
@@ -168,7 +176,7 @@ async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},
   assert(events.every(e=>up.ack-e.before<=1750),'physical UP exceeded 1750ms');
   for(const key of keys){
     const edges=up.released.events.filter(e=>e.key===KEYS[key]);assert.deepEqual(edges.map(e=>e.type),['DOWN','UP']);
-    assert(edges[1].at-edges[0].at>=80&&edges[1].at-edges[0].at<=1750,'actual original physical edge order/bounds');
+    assert(edges[1].at-edges[0].at>=80&&edges[1].at-edges[0].at<=1400,'actual original physical edge order/bounds');
   }
   return {armed,events,up,noReplay:true};
 }
