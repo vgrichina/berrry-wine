@@ -142,3 +142,61 @@ during concurrent checks correctly refused input when its independent UP helper
 did not arm; the serial production rerun passes all 13 cases. The original must
 use the qualified HEAD module, the unchanged source/host-map Worker preloads,
 and new exact input pins. At this checkpoint no new original has launched.
+
+## Published repair and one authorized original
+
+Repair `8f2c2cb4f98473f86797e82fd0c34ff76b77e21c` is published on main.
+A fresh native run using only published source again qualifies inherited D cwd.
+The exact two Worker preloads pass the actual authority round trip; either
+missing preload is rejected. The original launch pins 3173 existing inputs,
+including Setup SHA-256
+`fe95a9fc8b2cdb5add76fbd326b1a11801eaa43c7d908f20cbdf413fd4d8dfde`
+and the genuine 614532-byte IKernel. It uses the qualified HEAD module, real
+ticks, default settings, the current native partial overlay, a 900-second native
+deadline, independent 920-second watchdog and 180-second Quit reserve.
+
+Exactly one newly authorized original ran. The complete current 800x600 scene
+was personally readable through an explicit `image/png` item: the branded Sims
+backdrop, InstallShield Wizard, and the front error "The InstallShield Engine
+(iKernel.exe) could not be launched. (0x80040154)". Identical PNG items sometimes
+rendered flat; this is not a native-blank claim. Selected unchanged image
+`installer-closefresh.png` has SHA-256
+`b368d52c088daae3bd9c5410189d1a60e79bd059c04e8c48bf23b162a2ffae33`.
+The first review expired before binding, so it caused no bind, intent or input.
+A separately captured, personally reviewed fresh scene supported one permanent
+binding and one 120 ms physical pointer gesture on the visible error-dialog X.
+Its fresh nonce was CONSUMED, independent UP was ACKed, and the release helper
+has its actual wait and both EOFs. No gameplay or installation success follows
+from those receipts.
+
+After the X gesture, the native parent traps on unimplemented
+`CoFreeAllLibraries` and exits 1. Native, watchdog and supervisor actual waits
+and both EOFs are recorded. This is the next concrete cleanup failure, not
+successful native Cancel/Quit. The original parent also reported class-not-
+registered `80040154`; its IKernel child was launched with inherited `d:\\setup`,
+but no completed child registration/merge was observed before closure. Thus
+generated native D-context qualification is established, while successful
+original installation and original child registration remain unproved. The
+earlier original's LoadTypeLib/RegisterTypeLib/TreatAs success is not borrowed
+as evidence for this run.
+
+Actual consumed parent/child source hashes match the published repair, and
+their nonempty main/Worker host maps verify. Post-run input readback finds only
+the runtime-rewritten overlay index changed; pinned media, DLLs and IKernel
+bytes remain unchanged. The overlay contains ordinary engine directories,
+temporary-file whiteout and retained IKernel file records; this is a filesystem
+effect, not an installation-completion claim.
+
+One closure limitation is permanent: the invoking launcher ended with observed
+tool exit 143 before writing `actual-outer-wait.json`. The outer process had
+recorded its actual supervisor-child wait, but its own parent wait receipt is
+missing. All recorded native/child/watchdog/supervisor/outer PIDs and groups are
+personally absent; absence does not reconstruct the missing wait. This is
+written UNKNOWN for that closure receipt. No subsequent control requests,
+input, rebind, replay or second original are permitted. The prior UNKNOWN
+original also stays closed. The run retains the known native exit separately
+from this outer-wait limitation. No boxes were created.
+
+Next work is the real IKernel child bootstrap/registration boundary and genuine
+`CoFreeAllLibraries` cleanup behavior. A future original requires new explicit
+authorization; this task's single original authorization is consumed.
