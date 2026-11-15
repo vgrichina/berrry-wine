@@ -15,7 +15,7 @@ watchdog and supervisor waits, both EOFs and exact PID absence were checked;
 QuakeIII's controller exit 1 is a diagnostic failure, with Chrome/watchdog/
 supervisor zero. Ancillary outer UNKNOWN remains separate. No box was created.
 
-The owner explicitly extends the earlier coordinator-authored cursor-image-only
+The coordinator task explicitly extends the earlier coordinator-authored cursor-image-only
 policy to personally reviewed current native SYSTEM cursor metadata. This is
 public `renderer.canvas.style.cursor` output, not an OS pointer image. Neither
 cursor pixels nor selected/orientation flags are manufactured. The complete raw
