@@ -5981,6 +5981,31 @@ async function main() {
   // modules\TCPIP.DLL) uses the resident-byte resolver below. So does
   // one from inside a nested synchronous send ($wnd_send_message asks through
   // the service_load_library import), which cannot return to this loop either.
+  // Explicit system/runtime inputs must exist before a PE initializer can
+  // request them. Keep their final override pass below for manifest precedence.
+  const mountExplicitVfsFiles = () => {
+    if (!ctx.vfs) return;
+    for (const spec of VFS_MOUNT) {
+      const eq = spec.lastIndexOf('=');
+      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);
+      const hostPath = appAsset(spec.slice(0, eq).trim());
+      const guestPath = spec.slice(eq + 1).trim();
+      if (!guestPath) throw new Error(`--vfs-mount needs a guest path: ${spec}`);
+      const size = fs.statSync(hostPath).size;
+      const add = raw => {
+        let name = raw.toLowerCase().replace(/\//g, '\\');
+        if (!/^[a-z]:/.test(name)) name = 'c:\\' + name.replace(/^\\+/, '');
+        ctx.vfs.ensureParentDirs(name);
+        ctx.vfs.setLazyFile(name.slice(0, name.lastIndexOf('\\') + 1) + raw.replace(/^.*[\\/]/, ''), {
+          attrs: 0x20, size, load: () => new Uint8Array(readAssetBytes(hostPath)),
+        });
+      };
+      add(guestPath);
+      const base = guestPath.replace(/^.*[\\/]/, '').toLowerCase();
+      if (/\.(ttf|ttc|fon)$/.test(base)) add('c:\\windows\\fonts\\' + base);
+    }
+  };
+  mountExplicitVfsFiles();
   const onLoadLibraryYield = ex => serviceLoadLibraryYieldSync({
     exports: ex, memoryBuffer: memory.buffer, resourceHost: ctx, log: console.log,
     findDllSync: findRuntimeDllBytes, onLoadLibraryYield,
@@ -6230,16 +6255,7 @@ async function main() {
     // Explicit --vfs-mount files go last, so one can replace a single file of
     // a registered app's manifest for this run (e.g. a test INI over the
     // app's own) without touching the files on disk.
-    for (const spec of VFS_MOUNT) {
-      const eq = spec.lastIndexOf('=');
-      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);
-      const hostPath = appAsset(spec.slice(0, eq).trim());
-      const guestPath = spec.slice(eq + 1).trim();
-      if (!guestPath) throw new Error(`--vfs-mount needs a guest path: ${spec}`);
-      const size = fs.statSync(hostPath).size;
-      addFile(guestPath, hostPath, size);
-      addFontAlias(guestPath, hostPath, size);
-    }
+    mountExplicitVfsFiles();
     if (VFS_DRIVE) {
       const drive = VFS_DRIVE.replace(/:$/, '').toLowerCase();
       if (!/^[a-z]$/.test(drive)) throw new Error(`invalid --vfs-drive: ${VFS_DRIVE}`);

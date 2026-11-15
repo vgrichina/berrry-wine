@@ -58,6 +58,14 @@ class HTTP(unittest.TestCase):
  def test_impossible_short_pulse_never_reaches_http(self):
   with self.assertRaises(AssertionError):a.action('short','mousedown:200:240','fresh','select',40)
   self.assertEqual(self.effects,[]);self.assertFalse((c.R/'short-intent.json').exists())
+ def test_installer_cancel_is_final_without_post_choice_capture(self):
+  review=c.read('fresh-review.json');review.update(mode='quit',sceneType='installer',quitRoute='cancel-installer',visibleQuitTarget=True)
+  (c.R/'fresh-review.json').write_text(json.dumps(review))
+  with patch.object(c,'capture') as capture:
+   result=a.action('cancel-installer','mousedown:200:240','fresh','quit',120,'cancel-installer')
+  capture.assert_not_called();self.assertTrue(c.read('cancel-installer-intent.json')['final'])
+  self.assertEqual(c.read('cancel-installer-up.json')['state'],'ACK')
+  self.assertIn('actual native wait',result)
  def test_unknown_cancel_identity_close(self):
   self.fault='unknown'
   with self.assertRaises(AssertionError):a.action('bad','mousedown:200:240','fresh','select',400)
@@ -279,8 +287,76 @@ a.c.call=killed;a.action('killed','mousedown:200:240','fresh','select',400)
    p.b.waitfile(c.R/'killed-up.json');p.b.waitfile(c.R/'terminal-input-failure.json');self.assertTrue(c.read('terminal-input-failure.json')['noReplay']);c.save('orphan-child-wait-unknown.json',dict(actualWait=False,parentKilled=True))
   finally:summary=self.finish()
   d=next(e for e in summary['effects'] if e['kind']=='DOWN');u=next(e for e in summary['effects'] if e['kind']=='UP');self.assertLess(u['at']-d['at'],1750)
+FIXTURE_SOURCE = r"""
+'use strict';
+// Generated fixture only. Neither original proprietary image is loaded here.
+const fs=require('fs'),path=require('path');
+const {makeFixture}=require(process.cwd()+'/tools/kernel32-native-fixture');
+const out=process.argv[2],u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
+const raw=r=>r-0x1000+0x200;
+const exe=makeFixture();
+exe.fill(0,raw(0x1a02),raw(0x1a02)+17);exe.write('ExitProcess\0',raw(0x1a02));
+exe.set([0x6a,0,0xff,0x15,...u32(0x401900)],raw(0x2000));
+const dll=makeFixture();dll.writeUInt16LE(0x210e,0x80+22);
+dll.fill(0,raw(0x1900),raw(0x1b80));
+let at=0x1a00;
+for(const [i,name] of ['CreateFileA','ReadFile','CloseHandle'].entries()) {
+  dll.writeUInt32LE(at,raw(0x1900+4*i));dll.write(name+'\0',raw(at+2));at+=name.length+3;
+}
+dll.write('c:\\windows\\system\\bootstrap.dat\0',raw(0x2500));
+const code=[0x53,0x56,0x8b,0x5c,0x24,12]; // preserve EBX/ESI, actual incoming HMODULE
+for(const arg of [0,0,3,0,1,0x80000000])code.push(0x68,...u32(arg));
+code.push(0x8d,0x83,...u32(0x2500),0x50,0xff,0x93,...u32(0x1900),0x89,0xc6,
+  0x83,0xf8,0xff,0x74,0);
+const failureJump=code.length-1;
+code.push(0x6a,0,0x8d,0x83,...u32(0x2604),0x50,0x6a,4,
+  0x8d,0x83,...u32(0x2600),0x50,0x56,0xff,0x93,...u32(0x1904),
+  0x81,0xbb,...u32(0x2600),...u32(0x314c534c),0x0f,0x94,0xc0,0x0f,0xb6,0xc0,
+  0x50,0x56,0xff,0x93,...u32(0x1908),0x58,0x5e,0x5b,0xc2,12,0);
+const failure=code.length;code.push(0x31,0xc0,0x5e,0x5b,0xc2,12,0);
+code[failureJump]=failure-(failureJump+1);
+dll.set(code,raw(0x2000));
+fs.writeFileSync(path.join(out,'bootstrap.exe'),exe);
+fs.writeFileSync(path.join(out,'bootstrap.dll'),dll);
+fs.writeFileSync(path.join(out,'companion-input.dat'),Buffer.from('LSL1'));
+console.log(JSON.stringify({fixtureOnly:true,originalExecuted:false,bytes:code.length}));
+"""
+
+class Bootstrap(unittest.TestCase):
+ """Actual ordinary CLI DllMain file reads; generated inputs, no Sims execution."""
+ def bootstrap(self, name, mount, data=b'LSL1'):
+  out=p.b.R/('bootstrap-'+name);out.mkdir()
+  generator=out/'fixture.cjs'
+  generator.write_text(FIXTURE_SOURCE)
+  made=subprocess.run(['node',str(generator),str(out)],cwd=ROOT,capture_output=True,timeout=10)
+  self.assertEqual(made.returncode,0,made.stderr.decode())
+  (out/'companion-input.dat').write_bytes(data)
+  args=['node',str(ROOT/'test/run.js'),'--exe='+str(out/'bootstrap.exe'),
+   '--dlls='+str(out/'bootstrap.dll'),'--wasm='+str(ROOT/'build/wine-assembly.wasm'),
+   '--no-build','--real-ticks','--quiet-api','--quiet-blocks','--max-seconds=12']
+  if mount:args.append('--vfs-mount='+str(out/'companion-input.dat')+'=C:\\Windows\\System\\bootstrap.dat')
+  p.b.save(out,'recipe.json',dict(args=args,cwd=str(ROOT),seconds=15,watchdogGrace=2))
+  child=subprocess.Popen([sys.executable,'-B',str(p.b.SUPERVISOR),'outerwait',str(out)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+  stdout,stderr=child.communicate(timeout=22)
+  p.b.save(out,'bootstrap-outer-wait.json',dict(pid=child.pid,exit=child.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=stdout.decode(),stderr=stderr.decode()))
+  self.assertEqual(child.returncode,0,stderr.decode())
+  waits={n:json.loads((out/n).read_text()) for n in ('native-wait.json','watchdog-wait.json','outer-child-wait.json')}
+  self.assertTrue(all(all(v[k] is True for k in ('actualWait','stdoutEOF','stderrEOF')) for v in waits.values()))
+  log=(out/'native.stdout.log').read_text()+(out/'native.stderr.log').read_text()
+  p.b.save(out,'checks.json',dict(fixtureOnly=True,originalExecuted=False,mount=mount,expectedBytes=data.hex(),nativeExit=waits['native-wait.json']['exit']))
+  return waits['native-wait.json']['exit'],log
+ def test_explicit_companion_bytes_available_in_dllmain(self):
+  rc,log=self.bootstrap('early-explicit',True)
+  self.assertEqual(rc,0,log[-4000:]);self.assertNotIn('DLL initializer did not return',log)
+ def test_missing_companion_dllmain_failure_stays_failure(self):
+  rc,log=self.bootstrap('absent',False)
+  self.assertNotEqual(rc,0,log[-4000:])
+ def test_wrong_companion_bytes_dllmain_failure_stays_failure(self):
+  rc,log=self.bootstrap('wrong-bytes',True,b'BAD!')
+  self.assertNotEqual(rc,0,log[-4000:])
+
 if __name__=='__main__':
- cls=Production if '--production' in sys.argv else HTTP
+ cls=Bootstrap if '--bootstrap' in sys.argv else Production if '--production' in sys.argv else HTTP
  raise SystemExit(not unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(cls(n) for n in cls.__dict__ if n.startswith('test_'))).wasSuccessful())
 
 

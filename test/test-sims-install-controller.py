@@ -77,7 +77,7 @@ class Policy(unittest.TestCase):
   with patch.object(time,'time',return_value=1121),self.assertRaises(AssertionError):self.invoke()
   self.assertTrue((c.R/'quit-phase.json').exists())
  def test_short_or_long_hold_never_sent(self):
-  for ms in (0,40,79,1501):
+  for ms in (0,40,79,1401,1500,1501):
    with self.subTest(ms=ms),patch.object(c,'call') as call:
     with self.assertRaises(AssertionError):a.action('bad','mousedown:200:240','fresh','install',ms,'next')
     call.assert_not_called()

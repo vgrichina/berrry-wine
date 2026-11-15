@@ -257,7 +257,7 @@ def action(name, command, scene, mode, milliseconds=400, route=None):
     assert name.replace('-', '').isalnum()
     # A 40 ms pulse cannot satisfy the strict >40 ms scheduling margin below.
     # Reject it locally rather than dispatching an inevitably terminal gesture.
-    assert type(milliseconds) is int and 80 <= milliseconds <= 1500
+    assert type(milliseconds) is int and 80 <= milliseconds <= 1400
     for suffix in ('-intent.json', '-up.json', '-receipt.json', '-completed.json', '.png', '.json'):
         assert not (c.R / (name+suffix)).exists(), 'name already reserved'
     # A local policy refusal before reservation/transport has no input effect.
@@ -270,7 +270,7 @@ def action(name, command, scene, mode, milliseconds=400, route=None):
         p = dict(name=name, mode=mode, command=command, scene=scene, pngSHA256=rr['pngSHA256'], target=rr['target'], owner=owner,
                  nonce=str(uuid.uuid4()), noReplay=True, milliseconds=milliseconds, createdAt=now,
                  gestureDeadline=now+1.500, fallbackAt=now+1.750,
-                 final=mode=='quit' and route in ('select-exit', 'titlebar-close', 'confirm-exit'), sceneDeadline=sceneEnd)
+                 final=mode=='quit' and route in ('select-exit', 'titlebar-close', 'confirm-exit', 'cancel-installer'), sceneDeadline=sceneEnd)
         c.save(name+'-intent.json', p); c.save(scene+'-used-by-'+name, dict(name=name))
         child = subprocess.Popen([sys.executable, '-B', __file__, 'release', name], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         assert select.select([child.stdout], [], [], .5)[0], 'independent UP not armed'
