@@ -30,7 +30,10 @@
   (global $GPU_STREAM i32 (region.addr $GPU_STREAM 0))
   (global $GPU_STREAM_SIZE i32 (region.size $GPU_STREAM))
   (global $GPS_MAGIC i32 (i32.const 0x32535047))     ;; 'GPS2'
-  (global $GPS_VERSION i32 (i32.const 1))
+  ;; 2: slice D1 (generic LAYOUT, 96-byte RASTER with stencil, SAMPLER
+  ;; mirror/border, DRAW index_size/vcount, FENCE kinds, PRESENT dst/stamp,
+  ;; consumer capability block, A8B8G8R8-only READBACK).
+  (global $GPS_VERSION i32 (i32.const 2))
   (global $GPS_RING_MAX i32 (i32.const 8))
   (global $GPS_RECORD_ALIGN i32 (i32.const 8))
   (global $GPS_FLAG_WANT_DONE i32 (i32.const 1))
@@ -95,16 +98,47 @@
   ;; rasterizer take without a swizzle. Glide textures and targets use it.
   (global $GPS_FMT_A8B8G8R8 i32 (i32.const 15))
 
-  ;; Primitive types (GpsDraw.prim), D3DPRIMITIVETYPE values.
+  ;; Primitive types (GpsDraw.prim), D3DPRIMITIVETYPE values. Fans (6) are
+  ;; not in the contract: producers lower them to indexed triangle lists.
   (global $GPS_PRIM_POINTLIST i32 (i32.const 1))
   (global $GPS_PRIM_LINELIST i32 (i32.const 2))
+  (global $GPS_PRIM_LINESTRIP i32 (i32.const 3))
   (global $GPS_PRIM_TRIANGLELIST i32 (i32.const 4))
+  (global $GPS_PRIM_TRIANGLESTRIP i32 (i32.const 5))
 
   ;; Vertex element types/usages (GpsLayoutElem), D3DDECLTYPE/D3DDECLUSAGE.
+  ;; D3DCOLOR is 4 bytes B,G,R,A in memory, normalized to 0..1 (D3D order).
+  (global $GPS_VTYPE_FLOAT1 i32 (i32.const 0))
+  (global $GPS_VTYPE_FLOAT2 i32 (i32.const 1))
+  (global $GPS_VTYPE_FLOAT3 i32 (i32.const 2))
   (global $GPS_VTYPE_FLOAT4 i32 (i32.const 3))
+  (global $GPS_VTYPE_D3DCOLOR i32 (i32.const 4))
   (global $GPS_USAGE_TEXCOORD i32 (i32.const 5))
   (global $GPS_USAGE_POSITIONT i32 (i32.const 9))
   (global $GPS_USAGE_COLOR i32 (i32.const 10))
+
+  ;; Sampler addressing (GpsSampler.address_*), D3DTEXTUREADDRESS.
+  (global $GPS_ADDR_WRAP i32 (i32.const 1))
+  (global $GPS_ADDR_MIRROR i32 (i32.const 2))
+  (global $GPS_ADDR_CLAMP i32 (i32.const 3))
+  (global $GPS_ADDR_BORDER i32 (i32.const 4))
+  (global $GPS_ADDR_MIRRORONCE i32 (i32.const 5))
+
+  ;; FENCE kinds. An occlusion END stores the u32 count of samples that
+  ;; passed depth/stencil since the matching BEGIN to the arena at dst.
+  (global $GPS_FENCEK_FENCE i32 (i32.const 0))
+  (global $GPS_FENCEK_OCCLUSION_BEGIN i32 (i32.const 1))
+  (global $GPS_FENCEK_OCCLUSION_END i32 (i32.const 2))
+
+  ;; Consumer capability bits (GpsRing.caps_flags). The consumer writes the
+  ;; block before it executes the first record; VALID says it has.
+  (global $GPS_CAP_VALID i32 (i32.const 1))
+  (global $GPS_CAP_VS_IR i32 (i32.const 2))
+  (global $GPS_CAP_STENCIL i32 (i32.const 4))
+  (global $GPS_CAP_LOGIC_OP i32 (i32.const 8))
+  (global $GPS_CAP_OCCLUSION i32 (i32.const 16))
+  (global $GPS_CAP_BORDER_LINEAR i32 (i32.const 32))
+  (global $GPS_CAP_MIRRORONCE i32 (i32.const 64))
 
   ;; CLEAR mask bits; RASTER colormask bits (R,G,B,A = 1,2,4,8).
   (global $GPS_CLEAR_COLOR i32 (i32.const 1))
@@ -122,8 +156,10 @@
   (global $GPS_FOGF_NO_MULT i32 (i32.const 1))
   (global $GPS_FOGF_NO_ADD i32 (i32.const 2))
 
-  ;; SHADER stages. vs id 0 in a DRAW means "pretransformed": positions are
-  ;; render-target pixels, y down, centers at +0.5 (Glide/D3D XYZRHW).
+  ;; SHADER stages. vs id 0 in a DRAW means "pretransformed": POSITIONT is
+  ;; (x, y, z, rhw) in render-target pixels, y down, pixel centres at
+  ;; INTEGER coordinates (D3D XYZRHW). Producers with a +0.5 convention
+  ;; (Glide) subtract 0.5 in WAT.
   (global $GPS_STAGE_VS i32 (i32.const 0))
   (global $GPS_STAGE_PS i32 (i32.const 1))
 
@@ -167,7 +203,16 @@
     ;; 0 = kick through the host bridge. WAT never reads it: the alloc/free
     ;; memory.fill clears it, the consumer sets and clears it.
     (field consumer i32)
-    (field reserved i32 7))
+    ;; Consumer-written capability block ($GPS_CAP_*), stored before the
+    ;; consumer executes the first record. caps_formats bit n = format n
+    ;; accepted (CREATE of a TEX2D/RT/DS). Producers may read it to pick a
+    ;; lowering; executors still refuse what they do not support.
+    (field caps_flags i32)
+    (field caps_max_texture i32)
+    (field caps_max_samplers i32)
+    (field caps_max_aniso i32)
+    (field caps_formats i32)
+    (field reserved i32 2))
 
   ;; Record header; the payload follows at (size-of GpsRecord).
   (layout GpsRecord
@@ -192,11 +237,15 @@
   (layout GpsLayoutElem
     (field slot u8) (field type u8) (field usage u8) (field index u8)
     (field offset u16) (field pad u16))
-  ;; address: 1 wrap, 3 clamp (D3DTADDRESS). filters: 1 point, 2 linear;
-  ;; mip 0 none. lod_bias in levels.
+  ;; address: $GPS_ADDR_* (D3DTADDRESS 1..5); address_w is read only for
+  ;; CUBE (0 allowed otherwise). filters: 1 point, 2 linear; mip 0 none.
+  ;; lod_bias in levels. max_level is D3DSAMP_MAXMIPLEVEL (the largest level
+  ;; used, 0 = the top one). max_aniso 0/1 = off. border is R | G<<8 |
+  ;; B<<16 | A<<24, read only with $GPS_ADDR_BORDER.
   (layout GpsSampler
     (field id i32) (field address_u u8) (field address_v u8) (field min u8) (field mag u8)
-    (field mip u8) (field pad u8) (field pad2 u16) (field lod_bias f32))
+    (field mip u8) (field address_w u8) (field max_level u8) (field max_aniso u8)
+    (field lod_bias f32) (field border i32))
   (layout GpsTargets (field color i32) (field depth i32))
   (layout GpsViewport
     (field x i32) (field y i32) (field w i32) (field h i32) (field zmin f32) (field zmax f32))
@@ -206,30 +255,51 @@
   ;; CLEAR uses its own rect/colormask and leaves this state. Enums are D3D's: compare
   ;; functions D3DCMP (1 never .. 8 always), blend D3DBLEND (1..11), cull
   ;; D3DCULL in render-target pixel space (1 none, 2 cw, 3 ccw). Scissor is
-  ;; top-down, half-open. fog_table names an L8 64x1 texture (table fog).
-  ;; depth_bias applies to W depth and table fog lookups (Glide units).
+  ;; top-down, half-open. fog_table names an A8B8G8R8 64x1 texture whose R
+  ;; channel is the table (table fog). blend 0 = write the source; 1 = blend
+  ;; with blend_op/blend_op_alpha (D3DBLENDOP 1..5). Stencil (D3DSTENCILOP /
+  ;; D3DCMP) needs a D24S8 depth target; two_sided uses the ccw_* set for
+  ;; counter-clockwise (in pixel space) triangles. logic_op 0 = off;
+  ;; nonzero is optional (GPS_CAP_LOGIC_OP), refused when unsupported.
+  ;; Depth: depth_mode 1 tests interpolated z (0..1), biased by z_bias plus
+  ;; slope_bias * max |dz/dx|,|dz/dy| (D3D DEPTHBIAS / SLOPESCALEDEPTHBIAS);
+  ;; depth_mode 2 tests interpolated rhw stored as the 16-bit floating W
+  ;; encoding (4-bit exponent, 12-bit mantissa of 1/rhw), biased by
+  ;; depth_bias in that encoding's units; table fog indexes the same
+  ;; encoding (+ depth_bias). linear 1 = varyings interpolate screen-linear
+  ;; and rhw is used only for W depth and table fog (Glide); 0 = varyings
+  ;; are perspective-correct by rhw (D3D).
   (layout GpsRaster
     (field depth_mode u8) (field zfunc u8) (field zwrite u8) (field cull u8)
     (field blend u8) (field src_rgb u8) (field dst_rgb u8) (field src_alpha u8)
     (field dst_alpha u8) (field alpha_func u8) (field alpha_ref u8) (field colormask u8)
-    (field fog_mode u8) (field fog_flags u8) (field fill u8) (field pad u8)
+    (field fog_mode u8) (field fog_flags u8) (field fill u8) (field linear u8)
     (field fog_color i32)       ;; R | G<<8 | B<<16 | A<<24
     (field fog_table i32)
     (field depth_bias i32)
     (field scissor_left i32) (field scissor_top i32)
     (field scissor_right i32) (field scissor_bottom i32)
-    (field reserved i32 5))
+    (field blend_op u8) (field blend_op_alpha u8) (field stencil_enable u8) (field two_sided u8)
+    (field stencil_func u8) (field stencil_fail u8) (field stencil_zfail u8) (field stencil_pass u8)
+    (field ccw_func u8) (field ccw_fail u8) (field ccw_zfail u8) (field ccw_pass u8)
+    (field stencil_ref u8) (field stencil_mask u8) (field stencil_wmask u8) (field logic_op u8)
+    (field z_bias f32) (field slope_bias f32)
+    (field reserved i32 7))
   ;; Followed by count GpsBindEntry.
   (layout GpsBind (field count i32))
   (layout GpsBindEntry (field slot i32) (field texture i32) (field sampler i32))
   ;; Followed by count * 16 bytes of f32x4.
   (layout GpsConsts (field stage u8) (field pad u8) (field first u16) (field count i32))
-  ;; DRAW_UP: vbuf 0, voff is an arena position, count is vertices.
+  ;; index_size 0 = not indexed (count vertices from voff), 2 or 4 = count
+  ;; u16/u32 indices from ioff, each < vcount. vcount = vertices readable at
+  ;; voff (== count when not indexed). DRAW: voff/ioff are byte offsets
+  ;; into vbuf/ibuf. DRAW_UP: vbuf 0 and ibuf 0, voff/ioff are arena
+  ;; positions.
   (layout GpsDraw
-    (field prim u8) (field pad u8) (field pad2 u16)
+    (field prim u8) (field index_size u8) (field pad2 u16)
     (field vs i32) (field ps i32) (field layout i32)
     (field vbuf i32) (field voff i32) (field stride i32)
-    (field ibuf i32) (field ioff i32) (field count i32))
+    (field ibuf i32) (field ioff i32) (field count i32) (field vcount i32))
   ;; rgba: R | G<<8 | B<<16 | A<<24. Rect top-down, half-open.
   (layout GpsClear
     (field mask u8) (field colormask u8) (field pad u16)
@@ -239,17 +309,23 @@
     (field src i32) (field dst i32)
     (field sx i32) (field sy i32) (field sw i32) (field sh i32)
     (field dx i32) (field dy i32) (field dw i32) (field dh i32) (field filter i32))
-  (layout GpsFence (field slot i32))
+  ;; kind $GPS_FENCEK_*. OCCLUSION_END writes a u32 sample count to the
+  ;; arena at dst (dst unused otherwise); every kind completes slots[slot].
+  (layout GpsFence (field slot i32) (field kind u8) (field pad u8) (field pad2 u16) (field dst i32))
   ;; Pixels go to the arena at dst, rows top-down, pitch bytes apart; then the
-  ;; executor stores this record's seq into slots[slot].
+  ;; executor stores this record's seq into slots[slot]. fmt must be
+  ;; A8B8G8R8; producers convert to the guest's format in WAT.
   (layout GpsReadback
     (field rt i32) (field x i32) (field y i32) (field w i32) (field h i32)
     (field fmt i32) (field dst i32) (field pitch i32) (field slot i32))
-  ;; gamma names a 256x1 A8R8G8B8 lookup texture (0 = none). surface is the
-  ;; frontend's window handle.
+  ;; gamma names a 256x1 A8B8G8R8 lookup texture (0 = none). The rt rect
+  ;; x,y,w,h goes to surface (the frontend's window handle) at dst_x,dst_y.
+  ;; stamp is the producer's frame number; a sink may drop a PRESENT whose
+  ;; stamp is older than one it already showed.
   (layout GpsPresent
     (field rt i32) (field gamma i32)
-    (field x i32) (field y i32) (field w i32) (field h i32) (field surface i32))
+    (field x i32) (field y i32) (field w i32) (field h i32) (field surface i32)
+    (field dst_x i32) (field dst_y i32) (field stamp i32))
   (layout GpsMark (field frame i32) (field tag i32))
 
   (func $gps_fail

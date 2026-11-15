@@ -1259,11 +1259,13 @@
         (local.set $z (call $d3d_software_quantize_depth
           (i32.shr_u (i32.load offset=204 (local.get $ctx)) (i32.const 16))
           (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 8) (local.get $u) (local.get $v) (local.get $w))))
-        ;; Glide keeps global oow in the third texture-coordinate lane. The
-        ;; fourth lane is TMU-oow for PS1.4 projected sampling.
+        ;; The W depth/fog fragment reads screen-linear rhw from the output
+        ;; vertex byte offset its descriptor names (word 6): 12, the position
+        ;; w lane, when varyings are perspective-correct, or a texture lane the
+        ;; GPU stream executor filled when they interpolate screen-linear.
         (if (local.get $glide) (then
           (local.set $glide_q (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c)
-            (i32.const 40) (local.get $u) (local.get $v) (local.get $w)))
+            (i32.load offset=24 (local.get $glide)) (local.get $u) (local.get $v) (local.get $w)))
           (if (i32.eq (i32.load offset=12 (local.get $glide)) (i32.const 2)) (then
             (local.set $z (f32.div (f32.min (f32.const 65535) (f32.max (f32.const 0)
               (f32.add (call $d3d_software_glide_w (local.get $glide_q)) (f32.load offset=16 (local.get $glide))))) (f32.const 65535)))))))
@@ -1591,7 +1593,12 @@
     (i32.or (i32.ne (i32.load offset=4 (local.get $desc)) (i32.const 4))
       (i32.or (i32.gt_u (i32.load offset=12 (local.get $desc)) (i32.const 2))
         (i32.or (i32.gt_u (i32.load offset=20 (local.get $desc)) (i32.const 3))
-          (i32.or (i32.load offset=24 (local.get $desc)) (i32.load offset=28 (local.get $desc))))))) (then (return (i32.const 0))))
+          (i32.load offset=28 (local.get $desc)))))) (then (return (i32.const 0))))
+  ;; q lane: 12 (position w) or the x lane of output texture 0..5 (32 + 16n).
+  (local.set $copy (i32.load offset=24 (local.get $desc)))
+  (if (i32.eqz (i32.or (i32.eq (local.get $copy) (i32.const 12))
+      (i32.and (i32.and (i32.ge_u (local.get $copy) (i32.const 32)) (i32.le_u (local.get $copy) (i32.const 112)))
+        (i32.eqz (i32.and (local.get $copy) (i32.const 15)))))) (then (return (i32.const 0))))
   (if (i32.eqz (f32.le (f32.abs (f32.load offset=16 (local.get $desc))) (f32.const 65535))) (then (return (i32.const 0))))
   (local.set $copy (call $heap_alloc (i32.const 96))) (if (i32.eqz (local.get $copy)) (then (return (i32.const 0))))
   (local.set $copy (call $g2w (local.get $copy))) (memory.copy (local.get $copy) (local.get $desc) (i32.const 96))

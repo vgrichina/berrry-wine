@@ -215,12 +215,13 @@ call('_grBufferSwap@4', [1]);
   const prims = primitives(records);
   assert.deepStrictEqual(prims.map(p => p.prim), [PRIM.TRIANGLELIST, PRIM.TRIANGLELIST, PRIM.LINELIST, PRIM.POINTLIST],
     'triangle, triangle, line, point in call order');
-  assert.strictEqual(prims[0].verts[0][0], 0.25, 'vertex copied before mutation');
+  // GPS vertices are in integer pixel centres: Glide x - 0.5.
+  assert.strictEqual(prims[0].verts[0][0], -0.25, 'vertex copied before mutation');
   assert.notStrictEqual(prims[0].ps, prims[1].ps, 'first draw keeps its own combine (immutable state)');
   assert.strictEqual(prims[2].ps, prims[1].ps, 'second WASM instance shares state/stream: the line uses b\'s combine');
   assert.strictEqual(prims[3].ps, prims[1].ps, 'and so does the point');
-  assert.deepStrictEqual(prims[2].verts.map(v => v[0]), [0.25, 15.25], 'line topology is preserved');
-  assert.deepStrictEqual(prims[3].verts.map(v => v[0]), [0.25], 'point topology is preserved');
+  assert.deepStrictEqual(prims[2].verts.map(v => v[0]), [-0.25, 14.75], 'line topology is preserved');
+  assert.deepStrictEqual(prims[3].verts.map(v => v[0]), [-0.25], 'point topology is preserved');
   const lastDraw = records.map(r => r.name).lastIndexOf('DRAW_UP');
   const present = records.findIndex(r => r.name === 'PRESENT');
   assert(present > lastDraw, 'the swap presents after every draw');
@@ -234,8 +235,8 @@ call('_grDrawLine@8', [vertices, vertices]);
 call('_grBufferSwap@4', [0]);
 const snapped = primitives(rec.recordsSince(m)).at(-1);
 assert.strictEqual(snapped.op, 11);
-assert.strictEqual(snapped.verts[0][0], 589.8125);
-assert.strictEqual(snapped.verts[0][1], -0.5, 'y snaps to -0.5 (origin upper-left, no flip)');
+assert.strictEqual(snapped.verts[0][0] + 0.5, 589.8125);
+assert.strictEqual(snapped.verts[0][1] + 0.5, -0.5, 'y snaps to -0.5 (origin upper-left, no flip)');
 assert.strictEqual(view.getUint32(wa(vertices), true), 0x494024dd, 'guest vertices remain untouched');
 assert.strictEqual(call('_grTexCalcMemRequired@16', [8, 0, 3, 10]), 174768,
   '256-square RGB565 mip chain aligns to eight bytes');
@@ -244,7 +245,9 @@ view.setUint32(wa(info), 20, true);
 assert.strictEqual(call('_grLfbLock@24', [1, 1, 0, 0, 0, info]), 1);
 assert.strictEqual(view.getUint32(wa(info + 8), true), 1280);
 const lfb = view.getUint32(wa(info + 4), true);
-assert.strictEqual(view.getUint16(wa(lfb), true), 0x5a5a, 'ordered host readback is guest-visible');
+// The recorder fills READBACK dst with 0x5a bytes (A8B8G8R8 5a,5a,5a,5a);
+// WAT converts that to RGB565: R 0x5a>>3=11, G 0x5a>>2=22, B 11 -> 0x5acb.
+assert.strictEqual(view.getUint16(wa(lfb), true), 0x5acb, 'ordered host readback is guest-visible');
 {
   // The lock read the back buffer through a READBACK that the sync kick
   // completed before the guest could see the LFB.
@@ -253,8 +256,8 @@ assert.strictEqual(view.getUint16(wa(lfb), true), 0x5a5a, 'ordered host readback
   assert(rb >= 0, 'the read lock issues a READBACK');
   assert.strictEqual(kicks[rb].mode, KICK.KICK_SYNC, 'the READBACK is drained by a synchronous kick');
   const read = kicks[rb].records.find(r => r.name === 'READBACK').fields;
-  assert.deepStrictEqual([read.x, read.y, read.w, read.h, read.fmt], [0, 0, 640, 480, GS.FMT.RGB565],
-    'the whole back buffer is read as RGB565');
+  assert.deepStrictEqual([read.x, read.y, read.w, read.h, read.fmt], [0, 0, 640, 480, GS.FMT.A8B8G8R8],
+    'the whole back buffer is read as A8B8G8R8 (WAT converts to RGB565)');
 }
 view.setUint16(wa(lfb), 0xf800, true);
 m = rec.mark();
@@ -298,7 +301,7 @@ call('_grSstIdle@0');
     'the RGB565 green pixel lands at (3, 2)');
 }
 assert.strictEqual(call('_grLfbReadRegion@28', [1, 3, 2, 1, 1, 2, pixel]), 1);
-assert.strictEqual(view.getUint16(wa(pixel), true), 0x5a5a);
+assert.strictEqual(view.getUint16(wa(pixel), true), 0x5acb);
 assert.strictEqual(call('_grSstVRetraceOn@0'), 0);
 ticks = 16;
 assert.strictEqual(call('_grSstVRetraceOn@0'), 1, 'virtual retrace advances with clock');
@@ -369,7 +372,7 @@ const beforePoly = rec.mark();
 call('_grDrawPolygonVertexList@8', [5, poly]);
 call('_grDrawPolygonVertexList@8', [2, poly]);   // fewer than three vertices draws nothing
 call('_grBufferSwap@4', [1]);
-const fans = primitives(rec.recordsSince(beforePoly)).filter(p => p.op === 5).map(p => p.verts.map(v => v[0]));
+const fans = primitives(rec.recordsSince(beforePoly)).filter(p => p.op === 5).map(p => p.verts.map(v => v[0] + 0.5));
 assert.deepStrictEqual(fans, [[100, 101, 102], [100, 102, 103], [100, 103, 104]],
   'five vertices draw exactly three fan triangles; a two-vertex list draws none');
 // Myth opens single-buffered with two aux buffers, which the release Glide 2.4

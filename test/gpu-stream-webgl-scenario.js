@@ -102,19 +102,21 @@
         depth_mode: 0, zfunc: 8, zwrite: 0, cull: 1, blend: 0, src_rgb: 2, dst_rgb: 1, src_alpha: 2, dst_alpha: 1,
         alpha_func: 8, alpha_ref: 0, colormask: 15, fog_mode: 0, fog_flags: 0, fill: 3, fog_color: 0, fog_table: 0,
         depth_bias: 0, scissor_left: 0, scissor_top: 0, scissor_right: W, scissor_bottom: H,
+        blend_op: 1, blend_op_alpha: 1, linear: 1,
       };
       const raster = (o) => emit('RASTER', Object.assign({}, BASE_RASTER, o));
       const clear = (rgba, o = {}) =>
         emit('CLEAR', Object.assign({ mask: 3, colormask: 15, rgba, z: 1, left: 0, top: 0, right: W, bottom: H }, o));
-      // vertex: [x, y, z, r, g, b, a, s, t, oow, s1, t1]
+      // vertex: [x, y, z, r, g, b, a, s, t, oow, s1, t1] in Glide's half-integer
+      // pixel centres; written as the contract's integer ones with rhw = oow.
       const draw = (ps, verts, prim = CONST.PRIM_TRIANGLELIST) => {
         const f = new Float32Array(verts.length * 16);
         verts.forEach((v, i) => {
           const [x, y, z, r, g, b, a, s = 0, t = 0, oow = 1, s1 = 0, t1 = 0] = v;
-          f.set([x, y, z, 1, r, g, b, a, s, t, oow, 1, s1, t1, 0, 1], i * 16);
+          f.set([x - 0.5, y - 0.5, z, oow, r, g, b, a, s, t, oow, 1, s1, t1, 0, 1], i * 16);
         });
         const voff = arenaPut(new Uint8Array(f.buffer));
-        emit('DRAW_UP', { prim, vs: 0, ps, layout: ID.LAYOUT, voff, stride: 64, count: verts.length });
+        emit('DRAW_UP', { prim, vs: 0, ps, layout: ID.LAYOUT, voff, stride: 64, count: verts.length, vcount: verts.length });
       };
       const present = (gamma = 0, rect = [0, 0, W, H]) => {
         emit('PRESENT', { rt: ID.RT, gamma, x: rect[0], y: rect[1], w: rect[2], h: rect[3], surface: 0x1234 });
@@ -135,12 +137,12 @@
         return [v(0, 0), v(W, 0), v(0, H), v(W, 0), v(W, H), v(0, H)];
       };
       const readback = (x, y, w, h) => {
-        const pos = p.arenaAlloc(w * 2 * h);
-        emit('READBACK', { rt: ID.RT, x, y, w, h, fmt: CONST.FMT_RGB565, dst: pos, pitch: w * 2, slot: 0 });
+        const pos = p.arenaAlloc(w * 4 * h);
+        emit('READBACK', { rt: ID.RT, x, y, w, h, fmt: CONST.FMT_A8B8G8R8, dst: pos, pitch: w * 4, slot: 0 });
         drain();
-        const v = p.arenaView(pos, w * 2 * h).slice();
+        const v = p.arenaView(pos, w * 4 * h).slice();
         reclaim();
-        return (px2, py) => v[py * w * 2 + px2 * 2] | (v[py * w * 2 + px2 * 2 + 1] << 8);
+        return (px2, py) => Array.from(v.subarray((py * w + px2) * 4, (py * w + px2) * 4 + 4));
       };
 
       // 1. clear + scissored, masked clear
@@ -242,10 +244,11 @@
       expectPx('Z depth near wins', f, 32, 32, [0, 0, 255, 255]);
 
       // 6. fog. Table fog: table all 128 -> f = 128/255.
-      emit('CREATE', { id: ID.FOG, kind: CONST.KIND_TEX2D, fmt: CONST.FMT_L8, levels: 1, width: 64, height: 1 });
+      emit('CREATE', { id: ID.FOG, kind: CONST.KIND_TEX2D, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: 64, height: 1 });
       {
-        const t = new Uint8Array(64).fill(128);
-        emit('UPLOAD', { id: ID.FOG, level: 0, x: 0, y: 0, w: 64, h: 1, pitch: 64, src: arenaPut(t), bytes: 64 });
+        const t = new Uint8Array(256);
+        for (let i = 0; i < 64; i++) t.set([128, 128, 128, 255], i * 4);
+        emit('UPLOAD', { id: ID.FOG, level: 0, x: 0, y: 0, w: 64, h: 1, pitch: 256, src: arenaPut(t), bytes: 256 });
       }
       const fq = 128 / 255, tableFog = [Math.round(255 * fq), 0, Math.round(255 * (1 - fq)), 255];
       raster({ fog_mode: 2, fog_table: ID.FOG, fog_color: 0xff0000ff });
@@ -289,8 +292,8 @@
         [W, 0, 0, 1, 0, 0, 1], [W, 1, 0, 1, 0, 0, 1], [0, 1, 0, 1, 0, 0, 1]]);
       {
         const at = readback(0, 0, W, H);
-        check('readback row 0 red', at(3, 0) === 0xF800, `0x${at(3, 0).toString(16)}`);
-        check('readback row 1 black', at(3, 1) === 0, `0x${at(3, 1).toString(16)}`);
+        check('readback row 0 red', near(at(3, 0), [255, 0, 0, 255], 0), `${at(3, 0)}`);
+        check('readback row 1 black', near(at(3, 1), [0, 0, 0, 255], 0), `${at(3, 1)}`);
         check('readback slot completed', p.slot(0) !== 0, `slot ${p.slot(0)}`);
       }
 
@@ -312,8 +315,7 @@
         expectPx('gamma LUT exact entries', f, 7, 10, [55, 50, 50, 255], 0);
         expectPx('gamma LUT black', f, 7, 30, [255, 0, 0, 255], 0);
         const at = readback(0, 0, W, H);
-        check('gamma LUT leaves RT raw (RGB565)', at(7, 10) === (((200 >> 3) << 11) | ((100 >> 2) << 5) | (50 >> 3)),
-          `0x${at(7, 10).toString(16)}`);
+        check('gamma LUT leaves RT raw', near(at(7, 10), [200, 100, 50, 255], 0), `${at(7, 10)}`);
         // Partial LUT update: entries 200 only; 100 and 50 keep their values.
         emit('UPLOAD', { id: ID.LUT, level: 0, x: 200, y: 0, w: 1, h: 1, pitch: 4, src: arenaPut(new Uint8Array([9, 8, 7, 255])), bytes: 4 });
         f = present(ID.LUT);
@@ -336,7 +338,7 @@
 
       // 10. fail fast
       let threw = null;
-      try { emit('DRAW_UP', { prim: 4, vs: 0, ps: 99, layout: ID.LAYOUT, voff: 0, stride: 64, count: 3 }); drain(); }
+      try { emit('DRAW_UP', { prim: 4, vs: 0, ps: 99, layout: ID.LAYOUT, voff: 0, stride: 64, count: 3, vcount: 3 }); drain(); }
       catch (e) { threw = e; }
       check('unknown ps throws', threw instanceof GS.GpsError, String(threw));
     } catch (e) {
@@ -344,8 +346,282 @@
     }
     const stats = ex.stats();
     ex.close();
-    return { checks, failures, stats };
+    // The D1 contract cases on a fresh executor over the same backend.
+    const d1 = runD1(opts);
+    return { checks: checks + d1.checks, failures: failures.concat(d1.failures.map((f) => `D1 ${f}`)), stats };
   }
 
-  return { run, W, H };
+  // ── D1 executor contract cases (docs/gpu-stream-v2.md "Core executor
+  // contract"), executor-agnostic: opts.makeExecutor(onPresent) builds the
+  // executor (default: new Executor({canvas, backend, onPresent})). Covers
+  // LAYOUT offsets + D3DCOLOR + a defaulted COLOR0, integer pixel centres,
+  // non-blend draws, index_size 2/4, strips, VIEWPORT (and its TARGETS
+  // reset), D24S8 stencil (one- and two-sided), z_bias, blend_op MIN and
+  // REVSUBTRACT, BIND of an RT, MIRROR/BORDER addressing, perspective vs
+  // linear varyings, PRESENT stamp/dst, the caps block, and refusals.
+  function runD1(opts) {
+    const { GS, makeProducer, Executor, canvas, backend, buffer } = opts;
+    const { CONST } = GS;
+    const failures = [];
+    let checks = 0;
+    const check = (name, ok, detail) => {
+      checks++;
+      if (!ok) failures.push(`${name}${detail ? `: ${detail}` : ''}`);
+    };
+    const make = (onPresent) => (opts.makeExecutor ? opts.makeExecutor(onPresent) : new Executor({ canvas, backend, onPresent }));
+    let lastFrame = null;
+    const ex = make((f) => {
+      lastFrame = { w: f.width, h: f.height, stamp: f.stamp, dstX: f.dstX, dstY: f.dstY, px: Uint8Array.from(f.pixels) };
+    });
+    const p = makeProducer({ ringBytes: 1 << 16, arenaBytes: 1 << 20, buffer });
+    const ring = p.ring();
+    const drain = () => GS.drain([ring], ex);
+    const emit = (op, fields, tail) => p.emit(op, fields, tail);
+    const arenaPut = (bytes) => {
+      const pos = p.arenaAlloc(bytes.length);
+      p.arenaView(pos, bytes.length).set(bytes);
+      return pos;
+    };
+    const reclaim = () => p.store('arena_tail', p.load('arena_head'));
+    const i32s = (...v) => new Uint8Array(new Int32Array(v).buffer);
+    const elems = (list) => {
+      const out = new Uint8Array(list.length * 8), dv = new DataView(out.buffer);
+      list.forEach(([usage, index, type, offset], i) => {
+        dv.setUint8(i * 8 + 1, type); dv.setUint8(i * 8 + 2, usage); dv.setUint8(i * 8 + 3, index); dv.setUint16(i * 8 + 4, offset, true);
+      });
+      return out;
+    };
+    const ID = { RT: 1, DS: 2, RT2: 3, COMPACT: 10, POS: 11, FLAT: 12, TEX: 13, SAMP: 14, MIRROR: 15, BORDER: 16, TEX2: 17 };
+    const S = 28; // COMPACT stride: POSITIONT f4 @0, COLOR0 D3DCOLOR @16, TEXCOORD0 f2 @20
+    // vertex [x, y, z, rhw, argb, s, t] in the COMPACT layout
+    const pack = (verts) => {
+      const out = new Uint8Array(verts.length * S), dv = new DataView(out.buffer);
+      verts.forEach(([x, y, z, rhw, argb, s = 0, t = 0], i) => {
+        const o = i * S;
+        dv.setFloat32(o, x, true); dv.setFloat32(o + 4, y, true); dv.setFloat32(o + 8, z, true); dv.setFloat32(o + 12, rhw, true);
+        dv.setUint32(o + 16, argb >>> 0, true); dv.setFloat32(o + 20, s, true); dv.setFloat32(o + 24, t, true);
+      });
+      return out;
+    };
+    const idx = (size, list) => {
+      const out = new Uint8Array(list.length * size), dv = new DataView(out.buffer);
+      list.forEach((v, i) => (size === 2 ? dv.setUint16(i * 2, v, true) : dv.setUint32(i * 4, v, true)));
+      return out;
+    };
+    const draw = (ps, prim, verts, { index_size = 0, indices = null, layout = ID.COMPACT } = {}) => {
+      const voff = arenaPut(layout === ID.POS ? new Uint8Array(new Float32Array(verts.flatMap((v) => v.slice(0, 4))).buffer) : pack(verts));
+      const ioff = indices ? arenaPut(idx(index_size, indices)) : 0;
+      emit('DRAW_UP', { prim, vs: 0, ps, layout, voff, stride: layout === ID.POS ? 16 : S, index_size, ioff,
+        count: indices ? indices.length : verts.length, vcount: verts.length });
+    };
+    // A quad (x0,y0)-(x1,y1) as 4 vertices TL, TR, BL, BR with per-corner [argb, s, t, rhw].
+    const corners = (x0, y0, x1, y1, z, at) => [[x0, y0], [x1, y0], [x0, y1], [x1, y1]].map(([x, y]) => {
+      const [argb, s, t, rhw = 1] = at(x, y);
+      return [x, y, z, rhw, argb, s, t];
+    });
+    const QUAD = [0, 1, 2, 1, 3, 2]; // two clockwise (y down) triangles
+    const QUAD_CCW = [0, 2, 1, 1, 2, 3];
+    const BASE = {
+      depth_mode: 0, zfunc: 8, zwrite: 0, cull: 1, blend: 0, src_rgb: 2, dst_rgb: 1, src_alpha: 2, dst_alpha: 1,
+      blend_op: 1, blend_op_alpha: 1, alpha_func: 8, alpha_ref: 0, colormask: 15, fill: 3, linear: 0,
+      scissor_left: 0, scissor_top: 0, scissor_right: W, scissor_bottom: H,
+    };
+    const raster = (o) => emit('RASTER', Object.assign({}, BASE, o));
+    const STENCIL = (o) => Object.assign({ stencil_enable: 1, stencil_func: 8, stencil_fail: 1, stencil_zfail: 1, stencil_pass: 1,
+      stencil_ref: 0, stencil_mask: 255, stencil_wmask: 255 }, o);
+    let stamp = 100;
+    const present = () => {
+      emit('PRESENT', { rt: ID.RT, x: 0, y: 0, w: W, h: H, surface: 0x77, stamp: ++stamp });
+      lastFrame = null;
+      drain();
+      reclaim();
+      if (!lastFrame) throw new Error('PRESENT did not call onPresent');
+      return lastFrame;
+    };
+    const px = (f, x, y) => Array.from(f.px.subarray((y * f.w + x) * 4, (y * f.w + x) * 4 + 4));
+    const near = (a, b, tol = 2) => a.length === b.length && a.every((v, i) => Math.abs(v - b[i]) <= tol);
+    const expectPx = (name, f, x, y, want, tol) => {
+      const got = px(f, x, y);
+      check(`${name} @${x},${y}`, near(got, want, tol), `got ${got} want ${want}`);
+    };
+    const BLACK = [0, 0, 0, 255];
+
+    try {
+      emit('CREATE', { id: ID.RT, kind: CONST.KIND_RT, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: W, height: H });
+      emit('CREATE', { id: ID.DS, kind: CONST.KIND_DS, fmt: CONST.FMT_D24S8, levels: 1, width: W, height: H });
+      emit('CREATE', { id: ID.RT2, kind: CONST.KIND_RT, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: 16, height: 16 });
+      emit('LAYOUT', { id: ID.COMPACT, count: 3, stride: S }, elems([[CONST.USAGE_POSITIONT, 0, CONST.VTYPE_FLOAT4, 0],
+        [CONST.USAGE_COLOR, 0, CONST.VTYPE_D3DCOLOR, 16], [CONST.USAGE_TEXCOORD, 0, CONST.VTYPE_FLOAT2, 20]]));
+      emit('LAYOUT', { id: ID.POS, count: 1, stride: 16 }, elems([[CONST.USAGE_POSITIONT, 0, CONST.VTYPE_FLOAT4, 0]]));
+      emit('SHADER', { id: ID.FLAT, stage: 1, ir_bytes: FLAT_IR.length }, FLAT_IR);
+      emit('SHADER', { id: ID.TEX, stage: 1, ir_bytes: TEX_IR.length }, TEX_IR);
+      emit('SAMPLER', { id: ID.SAMP, address_u: 3, address_v: 3, min: 1, mag: 1 });
+      emit('SAMPLER', { id: ID.MIRROR, address_u: CONST.ADDR_MIRROR, address_v: 3, min: 1, mag: 1 });
+      emit('SAMPLER', { id: ID.BORDER, address_u: CONST.ADDR_BORDER, address_v: CONST.ADDR_BORDER, min: 1, mag: 1, border: 0xff00ffff });
+      emit('CREATE', { id: ID.TEX2, kind: CONST.KIND_TEX2D, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: 2, height: 1 });
+      {
+        const t = new Uint8Array([255, 0, 0, 255, 0, 0, 255, 255]); // red, blue
+        emit('UPLOAD', { id: ID.TEX2, level: 0, x: 0, y: 0, w: 2, h: 1, pitch: 8, src: arenaPut(t), bytes: t.length });
+      }
+      emit('TARGETS', { color: ID.RT, depth: ID.DS });
+      drain();
+      const caps = ring.caps();
+      check('caps block published', (caps.flags & CONST.CAP_VALID) !== 0, `flags ${caps.flags}`);
+      check('caps formats', caps.formats === ((1 << CONST.FMT_A8B8G8R8) | (1 << CONST.FMT_D16) | (1 << CONST.FMT_D24S8)), `${caps.formats}`);
+      check('caps stencil', (caps.flags & CONST.CAP_STENCIL) !== 0, `flags ${caps.flags}`);
+      check('caps limits', caps.maxSamplers >= 2 && caps.maxTexture >= 64 && caps.maxAniso >= 1, JSON.stringify(caps));
+
+      // 1. LAYOUT offsets, D3DCOLOR order, index_size 2, integer pixel
+      //    centres: (0,0)-(8,8) covers pixels 0..7.
+      raster({});
+      emit('CLEAR', { mask: 7, colormask: 15, rgba: 0xff000000, z: 1, stencil: 0, left: 0, top: 0, right: W, bottom: H });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(0, 0, 8, 8, 0, () => [0xff336699]), { index_size: 2, indices: QUAD });
+      // A position-only layout gets the default white diffuse.
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(8, 0, 16, 8, 0, () => [0]), { layout: ID.POS, index_size: 2, indices: QUAD });
+      // 2. strips: indexed (u32) and direct, under cull 3 (drop CCW): a
+      //    strip keeps one winding, so both triangles survive.
+      raster({ cull: 3 });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLESTRIP, corners(16, 0, 32, 8, 0, () => [0xff00ff00]), { index_size: 4, indices: [0, 1, 2, 3] });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLESTRIP, corners(32, 0, 40, 8, 0, () => [0xffff0000]));
+      raster({});
+      // 3. VIEWPORT clips a pretransformed draw; TARGETS resets it.
+      emit('VIEWPORT', { x: 40, y: 0, w: 8, h: 8, zmin: 0, zmax: 1 });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(0, 0, W, H, 0, () => [0xff0000ff]), { index_size: 2, indices: QUAD });
+      emit('TARGETS', { color: ID.RT, depth: ID.DS });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(56, 0, 64, 8, 0, () => [0xffffff00]), { index_size: 2, indices: QUAD });
+      let f = present();
+      check('PRESENT stamp', f.stamp === stamp, `${f.stamp} vs ${stamp}`);
+      check('PRESENT dst', f.dstX === 0 && f.dstY === 0, `${f.dstX},${f.dstY}`);
+      expectPx('D3DCOLOR layout', f, 4, 4, [0x33, 0x66, 0x99, 255], 0);
+      expectPx('integer centres: last covered pixel', f, 7, 7, [0x33, 0x66, 0x99, 255], 0);
+      expectPx('integer centres: first uncovered row', f, 4, 8, BLACK, 0);
+      expectPx('default COLOR0 is white', f, 12, 4, [255, 255, 255, 255], 0);
+      expectPx('indexed u32 strip, first triangle', f, 17, 6, [0, 255, 0, 255], 0);
+      expectPx('indexed u32 strip, second triangle', f, 30, 1, [0, 255, 0, 255], 0);
+      expectPx('direct strip', f, 39, 1, [255, 0, 0, 255], 0);
+      expectPx('viewport inside', f, 44, 4, [0, 0, 255, 255], 0);
+      expectPx('viewport clips right', f, 50, 4, BLACK, 0);
+      expectPx('viewport clips below', f, 44, 12, BLACK, 0);
+      expectPx('TARGETS resets the viewport', f, 60, 4, [255, 255, 0, 255], 0);
+
+      // 4. D24S8 stencil: mark the left half, then draw only where marked.
+      raster(STENCIL({ stencil_pass: 3, stencil_ref: 1, colormask: 0 }));
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(0, 16, 8, 32, 0, () => [0xffffffff]), { index_size: 2, indices: QUAD });
+      raster(STENCIL({ stencil_func: 3, stencil_ref: 1 }));
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(0, 16, 16, 32, 0, () => [0xffff0000]), { index_size: 2, indices: QUAD });
+      // 5. two-sided: counter-clockwise faces increment, clockwise keep.
+      raster(STENCIL({ two_sided: 1, ccw_func: 8, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 4, colormask: 0 }));
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(16, 16, 24, 32, 0, () => [0xffffffff]), { index_size: 2, indices: QUAD_CCW });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(24, 16, 32, 32, 0, () => [0xffffffff]), { index_size: 2, indices: QUAD });
+      raster(STENCIL({ stencil_func: 3, stencil_ref: 1 }));
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(16, 16, 32, 32, 0, () => [0xff0000ff]), { index_size: 2, indices: QUAD });
+      // 6. z_bias under depth_mode 1 (LESS): equal z with a negative bias wins,
+      //    a positive one loses.
+      raster({ depth_mode: 1, zfunc: 2, zwrite: 1 });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(32, 16, 48, 32, 0.5, () => [0xff0000ff]), { index_size: 2, indices: QUAD });
+      raster({ depth_mode: 1, zfunc: 2, zwrite: 1, z_bias: -0.01 });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(32, 16, 40, 32, 0.5, () => [0xffffff00]), { index_size: 2, indices: QUAD });
+      raster({ depth_mode: 1, zfunc: 2, zwrite: 1, z_bias: 0.01 });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(40, 16, 48, 32, 0.5, () => [0xffff0000]), { index_size: 2, indices: QUAD });
+      // 7. blend ops: MIN and REVSUBTRACT (dst - src) over red.
+      raster({});
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(48, 16, 64, 32, 0, () => [0xffff0000]), { index_size: 2, indices: QUAD });
+      raster({ blend: 1, src_rgb: 2, dst_rgb: 2, src_alpha: 2, dst_alpha: 2, blend_op: 4, blend_op_alpha: 4 });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(48, 16, 56, 32, 0, () => [0xff808080]), { index_size: 2, indices: QUAD });
+      raster({ blend: 1, src_rgb: 2, dst_rgb: 2, src_alpha: 2, dst_alpha: 2, blend_op: 3, blend_op_alpha: 1 });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(56, 16, 64, 32, 0, () => [0x00400000]), { index_size: 2, indices: QUAD });
+      f = present();
+      expectPx('stencil EQUAL inside the mark', f, 4, 20, [255, 0, 0, 255], 0);
+      expectPx('stencil EQUAL outside the mark', f, 12, 20, BLACK, 0);
+      expectPx('two-sided: ccw set incremented', f, 20, 20, [0, 0, 255, 255], 0);
+      expectPx('two-sided: cw set kept', f, 28, 20, BLACK, 0);
+      expectPx('z_bias -0.01 wins at equal z', f, 36, 20, [255, 255, 0, 255], 0);
+      expectPx('z_bias +0.01 loses at equal z', f, 44, 20, [0, 0, 255, 255], 0);
+      expectPx('blend_op MIN', f, 52, 20, [128, 0, 0, 255], 1);
+      expectPx('blend_op REVSUBTRACT', f, 60, 20, [191, 0, 0, 255], 1);
+
+      // 8. BIND an RT: clear the 16x16 RT2 green, sample it into RT.
+      emit('TARGETS', { color: ID.RT2, depth: 0 });
+      // Top half green, bottom half red: sampling keeps RT rows top-down.
+      emit('CLEAR', { mask: 1, colormask: 15, rgba: 0xff00ff00, z: 1, left: 0, top: 0, right: 16, bottom: 8 });
+      emit('CLEAR', { mask: 1, colormask: 15, rgba: 0xff0000ff, z: 1, left: 0, top: 8, right: 16, bottom: 16 });
+      emit('TARGETS', { color: ID.RT, depth: ID.DS });
+      raster({});
+      emit('BIND', { count: 1 }, i32s(0, ID.RT2, ID.SAMP));
+      draw(ID.TEX, CONST.PRIM_TRIANGLELIST, corners(0, 48, 16, 64, 0, (x, y) => [0xffffffff, x / 16, (y - 48) / 16]),
+        { index_size: 2, indices: QUAD });
+      // 9. MIRROR: u 0..2 over 16 px of [red, blue] -> red blue | blue red.
+      emit('BIND', { count: 1 }, i32s(0, ID.TEX2, ID.MIRROR));
+      draw(ID.TEX, CONST.PRIM_TRIANGLELIST, corners(16, 48, 32, 56, 0, (x) => [0xffffffff, (x - 16) / 8, 0.5]),
+        { index_size: 2, indices: QUAD });
+      // 10. BORDER (point): u -1..1 -> border yellow, then the texture.
+      emit('BIND', { count: 1 }, i32s(0, ID.TEX2, ID.BORDER));
+      draw(ID.TEX, CONST.PRIM_TRIANGLELIST, corners(32, 48, 48, 56, 0, (x) => [0xffffffff, (x - 40) / 8, 0.5]),
+        { index_size: 2, indices: QUAD });
+      // 11. perspective (linear 0) vs screen-linear (linear 1): black at rhw
+      //     1 to white at rhw 0.25; the middle pixel is 0.2 vs 0.5 white.
+      raster({ linear: 0 });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(48, 48, 64, 56, 0, (x) => (x === 48 ? [0xff000000, 0, 0, 1] : [0xffffffff, 0, 0, 0.25])),
+        { index_size: 2, indices: QUAD });
+      raster({ linear: 1 });
+      draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(48, 56, 64, 64, 0, (x) => (x === 48 ? [0xff000000, 0, 0, 1] : [0xffffffff, 0, 0, 0.25])),
+        { index_size: 2, indices: QUAD });
+      f = present();
+      expectPx('BIND RT samples its top rows at t 0', f, 8, 50, [0, 255, 0, 255], 0);
+      expectPx('BIND RT samples its bottom rows at t 1', f, 8, 62, [255, 0, 0, 255], 0);
+      expectPx('MIRROR first texel', f, 18, 50, [255, 0, 0, 255], 0);
+      expectPx('MIRROR second texel', f, 22, 50, [0, 0, 255, 255], 0);
+      expectPx('MIRROR mirrored second texel', f, 26, 50, [0, 0, 255, 255], 0);
+      expectPx('MIRROR mirrored first texel', f, 30, 50, [255, 0, 0, 255], 0);
+      expectPx('BORDER outside', f, 34, 50, [255, 255, 0, 255], 0);
+      expectPx('BORDER inside', f, 46, 50, [0, 0, 255, 255], 0);
+      const mid = (56 - 48) / 16, persp = Math.round(255 * (mid * 0.25) / ((1 - mid) + mid * 0.25));
+      expectPx('perspective-correct varying', f, 56, 52, [persp, persp, persp, 255], 4);
+      expectPx('screen-linear varying', f, 56, 60, [128, 128, 128, 255], 4);
+    } catch (e) {
+      failures.push(`scenario threw: ${e && e.stack || e}`);
+    }
+    ex.close();
+
+    // Refusals, each on a fresh stream and executor.
+    const refuse = (name, build, re) => {
+      const q = makeProducer({ ringBytes: 1 << 14, arenaBytes: 1 << 14, buffer });
+      const x = make(() => {});
+      let err = null;
+      try { build(q); GS.drain([q.ring()], x); } catch (e) { err = e; } finally { x.close(); }
+      check(`refuses ${name}`, !!err && re.test(err.message), err ? err.message : 'no error');
+    };
+    const setup = (q, ds = CONST.FMT_D24S8) => {
+      q.emit('CREATE', { id: 1, kind: CONST.KIND_RT, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: 16, height: 16 });
+      q.emit('CREATE', { id: 2, kind: CONST.KIND_DS, fmt: ds, levels: 1, width: 16, height: 16 });
+      q.emit('TARGETS', { color: 1, depth: 2 });
+      q.emit('LAYOUT', { id: 3, count: 1, stride: 16 }, elems([[CONST.USAGE_POSITIONT, 0, CONST.VTYPE_FLOAT4, 0]]));
+      q.emit('SHADER', { id: 4, stage: 1, ir_bytes: TEX_IR.length }, TEX_IR);
+      q.emit('SAMPLER', { id: 5, address_u: 3, address_v: 3, min: 1, mag: 1 });
+      const v = new Float32Array([0, 0, 0, 1, 8, 0, 0, 1, 0, 8, 0, 1]);
+      const pos = q.arenaAlloc(v.byteLength); q.arenaView(pos, v.byteLength).set(new Uint8Array(v.buffer));
+      return pos;
+    };
+    refuse('sampling the bound color target', (q) => {
+      const v = setup(q);
+      q.emit('RASTER', BASE);
+      q.emit('BIND', { count: 1 }, i32s(0, 1, 5));
+      q.emit('DRAW_UP', { prim: 4, ps: 4, layout: 3, voff: v, stride: 16, count: 3, vcount: 3 });
+    }, /bound color target/);
+    refuse('stencil on a D16 target', (q) => {
+      const v = setup(q, CONST.FMT_D16);
+      q.emit('RASTER', Object.assign({}, BASE, STENCIL({})));
+      q.emit('SHADER', { id: 6, stage: 1, ir_bytes: FLAT_IR.length }, FLAT_IR);
+      q.emit('DRAW_UP', { prim: 4, ps: 6, layout: 3, voff: v, stride: 16, count: 3, vcount: 3 });
+    }, /D24S8/);
+    refuse('logic_op without the cap', (q) => { setup(q); q.emit('RASTER', Object.assign({}, BASE, { logic_op: 3 })); }, /logic_op/);
+    refuse('a non-A8B8G8R8 texture', (q) => q.emit('CREATE', { id: 9, kind: CONST.KIND_TEX2D, fmt: CONST.FMT_L8, levels: 1, width: 4, height: 4 }), /fmt/);
+    refuse('a non-A8B8G8R8 readback', (q) => {
+      setup(q);
+      q.emit('READBACK', { rt: 1, w: 1, h: 1, fmt: CONST.FMT_RGB565, dst: q.arenaAlloc(16), pitch: 4 });
+    }, /only A8B8G8R8/);
+    return { checks, failures };
+  }
+
+  return { run, runD1, W, H };
 });

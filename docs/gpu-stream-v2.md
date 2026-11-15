@@ -69,7 +69,7 @@ u32 fields shared with the consumer are accessed with Atomics.
 | off | field | writer |
 |---|---|---|
 | 0 | u32 magic `'GPS2'` | producer |
-| 4 | u16 version, u16 flags | producer |
+| 4 | u16 version (2), u16 flags | producer |
 | 8 | u32 ring_bytes | producer |
 | 12 | u32 arena_bytes | producer |
 | 16 | u32 write_pos (published after the record is complete) | producer |
@@ -85,9 +85,27 @@ u32 fields shared with the consumer are accessed with Atomics.
 | 60 | u32 seq_counter (wasm address of the device-wide seq counter) | producer |
 | 64–127 | 16 completion slots: FENCE/READBACK store their seq here | consumer |
 | 160 | u32 consumer (non-zero = a render Worker armed this ring; WAT never reads it) | consumer |
-| 128– | producer-private (except 160): seq storage, last_present, owner, producer_lock, handoffs, guest block pointers | producer |
+| 164 | caps: u32 flags, max_texture, max_samplers, max_aniso, formats | consumer |
+| 184 | 2 reserved words | — |
+| 128–159 | producer-private: seq storage, last_present, owner, producer_lock, handoffs, guest block pointers | producer |
 
 `lib/gpu-stream.generated.js` is the authoritative offset list.
+
+**Capability block.** `drain()` writes the executor's `caps()` into the
+header before it executes the first record, and sets `CAP_VALID` (1) last.
+WAT reads it to decide what the guest is told; nothing else negotiates
+features. Flags: 2 VS_IR, 4 STENCIL, 8 LOGIC_OP, 16 OCCLUSION, 32
+BORDER_LINEAR, 64 MIRRORONCE. `formats` is a bit per fmt code (bit 15 =
+A8B8G8R8). Each executor's caps:
+
+| executor | flags | max_texture | max_samplers | max_aniso |
+|---|---|---|---|---|
+| null | all | 16384 | 16 | 16 |
+| software | STENCIL, OCCLUSION, BORDER_LINEAR, MIRRORONCE | 2048 | 8 | 1 |
+| webgl | STENCIL | MAX_TEXTURE_SIZE | min(8, units − 1) | 1 |
+
+A record that needs a capability the executor did not advertise is refused
+with error 3 (unsupported), never approximated.
 
 ## Record
 
@@ -185,6 +203,11 @@ fmt:
 Further formats are appended to this list. Codes 1–4 match the existing
 native16 format codes in `lib/d3dim-gpu.js`. Resources start zeroed.
 
+The **required** formats are A8B8G8R8 (TEX2D and RT), D16 and D24S8 (DS).
+Every other code exists only so WAT can name what it converts from; WAT
+converts at UPLOAD and READBACK, and an executor may refuse any format whose
+bit is not in its caps (all three in-tree executors refuse the rest).
+
 ## Opcodes
 
 | op | name | payload |
@@ -193,35 +216,50 @@ native16 format codes in `lib/d3dim-gpu.js`. Resources start zeroed.
 | 2 | UPLOAD | u32 id, u16 level, u16 face, x, y, w, h, u32 pitch, u32 src (arena position), u32 bytes. Rows top-down. |
 | 3 | RELEASE | u32 id |
 | 4 | SHADER | u32 id, u8 stage, u32 ir_bytes, IR (the `src/09af-d3d-shader-ir.wat` encoding, ABI 1) |
-| 5 | LAYOUT | u32 id, u32 n, u32 stride, n × {u8 slot, u8 type, u8 usage, u8 index, u16 offset, u16 pad} |
-| 6 | SAMPLER | u32 id, u8 address_u, u8 address_v (D3DTADDRESS), u8 min, u8 mag (1 point, 2 linear), u8 mip (0 none), f32 lod_bias |
+| 5 | LAYOUT | u32 id, u32 n, u32 stride, n × {u8 slot, u8 type, u8 usage, u8 index, u16 offset, u16 pad}; see "Core executor contract" |
+| 6 | SAMPLER | u32 id, u8 address_u, u8 address_v (D3DTADDRESS: 1 wrap, 2 mirror, 3 clamp, 4 border, 5 mirror-once), u8 min, u8 mag (1 point, 2 linear), u8 mip (0 none, 1 point, 2 linear), u8 address_w (0 = unused), u8 max_level (D3D MAXMIPLEVEL: the most detailed level sampled), u8 max_aniso (≤ caps), f32 lod_bias, u32 border (R \| G<<8 \| B<<16 \| A<<24) |
 | 10 | TARGETS | u32 color_rt, u32 depth_ds (0 = none) |
-| 11 | VIEWPORT | i32 x,y,w,h; f32 zmin,zmax |
-| 12 | RASTER | fixed 64-byte block, see below |
-| 13 | BIND | u32 n, n × {u32 slot, u32 texture id, u32 sampler id} |
+| 11 | VIEWPORT | i32 x,y,w,h; f32 zmin,zmax (0 ≤ zmin ≤ zmax ≤ 1). Inside the colour target; clips pretransformed draws (intersected with the scissor). TARGETS resets it to the whole target |
+| 12 | RASTER | fixed 96-byte block, see below |
+| 13 | BIND | u32 n, n × {u32 slot, u32 texture id (TEX2D, CUBE or RT), u32 sampler id}. Sampling the bound colour target is refused |
 | 14 | CONSTS | u8 stage, u16 first, u32 count, f32×4×count |
-| 20 | DRAW | u8 prim, u32 vs, u32 ps, u32 layout, u32 vbuf, u32 voff, u32 stride, u32 ibuf (0 = none), u32 ioff, u32 count |
-| 21 | DRAW_UP | same as DRAW; vbuf 0 and voff is an arena position |
+| 20 | DRAW | u8 prim (1–5), u8 index_size (0 none, 2, 4), u32 vs, u32 ps, u32 layout, u32 vbuf, u32 voff, u32 stride, u32 ibuf (0 = none), u32 ioff, u32 count (indices, or vertices when index_size 0), u32 vcount (vertices addressed; = count when not indexed; every index < vcount) |
+| 21 | DRAW_UP | same as DRAW; vbuf and ibuf 0, voff (and ioff when indexed) are arena positions |
 | 22 | CLEAR | u8 mask (1 color, 2 z, 4 stencil), u8 colormask, u32 rgba (R \| G<<8 \| B<<16 \| A<<24), f32 z, u32 stencil, rect |
 | 23 | COPY | u32 src, u32 dst, src rect, dst rect, u32 filter |
-| 30 | FENCE | u32 slot: the executor writes the seq into the slot |
-| 31 | READBACK | u32 rt, rect, u32 fmt, u32 arena dst, u32 pitch, u32 slot: only for Lock, GetDC or an LFB read, never once per frame |
-| 32 | PRESENT | u32 rt, u32 gamma (256×1 lookup texture id, 0 = none), rect, u32 surface (window handle): gamma runs on the GPU and nothing is read back |
+| 30 | FENCE | u32 slot, u8 kind (0 fence, 1 occlusion begin, 2 occlusion end), u32 dst: kind 0 writes the seq into the slot; kind 2 also writes the u32 count of samples that passed since the begin to arena dst. Occlusion needs CAP_OCCLUSION; begins do not nest |
+| 31 | READBACK | u32 rt, rect, u32 fmt (A8B8G8R8 only; WAT converts), u32 arena dst, u32 pitch (≥ 4w), u32 slot: only for Lock, GetDC or an LFB read, never once per frame |
+| 32 | PRESENT | u32 rt, u32 gamma (256×1 lookup texture id, 0 = none), rect, u32 surface (window handle), i32 dst_x, i32 dst_y (window-relative destination), u32 stamp (CPU-present sequence; the page drops a frame older than one already shown): gamma runs on the GPU and nothing is read back |
 | 33 | MARK | u32 frame, u32 tag |
 
 Rects are top-down and half-open. `vs` 0 means pretransformed: positions are
-render-target pixels, y down, pixel centres at +0.5 (Glide/D3D XYZRHW).
-Primitives are D3DPRIMITIVETYPE values (1 points, 2 lines, 4 triangles).
+render-target pixels, y down, pixel centres at integer coordinates (D3D
+XYZRHW; Glide's +0.5 centres are moved in WAT). Primitives are
+D3DPRIMITIVETYPE values 1–5 (points, lines, line strip, triangles, triangle
+strip); fans are lowered to indexed lists by the producer.
 
-**RASTER** (64 bytes): u8 depth_mode (0 off, 1 Z, 2 W), zfunc, zwrite, cull,
-blend, src_rgb, dst_rgb, src_alpha, dst_alpha, alpha_func, alpha_ref,
-colormask (R,G,B,A = 1,2,4,8), fog_mode (0 none, 1 vertex alpha, 2 table on
-W, 3 Z), fog_flags (1 no multiply, 2 no add), fill, pad; u32 fog_color;
-u32 fog_table (an L8 64×1 texture id); i32 depth_bias; scissor left, top,
-right, bottom; 20 reserved bytes. Enums are D3D's: compare functions are
-D3DCMP (1 never … 8 always), blend factors D3DBLEND, cull is D3DCULL in
-render-target pixel space (1 none, 2 drops triangles clockwise on screen,
-3 counter-clockwise).
+**RASTER** (96 bytes):
+
+| off | fields |
+|---|---|
+| 0 | u8 depth_mode (0 off, 1 Z, 2 W: depth from interpolated 1/rhw), zfunc, zwrite, cull |
+| 4 | u8 blend (0/1), src_rgb, dst_rgb, src_alpha, dst_alpha (D3DBLEND 1–11) |
+| 9 | u8 alpha_func, alpha_ref, colormask (R,G,B,A = 1,2,4,8) |
+| 12 | u8 fog_mode (0 none, 1 vertex alpha, 2 table on W, 3 Z), fog_flags (1 no multiply, 2 no add), fill (D3DFILL; executors take 3 solid), linear (1 = screen-linear varyings) |
+| 16 | u32 fog_color, u32 fog_table (an A8B8G8R8 64×1 texture id; R is the fog blend), i32 depth_bias (W-depth units, ±65535) |
+| 28 | i32 scissor left, top, right, bottom |
+| 44 | u8 blend_op, blend_op_alpha (D3DBLENDOP 1 add, 2 subtract, 3 revsubtract, 4 min, 5 max; checked only when blend is 1) |
+| 46 | u8 stencil_enable, two_sided, stencil_func, fail, zfail, pass (D3DCMP / D3DSTENCILOP 1–8), ccw_func, ccw_fail, ccw_zfail, ccw_pass, ref, mask, wmask |
+| 59 | u8 logic_op (0 off; any other value needs CAP_LOGIC_OP) |
+| 60 | f32 z_bias (fraction of the depth range), f32 slope_bias (depth_mode 1 only) |
+| 68 | 28 reserved bytes, zero |
+
+Enums are D3D's: compare functions are D3DCMP (1 never … 8 always), blend
+factors D3DBLEND, cull is D3DCULL in render-target pixel space (1 none, 2
+drops triangles clockwise on screen, 3 counter-clockwise). `blend 0` is a
+plain write: the blend factors and ops are then not read. `two_sided` needs
+`stencil_enable`; the main set applies to clockwise triangles and the ccw
+set to counter-clockwise ones. Stencil needs a D24S8 depth target.
 
 **Sticky state.** RASTER, CONSTS, BIND and TARGETS persist in the executor
 until the next record of the same op, across SHADER changes and draws. A
@@ -229,6 +267,50 @@ RASTER block is always complete (never a partial update), but the producer
 re-emits a block only when its bytes differ from the last one it sent — on
 the NFS III demo that cut RASTER from 488K records to 13K and CONSTS to one.
 CLEAR uses its own rect and colormask and leaves the sticky state in force.
+
+## Core executor contract
+
+What an executor must do, so a new backend can be written from this section
+and the generated layouts alone (`lib/gpu-stream.js` `validateLayout`,
+`validateRaster` and `assemble` are the shared reference checks).
+
+- **Coordinates.** Pretransformed POSITIONT (x, y, z, rhw) in RT pixels, y
+  down; pixel (i, j) is sampled at (i, j). A pixel is covered when its centre
+  is inside the triangle; on an edge, the D3D top-left rule decides. z is
+  0..1 depth for depth_mode 1.
+- **Interpolation.** `linear 0` is perspective-correct (as if clip w =
+  1/rhw); `linear 1` interpolates every varying screen-linearly and uses
+  rhw only for W depth and table fog. Glide sets linear 1.
+- **W depth (depth_mode 2).** Depth is computed per pixel from interpolated
+  rhw in the Voodoo 16-bit floating W form (4-bit exponent, 12-bit
+  mantissa), plus `depth_bias`, and compared/stored as a fraction of 65535.
+  Table fog indexes the 64-entry fog table by the same value / 1024.
+- **LAYOUT.** Stream slot 0 only; stride 4–1024 and 4-aligned; elements
+  4-aligned inside the stride. Exactly one FLOAT4 POSITIONT0; COLOR0/1
+  (FLOATn or D3DCOLOR, B,G,R,A bytes → R,G,B,A) and TEXCOORD0..7 at most once
+  each. A missing FLOATn component reads (0, 0, 1) behind; a missing COLOR0
+  is (1, 1, 1, 1).
+- **Draws.** Prims 1–5; a strip's odd triangles swap their first two
+  vertices so every triangle keeps the strip's winding. Indexed draws read
+  u16 or u32 indices and refuse one ≥ vcount.
+- **Samplers.** Mirror, clamp, wrap and point-filtered border are required;
+  mirror-once and linear-filtered border are optional (caps). LOD is clamped
+  below at max_level. Anisotropy above caps is refused.
+- **Render targets.** A colour RT may be bound as a texture once it is not
+  the current colour target; its row 0 is the top row, like any TEX2D.
+- **Required state.** Depth Z and W, alpha test, blend with all five ops,
+  stencil (one- and two-sided), depth bias, scissor, viewport, colour mask
+  (all or no colour channels, alpha separately), fog modes 0–3.
+- **Optional state (caps).** logic_op, occlusion, mirror-once,
+  linear-filtered border. Without the cap the record fails as unsupported.
+- **Readback and present.** READBACK writes A8B8G8R8 rows top-down at the
+  given pitch. PRESENT hands the page a frame with `dstX`, `dstY` and
+  `stamp`; the page shows a frame only if its stamp is not older (serial
+  arithmetic) than the last one shown. A non-zero dst is refused until
+  windowed present lands (migration slice D2).
+- **Fail fast.** Anything outside this section, or anything an executor
+  cannot do exactly, throws a `GpsError`; `drain()` stores it in
+  `error_seq`/`error_code` and the producer traps on its next SYNC kick.
 
 ## Upload arena
 
@@ -270,8 +352,8 @@ Worker consumer runs while the guest keeps writing.
 enum reaches an executor.
 
 - Open creates two A8B8G8R8 colour RTs (or one, single-buffered) and a D16
-  depth buffer, a fixed 64-byte layout (position, colour, tex0, tex1 as
-  float4) and a SAMPLER per distinct TMU filter/clamp/LOD state.
+  depth buffer, a 64-byte LAYOUT (POSITIONT, COLOR0, TEXCOORD0, TEXCOORD1,
+  all FLOAT4) and a SAMPLER per distinct TMU filter/clamp/LOD state.
 - Texture RAM, the palette and every texel-format decode live in WAT. A
   texture is decoded to A8B8G8R8 and uploaded the first time a TMU samples
   it; a download over its range, or a palette change for P8/AP88 formats,
@@ -279,13 +361,16 @@ enum reaches an executor.
 - Colour/alpha combine, texture combine, chroma key and constant colour are
   compiled into pixel-shader IR, cached by key. Constants travel in CONSTS.
 - Depth, blend, alpha test, cull, colour mask, clip window and fog become
-  RASTER; the fog table is an L8 64×1 texture and W depth is computed in the
-  executor from `oow` (the Voodoo 12-bit mantissa / 4-bit exponent form).
+  RASTER; the fog table is an A8B8G8R8 64×1 texture (R = the fog blend) and
+  W depth is depth_mode 2 from `oow` (pos.w = oow; tex0.z still carries it
+  for the texture's own q).
 - Triangles, lines and points batch into DRAW_UP (TRIANGLELIST, LINELIST,
-  POINTLIST) with screen-linear varyings; the y flip for a lower-left origin
-  is applied to vertices and swaps the cull sense.
-- LFB reads are READBACK (RGB565, rows top-down) plus a SYNC kick; LFB writes
-  are RT UPLOADs.
+  POINTLIST) with RASTER.linear 1; the y flip for a lower-left origin is
+  applied to vertices and swaps the cull sense, and WAT subtracts 0.5 from x
+  and y so Glide's +0.5 centres land on the contract's integer centres.
+- LFB reads are READBACK (A8B8G8R8, rows top-down, at most 2 MB — half the
+  arena — per band) plus a SYNC kick per band; WAT converts each band to
+  RGB565 in the lock's stage. LFB writes are RT UPLOADs.
 - grBufferSwap is PRESENT with a 256×1 gamma texture when a gamma ramp is
   set.
 

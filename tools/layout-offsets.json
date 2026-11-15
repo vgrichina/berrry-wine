@@ -486,11 +486,51 @@
           "stride": 4
         },
         {
-          "name": "reserved",
+          "name": "caps_flags",
           "type": "i32",
           "offset": 164,
-          "size": 28,
-          "count": 7,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "caps_max_texture",
+          "type": "i32",
+          "offset": 168,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "caps_max_samplers",
+          "type": "i32",
+          "offset": 172,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "caps_max_aniso",
+          "type": "i32",
+          "offset": 176,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "caps_formats",
+          "type": "i32",
+          "offset": 180,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "reserved",
+          "type": "i32",
+          "offset": 184,
+          "size": 8,
+          "count": 2,
           "stride": 4
         }
       ]
@@ -843,7 +883,7 @@
       "file": "src/09a8gs-gpu-stream.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 16,
+      "size": 20,
       "fields": [
         {
           "name": "id",
@@ -894,7 +934,7 @@
           "stride": 1
         },
         {
-          "name": "pad",
+          "name": "address_w",
           "type": "u8",
           "offset": 9,
           "size": 1,
@@ -902,17 +942,33 @@
           "stride": 1
         },
         {
-          "name": "pad2",
-          "type": "u16",
+          "name": "max_level",
+          "type": "u8",
           "offset": 10,
-          "size": 2,
+          "size": 1,
           "count": 1,
-          "stride": 2
+          "stride": 1
+        },
+        {
+          "name": "max_aniso",
+          "type": "u8",
+          "offset": 11,
+          "size": 1,
+          "count": 1,
+          "stride": 1
         },
         {
           "name": "lod_bias",
           "type": "f32",
           "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "border",
+          "type": "i32",
+          "offset": 16,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -1003,7 +1059,7 @@
       "file": "src/09a8gs-gpu-stream.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 64,
+      "size": 96,
       "fields": [
         {
           "name": "depth_mode",
@@ -1126,7 +1182,7 @@
           "stride": 1
         },
         {
-          "name": "pad",
+          "name": "linear",
           "type": "u8",
           "offset": 15,
           "size": 1,
@@ -1190,11 +1246,155 @@
           "stride": 4
         },
         {
+          "name": "blend_op",
+          "type": "u8",
+          "offset": 44,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "blend_op_alpha",
+          "type": "u8",
+          "offset": 45,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_enable",
+          "type": "u8",
+          "offset": 46,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "two_sided",
+          "type": "u8",
+          "offset": 47,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_func",
+          "type": "u8",
+          "offset": 48,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_fail",
+          "type": "u8",
+          "offset": 49,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_zfail",
+          "type": "u8",
+          "offset": 50,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_pass",
+          "type": "u8",
+          "offset": 51,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "ccw_func",
+          "type": "u8",
+          "offset": 52,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "ccw_fail",
+          "type": "u8",
+          "offset": 53,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "ccw_zfail",
+          "type": "u8",
+          "offset": 54,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "ccw_pass",
+          "type": "u8",
+          "offset": 55,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_ref",
+          "type": "u8",
+          "offset": 56,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_mask",
+          "type": "u8",
+          "offset": 57,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_wmask",
+          "type": "u8",
+          "offset": 58,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "logic_op",
+          "type": "u8",
+          "offset": 59,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "z_bias",
+          "type": "f32",
+          "offset": 60,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "slope_bias",
+          "type": "f32",
+          "offset": 64,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
           "name": "reserved",
           "type": "i32",
-          "offset": 44,
-          "size": 20,
-          "count": 5,
+          "offset": 68,
+          "size": 28,
+          "count": 7,
           "stride": 4
         }
       ]
@@ -1291,7 +1491,7 @@
       "file": "src/09a8gs-gpu-stream.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 40,
+      "size": 44,
       "fields": [
         {
           "name": "prim",
@@ -1302,7 +1502,7 @@
           "stride": 1
         },
         {
-          "name": "pad",
+          "name": "index_size",
           "type": "u8",
           "offset": 1,
           "size": 1,
@@ -1385,6 +1585,14 @@
           "name": "count",
           "type": "i32",
           "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vcount",
+          "type": "i32",
+          "offset": 40,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -1579,12 +1787,44 @@
       "file": "src/09a8gs-gpu-stream.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 4,
+      "size": 12,
       "fields": [
         {
           "name": "slot",
           "type": "i32",
           "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "kind",
+          "type": "u8",
+          "offset": 4,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "pad",
+          "type": "u8",
+          "offset": 5,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "pad2",
+          "type": "u16",
+          "offset": 6,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "dst",
+          "type": "i32",
+          "offset": 8,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -1675,7 +1915,7 @@
       "file": "src/09a8gs-gpu-stream.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 28,
+      "size": 40,
       "fields": [
         {
           "name": "rt",
@@ -1732,6 +1972,30 @@
           "size": 4,
           "count": 1,
           "stride": 4
+        },
+        {
+          "name": "dst_x",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dst_y",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "stamp",
+          "type": "i32",
+          "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
         }
       ]
     },
@@ -1763,7 +2027,7 @@
       "file": "src/09a8h-glide.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 12148,
+      "size": 12188,
       "fields": [
         {
           "name": "next_id",
@@ -2185,14 +2449,14 @@
           "name": "last_raster",
           "type": "i32",
           "offset": 11880,
-          "size": 64,
-          "count": 16,
+          "size": 96,
+          "count": 24,
           "stride": 4
         },
         {
           "name": "last_consts",
           "type": "i32",
-          "offset": 11944,
+          "offset": 11976,
           "size": 88,
           "count": 22,
           "stride": 4
@@ -2200,7 +2464,7 @@
         {
           "name": "last_bind",
           "type": "i32",
-          "offset": 12032,
+          "offset": 12064,
           "size": 28,
           "count": 7,
           "stride": 4
@@ -2208,9 +2472,9 @@
         {
           "name": "stage",
           "type": "i32",
-          "offset": 12060,
-          "size": 88,
-          "count": 22,
+          "offset": 12092,
+          "size": 96,
+          "count": 24,
           "stride": 4
         }
       ]

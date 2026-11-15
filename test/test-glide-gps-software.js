@@ -501,7 +501,8 @@ function ok(label, fn) { fn(); check.push(label); }
     const s1 = S.stats();
     // Five whole-buffer READBACKs (write region, three locks, read region).
     assert.strictEqual(s1.readbacks - s0.readbacks, 5, 'readbacks');
-    assert.strictEqual(s1.readbackBytes - s0.readbackBytes, 5 * 320 * 240 * 2, 'readback bytes');
+    // A8B8G8R8 readbacks (RGB565 conversion is in the WAT).
+    assert.strictEqual(s1.readbackBytes - s0.readbackBytes, 5 * 320 * 240 * 4, 'readback bytes');
     assert.strictEqual(s1.readbackCpuMs - s0.readbackCpuMs, 5 * 10, 'readback cpu ms');
     assert.strictEqual(s1.counts.READBACK - (s0.counts.READBACK || 0), 5, 'READBACK records');
   });

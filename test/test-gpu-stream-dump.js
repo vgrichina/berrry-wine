@@ -18,7 +18,7 @@ function produce(p, frames) {
   p.emit('CREATE', { id: 2, kind: KIND.TEX2D, fmt: FMT.A8B8G8R8, levels: 1, width: 4, height: 4, size: 64 });
   p.emit('SHADER', { id: 3, stage: 1, ir_bytes: 16 }, Uint8Array.from({ length: 16 }, (_, i) => i));
   p.emit('LAYOUT', { id: 4, count: 1, stride: 32 }, packLayout('GpsLayoutElem', { usage: 9, type: 3 }));
-  p.emit('SAMPLER', { id: 5, min: 2, mag: 2 });
+  p.emit('SAMPLER', { id: 5, address_u: 1, address_v: 1, min: 2, mag: 2 });
   for (let f = 0; f < frames; f++) {
     const t = p.arenaAlloc(64);
     p.arenaView(t, 64).fill(f + 1);
@@ -26,7 +26,7 @@ function produce(p, frames) {
     p.emit('BIND', { count: 1 }, packLayout('GpsBindEntry', { texture: 2, sampler: 5 }));
     const v = p.arenaAlloc(96);
     p.arenaView(v, 96).fill(0x80 + f);
-    p.emit('DRAW_UP', { prim: 4, ps: 3, layout: 4, voff: v, stride: 32, count: 3 });
+    p.emit('DRAW_UP', { prim: 4, ps: 3, layout: 4, voff: v, stride: 32, count: 3, vcount: 3 });
     if (f === 1) {
       const d = p.arenaAlloc(32);
       p.emit('READBACK', { rt: 1, w: 2, h: 2, dst: d, pitch: 8, slot: 2, fmt: FMT.A8B8G8R8 });
@@ -59,7 +59,7 @@ function produceFrame(f) {
   p.emit('UPLOAD', { id: 2, w: 4, h: 4, pitch: 16, src: t, bytes: 64 });
   const v = p.arenaAlloc(96);
   p.arenaView(v, 96).fill(0x80 + f);
-  p.emit('DRAW_UP', { prim: 4, ps: 0, layout: 0, voff: v, stride: 32, count: 3 });
+  p.emit('DRAW_UP', { prim: 4, ps: 0, layout: 0, voff: v, stride: 32, count: 3, vcount: 3 });
   p.emit('PRESENT', { rt: 0, w: 8, h: 8 });
   p.emit('MARK', { frame: f });
 }

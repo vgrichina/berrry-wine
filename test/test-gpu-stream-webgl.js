@@ -8,8 +8,12 @@
 //
 // Cases: clear (scissor rect + colormask), flat, textured, truncated mip,
 // two texture slots, cull, W/Z depth, fog (table, Z under W, vertex alpha),
-// alpha test, READBACK RGB565, LFB band upload, PRESENT through a gamma LUT
-// (exact entries, partial update, RT untouched), sticky state, fail fast.
+// alpha test, READBACK A8B8G8R8, LFB band upload, PRESENT through a gamma LUT
+// (exact entries, partial update, RT untouched), sticky state, fail fast;
+// then the D1 contract (runD1): caps, compact D3DCOLOR layout, integer pixel
+// centres, indexed and direct strips, VIEWPORT, PRESENT stamp/dst, one- and
+// two-sided stencil on D24S8, z bias, blend ops, RT bound as a texture,
+// mirror/border addressing, perspective vs linear varyings, and refusals.
 // Skips (exit 0) with a message when headless GL is unavailable.
 
 const path = require('path');

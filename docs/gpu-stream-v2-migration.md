@@ -145,6 +145,27 @@ Without this, every new backend would have to reimplement the 846 lines of
     - generalized W-depth, fog and half-pixel handling (the Glide-specific table above).
   - Tests: `test-gpu-stream-*`, `test-glide-gps-software`, `test-glide-abi`, `test-glide-render-worker`.
   - Apps: Glide pixel A/B against e412a3780 on Hype, UT348 and NFS3.
+  - **Status (2026-11-14): done, uncommitted.** The contract now lives in
+    gpu-stream-v2.md "Core executor contract"; ring VERSION 2, RASTER 96
+    bytes. Glide pixel A/B against 0b1a2e513 (`--headless-gl`) is
+    md5-identical on NFS3 @300, UT348 @1000/1100/1300 and Hype `--threads`
+    @800/1400/2000 (evidence `scratch/runs/20261114-gps-d1/`).
+    Choices that D2 inherits:
+    - W depth keeps the Voodoo 16-bit float encoding as *the* depth_mode 2
+      encoding; D3DIM W-buffering uses it too.
+    - The WebGL executor advertises STENCIL only: no occlusion, mirror-once,
+      linear-filtered border or logic op, and max_aniso 1. The software
+      executor has occlusion, mirror-once and linear-filtered border.
+    - WebGL perspective-mode (`linear 0`) rasterization lifts y by 1/128 px
+      so the top-left tie rule survives GL's y flip; the linear (Glide) path
+      is unchanged.
+    - The page Presenter refuses a non-zero PRESENT dst; D2 implements
+      windowed / child-window present on top of it. Stale stamps are
+      already dropped.
+    - DRAW from VBUF/IBUF resources is still refused by both drawing
+      executors (DRAW_UP only); D3D9 needs it.
+    - A fresh DS reads depth 0 in WebGL but 1.0 in the software executor
+      (Glide always clears first); settle it when D3DIM depends on it.
 - **D2. Switch D3DIM to v2.**
   - Changes: the lowering map above, plus the ownership state in WAT. Delete `lib/d3dim-gpu.js`, `lib/d3dim-render-worker.js`, and the 0x20000–0x2000A D3DIM records in `d3d-command-stream.js`.
   - Tests:

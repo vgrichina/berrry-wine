@@ -18,8 +18,8 @@ function recorder() {
 {
   const p = makeProducer({ magic: 0x1234 });
   assert.throws(() => p.ring(), /bad magic/);
-  const q = makeProducer({ version: 2 });
-  assert.throws(() => q.ring(), /version 2/);
+  const q = makeProducer({ version: 1 });
+  assert.throws(() => q.ring(), /version 1/);
   const r = makeProducer({ ringBytes: 1000 });
   assert.throws(() => r.ring(), /powers of two/);
   const s = makeProducer({ ringData: 65536 - 64, ringBytes: 1024 });
@@ -90,7 +90,7 @@ function recorder() {
   assert.strictEqual(ring.arenaTail, a + 40);
   const b = p.arenaAlloc(48); // 48..96
   p.arenaView(b, 48).fill(0xB2);
-  p.emit('DRAW_UP', { prim: 4, count: 3, stride: 16, voff: b });
+  p.emit('DRAW_UP', { prim: 4, count: 3, vcount: 3, stride: 16, voff: b });
   GS.drain([ring], ex);
   assert.strictEqual(ring.arenaTail, b + 48);
   const c = p.arenaAlloc(48); // 96+48 > 128 -> skips to 128

@@ -2,13 +2,16 @@
 // tl;dr: drives lib/gpu-stream-software.js (the GPU stream v2 software
 // executor) with synthetic records from test/gpu-stream-fixture.js and checks
 // pixels: CLEAR, a flat triangle, a textured quad, Z test, a point, a line,
-// RGB565 READBACK, PRESENT with and without a gamma LUT, alpha test, blend,
-// RT UPLOAD (LFB write path), and fail-fast refusals. Exits non-zero on failure.
+// A8B8G8R8 READBACK, PRESENT with and without a gamma LUT, alpha test, blend,
+// RT UPLOAD (LFB write path), occlusion fences, fail-fast refusals, and the
+// shared D1 contract scenario (test/gpu-stream-webgl-scenario.js runD1).
+// Exits non-zero on failure.
 const assert = require('assert');
 const GS = require('../lib/gpu-stream');
 const { makeProducer } = require('./gpu-stream-fixture');
 const { bootRenderHarness } = require('./render-helper');
 const { Executor } = require('../lib/gpu-stream-software');
+const scenario = require('./gpu-stream-webgl-scenario');
 
 const { KIND, FMT, CONST } = GS;
 const W = 64, H = 64;
@@ -29,16 +32,17 @@ function ir(instructions) {
 const FLAT = ir([[1, dst(0), src(1)]]);                 // mov r0, v0
 const TEXTURED = ir([[66, dst(0), src(3, 0, 10)]]);     // texld r0, t0_dw
 
-// Vertex: x y z rgba(0..1) s t
+// Vertex: x y z rgba(0..1) s t, in Glide's half-integer pixel centres, written
+// as the contract's integer ones (Glide's WAT subtracts 0.5 the same way).
 function vert(x, y, z, rgba, s = 0, t = 0) {
-  return [x, y, z, 1, ...rgba, s, t, 1, 1, 0, 0, 0, 1];
+  return [x - 0.5, y - 0.5, z, 1, ...rgba, s, t, 1, 1, 0, 0, 0, 1];
 }
 const RED = [1, 0, 0, 1], GREEN = [0, 1, 0, 1], BLUE = [0, 0, 1, 1], YELLOW = [1, 1, 0, 1], WHITE = [1, 1, 1, 1];
 
 function raster(over = {}) {
   return Object.assign({
     depth_mode: 0, zfunc: 8, zwrite: 0, cull: 1, blend: 1,
-    src_rgb: 2, dst_rgb: 1, src_alpha: 2, dst_alpha: 1,
+    src_rgb: 2, dst_rgb: 1, src_alpha: 2, dst_alpha: 1, blend_op: 1, blend_op_alpha: 1, linear: 1,
     alpha_func: 8, alpha_ref: 0, colormask: 15, fog_mode: 0, fog_flags: 0, fill: 3,
     fog_color: 0, fog_table: 0, depth_bias: 0,
     scissor_left: 0, scissor_top: 0, scissor_right: W, scissor_bottom: H,
@@ -64,7 +68,7 @@ function raster(over = {}) {
   const draw = (prim, verts, ps) => {
     const f = new Float32Array(verts.flat());
     const voff = arena(new Uint8Array(f.buffer));
-    p.emit('DRAW_UP', { prim, vs: 0, ps, layout: 4, vbuf: 0, voff, stride: 64, ibuf: 0, ioff: 0, count: verts.length });
+    p.emit('DRAW_UP', { prim, vs: 0, ps, layout: 4, vbuf: 0, voff, stride: 64, ibuf: 0, ioff: 0, count: verts.length, vcount: verts.length });
   };
   const px = (frame, x, y) => Array.from(frame.pixels.subarray((y * frame.width + x) * 4, (y * frame.width + x) * 4 + 4));
   const present = (gamma = 0) => { p.emit('PRESENT', { rt: 2, gamma, x: 0, y: 0, w: W, h: H, surface: 0x1234 }); run(); return frames[frames.length - 1]; };
@@ -116,17 +120,17 @@ function raster(over = {}) {
   assert.deepStrictEqual(px(f, 30, 0), [0, 255, 0, 255], 'edge pixel inside');
   assert.deepStrictEqual(px(f, 31, 0), [255, 0, 0, 255], 'edge pixel outside');
 
-  // ── READBACK RGB565, top-down ──
-  const rbPos = p.arenaAlloc(W * 2 * H);
-  p.emit('READBACK', { rt: 2, x: 0, y: 0, w: W, h: H, fmt: 1, dst: rbPos, pitch: W * 2, slot: 0 });
+  // ── READBACK A8B8G8R8, top-down ──
+  const rbPos = p.arenaAlloc(W * 4 * H);
+  p.emit('READBACK', { rt: 2, x: 0, y: 0, w: W, h: H, fmt: FMT.A8B8G8R8, dst: rbPos, pitch: W * 4, slot: 0 });
   const rbSeq = p.load('submit_seq');
   run();
   assert.strictEqual(p.slot(0), rbSeq, 'READBACK completes its slot');
-  const rb = new DataView(p.buffer, p.arenaData + (rbPos & (p.arenaBytes - 1)), W * 2 * H);
-  const r565 = (x, y) => rb.getUint16((y * W + x) * 2, true);
-  assert.strictEqual(r565(2, 2), 0x07e0, 'readback green');
-  assert.strictEqual(r565(50, 5), 0xf800, 'readback red');
-  assert.strictEqual(r565(60, 60), ((10 >> 3) << 11) | ((20 >> 2) << 5) | (30 >> 3), 'readback texel');
+  const rb = p.arenaView(rbPos, W * 4 * H);
+  const rgba = (x, y) => Array.from(rb.subarray((y * W + x) * 4, (y * W + x) * 4 + 4));
+  assert.deepStrictEqual(rgba(2, 2), [0, 255, 0, 255], 'readback green');
+  assert.deepStrictEqual(rgba(50, 5), [255, 0, 0, 255], 'readback red');
+  assert.deepStrictEqual(rgba(60, 60), [10, 20, 30, 255], 'readback texel');
 
   // ── gamma LUT (inverting) ──
   p.emit('CREATE', { id: 9, kind: KIND.TEX2D, fmt: FMT.A8B8G8R8, levels: 1, width: 256, height: 1 });
@@ -232,7 +236,7 @@ function raster(over = {}) {
     setup(q);
     try { GS.drain([q.ring()], x); } finally { x.close(); }
   };
-  expectFail(() => lone((q) => q.emit('VIEWPORT', {})), /VIEWPORT/, 'viewport');
+  expectFail(() => lone((q) => q.emit('VIEWPORT', {})), /color target is id 0/, 'viewport without a target');
   expectFail(() => lone((q) => q.emit('TARGETS', { color: 5, depth: 0 })), /never created/, 'unknown target');
   expectFail(() => lone((q) => { q.emit('CREATE', { id: 1, kind: KIND.RT, fmt: FMT.A8B8G8R8, levels: 1, width: 8, height: 8 });
     q.emit('CREATE', { id: 1, kind: KIND.RT, fmt: FMT.A8B8G8R8, levels: 1, width: 8, height: 8 }); }), /already live/, 'duplicate id');
@@ -242,7 +246,7 @@ function raster(over = {}) {
     q.emit('SHADER', { id: 2, stage: 1, ir_bytes: FLAT.length }, FLAT); q.emit('LAYOUT', { id: 3, count: 4, stride: 64 }, layoutTail);
     const fv = new Float32Array([vert(0, 0, 0, RED), vert(4, 0, 0, RED), vert(0, 4, 0, RED)].flat());
     const pos = q.arenaAlloc(fv.byteLength); q.arenaView(pos, fv.byteLength).set(new Uint8Array(fv.buffer));
-    q.emit('DRAW_UP', { prim: 4, ps: 2, layout: 3, voff: pos, stride: 64, count: 3 }); }), /fog_flags/, 'fog flags');
+    q.emit('DRAW_UP', { prim: 4, ps: 2, layout: 3, voff: pos, stride: 64, count: 3, vcount: 3 }); }), /fog_flags/, 'fog flags');
   // a failed executor stored the error in the ring
   {
     const q = makeProducer({ ringBytes: 4096, arenaBytes: 4096, memBytes: 1 << 16 });
@@ -254,7 +258,34 @@ function raster(over = {}) {
     x.close();
   }
 
+  // ── occlusion: a FENCE pair counts the samples that passed between them ──
+  {
+    const q = makeProducer({ ringBytes: 4096, arenaBytes: 4096, memBytes: 1 << 16 });
+    const x = new Executor({ getExports: () => e, getMemory: () => memory.buffer });
+    q.emit('CREATE', { id: 1, kind: KIND.RT, fmt: FMT.A8B8G8R8, levels: 1, width: 8, height: 8 });
+    q.emit('TARGETS', { color: 1, depth: 0 });
+    q.emit('RASTER', raster({ scissor_right: 8, scissor_bottom: 8 }));
+    q.emit('SHADER', { id: 2, stage: 1, ir_bytes: FLAT.length }, FLAT); q.emit('LAYOUT', { id: 3, count: 4, stride: 64 }, layoutTail);
+    const fv = new Float32Array([vert(0, 0, 0, RED), vert(4, 0, 0, RED), vert(0, 4, 0, RED), vert(4, 0, 0, RED), vert(4, 4, 0, RED), vert(0, 4, 0, RED)].flat());
+    const pos = q.arenaAlloc(fv.byteLength); q.arenaView(pos, fv.byteLength).set(new Uint8Array(fv.buffer));
+    const dst = q.arenaAlloc(16);
+    q.emit('FENCE', { kind: CONST.FENCEK_OCCLUSION_BEGIN, slot: 1 });
+    q.emit('DRAW_UP', { prim: 4, ps: 2, layout: 3, voff: pos, stride: 64, count: 6, vcount: 6 });
+    q.emit('FENCE', { kind: CONST.FENCEK_OCCLUSION_END, slot: 2, dst });
+    GS.drain([q.ring()], x);
+    assert.strictEqual(new DataView(q.buffer).getUint32(q.arenaData + dst, true), 16, 'occlusion counts a 4x4 quad');
+    assert.ok(x.caps().flags & CONST.CAP_OCCLUSION, 'software advertises occlusion');
+    x.close();
+  }
+
   ex.close();
+
+  // ── the shared D1 contract scenario ──
+  const d1 = scenario.runD1({ GS, makeProducer, buffer: new SharedArrayBuffer(1 << 22),
+    makeExecutor: (onPresent) => new Executor({ getExports: () => e, getMemory: () => memory.buffer, onPresent }) });
+  for (const msg of d1.failures) console.log(`FAIL D1 ${msg}`);
+  assert.strictEqual(d1.failures.length, 0, `D1 scenario: ${d1.failures.length} of ${d1.checks} checks failed`);
+  console.log(`D1 scenario: ${d1.checks}/${d1.checks} checks`);
   console.log(`PASS test-gpu-stream-software (${frames.length} presents, ${s.nativeDraws} native draws)`);
 })().catch((error) => {
   console.error('FAIL test-gpu-stream-software:', error && error.stack || error);

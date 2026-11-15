@@ -79,7 +79,7 @@ function vertexContext() {
 }
 // GPS vertex -> canonical offsets (bytes) it still carries.
 function canonical(g, c) {
-  const out = new Map([[0, g[0]], [4, g[1]], [12, g[4] * 255], [16, g[5] * 255], [20, g[6] * 255], [28, g[7] * 255],
+  const out = new Map([[0, g[0] + 0.5], [4, g[1] + 0.5], [12, g[4] * 255], [16, g[5] * 255], [20, g[6] * 255], [28, g[7] * 255],
     [32, g[10]], [36, g[8] * c.s0], [40, g[9] * c.t0], [44, g[11]], [48, g[12] * c.s1], [52, g[13] * c.t1], [56, g[15]]]);
   if (c.needsZ) out.set(24, g[2] * 65535 - c.bias);
   return out;
@@ -88,7 +88,8 @@ function canonical(g, c) {
 function toGps(v, c) {
   const f = Math.fround, d = (x, n) => f(f(x) / n);
   const z = c.needsZ ? f(Math.min(1, Math.max(0, (f(v[6]) + c.bias) / 65535))) : 0;
-  return [f(v[0]), f(v[1]), z, 1, d(v[3], 255), d(v[4], 255), d(v[5], 255), d(v[7], 255),
+  // Integer pixel centres: x and y move by -0.5; POSITIONT w is oow.
+  return [f(f(v[0]) - 0.5), f(f(v[1]) - 0.5), z, f(v[8]), d(v[3], 255), d(v[4], 255), d(v[5], 255), d(v[7], 255),
     d(v[9], c.s0), d(v[10], c.t0), f(v[8]), f(c.hintQ0 ? v[11] : v[8]), d(v[12], c.s1), d(v[13], c.t1), 0, f(v[14])];
 }
 // grFlush, then every primitive executed since the last call. Each carries
@@ -231,7 +232,7 @@ call('grVertexLayout',[0x41,0,0]);call('grVertexLayout',[0x51,0,0]);
 call('grFinish'); // Finish retains exactly one stdcall cleanup.
 const verts=0x411000;
 for(let i=0;i<7;++i)put(verts+i*28,vertex(i,10+i,0xff112233,1,0,0,1));
-const triangleXs = recs => recs.filter(r=>r.op===5).map(r=>r.gps.map(g=>g[0]));
+const triangleXs = recs => recs.filter(r=>r.op===5).map(r=>r.gps.map(g=>g[0]+0.5));
 call('grDrawVertexArrayContiguous',[4,4,verts,28]);
 assert.deepStrictEqual(triangleXs(records()),[[0,1,2],[2,1,3]],'strip winding alternates');
 call('grDrawVertexArrayContiguous',[7,2,verts+4*28,28]);
@@ -242,7 +243,7 @@ assert.deepStrictEqual(triangleXs(records()),[[0,1,2],[0,2,3],[0,3,4]],'fan cont
 call('grDrawVertexArrayContiguous',[6,6,verts,28]);
 assert.deepStrictEqual(triangleXs(records()),[[0,1,2],[3,4,5]],'triangle list');
 call('grDrawVertexArrayContiguous',[2,4,verts,28]);
-r=records();assert.deepStrictEqual(r.map(x=>[x.op,x.gps[0][0],x.gps[1][0]]),[[11,0,1],[11,2,3]],'line pairs');
+r=records();assert.deepStrictEqual(r.map(x=>[x.op,x.gps[0][0]+0.5,x.gps[1][0]+0.5]),[[11,0,1],[11,2,3]],'line pairs');
 call('grDrawVertexArrayContiguous',[1,3,verts,28]);assert.strictEqual(records().length,2,'line strip');
 // Float color mode replaces packed color selection; disabled Q defaults1.
 call('grVertexLayout',[0x20,8,1]);call('grVertexLayout',[0x10,20,1]);
@@ -518,7 +519,7 @@ assert.strictEqual(readbacks(beforeInvalid).length,0,'and issued no READBACK');
 // A READBACK has no graceful failure in the stream (a failed drain traps),
 // so the second staging is an ordinary successful 1x1 read.
 assert.strictEqual(call('grLfbReadRegion',[1,0,0,1,1,2,data]),1);
-assert.strictEqual(get(data,2).readUInt16LE(),0x5a5a,'the drained readback is what the guest reads');
+assert.strictEqual(get(data,2).readUInt16LE(),0x5acb,'the drained readback (0x5a A8B8G8R8 fill, WAT-converted to RGB565) is what the guest reads');
 assert.deepStrictEqual(metrics(2),[2,7,fullPixels*2,0,1,1,returnAddress],'every staging is an attempted full readback');
 a.glide_lfb_metrics_enable(0);
 const stopped=metrics(2);

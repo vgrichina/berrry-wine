@@ -59,7 +59,8 @@ for (const name of Object.keys(LAYOUTS)) {
     if ('count' in f && ['LAYOUT', 'BIND', 'CONSTS'].includes(name)) f.count = 0;
     if (name === 'SHADER') f.ir_bytes = 0;
     if (name === 'UPLOAD') f.bytes = 0;
-    if (name === 'DRAW_UP' || name === 'DRAW') f.count = 0;
+    if (name === 'DRAW_UP' || name === 'DRAW') { f.count = 0; f.vcount = 0; }
+    if (name === 'FENCE') f.kind = 0;
     if (name === 'READBACK') f.pitch = 0;
     if (name === 'FENCE' || name === 'READBACK') f.slot = 1;
     want.push({ name, f, seq: p.emit(name, f) });
