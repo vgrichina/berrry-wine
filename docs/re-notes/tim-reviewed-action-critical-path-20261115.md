@@ -1,6 +1,6 @@
 # TIM reviewed action critical path, 2026-11-15
 
-**Actual operator path qualified; original not yet started.** Evidence:
+**Operator path qualified; Puzzle 1 cleared and earned Advance reached Puzzle 2. Native Quit exited cleanly; Puzzle 2 remains partial.** Evidence:
 `scratch/runs/20261115-tim-reviewed-action-critical-path/`.
 
 The previous original is permanently closed. Its eight construction gestures
@@ -177,3 +177,58 @@ stores the frame ID plus capture/image tool entry/return timestamps under
 chosen review mode. No capture call accepts a gesture. Full originals must
 use this same concise handoff and dispatcher after publication, preserving
 the existing source/native controls and source/module/build freeze.
+
+
+The authorized original used the published helper (`edbdea8c8`) and this exact
+capture/image/dispatcher path. It produced 58 decisions: 45 admitted inputs and
+13 positively attested UNSENT refusals. Every refusal had native zero-send
+confirmation and no command file; each subsequent attempt used a new complete
+capture, personal review and independent intent. One malformed drag omitted
+its required button field and was rejected by exact schema before intent.
+No check, time window, reserve, capture anchor or UNKNOWN rule changed.
+
+Actual gameplay now progressed: Puzzle 1 received three placed mouse motors,
+three connected belts and a descending ramp. A misplaced second motor was
+corrected through visible manipulation; the final placement was separately
+confirmed. Run visibly moved the balls and drove all three conveyors. Two
+individually reviewed ordinary waits advanced native execution without input.
+The game displayed **PUZZLE 1 COMPLETED!**, bonus **618**. Continue opened the
+Replay/Advance dialog; Advance reached **Puzzle 2: Tutorial Mirror Images**.
+No password was typed. The older owner-question image is retained and labeled
+historical; its password remains AMBIGUOUS and Telegram2791 was not answered
+with a reliable transcription during this task.
+
+Puzzle 2 received a mouse motor inside the right cage and a visibly confirmed
+horizontal flip: the pulley moved from its right to its left side. Repeated
+fresh belt attachment attempts were UNSENT at the reserve boundary. The belt
+was not completed; Puzzle 2 had no Run or clear. Manipulation mistakes and
+refusals consumed real time, and are not transport qualification successes.
+The original's observable image-return-to-post-review-request median was
+3,193 ms. `original-operator-phases.json` records each capture return, image
+handoff, schema/hash/write event, independent intent, and native phase. These
+measurements bound combined tool/model/review latency without inventing a
+separate cognitive timing or claiming that unit tests fixed model latency.
+
+Construction stopped before 600 seconds. The last scene still had the flipped
+motor and an unconnected belt tool. A fresh five-second gameplay review
+admitted right-button return to the native panel at about 589.954 seconds.
+Only the actual subsequent menu and Quit confirmation used the thirty-second
+menu limit. The native red Quit control opened **QUIT GAME**; a fresh full
+scene review then selected **YES**. Native TIM reports `nativeExited: true`,
+`nativeExitCode: 0`, elapsed **606.221 seconds**, `held: false`; no host
+cancellation was used. The controller's `native owner changed` UNKNOWN stays
+permanent, and no further capture or input was requested after it. The native
+process wrapper exited 1 because of that UNKNOWN; watchdog exited 0,
+supervisor-child and launcher exited 1. These wrapper results do not overwrite
+the separate native exit proof.
+
+All 447 input pins were reverified unchanged before report editing. Runtime
+release personally verified 123 actual waits with both EOFs and 124 absent
+PIDs/process groups, including direct native, watchdog, supervisor-child and
+launcher waits; both locks were free. `runtime-release.json` records explicit
+source/build/runtime release. Selected result PNGs show construction, Run,
+clear, Advance, Puzzle 2's flipped motor and native Quit/YES separately from
+the synthetic transport marker. No box was created (ID/expiry null, state
+NOT_CREATED, stop receipt NOT_APPLICABLE). This one original is closed;
+further gameplay requires fresh owner authorization. The next technical work
+is reducing remaining operator latency without relaxing current guards.
