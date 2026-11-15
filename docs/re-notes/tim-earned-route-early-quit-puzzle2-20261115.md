@@ -1,5 +1,12 @@
 # TIM earned route and early Quit, 2026-11-15
 
+**Result: native Quit proved at 220.332 seconds; Puzzle 2 not reached.**
+The one authorized fresh original reached the ordinary Puzzle 1 construction
+board. Every construction attempt was positively refused before delivery;
+the unchanged five-second review / one-second dispatch margin could not admit
+this worker's observed image-review latency. There is no new construction,
+Run, clear, earned password or authored Puzzle 2 boundary claim.
+
 Evidence: `scratch/runs/20261115-tim-earned-route-early-quit-puzzle2/result.json`.
 This task authorizes one fresh unchanged installed original, with a 900-second
 native deadline and independent 920-second watchdog. Construction stops by
@@ -87,3 +94,53 @@ were corrected, and remaining tests passed without rebuilding or changing the
 controller. No original was used for qualification. Its new native deadline
 watchdog must be visibly armed before launch. Source/build/module remain
 frozen throughout that original, and any written UNKNOWN ends input forever.
+
+The fresh original started on published recipe `e3c695f90`, using the unchanged
+controller from `712384ad6`. Its independent watchdog was visibly armed before
+native launch, with 900 native / 920 watchdog seconds. The current ordinary
+challenge asked for manual page 1: personally viewed fishbowl, cat and bulb
+icons were selected individually, leading to the Puzzle 1 panel and Play.
+The uncertain historical password was never entered. Each game attempt had
+a fresh complete scene and a new independent intent. Eight positive UNSENT
+refusals had review ages 6.839, 8.197, 5.176, 4.390, 4.247, 4.485, 4.575 and
+4.339 seconds; each has its own native zero-send attestation. Even the last
+five were outside the four-second admission window after preserving the
+one-second dispatch margin. No construction DOWN reached the game. This is
+a measured interaction boundary, not evidence that the authored puzzle or
+ball/motor/ramp mechanism is impossible. The prepared narrow-key proposal
+remains unapplied, and no engine change was made.
+
+Construction ended early. A newly reviewed right-button return reached the
+native control panel at elapsed 211.1 seconds. Its visible red octagonal Quit
+opened the native QUIT GAME confirmation at 216.0 seconds. A newly reviewed
+YES click used explicit button 1 and a 100 ms hold. Its independent release
+completed; `native-final.json` then recorded `nativeExited: true`,
+`nativeExitCode: 0`, elapsed 220332 ms, held false and no game-state writes.
+There was no host cancellation or watchdog KILL in this original. This is
+the actual Quit consequence, not an ACK, fixture, host shutdown or default
+exit-code inference. The guest's exit changed native ownership before the
+controller could record its post-release consequence, so the controller
+wrote permanent UNKNOWN (`native owner changed`). Native host process exit
+1 and controller UNKNOWN remain unchanged; guest exit 0 is a separate fact.
+No input, capture request, replay, rebind or second original followed UNKNOWN.
+
+Direct native / deadline-watchdog / supervisor-child / launcher actual waits
+were 1 / 0 / 1 / 1, all with both EOFs. Original closure covered 120 sealed
+wait records and 124 absent PIDs/groups. At release, all 443 original input
+pins (including built module, host, route and 15 unchanged media files) and
+13 foreign WIP file hashes were unchanged, and both locks were free.
+Runtime release SHA-256:
+`c1259a400ab9483dfaf4e59491ed6058280aa27c5da71a4e265b191b9fe7d87d`.
+Q3layout916770 is next; only this report remained owned after release.
+
+Evidence retains exact Git SHA plus relevant binary patches, pins, compact
+logs/direct waits and four personally reviewed result-named PNGs: current
+untouched P1, native Quit panel, native confirmation, and the explicitly
+historical public completion/password screen. Unselected captures were
+removed; no source/media/WASM/frame archive was made. No box was created:
+ID null, state NOT_CREATED, expiry null, stop receipt NOT_APPLICABLE.
+
+Next work requires a fresh original authorization and a way to complete
+personal gameplay review and dispatch inside the existing margin. This task
+does not authorize a retry, wider review interval, automatic rebinding or
+guessing the password. The authorized single original is consumed and closed.
