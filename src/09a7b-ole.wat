@@ -1950,20 +1950,102 @@
     (call $crash_unimplemented (local.get $name_ptr))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
-  ;; CoLoadLibrary(lpszLibName, bAutoFree) uses the ordinary Unicode module
-  ;; loader. Loaded images are process-lifetime mappings here; bAutoFree only
-  ;; affects CoUninitialize bookkeeping that has no distinct observable
-  ;; mapping lifetime in the emulator.
+  ;; Legacy COM automatic references are a subset of ordinary loader roots.
+  ;; Synthetic system modules are permanently resident; real images use the
+  ;; same lock, detach callbacks and generation retirement as FreeLibrary.
+  (global $COM_DLL_AUTO_ROOTS i32 (region.addr $COM_DLL_AUTO_ROOTS 0))
+  (global $COM_DLL_AUTO_ROOTS_SIZE i32 (region.size $COM_DLL_AUTO_ROOTS))
+  (global $com_load_auto (mut i32) (i32.const 0))
+  (func (export "take_com_load_auto") (result i32)
+    (local $auto i32)
+    (local.set $auto (global.get $com_load_auto))
+    (global.set $com_load_auto (i32.const 0))
+    (local.get $auto))
+  (func (export "get_com_dll_auto_roots") (result i32) (region.addr $COM_DLL_AUTO_ROOTS 0))
+  ;; The tail holds 64 static-dispatch counters plus the kernel32 counter.
+  ;; These references retire too, while the builtin code stays resident.
+  (func $com_synthetic_auto_cell (param $module i32) (result i32)
+    (local $cell i32) (local $index i32)
+    (local.set $cell (call $dll_synthetic_reference (local.get $module)))
+    (if (i32.eqz (local.get $cell)) (then (return (i32.const 0))))
+    (local.set $index (if (result i32) (call $kernel32_is_module (local.get $module))
+      (then (i32.const 64))
+      (else (i32.shr_u (i32.sub (local.get $cell) (global.get $DLL_SYNTHETIC_REFS)) (i32.const 2)))))
+    (i32.add (region.addr $COM_DLL_AUTO_ROOTS 0x100) (i32.shl (local.get $index) (i32.const 2))))
+  (func (export "clamp_com_synthetic_auto_root") (param $module i32)
+    (local $cell i32) (local $roots i32)
+    (local.set $cell (call $com_synthetic_auto_cell (local.get $module)))
+    (if (i32.eqz (local.get $cell)) (then (return)))
+    (call $dll_load_lock_begin)
+    (local.set $roots (i32.load (call $dll_synthetic_reference (local.get $module))))
+    (if (i32.gt_u (i32.load (local.get $cell)) (local.get $roots))
+      (then (i32.store (local.get $cell) (local.get $roots))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)))
+  (func (export "release_com_synthetic_roots_locked")
+    (local $i i32) (local $cell i32) (local $ref i32) (local $count i32)
+    (loop $scan
+      (local.set $cell (i32.add (region.addr $COM_DLL_AUTO_ROOTS 0x100) (i32.shl (local.get $i) (i32.const 2))))
+      (local.set $ref (if (result i32) (i32.eq (local.get $i) (i32.const 64))
+        (then (region.addr $KERNEL32_MODULE 4))
+        (else (i32.add (global.get $DLL_SYNTHETIC_REFS) (i32.shl (local.get $i) (i32.const 2))))))
+      (local.set $count (i32.load (local.get $cell)))
+      (if (i32.gt_u (local.get $count) (i32.load (local.get $ref))) (then (unreachable)))
+      (i32.store (local.get $ref) (i32.sub (i32.load (local.get $ref)) (local.get $count)))
+      (i32.store (local.get $cell) (i32.const 0))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.le_u (local.get $i) (i32.const 64)))))
+  (func $com_dll_auto_retain (export "record_com_dll_auto_root") (param $module i32)
+    (local $i i32) (local $cell i32) (local $roots i32) (local $found i32)
+    (if (i32.eqz (local.get $module)) (then (return)))
+    (call $dll_load_lock_begin)
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
+      (if (i32.eq (local.get $module)
+            (i32.load (i32.add (global.get $DLL_TABLE) (i32.shl (local.get $i) (i32.const 5)))))
+        (then
+          (local.set $cell (i32.add (region.addr $COM_DLL_AUTO_ROOTS 0) (i32.shl (local.get $i) (i32.const 2))))
+          (local.set $roots (i32.load offset=8 (call $dll_lifecycle_row (local.get $i))))
+          (if (i32.ge_u (i32.load (local.get $cell)) (local.get $roots)) (then (unreachable)))
+          (i32.store (local.get $cell) (i32.add (i32.load (local.get $cell)) (i32.const 1)))
+          (local.set $found (i32.const 1))
+          (br $done)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (if (i32.eqz (local.get $found))
+      (then
+        (local.set $cell (call $com_synthetic_auto_cell (local.get $module)))
+        (if (local.get $cell)
+          (then
+            (local.set $roots (i32.load (call $dll_synthetic_reference (local.get $module))))
+            (if (i32.ge_u (i32.load (local.get $cell)) (local.get $roots)) (then (unreachable)))
+            (i32.store (local.get $cell) (i32.add (i32.load (local.get $cell)) (i32.const 1)))))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)))
+
   (func $handle_CoLoadLibrary (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $stack i32)
     (local.set $stack (i32.load offset=16 (global.get $reg_base)))
     (call $handle_LoadLibraryW
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
-    ;; LoadLibraryW consumes its return address and name argument. Consume the
-    ;; additional bAutoFree word without disturbing a pending DLL-load yield.
+    ;; A contended loader parks at the unchanged thunk/frame. Do not consume
+    ;; either argument or publish a new intent until delegation has accepted it.
+    (if (i32.eq (local.get $stack) (i32.load offset=16 (global.get $reg_base))) (then (return)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $stack) (i32.const 12)))
+    (if (local.get $arg1)
+      (then
+        (if (i32.eq (global.get $yield_reason) (i32.const 5))
+          (then (global.set $com_load_auto (i32.const 1)))
+          (else (call $com_dll_auto_retain (i32.load (global.get $reg_base)))))))
   )
+
+  (func $handle_CoFreeAllLibraries (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    ;; Reuse the ordinary release continuation; this void API has no argument.
+    (call $handle_FreeLibrary (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (local.get $name_ptr))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (global.set $dll_unload_kind (i32.const 4)))
+  (func $handle_CoFreeLibrary (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_FreeLibrary (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (global.set $dll_unload_kind (i32.const 5)))
 
   ;; IMoniker / IPersistStream for process-local file moniker values.
   (func $handle_IMoniker_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

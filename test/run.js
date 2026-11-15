@@ -10985,7 +10985,7 @@ async function main() {
       // An external event can change only while real time passes. Park the
       // host asynchronously between probes; runnable guest siblings still
       // receive their ordinary slices below, and main's guest frame stays put.
-      if (threadManager.isMainNamedEventWaiting()) {
+      if (threadManager.isMainNamedEventWaiting() || threadManager.isMainNativeProcessWaiting()) {
         await new Promise(resolve => setTimeout(resolve, 4));
       }
       // A main thread parked in GetMessage is otherwise resumed only by the

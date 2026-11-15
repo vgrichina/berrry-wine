@@ -19,8 +19,8 @@
       "file": "lib/process-boot.js",
       "name": "host-file",
       "baseSHA256": "7e3a7abc458b1049f6873e89ed6c2bf0b1e3d80f8626292cb47fd8d2e9665be7",
-      "sha256": "c7ce37ccd97973522e89cfc03dd59b40e7a4e1ffda90eec01ac85a8877eec6ee",
-      "reason": "Stock OLE Automation 1.0 data is mounted through the unchanged shared system-data list and localOnly policy. The pinned resource-only Microsoft file is not executed. No boot callback, invocation, owner admission, retention or asynchronous control flow changes. Native genuine OLEAUT32 LoadTypeLib/RegisterTypeLib/LoadRegTypeLib and interface-release controls qualify the dependency; ownership remains pending."
+      "sha256": "fb5d9796f8af64d4a6b78b61f756f88d5b6ef93f64713509ec91bf7a81425333",
+      "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
     },
     {
       "file": "src/09c3a-dialog-runtime.wat",
@@ -28,6 +28,20 @@
       "baseSHA256": "dc12e4d662a9a2c5ad3e0f181a744d7b487f0666c204df515c105dd22dd63da0",
       "sha256": "799ed01516e1441d54a457b1daabca35849a5609185553cae4e9ce442c66191c",
       "reason": "The owning parked MessageBox pump retrieves and synchronously dispatches one posted message filtered to its current HWND through its built-in USER procedure. Class 16 only: no guest dialog procedure, foreign continuation, callback admission, new EIP write or retained interface is introduced. Completion uses existing modal_finish_local and owning continuation splice; general ownership remains pending. Exact native NULL-owner error OK/X, OKCANCEL and strict guarded-input opposition controls qualify the route."
+    },
+    {
+      "file": "lib/dll-loader.js",
+      "name": "host-file",
+      "baseSHA256": "deb6b1b6bd417cac7007c7f27748ad117729349a9c5fb64e2237dca4ccb99bd5",
+      "sha256": "cbdca7ed6ecce5d26002c13b42a613e3637c9c5ecd4a95e8c9c6b0670f138ca0",
+      "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "79026e9016ade1a709c29a9449590bbd60b36991acdab582eeec2059c3486019",
+      "sha256": "c9c8453fd9f3935f7f65ef95b4df2fab71053dcd052015a75ed7f5e8ed3f74af",
+      "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
     }
   ]
 }

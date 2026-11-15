@@ -459,6 +459,8 @@
   (region.declare $DLL_LIFECYCLE_TABLE (size 0x00001000) (align 0x00000100)
     (stride 0x40 (count $DLL_TABLE_CAPACITY))
     (owner "08b-dll-loader.wat:$dll_lifecycle_row"))
+  (region.declare $COM_DLL_AUTO_ROOTS (size 0x00000300) (align 0x00000100)
+    (owner "09a7b-ole.wat:$com_dll_auto_retain"))
   (region.declare $GDI_BITMAP_TEXT_LAYOUT (size 0x00021000) (align 0x00001000)
     (owner "10b-gdi-font.wat:$GDI_BITMAP_TEXT_LAYOUT"))
   (region.declare $GDI_BITMAP_TEXT_PREFIX (size 0x00011000) (align 0x00001000)
