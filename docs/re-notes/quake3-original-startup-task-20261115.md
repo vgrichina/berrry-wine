@@ -1,7 +1,7 @@
 # Quake III original startup task boundaries, 2026-11-15
 
 Evidence destination: `scratch/runs/20261115-quake3-original-startup-task/`.
-Measurement qualified; no original has launched and no production repair is established.
+Diagnostic published as `29a19f34b`; one fresh original completed. No production repair is justified.
 The originals documented in the operation-cause and snapshot-latency notes stay closed.
 
 ## Measurement route
@@ -80,7 +80,7 @@ An UNKNOWN permanently closes the route. Only already-arriving events/responses
 may be observed afterward, with no CDP, evaluation, source-fetch or cleanup
 request. Independent host process teardown remains separate from native Quit.
 Diagnostic success, actual menu/arena review, gameplay/frag and native Quit are
-separate outcomes. No original progress is claimed here yet.
+separate outcomes. No menu, arena, frag or native Quit progress is claimed.
 
 ## Qualification before publication
 
@@ -91,20 +91,20 @@ binary patches preserve the actual shared source; neither module is bundled.
 Seven diagnostic unit controls and twelve existing observer/latency controls,
 the released helper protocol controls and the full locked build passed.
 
-`chrome-controls/requalified/` passed the actual current-module, transformed
+`chrome-controls/complete-pins/` passed the actual current-module, transformed
 Worker, Debugger/source-burst, error/identity, queue/body and passive-late controls.
 Forty repeated exact probes completed alongside 41 ordinary publications in
-1,369 ms, with maximum query wall time 5.044 ms. The synthetic queued native wait
-measured 3,351.410 ms before wrapper entry and 0.275 ms original body time;
-the deliberately slow synthetic body measured 3,400.645 ms. These calibrate the
+1,524 ms, with maximum query wall time 8.129 ms. The synthetic queued native wait
+measured 3,350.645 ms before wrapper entry and 0.290 ms original body time;
+the deliberately slow synthetic body measured 3,400.775 ms. These calibrate the
 new route and do not explain any original. No ordinary three-second overrun was
 reproduced by these fixtures. Eight 20,000-call no-op calibration pairs measured
-0.000454–0.000754 ms incremental observer cost per call; this is fixture overhead,
+0.000640–0.001191 ms incremental observer cost per call; this is fixture overhead,
 not an upper bound on production perturbation. Binding overhead is recorded
 separately, and the diagnostic changes scheduling cost without promising zero
 perturbation.
 
-`chrome-qualified/attended/` passed the complete released native key/Mouse1,
+`chrome-qualified/complete-pins/` passed the complete released native key/Mouse1,
 independent UP, owner/freshness/visibility, immutable capture and irreversible
 UNKNOWN controls with the new instrumentation and production compile awaits.
 The host consent image was personally reviewed within its bounded window.
@@ -118,3 +118,81 @@ were pinned before the fresh successful run, without altering the rejected pins.
 The first full input run expired awaiting personal host review and shut down.
 Neither attempt qualifies an original. No original has been launched by a
 qualification fixture.
+
+A further admission attempt was rejected before Chrome, HTTP or Q3 launch:
+the qualification manifest omitted the released latency helper. Its rejected
+pins remain in `admission-rejected/`. The manifest was corrected, both full
+qualifications repeated with all dependencies pinned, and a separate admission
+precheck passed before the sole actual original. Measurement code remained the
+published bytes; no guard was relaxed and no rejected evidence was overwritten.
+
+## Fresh original: real queued native shader work
+
+The actual original loaded the pinned production module in both guest and render
+Workers, and the actual transformed render source matched its pre-server hash.
+There were 443 exact 47-byte snapshot requests, with complete wrapper/body pairs
+and no event-cap overflow. No snapshot exceeded its three-second deadline.
+Historical request 1574 remains unexplained; these are new original measurements.
+
+The longest snapshot, request **1405**, took **2,303.894 ms** from send to response.
+Its measured pre-entry interval was **2,293.790 ms** (two-millisecond epoch
+tolerance), original body **0.025 ms**, wrapper **0.065 ms**, and wrapper completion
+to response **10.145 ms**. Body/wrapper durations use the Worker's monotonic clock.
+The host send epoch and Worker epoch are sampled separately; these independently
+sampled components are not forced to sum to the host monotonic response duration.
+
+Exact connection `281534:1`, request/response operation sequences `3299/3302`,
+render target `C161A91C48699A51A3C3FCAA6C829AB0`, session
+`8F15EBFEFABE81CE0759F1FE7C3BE959` identify this result. The real serialized
+message span **1989**, endpoint **1**, ran from epoch **1794714597015.240** to
+**1794714599319.620 ms**. Request send was **1794714597026 ms**. Its native GL
+`getShaderParameter` spans **2002** and **2006** lasted **1,129.080** and
+**1,152.380 ms**, followed by `getProgramParameter` span **2011**, **8.945 ms**.
+The first native query definitively enclosed send beyond the clock tolerance.
+The snapshot wrapper entered at **1794714599319.790 ms**, just after the message
+completed. This directly demonstrates delayed entry alongside substantial native
+shader-query occupancy on this actual render Worker, with a tiny snapshot body.
+It does not measure Chrome's internal inspector dispatch, or establish that every
+millisecond before entry was occupied by those native calls.
+
+The independently observed startup owner was process **1000**, slot **0**, window
+**65543**, endpoint/render endpoint **1**, epoch
+`f966cfe5-6374-4f68-87ee-b941a4243411`; its GL snapshot had context **1** with
+owner pair **[0,1]**. Native call timing rows themselves have null endpoint/owner;
+the endpoint association comes from their enclosing serialized message and the
+separate owner receipt, not a fabricated native-call owner field. Page compile
+rows have the actual page session but null raw target; `page-target.json` supplies
+the session-to-target mapping. Initial Worker parse and inspector dispatch remain
+unmeasured. No Chrome trace was collected. No general production bug or safe
+repair follows from two legitimate native status-query delays in this run.
+
+## Visible outcome and terminal closure
+
+The complete personally reviewed host-consent screenshot shows a stone-texture
+startup image, not a menu or arena. Ordinary GL draw/present/transfer production
+was observed. Only the finite host fullscreen consent click occurred, with its
+independent UP and actual release-child wait. There was no guest gameplay input,
+permanent game binding, frag, arena progression or native Quit claim.
+
+Before output selection, the owner receipt already reported an intersecting
+painted `CANVAS#touch-cursor` box. After consent, publication **90** remained
+pending held/in-flight paint and ordinary damage; the existing startup guard then
+threw `startup owner/output not live and fully visible`. The precise final DOM
+box was not captured, so the earlier touch-cursor observation is not asserted to
+be the final refusal's complete cause. The guard was preserved.
+
+The helper's subsequent failure screenshot request **1465**, operation sequence
+**3420**, hit the fixed three-second deadline at epoch **1794714623347 ms**.
+There was no passive screenshot response before host teardown and no pixels
+from that request were recovered. Its internal Chrome/compositor cause is missing.
+UNKNOWN permanently closed the route: **zero** later CDP requests, source fetches,
+evaluations or protocol cleanup requests. Passive task bindings continued until
+independent host termination. No second original, rebind or replay occurred.
+
+Actual Chrome, native, watchdog, supervisor, outer and host-release waits retain
+both EOF and absent recorded PIDs. The shared source/build/runtime slot was
+explicitly released; subsequent work must not reuse these pins for changed bytes.
+No box was created (ID/expiry null, state `NOT_CREATED`, stop not applicable).
+An early ancillary board watcher was stopped after orphaning and has no actual
+wait receipt; that limitation is explicit and distinct from runtime child waits.
+The later tool-managed board watcher was interrupted and actually collected.
