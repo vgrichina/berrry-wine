@@ -58,7 +58,7 @@ updates only the owned lifecycle boundary; its pending broader ownership claim
 and all gates remain intact. No generic TRUE, application whitelist, header
 patch, ordinal remap, forced FT success or original installer bypass is added.
 
-The owner clarified the predecessor gate before this implementation. All 326
+The coordinator clarified this task's predecessor gate before implementation. All 326
 available named SC waits were personally read with actual wait and both EOFs;
 328 PIDs/process groups were absent, explicit 04:51:05 release was present and
 the heavy lock was available. The two missing historical detached-tool outer
