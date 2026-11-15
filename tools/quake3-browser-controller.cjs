@@ -17,6 +17,16 @@ const FIELDS = ['processId', 'processObject', 'endpoint', 'endpointObject', 'wor
   'rendererTarget', 'rendererEpoch', 'rendererModuleSha256', 'pageRendererObject', 'canvasObject',
   'windowHwnd','windowObject','windowInstance','outputCanvasObject'];
 const MAX_AGE_MS = 30000;
+function identityOperands(identity){
+  const out={};
+  for(const key of FIELDS){
+    const value=identity[key];
+    assert(value===undefined||value===null||typeof value==='boolean'||typeof value==='number'&&Number.isFinite(value)||typeof value==='string'&&value.length<=256,'bounded identity scalar required: '+key);
+    out[key]=value;
+  }
+  assert(Buffer.byteLength(JSON.stringify(out))<=8192,'bounded identity encoding required');
+  return out;
+}
 function same(a, b) {
   for (const field of FIELDS) {
     assert(a?.[field] !== undefined && a[field] !== null && a[field] !== '', 'missing identity ' + field);
@@ -100,7 +110,7 @@ const PAGE_READ = `(() => {
 // Reuse the production receipt validator with an ephemeral request; its only
 // write is selectedOwner on this local object. No renderer state is changed.
 function readinessExpression(identity,selectOutput=false,allowPendingDamage=false) { return `(() => {
-  const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
+  const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identityOperands(identity))};
   if(!p.isolated||p.apps.length!==1||!a.running||a.stopped||!a.outputVisible)throw Error('startup owner/output not live and fully visible');
   for(const k of ${JSON.stringify(FIELDS.filter(k=>!['workerTarget','workerInstance','moduleSha256','rendererTarget','rendererEpoch','rendererModuleSha256',...(selectOutput?['outputCanvasObject']:[])].includes(k)))})if(a[k]!==want[k])throw Error('startup identity changed '+k);
   const w=runningApps[0].wine,r=w.renderer;
@@ -121,7 +131,7 @@ function precondition(reason) {
 // capture admission, queued input need not inspect current-display surfaces.
 // This restricts the experiment to an ordinary Worker-owned game window.
 function queuedKeyReadinessExpression(identity) { return `(() => {
-  const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
+  const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identityOperands(identity))};
   if(!p.isolated||p.apps.length!==1||!a.running||a.stopped||!a.outputVisible)throw Error('input owner/output not live and fully visible');
   for(const k of ${JSON.stringify(FIELDS.filter(k=>!['workerTarget','workerInstance','moduleSha256','rendererTarget','rendererEpoch','rendererModuleSha256'].includes(k)))})if(a[k]!==want[k])throw Error('input identity changed '+k);
   const w=runningApps[0].wine,r=w.renderer,win=r.windows[a.windowHwnd],e=w.instance.exports;
@@ -176,7 +186,7 @@ async function captureScene({evaluate, identity, now=Date.now, precheckDeadline=
     for(;;){
     assert(now()<deadline,'capture passive readiness deadline; no request');
     arm=await evaluate(`(() => {
-      const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
+      const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identityOperands(identity))};
       if(!p.isolated||p.apps.length!==1||!a.running||a.stopped||!a.outputVisible)throw Error('capture owner/output not live and fully visible');
       for(const k of ['processId','processObject','pageRendererObject','canvasObject','windowHwnd','windowObject','windowInstance','outputCanvasObject'])if(a[k]!==want[k])throw Error('capture identity changed '+k);
       if(globalThis.${key})throw Error('capture already armed');
@@ -227,7 +237,7 @@ async function captureScene({evaluate, identity, now=Date.now, precheckDeadline=
           return {pending:true,ticketObservation};
         }
         if(!r||!m)throw Error('complete ticket has no immutable bytes');
-        const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identity)};
+        const p=(${PAGE_READ}),a=p.apps[0],want=${JSON.stringify(identityOperands(identity))};
         if(p.apps.length!==1||!a.running||a.stopped||!a.outputVisible)throw Error('capture owner/output hidden or clipped');
         for(const k of ['processId','processObject','pageRendererObject','canvasObject','windowHwnd','windowObject','windowInstance','outputCanvasObject'])if(a[k]!==want[k])throw Error('capture identity changed '+k);
         const liveWindows=Object.values(h.renderer.windows).filter(v=>v.visible&&!v.isChild&&v.w>0&&v.h>0);
