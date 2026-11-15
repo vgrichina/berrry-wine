@@ -109,6 +109,43 @@ intent/nonce, 80–1400 ms hold and independent UP within 1750 ms. Written UNKNO
 permanently closes input, with no replay/rebind or second original. Installation
 files/UI and native Cancel/Quit must be distinguished from host shutdown.
 
-Original authorization is unused at qualification. No original installation
-advancement or native Cancel/Quit is claimed yet. Box ID/expiry null,
-state NOT_CREATED, stop receipt NOT_APPLICABLE.
+Feature `3e9771de91ec339ea8cf372d729186cca205efc5` was published on main before
+the one original. Its exact source/mapped-host preloads passed another actual
+authority/client Worker round trip. All 3,167 launch pins remained unchanged
+through the original; both main and spawned child exit source inventories
+match the published commit (118 and 107 consumed paths). No foreign hunk was
+adopted. Thirteen inherited foreign code pins remained unchanged.
+
+The original ran once at 10:06:49 UTC with the observable independent watchdog
+armed before native launch. The child now returned TRUE from both COMCTL32 and
+OLEAUT32 initializers; the previous missing COMMCTRL failure was absent.
+IKernel continued through genuine registration calls, then reached
+`UNIMPLEMENTED API: CoTreatAsClass` and trapped at native batch 53. Its failed
+child state was not merged because `complete.json` was absent. The parent
+displayed the actual Sims/InstallShield `0x80040154` error. This is advancement
+past child initialization, not a completed installation.
+
+Personally reviewed complete original scenes are `result-installer-start.png`
+and the identical-hash boundary/final PNGs. The active error HWND `0x10007`
+reported native owner `0x0`; the untitled main was `0x10001`. The qualified
+owned-modal rule therefore could not admit binding or Cancel/OK input.
+Input was closed as UNKNOWN without a binding attempt, DOWN, rebind or replay.
+The fixture's genuine Cancel/ExitProcess success does not establish native
+Cancel/Quit for this original.
+
+The retained native 614,532-byte engine and overlay index were byte-identical
+after the run: zero new installed files. The supervisor requested host SIGTERM;
+the native harness handled it, flushed zero records and returned 0 after
+44.112 seconds. That host shutdown is not native Quit. Native, watchdog,
+supervisor child and outer launcher all have actual waits with both EOF.
+The board watcher also stopped with actual tool wait 143. The sealed runtime
+release `68ea1c9f9c4ec372606b4cee74a24418ecf33daf23147adb03a75a110ddce889`
+verifies 609 named waits and 823 absent PIDs/groups. Two deliberate existing
+production-death fixture orphan waits remain UNKNOWN. Both locks were free
+and source/build/runtime were explicitly released to TIM next, then Q3 layout.
+
+Next: implement the demonstrated CoTreatAsClass registration boundary with
+focused native semantics, and investigate the original dialog's actual owner
+relationship before considering further input admission. A new original needs
+fresh authorization; this task's authorization is consumed and closed.
+Box ID/expiry null, state NOT_CREATED, stop receipt NOT_APPLICABLE.
