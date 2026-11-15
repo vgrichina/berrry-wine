@@ -50,7 +50,7 @@ export or executable bytes are changed, and no installation registry is fabricat
 ## Qualification and original-attempt status
 
 Evidence is in `scratch/runs/20261115-sims-original-installer-after-ft/`.
-The prepared controller caps holds at 1400 ms, retains independent UP at
+The published controller caps holds at 1400 ms, retains independent UP at
 1750 ms, and treats ordinary installer cancellation as a final native choice
 without requesting an automatic post-choice capture. Actual exit still needs
 the matching native wait; an input ACK never proves native Quit.
@@ -73,10 +73,64 @@ outer/ancillary EOF remain UNKNOWN. An initial UI qualification invocation used
 a relative evidence path that broke Node preload resolution; it was stopped,
 and the corrected absolute-path invocation passed all 13 controls.
 
-The one authorized original attempt remains unused before publication and
-fresh launch pins. It will use real ticks, default registered scheduling,
-900 native seconds, an independent 920-second watchdog and the final 180-second
-Quit reserve. Current complete scenes require personal review before finite
-ordinary controls. Any UNKNOWN closes further observation/input permanently;
-only independent host teardown remains allowed. No installer UI, installation,
-original FT call or household gameplay is claimed by these qualifications.
+## One original attempt: pre-guest host failure
+
+Feature `fe7e6219f288174b5f0755bb2f1a30ae107cfa91` was published to main
+before launch. Fresh launch pins name 3159 existing inputs, including the four
+archives/BINs, exact setup, selected DLLs, TLBs, fonts, PATH, modules and host
+libraries. All 3159 remained unchanged at original closure. Nonempty actual
+`/proc/self/maps` startup/exit receipts each name and hash eight mapped host
+files; there is no claim that a guest DLL was mapped from an empty census.
+
+The single authorized ordinary `D:\Setup\Setup.exe` attempt used real ticks,
+default scheduling, 900 native seconds, an independently prearmed 920-second
+watchdog and the final 180-second Quit reserve. It stopped before PE initializer
+execution and before its HTTP UI endpoint with:
+
+```text
+Error: Process desktop: ETIMEDOUT
+    at receive (lib/process-desktop.js:97)
+    at new ProcessDesktop (lib/process-desktop.js:270)
+    at test/run.js:3026
+```
+
+The native harness actually exited 1; watchdog, supervisor child and outer
+launcher exited 0. Each has a matching actual wait and both EOF. No input was
+sent. There is no current installer screenshot, UI, genuine installation,
+original FT invocation, native Quit or household gameplay. The native-write
+installed overlay remains empty. This attempt never reached the COMCTL32 route
+and is not another successful or failed genuine DLL attach measurement.
+
+A host-only public Worker probe reproduced a fault in this run's capture
+preload: `host-maps.cjs` used a PID-only output name with exclusive creation.
+Workers share their process PID, so its second startup write raised `EEXIST`.
+The original main thread was synchronously waiting for authority-ready; its
+Worker exited 1 before loading `process-desktop.js` (zero Worker source pins).
+These observations identify a capture-bootstrap failure rather than a proved
+unsupported installer thunk. The initial qualification omitted this additional
+capture preload; the ordinary bootstrap controls alone did not catch it.
+
+The evidence hook was repaired **after** the original pin check by including
+`worker_threads.threadId` in both startup and exit names. The exact old hook is
+retained as `host-maps-original-used.cjs`, with before/after hashes and
+`host-maps-worker-fix.patch`. A public Worker now exits 0. All three native
+DllMain file-read controls also pass with the repaired exact source/capture
+preloads and `--spawn-processes`. These are generated fixtures; they are not a
+second original run. Recover the naming rule with:
+
+```js
+const {threadId} = require('worker_threads');
+const name = `${label}-host-${phase}-${process.pid}-thread${threadId}.json`;
+```
+
+The next original task must use that qualified Worker-safe capture route and a
+fresh bounded authorization. The actual ordinary installer entry/UI boundary
+remains unobserved. It should not implement every guarded thunk direction in
+advance, infer FT invocation from attach, or replay this consumed attempt.
+
+Runtime release `392f01e4e0238d5f0aae897396c9f1180adffe96651d47230d3ea61fcf8d0067`
+names 205 actual waits with both EOF and verifies 216 PIDs/groups absent,
+including the stopped passive board watcher. Both build/runtime locks were
+free. Deliberately orphaned and historical outer/ancillary UNKNOWN remain
+UNKNOWN. Foreign operation-5/data-span/census bytes were preserved throughout;
+no foreign WIP was committed. No box, worker or deployment was created.
