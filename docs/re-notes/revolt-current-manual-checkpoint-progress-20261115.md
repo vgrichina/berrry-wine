@@ -1,8 +1,9 @@
 # Re-Volt manual checkpoint attempt, 2026-11-15
 
-The authored native command qualification passed. The original allowance is
-still unconsumed at this implementation checkpoint. No original checkpoint,
-lap, race result, backend parity or native Quit is claimed.
+The sole software original stopped on its first causal failure: the second
+full-scene capture exceeded the fixed three-second operation bound. Permanent
+UNKNOWN was written at 16:50:08.322Z. No original input was sent. No checkpoint,
+lap, race result or native Quit was reached, and WebGL was withheld.
 
 Run: `scratch/runs/20261115-revolt-current-manual-checkpoint-progress/`.
 The assigned runtime order is Sims1497762, GTA21571459, then this worker.
@@ -81,3 +82,41 @@ Evidence will record exact Git SHA and relevant binary diffs, media path/hash
 pins, compact logs, selected result-named personally reviewed full PNGs and
 direct closure. No source/media/WASM/frame/capture bundles will be retained.
 Box: none created; state NOT_CREATED, expiry null, stop receipt NOT_APPLICABLE.
+
+## Original outcome
+
+Implementation commit `abf5d6bb61786977b524df778787783a431e4a8b` was committed
+on main and strictly pulled/pushed after the full locked build and focused
+tests. Immediately before the original, personal closure checked 131 actual
+wait/both-EOF records, 83 recorded PIDs/groups absent, both locks free and more
+than 4 GB free disk. The run pins 766 source/module/media inputs; relevant
+shared uncommitted changes are patches, not a source archive. The original EXE
+remains SHA-256
+`58ba4835e6607eae62be4e023ef989172cb519c78f34811acba547e9e0e3581a`.
+
+The ordinary registered `re_volt_demo` browser started at 16:49:43Z with real
+ticks, a native 1200-second deadline, independent watchdog at 1220 seconds and
+the final 180 seconds reserved irreversibly for Quit. The first personally
+reviewed full screenshot showed the Acclaim London splash. Its owner was the
+actual legacy D3D endpoint 1, backend `software`, no WebGL adapter, with 83
+completed software draw calls. Guest and owning renderer module digests both
+matched `40cf68a2d8ac094b2dbeea501f9f247e21cf3e2a1df505baac4ba838eb671621`.
+These observations prove startup rendering only; no speed, FPS or hardware
+rendering claim follows.
+
+`capture menu-second` timed out before producing its PNG. The final issued
+request was a Runtime.evaluate in the capture's live-observation sequence.
+The trace contains 190 requests, zero input requests and zero requests after
+the UNKNOWN record. There was no replay, rebind, retry or later runtime
+inspection. The missing image is not reconstructed. This is a bounded capture
+failure; its deeper runtime cause remains unknown, with no speculative engine
+fix. Native Quit is unproved. OS teardown separately joined Chrome with code 0
+and the controller with code 1; the native/watchdog/supervisor-child receipts
+have actual waits and both EOFs. Host shutdown does not establish game success.
+
+`result.json`, `original-permanent-close-proof.json`, `direct-closure.json` and
+`selected-screenshots.json` index the evidence. Only two selected personally
+reviewed PNGs remain: the original splash and the authored native software
+fixture. Unselected image hashes are retained without image bundles. All
+historical and new UNKNOWN records remain closed. Further work must investigate
+capture latency in an authored fixture; this task authorizes no original retry.
