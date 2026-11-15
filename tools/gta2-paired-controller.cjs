@@ -60,24 +60,117 @@ async function boundedOperation(c,label,work) {
   } finally {clearTimeout(timer);}
 }
 async function release(out,file) {
-  const cfg=JSON.parse(fs.readFileSync(file));
-  const s=fs.readFileSync('/proc/'+cfg.pid+'/stat','utf8');assert.equal(s.slice(s.lastIndexOf(')')+2).split(' ')[19],cfg.startToken);
-  const c=connection(cfg.url,v=>save(out,cfg.name+'-UNKNOWN.json',v));try {await c.ready;
-  const session=(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;
-  if(cfg.owner){
-    const live=await c.send('Runtime.evaluate',{expression:require(ROOT+'/'+HELPER).PAGE_READ,returnByValue:true},session);
-    assert(!live.exceptionDetails);const apps=live.result.value.apps;assert.equal(apps.length,1);assert.equal(apps[0].name,'gta2_demo');
-    for(const key of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','pageRendererObject','canvasObject'])assert.equal(apps[0][key],cfg.owner[key],'independent release owner mismatch '+key);
+  const cfg=JSON.parse(fs.readFileSync(file)),native=require('./gta2-browser-release-binding.cjs');
+  native.checkPID(cfg.pid,cfg.startToken);
+  assert(Array.isArray(cfg.keys)&&cfg.keys.length>=1&&cfg.keys.length<=2&&new Set(cfg.keys).size===cfg.keys.length&&cfg.keys.every(k=>Object.hasOwn(KEYS,k)));
+  assert(Number.isSafeInteger(cfg.startedAt),'immutable prearm launch time');
+  const c=connection(cfg.url,v=>save(out,cfg.name+'-UNKNOWN.json',v));
+  const operationTimer=setTimeout(()=>c.seal('independent release operation exceeded 3000ms'),Math.max(0,3000-(Date.now()-cfg.startedAt)));
+  let pending='',scheduled=false,ended=false,due=Infinity,armed,session,prearmTimer;
+  process.stdin.on('data',b=>{
+    pending+=b;let i;
+    while((i=pending.indexOf('\n'))>=0){
+      try {const v=JSON.parse(pending.slice(0,i));pending=pending.slice(i+1);
+        assert(armed&&Number.isSafeInteger(v.at)&&v.at>=armed.at&&v.at<=armed.fallback,'finite release schedule');
+        scheduled=true;due=Math.min(due,v.at);
+      }catch(error){ended=true;due=Date.now();}
+    }
+  });
+  process.stdin.on('end',()=>{ended=true;if(!scheduled){due=Date.now();if(!armed)c.seal('parent EOF before independent arm');}});
+  try {
+    const prepare=(async()=>{
+      await c.ready;session=(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;
+      let attestation=null;
+      if(cfg.mode==='blank-control'){
+        assert(!cfg.owner&&!cfg.review&&!cfg.bindingToken,'blank controls cannot admit a native owner');
+        const actual=await native.evaluate(c,session,`({url:location.href,apps:typeof runningApps==='undefined'?0:runningApps.length})`);
+        assert.equal(actual.url,'about:blank');assert.equal(actual.apps,0);
+      }else{
+        assert.equal(cfg.mode,'native');assert(cfg.nonce&&cfg.review&&cfg.owner&&cfg.bindingToken);
+        attestation=await native.attestExecuted({c,pageSession:session,cfg,trace:phase=>fs.appendFileSync(out+'/'+cfg.name+'-prearm-phases.jsonl',JSON.stringify({phase,at:Date.now(),sinceStarted:Date.now()-cfg.startedAt})+'\n')});
+      }
+      assert(!ended,'parent EOF/cancel before arm');native.checkPID(cfg.pid,cfg.startToken);
+      const startedAt=cfg.startedAt;assert(Number.isSafeInteger(startedAt)&&Date.now()>=startedAt&&Date.now()-startedAt<=500,'release prearm exceeded 500ms');
+      let result;
+      if(cfg.mode==='native'){
+        const childToken=crypto.randomUUID();
+        result=await native.evaluate(c,session,`__gta2NativeReleasePageV1.arm(${JSON.stringify({
+          bindingToken:cfg.bindingToken,nonce:cfg.nonce,intent:cfg.intent,keys:cfg.keys.map(k=>KEYS[k]),childToken,startedAt})})`);
+        assert(result.armed&&result.nonce===cfg.nonce&&result.childToken===childToken);
+        assert.deepEqual(result.native,cfg.review.native);assert.deepEqual(result.pageIdentity,cfg.review.pageIdentity);
+        save(out,cfg.name+'-attestation.json',{...attestation,nonce:cfg.nonce,childToken,currentHelperSHA256:sha(fs.readFileSync(require.resolve('./gta2-browser-release-binding.cjs')))});
+      }else {const at=Date.now();result={armed:true,at,fallback:at+1500,protocolOnly:true};}
+      assert(Date.now()-startedAt<=500,'release ACK exceeded 500ms');
+      const stat=fs.readFileSync('/proc/'+process.pid+'/stat','utf8');
+      armed={...result,pid:process.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],session};
+      due=Math.min(due,armed.fallback);process.stdout.write(JSON.stringify(armed)+'\n');
+    })();
+    await Promise.race([prepare,new Promise((_,reject)=>{prearmTimer=setTimeout(()=>{c.seal('release prearm exceeded 500ms');reject(Error('release prearm exceeded 500ms'));},Math.max(0,500-(Date.now()-cfg.startedAt)));})]);
+    clearTimeout(prearmTimer);
+    while(Date.now()<due)await wait(Math.min(5,due-Date.now()));
+    const fired=Date.now(),receipts=[];
+    for(const key of [...cfg.keys].reverse())receipts.push(await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session));
+    const ack=Date.now();assert(ack-armed.at<=1750,'independent UP acknowledgement exceeded 1750ms');
+    let released=null;
+    if(cfg.mode==='native'){
+      if(!scheduled){
+        // EOF/cancel is terminal. UP already reached the original renderer;
+        // this never authorizes a fresh capture or another intent.
+        throw Error('parent EOF/cancel without completed finite schedule');
+      }
+      released=await native.evaluate(c,session,`__gta2NativeReleasePageV1.finish(${JSON.stringify({nonce:cfg.nonce,childToken:armed.childToken})})`);
+      assert.equal(released.state,'RELEASED');
+    }
+    save(out,cfg.name+'-up.json',{armed:armed.at,fallback:armed.fallback,due,fired,ack,receipts,released,nonce:cfg.nonce??null,state:'ACK',independent:true});
+    await c.send('Target.detachFromTarget',{sessionId:session});
+  }catch(error){if(!c.closed)c.seal(error);throw error;}
+  finally {clearTimeout(prearmTimer);clearTimeout(operationTimer);c.stop();process.stdin.destroy();}
+}
+async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},onAttempt=()=>{}}) {
+  assert(Number.isInteger(ms)&&ms>=80&&ms<=1400);
+  const native=require('./gta2-browser-release-binding.cjs'),stat=fs.readFileSync('/proc/'+process.pid+'/stat','utf8');
+  const config={...cfg,name,keys,mode:'native',parentPID:process.pid,parentStartToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],startedAt:Date.now()};
+  save(out,name+'-release-config.json',config);
+  const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});
+  let output='',errors='',error,armTimer,armed,childError;
+  child.stderr.on('data',b=>errors+=b);child.stdin.on('error',e=>{childError=e;});
+  const joined=new Promise(resolve=>{child.once('error',e=>{childError=e;});child.once('close',(code,signal)=>resolve({pid:child.pid??null,code,signal}));});
+  const events=[];
+  try {
+    armed=await new Promise((resolve,reject)=>{
+      armTimer=setTimeout(()=>reject(Error('release prearm timeout')),Math.max(0,500-(Date.now()-config.startedAt)));
+      child.stdout.on('data',b=>{output+=b;if(output.includes('\n')){try{resolve(JSON.parse(output.split('\n')[0]));}catch(e){reject(e);}}});
+      child.once('error',reject);child.once('exit',code=>{if(!output.includes('\n'))reject(Error('release child exit '+code));});
+    });
+    clearTimeout(armTimer);assert(armed.armed&&armed.nonce===cfg.nonce&&Date.now()-config.startedAt<=500,'actual independent child arm within 500ms');
+    assert.equal(armed.bindingToken,cfg.bindingToken);assert.deepEqual(armed.native,cfg.review.native);assert.deepEqual(armed.pageIdentity,cfg.review.pageIdentity);
+    native.checkPID(armed.pid,armed.startToken);
+    for(const key of keys){
+      beforeDown();native.verifyPins(cfg.pins);native.checkPID(cfg.pid,cfg.startToken);
+      assert(Date.now()<armed.fallback-250,'native release lease expired');
+      const before=Date.now();onAttempt();
+      await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session);
+      const consumed=await native.evaluate(c,session,`__gta2NativeReleasePageV1.consumed(${JSON.stringify({nonce:cfg.nonce,key:KEYS[key]})})`);
+      assert.equal(consumed.state,'CONSUMED');assert.equal(consumed.nonce,cfg.nonce);
+      events.push({key,before,ack:Date.now(),consumed});
+    }
+    child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,events[0].consumed.at+ms)})+'\n');
+  }catch(e){error=e;}
+  finally {
+    clearTimeout(armTimer);child.stdin.end();const result=await joined;
+    save(out,name+'-release-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout:output,stderr:errors});
+    if(result.code!==0)error??=Error('release child failed '+result.code+' '+errors);
+    error??=childError;
   }
-  const armed=Date.now(),fallback=armed+1500;let due=fallback,pending='';
-  process.stdin.on('data',b=>{pending+=b;let i;while((i=pending.indexOf('\n'))>=0){const v=JSON.parse(pending.slice(0,i));pending=pending.slice(i+1);assert(v.at>=armed&&v.at<=fallback);due=Math.min(due,v.at);}});
-  process.stdout.write(JSON.stringify({armed:true,at:armed,fallback,session,pid:process.pid})+'\n');
-  while(Date.now()<due)await wait(Math.min(5,due-Date.now()));
-  const fired=Date.now(),receipts=[];
-  for(const key of [...cfg.keys].reverse())receipts.push(await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session));
-  const ack=Date.now();if(ack-armed>1750){c.seal('independent UP acknowledgement exceeded 1750ms');throw Error('late independent UP');}save(out,cfg.name+'-up.json',{armed,fallback,due,fired,ack,receipts,state:'ACK',independent:true});
-  await c.send('Target.detachFromTarget',{sessionId:session});
-  } finally {c.stop();process.stdin.destroy();}
+  if(error){if(!c.closed)c.seal(error);throw error;}
+  const up=JSON.parse(fs.readFileSync(out+'/'+name+'-up.json'));
+  assert(up.released?.physicalUp,'independent original renderer physical UP required');
+  assert(events.every(e=>up.ack-e.before<=1750),'physical UP exceeded 1750ms');
+  for(const key of keys){
+    const edges=up.released.events.filter(e=>e.key===KEYS[key]);assert.deepEqual(edges.map(e=>e.type),['DOWN','UP']);
+    assert(edges[1].at-edges[0].at>=80&&edges[1].at-edges[0].at<=1750,'actual original physical edge order/bounds');
+  }
+  return {armed,events,up,noReplay:true};
 }
 async function browser(out,backend) {
   assert(['software','webgl','controls'].includes(backend));
@@ -85,7 +178,7 @@ async function browser(out,backend) {
   const pins=JSON.parse(fs.readFileSync(out+'/pins.json'));
   function verifyPins(){for(const p of pins.files)assert.equal(sha(fs.readFileSync(ROOT+'/'+p.path)),p.sha256,p.path);}
   verifyPins();const pinMap=new Map(pins.files.map(p=>['/'+p.path,p.sha256]));
-  let server,browser,chromeWait,c,session,chain,latest,bound,closing=false,phase=false;
+  let server,browser,chromeWait,c,session,chain,latest,bound,bridgeOptions,closing=false,phase=false;
   const workers=new Map(),tasks=[];
   const record=(n,v)=>save(out,n,v),log=(n,v)=>fs.appendFileSync(out+'/'+n,JSON.stringify(v)+'\n');
   async function evaluate(expression,s=session){const v=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},s);if(v.exceptionDetails)throw Error(JSON.stringify(v.exceptionDetails));return v.result.value;}
@@ -97,7 +190,11 @@ async function browser(out,backend) {
   }
   async function capture(name){
     verifyPins();assert(/^[a-z0-9-]+$/.test(name));assert(!fs.existsSync(out+'/'+name+'.png'));
-    const captured=await chain.capture(name);fs.writeFileSync(out+'/'+name+'.png',captured.png,{flag:'wx'});
+    const nativeBefore=await evaluate('__gta2NativeReleasePageV1.read()');
+    const captured=await chain.capture(name);
+    const nativeAfter=await evaluate('__gta2NativeReleasePageV1.read()');assert.deepEqual(nativeBefore,nativeAfter,'native scene changed during full capture');
+    captured.capture.nativeReview={...nativeAfter,capturedAt:Date.parse(captured.capture.at),pngSHA256:captured.capture.sha256};
+    fs.writeFileSync(out+'/'+name+'.png',captured.png,{flag:'wx'});
     latest=captured.capture;record(name+'.json',{...captured,png:undefined});const observed=await state();record(name+'-state.json',observed);
     if(latest.identity.renderEndpoint!=='none'){
       const owners=observed.owners.flatMap(w=>w.value.filter(e=>e.id===latest.identity.renderEndpoint&&w.targetId===latest.identity.rendererTarget));
@@ -145,11 +242,16 @@ async function browser(out,backend) {
     if(backend==='controls'){
       await evaluate(`globalThis.keyProof=[];for(const type of ['keydown','keyup'])addEventListener(type,e=>keyProof.push({type,key:e.key,trusted:e.isTrusted,at:Date.now()}));`);
       for(const [i,key] of Object.keys(KEYS).entries()){
-        const name='control-'+i,config={url,pid:browser.pid,startToken,targetId,keys:[key],name};record(name+'-release-config.json',config);
-        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});let stdout='',stderr='';child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
-        const armed=await new Promise((r,j)=>{const t=setTimeout(()=>j(Error('native release arm timeout')),1500);child.stdout.on('data',b=>{stdout+=b;if(stdout.includes('\n')){clearTimeout(t);r(JSON.parse(stdout.trim()));}});});assert(armed.armed);
-        const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session);child.stdin.end(JSON.stringify({at:before+120})+'\n');
-        const result=await joined;record(name+'-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr});assert.equal(result.code,0,stderr);
+        const name='control-'+i,config={url,pid:browser.pid,startToken,targetId,keys:[key],name,mode:'blank-control',startedAt:Date.now()};record(name+'-release-config.json',config);
+        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});let stdout='',stderr='',stdinError;child.stdin.on('error',e=>stdinError=e);child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
+        let armed,result,armError;
+        try {
+          armed=await new Promise((r,j)=>{const t=setTimeout(()=>j(Error('native release arm timeout')),Math.max(0,500-(Date.now()-config.startedAt)));child.stdout.on('data',b=>{stdout+=b;if(stdout.includes('\n')){clearTimeout(t);try{r(JSON.parse(stdout.split('\n')[0]));}catch(e){j(e);}}});child.once('error',e=>{clearTimeout(t);j(e);});child.once('exit',code=>{if(!stdout){clearTimeout(t);j(Error('release child exit '+code));}});});
+          assert(armed.armed&&Date.now()-config.startedAt<=500);
+          const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session);child.stdin.write(JSON.stringify({at:before+120})+'\n');
+        }catch(error){armError=error;}
+        finally{child.stdin.end();result=await joined;record(name+'-wait.json',{...result,pid:child.pid,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr});}
+        if(armError||stdinError)throw armError||stdinError;assert.equal(result.code,0,stderr);
       }
       const proof=await evaluate('keyProof');assert.equal(proof.length,Object.keys(KEYS).length*2);assert(proof.every(e=>e.trusted));for(let i=0;i<proof.length;i+=2){assert.equal(proof[i].type,'keydown');assert.equal(proof[i+1].type,'keyup');assert.equal(proof[i].key,proof[i+1].key);assert(proof[i+1].at-proof[i].at<=1750);}
       record('native-controls.json',{passed:true,proof,originalLaunched:false});await close('blank-page native input controls complete');return;
@@ -162,7 +264,9 @@ async function browser(out,backend) {
       if(ready?.length===1&&ready[0].running&&ready[0].worker&&ready[0].slice)break;
       assert(!ready?.some(a=>a.stopped),'original stopped during startup');assert(Date.now()<startupEnd,'bounded original startup readiness');await wait(250);
     }
-    await Promise.all(tasks);record('executed-sources.json',{workers:[...workers.values()]});await boundedOperation(c,'startup capture',()=>capture('startup'));
+    await Promise.all(tasks);record('executed-sources.json',{workers:[...workers.values()]});
+    bridgeOptions=await require('./gta2-browser-release-binding.cjs').install({c,pageSession:session,workers,app:'gta2_demo',backend});
+    record('native-bridge.json',{bridgeOptions});await boundedOperation(c,'startup capture',()=>capture('startup'));
     bound=latest.identity;record('permanent-owner.json',{identity:bound,browser:{pid:browser.pid,startToken},backend,noReplay:true});
     await evaluate(`(()=>{if(Object.hasOwn(globalThis,'__gta2PassiveOwner'))throw Error('owner reference already bound');Object.defineProperty(globalThis,'__gta2PassiveOwner',{value:runningApps[0].wine});return true;})()`);
     record('ready.json',{at:Date.now(),backend});
@@ -185,20 +289,14 @@ async function browser(out,backend) {
       record(latest.label+'-used.json',{intent:cmd.name,at:Date.now()});let attempted=false;
       await chain.admit(review,async admission=>{
         require(ROOT+'/'+HELPER).same(bound,admission.live.identity);policy(cmd,launch,phase&&cmd.mode!=='quit');
-        const config={...JSON.parse(fs.readFileSync(out+'/endpoint.json')),name:cmd.name,targetId,keys:cmd.keys,owner:bound};record(cmd.name+'-release-config.json',config);
-        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+cmd.name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});
-        let output='',errors='';const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));child.stderr.on('data',b=>errors+=b);
-        const armed=await new Promise((r,j)=>{let timer=setTimeout(()=>j(Error('release prearm timeout')),1000);child.stdout.on('data',b=>{output+=b;if(output.includes('\n')){clearTimeout(timer);r(JSON.parse(output.split('\n')[0]));}});child.once('exit',code=>{if(!output)j(Error('release child exit '+code));});});assert(armed.armed);
-        const events=[];let error;
-        try {
-          if(Date.now()-Date.parse(latest.at)>=maxAge){record(cmd.name+'-unsent.json',{effects:0,state:'NOT_SENT',reason:'expired after prearm'});return;}
-          for(const key of cmd.keys){assert(Date.now()<armed.fallback-250);attempted=true;const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session);events.push({key,before,ack:Date.now()});}
-          child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,events[0].before+cmd.ms)})+'\n');
-        }catch(e){error=e;}
-        finally {child.stdin.end();const joinedValue=await joined;record(cmd.name+'-release-wait.json',{...joinedValue,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout:output,stderr:errors});assert.equal(joinedValue.code,0);}
-        record(cmd.name+'-delivery.json',{events,admission,attempted,error:error?String(error):null});if(error)throw error;
-        const up=JSON.parse(fs.readFileSync(out+'/'+cmd.name+'-up.json'));assert(events.every(e=>up.ack-e.before<=1750),'UP acknowledgement exceeded maximum hold');
-        const physical=await evaluate(`runningApps.map(a=>({name:a.name,keys:${JSON.stringify(cmd.keys.map(k=>KEYS[k]))}.map(k=>({key:k,down:a.wine?.renderer?.peekKeyDownState(k)}))}))`);record(cmd.name+'-physical.json',{physical,at:Date.now()});assert(physical.every(a=>a.keys.every(k=>k.down===false||k.down===0)),'released physical key state');
+        const nativeReview={...latest.nativeReview,reviewed:true,observation:cmd.observation,maxAgeMs:maxAge};
+        const binding=await evaluate(`__gta2NativeReleasePageV1.bind(${JSON.stringify(nativeReview)})`);
+        const result=await releaseGesture({c,session,out,name:cmd.name,keys:cmd.keys,ms:cmd.ms,
+          cfg:{...JSON.parse(fs.readFileSync(out+'/endpoint.json')),targetId,owner:bound,pins,bridgeOptions,
+            review:nativeReview,bindingToken:binding.bindingToken,nonce:cmd.nonce,intent:cmd.intent},
+          beforeDown:()=>{verifyPins();policy(cmd,launch,phase&&cmd.mode!=='quit');},
+          onAttempt:()=>{attempted=true;}});
+        record(cmd.name+'-delivery.json',{...result,admission,attempted});
       });
       record('receipt-'+n+'.json',{state:attempted?'ACK':'NOT_SENT',effects:attempted?cmd.keys.length:0,noReplay:true,at:Date.now()});
       });
@@ -206,4 +304,4 @@ async function browser(out,backend) {
   }catch(e){if(!fs.existsSync(out+'/executed-sources.json'))record('executed-sources.json',{workers:[...workers.values()]});if(c&&!c.closed)c.seal('first causal failure: '+e);if(!fs.existsSync(out+'/UNKNOWN.json'))record('UNKNOWN.json',{state:'UNKNOWN',reason:String(e),at:Date.now(),permanentClose:true,laterRequestsAllowed:0});record('failure.json',{error:e.stack,noReplay:true,at:Date.now()});process.exitCode=1;await close('first causal failure');}
 }
 if(require.main===module){const [mode,out,arg]=process.argv.slice(2);(mode==='release'?release(out,arg):browser(out,arg)).catch(e=>{console.error(e);process.exitCode=1;});}
-module.exports={policy,KEYS,HELPER,sha,connection,release,boundedOperation,devtoolsEndpoint};
+module.exports={policy,KEYS,HELPER,sha,connection,release,releaseGesture,boundedOperation,devtoolsEndpoint};
