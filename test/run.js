@@ -527,6 +527,7 @@ const REG_EXPORT = getArg('reg-export', '');
 // guest/host exit codes and the earlier child-exit IPC notification.
 const CHILD_STATE_COMPLETION = getArg('child-state-completion', '');
 const CHILD_STATE_TOKEN = getArg('child-state-token', '');
+const CHILD_READONLY_CONTEXT = getArg('child-readonly-context', '');
 // --import-saves=FILE / --export-saves=FILE: the same state as a *save bundle*
 // (lib/save-bundle.js) — the app's persistFiles matches plus the registry/INI
 // store, in one zip. --reg-export carries only the second half, so a game whose
@@ -4263,6 +4264,23 @@ async function main() {
       const regOut = path.join(tmp, 'reg-out.json');
       const completion = path.join(tmp, 'complete.json');
       const token = require('crypto').randomBytes(32).toString('hex');
+      // Borrowed disc bytes stay outside mutable state. Carry the actual
+      // source-owned mount plan, directory tree and drive identity separately.
+      let readonlyContextArgs = [];
+      if (vfs.readOnlyDrives?.size || vfs.readonlyMediaContexts?.length) {
+        let contexts;
+        try { contexts = require('../lib/readonly-media-context').capture(vfs); }
+        catch (error) {
+          console.log(`[spawn] CreateProcess "${cmd}": readonly media context refused: ${error.message}`);
+          fs.rmSync(tmp, { recursive: true, force: true });
+          return 0;
+        }
+        if (contexts.length) {
+          const contextPath = path.join(tmp, 'readonly-context.json');
+          fs.writeFileSync(contextPath, JSON.stringify({ version: 1, token, contexts }));
+          readonlyContextArgs = [`--child-readonly-context=${contextPath}`];
+        }
+      }
       const written = saveVfsToHost(vfs, inDir);
       const before = new Map(written.map(row => [String(row.guestPath).toLowerCase(), row.outputPath]));
       const exeRow = written.find(row => String(row.guestPath).toLowerCase() === guestExe);
@@ -4294,6 +4312,7 @@ async function main() {
       });
       const args = [
         ...childMountArgs,
+        ...readonlyContextArgs,
         `--exe=${exeRow.outputPath}`, `--vfs-tree=${inDir}`, `--exe-guest-path=${guestExe}`,
         `--cwd=${cwd}`, `--args=${parsed.params.trim()}`,
         '--no-build', `--wasm=${WASM_PATH}`, '--quiet-api', '--quiet-blocks',
@@ -6020,6 +6039,20 @@ async function main() {
     }
   };
   mountExplicitVfsFiles();
+  if (CHILD_READONLY_CONTEXT) {
+    if (!SPAWNED_CHILD || typeof process.send !== 'function' || !CHILD_STATE_TOKEN)
+      throw new Error('readonly media context requires a native child launch');
+    const inherited = JSON.parse(fs.readFileSync(CHILD_READONLY_CONTEXT, 'utf8'));
+    if (inherited.version !== 1 || inherited.token !== CHILD_STATE_TOKEN)
+      throw new Error('readonly media context launch identity mismatch');
+    const media = await require('../lib/readonly-media-context').restore(ctx.vfs, inherited.contexts);
+    process.on('exit', () => { for (const source of media) require('../lib/media-cli').closeMedia(source); });
+    // Native DLL initializers may read profiles relative to the inherited CD.
+    // Validate the real directory now, before invoking any PE DllMain.
+    if (GUEST_CWD && ctx.vfs.readOnlyDrives.has(GUEST_CWD.slice(0, 1).toLowerCase()) &&
+        !ctx.vfs.setCurrentDirectory(GUEST_CWD))
+      throw new Error(`working directory is not present in the inherited readonly media: ${GUEST_CWD}`);
+  }
   const onLoadLibraryYield = ex => serviceLoadLibraryYieldSync({
     exports: ex, memoryBuffer: memory.buffer, resourceHost: ctx, log: console.log,
     findDllSync: findRuntimeDllBytes, onLoadLibraryYield,
@@ -6378,6 +6411,8 @@ async function main() {
       const { analyzeMediaPaths } = require('../lib/media-cli');
       const media = await analyzeMediaPaths(MEDIA_MOUNTS, { exePath: MEDIA_EXE });
       const result = await media.plan.mount(ctx.vfs);
+      if (ctx.vfs.readOnlyDrives.has(media.plan.mountRoot?.slice(0, 1).toLowerCase()))
+        require('../lib/readonly-media-context').remember(ctx.vfs, media);
       const guestExe = media.candidate.path;
       const slash = guestExe.lastIndexOf('\\');
       const guestDir = slash >= 2 ? guestExe.slice(0, slash) : guestExe.slice(0, 3);
