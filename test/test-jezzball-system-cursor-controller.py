@@ -106,6 +106,12 @@ class Policy(unittest.TestCase):
    bound.assert_not_called()
  def test_bound_hold(self):
   with self.assertRaises(AssertionError):a.action('bad','mousedown:200:240','fresh','place',1501)
+ def test_impossible_short_pulse_refused_before_intent(self):
+  with patch.object(c,'lease') as leased,patch.object(a.subprocess,'Popen') as child:
+   for milliseconds in (40,41,79):
+    with self.assertRaises(AssertionError):a.action('short','mousemove:200:240','fresh','hover',milliseconds)
+   leased.assert_not_called();child.assert_not_called()
+  self.assertFalse((c.R/'short-intent.json').exists())
  def test_bind_window(self):
   self.scene()
   def changed():c.save('lease-snapshot.json',dict(mainHwnd='0x2',screen=dict(w=800,h=600)))

@@ -54,6 +54,9 @@ class HTTP(unittest.TestCase):
    with self.assertRaises(AssertionError):a.action('unsupported',cmd,'fresh','place',400)
   self.assertEqual(self.effects,[])
   self.assertFalse((c.R/'unsupported-intent.json').exists())
+ def test_short_pulse_has_no_http_effect(self):
+  with self.assertRaises(AssertionError):a.action('short','mousemove:200:240','fresh','hover',40)
+  self.assertEqual(self.effects,[]);self.assertFalse((c.R/'short-intent.json').exists())
  def test_unknown_cancel_identity_close(self):
   self.fault='unknown'
   with self.assertRaises(AssertionError):a.action('bad','mousedown:200:240','fresh','place',400)
@@ -253,6 +256,17 @@ a.c.call=killed;a.action('killed','mousedown:200:240','fresh','place',400)
    a.action('hover','mousemove:200:240','fresh','hover',120)
    self.assertTrue(c.read('hover-receipt.json')['consumed'])
    self.assertEqual(c.read('hover-up.json')['state'],'ACK')
+  finally:summary=self.finish()
+  self.assertFalse(any(e['kind']=='DOWN' for e in summary['effects']))
+ def test_actual_minimum_pulse_guard(self):
+  self.start('jezzball-minimum-pulse')
+  try:
+   scene('hover');r=c.read('fresh-review.json');(c.R/'fresh-review.json').unlink();c.save('fresh-review.json',dict(**r,hoverReason='Synthetic finite 80ms minimum control'))
+   with self.assertRaises(AssertionError):a.action('short','mousemove:200:240','fresh','hover',40)
+   self.assertFalse((c.R/'short-intent.json').exists())
+   a.action('valid','mousemove:200:240','fresh','hover',80)
+   self.assertEqual(c.read('valid-up.json')['reason'],'consumed pulse')
+   self.assertEqual(c.read('valid-up.json')['state'],'ACK')
   finally:summary=self.finish()
   self.assertFalse(any(e['kind']=='DOWN' for e in summary['effects']))
 if __name__=='__main__':

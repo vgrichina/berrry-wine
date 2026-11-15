@@ -410,7 +410,9 @@ def release(name):
 
 def action(name, command, scene, mode, milliseconds=400, route=None):
     assert name.replace('-', '').isalnum()
-    assert type(milliseconds) is int and 40 <= milliseconds <= 1500
+    # A 40 ms pulse cannot satisfy the unchanged >40 ms ACK headroom check.
+    # Refuse that impossible plan before reservation, prearm or native input.
+    assert type(milliseconds) is int and 80 <= milliseconds <= 1500
     for suffix in ('-intent.json', '-up.json', '-receipt.json', '-completed.json', '.png', '.json'):
         assert not (c.R / (name+suffix)).exists(), 'name already reserved'
     # A local policy refusal before reservation/transport has no input effect.
