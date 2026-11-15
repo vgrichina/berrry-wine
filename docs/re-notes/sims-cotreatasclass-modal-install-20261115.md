@@ -56,11 +56,10 @@ MB_TASKMODAL are legitimate; the latter disables the calling thread's top-level
 windows when owner is NULL. An ownerless window alone grants no input authority.
 No owner will be fabricated, and the old attempt is neither retried nor rebound.
 
-New ordinary native controls are prepared for both application/task MessageBox
+Ordinary compiled native controls now cover both application/task MessageBox
 calls, exact same-process/thread/current-native-modal identity and finite
-Cancel → IDCANCEL → guest ExitProcess. Existing owned-modal controls remain
-required. Native execution and original installer outcome are pending the
-predecessor releases; generated inputs alone prove neither.
+Cancel → IDCANCEL → guest ExitProcess. Existing owned-modal controls passed too.
+Preparation, predecessor closure and final original evidence are distinguished below.
 
 ## Prepared checks and predecessor closure
 
@@ -120,8 +119,8 @@ or inherited source/metadata files remain unchanged, including op5/data-span
 and the primary callback census. Full shared and committed-HEAD-plus-whole-owned locked builds and focused
 qualification passed. The final compiled fixtures also cover nested redirected
 activation. Both native modality variants pass 18 cases each, and the existing
-owned route passes 12. Final closure seals 975 actual waits with both EOF and
-1088 recorded PIDs/groups absent. The fresh original remains pending publication.
+owned route passes 12. The prepublication qualification closure initially sealed 975 actual waits with
+both EOF and 1088 recorded PIDs/groups absent. The fresh original outcome is recorded below.
 
 The current [RegDeleteKey contract](https://learn.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regdeletekeya)
 is NT-oriented for descendant keys. The archived Microsoft Win32 reference
@@ -137,3 +136,86 @@ closure missing the current CPU diagnostic dependencies. It now compiles the
 real diagnostic-off pending-gap helpers, with explicit traps for unsupported
 armed/failing diagnostic paths. All original activation/ownership mutations
 pass. The production CPU/cache and all pinned foreign files are unchanged.
+
+
+## Published feature and one fresh original
+
+Feature `df42403751a84e476f6f66d957b4930c28c145df` was committed on main and
+strictly pulled/pushed before the new original. Both shared and committed-HEAD
+plus whole-owned locked builds passed. Qualification covers compiled native
+export contracts and GUID bytes, overwrite/delete/AutoTreatAs and failures,
+actual child registry overwrite/complete merge and fresh-process isolation,
+real guest-DLL and builtin activation including nested redirects and cycles,
+26 storage controls, 14 anchored census controls and existing census mutations,
+23 new policy controls plus 18 existing owned-modal controls, 24 installer
+policy and 12 HTTP controls, 18 native cases for each NULL-owner modality,
+12 existing owned-modal native cases, five child-mount cases, three bootstrap
+and 13 production controls, 22 NE/FT/GDI/COM regressions and two CLI controls.
+Final generated native clients were also run in the shared view. Worker-safe
+preload authority passed with both actual Workers joined; omitting either the
+source or mapped-host preload was refused. Existing ownership assertions remain.
+
+The one new ordinary ownerNova installer ran with the original Setup.exe SHA
+`fe95a9fc8b2cdb5add76fbd326b1a11801eaa43c7d908f20cbdf413fd4d8dfde`,
+published child mounts, genuine selected DLLs, real ticks and ordinary defaults.
+The independent 920-second watchdog was armed before the native process;
+900 seconds and the 180-second Quit reserve were fixed. Both actual parent
+and child consumed sources match the published feature SHA. Actual parent,
+child and Worker mapped native dependencies were independently hash-verified.
+All 3178 launch pins matched after closure; no source/build/module edits took
+place during the original. All 15 foreign/inherited pins remain unchanged.
+
+At child API #3261, `CoTreatAsClass(0x0046d8b8,0x0046f1d8)` returned S_OK with
+return address `0x0043194f`, identifying the actual target-mapping site. This
+original trace contains **one** CoTreatAsClass call. An earlier progress update
+incorrectly said both calls passed; the NULL-reset site is static evidence and
+is tested in compiled fixtures, not observed in this original. IKernel then
+called ExitProcess with `-2147312566` (`0x80029c4a`). Microsoft's
+[COM error table](https://learn.microsoft.com/en-us/windows/win32/com/com-error-codes-2)
+names this TYPE_E_CANTLOADLIBRARY. The precise failing library operation is
+not identified by this trace and must not be inferred from the error alone.
+The child exporter independently refused `unsafe child export path`; no
+complete.json was published and no child file/registry state merged.
+The offending export key was not logged. The existing safety guard is intact.
+
+The parent CoCreateInstance returned `0x80040154`, followed by actual
+`MessageBoxA(hwnd=0, ..., MB_ICONHAND)`. The personally viewed full scene shows
+“The InstallShield Engine (iKernel.exe) could not be launched. (0x80040154)”.
+Native HWND `0x10007`, class 16, generation 7, guest process 1000/thread 1,
+active focus child `0x10009`, untitled main `0x10001`, capture zero and physical
+UP exactly satisfy the newly qualified native route; no owner was invented.
+One fresh reviewed gesture selected the visible error-dialog titlebar X,
+held 120 ms, was CONSUMED with an independent physical-UP ACK after 162 ms.
+The dialog remained in the separately viewed post-UP scene. There was no
+native Cancel/Quit or completed installation in this original. A separate
+host cancellation stopped the attempt promptly, and its exit-zero harness wait
+is explicitly **not** native Quit evidence. No second gesture, rebind or retry.
+The attempt is permanently closed.
+
+Compiled genuine native MessageBox application/task-modal controls separately
+prove Cancel returning IDCANCEL followed by guest ExitProcess(0), with no host
+cancellation; existing owned-modal Cancel retains that consequence. Wrong
+process/thread, unowned foreign window, sibling, replacement/stale generation,
+focus, paint, capture and held-input negatives remain refusals. Fixture success
+is not installation success.
+
+The retained overlay index remains SHA
+`209641d4b739f61d44a2c6b4085995e16699912d9e06e5a44d617afb6e85d9b2`;
+its one 614532-byte IKernel blob remains SHA
+`985eb55ecb750da812876b8569d5f1999a30a24bcc54f9bab4d3fc44dfedb931`.
+There are no new installed files. Paths and hashes are in pre/post overlay
+records; no retained engine/media/source/module bundles were copied.
+
+`result.json` names the qualified logs, source/binary patches, launch pins,
+selected personally viewed result PNGs, actual waits and closure. Runtime
+release SHA `d6b27a221c437276a16ab6267bf4907cb1addaf48520afbb47524d623145c0a9`
+seals 991 actual waits/both EOF and absence of 1172 recorded PIDs/process groups,
+including actual original native/watchdog/supervisor-child/outer/launcher waits.
+Both locks are free and source/build/runtime ownership was explicitly released
+for the next worker; only this report remained owned until final publication.
+Box ID null, state NOT_CREATED, expiry null, stop receipt NOT_APPLICABLE.
+
+Next work is to identify the actual type-library failure and rejected export
+key with focused tests, keeping unsafe-path and incomplete-child merge guards.
+Any further original attempt needs fresh authorization. Earlier closed attempts
+and historical UNKNOWN outcomes remain closed and unchanged.
