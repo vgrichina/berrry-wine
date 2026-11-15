@@ -129,7 +129,42 @@ recorded, and the genuine attach uses the production module.
 
 ## Genuine selected attach
 
-One ordinary attach retest is reserved until the qualified feature is
-published. Its result will distinguish native connection settlement, actual
-FT execution, complete DLL attach and the exact next unsupported primitive.
-No installer or Sims UI is claimed by the synthetic qualification.
+Feature `fc63bbcbac4d835258b56b1642cfc52f13c98460` is published on main;
+strict pull/push succeeded. The published source was compared against every
+instrumented compiler input, and the full native relay suite passed again on
+that exact HEAD before the single genuine attempt.
+
+The one ordinary selected attach **succeeded** using production WASM SHA-256
+`4c89c53faccb977800ce36ffb3910db87d3fef94c6515ca5b6095f39e3ba1afd`.
+Selected `test/binaries/dlls/comctl32.dll` remains 577808 bytes, SHA-256
+`28a41e6a35c4509924a32a99841a815cf49e1d3ee6912ec26a823e45472edfa4`.
+Companion `test/binaries/sims-native-common-controls/kommctrl.dll` remains
+155136 bytes, SHA-256
+`39bbfafa8b759ebfcf6a00ee878fa494581a9144891bbd788bded61441de13f9`.
+Neither input was changed or copied into the evidence directory.
+
+Normal COMCTL32 DllMain at `0x51d1cd` requested only `commctrl.dll` through
+the ordinary source resolver. Its original six-argument ThunkConnect32 request
+named LS32 header `0x56b2ec`, checksum 7834. Native pairing returned token 5
+for actual NE module 13 and original FAR LS16 header `0x00670010`. Native FT
+publication and native request settlement each returned 1; settlement resumed
+the original PE return with EAX=1 and consumed exactly 28 bytes.
+DllMain then completed normally with EAX=1, and the loader published generation
+1 in native LIVE state 2. All recorded caller context was restored; no pending
+request or FT frame remained.
+
+This attach executes no FT calls: actual FT invocation count is zero. The
+separate synthetic original x86 fixtures prove distinct-target FT execution
+locally, cooperatively and in a real Worker. Genuine FT execution beyond attach,
+QT publication, installer behavior and Sims UI remain unproved. The successful
+connection remained valid until the local native process's normal exit; this
+run does not claim a genuine PROCESS_DETACH notification or WEP execution.
+The direct native process, independent watchdog and supervisor child all
+returned zero with actual waits and both pipe EOFs.
+
+No installer or further genuine retry was run. The next work is to establish
+which remaining native relay directions the installer actually needs, with
+an owned implementation and qualification before broadening publication or
+starting an installer. The exact attach events and closure records are in
+`genuine-result.json`, `runtime-release.json` and `result.json` in the run.
+No boxes, browser sessions or additional workers were created.
