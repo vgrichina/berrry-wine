@@ -430,9 +430,11 @@ def start_original(directory):
     assert proof['fullLockedBuildExit'] == 0
     assert proof['nativeModes'] == ['hover', 'click', 'right', 'drag', 'cancel', 'watchdog', 'parentdeath', 'unsent', 'lateack', 'dropack', 'heldinput', 'writtenstale', 'quitreserve']
     assert proof['actualNativeCallbacks'] and proof['directWaitsBothEOF']
+    assert proof['schemaTestSHA256'] == digest(Path(__file__).resolve().parents[1] / 'test/test-tim-gesture-schema.py')
+    assert proof['schemaExactCLIAndNativeZeroDelivery'] is True
     assert subprocess.check_output(['git', 'branch', '--show-current'], text=True).strip() == 'main'
     subprocess.run(['git', 'merge-base', '--is-ancestor', proof['publishedCommit'], 'origin/main'], check=True)
-    for path in ('tools/tim-smart-handle-controller.py', 'test/test-tim-smart-handle-controller.py'):
+    for path in ('tools/tim-smart-handle-controller.py', 'test/test-tim-smart-handle-controller.py', 'test/test-tim-gesture-schema.py'):
         assert not subprocess.check_output(['git', 'status', '--porcelain', '--', path]), 'route must be published and clean'
     exclusive(directory / 'ONE-original-intent.json', dict(at=time.time(), routeSHA256=digest(__file__),
               publishedCommit=proof['publishedCommit'], nativeSeconds=900, watchdogSeconds=920, quitReserveSeconds=180))
@@ -466,13 +468,67 @@ def refresh_scene(directory):
     raise RuntimeError('capture request not acknowledged; terminal UNKNOWN; no replay/rebind')
 
 
+def validate_gesture(action, width=None, height=None):
+    """Pure exact-schema constructor, before any live review or intent.
+
+    No aliases, defaults, coordinate discovery, submission, retry or recovery.
+    Policy and native admission retain all binding and UNKNOWN decisions.
+    """
+    schemas = {
+        'click': {'kind', 'x', 'y', 'button', 'holdMs'},
+        'drag': {'kind', 'x', 'y', 'toX', 'toY', 'button', 'holdMs'},
+        'hover': {'kind', 'x', 'y'},
+        'key': {'kind', 'key', 'holdMs'},
+        'wait': {'kind'}, 'stop': {'kind'},
+    }
+    if type(action) is not dict or type(action.get('kind')) is not str:
+        raise ValueError('gesture must be one object with an explicit kind')
+    kind = action['kind']
+    if kind not in schemas or set(action) != schemas[kind]:
+        raise ValueError('exact gesture fields required; no aliases or extra fields')
+    for name in ('x', 'y', 'toX', 'toY'):
+        if name in action and (type(action[name]) is not int or action[name] < 0):
+            raise ValueError('gesture coordinates must be nonnegative integers')
+    if 'button' in action and (type(action['button']) is not int or action['button'] not in (1, 2)):
+        raise ValueError('explicit integer left/right button required')
+    if 'holdMs' in action and (type(action['holdMs']) is not int or not 80 <= action['holdMs'] <= 1400):
+        raise ValueError('explicit finite integer holdMs must be 80..1400')
+    if kind == 'key' and action['key'] not in ('Enter', 'Escape', 'Space'):
+        raise ValueError('ordinary visible menu key required')
+    if width is not None or height is not None:
+        if type(width) is not int or type(height) is not int or width <= 0 or height <= 0:
+            raise ValueError('complete frame dimensions required')
+        for name, bound in (('x', width), ('toX', width), ('y', height), ('toY', height)):
+            if name in action and action[name] >= bound:
+                raise ValueError('gesture outside complete frame')
+    return dict(action)
+
+
+def parse_gesture(raw):
+    """Reject duplicate/nonfinite JSON rather than silently choosing a field."""
+    def pairs(items):
+        value = {}
+        for key, item in items:
+            if key in value:
+                raise ValueError('duplicate gesture field')
+            value[key] = item
+        return value
+
+    def nonfinite(_):
+        raise ValueError('nonfinite gesture JSON')
+
+    return validate_gesture(json.loads(raw, object_pairs_hook=pairs, parse_constant=nonfinite))
+
+
 def operate(directory, mode, scene, target, consequence, action, keep=None):
     """One explicitly chosen current-scene gesture, never a future action list."""
+    action = validate_gesture(action)
     root = Path(directory)
     if keep:
         assert keep.replace('-', '').isalnum(), 'simple unique selected-image label'
         assert not (root / ('kept-' + keep + '.json')).exists()
     capture = json.loads((root / 'latest.json').read_text())
+    action = validate_gesture(action, capture['width'], capture['height'])
     review = {k: capture[k] for k in ('session', 'frameId', 'digest', 'programId', 'targetId')}
     review.update(mode=mode, source='personally-viewed-current-full-scene', completeScene=scene,
                   visibleTarget=target, expectedVisibleConsequence=consequence,
@@ -522,7 +578,7 @@ def main():
         return
     if len(sys.argv) in (8, 9) and sys.argv[1] == '--gesture':
         _, _, directory, mode, scene, target, consequence, action, *kept = sys.argv
-        print(json.dumps(operate(directory, mode, scene, target, consequence, json.loads(action), kept[0] if kept else None)))
+        print(json.dumps(operate(directory, mode, scene, target, consequence, parse_gesture(action), kept[0] if kept else None)))
         return
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('directory', type=Path)
@@ -531,8 +587,11 @@ def main():
     p.add_argument('action', type=Path)
     args = p.parse_args()
     read = lambda f: json.loads(Path(f).read_text())
+    action = parse_gesture(Path(args.action).read_text())
+    capture = read(args.capture)
+    action = validate_gesture(action, capture['width'], capture['height'])
     policy = Policy(args.directory, read(args.directory / 'lease.json'))
-    command = policy.admit(read(args.capture), read(args.review), read(args.action))
+    command = policy.admit(capture, read(args.review), action)
     print(json.dumps(command, allow_nan=False))
 
 
