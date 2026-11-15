@@ -3,6 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'..');
 const HELPER='tools/quake3-browser-controller.cjs';
+const {createInventory}=require('./cdp-source-inventory.cjs');
 const binding = (() => {
 'use strict';
 // Native-CDP capture/admission chain. No guest memory, clocks or callbacks are written.
@@ -573,7 +574,7 @@ function connection(url,observer=require('./quake3-startup-observer.cjs').fromEn
     if(v.sessionId!==p.sessionId){fail(Error('UNKNOWN CDP response session changed; never replay'),'session-mismatch',{id:v.id});return;}
     clearTimeout(p.timer);pending.delete(v.id);v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);
   }}else api.event(v);};
-  const api={ws,ready,event:()=>{},get closed(){return !!terminal;},send(method,params={},sessionId){
+  const api={ws,ready,event:()=>{},get closed(){return !!terminal;},abort(error){fail(error,'source-inventory-failure');},send(method,params={},sessionId){
     if(terminal)return Promise.reject(terminal);
     return new Promise((resolve,reject)=>{const n=++id,start=performance.now(),startedAt=Date.now(),timer=setTimeout(()=>fail(Error('UNKNOWN '+method+'; never replay'),'deadline',{id:n,method,sessionId:sessionId??null}),3000);pending.set(n,{resolve,reject,timer,sessionId});try{const wire=JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})});observer?.sent(wire,{start,startedAt,deadline:start+3000});ws.send(wire);}catch(e){fail(e,'send-failed',{id:n,method});}});
   }};
@@ -680,10 +681,10 @@ async function browser(out,backend) {
   const pins=JSON.parse(fs.readFileSync(out+'/pins.json'));
   const qualification=backend==='controls'?null:assertOriginalQualification(pins);
   for(const p of pins.files)assert.equal(sha(fs.readFileSync(ROOT+'/'+p.path)),p.sha256,p.path);
-  let server,browser,chromeWait,c,session,chain,latest,bound,cutoffTimer,pendingInput=null,closing=false,phase=false;
+  let server,browser,chromeWait,c,session,chain,latest,bound,cutoffTimer,pendingInput=null,closing=false,phase=false,sourceInventory,sourceError;
   const workers=new Map(),tasks=[];
   const record=(n,v)=>save(out,n,v),log=(n,v)=>fs.appendFileSync(out+'/'+n,JSON.stringify(v)+'\n');
-  async function evaluate(expression,s=session){const v=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},s);if(v.exceptionDetails)throw Error(JSON.stringify(v.exceptionDetails));return v.result.value;}
+  async function evaluate(expression,s=session){if(sourceError)throw sourceError;sourceInventory?.noteEvaluation(s,expression);const v=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},s);if(v.exceptionDetails)throw Error(JSON.stringify(v.exceptionDetails));return v.result.value;}
   async function state(){
     const page=await evaluate(`({at:Date.now(),apps:runningApps.map(a=>({name:a.name,running:a.wine?.running,stopped:a.wine?._stopped,processId:a.wine?.processId,slice:a.wine?._workerLastSlice,d3dStats:a.wine?.guestWorker?.d3dStats,exitCode:a.wine?._exitCode})),retiredOwner:globalThis.__gltronPassiveOwner?{processId:__gltronPassiveOwner.processId,running:__gltronPassiveOwner.running,stopped:__gltronPassiveOwner._stopped,nativeExitCode:__gltronPassiveOwner._exitCode??null,processExited:__gltronPassiveOwner._processObject?.exited,processExitCode:__gltronPassiveOwner._processObject?.exitCode}:null,log:document.getElementById('log')?.textContent?.slice(-12000)})`);
     const owners=[];
@@ -707,7 +708,7 @@ async function browser(out,backend) {
     if(closing)return;closing=true;clearTimeout(cutoffTimer);record('close-reason.json',{reason,at:Date.now(),hostOnly:true});
     if(c&&!c.closed)try{await c.send('Browser.close');}catch(e){record('browser-close-error.json',{error:String(e)});}
     if(browser){let timer;try{await Promise.race([chromeWait,new Promise((_,j)=>{timer=setTimeout(()=>j(Error('browser close timeout')),5000);})]);}catch(e){browser.kill('SIGTERM');await chromeWait;}finally{clearTimeout(timer);}}
-    c?.ws.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));fs.rmSync(out+'/profile',{recursive:true,force:true});record('closed.json',{at:Date.now(),nativeQuitClaim:false});
+    c?.ws.close();sourceInventory?.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));fs.rmSync(out+'/profile',{recursive:true,force:true});record('closed.json',{at:Date.now(),nativeQuitClaim:false});
   }
   try {
     if(backend!=='controls')cutoffTimer=setTimeout(()=>{phase=true;if(!fs.existsSync(out+'/quit-phase.json'))record('quit-phase.json',{at:Date.now(),cutoff:gameplayCutoff(launch),irreversible:true,reason:'mechanical 180s Quit reserve; no automatic input'});},Math.max(0,gameplayCutoff(launch)-Date.now()));
@@ -724,14 +725,19 @@ async function browser(out,backend) {
     const active=out+'/profile/DevToolsActivePort';for(let n=0;n<100&&(!fs.existsSync(active)||!/^\d+\n\/devtools\/browser\/[0-9a-f-]{36}\s*$/i.test(fs.readFileSync(active,'utf8')));n++){assert(browser.exitCode===null);await wait(100);}
     const [dp,wp]=fs.readFileSync(active,'utf8').trim().split('\n'),url='ws://127.0.0.1:'+dp+wp;c=connection(url);await c.ready;
     record('endpoint.json',{url,pid:browser.pid,startToken});
+    sourceInventory=createInventory({send:c.send,terminal:()=>c.closed});
     c.event=v=>{
       if(v.method==='Target.attachedToTarget'&&v.params.targetInfo.type==='worker'){
         const {sessionId,targetInfo}=v.params,w={sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false};workers.set(sessionId,w);
-        const task=(async()=>{await c.send('Runtime.enable',{},sessionId);await c.send('Runtime.evaluate',{expression:GL_OBSERVER},sessionId);await c.send('Debugger.enable',{},sessionId);await c.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true},sessionId);await c.send('Runtime.runIfWaitingForDebugger',{},sessionId);})();tasks.push(task);task.catch(e=>log('worker-errors.jsonl',{error:String(e)}));
-      } else if(v.method==='Target.detachedFromTarget'){const w=workers.get(v.params.sessionId);if(w)w.closed=true;}
+        sourceInventory.attach(sessionId,targetInfo.targetId);
+        const task=(async()=>{await c.send('Runtime.enable',{},sessionId);sourceInventory.noteEvaluation(sessionId,GL_OBSERVER);await c.send('Runtime.evaluate',{expression:GL_OBSERVER},sessionId);await c.send('Debugger.enable',{},sessionId);await c.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true},sessionId);await c.send('Runtime.runIfWaitingForDebugger',{},sessionId);})();tasks.push(task);task.catch(e=>log('worker-errors.jsonl',{error:String(e)}));
+      } else if(v.method==='Target.detachedFromTarget'){const w=workers.get(v.params.sessionId);if(w)w.closed=true;sourceInventory.detach(v.params.sessionId);}
+      else if(v.method==='Runtime.executionContextCreated')sourceInventory.contextCreated(v.sessionId,v.params.context);
+      else if(v.method==='Runtime.executionContextsCleared')sourceInventory.contextsCleared(v.sessionId);
+      else if(v.method==='Runtime.executionContextDestroyed')sourceInventory.contextsCleared(v.sessionId,v.params.executionContextId);
       else if(v.method==='Debugger.scriptParsed'&&workers.has(v.sessionId)){
-        const w=workers.get(v.sessionId),p=v.params,row={url:p.url,scriptId:p.scriptId};w.scripts.push(row);
-        const task=c.send('Debugger.getScriptSource',{scriptId:p.scriptId},v.sessionId).then(s=>{const b=s.bytecode?Buffer.from(s.bytecode,'base64'):Buffer.from(s.scriptSource||'');row.bytecodeAvailable=!!s.bytecode;row.sha256=sha(b);row.size=b.length;});tasks.push(task);task.catch(e=>row.error=String(e));
+        const w=workers.get(v.sessionId),p=v.params,row={url:p.url,scriptId:p.scriptId,sessionId:v.sessionId,targetId:w.targetId,executionContextId:p.executionContextId,contentHash:p.hash??null,scriptLanguage:p.scriptLanguage??null};w.scripts.push(row);
+        const task=sourceInventory.inspect(v.sessionId,p).then(identity=>{Object.assign(row,identity);log('source-inventory.jsonl',row);});tasks.push(task);task.catch(e=>{row.error=String(e);sourceError??=e;c.abort(sourceError);log('source-inventory-errors.jsonl',row);});
       } else if(['Runtime.consoleAPICalled','Runtime.exceptionThrown'].includes(v.method))log('console.jsonl',v);
     };
     record('browser-version.json',await c.send('Browser.getVersion'));record('system-info.json',await c.send('SystemInfo.getInfo'));
@@ -807,7 +813,7 @@ async function browser(out,backend) {
     await evaluate(`(()=>{if(Object.hasOwn(globalThis,'__gltronPassiveOwner'))throw Error('owner reference already bound');Object.defineProperty(globalThis,'__gltronPassiveOwner',{value:runningApps[0].wine});return true;})()`);
     record('ready.json',{at:Date.now(),backend});
     for(let n=0;!closing;n++) {
-      const file=out+'/command-'+n+'.json';while(!fs.existsSync(file)&&Date.now()<launch.deadline*1000)await wait(25);
+      const file=out+'/command-'+n+'.json';while(!fs.existsSync(file)&&Date.now()<launch.deadline*1000){if(sourceError)throw sourceError;await wait(25);}
       assert(Date.now()<launch.deadline*1000,'fixed deadline');const cmd=JSON.parse(fs.readFileSync(file));assert(!fs.existsSync(out+'/receipt-'+n+'.json'));
       if(cmd.action==='close'){record('terminal-state.json',await state());await close('reviewed host teardown');record('receipt-'+n+'.json',{state:'ACK',hostOnly:true});break;}
       if(cmd.action==='terminal'){

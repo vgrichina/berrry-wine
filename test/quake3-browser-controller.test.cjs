@@ -176,16 +176,22 @@ async function browserCaptureControls(){
   while(!fs.existsSync(active)||!/^\d+\n\/devtools\/browser\/[0-9a-f-]{36}\s*$/i.test(fs.readFileSync(active,'utf8'))){assert(p.exitCode===null);assert(Date.now()-start<5000);await pause(20);}
   const [port,endpoint]=fs.readFileSync(active,'utf8').trim().split('\n');c=controller.connection('ws://127.0.0.1:'+port+endpoint);await c.ready;
   report.pid=p.pid;report.browser=await c.send('Browser.getVersion');report.runtimeErrors=[];
-  const workers=new Map(),workerTasks=[];
+  const workers=new Map(),workerTasks=[],sourceRows=[],sourceRequests=[];let sourceError;
+  const sourceInventory=require('../tools/cdp-source-inventory.cjs').createInventory({terminal:()=>c.closed,send:async(method,params,sessionId)=>{sourceRequests.push({method,...params,sessionId});return c.send(method,params,sessionId);}});
+  report.sourceInventory={rows:sourceRows,requests:sourceRequests};
   c.event=v=>{
     if(v.method==='Runtime.exceptionThrown')report.runtimeErrors.push(v.params.exceptionDetails);
     if(v.method==='Target.attachedToTarget'&&v.params.targetInfo.type==='worker'){
       const {sessionId,targetInfo}=v.params,w={sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false};workers.set(sessionId,w);
+      sourceInventory.attach(sessionId,targetInfo.targetId);
       const t=(async()=>{await c.send('Runtime.enable',{},sessionId);await c.send('Debugger.enable',{},sessionId);await c.send('Runtime.runIfWaitingForDebugger',{},sessionId);})();workerTasks.push(t);
-    }else if(v.method==='Target.detachedFromTarget'){const w=workers.get(v.params.sessionId);if(w)w.closed=true;}
+    }else if(v.method==='Target.detachedFromTarget'){const w=workers.get(v.params.sessionId);if(w)w.closed=true;sourceInventory.detach(v.params.sessionId);}
+    else if(v.method==='Runtime.executionContextCreated')sourceInventory.contextCreated(v.sessionId,v.params.context);
+    else if(v.method==='Runtime.executionContextsCleared')sourceInventory.contextsCleared(v.sessionId);
+    else if(v.method==='Runtime.executionContextDestroyed')sourceInventory.contextsCleared(v.sessionId,v.params.executionContextId);
     else if(v.method==='Debugger.scriptParsed'&&workers.has(v.sessionId)){
       const w=workers.get(v.sessionId),row={scriptId:v.params.scriptId};w.scripts.push(row);
-      workerTasks.push(c.send('Debugger.getScriptSource',{scriptId:row.scriptId},v.sessionId).then(s=>{row.bytecodeAvailable=!!s.bytecode;row.sha256=controller.sha(Buffer.from(s.bytecode||s.scriptSource||'',s.bytecode?'base64':'utf8'));}).catch(e=>row.error=String(e)));
+      const task=sourceInventory.inspect(v.sessionId,v.params).then(identity=>{Object.assign(row,identity);sourceRows.push(identity);});workerTasks.push(task);task.catch(e=>{row.error=String(e);sourceError??=e;c.abort(sourceError);});
     }
   };
   const target=(await c.send('Target.getTargets')).targetInfos.filter(t=>t.type==='page');assert.equal(target.length,1);
@@ -195,7 +201,7 @@ async function browserCaptureControls(){
   await cdp.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true});
   await cdp.send('Runtime.enable',{});await cdp.send('Page.enable',{});await cdp.send('Page.navigate',{url:'http://127.0.0.1:'+server.address().port+'/index.html?debug'});
   await page.waitForFunction('typeof Win98Renderer!=="undefined"&&typeof runningApps!=="undefined"');
-  const evaluate=async (expression,workerSession)=>{const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},workerSession??session);if(r.exceptionDetails){
+  const evaluate=async (expression,workerSession)=>{if(sourceError)throw sourceError;sourceInventory.noteEvaluation(workerSession??session,expression);const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},workerSession??session);if(r.exceptionDetails){
     const diagnostic=await cdp.send('Runtime.evaluate',{expression:`(() => {const r=fixture.r,c=!r.presentationFilter||r._directPresentation?r.canvas:r.presentationCanvas||r.canvas,b=c.getBoundingClientRect();return {output:c.id,direct:r._directPresentation,box:b.toJSON(),overlap:[...document.querySelectorAll('*')].filter(e=>e!==c&&!e.contains(c)).map(e=>{const s=getComputedStyle(e),x=e.getBoundingClientRect();return {id:e.id,tag:e.tagName,box:x.toJSON(),display:s.display,visibility:s.visibility,opacity:s.opacity,parent:e.parentElement?.id,backgroundColor:s.backgroundColor,backgroundImage:s.backgroundImage,boxShadow:s.boxShadow,backdropFilter:s.backdropFilter,pseudo:[getComputedStyle(e,'::before').content,getComputedStyle(e,'::after').content],text:e.textContent,border:s.border,outline:s.outline};}).filter(e=>e.box.width>0&&e.box.height>0&&e.box.left<b.right&&e.box.right>b.left&&e.box.top<b.bottom&&e.box.bottom>b.top)}})()`,returnByValue:true});
     report.failureDOM=diagnostic.result?.value;throw Error(JSON.stringify(r.exceptionDetails));}return r.result.value;};
   report.setup=await evaluate(`(() => {

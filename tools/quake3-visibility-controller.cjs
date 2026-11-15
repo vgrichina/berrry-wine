@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),Module=require('node:module'),assert=require('node:assert/strict');
 const ROOT=path.resolve(__dirname,'..');
 const RUN='scratch/runs/20261115-quake3-fullscreen-visibility/';
-const ORIGINAL_RUN='scratch/runs/20261115-quake3-original-public-visibility/';
+const ORIGINAL_RUN='scratch/runs/20261115-quake3-source-inventory/';
 const HELPER=path.join(__dirname,'quake3-browser-controller.cjs');
 const BINDING='__q3VisibilityOperands';
 function publicOperands(output) {
@@ -125,7 +125,7 @@ function assertPublicQualification(pins){
   assert(report.fullscreenGreen?.browserCompositorPixelMatch&&report.fullscreenNegativeOverlayRefused&&report.fullscreenModalAndPopoverRefused&&report.hostNoReplay);
   assert(report.replacementRefused&&report.startupOwnerReplacementRefused);
   for(const name of ['productionResize','browserFullscreenExitAndReentry','browserViewportResizeAndRestore','actualAncestorClippingRefused'])assert.equal(report.visibilityTransitions?.[name],true,name);
-  for(const name of ['tools/quake3-visibility-controller.cjs','test/quake3-visibility-controller.test.cjs','tools/quake3-browser-controller.cjs','test/quake3-browser-controller.test.cjs','host.js','lib/d3d-render-worker.js','lib/render-worker.js','build/wine-assembly.wasm'])assert(tested.files.some(p=>p.path===name),'missing qualified dependency: '+name);
+  for(const name of ['tools/cdp-source-inventory.cjs','test/cdp-source-inventory.test.cjs','tools/quake3-visibility-controller.cjs','test/quake3-visibility-controller.test.cjs','tools/quake3-browser-controller.cjs','test/quake3-browser-controller.test.cjs','host.js','lib/d3d-render-worker.js','lib/render-worker.js','build/wine-assembly.wasm'])assert(tested.files.some(p=>p.path===name),'missing qualified dependency: '+name);
   for(const p of tested.files){const live=pins.files.find(v=>v.path===p.path);assert(live&&live.sha256===p.sha256,'qualified dependency drift: '+p.path);assert.equal(hash(fs.readFileSync(ROOT+'/'+p.path)),p.sha256,p.path);}
   for(const p of tested.hostFiles){assert(pins.hostFiles.some(v=>v.path===p.path&&v.sha256===p.sha256));assert.equal(hash(fs.readFileSync(p.path)),p.sha256,p.path);}
   assert.equal(tested.compositions.controller,hash(Buffer.from(compose(fs.readFileSync(HELPER,'utf8')))));
@@ -139,6 +139,15 @@ function assertPublicQualification(pins){
   const rows=fs.readFileSync(folder+'/visibility-operands.jsonl','utf8').trim().split('\n').map(JSON.parse);
   assert(rows.some(r=>r.observation.apps.some(a=>a.outputVisibility.operands.fullscreenContainsOutput&&a.outputVisible)));
   assert(rows.some(r=>r.observation.apps.some(a=>a.outputVisibility.reason==='output ancestor clips canvas'&&a.outputVisibility.physicalAll.length===256)));
+  const source=pins.sourceInventoryQualification;
+  const sourceRead=p=>{assert(p?.path.startsWith(ORIGINAL_RUN+'source-chrome/')&&!p.path.includes('..'),'fresh source inventory qualification required');const b=fs.readFileSync(ROOT+'/'+p.path);assert.equal(hash(b),p.sha256);return JSON.parse(b);};
+  const sourceReport=sourceRead(source?.report),sourcePins=sourceRead(source?.pins);
+  assert(sourceReport.passed&&sourceReport.originalLaunched===false&&sourceReport.baselineSameContextSnapshotFetches===6&&sourceReport.sameContextSnapshotScripts>=6&&sourceReport.sameContextSnapshotFetches===1&&sourceReport.unknownAnonymousActualFetches>=2);
+  assert(sourceReport.distinctRealContextControls.length===2&&sourceReport.rows.filter(r=>r.scriptLanguage==='WebAssembly').every(r=>r.actualBytesFetched&&r.moduleByteProof));
+  for(const name of ['tools/cdp-source-inventory.cjs','test/cdp-source-inventory.test.cjs','tools/quake3-browser-controller.cjs']){
+    const p=sourcePins.files.find(p=>p.path===name);assert(p);assert.equal(hash(fs.readFileSync(ROOT+'/'+name)),p.sha256,'source inventory qualification drift');
+  }
+  const sourcePost=sourceRead(source?.postflight);assert(!sourcePost.pinDrift.length&&sourcePost.requestsAfterTerminal===0&&sourcePost.allPIDsAbsent&&sourcePost.profileAbsent);
   return true;
 }
 async function original(out){
@@ -151,7 +160,7 @@ async function original(out){
   const pins=JSON.parse(fs.readFileSync(out+'/pins.json'));assertPublicQualification(pins);
   const api=controller();
   for(const p of [...pins.files,...pins.hostFiles])assert.equal(api.sha(fs.readFileSync(path.resolve(ROOT,p.path))),p.sha256,'prelaunch dependency drift: '+p.path);
-  fs.writeFileSync(out+'/original-admission.json',JSON.stringify({at:Date.now(),qualification:pins.qualification,composition:pins.compositions.controller,authorization:'20261115 new public visibility assignment; one registered original',productionCorrection:false})+'\n',{flag:'wx'});
+  fs.writeFileSync(out+'/original-admission.json',JSON.stringify({at:Date.now(),qualification:pins.qualification,sourceInventoryQualification:pins.sourceInventoryQualification,composition:pins.compositions.controller,authorization:'20261115 published causal source-inventory correction; one registered original',productionCorrection:true})+'\n',{flag:'wx'});
   // The original browser already hashes its served HTTP responses. No fixture,
   // transformed production script, UI mutation or synthetic scene is installed.
   await api.browser(out,'webgl');
