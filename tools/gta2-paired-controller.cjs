@@ -7,6 +7,11 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 const KEYS={ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:27,Space:32,Control:17,y:89,n:78};
 const QUIT={'open-menu':'Escape','menu-up':'ArrowUp','menu-down':'ArrowDown','select-quit':'Enter','confirm-quit':'y'};
+function devtoolsEndpoint(file) {
+  if(!fs.existsSync(file))return null;
+  const [port,endpoint]=fs.readFileSync(file,'utf8').trim().split('\n');
+  return /^\d+$/.test(port)&&Number(port)>0&&Number(port)<=65535&&/^\/devtools\/browser\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(endpoint||'')?'ws://127.0.0.1:'+port+endpoint:null;
+}
 function policy(c,launch,phase,now=Date.now()) {
   assert(['play','menu','quit'].includes(c.mode));
   assert(Array.isArray(c.keys)&&c.keys.length>=1&&c.keys.length<=2&&new Set(c.keys).size===c.keys.length);
@@ -46,6 +51,14 @@ function connection(url,onUnknown=()=>{}) {
   return api;
 }
 function save(out,n,v){const p=path.join(out,n);assert(!fs.existsSync(p),n);fs.writeFileSync(p+'.pending',JSON.stringify(v,null,2)+'\n',{flag:'wx'});fs.renameSync(p+'.pending',p);}
+async function boundedOperation(c,label,work) {
+  let timer;
+  try {
+    return await Promise.race([Promise.resolve().then(work),new Promise((_,reject)=>{
+      timer=setTimeout(()=>{c.seal(label+' exceeded 3000ms');reject(Error('UNKNOWN '+label+'; permanently closed; never replay'));},3000);
+    })]);
+  } finally {clearTimeout(timer);}
+}
 async function release(out,file) {
   const cfg=JSON.parse(fs.readFileSync(file));
   const s=fs.readFileSync('/proc/'+cfg.pid+'/stat','utf8');assert.equal(s.slice(s.lastIndexOf(')')+2).split(' ')[19],cfg.startToken);
@@ -109,8 +122,9 @@ async function browser(out,backend) {
     chromeWait=new Promise(r=>browser.once('close',(code,signal)=>{record('chrome-wait.json',{pid:browser.pid,code,signal,actualWait:true,stdoutEOF:browser.stdout.readableEnded,stderrEOF:browser.stderr.readableEnded,at:Date.now()});r();}));
     const stat=fs.readFileSync('/proc/'+browser.pid+'/stat','utf8'),startToken=stat.slice(stat.lastIndexOf(')')+2).split(' ')[19];
     record('browser-pid.json',{pid:browser.pid,startToken,port,at:Date.now()});
-    const active=out+'/profile/DevToolsActivePort';for(let n=0;n<100&&!fs.existsSync(active);n++){assert(browser.exitCode===null);await wait(100);}
-    const [dp,wp]=fs.readFileSync(active,'utf8').trim().split('\n'),url='ws://127.0.0.1:'+dp+wp;c=connection(url,v=>record('UNKNOWN.json',v));await c.ready;
+    const active=out+'/profile/DevToolsActivePort',endpointDeadline=Date.now()+3000;let url;
+    while(!(url=devtoolsEndpoint(active))){assert(browser.exitCode===null);assert(Date.now()<endpointDeadline,'complete Chrome endpoint within 3000ms');await wait(25);}
+    c=connection(url,v=>record('UNKNOWN.json',v));await c.ready;
     record('endpoint.json',{url,pid:browser.pid,startToken});
     c.event=v=>{
       if(v.method==='Target.attachedToTarget'&&v.params.targetInfo.type==='worker'){
@@ -148,25 +162,26 @@ async function browser(out,backend) {
       if(ready?.length===1&&ready[0].running&&ready[0].worker&&ready[0].slice)break;
       assert(!ready?.some(a=>a.stopped),'original stopped during startup');assert(Date.now()<startupEnd,'bounded original startup readiness');await wait(250);
     }
-    await Promise.all(tasks);record('executed-sources.json',{workers:[...workers.values()]});await capture('startup');
+    await Promise.all(tasks);record('executed-sources.json',{workers:[...workers.values()]});await boundedOperation(c,'startup capture',()=>capture('startup'));
     bound=latest.identity;record('permanent-owner.json',{identity:bound,browser:{pid:browser.pid,startToken},backend,noReplay:true});
     await evaluate(`(()=>{if(Object.hasOwn(globalThis,'__gta2PassiveOwner'))throw Error('owner reference already bound');Object.defineProperty(globalThis,'__gta2PassiveOwner',{value:runningApps[0].wine});return true;})()`);
     record('ready.json',{at:Date.now(),backend});
     for(let n=0;!closing;n++) {
       const file=out+'/command-'+n+'.json';while(!fs.existsSync(file)&&Date.now()<launch.deadline*1000)await wait(25);
       assert(Date.now()<launch.deadline*1000,'fixed deadline');const cmd=JSON.parse(fs.readFileSync(file));assert(!fs.existsSync(out+'/receipt-'+n+'.json'));
-      if(cmd.action==='close'){record('terminal-state.json',await state());await close('reviewed host teardown');record('receipt-'+n+'.json',{state:'ACK',hostOnly:true});break;}
+      await boundedOperation(c,'manual operation '+cmd.action,async()=>{
+      if(cmd.action==='close'){record('terminal-state.json',await state());await close('reviewed host teardown');record('receipt-'+n+'.json',{state:'ACK',hostOnly:true});return;}
       if(cmd.action==='terminal'){
         assert(phase,'reviewed irreversible Quit phase required');const terminal=await state();assert(terminal.retiredOwner?.processExited===true,'actual original owner has not exited');
-        const at=Date.now(),shot=await c.send('Page.captureScreenshot',{format:'png'},session),png=Buffer.from(shot.data,'base64');assert(/^[a-z0-9-]+$/.test(cmd.name));fs.writeFileSync(out+'/'+cmd.name+'.png',png,{flag:'wx'});record(cmd.name+'.json',{at,terminal,pngSHA256:sha(png),nativeQuitClaim:false});record('receipt-'+n+'.json',{state:'ACK',at:Date.now()});continue;
+        const at=Date.now(),shot=await c.send('Page.captureScreenshot',{format:'png'},session),png=Buffer.from(shot.data,'base64');assert(/^[a-z0-9-]+$/.test(cmd.name));fs.writeFileSync(out+'/'+cmd.name+'.png',png,{flag:'wx'});record(cmd.name+'.json',{at,terminal,pngSHA256:sha(png),nativeQuitClaim:false});record('receipt-'+n+'.json',{state:'ACK',at:Date.now()});return;
       }
-      if(cmd.action==='capture'){await capture(cmd.name);record('receipt-'+n+'.json',{state:'ACK',capture:latest});continue;}
+      if(cmd.action==='capture'){await capture(cmd.name);record('receipt-'+n+'.json',{state:'ACK',capture:latest});return;}
       assert.equal(cmd.action,'pulse');verifyPins();const maxAge=policy(cmd,launch,phase);assert(!fs.existsSync(out+'/nonce-'+cmd.nonce+'.json'),'gesture nonce cannot be reused');record('nonce-'+cmd.nonce+'.json',{intent:cmd.intent,name:cmd.name,at:Date.now()});
       if(cmd.mode==='quit'){phase=true;if(!fs.existsSync(out+'/quit-phase.json'))record('quit-phase.json',{at:Date.now(),cutoff:(launch.deadline-180)*1000,irreversible:true,route:cmd.route});}
       assert.equal(cmd.review,latest.label);assert(!fs.existsSync(out+'/'+latest.label+'-used.json'),'fresh full scene before each gesture');const review={...latest,review:cmd.observation};record(cmd.name+'-review.json',{...review,mode:cmd.mode,route:cmd.route});
       assert.equal(sha(fs.readFileSync(out+'/'+latest.label+'.png')),latest.sha256,'reviewed fullscene bytes changed');
       require(ROOT+'/'+HELPER).same(bound,latest.identity);
-      if(Date.now()-Date.parse(latest.at)>=maxAge){record('receipt-'+n+'.json',{state:'NOT_SENT',effects:0,reason:'fresh scene expired',newIntentOnly:true});continue;}
+      if(Date.now()-Date.parse(latest.at)>=maxAge){record('receipt-'+n+'.json',{state:'NOT_SENT',effects:0,reason:'fresh scene expired',newIntentOnly:true});return;}
       record(latest.label+'-used.json',{intent:cmd.name,at:Date.now()});let attempted=false;
       await chain.admit(review,async admission=>{
         require(ROOT+'/'+HELPER).same(bound,admission.live.identity);policy(cmd,launch,phase&&cmd.mode!=='quit');
@@ -186,8 +201,9 @@ async function browser(out,backend) {
         const physical=await evaluate(`runningApps.map(a=>({name:a.name,keys:${JSON.stringify(cmd.keys.map(k=>KEYS[k]))}.map(k=>({key:k,down:a.wine?.renderer?.peekKeyDownState(k)}))}))`);record(cmd.name+'-physical.json',{physical,at:Date.now()});assert(physical.every(a=>a.keys.every(k=>k.down===false||k.down===0)),'released physical key state');
       });
       record('receipt-'+n+'.json',{state:attempted?'ACK':'NOT_SENT',effects:attempted?cmd.keys.length:0,noReplay:true,at:Date.now()});
+      });
     }
-  }catch(e){if(!fs.existsSync(out+'/executed-sources.json'))record('executed-sources.json',{workers:[...workers.values()]});if(c&&!c.closed)c.seal('first causal failure: '+e);record('failure.json',{error:e.stack,noReplay:true,at:Date.now()});process.exitCode=1;await close('first causal failure');}
+  }catch(e){if(!fs.existsSync(out+'/executed-sources.json'))record('executed-sources.json',{workers:[...workers.values()]});if(c&&!c.closed)c.seal('first causal failure: '+e);if(!fs.existsSync(out+'/UNKNOWN.json'))record('UNKNOWN.json',{state:'UNKNOWN',reason:String(e),at:Date.now(),permanentClose:true,laterRequestsAllowed:0});record('failure.json',{error:e.stack,noReplay:true,at:Date.now()});process.exitCode=1;await close('first causal failure');}
 }
 if(require.main===module){const [mode,out,arg]=process.argv.slice(2);(mode==='release'?release(out,arg):browser(out,arg)).catch(e=>{console.error(e);process.exitCode=1;});}
-module.exports={policy,KEYS,HELPER,sha,connection,release};
+module.exports={policy,KEYS,HELPER,sha,connection,release,boundedOperation,devtoolsEndpoint};
