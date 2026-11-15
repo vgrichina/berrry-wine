@@ -78,6 +78,20 @@ class Policy(unittest.TestCase):
         self.scene(mode='target', visibleResourceTarget=''); self.order()
         with self.assertRaises(AssertionError): self.check('target')
 
+    def test_attack_requires_armed_hud_and_visible_command(self):
+        self.scene(commandKind='attack')
+        with self.assertRaises(AssertionError):self.check()
+        self.scene('armed',commandKind='attack',armedUnitHUD='fixture weapon',visibleAttackCommand='fixture Attack')
+        a.policy(['mousedown:200:200'],'armed','command')
+
+    def test_attack_target_requires_current_enemy_and_consumed_command(self):
+        self.scene(mode='target',commandKind='attack',armedUnitHUD='fixture weapon',visibleAttackCommand='fixture Attack')
+        self.order(kind='attack')
+        with self.assertRaises(AssertionError):self.check('target')
+        self.scene('enemy',mode='target',commandKind='attack',armedUnitHUD='fixture weapon',
+            visibleAttackCommand='fixture Attack',visibleEnemy='fixture red Marine')
+        a.policy(['mousedown:200:200'],'enemy','target')
+
     def test_command_superseded(self):
         self.scene(mode='target'); self.order()
         a.c.save('later-mission-order.json', dict(at=498.5))
@@ -190,6 +204,51 @@ class Policy(unittest.TestCase):
     def test_objective_needs_native_objective_evidence(self):
         self.result_fixture(kind='objective-progress')
         with self.assertRaisesRegex(AssertionError,'incidental'): self.result()
+
+    def combat_fixture(self, **changes):
+        self.result_fixture(kind='enemy-consequence')
+        for name in ('before','after','persistent'):
+            r=a.c.read(name+'-review.json')
+            r.update(visibleEnemy='fixture red enemy before target', enemyConsequence='destruction',
+                enemyBeforeAfterEvidence='fixture enemy then remains and absence',
+                sameSelectedUnitEvidence='fixture same selected Marine',nativeCounterOrHPEvidence='fixture Kills 0 to 1',
+                otherShootersReviewed=True,otherUnitsFiring=False)
+            r.update(changes)
+            if name == 'before':r.update(mode='target',commandKind='attack')
+            (a.c.R/(name+'-review.json')).write_text(json.dumps(r))
+        (a.c.R/'chosen-mission-order.json').unlink()
+        self.order(mode='target',kind='attack',at=491)
+        (a.c.R/'after-result-observation.json').unlink()
+        with patch.object(a.c,'lease'),patch.object(a.time,'time',return_value=498):a.attest_result('after')
+
+    def test_enemy_consequence_is_separate_from_objective_and_win(self):
+        self.combat_fixture();self.result()
+        r=a.c.read('result-mission-result.json')
+        self.assertTrue(r['proven'])
+        self.assertFalse(r['objectiveProgressClaim']);self.assertFalse(r['missionCompletionClaim'])
+
+    def test_enemy_result_requires_consumed_attack_target(self):
+        self.combat_fixture();(a.c.R/'chosen-mission-order.json').unlink()
+        self.order(mode='command',kind='attack',at=491)
+        with self.assertRaisesRegex(AssertionError,'attack target'):self.result()
+
+    def test_enemy_result_rejects_ambiguous_shooters(self):
+        self.combat_fixture(otherUnitsFiring=True)
+        with self.assertRaisesRegex(AssertionError,'ambiguous'):self.result()
+
+    def test_enemy_result_requires_visible_native_consequence(self):
+        self.combat_fixture(nativeCounterOrHPEvidence='')
+        with self.assertRaisesRegex(AssertionError,'native consequence'):self.result()
+
+    def test_enemy_result_ack_or_animation_alone_refused(self):
+        self.combat_fixture(enemyConsequence='animation')
+        with self.assertRaisesRegex(AssertionError,'not damage'):self.result()
+
+    def test_enemy_result_same_consequence_persists(self):
+        self.combat_fixture()
+        r=a.c.read('persistent-review.json');r['enemyConsequence']='damage'
+        (a.c.R/'persistent-review.json').write_text(json.dumps(r))
+        with self.assertRaisesRegex(AssertionError,'must persist'):self.result()
 
     def test_before_image_hash_checked(self):
         self.result_fixture(); (a.c.R/'before.png').write_bytes(b'changed')

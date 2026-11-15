@@ -145,7 +145,7 @@ def record_result(name, before, after, persistent, intent):
         world(r)
         assert r.get('sceneType') == 'mission' and r.get('unobstructedMission') is True
     claim = p.get('resultKind')
-    assert claim in ('gathering', 'production', 'objective-progress', 'unproven')
+    assert claim in ('gathering', 'production', 'enemy-consequence', 'objective-progress', 'unproven')
     for r in (a, p):
         assert r.get('resultKind') == claim
         assert r.get('visibleResultEvidence', '').strip()
@@ -159,11 +159,22 @@ def record_result(name, before, after, persistent, intent):
         elif claim == 'production':
             assert order['mode'] == 'command' and order['commandKind'] == 'train'
             assert p.get('producedUnitIdentity', '').strip() and p.get('resourcesBeforeAfter', '').strip()
+        elif claim == 'enemy-consequence':
+            assert order['mode'] == 'target' and order['commandKind'] == 'attack', 'consumed attack target required'
+            assert v.get('visibleEnemy', '').strip(), 'enemy before the actual target order required'
+            for r in (a, p):
+                assert r.get('enemyConsequence') in ('damage', 'destruction'), 'animation or ACK is not damage'
+                assert r.get('enemyBeforeAfterEvidence', '').strip()
+                assert r.get('sameSelectedUnitEvidence', '').strip()
+                assert r.get('nativeCounterOrHPEvidence', '').strip(), 'visible native consequence required'
+                assert r.get('otherShootersReviewed') is True and r.get('otherUnitsFiring') is False, 'ambiguous attribution cannot prove personally commanded combat'
+            assert a['enemyConsequence'] == p['enemyConsequence'], 'same consequence must persist'
         else:
             assert p.get('nativeObjectiveProgressEvidence', '').strip(), 'incidental combat is not objective proof'
     c.save(name+'-mission-result.json', dict(before=before, after=after, persistent=persistent,
         intent=intent, resultKind=claim, proven=claim != 'unproven', review=p,
-        target=pr['target'], at=time.time(), missionCompletionClaim=False))
+        target=pr['target'], at=time.time(), missionCompletionClaim=False,
+        objectiveProgressClaim=claim == 'objective-progress'))
 
 
 def completion(name, scene):

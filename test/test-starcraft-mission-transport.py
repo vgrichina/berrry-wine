@@ -51,6 +51,23 @@ class MissionHTTP(b.r.Refusal):
             self.assertEqual(c.read('train-up.json')['state'],'ACK')
             self.assertTrue(c.read('train-release-wait.json')['actualWait'])
         finally:self.finish()
+    def test_attack_command_and_separate_target_actual_http(self):
+        self.start('mission-http-attack')
+        try:
+            combat=dict(commandKind='attack',selectedUnitsEvidence='Fixture Marine HUD',
+                armedUnitHUD='Fixture Marine weapon',visibleAttackCommand='Fixture Attack card',
+                nativeCommandSemantics='Fixture ordinary Attack')
+            self.review('command',**combat)
+            a.pulse('attack',['mousedown:200:200'],400,'command','Fixture attack','command')
+            self.review('target',mode='target',activeCommandEvidence='Fixture Select Target',
+                visibleEnemy='Fixture red enemy',commandIntent='attack',**combat)
+            a.pulse('enemy',['mousedown:200:200'],400,'target','Fixture enemy','target')
+            self.assertEqual(c.read('enemy-mission-order.json')['mode'],'target')
+            self.assertFalse(list(c.R.glob('*-mission-result.json')), 'ACK does not create combat proof')
+            for name in ('attack','enemy'):
+                self.assertEqual(c.read(name+'-up.json')['state'],'ACK')
+                self.assertTrue(c.read(name+'-release-wait.json')['actualWait'])
+        finally:self.finish()
     def test_consumed_foreign_ack_fails_closed_and_releases(self):
         self.start('mission-http-foreign-ack')
         try:
@@ -124,8 +141,8 @@ c.save('death-consumed.json',r);os.kill(os.getpid(),signal.SIGKILL)
             c.save('mission-admitted.json',dict(fixture=True))
             start=c.call(dict(action='snapshot'))
             nonces=[]
-            for i,kind in enumerate(('train','gather','gather')):
-                mode='target' if i==2 else 'command';scene='scene'+str(i);name='order'+str(i)
+            for i,kind in enumerate(('attack','attack','move','move')):
+                mode='target' if i%2 else 'command';scene='scene'+str(i);name='order'+str(i)
                 c.capture(scene);rr=c.read(scene+'.json')
                 c.save(scene+'-review.json',dict(at=time.time(),pngSHA256=rr['pngSHA256'],submittedScene=True,
                     observation='Synthetic mission assertion in isolated Solitaire fixture', mode=mode,
@@ -134,7 +151,8 @@ c.save('death-consumed.json',r);os.kill(os.getpid(),signal.SIGKILL)
                     selectedUnitsEvidence='Fixture selected HUD',nativeCommandSemantics='Fixture '+kind,commandKind=kind,
                     selectedBuildingEvidence='Fixture command center',visibleTrainUnit='Fixture SCV',resourcesBefore='Fixture 250 minerals',
                     selectedWorkerEvidence='Fixture worker',activeCommandEvidence='Fixture Select Target',
-                    visibleResourceTarget='Fixture mineral patch',commandIntent='order1',
+                    visibleResourceTarget='Fixture mineral patch',commandIntent='order'+str(i-1),
+                    armedUnitHUD='Fixture armed Marine',visibleAttackCommand='Fixture Attack',visibleEnemy='Fixture red enemy',
                     pixelGeometry=dict(source='current-full-scene',target=c.read('native-pid.json'),chosenCenter=[240,240])))
                 args=[sys.executable,'-B',str(ROOT/'tools/starcraft-mission-controller.py'),mode,name,'mousedown:240:240','400',scene]
                 child=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
@@ -147,14 +165,14 @@ c.save('death-consumed.json',r);os.kill(os.getpid(),signal.SIGKILL)
                 self.assertEqual(c.read(name+'-mission-order.json')['commandKind'],kind)
                 self.assertFalse((c.R/(name+'-midpress.png')).exists())
                 nonces.extend(c.read(name+'-intent.json')['nonces'])
-            self.assertEqual(len(set(nonces)),3)
+            self.assertEqual(len(set(nonces)),4)
             end=c.call(dict(action='snapshot'))
             self.assertGreater(end['batch'],start['batch'])
             c.save('no-pause-control.json',dict(before=start,after=end,realTicks=True,
                 nativePauseObserved=False,fixtureOnly=True,noFrozenClock=True))
             effects=c.call(dict(action='eval',code='persistenceEffects'))
-            self.assertEqual(len([e for e in effects if e['kind']=='MOUSEDOWN']),3)
-            self.assertGreaterEqual(len([e for e in effects if e['kind']=='DEQUEUE' and e['event']['msg']==513]),3)
+            self.assertEqual(len([e for e in effects if e['kind']=='MOUSEDOWN']),4)
+            self.assertGreaterEqual(len([e for e in effects if e['kind']=='DEQUEUE' and e['event']['msg']==513]),4)
             for down in [e for e in effects if e['kind']=='MOUSEDOWN']:
                 up=next(e for e in effects if e['kind']=='MOUSEUP' and e['at']>=down['at'])
                 self.assertLess(up['at']-down['at'],1750)
