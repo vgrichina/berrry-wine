@@ -630,6 +630,42 @@
     (call $d9g_stat (i32.const 75) (i32.const 1)))
   ;; ---- d9cl: user clip planes end --------------------------------------------
 
+  ;; ---- d9cl: projected texture coordinates (reason 12) begin
+  ;; D3DTTFF_PROJECTED | COUNT3/4 under fixed T&L lowers with no new
+  ;; protocol: the fixed VS writes the full transformed coordinate (09aj
+  ;; accepts 259/260) and the pixel stage's raw `tex t#` samples with the
+  ;; core texld DZ / DW coordinate modifier, which every executor divides
+  ;; per pixel (q == 0 samples (1, 1), as texld_dz does). Only for the fixed
+  ;; cascade or a guest ps1.1-1.3: ps1.4 and 2.0 project explicitly
+  ;; (texld_dw / texldp), and the old path refused them too. $d9cl_proj is
+  ;; the 09af1 $cn_projected word for the current draw.
+  (global $d9cl_proj (mut i32) (i32.const 0))
+
+  ;; Stage $i's TEXTURETRANSFORMFLAGS for the decline checks: a lowerable
+  ;; PROJECTED | COUNT3/4 is recorded in $d9cl_proj and reads as COUNT3/4.
+  (func $d9cl_tt (param $i i32) (param $guest_ps i32) (result i32)
+    (local $tt i32) (local $sw i32) (local $ver i32)
+    (local.set $tt (call $d9g_tss (local.get $i) (i32.const 96)))
+    (if (i32.and (i32.ne (local.get $tt) (i32.const 259)) (i32.ne (local.get $tt) (i32.const 260)))
+      (then (return (local.get $tt))))
+    (if (local.get $guest_ps) (then
+      (local.set $sw (call $g2w (local.get $guest_ps)))
+      (local.set $ver (i32.load offset=12 (i32.add (i32.add (local.get $sw) (i32.const 24)) (i32.load offset=16 (local.get $sw)))))
+      (if (i32.or (i32.lt_u (local.get $ver) (i32.const 0xffff0101)) (i32.gt_u (local.get $ver) (i32.const 0xffff0103)))
+        (then (return (local.get $tt))))))
+    (global.set $d9cl_proj (i32.or (global.get $d9cl_proj)
+      (i32.shl (i32.and (local.get $tt) (i32.const 255)) (i32.shl (local.get $i) (i32.const 2)))))
+    (i32.and (local.get $tt) (i32.const 255)))
+
+  ;; A pixel-stage SHADER under the draw's projected stages.
+  (func $d9cl_ps_emit (param $ir i32) (result i32)
+    (local $id i32)
+    (global.set $cn_projected (global.get $d9cl_proj))
+    (local.set $id (call $d9g_shader_emit (local.get $ir) (global.get $GPS_STAGE_PS)))
+    (global.set $cn_projected (i32.const 0))
+    (local.get $id))
+  ;; ---- d9cl: projected texture coordinates (reason 12) end ----------------
+
   ;; ---- RASTER ----------------------------------------------------------------
   ;; D3DBLEND 1..11 pass; BOTHSRCALPHA/BOTHINVSRCALPHA are expanded by the
   ;; caller; anything else is reason 14 (-1 here).
@@ -945,6 +981,9 @@
         (i32.load8_u (i32.add (i32.add (local.get $sw) (i32.const 24)) (local.get $i)))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $hash)))
+    ;; d9cl: the projected word is part of the key (an odd multiple, so two
+    ;; words never give one shader the same sum).
+    (local.set $sum (i32.add (local.get $sum) (i32.mul (global.get $d9cl_proj) (i32.const 0x9e3779b1))))
     (local.set $i (i32.const 0))
     (loop $scan
       (local.set $e (i32.add (i32.add (call $d9g_m) (i32.const 2304)) (i32.shl (local.get $i) (i32.const 4))))
@@ -953,8 +992,7 @@
         (then (return (i32.load offset=12 (local.get $e)))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $scan (i32.lt_u (local.get $i) (i32.const 32))))
-    (local.set $id (call $d9g_shader_emit (i32.add (i32.add (local.get $sw) (i32.const 24)) (local.get $len))
-      (global.get $GPS_STAGE_PS)))
+    (local.set $id (call $d9cl_ps_emit (i32.add (i32.add (local.get $sw) (i32.const 24)) (local.get $len)))) ;; d9cl
     (if (i32.eqz (local.get $id)) (then (return (i32.const -8))))
     (local.set $i (global.get $d9g_rr_gps))
     (global.set $d9g_rr_gps (i32.and (i32.add (local.get $i) (i32.const 1)) (i32.const 31)))
@@ -1867,7 +1905,8 @@
     ;; flags and index are in the key rows; the matrices go out as c16..c39
     ;; columns per draw (09aj DEFs c(16 + 4 stage + row)), and a
     ;; CAMERASPACENORMAL / REFLECTIONVECTOR texgen's normal matrix as
-    ;; c40..c42. $d9g_draw_try already refused projected / unknown flags,
+    ;; c40..c42. $d9g_draw_try already refused unknown flags (PROJECTED
+    ;; COUNT3/4 is the pixel stage's divide: d9cl block),
     ;; generators past 3 and a normal texgen without NORMAL.
     (global.set $d9g_tl_tex (i32.const 0))
     (global.set $d9g_tl_nrm (i32.const 0))
@@ -1954,7 +1993,10 @@
       (local.set $i (i32.const 0))
       (loop $uvs
         (local.set $set (call $d9g_tss (local.get $i) (i32.const 44)))
-        (if (i32.lt_u (local.get $set) (local.get $ntex))
+        ;; d9cl: a generated coordinate (TEXCOORDINDEX >> 16) needs no input
+        ;; set but is still the stage's output (it was dropped: t# read 0).
+        (if (i32.or (i32.lt_u (i32.and (local.get $set) (i32.const 0xffff)) (local.get $ntex))
+              (i32.ne (i32.shr_u (local.get $set) (i32.const 16)) (i32.const 0)))
           (then (local.set $uv (i32.or (local.get $uv) (i32.shl (i32.const 1) (local.get $i))))))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br_if $uvs (i32.lt_u (local.get $i) (i32.const 6))))))
@@ -2012,7 +2054,7 @@
     (global.set $vc_implicit_dcl (i32.const 0))
     (if (i32.and (i32.ne (local.get $vs) (i32.const 0)) (i32.eqz (local.get $guest_ps)))
       (then
-        (local.set $ps (call $d9g_shader_emit (i32.load offset=8 (local.get $bundle)) (global.get $GPS_STAGE_PS)))
+        (local.set $ps (call $d9cl_ps_emit (i32.load offset=8 (local.get $bundle)))) ;; d9cl
         (if (i32.eqz (local.get $ps)) (then (call $d9g_release (local.get $vs)) (local.set $vs (i32.const 0))))))
     (call $d3d_fixed_free (local.get $bundle))
     (if (i32.eqz (local.get $vs)) (then (return (i32.const -8))))
@@ -2187,6 +2229,7 @@
     (local.set $active (if (result i32) (local.get $guest_ps) (then (i32.const 6)) (else (call $d9g_active_stages))))
     (local.set $ntex (i32.and (i32.shr_u (local.get $fvf) (i32.const 8)) (i32.const 15)))
     (local.set $texmap (i32.const 0xffffff))
+    (global.set $d9cl_proj (i32.const 0)) ;; d9cl
     (local.set $i (i32.const 0))
     (block $sdone (loop $stages
       (br_if $sdone (i32.ge_u (local.get $i) (local.get $active)))
@@ -2203,14 +2246,15 @@
           (i32.xor (i32.shl (i32.xor (local.get $set) (i32.const 15)) (i32.shl (local.get $i) (i32.const 2))) (i32.const -1))))))
       (if (call $d9g_tex_ptr (local.get $i)) (then
         ;; POSITIONT: no texture transform or texgen. Fixed T&L: COUNT2..4
-        ;; transforms (not PROJECTED: that is a raster divide the executor
-        ;; lacks) and generators 1..3, a normal one only with NORMAL.
+        ;; transforms (PROJECTED with COUNT3/4 too: $d9cl_tt) and generators
+        ;; 1..3, a normal one only with NORMAL.
         (if (i32.eqz (local.get $vsmode)) (then
           (if (call $d9g_tss (local.get $i) (i32.const 96)) (then (return (i32.const 12))))
           (if (i32.shr_u (local.get $set) (i32.const 16)) (then (return (i32.const 12))))))
         (if (i32.eq (local.get $vsmode) (i32.const 2)) (then
-          (if (i32.gt_u (call $d9g_tss (local.get $i) (i32.const 96)) (i32.const 4)) (then (return (i32.const 12))))
-          (if (i32.eq (call $d9g_tss (local.get $i) (i32.const 96)) (i32.const 1)) (then (return (i32.const 12))))
+          ;; d9cl: PROJECTED | COUNT3/4 reads as COUNT3/4 ($d9cl_tt).
+          (if (i32.gt_u (call $d9cl_tt (local.get $i) (local.get $guest_ps)) (i32.const 4)) (then (return (i32.const 12))))
+          (if (i32.eq (call $d9cl_tt (local.get $i) (local.get $guest_ps)) (i32.const 1)) (then (return (i32.const 12))))
           (if (i32.gt_u (i32.shr_u (local.get $set) (i32.const 16)) (i32.const 3)) (then (return (i32.const 12))))
           (if (i32.and (i32.eqz (i32.and (local.get $fvf) (i32.const 16)))
                 (i32.and (i32.shr_u (local.get $set) (i32.const 16)) (i32.const 1)))

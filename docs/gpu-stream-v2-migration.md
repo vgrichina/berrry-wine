@@ -272,6 +272,18 @@ Without this, every new backend would have to reimplement the 846 lines of
     the VS and discards a fragment with any negative interpolated distance
     (WebGL has no `gl_ClipDistance`), on WebGL1 and WebGL2
     (`test-d3d9-gps-clip.js`, scenario step 13).
+  - **Projected texture coordinates (2026-11-16).** D3DTTFF_PROJECTED |
+    COUNT3/4 under fixed T&L no longer declines 12, and needs no new record
+    or cap: the fixed VS writes the full transformed coordinate and the
+    pixel stage's raw `tex t#` (the fixed cascade, or a guest ps1.1-1.3)
+    canonicalizes to a core texld with the DZ / DW coordinate modifier,
+    which both executors already divide per pixel (09af1 `$cn_projected`,
+    set by 09akg for that one canonicalization; the guest-PS cache key
+    includes it). q == 0 samples (1, 1) as texld_dz does (the old path drew
+    black). Still 12: PROJECTED with COUNT1/2, a ps1.4 / 2.0 under it, a
+    dependent texture op on a projected stage, and POSITIONT. A generated
+    coordinate behind a guest PS no longer drops its VS output
+    (`test-d3d9-gps-texgen.js` frames 8..11).
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
   a performance step.
 

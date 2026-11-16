@@ -43,6 +43,12 @@
   (global $cn_clamp (mut i32) (i32.const 0))
   (global $cn_fixed (mut i32) (i32.const 0))
   (global $cn_pad (mut i32) (i32.const 0))
+  ;; d9cl: D3DTTFF_PROJECTED stages for a ps1.1-1.3 (fixed T&L): 4 bits per
+  ;; stage, 3 (divide by z) or 4 (by w). A raw `tex t#` samples t# with the
+  ;; core texld DZ / DW modifier (9 / 10); any other texture-addressing
+  ;; instruction on such a stage declines. Set by the caller around one
+  ;; canonicalization and cleared after it (09akg $d9cl_ps_emit).
+  (global $cn_projected (mut i32) (i32.const 0))
   (func (export "d3d_shader_ir_canon_declines") (result i32) (global.get $d3d_canon_declines))
   (func (export "d3d_shader_ir_canon_decline_op") (result i32) (global.get $d3d_canon_decline_op))
 
@@ -313,6 +319,16 @@
     (if (i32.ne (i32.load offset=28 (local.get $ins)) (i32.const 0)) (then (return (call $cn_decline (local.get $op)))))
     (local.set $dst (call $cn_d (i32.const 0) (i32.add (i32.const 8) (local.get $n)) (i32.const 15)))
     (local.set $u (call $cn_d (i32.const 0) (i32.const 26) (i32.const 15)))
+    ;; d9cl: projected stage (see $cn_projected).
+    (local.set $sel (i32.and (i32.shr_u (global.get $cn_projected) (i32.shl (local.get $n) (i32.const 2))) (i32.const 15)))
+    (if (i32.and (i32.ne (local.get $sel) (i32.const 0))
+          (i32.and (i32.ne (local.get $op) (i32.const 66)) (i32.ne (local.get $op) (i32.const 64))))
+      (then (return (call $cn_decline (local.get $op)))))
+    (if (i32.and (i32.eq (local.get $op) (i32.const 66)) (i32.ne (local.get $sel) (i32.const 0))) (then
+      (return (call $cn_op2 (i32.const 66) (local.get $dst)
+        (call $cn_s (i32.const 3) (local.get $n) (i32.const 0xe4) (select (i32.const 9) (i32.const 10) (i32.eq (local.get $sel) (i32.const 3))))
+        (call $cn_s (i32.const 10) (local.get $n) (i32.const 0) (i32.const 0))))))
+    (local.set $sel (i32.const 0))
     (if (i32.eq (local.get $op) (i32.const 66)) (then
       (return (call $cn_op2 (i32.const 66) (local.get $dst) (call $cn_in (local.get $n)) (call $cn_s (i32.const 10) (local.get $n) (i32.const 0) (i32.const 0))))))
     (if (i32.eq (local.get $op) (i32.const 64)) (then
@@ -610,6 +626,7 @@
             (br_if $fail (i32.ne (local.get $r) (i32.const 1)))
             (br $handled)))
           (if (global.get $cn_ps14) (then
+            (if (global.get $cn_projected) (then (local.set $r (call $cn_decline (local.get $op))) (br $fail))) ;; d9cl
             (local.set $r (call $cn_tex14 (local.get $ins)))
             (br_if $fail (i32.ne (local.get $r) (i32.const 1)))
             (br $handled)))
