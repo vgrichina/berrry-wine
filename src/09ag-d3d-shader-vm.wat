@@ -386,7 +386,150 @@
   (i32.const 1))
 
 (func $d3d_shader_vm_compile (export "d3d_shader_vm_compile") (param $ir i32) (result i32)
+  (if (call $d3d_shader_vm_range (local.get $ir) (i32.const 32)) (then
+    (if (i32.and (i32.load offset=28 (local.get $ir)) (i32.const 8))
+      (then (return (call $d3d_shader_vm_compile_core (local.get $ir)))))))
   (call $d3d_shader_vm_compile_profile (local.get $ir) (i32.const 0)))
+
+;; Core pixel IR (header flag 8, written by 09af1's canonicalizer): every ps1.x
+;; rule is already lowered, so this is a 1:1 packet map onto EXISTING handlers.
+;; texld -> TEXLD14 (51) with packet flag bit7 and the sampler in pkt+28;
+;; texkill -> TEXKILL14 (52) on any register; mov oDepth -> TEXDEPTH (54) with
+;; bit7, reading source 1's x instead of r5.r/r5.g.
+(func $d3d_shader_vm_core_handler (param $op i32) (result i32)
+  (if (i32.le_u (local.get $op) (i32.const 2)) (then (return (i32.sub (local.get $op) (i32.const 1)))))
+  (if (i32.or (i32.eq (local.get $op) (i32.const 4)) (i32.eq (local.get $op) (i32.const 5))) (then (return (i32.sub (local.get $op) (i32.const 1)))))
+  (if (i32.eq (local.get $op) (i32.const 6)) (then (return (i32.const 20))))
+  (if (i32.and (i32.ge_u (local.get $op) (i32.const 8)) (i32.le_u (local.get $op) (i32.const 11))) (then (return (i32.sub (local.get $op) (i32.const 3)))))
+  (if (i32.eq (local.get $op) (i32.const 18)) (then (return (i32.const 28))))
+  (if (i32.eq (local.get $op) (i32.const 88)) (then (return (i32.const 46))))
+  (if (i32.eq (local.get $op) (i32.const 66)) (then (return (i32.const 51))))
+  (if (i32.eq (local.get $op) (i32.const 65)) (then (return (i32.const 52))))
+  (if (i32.eq (local.get $op) (i32.const 81)) (then (return (i32.const 14))))
+  (i32.const -1))
+(func $d3d_shader_vm_core_arity (param $op i32) (result i32)
+  (if (i32.or (i32.eq (local.get $op) (i32.const 1)) (i32.eq (local.get $op) (i32.const 6))) (then (return (i32.const 2))))
+  (if (i32.or (i32.eq (local.get $op) (i32.const 4)) (i32.or (i32.eq (local.get $op) (i32.const 18)) (i32.eq (local.get $op) (i32.const 88))))
+    (then (return (i32.const 4))))
+  (if (i32.eq (local.get $op) (i32.const 65)) (then (return (i32.const 1))))
+  (if (i32.eq (local.get $op) (i32.const 81)) (then (return (i32.const 5))))
+  (i32.const 3))
+(func $d3d_shader_vm_compile_core (param $ir i32) (result i32)
+  (local $n i32) (local $i i32) (local $j i32) (local $ins i32) (local $op i32) (local $p i32)
+  (local $bank i32) (local $index i32) (local $out i32) (local $pkt i32) (local $pass i32) (local $emitted i32)
+  (if (i32.or (i32.ne (i32.load (local.get $ir)) (i32.const 0x44534952))
+    (i32.or (i32.ne (i32.load offset=4 (local.get $ir)) (i32.const 1)) (i32.ne (i32.load offset=8 (local.get $ir)) (i32.const 1))))
+    (then (return (i32.const 0))))
+  (if (i32.ne (i32.and (i32.load offset=28 (local.get $ir)) (i32.const -13)) (i32.const 0)) (then (return (i32.const 0))))
+  (local.set $n (i32.load offset=16 (local.get $ir)))
+  (if (i32.gt_u (local.get $n) (i32.const 4096)) (then (return (i32.const 0))))
+  (if (i32.or (i32.eqz (call $d3d_shader_vm_range (local.get $ir) (i32.add (i32.const 32) (i32.shl (local.get $n) (i32.const 7)))))
+    (i32.ne (i32.load offset=24 (local.get $ir)) (i32.add (i32.const 32) (i32.shl (local.get $n) (i32.const 7)))))
+    (then (return (i32.const 0))))
+  (block $validated (loop $validate
+    (br_if $validated (i32.ge_u (local.get $i) (local.get $n)))
+    (local.set $ins (i32.add (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $i) (i32.const 7))))
+    (local.set $op (i32.load (local.get $ins)))
+    (if (i32.or (i32.lt_s (call $d3d_shader_vm_core_handler (local.get $op)) (i32.const 0))
+      (i32.or (i32.load offset=12 (local.get $ins)) (i32.ne (i32.load offset=8 (local.get $ins)) (call $d3d_shader_vm_core_arity (local.get $op)))))
+      (then (return (i32.const 0))))
+    (local.set $j (i32.const 0))
+    (block $operands_done (loop $operands
+      (br_if $operands_done (i32.ge_u (local.get $j) (i32.load offset=8 (local.get $ins))))
+      (local.set $p (i32.add (local.get $ins) (i32.add (i32.const 16) (i32.shl (local.get $j) (i32.const 4)))))
+      (local.set $bank (i32.load (local.get $p))) (local.set $index (i32.load offset=4 (local.get $p)))
+      (block $ok
+        (if (i32.eq (local.get $op) (i32.const 81)) (then
+          (br_if $ok (i32.and (i32.eqz (local.get $j)) (i32.and (i32.eq (local.get $bank) (i32.const 2)) (i32.lt_u (local.get $index) (i32.const 32)))))
+          (br_if $ok (i32.and (i32.ne (local.get $j) (i32.const 0)) (i32.and (i32.eq (local.get $bank) (i32.const 255))
+            (i32.ne (i32.and (local.get $index) (i32.const 0x7f800000)) (i32.const 0x7f800000)))))
+          (return (i32.const 0))))
+        (if (i32.eqz (local.get $j)) (then
+          (if (i32.or (i32.eqz (i32.load offset=8 (local.get $p))) (i32.or (i32.gt_u (i32.load offset=8 (local.get $p)) (i32.const 15)) (i32.load offset=12 (local.get $p))))
+            (then (return (i32.const 0))))
+          (br_if $ok (i32.and (i32.eqz (local.get $bank)) (i32.lt_u (local.get $index) (i32.const 32))))
+          (br_if $ok (i32.and (i32.eq (local.get $op) (i32.const 65)) (i32.and (i32.eq (local.get $bank) (i32.const 3)) (i32.lt_u (local.get $index) (i32.const 6)))))
+          (br_if $ok (i32.and (i32.eq (local.get $op) (i32.const 1)) (i32.and (i32.eq (local.get $bank) (i32.const 9))
+            (i32.and (i32.eqz (local.get $index)) (i32.eq (i32.load offset=8 (local.get $p)) (i32.const 1))))))
+          (return (i32.const 0))))
+        (if (i32.and (i32.eq (local.get $op) (i32.const 66)) (i32.eq (local.get $j) (i32.const 2))) (then
+          (br_if $ok (i32.and (i32.eq (local.get $bank) (i32.const 10)) (i32.and (i32.lt_u (local.get $index) (i32.const 6)) (i32.le_u (i32.load offset=8 (local.get $p)) (i32.const 3)))))
+          (return (i32.const 0))))
+        (if (i32.gt_u (i32.load offset=8 (local.get $p)) (i32.const 255)) (then (return (i32.const 0))))
+        (if (i32.gt_u (i32.load offset=12 (local.get $p))
+              (select (i32.const 10) (i32.const 1) (i32.eq (local.get $op) (i32.const 66)))) (then (return (i32.const 0))))
+        (if (i32.and (i32.eq (local.get $op) (i32.const 66))
+              (i32.and (i32.gt_u (i32.load offset=12 (local.get $p)) (i32.const 0)) (i32.lt_u (i32.load offset=12 (local.get $p)) (i32.const 9))))
+          (then (return (i32.const 0))))
+        (br_if $ok (i32.and (i32.eqz (local.get $bank)) (i32.lt_u (local.get $index) (i32.const 32))))
+        (br_if $ok (i32.and (i32.eq (local.get $bank) (i32.const 1)) (i32.lt_u (local.get $index) (i32.const 2))))
+        (br_if $ok (i32.and (i32.eq (local.get $bank) (i32.const 2)) (i32.lt_u (local.get $index) (i32.const 32))))
+        (br_if $ok (i32.and (i32.eq (local.get $bank) (i32.const 3)) (i32.lt_u (local.get $index) (i32.const 6))))
+        (return (i32.const 0)))
+      (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $operands)))
+    ;; Only mov may write oDepth, and nothing else names bank 9.
+    (if (i32.and (i32.eq (i32.load offset=16 (local.get $ins)) (i32.const 9)) (i32.ne (local.get $op) (i32.const 1))) (then (return (i32.const 0))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $validate)))
+  (local.set $out (call $heap_alloc (i32.add (i32.const 16) (i32.shl (local.get $n) (i32.const 6)))))
+  (if (i32.eqz (local.get $out)) (then (return (i32.const 0))))
+  (local.set $out (call $g2w (local.get $out)))
+  (memory.fill (local.get $out) (i32.const 0) (i32.add (i32.const 16) (i32.shl (local.get $n) (i32.const 6))))
+  (i32.store (local.get $out) (i32.const 0x4453564d))
+  (i32.store offset=4 (local.get $out) (i32.const 2))
+  (i32.store offset=8 (local.get $out) (local.get $n))
+  (i32.store offset=12 (local.get $out) (i32.add (i32.const 16) (i32.shl (local.get $n) (i32.const 6))))
+  ;; Pass 0 hoists DEF into the prologue, as the profile compiler does.
+  (loop $passes
+    (local.set $i (i32.const 0))
+    (block $emitted_pass (loop $emit
+      (br_if $emitted_pass (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $ins (i32.add (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $i) (i32.const 7))))
+      (local.set $op (i32.load (local.get $ins)))
+      (block $skip
+        (br_if $skip (i32.ne (i32.eq (local.get $op) (i32.const 81)) (i32.eqz (local.get $pass))))
+        (local.set $pkt (i32.add (i32.add (local.get $out) (i32.const 16)) (i32.shl (local.get $emitted) (i32.const 6))))
+        (local.set $emitted (i32.add (local.get $emitted) (i32.const 1)))
+        (i32.store (local.get $pkt) (call $d3d_shader_vm_core_handler (local.get $op)))
+        (i32.store offset=4 (local.get $pkt) (i32.add (i32.shl (i32.load offset=16 (local.get $ins)) (i32.const 7)) (i32.load offset=20 (local.get $ins))))
+        (i32.store offset=8 (local.get $pkt) (i32.load offset=24 (local.get $ins)))
+        (if (i32.eq (local.get $op) (i32.const 81)) (then
+          (i32.store offset=8 (local.get $pkt) (i32.const 15))
+          (i32.store offset=16 (local.get $pkt) (i32.load offset=36 (local.get $ins)))
+          (i32.store offset=20 (local.get $pkt) (i32.load offset=52 (local.get $ins)))
+          (i32.store offset=24 (local.get $pkt) (i32.load offset=68 (local.get $ins)))
+          (i32.store offset=28 (local.get $pkt) (i32.load offset=84 (local.get $ins)))
+          (br $skip)))
+        (if (i32.eq (i32.load offset=16 (local.get $ins)) (i32.const 9)) (then
+          (i32.store (local.get $pkt) (i32.const 54))
+          (i32.store offset=4 (local.get $pkt) (i32.const 0))
+          (i32.store offset=12 (local.get $pkt) (i32.const 128))))
+        (local.set $j (i32.const 1))
+        (block $sources (loop $source
+          (br_if $sources (i32.ge_u (local.get $j) (select (i32.const 2) (i32.load offset=8 (local.get $ins)) (i32.eq (local.get $op) (i32.const 66)))))
+          (local.set $p (i32.add (local.get $ins) (i32.add (i32.const 16) (i32.shl (local.get $j) (i32.const 4)))))
+          (i32.store (i32.add (local.get $pkt) (i32.shl (local.get $j) (i32.const 4)))
+            (i32.add (i32.shl (i32.load (local.get $p)) (i32.const 7)) (i32.load offset=4 (local.get $p))))
+          (i32.store offset=4 (i32.add (local.get $pkt) (i32.shl (local.get $j) (i32.const 4))) (i32.load offset=8 (local.get $p)))
+          (i32.store offset=8 (i32.add (local.get $pkt) (i32.shl (local.get $j) (i32.const 4))) (i32.load offset=12 (local.get $p)))
+          (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $source)))
+        (if (i32.eq (local.get $op) (i32.const 66)) (then
+          (i32.store offset=12 (local.get $pkt) (i32.const 128))
+          (i32.store offset=28 (local.get $pkt) (i32.load offset=52 (local.get $ins))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $emit)))
+    (local.set $pass (i32.add (local.get $pass) (i32.const 1)))
+    (br_if $passes (i32.lt_u (local.get $pass) (i32.const 2))))
+  (local.get $out))
+
+;; Core TEXLD (bit7) names its stage in pkt+28; legacy TEXLD14 uses dst#.
+(func $d3d_shader_vm_tex_stage (param $pkt i32) (result i32)
+  (if (result i32) (i32.and (i32.load offset=12 (local.get $pkt)) (i32.const 128))
+    (then (i32.load offset=28 (local.get $pkt))) (else (i32.load offset=4 (local.get $pkt)))))
+;; Core TEXLD of a raw t# with identity swizzle and no modifier is ps1.1-1.3
+;; TEX: the stage's D3DTTFF_PROJECTED state applies, as for handler 16.
+(func $d3d_shader_vm_core_raw (param $pkt i32) (param $stage i32) (result i32)
+  (i32.and (i32.and (i32.ne (i32.and (i32.load offset=12 (local.get $pkt)) (i32.const 128)) (i32.const 0))
+      (i32.eq (i32.load offset=16 (local.get $pkt)) (i32.add (i32.const 384) (local.get $stage))))
+    (i32.and (i32.eq (i32.load offset=20 (local.get $pkt)) (i32.const 0xe4)) (i32.eqz (i32.load offset=24 (local.get $pkt))))))
 
 ;; Development-only foundation, not public shader-profile admission.
 (func $d3d_shader_vm_compile_vs20 (export "d3d_shader_vm_compile_vs20") (param $ir i32) (result i32)
@@ -1180,6 +1323,17 @@
     (br_if $finite (i32.lt_u (local.get $i) (i32.const 6))))
   (memory.copy (local.get $out) (i32.add (local.get $desc) (i32.const 4)) (i32.const 24))
   (i32.store offset=24 (local.get $out) (i32.const 1))
+  ;; Core IR (09af1) reads the same six values as ordinary constants:
+  ;; c16+2s = (m00,m01,m10,m11), c17+2s = (lscale,loffset,0,0).
+  (local.set $out (i32.add (local.get $ctx) (i32.add (i32.const 16416)
+    (i32.shl (i32.add (i32.const 16) (i32.shl (local.get $stage) (i32.const 1))) (i32.const 6)))))
+  (memory.fill (local.get $out) (i32.const 0) (i32.const 128))
+  (local.set $i (i32.const 0))
+  (loop $splat
+    (v128.store (i32.add (local.get $out) (i32.shl (local.get $i) (i32.const 4)))
+      (v128.load32_splat (i32.add (i32.add (local.get $desc) (i32.const 4)) (i32.shl (local.get $i) (i32.const 2)))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1)))
+    (br_if $splat (i32.lt_u (local.get $i) (i32.const 6))))
   (i32.const 1))
 
 (func $d3d_shader_vm_live_mask (export "d3d_shader_vm_live_mask") (param $ctx i32) (result i32)
@@ -1799,7 +1953,10 @@
     (local.set $v (v128.bitselect (f32x4.splat (f32.const 1))
       (f32x4.div (v128.load (i32.add (local.get $regs) (i32.const 57552))) (local.get $v))
       (f32x4.eq (local.get $v) (f32x4.splat (f32.const 0)))))))
-    (if (i32.eq (local.get $op) (i32.const 54)) (then
+    (if (i32.and (i32.eq (local.get $op) (i32.const 54)) (i32.ne (i32.and (i32.load offset=12 (local.get $pkt)) (i32.const 128)) (i32.const 0))) (then
+      ;; Core mov oDepth: the canonical IR already computed the value.
+      (local.set $v (call $d3d_shader_vm_source (local.get $regs) (i32.add (local.get $pkt) (i32.const 16)) (i32.const 0)))))
+    (if (i32.and (i32.eq (local.get $op) (i32.const 54)) (i32.eqz (i32.and (i32.load offset=12 (local.get $pkt)) (i32.const 128)))) (then
       (local.set $t (v128.load offset=336 (local.get $regs)))
       (local.set $v (v128.bitselect (f32x4.splat (f32.const 1)) (f32x4.div (v128.load offset=320 (local.get $regs)) (local.get $t))
         (f32x4.eq (local.get $t) (f32x4.splat (f32.const 0)))))))
@@ -1842,7 +1999,7 @@
   (if (i32.or (i32.eq (local.get $op) (i32.const 51)) (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 16)) (i32.le_u (local.get $op) (i32.const 19)))
         (i32.and (i32.ge_u (local.get $op) (i32.const 33)) (i32.le_u (local.get $op) (i32.const 43))))) (then
     (local.set $stage (i32.sub (i32.load offset=4 (local.get $pkt)) (i32.const 384)))
-    (if (i32.eq (local.get $op) (i32.const 51)) (then (local.set $stage (i32.load offset=4 (local.get $pkt)))))
+    (if (i32.eq (local.get $op) (i32.const 51)) (then (local.set $stage (call $d3d_shader_vm_tex_stage (local.get $pkt)))))
     (local.set $desc (call $d3d_shader_vm_sampler (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage)))
     (local.set $j (i32.add (local.get $regs) (i32.shl (i32.add (local.get $stage) (i32.const 144)) (i32.const 6))))
     (if (i32.eq (local.get $op) (i32.const 17))
@@ -1894,7 +2051,8 @@
       (local.set $u (call $d3d_shader_vm_source (local.get $regs) (i32.add (local.get $pkt) (i32.const 16)) (i32.const 3)))
       (local.set $t (call $d3d_shader_vm_source (local.get $regs) (i32.add (local.get $pkt) (i32.const 16)) (i32.const 0))))
     (else (local.set $u (v128.load (local.get $j))) (local.set $t (v128.load offset=16 (local.get $j)))))
-    (local.set $projected (select (i32.load offset=40 (local.get $desc)) (i32.const 0) (i32.eq (local.get $op) (i32.const 16))))
+    (local.set $projected (select (i32.load offset=40 (local.get $desc)) (i32.const 0) (i32.or (i32.eq (local.get $op) (i32.const 16))
+      (i32.and (i32.eq (local.get $op) (i32.const 51)) (call $d3d_shader_vm_core_raw (local.get $pkt) (local.get $stage))))))
     (if (local.get $projected) (then
       (local.set $q (v128.load (i32.add (local.get $j) (i32.shl (i32.sub (local.get $projected) (i32.const 1)) (i32.const 4)))))
       (local.set $valid (v128.and (f32x4.ne (local.get $q) (f32x4.splat (f32.const 0)))
@@ -1908,7 +2066,7 @@
       ;; Sanitized helper coordinates bound LOD; no Windows-equivalence claim.
       (local.set $u (v128.and (local.get $u) (local.get $valid)))
       (local.set $t (v128.and (local.get $t) (local.get $valid)))))
-    (if (i32.eq (local.get $op) (i32.const 51)) (then
+    (if (i32.and (i32.eq (local.get $op) (i32.const 51)) (i32.eqz (local.get $projected))) (then
       (local.set $u (call $d3d_shader_vm_coord14 (local.get $regs) (local.get $pkt) (i32.const 0)))
       (local.set $t (call $d3d_shader_vm_coord14 (local.get $regs) (local.get $pkt) (i32.const 1)))))
     (if (i32.eq (local.get $op) (i32.const 35)) (then
@@ -2221,7 +2379,7 @@
           (v128.load offset=16 (local.get $pkt)))))
       (br $execute)))
     (if (i32.eq (local.get $op) (i32.const 51)) (then
-      (local.set $desc (call $d3d_shader_vm_sampler (local.get $ctx) (i32.load offset=4 (local.get $pkt))))
+      (local.set $desc (call $d3d_shader_vm_sampler (local.get $ctx) (call $d3d_shader_vm_tex_stage (local.get $pkt))))
       (if (i32.eqz (i32.load (local.get $desc))) (then (return (call $d3d_shader_vm_status (local.get $ctx) (i32.const -3)))))
       (if (i32.load offset=36 (local.get $desc)) (then
         (if (i32.ne (i32.and (local.get $bits) (i32.const 15)) (i32.const 15)) (then (return (call $d3d_shader_vm_status (local.get $ctx) (i32.const -4)))))

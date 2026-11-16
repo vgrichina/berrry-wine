@@ -105,6 +105,7 @@
 (include "09ae-d3d9-resources.wat")
 (include "09ae1-d3d9-texture-decode.wat")
 (include "09af-d3d-shader-ir.wat")
+(include "09af1-d3d-shader-canon.wat")
 (include "09ag-d3d-shader-vm.wat")
 (include "09ah-d3d-software.wat")
 (include "09ai-d3d-render-lifetime.wat")

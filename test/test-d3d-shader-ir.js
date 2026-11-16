@@ -33,13 +33,20 @@ const IR = require('../lib/d3d-shader-ir');
     const p = compile(code);
     assert.ok(p, `native error ${e.d3d_shader_ir_error()} at ${e.d3d_shader_ir_error_offset()}: ${code.map(x=>x.toString(16))}`);
     const ir = IR.read(memory.buffer, p);
-    const legacy = Shader.compile(Uint32Array.from(code));
-    const lowered = Shader.compileNativeIR(ir);
-    assert.strictEqual(lowered.source, legacy.source, 'normalized WAT IR preserves GLSL output');
-    assert.deepStrictEqual(lowered.attributes, legacy.attributes);
-    assert.deepStrictEqual(lowered.uniforms, legacy.uniforms);
-    assert.deepStrictEqual(lowered.semantics, legacy.semantics);
-    assert.strictEqual(ir.length, legacy.length);
+    if (ir.stage === 'pixel') {
+      // ps1.x lowering is WAT-owned: the shader must canonicalize to core IR.
+      const core = IR.canonical(e, () => memory.buffer, p);
+      assert.strictEqual(core.flags & 8, 8, 'canonical pixel IR is flagged core');
+      assert.match(Shader.compileCoreIR(core).source, /gl_FragColor = r0;/);
+    } else {
+      const legacy = Shader.compile(Uint32Array.from(code));
+      const lowered = Shader.compileNativeIR(ir);
+      assert.strictEqual(lowered.source, legacy.source, 'normalized WAT IR preserves GLSL output');
+      assert.deepStrictEqual(lowered.attributes, legacy.attributes);
+      assert.deepStrictEqual(lowered.uniforms, legacy.uniforms);
+      assert.deepStrictEqual(lowered.semantics, legacy.semantics);
+      assert.strictEqual(ir.length, legacy.length);
+    }
     const copy = new Uint8Array(memory.buffer, p, IR.HEADER_BYTES + ir.instructions.length * IR.INSTRUCTION_BYTES).slice();
     words.fill(0, 0, code.length);
     assert.deepStrictEqual(new Uint8Array(memory.buffer, p, copy.length), copy, 'IR owns immutable normalized data');
@@ -93,7 +100,8 @@ const IR = require('../lib/d3d-shader-ir');
       header.set([0x44534952,1,1,ps14,expected,code.length,bytes,body.some(x=>(x>>>0)>>>16===0x4000)?2:0]);
       assert.strictEqual(e.test_d3d_ir_scan14(ptr,code.length,output),expected);
       const view=IR.read(memory.buffer,output);
-      assert.strictEqual(Shader.compileIR(view).source,Shader.compile(Uint32Array.from(code)).source,'PS1.4 shared normalized IR lowers identically');
+      assert.strictEqual(view.version,ps14);
+      assert.match(Shader.compileCoreIR(IR.canonical(e,()=>memory.buffer,output)).source,/gl_FragColor = r0;/,'PS1.4 shared normalized IR lowers through core IR');
       vmAgrees(output,code);
     }
   }
@@ -338,8 +346,8 @@ const IR = require('../lib/d3d-shader-ir');
     const s=src(3,0,228,modifier),code=[ps,64,dst(3),73,dst(3,1),s,73,dst(3,2),s,
       opcode,dst(3,3),s,...(opcode===75?[src(2,7)]:[]),1,dst(0),src(3,3),65535];
     const p=compile(code);assert.ok(p,`SPEC error ${e.d3d_shader_ir_error()} at ${e.d3d_shader_ir_error_offset()}`);
-    const native=IR.read(memory.buffer,p),glsl=Shader.compileIR(native,{cubeStages:[3]});
-    assert.strictEqual(glsl.source,Shader.compile(Uint32Array.from(code),{cubeStages:[3]}).source);
+    const glsl=Shader.compileCoreIR(IR.canonical(e,()=>memory.buffer,p),{cubeStages:[3]});
+    assert.match(glsl.source,/textureCube\(d3d_s3, /,'texm3x3 spec/vspec samples the cube stage');
     e.d3d_shader_ir_free(p);
   }
   for(const eye of [src(3),src(1),src(0),src(2,8),src(2,0,255),src(2,0,228,1),src(2,0,228,4)])
@@ -481,7 +489,15 @@ const IR = require('../lib/d3d-shader-ir');
     for (let n=0;n<(i%13)+1;n++) { seed ^= seed<<13; seed ^= seed>>>17; seed ^= seed<<5; code.push(seed>>>0); }
     code.push(65535);
     const p=compile(code);
-    if (p) { Shader.compileIR(IR.read(memory.buffer,p)); e.d3d_shader_ir_free(p); }
+    if (p) {
+      const view=IR.read(memory.buffer,p);
+      if(view.stage==='pixel'){
+        // ps1.x lowers only through 09af1 core IR; a decline is counted, never silent.
+        let core=null;try{core=IR.canonical(e,()=>memory.buffer,p);}catch(error){assert.match(error.message,/canonicalization declined/);}
+        if(core)Shader.compileCoreIR(core);
+      }else Shader.compileIR(view);
+      e.d3d_shader_ir_free(p);
+    }
     else assert.ok(e.d3d_shader_ir_error());
   }
   // Release/recompile must reuse heap storage rather than leak one allocation

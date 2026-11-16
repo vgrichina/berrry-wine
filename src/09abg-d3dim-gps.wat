@@ -840,7 +840,7 @@
       (i32.ne (i32.and (local.get $key) (i32.shl (i32.const 1) (local.get $bit))) (i32.const 0))))
 
   (func $d3g_shader (param $pb i32) (param $key i32) (result i32)
-    (local $i i32) (local $e i32) (local $id i32) (local $p i32) (local $buf i32) (local $n i32) (local $bytes i32)
+    (local $i i32) (local $e i32) (local $id i32) (local $p i32) (local $buf i32) (local $n i32) (local $bytes i32) (local $core i32)
     (local.set $key (i32.or (local.get $key) (i32.const 0x80000000)))
     (loop $scan
       (local.set $e (i32.add (i32.add (local.get $pb) (i32.const 5888)) (i32.shl (local.get $i) (i32.const 3))))
@@ -874,7 +874,11 @@
       ;; D3D vertex fog: specular alpha is the fraction of the colour kept.
       (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (i32.const 18) (i32.const 4)
         (call $d3g_dst (i32.const 0) (i32.const 7)) (i32.const 0x90FF0001) (i32.const 0x80E40000) (i32.const 0xA0E40001)))))
-    (local.set $bytes (call $gps_ir_finish (local.get $buf) (local.get $n) (global.get $GPS_STAGE_PS) (i32.const 0xffff0104)))
+    (drop (call $gps_ir_finish (local.get $buf) (local.get $n) (global.get $GPS_STAGE_PS) (i32.const 0xffff0104)))
+    ;; Publish core IR (09af1): every consumer sees one IR; a decline is a bug here.
+    (local.set $core (call $d3d_shader_ir_canonicalize (local.get $buf)))
+    (if (i32.eqz (local.get $core)) (then (call $d3g_fail)))
+    (local.set $bytes (i32.load offset=24 (local.get $core)))
     (local.set $id (call $d3g_new_id (local.get $pb)))
     (local.set $p (call $d3g_begin (local.get $pb) (global.get $GPS_OP_SHADER) (i32.add (size-of GpsShader) (local.get $bytes))))
     (store.field GpsShader id (local.get $p) (local.get $id))
@@ -882,7 +886,8 @@
     (store.field GpsShader pad (local.get $p) (i32.const 0))
     (store.field GpsShader pad2 (local.get $p) (i32.const 0))
     (store.field GpsShader ir_bytes (local.get $p) (local.get $bytes))
-    (memory.copy (i32.add (local.get $p) (size-of GpsShader)) (local.get $buf) (local.get $bytes))
+    (memory.copy (i32.add (local.get $p) (size-of GpsShader)) (local.get $core) (local.get $bytes))
+    (call $d3d_shader_ir_free (local.get $core))
     (drop (call $d3g_end (local.get $p)))
     (local.set $i (i32.load offset=44 (local.get $pb)))
     (i32.store offset=44 (local.get $pb) (i32.rem_u (i32.add (local.get $i) (i32.const 1)) (global.get $D3G_SHADER_CACHE)))
