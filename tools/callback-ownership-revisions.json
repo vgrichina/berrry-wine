@@ -2,6 +2,20 @@
   "version": 1,
   "revisions": [
     {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "5c54551666f6d20edd865cc3e9e481e2317fe33fd54781b0675442cd70220fc2",
+      "sha256": "b8abec9347b5814daf2a1804b92e765b36503e71497e682d9e9e9e007aff1ee2",
+      "reason": "Coordinate arrival waits for native USER pump completion, scoped to the original memory, native thread, window object and generation. The acknowledgement changes only pending hover admission; it invokes no guest callback and grants no invocation ownership. Existing physical release timing, guarded cancellation and message order remain authoritative."
+    },
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_PeekMessageA_fetch",
+      "baseSHA256": "efcb7dda81314d186771f176b66ff594a7ebb82b6718db9cccd3a7b1270ef929",
+      "sha256": "5d8a0280cc60f5ffc0a3227305216e415c9975a1aa0e0a4c967fed0d74453981",
+      "reason": "A synchronous host notification on the proven-empty unfiltered native USER path acknowledges pointer-arrival pump completion. Filtered queries, successful posted/input/paint/timer retrieval and native callbacks do not acknowledge it. No guest frame, continuation, callback admission or context restoration is added; invocation ownership remains pending."
+    },
+    {
       "file": "lib/storage.js",
       "name": "host-file",
       "baseSHA256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053",

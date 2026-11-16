@@ -2369,6 +2369,9 @@
     ;; No message ready. Real GetMessage blocks here; keep the API call live
     ;; and let JS wake/re-enter this handler when input/post/paint/timer work
     ;; becomes available.
+    (if (i32.eqz (i32.or (local.get $arg1)
+          (i32.or (local.get $arg2) (local.get $arg3))))
+      (then (call $host_input_pump_idle (global.get $current_thread_id))))
     (global.set $message_wait_msg_ptr (local.get $msg_ptr))
     (global.set $yield_reason (i32.const 7))
     (global.set $yield_flag (i32.const 1))
@@ -2795,6 +2798,10 @@
     ;; Nothing to deliver. Undo the activity mark $win32_dispatch made for
     ;; PeekMessage: only this proven-empty path is neutral to the clock-spin
     ;; detector. Every successful Peek remains observable work and breaks it.
+    ;; A filtered query says nothing about the rest of this thread's pump.
+    (if (i32.eqz (i32.or (local.get $arg1)
+          (i32.or (local.get $arg2) (local.get $arg3))))
+      (then (call $host_input_pump_idle (global.get $current_thread_id))))
     (if (local.get $spin_activity_marked)
       (then
         (global.set $spin_nonpoll_seq

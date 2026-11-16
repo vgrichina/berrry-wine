@@ -114,6 +114,9 @@
   ;; draw_text(x, y, text_ptr, text_len, color)
   (import "host" "check_input" (func $host_check_input (result i32)))
   ;; check_input() → packed event (0 = none)
+  (import "host" "input_pump_idle" (func $host_input_pump_idle (param i32)))
+  ;; input_pump_idle(thread) — native unfiltered message pump exhausted all
+  ;; work, including posted messages/paint/timers after the host input poll.
   (import "host" "check_input_lparam" (func $host_check_input_lparam (result i32)))
   ;; check_input_lparam() → lParam of last check_input event
   (import "host" "check_input_wparam" (func $host_check_input_wparam (result i32)))

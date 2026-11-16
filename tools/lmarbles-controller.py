@@ -25,8 +25,27 @@ def reserve():
     assert launch['gameplayCutoff']==launch['deadline']-180,'immutable 180-second reserve missing'
     assert launch['at']<launch['gameplayCutoff'],'reserve must be recorded before original'
     return launch['gameplayCutoff']
-def policy(intent,keys,review=None,route=None,operationEnd=None):
+def capture_phase():
+    # Captures remain available for personally reviewing the ordinary Quit
+    # route, but crossing the cutoff can never reopen gameplay.
     cutoff=reserve()
+    if time.time()>=cutoff and not (R/'quit-phase.json').exists():
+        save('quit-phase.json',dict(at=time.time(),cutoff=cutoff,irreversible=True))
+    return cutoff
+def bind(review=None):
+    opened();reserve();assert not (R/'input-owner.json').exists(),'permanent owner; no rebind'
+    command={'action':'guarded-bind'}
+    if read('launch.json').get('nativeScene'):
+        assert review,'original binding requires a personally reviewed complete scene'
+        rr=read(review+'.json');personal=read(review+'-review.json')
+        assert 0<=time.time()-rr['at']<30 and 0<=time.time()-personal['at']<30,'binding review expired'
+        assert personal['pngSHA256']==rr['pngSHA256']==hashlib.sha256((R/(review+'.png')).read_bytes()).hexdigest()
+        command['reviewedScene']=dict(route='native-scene-v1',snapshot=rr['snapshot'],pngSHA256=rr['pngSHA256'])
+    save('bind-intent.json',dict(at=time.time(),permanent=True,review=review))
+    save('input-owner.json',call(command));s=call({'action':'snapshot'})
+    save('lease-snapshot.json',{k:s[k] for k in ('mainHwnd','screen')})
+def policy(intent,keys,review=None,route=None,operationEnd=None):
+    cutoff=capture_phase()
     if time.time()>=cutoff or intent=='quit':
         if not (R/'quit-phase.json').exists():
             save('quit-phase.json',dict(at=time.time(),cutoff=cutoff,irreversible=True))
@@ -75,9 +94,9 @@ def lease():
     return o,s
 def capture(name):
     try:
-        assert name.replace('-','').isalnum();opened()
+        assert name.replace('-','').isalnum();capture_phase();opened()
         p=R/(name+'.png');assert not p.exists()
-        start=time.time();s=call({'action':'snapshot'});im=call({'cmd':'png:'+str(p)});end=time.time()
+        start=time.time();s=call({'action':'snapshot'});capture_phase();im=call({'cmd':'png:'+str(p)});end=time.time()
         save(name+'.json',dict(at=start,completedAt=end,snapshot=s,image=im,pngSHA256=hashlib.sha256(p.read_bytes()).hexdigest()))
         return str(p)
     except BaseException as e:fail(e,name);raise
@@ -134,6 +153,10 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
     policy(intent,keys,review,route)
     try:
         owner,before=lease();rr=read(review+'.json');reviewed=read(review+'-review.json')
+        native=read('launch.json').get('nativeScene',False)
+        if native:
+            assert before['physicalUp'] and before['capture']=='0x0','native physical UP required before intention'
+            assert rr['snapshot']['physicalUp'] and rr['snapshot']['capture']=='0x0','review must precede any held input'
         assert 0<=time.time()-reviewed['at']<30,'personal review age expired'
         assert reviewed['pngSHA256']==rr['pngSHA256'],'review binding changed'
         assert hashlib.sha256((R/(review+'.png')).read_bytes()).hexdigest()==rr['pngSHA256'],'review image changed'
@@ -166,7 +189,9 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
                 assert time.time()-rr['at']<30 and time.time()-reviewed['at']<30,'capture/review expired before edge'
                 cutoff=policy(intent,keys,review,route)
                 sent=True
-                receipt=call({'action':'guarded-input','cmd':key,'guard':{**owner,'nonce':nonce,'reviewed':True,'deadline':int(min(deadline,releaseCap,cutoff if intent=='gameplay' else deadline)*1000)}})
+                guard={**owner,'nonce':nonce,'reviewed':True,'deadline':int(min(deadline,releaseCap,cutoff if intent=='gameplay' else deadline)*1000)}
+                if native:guard['intent']=rr['snapshot']
+                receipt=call({'action':'guarded-input','cmd':key,'guard':guard})
                 returnedAt=time.time()
                 receipts.append(receipt)
                 if receipt.get('consumedAt'):
@@ -213,8 +238,7 @@ if __name__=='__main__':
         rr=read(sys.argv[2]+'.json');save(sys.argv[2]+'-review.json',dict(at=time.time(),pngSHA256=rr['pngSHA256'],observation=sys.argv[3],quitRoute=sys.argv[4] if len(sys.argv)>4 else None));print('personal review recorded')
     elif sys.argv[1]=='capture':print(capture(sys.argv[2]))
     elif sys.argv[1]=='bind':
-        opened();reserve();assert not (R/'input-owner.json').exists(),'permanent owner; no rebind'
-        save('bind-intent.json',dict(at=time.time(),permanent=True));save('input-owner.json',call({'action':'guarded-bind'}));s=call({'action':'snapshot'});save('lease-snapshot.json',{k:s[k] for k in ('mainHwnd','screen')})
+        bind(sys.argv[2] if len(sys.argv)>2 else None)
     elif sys.argv[1]=='release':release(sys.argv[2],sys.argv[3],float(sys.argv[4]),len(sys.argv)>5 and sys.argv[5]=='final')
     elif sys.argv[1] in ('pulse','quit-pulse'):
         quitIntent=sys.argv[1]=='quit-pulse'

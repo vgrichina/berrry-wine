@@ -39,10 +39,11 @@ const client = source ? source : path.join(fixture, 'game/LMARBLES');
 const rows = inventory(client);
 verifyRows(rows, 86, 3800414,
   'aa2cbae11ba5b5a57010643b886552b3ee955e441f76976a3a7593018816d93b');
-const expected = rows.filter(row => row.path !== 'lmarbles.exe').map(row => ({
+const expected = rows.map(row => ({
   url: 'game/LMARBLES/' + row.path,
   vfsPath: 'C:\\LMARBLES\\' + row.path.replace(/\//g, '\\'),
   size: row.bytes,
+  sha256: row.sha256,
 }));
 if (originalMode) {
   console.log('LMarbles: 86 original files and authentic CRT verified; no fixture copied or mapping manifest inspected');
@@ -67,5 +68,5 @@ if (prepare) {
 const manifest = JSON.parse(fs.readFileSync(path.join(fixture, '.wine-assembly-browser.json')));
 assert.strictEqual(manifest.schemaVersion, 1);
 const sorted = files => [...files].sort((a, b) => a.url < b.url ? -1 : a.url > b.url ? 1 : 0);
-assert.deepStrictEqual(sorted(manifest.files), sorted(expected), 'all 85 exact companion mappings required');
-console.log('LMarbles: 86 original client files, authentic CRT and 85 exact companion mappings verified');
+assert.deepStrictEqual(sorted(manifest.files), sorted(expected), 'all 86 exact SHA-pinned file mappings required');
+console.log('LMarbles: 86 original client files, authentic CRT and 86 exact SHA-pinned file mappings verified');

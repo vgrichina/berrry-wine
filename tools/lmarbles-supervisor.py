@@ -1,6 +1,62 @@
 """Detached owner of native+watchdog waits. No pipe to the invoking tool."""
-import pathlib, subprocess, sys, os, time, json, signal, threading, fcntl
+import pathlib, subprocess, sys, os, time, json, signal, threading, fcntl, hashlib, base64, re
 BASE=pathlib.Path(__file__).resolve().parent
+def seal(label,body):
+    fd=os.memfd_create(label,os.MFD_ALLOW_SEALING)
+    with os.fdopen(os.dup(fd),'wb') as f:f.write(body)
+    os.lseek(fd,0,0);fcntl.fcntl(fd,fcntl.F_ADD_SEALS,15)
+    assert fcntl.fcntl(fd,fcntl.F_GET_SEALS)==15
+    return fd
+def frozen_inputs(out,recipe):
+    root=pathlib.Path(recipe['cwd']).resolve()
+    names=subprocess.check_output(['git','ls-files'],cwd=root).decode().splitlines()
+    selected=[p for p in names if (p.startswith('lib/') and p.endswith(('.js','.json'))) or
+              p in ('host.js','test/run.js','src/api_table.json','src/win16-ordinals.generated.json','fonts/substitutions.json')]
+    selected+=['tools/lmarbles-native-source-view.cjs','test/test-lmarbles-native-first-selection.cjs']
+    for arg in recipe['args']:
+        path=pathlib.Path(arg)
+        if path.suffix not in ('.js','.cjs'):continue
+        path=path if path.is_absolute() else root/path
+        if path.is_file() and path.is_relative_to(root):selected.append(str(path.relative_to(root)))
+    selected+=['test/candidate-corpus/manifest.json','test/binaries/candidates/lmarbles-108/.wine-assembly-browser.json']
+    # Literal dependencies of the actual runtime closure, including CLI helpers.
+    for p in selected:
+        body=(root/p).read_bytes()
+        for relative in re.findall(rb'require\([\'\"](\.[^\'\"]+)[\'\"]\)',body):
+            candidate=(pathlib.Path(p).parent/relative.decode())
+            for suffix in ('','.js','.cjs','.json','/index.js'):
+                found=os.path.normpath(str(candidate)+suffix)
+                if (root/found).is_file() and found not in selected:
+                    selected.append(found);break
+    codec=root/'node_modules/pngjs'
+    selected += [str(p.relative_to(root)) for p in codec.rglob('*') if p.is_file() and p.suffix in ('.js','.json')]
+    rows=[]
+    for p in sorted(set(selected)):
+        body=(root/p).read_bytes()
+        rows.append(dict(path=p,sha256=hashlib.sha256(body).hexdigest(),body=base64.b64encode(body).decode()))
+    holder=json.loads(pathlib.Path(recipe.get('moduleHolder') or os.environ['LMARBLES_MODULE_HOLDER']).read_text())
+    assert token(holder['pid'])==holder['startToken'] and holder['sealed']==15
+    body=pathlib.Path(holder['fdPath']).read_bytes()
+    assert hashlib.sha256(body).hexdigest()==holder['sha256']
+    module=seal('lmarbles-module',body)
+    source=seal('lmarbles-sources',json.dumps(dict(files=rows)).encode())
+    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root).decode().strip()
+    patches=[]
+    for p in sorted(set(selected)):
+        tracked=p in names
+        if p.startswith('node_modules/'):continue
+        diff=subprocess.run(['git','diff','--binary',head,'--',p] if tracked else
+                            ['git','diff','--no-index','--binary','--','/dev/null',p],cwd=root,capture_output=True)
+        assert diff.returncode in ((0,) if tracked else (1,)) and not diff.stderr
+        patches.append(diff.stdout)
+    (out/'runtime-source.patch').write_bytes(b''.join(patches))
+    save(out,'runtime-inputs.json',dict(gitSHA=head,moduleSHA256=holder['sha256'],moduleSeals=15,sourceSeals=15,
+         sources=[{k:v for k,v in row.items() if k!='body'} for row in rows],sourceArchive='Git plus binary patch; no persisted source/module bundle'))
+    env=os.environ.copy();assert not env.get('NODE_OPTIONS')
+    env.update(NODE_OPTIONS='--require='+str(BASE/'lmarbles-native-source-view.cjs'),
+               LMARBLES_SOURCE_FD='/proc/self/fd/'+str(source),LMARBLES_MODULE_FD='/proc/self/fd/'+str(module),
+               LMARBLES_MODULE_SHA256=holder['sha256'])
+    return env,(source,module)
 def save(out,name,value):
     p=out/name
     assert not p.exists(),str(p)
@@ -43,14 +99,19 @@ def run(out,recipe):
         if pre.returncode:
             save(out,'preflight-blocker.json',dict(exit=pre.returncode,originalLaunched=False,at=time.time()))
             return
+    # Seal inputs before arming any child. A source refusal must not strand an
+    # independent watchdog with neither a native PID nor an actual wait.
+    frozen=recipe.get('moduleHolder') or (os.environ.get('LMARBLES_MODULE_HOLDER') and recipe['args'][0]=='node')
+    env,fds=frozen_inputs(out,recipe) if frozen else (None,())
     deadline=time.time()+recipe['seconds']
     watchdog_deadline=deadline+recipe.get('watchdogGrace',0)
     w=subprocess.Popen([sys.executable,'-u','-B',__file__,'watchdog',str(out),str(watchdog_deadline)],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     while not (out/'watchdog-armed.json').exists():
         assert w.poll() is None,'watchdog died before arm';time.sleep(.01)
     assert not stop,'supervisor cancelled before native launch'
-    save(out,'launch.json',dict(args=recipe['args'],deadline=deadline,gameplayCutoff=deadline-180,reserveSeconds=180,at=time.time(),supervisor=os.getpid(),clock=recipe.get('clock')))
-    p=subprocess.Popen(recipe['args'],cwd=recipe['cwd'],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+    save(out,'launch.json',dict(args=recipe['args'],deadline=deadline,gameplayCutoff=deadline-180,reserveSeconds=180,at=time.time(),supervisor=os.getpid(),clock=recipe.get('clock'),nativeScene=bool(recipe.get('nativeScene'))))
+    p=subprocess.Popen(recipe['args'],cwd=recipe['cwd'],env=env,pass_fds=fds,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+    for fd in fds:os.close(fd)
     info=dict(pid=p.pid,startToken=token(p.pid),at=time.time());save(out,'native-pid.json',info)
     eof={};errors=[]
     def drain(pipe,name):
@@ -76,7 +137,14 @@ def run(out,recipe):
     save(out,'supervisor-complete.json',dict(pid=os.getpid(),nativeWait=rc,watchdogWait=w.returncode,heavyReleased=bool(lock),actualChildWaits=True,bothEOF=eof=={'stdout':True,'stderr':True},at=time.time()))
 if __name__=='__main__':
     mode=sys.argv[1];out=pathlib.Path(sys.argv[2]).resolve()
-    if mode=='watchdog':watchdog(out,float(sys.argv[3]))
+    if mode=='hold-module':
+        body=(BASE.parent/'build/wine-assembly.wasm').read_bytes()
+        fd=seal('lmarbles-qualified-module',body)
+        save(out,'holder.json',dict(pid=os.getpid(),startToken=token(os.getpid()),sealed=15,
+             sha256=hashlib.sha256(body).hexdigest(),fdPath='/proc/'+str(os.getpid())+'/fd/'+str(fd),at=time.time()))
+        while not (out/'stop.json').exists():time.sleep(.05)
+        os.close(fd);save(out,'holder-closed.json',dict(closed=True,at=time.time()))
+    elif mode=='watchdog':watchdog(out,float(sys.argv[3]))
     elif mode=='run':run(out,json.loads((out/'recipe.json').read_text()))
     elif mode=='outerwait':
         p=subprocess.Popen([sys.executable,'-u','-B',__file__,'run',str(out)],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True,close_fds=True)
