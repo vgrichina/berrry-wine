@@ -1508,7 +1508,12 @@
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $desc) (i32.const 36))) (then (return (i32.const 0))))
   (if (i32.ne (i32.load (local.get $desc)) (i32.const 1)) (then (return (i32.const 0))))
   (local.set $flags (i32.load offset=4 (local.get $desc)))
-  (if (i32.gt_u (local.get $flags) (i32.const 3)) (then (return (i32.const 0))))
+  ;; flags bits4..8: GPS logic op 1..16 (1 + GL logic op - GL_CLEAR), only
+  ;; with blending off; applied to the packed output in $d3d_software_output.
+  (if (i32.or (i32.and (local.get $flags) (i32.const 0xfffffe0c))
+    (i32.or (i32.gt_u (i32.shr_u (local.get $flags) (i32.const 4)) (i32.const 16))
+      (i32.and (i32.ne (i32.shr_u (local.get $flags) (i32.const 4)) (i32.const 0))
+        (i32.ne (i32.and (local.get $flags) (i32.const 1)) (i32.const 0))))) (then (return (i32.const 0))))
   (local.set $rgb (call $d3d_software_blend_pack (i32.load offset=8 (local.get $desc)) (i32.load offset=12 (local.get $desc)) (i32.load offset=16 (local.get $desc))))
   (local.set $alpha (call $d3d_software_blend_pack (i32.load offset=20 (local.get $desc)) (i32.load offset=24 (local.get $desc)) (i32.load offset=28 (local.get $desc))))
   (if (i32.or (i32.eq (local.get $rgb) (i32.const -1)) (i32.eq (local.get $alpha) (i32.const -1))) (then (return (i32.const 0))))
@@ -1665,7 +1670,7 @@
   (i32.const 1))
 
 (func $d3d_software_output (param $ctx i32) (param $src i32) (param $dest i32) (result i32)
-  (local $s v128) (local $d v128) (local $k v128) (local $v v128) (local $packed i32)
+  (local $s v128) (local $d v128) (local $k v128) (local $v v128) (local $packed i32) (local $n i32)
   (local.set $s (f32x4.replace_lane 0 (local.get $s) (f32.load offset=0 (local.get $src))))
   (local.set $s (f32x4.replace_lane 1 (local.get $s) (f32.load offset=16 (local.get $src))))
   (local.set $s (f32x4.replace_lane 2 (local.get $s) (f32.load offset=32 (local.get $src))))
@@ -1697,4 +1702,15 @@
       (i32.or (i32.and (local.get $packed) (i32.const 0x00f8fcf8))
         (i32.or (i32.and (i32.shr_u (local.get $packed) (i32.const 5)) (i32.const 0x00070007))
           (i32.and (i32.shr_u (local.get $packed) (i32.const 6)) (i32.const 0x00000300))))))))
+  ;; Logic op (blend off): n = op - 1 is the GL truth table, bit (1-s)*2+(1-d).
+  (local.set $n (i32.and (i32.shr_u (i32.load offset=224 (local.get $ctx)) (i32.const 4)) (i32.const 31)))
+  (if (local.get $n) (then
+    (local.set $n (i32.sub (local.get $n) (i32.const 1)))
+    (local.set $packed (i32.or
+      (i32.or
+        (select (i32.and (local.get $packed) (local.get $dest)) (i32.const 0) (i32.and (local.get $n) (i32.const 1)))
+        (select (i32.and (local.get $packed) (i32.xor (local.get $dest) (i32.const -1))) (i32.const 0) (i32.and (local.get $n) (i32.const 2))))
+      (i32.or
+        (select (i32.and (i32.xor (local.get $packed) (i32.const -1)) (local.get $dest)) (i32.const 0) (i32.and (local.get $n) (i32.const 4)))
+        (select (i32.xor (i32.or (local.get $packed) (local.get $dest)) (i32.const -1)) (i32.const 0) (i32.and (local.get $n) (i32.const 8))))))))
   (local.get $packed))

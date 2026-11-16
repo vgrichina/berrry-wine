@@ -286,6 +286,12 @@ function raster(over = {}) {
   for (const msg of d1.failures) console.log(`FAIL D1 ${msg}`);
   assert.strictEqual(d1.failures.length, 0, `D1 scenario: ${d1.failures.length} of ${d1.checks} checks failed`);
   console.log(`D1 scenario: ${d1.checks}/${d1.checks} checks`);
+  // Slice 9.4a features, the same checks the WebGL executor runs.
+  const r94 = scenario.run94a({ GS, makeProducer, buffer: new SharedArrayBuffer(1 << 22),
+    makeExecutor: (onPresent) => new Executor({ getExports: () => e, getMemory: () => memory.buffer, onPresent }) });
+  for (const msg of r94.failures) console.log(`FAIL 9.4a ${msg}`);
+  assert.strictEqual(r94.failures.length, 0, `9.4a scenario: ${r94.failures.length} of ${r94.checks} checks failed`);
+  console.log(`9.4a scenario: ${r94.checks}/${r94.checks} checks`);
   console.log(`PASS test-gpu-stream-software (${frames.length} presents, ${s.nativeDraws} native draws)`);
 })().catch((error) => {
   console.error('FAIL test-gpu-stream-software:', error && error.stack || error);

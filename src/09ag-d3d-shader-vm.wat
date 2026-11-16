@@ -213,7 +213,9 @@
         (if (i32.or (i32.eq (local.get $op) (i32.const 64)) (i32.eq (local.get $op) (i32.const 66))) (then
           (if (i32.or (i32.and (i32.ne (local.get $bank) (i32.const 3)) (i32.ne (local.get $bank) (i32.const 0)))
             (i32.and (i32.eq (local.get $op) (i32.const 64)) (i32.ne (local.get $bank) (i32.const 3)))) (then (return (i32.const 0))))
-          (if (i32.and (i32.ne (local.get $mod) (i32.const 0)) (i32.ne (local.get $mod) (select (i32.const 10) (i32.const 9) (i32.eq (local.get $bank) (i32.const 3))))) (then (return (i32.const 0))))
+          ;; t# takes _dz or _dw (projected texld, divide x,y by z or w); r# only _dz.
+          (if (i32.and (i32.ne (local.get $mod) (i32.const 0)) (i32.and (i32.ne (local.get $mod) (i32.const 9))
+            (i32.or (i32.ne (local.get $mod) (i32.const 10)) (i32.ne (local.get $bank) (i32.const 3))))) (then (return (i32.const 0))))
           (if (i32.and (i32.ne (i32.load offset=8 (local.get $p)) (i32.const 228)) (i32.ne (i32.load offset=8 (local.get $p)) (i32.const 244))) (then (return (i32.const 0)))))
           (else (if (i32.gt_u (local.get $mod) (i32.const 8)) (then (return (i32.const 0)))))))))
     (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $args)))
