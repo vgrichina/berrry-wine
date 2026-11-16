@@ -34,7 +34,9 @@ def confirm_receipt(receipt,guard,review_deadline):
 QUIT_ROUTES={'options':'keydown:27','leave-quest':None,'confirm-leave':None,'main-quit':None,'confirm-quit':None}
 def reserve():
     launch=read('launch.json')
-    assert launch['gameplayCutoff']==launch['deadline']-180,'immutable 180-second reserve missing'
+    seconds=launch.get('reserveSeconds',180)
+    assert seconds in (180,300) and launch['gameplayCutoff']==launch['deadline']-seconds,'immutable Quit reserve missing'
+    if launch.get('completionSession'):assert seconds==300,'original requires 300-second Quit reserve'
     assert launch['at']<launch['gameplayCutoff'],'reserve must be recorded before original'
     return launch['gameplayCutoff']
 def capture_phase():

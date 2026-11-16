@@ -1,6 +1,58 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs');
 async function main(){
+ const provenance=require('node:child_process').spawnSync('python3',['-B','-c',String.raw`
+import pathlib,json,subprocess,os,tempfile,importlib.util
+root=pathlib.Path.cwd();tool=root/'tools/disciples2-current-supervisor.py'
+spec=importlib.util.spec_from_file_location('supervisor',tool);s=importlib.util.module_from_spec(spec);spec.loader.exec_module(s)
+pool,index,rows=s.indexed_sources({'test.js':b'one','nested/helper.js':b'two'})
+manifest=dict(sourceIndexSHA256=s.digest(index),sources=rows)
+s.validate_sources(pool,manifest)
+for bad in (pool[:-1],pool+b'junk',pool[:-1]+b'x'):
+ try:s.validate_sources(bad,manifest)
+ except (AssertionError,ValueError):pass
+ else:raise AssertionError('incomplete/corrupt indexed inventory accepted')
+evidence=os.environ.get('DISCIPLES2_LAUNCH_TEST_OUT')
+with tempfile.TemporaryDirectory() as temporary:
+ out=pathlib.Path(evidence or temporary);out.mkdir(parents=True,exist_ok=True)
+ base=dict(cwd=str(root),args=['node','-e',"require('fs').writeFileSync(process.env.DISCIPLES2_TEST_MARKER,'executed')"],seconds=220,watchdogGrace=20)
+ holderpath=os.environ.get('DISCIPLES2_LAUNCH_HOLDER')
+ if holderpath:
+  h=json.loads(pathlib.Path(holderpath).read_text());manifest=json.loads(s.holder_bytes(h,'manifestPath'))
+  base.update(moduleHolder=holderpath,childInheritance='sealed-node-v1',immutableManifest=dict(manifestSHA256=h['manifestSHA256'],**{k:manifest[k] for k in ('gitSHA','sourceSHA256','moduleSHA256','preloadSHA256')}))
+ def run(name,recipe,valid=False):
+  d=out/name;d.mkdir();marker=d/'executed';env=os.environ.copy();env['DISCIPLES2_TEST_MARKER']=str(marker)
+  (d/'recipe.json').write_text(json.dumps(recipe))
+  p=subprocess.run(['python3','-B',str(tool),'run',str(d)],env=env,capture_output=True,timeout=45)
+  (d/'tool-wait.json').write_text(json.dumps(dict(exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=p.stdout.decode(),stderr=p.stderr.decode())))
+  assert marker.exists()==valid,(name,p.stderr.decode())
+  if valid:
+   for f in ('native-wait.json','watchdog-wait.json'):
+    w=json.loads((d/f).read_text());assert w['exit']==0 and w['actualWait'] and w['stdoutEOF'] and w['stderrEOF'],w
+   assert json.loads((d/'runtime-inputs.json').read_text())['sourceSHA256']==manifest['sourceSHA256']
+   assert json.loads((d/'inheritance-wait.json').read_text())['exit']==0
+  else:
+   assert p.returncode!=0 and (d/'prelaunch-refusal.json').exists(),name
+   assert not any((d/f).exists() for f in ('native-pid.json','watchdog-armed.json','launch.json')),name
+ for field in ('moduleHolder','immutableManifest','childInheritance'):
+  recipe=dict(base);recipe.pop(field,None);run('omitted-'+field,recipe)
+ if holderpath:
+  for name,change in [('missing-holder',dict(moduleHolder=str(out/'absent'))),('manifest-mismatch',dict(immutableManifest=dict(base['immutableManifest'],moduleSHA256='0'*64)))]:run(name,dict(base,**change))
+  for name,change in [('stale-holder',dict(startToken='0')),('unsealed-holder',dict(sealed=0)),('descriptor-mismatch',dict(fdPath=h['sourcePath']))]:
+   hp=out/(name+'.json');hp.write_text(json.dumps(dict(h,**change)));run(name,dict(base,moduleHolder=str(hp)))
+  # Actual production preload rejects omission in both supported child routes.
+  for name,code in [('worker-omitted-env',"new (require('worker_threads').Worker)('0',{eval:true,env:{}})"),('worker-omitted-preload',"new (require('worker_threads').Worker)('0',{eval:true,execArgv:[]})"),('process-omitted-env',"require('child_process').spawnSync(process.execPath,['-e','0'],{env:{}})")]:
+   d=out/name;d.mkdir();env,fds=s.frozen_inputs(d,base)
+   try:
+    p=subprocess.run(['node','--require',env['DISCIPLES2_PRELOAD'],'-e',code],cwd=root,env=env,capture_output=True,timeout=20)
+    assert p.returncode!=0 and b'sealed child' in p.stderr,(name,p.stderr)
+    (d/'wait.json').write_text(json.dumps(dict(exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stderr=p.stderr.decode())))
+   finally:
+    for fd in fds:os.close(fd)
+  run('valid-production-supervisor',base,True)
+ print('PASS mandatory sealed admission before native/watchdog spawn'+('; exact live Git holder, manifest and actual Worker/process inheritance' if holderpath else ' (holder-positive not requested)'))
+`],{encoding:'utf8',timeout:180000,env:process.env});
+ process.stdout.write(provenance.stdout||'');process.stderr.write(provenance.stderr||'');assert.equal(provenance.status,0);
  const closure=require('node:child_process').spawnSync('python3',['-B','-c',String.raw`
 import pathlib,json,time,tempfile,os,types,subprocess
 path='tools/disciples2-current-controller.py'
@@ -50,7 +102,8 @@ with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[
 c.URL='http://127.0.0.1:'+str(port)+'/ctl'
 os.environ.update(DISCIPLES2_CONTROL_URL=c.URL,DISCIPLES2_CONTROL_OUT=str(out))
 args=['node','test/run.js','--app=sol','--no-build','--no-threads','--real-ticks','--screen=1024x712','--max-seconds=35','--max-batches=10000000','--control='+str(port),'--quiet-api','--quiet-blocks','--no-close']
-c.save('recipe.json',dict(cwd=str(root),args=args,seconds=220,watchdogGrace=20,nativeScene=True,moduleHolder=os.environ['DISCIPLES2_MODULE_HOLDER']))
+h=json.loads(pathlib.Path(os.environ['DISCIPLES2_MODULE_HOLDER']).read_text());manifest=json.loads(pathlib.Path(h['manifestPath']).read_text())
+c.save('recipe.json',dict(cwd=str(root),args=args,seconds=220,watchdogGrace=20,nativeScene=True,moduleHolder=os.environ['DISCIPLES2_MODULE_HOLDER'],childInheritance='sealed-node-v1',immutableManifest=dict(manifestSHA256=h['manifestSHA256'],**{k:manifest[k] for k in ('gitSHA','sourceSHA256','moduleSHA256','preloadSHA256')})))
 p=subprocess.Popen(['python3','-B','tools/disciples2-current-supervisor.py','durablewait',str(out)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 try:
  end=time.time()+25
