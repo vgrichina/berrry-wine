@@ -85,13 +85,13 @@ The next prerequisite is a published and qualified native child census with
 capture-time and consume-time button identity and label checks. The conditional
 original route remains unused; installed Play, first-room gameplay and native
 Quit remain unproved. No host cleanup of an original was needed and no box was
-created. Removal of the unused original supervisor/controller wrappers and
-the extended qualification helper remain uncommitted WIP in the shared tree:
-the wrappers read mutable borrowed helpers and had not qualified immutable
-launch inheritance. They must not be mistaken for an admitted original runtime.
+created. The unused original supervisor/controller wrappers were removed:
+they read mutable borrowed helpers and had not qualified immutable launch
+inheritance. They must not be mistaken for an admitted original runtime.
 Two final canonical build attempts failed on active foreign changes (first
 native control-reader attribution, then renderer producer lifetime hashes).
 The core repair itself was already published after two successful locked full
-builds. The follow-up is not published while the fresh build gate fails.
+builds. Both owners repaired their gates; a third final locked full build then
+passed before publishing the extended qualification and wrapper removal.
 The run's result.json records this concrete next blocker and the published
 dependency repair separately.

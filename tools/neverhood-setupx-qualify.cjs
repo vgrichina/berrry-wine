@@ -32,7 +32,7 @@ function describe(bytes){
     imports:[...new Map(i.imports.map(x=>[x.module+'.'+x.symbol,x])).values()],
     names:Object.fromEntries(i.names),entries:Object.fromEntries(i.entries)};
 }
-async function native(bytes,wasmFile){
+async function native(bytes,wasmFile,dsetupBytes=null){
   const {createHostImports}=require('../lib/host-imports'),{makeFixture}=require('./kernel32-native-fixture');
   const {createNeLifecycle}=require('../lib/ne-lifecycle');
   const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),logs=[],words=[],entries=[];
@@ -76,7 +76,21 @@ async function native(bytes,wasmFile){
   const life=createNeLifecycle(owner,memory,[['SETUPX',bytes]],{maxBlocks:100000});let id=null,error=null,attached=false,retired=false;
   try {id=life.load('SETUPX');attached=life.liveModule('SETUPX');assert(attached);assert.deepEqual(context(),before);life.release(id);retired=!life.liveModule('SETUPX');assert(retired);assert.deepEqual(context(),before);}
   catch(failure){error={message:failure.message,stack:failure.stack,causes:failure.errors?.map(x=>String(x))};}
-  return {wasmFile,wasmSHA256:sha(wasm),aliasRegression,id,attached,retired,error,fault,logs,words,entries,before,after:context(),installerExecuted:false,guestPatched:false};
+  const setupxResult={id,attached,retired,error,fault,logs:[...logs],words:[...words],entries:[...entries],before,after:context()};
+  let chain=null;
+  if(dsetupBytes&&attached&&retired){
+    fault=null;logs.length=0;words.length=0;entries.length=0;
+    const chainBefore=context(),chainLife=createNeLifecycle(owner,memory,[['SETUPX',bytes],['DSETUP6E',dsetupBytes]],{maxBlocks:100000});
+    let chainId=null,chainError=null,chainAttached=false,chainRetired=false;
+    try{
+      chainId=chainLife.load('DSETUP6E');chainAttached=!!chainLife.liveModule('DSETUP6E');
+      assert(chainAttached);assert.deepEqual(context(),chainBefore);
+      chainLife.release(chainId);chainRetired=!chainLife.liveModule('DSETUP6E')&&!chainLife.liveModule('SETUPX');
+      assert(chainRetired);assert.deepEqual(context(),chainBefore);
+    }catch(failure){chainError={message:failure.message,stack:failure.stack,causes:failure.errors?.map(x=>String(x))};}
+    chain={id:chainId,attached:chainAttached,retired:chainRetired,error:chainError,fault,logs:[...logs],words:[...words],entries:[...entries],before:chainBefore,after:context()};
+  }
+  return {wasmFile,wasmSHA256:sha(wasm),aliasRegression,...setupxResult,chain,installerExecuted:false,guestPatched:false};
 }
 async function main(){
   const out=process.argv[2];assert(out,'usage: node tools/neverhood-setupx-qualify.cjs NEW_OUTPUT_DIR [WASM]');fs.mkdirSync(out,{recursive:false});
@@ -90,9 +104,9 @@ async function main(){
   const required=[...new Set(dsetup.imports.filter(x=>x.module==='SETUPX').map(x=>x.symbol))];
   assert(required.every(n=>target.entries.has(n)),'all genuine DSETUP6E SETUPX ordinals exist');
   assert(setupx.dependencies.every(x=>x.builtin==='fixed'),'actual static closure has only fixed system dependencies');
-  const result={pins:PINS,cabextractStderr:stderr,setupx,dsetup,requiredSetupxOrdinals:required,native:process.argv[3]?await native(bytes,process.argv[3]):null};
+  const result={pins:PINS,cabextractStderr:stderr,setupx,dsetup,requiredSetupxOrdinals:required,native:process.argv[3]?await native(bytes,process.argv[3],original):null};
   fs.writeFileSync(path.join(out,'qualification.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
-  console.log(JSON.stringify({setupxSHA256:setupx.sha256,dependencies:setupx.dependencies,required,native:result.native&&{attached:result.native.attached,retired:result.native.retired,error:result.native.error}},null,2));
+  console.log(JSON.stringify({setupxSHA256:setupx.sha256,dependencies:setupx.dependencies,required,native:result.native&&{attached:result.native.attached,retired:result.native.retired,error:result.native.error,chain:result.native.chain}},null,2));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={PINS,describe,native};
