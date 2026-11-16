@@ -41,9 +41,16 @@
   ;;
   ;; Decline reasons (d3d9_gps_stat 16 + r), and what each waits on:
   ;;   1 (retired in 9.5b: vertex shaders lower)
-  ;;   2 declaration with fixed-function T&L that is not an FVF layout
-  ;;     (stream 0, FVF order and offsets: $d9g_decl_fvf); 09aj registers
-  ;;     from the declaration's own map would close the rest
+  ;;   2 declaration with fixed-function T&L that has neither (or both of)
+  ;;     POSITION0 and POSITIONT0. A declaration that is not an FVF layout
+  ;;     is gathered into one since d9ms ("d9ms: gathered vertex input"),
+  ;;     and so are the 27 cases multi-stream, types past D3DCOLOR and
+  ;;     XYZW / XYZBn FVFs; 27 keeps POSITIONT under a VS, a declaration
+  ;;     of more than 15 elements under a VS, a POSITIONT one with PSIZE or
+  ;;     a non-D3DCOLOR colour, a blend without its BLENDWEIGHT /
+  ;;     BLENDINDICES (or a tween without POSITION1 / NORMAL1), a VERTEXBLEND
+  ;;     value D3D does not define, and an index past the 22-entry palette.
+  ;;     Vertex blending and tweening lower since d9ms ("vertex blending")
   ;;   3 no vertex pointer / bad stride   -
   ;;   4 offscreen colour target          RT objects for color surfaces
   ;;   5 render-target texture            RT-as-texture residency
@@ -1957,10 +1964,15 @@
             (i32.const 0x7f800000)) (i32.const 0x7f800000)) (then (return (i32.const -9))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $finite (i32.lt_u (local.get $i) (i32.const 48))))
+    ;; ---- d9ms: a blend's world is the identity; its matrices are c96..
+    (if (call $d9ms_blend_world) (then (call $d9ms_identity (i32.add (local.get $m) (i32.const 77840)))))
+    (if (global.get $d9ms_blend) (then (if (call $d9ms_blend_consts) (then (return (i32.const -27))))))
+    ;; ---- end d9ms
     (if (i32.or (global.get $d9g_tl_lit) (global.get $d9g_tl_nrm)) (then
       ;; DFX1 with the row-major world (+96), view (+160), projection (+224).
       (memory.copy (local.get $D) (local.get $d) (i32.const 288))
       (memory.copy (i32.add (local.get $D) (i32.const 96)) (i32.add (global.get $d9g_pw) (i32.const 2708)) (i32.const 64))
+      (if (call $d9ms_blend_world) (then (call $d9ms_identity (i32.add (local.get $D) (i32.const 96))))) ;; d9ms
       (memory.copy (i32.add (local.get $D) (i32.const 160)) (i32.add (global.get $d9g_pw) (i32.const 2068)) (i32.const 64))
       (memory.copy (i32.add (local.get $D) (i32.const 224)) (i32.add (global.get $d9g_pw) (i32.const 2132)) (i32.const 64))
       (if (global.get $d9g_tl_lit)
@@ -1979,7 +1991,8 @@
     (local.set $i (i32.const 0))
     (loop $cache
       (local.set $e (i32.add (i32.add (local.get $m) (i32.const 78080)) (i32.mul (local.get $i) (i32.const 1452))))
-      (if (i32.and (i32.ne (i32.load (local.get $e)) (i32.const 0)) (i32.eq (i32.load offset=8 (local.get $e)) (local.get $len)))
+      (if (i32.and (i32.and (i32.ne (i32.load (local.get $e)) (i32.const 0)) (i32.eq (i32.load offset=8 (local.get $e)) (local.get $len)))
+            (i32.eq (call $d9ms_tl_key (local.get $i)) (global.get $d9ms_blend))) ;; d9ms
         (then (if (if (result i32) (call $d3g_row_eq (i32.add (local.get $e) (i32.const 12)) (local.get $d) (local.get $len))
               (then (call $d3g_row_eq (i32.add (i32.add (local.get $m) (i32.const 102400)) (i32.shl (local.get $i) (i32.const 6))) (local.get $S) (i32.const 64)))
               (else (i32.const 0)))
@@ -2034,6 +2047,10 @@
         (then (i32.store (local.get $rec) (i32.const 0))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $defs)))
+    ;; d9ms: the blend / tween prologue (a new IR, freed after the emit).
+    (if (global.get $d9ms_blend) (then
+      (local.set $ir (call $d9ms_blend_ir (local.get $ir)))
+      (if (i32.eqz (local.get $ir)) (then (call $d3d_fixed_free (local.get $bundle)) (return (i32.const -9))))))
     ;; Implicit DCLs for the FVF's inputs.
     (local.set $imp (i32.add (local.get $m) (i32.const 101952)))
     (memory.fill (local.get $imp) (i32.const 0) (i32.const 64))
@@ -2049,9 +2066,11 @@
         (i32.or (i32.const 0x80000005) (i32.shl (local.get $i) (i32.const 16))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $tcs)))
+    (call $d9ms_blend_dcls (local.get $imp)) ;; d9ms
     (global.set $vc_implicit_dcl (local.get $imp))
     (local.set $vs (call $d9g_shader_emit (local.get $ir) (global.get $GPS_STAGE_VS)))
     (global.set $vc_implicit_dcl (i32.const 0))
+    (if (global.get $d9ms_blend) (then (call $d3d_shader_vm_free (local.get $ir)))) ;; d9ms
     (if (i32.and (i32.ne (local.get $vs) (i32.const 0)) (i32.eqz (local.get $guest_ps)))
       (then
         (local.set $ps (call $d9cl_ps_emit (i32.load offset=8 (local.get $bundle)))) ;; d9cl
@@ -2066,10 +2085,895 @@
     (i32.store (local.get $e) (local.get $vs))
     (i32.store offset=4 (local.get $e) (local.get $ps))
     (i32.store offset=8 (local.get $e) (local.get $len))
+    (call $d9ms_tl_key_set (local.get $i) (global.get $d9ms_blend)) ;; d9ms
     (memory.copy (i32.add (local.get $e) (i32.const 12)) (local.get $d) (local.get $len))
     (memory.copy (i32.add (i32.add (local.get $m) (i32.const 102400)) (i32.shl (local.get $i) (i32.const 6))) (local.get $S) (i32.const 64))
     (global.set $d9g_tl_ps (local.get $ps))
     (local.get $vs))
+
+  ;; ---- d9ms: gathered vertex input ------------------------------------------
+  ;; A vertex input the executor cannot read in place -- a declaration
+  ;; element on stream 1..15, a D3DDECLTYPE past D3DCOLOR, a declaration that
+  ;; is not exactly an FVF layout under fixed function, an XYZW / XYZBn FVF
+  ;; -- is gathered per draw into one interleaved arena vertex of canonical
+  ;; types and drawn as DRAW_UP. Each element becomes FLOATn (its D3D
+  ;; component count, converted exactly as D3D defines the type: the f64
+  ;; quotient rounded once to f32) or stays D3DCOLOR (4 raw bytes; the
+  ;; executor reads it in D3D order). Vertex v of the draw reads stream s at
+  ;; pointer_s + v * stride_s: pointer_s is the base-vertex pointer 09ae
+  ;; published ($d3d9_stream_pointer), v runs MinIndex .. MinIndex +
+  ;; NumVertices (0 .. n for a non-indexed draw), so BaseVertexIndex,
+  ;; MinIndex and NumVertices are the D3D ones. A Draw*UP is stream 0.
+  ;; Stream frequency cannot reach a draw: SetStreamSourceFreq is still
+  ;; crash_unimplemented in 09ad.
+  ;;
+  ;; Vertex stages from a gathered input ($d9ms_vsmode):
+  ;;   1 guest VS: every element in declared order, a LAYOUT of its own
+  ;;     (POSITIONT stays reason 27, as for an ungathered declaration);
+  ;;   2 fixed T&L: POSITION / NORMAL / PSIZE / COLOR0..1 / TEXCOORD0..7 by
+  ;;     semantic (others are not fixed-function inputs and are skipped),
+  ;;     run as the FVF those semantics make ($d9ms_fvf, for 09aj's shape);
+  ;;     texcoord gaps are zero FLOAT2 sets; the LAYOUT is ours;
+  ;;   0 POSITIONT: gathered in exactly the XYZRHW FVF's byte order (so
+  ;;     $d9g_layout's texmap layout applies); colours must be D3DCOLOR and
+  ;;     PSIZE declines (27).
+  ;; Block $d9ms_mem: +0 gather plan 16 x 32 {src wasm (vertex 0 + element
+  ;; offset), src stride, src type (255 = zero fill), dst offset, dst comps,
+  ;; usage, index, dst vtype}, +512 synthetic declaration from an FVF (the
+  ;; 09ae object shape: +12 tag, +16 bytes, +24 elements).
+  (global $d9ms_mem (mut i32) (i32.const 0))
+  (global $d9ms_n (mut i32) (i32.const 0))
+  (global $d9ms_stride (mut i32) (i32.const 0))
+  (global $d9ms_vsmode (mut i32) (i32.const 0))
+  (global $d9ms_fvf (mut i32) (i32.const 0))
+
+  (func $d9ms_m (result i32)
+    (local $g i32)
+    (if (i32.eqz (global.get $d9ms_mem)) (then
+      (local.set $g (call $gps_alloc (i32.const 4096)))
+      (if (i32.eqz (local.get $g)) (then (call $d9g_fail (i32.const 40))))
+      (global.set $d9ms_mem (call $gps_wa (local.get $g)))
+      (memory.fill (global.get $d9ms_mem) (i32.const 0) (i32.const 4096))))
+    (global.get $d9ms_mem))
+
+  ;; D3DDECLTYPE 0..16: components (low nibble) and bytes (high nibble / 4).
+  (func $d9ms_comps (param $type i32) (result i32)
+    (i32.and (i32.load8_u (i32.add (global.get $d9ms_types) (local.get $type))) (i32.const 15)))
+  (func $d9ms_bytes (param $type i32) (result i32)
+    (i32.shr_u (i32.and (i32.load8_u (i32.add (global.get $d9ms_types) (local.get $type))) (i32.const 0xf0)) (i32.const 2)))
+  (global $d9ms_types (mut i32) (i32.const 0))
+  (func $d9ms_types_init
+    (local $t i32)
+    (if (global.get $d9ms_types) (then (return)))
+    (local.set $t (i32.add (call $d9ms_m) (i32.const 1000)))
+    ;; FLOAT1..4, D3DCOLOR, UBYTE4, SHORT2, SHORT4, UBYTE4N, SHORT2N, SHORT4N,
+    ;; USHORT2N, USHORT4N, UDEC3, DEC3N, FLOAT16_2, FLOAT16_4.
+    (i64.store (local.get $t) (i64.const 0x2412141444332211))
+    (i64.store offset=8 (local.get $t) (i64.const 0x1213132412241214))
+    (i32.store8 offset=16 (local.get $t) (i32.const 0x24))
+    (global.set $d9ms_types (local.get $t)))
+
+  ;; Synthetic declaration for an untransformed FVF (XYZ, XYZW, XYZB1..5)
+  ;; into +512; its wasm address, or 0 when the FVF is not one of those.
+  (func $d9ms_fvf_decl (param $fvf i32) (result i32)
+    (local $dw i32) (local $n i32) (local $off i32) (local $pos i32) (local $nb i32) (local $nw i32)
+    (local $beta i32) (local $i i32) (local $ntex i32) (local $code i32)
+    (local.set $dw (i32.add (call $d9ms_m) (i32.const 512)))
+    (local.set $pos (i32.and (local.get $fvf) (i32.const 0x400e)))
+    (if (i32.eq (local.get $pos) (i32.const 4)) (then (return (i32.const 0))))
+    (if (i32.or (i32.eqz (local.get $pos)) (i32.and (local.get $pos) (i32.const 0x4000))) (then
+      (if (i32.ne (local.get $pos) (i32.const 0x4002)) (then (return (i32.const 0))))))
+    (local.set $ntex (i32.and (i32.shr_u (local.get $fvf) (i32.const 8)) (i32.const 15)))
+    (if (i32.gt_u (local.get $ntex) (i32.const 8)) (then (return (i32.const 0))))
+    (i32.store offset=12 (local.get $dw) (i32.const 0))
+    (if (i32.eq (local.get $pos) (i32.const 0x4002))
+      (then
+        (call $d9ms_el (local.get $dw) (local.get $n) (i32.const 0) (i32.const 3) (i32.const 0) (i32.const 0))
+        (local.set $off (i32.const 16)))
+      (else
+        (call $d9ms_el (local.get $dw) (local.get $n) (i32.const 0) (i32.const 2) (i32.const 0) (i32.const 0))
+        (local.set $off (i32.const 12))
+        (local.set $nb (i32.shr_s (i32.sub (local.get $pos) (i32.const 4)) (i32.const 1)))
+        (if (i32.gt_s (local.get $nb) (i32.const 0)) (then
+          (local.set $beta (i32.and (local.get $fvf) (i32.const 0x9000)))
+          (if (i32.eq (local.get $beta) (i32.const 0x9000)) (then (return (i32.const 0))))
+          (local.set $nw (i32.sub (local.get $nb) (i32.ne (local.get $beta) (i32.const 0))))
+          (if (local.get $nw) (then
+            (local.set $n (i32.add (local.get $n) (i32.const 1)))
+            (call $d9ms_el (local.get $dw) (local.get $n) (local.get $off) (i32.sub (local.get $nw) (i32.const 1))
+              (i32.const 1) (i32.const 0))
+            (local.set $off (i32.add (local.get $off) (i32.shl (local.get $nw) (i32.const 2))))))
+          (if (local.get $beta) (then
+            (local.set $n (i32.add (local.get $n) (i32.const 1)))
+            (call $d9ms_el (local.get $dw) (local.get $n) (local.get $off)
+              (select (i32.const 5) (i32.const 4) (i32.eq (local.get $beta) (i32.const 0x1000))) (i32.const 2) (i32.const 0))
+            (local.set $off (i32.add (local.get $off) (i32.const 4)))))))))
+      (if (i32.and (local.get $fvf) (i32.const 16)) (then
+        (local.set $n (i32.add (local.get $n) (i32.const 1)))
+        (call $d9ms_el (local.get $dw) (local.get $n) (local.get $off) (i32.const 2) (i32.const 3) (i32.const 0))
+        (local.set $off (i32.add (local.get $off) (i32.const 12)))))
+      (if (i32.and (local.get $fvf) (i32.const 32)) (then
+        (local.set $n (i32.add (local.get $n) (i32.const 1)))
+        (call $d9ms_el (local.get $dw) (local.get $n) (local.get $off) (i32.const 0) (i32.const 4) (i32.const 0))
+        (local.set $off (i32.add (local.get $off) (i32.const 4)))))
+      (if (i32.and (local.get $fvf) (i32.const 64)) (then
+        (local.set $n (i32.add (local.get $n) (i32.const 1)))
+        (call $d9ms_el (local.get $dw) (local.get $n) (local.get $off) (i32.const 4) (i32.const 10) (i32.const 0))
+        (local.set $off (i32.add (local.get $off) (i32.const 4)))))
+      (if (i32.and (local.get $fvf) (i32.const 128)) (then
+        (local.set $n (i32.add (local.get $n) (i32.const 1)))
+        (call $d9ms_el (local.get $dw) (local.get $n) (local.get $off) (i32.const 4) (i32.const 10) (i32.const 1))
+        (local.set $off (i32.add (local.get $off) (i32.const 4)))))
+      (block $tdone (loop $tc
+        (br_if $tdone (i32.ge_u (local.get $i) (local.get $ntex)))
+        ;; FVF size code 0..3 = 2, 3, 4, 1 floats -> FLOAT2, FLOAT3, FLOAT4, FLOAT1.
+        (local.set $code (i32.and (i32.shr_u (local.get $fvf) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 1)))) (i32.const 3)))
+        (local.set $n (i32.add (local.get $n) (i32.const 1)))
+        (call $d9ms_el (local.get $dw) (local.get $n) (local.get $off)
+          (i32.and (i32.add (local.get $code) (i32.const 1)) (i32.const 3)) (i32.const 5) (local.get $i))
+        (local.set $off (i32.add (local.get $off) (i32.shl (call $d9g_tc_size (local.get $fvf) (local.get $i)) (i32.const 2))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $tc)))
+    (local.set $n (i32.add (local.get $n) (i32.const 1)))
+    (i32.store offset=16 (local.get $dw) (i32.shl (i32.add (local.get $n) (i32.const 1)) (i32.const 3)))
+    (local.get $dw))
+
+  (func $d9ms_el (param $dw i32) (param $i i32) (param $off i32) (param $type i32) (param $usage i32) (param $index i32)
+    (local $el i32)
+    (local.set $el (i32.add (i32.add (local.get $dw) (i32.const 24)) (i32.shl (local.get $i) (i32.const 3))))
+    (i32.store16 (local.get $el) (i32.const 0))
+    (i32.store16 offset=2 (local.get $el) (local.get $off))
+    (i32.store8 offset=4 (local.get $el) (local.get $type))
+    (i32.store8 offset=5 (local.get $el) (i32.const 0))
+    (i32.store8 offset=6 (local.get $el) (local.get $usage))
+    (i32.store8 offset=7 (local.get $el) (local.get $index)))
+
+  ;; Does declaration $dw need a gather under a guest VS? (an element off
+  ;; stream 0 or past D3DCOLOR).
+  (func $d9ms_decl_needs (param $dw i32) (result i32)
+    (local $n i32) (local $i i32) (local $el i32)
+    (local.set $n (i32.sub (i32.shr_u (i32.load offset=16 (local.get $dw)) (i32.const 3)) (i32.const 1)))
+    (block $done (loop $els
+      (br_if $done (i32.ge_s (local.get $i) (local.get $n)))
+      (local.set $el (i32.add (i32.add (local.get $dw) (i32.const 24)) (i32.shl (local.get $i) (i32.const 3))))
+      (if (i32.or (i32.ne (i32.load16_u (local.get $el)) (i32.const 0)) (i32.gt_u (i32.load8_u offset=4 (local.get $el)) (i32.const 4)))
+        (then (return (i32.const 1))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $els)))
+    (i32.const 0))
+
+  ;; One plan entry: element $el of $dw read from its stream into dst
+  ;; offset $doff as $dcomps components (or D3DCOLOR when $dcomps is 0).
+  ;; Advances $d9ms_n; the dst offset after it, or a negative reason.
+  (func $d9ms_add (param $el i32) (param $doff i32) (param $dcomps i32) (param $kind i32) (param $desc i32) (result i32)
+    (local $e i32) (local $s i32) (local $type i32) (local $ptr i32) (local $stride i32) (local $slot i32) (local $off i32)
+    (if (i32.ge_u (global.get $d9ms_n) (i32.const 16)) (then (return (i32.const -27))))
+    (local.set $e (i32.add (call $d9ms_m) (i32.shl (global.get $d9ms_n) (i32.const 5))))
+    (global.set $d9ms_n (i32.add (global.get $d9ms_n) (i32.const 1)))
+    (i32.store offset=12 (local.get $e) (local.get $doff))
+    (i32.store offset=16 (local.get $e) (local.get $dcomps))
+    (i32.store offset=28 (local.get $e) (select (i32.sub (local.get $dcomps) (i32.const 1)) (global.get $GPS_VTYPE_D3DCOLOR) (local.get $dcomps)))
+    (if (i32.eqz (local.get $el)) (then
+      ;; A zero-filled texcoord gap (usage/index set by the caller).
+      (i32.store offset=8 (local.get $e) (i32.const 255))
+      (return (i32.add (local.get $doff) (i32.shl (local.get $dcomps) (i32.const 2))))))
+    (local.set $s (i32.load16_u (local.get $el)))
+    (local.set $type (i32.load8_u offset=4 (local.get $el)))
+    (local.set $off (i32.load16_u offset=2 (local.get $el)))
+    (i32.store offset=20 (local.get $e) (i32.load8_u offset=6 (local.get $el)))
+    (i32.store offset=24 (local.get $e) (i32.load8_u offset=7 (local.get $el)))
+    (if (i32.or (i32.gt_u (local.get $s) (i32.const 15)) (i32.or (i32.gt_u (local.get $type) (i32.const 16))
+          (i32.ne (i32.load8_u offset=5 (local.get $el)) (i32.const 0))))
+      (then (return (i32.const -27))))
+    (if (i32.le_u (local.get $kind) (i32.const 1))
+      (then
+        ;; Draw*UP: stream 0 is the user pointer; nothing else is bound.
+        (if (local.get $s) (then (return (i32.const -3))))
+        (local.set $ptr (i32.load offset=32 (local.get $desc)))
+        (local.set $stride (i32.load offset=36 (local.get $desc))))
+      (else
+        (local.set $slot (call $g2w (call $d3d9_stream_slot (i32.load offset=4 (local.get $desc)) (local.get $s))))
+        (local.set $ptr (i32.load offset=12 (local.get $slot)))
+        (local.set $stride (i32.load offset=8 (local.get $slot)))))
+    (if (i32.or (i32.or (i32.eqz (local.get $ptr)) (i32.eqz (local.get $stride)))
+          (i32.or (i32.gt_u (local.get $stride) (i32.const 1024))
+            (i32.gt_u (i32.add (local.get $off) (call $d9ms_bytes (local.get $type))) (local.get $stride))))
+      (then (return (i32.const -3))))
+    (i32.store (local.get $e) (i32.add (call $g2w (local.get $ptr)) (local.get $off)))
+    (i32.store offset=4 (local.get $e) (local.get $stride))
+    (i32.store offset=8 (local.get $e) (local.get $type))
+    (i32.add (local.get $doff) (select (i32.shl (local.get $dcomps) (i32.const 2)) (i32.const 4) (local.get $dcomps))))
+
+  ;; Canonical dst components of $type: 0 = D3DCOLOR (kept raw).
+  (func $d9ms_dcomps (param $type i32) (result i32)
+    (select (i32.const 0) (call $d9ms_comps (local.get $type)) (i32.eq (local.get $type) (i32.const 4))))
+
+  ;; Plans the gather for this draw. $vsmode 1 (a guest VS) or 2 (fixed
+  ;; function: becomes 0 when the input is POSITIONT). Sets $d9ms_n,
+  ;; $d9ms_stride, $d9ms_vsmode, $d9ms_fvf; 0, or a decline reason.
+  (func $d9ms_plan (param $dw i32) (param $vsmode i32) (param $kind i32) (param $desc i32) (result i32)
+    (local $n i32) (local $i i32) (local $el i32) (local $usage i32) (local $idx i32) (local $type i32)
+    (local $off i32) (local $pos i32) (local $post i32) (local $nrm i32) (local $psz i32) (local $c0 i32) (local $c1 i32)
+    (local $tc i32) (local $ntex i32) (local $fvf i32) (local $k i32) (local $t i32) (local $c i32) (local $e i32)
+    (local $bw i32) (local $bi i32) (local $pos1 i32) (local $nrm1 i32)
+    (call $d9ms_types_init)
+    (global.set $d9ms_n (i32.const 0))
+    (local.set $n (i32.sub (i32.shr_u (i32.load offset=16 (local.get $dw)) (i32.const 3)) (i32.const 1)))
+    (if (i32.or (i32.lt_s (local.get $n) (i32.const 1)) (i32.gt_u (local.get $n) (i32.const 16))) (then (return (i32.const 27))))
+    (if (i32.eq (local.get $vsmode) (i32.const 1)) (then
+      (block $done (loop $els
+        (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+        (local.set $el (i32.add (i32.add (local.get $dw) (i32.const 24)) (i32.shl (local.get $i) (i32.const 3))))
+        (if (i32.eq (i32.load8_u offset=6 (local.get $el)) (i32.const 9)) (then (return (i32.const 27))))
+        (local.set $off (call $d9ms_add (local.get $el) (local.get $off)
+          (call $d9ms_dcomps (i32.load8_u offset=4 (local.get $el))) (local.get $kind) (local.get $desc)))
+        (if (i32.lt_s (local.get $off) (i32.const 0)) (then (return (i32.sub (i32.const 0) (local.get $off)))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $els)))
+      ;; The executor repacks each element to a 16-byte lane, at most 255 bytes.
+      (if (i32.gt_u (global.get $d9ms_n) (i32.const 15)) (then (return (i32.const 27))))
+      (global.set $d9ms_stride (local.get $off))
+      (global.set $d9ms_vsmode (i32.const 1))
+      ;; (the FVF the VS selection in $d9g_draw_try accepts)
+      (global.set $d9ms_fvf (i32.const 2))
+      (return (i32.const 0))))
+    ;; Fixed function: find the fixed inputs by semantic.
+    (block $done (loop $find
+      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $el (i32.add (i32.add (local.get $dw) (i32.const 24)) (i32.shl (local.get $i) (i32.const 3))))
+      (local.set $usage (i32.load8_u offset=6 (local.get $el)))
+      (local.set $idx (i32.load8_u offset=7 (local.get $el)))
+      (if (i32.eqz (local.get $idx)) (then
+        (if (i32.eqz (local.get $usage)) (then (local.set $pos (local.get $el))))
+        (if (i32.eq (local.get $usage) (i32.const 9)) (then (local.set $post (local.get $el))))
+        (if (i32.eq (local.get $usage) (i32.const 3)) (then (local.set $nrm (local.get $el))))
+        (if (i32.eq (local.get $usage) (i32.const 4)) (then (local.set $psz (local.get $el))))
+        ;; blend inputs
+        (if (i32.eq (local.get $usage) (i32.const 1)) (then (local.set $bw (local.get $el))))
+        (if (i32.eq (local.get $usage) (i32.const 2)) (then (local.set $bi (local.get $el))))))
+      (if (i32.eq (local.get $idx) (i32.const 1)) (then
+        (if (i32.eqz (local.get $usage)) (then (local.set $pos1 (local.get $el))))
+        (if (i32.eq (local.get $usage) (i32.const 3)) (then (local.set $nrm1 (local.get $el))))))
+      (if (i32.eq (local.get $usage) (i32.const 10)) (then
+        (if (i32.eqz (local.get $idx)) (then (local.set $c0 (local.get $el))))
+        (if (i32.eq (local.get $idx) (i32.const 1)) (then (local.set $c1 (local.get $el))))))
+      (if (i32.and (i32.eq (local.get $usage) (i32.const 5)) (i32.lt_u (local.get $idx) (i32.const 8))) (then
+        (i32.store (i32.add (i32.add (call $d9ms_m) (i32.const 896)) (i32.shl (local.get $idx) (i32.const 2))) (local.get $el))
+        (local.set $tc (i32.or (local.get $tc) (i32.shl (i32.const 1) (local.get $idx))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $find)))
+    (if (i32.eqz (i32.xor (i32.eqz (local.get $pos)) (i32.eqz (local.get $post)))) (then (return (i32.const 2))))
+    (local.set $ntex (i32.sub (i32.const 32) (i32.clz (local.get $tc))))
+    (if (local.get $post)
+      (then
+        ;; XYZRHW byte order: POSITIONT as 4 floats, D3DCOLOR colours, sets.
+        (if (local.get $psz) (then (return (i32.const 27))))
+        (if (i32.and (i32.ne (local.get $c0) (i32.const 0)) (i32.ne (i32.load8_u offset=4 (local.get $c0)) (i32.const 4)))
+          (then (return (i32.const 27))))
+        (if (i32.and (i32.ne (local.get $c1) (i32.const 0)) (i32.ne (i32.load8_u offset=4 (local.get $c1)) (i32.const 4)))
+          (then (return (i32.const 27))))
+        (local.set $fvf (i32.const 4))
+        (local.set $off (call $d9ms_add (local.get $post) (i32.const 0) (i32.const 4) (local.get $kind) (local.get $desc))))
+      (else
+        (local.set $fvf (i32.const 2))
+        (local.set $off (call $d9ms_add (local.get $pos) (i32.const 0)
+          (select (i32.const 4) (call $d9ms_dcomps (i32.load8_u offset=4 (local.get $pos)))
+            (i32.eq (i32.load8_u offset=4 (local.get $pos)) (i32.const 4)))
+          (local.get $kind) (local.get $desc)))
+        (if (i32.and (i32.ne (local.get $nrm) (i32.const 0)) (i32.ge_s (local.get $off) (i32.const 0))) (then
+          (local.set $fvf (i32.or (local.get $fvf) (i32.const 16)))
+          (local.set $off (call $d9ms_add (local.get $nrm) (local.get $off)
+            (select (i32.const 4) (call $d9ms_dcomps (i32.load8_u offset=4 (local.get $nrm)))
+              (i32.eq (i32.load8_u offset=4 (local.get $nrm)) (i32.const 4)))
+            (local.get $kind) (local.get $desc)))))
+        (if (i32.and (i32.ne (local.get $psz) (i32.const 0)) (i32.ge_s (local.get $off) (i32.const 0))) (then
+          (local.set $fvf (i32.or (local.get $fvf) (i32.const 32)))
+          (local.set $off (call $d9ms_add (local.get $psz) (local.get $off)
+            (select (i32.const 4) (call $d9ms_dcomps (i32.load8_u offset=4 (local.get $psz)))
+              (i32.eq (i32.load8_u offset=4 (local.get $psz)) (i32.const 4)))
+            (local.get $kind) (local.get $desc)))))
+        (if (i32.ge_s (local.get $off) (i32.const 0)) (then
+          (local.set $off (call $d9ms_blend_plan (local.get $bw) (local.get $bi) (local.get $pos1) (local.get $nrm1)
+            (local.get $nrm) (local.get $off) (local.get $kind) (local.get $desc)))))))
+    (if (i32.lt_s (local.get $off) (i32.const 0)) (then (return (i32.sub (i32.const 0) (local.get $off)))))
+    (if (local.get $c0) (then
+      (local.set $fvf (i32.or (local.get $fvf) (i32.const 64)))
+      (local.set $off (call $d9ms_add (local.get $c0) (local.get $off)
+        (call $d9ms_dcomps (i32.load8_u offset=4 (local.get $c0))) (local.get $kind) (local.get $desc)))
+      (if (i32.lt_s (local.get $off) (i32.const 0)) (then (return (i32.sub (i32.const 0) (local.get $off)))))))
+    (if (local.get $c1) (then
+      (local.set $fvf (i32.or (local.get $fvf) (i32.const 128)))
+      (local.set $off (call $d9ms_add (local.get $c1) (local.get $off)
+        (call $d9ms_dcomps (i32.load8_u offset=4 (local.get $c1))) (local.get $kind) (local.get $desc)))
+      (if (i32.lt_s (local.get $off) (i32.const 0)) (then (return (i32.sub (i32.const 0) (local.get $off)))))))
+    (local.set $fvf (i32.or (local.get $fvf) (i32.shl (local.get $ntex) (i32.const 8))))
+    (block $tdone (loop $sets
+      (br_if $tdone (i32.ge_u (local.get $k) (local.get $ntex)))
+      (if (i32.and (local.get $tc) (i32.shl (i32.const 1) (local.get $k)))
+        (then
+          (local.set $el (i32.load (i32.add (i32.add (call $d9ms_m) (i32.const 896)) (i32.shl (local.get $k) (i32.const 2)))))
+          (local.set $t (i32.load8_u offset=4 (local.get $el)))
+          ;; A D3DCOLOR set is read as its 4 normalized floats.
+          (local.set $c (select (i32.const 4) (call $d9ms_comps (local.get $t)) (i32.eq (local.get $t) (i32.const 4))))
+          (local.set $off (call $d9ms_add (local.get $el) (local.get $off)
+            (select (i32.const 0) (local.get $c) (i32.and (i32.eq (local.get $t) (i32.const 4)) (i32.ne (local.get $post) (i32.const 0))))
+            (local.get $kind) (local.get $desc)))
+          (if (i32.lt_s (local.get $off) (i32.const 0)) (then (return (i32.sub (i32.const 0) (local.get $off)))))
+          ;; POSITIONT: the FVF layout reads a set as floats only.
+          (if (i32.and (i32.eq (local.get $t) (i32.const 4)) (i32.ne (local.get $post) (i32.const 0))) (then (return (i32.const 27)))))
+        (else
+          (local.set $c (i32.const 2))
+          (local.set $e (i32.add (call $d9ms_m) (i32.shl (global.get $d9ms_n) (i32.const 5))))
+          (local.set $off (call $d9ms_add (i32.const 0) (local.get $off) (i32.const 2) (local.get $kind) (local.get $desc)))
+          (i32.store offset=20 (local.get $e) (i32.const 5))
+          (i32.store offset=24 (local.get $e) (local.get $k))))
+      ;; FVF size code of $c floats: 1 -> 3, 2 -> 0, 3 -> 1, 4 -> 2.
+      (local.set $fvf (i32.or (local.get $fvf) (i32.shl (i32.and (i32.add (local.get $c) (i32.const 2)) (i32.const 3))
+        (i32.add (i32.const 16) (i32.shl (local.get $k) (i32.const 1))))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br $sets)))
+    (global.set $d9ms_stride (local.get $off))
+    (global.set $d9ms_fvf (local.get $fvf))
+    (global.set $d9ms_vsmode (select (i32.const 0) (i32.const 2) (i32.ne (local.get $post) (i32.const 0))))
+    (i32.const 0))
+
+  ;; IEEE half -> f32 (exact: every half is an f32).
+  (func $d9ms_half (param $h i32) (result f32)
+    (local $e i32) (local $m i32) (local $s i32)
+    (local.set $s (i32.shl (i32.and (local.get $h) (i32.const 0x8000)) (i32.const 16)))
+    (local.set $e (i32.and (i32.shr_u (local.get $h) (i32.const 10)) (i32.const 31)))
+    (local.set $m (i32.and (local.get $h) (i32.const 0x3ff)))
+    (if (i32.eqz (local.get $e)) (then
+      (return (f32.mul (f32.convert_i32_s (select (i32.sub (i32.const 0) (local.get $m)) (local.get $m) (local.get $s)))
+        (f32.const 0x1p-24)))))
+    (if (i32.eq (local.get $e) (i32.const 31)) (then
+      (return (f32.reinterpret_i32 (i32.or (local.get $s)
+        (i32.or (i32.const 0x7f800000) (select (i32.const 0x400000) (i32.const 0) (local.get $m))))))))
+    (f32.reinterpret_i32 (i32.or (local.get $s) (i32.or (i32.shl (i32.add (local.get $e) (i32.const 112)) (i32.const 23))
+      (i32.shl (local.get $m) (i32.const 13))))))
+
+  ;; Component $c of a $type element at wasm $src, as D3D defines it.
+  (func $d9ms_comp (param $src i32) (param $type i32) (param $c i32) (result f32)
+    (local $raw i32)
+    (block $f16 (block $dec3n (block $udec3 (block $usn (block $sn (block $ubn (block $short (block $ub (block $flt
+      (br_table $flt $flt $flt $flt $ub $ub $short $short $ubn $sn $sn $usn $usn $udec3 $dec3n $f16 $f16 (local.get $type)))
+      (return (f32.load (i32.add (local.get $src) (i32.shl (local.get $c) (i32.const 2))))))
+      (return (f32.convert_i32_u (i32.load8_u (i32.add (local.get $src) (local.get $c))))))
+      (return (f32.convert_i32_s (i32.load16_s (i32.add (local.get $src) (i32.shl (local.get $c) (i32.const 1)))))))
+      (return (f32.demote_f64 (f64.div (f64.convert_i32_u (i32.load8_u (i32.add (local.get $src) (local.get $c)))) (f64.const 255)))))
+      (return (f32.demote_f64 (f64.div (f64.convert_i32_s (i32.load16_s (i32.add (local.get $src) (i32.shl (local.get $c) (i32.const 1)))))
+        (f64.const 32767)))))
+      (return (f32.demote_f64 (f64.div (f64.convert_i32_u (i32.load16_u (i32.add (local.get $src) (i32.shl (local.get $c) (i32.const 1)))))
+        (f64.const 65535)))))
+      (return (f32.convert_i32_u (i32.and (i32.shr_u (i32.load (local.get $src)) (i32.mul (local.get $c) (i32.const 10))) (i32.const 0x3ff)))))
+      (local.set $raw (i32.and (i32.shr_u (i32.load (local.get $src)) (i32.mul (local.get $c) (i32.const 10))) (i32.const 0x3ff)))
+      (return (f32.demote_f64 (f64.div (f64.convert_i32_s
+        (select (i32.sub (local.get $raw) (i32.const 1024)) (local.get $raw) (i32.gt_u (local.get $raw) (i32.const 511))))
+        (f64.const 511)))))
+    (call $d9ms_half (i32.load16_u (i32.add (local.get $src) (i32.shl (local.get $c) (i32.const 1))))))
+
+  ;; Gathers vertices $min .. $min + $num into wasm $dst ($d9ms_stride each).
+  (func $d9ms_gather (param $dst i32) (param $min i32) (param $num i32)
+    (local $v i32) (local $i i32) (local $e i32) (local $src i32) (local $d i32) (local $type i32)
+    (local $c i32) (local $sc i32) (local $dc i32) (local $out i32)
+    (block $vdone (loop $verts
+      (br_if $vdone (i32.ge_u (local.get $v) (local.get $num)))
+      (local.set $out (i32.add (local.get $dst) (i32.mul (local.get $v) (global.get $d9ms_stride))))
+      (local.set $i (i32.const 0))
+      (block $edone (loop $els
+        (br_if $edone (i32.ge_u (local.get $i) (global.get $d9ms_n)))
+        (local.set $e (i32.add (call $d9ms_m) (i32.shl (local.get $i) (i32.const 5))))
+        (local.set $type (i32.load offset=8 (local.get $e)))
+        (local.set $d (i32.add (local.get $out) (i32.load offset=12 (local.get $e))))
+        (local.set $dc (i32.load offset=16 (local.get $e)))
+        (if (i32.eq (local.get $type) (i32.const 255))
+          (then (memory.fill (local.get $d) (i32.const 0) (i32.shl (local.get $dc) (i32.const 2))))
+          (else
+            (local.set $src (i32.add (i32.load (local.get $e))
+              (i32.mul (i32.add (local.get $min) (local.get $v)) (i32.load offset=4 (local.get $e)))))
+            (if (i32.eqz (local.get $dc))
+              (then (i32.store (local.get $d) (i32.load (local.get $src))))
+              (else
+                (local.set $sc (call $d9ms_comps (local.get $type)))
+                (if (i32.lt_u (local.get $type) (i32.const 4))
+                  ;; Floats are copied as their bits.
+                  (then (memory.copy (local.get $d) (local.get $src)
+                    (i32.shl (select (local.get $sc) (local.get $dc) (i32.lt_u (local.get $sc) (local.get $dc))) (i32.const 2))))
+                  (else
+                    (local.set $c (i32.const 0))
+                    (block $cdone (loop $comps
+                      (br_if $cdone (i32.ge_u (local.get $c) (select (local.get $sc) (local.get $dc) (i32.lt_u (local.get $sc) (local.get $dc)))))
+                      (f32.store (i32.add (local.get $d) (i32.shl (local.get $c) (i32.const 2)))
+                        (if (result f32) (i32.eq (local.get $type) (i32.const 4))
+                          ;; D3DCOLOR as floats: R, G, B, A from bytes 2, 1, 0, 3.
+                          (then (f32.demote_f64 (f64.div (f64.convert_i32_u (i32.load8_u (i32.add (local.get $src)
+                            (i32.xor (local.get $c) (select (i32.const 2) (i32.const 0) (i32.lt_u (local.get $c) (i32.const 3)))))))
+                            (f64.const 255))))
+                          (else (call $d9ms_comp (local.get $src) (local.get $type) (local.get $c)))))
+                      (local.set $c (i32.add (local.get $c) (i32.const 1)))
+                      (br $comps)))))
+                ;; Missing components default to (0, 0, 0, 1).
+                (local.set $c (local.get $sc))
+                (block $fdone (loop $fill
+                  (br_if $fdone (i32.ge_u (local.get $c) (local.get $dc)))
+                  (f32.store (i32.add (local.get $d) (i32.shl (local.get $c) (i32.const 2)))
+                    (select (f32.const 1) (f32.const 0) (i32.eq (local.get $c) (i32.const 3))))
+                  (local.set $c (i32.add (local.get $c) (i32.const 1)))
+                  (br $fill)))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $els)))
+      (local.set $v (i32.add (local.get $v) (i32.const 1)))
+      (br $verts))))
+
+  ;; The programmable LAYOUT of the planned gather (modes 1 and 2), cached
+  ;; by a hash of its elements (key tag 0x6.......).
+  (func $d9ms_layout (result i32)
+    (local $i i32) (local $e i32) (local $h1 i32) (local $h2 i32) (local $id i32) (local $p i32) (local $q i32) (local $w i32)
+    (local.set $h1 (global.get $d9ms_stride))
+    (local.set $h2 (global.get $d9ms_n))
+    (block $done (loop $hash
+      (br_if $done (i32.ge_u (local.get $i) (global.get $d9ms_n)))
+      (local.set $e (i32.add (call $d9ms_m) (i32.shl (local.get $i) (i32.const 5))))
+      (local.set $w (i32.or (i32.or (i32.load offset=28 (local.get $e)) (i32.shl (i32.load offset=20 (local.get $e)) (i32.const 8)))
+        (i32.or (i32.shl (i32.load offset=24 (local.get $e)) (i32.const 16)) (i32.shl (i32.load offset=12 (local.get $e)) (i32.const 20)))))
+      (local.set $h1 (i32.add (i32.mul (local.get $h1) (i32.const 31)) (local.get $w)))
+      (local.set $h2 (i32.xor (i32.mul (local.get $h2) (i32.const 0x01000193)) (local.get $w)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $hash)))
+    (local.set $h2 (i32.or (i32.and (local.get $h2) (i32.const 0x0fffffff)) (i32.const 0x60000000)))
+    (local.set $i (i32.const 0))
+    (loop $scan
+      (local.set $e (i32.add (i32.add (call $d9g_m) (i32.const 1024)) (i32.shl (local.get $i) (i32.const 4))))
+      (if (i32.and (i32.and (i32.eq (i32.load (local.get $e)) (local.get $h1)) (i32.eq (i32.load offset=4 (local.get $e)) (global.get $d9ms_stride)))
+            (i32.and (i32.eq (i32.load offset=8 (local.get $e)) (local.get $h2)) (i32.ne (i32.load offset=12 (local.get $e)) (i32.const 0))))
+        (then (return (i32.load offset=12 (local.get $e)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.lt_u (local.get $i) (i32.const 32))))
+    (local.set $id (call $d9g_id))
+    (local.set $p (call $d9g_begin (global.get $GPS_OP_LAYOUT)
+      (i32.add (size-of GpsLayout) (i32.mul (global.get $d9ms_n) (size-of GpsLayoutElem)))))
+    (store.field GpsLayout id (local.get $p) (local.get $id))
+    (store.field GpsLayout count (local.get $p) (global.get $d9ms_n))
+    (store.field GpsLayout stride (local.get $p) (global.get $d9ms_stride))
+    (local.set $q (i32.add (local.get $p) (size-of GpsLayout)))
+    (local.set $i (i32.const 0))
+    (block $edone (loop $emit
+      (br_if $edone (i32.ge_u (local.get $i) (global.get $d9ms_n)))
+      (local.set $e (i32.add (call $d9ms_m) (i32.shl (local.get $i) (i32.const 5))))
+      (local.set $q (call $d9g_elem (local.get $q) (i32.load offset=28 (local.get $e)) (i32.load offset=20 (local.get $e))
+        (i32.load offset=24 (local.get $e)) (i32.load offset=12 (local.get $e))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $emit)))
+    (drop (call $d9g_end (local.get $p)))
+    (call $d9g_layout_cache (local.get $h1) (global.get $d9ms_stride) (local.get $h2) (local.get $id))
+    (local.get $id))
+
+  ;; Entry from $d9g_draw_try: 0 = not gathered (the in-place path reads
+  ;; it), 1 = planned (read $d9ms_vsmode / $d9ms_fvf), else -reason.
+  (func $d9ms_select (param $vs i32) (param $decl i32) (param $fvf i32) (param $kind i32) (param $desc i32) (result i32)
+    (local $dw i32) (local $r i32) (local $tab i32) (local $n i32) (local $i i32) (local $el i32) (local $reg i32)
+    (local $blend i32)
+    (global.set $d9ms_blend (i32.const 0))
+    ;; A blend (fixed function only) always gathers its inputs.
+    (local.set $blend (i32.and (i32.eqz (local.get $vs)) (call $d9ms_blend_rs)))
+    (if (local.get $decl)
+      (then
+        (local.set $dw (call $g2w (local.get $decl)))
+        (if (local.get $vs)
+          (then (if (i32.eqz (call $d9ms_decl_needs (local.get $dw))) (then (return (i32.const 0)))))
+          (else (if (i32.and (i32.ne (call $d9g_decl_fvf (local.get $decl)) (i32.const 0)) (i32.eqz (local.get $blend)))
+            (then (return (i32.const 0)))))))
+      (else
+        ;; XYZ and XYZRHW FVFs are read in place.
+        (if (i32.and (i32.eq (i32.and (local.get $fvf) (i32.const 0x400e)) (i32.const 2)) (i32.eqz (local.get $blend)))
+          (then (return (i32.const 0))))
+        (if (i32.eq (i32.and (local.get $fvf) (i32.const 0x400e)) (i32.const 4)) (then (return (i32.const 0))))
+        (local.set $dw (call $d9ms_fvf_decl (local.get $fvf)))
+        (if (i32.eqz (local.get $dw)) (then (return (i32.const -27))))))
+    (local.set $r (call $d9ms_plan (local.get $dw) (select (i32.const 1) (i32.const 2) (i32.ne (local.get $vs) (i32.const 0)))
+      (local.get $kind) (local.get $desc)))
+    (if (local.get $r) (then (return (i32.sub (i32.const 0) (local.get $r)))))
+    ;; A D3D8 declaration's register map declares a DCL-less shader's inputs
+    ;; (as $d9g_layout_decl does).
+    (if (i32.and (i32.ne (local.get $vs) (i32.const 0)) (i32.ne (local.get $decl) (i32.const 0))) (then
+      (if (i32.eq (i32.load offset=12 (local.get $dw)) (i32.const 0xd3d80002)) (then
+        (local.set $tab (i32.add (call $d9g_m) (i32.const 101952)))
+        (memory.fill (local.get $tab) (i32.const 0) (i32.const 64))
+        (local.set $n (i32.sub (i32.shr_u (i32.load offset=16 (local.get $dw)) (i32.const 3)) (i32.const 1)))
+        (block $done (loop $els
+          (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+          (local.set $el (i32.add (i32.add (local.get $dw) (i32.const 24)) (i32.shl (local.get $i) (i32.const 3))))
+          (local.set $reg (i32.load8_u (i32.add (i32.add (i32.add (local.get $dw) (i32.const 24))
+            (i32.load offset=16 (local.get $dw))) (local.get $i))))
+          (if (i32.gt_u (local.get $reg) (i32.const 15)) (then (return (i32.const -27))))
+          (i32.store (i32.add (local.get $tab) (i32.shl (local.get $reg) (i32.const 2)))
+            (i32.or (i32.const 0x80000000) (i32.or (i32.load8_u offset=6 (local.get $el))
+              (i32.shl (i32.load8_u offset=7 (local.get $el)) (i32.const 16)))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $els)))))))
+    (i32.const 1))
+  ;; ---- d9ms: vertex blending / tweening under fixed T&L ------------------
+  ;; D3DRS_VERTEXBLEND (151) 1..3 WEIGHTS, 0WEIGHTS with
+  ;; INDEXEDVERTEXBLENDENABLE (167), and TWEENING (255), lowered the way S3
+  ;; lowers lighting: a prologue on 09aj's cascade VS, compiled once per
+  ;; SHAPE ($d9ms_blend, part of the fixed T&L cache key), with the values
+  ;; sent as CONSTS per draw. The input is always gathered (BLENDWEIGHT0
+  ;; v12, BLENDINDICES0 v13, POSITION1 v14, NORMAL1 v15, as implicit DCLs).
+  ;;   blend: r12 = sum_i w_i (v0 . W_i), r13.xyz = sum_i w_i (v11 . W_i^-T)
+  ;;     (the last weight is 1 - the others), with the world matrix then the
+  ;;     identity in c0..c3 and the DFX1, so the cascade's world-view path
+  ;;     and lighting / texgen run on the blended world-space vertex; W_i is
+  ;;     world matrix i, or the palette entry BLENDINDICES.i when indexed.
+  ;;   tween: r12 = lerp(v0, v14, TWEENFACTOR), r13 = lerp(v11, v15, ...),
+  ;;     under the real world matrix.
+  ;; The cascade's v0 / v11 reads become r12 / r13. Matrix k (world k, or
+  ;; palette entry k) is c(96 + 7k): four position columns, then three
+  ;; inverse-transpose columns (zero when singular). Indexed: a0 = 7 x
+  ;; index (D3DCOLOR indices are their RGBA order, x 255), 22 entries
+  ;; (c96..c249), an index past 21 declines 27 before the draw. c250 / c251
+  ;; are the prologue's DEFs. Shape: matrices (bits 0..2), indexed 8,
+  ;; D3DCOLOR indices 16, tween 32, NORMAL 64.
+  ;; d9ms block +1024: the shape of each fixed T&L cache entry (16 x 4);
+  ;; +1536: the per-draw blend constants (up to 154 x 16).
+  (global $d9ms_blend (mut i32) (i32.const 0))
+  (global $d9ms_bi (mut i32) (i32.const 0))
+  (global $d9ms_bcount (mut i32) (i32.const 0))
+
+  ;; Does the render state ask for a blend (or a tween)?
+  (func $d9ms_blend_rs (result i32)
+    (local $vb i32)
+    (local.set $vb (call $d9g_rs (i32.const 151)))
+    (if (i32.eqz (local.get $vb)) (then (return (i32.const 0))))
+    ;; 0WEIGHTS without indices is the one world matrix: unblended.
+    (if (i32.eq (local.get $vb) (i32.const 256))
+      (then (return (i32.ne (call $d9g_rs (i32.const 167)) (i32.const 0)))))
+    (i32.const 1))
+
+  ;; Float components a gathered element gets (D3DCOLOR: its 4 normalized).
+  (func $d9ms_fcomps (param $el i32) (result i32)
+    (call $d9ms_comps (i32.load8_u offset=4 (local.get $el))))
+
+  ;; Plans the blend inputs after POSITION / NORMAL / PSIZE ($d9ms_plan,
+  ;; fixed function); the next dst offset, or -reason. Sets $d9ms_blend.
+  (func $d9ms_blend_plan (param $bw i32) (param $bi i32) (param $pos1 i32) (param $nrm1 i32) (param $nrm i32)
+    (param $off i32) (param $kind i32) (param $desc i32) (result i32)
+    (local $vb i32) (local $n i32) (local $shape i32) (local $t i32)
+    (global.set $d9ms_blend (i32.const 0))
+    (if (i32.eqz (call $d9ms_blend_rs)) (then (return (local.get $off))))
+    (local.set $vb (call $d9g_rs (i32.const 151)))
+    (local.set $shape (select (i32.const 0x40) (i32.const 0) (i32.ne (local.get $nrm) (i32.const 0))))
+    (if (i32.eq (local.get $vb) (i32.const 255)) (then
+      (if (i32.eqz (local.get $pos1)) (then (return (i32.const -27))))
+      (if (i32.and (i32.ne (local.get $nrm) (i32.const 0)) (i32.eqz (local.get $nrm1))) (then (return (i32.const -27))))
+      (local.set $off (call $d9ms_add (local.get $pos1) (local.get $off) (call $d9ms_fcomps (local.get $pos1))
+        (local.get $kind) (local.get $desc)))
+      (if (i32.and (i32.ne (local.get $nrm) (i32.const 0)) (i32.ge_s (local.get $off) (i32.const 0))) (then
+        (local.set $off (call $d9ms_add (local.get $nrm1) (local.get $off) (call $d9ms_fcomps (local.get $nrm1))
+          (local.get $kind) (local.get $desc)))))
+      (global.set $d9ms_blend (i32.or (local.get $shape) (i32.const 0x20)))
+      (return (local.get $off))))
+    (local.set $n (select (i32.const 1) (i32.add (local.get $vb) (i32.const 1)) (i32.eq (local.get $vb) (i32.const 256))))
+    (if (i32.gt_u (local.get $n) (i32.const 4)) (then (return (i32.const -27))))
+    (local.set $shape (i32.or (local.get $shape) (local.get $n)))
+    (if (i32.gt_u (local.get $n) (i32.const 1)) (then
+      (if (i32.eqz (local.get $bw)) (then (return (i32.const -27))))
+      (if (i32.lt_u (call $d9ms_fcomps (local.get $bw)) (i32.sub (local.get $n) (i32.const 1))) (then (return (i32.const -27))))
+      (local.set $off (call $d9ms_add (local.get $bw) (local.get $off) (call $d9ms_fcomps (local.get $bw))
+        (local.get $kind) (local.get $desc)))
+      (if (i32.lt_s (local.get $off) (i32.const 0)) (then (return (local.get $off))))))
+    (if (call $d9g_rs (i32.const 167)) (then
+      (if (i32.eqz (local.get $bi)) (then (return (i32.const -27))))
+      (local.set $t (i32.load8_u offset=4 (local.get $bi)))
+      (local.set $shape (i32.or (local.get $shape)
+        (i32.or (i32.const 8) (select (i32.const 16) (i32.const 0) (i32.eq (local.get $t) (i32.const 4))))))
+      (global.set $d9ms_bi (i32.add (call $d9ms_m) (i32.shl (global.get $d9ms_n) (i32.const 5))))
+      (local.set $off (call $d9ms_add (local.get $bi) (local.get $off) (call $d9ms_fcomps (local.get $bi))
+        (local.get $kind) (local.get $desc)))))
+    (global.set $d9ms_blend (local.get $shape))
+    (local.get $off))
+
+  ;; An indexed blend whose vertices [min, min + num) name a palette entry
+  ;; past 21 (or a non-integer one): 1 (the draw declines 27).
+  (func $d9ms_idx_bad (param $min i32) (param $num i32) (result i32)
+    (local $e i32) (local $v i32) (local $c i32) (local $src i32) (local $type i32) (local $sc i32) (local $n i32) (local $f f32)
+    (if (i32.eqz (i32.and (global.get $d9ms_blend) (i32.const 8))) (then (return (i32.const 0))))
+    (local.set $e (global.get $d9ms_bi))
+    (local.set $type (i32.load offset=8 (local.get $e)))
+    (local.set $sc (call $d9ms_comps (local.get $type)))
+    (local.set $n (i32.and (global.get $d9ms_blend) (i32.const 7)))
+    (if (i32.lt_u (local.get $sc) (local.get $n)) (then (local.set $n (local.get $sc))))
+    (block $vdone (loop $verts
+      (br_if $vdone (i32.ge_u (local.get $v) (local.get $num)))
+      (local.set $src (i32.add (i32.load (local.get $e))
+        (i32.mul (i32.add (local.get $min) (local.get $v)) (i32.load offset=4 (local.get $e)))))
+      (local.set $c (i32.const 0))
+      (block $cdone (loop $comps
+        (br_if $cdone (i32.ge_u (local.get $c) (local.get $n)))
+        (local.set $f (if (result f32) (i32.eq (local.get $type) (i32.const 4))
+          (then (f32.convert_i32_u (i32.load8_u (i32.add (local.get $src)
+            (i32.xor (local.get $c) (select (i32.const 2) (i32.const 0) (i32.lt_u (local.get $c) (i32.const 3))))))))
+          (else (call $d9ms_comp (local.get $src) (local.get $type) (local.get $c)))))
+        (if (i32.eqz (i32.and (i32.and (f32.ge (local.get $f) (f32.const 0)) (f32.le (local.get $f) (f32.const 21)))
+              (f32.eq (local.get $f) (f32.nearest (local.get $f)))))
+          (then (return (i32.const 1))))
+        (local.set $c (i32.add (local.get $c) (i32.const 1)))
+        (br $comps)))
+      (local.set $v (i32.add (local.get $v) (i32.const 1)))
+      (br $verts)))
+    (i32.const 0))
+
+  ;; Blending replaces the world matrix by the identity (tweening does not).
+  (func $d9ms_blend_world (result i32)
+    (i32.and (i32.ne (global.get $d9ms_blend) (i32.const 0))
+      (i32.eqz (i32.and (global.get $d9ms_blend) (i32.const 0x20)))))
+  (func $d9ms_identity (param $p i32)
+    (memory.fill (local.get $p) (i32.const 0) (i32.const 64))
+    (f32.store (local.get $p) (f32.const 1))
+    (f32.store offset=20 (local.get $p) (f32.const 1))
+    (f32.store offset=40 (local.get $p) (f32.const 1))
+    (f32.store offset=60 (local.get $p) (f32.const 1)))
+
+  ;; The shape a fixed T&L cache entry was compiled for.
+  (func $d9ms_tl_key (param $i i32) (result i32)
+    (i32.load (i32.add (i32.add (call $d9ms_m) (i32.const 1024)) (i32.shl (local.get $i) (i32.const 2)))))
+  (func $d9ms_tl_key_set (param $i i32) (param $v i32)
+    (i32.store (i32.add (i32.add (call $d9ms_m) (i32.const 1024)) (i32.shl (local.get $i) (i32.const 2))) (local.get $v)))
+
+  ;; Cofactor (r, c) of the 3x3 of row-major matrix $mat, in f64 (exact
+  ;; products of f32s, one rounding).
+  (func $d9ms_a (param $mat i32) (param $r i32) (param $c i32) (result f64)
+    (f64.promote_f32 (f32.load (i32.add (local.get $mat)
+      (i32.shl (i32.add (i32.shl (i32.rem_u (local.get $r) (i32.const 3)) (i32.const 2)) (i32.rem_u (local.get $c) (i32.const 3)))
+        (i32.const 2))))))
+  (func $d9ms_cof (param $mat i32) (param $r i32) (param $c i32) (result f64)
+    (f64.sub
+      (f64.mul (call $d9ms_a (local.get $mat) (i32.add (local.get $r) (i32.const 1)) (i32.add (local.get $c) (i32.const 1)))
+        (call $d9ms_a (local.get $mat) (i32.add (local.get $r) (i32.const 2)) (i32.add (local.get $c) (i32.const 2))))
+      (f64.mul (call $d9ms_a (local.get $mat) (i32.add (local.get $r) (i32.const 1)) (i32.add (local.get $c) (i32.const 2)))
+        (call $d9ms_a (local.get $mat) (i32.add (local.get $r) (i32.const 2)) (i32.add (local.get $c) (i32.const 1))))))
+
+  ;; Stages this draw's blend constants (c96.. at block +1536, count in
+  ;; $d9ms_bcount); 0, or 27 for a non-finite matrix or tween factor.
+  (func $d9ms_blend_consts (result i32)
+    (local $st i32) (local $shape i32) (local $P i32) (local $k i32) (local $mat i32) (local $o i32) (local $j i32)
+    (local $r i32) (local $det f64) (local $ok i32) (local $t f32)
+    (local.set $st (i32.add (call $d9ms_m) (i32.const 1536)))
+    (local.set $shape (global.get $d9ms_blend))
+    (if (i32.and (local.get $shape) (i32.const 0x20)) (then
+      (local.set $t (f32.reinterpret_i32 (call $d9g_rs (i32.const 170))))
+      (if (i32.eqz (f32.lt (f32.abs (local.get $t)) (f32.const inf))) (then (return (i32.const 27))))
+      (memory.fill (local.get $st) (i32.const 0) (i32.const 16))
+      (f32.store (local.get $st) (local.get $t))
+      (global.set $d9ms_bcount (i32.const 1))
+      (return (i32.const 0))))
+    (local.set $P (select (i32.const 22) (i32.and (local.get $shape) (i32.const 7)) (i32.and (local.get $shape) (i32.const 8))))
+    (block $kdone (loop $mats
+      (br_if $kdone (i32.ge_u (local.get $k) (local.get $P)))
+      (local.set $mat (i32.add (global.get $d9g_pw) (i32.add (i32.const 2708) (i32.shl (local.get $k) (i32.const 6)))))
+      (local.set $o (i32.add (local.get $st) (i32.mul (local.get $k) (i32.const 112))))
+      (local.set $j (i32.const 0))
+      (loop $cols
+        (i32.store (i32.add (local.get $o) (i32.shl (local.get $j) (i32.const 4)))
+          (i32.load (i32.add (local.get $mat) (i32.shl (local.get $j) (i32.const 2)))))
+        (i32.store offset=4 (i32.add (local.get $o) (i32.shl (local.get $j) (i32.const 4)))
+          (i32.load offset=16 (i32.add (local.get $mat) (i32.shl (local.get $j) (i32.const 2)))))
+        (i32.store offset=8 (i32.add (local.get $o) (i32.shl (local.get $j) (i32.const 4)))
+          (i32.load offset=32 (i32.add (local.get $mat) (i32.shl (local.get $j) (i32.const 2)))))
+        (i32.store offset=12 (i32.add (local.get $o) (i32.shl (local.get $j) (i32.const 4)))
+          (i32.load offset=48 (i32.add (local.get $mat) (i32.shl (local.get $j) (i32.const 2)))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $cols (i32.lt_u (local.get $j) (i32.const 4))))
+      (local.set $j (i32.const 0))
+      (loop $finite
+        (if (i32.eq (i32.and (i32.load (i32.add (local.get $mat) (i32.shl (local.get $j) (i32.const 2)))) (i32.const 0x7f800000))
+              (i32.const 0x7f800000)) (then (return (i32.const 27))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $finite (i32.lt_u (local.get $j) (i32.const 16))))
+      ;; Normal columns j = row j of the 3x3 inverse = (cof(0,j), cof(1,j),
+      ;; cof(2,j)) / det, so dp3(n, column j) is (n . W^-T).j.
+      (memory.fill (i32.add (local.get $o) (i32.const 64)) (i32.const 0) (i32.const 48))
+      (if (i32.and (local.get $shape) (i32.const 0x40)) (then
+        (local.set $det (f64.add (f64.add
+          (f64.mul (call $d9ms_a (local.get $mat) (i32.const 0) (i32.const 0)) (call $d9ms_cof (local.get $mat) (i32.const 0) (i32.const 0)))
+          (f64.mul (call $d9ms_a (local.get $mat) (i32.const 0) (i32.const 1)) (call $d9ms_cof (local.get $mat) (i32.const 0) (i32.const 1))))
+          (f64.mul (call $d9ms_a (local.get $mat) (i32.const 0) (i32.const 2)) (call $d9ms_cof (local.get $mat) (i32.const 0) (i32.const 2)))))
+        (if (f64.ne (local.get $det) (f64.const 0)) (then
+          (local.set $j (i32.const 0))
+          (loop $ncols
+            (local.set $r (i32.const 0))
+            (loop $nrows
+              (f32.store (i32.add (i32.add (local.get $o) (i32.const 64))
+                  (i32.add (i32.shl (local.get $j) (i32.const 4)) (i32.shl (local.get $r) (i32.const 2))))
+                (f32.demote_f64 (f64.div (call $d9ms_cof (local.get $mat) (local.get $r) (local.get $j)) (local.get $det))))
+              (local.set $r (i32.add (local.get $r) (i32.const 1)))
+              (br_if $nrows (i32.lt_u (local.get $r) (i32.const 3))))
+            (local.set $j (i32.add (local.get $j) (i32.const 1)))
+            (br_if $ncols (i32.lt_u (local.get $j) (i32.const 3))))))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br $mats)))
+    (global.set $d9ms_bcount (i32.mul (local.get $P) (i32.const 7)))
+    (i32.const 0))
+
+  ;; Implicit DCLs of the blend inputs (beside $d9g_fixed_tl's).
+  (func $d9ms_blend_dcls (param $imp i32)
+    (local $shape i32)
+    (local.set $shape (global.get $d9ms_blend))
+    (if (i32.eqz (local.get $shape)) (then (return)))
+    (if (i32.and (local.get $shape) (i32.const 0x20)) (then
+      (i32.store offset=56 (local.get $imp) (i32.const 0x80010000))
+      (if (i32.and (local.get $shape) (i32.const 0x40)) (then (i32.store offset=60 (local.get $imp) (i32.const 0x80010003))))
+      (return)))
+    (if (i32.gt_u (i32.and (local.get $shape) (i32.const 7)) (i32.const 1))
+      (then (i32.store offset=48 (local.get $imp) (i32.const 0x80000001))))
+    (if (i32.and (local.get $shape) (i32.const 8)) (then (i32.store offset=52 (local.get $imp) (i32.const 0x80000002)))))
+
+  ;; The last record of IR $ir.
+  (func $d9ms_last (param $ir i32) (result i32)
+    (i32.add (i32.add (local.get $ir) (i32.const 32))
+      (i32.shl (i32.sub (i32.load offset=16 (local.get $ir)) (i32.const 1)) (i32.const 7))))
+
+  ;; dp3 / dp4 $dst.(1 << $comp) = $a . (column $col of blend matrix $i).
+  (func $d9ms_dp (param $ir i32) (param $op i32) (param $dst i32) (param $comp i32) (param $a i32) (param $i i32) (param $col i32)
+    (local $q i32)
+    (if (i32.and (global.get $d9ms_blend) (i32.const 8))
+      (then
+        (call $d3d_fixed_op (local.get $ir) (local.get $op) (i32.const 0) (local.get $dst) (i32.shl (i32.const 1) (local.get $comp))
+          (i32.const 0) (local.get $a) (call $d3d_fixed_source (i32.const 2) (i32.const 0) (i32.const 0xe4) (i32.const 0)) (i32.const 0))
+        ;; c[a0.i + 96 + col]
+        (local.set $q (i32.add (call $d9ms_last (local.get $ir)) (i32.const 48)))
+        (i32.store offset=4 (local.get $q) (i32.add (i32.const 96) (local.get $col)))
+        (i32.store offset=12 (local.get $q) (i32.or (i32.const 256) (i32.shl (local.get $i) (i32.const 11)))))
+      (else
+        (call $d3d_fixed_op (local.get $ir) (local.get $op) (i32.const 0) (local.get $dst) (i32.shl (i32.const 1) (local.get $comp))
+          (i32.const 0) (local.get $a)
+          (call $d3d_fixed_source (i32.const 2) (i32.add (i32.add (i32.const 96) (i32.mul (local.get $i) (i32.const 7))) (local.get $col))
+            (i32.const 0xe4) (i32.const 0))
+          (i32.const 0)))))
+
+  ;; The blend / tween prologue into $ir (see the block comment).
+  (func $d9ms_prologue (param $ir i32)
+    (local $shape i32) (local $nm i32) (local $nrm i32) (local $i i32) (local $j i32) (local $w i32) (local $p i32)
+    (local.set $shape (global.get $d9ms_blend))
+    (local.set $nrm (i32.ne (i32.and (local.get $shape) (i32.const 0x40)) (i32.const 0)))
+    (if (i32.and (local.get $shape) (i32.const 0x20)) (then
+      ;; r12 = v0 + (v14 - v0) t; r13 = v11 + (v15 - v11) t.
+      (call $d3d_fixed_op (local.get $ir) (i32.const 2) (i32.const 0) (i32.const 14) (i32.const 15) (i32.const 0)
+        (call $d3d_fixed_source (i32.const 1) (i32.const 14) (i32.const 0xe4) (i32.const 0))
+        (call $d3d_fixed_source (i32.const 1) (i32.const 0) (i32.const 0xe4) (i32.const 1)) (i32.const 0))
+      (call $d3d_fixed_op (local.get $ir) (i32.const 4) (i32.const 0) (i32.const 12) (i32.const 15) (i32.const 0)
+        (call $d3d_fixed_source (i32.const 0) (i32.const 14) (i32.const 0xe4) (i32.const 0))
+        (call $d3d_fixed_source (i32.const 2) (i32.const 96) (i32.const 0) (i32.const 0))
+        (call $d3d_fixed_source (i32.const 1) (i32.const 0) (i32.const 0xe4) (i32.const 0)))
+      (if (local.get $nrm) (then
+        (call $d3d_fixed_op (local.get $ir) (i32.const 2) (i32.const 0) (i32.const 16) (i32.const 15) (i32.const 0)
+          (call $d3d_fixed_source (i32.const 1) (i32.const 15) (i32.const 0xe4) (i32.const 0))
+          (call $d3d_fixed_source (i32.const 1) (i32.const 11) (i32.const 0xe4) (i32.const 1)) (i32.const 0))
+        (call $d3d_fixed_op (local.get $ir) (i32.const 4) (i32.const 0) (i32.const 13) (i32.const 15) (i32.const 0)
+          (call $d3d_fixed_source (i32.const 0) (i32.const 16) (i32.const 0xe4) (i32.const 0))
+          (call $d3d_fixed_source (i32.const 2) (i32.const 96) (i32.const 0) (i32.const 0))
+          (call $d3d_fixed_source (i32.const 1) (i32.const 11) (i32.const 0xe4) (i32.const 0)))))
+      (return)))
+    (local.set $nm (i32.and (local.get $shape) (i32.const 7)))
+    ;; c250 = (1, 7 x index scale, 0, 0); c251 = 1 for each stored weight.
+    (call $d3d_fixed_def (local.get $ir) (i32.const 250) (f32.const 1)
+      (select (f32.const 1785) (f32.const 7) (i32.and (local.get $shape) (i32.const 16))) (f32.const 0) (f32.const 0))
+    (call $d3d_fixed_def (local.get $ir) (i32.const 251)
+      (select (f32.const 1) (f32.const 0) (i32.gt_u (local.get $nm) (i32.const 1)))
+      (select (f32.const 1) (f32.const 0) (i32.gt_u (local.get $nm) (i32.const 2)))
+      (select (f32.const 1) (f32.const 0) (i32.gt_u (local.get $nm) (i32.const 3))) (f32.const 0))
+    (if (i32.and (local.get $shape) (i32.const 8)) (then
+      ;; a0 = round(v13 x 7 x scale): each component a palette base.
+      (call $d3d_fixed_op (local.get $ir) (i32.const 5) (i32.const 0) (i32.const 17) (i32.const 15) (i32.const 0)
+        (call $d3d_fixed_source (i32.const 1) (i32.const 13) (i32.const 0xe4) (i32.const 0))
+        (call $d3d_fixed_source (i32.const 2) (i32.const 250) (i32.const 0x55) (i32.const 0)) (i32.const 0))
+      (local.set $p (call $d3d_fixed_instruction (local.get $ir) (i32.const 46) (i32.const 2)))
+      (call $d3d_fixed_operand (local.get $p) (i32.const 0) (i32.const 3) (i32.const 0) (i32.const 15) (i32.const 0))
+      (call $d3d_fixed_operand (local.get $p) (i32.const 1) (i32.const 0) (i32.const 17) (i32.const 0xe4) (i32.const 0))))
+    (if (i32.gt_u (local.get $nm) (i32.const 1)) (then
+      ;; r15.x = 1 - (the stored weights).
+      (call $d3d_fixed_op (local.get $ir) (i32.const 9) (i32.const 0) (i32.const 15) (i32.const 1) (i32.const 0)
+        (call $d3d_fixed_source (i32.const 1) (i32.const 12) (i32.const 0xe4) (i32.const 0))
+        (call $d3d_fixed_source (i32.const 2) (i32.const 251) (i32.const 0xe4) (i32.const 0)) (i32.const 0))
+      (call $d3d_fixed_op (local.get $ir) (i32.const 2) (i32.const 0) (i32.const 15) (i32.const 1) (i32.const 0)
+        (call $d3d_fixed_source (i32.const 2) (i32.const 250) (i32.const 0) (i32.const 0))
+        (call $d3d_fixed_source (i32.const 0) (i32.const 15) (i32.const 0) (i32.const 1)) (i32.const 0))))
+    (block $done (loop $mats
+      (br_if $done (i32.ge_u (local.get $i) (local.get $nm)))
+      (local.set $w (if (result i32) (i32.lt_u (local.get $i) (i32.sub (local.get $nm) (i32.const 1)))
+        (then (call $d3d_fixed_source (i32.const 1) (i32.const 12) (i32.mul (local.get $i) (i32.const 0x55)) (i32.const 0)))
+        (else (if (result i32) (i32.eq (local.get $nm) (i32.const 1))
+          (then (call $d3d_fixed_source (i32.const 2) (i32.const 250) (i32.const 0) (i32.const 0)))
+          (else (call $d3d_fixed_source (i32.const 0) (i32.const 15) (i32.const 0) (i32.const 0)))))))
+      (local.set $j (i32.const 0))
+      (loop $pcols
+        (call $d9ms_dp (local.get $ir) (i32.const 9) (i32.const 14) (local.get $j)
+          (call $d3d_fixed_source (i32.const 1) (i32.const 0) (i32.const 0xe4) (i32.const 0)) (local.get $i) (local.get $j))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $pcols (i32.lt_u (local.get $j) (i32.const 4))))
+      (call $d3d_fixed_op (local.get $ir) (select (i32.const 4) (i32.const 5) (local.get $i))
+        (i32.const 0) (i32.const 12) (i32.const 15) (i32.const 0)
+        (call $d3d_fixed_source (i32.const 0) (i32.const 14) (i32.const 0xe4) (i32.const 0)) (local.get $w)
+        (call $d3d_fixed_source (i32.const 0) (i32.const 12) (i32.const 0xe4) (i32.const 0)))
+      (if (local.get $nrm) (then
+        (local.set $j (i32.const 0))
+        (loop $ncols
+          (call $d9ms_dp (local.get $ir) (i32.const 8) (i32.const 16) (local.get $j)
+            (call $d3d_fixed_source (i32.const 1) (i32.const 11) (i32.const 0xe4) (i32.const 0)) (local.get $i)
+            (i32.add (local.get $j) (i32.const 4)))
+          (local.set $j (i32.add (local.get $j) (i32.const 1)))
+          (br_if $ncols (i32.lt_u (local.get $j) (i32.const 3))))
+        (call $d3d_fixed_op (local.get $ir) (select (i32.const 4) (i32.const 5) (local.get $i))
+          (i32.const 0) (i32.const 13) (i32.const 7) (i32.const 0)
+          (call $d3d_fixed_source (i32.const 0) (i32.const 16) (i32.const 0xe4) (i32.const 0)) (local.get $w)
+          (call $d3d_fixed_source (i32.const 0) (i32.const 13) (i32.const 0xe4) (i32.const 0)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $mats)))
+    (if (local.get $nrm) (then
+      (call $d3d_fixed_op (local.get $ir) (i32.const 1) (i32.const 0) (i32.const 13) (i32.const 8) (i32.const 0)
+        (call $d3d_fixed_source (i32.const 2) (i32.const 250) (i32.const 0xaa) (i32.const 0)) (i32.const 0) (i32.const 0)))))
+
+  ;; The cascade VS $ir with the prologue: a new IR (the caller frees it),
+  ;; or 0 when the cascade already uses r12..r27 or c96 and up.
+  (func $d9ms_blend_ir (param $ir i32) (result i32)
+    (local $n i32) (local $out i32) (local $i i32) (local $j i32) (local $rec i32) (local $p i32) (local $q i32)
+    (local $op i32) (local $pass i32) (local $decl i32) (local $nrm i32)
+    (local.set $nrm (i32.ne (i32.and (global.get $d9ms_blend) (i32.const 0x40)) (i32.const 0)))
+    (local.set $n (i32.load offset=16 (local.get $ir)))
+    (block $sdone (loop $scan
+      (br_if $sdone (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $rec (i32.add (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $i) (i32.const 7))))
+      (if (i32.load (local.get $rec)) (then
+        (local.set $j (i32.const 0))
+        (block $odone (loop $ops
+          (br_if $odone (i32.ge_u (local.get $j) (i32.load offset=8 (local.get $rec))))
+          (local.set $q (i32.add (i32.add (local.get $rec) (i32.const 16)) (i32.shl (local.get $j) (i32.const 4))))
+          (if (i32.and (i32.eqz (i32.load (local.get $q)))
+                (i32.and (i32.ge_u (i32.load offset=4 (local.get $q)) (i32.const 12)) (i32.lt_u (i32.load offset=4 (local.get $q)) (i32.const 28))))
+            (then (return (i32.const 0))))
+          (if (i32.and (i32.eq (i32.load (local.get $q)) (i32.const 2)) (i32.ge_u (i32.load offset=4 (local.get $q)) (i32.const 96)))
+            (then (return (i32.const 0))))
+          (local.set $j (i32.add (local.get $j) (i32.const 1)))
+          (br $ops)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (local.set $out (call $d3d_fixed_ir_sized (i32.load offset=8 (local.get $ir))
+      (i32.add (i32.const 32) (i32.shl (i32.add (local.get $n) (i32.const 80)) (i32.const 7)))))
+    (if (i32.eqz (local.get $out)) (then (return (i32.const 0))))
+    (i32.store offset=12 (local.get $out) (i32.load offset=12 (local.get $ir)))
+    (i32.store offset=28 (local.get $out) (i32.load offset=28 (local.get $ir)))
+    ;; Pass 0: DCL / DEF records; then the prologue; pass 1: the program,
+    ;; reading r12 / r13 for v0 / v11.
+    (loop $passes
+      (if (local.get $pass) (then (call $d9ms_prologue (local.get $out))))
+      (local.set $i (i32.const 0))
+      (block $rdone (loop $recs
+        (br_if $rdone (i32.ge_u (local.get $i) (local.get $n)))
+        (local.set $rec (i32.add (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $i) (i32.const 7))))
+        (local.set $op (i32.load (local.get $rec)))
+        (local.set $decl (i32.or (i32.eq (local.get $op) (i32.const 31)) (i32.eq (local.get $op) (i32.const 81))))
+        (if (i32.and (i32.ne (local.get $op) (i32.const 0)) (i32.eq (local.get $decl) (i32.eqz (local.get $pass)))) (then
+          (local.set $p (call $d3d_fixed_instruction (local.get $out) (local.get $op) (i32.load offset=8 (local.get $rec))))
+          (memory.copy (i32.add (local.get $p) (i32.const 12)) (i32.add (local.get $rec) (i32.const 12)) (i32.const 116))
+          (if (local.get $pass) (then
+            (local.set $j (i32.const 1))
+            (block $odone (loop $ops
+              (br_if $odone (i32.ge_u (local.get $j) (i32.load offset=8 (local.get $p))))
+              (local.set $q (i32.add (i32.add (local.get $p) (i32.const 16)) (i32.shl (local.get $j) (i32.const 4))))
+              (if (i32.eq (i32.load (local.get $q)) (i32.const 1)) (then
+                (if (i32.eqz (i32.load offset=4 (local.get $q))) (then
+                  (i32.store (local.get $q) (i32.const 0))
+                  (i32.store offset=4 (local.get $q) (i32.const 12))))
+                (if (i32.and (local.get $nrm) (i32.eq (i32.load offset=4 (local.get $q)) (i32.const 11))) (then
+                  (i32.store (local.get $q) (i32.const 0))
+                  (i32.store offset=4 (local.get $q) (i32.const 13))))))
+              (local.set $j (i32.add (local.get $j) (i32.const 1)))
+              (br $ops)))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $recs)))
+      (local.set $pass (i32.add (local.get $pass) (i32.const 1)))
+      (br_if $passes (i32.lt_u (local.get $pass) (i32.const 2))))
+    (local.get $out))
+  ;; ---- end d9ms ----------------------------------------------------------------
 
   ;; ---- draws -----------------------------------------------------------------
   (func $d9g_vcount (param $prim i32) (param $n i32) (result i32)
@@ -2173,9 +3077,19 @@
     (local $oprim i32) (local $i0 i32) (local $b i32)
     (local $vsmode i32) (local $vs i32) (local $decl i32) (local $d3d8 i32) (local $direct i32)
     (local $vbuf i32) (local $ibuf i32) (local $voff i32) (local $ioff i32) (local $vcount i32) (local $minstride i32)
+    (local $gather i32) ;; d9ms
     (local.set $vs (i32.load (global.get $d9g_pw)))
     (local.set $decl (i32.load offset=8 (global.get $d9g_pw)))
     (local.set $fvf (i32.load offset=12 (global.get $d9g_pw)))
+    ;; ---- d9ms: an input the executor cannot read in place is gathered;
+    ;; the selection below then sees the FVF the gather stands for (XYZ,
+    ;; or XYZRHW for POSITIONT) and no declaration under fixed function.
+    (local.set $gather (call $d9ms_select (local.get $vs) (local.get $decl) (local.get $fvf) (local.get $kind) (local.get $desc)))
+    (if (i32.lt_s (local.get $gather) (i32.const 0)) (then (return (i32.sub (i32.const 0) (local.get $gather)))))
+    (if (local.get $gather) (then
+      (local.set $fvf (global.get $d9ms_fvf))
+      (if (i32.eqz (local.get $vs)) (then (local.set $decl (i32.const 0))))))
+    ;; ---- end d9ms
     (if (local.get $vs)
       (then
         (local.set $vsmode (i32.const 1))
@@ -2197,7 +3111,8 @@
       (local.set $r (call $d9cl_prep (local.get $vsmode)))
       (if (local.get $r) (then (return (local.get $r))))
       (if (i32.eq (local.get $vsmode) (i32.const 2)) (then
-        (if (i32.or (call $d9g_rs (i32.const 151)) (call $d9g_rs (i32.const 167))) (then (return (i32.const 27))))))))
+        ;; d9ms: blending lowers ($d9ms_blend); a blend nothing planned is 27.
+        (if (i32.and (call $d9ms_blend_rs) (i32.eqz (global.get $d9ms_blend))) (then (return (i32.const 27))))))))
     (local.set $prim (i32.load offset=24 (local.get $desc)))
     (local.set $count (i32.load offset=28 (local.get $desc)))
     (if (i32.or (i32.eqz (local.get $prim)) (i32.gt_u (local.get $prim) (i32.const 6))) (then (return (i32.const 26))))
@@ -2288,6 +3203,9 @@
           (else (local.set $ps (call $d9g_fixed_ps (local.get $active)))))))
     (if (i32.lt_s (local.get $ps) (i32.const 0)) (then (return (i32.sub (i32.const 0) (local.get $ps)))))
     ;; Vertex source.
+    ;; ---- d9ms: a gathered input has its own canonical stride.
+    (if (local.get $gather) (then (local.set $stride (global.get $d9ms_stride))) (else
+    ;; ---- end d9ms
     (if (i32.le_u (local.get $kind) (i32.const 1))
       (then
         (local.set $vptr (i32.load offset=32 (local.get $desc)))
@@ -2303,18 +3221,20 @@
     (if (i32.or (i32.or (i32.eqz (local.get $vptr)) (i32.and (local.get $stride) (i32.const 3)))
           (i32.or (i32.gt_u (local.get $stride) (i32.const 1024))
             (i32.lt_u (local.get $stride) (local.get $minstride))))
-      (then (return (i32.const 3))))
+      (then (return (i32.const 3))))))
     ;; Vertex stage objects (the declaration's layout first: a D3D8 one also
     ;; declares the shader's inputs).
     (if (i32.eq (local.get $vsmode) (i32.const 1)) (then
-      (local.set $layout (if (result i32) (local.get $decl)
+      (local.set $layout (if (result i32) (local.get $gather) (then (call $d9ms_layout)) (else ;; d9ms
+        (if (result i32) (local.get $decl)
         (then (call $d9g_layout_decl (local.get $decl) (local.get $stride)))
-        (else (call $d9g_layout_fvf (local.get $fvf) (local.get $stride)))))
+        (else (call $d9g_layout_fvf (local.get $fvf) (local.get $stride)))))))
       (if (i32.lt_s (local.get $layout) (i32.const 0)) (then (return (i32.sub (i32.const 0) (local.get $layout)))))
       (local.set $vs (call $d9g_guest_vs (local.get $vs) (select (local.get $decl) (i32.const 0) (local.get $d3d8))))
       (if (i32.lt_s (local.get $vs) (i32.const 0)) (then (return (i32.sub (i32.const 0) (local.get $vs)))))))
     (if (i32.eq (local.get $vsmode) (i32.const 2)) (then
-      (local.set $layout (call $d9g_layout_fvf (local.get $fvf) (local.get $stride)))))
+      (local.set $layout (if (result i32) (local.get $gather) (then (call $d9ms_layout)) ;; d9ms
+        (else (call $d9g_layout_fvf (local.get $fvf) (local.get $stride)))))))
     (local.set $n (call $d9g_vcount (local.get $prim) (local.get $count)))
     (local.set $oprim (select (i32.const 4) (local.get $prim) (i32.eq (local.get $prim) (i32.const 6))))
     (local.set $ocount (select (i32.mul (local.get $count) (i32.const 3)) (local.get $n) (i32.eq (local.get $prim) (i32.const 6))))
@@ -2328,12 +3248,14 @@
     (if (i32.or (i32.eqz (local.get $num)) (i32.gt_u (local.get $num) (i32.const 0x100000))) (then (return (i32.const 20))))
     (if (i32.gt_u (local.get $ocount) (i32.const 0x80000)) (then (return (i32.const 20))))
     ;; DRAW from the buffers: not a fan, base vertex inside the buffer.
-    (if (i32.and (i32.ge_u (local.get $kind) (i32.const 2)) (i32.ne (local.get $prim) (i32.const 6))) (then
+    (if (i32.and (i32.and (i32.ge_u (local.get $kind) (i32.const 2)) (i32.ne (local.get $prim) (i32.const 6)))
+          (i32.eqz (local.get $gather))) (then ;; d9ms: a gather is a DRAW_UP
       (local.set $voff (i32.sub (local.get $vptr) (i32.add (local.get $vbuf) (i32.const 64))))
       (local.set $direct (i32.and (i32.ge_s (local.get $voff) (i32.const 0)) (i32.eqz (i32.and (local.get $voff) (i32.const 3)))))))
     (if (i32.and (i32.eqz (local.get $direct))
           (i32.gt_u (i32.mul (local.get $num) (local.get $stride)) (i32.const 0x200000)))
       (then (return (i32.const 20))))
+    (if (call $d9ms_idx_bad (local.get $min) (local.get $num)) (then (return (i32.const 27)))) ;; d9ms
     (local.set $depth (select (global.get $GPS_DEPTH_Z) (i32.const 0) (local.get $depth)))
     (local.set $r (call $d9g_raster (local.get $depth) (local.get $stencil) (local.get $fog)))
     (if (local.get $r) (then (return (local.get $r))))
@@ -2385,9 +3307,12 @@
             (local.set $k (i32.add (local.get $k) (i32.const 1)))
             (br $idx)))))
         (local.set $vpos (call $d9g_arena (i32.mul (local.get $num) (local.get $stride))))
+        (if (local.get $gather)
+          (then (call $d9ms_gather (call $d9g_aptr (local.get $vpos)) (local.get $min) (local.get $num))) ;; d9ms
+          (else
         (memory.copy (call $d9g_aptr (local.get $vpos))
           (i32.add (call $g2w (local.get $vptr)) (i32.mul (local.get $min) (local.get $stride)))
-          (i32.mul (local.get $num) (local.get $stride)))))
+          (i32.mul (local.get $num) (local.get $stride)))))))
     (if (local.get $guest_ps) (then (call $d9g_ps_consts)))
     (if (i32.eq (local.get $vsmode) (i32.const 1)) (then
       (call $d9g_vs_consts (i32.add (global.get $d9g_pw) (i32.const 16)) (i32.const 0) (i32.const 96))
@@ -2399,7 +3324,9 @@
       (else (if (global.get $d9g_tl_nrm) (then
         (call $d9g_vs_consts (i32.add (call $d9g_m) (i32.const 104928)) (i32.const 40) (i32.const 4))))))
       (if (global.get $d9g_tl_tex) (then
-        (call $d9g_vs_consts (i32.add (call $d9g_m) (i32.const 111616)) (i32.const 16) (i32.const 24))))))
+        (call $d9g_vs_consts (i32.add (call $d9g_m) (i32.const 111616)) (i32.const 16) (i32.const 24))))
+      (if (global.get $d9ms_blend) (then ;; d9ms
+        (call $d9g_vs_consts (i32.add (call $d9ms_m) (i32.const 1536)) (i32.const 96) (global.get $d9ms_bcount))))))
     (call $d9g_bind_tex (local.get $nb))
     (call $d9g_viewport)
     (if (local.get $vsmode) (then (call $d9cl_emit))) ;; d9cl

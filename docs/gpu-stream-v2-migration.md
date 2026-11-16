@@ -284,6 +284,29 @@ Without this, every new backend would have to reimplement the 846 lines of
     dependent texture op on a projected stage, and POSITIONT. A generated
     coordinate behind a guest PS no longer drops its VS output
     (`test-d3d9-gps-texgen.js` frames 8..11).
+  - **d9ms (2026-11-16): gathered vertex input.** Input the executor
+    cannot read in place is gathered per draw in WAT (`09akg` "d9ms") into
+    one interleaved arena vertex, drawn as DRAW_UP: declaration elements on
+    streams 1..15, every D3DDECLTYPE (converted as D3D defines it, the f64
+    quotient rounded once), declarations that are not an FVF layout under
+    fixed T&L (2) or POSITIONT (`XYZRHW` byte order), and XYZW / XYZBn
+    FVFs. BaseVertexIndex, MinIndex and NumVertices are the D3D ones.
+    SetStreamSourceFreq is still `crash_unimplemented`, so instancing
+    cannot reach a draw (`test-d3d9-gps-streams.js`, 7 frames pixel-exact
+    against the old path; each declined 2 or 27 before).
+  - **d9ms (2026-11-16): fixed-function vertex blending.** VERTEXBLEND
+    1..3 WEIGHTS, indexed blending (INDEXEDVERTEXBLENDENABLE, 0WEIGHTS
+    included, UBYTE4 or D3DCOLOR indices) and TWEENING lower like S3's
+    lighting: a prologue on the 09aj cascade VS compiled once per shape
+    (matrix count, indexed, index type, tween, NORMAL), the world matrices
+    0..3 or palette entries 0..21 (position columns and inverse transposes)
+    or TWEENFACTOR sent as c96.. CONSTS per draw; the cascade then runs on
+    the blended world-space vertex under an identity world. Inputs are
+    always gathered. Still 27: an index past 21 (checked over the draw's
+    vertices before it is lowered), missing BLENDWEIGHT / BLENDINDICES /
+    POSITION1 / NORMAL1. The old path ignores blending, so
+    `test-d3d9-gps-blend.js` compares against CPU-blended meshes (dyadic,
+    exact) drawn unblended. Caps still report MaxVertexBlendMatrices 0.
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
   a performance step.
 

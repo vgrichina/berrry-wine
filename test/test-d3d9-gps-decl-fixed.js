@@ -5,8 +5,9 @@
 // the declaration is exactly an FVF layout -- it runs as that FVF. The
 // same lit mesh is drawn through FVF 0x52 and through an equivalent
 // declaration (elements listed out of order), then through one whose
-// offsets are not an FVF layout, which still declines (2). Every frame
-// must equal the old software path's pixels.
+// offsets are not an FVF layout, which used to decline (2) and is now
+// gathered (the d9ms gather, test-d3d9-gps-streams.js). Every frame must
+// equal the old software path's pixels.
 const assert = require('assert');
 const { openD3d9GpsSession } = require('./helpers/d3d9-gps-session');
 
@@ -71,7 +72,7 @@ async function render(gps) {
     await frame(() => ok('IDirect3DDevice9_SetFVF', '[ctx.d9g.device,0x52]'));                  // 0 FVF
     await frame(async () => ok('IDirect3DDevice9_SetVertexDeclaration', `[ctx.d9g.device,${fvfDecl}]`)); // 1 equivalent decl
     const before = await s.stats();
-    await frame(async () => ok('IDirect3DDevice9_SetVertexDeclaration', `[ctx.d9g.device,${oddDecl}]`)); // 2 declines
+    await frame(async () => ok('IDirect3DDevice9_SetVertexDeclaration', `[ctx.d9g.device,${oddDecl}]`)); // 2 gathered
     const st = await s.stats();
     await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
     assert.strictEqual(await s.close(), 0, s.output());
@@ -84,7 +85,8 @@ async function render(gps) {
   const ring = await render('software');
   assert.strictEqual(ring.before.declines, 0, `FVF-layout declaration lowered ${JSON.stringify(ring.before)}`);
   assert.strictEqual(ring.before.draws, 2, `both draws on the ring ${JSON.stringify(ring.before)}`);
-  assert.deepStrictEqual(ring.st.reasons, { 2: 1 }, `a non-FVF declaration declines 2 ${JSON.stringify(ring.st)}`);
+  assert.deepStrictEqual(ring.st.reasons, {}, `a non-FVF declaration is gathered, not declined ${JSON.stringify(ring.st)}`);
+  assert.strictEqual(ring.st.draws, 3, `all three draws on the ring ${JSON.stringify(ring.st)}`);
   for (let i = 0; i < old.frames.length; i++) {
     const a = old.frames[i], b = ring.frames[i];
     const diff = a.findIndex((v, k) => v !== b[k]);
