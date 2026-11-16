@@ -36,5 +36,12 @@ const r = scenario.run({ GS, makeProducer, Executor, canvas, backend, buffer: ne
 for (const f of r.failures) console.log(`FAIL ${f}`);
 const s = r.stats;
 console.log(`stats: ${JSON.stringify({ draws: s.draws, presents: s.presents, readbacks: s.readbacks, programs: s.programs, backend: s.backend })}`);
-console.log(`${r.failures.length ? 'FAIL' : 'PASS'} test-gpu-stream-webgl: ${r.checks - r.failures.length}/${r.checks} checks`);
-process.exit(r.failures.length ? 1 : 0);
+// Slice 9.4a features (logic ops, partial colour masks, CUBE, occlusion,
+// projected texcoords, vertex fog), the same checks the software executor runs.
+const r94 = scenario.run94a({ GS, makeProducer, Executor, canvas, backend, buffer: new SharedArrayBuffer(1 << 22) });
+for (const f of r94.failures) console.log(`FAIL 9.4a ${f}`);
+const s94 = r94.stats || {};
+console.log(`9.4a stats: ${JSON.stringify({ logicDraws: s94.logicDraws, logicCopies: s94.logicCopies, occlusionQueries: s94.occlusionQueries, occlusionPasses: s94.occlusionPasses })}`);
+const failed = r.failures.length + r94.failures.length, total = r.checks + r94.checks;
+console.log(`${failed ? 'FAIL' : 'PASS'} test-gpu-stream-webgl: ${total - failed}/${total} checks`);
+process.exit(failed ? 1 : 0);

@@ -4,8 +4,14 @@ const assert = require('assert');
 const { parse, compile, withMipSampling } = require('../lib/d3d9-shader');
 const u32 = values => new Uint32Array(values);
 const vs = u32([0xfffe0101, 1, 0xc00f0000, 0x90e40000, 0xffff]);
-const ps = u32([0xffff0101, 66, 0xb00f0000, 5, 0x800f0000,
+// ps_1_1..1_3 lower only through WAT core IR (09af1; test-d3d9-shader-canon.js).
+// The JS pixel path left is the GPS producers' legacy ps_1_4 subset.
+const ps11 = u32([0xffff0101, 66, 0xb00f0000, 5, 0x800f0000,
   0xb0e40000, 0x90e40000, 0xffff]);
+assert.strictEqual(parse(ps11).instructions.length, 2);
+assert.throws(() => compile(ps11), /invalid D3D shader IR/);
+const ps = u32([0xffff0104, 66, 0x800f0000, 0xb0e40000, 5, 0x800f0000,
+  0x80e40000, 0x90e40000, 0xffff]);
 assert.strictEqual(parse(vs).length, 5);
 assert.strictEqual(parse(ps).instructions.length, 2);
 assert.deepStrictEqual(compile(vs).attributes, ['d3d_v0']);
@@ -40,7 +46,7 @@ for(const entry of ['void main() {','void main(){','void main ( void )\n{']){
   assert.strictEqual(withMipSampling(shader,[],1/16,[],[1]),shader,'unused sampler stays untouched');
 }
 assert.throws(()=>withMipSampling({source:'uniform sampler2D d3d_s0;',uniforms:['d3d_s0']},[0]),/main function/);
-const masked = compile(u32([0xffff0101, 1, 0x81130000, 0x91c60000, 0xffff]));
+const masked = compile(u32([0xffff0104, 1, 0x81130000, 0x91c60000, 0xffff]));
 assert.match(masked.source, /d3d_color0.zyxw/);
 assert.match(masked.source, /clamp\(/);
 assert.match(masked.source, /\* 2.000/);
@@ -48,11 +54,11 @@ assert.match(masked.source, /r0.xy = result1.xy/);
 const comment = u32([0xfffe0101, 0x0002fffe, 0xffffffff, 0xfffe0200, ...vs.slice(1)]);
 assert.strictEqual(parse(comment).length, comment.length);
 const floats = new Uint32Array(new Float32Array([0.25, 0.5, 0.75, 1]).buffer);
-const def = compile(u32([0xffff0101, 1, 0x800f0000, 0xa0e40000,
+const def = compile(u32([0xffff0104, 1, 0x800f0000, 0xa0e40000,
   81, 0xa00f0000, ...floats, 0xffff]));
 assert.match(def.source, /const vec4 d3d_ps_c0 = vec4\(0.25, 0.5, 0.75, 1.0\)/);
 assert.deepStrictEqual(def.uniforms, []);
-const pair = compile(u32([0xffff0101, 1, 0x80070000, 0x90e40000,
+const pair = compile(u32([0xffff0104, 1, 0x80070000, 0x90e40000,
   0x40000001, 0x80080000, 0x80e40000, 0xffff])).source;
 assert.ok(pair.indexOf('vec4 result4') < pair.indexOf('r0.xyz ='),
   'coissued alpha source reads registers before the RGB instruction writes');
@@ -73,9 +79,10 @@ for (const [words, pattern] of [
   [[0xffff0101, 1, 0x800f0000, 0x00e40000, 0xffff], /parameter token/],
   [[0xffff0101, 1, 0x800f0000, 0xa0e42000, 0xffff], /relative/],
   [[0xfffe0101, 1, 0xc00f0000, 0xa0e42000, 0xffff], /before a0 initialization/],
-  [[0xffff0101, 0x40000001, 0x800f0000, 0x90e40000, 0xffff], /coissue/],
+  [[0xffff0104, 0x40000001, 0x800f0000, 0x90e40000, 0xffff], /coissue/],
   [[0xffff0101, 254, 0xffff], /opcode 254/],
-  [[0xffff0101, 1, 0x800f0002, 0x90e40000, 0xffff], /register/],
+  [[0xffff0104, 1, 0x800f0006, 0x90e40000, 0xffff], /register/],
+  [[0xffff0104, 64, 0x80070000, 0xb0e40000, 0xffff], /texcrd requires core IR/],
   [[0xfffe0101, 0xffff], /does not write position/],
 ]) assert.throws(() => compile(u32(words)), pattern);
 console.log('PASS bounded D3D9 shader decoding, operands, masks, constants and GLSL lowering');

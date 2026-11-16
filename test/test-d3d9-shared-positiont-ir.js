@@ -20,7 +20,7 @@ const allocator=`(memory 128 128)(export "memory" (memory 0))
  (func $g2w (export "guest_to_wasm") (param $p i32)(result i32)(local.get $p))
  (func $w2g (param $p i32)(result i32)(local.get $p))`;
 async function boot(){
- const source=allocator+['09af-d3d-shader-ir.wat','09ag-d3d-shader-vm.wat',
+ const source=allocator+['09af-d3d-shader-ir.wat','09af1-d3d-shader-canon.wat','09ag-d3d-shader-vm.wat',
   '09ah-d3d-software.wat','09aj-d3d-fixed.wat'].map(p=>fs.readFileSync(path.join(__dirname,'../src',p),'utf8')).join('\n');
  const r=compile(source,new Map(),{simd:true});
  assert(r.success,r.error);assert(WebAssembly.validate(r.wasmBinary));

@@ -5,13 +5,15 @@ const assert = require('assert');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const {spawnSync} = require('child_process');
 const controls = require('./helpers/palette-browser-launch');
 const dir = fs.mkdtempSync(path.join(os.tmpdir(),'palette-launch-controls-'));
-const fixture = path.join(__dirname,'test-d3dim-palette-gpu-web.js');
+// The browser fixture that exposed --launch-config-check
+// (test-d3dim-palette-gpu-web.js) went with the deleted JS D3DIM executor;
+// its boundary was launchConfiguration() before anything else, called here.
 function boundary(chrome) {
-  return spawnSync(process.execPath,[...process.execArgv,fixture,'--launch-config-check'],
-    {env:{...process.env,CHROME:chrome},encoding:'utf8',timeout:10000,maxBuffer:8192});
+  try {
+    return {status:0, stdout:JSON.stringify(controls.launchConfiguration({...process.env,CHROME:chrome})), stderr:''};
+  } catch (error) { return {status:1, stdout:'', stderr:String(error && error.message)}; }
 }
 try {
   // Exact production fixture boundary first; sentinel must never be invoked.

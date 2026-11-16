@@ -217,7 +217,15 @@ Without this, every new backend would have to reimplement the 846 lines of
 - **9.3. IR canonicalization:** the ps1.x ops, modifiers and unrolling.
 - **9.4. Executor growth:** vertex shader stage, stencil, partial colormask,
   blend_op, render target as texture, 8 samplers, index_size, CUBE and the
-  occlusion FENCE.
+  occlusion FENCE. **9.4a done (2026-11-15)** in the software and WebGL
+  executors, shared `run94a` scenario: stencil, partial colormask,
+  blend_op, logic_op (all 16; exact blend/output forms, else one copy per
+  run of non-overlapping primitives, no CPU readback), RT as texture,
+  index_size 2/4, CUBE, occlusion FENCE, and in software projected
+  texcoords (`t#_dz`) and the vertex fog LRP. Open: the vertex shader stage
+  (9.4b), DRAW from VBUF/IBUF resources (both executors still refuse
+  DRAW), and samplers 6/7, which ABI 1 IR cannot name (extension proposed
+  in gpu-stream-v2.md for 9.3; software caps 6).
 - **9.5. Switch D3D9 and D3D8 together.** Delete `d3d9-host.js`,
   `d3d9-backend.js`, `d3d9-render-worker.js`, the host part of
   `d3d9-software-backend.js` and v1 `d3d-command-stream.js`.

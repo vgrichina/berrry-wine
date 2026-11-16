@@ -105,8 +105,11 @@ A8B8G8R8). Each executor's caps:
 | executor | flags | max_texture | max_samplers | max_aniso |
 |---|---|---|---|---|
 | null | all | 16384 | 16 | 16 |
-| software | STENCIL, OCCLUSION, BORDER_LINEAR, MIRRORONCE | 2048 | 8 | 1 |
-| webgl | STENCIL | MAX_TEXTURE_SIZE | min(8, units − 1) | 1 |
+| software | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE | 2048 | 6 (the native VM's stages) | 1 |
+| webgl | STENCIL, LOGIC_OP, OCCLUSION | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
+
+The WebGL executor keeps two texture units past the samplers: the fog
+table and the logic-op destination copy.
 
 A record that needs a capability the executor did not advertise is refused
 with error 3 (unsupported), never approximated.
@@ -256,7 +259,7 @@ strip); fans are lowered to indexed lists by the producer.
 | 28 | i32 scissor left, top, right, bottom |
 | 44 | u8 blend_op, blend_op_alpha (D3DBLENDOP 1 add, 2 subtract, 3 revsubtract, 4 min, 5 max; checked only when blend is 1) |
 | 46 | u8 stencil_enable, two_sided, stencil_func, fail, zfail, pass (D3DCMP / D3DSTENCILOP 1–8), ccw_func, ccw_fail, ccw_zfail, ccw_pass, ref, mask, wmask |
-| 59 | u8 logic_op (0 off; any other value needs CAP_LOGIC_OP) |
+| 59 | u8 logic_op: 0 off, else 1 + (GL logic op − GL_CLEAR 0x1500), so 1..16: 1 CLEAR, 2 AND, 3 AND_REVERSE, 4 COPY, 5 AND_INVERTED, 6 NOOP, 7 XOR, 8 OR, 9 NOR, 10 EQUIV, 11 INVERT, 12 OR_REVERSE, 13 COPY_INVERTED, 14 OR_INVERTED, 15 NAND, 16 SET. n = logic_op − 1 is the truth table: result bit = (n >> ((1−s)·2 + (1−d))) & 1. Needs CAP_LOGIC_OP and blend 0 (a logic op replaces blending, as in GL); see "Logic ops" |
 | 60 | f32 z_bias (fraction of the depth range), f32 slope_bias (depth_mode 1 only) |
 | 68 | 28 reserved bytes, zero |
 
@@ -304,11 +307,44 @@ and the generated layouts alone (`lib/gpu-stream.js` `validateLayout`,
   below at max_level. Anisotropy above caps is refused.
 - **Render targets.** A colour RT may be bound as a texture once it is not
   the current colour target; its row 0 is the top row, like any TEX2D.
+- **Cube textures.** CREATE kind 2 is square, A8B8G8R8, with `levels` per
+  face; UPLOAD's `face` is 0..5 in D3D/GL order (+X, −X, +Y, −Y, +Z, −Z),
+  rows top-down (row 0 at t = 0). Face selection and (s, t) are the D3D/GL
+  rule (for +X: s = (−z/|x| + 1)/2, t = (−y/|x| + 1)/2). A cube is sampled
+  clamped to the face edge whatever the sampler's address modes say. The IR
+  names no texture type: BIND of a CUBE decides that the slot is a cube.
 - **Required state.** Depth Z and W, alpha test, blend with all five ops,
-  stencil (one- and two-sided), depth bias, scissor, viewport, colour mask
-  (all or no colour channels, alpha separately), fog modes 0–3.
+  stencil (one- and two-sided), depth bias, scissor, viewport, any colour
+  mask (each of R, G, B, A separately, on draws and CLEARs), fog modes 0–3.
+- **Logic ops.** Applied to the 8-bit-per-channel fragment (rounded) and
+  the destination after alpha test and fog; the colour mask applies after
+  the op, and depth/stencil writes are unaffected (NOOP still writes depth).
+  The software executor applies it in the native output stage; the WebGL
+  executor uses exact output or blend forms where they exist (CLEAR, SET,
+  COPY, COPY_INVERTED, INVERT = 1·(1 − dst), NOOP = colour mask 0) and
+  otherwise samples a copy of the RT at `gl_FragCoord`. One
+  `copyTexSubImage2D` serves a run of primitives that cover no pixel twice
+  (triangles separated by edge-normal SAT, so triangles sharing an edge do
+  not split a run; lines and points by a bounding box grown by one pixel;
+  at most 256 shapes per copy); the copy is refreshed only when something
+  other than a logic op wrote the RT, or the next primitive overlaps one
+  drawn since the copy. No executor reads the RT back to the CPU for it.
+- **Occlusion.** FENCE kind 1/2 counts pixels that pass depth and stencil
+  (and alpha test), whatever the colour mask. The WebGL executor draws each
+  run of non-overlapping primitives twice inside a query: first with the
+  same tests into a count target sharing the depth/stencil buffer (adding
+  1/255, depth and stencil unwritten), then the real pass; it sums the
+  count target at END, and every 255 runs, with one `readPixels` of it.
 - **Optional state (caps).** logic_op, occlusion, mirror-once,
   linear-filtered border. Without the cap the record fails as unsupported.
+- **Samplers 6 and 7 (open, IR side).** BIND and the WebGL executor take
+  slots 0..7, but IR ABI 1 is ps_1_x, whose texld names its stage by the
+  destination register r0..r5, so no shader can sample slot 6 or 7 yet.
+  Proposed minimal extension, for gps-9.3: IR header version 0xffff0200
+  with texld (66) taking a third operand of bank 10 (D3DSPR_SAMPLER) whose
+  index is the slot, the stage no longer implied by the destination. The
+  software executor's native VM has six stages, so its caps stay at 6 until
+  09ag grows two more.
 - **Readback and present.** READBACK writes A8B8G8R8 rows top-down at the
   given pitch. PRESENT hands the page a frame with `dstX`, `dstY` and
   `stamp`; the page shows a frame only if its stamp is not older (serial
@@ -385,8 +421,7 @@ enum reaches an executor.
 
 Known differences from the old JS backends: gamma uses the LUT sampled at
 `(floor(c*255+0.5)+0.5)/256` on both executors; the software executor
-refuses fog no-multiply/no-add, and both refuse a colour mask that writes
-only some colour channels, combine `local = 2`, and fog/gamma/TMU writes
+refuses fog no-multiply/no-add, and both refuse combine `local = 2`, and fog/gamma/TMU writes
 before the first open — all fail fast rather than draw wrongly.
 
 ## One source of truth

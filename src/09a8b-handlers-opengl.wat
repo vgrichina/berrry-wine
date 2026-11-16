@@ -3096,6 +3096,7 @@
     ;; already the stored value, byte-swizzled to the surface's ARGB.
     (local.set $type (i32.load offset=32 (local.get $s)))
     (local.set $bytes (i32.and (i32.eq (local.get $type) (i32.const 0x1401)) (call $gl_transfer_identity)))
+    (call $glg_tex_dirty (load.field DxObject misc1 (local.get $entry)))
     (loop $rows
       (local.set $col (i32.const 0))
       (local.set $dst (i32.add (load.field DxObject misc1 (local.get $entry))
@@ -3322,7 +3323,10 @@
       (i32.store offset=20 (local.get $s) (local.get $out))
       (drop (call $gl_wat_encode_call (i32.const 160) (local.get $s) (i32.const 0)))
       (call $heap_free (local.get $g)) (return)))
+    ;; GPU stream (09a8gt) charges any readback to the framebuffer-copy site.
+    (local.set $g (call $glg_set_read_site (i32.const 4)))
     (local.set $lease (call $gl_sw_read_surface))
+    (drop (call $glg_set_read_site (local.get $g)))
     (local.set $rt (i32.and (local.get $lease) (i32.const 0x3fffffff)))
     (if (i32.eqz (local.get $rt)) (then (return)))
     (loop $rows
@@ -3779,6 +3783,7 @@
    (else (if (global.get $gl_sw_enabled)
      (then
        (call $d3dim_worker_fence) (drop (call $gl_sw_target))
+       (if (i32.eq (local.get $kind) (i32.const 1)) (then (call $glg_cpu_zread)))
        (if (i32.eq (local.get $kind) (i32.const 2)) (then (drop (call $gl_stencil_ensure))))
        (local.set $source (global.get $gl_sw_zbuf))
        (loop $rows

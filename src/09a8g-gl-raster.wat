@@ -865,6 +865,7 @@
     (local $bpp i32) (local $align i32) (local $stride i32) (local $len i32)
     (local $src i32) (local $row i32) (local $col i32)
     (local $dst i32) (local $px i32)
+    (call $glg_tex_dirty (local.get $dib))
     (local.set $bpp (call $gl_sw_format_bytes (local.get $format)))
     (local.set $align (i32.load offset=44 (global.get $gl_sw_st)))
     (if (i32.eqz (local.get $align)) (then (local.set $align (i32.const 4))))
@@ -1201,6 +1202,7 @@
     (local $p i32)
     (if (i32.eqz (global.get $gl_sw_enabled)) (then (return)))
     (call $d3dim_worker_fence)
+    (call $glg_hook_detach)
     (call $gl_sw_drawable_save)
     (global.set $gl_sw_drawable_node (i32.const 0))
     (call $gl_sw_drawable_zero)
@@ -1237,6 +1239,7 @@
   (func $gl_sw_delete_drawable (param $key i32)
     (local $p i32) (local $prev i32)
     (call $d3dim_worker_fence)
+    (call $glg_hook_detach)
     (call $gl_sw_drawable_save)
     (local.set $p (global.get $gl_sw_drawables))
     (block $done (loop $scan
@@ -1286,6 +1289,7 @@
     (local.set $rt (select (global.get $gl_sw_front) (global.get $gl_sw_rt)
       (i32.or (call $gl_color_front (local.get $mode)) (i32.eq (local.get $mode) (i32.const 0x406)))))
     (if (global.get $gl_sw_bitmap) (then (local.set $rt (global.get $gl_sw_rt))))
+    (call $glg_cpu_read (local.get $rt))
     (i32.or (local.get $rt) (i32.or (i32.const 0x80000000)
       (select (i32.const 0x40000000) (i32.const 0) (global.get $gl_sw_flip_y)))))
 
@@ -1485,6 +1489,7 @@
       (local.get $w) (local.get $h) (i32.const 32) (i32.const 4)))
     (if (i32.eqz (local.get $obj)) (then
       (call $gl_sw_drop_surface (local.get $newfront)) (return (i32.const 0))))
+    (call $glg_hook_unbind)
     (call $gl_sw_drop_surface (global.get $gl_sw_front_obj))
     (call $gl_sw_drop_surface (global.get $gl_sw_rt_obj))
     (global.set $gl_sw_front_obj (local.get $newfront))
@@ -1515,7 +1520,8 @@
       (then
         (global.set $gl_sw_zbuf_obj (local.get $obj))
         (global.set $gl_sw_zbuf (call $dx_from_this (local.get $obj)))
-        (call $gl_sw_clear_depth)))
+        (call $gl_sw_clear_depth)
+        (call $glg_hook_zfresh)))
     (drop (call $rast_white_texel)))
 
   ;; The shared 1x1 opaque white texture, made on first use. GL draws an
@@ -1589,6 +1595,7 @@
                 (i32.and (i32.eq (i32.load offset=4 (local.get $masks)) (i32.const 0x7e0))
                   (i32.eq (i32.load offset=8 (local.get $masks)) (i32.const 31)))) (then
               (call $dx_surf_fmt_set (local.get $entry) (i32.const 1))))))))))
+    (call $glg_hook_detach)
     (call $gl_sw_drop_surface (global.get $gl_sw_front_obj))
     (call $gl_sw_drop_surface (global.get $gl_sw_rt_obj))
     (global.set $gl_sw_front_obj (i32.const 0))
@@ -2073,6 +2080,7 @@
     ;; picture.
     (if (i32.eq (local.get $op) (i32.const 55))
       (then
+        (if (call $glg_swap) (then (return)))
         (if (i32.and (i32.ne (global.get $gl_sw_rt) (i32.const 0))
                      (i32.ne (global.get $gl_sw_front) (i32.const 0)))
           (then
@@ -2091,7 +2099,8 @@
             (memory.fill (load.field DxObject misc1 (global.get $gl_sw_rt)) (i32.const 0)
               (i32.mul (load.field DxObject pitch (global.get $gl_sw_rt))
                        (load.field DxObject height (global.get $gl_sw_rt))))
-            (global.set $gl_sw_presents (i32.add (global.get $gl_sw_presents) (i32.const 1)))))
+            (global.set $gl_sw_presents (i32.add (global.get $gl_sw_presents) (i32.const 1)))
+            (call $glg_after_sw_swap)))
         (return)))
     ;; 18 glScissor(x, y, w, h)
     (if (i32.eq (local.get $op) (i32.const 18))
@@ -2105,8 +2114,10 @@
         (local.set $mask (i32.load offset=4 (local.get $stack)))
         (local.set $rt (call $gl_sw_target))
         (if (i32.eqz (local.get $rt)) (then (return)))
-        (if (i32.and (local.get $mask) (i32.const 0x4000))
-          (then (call $gl_sw_clear_selected)))
+        ;; GPU stream (09a8gt) mirrors the clear; 1 = it did the colour part.
+        (if (i32.eqz (call $glg_clear (local.get $mask)))
+          (then (if (i32.and (local.get $mask) (i32.const 0x4000))
+            (then (call $gl_sw_clear_selected)))))
         ;; glClear is scissored too.
         (local.set $zv (global.get $gl_sw_zbuf))
         (if (i32.and (i32.load (local.get $s)) (i32.const 32))
@@ -2943,6 +2954,8 @@
     (local.set $caps (i32.load (local.get $s)))
     (local.set $qa (f32.load offset=12 (local.get $pa)))
     (local.set $qb (f32.load offset=12 (local.get $pb)))
+    (if (call $glg_span (local.get $y) (local.get $xa) (local.get $pa) (local.get $xb) (local.get $pb))
+      (then (return)))
     (global.set $gl_sw_rgba_span (i32.const 1))
     (call $viewport_draw_textured_span
       (global.get $gl_sw_r_rt) (global.get $gl_sw_r_tex)
@@ -3225,6 +3238,12 @@
       (global.set $rast_t0_qb (global.get $rast_pb))
       (global.set $rast_t0_qc (global.get $rast_pc))
       (global.set $rast_t0_q_on (i32.const 1))))
+    ;; GPU stream (09a8gt): the executor draws it instead.
+    (if (call $glg_tri (local.get $c0) (local.get $c1) (local.get $c2)) (then
+      (global.set $rast_t0_q_on (i32.const 0))
+      (global.set $rast_t1_on (i32.const 0))
+      (global.set $rast_fog_on (i32.const 0))
+      (return)))
     (global.set $rast_gl_stipple (select (i32.const 1) (i32.const 0)
       (i32.ne (i32.and (local.get $caps) (i32.const 0x1000000)) (i32.const 0))))
     ;; Triangles need GL's alpha blend equation just as point/line spans do.
@@ -3600,6 +3619,7 @@
     (if (i32.eq (i32.and (i32.load offset=8 (local.get $start)) (i32.const 0x84FDFFFF)) (i32.const 0x50000)) (then
       (if (i32.eqz (call $gl_stencil_ensure)) (then (return)))
       (if (call $gl_sw_worker_try (local.get $start) (local.get $vertices)) (then (return)))
+      (call $glg_cpu_write (i32.const 14))
       (call $gl_pixels_stencil_draw (local.get $start) (local.get $vertices)) (return)))
     (call $gl_1d_capture)
     (call $gl_2d_capture)
@@ -3612,6 +3632,7 @@
       ;; record with draw-time fragment state, without primitive transformation.
       (if (i32.eqz (call $gl_stencil_prepare)) (then (return)))
       (if (call $gl_sw_worker_try (local.get $start) (local.get $vertices)) (then (return)))
+      (call $glg_cpu_write (i32.const 13))
       (call $gl_bitmap_sw_draw (local.get $start) (local.get $vertices)) (return)))
     (local.set $step (if (result i32) (i32.eqz (local.get $mode))
       (then (i32.const 1))
@@ -3648,6 +3669,7 @@
     (if (global.get $rast_stencil_state) (then
       (if (i32.eqz (i32.load (global.get $rast_stencil_state)))
         (then (global.set $rast_stencil_state (i32.const 0))))))
+    (call $glg_draw_begin)
     (local.set $b (call $gl_mtx_block))
     (local.set $mvp (global.get $gl_sw_scratch))
     ;; Stacks BY NAME -- 0 modelview, 1 projection -- and not "the current
@@ -3838,6 +3860,8 @@
     (local $snap i32) (local $b i32) (local $d i32) (local $g i32)
     (if (global.get $gl_sw_in_worker) (then (return (i32.const 0))))
     (if (i32.eq (global.get $gl_sw_worker_ok) (i32.const 2)) (then (return (i32.const 0))))
+    ;; GPU stream (09a8gt) draws in place, in order with its ring.
+    (if (global.get $glg_on) (then (return (i32.const 0))))
     (if (i32.eqz (global.get $gl_sw_snap)) (then
       (local.set $g (call $gl_alloc_affine (i32.const 2748)))
       (if (i32.eqz (local.get $g)) (then
@@ -4093,6 +4117,8 @@
   (func (export "gl_sw_present_window") (param $hwnd i32) (result i32)
     (if (i32.or (i32.eqz (global.get $gl_sw_front)) (i32.eqz (local.get $hwnd)))
       (then (return (i32.const 0))))
+    ;; GPU stream (09a8gt): the executor's PRESENT is the picture.
+    (if (global.get $glg_presented) (then (return (i32.const 1))))
     (call $dx_blit_entry_to_hdc (global.get $gl_sw_front)
       (i32.or (local.get $hwnd) (i32.const 0x40000)))
     (i32.const 1))
@@ -4160,6 +4186,8 @@
 
   (func $gl_sw_export_reset (export "gl_sw_reset")
     (call $d3dim_worker_fence)
+    (call $glg_hook_unbind)
+    (global.set $glg_presented (i32.const 0))
     (block $done (loop $drawables
       (br_if $done (i32.eqz (global.get $gl_sw_drawables)))
       (call $gl_sw_delete_drawable (i32.load (global.get $gl_sw_drawables)))
@@ -4285,6 +4313,10 @@
   (local.set $top (i32.add (local.get $dy) (load.field DxObject height (local.get $view))))
   (local.set $mode (call $gl_color_selection (i32.const 0)))
   (if (i32.and (i32.eq (local.get $operation) (i32.const 0x102)) (i32.eqz (local.get $mode))) (then (return (i32.const 1))))
+  ;; GPU stream (09a8gt): glAccum(RETURN) writes the colour buffer here.
+  (if (i32.eq (local.get $operation) (i32.const 0x102)) (then
+    (call $glg_cpu_write (i32.const 15))
+    (call $glg_front_sync (i32.const 5))))
   (if (i32.le_u (i32.sub (local.get $operation) (i32.const 0x100)) (i32.const 1)) (then
     (local.set $src (i32.and (call $gl_sw_read_surface) (i32.const 0x3fffffff)))))
   (local.set $y (local.get $dy))
