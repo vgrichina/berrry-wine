@@ -132,6 +132,14 @@
       "kind": "continuation",
       "reason": "Read-only full-width current invocation token export used to authenticate the original parked COM frame. It neither enters a guest callback nor mutates or restores invocation state; broader ownership remains pending.",
       "ownership": "pending"
+    },
+    {
+      "file": "lib/com-owned-proxy.js",
+      "name": "host-file",
+      "sha256": "10fb71d7574aed4e9ffea326770f061505c89591434c99143fb9444cd873780e",
+      "kind": "continuation",
+      "reason": "Remote QI retains the existing proxy root while awaiting authenticated exporter work. It reads the full-width current invocation token before suspension and validates token, exact IID and owner around every await. Ordinary HRESULT completion cancels pending work and releases the pin; traps and changed ownership do not replay or clean an abandoned guest frame. No new guest entry or context restoration; broader ownership remains pending.",
+      "ownership": "pending"
     }
   ]
 }
