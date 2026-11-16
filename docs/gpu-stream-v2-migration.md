@@ -286,6 +286,35 @@ The v2 lowering reuses the 09a8g pipeline:
   rasterizer.
   - Apps: Quake II, Quake III, Hexen II, Heretic II, Half-Life, GLTron,
     SimGolf, WC3, each in both software and webgl modes.
+  - **Status (G3a/G3a-2/G3b/G3c).** `src/09a8gt-gl-gps.wat` lowers the
+    09a8g pipeline onto ring api 3. The browser's default GL renderer is
+    `software` with gps on, on the WebGL executor (the page GPU select
+    "Software" picks the software executor; `?gl-gps=off|software|webgl|null`
+    overrides it). In Threads mode the guest instance's producer is turned on
+    through word 4 of the software-GL producer mailbox
+    (`lib/gl-software-producer.js`, written by `lib/gl-render-host.js` from
+    the host's `glGps`), its kicks reach the render Worker through
+    `lib/guest-rpc.js`, and the render owner sends no CPU frame while the
+    executor presents. `?gl-renderer=webgl`, or `glRenderer: 'webgl'` on an
+    app in `lib/apps.js`, keeps the JS path. Opted out: `heretic2_demo` (the
+    WebGL executor draws a 1 px dark seam where the main-menu book's tiled
+    quads meet; neither the JS path nor gps-off software GL does). The CLI default is unchanged
+    (`--gl-renderer` defaults to webgl; `--gl-renderer=software
+    --headless-gl` is gps on WebGL).
+  - **What of the old JS transport is still live, and why.** Nothing became
+    dead with the flip, so nothing was deleted:
+    `gl-compat.js` is still the WGL context manager for software contexts
+    (create/share/make-current/swap bookkeeping, PFD_DRAW_TO_BITMAP,
+    `gl_sw_*` drawable sizing) and still the whole `webgl` renderer
+    (FixedFunctionGL over `gpu-backend.js`), which serves `?gl-renderer=webgl`,
+    per-app opt-outs, the CLI and Node default, and about 150 tests;
+    `gl-command-stream.js` is the WAT GL encoder's batch format every context
+    (software included) is replayed from; `gl-render-host.js`,
+    `gl-render-worker.js` and `gl-software-producer.js` carry software
+    contexts in Threads mode (the render owner's context table and the
+    producer mailbox). Deleting them needs the WGL context table and the
+    wgl* lifecycle in WAT (the G3 plan's "routing part"), and the CLI/test
+    default moved off `webgl`.
 - **G4. Optional: GPU transform and lighting through vertex-shader IR.**
 
 **Readbacks:**

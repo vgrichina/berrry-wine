@@ -35,7 +35,8 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "fbd2f47cc40149904c404a10c191181c4fd38ab2b187ee7aa95158447ff5f78f",
+      "sha256": "62d5798df5ec0938ccd894a58cd87b7642a82d4c6f2985cb6c9f95d51c1e8558",
+      "glRendererOptOutReview20261116": "2026-11-16 GPU stream v2 G3c: heretic2_demo gains glRenderer 'webgl' (per-app opt-out from the browser's software+gps GL default). Registry data only; no guest invocation, callback owner, continuation or retained guest reference added.",
       "aoe1SavePersistReview20261115": "Age of Empires trial (aoe1) gains persistFiles c:\\savegame\\*.gam and c:\\game*.nfo with persistStore indexeddb / persistMaxBytes 8 MB; static app-registry data only, no callback ownership change",
       "aoe1DesktopPublishReview20261115": "Age of Empires trial (aoe1) added to DESKTOP_APPS with a comment; list membership only, no callback ownership change",
       "utGlideComment20261114": "UT348 apps.js comment: GlideDrv needs fullscreen",
@@ -56,7 +57,8 @@
     {
       "file": "lib/browser-shell.js",
       "name": "host-file",
-      "sha256": "7b1daf7daa43b6566fc6fc741b615449798908442ad17cf395337681eaf1bc59",
+      "sha256": "b83258c681635230fc85b0ed9f83ac44b0785b744ce49feedcfaf471ac4d9d15",
+      "glRendererOptOutReview20261116": "2026-11-16 GPU stream v2 G3c: launch copies the app's glRenderer ('webgl'|'software') onto the fresh WineAssembly, where lib/host-imports.js reads it as the GL renderer after ?gl-renderer=. A configuration field only; no guest invocation, callback owner, continuation or retained guest reference added.",
       "spinParkUrlReview20261114": "?spin-park=N applies set_spin_park_k at launch on the main instance, the guest Worker (callExport) and every inherited thread (table entry added in worker-imports); no callback, timer or lifetime change. renderer.js reseal covers d576f57ce's exclusive-mode test, read-only WAT getters, no new callbacks.",
       "appArgsUrlReview20261113": "?app=ID&app-args= overrides one app's launch command line; string only, no callback ownership change",
       "maximizerSettleReview20261112": "maximizeForSingleApp interval now lives up to 40 more ticks after maximizing; cleared on app exit or tick cap; same single timer, no new ownership",
@@ -211,7 +213,8 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "2ec85ba4f5f15a0670af671dad28b9c1d54edc92ff7f673e2718acff8a55bcbf",
+      "sha256": "e437f72abca89b6bb23178602fa38e52688e2d8c61250bb69fc00bd78b832d70",
+      "glGpsBrowserDefaultReview20261116": "2026-11-16 GPU stream v2 G3c: the GL host bridge's backend is a getter (ctx.glBackend, ?gl-renderer=, the app's glRenderer read from ctx.callbackHost, then software in a browser / webgl in Node); the gl-gps executor follows the page GPU select (software) after ?gl-gps=; the gl-gps layer's stale check also requires this instance to have software GL enabled, so a Worker-main producer's frames are not hidden. Configuration and a predicate only; no guest invocation, callback owner, continuation or retained guest reference added.",
       "d3d9GpsReview20261115": "2026-11-15 GPU stream v2 slice 9.5a: gpu_stream_kick routes ring api 4 (D3D9/D3D8, opt-in --d3d9-gps) to a lazily built generic bridge named 'd3d9-gps', or answers 0 for the 'none' backend. Same synchronous results as the other rings; no guest invocation, callback owner, continuation or retained guest reference added.",
       "glGpsDefaultReview20261115": "2026-11-15 GPU stream v2 G3b: the GL host bridge gets a glGps option (software GL contexts call gl_gps_enable from it; browser default on, ?gl-gps=off|software|webgl|null) and the lazy gl-gps bridge's executor comes from ctx.glGpsBackend, then ?gl-gps=, then webgl in a browser. A WASM global flag only; no guest invocation, callback owner, continuation or retained guest reference added.",
       "d3dimOldPathDeleteReview20261115": "2026-11-15 GPU stream v2 D2c: the shared render owner's D3DIM endpoint is always software; the 0x2000A host branch is removed (D3DIM GPU present never leaves WAT). No guest invocation, callback owner, continuation or retained guest reference added.",
