@@ -205,11 +205,6 @@ const D3D_WORKER = hasFlag('d3d-worker');
 const D3DIM_GPU = hasFlag('d3dim-gpu');
 if (D3DIM_GPU && D3D_WORKER) { console.error('--d3dim-gpu and --d3d-worker are exclusive'); process.exit(2); }
 if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --headless-gl'); process.exit(2); }
-// --d3d9-gps[=webgl|none]: D3D9 / D3D8 frames also lowered onto GPU stream
-// v2 (src/09akg-d3d9-gps.wat); the old D3D9 path still runs as the shadow.
-// 'none' is a host without an executor (the arm turns itself off).
-const D3D9_GPS = hasFlag('d3d9-gps') || getArg('d3d9-gps', null) !== null;
-const D3D9_GPS_BACKEND = getArg('d3d9-gps', null) || 'software';
 // Software GL (--gl-renderer=software) on GPU stream v2: the WAT producer
 // (src/09a8gt-gl-gps.wat) lowers its screen-space triangles, clears and
 // swaps into a ring an executor drains. It is the default wherever there is
@@ -224,6 +219,15 @@ const GL_GPS = GL_GPS_ARG === 'off' ? false
   : hasFlag('gl-gps') || GL_GPS_ARG !== null || (GL_RENDERER === 'software' && hasFlag('headless-gl'));
 const GL_GPS_BACKEND = GL_GPS_ARG !== null && GL_GPS_ARG !== 'off' ? GL_GPS_ARG
   : hasFlag('gl-gps') ? 'software' : 'webgl';
+// --d3d9-gps[=software|webgl|none|off]: D3D9 / D3D8 frames are also lowered
+// onto GPU stream v2 (src/09akg-d3d9-gps.wat); the old D3D9 path still runs
+// as the shadow. On by default (slice 9.5b); --d3d9-gps=off or
+// --no-d3d9-gps turns the arm off. The executor follows the D3D9 renderer
+// (webgl with --headless-gl, else software) unless one is named. 'none' is
+// a host without an executor (the arm turns itself off).
+const D3D9_GPS_ARG = getArg('d3d9-gps', null);
+const D3D9_GPS = !hasFlag('no-d3d9-gps') && D3D9_GPS_ARG !== 'off';
+const D3D9_GPS_EXPLICIT = D3D9_GPS_ARG !== null && D3D9_GPS_ARG !== 'off' && D3D9_GPS_ARG !== '';
 if (args.some(arg => arg === '--gl-encoder' || arg.startsWith('--gl-encoder='))) {
   throw new Error('--gl-encoder was removed; OpenGL encoding always runs in WAT');
 }
@@ -2824,7 +2828,8 @@ async function main() {
     glBackend: GL_RENDERER || 'webgl',
     glideBackend: GLIDE_RENDERER,
     glGpsBackend: GL_GPS_BACKEND,
-    d3d9GpsBackend: D3D9_GPS_BACKEND,
+    d3d9GpsBackend: D3D9_GPS_EXPLICIT ? D3D9_GPS_ARG
+      : (HEADLESS_GL && (D3D9_RENDERER || 'webgl') === 'webgl' ? 'webgl' : 'software'),
     glGps: GL_GPS,
     gpuStreamDump: GPU_STREAM_DUMP,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
@@ -5166,7 +5171,7 @@ async function main() {
   // ring that lib/d3dim-host.js drains (host-imports gpu_stream_kick).
   if (D3DIM_GPU) instance.exports.d3dim_gpu_enable(1);
   if (GL_GPS) instance.exports.gl_gps_enable(1);
-  if (D3D9_GPS) instance.exports.d3d9_gps_enable(1);
+  instance.exports.d3d9_gps_enable?.(D3D9_GPS ? 1 : 0);
   // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
   // turns it off there); the WAT default and the CLI default are off.
   if (D3DIM_GPU && hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
@@ -12871,7 +12876,7 @@ if (VERBOSE) {
       ` front-presents=${st(64)} cpu-stencil-pixels=${st(65)} canon-declines=${st(66)}` +
       ` active=${instance.exports.gl_gps_active()}`);
   }
-  if (D3D9_GPS) {
+  if (D3D9_GPS && instance.exports.d3d9_gps_stat(14)) {
     // src/09akg-d3d9-gps.wat d3d9_gps_stat: counters, decline reasons 16+r,
     // readback sites 48+s (0 lock, 1 getdc, 2 rtdata, 3 capture).
     const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
@@ -12886,6 +12891,7 @@ if (VERBOSE) {
     console.log(`[d3d9-gps] ${names.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
       ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
       ` old-present=${old.join(',') || 'none'}` +
+      ` buffer-draws=${st(74)} buffer-uploads=${st(72)} buffer-hits=${st(73)}` +
       ` active=${instance.exports.d3d9_gps_active()}`);
   }
 
@@ -12894,7 +12900,7 @@ if (VERBOSE) {
     // in its DIB before reading surfaces out of memory.
     if (D3DIM_GPU && instance.exports.d3dim_gps_sync_all) instance.exports.d3dim_gps_sync_all();
     if (GL_GPS) instance.exports.gl_gps_sync_front();
-    if (D3D9_GPS) {
+    if (D3D9_GPS && instance.exports.d3d9_gps_stat(14)) {
       instance.exports.d3d9_gps_sync_front();
       const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
       console.log(`[d3d9-gps] capture: executor-readback=${st(51)} stale=${st(68)} no-rt=${st(69)}`);

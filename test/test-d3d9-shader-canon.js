@@ -76,11 +76,12 @@ const W = 8, H = 8;
   expectClamp(swPixels(clampShader), 'software');
   sw.destroy();
 
-  // Declines are counted, never silent: a vertex shader is outside ps1.x.
+  // Declines are counted, never silent: vertex shaders canonicalize through
+  // 09af1, which needs every v# it reads DCL'd; this vs_1_1 declares none.
   const before = e.d3d_shader_ir_canon_declines() >>> 0;
   const vs11 = compile(new Uint32Array([0xfffe0101, 1, 0xc00f0000, 0x90e40000, 0xffff]));
   assert(vs11.ir, 'vs_1_1 validates');
-  try { assert.strictEqual(e.d3d_shader_ir_canonicalize(vs11.ir) >>> 0, 0, 'a vertex shader is not canonicalized'); }
+  try { assert.strictEqual(e.d3d_shader_ir_canonicalize(vs11.ir) >>> 0, 0, 'a vs_1_1 reading an undeclared v0 declines'); }
   finally { vs11.release(); }
   assert.strictEqual(e.d3d_shader_ir_canon_declines() >>> 0, before + 1, 'decline is counted');
   assert.strictEqual(e.d3d_shader_ir_canonicalize(0xfffffff0) >>> 0, 0, 'out-of-range IR pointer declines');

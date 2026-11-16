@@ -278,7 +278,8 @@
     (if (i32.and (i32.eqz (global.get $d3d_render_token))
       (i32.ne (i32.and (load.field DxObject flags (local.get $rt)) (i32.const 0x40000000)) (i32.const 0))) (then (return)))
     (local.set $width (load.field DxObject width (local.get $rt)))
-    (local.set $height (load.field DxObject height (local.get $rt)))))
+    (local.set $height (load.field DxObject height (local.get $rt)))
+    (call $d9g_rt_written (local.get $device))))
   (local.set $right (local.get $width)) (local.set $bottom (local.get $height))
   (if (local.get $rect) (then
     (local.set $rw (call $d3d9_state_bytes (local.get $rect) (i32.const 16)))
@@ -408,6 +409,7 @@
           (i32.ne (i32.add (local.get $dy) (local.get $h)) (i32.load offset=4 (local.get $d)))))))))
     (local.set $bits (i32.add (i32.load offset=12 (local.get $s))
       (i32.add (i32.mul (local.get $y) (i32.load offset=16 (local.get $s))) (i32.mul (local.get $x) (call $d3d9_color_bytes (local.get $format))))))
+    (if (i32.load offset=28 (local.get $d)) (then (call $d9g_rt_written (local.get $device))))
     (if (i32.or (i32.load offset=20 (local.get $d)) (i32.load offset=28 (local.get $d))) (then
       (local.set $desc (call $d3d9_gpu_descriptor (local.get $device)))
       (i32.store offset=24 (local.get $desc) (i32.load offset=20 (local.get $d)))
@@ -737,6 +739,7 @@
   (local.set $d (i32.add (local.get $p) (i32.const 32)))
   (br_if $done (i32.eqz (call $d3d9_update_view (local.get $source) (local.get $device) (i32.const 0) (local.get $p))))
   (br_if $done (i32.eqz (call $d3d9_update_view (local.get $dest) (local.get $device) (i32.const 0) (local.get $d))))
+  (if (i32.load offset=28 (local.get $d)) (then (call $d9g_rt_written (local.get $device))))
   (br_if $done (i32.or (i32.lt_u (i32.load offset=8 (local.get $p)) (i32.const 21))
     (i32.gt_u (i32.load offset=8 (local.get $p)) (i32.const 22))))
   (br_if $done (i32.or (i32.lt_u (i32.load offset=8 (local.get $d)) (i32.const 21))

@@ -187,6 +187,7 @@
     (i32.store offset=28 (local.get $wa) (local.get $usage))
     (i32.store offset=32 (local.get $wa) (local.get $format))
     (i32.store offset=36 (local.get $wa) (local.get $pool))
+    (call $d9g_buffer_dirty (local.get $wa) (i32.const 0) (local.get $length))
     (call $d3d9_reset_resource (local.get $wa) (i32.const 1))
     (drop (call $d3d9_device_addref (local.get $device)))
     (call $gs32 (local.get $out) (local.get $obj))
@@ -214,6 +215,7 @@
     ;; Synchronous draw snapshots make DISCARD/NOOVERWRITE safe without retaining
     ;; previous CPU storage: no in-flight GPU command references these bytes.
     (i32.store offset=40 (local.get $wa) (i32.or (local.get $flags) (i32.const 0x80000000)))
+    (call $d9g_buffer_dirty (local.get $wa) (local.get $offset) (local.get $size))
     (call $gs32 (local.get $out) (i32.add (local.get $buffer) (i32.add (i32.const 64) (local.get $offset))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
