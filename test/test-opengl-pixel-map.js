@@ -2,19 +2,9 @@
 const assert=require('assert'),fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..'),req=p=>require(path.join(root,p));
 const {bootRenderHarness}=req('test/render-helper');
-if(process.env.GL_PIXEL_MAP_JS_MUTATION){
- const key=process.env.GL_PIXEL_MAP_JS_MUTATION,filename=path.join(root,'lib/gl-compat.js');
- const alternatives={
-  component:['      return value;\n    }\n    _mapIndex(value)', '      return 0;\n    }\n    _mapIndex(value)'],
-  index:['return this.pixelMaps.slice(2,6).map(map=>map[index&(map.length-1)]);','return [0,0,0,0];'],
-  capture:['const owned=!get&&capture&&capture.pointerGuest===pointer&&!capture.pointerBorrowed&&capture.pointerOffset;','const owned=!this._pixelMapIgnoreCapture&&!get&&capture&&capture.pointerGuest===pointer&&!capture.pointerBorrowed&&capture.pointerOffset;'],
- };
- assert(alternatives[key],'known JS control');let source=fs.readFileSync(filename,'utf8');
- const [from,to]=alternatives[key];assert(source.includes(from),'JS source control anchor');source=source.replace(from,to);
- const Module=require('module'),replacement=new Module(filename,module);replacement.filename=filename;
- replacement.paths=Module._nodeModulePaths(path.dirname(filename));replacement._compile(source,filename);require.cache[filename]=replacement;
- console.error('JS_SOURCE_CONTROL_LOADED '+key);
-}
+// GPU stream v2 G2: pixel maps and transfer are WAT-only (src/09a8t-gl-texture.wat);
+// the JS executor no longer has a copy to mutate, so the old JS controls are gone.
+assert(!process.env.GL_PIXEL_MAP_JS_MUTATION,'JS pixel-map controls were removed with the JS pixel-map path (G2)');
 const {OpenGLHostBridge,CALL_INDEX:GL}=req('lib/gl-compat');
 const Stream=req('lib/gl-command-stream');
 const table=req('src/api_table.json');
@@ -62,7 +52,8 @@ if(mutation||old){let changed=0;
   shortWidth:['09a8b-handlers-opengl.wat','gl_pixel_map_get','(call $gs8 (i32.add (local.get $out) (i32.const 1))','(call $gs32 (i32.add (local.get $out) (i32.const 1))'],
   mapOrder:['09a8b-handlers-opengl.wat','gl_transfer_channel','(f64.nearest (f64.mul','(f64.floor (f64.mul'],
   mapConsumer:['09a8b-handlers-opengl.wat','gl_transfer_channel','(return (f32.demote_f64 (call $gl_pixel_map_value (local.get $map) (local.get $index))))','(return (f32.const 0))'],
-  indexConsumer:['09a8b-handlers-opengl.wat','gl_pixel_index_rgba','(local.set $index (call $gl_pixel_index_transfer (local.get $value)))','(local.set $index (i32.const 0))'],
+  indexConsumer:['09a8t-gl-texture.wat','gl_g2_index_rgba','(local.set $map (i32.add (local.get $i) (i32.const 2)))','(local.set $index (i32.const 0)) (local.set $map (i32.add (local.get $i) (i32.const 2)))'],
+  textureMapConsumer:['09a8t-gl-texture.wat','gl_g2_channel','(if (i32.load (local.get $t)) (then','(if (i32.const 0) (then'],
   stencilRound:['09a8b-handlers-opengl.wat','gl_pixel_map_set','(f64.nearest (local.get $v))','(f64.trunc (local.get $v))'],
   power:['09a8b-handlers-opengl.wat','gl_pixel_map_validate','(i32.lt_u (local.get $map) (i32.const 6))','(i32.const 0)'],
   outputAtomic:['09a8b-handlers-opengl.wat','gl_pixel_map_get','    (call $gl_1d_span (local.get $out)','    (call $gs8 (local.get $out) (i32.const 0))\n    (call $gl_1d_span (local.get $out)'],
@@ -288,7 +279,6 @@ if(mutation||old){let changed=0;
  // List captures unmapped indices; table lookup occurs during execution.
  bytes(input,[1]);call('glNewList',[710,0x1300]);call('glTexImage1D',[T1,0,RGBA,1,0,0x1900,U8,input]);call('glEndList');bytes(input,[0]);set(0xc72,[1,.5,.25,0]);call('glCallList',[710]);image(T1,[128,0,191,64],'indexed list execution map');
  // Stream captures setter bytes and preserves ordering with a subsequent read.
- if(process.env.GL_PIXEL_MAP_JS_MUTATION==='capture')bridge._pixelMapIgnoreCapture=true;
  write(input,[0,1]);call('glPixelMapfv',[0xc76,2,input]);write(input,[1,0]);call('glPixelTransferi',[0xd10,1]);call('glReadPixels',[0,0,1,1,RGBA,U8,at]);literal('queued setter owns input',Array.from(new Uint8Array(memory.buffer,wa(at),4)),[255,0,64,128]);error(0,'queued mapped read');
  // RGBA framebuffer color-index queries remain errors, and stencil readback remains an explicit unsupported path.
  call('glReadPixels',[0,0,1,1,0x1900,U8,at]);error(0x502,'no color-index framebuffer mode');

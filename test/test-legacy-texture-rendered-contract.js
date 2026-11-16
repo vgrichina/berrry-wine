@@ -2,6 +2,9 @@
 'use strict';
 
 // --plan never compiles, instantiates Wasm or starts a browser.
+// --offline runs the same fixture in node against build/wine-assembly.wasm:
+// 'software' (WAT rasterizer) and 'gps' (the WAT GPU stream producer drained
+// into lib/gpu-stream-software.js), with the nearest/stale/border negatives.
 // Runtime: LEGACY_RENDER_EVIDENCE=... node test/test-legacy-texture-rendered-contract.js
 // --stateblocks exercises selective Begin/End/Apply/Capture pixels and delayed
 // two-device production Worker batches; requires LEGACY_RENDER_MODULE_DIR=build.
@@ -116,12 +119,23 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     raw=(name,...args)=>link.callExport(name,...args);
     await link.start();
   } else {
-    host.memory=memory;host.gpu_gl_call=(...args)=>gpu?gpu.call(...args):0;
+    // gps: $d3dim_gpu_on = 1, the WAT GPU stream producer
+    // (src/09abg-d3dim-gps.wat) drained into the GPU stream v2 software
+    // executor (lib/gpu-stream-software.js), exactly as test-d3dim-surface-fence.js.
+    // The producer never calls gpu_gl_call; an executor error throws out of the kick.
+    host.memory=memory;host.gpu_gl_call=(...args)=>{check(mode==='software','gps producer called gpu_gl_call 0x'+(args[0]>>>0).toString(16));return 0;};
+    if(mode==='gps'){
+      const GS=globalThis.GpuStream,Executor=globalThis.GpuStreamSoftware.Executor;let ring=null,ringAddr=0;
+      host.gpu_stream_kick=(addr,kick)=>{
+        addr>>>=0;if(!gpu)gpu=new Executor({getExports:()=>e,getMemory:()=>memory.buffer});
+        if(!ring||ringAddr!==addr){ring=new GS.Ring(()=>memory.buffer,addr);ringAddr=addr;}
+        GS.drain([ring],gpu);
+        if((kick|0)===GS.CONST.KICK_CLOSE){gpu.close();gpu=null;ring=null;ringAddr=0;}
+        return 1;
+      };
+    }
     e=new WebAssembly.Instance(module,{host}).exports;
     raw=async(name,...args)=>e[name](...args);
-    if(mode==='webgl')gpu=new D3DIMGpu.D3DIMGpu({exactNative16:config.exactNative16===true,getExports:()=>e,getMemory:()=>memory.buffer,
-      createCanvas:(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;document.body.append(c);return c;},
-      onError:s=>evidence.logs.push(s)});
   }
   try {
     const pe=new Uint8Array(await (await fetch('/test/binaries/calc.exe')).arrayBuffer());
@@ -294,34 +308,15 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
       const expectedAddress=state.address===4?(mode==='software'?1:3):state.address;
       const expected=expectedColor(state.palette||config.texture,sample.uv,state.filter,expectedAddress);
       const row={label,sample,state,expectedAddress,actual,expected,rawPixel:value,lock:l,dibRGBA,descriptor:await describe()};evidence.observations.push(row);
-      if(gpu){
-        const target=gpu.targets.get(row.descriptor[0]);check(target,'real GPU target');
-        const gl=target.device.gpu.gl;target.device.gpu.bindImplicitTarget();
-        if(!evidence.glRenderer){
-          const ext=gl.getExtension('WEBGL_debug_renderer_info');
-          evidence.glRenderer={version:gl.getParameter(gl.VERSION),renderer:gl.getParameter(gl.RENDERER),
-            vendor:gl.getParameter(gl.VENDOR),unmaskedRenderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):null};
-        }
-        const rgba=new Uint8Array(4);gl.readPixels(2,8-1-2,1,1,gl.RGBA,gl.UNSIGNED_BYTE,rgba);
-        row.webglRGBA=Array.from(rgba);row.glError=gl.getError();
-        eq(row.glError,gl.NO_ERROR,'WebGL readback error');
-      }
       // Explicit X8R8G8B8 target: each RGB channel is one unquantized byte.
-      // Software X and GPU opaque X need not agree; RGB must agree exactly.
+      // Under gps the public Lock is what reads the GPU target back into the DIB.
       eq(actual,expected,'PIXEL ORACLE '+label);
-      if(gpu)eq(state.rgbOnly?row.webglRGBA.slice(0,3):row.webglRGBA,
-        state.rgbOnly?expected:[...expected,255],'independent actual WebGL pixels');
     };
     if(config.immediate){
       await (0,eval)('('+config.immediateSource+')')({mode,negative,evidence,check,eq,until,
         raw,read,alloc,wa,write,bytes,words,guard,guid,stack,invoke,prepareInvoke,com,ok,acquire,
         dd,hal,texture,texturePalette:config.texture,surface,lock,unlock,bits,observe,
-        rendererInfo:()=>{
-          const gl=gpu?.targets.values().next().value?.device.gpu.gl;
-          if(!gl)return null;
-          const ext=gl.getExtension('WEBGL_debug_renderer_info');
-          return {version:gl.getParameter(gl.VERSION),renderer:gl.getParameter(ext?ext.UNMASKED_RENDERER_WEBGL:gl.RENDERER)};
-        },
+        rendererInfo:()=>null,
         use:target=>{device=target.device;rt=target.rt;},
         initial:{device,rt},allocationFailure:!!config.noPreview,countDraw:()=>drawCount++,
         queue:{hold:label=>{heldRecord={label,device,rt,messages:[],before:transportSnapshot()};
@@ -478,11 +473,23 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     }
     if(mode==='worker'&&config.immediate){await until(()=>lastStats?.stats.drawCalls===drawCount,'immediate Worker stats');evidence.stats=lastStats.stats;
       evidence.glRenderer={version:lastStats.stats.glVersion,renderer:lastStats.stats.glRenderer};}
-    if(gpu)evidence.stats=gpu.snapshot();
     evidence.drawCount=drawCount;
-    if(mode!=='software'){
+    if(mode==='worker'){
       eq(evidence.stats.drawCalls,drawCount,'every draw reached GPU');eq(evidence.stats.fallbacks,0,'no software fallback');
       eq(evidence.stats.errors,0,'no backend errors');check(evidence.stats.fences>0&&evidence.stats.syncs>0,'actual GPU fence/readPixels');
+    }
+    if(mode==='gps'){
+      // Producer counters (test/run.js "[d3dim-gps]"): 0 draws, 1 fallbacks,
+      // 2 readbacks, 14 declined. Every public draw lowered, none fell back,
+      // except that $d3g_points keeps POINTLIST on a 32-bit target in software
+      // by design (config.gpsDeclined names how many such draws a fixture makes).
+      const stat=async i=>(await raw('d3dim_gps_stat',i))>>>0;
+      evidence.stats={drawCalls:await stat(0),fallbacks:await stat(1),readbacks:await stat(2),declined:await stat(14)};
+      const declined=config.gpsDeclined|0;
+      eq(evidence.stats.declined,declined,'declined draws '+JSON.stringify(evidence.stats));
+      eq(evidence.stats.drawCalls,drawCount-declined,'every draw reached the WAT GPU producer');
+      eq(evidence.stats.fallbacks,0,'no software fallback');
+      check(evidence.stats.readbacks>0,'public Lock read the GPU target back');
     }
     await ok(com('unbind texture',device,35,0,0));
     for(const [name,obj] of Object.entries({device,texture,rt,padding,d3d,dd}))
@@ -490,7 +497,7 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     evidence.status='PASS';return evidence;
   }finally{
     holding=false;for(const send of held.splice(0))send();
-    if(gpu)gpu.stop();
+    if(gpu)gpu.close();
     if(link){try{if(manager)evidence.retirement=await manager.stop();}finally{await link.stop();}}
   }
 }
@@ -511,11 +518,12 @@ async function runtime() {
     plan:planner(cubeBorder),results:[],negativeControls:[]};
   const scripts=['lib/region-map.generated.js','lib/gl-command-stream.js','lib/d3d-command-stream.js','lib/guest-rpc.js',
     'lib/guest-thread-host.js','lib/render-worker.js','lib/gpu-backend.js','lib/d3d9-shader.js','lib/d3d-shader-ir.js',
-    'lib/d3d9-fixed.js','lib/d3d9-texture.js','lib/render-clear.js','lib/d3d9-backend.js','lib/d3dim-gpu.js'];
+    'lib/render-clear.js','lib/d3d9-backend.js','lib/gpu-stream.generated.js','lib/gpu-stream.js',
+    'lib/d3d-geometry-batches.js','lib/d3d9-software-backend.js','lib/gpu-stream-software.js'];
   evidence.productionJS=Object.fromEntries(fs.readdirSync(path.join(ROOT,'lib')).filter(p=>p.endsWith('.js')||p.endsWith('.json'))
     .map(p=>['lib/'+p,sha(fs.readFileSync(path.join(ROOT,'lib',p)))]));
   const config={...plan(cubeBorder),stateblocks,immediate,
-    ...(immediate?{immediateSource:require('./test-d3dim-immediate-drawing').immediateFixture.toString()}:{}),
+    ...(immediate?{gpsDeclined:2,immediateSource:require('./test-d3dim-immediate-drawing').immediateFixture.toString()}:{}),
     thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
   const bootstrapPE=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
@@ -551,13 +559,13 @@ async function runtime() {
     const child=browser.process();evidence.browserProcess={pid:child.pid,startTicks:fs.readFileSync('/proc/'+child.pid+'/stat','utf8').split(') ')[1].split(' ')[19]};
     evidence.browserProcess.profile=child.spawnargs.find(a=>a.startsWith('--user-data-dir='))?.slice('--user-data-dir='.length);
     child.once('exit',(code,signal)=>{evidence.browserProcess.exit={code,signal,at:new Date().toISOString()};});
-    for(const mode of ['software','webgl','worker']){
+    for(const mode of ['software','gps','worker']){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       evidence.results.push(await page.evaluate(browserFixture,mode,config,oracle.toString()));
       await page.screenshot({path:path.join(dir,mode+'.png'),fullPage:true});await page.close();page=null;
       console.log('PASS public-COM '+(immediate?'Device2/3 immediate':stateblocks?'selective state-block':'sampler')+' rendered pixels '+mode);
     }
-    for(const [negative,mode] of immediate?[['dropped','software'],['cross-device','software'],['queued-vertices','worker']]:stateblocks?[['recording','software'],['full-state','software'],['queued-stale','worker'],['queued-cross','worker']]:cubeBorder?['software','webgl','worker'].map(m=>['border',m])
+    for(const [negative,mode] of immediate?[['dropped','software'],['cross-device','software'],['queued-vertices','worker']]:stateblocks?[['recording','software'],['full-state','software'],['queued-stale','worker'],['queued-cross','worker']]:cubeBorder?['software','gps','worker'].map(m=>['border',m])
       :['nearest','stale'].map(n=>[n,'software'])){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       let failure;
@@ -603,8 +611,62 @@ async function runtime() {
   }
 }
 
+// Node, no browser: the same serialized fixture in a vm context against the
+// built module. 'software' is the WAT rasterizer; 'gps' is the WAT GPU stream
+// producer drained into lib/gpu-stream-software.js.
+function offlineContext(wasm) {
+  const routes=new Map([['/legacy-render.wasm',wasm||fs.readFileSync(path.join(ROOT,'build/wine-assembly.wasm'))],
+    ['/test/binaries/calc.exe',fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))],
+    ['/lib/host-import-sigs.generated.json',fs.readFileSync(path.join(ROOT,'lib/host-import-sigs.generated.json'))]]);
+  return require('node:vm').createContext({WebAssembly,performance,setTimeout,Atomics,
+    GpuStream:require('../lib/gpu-stream'),GpuStreamSoftware:require('../lib/gpu-stream-software'),
+    fetch:async url=>{assert(routes.has(url),'offline route '+url);const b=routes.get(url);
+      return {arrayBuffer:async()=>Uint8Array.from(b).buffer,json:async()=>JSON.parse(b)};},
+    document:{createElement:()=>({style:{},getContext:()=>({putImageData(){}})}),body:{append(){}}},ImageData:class{}});
+}
+async function runOffline(mode,config,oracleSource,negative=null,wasm=null) {
+  const context=offlineContext(wasm);
+  try{return await require('node:vm').runInContext('('+browserFixture.toString()+')',context)(mode,config,oracleSource,negative);}
+  finally{config.lastEvidence=context.legacyTextureEvidence;}
+}
+function offlineConfig(cubeBorder=false) {
+  const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
+  return {...plan(cubeBorder),noPreview:true,imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),
+    thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+    factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
+}
+async function offline() {
+  for(const cubeBorder of [false,true]){
+    const config=offlineConfig(cubeBorder);
+    for(const mode of ['software','gps']){
+      const result=await runOffline(mode,config,oracle.toString());
+      assert.equal(result.status,'PASS');
+      console.log(`PASS offline ${mode}${cubeBorder?' cube-border':''}: ${result.observations.length} public-COM sampler pixels`+
+        (result.stats?` (gps draws=${result.stats.drawCalls} readbacks=${result.stats.readbacks})`:''));
+    }
+    const negatives=cubeBorder?['software','gps'].map(m=>['border',m]):[['nearest','software'],['stale','software'],['nearest','gps'],['stale','gps']];
+    for(const [negative,mode] of negatives){
+      const c=negative==='border'?{...config,states:config.states.filter(s=>s.address===4)}:{...config};
+      let failure;try{await runOffline(mode,c,oracle.toString(),negative);}catch(error){failure=String(error);}
+      assert(failure?.includes('PIXEL ORACLE'),`negative ${negative}/${mode} must fail the pixel oracle, not bootstrap: ${failure}`);
+      assert(c.lastEvidence.observations.some(x=>JSON.stringify(x.actual)!==JSON.stringify(x.expected)),'actual discriminating pixel');
+      console.log(`PASS offline negative ${negative} ${mode} rejected by pixels`);
+    }
+  }
+  const variants={stateblocks:{stateblocks:true},
+    // One POINTLIST per 8x8 X8R8G8B8 device: two draws $d3g_points declines.
+    immediate:{immediate:true,gpsDeclined:2,immediateSource:require('./test-d3dim-immediate-drawing').immediateFixture.toString()}};
+  for(const [name,extra] of Object.entries(variants))for(const mode of ['software','gps']){
+    const result=await runOffline(mode,{...offlineConfig(),...extra},oracle.toString());
+    assert.equal(result.status,'PASS');
+    console.log(`PASS offline ${name} ${mode}: ${result.observations.length} pixels`+
+      (result.stats?` (gps draws=${result.stats.drawCalls} readbacks=${result.stats.readbacks})`:''));
+  }
+}
+
 if(require.main===module){
   if(process.argv.includes('--plan'))console.log(JSON.stringify(planner(process.argv.includes('--cube-border')),null,2));
+  else if(process.argv.includes('--offline'))offline().catch(error=>{console.error(error);process.exitCode=1;});
   else runtime().catch(error=>{console.error(error);process.exitCode=1;});
 }
-module.exports={plan,oracle,planner,browserFixture};
+module.exports={plan,oracle,planner,browserFixture,offlineContext,runOffline,offlineConfig};

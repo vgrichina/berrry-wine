@@ -42,6 +42,13 @@ const EXEMPT = new Map([
     + 'from a fixed data segment, so it never reaches the encoder at all'],
   ['glReadBuffer', 'selects the buffer later reads come from; it reports nothing '
     + 'and writes no guest memory'],
+  // GPU stream v2 G1: answered in WAT before the encoder emits a record
+  // (src/09a8ca-gl-lists.wat, src/09a8e-gl-state.wat, src/09a8b), so the
+  // answer exists before the guest resumes and no batch is involved.
+  ...['glGetError', 'glGetFloatv', 'glGetIntegerv', 'glGetDoublev', 'glGetBooleanv',
+    'glIsEnabled', 'glIsTexture', 'glGetTexParameterfv', 'glGetTexLevelParameteriv',
+    'glGetTexLevelParameterfv'].map(name => [name, 'answered in WAT (GPU stream v2 G1); '
+    + 'never a stream record']),
 ]);
 
 // A call reports something to the guest if it writes through a pointer argument

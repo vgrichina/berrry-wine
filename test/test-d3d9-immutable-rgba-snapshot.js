@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 'use strict';
+// Uploads decode through the standalone build of the WAT decoder (slice 9.1).
+require('./helpers/wat-texture-decoder').installStandalone();
 // Source/JS contract only: real producer, command queue and worker endpoint;
 // mock device records RGBA bindings. No native executor or GPU is created.
 const assert = require('node:assert/strict');
@@ -193,6 +195,7 @@ test('production RPC and WorkerLink deliver state once per device and Worker inc
     link=new WorkerLink({slot:1,memory,sigs,broker,renderPublication:publication});
     worker=new Thread(`
       const {parentPort,workerData:d}=require('node:worker_threads');
+      require(${JSON.stringify(require.resolve('./helpers/wat-texture-decoder'))}).installStandalone();
       const RPC=require(d.module);
       const built=RPC.createWorkerImports(d.memory,d.sigs,m=>parentPort.postMessage(m),
         {slot:1,renderPublication:d.publication,guestToWasm:p=>p,
@@ -470,6 +473,7 @@ test('independent producer incarnations cannot alias resident textures on one de
     for(let at=f.texels;at<f.texels+16384;at+=4)new Uint8Array(memory,at,4).set([color[2],color[1],color[0],255]);
     const worker=new Thread(`
       const {parentPort,workerData:d}=require('node:worker_threads');
+      require(${JSON.stringify(require.resolve('./helpers/wat-texture-decoder'))}).installStandalone();
       const {PublicationQueue}=require(d.transport),{DrawProducer}=require(d.module);
       try {
         const id=new PublicationQueue(d.queue).allocateProducerId();
@@ -519,6 +523,7 @@ test('native worker producer owns draw data and attachment state before guest re
   f.set(f.program+22016,1);f.set(f.program+22008,2);f.set(f.program+22012,2);
   const worker=new Thread(`
     const {parentPort,workerData:d}=require('node:worker_threads');
+    require(${JSON.stringify(require.resolve('./helpers/wat-texture-decoder'))}).installStandalone();
     const {DrawProducer}=require(d.module);
     const producer=new DrawProducer({getMemory:()=>d.memory,guestToWasm:p=>p,
       createCanvas(){throw Error('producer attempted rendering');}});
@@ -678,11 +683,12 @@ test('replacement at the same mip address cannot inherit a sparse fingerprint co
   try {
     assert.equal(f.draw(), 1); await f.drain();
     const before = f.observations[0];
-    // Old fingerprint: 32 bytes every 256 bytes. Offset 40 is unsampled.
-    // A released record can be reallocated with the same dirty sequence and
-    // bits pointer; a new allocation changes the device texture generation.
+    // A released record can be reallocated at the same address and bits
+    // pointer. Since slice 9.1 every write path stamps the level with a
+    // process-unique serial ($d3d9_texture_touch), so a reallocated record can
+    // never repeat the old record's seq; that stamp is the whole identity.
     new Uint8Array(f.memory, f.texels + 40, 4).set([90,80,70,255]);
-    f.set(f.program + 25596, 1);
+    f.set(f.mip + 28, 0x5eed0001);
     assert.equal(f.draw(), 1); await f.drain();
     assert.deepEqual(pixel(f.observations[1], 40), [70,80,90,255]);
     assert.notEqual(level(f.observations[1]).key, level(before).key);

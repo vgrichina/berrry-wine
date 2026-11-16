@@ -213,14 +213,14 @@ async function runtime(){
     publicFixtureSha256:sha(fs.readFileSync(path.join(ROOT,'test/test-legacy-texture-rendered-contract.js'))),
     mipFixtureSha256:sha(fs.readFileSync(path.join(ROOT,'test/test-legacy-public-mip-webgl.js'))),
     calcSha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))),
-    renderSourceHashes:Object.fromEntries(['d3dim-gpu','d3d9-shader','d3d9-backend','d3d9-fixed'].map(n=>[n,sha(fs.readFileSync(path.join(ROOT,'lib',n+'.js')))])),
+    renderSourceHashes:Object.fromEntries(['d3d9-shader','d3d9-backend'].map(n=>[n,sha(fs.readFileSync(path.join(ROOT,'lib',n+'.js')))])),
     node:process.version,plan:plan(),modules:[],results:[],failures:[],physicalGPU:false};
   const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(result,null,2)+'\n');
   const fixture=Function('return ('+fixtureSource()+')')();
   let wasm,server,browser,page;
   try{
     const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend'];
     server=await require(path.join(ROOT,'test/static-server')).startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
       res.setHeader('Cache-Control','no-store');
       res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
@@ -231,7 +231,9 @@ async function runtime(){
     result.serverPort=server.address().port;
     for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm'].filter(n=>!process.env.KEYED_MIP_FORMATS_ONLY_MODULE||n===process.env.KEYED_MIP_FORMATS_ONLY_MODULE)){
       wasm=fs.readFileSync(path.join(moduleDir,name));result.modules.push({name,sha256:sha(wasm),bytes:wasm.length});
-      for(const mode of ['software','webgl','worker'].filter(m=>!process.env.KEYED_MIP_FORMATS_ONLY_MODE||m===process.env.KEYED_MIP_FORMATS_ONLY_MODE))for(const webglVersion of mode==='software'?[null]:[1,2])for(const format of formats.filter(f=>!process.env.KEYED_MIP_FORMATS_ONLY_FORMAT||f.name===process.env.KEYED_MIP_FORMATS_ONLY_FORMAT)){
+      // Software route only; the GPU route (WAT GPU stream producer) is
+      // test-d3dim-gps-keyed-mip.js.
+      for(const mode of ['software'].filter(m=>!process.env.KEYED_MIP_FORMATS_ONLY_MODE||m===process.env.KEYED_MIP_FORMATS_ONLY_MODE))for(const webglVersion of mode==='software'?[null]:[1,2])for(const format of formats.filter(f=>!process.env.KEYED_MIP_FORMATS_ONLY_FORMAT||f.name===process.env.KEYED_MIP_FORMATS_ONLY_FORMAT)){
         try{
           const cfg={...config(),...plan(format),webglVersion,expectedModuleSha256:sha(wasm)};let row;
           if(mode==='software'){
@@ -267,7 +269,7 @@ async function runtime(){
         }
       }
     }
-    if(!process.env.KEYED_MIP_FORMATS_ONLY_MODULE&&!process.env.KEYED_MIP_FORMATS_ONLY_MODE&&!process.env.KEYED_MIP_FORMATS_ONLY_FORMAT)assert.equal(result.results.length,50);
+    if(!process.env.KEYED_MIP_FORMATS_ONLY_MODULE&&!process.env.KEYED_MIP_FORMATS_ONLY_MODE&&!process.env.KEYED_MIP_FORMATS_ONLY_FORMAT)assert.equal(result.results.length,10);
     result.coverage={renderedRoutes:result.results.filter(r=>r.status==='PASS').length,unadvertisedRoutes:result.results.filter(r=>r.status.startsWith('UNADVERTISED')).length,observations:result.results.reduce((n,r)=>n+(r.observations?.length||0),0)};
     result.status='PASS';
   }catch(error){result.status='FAIL';result.error=error.stack;throw error;}

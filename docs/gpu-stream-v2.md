@@ -5,9 +5,13 @@ D3D9, D3DIM, OpenGL) and every renderer (WebGL, software, null, later WebGPU
 and Berrry's native C replayer).
 
 **Status:** steps 0 and 1 are implemented — the wire format, ring, null
-executor, dump tool and Glide (2 and 3) run on it. D3D9, D3DIM and OpenGL
-still use their old transports. Run `20261114-gpu-stream-v2-glide` has the
-evidence.
+executor, dump tool and Glide (2 and 3) run on it. Run
+`20261114-gpu-stream-v2-glide` has the evidence. D3DIM's GPU path is the WAT
+producer `src/09abg-d3dim-gps.wat` (slice D2). Its old JS WebGL executor,
+`lib/d3dim-gpu.js`, and its 0x20007/0x2000A host records were deleted in D2c.
+The D3DIM software arm is still the render Worker
+(`lib/d3dim-render-worker.js`) until D4. D3D9 and OpenGL are being migrated;
+see the migration plan.
 
 **Why.** Before v2, WAT wrote API-level records (Glide ops, D3DIM method calls,
 raw gl* calls, D3D9 records), and JS lowered them. The D3D9 path then turns
@@ -200,8 +204,8 @@ fmt:
 | 14 | A8 |
 | 15 | A8B8G8R8 (bytes R,G,B,A — what WebGL and the software rasterizer take without a swizzle) |
 
-Further formats are appended to this list. Codes 1–4 match the existing
-native16 format codes in `lib/d3dim-gpu.js`. Resources start zeroed, except
+Further formats are appended to this list. Codes 1–4 match the D3DIM
+native16 format codes (`$dx_surf_fmt_get`). Resources start zeroed, except
 a DS, which starts at depth 1.0 (far) and stencil 0 in every executor, so a
 draw before the first CLEAR passes a LESS test.
 
@@ -398,6 +402,12 @@ this needs requires sign-off first.
 - `--gpu-stream-dump=FILE` (test/run.js) tees every executed record, with
   its arena data, into a dump.
 - `--glide-renderer=null|software|webgl` picks the Glide executor.
+- `--d3dim-gpu` (test/run.js) puts D3DIM on the WAT producer; with
+  `--headless-gl` it prints `[d3dim-gps]` counters, readbacks per site and
+  software-decline reasons. Without it, and on the page with
+  `?d3d-renderer=software` or `?d3dim-gpu=0`, D3DIM uses the software
+  rasterizer. The remaining page switches are listed in
+  [d3dim-gpu-present.md](d3dim-gpu-present.md#switches).
 - `tools/gpu-stream.js list|stats|replay FILE --executor=null|soft|webgl
   [--png=OUT --frame=N]` inspects and replays a dump.
 - Tests: `test/test-gpu-stream-{ring,decoder,null,dump,software,webgl}.js`
@@ -415,7 +425,7 @@ replaces the order listed below where they differ.
 0. Spec, generator, ring, null executor and dump tool. **Done.**
 1. Glide. **Done.**
 2. D3D9.
-3. D3DIM, after the D3D present rework lands.
+3. D3DIM. **Done** (D2a-D2c; the software arm moves in D4).
 4. OpenGL.
 
 Every step gets a browser fps A/B and a pixel comparison against the commit

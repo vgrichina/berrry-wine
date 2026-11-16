@@ -2,6 +2,8 @@
 'use strict';
 // Public COM regression for NFS-style integer edges and half-texel UVs.
 // Both shipped modules; no synthetic descriptor or test Wasm exports.
+// Software route only: the GPU route (the WAT GPU stream producer) is
+// test-d3dim-gps-roof-edge.js.
 // ROOF_EDGE_EVIDENCE retains full native pixels, API calls and module hashes.
 async function roofFixture(c,targetName) {
   const {negative,evidence,eq,read,alloc,write,words,guard,guid,com,ok,acquire,dd,hal,unlock,bits,countDraw}=c;
@@ -98,7 +100,7 @@ async function runtime() {
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker',
-    'gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+    'gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend'];
   const evidence={startedAt:new Date().toISOString(),source:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
     fixture:hash(fs.readFileSync(__filename)),calc:hash(pe),results:[],controls:[],
     productionJS:Object.fromEntries(scripts.map(n=>['lib/'+n+'.js',hash(fs.readFileSync(path.join(root,'lib',n+'.js')))]))};
@@ -124,7 +126,7 @@ async function runtime() {
       wasm=fs.readFileSync(path.join(root,'build',name));
       for(const target of (process.env.ROOF_EDGE_TARGETS||'rgb565,x1,a1,a4,rgb').split(',')) {
         config.immediateSource='async function(c){return ('+roofFixture.toString()+')(c,'+JSON.stringify(target)+');}';
-        for(const mode of (process.env.ROOF_EDGE_MODES||'software,webgl,worker').split(','))for(const negative of [null,...(target==='rgb565'?['diffuse']:[])]) {
+        for(const mode of (process.env.ROOF_EDGE_MODES||'software').split(','))for(const negative of [null,...(target==='rgb565'?['diffuse']:[])]) {
           page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/roof-fixture');
           let result,error;try{result=await page.evaluate(base.browserFixture,mode,config,base.oracle.toString(),negative);}catch(e){error=String(e);}
           const partial=error?await page.evaluate(()=>globalThis.legacyTextureEvidence):null;

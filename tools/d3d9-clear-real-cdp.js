@@ -22,7 +22,7 @@ const variants=[
   {name:'reject-rectangles',gpu:currentGpu,device:currentDevice.replace(needle,
     'for(const [left,top,right,bottom]of [[0,0,g.canvas.width,g.canvas.height]])'),expected:'fail'}
 ];
-return {variants,dependencies:['lib/render-clear.js','lib/d3d9-shader.js','lib/d3d9-fixed.js']
+return {variants,dependencies:['lib/render-clear.js','lib/d3d9-shader.js']
   .map(file=>({file,source:read(file)})),fixture:read('test/fixtures/d3d9-clear-real-pixels.js')};
 }
 function classify(results){

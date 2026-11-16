@@ -1133,3 +1133,13 @@
   ;; Process writer registry and bounded CPU store records. No object leases.
   (region.declare $WRITER_SESSION (size 0x00004000) (align 128)
     (owner "03-registers.wat:$writer_note"))
+
+  ;; D3D9/D3D8 texture upload decode (GPU stream v2 slice 9.1). +0 is the
+  ;; process-wide source of level content identities, +4 the decode band's
+  ;; owner lock. The band holds one run of decoded A8B8G8R8 rows (4 rows of a
+  ;; 2048-wide level), copied out by the host while it holds the lock. One
+  ;; band, not one per thread: the map has ~52 KB left below GUEST_PAGE_TABLE.
+  (region.declare $D3D9_TEXTURE_SERIAL (size 0x8) (align 0x4)
+    (owner "09ae-d3d9-resources.wat:$d3d9_texture_touch"))
+  (region.declare $D3D9_TEXTURE_DECODE (size 0x00008000) (align 0x00001000)
+    (owner "09ae-d3d9-resources.wat:$d3d9_texture_decode_scratch"))

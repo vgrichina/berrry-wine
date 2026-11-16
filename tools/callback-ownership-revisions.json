@@ -47,8 +47,8 @@
       "file": "lib/guest-worker.js",
       "name": "host-file",
       "baseSHA256": "3e09b9aa06b86ffa52bb00d4052a2b4393952ed61f2821ced4871dfbec0498ec",
-      "sha256": "f614b3d4ad4abe601be4674207cfc9420faa11be8a8d66a63bc086cea564dd8f",
-      "reason": "Worker opts into bounded pending COM activation advancement. Each host slice receives an incomplete result while the same iterator and original invocation frame remain parked. Existing watchdog timeout, retirement and message scheduling remain unchanged; the runtime validates ownership before any later advance."
+      "sha256": "fdc42f0e5044cd6692a48b5931005ca1fdb3b5d6e2a621a637de4a3fe4ad43bf",
+      "reason": "Worker opts into bounded pending COM activation advancement. Each host slice receives an incomplete result while the same iterator and original invocation frame remain parked. Existing watchdog timeout, retirement and message scheduling remain unchanged; the runtime validates ownership before any later advance. GPU stream v2 (D2c/9.2, 20261115): D3D9 backend script list loses d3d9-fixed.js/d3dim-gpu.js and d3dCommands forwards only 0x20000-0x20006; no guest invocation, callback or continuation change."
     }
   ],
   "additions": [

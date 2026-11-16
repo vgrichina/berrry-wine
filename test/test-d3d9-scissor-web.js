@@ -4,7 +4,7 @@ const assert=require('assert'),path=require('path'),puppeteer=require('puppeteer
  const browser=await puppeteer.launch({headless:true,executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--no-first-run','--no-default-browser-check']});
  try{
   const page=await browser.newPage();
-  for(const file of['lib/gpu-backend.js','lib/d3d9-shader.js','lib/d3d9-fixed.js','lib/render-clear.js','lib/d3d9-backend.js','test/fixtures/d3d9-scissor-cases.js'])await page.addScriptTag({path:path.join(__dirname,'..',file)});
+  for(const file of['lib/gpu-backend.js','lib/d3d9-shader.js','lib/render-clear.js','lib/d3d9-backend.js','test/fixtures/d3d9-scissor-cases.js'])await page.addScriptTag({path:path.join(__dirname,'..',file)});
   const result=await page.evaluate(()=>{
    let checked=0;for(const version of[1,2]){
     const canvas=document.createElement('canvas');canvas.width=canvas.height=8;const d=new D3D9Backend.Device(canvas,{webglVersion:version}),g=d.gpu,gl=g.gl;

@@ -46,12 +46,12 @@ function checkRendererRestore(source){
 }
 function checkWorkerImports(){
  const worker=fs.readFileSync(root+'/lib/guest-worker.js','utf8');
- const block=slice(worker,'  self.loadD3DIMGpuScripts = () => {','\n} else {');
+ const block=slice(worker,'  self.loadD3D9BackendScripts = () => {','\n} else {');
  const self={},calls=[],boom=Error('import failure');let reject=false;
- new Function('self','importScripts','versionedWorkerUrl',block)(self,(...urls)=>{calls.push(urls);if(reject)throw boom;self.D3DIMGpu={};},name=>name+'?v=exact');
- assert.equal(self.loadD3DIMGpuScripts(),true);assert(calls[0].indexOf('render-clear.js?v=exact')<calls[0].indexOf('d3d9-backend.js?v=exact'));assert(calls[0].includes('render-clear.js?v=exact'));cases++;
- self.loadD3DIMGpuScripts();assert.equal(calls.length,1,'already-loaded fast path');cases++;
- delete self.D3DIMGpu;reject=true;assert.throws(()=>self.loadD3DIMGpuScripts(),e=>e===boom);assert.equal(self.D3DIMGpu,undefined);cases++;
+ new Function('self','importScripts','versionedWorkerUrl',block)(self,(...urls)=>{calls.push(urls);if(reject)throw boom;self.D3D9Backend={};},name=>name+'?v=exact');
+ assert.equal(self.loadD3D9BackendScripts(),true);assert(calls[0].indexOf('render-clear.js?v=exact')<calls[0].indexOf('d3d9-backend.js?v=exact'));assert(calls[0].includes('render-clear.js?v=exact'));cases++;
+ self.loadD3D9BackendScripts();assert.equal(calls.length,1,'already-loaded fast path');cases++;
+ delete self.D3D9Backend;reject=true;assert.throws(()=>self.loadD3D9BackendScripts(),e=>e===boom);assert.equal(self.D3D9Backend,undefined);cases++;
 }
 (async()=>{
  for(const stage of ['fetch','json','validate','invalid','success'])await checkManifest(manifest,stage);

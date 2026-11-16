@@ -109,7 +109,7 @@ async function runtime() {
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker',
-    'gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+    'gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend'];
   const evidence={startedAt:new Date().toISOString(),source:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
     fixture:hash(fs.readFileSync(__filename)),calc:hash(pe),results:[],
     productionJS:Object.fromEntries(scripts.map(n=>['lib/'+n+'.js',hash(fs.readFileSync(path.join(root,'lib',n+'.js')))]))};
@@ -129,7 +129,8 @@ async function runtime() {
     timer=setTimeout(()=>{evidence.deadlineExceeded=true;browser.close().catch(()=>{});},120000);
     for(const name of (process.env.SURFACE_FENCE_MODULES||'wine-assembly.wasm,wine-assembly.compat.wasm').split(',')) {
       wasm=fs.readFileSync(path.join(process.env.SURFACE_FENCE_MODULE_DIR||path.join(root,'build'),name));
-      for(const mode of (process.env.SURFACE_FENCE_MODES||'software,webgl,worker').split(',')) {
+      // Software route; the producer's SetSurfaceDesc fence is test-d3dim-surface-fence.js.
+      for(const mode of (process.env.SURFACE_FENCE_MODES||'software').split(',')) {
         page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/surface-fence-fixture');
         let result,error;try{result=await page.evaluate(base.browserFixture,mode,config,base.oracle.toString());}catch(e){error=String(e);}
         const partial=error?await page.evaluate(()=>globalThis.legacyTextureEvidence):null;

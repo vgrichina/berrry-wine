@@ -1861,23 +1861,9 @@
     (global.set $gl_texture_draw (local.get $p)))
 
   ;; Base formats of all GL1.1 sized/unsized internal formats (table3.8).
+  ;; Base internal format (1 L, 2 LA, 3 RGB, 4 RGBA, 5 A, 6 I): 09a8t.
   (func $gl_texture_base (param $fmt i32) (result i32)
-    (if (i32.or (i32.eq (local.get $fmt) (i32.const 1))
-      (i32.or (i32.eq (local.get $fmt) (i32.const 0x1909))
-        (i32.le_u (i32.sub (local.get $fmt) (i32.const 0x803f)) (i32.const 3)))) (then (return (i32.const 1))))
-    (if (i32.or (i32.eq (local.get $fmt) (i32.const 2))
-      (i32.or (i32.eq (local.get $fmt) (i32.const 0x190a))
-        (i32.le_u (i32.sub (local.get $fmt) (i32.const 0x8043)) (i32.const 5)))) (then (return (i32.const 2))))
-    (if (i32.or (i32.eq (local.get $fmt) (i32.const 3))
-      (i32.or (i32.eq (local.get $fmt) (i32.const 0x1907))
-        (i32.or (i32.eq (local.get $fmt) (i32.const 0x2a10))
-          (i32.le_u (i32.sub (local.get $fmt) (i32.const 0x804f)) (i32.const 5))))) (then (return (i32.const 3))))
-    (if (i32.or (i32.eq (local.get $fmt) (i32.const 4))
-      (i32.or (i32.eq (local.get $fmt) (i32.const 0x1908))
-        (i32.le_u (i32.sub (local.get $fmt) (i32.const 0x8055)) (i32.const 6)))) (then (return (i32.const 4))))
-    (if (i32.or (i32.eq (local.get $fmt) (i32.const 0x1906))
-        (i32.le_u (i32.sub (local.get $fmt) (i32.const 0x803b)) (i32.const 3))) (then (return (i32.const 5))))
-    (i32.const 6)) ;; INTENSITY
+    (call $gl_g2_base (local.get $fmt)))
 
   ;; GL1.1 tables3.10/3.11. Byte arithmetic occurs only at rasterization;
   ;; authoritative environment colors retain their original clamped f32s.
@@ -2302,17 +2288,7 @@
 
   ;; Internal components are selected after external expansion, GL1.1 table3.7.
   (func $gl_1d_select (param $px i32) (param $internal i32) (result i32)
-    (local $base i32) (local $r i32)
-    (local.set $base (call $gl_texture_base (local.get $internal)))
-    (local.set $r (i32.and (i32.shr_u (local.get $px) (i32.const 16)) (i32.const 255)))
-    (if (i32.eq (local.get $base) (i32.const 3)) (then (return (i32.or (local.get $px) (i32.const 0xff000000)))))
-    (if (i32.eq (local.get $base) (i32.const 4)) (then (return (local.get $px))))
-    (if (i32.eq (local.get $base) (i32.const 5)) (then (return (i32.and (local.get $px) (i32.const 0xff000000)))))
-    (i32.or (i32.mul (local.get $r) (i32.const 0x10101))
-      (if (result i32) (i32.eq (local.get $base) (i32.const 1)) (then (i32.const 0xff000000))
-        (else (if (result i32) (i32.eq (local.get $base) (i32.const 2))
-          (then (i32.and (local.get $px) (i32.const 0xff000000)))
-          (else (i32.shl (local.get $r) (i32.const 24))))))))
+    (call $gl_g2_select (local.get $px) (local.get $internal)))
 
   ;; Metadata validation runs before list capture and again during playback.
   ;; Source format/type checks precede any client pointer access in the adapter.
@@ -2908,21 +2884,10 @@
         (f32.store (local.get $out) (local.get $r)) (local.set $r (local.get $b)) (local.set $b (f32.load (local.get $out)))))))
     (f32.store (local.get $out) (local.get $r)) (f32.store offset=4 (local.get $out) (local.get $g))
     (f32.store offset=8 (local.get $out) (local.get $b)) (f32.store offset=12 (local.get $out) (local.get $a)))
+  ;; Canonical cell -> ARGB after pixel transfer (09a8t, the same arithmetic
+  ;; the WebGL arm's finished RGBA8 rows come from).
   (func $gl_texture_canonical_pixel (param $p i32) (param $type i32) (param $format i32) (result i32)
-    (local $i i32) (local $value f32) (local $out i32) (local $bytes i32)
-    (if (i32.eq (local.get $format) (i32.const 0x1900)) (then
-      (return (call $gl_pixel_index_rgba (f64.load (call $g2w (local.get $p)))))))
-    (local.set $bytes (select (i32.const 4) (i32.const 1) (i32.eq (local.get $type) (i32.const 0x1406))))
-    (loop $channels
-      (local.set $value (if (result f32) (i32.eq (local.get $bytes) (i32.const 4))
-        (then (f32.load (call $g2w (i32.add (local.get $p) (i32.shl (local.get $i) (i32.const 2))))))
-        (else (f32.div (f32.convert_i32_u (call $gl8 (i32.add (local.get $p) (local.get $i)))) (f32.const 255)))))
-      (local.set $out (i32.or (local.get $out) (i32.shl
-        (call $gl_sw_u8 (call $gl_transfer_channel (local.get $i) (local.get $value)))
-        (select (i32.const 24) (i32.sub (i32.const 16) (i32.shl (local.get $i) (i32.const 3))) (i32.eq (local.get $i) (i32.const 3))))))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br_if $channels (i32.lt_u (local.get $i) (i32.const 4))))
-    (local.get $out))
+    (call $gl_g2_canonical (local.get $p) (local.get $type) (local.get $format)))
   ;; One unpacked guest row of unsigned-byte RGB/RGBA/BGR/BGRA -> RGBA8 at
   ;; $dst. The row is copied to the tail of its own destination span (one
   ;; memory.copy when the guest span is contiguous) and widened forward in
@@ -3167,20 +3132,8 @@
   (func $gl_texture_pack_scalar (param $out i32) (param $value i32)
       (param $type i32) (param $swap i32)
     (local $n i32) (local $v i32) (local $i i32) (local $shift i32)
-    (local $scaled f64)
     (local.set $n (call $gl_1d_type_bytes (local.get $type)))
-    (if (i32.eq (local.get $type) (i32.const 0x1406))
-      (then (local.set $v (i32.reinterpret_f32 (f32.div
-        (f32.convert_i32_u (local.get $value)) (f32.const 255)))))
-      (else
-        (local.set $scaled (f64.mul
-          (f64.div (f64.convert_i32_u (local.get $value)) (f64.const 255))
-          (f64.sub (f64.convert_i64_u (i64.shl (i64.const 1)
-            (i64.extend_i32_u (i32.shl (local.get $n) (i32.const 3))))) (f64.const 1))))
-        (if (i32.and (local.get $type) (i32.const 1))
-          (then (local.set $v (i32.trunc_sat_f64_u (f64.nearest (local.get $scaled)))))
-          (else (local.set $v (i32.trunc_sat_f64_s (f64.nearest
-            (f64.mul (f64.sub (local.get $scaled) (f64.const 1)) (f64.const 0.5)))))))))
+    (local.set $v (call $gl_g2_pack_value (local.get $value) (local.get $type)))
     (loop $bytes
       (local.set $shift (i32.shl (select
         (i32.sub (i32.sub (local.get $n) (i32.const 1)) (local.get $i))
@@ -3538,21 +3491,6 @@
     (i32.wrap_i64 (i64.trunc_sat_f64_s (f64.nearest (call $gl_pixel_index_shift (local.get $value))))))
   (func $gl_pixels_stencil_transfer (param $value f64) (result i32)
     (i32.wrap_i64 (i64.trunc_sat_f64_s (f64.floor (call $gl_pixel_index_shift (local.get $value))))))
-  (func $gl_pixel_index_rgba (param $value f64) (result i32)
-    (local $index i32) (local $i i32) (local $out i32) (local $color i32)
-    (local.set $index (call $gl_pixel_index_transfer (local.get $value)))
-    (loop $channels
-      (local.set $color (call $gl_sw_u8 (f32.demote_f64
-        (call $gl_pixel_map_value (i32.add (local.get $i) (i32.const 2))
-          (i32.and (local.get $index)
-            (i32.sub (call $gl_pixel_map_size (i32.add (local.get $i) (i32.const 2))) (i32.const 1)))))))
-      (local.set $out (i32.or (local.get $out) (i32.shl (local.get $color)
-        (select (i32.const 24)
-          (i32.sub (i32.const 16) (i32.shl (local.get $i) (i32.const 3)))
-          (i32.eq (local.get $i) (i32.const 3))))))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br_if $channels (i32.lt_u (local.get $i) (i32.const 4))))
-    (local.get $out))
   ;; Expand a bitmap index into the same sixteen-byte canonical pixel slot.
   (func $gl_pixel_bitmap_expand (param $p i32) (param $bit i32) (param $ctx i32) (param $out i32)
     (local $shift i32)

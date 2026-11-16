@@ -24,7 +24,7 @@ if(baseline)save('baseline.json',JSON.stringify(baseline,null,2)+'\n');
 const suites=mode==='conformance'?[
   ['test-d3dim-render-worker-web.js',['--no-sandbox','--swiftshader']],
   ['test-d3dim-palette-worker-web.js',[]],
-  ['test-d3dim-palette-gpu-web.js',[],{PALETTE_GPU_SOURCE_ROOT:baseline.root}],
+  ['test-d3dim-gps-palette.js',[]],
 ]:mode==='worker'?[['test-d3dim-palette-worker-web.js',[]]]:[
   ['test-directdraw-palette-format.js',[]],['test-directdraw-palette-query-interface.js',[]],
   ['test-d3dim-texture-stage-alias.js',[]],['test-page-watch.js',[]],
@@ -33,7 +33,7 @@ const suites=mode==='conformance'?[
   ['test-d3d9-webgl-versions.js',[]],['test-d3d9-pipeline-web.js',[]],
   ['test-d3d9-shader-web.js',[],{D3D9_WEBGL_VERSION:'1'}],
   ['test-d3d9-shader-web.js',[],{D3D9_WEBGL_VERSION:'2'}],
-  ['test-d3dim-gpu-web.js',[]],['test-d3dim-render-worker-web.js',['--no-sandbox','--swiftshader']],
+  ['test-d3dim-gps-boids.js',[]],['test-d3dim-render-worker-web.js',['--no-sandbox','--swiftshader']],
 ];
 try{
   for(const [index,[file,args,extraEnv]] of suites.entries()){

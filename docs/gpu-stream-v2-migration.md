@@ -185,6 +185,12 @@ Without this, every new backend would have to reimplement the 846 lines of
   - Tests that probe JS internals get ported to the dump/fixture.
   - Apps, on the CLI (`--headless-gl --d3dim-gpu --png`): mw3, gta2_demo, mcm, dx_flip3dtl, dx_boids, dx_twist, dx_tunnel, dx_globe, dx_viewer, TR2 demo.
   - Browser fps A/B in Threads mode: UT348 D3DDrv, TR2 and dx_boids. Readbacks should be about 0 per frame.
+  - **Status (2026-11-15): D2a, D2b committed; D2c uncommitted.** D2c deleted:
+    - `lib/d3dim-gpu.js`;
+    - the GPU half of `lib/d3dim-render-worker.js`, which is kept as the software Worker adapter until D4;
+    - the 0x20007/0x2000A/PRESENT JS responders.
+
+    Stage-0 operands now follow the software rule, so giants' 17 TFACTOR declines per frame draw on the GPU. Its swDraw readbacks went from 1 per frame to 1 per run. Software declines are counted per reason (`d3dim_gps_stat` 35+). Evidence: `scratch/runs/20261115-gps-d2c/`.
 - **D3. 2D drawing onto GPU surfaces on the GPU.** A Blt or BltFast from a DIB surface becomes an UPLOAD plus a keyed, textured quad. ColorFill becomes a CLEAR. This removes the HUD and sprite readbacks.
   - Apps: gta2_demo, Forsaken, Blood2, Re-Volt.
 - **D4. Move the D3DIM software arm to the v2 software executor.**

@@ -78,7 +78,7 @@ const {Device}=require('../lib/d3d9-software-backend');
  const browser=await puppeteer.launch({headless:true,executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--no-first-run','--no-default-browser-check']});
  try{
   const page=await browser.newPage();page.on('console',message=>console.error('browser:',message.text()));
-  for(const f of ['gpu-backend.js','d3d9-shader.js','d3d9-fixed.js','render-clear.js','d3d9-backend.js'])await page.addScriptTag({path:path.join(__dirname,'../lib',f)});
+  for(const f of ['gpu-backend.js','d3d9-shader.js','render-clear.js','d3d9-backend.js'])await page.addScriptTag({path:path.join(__dirname,'../lib',f)});
   const results=await page.evaluate(cases=>{
    const canvas=document.createElement('canvas');canvas.width=canvas.height=16;const d=new D3D9Backend.Device(canvas,{webglVersion:2}),g=d.gpu,gl=g.gl;
    const result=[];

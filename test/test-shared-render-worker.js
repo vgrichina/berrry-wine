@@ -31,33 +31,22 @@ function fixture(legacy=false,nativeMemory=false){
     D3D9RenderWorker:factory,D3DCommandStream:Stream});
   const sharedMemory=nativeMemory ? new WebAssembly.Memory({initial:96,maximum:96,shared:true})
     : {buffer:new SharedArrayBuffer(legacy?6*1024*1024:1024)};
-  let allocation=4096,override=0;
-  const exports={d3d_render_reset_transients(){transients=0;override=0;},d3dim_worker_init(){init++;},d3d_render_retire_heap(){retire++;return 1234;},
-    d3dim_worker_draw(...args){events.push(['software-draw',...args]);},
+  let allocation=4096;
+  const exports={d3d_render_reset_transients(){transients=0;},d3dim_worker_init(){init++;},d3d_render_retire_heap(){retire++;return 1234;},
+    // Legacy fixtures read the replayed snapshot out of the worker workspace
+    // (guest_to_wasm is identity) at call time: [state word, vertex word].
+    d3dim_worker_draw(...args){
+      if(!legacy){events.push(['software-draw',...args]);return;}
+      const d=new DataView(sharedMemory.buffer);
+      events.push(['software-draw',d.getUint32(args[5],true),d.getUint32(args[3],true)]);
+    },
     d3dim_worker_flip(...args){events.push(['flip',...args]);},
     guest_to_wasm:p=>p,
-    d3dim_gpu_state_override(p){override=p;events.push(['override',p]);},
     guest_alloc(bytes){const p=allocation;allocation+=bytes;return p;}};
   if(legacy){
-    class FakeGPU {
-      constructor(){this.targets=new Map();}
-      call(opcode,wa,length=0){
-        if(opcode===0x20001)return this.fence(wa,length);
-        const d=new DataView(sharedMemory.buffer);
-        if(opcode===0x20000){
-          assert(override,'GPU draw receives packet state override');
-          assert.strictEqual(d.getUint32(wa+20,true),override);
-          events.push(['gpu-draw',d.getUint32(override,true),d.getUint32(d.getUint32(wa+12,true),true)]);
-          return d.getUint32(wa+4,true)===1?0:1;
-        }
-        assert.strictEqual(override,0,'state override reset before clear');
-        events.push(['gpu-clear',wa]);return 7;
-      }
-      fence(address=0,length=0){assert.strictEqual(override,0);events.push(['gpu-fence',address,length]);return length?2:1;}
-      snapshot(){return {draws:events.filter(e=>e[0]==='gpu-draw').length};}
-      stop(){events.push(['gpu-stop']);}
-    }
-    const adapterContext={module:{exports:{}},require:()=>({D3DIMGpu:FakeGPU}),DataView,Error};
+    // The production D3DIM adapter is software only since GPU stream v2 D2c
+    // (the WebGL executor moved into the WAT producer); load it unmodified.
+    const adapterContext={module:{exports:{}},require:()=>({}),DataView,Error};
     vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../lib/d3dim-render-worker.js'),'utf8'),adapterContext);
     self.D3DIMRenderWorker=adapterContext.module.exports;
   }
@@ -105,23 +94,14 @@ function encoderScopedFence(){
   assert(messages.at(-1).seq>scopedSequence);
   assert.deepStrictEqual([messages.at(-1).address,messages.at(-1).length],[0,0]);
   assert.strictEqual(encoder.snapshot().transportFences,2);
+  // 0x20007 (lazy shared-surface publication), 0x2000A (present) and 0x20004
+  // (clear) belong to the WAT producer since GPU stream v2 D2c; the software
+  // transport declines them without posting anything.
+  const before=messages.length;
+  for(const opcode of [0x20004,0x20007,0x2000A])
+    assert.strictEqual(encoder.call(opcode,0,0),-1,'software transport declines GPU opcode 0x'+opcode.toString(16));
+  assert.strictEqual(messages.length,before,'declined GPU opcodes post nothing');
   encoder.stop();
-  messages.length=0;
-  const shared=new Stream.Encoder({workerFactory:()=>worker,memory,module:{},
-    getImageBase:()=>0x400000,guestToWasm:p=>p,explicitFence:true,sharedSurfaceSync:true});
-  // Already consumed batches need no readback to publish a lazy range.
-  assert.strictEqual(shared.call(0x20007,0,0),1);
-  assert.deepStrictEqual(messages.map(m=>m.t),['init']);
-  consume=true;
-  shared.call(0x20005,0);shared.call(0x20005,0);
-  assert.strictEqual(shared.call(0x20007,0,0),1);
-  assert.deepStrictEqual(messages.map(m=>m.t),['init','batch','batch'],
-    'lazy publication consumes both buffered batches without requesting readback');
-  assert.strictEqual(shared.snapshot().publications,2);
-  assert.strictEqual(shared.snapshot().transportFences,0);
-  assert.strictEqual(shared.snapshot().publicationWaitMs,0,'already completed publication does not wait');
-  assert.strictEqual(encoder.call(0x20007,0,0),0,'private encoder declines shared lazy synchronization');
-  shared.stop();
 }
 encoderScopedFence();
 // Actual adapter, with the native boundary controlled: only calls returning
@@ -142,36 +122,6 @@ encoderScopedFence();
   assert.strictEqual(adapter.d3dimSoftwareDrawCallsCompleted,1,'throwing draw does not complete');
   adapter.execute({opcode:0x20005,wa:0});
   assert.strictEqual(adapter.d3dimSoftwareDrawCallsCompleted,1,'GL has separate evidence semantics');
-}
-// A presentation before context creation must not cache a missing renderer;
-// subsequent presentations reuse renderer/version only for the same context.
-{
-  let gpu,queries=0,extensions=0;
-  const context={module:{exports:{}},require:()=>({D3DIMGpu:class{
-    constructor(){gpu=this;this.targets=new Map();}
-    call(){return 1;} snapshot(){return {};}
-  }}),DataView,Error};
-  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../lib/d3dim-render-worker.js'),'utf8'),context);
-  const adapter=context.module.exports.create({backend:'webgl',memory:{buffer:new ArrayBuffer(64)},instance:{exports:{}}});
-  const present=()=>adapter.execute({opcode:0x20001,wa:0});
-  const gl=(name,version)=>({RENDERER:1,VERSION:2,
-    getExtension(){extensions++;return null;},
-    getParameter(parameter){queries++;assert([1,2].includes(parameter));return parameter===2?version:name;}});
-  const absent=present();
-  assert.strictEqual(absent.glRenderer,null);
-  assert.strictEqual(absent.glVersion,null);
-  gpu.targets.set(1,{device:{gpu:{gl:gl('first','WebGL 1.0')}}});
-  for(let i=0;i<100;i++){
-    const result=present();
-    assert.strictEqual(result.glRenderer,'first');
-    assert.strictEqual(result.glVersion,'WebGL 1.0');
-  }
-  assert.strictEqual(queries,2);assert.strictEqual(extensions,1);
-  gpu.targets.set(1,{device:{gpu:{gl:gl('replacement','WebGL 2.0')}}});
-  const replacement=present();
-  assert.strictEqual(replacement.glRenderer,'replacement');
-  assert.strictEqual(replacement.glVersion,'WebGL 2.0');
-  assert.strictEqual(queries,4);assert.strictEqual(extensions,2);
 }
 (async()=>{
   const f=fixture(),a=f.manager.createEndpoint({api:'glide',name:'a'}),b=f.manager.createEndpoint({api:'gl',name:'b'});
@@ -197,14 +147,16 @@ encoderScopedFence();
   await anotherGL.ready;
   assert.strictEqual(f.importOrder.filter(url=>url==='mem-utils.js').length,1,'GL dependencies shared across endpoints');
   await anotherGL.terminate();
-  f.failedImports.add('d3d9-fixed.js');
+  // First dependency only the neutral endpoint imports (render-clear is
+  // already shared with the gpu-stream endpoints opened above).
+  f.failedImports.add('d3d9-backend.js');
   const failedLoad=f.manager.createEndpoint({api:'neutral',name:'failed-load'});
   await assert.rejects(failedLoad.ready,/injected import failure/);
   await failedLoad.terminate();
 
   // Existing neutral command receipts use a separate per-port namespace.
   const c=f.manager.createEndpoint({api:'neutral',name:'c'});await c.ready;
-  assert.strictEqual(f.importOrder.filter(url=>url==='d3d9-fixed.js').length,2,'failed dependency retried');
+  assert.strictEqual(f.importOrder.filter(url=>url==='d3d9-backend.js').length,2,'failed dependency retried');
   assert.strictEqual(f.importOrder.filter(url=>url==='d3d9-shader.js').length,1,'successful predecessor retained across retry');
   const consumer=new Stream.WorkerConsumer(c);
   const command={version:Stream.VERSION,opcode:Stream.OPCODES.FENCE,deviceId:1,generation:1,sequence:1,payload:{kind:'echo',value:9}};
@@ -216,9 +168,10 @@ encoderScopedFence();
   assert.deepStrictEqual(f.counts(),{init:1,retire:1,terminated:1});
   await f.manager.stop();assert.strictEqual(f.counts().retire,1,'idempotent process shutdown');
   // Production Encoder -> Manager endpoint -> worker legacy decoder ->
-  // D3DIM adapter, with only the WASM/GPU executor and event delivery mocked.
-  // Queued render-state generations survive producer scratch reuse. Palette
-  // payloads are not copied by this protocol: this is NOT a COM lifetime test.
+  // production D3DIM adapter (software since GPU stream v2 D2c), with only
+  // the WASM rasterizer exports and event delivery mocked. Queued render-state
+  // generations survive producer scratch reuse. Palette payloads are not
+  // copied by this protocol: this is NOT a COM lifetime test.
   {
     // A real Memory handle follows the manager's initialization-handle byte
     // accounting; a plain {buffer} mock would charge the entire shared heap.
@@ -234,18 +187,16 @@ encoderScopedFence();
       assert.strictEqual(encoder.enqueue(descriptor),1);
     }
     d.setUint32(state,99,true);d.setUint32(vertices,99,true);
-    assert.strictEqual(q.events.filter(e=>e[0]==='gpu-draw').length,0,'producer changes precede drain');
+    assert.strictEqual(q.events.filter(e=>e[0]==='software-draw').length,0,'producer changes precede drain');
     await tick();
-    assert.deepStrictEqual(q.events.filter(e=>e[0]==='gpu-draw'),
-      [['gpu-draw',31,41],['gpu-draw',32,42]],'both queued snapshots retain FIFO generation');
+    assert.deepStrictEqual(q.events.filter(e=>e[0]==='software-draw'),
+      [['software-draw',31,41],['software-draw',32,42]],'both queued snapshots retain FIFO generation');
     assert.strictEqual(encoder.snapshot().replayCommands,2);
-    assert.strictEqual(encoder.snapshot().fallbacks,0);
-    assert.strictEqual(q.events.filter(e=>e[0]==='software-draw').length,0,'no software fallback');
     encoder.stop();await tick();await q.manager.stop();
   }
-  // Actual legacy decoder + production D3DIM worker adapter. A GPU call is
-  // recorded rather than rendered, so the fixture isolates ordering and owns
-  // the expected snapshot values independently of rasterization.
+  // Actual legacy decoder + production D3DIM worker adapter. The native draw
+  // is recorded rather than rendered, so the fixture isolates ordering and
+  // owns the expected snapshot values independently of rasterization.
   {
   const l=fixture(true),port=l.manager.createEndpoint({api:'legacy',backend:'webgl'});
   await port.ready;
@@ -261,49 +212,45 @@ encoderScopedFence();
   port.postMessage({t:'init',control:control.buffer,buffers:[packet]});await tick();
   port.postMessage({t:'batch',index:0,seq:1,bytes:offset,commands:2,imageBase:0x400000});await tick();
   assert.strictEqual(Atomics.load(control,1),1,'batch consumption releases snapshots');
-  assert.deepStrictEqual(l.events.filter(e=>e[0]==='gpu-draw'),[['gpu-draw',11,21],['gpu-draw',12,22]]);
-  assert.strictEqual(l.events.filter(e=>e[0]==='gpu-fence').length,0,'no readback per batch');
-  let gpuStats;
-  port.onmessage=event=>{if(event.data.t==='stats')gpuStats=event.data.stats;};
+  assert.deepStrictEqual(l.events.filter(e=>e[0]==='software-draw'),[['software-draw',11,21],['software-draw',12,22]]);
+  let adapterStats;
+  port.onmessage=event=>{if(event.data.t==='stats')adapterStats=event.data.stats;};
   port.postMessage({t:'legacy-fence',seq:2,address:8194,length:3});await tick();
-  assert.strictEqual(Atomics.load(control,1),2);assert.strictEqual(gpuStats.draws,2);
-  assert.strictEqual(gpuStats.d3dimSoftwareDrawCallsCompleted,0);
-  assert.strictEqual(gpuStats.d3dimFallbackSoftwareDrawCallsCompleted,0);
-  assert.strictEqual(gpuStats.completedFenceSequence,2);
-  assert.strictEqual(l.events.filter(e=>e[0]==='gpu-fence').length,1,'explicit fence materializes GPU contents');
-  assert.deepStrictEqual(l.events.at(-1),['gpu-fence',8194,3],'range reaches GPU executor unchanged');
-  assert.strictEqual(Atomics.load(control,11),2,'scoped fence retains other dirty targets');
+  assert.strictEqual(Atomics.load(control,1),2);
+  // Adapter-routed draws count on the adapter, not on the adapterless counter.
+  assert.strictEqual(adapterStats.d3dimSoftwareDrawCallsCompleted,0);
+  assert.strictEqual(adapterStats.d3dimFallbackSoftwareDrawCallsCompleted,2);
+  assert.strictEqual(adapterStats.completedFenceSequence,2);
+  assert.strictEqual(Atomics.load(control,11),1,'software fence has no pending GPU targets');
   port.postMessage({t:'legacy-fence',seq:3});await tick();
-  assert.strictEqual(Atomics.load(control,11),1,'global fence finishes remaining targets');
+  assert.strictEqual(Atomics.load(control,11),1,'global fence completes');
   port.postMessage({t:'legacy-call',seq:4,opcode:0x20004,wa:80});await tick();
-  assert.strictEqual(Atomics.load(control,11),7,'clear returns result through shared control');
+  assert.strictEqual(Atomics.load(control,11),0,'clear is guest-local WAT; the worker declines it');
   assert.strictEqual(Atomics.load(control,1),4);
   offset=0;drawRecord(13,23,1);
   [32,123,456,0,0,0,0,1].forEach((v,i)=>d.setUint32(offset+i*4,v,true));offset+=32;
+  const drawsBefore=l.events.filter(e=>e[0]==='software-draw').length;
   port.postMessage({t:'batch',index:0,seq:5,bytes:offset,commands:2,imageBase:0x400000});await tick();
-  const softwareIndex=l.events.findIndex(e=>e[0]==='software-draw');
-  assert.strictEqual(l.events[softwareIndex-1][0],'gpu-fence','fallback materializes prior GPU writes');
+  assert.deepStrictEqual(l.events.filter(e=>e[0]==='software-draw').slice(drawsBefore),[['software-draw',13,23]]);
   const flipIndex=l.events.findIndex(e=>e[0]==='flip');
-  assert.strictEqual(l.events[flipIndex-1][0],'gpu-fence','DIB swap follows GPU materialization');
+  assert.deepStrictEqual(l.events[flipIndex],['flip',123,456],'flip record reaches the DIB swap');
+  assert.strictEqual(l.events[flipIndex-1][0],'software-draw','flip follows the draw queued ahead of it');
   port.postMessage({t:'legacy-fence',seq:6});await tick();
-  assert.strictEqual(gpuStats.d3dimFallbackSoftwareDrawCallsCompleted,1,'one completed fallback; flip is not a draw');
-  assert.strictEqual(gpuStats.d3dimSoftwareDrawCallsCompleted,0,'fallback stays separate from requested software');
-  const gpuEndpoint=gpuStats.renderEndpointId;
+  assert.strictEqual(adapterStats.d3dimFallbackSoftwareDrawCallsCompleted,3,'flip is not a draw');
+  assert.strictEqual(adapterStats.d3dimSoftwareDrawCallsCompleted,0);
+  const adapterEndpoint=adapterStats.renderEndpointId;
   const peer=l.manager.createEndpoint({api:'legacy',backend:'software'});
   await peer.ready;
   const peerControl=new Int32Array(new SharedArrayBuffer(64));
   let softwareStats;
   peer.onmessage=event=>{if(event.data.t==='stats')softwareStats=event.data.stats;};
   peer.postMessage({t:'init',control:peerControl.buffer,buffers:[packet]});await tick();
-  const priorFences=l.events.filter(e=>e[0]==='gpu-fence').length;
   peer.postMessage({t:'legacy-fence',seq:1,address:8192,length:4});await tick();
-  assert.strictEqual(Atomics.load(peerControl,1),1,'foreign caller completes only after owner fence');
-  assert.strictEqual(l.events.filter(e=>e[0]==='gpu-fence').length,priorFences+1,
-    'producer without a GPU still reaches the owning endpoint');
-  assert.strictEqual(Atomics.load(peerControl,11),2,'foreign producer receives pending-target result');
+  assert.strictEqual(Atomics.load(peerControl,1),1,'foreign caller completes after owner fence');
+  assert.strictEqual(Atomics.load(peerControl,11),1,'foreign producer receives completed result');
   assert.strictEqual(softwareStats.d3dimSoftwareDrawCallsCompleted,0,'foreign fence cannot claim owner draws');
   assert.strictEqual(softwareStats.d3dimFallbackSoftwareDrawCallsCompleted,0);
-  assert.notStrictEqual(softwareStats.renderEndpointId,gpuEndpoint);
+  assert.notStrictEqual(softwareStats.renderEndpointId,adapterEndpoint);
   peer.postMessage({t:'batch',index:0,seq:2,bytes:offset,commands:2,imageBase:0x400000});await tick();
   assert.strictEqual(softwareStats.d3dimSoftwareDrawCallsCompleted,0,'no extra telemetry publication per batch');
   peer.postMessage({t:'legacy-fence',seq:3});await tick();
@@ -313,7 +260,7 @@ encoderScopedFence();
   assert.strictEqual(softwareStats.requestedBackend,'software');
   await peer.terminate();
   port.postMessage({t:'legacy-close'});await tick();
-  assert(l.events.some(e=>e[0]==='gpu-stop'));assert.strictEqual(l.counts().retire,0);
+  assert.strictEqual(l.counts().retire,0,'closing a legacy endpoint keeps the process heap');
   await l.manager.stop();assert.strictEqual(l.counts().init,1);assert.strictEqual(l.counts().retire,1);
   let orphanTerminated=0;
   assert.throws(()=>new Manager({workerFactory:()=>({addEventListener(){},postMessage(){throw new Error('clone failed');},

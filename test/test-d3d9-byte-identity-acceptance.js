@@ -7,6 +7,9 @@ const {test} = require('node:test');
 const {Bridge} = require('../lib/d3d9-host');
 const Worker = require('../lib/d3d9-render-worker');
 const {OPCODES: OP} = require('../lib/d3d-command-stream');
+// Slice 9.1: decode in WAT (standalone build here); identity is the level's
+// dirty serial, so a write is modelled as bytes plus a stamp at mip+28.
+require('./helpers/wat-texture-decoder').installStandalone();
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return {promise, resolve}; };
 
@@ -74,23 +77,22 @@ const pixel = (draw, at = 0, stage = 0) => [...level(draw, stage).pixels.slice(a
 
 
 
-test('independent exact-byte interior collision, equal-byte reuse and private ownership', async()=>{
+test('independent interior write: stamped re-decode, clean reuse and private ownership', async()=>{
  const f=fixture(); try {
   f.draw();await f.drain();const a=level(f.observations[0]);const snap=f.bridge._textureSnapshots.get(f.mip);
-  assert(snap.source.buffer!==f.memory,'private source buffer');assert(snap.source.buffer!==snap.pixels.buffer,'separate decoded buffer');
-  // Identical bytes under recurring metadata safely retain the same key and no upload.
+  assert.equal(snap.source,undefined,'no source copy');assert(snap.pixels.buffer!==f.memory,'private decoded buffer');
+  // An unstamped level is clean: same key and no upload.
   f.draw();await f.drain();assert.equal(level(f.observations[1]).key,a.key);
   assert.equal(f.commands.filter(c=>c.opcode===OP.DRAW)[1].payload.textures[0].levels[0].pixels,undefined);
-  // Offset 191 is outside the predecessor's 32-of-256 sparse sample.
-  new Uint8Array(f.memory,f.texels+191,1)[0]=19;
+  new Uint8Array(f.memory,f.texels+191,1)[0]=19;f.set(f.mip+28,0x70000001);
   f.draw();await f.drain();assert.equal(pixel(f.observations[2],188)[3],19);
-  assert.notEqual(level(f.observations[2]).key,a.key);assert.equal(snap.source[191],255);
+  assert.notEqual(level(f.observations[2]).key,a.key);assert.equal(snap.pixels[191],255);
   assert.equal(pixel(f.observations[0],188)[3],255);
  }finally{await f.bridge.close();}
 });
 test('independent zero-cache budget retains no source aliases across replacement',async()=>{
  const f=fixture({maxTextureSnapshotBytes:0});try{
-  f.draw();f.fill(f.texels,16384,[71,82,93,255]);f.draw();await f.drain();
+  f.draw();f.fill(f.texels,16384,[71,82,93,255]);f.set(f.mip+28,0x70000002);f.draw();await f.drain();
   assert.deepEqual(f.observations.map(d=>pixel(d)),[f.rgba,[71,82,93,255]]);
   assert.equal(f.bridge._textureSnapshots.size,0);assert.equal(f.bridge._textureSnapshotBytes,0);
  }finally{await f.bridge.close();}

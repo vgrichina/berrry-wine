@@ -1,7 +1,7 @@
 'use strict';
 const path=require('path'),puppeteer=require('puppeteer');
 (async()=>{const browser=await puppeteer.launch({headless:true,executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--no-first-run','--no-default-browser-check']});
- try{const page=await browser.newPage();for(const file of['lib/gpu-backend.js','lib/d3d9-shader.js','lib/d3d9-fixed.js','lib/render-clear.js','lib/d3d9-backend.js','test/fixtures/d3d9-triangle-edge-cases.js'])await page.addScriptTag({path:path.join(__dirname,'..',file)});
+ try{const page=await browser.newPage();for(const file of['lib/gpu-backend.js','lib/d3d9-shader.js','lib/render-clear.js','lib/d3d9-backend.js','test/fixtures/d3d9-triangle-edge-cases.js'])await page.addScriptTag({path:path.join(__dirname,'..',file)});
   const result=await page.evaluate(()=>{const results=[];for(const version of[1,2])for(const clip of[false,true])for(const [name,points,width,height,viewport]of D3D9TriangleEdges.cases){
    const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const d=new D3D9Backend.Device(canvas,{webglVersion:version});
    try{d.clear([0,0,0,1],1,1,null,null);d.draw(D3D9TriangleEdges.draw(points,width,height,clip,viewport));const bytes=d.readColor(null).pixels,actual=Array.from({length:width*height},(_,i)=>bytes[i*4]>127),expected=D3D9TriangleEdges.mask(points,width,height);

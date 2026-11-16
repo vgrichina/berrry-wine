@@ -7,7 +7,7 @@ const assert=require('assert'),path=require('path'),puppeteer=require('puppeteer
   args:['--no-first-run','--no-default-browser-check']});
  try{
   const page=await browser.newPage();
-  for(const file of['gpu-backend.js','d3d9-shader.js','d3d9-fixed.js','render-clear.js','d3d9-backend.js'])
+  for(const file of['gpu-backend.js','d3d9-shader.js','render-clear.js','d3d9-backend.js'])
    await page.addScriptTag({path:path.join(__dirname,'../lib',file)});
   const results=await page.evaluate(()=>{
    const results=[],identity=new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]);

@@ -106,11 +106,15 @@ const vsNoSpecular = new Uint32Array([0xfffe0101,
       'v1 still reads zero behind a programmable vertex shader');
 
     // And the boundary. A COLOR2 attribute is a real specular producer, so
-    // answering zero would be a lie rather than a reading of undefined -- the
-    // draw is still refused until the linkage is actually implemented.
-    assert.throws(() => d.draw(source(readInput(1), { color2: true })),
-      /specular/,
-      'a COLOR2 attribute is a real producer and is still refused');
+    // answering zero would be a lie rather than a reading of undefined. Since
+    // GPU stream v2 slice 9.2 the fixed vertex stage (09aj cascade6) writes
+    // oD1 from COLOR2, so the producer is SERVED: v1 reads the vertex colour
+    // (present() is BGRA, hence the reversed channels).
+    d.clear([0, 0, 0, 1], 1);
+    assert.doesNotThrow(() => d.draw(source(readInput(1), { color2: true })),
+      'a COLOR2 attribute is a real producer and is served');
+    assert.deepStrictEqual(centre(d.present().pixels), [192, 128, 64, 255],
+      'v1 reads the COLOR2 vertex colour, not the undefined zero');
 
     // A vertex shader that writes oD1 is the other side of the same boundary,
     // and it is no longer a refusal: the second colour varying is carried end

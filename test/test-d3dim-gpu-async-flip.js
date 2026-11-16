@@ -1,281 +1,174 @@
 #!/usr/bin/env node
 'use strict';
 
-// A queued Flip on a WebGL2 target: the back buffer's readback goes into a
-// pixel-pack buffer behind a fence sync instead of a synchronous readPixels,
-// the flip chain's DIBs swap in draw order, and the pixels land in the DIB
-// they were read from only when something fences those bytes. Measured on
-// Deus Ex's D3DDrv: the synchronous readback was 28 ms of every present.
+// A GPU Flip through the WAT GPU stream producer (src/09abg-d3dim-gps.wat
+// $d3g_flip), drained into the real software executor
+// (lib/gpu-stream-software.js). The flip chain's DIBs swap, the colour target
+// follows its DIB, the new front is PRESENTed from GPU memory, and the drawn
+// pixels land in the DIB they were drawn into only when a CPU reader fences
+// those bytes. Measured on Deus Ex's D3DDrv: a synchronous readback per
+// present was 28 ms of every frame.
+//
+// The JS WebGL executor's pixel-pack-buffer readback, its fence-sync polling,
+// retry-after-exception and context-loss handling (lib/d3dim-gpu.js) are gone
+// with it: the producer never reads a flipped frame back at all.
 
 const assert = require('assert');
-// The negative control changes only the collect-before-reuse call in a private
-// in-memory module. It must fail on actual lost first-frame DIB bytes.
-function loadExecutor() {
-  const filename = require.resolve('../lib/d3dim-gpu');
-  if (!process.argv.includes('--negative-control')) return require(filename);
-  const fs = require('fs'), Module = require('module');
-  const source = fs.readFileSync(filename, 'utf8');
-  const anchor = 'if (t.inflight) this._completeInflight(t);';
-  assert.equal(source.split(anchor).length, 2, 'exact single reuse boundary');
-  const isolated = new Module(filename, module);
-  isolated.filename = filename;
-  isolated.paths = module.paths;
-  isolated._compile(source.replace(anchor, '/* negative control: skip old frame collection */'), filename);
-  return isolated.exports;
-}
-const { D3DIMGpu, OPCODES } = loadExecutor();
+const GS = require('../lib/gpu-stream');
+const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
+const { bootRenderHarness } = require('./render-helper');
 
-function fixture({ asyncFlip = true, version = 2, own = true, bpp = 32 } = {}) {
-  const memory = new ArrayBuffer(0x10000), dv = new DataView(memory), u8 = new Uint8Array(memory);
-  const front = 0x1000, back = 0x1040, flipDesc = 0x1100, dibA = 0x8000, dibB = 0x9000;
-  dv.setUint32(front + 20, dibB, true);   // front entry's DIB
-  dv.setUint32(back + 20, dibA, true);    // back entry's DIB: the render target
-  dv.setUint32(flipDesc, front, true);
-  dv.setUint32(flipDesc + 4, back, true);
-  u8.fill(0x11, dibA, dibA + 64);
-  u8.fill(0x22, dibB, dibB + 64);
+const extraWat = `
+  (func (export "flip_surface") (param $w i32) (param $h i32) (result i32)
+    (local $this i32) (local $entry i32)
+    (local.set $this (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF3)))
+    (local.set $entry (call $dx_from_this (local.get $this)))
+    (store.field DxObject width (local.get $entry) (local.get $w))
+    (store.field DxObject height (local.get $entry) (local.get $h))
+    (store.field DxObject bpp (local.get $entry) (i32.const 16))
+    (store.field DxObject pitch (local.get $entry) (i32.shl (local.get $w) (i32.const 1)))
+    (store.field DxObject misc1 (local.get $entry)
+      (call $g2w (call $heap_alloc (i32.mul (i32.shl (local.get $w) (i32.const 1)) (local.get $h)))))
+    (call $dx_surf_fmt_set (local.get $entry) (i32.const 1))
+    (local.get $this))
+  (func (export "flip_dib") (param $this i32) (result i32)
+    (load.field DxObject misc1 (call $dx_from_this (local.get $this))))
+  ;; Exclusive mode on a top-level cooperative window: what $d3g_flip needs.
+  (func (export "flip_exclusive") (param $hwnd i32)
+    (call $dx_coop_hwnd_set (local.get $hwnd))
+    (call $dx_exclusive_set (i32.const 1)))
+  ;; A GPU colour clear through the producer's own 0x20004 lowering (as
+  ;; test-d3dim-surface-fence.js): the producer clears only a target the GPU
+  ;; has drawn on (flag 4, set by a draw); the test marks that instead.
+  (func (export "flip_paint") (param $this i32) (param $color i32) (result i32)
+    (local $entry i32) (local $pb i32) (local $t i32) (local $ga i32) (local $d i32) (local $r i32)
+    (global.set $d3dim_gpu_on (i32.const 1))
+    (local.set $entry (call $dx_from_this (local.get $this)))
+    (call $lock_acquire (global.get $D3DIM_GPS))
+    (local.set $pb (call $d3g_pb))
+    (local.set $t (call $d3g_target (local.get $pb) (local.get $entry)
+      (load.field DxObject misc1 (local.get $entry)) (load.field DxObject width (local.get $entry))
+      (load.field DxObject height (local.get $entry)) (load.field DxObject bpp (local.get $entry))
+      (load.field DxObject pitch (local.get $entry)) (call $dx_surf_fmt_get (local.get $entry))))
+    (if (local.get $t) (then
+      (i32.store offset=32 (local.get $t) (i32.or (i32.load offset=32 (local.get $t)) (i32.const 4)))))
+    (call $lock_release (global.get $D3DIM_GPS))
+    (local.set $ga (call $heap_alloc (i32.const 64)))
+    (local.set $d (call $g2w (local.get $ga)))
+    (memory.fill (local.get $d) (i32.const 0) (i32.const 64))
+    (i32.store offset=0 (local.get $d) (local.get $entry))
+    (i32.store offset=4 (local.get $d) (i32.const 1))
+    (i32.store offset=8 (local.get $d) (local.get $color))
+    (i32.store offset=24 (local.get $d) (load.field DxObject width (local.get $entry)))
+    (i32.store offset=28 (local.get $d) (load.field DxObject height (local.get $entry)))
+    (local.set $r (call $d3dim_gpu_call (i32.const 0x20004) (local.get $d) (i32.const 0)))
+    (call $heap_free (local.get $ga))
+    (if (local.get $r) (then (global.set $d3dim_worker_pending (i32.const 1))))
+    (local.get $r))
+  ;; IDirectDrawSurface::Flip's queued path, as the handler takes it.
+  (func (export "flip_try") (param $front i32) (param $back i32) (result i32)
+    (global.set $d3dim_gpu_on (i32.const 1))
+    (global.set $d3dim_worker_pending (i32.const 1))
+    (call $d3dim_worker_try_flip (call $dx_from_this (local.get $front)) (call $dx_from_this (local.get $back))))
+  (func (export "flip_present_pending") (result i32) (global.get $d3dim_present_pending))
+  ;; A raw producer fence (0x20001) over [wa, wa+len); len 0 = global.
+  (func (export "flip_fence") (param $wa i32) (param $len i32) (result i32)
+    (global.set $d3dim_gpu_on (i32.const 1))
+    (call $d3dim_gpu_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
+  ;; A CPU reader of one surface (Lock/GetDC/CPU present all fence this way).
+  (func (export "flip_reader") (param $this i32)
+    (global.set $d3dim_gpu_on (i32.const 1))
+    (global.set $d3dim_worker_pending (i32.const 1))
+    (call $d3dim_surface_fence (call $dx_from_this (local.get $this))))
+`;
 
-  const events = [];
-  let packBound = null, bufferSerial = 0, live = true, destroyed = false;
-  let frame = [0x10, 0x20, 0x30, 0xff];
-  const context = {}, lifecycle = [];
-  const owned = buffer => assert(buffer && buffer.context === context && !buffer.deleted,
-    'operation uses live PBO owned by this exact context');
-  const PIXEL_PACK_BUFFER = 0x88eb;
-  const gl = {
-    RGBA: 1, UNSIGNED_BYTE: 2, PIXEL_PACK_BUFFER, STREAM_READ: 3, SYNC_GPU_COMMANDS_COMPLETE: 4,
-    createBuffer() { const b = { context, id: ++bufferSerial, data: null }; lifecycle.push(['create', b]); return b; },
-    deleteBuffer(b) { owned(b); b.deleted = true; lifecycle.push(['delete', b]); },
-    bindBuffer(target, buf) {
-      assert.equal(target, PIXEL_PACK_BUFFER);
-      if (buf) owned(buf);
-      packBound = buf;
-    },
-    bufferData(target, size) { owned(packBound); packBound.data = new Uint8Array(size); },
-    readPixels(x, y, w, h, fmt, type, dst) {
-      // The GPU frame: every pixel R=0x10 G=0x20 B=0x30 A=0xff (RGBA bytes).
-      const fill = out => { for (let i = 0; i < out.length; i += 4) out.set(frame, i); };
-      if (typeof dst === 'number') { events.push('read-async'); owned(packBound); lifecycle.push(['write', packBound]); fill(packBound.data.subarray(dst, dst + w * h * 4)); }
-      else { events.push('read-sync'); fill(dst); }
-    },
-    fenceSync() { events.push('fence-sync'); return { sync: true }; },
-    deleteSync() { events.push('delete-sync'); },
-    flush() {},
-    getBufferSubData(target, offset, dst) {
-      assert.equal(target, PIXEL_PACK_BUFFER); owned(packBound);
-      assert(offset >= 0 && offset + dst.length <= packBound.data.length);
-      events.push('collect'); lifecycle.push(['collect', packBound]);
-      dst.set(packBound.data.subarray(offset, offset + dst.length));
-    },
-  };
-  const exports = {
-    d3dim_worker_flip(f, b) {
-      events.push('swap');
-      const t = dv.getUint32(f + 20, true);
-      dv.setUint32(f + 20, dv.getUint32(b + 20, true), true);
-      dv.setUint32(b + 20, t, true);
-    },
-    page_watch_write() {},
-    d3dim_gpu_surface_live() { return live; },
-  };
-  const gpu = new D3DIMGpu({ getMemory: () => memory, getExports: () => exports,
-    createCanvas: () => null, asyncFlip, onError: () => {} });
-  const target = { rt: back, width: 4, height: 4, bpp, pitch: bpp / 2, format: 1,
-    dib: dibA, dirty: true, colorDirtyBounds: null, check: false, textureKeys: new Set(),
-    device: { gpu: { version, gl, bindImplicitTarget() {} }, destroy() { destroyed = true; } } };
-  if (own) gpu.targets.set(back, target);
-  return { gpu, dv, u8, events, lifecycle, gl, flipDesc, front, back, dibA, dibB, target,
-    get packBound() { return packBound; },
-    setFrame(value) { frame = value; }, setLive(value) { live = value; },
-    get destroyed() { return destroyed; } };
-}
+(async () => {
+  let ex, wasmMemory, gps = null, ring = null, ringAddr = 0, kicks = 0;
+  const frames = [], calls = [];
+  const harness = await bootRenderHarness({ fonts: 'none', extraWat,
+    extraHostOverrides: {
+      gpu_gl_call: (...args) => { calls.push(args); return 0; },
+      gpu_stream_kick: (r, mode) => {
+        r >>>= 0; kicks++;
+        if (!gps) gps = new SoftwareExecutor({ getExports: () => ex, getMemory: () => wasmMemory.buffer,
+          onPresent: f => frames.push(f) });
+        if (!ring || ringAddr !== r) { ring = new GS.Ring(() => wasmMemory.buffer, r); ringAddr = r; }
+        GS.drain([ring], gps);
+        if ((mode | 0) === GS.CONST.KICK_CLOSE) { gps.close(); gps = null; ring = null; ringAddr = 0; }
+        return 1;
+      },
+    } });
+  ex = harness.exports; wasmMemory = harness.memory;
+  const pe = require('fs').readFileSync(require('path').join(__dirname, 'binaries/calc.exe'));
+  new Uint8Array(wasmMemory.buffer).set(pe, ex.get_staging());
+  assert(ex.load_pe(pe.length));
+  ex.init_dx_com_thunks();
+  ex.flip_exclusive(0x1234);
 
-// DIB bytes for one 32-bit pixel converted from RGBA (0x10,0x20,0x30): B G R A.
-const PIXEL = [0x30, 0x20, 0x10, 0xff];
+  const W = 4, H = 4, PITCH = W * 2, LEN = PITCH * H;
+  const readbacks = () => ex.d3dim_gps_stat(2), flips = () => ex.d3dim_gps_stat(10);
+  const bytes = (dib, n = LEN) => Array.from(new Uint8Array(wasmMemory.buffer, dib, n));
+  const fill = (dib, v) => new Uint8Array(wasmMemory.buffer, dib, LEN).fill(v);
+  // RGB565 bytes the clear colours must land as.
+  const RED = 0xffff0000, GREEN = 0xff00ff00;
+  const red = Array(W * H).fill([0x00, 0xf8]).flat(), green = Array(W * H).fill([0xe0, 0x07]).flat();
 
-{
-  const f = fixture();
-  assert.equal(f.gpu.call(OPCODES.FLIP, f.flipDesc), 1, 'a WebGL2 target queues the flip');
-  assert.deepEqual(f.events, ['read-async', 'fence-sync', 'swap'],
-    'the readback goes to a pixel-pack buffer, then the chain swaps; no client-memory read');
-  assert.equal(f.dv.getUint32(f.front + 20, true), f.dibA, 'the drawn DIB is the front now');
-  assert.equal(f.dv.getUint32(f.back + 20, true), f.dibB);
-  assert.deepEqual(Array.from(f.u8.subarray(f.dibA, f.dibA + 4)), [0x11, 0x11, 0x11, 0x11],
-    'the pixels are not in the DIB until something fences it');
-  assert.equal(f.target.dirty, false, 'the in-flight read owns that frame, not a later fence');
+  const front = ex.flip_surface(W, H), back = ex.flip_surface(W, H);
+  const dibA = ex.flip_dib(back) >>> 0, dibB = ex.flip_dib(front) >>> 0;
+  fill(dibA, 0x11); fill(dibB, 0x22);
+  assert.strictEqual(ex.flip_paint(back, RED), 1, 'the producer takes the clear of the back buffer');
 
-  // A fence on unrelated bytes leaves the read in flight and keeps WAT pending.
-  assert.equal(f.gpu.call(OPCODES.FENCE, 0xa000, 64), 2);
-  assert(!f.events.includes('collect'));
+  // The flip: DIBs swap, nothing reads back, nothing is owed.
+  let r = readbacks(), f0 = flips(), p0 = frames.length;
+  assert.strictEqual(ex.flip_try(front, back), 1, 'a GPU back buffer flips on the GPU');
+  assert.strictEqual(ex.flip_present_pending(), 0, 'the producer PRESENTed the new front itself');
+  assert.strictEqual(flips(), f0 + 1);
+  assert.strictEqual(ex.flip_dib(front) >>> 0, dibA, 'the drawn DIB is the front now');
+  assert.strictEqual(ex.flip_dib(back) >>> 0, dibB);
+  assert.strictEqual(readbacks(), r, 'no readback on Flip');
+  assert.deepStrictEqual(bytes(dibA), Array(LEN).fill(0x11), 'the pixels are not in the DIB until something fences it');
+  assert.strictEqual(frames.length, p0 + 1, 'the executor received the presented frame');
+  const fr = frames.at(-1);
+  assert.deepStrictEqual([fr.width, fr.height, fr.hwnd], [W, H, 0x1234]);
+  assert.deepStrictEqual(Array.from(fr.pixels.subarray(0, 4)), [255, 0, 0, 255], 'presented from GPU memory');
 
-  // Presenting the front (a fence ranged to its DIB) collects it.
-  f.gpu.call(OPCODES.FENCE, f.dibA, 64);
-  assert.deepEqual(f.events.slice(-2), ['collect', 'delete-sync']);
-  for (let i = 0; i < 16; i++) {
-    assert.deepEqual(Array.from(f.u8.subarray(f.dibA + i * 4, f.dibA + i * 4 + 4)), PIXEL,
-      `pixel ${i} arrived in the DIB it was read from`);
-  }
-  assert.deepEqual(Array.from(f.u8.subarray(f.dibB, f.dibB + 4)), [0x22, 0x22, 0x22, 0x22],
-    'the new back buffer is untouched');
-  assert.equal(f.gpu.stats.asyncFlips, 1);
-  assert.equal(f.gpu.stats.asyncReads, 1);
-  assert.equal(f.gpu.stats.syncs, 1);
+  // A fence on unrelated bytes leaves the target GPU-only and reports it.
+  assert.strictEqual(ex.flip_fence(dibA + 4096, 64), 2, 'other targets still hold GPU-only pixels');
+  assert.strictEqual(readbacks(), r);
 
-  // Nothing is collected twice: a later global fence finds no in-flight read.
-  const n = f.events.length;
-  f.gpu.call(OPCODES.FENCE, 0, 0);
-  assert(!f.events.slice(n).includes('collect'));
-}
+  // Presenting the front (a CPU reader of its DIB) lands it, once.
+  ex.flip_reader(front);
+  assert.strictEqual(readbacks(), r + 1);
+  assert.deepStrictEqual(bytes(dibA), red, 'every pixel arrived in the DIB it was drawn into');
+  assert.deepStrictEqual(bytes(dibB), Array(LEN).fill(0x22), 'the new back buffer is untouched');
+  assert.strictEqual(ex.flip_fence(0, 0), 1, 'nothing GPU-only remains');
+  assert.strictEqual(readbacks(), r + 1, 'nothing is read back twice');
 
-{
-  // A global fence (zero length) collects an in-flight read too.
-  const f = fixture();
-  f.gpu.call(OPCODES.FLIP, f.flipDesc);
-  f.gpu.call(OPCODES.FENCE, 0, 0);
-  assert(f.events.includes('collect'));
-  assert.deepEqual(Array.from(f.u8.subarray(f.dibA, f.dibA + 4)), PIXEL);
-}
+  // A back buffer the GPU does not own: the CPU swap (0 = not queued).
+  assert.strictEqual(ex.flip_try(front, back), 0, 'an undrawn back buffer takes the synchronous Flip');
+  assert.strictEqual(ex.flip_dib(front) >>> 0, dibA, 'and the producer did not swap it');
 
-// Reuse one PBO across two different frames. The second flip itself must
-// materialize the first frame, before the PBO receives the second frame.
-{
-  const f = fixture();
-  f.gpu.call(OPCODES.FLIP, f.flipDesc);
-  const pbo = f.target.pbo;
-  f.target.dib = f.dv.getUint32(f.back + 20, true);
-  f.target.dirty = true;
-  f.setFrame([0x40, 0x50, 0x60, 0xff]);
-  f.gpu.call(OPCODES.FLIP, f.flipDesc);
-  assert.deepEqual(Array.from(f.u8.subarray(f.dibA, f.dibA + 4)), PIXEL,
-    'first frame bytes survive PBO reuse before second collection');
-  assert.equal(f.target.pbo, pbo, 'actual same-buffer reuse exercised');
-  assert.deepEqual(f.lifecycle.filter(x => x[0] !== 'create').map(x => x[0]),
-    ['write', 'collect', 'write']);
-  f.gpu.call(OPCODES.FENCE, 0, 0);
-  assert.deepEqual(Array.from(f.u8.subarray(f.dibB, f.dibB + 4)), [0x60, 0x50, 0x40, 0xff]);
-  assert(f.lifecycle.filter(x => ['collect', 'write'].includes(x[0])).every(x => x[1] === pbo));
-}
+  // Two frames in a row: the second Flip must not disturb the first frame.
+  assert.strictEqual(ex.flip_paint(back, GREEN), 1);
+  r = readbacks();
+  assert.strictEqual(ex.flip_try(front, back), 1);
+  assert.strictEqual(ex.flip_dib(front) >>> 0, dibB);
+  assert.strictEqual(readbacks(), r, 'the second Flip reads nothing back either');
+  assert.deepStrictEqual(bytes(dibA), red, 'first frame bytes survive the second Flip');
+  assert.deepStrictEqual(Array.from(frames.at(-1).pixels.subarray(0, 4)), [0, 255, 0, 255]);
+  ex.flip_reader(front);
+  assert.strictEqual(readbacks(), r + 1);
+  assert.deepStrictEqual(bytes(dibB), green);
+  assert.deepStrictEqual(bytes(dibA), red);
 
-// A bound-buffer mock must reject cross-context objects and read the selected
-// buffer rather than the last buffer allocated. Separate contexts also retain
-// their respective pixel contents when collection order is reversed.
-{
-  const a = fixture(), b = fixture();
-  a.gpu.call(OPCODES.FLIP, a.flipDesc);
-  b.setFrame([7, 8, 9, 255]);
-  b.gpu.call(OPCODES.FLIP, b.flipDesc);
-  assert.throws(() => a.gl.bindBuffer(a.gl.PIXEL_PACK_BUFFER, b.target.pbo), /exact context/);
-  const unused = a.gl.createBuffer();
-  a.gl.bindBuffer(a.gl.PIXEL_PACK_BUFFER, unused);
-  a.gl.bufferData(a.gl.PIXEL_PACK_BUFFER, 64);
-  b.gpu.call(OPCODES.FENCE, 0, 0);
-  a.gpu.call(OPCODES.FENCE, 0, 0);
-  assert.deepEqual(Array.from(a.u8.subarray(a.dibA, a.dibA + 4)), PIXEL);
-  assert.deepEqual(Array.from(b.u8.subarray(b.dibA, b.dibA + 4)), [9, 8, 7, 255]);
-  assert.equal(a.lifecycle.find(x => x[0] === 'collect')[1], a.target.pbo);
-}
+  // A front of another size cannot take the GPU's back buffer.
+  const odd = ex.flip_surface(W, H - 1);
+  assert.strictEqual(ex.flip_paint(back, RED), 1);
+  const oddDib = ex.flip_dib(odd) >>> 0;
+  assert.strictEqual(ex.flip_try(odd, back), 0, 'size mismatch declines');
+  assert.strictEqual(ex.flip_dib(odd) >>> 0, oddDib);
 
-// Dead-target discard does not collect or reuse its pending buffer. The
-// actual executor drops the target and declines a further flip of that entry.
-{
-  const f = fixture();
-  f.gpu.call(OPCODES.FLIP, f.flipDesc);
-  f.setLive(false);
-  f.gpu.call(OPCODES.FENCE, 0, 0);
-  assert.equal(f.target.inflight, null);
-  assert.equal(f.destroyed, true);
-  assert.equal(f.gpu.targets.has(f.back), false);
-  assert.deepEqual(f.events, ['read-async', 'fence-sync', 'swap', 'delete-sync']);
-  assert.deepEqual(Array.from(f.u8.subarray(f.dibA, f.dibA + 4)), [0x11, 0x11, 0x11, 0x11]);
-  assert.equal(f.gpu.call(OPCODES.FLIP, f.flipDesc), 0);
-  assert.equal(f.lifecycle.filter(x => x[0] === 'write').length, 1);
-}
-
-// Collection and writeback can throw after a Flip has already been accepted.
-// Retain the exact frame/PBO until both finish: a retry must never report a
-// clean fence over stale bytes, and a later Flip must not overwrite that PBO.
-// Controlled exceptions exercise the actual executor, not a replacement fence.
-for (const bpp of [16, 32]) for (const stage of ['collect', 'writeback']) {
-  const f = fixture({ bpp });
-  f.gpu.call(OPCODES.FLIP, f.flipDesc);
-  const pending = f.target.inflight, pbo = f.target.pbo;
-  const failure = new Error(`${stage} exception`);
-  const owner = stage === 'collect' ? f.gl : f.gpu.getExports();
-  const method = stage === 'collect' ? 'getBufferSubData' : 'page_watch_write';
-  const original = owner[method];
-  owner[method] = () => { throw failure; };
-  for (let attempt = 0; attempt < 2; attempt++) {
-    assert.throws(() => f.gpu.call(OPCODES.FENCE, f.dibA, 64), e => e === failure);
-    assert.equal(f.target.inflight, pending, 'failed collection retains the accepted frame');
-    assert.equal(f.packBound, null, 'exception restores client-memory readback binding');
-    assert.equal(f.events.filter(e => e === 'delete-sync').length, 0);
-    assert.equal(f.gpu.stats.syncs, 0, 'failed writeback is not a completed synchronization');
-  }
-  if (stage === 'collect') assert.deepEqual([...f.u8.slice(f.dibA, f.dibA + 4)], [17,17,17,17]);
-  // Prepare the next back buffer exactly as a subsequent draw does. Its Flip
-  // must also refuse while collection fails, without overwriting frame one.
-  f.target.dib = f.dibB; f.target.dirty = true;
-  f.setFrame([0x40, 0x50, 0x60, 0xff]);
-  assert.throws(() => f.gpu.call(OPCODES.FLIP, f.flipDesc), e => e === failure);
-  assert.equal(f.lifecycle.filter(e => e[0] === 'write').length, 1);
-  assert.equal(f.events.filter(e => e === 'swap').length, 1);
-  owner[method] = original;
-  assert.equal(f.gpu.call(OPCODES.FLIP, f.flipDesc), 1);
-  const first = bpp === 16 ? [0x06, 0x11] : PIXEL;
-  const second = bpp === 16 ? [0x8c, 0x42] : [0x60, 0x50, 0x40, 0xff];
-  for (let i = 0; i < 16; i++)
-    assert.deepEqual([...f.u8.slice(f.dibA + i * first.length, f.dibA + (i + 1) * first.length)], first);
-  assert.equal(f.target.pbo, pbo, 'retry reuses the original PBO only after writing its frame');
-  assert.equal(f.gpu.call(OPCODES.FENCE, 0, 0), 1);
-  for (let i = 0; i < 16; i++)
-    assert.deepEqual([...f.u8.slice(f.dibB + i * second.length, f.dibB + (i + 1) * second.length)], second);
-  assert.equal(f.target.inflight, null);
-  assert.equal(f.events.filter(e => e === 'delete-sync').length, 2);
-  assert.equal(f.gpu.stats.syncs, 2);
-}
-
-// Everything else keeps the synchronous Flip: WAT fences and swaps itself.
-assert.equal(fixture({ asyncFlip: false }).gpu.call(OPCODES.FLIP, 0x1100), 0, 'not opted in');
-assert.equal(fixture({ version: 1 }).gpu.call(OPCODES.FLIP, 0x1100), 0, 'WebGL1 has no pixel-pack buffer');
-assert.equal(fixture({ own: false }).gpu.call(OPCODES.FLIP, 0x1100), 0, 'a back buffer this executor does not own');
-
-// Context loss makes WebGL reads silent no-ops rather than JS exceptions.
-// Detect both a preexisting loss and a loss during collection, before any
-// native bytes, shadow, completion counts or accepted ownership can change.
-for (const bpp of [16,32]) for (const queued of [false,true]) for (const during of [false,true]) {
-  const f=fixture({bpp});
-  let lost=false;
-  f.gl.isContextLost=()=>lost;
-  if(queued)f.gpu.call(OPCODES.FLIP,f.flipDesc);
-  const pending=f.target.inflight,before=f.u8.slice(),shadow=f.target.shadow;
-  if(during) {
-    const method=queued?'getBufferSubData':'readPixels';
-    f.gl[method]=()=>{lost=true;};
-  } else lost=true;
-  assert.throws(()=>f.gpu.fence(),/readback context lost/);
-  assert.deepEqual(f.u8,before,'native memory including canaries remains exact');
-  assert.equal(f.target.inflight,pending,'accepted frame is retained');
-  assert.equal(f.target.shadow,shadow);
-  assert.equal(f.gpu.stats.syncs,0);
-  lost=false; // Public restoration cannot revalidate old GL objects/frame.
-  assert.throws(()=>f.gpu.fence(),/recreate executor/);
-  assert.throws(()=>f.gpu.call(OPCODES.FLIP,f.flipDesc),/recreate executor/);
-  assert.throws(()=>f.gpu.stop(),/recreate executor/);
-  assert.equal(f.gpu.targets.size,0);assert(f.destroyed);
-}
-
-(async()=>{
-  for(const bpp of [16,32]) for(const stage of ['poll','collect']) {
-    const f=fixture({bpp});let lost=false;
-    f.gl.isContextLost=()=>lost;
-    Object.assign(f.gl,{ALREADY_SIGNALED:7,CONDITION_SATISFIED:8,TIMEOUT_EXPIRED:9});
-    f.gl.clientWaitSync=()=>{if(stage==='poll')lost=true;return 7;};
-    if(stage==='collect')f.gl.getBufferSubData=()=>{lost=true;};
-    const before=f.u8.slice();
-    await assert.rejects(f.gpu.fenceFlip(),/readback context lost/);
-    assert.deepEqual(f.u8,before);assert(f.target.dirty);assert.equal(f.gpu.stats.syncs,0);
-    lost=false;await assert.rejects(f.gpu.fenceFlip(),/recreate executor/);
-    assert.throws(()=>f.gpu.stop(),/recreate executor/);assert(f.destroyed);
-  }
-  console.log('PASS D3DIM queued ownership, retry exceptions and native16/32 silent loss before/during sync/async readback');
-})().catch(e=>{console.error(e);process.exitCode=1;});
+  assert.deepStrictEqual(calls, [], 'the WAT producer never calls the host gpu_gl_call');
+  assert(kicks > 0, 'records went through the GPU stream consumer');
+  console.log('PASS D3DIM GPU Flip: DIB swap, GPU present, readback only for the front reader, two-frame order, declines');
+})().catch(e => { console.error(e); process.exitCode = 1; });

@@ -7,7 +7,7 @@ const fixtures=require('./fixtures/d3d9-lighting-cases');
  const native={...e,d3d_fixed_bind_lighting(bundle,desc,lighting){
   const before=new Uint32Array(memory.buffer,bundle,8).slice(),words=new Uint32Array(memory.buffer,lighting,32);
   // Slot 4 = the normal's register is a collision only when a NORMAL exists.
-  if(words[3]!==16)for(const [slot,value]of[[1,3],[2,9],[3,17],[4,3],[6,2],[8,3],[11,1],[13,1],[28,1]]){
+  if(words[3]!==16)for(const [slot,value]of[[1,4],[2,9],[3,17],[4,3],[6,2],[8,3],[11,1],[13,8],[28,0x7fc00000]]){
    const old=words[slot];words[slot]=value;assert.strictEqual(e.d3d_fixed_bind_lighting(bundle,desc,lighting),0,'malformed lighting '+slot);
    assert.deepStrictEqual(new Uint32Array(memory.buffer,bundle,8),before,'failure retains original bundle');words[slot]=old;
   }

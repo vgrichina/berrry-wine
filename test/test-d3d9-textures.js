@@ -2,7 +2,11 @@
 'use strict';
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const Texture=require('../lib/d3d9-texture');
+// The JS DXT decoder (lib/d3d9-texture.js) is gone: these unit asserts now run
+// the WAT decoder itself (GPU stream v2 slice 9.1). Length and dimension
+// validation moved to the upload path (lib/d3d9-host.js captureDraw).
+const {decode:watDecode}=require('./helpers/wat-texture-decoder');
+const Texture={DXT1:0x31545844,DXT3:0x33545844,DXT5:0x35545844,decode:(bytes,w,h,format)=>watDecode(bytes,w,h,format)};
 const {REGIONS}=require('../lib/region-map.generated.js');
 (async () => {
   const dxt1=new Uint8Array([0,248,224,7,0xe4,0xe4,0xe4,0xe4]);
@@ -32,9 +36,6 @@ const {REGIONS}=require('../lib/region-map.generated.js');
   reversedDxt3.set([0,0,255,255,255,255,255,255],8);
   assert.deepStrictEqual(Array.from(Texture.decode(reversedDxt3,1,1,Texture.DXT3)),[170,170,170,255],
     'DXT3 uses four-color interpolation even when endpoint0 <= endpoint1');
-  assert.throws(()=>Texture.decode(dxt3.slice(1),4,4,Texture.DXT3),/byte length/);
-  assert.throws(()=>Texture.decode(dxt1.slice(1),4,4,Texture.DXT1),/byte length/);
-  assert.throws(()=>Texture.decode(dxt1,0,4,Texture.DXT1),/dimensions/);
   const reversedDxt5=new Uint8Array([255,0,0,0,0,0,0,0,0,0,255,255,255,255,255,255]);
   assert.deepStrictEqual(Array.from(Texture.decode(reversedDxt5,1,1,Texture.DXT5)),[170,170,170,255],
     'DXT5 uses four-color interpolation even when endpoint0 <= endpoint1');
