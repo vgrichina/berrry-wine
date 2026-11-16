@@ -78,7 +78,7 @@ const {startStaticServer,closeServer}=require(root+'/test/static-server');
     check(JSON.stringify(d)===retained,'later failure cannot mutate first snapshot');
     // Generated owning control additionally checks the Error before transport,
     // then mutates its private failing command. Original runs use no wrapper.
-    const files=['gpu-backend','d3d-shader-ir','d3d9-shader','d3d9-fixed','render-clear',
+    const files=['gpu-backend','d3d-shader-ir','d3d9-shader','render-clear',
       'd3d9-backend','d3d-command-stream','d3d-geometry-batches','d3d9-software-backend','d3d9-render-worker'];
     const source=`importScripts(${files.map(f=>JSON.stringify(location.origin+'/lib/'+f+'.js')).join(',')});
       const adapter=D3D9RenderWorker.create({backend:'webgl'});

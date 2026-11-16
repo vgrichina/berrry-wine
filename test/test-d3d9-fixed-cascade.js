@@ -5,7 +5,7 @@ const {Device}=require('../lib/d3d9-software-backend');
 (async()=>{
  const {exports:e,memory}=await bootRenderHarness({fonts:'none'});
  let compiled=0,freed=0,maxInstructions=0,legacyChecked=false;const live=new Set();
- const native={...e,d3d_fixed_compile_cascade5(...args){const p=e.d3d_fixed_compile_cascade5(...args)>>>0;
+ const native={...e,d3d_fixed_compile_cascade6(...args){const p=e.d3d_fixed_compile_cascade6(...args)>>>0;if(p){compiled++;live.add(p);}return p;},d3d_fixed_compile_cascade5(...args){const p=e.d3d_fixed_compile_cascade5(...args)>>>0;
   if(p){compiled++;live.add(p);const d=new Uint32Array(memory.buffer,p,8);
    for(const slot of [1,2])if(d[slot]){const count=new Uint32Array(memory.buffer,d[slot],8)[4];assert(count<=128);maxInstructions=Math.max(maxInstructions,count);}
    if(!legacyChecked){

@@ -170,7 +170,8 @@
     {
       "file": "lib/guest-worker.js",
       "name": "host-file",
-      "sha256": "c66d850c9ed5ba6cdbd0933c4a6f8c16b532f96ed8c3cf662826124a9da35f0f",
+      "sha256": "fcc04833a9d0badd7f85ddd43b3398cc55db5adc0339f323113aea9ebf50cbd3",
+      "d3d9FixedDeleteReview20261115": "2026-11-15 GPU stream v2 slice 9.2: lib/d3d9-fixed.js deleted; the lazy D3DIM GPU script list drops it. Script-list token only: no new guest invocation, callback, continuation, timer or restoration boundary.",
       "gpuStreamDoorbellReview20261114": "2026-11-14 GPU stream doorbell: the Worker loads gpu-stream.generated.js + gpu-stream-doorbell.js so guest-rpc can notify/wait on a ring's shared header words, and slice results carry the gps counters. No guest invocation, callback owner, continuation or retained guest reference added.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",

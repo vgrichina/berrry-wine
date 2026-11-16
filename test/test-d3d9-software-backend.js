@@ -11,7 +11,7 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
   const nativeExports={...e,d3d_fixed_compile(ptr){
     const bundle=e.d3d_fixed_compile(ptr)>>>0;if(bundle){assert(!fixedLive.has(bundle));fixedLive.add(bundle);fixedCreated++;}return bundle;
   },d3d_fixed_free(bundle){assert(fixedLive.delete(bundle),'bundle released exactly once by its owner');fixedFreed++;e.d3d_fixed_free(bundle);}};
-  for(const name of ['d3d_fixed_compile_vertex','d3d_fixed_compile_pixel','d3d_fixed_compile_cascade','d3d_fixed_compile_cascade2','d3d_fixed_compile_cascade3','d3d_fixed_compile_cascade4','d3d_fixed_compile_cascade5',
+  for(const name of ['d3d_fixed_compile_vertex','d3d_fixed_compile_pixel','d3d_fixed_compile_cascade','d3d_fixed_compile_cascade2','d3d_fixed_compile_cascade3','d3d_fixed_compile_cascade4','d3d_fixed_compile_cascade5','d3d_fixed_compile_cascade6','d3d_fixed_compile_cached6',
     // The backend's default per-device packet cache hands out bundles too; each
     // is the caller's to free once (09aj: "Bundle owns ... until d3d_fixed_free").
     'd3d_fixed_compile_cached'])nativeExports[name]=(...args)=>{

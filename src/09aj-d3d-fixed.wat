@@ -35,6 +35,12 @@
   (local.set $old (global.get $d3d_fixed_active_cache)) (global.set $d3d_fixed_active_cache (local.get $cache))
   (local.set $result (call $d3d_fixed_compile_cascade5 (local.get $desc) (local.get $table) (local.get $count) (local.get $stages) (local.get $uvmask)))
   (global.set $d3d_fixed_active_cache (local.get $old)) (local.get $result))
+(func (export "d3d_fixed_compile_cached6") (param $cache i32) (param $desc i32) (param $table i32) (param $count i32) (param $stages i32) (param $uvmask i32) (result i32)
+  (local $old i32) (local $result i32)
+  (if (i32.eqz (call $d3d_fixed_cache_valid (local.get $cache))) (then (return (i32.const 0))))
+  (local.set $old (global.get $d3d_fixed_active_cache)) (global.set $d3d_fixed_active_cache (local.get $cache))
+  (local.set $result (call $d3d_fixed_compile_cascade6 (local.get $desc) (local.get $table) (local.get $count) (local.get $stages) (local.get $uvmask)))
+  (global.set $d3d_fixed_active_cache (local.get $old)) (local.get $result))
 (func (export "d3d_fixed_light_cached") (param $cache i32) (param $bundle i32) (param $desc i32) (param $lighting i32) (result i32)
   (local $old i32) (local $result i32)
   (if (i32.eqz (call $d3d_fixed_cache_valid (local.get $cache))) (then (return (i32.const 0))))
@@ -615,6 +621,26 @@
 (func $d3d_fl_t (param $ir i32) (param $op i32) (param $reg i32) (param $mask i32) (param $a i32) (param $b i32) (param $c i32)
   (call $d3d_fixed_op (local.get $ir) (local.get $op) (i32.const 0) (local.get $reg) (local.get $mask) (i32.const 0) (local.get $a) (local.get $b) (local.get $c)))
 
+;; DLT1 ABI3 specular for one light, the D3D9 half-vector model:
+;;   H = normalize(E + L); r7.rgb += Ls.rgb * [N.L>0][E.E>0] * lit(N.L, N.H, P).z * factor
+;; LIT supplies the N.L>0 / N.H>0 guards and pow (exponent clamped to +-128, as
+;; the vs lit instruction defines it). The caller leaves E in r9, N in r8, L in
+;; $light (r2 or the directional constant) and, for positional lights, the
+;; attenuation*spot factor in r3.w. Uses r0 and r6.xyz as scratch.
+(func $d3d_fixed_specular_term (param $ir i32) (param $light i32) (param $positional i32) (param $color i32)
+  (call $d3d_fl_t (local.get $ir) (i32.const 2) (i32.const 0) (i32.const 7) (call $d3d_fl_r (i32.const 9) (i32.const 228)) (local.get $light) (i32.const 0))
+  (call $d3d_fixed_normalize (local.get $ir) (i32.const 0))
+  (call $d3d_fl_t (local.get $ir) (i32.const 8) (i32.const 6) (i32.const 1) (call $d3d_fl_r (i32.const 8) (i32.const 228)) (local.get $light) (i32.const 0))
+  (call $d3d_fl_t (local.get $ir) (i32.const 8) (i32.const 6) (i32.const 2) (call $d3d_fl_r (i32.const 8) (i32.const 228)) (call $d3d_fl_r (i32.const 0) (i32.const 228)) (i32.const 0))
+  (call $d3d_fl_t (local.get $ir) (i32.const 8) (i32.const 6) (i32.const 4) (call $d3d_fl_r (i32.const 9) (i32.const 228)) (call $d3d_fl_r (i32.const 9) (i32.const 228)) (i32.const 0))
+  (call $d3d_fl_t (local.get $ir) (i32.const 1) (i32.const 6) (i32.const 8) (call $d3d_fl_c (i32.const 46) (i32.const 255)) (i32.const 0) (i32.const 0))
+  (call $d3d_fl_t (local.get $ir) (i32.const 16) (i32.const 0) (i32.const 15) (call $d3d_fl_r (i32.const 6) (i32.const 228)) (i32.const 0) (i32.const 0))
+  (call $d3d_fl_t (local.get $ir) (i32.const 12) (i32.const 6) (i32.const 4) (call $d3d_fl_c (i32.const 15) (i32.const 0)) (call $d3d_fl_r (i32.const 6) (i32.const 170)) (i32.const 0))
+  (call $d3d_fl_t (local.get $ir) (i32.const 5) (i32.const 0) (i32.const 4) (call $d3d_fl_r (i32.const 0) (i32.const 170)) (call $d3d_fl_r (i32.const 6) (i32.const 170)) (i32.const 0))
+  (if (local.get $positional) (then
+    (call $d3d_fl_t (local.get $ir) (i32.const 5) (i32.const 0) (i32.const 4) (call $d3d_fl_r (i32.const 0) (i32.const 170)) (call $d3d_fl_r (i32.const 3) (i32.const 255)) (i32.const 0))))
+  (call $d3d_fl_t (local.get $ir) (i32.const 4) (i32.const 7) (i32.const 7) (call $d3d_fl_r (i32.const 0) (i32.const 170)) (call $d3d_fl_c (local.get $color) (i32.const 228)) (call $d3d_fl_r (i32.const 7) (i32.const 228))))
+
 ;; One ABI2 point/spot row: constants c_k..c_k+3 (spot: +c_k+4, with the cone
 ;; scale in c_k+1.w and the falloff in c_k+2.w), then r3.w = atten*spot and
 ;; r2.xyz = normalized vertex-to-light vector. The caller accumulates.
@@ -675,6 +701,7 @@
   (local $old i32) (local $ir i32) (local $program i32) (local $n i32) (local $i i32) (local $j i32) (local $p i32) (local $k i32)
   (local $md i32) (local $ma i32) (local $me i32)
   (local $v2 i32) (local $shift i32) (local $end i32) (local $type i32)
+  (local $v3 i32) (local $spec i32) (local $per i32) (local $kend i32) (local $ms i32)
   (local $x f32) (local $y f32) (local $z f32) (local $d f32)
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $bundle) (i32.const 32))) (then (return (i32.const 0))))
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $desc) (i32.const 288))) (then (return (i32.const 0))))
@@ -682,10 +709,23 @@
   (if (i32.or (i32.ne (i32.load (local.get $bundle)) (i32.const 0x44464231))
     (i32.or (i32.ne (i32.load (local.get $lighting)) (i32.const 0x444c5431))
       (i32.or (i32.lt_u (i32.load offset=4 (local.get $lighting)) (i32.const 1))
-        (i32.gt_u (i32.load offset=4 (local.get $lighting)) (i32.const 2))))) (then (return (i32.const 0))))
-  (local.set $v2 (i32.eq (i32.load offset=4 (local.get $lighting)) (i32.const 2)))
+        (i32.gt_u (i32.load offset=4 (local.get $lighting)) (i32.const 3))))) (then (return (i32.const 0))))
+  ;; ABI3 (version 3) is ABI2 plus specular: header +52 flags (bit0 SPECULARENABLE,
+  ;; bit1 write oD1, bit2 LOCALVIEWER), +56 specular material source 0..2,
+  ;; +60 reserved0, +112/116/120 material specular RGB, +124 power (>= 0);
+  ;; rows +88/92/96 light specular RGB, +100..127 reserved0.
+  (local.set $v3 (i32.eq (i32.load offset=4 (local.get $lighting)) (i32.const 3)))
+  (local.set $v2 (i32.ge_u (i32.load offset=4 (local.get $lighting)) (i32.const 2)))
   (local.set $shift (select (i32.const 7) (i32.const 6) (local.get $v2)))
-  (local.set $end (select (i32.const 88) (i32.const 48) (local.get $v2)))
+  (local.set $end (select (i32.const 100) (select (i32.const 88) (i32.const 48) (local.get $v2)) (local.get $v3)))
+  (local.set $per (select (i32.const 50) (select (i32.const 30) (i32.const 7) (local.get $v2)) (local.get $v3)))
+  (if (local.get $v3) (then
+    (local.set $spec (i32.load offset=52 (local.get $lighting)))
+    (if (i32.or (i32.gt_u (local.get $spec) (i32.const 7))
+      (i32.or (i32.gt_u (i32.load offset=56 (local.get $lighting)) (i32.const 2)) (i32.ne (i32.load offset=60 (local.get $lighting)) (i32.const 0))))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (i32.and (f32.ge (f32.load offset=124 (local.get $lighting)) (f32.const 0))
+      (f32.le (f32.load offset=124 (local.get $lighting)) (f32.const 3.4028234663852886e38)))) (then (return (i32.const 0))))))
   (if (i32.and (i32.load offset=8 (local.get $desc)) (i32.const 1)) (then (return (i32.const 1))))
   (local.set $old (i32.load offset=4 (local.get $bundle)))
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $old) (i32.const 32))) (then (return (i32.const 0))))
@@ -694,7 +734,7 @@
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $old) (i32.load offset=24 (local.get $old)))) (then (return (i32.const 0))))
   (local.set $n (i32.load offset=8 (local.get $lighting)))
   (if (i32.or (i32.gt_u (local.get $n) (i32.const 8))
-    (i32.gt_u (i32.add (i32.load offset=16 (local.get $old)) (i32.add (i32.const 32) (i32.mul (local.get $n) (select (i32.const 30) (i32.const 7) (local.get $v2)))))
+    (i32.gt_u (i32.add (i32.load offset=16 (local.get $old)) (i32.add (select (i32.const 48) (i32.const 32) (local.get $v3)) (i32.mul (local.get $n) (local.get $per))))
       (select (i32.const 512) (i32.const 128) (local.get $v2)))) (then (return (i32.const 0))))
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $lighting) (i32.add (i32.const 128) (i32.shl (local.get $n) (local.get $shift))))) (then (return (i32.const 0))))
   ;; normalReg 16 = the declaration has no NORMAL. D3D9 lights such a vertex
@@ -711,11 +751,12 @@
     (i32.and (i32.lt_u (i32.load offset=16 (local.get $lighting)) (i32.const 16))
       (i32.eq (i32.load offset=16 (local.get $lighting)) (i32.load offset=20 (local.get $lighting))))) (then (return (i32.const 0))))
   (if (i32.load offset=44 (local.get $lighting)) (then (return (i32.const 0))))
+  (if (i32.eqz (local.get $v3)) (then
   (local.set $i (i32.const 52))
   (loop $reserved
     (if (i32.load (i32.add (local.get $lighting) (local.get $i))) (then (return (i32.const 0))))
     (local.set $i (select (i32.const 112) (i32.add (local.get $i) (i32.const 4)) (i32.eq (local.get $i) (i32.const 60))))
-    (br_if $reserved (i32.lt_u (local.get $i) (i32.const 128))))
+    (br_if $reserved (i32.lt_u (local.get $i) (i32.const 128))))))
   (local.set $i (i32.const 32))
   (loop $selectors
     (if (i32.gt_u (i32.load (i32.add (local.get $lighting) (local.get $i))) (i32.const 2)) (then (return (i32.const 0))))
@@ -723,7 +764,7 @@
   (local.set $i (i32.const 64))
   (loop $materials
     (if (i32.eqz (f32.le (f32.abs (f32.load (i32.add (local.get $lighting) (local.get $i)))) (f32.const 3.4028234663852886e38))) (then (return (i32.const 0))))
-    (local.set $i (i32.add (local.get $i) (i32.const 4))) (br_if $materials (i32.lt_u (local.get $i) (i32.const 112))))
+    (local.set $i (i32.add (local.get $i) (i32.const 4))) (br_if $materials (i32.lt_u (local.get $i) (select (i32.const 128) (i32.const 112) (local.get $v3)))))
   (local.set $i (i32.const 0))
   (block $validated (loop $lights
     (br_if $validated (i32.ge_u (local.get $i) (local.get $n)))
@@ -740,10 +781,16 @@
     (loop $row_reserved
       (if (i32.load (i32.add (local.get $p) (local.get $j))) (then (return (i32.const 0))))
       (local.set $j (i32.add (local.get $j) (i32.const 4))) (br_if $row_reserved (i32.lt_u (local.get $j) (i32.shl (i32.const 1) (local.get $shift)))))
+    (local.set $kend (i32.add (local.get $kend) (select (i32.const 3) (select (i32.const 5) (i32.const 4) (i32.eq (local.get $type) (i32.const 2))) (i32.eq (local.get $type) (i32.const 3)))))
     (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $lights)))
+  ;; ABI3 specular colours follow the light rows (c52 + rows), one per light,
+  ;; and the material specular/power is c46: all inside the 96-constant file.
+  (local.set $kend (i32.add (local.get $kend) (i32.const 52)))
+  (if (i32.and (i32.ne (i32.and (local.get $spec) (i32.const 1)) (i32.const 0))
+    (i32.gt_u (i32.add (local.get $kend) (local.get $n)) (i32.const 96))) (then (return (i32.const 0))))
   ;; Clone before append: failure leaves the old bundle and packets intact.
   (local.set $ir (call $d3d_fixed_ir_sized (i32.const 0) (select
-    (i32.add (i32.const 32) (i32.shl (i32.add (i32.load offset=16 (local.get $old)) (i32.add (i32.const 32) (i32.mul (local.get $n) (i32.const 30)))) (i32.const 7)))
+    (i32.add (i32.const 32) (i32.shl (i32.add (i32.load offset=16 (local.get $old)) (i32.add (select (i32.const 48) (i32.const 32) (local.get $v3)) (i32.mul (local.get $n) (local.get $per)))) (i32.const 7)))
     (i32.const 16416) (local.get $v2))))
   (if (i32.eqz (local.get $ir)) (then (return (i32.const 0))))
   (memory.copy (local.get $ir) (local.get $old) (i32.load offset=24 (local.get $old)))
@@ -767,12 +814,27 @@
     (local.set $me (call $d3d_fixed_light_source (local.get $lighting) (i32.load offset=40 (local.get $lighting)) (i32.const 50)))
     (call $d3d_fixed_op (local.get $ir) (i32.const 1) (i32.const 0) (i32.const 4) (i32.const 7) (i32.const 0) (call $d3d_fixed_source (i32.const 2) (i32.const 51) (i32.const 228) (i32.const 0)) (i32.const 0) (i32.const 0))
     (call $d3d_fixed_op (local.get $ir) (i32.const 1) (i32.const 0) (i32.const 5) (i32.const 7) (i32.const 0) (call $d3d_fixed_source (i32.const 2) (i32.const 15) (i32.const 0) (i32.const 0)) (i32.const 0) (i32.const 0))
+    (if (i32.and (local.get $spec) (i32.const 1)) (then
+      ;; c46 = material specular RGB, power; r9 = eye vector; r7 = specular sum.
+      (call $d3d_fixed_def (local.get $ir) (i32.const 46) (f32.load offset=112 (local.get $lighting)) (f32.load offset=116 (local.get $lighting))
+        (f32.load offset=120 (local.get $lighting)) (f32.load offset=124 (local.get $lighting)))
+      (if (i32.and (local.get $spec) (i32.const 4))
+        (then
+          (call $d3d_fl_t (local.get $ir) (i32.const 1) (i32.const 9) (i32.const 7) (call $d3d_fixed_source (i32.const 0) (i32.const 1) (i32.const 228) (i32.const 1)) (i32.const 0) (i32.const 0))
+          (call $d3d_fixed_normalize (local.get $ir) (i32.const 9)))
+        (else (call $d3d_fl_t (local.get $ir) (i32.const 1) (i32.const 9) (i32.const 7) (call $d3d_fl_c (i32.const 43) (i32.const 160)) (i32.const 0) (i32.const 0))))
+      (call $d3d_fl_t (local.get $ir) (i32.const 1) (i32.const 7) (i32.const 7) (call $d3d_fl_c (i32.const 15) (i32.const 0)) (i32.const 0) (i32.const 0))))
     (local.set $i (i32.const 0)) (local.set $k (i32.const 52))
     (block $lit (loop $accumulate
       (br_if $lit (i32.ge_u (local.get $i) (local.get $n)))
       (local.set $p (i32.add (local.get $lighting) (i32.add (i32.const 128) (i32.shl (local.get $i) (local.get $shift)))))
+      (if (i32.and (local.get $spec) (i32.const 1)) (then
+        (call $d3d_fixed_def (local.get $ir) (i32.add (local.get $kend) (local.get $i))
+          (f32.load offset=88 (local.get $p)) (f32.load offset=92 (local.get $p)) (f32.load offset=96 (local.get $p)) (f32.const 0))))
       (if (i32.ne (i32.load (local.get $p)) (i32.const 3)) (then
         (call $d3d_fixed_positional_light (local.get $ir) (local.get $desc) (local.get $p) (local.get $k))
+        (if (i32.and (local.get $spec) (i32.const 1)) (then
+          (call $d3d_fixed_specular_term (local.get $ir) (call $d3d_fl_r (i32.const 2) (i32.const 228)) (i32.const 1) (i32.add (local.get $kend) (local.get $i)))))
         (call $d3d_fl_t (local.get $ir) (i32.const 8) (i32.const 6) (i32.const 1) (call $d3d_fl_r (i32.const 8) (i32.const 228)) (call $d3d_fl_r (i32.const 2) (i32.const 228)) (i32.const 0))
         (call $d3d_fl_t (local.get $ir) (i32.const 11) (i32.const 6) (i32.const 1) (call $d3d_fl_r (i32.const 6) (i32.const 0)) (call $d3d_fl_c (i32.const 15) (i32.const 0)) (i32.const 0))
         (call $d3d_fl_t (local.get $ir) (i32.const 5) (i32.const 6) (i32.const 1) (call $d3d_fl_r (i32.const 6) (i32.const 0)) (call $d3d_fl_r (i32.const 3) (i32.const 255)) (i32.const 0))
@@ -789,6 +851,8 @@
       (call $d3d_fixed_def (local.get $ir) (local.get $k) (local.get $x) (local.get $y) (local.get $z) (f32.const 0))
       (call $d3d_fixed_def (local.get $ir) (i32.add (local.get $k) (i32.const 1)) (f32.load offset=4 (local.get $p)) (f32.load offset=8 (local.get $p)) (f32.load offset=12 (local.get $p)) (f32.load offset=16 (local.get $p)))
       (call $d3d_fixed_def (local.get $ir) (i32.add (local.get $k) (i32.const 2)) (f32.load offset=20 (local.get $p)) (f32.load offset=24 (local.get $p)) (f32.load offset=28 (local.get $p)) (f32.load offset=32 (local.get $p)))
+      (if (i32.and (local.get $spec) (i32.const 1)) (then
+        (call $d3d_fixed_specular_term (local.get $ir) (call $d3d_fl_c (local.get $k) (i32.const 228)) (i32.const 0) (i32.add (local.get $kend) (local.get $i)))))
       (call $d3d_fixed_op (local.get $ir) (i32.const 8) (i32.const 0) (i32.const 6) (i32.const 1) (i32.const 0) (call $d3d_fixed_source (i32.const 0) (i32.const 8) (i32.const 228) (i32.const 0)) (call $d3d_fixed_source (i32.const 2) (local.get $k) (i32.const 228) (i32.const 0)) (i32.const 0))
       (call $d3d_fixed_op (local.get $ir) (i32.const 11) (i32.const 0) (i32.const 6) (i32.const 1) (i32.const 0) (call $d3d_fixed_source (i32.const 0) (i32.const 6) (i32.const 0) (i32.const 0)) (call $d3d_fixed_source (i32.const 2) (i32.const 15) (i32.const 0) (i32.const 0)) (i32.const 0))
       (call $d3d_fixed_op (local.get $ir) (i32.const 4) (i32.const 0) (i32.const 5) (i32.const 7) (i32.const 0) (call $d3d_fixed_source (i32.const 0) (i32.const 6) (i32.const 0) (i32.const 0)) (call $d3d_fixed_source (i32.const 2) (i32.add (local.get $k) (i32.const 1)) (i32.const 228) (i32.const 0)) (call $d3d_fixed_source (i32.const 0) (i32.const 5) (i32.const 228) (i32.const 0)))
@@ -798,6 +862,14 @@
     (call $d3d_fixed_op (local.get $ir) (i32.const 4) (i32.const 0) (i32.const 4) (i32.const 7) (i32.const 0) (local.get $ma) (call $d3d_fixed_source (i32.const 0) (i32.const 4) (i32.const 228) (i32.const 0)) (local.get $me))
     (call $d3d_fixed_op (local.get $ir) (i32.const 4) (i32.const 5) (i32.const 0) (i32.const 7) (i32.const 1) (local.get $md) (call $d3d_fixed_source (i32.const 0) (i32.const 5) (i32.const 228) (i32.const 0)) (call $d3d_fixed_source (i32.const 0) (i32.const 4) (i32.const 228) (i32.const 0)))
     (call $d3d_fixed_op (local.get $ir) (i32.const 1) (i32.const 5) (i32.const 0) (i32.const 8) (i32.const 1) (local.get $md) (i32.const 0) (i32.const 0))
+    ;; Specular alpha never participates: oD1 = (sat(ms.rgb * sum), 0), or 0.
+    (if (i32.and (local.get $spec) (i32.const 1))
+      (then
+        (local.set $ms (call $d3d_fixed_light_source (local.get $lighting) (i32.load offset=56 (local.get $lighting)) (i32.const 46)))
+        (call $d3d_fixed_op (local.get $ir) (i32.const 5) (i32.const 5) (i32.const 1) (i32.const 7) (i32.const 1) (local.get $ms) (call $d3d_fl_r (i32.const 7) (i32.const 228)) (i32.const 0))
+        (call $d3d_fixed_op (local.get $ir) (i32.const 1) (i32.const 5) (i32.const 1) (i32.const 8) (i32.const 0) (call $d3d_fl_c (i32.const 15) (i32.const 0)) (i32.const 0) (i32.const 0)))
+      (else (if (i32.and (local.get $spec) (i32.const 2)) (then
+        (call $d3d_fixed_op (local.get $ir) (i32.const 1) (i32.const 5) (i32.const 1) (i32.const 15) (i32.const 0) (call $d3d_fl_c (i32.const 15) (i32.const 0)) (i32.const 0) (i32.const 0))))))
     (local.set $program (call $d3d_fixed_packet (local.get $ir)))
     (br_if $failure (i32.eqz (local.get $program)))
     (call $d3d_shader_vm_free (i32.load offset=12 (local.get $bundle)))
@@ -925,6 +997,25 @@
   (call $d3d_fixed_compile_cascade_table (local.get $desc) (local.get $table) (local.get $count) (local.get $stages) (local.get $uvmask) (i32.const 136)))
 (func $d3d_fixed_compile_cascade5 (export "d3d_fixed_compile_cascade5") (param $desc i32) (param $table i32) (param $count i32) (param $stages i32) (param $uvmask i32) (result i32)
   (call $d3d_fixed_compile_cascade_table (local.get $desc) (local.get $table) (local.get $count) (local.get $stages) (local.get $uvmask) (i32.const 160)))
+;; Version6: 192-byte rows. Row0 +160 is the VS oD1 source: input register
+;; 0..15, 16 = no COLOR1 (writes 0), 17 = oD1 not written. Row0 +164 pixel
+;; flags: bit0 D3DTA_SPECULAR reads v1 (else zero), bit1 post-texture specular
+;; add (current.rgb = sat(current.rgb + v1.rgb), D3DRS_SPECULARENABLE).
+;; Row0 +168..191 and every other row's +160..191 are reserved zero.
+(func $d3d_fixed_compile_cascade6 (export "d3d_fixed_compile_cascade6") (param $desc i32) (param $table i32) (param $count i32) (param $stages i32) (param $uvmask i32) (result i32)
+  (local $i i32) (local $j i32)
+  (if (i32.or (i32.lt_u (local.get $count) (i32.const 1)) (i32.gt_u (local.get $count) (i32.const 6))) (then (return (i32.const 0))))
+  (if (i32.eqz (call $d3d_shader_vm_range (local.get $table) (i32.mul (local.get $count) (i32.const 192)))) (then (return (i32.const 0))))
+  (if (i32.or (i32.gt_u (i32.load offset=160 (local.get $table)) (i32.const 17)) (i32.gt_u (i32.load offset=164 (local.get $table)) (i32.const 3)))
+    (then (return (i32.const 0))))
+  (block $checked (loop $rows
+    (br_if $checked (i32.ge_u (local.get $i) (local.get $count)))
+    (local.set $j (select (i32.const 168) (i32.const 160) (i32.eqz (local.get $i))))
+    (loop $reserved
+      (if (i32.load (i32.add (i32.add (local.get $table) (i32.mul (local.get $i) (i32.const 192))) (local.get $j))) (then (return (i32.const 0))))
+      (local.set $j (i32.add (local.get $j) (i32.const 4))) (br_if $reserved (i32.lt_u (local.get $j) (i32.const 192))))
+    (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $rows)))
+  (call $d3d_fixed_compile_cascade_table (local.get $desc) (local.get $table) (local.get $count) (local.get $stages) (local.get $uvmask) (i32.const 192)))
 (func $d3d_fixed_compile_cascade_table (param $desc i32) (param $table i32) (param $count i32) (param $stages i32) (param $uvmask i32) (param $stride i32) (result i32)
   (local $bundle i32) (local $vs i32) (local $ps i32) (local $i i32) (local $p i32)
   (local $color i32) (local $alpha i32) (local $ca i32) (local $cb i32) (local $aa i32) (local $ab i32)
@@ -948,9 +1039,12 @@
       (call $d3d_fixed_def (local.get $ps) (i32.const 1) (f32.const 0.5) (f32.const 0.5) (f32.const 0.5) (f32.const 0.5))
       (call $d3d_fixed_op (local.get $ps) (i32.const 1) (i32.const 0) (i32.const 0) (i32.const 15) (i32.const 0)
         (call $d3d_fixed_source (i32.const 1) (i32.const 0) (i32.const 228) (i32.const 0)) (i32.const 0) (i32.const 0))
-      (call $d3d_fixed_op (local.get $ps) (i32.const 3) (i32.const 0) (i32.const 3) (i32.const 15) (i32.const 0)
+      (if (i32.and (i32.eq (local.get $stride) (i32.const 192)) (i32.ne (i32.and (i32.load offset=164 (local.get $table)) (i32.const 1)) (i32.const 0)))
+        (then (call $d3d_fixed_op (local.get $ps) (i32.const 1) (i32.const 0) (i32.const 3) (i32.const 15) (i32.const 0)
+          (call $d3d_fixed_source (i32.const 1) (i32.const 1) (i32.const 228) (i32.const 0)) (i32.const 0) (i32.const 0)))
+        (else (call $d3d_fixed_op (local.get $ps) (i32.const 3) (i32.const 0) (i32.const 3) (i32.const 15) (i32.const 0)
         (call $d3d_fixed_source (i32.const 1) (i32.const 0) (i32.const 228) (i32.const 0))
-        (call $d3d_fixed_source (i32.const 1) (i32.const 0) (i32.const 228) (i32.const 0)) (i32.const 0))
+        (call $d3d_fixed_source (i32.const 1) (i32.const 0) (i32.const 228) (i32.const 0)) (i32.const 0))))
       (call $d3d_fixed_op (local.get $ps) (i32.const 1) (i32.const 0) (i32.const 4) (i32.const 15) (i32.const 0)
         (call $d3d_fixed_source (i32.const 0) (i32.const 3) (i32.const 228) (i32.const 0)) (i32.const 0) (i32.const 0))
       (block $terminated (loop $cascade
@@ -1032,6 +1126,10 @@
         (local.set $previous_bump (select (local.get $color) (i32.const 0) (local.get $bump)))
         (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $cascade)))
       (br_if $failure (i32.ne (local.get $last) (i32.const 1)))
+      (if (i32.and (i32.eq (local.get $stride) (i32.const 192)) (i32.ne (i32.and (i32.load offset=164 (local.get $table)) (i32.const 2)) (i32.const 0))) (then
+        (call $d3d_fixed_op (local.get $ps) (i32.const 2) (i32.const 0) (i32.const 0) (i32.const 7) (i32.const 1)
+          (call $d3d_fixed_source (i32.const 0) (i32.const 0) (i32.const 228) (i32.const 0))
+          (call $d3d_fixed_source (i32.const 1) (i32.const 1) (i32.const 228) (i32.const 0)) (i32.const 0))))
       (i32.store offset=16 (local.get $bundle) (call $d3d_fixed_packet (local.get $ps)))
       (br_if $failure (i32.eqz (i32.load offset=16 (local.get $bundle))))
       (i32.store offset=20 (local.get $bundle) (local.get $mask))
@@ -1131,8 +1229,15 @@
           (call $d3d_fixed_op (local.get $vs) (i32.const 1) (i32.const 6) (local.get $i) (i32.const 15) (i32.const 0)
             (local.get $source) (i32.const 0) (i32.const 0))))
         (local.set $i (i32.add (local.get $i) (i32.const 1))) (br_if $coordinates (i32.lt_u (local.get $i) (i32.const 6))))
-      (if (i32.eq (local.get $stride) (i32.const 160)) (then
+      (if (i32.ge_u (local.get $stride) (i32.const 160)) (then
         (br_if $failure (i32.eqz (call $d3d_fixed_fog (local.get $desc) (local.get $table) (local.get $vs))))))
+      (if (i32.eq (local.get $stride) (i32.const 192)) (then
+        (local.set $reg (i32.load offset=160 (local.get $table)))
+        (if (i32.ne (local.get $reg) (i32.const 17)) (then
+          (call $d3d_fixed_op (local.get $vs) (i32.const 1) (i32.const 5) (i32.const 1) (i32.const 15) (i32.const 1)
+            (call $d3d_fixed_source (select (i32.const 2) (i32.const 1) (i32.eq (local.get $reg) (i32.const 16)))
+              (select (i32.const 15) (local.get $reg) (i32.eq (local.get $reg) (i32.const 16)))
+              (select (i32.const 0) (i32.const 228) (i32.eq (local.get $reg) (i32.const 16))) (i32.const 0)) (i32.const 0) (i32.const 0))))))
       (call $d3d_shader_vm_free (i32.load offset=12 (local.get $bundle)))
       (i32.store offset=12 (local.get $bundle) (call $d3d_fixed_packet (local.get $vs)))
       (br_if $failure (i32.eqz (i32.load offset=12 (local.get $bundle))))))

@@ -29,7 +29,7 @@ const {OPCODES:O}=require('../lib/d3d-command-stream');
   args:['--no-first-run','--no-default-browser-check']});
  try{
   const page=await browser.newPage();
-  for(const file of['gpu-backend.js','d3d-shader-ir.js','d3d9-shader.js','d3d9-fixed.js','d3d9-backend.js'])await page.addScriptTag({path:path.join(__dirname,'../lib',file)});
+  for(const file of['gpu-backend.js','d3d-shader-ir.js','d3d9-shader.js','d3d9-backend.js'])await page.addScriptTag({path:path.join(__dirname,'../lib',file)});
   const result=await page.evaluate(({commands,assets,width,height})=>{
    const buffers={};for(const [id,data]of Object.entries(assets))buffers[id]=Uint8Array.from(atob(data),c=>c.charCodeAt(0)).buffer;
    const types={Uint8Array,Uint8ClampedArray,Uint16Array,Uint32Array,Int8Array,Int16Array,Int32Array,Float32Array,Float64Array,DataView};

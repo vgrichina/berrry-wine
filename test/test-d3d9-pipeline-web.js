@@ -138,7 +138,7 @@ const { compileSrcWasm } = require('./compile-src');
       args: ['--no-first-run','--no-default-browser-check'] });
     const page = await browser.newPage();
     await page.goto(`http://127.0.0.1:${server.address().port}`);
-    for (const file of ['gpu-backend.js','d3d9-shader.js','d3d-shader-ir.js','d3d9-fixed.js','render-clear.js','d3d9-backend.js','d3d-command-stream.js','d3d9-host.js'])
+    for (const file of ['gpu-backend.js','d3d9-shader.js','d3d-shader-ir.js','render-clear.js','d3d9-backend.js','d3d-command-stream.js','d3d9-host.js'])
       await page.addScriptTag({ path: path.join(__dirname,'../lib',file) });
     const result = await page.evaluate(async base64 => {
       const bytes = Uint8Array.from(atob(base64),c=>c.charCodeAt(0));

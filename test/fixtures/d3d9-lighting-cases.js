@@ -54,6 +54,19 @@
   add('spot penumbra falloff 1',(d,s)=>s.lights=[spot(.2)],[80,40,20,191]);
   add('spot penumbra falloff 2',(d,s)=>s.lights=[spot(.2,{falloff:2})],[50,25,12,191]);
   add('spot penumbra falloff 0',(d,s)=>s.lights=[spot(.2,{falloff:0})],[128,64,32,191]);
+  // Specular (DLT1 ABI3 + cascade6). N=(0,0,1), COLOR1=(.25,.5,.75,.25) is the
+  // default specular material source; its alpha never participates.
+  const lit=(s,extra={})=>{s.specular=true;s.lights.forEach(l=>l.specular=f([1,1,1,1]));Object.assign(s,extra);};
+  add('specular front directional',(d,s)=>lit(s,{localViewer:false}),[191,191,223,191]);
+  add('specular back directional',(d,s)=>{s.lights[0].direction[2]=1;lit(s);},[0,0,0,191]);
+  // L at 1 rad from N: H at .5 rad, (cos .5)^8 = .3518; diffuse cos 1 = .5403.
+  add('specular power 8 half vector',(d,s)=>{s.lights[0].direction=f([-Math.sin(1),0,-Math.cos(1)]);s.material.power=8;lit(s,{localViewer:false});},[91,79,85,191]);
+  add('specular local viewer power 0',(d,s)=>lit(s,{localViewer:true}),[191,191,223,191]);
+  add('specular material source',(d,s)=>{s.material.specular=f([.25,.25,.25,1]);lit(s,{specularMaterialSource:0});},[191,128,96,191]);
+  add('specular point light',(d,s)=>{s.lights=[point()];lit(s);},[191,191,223,191]);
+  add('specular disabled reads zero',(d,s)=>Object.assign(s.stages[0],{colorArg1:4}),[0,0,0,191]);
+  add('unlit specular add',(d,s)=>{s.lighting=false;s.specular=true;},[191,191,223,191]);
+  add('unlit D3DTA_SPECULAR',(d,s)=>{s.lighting=false;Object.assign(s.stages[0],{colorArg1:4});},[64,128,191,191]);
   add('eight mixed lights',(d,s)=>s.lights=Array.from({length:8},(_,i)=>i%2?spot(0,{diffuse:f([.125,.125,.125,1])}):
    point({diffuse:f([.125,.125,.125,1])})),[128,64,32,191]);
   return out;

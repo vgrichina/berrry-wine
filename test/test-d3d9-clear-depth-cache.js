@@ -8,6 +8,16 @@ if (process.argv.includes('--mutation')) {
   const filename = path.resolve(__dirname, '../lib/d3d9-backend.js');
   const m = new Module(filename, module);
   m.filename = filename; m.paths = module.paths;
+  // That historical backend requires its retained JS fixed compiler, which
+  // slice 9.2 deleted from the tree: load it from the same revision.
+  m.require = id => {
+    if (id !== './d3d9-fixed') return Module.prototype.require.call(m, id);
+    const fixedName = path.resolve(__dirname, '../lib/d3d9-fixed.js'), f = new Module(fixedName, m);
+    f.filename = fixedName; f.paths = module.paths;
+    f._compile(cp.execFileSync('git', ['show', 'ffe822a9d50ad79439330609915eb84475acd2bc:lib/d3d9-fixed.js'],
+      {stdio:['ignore','pipe','ignore'], maxBuffer:1 << 20}).toString(), fixedName);
+    return f.exports;
+  };
   m._compile(cp.execFileSync('git', ['show',
     'ffe822a9d50ad79439330609915eb84475acd2bc:lib/d3d9-backend.js'],
     {stdio:['ignore','pipe','ignore'], maxBuffer:131072}).toString(), filename);

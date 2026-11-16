@@ -52,7 +52,7 @@ const NativeIR = require('../lib/d3d-shader-ir');
     executablePath: process.env.CHROME || '/usr/bin/google-chrome', args: ['--no-sandbox']});
   try {
     const page = await browser.newPage();
-    for (const file of ['gpu-backend.js', 'd3d-shader-ir.js', 'd3d9-shader.js', 'd3d9-fixed.js', 'render-clear.js','d3d9-backend.js'])
+    for (const file of ['gpu-backend.js', 'd3d-shader-ir.js', 'd3d9-shader.js', 'render-clear.js','d3d9-backend.js'])
       await page.addScriptTag({path: path.join(__dirname, '../lib', file)});
     const results = await page.evaluate(({shaders, constants}) => {
       const results = [];

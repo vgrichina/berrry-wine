@@ -197,14 +197,14 @@ encoderScopedFence();
   await anotherGL.ready;
   assert.strictEqual(f.importOrder.filter(url=>url==='mem-utils.js').length,1,'GL dependencies shared across endpoints');
   await anotherGL.terminate();
-  f.failedImports.add('d3d9-fixed.js');
+  f.failedImports.add('render-clear.js');
   const failedLoad=f.manager.createEndpoint({api:'neutral',name:'failed-load'});
   await assert.rejects(failedLoad.ready,/injected import failure/);
   await failedLoad.terminate();
 
   // Existing neutral command receipts use a separate per-port namespace.
   const c=f.manager.createEndpoint({api:'neutral',name:'c'});await c.ready;
-  assert.strictEqual(f.importOrder.filter(url=>url==='d3d9-fixed.js').length,2,'failed dependency retried');
+  assert.strictEqual(f.importOrder.filter(url=>url==='render-clear.js').length,2,'failed dependency retried');
   assert.strictEqual(f.importOrder.filter(url=>url==='d3d9-shader.js').length,1,'successful predecessor retained across retry');
   const consumer=new Stream.WorkerConsumer(c);
   const command={version:Stream.VERSION,opcode:Stream.OPCODES.FENCE,deviceId:1,generation:1,sequence:1,payload:{kind:'echo',value:9}};

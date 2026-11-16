@@ -266,7 +266,7 @@ async function runtime(){
     reusedPositive:remaining?acceptedPositive:null};
   const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(state)+'\n');
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker',
-    'gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','render-clear','d3d9-backend','d3dim-gpu'];
+    'gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend','d3dim-gpu'];
   let wasm,negative=null,server,browser,page,timer;
   try{
     const puppeteer=require('puppeteer');
