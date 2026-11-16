@@ -11591,6 +11591,14 @@ if (VERBOSE) {
     const names = ['draws', 'fallbacks', 'readbacks', 'readbackRows', 'uploads', 'uploadRows', 'presents',
       'syncs', 'textureUploads', 'clears', 'flips', 'bltPresents', 'points', 'fences', 'declined', 'primitives'];
     console.log('[d3dim-gps] ' + names.map((n, i) => `${n}=${st(i)}`).join(' '));
+    // Readbacks by CPU-access site (src/09abg-d3dim-gps.wat d3dim_gps_stat).
+    const sites = ['global', 'getDC', 'bltSrc', 'bltDst', 'lock', 'texLoad', 'swDraw', 'release', 'cpuPresent',
+      'parkLand', 'prepare', 'texFromRT', 'retarget', 'capture', 'lazy', 'other'];
+    console.log('[d3dim-gps] readback sites ' + sites.map((n, i) => `${n}=${st(16 + i)}`).join(' ')
+      + ` gpuBltFastKeyed=${st(32)} gpuBltFastUpload=${st(33)} readbackBytes=${st(34)}`
+      + ` lazyLocks armed=${instance.exports.get_d3dim_lazy_armed?.() ?? 0}`
+      + ` touched=${instance.exports.get_d3dim_lazy_touched?.() ?? 0}`
+      + ` untouched=${instance.exports.get_d3dim_lazy_untouched?.() ?? 0}`);
     const bridge = ctx.getD3dimBridge && ctx.getD3dimBridge();
     if (bridge && bridge.stats) console.log('[d3dim-gps] bridge ' + JSON.stringify(bridge.stats));
   }

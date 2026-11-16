@@ -12,8 +12,13 @@
 //      reader of THAT surface fences it; pixels and readback counts are checked
 //      against what the clear colour must produce in RGB565.
 //
-// The producer declines lazy Lock publish (0x20007 -> 0), so a Lock on a GPU
-// surface reads back eagerly, once, and the access hooks have nothing armed.
+// The producer accepts lazy Lock publish (0x20007 -> 1): with lazy sync on, a
+// Lock of a page-aligned DIB arms the range and reads nothing; the first
+// guest access (this instance or another) lands that target once; an
+// untouched Unlock does nothing. Lazy off, a Lock reads back eagerly.
+// A CPU-source BltFast onto a GPU target is replayed on the GPU (upload, or a
+// keyed alpha-tested blit) instead of reading the target back, and five
+// Blt-presents exercise $d3g_park_merge (fits: GPU merge; too wide: land).
 const assert = require('assert');
 const { D3DIMGpu, OPCODES } = require('../lib/d3dim-gpu');
 const GS = require('../lib/gpu-stream');
@@ -88,6 +93,26 @@ async function main() {
         (store.field DxObject misc1 (local.get $entry) (local.get $dib))
         (store.field DxObject flags (local.get $entry) (i32.const 0))
         (local.get $dib))
+      (func (export "test_lazy_surface_at") (param $this i32) (param $off i32) (result i32)
+        (local $entry i32) (local $dib i32)
+        (local.set $entry (call $dx_from_this (local.get $this)))
+        (local.set $dib (i32.add (global.get $DIB_BACKING_BASE) (local.get $off)))
+        (store.field DxObject misc1 (local.get $entry) (local.get $dib))
+        (store.field DxObject flags (local.get $entry) (i32.const 0))
+        (local.get $dib))
+      (func (export "test_gpu_on") (param $on i32) (global.set $d3dim_gpu_on (local.get $on)))
+      (func (export "test_lazy_epoch") (result i32) (i32.atomic.load (global.get $UOP_WIN_EPOCH)))
+      (func (export "test_lazy_float") (param $wa i32) (param $pipeline i32) (result i32)
+        (if (local.get $pipeline) (then
+          (return (i32.reinterpret_f32 (f32.demote_f64
+            (call $x87_pipeline_load (call $w2g (local.get $wa)) (i32.const 0)))))))
+        (call $fpu_exec_mem (i32.const 1) (i32.const 0) (call $w2g (local.get $wa)))
+        (i32.reinterpret_f32 (f32.demote_f64 (call $fpu_pop))))
+      (func (export "test_lazy_wide") (param $wa i32) (param $pipeline i32) (result i64)
+        (if (local.get $pipeline) (then
+          (return (i64.reinterpret_f64 (call $x87_pipeline_load (call $w2g (local.get $wa)) (i32.const 1))))))
+        (call $fpu_exec_mem (i32.const 5) (i32.const 0) (call $w2g (local.get $wa)))
+        (i64.reinterpret_f64 (call $fpu_pop)))
       (func (export "test_lazy_arm") (param $this i32) (param $on i32)
         (global.set $d3dim_lazy_on (local.get $on))
         (global.set $d3dim_gpu_on (i32.const 1))
@@ -170,6 +195,61 @@ async function main() {
         (local.set $r (call $d3dim_gpu_call (i32.const 0x20004) (local.get $d) (i32.const 0)))
         (call $heap_free (local.get $ga))
         (if (local.get $r) (then (global.set $d3dim_worker_pending (i32.const 1))))
+        (local.get $r))
+      (func (export "test_fence_surface_w") (param $w i32) (result i32)
+        (local $this i32) (local $entry i32)
+        (local.set $this (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF3)))
+        (local.set $entry (call $dx_from_this (local.get $this)))
+        (store.field DxObject width (local.get $entry) (local.get $w))
+        (store.field DxObject height (local.get $entry) (i32.const 1))
+        (store.field DxObject bpp (local.get $entry) (i32.const 16))
+        (store.field DxObject pitch (local.get $entry) (i32.shl (local.get $w) (i32.const 1)))
+        (store.field DxObject misc1 (local.get $entry)
+          (call $g2w (call $heap_alloc (i32.shl (local.get $w) (i32.const 1)))))
+        (call $dx_surf_fmt_set (local.get $entry) (i32.const 1))
+        (local.get $this))
+      (func (export "test_fence_flags") (param $this i32) (param $flags i32)
+        (store.field DxObject flags (call $dx_from_this (local.get $this)) (local.get $flags)))
+      (func (export "test_fence_key") (param $this i32) (param $key i32)
+        (store.field DxObject misc2 (call $dx_from_this (local.get $this)) (local.get $key)))
+      ;; BltFast(dst <- src) of a whole w x 1 surface as the handler does it:
+      ;; the fence, the CPU copy, then the GPU replay. Returns 1 when the
+      ;; destination stayed on the GPU.
+      (func (export "test_gps_bltfast") (param $dst i32) (param $src i32) (param $trans i32) (result i32)
+        (local $d i32) (local $s i32) (local $gpu i32) (local $w i32)
+        (global.set $d3dim_gpu_on (i32.const 1))
+        (global.set $d3dim_worker_pending (i32.const 1))
+        (local.set $d (call $dx_from_this (local.get $dst)))
+        (local.set $s (call $dx_from_this (local.get $src)))
+        (local.set $w (load.field DxObject width (local.get $s)))
+        (local.set $gpu (call $d3dim_blt_fast_fence (local.get $d) (local.get $s) (local.get $trans)))
+        (if (i32.and (local.get $trans) (i32.const 1))
+          (then (call $dx_ckey_copy_rect
+            (load.field DxObject misc1 (local.get $d)) (load.field DxObject pitch (local.get $d)) (i32.const 0) (i32.const 0)
+            (load.field DxObject misc1 (local.get $s)) (load.field DxObject pitch (local.get $s)) (i32.const 0) (i32.const 0)
+            (local.get $w) (i32.const 1) (i32.const 2) (load.field DxObject misc2 (local.get $s))))
+          (else (memory.copy (load.field DxObject misc1 (local.get $d)) (load.field DxObject misc1 (local.get $s))
+            (i32.shl (local.get $w) (i32.const 1)))))
+        (if (local.get $gpu) (then (call $d3dim_gps_blt_end (local.get $d) (local.get $s)
+          (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (local.get $w) (i32.const 1) (local.get $trans))))
+        (local.get $gpu))
+      ;; Blt(primary <- GPU target) of the 1x1 rect at x through the
+      ;; producer's 0x2000A lowering (window 0: screen-relative).
+      (func (export "test_gps_blt_present") (param $dst i32) (param $src i32) (param $x i32) (param $sx i32) (result i32)
+        (local $ga i32) (local $d i32) (local $r i32)
+        (global.set $d3dim_gpu_on (i32.const 1))
+        (local.set $ga (call $heap_alloc (i32.const 48)))
+        (local.set $d (call $g2w (local.get $ga)))
+        (memory.fill (local.get $d) (i32.const 0) (i32.const 48))
+        (i32.store offset=0 (local.get $d) (i32.const 0x44585033))
+        (i32.store offset=4 (local.get $d) (call $dx_from_this (local.get $dst)))
+        (i32.store offset=8 (local.get $d) (call $dx_from_this (local.get $src)))
+        (i32.store offset=12 (local.get $d) (local.get $x))
+        (i32.store offset=20 (local.get $d) (i32.const 1))
+        (i32.store offset=24 (local.get $d) (i32.const 1))
+        (i32.store offset=28 (local.get $d) (local.get $sx))
+        (local.set $r (call $d3dim_gpu_call (i32.const 0x2000A) (local.get $d) (i32.const 48)))
+        (call $heap_free (local.get $ga))
         (local.get $r))
       ;; A raw producer fence (0x20001) over [wa, wa+len); len 0 = global.
       (func (export "test_gps_fence") (param $wa i32) (param $len i32) (result i32)
@@ -256,32 +336,89 @@ async function main() {
   assert.strictEqual(ex.test_gps_fence(0, 0), 1);
   assert.strictEqual(readbacks(), r + 2, 'clean targets need no readback');
 
-  // Lock/Unlock: the producer declines lazy publish, so Lock is the reader.
-  const armed = ex.get_d3dim_lazy_armed();
-  paint(A, RED); zero(A); r = readbacks();
-  ex.test_lazy_arm(A, 1);
-  assert.strictEqual(ex.get_d3dim_lazy_armed(), armed, 'WAT producer declines 0x20007: no lazy range is armed');
-  assert.strictEqual(readbacks(), r + 1, 'Lock synchronizes its surface once');
-  assert.deepStrictEqual(px(A), red, 'locked bytes hold the GPU pixels');
-  assert.strictEqual(ex.test_lazy_unlock(A), 0, 'Unlock has no armed range to drop');
-  assert.strictEqual(readbacks(), r + 1, 'untouched Unlock needs no readback');
-  assert.strictEqual(ex.test_lazy_access(dib(A), 0), 0xf800, 'first read sees fresh GPU pixels');
-  assert.strictEqual(ex.test_lazy_access(dib(A) + 2, 2), 0xf800, 'native span read sees them too');
-  assert.strictEqual(readbacks(), r + 1, 'reads after Lock need no further barrier');
-  paint(A, RED); zero(A); r = readbacks();
-  ex.test_lazy_arm(A, 1);
-  ex.test_lazy_access(dib(A), 1);
-  assert.deepStrictEqual(px(A), [0x34, 0x12, 0x00, 0xf8],
-    'partial write happens AFTER readback and preserves untouched GPU pixels');
-  assert.strictEqual(readbacks(), r + 1);
-  assert.strictEqual(ex.test_global_fence(), 0);
-  assert.strictEqual(ex.test_gps_fence(0, 0), 1);
-  assert.deepStrictEqual(px(A), [0x34, 0x12, 0x00, 0xf8], 'later fences preserve the CPU write');
-  assert.strictEqual(readbacks(), r + 1);
+  // Lock with lazy sync off (or an unaligned heap DIB): eager, one readback.
   paint(A, GREEN); zero(A); r = readbacks();
   ex.test_lazy_arm(A, 0);
-  assert.strictEqual(readbacks(), r + 1, 'option off keeps the same eager Lock');
+  assert.strictEqual(readbacks(), r + 1, 'option off keeps the eager Lock');
   assert.deepStrictEqual(px(A), green);
+  assert.strictEqual(ex.test_lazy_unlock(A), 0, 'nothing armed to drop');
+
+  // Lazy Lock through the producer's 0x20007: Lock arms the page-aligned
+  // DIB and reads nothing; the first real access lands exactly that target,
+  // once (readback site 14); an untouched Unlock does nothing.
+  const L = ex.test_fence_surface(), lDib = ex.test_lazy_surface_at(L, 16384);
+  const lpx = () => Array.from(new Uint8Array(wasmMemory.buffer, lDib, 4));
+  const lzero = () => new Uint8Array(wasmMemory.buffer, lDib - 4, 12).fill(0);
+  const cnt = () => [ex.get_d3dim_lazy_armed(), ex.get_d3dim_lazy_touched(), ex.get_d3dim_lazy_untouched()];
+  const lazyRb = () => ex.d3dim_gps_stat(16 + 14);
+  other.test_gpu_on(1);
+  const arm = () => { paint(L, RED); lzero(); r = readbacks(); ex.test_lazy_arm(L, 1); };
+  let c0 = cnt(), lr = lazyRb();
+  const epoch = ex.test_lazy_epoch();
+  arm();
+  assert.notStrictEqual(ex.test_lazy_epoch(), epoch, 'arm invalidates cached native read windows');
+  assert.deepStrictEqual(cnt(), [c0[0] + 1, c0[1], c0[2]], 'Lock arms one lazy range');
+  assert.strictEqual(readbacks(), r, 'Lock defers the readback');
+  assert.strictEqual(ex.test_lazy_unlock(L), 1, 'untouched Unlock drops only the access barrier');
+  assert.deepStrictEqual(cnt(), [c0[0] + 1, c0[1], c0[2] + 1]);
+  assert.strictEqual(readbacks(), r, 'untouched Lock cycle reads nothing back');
+  assert.deepStrictEqual(lpx(), [0, 0, 0, 0], 'GPU pixels stay on the GPU');
+
+  arm(); c0 = cnt();
+  ex.test_lazy_access(lDib + 4096, 0);
+  assert.strictEqual(readbacks(), r, 'an unrelated DIB read does not synchronize');
+  assert.strictEqual(ex.test_lazy_access(lDib, 0), 0xf800, 'first read sees fresh GPU pixels');
+  assert.strictEqual(readbacks(), r + 1, 'exactly one readback');
+  assert.strictEqual(lazyRb(), lr + 1, 'charged to the lazy site');
+  assert.deepStrictEqual(cnt(), [c0[0], c0[1] + 1, c0[2]], 'one touch counted');
+  ex.test_lazy_access(lDib + 2, 0);
+  assert.strictEqual(readbacks(), r + 1, 'later accesses need no barrier');
+  assert.strictEqual(ex.test_lazy_unlock(L), 0, 'a touched Unlock has nothing armed');
+
+  arm();
+  ex.test_lazy_access(lDib, 1);
+  assert.deepStrictEqual(lpx(), [0x34, 0x12, 0x00, 0xf8],
+    'partial write happens AFTER readback and preserves untouched GPU pixels');
+  assert.strictEqual(readbacks(), r + 1);
+  assert.strictEqual(ex.test_gps_fence(0, 0), 1);
+  assert.deepStrictEqual(lpx(), [0x34, 0x12, 0x00, 0xf8], 'later fences preserve the CPU write');
+  ex.test_lazy_unlock(L);
+
+  arm();
+  assert.strictEqual(ex.test_lazy_access(lDib, 2), 0xf800, 'native span proof synchronizes too');
+  assert.strictEqual(readbacks(), r + 1);
+  ex.test_lazy_unlock(L);
+
+  arm();
+  assert.strictEqual(ex.test_global_fence(), 0);
+  assert.strictEqual(readbacks(), r + 1, 'a global barrier lands the deferred target');
+  assert.strictEqual(ex.test_lazy_unlock(L), 0, 'and disarms the stale range');
+
+  for (const pipeline of [0, 1]) {
+    arm();
+    assert.strictEqual(ex.test_lazy_float(lDib - 2, pipeline) >>> 0, 0xf8000000,
+      'baseline and folded float32 reads synchronize across the surface start');
+    assert.strictEqual(readbacks(), r + 1);
+    ex.test_lazy_unlock(L);
+    arm();
+    assert.strictEqual(BigInt.asUintN(64, ex.test_lazy_wide(lDib - 4, pipeline)), 0xf800f80000000000n,
+      'baseline and folded wide reads synchronize before crossing an aligned surface start');
+    assert.strictEqual(readbacks(), r + 1);
+    ex.test_lazy_unlock(L);
+  }
+
+  // Cross-thread: another instance on the same memory touches the range.
+  for (const kind of [0, 1, 2]) {
+    arm();
+    const value = other.test_lazy_access(lDib, kind);
+    if (kind !== 1) assert.strictEqual(value, 0xf800, 'foreign instance sees fresh pixels');
+    assert.strictEqual(readbacks(), r + 1, 'foreign touch reads back once');
+    assert.strictEqual(ex.test_lazy_unlock(L), 0, 'foreign touch is visible to the locking thread');
+    ex.test_global_fence();
+    assert.strictEqual(new Uint16Array(wasmMemory.buffer, lDib, 1)[0], kind === 1 ? 0x1234 : 0xf800,
+      'a later owner fence preserves foreign writes');
+  }
+  ex.test_lazy_arm(L, 0);
 
   // Another wasm instance on the same memory drives the same shared producer.
   paint(A, BLUE); zero(A); r = readbacks();
@@ -329,7 +466,71 @@ async function main() {
   assert.strictEqual(readbacks(), r, 'nonfinal GPU texture view release needs no readback');
   assert.deepStrictEqual(px(C), [0, 0, 0, 0]);
   assert.strictEqual(ex.test_fence_release(C, 1, 1), 0);
-  assert.strictEqual(readbacks(), r + 1, 'final release retains the global lifetime barrier');
+  assert.strictEqual(readbacks(), r, 'final release of storage it frees reads nothing back');
+  // Client memory (DDSD_LPSURFACE, flag 0x200) outlives the surface: the
+  // guest can still read it, so the final release lands the GPU pixels.
+  const M = ex.test_fence_surface();
+  ex.test_fence_flags(M, 0x200);
+  paint(M, GREEN); zero(M); r = readbacks();
+  const mDib = dib(M);
+  assert.strictEqual(ex.test_fence_release(M, 1, 1), 0);
+  assert.strictEqual(readbacks(), r + 1, 'final release of client memory reads it back');
+  assert.deepStrictEqual(Array.from(new Uint8Array(wasmMemory.buffer, mDib, 4)), green,
+    'client memory holds the GPU pixels after Release');
+
+  // BltFast(GPU target <- CPU surface) replays on the GPU: no readback.
+  const G = ex.test_fence_surface(), S = ex.test_fence_surface();
+  const setPx = (s, b) => new Uint8Array(wasmMemory.buffer, dib(s), b.length).set(b);
+  paint(G, RED); zero(G); setPx(S, [0x1f, 0x00, 0xe0, 0x07]); r = readbacks();
+  let up = ex.d3dim_gps_stat(33), keyed = ex.d3dim_gps_stat(32);  assert.strictEqual(ex.test_gps_bltfast(G, S, 0), 1, 'unkeyed CPU-source BltFast stays on the GPU');
+  assert.strictEqual(readbacks(), r, 'no readback of the GPU destination');
+  assert.strictEqual(ex.d3dim_gps_stat(33), up + 1);
+  ex.test_lazy_scope(G, 1, 1);
+  assert.strictEqual(readbacks(), r + 1, 'the reader fences it once');
+  assert.deepStrictEqual(px(G), [0x1f, 0x00, 0xe0, 0x07], 'the GPU copy holds the uploaded pixels');
+  paint(G, RED); zero(G); ex.test_fence_key(S, 0x001f); r = readbacks();
+  assert.strictEqual(ex.test_gps_bltfast(G, S, 1), 1, 'source-keyed BltFast onto a drawn target stays on the GPU');
+  assert.strictEqual(readbacks(), r, 'keyed copy needs no readback either');
+  assert.strictEqual(ex.d3dim_gps_stat(32), keyed + 1);
+  ex.test_lazy_scope(G, 1, 1);
+  assert.deepStrictEqual(px(G), [0x00, 0xf8, 0xe0, 0x07], 'keyed texel keeps the GPU pixel, the other lands');
+  paint(G, RED); r = readbacks();
+  assert.strictEqual(ex.test_gps_bltfast(G, S, 2), 0, 'DESTCOLORKEY stays a CPU copy');
+  assert.strictEqual(readbacks(), r + 1, 'so the destination reads back first');
+
+  // $d3g_park_merge: five non-covering Blt-present rects fill the four park
+  // slots; the fifth merges the two oldest on the GPU (union seeded from the
+  // primary's DIB). Nothing reads back until a CPU reader fences the primary.
+  // Source targets stay 2x1: the software executor's device is that size.
+  const T = ex.test_fence_surface_w(2), P = ex.test_fence_surface_w(8);
+  const pxs = (s, n) => Array.from(new Uint8Array(wasmMemory.buffer, dib(s), n));
+  paint(T, RED);
+  new Uint8Array(wasmMemory.buffer, dib(P), 16).fill(0xa5);
+  r = readbacks();
+  let land = ex.d3dim_gps_stat(16 + 9);
+  for (const x of [0, 1, 4, 6, 7])
+    assert.strictEqual(ex.test_gps_blt_present(P, T, x, x & 1), 1, `Blt-present at ${x} is taken`);
+  assert.strictEqual(readbacks(), r, 'parking and the GPU merge read nothing back');
+  assert.strictEqual(ex.d3dim_gps_stat(16 + 9), land, 'merge of a union that fits lands nothing');
+  assert.deepStrictEqual(pxs(P, 16), Array(16).fill(0xa5), 'primary DIB untouched while parked');
+  ex.test_lazy_scope(P, 1, 1);
+  const R5 = [0x00, 0xf8], K = [0xa5, 0xa5];
+  assert.deepStrictEqual(pxs(P, 16), [R5, R5, K, K, R5, K, R5, R5].flat(),
+    'landing writes every parked rect, the merged pair included');
+  // A union wider than the source target cannot merge: the oldest lands.
+  const T2 = ex.test_fence_surface_w(2), P2 = ex.test_fence_surface_w(16);
+  paint(T2, GREEN);
+  new Uint8Array(wasmMemory.buffer, dib(P2), 32).fill(0xa5);
+  for (const x of [0, 12, 4, 8]) assert.strictEqual(ex.test_gps_blt_present(P2, T2, x, x & 1), 1);
+  r = readbacks(); land = ex.d3dim_gps_stat(16 + 9);
+  assert.strictEqual(ex.test_gps_blt_present(P2, T2, 15, 1), 1);
+  assert.strictEqual(ex.d3dim_gps_stat(16 + 9), land + 1, 'too-wide union lands the oldest slot');
+  assert.strictEqual(readbacks(), r + 1, 'with one readback');
+  assert.deepStrictEqual(pxs(P2, 2), [0xe0, 0x07], 'the oldest rect reached the DIB');
+  ex.test_lazy_scope(P2, 1, 1);
+  const G5 = [0xe0, 0x07], K2 = [0xa5, 0xa5];
+  assert.deepStrictEqual(pxs(P2, 32), [...G5, K2, K2, K2, G5, K2, K2, K2, G5, K2, K2, K2, G5, K2, K2, G5].flat(),
+    'every rect lands once the primary is fenced');
 
   assert.deepStrictEqual(calls, [], 'the WAT producer never calls the host gpu_gl_call');
   assert(kicks > 0 && gps, 'records went through the GPU stream consumer');
