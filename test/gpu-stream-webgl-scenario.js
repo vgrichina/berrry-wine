@@ -391,7 +391,7 @@
       });
       return out;
     };
-    const ID = { RT: 1, DS: 2, RT2: 3, COMPACT: 10, POS: 11, FLAT: 12, TEX: 13, SAMP: 14, MIRROR: 15, BORDER: 16, TEX2: 17 };
+    const ID = { RT: 1, DS: 2, RT2: 3, COMPACT: 10, POS: 11, FLAT: 12, TEX: 13, SAMP: 14, MIRROR: 15, BORDER: 16, TEX2: 17, BLIN: 18 };
     const S = 28; // COMPACT stride: POSITIONT f4 @0, COLOR0 D3DCOLOR @16, TEXCOORD0 f2 @20
     // vertex [x, y, z, rhw, argb, s, t] in the COMPACT layout
     const pack = (verts) => {
@@ -578,6 +578,21 @@
       const mid = (56 - 48) / 16, persp = Math.round(255 * (mid * 0.25) / ((1 - mid) + mid * 0.25));
       expectPx('perspective-correct varying', f, 56, 52, [persp, persp, persp, 255], 4);
       expectPx('screen-linear varying', f, 56, 60, [128, 128, 128, 255], 4);
+
+      // 12. BORDER with linear filtering (GPS_CAP_BORDER_LINEAR; GL_CLAMP +
+      //     GL_LINEAR). [red, blue] at u = (x - 16) / 32: texel coordinate
+      //     (x - 16) / 16 - 0.5, so every 8 px is a half texel, blending
+      //     into the yellow border on both sides.
+      check('caps border linear', (ring.caps().flags & CONST.CAP_BORDER_LINEAR) !== 0, `flags ${ring.caps().flags}`);
+      emit('SAMPLER', { id: ID.BLIN, address_u: CONST.ADDR_BORDER, address_v: CONST.ADDR_BORDER, min: 2, mag: 2, border: 0xff00ffff });
+      emit('CLEAR', { mask: 1, colormask: 15, rgba: 0xff000000, z: 1, left: 0, top: 0, right: W, bottom: H });
+      emit('BIND', { count: 1 }, i32s(0, ID.TEX2, ID.BLIN));
+      draw(ID.TEX, CONST.PRIM_TRIANGLELIST, corners(0, 0, 64, 8, 0, (x) => [0xffffffff, (x - 16) / 32, 0.5]),
+        { index_size: 2, indices: QUAD });
+      f = present();
+      [[0, [255, 255, 0]], [8, [255, 255, 0]], [16, [255, 128, 0]], [24, [255, 0, 0]], [32, [128, 0, 128]],
+        [40, [0, 0, 255]], [48, [128, 128, 128]], [56, [255, 255, 0]]]
+        .forEach(([x, rgb]) => expectPx('BORDER linear', f, x, 4, [...rgb, 255], 2));
     } catch (e) {
       failures.push(`scenario threw: ${e && e.stack || e}`);
     }
@@ -904,5 +919,5 @@
     return { checks, failures, stats: ex.stats ? ex.stats() : null };
   }
 
-  return { run, runD1, run94a, W, H };
+  return { run, runD1, run94a, W, H, irShader, TEX_IR };
 });

@@ -9,8 +9,9 @@
 //
 //   GPS_CAP_LOGIC_OP 8       -> reason 1
 //   GPS_CAP_STENCIL 4        -> reason 4
-//   GPS_CAP_BORDER_LINEAR 32 -> reason 10 (GL_CLAMP + GL_LINEAR; the WebGL
-//                               executor lacks it, and used to crash on it)
+//   GPS_CAP_BORDER_LINEAR 32 -> reason 10 (GL_CLAMP + GL_LINEAR; every
+//                               executor has it since 2026-11-16, and the
+//                               WebGL one used to crash on it before that)
 const assert = require('assert');
 const { bothArms } = require('./helpers/gl-gps-context');
 

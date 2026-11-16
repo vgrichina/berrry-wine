@@ -418,3 +418,17 @@ Local box ID/state/expiry: N/A. No audio, FPS, browser/native parity or full
 suite claim is made. Only this note is tracked; evidence and control helpers
 remain in the ignored run directory. `cleanup.json` verifies owned runtime,
 helper and watcher PIDs/groups absent and no new temporary directories.
+
+## GPU stream v2 main-menu seam (2026-11-16)
+
+On the browser default (software GL on the gps WebGL executor) the main-menu
+book showed a 1 px dark line at y 256. The book is 1:1
+point-sampled WRAP tiles (256x256, 256x128, 256x64, 256x32) whose quad edges
+sit exactly on pixel centres, so the D3D top-left rule decides the row. The
+executor emulated that with a 1/128 px y lift, which SwiftShader's 4-bit
+subpixel grid rounds away; GL then gave row 256 to the upper tile at v = 1.0,
+which wraps to its texel row 0. The lift is now 1/16 px (`Y_CENTRE` in
+`lib/gpu-stream-webgl.js`) and the per-app `glRenderer: 'webgl'` opt-out is
+gone. Headless GL keeps more subpixel bits, so the CLI never showed it:
+`test/test-gpu-stream-webgl-subpixel.js` snaps vertices in the VS to
+reproduce it. Evidence `scratch/runs/20261116-gps-edges/`.

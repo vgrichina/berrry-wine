@@ -154,11 +154,15 @@ Without this, every new backend would have to reimplement the 846 lines of
     - W depth keeps the Voodoo 16-bit float encoding as *the* depth_mode 2
       encoding; D3DIM W-buffering uses it too.
     - The WebGL executor advertises STENCIL only: no occlusion, mirror-once,
-      linear-filtered border or logic op, and max_aniso 1. The software
+      linear-filtered border or logic op, and max_aniso 1. (Since then it
+      has gained all of them but mirror-once; see the caps table in
+      `gpu-stream-v2.md`.) The software
       executor has occlusion, mirror-once and linear-filtered border.
-    - WebGL perspective-mode (`linear 0`) rasterization lifts y by 1/128 px
+    - WebGL perspective-mode (`linear 0`) rasterization lifts y by 1/16 px
       so the top-left tie rule survives GL's y flip; the linear (Glide) path
-      is unchanged.
+      is unchanged. (It was 1/128 px until 2026-11-16, which SwiftShader's
+      4-bit subpixel grid rounds away: Heretic II's seam, the same bug as
+      the 2026-10-06 NFS III horizon line in `docs/re-notes/need-for-speed.md`.)
     - The page Presenter refuses a non-zero PRESENT dst; D2 implements
       windowed / child-window present on top of it. Stale stamps are
       already dropped.
@@ -296,9 +300,11 @@ The v2 lowering reuses the 09a8g pipeline:
     the host's `glGps`), its kicks reach the render Worker through
     `lib/guest-rpc.js`, and the render owner sends no CPU frame while the
     executor presents. `?gl-renderer=webgl`, or `glRenderer: 'webgl'` on an
-    app in `lib/apps.js`, keeps the JS path. Opted out: `heretic2_demo` (the
-    WebGL executor draws a 1 px dark seam where the main-menu book's tiled
-    quads meet; neither the JS path nor gps-off software GL does). The CLI default is unchanged
+    app in `lib/apps.js`, keeps the JS path; no app opts out. (`heretic2_demo`
+    did until 2026-11-16, for a 1 px dark seam where the main-menu book's
+    tiled quads meet: the perspective y lift was rounded away on
+    SwiftShader, see D1. Hexen II declined every frame with reason 10 until
+    the WebGL executor gained linear-filtered border the same day.) The CLI default is unchanged
     (`--gl-renderer` defaults to webgl; `--gl-renderer=software
     --headless-gl` is gps on WebGL).
   - **What of the old JS transport is still live, and why.** Nothing became

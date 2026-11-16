@@ -35,7 +35,8 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "62d5798df5ec0938ccd894a58cd87b7642a82d4c6f2985cb6c9f95d51c1e8558",
+      "sha256": "fbd2f47cc40149904c404a10c191181c4fd38ab2b187ee7aa95158447ff5f78f",
+      "glRendererOptOutDropReview20261116": "2026-11-16 GPU stream v2 edges: heretic2_demo loses its glRenderer 'webgl' opt-out (the WebGL executor seam is fixed). Registry data only; no guest invocation, callback owner, continuation or retained guest reference added.",
       "glRendererOptOutReview20261116": "2026-11-16 GPU stream v2 G3c: heretic2_demo gains glRenderer 'webgl' (per-app opt-out from the browser's software+gps GL default). Registry data only; no guest invocation, callback owner, continuation or retained guest reference added.",
       "aoe1SavePersistReview20261115": "Age of Empires trial (aoe1) gains persistFiles c:\\savegame\\*.gam and c:\\game*.nfo with persistStore indexeddb / persistMaxBytes 8 MB; static app-registry data only, no callback ownership change",
       "aoe1DesktopPublishReview20261115": "Age of Empires trial (aoe1) added to DESKTOP_APPS with a comment; list membership only, no callback ownership change",

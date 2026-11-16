@@ -475,7 +475,10 @@ const OUT_PS = [[1, 0], [1, 1], [3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5]];
       const swQuad = Uint8Array.from(p.arenaView(at, W * H * 4));
       ok(covered(swQuad) === N, 'software VBUF/IBUF quad covers the target');
       ok(covered(glExtra.quad) === N, 'webgl VBUF/IBUF quad covers the target');
-      compare({ quad: swQuad }, { quad: glExtra.quad }, 'VBUF/IBUF triangle quad software vs webgl');
+      // 2: a perspective draw's WebGL raster is lifted 1/16 px (Y_CENTRE in
+      // lib/gpu-stream-webgl.js), so its varyings are read that far from the
+      // software executor's.
+      compare({ quad: swQuad }, { quad: glExtra.quad }, 'VBUF/IBUF triangle quad software vs webgl', 2);
     }
 
     // ── old transport, GL (JS compileIR translation of the guest bytecode) ──
