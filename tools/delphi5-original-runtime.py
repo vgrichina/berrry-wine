@@ -4,7 +4,7 @@
 Never builds or changes shared outputs. Runtime sources and module are sealed
 in memory; only Git identities, hashes and helper diffs persist in evidence.
 """
-import base64, fcntl, hashlib, json, os, pathlib, re, signal, subprocess, sys, time
+import base64, fcntl, hashlib, json, os, pathlib, re, signal, socket, subprocess, sys, time
 
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 RUN=pathlib.Path(os.environ.get('DELPHI5_RUN',ROOT/'scratch/runs/20261116-delphi5-native-controller-completion-repair'))
@@ -156,20 +156,25 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
         return
     # Pause for the worker to personally inspect qualification evidence. No original restart.
     while not (RUN/'original-go.json').exists():time.sleep(.1)
+    ports=[]
+    for _ in range(2):
+        with socket.socket() as reservation:
+            reservation.bind(('127.0.0.1',0));ports.append(reservation.getsockname()[1])
+    assert ports[0]!=ports[1]
     (RUN/'desktop-observations').mkdir(exist_ok=True)
     argv=['node','test/run.js','--exe='+str(MEDIA/'media/INSTALL.EXE'),'--exe-guest-path=D:\\INSTALL.EXE',
          '--cwd=D:\\','--vfs-drive=D','--vfs-include=**/*','--no-build',
          f'--wasm=/proc/{os.getpid()}/fd/{module}','--overlay-dir='+str(RUN/'guest-overlay'),
          '--reg-export='+str(RUN/'guest-registry.json'),'--spawn-processes','--threads',
-         '--control=45761','--max-seconds=1200','--max-batches=1000000000','--stuck-after=0',
+         '--control='+str(ports[0]),'--max-seconds=1200','--max-batches=1000000000','--stuck-after=0',
          '--real-ticks','--quiet-api','--quiet-blocks','--png-canvas',
          '--trace-api=LoadLibraryA,LoadLibraryExA,GetProcAddress,CreateProcessA,WinExec,ShellExecuteA,ExitProcess,HeapCreate,MakeCriticalSectionGlobal',
          '--trace-to=10000000',
-         '--pipe-child-args=--control=45762 --png-canvas']
+         '--pipe-child-args=--control='+str(ports[1])+' --png-canvas']
     started=time.time();deadline=started+1200
     w=subprocess.Popen([sys.executable,'-B',__file__,'watchdog',str(started+1220)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     while not (RUN/'watchdog-armed.json').exists():assert w.poll() is None;time.sleep(.01)
-    save('launch.json',dict(args=argv,cwd=str(ROOT),at=started,deadline=deadline,gameplayCutoff=deadline-180,
+    save('launch.json',dict(args=argv,cwd=str(ROOT),at=started,deadline=deadline,gameplayCutoff=deadline-180,rootPort=ports[0],childPort=ports[1],
         reserveSeconds=180,watchdogDeadline=started+1220,winIdentity='default Windows 98; no date override',supervisor=os.getpid()))
     with (RUN/'native.stdout.log').open('xb') as out,(RUN/'native.stderr.log').open('xb') as err:
         p=subprocess.Popen(argv,cwd=ROOT,env=env,pass_fds=(source,module),stdout=out,stderr=err,start_new_session=True)
