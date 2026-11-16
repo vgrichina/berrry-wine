@@ -205,17 +205,25 @@ const D3D_WORKER = hasFlag('d3d-worker');
 const D3DIM_GPU = hasFlag('d3dim-gpu');
 if (D3DIM_GPU && D3D_WORKER) { console.error('--d3dim-gpu and --d3d-worker are exclusive'); process.exit(2); }
 if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --headless-gl'); process.exit(2); }
-// --gl-gps: put software GL (--gl-renderer=software) on GPU stream v2: the
-// WAT producer (src/09a8gt-gl-gps.wat) lowers its screen-space triangles,
-// clears and swaps into a ring the software executor drains.
-// --gl-gps=webgl picks the WebGL executor (needs --headless-gl).
-const GL_GPS = hasFlag('gl-gps') || getArg('gl-gps', null) !== null;
-const GL_GPS_BACKEND = getArg('gl-gps', null) || 'software';
 // --d3d9-gps[=webgl|none]: D3D9 / D3D8 frames also lowered onto GPU stream
 // v2 (src/09akg-d3d9-gps.wat); the old D3D9 path still runs as the shadow.
 // 'none' is a host without an executor (the arm turns itself off).
 const D3D9_GPS = hasFlag('d3d9-gps') || getArg('d3d9-gps', null) !== null;
 const D3D9_GPS_BACKEND = getArg('d3d9-gps', null) || 'software';
+// Software GL (--gl-renderer=software) on GPU stream v2: the WAT producer
+// (src/09a8gt-gl-gps.wat) lowers its screen-space triangles, clears and
+// swaps into a ring an executor drains. It is the default wherever there is
+// a GPU to drain it (--headless-gl: the WebGL executor); without one the
+// arm would only add the software executor's cost, so it stays off.
+// --gl-gps forces it on with the software executor, --gl-gps=webgl|software
+// picks the executor, --gl-gps=off keeps software GL drawing the DIB.
+const GL_GPS_ARG = getArg('gl-gps', null);
+if (GL_GPS_ARG !== null && !['off', 'software', 'webgl', 'null'].includes(GL_GPS_ARG))
+  throw new Error('--gl-gps must be off, software, webgl or null');
+const GL_GPS = GL_GPS_ARG === 'off' ? false
+  : hasFlag('gl-gps') || GL_GPS_ARG !== null || (GL_RENDERER === 'software' && hasFlag('headless-gl'));
+const GL_GPS_BACKEND = GL_GPS_ARG !== null && GL_GPS_ARG !== 'off' ? GL_GPS_ARG
+  : hasFlag('gl-gps') ? 'software' : 'webgl';
 if (args.some(arg => arg === '--gl-encoder' || arg.startsWith('--gl-encoder='))) {
   throw new Error('--gl-encoder was removed; OpenGL encoding always runs in WAT');
 }
@@ -2817,6 +2825,7 @@ async function main() {
     glideBackend: GLIDE_RENDERER,
     glGpsBackend: GL_GPS_BACKEND,
     d3d9GpsBackend: D3D9_GPS_BACKEND,
+    glGps: GL_GPS,
     gpuStreamDump: GPU_STREAM_DUMP,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
     createD3DRenderWorker: () => {
@@ -12859,6 +12868,7 @@ if (VERBOSE) {
     for (let s = 0; s < 16; s++) if (st(48 + s)) sites.push(`${s}:${st(48 + s)}`);
     console.log(`[gl-gps] ${names.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
       ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
+      ` front-presents=${st(64)} cpu-stencil-pixels=${st(65)} canon-declines=${st(66)}` +
       ` active=${instance.exports.gl_gps_active()}`);
   }
   if (D3D9_GPS) {
