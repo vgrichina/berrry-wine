@@ -3081,10 +3081,14 @@ class WineAssembly {
   // module it lives in. A raw runtime address is useless against a disassembly
   // -- every DLL is relocated -- and `module+0xVA` is the form every tool here
   // (disasm_fn, xrefs, --count, --break) already takes.
-  _exitSiteText() {
-    const ex = this.instance && this.instance.exports;
-    if (!ex || !ex.get_dbg_prev_eip) return '';
+  //
+  // With the guest main in a Worker (Threads on), this.instance is the page's
+  // idle instance and every register it reports is zero. That Worker's slice
+  // reply carries its own registers when it ended at EIP 0 (`slice.regs`), and
+  // those are the ones to print; a reply without them says so.
+  _exitSiteText(slice = null) {
     const hex = v => '0x' + ((v >>> 0).toString(16).padStart(8, '0'));
+    const ex = this.instance && this.instance.exports;
     const name = addr => {
       let best = null;
       for (const key of Object.keys(this.moduleBases || {})) {
@@ -3095,6 +3099,14 @@ class WineAssembly {
       if (!best) return hex(addr);
       return `${best.key}+${hex(addr - best.m.loadAddr + best.m.origBase)}`;
     };
+    if (slice) {
+      const g = slice.regs;
+      if (!g) return '(the guest Worker reported no registers)';
+      return `last block ${hex(g.prevEip)} (${name(g.prevEip >>> 0)})` +
+        (g.prev2Eip ? `, before it ${hex(g.prev2Eip)} (${name(g.prev2Eip >>> 0)})` : '') +
+        ['eax', 'ebx', 'ecx', 'edx', 'esi', 'edi', 'ebp', 'esp'].map(n => ` ${n}=${hex(g[n] || 0)}`).join('');
+    }
+    if (!ex || !ex.get_dbg_prev_eip) return '';
     const prev = ex.get_dbg_prev_eip() >>> 0;
     const prev2 = ex.get_dbg_prev2_eip ? ex.get_dbg_prev2_eip() >>> 0 : 0;
     // The registers as the last block left them. A NULL call is almost always
@@ -6558,7 +6570,7 @@ class WineAssembly {
         self._presentAtBoundary(perf);
 
         if (!r.threadSendPending && !r.eip && !r.yield) {
-          self.logToUI(`--- Program exited (worker) --- ${self._exitSiteText()}`);
+          self.logToUI(`--- Program exited (worker) --- ${self._exitSiteText(r)}`);
           self.stop({ repaint: false });
           return;
         }

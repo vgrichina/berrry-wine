@@ -4675,6 +4675,12 @@
     (i32.store (global.get $PROCESS_IMAGE_STATE)
       (i32.or (i32.load (global.get $PROCESS_IMAGE_STATE)) (i32.const 2))))
 
+  ;; GetModuleFileName(NULL) into a guest buffer, for the host loader: a
+  ;; LoadLibrary of a relative name is found in the EXE's directory first, and
+  ;; the module path it records must be that full path (lib/process-boot.js).
+  (func (export "exe_module_file_name") (param $buf_g i32) (param $size i32) (result i32)
+    (call $module_file_name (local.get $buf_g) (local.get $size) (i32.const 0)))
+
   ;; Get GUEST_BASE for direct WASM memory access
   (func (export "get_guest_base") (result i32) (global.get $GUEST_BASE))
   (func (export "get_dll_table") (result i32) (global.get $DLL_TABLE))
