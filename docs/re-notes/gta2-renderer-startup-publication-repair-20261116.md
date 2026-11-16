@@ -61,8 +61,10 @@ inventory. All startup cases sent zero input and captured no frames. Failure
 cases retained zero-wire local replay/rebind/request refusals. The predecessor
 fixture published `none` then observed a genuine renderer; the repair publishes
 only after the actual renderer, backend, module and generation are established.
-The final shared and sealed HEAD full flock builds passed, as did both focused
-sets of ten commands. The rebuilt HEAD module SHA-256
+The final shared and sealed HEAD full flock builds passed. The shared focused
+set of ten commands passed. The sealed HEAD focused set failed its fixed-500 ms
+blank-control child-arm check; its outer supervisor exited zero, which was
+initially mistaken for test success. The inner child exit is authoritative. The rebuilt HEAD module SHA-256
 `ef7de08a1a1ea564ea7ff2fbd1e3dbbd56cbfc07c19d3db7fcb45c9bac4b5fb8`
 exactly matches the retained sealed module.
 
@@ -76,9 +78,9 @@ script ID in the same session is one script; conflicting descriptors or distinct
 scripts remain refused. Every accepted module is still freshly recovered and
 hashed. The final 34-case suite passed after these corrections.
 
-Implementation publication, the current full 50-fault/eight-normal gesture
-qualification and the single original software run follow. Original walking,
-vehicle entry, driving, native Quit and WebGL are not yet claimed.
+Implementation `e1d6aad9afe32cc85739e5e810c4b90e283122e4` was committed on main
+and immediately published with strict pull/push. Current native qualification
+subsequently refused; no original launch was authorized.
 
 
 A separate native late-publication negative deliberately omits the D3D startup
@@ -100,3 +102,38 @@ owned code patch and the matching retained module. The implementation commit
 must be published on main, and its exact owned executed files must equal the
 qualified fresh pins. Other lanes' later core changes remain outside this view.
 No historical endpoint is contacted, rebound or retried.
+
+
+Final outcome: concrete current qualification blocker
+
+The published main-thread native normal fixture completed first-modal Enter,
+second-modal Enter and ArrowUp, each after a personally reviewed whole-host
+screenshot with fresh nonce and with actual independent physical UP. The fourth
+intent, authored native Quit, failed `actual independent child arm within 500ms`
+before any physical DOWN. The child's arm-ACK-ready timestamp is exactly 500 ms
+after its configuration start; the parent refused when it observed the result
+after the fixed deadline. No bound was extended. Cause beyond that observation
+remains UNKNOWN. This endpoint is permanently closed: three subsequent local
+replay/rebind/request refusals produced zero later wire requests.
+
+The remaining four Worker normals and all 50 faults were NOT RUN. The required
+eight-normal/full-fault qualification has not passed. The single original
+software attempt was NOT LAUNCHED; walking, vehicle entry, driving, original
+native Quit and WebGL are unproved. The four selected screenshots are authored
+fixture views only, listed with hashes in `selected-screenshots.json`.
+
+A final published sealed-HEAD focused run also refused the blank-control child's
+unchanged 500 ms prearm bound. Its child actual wait and both EOFs are retained.
+Three earlier failed focused probes lack a direct grandchild wait receipt; their
+PIDs and groups are absent in the final process audit. This receipt gap is
+retained explicitly, not represented as a successful wait. All native fixture,
+release-child, watchdog, supervisor, outer and module-holder waits are recorded;
+all recorded task PIDs and process groups are closed. No box was created.
+
+The implementation publication title and an earlier messageboard statement
+overstated sealed-HEAD focused success by reading the outer supervisor status.
+This report and `result.json` correct that claim. Both full builds and the 35
+native renderer/USER cases passed; focused HEAD and current normal qualification
+did not pass. Next work must repair the current child-arm boundary while
+preserving the fixed bounds and permanent closure; it requires a fresh task and
+fresh endpoints. Source/build/runtime ownership is released after this report.
