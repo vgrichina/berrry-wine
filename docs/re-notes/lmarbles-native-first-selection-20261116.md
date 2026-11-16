@@ -67,3 +67,53 @@ The sealed qualified native module SHA-256 is
 Its build source is recorded by build-source.json plus build-source.patch;
 foreign GL and other shared-tree WIP is explicitly unadopted. Final helper full locked build also passed, with an exact match to the sealed
 module. The one authorized fresh original run follows publication.
+
+
+## One fresh original and closure
+
+Implementation commit `4a8331cf9` was published on main before the original.
+Exactly one registered `lmarbles_108` was launched, with genuine guest Workers1
+and2, real ticks and untouched media. The complete setup showed Normal,
+Original, Michael. The visible eighth Tier1 selector dot opened the actual
+level8/chapter1 confirmation; one reviewed Y entered settled Puzzle8 Moves96.
+
+The first board pointer press directly selected the central blue marble, with a
+visible cyan ring. No preliminary pointer intent, repeated click, selector
+confirmation or imported progress was used. Subsequent manually chosen slides
+reached Moves76 (20 completed slides), paired two grays and released the third
+from the left pocket. Each intention followed a fresh complete-scene review;
+two aged reviews were refused as NOT_SENT and replaced with fresh captures and
+new intentions. No solver, OCR, tile-map reader or queued route was used.
+
+Puzzle8 remained incomplete at the fixed gameplay cutoff. This is a bounded
+manual-play limitation, **not a new native failure**. Puzzle8 clear, tally and
+Puzzle9 were not achieved. There was no recurrence of the selection bug.
+
+The independently prearmed watchdog deadline was launch+1220 seconds, native
+runtime deadline launch+1200, gameplay cutoff launch+1020 (09:39:45.059 UTC).
+The irreversible Quit phase latched before the next capture/intent. All sent
+DOWNs were consumed, all independent UPs acknowledged, and no gameplay was
+admitted at or after cutoff. Escape opened ordinary “Do you really want to
+quit? (y/n)”; reviewed Y returned to setup. A further reviewed Escape from
+setup produced native `[Exit] code=0`, waveOut close and worker2 exit. Native
+PID3327612 actually waited0 with both EOFs at09:40:30.694 UTC, before either
+deadline; the watchdog exited through actual-native-wait without signalling.
+No host Quit/WM_CLOSE/cancellation was injected. Native ordinary exit is proved;
+an additional main-menu Quit screenshot was not observed or fabricated.
+
+The final auto-capture encountered the already-waited native terminal. Its
+sticky failure is preserved and no subsequent endpoint request was made. The
+parent recorded its actual child wait0/bothEOF; the invoking tool nevertheless
+reported143, preserved separately in tool-channel-outcome.json. These are
+separate observations. The module-holder launcher has no standalone actual
+parent wait receipt (UNKNOWN); its native/watchdog/supervisor waits are0 and
+all recorded PIDs are absent. Missing older historical receipts remain UNKNOWN.
+
+Eight selected result-named screenshots, image hashes, intentions, actual wait
+chains, sealed-source Git/patch/module pins and closure checks are indexed by
+result.json. The holder closed normally, the original port45499 is closed,
+and the media postflight again verifies all86 SHA-pinned files plus authentic
+CRT. No box was created (ID/state/expiry/stop: not applicable). No new original
+or restart is authorized by this result; further Puzzle8 completion needs a
+separately assigned manual run. Source and runtime ownership are released at
+final publication.
