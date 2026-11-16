@@ -95,3 +95,44 @@ focused tests and the unchanged 128 original media SHA-256 pins / 127 manifest
 rows / real-DLL closure are recorded in the run. Original-game outcome and
 final process/box closure are recorded in its final `result.json`; native
 fixture success alone does not claim NewQuest, a quest consequence or Quit.
+
+
+The one authorized original was launched only after publication of
+`2593c43eaaaafb34e668cb43f6739306fc195220` and fresh unchanged-media preflight.
+The immutable runtime used canonical Git `85f7dd61ace7b22a289d9d5b37975e5faa9797c0`
+plus exactly that publication's owned source paths, with every loaded source
+hash recorded. Its native limit was 1200 seconds, independent watchdog 1220,
+and irreversible Quit reserve 180, all recorded before launch. No second
+original, prior save, replay, OCR, solver, private board read or configuration
+change was used.
+
+Personally viewed complete scenes reached Single Player, New Quest, the
+ordinary “The Search for Timmoria” quest list, available Undead Hordes race,
+and Warrior Lord / Average setup. Nine finite reviewed actions, each with its
+own capture and nonce, have consumption and independent-UP receipts inside
+500/1750 ms. All these are setup/exit-seeking actions, not a quest consequence.
+The race selector's delayed changes were observed again rather than inferred
+from receipts. The final Enter reached “Please Wait” with an hourglass. One reviewed
+Escape sought the ordinary native exit/options route and was acknowledged,
+but no exit menu appeared. Subsequent complete frames became black. Later,
+after the irreversible Quit phase had begun, fresh full scenes visibly reached
+the quest map, an undead capital and turn indicator 1, then “Beginning day 1”
+with income 150/25/0/0/0. This proves ordinary NewQuest startup and its initial
+day consequence; no town interaction, manual turn advancement or battle is
+claimed. A fresh exit intent was NOT_SENT because its game capture exceeded
+the unchanged five-second limit. No DOWN was delivered for it. The day dialog
+was not dismissed through gameplay after the Quit latch. Native Quit remains
+unproved. The caller was permanently closed and the owned supervisor received
+a local host-cancellation file, with no further HTTP. Native exit 0 and
+independent watchdog exit 0 have actual waits and both EOFs; the host-triggered
+shutdown is not native Quit. Runtime lasted about 1117 seconds within its fixed
+1200/1220 limits. Final receipts are in `result.json`.
+
+The tool-managed sealed source holder and original outer launcher returned
+actual status 143. Their normal holder-close / outer-child-wait receipts are
+missing; process absence is not substituted for those receipts. The original
+supervisor and independently armed watchdog survived and retain their own
+native-child waits. Source/module hashes were verified during immutable
+launch; a final holder recheck failed because its `/proc` descriptors were
+already gone. The cause of that external tool-parent termination is unknown.
+These lifecycle limits remain explicit alongside the native fixture passes.
