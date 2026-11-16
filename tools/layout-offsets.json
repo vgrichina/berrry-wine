@@ -1487,6 +1487,30 @@
         }
       ]
     },
+    "GpsClip": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 100,
+      "fields": [
+        {
+          "name": "mask",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "planes",
+          "type": "f32",
+          "offset": 4,
+          "size": 96,
+          "count": 24,
+          "stride": 4
+        }
+      ]
+    },
     "GpsDraw": {
       "file": "src/09a8gs-gpu-stream.wat",
       "frozen": null,

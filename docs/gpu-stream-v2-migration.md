@@ -261,6 +261,17 @@ Without this, every new backend would have to reimplement the 846 lines of
     distances in the executor protocol; multi-stream declarations need a
     WAT interleave; vertex blending has no 09aj lowering on either path),
     and the reasons outside this slice (4..7, 11, 14..26).
+  - **User clip planes (2026-11-16).** D3DRS_CLIPPLANEENABLE + SetClipPlane
+    no longer decline 27 when the executor advertises
+    `GPS_CAP_CLIP_PLANES` (128): a sticky CLIP record (op 15, mask + six
+    clip-space planes) is sent with the viewport for every vertex-stage
+    draw. A guest VS's planes are clip space already; fixed T&L's are
+    world space and go out as `plane * inverse(View * Projection)` (a
+    singular product still declines 27). POSITIONT draws ignore them. The
+    software executor clips the polygons; WebGL computes the distances in
+    the VS and discards a fragment with any negative interpolated distance
+    (WebGL has no `gl_ClipDistance`), on WebGL1 and WebGL2
+    (`test-d3d9-gps-clip.js`, scenario step 13).
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
   a performance step.
 

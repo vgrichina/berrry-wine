@@ -57,6 +57,7 @@
   (global $GPS_OP_RASTER i32 (i32.const 12))
   (global $GPS_OP_BIND i32 (i32.const 13))
   (global $GPS_OP_CONSTS i32 (i32.const 14))
+  (global $GPS_OP_CLIP i32 (i32.const 15))
   (global $GPS_OP_DRAW i32 (i32.const 20))
   (global $GPS_OP_DRAW_UP i32 (i32.const 21))
   (global $GPS_OP_CLEAR i32 (i32.const 22))
@@ -140,6 +141,7 @@
   (global $GPS_CAP_OCCLUSION i32 (i32.const 16))
   (global $GPS_CAP_BORDER_LINEAR i32 (i32.const 32))
   (global $GPS_CAP_MIRRORONCE i32 (i32.const 64))
+  (global $GPS_CAP_CLIP_PLANES i32 (i32.const 128))
 
   ;; CLEAR mask bits; RASTER colormask bits (R,G,B,A = 1,2,4,8).
   (global $GPS_CLEAR_COLOR i32 (i32.const 1))
@@ -291,6 +293,13 @@
   (layout GpsBindEntry (field slot i32) (field texture i32) (field sampler i32))
   ;; Followed by count * 16 bytes of f32x4.
   (layout GpsConsts (field stage u8) (field pad u8) (field first u16) (field count i32))
+  ;; User clip planes, sticky like RASTER. Bit i of mask enables planes[4i..4i+3]
+  ;; = (a,b,c,d) in D3D clip space: a vertex is kept where a*x+b*y+c*z+d*w >= 0
+  ;; on the vertex shader's output position (before the divide and viewport,
+  ;; z in 0..w). Disabled planes are zero. Applies to draws with a vertex
+  ;; shader only; vs 0 (pretransformed) draws ignore it, as D3D does. A
+  ;; nonzero mask needs GPS_CAP_CLIP_PLANES.
+  (layout GpsClip (field mask i32) (field planes f32 24))
   ;; index_size 0 = not indexed (count vertices from voff), 2 or 4 = count
   ;; u16/u32 indices from ioff, each < vcount. vcount = vertices readable at
   ;; voff (== count when not indexed). DRAW: voff/ioff are byte offsets

@@ -71,7 +71,8 @@
   ;;  26 primitive type out of range
   ;;  27 vertex input not lowerable: declaration element off stream 0, type
   ;;     past D3DCOLOR, POSITIONT in a declaration; XYZB/XYZW FVF; vertex
-  ;;     blending; user clip planes
+  ;;     blending; user clip planes without GPS_CAP_CLIP_PLANES, or fixed
+  ;;     T&L planes under a singular View*Projection (d9cl block)
   ;;  28 lighting the ring cannot express: more than 8 lights, a bad light
   ;;     type or material source, a non-finite light/material value, a
   ;;     singular world-view (normal matrix). Lighting itself lowers since
@@ -85,7 +86,8 @@
   ;; back buffer), 8 texture level uploads, 9 texture hits, 10 shaders,
   ;; 11 syncs, 12 declines, 13 old path did not report success (not
   ;; lowered), 14 ring opens, 15 no executor (arm dead), 16.. reasons,
-  ;; 72 buffer uploads, 73 buffer hits, 74 DRAWs from buffers, 76 back
+  ;; 72 buffer uploads, 73 buffer hits, 74 DRAWs from buffers, 75 CLIP
+  ;; records sent, 76 back
   ;; buffer locks that needed no readback (the DIB was current), 77 locks
   ;; filled with the last full Clear's colour, 78 unlock uploads folded into
   ;; a later one, 79 old-path lock readbacks skipped ($d9g_lock_supplies).
@@ -489,6 +491,144 @@
     (store.field GpsViewport zmin (local.get $p) (f32.const 0))
     (store.field GpsViewport zmax (local.get $p) (f32.const 1))
     (drop (call $d9g_end (local.get $p))))
+
+  ;; ---- d9cl: user clip planes (reason 27) begin ------------------------------
+  ;; D3DRS_CLIPPLANEENABLE (152) + SetClipPlane (program +25244 + 16*i) -> one
+  ;; sticky CLIP record (GpsClip, D3D clip space) when the executor states
+  ;; GPS_CAP_CLIP_PLANES. A guest VS's planes are already in clip space; fixed
+  ;; T&L planes are in world space and go through inverse(View * Projection):
+  ;; with clip = world * A, plane Pc = inverse(A) * Pw (column vector).
+  ;; POSITIONT draws ignore the planes (D3D clips only processed vertices).
+  ;; Own block (528 bytes): +0 staged GpsClip payload (100), +112 last sent
+  ;; payload (zero = the executor's initial state), +256 f64 4x8 scratch.
+  (global $d9cl_mem (mut i32) (i32.const 0))
+  (func $d9cl_m (result i32)
+    (local $g i32)
+    (if (i32.eqz (global.get $d9cl_mem)) (then
+      (local.set $g (call $gps_alloc (i32.const 528)))
+      (if (i32.eqz (local.get $g)) (then (call $d9g_fail (i32.const 1))))
+      (global.set $d9cl_mem (call $gps_wa (local.get $g)))
+      (memory.fill (global.get $d9cl_mem) (i32.const 0) (i32.const 528))))
+    (global.get $d9cl_mem))
+  ;; Scratch element [r][c] of the 4x8 f64 Gauss-Jordan matrix.
+  (func $d9cl_at (param $r i32) (param $c i32) (result i32)
+    (i32.add (i32.add (call $d9cl_m) (i32.const 256))
+      (i32.shl (i32.add (i32.shl (local.get $r) (i32.const 3)) (local.get $c)) (i32.const 3))))
+  ;; Stage the payload for a draw with a VS (vsmode 1 guest, 2 fixed T&L).
+  ;; 0 = staged (mask may be 0), 27 = decline (no cap, singular View*Proj
+  ;; or a non-finite plane).
+  (func $d9cl_prep (param $vsmode i32) (result i32)
+    (local $m i32) (local $mask i32) (local $i i32) (local $j i32) (local $k i32) (local $piv i32)
+    (local $s f64) (local $t f64) (local $best f64) (local $src i32) (local $x f32)
+    (local.set $m (call $d9cl_m))
+    (local.set $mask (i32.and (call $d9g_rs (i32.const 152)) (i32.const 63)))
+    (memory.fill (local.get $m) (i32.const 0) (i32.const 100))
+    (i32.store (local.get $m) (local.get $mask))
+    (if (i32.eqz (local.get $mask)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.and (global.get $d9g_caps) (global.get $GPS_CAP_CLIP_PLANES))) (then (return (i32.const 27))))
+    (if (i32.eq (local.get $vsmode) (i32.const 2)) (then
+      ;; [A | I] with A = View * Projection (row-major D3DMATRIX).
+      (local.set $i (i32.const 0))
+      (loop $rows
+        (local.set $j (i32.const 0))
+        (loop $cols
+          (local.set $s (f64.const 0))
+          (local.set $k (i32.const 0))
+          (loop $dot
+            (local.set $s (f64.add (local.get $s) (f64.mul
+              (f64.promote_f32 (f32.load (i32.add (global.get $d9g_pw)
+                (i32.add (i32.const 2068) (i32.shl (i32.add (i32.shl (local.get $i) (i32.const 2)) (local.get $k)) (i32.const 2))))))
+              (f64.promote_f32 (f32.load (i32.add (global.get $d9g_pw)
+                (i32.add (i32.const 2132) (i32.shl (i32.add (i32.shl (local.get $k) (i32.const 2)) (local.get $j)) (i32.const 2)))))))))
+            (local.set $k (i32.add (local.get $k) (i32.const 1)))
+            (br_if $dot (i32.lt_u (local.get $k) (i32.const 4))))
+          (f64.store (call $d9cl_at (local.get $i) (local.get $j)) (local.get $s))
+          (f64.store (call $d9cl_at (local.get $i) (i32.add (local.get $j) (i32.const 4)))
+            (select (f64.const 1) (f64.const 0) (i32.eq (local.get $i) (local.get $j))))
+          (local.set $j (i32.add (local.get $j) (i32.const 1)))
+          (br_if $cols (i32.lt_u (local.get $j) (i32.const 4))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $rows (i32.lt_u (local.get $i) (i32.const 4))))
+      ;; Gauss-Jordan, partial pivoting. NaN never beats the threshold.
+      (local.set $k (i32.const 0))
+      (loop $pivots
+        (local.set $piv (local.get $k))
+        (local.set $best (f64.abs (f64.load (call $d9cl_at (local.get $k) (local.get $k)))))
+        (local.set $i (i32.add (local.get $k) (i32.const 1)))
+        (block $found (loop $search
+          (br_if $found (i32.ge_u (local.get $i) (i32.const 4)))
+          (if (f64.gt (f64.abs (f64.load (call $d9cl_at (local.get $i) (local.get $k)))) (local.get $best)) (then
+            (local.set $piv (local.get $i))
+            (local.set $best (f64.abs (f64.load (call $d9cl_at (local.get $i) (local.get $k)))))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $search)))
+        (if (i32.eqz (f64.gt (local.get $best) (f64.const 1e-30))) (then (return (i32.const 27))))
+        (local.set $j (i32.const 0))
+        (loop $swap
+          (local.set $t (f64.load (call $d9cl_at (local.get $k) (local.get $j))))
+          (f64.store (call $d9cl_at (local.get $k) (local.get $j)) (f64.load (call $d9cl_at (local.get $piv) (local.get $j))))
+          (f64.store (call $d9cl_at (local.get $piv) (local.get $j)) (local.get $t))
+          (local.set $j (i32.add (local.get $j) (i32.const 1)))
+          (br_if $swap (i32.lt_u (local.get $j) (i32.const 8))))
+        (local.set $t (f64.load (call $d9cl_at (local.get $k) (local.get $k))))
+        (local.set $j (i32.const 0))
+        (loop $scale
+          (f64.store (call $d9cl_at (local.get $k) (local.get $j))
+            (f64.div (f64.load (call $d9cl_at (local.get $k) (local.get $j))) (local.get $t)))
+          (local.set $j (i32.add (local.get $j) (i32.const 1)))
+          (br_if $scale (i32.lt_u (local.get $j) (i32.const 8))))
+        (local.set $i (i32.const 0))
+        (loop $elim
+          (if (i32.ne (local.get $i) (local.get $k)) (then
+            (local.set $t (f64.load (call $d9cl_at (local.get $i) (local.get $k))))
+            (local.set $j (i32.const 0))
+            (loop $sub
+              (f64.store (call $d9cl_at (local.get $i) (local.get $j))
+                (f64.sub (f64.load (call $d9cl_at (local.get $i) (local.get $j)))
+                  (f64.mul (local.get $t) (f64.load (call $d9cl_at (local.get $k) (local.get $j))))))
+              (local.set $j (i32.add (local.get $j) (i32.const 1)))
+              (br_if $sub (i32.lt_u (local.get $j) (i32.const 8))))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $elim (i32.lt_u (local.get $i) (i32.const 4))))
+        (local.set $k (i32.add (local.get $k) (i32.const 1)))
+        (br_if $pivots (i32.lt_u (local.get $k) (i32.const 4))))))
+    (local.set $i (i32.const 0))
+    (loop $planes
+      (if (i32.and (local.get $mask) (i32.shl (i32.const 1) (local.get $i))) (then
+        (local.set $src (i32.add (global.get $d9g_pw) (i32.add (i32.const 25244) (i32.shl (local.get $i) (i32.const 4)))))
+        (if (i32.eq (local.get $vsmode) (i32.const 1))
+          (then (memory.copy (i32.add (local.get $m) (i32.add (i32.const 4) (i32.shl (local.get $i) (i32.const 4)))) (local.get $src) (i32.const 16)))
+          (else
+            (local.set $j (i32.const 0))
+            (loop $comp
+              (local.set $s (f64.const 0))
+              (local.set $k (i32.const 0))
+              (loop $dot2
+                (local.set $s (f64.add (local.get $s) (f64.mul
+                  (f64.load (call $d9cl_at (local.get $j) (i32.add (local.get $k) (i32.const 4))))
+                  (f64.promote_f32 (f32.load (i32.add (local.get $src) (i32.shl (local.get $k) (i32.const 2))))))))
+                (local.set $k (i32.add (local.get $k) (i32.const 1)))
+                (br_if $dot2 (i32.lt_u (local.get $k) (i32.const 4))))
+              (local.set $x (f32.demote_f64 (local.get $s)))
+              (if (f32.ne (f32.sub (local.get $x) (local.get $x)) (f32.const 0)) (then (return (i32.const 27))))
+              (f32.store (i32.add (local.get $m) (i32.add (i32.add (i32.const 4) (i32.shl (local.get $i) (i32.const 4))) (i32.shl (local.get $j) (i32.const 2))))
+                (local.get $x))
+              (local.set $j (i32.add (local.get $j) (i32.const 1)))
+              (br_if $comp (i32.lt_u (local.get $j) (i32.const 4))))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $planes (i32.lt_u (local.get $i) (i32.const 6))))
+    (i32.const 0))
+  ;; Emit the staged payload when it differs from the last one sent.
+  (func $d9cl_emit
+    (local $m i32) (local $p i32)
+    (local.set $m (call $d9cl_m))
+    (if (call $d3g_row_eq (local.get $m) (i32.add (local.get $m) (i32.const 112)) (size-of GpsClip)) (then (return)))
+    (memory.copy (i32.add (local.get $m) (i32.const 112)) (local.get $m) (size-of GpsClip))
+    (local.set $p (call $d9g_begin (global.get $GPS_OP_CLIP) (size-of GpsClip)))
+    (memory.copy (local.get $p) (local.get $m) (size-of GpsClip))
+    (drop (call $d9g_end (local.get $p)))
+    (call $d9g_stat (i32.const 75) (i32.const 1)))
+  ;; ---- d9cl: user clip planes end --------------------------------------------
 
   ;; ---- RASTER ----------------------------------------------------------------
   ;; D3DBLEND 1..11 pass; BOTHSRCALPHA/BOTHINVSRCALPHA are expanded by the
@@ -2011,7 +2151,9 @@
           (if (i32.ne (i32.and (local.get $fvf) (i32.const 0x400e)) (i32.const 2)) (then (return (i32.const 27))))
           (local.set $vsmode (i32.const 2))))))
     (if (local.get $vsmode) (then
-      (if (call $d9g_rs (i32.const 152)) (then (return (i32.const 27))))
+      ;; d9cl: user clip planes staged here, emitted with the viewport.
+      (local.set $r (call $d9cl_prep (local.get $vsmode)))
+      (if (local.get $r) (then (return (local.get $r))))
       (if (i32.eq (local.get $vsmode) (i32.const 2)) (then
         (if (i32.or (call $d9g_rs (i32.const 151)) (call $d9g_rs (i32.const 167))) (then (return (i32.const 27))))))))
     (local.set $prim (i32.load offset=24 (local.get $desc)))
@@ -2216,6 +2358,7 @@
         (call $d9g_vs_consts (i32.add (call $d9g_m) (i32.const 111616)) (i32.const 16) (i32.const 24))))))
     (call $d9g_bind_tex (local.get $nb))
     (call $d9g_viewport)
+    (if (local.get $vsmode) (then (call $d9cl_emit))) ;; d9cl
     (if (i32.eqz (local.get $vsmode)) (then
       (local.set $layout (call $d9g_layout (local.get $fvf) (local.get $stride) (local.get $texmap)))))
     (if (local.get $direct)

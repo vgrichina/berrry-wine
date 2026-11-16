@@ -99,14 +99,14 @@ u32 fields shared with the consumer are accessed with Atomics.
 header before it executes the first record, and sets `CAP_VALID` (1) last.
 WAT reads it to decide what the guest is told; nothing else negotiates
 features. Flags: 2 VS_IR, 4 STENCIL, 8 LOGIC_OP, 16 OCCLUSION, 32
-BORDER_LINEAR, 64 MIRRORONCE. `formats` is a bit per fmt code (bit 15 =
+BORDER_LINEAR, 64 MIRRORONCE, 128 CLIP_PLANES. `formats` is a bit per fmt code (bit 15 =
 A8B8G8R8). Each executor's caps:
 
 | executor | flags | max_texture | max_samplers | max_aniso |
 |---|---|---|---|---|
 | null | all | 16384 | 16 | 16 |
-| software | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE | 2048 | 6 (the native VM's stages) | 1 |
-| webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
+| software | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES | 2048 | 6 (the native VM's stages) | 1 |
+| webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, CLIP_PLANES (with VS_IR, 266 vertex uniform vectors and 12 varyings) | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
 
 The WebGL executor keeps two texture units past the samplers: the fog
 table and the logic-op destination copy. GL has no border wrap mode: a
@@ -241,6 +241,7 @@ bit is not in its caps (all three in-tree executors refuse the rest).
 | 12 | RASTER | fixed 96-byte block, see below |
 | 13 | BIND | u32 n, n × {u32 slot, u32 texture id (TEX2D, CUBE or RT), u32 sampler id}. Sampling the bound colour target is refused |
 | 14 | CONSTS | u8 stage (0 vertex: c0..c255, 1 pixel: c0..c7), u16 first, u32 count, f32×4×count |
+| 15 | CLIP | u32 mask (bits 0–5), f32×4×6 planes (a, b, c, d) in D3D clip space; disabled planes zero. Sticky. A draw with `vs ≠ 0` keeps only what satisfies a·x + b·y + c·z + d·w ≥ 0 on the output position for every enabled plane (before the divide; z 0..w); `vs 0` draws ignore it, as D3D does for pretransformed vertices. A nonzero mask needs CAP_CLIP_PLANES |
 | 20 | DRAW | u8 prim (1–5), u8 index_size (0 none, 2, 4), u32 vs, u32 ps, u32 layout, u32 vbuf, u32 voff, u32 stride, u32 ibuf (0 = none), u32 ioff, u32 count (indices, or vertices when index_size 0), u32 vcount (vertices addressed; = count when not indexed; every index < vcount). voff and ioff are byte offsets into the VBUF and IBUF: D3D's base vertex is `voff = (offset + BaseVertexIndex) × stride` and its start index `ioff = StartIndex × index_size` (ioff aligned to index_size); vertex 0 of the draw is at voff, and indices are relative to it |
 | 21 | DRAW_UP | same as DRAW; vbuf and ibuf 0, voff (and ioff when indexed) are arena positions |
 | 22 | CLEAR | u8 mask (1 color, 2 z, 4 stencil), u8 colormask, u32 rgba (R \| G<<8 \| B<<16 \| A<<24), f32 z, u32 stencil, rect |
@@ -279,7 +280,7 @@ plain write: the blend factors and ops are then not read. `two_sided` needs
 `stencil_enable`; the main set applies to clockwise triangles and the ccw
 set to counter-clockwise ones. Stencil needs a D24S8 depth target.
 
-**Sticky state.** RASTER, CONSTS, BIND and TARGETS persist in the executor
+**Sticky state.** RASTER, CONSTS, CLIP, BIND and TARGETS persist in the executor
 until the next record of the same op, across SHADER changes and draws. A
 RASTER block is always complete (never a partial update), but the producer
 re-emits a block only when its bytes differ from the last one it sent — on
@@ -410,6 +411,16 @@ a vertex stage set CAP_VS_IR: the software one runs the IR in the native
 VM (oT0..5, six samplers); the WebGL one prints it to GLSL
 (`compileCoreVS` in `lib/d3d9-shader.js`) when the context has 260 vertex
 uniform vectors, 11 varyings and 16 attributes.
+
+User clip planes (CLIP) are tested on the output position. The software
+executor clips each primitive against them in the native rasterizer
+(`d3d_software_create_deferred_clipped`, real polygon clipping); the WebGL
+one, which has no `gl_ClipDistance` in GLSL ES, passes the six distances as
+varyings and discards a fragment whose interpolated distance is negative.
+The D3D9 producer sends a guest vertex shader's planes as they are (D3D9
+defines them in clip space for programmable vertex processing) and moves
+fixed-function ones from world space through inverse(View × Projection);
+a singular View × Projection declines the draw (reason 27).
 
 ## Upload arena
 

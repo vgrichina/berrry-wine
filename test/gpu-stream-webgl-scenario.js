@@ -39,6 +39,27 @@
     });
     return bytes;
   }
+  // Core vertex IR (stage 0, 0xfffe0200, flag 8; src/09af1 $vc_publish):
+  // [op, ...operands], each operand [bank, index, selector, modifier].
+  function vsIRShader(instrs) {
+    const bytes = new Uint8Array(32 + instrs.length * 128);
+    const dv = new DataView(bytes.buffer);
+    const u32 = (o, v) => dv.setUint32(o, v >>> 0, true);
+    u32(0, 0x44534952); u32(4, 1); u32(8, 0); u32(12, 0xfffe0200);
+    u32(16, instrs.length); u32(20, instrs.length * 3 + 2); u32(24, bytes.length); u32(28, 8);
+    instrs.forEach(([op, ...ops], i) => {
+      const at = 32 + i * 128;
+      u32(at, op); u32(at + 4, i + 1); u32(at + 8, ops.length); u32(at + 12, 0);
+      ops.forEach(([bank, index, selector = 0, modifier = 0], j) => {
+        const q = at + 16 + j * 16;
+        u32(q, bank); u32(q + 4, index); u32(q + 8, selector); u32(q + 12, modifier);
+      });
+    });
+    return bytes;
+  }
+  // dcl_position v0, dcl_color v1, mov oPos v0, mov oD0 v1.
+  const PASS_VS = vsIRShader([[31, [254, 0, 0], [1, 0, 15]], [31, [254, 10, 0], [1, 1, 15]],
+    [1, [4, 0, 15], [1, 0, 0xe4]], [1, [5, 0, 15], [1, 1, 0xe4]]]);
   const R0 = 0x800F0000, R1 = 0x800F0001, R0S = 0x801F0000; // r0, r1, r0_sat (all channels)
   const SRC_R0 = 0x80E40000, SRC_R1 = 0x80E40001, V0 = 0x90E40000, T0DW = 0xBAE40000, T1DW = 0xBAE40001;
   const FLAT_IR = irShader([[OPC.MOV, R0S, V0]]);
@@ -391,7 +412,7 @@
       });
       return out;
     };
-    const ID = { RT: 1, DS: 2, RT2: 3, COMPACT: 10, POS: 11, FLAT: 12, TEX: 13, SAMP: 14, MIRROR: 15, BORDER: 16, TEX2: 17, BLIN: 18 };
+    const ID = { RT: 1, DS: 2, RT2: 3, COMPACT: 10, POS: 11, FLAT: 12, TEX: 13, SAMP: 14, MIRROR: 15, BORDER: 16, TEX2: 17, BLIN: 18, PVS: 19, PL: 20 };
     const S = 28; // COMPACT stride: POSITIONT f4 @0, COLOR0 D3DCOLOR @16, TEXCOORD0 f2 @20
     // vertex [x, y, z, rhw, argb, s, t] in the COMPACT layout
     const pack = (verts) => {
@@ -593,6 +614,49 @@
       [[0, [255, 255, 0]], [8, [255, 255, 0]], [16, [255, 128, 0]], [24, [255, 0, 0]], [32, [128, 0, 128]],
         [40, [0, 0, 255]], [48, [128, 128, 128]], [56, [255, 255, 0]]]
         .forEach(([x, rgb]) => expectPx('BORDER linear', f, x, 4, [...rgb, 255], 2));
+
+      // 13. User clip planes (CLIP, GPS_CAP_CLIP_PLANES) apply to vs != 0
+      //     draws on the output position (D3D clip space). A pass-through
+      //     core VS draws a clip-space quad; plane 0 (x >= 0) and plane 5
+      //     (y >= 0; WebGL carries 4-5 in another varying than 0-3) leave the
+      //     top-right quadrant. A vs 0 draw ignores the planes; mask 0 lifts
+      //     them. Executors without a vertex stage cannot advertise CLIP.
+      const cflags = ring.caps().flags;
+      check('caps clip planes need a vertex stage', !(cflags & CONST.CAP_CLIP_PLANES) || !!(cflags & CONST.CAP_VS_IR), `flags ${cflags}`);
+      if (cflags & CONST.CAP_CLIP_PLANES) {
+        const WHITE = [255, 255, 255, 255];
+        emit('SHADER', { id: ID.PVS, stage: 0, ir_bytes: PASS_VS.length }, PASS_VS);
+        emit('LAYOUT', { id: ID.PL, count: 2, stride: 20 }, elems([[0, 0, CONST.VTYPE_FLOAT4, 0], [CONST.USAGE_COLOR, 0, CONST.VTYPE_D3DCOLOR, 16]]));
+        emit('TARGETS', { color: ID.RT, depth: 0 });
+        emit('VIEWPORT', { x: 0, y: 0, w: W, h: H, zmin: 0, zmax: 1 });
+        raster({});
+        const clipQuad = () => {
+          const v = new Uint8Array(80), dv = new DataView(v.buffer);
+          [[-1, 1], [1, 1], [-1, -1], [1, -1]].forEach(([x, y], i) => {
+            dv.setFloat32(i * 20, x, true); dv.setFloat32(i * 20 + 4, y, true); dv.setFloat32(i * 20 + 8, 0.5, true);
+            dv.setFloat32(i * 20 + 12, 1, true); dv.setUint32(i * 20 + 16, 0xffffffff, true);
+          });
+          emit('DRAW_UP', { prim: CONST.PRIM_TRIANGLELIST, vs: ID.PVS, ps: ID.FLAT, layout: ID.PL, voff: arenaPut(v), stride: 20,
+            index_size: 2, ioff: arenaPut(idx(2, QUAD)), count: 6, vcount: 4 });
+        };
+        const planes = new Float32Array(24);
+        planes.set([1, 0, 0, 0], 0); planes.set([0, 1, 0, 0], 20);
+        emit('CLIP', { mask: 0x21, planes: Array.from(planes) });
+        emit('CLEAR', { mask: 1, colormask: 15, rgba: 0xff000000, z: 1, left: 0, top: 0, right: W, bottom: H });
+        clipQuad();
+        f = present();
+        expectPx('clip planes 0+5 keep', f, 48, 16, WHITE, 2);
+        for (const [x, y] of [[16, 16], [16, 48], [48, 48]]) expectPx('clip planes 0+5 drop', f, x, y, BLACK, 2);
+        emit('CLEAR', { mask: 1, colormask: 15, rgba: 0xff000000, z: 1, left: 0, top: 0, right: W, bottom: H });
+        draw(ID.FLAT, CONST.PRIM_TRIANGLELIST, corners(0, 0, W, H, 0.5, () => [0xffffffff, 0, 0]), { index_size: 2, indices: QUAD });
+        f = present();
+        expectPx('clip planes ignored by vs 0', f, 16, 48, WHITE, 2);
+        emit('CLIP', { mask: 0, planes: Array.from(new Float32Array(24)) });
+        emit('CLEAR', { mask: 1, colormask: 15, rgba: 0xff000000, z: 1, left: 0, top: 0, right: W, bottom: H });
+        clipQuad();
+        f = present();
+        expectPx('clip mask 0', f, 16, 48, WHITE, 2);
+      }
     } catch (e) {
       failures.push(`scenario threw: ${e && e.stack || e}`);
     }
