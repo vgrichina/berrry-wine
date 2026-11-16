@@ -136,3 +136,40 @@ Git SHA plus binary diffs preserve relevant source and owned new files; only
 small inputs and selected logs/screenshots/pins/closure belong in the ignored
 run. No agents, workers or boxes are launched. Box ID/expiry are null, state
 NOT_CREATED, stop receipt NOT_APPLICABLE.
+
+## Published-revision first blocker
+
+Implementation commit `9005ce1b84dde2611fed0c747ba30f7e1e8c21fb` was published
+with strict pull/push. Both shared and committed-HEAD+whole-owned locked builds
+passed. The current pixel/source/confirmation/input/protocol tests passed, as
+did FT relay, LS32, ThunkConnect16, Win4 DllEntryPoint, Win16 brush and native
+Quit ABI checks. One repeated shared ABI compile refused its already-existing
+output filename; the preceding shared compile and full HEAD compile passed.
+The initial authored loopback preinit test failed because its server did not
+acknowledge WebSocket close. Its child receipt was not persisted, so that child
+identity remains UNKNOWN in evidence; it is not counted as native closure.
+The corrected receipt-first server controls passed, including real 3-second
+initialization expiry with zero CDP observation/input messages.
+
+`final-main` exercised that exact published revision. The first three freshly
+reviewed gestures confirmed all current gates at 198, 254 and 350 ms, with
+separate initialization of 99, 113 and 121 ms. Both visible native modals and
+public DOWN=1/UP=3 were observed. The fourth, intended Escape, failed before
+arming or physical DOWN. The fresh module request began at 181 ms and returned
+at 481 ms; byte verification completed at 491 ms. Source completion was 497 ms,
+final file-pin checking began at 498 ms and finished at 545 ms. The 500 ms guard
+refused, permanently closing that endpoint. No Escape DOWN or native Quit
+occurred on the published run, and no subsequent protocol request was sent.
+A local terminal-diagnostic command file was mistakenly written after the
+failed receipt lookup; the closed process never consumed it. That file and the
+zero-later-request proof are preserved rather than silently removed.
+
+This is the first remaining concrete blocker: the complete actual current
+source/module/pin path does not consistently fit the mandatory 500 ms guard.
+It is not a proven explanation of the predecessor's historical UNKNOWN.
+Final Worker qualification and the full final-revision refusal matrix were
+not reached; intermediate passes do not qualify them. No original software or
+WebGL run was authorized or launched, and original gameplay/native Quit remain
+unobserved. A future repair needs a complete qualifying path, or independently
+proven immutable identity reuse with all required invalidations and a fresh
+native lease. This task does not introduce such reuse or waive the guard.
