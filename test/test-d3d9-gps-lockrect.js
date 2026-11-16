@@ -38,10 +38,12 @@ const GREEN = 0xff00ff00;
     assert.strictEqual(px.br >>> 0, BLUE);
     assert.strictEqual(await s.call('IDirect3DSurface9_UnlockRect', '[ctx.d9g.bb]'), 0);
     st = await s.stats();
-    assert.strictEqual(st.rtUploads, 1, 'UnlockRect pushed the CPU write to the executor');
+    assert.strictEqual(st.rtUploads, 0, 'UnlockRect holds its upload until the executor needs the RT');
     // A frame with nothing drawn still presents from the ring; read the
     // executor back into a zeroed DIB.
     await run([['IDirect3DDevice9_Present', '[ctx.d9g.device,0,0,0,0]']]);
+    st = await s.stats();
+    assert.strictEqual(st.rtUploads, 1, 'Present pushed the CPU write to the executor');
     const after = await s.evaluate(`(()=>{const p=ctx.d9g,wa=exports.guest_to_wasm(p.bits);
       new Uint8Array(memory.buffer,wa,p.pitch*8).fill(0);exports.d3d9_gps_sync_front();
       const v=new DataView(memory.buffer),at=(x,y)=>v.getUint32(wa+y*p.pitch+x*4,true)>>>0;

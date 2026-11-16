@@ -197,6 +197,9 @@
         (local.set $dst (i32.sub (local.get $edi) (i32.sub (local.get $bytes) (local.get $w))))
         (local.set $src (i32.sub (local.get $esi) (i32.sub (local.get $bytes) (local.get $w))))
         (local.set $step (i32.sub (i32.const 0) (local.get $w)))))
+    ;; A copy over a whole lazily-locked GPU surface needs no readback.
+    (if (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4))
+      (then (call $d3dim_lazy_overwrite (local.get $dst) (local.get $bytes) (local.get $src) (local.get $bytes))))
     ;; One call over the whole destination extent, not two endpoint calls.
     ;; Endpoints were enough while invalidation was per-page and a copy of
     ;; this size spanned at most two pages; per-offset retirement
@@ -270,6 +273,8 @@
               (i32.eq (local.get $w) (i32.const 8))))
     (local.set $v (i64.and (local.get $v) (local.get $mask)))
     (local.set $b (i32.and (i32.wrap_i64 (local.get $v)) (i32.const 0xFF)))
+    (if (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4))
+      (then (call $d3dim_lazy_overwrite (local.get $dst) (local.get $bytes) (i32.const 0) (i32.const 0))))
     (call $invalidate_code_write (local.get $dst) (local.get $bytes))
     ;; Match MOVS: only armed runs pay for per-element $gs completion notes.
     (if (i32.and (i32.eqz (global.get $native_store_on))

@@ -77,7 +77,10 @@
   ;; back buffer), 8 texture level uploads, 9 texture hits, 10 shaders,
   ;; 11 syncs, 12 declines, 13 old path did not report success (not
   ;; lowered), 14 ring opens, 15 no executor (arm dead), 16.. reasons,
-  ;; 72 buffer uploads, 73 buffer hits, 74 DRAWs from buffers.
+  ;; 72 buffer uploads, 73 buffer hits, 74 DRAWs from buffers, 76 back
+  ;; buffer locks that needed no readback (the DIB was current), 77 locks
+  ;; filled with the last full Clear's colour, 78 unlock uploads folded into
+  ;; a later one, 79 old-path lock readbacks skipped ($d9g_lock_supplies).
   ;;
   ;; Block $d9g_mem: +0 stats (128 words), +512 RASTER stage, +608 its
   ;; cache, +704 viewport cache (24), +768 bind cache {n, 6 x {slot, tex,
@@ -131,6 +134,20 @@
   ;; Per call: program state and render-state block (wasm).
   (global $d9g_pw (mut i32) (i32.const 0))
   (global $d9g_rsw (mut i32) (i32.const 0))
+  ;; The guest's copy of the executor RT (the back buffer DIB at
+  ;; $d9g_cpu_bits / $d9g_cpu_pitch), while $d9g_coherent: 0 unknown, 1 the
+  ;; DIB holds the RT, 2 the DIB is newer inside [px0,px1) x [py0,py1) (an
+  ;; Unlock's upload not sent yet: $d9g_flush sends it before the executor
+  ;; next reads the RT), 3 the RT is one full Clear of $d9g_cpu_rgba (a Lock
+  ;; fills the DIB instead of reading back).
+  (global $d9g_cpu (mut i32) (i32.const 0))
+  (global $d9g_cpu_bits (mut i32) (i32.const 0))
+  (global $d9g_cpu_pitch (mut i32) (i32.const 0))
+  (global $d9g_cpu_rgba (mut i32) (i32.const 0))
+  (global $d9g_px0 (mut i32) (i32.const 0))
+  (global $d9g_py0 (mut i32) (i32.const 0))
+  (global $d9g_px1 (mut i32) (i32.const 0))
+  (global $d9g_py1 (mut i32) (i32.const 0))
 
   (func $d9g_fail (param $code i32)
     (call $host_log_i32 (i32.const 0x44394750))
@@ -273,6 +290,7 @@
     (global.set $d9g_ds (i32.const 0))
     (global.set $d9g_ds_ptr (i32.const 0))
     (global.set $d9g_dev (i32.const 0))
+    (global.set $d9g_cpu (i32.const 0))
     (global.set $d9g_cstale (i32.const 1))
     (global.set $d9g_zstale (i32.const 6))
     (global.set $d9g_c_color (i32.const -1))
@@ -1744,8 +1762,10 @@
     (if (i32.eqz (global.get $d9g_on)) (then (return)))
     (if (i32.ne (local.get $result) (i32.const 1)) (then
       (call $d9g_stat (i32.const 13) (i32.const 1)) (return)))
+    (call $d9g_flush)
     (local.set $desc (call $d9g_desc (local.get $device)))
     (if (i32.eqz (call $d9g_ready (local.get $desc))) (then (return)))
+    (global.set $d9g_cpu (i32.const 0))
     (local.set $r (call $d9g_draw_try (local.get $device) (local.get $desc) (local.get $kind)))
     (if (local.get $r) (then (call $d9g_decline (local.get $r)))))
 
@@ -1758,11 +1778,13 @@
     (if (i32.eqz (global.get $d9g_on)) (then (return)))
     (if (i32.ne (local.get $result) (i32.const 1)) (then
       (call $d9g_stat (i32.const 13) (i32.const 1)) (return)))
+    (call $d9g_flush)
     (local.set $desc (call $d9g_desc (local.get $device)))
     (if (i32.eqz (call $d9g_ready (local.get $desc))) (then (return)))
     (local.set $r (call $d9g_bind (local.get $device) (local.get $desc)))
     (if (local.get $r) (then (call $d9g_decline (local.get $r)) (return)))
     (local.set $flags (i32.and (i32.load offset=44 (local.get $desc)) (i32.const 7)))
+    (if (i32.and (local.get $flags) (i32.const 1)) (then (global.set $d9g_cpu (i32.const 0))))
     (if (i32.or (i32.eqz (global.get $d9g_ds)) (global.get $d9g_ds_bad))
       (then (local.set $flags (i32.and (local.get $flags) (i32.const 1)))))
     (if (i32.eqz (global.get $d9g_ds_d24)) (then (local.set $flags (i32.and (local.get $flags) (i32.const 3)))))
@@ -1812,7 +1834,10 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $each (i32.lt_u (local.get $i) (local.get $count)))))
     (if (local.get $full) (then
-      (if (i32.and (local.get $flags) (i32.const 1)) (then (global.set $d9g_cstale (i32.const 0))))
+      (if (i32.and (local.get $flags) (i32.const 1)) (then
+        (global.set $d9g_cstale (i32.const 0))
+        (global.set $d9g_cpu (i32.const 3))
+        (global.set $d9g_cpu_rgba (local.get $rgba))))
       (global.set $d9g_zstale (i32.and (global.get $d9g_zstale)
         (i32.xor (i32.and (local.get $flags) (i32.const 6)) (i32.const -1))))
       ;; D16 has no stencil to go stale.
@@ -1820,6 +1845,7 @@
         (then (global.set $d9g_zstale (i32.and (global.get $d9g_zstale) (i32.const 2))))))))
 
   (func $d9g_frame_end (param $gpu i32)
+    (if (i32.eqz (local.get $gpu)) (then (global.set $d9g_cpu (i32.const 0))))
     (call $d9g_stat (select (i32.const 4) (i32.const 5) (local.get $gpu)) (i32.const 1))
     (global.set $d9g_mode (i32.const 0))
     (global.set $d9g_frame (i32.add (global.get $d9g_frame) (i32.const 1))))
@@ -1830,6 +1856,7 @@
     (local $h i32) (local $p i32) (local $seq i32) (local $hwnd i32) (local $state i32)
     (if (i32.or (i32.eqz (global.get $d9g_on)) (global.get $d9g_dead)) (then (return (i32.const 0))))
     (if (i32.eqz (global.get $d9g_h)) (then (return (i32.const 0))))
+    (call $d9g_flush)
     ;; Old-path presents by cause (stat 64 + k): 0 another device / no
     ;; target, 1 declined frame, 2 executor target stale, 3 no window.
     (if (i32.or (i32.ne (local.get $device) (global.get $d9g_dev)) (i32.eqz (global.get $d9g_rt)))
@@ -1971,11 +1998,62 @@
         (i32.and (i32.ne (global.get $d9g_h) (i32.const 0)) (i32.ne (global.get $d9g_rt) (i32.const 0)))
         (i32.and (i32.eq (global.get $d9g_dev) (local.get $device)) (i32.eqz (global.get $d9g_cstale))))))
 
+  ;; Send the Unlock upload $d9g_cpu 2 has been holding back: the
+  ;; executor is about to read or write its RT.
+  (func $d9g_flush
+    (if (i32.ne (global.get $d9g_cpu) (i32.const 2)) (then (return)))
+    (global.set $d9g_cpu (i32.const 0))
+    (if (i32.eqz (call $d9g_coherent (global.get $d9g_dev))) (then (return)))
+    (call $d9g_upload_rect (global.get $d9g_cpu_bits) (global.get $d9g_cpu_pitch) (global.get $d9g_rt_fmt)
+      (global.get $d9g_px0) (global.get $d9g_py0)
+      (i32.sub (global.get $d9g_px1) (global.get $d9g_px0)) (i32.sub (global.get $d9g_py1) (global.get $d9g_py0)))
+    (global.set $d9g_cpu (i32.const 1)))
+
+  ;; The RT is one solid colour (rgba): write it to the DIB at $bits as the
+  ;; readback would have converted it. 0 = not done (row under 4 bytes).
+  (func $d9g_fill (param $bits i32) (param $pitch i32) (param $fmt i32) (param $rgba i32) (result i32)
+    (local $pix i32) (local $row i32) (local $n i32) (local $c i32) (local $y i32)
+    (local.set $pix (call $d9g_pix (local.get $fmt)))
+    (local.set $row (i32.mul (global.get $d9g_rt_w) (i32.shr_u (local.get $pix) (i32.const 11))))
+    (if (i32.lt_u (local.get $row) (i32.const 4)) (then (return (i32.const 0))))
+    (i32.store (local.get $bits) (local.get $rgba))
+    (call $d3g_rgba_to_row (local.get $bits) (local.get $bits) (i32.const 1)
+      (i32.and (local.get $pix) (i32.const 255)) (i32.shr_u (local.get $pix) (i32.const 8)))
+    (local.set $n (i32.shr_u (local.get $pix) (i32.const 11)))
+    (block $d (loop $dbl
+      (br_if $d (i32.ge_u (local.get $n) (local.get $row)))
+      (local.set $c (i32.sub (local.get $row) (local.get $n)))
+      (if (i32.gt_u (local.get $c) (local.get $n)) (then (local.set $c (local.get $n))))
+      (memory.copy (i32.add (local.get $bits) (local.get $n)) (local.get $bits) (local.get $c))
+      (local.set $n (i32.add (local.get $n) (local.get $c)))
+      (br $dbl)))
+    (local.set $y (i32.const 1))
+    (block $e (loop $rows
+      (br_if $e (i32.ge_u (local.get $y) (global.get $d9g_rt_h)))
+      (memory.copy (i32.add (local.get $bits) (i32.mul (local.get $y) (local.get $pitch))) (local.get $bits) (local.get $row))
+      (local.set $y (i32.add (local.get $y) (i32.const 1)))
+      (br $rows)))
+    (call $page_watch_write (local.get $bits) (i32.mul (global.get $d9g_rt_h) (local.get $pitch)))
+    (call $d9g_stat (i32.const 77) (i32.const 1))
+    (i32.const 1))
+
+  ;; 09am, before the old path reads its RT back for a Lock / GetDC of the
+  ;; back buffer: 1 when $d9g_bb_sync will supply every pixel itself, so
+  ;; that readback (a readPixels in the browser) is skipped.
+  (func $d9g_lock_supplies (param $device i32) (result i32)
+    (if (i32.eqz (call $d9g_coherent (local.get $device))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d9g_pix (global.get $d9g_rt_fmt))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d3ddev_rt_entry (local.get $device))) (then (return (i32.const 0))))
+    (call $d9g_stat (i32.const 79) (i32.const 1))
+    (i32.const 1))
+
   ;; 09am $d3d9_backbuffer_dc_sync, after the old call: a coherent executor
-  ;; back buffer is what LockRect / GetDC see (readback, sites 0/1); what the
-  ;; CPU wrote on unlock / ReleaseDC goes back up.
+  ;; back buffer is what LockRect / GetDC see (readback, sites 0/1) unless
+  ;; the DIB already holds it ($d9g_cpu); what the CPU wrote on unlock /
+  ;; ReleaseDC goes back up before the executor next uses its RT.
   (func $d9g_bb_sync (param $device i32) (param $upload i32) (param $result i32) (result i32)
-    (local $rt i32) (local $state i32) (local $flags i32)
+    (local $rt i32) (local $state i32) (local $flags i32) (local $bits i32) (local $pitch i32)
+    (local $x i32) (local $y i32) (local $w i32) (local $hgt i32)
     (if (i32.ne (local.get $result) (i32.const 1)) (then (return (local.get $result))))
     (if (i32.or (i32.eqz (global.get $d9g_on)) (global.get $d9g_dead)) (then (return (local.get $result))))
     (if (i32.or (i32.eqz (global.get $d9g_h)) (i32.ne (global.get $d9g_dev) (local.get $device)))
@@ -1983,29 +2061,68 @@
     (if (i32.eqz (global.get $d9g_rt)) (then (return (local.get $result))))
     (local.set $rt (call $d3ddev_rt_entry (local.get $device)))
     (local.set $flags (load.field DxObject flags (local.get $rt)))
+    (local.set $bits (load.field DxObject misc1 (local.get $rt)))
+    (local.set $pitch (load.field DxObject pitch (local.get $rt)))
+    ;; The copy is of another DIB, or the render worker's old readback has
+    ;; just rewritten this one: start over.
+    (if (i32.or (global.get $d3d_render_token)
+          (i32.and (i32.or (i32.eq (global.get $d9g_cpu) (i32.const 1)) (i32.eq (global.get $d9g_cpu) (i32.const 2)))
+            (i32.or (i32.ne (global.get $d9g_cpu_bits) (local.get $bits)) (i32.ne (global.get $d9g_cpu_pitch) (local.get $pitch)))))
+      (then
+        (call $d9g_flush)
+        (global.set $d9g_cpu (i32.const 0))))
     (if (local.get $upload)
       (then
+        (local.set $w (global.get $d9g_rt_w))
+        (local.set $hgt (global.get $d9g_rt_h))
         (if (i32.and (local.get $flags) (i32.shl (i32.const 1) (i32.const 26)))
           (then
             (local.set $state (call $g2w (call $d3d9_program_state (local.get $device))))
-            (call $d9g_upload_rect (load.field DxObject misc1 (local.get $rt)) (load.field DxObject pitch (local.get $rt))
-              (global.get $d9g_rt_fmt)
-              (i32.load offset=22028 (local.get $state)) (i32.load offset=22032 (local.get $state))
-              (i32.load offset=22036 (local.get $state)) (i32.load offset=22040 (local.get $state))))
+            (local.set $x (i32.load offset=22028 (local.get $state)))
+            (local.set $y (i32.load offset=22032 (local.get $state)))
+            (local.set $w (i32.load offset=22036 (local.get $state)))
+            (local.set $hgt (i32.load offset=22040 (local.get $state)))))
+        (if (i32.and (call $d9g_coherent (local.get $device))
+              (i32.or (i32.eq (global.get $d9g_cpu) (i32.const 1)) (i32.eq (global.get $d9g_cpu) (i32.const 2))))
+          (then
+            ;; Hold the upload back; widen one already held.
+            (if (i32.eq (global.get $d9g_cpu) (i32.const 2))
+              (then
+                (call $d9g_stat (i32.const 78) (i32.const 1))
+                (if (i32.lt_u (local.get $x) (global.get $d9g_px0)) (then (global.set $d9g_px0 (local.get $x))))
+                (if (i32.lt_u (local.get $y) (global.get $d9g_py0)) (then (global.set $d9g_py0 (local.get $y))))
+                (if (i32.gt_u (i32.add (local.get $x) (local.get $w)) (global.get $d9g_px1))
+                  (then (global.set $d9g_px1 (i32.add (local.get $x) (local.get $w)))))
+                (if (i32.gt_u (i32.add (local.get $y) (local.get $hgt)) (global.get $d9g_py1))
+                  (then (global.set $d9g_py1 (i32.add (local.get $y) (local.get $hgt))))))
+              (else
+                (global.set $d9g_px0 (local.get $x)) (global.set $d9g_py0 (local.get $y))
+                (global.set $d9g_px1 (i32.add (local.get $x) (local.get $w)))
+                (global.set $d9g_py1 (i32.add (local.get $y) (local.get $hgt)))
+                (global.set $d9g_cpu (i32.const 2)))))
           (else
-            (call $d9g_upload_rect (load.field DxObject misc1 (local.get $rt)) (load.field DxObject pitch (local.get $rt))
-              (global.get $d9g_rt_fmt) (i32.const 0) (i32.const 0) (global.get $d9g_rt_w) (global.get $d9g_rt_h)))))
+            (global.set $d9g_cpu (i32.const 0))
+            (call $d9g_upload_rect (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt)
+              (local.get $x) (local.get $y) (local.get $w) (local.get $hgt)))))
       (else
         (if (call $d9g_coherent (local.get $device)) (then
-          (call $d9g_readback (load.field DxObject misc1 (local.get $rt)) (load.field DxObject pitch (local.get $rt))
-            (global.get $d9g_rt_fmt)
-            (select (i32.const 0) (i32.const 1) (i32.ne (i32.and (local.get $flags) (i32.shl (i32.const 1) (i32.const 29))) (i32.const 0))))))))
+          (global.set $d9g_cpu_bits (local.get $bits))
+          (global.set $d9g_cpu_pitch (local.get $pitch))
+          (block $have
+            (if (i32.or (i32.eq (global.get $d9g_cpu) (i32.const 1)) (i32.eq (global.get $d9g_cpu) (i32.const 2)))
+              (then (call $d9g_stat (i32.const 76) (i32.const 1)) (br $have)))
+            (if (i32.eq (global.get $d9g_cpu) (i32.const 3)) (then
+              (br_if $have (call $d9g_fill (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt) (global.get $d9g_cpu_rgba)))))
+            (call $d9g_readback (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt)
+              (select (i32.const 0) (i32.const 1) (i32.ne (i32.and (local.get $flags) (i32.shl (i32.const 1) (i32.const 29))) (i32.const 0)))))
+          (if (i32.ne (global.get $d9g_cpu) (i32.const 2)) (then (global.set $d9g_cpu (i32.const 1))))))))
     (local.get $result))
 
   ;; GetRenderTargetData of the back buffer into the surface $dst (wasm),
   ;; after the old call succeeded.
   (func $d9g_rtdata (param $device i32) (param $dst i32) (param $result i32)
     (if (i32.ne (local.get $result) (i32.const 1)) (then (return)))
+    (call $d9g_flush)
     (if (i32.eqz (call $d9g_coherent (local.get $device))) (then (return)))
     (call $d9g_readback (call $g2w (i32.load offset=40 (local.get $dst))) (i32.load offset=48 (local.get $dst))
       (i32.load offset=28 (local.get $dst)) (i32.const 2)))
@@ -2031,10 +2148,14 @@
   ;; Skipped (stat 68 + k): 0 executor not coherent, 1 no target entry.
   (func (export "d3d9_gps_sync_front")
     (local $rt i32)
+    (call $d9g_flush)
     (if (i32.eqz (call $d9g_coherent (global.get $d9g_dev)))
       (then (call $d9g_stat (i32.const 68) (i32.const 1)) (return)))
     (local.set $rt (call $d3ddev_rt_entry (global.get $d9g_dev)))
     (if (i32.eqz (local.get $rt)) (then (call $d9g_stat (i32.const 69) (i32.const 1)) (return)))
     (call $d9g_readback (load.field DxObject misc1 (local.get $rt)) (load.field DxObject pitch (local.get $rt))
       (global.get $d9g_rt_fmt) (i32.const 3))
+    (global.set $d9g_cpu_bits (load.field DxObject misc1 (local.get $rt)))
+    (global.set $d9g_cpu_pitch (load.field DxObject pitch (local.get $rt)))
+    (global.set $d9g_cpu (i32.const 1))
     (call $dx_present (local.get $rt)))

@@ -11631,7 +11631,8 @@ if (VERBOSE) {
       + ` gpuBltFastKeyed=${st(32)} gpuBltFastUpload=${st(33)} readbackBytes=${st(34)}`
       + ` lazyLocks armed=${instance.exports.get_d3dim_lazy_armed?.() ?? 0}`
       + ` touched=${instance.exports.get_d3dim_lazy_touched?.() ?? 0}`
-      + ` untouched=${instance.exports.get_d3dim_lazy_untouched?.() ?? 0}`);
+      + ` untouched=${instance.exports.get_d3dim_lazy_untouched?.() ?? 0}`
+      + ` overwritten=${st(43)}`);
     // Software declines by reason ($d3g_decline).
     const why = ['stageArg', 'texture', 'zfunc', 'blendFactor', 'noDepth', 'clearTarget', 'clearBackground'];
     console.log('[d3dim-gps] decline reasons ' + why.map((n, i) => `${n}=${st(35 + i)}`).join(' '));
@@ -12892,6 +12893,7 @@ if (VERBOSE) {
       ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
       ` old-present=${old.join(',') || 'none'}` +
       ` buffer-draws=${st(74)} buffer-uploads=${st(72)} buffer-hits=${st(73)}` +
+      ` lock-current=${st(76)} lock-fills=${st(77)} uploads-folded=${st(78)} old-readbacks-skipped=${st(79)}` +
       ` active=${instance.exports.d3d9_gps_active()}`);
   }
 

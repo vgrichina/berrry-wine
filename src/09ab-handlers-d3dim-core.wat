@@ -787,6 +787,43 @@
       (call $d3dim_lazy_materialize (i32.load (region.addr $D3DIM_LAZY_SHARED 8))
         (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)))))
     (call $d3dim_lazy_leave))
+  ;; A REP MOVS / STOS ($rep_movs_mem, $rep_stos_mem, the micro-op tier's
+  ;; COPY/FILL slow path) is about to write guest [dst, dst+bytes), reading
+  ;; [src, src+sbytes) (0 for STOS). When that write covers the whole armed
+  ;; Lock range and the read does not touch it, the first-touch readback
+  ;; would be overwritten before anything reads it: the GPU producer drops
+  ;; those pixels ($d3dim_gps_discard) and the Lock is disarmed with nothing
+  ;; read back. MechWarrior 3 copies its whole menu background into the
+  ;; locked back buffer every frame (one 640x480 readback per Flip before).
+  ;; The source must be one proven mapping so the copy cannot stop part way.
+  (func $d3dim_lazy_overwrite (param $dst i32) (param $bytes i32) (param $src i32) (param $sbytes i32)
+    (local $off i32) (local $wa i32) (local $start i32) (local $len i32)
+    (if (i32.eqz (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4))) (then (return)))
+    (if (i32.or (global.get $d3dim_lazy_bypass) (i32.eqz (global.get $d3dim_gpu_on))) (then (return)))
+    (if (global.get $d3dim_gpu_cooperative) (then (return)))
+    (local.set $off (i32.sub (local.get $dst) (global.get $DIB_GUEST_BASE)))
+    (if (i32.ge_u (local.get $off) (global.get $DIB_GUEST_CAPACITY)) (then (return)))
+    (if (i32.gt_u (local.get $bytes) (i32.sub (global.get $DIB_GUEST_CAPACITY) (local.get $off))) (then (return)))
+    (local.set $wa (i32.add (global.get $DIB_BACKING_BASE) (local.get $off)))
+    (call $d3dim_lazy_enter)
+    (block $out
+      (local.set $len (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)))
+      (local.set $start (i32.load (region.addr $D3DIM_LAZY_SHARED 8)))
+      (br_if $out (i32.eqz (local.get $len)))
+      (br_if $out (i32.gt_u (local.get $wa) (local.get $start)))
+      (br_if $out (i64.lt_u (i64.add (i64.extend_i32_u (local.get $wa)) (i64.extend_i32_u (local.get $bytes)))
+        (i64.add (i64.extend_i32_u (local.get $start)) (i64.extend_i32_u (local.get $len)))))
+      (if (local.get $sbytes) (then
+        (local.set $off (i32.sub (local.get $src) (global.get $DIB_GUEST_BASE)))
+        (if (i32.lt_u (local.get $off) (global.get $DIB_GUEST_CAPACITY)) (then
+          (br_if $out (call $d3dim_lazy_overlaps
+            (i32.add (global.get $DIB_BACKING_BASE) (local.get $off)) (local.get $sbytes)))
+          ;; The span may run past the window: then it is not one mapping.
+          (br_if $out (i32.gt_u (local.get $sbytes) (i32.sub (global.get $DIB_GUEST_CAPACITY) (local.get $off))))))
+        (br_if $out (i32.eqz (call $string_guest_range_contiguous (local.get $src) (local.get $sbytes))))))
+      (br_if $out (i32.ne (call $d3dim_gps_discard (local.get $start) (local.get $len)) (i32.const 1)))
+      (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 4) (i32.const 0)))
+    (call $d3dim_lazy_leave))
   ;; Host file reads scatter directly through JS views, bypassing g2w stores.
   ;; Run on the owning instance BEFORE its host import, never on the page
   ;; shadow after copying. Lock only arms backing wholly inside this DIB

@@ -80,6 +80,10 @@
           (i32.mul (i32.load offset=36 (local.get $desc)) (call $d3d9_color_bytes (call $d3d9_backbuffer_format (local.get $device)))))))))
     (return (call $d9g_bb_sync (local.get $device) (i32.const 1)
       (call $host_gpu_gl_call (i32.const 0x30015) (local.get $desc) (i32.const 0))))))
+  ;; The GPU stream supplies every pixel of a coherent back buffer itself:
+  ;; the old path's readback would be overwritten unread.
+  (if (call $d9g_lock_supplies (local.get $device))
+    (then (return (call $d9g_bb_sync (local.get $device) (i32.const 0) (i32.const 1)))))
   (call $d9g_bb_sync (local.get $device) (i32.const 0)
     (call $host_gpu_gl_call (i32.const 0x30016) (local.get $desc) (i32.const 0))))
 
