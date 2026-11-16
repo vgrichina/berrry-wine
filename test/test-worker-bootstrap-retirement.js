@@ -124,6 +124,7 @@ function fixtureWorker() {
     // The VM selects the browser bootstrap. Supply its real eagerly used
     // dependencies; an empty importScripts does not install browser globals.
     GuestRpc: RPC, RenderWorker: require('../lib/render-worker'),
+    NeGuestBridge: require('../lib/ne-guest-bridge'),
     ThreadSendWaits: require('../lib/thread-send-waits'),
     memUtils: require('../lib/mem-utils'), workerImports: require('../lib/worker-imports'),
     DllLoader: loader, processBoot: boot, fixture: { exports: ex },
