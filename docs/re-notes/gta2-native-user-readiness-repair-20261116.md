@@ -1,7 +1,7 @@
 # GTA2 native USER readiness contract
 
-Status: actual authored main/Worker reproduction and repair under final
-qualification. Ordered GL and Sims final releases, personally checked surviving
+Status: native USER repair published and qualified; one new original launch
+reached its menu, then refused before input on a renderer identity change. Ordered GL and Sims final releases, personally checked surviving
 evidence, current process closure and free locks admitted this worker at 07:08
 UTC. Foreign host/GL/D3D/Sims work remains unadopted.
 
@@ -139,3 +139,72 @@ actual protocol wire sequence remains unchanged after seal. A real replacement
 window (HWND 65538, generation 2, TID 1) is healthy but terminal because the
 observed owner generation changed; it correctly remains unpublished. Final
 case source-state references tie each run to the exact owned source patch.
+
+
+## Published qualification and one actual original launch
+
+Implementation `1305d45eb47203f32bfa690117265c4967c72a9d` is on main and
+strict pull/push passed. The published source passed all fifty actual native
+fault cases and eight normal main/Worker gestures. Forty-eight faults have zero
+physical DOWN; the two intentional stalls after DOWN have independent physical
+UP at 1469 ms (main) and 1388 ms (Worker), ACK at 1470/1389 ms. All fifty retain
+permanent closure and zero-wire local replay/rebind/after-UNKNOWN refusals.
+Normal COMPLETE was 117/100/134/150 ms on main and 398/296/281/380 ms on Worker;
+independent UP was 148/139/158/149 and 314/232/204/216 ms. Both authored native
+Quit routes exited the real native process. These are fixture successes.
+
+The audit distinguishes actual module instances (one main, two Worker) from
+freshness passes. It verifies the independent before-ARM and confirmation
+freshness phases. The original controller retains both final parent freshness
+calls, independent confirmation, COMPLETE 500 ms, physical UP 1750 ms and
+aggregate 3000 ms. No guard or deadline was weakened. One expired Worker review,
+one expired context-fault review, one host-deadline case and the prelaunch
+recipe cancellation are retained as unqualified attempts, not passing cases.
+
+Original qualification uses source-equivalent current main
+`035e10cf849b6d14086814b10c51df3f821246e1`: the only committed difference from
+the implementation qualification is TODOS.md. Source/module pins remain exact;
+foreign shared-tree WIP is excluded. A controller-entry preflight first refused
+ENOENT before Chrome/game/endpoint creation because its child output directory
+lacked launch metadata. It is recorded separately from the single actual game
+launch. The recovery recipe supplies a link from the child `launch.json` to the
+actual newly prearmed supervisor launch metadata; it neither fabricates nor
+extends the 900 second budget or independent 920 second watchdog.
+
+The single actual original software launch now proves its current false
+predicates: public PID 1000/TID 1/nonzero EIP/quit 0/yield 0, HWND 0/generation 0,
+mainLive=false, mainVisible=false, focusLive=false. Fifteen UNSENT samples span
+541 ms until actual HWND 65537/generation 1/TID 1, visible 648x508, matching
+focus, no capture/modal, quit 0/yield 5 and every health predicate true. Only
+then are the bridge and capture installed. This is proof for the new launch;
+the exact cause of the old closed original remains UNKNOWN.
+
+The selected complete host image shows the original GTA2 demo menu with PLAY
+highlighted above OPTIONS and QUIT. Before the requested finite Enter could
+reach release-child creation or native input, the permanent-owner guard refused:
+`identity changed: renderEndpoint`, actual 1 versus startup `none`. The renderer
+published after the startup identity was bound. This is the first new blocker;
+it is not evidence that the renderer's generation may be ignored or rebound.
+The endpoint became permanently UNKNOWN and closed. No later command, review,
+rebind, replay, retry or WebGL run occurred. Zero release children and zero
+native input were sent. No walking, car entry, driving or original native Quit
+is claimed. OS browser shutdown is recorded as host-only closure.
+
+Next work is to prove renderer publication/ownership readiness before permanent
+scene binding, preserving every current guard and qualifying it with authored
+controls. This run does not authorize another original launch or contacting
+either closed endpoint. Final result/release evidence in the run directory
+names selected full screenshots, exact Git/patch states, actual child/watchdog
+waits with both EOF, current PID-group absence and free locks. No box was created.
+
+
+Final shared restore full flock build passed, followed by shared thirteen and
+sealed-HEAD fourteen focused checks. Current closure personally checks 895
+retained actual child-wait receipts with stdout/stderr EOF and all 114 recorded
+native PID groups absent. No process with this run's profile remains. Both
+wine-heavy-runtime and wine-build locks are free; /home has over 7.8 GB free.
+The admitted foreign source pins remain byte-identical and unadopted. Seven
+selected full screenshots are named by result.json; redundant captures were
+removed with their hashes recorded. Box ID/state: null / NOT_CREATED; expiry
+and stop receipt are not applicable. SOURCE / BUILD / RUNTIME RELEASED at final
+publication; no further original work is authorized by this report.
