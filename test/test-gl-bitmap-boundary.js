@@ -55,29 +55,4 @@ const context = { surfaceId: 5, backend: { canvas, readPixels(x, y, w, h, format
 } }, layer: { canvas } };
 assert.strictEqual(bridge._publishToBitmap(context), 1);
 assert.deepStrictEqual(Array.from(storage), [72, 56, 40, 60, 0, 0, 0, 0, 85, 170, 150, 0, 0, 0, 0, 0]);
-async function transport() {
-  const { Bridge } = require('../lib/gl-render-host');
-  for (const bpp of [16, 32]) {
-    const bits = new Uint8Array([0x48, 0x38, 0x28, 0x3c]);
-    if (bpp === 16) bits.set([0xc7, 0xa8, 0x6d, 0x6d]);
-    const surface = new GdiSurface({ width: 1, height: 1, bpp, stride: 4, storage: bits });
-    const port = { ready: Promise.resolve(), addEventListener() {}, terminate() {},
-      async request(message) {
-        const item = message.surfaces[0];
-        assert.strictEqual(item.bpp, bpp, 'transport carries semantic format');
-        assert.deepStrictEqual(item.colorMasks,bpp===16?[0x7c00,0x03e0,0x001f]:undefined,
-          'transport retains stored channel masks independently of byte width');
-        assert.deepStrictEqual(Array.from(item.pixels), bpp === 32 ? [40, 56, 72, 60] : [82, 49, 58, 255]);
-        return { value: 0, surfaces: [{ id: 5, x: 0, y: 0, width: 1, height: 1,
-          pixels: new Uint8Array([0, 255, 0, 17]) }], windows: [], activeWindows: [], contexts: 0 };
-      } };
-    const host = new Bridge({ getGdiSurface: () => ({ surface }), renderer: { windows: {} }, createRenderEndpoint: () => port });
-    host.surfaceIds.add(5);
-    try {
-      await host._replay({ owned: true, buffer: new ArrayBuffer(0), bytes: 0 }, 0);
-      assert.deepStrictEqual(Array.from(bits), bpp === 32 ? [0, 255, 0, 17] : [0xe0, 0x83, 0x6d, 0x6d], 'transport return preserves alpha/unused bits');
-    } finally { await host.close(); }
-  }
-}
-transport().then(() => console.log('PASS GL bitmap literal storage, orientation, alpha, unused bits, RGB565, transport and opaque GDI controls'))
-  .catch(error => { console.error(error); process.exitCode = 1; });
+console.log('PASS GL bitmap literal storage, orientation, alpha, unused bits, RGB565 and opaque GDI controls');

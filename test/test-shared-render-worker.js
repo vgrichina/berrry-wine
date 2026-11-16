@@ -27,7 +27,7 @@ function fixture(legacy=false,nativeMemory=false){
       return {complete:true,value:p.value};
     },destroy(){events.push(['destroy',options.name]);}};
   }};
-  Object.assign(self,{GpuStreamRenderWorker:factory,GLRenderWorker:factory,D3DIMRenderWorker:factory,
+  Object.assign(self,{GpuStreamRenderWorker:factory,D3DIMRenderWorker:factory,
     D3D9RenderWorker:factory,D3DCommandStream:Stream});
   const sharedMemory=nativeMemory ? new WebAssembly.Memory({initial:96,maximum:96,shared:true})
     : {buffer:new SharedArrayBuffer(legacy?6*1024*1024:1024)};
@@ -124,7 +124,7 @@ encoderScopedFence();
   assert.strictEqual(adapter.d3dimSoftwareDrawCallsCompleted,1,'GL has separate evidence semantics');
 }
 (async()=>{
-  const f=fixture(),a=f.manager.createEndpoint({api:'glide',name:'a'}),b=f.manager.createEndpoint({api:'gl',name:'b'});
+  const f=fixture(),a=f.manager.createEndpoint({api:'glide',name:'a'}),b=f.manager.createEndpoint({api:'d3dim',name:'b'});
   await Promise.all([a.ready,b.ready]);
   assert.strictEqual(f.counts().init,1,'one native initializer for both APIs');
   const first=a.request({kind:'hold',value:1});
@@ -143,10 +143,10 @@ encoderScopedFence();
   await assert.rejects(a.request({kind:'fail'}),/injected/);
   assert.strictEqual(await b.request({kind:'echo',value:4}),4,'failed endpoint does not poison peer');
   await a.terminate();assert.strictEqual(f.counts().retire,0,'closing endpoint keeps process heap');
-  const anotherGL=f.manager.createEndpoint({api:'gl',name:'second-gl',backend:'software'});
-  await anotherGL.ready;
-  assert.strictEqual(f.importOrder.filter(url=>url==='mem-utils.js').length,1,'GL dependencies shared across endpoints');
-  await anotherGL.terminate();
+  const another=f.manager.createEndpoint({api:'d3dim',name:'second-d3dim',backend:'software'});
+  await another.ready;
+  assert.strictEqual(f.importOrder.filter(url=>url==='d3dim-render-worker.js').length,1,'dependencies shared across endpoints');
+  await another.terminate();
   // First dependency only the neutral endpoint imports (render-clear is
   // already shared with the gpu-stream endpoints opened above).
   f.failedImports.add('d3d9-backend.js');

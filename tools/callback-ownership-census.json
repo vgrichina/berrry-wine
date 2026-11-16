@@ -58,7 +58,8 @@
     {
       "file": "lib/browser-shell.js",
       "name": "host-file",
-      "sha256": "b83258c681635230fc85b0ed9f83ac44b0785b744ce49feedcfaf471ac4d9d15",
+      "sha256": "6c1e8f7412c85b3a45ba5f30aa893bc5b74098508f315a247a0f1c3e520812a7",
+      "glRetireS3Review20261116": "gl-retire S3 removes the per-app glRenderer copy and the onOpenGLContextCountChange hook (WAT owns GL contexts; no host reports them); nothing retained or scheduled is added.",
       "glRendererOptOutReview20261116": "2026-11-16 GPU stream v2 G3c: launch copies the app's glRenderer ('webgl'|'software') onto the fresh WineAssembly, where lib/host-imports.js reads it as the GL renderer after ?gl-renderer=. A configuration field only; no guest invocation, callback owner, continuation or retained guest reference added.",
       "spinParkUrlReview20261114": "?spin-park=N applies set_spin_park_k at launch on the main instance, the guest Worker (callExport) and every inherited thread (table entry added in worker-imports); no callback, timer or lifetime change. renderer.js reseal covers d576f57ce's exclusive-mode test, read-only WAT getters, no new callbacks.",
       "appArgsUrlReview20261113": "?app=ID&app-args= overrides one app's launch command line; string only, no callback ownership change",
@@ -179,7 +180,8 @@
     {
       "file": "lib/guest-worker.js",
       "name": "host-file",
-      "sha256": "ac487f0b73acc3ee13f96b1e8f3522b4fb8ca3babb4d9f173a02964e3417c376",
+      "sha256": "4aea239ce4fe65a57906081d16c4f15c96d12f18d107360309210054b89f59b3",
+      "glRetireS3Review20261116": "gl-retire S3 removes the software-GL producer mailbox and the GL publication options; the Worker's GL flush is only the synchronous 0x10008 mode query, no callback or ownership state is added.",
       "d3dimOldPathDeleteReview20261115": "2026-11-15 GPU stream v2 D2c: lib/d3dim-gpu.js deleted. The lazy D3D9 backend loader drops d3dim-gpu.js (renamed loadD3D9BackendScripts, keyed on D3D9Backend); the shared encoder no longer takes gpuCalls/sharedSurfaceSync and d3dCommands forwards 0x20000-0x20006 only. Includes gps-9.2's d3d9-fixed.js token removal. No guest invocation, callback owner, continuation or retained guest reference added.",
       "gpuStreamDoorbellReview20261114": "2026-11-14 GPU stream doorbell: the Worker loads gpu-stream.generated.js + gpu-stream-doorbell.js so guest-rpc can notify/wait on a ring's shared header words, and slice results carry the gps counters. No guest invocation, callback owner, continuation or retained guest reference added.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
@@ -215,7 +217,8 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "19a7170a4cecb9c1f35585c420c4d7e96a12e407f91208769c29757c683ec812",
+      "sha256": "178ccbc01d427ef19375472b00eeeb8d6047e0cec376957d38ae82441ea1cc80",
+      "glRetireS3Review20261116": "gl-retire S3 deletes the JS GL bridge (OpenGLHostBridge / gl-render-host Bridge, its onPresent/clearWindowOwnership/onContextCountChange callbacks and Worker synchronize); gpu_gl_call and gpu_gl_batch answer only the synchronous 0x10008 query and otherwise throw; the D3DIM render bridge moved inline unchanged.",
       "glRetireS2TagReview20261116": "gl-retire S2 tags the 0x10008 WGL-mode answer with 0x5747 so untagged host answers claim nothing; still a synchronous header peek with no retained callback, scheduling or ownership writes.",
       "glRetireS2Review20261116": "gl-retire S2 adds the synchronous 0x10008 WGL-mode answer to gpu_gl_call and gpu_gl_batch: it peeks one record header in the caller's own memory and returns backend/glGps bits, retains no callback, schedules nothing and writes no ownership state.",
       "glRetireS1Review20261116": "2026-11-16 GL retire S1: the GL host bridge's backend getter falls back to software in Node as in the browser (was webgl), so a host without ctx.glBackend gets WAT software GL; a default change only, no guest invocation, callback owner, continuation or retained guest reference added.",

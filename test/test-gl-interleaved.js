@@ -19,7 +19,7 @@ const extraWat=`
  (drop (call $gdi_dc_set_field (i32.load (global.get $reg_base)) (i32.const 92) (i32.const 42) (i32.const 0)))
  (i32.load (global.get $reg_base)))`;
 async function run(){
- const queued=process.argv.includes('--worker');let encoder=null,manager=null,bridge=null,render=null,producer=null,memory;
+ const queued=(()=>{if(process.argv.some(a=>a==='--worker'||a==='--worker-fallback'))throw new Error('the --worker arm replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');return false;})();let encoder=null,manager=null,bridge=null,render=null,producer=null,memory;
  const captures=[],cases=[]; let prebuiltModule=null;
  const recordModule=bytes=>{const sha=require('crypto').createHash('sha256').update(bytes).digest('hex');console.log('NATIVE_MODULE_SHA256',sha,'bytes',bytes.length);if(process.env.GL_INTERLEAVED_MODULE_OUT)fs.writeFileSync(process.env.GL_INTERLEAVED_MODULE_OUT,bytes);};
  if(process.env.GL_INTERLEAVED_MUTATION){

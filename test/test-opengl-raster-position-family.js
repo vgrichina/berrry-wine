@@ -41,7 +41,7 @@ const extraWat=`
 
 (async()=>{
  let memory,bridge,encoder=null,manager=null,render=null,producer=null;
- const queued=process.argv.includes('--worker'),mutation=process.env.GL_RASTER_POSITION_MUTATION,baseline=process.env.GL_RASTER_POSITION_BASELINE;
+ const queued=(()=>{if(process.argv.some(a=>a==='--worker'||a==='--worker-fallback'))throw new Error('the --worker arm replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');return false;})(),mutation=process.env.GL_RASTER_POSITION_MUTATION,baseline=process.env.GL_RASTER_POSITION_BASELINE;
  let prebuiltModule;
  if(mutation||baseline){let changed=false;
   const bytes=req('test/compile-src').compileSrcWasm((file,source)=>{

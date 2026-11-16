@@ -44,7 +44,7 @@ const extraWat=`
 (async()=>{
  let memory,bridge,encoder=null,manager=null,render=null,producer=null;
  const gdiSurfaces=[];
- const queued=process.argv.includes('--worker');
+ const queued=(()=>{if(process.argv.some(a=>a==='--worker'||a==='--worker-fallback'))throw new Error('the --worker arm replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');return false;})();
  const mutation=process.env.GL_ACCUM_MUTATION, internal=process.env.GL_ACCUM_INTERNAL, baseline=process.env.GL_ACCUM_BASELINE;
  let prebuiltModule=null;
  if(mutation||internal||baseline){

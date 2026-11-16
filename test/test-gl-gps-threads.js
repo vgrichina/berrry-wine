@@ -1,23 +1,21 @@
 'use strict';
-// GPU stream v2 for software GL in Threads mode (slice G3c).
+// GPU stream v2 for software GL in Threads mode.
 //
-// In a Threads run the guest instance that executes GL is not the one that
-// owns the WGL contexts: its WAT encoder flushes each GL batch to the shared
-// render owner (lib/gl-render-worker.js, softwareConsumer), and the reply's
-// producerConfig is applied to the guest instance by lib/gl-software-producer.js.
-// G3c adds word 4 to that mailbox (lib/gl-render-host.js producerConfig: the
-// host's glGps decision), so the guest instance turns on its gl-gps producer
-// (src/09a8gt-gl-gps.wat) and its draws go to the ring instead of the DIB.
+// In a Threads run the guest instance executing GL is a Worker. WAT owns its
+// WGL contexts (src/09a8cw-gl-wgl.wat): the instance's only GL flush is the
+// 0x10008 mode query, which the Worker import (lib/guest-rpc.js) sends to the
+// page as one glBatch; the page's gpu_gl_batch (lib/host-imports.js) answers
+// with the host's glGps decision, and the instance's gl-gps producer
+// (src/09a8gt-gl-gps.wat) turns on or stays off by itself.
 //
-//   guest GL -> real opengl32 thunk -> WAT encoder -> gl-render-worker (2nd
-//   instance) -> producerConfig + word 4 -> Producer.configure -> gl_gps_enable
-//   -> $glg_* -> GPS ring -> lib/gpu-stream-software.js Executor
+//   guest GL -> real opengl32 thunk -> WAT encoder -> 0x10008 -> guest-rpc
+//   Worker import -> main broker serveGlBatch -> host-imports gpu_gl_batch
+//   -> tagged mode -> $glg_on -> GPS ring -> lib/gpu-stream-software.js
 //
-// Checks: the mailbox semantics (1 on / 0 off / -1 and 4-word configs leave
-// the arm alone); with gps the frame is drawn by the executor (DRAW_UPs and a
-// PRESENT, no readback, no software CPU frame from the render owner, because
-// the producer sends softwareFront 0 as lib/guest-rpc.js does); each arm's
-// picture equals the same scene drawn in one (cooperative) instance.
+// Checks: exactly one glBatch crosses (the query) and every later GL call is
+// answered in WAT; with gps the frame is drawn by the executor (DRAW_UPs and a
+// PRESENT per swap, no readback), without it nothing reaches the ring; each
+// arm's picture equals the same scene drawn in one (cooperative) instance.
 const assert = require('assert');
 const path = require('path');
 const root = path.resolve(__dirname, '..');
@@ -26,8 +24,7 @@ const GS = req('lib/gpu-stream');
 const { Executor } = req('lib/gpu-stream-software');
 const { bootRenderHarness } = req('test/render-helper');
 const Stream = req('lib/gl-command-stream');
-const { Producer } = req('lib/gl-software-producer');
-const { producerConfig } = req('lib/gl-render-host');
+const RPC = req('lib/guest-rpc');
 const table = req('src/api_table.json');
 const { comparePictures, bootGlGps } = req('test/helpers/gl-gps-context');
 
@@ -52,42 +49,21 @@ const WAT = String.raw`
  (func (export "probe_invoke") (param $thunk i32) (result i32)
    (call $win32_dispatch (i32.div_u
      (i32.sub (local.get $thunk) (global.get $thunk_guest_base)) (i32.const 8)))
-   (i32.load (global.get $reg_base)))`;
+   (i32.load (global.get $reg_base)))
+ (func (export "probe_window") (param $hwnd i32) (param $w i32) (param $h i32)
+   (call $wnd_table_set (local.get $hwnd) (i32.const 0))
+   (call $client_rect_set (local.get $hwnd) (i32.const 0) (i32.const 0) (local.get $w) (local.get $h)))`;
 
-// 1. Mailbox semantics, on a fake instance.
-{
-  const calls = [];
-  const fake = { gl_sw_enabled: () => 1, gl_sw_set_enabled() {}, gl_sw_bind_drawable() {}, gl_sw_bitmap: () => 0,
-    gl_sw_set_default_size() {}, gl_gps_enable: on => calls.push(on) };
-  const p = new Producer(() => fake);
-  assert.strictEqual(p.config.length, 5, 'mailbox has the gps word');
-  p.configure([1, 16, 16, 0]); assert.deepStrictEqual(calls, [], '4-word config leaves the arm');
-  p.configure([1, 16, 16, 0, -1]); assert.deepStrictEqual(calls, [], '-1 leaves the arm');
-  p.configure([1, 16, 16, 0, 1]); p.configure([1, 16, 16, 0, 1]);
-  assert.deepStrictEqual(calls, [1], 'on, once');
-  p.configure([1, 16, 16, 0, 0]); assert.deepStrictEqual(calls, [1, 0], 'off');
-  assert.deepStrictEqual(producerConfig([1, 8, 9, 0], 5, () => true), [1, 8, 9, 0, 1]);
-  assert.deepStrictEqual(producerConfig([1, 8, 9, 0], 5, false), [1, 8, 9, 0, 0]);
-  assert.deepStrictEqual(producerConfig([1, 8, 9, 0], 5, () => null), [1, 8, 9, 0, -1]);
-  assert.deepStrictEqual(producerConfig([0, 0, 0, 0], 5, true), [0, 0, 0, 0, 0], 'no software context: off');
-  assert.deepStrictEqual(producerConfig([1, 8, 9, 0], 4, true), [1, 8, 9, 0], 'old mailbox keeps 4 words');
-}
-
-// 2. A real frame through the render owner, arm on vs off.
+// A real frame through the Worker import and the page's host, arm on vs off.
 async function run(glGps) {
   const size = 16;
-  let memory, render = null, producer = null, executor = null, ring = null, ringAddr = 0;
-  const frames = [];
+  let memory, worker = null, executor = null, ring = null, ringAddr = 0, pageBatch = null;
+  const messages = [], answers = [];
   const h = await bootRenderHarness({ fonts: 'none', width: size, height: size, extraWat: WAT,
+    beforeInstantiate(ctx, host) { ctx.glGps = glGps; pageBatch = host.gpu_gl_batch; },
     extraHostOverrides: {
       gpu_gl_call(op, at, bytes) {
-        if (op === Stream.WAT_STREAM_FLUSH_OPCODE) {
-          // lib/guest-rpc.js glBatch: no front to copy while gps presents.
-          const reply = render.execute({ memoryOffset: at, bytes, owner: 0, windows: [win], surfaces: [],
-            softwareFront: e.gl_gps_active() ? 0 : e.gl_sw_front() });
-          producer.configure(producerConfig(reply.producerConfig, producer.config.length, glGps));
-          return reply.value;
-        }
+        if (op === Stream.WAT_STREAM_FLUSH_OPCODE) return worker.imports.host.gpu_gl_call(op, at, bytes);
         if (op >= 0x20000 && op <= 0x20006) return 0;
         throw Error('unexpected host opcode ' + op);
       },
@@ -103,12 +79,11 @@ async function run(glGps) {
   memory = h.memory;
   const e = h.exports, dv = () => new DataView(memory.buffer), wa = p => e.guest_to_wasm(p) >>> 0;
   e.init_thread(1, 0x400000, 0, 0, 0, 0, 0); e.heap_init(0x800000);
-  const win = { hwnd: 42, w: size, h: size, clientRect: { w: size, h: size }, clientSize: { w: size, h: size } };
-  producer = new Producer(() => e);
-  const consumer = new WebAssembly.Instance(h.module, { host: h.host });
-  consumer.exports.d3dim_worker_init(e.get_image_base() >>> 0);
-  render = req('lib/gl-render-worker').create({ instance: consumer, memory, backend: 'software',
-    sendFrame: frame => frames.push(frame) });
+  const broker = RPC.createMainBroker(memory, { gpu_gl_batch: (batch, owner) => {
+    const v = pageBatch(batch, owner); answers.push(v >>> 0); return v; } }, {});
+  worker = RPC.createWorkerImports(memory, { gpu_gl_call: { params: ['i32', 'i32', 'i32'], results: ['i32'] } },
+    message => { messages.push(message); broker.serveGlBatch(message); }, {});
+  e.probe_window(42, size, size);
   e.probe_init();
   const regs = e.probe_regs(), stack = e.guest_alloc(256) >>> 0, stackWa = wa(stack);
   const str = s => { const p = e.guest_alloc(s.length + 1) >>> 0; new Uint8Array(memory.buffer, wa(p), s.length + 1).set(Buffer.from(s + '\0')); return p; };
@@ -130,8 +105,8 @@ async function run(glGps) {
   const dc = e.probe_dc(42) >>> 0; assert(dc);
   const context = call('wglCreateContext', [dc]); assert(context);
   assert.strictEqual(call('wglMakeCurrent', [dc, context]), 1);
-  assert.strictEqual(e.gl_sw_enabled(), 1, 'the render owner enabled software GL on the guest instance');
-  assert.strictEqual(e.gl_gps_active(), glGps ? 1 : 0, 'word 4 drove the arm');
+  assert.strictEqual(e.gl_sw_enabled(), 1, 'WAT enabled software GL on the guest instance');
+  assert.strictEqual(e.gl_gps_active(), glGps ? 1 : 0, 'the page host decided the arm');
   call('glViewport', [0, 0, size, size]);
   for (let frame = 0; frame < 2; frame++) {
     call('glClearColor', [0.1, 0.2, 0.3, 1].map(f)); call('glClear', [0x4000]);
@@ -145,25 +120,26 @@ async function run(glGps) {
   }
   const stat = i => e.gl_gps_stat(i) >>> 0;
   const stats = { draws: stat(0), presents: stat(4), readbacks: stat(5), gpuFrames: stat(10), declines: stat(14) };
-  const cpuFrames = frames.filter(fr => fr.pixels).length;
   if (glGps) e.gl_gps_sync_front();
   const entry = e.gl_sw_front() >>> 0; assert(entry);
   const d = dv(), dib = d.getUint32(entry + 20, true), pitch = d.getUint16(entry + 18, true);
   const px = new Uint32Array(size * size);
   for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) px[y * size + x] = d.getUint32(dib + y * pitch + x * 4, true) & 0xffffff;
-  return { stats, cpuFrames, pic: { w: size, h: size, px } };
+  return { stats, messages, answers, pic: { w: size, h: size, px } };
 }
 
 (async () => {
   const off = await run(false);
   assert.strictEqual(off.stats.draws, 0, 'arm off: nothing on the ring');
-  assert.strictEqual(off.cpuFrames, 2, 'arm off: the render owner sends the software front per swap');
+  assert.strictEqual(off.messages.length, 1, 'one glBatch: the mode query');
+  assert.deepStrictEqual(off.answers, [0x57470003], 'tagged mode: owned, gps decided off');
   const on = await run(true);
   assert(on.stats.draws > 0, 'arm on: draws on the ring ' + JSON.stringify(on.stats));
   assert.strictEqual(on.stats.presents, 2, 'one PRESENT per swap');
   assert.strictEqual(on.stats.declines, 0);
   assert.strictEqual(on.stats.readbacks, 0, 'no readback while drawing');
-  assert.strictEqual(on.cpuFrames, 0, 'no CPU frame over the executor PRESENT');
+  assert.strictEqual(on.messages.length, 1, 'one glBatch: the mode query');
+  assert.deepStrictEqual(on.answers, [0x57470007], 'tagged mode: owned, gps on');
   // The same scene in one instance (the cooperative shape): each Threads arm
   // must draw exactly what its cooperative arm draws. (The two arms differ
   // from each other on a few edge pixels of this triangle in either shape:

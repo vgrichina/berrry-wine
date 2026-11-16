@@ -363,6 +363,23 @@ The v2 lowering reuses the 09a8g pipeline:
     answer and the picture against the JS-hosted path. The JS GL transport is
     now reachable only from `webgl` and from test harnesses that replay the
     stream into `OpenGLHostBridge` themselves.
+  - **Status (gl-retire S3).** The JS GL transport is deleted:
+    `lib/gl-render-host.js` (its D3DIM endpoint bridge moved into
+    `lib/host-imports.js` unchanged), `lib/gl-render-worker.js` (the
+    render-Worker `gl` kind), `lib/gl-software-producer.js` (the Threads
+    producer mailbox), the GL packet publication in `lib/guest-rpc.js`,
+    `?gl-renderer=`, the app `glRenderer` opt-out, `--gl-renderer=webgl` and
+    `--trace-gl` (both now fail fast). A host answers exactly one GL record,
+    the 0x10008 mode query; any other GL batch reaching a host throws. Still
+    in the tree, and why: `lib/gl-command-stream.js` is the encoder's record
+    ABI (ARG_WORDS/BARRIERS, generated into `09a8d-gl-abi.generated.wat` and
+    checked by the build gates) and the Worker's query transport;
+    `lib/gl-compat.js` is no longer loaded by any page or host, but it holds
+    the `CALLS` opcode table the GL tools and gates read and the
+    `OpenGLHostBridge` oracle about a hundred GL tests (including
+    `test-gl-wgl-owned`) replay the stream into. Retiring it means moving
+    those tests onto the owned harness (`test/helpers/gl-gps-context.js`
+    with `owned: true`) and the table into the stream ABI file.
 - **G4. Optional: GPU transform and lighting through vertex-shader IR.**
 
 **Readbacks:**

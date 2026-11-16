@@ -1,5 +1,11 @@
 # Shared graphics render Worker
 
+> **2026-11-16 (gl-retire S3):** the OpenGL endpoint described below is gone.
+> WAT owns software GL contexts (`src/09a8cw-gl-wgl.wat`) and GL reaches the
+> render Worker only as GPU stream v2 rings; `lib/gl-render-host.js`,
+> `lib/gl-render-worker.js` and `lib/gl-software-producer.js` are deleted.
+> The OpenGL sections remain as history of the queue design.
+
 ## Common submission queue (2026-10-21)
 
 `RenderWorker.SubmissionQueue` now owns packet admission credits, FIFO waiting,
@@ -207,7 +213,7 @@ exhaustion/wrap, stale generations, failed enqueue, blocked-producer shutdown,
 API query results, readback/GDI ordering, shared software scratch, pending
 geometry retaining a slot, cross-API resource fences and one heap retirement.
 Build on `test-d3d-neutral-command-stream.js`, `test-shared-render-worker.js`,
-`test-gl-shared-render-worker.js`, `test-glide-render-worker.js`,
+`test-glide-render-worker.js`,
 `test-d3d9-shared-render-worker.js` and `test-render-worker-lifecycle.js`.
 Browser validation should exercise mixed endpoints and representative gameplay
 sequentially. Record copied bytes, submissions/wakeups, pool-full wait time,
@@ -310,12 +316,10 @@ Run on the remote Linux box with the current production build:
 
 ```sh
 node test/test-shared-render-worker.js
-node test/test-gl-shared-render-worker.js
 node test/test-glide-render-worker.js
 node test/test-d3d9-shared-render-worker.js
 node test/test-render-legacy-ready.js
 node test/test-render-worker-lifecycle.js
-node test/test-gl-software-producer.js
 CHROME=/path/to/chrome node test/test-shared-render-worker-web.js --swiftshader --no-sandbox
 ```
 
