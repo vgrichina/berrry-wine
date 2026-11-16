@@ -85,11 +85,15 @@ assert.strictEqual(backend.definedLevel.texture, lightmapTexture);
 // GPU stream v2 G1: WAT ($gl_2d_validate) rejects this before a record
 // exists. Should it ever reach the executor, the executor refuses loudly
 // rather than deciding a GL error the guest could never read.
-assert.throws(() => call('glTexSubImage2D', [GL.TEXTURE_2D, 1, 0, 0, 4, 3,
+// G2: uploads reach the executor only as canonical finished RGBA8
+// (_glTexSubImage2D); a raw glTexSubImage2D record is a routing bug.
+assert.throws(() => call('_glTexSubImage2D', [GL.TEXTURE_2D, 1, 0, 0, 4, 3,
   GL.RGBA, GL.UNSIGNED_BYTE, pixelsGa]), /decided in the JS executor/,
   'an undefined texture level still rejects the update');
+assert.throws(() => call('glTexSubImage2D', [GL.TEXTURE_2D, 0, 7, 11, 4, 3,
+  GL.RGBA, GL.UNSIGNED_BYTE, pixelsGa]), /canonical _glTexImage2D/);
 assert.strictEqual(backend.updates.length, 0);
-call('glTexSubImage2D', [GL.TEXTURE_2D, 0, 7, 11, 4, 3,
+call('_glTexSubImage2D', [GL.TEXTURE_2D, 0, 7, 11, 4, 3,
   GL.RGBA, GL.UNSIGNED_BYTE, pixelsGa]);
 
 assert.deepStrictEqual(backend.depthMasks, [false, true],

@@ -322,10 +322,15 @@ const bridgeEncoder = new Stream.Encoder({
   shared: false,
   submit: batch => bridge.replay(batch),
 });
-bridgeEncoder.call(45, stack, 0);
-assert.strictEqual(replayPixels.buffer, memory,
-  'GL frontend receives a view of guest memory, not a copied texture payload');
-assert.strictEqual(replayPixels.byteOffset, texture);
+// G2: the executor consumes only WAT's canonical finished-RGBA8 upload
+// (158 _glTexImage2D); a raw 45 record is refused.
+dv.setUint32(stack + 4 + 3 * 4, 16, true);
+dv.setUint32(stack + 4 + 4 * 4, 16, true);
+bridgeEncoder.call(158, stack, 0);
+bridgeEncoder.flush();
+assert.strictEqual(replayPixels.length, 16 * 16 * 4, 'canonical upload carries tight RGBA8 rows');
+assert(replayPixels.every(b => b === 0xA7), 'canonical upload carries the guest texels');
+assert.throws(() => bridgeEncoder.call(45, stack, 0), /canonical _glTexImage2D/);
 
 // A buffered stream can outlive another guest thread's wglMakeCurrent call.
 // Replay therefore resolves the current context by originating Worker slot.

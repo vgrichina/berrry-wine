@@ -74,12 +74,11 @@ assert.strictEqual(backend.uploads.length, 1);
 assert.strictEqual(gl.unpackAlignment,4,'desktop client alignment retains its default');
 assert.strictEqual(backend.uploads[0].alignment, 1,
   'converted backend pixels use a tight layout independent of client unpack state');
-gl.texImage(0, 4, 1, 1, 0, GL.BGRA, GL.UNSIGNED_BYTE,
-  new Uint8Array([0x11, 0x22, 0x33, 0x44]));
-assert.strictEqual(backend.uploads.at(-1).format, GL.RGBA,
-  'desktop BGRA textures use the WebGL-compatible RGBA format');
-assert.deepStrictEqual(Array.from(backend.uploads.at(-1).pixels), [0x33, 0x22, 0x11, 0x44],
-  'desktop BGRA texture bytes are converted to RGBA without changing alpha');
+// Desktop BGRA (and every other client format) is converted in WAT
+// (src/09a8t-gl-texture.wat); the executor refuses anything but RGBA8.
+assert.throws(() => gl.texImage(0, 4, 1, 1, 0, GL.BGRA, GL.UNSIGNED_BYTE,
+  new Uint8Array([0x11, 0x22, 0x33, 0x44])), /must be converted to RGBA8 in WAT/,
+  'unconverted desktop BGRA texels fail fast');
 
 gl.bindTexture(0);
 gl.texParameter(GL.TEXTURE_MIN_FILTER, GL.LINEAR);
@@ -169,10 +168,11 @@ bridgeView.setUint32(stack + 4, GL.TEXTURE_2D, true);
 bridgeView.setInt32(stack + 8, 3, true);
 bridgeView.setInt32(stack + 12, 2, true);
 bridgeView.setInt32(stack + 16, 2, true);
-bridgeView.setUint32(stack + 20, GL.RGB, true);
+// WAT rewrote the GLU source to finished RGBA8 before it reached the bridge.
+bridgeView.setUint32(stack + 20, GL.RGBA, true);
 bridgeView.setUint32(stack + 24, GL.UNSIGNED_BYTE, true);
 bridgeView.setUint32(stack + 28, 0x200, true);
-new Uint8Array(bridgeMemory, 0x200, 12).fill(0x7f);
+new Uint8Array(bridgeMemory, 0x200, 16).fill(0x7f);
 assert.strictEqual(bridge.call(CALL_INDEX.gluBuild2DMipmaps, stack, 0), 0,
   'gluBuild2DMipmaps returns GLU_NO_ERROR');
 assert.strictEqual(matrixFrontend.backend.uploads.find(x=>x.level===0).level, 0,
@@ -183,13 +183,13 @@ assert.strictEqual(matrixFrontend.backend.mipmapTextures.length, 1,
   const backend = new FakeBackend(), f = new FixedFunctionGL(backend);
   // The original Tux Racer tree is 256x255 RGBA. Its alpha must survive the
   // GLU resize rather than becoming an incomplete WebGL1 texture.
-  f.unpackAlignment = 8;
+  // Sources arrive from WAT as tight finished RGBA8 (unpack, transfer and
+  // the base format already applied), so the resize never sees row padding.
   const pixels = new Uint8Array(256 * 255 * 4);
   for (let i = 0; i < pixels.length; i += 4) pixels.set([20, 90, 30, 128], i);
   f.build2DMipmaps(4, 256, 255, GL.RGBA, GL.UNSIGNED_BYTE, pixels);
   const image = backend.uploads.findLast(x=>x.level===0);
   assert.deepStrictEqual([image.width, image.height, image.alignment], [256, 256, 1]);
-  assert.strictEqual(f.unpackAlignment, 8, 'internal resize restores guest unpack alignment');
   assert.strictEqual(image.pixels.length, 256 * 256 * 4);
   for (let i = 0; i < image.pixels.length; i += 4)
     assert.deepStrictEqual(Array.from(image.pixels.subarray(i, i + 4)), [20, 90, 30, 128]);
@@ -197,29 +197,29 @@ assert.strictEqual(matrixFrontend.backend.mipmapTextures.length, 1,
   assert(f._textureComplete(f._textureState()), 'resized chain is complete');
   assert.strictEqual(pixels.length, 256 * 255 * 4, 'client image is untouched');
 
-  // Nearest-power rounding: 5 rounds down to 4, 6 ties upward to 8. RGB
-  // rows include padding which must never enter the resampling footprint.
-  const rgb = new Uint8Array(16 * 6).fill(0xee);
-  for (let y = 0; y < 6; y++) for (let x = 0; x < 5; x++)
-    rgb.set([50, 100, 150], y * 16 + x * 3);
-  f.build2DMipmaps(3, 5, 6, GL.RGB, GL.UNSIGNED_BYTE, rgb);
+  // Nearest-power rounding: 5 rounds down to 4, 6 ties upward to 8. An RGB
+  // source arrives from WAT with alpha already 255.
+  const rgb = new Uint8Array(5 * 6 * 4);
+  for (let i = 0; i < rgb.length; i += 4) rgb.set([50, 100, 150, 255], i);
+  f.build2DMipmaps(3, 5, 6, GL.RGBA, GL.UNSIGNED_BYTE, rgb);
   const rounded = backend.uploads.findLast(x=>x.level===0);
   assert.deepStrictEqual([rounded.width, rounded.height], [4, 8]);
   assert.deepStrictEqual(Array.from(rounded.pixels), Array.from({length: 32}, () => [50, 100, 150,255]).flat());
 
   // A black/white 3x1 image enlarges with GLU's periodic box filter,
-  // rather than a nearest-neighbour copy or zeroed edge alpha.
-  f.unpackAlignment = 1;
-  f.build2DMipmaps(1, 3, 1, GL.LUMINANCE, GL.UNSIGNED_BYTE, new Uint8Array([0, 100, 200]));
+  // rather than a nearest-neighbour copy or zeroed edge alpha. LUMINANCE
+  // arrives as L,L,L,255; filtering each channel equals filtering L.
+  const lum = values => Uint8Array.from(values.flatMap(v => [v, v, v, 255]));
+  f.build2DMipmaps(1, 3, 1, GL.RGBA, GL.UNSIGNED_BYTE, lum([0, 100, 200]));
   assert.deepStrictEqual(Array.from(backend.uploads.findLast(x=>x.level===0).pixels), [25,25,25,255,63,63,63,255,138,138,138,255,175,175,175,255]);
   backend.getParameter = pname => { assert.strictEqual(pname, GL.MAX_TEXTURE_SIZE); return 2; };
-  f.build2DMipmaps(1, 4, 1, GL.LUMINANCE, GL.UNSIGNED_BYTE, new Uint8Array([0, 100, 100, 200]));
+  f.build2DMipmaps(1, 4, 1, GL.RGBA, GL.UNSIGNED_BYTE, lum([0, 100, 100, 200]));
   assert.deepStrictEqual(Array.from(backend.uploads.findLast(x=>x.level===0).pixels), [50,50,50,255,150,150,150,255], 'maximum size clamps and averages');
+  assert.throws(() => f.build2DMipmaps(1, 3, 1, GL.LUMINANCE, GL.UNSIGNED_BYTE, new Uint8Array(3)),
+    /must be converted to RGBA8 in WAT/, 'unconverted GLU sources fail fast');
 
-  f.unpackAlignment = 8;
   backend.uploadTexture2D = () => { throw new Error('upload failed'); };
   assert.throws(() => f.build2DMipmaps(4, 3, 1, GL.RGBA, GL.UNSIGNED_BYTE, new Uint8Array(12)), /upload failed/);
-  assert.strictEqual(f.unpackAlignment, 8, 'failed upload also restores unpack alignment');
   for (const size of [0, -1, NaN, Infinity, 0xffffffff]) {
     assert.strictEqual(f.build2DMipmaps(4, size, 1, GL.RGBA, GL.UNSIGNED_BYTE, pixels), 100901);
     assert.strictEqual(f.build2DMipmaps(4, 1, size, GL.RGBA, GL.UNSIGNED_BYTE, pixels), 100901);
