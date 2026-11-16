@@ -33,7 +33,8 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "7e09a0f0f8a4214af59c7d6a5286855d05e72e73ca9d8971a5b699a503bf5765",
+      "sha256": "4cfcbaf850e0b14db0ff428d868b95d4ebaf3e861a835a29313da093b90976bd",
+      "aoe1DesktopPublishReview20261115": "Age of Empires trial (aoe1) added to DESKTOP_APPS with a comment; list membership only, no callback ownership change",
       "utGlideComment20261114": "UT348 apps.js comment: GlideDrv needs fullscreen",
       "utOpenGlTr2TrueColour20261114": "apps.js: ut348_demo OpenGL default via iniSet (FirstRun skip); tomb_raider_2_demo startupRegistry FullScreenBPP=32. Registry data only, no new callbacks.",
       "heretic2ModernControlsReview20261114": "Heretic II demo gains a modern config.cfg mount (c:\\Base), persistFiles (c:\\user\\config.cfg), relativeMouse and WASD touch layout; static app-registry data only, no callback ownership change",

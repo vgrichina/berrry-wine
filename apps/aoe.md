@@ -6,6 +6,13 @@
 **Data files:** `test/binaries/shareware/aoe/aoe_ex/data/` — sounds.drs, graphics.drs, Terrain.drs, Border.drs, Interfac.drs
 **Window:** 640×480 (or 800×600), title "Age of Empires"
 
+**Status (2026-11-15):** playable from launch to placing a building; prepared for the public desktop as `aoe1`, "Age of Empires Trial" (committed, not deployed).
+
+- Gameplay evidence: `scratch/runs/20261115-aoe-gameplay/` (result.json, CLI control-loop captures, browser coop/worker samples). The title, the campaign list, Reign of the Hittites / Homelands map load, selecting and commanding villagers (walk, cut wood, wood counter rises), arrow-key scrolling, and Build -> House placement (30 wood taken, foundation laid, villager becomes Builder) all pass with no crash. The browser page held 60 fps on an M1 (Chrome 157).
+- The trial locks Random Map, Death Match and Scenario itself (advertising screens / "not enabled in the trial version"); its Campaign menu lists Reign of the Hittites (five scenarios) and the one-scenario Armies at War showcase. Only Homelands was played.
+- Desktop preparation: `scratch/runs/20261115-aoe-desktop/` — DESKTOP_APPS row, site blurb/controls/sound answer, compat row refresh, icon (the exe's only icon is 20x31), `screenshots/apps/aoe1.png` (headless 640x480, villager woodcutting at batch 2815 on the same deterministic route; identical to the gameplay run's frames at b500 and b2260), `test/test-deploy-aoe1-assets.js` (deploy ships all 129 trial files with eula.txt, whose terms permit complete noncommercial copies; see test/binaries/SOURCES.md).
+- A reported double cursor did not reproduce on 3afab3e44: one cursor in threads/coop, 2D/WebGL, desktop/touch, menus and gameplay (`scratch/runs/20261115-aoe-cursor/`); needs the reporter's device/browser to pursue. Not verified: audible sound (open.mid plays through MCI and the AudioContext runs), combat, completing a building, long sessions, later campaign scenarios. Headless renders the briefing title as "IOMELANDS" (glyph glitch at 640x480).
+
 **Status (2026-06-14):** all-EXE smoke promoted for the title splash.
 
 - The harness now runs `Empires.exe` with `maxBatches: 3000`, `--no-close`, and `--quiet-blocks`, which gets past the initial black frame and writes the 800×600 Age of Empires title-art DirectDraw surface.

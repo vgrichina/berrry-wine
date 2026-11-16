@@ -61,6 +61,10 @@ Both games reached the public desktop with the fallback blurb, no screenshot and
 
 Screenshots: Half-Life is a crop of the reviewed browser capture `scratch/runs/20261028-uplink-release-gl/gameplay.png`; Hexen II was shot headless (`scratch/runs/20261113-hexen2-site-shot/`, `--headless-gl --batch-size=50000`, Enter as keydown/keyup pairs at 900-1300, gameplay at b8100). Bare keydowns only open the first submenu.
 
+## Age of Empires trial page (2026-11-15, prepared, not deployed)
+
+`aoe1` joins the desktop as "Age of Empires Trial": the game calls itself the trial and locks Random Map, Death Match and Scenario, so the name and blurb say so. Blurb and controls come from the reviewed gameplay run `scratch/runs/20261115-aoe-gameplay/` (click select, right-click move and gather, Build -> House, arrow-key scroll; F10 and the touch Menu button are the registry's touch layout). The sound answer says not verified: open.mid is played through MCI and the AudioContext runs, but nobody listened. The compat row's works line is refreshed to that route. The screenshot was shot headless with the control loop (`scratch/runs/20261115-aoe-desktop/`, `--batch-size=200000 --tick-ms-per-batch=50 --control --frozen`, the gameplay run's click route, capture at b2815: a villager cutting wood); it is a full 640x480 frame, so the crop keeps it. Avoid the briefing: headless renders its title as "IOMELANDS".
+
 ## Remaining
 
 Ranked by search value per hour. The first two need a machine that is not running other sweeps; the rest are the site owner's.
