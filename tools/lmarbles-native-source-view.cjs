@@ -5,20 +5,77 @@ const fs = require('node:fs'), path = require('node:path'), Module = require('no
 const crypto = require('node:crypto');
 const read = fs.readFileSync.bind(fs);
 const hash = b => crypto.createHash('sha256').update(b).digest('hex');
-const pool = JSON.parse(read(process.env.LMARBLES_SOURCE_FD));
 const root = path.resolve(__dirname, '..');
-const files = new Map(pool.files.map(row => {
-  const body = Buffer.from(row.body, 'base64');
-  if (hash(body) !== row.sha256) throw Error('sealed source digest differs: ' + row.path);
-  return [path.join(root, row.path), body];
-}));
-const wasm = read(process.env.LMARBLES_MODULE_FD);
-if (hash(wasm) !== process.env.LMARBLES_MODULE_SHA256) throw Error('sealed module differs');
-files.set(path.join(root, 'build/wine-assembly.wasm'), wasm);
+const files = new Map();
+const sourceFd = fs.openSync(process.env.LMARBLES_SOURCE_FD, 'r');
+const sourceSize = fs.fstatSync(sourceFd).size;
+const observeDirectory = process.env.LMARBLES_SOURCE_OBSERVE;
+const threadId = require('node:worker_threads').threadId;
+function observed(file, body) {
+  if (!observeDirectory) return;
+  fs.appendFileSync(path.join(observeDirectory, `source-${process.pid}-${threadId}.jsonl`),
+    JSON.stringify({ pid: process.pid, threadId, path: path.relative(root, file),
+      size: body.length, sha256: hash(body) }) + '\n');
+}
+function range(offset, size) {
+  const b = Buffer.alloc(size);
+  let done = 0;
+  while (done < size) {
+    const n = fs.readSync(sourceFd, b, done, size - done, offset + done);
+    if (!n) throw Error('truncated sealed source');
+    done += n;
+  }
+  return b;
+}
+if (process.env.LMARBLES_SOURCE_INDEX_SHA256) {
+  const size = range(0, 4).readUInt32LE();
+  if (size > sourceSize - 4) throw Error('invalid sealed source index length');
+  const bytes = range(4, size);
+  if (hash(bytes) !== process.env.LMARBLES_SOURCE_INDEX_SHA256) throw Error('sealed source index differs');
+  const index = JSON.parse(bytes);
+  if (index.version !== 1) throw Error('unsupported sealed source index');
+  let end = 0;
+  for (const row of index.files) {
+    if (typeof row.path !== 'string' || path.posix.normalize(row.path) !== row.path ||
+        path.isAbsolute(row.path) || row.path.startsWith('../') ||
+        !Number.isSafeInteger(row.size) || row.size < 0 || row.offset !== end ||
+        !/^[a-f0-9]{64}$/.test(row.sha256) || files.has(path.join(root, row.path)))
+      throw Error('invalid sealed source entry');
+    files.set(path.join(root, row.path), { ...row, offset: 4 + size + row.offset });
+    end += row.size;
+  }
+  if (4 + size + end !== sourceSize) throw Error('sealed source size differs');
+} else {
+  // Legacy compile holders remain readable. Native launches use the indexed
+  // format, avoiding full Git-pool JSON/base64 work in every Worker.
+  const pool = JSON.parse(read(process.env.LMARBLES_SOURCE_FD));
+  for (const row of pool.files) {
+    const body = Buffer.from(row.body, 'base64');
+    if (hash(body) !== row.sha256) throw Error('sealed source digest differs: ' + row.path);
+    files.set(path.join(root, row.path), body);
+  }
+}
+const wasmPath = path.join(root, 'build/wine-assembly.wasm');
+let wasm;
 function select(file) {
   if (typeof file !== 'string') return null;
   const full = path.resolve(file), value = files.get(full);
-  if (value) return value;
+  if (full === wasmPath) {
+    if (!wasm) {
+      wasm = read(process.env.LMARBLES_MODULE_FD);
+      if (hash(wasm) !== process.env.LMARBLES_MODULE_SHA256) throw Error('sealed module differs');
+      observed(full, wasm);
+    }
+    return wasm;
+  }
+  if (value) {
+    if (Buffer.isBuffer(value)) return value;
+    const body = range(value.offset, value.size);
+    if (hash(body) !== value.sha256) throw Error('sealed source digest differs: ' + value.path);
+    files.set(full, body);
+    observed(full, body);
+    return body;
+  }
   if (full.startsWith(root + '/') && /\.(?:js|cjs|json|wasm)$/.test(full) &&
       !full.startsWith(root + '/node_modules/')) throw Error('unsealed runtime input: ' + full);
   return null;

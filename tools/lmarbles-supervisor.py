@@ -7,8 +7,41 @@ def seal(label,body):
     os.lseek(fd,0,0);fcntl.fcntl(fd,fcntl.F_ADD_SEALS,15)
     assert fcntl.fcntl(fd,fcntl.F_GET_SEALS)==15
     return fd
+def indexed_source(rows):
+    # Verify once before sealing; each Node Worker also verifies every file it
+    # reads. Keep the complete inventory, but do not decode unused bodies in
+    # every desktop/guest Worker before its synchronous startup handshake.
+    index=[];bodies=[];offset=0;seen=set()
+    for row in rows:
+        name=row['path'];body=base64.b64decode(row['body'],validate=True)
+        assert name not in seen and not pathlib.PurePosixPath(name).is_absolute() and '..' not in pathlib.PurePosixPath(name).parts
+        assert hashlib.sha256(body).hexdigest()==row['sha256'],name
+        seen.add(name);index.append(dict(path=name,sha256=row['sha256'],offset=offset,size=len(body)))
+        bodies.append(body);offset+=len(body)
+    header=json.dumps(dict(version=1,files=index),separators=(',',':')).encode()
+    return len(header).to_bytes(4,'little')+header+b''.join(bodies),hashlib.sha256(header).hexdigest()
 def frozen_inputs(out,recipe):
     root=pathlib.Path(recipe['cwd']).resolve()
+    holder=json.loads(pathlib.Path(recipe.get('moduleHolder') or os.environ['LMARBLES_MODULE_HOLDER']).read_text())
+    assert token(holder['pid'])==holder['startToken'] and holder['sealed']==15
+    if holder.get('sourceFdPath'):
+        assert holder['sourceSeals']==15
+        source_body=pathlib.Path(holder['sourceFdPath']).read_bytes()
+        module_body=pathlib.Path(holder['fdPath']).read_bytes()
+        assert hashlib.sha256(source_body).hexdigest()==holder['sourceSHA256']
+        assert hashlib.sha256(module_body).hexdigest()==holder['sha256']
+        rows=json.loads(source_body)['files']
+        packed,index_sha=indexed_source(rows)
+        source=seal('lmarbles-own-git-source',packed);module=seal('lmarbles-own-git-module',module_body)
+        save(out,'runtime-inputs.json',dict(gitSHA=holder['gitSHA'],moduleSHA256=holder['sha256'],moduleSeals=15,sourceSeals=15,
+             sources=[{k:v for k,v in row.items() if k!='body'} for row in rows],sourceArchive='Pinned Git plus owned patch; only transient memfds',ownDescriptors=True,
+             sourceFormat='indexed-v1',sourceIndexSHA256=index_sha,sourceSHA256=hashlib.sha256(packed).hexdigest()))
+        (out/'runtime-source.patch').write_bytes(pathlib.Path(holder['ownedPatch']).read_bytes())
+        env=os.environ.copy();assert not env.get('NODE_OPTIONS')
+        env.update(NODE_OPTIONS='--require='+str(BASE/'lmarbles-native-source-view.cjs'),LMARBLES_SOURCE_FD='/proc/self/fd/'+str(source),
+                   LMARBLES_MODULE_FD='/proc/self/fd/'+str(module),LMARBLES_MODULE_SHA256=holder['sha256'],
+                   LMARBLES_SOURCE_INDEX_SHA256=index_sha)
+        return env,(source,module)
     names=subprocess.check_output(['git','ls-files'],cwd=root).decode().splitlines()
     selected=[p for p in names if (p.startswith('lib/') and p.endswith(('.js','.json'))) or
               p in ('host.js','test/run.js','src/api_table.json','src/win16-ordinals.generated.json','fonts/substitutions.json')]
@@ -39,7 +72,8 @@ def frozen_inputs(out,recipe):
     body=pathlib.Path(holder['fdPath']).read_bytes()
     assert hashlib.sha256(body).hexdigest()==holder['sha256']
     module=seal('lmarbles-module',body)
-    source=seal('lmarbles-sources',json.dumps(dict(files=rows)).encode())
+    packed,index_sha=indexed_source(rows)
+    source=seal('lmarbles-sources',packed)
     head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root).decode().strip()
     patches=[]
     for p in sorted(set(selected)):
@@ -51,11 +85,12 @@ def frozen_inputs(out,recipe):
         patches.append(diff.stdout)
     (out/'runtime-source.patch').write_bytes(b''.join(patches))
     save(out,'runtime-inputs.json',dict(gitSHA=head,moduleSHA256=holder['sha256'],moduleSeals=15,sourceSeals=15,
-         sources=[{k:v for k,v in row.items() if k!='body'} for row in rows],sourceArchive='Git plus binary patch; no persisted source/module bundle'))
+         sources=[{k:v for k,v in row.items() if k!='body'} for row in rows],sourceArchive='Git plus binary patch; no persisted source/module bundle',
+         sourceFormat='indexed-v1',sourceIndexSHA256=index_sha,sourceSHA256=hashlib.sha256(packed).hexdigest()))
     env=os.environ.copy();assert not env.get('NODE_OPTIONS')
     env.update(NODE_OPTIONS='--require='+str(BASE/'lmarbles-native-source-view.cjs'),
                LMARBLES_SOURCE_FD='/proc/self/fd/'+str(source),LMARBLES_MODULE_FD='/proc/self/fd/'+str(module),
-               LMARBLES_MODULE_SHA256=holder['sha256'])
+               LMARBLES_MODULE_SHA256=holder['sha256'],LMARBLES_SOURCE_INDEX_SHA256=index_sha)
     return env,(source,module)
 def save(out,name,value):
     p=out/name
@@ -103,13 +138,19 @@ def run(out,recipe):
     # independent watchdog with neither a native PID nor an actual wait.
     frozen=recipe.get('moduleHolder') or (os.environ.get('LMARBLES_MODULE_HOLDER') and recipe['args'][0]=='node')
     env,fds=frozen_inputs(out,recipe) if frozen else (None,())
+    reserve=recipe.get('reserveSeconds',180)
+    assert reserve in (180,300)
+    if recipe.get('completionSession'):
+        assert recipe['seconds']==3600 and recipe.get('watchdogGrace')==20 and reserve==300
+        assert recipe.get('inputPolicy')==dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=5,menuFreshnessSeconds=30)
+        assert '--max-seconds=3600' in recipe['args']
     deadline=time.time()+recipe['seconds']
     watchdog_deadline=deadline+recipe.get('watchdogGrace',0)
     w=subprocess.Popen([sys.executable,'-u','-B',__file__,'watchdog',str(out),str(watchdog_deadline)],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     while not (out/'watchdog-armed.json').exists():
         assert w.poll() is None,'watchdog died before arm';time.sleep(.01)
     assert not stop,'supervisor cancelled before native launch'
-    save(out,'launch.json',dict(args=recipe['args'],deadline=deadline,gameplayCutoff=deadline-180,reserveSeconds=180,at=time.time(),supervisor=os.getpid(),clock=recipe.get('clock'),nativeScene=bool(recipe.get('nativeScene'))))
+    save(out,'launch.json',dict(args=recipe['args'],deadline=deadline,gameplayCutoff=deadline-reserve,reserveSeconds=reserve,at=time.time(),supervisor=os.getpid(),clock=recipe.get('clock'),nativeScene=bool(recipe.get('nativeScene')),inputPolicy=recipe.get('inputPolicy')))
     p=subprocess.Popen(recipe['args'],cwd=recipe['cwd'],env=env,pass_fds=fds,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     for fd in fds:os.close(fd)
     info=dict(pid=p.pid,startToken=token(p.pid),at=time.time());save(out,'native-pid.json',info)

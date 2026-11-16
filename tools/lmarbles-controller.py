@@ -12,6 +12,8 @@ def save(n,v):
     with pending.open('x') as f:json.dump(v,f,indent=2);f.write('\n');f.flush();os.fsync(f.fileno())
     os.rename(pending,R/n)
 def call(c,timeout=10):
+    launch=R/'launch.json'
+    if launch.exists() and json.loads(launch.read_text()).get('inputPolicy'):timeout=min(timeout,3)
     req=urllib.request.Request(URL,data=json.dumps(c).encode(),headers={'Content-Type':'application/json'})
     with urllib.request.urlopen(req,timeout=timeout) as f:r=json.load(f)
     if not r.get('ok'):raise RuntimeError(r)
@@ -22,7 +24,8 @@ QUIT_ROUTES={'leave-game':'keydown:27','confirm-leave':'keydown:89',
              'exit-setup':'keydown:27','confirm-quit':'keydown:89'}
 def reserve():
     launch=read('launch.json')
-    assert launch['gameplayCutoff']==launch['deadline']-180,'immutable 180-second reserve missing'
+    seconds=launch.get('reserveSeconds',180)
+    assert seconds in (180,300) and launch['gameplayCutoff']==launch['deadline']-seconds,'immutable Quit reserve missing'
     assert launch['at']<launch['gameplayCutoff'],'reserve must be recorded before original'
     return launch['gameplayCutoff']
 def capture_phase():
@@ -32,6 +35,12 @@ def capture_phase():
     if time.time()>=cutoff and not (R/'quit-phase.json').exists():
         save('quit-phase.json',dict(at=time.time(),cutoff=cutoff,irreversible=True))
     return cutoff
+def freshness(review):
+    launch=read('launch.json');p=launch.get('inputPolicy')
+    if not p:return 30
+    scene=read(review+'-review.json').get('scene')
+    assert scene in ('game','menu'),'explicit personally reviewed game/menu scene required'
+    return p['gameFreshnessSeconds'] if scene=='game' else p['menuFreshnessSeconds']
 def bind(review=None):
     opened();reserve();assert not (R/'input-owner.json').exists(),'permanent owner; no rebind'
     command={'action':'guarded-bind'}
@@ -97,6 +106,7 @@ def capture(name):
         assert name.replace('-','').isalnum();capture_phase();opened()
         p=R/(name+'.png');assert not p.exists()
         start=time.time();s=call({'action':'snapshot'});capture_phase();im=call({'cmd':'png:'+str(p)});end=time.time()
+        if read('launch.json').get('inputPolicy'):assert end-start<=3,'3000ms observation exceeded'
         save(name+'.json',dict(at=start,completedAt=end,snapshot=s,image=im,pngSHA256=hashlib.sha256(p.read_bytes()).hexdigest()))
         return str(p)
     except BaseException as e:fail(e,name);raise
@@ -157,7 +167,8 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
         if native:
             assert before['physicalUp'] and before['capture']=='0x0','native physical UP required before intention'
             assert rr['snapshot']['physicalUp'] and rr['snapshot']['capture']=='0x0','review must precede any held input'
-        assert 0<=time.time()-reviewed['at']<30,'personal review age expired'
+        fresh=freshness(review)
+        assert 0<=time.time()-reviewed['at']<fresh,'personal review age expired'
         assert reviewed['pngSHA256']==rr['pngSHA256'],'review binding changed'
         assert hashlib.sha256((R/(review+'.png')).read_bytes()).hexdigest()==rr['pngSHA256'],'review image changed'
         assert not list(R.glob(review+'-used-by-*')),'capture already reserved; fresh review required'
@@ -165,15 +176,17 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
         record=dict(name=name,keys=keys,ms=ms,review=review,reviewSHA256=rr['pngSHA256'],description=description,nonces=nonces,createdAt=time.time(),intent=intent,quitRoute=route)
         save(name+'-intent.json',record);save(review+'-used-by-'+name,dict(intent=name))
         age=time.time()-rr['at']
-        if not 0<=age<30:
+        if not 0<=age<fresh:
             save(name+'-rejection.json',dict(state='NOT_SENT',lease='VALID',reason='review expired before DOWN/arm',age=age,nonces=nonces,at=time.time()))
             return 'NOT_SENT: review expired; fresh capture + review + NEW intent required'
-        deadline=min(time.time()+6.0,rr['at']+30.0)
-        intentDeadline=dict(deadline=deadline,pulseMilliseconds=ms,operationWindowSeconds=6.0)
+        strict=read('launch.json').get('inputPolicy')
+        window=3.0 if strict else 6.0
+        deadline=min(time.time()+window,rr['at']+fresh)
+        intentDeadline=dict(deadline=deadline,pulseMilliseconds=ms,operationWindowSeconds=window)
         save(name+'-operation.json',intentDeadline)
         assert deadline+2<read('launch.json')['deadline'],'operation exceeds fixed runtime'
         policy(intent,keys,review,route,deadline)
-        releaseCap=time.time()+2.0
+        releaseCap=time.time()+(1.65 if strict else 2.0)
         save(name+'-release-cap.json',dict(at=releaseCap,beforeFirstDown=True))
         child=subprocess.Popen([sys.executable,'-B',__file__,'release',name,owner['owner'],str(releaseCap),*(['final'] if final else [])],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         sent=False
@@ -181,18 +194,20 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
             ready,_,_=select.select([child.stdout],[],[],1.5);assert ready,'independent release child arm deadline'
             armed=json.loads(child.stdout.readline());assert armed['armed'];save(name+'-armed.json',armed)
             assert time.time()<deadline,'operation deadline before DOWN'
-            if time.time()-rr['at']>=30 or time.time()-reviewed['at']>=30:
+            if time.time()-rr['at']>=fresh or time.time()-reviewed['at']>=fresh:
                 save(name+'-rejection.json',dict(state='NOT_SENT',lease='VALID',reason='review expired after arm before DOWN',nonces=nonces,at=time.time()))
                 return 'NOT_SENT: review expired after arm; fresh capture + NEW intent required'
             receipts=[]
             for key,nonce in zip(keys,nonces):
-                assert time.time()-rr['at']<30 and time.time()-reviewed['at']<30,'capture/review expired before edge'
+                assert time.time()-rr['at']<fresh and time.time()-reviewed['at']<fresh,'capture/review expired before edge'
                 cutoff=policy(intent,keys,review,route)
                 sent=True
                 guard={**owner,'nonce':nonce,'reviewed':True,'deadline':int(min(deadline,releaseCap,cutoff if intent=='gameplay' else deadline)*1000)}
                 if native:guard['intent']=rr['snapshot']
-                receipt=call({'action':'guarded-input','cmd':key,'guard':guard})
+                deliveryAt=time.time()
+                receipt=call({'action':'guarded-input','cmd':key,'guard':guard},timeout=.5 if strict else 10)
                 returnedAt=time.time()
+                if strict:assert returnedAt-deliveryAt<=.5,'500ms confirmation exceeded'
                 receipts.append(receipt)
                 if receipt.get('consumedAt'):
                     save(name+'-release-at.json',dict(at=receipt['consumedAt']/1000+ms/1000,immutableOperationDeadline=deadline))
@@ -217,20 +232,24 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
             save(name+'-final-choice.json',dict(nativeQuitClaim=False,ownerExited=True,physicalUpACK=False))
             return 'Native owner exited with actual wait and both EOFs; physical UP unacknowledged'
         assert up['state']=='ACK' and up['at']<deadline,'independent UP not acknowledged in window'
+        if strict:assert up['at']-deliveryAt<=1.75,'1750ms independent physical UP exceeded'
         # Append-only link instead of overwriting old intent records.
         old=R/'last-intent.json'
         if old.exists():old.unlink()
         save('last-intent.json',dict(nonces=nonces))
         if final:
             save(name+'-final-choice.json',dict(nativeQuitClaim=False,awaitActualNativeWait=True));return 'Final reviewed choice submitted; await actual native wait'
-        b=call({'action':'snapshot'});end=time.monotonic()+10
+        observationAt=time.monotonic()
+        b=call({'action':'snapshot'});end=observationAt+(3 if strict else 10)
         while time.monotonic()<end:
             a=call({'action':'snapshot'})
             if a['batch']>b['batch']:break
             time.sleep(.02)
         else:raise RuntimeError('no postrelease progress')
         save(name+'-progress.json',dict(before=before,afterRelease=b,postProgress=a,at=time.time()))
-        time.sleep(1.2);return capture(name)
+        time.sleep(1.2);result=capture(name)
+        if strict:assert time.monotonic()-observationAt<=3,'3000ms post-UP observation exceeded'
+        return result
     except ReserveRejected:raise
     except BaseException as e:fail(e,name);raise
 if __name__=='__main__':

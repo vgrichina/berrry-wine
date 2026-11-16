@@ -50,9 +50,10 @@ c.R=out
 with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
 c.URL='http://127.0.0.1:'+str(port)+'/ctl'
 os.environ['LMARBLES_CONTROL_URL']=c.URL;os.environ['LMARBLES_CONTROL_OUT']=str(out)
-args=['node','test/run.js','--app=sol','--no-build','--no-threads','--real-ticks','--screen=1024x712',
+args=['node','test/run.js','--app=sol','--no-build','--threads','--real-ticks','--screen=1024x712',
       '--max-seconds=45','--max-batches=10000000','--control='+str(port),'--quiet-api','--quiet-blocks','--no-close']
-c.save('recipe.json',dict(cwd=str(root),args=args,seconds=195,watchdogGrace=2,nativeScene=True,
+c.save('recipe.json',dict(cwd=str(root),args=args,seconds=315,reserveSeconds=300,watchdogGrace=2,nativeScene=True,
+                        inputPolicy=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=5,menuFreshnessSeconds=30),
                         moduleHolder=os.environ['LMARBLES_MODULE_HOLDER']))
 p=subprocess.Popen(['python3','-B','tools/lmarbles-supervisor.py','durablewait',str(out)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 try:
@@ -65,7 +66,7 @@ try:
         assert time.time()<end,'synthetic native scene startup';time.sleep(.02)
     time.sleep(.3)
     c.capture('binding');r=c.read('binding.json')
-    c.save('binding-review.json',dict(at=time.time(),pngSHA256=r['pngSHA256'],observation='Automated synthetic Solitaire controller fixture, no original/personal review claim'))
+    c.save('binding-review.json',dict(at=time.time(),pngSHA256=r['pngSHA256'],scene='game',observation='Automated synthetic Solitaire controller fixture, no original/personal review claim'))
     c.bind('binding')
     c.pulse('finite',['keydown:40'],100,'binding','automated synthetic controller fixture')
     while time.time()<c.reserve():time.sleep(.01)
