@@ -66,6 +66,32 @@ prepared before the runtime begins, 1800 native seconds, an independently
 prearmed 1820-second watchdog and a fixed 180-second Quit reserve. The current
 reviewed-context input contract is reused read-only. The exact unsuffixed
 DirectXSetup guard still stops before its unsupported handler executes.
-At this publication checkpoint the original has not yet been launched;
-installed Play and first-room gameplay remain unproved. Final outcome belongs
-in the run's result.json and a subsequent update of this note.
+The extended qualification also loads the unchanged original DSETUP6E with
+SETUPX supplied as its real dependency. Both attach and retire successfully;
+the actual LibEntry, notification and WEP calls restore the caller. This is
+NE dependency initialization, not a Win32 DSETUPE ThunkConnect32 replay or a
+DirectXSetup call. `native-transitive/qualification.json` retains the result.
+
+The original route was not launched. Before admission, the concurrent native
+reviewed-context worker demonstrated that `controlSnapshot.windows`, populated
+from `renderer.windows`, omits actual USER child buttons. Its generated native
+MessageBox has a live focused BUTTON while the listed windows contain only
+the main window and modal container. Binding the actual button is unavailable;
+targeting the container would discard the button's own semantic identity. The
+coordinator assigned the released core census repair to the VB reviewed-context
+worker at 12:40 UTC. This task leaves those owned core files untouched.
+
+The next prerequisite is a published and qualified native child census with
+capture-time and consume-time button identity and label checks. The conditional
+original route remains unused; installed Play, first-room gameplay and native
+Quit remain unproved. No host cleanup of an original was needed and no box was
+created. Removal of the unused original supervisor/controller wrappers and
+the extended qualification helper remain uncommitted WIP in the shared tree:
+the wrappers read mutable borrowed helpers and had not qualified immutable
+launch inheritance. They must not be mistaken for an admitted original runtime.
+Two final canonical build attempts failed on active foreign changes (first
+native control-reader attribution, then renderer producer lifetime hashes).
+The core repair itself was already published after two successful locked full
+builds. The follow-up is not published while the fresh build gate fails.
+The run's result.json records this concrete next blocker and the published
+dependency repair separately.
