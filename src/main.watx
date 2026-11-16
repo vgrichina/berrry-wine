@@ -112,6 +112,7 @@
 (include "09ai-d3d-render-lifetime.wat")
 (include "09aj-d3d-fixed.wat")
 (include "09ak-d3d-depth.wat")
+(include "09akg-d3d9-gps.wat")
 (include "09al-d3d-reset.wat")
 (include "09am-d3d-color.wat")
 (include "09b-dispatch.wat")

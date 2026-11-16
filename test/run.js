@@ -211,6 +211,11 @@ if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --h
 // --gl-gps=webgl picks the WebGL executor (needs --headless-gl).
 const GL_GPS = hasFlag('gl-gps') || getArg('gl-gps', null) !== null;
 const GL_GPS_BACKEND = getArg('gl-gps', null) || 'software';
+// --d3d9-gps[=webgl|none]: D3D9 / D3D8 frames also lowered onto GPU stream
+// v2 (src/09akg-d3d9-gps.wat); the old D3D9 path still runs as the shadow.
+// 'none' is a host without an executor (the arm turns itself off).
+const D3D9_GPS = hasFlag('d3d9-gps') || getArg('d3d9-gps', null) !== null;
+const D3D9_GPS_BACKEND = getArg('d3d9-gps', null) || 'software';
 if (args.some(arg => arg === '--gl-encoder' || arg.startsWith('--gl-encoder='))) {
   throw new Error('--gl-encoder was removed; OpenGL encoding always runs in WAT');
 }
@@ -2811,6 +2816,7 @@ async function main() {
     glBackend: GL_RENDERER || 'webgl',
     glideBackend: GLIDE_RENDERER,
     glGpsBackend: GL_GPS_BACKEND,
+    d3d9GpsBackend: D3D9_GPS_BACKEND,
     gpuStreamDump: GPU_STREAM_DUMP,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
     createD3DRenderWorker: () => {
@@ -5151,6 +5157,7 @@ async function main() {
   // ring that lib/d3dim-host.js drains (host-imports gpu_stream_kick).
   if (D3DIM_GPU) instance.exports.d3dim_gpu_enable(1);
   if (GL_GPS) instance.exports.gl_gps_enable(1);
+  if (D3D9_GPS) instance.exports.d3d9_gps_enable(1);
   // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
   // turns it off there); the WAT default and the CLI default are off.
   if (D3DIM_GPU && hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
@@ -12854,12 +12861,34 @@ if (VERBOSE) {
       ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
       ` active=${instance.exports.gl_gps_active()}`);
   }
+  if (D3D9_GPS) {
+    // src/09akg-d3d9-gps.wat d3d9_gps_stat: counters, decline reasons 16+r,
+    // readback sites 48+s (0 lock, 1 getdc, 2 rtdata, 3 capture).
+    const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
+    const names = ['draws', 'prims', 'clears', 'presents', 'gpu-frames', 'old-frames', 'readbacks',
+      'rt-uploads', 'tex-uploads', 'tex-hits', 'shaders', 'syncs', 'declines', 'old-fail', 'opens', 'dead'];
+    const reasons = [];
+    for (let r = 1; r < 32; r++) if (st(16 + r)) reasons.push(`${r}:${st(16 + r)}`);
+    const sites = [];
+    for (let s = 0; s < 16; s++) if (st(48 + s)) sites.push(`${s}:${st(48 + s)}`);
+    const old = [];
+    for (let k = 0; k < 6; k++) if (st(64 + k)) old.push(`${['other-device', 'declined', 'stale', 'no-hwnd', 'capture-stale', 'capture-no-rt'][k]}:${st(64 + k)}`);
+    console.log(`[d3d9-gps] ${names.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
+      ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
+      ` old-present=${old.join(',') || 'none'}` +
+      ` active=${instance.exports.d3d9_gps_active()}`);
+  }
 
   if (PNG_OUT && renderer) {
     // GPU stream D3DIM presents without reading back: land every GPU target
     // in its DIB before reading surfaces out of memory.
     if (D3DIM_GPU && instance.exports.d3dim_gps_sync_all) instance.exports.d3dim_gps_sync_all();
     if (GL_GPS) instance.exports.gl_gps_sync_front();
+    if (D3D9_GPS) {
+      instance.exports.d3d9_gps_sync_front();
+      const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
+      console.log(`[d3d9-gps] capture: executor-readback=${st(51)} stale=${st(68)} no-rt=${st(69)}`);
+    }
     const { mem, surfaces } = getDxSurfaceManifest();
     const wantSlot = DX_SLOT === null ? null : (parseInt(DX_SLOT, 10) | 0);
     // Software GL drawing into a PFD_DRAW_TO_BITMAP DIB leaves only helper

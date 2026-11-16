@@ -57,7 +57,8 @@
 
 (func $d3d9_backbuffer_dc_sync (param $device i32) (param $upload i32) (result i32)
   (local $desc i32) (local $result i32) (local $state i32)
-  (if (global.get $d3d_render_token) (then (return (call $d3d_render_poll))))
+  (if (global.get $d3d_render_token) (then
+    (return (call $d9g_bb_sync (local.get $device) (local.get $upload) (call $d3d_render_poll)))))
   (local.set $desc (call $d3d9_gpu_descriptor (local.get $device)))
   (if (local.get $upload) (then
     (i32.store offset=24 (local.get $desc) (i32.const 0))
@@ -77,8 +78,10 @@
       (i32.store offset=28 (local.get $desc) (i32.add (i32.load offset=28 (local.get $desc))
         (i32.add (i32.mul (i32.load offset=44 (local.get $desc)) (i32.load offset=32 (local.get $desc)))
           (i32.mul (i32.load offset=36 (local.get $desc)) (call $d3d9_color_bytes (call $d3d9_backbuffer_format (local.get $device)))))))))
-    (return (call $host_gpu_gl_call (i32.const 0x30015) (local.get $desc) (i32.const 0)))))
-  (call $host_gpu_gl_call (i32.const 0x30016) (local.get $desc) (i32.const 0)))
+    (return (call $d9g_bb_sync (local.get $device) (i32.const 1)
+      (call $host_gpu_gl_call (i32.const 0x30015) (local.get $desc) (i32.const 0))))))
+  (call $d9g_bb_sync (local.get $device) (i32.const 0)
+    (call $host_gpu_gl_call (i32.const 0x30016) (local.get $desc) (i32.const 0))))
 
 ;; LockRect and GetDC share CPU exclusion, but remain distinct ownership kinds.
 (func $d3d9_backbuffer_lock (param $surface i32) (param $out i32) (param $rect i32) (param $flags i32)
@@ -579,6 +582,7 @@
       (then (call $d3d_render_poll))
       (else (call $host_gpu_gl_call (i32.const 0x30012) (call $d3d9_gpu_descriptor (local.get $device)) (local.get $dst)))))
     (if (call $d3d_render_park (local.get $result) (i32.const 0)) (then (return)))
+    (call $d9g_rtdata (local.get $device) (local.get $dst) (local.get $result))
     (if (i32.eq (local.get $result) (i32.const 1)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0))))
     (return)))
   (local.set $src (call $g2w (local.get $source))) (local.set $dst (call $g2w (local.get $dest)))

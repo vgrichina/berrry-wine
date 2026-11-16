@@ -1167,6 +1167,7 @@
           (then (call $d3d_render_poll))
           (else (call $host_gpu_gl_call (i32.const 0x30004) (i32.const 0) (local.get $arg0)))))
         (if (call $d3d_render_park (local.get $result) (i32.const 0)) (then (return)))
+        (if (i32.eq (local.get $result) (i32.const 1)) (then (call $d9g_reset (local.get $arg0))))
         ;; A failed ownership handoff is not permission to free storage still
         ;; reachable by a renderer. Keep the native owner for explicit recovery.
         (if (i32.ne (local.get $result) (i32.const 1)) (then
@@ -1360,6 +1361,7 @@
       ;; Present-only packet word: the broker's instance is not the guest
       ;; owner and cannot read this invocation's synchronous-send depth.
       (i32.store offset=60 (local.get $desc) (global.get $sync_msg_depth))
+      (if (call $d9g_present (local.get $arg0)) (then (local.set $result (i32.const 1)) (br $issue)))
       (local.set $result (call $host_gpu_gl_call (i32.const 0x30002) (local.get $desc) (i32.const 0))))))
     (if (call $d3d_render_park (local.get $result) (i32.const 24)) (then (return)))
     ;; Past the park, this call completes whichever way it presents.
@@ -1636,6 +1638,7 @@
         (local.set $result (call $host_gpu_gl_call (i32.const 0x30003) (local.get $desc) (i32.const 0)))))))
     )
     (if (call $d3d_render_park (local.get $result) (i32.const 32)) (then (return)))
+    (call $d9g_clear (local.get $arg0) (local.get $result))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (if (i32.lt_s (local.get $result) (i32.const 0))
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086C)) (return)))
@@ -2043,6 +2046,7 @@
     (i32.store offset=36 (local.get $desc) (local.get $arg4))
     (local.set $result (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))
     (if (call $d3d_render_park (local.get $result) (i32.const 24)) (then (return)))
+    (call $d9g_draw (local.get $arg0) (i32.const 0) (local.get $result))
     (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x8876086c) (i32.eq (local.get $result) (i32.const 1))))
     (local.set $result (i32.load offset=0 (global.get $reg_base)))
     (call $d3d9_buffer_bind (local.get $arg0) (i32.const 0) (i32.const 6) (i32.const 0) (i32.const 0) (i32.const 0))
@@ -2081,6 +2085,7 @@
     (i32.store offset=56 (local.get $desc) (local.get $arg3))
     (local.set $result (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))
     (if (call $d3d_render_park (local.get $result) (i32.const 40)) (then (return)))
+    (call $d9g_draw (local.get $arg0) (i32.const 1) (local.get $result))
     (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x8876086c) (i32.eq (local.get $result) (i32.const 1))))
     (local.set $result (i32.load offset=0 (global.get $reg_base)))
     (call $d3d9_buffer_bind (local.get $arg0) (i32.const 0) (i32.const 6) (i32.const 0) (i32.const 0) (i32.const 0))
@@ -2773,7 +2778,8 @@
         (then (call $d3d_render_poll))
         (else (local.set $desc (call $d3d9_gpu_descriptor (local.get $device)))
           (i32.store offset=60 (local.get $desc) (global.get $sync_msg_depth))
-          (call $host_gpu_gl_call (i32.const 0x30002) (local.get $desc) (i32.const 0)))))
+          (if (result i32) (call $d9g_present (local.get $device)) (then (i32.const 1))
+            (else (call $host_gpu_gl_call (i32.const 0x30002) (local.get $desc) (i32.const 0)))))))
       (if (call $d3d_render_park (local.get $result) (i32.const 28)) (then (return)))
       (call $present_frame_end)
       (if (i32.eqz (local.get $result)) (then (call $dx_present (local.get $rt))))

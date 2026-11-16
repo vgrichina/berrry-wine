@@ -207,7 +207,8 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "dbeb7e8372cd788b006d2d264f7ba500f181c33ce983cafbfadac6d41414dea1",
+      "sha256": "611b02a06fe1bfbb44280f615076fd6ca92ca90515bc09f9ed5f7e9ce261c998",
+      "d3d9GpsReview20261115": "2026-11-15 GPU stream v2 slice 9.5a: gpu_stream_kick routes ring api 4 (D3D9/D3D8, opt-in --d3d9-gps) to a lazily built generic bridge named 'd3d9-gps', or answers 0 for the 'none' backend. Same synchronous results as the other rings; no guest invocation, callback owner, continuation or retained guest reference added.",
       "d3dimOldPathDeleteReview20261115": "2026-11-15 GPU stream v2 D2c: the shared render owner's D3DIM endpoint is always software; the 0x2000A host branch is removed (D3DIM GPU present never leaves WAT). No guest invocation, callback owner, continuation or retained guest reference added.",
       "gpuStreamDoorbellReview20261114": "2026-11-14 GPU stream doorbell: gpu_stream_kick picks its consumer bridge from GpsRing.api (Glide only today) instead of assuming Glide. Same synchronous/promise results as before; no guest invocation, callback owner, continuation or retained guest reference added.",
       "gpuStreamV2Review20261114": "2026-11-14 GPU stream v2: glide_submit/glide_batch replaced by gpu_stream_kick(ring, mode), which drains a WAT-written ring in shared memory into an executor; Glide bridge also receives the --gpu-stream-dump path. Frames reach the compositor exactly as before; no guest invocation, callback owner, continuation or retained guest reference added.",

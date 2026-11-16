@@ -121,6 +121,7 @@
   (i32.store offset=21768 (local.get $old) (i32.const 0))
   (if (i32.ne (local.get $result) (i32.const 1)) (then
     (call $d3d9_reset_dispose (local.get $plan)) (i32.store offset=0 (global.get $reg_base) (i32.const 0x88760868)) (return)))
+  (call $d9g_reset (local.get $device))
   (local.set $next (call $g2w (i32.load offset=4 (local.get $wa))))
   ;; Preserve vtables needed by surviving shaders/managed resources and the
   ;; creation identity, but none of the old bindings or render state.

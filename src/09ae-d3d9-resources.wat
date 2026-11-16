@@ -440,6 +440,7 @@
       (i32.store offset=56 (local.get $desc) (local.get $num))))
     (local.set $result (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))
     (if (call $d3d_render_park (local.get $result) (i32.const 0)) (then (return)))
+    (call $d9g_draw (local.get $device) (i32.add (i32.const 2) (i32.ne (local.get $indexed) (i32.const 0))) (local.get $result))
     (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x8876086c) (i32.eq (local.get $result) (i32.const 1)))))
 
   ;; Why $d3d9_declaration_create refused, counted. The refusal itself is
