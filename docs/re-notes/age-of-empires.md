@@ -190,12 +190,35 @@ dir); every path below is relative to it.
 `lib/apps.js` therefore persists `c:\savegame\*.gam` and `c:\game*.nfo`
 through IndexedDB; `test/test-aoe1-save-persistence.js` pins it.
 
-**Crash on the way back to the menu (open).** Campaign game -> F10 -> Quit
-Game -> Yes -> Close (Achievements) -> Cancel (Campaign) -> Cancel (Select
-Player) traps with opcode `0x6c` at `0x083f1140`: `0x004571f6 call
-[eax+0x24]` dispatches through `[edi+0x40]`, an object whose vtable word is a
-heap address. Same signature with and without a save/load in the game, so it
-is not the save path. Not root-caused.
+**Crash on the way back to the menu (fixed 2026-11-16).** Campaign game ->
+F10 -> Quit Game -> Yes -> Close (Achievements) -> Cancel (Campaign) ->
+Cancel (Select Player) trapped with opcode `0x6c` at `0x083f1140`:
+`0x004571f6 call [eax+0x24]` dispatched through `[edi+0x40]`, an object whose
+vtable word is a heap address. The trigger is the New Name dialog closed with
+Enter earlier in the session (every reported route typed a name that way).
+
+- The panel system is the object at `0x5f5110`; `0x4079d0` returns its
+  current panel `[0x5f511c]`, and WM_PAINT (`0x41b4f5`) draws it through
+  vtable `+0x54` = `0x457180`, which calls `[this+0x40]->vfunc+0x24` (the
+  parent) when `parent+0x7c` is set.
+- With no player on file, Campaign pops the **New Name Dialog** (ctor
+  `0x48cb50`, vtable `0x53c298`, 500x230 at 150,185, parent = the Single
+  Player Menu panel). Its EDIT is a native control the game subclasses; the
+  subclass handles Enter itself: it reads the name, builds Select Player, and
+  fades the palette (`IDirectDrawPalette_SetEntries` + `timeGetTime` loop at
+  `0x41d551..0x41d6e3`), then deletes the dialog.
+- The renderer sent that WM_KEYDOWN straight into the subclass with
+  `send_message`, a bounded nested run; the fade outlived its 64 rounds
+  (`[sync] ABANDONED wndproc hwnd=0x10003 msg=0x100 wParam=0xd at
+  0x0041d551`), so the dialog was never deleted. Starting the game freed the
+  Single Player Menu (`0x00519417` writes the free-list link into its
+  vtable word), and Cancel on Select Player made the orphaned dialog current
+  again; its first paint called through the freed parent.
+- Fix: `lib/renderer-input.js` queues keys for an EDIT whose wndproc slot
+  holds an x86 subclass, so the game dispatches Enter from its own
+  GetMessage loop as on Windows (Threads mode already did).
+  `test/test-edit-subclass-key-queue.js`; route and captures in
+  `scratch/runs/20261116-aoe-fixes`.
 
 ## Ruled out
 
