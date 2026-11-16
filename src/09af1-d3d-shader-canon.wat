@@ -649,7 +649,8 @@
 ;; ABI 1, stage 0, version 0xfffe0200, header flags 8 (core) | guest bit0.
 ;; docs/gpu-stream-v2.md "Vertex shaders" is the contract. Core vertex ops:
 ;;   mov1 add2 mad4 mul5 rcp6 rsq7 dp3 8 dp4 9 min10 max11 slt12 sge13
-;;   exp14 log15 frc19 mova46 (round to nearest even) dcl31 def81
+;;   exp14 log15 frc19 mova46 (round to nearest even) cmp88 (per component
+;;   a >= 0 ? b : c, a pure select, destination never a source) dcl31 def81
 ;; rcp/rsq/exp/log sources always carry a replicate swizzle. Source modifiers
 ;; are 0 or 1 (negate) plus the relative bits (256 = c[a0.? + n], component
 ;; in bits 11..12; an index outside c0..c255 reads 0). Destinations carry a
@@ -660,7 +661,8 @@
 ;;   guest), v0..v15 inputs each named by a DCL, c0..c255, a0,
 ;;   oPos (bank 4 index 0), oFog (4/1, .x), oPts (4/2, .x), oD0..1, oT0..7.
 ;; Lowered here: sub, abs, lrp, lit, dst, expp, logp, m4x4/m4x3/m3x4/m3x3/
-;; m3x2, pow, nrm, crs, vs_1_x "mov a0" (floor, then mova).
+;; m3x2, pow, nrm, crs, vs_1_x "mov a0" (floor, then mova), and the 09aj
+;; fixed-function cnd (via cmp).
 ;; Declined (counted, never silently wrong): flow control, sincos, sgn,
 ;; defb/defi, a source modifier other than negate, a result shift, and a v#
 ;; read that no DCL names (the executor binds inputs only by declaration).
@@ -1021,6 +1023,25 @@
       (call $vc_src (local.get $rec) (i32.const 2) (local.get $b) (i32.const 0xd2) (i32.const 0) (i32.const 0))
       (call $vc_t (local.get $rec) (i32.const 3) (i32.const 28) (i32.const 0xe4) (i32.const 1))
       (return (i32.const 1))))
+    ;; cnd a, b, c = a > 0.5 ? b : c per component (09aj fixed-function IR
+    ;; only: its normalize selects rather than multiplying a non-finite length
+    ;; by zero) = cmp(0.5 - a, c, b) into r29 -- cmp never writes one of its
+    ;; sources -- then the guest's write.
+    (if (i32.eq (local.get $op) (i32.const 80)) (then
+      (local.set $rec (call $vc_op (i32.const 2) (i32.const 3) (i32.const 28) (i32.const 15)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 1) (i32.const 0))
+      (call $vc_lit (local.get $rec) (i32.const 2) (i32.const 1) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 88) (i32.const 4) (i32.const 29) (i32.const 15)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0xe4) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 2) (local.get $c) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 3) (local.get $b) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (local.set $rec (call $vc_rec (i32.const 1) (i32.const 2)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_dst (local.get $rec) (local.get $d))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 29) (i32.const 0xe4) (i32.const 0))
+      (return (i32.const 1))))
     (call $cn_decline (local.get $op)))
 
   ;; Allocate the output for $cap records; returns the guest pointer or 0.
@@ -1087,7 +1108,7 @@
         (if (i32.or (i32.ne (i32.load offset=32 (local.get $ins)) (i32.const 1)) (i32.ge_u (i32.load offset=36 (local.get $ins)) (i32.const 16)))
           (then (drop (call $cn_decline (i32.const 0x60006))) (return (i32.const 0))))
         (local.set $declared (i32.or (local.get $declared) (i32.shl (i32.const 1) (i32.load offset=36 (local.get $ins)))))))
-      (if (i32.or (i32.eq (local.get $op) (i32.const 16))
+      (if (i32.or (i32.or (i32.eq (local.get $op) (i32.const 16)) (i32.eq (local.get $op) (i32.const 80)))
             (i32.or (i32.eq (local.get $op) (i32.const 17)) (i32.and (local.get $vs1) (i32.eq (local.get $op) (i32.const 78)))))
         (then (local.set $lits (i32.const 1))))
       (if (i32.eq (local.get $op) (i32.const 16)) (then (local.set $lit (i32.const 1))))

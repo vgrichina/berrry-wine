@@ -220,11 +220,14 @@ const GL_GPS = GL_GPS_ARG === 'off' ? false
 const GL_GPS_BACKEND = GL_GPS_ARG !== null && GL_GPS_ARG !== 'off' ? GL_GPS_ARG
   : hasFlag('gl-gps') ? 'software' : 'webgl';
 // --d3d9-gps[=software|webgl|none|off]: D3D9 / D3D8 frames are also lowered
-// onto GPU stream v2 (src/09akg-d3d9-gps.wat); the old D3D9 path still runs
-// as the shadow. On by default (slice 9.5b); --d3d9-gps=off or
+// onto GPU stream v2 (src/09akg-d3d9-gps.wat), which leads once its frames
+// hold (d3d9-retire S1). On by default (slice 9.5b); --d3d9-gps=off or
 // --no-d3d9-gps turns the arm off. The executor follows the D3D9 renderer
-// (webgl with --headless-gl, else software) unless one is named. 'none' is
-// a host without an executor (the arm turns itself off).
+// unless one is named: webgl with --headless-gl, software for the software
+// renderer, and none when the D3D9 renderer has no GPU either (WebGL
+// without --headless-gl), since WAT now decides caps from the executor
+// (d3d9-retire S2). 'none' is a host without an executor (the arm turns
+// itself off).
 const D3D9_GPS_ARG = getArg('d3d9-gps', null);
 const D3D9_GPS = !hasFlag('no-d3d9-gps') && D3D9_GPS_ARG !== 'off';
 const D3D9_GPS_EXPLICIT = D3D9_GPS_ARG !== null && D3D9_GPS_ARG !== 'off' && D3D9_GPS_ARG !== '';
@@ -2829,7 +2832,9 @@ async function main() {
     glideBackend: GLIDE_RENDERER,
     glGpsBackend: GL_GPS_BACKEND,
     d3d9GpsBackend: D3D9_GPS_EXPLICIT ? D3D9_GPS_ARG
-      : (HEADLESS_GL && (D3D9_RENDERER || 'webgl') === 'webgl' ? 'webgl' : 'software'),
+      : (HEADLESS_GL && (D3D9_RENDERER || 'webgl') === 'webgl' ? 'webgl'
+        : (D3D9_RENDERER || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl')) === 'software'
+          ? 'software' : 'none'),
     glGps: GL_GPS,
     gpuStreamDump: GPU_STREAM_DUMP,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
@@ -5172,6 +5177,9 @@ async function main() {
   if (D3DIM_GPU) instance.exports.d3dim_gpu_enable(1);
   if (GL_GPS) instance.exports.gl_gps_enable(1);
   instance.exports.d3d9_gps_enable?.(D3D9_GPS ? 1 : 0);
+  // D3D9/D3D8 presents so far (09akg stat 4 GPU + 5 old-path frames), for --cpu-window.
+  const d3d9Frames = () => instance.exports.d3d9_gps_stat
+    ? (instance.exports.d3d9_gps_stat(4) >>> 0) + (instance.exports.d3d9_gps_stat(5) >>> 0) : 0;
   // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
   // turns it off there); the WAT default and the CLI default are off.
   if (D3DIM_GPU && hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
@@ -7927,11 +7935,11 @@ async function main() {
       break;
     }
     for (const w of CPU_WINDOWS) {
-      if (!w.cpu && !w.done && batch >= w.start) { w.cpu = process.cpuUsage(); w.wall = performance.now(); }
+      if (!w.cpu && !w.done && batch >= w.start) { w.cpu = process.cpuUsage(); w.wall = performance.now(); w.d9 = d3d9Frames(); }
       else if (w.cpu && !w.done && batch >= w.stop) {
         const d = process.cpuUsage(w.cpu);
         w.done = true;
-        console.log(`[cpu-window] batches ${w.start}..${w.stop}: user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s`);
+        console.log(`[cpu-window] batches ${w.start}..${w.stop}: user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}`);
       }
     }
     if (cpuProf) {
@@ -11613,7 +11621,7 @@ if (VERBOSE) {
     if (!w.cpu || w.done) continue;
     const d = process.cpuUsage(w.cpu);
     w.done = true;
-    console.log(`[cpu-window] batches ${w.start}..run end (asked ${w.stop}): user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s`);
+    console.log(`[cpu-window] batches ${w.start}..run end (asked ${w.stop}): user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}`);
   }
   // The control server would otherwise hold the process open; unref lets a
   // reply resolved in the final batch still flush while the exit path prints.
@@ -12879,7 +12887,8 @@ if (VERBOSE) {
   }
   if (D3D9_GPS && instance.exports.d3d9_gps_stat(14)) {
     // src/09akg-d3d9-gps.wat d3d9_gps_stat: counters, decline reasons 16+r,
-    // readback sites 48+s (0 lock, 1 getdc, 2 rtdata, 3 capture).
+    // readback sites 48+s (0 lock, 1 getdc, 2 rtdata, 3 capture, 4 handover
+    // to the old path), 80 handovers, 81 lead-mode entries (S1).
     const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
     const names = ['draws', 'prims', 'clears', 'presents', 'gpu-frames', 'old-frames', 'readbacks',
       'rt-uploads', 'tex-uploads', 'tex-hits', 'shaders', 'syncs', 'declines', 'old-fail', 'opens', 'dead'];
@@ -12894,6 +12903,7 @@ if (VERBOSE) {
       ` old-present=${old.join(',') || 'none'}` +
       ` buffer-draws=${st(74)} buffer-uploads=${st(72)} buffer-hits=${st(73)}` +
       ` lock-current=${st(76)} lock-fills=${st(77)} uploads-folded=${st(78)} old-readbacks-skipped=${st(79)}` +
+      ` handovers=${st(80)} lead-entries=${st(81)}` +
       ` active=${instance.exports.d3d9_gps_active()}`);
   }
 

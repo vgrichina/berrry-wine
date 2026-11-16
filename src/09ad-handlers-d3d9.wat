@@ -423,7 +423,7 @@
 
   (func $d3d9_shader_create (param $this i32) (param $code i32) (param $out i32) (param $version i32)
     (local $state i32) (local $length i32) (local $shader i32) (local $wa i32)
-    (local $ir i32) (local $words i32) (local $retained i32) (local $ir_bytes i32)
+    (local $ir i32) (local $words i32) (local $retained i32) (local $ir_bytes i32) (local $profile i32)
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086C))
     (if (i32.eqz (local.get $out)) (then (return)))
     (call $gs32 (local.get $out) (i32.const 0))
@@ -481,8 +481,11 @@
     ;; error latches its command queue for good. Refuse here instead, while
     ;; the guest can still see D3DERR_INVALIDCALL. Bit 0x800 is reported only
     ;; by that executor; -1 (no D3D9 bridge) is masked out by the sign bit.
-    (if (i32.eq (i32.and (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 0))
-          (i32.const 0x80000800)) (i32.const 0x800)) (then
+    (local.set $profile (call $d3d9_caps_profile))
+    (if (if (result i32) (i32.ge_s (local.get $profile) (i32.const 0))
+          (then (call $d3d9_caps_software (local.get $profile)))
+          (else (i32.eq (i32.and (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 0))
+            (i32.const 0x80000800)) (i32.const 0x800)))) (then
       (local.set $retained (call $d3d_shader_vm_compile (local.get $ir)))
       (if (i32.eqz (local.get $retained)) (then
         (call $d3d_shader_ir_free (local.get $ir)) (call $heap_free (local.get $shader))
@@ -661,6 +664,10 @@
 
   ;; Backend-specific software precision contract. +25600 stores BB format.
   (func $d3d9_rgb565_supported (result i32)
+    (local $profile i32)
+    (local.set $profile (call $d3d9_caps_profile))
+    (if (i32.ge_s (local.get $profile) (i32.const 0))
+      (then (return (call $d3d9_caps_software (local.get $profile)))))
     (i32.eq (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 23)) (i32.const 1)))
   (func $d3d9_color_bytes (param $format i32) (result i32)
     (select (i32.const 2) (i32.const 4) (i32.eq (local.get $format) (i32.const 23))))
@@ -908,7 +915,7 @@
   ;; The host enables it only after a real shader/texture/indexed draw pixel
   ;; probe succeeds. Headless/non-opted-in hosts retain zero shader caps.
   (func $d3d9_fill_caps (param $dest i32) (result i32)
-    (local $wa i32)
+    (local $wa i32) (local $profile i32)
     (if (i32.eqz (local.get $dest)) (then (return (i32.const 0x8876086C))))
     ;; D3DCAPS9 is 304 bytes, so it crosses a guest page boundary from most
     ;; addresses, and two adjacent sparse pages need not be adjacent in WASM
@@ -923,12 +930,17 @@
     (i32.store offset=108 (local.get $wa) (i32.const 1)) ;; MaxAnisotropy (no anisotropic filtering)
     (i32.store offset=232 (local.get $wa) (i32.const 1)) ;; NumberOfAdaptersInGroup
     (i32.store offset=240 (local.get $wa) (i32.const 1)) ;; NumSimultaneousRTs
-    (if (i32.eq (call $host_gpu_gl_call (i32.const 0x30005) (i32.const 0) (i32.const 0)) (i32.const 1)) (then
+    (local.set $profile (call $d3d9_caps_profile))
+    (if (if (result i32) (i32.ge_s (local.get $profile) (i32.const 0))
+          (then (i32.and (local.get $profile) (i32.const 1)))
+          (else (i32.eq (call $host_gpu_gl_call (i32.const 0x30005) (i32.const 0) (i32.const 0)) (i32.const 1)))) (then
       (i32.store offset=28 (local.get $wa) (i32.const 0x80000)) ;; hardware rasterization
       ;; BLENDOP is real in the software executor; the WebGL executor still
       ;; supports ADD only. Never advertise another backend's operations.
       (i32.store offset=32 (local.get $wa)
-        (i32.and (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 0)) (i32.const 0x800)))
+        (if (result i32) (i32.ge_s (local.get $profile) (i32.const 0))
+          (then (select (i32.const 0x800) (i32.const 0) (call $d3d9_caps_software (local.get $profile))))
+          (else (i32.and (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 0)) (i32.const 0x800)))))
       (i32.store offset=40 (local.get $wa) (i32.const 255)) ;; depth comparisons
       (i32.store offset=44 (local.get $wa) (i32.const 0x7ff)) ;; source blend factors
       (i32.store offset=48 (local.get $wa) (i32.const 0x3ff)) ;; destination blend factors
@@ -1635,7 +1647,8 @@
         (i32.store offset=24 (local.get $desc) (local.get $stencil))
         (i32.store offset=56 (local.get $desc) (local.get $arg1))
         (i32.store offset=60 (local.get $desc) (local.get $arg2))
-        (local.set $result (call $host_gpu_gl_call (i32.const 0x30003) (local.get $desc) (i32.const 0)))))))
+        (local.set $result (if (result i32) (call $d9g_lead_clear (local.get $arg0)) (then (i32.const 1))
+          (else (call $host_gpu_gl_call (i32.const 0x30003) (local.get $desc) (i32.const 0)))))))))
     )
     (if (call $d3d_render_park (local.get $result) (i32.const 32)) (then (return)))
     (call $d9g_clear (local.get $arg0) (local.get $result))
@@ -2044,7 +2057,8 @@
     (i32.store offset=28 (local.get $desc) (local.get $arg2))
     (i32.store offset=32 (local.get $desc) (local.get $arg3))
     (i32.store offset=36 (local.get $desc) (local.get $arg4))
-    (local.set $result (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))
+    (local.set $result (if (result i32) (call $d9g_lead_draw (local.get $arg0) (i32.const 0)) (then (i32.const 1))
+      (else (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))))
     (if (call $d3d_render_park (local.get $result) (i32.const 24)) (then (return)))
     (call $d9g_draw (local.get $arg0) (i32.const 0) (local.get $result))
     (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x8876086c) (i32.eq (local.get $result) (i32.const 1))))
@@ -2083,7 +2097,8 @@
     (i32.store offset=48 (local.get $desc) (local.get $format))
     (i32.store offset=52 (local.get $desc) (local.get $arg2))
     (i32.store offset=56 (local.get $desc) (local.get $arg3))
-    (local.set $result (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))
+    (local.set $result (if (result i32) (call $d9g_lead_draw (local.get $arg0) (i32.const 1)) (then (i32.const 1))
+      (else (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))))
     (if (call $d3d_render_park (local.get $result) (i32.const 40)) (then (return)))
     (call $d9g_draw (local.get $arg0) (i32.const 1) (local.get $result))
     (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x8876086c) (i32.eq (local.get $result) (i32.const 1))))

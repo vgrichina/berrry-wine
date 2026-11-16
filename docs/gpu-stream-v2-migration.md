@@ -236,6 +236,31 @@ Without this, every new backend would have to reimplement the 846 lines of
   - Apps: pawn, B&W2, Morrowind (D3D8), Die Hard (D3D8 A1R5G5B5), GeneRally.
   - On the CLI with no GPU, the kick must return 0 so that CreateDevice
     still fails.
+  - **S1 (2026-11-16): the ring leads.** After two ring-presented frames
+    the old draw/clear calls are skipped; a decline or a back-buffer
+    operation the ring cannot do hands the executor picture to the old
+    path (readback, one 0x30015 upload) and returns to shadow mode
+    (`09akg` "Lead mode", `test-d3d9-gps-lead.js`). CPU per present:
+    Alien Shooter −52%, Die Hard −24%, B&W2 −14%, pixels identical.
+  - **S2 (2026-11-16): WAT decides the caps.** `09akg` picks the D3D9 caps
+    profile (`d3d9_profile_set`, from the ring's CAP flags at open) and
+    09ad/09ae answer GetDeviceCaps, the shader-version gate, RGB565 and
+    occlusion queries from it, with no JS round trip
+    (`test-d3d9-gps-caps.js`).
+  - **S3 (2026-11-16): fewer declines.** Lit fixed T&L (28) lowers: the
+    09aj DLT1 is built in WAT from the device's lights and material, the VS
+    compiles once per lighting *shape* and the values go out as c40..c95
+    per draw (`test-d3d9-gps-lit.js`). Texture transforms and texgen (12)
+    lower the same way, the matrices as c16..c39 and a normal texgen's
+    normal matrix as c40..c42 (`test-d3d9-gps-texgen.js`); PROJECTED still
+    declines (the executor has no raster divide on this path). A vertex
+    declaration that is exactly an FVF layout runs fixed T&L as that FVF
+    (2, `test-d3d9-gps-decl-fixed.js`). The core vertex IR gained `cmp`
+    (op 88, a per-component select): 09aj's normalize selects with CND, and
+    09af1 lowers it. Still declined: 27 (user clip planes need clip
+    distances in the executor protocol; multi-stream declarations need a
+    WAT interleave; vertex blending has no 09aj lowering on either path),
+    and the reasons outside this slice (4..7, 11, 14..26).
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
   a performance step.
 

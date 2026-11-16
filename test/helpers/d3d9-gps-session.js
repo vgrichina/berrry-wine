@@ -8,10 +8,11 @@ const { startControlSession } = require('../control-session');
 
 const root = path.join(__dirname, '..', '..');
 
-async function openD3d9GpsSession({ gps = 'software', renderer = 'software', size = 8 } = {}) {
+async function openD3d9GpsSession({ gps = 'software', renderer = 'software', size = 8, extra = [] } = {}) {
   const args = ['test/run.js', '--exe=test/binaries/calc.exe', '--no-build'];
   if (renderer) args.push(`--d3d9-renderer=${renderer}`);
   if (gps) args.push(`--d3d9-gps=${gps}`);
+  args.push(...extra);
   args.push('--control-stdin', '--frozen', '--quiet-api', '--max-seconds=60',
     '--max-batches=1000000', '--batch-size=100');
   const session = startControlSession(args, { cwd: root, idPrefix: 'd9g' });

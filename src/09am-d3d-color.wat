@@ -60,6 +60,9 @@
   (if (global.get $d3d_render_token) (then
     (return (call $d9g_bb_sync (local.get $device) (local.get $upload) (call $d3d_render_poll)))))
   (local.set $desc (call $d3d9_gpu_descriptor (local.get $device)))
+  ;; The ring leads this device (09akg S1): the old RT is not kept.
+  (if (i32.and (local.get $upload) (call $d9g_lead_upload (local.get $device)))
+    (then (return (call $d9g_bb_sync (local.get $device) (i32.const 1) (i32.const 1)))))
   (if (local.get $upload) (then
     (i32.store offset=24 (local.get $desc) (i32.const 0))
     (i32.store offset=28 (local.get $desc) (i32.load offset=8 (local.get $desc)))
@@ -744,6 +747,8 @@
   (br_if $done (i32.eqz (call $d3d9_update_view (local.get $source) (local.get $device) (i32.const 0) (local.get $p))))
   (br_if $done (i32.eqz (call $d3d9_update_view (local.get $dest) (local.get $device) (i32.const 0) (local.get $d))))
   (if (i32.load offset=28 (local.get $d)) (then (call $d9g_rt_written (local.get $device))))
+  ;; The old path reads the back buffer as the source.
+  (if (i32.load offset=28 (local.get $p)) (then (call $d9g_to_old (local.get $device))))
   (br_if $done (i32.or (i32.lt_u (i32.load offset=8 (local.get $p)) (i32.const 21))
     (i32.gt_u (i32.load offset=8 (local.get $p)) (i32.const 22))))
   (br_if $done (i32.or (i32.lt_u (i32.load offset=8 (local.get $d)) (i32.const 21))

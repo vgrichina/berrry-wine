@@ -382,8 +382,10 @@ from validated vs_1_1 or vs_2_0 IR. It has temps r0..r31 (r28..r31 are the
 lowering's scratch and its literal register), inputs v0..v15, constants
 c0..c255 (DEF'd ones replace the CONSTS value), a0, and outputs oPos (bank
 4:0), oFog (4:1), oPts (4:2), oD0..1 (bank 5), oT0..7 (bank 6). Its ops are
-mov add mad mul rcp rsq dp3 dp4 min max slt sge exp log frc mova, plus dcl
-and def; every macro and composite is lowered there: m4x4/m4x3/m3x4/m3x3/
+mov add mad mul rcp rsq dp3 dp4 min max slt sge exp log frc mova and cmp
+(op 88, per component `a >= 0 ? b : c`, a pure select whose destination is
+never one of its sources; only 09aj fixed-function IR's cnd lowers to it),
+plus dcl and def; every macro and composite is lowered there: m4x4/m4x3/m3x4/m3x3/
 m3x2 to dp rows, sub/abs/lrp, lit (gated pow, power clamped to ±127.996),
 dst, expp/logp (vs_1_1 partial forms), pow, nrm, crs, and vs_1_1's
 `mov a0` to floor + mova. Numerics are the shader VM's (09ag): rsq and log

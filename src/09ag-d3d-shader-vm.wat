@@ -256,7 +256,11 @@
       (i32.or (i32.eq (local.get $op) (i32.const 42)) (i32.eq (local.get $op) (i32.const 43))))
     (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 35)) (i32.le_u (local.get $op) (i32.const 39)))
     (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 46)) (i32.le_u (local.get $op) (i32.const 48)))
-      (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 78)) (i32.le_u (local.get $op) (i32.const 79))) (i32.eq (local.get $op) (i32.const 81)))))))))) (then (return (i32.const 0))))
+      (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 78)) (i32.le_u (local.get $op) (i32.const 79)))
+        (i32.or (i32.eq (local.get $op) (i32.const 81))
+          ;; cmp: core vertex IR only (09af1 lowers 09aj's fixed-function cnd to
+          ;; it); guest vs_2_0 has no cmp.
+          (i32.and (i32.ne (global.get $d3d_vm_core_vs) (i32.const 0)) (i32.eq (local.get $op) (i32.const 88)))))))))))) (then (return (i32.const 0))))
   (local.set $arity (call $d3d_shader_vm_arity20 (local.get $op)))
   (if (i32.or (i32.ne (i32.load offset=8 (local.get $ins)) (local.get $arity))
     (i32.load offset=12 (local.get $ins))) (then (return (i32.const 0))))
