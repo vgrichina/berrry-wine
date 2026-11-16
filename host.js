@@ -1674,12 +1674,33 @@ class WineAssembly {
     return shared.guestTickState;
   }
 
+  // The wall time the guest clock reads. It stands still while a guest thread
+  // that may already run is still booting its Worker, and the origin slides
+  // past that interval afterwards. On Windows a resumed thread runs within a
+  // quantum; here booting it costs hundreds of ms, and a creator that times
+  // the new thread saw all of it. NFS II SE starts a multimedia-timer tick
+  // thread, gives it 10000/rate ms to tick, and otherwise tears it down and
+  // spins forever on a tick counter nothing advances.
+  _guestClockNow(st) {
+    const now = this._audioSchedulerNow();
+    const tm = this.threadManager;
+    if (tm && tm.hasBootingRunnableThread && tm.hasBootingRunnableThread()) {
+      if (!Number.isFinite(st.bootHoldAt)) st.bootHoldAt = now;
+      return st.bootHoldAt;
+    }
+    if (Number.isFinite(st.bootHoldAt)) {
+      if (Number.isFinite(st.wallStartMs)) st.wallStartMs += Math.max(0, now - st.bootHoldAt);
+      st.bootHoldAt = null;
+    }
+    return now;
+  }
+
   _beginGuestTickBatch(sharedAudio) {
     const st = this._guestTickState(sharedAudio);
     // Frozen mode charges guest time per executed step instead of reading the
     // wall — see the frozen-mode block above `class WineAssembly`.
     if (this._frozen) { st.callsInBatch = 0; return; }
-    const now = this._audioSchedulerNow();
+    const now = this._guestClockNow(st);
     if (!Number.isFinite(st.wallStartMs)) st.wallStartMs = now;
     const elapsed = Math.max(0, Math.floor(this._startupElapsed(now - st.wallStartMs)));
     st.batchMs = Math.max(Number.isFinite(st.batchMs) ? st.batchMs : 0, elapsed) & 0x7FFFFFFF;
@@ -1706,7 +1727,7 @@ class WineAssembly {
     const stride = Math.max(1, this.guestTickPollStride | 0);
     let elapsed = Number.isFinite(st.batchMs) ? st.batchMs : 0;
     if ((calls % stride) === 0) {
-      const now = this._audioSchedulerNow();
+      const now = this._guestClockNow(st);
       if (!Number.isFinite(st.wallStartMs)) st.wallStartMs = now;
       elapsed = Math.max(0, Math.floor(this._startupElapsed(now - st.wallStartMs)));
     }
@@ -1746,7 +1767,7 @@ class WineAssembly {
     const base = Math.max(Number.isFinite(st.batchMs) ? st.batchMs : 0,
       Number.isFinite(st.lastReturnedMs) ? st.lastReturnedMs : 0);
     if (this._frozen || !Number.isFinite(st.wallStartMs)) return base;
-    return Math.max(base, this._startupElapsed(this._audioSchedulerNow() - st.wallStartMs));
+    return Math.max(base, this._startupElapsed(this._guestClockNow(st) - st.wallStartMs));
   }
 
   // The real (host-advanced) guest clock, never held back by the deadline clock.
