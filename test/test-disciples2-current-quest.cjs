@@ -1,6 +1,31 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs');
 async function main(){
+ const closure=require('node:child_process').spawnSync('python3',['-B','-c',String.raw`
+import pathlib,json,time,tempfile,os,types,subprocess
+path='tools/disciples2-current-controller.py'
+def check(source,should_close):
+ m=types.ModuleType('fixture');m.__file__=str(pathlib.Path(path).resolve());exec(compile(source,path,'exec'),m.__dict__)
+ with tempfile.TemporaryDirectory() as d:
+  m.R=pathlib.Path(d);now=time.time();m.save('launch.json',dict(at=now,deadline=now+240,gameplayCutoff=now+60,nativeScene=False))
+  stat=pathlib.Path('/proc/'+str(os.getpid())+'/stat').read_text();m.save('native-pid.json',dict(pid=os.getpid(),startToken=stat[stat.rindex(')')+2:].split()[19]))
+  m.endpoint_identity=lambda _:None;requests=[]
+  def refused(command,timeout=3):
+   requests.append(command);raise RuntimeError('reviewed native paint changed')
+  m.call=refused
+  try:m.bind()
+  except RuntimeError:pass
+  closed=(m.R/'terminal-input-failure.json').exists()
+  assert closed==should_close,(closed,should_close)
+  for operation in (lambda:m.capture('later'),lambda:m.bind()):
+   try:operation()
+   except Exception:pass
+  assert len(requests)==(1 if should_close else 2),requests
+old=subprocess.check_output(['git','show','68543c27cc4173b085205216c3e2979179f9140f:'+path]).decode()
+check(old,False);check(pathlib.Path(path).read_text(),True)
+print('PASS historical bind refusal leaves capture request possible; repaired bind failure latches closure, zero later requests')
+`],{encoding:'utf8',timeout:10000});
+ process.stdout.write(closure.stdout||'');process.stderr.write(closure.stderr||'');assert.equal(closure.status,0);
  const v=await require('../tools/disciples2-current-preflight.cjs').verify();
  assert.equal(v.media.length,128);assert.equal(v.manifestRows,127);assert.equal(v.missing.length,0);
  const {matches}=require('../lib/cli-native-scene');assert(!matches({},{}));

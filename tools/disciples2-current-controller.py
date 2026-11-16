@@ -32,17 +32,21 @@ def capture_phase():
         save('quit-phase.json',dict(at=time.time(),cutoff=cutoff,irreversible=True))
     return cutoff
 def bind(review=None):
-    opened();reserve();assert not (R/'input-owner.json').exists(),'permanent owner; no rebind'
-    command={'action':'guarded-bind'}
-    if read('launch.json').get('nativeScene'):
-        assert review,'original binding requires a personally reviewed complete scene'
-        rr=read(review+'.json');personal=read(review+'-review.json')
-        assert 0<=time.time()-rr['at']<30 and 0<=time.time()-personal['at']<30,'binding review expired'
-        assert personal['pngSHA256']==rr['pngSHA256']==hashlib.sha256((R/(review+'.png')).read_bytes()).hexdigest()
-        command['reviewedScene']=dict(route='native-scene-v1',snapshot=rr['snapshot'],pngSHA256=rr['pngSHA256'])
-    save('bind-intent.json',dict(at=time.time(),permanent=True,review=review))
-    save('input-owner.json',call(command));s=call({'action':'snapshot'})
-    save('lease-snapshot.json',{k:s[k] for k in ('mainHwnd','screen')})
+    try:
+        opened();reserve();assert not (R/'bind-intent.json').exists(),'permanent binding attempt; no rebind'
+        assert not (R/'input-owner.json').exists(),'permanent owner; no rebind'
+        command={'action':'guarded-bind'}
+        if read('launch.json').get('nativeScene'):
+            assert review,'original binding requires a personally reviewed complete scene'
+            rr=read(review+'.json');personal=read(review+'-review.json')
+            assert 0<=time.time()-rr['at']<30 and 0<=time.time()-personal['at']<30,'binding review expired'
+            assert personal['pngSHA256']==rr['pngSHA256']==hashlib.sha256((R/(review+'.png')).read_bytes()).hexdigest()
+            command['reviewedScene']=dict(route='native-scene-v1',snapshot=rr['snapshot'],pngSHA256=rr['pngSHA256'])
+        save('bind-intent.json',dict(at=time.time(),permanent=True,review=review))
+        save('input-owner.json',call(command));s=call({'action':'snapshot'})
+        save('lease-snapshot.json',{k:s[k] for k in ('mainHwnd','screen')})
+    except BaseException as e:fail(e,'bind');raise
+
 def policy(intent,keys,review=None,route=None,operationEnd=None):
     cutoff=capture_phase()
     if time.time()>=cutoff or intent=='quit':
