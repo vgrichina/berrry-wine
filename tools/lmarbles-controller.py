@@ -126,16 +126,34 @@ def exited_owner(expected):
         return None
     return wait
 
+def admission_allowance(ms,strict):
+    # Reserve existing bounds, not the observed latency of the last pulse.
+    # The fallback is armed before DOWN; even its latest release needs one
+    # confirmation budget. The consumed path needs DOWN ACK + pulse + UP ACK.
+    if not strict:return ms/1000
+    return max(1.750, .500+ms/1000+.500, 1.650+.500)
+
+def admission_fits(now,deadline,allowance,releaseCap=None,ms=0):
+    # Equality is refused: the successful ACK must be strictly before deadline.
+    return (now+allowance<deadline and
+            (releaseCap is None or now+.500+ms/1000<releaseCap))
+
 def release(name,owner,deadline,final=False):
     target=read('native-pid.json')
     print(json.dumps(dict(armed=True,pid=os.getpid(),deadline=deadline,owner=owner,target=target,at=time.time())),flush=True)
     # Already armed at the immutable fallback. A consumed ACK can only shorten it.
     due=deadline; source='fallback'
     while time.time()<due:
+        if (R/(name+'-disarm.json')).exists():
+            save(name+'-release-skipped.json',dict(state='NOT_SENT',at=time.time(),reason='disarmed before DOWN'))
+            return
         schedule=R/(name+'-release-at.json')
         if schedule.exists():
             v=read(schedule.name);due=min(due,v['at']);source='consumed-pulse'
         time.sleep(min(.005,max(0,due-time.time())))
+    if not (R/(name+'-dispatch.json')).exists():
+        save(name+'-release-skipped.json',dict(state='NOT_SENT',at=time.time(),reason='no DOWN dispatch authorized'))
+        return
     save(name+'-release-fired.json',dict(at=time.time(),due=due,source=source,fallback=deadline))
     try:save(name+'-up.json',dict(state='ACK',reply=call({'action':'guarded-release','owner':owner}),at=time.time()))
     except Exception as e:
@@ -181,9 +199,16 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
             return 'NOT_SENT: review expired; fresh capture + review + NEW intent required'
         strict=read('launch.json').get('inputPolicy')
         window=3.0 if strict else 6.0
-        deadline=min(time.time()+window,rr['at']+fresh)
-        intentDeadline=dict(deadline=deadline,pulseMilliseconds=ms,operationWindowSeconds=window)
+        deadline=min(time.time()+window,rr['at']+fresh,reviewed['at']+fresh)
+        allowance=admission_allowance(ms,strict)
+        intentDeadline=dict(deadline=deadline,pulseMilliseconds=ms,operationWindowSeconds=window,
+                            admissionAllowanceSeconds=allowance)
         save(name+'-operation.json',intentDeadline)
+        def reject(stage):
+            save(name+'-rejection.json',dict(state='NOT_SENT',lease='VALID',reason='insufficient remaining finite-intent budget',
+                 stage=stage,deadline=deadline,requiredSeconds=allowance,nonces=nonces,at=time.time(),effects=False))
+            return 'NOT_SENT: insufficient remaining budget; fresh capture + review + NEW intent required'
+        if not admission_fits(time.time(),deadline,allowance):return reject('before-prearm')
         assert deadline+2<read('launch.json')['deadline'],'operation exceeds fixed runtime'
         policy(intent,keys,review,route,deadline)
         releaseCap=time.time()+(1.65 if strict else 2.0)
@@ -193,18 +218,21 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
         try:
             ready,_,_=select.select([child.stdout],[],[],1.5);assert ready,'independent release child arm deadline'
             armed=json.loads(child.stdout.readline());assert armed['armed'];save(name+'-armed.json',armed)
-            assert time.time()<deadline,'operation deadline before DOWN'
-            if time.time()-rr['at']>=fresh or time.time()-reviewed['at']>=fresh:
-                save(name+'-rejection.json',dict(state='NOT_SENT',lease='VALID',reason='review expired after arm before DOWN',nonces=nonces,at=time.time()))
-                return 'NOT_SENT: review expired after arm; fresh capture + NEW intent required'
+            if not admission_fits(time.time(),deadline,allowance,releaseCap if strict else None,ms):
+                save(name+'-disarm.json',dict(at=time.time(),beforeDown=True))
+                return reject('after-prearm')
             receipts=[]
             for key,nonce in zip(keys,nonces):
                 assert time.time()-rr['at']<fresh and time.time()-reviewed['at']<fresh,'capture/review expired before edge'
                 cutoff=policy(intent,keys,review,route)
-                sent=True
                 guard={**owner,'nonce':nonce,'reviewed':True,'deadline':int(min(deadline,releaseCap,cutoff if intent=='gameplay' else deadline)*1000)}
                 if native:guard['intent']=rr['snapshot']
                 deliveryAt=time.time()
+                if not admission_fits(deliveryAt,deadline,allowance,releaseCap if strict else None,ms):
+                    save(name+'-disarm.json',dict(at=deliveryAt,beforeDown=True))
+                    return reject('before-dispatch')
+                save(name+'-dispatch.json',dict(at=deliveryAt,nonce=nonce,mayHaveEffects=True))
+                sent=True
                 receipt=call({'action':'guarded-input','cmd':key,'guard':guard},timeout=.5 if strict else 10)
                 returnedAt=time.time()
                 if strict:assert returnedAt-deliveryAt<=.5,'500ms confirmation exceeded'
