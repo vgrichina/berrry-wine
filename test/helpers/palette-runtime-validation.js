@@ -34,8 +34,9 @@ try{
     for(const [label,file] of [['palette-lifetime','test-d3dim-palette-alpha-page-watch.js'],
       ['device7-load','test-d3dim-device7-load.js'],['indexed-texture','test-d3dim-indexed-texture.js'],
       ['software-raster','test-gl-software-raster.js']])run(label,240,process.execPath,['test/'+file]);
-    run('gpu-pixels',360,process.execPath,['test/test-d3dim-palette-gpu-web.js'],
-      {...process.env,PALETTE_GPU_EVIDENCE:path.join(dir,'pixels.json')});
+    // GPU pixels: the WAT producer (test-d3dim-gps-palette.js) replaced the
+    // deleted JS executor's browser fixture test-d3dim-palette-gpu-web.js.
+    run('gpu-pixels',360,process.execPath,['test/test-d3dim-gps-palette.js']);
   }
 }catch(error){failed=true;save('driver-error.txt',error.stack+'\n');console.error(error);}
 finally{

@@ -5143,6 +5143,9 @@ async function main() {
   // GPU stream v2: src/09abg-d3dim-gps.wat lowers D3DIM itself and kicks a
   // ring that lib/d3dim-host.js drains (host-imports gpu_stream_kick).
   if (D3DIM_GPU) instance.exports.d3dim_gpu_enable(1);
+  // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
+  // turns it off there); the WAT default and the CLI default are off.
+  if (D3DIM_GPU && hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
   if (GUEST_PAGE_STATS) {
     if (!instance.exports.reset_guest_page_stats || !instance.exports.get_guest_page_stat) {
       throw new Error('--guest-page-stats requires the offline artifact from ' +
