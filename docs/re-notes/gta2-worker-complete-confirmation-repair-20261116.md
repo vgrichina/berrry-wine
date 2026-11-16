@@ -1,8 +1,10 @@
 # GTA2 Worker COMPLETE confirmation repair
 
-Status: candidate actual main and Worker four-gesture fixtures PASS; full live
-fault matrix and published-source qualification remain OPEN. Implementation is
-uncommitted. No original game, worker or box has been launched for this task.
+Status: implementation published on main as
+`6d8b95c2cb4403b71d8e6ed2a21222d97fd3d12c`; complete published-source
+main/Worker qualification PASS. The single subsequent original software attempt
+failed native USER health at bridge installation before capture or input. Its
+endpoint is permanently closed. No WebGL attempt or box was launched.
 Evidence: `scratch/runs/20261116-gta2-worker-complete-confirmation/`.
 
 The predecessor report is `5eeacc6c064cc207817d365b8ab30566e8c111b9`.
@@ -79,12 +81,59 @@ The existing actual paired-controller protocol controls pass. In the actual
 Worker stalled-parent-after-DOWN control, independent physical UP was witnessed
 1,329 ms after DOWN while the parent remained blocked. Missing-schedule refusal
 remained mandatory, followed by local replay/rebind/after-UNKNOWN refusal with
-zero later wire requests. The complete main/Worker live fault checklist remains
-OPEN.
+zero later wire requests. The complete published main/Worker live fault checklist now passes, as detailed
+below.
 After failure the test wrapper attempts replay/rebind/later requests through the
 same terminal API and requires local refusal with unchanged actual wire logs.
 
-Publication and original-game authorization remain OPEN until final builds,
-focused controls and the complete published main/Worker native fixture and fault
-matrix pass. No ARM-only, prototype, screenshot or host-stop result is treated
-as qualification. No original attempt is authorized by these candidate results.
+Published-source qualification uses the same committed implementation and freshly
+verified HEAD module SHA-256
+`89dcaf9ce39a950edb36ab12301d96733be5b17b269f0d1f5f7599953885f37c`.
+Four actual COMPLETE times are main **139/114/126/81 ms**, Worker
+**267/490/232/206 ms**, each including independent postarm confirmation and both
+original final source-check invocations. Every immutable source ledger records
+two final checks per release child. Both fixtures retain genuine COMCTL/COMMCTRL
+lifecycle, two personally reviewed VISIBLE native modals, public DOWN1/UP3,
+all physical keys UP and native ExitProcess(0). The slowest Worker result has
+only 10 ms margin; these results do not promise universal runtime timing.
+
+All 50 published native fault cases pass (24 main, 26 Worker): stale review,
+missing/changed source, wrong generation, source/module changes before and after
+ARM, owner/renderer/handler/queue/context/retired owner, focus/reload, duplicate
+ARM, bind after ARM, early EOF, late ACK, child start failure, parent cancellation,
+stalled parent before ARM and after real DOWN; Worker also tests retired Worker
+owner/endpoint. Actual terminal API replay/rebind/after-UNKNOWN calls all refuse
+locally with unchanged wire logs. Only the two intentional after-DOWN stalls
+send input; real independently witnessed physical UP is **1471/1428 ms** for
+main/Worker, with the unchanged missing-schedule refusal. The matrix retains
+396 actual wait/both-EOF receipts and 394 recorded current PID/group absences.
+Actual late-ACK expiry/signaling/quiescence is main 501/502/503 ms and Worker
+501/501/503 ms. Worker reload quiescence is 579 ms after expiry at 501 ms;
+the COMPLETE deadline remains 500 ms and no input is sent. The Worker-owner
+child had already exited when the watchdog expired, so its receipt is not
+represented as a watchdog signal. All causal failures and raw phase logs remain.
+
+The single ordinary original software attempt followed the completed published
+qualification. Its 900 s launch limit, independent 920 s watchdog and 180 s Quit
+reserve were prearmed; 71 existing media files were hash-verified without copies.
+The actual native Worker bridge's initial `snapshot()` failed with
+`Error: unhealthy native USER context` during binding installation. This occurs
+before the startup capture or command/input loop. No authored input, nonce or
+release configuration was issued. No startup image exists to review. Failure
+caused permanent UNKNOWN, zero allowed later requests, browser closure and
+actual controller/native/watchdog/child waits with both EOFs. The endpoint will
+not be retried, rebound, replayed or reconnected. No diagnosis beyond that
+observed native USER readiness contract is claimed. Walking, car entry, driving
+and original native Quit were not reached; host teardown is not native Quit.
+The paired WebGL run therefore remains prohibited.
+
+Final evidence is `result.json`, `runtime-release.json`, `qualification.json`,
+`matrix-audit.json` and `original-result.json` under the run directory. Source
+recovery uses the exact implementation Git SHA and relevant pre-edit/candidate
+binary patches, including originally untracked owned files. No source tree,
+media or WASM snapshots are stored. Selected named screenshot references are in
+`result.json`; no frame or capture bundle was created. Final shared restoration
+uses the ordinary full flock build, preserving the qualified HEAD module's hash
+and rebuild recipe rather than archiving its bytes. All owned runtime endpoints
+are closed, actual waits joined and current PID/groups checked before the final
+SOURCE_BUILD_RUNTIME release. No worker or box was created.
