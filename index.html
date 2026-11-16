@@ -2116,7 +2116,6 @@ Resource-aware Win98 emulator
       "lib/d3d-shader-ir.js",
       "lib/render-clear.js",
       "lib/d3d9-backend.js",
-      "lib/d3dim-gpu.js",
       "lib/d3d-command-stream.js",
       "lib/render-worker.js",
       "lib/d3d-geometry-batches.js",
@@ -2745,8 +2744,8 @@ Resource-aware Win98 emulator
     })();
     // One control for both Direct3D generations. They really are separate code
     // paths — D3D8/9 goes to lib/d3d9-backend.js or to the software backend on
-    // a render Worker, DX2-7 immediate mode to lib/d3dim-gpu.js or to the WAT
-    // rasterizer — and the WebGL sides share a backend while the software
+    // a render Worker, DX2-7 immediate mode to the WAT GPU stream producer
+    // (src/09abg-d3dim-gps.wat) or to the WAT rasterizer — and the WebGL sides share a backend while the software
     // sides do not, so "Software" means two different rasterizers. But "which
     // renderer do I want" is one question to whoever is looking at the
     // toolbar, and a dropdown next to a checkbox made it look like two.

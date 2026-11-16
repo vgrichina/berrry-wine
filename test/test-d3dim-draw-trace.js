@@ -179,13 +179,6 @@ async function fixture(backend = 'software') {
   const broken=createGround({endpointId:1,x:2,y:2});
   assert.strictEqual(broken.before({get textures(){throw Error('diagnostic-only failure');}},target,draw),null);
   assert.match(broken.receipt().reason,/observation-error.*diagnostic-only failure/);
-  const renderFailure=new Error('real renderer failure');
-  const failingObserver=createGround({endpointId:1,x:2,y:2,maxRecords:1});
-  const backend=new (require('../lib/d3dim-gpu').D3DIMGpu)({getMemory:()=>new ArrayBuffer(4),getExports:()=>({}),
-    onError:message=>{assert.match(message,/real renderer failure/);throw renderFailure;}});
-  backend.drawObserver=failingObserver;target.device.draw=()=>{throw renderFailure;};
-  assert.throws(()=>backend._submitImmediate(target,draw),e=>e===renderFailure,'active observer preserves render failure');
-  assert.strictEqual(backend.stats.errors,1);assert.strictEqual(failingObserver.receipt().records[0].completed,false);
   // Producer-route controls use independent known data and preserve exception
   // identity. No inference of absent geometry from an omitted source route.
   const {createProducer,createDxProducer}=require('../lib/d3dim-draw-trace');

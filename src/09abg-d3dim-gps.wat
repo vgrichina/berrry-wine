@@ -23,7 +23,7 @@
   ;; ================================================================
   (global $D3DIM_GPS i32 (region.addr $D3DIM_GPS 0))
   (global $D3DIM_GPS_SIZE i32 (region.size $D3DIM_GPS))
-  (global $D3G_PB_SIZE i32 (i32.const 23312))
+  (global $D3G_PB_SIZE i32 (i32.const 23344))
   ;; The CPU-access site asking for the next readback (stats 16 + site).
   (global $d3dim_fence_site (mut i32) (i32.const 0))
   (global $D3G_RING_BYTES i32 (i32.const 1048576))
@@ -41,7 +41,7 @@
   ;; park sequence at 23168, the merge spare slot at 23184. Readbacks per
   ;; site: 16 words at 23216. At 23280: +0 keyed GPU BltFasts, +4 uploaded
   ;; GPU BltFasts, +8 key texture id, +12 its w, +16 its h, +20 readback
-  ;; bytes.
+  ;; bytes. Decline reasons: 8 words at 23312 ($d3g_decline).
   ;; Target: +0 dib, +4 entry, +8 w, +12 h, +16 bpp, +20 pitch, +24 fmt,
   ;; +28 rt id, +32 flags (1 dirty, 2 check, 4 drawn, 8 shadow valid),
   ;; +36..+48 dirty rect, +52 shadow wa, +56 shadow guest, +64 i64 watch
@@ -58,6 +58,18 @@
     (local $a i32)
     (local.set $a (i32.add (i32.add (local.get $pb) (i32.const 80)) (i32.shl (local.get $i) (i32.const 2))))
     (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (local.get $n))))
+
+  ;; A draw or clear sent back to software (stat 1), with its reason
+  ;; (d3dim_gps_stat 35 + $why): 0 unused (stage-0 operands follow the
+  ;; software rule since D2c and no longer decline), 1 texture not
+  ;; uploadable, 2 Z function out of range, 3 blend factor out of range, 4 no
+  ;; depth surface, 5 clear target not creatable, 6 clear background without
+  ;; texture words, 7 unused.
+  (func $d3g_decline (param $pb i32) (param $why i32)
+    (local $a i32)
+    (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1))
+    (local.set $a (i32.add (i32.add (local.get $pb) (i32.const 23312)) (i32.shl (local.get $why) (i32.const 2))))
+    (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (i32.const 1))))
 
   ;; One readback, charged to the CPU-access site that asked for it.
   (func $d3g_site_stat (param $pb i32)
@@ -1267,8 +1279,6 @@
     (call $d3g_stat (local.get $pb) (i32.const 12) (local.get $count))
     (i32.const 1))
 
-  (func $d3g_argmap (param $v i32) (result i32)
-    (if (result i32) (i32.eq (local.get $v) (i32.const 1)) (then (i32.const 0)) (else (local.get $v))))
   (func $d3g_opmap (param $v i32) (result i32)
     (if (result i32) (i32.or (i32.or (i32.eq (local.get $v) (i32.const 2)) (i32.eq (local.get $v) (i32.const 3)))
           (i32.eq (local.get $v) (i32.const 13)))
@@ -1324,18 +1334,23 @@
                  (i32.ne (i32.load offset=44 (local.get $d)) (i32.const 0))))))
     (local.set $wrap (i32.load offset=132 (local.get $d)))
     (if (local.get $textured) (then
-      ;; Stage 0: arguments DIFFUSE/CURRENT (0) or TEXTURE (2) only.
+      ;; Stage 0 operands, by the software rasterizer's rule
+      ;; ($d3dim_stage_operation), so a draw reads the same operands on
+      ;; either path: ARG1 (k 0, 2) is diffuse for DIFFUSE/CURRENT and the
+      ;; texture otherwise; ARG2 (k 1, 3) is the texture for exactly TEXTURE
+      ;; and diffuse otherwise. Any other selector (TFACTOR, SPECULAR,
+      ;; modifiers) gets the software path's approximation, not a decline.
       (local.set $k (i32.const 0))
       (loop $args
-        (local.set $a (call $d3g_argmap (i32.load (i32.add (i32.add (local.get $d) (i32.const 164)) (i32.shl (local.get $k) (i32.const 2))))))
-        (if (i32.and (i32.ne (local.get $a) (i32.const 0)) (i32.ne (local.get $a) (i32.const 2)))
-          (then (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1)) (return (i32.const 0))))
-        (if (i32.eq (local.get $a) (i32.const 2))
+        (local.set $a (i32.load (i32.add (i32.add (local.get $d) (i32.const 164)) (i32.shl (local.get $k) (i32.const 2)))))
+        (if (if (result i32) (i32.and (local.get $k) (i32.const 1))
+              (then (i32.eq (local.get $a) (i32.const 2)))
+              (else (i32.gt_u (local.get $a) (i32.const 1))))
           (then (local.set $key (i32.or (local.get $key) (i32.shl (i32.const 0x200) (local.get $k))))))
         (local.set $k (i32.add (local.get $k) (i32.const 1)))
         (br_if $args (i32.lt_u (local.get $k) (i32.const 4))))
       (local.set $tex (call $d3g_texture (local.get $pb) (local.get $d) (i32.load (local.get $t))))
-      (if (i32.eqz (local.get $tex)) (then (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1)) (return (i32.const 0))))
+      (if (i32.eqz (local.get $tex)) (then (call $d3g_decline (local.get $pb) (i32.const 1)) (return (i32.const 0))))
       (local.set $smp (call $d3g_sampler (local.get $pb)
         (i32.or (i32.or (call $d3g_addr (i32.load offset=96 (local.get $d)))
             (i32.shl (call $d3g_addr (i32.load offset=100 (local.get $d))) (i32.const 4)))
@@ -1362,7 +1377,7 @@
       (local.set $zen (i32.ne (i32.load offset=64 (local.get $d)) (i32.const 0)))
       (local.set $zfunc (i32.load offset=68 (local.get $d)))
       (if (i32.and (local.get $zen) (i32.or (i32.lt_u (local.get $zfunc) (i32.const 1)) (i32.gt_u (local.get $zfunc) (i32.const 8))))
-        (then (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1)) (return (i32.const 0))))
+        (then (call $d3g_decline (local.get $pb) (i32.const 2)) (return (i32.const 0))))
       (local.set $zwrite (i32.and (local.get $zen) (i32.ne (i32.load offset=72 (local.get $d)) (i32.const 0))))
       (local.set $cull (i32.load offset=108 (local.get $d)))
       (local.set $blend (i32.ne (i32.load offset=76 (local.get $d)) (i32.const 0)))
@@ -1377,7 +1392,7 @@
     (if (i32.eqz (local.get $blend)) (then (local.set $sb (i32.const 2)) (local.set $db (i32.const 1))))
     (if (i32.or (i32.or (i32.lt_u (local.get $sb) (i32.const 1)) (i32.gt_u (local.get $sb) (i32.const 11)))
                 (i32.or (i32.lt_u (local.get $db) (i32.const 1)) (i32.gt_u (local.get $db) (i32.const 11))))
-      (then (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1)) (return (i32.const 0))))
+      (then (call $d3g_decline (local.get $pb) (i32.const 3)) (return (i32.const 0))))
     ;; 16-bit destination alpha (A1R5G5B5, A4R4G4B4) blends on the GPU: the
     ;; A8B8G8R8 target holds the alpha the DIB had at upload (row_to_rgba
     ;; widens 1 and 4 bits) and readback narrows it again (rgba_to_row). The
@@ -1389,7 +1404,7 @@
     (local.set $ds (call $d3g_depth (local.get $pb) (i32.load (local.get $d))
       (i32.load offset=4 (local.get $d)) (i32.load offset=8 (local.get $d)) (local.get $zen)))
     (if (i32.and (local.get $zen) (i32.eqz (local.get $ds)))
-      (then (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1)) (return (i32.const 0))))
+      (then (call $d3g_decline (local.get $pb) (i32.const 4)) (return (i32.const 0))))
     (call $d3g_prepare (local.get $pb) (local.get $t) (i32.const 0))
     (call $d3g_targets (local.get $pb) (i32.load offset=28 (local.get $t)) (local.get $ds))
     (call $d3g_scissor_draw (local.get $pb) (local.get $d) (local.get $zen) (local.get $zfunc) (local.get $zwrite)
@@ -1545,7 +1560,7 @@
       (load.field DxObject width (local.get $rt)) (load.field DxObject height (local.get $rt))
       (load.field DxObject bpp (local.get $rt)) (load.field DxObject pitch (local.get $rt))
       (call $dx_surf_fmt_get (local.get $rt))))
-    (if (i32.eqz (local.get $t)) (then (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1)) (return (i32.const 0))))
+    (if (i32.eqz (local.get $t)) (then (call $d3g_decline (local.get $pb) (i32.const 5)) (return (i32.const 0))))
     (local.set $l (select (local.get $x) (i32.const 0) (i32.gt_s (local.get $x) (i32.const 0))))
     (local.set $tp (select (local.get $y) (i32.const 0) (i32.gt_s (local.get $y) (i32.const 0))))
     (local.set $r (i32.add (local.get $x) (local.get $w)))
@@ -1558,7 +1573,7 @@
     (if (local.get $tex) (then
       (if (i32.or (i32.or (i32.eqz (i32.load offset=36 (local.get $desc))) (i32.eqz (i32.load offset=40 (local.get $desc))))
                   (i32.or (i32.eqz (i32.load offset=48 (local.get $desc))) (i32.eqz (i32.load offset=52 (local.get $desc)))))
-        (then (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1)) (return (i32.const 0))))))
+        (then (call $d3g_decline (local.get $pb) (i32.const 6)) (return (i32.const 0))))))
     (call $d3g_prepare (local.get $pb) (local.get $t)
       (i32.and (i32.ne (i32.and (local.get $flags) (i32.const 1)) (i32.const 0))
         (i32.and (i32.and (i32.eqz (local.get $l)) (i32.eqz (local.get $tp)))
@@ -2387,10 +2402,14 @@
   ;; primary, 10 prepare of a dirty target, 11 texture from a target, 12
   ;; target re-create, 13 host capture, 14 lazy Lock first touch, 15 other).
   ;; 32 keyed GPU BltFasts, 33 uploaded GPU BltFasts, 34 readback bytes.
+  ;; 35 + reason: software declines by reason ($d3g_decline), 35..42.
   (func (export "d3dim_gps_stat") (param $i i32) (result i32)
     (local $pb i32)
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
-    (if (i32.or (i32.eqz (local.get $pb)) (i32.ge_u (local.get $i) (i32.const 35))) (then (return (i32.const 0))))
+    (if (i32.or (i32.eqz (local.get $pb)) (i32.ge_u (local.get $i) (i32.const 43))) (then (return (i32.const 0))))
+    (if (i32.ge_u (local.get $i) (i32.const 35))
+      (then (return (i32.load (i32.add (i32.add (local.get $pb) (i32.const 23312))
+        (i32.shl (i32.sub (local.get $i) (i32.const 35)) (i32.const 2)))))))
     (if (i32.eq (local.get $i) (i32.const 34)) (then (return (i32.load offset=23300 (local.get $pb)))))
     (if (i32.ge_u (local.get $i) (i32.const 32))
       (then (return (i32.load (i32.add (i32.add (local.get $pb) (i32.const 23280))

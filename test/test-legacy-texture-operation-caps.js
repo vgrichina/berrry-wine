@@ -8,7 +8,6 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { compile } = require('../tools/watx');
-const { D3DIMGpu, OPCODES } = require('../lib/d3dim-gpu');
 const root = path.resolve(__dirname, '..');
 const corePath = process.env.LEGACY_CAPS_CORE || path.join(root, 'src/09ab-handlers-d3dim-core.wat');
 const core = fs.readFileSync(corePath, 'utf8');
@@ -66,7 +65,6 @@ forms.push(form(rasterSource, '(func $gl_sw_sample_prepared', 'src/09a8g-gl-rast
 forms.push(form(colorMaskSource, '(func $gl_color_merge', 'src/09a8cd-gl-color-mask.wat'));
 if (argumentStateRepair) forms.push(form(directx, '(func $d3ddev_init_state', 'src/09a8-handlers-directx.wat'));
 forms.push(form(directx, '(func $fill_primcaps', 'src/09a8-handlers-directx.wat'));
-forms.push(form(core, '(func (export "d3dim_gpu_describe")', 'src/09ab-handlers-d3dim-core.wat'));
 const selected = new Set([...names, 'fill_primcaps']);
 selected.add('gl_sw_sample_prepared');
 selected.add('gl_color_merge');
@@ -110,11 +108,11 @@ const prefix = `(region.declare-fixed $D3DIM_AUX (base 1024) (size 128) (align 1
 const suffix = [...names, ...(argumentStateRepair ? ['d3ddev_init_state'] : [])].map(n => `(export "${n}" (func $${n}))`).join('\n');
 const assembled = prefix + forms.join('\n') + suffix;
 const mutations = process.argv.includes('--negative-controls');
-const receipts = {qualification: 'source excerpts and legacy GPU lowering only; fixture imports, no COM/native guest/WebGL/gameplay',
+const receipts = {qualification: 'source excerpts only; fixture imports, no COM/native guest/WebGL/gameplay',
   node: process.version, corePath, coreSHA256: sha(core), directxSHA256: sha(directx), excerpts,
   compiler: ['tools/watx.js', ...['compiler-parser.js', 'compiler-stages.js', 'compiler-codegen.js', 'compiler.js'].map(n => 'tools/watx-src/' + n)]
     .map(file => ({file, sha256: sha(fs.readFileSync(path.join(root, file)))})),
-  extractionRecipe: 'balanced form at unique marker; UTF-8 byte offsets start inclusive/end exclusive; concatenate names in test order, then fill_primcaps and gpu_describe; fixture imports/globals and exports wrap verbatim forms',
+  extractionRecipe: 'balanced form at unique marker; UTF-8 byte offsets start inclusive/end exclusive; concatenate names in test order, then fill_primcaps; fixture imports/globals and exports wrap verbatim forms',
   assembledBytes: Buffer.byteLength(assembled), assembledSHA256: sha(assembled), cases: [], controls: [], modules: []};
 if (process.argv.includes('--manifest-only')) {
   assert(process.env.LEGACY_CAPS_RECEIPT);
@@ -192,39 +190,18 @@ function makeFixture(source) {
     }
   }};
 }
-function gpuDraw(f, c, a, gpuSource, bound = true, declined = false) {
-  f.setOps(c, a);
-  let GPU = D3DIMGpu;
-  if (gpuSource) {
-    // Run the entire mutated module with its real relative backend import.
-    const Module = require('module'), m = new Module(path.join(root, 'lib/d3dim-gpu.js'), module);
-    m.filename = path.join(root, 'lib/d3dim-gpu.js'); m.paths = module.paths;
-    m._compile(gpuSource, m.filename); GPU = m.exports.D3DIMGpu;
-  }
-  const gpu = new GPU({getMemory: () => f.e.memory.buffer,
-    getExports: () => ({...f.e, guest_to_wasm: a => a}), createCanvas: () => null, batchDraws: false});
-  const t = {rt: 24576, width: 2, height: 2, dib: 32768, bpp: 32, pitch: 8, format: 1,
-    check: false, textureKeys: new Set()};
-  let draw;
-  gpu._target = () => t; gpu._prepare = () => {};
-  gpu._texture = () => ({width: 1, height: 1, data: new Uint8Array([192, 128, 64, 160])});
-  gpu._submit = (target, d) => { draw = d; return true; };
-  [1, 4, 3, 20480, 3].forEach((v, i) => f.dv.setUint32(28672 + i * 4, v, true));
-  assert.equal(gpu.call(OPCODES.DRAW, 28672), declined ? 0 : 1, 'real GPU lowering disposition');
-  if (declined) { assert.equal(draw,undefined); return; }
-  assert(draw); assert.equal(draw.textures.length, bound ? 1 : 0);
-  return draw.fixedFunction.stages[0];
-}
+// The GPU-lowering half (gpuDraw: the deleted JS executor lib/d3dim-gpu.js
+// lowering a WAT d3dim_gpu_describe record) is gone with that executor. Stage
+// operations through the WAT GPU stream producer are rendered by
+// test-legacy-texture-operation-web.js --offline (software and gps).
 const tex = 0xa0c08040, diffuse = 0x8060a0e0;
 // Independent byte expectations, not copies of the production formulas.
 const expected = new Map([[2, tex], [3, diffuse], [4, 0x50485038]]);
-function supported(f, gpuSource) {
+function supported(f) {
   for (const c of [2, 3, 4]) for (const a of [2, 3, 4]) {
     const want = ((expected.get(c) & 0xffffff) | (expected.get(a) & 0xff000000)) >>> 0;
     assert.equal(f.e.d3dim_texture_stage_combine(tex, diffuse, c, a) >>> 0, want, `software ${c}/${a}`);
-    const stage = gpuDraw(f, c, a, gpuSource);
-    assert.deepEqual([stage.colorOp, stage.alphaOp, stage.colorArg1, stage.colorArg2, stage.alphaArg1, stage.alphaArg2],
-      [c, a, 2, 0, 2, 0], `GPU ${c}/${a} retains operation and TEXTURE/DIFFUSE operands`);
+    f.setOps(c, a);
     f.softwareOuter(want);
   }
 }
@@ -248,8 +225,6 @@ function caps(f) {
 }
 function reject(label, fn) { assert.throws(fn, assert.AssertionError, label); receipts.controls.push(label); }
 // Independent per-byte oracle: selectors choose operands before the operation.
-// It also evaluates the actual lowered GPU stage, rather than asserting only
-// that a descriptor happened to contain the supplied integer.
 function argumentResult(c, a, args) {
   let result = 0;
   for (let byte = 0; byte < 4; byte++) {
@@ -260,11 +235,10 @@ function argumentResult(c, a, args) {
   }
   return result >>> 0;
 }
-function argumentCases(f, gpuSource) {
+function argumentCases(f) {
   for (const [type, value] of [[1,4],[2,2],[3,1],[4,2],[5,2],[6,1]])
     assert.equal(f.e.d3dim_tss_load(4096,0,type), value, `real initialized default ${type}`);
-  const initial = gpuDraw(f,4,2,gpuSource);
-  assert.deepEqual([initial.colorArg1,initial.colorArg2,initial.alphaArg1,initial.alphaArg2],[2,0,2,0]);
+  f.setOps(4,2);
   f.softwareOuter(argumentResult(4,2,[2,0,2,0]));
   let count = 0;
   for (const c1 of [0,2]) for (const c2 of [0,2])
@@ -275,10 +249,7 @@ function argumentCases(f, gpuSource) {
         assert.equal(f.e.d3dim_tss_load(4096,0,type),args[i]);
       });
       for (const c of [2,3,4]) for (const a of [2,3,4]) {
-        const want = argumentResult(c,a,args), stage = gpuDraw(f,c,a,gpuSource);
-        const lowered = [stage.colorArg1,stage.colorArg2,stage.alphaArg1,stage.alphaArg2];
-        assert.deepEqual(lowered,args,`four independent descriptor/lowering arguments ${args}`);
-        assert.equal(argumentResult(stage.colorOp,stage.alphaOp,lowered),want);
+        const want = argumentResult(c,a,args);f.setOps(c,a);
         assert.equal(f.e.d3dim_texture_stage_combine(tex,diffuse,
           f.e.d3dim_stage_operation(4096,1),f.e.d3dim_stage_operation(4096,4)) >>> 0,want);
         f.softwareOuter(want); count++;
@@ -286,21 +257,11 @@ function argumentCases(f, gpuSource) {
     }
   // Stage zero CURRENT is the incoming diffuse, including as explicit ARG1.
   for (const type of [2,3,5,6]) f.e.d3dim_set_tss(1,0,type,1);
-  const current = gpuDraw(f,2,3,gpuSource);
-  assert.deepEqual([current.colorArg1,current.colorArg2,current.alphaArg1,current.alphaArg2],[0,0,0,0]);
+  f.setOps(2,3);
   f.softwareOuter(diffuse);
-  for (const type of [2,3,5,6]) {
-    for (const unsupported of [3,4,5,6,0x10,0x20,0x12,0x22]) {
-      f.e.d3dim_set_tss(1,0,type,unsupported);
-      gpuDraw(f,4,4,gpuSource,true,true);
-    }
-    f.e.d3dim_set_tss(1,0,type,1);
-  }
   f.dv.setUint32(4096+2824,0,true);
   for (const c of [2,3,4]) for (const a of [2,3,4]) {
-    const stage = gpuDraw(f,c,a,gpuSource,false);
-    assert.equal(argumentResult(stage.colorOp,stage.alphaOp,
-      [stage.colorArg1,stage.colorArg2,stage.alphaArg1,stage.alphaArg2]),diffuse);
+    f.setOps(c,a);
     f.softwareUnbound();
   }
   return count;
@@ -328,10 +289,10 @@ try {
     assert.equal(got, want);
     if (op === 7) assert.equal((got >>> 16) & 255, redExpected);
     else assert.notEqual((got >>> 16) & 255, redExpected);
-    const stage = gpuDraw(f, op, op); assert.equal(stage.colorOp, op === 7 ? 7 : 4); assert.equal(stage.alphaOp, 4);
+    f.setOps(op, op);
     f.softwareOuter(want);
     receipts.cases.push({operation: op, observed: got.toString(16), observedRed: got >>> 16 & 255,
-      semanticRed: redExpected, gpuColorOp: stage.colorOp, gpuAlphaOp: stage.alphaOp,
+      semanticRed: redExpected,
       bothOuterSoftwareRoutes: op === 7 ? 'actual software triangle and span, saturated RGB ADD / MODULATE alpha'
         : 'actual software triangle and span, legacy MODULATE fallback'});
   }
@@ -347,25 +308,9 @@ try {
       '(then (local.set $rgb (i32.and (local.get $diffuse)');
     assert.notEqual(wrongSoftware, assembled);
     reject('software SELECTARG1 operand mutation', () => supported(makeFixture(wrongSoftware)));
-    const gpuSource = fs.readFileSync(path.join(root, 'lib/d3dim-gpu.js'), 'utf8');
-    const wrongGpu = gpuSource.replace('v === 2 || v === 3 || v === 13 ? v : 4',
-      'v === 2 || v === 3 || v === 13 ? 4 : 4');
-    assert.notEqual(wrongGpu, gpuSource);
-    reject('GPU SELECTARG lowering mutation', () => supported(f, wrongGpu));
     if (argumentStateRepair) {
-      for (const [label, replacement] of [
-        ['hardcoded GPU arguments','[2,0,2,0]'],
-        ['swapped RGB arguments','[d.colorArg2,d.colorArg1,d.alphaArg1,d.alphaArg2].map(arg)'],
-        ['swapped alpha arguments','[d.colorArg1,d.colorArg2,d.alphaArg2,d.alphaArg1].map(arg)'],
-        ['crossed RGB/alpha arguments','[d.alphaArg1,d.alphaArg2,d.colorArg1,d.colorArg2].map(arg)']]) {
-        const changed = gpuSource.replace('[d.colorArg1, d.colorArg2, d.alphaArg1, d.alphaArg2].map(arg)',replacement);
-        assert.notEqual(changed,gpuSource); reject(label,() => argumentCases(makeFixture(assembled),changed));
-      }
-      for (const [offset,type] of [[164,2],[168,3],[172,5],[176,6]]) {
-        const original = `(i32.store offset=${offset} (local.get $out) (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const ${type})))`;
-        const changed = assembled.replace(original,`(i32.store offset=${offset} (local.get $out) (i32.const ${type===2||type===5?2:0}))`);
-        assert.notEqual(changed,assembled); reject(`hardcoded WAT argument ${type}`,() => argumentCases(makeFixture(changed)));
-      }
+      // The hardcoded-argument mutations targeted d3dim_gpu_describe's argument
+      // stores, which left src with the JS executor's descriptor ABI.
       const raw = assembled.replaceAll('(call $d3dim_stage_operation (local.get $state)',
         '(call $d3dim_tss_load (local.get $state) (i32.const 0)');
       assert.notEqual(raw,assembled); reject('software drops argument words',() => argumentCases(makeFixture(raw)));
@@ -376,7 +321,7 @@ try {
   }
   receipts.descriptorHex = acceptedDescriptor;
   receipts.status = 'PASS';
-  console.log(`PASS legacy texture-operation caps: 9 pairs, 6 unadvertised operations (RGB ADD and 5 fallbacks); ${receipts.argumentCases || 0} argument combinations, real software pixels and GPU lowering; ${receipts.controls.length} rejecting controls`);
+  console.log(`PASS legacy texture-operation caps: 9 pairs, 6 unadvertised operations (RGB ADD and 5 fallbacks); ${receipts.argumentCases || 0} argument combinations, real software pixels; ${receipts.controls.length} rejecting controls`);
 } catch (e) {
   receipts.status = 'FAIL'; receipts.error = e.message;
   console.error('FAIL legacy texture-operation caps: ' + e.message); process.exitCode = 1;

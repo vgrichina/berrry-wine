@@ -686,37 +686,25 @@ async function legacyProxy(){
   assert.strictEqual(await bridge.call(0x20001,128,37),2,'main proxy preserves fence range and pending result');
   await bridge.close();assert(port.stopped);assert.throws(()=>bridge.call(0x20000,128),/closed/);
 }
-function legacyWorkerCleanup(){
-  let stops=0;
-  class FakeGPU{stop(){stops++;}}
-  const context={D3DIMGpu:{D3DIMGpu:FakeGPU}};
-  vm.runInNewContext(fs.readFileSync(require.resolve('../lib/d3dim-render-worker'),'utf8'),context);
-  const adapter=context.D3DIMRenderWorker.create({instance:{exports:{}},memory:{buffer:new SharedArrayBuffer(128)},backend:'webgl'});
-  adapter.destroy();assert.strictEqual(stops,1,'legacy GPU teardown flushes and releases resources through stop()');
-}
-function legacyUnavailableFallback(){
-  const RealGPU=require('../lib/d3dim-gpu').D3DIMGpu;
-  let gpu,attempts=0;const warnings=[],draws=[],overrides=[];
-  class ObservedGPU extends RealGPU {constructor(options){super(options);gpu=this;}}
+// Since GPU stream v2 D2c the D3DIM worker adapter is software only (D3DIM on
+// the GPU is the WAT producer). A legacy endpoint that still asks for 'webgl'
+// draws natively with the exact descriptor, never opens a WebGL context, and
+// tears down without a GPU to stop.
+function legacyWebglRequestDrawsNatively(){
+  let attempts=0;const draws=[];
   class MissingCanvas {constructor(){attempts++;throw new Error('no WebGL context');}}
-  const context={D3DIMGpu:{D3DIMGpu:ObservedGPU},OffscreenCanvas:MissingCanvas,
-    console:{warn:message=>warnings.push(message)}};
+  const context={OffscreenCanvas:MissingCanvas};
   vm.runInNewContext(fs.readFileSync(require.resolve('../lib/d3dim-render-worker'),'utf8'),context);
   const memory={buffer:new SharedArrayBuffer(16384)},d=new DataView(memory.buffer);
   [1,4,3,1024,3,4096].forEach((value,i)=>d.setUint32(64+i*4,value,true));
-  [512,4,4,32,16,2048,1].forEach((value,i)=>d.setUint32(256+i*4,value,true));
-  const e={d3dim_gpu_describe:()=>256,d3dim_gpu_state_override:p=>overrides.push(p),
-    d3dim_worker_draw:(...args)=>draws.push(args)};
+  const e={d3dim_worker_draw:(...args)=>draws.push(args)};
   const adapter=context.D3DIMRenderWorker.create({instance:{exports:e},memory,backend:'webgl'});
   assert.strictEqual(adapter.execute({opcode:0x20000,wa:64,stateGuest:4096}),1);
-  assert.deepStrictEqual(draws,[[1,4,3,1024,3,4096]],'unavailable GPU draw reaches native fallback');
-  assert.deepStrictEqual(overrides,[4096,0],'snapshot scope is reset before native fallback');
-  assert.strictEqual(warnings.length,1,'unavailable renderer remains diagnosed');
+  assert.deepStrictEqual(draws,[[1,4,3,1024,3,4096]],'draw reaches the native rasterizer unchanged');
   assert.strictEqual(adapter.execute({opcode:0x20000,wa:64,stateGuest:4096}),1);
-  assert.strictEqual(attempts,1,'unavailable context is not retried per triangle');
-  assert.strictEqual(draws.length,2);
-  assert.throws(()=>gpu._fail(new Error('shader execution failed')),/shader execution failed/,
-    'a real GPU failure remains fatal even after unavailable fallback');
+  assert.strictEqual(draws.length,2);assert.strictEqual(adapter.d3dimSoftwareDrawCallsCompleted,2);
+  assert.strictEqual(attempts,0,'no WebGL context is ever requested');
+  assert.strictEqual(adapter.fence(),1);
   adapter.destroy();
 }
 const watchdog=setTimeout(()=>{console.error('GL shared render worker protocol timed out');process.exitCode=1;},10000);
@@ -727,6 +715,6 @@ const watchdog=setTimeout(()=>{console.error('GL shared render worker protocol t
   await queuedSmallTextureUploads();
   await sharedPacketRotation();
   workerOwnedCommandReplay();workerCapturedGeometry();workerSoftwareResponseClone();
-  await legacyProxy();legacyWorkerCleanup();legacyUnavailableFallback();
+  await legacyProxy();legacyWebglRequestDrawsNatively();
   console.log('GL shared render worker protocol PASS');})().catch(error=>{console.error(error);process.exitCode=1;})
   .finally(()=>clearTimeout(watchdog));

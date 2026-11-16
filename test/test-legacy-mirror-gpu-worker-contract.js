@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 
-// Actual browser WebGL and GuestWorkerLink -> RenderWorker pixels. Prebuilt
-// modules only; --plan does not launch a browser or qualify a backend.
+// GPU arms of the mirror UV contract: 'gps' (the WAT GPU stream producer
+// drained into lib/gpu-stream-software.js) and, in the browser,
+// GuestWorkerLink -> RenderWorker. --offline runs gps in node against
+// build/wine-assembly.wasm; --plan does not launch a browser.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -13,7 +15,8 @@ const ROOT = path.resolve(__dirname, '..');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const scripts = ['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc',
   'guest-thread-host','render-worker','gpu-backend','d3d9-shader','d3d-shader-ir',
-  'render-clear','d3d9-backend','d3dim-gpu'].map(n=>'lib/'+n+'.js');
+  'render-clear','d3d9-backend','gpu-stream.generated','gpu-stream','d3d-geometry-batches',
+  'd3d9-software-backend','gpu-stream-software'].map(n=>'lib/'+n+'.js');
 
 function fixtureSource() {
   let source = softwareSource();
@@ -21,9 +24,7 @@ function fixtureSource() {
     assert.equal(source.split(from).length,2,'unique browser fixture adaptation seam');
     source=source.replace(from,to);
   };
-  replace("    if(mode==='webgl')gpu=new D3DIMGpu.D3DIMGpu({getExports:()=>e,getMemory:()=>memory.buffer,",
-    "    if(mode==='webgl')gpu=new D3DIMGpu.D3DIMGpu({webglVersion:config.webglVersion,getExports:()=>e,getMemory:()=>memory.buffer,");
-  replace('port=manager.createEndpoint(options);',
+  replace('port=manager.createEndpoint(config.exactNative16===true?{...options,exactNative16:true}:options);',
     'port=manager.createEndpoint({...options,webglVersion:config.webglVersion});');
   const begin=source.indexOf('      const transitions=config.cubeBorder?');
   const end=source.indexOf('      for(const [old,next] of transitions)',begin);
@@ -44,7 +45,6 @@ function fixtureSource() {
         eq(row.workerStats.d3dimFallbackSoftwareDrawCallsCompleted,0,'observed worker no fallback rasterization');
         check(row.workerStats.glRenderer&&row.workerStats.renderEndpointId,'observed actual worker identity');
       }
-      if(gpu)checkVersion(evidence.glRenderer.version,'actual direct context VERSION');
       eq(actual,expected,'PIXEL ORACLE '+label);`);
   replace("await until(()=>lastStats?.stats.drawCalls===drawCount,'all production GPU stats');evidence.stats=lastStats.stats;",
     `await until(()=>lastStats?.stats.drawCalls===drawCount,'all production GPU stats');evidence.stats=lastStats.stats;
@@ -75,29 +75,10 @@ function apiVersion(value='auto') {
   return value==='auto'?value:Number(value);
 }
 
-// Exercise real legacy constructors with only the GPU device replaced. No
-// browser or sampler proxy can qualify runtime pixels through these controls.
+// The D3DIMGpu / D3DIMRenderWorker webglVersion forwarding controls went
+// with the deleted JS executor (lib/d3dim-gpu.js). Remaining: the CLI
+// version parser and d3d9-backend's refusal to switch WebGL APIs.
 function versionControls() {
-  for(const version of [1,2,'auto',undefined]) {
-    let seen;
-    const context={D3D9Backend:{Device:class {constructor(canvas,options){seen=options?.webglVersion;}}}};
-    vm.runInNewContext(fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8'),context);
-    const gpu=new context.D3DIMGpu.D3DIMGpu({webglVersion:version,createCanvas:()=>({})});
-    assert(gpu._target({rt:1,dib:1,width:2,height:2,bpp:32}));
-    assert.equal(seen,version,'legacy device forwards explicit WebGL version');
-    let workerOptions;
-    const gl={VERSION:1,RENDERER:2,getExtension:()=>null,getParameter:k=>k===1?'WebGL 1.0 control':'control renderer'};
-    const worker={D3DIMGpu:{D3DIMGpu:class {
-      constructor(options){workerOptions=options;this.targets=new Map([[1,{device:{gpu:{gl}}}]]);}
-      call(){return 1;} snapshot(){return {drawCalls:1};}
-    }}};
-    vm.runInNewContext(fs.readFileSync(path.join(ROOT,'lib/d3dim-render-worker.js'),'utf8'),worker);
-    const adapter=worker.D3DIMRenderWorker.create({instance:{exports:{}},memory:{buffer:new ArrayBuffer(8)},
-      backend:'webgl',options:{webglVersion:version}});
-    assert.equal(workerOptions.webglVersion,version,'worker forwards explicit WebGL version');
-    assert.equal(adapter.execute({opcode:0x20001,wa:0}).glVersion,'WebGL 1.0 control',
-      'worker reports context VERSION, independently of request');
-  }
   assert.equal(apiVersion('1'),1);assert.equal(apiVersion('2'),2);assert.equal(apiVersion(), 'auto');
   for(const bad of ['0','3','webgl1',''])assert.throws(()=>apiVersion(bad));
   for(const version of [1,2]) {
@@ -156,7 +137,7 @@ async function runtime() {
       wasm=fs.readFileSync(path.join(moduleDir,name));
       const module={name,sha256:sha(wasm),bytes:wasm.length};evidence.modules.push(module);
       fs.writeFileSync(path.join(dir,name),wasm);
-      for(const mode of ['webgl','worker']){
+      for(const mode of ['gps','worker']){
         page=await browser.newPage();
         await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
         const result=await page.evaluate(fixture,mode,config,oracle.toString(),null);
@@ -178,7 +159,6 @@ async function runtime() {
           assert(partial.observations.some(o=>JSON.stringify(o.actual)!==JSON.stringify(o.expected)),
             'negative must observe a wrong actual rendered pixel');
           assert(partial.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0),'successful public draw');
-          if(mode==='webgl')assert(partial.observations.some(o=>o.webglRGBA&&o.glError===0),'actual WebGL readPixels');
           if(mode==='worker')assert(partial.observations.some(o=>o.workerStats?.drawCalls>0&&
             o.workerStats.requestedBackend==='webgl'&&o.workerStats.fallbacks===0), 'actual queued WebGL draw');
           await page.close();page=null;
@@ -197,8 +177,36 @@ async function runtime() {
   }
 }
 
+async function offline() {
+  versionControls();
+  const base=require('./test-legacy-texture-rendered-contract');
+  const p=plan(),pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
+  const config={...p,webglVersion:'auto',noPreview:true,thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
+    factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
+    imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52)};
+  const source=fixtureSource();
+  const run=async(cfg,negative=null)=>{
+    const context=base.offlineContext();
+    try{return await vm.runInContext('('+source+')',context)('gps',cfg,oracle.toString(),negative);}
+    finally{cfg.lastEvidence=context.legacyTextureEvidence;}
+  };
+  const result=await run({...config});
+  assert.equal(result.status,'PASS');assert.equal(result.observations.length,480);
+  console.log('PASS offline gps exact pixels '+result.observations.length+' draws='+result.stats.drawCalls+' readbacks='+result.stats.readbacks);
+  for(const filter of [1,2])for(const negative of ['wrap-for-mirror','stale-u','stale-v','coupled-u','coupled-v']){
+    const cfg={...config,states:config.states.filter(s=>s.filter===filter)};let failure;
+    try{await run(cfg,negative);}catch(error){failure=String(error);}
+    const partial=cfg.lastEvidence;
+    assert(failure?.includes('PIXEL ORACLE'),'negative must reach rendered pixel failure: '+failure);
+    assert(partial.observations.some(o=>JSON.stringify(o.actual)!==JSON.stringify(o.expected)),'negative must observe a wrong actual rendered pixel');
+    assert(partial.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0),'successful public draw');
+    console.log('PASS offline negative gps '+filter+' '+negative);
+  }
+}
+
 if(require.main===module){
-  if(process.argv.includes('--plan')){versionControls();console.log(JSON.stringify({webglVersion:apiVersion(process.argv.find(a=>a.startsWith('--webgl='))?.slice(8)),...plan()},null,2));}
+  if(process.argv.includes('--offline'))offline().catch(error=>{console.error(error);process.exitCode=1;});
+  else if(process.argv.includes('--plan')){versionControls();console.log(JSON.stringify({webglVersion:apiVersion(process.argv.find(a=>a.startsWith('--webgl='))?.slice(8)),...plan()},null,2));}
   else runtime().catch(error=>{console.error(error);process.exitCode=1;});
 }
 module.exports={fixtureSource,apiVersion,versionControls};

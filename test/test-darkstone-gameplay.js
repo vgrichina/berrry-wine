@@ -224,7 +224,7 @@ async function main() {
 
     const code = await session.quit();
     // DARKSTONE_LOG=<file> keeps the CLI transcript, which carries the
-    // renderer's own counters (e.g. the [d3dim-gpu] draws/fallbacks line).
+    // renderer's own counters (e.g. the [d3dim-gps] draws/fallbacks line).
     if (process.env.DARKSTONE_LOG) fs.writeFileSync(process.env.DARKSTONE_LOG, session.output());
     assert.strictEqual(code, 0,
       `Darkstone CLI exited ${code}\n${session.output().slice(-12000)}`);

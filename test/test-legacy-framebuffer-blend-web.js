@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 // Run: CHROME=/path/to/chrome FRAMEBUFFER_EVIDENCE=scratch/runs/<id>/render node test/test-legacy-framebuffer-blend-web.js
+// --offline: node, no browser; modes software and gps (the WAT GPU stream
+// producer drained into lib/gpu-stream-software.js) on both built modules.
 // DX6.1 imref_15ic.htm supplies paired factors and RGBA factor equations;
 // ddref_5n3r.htm defines stored alpha. Retained primary topics and causal
 // baselines: docs/re-notes/legacy-framebuffer-blend-20261105.md.
@@ -300,24 +302,25 @@ async function framebufferFixture(c,alphaTarget=false,options={}) {
 async function runtime() {
   const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto'),cp=require('node:child_process');
   const ROOT=path.resolve(__dirname,'..'),base=require('./test-legacy-texture-rendered-contract');
-  const out=process.env.FRAMEBUFFER_EVIDENCE;
+  const offline=process.argv.includes('--offline');
+  const out=process.env.FRAMEBUFFER_EVIDENCE||(offline?null:undefined);
   const dependent=!!process.env.FRAMEBUFFER_DEPENDENT;
-  assert(out,'FRAMEBUFFER_EVIDENCE must name an ignored run directory');
-  fs.mkdirSync(out,{recursive:true});
+  assert(out||offline,'FRAMEBUFFER_EVIDENCE must name an ignored run directory');
+  if(out)fs.mkdirSync(out,{recursive:true});
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-  const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend','d3dim-gpu'];
+  const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend',
+    'gpu-stream.generated','gpu-stream','d3d-geometry-batches','d3d9-software-backend','gpu-stream-software'];
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   const config={...base.plan(),immediate:true,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
-    // The dependent oracle is the bit-exact per-primitive native16 storage
-    // contract; production keeps full colour (lib/d3dim-gpu.js exactNative16).
-    exactNative16:dependent};
+    noPreview:offline};
   const evidence={startedAt:new Date().toISOString(),source:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:ROOT,encoding:'utf8'}).trim(),
     fixture:hash(fs.readFileSync(__filename)),calc:hash(pe),results:[],controls:[],
     productionJS:Object.fromEntries(fs.readdirSync(path.join(ROOT,'lib')).filter(n=>/\.(js|json)$/.test(n)).map(n=>['lib/'+n,hash(fs.readFileSync(path.join(ROOT,'lib',n)))]))};
   let wasm,server,browser,page,timer;
   try {
+    if(!offline){
     server=await require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
       res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
       if(req.url==='/legacy-render.wasm'){res.writeHead(200,{'Content-Type':'application/wasm'});res.end(wasm);return true;}
@@ -331,18 +334,33 @@ async function runtime() {
     const child=browser.process();evidence.process={pid:child.pid,profile:child.spawnargs.find(s=>s.startsWith('--user-data-dir='))?.slice(16)};
     child.once('exit',(code,signal)=>evidence.process.exit={code,signal});
     timer=setTimeout(()=>{evidence.deadlineExceeded=true;browser.close().catch(()=>{});},600000);
+    }
     for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']) {
       wasm=fs.readFileSync(path.join(ROOT,'build',name));const moduleHash=hash(wasm);
       for(const target of (process.env.FRAMEBUFFER_TARGETS||(dependent?'a1,a4,x1,rgb565,alpha,rgb':'rgb,alpha,destination,a1,a4,x1,rgb565')).split(',')) {
         config.immediateSource='async function(c){return ('+framebufferFixture.toString()+')(c,'+(target==='rgb'?'false':target==='alpha'?'true':JSON.stringify(target))+','+JSON.stringify({probeOnly:!!process.env.FRAMEBUFFER_PROBE,baseline:!!process.env.FRAMEBUFFER_BASELINE,dependent})+');}';
-        for(const mode of (process.env.FRAMEBUFFER_MODES||(process.env.FRAMEBUFFER_PROBE?'software':'software,webgl,worker')).split(','))for(const negative of (process.env.FRAMEBUFFER_PROBE||process.env.FRAMEBUFFER_BASELINE?[null]:dependent?[null,'dependent-stale',...(['a1','a4','x1','rgb565'].includes(target)?['dependent-final-only','dependent-per-draw']:[]),...(['a1','a4','alpha'].includes(target)?['dependent-stale-alpha']:[])]:['x1','rgb565'].includes(target)?[null]:[null,['destination','a1','a4'].includes(target)?'opaque-target':'old-both'])) {
+        for(const mode of (process.env.FRAMEBUFFER_MODES||(process.env.FRAMEBUFFER_PROBE?'software':(offline?'software,gps':'software,gps,worker'))).split(',')
+          // The dependent native16 oracle narrows every primitive to the 16-bit
+          // format. The GPU producer keeps 8 bits per channel until readback by
+          // design (src/09abg-d3dim-gps.wat $d3g_draw); it has no per-draw
+          // narrowing mode like the deleted JS executor's exactNative16, so gps
+          // runs the dependent arm on the 32-bit targets only.
+          .filter(m=>!(dependent&&m==='gps'&&['a1','a4','x1','rgb565'].includes(target))))for(const negative of (process.env.FRAMEBUFFER_PROBE||process.env.FRAMEBUFFER_BASELINE?[null]:dependent?[null,'dependent-stale',...(['a1','a4','x1','rgb565'].includes(target)?['dependent-final-only','dependent-per-draw']:[]),...(['a1','a4','alpha'].includes(target)?['dependent-stale-alpha']:[])]:['x1','rgb565'].includes(target)?[null]:[null,['destination','a1','a4'].includes(target)?'opaque-target':'old-both'])) {
+          let result,error,partial;
+          if(offline){
+            const c={...config};try{result=await base.runOffline(mode,c,base.oracle.toString(),negative,wasm);}catch(e){error=String(e);}
+            partial=error?c.lastEvidence||null:null;
+          }else{
           page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');
-          let result,error;try{result=await page.evaluate(base.browserFixture,mode,config,base.oracle.toString(),negative);}catch(e){error=String(e);}
-          const partial=error?await page.evaluate(()=>globalThis.legacyTextureEvidence||null):null;
-          const row={name,moduleHash,target,mode,negative,result,error,partial};(negative?evidence.controls:evidence.results).push(row);
+          try{result=await page.evaluate(base.browserFixture,mode,config,base.oracle.toString(),negative);}catch(e){error=String(e);}
+          partial=error?await page.evaluate(()=>globalThis.legacyTextureEvidence||null):null;
           await page.screenshot({path:path.join(out,name+'-'+target+'-'+mode+'-'+(negative||'normal')+'.png'),fullPage:true});
           await page.close();page=null;
-          if(dependent&&!negative&&!error&&mode!=='software') {
+          }
+          const row={name,moduleHash,target,mode,negative,result,error,partial};(negative?evidence.controls:evidence.results).push(row);
+          if(dependent&&!negative&&!error&&mode==='gps')
+            assert.equal(result.stats.readbacks,result.framebufferBlend.dependent.pairs.length,'one final producer readback per dependent pair');
+          if(dependent&&!negative&&!error&&mode==='worker') {
             const pairs=result.framebufferBlend.dependent.pairs.length;
             assert.equal(result.stats.syncs,pairs,'one final native readback per dependent pair');
             assert.equal(result.stats.uploads,pairs,'one initial upload per dependent pair; no intermediate injected upload');
@@ -367,8 +385,8 @@ async function runtime() {
     if(timer)clearTimeout(timer);if(page)await page.close();if(browser)await browser.close();
     if(server)await require('./static-server').closeServer(server);
     evidence.cleanupAt=new Date().toISOString();
-    fs.writeFileSync(path.join(out,'result.json.tmp'),JSON.stringify(evidence,null,2)+'\n');
-    fs.renameSync(path.join(out,'result.json.tmp'),path.join(out,'result.json'));
+    if(out){fs.writeFileSync(path.join(out,'result.json.tmp'),JSON.stringify(evidence,null,2)+'\n');
+    fs.renameSync(path.join(out,'result.json.tmp'),path.join(out,'result.json'));}
     if(browser&&!evidence.deadlineExceeded)assert.deepEqual(evidence.process.exit,{code:0,signal:null},'normal browser closure');
   }
 }

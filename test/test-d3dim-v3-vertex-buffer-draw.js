@@ -247,7 +247,7 @@ if (!process.argv.includes('--public-ranges')) (async () => {
 // witness remains useful. Expected colors/geometry never use renderer helpers.
 async function publicRangeFixture(c) {
   const {mode,negative,evidence,check,eq,read,alloc,words,guard,guid,com,ok,acquire,
-    dd,hal,surface,lock,unlock,bits,use,initial,countDraw,queue,rendererInfo}=c;
+    dd,hal,surface,lock,unlock,bits,use,initial,countDraw,queue}=c;
   const r=evidence.vbRanges={draws:[],pixels:[],held:[],buffers:[]};
   const colors={red:[208,48,32],blue:[32,80,192],poison:[176,32,160],clear:[11,22,33]};
   const argb=rgb=>(0xff000000|rgb[0]<<16|rgb[1]<<8|rgb[2])>>>0;
@@ -365,7 +365,6 @@ async function publicRangeFixture(c) {
       for(const item of [a,b])await com('ranges ReleaseVB',item.vb,2);
     }
   }
-  if(mode==='webgl')evidence.glRenderer=rendererInfo();
   use(initial);
   for(const obj of [t3.device,t3.viewport,t3.rt,d3d3])await com('ranges Release object',obj,2);
 }
@@ -384,8 +383,8 @@ async function runPublicRanges(){
   eq(moduleSHA,config.moduleSHA,'actual fetched module identity before compile');
   evidence.compiledModule={sha256:moduleSHA,bytes:moduleBytes.byteLength,reusedForCPUAndRenderWorkers:mode==='worker'};
   const module=await WebAssembly.compile(moduleBytes);`);
-  replace("if(mode==='webgl')gpu=new D3DIMGpu.D3DIMGpu({getExports:","if(mode==='webgl')gpu=new D3DIMGpu.D3DIMGpu({webglVersion:config.webglVersion,getExports:");
-  replace('port=manager.createEndpoint(options);','port=manager.createEndpoint({...options,webglVersion:config.webglVersion});');
+  // GPU stream v2 D2c: the fixture's GPU mode is 'gps' (WAT producer drained
+  // into lib/gpu-stream-software.js); there is no WebGL version to select.
   replace('snapshot:transportSnapshot,pendingPackets:',`buffers:()=>queueBuffers.map(buffer=>({
     vertices:new Uint8Array(buffer,32+4096,new DataView(buffer).getUint32(24,true))})),
     snapshot:transportSnapshot,pendingPackets:`);
@@ -397,7 +396,7 @@ async function runPublicRanges(){
     .map(p=>[p,sha(fs.readFileSync(path.join(ROOT,p)))]));
   const save=()=>fs.writeFileSync(path.join(dir,'range-controls.json'),JSON.stringify(state,null,2)+'\n');
   const cfg=()=>({...base.plan(),immediate:true,noPreview:true,states:[],samples:[],
-    immediateSource:publicRangeFixture.toString(),webglVersion:2,
+    immediateSource:publicRangeFixture.toString(),
     thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),moduleSHA:sha(wasm)});
@@ -417,7 +416,8 @@ async function runPublicRanges(){
       state.cells.push({name,mode:'software',result});save();console.log('PASS ranges software '+name);
     }
     const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','render-clear','d3d9-backend','d3dim-gpu'];
+      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend',
+      'gpu-stream.generated','gpu-stream','d3d-geometry-batches','d3d9-software-backend','gpu-stream-software'];
     server=await require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
       const url=new URL(req.url,'http://localhost').pathname;
       res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
@@ -432,25 +432,24 @@ async function runPublicRanges(){
     state.browser={version:await browser.version(),pid:browser.process().pid,profile:browser.process().spawnargs.find(s=>s.startsWith('--user-data-dir='))?.slice(16)};save();
     browser.process().once('exit',(code,signal)=>{state.browserExit={code,signal,at:new Date().toISOString()};});
     timer=setTimeout(()=>browser.close().catch(()=>{}),Math.min(900000,deadline-Date.now()-30000));
-    async function cell(name,mode,version,negative=null){
+    async function cell(name,mode,negative=null){
       wasm=fs.readFileSync(path.join(ROOT,'build',name));assert.equal(sha(wasm),state.modules[name].sha256);
       page=await browser.newPage();await page.goto('http://127.0.0.1:'+state.port+'/ranges-fixture');
       assert.equal(await page.evaluate(()=>self.crossOriginIsolated),true,'isolated fixture before any Worker');
-      const config=cfg();config.webglVersion=version;let result,error;
+      const config=cfg();let result,error;
       try{result=await page.evaluate(fixture,mode,config,base.oracle.toString(),negative);}catch(e){error=String(e);}
-      const row={name,mode,version,negative,result,error};
+      const row={name,mode,negative,result,error};
       if(error)row.partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
       (negative?state.negatives:state.cells).push(row);save();
       if(negative){assert.match(error||'',/VB RANGE PIXEL ORACLE/);assert(row.partial.vbRanges.draws.length);}
       else{assert.equal(error,undefined);assert.equal(result.status,'PASS');
-        assert.match(result.glRenderer.version,new RegExp('^WebGL '+version+'[.]0'));
-        if(mode==='worker'){assert.equal(result.stats.requestedBackend,'webgl');assert.equal(result.stats.d3dimSoftwareDrawCallsCompleted,0);
-          assert.equal(result.stats.d3dimFallbackSoftwareDrawCallsCompleted,0);assert(result.stats.renderEndpointId);}
-        await page.screenshot({path:path.join(dir,name+'-'+mode+'-gl'+version+'.png'),fullPage:true});}
-      await page.close();page=null;console.log('PASS ranges '+JSON.stringify({name,mode,version,negative}));
+        // The legacy render-Worker endpoint is software only since D2c.
+        if(mode==='worker')assert(result.stats.renderEndpointId);
+        await page.screenshot({path:path.join(dir,name+'-'+mode+'.png'),fullPage:true});}
+      await page.close();page=null;console.log('PASS ranges '+JSON.stringify({name,mode,negative}));
     }
-    for(const name of Object.keys(state.modules))for(const mode of ['webgl','worker'])for(const version of [1,2])await cell(name,mode,version);
-    for(const negative of ['start','capacity','absolute','queued'])await cell('wine-assembly.wasm',negative==='queued'?'worker':'webgl',2,negative);
+    for(const name of Object.keys(state.modules))for(const mode of ['gps','worker'])await cell(name,mode);
+    for(const negative of ['start','capacity','absolute','queued'])await cell('wine-assembly.wasm',negative==='queued'?'worker':'gps',negative);
     for(const [file,hash] of Object.entries(state.productionFiles))assert.equal(sha(fs.readFileSync(path.join(ROOT,file))),hash,'source drift '+file);
     state.status='PASS';
   }catch(error){state.status='FAIL; subsequent paths UNTESTED';state.error=error.stack;throw error;}

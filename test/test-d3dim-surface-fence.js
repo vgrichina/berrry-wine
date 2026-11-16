@@ -1,16 +1,16 @@
 'use strict';
 // D3DIM surface fences.
 //
-//   1. lib/d3dim-gpu.js (the JS WebGL executor) on its own: ranged fences read
-//      back only aliasing targets, a global fence flushes the rest.
-//   2. $d3dim_gpu_on = 0, the software render Worker: the host owns every
+//   1. $d3dim_gpu_on = 0, the software render Worker: the host owns every
 //      fence, and the WAT keeps global ordering (FENCE 0,0).
-//   3. $d3dim_gpu_on = 1, the WAT GPU stream producer (src/09abg-d3dim-gps.wat)
+//   2. $d3dim_gpu_on = 1, the WAT GPU stream producer (src/09abg-d3dim-gps.wat)
 //      draining into the real software executor (lib/gpu-stream-software.js):
 //      the producer lowers fences into READBACK records itself and never calls
 //      the host's gpu_gl_call. A GPU clear leaves the DIB stale until a CPU
 //      reader of THAT surface fences it; pixels and readback counts are checked
-//      against what the clear colour must produce in RGB565.
+//      against what the clear colour must produce in RGB565. Ranged fences
+//      read back only aliasing targets and a global fence flushes the rest
+//      (these used to be checked on the deleted JS executor lib/d3dim-gpu.js).
 //
 // The producer accepts lazy Lock publish (0x20007 -> 1): with lazy sync on, a
 // Lock of a page-aligned DIB arms the range and reads nothing; the first
@@ -20,43 +20,13 @@
 // keyed alpha-tested blit) instead of reading the target back, and five
 // Blt-presents exercise $d3g_park_merge (fits: GPU merge; too wide: land).
 const assert = require('assert');
-const { D3DIMGpu, OPCODES } = require('../lib/d3dim-gpu');
 const GS = require('../lib/gpu-stream');
 const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
+const { FENCE_OPCODE } = require('../lib/d3d-command-stream');
 const { bootRenderHarness } = require('./render-helper');
+const OPCODES = { FENCE: FENCE_OPCODE };
 
 async function main() {
-  const memory = new ArrayBuffer(65536), bytes = new Uint8Array(memory);
-  const reads = [], writes = [];
-  const gpu = new D3DIMGpu({ getMemory: () => memory,
-    getExports: () => ({ page_watch_write: (a, n) => writes.push([a, n]) }),
-    createCanvas: () => { throw Error('unexpected allocation'); } });
-  function target(id, dib) {
-    const t = { rt: id, dib, width: 2, height: 1, pitch: 4, bpp: 16,
-      format: 1, dirty: true, device: { gpu: { bindImplicitTarget() {}, gl: {
-        RGBA: 1, UNSIGNED_BYTE: 2,
-        readPixels(x, y, w, h, f, ty, out) {
-          reads.push(id); out.set([255, 0, 0, 255, 0, 255, 0, 255]);
-        },
-      } } } };
-    gpu.targets.set(id, t); return t;
-  }
-  const a = target(1, 4096), b = target(2, 8192);
-  assert.strictEqual(gpu.call(OPCODES.FENCE, 16384, 4), 2);
-  assert.deepStrictEqual(reads, [], 'unrelated surface leaves GPU targets alone');
-  assert(a.dirty && b.dirty);
-  assert.strictEqual(gpu.call(OPCODES.FENCE, 4098, 1), 2);
-  assert.deepStrictEqual(reads, [1], 'partial backing alias synchronizes its target');
-  assert(!a.dirty && b.dirty, 'other target remains pending');
-  assert.deepStrictEqual(Array.from(bytes.slice(4096, 4100)), [0, 248, 224, 7]);
-  assert.deepStrictEqual(writes, [[4096, 4]], 'readback marks changed backing bytes');
-  gpu.call(OPCODES.FENCE, 8188, 4);
-  assert(b.dirty, 'touching but nonoverlapping range is not an alias');
-  assert.strictEqual(gpu.call(OPCODES.FENCE, 0, 0), 1);
-  assert.deepStrictEqual(reads, [1, 2], 'global barrier still flushes remaining target');
-  gpu.call(OPCODES.FENCE, 0, 0);
-  assert.strictEqual(reads.length, 2, 'clean targets need no readback');
-
   const calls = [];
   let ex, wasmMemory, gps = null, gpsRing = null, gpsRingAddr = 0, kicks = 0;
   const harness = await bootRenderHarness({ fonts: 'none',

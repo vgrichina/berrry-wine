@@ -2,9 +2,8 @@
 'use strict';
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),vm=require('node:vm');
 const previous=require('./test-legacy-projected-webgl');
-const expanded=require('./test-legacy-count-selector-webgl');
+const expanded=require('./test-legacy-projected-coordinate-contract');
 const ROOT=path.resolve(__dirname,'..'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-const sourceCommit='0b7318794f8dbf8dc5fdd552d30ab2e97b76480d';
 // Expected coordinates are authored independently of the FVF decoder. The
 // rational interpolation and analytic mip rule are retained from the audit.
 function oracle(colors,state,sample,details=false){
@@ -38,7 +37,7 @@ function plan(){
     for(const flags of dimension<=2?[0,0x102,0x103,0x104]:[0])for(const scale of flags?[1,16]:[1]){
       const matrix=[scale,.75,.5,.375, .25,.25,.375,.625, 7,11,13,17, .093,.3125,.625,.4375];
       for(const geomW of [false,true])states.push({label:`dims${dimensions.join('')}/TEX${selector}/FLOAT${dimension}/flags${flags}/scale${scale}/w${geomW}`,
-        dimensions,dimension,sets,selector,flags,matrix,geomW,mip:scale===1?1:2,fvf:fvf(dimensions)});
+        dimensions,dimension,sets,selector,flags,matrix,geomW,mip:scale===1?1:2,filter:1,fvf:fvf(dimensions)});
     }
   }
   const candidates=Array.from({length:17},(_,x)=>Array.from({length:17},(_,y)=>({x:x+5,y:y+5}))).flat().filter(p=>p.x+p.y<29);
@@ -50,7 +49,6 @@ function plan(){
 function config(){return {...previous.config(),...plan()};}
 function fixtureSource(){
   let source=expanded.fixtureSource();
-  source=source.replace("if(mode==='software'&&args[0]===0x20000&&!nativeEncoder)inspect(e,memory,args[1],evidence);",'');
   const replace=(a,b)=>{assert.equal(source.split(a).length,2,'dimension seam '+a.slice(0,70));source=source.replace(a,b);};
   replace('const vertices=await alloc(264)','const vertices=await alloc(480)');
   // Bounded ownership: the immediate Device7 path is the tested contract.
@@ -68,13 +66,12 @@ function fixtureSource(){
   {const start=source.indexOf("          if(negative!=='early')return set[i];"),end=source.indexOf('        });',start);
     assert(start>0&&end>start);source=source.slice(0,start)+"          return negative==='default-v'&&setIndex===state.selector?[set[i][0],.28125]:set[i];\n"+source.slice(end);}
   replace('if(negative===\'component\'){',"if(negative==='default-w'){for(let c=0;c<4;c++)m[12+c]=0;}\n      if(negative==='component'){");
-  // Higher dimensional transformed input is explicitly unsupported instead
-  // of accepting a draw after silently discarding its extra components.
+  // Out-of-range selector and texture-count words are rejected. Transformed
+  // FLOAT3/4 input used to be rejected here too; it is now supported and its
+  // pixels are owned by test-legacy-transformed-float34.js.
   replace("    await ok(com('unbind texture',device,35,0,0));",`    if(!negative){
       const base=config.states[0];await geometry(base);await setState({...base,flags:0});
-      const invalid=[{...base,selector:8},
-        ...config.states.filter(s=>s.dimension>=3&&!s.geomW).slice(0,4).flatMap(s=>[0x102,0x103,0x104].map(flags=>({...s,flags}))),
-        {...base,overrideFVF:0x9e2}];
+      const invalid=[{...base,selector:8},{...base,overrideFVF:0x9e2}];
       evidence.rejected=[];
       for(const state of invalid){await geometry(state);await setState(state);
         await ok(com('BeginScene7 invalid',device,5));
@@ -106,139 +103,38 @@ function controls(){
     }));assert(state,'independent pixel witness '+fault);witnesses[fault]=state.label;
   }
   return {status:'PLAN PASS; no drawn pixels',states:p.states.length,tolerance:2,witnesses,
-    boundary:'FLOAT1/2 supplied projected COUNT2/3/4; FLOAT3/4 disabled transform; transformed FLOAT3/4 explicitly rejected'};
+    boundary:'FLOAT1/2 supplied projected COUNT2/3/4; FLOAT3/4 disabled transform; invalid selector/count rejected'};
 }
+// Node pixels through public COM: the WAT rasterizer ('software') and the WAT
+// GPU stream producer drained into lib/gpu-stream-software.js ('gps'). The
+// browser WebGL/Worker runtime and its served lib/d3dim-gpu.js went with the
+// deleted JS executor. GAP (lib/src): the software GPU backend refuses every
+// D3DTTFF_PROJECTED draw the producer emits ('shader exceeds native VM
+// implementation'), so gps runs the unprojected states unless
+// LEGACY_PROJECTED_GPS_ALL=1.
+const NEGATIVES=['selector','default-v','default-w','component','layout'];
 async function offline(){
-  const p=plan(),results=[];
-  for(const indexed of [false,true]){
-    const context=await offlineContext();
-    let result;try{result=await vm.runInContext('('+fixtureSource()+')',context)('software',{...config(),indexed},oracle.toString());}catch(e){fs.writeFileSync(path.join(process.env.LEGACY_PROJECTED_EVIDENCE||'/tmp','offline-first-failure.json'),JSON.stringify(context.legacyTextureEvidence));throw e;}
+  const p=plan(),results=[],source=fixtureSource();
+  const gpsStates=process.env.LEGACY_PROJECTED_GPS_ALL==='1'?p.states:p.states.filter(s=>!(s.flags&0x100));
+  for(const mode of ['software','gps'])for(const indexed of [false,true]){
+    const result=await previous.runFixture(source,mode,{...config(),states:mode==='gps'?gpsStates:p.states,indexed},oracle.toString());
     assert.equal(result.status,'PASS');results.push(result);
+    console.log('PASS '+JSON.stringify({mode,indexed,observations:result.observations.length,rejected:result.rejected?.length}));
   }
-  for(const negative of ['selector','default-v','default-w','component','layout']){
-    const context=await offlineContext(),witness=controls().witnesses[negative];let error;
-    try{await vm.runInContext('('+fixtureSource()+')',context)('software',{...config(),states:p.states.filter(s=>s.label===witness)},oracle.toString(),negative);}catch(e){error=String(e);}
-    assert.match(error||'',/PIXEL ORACLE/);assert(context.legacyTextureEvidence.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0));
-    results.push({negative,error,partial:context.legacyTextureEvidence});
+  for(const mode of ['software','gps'])for(const negative of NEGATIVES){
+    const witness=controls().witnesses[negative],states=p.states.filter(s=>s.label===witness);
+    if(mode==='gps'&&!gpsStates.includes(states[0]))continue;
+    const cfg={...config(),states};let error;
+    try{await previous.runFixture(source,mode,cfg,oracle.toString(),negative);}catch(e){error=String(e);}
+    assert.match(error||'',/PIXEL ORACLE/);assert(cfg.lastEvidence.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0));
+    results.push({mode,negative,error,partial:cfg.lastEvidence});
+    console.log('PASS negative '+mode+' '+negative);
   }
   return results;
 }
-async function offlineContext(){
-  const routes=new Map([['/legacy-render.wasm',fs.readFileSync(path.join(ROOT,'build/wine-assembly.wasm'))],
-    ['/test/binaries/calc.exe',fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))],
-    ['/lib/host-import-sigs.generated.json',fs.readFileSync(path.join(ROOT,'lib/host-import-sigs.generated.json'))]]);
-  return vm.createContext({WebAssembly,performance,setTimeout,fetch:async url=>{assert(routes.has(url));const b=routes.get(url);return {arrayBuffer:async()=>Uint8Array.from(b).buffer,json:async()=>JSON.parse(b)};},
-    document:{createElement:()=>({style:{},getContext:()=>({putImageData(){}})}),body:{append(){}}},ImageData:class{}});
-}
 
-async function runtime(){
-  const dir=process.env.LEGACY_PROJECTED_EVIDENCE;assert(dir);fs.mkdirSync(dir,{recursive:true});
-  const hardClose=Date.parse(process.env.LEGACY_PROJECTED_HARD_CLOSE);
-  assert(Number.isFinite(hardClose),'explicit finite browser close time');
-  const seal=JSON.parse(fs.readFileSync(path.join(dir,'source-seal.json')));
-  const remaining=false;
-  const state={status:'PREPARING',seal,preflight:controls(),results:[],negatives:[],injections:[],
-    scope:controls().boundary};
-  const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(state)+'\n');
-  const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker',
-    'gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend','d3dim-gpu'];
-  let wasm,negative=null,server,browser,page,timer;
-  try{
-    const puppeteer=require('puppeteer');
-    const esmPath=path.join(path.dirname(require.resolve('puppeteer/package.json')),'lib/esm/puppeteer/puppeteer.js');
-    await import(require('node:url').pathToFileURL(esmPath).href);
-    state.puppeteer={require:require.resolve('puppeteer'),import:esmPath};
-    assert.equal(require('puppeteer/package.json').version,'24.31.0');
-    for(const [name,pin] of Object.entries(seal.files))assert.equal(hash(fs.readFileSync(path.join(ROOT,name))),pin.sha256,name);
-    assert.equal(hash(fs.readFileSync('/home/user/legacy-solid-browser/package-lock.json')),seal.puppeteerLockSha256);
-    server=await require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
-      const name=new URL(req.url,'http://localhost').pathname;
-      res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
-      res.setHeader('Cache-Control','no-store');
-      if(name==='/legacy-render-fixture'){
-        res.writeHead(200,{'Content-Type':'text/html'});res.end(scripts.map(n=>'<script src="/lib/'+n+'.js"></script>').join('\n'));return true;
-      }
-      if(name==='/legacy-render.wasm'){res.writeHead(200,{'Content-Type':'application/wasm'});res.end(wasm);return true;}
-      if(name==='/lib/d3dim-gpu.js'&&negative&&negative!=='unclipped'){
-        const body=((s)=>s)(fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8'),negative);
-        state.injections.push({negative,url:req.url,sha256:hash(body)});
-        res.writeHead(200,{'Content-Type':'application/javascript'});res.end(body);return true;
-      }
-      return false;
-    }});
-    state.serverPort=server.address().port;
-    state.bootstrap=[];
-    for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
-      wasm=fs.readFileSync(path.join(ROOT,'build',name));assert(WebAssembly.validate(wasm));
-      const transport={status:"predecessor transport seam retained; new actual software draws tested separately"};
-      // Instantiate the exact served module and acquire actual public COM
-      // surfaces/device/mip chain before Chrome. Bootstrap exits before draws.
-      const routes=new Map([['/legacy-render.wasm',wasm],
-        ['/lib/host-import-sigs.generated.json',fs.readFileSync(path.join(ROOT,'lib/host-import-sigs.generated.json'))],
-        ['/test/binaries/calc.exe',fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))]]);
-      const context=vm.createContext({WebAssembly,performance,setTimeout,fetch:async url=>{
-        assert(routes.has(url));const bytes=routes.get(url);
-        return {arrayBuffer:async()=>Uint8Array.from(bytes).buffer,json:async()=>JSON.parse(bytes)};
-      }});
-      const bootstrap=await vm.runInContext('('+fixtureSource()+')',context)('software',{...config(),bootstrap:true},oracle.toString());
-      assert.equal(bootstrap.status,'BOOTSTRAP PASS; no draws');
-      assert(!bootstrap.calls.some(c=>/Draw(Indexed)?Primitive7/.test(c.label)));
-      state.bootstrap.push({module:name,sha256:hash(wasm),result:bootstrap,transport});
-      for(const route of ['/legacy-render-fixture','/legacy-render.wasm','/lib/guest-worker.js']){
-        const response=await fetch('http://127.0.0.1:'+state.serverPort+route);assert.equal(response.status,200);
-        assert.equal(response.headers.get('cross-origin-opener-policy'),'same-origin');
-        assert.equal(response.headers.get('cross-origin-embedder-policy'),'require-corp');
-        if(route.endsWith('.wasm'))assert.equal(hash(Buffer.from(await response.arrayBuffer())),hash(wasm));else await response.text();
-      }
-    }
-    for(const [name,pin] of Object.entries(seal.files))if(name.startsWith('lib/')||name.startsWith('test/')){
-      const response=await fetch('http://127.0.0.1:'+state.serverPort+'/'+name);assert.equal(response.status,200);
-      assert.equal(hash(Buffer.from(await response.arrayBuffer())),pin.sha256,'HTTP '+name);
-    }
-    state.preBrowser='PASS actual imports, dependency/source/module pins, HTTP/isolation';save();
-    if(process.argv.includes('--preflight')){state.status='PREFLIGHT PASS; no browser';return;}
-    assert(Date.now()<hardClose-300000,'launch deadline');
-    timer=setTimeout(()=>{state.timedOut=true;save();if(browser)browser.close().catch(()=>{});},Math.min(840000,hardClose-Date.now()));
-    state.browserOpenedAt=new Date().toISOString();
-    browser=await puppeteer.launch({headless:true,executablePath:'/usr/bin/google-chrome',args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader'],protocolTimeout:120000});
-    state.browser=await browser.version();state.browserPid=browser.process().pid;
-    const cdp=await browser.target().createCDPSession();state.systemInfo=await cdp.send('SystemInfo.getInfo');await cdp.detach();
-    let implementation={fixtureSource,config,oracle},revision=0;
-    const run=async(name,mode,version,indexed,fault=null,count=null)=>{
-      negative=fault;wasm=fs.readFileSync(path.join(ROOT,'build',name));
-      page=await browser.newPage();await page.goto('http://127.0.0.1:'+state.serverPort+'/legacy-render-fixture');
-      const cfg={...implementation.config(),webglVersion:version,indexed};
-      if(fault)cfg.states=cfg.states.filter(s=>s.label===controls().witnesses[fault]);
-      let result,error;
-      const fixture=Function('return ('+implementation.fixtureSource()+')')();
-      try{result=await page.evaluate(fixture,mode,cfg,implementation.oracle.toString(),fault);}catch(e){error=String(e);}
-      const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
-      const row={module:name,mode,version,indexed,fault,count,revision,result,error,partial:error?partial:undefined};
-      (fault?state.negatives:state.results).push(row);save();
-      if(fault){assert.match(error||'',/PIXEL ORACLE/,'rendered semantic rejection');
-        assert(partial.calls.some(c=>/Draw(Indexed)?Primitive7/.test(c.label)&&c.result===0));
-        assert(partial.observations.at(-1).actual.some((c,i)=>Math.abs(c-partial.observations.at(-1).expected[i])>cfg.tolerance));
-      }else{assert.equal(error,undefined);assert.equal(result.status,'PASS');}
-      if(!fault)await page.screenshot({path:path.join(dir,'capture-'+mode+'-'+version+'-'+indexed+'.png')});
-      await page.close();page=null;console.log('PASS '+JSON.stringify({name,mode,version,indexed,fault}));
-    };
-    // Canonical direct and queued first, then bounded compatibility coverage.
-    const cells=['wine-assembly.wasm'].flatMap(name=>['webgl','worker'].flatMap(mode=>
-      [1,2].flatMap(version=>[false,true].map(indexed=>[name,mode,version,indexed]))));
-    if(!remaining)for(const cell of cells)await run(...cell);
-    for(const version of [1,2])for(const mode of ['webgl','worker'])for(const fault of ['selector','default-v','default-w','component','layout'])await run('wine-assembly.wasm',mode,version,false,fault);
-    state.status='PASS';
-  }catch(error){state.status='FAIL; later paths unexecuted';state.error=error.stack;
-    if(page)state.partial=await page.evaluate(()=>globalThis.legacyTextureEvidence).catch(()=>null);throw error;
-  }finally{
-    if(timer)clearTimeout(timer);if(browser)await browser.close();state.browserClosedAt=new Date().toISOString();
-    if(server)await require('./static-server').closeServer(server);
-    state.closedAt=new Date().toISOString();save();
-  }
-}
 if(require.main===module){
  if(process.argv.includes('--plan'))console.log(JSON.stringify(controls(),null,2));
- else if(process.argv.includes('--offline'))offline().then(results=>{const out=process.env.LEGACY_PROJECTED_EVIDENCE; if(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'offline.json'),JSON.stringify(results));}console.log('OFFLINE PASS '+results.length);}).catch(e=>{console.error(e);process.exitCode=1;});
- else runtime().catch(e=>{console.error(e);process.exitCode=1;});
+ else offline().then(results=>{const out=process.env.LEGACY_PROJECTED_EVIDENCE; if(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'offline.json'),JSON.stringify(results));}console.log('OFFLINE PASS '+results.length);}).catch(e=>{console.error(e);process.exitCode=1;});
 }
-module.exports={oracle,plan,config,fvf,fixtureSource,controls,offline,runtime};
+module.exports={oracle,plan,config,fvf,fixtureSource,controls,offline};

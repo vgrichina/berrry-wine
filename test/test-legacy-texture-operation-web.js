@@ -1,14 +1,18 @@
 #!/usr/bin/env node
 'use strict';
-// Public COM -> shipped module -> WebGL, including owning CPU/render Workers.
-// --plan is static; runtime needs LEGACY_OPERATION_EVIDENCE and an absolute
+// Public COM texture-stage operations -> shipped module -> pixels.
+// --plan is static. --offline renders in node through the WAT rasterizer
+// ('software') and the WAT GPU stream producer drained into
+// lib/gpu-stream-software.js ('gps'). The browser runtime (owning CPU/render
+// Workers) needs LEGACY_OPERATION_EVIDENCE and an absolute
 // LEGACY_OPERATION_HARD_CLOSE ISO deadline. Exactly one browser per invocation.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const vm=require('node:vm'),crypto=require('node:crypto'),cp=require('node:child_process');
 const base=require('./test-legacy-texture-rendered-contract');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-  'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend','d3dim-gpu'];
+  'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend','gpu-stream.generated',
+  'gpu-stream','d3d-geometry-batches','d3d9-software-backend','gpu-stream-software'];
 
 // Independent channel arithmetic. Chosen bytes make every multiply integral;
 // no production sampler, stage lowering, shader or rounding helper is used.
@@ -160,9 +164,7 @@ function fixtureSource(){
   let s=base.browserFixture.toString();
   const replace=(a,b)=>{assert.equal(s.split(a).length,2,'unique operation fixture seam '+a.slice(0,70));s=s.replace(a,b);};
   replace('const expected=expectedColor(state.palette||config.texture,sample.uv,state.filter,expectedAddress);','const expected=expectedColor(state);');
-  replace('if(mode===\'webgl\')gpu=new D3DIMGpu.D3DIMGpu({getExports:',
-    'if(mode===\'webgl\')gpu=new D3DIMGpu.D3DIMGpu({webglVersion:config.webglVersion,getExports:');
-  replace('port=manager.createEndpoint(options);','port=manager.createEndpoint({...options,webglVersion:config.webglVersion});');
+  replace('port=manager.createEndpoint(config.exactNative16===true?{...options,exactNative16:true}:options);','port=manager.createEndpoint({...options,webglVersion:config.webglVersion});');
   replace('return {sequence:packet.seq,vertices:', 'return {sequence:packet.seq,state:new Uint8Array(buffer,32,4096),vertices:');
   // Public Lock fences the owning GPU; copy completed DIB bytes locally to
   // avoid sixty-four CPU Worker RPCs for each tiny observation.
@@ -175,10 +177,10 @@ function fixtureSource(){
         eq(dibRGBA.slice(pixel*4,pixel*4+3),expected,'PIXEL ORACLE full target '+label+' '+pixel);`);
   replace("    if(mode==='worker'&&config.immediate){",`    if(config.bootstrap)return evidence;
     if(mode==='worker'&&config.immediate){`);
-  replace("    if(gpu)evidence.stats=gpu.snapshot();",`    if(gpu)evidence.stats=gpu.snapshot();
-    const version=evidence.glRenderer?.version;
-    check(new RegExp('^WebGL '+config.webglVersion+'[.]0').test(version),'actual requested context version '+version);
+  replace("    evidence.drawCount=drawCount;\n",`    evidence.drawCount=drawCount;
     if(mode==='worker'){
+      const version=evidence.glRenderer?.version;
+      check(new RegExp('^WebGL '+config.webglVersion+'[.]0').test(version),'actual requested context version '+version);
       eq(evidence.stats.requestedBackend,'webgl','actual worker backend');
       eq(evidence.stats.renderApi,'legacy','actual worker API');
       eq(evidence.stats.d3dimSoftwareDrawCallsCompleted,0,'no native worker rasterization');
@@ -187,15 +189,11 @@ function fixtureSource(){
     }`);
   return s;
 }
-const faults=['select','argument','alpha','current','queued-argument'];
-function mutate(source,fault){
-  if(fault==='queued-argument')return source;
-  const edits={select:['v === 2 || v === 3 || v === 13 ? v : 4','v === 2 ? 3 : v === 3 || v === 13 ? v : 4'],
-    argument:['const arg = v => v === 1 ? 0 : v;','const arg = v => v === 1 || v === 2 ? 0 : v;'],
-    alpha:['alphaOp: op(d.alphaOp)','alphaOp: 2'],
-    current:['const arg = v => v === 1 ? 0 : v;','const arg = v => v === 1 ? 2 : v;']};
-  const [a,b]=edits[fault];assert.equal(source.split(a).length,2,'unique production semantic mutation '+fault);return source.replace(a,b);
-}
+// The select/argument/alpha/current faults mutated the stage lowering of the
+// deleted JS executor (lib/d3dim-gpu.js), served to the page; that lowering is
+// in the WAT producer now, out of reach of a served-script fault. The
+// queued-argument fault changes live public setters and stays (browser Worker).
+const faults=['queued-argument'];
 function config(bootstrap=false,negative=null){
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   const labels={select:'rich-2/3-rgb',argument:'rich-2/3-rgb',alpha:'rich-4/3-alpha',current:'CURRENT-rgb',
@@ -213,7 +211,6 @@ function controls(){
   const rows=cases();for(const s of rows){const rgb=expected(s);assert(rgb.every(x=>Number.isInteger(x)&&x>=0&&x<=255));}
   assert.deepEqual(expected(rows.find(s=>s.label==='rich-4/4-rgb')),[68,102,102]);
   assert.deepEqual(expected(rows.find(s=>s.label==='rich-4/4-alpha')),[102,102,102]);
-  const source=fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8');for(const f of faults)mutate(source,f);
   return {status:'STATIC ONLY; no rendering',cases:rows.length,argumentDraws:288,unadvertisedDiagnostics:12,
     alphaObservation:'white RGB SRCALPHA/ZERO, independent integral channel arithmetic',faults};
 }
@@ -248,11 +245,6 @@ async function runtime(){
       res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');res.setHeader('Cache-Control','no-store');
       if(url==='/legacy-render.wasm'){res.writeHead(200,{'Content-Type':'application/wasm'});res.end(wasm);return true;}
       if(url==='/legacy-render-fixture'){res.writeHead(200,{'Content-Type':'text/html'});res.end(scripts.map(p=>'<script src="/lib/'+p+'.js"></script>').join('\n'));return true;}
-      if(url==='/lib/d3dim-gpu.js'&&fault){
-        const body=mutate(fs.readFileSync(path.join(ROOT,'lib/d3dim-gpu.js'),'utf8'),fault);
-        state.injections.push({fault,url:req.url,sha256:sha(body)});
-        res.writeHead(200,{'Content-Type':'application/javascript'});res.end(body);return true;
-      }
       return false;
     }});state.serverPort=server.address().port;
     for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
@@ -299,13 +291,12 @@ async function runtime(){
         assert.equal(partial.observations.at(-1).label,target,'mutation reaches designated semantic observation');
         assert(partial.calls.some(c=>/operation Draw(Indexed)?Primitive7/.test(c.label)&&c.result===0),'successful public draw before rejection');
         assert(partial.observations.some(o=>JSON.stringify(o.actual)!==JSON.stringify(o.expected)),'discriminating readback');
-        if(negative==='queued-argument')assert(partial.operation.mutation.before.some((x,i)=>x!==partial.operation.mutation.after[i]),'captured operands actually changed');
-        else assert(state.injections.slice(injectionStart).some(i=>i.fault===negative&&i.sha256!==state.productionFiles['lib/d3dim-gpu.js']),'actual served semantic mutant');}
+        assert(partial.operation.mutation.before.some((x,i)=>x!==partial.operation.mutation.after[i]),'captured operands actually changed');}
       else {assert.equal(error,undefined);assert.equal(result.status,'PASS');}
       await page.close();page=null;console.log('PASS '+JSON.stringify({name,mode,version,negative}));
     };
-    for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm'])for(const mode of ['webgl','worker'])for(const version of [1,2])await run(name,mode,version);
-    for(const version of [1,2])for(const f of faults)await run('wine-assembly.wasm',f==='queued-argument'?'worker':'webgl',version,f);
+    for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm'])for(const mode of ['worker'])for(const version of [1,2])await run(name,mode,version);
+    for(const version of [1,2])for(const f of faults)await run('wine-assembly.wasm','worker',version,f);
     for(const [p,hash] of Object.entries(state.productionFiles))assert.equal(sha(fs.readFileSync(path.join(ROOT,p))),hash,'source drift '+p);
     for(const [p,hash] of Object.entries(state.inputClosure))assert.equal(sha(fs.readFileSync(path.join(ROOT,p))),hash,'WAT closure drift '+p);
     for(const [name,pin] of Object.entries(state.modules))assert.equal(sha(fs.readFileSync(path.join(ROOT,'build',name))),pin.sha256,'final module drift '+name);
@@ -318,5 +309,19 @@ async function runtime(){
       browserAbsent:state.browserPid?!fs.existsSync('/proc/'+state.browserPid):null};
     save();}
 }
-if(require.main===module){if(process.argv.includes('--plan'))console.log(JSON.stringify(controls(),null,2));else runtime().catch(e=>{console.error(e);process.exitCode=1;});}
-module.exports={expected,cases,operationFixture,fixtureSource,config,controls,runtime};
+async function offline(){
+  controls();
+  for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
+    const wasm=fs.readFileSync(path.join(ROOT,'build',name));
+    for(const mode of ['software','gps']){
+      const context=base.offlineContext(wasm),cfg={...config(),noPreview:true};
+      const result=await vm.runInContext('('+fixtureSource()+')',context)(mode,cfg,expected.toString());
+      assert.equal(result.status,'PASS');
+      console.log('PASS '+JSON.stringify({name,mode,observations:result.observations.length,stats:result.stats}));
+    }
+  }
+}
+if(require.main===module){if(process.argv.includes('--plan'))console.log(JSON.stringify(controls(),null,2));
+else if(process.argv.includes('--offline'))offline().catch(e=>{console.error(e);process.exitCode=1;});
+else runtime().catch(e=>{console.error(e);process.exitCode=1;});}
+module.exports={expected,cases,operationFixture,fixtureSource,config,controls,offline,runtime};
