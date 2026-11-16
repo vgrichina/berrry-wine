@@ -63,6 +63,20 @@
       "baseSHA256": "3e09b9aa06b86ffa52bb00d4052a2b4393952ed61f2821ced4871dfbec0498ec",
       "sha256": "fdc42f0e5044cd6692a48b5931005ca1fdb3b5d6e2a621a637de4a3fe4ad43bf",
       "reason": "Worker opts into bounded pending COM activation advancement. Each host slice receives an incomplete result while the same iterator and original invocation frame remain parked. Existing watchdog timeout, retirement and message scheduling remain unchanged; the runtime validates ownership before any later advance. GPU stream v2 (D2c/9.2, 20261115): D3D9 backend script list loses d3d9-fixed.js/d3dim-gpu.js and d3dCommands forwards only 0x20000-0x20006; no guest invocation, callback or continuation change."
+    },
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "8f2da4eb3cee84139a603fa5c0b85897ba038b74b54845415756eb0858ddf261",
+      "sha256": "11653b8eae45606e056e4882a2b4795446e02095aacbd1dc13cda5548f1c1e6e",
+      "reason": "20261116 passive current-display observation: a real pending host surface arms the existing owner-bound request until an ordinary unheld successful composition/display. No upload, guest invocation, new callback/timer, clock change, hold release or input admission change. Immediate held/partial reads still refuse; existing request cancellation and immutable readback lifetime remain authoritative. General invocation ownership remains pending. Run 20261116-boids-pending-publication-display-capture."
+    },
+    {
+      "file": "lib/renderer.js",
+      "name": "host-file",
+      "baseSHA256": "42cfc02c59fb2b7178a2becec3b34f781050122c23293a12045f6b5027be38b9",
+      "sha256": "54fa1df25f915962dc8459184f9c00ca1f0689390e239b9daed36689ce20eb72",
+      "reason": "20261116 passive current-display observation: a real pending host surface arms the existing owner-bound request until an ordinary unheld successful composition/display. No upload, guest invocation, new callback/timer, clock change, hold release or input admission change. Immediate held/partial reads still refuse; existing request cancellation and immutable readback lifetime remain authoritative. General invocation ownership remains pending. Run 20261116-boids-pending-publication-display-capture."
     }
   ],
   "additions": [

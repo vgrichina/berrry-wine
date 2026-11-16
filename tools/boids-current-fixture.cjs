@@ -2,13 +2,13 @@
 // Newly authored input derived from the existing public-COM native fixture.
 // Only the fixture uses Sleep before window creation and a native GetPixel oracle.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
-function prepare(out){
+function prepare(out, active = false){
   fs.mkdirSync(out,{recursive:true});
   let source=require('../test/test-revolt-software-capture-latency-cause.cjs').fixtureSource(1);
   source=source.replace(' P hwnd=CreateWindowExA',' Sleep(1500);\n P hwnd=CreateWindowExA')
     .replace('AUTHORED software capture latency fixture','AUTHORED Boids harness native public COM')
     .replace('if(!tid&&GetTickCount()-started>=3000){if(!CreateThread(0,0,auxiliary,0,0,&tid))ExitProcess(29);}','')
-    .replace('if(GetAsyncKeyState(27)&0x8000){OutputDebugStringA("LATENCY fixture native Quit");ExitProcess(0);}Sleep(10);','for(;;)Sleep(100);');
+    .replace('if(GetAsyncKeyState(27)&0x8000){OutputDebugStringA("LATENCY fixture native Quit");ExitProcess(0);}Sleep(10);',active ? 'Sleep(10);' : 'for(;;)Sleep(100);');
   // Use the existing supported Device7 public ABI. Device3's legacy vertex
   // selector in the seed is a software-only path and cannot qualify GPU geometry.
   source=source.replace('0xbb223240,0x11d0e72b,0xaa00b4a9,0x3e99c000','0xf5049e77,0x11d24861,0xa00007a4,0xa82906c9')
@@ -30,7 +30,7 @@ function prepare(out){
   cp.execFileSync('clang',['--target=i686-pc-windows-msvc','-ffreestanding','-fno-stack-protector','-fno-builtin','-O1','-c',path.join(out,'fixture.c'),'-o',path.join(out,'fixture.obj')]);
   cp.execFileSync('ld',['-mi386pe','--entry','_start','--subsystem','console','--disable-dynamicbase','--no-insert-timestamp','-o',path.join(out,'fixture.exe'),path.join(out,'fixture.obj'),...Object.keys(imports).map(n=>path.join(out,n+'.lib'))]);
   const b=fs.readFileSync(path.join(out,'fixture.exe'));
-  fs.writeFileSync(path.join(out,'reference.json'),JSON.stringify({sha256:crypto.createHash('sha256').update(b).digest('hex'),expectedRGB:[51,68,204],nativeGetPixel:0xcc4433,delayedWindowMs:1500,publicCOM:true,original:false},null,2));
+  fs.writeFileSync(path.join(out,'reference.json'),JSON.stringify({sha256:crypto.createHash('sha256').update(b).digest('hex'),expectedRGB:[51,68,204],nativeGetPixel:0xcc4433,delayedWindowMs:1500,publicCOM:true,active,original:false},null,2));
 }
 function qualify(snapshot,mode){
   const assert=require('node:assert/strict'),m=snapshot.metadata,v=m.presentationViewport;
@@ -52,4 +52,4 @@ function qualify(snapshot,mode){
   return proof;
 }
 module.exports={prepare,qualify};
-if(require.main===module)prepare(path.resolve(process.argv[2]));
+if(require.main===module)prepare(path.resolve(process.argv[2]),process.argv[3]==='active');

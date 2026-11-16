@@ -6,7 +6,14 @@ const {installDriver}=require('./boids-current-driver.cjs');
 async function run(out,commit,backend,mode,fixtureFile){
   fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2));
   save('harness-pins.json',['tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py','test/test-boids-current-rendering.cjs'].map(path=>({path,sha256:sha(fs.readFileSync(path))})));
-  const files=gitFiles(commit),sourcePins=[...files].map(([path,b])=>({path,size:b.length,sha256:sha(b)}));
+  const files=gitFiles(commit);
+  if(process.env.BOIDS_CAPTURE_OWNED_OVERLAY){
+    if(!fixtureFile)throw Error('Owned overlay is fixture-only');
+    const paths=['host.js','lib/renderer.js'];
+    save('owned-overlay.json',paths.map(path=>{const bytes=fs.readFileSync(path);files.set(path,bytes);return {path,sha256:sha(bytes)};}));
+    fs.writeFileSync(path.join(out,'owned-overlay.patch'),cp.execFileSync('git',['diff','--binary',commit,'--',...paths]));
+  }
+  const sourcePins=[...files].map(([path,b])=>({path,size:b.length,sha256:sha(b)}));
   const sizes={module:{exports:{}}};vm.runInNewContext(files.get('lib/app-file-sizes.generated.js').toString(),sizes);
   const sandbox={module:{exports:{}},console,URL,require:n=>{if(n!=='./app-file-sizes.generated.js')throw Error('unexpected registry dependency');return sizes.module.exports;}};vm.runInNewContext(files.get('lib/apps.js').toString(),sandbox);const app=sandbox.module.exports.APPS.dx_boids;
   const media=[app.exe,...app.files.map(f=>f.url)].map(n=>{const b=fs.readFileSync(path.join(ROOT,n));files.set(n,b);return {path:n,size:b.length,sha256:sha(b)};});
@@ -32,14 +39,39 @@ async function run(out,commit,backend,mode,fixtureFile){
     const url='http://127.0.0.1:'+server.address().port+'/index.html?app=dx_boids&'+(mode==='worker'?'threads':'no-threads')+'&d3d-renderer='+backend;
     terminal.url=url;terminal.launchedAt=new Date().toISOString();await page.goto(url,{waitUntil:'domcontentloaded',timeout:Math.max(1,deadline-Date.now())});
     save('readiness.json',await page.evaluate(()=>__boidsDriver.ready()));
+    if(fixtureFile)await page.evaluate(end=>{globalThis.__boidsFixtureDeadline=end;},deadline);
     const identity=()=>page.evaluate(()=>({...__boidsDriver.identity(),inputEvents:globalThis.__boidsInputs||[]}));
     save('identity-start.json',await identity());
-    for(const delay of [15000,15000,15000]){
+    // One selected queued boundary suffices for the authored delay regression.
+    // Originals retain all three independent passive observations.
+    for(const delay of fixtureFile&&process.env.BOIDS_CAPTURE_ACTIVE?[15000]:[15000,15000,15000]){
       await sleep(delay);const i=captures.length;
       const captureStarted=Date.now();let captureTimer;
-      const snapshot=await Promise.race([page.evaluate(()=>__boidsDriver.capture()),new Promise((_,reject)=>{captureTimer=setTimeout(()=>reject(Error('DISPLAY_UNKNOWN controller capture deadline')),Math.max(1,Math.min(5000,deadline-Date.now())));})]).finally(()=>clearTimeout(captureTimer));
+      const snapshot=await Promise.race([page.evaluate(async active=>{
+        if(active){
+          // Fixture only: select a naturally queued update and request within
+          // the same turn. No writer/flag/clock or publication is changed.
+          while(Date.now()<__boidsFixtureDeadline){
+            const w=runningApps.find(a=>a.name==='dx_boids').wine,r=w.renderer;
+            if(w._dxDirty||w._dxLockDeferred||w._presentFrameDue){
+              globalThis.__boidsPendingAttempt={at:Date.now(),dirty:!!w._dxDirty,lockDeferred:!!w._dxLockDeferred,presentDue:!!w._presentFrameDue,held:r._workerPublicationHeld(),publication:r._immutablePublicationSequence,displayedAt:r._currentDisplayRecord?.displayedAt};
+              console.debug('BOIDS actual pending capture '+JSON.stringify(__boidsPendingAttempt));
+              return __boidsDriver.capture();
+            }
+            await new Promise(resolve=>setTimeout(resolve,0));
+          }throw Error('no actual pending host publication');
+        }
+        return __boidsDriver.capture();
+      },!!fixtureFile&&!!process.env.BOIDS_CAPTURE_ACTIVE),new Promise((_,reject)=>{captureTimer=setTimeout(()=>reject(Error('DISPLAY_UNKNOWN controller capture deadline')),Math.max(1,Math.min(5000,deadline-Date.now())));})]).finally(()=>clearTimeout(captureTimer));
       if(Date.now()>=Math.min(deadline,captureStarted+5000))throw Error('late controller capture delivery');
-      if(fixtureFile)save(`literal-reference-${i}.json`,require('./boids-current-fixture.cjs').qualify(snapshot,mode));
+      if(fixtureFile){
+        save(`literal-reference-${i}.json`,require('./boids-current-fixture.cjs').qualify(snapshot,mode));
+        if(process.env.BOIDS_CAPTURE_ACTIVE){
+          save(`pending-host-${i}.json`,await page.evaluate(()=>__boidsPendingAttempt));
+          const pending=snapshot.metadata.pendingHostPublicationAtRequest;
+          if(!pending||!Object.values(pending).some(Boolean)||snapshot.metadata.content!=='ordinary-publication-after-request')throw Error('active fixture did not complete a real pending host publication');
+        }
+      }
       for(const kind of ['source','output']){const dims=snapshot.metadata[kind],png=new PNG({width:dims.width,height:dims.height});png.data=Buffer.from(snapshot[kind],'base64');fs.writeFileSync(path.join(out,`frame-${i}-${kind}.png`),PNG.sync.write(png));}
       const row={index:i,metadata:snapshot.metadata,identity:await identity(),at:new Date().toISOString()};save(`frame-${i}.json`,row);captures.push(row);
       const traces=[{target:'page',trace:await page.evaluate(()=>globalThis.__boidsPublicTrace||null)}];for(const {session,target}of workerSessions)try{const r=await session.send('Runtime.evaluate',{expression:'JSON.stringify(globalThis.__boidsPublicTrace||null)',returnByValue:true});traces.push({target:target.url(),trace:JSON.parse(r.result.value)});}catch(e){traces.push({target:target.url(),error:String(e)});}save(`public-trace-${i}.json`,traces);

@@ -322,15 +322,56 @@ test('current display refuses held or in-flight paint, replacement, hidden/clipp
   }
 });
 
-test('pending current display cannot cross owner replacement and host pending surface publication is explicit', () => {
+test('pending current display cannot cross owner replacement', () => {
   const { r, h, win } = ownedFixture(); r.repaint(); r.scheduleRepaint();
   const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
   r.windows[123] = { ...win }; r.flushRepaint();
   assert.equal(t.status, 'failed'); assert.equal(t.read(), null);
+});
+
+test('queued host capture waits for actual unheld publication without uploading, scheduling or completing a writer', () => {
   for (const field of ['_dxDirty', '_dxLockDeferred', '_presentFrameDue']) {
+    const { r, h, win } = ownedFixture(); r.repaint();
+    const old = h.requestCurrentDisplayCapture({ hwnd: 123 });
+    const seq = r._immutablePublicationSequence;
+    win._backCanvas.getContext('2d').fillStyle = '#0000ff';
+    win._backCanvas.getContext('2d').fillRect(0, 0, 8, 8);
     h[field] = true;
-    assert.throws(() => h.requestCurrentDisplayCapture({ hwnd: 123 }), /pending host/);
+    r.beginWorkerGuestSlice();
+    const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
+    assert.equal(t.status, 'pending'); assert.equal(t.read(), null);
+    assert.equal(r._repaintScheduled, false);
+    assert.equal(r._immutablePublicationSequence, seq);
+    assert.equal(h[field], true);
+    r.repaint(); assert.equal(t.status, 'pending', 'active writer cannot publish');
+    r.endWorkerGuestSlice();
     h[field] = false;
+    r.repaint();
+    assert.equal(t.status, 'complete', t.error);
+    const now = t.read();
+    assert.equal(now.metadata.publication, seq + 1);
+    assert.equal(now.metadata.content, 'ordinary-publication-after-request');
+    const key = {_dxDirty:'dirty',_dxLockDeferred:'lockDeferred',_presentFrameDue:'presentDue'}[field];
+    assert.equal(now.metadata.pendingHostPublicationAtRequest[key], true);
+    assert.notDeepEqual(now.outputRGBA, old.read().outputRGBA);
+    assert.deepEqual(Array.from(now.outputRGBA), pixels(r.presentationCanvas));
+    assert.equal(old.read().metadata.publication, seq);
+    const retained = now.outputRGBA.slice(); now.outputRGBA.fill(99); r.repaint();
+    assert.deepEqual(t.read().outputRGBA, retained, 'completed ticket remains detached');
+  }
+});
+
+test('queued host request retains cancellation, owner replacement and failed readback refusal', () => {
+  for (const fault of ['cancel', 'owner', 'readback']) {
+    const { r, h, win } = ownedFixture(); r.repaint(); h._dxDirty = true;
+    const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
+    assert.equal(t.status, 'pending');
+    if (fault === 'cancel') assert(t.cancel());
+    if (fault === 'owner') r.windows[123] = { ...win };
+    if (fault === 'readback') r.presentationCanvas.getContext('2d').getImageData = () => { throw Error('failed readback'); };
+    h._dxDirty = false; r.repaint();
+    assert.equal(t.status, fault === 'cancel' ? 'cancelled' : 'failed');
+    assert.equal(t.read(), null);
   }
 });
 
