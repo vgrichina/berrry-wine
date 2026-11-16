@@ -302,8 +302,9 @@
     {
       "file": "lib/renderer.js",
       "name": "host-file",
-      "sha256": "580f5a68ae1d4e10e44543407808dabb54f1302f51a897f35569b576dc362b20",
+      "sha256": "07dd7a1b0c33da8dd4e6df7c501a1e1614a81ee521602ec444bb191a3cfba74f",
       "glideModeSwitchReview20261116": "2026-11-16 D2 Glide menu in 512x384: the exclusive compositor now draws a kind 'gpu' frame layer at its own size times the exclusive scale, as every other composite path does, instead of stretching it to the (lazily sized, possibly stale) GDI back canvas. Pure draw-geometry change inside _repaintOnce; no callback, timer, retained guest reference or lifetime change. test/test-gpu-layer-exclusive-mode-switch.js.",
+      "crtPresetReview20261116": "CRT presets: presentation-effect normalization now delegates to presentation-filter's normalizeCrtEffects ({preset, curvature, persistence}; legacy flags map to vga), and the direct-canvas and change checks read the preset. Display-only state; no guest callback, invocation, continuation, timer or retained guest reference added. Ownership remains pending.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "spinParkUrlReview20261114": "?spin-park=N applies set_spin_park_k at launch on the main instance, the guest Worker (callExport) and every inherited thread (table entry added in worker-imports); no callback, timer or lifetime change. renderer.js reseal covers d576f57ce's exclusive-mode test, read-only WAT getters, no new callbacks.",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",

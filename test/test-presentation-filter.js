@@ -34,9 +34,13 @@ assert(html.includes('id="presentation-dedither-select"'));
 assert(html.includes('<option value="off" selected>Off</option>'));
 assert(html.includes('<option value="mdapt">MDAPT</option>'));
 assert(html.includes('<option value="jinc2">Jinc2</option>'));
-assert(html.includes('id="crt-scanlines-toggle"'));
-assert(html.includes('id="crt-mask-toggle"'));
-assert(html.includes('id="crt-glow-toggle"'));
+assert(html.includes('id="crt-preset-select"'));
+assert(html.includes('<option value="vga">VGA monitor</option>'));
+assert(html.includes('<option value="arcade">Arcade/TV</option>'));
+assert(html.includes('id="crt-curvature-toggle"'));
+assert(html.includes('id="crt-persistence-toggle"'));
+assert(!html.includes('id="crt-scanlines-toggle"'),
+  'the independent CRT checkboxes were replaced by presets');
 assert(hasPageScript('lib/page-settings.js'),
   'page settings should be loaded before presentation is configured');
 assert(hasPageScript('lib/presentation-filter.js'));
@@ -197,6 +201,15 @@ assert(FSR_EASU_FRAGMENT_SHADER.includes('easu_tap'));
 assert(FSR_EASU_FRAGMENT_SHADER.includes('12 EASU taps') ||
   FSR_EASU_FRAGMENT_SHADER.includes('vec3 o = sample_pixel'));
 assert(POST_FRAGMENT_SHADER.includes('rcas'));
-assert(POST_FRAGMENT_SHADER.includes('u_crt_flags'));
+assert(!POST_FRAGMENT_SHADER.includes('u_crt_flags'),
+  'CRT is no longer a tint over the scaled image (see test-presentation-crt.js)');
 
-console.log('PASS  DPR presentation exposes auto 2x/3x/4x scaling, FSR1, and independent CRT effects');
+// With CRT on and no WebGL, presentation falls back to the selected scaler
+// untouched, and says the CRT pass was unavailable.
+draws.length = 0;
+filter.present(source, 'nearest', { preset: 'vga' });
+assert.strictEqual(filter.lastBackend, 'canvas-nearest');
+assert.deepStrictEqual(filter.lastCrt, { preset: 'vga', backend: 'unavailable' });
+assert.strictEqual(draws.length, 1);
+
+console.log('PASS  DPR presentation exposes auto 2x/3x/4x scaling, FSR1, and CRT presets');

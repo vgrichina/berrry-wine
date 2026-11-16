@@ -57,3 +57,26 @@ a 256-pixel readback; otherwise no CPU frame readback is made, though the
 WebGL fallback copies a source-sized image from WebGL into Canvas2D each
 frame (about 1 ms/frame in headless Chrome on an M1). Measurements:
 `docs/re-notes/quake3-demo.md`.
+
+### CRT presets
+
+The debug toolbar's CRT select (`Off` / `VGA monitor` / `Arcade/TV`, plus
+optional Curve and Persistence) is stored as `{ preset, curvature,
+persistence }` under `wine-assembly:crt-effects`; an old `{ scanlines, mask,
+glow }` value reads as `vga` if any flag was on. With a preset on,
+`presentation-filter.js` **replaces the scaler**: one beam pass reads the
+native frame (cropped, display-gamma corrected) and draws the output rectangle
+directly — decode 2.4 to linear, two nearest beam lines x four horizontal
+taps, a vertical Gaussian spot that widens with gun intensity and is
+integrated over the output pixel, a quarter-resolution halation buffer, and a
+phosphor mask in device pixels with brightness compensation, then encode 2.2.
+The selected scaler and dedither do not run (`lastBackend` is
+`webgl-beam+crt`, `lastCrt` reports lines/doublescan/mask/bloom). VGA
+doublescans sources of 300 rows or fewer. The mask is dropped when a canvas
+pixel is not a whole number of device pixels and faded in below ~2.25 output
+pixels per source pixel; the line structure fades to a flat beam below ~2
+output pixels per line; halation is skipped for the filter's lifetime on a
+>2 MP output measured slower than 12 ms. Without WebGL, or when the output is
+smaller than the frame, presentation falls back to the selected scaler with no
+effect. `tools/crt-stills.js` renders reference frames through every preset at
+chosen CSS sizes and DPRs and reports brightness against Off.
