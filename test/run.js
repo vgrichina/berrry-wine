@@ -178,11 +178,12 @@ const NO_RENDERER = hasFlag('no-renderer'); // --no-renderer: skip CLI canvas/re
 // Keep capability opt-in separate: the implementation is not a full SM profile.
 const D3D9_RENDERER = getArg('d3d9-renderer', null);
 const D3D9_PROGRAMMABLE = hasFlag('d3d9-programmable');
-// --gl-renderer=software: draw OpenGL in WAT (src/09a8g-gl-raster.wat) into a
-// DirectDraw surface. Needs no --headless-gl and no native deps, so it is the
-// only way a GL app gets a context on a box without a display; --png captures
-// the surface like any DX primary. The browser twin is ?gl-renderer=software.
-const GL_RENDERER = getArg('gl-renderer', null);
+// OpenGL is drawn in WAT (src/09a8g-gl-raster.wat) and lowered onto GPU
+// stream v2 (src/09a8gt-gl-gps.wat): the default, and the browser's. It needs
+// no --headless-gl and no native deps, so a GL app gets a context on any box;
+// --png captures the presented frame. --gl-renderer=webgl selects the old JS
+// FixedFunctionGL path (lib/gl-compat.js, needs --headless-gl for a context).
+const GL_RENDERER = getArg('gl-renderer', 'software');
 const GLIDE_RENDERER = getArg('glide-renderer', 'webgl');
 // null: the GPU stream null executor (validates records, draws nothing).
 if (!['software', 'webgl', 'null'].includes(GLIDE_RENDERER))
@@ -191,7 +192,7 @@ if (!['software', 'webgl', 'null'].includes(GLIDE_RENDERER))
 // (with its arena inputs) into a lib/gpu-stream.js DumpWriter at FILE, for
 // tools/gpu-stream.js list|stats|replay.
 const GPU_STREAM_DUMP = getArg('gpu-stream-dump', null);
-if (GL_RENDERER !== null && GL_RENDERER !== 'software' && GL_RENDERER !== 'webgl') {
+if (GL_RENDERER !== 'software' && GL_RENDERER !== 'webgl') {
   throw new Error('--gl-renderer must be software or webgl');
 }
 // --d3d-worker: rasterize D3DIM (DX2-7) draws on a render worker_thread over
@@ -207,18 +208,17 @@ if (D3DIM_GPU && D3D_WORKER) { console.error('--d3dim-gpu and --d3d-worker are e
 if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --headless-gl'); process.exit(2); }
 // Software GL (--gl-renderer=software) on GPU stream v2: the WAT producer
 // (src/09a8gt-gl-gps.wat) lowers its screen-space triangles, clears and
-// swaps into a ring an executor drains. It is the default wherever there is
-// a GPU to drain it (--headless-gl: the WebGL executor); without one the
-// arm would only add the software executor's cost, so it stays off.
-// --gl-gps forces it on with the software executor, --gl-gps=webgl|software
-// picks the executor, --gl-gps=off keeps software GL drawing the DIB.
+// swaps into a ring an executor drains. On by default: the WebGL executor
+// with --headless-gl, the software executor (lib/gpu-stream-software.js)
+// without one. --gl-gps (bare) forces the software executor,
+// --gl-gps=webgl|software|null picks one, --gl-gps=off keeps software GL
+// drawing the DIB. Inert under --gl-renderer=webgl.
 const GL_GPS_ARG = getArg('gl-gps', null);
 if (GL_GPS_ARG !== null && !['off', 'software', 'webgl', 'null'].includes(GL_GPS_ARG))
   throw new Error('--gl-gps must be off, software, webgl or null');
-const GL_GPS = GL_GPS_ARG === 'off' ? false
-  : hasFlag('gl-gps') || GL_GPS_ARG !== null || (GL_RENDERER === 'software' && hasFlag('headless-gl'));
+const GL_GPS = GL_GPS_ARG !== 'off' && GL_RENDERER === 'software';
 const GL_GPS_BACKEND = GL_GPS_ARG !== null && GL_GPS_ARG !== 'off' ? GL_GPS_ARG
-  : hasFlag('gl-gps') ? 'software' : 'webgl';
+  : hasFlag('gl-gps') || !hasFlag('headless-gl') ? 'software' : 'webgl';
 // --d3d9-gps[=software|webgl|none|off]: D3D9 / D3D8 frames are also lowered
 // onto GPU stream v2 (src/09akg-d3d9-gps.wat), which leads once its frames
 // hold (d3d9-retire S1). On by default (slice 9.5b); --d3d9-gps=off or
@@ -2828,7 +2828,7 @@ async function main() {
     // when no GPU is available. An explicit --d3d9-renderer always wins.
     d3d9Backend: D3D9_RENDERER
       || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl'),
-    glBackend: GL_RENDERER || 'webgl',
+    glBackend: GL_RENDERER,
     glideBackend: GLIDE_RENDERER,
     glGpsBackend: GL_GPS_BACKEND,
     d3d9GpsBackend: D3D9_GPS_EXPLICIT ? D3D9_GPS_ARG
@@ -12869,7 +12869,10 @@ if (VERBOSE) {
         (sw.gl_sw_bitmap && sw.gl_sw_bitmap() ? ` bitmap=0x${(sw.gl_sw_bitmap() >>> 0).toString(16)}` : ''));
     }
   }
-  if (GL_GPS) {
+  // Only a run that opened the GL ring (glg_mem: gl_gps_stat answers 0
+  // before it) has anything to report.
+  if (GL_GPS && (instance.exports.gl_gps_stat(4) || instance.exports.gl_gps_stat(0)
+      || instance.exports.gl_gps_stat(3) || instance.exports.gl_gps_stat(14))) {
     // src/09a8gt-gl-gps.wat gl_gps_stat: counters, decline reasons 16+r,
     // readback sites 48+s.
     const st = i => instance.exports.gl_gps_stat(i) >>> 0;
