@@ -406,7 +406,8 @@ function pageBridge(options, readNative) {
     },
     status(nonce) {
       open();check(active?.nonce === nonce,'wrong status nonce');
-      return {nonce,receipts:active.keys.map(key=>receipts.get(nonce+':'+key) || null),events:clone(events)};
+      return {nonce,receipts:active.keys.map(key=>receipts.get(nonce+':'+key) || null),events:clone(events),
+        physicalUp:active.keys.every(key=>active.upSeen.has(key)&&!renderer.peekKeyDownState(key))};
     },
     async cancel({nonce,childToken}) {
       try {return await request('cancel',{nonce,childToken});}
@@ -446,6 +447,38 @@ function verifyPins(pins){
   for(const required of ['tools/gta2-browser-release-binding.cjs','tools/gta2-paired-controller.cjs',HELPER,'build/wine-assembly.wasm'])
     assert(pins.files.some(p=>p.path===required),'required current helper/source/module pin '+required);
 }
+// Every invocation checks every pin. Mutable files are freshly read and hashed;
+// immutable Git bytes may use their verified view digest only after fresh and
+// executed preload provenance is checked. Native/module observations never use
+// this source-only path. WebCrypto keeps mutable hashing off this event loop.
+async function verifyPinsAsync(pins){
+  assert(Array.isArray(pins.files)&&pins.files.length,'current source pins required');
+  const seen=new Set();
+  for(const p of pins.files){
+    assert(typeof p.path==='string'&&!path.isAbsolute(p.path)&&!p.path.split('/').includes('..'));
+    assert(/^[a-f0-9]{64}$/.test(p.sha256)&&!seen.has(p.path),'unique current source pin');seen.add(p.path);
+  }
+  for(const required of ['tools/gta2-browser-release-binding.cjs','tools/gta2-paired-controller.cjs',HELPER,'build/wine-assembly.wasm'])
+    assert(seen.has(required),'required current helper/source/module pin '+required);
+  const view=globalThis.__gta2ImmutableVerifiedViewV1;
+  if(view){
+    assert(Object.isFrozen(view)&&view.version===1,'immutable verified source view contract');
+    assert.equal(view.head,process.env.GTA2_PIN_VIEW_HEAD);assert.equal(view.head,process.env.GTA2_VIEW_HEAD);
+    const preload=pins.files.find(p=>path.resolve(ROOT,p.path)===view.sourcePath);
+    assert(preload,'current verified source-view preload pin required');
+    assert.equal(view.executedSHA256,preload.sha256,'exact executed immutable view preload');
+    const bytes=await fs.promises.readFile(view.sourcePath);
+    assert.equal(Buffer.from(await crypto.webcrypto.subtle.digest('SHA-256',bytes)).toString('hex'),preload.sha256,'current immutable view preload changed');
+  }
+  const completed=await Promise.allSettled(pins.files.map(async p=>{
+    const immutableDigest=view?.immutableDigest(p.path)??null;
+    if(immutableDigest!==null){assert.equal(immutableDigest,p.sha256,'current immutable source changed '+p.path);return;}
+    const bytes=await fs.promises.readFile(path.join(ROOT,p.path));
+    const digest=Buffer.from(await crypto.webcrypto.subtle.digest('SHA-256',bytes)).toString('hex');
+    assert.equal(digest,p.sha256,'current source changed '+p.path);
+  }));
+  for(const result of completed)if(result.status==='rejected')throw result.reason;
+}
 async function evaluate(c,session,expression){
   const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},session);
   assert(!r.exceptionDetails,JSON.stringify(r.exceptionDetails));return r.result.value;
@@ -475,7 +508,7 @@ async function install({c,pageSession,workers,app,backend}){
 }
 // This runs in the release child on its own CDP transport. The expected source
 // bodies are generated from this child's current helper, not copied from ACKs.
-async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
+async function attestExecuted({c,pageSession,cfg,trace=()=>{},preparedTargets=null}){
   trace('current-pins-and-processes-begin');
   // The fresh final verifyPins below proves current disk bodies before arm.
   // Re-reading and hashing this same mutable set during connection setup adds
@@ -538,7 +571,9 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
       const value=await c.send('Debugger.getScriptSource',{scriptId:script.scriptId},session);
       current();
       const bytes=value.bytecode?Buffer.from(value.bytecode,'base64'):Buffer.from(value.scriptSource||'');
-      const hash=sha(bytes),row={url:script.url,scriptId:script.scriptId,
+      const hash=Buffer.from(await crypto.webcrypto.subtle.digest('SHA-256',bytes)).toString('hex');
+      current();
+      const row={url:script.url,scriptId:script.scriptId,
         executionContextId:script.executionContextId,sha256:hash,size:bytes.length,bytecodeAvailable:!!value.bytecode};
       rows.push(row);trace(value.bytecode?'actual-module-bytes':'actual-source-body',{...row,session,began,ms:Date.now()-began});
       if(workers.has(session))workers.get(session).scripts.push(row);
@@ -557,19 +592,35 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
     if(v.method==='Runtime.executionContextsCleared'&&sessions.includes(v.sessionId))invalid='executed contexts cleared';
     if(v.method==='Target.detachedFromTarget')for(const w of workers.values())if(w.sessionId===v.params.sessionId){w.closed=true;invalid='owning target detached';}
   };
+  // Attachment may be prepared before this intent; source inventories, module
+  // bytes and native observations may not. Revalidate every prepared target
+  // against a fresh current inventory, then enable fresh debugger inventories.
+  const targets=(await c.send('Target.getTargets')).targetInfos;
+  const pageTarget=targets.find(t=>t.targetId===cfg.targetId);
+  assert(pageTarget?.type==='page','actual current page target');
+  if(preparedTargets){
+    assert.equal(preparedTargets.page.targetId,cfg.targetId);
+    assert.equal(preparedTargets.page.sessionId,pageSession);
+    assert.equal(preparedTargets.page.url,pageTarget.url,'prepared page replaced');
+  }
   if(cfg.owner?.workerTarget){
     const ids=[cfg.owner.workerTarget,...(cfg.owner.rendererTarget!=='none'?[cfg.owner.rendererTarget]:[])];
-    const targets=(await c.send('Target.getTargets')).targetInfos;
-    for(const id of ids){
+    await Promise.all(ids.map(async id=>{
       const target=targets.find(t=>t.targetId===id);assert(target?.type==='worker','actual bound Worker target');
-      const sessionId=(await c.send('Target.attachToTarget',{targetId:id,flatten:true})).sessionId;
+      const prepared=preparedTargets?.workers.find(w=>w.targetId===id);
+      if(preparedTargets)assert(prepared&&prepared.url===target.url,'prepared Worker replaced');
+      const sessionId=prepared?.sessionId??(await c.send('Target.attachToTarget',{targetId:id,flatten:true})).sessionId;
       workers.set(sessionId,{targetId:id,sessionId,url:target.url,scripts:[],closed:false});sessions.push(sessionId);
-    }
+    }));
   }
   trace('attached-actual-targets');
   // These are fresh observations on this child's current sessions, independent
   // of recovering immutable script/module bodies. Keep their before/after
   // owner ordering while overlapping the large wire-byte transfers.
+  // Start inventory before independent native/function observations so large
+  // current module wire recovery can use the protocol while they complete.
+  const inventory=Promise.all(sessions.flatMap(session=>[c.send('Debugger.enable',{},session),c.send('Runtime.enable',{},session)]));
+  inventory.catch(()=>{});
   const helper=cfg.owner?.workerTarget?require(path.join(ROOT,HELPER)):null;
   const ownerTask=helper?(async()=>{
     const page=await evaluate(c,pageSession,helper.PAGE_READ);
@@ -580,7 +631,6 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
   ownerTask?.catch(()=>{});
   const nativeTask=evaluate(c,pageSession,`__gta2NativeReleasePageV1.attest(${JSON.stringify({bindingToken:cfg.bindingToken,review:cfg.review})})`);
   nativeTask.catch(()=>{});
-  const inventory=Promise.all(sessions.flatMap(session=>[c.send('Runtime.enable',{},session),c.send('Debugger.enable',{},session)]));
   // This fresh function-body proof and the engine's fresh source recoveries are
   // independent observations and can run together on this child's transport.
   const proofTask=evaluate(c,pageSession,'__gta2NativeReleasePageV1.sourceProof({compactHost:true})');
@@ -594,18 +644,23 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
   // avoiding a second 400KB transfer while recovering the actual module wire
   // bytes. The expected class is selected conservatively from current source;
   // an ambiguous layout refuses rather than accepting a shortened body.
-  const hostText=fs.readFileSync(path.join(ROOT,'host.js'),'utf8');
+  const [hostText,physicalText]=await Promise.all(['host.js','lib/renderer-input.js'].map(file=>fs.promises.readFile(path.join(ROOT,file),'utf8')));
   const hostStart=hostText.indexOf('\nclass WineAssembly {')+1;
   assert(hostStart>0&&hostText.indexOf('\nclass WineAssembly {',hostStart)===-1,'one current host class');
   const hostEnd=hostText.indexOf('\n}',hostStart)+2;assert(hostEnd>hostStart);
   const hostBody=hostText.slice(hostStart,hostEnd);
   assert.equal(proof.hostSHA256,sha(Buffer.from(hostBody)),'current actual WineAssembly class body');
-  for(const key of ['down','up','press'])assert(fs.readFileSync(path.join(ROOT,'lib/renderer-input.js'),'utf8').includes(proof[key]),'current actual original physical '+key+' body');
+  for(const key of ['down','up','press'])assert(physicalText.includes(proof[key]),'current actual original physical '+key+' body');
   const pageProof={bridgeSHA256:sha(Buffer.from(proof.bridge)),nativeContextSHA256:sha(Buffer.from(proof.nativeContext)),
     hostClassSHA256:proof.hostSHA256,physicalBodies:Object.fromEntries(['down','up','press'].map(key=>[key,sha(Buffer.from(proof[key]))]))};
   trace('actual-page-and-original-handler-bodies');
   let recoveredCount=0;
-  for(;recoveredCount!==sourceTasks.length;){recoveredCount=sourceTasks.length;await Promise.all(sourceTasks);current();}
+  for(;recoveredCount!==sourceTasks.length;){
+    recoveredCount=sourceTasks.length;
+    const recovered=await Promise.allSettled(sourceTasks);
+    for(const result of recovered)if(result.status==='rejected')throw result.reason;
+    current();
+  }
   sealed=true;
   trace('actual-source-bodies-and-modules');
   assert(pageBody&&workerBody,'actual injected binding source bodies required');
@@ -654,9 +709,9 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{}}){
   assert.equal(native.bindingToken,cfg.bindingToken);assert.deepEqual(native.native,cfg.review.native);
   assert.deepEqual(native.pageIdentity,cfg.review.pageIdentity);assert.equal(native.reviewedPNG,cfg.review.pngSHA256);
   trace('current-final-file-bodies-begin');
-  verifyPins(cfg.pins);checkPID(cfg.pid,cfg.startToken);checkPID(cfg.parentPID,cfg.parentStartToken);
+  await verifyPinsAsync(cfg.pins);checkPID(cfg.pid,cfg.startToken);checkPID(cfg.parentPID,cfg.parentStartToken);
   assert.equal(sourceTasks.length,recoveredCount,'new executed script after source recovery');
   current();trace('fresh-native-scene-and-final-pins');
   return {native,live:live?.identity??null,sources:rows,pageProof,assertCurrent:current};
 }
-module.exports={nativeContext,workerBridge,pageBridge,workerSource,pageSource,install,attestExecuted,evaluate,verifyPins,checkPID};
+module.exports={nativeContext,workerBridge,pageBridge,workerSource,pageSource,install,attestExecuted,evaluate,verifyPins,verifyPinsAsync,checkPID};

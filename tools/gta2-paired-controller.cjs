@@ -31,8 +31,84 @@ function policy(c,launch,phase,now=Date.now()) {
   else assert(!phase&&now+3000<(launch.deadline-180)*1000,'irreversible 180 second Quit reserve');
   return c.mode==='play'?5000:30000;
 }
-function connection(url,onUnknown=()=>{}) {
-  const ws=new WebSocket(url),pending=new Map();let id=0,terminal=null,readyResolve,readyReject;
+// The independent child receives several megabytes of fresh module bytes.
+// Consume socket chunks once, retaining fragments until one complete CDP text
+// message is available. No repository dependency or observation cache is used.
+class LoopbackWebSocket {
+  constructor(address) {
+    const http=require('node:http'),{TextDecoder}=require('node:util');
+    const url=new URL(address);
+    assert.equal(url.protocol,'ws:');assert.equal(url.hostname,'127.0.0.1');
+    assert(!url.username&&!url.password&&!url.hash,'plain owned loopback transport');
+    const key=crypto.randomBytes(16).toString('base64');
+    const accept=crypto.createHash('sha1').update(key+'258EAFA5-E914-47DA-95CA-C5AB0DC85B11').digest('base64');
+    let socket,closing=false,ended=false,chunks=[],offset=0,available=0,frame=null,fragments=null,fragmentBytes=0;
+    const max=64*1024*1024,decode=bytes=>new TextDecoder('utf-8',{fatal:true}).decode(bytes);
+    const fail=error=>{if(ended)return;ended=true;closing=true;socket?.destroy();request.destroy();this.onerror?.(error);};
+    const take=count=>{
+      assert(available>=count);available-=count;
+      if(!count)return Buffer.alloc(0);
+      const first=chunks[0],left=first.length-offset;
+      if(left>=count){const result=first.subarray(offset,offset+count);offset+=count;if(offset===first.length){chunks.shift();offset=0;}return result;}
+      const result=Buffer.allocUnsafe(count);let copied=0;
+      while(copied<count){const part=chunks[0],n=Math.min(count-copied,part.length-offset);part.copy(result,copied,offset,offset+n);copied+=n;offset+=n;if(offset===part.length){chunks.shift();offset=0;}}
+      return result;
+    };
+    const writeFrame=(opcode,body)=>{
+      assert(socket&&!closing,'transport closed');
+      body=Buffer.isBuffer(body)?body:Buffer.from(body);assert(body.length<=max);
+      const extra=body.length<126?0:body.length<=65535?2:8,header=Buffer.alloc(2+extra+4),mask=crypto.randomBytes(4);
+      header[0]=0x80|opcode;header[1]=0x80|(extra===0?body.length:extra===2?126:127);
+      if(extra===2)header.writeUInt16BE(body.length,2);if(extra===8)header.writeBigUInt64BE(BigInt(body.length),2);
+      mask.copy(header,2+extra);const masked=Buffer.allocUnsafe(body.length);
+      for(let i=0;i<body.length;i++)masked[i]=body[i]^mask[i&3];
+      socket.cork();socket.write(header);socket.write(masked);socket.uncork();
+    };
+    const consume=bytes=>{
+      if(ended||closing)return;chunks.push(bytes);available+=bytes.length;
+      try{for(;;){
+        if(!frame){
+          if(available<2)return;const h=take(2),opcode=h[0]&15,short=h[1]&127;
+          assert(!(h[0]&0x70)&&!(h[1]&0x80),'invalid reserved bits or masked server frame');
+          assert([0,1,8,9,10].includes(opcode),'CDP text/control opcode required');
+          assert(opcode<8||(!!(h[0]&0x80)&&short<=125),'invalid control fragmentation/length');
+          frame={opcode,final:!!(h[0]&0x80),short,length:short<126?short:null};
+        }
+        if(frame.length===null){
+          const n=frame.short===126?2:8;if(available<n)return;const h=take(n);
+          const size=n===2?BigInt(h.readUInt16BE()):h.readBigUInt64BE();
+          assert(size>=BigInt(n===2?126:65536)&&size<=BigInt(max),'noncanonical or oversized frame');frame.length=Number(size);
+        }
+        assert(frame.length<=max);if(available<frame.length)return;
+        const payload=take(frame.length),current=frame;frame=null;
+        if(current.opcode===8){
+          assert(payload.length!==1,'invalid close payload');
+          if(payload.length>=2){const code=payload.readUInt16BE();assert((code>=1000&&code<=1014&&![1004,1005,1006].includes(code))||(code>=3000&&code<=4999),'invalid close code');decode(payload.subarray(2));}
+          writeFrame(8,payload);closing=true;socket.end();return;
+        }
+        if(current.opcode===9){writeFrame(10,payload);continue;}if(current.opcode===10)continue;
+        if(current.opcode===1){assert(fragments===null,'new message during fragmentation');fragments=[];fragmentBytes=0;}
+        else assert(fragments!==null,'unrequested continuation');
+        fragmentBytes+=payload.length;assert(fragmentBytes<=max,'oversized message');fragments.push(payload);
+        if(current.final){const message=decode(fragments.length===1?fragments[0]:Buffer.concat(fragments,fragmentBytes));fragments=null;fragmentBytes=0;this.onmessage?.({data:message});if(closing||ended)return;}
+      }}catch(error){fail(error);}
+    };
+    const requestURL=new URL(url);requestURL.protocol='http:';
+    const request=http.request(requestURL,{headers:{Upgrade:'websocket',Connection:'Upgrade','Sec-WebSocket-Key':key,'Sec-WebSocket-Version':'13'}});
+    request.on('upgrade',(response,stream,head)=>{
+      socket=stream;
+      try{assert.equal(response.statusCode,101);assert.equal(response.headers.upgrade?.toLowerCase(),'websocket');assert(response.headers.connection?.toLowerCase().split(/\s*,\s*/).includes('upgrade'));assert.equal(response.headers['sec-websocket-accept'],accept);assert(!response.headers['sec-websocket-extensions']&&!response.headers['sec-websocket-protocol'],'unrequested websocket negotiation');
+        socket.setNoDelay(true);socket.on('data',consume);socket.on('error',fail);socket.on('close',()=>{ended=true;closing=true;this.onclose?.();});
+        this.onopen?.();if(head.length)consume(head);
+      }catch(error){fail(error);}
+    });
+    request.on('response',()=>fail(Error('websocket upgrade refused')));request.on('error',fail);request.end();
+    this.send=text=>writeFrame(1,Buffer.from(text));
+    this.close=()=>{if(closing||ended)return;if(!socket){closing=true;request.destroy();return;}try{writeFrame(8,Buffer.alloc(0));}finally{closing=true;socket.end();setTimeout(()=>socket.destroy(),250).unref();}};
+  }
+}
+function connection(url,onUnknown=()=>{},Socket=WebSocket) {
+  const ws=new Socket(url),pending=new Map();let id=0,terminal=null,readyResolve,readyReject;
   const ready=new Promise((r,j)=>{readyResolve=r;readyReject=j;});
   const api={ws,ready,event:()=>{},protocol:()=>{},get closed(){return terminal!==null;},stop(){if(terminal)return;terminal='deliberate host teardown';clearTimeout(openTimer);for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error(terminal));}pending.clear();ws.onclose=null;ws.close();},seal(reason){
     if(terminal)return;terminal=String(reason);clearTimeout(openTimer);
@@ -40,6 +116,7 @@ function connection(url,onUnknown=()=>{}) {
     onUnknown({state:'UNKNOWN',reason:terminal,at:Date.now(),permanentClose:true,laterRequestsAllowed:0});
     readyReject(error);for(const p of pending.values()){clearTimeout(p.timer);p.reject(error);}pending.clear();ws.close();
   },send(method,params={},sessionId){
+    if(!terminal)try{api.requestGuard?.();}catch(error){api.seal(error);}
     if(terminal)return Promise.reject(Error('permanently closed '+terminal));
     return new Promise((resolve,reject)=>{const n=++id,timer=setTimeout(()=>api.seal(method+' timeout'),3000);pending.set(n,{resolve,reject,timer,method,sessionId,scriptId:params.scriptId,at:Date.now()});
       try{api.protocol({event:'sent',method,session:sessionId??null,at:Date.now(),type:params.type??null});ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));}catch(e){api.seal(method+' send '+e);}
@@ -52,6 +129,11 @@ function connection(url,onUnknown=()=>{}) {
   return api;
 }
 function save(out,n,v){const p=path.join(out,n);assert(!fs.existsSync(p),n);fs.writeFileSync(p+'.pending',JSON.stringify(v,null,2)+'\n',{flag:'wx'});fs.renameSync(p+'.pending',p);}
+async function saveAsync(out,name,value){
+  const file=path.join(out,name);assert(!fs.existsSync(file),name);
+  await fs.promises.writeFile(file+'.pending',JSON.stringify(value,null,2)+'\n',{flag:'wx'});
+  await fs.promises.rename(file+'.pending',file);
+}
 async function boundedOperation(c,label,work) {
   let timer;
   try {
@@ -77,14 +159,29 @@ async function releasePreinit(out,file,loadedSources=null) {
   }
   const setup=JSON.parse(fs.readFileSync(file)),native=require('./gta2-browser-release-binding.cjs');
   native.checkPID(setup.pid,setup.startToken);
-  const c=connection(setup.url,v=>save(out,setup.name+'-UNKNOWN.json',v));let timer;
+  const c=connection(setup.url,v=>save(out,setup.name+'-UNKNOWN.json',v),LoopbackWebSocket);let timer,preparedTargets=null;
   try {
     const configFile=await Promise.race([(async()=>{
       await c.ready;
+      if(setup.targetId){
+        // Transport/target attachment only. No debugger/runtime inventory,
+        // source/module bytes, native state or authorization is prepared.
+        const targets=(await c.send('Target.getTargets')).targetInfos;
+        const ids=[setup.targetId,...(setup.workerTargets??[])];
+        assert.equal(new Set(ids).size,ids.length,'unique prepared target identities');
+        const attached=await Promise.all(ids.map(async(targetId,index)=>{
+          const target=targets.find(t=>t.targetId===targetId);
+          assert(target&&target.type===(index?'worker':'page'),'current initialization target');
+          const sessionId=(await c.send('Target.attachToTarget',{targetId,flatten:true})).sessionId;
+          return {targetId,sessionId,url:target.url};
+        }));
+        preparedTargets={page:attached[0],workers:attached.slice(1)};
+      }
       const stat=fs.readFileSync('/proc/'+process.pid+'/stat','utf8');
       process.stdout.write(JSON.stringify({state:'INITIALIZED',pid:process.pid,
         startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],at:Date.now(),loadedSources,loadedFromExactBytes:true,
-        nativeObservationsCached:false,sourceInventoriesCached:false,moduleBytesCached:false})+'\n');
+        nativeObservationsCached:false,sourceInventoriesCached:false,moduleBytesCached:false,
+        preparedTargetIds:preparedTargets?[preparedTargets.page.targetId,...preparedTargets.workers.map(w=>w.targetId)]:[]})+'\n');
       return await new Promise((resolve,reject)=>{
         if(process.stdin.readableEnded)return reject(Error('parent EOF before current guard configuration'));
         let text='';const data=b=>{text+=b;const end=text.indexOf('\n');if(end<0)return;
@@ -96,7 +193,7 @@ async function releasePreinit(out,file,loadedSources=null) {
     })(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('release initialization exceeded aggregate 3000ms')),
       Math.max(0,3000-(Date.now()-setup.operationStartedAt)));})]);
     clearTimeout(timer);
-    await release(out,configFile,{c,loadedSources,operationStartedAt:setup.operationStartedAt});
+    await release(out,configFile,{c,loadedSources,operationStartedAt:setup.operationStartedAt,preparedTargets,phasePipe:setup.phasePipe?fs.createWriteStream(null,{fd:3,autoClose:false}):null});
   } finally {clearTimeout(timer);c.stop();process.stdin.destroy();}
 }
 async function release(out,file,initialized=null) {
@@ -105,7 +202,8 @@ async function release(out,file,initialized=null) {
   assert(Array.isArray(cfg.keys)&&cfg.keys.length>=1&&cfg.keys.length<=2&&new Set(cfg.keys).size===cfg.keys.length&&cfg.keys.every(k=>Object.hasOwn(KEYS,k)));
   assert(Number.isSafeInteger(cfg.startedAt),'immutable prearm launch time');
   const phases=[];
-  const trace=(phase,detail)=>{const at=Date.now();phases.push({phase,at,sinceStarted:at-cfg.startedAt,...(detail?{detail}:{})});};
+  const phasePipe=initialized?.phasePipe??null;
+  const trace=(phase,detail)=>{const at=Date.now(),row={phase,at,sinceStarted:at-cfg.startedAt,...(detail?{detail}:{})};phases.push(row);phasePipe?.write(JSON.stringify(row)+'\n');};
   trace('release-program-entry',{programEnteredAt:PROGRAM_ENTERED_AT,entryMs:PROGRAM_ENTERED_AT-cfg.startedAt,pid:process.pid});
   if(initialized){
     assert.equal(cfg.operationStartedAt,initialized.operationStartedAt);
@@ -116,7 +214,8 @@ async function release(out,file,initialized=null) {
   c.protocol=v=>trace('protocol',v);
   const operationTimer=setTimeout(()=>c.seal('independent release operation exceeded 3000ms'),Math.max(0,3000-(Date.now()-(cfg.operationStartedAt??cfg.startedAt))));
   let pending='',scheduled=false,ended=false,due=Infinity,armed,session,prearmTimer,attestation,
-    confirmation=null,confirmed=false;
+    confirmation=null,confirmed=false,signalResolve=null;
+  const signal=()=>signalResolve?.();
   process.stdin.on('data',b=>{
     pending+=b;let i;
     while((i=pending.indexOf('\n'))>=0){
@@ -125,17 +224,17 @@ async function release(out,file,initialized=null) {
           assert(cfg.mode==='native'&&armed&&!confirmation&&!confirmed&&v.nonce===cfg.nonce&&
             v.childToken===armed.childToken&&typeof v.leaseToken==='string'&&v.leaseToken.length>=16,
             'one current independent source/native confirmation');
-          confirmation=v;continue;
+          confirmation=v;trace('independent-confirmation-received');signal();continue;
         }
         assert(armed&&Number.isSafeInteger(v.at)&&v.at>=armed.at&&v.at<=armed.fallback,'finite release schedule');
-        scheduled=true;due=Math.min(due,v.at);
-      }catch(error){ended=true;due=Date.now();}
+        scheduled=true;due=Math.min(due,v.at);signal();
+      }catch(error){ended=true;due=Date.now();signal();}
     }
   });
-  process.stdin.on('end',()=>{ended=true;if(!scheduled){due=Date.now();if(!armed)c.seal('parent EOF before independent arm');}});
+  process.stdin.on('end',()=>{ended=true;if(!scheduled){due=Date.now();if(!armed)c.seal('parent EOF before independent arm');}signal();});
   try {
     const prepare=(async()=>{
-      await c.ready;trace('independent-transport-connected');session=(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;trace('independent-page-attached');
+      await c.ready;trace('independent-transport-connected');session=initialized?.preparedTargets?.page.sessionId??(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;trace('independent-page-attached',{prepared:!!initialized?.preparedTargets});
       attestation=null;
       if(cfg.mode==='blank-control'){
         assert(!cfg.owner&&!cfg.review&&!cfg.bindingToken,'blank controls cannot admit a native owner');
@@ -143,7 +242,7 @@ async function release(out,file,initialized=null) {
         assert.equal(actual.url,'about:blank');assert.equal(actual.apps,0);
       }else{
         assert.equal(cfg.mode,'native');assert(cfg.nonce&&cfg.review&&cfg.owner&&cfg.bindingToken);
-        attestation=await native.attestExecuted({c,pageSession:session,cfg,trace});
+        attestation=await native.attestExecuted({c,pageSession:session,cfg,trace,preparedTargets:initialized?.preparedTargets??null});
       }
       assert(!ended,'parent EOF/cancel before arm');native.checkPID(cfg.pid,cfg.startToken);
       const startedAt=cfg.startedAt;assert(Number.isSafeInteger(startedAt)&&Date.now()>=startedAt&&Date.now()-startedAt<=500,'release prearm exceeded 500ms');
@@ -171,8 +270,9 @@ async function release(out,file,initialized=null) {
         attestation.assertCurrent();
         const resultTask=native.evaluate(c,session,`__gta2NativeReleasePageV1.confirm(${JSON.stringify(confirmation)})`);
         resultTask.catch(()=>{});
-        native.verifyPins(cfg.pins);
+        await native.verifyPinsAsync(cfg.pins);
         const result=await resultTask;
+        assert(!ended&&!confirmed,'parent EOF/cancel during independent confirmation');
         // The protocol round trip is also a barrier for this independent
         // debugger's preceding live-edit/context/target invalidations.
         attestation.assertCurrent();
@@ -184,7 +284,10 @@ async function release(out,file,initialized=null) {
         const receipt={...result,at:Date.now(),pid:process.pid,startedAt:cfg.startedAt};
         save(out,cfg.name+'-confirmation.json',receipt);process.stdout.write(JSON.stringify(receipt)+'\n');
       }
-      await wait(Math.min(5,Math.max(0,due-Date.now())));
+      await new Promise(resolve=>{
+        const finish=()=>{clearTimeout(timer);signalResolve=null;resolve();};
+        const timer=setTimeout(finish,Math.max(0,due-Date.now()));signalResolve=finish;
+      });
     }
     if(cfg.mode==='native'&&!confirmed){
       // The installed physical handler requires the independent confirmation
@@ -199,6 +302,19 @@ async function release(out,file,initialized=null) {
     const ack=Date.now();assert(ack-armed.at<=1750,'independent UP acknowledgement exceeded 1750ms');
     let released=null;
     if(cfg.mode==='native'){
+      // This read-only original-renderer witness records the independently
+      // delivered UP even when the stalled/EOF parent never supplied a schedule.
+      // The missing-schedule refusal below remains mandatory.
+      const physical=await native.evaluate(c,session,`__gta2NativeReleasePageV1.status(${JSON.stringify(cfg.nonce)})`);
+      assert.equal(physical.nonce,cfg.nonce);assert.equal(physical.physicalUp,true);
+      assert.equal(physical.receipts.length,cfg.keys.length);
+      assert(physical.receipts.every(row=>row?.state==='CONSUMED'&&row.nonce===cfg.nonce));
+      for(const key of cfg.keys){
+        const edges=physical.events.filter(row=>row.nonce===cfg.nonce&&row.key===KEYS[key]);
+        assert.deepEqual(edges.map(row=>row.type),['DOWN','UP']);
+        assert(ack-edges[0].at<=1750,'actual original renderer independent UP deadline');
+      }
+      save(out,cfg.name+'-up-physical-proof.json',{...physical,fired,ack,independent:true,scheduled});
       if(!scheduled){
         // EOF/cancel is terminal. UP already reached the original renderer;
         // this never authorizes a fresh capture or another intent.
@@ -218,13 +334,162 @@ async function release(out,file,initialized=null) {
   finally {clearTimeout(prearmTimer);clearTimeout(operationTimer);c.stop();process.stdin.destroy();
     fs.writeFileSync(out+'/'+cfg.name+'-prearm-phases.jsonl',phases.map(row=>JSON.stringify(row)).join('\n')+'\n',{flag:'wx'});}
 }
-async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},onAttempt=()=>{}}) {
+function prearmDeadlineService(output,bootstrap=null){
+  const fs=require('node:fs'),assert=require('node:assert/strict'),readline=require('node:readline');
+  let state='READY',config=bootstrap?.releaseIdentity??null,timer,aggregateTimer,finished=false;
+  const token=pid=>{const s=fs.readFileSync('/proc/'+pid+'/stat','utf8');return s.slice(s.lastIndexOf(')')+2).split(' ')[19];};
+  const send=value=>process.stdout.write(JSON.stringify(value)+'\n');
+  const lines=readline.createInterface({input:process.stdin});
+  const finish=async(value,terminate=false)=>{
+    if(finished)return;finished=true;clearTimeout(timer);clearTimeout(aggregateTimer);
+    if(terminate&&config){
+      try{
+        if(token(config.pid)===config.startToken){
+          process.kill(config.pid,'SIGKILL');value.signaledAt=Date.now();
+          // Observe quiescence before publishing a terminal receipt. This is
+          // not wait evidence: the actual parent must still join both EOFs.
+          const until=Date.now()+1000;
+          for(;;){
+            try{
+              const stat=fs.readFileSync('/proc/'+config.pid+'/stat','utf8');
+              const fields=stat.slice(stat.lastIndexOf(')')+2).split(' ');
+              if(fields[19]!==config.startToken||fields[0]==='Z')break;
+            }catch(error){if(error.code==='ENOENT')break;throw error;}
+            assert(Date.now()<until,'signaled release child did not quiesce');
+            await new Promise(resolve=>setTimeout(resolve,1));
+          }
+          value.quiescentAt=Date.now();
+        }
+      }
+      catch(error){if(error.code!=='ENOENT'&&error.code!=='ESRCH')throw error;}
+    }
+    fs.writeFileSync(output+(value.state==='QUALIFIED'?'-qualified.json':'-UNKNOWN.json'),JSON.stringify(value)+'\n',{flag:'wx'});
+    send(value);lines.close();process.stdin.destroy();
+  };
+  lines.on('line',async text=>{
+    if(finished)return;
+    try{
+      const message=JSON.parse(text);
+      if(message.action==='start'){
+        assert.equal(state,'READY');assert(Number.isSafeInteger(message.startedAt)&&Date.now()>=message.startedAt&&Date.now()-message.startedAt<500);
+        assert(Number.isSafeInteger(message.pid)&&message.pid>1);assert.equal(token(message.pid),message.startToken);if(bootstrap){assert.equal(message.pid,bootstrap.releaseIdentity?.pid);assert.equal(message.startToken,bootstrap.releaseIdentity?.startToken);}
+        assert(/^[a-z0-9-]{8,100}$/.test(message.nonce));config=message;state='WATCHING';
+        timer=setTimeout(async()=>{
+          if(state!=='WATCHING')return;state='EXPIRED';
+          const value={state,pid:config.pid,startToken:config.startToken,nonce:config.nonce,startedAt:config.startedAt,firedAt:Date.now(),laterRequestsAllowed:0};
+          await finish(value,true);
+        },Math.max(0,message.startedAt+500-Date.now()));
+        send({state:'WATCHING',nonce:message.nonce});return;
+      }
+      assert.equal(message.action,'complete');assert.equal(state,'WATCHING');
+      assert.equal(message.nonce,config.nonce);assert.equal(token(config.pid),config.startToken);
+      assert(Date.now()-config.startedAt<=500,'actual independent completion after 500ms');
+      state='QUALIFIED';await finish({state,nonce:config.nonce,startedAt:config.startedAt,completedAt:Date.now(),pid:config.pid});
+    }catch(error){state='REFUSED';await finish({state,error:String(error),at:Date.now(),laterRequestsAllowed:0},true);process.exitCode=1;}
+  });
+  lines.on('close',async()=>{
+    if(finished)return;state='REFUSED';process.exitCode=1;
+    await finish({state,error:'parent EOF before independent qualification',at:Date.now(),laterRequestsAllowed:0},true);
+  });if(bootstrap){assert(Number.isSafeInteger(bootstrap.operationStartedAt));aggregateTimer=setTimeout(async()=>{if(finished)return;state='EXPIRED';await finish({state,scope:'aggregate-3000',startedAt:bootstrap.operationStartedAt,firedAt:Date.now(),laterRequestsAllowed:0},true);},Math.max(0,bootstrap.operationStartedAt+3000-Date.now()));}send({state:'READY',pid:process.pid,startToken:token(process.pid),at:Date.now(),executedSourceSHA256:require('node:crypto').createHash('sha256').update(process.execArgv[1]).digest('hex')});
+}
+
+
+// The independent deadline has only builtin imports. Its source comes from the
+// current compiled controller, and its actual -e bytes are independently hashed.
+// Capture this spawn primitive before test-only release-child fault injection.
+const spawnPrearmDeadlineProcess=cp.spawn;
+function startPrearmWatchdog(out,name,operationStartedAt,releaseChild){
+  const base=path.join(out,name+'-prearm-watchdog');
+  let releaseIdentity=null;
+  if(Number.isSafeInteger(releaseChild.pid)){
+    try{const stat=fs.readFileSync('/proc/'+releaseChild.pid+'/stat','utf8');releaseIdentity={pid:releaseChild.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19]};}
+    catch(error){if(error.code!=='ENOENT')throw error;}
+  }
+  const bootstrap={operationStartedAt,releaseIdentity};
+  const source='('+prearmDeadlineService.toString()+')('+JSON.stringify(base)+','+JSON.stringify(bootstrap)+');';
+  const sourceSHA256=sha(Buffer.from(source)),env={...process.env};
+  // This process executes only the exact self-contained function above; it
+  // neither imports repository modules nor needs a source-view preload/cache.
+  delete env.NODE_OPTIONS;
+  const child=spawnPrearmDeadlineProcess(process.execPath,['-e',source],{env,stdio:['pipe','pipe','pipe']});
+  const messages=[];let stdout='',stderr='',buffer='',waiter=null,closed=null,failure=null,qualified=false;
+  const next=deadline=>new Promise((resolve,reject)=>{
+    if(messages.length)return resolve(messages.shift());
+    if(failure)return reject(failure);
+    if(closed)return reject(Error('independent prearm watchdog already closed'));
+    assert(!waiter,'one watchdog reply at a time');
+    const timer=setTimeout(()=>{waiter=null;reject(Error('independent prearm watchdog reply deadline'));},Math.max(0,deadline-Date.now()));
+    waiter={resolve:v=>{clearTimeout(timer);resolve(v);},reject:e=>{clearTimeout(timer);reject(e);}};
+  });
+  child.stdin.on('error',error=>{if(!qualified)failure=error;});
+  child.stdout.on('data',bytes=>{
+    stdout+=bytes;buffer+=bytes;let end;
+    while((end=buffer.indexOf('\n'))>=0){
+      const text=buffer.slice(0,end);buffer=buffer.slice(end+1);
+      try{const value=JSON.parse(text);if(waiter){const current=waiter;waiter=null;current.resolve(value);}else messages.push(value);}
+      catch(error){failure=error;waiter?.reject(error);waiter=null;}
+    }
+  });
+  child.stderr.on('data',bytes=>stderr+=bytes);
+  const joined=new Promise(resolve=>{
+    child.once('error',error=>{failure=error;waiter?.reject(error);waiter=null;});
+    child.once('close',(code,signal)=>{closed={pid:child.pid??null,code,signal};waiter?.reject(Error('independent prearm watchdog closed '+code));waiter=null;resolve(closed);});
+  });
+  const ready=next(operationStartedAt+3000).then(value=>{
+    assert.equal(value.state,'READY');assert.equal(value.pid,child.pid);
+    assert.equal(value.executedSourceSHA256,sourceSHA256,'actual independent deadline source bytes');
+    const stat=fs.readFileSync('/proc/'+value.pid+'/stat','utf8');
+    assert.equal(stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],value.startToken,'watchdog process start identity');
+    save(out,name+'-prearm-watchdog-initialization.json',{...value,sourceSHA256,operationStartedAt,
+      repositoryImports:0,nativeObservationsCached:false,sourceInventoriesCached:false,moduleBytesCached:false});
+    return value;
+  });
+  ready.catch(()=>{});
+  return {
+    ready,
+    async start(config,release){
+      await ready;
+      child.stdin.write(JSON.stringify({action:'start',pid:release.pid,startToken:release.startToken,startedAt:config.startedAt,nonce:config.nonce})+'\n');
+      const value=await next(config.startedAt+500);
+      assert.equal(value.state,'WATCHING');assert.equal(value.nonce,config.nonce);
+      assert(Date.now()-config.startedAt<=500,'independent deadline was not armed in time');
+    },
+    async complete(config){
+      child.stdin.write(JSON.stringify({action:'complete',nonce:config.nonce})+'\n');
+      const value=await next(config.startedAt+500);
+      assert.equal(value.state,'QUALIFIED');assert.equal(value.nonce,config.nonce);
+      assert.equal(value.startedAt,config.startedAt);
+      assert(value.completedAt>=config.startedAt&&value.completedAt-config.startedAt<=500&&Date.now()-config.startedAt<=500,
+        'independent complete current attestation exceeded 500ms');
+      qualified=true;return value;
+    },
+    async close(){
+      child.stdin.end();const result=await joined;
+      const receipt={...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr,sourceSHA256,qualified};
+      save(out,name+'-prearm-watchdog-wait.json',receipt);
+      assert(receipt.stdoutEOF&&receipt.stderrEOF,'actual watchdog wait and both EOFs');
+      if(qualified)assert.equal(result.code,0,'qualified deadline process exit');
+      return receipt;
+    },
+  };
+}
+
+async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},finalChecks=()=>{},onAttempt=()=>{}}) {
   assert(Number.isInteger(ms)&&ms>=80&&ms<=1400);
   const native=require('./gta2-browser-release-binding.cjs'),stat=fs.readFileSync('/proc/'+process.pid+'/stat','utf8');
   const operationStartedAt=Date.now();let messageDeadline=operationStartedAt+3000,config;
-  save(out,name+'-release-initialization.json',{name,operationStartedAt,url:cfg.url,pid:cfg.pid,startToken:cfg.startToken});
-  const child=cp.spawn(process.execPath,[__filename,'release-preinit',out,out+'/'+name+'-release-initialization.json'],{stdio:['pipe','pipe','pipe']});
-  let output='',errors='',error,armTimer,armed,childError,messageBuffer='',messageWaiter;
+  save(out,name+'-release-initialization.json',{name,operationStartedAt,url:cfg.url,pid:cfg.pid,startToken:cfg.startToken,phasePipe:true,
+    targetId:cfg.targetId,workerTargets:cfg.owner?.workerTarget?[cfg.owner.workerTarget,...(cfg.owner.rendererTarget!=='none'?[cfg.owner.rendererTarget]:[])]:[]});
+  const child=cp.spawn(process.execPath,[__filename,'release-preinit',out,out+'/'+name+'-release-initialization.json'],{stdio:['pipe','pipe','pipe','pipe']});
+  const watchdog=startPrearmWatchdog(out,name,operationStartedAt,child);
+  const previousRequestGuard=c.requestGuard;
+  c.requestGuard=()=>{
+    previousRequestGuard?.();
+    assert(!fs.existsSync(path.join(out,name+'-UNKNOWN.json'))&&
+      !fs.existsSync(path.join(out,name+'-prearm-watchdog-UNKNOWN.json')),'independent child permanently UNKNOWN');
+  };
+  let output='',errors='',phaseOutput='',error,armTimer,armed,childError,messageBuffer='',messageWaiter;
+  child.stdio[3].on('data',bytes=>phaseOutput+=bytes);
   const messages=[];
   child.stdout.on('data',b=>{
     output+=b;messageBuffer+=b;let end;
@@ -244,10 +509,11 @@ async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},
   const joined=new Promise(resolve=>{child.once('error',e=>{childError=e;messageWaiter?.reject(e);messageWaiter=null;});
     child.once('close',(code,signal)=>{messageWaiter?.reject(Error('release child exit '+code));messageWaiter=null;resolve({pid:child.pid??null,code,signal});});});
   const events=[];
-  const aggregateTimer=setTimeout(()=>{c.seal('release gesture exceeded aggregate 3000ms');
-    messageWaiter?.reject(Error('aggregate release timeout'));messageWaiter=null;child.stdin.end();},3000);
+  let aggregateExpired=false;
+  const aggregateTimer=setTimeout(()=>{aggregateExpired=true;
+    messageWaiter?.reject(Error('aggregate release timeout'));messageWaiter=null;child.stdin.end();},Math.max(0,operationStartedAt+3000-Date.now()));
   try {
-    const initialized=await nextMessage();assert.equal(initialized.state,'INITIALIZED');
+    const [initialized]=await Promise.all([nextMessage(),watchdog.ready]);assert.equal(initialized.state,'INITIALIZED');
     native.checkPID(initialized.pid,initialized.startToken);assert.equal(initialized.pid,child.pid);
     assert(initialized.loadedFromExactBytes===true);
     assert(initialized.nativeObservationsCached===false&&initialized.sourceInventoriesCached===false&&initialized.moduleBytesCached===false);
@@ -256,7 +522,12 @@ async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},
     save(out,name+'-initialized.json',initialized);
     config={...cfg,name,keys,mode:'native',parentPID:process.pid,parentStartToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],
       operationStartedAt,initializedAt:initialized.at,startedAt:Date.now()};
-    messageDeadline=config.startedAt+500;save(out,name+'-release-config.json',config);
+    messageDeadline=config.startedAt+500;
+    // Arm the separate 500ms process before parent configuration IO.
+    await watchdog.start(config,initialized);
+    await saveAsync(out,name+'-release-config.json',config);
+    c.requestGuard();native.checkPID(initialized.pid,initialized.startToken);
+    assert(Date.now()-config.startedAt<=500,'configuration IO exceeded fixed prearm deadline');
     child.stdin.write(JSON.stringify({file:out+'/'+name+'-release-config.json'})+'\n');
     armed=await nextMessage();
     clearTimeout(armTimer);assert(armed.armed&&armed.nonce===cfg.nonce&&Date.now()-config.startedAt<=500,'actual independent child arm within 500ms');
@@ -267,7 +538,10 @@ async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},
       if(!events.length){
         const leaseToken=crypto.randomUUID();
         child.stdin.write(JSON.stringify({action:'confirm',nonce:cfg.nonce,childToken:armed.childToken,leaseToken})+'\n');
-        native.verifyPins(cfg.pins);
+        // Hook/fault ordering remains before confirmation. Both original
+        // parent freshness passes run after ARM while the child confirms.
+        await finalChecks();
+        await native.verifyPinsAsync(cfg.pins);
         const current=await nextMessage();
         assert.equal(current.state,'CONFIRMED');assert.equal(current.nonce,cfg.nonce);
         assert.equal(current.childToken,armed.childToken);assert.equal(current.leaseToken,leaseToken);
@@ -275,8 +549,12 @@ async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},
         assert.deepEqual(current.native,cfg.review.native);assert.deepEqual(current.pageIdentity,cfg.review.pageIdentity);
         assert(Date.now()-config.startedAt<=500,'all independent current gates within 500ms');
         native.checkPID(armed.pid,armed.startToken);
-      }else native.verifyPins(cfg.pins);
+        const complete=await watchdog.complete(config);
+        save(out,name+'-complete-current-prearm.json',complete);
+      }else {await finalChecks();await native.verifyPinsAsync(cfg.pins);}
       assert(Date.now()<armed.fallback-250,'native release lease expired');
+      assert(!aggregateExpired&&Date.now()-operationStartedAt<=3000,'actual release aggregate deadline');
+      assert(Date.now()-config.startedAt<=500,'actual current physical DOWN deadline');
       const before=Date.now();onAttempt();
       await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='Control'?'ControlLeft':key==='y'?'KeyY':key==='n'?'KeyN':key,windowsVirtualKeyCode:KEYS[key]},session);
       const consumed=await native.evaluate(c,session,`__gta2NativeReleasePageV1.consumed(${JSON.stringify({nonce:cfg.nonce,key:KEYS[key]})})`);
@@ -286,12 +564,18 @@ async function releaseGesture({c,session,out,name,keys,ms,cfg,beforeDown=()=>{},
     child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,events[0].consumed.at+ms)})+'\n');
   }catch(e){error=e;}
   finally {
-    clearTimeout(armTimer);child.stdin.end();const result=await joined;clearTimeout(aggregateTimer);
+    clearTimeout(armTimer);child.stdin.end();const result=await joined;
+    assert(child.stdio[3].readableEnded,'actual phase pipe EOF');
+    fs.writeFileSync(out+'/'+name+'-observed-prearm-phases.jsonl',phaseOutput,{flag:'wx'});
+    try{await watchdog.close();}catch(e){error??=e;}
+    clearTimeout(aggregateTimer);
     save(out,name+'-release-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout:output,stderr:errors});
     if(result.code!==0)error??=Error('release child failed '+result.code+' '+errors);
     error??=childError;
+    if(aggregateExpired)error??=Error('release gesture exceeded aggregate 3000ms');
   }
   if(error){if(!c.closed)c.seal(error);throw error;}
+  c.requestGuard=previousRequestGuard;
   const up=JSON.parse(fs.readFileSync(out+'/'+name+'-up.json'));
   assert(up.released?.physicalUp,'independent original renderer physical UP required');
   assert(events.every(e=>up.ack-e.before<=1750),'physical UP exceeded 1750ms');
@@ -434,7 +718,8 @@ async function browser(out,backend) {
         const result=await releaseGesture({c,session,out,name:cmd.name,keys:cmd.keys,ms:cmd.ms,
           cfg:{...JSON.parse(fs.readFileSync(out+'/endpoint.json')),targetId,owner:bound,pins,bridgeOptions,
             review:nativeReview,bindingToken:binding.bindingToken,nonce:cmd.nonce,intent:cmd.intent},
-          beforeDown:()=>{verifyPins();policy(cmd,launch,phase&&cmd.mode!=='quit');},
+          beforeDown:async()=>{policy(cmd,launch,phase&&cmd.mode!=='quit');},
+          finalChecks:async()=>{await require('./gta2-browser-release-binding.cjs').verifyPinsAsync(pins);policy(cmd,launch,phase&&cmd.mode!=='quit');},
           onAttempt:()=>{attempted=true;}});
         record(cmd.name+'-delivery.json',{...result,admission,attempted});
       });
@@ -444,4 +729,4 @@ async function browser(out,backend) {
   }catch(e){if(!fs.existsSync(out+'/executed-sources.json'))record('executed-sources.json',{workers:[...workers.values()]});if(c&&!c.closed)c.seal('first causal failure: '+e);if(!fs.existsSync(out+'/UNKNOWN.json'))record('UNKNOWN.json',{state:'UNKNOWN',reason:String(e),at:Date.now(),permanentClose:true,laterRequestsAllowed:0});record('failure.json',{error:e.stack,noReplay:true,at:Date.now()});process.exitCode=1;await close('first causal failure');}
 }
 if(require.main===module){const [mode,out,arg]=process.argv.slice(2);(mode==='release'?release(out,arg):mode==='release-preinit'?releasePreinit(out,arg):browser(out,arg)).catch(e=>{console.error(e);process.exitCode=1;});}
-module.exports={policy,KEYS,HELPER,sha,connection,release,releasePreinit,releaseGesture,boundedOperation,devtoolsEndpoint};
+module.exports={LoopbackWebSocket,prearmDeadlineService,policy,KEYS,HELPER,sha,connection,release,releasePreinit,releaseGesture,boundedOperation,devtoolsEndpoint};
