@@ -23,6 +23,16 @@ def check(source,should_close):
   assert len(requests)==(1 if should_close else 2),requests
 old=subprocess.check_output(['git','show','68543c27cc4173b085205216c3e2979179f9140f:'+path]).decode()
 check(old,False);check(pathlib.Path(path).read_text(),True)
+m=types.ModuleType('receipt');m.__file__=str(pathlib.Path(path).resolve());exec(compile(pathlib.Path(path).read_text(),path,'exec'),m.__dict__)
+g=dict(owner='one',epoch=1,nonce='finite',deadline=5000);r=dict(**g,state='CONSUMED',consumed=True,consumedAt=4999)
+m.confirm_receipt(r,g,5)
+for patch in (dict(consumedAt=5000),dict(consumedAt=5001),dict(owner='replacement'),dict(nonce='replayed'),dict(deadline=6000)):
+ try:m.confirm_receipt(dict(r,**patch),g,5)
+ except AssertionError:pass
+ else:raise AssertionError(patch)
+try:m.confirm_receipt(dict(r,consumedAt=4500),g,4.5)
+except AssertionError:pass
+else:raise AssertionError('capture expiry before operation deadline accepted')
 print('PASS historical bind refusal leaves capture request possible; repaired bind failure latches closure, zero later requests')
 `],{encoding:'utf8',timeout:10000});
  process.stdout.write(closure.stdout||'');process.stderr.write(closure.stderr||'');assert.equal(closure.status,0);

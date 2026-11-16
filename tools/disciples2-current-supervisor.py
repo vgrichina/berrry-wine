@@ -115,7 +115,7 @@ def run(out,recipe):
     while not (out/'watchdog-armed.json').exists():
         assert w.poll() is None,'watchdog died before arm';time.sleep(.01)
     assert not stop,'supervisor cancelled before native launch'
-    save(out,'launch.json',dict(args=recipe['args'],deadline=deadline,gameplayCutoff=deadline-reserve,reserveSeconds=reserve,at=time.time(),supervisor=os.getpid(),clock=recipe.get('clock'),nativeScene=bool(recipe.get('nativeScene')),inputPolicy=recipe.get('inputPolicy')))
+    save(out,'launch.json',dict(args=recipe['args'],deadline=deadline,gameplayCutoff=deadline-reserve,reserveSeconds=reserve,at=time.time(),supervisor=os.getpid(),clock=recipe.get('clock'),nativeScene=bool(recipe.get('nativeScene')),bindingContract=recipe.get('bindingContract','native-scene-v1'),inputPolicy=recipe.get('inputPolicy')))
     p=subprocess.Popen(recipe['args'],cwd=recipe['cwd'],env=env,pass_fds=fds,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     for fd in fds:os.close(fd)
     info=dict(pid=p.pid,startToken=token(p.pid),at=time.time());save(out,'native-pid.json',info)

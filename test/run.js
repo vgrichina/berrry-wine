@@ -7618,6 +7618,12 @@ async function main() {
       threadId: e.get_window_thread?.(w.hwnd) >>> 0,
       owner: '0x' + ((e.wnd_get_owner?.(w.hwnd) || 0) >>> 0).toString(16),
       parent: '0x' + ((e.wnd_get_parent?.(w.hwnd) || 0) >>> 0).toString(16),
+      style: e.wnd_get_style_export?.(w.hwnd) >>> 0,
+      controlClass: e.ctrl_get_class?.(w.hwnd) >>> 0,
+      controlId: e.ctrl_get_id?.(w.hwnd) >>> 0,
+      buttonFlags: e.ctrl_get_class?.(w.hwnd)===1 ? e.button_get_flags?.(w.hwnd) >>> 0 : null,
+      screenX: e.wnd_window_screen_x?.(w.hwnd) | 0,
+      screenY: e.wnd_window_screen_y?.(w.hwnd) | 0,
     }); }) : [];
     return {
       batch: tickState.batch | 0,
@@ -7722,6 +7728,8 @@ async function main() {
   };
   let reviewedSceneBindAttempted = false, reviewedSceneLease = null, nativeSceneLease = null;
   const nativeScene = require('../lib/cli-native-scene');
+  const reviewedContexts = nativeScene.createReviewedContexts();
+  let nativeSceneContract = null;
   const cliInputSnapshot = require('../lib/cli-input-owner').createCliInputSnapshot({
       instance, memory, renderer, getDevice: () => ctx.d3dCommands,
       getThreadManager: () => threadManager,
@@ -7733,6 +7741,10 @@ async function main() {
   const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
     validateIntent: intent => {
       if (!nativeSceneLease) return true;
+      if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {
+        try { reviewedContexts.verify(controlSnapshot(),intent.review,intent.event,intent.nonce); return true; }
+        catch { return false; }
+      }
       if (!nativeScene.matches(controlSnapshot(), intent)) return false;
       // A reviewed native intent can pin its complete composited frame as
       // well as its USER identities. Check again at consumption: paint may
@@ -7845,6 +7857,12 @@ async function main() {
     }
     if (cmd.action === 'guarded-bind') {
       if (reviewedSceneBindAttempted) throw new Error('reviewed scene binding is permanent; no replay/rebind');
+      if (cmd.reviewedScene?.contract === nativeScene.REVIEWED_CONTEXT) {
+        reviewedSceneBindAttempted=true;
+        const verified=reviewedContexts.verify(controlSnapshot(),cmd.reviewedScene);
+        nativeSceneLease=verified.context; nativeSceneContract=verified.contract;
+        return {...guardedInput.bind(),contract:nativeSceneContract};
+      }
       if (cmd.reviewedScene?.route === 'native-scene-v1') {
         reviewedSceneBindAttempted=true;
         const expected=cmd.reviewedScene, s=controlSnapshot();
@@ -7890,6 +7908,10 @@ async function main() {
       return guardedInput.bind();
     }
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
+    if (cmd.action === 'native-reviewed-capture') {
+      if (!cmd.path) throw new Error('reviewed capture needs a complete PNG path');
+      return reviewedContexts.capture(controlSnapshot,()=>canvasToPng(renderer.canvas),bytes=>fs.writeFileSync(cmd.path,bytes,{flag:'wx'}));
+    }
     if (cmd.action === 'guarded-release') return guardedInput.release(cmd.owner);
     if (cmd.action === 'guarded-input') {
       const evs = parseInputEntries([`${tickState.batch | 0}:${String(cmd.cmd || '')}`]);
@@ -7899,6 +7921,10 @@ async function main() {
       if (['keydown', 'keyup'].includes(ev.action) ?
           !Number.isInteger(ev.code) || ev.code < 1 || ev.code > 255 :
           !Number.isFinite(ev.x) || !Number.isFinite(ev.y)) throw new Error('invalid guarded input arguments');
+      if (nativeSceneContract===nativeScene.REVIEWED_CONTEXT) {
+        // Bind the actual parsed edge and nonce, never caller-provided event data.
+        cmd.guard={...cmd.guard,intent:{review:cmd.guard?.intent?.review,event:{action:ev.action,code:ev.code,x:ev.x,y:ev.y},nonce:cmd.guard?.nonce}};
+      }
       const ticket = guardedInput.prepare(cmd.guard, ev);
       if (ticket.state === 'QUEUED') {
         ev.guardedTicket = ticket;

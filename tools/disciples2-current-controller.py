@@ -18,6 +18,19 @@ def call(c,timeout=3):
     return r['value']
 def read(n):return json.loads((R/n).read_text())
 class ReserveRejected(Exception):pass
+CONTEXT_CONTRACT='native-reviewed-context-v1'
+def context_contract():return read('launch.json').get('bindingContract')==CONTEXT_CONTRACT
+def review_limit(personal):
+    return {'game':5,'menu':30}[personal['scope']] if context_contract() else 30
+def native_review(rr,personal):
+    assert personal['pngSHA256']==rr['pngSHA256']
+    return dict(contract=CONTEXT_CONTRACT,captureId=rr['captureId'],pngSHA256=rr['pngSHA256'],
+                reviewed=True,reviewedAt=personal['at']*1000,scope=personal['scope'],targetHwnd=personal['targetHwnd'])
+def confirm_receipt(receipt,guard,review_deadline):
+    assert receipt['state']=='CONSUMED' and receipt['consumed'],receipt
+    assert all(receipt.get(k)==guard[k] for k in ('owner','epoch','nonce','deadline')),'input receipt identity changed'
+    consumed=receipt.get('consumedAt')
+    assert isinstance(consumed,(int,float)) and 0<consumed<min(guard['deadline'],review_deadline*1000),'native consumption crossed immutable target freshness/deadline'
 QUIT_ROUTES={'options':'keydown:27','leave-quest':None,'confirm-leave':None,'main-quit':None,'confirm-quit':None}
 def reserve():
     launch=read('launch.json')
@@ -39,10 +52,11 @@ def bind(review=None):
         if read('launch.json').get('nativeScene'):
             assert review,'original binding requires a personally reviewed complete scene'
             rr=read(review+'.json');personal=read(review+'-review.json')
-            assert 0<=time.time()-rr['at']<30 and 0<=time.time()-personal['at']<30,'binding review expired'
+            limit=review_limit(personal)
+            assert 0<=time.time()-rr['at']<limit and 0<=time.time()-personal['at']<limit,'binding review expired'
             assert personal['pngSHA256']==rr['pngSHA256']==hashlib.sha256((R/(review+'.png')).read_bytes()).hexdigest()
-            command['reviewedScene']=dict(route='native-scene-v1',snapshot=rr['snapshot'],pngSHA256=rr['pngSHA256'])
-        save('bind-intent.json',dict(at=time.time(),permanent=True,review=review))
+            command['reviewedScene']=native_review(rr,personal) if context_contract() else dict(route='native-scene-v1',snapshot=rr['snapshot'],pngSHA256=rr['pngSHA256'])
+        save('bind-intent.json',dict(at=time.time(),permanent=True,review=review,contract=read('launch.json').get('bindingContract','native-scene-v1')))
         save('input-owner.json',call(command));s=call({'action':'snapshot'})
         save('lease-snapshot.json',{k:s[k] for k in ('mainHwnd','screen')})
     except BaseException as e:fail(e,'bind');raise
@@ -99,9 +113,16 @@ def capture(name):
     try:
         assert name.replace('-','').isalnum();capture_phase();opened()
         p=R/(name+'.png');assert not p.exists()
-        start=time.time();s=call({'action':'snapshot'},3);capture_phase();im=call({'cmd':'png:'+str(p)},max(.01,3-(time.time()-start)));end=time.time()
+        start=time.time()
+        if context_contract():
+            im=call({'action':'native-reviewed-capture','path':str(p)},3);s=im['snapshot']
+        else:
+            s=call({'action':'snapshot'},3);capture_phase();im=call({'cmd':'png:'+str(p)},max(.01,3-(time.time()-start)))
+        end=time.time()
         assert end-start<=3,'3000ms whole-scene observation exceeded'
-        save(name+'.json',dict(at=start,completedAt=end,snapshot=s,image=im,pngSHA256=hashlib.sha256(p.read_bytes()).hexdigest()))
+        record=dict(at=start,completedAt=end,snapshot=s,image=im,pngSHA256=hashlib.sha256(p.read_bytes()).hexdigest())
+        if context_contract():record.update(captureId=im['captureId'],contract=im['contract'],nativeStartedAt=im['startedAt'],nativeCompletedAt=im['completedAt'])
+        save(name+'.json',record)
         return str(p)
     except BaseException as e:fail(e,name);raise
 def exited_owner(expected):
@@ -157,22 +178,23 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
     policy(intent,keys,review,route)
     try:
         owner,before=lease();rr=read(review+'.json');reviewed=read(review+'-review.json')
+        limit=review_limit(reviewed)
         native=read('launch.json').get('nativeScene',False)
         if native:
             assert before['physicalUp'] and before['capture']=='0x0','native physical UP required before intention'
             assert rr['snapshot']['physicalUp'] and rr['snapshot']['capture']=='0x0','review must precede any held input'
-        assert 0<=time.time()-reviewed['at']<30,'personal review age expired'
+        assert 0<=time.time()-reviewed['at']<limit,'personal review age expired'
         assert reviewed['pngSHA256']==rr['pngSHA256'],'review binding changed'
         assert hashlib.sha256((R/(review+'.png')).read_bytes()).hexdigest()==rr['pngSHA256'],'review image changed'
         assert not list(R.glob(review+'-used-by-*')),'capture already reserved; fresh review required'
         nonces=[str(uuid.uuid4()) for k in keys]
-        record=dict(name=name,keys=keys,ms=ms,review=review,reviewSHA256=rr['pngSHA256'],description=description,nonces=nonces,createdAt=time.time(),intent=intent,quitRoute=route)
+        record=dict(name=name,keys=keys,ms=ms,review=review,reviewSHA256=rr['pngSHA256'],description=description,nonces=nonces,createdAt=time.time(),intent=intent,quitRoute=route,contract=read('launch.json').get('bindingContract','native-scene-v1'))
         save(name+'-intent.json',record);save(review+'-used-by-'+name,dict(intent=name))
         age=time.time()-rr['at']
-        if not 0<=age<30:
+        if not 0<=age<limit:
             save(name+'-rejection.json',dict(state='NOT_SENT',lease='VALID',reason='review expired before DOWN/arm',age=age,nonces=nonces,at=time.time()))
             return 'NOT_SENT: review expired; fresh capture + review + NEW intent required'
-        deadline=min(time.time()+3.0,rr['at']+30.0)
+        deadline=min(time.time()+3.0,rr['at']+limit)
         intentDeadline=dict(deadline=deadline,pulseMilliseconds=ms,operationWindowSeconds=3.0,confirmMilliseconds=500,physicalUpMilliseconds=1750)
         save(name+'-operation.json',intentDeadline)
         assert deadline+2<read('launch.json')['deadline'],'operation exceeds fixed runtime'
@@ -185,16 +207,16 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
             ready,_,_=select.select([child.stdout],[],[],1.5);assert ready,'independent release child arm deadline'
             armed=json.loads(child.stdout.readline());assert armed['armed'];save(name+'-armed.json',armed)
             assert time.time()<deadline,'operation deadline before DOWN'
-            if time.time()-rr['at']>=30 or time.time()-reviewed['at']>=30:
+            if time.time()-rr['at']>=limit or time.time()-reviewed['at']>=limit:
                 save(name+'-rejection.json',dict(state='NOT_SENT',lease='VALID',reason='review expired after arm before DOWN',nonces=nonces,at=time.time()))
                 return 'NOT_SENT: review expired after arm; fresh capture + NEW intent required'
             receipts=[]
             for key,nonce in zip(keys,nonces):
-                assert time.time()-rr['at']<30 and time.time()-reviewed['at']<30,'capture/review expired before edge'
+                assert time.time()-rr['at']<limit and time.time()-reviewed['at']<limit,'capture/review expired before edge'
                 cutoff=policy(intent,keys,review,route)
                 sent=True
                 guard={**owner,'nonce':nonce,'reviewed':True,'deadline':int(min(deadline,releaseCap,cutoff if intent=='gameplay' else deadline)*1000)}
-                if native:guard['intent']=rr['snapshot']
+                if native:guard['intent']={'review':native_review(rr,reviewed)} if context_contract() else rr['snapshot']
                 sentAt=time.time()
                 receipt=call({'action':'guarded-input','cmd':key,'guard':guard},.5)
                 returnedAt=time.time()
@@ -203,7 +225,7 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
                 if receipt.get('consumedAt'):
                     save(name+'-release-at.json',dict(at=receipt['consumedAt']/1000+ms/1000,immutableOperationDeadline=deadline))
                 save(name+'-receipt.json',receipt)
-                assert receipt['state']=='CONSUMED' and receipt['consumed'],receipt
+                confirm_receipt(receipt,guard,rr['at']+limit)
             save(name+'-down.json',receipts)
             releaseAt=max(x['consumedAt'] for x in receipts)/1000+ms/1000
             assert releaseAt<deadline,'finite pulse cannot fit original operation deadline'
@@ -230,13 +252,18 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
         save('last-intent.json',dict(nonces=nonces))
         if final:
             save(name+'-final-choice.json',dict(nativeQuitClaim=False,awaitActualNativeWait=True));return 'Final reviewed choice submitted; await actual native wait'
-        save(name+'-complete.json',dict(at=time.time(),confirmationMs=(returnedAt-sentAt)*1000,physicalUpMs=max(up['at']-r['consumedAt']/1000 for r in receipts)*1000,observationBoundMs=3000))
+        save(name+'-complete.json',dict(at=time.time(),confirmationMs=(returnedAt-sentAt)*1000,physicalUpMs=max(up['at']-r['consumedAt']/1000 for r in receipts)*1000,observationBoundMs=3000,contract=record['contract']))
         return 'CONSUMED with independent physical UP; take a fresh complete capture for next intent'
     except ReserveRejected:raise
     except BaseException as e:fail(e,name);raise
 if __name__=='__main__':
     if sys.argv[1]=='review':
-        rr=read(sys.argv[2]+'.json');save(sys.argv[2]+'-review.json',dict(at=time.time(),pngSHA256=rr['pngSHA256'],observation=sys.argv[3],quitRoute=sys.argv[4] if len(sys.argv)>4 else None));print('personal review recorded')
+        rr=read(sys.argv[2]+'.json')
+        personal=dict(at=time.time(),pngSHA256=rr['pngSHA256'],observation=sys.argv[3],quitRoute=sys.argv[4] if len(sys.argv)>4 else None)
+        if context_contract():
+            assert len(sys.argv)>6 and sys.argv[5] in ('game','menu'),'explicit reviewed scope and native target required'
+            personal.update(scope=sys.argv[5],targetHwnd=sys.argv[6],contract=CONTEXT_CONTRACT)
+        save(sys.argv[2]+'-review.json',personal);print('personal review recorded')
     elif sys.argv[1]=='capture':print(capture(sys.argv[2]))
     elif sys.argv[1]=='bind':
         bind(sys.argv[2] if len(sys.argv)>2 else None)

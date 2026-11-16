@@ -14,7 +14,7 @@ function fixture(changing=false){
  d(opt+56,0x5000);d(opt+60,1024);w(opt+68,2);d(opt+72,0x100000);d(opt+76,4096);d(opt+80,0x100000);d(opt+84,4096);d(opt+92,16);
  d(opt+104,0x1000);d(opt+108,60);b.write('.native',section);d(section+8,0x4000);d(section+12,0x1000);d(section+16,0x4000);d(section+20,1024);d(section+36,0xe0000060);
  let string=0x1600;
- for(const [i,[dll,names]]of [['kernel32.dll',['ExitProcess','Sleep','CreateThread']],['user32.dll',['RegisterClassA','CreateWindowExA','SetFocus','GetMessageA','TranslateMessage','DispatchMessageA','DefWindowProcA','SetWindowTextA','PostQuitMessage','SetTimer']]].entries()){
+ for(const [i,[dll,names]]of [['kernel32.dll',['ExitProcess','Sleep','CreateThread']],['user32.dll',['RegisterClassA','CreateWindowExA','SetFocus','GetMessageA','TranslateMessage','DispatchMessageA','DefWindowProcA','SetWindowTextA','PostQuitMessage','SetTimer','GetDC','MessageBoxA','DestroyWindow']],['gdi32.dll',['SetPixel']]].entries()){
   const desc=raw(0x1000+i*20),thunk=0x1200+i*256;d(desc,thunk);d(desc+12,string);d(desc+16,thunk);b.write(dll+'\0',raw(string));string+=dll.length+1;
   for(const [j,name]of names.entries()){d(raw(thunk+j*4),string);b.write(name+'\0',raw(string+2));string+=name.length+3;}
  }
@@ -26,7 +26,7 @@ function fixture(changing=false){
   const code=[],labels=new Map(),fix=[];const emit=(...v)=>code.push(...v),push=n=>emit(0x68,...u32(n));
   const apis={ExitProcess:0x401200,Sleep:0x401204,CreateThread:0x401208,RegisterClassA:0x401300,
    CreateWindowExA:0x401304,SetFocus:0x401308,GetMessageA:0x40130c,TranslateMessage:0x401310,
-   DispatchMessageA:0x401314,DefWindowProcA:0x401318,SetWindowTextA:0x40131c,PostQuitMessage:0x401320,SetTimer:0x401324};
+   DispatchMessageA:0x401314,DefWindowProcA:0x401318,SetWindowTextA:0x40131c,PostQuitMessage:0x401320,SetTimer:0x401324,GetDC:0x401328,MessageBoxA:0x40132c,DestroyWindow:0x401330,SetPixel:0x401400};
   const call=n=>{assert(apis[n]);emit(0xff,0x15,...u32(apis[n]));},label=n=>labels.set(n,code.length);
   const jump=(n,c)=>{emit(...(c?[0x0f,c]:[0xe9]));fix.push([code.length,n]);emit(0,0,0,0);};
   work({emit,push,call,label,jump});const result=Buffer.from(code);for(const [o,n]of fix){assert(labels.has(n));result.writeInt32LE(labels.get(n)-o-4,o);}assert(result.length<0x400);b.fill(0,raw(rva),raw(rva+0x400));result.copy(b,raw(rva));
@@ -45,7 +45,14 @@ function fixture(changing=false){
   label('exit');push(0);call('ExitProcess');emit(0xcc);
  });
  assemble(0x2400,({emit,push,call,label,jump})=>{
-  emit(0x55,0x89,0xe5,0x81,0x7d,0x0c,...u32(0x113));jump('input',0x85);
+  emit(0x55,0x89,0xe5,0x81,0x7d,0x0c,...u32(0x8000));jump('target-fault',0x85);
+  push(0);push(base+0x3080);push(base+0x3180);emit(0xff,0x75,8);call('MessageBoxA');jump('zero');
+  label('target-fault');emit(0x81,0x7d,0x0c,...u32(0x8001));jump('timer',0x85);
+  emit(0xff,0x35,...u32(base+0x360c));call('DestroyWindow');
+  for(const n of [0,base,0,7])push(n);emit(0xff,0x75,8);
+  for(const n of [100,660,20,20,0x50000000,base+0x3100,base+0x3040,0])push(n);
+  call('CreateWindowExA');emit(0xa3,...u32(base+0x360c));jump('zero');
+  label('timer');emit(0x81,0x7d,0x0c,...u32(0x113));jump('input',0x85);
   emit(0x83,0x35,...u32(base+0x3604),1,0x83,0x3d,...u32(base+0x3604),0);jump('b',0x85);
   push(base+0x3100);jump('text');label('b');push(base+0x3180);label('text');
   emit(0xff,0x35,...u32(base+0x360c));call('SetWindowTextA');jump('zero');
@@ -55,23 +62,55 @@ function fixture(changing=false){
   label('zero');emit(0x31,0xc0,0xc9,0xc2,0x10,0);
  });
  assemble(0x2800,({emit,push,call,label,jump})=>{
+  if(changing==='repaint'){emit(0xff,0x35,...u32(base+0x3600));call('GetDC');emit(0xa3,...u32(base+0x3614));}
   label('wait');push(500);call('Sleep');
-  if(changing){emit(0xff,0x05,...u32(base+0x3610),0xa1,...u32(base+0x3610),0x83,0xe0,31,0xc1,0xe0,6,0x05,...u32(base+0x3800),0x50);}
+  if(changing==='repaint'){
+   // Ordinary guest GDI repaint, no changed USER text/control semantics.
+   emit(0xff,0x05,...u32(base+0x3610),0xff,0x35,...u32(base+0x3610));push(200);push(500);
+   emit(0xff,0x35,...u32(base+0x3614));call('SetPixel');jump('wait');return;
+  }
+  if(changing===true){emit(0xff,0x05,...u32(base+0x3610),0xa1,...u32(base+0x3610),0x83,0xe0,31,0xc1,0xe0,6,0x05,...u32(base+0x3800),0x50);}
   else push(base+0x3100);
   emit(0xff,0x35,...u32(base+0x360c));call('SetWindowTextA');jump('wait');
  });
  return b;
 }
-module.exports={fixture};
+function contextUnits(){
+ const {createReviewedContexts,REVIEWED_CONTEXT}=require('../lib/cli-native-scene');
+ let clock=1000;const registry=createReviewedContexts({now:()=>clock,monotonic:()=>clock});
+ const main={hwnd:'0x1',generation:'1',live:true,visible:true,isChild:false,title:'Fixture',owner:'0x0',parent:'0x0',processId:1,threadId:1,x:0,y:0,screenX:0,screenY:0,w:800,h:600,style:0x10000000,controlClass:0};
+ const child={...main,hwnd:'0x2',generation:'2',isChild:true,parent:'0x1',title:'Continue',controlClass:1};
+ const scene={windows:[main,child],mainHwnd:'0x1',modalHwnd:'0x0',focus:'0x1',focusTopLevel:'0x1',focusWindow:{...main},capture:'0x0',physicalUp:true,nativeProcess:{pid:10,executable:'fixture'},screen:{w:800,h:600},nativeMessageBox:null,eip:'0x400000'};
+ const image=Buffer.from('unit complete encoder bytes'),c=registry.capture(()=>scene,()=>image,()=>{});
+ const review={contract:REVIEWED_CONTEXT,captureId:c.captureId,pngSHA256:c.pngSHA256,reviewed:true,reviewedAt:clock,scope:'menu',targetHwnd:'0x1'};
+ image.fill(0);assert.doesNotThrow(()=>registry.verify(scene,review));
+ for(const mutate of [s=>s.nativeProcess.pid++,s=>s.windows[0].generation='9',s=>s.windows[0].owner='0x8',s=>s.windows[0].w++,s=>s.windows[1].title='Delete',s=>s.windows[1].controlClass++,s=>s.windows[1].style|=0x08000000,s=>s.focus='0x2',s=>s.modalHwnd='0x2',s=>s.physicalUp=false,s=>s.capture='0x1']){
+  const v=structuredClone(scene);mutate(v);assert.throws(()=>registry.verify(v,review));
+ }
+ for(const change of [{reviewed:false},{captureId:'unretained'},{pngSHA256:'0'.repeat(64)},{reviewedAt:1001},{targetHwnd:'0x9'}])assert.throws(()=>registry.verify(scene,{...review,...change}));
+ const gameCapture=registry.capture(()=>scene,()=>Buffer.from('game unit frame'),()=>{}),gameReview={...review,scope:'game',captureId:gameCapture.captureId,pngSHA256:gameCapture.pngSHA256};
+ clock=5999;assert.doesNotThrow(()=>registry.verify(scene,gameReview));clock=6000;assert.throws(()=>registry.verify(scene,gameReview),/stale/);
+ assert.throws(()=>registry.verify(scene,{...review,scope:'game'}),/stale/);
+ clock=30999;assert.doesNotThrow(()=>registry.verify(scene,review));clock=31000;assert.throws(()=>registry.verify(scene,review),/stale/);
+ clock=1001;assert.throws(()=>registry.verify(scene,{...review,reviewedAt:1001}),/attestation changed/);registry.verify(scene,review,{action:'keydown',code:40},'one');registry.verify(scene,review,{action:'keydown',code:40},'one');
+ assert.throws(()=>registry.verify(scene,review,{action:'keydown',code:40},'two'),/another finite intent/);
+ assert.throws(()=>registry.verify(scene,review,{action:'mousedown',x:900,y:0},'one'),/outside/);
+ const {createGuardedInput}=require('../lib/cli-guarded-input');let current=scene,effects=0;const refs={queue:[]};
+ const g=createGuardedInput({snapshot:()=>({healthy:true,refs}),cleanup:()=>{},validateIntent:intent=>{try{registry.verify(current,intent.review,intent.event,intent.nonce);return true;}catch{return false;}}});
+ const owner=g.bind(),event={action:'keydown',code:40};const t=g.prepare({...owner,nonce:'one',reviewed:true,deadline:Date.now()+1000,intent:{review,event,nonce:'one'}},event);
+ current=structuredClone(scene);current.windows[1].title='Changed after prepare';assert.equal(g.consume(t,()=>effects++).state,'CANCELLED');assert.equal(effects,0);g.close();
+ console.log('PASS retained complete bytes/original times, 5s/30s boundaries, public target/control/focus/modal/owner negatives and queued zero-input cancellation');
+}
+module.exports={fixture,contextUnits};
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 async function native(out,mode){
  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
- const image=path.join(out,'public-menu.exe'),bytes=fixture(mode==='paint');fs.writeFileSync(image,bytes,{flag:'wx'});
+ const image=path.join(out,'public-menu.exe'),bytes=fixture(mode==='paint'?true:mode==='positive'?'repaint':false);fs.writeFileSync(image,bytes,{flag:'wx'});
  const reservation=net.createServer();await new Promise((r,j)=>{reservation.once('error',j);reservation.listen(0,'127.0.0.1',r);});
  const port=reservation.address().port;await new Promise(r=>reservation.close(r));
- const start=Date.now()/1000;save('launch.json',{at:start,deadline:start+240,gameplayCutoff:start+60,reserveSeconds:180,nativeScene:true});
+ const start=Date.now()/1000;save('launch.json',{at:start,deadline:start+240,gameplayCutoff:start+60,reserveSeconds:180,nativeScene:true,bindingContract:mode==='strict-positive'?'native-scene-v1':'native-reviewed-context-v1'});
  // Independent watchdog arms before test/run.js, then observes EOF and exits.
- const watchdog=cp.spawn(process.execPath,['-e',`let pid;const t=setTimeout(()=>{if(pid){try{process.kill(-pid,'SIGCONT');process.kill(-pid,'SIGTERM')}catch{}}process.exit(2)},90000);console.log('ARMED');process.stdin.on('data',b=>pid=Number(b));process.stdin.on('end',()=>clearTimeout(t));`]);
+ const watchdog=cp.spawn(process.execPath,['-e',`let pid,kill;const t=setTimeout(()=>{console.log('DEADLINE');if(pid){try{process.kill(-pid,'SIGCONT');process.kill(-pid,'SIGTERM')}catch{}kill=setTimeout(()=>{try{process.kill(-pid,'SIGKILL')}catch{}},3000)}},90000);console.log('ARMED');process.stdin.on('data',b=>pid=Number(b));process.stdin.on('end',()=>{clearTimeout(t);clearTimeout(kill)});`]);
  let wo='',we='';watchdog.stdout.on('data',b=>wo+=b);watchdog.stderr.on('data',b=>we+=b);
  const wwait=new Promise(r=>watchdog.on('close',(exit,signal)=>r({exit,signal})));
  while(!wo.includes('ARMED'))await pause(5);save('watchdog-armed.json',{pid:watchdog.pid,at:Date.now(),beforeNative:true,deadline:start+90});
@@ -102,32 +141,54 @@ async function native(out,mode){
   const first=await sample('capture-source');
   const decoded=require('pngjs').PNG.sync.read(fs.readFileSync(path.join(out,'reviewed.png'))),colors=new Set();for(let i=0;i<decoded.data.length;i+=4)colors.add(decoded.data.readUInt32LE(i));assert(colors.size>8,'complete fixture window must be painted before review');
   save('ready.json',{mode,pid:s.child.pid,png:path.join(out,'reviewed.png'),pngSHA256:rr.pngSHA256,captureAt:rr.at,tuple:rr.snapshot,source:first});
+  if(mode==='unreviewed') {
+   let error;
+   try {await s.send({action:'guarded-bind',reviewedScene:{contract:'native-reviewed-context-v1',captureId:rr.captureId,pngSHA256:rr.pngSHA256,reviewed:false,reviewedAt:Date.now(),scope:'menu',targetHwnd:rr.snapshot.focus}});}catch(e){error=e.message;}
+   assert(error?.includes('personal reviewed-context attestation required'));
+   save('assertions.json',{contract:'native-reviewed-context-v1',negative:'unreviewed',zeroEffects:true,laterRequests:0,error,personalReviewSupplied:false});return;
+  }
   // A human/agent must actually view the full PNG and record the matching hash.
-  const reviewDue=Date.now()+25000;
+  const reviewDue=Date.now()+28000;
   while(!fs.existsSync(path.join(out,'personal-review.json'))){assert(Date.now()<reviewDue,'personal review not supplied within unchanged menu freshness');await pause(20);}
   const review=JSON.parse(fs.readFileSync(path.join(out,'personal-review.json')));assert.equal(review.pngSHA256,rr.pngSHA256);assert(review.observation?.length>10);assert(Date.now()/1000-review.at<30);
   save('reviewed-review.json',review);
   await s.send({action:'eval',code:"globalThis.__paintRole='pre-bind';true"});
   if(mode==='stale')await pause(Math.max(0,(rr.at+30.1)*1000-Date.now()));
+  if(mode==='target' || mode==='modal') {
+   // Authored fixture's explicit WM_APP fault hooks call actual Win32 APIs in
+   // its ordinary main-thread wndproc; this is not a physical input edge.
+   await s.send({action:'eval',code:`instance.exports.post_message_q(${parseInt(rr.snapshot.mainHwnd,16)},${mode==='modal'?0x8000:0x8001},0,0);true`});
+   const child=rr.snapshot.windows.find(w=>w.isChild);let changed;const due=rr.at*1000+27000;
+   do {
+    changed=await s.send({action:'snapshot'});
+    if(mode==='modal'?changed.modalHwnd!=='0x0':!changed.windows.some(w=>w.live&&w.hwnd===child.hwnd&&w.generation===child.generation))break;
+    assert(Date.now()<due,'actual native modal/target replacement not observed');await pause(50);
+   }while(true);
+   save('actual-native-context-change.json',{before:rr.snapshot,after:changed,mode});
+  }
   if(mode==='focus'){const child=rr.snapshot.windows.find(w=>w.isChild);assert(child);await s.send({action:'eval',code:'instance.exports.set_focus('+parseInt(child.hwnd,16)+');true'});}
   if(mode==='owner'){
    await controller(['bind','reviewed']);await s.send({action:'eval',code:'renderer.handleMouseDown=renderer.handleMouseDown.bind(renderer);true'});
    const owner=JSON.parse(fs.readFileSync(path.join(out,'input-owner.json')));
-   const reply=await s.send({action:'guarded-input',cmd:'keydown:40',guard:{...owner,nonce:'owner-fault',reviewed:true,deadline:Date.now()+500,intent:{...rr.snapshot,pngSHA256:rr.pngSHA256}}});
+   const reply=await s.send({action:'guarded-input',cmd:'keydown:40',guard:{...owner,nonce:'owner-fault',reviewed:true,deadline:Date.now()+500,intent:{review:{contract:'native-reviewed-context-v1',captureId:rr.captureId,pngSHA256:rr.pngSHA256,reviewed:true,reviewedAt:review.at*1000,scope:'menu',targetHwnd:rr.snapshot.focus}}}});
    save('owner-fault-receipt.json',reply);assert(!reply.consumed);assert(['REFUSED','CANCELLED','UNKNOWN'].includes(reply.state));terminal=true;
   }else if(mode==='unknown'){
    process.kill(-s.child.pid,'SIGSTOP');await controller(['capture','timeout'],false);terminal=true;process.kill(-s.child.pid,'SIGCONT');
-  }else if(mode==='positive'){
-   const prebind=await sample('bind-source');assert.equal(prebind.pngSHA256,rr.pngSHA256,'stable complete capture must match bind-time production PNG');
+  }else if(mode==='positive'||mode==='strict-positive'){
+   await pause(600);const prebind=await sample('bind-source');
+   if(mode==='positive')assert.notEqual(prebind.pngSHA256,rr.pngSHA256,'real native GDI repaint must change complete PNG');
+   else assert.equal(prebind.pngSHA256,rr.pngSHA256);
    await controller(['bind','reviewed']);
    await controller(['pulse','finite','keydown:40','100','reviewed',review.observation]);
    const done=JSON.parse(fs.readFileSync(path.join(out,'finite-complete.json')));assert(done.confirmationMs<=500&&done.physicalUpMs<=1750);
-   save('assertions.json',{nativeWorkerThread:rr.snapshot.focusWindow.threadId,completePaintStable:true,consumerBound:true,...done,nativeQuit:false});
+   save('assertions.json',{contract:mode==='positive'?'native-reviewed-context-v1':'native-scene-v1',nativeWorkerThread:rr.snapshot.focusWindow.threadId,completePaintChanged:prebind.pngSHA256!==rr.pngSHA256,consumerBound:true,...done,nativeQuit:false});
   }else{
    let prebind=await sample('bind-source');
    if(mode==='paint'){for(let i=0;prebind.pngSHA256===rr.pngSHA256&&i<10;i++){await pause(80);prebind=await sample('changed-'+i);}assert.notEqual(prebind.pngSHA256,rr.pngSHA256,'actual guest timer must change complete paint before binding');}
    await s.send({action:'eval',code:"globalThis.__paintRole='bind';true"});
-   await controller(['bind','reviewed'],false);terminal=true;
+   const rejected=await controller(['bind','reviewed'],false);
+   if(mode==='stale')assert(rejected.stderr.includes('binding review expired'),'stale assertion must actually execute; native crash/timeout is not a stale PASS');
+   terminal=true;
   }
   if(terminal){
    const closed=path.join(out,'terminal-input-failure.json');
@@ -137,7 +198,7 @@ async function native(out,mode){
    assert(fs.existsSync(closed),'controller refusal/UNKNOWN must latch closure before caller intervenes');
    const count=calls,ledger=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');for(const args of [['capture','later'],['bind','reviewed']])await controller(args,false);
    assert.equal(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'),ledger,'closed controller must issue zero later HTTP requests');
-   save('assertions.json',{nativeWorkerThread:rr.snapshot.focusWindow.threadId,negative:mode,zeroEffects:true,laterRequests:0,closed:true,localRefusals:calls-count});
+   save('assertions.json',{contract:rr.contract||'native-scene-v1',nativeWorkerThread:rr.snapshot.focusWindow.threadId,negative:mode,zeroEffects:true,laterRequests:0,closed:true,localRefusals:calls-count});
   }
  }finally{
   // No HTTP/stdio teardown request after a refusal or UNKNOWN.
@@ -148,5 +209,5 @@ async function native(out,mode){
 }
 if(require.main===module){
  if(process.argv[2]==='--native')native(path.resolve(process.argv[3]),process.argv[4]||'positive').catch(e=>{console.error(e);process.exitCode=1;});
- else{assert(fixture(false).includes(Buffer.from('PUBLIC MENU:')));assert.notDeepEqual(fixture(false),fixture(true));console.log('PASS authored native painting PE structure; runtime requires --native OUT MODE and personal review');}
+ else{contextUnits();assert(fixture(false).includes(Buffer.from('PUBLIC MENU:')));assert.notDeepEqual(fixture(false),fixture(true));console.log('PASS authored native painting PE structure; runtime requires --native OUT MODE and personal review');}
 }
