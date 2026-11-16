@@ -1927,3 +1927,22 @@ decoding gives initial life55/55, Vitality25 and next-level threshold500.
 The earned save restores XP380, life27/55 and gold3; no stats were edited.
 Published notes: `4b5002933`, `00aea67f3`. Tested module:`04c53419…`.
 All three private attempts stopped normally with actual parent joins.
+
+## 2026-11-16: Glide menu drawn in the top-left 512x384
+
+D2Glide calls `grSstWinOpen(hwnd 0x10001, res 7 = 640x480, refresh 0, color fmt 2,
+origin 0, 2 color buffers, 0 aux)` twice for the intro (the board is closed in
+between; `_grSstWinClose@4` is not the path, the closer was not traced) and then `res 8` (800x600)
+for the menus, with the window still 640x480. The GPU stream itself is right:
+800x600 `CREATE`s, `TARGETS` and `PRESENT w=800 h=600` (`--gpu-stream-dump`).
+`glide_display_take` resizes the window and its WAT client rect to 800x600, but
+the window GDI surface is only reallocated by `gdi_window_surface_ensure`, i.e.
+on the next DC handed out, and D2 draws its menu through Glide alone. So the
+renderer back canvas stayed 640x480, and the exclusive compositor stretched the
+800x600 Glide layer to that back canvas (640x480) and then by the 800->640
+exclusive scale again: 0.64, the top-left 512x384. Every other composite path
+already drew a GPU layer at its own size; `lib/renderer.js` now does so here
+too (`test/test-gpu-layer-exclusive-mode-switch.js`). Headless repro:
+`--app=diablo2_glide_demo --batch-size=50000 --max-batches=215` with `--glide-renderer=software`
+or `--headless-gl --glide-renderer=webgl`; the menu is up by batch ~190.
+Evidence `scratch/runs/20261116-d2-glide/`.
