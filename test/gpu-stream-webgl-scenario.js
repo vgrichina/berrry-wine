@@ -20,7 +20,7 @@
   const W = 64, H = 64;
 
   // ── shader IR (src/09a8h-glide.wat $glide_ir_* / $gps_ir_operand format) ──
-  const OPC = { MOV: 1, MUL: 5, TEXLD: 66 };
+  const OPC = { MOV: 1, MUL: 5, LRP: 18, TEXLD: 66 };
   function irShader(instrs) {
     const bytes = new Uint8Array(32 + instrs.length * 128);
     const dv = new DataView(bytes.buffer);
@@ -614,7 +614,8 @@
       q.emit('SHADER', { id: 6, stage: 1, ir_bytes: FLAT_IR.length }, FLAT_IR);
       q.emit('DRAW_UP', { prim: 4, ps: 6, layout: 3, voff: v, stride: 16, count: 3, vcount: 3 });
     }, /D24S8/);
-    refuse('logic_op without the cap', (q) => { setup(q); q.emit('RASTER', Object.assign({}, BASE, { logic_op: 3 })); }, /logic_op/);
+    refuse('logic_op with blending on', (q) => { setup(q); q.emit('RASTER', Object.assign({}, BASE, { logic_op: 7, blend: 1 })); }, /logic_op/);
+    refuse('logic_op out of range', (q) => { setup(q); q.emit('RASTER', Object.assign({}, BASE, { logic_op: 17 })); }, /logic_op/);
     refuse('a non-A8B8G8R8 texture', (q) => q.emit('CREATE', { id: 9, kind: CONST.KIND_TEX2D, fmt: CONST.FMT_L8, levels: 1, width: 4, height: 4 }), /fmt/);
     refuse('a non-A8B8G8R8 readback', (q) => {
       setup(q);
@@ -623,5 +624,285 @@
     return { checks, failures };
   }
 
-  return { run, runD1, W, H };
+
+  // ── slice 9.4a: the executor features D3D9/D3D8 and OpenGL need ──
+  // Partial colour masks, logic ops (every one of the 16, including runs of
+  // overlapping primitives in one draw and stale destinations), CUBE
+  // textures, occlusion counts, projected texcoords (t0_dz) and the vertex
+  // fog LRP. Every executor must produce the exact expected bytes (tol 1).
+  const LOGIC_NAMES = ['CLEAR', 'AND', 'AND_REVERSE', 'COPY', 'AND_INVERTED', 'NOOP', 'XOR', 'OR', 'NOR', 'EQUIV',
+    'INVERT', 'OR_REVERSE', 'COPY_INVERTED', 'OR_INVERTED', 'NAND', 'SET'];
+  function logicByte(op, s, d) {
+    const n = op - 1;
+    return ((n & 1 ? s & d : 0) | (n & 2 ? s & ~d : 0) | (n & 4 ? ~s & d : 0) | (n & 8 ? ~s & ~d : 0)) & 255;
+  }
+  // GL/D3D cube face selection: dir -> [face, s, t].
+  function cubeLookup([x, y, z]) {
+    const ax = Math.abs(x), ay = Math.abs(y), az = Math.abs(z);
+    let face, sc, tc, ma;
+    if (ax >= ay && ax >= az) { face = x > 0 ? 0 : 1; sc = x > 0 ? -z : z; tc = -y; ma = ax; }
+    else if (ay >= az) { face = y > 0 ? 2 : 3; sc = x; tc = y > 0 ? z : -z; ma = ay; }
+    else { face = z > 0 ? 4 : 5; sc = z > 0 ? x : -x; tc = -y; ma = az; }
+    return [face, (sc / ma + 1) / 2, (tc / ma + 1) / 2];
+  }
+
+  function run94a(opts) {
+    const { GS, makeProducer, Executor, canvas, backend, buffer } = opts;
+    const { CONST } = GS;
+    const failures = [];
+    let checks = 0;
+    const check = (name, ok, detail) => {
+      checks++;
+      if (!ok) failures.push(`${name}${detail ? `: ${detail}` : ''}`);
+    };
+    const make = (onPresent) => (opts.makeExecutor ? opts.makeExecutor(onPresent) : new Executor({ canvas, backend, onPresent }));
+    let lastFrame = null;
+    const ex = make((f) => { lastFrame = { w: f.width, h: f.height, px: Uint8Array.from(f.pixels) }; });
+    const p = makeProducer({ ringBytes: 1 << 16, arenaBytes: 1 << 20, buffer });
+    const ring = p.ring();
+    const drain = () => GS.drain([ring], ex);
+    const emit = (op, fields, tail) => p.emit(op, fields, tail);
+    const arenaPut = (bytes) => {
+      const pos = p.arenaAlloc(bytes.length);
+      p.arenaView(pos, bytes.length).set(bytes);
+      return pos;
+    };
+    const i32s = (...v) => new Uint8Array(new Int32Array(v).buffer);
+    const elems = (list) => {
+      const out = new Uint8Array(list.length * 8), dv = new DataView(out.buffer);
+      list.forEach(([usage, index, type, offset], i) => {
+        dv.setUint8(i * 8 + 1, type); dv.setUint8(i * 8 + 2, usage); dv.setUint8(i * 8 + 3, index); dv.setUint16(i * 8 + 4, offset, true);
+      });
+      return out;
+    };
+    // L: POSITIONT f4 @0, COLOR0 D3DCOLOR @16, COLOR1 D3DCOLOR @20, TEXCOORD0 f3 @24.
+    const ID = { RT: 1, DS: 2, L: 3, FLAT: 4, TEX: 5, CUBEPS: 6, PROJ: 7, FOG: 8, SAMP: 9, CUBE: 10, TEX4: 11 };
+    const S = 36;
+    // vertex [x, y, z, rhw, argb, spec, s, t, q]
+    const pack = (verts) => {
+      const out = new Uint8Array(verts.length * S), dv = new DataView(out.buffer);
+      verts.forEach(([x, y, z, rhw, argb, spec = 0, s = 0, t = 0, q = 0], i) => {
+        const o = i * S;
+        [x, y, z, rhw].forEach((v, k) => dv.setFloat32(o + k * 4, v, true));
+        dv.setUint32(o + 16, argb >>> 0, true); dv.setUint32(o + 20, spec >>> 0, true);
+        [s, t, q].forEach((v, k) => dv.setFloat32(o + 24 + k * 4, v, true));
+      });
+      return out;
+    };
+    const QUAD = [0, 1, 2, 1, 3, 2];
+    // Quads as [x0, y0, x1, y1, at(x, y) -> [argb, spec, s, t, q]], drawn as one indexed list.
+    const quads = (ps, list) => {
+      const verts = [], indices = [];
+      for (const [x0, y0, x1, y1, at] of list) {
+        const b = verts.length;
+        for (const [x, y] of [[x0, y0], [x1, y0], [x0, y1], [x1, y1]]) verts.push([x, y, 0.5, 1, ...at(x, y)]);
+        indices.push(...QUAD.map((i) => i + b));
+      }
+      const voff = arenaPut(pack(verts));
+      const bytes = new Uint8Array(new Uint16Array(indices).buffer);
+      emit('DRAW_UP', { prim: CONST.PRIM_TRIANGLELIST, vs: 0, ps, layout: ID.L, voff, stride: S, index_size: 2, ioff: arenaPut(bytes),
+        count: indices.length, vcount: verts.length });
+    };
+    const quad = (ps, x0, y0, x1, y1, argb, rest = []) => quads(ps, [[x0, y0, x1, y1, () => [argb, ...rest]]]);
+    const BASE = {
+      depth_mode: 0, zfunc: 8, zwrite: 0, cull: 1, blend: 0, src_rgb: 2, dst_rgb: 1, src_alpha: 2, dst_alpha: 1,
+      blend_op: 1, blend_op_alpha: 1, alpha_func: 8, alpha_ref: 0, colormask: 15, fill: 3, linear: 0,
+      scissor_left: 0, scissor_top: 0, scissor_right: W, scissor_bottom: H,
+    };
+    const raster = (o) => emit('RASTER', Object.assign({}, BASE, o));
+    const clearRect = (rgba, x0, y0, x1, y1, o = {}) =>
+      emit('CLEAR', Object.assign({ mask: 1, colormask: 15, rgba, z: 1, left: x0, top: y0, right: x1, bottom: y1 }, o));
+    const present = () => {
+      emit('PRESENT', { rt: ID.RT, x: 0, y: 0, w: W, h: H, surface: 0x94 });
+      lastFrame = null;
+      drain();
+      p.store('arena_tail', p.load('arena_head'));
+      if (!lastFrame) throw new Error('PRESENT did not call onPresent');
+      return lastFrame;
+    };
+    const px = (f, x, y) => Array.from(f.px.subarray((y * f.w + x) * 4, (y * f.w + x) * 4 + 4));
+    // PRESENT shows RGB (alpha is forced opaque); READBACK checks alpha.
+    const expectPx = (name, f, x, y, want, tol = 1) => {
+      const got = px(f, x, y).slice(0, 3);
+      check(`${name} @${x},${y}`, got.every((v, i) => Math.abs(v - want[i]) <= tol), `got ${got} want ${want.slice(0, 3)}`);
+    };
+    const readRow = (y) => {
+      const dst = p.arenaAlloc(W * 4);
+      emit('READBACK', { rt: ID.RT, x: 0, y, w: W, h: 1, fmt: CONST.FMT_A8B8G8R8, dst, pitch: W * 4 });
+      drain();
+      return p.arenaView(dst, W * 4).slice();
+    };
+    // D3DCOLOR argb -> [r, g, b, a]; CLEAR rgba is r | g << 8 | b << 16 | a << 24.
+    const rgbaOf = (argb) => [(argb >>> 16) & 255, (argb >>> 8) & 255, argb & 255, argb >>> 24];
+    const clearOf = ([r, g, b, a]) => (r | (g << 8) | (b << 16) | (a << 24)) >>> 0;
+    const DST = [0x5a, 0xc3, 0x0f, 0xff], SRC = 0x8033f0aa, SRCB = rgbaOf(SRC);
+    const lop = (op, s, d) => s.map((v, i) => logicByte(op, v, d[i]));
+
+    // IR tokens (bank << 28 | modifier << 24 | swizzle/mask << 16 | index).
+    const R0 = 0x800F0000, R0S = 0x801F0000, R0RGB = 0x80070000, SRC_R0 = 0x80E40000;
+    const V0 = 0x90E40000, V1A = 0x90FF0001, C1 = 0xA0E40001, T0 = 0xB0E40000, T0DZ = 0xB9E40000;
+    const CUBE_IR = irShader([[OPC.TEXLD, R0, T0], [OPC.MUL, R0S, SRC_R0, V0]]);
+    const PROJ_IR = irShader([[OPC.TEXLD, R0, T0DZ], [OPC.MUL, R0S, SRC_R0, V0]]);
+    const FOG_IR = irShader([[OPC.MOV, R0, V0], [OPC.LRP, R0RGB, V1A, SRC_R0, C1]]);
+
+    try {
+      emit('CREATE', { id: ID.RT, kind: CONST.KIND_RT, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: W, height: H });
+      emit('CREATE', { id: ID.DS, kind: CONST.KIND_DS, fmt: CONST.FMT_D24S8, levels: 1, width: W, height: H });
+      emit('LAYOUT', { id: ID.L, count: 4, stride: S }, elems([[CONST.USAGE_POSITIONT, 0, CONST.VTYPE_FLOAT4, 0],
+        [CONST.USAGE_COLOR, 0, CONST.VTYPE_D3DCOLOR, 16], [CONST.USAGE_COLOR, 1, CONST.VTYPE_D3DCOLOR, 20],
+        [CONST.USAGE_TEXCOORD, 0, CONST.VTYPE_FLOAT3, 24]]));
+      emit('SHADER', { id: ID.FLAT, stage: 1, ir_bytes: FLAT_IR.length }, FLAT_IR);
+      emit('SHADER', { id: ID.CUBEPS, stage: 1, ir_bytes: CUBE_IR.length }, CUBE_IR);
+      emit('SHADER', { id: ID.PROJ, stage: 1, ir_bytes: PROJ_IR.length }, PROJ_IR);
+      emit('SHADER', { id: ID.FOG, stage: 1, ir_bytes: FOG_IR.length }, FOG_IR);
+      emit('SAMPLER', { id: ID.SAMP, address_u: 3, address_v: 3, min: 1, mag: 1 });
+      emit('TARGETS', { color: ID.RT, depth: ID.DS });
+      drain();
+      const caps = ring.caps();
+      check('caps logic op', (caps.flags & CONST.CAP_LOGIC_OP) !== 0, `flags ${caps.flags}`);
+      check('caps occlusion', (caps.flags & CONST.CAP_OCCLUSION) !== 0, `flags ${caps.flags}`);
+      emit('CLEAR', { mask: 7, colormask: 15, rgba: 0xff000000, z: 1, stencil: 0, left: 0, top: 0, right: W, bottom: H });
+
+      // 1. All 16 logic ops, 4 px each, over DST on rows 0..8.
+      clearRect(clearOf(DST), 0, 0, W, 8);
+      for (let op = 1; op <= 16; op++) {
+        raster({ logic_op: op });
+        quad(ID.FLAT, (op - 1) * 4, 0, op * 4, 8, SRC);
+      }
+      // 2. Runs. Rows 8..16 over DST:
+      //    a. XOR of two identical quads in ONE draw -> DST (the second reads the first's output);
+      //    b. XOR of one quad (two triangles sharing the diagonal) -> SRC ^ DST everywhere;
+      //    c. XOR in two draws on the same pixels -> DST;
+      //    d. XOR, a plain draw, XOR again on the same pixels -> green ^ SRC (stale copy);
+      //    e. XOR of 300 one-pixel-apart quads... kept small: 20 2x2 quads, one draw, half overlapped twice.
+      clearRect(clearOf(DST), 0, 8, W, 16);
+      raster({ logic_op: 7 });
+      quads(ID.FLAT, [[0, 8, 8, 16, () => [SRC]], [0, 8, 8, 16, () => [SRC]]]);
+      quad(ID.FLAT, 8, 8, 16, 16, SRC);
+      quad(ID.FLAT, 16, 8, 24, 16, SRC);
+      quad(ID.FLAT, 16, 8, 24, 16, SRC);
+      raster({});
+      quad(ID.FLAT, 24, 8, 32, 16, 0xff00ff00);
+      raster({ logic_op: 7 });
+      quad(ID.FLAT, 24, 8, 32, 16, SRC);
+      {
+        const list = [];
+        for (let i = 0; i < 8; i++) list.push([32 + i * 4, 8, 34 + i * 4, 10, () => [SRC]]);
+        for (let i = 0; i < 4; i++) list.push([32 + i * 8, 8, 34 + i * 8, 10, () => [SRC]]); // second hit on even quads
+        quads(ID.FLAT, list);
+      }
+      // 3. Partial colour masks, rows 16..24 over DST.
+      clearRect(clearOf(DST), 0, 16, W, 24);
+      raster({ colormask: 5 });
+      quad(ID.FLAT, 0, 16, 8, 24, 0xffffffff);
+      raster({ colormask: 7 });
+      quad(ID.FLAT, 8, 16, 16, 24, 0x00ffffff);
+      raster({ colormask: 2 });
+      quad(ID.FLAT, 16, 16, 24, 24, 0x00000000);
+      clearRect(0xffffffff, 24, 16, 32, 24, { colormask: 10 });
+      raster({ colormask: 1, logic_op: 7 });
+      quad(ID.FLAT, 32, 16, 40, 24, SRC);
+      raster({ colormask: 0, logic_op: 7 });
+      quad(ID.FLAT, 40, 16, 48, 24, SRC);
+      const row4 = readRow(4), row20 = readRow(20);
+      let f = present();
+      for (let op = 1; op <= 16; op++) {
+        const want = lop(op, SRCB, DST), x = (op - 1) * 4 + 1;
+        expectPx(`logic ${LOGIC_NAMES[op - 1]}`, f, x, 4, want);
+        check(`logic ${LOGIC_NAMES[op - 1]} alpha (READBACK)`, Math.abs(row4[x * 4 + 3] - want[3]) <= 1, `got ${row4[x * 4 + 3]} want ${want[3]}`);
+      }
+      check('colormask R|B keeps alpha (READBACK)', row20[4 * 4 + 3] === DST[3], `${row20[4 * 4 + 3]}`);
+      check('colormask RGB keeps alpha 0xff under a 0x00 source (READBACK)', row20[12 * 4 + 3] === DST[3], `${row20[12 * 4 + 3]}`);
+      check('colormask R with XOR keeps alpha (READBACK)', row20[36 * 4 + 3] === DST[3], `${row20[36 * 4 + 3]}`);
+      const xor = lop(7, SRCB, DST);
+      expectPx('logic XOR twice in one draw', f, 4, 12, DST);
+      expectPx('logic XOR one quad, first triangle', f, 9, 9, xor);
+      expectPx('logic XOR one quad, second triangle', f, 14, 14, xor);
+      expectPx('logic XOR one quad, on the diagonal', f, 12, 12, xor);
+      expectPx('logic XOR in two draws', f, 20, 12, DST);
+      expectPx('logic XOR after a plain draw', f, 28, 12, lop(7, SRCB, [0, 255, 0, 255]));
+      expectPx('logic XOR small quads, hit twice', f, 33, 9, DST);
+      expectPx('logic XOR small quads, hit once', f, 37, 9, xor);
+      expectPx('logic XOR small quads, gap', f, 35, 9, DST);
+      expectPx('colormask R|B', f, 4, 20, [255, DST[1], 255, DST[3]]);
+      expectPx('colormask RGB keeps alpha', f, 12, 20, [255, 255, 255, DST[3]]);
+      expectPx('colormask G only', f, 20, 20, [DST[0], 0, DST[2], DST[3]]);
+      expectPx('clear colormask G|A', f, 28, 20, [DST[0], 255, DST[2], 255]);
+      expectPx('colormask R with XOR', f, 36, 20, [xor[0], DST[1], DST[2], DST[3]]);
+      expectPx('colormask 0 with XOR', f, 44, 20, DST);
+
+      // 4. CUBE 2x2: face f texel (i, j) = [40f + 20, 60(i + 2j) + 10, 0x80, 255].
+      emit('CREATE', { id: ID.CUBE, kind: CONST.KIND_CUBE, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: 2, height: 2 });
+      const texel = (face, i, j) => [40 * face + 20, 60 * (i + 2 * j) + 10, 0x80, 255];
+      for (let face = 0; face < 6; face++) {
+        const t = new Uint8Array(16);
+        for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) t.set(texel(face, i, j), (j * 2 + i) * 4);
+        emit('UPLOAD', { id: ID.CUBE, face, level: 0, x: 0, y: 0, w: 2, h: 2, pitch: 8, src: arenaPut(t), bytes: 16 });
+      }
+      emit('BIND', { count: 1 }, i32s(0, ID.CUBE, ID.SAMP));
+      raster({});
+      const dirs = [[1, 0.5, 0.5], [1, -0.5, 0.5], [-1, 0.5, -0.5], [0.5, 1, 0.5], [-0.5, -1, 0.5],
+        [0.5, -0.5, 1], [-0.5, 0.5, -1], [1, -0.5, -0.5]];
+      dirs.forEach((d, k) => quad(ID.CUBEPS, k * 8, 24, k * 8 + 8, 32, 0xffffffff, [0, ...d]));
+      // 5. Projected texcoords (texld t0_dz): (s, t, q) = (1.5, 0.5, 2) samples
+      //    texel (0.75, 0.25) of a 2x2; unprojected it would clamp to (1, 0.5).
+      emit('CREATE', { id: ID.TEX4, kind: CONST.KIND_TEX2D, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: 4, height: 4 });
+      {
+        const t = new Uint8Array(64);
+        for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) t.set([i * 60 + 10, j * 60 + 10, 0x40, 255], (j * 4 + i) * 4);
+        emit('UPLOAD', { id: ID.TEX4, face: 0, level: 0, x: 0, y: 0, w: 4, h: 4, pitch: 16, src: arenaPut(t), bytes: 64 });
+      }
+      emit('BIND', { count: 1 }, i32s(0, ID.TEX4, ID.SAMP));
+      quad(ID.PROJ, 0, 32, 8, 40, 0xffffffff, [0, 1.25, 0.25, 2]);
+      quad(ID.PROJ, 8, 32, 16, 40, 0xffffffff, [0, 0.25, 1.25, 2]);
+      // 6. Vertex fog / specular linkage: LRP r0.rgb, v1.a, v0, c1.
+      const consts = new Float32Array(8); consts.set([0, 0, 1, 1], 4); // c1 = blue fog
+      emit('CONSTS', { stage: 1, first: 0, count: 2 }, new Uint8Array(consts.buffer));
+      quad(ID.FOG, 16, 32, 24, 40, 0xffff0000, [0x33000000]);
+      quad(ID.FOG, 24, 32, 32, 40, 0xffff0000, [0xff000000]);
+      f = present();
+      dirs.forEach((d, k) => {
+        const [face, s, t] = cubeLookup(d);
+        expectPx(`cube dir ${d} face ${face}`, f, k * 8 + 4, 28, texel(face, Math.floor(s * 2), Math.floor(t * 2)));
+      });
+      expectPx('projected t0_dz (0.625, 0.125)', f, 4, 36, [2 * 60 + 10, 10, 0x40, 255]);
+      expectPx('projected t0_dz (0.125, 0.625)', f, 12, 36, [10, 2 * 60 + 10, 0x40, 255]);
+      const fogA = 0x33 / 255;
+      expectPx('vertex fog lrp, fog 0x33', f, 20, 36, [Math.round(255 * fogA), 0, Math.round(255 * (1 - fogA)), 255], 2);
+      expectPx('vertex fog lrp, no fog', f, 28, 36, [255, 0, 0, 255]);
+
+      // 7. Occlusion: counts pixels passing depth/stencil, colour mask aside.
+      const dsts = [];
+      const query = (body) => {
+        const dst = p.arenaAlloc(4);
+        emit('FENCE', { kind: CONST.FENCEK_OCCLUSION_BEGIN, slot: 1 });
+        body();
+        emit('FENCE', { kind: CONST.FENCEK_OCCLUSION_END, slot: 2, dst });
+        dsts.push(dst);
+      };
+      emit('CLEAR', { mask: 2, colormask: 15, rgba: 0, z: 1, left: 0, top: 0, right: W, bottom: H });
+      raster({ depth_mode: 1, zfunc: 2, zwrite: 1 });
+      query(() => quad(ID.FLAT, 0, 40, 8, 48, 0xffffffff));                         // 64
+      query(() => quads(ID.FLAT, [[0, 40, 16, 48, () => [0xff00ff00]]]));           // 64 at z 0.5 vs 0.5: LESS fails left half
+      raster({ depth_mode: 1, zfunc: 2, zwrite: 1, colormask: 0 });
+      // 64 + 0: the second copy in the same draw fails LESS.
+      query(() => quads(ID.FLAT, [[16, 40, 24, 48, () => [0xffffffff]], [16, 40, 24, 48, () => [0xffffffff]]]));
+      raster({ depth_mode: 0, logic_op: 7 });
+      query(() => quads(ID.FLAT, [[24, 40, 28, 44, () => [SRC]], [24, 40, 28, 44, () => [SRC]], [32, 40, 36, 44, () => [SRC]]])); // 48
+      query(() => {});                                                               // 0
+      f = present();
+      const counts = dsts.map((d) => new DataView(p.arenaView(d, 4).slice().buffer).getUint32(0, true));
+      check('occlusion counts', JSON.stringify(counts) === JSON.stringify([64, 64, 64, 48, 0]), `got ${counts}`);
+      expectPx('occlusion: colour drawn after the count pass', f, 4, 44, [255, 255, 255, 255]);
+      expectPx('occlusion: right half drawn', f, 12, 44, [0, 255, 0, 255]);
+      expectPx('occlusion: logic XOR twice under a query', f, 25, 41, [0, 0, 0, 255]);
+      expectPx('occlusion: logic XOR once under a query', f, 33, 41, lop(7, SRCB, [0, 0, 0, 255]));
+    } catch (e) {
+      failures.push(`scenario threw: ${e && e.stack || e}`);
+    }
+    ex.close();
+    return { checks, failures, stats: ex.stats ? ex.stats() : null };
+  }
+
+  return { run, runD1, run94a, W, H };
 });

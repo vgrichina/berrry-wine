@@ -205,6 +205,12 @@ const D3D_WORKER = hasFlag('d3d-worker');
 const D3DIM_GPU = hasFlag('d3dim-gpu');
 if (D3DIM_GPU && D3D_WORKER) { console.error('--d3dim-gpu and --d3d-worker are exclusive'); process.exit(2); }
 if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --headless-gl'); process.exit(2); }
+// --gl-gps: put software GL (--gl-renderer=software) on GPU stream v2: the
+// WAT producer (src/09a8gt-gl-gps.wat) lowers its screen-space triangles,
+// clears and swaps into a ring the software executor drains.
+// --gl-gps=webgl picks the WebGL executor (needs --headless-gl).
+const GL_GPS = hasFlag('gl-gps') || getArg('gl-gps', null) !== null;
+const GL_GPS_BACKEND = getArg('gl-gps', null) || 'software';
 if (args.some(arg => arg === '--gl-encoder' || arg.startsWith('--gl-encoder='))) {
   throw new Error('--gl-encoder was removed; OpenGL encoding always runs in WAT');
 }
@@ -2805,6 +2811,7 @@ async function main() {
       || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl'),
     glBackend: GL_RENDERER || 'webgl',
     glideBackend: GLIDE_RENDERER,
+    glGpsBackend: GL_GPS_BACKEND,
     gpuStreamDump: GPU_STREAM_DUMP,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
     createD3DRenderWorker: () => {
@@ -5242,6 +5249,10 @@ async function main() {
   // GPU stream v2: src/09abg-d3dim-gps.wat lowers D3DIM itself and kicks a
   // ring that lib/d3dim-host.js drains (host-imports gpu_stream_kick).
   if (D3DIM_GPU) instance.exports.d3dim_gpu_enable(1);
+  if (GL_GPS) instance.exports.gl_gps_enable(1);
+  // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
+  // turns it off there); the WAT default and the CLI default are off.
+  if (D3DIM_GPU && hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
   if (GUEST_PAGE_STATS) {
     if (!instance.exports.reset_guest_page_stats || !instance.exports.get_guest_page_stat) {
       throw new Error('--guest-page-stats requires the offline artifact from ' +
@@ -13090,11 +13101,27 @@ if (VERBOSE) {
         (sw.gl_sw_bitmap && sw.gl_sw_bitmap() ? ` bitmap=0x${(sw.gl_sw_bitmap() >>> 0).toString(16)}` : ''));
     }
   }
+  if (GL_GPS) {
+    // src/09a8gt-gl-gps.wat gl_gps_stat: counters, decline reasons 16+r,
+    // readback sites 48+s.
+    const st = i => instance.exports.gl_gps_stat(i) >>> 0;
+    const names = ['draws', 'tris', 'span-quads', 'clears', 'presents', 'readbacks', 'readback-rows',
+      'rt-uploads', 'rt-upload-rows', 'tex-uploads', 'gpu-frames', 'sw-frames', 'syncs', 'tex-hits',
+      'declines', 'declined-frames'];
+    const reasons = [];
+    for (let r = 1; r < 32; r++) if (st(16 + r)) reasons.push(`${r}:${st(16 + r)}`);
+    const sites = [];
+    for (let s = 0; s < 16; s++) if (st(48 + s)) sites.push(`${s}:${st(48 + s)}`);
+    console.log(`[gl-gps] ${names.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
+      ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
+      ` active=${instance.exports.gl_gps_active()}`);
+  }
 
   if (PNG_OUT && renderer) {
     // GPU stream D3DIM presents without reading back: land every GPU target
     // in its DIB before reading surfaces out of memory.
     if (D3DIM_GPU && instance.exports.d3dim_gps_sync_all) instance.exports.d3dim_gps_sync_all();
+    if (GL_GPS) instance.exports.gl_gps_sync_front();
     const { mem, surfaces } = getDxSurfaceManifest();
     const wantSlot = DX_SLOT === null ? null : (parseInt(DX_SLOT, 10) | 0);
     // Software GL drawing into a PFD_DRAW_TO_BITMAP DIB leaves only helper

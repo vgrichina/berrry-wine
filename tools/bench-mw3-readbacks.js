@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 'use strict';
 
-// Eager synchronization only. The full arm changes one served constructor option;
-// neither guest files nor shipped renderer sources are modified.
+// MW3 cockpit readbacks on the WAT D3DIM producer (src/09abg-d3dim-gps.wat):
+// d3dim_gps_stat readbacks by site, bytes and declines per presented frame.
+// Eager Lock sync by default (?no-lazy-sync); --lazy-sync measures the shipped
+// lazy default. The old --full-readbacks arm patched the deleted JS executor
+// (lib/d3dim-gpu.js) and is retired.
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -15,15 +18,16 @@ const gameplayRoute = require('./mw3-gameplay-route');
 const ROOT = path.resolve(__dirname, '..');
 const arg = (name, fallback) => process.argv.find(a => a.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
 if (process.argv.includes('--help')) {
-  console.log('Usage: node tools/bench-mw3-readbacks.js [--full-readbacks] [--seconds=15] [--samples=1]\n' +
-    '  [--warmup-ms=15000] [--out=build/mw3-readbacks-bounded] [--wasm=FILE]\n' +
+  console.log('Usage: node tools/bench-mw3-readbacks.js [--lazy-sync] [--seconds=15] [--samples=1]\n' +
+    '  [--warmup-ms=15000] [--out=build/mw3-readbacks-eager] [--wasm=FILE]\n' +
     '  [--swiftshader] [--no-sandbox] [--source-commit=REV]\n' +
     'Headful Chrome (CHROME env), threads and shared WebGL worker required. Creates pilot ACE,\n' +
-    'deploys via the existing cockpit route, then measures without image polling. No lazy sync.\n' +
+    'deploys via the existing cockpit route, then measures without image polling.\n' +
     'SwiftShader requires explicit opt-in; quote its byte counts, not hardware-GPU FPS.');
   process.exit(0);
 }
-const full = process.argv.includes('--full-readbacks');
+if (process.argv.includes('--full-readbacks')) { console.error('--full-readbacks: retired with lib/d3dim-gpu.js (GPU stream v2)'); process.exit(2); }
+const lazy = process.argv.includes('--lazy-sync');
 const softwareGpu = process.argv.includes('--swiftshader');
 const seconds = Number(arg('seconds', '15'));
 const samples = Number(arg('samples', '1'));
@@ -31,21 +35,31 @@ const warmup = Number(arg('warmup-ms', '15000'));
 assert(Number.isFinite(seconds) && seconds > 0);
 assert(Number.isInteger(samples) && samples > 0);
 assert(Number.isFinite(warmup) && warmup >= 0);
-const output = path.resolve(ROOT, arg('out', `build/mw3-readbacks-${full ? 'full' : 'bounded'}`));
+const output = path.resolve(ROOT, arg('out', `build/mw3-readbacks-${lazy ? 'lazy' : 'eager'}`));
 assert(!fs.existsSync(path.join(output, 'result.json')), 'Choose a fresh --out directory');
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const wasmPath = path.resolve(ROOT, arg('wasm', 'build/wine-assembly.wasm'));
 const wasm = fs.readFileSync(wasmPath);
-const gpu = fs.readFileSync(path.join(ROOT, 'lib/d3dim-gpu.js'), 'utf8');
-const anchor = 'this.boundedReadback = options.boundedReadback !== false;';
-assert.equal(gpu.split(anchor).length, 2, 'Unique bounded-readback constructor option required');
-const servedGpu = full ? gpu.replace(anchor, 'this.boundedReadback = false;') : gpu;
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function observe(page) {
-  return page.evaluate(() => {
+  return page.evaluate(async () => {
     const wine = runningApps.find(app => app.name === 'mw3')?.wine;
     const owner = wine?.hostCtx?.sharedD3DIM;
-    const draw = owner?.stats || wine?.guestWorker?.d3dStats;
+    // WAT producer counters; Threads puts the live instance in the Worker.
+    const stat = wine?.guestWorker ? i => wine.guestWorker.callExport('d3dim_gps_stat', i)
+      : wine?.instance?.exports.d3dim_gps_stat ? i => wine.instance.exports.d3dim_gps_stat(i) : null;
+    let draw = null;
+    if (stat) {
+      const v = [];
+      for (let i = 0; i < 43; i++) v.push((await stat(i)) >>> 0);
+      const sites = ['global', 'getDC', 'bltSrc', 'bltDst', 'lock', 'texLoad', 'swDraw', 'release', 'cpuPresent',
+        'parkLand', 'prepare', 'texFromRT', 'retarget', 'capture', 'lazy', 'other'];
+      const why = ['unused0', 'texture', 'zfunc', 'blendFactor', 'noDepth', 'clearTarget', 'clearBackground', 'unused7'];
+      draw = { draws: v[0], fallbacks: v[1], readbacks: v[2], readbackRows: v[3], flips: v[10], primitives: v[15],
+        readbackBytes: v[34] };
+      sites.forEach((n, i) => { draw['site_' + n] = v[16 + i]; });
+      why.forEach((n, i) => { draw['decline_' + n] = v[35 + i]; });
+    }
     return {
       at: performance.now(), running: !!wine?.running, hidden: document.hidden,
       isolated: crossOriginIsolated, backend: wine?.threadManager?.backend,
@@ -58,11 +72,8 @@ async function observe(page) {
 }
 function validate(state) {
   assert(state.running && !state.hidden && state.isolated && state.backend === 'worker', 'Visible isolated worker gameplay required');
-  assert(state.endpoints.some(e => e.api === 'legacy' && e.backend === 'webgl'), 'Actual shared legacy D3DIM WebGL endpoint required');
-  assert(state.d3d?.draws > 0 && state.d3d?.syncs > 0, 'Actual GPU draws and eager readbacks required');
-  assert.equal(state.d3d.errors || 0, 0, 'GPU errors');
-  assert(state.glRenderer, 'Actual GL renderer string required');
-  if (!softwareGpu) assert(!/swiftshader|llvmpipe|software|unknown/i.test(state.glRenderer), 'Software GL requires --swiftshader');
+  assert(state.d3d?.draws > 0, 'Actual WAT-producer GPU draws required (d3dim_gps_stat)');
+  if (state.glRenderer && !softwareGpu) assert(!/swiftshader|llvmpipe|software|unknown/i.test(state.glRenderer), 'Software GL requires --swiftshader');
 }
 
 (async () => {
@@ -70,9 +81,9 @@ function validate(state) {
   const report = {
     startedAt: new Date().toISOString(), app: 'mw3', route: 'tools/mw3-gameplay-route.js',
     commit: arg('source-commit', null) || execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim(),
-    fullReadbacks: full, boundedReadbacks: !full, lazySync: false, softwareGpu, headful: true,
+    lazySync: lazy, softwareGpu, headful: true,
     seconds, samples, warmup, wasmPath, wasmSha256: digest(wasm),
-    gpuSha256: digest(gpu), servedGpuSha256: digest(servedGpu),
+    producerSha256: digest(fs.readFileSync(path.join(ROOT, 'src/09abg-d3dim-gps.wat'))),
     fixtureSha256: digest(fs.readFileSync(path.join(ROOT, 'test/binaries/shareware/mw3/ex/Program_Files/mech3demo.exe'))),
     sourceSha256: Object.fromEntries(['lib/d3dim-render-worker.js', 'lib/render-worker.js', 'lib/d3d-render-worker.js',
       'lib/guest-worker.js', 'lib/region-map.generated.js', 'tools/mw3-gameplay-route.js'].map(file =>
@@ -81,7 +92,6 @@ function validate(state) {
     loadAtLaunch: os.loadavg(), results: [], errors: [],
     note: 'Stationary cockpit still simulates; independent launches are not identical geometry. No image polling or profiling in measured windows. GPU counters arrive at normal game fences.'
   };
-  fs.writeFileSync(path.join(output, 'served-d3dim-gpu.js'), servedGpu);
   fs.writeFileSync(path.join(output, 'console.log'), '');
   let browser, page, server;
   try {
@@ -90,8 +100,7 @@ function validate(state) {
       allowedRealRoots: [fs.realpathSync(path.join(ROOT, 'test/binaries'))],
       handleRequest(req, res) {
         const url = new URL(req.url, 'http://localhost').pathname;
-        const value = url === '/lib/d3dim-gpu.js' ? ['application/javascript', servedGpu]
-          : url === '/build/wine-assembly.wasm' ? ['application/wasm', wasm] : null;
+        const value = url === '/build/wine-assembly.wasm' ? ['application/wasm', wasm] : null;
         if (!value) return false;
         res.writeHead(200, { 'Content-Type': value[0], 'Cache-Control': 'no-store',
           'Cross-Origin-Resource-Policy': 'same-origin', 'Cross-Origin-Embedder-Policy': 'require-corp' });
@@ -116,7 +125,7 @@ function validate(state) {
       if (/worker thread \d+ trapped|UNIMPLEMENTED API:|host import .* threw|\[launchApp\] failed:|FATAL:/.test(line)) report.errors.push(line);
     });
     page.on('pageerror', error => report.errors.push(String(error)));
-    await page.goto(`http://127.0.0.1:${server.address().port}/?debug&threads&d3d-renderer=webgl`, { waitUntil: 'networkidle2', timeout: 90000 });
+    await page.goto(`http://127.0.0.1:${server.address().port}/?debug&threads&d3d-renderer=webgl${lazy ? '' : '&no-lazy-sync'}`, { waitUntil: 'networkidle2', timeout: 90000 });
     await page.bringToFront();
     await page.evaluate(async () => {
       window.__mw3Presents = 0;
@@ -149,7 +158,7 @@ function validate(state) {
       const after = await observe(page), cpuAfter = await cpu(), loadAfter = os.loadavg();
       validate(before); validate(after);
       const frames = after.presents - before.presents, wallSeconds = (after.at - before.at) / 1000;
-      assert(frames > 0 && after.guest.triangles > before.guest.triangles, 'Cockpit presents and geometry must advance');
+      assert(frames > 0 && after.d3d.draws > before.d3d.draws, 'Cockpit presents and GPU draws must advance');
       assert.equal(report.errors.length, 0, report.errors.join('\n'));
       const delta = Object.fromEntries(Object.keys(after.d3d).filter(k => typeof after.d3d[k] === 'number' &&
         typeof before.d3d[k] === 'number').map(k => [k, after.d3d[k] - before.d3d[k]]));

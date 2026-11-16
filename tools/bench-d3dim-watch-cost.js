@@ -13,7 +13,7 @@ const { compileSrcWasm } = require('../test/compile-src');
 // Archived pre-implementation experiment. Adding these synthetic hooks on top
 // of production tracking would double-count its write cost and mislabel arms.
 if (fs.existsSync(path.join(__dirname, '../src/03a-page-watch.wat'))) {
-  throw new Error('Historical watch-cost prototype requires the pre-tracker source. Use bench-d3dim-gameplay.js to measure the production tracker.');
+  throw new Error('Historical watch-cost prototype requires the pre-tracker source. bench-d3dim-gameplay.js went with lib/d3dim-gpu.js; tools/bench-lazy-games.js and tools/bench-mw3-readbacks.js read the WAT producer counters.');
 }
 const out = path.resolve(process.argv[2] || 'build/d3dim-watch-cost');
 fs.mkdirSync(out, { recursive: true });

@@ -58,12 +58,16 @@ const workerSource = originalWorker.replace(seam, `
         armed: lazyBenchExports.get_d3dim_lazy_armed(),
         touched: lazyBenchExports.get_d3dim_lazy_touched(),
         untouched: lazyBenchExports.get_d3dim_lazy_untouched(),
-        d3d: d3dCommands?.snapshot() || null
+        d3d: d3dCommands?.snapshot() || null,
+        // WAT producer counters (src/09abg-d3dim-gps.wat d3dim_gps_stat 0..42:
+        // readbacks by site 16..31, bytes 34, declines by reason 35..42).
+        gps: lazyBenchExports.d3dim_gps_stat
+          ? Array.from({ length: 43 }, (_, i) => lazyBenchExports.d3dim_gps_stat(i) >>> 0) : null
       });`);
 fs.writeFileSync(path.join(output, 'guest-worker.js'), workerSource);
 const report = { app, lazy: shippedDefault ? !noLazySync : lazy, shippedDefault, traceFences, seconds, samples, started: new Date().toISOString(),
   wasmSha256: hash(wasm), workerSha256: hash(originalWorker), servedWorkerSha256: hash(workerSource),
-  sourceSha256: Object.fromEntries(['lib/d3dim-gpu.js', 'lib/d3d-command-stream.js',
+  sourceSha256: Object.fromEntries(['src/09abg-d3dim-gps.wat', 'lib/d3d-command-stream.js',
     'lib/d3d-render-worker.js', 'lib/d3dim-render-worker.js', 'lib/region-map.generated.js',
     'host.js', 'index.html', 'lib/guest-thread-host.js', 'lib/thread-manager.js',
     'tools/mw3-gameplay-route.js'].map(f => [f, hash(fs.readFileSync(path.join(ROOT, f)))])),

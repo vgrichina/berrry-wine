@@ -111,7 +111,7 @@ async function main() {
   for (const file of ['before.png', 'after.png', 'presentation-samples.json']) {
     if (fs.existsSync(path.join(out, file))) throw new Error('Refusing to overwrite evidence: ' + file);
   }
-  const proofFiles = ['host.js', 'lib/perf-hud.js', 'lib/d3dim-gpu.js',
+  const proofFiles = ['host.js', 'lib/perf-hud.js', 'src/09abg-d3dim-gps.wat',
     'lib/apps.js', 'tools/measure-gameplay-presentations.js'];
   const source = { commit: git('rev-parse', 'HEAD'), status: git('status', '--porcelain'),
     trackedDiffSha256: sha256(execFileSync('git', ['diff', 'HEAD', '--binary'], { cwd: ROOT })),
@@ -167,8 +167,11 @@ async function main() {
       return { atMs: performance.now(), visibility: document.visibilityState,
         presentsTotal: snap.presentsTotal, uploadsTotal: snap.uploadsTotal,
         blocksTotal: snap.blocksTotal, logicalMetric: snap.logicalFps,
-        gpu: window.wine.guestWorker ? window.wine.guestWorker.d3dStats ?? null : window.wine.d3dimGpu?.snapshot?.() ?? null,
-        gpuSource: window.wine.guestWorker ? "guestWorker.d3dStats (asynchronously merged backend census)" : "d3dimGpu.snapshot (local backend)",
+        gpu: window.wine.guestWorker ? window.wine.guestWorker.d3dStats ?? null
+          : window.wine.instance?.exports?.d3dim_gps_stat
+            ? Array.from({ length: 43 }, (_, i) => window.wine.instance.exports.d3dim_gps_stat(i) >>> 0) : null,
+        gpuSource: window.wine.guestWorker ? "guestWorker.d3dStats (asynchronously merged backend census)"
+          : "d3dim_gps_stat 0..42 (WAT producer, src/09abg-d3dim-gps.wat)",
         visibilityEvents: [...state.visibility] };
     }, token);
     report.samples.push(await sample());

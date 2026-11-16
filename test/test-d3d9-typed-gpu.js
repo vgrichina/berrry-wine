@@ -24,7 +24,10 @@ const assert=require('assert'),path=require('path'),puppeteer=require('puppeteer
      [2,0x80010000,0x80e40000,0xa0000001], // red += c1.x
      [39], [43], [1,0xd00f0000,0x80e40000],
     ].map(([opcode,...args],offset)=>({opcode,args,offset:offset+1}))};
-    const draw={vertexShader:ir,pixelShader:new Uint32Array([0xffff0101,1,0x800f0000,0x90e40000,0xffff]),
+    // ps1.x tokens lower only through WAT (09af1), absent from this page; the
+    // pixel stage rides the same test hook as the projected ps_1_4 subset.
+    const draw={vertexShader:ir,pixelShader:{irVersion:1,stage:'pixel',version:0xffff0104,
+     instructions:[{opcode:1,args:[0x800f0000,0x90e40000],offset:1}]},
      primitive:4,primitiveCount:1,stride:16,
      vertices:new Uint8Array(new Float32Array([-1,-1,.25,1,3,-1,.25,1,-1,3,.25,1]).buffer),
      attributes:[{register:0,type:3,offset:0}],

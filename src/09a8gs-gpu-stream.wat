@@ -260,8 +260,8 @@
   ;; channel is the table (table fog). blend 0 = write the source; 1 = blend
   ;; with blend_op/blend_op_alpha (D3DBLENDOP 1..5). Stencil (D3DSTENCILOP /
   ;; D3DCMP) needs a D24S8 depth target; two_sided uses the ccw_* set for
-  ;; counter-clockwise (in pixel space) triangles. logic_op 0 = off;
-  ;; nonzero is optional (GPS_CAP_LOGIC_OP), refused when unsupported.
+  ;; counter-clockwise (in pixel space) triangles. logic_op 0 = off; 1..16 =
+  ;; 1 + (GL logic op - GL_CLEAR), needs GPS_CAP_LOGIC_OP and blend 0.
   ;; Depth: depth_mode 1 tests interpolated z (0..1), biased by z_bias plus
   ;; slope_bias * max |dz/dx|,|dz/dy| (D3D DEPTHBIAS / SLOPESCALEDEPTHBIAS);
   ;; depth_mode 2 tests interpolated rhw stored as the 16-bit floating W
