@@ -417,7 +417,7 @@ async function runPublicRanges(){
       state.cells.push({name,mode:'software',result});save();console.log('PASS ranges software '+name);
     }
     const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','render-clear','d3d9-backend','d3dim-gpu'];
     server=await require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
       const url=new URL(req.url,'http://localhost').pathname;
       res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');

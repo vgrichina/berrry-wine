@@ -513,7 +513,7 @@ function uncorrectedCenterControl(){
 
 async function createServer(getWasm,getNegative=()=>null,onInjection=()=>{},onServe=()=>{}){
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','render-clear','d3d9-backend','d3dim-gpu'];
   return require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
     // The custom handler runs before static-server's ordinary header path.
     res.setHeader('Cross-Origin-Opener-Policy','same-origin');

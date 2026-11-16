@@ -45,7 +45,7 @@ const fixtureSource=base.browserFixture.toString().replace(
     if(mode==='worker'&&!config.stateblocks&&!config.immediate){`);
 assert.notEqual(fixtureSource,base.browserFixture.toString());
 const fixture=(0,eval)('('+fixtureSource+')');
-const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','render-clear','d3d9-backend','d3dim-gpu'];
 const pe=fs.readFileSync(root+'/test/binaries/calc.exe');
 const config={...base.plan(),imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),thunkBase:require(root+'/lib/region-map.generated').BASE.THUNK_BASE,
  factoryId:require(root+'/src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};

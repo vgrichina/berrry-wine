@@ -305,7 +305,7 @@ async function runtime() {
   assert(out,'FRAMEBUFFER_EVIDENCE must name an ignored run directory');
   fs.mkdirSync(out,{recursive:true});
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-  const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+  const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','render-clear','d3d9-backend','d3dim-gpu'];
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   const config={...base.plan(),immediate:true,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,

@@ -102,6 +102,7 @@
 (include "09ac-handlers-d3d8.wat")
 (include "09ad-handlers-d3d9.wat")
 (include "09ae-d3d9-resources.wat")
+(include "09ae1-d3d9-texture-decode.wat")
 (include "09af-d3d-shader-ir.wat")
 (include "09ag-d3d-shader-vm.wat")
 (include "09ah-d3d-software.wat")

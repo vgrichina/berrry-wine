@@ -481,8 +481,7 @@
                 (br $rows)))
               (local.set $i (i32.add (local.get $i) (i32.const 1)))
               (br $rects)))
-            (local.set $row (i32.load offset=24 (local.get $d)))
-            (i32.store (local.get $row) (i32.add (i32.load (local.get $row)) (i32.const 1)))
+            (call $d3d9_texture_touch (i32.load offset=24 (local.get $d)))
             (local.set $hr (i32.const 0))
             (br $done)))))
       ;; A colour target is on one side: one rect goes through UpdateSurface.

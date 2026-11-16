@@ -88,11 +88,11 @@ function boundedRead(file) {
 }
 function producer(code) {
   const host=require.resolve('../lib/d3d9-host'),helper=require.resolve('../tools/d3d9-rgba-benchmark');
-  const source=boundedRead(host),anchor='const src=new Uint8Array(memory,g2w(bits),byteLength);';
+  const source=boundedRead(host),anchor='const bits=u32(m+16),byteLength=u32(m+12),seq=u32(m+28);',sourceView='const src=new Uint8Array(memory,g2w(bits),byteLength);';
   assert.equal(source.split(anchor).length,2);
   const saved=[host,helper].map(p=>[p,require.cache[p]]);
   function load(file,body){const m=new Module(file,module);m.filename=file;m.paths=Module._nodeModulePaths(path.dirname(file));require.cache[file]=m;m._compile(body,file);m.loaded=true;return m.exports;}
-  try {load(host,source.replace(anchor,anchor+code));return load(helper,boundedRead(helper));}
+  try {load(host,source.replace(anchor,anchor+sourceView+code));return load(helper,boundedRead(helper));}
   finally {for(const[p,m]of saved){if(m)require.cache[p]=m;else delete require.cache[p];}}
 }
 for(const kind of ['compound','destructuring'])test(`${kind} key throw restores actual producer hooks and observer scope`,async()=>{
@@ -109,8 +109,8 @@ for(const kind of ['compound','destructuring'])test(`${kind} key throw restores 
     f.bridge.indexedFault=false;
     const recovery=h.measure(f);await f.drain();
     assert.equal(recovery.backingAllocationBytes,4096);
-    assert.throws(()=>h.budget(recovery,f.bytes,f.bytes,true),/backing allocation/);
-    const warm=h.measure(f);await f.drain();h.budget(warm,f.bytes,f.bytes,true);
+    assert.throws(()=>h.budget(recovery,f.bytes,0,true),/backing allocation/);
+    const warm=h.measure(f);await f.drain();h.budget(warm,f.bytes,0,true);
     assert.equal(warm.indexedSourceReads,0);assert.deepEqual(f.seen.at(-1).pixels,f.expected());
   } finally {await f.close();}
 });

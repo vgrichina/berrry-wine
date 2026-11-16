@@ -2,7 +2,9 @@
 'use strict';
 
 // RENDER-PERF-GATE: the exported producer, queue and endpoint, with only the
-// final device replaced by a recording sink. No browser, GPU or Wasm is used.
+// final device replaced by a recording sink. No browser or GPU is used; the
+// texture decode is the real WAT (src/09ae1-d3d9-texture-decode.wat) built
+// standalone, decoding in place in the fixture's guest memory (slice 9.1).
 const assert = require('node:assert/strict');
 const {performance} = require('node:perf_hooks');
 const {Bridge: NativeBridge} = require('../lib/d3d9-host');
@@ -10,6 +12,7 @@ const operationObserver = require('./d3d9-operation-observer').create(require.re
 const {Bridge} = operationObserver.exports;
 const Worker = require('../lib/d3d9-render-worker');
 const {OPCODES: OP} = require('../lib/d3d-command-stream');
+const {inPlace} = require('../test/helpers/wat-texture-decoder');
 const U8 = Uint8Array;
 const typedArrayPrototype = Object.getPrototypeOf(U8.prototype);
 const viewField = Object.fromEntries(['buffer','byteOffset','byteLength'].map(key =>
@@ -17,7 +20,9 @@ const viewField = Object.fromEntries(['buffer','byteOffset','byteLength'].map(ke
 
 function fixture(side, options = {}, observe = true) {
   const bytes = side * side * 4;
-  let memory = new ArrayBuffer(524288);
+  // Texels at 64K/128K/192K, the decode band at 256K: one 8-page guest memory.
+  const wat = inPlace({bytes:524288, scratchAt:262144});
+  let memory = wat.memory.buffer, serial = 0x1000;
   const program = 1024, desc = 64, records = [40000, 40200, 40400];
   const bits = [65536, 131072, 196608];
   const set = (p, n) => new DataView(memory).setUint32(p, n, true);
@@ -53,9 +58,11 @@ function fixture(side, options = {}, observe = true) {
     return endpoint.execute(command);
   }, cancel() { endpoint.destroy(); }};
   const bridge = new (observe ? Bridge : NativeBridge)({backend:'software', createSoftwareWorker:()=>consumer,
-    getMemory:()=>memory, guestToWasm:p=>p, maxTextureSnapshotBytes:4*bytes,
+    getMemory:()=>memory, guestToWasm:p=>p, textureDecoder:wat.decoder, maxTextureSnapshotBytes:2*bytes,
     maxResidentTextureBytes:2*bytes, ...options});
-  return {side, bytes, bridge, records, bits, program, wire, seen, held, set, bind,
+  return {side, bytes, bridge, records, bits, program, wire, seen, held, set, bind, decoder:wat.decoder,
+    // What every guest write path ends in ($d3d9_texture_touch): a new serial.
+    stamp(i = 0) { set(records[i] + 64 + 28, ++serial); },
     source(i = 0) { return new U8(memory, bits[i], bytes); },
     replaceBuffer() { memory = memory.slice(0); },
     draw() { return bridge.call(0x30001, desc, 0); },
@@ -91,6 +98,7 @@ function measure(f, extra = () => {}) {
   const restorations = [];
   for (const cached of f.bridge._textureSnapshots.values()) {
     const original = cached.source;
+    if (original === undefined) continue; // slice 9.1 keeps no source copy
     cached.source = new Proxy(original, {get(target, key) {
       if (typeof key === 'string' && /^(0|[1-9][0-9]*)$/.test(key)) counts.snapshotReads++;
       const value = Reflect.get(target, key, target);
@@ -216,42 +224,52 @@ function measure(f, extra = () => {}) {
 
 // Non-texture payload cost includes 5632 sliced bytes and 4096 set bytes
 // (constant banks and small vertex data). Fixed ceilings retain 512 bytes of
-// headroom; texture misses get at most three N-byte allocations and two copies:
-// decoded RGBA, private source snapshot, and owned command RGBA copy.
+// headroom. Since slice 9.1 the JS producer never reads, scans or copies guest
+// texels: the WAT decodes them, so `reads` (JS source reads) is 0 in every
+// legitimate case. A miss gets two N-byte allocations and two copies: the
+// decoded RGBA assembled from WAT bands, and the owned command RGBA copy.
 function budget(counts, bytes, reads, hit) {
   assert.equal(counts.sourceReads, reads, 'source scan complexity');
   assert.equal(counts.snapshotReads, reads, 'immutable snapshot read complexity');
-  assert.equal(counts.indexedSourceReads, hit ? 0 : bytes, 'indexed source read budget including decode');
+  assert.equal(counts.indexedSourceReads, 0, 'indexed source read budget (decode is WAT)');
   // Cold submission grows the renderer's vertex scratch to 4096 bytes.
   // Keep this newly observed backing store separate from the existing U8
   // allocation ceiling; cached draws must allocate no ArrayBuffer backing.
   assert(counts.backingAllocationBytes <= (hit ? 0 : 4096), 'ArrayBuffer backing allocation budget');
   assert(counts.backingAllocations <= (hit ? 0 : 3), 'ArrayBuffer backing allocation count');
-  assert.equal(counts.scans, reads ? 1 : 0, 'one scan per candidate');
+  assert.equal(counts.scans, reads ? 1 : 0, 'no source scan');
   assert.equal(counts.cacheHits, hit ? 1 : 0, 'cache reuse');
   assert.equal(counts.decodes, hit ? 0 : 1, 'decode/insertion count');
-  assert.equal(counts.sourceCopyBytes, hit ? 0 : bytes, 'private source copy');
-  assert(counts.allocationBytes <= (hit ? 0 : 3*bytes) + 6144, 'U8 allocation budget');
+  assert.equal(counts.sourceCopyBytes, 0, 'private source copy');
+  assert(counts.allocationBytes <= (hit ? 0 : 2*bytes) + 6144, 'U8 allocation budget');
   assert(counts.allocations <= 26, 'bounded U8 allocation count');
   assert(counts.sliceBytes + counts.setBytes + counts.constructorCopyBytes <=
     (hit ? 0 : 2*bytes) + 10240, 'logical copy budget');
 }
 
+// Every scenario reads 0 source bytes in JS. A write is bytes plus a stamp;
+// an unstamped one is by contract not a change (the guest cannot write a
+// texture except under Lock/Unlock, UpdateTexture/UpdateSurface or
+// AddDirtyRect, which all stamp), so the old picture is kept.
 const scenarios = [
-  {name:'same-source', reads:n=>n, hit:true, change() {}},
-  {name:'same-byte-alias', reads:n=>n, hit:true, change(f) {
+  {name:'same-source', reads:()=>0, hit:true, change() {}},
+  {name:'same-byte-alias', reads:()=>0, hit:true, change(f) {
     const alias = f.source().subarray(); alias.set(f.source());
   }},
-  {name:'equal-new-buffer', reads:n=>n, hit:true, change(f) { f.replaceBuffer(); }},
-  {name:'sparse-interior', reads:()=>41, hit:false, change(f) { f.source()[40] ^= 1; }},
-  {name:'sparse-last-byte', reads:n=>n, hit:false, change(f) { f.source()[f.bytes-1] ^= 1; }},
-  {name:'full-change', reads:()=>1, hit:false, change(f) {
+  {name:'equal-new-buffer', reads:()=>0, hit:true, change(f) { f.replaceBuffer(); }},
+  {name:'unstamped-interior', reads:()=>0, hit:true, setup(f) { f.kept = f.expected(); },
+    change(f) { f.source()[40] ^= 1; }, expected:f=>f.kept},
+  {name:'stamped-interior', reads:()=>0, hit:false, change(f) { f.source()[40] ^= 1; f.stamp(); }},
+  {name:'stamped-last-byte', reads:()=>0, hit:false, change(f) { f.source()[f.bytes-1] ^= 1; f.stamp(); }},
+  {name:'full-change', reads:()=>0, hit:false, change(f) {
     const src = f.source(); for (let i = 0; i < src.length; i++) src[i] ^= 255;
+    f.stamp();
   }},
   {name:'equal-relocated-pointer', reads:()=>0, hit:false, change(f) {
     f.source(1).set(f.source()); f.set(f.records[0]+80, f.bits[1]);
   }, expected:f=>f.expected(1)},
-  {name:'epoch-rollover', reads:()=>0, hit:false,
+  {name:'serial-only', reads:()=>0, hit:false, change(f) { f.stamp(); }},
+  {name:'generation-ignored', reads:()=>0, hit:true,
     setup(f) { f.set(f.program+25596, 0xffffffff); },
     change(f) { f.set(f.program+25596, 0); }},
 ];
@@ -280,7 +298,7 @@ async function runCounts(side) {
         if (!scenario.hit) assert(f.seen.at(-1).releases.includes(before.key), 'stale residency retired');
       }
       assert.equal(f.wire.at(-1).pixels === undefined, scenario.hit, 'definition versus reference');
-      assert.equal(f.bridge._textureSnapshotBytes, 2*f.bytes);
+      assert.equal(f.bridge._textureSnapshotBytes, f.bytes);
       assert.equal(f.bridge.devices.get(7).residentBytes, f.bytes);
       // Mutate through another view after submission: both recorded versions
       // and producer source/RGBA snapshots must remain independently owned.
@@ -288,7 +306,7 @@ async function runCounts(side) {
       f.source().fill(0);
       assert.deepEqual(f.seen.at(-1).pixels, published);
       assert.deepEqual(f.bridge._textureSnapshots.get(f.records[0]+64).pixels, expected);
-      assert.notEqual(f.bridge._textureSnapshots.get(f.records[0]+64).source.buffer, f.source().buffer);
+      assert.equal(f.bridge._textureSnapshots.get(f.records[0]+64).source, undefined, 'no source copy');
       rows.push({side, bytes:f.bytes, scenario:scenario.name, ...counts});
     } finally { await f.close(); }
   }
@@ -299,12 +317,12 @@ async function runCounts(side) {
     for (const [index, hit] of [[0,false],[1,false],[0,true],[2,false],[1,false]]) {
       f.bind(index);
       const counts = measure(f);
-      budget(counts, f.bytes, hit ? f.bytes : 0, hit);
+      budget(counts, f.bytes, 0, hit);
       await f.drain();
       assert.deepEqual(f.seen.at(-1).pixels, f.expected(index));
       if (keys.has(index)) assert.equal(f.seen.at(-1).key === keys.get(index), hit);
       keys.set(index, f.seen.at(-1).key);
-      assert(f.bridge._textureSnapshotBytes <= 4*f.bytes);
+      assert(f.bridge._textureSnapshotBytes <= 2*f.bytes);
       assert(f.bridge._textureSnapshots.size <= 2);
       assert(f.bridge.devices.get(7).residentBytes <= 2*f.bytes);
       assert(f.held.size <= 2);
@@ -342,7 +360,7 @@ async function timings(side, repeats = 5, batch = 8) {
       };
       // Alternate metadata/pointers so EVERY measured change stays a miss.
       let epoch = 0, relocated = false;
-      const change = scenario.name === 'epoch-rollover' ? f=>f.set(f.program+25596, (++epoch & 1) ? 0 : 0xffffffff)
+      const change = scenario.name === 'generation-ignored' ? f=>f.set(f.program+25596, (++epoch & 1) ? 0 : 0xffffffff)
         : scenario.name === 'equal-relocated-pointer' ? f=>{
           f.set(f.records[0]+80, f.bits[(relocated = !relocated) ? 1 : 0]);
         } : scenario.change;

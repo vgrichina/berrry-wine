@@ -784,7 +784,7 @@ async function main(){
   const {startStaticServer,closeServer}=require('./static-server'),puppeteer=require('puppeteer');
   const scripts=['lib/region-map.generated.js','lib/gl-command-stream.js','lib/d3d-command-stream.js','lib/guest-rpc.js',
     'lib/guest-thread-host.js','lib/render-worker.js','lib/gpu-backend.js','lib/d3d9-shader.js','lib/d3d-shader-ir.js',
-    'lib/d3d9-fixed.js','lib/d3d9-texture.js','lib/render-clear.js','lib/d3d9-backend.js','lib/d3dim-gpu.js'];
+    'lib/d3d9-fixed.js','lib/render-clear.js','lib/d3d9-backend.js','lib/d3dim-gpu.js'];
   let wasm,browser,server,page,deadline;const report={cells:[],negativeControls:[]};
   try{
     server=await startStaticServer({root,crossOriginIsolated:true,handleRequest(req,res){

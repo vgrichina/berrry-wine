@@ -511,7 +511,7 @@ async function runtime() {
     plan:planner(cubeBorder),results:[],negativeControls:[]};
   const scripts=['lib/region-map.generated.js','lib/gl-command-stream.js','lib/d3d-command-stream.js','lib/guest-rpc.js',
     'lib/guest-thread-host.js','lib/render-worker.js','lib/gpu-backend.js','lib/d3d9-shader.js','lib/d3d-shader-ir.js',
-    'lib/d3d9-fixed.js','lib/d3d9-texture.js','lib/render-clear.js','lib/d3d9-backend.js','lib/d3dim-gpu.js'];
+    'lib/d3d9-fixed.js','lib/render-clear.js','lib/d3d9-backend.js','lib/d3dim-gpu.js'];
   evidence.productionJS=Object.fromEntries(fs.readdirSync(path.join(ROOT,'lib')).filter(p=>p.endsWith('.js')||p.endsWith('.json'))
     .map(p=>['lib/'+p,sha(fs.readFileSync(path.join(ROOT,'lib',p)))]));
   const config={...plan(cubeBorder),stateblocks,immediate,
