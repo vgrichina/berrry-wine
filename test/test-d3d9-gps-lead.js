@@ -33,7 +33,7 @@ const GREEN = 0xff00ff00;
     };
     await s.evaluate(triangleXyzrhw());
     // An untransformed XYZ | DIFFUSE triangle in the bottom-right corner
-    // (screen (4,8) (8,8) (8,4)), drawn flat-shaded: decline 16.
+    // (screen (4,8) (8,8) (8,4)), drawn W-buffered: decline 17.
     await s.evaluate(`ctx.d9g.lit=ctx.d9g.vertices+128;
       ctx.d9g.f32(ctx.d9g.lit,[0,-1,.5,0, 1,-1,.5,0, 1,0,.5,0]);
       [12,28,44].forEach(o=>ctx.d9g.u32(ctx.d9g.lit+o,[${RED}]));true`);
@@ -58,17 +58,17 @@ const GREEN = 0xff00ff00;
     let px = await lockRead();
     assert.strictEqual(px.tl >>> 0, RED);
     assert.strictEqual(px.br >>> 0, BLUE);
-    // Frame 3: GREEN clear and the red triangle on the ring, then a flat draw
+    // Frame 3: GREEN clear and the red triangle on the ring, then a W-buffered draw
     // the ring declines: handover, the old path draws it and presents.
     const uploads = await ops(0x30015);
     await run([...frame(GREEN),
       ['IDirect3DDevice9_SetFVF', '[ctx.d9g.device,0x42]'],
-      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,9,1]'],
+      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,7,2]'],
       ['IDirect3DDevice9_DrawPrimitiveUP', '[ctx.d9g.device,4,1,ctx.d9g.lit,16]'],
-      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,9,2]'],
+      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,7,0]'],
       present]);
     const st = await s.stats();
-    assert.deepStrictEqual(st.reasons, { 16: 1 }, `one decline ${JSON.stringify(st)}`);
+    assert.deepStrictEqual(st.reasons, { 17: 1 }, `one decline ${JSON.stringify(st)}`);
     assert.strictEqual(await stat(80), 1, 'one handover');
     assert.strictEqual(await stat(52), 1, 'handover readback at site 4');
     assert.strictEqual(await ops(0x30015), uploads + 1, 'one old upload of the executor picture');
@@ -77,8 +77,8 @@ const GREEN = 0xff00ff00;
     px = await lockRead();
     assert.strictEqual(px.tl >>> 0, RED, `ring triangle handed over ${px.tl.toString(16)}`);
     assert.strictEqual(px.mid >>> 0, GREEN, `ring clear handed over ${px.mid.toString(16)}`);
-    // The old path's flat red triangle on top of the handed-over picture.
-    assert.strictEqual(px.br >>> 0, RED, `old-path flat draw ${px.br.toString(16)}`);
+    // The old path's W-buffered red triangle on top of the handed-over picture.
+    assert.strictEqual(px.br >>> 0, RED, `old-path W-buffered draw ${px.br.toString(16)}`);
     // Back in shadow mode, with the bar for leading again doubled to 4.
     await run([...frame(BLUE), present, ...frame(BLUE), present, ...frame(BLUE), present]);
     assert.strictEqual(await stat(81), 1, 'three frames are not enough after a handover');

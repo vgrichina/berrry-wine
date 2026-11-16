@@ -321,6 +321,26 @@ Without this, every new backend would have to reimplement the 846 lines of
     SetSoftwareVertexProcessing, which is now stateful), while the ring
     is live; the old path does not blend. Stat 82 counts CPU-blended
     draws.
+  - **d9cpu fallbacks (2026-11-16): reshaping declines into plain draws.**
+    09akg's "CPU expansion into list DRAW_UPs" rewrites a draw the ring
+    could not express into non-indexed list DRAW_UPs the executors already
+    run, with no protocol change. 16: a flat-shaded draw (fixed PS, no
+    lighting) gets its own vertices per primitive with the provoking
+    vertex's colours copied over (first vertex; the second of a fan
+    triangle). 24: a POSITIONT stage reading a missing texcoord set reads
+    a FLOAT2 (0,0) appended to a padded copy of each vertex (layout
+    nibble 14). 20: a draw over the arena or index limits is split into
+    chunks of at most 1 MB; a Clear with more than 256 rects is just
+    more CLEAR records. 6: cube textures upload as CREATE kind CUBE with
+    six faces (both executors already sample CUBE). 25 is unreachable
+    (CreateTexture refuses textures over 2048). Stats 83 / 84 count
+    expanded draws and the chunks they emitted. Still declining: 16 under
+    a guest VS or fixed lighting (needs a flat varying in the executor),
+    17 W-buffer (needs depth from w in the executor; not exact on the
+    CPU), 12 PROJECTED with COUNT1/2 or under POSITIONT (the per-pixel
+    divide cannot be done per vertex exactly). `test-d3d9-gps-cpu.js`
+    compares each reshaped frame to an equivalent plain draw on both
+    executors (`--webgl`) and to the old path where it draws the same.
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
   a performance step.
 
