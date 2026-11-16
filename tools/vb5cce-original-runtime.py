@@ -7,7 +7,7 @@ in memory; only Git identities, hashes and helper diffs persist in evidence.
 import base64, fcntl, hashlib, json, os, pathlib, re, signal, socket, subprocess, sys, time
 
 ROOT=pathlib.Path(__file__).resolve().parent.parent
-RUN=pathlib.Path(os.environ.get('DELPHI5_RUN',ROOT/'scratch/runs/20261116-vb5cce-original-install-ide-sample'))
+RUN=pathlib.Path(os.environ.get('DELPHI5_RUN',ROOT/'scratch/runs/20261116-vb5cce-reviewed-context-install-ide'))
 HEAD=subprocess.check_output(['git','rev-parse',os.environ.get('DELPHI5_GIT','HEAD')],cwd=ROOT).decode().strip()
 OWN_FDS=set()
 ORIGINAL_STARTED=False
@@ -39,7 +39,7 @@ def sources():
     p.stdin.close();assert p.wait()==0
     # All tracked code is supplied from one Git tree, including compiler and tests.
     # Only these owned helpers overlay Git; published process-desktop is untouched.
-    for name in ('tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs'):
+    for name in ('tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs','tools/vb5cce-reviewed-control.py','test/run.js','lib/cli-native-scene.js','lib/cli-native-user-windows.js','src/13-exports.wat'):
         if name=='test/run.js' and '--baseline-paint' in sys.argv:continue
         files[name]=(ROOT/name).read_bytes()
     return files
@@ -75,7 +75,7 @@ def run():
     assert not (original and '--baseline-paint' in sys.argv)
     if original:
         body=(MEDIA/'vb5ccein.exe').read_bytes()
-        assert len(body)==7479944 and hashlib.sha1(body).hexdigest()=='afaf3e9a0234f08e51fd234e10037c62c6b80f34'
+        assert len(body)==7479944 and sha(body)=='022af94b651cd9d31e0676a6819dd5085940893f1ecc4abaa85b48c30de6f318'
         assert sha((MEDIA/'setupapi.dll').read_bytes())=='51f2682279e28386aa9c0eb8ba4f8ac3000c9ff75cf7e2456e8cdd9f0c544159'
     st=os.statvfs('/home');assert st.f_bavail*st.f_frsize>1500000000
     assert subprocess.run(['git','merge-base','--is-ancestor','c8f308b84',HEAD],cwd=ROOT).returncode==0
@@ -85,7 +85,7 @@ def run():
     source=seal('delphi5-source',json.dumps(dict(root=str(ROOT),files={n:base64.b64encode(b).decode() for n,b in files.items()})).encode())
     patches=[]
     for name in ['tools/delphi5-original-runtime.py',
-                 'tools/delphi5-control.py','test/test-delphi5-after-desktop.cjs','test/run.js','tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs']:
+                 'tools/delphi5-control.py','test/test-delphi5-after-desktop.cjs','test/run.js','tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs','tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js','lib/cli-native-user-windows.js','src/13-exports.wat']:
         tracked=subprocess.run(['git','cat-file','-e',HEAD+':'+name],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
         diff=subprocess.run(['git','diff','--binary',HEAD,'--',name] if tracked else
              ['git','diff','--no-index','--binary','--','/dev/null',name],cwd=ROOT,capture_output=True)
@@ -109,12 +109,11 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
     os.lseek(module,0,0);body=os.read(module,os.fstat(module).st_size)
     fcntl.fcntl(module,fcntl.F_ADD_SEALS,15);assert body[:4]==b'\0asm'
     env['DELPHI5_MODULE_SHA256']=sha(body)
-    (RUN/'tested-module.wasm').write_bytes(body)
     save('compile-inputs.json',dict(gitSHA=HEAD,sources={n:sha(b) for n,b in files.items()},moduleSHA256=sha(body)))
     selected={n for n in files if n.startswith('lib/') or n in
         ('host.js','test/run.js','src/api_table.json','src/win16-ordinals.generated.json','fonts/substitutions.json',
          'test/test-vb5cce-original-current.cjs','test/test-delphi5-original-install.cjs','test/test-delphi5-after-desktop.cjs','test/test-process-desktop-observation.js',
-         'test/test-cli-native-scene-context.cjs','tools/delphi5-source-view.cjs','tools/delphi5-control.py','tools/delphi5-original-runtime.py')}
+         'test/test-cli-native-scene-context.cjs','tools/delphi5-source-view.cjs','tools/delphi5-control.py','tools/delphi5-original-runtime.py','tools/vb5cce-reviewed-control.py','test/test-disciples2-native-paint-binding.cjs')}
     pending=list(selected)
     while pending:
         name=pending.pop()
@@ -147,23 +146,26 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
     checked('desktop-regression',['node','test/test-process-desktop-observation.js'],env,(source,module))
     checked('native-context-guards',['node','test/test-cli-native-scene-context.cjs','--unit'],env,(source,module))
     checked('native-controller',['node','test/test-vb5cce-original-current.cjs',str(RUN/'native-qualification')],env,(source,module))
-    save('qualification.json',dict(passed=True,at=time.time(),originalStarted=False))
+    admission=json.loads((RUN/'native-qualification/vb-original-admission.json').read_text())
+    save('qualification.json',dict(passed=admission['safeForVBOriginal'],generatedTestsPassed=True,
+         admission=admission,at=time.time(),originalStarted=False))
     if not original:
         return
+    assert admission['safeForVBOriginal'],admission['blocker']
     while not (RUN/'original-go.json').exists():time.sleep(.1)
-    started=time.time();deadline=started+1800
-    save('pipeline-launch.json',dict(at=started,deadline=deadline,watchdogDeadline=started+1820,
-         reserveSeconds=180,gameplayCutoff=deadline-180,winver='nt4',secondPipeline=False))
-    w=subprocess.Popen([sys.executable,'-B',__file__,'watchdog',str(started+1820)],
+    started=time.time();deadline=started+2400
+    save('pipeline-launch.json',dict(at=started,deadline=deadline,watchdogDeadline=started+2420,
+         reserveSeconds=240,gameplayCutoff=deadline-240,winver='nt4',secondPipeline=False))
+    w=subprocess.Popen([sys.executable,'-B',__file__,'watchdog',str(started+2420)],
          stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     while not (RUN/'watchdog-armed.json').exists():assert w.poll() is None;time.sleep(.01)
     try:
         for stage in range(3):
             if stage:
                 while not (RUN/f'stage-{stage}-go.json').exists():
-                    if (RUN/'stop-pipeline.json').exists() or time.time()>=deadline-180:return
+                    if (RUN/'stop-pipeline.json').exists() or time.time()>=deadline-240:return
                     time.sleep(.05)
-            assert time.time()<deadline-180
+            assert time.time()<deadline-240
             if stage==0:
                 exe=MEDIA/'vb5ccein.exe';guest='C:\\vb5ccein.exe';cwd='C:\\';extra=['--vfs-include=setupapi.dll']
             else:
@@ -189,7 +191,7 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
                 '--quiet-api','--quiet-blocks','--png-canvas',
                 '--pipe-child-args=--control='+str(childport)+' --winver=nt4 --threads --real-ticks --png-canvas',*extra]
             (target/'launch.json').write_text(json.dumps(dict(args=argv,at=started,deadline=deadline,
-                 gameplayCutoff=deadline-180,reserveSeconds=180,rootPort=port,childPort=childport,winver='nt4')))
+                 gameplayCutoff=deadline-240,reserveSeconds=240,rootPort=port,childPort=childport,winver='nt4')))
             with (target/'native.stdout.log').open('xb') as out,(target/'native.stderr.log').open('xb') as err:
                 p=subprocess.Popen(argv,cwd=ROOT,env=env,pass_fds=(source,module),stdout=out,stderr=err,start_new_session=True)
                 ORIGINAL_STARTED=True

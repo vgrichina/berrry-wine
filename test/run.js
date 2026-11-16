@@ -7606,7 +7606,7 @@ async function main() {
   };
   const controlSnapshot = () => {
     const we = instance.exports;
-    const windows = renderer ? Object.values(renderer.windows).map(w => {
+    let windows = renderer ? Object.values(renderer.windows).map(w => {
       const e = w.wasm?.exports || we;
       return ({
       hwnd: '0x' + ((w.hwnd >>> 0) || 0).toString(16),
@@ -7625,6 +7625,7 @@ async function main() {
       screenX: e.wnd_window_screen_x?.(w.hwnd) | 0,
       screenY: e.wnd_window_screen_y?.(w.hwnd) | 0,
     }); }) : [];
+    if(renderer)windows=require('../lib/cli-native-user-windows').withNativeUserChildren(windows,renderer,memory);
     return {
       batch: tickState.batch | 0,
       eip: '0x' + (we.get_eip() >>> 0).toString(16),
