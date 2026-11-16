@@ -34,7 +34,8 @@
     {
       "file": "lib/apps.js",
       "name": "host-file",
-      "sha256": "4cfcbaf850e0b14db0ff428d868b95d4ebaf3e861a835a29313da093b90976bd",
+      "sha256": "fbd2f47cc40149904c404a10c191181c4fd38ab2b187ee7aa95158447ff5f78f",
+      "aoe1SavePersistReview20261115": "Age of Empires trial (aoe1) gains persistFiles c:\\savegame\\*.gam and c:\\game*.nfo with persistStore indexeddb / persistMaxBytes 8 MB; static app-registry data only, no callback ownership change",
       "aoe1DesktopPublishReview20261115": "Age of Empires trial (aoe1) added to DESKTOP_APPS with a comment; list membership only, no callback ownership change",
       "utGlideComment20261114": "UT348 apps.js comment: GlideDrv needs fullscreen",
       "utOpenGlTr2TrueColour20261114": "apps.js: ut348_demo OpenGL default via iniSet (FirstRun skip); tomb_raider_2_demo startupRegistry FullScreenBPP=32. Registry data only, no new callbacks.",

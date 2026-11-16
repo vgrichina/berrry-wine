@@ -162,6 +162,41 @@ here is a property of these settings, unlike Diablo's fixed 20 Hz. A real FPS
 needs a real-clock (browser) count of the `0x43bccc` Blt.
 Evidence: `scratch/runs/20261010T0430Z-aoe1-control-frames`.
 
+## Saved games and the player file (2026-11-15)
+
+Measured with `--trace-fs` on the control route above
+(`scratch/runs/20261115-aoe-saves`). The working directory is `C:\` (the exe
+dir); every path below is relative to it.
+
+- **Save** (F10 -> Save, type a name, OK): `CreateFile("savegame\NAME.gam",
+  GENERIC_WRITE, CREATE_ALWAYS)` then three `WriteFile`s. An early Homelands
+  save is 139,057 bytes. The Save dialog first probes `FindFirstFile
+  ("savegame\*.gam")`. Nothing else is written: no registry value, no INI.
+- **Load** (F10 -> Load, or Single Player -> Saved Game): the same
+  `FindFirstFile("savegame\*.gam")` lists names, then the chosen `.gam` is
+  read back. Loading in the same session, and in a second run started with
+  `--import-saves`, both restore the saved frame byte-identically.
+- **Player list / campaign progress**: `game%d.nfo` (`game0.nfo`). Read at
+  startup (`FindFirstFile` + `CreateFile`), **written only on Exit** from the
+  main menu (`CREATE_ALWAYS`, 12 bytes with no players), along with a rewrite of
+  the shipped `scenario\scenario.inf`. A player typed into Select Player lives
+  in memory until then.
+- Also written, all scratch: `c:\aoedoppl.txt` and `c:\aoewvlog.txt` (debug
+  logs), `C:\WINDOWS\TEMP\temp*.tmp` / `temp_airules0.tmp` /
+  `temp_buildlist0.tmp` (AI scratch). `Aoe.ply` at the root is a shipped AI
+  play file, not a player profile. The only registry key is
+  `HKCU\Software\Microsoft\Games\AOE Trial\1.00` (`Rollover Text`).
+
+`lib/apps.js` therefore persists `c:\savegame\*.gam` and `c:\game*.nfo`
+through IndexedDB; `test/test-aoe1-save-persistence.js` pins it.
+
+**Crash on the way back to the menu (open).** Campaign game -> F10 -> Quit
+Game -> Yes -> Close (Achievements) -> Cancel (Campaign) -> Cancel (Select
+Player) traps with opcode `0x6c` at `0x083f1140`: `0x004571f6 call
+[eax+0x24]` dispatches through `[edi+0x40]`, an object whose vtable word is a
+heap address. Same signature with and without a save/load in the game, so it
+is not the save path. Not root-caused.
+
 ## Ruled out
 
 - **VFS / `MapViewOfFile`.** Every `.drs` opens (`CreateFileA` → `h:0x700000xx`)
