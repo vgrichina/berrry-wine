@@ -4,8 +4,10 @@ Evidence: `scratch/runs/20261116-gltron-browser-capture-timeout-cause/`.
 
 **No material repair is proved. No original or guest input was launched.**
 The new native evidence isolates waits in the browser's old visual-state
-snapshot path and, in the final consent-visible case, after CopyFromSurface
-entry but before observed Viz copy/result processing. It does not justify changing paint
+snapshot path and, in consent-visible cases, after CopyFromSurface
+entry but before observed Viz copy/result processing. The native comparison
+also activates Chromium's alternative new-surface branch and still times out.
+It does not justify changing paint
 readiness, forcing a frame, increasing the deadline, switching capture routes,
 or attributing this cause to a historical original. Every UNKNOWN connection
 remained closed, with zero subsequent CDP requests and no adopted late pixels.
@@ -92,6 +94,53 @@ is unproved; these probes do not distinguish all possible early-return or
 pending-surface cases inside CopyFromSurface. No later request or late pixels
 were accepted. The two native cases must not be flattened into one fence.
 
+## Source-led branch comparison: still UNKNOWN
+
+The coordinator supplied a late source lead, received while publishing the
+initial report. The exact installed-version Chromium
+[feature definition](https://raw.githubusercontent.com/chromium/chromium/151.0.7922.108/content/common/features.cc)
+describes a disabled alternative, `CDPScreenshotNewSurface`, intended to avoid
+a screenshot stall involving frames that are not presented. The matching
+[snapshot implementation](https://raw.githubusercontent.com/chromium/chromium/151.0.7922.108/content/browser/renderer_host/render_widget_host_impl.cc)
+uses a new surface/copy request rather than waiting for the old redraw callback.
+That source mechanism was verified against the installed binary's branch
+disassembly; it was a hypothesis, not a repair claim.
+
+Two fresh preparations stopped before screenshot: v10's recorder exited 255
+without ACK, and v11 selected no PIDs because this Chrome rewrites its command
+line with spaces rather than retaining NUL separators. The final v12 recorder
+explicitly pins only current owned browser/renderer/GPU PIDs, verifies the
+browser and at least three processes, and obtains its enable ACK before capture.
+Their failures and actual waits remain recorded; neither preparation consumed
+an original or produced a screenshot comparison.
+
+**`new-surface-v12` proves actual alternative-branch activation and failure.**
+The only browser configuration difference is the diagnostic
+`--enable-features=CDPScreenshotNewSurface`; no helper or production default
+adopts it. Browser binary before/after SHA-256 is
+`22e4d5ef0c637a87b59a9baad42625aba3284dc03d4a5908748e253556318c97`.
+Sealed Git is `30bb96a5a44b5e67c64b9a65bcc6fdbab49664de`; the Wasm hash/size
+are unchanged. Production consent is visible/enabled/hit-tested before capture.
+The same full-viewport screenshot request at **11:15:10.878 UTC** becomes
+permanent UNKNOWN at **11:15:13.884 UTC**, with zero later CDP requests.
+
+Native capture entry is monotonic **2874931.490188**. The **new** visual call
+site enters at 2874931.490815, the new direct copy call at 2874931.491698 and
+CopyFromSurface at **2874931.492145** (1.957 ms after capture entry). The old
+call site does not execute. Yet Viz Skia copy does not enter until
+**2874938.567440**: **7,075.295 ms after browser-side copy entry**. Copy result
+and surface callback arrive at 2874938.652285 and 2874938.671511. These are
+passive native entries after UNKNOWN, without screenshot callback, PNG encode
+or adopted pixels. All probes finish independently and the browser exits.
+
+The alternative eliminates the long pre-copy wait but does not repair the
+complete-host timeout. The measured remaining blocker is the asynchronous gap
+between browser-side CopyFromSurface and actual Viz copy execution under the
+continuous native producer. Exact surface activation, scheduling or GPU-fence
+causation is still unproved. Enabling the flag alone is therefore rejected as a
+qualification repair. No readiness rewrite, forced paint/idle completion or
+larger deadline was substituted. The original remains withheld.
+
 The independently bounded `boundary-v4` syscall probe shows the actual browser
 main thread in its ordinary `MessagePumpGlib` / `RunLoop` poll. Passive `/proc`
 samples show renderer, native Worker and SwiftShader activity continuing during
@@ -143,7 +192,7 @@ idle-v7 patch and final v9 uses its separately retained new-test patch. Git plus
 archive. No full locked build or code-repair PASS is claimed; the unused shared
 build queue was cancelled without reading/writing its outputs.
 
-Nine diagnostic native children, nine prearmed independent watchdogs, nine
+Twelve diagnostic native children, twelve prearmed independent watchdogs, twelve
 browser/tracer children and all recorded passive probes have actual waits and
 both pipe EOFs. Recorded native process groups, all sampled exact PIDs/TIDs,
 profiles and loopback ports are absent/closed. Detached descendants were not
