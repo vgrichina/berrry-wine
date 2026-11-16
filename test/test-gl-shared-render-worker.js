@@ -105,6 +105,41 @@ async function sharedPacketRotation(){
   assert(copied.requests[1].message.commandBuffer instanceof ArrayBuffer,'comparison switch retains copy transport');
   copied.complete(1);await copied.bridge.close();
 }
+async function sharedPacketPartialFailure(){
+  // Deterministic transport fault: real Bridge/SubmissionQueue/PacketPool,
+  // controlled endpoint replies. This fixture does not claim native pixels.
+  const cap=Stream.DEFAULT_BYTES,start=128;
+  const f=await queuedFixture({memoryBytes:start+cap*6});
+  f.renderer.windows[9]={hwnd:9,w:4,h:4,clientRect:{left:0,top:0,right:4,bottom:4}};
+  const current=f.bridge.replay(batch(f.memory,64,GL.CALL_INDEX.wglMakeCurrent),2);
+  await tick();
+  f.requests[1].resolve({value:1,activeWindows:[[1,8],[2,9]],contexts:2});await current;
+  const pools=[0,3].map(n=>({version:1,capacity:cap,offsets:[0,1,2].map(i=>start+(n+i)*cap)}));
+  const packet=(owner,slot,value)=>Object.assign(
+    scalarBatch(f.memory,pools[owner-1].offsets[slot],'glClear',[value]),{pool:pools[owner-1]});
+  await f.bridge.replay(packet(1,0,0x4000),1);
+  await f.bridge.replay(packet(2,0,0x100),2);
+  await tick();
+  assert.strictEqual(f.requests.length,3,'second owner admitted but has not been sent past first replay');
+  assert.deepStrictEqual(f.bridge.packetStats,{leasedBatches:2,copiedBatches:0,copiedBytes:0},
+    'cumulative admissions include one sent and one unsent leased packet');
+  const third=f.bridge.replay(packet(1,1,0x400),1);
+  const thirdRejected=assert.rejects(third,/partial consumer failure/);
+  // Model a consumer that read a prefix and then failed. Neither failure nor
+  // admission proves readers stopped, so neither owner's slot can be recycled.
+  assert.strictEqual(new DataView(f.memory).getUint32(pools[0].offsets[0]+36,true),0x4000);
+  f.requests[2].reject(Error('partial consumer failure'));await thirdRejected;
+  await assert.rejects(f.bridge.drain(),/partial consumer failure/);
+  await assert.rejects(f.bridge.replay(packet(2,1,0x800),2),/partial consumer failure/);
+  for(let owner=1;owner<=2;owner++)assert.throws(
+    ()=>f.bridge.packetPool.unregister(`${owner}:${pools[owner-1].offsets[0]}`),/active leases/,
+    'failed and unsent slots remain quarantined until process retirement');
+  assert.strictEqual(f.requests.length,3,'no later owner, query or retry submitted after failure');
+  assert.strictEqual(f.bridge.submissions.used,2,'failure does not manufacture completion credit');
+  await assert.rejects(f.bridge.close(),/partial consumer failure/);
+  assert(f.port.stopped,'failed endpoint is physically terminated');
+  assert.strictEqual(f.bridge.frameOwners.size,0,'failed replay retires its presentation references');
+}
 async function queuedBarriersAndFallbacks(){
   const f=await queuedFixture(),{bridge,memory,requests}=f;
   assert.strictEqual(await bridge.replay(scalarBatch(memory,128,'gpuPresent',[0]),1),1);
@@ -724,7 +759,7 @@ const watchdog=setTimeout(()=>{console.error('GL shared render worker protocol t
   await queuedSynchronization();await queuedOwnerInvalidation();await queuedPackedPayload();await queuedWindowLifetime();
   await queuedCopiedVectors();await queuedMalformedVectors();
   await queuedSmallTextureUploads();
-  await sharedPacketRotation();
+  await sharedPacketRotation();await sharedPacketPartialFailure();
   workerOwnedCommandReplay();workerCapturedGeometry();workerSoftwareResponseClone();
   await legacyProxy();legacyWorkerCleanup();legacyUnavailableFallback();
   console.log('GL shared render worker protocol PASS');})().catch(error=>{console.error(error);process.exitCode=1;})

@@ -32,7 +32,9 @@ function producerWorker() {
       e.init_thread(1,0x400000,0,0,0,0,0,0);
       if(e.gl_wat_stream_pool_enable(1)!==1)throw Error('native triple pool unavailable');
       const stack=RegionMap.BASE.GUEST_STACK+0x4000;
+      let callSequence=0;
       const call=(name,args=[],aux=0)=>{
+        postMessage({t:'api',sequence:++callSequence,name});
         new Uint8Array(memory.buffer,stack,128).fill(0);
         v.setUint32(stack,0xdec0adde,true);
         args.forEach((x,i)=>v.setUint32(stack+4+i*4,x>>>0,true));
@@ -46,6 +48,7 @@ function producerWorker() {
       if(timed('current',()=>call('wglMakeCurrent',[0,handle],hwnd))!==1)throw Error('make current');
       call('glViewport',[0,0,8,8]);call('glPixelStorei',[0xd05,1]);
       timed('setup-finish',()=>call('glFinish'));
+      timed('empty-flush',()=>e.gl_wat_stream_flush());
       const colors=[[1,0,0],[0,1,0],[0,0,1],[1,1,0],[1,0,1],[0,1,1]];
       for(let i=0;i<colors.length;i++){
         call('glClearColor',[...colors[i].map(f),f(1)]);call('glClear',[0x4000]);
@@ -118,7 +121,7 @@ function delayedRenderWorker() {
 }
 
 async function browserScenario(backend) {
-  const observations=[],steps=[],frames=[],batches=[],deliveries=[],responses=[],backends=[],contextCounts=[];
+  const observations=[],steps=[],frames=[],batches=[],deliveries=[],responses=[],backends=[],contextCounts=[],ownershipFences=[];
   const assert=(ok,label)=>{if(!ok)throw Error(label);};
   const equal=(a,b,label)=>assert(JSON.stringify(a)===JSON.stringify(b),label+': '+JSON.stringify(a)+' != '+JSON.stringify(b));
   const moduleBytes=await(await fetch('/build/wine-assembly.wasm')).arrayBuffer();
@@ -154,7 +157,8 @@ async function browserScenario(backend) {
   const pending=new Map();
   const wait=t=>new Promise(resolve=>pending.set(t,resolve));
   const hash=raw=>{let value=2166136261;for(const x of raw)value=Math.imul(value^x,16777619)>>>0;return value;};
-  let retirement,physicalTerminate=false;
+  let retirement,physicalTerminate=false,activeCall,workload;
+  const apiCalls=[];
   try {
     manager=new RenderWorker.Manager({module,memory,sigs,imageBase:0x400000,
       workerFactory:()=>{
@@ -187,7 +191,8 @@ async function browserScenario(backend) {
         const index=batches.length,raw=new Uint8Array(memory.buffer,desc.memoryOffset,desc.bytes);
         const ops=[];GLCommandStream.replay(GLCommandStream.memoryBatch(memory,desc.memoryOffset,desc.bytes),(op)=>{ops.push(op);return 0;});
         const item={index,offset:desc.memoryOffset,bytes:desc.bytes,hash:hash(raw),ops,
-          pool:desc.pool,receivedAt:performance.now(),framesBefore:frames.length,responsesBefore:responses.length};
+          pool:desc.pool,api:{...activeCall},packetStatsBefore:{...bridge.packetStats},
+          receivedAt:performance.now(),framesBefore:frames.length,responsesBefore:responses.length};
         for(const earlier of batches)if(earlier.offset===item.offset&&earlier.hash!==item.hash)
           observations.push({kind:'overwrite',earlier:earlier.index,later:index});
         batches.push(item);
@@ -195,11 +200,19 @@ async function browserScenario(backend) {
           {pool:desc.pool,softwareFront:desc.softwareFront,softwareConfig:desc.softwareConfig});
         return Promise.resolve(bridge.replay(batch,owner)).then(value=>{
           item.ackAt=performance.now();item.responsesAtAck=responses.length;
+          item.packetStatsAtAck={...bridge.packetStats};
+          item.leased=item.packetStatsAtAck.leasedBatches-item.packetStatsBefore.leasedBatches;
           item.framesAtAck=frames.length;item.queueAtAck=bridge.submissions.used;return value;
         });
       },gpu_gl_call:(op,owner)=>{
         assert(op===0x10002,'only native GDI readback bridge call expected');
-        return bridge.synchronize(()=>renderer.resolveGpuWindowReadback(owner)?1:0);
+        const fence={hwnd:owner,batchesBefore:batches.length,responsesBefore:responses.length,at:performance.now()};
+        ownershipFences.push(fence);
+        return bridge.synchronize(()=>{
+          const value=renderer.resolveGpuWindowReadback(owner)?1:0;
+          fence.responsesAtReturn=responses.length;fence.value=value;fence.completedAt=performance.now();
+          return value;
+        });
       }
     },sigs,{onError:(name,error)=>fail(Error(name+': '+error.stack))});
     rendered=wait('rendered');done=wait('done');
@@ -214,7 +227,8 @@ async function browserScenario(backend) {
           assert(broker.serveGlBatch(m),'production broker serves actual waiting producer');
         }else if(m.t==='rpc')broker.serveRpc(m.slot);
         else if(m.t==='calls')broker.serveCalls(m);
-        else if(m.t==='step')steps.push(m);
+        else if(m.t==='api'){activeCall=m;apiCalls.push(m);}
+        else if(m.t==='step')steps.push({...m,batches:batches.length});
         else if(m.t==='fixture-error')fail(Error(m.error));
         else if(pending.has(m.t)){pending.get(m.t)(m);pending.delete(m.t);}
         else fail(Error('unexpected producer message '+JSON.stringify(m)));
@@ -223,6 +237,10 @@ async function browserScenario(backend) {
     producer.postMessage({t:'start',module,memory,sigs,backend,hwnd,dc});
     const result=producerResult=await safe(rendered);
     await safe(bridge.drain());
+    // Freeze the producer workload before the separate context-retirement
+    // requests extend the same endpoint's delivery/reply transcript.
+    workload={submitted:batches.length,sent:deliveries.length,completed:responses.length,
+      packetStats:{...bridge.packetStats},liveCredits:bridge.submissions.used};
     equal(frames.map(x=>x.background),[[255,0,0,255],[0,255,0,255],[0,0,255,255],
       [255,255,0,255],[255,0,255,255],[0,255,255,255]],'literal presented frame FIFO');
     equal(frames.map(x=>x.triangle),Array(6).fill([255,255,255,255]),'literal packed triangle pixels');
@@ -245,13 +263,55 @@ async function browserScenario(backend) {
     for(const b of frameBatches)assert(b.ops.includes(GLCommandStream.PACKED_DRAW_OPCODE),'native packed draw present');
     if(backend==='webgl'){
       assert(backends.some(x=>x.renderer&&/^WebGL/.test(x.version)),'actual render worker WebGL renderer identified');
-      equal(bridge.packetStats,{leasedBatches:6,copiedBatches:0,copiedBytes:0},'production shared packet transport');
-      assert(frameBatches[0].responsesAtAck===frameBatches[0].responsesBefore,'first frame ACK before replay');
-      assert(frameBatches[1].framesAtAck===0,'two frames admitted before first consumption');
-      assert(frameBatches[2].ackAt-frameBatches[2].receivedAt>=150,'third native publication backpressured');
-      assert(frameBatches[2].framesAtAck>=1,'oldest replay retired before pool rotation ACK');
-      assert(frameBatches.every(b=>b.queueAtAck<=2),'two live publications bound the production queue');
+      // Count leases in their actual scope: setup, clears and read-buffer
+      // selection also publish safe packets. A frame is two submissions.
+      const C=OpenGLCompat.CALL_INDEX,expected=[
+        ['wglCreateContext',[C.wglCreateContext],0],
+        ['wglMakeCurrent',[C.wglMakeCurrent],0],
+        ['glPixelStorei',[C.glViewport,C.glPixelStorei],1],
+        ['glFinish',[C.glFinish],0],
+      ];
+      for(let i=0;i<6;i++){
+        expected.push(['glClear',[C.glClearColor,C.glClear],1],
+          ['gpuPresent',[GLCommandStream.PACKED_DRAW_OPCODE,C.gpuPresent],1]);
+        if(i===2)expected.push(['glFinish',[C.glFinish],0]);
+      }
+      expected.push(['glFinish',[C.glFinish],0],['glReadBuffer',[C.glReadBuffer],1],
+        ['glGetIntegerv',[C.glGetIntegerv],0],['glReadPixels',[C.glReadPixels],0]);
+      equal(batches.map(b=>[b.api.name,b.ops,b.leased]),expected,
+        'every native submission has exactly one API cause and the required lease policy');
+      const leased=batches.filter(b=>b.leased===1);
+      equal(frameBatches.reduce((n,b)=>n+b.leased,0),6,'six scoped draw/present leases');
+      equal(leased.filter(b=>b.api.name==='glClear').length,6,'six separate ordered clear leases');
+      equal(bridge.packetStats,{leasedBatches:leased.length,copiedBatches:0,copiedBytes:0},
+        'cumulative leases account for all safe submissions with zero copies');
+      assert(leased[0].responsesAtAck===leased[0].responsesBefore,'setup ACK precedes replay');
+      assert(leased[1].responsesAtAck===leased[1].responsesBefore,'first clear ACK precedes replay');
+      assert(leased[2].responsesAtAck===leased[2].responsesBefore,'first draw/present ACK precedes replay');
+      const thirdLive=leased[3];
+      assert(thirdLive.ackAt-thirdLive.receivedAt>=150,'third live native publication backpressured');
+      assert(thirdLive.responsesAtAck>thirdLive.responsesBefore,'oldest replay completed before third live publication ACK');
+      assert(batches.every(b=>b.queueAtAck<=2),'all publications respect two live credits');
+      equal(deliveries.length,batches.length,'every submitted packet reaches the consumer once');
+      equal(responses.length,batches.length,'every submitted packet completes once after drain');
+      equal(responses.map(x=>x.requestId),deliveries.map(x=>x.requestId),'sent and completed request FIFO');
+      for(const [i,b]of batches.entries()){
+        assert(responses[i].at>=deliveries[i].at,'completion follows actual consumer read');
+        const previous=batches.findLast((p,j)=>j<i&&p.offset===b.offset);
+        if(previous)assert(b.receivedAt>=responses[previous.index].at,
+          'slot reuse follows previous reader completion, including synchronous barriers');
+      }
+      equal(steps.find(x=>x.name==='empty-flush').batches,
+        steps.find(x=>x.name==='setup-finish').batches,'empty native flush never submits or rotates');
+      equal(bridge.submissions.used,0,'all live credits retired after output barriers');
+      equal(bridge.frameOwners.size,0,'no completed frame owner retained');
       assert(deliveries.every(x=>!x.ownedCopy),'shared ranges reach actual worker without copies');
+      equal(ownershipFences.length,1,'one actual native pre-GDI ownership fence');
+      equal(ownershipFences[0].value,1,'canonical readback succeeds at the ownership fence');
+      equal(ownershipFences[0].responsesAtReturn,ownershipFences[0].batchesBefore,
+        'GDI readback completes every earlier submitted packet');
+      assert(ownershipFences[0].responsesBefore<ownershipFences[0].batchesBefore,
+        'GDI fence exercises outstanding actual consumer work');
       assert(steps.find(x=>x.name==='gdi-read').elapsed>=150,'native GDI read waits for pending actual presentations');
       assert(steps.find(x=>x.name==='queued-finish').elapsed>=450,'native finish waits behind the outstanding actual frame queue');
     } else {
@@ -294,7 +354,7 @@ async function browserScenario(backend) {
     assert(Object.hasOwn(retirement,'heapHead')&&manager._retired,'real worker acknowledged native heap retirement');
     equal(manager.pending.size,0,'transport pending drained');
     return {backend,moduleHash,webglImplementation:backend==='webgl'?backends:'native WAT software',
-      result,frames,batches,deliveries,steps,observations,backends,contextCounts,packetStats:bridge.packetStats,retirement,physicalTerminate};
+      result,workload,frames,batches,deliveries,responses,apiCalls,ownershipFences,steps,observations,backends,contextCounts,packetStats:bridge.packetStats,retirement,physicalTerminate};
   } catch(error) {
     window.glLoadFailure={backend,error:String(error.stack||error),moduleHash,producerResult,frames,batches,deliveries,responses,steps,observations,backends,
       packetStats:bridge?.packetStats,queue:bridge&&{used:bridge.submissions.used,error:String(bridge.submissions.error)}};
@@ -313,9 +373,11 @@ async function launchBrowser() {
     '--disable-background-networking','--disable-component-update','--disable-sync',
     '--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','about:blank'
   ],{stdio:['ignore','ignore','pipe']});
-  let ws,spawnError,stderr='',id=0;const pending=new Map();
+  let ws,spawnError,stderr='',stderrEOF=false,id=0;const pending=new Map();
   chrome.on('error',e=>spawnError=e);chrome.stderr.on('data',b=>stderr=(stderr+b).slice(-8000));
+  chrome.stderr.on('end',()=>{stderrEOF=true;});
   const exited=new Promise(resolve=>chrome.once('exit',(code,signal)=>resolve({code,signal})));
+  const closed=new Promise(resolve=>chrome.once('close',(code,signal)=>resolve({code,signal})));
   const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
   async function close() {
     if(ws?.readyState===WebSocket.OPEN)await send('Browser.close').catch(()=>{});
@@ -326,7 +388,8 @@ async function launchBrowser() {
       try {chrome.kill('SIGTERM');await exited;} finally {clearTimeout(timer);}
     }
     ws?.close();fs.rmSync(profile,{recursive:true,force:true});
-    return {pid:chrome.pid,...await exited};
+    return {pid:chrome.pid,...await closed,actualWait:true,
+      stdoutEOF:chrome.stdout===null,stderrEOF};
   }
   function send(method,params={}) {return new Promise((resolve,reject)=>{
     const n=++id,timer=setTimeout(()=>{pending.delete(n);reject(Error('CDP timeout '+method));},45000);

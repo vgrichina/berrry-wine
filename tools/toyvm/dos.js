@@ -322,6 +322,7 @@ const GC_READ_MAP = 4, GC_MODE = 5, GC_MISC = 6, GC_BIT_MASK = 8;
 const CRTC_HDE = 0x01;
 const CRTC_MAX_SCAN = 0x09, CRTC_START_HI = 0x0C, CRTC_START_LO = 0x0D;
 const CRTC_VDE = 0x12, CRTC_OVERFLOW = 0x07, CRTC_OFFSET = 0x13;
+const CRTC_LINE_COMPARE = 0x18;
 // Vertical Retrace End. Bit 5 is "disable vertical interrupt" -- active low, so
 // a program that clears it is asking the CRTC to interrupt it once per frame on
 // IRQ2. Bit 7 write-protects CRTC 0-7, which is why the value is usually 0x90
@@ -507,6 +508,11 @@ function resetVgaMode(v, mode) {
     v.crtc[CRTC_VDE] = 0x8F;
     v.crtc[CRTC_OFFSET] = 40;          // 40 words per line -> 320 pixels
   }
+  // BIOS modes disable the split below the visible display. Both high bits
+  // belong to line compare too; leaving only its low byte zero enables a
+  // split at scan line 256 in the EGA modes.
+  v.crtc[CRTC_LINE_COMPARE] = 0xFF;
+  v.crtc[CRTC_MAX_SCAN] |= 0x40;
   // An EGA graphics mode is planar from the moment it is set; mode 13h only
   // becomes planar when the guest clears chain-4.
   // CGA graphics. Modes 4 and 5 are 320x200 with two bits per pixel; mode 6 is
@@ -585,11 +591,17 @@ function vgaGeometry(v) {
   const width = (v.crtc[CRTC_HDE] + 1) * dots;
   const stride = v.crtc[CRTC_OFFSET] * (v.bpp === 4 ? 16 : 8);
   const start = (v.crtc[CRTC_START_HI] << 8) | v.crtc[CRTC_START_LO];
+  const lineCompare = v.crtc[CRTC_LINE_COMPARE]
+    | ((v.crtc[CRTC_OVERFLOW] & 0x10) << 4)
+    | ((v.crtc[CRTC_MAX_SCAN] & 0x40) << 3);
   return {
     width: width > 0 && width <= 800 ? width : 320,
     height: rows > 0 && rows <= 600 ? rows : 200,
     stride: stride > 0 ? stride : 320,
     start,
+    // The address counter resets for the row AFTER the compare scan line.
+    // Geometry omits repeated scan lines, so express the split in its rows.
+    splitRow: Math.ceil((lineCompare + 1) / ((v.crtc[CRTC_MAX_SCAN] & 0x1F) + 1)),
     planar: v.planar,
     bpp: v.bpp,
     // The attribute palette, so the renderer can turn a 4-bit pixel into the

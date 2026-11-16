@@ -1217,6 +1217,24 @@
   ;; a 16-bit task, and the four bytes it pops as a linear address are two
   ;; words of somebody's stack — which reads as a wild jump thousands of
   ;; instructions from the actual mistake.
+  ;; A secondary ThreadProc owns one host-seeded stdcall return frame.
+  ;; Record the actual consuming RET, never infer it from EIP/ESP afterwards.
+  ;; Main instances remain unarmed. The record is read before DLL detach.
+  (global $thread_return_slot (mut i32) (i32.const 0))
+  (global $thread_returned (mut i32) (i32.const 0))
+  (func (export "arm_thread_return") (param $slot i32)
+    (global.set $thread_return_slot (local.get $slot))
+    (global.set $thread_returned (i32.const 0)))
+  (func (export "get_thread_returned") (result i32)
+    (global.get $thread_returned))
+  (func $thread_return_record (param $target i32) (param $pre i32) (param $post i32)
+    (if (global.get $thread_return_slot) (then
+      (global.set $thread_returned
+        (i32.and (i32.eqz (local.get $target))
+          (i32.and (i32.eq (local.get $pre) (global.get $thread_return_slot))
+            (i32.eq (local.get $post)
+              (i32.add (global.get $thread_return_slot) (i32.const 8)))))))))
+
   (func $th_ret_guard16
     (if (global.get $code16)
       (then
@@ -1230,6 +1248,8 @@
     (call $th_ret_guard16)
     (local.set $esp (i32.load offset=16 (global.get $reg_base)))
     (local.set $ret (call $gl32 (local.get $esp)))
+    (call $thread_return_record (local.get $ret) (local.get $esp)
+      (i32.add (local.get $esp) (i32.const 4)))
     (call $null_transfer_record (i32.const 2) (local.get $ret)
       (i32.add (local.get $esp) (i32.const 4)) (local.get $esp) (local.get $ret)
       (i32.const 0) (i32.const 0))
@@ -1244,6 +1264,8 @@
     (call $th_ret_guard16)
     (local.set $esp (i32.load offset=16 (global.get $reg_base)))
     (local.set $ret (call $gl32 (local.get $esp)))
+    (call $thread_return_record (local.get $ret) (local.get $esp)
+      (i32.add (local.get $esp) (i32.add (i32.const 4) (local.get $op))))
     (call $null_transfer_record (i32.const 3) (local.get $ret)
       (i32.add (local.get $esp) (i32.add (i32.const 4) (local.get $op)))
       (local.get $esp) (local.get $ret) (i32.const 0) (i32.const 0))
@@ -1444,6 +1466,8 @@
       (if (result i32) (global.get $sr_fast)
         (then (i32.load (i32.add (local.get $cur) (global.get $sr_delta))))
         (else (call $gl32 (local.get $cur)))))
+    (call $thread_return_record (local.get $ret) (local.get $cur)
+      (i32.add (local.get $cur) (i32.add (i32.const 4) (local.get $imm))))
     (call $null_transfer_record (i32.const 4) (local.get $ret)
       (i32.add (local.get $cur) (i32.add (i32.const 4) (local.get $imm)))
       (local.get $cur) (local.get $ret) (i32.const 0) (i32.const 0))

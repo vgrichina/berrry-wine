@@ -7240,6 +7240,17 @@ class WineAssembly {
     });
   }
 
+  requestCurrentDisplayCapture(options) {
+    if (!this.renderer || !options) throw new Error('Current display capture requires a renderer and owner');
+    if (this._stopped || this.running === false) throw new Error('Current display capture owner is stopped');
+    if (this._dxDirty || this._dxLockDeferred || this._presentFrameDue) {
+      throw new Error('Current display capture refused pending host surface publication');
+    }
+    return this.renderer.requestCurrentDisplayCapture({
+      hwnd: options.hwnd, processId: this.processId, instance: this.instance,
+    });
+  }
+
   // Upload the newest guest frame and composite, now. Called from the rAF,
   // from a step boundary when a frame fell due mid-slice, and wherever
   // stepping comes to rest (frozen park, recording tap, stop) so the last

@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/storage.js",
+      "name": "host-file",
+      "baseSHA256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053",
+      "sha256": "e5e76aad020c40a050b08057fc2f4454cda0dfd62ce51761f19fdcaf4e051254",
+      "reason": "LocalServer metadata reads the real class registration and copies a bounded command into the caller buffer. It never enters a guest callback or transfers a guest pointer. Public launch and factory work are scheduled later by the actual owner continuation; existing synchronous callbacks are unchanged. Native qualification is recorded separately."
+    },
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "baseSHA256": "5a9f6a834b9ad5a58d4090c18f714961416dc9583908990087503ebbf715f25b",
+      "sha256": "682ab78e7e3f03d7a784f6552a8dd57de56bd637c2874de1d4fbb8a3930ab92f",
+      "reason": "TreatAs activation uses the existing COM jump/continuation mechanism with a private guest-stack frame. Marker CACA0041 restores the original stdcall frame after ordinary activation completes, including DLL-load yields and native class-factory callbacks. No foreign activation frame, global GUID scratch, callback admission or nonlocal ownership assertion is added; native guest-DLL, builtin-chain, cycle and unchanged activation regressions qualify the bounded route; ownership remains pending."
+    },
+    {
+      "file": "lib/process-boot.js",
+      "name": "host-file",
+      "baseSHA256": "7e3a7abc458b1049f6873e89ed6c2bf0b1e3d80f8626292cb47fd8d2e9665be7",
+      "sha256": "fb5d9796f8af64d4a6b78b61f756f88d5b6ef93f64713509ec91bf7a81425333",
+      "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_pump_step",
+      "baseSHA256": "dc12e4d662a9a2c5ad3e0f181a744d7b487f0666c204df515c105dd22dd63da0",
+      "sha256": "799ed01516e1441d54a457b1daabca35849a5609185553cae4e9ce442c66191c",
+      "reason": "The owning parked MessageBox pump retrieves and synchronously dispatches one posted message filtered to its current HWND through its built-in USER procedure. Class 16 only: no guest dialog procedure, foreign continuation, callback admission, new EIP write or retained interface is introduced. Completion uses existing modal_finish_local and owning continuation splice; general ownership remains pending. Exact native NULL-owner error OK/X, OKCANCEL and strict guarded-input opposition controls qualify the route."
+    },
+    {
+      "file": "lib/dll-loader.js",
+      "name": "host-file",
+      "baseSHA256": "deb6b1b6bd417cac7007c7f27748ad117729349a9c5fb64e2237dca4ccb99bd5",
+      "sha256": "cbdca7ed6ecce5d26002c13b42a613e3637c9c5ecd4a95e8c9c6b0670f138ca0",
+      "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "79026e9016ade1a709c29a9449590bbd60b36991acdab582eeec2059c3486019",
+      "sha256": "c9c8453fd9f3935f7f65ef95b4df2fab71053dcd052015a75ed7f5e8ed3f74af",
+      "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
+    },
+    {
+      "file": "lib/guest-worker.js",
+      "name": "host-file",
+      "baseSHA256": "3e09b9aa06b86ffa52bb00d4052a2b4393952ed61f2821ced4871dfbec0498ec",
+      "sha256": "d5150e13728d2bc5f5f02703e1855cc8abd61b517a3f78bbf0c494b8dec95e0e",
+      "reason": "The Worker COM runtime receives a metadata-only import closure. Class publication, actual factory calls and marshaling use that Worker instance and its existing guarded ComGuestContinuation; no host shadow or foreign CPU is entered. Existing retirement and callback scope checks remain authoritative. Merged with GPU stream v2 D2a: the in-Worker D3DIMGpu executor is removed (D3DIM lowers in WAT onto the shared ring); no guest-control producer added."
+    }
+  ],
+  "additions": [
+    {
+      "file": "lib/com-guest-continuation.js",
+      "name": "host-file",
+      "sha256": "f8cfed9c5a0c97886749116fa479acb0eb2b992ddbfcaaf06cd2abd3375f5afb",
+      "kind": "host-entry",
+      "reason": "Actual owner-only COM callbacks retain full i64 child tokens and validate source/process/thread/generation before and after suspension. All registers, private IP/thunk, handler, SEH and parent yield are restored only after a complete native stdcall return and ABI checks. Trap, unsupported wait or replacement leaves the child live for explicit retirement; no shadow CPU or finally resurrection.",
+      "ownership": "pending"
+    },
+    {
+      "file": "lib/com-interface-runtime.js",
+      "name": "host-file",
+      "sha256": "aa8be2a637ea45c16615e11f81e7b54a380eb778ae3803f3af14340b700f008d",
+      "kind": "host-entry",
+      "reason": "LocalServer bridge operations retain the parked public stdcall frame and dispatch registration, revoke and activation on the actual owning continuation. Draining class tickets precedes existing stub tickets under the same owner and generation checks. Registered object addresses remain private to the runtime; only authenticated opaque identities and copied bytes cross the channel.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "$com_interface_bridge",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "global.get",
+          "$current_thunk_eip"
+        ]
+      ],
+      "sha256": "7377ce8aba18065b539e4f78b563d454c257eaada7b59b82b2e5190f55c42ea9",
+      "kind": "continuation",
+      "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "export:com_owner_epoch",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [
+        "com_owner_epoch"
+      ],
+      "targets": [],
+      "sha256": "2c2590aad9f2059b9cb83e9eb49e9ab1970d3017e284cfe818cde2ac008f1ae5",
+      "kind": "continuation",
+      "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "export:com_owner_root",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [
+        "com_owner_root"
+      ],
+      "targets": [],
+      "sha256": "d4e464b828542fb3c3e9fa8b5e7640eb752e8fef3fc908f29b34adfaf0806ced",
+      "kind": "continuation",
+      "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
+    }
+  ]
+}

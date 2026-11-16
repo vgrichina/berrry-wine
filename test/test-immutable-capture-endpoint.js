@@ -254,3 +254,121 @@ test('owner is checked at selection and after display; holds and failed display 
     assert.match(t.error, kind === 'false' ? /returned false/ : kind === 'throw' ? /scoped display threw/ : /owner/);
   }
 });
+
+test('current display is a request-local read of an unchanged ordinary publication, not a new frame', () => {
+  const { r, h } = ownedFixture(); r.repaint();
+  const pub = r._immutablePublicationSequence, displayedAt = r._currentDisplayRecord.displayedAt;
+  const next = h.requestImmutableCapture({ hwnd: 123 });
+  assert.equal(next.status, 'pending'); next.cancel();
+  const a = h.requestCurrentDisplayCapture({ hwnd: 123 }), first = a.read();
+  assert.equal(a.status, 'complete');
+  assert.equal(first.metadata.publication, pub);
+  assert.equal(first.metadata.displayedAt, displayedAt);
+  assert.equal(first.metadata.observation, 'current-display');
+  assert.equal(first.metadata.content, 'already-displayed');
+  assert.equal(first.metadata.engineRender, null);
+  assert(first.metadata.requestedAt <= first.metadata.readbackStartedAt);
+  assert(first.metadata.readbackStartedAt <= first.metadata.readbackCompletedAt);
+  assert.deepEqual(Array.from(first.outputRGBA), pixels(r.presentationCanvas));
+  first.outputRGBA.fill(99);
+  const b = h.requestCurrentDisplayCapture({ hwnd: 123 });
+  assert.deepEqual(b.read().outputRGBA, a.read().outputRGBA);
+  assert.equal(r._immutablePublicationSequence, pub);
+  assert.equal(r._repaintScheduled, false);
+});
+
+test('current display preserves pending damage and cancellation without scheduling or forcing publication', () => {
+  const { r, h, win } = ownedFixture(); r.repaint();
+  const old = h.requestCurrentDisplayCapture({ hwnd: 123 }).read();
+  win._backCanvas.getContext('2d').fillStyle = '#0000ff';
+  win._backCanvas.getContext('2d').fillRect(0, 0, 8, 8);
+  r.scheduleRepaint();
+  const cancelled = h.requestCurrentDisplayCapture({ hwnd: 123 });
+  assert.equal(cancelled.status, 'pending'); assert.equal(cancelled.read(), null);
+  assert(cancelled.cancel());
+  const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
+  assert.equal(t.status, 'pending'); assert.equal(r._repaintScheduled, true);
+  r.flushRepaint();
+  const now = t.read(); assert.equal(t.status, 'complete');
+  assert.equal(now.metadata.content, 'ordinary-publication-after-request');
+  assert.equal(now.metadata.publication, old.metadata.publication + 1);
+  assert.notDeepEqual(now.outputRGBA, old.outputRGBA);
+  assert.deepEqual(Array.from(now.outputRGBA), pixels(r.presentationCanvas));
+  assert.equal(cancelled.status, 'cancelled'); assert.equal(cancelled.read(), null);
+});
+
+test('current display refuses held or in-flight paint, replacement, hidden/clipped owner and unreceipted display', () => {
+  for (const [name, change] of Object.entries({
+    held: ({ r }) => r.beginWorkerGuestSlice(),
+    paint: ({ r }) => r.beginWorkerGdiPaint(123),
+    nested: ({ r }) => { r._repainting = true; },
+    replacement: ({ r, win }) => { r.windows[123] = { ...win }; },
+    hidden: ({ win }) => { win.visible = false; },
+    clipped: ({ win }) => { win.x = -1; },
+    changedProcess: ({ win }) => { win.processId++; },
+    changedInstance: ({ win }) => { win.wasm = {}; },
+    output: ({ r }) => { r.presentationCanvas = createCanvas(16, 16); },
+    resizedOutput: ({ r }) => { r.presentationCanvas.width++; },
+    transparent: ({ r }) => { r.transparentDesktop = true; },
+    displayOnly: ({ r }) => r._presentDisplayCanvas(),
+    failedDisplay: ({ r }) => { r.presentationFilter.ctx = null; assert.throws(() => r.repaint()); },
+  })) {
+    const f = ownedFixture(); f.r.repaint(); change(f);
+    let t;
+    try { t = f.h.requestCurrentDisplayCapture({ hwnd: 123 }); }
+    catch (e) { assert.match(e.message, /owner/, name); continue; }
+    assert.equal(t.status, 'failed', name); assert.equal(t.read(), null, name);
+    assert.equal(f.r._immutableCaptureRequest, null, name);
+  }
+});
+
+test('pending current display cannot cross owner replacement and host pending surface publication is explicit', () => {
+  const { r, h, win } = ownedFixture(); r.repaint(); r.scheduleRepaint();
+  const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
+  r.windows[123] = { ...win }; r.flushRepaint();
+  assert.equal(t.status, 'failed'); assert.equal(t.read(), null);
+  for (const field of ['_dxDirty', '_dxLockDeferred', '_presentFrameDue']) {
+    h[field] = true;
+    assert.throws(() => h.requestCurrentDisplayCapture({ hwnd: 123 }), /pending host/);
+    h[field] = false;
+  }
+});
+
+test('current readback fails closed on identity change during read and never substitutes prior bytes', () => {
+  for (const kind of ['owner', 'output', 'tainted', 'alpha']) {
+    const { r, h, win } = ownedFixture(); r.repaint();
+    const old = h.requestCurrentDisplayCapture({ hwnd: 123 }).read();
+    const ctx = r.presentationCanvas.getContext('2d'), read = ctx.getImageData;
+    ctx.getImageData = function (...args) {
+      const data = read.apply(this, args);
+      if (kind === 'owner') r.windows[123] = { ...win };
+      if (kind === 'output') r.presentationCanvas = createCanvas(16, 16);
+      if (kind === 'tainted') throw Error('readback tainted');
+      if (kind === 'alpha') data.data[3] = 0;
+      return data;
+    };
+    const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
+    assert.equal(t.status, 'failed', kind); assert.equal(t.read(), null);
+    assert.equal(r._immutableCaptureRequest, null);
+    assert.equal(old.metadata.publication, 1);
+  }
+});
+
+test('current exclusive display proves complete one-owner source crop and contained output from the production viewport', () => {
+  const { r, h, win } = ownedFixture();
+  win.wasm.exports.get_dx_exclusive_hwnd = () => win.hwnd;
+  r.repaint();
+  const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
+  assert.equal(t.status, 'complete', t.error);
+  assert.equal(t.read().metadata.composition.exclusive, true);
+  assert.deepEqual(Array.from(t.read().outputRGBA), pixels(r.presentationCanvas));
+  assert.equal(t.read().metadata.content, 'already-displayed');
+  for (const change of [v => { v.cropX++; }, v => { v.cropW--; },
+    v => { v.dstX = -1; }, v => { v.dstH = v.outputH + 1; },
+    v => { v.cropBase.w--; }]) {
+    const f = ownedFixture(); f.win.wasm.exports.get_dx_exclusive_hwnd = () => 123;
+    f.r.repaint(); change(f.r._exclusivePresentationViewport);
+    const refused = f.h.requestCurrentDisplayCapture({ hwnd: 123 });
+    assert.equal(refused.status, 'failed'); assert.equal(refused.read(), null);
+  }
+});

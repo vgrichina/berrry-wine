@@ -92,6 +92,7 @@ for (const file of SRC) {
   let funcStart = -1, funcName = null, depth = 0;
   let adjustments = [];   // { value, line }
   let delegates = false;
+  let registerFtDelegate = false;
 
   for (let i = 0; i < lines.length; i++) {
     const raw = lines[i];
@@ -105,6 +106,7 @@ for (const file of SRC) {
       depth = 0;
       adjustments = [];
       delegates = false;
+      registerFtDelegate = false;
     }
 
     // A handler that hands off to a sub-dispatcher lets that callee do the
@@ -118,6 +120,12 @@ for (const file of SRC) {
         /call \$crt_callback_begin\b/.test(code)) delegates = true;
     // Beep's retained continuation owns the stdcall pop across alertable waits.
     if (funcName === 'Beep' && /call \$beep_begin\b/.test(code)) delegates = true;
+    // FT register entry points use the saved 64-byte compiler frame, rather
+    // than an ordinary stdcall frame. Require the exact native delegate and
+    // exit byte count; the native relay tests check the resulting guest ESP.
+    if (funcName === 'FT_Prolog' && /call \$win16_ft_prolog\)/.test(code)) registerFtDelegate = true;
+    const ftExit = /^FT_Exit(0|4|8|12|16|20|24|28|32|36|40|44|48|52|56)$/.exec(funcName);
+    if (ftExit && code.includes(`call $win16_ft_exit (i32.const ${ftExit[1]})`)) registerFtDelegate = true;
     // Three spellings of "esp += N": the historical wasm-global form, the
     // per-thread register-file form where esp is slot +16 of $reg_base, and
     // `(call $amstream_finish RESULT (i32.const N))` or
@@ -148,6 +156,11 @@ for (const file of SRC) {
     if (!entry || typeof entry.nargs !== 'number') continue;
     const convention = entry.convention || 'stdcall';
     if (conventionFilter && convention !== conventionFilter) continue;
+    if (name === 'FT_Prolog' || /^FT_Exit\d+$/.test(name)) {
+      checked++;
+      if (!registerFtDelegate) issues.push(`${file}:${startLine}\t$handle_${name}\tmissing exact FT register-ABI delegate`);
+      continue;
+    }
     if (delegates) { skippedDelegating++; continue; }
 
     const expected = convention === 'stdcall' ? 4 * (entry.nargs + 1) : 4;

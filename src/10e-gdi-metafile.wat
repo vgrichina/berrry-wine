@@ -501,6 +501,59 @@
         (return (i32.const 0))))
     (local.get $handle))
 
+  ;; Cached system brushes are ordinary process-shared GDI brush records.
+  ;; flags bit31 marks system ownership; bits24..28 retain the color index.
+  ;; Allocation and publication use the existing recursive GDI allocator lock,
+  ;; so other WASM instances cannot publish duplicate brushes for one index.
+  (func $gdi_system_brush_record (param $idx i32) (result i32)
+    (local $i i32) (local $p i32) (local $tag i32)
+    (local.set $tag (i32.or (i32.const 0x80000000)
+      (i32.shl (local.get $idx) (i32.const 24))))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (global.get $GDI_OBJECT_COUNT)))
+      (local.set $p (i32.add (global.get $GDI_OBJECT_TABLE)
+        (i32.mul (local.get $i) (global.get $GDI_OBJECT_STRIDE))))
+      (if (i32.and (i32.ne (load.field.memarg GdiObject handle (local.get $p)) (i32.const 0))
+            (i32.and (i32.eq (load.field.memarg GdiObject type (local.get $p)) (i32.const 2))
+              (i32.eq (load.field.memarg GdiBrush flags (local.get $p)) (local.get $tag))))
+        (then (return (local.get $p))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (i32.const 0))
+
+  (func $gdi_system_brush_owned (param $handle i32) (result i32)
+    (local $p i32)
+    (local.set $p (call $gdi_object_record (local.get $handle)))
+    (if (i32.eqz (local.get $p)) (then (return (i32.const 0))))
+    (i32.and (i32.eq (load.field.memarg GdiObject type (local.get $p)) (i32.const 2))
+      (i32.ne (i32.and (load.field.memarg GdiBrush flags (local.get $p))
+        (i32.const 0x80000000)) (i32.const 0))))
+
+  (func $gdi_system_brush (param $idx i32) (result i32)
+    (local $p i32) (local $handle i32)
+    ;; Classic COLOR_* indices including the alternate face, hot tracking,
+    ;; gradient captions and flat-menu colors. Storage capacity is not an API
+    ;; support predicate: 31, negative and larger indices return NULL.
+    (if (i32.gt_u (local.get $idx) (i32.const 30)) (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $GDI_ALLOC_LOCK))
+    (local.set $p (call $gdi_system_brush_record (local.get $idx)))
+    (if (local.get $p)
+      (then (local.set $handle (load.field.memarg GdiObject handle (local.get $p))))
+      (else (local.set $handle (call $gdi_object_alloc_locked (i32.const 2)
+        (i32.const 0) (i32.const 0) (call $win98_sys_color (local.get $idx))
+        (i32.or (i32.const 0x80000000) (i32.shl (local.get $idx) (i32.const 24)))))))
+    (call $lock_release (global.get $GDI_ALLOC_LOCK))
+    (local.get $handle))
+
+  ;; Called under the same lock as cache publication. Updating the canonical
+  ;; record changes both previously selected brushes and GetObject results.
+  (func $gdi_system_brush_recolor (param $idx i32) (param $color i32)
+    (local $p i32)
+    (local.set $p (call $gdi_system_brush_record (local.get $idx)))
+    (if (local.get $p)
+      (then (store.field.memarg GdiBrush color (local.get $p)
+        (i32.and (local.get $color) (i32.const 0x00FFFFFF))))))
+
   (func $gdi_object_type (param $handle i32) (result i32)
     (local $p i32)
     ;; Compatible memory DCs start with a stock 1x1 monochrome bitmap.  MFC
@@ -572,6 +625,8 @@
 
   (func $gdi_object_delete_locked (param $handle i32) (result i32)
     (local $p i32)
+    (if (call $gdi_system_brush_owned (local.get $handle))
+      (then (return (i32.const 1))))
     (if (call $gdi_object_type (local.get $handle))
       (then
         (local.set $p (call $gdi_object_record (local.get $handle)))
@@ -2753,6 +2808,8 @@
   (func $gdi_object_delete_full (param $handle i32) (result i32)
     (local $p i32) (local $type i32) (local $bits i32) (local $flags i32) (local $surface i32)
     (local $owned_bitmap i32) (local $font_face_guest i32)
+    (if (call $gdi_system_brush_owned (local.get $handle))
+      (then (return (i32.const 1))))
     (local.set $p (call $gdi_object_record (local.get $handle)))
     (if (i32.eqz (local.get $p))
       (then (return (select (i32.const 1) (i32.const 0)

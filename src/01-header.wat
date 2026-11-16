@@ -532,6 +532,10 @@
   ;; a nested synchronous send, which cannot return to the host's event loop.
 
   ;; COM host imports
+  (import "host" "com_localserver_information" (func $host_com_localserver_information (param i32 i32 i32 i32) (result i32)))
+  (import "host" "com_interface_operation" (func $host_com_interface_operation (param i32 i32 i32) (result i32)))
+  (import "host" "com_interface_result" (func $host_com_interface_result (param i32 i32) (result i32)))
+  (import "host" "com_proxy_stub" (func $host_com_proxy_stub (param i32 i32 i32) (result i32)))
   (import "host" "com_create_instance" (func $host_com_create_instance (param i32 i32 i32 i32 i32) (result i32)))
   ;; com_create_instance(rclsidWA, pUnkOuterGA, dwClsContext, riidWA, ppvGA) → HRESULT
   (import "host" "com_register_class_object" (func $host_com_register_class_object (param i32 i32 i32 i32) (result i32)))
@@ -2344,7 +2348,8 @@
   ;; slot 0 still produces the non-zero handle callers test for.
   (global $CURSOR_TABLE i32 (region.addr $CURSOR_TABLE 0))
   (global $CURSOR_TABLE_SIZE i32 (region.size $CURSOR_TABLE))
-  (global $CURSOR_TABLE_STRIDE i32 (i32.const 24))
+  ;; +24/+28 identify a shared NE resource's module and type/NAMEINFO id.
+  (global $CURSOR_TABLE_STRIDE i32 (i32.const 32))
   (global $MAX_CURSORS i32 (i32.const 32))
   (global $CURSOR_HANDLE_TAG i32 (i32.const 0x00CC0000))
   ;; Two private surface descriptors: compositing a cursor reads the mask and

@@ -134,6 +134,9 @@
     (if (i32.eq (local.get $idx) (i32.const 47)) (then (return "wintrust")))
     (if (i32.eq (local.get $idx) (i32.const 48)) (then (return "ws2_32")))
     (if (i32.eq (local.get $idx) (i32.const 49)) (then (return "wsock32")))
+    ;; DirectMusic's COM object is implemented by the dispatcher. Publish the
+    ;; component through the same module identity/refcount path as DirectInput.
+    (if (i32.eq (local.get $idx) (i32.const 50)) (then (return "dmusic")))
     (if (i32.ge_u (local.get $idx) (i32.const 11)) (then (return "")))
     (local.set $entry (global.get $STATIC_SYS_DLL_NAMES))
     (block $done (loop $skip

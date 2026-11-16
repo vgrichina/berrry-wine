@@ -114,7 +114,7 @@ function fixture(source = original, wrapperSource = wat) {
   put(0x600, 0xabcdef);
   put(0x200, 0x220); put(0x224, 0x1000); put(0x228, 0x1100); put(0x22c, 0x1200);
   // Zero GUID at 0x100 (class) and 0x120 (interface).
-  const register = () => storage.com_register_class_object(0x100, 0x200, 1, 0);
+  const register = () => storage.com_register_class_object(0x100, 0x200, 1, 1);
   const create = (outer = 0) => storage.com_create_instance(0x100, outer, 1, 0x120, 0x300);
   const dll = (classOnly = true) => {
     module.exports.setRegValue('HKCR\\CLSID\\{00000000-0000-0000-0000-000000000000}\\InprocServer32',

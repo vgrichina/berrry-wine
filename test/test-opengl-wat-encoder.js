@@ -110,6 +110,54 @@ function watRunner(memory, exports) {
   };
 }
 
+// The reference cannot define its own context correctness. Attribute each
+// publication to the exact API call and check literal lifecycle/vertex values.
+function traceContext(runner, submissions, trace) {
+  return { ...runner, call(opcode, args = [], aux = 0) {
+    const first = submissions.length;
+    const result = runner.call(opcode, args, aux);
+    trace.push({ opcode, args, aux, result, firstSubmission: first, submissions: submissions.length - first });
+    return result;
+  } };
+}
+
+function assertContextTranscript(submissions, trace) {
+  assert.deepStrictEqual(trace.map(x => [x.opcode, x.submissions]), [
+    [48,1], [51,1], [25,0], [21,0], [30,0], [22,0],
+    [51,1], [21,0], [30,0], [22,0],
+    [51,1], [21,0], [30,0], [22,0],
+    [51,1], [21,0], [30,0], [22,0],
+    [49,0], [49,1], [21,0], [30,0], [22,0], [11,1],
+  ], 'creation/binds/valid deletion/finish publish; invalid deletion leaves pending work intact');
+  const decoded = submissions.map(bytes => {
+    const records = [];
+    for (let at = 0; at < bytes.length;) {
+      const length = bytes.readUInt32LE(at), opcode = bytes.readUInt32LE(at + 4);
+      assert(length >= 32 && at + length <= bytes.length);
+      const record = { opcode };
+      if (opcode === Stream.PACKED_DRAW_OPCODE) {
+        record.mode = bytes.readUInt32LE(at + 8);
+        const pointer = bytes.readUInt32LE(at + 24), payload = bytes.readUInt32LE(at + 20);
+        assert.equal(payload, 19 * 4, 'one complete point with no index buffer');
+        assert(pointer >= at + 32 && pointer + payload <= at + length);
+        record.vertex = Array.from({ length: 19 }, (_, i) => bytes.readFloatLE(pointer + i * 4));
+      }
+      records.push(record); at += length;
+    }
+    return records;
+  });
+  assert.deepStrictEqual(decoded.map(packet => packet.map(x => x.opcode)), [
+    [48], [51], [65536,51], [65536,51], [65536,51], [65536,49], [65536,11],
+  ], 'every real lifecycle barrier retains all prior geometry in order');
+  const colors = [[.25,.5,.75,1], [1,1,1,1], [.25,.5,.75,1], [1,1,1,1], [1,1,1,1]];
+  const positions = [[1,2,3], [7,8,9], [10,11,12], [13,14,15], [4,5,6]];
+  const points = decoded.flat().filter(x => x.opcode === Stream.PACKED_DRAW_OPCODE);
+  assert.deepStrictEqual(points.map(x => x.mode), [0,0,0,0,0]);
+  assert.deepStrictEqual(points.map(x => x.vertex), positions.map((p, i) =>
+    [...p, ...colors[i], 0,0, 0,0,1, 0,0, 1, 0,1, 0,1]),
+  'literal saved/default attributes survive switches, failed bind and deletion');
+}
+
 function compareSubmissions(label, expected, actual) {
   assert.strictEqual(actual.length, expected.length, `${label}: submission count`);
   for (let i = 0; i < expected.length; i++) {
@@ -117,8 +165,14 @@ function compareSubmissions(label, expected, actual) {
       const summary = bytes => {
         const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
         let at = 0, records = 0, last = 0;
-        while (at < bytes.length) { last = view.getUint32(at, true); at += last; records++; }
-        return `${bytes.length} bytes/${records} records/last=${last}`;
+        const wire = [];
+        while (at < bytes.length) {
+          last = view.getUint32(at, true);
+          wire.push({ opcode: view.getUint32(at + 4, true), mode: view.getUint32(at + 8, true),
+            pointerBytes: view.getUint32(at + 20, true) });
+          at += last; records++;
+        }
+        return `${bytes.length} bytes/${records} records/last=${last}/wire=${JSON.stringify(wire)}`;
       };
       assert.fail(`${label}: submission ${i} byte length: JS ${summary(expected[i])}, WAT ${summary(actual[i])}`);
     }
@@ -261,14 +315,30 @@ async function main() {
     const section = label.split(':', 1)[0];
     if (!sectionEnabled(section)) return;
     const expected = [];
-    const oracle = jsRunner(memory, capacity, expected, translateGuest);
+    const referenceTrace = [], nativeTrace = [];
+    const oracleRunner = jsRunner(memory, capacity, expected, translateGuest);
+    const oracle = section === 'context' ? traceContext(oracleRunner, expected, referenceTrace) : oracleRunner;
     sequence(oracle, memory);
     oracle.flush();
     a.gl_wat_encoder_reset();
     activeSubmissions = [];
-    const native = watRunner(memory, a);
+    const nativeRunner = watRunner(memory, a);
+    const native = section === 'context' ? traceContext(nativeRunner, activeSubmissions, nativeTrace) : nativeRunner;
     sequence(native, memory);
     native.flush();
+    if (section === 'context') {
+      if (process.env.GL_PARITY_CONTEXT_TRACE) {
+        const packetOpcodes = packets => packets.map(bytes => {
+          const ops = [];
+          for (let at = 0; at < bytes.length; at += bytes.readUInt32LE(at)) ops.push(bytes.readUInt32LE(at + 4));
+          return ops;
+        });
+        console.log('GL_CONTEXT_CAUSALITY ' + JSON.stringify({ referenceTrace, nativeTrace,
+          referencePacketOpcodes: packetOpcodes(expected), nativePacketOpcodes: packetOpcodes(activeSubmissions) }));
+      }
+      assertContextTranscript(expected, referenceTrace);
+      assertContextTranscript(activeSubmissions, nativeTrace);
+    }
     if (section === 'pressure') {
       assert.deepStrictEqual(orderedRecords(activeSubmissions), orderedRecords(expected),
         `${label}: smaller batches preserve every complete record in order`);

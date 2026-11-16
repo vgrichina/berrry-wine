@@ -17,14 +17,7 @@ const OUTPUT_GUEST = 0x405000;
 const IMAGE_BASE = 0x400000;
 const OUTPUT_WASM = OUTPUT_GUEST - IMAGE_BASE + RegionMap.BASE.GUEST_BASE;
 
-if (!isMainThread) {
-  const sigs = require(workerData.sigsPath).sigs;
-  const memory = workerData.memory;
-  let instance;
-  const built = RPC.createWorkerImports(memory, sigs,
-    message => parentPort.postMessage(message), { slot: 0, getExports: () => instance?.exports });
-  const module_ = new WebAssembly.Module(workerData.wasm);
-  instance = new WebAssembly.Instance(module_, built.imports);
+function produce(memory, instance, built, pooled, complete) {
   const e = instance.exports;
   assert.strictEqual(e.gl_wat_encoder_set_enabled, undefined,
     'production worker exposes only the native encoder');
@@ -32,7 +25,7 @@ if (!isMainThread) {
     'production worker has no runtime JS fallback selector');
   e.init_thread(1, IMAGE_BASE, 0, 0, 0, 0, 0);
   e.heap_init(0x420000);
-  if (workerData.pooled) assert.strictEqual(e.gl_wat_stream_pool_enable(1), 1);
+  if (pooled) assert.strictEqual(e.gl_wat_stream_pool_enable(1), 1);
   const initialStats = { ...built.stats };
   const view = new DataView(memory.buffer);
   const call = (opcode, args = [], aux = 0) => {
@@ -47,6 +40,10 @@ if (!isMainThread) {
   };
   const f32 = value => ({ f32: value });
 
+  // A WGL lifecycle initializes per-context render/polygon defaults.
+  // Drawing before any context is bound cannot establish a packed ABI oracle.
+  assert.strictEqual(call(48, [0x1234], 0x1234), 0xC001);
+  assert.strictEqual(call(51, [0x1234, 0xC001]), 1);
   call(21, [0x0004]);
   call(25, [f32(0.25), f32(0.5), f32(0.75), f32(1)]);
   call(30, [f32(1), f32(2), f32(3)]);
@@ -55,8 +52,10 @@ if (!isMainThread) {
   call(22);
   const outputWa = e.guest_to_wasm(OUTPUT_GUEST) >>> 0;
   view.setUint32(outputWa, 0, true);
+  // RED_BITS reaches the drawable owner. MAX_TEXTURE_UNITS is authoritative
+  // native state once a context is bound and would bypass this RPC barrier.
   const queryStart = Date.now();
-  const queryResult = call(103, [0x84E2, OUTPUT_GUEST]);
+  const queryResult = call(103, [0x0D52, OUTPUT_GUEST]);
   const queryElapsed = Date.now() - queryStart;
   const queryOutput = view.getUint32(outputWa, true);
 
@@ -66,13 +65,52 @@ if (!isMainThread) {
   const finishStart = Date.now();
   const finishResult = call(11);
   const finishElapsed = Date.now() - finishStart;
-  if (workerData.pooled) {
+  if (pooled) {
     // Two more barriers wrap the three-buffer writer back to its first slot.
     for (let i = 0; i < 2; i++) { call(10, [0x0B71 + i]); call(11); }
   }
-  parentPort.postMessage({ t: 'done', queryResult, queryOutput, queryElapsed,
+  complete({ t: 'done', queryResult, queryOutput, queryElapsed,
     finishResult, finishElapsed, stats: Object.fromEntries(Object.entries(built.stats)
       .map(([name, count]) => [name, count - initialStats[name]])) });
+}
+
+function directControl(wasm, pooled) {
+  const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
+  const module_ = new WebAssembly.Module(wasm), imports = {}, packets = [];
+  const built = { stats: { sync: 0, async: 0, local: 0 } };
+  for (const item of WebAssembly.Module.imports(module_)) {
+    if (item.kind === 'memory') (imports[item.module] ||= {})[item.name] = memory;
+    else if (item.kind === 'function') (imports[item.module] ||= {})[item.name] = () => 0;
+  }
+  imports.host.gpu_gl_call = (op, at, bytes) => {
+    assert.strictEqual(op, Stream.WAT_STREAM_FLUSH_OPCODE);
+    built.stats.sync++; built.stats.local++;
+    packets.push(Buffer.from(new Uint8Array(memory.buffer, at, bytes)));
+    return Stream.replay(Stream.memoryBatch(memory, at, bytes), opcode => {
+      if (opcode === 48) return 0xC001;
+      if (opcode === 51) return 1;
+      if (opcode === 103) {
+        new DataView(memory.buffer).setUint32(OUTPUT_WASM, 4, true);
+        return 0x2468;
+      }
+      return 0x1357;
+    });
+  };
+  let result;
+  produce(memory, new WebAssembly.Instance(module_, imports), built, pooled, value => { result = value; });
+  assert(result);
+  return { packets, result };
+}
+
+if (!isMainThread) {
+  const sigs = require(workerData.sigsPath).sigs;
+  const memory = workerData.memory;
+  let instance;
+  const built = RPC.createWorkerImports(memory, sigs,
+    message => parentPort.postMessage(message), { slot: 0, getExports: () => instance?.exports });
+  const module_ = new WebAssembly.Module(workerData.wasm);
+  instance = new WebAssembly.Instance(module_, built.imports);
+  produce(memory, instance, built, workerData.pooled, message => parentPort.postMessage(message));
 } else {
   const { compileSrcWasm } = require('./compile-src');
   const sigs = require('../lib/host-import-sigs.generated.json').sigs;
@@ -80,6 +118,7 @@ if (!isMainThread) {
   async function main() {
     const wasm = compileSrcWasm();
     for (const pooled of [false, true]) {
+    const control = directControl(wasm, pooled);
     const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
     const rpcView = RPC.views(memory, 0).i32;
     const batches = [];
@@ -125,12 +164,14 @@ if (!isMainThread) {
           }
           if (opcode === 103) {
             const stack = new DataView(capture.buffer, capture.stackOffset, capture.stackBytes);
-            assert.strictEqual(stack.getUint32(4, true), 0x84E2);
+            assert.strictEqual(stack.getUint32(4, true), 0x0D52);
             assert.strictEqual(stack.getUint32(8, true), OUTPUT_GUEST);
             // Publish the query output before serveGlBatch wakes Atomics.wait.
             new DataView(memory.buffer).setUint32(OUTPUT_WASM, 4, true);
           }
-          return batches.length === 0 ? 0x2468 : 0x1357;
+          if (opcode === 48) return 0xC001;
+          if (opcode === 51) return 1;
+          return opcode === 103 ? 0x2468 : 0x1357;
         });
         batches.push({ ...batch, snapshot, opcodes, packed });
         return result;
@@ -168,6 +209,10 @@ if (!isMainThread) {
 
     try {
       const result = await done;
+      assert.deepStrictEqual(batches.map(batch => batch.snapshot), control.packets,
+        'real Worker and direct main-thread native WAT emit identical complete packets');
+      assert.deepStrictEqual([result.queryResult, result.queryOutput, result.finishResult],
+        [control.result.queryResult, control.result.queryOutput, control.result.finishResult]);
       assert.strictEqual(result.queryResult, 0x2468);
       assert.strictEqual(result.queryOutput, 4,
         'query output is visible on the first worker instruction after wake');
@@ -175,24 +220,27 @@ if (!isMainThread) {
       assert(result.queryElapsed >= 15 && result.finishElapsed >= 15,
         'both barriers remained blocked until delayed main-thread replay');
       assert.deepStrictEqual(batches.map(batch => batch.opcodes),
-        pooled ? [[Stream.PACKED_DRAW_OPCODE, 103], [10, 11], [10, 11], [10, 11]]
-          : [[Stream.PACKED_DRAW_OPCODE, 103], [10, 11]],
+        pooled ? [[48], [51], [Stream.PACKED_DRAW_OPCODE, 103], [10, 11], [10, 11], [10, 11]]
+          : [[48], [51], [Stream.PACKED_DRAW_OPCODE, 103], [10, 11]],
         'geometry, query, reuse, and finish preserve global order');
-      assert.strictEqual(batches[0].packed.mode, 0x0004);
-      assert.strictEqual(batches[0].packed.vertices.length, 3 * Stream.VERTEX_FLOATS);
-      assert.deepStrictEqual(batches[0].packed.vertices.slice(0, 7),
-        [1, 2, 3, 0.25, 0.5, 0.75, 1]);
-      const reused = batches[pooled ? 3 : 1];
-      assert.strictEqual(reused.memoryOffset, batches[0].memoryOffset,
+      const geometry = batches[2];
+      assert.strictEqual(geometry.packed.mode, 0x0004);
+      // Literal API-to-attribute oracle, independent of the encoder and host
+      // frontend: xyz, rgba, unit0 st, normal, unit1 st, w, unit0 rq, unit1 rq.
+      assert.deepStrictEqual(geometry.packed.vertices,
+        [[1,2,3], [4,5,6], [7,8,9]].flatMap(position =>
+          [...position, 0.25,0.5,0.75,1, 0,0, 0,0,1, 0,0, 1, 0,1, 0,1]));
+      const reused = batches[pooled ? 5 : 3];
+      assert.strictEqual(reused.memoryOffset, geometry.memoryOffset,
         'stream range is reused only after the first response wakes the worker');
-      const reusedBytes = Math.min(batches[0].bytes, reused.bytes);
-      assert.notStrictEqual(Buffer.compare(batches[0].snapshot.subarray(0, reusedBytes),
-        Buffer.from(new Uint8Array(memory.buffer, batches[0].memoryOffset, reusedBytes))), 0,
+      const reusedBytes = Math.min(geometry.bytes, reused.bytes);
+      assert.notStrictEqual(Buffer.compare(geometry.snapshot.subarray(0, reusedBytes),
+        Buffer.from(new Uint8Array(memory.buffer, geometry.memoryOffset, reusedBytes))), 0,
       'second submission overwrites the released range without changing its snapshot');
       assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_IDLE);
       assert.deepStrictEqual(bootstraps, ['process', 'thread']);
-      assert.strictEqual(result.stats.sync, pooled ? 4 : 2);
-      assert.strictEqual(result.stats.local, pooled ? 4 : 2,
+      assert.strictEqual(result.stats.sync, pooled ? 6 : 4);
+      assert.strictEqual(result.stats.local, pooled ? 6 : 4,
         'only native flush imports cross out of WAT after bootstrap');
       console.log(`PASS real Worker WAT GL ${pooled ? 'triple-pool' : 'single-buffer'} offset transport, Atomics barriers, ordering, and reuse`);
     } finally {
