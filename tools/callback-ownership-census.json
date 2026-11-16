@@ -215,7 +215,9 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "72924b8e2b36362fd2cef5d61603f7c482d96897e85d89030f644d33589e40b0",
+      "sha256": "19a7170a4cecb9c1f35585c420c4d7e96a12e407f91208769c29757c683ec812",
+      "glRetireS2TagReview20261116": "gl-retire S2 tags the 0x10008 WGL-mode answer with 0x5747 so untagged host answers claim nothing; still a synchronous header peek with no retained callback, scheduling or ownership writes.",
+      "glRetireS2Review20261116": "gl-retire S2 adds the synchronous 0x10008 WGL-mode answer to gpu_gl_call and gpu_gl_batch: it peeks one record header in the caller's own memory and returns backend/glGps bits, retains no callback, schedules nothing and writes no ownership state.",
       "glRetireS1Review20261116": "2026-11-16 GL retire S1: the GL host bridge's backend getter falls back to software in Node as in the browser (was webgl), so a host without ctx.glBackend gets WAT software GL; a default change only, no guest invocation, callback owner, continuation or retained guest reference added.",
       "d3d9ProfileReview20261116": "2026-11-16 d3d9-retire S2: before the first api-4 gpu_stream_kick the host states the D3D9 launch profile once through the d3d9_profile_set export (programmable opt-in from ctx.d3d9Programmable / ?d3d9-programmable, software executor from the old bridge's backend, ctx.d3d9Backend or ?d3d9-renderer); WAT decides caps from it and the ring capability block. A WASM global write only; no guest invocation, callback owner, continuation or retained guest reference added.",
       "glGpsBrowserDefaultReview20261116": "2026-11-16 GPU stream v2 G3c: the GL host bridge's backend is a getter (ctx.glBackend, ?gl-renderer=, the app's glRenderer read from ctx.callbackHost, then software in a browser / webgl in Node); the gl-gps executor follows the page GPU select (software) after ?gl-gps=; the gl-gps layer's stale check also requires this instance to have software GL enabled, so a Worker-main producer's frames are not hidden. Configuration and a predicate only; no guest invocation, callback owner, continuation or retained guest reference added.",

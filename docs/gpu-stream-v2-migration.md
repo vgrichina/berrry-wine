@@ -346,6 +346,23 @@ The v2 lowering reuses the 09a8g pipeline:
     producer mailbox). Deleting them needs the WGL context table and the
     wgl* lifecycle in WAT (the G3 plan's "routing part"), and the CLI/test
     default moved off `webgl`.
+  - **Status (gl-retire S1/S2).** The CLI/Node default is `software` with
+    gps on: the software executor, or the WebGL executor with
+    `--headless-gl` (`--gl-renderer=webgl` still selects the JS path).
+    `src/09a8cw-gl-wgl.wat` owns the WGL lifecycle for software contexts:
+    an instance's first GL record (0x10008) asks the host, and
+    `lib/host-imports.js` answers "WAT owns" for the software backend (with
+    its glGps decision). From then on `$gl_emit_record` answers each record
+    in place and nothing is flushed to a host: context handles (a
+    process-wide counter), make-current with a per-instance owner mark,
+    delete, wglShareLists, wglCopyContext validation, SwapBuffers/glFlush
+    presentation, glReadPixels from the leased read surface, glGenTextures
+    (generated names reserved per share group), gluScaleImage and the
+    gluBuild*Mipmaps status. Threads mode needs no mailbox: each guest
+    instance asks and answers for itself. `test-gl-wgl-owned` compares every
+    answer and the picture against the JS-hosted path. The JS GL transport is
+    now reachable only from `webgl` and from test harnesses that replay the
+    stream into `OpenGLHostBridge` themselves.
 - **G4. Optional: GPU transform and lighting through vertex-shader IR.**
 
 **Readbacks:**

@@ -11,7 +11,9 @@
 // READBACK records ($glg_front_sync on gl_gps_sync_front).
 //
 // opts.gps: 1 = producer on; opts.dropCaps: GPS_CAP_* bits the executor
-// pretends it lacks (the caps-missing decline paths).
+// pretends it lacks (the caps-missing decline paths); opts.owned: answer the
+// instance's 0x10008 query as host-imports does for the software backend, so
+// WAT owns WGL (src/09a8cw-gl-wgl.wat) and no command batch reaches a host.
 const assert = require('assert');
 const path = require('path');
 const root = path.resolve(__dirname, '../..');
@@ -44,19 +46,27 @@ const WAT = String.raw`
  (func (export "probe_invoke") (param $thunk i32) (result i32)
    (call $win32_dispatch (i32.div_u
      (i32.sub (local.get $thunk) (global.get $thunk_guest_base)) (i32.const 8)))
-   (i32.load (global.get $reg_base)))`;
+   (i32.load (global.get $reg_base)))
+ (func (export "probe_window") (param $hwnd i32) (param $w i32) (param $h i32)
+   (call $wnd_table_set (local.get $hwnd) (i32.const 0))
+   (call $client_rect_set (local.get $hwnd) (i32.const 0) (i32.const 0) (local.get $w) (local.get $h)))`;
 
 const STAT_NAMES = ['draws', 'tris', 'spanQuads', 'clears', 'presents', 'readbacks', 'readbackRows',
   'rtUploads', 'rtUploadRows', 'texUploads', 'gpuFrames', 'swFrames', 'syncs', 'texHits',
   'declines', 'declinedFrames'];
 
-async function bootGlGps({ gps = 1, dropCaps = 0, size = 16 } = {}) {
+async function bootGlGps({ gps = 1, dropCaps = 0, size = 16, owned = false } = {}) {
   let memory, bridge, executor = null, ring = null, ringAddr = 0;
   const kicks = { n: 0, records: {} };
   const h = await bootRenderHarness({ fonts: 'none', width: size, height: size, extraWat: WAT,
     extraHostOverrides: {
       gpu_gl_call(op, at, bytes) {
-        if (op === Stream.WAT_STREAM_FLUSH_OPCODE) return bridge.replay(Stream.memoryBatch(memory, at, bytes));
+        if (op === Stream.WAT_STREAM_FLUSH_OPCODE) {
+          const d = new DataView(memory.buffer, at >>> 0, 8);
+          if (bytes === d.getUint32(0, true) && d.getUint32(4, true) === 0x10008) return owned ? 0x57470000 | 1 | 2 | (gps ? 4 : 0) : 0;
+          if (owned) throw Error('WAT-owned GL sent a command batch');
+          return bridge.replay(Stream.memoryBatch(memory, at, bytes));
+        }
         if (op >= 0x20000 && op <= 0x20006) return 0;
         throw Error('unexpected host opcode ' + op);
       },
@@ -91,11 +101,13 @@ async function bootGlGps({ gps = 1, dropCaps = 0, size = 16 } = {}) {
   const str = s => { const p = e.guest_alloc(s.length + 1) >>> 0; new Uint8Array(memory.buffer, wa(p), s.length + 1).set(Buffer.from(s + '\0')); return p; };
   const gl32 = e.probe_module(str('opengl32.dll')) >>> 0; assert(gl32);
   const user32 = e.probe_module(str('user32.dll')) >>> 0; assert(user32);
+  const glu32 = e.probe_module(str('glu32.dll')) >>> 0; assert(glu32);
+  e.probe_window(42, size, size);
   const cache = new Map();
   const resolve = name => {
     if (!cache.has(name)) {
       dv().setUint32(regs + 16, stack, true);
-      cache.set(name, e.probe_lookup(/^(gl|wgl)/.test(name) ? gl32 : user32, str(name)) >>> 0);
+      cache.set(name, e.probe_lookup(/^glu/.test(name) ? glu32 : /^(gl|wgl)/.test(name) ? gl32 : user32, str(name)) >>> 0);
     }
     return cache.get(name);
   };
@@ -147,7 +159,7 @@ async function bootGlGps({ gps = 1, dropCaps = 0, size = 16 } = {}) {
     { x: x0, y: y0, t: extra.t && extra.t[0] }, { x: x1, y: y0, t: extra.t && extra.t[1] },
     { x: x1, y: y1, t: extra.t && extra.t[2] }, { x: x0, y: y1, t: extra.t && extra.t[3] }], color);
   const clear = (rgba, mask = 0x4000) => { call('glClearColor', rgba.map(f)); call('glClear', [mask]); };
-  return { e, memory, call, f, stats, front, swap, prim, quad, clear, kicks, wa, size, str };
+  return { e, memory, call, f, stats, front, swap, prim, quad, clear, kicks, wa, size, str, dc, context, bridge };
 }
 
 // The two arms' presented pictures: equal within $tol per channel.

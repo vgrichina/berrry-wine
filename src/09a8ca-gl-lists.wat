@@ -27,9 +27,9 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (local.get $key))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 1104))) ;; index state follows selection/feedback; G1 query tail +1068
+    (local.set $p (call $gl_list_alloc (i32.const 1112))) ;; index state follows selection/feedback; G1 query tail +1068; WGL +1104 (09a8cw)
     (if (i32.eqz (local.get $p)) (then (unreachable)))
-    (local.set $group (call $gl_list_alloc (i32.const 20)))
+    (local.set $group (call $gl_list_alloc (i32.const 28))) ;; +20/+24 generated names (09a8cw)
     (if (i32.eqz (local.get $group)) (then (unreachable)))
     (i32.store (local.get $group) (i32.const 1))
     (i32.store offset=968 (local.get $p) (local.get $group))

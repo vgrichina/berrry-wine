@@ -63,6 +63,7 @@ async function main() {
     if ((opcode >>> 0) === Stream.WAT_STREAM_FLUSH_OPCODE) {
       return Stream.replay(Stream.memoryBatch(memory, stackWa, aux),
         (streamOpcode, streamAux, capture) => {
+          if (streamOpcode === 0x10008) return 0; // WGL-mode query: this host keeps the JS path
           presents.push({ opcode: streamOpcode, stackWa: capture.stackOffset, aux: streamAux });
           return gpuResult;
         });

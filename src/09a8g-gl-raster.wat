@@ -4116,7 +4116,7 @@
   ;; were right there and a browser window stayed black. The frame is
   ;; client-sized with (0,0) at the client origin, so a client DC is exact.
   ;; Result 1 when a frame was blitted.
-  (func (export "gl_sw_present_window") (param $hwnd i32) (result i32)
+  (func $gl_sw_export_present_window (export "gl_sw_present_window") (param $hwnd i32) (result i32)
     (if (i32.or (i32.eqz (global.get $gl_sw_front)) (i32.eqz (local.get $hwnd)))
       (then (return (i32.const 0))))
     ;; GPU stream (09a8gt): the executor's PRESENT is the picture.
