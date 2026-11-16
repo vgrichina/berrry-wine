@@ -216,6 +216,18 @@ test('actual owned file IO detects replacement and deletion without inode/digest
 }
 
 function checkHeavyGate(out) {
+  if(process.env.GTA2_PARALLEL_RENDERER_GATE){
+    const gate=JSON.parse(fs.readFileSync(process.env.GTA2_PARALLEL_RENDERER_GATE,'utf8'));
+    assert.equal(gate.owner199IndependentImmutableRuntime,true,'explicit parallel runtime authorization');
+    const view=globalThis.__gta2ImmutableVerifiedViewV1;
+    assert(view&&Object.isFrozen(view)&&view.head===process.env.GTA2_VIEW_HEAD,'actual sealed source view');
+    assert.equal(sha(fs.readFileSync(path.resolve(__dirname,'../build/wine-assembly.wasm'))),
+      process.env.GTA2_FROZEN_MODULE_SHA256,'actual frozen native module');
+    const watch=JSON.parse(fs.readFileSync(path.join(out,'..','watchdog-armed.json')));
+    assert(watch.independent&&watch.deadline*1000>Date.now(),'independent watchdog prearmed');
+    process.kill(watch.pid,0);
+    return;
+  }
   const gate=JSON.parse(fs.readFileSync(process.env.GTA2_COMPLETE_RELEASE_GATE,'utf8'));
   assert(gate.glFinal&&gate.simsFinal&&gate.personalCurrentClosure&&gate.heavyLaneClaimed,
     'both explicit final releases, personal current closure and owned heavy lock required');
@@ -424,7 +436,8 @@ async function browserFixture(out,mode,fault='none') {
     fixtureFactory:predecessor.authoredPE,
     extraPins:['test/test-gta2-current-scene-prearm.cjs','test/test-gta2-final-pin-prearm-scheduling.cjs',
       'test/test-gta2-worker-complete-confirmation.cjs',
-      'tools/gta2-verified-source-view.cjs'],
+      'tools/gta2-verified-source-view.cjs','tools/gta2-renderer-startup-runtime.cjs',
+      'tools/gta2-renderer-startup-runtime.py','test/test-gta2-renderer-startup-publication.cjs'],
     captureWitness:async({label,png,evaluate,record})=>{
       const witness=await current.readPublishedPixels(evaluate);
       record(label+'-pixel-witness.json',witness);

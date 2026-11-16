@@ -37,9 +37,16 @@ async function main(){
    const out=path.join(root,kind);fs.mkdirSync(out);const keys=kind==='pair'?['ArrowUp','ArrowLeft']:['Enter'];
    const file=out+'/config.json';fs.writeFileSync(file,JSON.stringify({pid:process.pid,startToken,url:'ws://127.0.0.1:'+server.address().port,targetId:'exact-page',keys,name:'pulse',mode:'blank-control',startedAt:Date.now()}));
    const child=cp.spawn(process.execPath,[path.resolve(__dirname,'../tools/gta2-paired-controller.cjs'),'release',out,file],{stdio:['pipe','pipe','pipe']});fs.writeFileSync(out+'/child-pid.json',JSON.stringify({pid:child.pid}));let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({pid:child.pid,code,signal})));
-   const end=Date.now()+2000;while(!stdout.includes('\n')){assert(Date.now()<end);await pause(5);}const armed=JSON.parse(stdout.trim());assert(armed.armed);assert.equal(armed.fallback-armed.at,1500);
-   if(kind!=='parent-eof')child.stdin.write(JSON.stringify({at:armed.at+150})+'\n');child.stdin.end();
-   const result=await joined;assert.equal(result.code,0,stderr);assert(child.stdout.readableEnded&&child.stderr.readableEnded);
+   let armed,result;
+   try {
+    const end=Date.now()+2000;while(!stdout.includes('\n')){assert(child.exitCode===null,'release exited before arm: '+stderr);assert(Date.now()<end);await pause(5);}
+    armed=JSON.parse(stdout.trim());assert(armed.armed);assert.equal(armed.fallback-armed.at,1500);
+    if(kind!=='parent-eof')child.stdin.write(JSON.stringify({at:armed.at+150})+'\n');
+   } finally {
+    child.stdin.end();result=await joined;
+    fs.writeFileSync(out+'/actual-child-wait.json',JSON.stringify({...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr}));
+   }
+   assert.equal(result.code,0,stderr);assert(child.stdout.readableEnded&&child.stderr.readableEnded);
    const up=JSON.parse(fs.readFileSync(out+'/pulse-up.json'));assert.equal(up.state,'ACK');assert(up.ack>=up.due&&up.ack-up.armed<=1750);
    const ups=events.filter(e=>e.method==='Input.dispatchKeyEvent'&&e.at>=armed.at&&e.at<=up.ack);assert.deepEqual(ups.map(e=>e.params.key),[...keys].reverse());assert(ups.every(e=>e.params.type==='keyUp'&&e.sessionId==='fixture-page'));
    fs.writeFileSync(out+'/wait.json',JSON.stringify({...result,stdoutEOF:true,stderrEOF:true,actualWait:true,stdout,stderr,events:ups}));

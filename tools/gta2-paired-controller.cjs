@@ -598,7 +598,7 @@ async function browser(out,backend) {
   async function state(){
     const page=await evaluate(`({at:Date.now(),apps:runningApps.map(a=>({name:a.name,running:a.wine?.running,stopped:a.wine?._stopped,processId:a.wine?.processId,slice:a.wine?._workerLastSlice,d3dStats:a.wine?.guestWorker?.d3dStats,exitCode:a.wine?._exitCode})),retiredOwner:globalThis.__gta2PassiveOwner?{processId:__gta2PassiveOwner.processId,running:__gta2PassiveOwner.running,stopped:__gta2PassiveOwner._stopped,nativeExitCode:__gta2PassiveOwner._exitCode??null,processExited:__gta2PassiveOwner._processObject?.exited,processExitCode:__gta2PassiveOwner._processObject?.exitCode}:null,log:document.getElementById('log')?.textContent?.slice(-12000)})`);
     const owners=[];
-    for(const w of workers.values())if(!w.closed&&w.url.includes('d3d-render-worker'))owners.push({targetId:w.targetId,sessionId:w.sessionId,value:await evaluate(`Array.from(endpoints,([id,e])=>({id,options:e.options,failed:e.failed?String(e.failed):null,evidence:e.evidence,adapterPresent:!!e.adapter,targets:e.adapter?.inspectTargets?.()??null,software:e.adapter?.d3dimSoftwareDrawCallsCompleted??null,control:e.control?Array.from(e.control):null}))`,w.sessionId)});
+    for(const w of workers.values())if(!w.closed&&w.url.includes('d3d-render-worker'))owners.push({targetId:w.targetId,sessionId:w.sessionId,value:await evaluate(`Array.from(endpoints,([id,e])=>({id,generation:e.generation,options:e.options,failed:e.failed?String(e.failed):null,evidence:e.evidence,adapterPresent:!!e.adapter,targets:e.adapter?.inspectTargets?.()??null,software:e.adapter?.d3dimSoftwareDrawCallsCompleted??null,control:e.control?Array.from(e.control):null}))`,w.sessionId)});
     return {...page,owners,workers:[...workers.values()]};
   }
   async function capture(name){
@@ -612,6 +612,10 @@ async function browser(out,backend) {
     if(latest.identity.renderEndpoint!=='none'){
       const owners=observed.owners.flatMap(w=>w.value.filter(e=>e.id===latest.identity.renderEndpoint&&w.targetId===latest.identity.rendererTarget));
       assert.equal(owners.length,1,'unique actual owning backend');assert.equal(owners[0].options.api,'legacy');assert.equal(owners[0].options.backend,backend,'actual backend differs from selected arm');assert(!owners[0].failed);
+      if(bridgeOptions.rendererStartup){
+        assert.equal(latest.identity.rendererTarget,bridgeOptions.rendererStartup.targetId,'permanent startup renderer target');
+        assert.equal(owners[0].generation,bridgeOptions.rendererStartup.generation,'permanent startup renderer generation');
+      }
     }
     return latest;
   }
@@ -691,6 +695,7 @@ async function browser(out,backend) {
     await Promise.all(tasks);record('executed-sources.json',{workers:[...workers.values()]});
     try {
       bridgeOptions=await require('./gta2-browser-release-binding.cjs').install({c,pageSession:session,workers,app:'gta2_demo',backend,
+        rendererRequired:true,expectedModules:pins.modules,
         onReadiness:value=>fs.appendFileSync(out+'/native-readiness.log',JSON.stringify(value)+'\n')});
     } catch(error) {
       record('native-startup-refusal.json',{at:Date.now(),state:error.nativeStartupState??'UNKNOWN',

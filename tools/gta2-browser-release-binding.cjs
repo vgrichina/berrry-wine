@@ -159,6 +159,7 @@ function pageBridge(options, readNative) {
   const epoch = crypto.randomUUID(), ids = new WeakMap();let next = 0;
   const token = object => {if (!object) return null;if (!ids.has(object)) ids.set(object,epoch+':'+(++next));return ids.get(object);};
   const pending = new Map(), receipts = new Map();let sequence = 0, closed = null, binding = null, active = null;
+  let publishedIdentity = null;
   const nativeOwner = clone(options.nativeOwner), events = [];
   const mainNonces = new Set();let mainBound = null, mainArm = null;
   function mainNative() {
@@ -233,19 +234,26 @@ function pageBridge(options, readNative) {
     if (worker) check(wine.guestWorker?.link === link && link.worker === worker && !link._stopped && !link._stopping &&
       !link._transportFailure && link.endpointIdentity === nativeOwner.endpointIdentity, 'actual CPU endpoint retired');
     else check(!wine.guestWorker,'CPU backend changed');
-    const ports = [...(wine._renderWorkerManager?.ports?.values() || [])].filter(p=>!p.closed);
+    const ports = [...(wine._renderWorkerManager?.ports?.values() || [])];
+    check(ports.length<=1&&!ports.some(p=>p.closed||p._failed),'actual renderer endpoint ambiguous or retired');
+    const manager=wine._renderWorkerManager;
+    if(manager)check(!manager.stopped&&!manager._failure&&!manager._retired&&
+      manager.options.module===module&&manager.options.memory===memory,'actual renderer owner/module retired or changed');
     const renderId = wine.guestWorker?.d3dStats?.renderEndpointId;
     const owners = ports.filter(p=>p.id === renderId);
     check(owners.length <= 1,'ambiguous owning backend');
     const port = owners[0] || (!renderId && ports.length === 1 ? ports[0] : null);
+    check(!port?true:!port._failed,'actual renderer endpoint failed');
     check(!renderId || port,'actual owning renderer unavailable');
     const backend = port?.options?.backend || 'none';
     check(backend === 'none' || backend === options.backend,'actual backend changed');
-    return {identity:{epoch, processId:wine.processId, processObject:token(wine), renderer:token(renderer),
+    const identity={epoch, processId:wine.processId, processObject:token(wine), renderer:token(renderer),
       memory:token(memory), buffer:token(buffer), module:token(module), canvas:token(canvas), queue:token(queue),
       instance:token(instance), worker:token(worker), endpoint:link?.endpointIdentity ?? 'main',
       renderManager:token(wine._renderWorkerManager), renderWorker:token(wine._renderWorkerManager?.worker),
-      renderPort:token(port), renderEndpoint:port?.id ?? 'none', backend},
+      renderPort:token(port), renderEndpoint:port?.id ?? 'none', backend};
+    check(!publishedIdentity || same(identity,publishedIdentity),'permanent startup renderer identity changed');
+    return {identity,
       physicalUp:!renderer._mouseButtonsMask && !Object.values(renderer._physicalKeys || {}).some(Boolean)};
   }
   const request = (action, body = {}) => {
@@ -434,6 +442,7 @@ function pageBridge(options, readNative) {
     seal:reason=>seal(reason),
   });
   const initial = page([originalDown,originalUp,originalPress]);
+  publishedIdentity = clone(initial.identity);
   check(initial.physicalUp,'physical input held before native installation');
   if (!worker) check(readNative(instance.exports).healthy,'unhealthy main-thread native context');
   if (worker) worker.addEventListener('message',onWorkerMessage);
@@ -522,6 +531,38 @@ function userStartupObserver(readNative, options) {
     const canvas=renderer.canvas,queue=renderer.inputQueue,link=wine.guestWorker?.link,worker=link?.worker;
     const down=renderer.handleKeyDown,up=renderer.handleKeyUp,press=renderer.handleKeyPress;
     owner={worker:!!worker,endpoint:link?.endpointIdentity??'main',slot:0,processId};
+    // The caller declares whether its startup contract includes a render
+    // Worker. Absence is never used as proof of completed D3D initialization.
+    // A GDI-only caller keeps the equally strict permanent `none` identity.
+    let manager=null,renderWorker=null,port=null,renderId=null;
+    const rendererSample=()=>{
+      const current=wine._renderWorkerManager;
+      check(!wine._renderWorkerRetired&&!wine._d3dRenderRetired,'renderer retired');
+      if(manager)check(current===manager&&current.worker===renderWorker,'renderer manager/Worker changed');
+      if(current){
+        check(!current.stopped&&!current._failure&&!current._retired,'renderer manager failed or retired');
+        check(current.options.module===module&&current.options.memory===memory,'renderer module/memory wrong owner');
+        if(!manager){manager=current;renderWorker=current.worker;}
+      }
+      const ports=[...(current?.ports?.values()||[])];
+      check(!ports.some(p=>p.closed||p._failed),'renderer endpoint failed or retired');
+      check(ports.length<=1,'ambiguous startup renderer');
+      const currentPort=ports[0]||null,reported=wine.guestWorker?.d3dStats?.renderEndpointId;
+      if(port)check(currentPort===port&&port.id===renderId,'renderer endpoint/generation changed');
+      if(currentPort){
+        check(currentPort.manager===current,'renderer endpoint wrong manager');
+        check(currentPort.options.backend===options.backend,'renderer backend changed');
+        check(!reported||reported===currentPort.id,'renderer endpoint wrong CPU owner');
+        if(!port){port=currentPort;renderId=port.id;}
+      }
+      const legacy=link?._renderLegacyEndpoint,control=link?._renderLegacyControl;
+      if(legacy)check(legacy===currentPort,'legacy renderer wrong owner');
+      if(control)check(!Atomics.load(control,2),'renderer control error');
+      const ready=!!(currentPort&&legacy===currentPort&&control&&Atomics.load(control,0)===1);
+      check(!options.rendererRequired||worker,'render Worker contract requires actual CPU Worker');
+      return {required:!!options.rendererRequired,ready:options.rendererRequired?ready:!current,
+        endpoint:currentPort?.id??'none',backend:currentPort?.options.backend??'none'};
+    };
     inspect=()=>{
       check(!Object.hasOwn(globalThis,'__gta2NativeReleasePageV1'),'page bridge published during observation');
       check(runningApps.length===1&&runningApps[0].name===options.app&&runningApps[0].wine===wine&&
@@ -535,14 +576,15 @@ function userStartupObserver(readNative, options) {
       if(worker)check(wine.guestWorker?.link===link&&link.worker===worker&&!link._stopped&&!link._stopping&&
         !link._transportFailure&&link.endpointIdentity===owner.endpoint,'CPU endpoint retired or changed');
       else check(!wine.guestWorker,'CPU backend changed');
-      return worker?null:readNative(ownInstance.exports,true);
+      const rendering=rendererSample();
+      return {...(worker?{healthy:true,pageOnly:true}:readNative(ownInstance.exports,true)),renderer:rendering};
     };
   }
   let processThread=null,main=null;
   const generations=new Map();
   function sample(){
     const user=inspect();
-    if(user){
+    if(user&&!user.pageOnly){
       const terminal=reason=>({owner,...user,terminal:reason});
       if(user.execution.quit||user.execution.yieldReason===2)
         return terminal('native quit or exit');
@@ -565,7 +607,8 @@ function userStartupObserver(readNative, options) {
         if(win.threadId!==context.threadId)return terminal('native window belongs to another thread');
       }
     }
-    return {owner,...(user||{healthy:true,pageOnly:true})};
+    return {owner,...(user||{healthy:true,pageOnly:true}),
+      healthy:!!(user?.healthy??true)&&(!user?.renderer||user.renderer.ready)};
   }
   return Object.freeze({sample,commit(source){
     const current=sample();check(!current.terminal,current.terminal);
@@ -575,13 +618,32 @@ function userStartupObserver(readNative, options) {
     return (0,eval)(source);
   }});
 }
-async function install({c,pageSession,workers,app,backend,onReadiness=()=>{}}){
+function rendererStartupObserver(options) {
+  // Read-only retained RemoteObject on the actual newly created render owner.
+  const check=(ok,message)=>{if(!ok)throw Error('UNSENT renderer startup: '+message);};
+  check(sharedMode&&instance&&!stopping&&!retirementError,'renderer unavailable');
+  check(endpoints.size===1,'unique actual render endpoint');
+  const ownInstance=instance,ownMemory=memory,buffer=memory.buffer;
+  const entry=endpoints.get(options.endpoint),generation=entry?.generation,ownControl=entry?.control;
+  check(entry&&generation>0,'actual renderer endpoint/generation');
+  const sample=()=>{
+    check(instance===ownInstance&&memory===ownMemory&&memory.buffer===buffer&&!stopping&&!retirementError,
+      'renderer instance/module owner changed');
+    check(endpoints.size===1&&endpoints.get(options.endpoint)===entry&&entry.generation===generation,
+      'renderer endpoint generation changed');
+    check(!entry.failed&&entry.options.backend===options.backend,'renderer failed or wrong backend');
+    check(entry.control===ownControl&&ownControl&&!Atomics.load(ownControl,2),'renderer control changed or faulted');
+    return {healthy:Atomics.load(ownControl,0)===1,endpoint:options.endpoint,generation,backend:entry.options.backend};
+  };
+  return Object.freeze({sample,commit(){const value=sample();check(value.healthy,'renderer not ready');return value;}});
+}
+async function install({c,pageSession,workers,app,backend,rendererRequired=false,expectedModules=null,onReadiness=()=>{}}){
   const due=Date.now()+3000,refs=[];let timer,publishing=false;
   const unsent=error=>{error.nativeStartupState=publishing?'UNKNOWN':'UNSENT';return error;};
   const work=(async()=>{
     async function observer(session,cpu){
       const r=await c.send('Runtime.evaluate',{expression:'('+userStartupObserver.toString()+')('+nativeContext.toString()+','+
-        JSON.stringify({app,cpu})+')',returnByValue:false},session);
+        JSON.stringify({app,cpu,backend,rendererRequired})+')',returnByValue:false},session);
       assert(!r.exceptionDetails,JSON.stringify(r.exceptionDetails));
       assert(r.result.objectId,'retained actual startup observer');
       const ref={session,objectId:r.result.objectId};refs.push(ref);return ref;
@@ -607,16 +669,65 @@ async function install({c,pageSession,workers,app,backend,onReadiness=()=>{}}){
       // still independently recovers current executed bodies and module bytes.
       await c.send('Debugger.enable',{},pageSession);
     }
+    let rendererRef=null,rendererStartup=null;
     for(;;){
       assert(Date.now()<due,'bounded native USER startup expired UNSENT');
       const samples=await Promise.all([call(cpuRef,'sample'),...(cpuRef===pageRef?[]:[call(pageRef,'sample')])]);
       const current=samples[0];assert(Date.now()<due,'bounded native USER startup expired UNSENT');
-      onReadiness({...current,state:'UNSENT',at:Date.now(),deadline:due});
+      const pageCurrent=cpuRef===pageRef?current:samples[1];
+      onReadiness({...current,renderer:pageCurrent.renderer,state:'UNSENT',at:Date.now(),deadline:due});
       assert(!current.terminal,current.terminal);
       assert.equal(current.context.processId,page.owner.processId,'actual native process differs from current owner');
-      if(current.healthy)break;
+      assert(!pageCurrent.terminal,pageCurrent.terminal);
+      if(current.healthy&&pageCurrent.healthy){
+        if(rendererRequired){
+          const owners=[];
+          for(const w of workers.values())if(!w.closed&&w.url.includes('d3d-render-worker')){
+            const actual=await evaluate(c,w.sessionId,`typeof endpoints==='undefined'?[]:Array.from(endpoints.keys())`);
+            if(actual.includes(pageCurrent.renderer.endpoint))owners.push(w);
+          }
+          assert.equal(owners.length,1,'one actual startup renderer Worker');
+          const w=owners[0];
+          assert(expectedModules?.length,'frozen expected native modules required');
+          const r=await c.send('Runtime.evaluate',{expression:'('+rendererStartupObserver.toString()+')('+JSON.stringify({endpoint:pageCurrent.renderer.endpoint,backend})+')',returnByValue:false},w.sessionId);
+          assert(!r.exceptionDetails,JSON.stringify(r.exceptionDetails));assert(r.result.objectId);
+          rendererRef={session:w.sessionId,objectId:r.result.objectId};refs.push(rendererRef);
+          // Current executed module bytes, never a filename or saved identity.
+          // The engine can repeat the same scriptParsed descriptor when a
+          // compiled module becomes instantiated. Script IDs remain scoped to
+          // this exact session. A repeat is not another module or a new owner.
+          const scripts=new Map(),event=c.event;let inventoryError=null;
+          const remember=(id,url)=>{
+            if(scripts.has(id)&&scripts.get(id)!==url)inventoryError='renderer script descriptor changed';
+            scripts.set(id,url);
+          };
+          for(const s of w.scripts||[])if(s.bytecodeAvailable||s.url?.startsWith('wasm:'))remember(s.scriptId,s.url);
+          c.event=value=>{event?.(value);if(value.sessionId===w.sessionId&&value.method==='Debugger.scriptParsed'&&value.params.scriptLanguage==='WebAssembly'){
+            if(value.params.isLiveEdit)inventoryError='renderer module live edited';
+            remember(value.params.scriptId,value.params.url);
+          }};
+          try{
+            if(!scripts.size)await c.send('Debugger.enable',{},w.sessionId);
+            assert(!inventoryError,inventoryError);
+            assert.equal(scripts.size,1,'one actual startup renderer module');
+            const source=await c.send('Debugger.getScriptSource',{scriptId:[...scripts.keys()][0]},w.sessionId);
+            assert(source.bytecode,'actual renderer bytecode required');
+            assert(expectedModules.includes(sha(Buffer.from(source.bytecode,'base64'))),'startup renderer module differs from frozen CPU module');
+            assert(!inventoryError&&scripts.size===1,'renderer module inventory changed during byte recovery');
+          }finally{c.event=event;}
+          const render=await call(rendererRef,'sample');assert(render.healthy,'actual renderer startup unready');
+          rendererStartup={...render,targetId:w.targetId};
+          onReadiness({renderer:render,state:'UNSENT',at:Date.now(),deadline:due});
+        }
+        break;
+      }
       await new Promise(resolve=>setTimeout(resolve,20));
     }
+    assert(Date.now()<due,'bounded startup publication expired UNSENT');
+    if(rendererRef)await call(rendererRef,'commit');
+    // Recheck the page before publishing even the CPU bridge.
+    const finalPage=await call(pageRef,'sample');assert(finalPage.healthy&&!finalPage.terminal,'page startup changed before publication');
+    assert(Date.now()<due,'bounded startup publication expired UNSENT');
     let nativeOwner;
     // Once this request is issued, a transport failure has an UNKNOWN endpoint
     // outcome. Nothing, including RemoteObject cleanup, may send a later request.
@@ -625,7 +736,7 @@ async function install({c,pageSession,workers,app,backend,onReadiness=()=>{}}){
       const actual=await call(cpuRef,'commit',workerSource());
       nativeOwner={epoch:actual.epoch,endpointIdentity:actual.endpointIdentity,slot:actual.slot};
     } else nativeOwner={epoch:crypto.randomUUID(),endpointIdentity:'main',slot:0};
-    const options={app,backend,nativeOwner};
+    const options={app,backend,nativeOwner,...(rendererStartup?{rendererStartup}:{})};
     await call(pageRef,'commit',pageSource(options));
     await Promise.all(refs.map(ref=>c.send('Runtime.releaseObject',{objectId:ref.objectId},ref.session)));
     return options;
@@ -831,9 +942,16 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{},preparedTargets=nu
     assert(!w.closed);live={identity};trace('actual-native-owner-and-renderer-identity');
     if(live.identity.renderEndpoint!=='none'){
       const renderer=[...workers.values()].find(w=>w.targetId===live.identity.rendererTarget);assert(renderer);
-      const endpoints=await evaluate(c,renderer.sessionId,`Array.from(endpoints,([id,e])=>({id,options:e.options,failed:!!e.failed}))`);
+      const endpoints=await evaluate(c,renderer.sessionId,`Array.from(endpoints,([id,e])=>({id,generation:e.generation,options:e.options,failed:!!e.failed}))`);
       const endpoint=endpoints.find(e=>e.id===live.identity.renderEndpoint);assert(endpoint&&!endpoint.failed);
       assert.equal(endpoint.options.backend,cfg.bridgeOptions.backend,'independent owning backend');
+      if(cfg.bridgeOptions.rendererStartup){
+        const startup=cfg.bridgeOptions.rendererStartup;
+        assert.equal(endpoints.length,1,'unique permanent startup renderer endpoint');
+        assert.equal(renderer.targetId,startup.targetId,'permanent startup renderer target');
+        assert.equal(endpoint.id,startup.endpoint,'permanent startup renderer endpoint');
+        assert.equal(endpoint.generation,startup.generation,'permanent startup renderer generation');
+      }
     }
   }else assert(rows.some(r=>r.bytecodeAvailable&&cfg.pins.modules.includes(r.sha256)),'actual main module required');
   trace('current-owning-backend');
@@ -846,4 +964,4 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{},preparedTargets=nu
   current();trace('fresh-native-scene-and-final-pins');
   return {native,live:live?.identity??null,sources:rows,pageProof,assertCurrent:current};
 }
-module.exports={nativeContext,userStartupObserver,workerBridge,pageBridge,workerSource,pageSource,install,attestExecuted,evaluate,verifyPins,verifyPinsAsync,checkPID};
+module.exports={nativeContext,userStartupObserver,rendererStartupObserver,workerBridge,pageBridge,workerSource,pageSource,install,attestExecuted,evaluate,verifyPins,verifyPinsAsync,checkPID};
