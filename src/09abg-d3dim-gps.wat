@@ -18,7 +18,7 @@
   ;; ================================================================
   (global $D3DIM_GPS i32 (region.addr $D3DIM_GPS 0))
   (global $D3DIM_GPS_SIZE i32 (region.size $D3DIM_GPS))
-  (global $D3G_PB_SIZE i32 (i32.const 23040))
+  (global $D3G_PB_SIZE i32 (i32.const 23216))
   (global $D3G_RING_BYTES i32 (i32.const 1048576))
   (global $D3G_ARENA_BYTES i32 (i32.const 8388608))
   (global $D3G_BAND i32 (i32.const 2097152))
@@ -29,6 +29,9 @@
   ;; Producer block offsets. Tables: targets 32 x 128 B at 1280, depth
   ;; 32 x 16 B at 5376, shaders 64 x 8 B at 5888, samplers 32 x 8 B at 6400,
   ;; textures 64 x 256 B at 6656. Stats are 16 words at 80 (d3dim_gps_stat).
+  ;; Parked primary: +164 dib, +168 pitch, +172 bpp, +176 fmt, +180 height,
+  ;; +184 parked, +188 entry; park slots 4 x 32 B at 23040 ($d3g_slot), the
+  ;; park sequence at 23168, the merge spare slot at 23184.
   ;; Target: +0 dib, +4 entry, +8 w, +12 h, +16 bpp, +20 pitch, +24 fmt,
   ;; +28 rt id, +32 flags (1 dirty, 2 check, 4 drawn, 8 shadow valid),
   ;; +36..+48 dirty rect, +52 shadow wa, +56 shadow guest, +64 i64 watch
@@ -1686,16 +1689,284 @@
     (call $d3g_stat (local.get $pb) (i32.const 10) (i32.const 1))
     (i32.const 3))
 
-  ;; The parked frame (a Blt-presented rect of the primary) -> its DIB.
+  ;; Park slot $i: +0 x, +4 y, +8 w, +12 h (primary coordinates), +16 RT
+  ;; id (w x h, kept for reuse), +20 parked, +24 park sequence.
+  (func $d3g_slot (param $pb i32) (param $i i32) (result i32)
+    (i32.add (i32.add (local.get $pb) (i32.const 23040)) (i32.shl (local.get $i) (i32.const 5))))
+
+  ;; Slot $s's rect lies inside (x, y, w, h).
+  (func $d3g_slot_in (param $s i32) (param $x i32) (param $y i32) (param $w i32) (param $hgt i32) (result i32)
+    (i32.and
+      (i32.and (i32.ge_s (i32.load (local.get $s)) (local.get $x))
+               (i32.ge_s (i32.load offset=4 (local.get $s)) (local.get $y)))
+      (i32.and (i32.le_s (i32.add (i32.load (local.get $s)) (i32.load offset=8 (local.get $s)))
+                         (i32.add (local.get $x) (local.get $w)))
+               (i32.le_s (i32.add (i32.load offset=4 (local.get $s)) (i32.load offset=12 (local.get $s)))
+                         (i32.add (local.get $y) (local.get $hgt))))))
+
+  ;; Rect (x, y, w, h) lies inside slot $s's rect.
+  (func $d3g_in_slot (param $s i32) (param $x i32) (param $y i32) (param $w i32) (param $hgt i32) (result i32)
+    (i32.and
+      (i32.and (i32.le_s (i32.load (local.get $s)) (local.get $x))
+               (i32.le_s (i32.load offset=4 (local.get $s)) (local.get $y)))
+      (i32.and (i32.ge_s (i32.add (i32.load (local.get $s)) (i32.load offset=8 (local.get $s)))
+                         (i32.add (local.get $x) (local.get $w)))
+               (i32.ge_s (i32.add (i32.load offset=4 (local.get $s)) (i32.load offset=12 (local.get $s)))
+                         (i32.add (local.get $y) (local.get $hgt))))))
+
+  ;; Slots $a and $b overlap.
+  (func $d3g_slots_meet (param $a i32) (param $b i32) (result i32)
+    (i32.and
+      (i32.and (i32.lt_s (i32.load (local.get $a)) (i32.add (i32.load (local.get $b)) (i32.load offset=8 (local.get $b))))
+               (i32.lt_s (i32.load (local.get $b)) (i32.add (i32.load (local.get $a)) (i32.load offset=8 (local.get $a)))))
+      (i32.and (i32.lt_s (i32.load offset=4 (local.get $a)) (i32.add (i32.load offset=4 (local.get $b)) (i32.load offset=12 (local.get $b))))
+               (i32.lt_s (i32.load offset=4 (local.get $b)) (i32.add (i32.load offset=4 (local.get $a)) (i32.load offset=12 (local.get $a)))))))
+
+  ;; Slot $s gets a w x h RT (another size is released and recreated).
+  (func $d3g_slot_rt (param $pb i32) (param $s i32) (param $w i32) (param $hgt i32)
+    (local $id i32)
+    (local.set $id (i32.load offset=16 (local.get $s)))
+    (if (i32.and (i32.ne (local.get $id) (i32.const 0))
+          (i32.or (i32.ne (i32.load offset=8 (local.get $s)) (local.get $w))
+                  (i32.ne (i32.load offset=12 (local.get $s)) (local.get $hgt))))
+      (then (call $d3g_release (local.get $pb) (local.get $id)) (local.set $id (i32.const 0))))
+    (if (i32.eqz (local.get $id)) (then
+      (local.set $id (call $d3g_new_id (local.get $pb)))
+      (call $d3g_create (local.get $id) (global.get $GPS_KIND_RT) (global.get $GPS_FMT_A8B8G8R8)
+        (i32.const 1) (local.get $w) (local.get $hgt))
+      (i32.store offset=16 (local.get $s) (local.get $id))))
+    (i32.store offset=8 (local.get $s) (local.get $w))
+    (i32.store offset=12 (local.get $s) (local.get $hgt)))
+
+  ;; RT $src's rect (sx, sy, w, h) (a sw x sh RT) -> RT $dst at (ox, oy).
+  (func $d3g_copy_rt (param $pb i32) (param $dst i32) (param $src i32) (param $sw i32) (param $sh i32)
+      (param $sx i32) (param $sy i32) (param $w i32) (param $hgt i32) (param $ox i32) (param $oy i32)
+    (call $d3g_targets (local.get $pb) (local.get $dst) (i32.const 0))
+    (call $d3g_blit (local.get $pb) (local.get $src) (i32.const 0) (i32.const 0)
+      (f32.convert_i32_s (local.get $ox)) (f32.convert_i32_s (local.get $oy))
+      (f32.convert_i32_s (i32.add (local.get $ox) (local.get $w))) (f32.convert_i32_s (i32.add (local.get $oy) (local.get $hgt)))
+      (f32.div (f32.convert_i32_s (local.get $sx)) (f32.convert_i32_s (local.get $sw)))
+      (f32.div (f32.convert_i32_s (local.get $sy)) (f32.convert_i32_s (local.get $sh)))
+      (f32.div (f32.convert_i32_s (i32.add (local.get $sx) (local.get $w))) (f32.convert_i32_s (local.get $sw)))
+      (f32.div (f32.convert_i32_s (i32.add (local.get $sy) (local.get $hgt))) (f32.convert_i32_s (local.get $sh)))
+      (local.get $ox) (local.get $oy) (i32.add (local.get $ox) (local.get $w)) (i32.add (local.get $oy) (local.get $hgt))))
+
+  ;; The parked primary DIB's rect (x, y, w, h) -> RT $id at (0, 0).
+  (func $d3g_upload_dib_rect (param $pb i32) (param $id i32) (param $x i32) (param $y i32) (param $w i32) (param $hgt i32)
+    (local $k i32) (local $n i32) (local $j i32) (local $pos i32) (local $dst i32) (local $band i32)
+    (local $pitch i32) (local $bpp i32) (local $src i32)
+    (local.set $pitch (i32.load offset=168 (local.get $pb)))
+    (local.set $bpp (i32.load offset=172 (local.get $pb)))
+    (local.set $src (i32.add (i32.load offset=164 (local.get $pb))
+      (i32.add (i32.mul (local.get $y) (local.get $pitch)) (i32.mul (local.get $x) (i32.shr_u (local.get $bpp) (i32.const 3))))))
+    (local.set $band (call $d3g_band_rows (local.get $w)))
+    (block $done (loop $bands
+      (br_if $done (i32.ge_u (local.get $k) (local.get $hgt)))
+      (local.set $n (i32.sub (local.get $hgt) (local.get $k)))
+      (if (i32.gt_u (local.get $n) (local.get $band)) (then (local.set $n (local.get $band))))
+      (local.set $pos (call $d3g_arena (i32.mul (i32.shl (local.get $w) (i32.const 2)) (local.get $n))))
+      (local.set $dst (call $d3g_aptr (local.get $pos)))
+      (local.set $j (i32.const 0))
+      (block $rows_done (loop $rows
+        (br_if $rows_done (i32.ge_u (local.get $j) (local.get $n)))
+        (call $d3g_row_to_rgba
+          (i32.add (local.get $src) (i32.mul (i32.add (local.get $k) (local.get $j)) (local.get $pitch)))
+          (i32.add (local.get $dst) (i32.mul (local.get $j) (i32.shl (local.get $w) (i32.const 2))))
+          (local.get $w) (i32.load offset=176 (local.get $pb)) (local.get $bpp))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br $rows)))
+      (call $d3g_upload (local.get $pb) (local.get $id) (i32.const 0) (local.get $k) (local.get $w) (local.get $n) (local.get $pos))
+      (local.set $k (i32.add (local.get $k) (local.get $n)))
+      (br $bands)))
+    (call $d3g_stat (local.get $pb) (i32.const 4) (i32.const 1))
+    (call $d3g_stat (local.get $pb) (i32.const 5) (local.get $hgt)))
+
+  ;; Park slot $s's pixels -> the DIB; the slot goes idle.
+  (func $d3g_land_slot (param $pb i32) (param $s i32)
+    (i32.store offset=20 (local.get $s) (i32.const 0))
+    (call $d3g_park_dib_check (local.get $pb))
+    (call $d3g_read_rect (local.get $pb) (i32.load offset=16 (local.get $s)) (i32.const 0) (i32.const 0)
+      (i32.load offset=8 (local.get $s)) (i32.load offset=12 (local.get $s))
+      (i32.load offset=164 (local.get $pb)) (i32.load offset=168 (local.get $pb)) (i32.load offset=172 (local.get $pb))
+      (i32.load offset=176 (local.get $pb)) (i32.load (local.get $s)) (i32.load offset=4 (local.get $s))))
+
+  ;; The oldest parked slot other than $skip (0 = none).
+  (func $d3g_oldest (param $pb i32) (param $skip i32) (result i32)
+    (local $i i32) (local $s i32) (local $old i32)
+    (loop $scan
+      (local.set $s (call $d3g_slot (local.get $pb) (local.get $i)))
+      (if (i32.and (i32.and (i32.ne (i32.load offset=20 (local.get $s)) (i32.const 0)) (i32.ne (local.get $s) (local.get $skip)))
+            (i32.or (i32.eqz (local.get $old))
+                    (i32.lt_s (i32.sub (i32.load offset=24 (local.get $s)) (i32.load offset=24 (local.get $old))) (i32.const 0))))
+        (then (local.set $old (local.get $s))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.lt_u (local.get $i) (i32.const 4))))
+    (local.get $old))
+
+  ;; All four slots are parked: merge the two oldest into one slot on the
+  ;; GPU (the union seeded from the DIB, then both copied in, oldest first)
+  ;; and return the slot that freed. A union larger than the source target
+  ;; ($lw x $lh, which every executor can hold) lands the oldest instead.
+  (func $d3g_park_merge (param $pb i32) (param $lw i32) (param $lh i32) (result i32)
+    (local $a i32) (local $b i32) (local $ux i32) (local $uy i32) (local $ur i32) (local $ub i32)
+    (local $uw i32) (local $uh i32) (local $spare i32) (local $id i32)
+    (local.set $a (call $d3g_oldest (local.get $pb) (i32.const 0)))
+    (local.set $b (call $d3g_oldest (local.get $pb) (local.get $a)))
+    (local.set $ux (select (i32.load (local.get $a)) (i32.load (local.get $b))
+      (i32.lt_s (i32.load (local.get $a)) (i32.load (local.get $b)))))
+    (local.set $uy (select (i32.load offset=4 (local.get $a)) (i32.load offset=4 (local.get $b))
+      (i32.lt_s (i32.load offset=4 (local.get $a)) (i32.load offset=4 (local.get $b)))))
+    (local.set $ur (i32.add (i32.load (local.get $a)) (i32.load offset=8 (local.get $a))))
+    (if (i32.gt_s (i32.add (i32.load (local.get $b)) (i32.load offset=8 (local.get $b))) (local.get $ur))
+      (then (local.set $ur (i32.add (i32.load (local.get $b)) (i32.load offset=8 (local.get $b))))))
+    (local.set $ub (i32.add (i32.load offset=4 (local.get $a)) (i32.load offset=12 (local.get $a))))
+    (if (i32.gt_s (i32.add (i32.load offset=4 (local.get $b)) (i32.load offset=12 (local.get $b))) (local.get $ub))
+      (then (local.set $ub (i32.add (i32.load offset=4 (local.get $b)) (i32.load offset=12 (local.get $b))))))
+    (local.set $uw (i32.sub (local.get $ur) (local.get $ux)))
+    (local.set $uh (i32.sub (local.get $ub) (local.get $uy)))
+    (if (i32.or (i32.gt_s (local.get $uw) (local.get $lw)) (i32.gt_s (local.get $uh) (local.get $lh))) (then
+      (call $d3g_land_slot (local.get $pb) (local.get $a))
+      (return (local.get $a))))
+    ;; The spare slot (at 23184, never parked) takes the union; slot $a
+    ;; then trades RTs with it.
+    (local.set $spare (i32.add (local.get $pb) (i32.const 23184)))
+    (call $d3g_slot_rt (local.get $pb) (local.get $spare) (local.get $uw) (local.get $uh))
+    (local.set $id (i32.load offset=16 (local.get $spare)))
+    (call $d3g_upload_dib_rect (local.get $pb) (local.get $id) (local.get $ux) (local.get $uy) (local.get $uw) (local.get $uh))
+    (call $d3g_copy_rt (local.get $pb) (local.get $id) (i32.load offset=16 (local.get $a))
+      (i32.load offset=8 (local.get $a)) (i32.load offset=12 (local.get $a)) (i32.const 0) (i32.const 0)
+      (i32.load offset=8 (local.get $a)) (i32.load offset=12 (local.get $a))
+      (i32.sub (i32.load (local.get $a)) (local.get $ux)) (i32.sub (i32.load offset=4 (local.get $a)) (local.get $uy)))
+    (call $d3g_copy_rt (local.get $pb) (local.get $id) (i32.load offset=16 (local.get $b))
+      (i32.load offset=8 (local.get $b)) (i32.load offset=12 (local.get $b)) (i32.const 0) (i32.const 0)
+      (i32.load offset=8 (local.get $b)) (i32.load offset=12 (local.get $b))
+      (i32.sub (i32.load (local.get $b)) (local.get $ux)) (i32.sub (i32.load offset=4 (local.get $b)) (local.get $uy)))
+    (i32.store offset=16 (local.get $spare) (i32.load offset=16 (local.get $a)))
+    (i32.store offset=8 (local.get $spare) (i32.load offset=8 (local.get $a)))
+    (i32.store offset=12 (local.get $spare) (i32.load offset=12 (local.get $a)))
+    (i32.store offset=16 (local.get $a) (local.get $id))
+    (i32.store (local.get $a) (local.get $ux))
+    (i32.store offset=4 (local.get $a) (local.get $uy))
+    (i32.store offset=8 (local.get $a) (local.get $uw))
+    (i32.store offset=12 (local.get $a) (local.get $uh))
+    (i32.store offset=24 (local.get $a) (i32.load offset=24 (local.get $b)))
+    (i32.store offset=20 (local.get $b) (i32.const 0))
+    (local.get $b))
+
+  ;; Park primary rect (x, y, w, h), copied from target $t at (sx, sy), and
+  ;; return the slot to present (whole): newest in park order. The same
+  ;; rect reuses its slot; a parked slot holding the rect alone takes it in
+  ;; place; parked rects it covers are superseded; with every slot parked
+  ;; the two oldest merge on the GPU. Nothing is read back here.
+  (func $d3g_park (param $pb i32) (param $t i32) (param $x i32) (param $y i32) (param $w i32) (param $hgt i32)
+      (param $sx i32) (param $sy i32) (result i32)
+    (local $i i32) (local $s i32) (local $o i32) (local $j i32) (local $pick i32) (local $ok i32)
+    ;; The same rect: overwritten whole, so it is newest whatever it overlaps.
+    (loop $exact
+      (local.set $s (call $d3g_slot (local.get $pb) (local.get $i)))
+      (if (i32.and
+            (i32.and (i32.ne (i32.load offset=16 (local.get $s)) (i32.const 0))
+                     (i32.and (i32.eq (i32.load (local.get $s)) (local.get $x))
+                              (i32.eq (i32.load offset=4 (local.get $s)) (local.get $y))))
+            (i32.and (i32.eq (i32.load offset=8 (local.get $s)) (local.get $w))
+                     (i32.eq (i32.load offset=12 (local.get $s)) (local.get $hgt))))
+        (then (local.set $pick (local.get $s))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $exact (i32.and (i32.eqz (local.get $pick)) (i32.lt_u (local.get $i) (i32.const 4)))))
+    ;; A parked slot containing the rect that no other surviving parked
+    ;; slot overlaps: drawing into it keeps the park order exact.
+    (local.set $i (i32.const 0))
+    (if (i32.eqz (local.get $pick)) (then (loop $contain
+      (local.set $s (call $d3g_slot (local.get $pb) (local.get $i)))
+      (if (i32.and (i32.ne (i32.load offset=20 (local.get $s)) (i32.const 0))
+            (call $d3g_in_slot (local.get $s) (local.get $x) (local.get $y) (local.get $w) (local.get $hgt)))
+        (then
+          (local.set $ok (i32.const 1))
+          (local.set $j (i32.const 0))
+          (loop $others
+            (local.set $o (call $d3g_slot (local.get $pb) (local.get $j)))
+            (if (i32.and
+                  (i32.and (i32.ne (local.get $o) (local.get $s)) (i32.ne (i32.load offset=20 (local.get $o)) (i32.const 0)))
+                  (i32.and (i32.eqz (call $d3g_slot_in (local.get $o) (local.get $x) (local.get $y) (local.get $w) (local.get $hgt)))
+                           (call $d3g_slots_meet (local.get $o) (local.get $s))))
+              (then (local.set $ok (i32.const 0))))
+            (local.set $j (i32.add (local.get $j) (i32.const 1)))
+            (br_if $others (i32.lt_u (local.get $j) (i32.const 4))))
+          (if (local.get $ok) (then (local.set $pick (local.get $s))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $contain (i32.and (i32.eqz (local.get $pick)) (i32.lt_u (local.get $i) (i32.const 4)))))))
+    (if (local.get $pick)
+      (then
+        (call $d3g_copy_rt (local.get $pb) (i32.load offset=16 (local.get $pick)) (i32.load offset=28 (local.get $t))
+          (i32.load offset=8 (local.get $t)) (i32.load offset=12 (local.get $t)) (local.get $sx) (local.get $sy)
+          (local.get $w) (local.get $hgt)
+          (i32.sub (local.get $x) (i32.load (local.get $pick))) (i32.sub (local.get $y) (i32.load offset=4 (local.get $pick)))))
+      (else
+        ;; An idle slot (same size first), else merge two parked ones.
+        (local.set $i (i32.const 0))
+        (loop $same_size
+          (local.set $s (call $d3g_slot (local.get $pb) (local.get $i)))
+          (if (i32.and
+                (i32.and (i32.eqz (i32.load offset=20 (local.get $s))) (i32.ne (i32.load offset=16 (local.get $s)) (i32.const 0)))
+                (i32.and (i32.eq (i32.load offset=8 (local.get $s)) (local.get $w))
+                         (i32.eq (i32.load offset=12 (local.get $s)) (local.get $hgt))))
+            (then (local.set $pick (local.get $s))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $same_size (i32.and (i32.eqz (local.get $pick)) (i32.lt_u (local.get $i) (i32.const 4)))))
+        (local.set $i (i32.const 0))
+        (if (i32.eqz (local.get $pick)) (then (loop $idle
+          (local.set $s (call $d3g_slot (local.get $pb) (local.get $i)))
+          (if (i32.eqz (i32.load offset=20 (local.get $s))) (then (local.set $pick (local.get $s))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $idle (i32.and (i32.eqz (local.get $pick)) (i32.lt_u (local.get $i) (i32.const 4)))))))
+        (if (i32.eqz (local.get $pick)) (then
+          (local.set $pick (call $d3g_park_merge (local.get $pb)
+            (i32.load offset=8 (local.get $t)) (i32.load offset=12 (local.get $t))))))
+        (call $d3g_slot_rt (local.get $pb) (local.get $pick) (local.get $w) (local.get $hgt))
+        (i32.store (local.get $pick) (local.get $x))
+        (i32.store offset=4 (local.get $pick) (local.get $y))
+        (call $d3g_copy_rt (local.get $pb) (i32.load offset=16 (local.get $pick)) (i32.load offset=28 (local.get $t))
+          (i32.load offset=8 (local.get $t)) (i32.load offset=12 (local.get $t)) (local.get $sx) (local.get $sy)
+          (local.get $w) (local.get $hgt) (i32.const 0) (i32.const 0))))
+    (local.set $i (i32.const 0))
+    (loop $cover
+      (local.set $s (call $d3g_slot (local.get $pb) (local.get $i)))
+      (if (i32.and (i32.ne (local.get $s) (local.get $pick))
+            (call $d3g_slot_in (local.get $s) (local.get $x) (local.get $y) (local.get $w) (local.get $hgt)))
+        (then (i32.store offset=20 (local.get $s) (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $cover (i32.lt_u (local.get $i) (i32.const 4))))
+    (i32.store offset=23168 (local.get $pb) (i32.add (i32.load offset=23168 (local.get $pb)) (i32.const 1)))
+    (i32.store offset=24 (local.get $pick) (i32.load offset=23168 (local.get $pb)))
+    (i32.store offset=20 (local.get $pick) (i32.const 1))
+    (local.get $pick))
+
+  ;; Forget the parked frame without landing it (its surface is gone).
+  (func $d3g_park_drop (param $pb i32)
+    (local $i i32)
+    (i32.store offset=184 (local.get $pb) (i32.const 0))
+    (loop $slots
+      (i32.store offset=20 (call $d3g_slot (local.get $pb) (local.get $i)) (i32.const 0))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $slots (i32.lt_u (local.get $i) (i32.const 4)))))
+
+  ;; The parked frame (the Blt-presented rects of the primary) -> its DIB:
+  ;; one readback per parked rect, oldest first, and only when a CPU
+  ;; reader asks.
   (func $d3g_materialize (param $pb i32)
-    (local $i i32) (local $t i32) (local $dib i32) (local $len i32)
+    (local $old i32)
     (if (i32.eqz (i32.load offset=184 (local.get $pb))) (then (return)))
     (i32.store offset=184 (local.get $pb) (i32.const 0))
+    (block $landed (loop $rects
+      (local.set $old (call $d3g_oldest (local.get $pb) (i32.const 0)))
+      (br_if $landed (i32.eqz (local.get $old)))
+      (call $d3g_land_slot (local.get $pb) (local.get $old))
+      (br $rects))))
+
+  ;; Targets aliasing the parked DIB re-check it before their next GPU use.
+  (func $d3g_park_dib_check (param $pb i32)
+    (local $i i32) (local $t i32) (local $dib i32) (local $len i32)
     (local.set $dib (i32.load offset=164 (local.get $pb)))
-    (call $d3g_read_rect (local.get $pb) (i32.load offset=144 (local.get $pb)) (i32.const 0) (i32.const 0)
-      (i32.load offset=148 (local.get $pb)) (i32.load offset=152 (local.get $pb))
-      (local.get $dib) (i32.load offset=168 (local.get $pb)) (i32.load offset=172 (local.get $pb))
-      (i32.load offset=176 (local.get $pb)) (i32.load offset=156 (local.get $pb)) (i32.load offset=160 (local.get $pb)))
     (local.set $len (i32.mul (i32.load offset=168 (local.get $pb)) (i32.load offset=180 (local.get $pb))))
     (loop $scan
       (local.set $t (call $d3g_t (local.get $pb) (local.get $i)))
@@ -1706,11 +1977,13 @@
       (br_if $scan (i32.lt_u (local.get $i) (global.get $D3G_TARGETS)))))
 
   ;; 0x2000A DXP3 {magic, dst, src, dx, dy, w, h, sx, sy, hwnd, seq, excl}:
-  ;; Blt(primary <- GPU target). Copy the rect into the parked RT (the
-  ;; primary's pending pixels) and PRESENT it client-relative. 1 = taken.
+  ;; Blt(primary <- GPU target). Copy the rect into its park slot's RT (the
+  ;; primary's pending pixels) and PRESENT it client-relative; the DIB is
+  ;; written only when a CPU reader fences it. 1 = taken.
   (func $d3g_blt_present (param $pb i32) (param $desc i32) (result i32)
     (local $dst i32) (local $src i32) (local $dx i32) (local $dy i32) (local $w i32) (local $hgt i32)
-    (local $sx i32) (local $sy i32) (local $hwnd i32) (local $t i32) (local $id i32)
+    (local $sx i32) (local $sy i32) (local $hwnd i32) (local $t i32) (local $s i32)
+    (local $pw i32) (local $ph i32)
     (if (i32.ne (i32.load (local.get $desc)) (i32.const 0x44585033)) (then (return (i32.const 0))))
     (local.set $dst (i32.load offset=4 (local.get $desc)))
     (local.set $src (i32.load offset=8 (local.get $desc)))
@@ -1728,49 +2001,37 @@
     (if (i32.or (i32.gt_s (i32.add (local.get $sx) (local.get $w)) (i32.load offset=8 (local.get $t)))
                 (i32.gt_s (i32.add (local.get $sy) (local.get $hgt)) (i32.load offset=12 (local.get $t))))
       (then (return (i32.const 0))))
+    (local.set $pw (load.field DxObject width (local.get $dst)))
+    (local.set $ph (load.field DxObject height (local.get $dst)))
+    (if (i32.or (i32.or (i32.lt_s (local.get $dx) (i32.const 0)) (i32.lt_s (local.get $dy) (i32.const 0)))
+          (i32.or (i32.gt_s (i32.add (local.get $dx) (local.get $w)) (local.get $pw))
+                  (i32.gt_s (i32.add (local.get $dy) (local.get $hgt)) (local.get $ph))))
+      (then (return (i32.const 0))))
     (call $d3g_prepare (local.get $pb) (local.get $t) (i32.const 0))
-    ;; An older parked frame not wholly covered by this one must land first.
+    ;; A frame parked for another primary (or another DIB / layout of this
+    ;; one) must land first: the park slots describe exactly one DIB.
     (if (i32.load offset=184 (local.get $pb)) (then
-      (if (i32.or (i32.ne (i32.load offset=188 (local.get $pb)) (local.get $dst))
-            (i32.or (i32.or (i32.lt_s (i32.load offset=156 (local.get $pb)) (local.get $dx))
-                            (i32.lt_s (i32.load offset=160 (local.get $pb)) (local.get $dy)))
-              (i32.or (i32.gt_s (i32.add (i32.load offset=156 (local.get $pb)) (i32.load offset=148 (local.get $pb)))
-                        (i32.add (local.get $dx) (local.get $w)))
-                      (i32.gt_s (i32.add (i32.load offset=160 (local.get $pb)) (i32.load offset=152 (local.get $pb)))
-                        (i32.add (local.get $dy) (local.get $hgt))))))
+      (if (i32.or
+            (i32.or (i32.ne (i32.load offset=188 (local.get $pb)) (local.get $dst))
+                    (i32.ne (i32.load offset=164 (local.get $pb)) (load.field DxObject misc1 (local.get $dst))))
+            (i32.or (i32.ne (i32.load offset=168 (local.get $pb)) (load.field DxObject pitch (local.get $dst)))
+                    (i32.ne (i32.load offset=180 (local.get $pb)) (local.get $ph))))
         (then (call $d3g_materialize (local.get $pb))))))
-    (local.set $id (i32.load offset=144 (local.get $pb)))
-    (if (i32.and (i32.ne (local.get $id) (i32.const 0))
-          (i32.or (i32.ne (i32.load offset=148 (local.get $pb)) (local.get $w)) (i32.ne (i32.load offset=152 (local.get $pb)) (local.get $hgt))))
-      (then (call $d3g_release (local.get $pb) (local.get $id)) (local.set $id (i32.const 0))))
-    (if (i32.eqz (local.get $id)) (then
-      (local.set $id (call $d3g_new_id (local.get $pb)))
-      (call $d3g_create (local.get $id) (global.get $GPS_KIND_RT) (global.get $GPS_FMT_A8B8G8R8)
-        (i32.const 1) (local.get $w) (local.get $hgt))
-      (i32.store offset=144 (local.get $pb) (local.get $id))
-      (i32.store offset=148 (local.get $pb) (local.get $w))
-      (i32.store offset=152 (local.get $pb) (local.get $hgt))))
-    (call $d3g_targets (local.get $pb) (local.get $id) (i32.const 0))
-    (call $d3g_blit (local.get $pb) (i32.load offset=28 (local.get $t)) (i32.const 0) (i32.const 0)
-      (f32.const 0) (f32.const 0) (f32.convert_i32_s (local.get $w)) (f32.convert_i32_s (local.get $hgt))
-      (f32.div (f32.convert_i32_s (local.get $sx)) (f32.convert_i32_s (i32.load offset=8 (local.get $t))))
-      (f32.div (f32.convert_i32_s (local.get $sy)) (f32.convert_i32_s (i32.load offset=12 (local.get $t))))
-      (f32.div (f32.convert_i32_s (i32.add (local.get $sx) (local.get $w))) (f32.convert_i32_s (i32.load offset=8 (local.get $t))))
-      (f32.div (f32.convert_i32_s (i32.add (local.get $sy) (local.get $hgt))) (f32.convert_i32_s (i32.load offset=12 (local.get $t))))
-      (i32.const 0) (i32.const 0) (local.get $w) (local.get $hgt))
-    (i32.store offset=156 (local.get $pb) (local.get $dx))
-    (i32.store offset=160 (local.get $pb) (local.get $dy))
     (i32.store offset=164 (local.get $pb) (load.field DxObject misc1 (local.get $dst)))
     (i32.store offset=168 (local.get $pb) (load.field DxObject pitch (local.get $dst)))
     (i32.store offset=172 (local.get $pb) (load.field DxObject bpp (local.get $dst)))
     (i32.store offset=176 (local.get $pb) (call $dx_surf_fmt_get (local.get $dst)))
     (i32.store offset=180 (local.get $pb) (load.field DxObject height (local.get $dst)))
+    (local.set $s (call $d3g_park (local.get $pb) (local.get $t) (local.get $dx) (local.get $dy)
+      (local.get $w) (local.get $hgt) (local.get $sx) (local.get $sy)))
     (i32.store offset=184 (local.get $pb) (i32.const 1))
     (i32.store offset=188 (local.get $pb) (local.get $dst))
-    (call $d3g_present (local.get $pb) (local.get $id) (i32.const 0) (i32.const 0) (local.get $w) (local.get $hgt)
+    ;; The whole slot: outside this Blt's rect it holds what the primary shows.
+    (call $d3g_present (local.get $pb) (i32.load offset=16 (local.get $s)) (i32.const 0) (i32.const 0)
+      (i32.load offset=8 (local.get $s)) (i32.load offset=12 (local.get $s))
       (local.get $hwnd)
-      (i32.sub (local.get $dx) (call $wnd_client_screen_x (local.get $hwnd)))
-      (i32.sub (local.get $dy) (call $wnd_client_screen_y (local.get $hwnd))))
+      (i32.sub (i32.load (local.get $s)) (call $wnd_client_screen_x (local.get $hwnd)))
+      (i32.sub (i32.load offset=4 (local.get $s)) (call $wnd_client_screen_y (local.get $hwnd))))
     (call $d3g_stat (local.get $pb) (i32.const 11) (i32.const 1))
     (i32.const 1))
 
@@ -1860,7 +2121,7 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $tex (i32.lt_u (local.get $i) (global.get $D3G_TEX_CACHE))))
     (if (i32.eq (i32.load offset=188 (local.get $pb)) (local.get $entry))
-      (then (i32.store offset=184 (local.get $pb) (i32.const 0))))
+      (then (call $d3g_park_drop (local.get $pb))))
     (call $lock_release (global.get $D3DIM_GPS)))
 
   ;; Counters: 0 draws, 1 fallbacks, 2 readbacks, 3 readback rows, 4 uploads,
