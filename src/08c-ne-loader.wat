@@ -196,6 +196,14 @@
   ;; modules get 0, which makes every call through them fail loudly rather
   ;; than silently returning into nothing.
   (func $win16_system_module_id (param $pstr i32) (result i32)
+    ;; The Win9x file KRNL386.EXE retains the internal NE name KERNEL.
+    ;; Accept that exact basename as the same fixed identity and reference
+    ;; count; this does not add exports or settle an unsupported API.
+    (if (i32.and (i32.eq (i32.load8_u (local.get $pstr)) (i32.const 7))
+      (i32.and (i32.eq (i32.load offset=1 (local.get $pstr)) (i32.const 0x4C4E524B))
+        (i32.and (i32.eq (i32.load16_u offset=5 (local.get $pstr)) (i32.const 0x3833))
+          (i32.eq (i32.load8_u offset=7 (local.get $pstr)) (i32.const 0x36)))))
+      (then (return (i32.const 1))))
     (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_KERNEL))   (then (return (i32.const 1))))
     (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_USER))     (then (return (i32.const 2))))
     (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_GDI))      (then (return (i32.const 3))))
@@ -2381,6 +2389,15 @@
     (local.set $ne (i32.load (call $win16_dll_rec (local.get $id))))
     (if (i32.lt_u (i32.load16_u offset=62 (local.get $ne)) (i32.const 0x400))
       (then (return (i32.const 0))))
+    ;; Version >= 4 permits notifications but does not require the export.
+    ;; SETUPX, for example, still uses only its header LibEntry and WEP.
+    (local.set $name (i32.add (i32.wrap_i64 (global.get $win16_bridge_frame)) (i32.const 1024)))
+    (i32.store8 (local.get $name) (i32.const 13))
+    (i64.store offset=1 (local.get $name) (i64.const 0x5952544E454C4C44)) ;; DLLENTRY
+    (i32.store offset=9 (local.get $name) (i32.const 0x4E494F50)) ;; POIN
+    (i32.store8 offset=13 (local.get $name) (i32.const 0x54)) ;; T
+    (local.set $ordinal (call $win16_dll_ordinal (local.get $id) (local.get $name)))
+    (if (i32.eqz (local.get $ordinal)) (then (return (i32.const 0))))
     (if (i32.eq (local.get $field) (i32.const 4)) (then (return (i32.const 1))))
     (local.set $ds (call $win16_dll_data_sel (local.get $id)))
     (if (i32.eq (local.get $field) (i32.const 1)) (then (return (local.get $ds))))
@@ -2390,13 +2407,6 @@
       (then (if (local.get $ds) (then (return (local.get $ds))))
         (return (call $win16_h16 (i32.or (i32.const 0x00D10000) (local.get $id))))))
     (if (local.get $field) (then (return (i32.const 0))))
-    (local.set $name (i32.add (i32.wrap_i64 (global.get $win16_bridge_frame)) (i32.const 1024)))
-    (i32.store8 (local.get $name) (i32.const 13))
-    (i64.store offset=1 (local.get $name) (i64.const 0x5952544E454C4C44)) ;; DLLENTRY
-    (i32.store offset=9 (local.get $name) (i32.const 0x4E494F50)) ;; POIN
-    (i32.store8 offset=13 (local.get $name) (i32.const 0x54)) ;; T
-    (local.set $ordinal (call $win16_dll_ordinal (local.get $id) (local.get $name)))
-    (if (i32.eqz (local.get $ordinal)) (then (return (i32.const 0))))
     (call $win16_dll_entry (local.get $id) (local.get $ordinal)))
 
   ;; The enclosing scope owns the process execution lease. Move ready ->

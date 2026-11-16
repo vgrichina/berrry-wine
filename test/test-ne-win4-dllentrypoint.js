@@ -41,7 +41,7 @@ function staticControls() {
   assert.equal(image.expectedWinVersion,0x400);
   assert.equal(inspectNeDll(win4Image({version:0x30a})).dllEntryOrdinal,0);
   const missing=win4Image();missing[0x80+0x70+15]=88;
-  assert.throws(()=>inspectNeDll(missing),/DllEntryPoint/);
+  assert.equal(inspectNeDll(missing).dllEntryOrdinal,0,'Win4 notification export is optional');
   const data=win4Image();data[0x80+0x61]=2;
   assert.throws(()=>inspectNeDll(data),/initializer|DllEntryPoint/);
   const absent=win4Image();absent.writeUInt16LE(99,0x80+0x70+28);
@@ -104,6 +104,14 @@ async function compiledControls() {
   const legacyStart=events.length,legacy=createNeLifecycle(e,memory,[['LEGACY',win4Image({version:0x30a})]]);
   const legacyId=legacy.load('LEGACY');legacy.load('LEGACY');legacy.release(legacyId);legacy.release(legacyId);
   assert.deepEqual(events.slice(legacyStart).filter(x=>x.target!==undefined).map(x=>x.target),[0,32],'Win3 LibMain/WEP preserved even with a similarly named export');
+  const optionalImage=win4Image();optionalImage[0x80+0x70+15]=88;
+  const optionalStart=events.length,optional=createNeLifecycle(e,memory,[['OPTIONAL',optionalImage]]);
+  const optionalId=optional.load('OPTIONAL');optional.load('OPTIONAL');
+  assert(optional.liveModule('OPTIONAL'));
+  optional.release(optionalId);optional.release(optionalId);
+  assert.deepEqual(events.slice(optionalStart).filter(x=>x.target!==undefined).map(x=>x.target),[0,32],
+    'Win4 without DllEntryPoint executes real LibMain and final WEP only');
+  assert(!optional.liveModule('OPTIONAL'));assert.deepEqual(snapshot(),original);
   // A legacy NE DriverProc-shaped FAR PASCAL call keeps its own sixteen
   // argument bytes and AX return; it receives no Win4 notifications.
   const driverImage=win4Image({version:0x30a});
