@@ -1150,6 +1150,7 @@
     (if (call $gl_clip_query (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
     (if (call $gl_1d_query (local.get $op) (local.get $stack)) (then (return (global.get $gl_list_result))))
+    (if (call $gl_g1_is_query (local.get $op) (local.get $stack)) (then (return (global.get $gl_list_result))))
     (if (i32.eq (local.get $op) (i32.const 155)) (then
       (call $gl_texture_get_image (i32.load offset=4 (local.get $stack)) (i32.load offset=8 (local.get $stack))
         (i32.load offset=12 (local.get $stack)) (i32.load offset=16 (local.get $stack)) (i32.load offset=20 (local.get $stack)))
@@ -1181,6 +1182,7 @@
     (if (call $gl_list_intercept (local.get $op) (local.get $stack))
       (then (return (global.get $gl_list_result))))
     (if (call $gl_index_command (local.get $op) (local.get $stack)) (then (return (i32.const 0))))
+    (if (call $gl_g1_validate (local.get $op) (local.get $stack)) (then (return (i32.const 0))))
     (if (i32.and (i32.eq (local.get $op) (i32.const 2))
         (i32.ne (call $gl_sf_mode) (i32.const 0x1c00))) (then
       (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
@@ -1238,6 +1240,7 @@
     (call $gl_sw_observe (local.get $op) (local.get $stack))
     (call $gl_period_observe (local.get $op) (local.get $stack))
     (call $gl_hint_observe (local.get $op) (local.get $stack))
+    (call $gl_g1_observe (local.get $op) (local.get $stack))
     (if (i32.or (i32.eq (local.get $op) (i32.const 77)) (i32.or (i32.eq (local.get $op) (i32.const 42)) (i32.eq (local.get $op) (i32.const 43))))
       (then
         (call $gl_texture_sync_sampling)
@@ -1250,6 +1253,7 @@
       (then (local.set $aux (i32.const 0x0505))))
     (if (call $gl_state_intercept (local.get $op) (local.get $stack))
       (then (return (i32.const 0))))
+    (if (call $gl_g1_query_fallback (local.get $op)) (then (return (i32.const 0))))
     (if (i32.eq (local.get $op) (i32.const 19)) (then
       (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then (unreachable)))
       (global.set $gl_shade_model (i32.load offset=4 (local.get $stack))) (return (i32.const 0))))
@@ -1342,7 +1346,8 @@
         (global.set $gl_current_dc
           (if (result i32) (i32.load offset=8 (local.get $stack))
             (then (i32.load offset=4 (local.get $stack)))
-            (else (i32.const 0))))))
+            (else (i32.const 0))))
+        (call $gl_g1_bind_default_size (global.get $gl_current_dc))))
     (if (i32.and (i32.eq (local.get $op) (i32.const 49)) (i32.ne (local.get $result) (i32.const 0)))
       (then
         (call $gl_state_context_deleted (i32.load offset=4 (local.get $stack)))
@@ -1757,6 +1762,7 @@
     (call $gl_copy_values (local.get $mask) (local.get $as) (local.get $bs)
       (local.get $am) (local.get $bm) (local.get $a) (local.get $b)
       (local.get $ar) (local.get $br) (local.get $at) (local.get $bt))
+    (call $gl_g1_copy_context (local.get $a) (local.get $b) (local.get $mask))
     (if (i32.and (local.get $mask) (i32.const 270336)) (then (call $gl_copy_bits (i32.add (local.get $a) (i32.const 108)) (i32.add (local.get $b) (i32.const 108)) (i32.const 3))))
     (if (i32.and (local.get $mask) (i32.const 8320)) (then (call $gl_copy_bits (i32.add (local.get $a) (i32.const 108)) (i32.add (local.get $b) (i32.const 108)) (i32.const 4))))
     (if (i32.and (local.get $mask) (i32.const 8256)) (then (call $gl_copy_bits (i32.add (local.get $a) (i32.const 108)) (i32.add (local.get $b) (i32.const 108)) (i32.const 8))))

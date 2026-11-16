@@ -82,7 +82,9 @@ const submit = batch => {
       opcode, aux, capture,
       arg0: stackView.getUint32(capture.stackOffset + 4, true),
     });
-    return opcode === 12 ? 0x504 : 0;
+    // glIsList (129): a synchronous barrier. glGetError (12) was used here
+    // until GPU stream v2 G1 answered it in WAT, where it is never a record.
+    return opcode === 129 ? 0x504 : 0;
   });
 };
 
@@ -102,8 +104,8 @@ dv.setUint32(stack + 4, 0x0BE2, true);
 encoder.call(10, stack, 0); // glEnable
 dv.setUint32(stack + 4, 0x0B71, true);
 assert.strictEqual(submissions.length, 0, 'ordinary GL calls stay local until a barrier');
-assert.strictEqual(encoder.call(12, stack, 0), 0x504, 'query returns the last replay result');
-assert.deepStrictEqual(executed.map(x => x.opcode), [10, 12], 'barrier preserves command order');
+assert.strictEqual(encoder.call(129, stack, 0), 0x504, 'query returns the last replay result');
+assert.deepStrictEqual(executed.map(x => x.opcode), [10, 129], 'barrier preserves command order');
 assert.strictEqual(executed[0].arg0, 0x0BE2, 'queued stack arguments are copied immediately');
 
 // Newly appended GL entry points retain the established opcode ABI and copy
@@ -366,7 +368,7 @@ const brokerEncoder = new Stream.Encoder({
   submit: batch => { brokerBatch = batch; return 0; },
 });
 brokerEncoder.call(10, stack, 0);
-brokerEncoder.call(12, stack, 0);
+brokerEncoder.call(129, stack, 0);
 Atomics.store(rpcView, RPC.SLOT.STATUS, RPC.STATUS_REQ);
 const brokerOffset = 0x10000;
 new Uint8Array(rpcMemory.buffer, brokerOffset, brokerBatch.bytes)
@@ -374,7 +376,7 @@ new Uint8Array(rpcMemory.buffer, brokerOffset, brokerBatch.bytes)
 assert.strictEqual(broker.serveGlBatch({
   slot: 0, memoryOffset: brokerOffset, bytes: brokerBatch.bytes,
 }), true);
-assert.deepStrictEqual(brokerOps, [10, 12], 'main broker replays one ordered GL batch');
+assert.deepStrictEqual(brokerOps, [10, 129], 'main broker replays one ordered GL batch');
 assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.RESULT), 77);
 assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_RESP,
   'worker is acknowledged only after replay completes');
@@ -409,7 +411,7 @@ const nativeWorker = RPC.createWorkerImports(rpcMemory, {
 }, {});
 assert.strictEqual(nativeWorker.imports.host.gpu_gl_call(Stream.WAT_STREAM_FLUSH_OPCODE,
   nativeOffset, brokerBatch.bytes), 91);
-assert.deepStrictEqual(nativeOps, [10, 12]);
+assert.deepStrictEqual(nativeOps, [10, 129]);
 assert.deepStrictEqual(nativeMessages, [{ t: 'glBatch', slot: 0,
   memoryOffset: nativeOffset, bytes: brokerBatch.bytes, softwareFront: 0,
   softwareConfig: undefined, pool: undefined }],
@@ -457,7 +459,7 @@ for (const [version, thirdBase, expectedPool] of [
   if (expectedPool) expectedBatch.pool = expectedPool;
   assert.deepStrictEqual(receivedBatch, expectedBatch,
     "the broker forwards a present descriptor and omits an unavailable pool");
-  assert.deepStrictEqual(poolOps, [10, 12], "pool metadata preserves ordered replay");
+  assert.deepStrictEqual(poolOps, [10, 129], "pool metadata preserves ordered replay");
   assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_IDLE);
 }
 
@@ -477,9 +479,11 @@ const queryEncoder = new Stream.Encoder({
 });
 queryEncoder.call(10, stack, 0);           // glEnable: buffered
 assert.strictEqual(querySubmissions.length, 0, 'ordinary state calls stay buffered');
-queryEncoder.call(103, stack, 0);          // glGetIntegerv: must submit now
+queryEncoder.call(74, stack, 0);           // glGenTextures: must submit now
 assert.deepStrictEqual(querySubmissions, [2],
-  'glGetIntegerv flushes the pending batch so its answer is in guest memory on return');
-assert(Stream.BARRIERS.has(103), 'glGetIntegerv is a command-stream barrier');
+  'a guest-output call flushes the pending batch so its answer is in guest memory on return');
+// GPU stream v2 G1: glGetIntegerv is answered in WAT before anything is
+// recorded, so the answer is in guest memory on return with no barrier.
+assert(!Stream.BARRIERS.has(103), 'glGetIntegerv is answered in WAT, not a stream barrier');
 
 console.log('PASS buffered OpenGL ordering, overflow, barriers, and zero-copy textures');

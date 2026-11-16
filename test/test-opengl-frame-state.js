@@ -82,9 +82,11 @@ const lightmapTexture = backend.boundTexture;
 frontend.texImage(0, GL.RGBA, 16, 16, 0, GL.RGBA, GL.UNSIGNED_BYTE,
   new Uint8Array(16 * 16 * 4));
 assert.strictEqual(backend.definedLevel.texture, lightmapTexture);
-call('glTexSubImage2D', [GL.TEXTURE_2D, 1, 0, 0, 4, 3,
-  GL.RGBA, GL.UNSIGNED_BYTE, pixelsGa]);
-assert.strictEqual(call('glGetError', []), 0x0501,
+// GPU stream v2 G1: WAT ($gl_2d_validate) rejects this before a record
+// exists. Should it ever reach the executor, the executor refuses loudly
+// rather than deciding a GL error the guest could never read.
+assert.throws(() => call('glTexSubImage2D', [GL.TEXTURE_2D, 1, 0, 0, 4, 3,
+  GL.RGBA, GL.UNSIGNED_BYTE, pixelsGa]), /decided in the JS executor/,
   'an undefined texture level still rejects the update');
 assert.strictEqual(backend.updates.length, 0);
 call('glTexSubImage2D', [GL.TEXTURE_2D, 0, 7, 11, 4, 3,

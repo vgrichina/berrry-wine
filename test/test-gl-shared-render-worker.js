@@ -62,7 +62,7 @@ async function queuedSnapshotsAndOrder(){
   assert.strictEqual(requests.length,2,'second owned batch waits behind first replay');
   let thirdDone=false,queryDone=false;
   const third=bridge.replay(scalarBatch(memory,384,'glClear',[0x0400]),1).then(()=>{thirdDone=true;});
-  const query=bridge.replay(batch(memory,512,GL.CALL_INDEX.glGetError),2).then(value=>{queryDone=true;return value;});
+  const query=bridge.replay(batch(memory,512,GL.CALL_INDEX.glIsList),2).then(value=>{queryDone=true;return value;});
   await tick();assert(!thirdDone&&!queryDone,'third producer is backpressured and later owner cannot overtake it');
   f.complete(1);await tick();await third;
   assert.strictEqual(requests.length,3);assert.strictEqual(requests[2].message.owner,1);
@@ -131,7 +131,7 @@ async function queuedFailure(){
   await f.bridge.replay(scalarBatch(f.memory,128,'glClear',[0]),1);await tick();
   f.requests[1].reject(new Error('queued GPU failure'));await tick();
   await assert.rejects(f.bridge.drain(),/queued GPU failure/);
-  await assert.rejects(f.bridge.replay(batch(f.memory,256,GL.CALL_INDEX.glGetError),1),/queued GPU failure/,
+  await assert.rejects(f.bridge.replay(batch(f.memory,256,GL.CALL_INDEX.glIsList),1),/queued GPU failure/,
     'asynchronous error survives until a subsequent guest barrier');
   assert.strictEqual(f.requests.length,2,'failed queue cannot submit further work');
   await assert.rejects(f.bridge.close(),/queued GPU failure/);assert(f.port.stopped);
@@ -142,7 +142,7 @@ async function queuedClose(){
   const closing=f.bridge.close();
   await tick();assert(!f.port.stopped,'teardown keeps endpoint alive until outstanding replay settles');
   f.complete(1);await closing;assert(f.port.stopped);
-  assert.throws(()=>f.bridge.replay(batch(f.memory,256,GL.CALL_INDEX.glGetError),1),/closed/);
+  assert.throws(()=>f.bridge.replay(batch(f.memory,256,GL.CALL_INDEX.glIsList),1),/closed/);
 }
 async function queuedSynchronization(){
   const f=await queuedFixture(),events=[];
@@ -416,10 +416,11 @@ async function nullRendererProtocol(){
     assert.deepStrictEqual(execute('wglMakeCurrent',1,[1,context]).producerConfig,[0,0,0,0],
       'null never requests software rasterization in the guest');
     execute('glEnable',0,[0xb71]);
-    assert.strictEqual(execute('glIsEnabled',0,[0xb71]).value,1,'state queries survive');
     execute('glViewport',0,[2,3,7,9]);
-    execute('glGetIntegerv',0,[0xba2,1024]);
-    assert.deepStrictEqual(Array.from(new Int32Array(memory.buffer,1024,4)),[2,3,7,9]);
+    // GPU stream v2 G1: glIsEnabled/glGetIntegerv are answered in WAT and are
+    // never executor records; the null executor must refuse them loudly.
+    assert.throws(()=>execute('glIsEnabled',0,[0xb71]),/answered in WAT/);
+    assert.throws(()=>execute('glGetIntegerv',0,[0xba2,1024]),/answered in WAT/);
     const bytes=32+Stream.VERTEX_FLOATS*4,v=new DataView(memory.buffer);
     v.setUint32(0,bytes,true);v.setUint32(4,Stream.PACKED_DRAW_OPCODE,true);v.setUint32(8,4,true);
     v.setUint32(12,0,true);v.setUint32(20,Stream.VERTEX_FLOATS*4,true);
@@ -594,7 +595,7 @@ async function publishedBrokerProtocol(){
         assert.strictEqual(Atomics.load(marks,0),1,'window marked before asynchronous replay');
         events.push(new DataView(capture.buffer).getFloat32(capture.pointerOffset,true));return 0;
       }
-      if(op===12){events.push('query');return 73;}
+      if(op===129){events.push('query');return 73;}
       throw Error('unexpected published opcode '+op);
     });
   }},sigs,{renderPublication:queue.buffer,onRenderSnapshot:async value=>{
@@ -620,7 +621,7 @@ async function publishedBrokerProtocol(){
       const publication=new (require(d.transport).PublicationQueue)(d.queue),vertices=new Uint8Array([33,44]);
       publication.publishSnapshot(4,0,{value:{vertices},bytes:64},m=>parentPort.postMessage(m),
         ()=>parentPort.postMessage({t:'renderPublished',slot:0}));vertices.fill(99);
-      const value=make(12,[]),kick=built.imports.host.gpu_stream_kick;
+      const value=make(129,[1]),kick=built.imports.host.gpu_stream_kick;
       softwareConfig[0]=1;const asyncBefore=built.stats.async;
       make(147,[0x2300,0x2200,1234],0,[0.5]);
       if(built.stats.async!==asyncBefore)throw Error('software GL metadata bypassed');
@@ -650,7 +651,7 @@ async function publishedBrokerProtocol(){
   const packed=new SharedArrayBuffer(512);
   assert(Stream.publicationSafe(scalarBatch(packed,0,'glEnable',[0x0de1])));
   assert(!Stream.publicationSafe(scalarBatch(packed,0,'glFinish',[])));
-  assert(!Stream.publicationSafe(scalarBatch(packed,0,'glGetError',[])));
+  assert(!Stream.publicationSafe(scalarBatch(packed,0,'glIsList',[1])));
   const borrowed=vectorBatch(packed,0,'glTexEnvfv',[0x2300,0x2200,1234],[1]);
   new DataView(packed).setUint32(28,Stream.FLAG_POINTER_BORROW,true);
   assert(!Stream.publicationSafe(borrowed),'borrowed data retains synchronous fallback');

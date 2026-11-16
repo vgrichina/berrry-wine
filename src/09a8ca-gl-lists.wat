@@ -27,7 +27,7 @@
       (if (i32.eq (i32.load offset=4 (local.get $p)) (local.get $key))
         (then (return (local.get $p))))
       (local.set $p (i32.load (local.get $p))) (br $scan)))
-    (local.set $p (call $gl_list_alloc (i32.const 1068))) ;; index state follows selection/feedback
+    (local.set $p (call $gl_list_alloc (i32.const 1104))) ;; index state follows selection/feedback; G1 query tail +1068
     (if (i32.eqz (local.get $p)) (then (unreachable)))
     (local.set $group (call $gl_list_alloc (i32.const 20)))
     (if (i32.eqz (local.get $group)) (then (unreachable)))
@@ -42,6 +42,7 @@
     (i32.store offset=1052 (local.get $p) (i32.const -1))
     (i32.store offset=1056 (local.get $p) (i32.const 0x1406))
     (call $gl_stencil_init (i32.add (local.get $p) (i32.const 192)))
+    (call $gl_g1_context_init (local.get $p))
     (i32.store offset=228 (local.get $p) (i32.const 15))
     (i32.store offset=232 (local.get $p) (i32.const 0x405))
     (i32.store offset=236 (local.get $p) (i32.const 0x405))
@@ -202,7 +203,7 @@
     (global.set $gl_list_result (i32.const 0))
     (local.set $ctx (call $gl_list_context))
     (if (i32.eqz (local.get $ctx))
-      (then (return (i32.or (i32.eq (local.get $op) (i32.const 146))
+      (then (return (i32.or (i32.or (i32.eq (local.get $op) (i32.const 146)) (i32.eq (local.get $op) (i32.const 12)))
         (i32.and (i32.ge_u (local.get $op) (i32.const 124))
           (i32.le_u (local.get $op) (i32.const 140)))))))
     (if (i32.eq (local.get $op) (i32.const 160)) (then (return (i32.const 0))))
@@ -286,8 +287,9 @@
         (call $gl_list_error (local.get $ctx) (i32.const 0x502))
         (return (i32.const 1))))))
     ;; GetError is immediate during compilation, as are allocation/deletion.
-    (if (i32.and (i32.eq (local.get $op) (i32.const 12))
-        (i32.ne (i32.load offset=32 (local.get $ctx)) (i32.const 0))) (then
+    ;; The context's +32 word is the ONLY GL error flag (sticky first error,
+    ;; $gl_list_error); no host executor is asked, so GetError never forwards.
+    (if (i32.eq (local.get $op) (i32.const 12)) (then
       (global.set $gl_list_result (i32.load offset=32 (local.get $ctx)))
       (i32.store offset=32 (local.get $ctx) (i32.const 0)) (return (i32.const 1))))
     ;; 124 GenLists: reserve a contiguous, nonzero range, checking wraparound.

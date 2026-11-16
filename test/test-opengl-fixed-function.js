@@ -316,15 +316,13 @@ assert.strictEqual(lifecycleWin._gpuFrameLayer, null,
   assert.deepStrictEqual(f.getTexParameter(GL.TEXTURE_WRAP_S), [GL.CLAMP],
     'query preserves desktop enum rather than hardware CLAMP_TO_EDGE alias');
   const count = b.parameters.length;
-  assert.strictEqual(f.texParameter(GL.TEXTURE_MAG_FILTER, 0x2703), false);
-  assert.strictEqual(f.lastError, GL.INVALID_ENUM);
+  // GPU stream v2 G1: WAT validates texture parameters before a record
+  // exists; an error decided by the frontend is refused loudly.
+  assert.throws(() => f.texParameter(GL.TEXTURE_MAG_FILTER, 0x2703), /decided in the JS executor/);
   assert.strictEqual(b.parameters.length, count, 'invalid filter cannot touch hardware');
   assert.deepStrictEqual(f.getTexParameter(GL.TEXTURE_MAG_FILTER), [GL.LINEAR]);
-  f.lastError = 0;
-  assert.strictEqual(f.texBorderColor([0, 0, 0, 0], 0xDE2), false);
-  assert.strictEqual(f.lastError, GL.INVALID_ENUM);
+  assert.throws(() => f.texBorderColor([0, 0, 0, 0], 0xDE2), /decided in the JS executor/);
   assert.deepStrictEqual(Array.from(f.getTexParameter(GL.TEXTURE_BORDER_COLOR)), [0, 0.25, 1, 0.5]);
-  f.lastError = 0;
   f.deleteTextures([12]);
   f.bindTexture(12);
   assert.deepStrictEqual(Array.from(f.getTexParameter(GL.TEXTURE_BORDER_COLOR)), [0, 0, 0, 0],
@@ -342,55 +340,21 @@ assert.strictEqual(lifecycleWin._gpuFrameLayer, null,
   };
   [0.125,0.25,0.5,1].forEach((v,i)=>dv.setFloat32(256+i*4,v,true));
   call('glTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_BORDER_COLOR,256);
-  call('glGetTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_BORDER_COLOR,320);
-  assert.deepStrictEqual(Array.from(new Float32Array(memory,320,4)),[0.125,0.25,0.5,1]);
+  assert.deepStrictEqual(Array.from(f.getTexParameter(GL.TEXTURE_BORDER_COLOR)),[0.125,0.25,0.5,1]);
   dv.setFloat32(256,0.375,true);
   call('glTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_PRIORITY,256);
-  call('glGetTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_PRIORITY,320);
-  assert.strictEqual(dv.getFloat32(320,true),0.375);
-  call('glTexParameterfv',0xDE2,GL.TEXTURE_BORDER_COLOR,0xFFFFFFF0);
-  assert.strictEqual(call('glGetError'),GL.INVALID_ENUM);
-  assert.strictEqual(call('glGetError'),0,'frontend error is cleared when consumed');
-  dv.setUint32(320,0xDEADBEEF,true);
-  call('glGetTexParameterfv',GL.TEXTURE_2D,0xDEADBEEF,320);
-  assert.strictEqual(dv.getUint32(320,true),0xDEADBEEF,'invalid query must not write output');
-  assert.strictEqual(call('glGetError'),GL.INVALID_ENUM);
-  // glGetTexLevelParameter: Serious Sam's Engine specifies a 1x1 GL_RGBA8
-  // image and enables 32-bit textures only if GL_TEXTURE_GREEN_SIZE is 8.
-  f.texImage(0,0x8058,1,1,0,GL.RGBA,0x1401,new Uint8Array(4));
-  const level=(pname,lv=0,fv=false)=>{
-    dv.setUint32(336,0xDEADBEEF,true);
-    call(fv?'glGetTexLevelParameterfv':'glGetTexLevelParameteriv',GL.TEXTURE_2D,lv,pname,336);
-    return fv?dv.getFloat32(336,true):dv.getInt32(336,true);
-  };
-  assert.strictEqual(level(0x805D),8,'RGBA8 green size');
-  assert.strictEqual(level(0x805F),8,'RGBA8 alpha size');
-  assert.strictEqual(level(0x8060),0,'RGBA8 has no luminance');
-  assert.strictEqual(level(0x1000),1,'level 0 width');
-  assert.strictEqual(level(0x1003),0x8058,'internal format as specified');
-  assert.strictEqual(level(0x1001,0,true),1,'fv form answers in float');
-  assert.strictEqual(level(0x1000,3),0,'an unspecified level has width 0');
-  assert.strictEqual(level(0x1003,3),1,'and internal format 1');
-  f.texImage(0,GL.ALPHA,1,1,0,GL.ALPHA,0x1401,new Uint8Array(1));
-  assert.deepStrictEqual([level(0x805C),level(0x805F)],[0,8],'alpha-only image');
-  assert.strictEqual(call('glGetError'),0);
-  dv.setUint32(336,0xDEADBEEF,true);
-  call('glGetTexLevelParameteriv',GL.TEXTURE_2D,0,0xDEADBEEF,336);
-  assert.strictEqual(dv.getUint32(336,true),0xDEADBEEF,'invalid level query must not write output');
-  assert.strictEqual(call('glGetError'),GL.INVALID_ENUM);
-  // glIsTexture (Soldier of Fortune's ref_gl, during a level load): a name is
-  // a texture from its first bind until it is deleted; a reserved-only name,
-  // an unknown one and 0 are not.
-  call('glBindTexture',GL.TEXTURE_2D,77);
-  assert.strictEqual(call('glIsTexture',77),1,'a bound name is a texture');
-  assert.strictEqual(call('glIsTexture',78),0,'a never-bound name is not');
-  assert.strictEqual(call('glIsTexture',0),0,'0 is never a texture');
-  dv.setUint32(352,77,true);
-  call('glDeleteTextures',1,352);
-  assert.strictEqual(call('glIsTexture',77),0,'a deleted name is not');
+  assert.deepStrictEqual(f.getTexParameter(GL.TEXTURE_PRIORITY),[0.375]);
+  // GPU stream v2 G1: every query and the error flag are answered in WAT
+  // (glGetTexParameterfv/glGetTexLevelParameter*: 09a8b, glIsTexture and
+  // glGetError: 09a8e/09a8ca; test-opengl-texture-state-query and
+  // test-opengl-one-dimensional-textures run them). None may reach here.
+  for (const name of ['glGetError','glGetTexParameterfv','glGetTexLevelParameteriv',
+    'glGetTexLevelParameterfv','glIsTexture','glGetIntegerv','glGetFloatv',
+    'glGetDoublev','glGetBooleanv','glIsEnabled'])
+    assert.throws(()=>call(name,GL.TEXTURE_2D,0,0,320),/answered in WAT/,name);
+  // An executor-side failure (allocation) is not a guest GL error any more.
   dv.setUint32(4,GL.TEXTURE_2D,true);dv.setUint32(8,GL.TEXTURE_BORDER_COLOR,true);dv.setUint32(12,256,true);
-  host.call(CALL_INDEX.glTexParameterfv,0,0x505);
-  assert.strictEqual(call('glGetError'),0x505,'native allocation failure reaches guest error query');
+  assert.throws(()=>host.call(CALL_INDEX.glTexParameterfv,0,0x505),/decided in the JS executor/);
 }
 
 // A scalar state update must not inspect unrelated light/projection state.

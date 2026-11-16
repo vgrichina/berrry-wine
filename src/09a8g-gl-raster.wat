@@ -1765,8 +1765,17 @@
         (i32.store (global.get $gl_sw_st) (if (result i32) (i32.eq (local.get $op) (i32.const 10))
           (then (i32.or (i32.load (global.get $gl_sw_st)) (local.get $bit)))
           (else (i32.and (i32.load (global.get $gl_sw_st)) (i32.xor (local.get $bit) (i32.const -1))))))))))
-    (if (i32.eqz (global.get $gl_sw_enabled)) (then (return)))
     (local.set $s (global.get $gl_sw_st))
+    ;; Pixel-deciding server state is observed on every route: WAT answers
+    ;; the glGet*/glIsEnabled queries from it (09a8e) whichever executor
+    ;; draws. Only surface and texture-slot work needs the software target.
+    (if (i32.eqz (global.get $gl_sw_enabled)) (then
+      (if (i32.or (i32.or (i32.or (i32.eq (local.get $op) (i32.const 2)) (i32.eq (local.get $op) (i32.const 55)))
+                          (i32.or (i32.eq (local.get $op) (i32.const 43)) (i32.eq (local.get $op) (i32.const 61))))
+            (i32.or (i32.or (i32.eq (local.get $op) (i32.const 45)) (i32.eq (local.get $op) (i32.const 47)))
+                    (i32.or (i32.eq (local.get $op) (i32.const 46))
+                      (i32.or (i32.eq (local.get $op) (i32.const 96)) (i32.eq (local.get $op) (i32.const 112))))))
+        (then (return)))))
     ;; A render Worker may still be drawing from the surfaces and texture
     ;; slots these change: 2 glClear, 43 glDeleteTextures, 45 glTexImage2D,
     ;; 55 SwapBuffers, 61 gluBuild2DMipmaps. glTexSubImage2D queues its texels
