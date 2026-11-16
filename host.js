@@ -3540,9 +3540,9 @@ class WineAssembly {
         d3d9Bridge: mainCtx.d3d9Bridge,
         // Cooperative threads share the in-page WebGL D3DIM owner, calling it
         // with their own instance's exports (describe/decode scratch).
-        d3dCommands: self.d3dimGpu ? {
-          call: (...args) => self.d3dimGpu.callForExports(workerInstance?.exports, ...args),
-        } : null,
+        // D3DIM on GPU stream v2 needs no host command object: every
+        // instance produces into the one shared ring (src/09abg-d3dim-gps.wat).
+        d3dCommands: null,
         detached: true,
         instance: () => workerInstance || self.instance,
         exports: () => workerInstance ? workerInstance.exports : self.instance.exports,
@@ -3550,7 +3550,11 @@ class WineAssembly {
       }));
       wi.__setInstance = (instance) => { workerInstance = instance; };
       wi.__initializeCooperative = () => {
-        if (self.d3dimGpu) self.d3dimGpu.attachCooperative(workerInstance.exports);
+        // Siblings share the ring, so CPU barriers must be global ones.
+        if (self.d3dimGpu) {
+          self.instance.exports.d3dim_gpu_cooperative_enable();
+          workerInstance.exports.d3dim_gpu_cooperative_enable();
+        }
       };
       wi.host.memory = self.memory;
       const markAudioThread = () => {
@@ -3973,50 +3977,23 @@ class WineAssembly {
     }
   }
 
-  // Attach the D3DIM WebGL executor to the main-thread instance.
-  //
-  // It renders into its own offscreen canvas and its fence reads the result
-  // back into the guest's DIB, so the renderer keeps presenting exactly the
-  // surface it presents for the software rasterizer. Nothing else in the
-  // compositing path changes, and a device with no WebGL keeps the software
-  // path rather than failing to launch.
+  // Put the main-thread instance's D3DIM on GPU stream v2. Frames reach the
+  // page as GPU layers (PRESENT); CPU readers of a surface fence it back
+  // into the guest's DIB. A device with no WebGL keeps working on the
+  // bridge's software executor rather than failing to launch.
   _startD3DIMGpu() {
     if (this.d3dimGpu) return this.d3dimGpu;
-    const gpu = typeof window !== 'undefined' && window.D3DIMGpu;
-    if (!gpu || !this.instance.exports.d3dim_gpu_cooperative_enable) {
-      this.logToUI('[d3dim-gpu] lib/d3dim-gpu.js not loaded — software D3DIM');
+    if (!this.instance.exports.d3dim_gpu_cooperative_enable || typeof window.D3DIMHost !== 'object') {
+      this.logToUI('[d3dim-gpu] lib/d3dim-host.js not loaded — software D3DIM');
       return null;
     }
-    try {
-      const self = this;
-      this.d3dimGpu = new gpu.D3DIMGpu({
-        getExports: () => self.instance.exports,
-        getMemory: () => self.memory.buffer,
-        // This executor runs on the guest main thread's own instance, so a
-        // Flip may queue its readback and swap the chain here (d3dim-gpu.js
-        // _flip); the shared render Worker keeps the synchronous Flip.
-        asyncFlip: true,
-        createCanvas: (width, height) => {
-          const canvas = document.createElement('canvas');
-          canvas.width = width; canvas.height = height;
-          return canvas;
-        },
-        onError: message => { console.error(message); self.logToUI(message); },
-        // GPU present (docs/d3dim-gpu-present.md): the frame's canvas is
-        // this executor's own, drawn synchronously before the call returns.
-        onPresent: frame => self.hostCtx?.presentD3dimGpuFrame?.(frame),
-      });
-      if (this.hostCtx) this.hostCtx.d3dCommands = {
-        call: (...args) => this.d3dimGpu.callForExports(this.instance.exports, ...args),
-      };
-      this.instance.exports.d3dim_gpu_enable(1);
-      this.logToUI('[d3dim-gpu] D3DIM draws on WebGL');
-      return this.d3dimGpu;
-    } catch (error) {
-      this.d3dimGpu = null;
-      this.logToUI(`[d3dim-gpu] unavailable: ${error.message} — software D3DIM`);
-      return null;
-    }
+    // GPU stream v2: the WAT producer lowers D3DIM itself; host-imports'
+    // gpu_stream_kick builds the lib/d3dim-host.js bridge on the first kick
+    // (WebGL, or its software executor on a device without WebGL).
+    this.d3dimGpu = { gpuStream: true };
+    this.instance.exports.d3dim_gpu_enable(1);
+    this.logToUI('[d3dim-gpu] D3DIM draws on GPU stream v2');
+    return this.d3dimGpu;
   }
 
   // EXPERIMENTAL: run the guest's main thread in a Worker.

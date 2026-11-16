@@ -1,0 +1,28 @@
+{
+  "_comment": [
+    "APPEND-ONLY baseline of GPU stream v2 op ids (src/09a8gs-gpu-stream.wat).",
+    "Written by tools/gen-gpu-stream.js; --check fails if an id changes or an op disappears."
+  ],
+  "ops": {
+    "WRAP": 0,
+    "CREATE": 1,
+    "UPLOAD": 2,
+    "RELEASE": 3,
+    "SHADER": 4,
+    "LAYOUT": 5,
+    "SAMPLER": 6,
+    "TARGETS": 10,
+    "VIEWPORT": 11,
+    "RASTER": 12,
+    "BIND": 13,
+    "CONSTS": 14,
+    "DRAW": 20,
+    "DRAW_UP": 21,
+    "CLEAR": 22,
+    "COPY": 23,
+    "FENCE": 30,
+    "READBACK": 31,
+    "PRESENT": 32,
+    "MARK": 33
+  }
+}

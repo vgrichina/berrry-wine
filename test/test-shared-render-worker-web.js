@@ -25,8 +25,11 @@ const {startStaticServer,closeServer}=require('./static-server');
     page.on('console',message=>{if(message.type()==='error')console.error('browser console:',message.text());});
     await page.goto(`http://127.0.0.1:${server.address().port}/shared-render-test`);
     for(const file of ['region-map.generated','render-worker','d3d-command-stream','gl-command-stream','gpu-backend','mem-utils','gl-compat',
-      'glide-backend','glide-software','glide-host'])
+      'gpu-stream.generated','gpu-stream','gpu-stream-doorbell','gpu-stream-host','glide-host'])
       await page.addScriptTag({url:`/lib/${file}.js`});
+    // test/gpu-stream-fixture.js (CommonJS) writes the ring the WAT would.
+    await page.addScriptTag({content:`(function(){var module={exports:{}};var require=function(){return globalThis.GpuStream;};\n${
+      require('fs').readFileSync(path.join(__dirname,'gpu-stream-fixture.js'),'utf8')}\nglobalThis.GpsFixture=module.exports;})();`});
     const result=await page.evaluate(async()=>{
       if(!crossOriginIsolated)throw new Error('shared-memory test requires isolated document');
       const module=await WebAssembly.compile(await (await fetch('/build/wine-assembly.wasm')).arrayBuffer());
@@ -57,64 +60,58 @@ const {startStaticServer,closeServer}=require('./static-server');
         await issue(OP.RESOURCE_CREATE,{kind:'device',backend,width:16,height:16,quadBudget:1});
         return {port,queue,issue};
       }
+      // GPU stream v2: the page writes a GpsRing in the SHARED wasm memory (as
+      // the WAT does) and kicks; the render Worker drains that same ring.
       async function glidePool(backend){
-        const pointer=e.guest_to_wasm(e.guest_alloc(4096))>>>0;
-        const view=new DataView(memory.buffer,pointer,4096),packets=[],presented=[];
+        const C=GpuStream.CONST,ringBytes=4096,arenaBytes=16384;
+        const base=((e.guest_to_wasm(e.guest_alloc(ringBytes+arenaBytes+1024))>>>0)+63)&-64;
+        const p=GpsFixture.makeProducer({buffer:memory.buffer,headerAddr:base,ringData:base+512,
+          arenaData:base+512+ringBytes,ringBytes,arenaBytes});
+        const kicks=[],presented=[];
         let readbacks=0;
         const renderer={windows:{7:{}},scheduleRepaint(){}};
         const bridge=new GlideHost.Bridge({backend,getMemory:()=>memory,getExports:()=>e,renderer,
           createRenderEndpoint(options){
             const port=manager.createEndpoint(options),request=port.request.bind(port);
-            port.request=async message=>{
-              if(message.bytes?.buffer instanceof SharedArrayBuffer)
-                packets.push({buffer:message.bytes.buffer,offset:message.bytes.byteOffset,op:message.op});
-              const reply=await request(message);
-              if(message.op===9){
-                if(!(reply.bytes?.buffer instanceof SharedArrayBuffer))throw new Error('Glide readback lost shared packet');
-                readbacks++;
-              }
-              return reply;
-            };
+            port.request=async message=>{kicks.push(message);return request(message);};
             return port;
           },
           onPresent(layer){presented.push([...layer.canvas.getContext('2d').getImageData(2,2,1,1).data]);}});
-        const words=values=>values.forEach((value,i)=>view.setUint32(i*4,value,true));
-        const barrier=()=>bridge.submit(19,pointer,0);
+        const clear=rgba=>p.emit('CLEAR',{mask:C.CLEAR_COLOR,colormask:15,rgba,z:1,left:0,top:0,right:16,bottom:16});
         const read=async expected=>{
-          words([0,0,0,16,16]);await bridge.submit(9,pointer,20+16*16*2);
-          same(view.getUint16(20+(2*16+2)*2,true),expected,backend+' Glide RGB565 readback');
+          const dst=p.arenaAlloc(16*16*2);
+          p.emit('READBACK',{rt:1,x:0,y:0,w:16,h:16,fmt:C.FMT_RGB565,dst,pitch:32,slot:0});
+          same(await bridge.kick(base,C.KICK_SYNC),1,backend+' Glide sync kick');
+          const v=p.arenaView(dst,16*16*2);readbacks++;
+          same(v[(2*16+2)*2]|v[(2*16+2)*2+1]<<8,expected,backend+' Glide RGB565 readback');
         };
+        const present=()=>{p.emit('PRESENT',{rt:1,gamma:0,x:0,y:0,w:16,h:16,surface:7});return bridge.kick(base,C.KICK_SYNC);};
         try{
-          words([7,16,16,0,0,1]);same(await bridge.submit(1,pointer,24),1,backend+' Glide open');
-          if(backend==='webgl'&&!bridge.device.glRenderer)throw new Error('Glide GPU unexpectedly fell back to software');
-          // No await between three early ACKs: all slots must stay leased even
-          // before the first actual worker request starts. Poison reused input.
-          for(const color of [0xff0000,0x00ff00,0x0000ff]){
-            words([3,12,color,255,65535]);same(bridge.submit(0,pointer,20),1,'Glide snapshot early ACK');
-            words([0xffffffff,0xffffffff,0,0,0]);
-          }
-          words([3,12,0xffffff,255,65535]);
-          const blocked=bridge.submit(0,pointer,20);
-          if(!(blocked instanceof Promise)||bridge.workerSubmissions.waiters.length!==1)
-            throw new Error('Glide fourth packet did not wait for bounded pool credit');
-          await blocked;words([0xffffffff,0xffffffff,0,0,0]);await barrier();
+          p.emit('CREATE',{id:1,kind:C.KIND_RT,fmt:C.FMT_A8B8G8R8,levels:1,width:16,height:16});
+          p.emit('TARGETS',{color:1,depth:0});
+          // ASYNC kicks ACK at once, before the Worker even exists; the
+          // Worker handles kicks in order, so the SYNC read sees all three.
+          for(const rgba of [0xff0000ff,0xff00ff00,0xffff0000]){clear(rgba);same(bridge.kick(base,C.KICK_ASYNC),1,'Glide async kick early ACK');}
+          clear(0xffffffff);
           await read(0xffff);
-          await bridge.submit(4,pointer,0);await barrier();
+          if(backend==='webgl'&&!bridge.device.glRenderer)throw new Error('Glide GPU unexpectedly fell back to software');
+          await present();
           same(presented.at(-1),[255,255,255,255],backend+' Glide white presentation');
-          words([0,0,0,16,16]);
-          for(let i=0;i<16*16;i++)view.setUint16(20+i*2,0x07e0,true);
-          same(bridge.submit(10,pointer,20+16*16*2),1,'Glide LFB write early ACK');
-          new Uint8Array(memory.buffer,pointer+20,16*16*2).fill(0);
-          await barrier();await read(0x07e0);
-          await bridge.submit(4,pointer,0);await barrier();
-          same(presented.at(-1),[0,255,0,255],backend+' Glide copied green LFB presentation');
-          const offsets=new Set(packets.map(packet=>packet.offset));
-          if(offsets.size!==3||packets.length<=3||packets.some(packet=>packet.buffer!==packets[0].buffer))
-            throw new Error('Glide packets did not wrap one canonical three-slot SAB');
-          await bridge.close();
-          if(bridge.workerPacketPool||renderer.windows[7]._gpuFrameLayer||adoptions||terminations)
-            throw new Error('Glide close failed pool/window retirement or retired peer endpoints');
-          return {backend,packets:packets.length,slots:offsets.size,readbacks,presents:presented.length};
+          // LFB write: top-down RGBA rows uploaded into the RT.
+          const rows=new Uint8Array(16*16*4);for(let i=0;i<256;i++)rows.set([0,255,0,255],i*4);
+          const src=p.arenaAlloc(rows.length);p.arenaView(src,rows.length).set(rows);
+          p.emit('UPLOAD',{id:1,level:0,face:0,x:0,y:0,w:16,h:16,pitch:64,src,bytes:rows.length});
+          same(bridge.kick(base,C.KICK_ASYNC),1,'Glide LFB upload early ACK');
+          await read(0x07e0);
+          await present();
+          same(presented.at(-1),[0,255,0,255],backend+' Glide LFB green presentation');
+          if(kicks.some(k=>k.t!=='gps-kick'||k.ring!==base))throw new Error('Glide kicks must name the one shared ring');
+          same(await bridge.kick(base,C.KICK_CLOSE),1,backend+' Glide close kick');
+          if(bridge.endpoint||renderer.windows[7]._gpuFrameLayer||adoptions||terminations)
+            throw new Error('Glide close failed endpoint/window retirement or retired peer endpoints');
+          // The upload's ASYNC kick came after the endpoint armed the ring's
+          // doorbell: one Atomics.notify, no request message.
+          return {backend,kicks:kicks.length,readbacks,presents:presented.length,doorbells:bridge.stats.doorbells};
         }finally{await bridge.close();}
       }
       try{
@@ -267,7 +264,8 @@ const {startStaticServer,closeServer}=require('./static-server');
     assert.strictEqual(result.workers,1);assert.strictEqual(result.adoptions,1);assert.strictEqual(result.frames,2);
     assert.strictEqual(result.softwareGlFrames,2);
     assert.strictEqual(result.gpuTexturedDraws,2);
-    assert.deepStrictEqual(result.glide.map(run=>[run.backend,run.slots,run.readbacks]),[['webgl',3,2],['software',3,2]]);
+    assert.deepStrictEqual(result.glide.map(run=>[run.backend,run.kicks,run.readbacks,run.presents,run.doorbells]),
+      [['webgl',8,2,2,1],['software',8,2,2,1]]);
     console.log('PASS actual shared worker GL + D3D9 + Glide WebGL/native software:',JSON.stringify(result));
   }finally{if(browser)await browser.close();await closeServer(server);}
 })().catch(error=>{console.error(error);process.exitCode=1;});

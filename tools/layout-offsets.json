@@ -271,6 +271,2214 @@
         }
       ]
     },
+    "GpsRing": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 192,
+      "fields": [
+        {
+          "name": "magic",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "version",
+          "type": "u16",
+          "offset": 4,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "flags",
+          "type": "u16",
+          "offset": 6,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "ring_bytes",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "arena_bytes",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "write_pos",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "read_pos",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "submit_seq",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "done_seq",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "arena_head",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "arena_tail",
+          "type": "i32",
+          "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "error_seq",
+          "type": "i32",
+          "offset": 40,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "error_code",
+          "type": "i32",
+          "offset": 44,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ring_data",
+          "type": "i32",
+          "offset": 48,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "arena_data",
+          "type": "i32",
+          "offset": 52,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "api",
+          "type": "i32",
+          "offset": 56,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "seq_counter",
+          "type": "i32",
+          "offset": 60,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "slots",
+          "type": "i32",
+          "offset": 64,
+          "size": 64,
+          "count": 16,
+          "stride": 4
+        },
+        {
+          "name": "seq_storage",
+          "type": "i32",
+          "offset": 128,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "last_present",
+          "type": "i32",
+          "offset": 132,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "owner",
+          "type": "i32",
+          "offset": 136,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "producer_lock",
+          "type": "i32",
+          "offset": 140,
+          "size": 8,
+          "count": 2,
+          "stride": 4
+        },
+        {
+          "name": "handoffs",
+          "type": "i32",
+          "offset": 148,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ring_guest",
+          "type": "i32",
+          "offset": 152,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "arena_guest",
+          "type": "i32",
+          "offset": 156,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "consumer",
+          "type": "i32",
+          "offset": 160,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "caps_flags",
+          "type": "i32",
+          "offset": 164,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "caps_max_texture",
+          "type": "i32",
+          "offset": 168,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "caps_max_samplers",
+          "type": "i32",
+          "offset": 172,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "caps_max_aniso",
+          "type": "i32",
+          "offset": 176,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "caps_formats",
+          "type": "i32",
+          "offset": 180,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "reserved",
+          "type": "i32",
+          "offset": 184,
+          "size": 8,
+          "count": 2,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsRecord": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 12,
+      "fields": [
+        {
+          "name": "op",
+          "type": "u16",
+          "offset": 0,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "flags",
+          "type": "u16",
+          "offset": 2,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "bytes",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "seq",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsCreate": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 20,
+      "fields": [
+        {
+          "name": "id",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "kind",
+          "type": "u8",
+          "offset": 4,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "fmt",
+          "type": "u8",
+          "offset": 5,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "levels",
+          "type": "u16",
+          "offset": 6,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "width",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "height",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "size",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsUpload": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 36,
+      "fields": [
+        {
+          "name": "id",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "level",
+          "type": "u16",
+          "offset": 4,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "face",
+          "type": "u16",
+          "offset": 6,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "x",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "y",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "w",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "h",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "pitch",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "src",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "bytes",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsRelease": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 4,
+      "fields": [
+        {
+          "name": "id",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsShader": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 12,
+      "fields": [
+        {
+          "name": "id",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "stage",
+          "type": "u8",
+          "offset": 4,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "pad",
+          "type": "u8",
+          "offset": 5,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "pad2",
+          "type": "u16",
+          "offset": 6,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "ir_bytes",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsLayout": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 12,
+      "fields": [
+        {
+          "name": "id",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "count",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "stride",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsLayoutElem": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 8,
+      "fields": [
+        {
+          "name": "slot",
+          "type": "u8",
+          "offset": 0,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "type",
+          "type": "u8",
+          "offset": 1,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "usage",
+          "type": "u8",
+          "offset": 2,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "index",
+          "type": "u8",
+          "offset": 3,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "offset",
+          "type": "u16",
+          "offset": 4,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "pad",
+          "type": "u16",
+          "offset": 6,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        }
+      ]
+    },
+    "GpsSampler": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 20,
+      "fields": [
+        {
+          "name": "id",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "address_u",
+          "type": "u8",
+          "offset": 4,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "address_v",
+          "type": "u8",
+          "offset": 5,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "min",
+          "type": "u8",
+          "offset": 6,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "mag",
+          "type": "u8",
+          "offset": 7,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "mip",
+          "type": "u8",
+          "offset": 8,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "address_w",
+          "type": "u8",
+          "offset": 9,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "max_level",
+          "type": "u8",
+          "offset": 10,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "max_aniso",
+          "type": "u8",
+          "offset": 11,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "lod_bias",
+          "type": "f32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "border",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsTargets": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 8,
+      "fields": [
+        {
+          "name": "color",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "depth",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsViewport": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 24,
+      "fields": [
+        {
+          "name": "x",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "y",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "w",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "h",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "zmin",
+          "type": "f32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "zmax",
+          "type": "f32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsRaster": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 96,
+      "fields": [
+        {
+          "name": "depth_mode",
+          "type": "u8",
+          "offset": 0,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "zfunc",
+          "type": "u8",
+          "offset": 1,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "zwrite",
+          "type": "u8",
+          "offset": 2,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "cull",
+          "type": "u8",
+          "offset": 3,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "blend",
+          "type": "u8",
+          "offset": 4,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "src_rgb",
+          "type": "u8",
+          "offset": 5,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "dst_rgb",
+          "type": "u8",
+          "offset": 6,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "src_alpha",
+          "type": "u8",
+          "offset": 7,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "dst_alpha",
+          "type": "u8",
+          "offset": 8,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "alpha_func",
+          "type": "u8",
+          "offset": 9,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "alpha_ref",
+          "type": "u8",
+          "offset": 10,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "colormask",
+          "type": "u8",
+          "offset": 11,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "fog_mode",
+          "type": "u8",
+          "offset": 12,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "fog_flags",
+          "type": "u8",
+          "offset": 13,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "fill",
+          "type": "u8",
+          "offset": 14,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "linear",
+          "type": "u8",
+          "offset": 15,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "fog_color",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "fog_table",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "depth_bias",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "scissor_left",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "scissor_top",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "scissor_right",
+          "type": "i32",
+          "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "scissor_bottom",
+          "type": "i32",
+          "offset": 40,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "blend_op",
+          "type": "u8",
+          "offset": 44,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "blend_op_alpha",
+          "type": "u8",
+          "offset": 45,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_enable",
+          "type": "u8",
+          "offset": 46,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "two_sided",
+          "type": "u8",
+          "offset": 47,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_func",
+          "type": "u8",
+          "offset": 48,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_fail",
+          "type": "u8",
+          "offset": 49,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_zfail",
+          "type": "u8",
+          "offset": 50,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_pass",
+          "type": "u8",
+          "offset": 51,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "ccw_func",
+          "type": "u8",
+          "offset": 52,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "ccw_fail",
+          "type": "u8",
+          "offset": 53,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "ccw_zfail",
+          "type": "u8",
+          "offset": 54,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "ccw_pass",
+          "type": "u8",
+          "offset": 55,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_ref",
+          "type": "u8",
+          "offset": 56,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_mask",
+          "type": "u8",
+          "offset": 57,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "stencil_wmask",
+          "type": "u8",
+          "offset": 58,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "logic_op",
+          "type": "u8",
+          "offset": 59,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "z_bias",
+          "type": "f32",
+          "offset": 60,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "slope_bias",
+          "type": "f32",
+          "offset": 64,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "reserved",
+          "type": "i32",
+          "offset": 68,
+          "size": 28,
+          "count": 7,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsBind": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 4,
+      "fields": [
+        {
+          "name": "count",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsBindEntry": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 12,
+      "fields": [
+        {
+          "name": "slot",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "texture",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "sampler",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsConsts": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 8,
+      "fields": [
+        {
+          "name": "stage",
+          "type": "u8",
+          "offset": 0,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "pad",
+          "type": "u8",
+          "offset": 1,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "first",
+          "type": "u16",
+          "offset": 2,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "count",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsDraw": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 44,
+      "fields": [
+        {
+          "name": "prim",
+          "type": "u8",
+          "offset": 0,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "index_size",
+          "type": "u8",
+          "offset": 1,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "pad2",
+          "type": "u16",
+          "offset": 2,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "vs",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ps",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "layout",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vbuf",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "voff",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "stride",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ibuf",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ioff",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "count",
+          "type": "i32",
+          "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vcount",
+          "type": "i32",
+          "offset": 40,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsClear": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 32,
+      "fields": [
+        {
+          "name": "mask",
+          "type": "u8",
+          "offset": 0,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "colormask",
+          "type": "u8",
+          "offset": 1,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "pad",
+          "type": "u16",
+          "offset": 2,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "rgba",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "z",
+          "type": "f32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "stencil",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "left",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "top",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "right",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "bottom",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsCopy": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 44,
+      "fields": [
+        {
+          "name": "src",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dst",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "sx",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "sy",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "sw",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "sh",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dx",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dy",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dw",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dh",
+          "type": "i32",
+          "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "filter",
+          "type": "i32",
+          "offset": 40,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsFence": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 12,
+      "fields": [
+        {
+          "name": "slot",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "kind",
+          "type": "u8",
+          "offset": 4,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "pad",
+          "type": "u8",
+          "offset": 5,
+          "size": 1,
+          "count": 1,
+          "stride": 1
+        },
+        {
+          "name": "pad2",
+          "type": "u16",
+          "offset": 6,
+          "size": 2,
+          "count": 1,
+          "stride": 2
+        },
+        {
+          "name": "dst",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsReadback": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 36,
+      "fields": [
+        {
+          "name": "rt",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "x",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "y",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "w",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "h",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "fmt",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dst",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "pitch",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "slot",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsPresent": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 40,
+      "fields": [
+        {
+          "name": "rt",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "gamma",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "x",
+          "type": "i32",
+          "offset": 8,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "y",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "w",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "h",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "surface",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dst_x",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dst_y",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "stamp",
+          "type": "i32",
+          "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsMark": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 8,
+      "fields": [
+        {
+          "name": "frame",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "tag",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GlideGps": {
+      "file": "src/09a8h-glide.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 12188,
+      "fields": [
+        {
+          "name": "next_id",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "color",
+          "type": "i32",
+          "offset": 4,
+          "size": 8,
+          "count": 2,
+          "stride": 4
+        },
+        {
+          "name": "depth",
+          "type": "i32",
+          "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "layout",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "target",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "single",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "width",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "height",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "hwnd",
+          "type": "i32",
+          "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "color_format",
+          "type": "i32",
+          "offset": 40,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "front_dirty",
+          "type": "i32",
+          "offset": 44,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "pipe_valid",
+          "type": "i32",
+          "offset": 48,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "pipe_dual",
+          "type": "i32",
+          "offset": 52,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ps",
+          "type": "i32",
+          "offset": 56,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "draw_open",
+          "type": "i32",
+          "offset": 60,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "draw_prim",
+          "type": "i32",
+          "offset": 64,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "draw_end",
+          "type": "i32",
+          "offset": 68,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "draw_count",
+          "type": "i32",
+          "offset": 72,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "kick_pos",
+          "type": "i32",
+          "offset": 76,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "kick_arena",
+          "type": "i32",
+          "offset": 80,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "present_seq",
+          "type": "i32",
+          "offset": 84,
+          "size": 8,
+          "count": 2,
+          "stride": 4
+        },
+        {
+          "name": "frame",
+          "type": "i32",
+          "offset": 92,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "gamma_id",
+          "type": "i32",
+          "offset": 96,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "gamma_bits",
+          "type": "i32",
+          "offset": 100,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "gamma_table",
+          "type": "i32",
+          "offset": 104,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "gamma_dirty",
+          "type": "i32",
+          "offset": 108,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "fog_id",
+          "type": "i32",
+          "offset": 112,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "tmu_ram",
+          "type": "i32",
+          "offset": 116,
+          "size": 8,
+          "count": 2,
+          "stride": 4
+        },
+        {
+          "name": "tmu_guest",
+          "type": "i32",
+          "offset": 124,
+          "size": 8,
+          "count": 2,
+          "stride": 4
+        },
+        {
+          "name": "ir",
+          "type": "i32",
+          "offset": 132,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ir_guest",
+          "type": "i32",
+          "offset": 136,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "tex_next",
+          "type": "i32",
+          "offset": 140,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "shader_next",
+          "type": "i32",
+          "offset": 144,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "sampler_next",
+          "type": "i32",
+          "offset": 148,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vx_origin",
+          "type": "i32",
+          "offset": 152,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vx_height",
+          "type": "f32",
+          "offset": 156,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vx_s0",
+          "type": "f32",
+          "offset": 160,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vx_t0",
+          "type": "f32",
+          "offset": 164,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vx_s1",
+          "type": "f32",
+          "offset": 168,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vx_t1",
+          "type": "f32",
+          "offset": 172,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vx_hint_q0",
+          "type": "i32",
+          "offset": 176,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vx_needs_z",
+          "type": "i32",
+          "offset": 180,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "vx_bias",
+          "type": "f64",
+          "offset": 184,
+          "size": 8,
+          "count": 1,
+          "stride": 8
+        },
+        {
+          "name": "vx_dual",
+          "type": "i32",
+          "offset": 192,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "snap",
+          "type": "i32",
+          "offset": 196,
+          "size": 336,
+          "count": 84,
+          "stride": 4
+        },
+        {
+          "name": "vtx",
+          "type": "i32",
+          "offset": 532,
+          "size": 180,
+          "count": 45,
+          "stride": 4
+        },
+        {
+          "name": "fog",
+          "type": "i32",
+          "offset": 712,
+          "size": 64,
+          "count": 16,
+          "stride": 4
+        },
+        {
+          "name": "gamma",
+          "type": "i32",
+          "offset": 776,
+          "size": 768,
+          "count": 192,
+          "stride": 4
+        },
+        {
+          "name": "tex",
+          "type": "i32",
+          "offset": 1544,
+          "size": 3072,
+          "count": 768,
+          "stride": 4
+        },
+        {
+          "name": "shader",
+          "type": "i32",
+          "offset": 4616,
+          "size": 6656,
+          "count": 1664,
+          "stride": 4
+        },
+        {
+          "name": "sampler",
+          "type": "i32",
+          "offset": 11272,
+          "size": 512,
+          "count": 128,
+          "stride": 4
+        },
+        {
+          "name": "key",
+          "type": "i32",
+          "offset": 11784,
+          "size": 96,
+          "count": 24,
+          "stride": 4
+        },
+        {
+          "name": "last_raster",
+          "type": "i32",
+          "offset": 11880,
+          "size": 96,
+          "count": 24,
+          "stride": 4
+        },
+        {
+          "name": "last_consts",
+          "type": "i32",
+          "offset": 11976,
+          "size": 88,
+          "count": 22,
+          "stride": 4
+        },
+        {
+          "name": "last_bind",
+          "type": "i32",
+          "offset": 12064,
+          "size": 28,
+          "count": 7,
+          "stride": 4
+        },
+        {
+          "name": "stage",
+          "type": "i32",
+          "offset": 12092,
+          "size": 96,
+          "count": 24,
+          "stride": 4
+        }
+      ]
+    },
     "WndRecord": {
       "file": "src/09c0-window-table.wat",
       "frozen": null,

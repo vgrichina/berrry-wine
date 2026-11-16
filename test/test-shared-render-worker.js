@@ -27,7 +27,7 @@ function fixture(legacy=false,nativeMemory=false){
       return {complete:true,value:p.value};
     },destroy(){events.push(['destroy',options.name]);}};
   }};
-  Object.assign(self,{GlideRenderWorker:factory,GLRenderWorker:factory,D3DIMRenderWorker:factory,
+  Object.assign(self,{GpuStreamRenderWorker:factory,GLRenderWorker:factory,D3DIMRenderWorker:factory,
     D3D9RenderWorker:factory,D3DCommandStream:Stream});
   const sharedMemory=nativeMemory ? new WebAssembly.Memory({initial:96,maximum:96,shared:true})
     : {buffer:new SharedArrayBuffer(legacy?6*1024*1024:1024)};

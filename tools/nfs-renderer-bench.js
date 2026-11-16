@@ -163,8 +163,13 @@ async function observe(page) {
   return page.evaluate(metricsEnabled => {
     const wine = runningApps.find(app => app.name === 'nfs3_demo')?.wine;
     const ex = wine?.instance?.exports;
-    const glide = wine?.hostCtx?.glideBridge?.device;
-    const gl = glide?.backend?.gl;
+    // GPU stream v2: local route = the bridge's executor (maybe a dump tee);
+    // Worker route = the counters the render Worker replies with.
+    const bridge = wine?.hostCtx?.glideBridge;
+    const executor = bridge?.executor && (bridge.executor.inner || bridge.executor);
+    const glideStats = executor?.stats ? executor.stats() : bridge?.device?.stats || null;
+    const glide = { stats: glideStats, glRenderer: bridge?.device?.glRenderer || null };
+    const gl = executor?.gl;
     const ext = gl?.getExtension('WEBGL_debug_renderer_info');
     const draw = wine?.hostCtx?.sharedD3DIM?.stats || wine?.guestWorker?.d3dStats;
     const renderer = wine?.renderer;
@@ -187,9 +192,14 @@ async function observe(page) {
     }
     return { at: performance.now(), running: !!wine?.running,
       backend: wine?.threadManager?.backend, hidden: document.hidden,
-      flips: window.__nfsBenchFlips, presents: window.__nfsBenchPresents, swaps: glide?.stats.swaps,
-      glide: glide?.stats, d3d: draw, glideLfb,
-      glideEndpoint: wine?.hostCtx?.glideBridge?.endpoint?.options || null,
+      flips: window.__nfsBenchFlips, presents: window.__nfsBenchPresents,
+      swaps: glideStats?.presents ?? bridge?.stats?.presents,
+      glide: glideStats, d3d: draw, glideLfb,
+      glideEndpoint: bridge?.endpoint?.options || null,
+      glideRoute: bridge ? { route: bridge.endpoint ? 'worker' : bridge.executor ? 'local' : 'closed',
+        backend: bridge.options?.backend || null,
+        executor: executor ? (window.GpuStreamWebGL && executor instanceof GpuStreamWebGL.Executor ? 'webgl'
+          : window.GpuStreamSoftware && executor instanceof GpuStreamSoftware.Executor ? 'software' : 'other') : null } : null,
       glRenderer: ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : glide?.glRenderer || draw?.glRenderer || wine?.hostCtx?.sharedD3DIM?.glRenderer || null,
       renderWorker: wine?._renderWorkerManager ? {
         endpoints: [...wine._renderWorkerManager.ports.values()].map(port => port.options),
@@ -207,9 +217,18 @@ async function observe(page) {
   }, glideLfbMetrics);
 }
 
+// Either the render-Worker endpoint, or the page-local executor, must be the
+// requested backend (a WebGL request that fell back to software fails).
 function assertGlideBackend(state, expected) {
-  assert(state.glideEndpoint?.api === 'glide' && state.glideEndpoint.backend === expected,
-    `requested Glide ${expected}, actual endpoint ${JSON.stringify(state.glideEndpoint)}`);
+  if (state.glideEndpoint) {
+    assert(state.glideEndpoint.api === 'glide' && state.glideEndpoint.backend === expected,
+      `requested Glide ${expected}, actual endpoint ${JSON.stringify(state.glideEndpoint)}`);
+    return;
+  }
+  const route = state.glideRoute;
+  assert(route?.route === 'local' && route.backend === expected
+    && (expected === 'webgl') === (route.executor === 'webgl'),
+    `requested Glide ${expected}, actual route ${JSON.stringify(route)}`);
 }
 
 async function runCase(server, name) {

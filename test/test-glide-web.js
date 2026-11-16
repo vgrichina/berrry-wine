@@ -1,10 +1,29 @@
 #!/usr/bin/env node
 'use strict';
-// Verify the actual ESSL1/ESSL3 paths; the native GPU test uses desktop GLSL.
+// tl;dr: real-Chrome check of the GPU stream v2 Glide path.
+//   1. Runs test/gpu-stream-webgl-scenario.js (the same record scenario as
+//      test/test-gpu-stream-webgl.js, which uses desktop GLSL under headless GL)
+//      on WebGL1 (ESSL1) and WebGL2 (ESSL3) contexts.
+//   2. Drives lib/glide-host.js Bridge.kick() over a real ring into the actual
+//      Win98Renderer desktop compositor: top-level window, close, GPU child.
+//
+//   node test/test-glide-web.js [--no-sandbox] [--swiftshader]
+//
+// Glide semantics (TMU combine, chroma key, gamma ramp building, clip
+// coordinates) are compiled by the WAT frontend into shader IR and records;
+// here only their WebGL execution is checked.
 const assert = require('assert');
+const fs = require('fs');
 const path = require('path');
 const puppeteer = require('puppeteer');
-const twoTMUFixture = require('./glide-two-tmu-fixture');
+
+const LIB = path.join(__dirname, '../lib');
+const LIB_SCRIPTS = ['surface.js', 'renderer.js', 'gpu-backend.js', 'gpu-stream.generated.js', 'gpu-stream.js',
+  'd3d-shader-ir.js', 'd3d9-shader.js', 'gpu-stream-webgl.js', 'gpu-stream-doorbell.js', 'gpu-stream-host.js', 'glide-host.js'];
+// test/gpu-stream-fixture.js is a CommonJS module; give it the page's GpuStream.
+const FIXTURE = `(function(){var module={exports:{}};var require=function(){return globalThis.GpuStream;};\n${
+  fs.readFileSync(path.join(__dirname, 'gpu-stream-fixture.js'), 'utf8')}\nglobalThis.GpsFixture=module.exports;})();`;
+
 (async () => {
   const args = ['--no-first-run', '--no-default-browser-check'];
   if (process.argv.includes('--no-sandbox')) args.push('--no-sandbox');
@@ -16,177 +35,94 @@ const twoTMUFixture = require('./glide-two-tmu-fixture');
   });
   try {
     const page = await browser.newPage();
-    for (const file of ['surface.js', 'renderer.js', 'gpu-backend.js', 'glide-backend.js', 'glide-host.js'])
-      await page.addScriptTag({ path: path.join(__dirname, '../lib', file) });
-    await page.addScriptTag({ path: path.join(__dirname, "glide-two-tmu-fixture.js") });
+    const pageErrors = [];
+    page.on('pageerror', e => pageErrors.push(String(e)));
+    for (const file of LIB_SCRIPTS) await page.addScriptTag({ path: path.join(LIB, file) });
+    await page.addScriptTag({ content: FIXTURE });
+    await page.addScriptTag({ path: path.join(__dirname, 'gpu-stream-webgl-scenario.js') });
+    assert.deepStrictEqual(pageErrors, [], 'page scripts load');
+
     const results = await page.evaluate(() => {
-      const results = [];
+      const out = [];
       for (const version of [1, 2]) {
         const canvas = document.createElement('canvas');
         canvas.width = canvas.height = 32;
-        const backend = new GpuBackend.WebGLBackend(canvas, { apiVersion: version });
-        const device = new GlideBackend.Device({ backend });
-        const packet = values => new Uint8Array(new Uint32Array(values).buffer);
-        try {
-          device.submit(1, packet([1, 32, 32, 0, 0]));
-          device.submit(3, packet([0, 255, 65535]));
-          const upload = new Uint8Array(36);
-          upload.set(packet([0, 7, 7, 3, 10, 3, 8]));
-          upload.set([0, 248, 224, 7, 31, 0, 255, 255], 28);
-          device.submit(6, upload);
-          const draw = new Uint8Array(436);
-          const state = new Uint32Array(draw.buffer, 0, 64);
-          const values = { 0:3,1:8,3:1,5:1,11:2,12:1,13:1,14:4,16:4,18:7,
-            28:32,29:32,30:1,31:1,33:7,34:7,35:3,36:10,37:3,38:1,39:1,42:1,45:1,46:1,48:1,61:1 };
-          for (const [index,value] of Object.entries(values)) state[index]=value;
-          const view = new DataView(draw.buffer);
-          for (let i=0;i<3;i++) {
-            const xy=[[0,0],[32,0],[0,32]][i];
-            const vertex=[...xy,0,255,255,255,1,255,0.5,i===1?4096:0,i===2?4096:0,0.5,0,0,0];
-            vertex.forEach((value,j)=>view.setFloat32(256+i*60+j*4,value,true));
-          }
-          device.submit(5, draw);
-          const pixels = new Uint8Array(4), gl=backend.gl;
-          backend.readPixels(4,27,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
-          const clamped=Array.from(pixels);
-          state[0]=1;state[3]=0;
-          for(let i=0;i<3;i++) {
-            view.setFloat32(256+i*60+4*4,0,true);
-            view.setFloat32(256+i*60+5*4,0,true);
-            view.setFloat32(256+i*60+8*4,0.25,true);
-          }
-          device.submit(5,draw);
-          backend.readPixels(4,27,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
-          const occluded=Array.from(pixels);
-          device.submit(4,new Uint8Array());
-          const published=Array.from(backend.getPresentationSurface().getContext('2d').getImageData(4,4,1,1).data);
-          // W depth plus table fog must never consume the unused ooz field.
-          // NFS II SE supplies NaNs here; test an independent expected color
-          // as well as identical output for finite/nonfinite guest bytes.
-          state[22]=2;state[23]=0xff0000ff;
-          device.submit(8,new Uint8Array(64).fill(64));
-          for(let i=0;i<3;i++) view.setFloat32(256+i*60+8*4,0.5,true);
-          const unusedZ=[];
-          for(const z of [12345,NaN,Infinity,-Infinity,2.1e36]) {
-            device.submit(3,packet([0,255,65535]));
-            for(let i=0;i<3;i++) view.setFloat32(256+i*60+6*4,z,true);
-            device.submit(5,draw);
-            backend.readPixels(4,27,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
-            unusedZ.push(Array.from(pixels));
-          }
-          // Explicit Z fog remains meaningful with W buffering: its raw Z
-          // varying must survive even though geometry uses neutral clip Z.
-          state[22]=3;
-          const zFog=[];
-          for(const z of [0,65535]) {
-            device.submit(3,packet([0,255,65535]));
-            for(let i=0;i<3;i++) view.setFloat32(256+i*60+6*4,z,true);
-            device.submit(5,draw);
-            backend.readPixels(4,27,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
-            zFog.push(Array.from(pixels));
-          }
-          // Exercise the actual presentation shaders in both ESSL versions.
-          // DAC correction must change display pixels without touching the
-          // render target or the RGB565 bytes returned through an LFB read.
-          const displayPixel = () => Array.from(backend.getPresentationSurface()
-            .getContext('2d').getImageData(4,4,1,1).data);
-          device.submit(3,packet([0x404040,255,65535]));
-          device.submit(4,new Uint8Array());
-          device.submit(14,new Uint8Array(new Float32Array([2,1,.5]).buffer));
-          const rgbGamma = displayPixel();
-          const ramp = new Uint8Array(4+66*3);
-          new DataView(ramp.buffer).setUint32(0,66,true);
-          for(let c=0;c<3;c++) {
-            ramp[4+c*66+64]=7+c;
-            ramp[4+c*66+65]=211+c;
-          }
-          device.submit(13,ramp);
-          const gammaTable = displayPixel();
-          device.bind(0);
-          backend.readPixels(4,27,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
-          const rawGamma = Array.from(pixels);
-          const lfb = new Uint8Array(20+32*32*2);
-          lfb.set(packet([0,0,0,32,32]));device.submit(9,lfb);
-          const lfbGamma = new DataView(lfb.buffer).getUint16(20+(4*32+4)*2,true);
-          device.bind(1);
-          device.submit(3,packet([0xc8c8c8,255,65535]));device.submit(4,new Uint8Array());
-          const untouchedGammaTail = displayPixel();
-          device.submit(14,new Uint8Array(new Float32Array([1,1,1]).buffer));
-          const gammaIdentity = displayPixel();
-          const originalFinish=gl.finish;
-          let completionCalls=0;
-          gl.finish=function(){completionCalls++;return originalFinish.call(gl);};
-          const twoTMU=glideTwoTMU(device,()=>{backend.readPixels(4,27,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixels);return Array.from(pixels);},32);
-          gl.finish=originalFinish;
-          results.push({completionCalls,twoTMU,version,clamped,occluded,published,unusedZ,zFog,rgbGamma,gammaTable,
-            rawGamma,lfbGamma,untouchedGammaTail,gammaIdentity,error:gl.getError()});
-        } finally { device.destroy();backend.destroy(); }
+        let backend;
+        try { backend = new GpuBackend.WebGLBackend(canvas, { apiVersion: version }); }
+        catch (e) { out.push({ version, error: `no WebGL${version}: ${e.message}` }); continue; }
+        const gl = backend.gl;
+        const r = GpuStreamWebGLScenario.run({
+          GS: GpuStream, makeProducer: GpsFixture.makeProducer, Executor: GpuStreamWebGL.Executor,
+          canvas, backend, buffer: new ArrayBuffer(1 << 22),
+          readSurface: (surface, x, y) => surface.getContext('2d').getImageData(x, y, 1, 1).data,
+        });
+        out.push({ version, glVersion: backend.version, shading: String(gl.getParameter(gl.SHADING_LANGUAGE_VERSION)),
+          checks: r.checks, failures: r.failures, glError: gl.getError() });
+        backend.destroy();
       }
-      return results;
+      return out;
     });
-    for (const result of results) {
-      assert.deepStrictEqual(result.clamped,[255,255,255,255],`WebGL${result.version} truncated mip`);
-      assert.deepStrictEqual(result.occluded,[255,255,255,255],`WebGL${result.version} W depth`);
-      assert.deepStrictEqual(result.published,[255,255,255,255],`WebGL${result.version} published surface`);
-      for(const pixels of result.unusedZ)
-        assert.deepStrictEqual(pixels,[191,0,64,255],`WebGL${result.version} W mode ignores unused ooz`);
-      assert.deepStrictEqual(result.zFog,[[255,0,0,255],[0,0,255,255]],`WebGL${result.version} W mode preserves Z fog`);
-      assert.deepStrictEqual(result.rgbGamma,[128,64,16,255],`WebGL${result.version} independent RGB gamma`);
-      assert.deepStrictEqual(result.gammaTable,[7,8,9,255],`WebGL${result.version} DAC uses exact nearest entries`);
-      assert.deepStrictEqual(result.rawGamma,[64,64,64,255],`WebGL${result.version} DAC preserves render target`);
-      assert.strictEqual(result.lfbGamma,0x4208,`WebGL${result.version} DAC preserves raw RGB565 LFB`);
-      assert.deepStrictEqual(result.untouchedGammaTail,[226,200,157,255],`WebGL${result.version} partial upload preserves DAC tail`);
-      assert.deepStrictEqual(result.gammaIdentity,[200,200,200,255],`WebGL${result.version} RGB correction replaces custom DAC`);
-      assert.deepStrictEqual(result.twoTMU, twoTMUFixture.expected,
-        `WebGL${result.version} independent TMUs, liveness and chroma`);
-      assert.strictEqual(result.completionCalls,1, 'completion packet executes actual GPU finish');
-      assert.strictEqual(result.error,0);
+    let failed = false;
+    for (const r of results) {
+      if (r.error) { console.log(`FAIL WebGL${r.version}: ${r.error}`); failed = true; continue; }
+      for (const f of r.failures) console.log(`FAIL WebGL${r.version}: ${f}`);
+      console.log(`WebGL${r.version} (backend v${r.glVersion}, ${r.shading}): ${r.checks - r.failures.length}/${r.checks} checks`);
+      if (r.failures.length || r.glError !== 0 || r.glVersion !== r.version) failed = true;
+      if (r.glError !== 0) console.log(`FAIL WebGL${r.version}: GL error 0x${r.glError.toString(16)} left after the scenario`);
     }
+    assert(!failed, 'WebGL1/WebGL2 executor scenario');
+
     const composed = await page.evaluate(async () => {
-      const screen = document.createElement('canvas');screen.width=screen.height=96;
+      const screen = document.createElement('canvas'); screen.width = screen.height = 96;
       const renderer = new Win98Renderer(screen);
-      renderer.createWindow(1,0x90000000,8,8,32,32,'Glide only',0);
+      renderer.createWindow(1, 0x90000000, 8, 8, 32, 32, 'Glide only', 0);
       const withoutBacking = !renderer.windows[1]._backCanvas;
-      const memory = new ArrayBuffer(4096);
-      const bridge = new GlideHost.Bridge({getMemory:()=>memory,renderer:()=>renderer,
-        getExports:()=>({get_dx_present_hwnd:()=>1})});
-      const send = (opcode,values) => {
-        const bytes=new Uint8Array(new Uint32Array(values).buffer);
-        new Uint8Array(memory).set(bytes);
-        return bridge.submit(opcode,0,bytes.length);
+      const memory = new ArrayBuffer(1 << 16);
+      const bridge = new GlideHost.Bridge({ getMemory: () => memory, renderer: () => renderer,
+        getExports: () => ({ get_dx_present_hwnd: () => 1 }) });
+      const C = GpuStream.CONST;
+      const p = GpsFixture.makeProducer({ buffer: memory, ringBytes: 4096, arenaBytes: 4096 });
+      // One frame: RT (new executor each open), clear, present to hwnd.
+      const frame = (size, rgba, hwnd) => {
+        p.emit('CREATE', { id: 1, kind: C.KIND_RT, fmt: C.FMT_A8B8G8R8, levels: 1, width: size, height: size });
+        p.emit('TARGETS', { color: 1, depth: 0 });
+        p.emit('CLEAR', { mask: C.CLEAR_COLOR, colormask: 15, rgba, z: 1, left: 0, top: 0, right: size, bottom: size });
+        p.emit('PRESENT', { rt: 1, gamma: 0, x: 0, y: 0, w: size, h: size, surface: hwnd });
+        return bridge.kick(p.header, C.KICK_SYNC);
       };
       // Exercise the host's real publication request. Calling repaint here
       // would hide a bridge that attaches a valid layer but never schedules
-      // it for display, which was the final NFS integration regression.
+      // it for display.
       const scheduledFrame = async () => {
-        await new Promise(resolve=>requestAnimationFrame(resolve));
-        await new Promise(resolve=>requestAnimationFrame(resolve));
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        await new Promise(resolve => requestAnimationFrame(resolve));
       };
       try {
-        // Drain any window-creation repaint before the Glide frame exists,
-        // so an unrelated queued repaint cannot make this test pass.
         await scheduledFrame();
-        send(1,[0,32,32,0,0]);send(3,[0xff0000,255,65535]);send(4,[]);
+        const kicked = frame(32, 0xff0000ff, 0); // red; null hwnd -> process-owned
         await scheduledFrame();
-        const top=Array.from(screen.getContext('2d').getImageData(12,12,1,1).data);
-        const backing=!!renderer.windows[1]._backCanvas;
-        const attached=bridge.win?.hwnd;
-        bridge.close();await scheduledFrame();
-        const closed=Array.from(screen.getContext('2d').getImageData(12,12,1,1).data);
+        const top = Array.from(screen.getContext('2d').getImageData(12, 12, 1, 1).data);
+        const backing = !!renderer.windows[1]._backCanvas;
+        const attached = bridge.win?.hwnd;
+        bridge.close(); await scheduledFrame();
+        const closed = Array.from(screen.getContext('2d').getImageData(12, 12, 1, 1).data);
         // A GPU child has its own surface despite its ordinary Win32 parent.
-        renderer.createWindow(2,0x50000000,4,4,16,16,'child',0);
-        send(1,[2,16,16,0,0]);send(3,[0x00ff00,255,65535]);send(4,[]);
+        renderer.createWindow(2, 0x50000000, 4, 4, 16, 16, 'child', 0);
+        frame(16, 0xff00ff00, 2);
         await scheduledFrame();
-        const child=Array.from(screen.getContext('2d').getImageData(16,16,1,1).data);
-        return {withoutBacking,backing,attached,top,closed,child,childOwn:renderer.windows[2]._canonicalOwnSurface};
-      } finally {bridge.close();}
+        const child = Array.from(screen.getContext('2d').getImageData(16, 16, 1, 1).data);
+        return { kicked, withoutBacking, backing, attached, top, closed, child,
+          childOwn: renderer.windows[2]._canonicalOwnSurface, records: bridge.stats.records };
+      } finally { bridge.close(); }
     });
-    assert(composed.withoutBacking && composed.backing,'Glide must allocate backing for GPU-only window');
-    assert.strictEqual(composed.attached,1,'null Glide HWND resolves through process-owned HWND');
-    assert.deepStrictEqual(composed.top,[255,0,0,255],'actual desktop compositor displays Glide');
-    assert.deepStrictEqual(composed.closed,[192,192,192,255],'closed Glide layer disappears');
-    assert(composed.childOwn,'Glide child owns its GPU surface');
-    assert.deepStrictEqual(composed.child,[0,255,0,255],'actual desktop compositor displays GPU child');
-    console.log('Glide WebGL1/WebGL2 mip/W-depth, gamma DAC and real window compositor PASS');
+    assert.strictEqual(composed.kicked, 1, 'local kick drains the ring');
+    assert(composed.withoutBacking && composed.backing, 'Glide must allocate backing for GPU-only window');
+    assert.strictEqual(composed.attached, 1, 'null Glide HWND resolves through process-owned HWND');
+    assert.deepStrictEqual(composed.top, [255, 0, 0, 255], 'actual desktop compositor displays Glide');
+    assert.deepStrictEqual(composed.closed, [192, 192, 192, 255], 'closed Glide layer disappears');
+    assert(composed.childOwn, 'Glide child owns its GPU surface');
+    assert.deepStrictEqual(composed.child, [0, 255, 0, 255], 'actual desktop compositor displays GPU child');
+    assert.deepStrictEqual(pageErrors, [], 'no page errors');
+    console.log('Glide GPU stream WebGL1/WebGL2 executor scenario and real window compositor PASS');
   } finally { await browser.close(); }
-})().catch(error=>{console.error(error);process.exitCode=1;});
+})().catch(error => { console.error(error); process.exitCode = 1; });

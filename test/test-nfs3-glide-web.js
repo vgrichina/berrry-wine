@@ -39,7 +39,7 @@ fs.writeFileSync(path.join(output, 'live.log'), '');
       const line = message.text();
       logs.push(line);
       fs.appendFileSync(path.join(output, 'live.log'), line + '\n');
-      if (/host import glide_submit threw|UNIMPLEMENTED API:|\[launchApp\] failed:|worker thread \d+ trapped/.test(line))
+      if (/host import gpu_stream_kick threw|UNIMPLEMENTED API:|\[launchApp\] failed:|worker thread \d+ trapped/.test(line))
         reportFailure(new Error(line));
       if (/Glide|UNIMPLEMENTED|RuntimeError|FATAL|voodooa\.dll loaded/i.test(line)) console.log(line);
     });
@@ -49,32 +49,73 @@ fs.writeFileSync(path.join(output, 'live.log'), '');
       { waitUntil: 'networkidle2', timeout: 60000 });
     await page.evaluate(async () => {
       await setThreads(true);
-      // Bounded original packet/resource samples make a real-game rendering
-      // defect reproducible without guessing from a black screenshot.
-      window.__glideSamples = [];
-      const draw = GlideBackend.Device.prototype.draw;
-      const sampled = new Set();
-      GlideBackend.Device.prototype.draw = function(bytes, primitive) {
-        const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-        const state = Array.from({ length: 64 }, (_, i) => view.getUint32(i * 4, true));
-        const stage = this.stats.triangles > 100000 ? 'race' : 'startup';
-        const key = stage + ':' + state.slice(0, 20).join(',');
-        if (!sampled.has(key) && sampled.size < 12) {
-          sampled.add(key);
-          const layout = GlideBackend.textureLayout(state[33], state[34], state[35], state[36], state[37]);
-          const base64 = data => {
-            let result = '';
-            for (let i = 0; i < data.length; i += 8192)
-              result += String.fromCharCode(...data.subarray(i, i + 8192));
-            return btoa(result);
-          };
-          window.__glideSamples.push({ stage, primitive, width: this.width, height: this.height,
-            colorFormat: this.colorFormat, state, packet: base64(bytes.slice(0, 256 + 60 * 300)),
-            texture: base64(this.ram.slice(state[32], state[32] + layout.size)),
-            palette: Array.from(this.palette), fogTable: Array.from(this.fogTable || []) });
-        }
-        return draw.call(this, bytes, primitive);
+      // Executor stats for the local route (the executor may be wrapped in a
+      // dump tee); the Worker route only reports kicks/records.
+      window.__glideStats = () => {
+        const bridge = runningApps.find(app => app.name === 'nfs3_demo')?.wine?.hostCtx?.glideBridge;
+        if (!bridge) return null;
+        const executor = bridge.executor && (bridge.executor.inner || bridge.executor);
+        return executor && executor.stats ? executor.stats() : bridge.device?.stats || null;
       };
+      // Bounded GPU stream v2 DRAW_UP samples, each with the sticky RASTER /
+      // BIND / CONSTS / TARGETS state it ran under, its first 300 vertices
+      // and (WebGL executor) the bound textures' level 0, make a real-game
+      // rendering defect reproducible without guessing from a black screenshot.
+      window.__glideSamples = [];
+      const OP = GpuStream.OP, sampled = new Set(), sticky = new WeakMap();
+      const base64 = data => {
+        let result = '';
+        for (let i = 0; i < data.length; i += 8192)
+          result += String.fromCharCode(...data.subarray(i, i + 8192));
+        return btoa(result);
+      };
+      // Level 0 of a WebGL executor texture, read through a scratch FBO.
+      const webglTexture = (executor, id) => {
+        const r = executor.res && executor.res.get(id);
+        if (!r || !r.tex || r.w * r.h > 256 * 256) return null;
+        const gl = executor.gl, fbo = gl.createFramebuffer(), rgba = new Uint8Array(r.w * r.h * 4);
+        try {
+          gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+          gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, r.tex, 0);
+          if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) return null;
+          gl.readPixels(0, 0, r.w, r.h, gl.RGBA, gl.UNSIGNED_BYTE, rgba);
+        } finally {
+          gl.bindFramebuffer(gl.FRAMEBUFFER, executor.boundFbo || null);
+          gl.deleteFramebuffer(fbo);
+        }
+        return { id, width: r.w, height: r.h, levels: r.levels, fmt: r.fmt, rgba: base64(rgba) };
+      };
+      const wrap = (Exec, kind) => {
+        if (!Exec) return;
+        const execute = Exec.prototype.execute;
+        Exec.prototype.execute = function(rec) {
+          let st = sticky.get(this);
+          if (!st) sticky.set(this, st = { raster: null, bind: [], consts: null, targets: null, triangles: 0 });
+          if (sampled.size >= 12) return execute.call(this, rec);
+          if (rec.op === OP.RASTER) st.raster = { ...rec.fields };
+          else if (rec.op === OP.BIND) st.bind = GpuStream.decodeBind(rec).map(e => ({ ...e }));
+          else if (rec.op === OP.CONSTS) st.consts = Array.from(GpuStream.decodeConsts(rec));
+          else if (rec.op === OP.TARGETS) st.targets = { ...rec.fields };
+          else if (rec.op === OP.DRAW_UP) {
+            const f = rec.fields;
+            const stage = st.triangles > 100000 ? 'race' : 'startup';
+            if (f.prim === 4) st.triangles += f.count / 3;
+            const key = stage + ':' + f.ps + ':' + JSON.stringify(st.raster) + JSON.stringify(st.bind);
+            // At most 6 startup samples, so race state always gets the rest.
+            const startup = window.__glideSamples.filter(s => s.stage === 'startup').length;
+            if (!sampled.has(key) && (stage === 'race' || startup < 6)) {
+              sampled.add(key);
+              window.__glideSamples.push({ stage, executor: kind, seq: rec.seq, draw: { ...f },
+                raster: st.raster, bind: st.bind, consts: st.consts, targets: st.targets,
+                vertices: base64(rec.arena(f.voff, Math.min(f.count, 300) * f.stride).slice()),
+                textures: kind === 'webgl' ? st.bind.map(e => webglTexture(this, e.texture)) : null });
+            }
+          }
+          return execute.call(this, rec);
+        };
+      };
+      wrap(window.GpuStreamWebGL && GpuStreamWebGL.Executor, 'webgl');
+      wrap(window.GpuStreamSoftware && GpuStreamSoftware.Executor, 'software');
       // Override this page's launch configuration, never the shared fixture.
       const app = window.wineApps.APPS.nfs3_demo;
       const keyPath = 'HKLM\\Software\\Electronic Arts\\Need For Speed III Demo';
@@ -120,12 +161,12 @@ fs.writeFileSync(path.join(output, 'live.log'), '');
         transparentPixels,
         attached: !!wine?.hostCtx?.glideBridge?.win,
         worker: wine?.threadManager?.backend,
-        glide: wine?.hostCtx?.glideBridge?.device?.stats,
+        glide: window.__glideStats(),
         bridge: wine?.hostCtx?.glideBridge?.stats };
     });
     // Loading art is not race geometry. Require sustained draws and swaps.
     await Promise.race([failure, page.waitForFunction(() => {
-      const stats = runningApps.find(app => app.name === 'nfs3_demo')?.wine?.hostCtx?.glideBridge?.device?.stats;
+      const stats = window.__glideStats();
       return stats?.triangles > 100000 && stats?.presents > 20;
     }, { timeout: 180000, polling: 500 })]);
     const before = await observe();
@@ -141,7 +182,7 @@ fs.writeFileSync(path.join(output, 'live.log'), '');
     await page.mouse.click(center.x, center.y);
     await page.keyboard.down('ArrowUp');
     await Promise.race([failure, page.waitForFunction(previous => {
-      const stats = runningApps.find(app => app.name === 'nfs3_demo')?.wine?.hostCtx?.glideBridge?.device?.stats;
+      const stats = window.__glideStats();
       return stats?.triangles > previous.triangles + 30000 &&
         stats?.presents > previous.presents + 60 && Date.now() - previous.inputStarted > 12000;
     }, { timeout: 180000, polling: 500 }, { ...before.glide, inputStarted: Date.now() })]);
@@ -154,7 +195,9 @@ fs.writeFileSync(path.join(output, 'live.log'), '');
     assert(after.isolated && after.running, 'isolated game must remain running');
     assert(after.attached, 'presented Glide surface must be attached to its game window');
     assert.strictEqual(after.worker, 'worker');
-    assert.strictEqual(after.glide.errors, 0);
+    // Executor errors throw out of gpu_stream_kick (caught by the console
+    // regex above); here the executor must still be the one that drew.
+    assert(after.glide && after.glide.draws > before.glide.draws, 'Glide executor must keep drawing');
     assert.strictEqual(after.transparentPixels, 0, 'RGB565 presentation must stay opaque');
     assert(before.drawableHash && after.drawableHash && before.drawableHash !== after.drawableHash,
       'the Glide drawable itself must advance, independently of desktop clock/cursor changes');
@@ -184,13 +227,13 @@ fs.writeFileSync(path.join(output, 'live.log'), '');
           ? runningApps.find(app => app.name === 'nfs3_demo')?.wine : null;
         const bridge = wine?.hostCtx?.glideBridge;
         const renderer = bridge?._renderer();
-        return { running: wine?.running, bridge: bridge?.stats, device: bridge?.device?.stats,
-          hwnd: bridge?.device?.hwnd, attachedHwnd: bridge?.win?.hwnd,
+        return { running: wine?.running, bridge: bridge?.stats, executor: window.__glideStats?.(),
+          attachedHwnd: bridge?.win?.hwnd,
           windows: renderer && Object.values(renderer.windows).map(win => ({hwnd:win.hwnd,
             visible:win.visible,isChild:win.isChild,x:win.x,y:win.y,w:win.w,h:win.h,
             layer:!!win._dxFrameLayer,sameLayer:win._dxFrameLayer===bridge.layer,
             back:!!win._backCanvas, parent:win.parent, owner:win.owner})),
-          state: bridge?.device?.lastDrawState };
+          lastSample: (window.__glideSamples || []).at(-1)?.seq ?? null };
       }).catch(error => ({ error: String(error) }));
       fs.writeFileSync(path.join(output, 'last-stats.json'), JSON.stringify(last, null, 2));
     }

@@ -4,7 +4,7 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "e62a0dbcb7201acd60d32673d2cb066cef8d77771a0b3389983cf2224d2ed4a1",
+      "sha256": "8f2da4eb3cee84139a603fa5c0b85897ba038b74b54845415756eb0858ddf261",
       "reviewCurrentDisplay20261114": "20261114 current-display capture: synchronous host wrapper derives PID/instance from this live host and refuses stopped/pending-surface state. No guest invocation, export, input, clock, callback, timer, context restoration or hold release added. The existing renderer ticket owns cancellation/readback and next-publication semantics remain distinct. Ownership remains pending; run 20261114-gltron-current-display-capture.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "spinParkUrlReview20261114": "?spin-park=N applies set_spin_park_k at launch on the main instance, the guest Worker (callExport) and every inherited thread (table entry added in worker-imports); no callback, timer or lifetime change. renderer.js reseal covers d576f57ce's exclusive-mode test, read-only WAT getters, no new callbacks.",
@@ -148,7 +148,7 @@
     {
       "file": "lib/guest-thread-host.js",
       "name": "host-file",
-      "sha256": "4a8cac465283d4f646996fe33e8b88b81c6d27702b7966652aace17b2faca898",
+      "sha256": "08be3bbfb8e0819b5f3f4a7345cea7fa2d9a115fcc5ce4f6db3e97fc791fca7c",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "quake2Review20261109": "Strict default-off quake2LoadObservation and quake2NativeWriteObservation options now survive GuestThreadHost -> slot-0 WorkerLink -> existing NodeWorker init. Secondary threads remain uncovered. Owning snapshot query delegates through the existing sequenced request transport, preserving retired records; it never reads shared memory on the main thread. No callback admission, clock/input, timeout, run, context restoration, retirement or termination policy changes. Actual Host startup reproduced missing observation on prior source; six native conversion/startup/headnode off/on pairs retain range epochs, UUID, actual PCs, lazy flags and direct/sparse memory parity, with actual Worker exit awaited. Other writers, edict ABA and browser support remain unqualified.",
@@ -203,7 +203,7 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "09065127a4a659380ee65f6289198d7ab9a501e64de857e9ce3c94335fc627aa",
+      "sha256": "4f2fc9d55fadfea736aadc5b96436a9b5cd95abd9b7b9fa545088c216d321be6",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "windowLookupRetirementReview20261112": "Native register_dialog_frame publications retain the calling context's captured process incarnation, just like create_window/dialog_loaded. The existing instance/memory/receiver and WND generation identity remain unchanged. FindWindow excludes the publication once that process exits, before export queries. Original TR2 owner inspection identified this separate native-popup publication path; actualHost regression covers it alongside surface-less WND trees. No guest invocation or continuation change; broader callback ownership remains pending.",

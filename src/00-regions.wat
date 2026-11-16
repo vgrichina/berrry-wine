@@ -1049,9 +1049,17 @@
   ;; Fixed state uses 532 bytes; streams, texture payloads and LFB live on heap.
   (region.declare $GLIDE_STATE (size 0x00000220) (align 0x00000010)
     (owner "09a8h-glide.wat:$GLIDE_STATE"))
+  ;; GPU stream v2 ring directory: 8 x 192-byte GpsRing entries (header,
+  ;; completion slots, producer words). Ring bytes and arenas are heap memory.
+  (region.declare $GPU_STREAM (size 0x00000600) (align 0x00000040)
+    (owner "09a8gs-gpu-stream.wat:$GPU_STREAM"))
   ;; Lazy surface barriers shared by guest instances, never initialized by data.
   (region.declare $D3DIM_LAZY_SHARED (size 0x00000020) (align 0x00000010)
     (owner "09ab-handlers-d3dim-core.wat:$D3DIM_LAZY_SHARED"))
+  ;; D3DIM GPU stream v2 producer: recursive lock, producer block and ring
+  ;; handle, shared by every guest thread. The block itself is heap memory.
+  (region.declare $D3DIM_GPS (size 0x00000040) (align 0x00000010)
+    (owner "09abg-d3dim-gps.wat:$D3DIM_GPS"))
 
   (region.declare $GETMESSAGE_HOOKS (size 0x00000100) (align 0x00000010)
     (owner "09a-handlers4-late.wat:$getmessage_hook_state"))

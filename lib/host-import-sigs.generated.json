@@ -686,9 +686,8 @@
         "i32"
       ]
     },
-    "glide_submit": {
+    "gpu_stream_kick": {
       "params": [
-        "i32",
         "i32",
         "i32"
       ],

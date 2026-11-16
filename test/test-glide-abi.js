@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 'use strict';
 // Independent Glide 2 ABI/layout and ordered transport checks. The host is
-// deliberately a byte recorder, so a shared renderer mistake cannot pass.
+// deliberately a GPU stream v2 record recorder (test/glide-gps-recorder.js),
+// so a shared renderer mistake cannot pass.
 const assert = require('assert');
 const { compileSrcWasm } = require('./compile-src');
 const regions = require('../lib/region-map.generated');
 const table = require('../src/api_table.json');
+const { createGpsRecorder, primitives, ringWord, GS } = require('./glide-gps-recorder');
+const KICK = GS.CONST, KIND = GS.KIND, PRIM = GS.PRIM;
 const bytes = compileSrcWasm((file, source) => file === '09a8h-glide.wat'
   ? source + '\n(export "glide_test_dispatch" (func $dispatch_api_table))\n'
     + '(export "glide_test_lookup" (func $lookup_api_id))\n'
@@ -16,8 +19,8 @@ const imports = {host: {memory}};
 for (const imp of WebAssembly.Module.imports(module_)) {
   if (imp.kind === 'function') (imports[imp.module] ||= {})[imp.name] = () => 0;
 }
-const submissions = [];
-let ticks = 0, rejectBatch = false, rejectOpen = false;
+const rec = createGpsRecorder(memory);
+let ticks = 0;
 const windowRects = new Map([[1, [15, 25, 815, 625]]]);
 const moves = [];
 imports.host.foreground_window = () => 1;
@@ -32,14 +35,9 @@ imports.host.move_window = (hwnd, x, y, w, h) => {
 };
 imports.host.get_ticks = () => ticks;
 imports.host.math_pow2 = x => 2 ** x;
-imports.host.glide_submit = (op, ptr, len) => {
-  const packet = new Uint8Array(memory.buffer, ptr, len);
-  submissions.push({op, bytes: Buffer.from(packet)});
-  if (op === 9) packet.fill(0x5a, 20);
-  if (op === 0 && rejectBatch) return 0;
-  if (op === 1 && rejectOpen) return 0;
-  return 1;
-};
+imports.host.math_pow = Math.pow;
+// READBACK destinations are filled with 0x5a by the recorder.
+imports.host.gpu_stream_kick = rec.kick;
 const a = new WebAssembly.Instance(module_, imports).exports;
 const b = new WebAssembly.Instance(module_, imports).exports;
 a.init_thread(0, 0x400000, 0, 0, 0, 0, 0);
@@ -177,10 +175,17 @@ assert.deepStrictEqual(moves.at(-1), [1, 0, 0, 640, 480]);
 assert.strictEqual(view.getUint32(dxState, true), 640);
 assert.strictEqual(view.getUint32(dxState + 4, true), 480);
 assert.strictEqual(view.getUint32(dxState + 8, true), 16);
-assert.strictEqual(submissions[0].op, 1);
-assert.strictEqual(submissions[0].bytes.readUInt32LE(4), 640);
-assert.strictEqual(submissions[0].bytes.readUInt32LE(8), 480);
-submissions.length = 0;
+// The open is one SYNC kick whose records create the 640x480 render targets
+// (one per colour buffer) and depth buffer before anything else runs.
+const openRts = k => k.records.filter(r => r.name === 'CREATE' && r.fields.kind === KIND.RT);
+assert.deepStrictEqual(rec.kicks.map(k => k.mode), [KICK.KICK_SYNC], 'open is one synchronous kick');
+assert.deepStrictEqual(openRts(rec.kicks[0]).map(r => [r.fields.width, r.fields.height]), [[640, 480], [640, 480]],
+  'open creates both 640x480 colour buffers');
+assert(rec.kicks[0].records.some(r => r.name === 'CREATE' && r.fields.kind === KIND.DS
+  && r.fields.width === 640 && r.fields.height === 480), 'open creates the 640x480 depth buffer');
+assert.strictEqual(rec.ringAddr, view.getUint32(regions.BASE.GLIDE_STATE + 16, true), 'the kick names the device ring');
+const ring = name => ringWord(memory, rec.ringAddr, name);
+let m = rec.mark();
 const vertices = 0x413fe0;
 for (let i = 0; i < 45; ++i) view.setFloat32(wa(vertices + i * 4), i + 0.25, true);
 call('_grColorCombine@20', [1, 0, 0, 0, 0]);
@@ -189,29 +194,49 @@ call('_grColorCombine@20', [3, 1, 0, 1, 0], b);
 call('_grDrawTriangle@12', [vertices, vertices + 60, vertices + 120], b);
 call('_grDrawLine@8', [vertices, vertices + 60]);
 call('_grDrawPoint@4', [vertices]);
-assert.strictEqual(submissions.length, 0, 'setters and draws stay in WAT until barrier');
+// Draws stay in the ring until a barrier. The only kicks before the swap are
+// the ASYNC producer handoffs when the other instance (another thread) starts
+// writing (a -> b at b's triangle, b -> a at a's line): each publishes the
+// previous owner's complete records and does not wait for them.
+const preSwap = rec.kicksSince(m);
+assert.deepStrictEqual(preSwap.map(k => k.mode), [KICK.KICK_ASYNC, KICK.KICK_ASYNC],
+  'only the two thread handoffs kick before the barrier, without waiting');
+assert.deepStrictEqual(preSwap.map(k => primitives(k.records).map(p => p.op)), [[5], [5]],
+  'each handoff publishes exactly the previous owner\'s triangle');
+assert.strictEqual(ring('handoffs'), 2, 'both handoffs are counted');
+assert(!preSwap.some(k => k.records.some(r => r.name === 'PRESENT')), 'nothing is presented before the swap');
 new Uint8Array(memory.buffer, wa(vertices), 180).fill(0);
 call('_grBufferSwap@4', [1]);
-assert.deepStrictEqual(submissions.map(s => s.op), [0, 4]);
-const batch = submissions[0].bytes;
-assert.strictEqual(batch.readUInt32LE(0), 5);
-assert.strictEqual(batch.readUInt32LE(4), 436);
-assert.strictEqual(batch.readUInt32LE(8), 1, 'first draw immutable state');
-assert.strictEqual(batch.readFloatLE(8 + 256), 0.25, 'vertex copied before mutation');
-assert.strictEqual(batch.readUInt32LE(444 + 8), 3, 'second WASM instance shares state/stream');
-assert.strictEqual(batch.readUInt32LE(888), 11, 'line topology is preserved');
-assert.strictEqual(batch.readUInt32LE(892), 376);
-assert.strictEqual(batch.readUInt32LE(1272), 12, 'point topology is preserved');
-assert.strictEqual(batch.readUInt32LE(1276), 316);
+{
+  const kicks = rec.kicksSince(m), records = rec.recordsSince(m);
+  assert.strictEqual(kicks.at(-1).mode, KICK.KICK_ASYNC, 'the swap submits without waiting');
+  assert(!kicks.some(k => k.mode !== KICK.KICK_ASYNC), 'nothing waits for the batch');
+  assert.strictEqual(ring('read_pos'), ring('write_pos'), 'the swap publishes every record');
+  const prims = primitives(records);
+  assert.deepStrictEqual(prims.map(p => p.prim), [PRIM.TRIANGLELIST, PRIM.TRIANGLELIST, PRIM.LINELIST, PRIM.POINTLIST],
+    'triangle, triangle, line, point in call order');
+  // GPS vertices are in integer pixel centres: Glide x - 0.5.
+  assert.strictEqual(prims[0].verts[0][0], -0.25, 'vertex copied before mutation');
+  assert.notStrictEqual(prims[0].ps, prims[1].ps, 'first draw keeps its own combine (immutable state)');
+  assert.strictEqual(prims[2].ps, prims[1].ps, 'second WASM instance shares state/stream: the line uses b\'s combine');
+  assert.strictEqual(prims[3].ps, prims[1].ps, 'and so does the point');
+  assert.deepStrictEqual(prims[2].verts.map(v => v[0]), [-0.25, 14.75], 'line topology is preserved');
+  assert.deepStrictEqual(prims[3].verts.map(v => v[0]), [-0.25], 'point topology is preserved');
+  const lastDraw = records.map(r => r.name).lastIndexOf('DRAW_UP');
+  const present = records.findIndex(r => r.name === 'PRESENT');
+  assert(present > lastDraw, 'the swap presents after every draw');
+}
 // The original 3dfx splash feeds this prebiased coordinate encoding directly
 // to Glide. Decode its entire signed domain, not only positive screen values.
 view.setUint32(wa(vertices), 0x494024dd, true); // NFS III observed: bias + 589.8125
 view.setFloat32(wa(vertices + 4), 786432 - 0.5, true);
+m = rec.mark();
 call('_grDrawLine@8', [vertices, vertices]);
 call('_grBufferSwap@4', [0]);
-const snapped = submissions.at(-2).bytes;
-assert.strictEqual(snapped.readFloatLE(8 + 256), 589.8125);
-assert.strictEqual(snapped.readFloatLE(8 + 260), -0.5);
+const snapped = primitives(rec.recordsSince(m)).at(-1);
+assert.strictEqual(snapped.op, 11);
+assert.strictEqual(snapped.verts[0][0] + 0.5, 589.8125);
+assert.strictEqual(snapped.verts[0][1] + 0.5, -0.5, 'y snaps to -0.5 (origin upper-left, no flip)');
 assert.strictEqual(view.getUint32(wa(vertices), true), 0x494024dd, 'guest vertices remain untouched');
 assert.strictEqual(call('_grTexCalcMemRequired@16', [8, 0, 3, 10]), 174768,
   '256-square RGB565 mip chain aligns to eight bytes');
@@ -220,11 +245,31 @@ view.setUint32(wa(info), 20, true);
 assert.strictEqual(call('_grLfbLock@24', [1, 1, 0, 0, 0, info]), 1);
 assert.strictEqual(view.getUint32(wa(info + 8), true), 1280);
 const lfb = view.getUint32(wa(info + 4), true);
-assert.strictEqual(view.getUint16(wa(lfb), true), 0x5a5a, 'ordered host readback is guest-visible');
+// The recorder fills READBACK dst with 0x5a bytes (A8B8G8R8 5a,5a,5a,5a);
+// WAT converts that to RGB565: R 0x5a>>3=11, G 0x5a>>2=22, B 11 -> 0x5acb.
+assert.strictEqual(view.getUint16(wa(lfb), true), 0x5acb, 'ordered host readback is guest-visible');
+{
+  // The lock read the back buffer through a READBACK that the sync kick
+  // completed before the guest could see the LFB.
+  const kicks = rec.kicksSince(m);
+  const rb = kicks.findIndex(k => k.records.some(r => r.name === 'READBACK'));
+  assert(rb >= 0, 'the read lock issues a READBACK');
+  assert.strictEqual(kicks[rb].mode, KICK.KICK_SYNC, 'the READBACK is drained by a synchronous kick');
+  const read = kicks[rb].records.find(r => r.name === 'READBACK').fields;
+  assert.deepStrictEqual([read.x, read.y, read.w, read.h, read.fmt], [0, 0, 640, 480, GS.FMT.A8B8G8R8],
+    'the whole back buffer is read as A8B8G8R8 (WAT converts to RGB565)');
+}
 view.setUint16(wa(lfb), 0xf800, true);
+m = rec.mark();
 assert.strictEqual(call('_grLfbUnlock@8', [1, 1]), 1);
-assert.strictEqual(submissions.at(-1).op, 10);
-assert.strictEqual(submissions.at(-1).bytes.readUInt16LE(20), 0xf800);
+call('_grSstIdle@0');
+{
+  const ups = rec.recordsSince(m).filter(r => r.name === 'UPLOAD');
+  assert(ups.length >= 1, 'the write unlock uploads the LFB');
+  assert.strictEqual(ups[0].fields.x, 0); assert.strictEqual(ups[0].fields.y, 0);
+  assert.strictEqual(ups[0].data.readUInt32LE(0), 0xff0000ff, 'the RGB565 write reaches the target as red');
+  assert.strictEqual(rec.textures.get(ups[0].fields.id).kind, KIND.RT, 'into a render target');
+}
 assert.strictEqual(call('_grLfbUnlock@8', [1, 1]), 0, 'unmatched unlock is rejected');
 // Retail glide2x does not check info->size (GR_CHECK_F is debug-only), and
 // Die by the Sword's rl3dfx.dll locks with whatever its stack held there.
@@ -245,10 +290,18 @@ sparseGuards(sparseInfo, 20);
 assert.strictEqual(call('_grLfbUnlock@8', [0, 1]), 1);
 const pixel = 0x419ffc;
 view.setUint16(wa(pixel), 0x07e0, true);
+m = rec.mark();
 assert.strictEqual(call('_grLfbWriteRegion@32', [1, 3, 2, 0, 1, 1, 2, pixel]), 1);
-assert.strictEqual(submissions.at(-1).bytes.readUInt16LE(20 + (2 * 640 + 3) * 2), 0x07e0);
+call('_grSstIdle@0');
+{
+  // WriteRegion publishes the staged LFB; pixel (3, 2) lands at its row offset.
+  const up = rec.recordsSince(m).find(r => r.name === 'UPLOAD' && r.fields.y === 0);
+  assert(up, 'WriteRegion uploads the LFB');
+  assert.strictEqual(up.data.readUInt32LE(2 * up.fields.pitch + 3 * 4), 0xff00ff00,
+    'the RGB565 green pixel lands at (3, 2)');
+}
 assert.strictEqual(call('_grLfbReadRegion@28', [1, 3, 2, 1, 1, 2, pixel]), 1);
-assert.strictEqual(view.getUint16(wa(pixel), true), 0x5a5a);
+assert.strictEqual(view.getUint16(wa(pixel), true), 0x5acb);
 assert.strictEqual(call('_grSstVRetraceOn@0'), 0);
 ticks = 16;
 assert.strictEqual(call('_grSstVRetraceOn@0'), 1, 'virtual retrace advances with clock');
@@ -258,12 +311,14 @@ assert.strictEqual(call('_grSstControl@4', [4]), 1,
   'GR_CONTROL_MOVE succeeds (Driver closes its window when it fails)');
 assert.strictEqual(call('_grSstControl@4', [99]), 0, 'unknown control code fails');
 assert.strictEqual(call('_grSstControl@4', [2]), 1);
+m = rec.mark();
 call('_grBufferSwap@4', [0]);
-assert.strictEqual(submissions.at(-1).bytes.readUInt32LE(244), 0, 'deactivation accompanies presentation');
-const beforePendingClose = submissions.length;
+assert(!rec.recordsSince(m).some(r => r.name === 'PRESENT'), 'a deactivated board presents nothing');
+assert.strictEqual(view.getUint32(regions.BASE.GLIDE_STATE + 256 + 244, true), 0, 'deactivation is board state');
+const beforePendingClose = rec.mark();
 call('_grBufferClear@12', [0x112233, 255, 65535]);
 call('_grDrawPoint@4', [vertices]);
-assert.strictEqual(submissions.length, beforePendingClose, 'commands remain pending before close');
+assert.strictEqual(rec.kicksSince(beforePendingClose).length, 0, 'commands remain pending before close');
 call('_grSstWinClose@0', [], b);
 assert.deepStrictEqual(Buffer.from(new Uint8Array(memory.buffer, dxState, 32)), savedDisplay,
   'close from another instance restores prior display exactly');
@@ -271,24 +326,28 @@ assert.deepStrictEqual(moves.at(-1), [1, 15, 25, 800, 600]);
 const closedMoveCount = moves.length;
 call('_grSstWinClose@0');
 assert.strictEqual(moves.length, closedMoveCount, 'repeated close does not resize again');
-const retired = submissions.slice(beforePendingClose);
-assert.deepStrictEqual(retired.map(s => s.op), [0, 2], 'pending batch is consumed before close');
-assert.strictEqual(retired[0].bytes.readUInt32LE(0), 3, 'queued clear remains ordered');
-assert.strictEqual(retired[0].bytes.readUInt32LE(264), 0x112233, 'queued clear color is preserved');
-assert.strictEqual(retired[0].bytes.readUInt32LE(276), 12, 'queued point follows the clear');
+{
+  const kicks = rec.kicksSince(beforePendingClose);
+  assert.strictEqual(kicks.at(-1).mode, KICK.KICK_CLOSE, 'close ends with a CLOSE kick');
+  assert.strictEqual(kicks.filter(k => k.mode === KICK.KICK_CLOSE).length, 1, 'repeated close kicks nothing');
+  const retired = rec.recordsSince(beforePendingClose).filter(r => r.name === 'CLEAR' || r.name === 'DRAW_UP');
+  assert.deepStrictEqual(retired.map(r => r.name), ['CLEAR', 'DRAW_UP'], 'pending batch is consumed before close; queued clear remains ordered');
+  assert.strictEqual(retired[0].fields.rgba >>> 0, 0xff332211, 'queued clear color is preserved (ARGB 0x112233)');
+  assert.strictEqual(retired[1].fields.prim, PRIM.POINTLIST, 'queued point follows the clear');
+}
 assert.strictEqual(a.guest_span_cursor_bytes(), 0, 'temporary guest spans are released');
 call('_grGlideShutdown@0');
 assert.strictEqual(view.getUint32(regions.BASE.GLIDE_STATE + 16, true), 0, 'shutdown releases stream');
 assert.strictEqual(view.getUint32(regions.BASE.GLIDE_STATE + 40, true), 0, 'shutdown releases LFB');
 call('_grGlideInit@0');
-rejectOpen = true;
+rec.noExecutor = true;   // gpu_stream_kick: no executor can exist
 assert.strictEqual(a.post_queue_depth() + b.post_queue_depth(), 0);
 assert.strictEqual(call('_grSstWinOpen@28', [1, 7, 0, 0, 0, 2, 1]), 0);
 assert.strictEqual(a.post_queue_depth() + b.post_queue_depth(), 0, 'failed host open posts no layout messages');
 assert.deepStrictEqual(Buffer.from(new Uint8Array(memory.buffer, dxState, 32)), savedDisplay,
   'failed open leaves display state untouched');
 assert.strictEqual(moves.length, closedMoveCount);
-rejectOpen = false;
+rec.noExecutor = false;
 call('_grSstWinOpen@28', [1, 7, 0, 0, 0, 2, 1]);
 call('_grGlideShutdown@0', [], b);
 assert.deepStrictEqual(Buffer.from(new Uint8Array(memory.buffer, dxState, 32)), savedDisplay,
@@ -296,43 +355,40 @@ assert.deepStrictEqual(Buffer.from(new Uint8Array(memory.buffer, dxState, 32)), 
 assert.deepStrictEqual(moves.at(-1), [1, 15, 25, 800, 600]);
 windowRects.clear();
 const missingMoveCount = moves.length;
+m = rec.mark();
 call('_grSstWinOpen@28', [0, 7, 0, 0, 0, 2, 1]);
 assert.strictEqual(a.get_dx_exclusive_hwnd(), 0, 'headless context does not claim a missing HWND');
 assert.strictEqual(moves.length, missingMoveCount);
-// The open packet carries nColBuffers as word 5 (backends: 1 = single-buffered).
-assert.strictEqual(submissions.at(-1).op, 1);
-assert.strictEqual(submissions.at(-1).bytes.length, 24, 'open packet carries the color buffer count');
-assert.strictEqual(submissions.at(-1).bytes.readUInt32LE(20), 2);
+// The executor learns the colour buffer count as the render targets it creates.
+assert.strictEqual(rec.kicksSince(m).at(-1).mode, KICK.KICK_SYNC);
+assert.strictEqual(openRts({records: rec.recordsSince(m)}).length, 2, 'double buffering creates two colour buffers');
 // grDrawPolygonVertexList: a convex polygon is a fan from vlist[0], stepping
 // the SDK's 60-byte GrVertex (Myth TFL's terrain path; it abandons Glide
 // entirely when this export is missing). Each vertex's x names it.
 const poly = 0x4150f0;
 for (let v = 0; v < 5; ++v) for (let f = 0; f < 15; ++f)
   view.setFloat32(wa(poly + v * 60 + f * 4), f === 0 ? 100 + v : 0.5, true);
-const beforePoly = submissions.length;
+const beforePoly = rec.mark();
 call('_grDrawPolygonVertexList@8', [5, poly]);
 call('_grDrawPolygonVertexList@8', [2, poly]);   // fewer than three vertices draws nothing
 call('_grBufferSwap@4', [1]);
-const polyBatch = submissions.slice(beforePoly).find(s => s.op === 0).bytes;
-const fans = [];
-for (let at = 0; at < polyBatch.length; at += 8 + polyBatch.readUInt32LE(at + 4)) {
-  if (polyBatch.readUInt32LE(at) !== 5) continue;
-  fans.push([256, 316, 376].map(o => polyBatch.readFloatLE(at + 8 + o)));
-}
+const fans = primitives(rec.recordsSince(beforePoly)).filter(p => p.op === 5).map(p => p.verts.map(v => v[0] + 0.5));
 assert.deepStrictEqual(fans, [[100, 101, 102], [100, 102, 103], [100, 103, 104]],
   'five vertices draw exactly three fan triangles; a two-vertex list draws none');
 // Myth opens single-buffered with two aux buffers, which the release Glide 2.4
 // driver accepts on a 4 MiB board; triple buffering has no surface and fails.
 call('_grSstWinClose@0');
+m = rec.mark();
 assert.strictEqual(call('_grSstWinOpen@28', [0, 7, 0, 0, 0, 1, 2]), 1, 'single-buffered open accepted');
-assert.strictEqual(submissions.at(-1).bytes.readUInt32LE(20), 1, 'backend is told there is one color buffer');
+assert.strictEqual(openRts({records: rec.recordsSince(m)}).length, 1, 'backend is told there is one color buffer');
 call('_grSstWinClose@0');
 // Triple buffering has no surface: FXFALSE with nothing opened, as a board
 // short of frame-buffer memory answers. Deus Ex's GlideDrv then retries with 2.
-const beforeTriple = submissions.length;
+const beforeTriple = rec.mark();
 assert.strictEqual(call('_grSstWinOpen@28', [0, 7, 0, 0, 0, 3, 0]), 0,
   'triple buffering is refused, not silently double-buffered');
-assert(!submissions.slice(beforeTriple).some(s => s.op === 1), 'a refused open reaches no backend');
+assert.strictEqual(rec.kicksSince(beforeTriple).length, 0, 'a refused open reaches no backend');
+assert.strictEqual(rec.recordsSince(beforeTriple).length, 0, 'and creates nothing');
 assert.strictEqual(call('_grSstWinOpen@28', [0, 7, 0, 0, 0, 2, 1]), 1, 'the double-buffered retry opens');
 // gu.c presets: guColorCombineFunction -> grColorCombine state (+0..+16),
 // guAlphaSource -> grAlphaCombine state (+20..+36).
@@ -362,25 +418,38 @@ assert.deepStrictEqual(glideState(184, 6), [7, 12, 7, 12, 0, 0],
 // mipmap at 0x1000; level 2 (64x64) sits after the 256x256 and 128x128 levels.
 const levelData = 0x416000;
 for (let i = 0; i < 4096; ++i) a.guest_write8(levelData + i, i & 0xff);
-const beforeLevels = submissions.length;
+const beforeLevels = rec.mark();
 call('_grTexDownloadMipMapLevel@32', [0, 0x1000, 2, 0, 3, 0, 3, levelData]);
 call('_grTexDownloadMipMapLevelPartial@40', [0, 0x1000, 2, 0, 3, 0, 3, levelData, 3, 5]);
 call('_grTexDownloadMipMapLevel@32', [0, 0x1000, 1, 0, 3, 0, 1, levelData]); // odd level, even mask: skipped
-call('_grBufferSwap@4', [1]);
-const levelBatch = submissions.slice(beforeLevels).find(s => s.op === 0).bytes;
-const uploads = [];
-for (let at = 0; at < levelBatch.length; at += 8 + ((levelBatch.readUInt32LE(at + 4) + 3) & ~3)) {
-  if (levelBatch.readUInt32LE(at) !== 6) continue;
-  const r = at + 8;
-  uploads.push({
-    head: Array.from({length: 7}, (_, i) => levelBatch.readUInt32LE(r + i * 4)),
-    first: levelBatch[r + 28], last: levelBatch[r + 28 + levelBatch.readUInt32LE(r + 24) - 1],
-  });
+assert.strictEqual(rec.kicksSince(beforeLevels).length, 0, 'downloads stay in TMU RAM');
+{
+  // Downloads only fill TMU RAM; the stream sees the chain when a draw samples
+  // it. Sample the 256..64 RGB332 chain at 0x1000 with a texture-only combine.
+  const texInfo = 0x417f00;
+  [2, 0, 3, 0, 0].forEach((v, i) => a.guest_write32(texInfo + i * 4, v)); // small 64, large 256, 1x1, RGB332
+  call('_guColorCombineFunction@4', [4]);   // other = texture
+  call('_grTexCombineFunction@8', [0, 1]);  // TMU0 local texture
+  call('_grTexSource@16', [0, 0x1000, 3, texInfo]);
+  call('_grDrawPoint@4', [poly]);
+  call('_grBufferSwap@4', [1]);
+  const records = rec.recordsSince(beforeLevels);
+  const draw = primitives(records).at(-1);
+  const bound = draw.state.bind.find(e => e.slot === 0);
+  assert(bound, 'the textured point binds TMU0');
+  const tex = rec.textures.get(bound.texture);
+  assert.deepStrictEqual([tex.width, tex.height, tex.levels], [256, 256, 3], 'the chain is 256..64');
+  const ups = records.filter(r => r.name === 'UPLOAD' && r.fields.id === bound.texture);
+  assert.deepStrictEqual(ups.map(r => [r.fields.level, r.fields.w, r.fields.h]), [[0, 256, 256], [1, 128, 128], [2, 64, 64]]);
+  const rgb332 = x => {
+    const e = v => Math.floor((v * 510 + 7) / 14);
+    return (e((x >> 5) & 7) | e((x >> 2) & 7) << 8 | ((x & 3) * 85) << 16 | 0xff << 24) >>> 0;
+  };
+  const level2 = Array.from({length: 4096}, (_, i) => rgb332(i >= 3 * 64 && i < 6 * 64 ? i - 3 * 64 : i & 0xff));
+  assert.deepStrictEqual(Array.from(tex.data[2]), level2,
+    'whole level at its packed offset; rows 3..5 at their row offset');
+  assert(tex.data[1].every(t => t === 0xff000000), 'a level outside the mask is skipped (unwritten TMU RAM)');
 }
-assert.deepStrictEqual(uploads, [
-  {head: [0x1000 + 65536 + 16384, 2, 2, 3, 0, 3, 4096], first: 0, last: 4095 & 0xff},
-  {head: [0x1000 + 65536 + 16384 + 3 * 64, 8, 8, 3, 0, 3, 192], first: 0, last: 191},
-], 'whole level at its packed offset; rows 3..5 at their row offset; a level outside the mask is skipped');
 call('_grGlideShutdown@0');
 call('_grGlideInit@0');
 assert.strictEqual(call('_grSstWinOpen@28', [0, 7, 0, 0, 0, 2, 1]), 1);
@@ -423,21 +492,20 @@ call('_grBufferClear@12', [0, 255, 65535]);
   assert.deepStrictEqual(perf(), [4, 0, 0, 0, 4], 'the clip window bounds the count (2x2, all inside x+y<4)');
   call('_grClipWindow@16', [0, 0, 640, 480]);
   // grAADrawTriangle: the triangle, then one native line per flagged edge.
-  const beforeAA = submissions.length;
+  const beforeAA = rec.mark();
   call('_grAADrawTriangle@24', [tri, tri + 60, tri + 120, 1, 1, 1]);
   call('_grAADrawTriangle@24', [tri, tri + 60, tri + 120, 0, 1, 0]);
   call('_grAADrawLine@8', [tri, tri + 60]);
   call('_grBufferSwap@4', [1]);
-  const aaBatch = submissions.slice(beforeAA).find(s => s.op === 0).bytes;
-  const ops = [];
-  for (let at = 0; at < aaBatch.length; at += 8 + ((aaBatch.readUInt32LE(at + 4) + 3) & ~3)) ops.push(aaBatch.readUInt32LE(at));
-  // The batch also carries the three perf-test triangles above; the AA calls are its tail.
+  // The swap also carries the three perf-test triangles above; the AA calls are its tail.
+  const ops = primitives(rec.recordsSince(beforeAA)).map(p => p.op);
   assert.deepStrictEqual(ops.filter(op => op === 5 || op === 11).slice(-7), [5, 11, 11, 11, 5, 11, 11],
     'each AA triangle draws itself, then a line for each flagged edge; grAADrawLine is one line');
 }
 // The swap above submitted the pending batch; give the rejected swap below one.
 call('_grBufferClear@12', [0, 255, 65535]);
-rejectBatch = true;
+rec.failDrain = true;
 assert.throws(() => call('_grBufferSwap@4', [0]), WebAssembly.RuntimeError,
   'a failed host batch traps even when worker RPC converted a host error to zero');
+assert.notStrictEqual(ring('error_code'), 0, 'the executor failure is recorded in the ring');
 console.log('PASS Glide 2 decorated ABI, shared state, immutable draws, sparse output spans, LFB ordering and pending-close retirement');

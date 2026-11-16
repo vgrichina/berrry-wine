@@ -47,8 +47,8 @@
       "file": "lib/guest-worker.js",
       "name": "host-file",
       "baseSHA256": "3e09b9aa06b86ffa52bb00d4052a2b4393952ed61f2821ced4871dfbec0498ec",
-      "sha256": "6800563bf95fd87cce6cc5448d34c189b7c4a436761d4a2a089c64c67da98925",
-      "reason": "The Worker COM runtime receives a metadata-only import closure. Class publication, actual factory calls and marshaling use that Worker instance and its existing guarded ComGuestContinuation; no host shadow or foreign CPU is entered. Existing retirement and callback scope checks remain authoritative."
+      "sha256": "d5150e13728d2bc5f5f02703e1855cc8abd61b517a3f78bbf0c494b8dec95e0e",
+      "reason": "The Worker COM runtime receives a metadata-only import closure. Class publication, actual factory calls and marshaling use that Worker instance and its existing guarded ComGuestContinuation; no host shadow or foreign CPU is entered. Existing retirement and callback scope checks remain authoritative. Merged with GPU stream v2 D2a: the in-Worker D3DIMGpu executor is removed (D3DIM lowers in WAT onto the shared ring); no guest-control producer added."
     }
   ],
   "additions": [

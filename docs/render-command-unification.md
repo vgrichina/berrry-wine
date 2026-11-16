@@ -31,7 +31,7 @@ sharing all rendering semantics:
 | Legacy D3D, including D3D 5–7 | `d3dim-gpu.js` lowers onto the D3D9 fixed-function GPU backend | Native legacy span rasterizer |
 | D3D 8/9 | `d3d9-backend.js`, with API-specific fixed-function lowering in JS | Native shader VM and quad rasterizer |
 | OpenGL | `gl-compat.js` fixed-function frontend and generic GPU backend | WAT GL frontend uses the legacy span rasterizer |
-| Glide 2/3 | `glide-backend.js` implements combiners and generates GLSL | `glide-software.js` generates native shader IR and uses the D3D9 software adapter |
+| Glide 2/3 | WAT lowers to GPU stream v2 records ([gpu-stream-v2.md](gpu-stream-v2.md)); `gpu-stream-webgl.js` compiles the WAT-built IR to GLSL | `gpu-stream-software.js` runs the same records on the native rasterizer |
 
 D3D8's ABI layer already shares D3D9 state and execution; see
 [`src/09ac-handlers-d3d8.wat`](../src/09ac-handlers-d3d8.wat). Glide2/3 likewise share canonical rendering packets after their native ABI and
@@ -153,7 +153,8 @@ production must have one semantic source for each migrated profile.
 
 ### Next: Glide lowering and resources
 
-Move the existing JS native-IR emitter in
+Done by GPU stream v2 step 1 (see [gpu-stream-v2.md](gpu-stream-v2.md#glide-lowering));
+the two JS backends named below are deleted. The original plan was to move the existing JS native-IR emitter in
 [`lib/glide-software.js`](../lib/glide-software.js) into WAT. Share that lowering
 with WebGL rather than maintaining separate GLSL combiner equations in
 [`lib/glide-backend.js`](../lib/glide-backend.js). Migrate texture conversion,

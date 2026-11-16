@@ -5248,6 +5248,8 @@
         (local.set $surf_bytes (call $dx_surf_billed_get (local.get $entry)))
         (call $dx_surf_billed_set (local.get $entry) (i32.const 0))
         (local.set $dib_wa (load.field DxObject misc1 (local.get $entry)))
+        ;; Already fenced above: drop the GPU stream resources behind it.
+        (call $d3dim_gps_forget (local.get $entry))
         (global.set $dx_vidmem_used (i32.sub (global.get $dx_vidmem_used) (local.get $surf_bytes)))
         (call $dx_surf_pal_detach (local.get $entry))
         (if (i32.eq (local.get $entry) (global.get $dx_primary_wa))
