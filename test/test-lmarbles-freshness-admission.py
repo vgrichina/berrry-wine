@@ -20,6 +20,11 @@ transport.startControlServer=options=>original({...options,onCommand(command){
  fs.appendFileSync(process.env.LMARBLES_REQUEST_LOG,JSON.stringify({at:Date.now(),command})+'\n');
  if(command.action==='guarded-input' && process.env.LMARBLES_FAULT==='stale-consumption')
   return new Promise(resolve=>setTimeout(()=>resolve(options.onCommand(command)),Math.max(0,command.guard.deadline-Date.now()+20)));
+ if(command.action==='guarded-bind' && process.env.LMARBLES_FAULT==='cross-expiry')
+  options.onCommand({action:'eval',code:`(()=>{const old=renderer.handleKeyDown;
+   renderer.handleKeyDown=function(k){const value=old.call(this,k);while(Date.now()<globalThis.crossExpiryDeadline){};return value};return true})()`});
+ if(command.action==='guarded-input' && process.env.LMARBLES_FAULT==='cross-expiry')
+  options.onCommand({action:'eval',code:`globalThis.crossExpiryDeadline=${command.guard.deadline+20}`});
  if(command.action==='guarded-input') {
   if(process.env.LMARBLES_FAULT==='focus') {
    const fault=options.onCommand({action:'eval',code:'({before:exports.get_focus_hwnd(),after:(exports.set_focus(0),exports.get_focus_hwnd())})'});
@@ -124,6 +129,17 @@ class Admission(unittest.TestCase):
   c.save('renewed-review.json',dict(at=time.time(),pngSHA256=r['pngSHA256'],scene='game',observation='New fixture capture after proven no effects'))
   c.pulse('new-intent',['keydown:40'],100,'renewed','fresh fixture intention after NOT_SENT')
   self.assertNotEqual(c.read('press-intent.json')['nonces'],c.read('new-intent-intent.json')['nonces'])
+ def test_native_confirmation_reserve_before_prearm(self):
+  self.start('confirmation-reserve')
+  expiry=c.read('fresh.json')['at']+5
+  while time.time()<expiry-.49:time.sleep(.002)
+  self.assertTrue(self.pulse().startswith('NOT_SENT'))
+  refusal=c.read('press-rejection.json')
+  self.assertEqual(refusal['stage'],'before-prearm');self.assertEqual(refusal['domain'],'targeting')
+  self.assertEqual(refusal['requiredSeconds'],.5)
+  self.assertLess(refusal['at'],expiry,'fresh but insufficient confirmation room')
+  self.assertFalse((self.out/'press-armed.json').exists())
+  self.assertFalse(any(r['command'].get('action') in ('guarded-input','guarded-release') for r in self.requests()))
  def test_native_budget_spent_during_prearm(self):
   self.start('prearm')
   real=c.select.select
@@ -136,7 +152,7 @@ class Admission(unittest.TestCase):
  def test_native_near_expiry_down_and_later_up(self):
   self.start('near-expiry')
   expiry=c.read('fresh.json')['at']+5
-  while time.time()<expiry-.65:time.sleep(.002)
+  while time.time()<expiry-.9:time.sleep(.002)
   c.pulse('press',['keydown:40'],800,'fresh','near expiry native fixture')
   down=c.read('press-down.json')[0];up=c.read('press-up.json');op=c.read('press-operation.json')
   self.assertLess(down['consumedAt']/1000,expiry)
@@ -164,11 +180,28 @@ class Admission(unittest.TestCase):
   self.start('stale-consumption','stale-consumption')
   expiry=c.read('fresh.json')['at']+5
   while time.time()<expiry-.4:time.sleep(.002)
-  with self.assertRaises(Exception):self.pulse()
+  # Fixture-only admission fault: the native consumption fence must still
+  # reject expiry when the controller's confirmation reserve is bypassed.
+  with patch.object(c,'freshness_fits',return_value=True),self.assertRaises(Exception):self.pulse()
   receipt=c.read('press-receipt.json')
   self.assertEqual(receipt['state'],'CANCELLED');self.assertFalse(receipt['consumed'])
   self.assertGreater(c.read('press-operation.json')['deadline'],time.time())
   self.assertEqual(c.read('press-up.json')['state'],'ACK');self.closed()
+ def test_native_effect_crosses_expiry(self):
+  self.start('cross-expiry','cross-expiry')
+  expiry=c.read('fresh.json')['at']+5
+  while time.time()<expiry-.4:time.sleep(.002)
+  # Bypass only the derived admission reserve in this authored fault fixture
+  # to reach the independent receipt fence. Native expiry remains unchanged.
+  with patch.object(c,'freshness_fits',return_value=True),self.assertRaisesRegex(Exception,'consumption exceeded targeting/admission deadline'):self.pulse()
+  receipt=c.read('press-receipt.json')
+  self.assertTrue(receipt['consumed'])
+  self.assertEqual(receipt['deadline'],int(expiry*1000))
+  self.assertGreaterEqual(receipt['consumedAt'],receipt['deadline'])
+  self.assertGreater(c.read('press-operation.json')['deadline'],time.time())
+  self.assertEqual(c.read('press-up.json')['state'],'ACK')
+  self.assertEqual(c.read('press-release-wait.json')['exit'],0)
+  self.closed()
  def test_native_budget_spent_before_dispatch(self):
   self.start('dispatch');real=c.policy;calls=[]
   def slow(*args,**kwargs):

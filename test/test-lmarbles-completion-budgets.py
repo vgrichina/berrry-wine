@@ -64,6 +64,23 @@ class Budget(unittest.TestCase):
   op=c.read('edge-operation.json');self.assertEqual(op['deadline'],1003.)
   self.assertEqual(op['targetingDeadline'],1004.)
   self.assertEqual(c.read('edge-rejection.json')['stage'],'before-prearm')
+ def test_confirmation_freshness_boundary_no_prearm_or_request(self):
+  now=1000.;self.launch(2000,1700,300)
+  self.assertFalse(c.freshness_fits(now,now+.5,True))
+  self.assertFalse(c.freshness_fits(now,now+.500001,True)) # same native millisecond deadline
+  self.assertTrue(c.freshness_fits(now,now+.501,True))
+  png=b'fixture';digest=hashlib.sha256(png).hexdigest();(c.R/'fresh.png').write_bytes(png)
+  c.save('fresh.json',dict(at=now+.5-5,pngSHA256=digest))
+  c.save('fresh-review.json',dict(at=now,pngSHA256=digest,scene='game'))
+  with patch.object(c.time,'time',return_value=now),patch.object(c,'lease',return_value=({},{})),\
+       patch.object(c,'call',side_effect=AssertionError('unexpected request')) as request,\
+       patch.object(c.subprocess,'Popen',side_effect=AssertionError('unexpected child')) as child:
+   self.assertTrue(c.pulse('edge',['keydown:40'],100,'fresh','confirmation boundary').startswith('NOT_SENT'))
+  self.assertFalse(request.called or child.called)
+  self.assertEqual(c.read('edge-rejection.json')['reason'],'insufficient targeting confirmation budget')
+  rejection=c.read('edge-rejection.json');self.assertEqual(rejection['domain'],'targeting')
+  self.assertEqual(rejection['requiredSeconds'],.5);self.assertEqual(rejection['deadline'],now+.5)
+  self.assertEqual(c.read('edge-operation.json')['targetingConfirmationSeconds'],.5)
  def test_actual_3600_3620_prearm_and_waits(self):
   out=c.R
   recipe=dict(cwd=str(out),args=['node',str(ROOT/'test/fixtures/lmarbles-reserve-endpoint.js'),'--max-seconds=3600'],seconds=3600,watchdogGrace=20,reserveSeconds=300,completionSession=True,inputPolicy=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=5,menuFreshnessSeconds=30))

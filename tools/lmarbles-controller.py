@@ -144,6 +144,12 @@ def admission_fits(now,deadline,allowance,releaseCap=None,ms=0):
     return (now+allowance<deadline and
             (releaseCap is None or now+.500+ms/1000<releaseCap))
 
+def freshness_fits(now,deadline,strict):
+    # A successful confirmation must fit before targeting expiry. This uses
+    # the existing 500ms bound, independently of release/completion allowance.
+    nativeDeadline=int(deadline*1000)/1000 if strict else deadline
+    return now+(.500 if strict else 0)<nativeDeadline
+
 def release(name,owner,deadline,final=False):
     target=read('native-pid.json')
     print(json.dumps(dict(armed=True,pid=os.getpid(),deadline=deadline,owner=owner,target=target,at=time.time())),flush=True)
@@ -214,12 +220,15 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
         targetingDeadline=min(rr['at']+fresh,reviewed['at']+fresh)
         allowance=admission_allowance(ms,strict)
         intentDeadline=dict(startedAt=startedAt,deadline=deadline,targetingDeadline=targetingDeadline,pulseMilliseconds=ms,operationWindowSeconds=window,
-                            admissionAllowanceSeconds=allowance)
+                            admissionAllowanceSeconds=allowance,targetingConfirmationSeconds=.500 if strict else 0)
         save(name+'-operation.json',intentDeadline)
-        def reject(stage,reason='insufficient remaining finite-intent budget'):
+        def reject(stage,reason='insufficient remaining finite-intent budget',targeting=False):
             save(name+'-rejection.json',dict(state='NOT_SENT',lease='VALID',reason=reason,
-                 stage=stage,deadline=deadline,requiredSeconds=allowance,nonces=nonces,at=time.time(),effects=False))
+                 stage=stage,domain='targeting' if targeting else 'completion',
+                 deadline=targetingDeadline if targeting else deadline,
+                 requiredSeconds=(.500 if strict else 0) if targeting else allowance,nonces=nonces,at=time.time(),effects=False))
             return 'NOT_SENT: insufficient remaining budget; fresh capture + review + NEW intent required'
+        if not freshness_fits(time.time(),targetingDeadline,strict):return reject('before-prearm','insufficient targeting confirmation budget',targeting=True)
         if not admission_fits(time.time(),deadline,allowance):return reject('before-prearm')
         assert deadline+2<read('launch.json')['deadline'],'operation exceeds fixed runtime'
         policy(intent,keys,review,route,deadline)
@@ -230,9 +239,9 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
         try:
             ready,_,_=select.select([child.stdout],[],[],1.5);assert ready,'independent release child arm deadline'
             armed=json.loads(child.stdout.readline());assert armed['armed'];save(name+'-armed.json',armed)
-            if time.time()>=targetingDeadline:
+            if not freshness_fits(time.time(),targetingDeadline,strict):
                 save(name+'-disarm.json',dict(at=time.time(),beforeDown=True))
-                return reject('after-prearm','targeting image expired')
+                return reject('after-prearm','insufficient targeting confirmation budget',targeting=True)
             if not admission_fits(time.time(),deadline,allowance,releaseCap if strict else None,ms):
                 save(name+'-disarm.json',dict(at=time.time(),beforeDown=True))
                 return reject('after-prearm')
@@ -244,9 +253,9 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
                 guard={**owner,'nonce':nonce,'reviewed':True,'deadline':int(min(targetingDeadline,deadline,releaseCap,cutoff if intent=='gameplay' else deadline)*1000)}
                 if native:guard['intent']=rr['snapshot']
                 deliveryAt=time.time()
-                if deliveryAt>=targetingDeadline:
+                if not freshness_fits(deliveryAt,targetingDeadline,strict):
                     save(name+'-disarm.json',dict(at=deliveryAt,beforeDown=True))
-                    return reject('before-dispatch','targeting image expired')
+                    return reject('before-dispatch','insufficient targeting confirmation budget',targeting=True)
                 if not admission_fits(deliveryAt,deadline,allowance,releaseCap if strict else None,ms):
                     save(name+'-disarm.json',dict(at=deliveryAt,beforeDown=True))
                     return reject('before-dispatch')
@@ -260,6 +269,10 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
                     save(name+'-release-at.json',dict(at=receipt['consumedAt']/1000+ms/1000,immutableOperationDeadline=deadline))
                 save(name+'-receipt.json',receipt)
                 assert receipt['state']=='CONSUMED' and receipt['consumed'],receipt
+                # The native pre-effect check can pass just before expiry and
+                # publish consumption after it. Do not accept that receipt or
+                # reopen the context; the prearmed release remains mandatory.
+                assert int(deliveryAt*1000)<=receipt['consumedAt']<guard['deadline'],'consumption exceeded targeting/admission deadline'
             save(name+'-down.json',receipts)
             releaseAt=max(x['consumedAt'] for x in receipts)/1000+ms/1000
             assert releaseAt<deadline,'finite pulse cannot fit original operation deadline'
