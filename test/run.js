@@ -7731,7 +7731,19 @@ async function main() {
     ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
       .every(k => a[k] === b[k]);
   const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
-    validateIntent: intent => !nativeSceneLease || nativeScene.matches(controlSnapshot(), intent),
+    validateIntent: intent => {
+      if (!nativeSceneLease) return true;
+      if (!nativeScene.matches(controlSnapshot(), intent)) return false;
+      // A reviewed native intent can pin its complete composited frame as
+      // well as its USER identities. Check again at consumption: paint may
+      // change while input waits even though HWND/focus remain unchanged.
+      if (intent.pngSHA256 !== undefined) {
+        if (!/^[a-f0-9]{64}$/.test(intent.pngSHA256)) return false;
+        const paint = require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
+        if (paint !== intent.pngSHA256) return false;
+      }
+      return true;
+    },
     snapshot: () => {
       const current = cliInputSnapshot();
       if (nativeSceneLease) {
