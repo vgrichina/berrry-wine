@@ -14,8 +14,13 @@
 //   K indexed 0WEIGHTS, XYZB1 | LASTBETA_D3DCOLOR (index = byte 2);
 //   L lit 2WEIGHTS with NORMAL (blended through the inverse transposes);
 //   M TWEENING: POSITION1 on stream 1, TWEENFACTOR 0.25, world 0 applied.
-// And N: an indexed blend naming entry 30 (past the 22-entry palette)
-// still declines 27.
+//   N indexed 0WEIGHTS naming entry 30, past the shader's 22-entry palette:
+//     blended on the CPU in WAT (09akg "d9cpu");
+//   O lit indexed 2WEIGHTS + NORMAL, UBYTE4 entries 40 / 128 / 255, VB DIP
+//     (CPU path, normals through the inverse transposes).
+// P: a FLOAT1 index of 300 (not a D3D palette entry) still declines 27.
+// Caps: MaxVertexBlendMatrices 4, MaxVertexBlendMatrixIndex 21 for hardware
+// vertex processing and 255 for software (a MIXED device switched).
 const assert = require('assert');
 const { openD3d9GpsSession } = require('./helpers/d3d9-gps-session');
 
@@ -52,14 +57,30 @@ const blend = (pairs, f) => pairs.reduce((acc, [w, M]) => f(M).map((x, k) => acc
 const weights = (stored, n) => { const w = stored.slice(0, n - 1); w.push(1 - w.reduce((s, x) => s + x, 0)); return w; };
 const f32ok = x => Math.fround(x) === x;
 
-async function render(gps) {
-  const s = await openD3d9GpsSession({ gps, size: SIZE });
+async function render(gps, extra = []) {
+  const s = await openD3d9GpsSession({ gps, size: SIZE, extra });
   try {
     const ok = async (name, args) => assert.strictEqual(await s.call(name, args), 0, name);
-    await ok('IDirect3D9_CreateDevice', '[0,0,1,exports.get_main_hwnd(),0,ctx.d9g.pp,ctx.d9g.out]');
+    // A MIXED_VERTEXPROCESSING device: the caps check below switches it.
+    await ok('IDirect3D9_CreateDevice', '[0,0,1,exports.get_main_hwnd(),0x80,ctx.d9g.pp,ctx.d9g.out]');
     await s.evaluate(`(()=>{const p=ctx.d9g;p.device=exports.guest_read32(p.out)>>>0;p.els=exports.guest_alloc(160)>>>0;
       p.dout=exports.guest_alloc(64)>>>0;p.up=exports.guest_alloc(1024)>>>0;p.m=exports.guest_alloc(64)>>>0;p.vbs=[];
+      p.caps=exports.guest_alloc(304)>>>0;
       p.put=(ga,b)=>new Uint8Array(memory.buffer).set(b,exports.guest_to_wasm(ga));return true})()`);
+    // Caps: MaxVertexBlendMatrices (+168), MaxVertexBlendMatrixIndex (+172)
+    // from IDirect3D9 (hardware: 21), the device in hardware mode (21) and
+    // in software mode (255, the D3D9 software limit).
+    const caps = {};
+    const blendCaps = async () => s.evaluate('[exports.guest_read32(ctx.d9g.caps+168)>>>0,exports.guest_read32(ctx.d9g.caps+172)>>>0]');
+    await ok('IDirect3D9_GetDeviceCaps', '[0,0,1,ctx.d9g.caps]');
+    caps.d3d9 = await blendCaps();
+    await ok('IDirect3DDevice9_GetDeviceCaps', '[ctx.d9g.device,ctx.d9g.caps]');
+    caps.hw = await blendCaps();
+    await ok('IDirect3DDevice9_SetSoftwareVertexProcessing', '[ctx.d9g.device,1]');
+    caps.swGet = await s.call('IDirect3DDevice9_GetSoftwareVertexProcessing', '[ctx.d9g.device]');
+    await ok('IDirect3DDevice9_GetDeviceCaps', '[ctx.d9g.device,ctx.d9g.caps]');
+    caps.sw = await blendCaps();
+    await ok('IDirect3DDevice9_SetSoftwareVertexProcessing', '[ctx.d9g.device,0]');
     let ndecl = 0;
     const decl = async b => {
       await s.evaluate(`ctx.d9g.put(ctx.d9g.els,${JSON.stringify(b)});true`);
@@ -90,11 +111,13 @@ async function render(gps) {
     const frame = async (bind, draw, mayFail = false) => {
       await bind();
       const before = await s.stats();
+      const cpu0 = await s.evaluate('exports.d3d9_gps_stat(82)>>>0');
       await ok('IDirect3DDevice9_Clear', '[ctx.d9g.device,0,0,1,0xff000000,0x3f800000,0]');
       if (mayFail) await s.call(draw[0], draw[1]); else await ok(draw[0], draw[1]);
       await ok('IDirect3DDevice9_Present', '[ctx.d9g.device,0,0,0,0]');
       const after = await s.stats();
       stats.push({ declines: after.declines - before.declines, draws: after.draws - before.draws,
+        cpu: (await s.evaluate('exports.d3d9_gps_stat(82)>>>0')) - cpu0,
         reasons: Object.fromEntries(Object.entries(after.reasons).map(([r, n]) => [r, n - (before.reasons[r] || 0)]).filter(([, n]) => n)) });
       assert.strictEqual(await s.call('IDirect3DDevice9_GetBackBuffer', '[ctx.d9g.device,0,0,0,ctx.d9g.surface]'), 0);
       await s.evaluate('ctx.d9g.bb=exports.guest_read32(ctx.d9g.surface)>>>0');
@@ -254,7 +277,8 @@ async function render(gps) {
       }, ['IDirect3DDevice9_DrawIndexedPrimitive', '[ctx.d9g.device,4,0,0,5,0,4]'], true);
       await reference(POS.map((_, k) => P3(k).map((x, j) => x + (P1(k)[j] - x) * 0.25)), null, MATS[0]);
     }
-    // N: an indexed blend naming palette entry 30.
+    // N: an indexed blend naming palette entry 30 (past the shader's 22):
+    // blended on the CPU (d9cpu).
     {
       const v = bytes(12 * 20);
       TRIS.forEach((k, i) => {
@@ -268,18 +292,71 @@ async function render(gps) {
         await rs(151, 256); await rs(167, 1);
         await ok('IDirect3DDevice9_SetFVF', '[ctx.d9g.device,0x1046]');
       }, ['IDirect3DDevice9_DrawPrimitiveUP', '[ctx.d9g.device,4,4,ctx.d9g.up,20]'], true);
+      await reference(POS.map((_, k) => xform(P3(k), k === 2 ? MATS[2] : MATS[1])));
+    }
+    // O: lit indexed 2WEIGHTS with NORMAL, a declaration with UBYTE4 indices
+    // 40 / 128 / 255 and a VB DIP: positions and normals blended on the CPU.
+    {
+      const W = [[0.5, 0.25], [0.25, 0.25], [0, 0.5], [0.5, 0], [0.25, 0.5]];
+      const IX = [[40, 128, 255], [255, 40, 128], [128, 255, 40], [40, 255, 128], [255, 128, 40]];
+      const PAL = { 40: MATS[0], 128: MATS[1], 255: MATS[2] };
+      const v = bytes(5 * 40), idx = bytes(24);
+      for (let k = 0; k < 5; k++) {
+        [...P3(k), ...W[k]].forEach((x, j) => v.setFloat32(k * 40 + j * 4, x, true));
+        IX[k].forEach((n, j) => v.setUint8(k * 40 + 20 + j, n)); v.setUint8(k * 40 + 23, 7);
+        NORMALS[k].forEach((x, j) => v.setFloat32(k * 40 + 24 + j * 4, x, true));
+        v.setUint32(k * 40 + 36, COLORS[k], true);
+      }
+      TRIS.forEach((k, i) => idx.setUint16(i * 2, k, true));
+      const vb = await buffer(out(v)), ib = await buffer(out(idx), true);
+      const d = await decl([...el(0, 0, 2, 0), ...el(0, 12, 1, 1), ...el(0, 20, 5, 2), ...el(0, 24, 2, 3), ...el(0, 36, 4, 10), ...END]);
+      const lit = async () => {
+        await rs(137, 1); await rs(139, 0xff202020);
+        await ok('IDirect3DDevice9_SetMaterial', '[ctx.d9g.device,ctx.d9g.mat]');
+        await ok('IDirect3DDevice9_SetLight', '[ctx.d9g.device,0,ctx.d9g.light]');
+        await ok('IDirect3DDevice9_LightEnable', '[ctx.d9g.device,0,1]');
+      };
+      await frame(async () => {
+        await lit();
+        for (const k of [40, 128, 255]) await world(k, PAL[k]);
+        await rs(151, 2); await rs(167, 1);
+        await ok('IDirect3DDevice9_SetVertexDeclaration', `[ctx.d9g.device,${d}]`);
+        await ok('IDirect3DDevice9_SetStreamSource', `[ctx.d9g.device,0,${vb},0,40]`);
+        await ok('IDirect3DDevice9_SetIndices', `[ctx.d9g.device,${ib}]`);
+      }, ['IDirect3DDevice9_DrawIndexedPrimitive', '[ctx.d9g.device,4,0,0,5,0,4]'], true);
+      const pairs = k => weights(W[k], 3).map((w, i) => [w, PAL[IX[k][i]]]);
+      await rs(167, 0);
+      await reference(POS.map((_, k) => blend(pairs(k), M => xform(P3(k), M))),
+        POS.map((_, k) => blend(pairs(k), M => nxform(NORMALS[k], M))));
+      await rs(137, 0);
+    }
+    // P: a FLOAT1 index of 300 (past D3D's 255) still declines 27.
+    {
+      const v = bytes(12 * 20);
+      TRIS.forEach((k, i) => {
+        P3(k).forEach((x, j) => v.setFloat32(i * 20 + j * 4, x, true));
+        v.setFloat32(i * 20 + 12, k === 2 ? 300 : 5, true);
+        v.setUint32(i * 20 + 16, COLORS[k], true);
+      });
+      const d = await decl([...el(0, 0, 2, 0), ...el(0, 12, 0, 2), ...el(0, 16, 4, 10), ...END]);
+      await up(v);
+      await frame(async () => {
+        await rs(151, 256); await rs(167, 1);
+        await ok('IDirect3DDevice9_SetVertexDeclaration', `[ctx.d9g.device,${d}]`);
+      }, ['IDirect3DDevice9_DrawPrimitiveUP', '[ctx.d9g.device,4,4,ctx.d9g.up,20]'], true);
     }
     const st = await s.stats();
+    st.cpuBlends = await s.evaluate('exports.d3d9_gps_stat(82)>>>0');
     await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
     assert.strictEqual(await s.close(), 0, s.output());
-    return { frames, stats, st, plain };
+    return { frames, stats, st, plain, caps };
   } catch (error) { console.error(s.output().slice(-4000)); await s.close(); throw error; }
 }
 
 (async () => {
   const old = await render('off');
   const ring = await render('software');
-  const names = 'HIJKLM';
+  const names = 'HIJKLMNO';
   const bad = [];
   names.split('').forEach((name, i) => {
     const blended = 2 * i, ref = 2 * i + 1;
@@ -295,8 +372,25 @@ async function render(gps) {
       if (diff >= 0) bad.push(`${name} ${label} pixel ${diff}: want ${(want[diff] >>> 0).toString(16)} ring ${(got[diff] >>> 0).toString(16)}`);
     }
   });
+  // N and O blend on the CPU (palette entries past 21); J and K do not.
+  const cpu = ring.stats.map(f => f.cpu).join('');
+  if (cpu !== '00000000000010100') bad.push(`CPU-blended draws per frame ${cpu}, want N and O blended only`);
   const last = ring.stats[ring.stats.length - 1];
-  if (last.declines !== 1 || last.reasons[27] !== 1) bad.push(`N (palette entry 30) ${JSON.stringify(last)}`);
+  if (last.declines !== 1 || last.reasons[27] !== 1) bad.push(`P (FLOAT1 index 300) ${JSON.stringify(last)}`);
+  assert.deepStrictEqual(ring.caps, { d3d9: [4, 21], hw: [4, 21], swGet: 1, sw: [4, 255] }, 'vertex blend caps');
+  // --webgl (needs a display): on the WebGL executor every blended frame
+  // must equal its own reference frame there (rasterization differs from
+  // the software path, the blend must not).
+  if (process.argv.includes('--webgl')) {
+    const gl = await render('webgl', ['--headless-gl']);
+    names.split('').forEach((name, i) => {
+      const fb = gl.stats[2 * i], want = gl.frames[2 * i + 1], got = gl.frames[2 * i];
+      if (fb.declines || fb.draws !== 1) bad.push(`webgl ${name} blended ${JSON.stringify(fb)}`);
+      const diff = want.findIndex((v, k) => v !== got[k]);
+      if (diff >= 0) bad.push(`webgl ${name} pixel ${diff}: reference ${(want[diff] >>> 0).toString(16)} blended ${(got[diff] >>> 0).toString(16)}`);
+    });
+    if (gl.stats.map(f => f.cpu).join('') !== '00000000000010100') bad.push('webgl CPU-blended draws per frame');
+  }
   assert.deepStrictEqual(bad, [], `frames that declined or differ:\n  ${bad.join('\n  ')}`);
-  console.log(`PASS fixed-function vertex blending / tweening on the ring, ${names.length} blends pixel-exact against CPU-blended references\n  ring ${JSON.stringify(ring.st)}`);
+  console.log(`PASS fixed-function vertex blending / tweening on the ring, ${names.length} blends pixel-exact against CPU-blended references (N, O on the WAT CPU path), caps ${JSON.stringify(ring.caps)}\n  ring ${JSON.stringify(ring.st)}`);
 })().catch(error => { console.error(error); process.exitCode = 1; });

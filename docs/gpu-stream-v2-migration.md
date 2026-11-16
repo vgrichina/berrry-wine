@@ -307,6 +307,20 @@ Without this, every new backend would have to reimplement the 846 lines of
     POSITION1 / NORMAL1. The old path ignores blending, so
     `test-d3d9-gps-blend.js` compares against CPU-blended meshes (dyadic,
     exact) drawn unblended. Caps still report MaxVertexBlendMatrices 0.
+  - **d9cpu (2026-11-16): indexed blending past the shader palette on the
+    CPU.** A draw whose indices name an entry 22..255 no longer declines:
+    09akg ("d9cpu") blends it inside the gather in WAT (v128: 1.77x less
+    user CPU than the bit-identical scalar version), writing the blended
+    world-space POSITION (4 floats) and NORMAL (through each entry's
+    inverse transpose) with the prologue's arithmetic, and draws the plain
+    cascade VS under an identity world, so lighting and texgen are
+    unchanged. Only an index that is not an integer in 0..255 or a
+    non-finite matrix declines 27. Caps now report MaxVertexBlendMatrices
+    4 and MaxVertexBlendMatrixIndex 21 (hardware vertex processing) or
+    255 (a SOFTWARE_VERTEXPROCESSING device, or a MIXED one switched by
+    SetSoftwareVertexProcessing, which is now stateful), while the ring
+    is live; the old path does not blend. Stat 82 counts CPU-blended
+    draws.
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
   a performance step.
 

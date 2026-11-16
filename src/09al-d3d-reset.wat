@@ -138,6 +138,9 @@
   (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 25604))
   (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 25608))
   (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 25612))
+  ;; Creation BehaviorFlags and the vertex-processing mode.
+  (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 25680))
+  (call $d3d9_reset_preserve (local.get $next) (local.get $old) (i32.const 25684))
   (memory.copy (i32.add (local.get $next) (i32.const 20628)) (i32.add (local.get $old) (i32.const 20628)) (i32.const 36))
   (i32.store offset=25600 (local.get $next)
     (select (i32.const 23) (i32.const 22) (i32.eq (i32.load offset=40 (local.get $wa)) (i32.const 23))))

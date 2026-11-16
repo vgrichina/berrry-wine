@@ -6,7 +6,8 @@
 // from the launch profile and the ring's capability block, without the old
 // 0x30005 / 0x30017 / 0x3000a calls. The answers are the old path's,
 // byte for byte, for every profile: programmable or not, software renderer
-// or no D3D9 GPU at all (where the ring has no executor by default).
+// or no D3D9 GPU at all (where the ring has no executor by default), except
+// the vertex-blend caps the ring alone implements (see below).
 const assert = require('assert');
 const { openD3d9GpsSession } = require('./helpers/d3d9-gps-session');
 
@@ -51,8 +52,19 @@ async function probe({ gps, renderer, programmable }) {
     // gps undefined: the run.js default executor for this renderer.
     const ring = await probe({ gps: null, renderer, programmable });
     const label = `renderer=${renderer || 'none'} programmable=${programmable}`;
-    for (const k of ['capsHr', 'caps', 'create', 'occlusion', 'event', 'create565'])
-      assert.deepStrictEqual(ring[k], old[k], `${label}: ${k} differs (old ${old[k]} ring ${ring[k]})`);
+    // One deliberate difference: fixed-function vertex blending lowers only
+    // on the ring (09akg d9ms / d9cpu), so a live ring reports
+    // MaxVertexBlendMatrices 4 and MaxVertexBlendMatrixIndex 21 (+168, +172,
+    // IDirect3D9 caps: hardware vertex processing) and the old path 0 / 0.
+    const blendCaps = c => { const b = c.split(',').map(Number); return [b[168] | b[169] << 8, b[172] | b[173] << 8]; };
+    const live = renderer === 'software';
+    assert.deepStrictEqual(blendCaps(old.caps), [0, 0], `${label}: old path blend caps`);
+    assert.deepStrictEqual(blendCaps(ring.caps), live ? [4, 21] : [0, 0], `${label}: ring blend caps`);
+    const unblend = c => c.split(',').map((x, i) => (i >= 168 && i < 176 ? '0' : x)).join(',');
+    for (const k of ['capsHr', 'caps', 'create', 'occlusion', 'event', 'create565']) {
+      const [a, b] = k === 'caps' ? [unblend(ring[k]), unblend(old[k])] : [ring[k], old[k]];
+      assert.deepStrictEqual(a, b, `${label}: ${k} differs (old ${old[k]} ring ${ring[k]})`);
+    }
     if (renderer === 'software') {
       assert.strictEqual(ring.stats.dead, 0, `${label}: the ring has an executor`);
       assert.strictEqual(ring.capOps, '', `${label}: no old caps call with the ring active`);

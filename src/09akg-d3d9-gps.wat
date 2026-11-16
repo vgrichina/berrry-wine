@@ -49,8 +49,10 @@
   ;;     of more than 15 elements under a VS, a POSITIONT one with PSIZE or
   ;;     a non-D3DCOLOR colour, a blend without its BLENDWEIGHT /
   ;;     BLENDINDICES (or a tween without POSITION1 / NORMAL1), a VERTEXBLEND
-  ;;     value D3D does not define, and an index past the 22-entry palette.
-  ;;     Vertex blending and tweening lower since d9ms ("vertex blending")
+  ;;     value D3D does not define, and an index that is not an integer in
+  ;;     0..255. Vertex blending and tweening lower since d9ms ("vertex
+  ;;     blending"); entries past the 22-entry shader palette blend on the
+  ;;     CPU since d9cpu ("indexed vertex blending on the CPU")
   ;;   3 no vertex pointer / bad stride   -
   ;;   4 offscreen colour target          RT objects for color surfaces
   ;;   5 render-target texture            RT-as-texture residency
@@ -97,7 +99,9 @@
   ;; records sent, 76 back
   ;; buffer locks that needed no readback (the DIB was current), 77 locks
   ;; filled with the last full Clear's colour, 78 unlock uploads folded into
-  ;; a later one, 79 old-path lock readbacks skipped ($d9g_lock_supplies).
+  ;; a later one, 79 old-path lock readbacks skipped ($d9g_lock_supplies),
+  ;; 80 lead -> shadow handovers, 81 shadow -> lead entries, 82 draws
+  ;; blended on the CPU (d9cpu).
   ;;
   ;; Block $d9g_mem: +0 stats (128 words), +512 RASTER stage, +608 its
   ;; cache, +704 viewport cache (24), +768 bind cache {n, 6 x {slot, tex,
@@ -2356,9 +2360,11 @@
         (local.set $off (call $d9ms_add (local.get $post) (i32.const 0) (i32.const 4) (local.get $kind) (local.get $desc))))
       (else
         (local.set $fvf (i32.const 2))
+        ;; d9cpu: an indexed blend gathers POSITION as 4 floats (w defaults
+        ;; to 1), the slot $d9cpu_run writes the blended (x, y, z, w) into.
         (local.set $off (call $d9ms_add (local.get $pos) (i32.const 0)
           (select (i32.const 4) (call $d9ms_dcomps (i32.load8_u offset=4 (local.get $pos)))
-            (i32.eq (i32.load8_u offset=4 (local.get $pos)) (i32.const 4)))
+            (i32.or (i32.eq (i32.load8_u offset=4 (local.get $pos)) (i32.const 4)) (call $d9cpu_pos4)))
           (local.get $kind) (local.get $desc)))
         (if (i32.and (i32.ne (local.get $nrm) (i32.const 0)) (i32.ge_s (local.get $off) (i32.const 0))) (then
           (local.set $fvf (i32.or (local.get $fvf) (i32.const 16)))
@@ -2554,6 +2560,7 @@
     (local $dw i32) (local $r i32) (local $tab i32) (local $n i32) (local $i i32) (local $el i32) (local $reg i32)
     (local $blend i32)
     (global.set $d9ms_blend (i32.const 0))
+    (global.set $d9cpu_blend (i32.const 0)) ;; d9cpu
     ;; A blend (fixed function only) always gathers its inputs.
     (local.set $blend (i32.and (i32.eqz (local.get $vs)) (call $d9ms_blend_rs)))
     (if (local.get $decl)
@@ -2610,7 +2617,8 @@
   ;; palette entry k) is c(96 + 7k): four position columns, then three
   ;; inverse-transpose columns (zero when singular). Indexed: a0 = 7 x
   ;; index (D3DCOLOR indices are their RGBA order, x 255), 22 entries
-  ;; (c96..c249), an index past 21 declines 27 before the draw. c250 / c251
+  ;; (c96..c249); a draw naming an entry past 21 blends on the CPU instead
+  ;; (d9cpu block). c250 / c251
   ;; are the prologue's DEFs. Shape: matrices (bits 0..2), indexed 8,
   ;; D3DCOLOR indices 16, tween 32, NORMAL 64.
   ;; d9ms block +1024: the shape of each fixed T&L cache entry (16 x 4);
@@ -2672,11 +2680,13 @@
     (global.set $d9ms_blend (local.get $shape))
     (local.get $off))
 
-  ;; An indexed blend whose vertices [min, min + num) name a palette entry
-  ;; past 21 (or a non-integer one): 1 (the draw declines 27).
-  (func $d9ms_idx_bad (param $min i32) (param $num i32) (result i32)
+  ;; d9cpu: the largest palette entry an indexed blend's vertices [min,
+  ;; min + num) name, each entry marked in the d9cpu used mask; -1 when one
+  ;; is not an integer in 0..255 (the draw declines 27).
+  (func $d9cpu_idx_scan (param $min i32) (param $num i32) (result i32)
     (local $e i32) (local $v i32) (local $c i32) (local $src i32) (local $type i32) (local $sc i32) (local $n i32) (local $f f32)
-    (if (i32.eqz (i32.and (global.get $d9ms_blend) (i32.const 8))) (then (return (i32.const 0))))
+    (local $k i32) (local $max i32) (local $mask i32)
+    (local.set $mask (i32.add (call $d9cpu_m) (global.get $D9CPU_MASK)))
     (local.set $e (global.get $d9ms_bi))
     (local.set $type (i32.load offset=8 (local.get $e)))
     (local.set $sc (call $d9ms_comps (local.get $type)))
@@ -2693,19 +2703,24 @@
           (then (f32.convert_i32_u (i32.load8_u (i32.add (local.get $src)
             (i32.xor (local.get $c) (select (i32.const 2) (i32.const 0) (i32.lt_u (local.get $c) (i32.const 3))))))))
           (else (call $d9ms_comp (local.get $src) (local.get $type) (local.get $c)))))
-        (if (i32.eqz (i32.and (i32.and (f32.ge (local.get $f) (f32.const 0)) (f32.le (local.get $f) (f32.const 21)))
+        (if (i32.eqz (i32.and (i32.and (f32.ge (local.get $f) (f32.const 0)) (f32.le (local.get $f) (f32.const 255)))
               (f32.eq (local.get $f) (f32.nearest (local.get $f)))))
-          (then (return (i32.const 1))))
+          (then (return (i32.const -1))))
+        (local.set $k (i32.trunc_f32_u (local.get $f)))
+        (if (i32.gt_u (local.get $k) (local.get $max)) (then (local.set $max (local.get $k))))
+        (i32.store8 (i32.add (local.get $mask) (local.get $k)) (i32.const 1))
         (local.set $c (i32.add (local.get $c) (i32.const 1)))
         (br $comps)))
       (local.set $v (i32.add (local.get $v) (i32.const 1)))
       (br $verts)))
-    (i32.const 0))
+    (local.get $max))
 
-  ;; Blending replaces the world matrix by the identity (tweening does not).
+  ;; Blending replaces the world matrix by the identity (tweening does not);
+  ;; so does a blend done on the CPU (d9cpu), whose output is world space.
   (func $d9ms_blend_world (result i32)
-    (i32.and (i32.ne (global.get $d9ms_blend) (i32.const 0))
-      (i32.eqz (i32.and (global.get $d9ms_blend) (i32.const 0x20)))))
+    (i32.or (i32.ne (global.get $d9cpu_blend) (i32.const 0))
+      (i32.and (i32.ne (global.get $d9ms_blend) (i32.const 0))
+        (i32.eqz (i32.and (global.get $d9ms_blend) (i32.const 0x20))))))
   (func $d9ms_identity (param $p i32)
     (memory.fill (local.get $p) (i32.const 0) (i32.const 64))
     (f32.store (local.get $p) (f32.const 1))
@@ -2975,6 +2990,216 @@
     (local.get $out))
   ;; ---- end d9ms ----------------------------------------------------------------
 
+  ;; ---- d9cpu: indexed vertex blending on the CPU ------------------------------
+  ;; The shader palette above holds 22 matrices (c96..c249). An indexed
+  ;; blend whose vertices name an entry past 21 -- D3D allows 0..255, the
+  ;; software vertex-processing limit -- is blended here instead, inside the
+  ;; d9ms gather: the vertex is gathered as usual (POSITION as 4 floats),
+  ;; then $d9cpu_run overwrites its POSITION with sum_i w_i (p . W_i) and
+  ;; its NORMAL with sum_i w_i (n . W_i^-T) -- the prologue's arithmetic in
+  ;; the prologue's order (dp4 / dp3 left to right, the first product a mul,
+  ;; the rest mads, the last weight 1 - dp4(weights, mask)) -- and the draw
+  ;; runs the plain cascade VS ($d9ms_blend 0) under the identity world
+  ;; ($d9ms_blend_world), so lighting and texgen see the same world-space
+  ;; vertex as on the shader path. The BLENDWEIGHT / BLENDINDICES lanes stay
+  ;; in the vertex unread. Only an index that is not an integer in 0..255 or
+  ;; a non-finite matrix still declines 27. Stat 82 counts CPU-blended draws.
+  ;; Block $d9cpu_mem: +0 256 x 112 per palette entry {the row-major matrix
+  ;; (64), the 3x3 inverse transpose as rows (3 x 16, w 0)}, +28672 the
+  ;; used-entry mask (256 bytes).
+  (global $D9CPU_MASK i32 (i32.const 28672))
+  (global $d9cpu_mem (mut i32) (i32.const 0))
+  ;; The blend shape done on the CPU this draw (0: none), and the gathered
+  ;; vertex's NORMAL (-1: none), weight and index offsets and their lanes.
+  (global $d9cpu_blend (mut i32) (i32.const 0))
+  (global $d9cpu_nrm (mut i32) (i32.const -1))
+  (global $d9cpu_nrm4 (mut i32) (i32.const 0))
+  (global $d9cpu_bw (mut i32) (i32.const 0))
+  (global $d9cpu_bwc (mut i32) (i32.const 0))
+  (global $d9cpu_bi (mut i32) (i32.const 0))
+  (global $d9cpu_bic (mut i32) (i32.const 0))
+
+  (func $d9cpu_m (result i32)
+    (local $g i32)
+    (if (i32.eqz (global.get $d9cpu_mem)) (then
+      (local.set $g (call $gps_alloc (i32.const 28928)))
+      (if (i32.eqz (local.get $g)) (then (call $d9g_fail (i32.const 41))))
+      (global.set $d9cpu_mem (call $gps_wa (local.get $g)))
+      (memory.fill (global.get $d9cpu_mem) (i32.const 0) (i32.const 28928))))
+    (global.get $d9cpu_mem))
+
+  ;; Does this draw's state ask for an indexed blend (POSITION as 4 floats)?
+  (func $d9cpu_pos4 (result i32)
+    (i32.and (call $d9ms_blend_rs) (i32.ne (call $d9g_rs (i32.const 167)) (i32.const 0))))
+
+  ;; Palette entry $k into the table: 0, or 27 for a non-finite matrix.
+  (func $d9cpu_mat (param $k i32) (param $nrm i32) (result i32)
+    (local $mat i32) (local $o i32) (local $j i32) (local $r i32) (local $det f64)
+    (local.set $mat (i32.add (global.get $d9g_pw) (i32.add (i32.const 2708) (i32.shl (local.get $k) (i32.const 6)))))
+    (local.set $o (i32.add (call $d9cpu_m) (i32.mul (local.get $k) (i32.const 112))))
+    (loop $finite
+      (if (i32.eq (i32.and (i32.load (i32.add (local.get $mat) (i32.shl (local.get $j) (i32.const 2)))) (i32.const 0x7f800000))
+            (i32.const 0x7f800000)) (then (return (i32.const 27))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br_if $finite (i32.lt_u (local.get $j) (i32.const 16))))
+    (memory.copy (local.get $o) (local.get $mat) (i32.const 64))
+    (memory.fill (i32.add (local.get $o) (i32.const 64)) (i32.const 0) (i32.const 48))
+    (if (i32.eqz (local.get $nrm)) (then (return (i32.const 0))))
+    ;; Row r of W^-T is (cof(r, 0), cof(r, 1), cof(r, 2)) / det: the same
+    ;; values $d9ms_blend_consts stores as the prologue's columns.
+    (local.set $det (f64.add (f64.add
+      (f64.mul (call $d9ms_a (local.get $mat) (i32.const 0) (i32.const 0)) (call $d9ms_cof (local.get $mat) (i32.const 0) (i32.const 0)))
+      (f64.mul (call $d9ms_a (local.get $mat) (i32.const 0) (i32.const 1)) (call $d9ms_cof (local.get $mat) (i32.const 0) (i32.const 1))))
+      (f64.mul (call $d9ms_a (local.get $mat) (i32.const 0) (i32.const 2)) (call $d9ms_cof (local.get $mat) (i32.const 0) (i32.const 2)))))
+    (if (f64.eq (local.get $det) (f64.const 0)) (then (return (i32.const 0))))
+    (local.set $r (i32.const 0))
+    (loop $rows
+      (local.set $j (i32.const 0))
+      (loop $cols
+        (f32.store (i32.add (i32.add (local.get $o) (i32.const 64))
+            (i32.add (i32.shl (local.get $r) (i32.const 4)) (i32.shl (local.get $j) (i32.const 2))))
+          (f32.demote_f64 (f64.div (call $d9ms_cof (local.get $mat) (local.get $r) (local.get $j)) (local.get $det))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $cols (i32.lt_u (local.get $j) (i32.const 3))))
+      (local.set $r (i32.add (local.get $r) (i32.const 1)))
+      (br_if $rows (i32.lt_u (local.get $r) (i32.const 3))))
+    (i32.const 0))
+
+  ;; Called by $d9g_draw_try once the draw has vertices: an indexed blend
+  ;; (shader shape planned by d9ms) naming an entry past 21 moves to the CPU
+  ;; (sets $d9cpu_blend, clears $d9ms_blend, fills the table). 0, or 27.
+  (func $d9cpu_pick (param $desc i32) (param $kind i32) (param $n i32) (result i32)
+    (local $min i32) (local $num i32) (local $max i32) (local $k i32) (local $i i32) (local $e i32) (local $mask i32)
+    (if (i32.eqz (i32.and (global.get $d9ms_blend) (i32.const 8))) (then (return (i32.const 0))))
+    (if (i32.and (local.get $kind) (i32.const 1))
+      (then
+        (local.set $min (i32.load offset=52 (local.get $desc)))
+        (local.set $num (i32.load offset=56 (local.get $desc))))
+      (else (local.set $num (local.get $n))))
+    ;; (an empty or oversized range declines 20 later)
+    (if (i32.or (i32.eqz (local.get $num)) (i32.gt_u (local.get $num) (i32.const 0x100000))) (then (return (i32.const 0))))
+    (local.set $mask (i32.add (call $d9cpu_m) (global.get $D9CPU_MASK)))
+    (memory.fill (local.get $mask) (i32.const 0) (i32.const 256))
+    (local.set $max (call $d9cpu_idx_scan (local.get $min) (local.get $num)))
+    (if (i32.lt_s (local.get $max) (i32.const 0)) (then (return (i32.const 27))))
+    (if (i32.le_u (local.get $max) (i32.const 21)) (then (return (i32.const 0))))
+    ;; Lanes the index element lacks read 0 (x, y, z) or 1 (w).
+    (i32.store8 (local.get $mask) (i32.const 1))
+    (i32.store8 offset=1 (local.get $mask) (i32.const 1))
+    (if (i32.and (global.get $d9ms_blend) (i32.const 16))
+      (then (i32.store8 offset=255 (local.get $mask) (i32.const 1))))
+    (block $kdone (loop $mats
+      (if (i32.load8_u (i32.add (local.get $mask) (local.get $k))) (then
+        (if (call $d9cpu_mat (local.get $k) (i32.and (global.get $d9ms_blend) (i32.const 0x40)))
+          (then (return (i32.const 27))))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br_if $mats (i32.lt_u (local.get $k) (i32.const 256)))))
+    ;; The gathered lanes, by semantic (POSITION is plan entry 0, offset 0).
+    (global.set $d9cpu_nrm (i32.const -1))
+    (block $edone (loop $ents
+      (br_if $edone (i32.ge_u (local.get $i) (global.get $d9ms_n)))
+      (local.set $e (i32.add (call $d9ms_m) (i32.shl (local.get $i) (i32.const 5))))
+      (if (i32.eqz (i32.load offset=24 (local.get $e))) (then
+        (if (i32.eq (i32.load offset=20 (local.get $e)) (i32.const 3)) (then
+          (global.set $d9cpu_nrm (i32.load offset=12 (local.get $e)))
+          (global.set $d9cpu_nrm4 (i32.ge_u (i32.load offset=16 (local.get $e)) (i32.const 4)))))
+        (if (i32.eq (i32.load offset=20 (local.get $e)) (i32.const 1)) (then
+          (global.set $d9cpu_bw (i32.load offset=12 (local.get $e)))
+          (global.set $d9cpu_bwc (i32.load offset=16 (local.get $e)))))
+        (if (i32.eq (i32.load offset=20 (local.get $e)) (i32.const 2)) (then
+          (global.set $d9cpu_bi (i32.load offset=12 (local.get $e)))
+          (global.set $d9cpu_bic (i32.load offset=16 (local.get $e)))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $ents)))
+    (if (i32.eqz (i32.and (global.get $d9ms_blend) (i32.const 0x40))) (then (global.set $d9cpu_nrm (i32.const -1))))
+    (if (i32.le_u (i32.and (global.get $d9ms_blend) (i32.const 7)) (i32.const 1)) (then (global.set $d9cpu_bwc (i32.const 0))))
+    (global.set $d9cpu_blend (global.get $d9ms_blend))
+    (global.set $d9ms_blend (i32.const 0))
+    (call $d9g_stat (i32.const 82) (i32.const 1))
+    (i32.const 0))
+
+  ;; Lane $c of the gathered vector at $p with $n lanes ((0, 0, 0, 1) past them).
+  (func $d9cpu_lane (param $p i32) (param $n i32) (param $c i32) (result f32)
+    (if (result f32) (i32.lt_u (local.get $c) (local.get $n))
+      (then (f32.load (i32.add (local.get $p) (i32.shl (local.get $c) (i32.const 2)))))
+      (else (select (f32.const 1) (f32.const 0) (i32.eq (local.get $c) (i32.const 3))))))
+
+  ;; Weight i of $nm matrices at gathered vertex $base.
+  (func $d9cpu_weight (param $base i32) (param $nm i32) (param $i i32) (result f32)
+    (local $p i32) (local $n i32)
+    (if (i32.eq (local.get $nm) (i32.const 1)) (then (return (f32.const 1))))
+    (local.set $p (i32.add (local.get $base) (global.get $d9cpu_bw)))
+    (local.set $n (global.get $d9cpu_bwc))
+    (if (i32.lt_u (local.get $i) (i32.sub (local.get $nm) (i32.const 1)))
+      (then (return (call $d9cpu_lane (local.get $p) (local.get $n) (local.get $i)))))
+    ;; 1 - dp4(v12, (nm > 1, nm > 2, nm > 3, 0)).
+    (f32.add (f32.const 1) (f32.neg
+      (f32.add (f32.add (f32.add
+        (f32.mul (call $d9cpu_lane (local.get $p) (local.get $n) (i32.const 0)) (f32.const 1))
+        (f32.mul (call $d9cpu_lane (local.get $p) (local.get $n) (i32.const 1))
+          (select (f32.const 1) (f32.const 0) (i32.gt_u (local.get $nm) (i32.const 2)))))
+        (f32.mul (call $d9cpu_lane (local.get $p) (local.get $n) (i32.const 2))
+          (select (f32.const 1) (f32.const 0) (i32.gt_u (local.get $nm) (i32.const 3)))))
+        (f32.mul (call $d9cpu_lane (local.get $p) (local.get $n) (i32.const 3)) (f32.const 0))))))
+
+  ;; Table address of the palette entry weight i of gathered vertex $base names.
+  (func $d9cpu_entry (param $base i32) (param $i i32) (result i32)
+    (local $f f32)
+    (local.set $f (call $d9cpu_lane (i32.add (local.get $base) (global.get $d9cpu_bi)) (global.get $d9cpu_bic) (local.get $i)))
+    ;; D3DCOLOR indices were gathered as byte / 255.
+    (if (i32.and (global.get $d9cpu_blend) (i32.const 16)) (then (local.set $f (f32.mul (local.get $f) (f32.const 255)))))
+    (i32.add (call $d9cpu_m) (i32.mul (i32.and (i32.trunc_sat_f32_u (f32.nearest (local.get $f))) (i32.const 255)) (i32.const 112))))
+
+  ;; Blends the $num gathered vertices at $dst in place (see the block
+  ;; comment), in v128: p . M is x row0 + y row1 + z row2 + w row3, lane j
+  ;; the dp4 ((x m0j + y m1j) + z m2j) + w m3j in the prologue's order. A
+  ;; scalar version gave bit-identical vertices and took 1.77x the user CPU
+  ;; on a fixed-work micro (4096 vertices x 400, four matrices + NORMAL:
+  ;; 35.3 vs 20.0 ns/vertex, node 24 arm64), so only this one ships.
+  (func $d9cpu_run (param $dst i32) (param $num i32)
+    (local $v i32) (local $base i32) (local $nm i32) (local $i i32) (local $t i32) (local $np i32) (local $nrm i32)
+    (local $p v128) (local $n v128) (local $q v128) (local $acc v128) (local $nacc v128) (local $wt v128)
+    (local.set $nm (i32.and (global.get $d9cpu_blend) (i32.const 7)))
+    (local.set $nrm (i32.ge_s (global.get $d9cpu_nrm) (i32.const 0)))
+    (block $vdone (loop $verts
+      (br_if $vdone (i32.ge_u (local.get $v) (local.get $num)))
+      (local.set $base (i32.add (local.get $dst) (i32.mul (local.get $v) (global.get $d9ms_stride))))
+      (local.set $p (v128.load (local.get $base)))
+      (if (local.get $nrm) (then
+        (local.set $np (i32.add (local.get $base) (global.get $d9cpu_nrm)))
+        (local.set $n (v128.load (local.get $np)))))
+      (local.set $i (i32.const 0))
+      (block $mdone (loop $mats
+        (br_if $mdone (i32.ge_u (local.get $i) (local.get $nm)))
+        (local.set $wt (f32x4.splat (call $d9cpu_weight (local.get $base) (local.get $nm) (local.get $i))))
+        (local.set $t (call $d9cpu_entry (local.get $base) (local.get $i)))
+        (local.set $q (f32x4.mul (f32x4.add (f32x4.add (f32x4.add
+          (f32x4.mul (i8x16.shuffle 0 1 2 3 0 1 2 3 0 1 2 3 0 1 2 3 (local.get $p) (local.get $p)) (v128.load (local.get $t)))
+          (f32x4.mul (i8x16.shuffle 4 5 6 7 4 5 6 7 4 5 6 7 4 5 6 7 (local.get $p) (local.get $p)) (v128.load offset=16 (local.get $t))))
+          (f32x4.mul (i8x16.shuffle 8 9 10 11 8 9 10 11 8 9 10 11 8 9 10 11 (local.get $p) (local.get $p)) (v128.load offset=32 (local.get $t))))
+          (f32x4.mul (i8x16.shuffle 12 13 14 15 12 13 14 15 12 13 14 15 12 13 14 15 (local.get $p) (local.get $p)) (v128.load offset=48 (local.get $t))))
+          (local.get $wt)))
+        (local.set $acc (if (result v128) (local.get $i) (then (f32x4.add (local.get $q) (local.get $acc))) (else (local.get $q))))
+        (if (local.get $nrm) (then
+          (local.set $q (f32x4.mul (f32x4.add (f32x4.add
+            (f32x4.mul (i8x16.shuffle 0 1 2 3 0 1 2 3 0 1 2 3 0 1 2 3 (local.get $n) (local.get $n)) (v128.load offset=64 (local.get $t)))
+            (f32x4.mul (i8x16.shuffle 4 5 6 7 4 5 6 7 4 5 6 7 4 5 6 7 (local.get $n) (local.get $n)) (v128.load offset=80 (local.get $t))))
+            (f32x4.mul (i8x16.shuffle 8 9 10 11 8 9 10 11 8 9 10 11 8 9 10 11 (local.get $n) (local.get $n)) (v128.load offset=96 (local.get $t))))
+            (local.get $wt)))
+          (local.set $nacc (if (result v128) (local.get $i) (then (f32x4.add (local.get $q) (local.get $nacc))) (else (local.get $q))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $mats)))
+      (v128.store (local.get $base) (local.get $acc))
+      (if (local.get $nrm) (then
+        (if (global.get $d9cpu_nrm4)
+          (then (v128.store (local.get $np) (local.get $nacc)))
+          (else
+            (i64.store (local.get $np) (i64x2.extract_lane 0 (local.get $nacc)))
+            (f32.store offset=8 (local.get $np) (f32x4.extract_lane 2 (local.get $nacc)))))))
+      (local.set $v (i32.add (local.get $v) (i32.const 1)))
+      (br $verts))))
+  ;; ---- end d9cpu ---------------------------------------------------------------
+
   ;; ---- draws -----------------------------------------------------------------
   (func $d9g_vcount (param $prim i32) (param $n i32) (result i32)
     (if (i32.eq (local.get $prim) (i32.const 1)) (then (return (local.get $n))))
@@ -3117,6 +3342,9 @@
     (local.set $count (i32.load offset=28 (local.get $desc)))
     (if (i32.or (i32.eqz (local.get $prim)) (i32.gt_u (local.get $prim) (i32.const 6))) (then (return (i32.const 26))))
     (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
+    ;; d9cpu: an indexed blend past the constant palette blends on the CPU.
+    (local.set $r (call $d9cpu_pick (local.get $desc) (local.get $kind) (call $d9g_vcount (local.get $prim) (local.get $count))))
+    (if (local.get $r) (then (return (local.get $r))))
     (local.set $r (call $d9g_bind (local.get $device) (local.get $desc)))
     (if (local.get $r) (then (return (local.get $r))))
     (if (global.get $d9g_cstale) (then (return (i32.const 13))))
@@ -3255,7 +3483,6 @@
     (if (i32.and (i32.eqz (local.get $direct))
           (i32.gt_u (i32.mul (local.get $num) (local.get $stride)) (i32.const 0x200000)))
       (then (return (i32.const 20))))
-    (if (call $d9ms_idx_bad (local.get $min) (local.get $num)) (then (return (i32.const 27)))) ;; d9ms
     (local.set $depth (select (global.get $GPS_DEPTH_Z) (i32.const 0) (local.get $depth)))
     (local.set $r (call $d9g_raster (local.get $depth) (local.get $stencil) (local.get $fog)))
     (if (local.get $r) (then (return (local.get $r))))
@@ -3308,7 +3535,9 @@
             (br $idx)))))
         (local.set $vpos (call $d9g_arena (i32.mul (local.get $num) (local.get $stride))))
         (if (local.get $gather)
-          (then (call $d9ms_gather (call $d9g_aptr (local.get $vpos)) (local.get $min) (local.get $num))) ;; d9ms
+          (then
+            (call $d9ms_gather (call $d9g_aptr (local.get $vpos)) (local.get $min) (local.get $num)) ;; d9ms
+            (if (global.get $d9cpu_blend) (then (call $d9cpu_run (call $d9g_aptr (local.get $vpos)) (local.get $num))))) ;; d9cpu
           (else
         (memory.copy (call $d9g_aptr (local.get $vpos))
           (i32.add (call $g2w (local.get $vptr)) (i32.mul (local.get $min) (local.get $stride)))
