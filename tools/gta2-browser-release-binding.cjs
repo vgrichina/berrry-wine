@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypt
 const ROOT=path.resolve(__dirname,'..');
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const HELPER='scratch/runs/20261108-redline-car-door-native/bound-input.cjs';
-function nativeContext(ex) {
+function nativeContext(ex, diagnostics = false) {
   // Runs on the owning CPU instance; only public USER/process exports.
   for (const name of ['get_main_hwnd','get_focus_hwnd','get_capture_hwnd','modal_dialog_hwnd',
     'dialogbox_hwnd','get_process_id','get_current_thread_id','get_window_thread',
@@ -29,10 +29,15 @@ function nativeContext(ex) {
   const live = w => w.hwnd && w.live && w.generation !== '0' && w.threadId === threadId;
   const modalValid = !modal || (live(modal) && modal.visible && !modal.child &&
     (modal.owner === main.hwnd || !modal.owner && ex.ctrl_get_class(modal.hwnd) === 16));
-  const healthy = !!(processId && threadId && ex.get_eip() && !ex.get_quit_flag() && ex.get_yield_reason() !== 2 &&
-    live(main) && main.visible && !main.child && live(focus) && !capture && modalValid &&
-    focusTopLevel === (modal ? modal.hwnd : main.hwnd));
-  return {healthy, context:{processId, threadId, main, focus, focusTopLevel, capture, modal}};
+  const execution = {eip:ex.get_eip() >>> 0,quit:ex.get_quit_flag() >>> 0,yieldReason:ex.get_yield_reason() >>> 0};
+  const checks = {process:!!processId,thread:!!threadId,instruction:!!execution.eip,
+    notQuit:!execution.quit,notExited:execution.yieldReason !== 2,mainLive:!!live(main),
+    mainVisible:main.visible,mainTopLevel:!main.child,focusLive:!!live(focus),noCapture:!capture,
+    modalValid:!!modalValid,focusTopLevel:focusTopLevel === (modal ? modal.hwnd : main.hwnd)};
+  const value = {healthy:Object.values(checks).every(Boolean),
+    context:{processId, threadId, main, focus, focusTopLevel, capture, modal}};
+  // Moving execution diagnostics never enter the stable scene identity.
+  return diagnostics ? {...value,checks,failed:Object.keys(checks).filter(k=>!checks[k]),execution} : value;
 }
 function workerBridge(readNative) {
   // Free names below are the actual existing
@@ -44,9 +49,10 @@ function workerBridge(readNative) {
   const clone = value => JSON.parse(JSON.stringify(value));
   const same = (a,b) => JSON.stringify(a) === JSON.stringify(b);
   const check = (condition, message) => {if (!condition) throw Error(message);};
-  const snapshot = () => {
+  const snapshot = (beforeInstall = false) => {
     check(!closed, 'permanent native UNKNOWN');
-    check(self.onmessage===onMessage && instance === ownerInstance && endpointIdentity === ownerEndpoint && workerSlot === ownerSlot &&
+    check((beforeInstall ? self.onmessage===previous : self.onmessage===onMessage) &&
+      instance === ownerInstance && endpointIdentity === ownerEndpoint && workerSlot === ownerSlot &&
       !scopedRetiring && !threadSendFrames.length && !threadSendWaits.fenced() && !threadSendWaits.rootSend &&
       !(typeof dynamicLoadTransaction !== 'undefined' && (dynamicLoadTransaction || dynamicLoadDraining)) &&
       !writerActive() && !commandWriterHandoff, 'native owner unavailable or nested');
@@ -132,9 +138,10 @@ function workerBridge(readNative) {
       }
     });
   };
+  const initial = snapshot(true);
   self.onmessage=onMessage;
   Object.defineProperty(globalThis,'__gta2NativeReleaseV1',{value:Object.freeze({epoch,endpointIdentity:ownerEndpoint,slot:ownerSlot})});
-  return snapshot();
+  return initial;
 }
 function pageBridge(options, readNative) {
   // Independent child attestation recovers and compares
@@ -216,12 +223,12 @@ function pageBridge(options, readNative) {
     pending.clear();
   }
   function open() {check(!closed,'permanent page UNKNOWN; zero later requests');}
-  function page() {
+  function page(handlers = [down,up,press]) {
     open();
     check(appsNow().length === 1 && appsNow()[0].name === options.app && appsNow()[0].wine === wine &&
       wine.running && !wine._stopped && wine.renderer === renderer && wine.memory === memory && memory.buffer === buffer &&
       wine.instance === instance && wine._wasmModule === module && renderer.canvas === canvas && renderer.inputQueue === queue &&
-      renderer.handleKeyDown === down && renderer.handleKeyUp === up && renderer.handleKeyPress === press,
+      renderer.handleKeyDown === handlers[0] && renderer.handleKeyUp === handlers[1] && renderer.handleKeyPress === handlers[2],
       'current process/renderer/source ownership changed');
     if (worker) check(wine.guestWorker?.link === link && link.worker === worker && !link._stopped && !link._stopping &&
       !link._transportFailure && link.endpointIdentity === nativeOwner.endpointIdentity, 'actual CPU endpoint retired');
@@ -290,7 +297,7 @@ function pageBridge(options, readNative) {
     check(!renderer._mouseButtonsMask && Object.entries(renderer._physicalKeys || {}).every(([key,held]) =>
       !held || active.physical.has(Number(key))), 'unowned physical input at consumption');
   }
-  if (worker) worker.addEventListener('message', event => {
+  const onWorkerMessage = event => {
     const message = event.data;
     if (message?.t === 'gta2NativeCommitV1') {
       const words = new Int32Array(message.commit);
@@ -312,7 +319,7 @@ function pageBridge(options, readNative) {
       if (message.error) {entry.reject(Error(message.error));seal(message.error);}
       else entry.resolve(message.result);
     }
-  });
+  };
   function down(key, info) {
     if (closed) return;
     try {
@@ -336,7 +343,6 @@ function pageBridge(options, readNative) {
     // character event is outside this guarded protocol and cannot add effects.
     return undefined;
   }
-  renderer.handleKeyDown = down;renderer.handleKeyUp = up;renderer.handleKeyPress = press;
   const api = Object.freeze({epoch,app:options.app,
     async sourceProof({compactHost=false}={}) {
       page();
@@ -427,8 +433,13 @@ function pageBridge(options, readNative) {
     },
     seal:reason=>seal(reason),
   });
+  const initial = page([originalDown,originalUp,originalPress]);
+  check(initial.physicalUp,'physical input held before native installation');
+  if (!worker) check(readNative(instance.exports).healthy,'unhealthy main-thread native context');
+  if (worker) worker.addEventListener('message',onWorkerMessage);
+  renderer.handleKeyDown = down;renderer.handleKeyUp = up;renderer.handleKeyPress = press;
   Object.defineProperty(globalThis,'__gta2NativeReleasePageV1',{value:api});
-  return page();
+  return initial;
 }
 const WORKER_URL='gta2-native-release-worker-v1.js',PAGE_URL='gta2-native-release-page-v1.js';
 function workerSource(){return '('+workerBridge.toString()+')('+nativeContext.toString()+')\n//# sourceURL='+WORKER_URL;}
@@ -483,28 +494,149 @@ async function evaluate(c,session,expression){
   const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},session);
   assert(!r.exceptionDetails,JSON.stringify(r.exceptionDetails));return r.result.value;
 }
-async function install({c,pageSession,workers,app,backend}){
-  const page=await evaluate(c,pageSession,`({worker:!!runningApps[0]?.wine?.guestWorker,endpoint:runningApps[0]?.wine?.guestWorker?.link?.endpointIdentity})`);
-  let nativeOwner;
-  if(page.worker){
-    const matches=[];
-    for(const w of workers.values())if(!w.closed&&w.url.includes('guest-worker')){
-      const actual=await evaluate(c,w.sessionId,`typeof endpointIdentity==='undefined'?null:({endpointIdentity,slot:workerSlot})`);
-      if(actual?.endpointIdentity===page.endpoint&&actual.slot===0)matches.push(w);
-    }
-    assert.equal(matches.length,1,'one actual owning CPU Worker');
-    const actual=await evaluate(c,matches[0].sessionId,workerSource());
-    nativeOwner={epoch:actual.epoch,endpointIdentity:actual.endpointIdentity,slot:actual.slot};
-  }else {
-    // Pay the engine's first debugger transition before personal scene review.
-    // Each release child still opens its own session and recovers fresh bodies
-    // and module wire bytes; no source/hash or scene is retained here.
-    await c.send('Debugger.enable',{},pageSession);
-    nativeOwner={epoch:crypto.randomUUID(),endpointIdentity:'main',slot:0};
+function userStartupObserver(readNative, options) {
+  // Retained only as a CDP RemoteObject. No global, handler, native endpoint,
+  // capture or input is installed by this read-only observer.
+  const check=(ok,message)=>{if(!ok)throw Error('UNSENT native startup: '+message);};
+  const cpu=options.cpu, workerCPU=cpu==='worker';
+  let owner, inspect;
+  if(workerCPU){
+    check(!Object.hasOwn(globalThis,'__gta2NativeReleaseV1'),'bridge already published');
+    const ownInstance=instance,ownEndpoint=endpointIdentity,ownSlot=workerSlot,handler=self.onmessage;
+    owner={worker:true,endpoint:ownEndpoint,slot:ownSlot};
+    inspect=()=>{
+      check(!Object.hasOwn(globalThis,'__gta2NativeReleaseV1'),'bridge published during observation');
+      check(instance===ownInstance && endpointIdentity===ownEndpoint && workerSlot===ownSlot &&
+        self.onmessage===handler && !scopedRetiring,'CPU owner retired or changed');
+      check(!threadSendFrames.length && !threadSendWaits.fenced() && !threadSendWaits.rootSend &&
+        !(typeof dynamicLoadTransaction!=='undefined'&&(dynamicLoadTransaction||dynamicLoadDraining)) &&
+        !writerActive() && !commandWriterHandoff,'CPU owner nested or unavailable');
+      return readNative(ownInstance.exports,true);
+    };
+  } else {
+    check(!Object.hasOwn(globalThis,'__gta2NativeReleasePageV1'),'page bridge already published');
+    check(typeof runningApps!=='undefined'&&runningApps.length===1&&runningApps[0].name===options.app,'one current registered process');
+    const wine=runningApps[0].wine,renderer=wine.renderer,memory=wine.memory,buffer=memory.buffer;
+    const ownInstance=wine.instance,module=wine._wasmModule,process=wine._processObject,processId=wine.processId;
+    check(process&&Number.isSafeInteger(processId)&&processId>0,'current process object unavailable');
+    const canvas=renderer.canvas,queue=renderer.inputQueue,link=wine.guestWorker?.link,worker=link?.worker;
+    const down=renderer.handleKeyDown,up=renderer.handleKeyUp,press=renderer.handleKeyPress;
+    owner={worker:!!worker,endpoint:link?.endpointIdentity??'main',slot:0,processId};
+    inspect=()=>{
+      check(!Object.hasOwn(globalThis,'__gta2NativeReleasePageV1'),'page bridge published during observation');
+      check(runningApps.length===1&&runningApps[0].name===options.app&&runningApps[0].wine===wine&&
+        wine.running&&!wine._stopped&&wine._processObject===process&&!process?.exited&&wine.processId===processId&&
+        wine.renderer===renderer&&wine.memory===memory&&memory.buffer===buffer&&wine.instance===ownInstance&&
+        wine._wasmModule===module&&renderer.canvas===canvas&&renderer.inputQueue===queue&&
+        renderer.handleKeyDown===down&&renderer.handleKeyUp===up&&renderer.handleKeyPress===press,
+        'process/renderer/source owner stopped or changed');
+      check(!document.getElementById('wine-crash-report'),'native fault report');
+      check(!renderer._mouseButtonsMask&&!Object.values(renderer._physicalKeys||{}).some(Boolean),'physical input held');
+      if(worker)check(wine.guestWorker?.link===link&&link.worker===worker&&!link._stopped&&!link._stopping&&
+        !link._transportFailure&&link.endpointIdentity===owner.endpoint,'CPU endpoint retired or changed');
+      else check(!wine.guestWorker,'CPU backend changed');
+      return worker?null:readNative(ownInstance.exports,true);
+    };
   }
-  const options={app,backend,nativeOwner};
-  await evaluate(c,pageSession,pageSource(options));
-  return options;
+  let processThread=null,main=null;
+  const generations=new Map();
+  function sample(){
+    const user=inspect();
+    if(user){
+      const terminal=reason=>({owner,...user,terminal:reason});
+      if(user.execution.quit||user.execution.yieldReason===2)
+        return terminal('native quit or exit');
+      const context=user.context;
+      if(context.processId&&context.threadId){
+        const current=context.processId+':'+context.threadId;
+        if(processThread===null)processThread=current;
+        if(current!==processThread)return terminal('native process/thread generation changed');
+      }
+      if(main!==null&&!context.main.hwnd)return terminal('native main window retired');
+      if(context.main.hwnd){
+        const current=context.main.hwnd+':'+context.main.generation;
+        if(main===null)main=current;
+        if(main!==current||!context.main.live)return terminal('native main window retired or generation changed');
+      }
+      for(const win of [context.main,context.focus,context.modal])if(win?.hwnd){
+        const identity=win.generation+':'+win.threadId;
+        if(!generations.has(win.hwnd))generations.set(win.hwnd,identity);
+        if(generations.get(win.hwnd)!==identity||!win.live)return terminal('native window retired or generation changed');
+        if(win.threadId!==context.threadId)return terminal('native window belongs to another thread');
+      }
+    }
+    return {owner,...(user||{healthy:true,pageOnly:true})};
+  }
+  return Object.freeze({sample,commit(source){
+    const current=sample();check(!current.terminal,current.terminal);
+    check(current.healthy,'USER became unhealthy before publication');
+    // Recheck the retained actual owner and native state in the same CPU turn
+    // as the bridge's own atomic preflight. No saved observation grants input.
+    return (0,eval)(source);
+  }});
+}
+async function install({c,pageSession,workers,app,backend,onReadiness=()=>{}}){
+  const due=Date.now()+3000,refs=[];let timer,publishing=false;
+  const unsent=error=>{error.nativeStartupState=publishing?'UNKNOWN':'UNSENT';return error;};
+  const work=(async()=>{
+    async function observer(session,cpu){
+      const r=await c.send('Runtime.evaluate',{expression:'('+userStartupObserver.toString()+')('+nativeContext.toString()+','+
+        JSON.stringify({app,cpu})+')',returnByValue:false},session);
+      assert(!r.exceptionDetails,JSON.stringify(r.exceptionDetails));
+      assert(r.result.objectId,'retained actual startup observer');
+      const ref={session,objectId:r.result.objectId};refs.push(ref);return ref;
+    }
+    async function call(ref,method,source){
+      const r=await c.send('Runtime.callFunctionOn',{objectId:ref.objectId,
+        functionDeclaration:method==='sample'?'function(){return this.sample();}':'function(source){return this.commit(source);}',
+        arguments:source===undefined?[]:[{value:source}],returnByValue:true},ref.session);
+      assert(!r.exceptionDetails,JSON.stringify(r.exceptionDetails));return r.result.value;
+    }
+    const pageRef=await observer(pageSession,'page');
+    const page=await call(pageRef,'sample');let cpuRef=pageRef;
+    if(page.owner.worker){
+      const matches=[];
+      for(const w of workers.values())if(!w.closed&&w.url.includes('guest-worker')){
+        const actual=await evaluate(c,w.sessionId,`typeof endpointIdentity==='undefined'?null:({endpointIdentity,slot:workerSlot})`);
+        if(actual?.endpointIdentity===page.owner.endpoint&&actual.slot===0)matches.push(w);
+      }
+      assert.equal(matches.length,1,'one actual owning CPU Worker');
+      cpuRef=await observer(matches[0].sessionId,'worker');
+    } else {
+      // First debugger transition is paid before review. Every release child
+      // still independently recovers current executed bodies and module bytes.
+      await c.send('Debugger.enable',{},pageSession);
+    }
+    for(;;){
+      assert(Date.now()<due,'bounded native USER startup expired UNSENT');
+      const samples=await Promise.all([call(cpuRef,'sample'),...(cpuRef===pageRef?[]:[call(pageRef,'sample')])]);
+      const current=samples[0];assert(Date.now()<due,'bounded native USER startup expired UNSENT');
+      onReadiness({...current,state:'UNSENT',at:Date.now(),deadline:due});
+      assert(!current.terminal,current.terminal);
+      assert.equal(current.context.processId,page.owner.processId,'actual native process differs from current owner');
+      if(current.healthy)break;
+      await new Promise(resolve=>setTimeout(resolve,20));
+    }
+    let nativeOwner;
+    // Once this request is issued, a transport failure has an UNKNOWN endpoint
+    // outcome. Nothing, including RemoteObject cleanup, may send a later request.
+    publishing=true;
+    if(page.owner.worker){
+      const actual=await call(cpuRef,'commit',workerSource());
+      nativeOwner={epoch:actual.epoch,endpointIdentity:actual.endpointIdentity,slot:actual.slot};
+    } else nativeOwner={epoch:crypto.randomUUID(),endpointIdentity:'main',slot:0};
+    const options={app,backend,nativeOwner};
+    await call(pageRef,'commit',pageSource(options));
+    await Promise.all(refs.map(ref=>c.send('Runtime.releaseObject',{objectId:ref.objectId},ref.session)));
+    return options;
+  })();
+  const deadline=new Promise((_,reject)=>{timer=setTimeout(()=>{
+    const error=unsent(Error('native USER startup exceeded fixed 3000ms'));
+    c.seal(error.message);reject(error);
+  },Math.max(0,due-Date.now()));});
+  try{return await Promise.race([work,deadline]);}
+  catch(error){c.seal('first native USER startup refusal: '+error);throw unsent(error);}
+  finally{clearTimeout(timer);}
 }
 // This runs in the release child on its own CDP transport. The expected source
 // bodies are generated from this child's current helper, not copied from ACKs.
@@ -714,4 +846,4 @@ async function attestExecuted({c,pageSession,cfg,trace=()=>{},preparedTargets=nu
   current();trace('fresh-native-scene-and-final-pins');
   return {native,live:live?.identity??null,sources:rows,pageProof,assertCurrent:current};
 }
-module.exports={nativeContext,workerBridge,pageBridge,workerSource,pageSource,install,attestExecuted,evaluate,verifyPins,verifyPinsAsync,checkPID};
+module.exports={nativeContext,userStartupObserver,workerBridge,pageBridge,workerSource,pageSource,install,attestExecuted,evaluate,verifyPins,verifyPinsAsync,checkPID};

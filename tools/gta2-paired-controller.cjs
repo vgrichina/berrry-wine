@@ -683,13 +683,19 @@ async function browser(out,backend) {
     await c.send('Page.navigate',{url:'http://127.0.0.1:'+port+'/index.html?debug&threads&d3d-renderer='+backend+'&app=gta2_demo'},session);
     const startupEnd=Math.min(Date.now()+60000,(launch.deadline-180)*1000);
     for(;;){
-      const fatal=await evaluate(`!!document.getElementById('wine-crash-report')`);if(fatal){const shot=await c.send('Page.captureScreenshot',{format:'png'},session);const png=Buffer.from(shot.data,'base64');fs.writeFileSync(out+'/startup-failure.png',png,{flag:'wx'});record('startup-failure.json',{at:Date.now(),sha256:sha(png),diagnostic:true,nativeQuit:false});throw Error('original fatal launch report');}
+      const fatal=await evaluate(`!!document.getElementById('wine-crash-report')`);if(fatal){record('startup-failure.json',{at:Date.now(),fatalNativeReport:true,state:'UNSENT',captures:0,input:0,nativeQuit:false});throw Error('original fatal launch report');}
       const ready=await evaluate(`typeof runningApps==='undefined'?null:runningApps.map(a=>({name:a.name,running:a.wine?.running,stopped:a.wine?._stopped,worker:!!a.wine?.guestWorker,slice:!!a.wine?._workerLastSlice}))`);
       if(ready?.length===1&&ready[0].running&&ready[0].worker&&ready[0].slice)break;
       assert(!ready?.some(a=>a.stopped),'original stopped during startup');assert(Date.now()<startupEnd,'bounded original startup readiness');await wait(250);
     }
     await Promise.all(tasks);record('executed-sources.json',{workers:[...workers.values()]});
-    bridgeOptions=await require('./gta2-browser-release-binding.cjs').install({c,pageSession:session,workers,app:'gta2_demo',backend});
+    try {
+      bridgeOptions=await require('./gta2-browser-release-binding.cjs').install({c,pageSession:session,workers,app:'gta2_demo',backend,
+        onReadiness:value=>fs.appendFileSync(out+'/native-readiness.log',JSON.stringify(value)+'\n')});
+    } catch(error) {
+      record('native-startup-refusal.json',{at:Date.now(),state:error.nativeStartupState??'UNKNOWN',
+        error:String(error),captures:0,input:0,laterRequestsAllowed:0});throw error;
+    }
     record('native-bridge.json',{bridgeOptions});await boundedOperation(c,'startup capture',()=>capture('startup'));
     bound=latest.identity;record('permanent-owner.json',{identity:bound,browser:{pid:browser.pid,startToken},backend,noReplay:true});
     await evaluate(`(()=>{if(Object.hasOwn(globalThis,'__gta2PassiveOwner'))throw Error('owner reference already bound');Object.defineProperty(globalThis,'__gta2PassiveOwner',{value:runningApps[0].wine});return true;})()`);

@@ -39,7 +39,10 @@ function authoredPE(){
   assert.equal(changed,3);return bytes;
 }
 function sourcePins(controller){
-  const files=['host.js','index.html',...fs.readdirSync(path.join(ROOT,'lib')).filter(n=>n.endsWith('.js')).map(n=>'lib/'+n),
+  const librarySources=dir=>fs.readdirSync(path.join(ROOT,dir),{withFileTypes:true}).sort((a,b)=>a.name.localeCompare(b.name))
+    .flatMap(entry=>entry.isDirectory()?librarySources(dir+'/'+entry.name):
+      /\.(?:js|json)$/.test(entry.name)?[dir+'/'+entry.name]:[]);
+  const files=['host.js','index.html','src/api_table.json',...librarySources('lib'),
     'tools/gta2-browser-release-binding.cjs','tools/gta2-paired-controller.cjs',controller.HELPER,
     'test/test-gta2-fresh-attestation-prearm.cjs','test/test-gta2-browser-release-scene-binding.cjs','build/wine-assembly.wasm'];
   return {files:files.map(p=>({path:p,sha256:sha(fs.readFileSync(path.join(ROOT,p)))})),
@@ -63,8 +66,10 @@ async function browserFixture(out,mode,{dlls=false,prepareDebugger=false,tamperS
   // One small authored run input; Git stores its generator, not a source or
   // game-media archive. Native counters use public SetWindowTextA, so no
   // private counter reads or foreign OutputDebugString implementation is used.
-  const fixtureFile=path.resolve(out,'..','..','authored-native-input.exe');
-  const fixture=path.relative(ROOT,fixtureFile),fixtureBytes=fixtureFactory();
+  const fixtureBytes=fixtureFactory(),fixtureDir=path.join(ROOT,'test/binaries/gta2-user-readiness-20261116');
+  fs.mkdirSync(fixtureDir,{recursive:true});
+  const fixtureFile=path.join(fixtureDir,'manual-native-input-'+sha(fixtureBytes).slice(0,16)+'.exe');
+  const fixture=path.relative(ROOT,fixtureFile);
   if(!fs.existsSync(fixtureFile))fs.writeFileSync(fixtureFile,fixtureBytes,{flag:'wx'});
   assert.equal(sha(fs.readFileSync(fixtureFile)),sha(fixtureBytes));
   const pins=sourcePins(controller);pins.files.push({path:fixture,sha256:sha(fixtureBytes)});
@@ -347,7 +352,16 @@ async function browserFixture(out,mode,{dlls=false,prepareDebugger=false,tamperS
     record('failure.json',{error:error.stack,at:Date.now(),originalLaunched:false,noRetry:true});process.exitCode=1;
   }finally{
     if(c)c.stop();
-    if(browser){browser.kill('SIGTERM');let timer;
+    if(browser){
+      const processes=[];
+      for(const name of fs.readdirSync('/proc').filter(n=>/^\d+$/.test(n)))try{
+        const line=fs.readFileSync('/proc/'+name+'/stat','utf8'),f=line.slice(line.lastIndexOf(')')+2).split(' ');
+        processes.push({pid:Number(name),ppid:Number(f[1]),pgid:Number(f[2]),startToken:f[19]});
+      }catch{}
+      const owned=new Set([browser.pid]);let changed=true;
+      while(changed){changed=false;for(const p of processes)if(owned.has(p.ppid)&&!owned.has(p.pid)){owned.add(p.pid);changed=true;}}
+      record('chrome-processes.json',{processes:processes.filter(p=>owned.has(p.pid))});
+      browser.kill('SIGTERM');let timer;
       try{await Promise.race([joined,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Chrome close timeout')),3000);})]);}
       catch{browser.kill('SIGKILL');await joined;}finally{clearTimeout(timer);}
     }
