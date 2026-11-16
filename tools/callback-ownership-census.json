@@ -206,7 +206,7 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "924969232493d1edd85238eb7ac10924ba6d8327f0ca8b44fe919dc051eeed22",
+      "sha256": "dbeb7e8372cd788b006d2d264f7ba500f181c33ce983cafbfadac6d41414dea1",
       "d3dimOldPathDeleteReview20261115": "2026-11-15 GPU stream v2 D2c: the shared render owner's D3DIM endpoint is always software; the 0x2000A host branch is removed (D3DIM GPU present never leaves WAT). No guest invocation, callback owner, continuation or retained guest reference added.",
       "gpuStreamDoorbellReview20261114": "2026-11-14 GPU stream doorbell: gpu_stream_kick picks its consumer bridge from GpsRing.api (Glide only today) instead of assuming Glide. Same synchronous/promise results as before; no guest invocation, callback owner, continuation or retained guest reference added.",
       "gpuStreamV2Review20261114": "2026-11-14 GPU stream v2: glide_submit/glide_batch replaced by gpu_stream_kick(ring, mode), which drains a WAT-written ring in shared memory into an executor; Glide bridge also receives the --gpu-stream-dump path. Frames reach the compositor exactly as before; no guest invocation, callback owner, continuation or retained guest reference added.",
