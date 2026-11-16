@@ -101,11 +101,17 @@ def lease():
             assert r['state'] in ('CONSUMED','CANCELLED') and r['consumed'],'prior intent unresolved'
             assert r['reason'] in (None,'immutable deadline expired','independent release'),'guard owner revoked'
     return o,s
-def capture(name):
+def capture(name,operationDeadline=None):
     try:
         assert name.replace('-','').isalnum();capture_phase();opened()
         p=R/(name+'.png');assert not p.exists()
-        start=time.time();s=call({'action':'snapshot'});capture_phase();im=call({'cmd':'png:'+str(p)});end=time.time()
+        def observe(command):
+            remaining=10 if operationDeadline is None else operationDeadline-time.time()
+            assert remaining>0,'3000ms operation completion exceeded'
+            value=call(command,timeout=remaining)
+            if operationDeadline is not None:assert time.time()<operationDeadline,'3000ms operation completion exceeded'
+            return value
+        start=time.time();s=observe({'action':'snapshot'});capture_phase();im=observe({'cmd':'png:'+str(p)});end=time.time()
         if read('launch.json').get('inputPolicy'):assert end-start<=3,'3000ms observation exceeded'
         save(name+'.json',dict(at=start,completedAt=end,snapshot=s,image=im,pngSHA256=hashlib.sha256(p.read_bytes()).hexdigest()))
         return str(p)
@@ -155,7 +161,11 @@ def release(name,owner,deadline,final=False):
         save(name+'-release-skipped.json',dict(state='NOT_SENT',at=time.time(),reason='no DOWN dispatch authorized'))
         return
     save(name+'-release-fired.json',dict(at=time.time(),due=due,source=source,fallback=deadline))
-    try:save(name+'-up.json',dict(state='ACK',reply=call({'action':'guarded-release','owner':owner}),at=time.time()))
+    try:
+        strict=read('launch.json').get('inputPolicy');start=time.time()
+        reply=call({'action':'guarded-release','owner':owner},timeout=.5 if strict else 10)
+        if strict:assert time.time()-start<=.5,'500ms release confirmation exceeded'
+        save(name+'-up.json',dict(state='ACK',reply=reply,at=time.time()))
     except Exception as e:
         # A reviewed final choice can retire the native before the finite UP.
         # Port closure alone never proves that. Preserve failed/signal waits
@@ -173,6 +183,7 @@ def release(name,owner,deadline,final=False):
                     time.sleep(.01)
         save(name+'-up.json',dict(state='UNKNOWN',error=str(e),at=time.time()));raise
 def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=None):
+    startedAt=time.time();startedMono=time.monotonic()
     assert name.replace('-','').isalnum() and 40<=ms<=1000
     assert len(keys)==1 and re.fullmatch(r'(?:keydown:(?:13|27|32|37|38|39|40|78|89)|(?:mousedown|mousemove):[0-9]{1,4}:[0-9]{1,4})',keys[0])
     if keys[0].startswith(('mousedown:','mousemove:')):
@@ -199,13 +210,14 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
             return 'NOT_SENT: review expired; fresh capture + review + NEW intent required'
         strict=read('launch.json').get('inputPolicy')
         window=3.0 if strict else 6.0
-        deadline=min(time.time()+window,rr['at']+fresh,reviewed['at']+fresh)
+        deadline=startedAt+window
+        targetingDeadline=min(rr['at']+fresh,reviewed['at']+fresh)
         allowance=admission_allowance(ms,strict)
-        intentDeadline=dict(deadline=deadline,pulseMilliseconds=ms,operationWindowSeconds=window,
+        intentDeadline=dict(startedAt=startedAt,deadline=deadline,targetingDeadline=targetingDeadline,pulseMilliseconds=ms,operationWindowSeconds=window,
                             admissionAllowanceSeconds=allowance)
         save(name+'-operation.json',intentDeadline)
-        def reject(stage):
-            save(name+'-rejection.json',dict(state='NOT_SENT',lease='VALID',reason='insufficient remaining finite-intent budget',
+        def reject(stage,reason='insufficient remaining finite-intent budget'):
+            save(name+'-rejection.json',dict(state='NOT_SENT',lease='VALID',reason=reason,
                  stage=stage,deadline=deadline,requiredSeconds=allowance,nonces=nonces,at=time.time(),effects=False))
             return 'NOT_SENT: insufficient remaining budget; fresh capture + review + NEW intent required'
         if not admission_fits(time.time(),deadline,allowance):return reject('before-prearm')
@@ -218,16 +230,23 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
         try:
             ready,_,_=select.select([child.stdout],[],[],1.5);assert ready,'independent release child arm deadline'
             armed=json.loads(child.stdout.readline());assert armed['armed'];save(name+'-armed.json',armed)
+            if time.time()>=targetingDeadline:
+                save(name+'-disarm.json',dict(at=time.time(),beforeDown=True))
+                return reject('after-prearm','targeting image expired')
             if not admission_fits(time.time(),deadline,allowance,releaseCap if strict else None,ms):
                 save(name+'-disarm.json',dict(at=time.time(),beforeDown=True))
                 return reject('after-prearm')
             receipts=[]
             for key,nonce in zip(keys,nonces):
-                assert time.time()-rr['at']<fresh and time.time()-reviewed['at']<fresh,'capture/review expired before edge'
                 cutoff=policy(intent,keys,review,route)
-                guard={**owner,'nonce':nonce,'reviewed':True,'deadline':int(min(deadline,releaseCap,cutoff if intent=='gameplay' else deadline)*1000)}
+                # Only DOWN targets the reviewed scene. Expiry still fences
+                # actual native consumption, independently of completion/UP.
+                guard={**owner,'nonce':nonce,'reviewed':True,'deadline':int(min(targetingDeadline,deadline,releaseCap,cutoff if intent=='gameplay' else deadline)*1000)}
                 if native:guard['intent']=rr['snapshot']
                 deliveryAt=time.time()
+                if deliveryAt>=targetingDeadline:
+                    save(name+'-disarm.json',dict(at=deliveryAt,beforeDown=True))
+                    return reject('before-dispatch','targeting image expired')
                 if not admission_fits(deliveryAt,deadline,allowance,releaseCap if strict else None,ms):
                     save(name+'-disarm.json',dict(at=deliveryAt,beforeDown=True))
                     return reject('before-dispatch')
@@ -268,15 +287,24 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
         if final:
             save(name+'-final-choice.json',dict(nativeQuitClaim=False,awaitActualNativeWait=True));return 'Final reviewed choice submitted; await actual native wait'
         observationAt=time.monotonic()
-        b=call({'action':'snapshot'});end=observationAt+(3 if strict else 10)
+        end=startedMono+window if strict else observationAt+10
+        def observe():
+            remaining=end-time.monotonic()
+            assert remaining>0,'3000ms operation completion exceeded'
+            value=call({'action':'snapshot'},timeout=remaining)
+            assert time.monotonic()<end,'3000ms operation completion exceeded'
+            return value
+        b=observe()
         while time.monotonic()<end:
-            a=call({'action':'snapshot'})
+            a=observe()
             if a['batch']>b['batch']:break
             time.sleep(.02)
         else:raise RuntimeError('no postrelease progress')
         save(name+'-progress.json',dict(before=before,afterRelease=b,postProgress=a,at=time.time()))
-        time.sleep(1.2);result=capture(name)
-        if strict:assert time.monotonic()-observationAt<=3,'3000ms post-UP observation exceeded'
+        time.sleep(1.2)
+        if strict:assert time.monotonic()<end,'3000ms operation completion exceeded'
+        result=capture(name,deadline) if strict else capture(name)
+        if strict:assert time.monotonic()<end,'3000ms operation completion exceeded'
         return result
     except ReserveRejected:raise
     except BaseException as e:fail(e,name);raise

@@ -18,6 +18,8 @@ const fs=require('fs'),transport=require('./lib/control-server');
 const original=transport.startControlServer;
 transport.startControlServer=options=>original({...options,onCommand(command){
  fs.appendFileSync(process.env.LMARBLES_REQUEST_LOG,JSON.stringify({at:Date.now(),command})+'\n');
+ if(command.action==='guarded-input' && process.env.LMARBLES_FAULT==='stale-consumption')
+  return new Promise(resolve=>setTimeout(()=>resolve(options.onCommand(command)),Math.max(0,command.guard.deadline-Date.now()+20)));
  if(command.action==='guarded-input') {
   if(process.env.LMARBLES_FAULT==='focus') {
    const fault=options.onCommand({action:'eval',code:'({before:exports.get_focus_hwnd(),after:(exports.set_focus(0),exports.get_focus_hwnd())})'});
@@ -31,6 +33,14 @@ transport.startControlServer=options=>original({...options,onCommand(command){
  const pending=options.onCommand(command);
  if(command.action==='guarded-input')Promise.resolve(pending).then(receipt=>
    fs.appendFileSync(process.env.LMARBLES_REQUEST_LOG,JSON.stringify({at:Date.now(),receipt})+'\n'),()=>{});
+ if(command.action==='guarded-release' && process.env.LMARBLES_FAULT==='slow-up')
+  return Promise.resolve(pending).then(v=>new Promise(resolve=>setTimeout(()=>resolve(v),650)));
+ if(command.action==='guarded-input' && process.env.LMARBLES_FAULT==='late-up')
+  setTimeout(()=>{
+   const start=Date.now(),end=start+500;
+   fs.appendFileSync(process.env.LMARBLES_REQUEST_LOG,JSON.stringify({fault:'native-event-loop-stall',start,end})+'\n');
+   while(Date.now()<end){}
+  },1400);
  if(command.action!=='guarded-input')return pending;
  if(process.env.LMARBLES_FAULT==='slow-ack') {
   const delayed=Promise.resolve(pending).then(v=>new Promise(resolve=>setTimeout(()=>resolve(v),650)));
@@ -68,7 +78,9 @@ class Admission(unittest.TestCase):
     if s['mainHwnd']!='0x0' and s['focusWindow']['live'] and s['physicalUp']:break
    except Exception:pass
    self.assertLess(time.monotonic(),end,'native fixture startup');time.sleep(.02)
-  time.sleep(.3);c.capture('fresh');r=c.read('fresh.json')
+  # Let the authored Solitaire fixture finish its initial deal before the one
+  # permanent bind. This changes no production paint/review binding rule.
+  time.sleep(2);c.capture('fresh');r=c.read('fresh.json')
   c.save('fresh-review.json',dict(at=time.time(),pngSHA256=r['pngSHA256'],scene='game',
      observation='Automated native fixture review; no original or personal game review claim'))
   c.bind('fresh')
@@ -102,9 +114,9 @@ class Admission(unittest.TestCase):
  def test_native_insufficient_before_prearm(self):
   self.start('insufficient')
   # Actual elapsed capture age reproduces the boundary; no timestamp refresh.
-  while time.time()<c.read('fresh.json')['at']+3:time.sleep(.01)
+  while time.time()<c.read('fresh.json')['at']+5:time.sleep(.01)
   self.assertTrue(self.pulse().startswith('NOT_SENT'))
-  self.assertEqual(c.read('press-rejection.json')['stage'],'before-prearm')
+  self.assertEqual(c.read('press-rejection.json')['state'],'NOT_SENT')
   self.assertFalse((self.out/'press-armed.json').exists())
   self.assertFalse(any(r['command']['action']=='guarded-input' for r in self.requests() if 'action' in r['command']))
   self.assertFalse((self.out/'terminal-input-failure.json').exists())
@@ -121,6 +133,42 @@ class Admission(unittest.TestCase):
   self.assertEqual(c.read('press-release-skipped.json')['state'],'NOT_SENT')
   self.assertEqual(c.read('press-release-wait.json')['exit'],0)
   self.assertFalse(any(r['command'].get('action') in ('guarded-input','guarded-release') for r in self.requests()))
+ def test_native_near_expiry_down_and_later_up(self):
+  self.start('near-expiry')
+  expiry=c.read('fresh.json')['at']+5
+  while time.time()<expiry-.65:time.sleep(.002)
+  c.pulse('press',['keydown:40'],800,'fresh','near expiry native fixture')
+  down=c.read('press-down.json')[0];up=c.read('press-up.json');op=c.read('press-operation.json')
+  self.assertLess(down['consumedAt']/1000,expiry)
+  self.assertGreater(up['at'],expiry)
+  self.assertLessEqual(up['at']-c.read('press-dispatch.json')['at'],1.75)
+  self.assertEqual(op['deadline'],op['startedAt']+3)
+  self.assertLess(c.read('press.json')['completedAt'],op['deadline'])
+ def test_native_slow_operation(self):
+  self.start('slow-operation');real=c.capture
+  def slow(name,*args):
+   time.sleep(1.8)
+   return real(name,*args)
+  with patch.object(c,'capture',slow),self.assertRaisesRegex(Exception,'3000ms operation'):
+   self.pulse()
+  self.assertEqual(c.read('press-up.json')['state'],'ACK');self.closed()
+ def test_native_slow_physical_up(self):
+  self.start('slow-physical-up','late-up');real=c.save
+  def delayed(name,value):
+   if name=='press-release-at.json':return # fixture: withhold early schedule; independent fallback remains
+   return real(name,value)
+  with patch.object(c,'save',delayed),self.assertRaisesRegex(Exception,'1750ms'):
+   self.pulse()
+  self.assertEqual(c.read('press-release-fired.json')['source'],'fallback');self.closed()
+ def test_native_stale_at_consumption_with_spare_operation_time(self):
+  self.start('stale-consumption','stale-consumption')
+  expiry=c.read('fresh.json')['at']+5
+  while time.time()<expiry-.4:time.sleep(.002)
+  with self.assertRaises(Exception):self.pulse()
+  receipt=c.read('press-receipt.json')
+  self.assertEqual(receipt['state'],'CANCELLED');self.assertFalse(receipt['consumed'])
+  self.assertGreater(c.read('press-operation.json')['deadline'],time.time())
+  self.assertEqual(c.read('press-up.json')['state'],'ACK');self.closed()
  def test_native_budget_spent_before_dispatch(self):
   self.start('dispatch');real=c.policy;calls=[]
   def slow(*args,**kwargs):
@@ -135,12 +183,20 @@ class Admission(unittest.TestCase):
   self.start(name,name)
   with self.assertRaises(Exception):self.pulse()
   self.assertEqual(c.read('press-release-wait.json')['exit'],0)
+  self.assertEqual(c.read('press-up.json')['state'],'ACK')
+  self.assertTrue(c.read('press-up.json')['reply']['released'])
+  self.assertTrue((self.out/'press-release-fired.json').exists())
   if name in ('focus','owner'):
    receipts=[json.loads(l)['receipt'] for l in (self.out/'requests.jsonl').read_text().splitlines() if 'receipt' in json.loads(l)]
    self.assertFalse(any(r['consumed'] for r in receipts))
   self.closed()
  def test_native_slow_ack(self):self.fault('slow-ack')
  def test_native_unknown(self):self.fault('unknown')
+ def test_native_slow_up_confirmation(self):
+  self.start('slow-up','slow-up')
+  with self.assertRaises(Exception):self.pulse()
+  self.assertNotEqual(c.read('press-release-wait.json')['exit'],0)
+  self.closed()
  def test_native_focus(self):self.fault('focus')
  def test_native_owner(self):self.fault('owner')
 

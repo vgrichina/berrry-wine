@@ -35,19 +35,35 @@ class Budget(unittest.TestCase):
   self.assertFalse(c.admission_fits(0,needed,needed))
   self.assertFalse(c.admission_fits(0,needed-1e-9,needed))
   self.assertTrue(c.admission_fits(0,needed+1e-9,needed))
- def test_exact_remaining_boundary_rejects_without_prearm_or_down(self):
+ def test_exact_freshness_boundary_rejects_without_prearm_or_down(self):
   now=1000.;needed=c.admission_allowance(100,True)
   self.launch(2000,1700,300)
   png=b'fixture';digest=hashlib.sha256(png).hexdigest();(c.R/'fresh.png').write_bytes(png)
-  c.save('fresh.json',dict(at=now+needed-5,pngSHA256=digest))
+  c.save('fresh.json',dict(at=now-5,pngSHA256=digest))
   c.save('fresh-review.json',dict(at=now,pngSHA256=digest,scene='game'))
   with patch.object(c.time,'time',return_value=now),patch.object(c,'lease',return_value=({},{})),\
        patch.object(c,'call',side_effect=AssertionError('unexpected request')) as request,\
        patch.object(c.subprocess,'Popen',side_effect=AssertionError('unexpected prearm')) as child:
    self.assertTrue(c.pulse('edge',['keydown:40'],100,'fresh','exact fixture boundary').startswith('NOT_SENT'))
   self.assertFalse(request.called or child.called)
-  self.assertEqual(c.read('edge-rejection.json')['stage'],'before-prearm')
+  self.assertEqual(c.read('edge-rejection.json')['state'],'NOT_SENT')
   self.assertFalse((c.R/'terminal-input-failure.json').exists())
+ def test_operation_boundary_is_independent_of_freshness(self):
+  clock=[1000.];self.launch(2000,1700,300)
+  png=b'fixture';digest=hashlib.sha256(png).hexdigest();(c.R/'fresh.png').write_bytes(png)
+  c.save('fresh.json',dict(at=999.,pngSHA256=digest))
+  c.save('fresh-review.json',dict(at=999.,pngSHA256=digest,scene='game'))
+  def lease():
+   clock[0]+=3-c.admission_allowance(100,True)
+   return {},{}
+  with patch.object(c.time,'time',side_effect=lambda:clock[0]),patch.object(c,'lease',lease),\
+       patch.object(c,'call',side_effect=AssertionError('unexpected request')) as request,\
+       patch.object(c.subprocess,'Popen',side_effect=AssertionError('unexpected child')) as child:
+   self.assertTrue(c.pulse('edge',['keydown:40'],100,'fresh','operation boundary').startswith('NOT_SENT'))
+  self.assertFalse(request.called or child.called)
+  op=c.read('edge-operation.json');self.assertEqual(op['deadline'],1003.)
+  self.assertEqual(op['targetingDeadline'],1004.)
+  self.assertEqual(c.read('edge-rejection.json')['stage'],'before-prearm')
  def test_actual_3600_3620_prearm_and_waits(self):
   out=c.R
   recipe=dict(cwd=str(out),args=['node',str(ROOT/'test/fixtures/lmarbles-reserve-endpoint.js'),'--max-seconds=3600'],seconds=3600,watchdogGrace=20,reserveSeconds=300,completionSession=True,inputPolicy=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=5,menuFreshnessSeconds=30))
