@@ -99,9 +99,14 @@ fixture success alone does not claim NewQuest, a quest consequence or Quit.
 
 The one authorized original was launched only after publication of
 `2593c43eaaaafb34e668cb43f6739306fc195220` and fresh unchanged-media preflight.
-The immutable runtime used canonical Git `85f7dd61ace7b22a289d9d5b37975e5faa9797c0`
-plus exactly that publication's owned source paths, with every loaded source
-hash recorded. Its native limit was 1200 seconds, independent watchdog 1220,
+The fixture and preflight immutable runtime used canonical Git
+`85f7dd61ace7b22a289d9d5b37975e5faa9797c0` plus that publication's owned
+source paths. **The original was incorrectly launched without the recipe
+flag that activates sealing.** Its exact loaded source/module manifest is
+missing; shared WIP exclusion and its actual module SHA cannot be proved.
+That provenance failure disqualifies the original as immutable-runtime proof,
+regardless of its visible scenes. No manifest was invented after execution.
+Its native limit was 1200 seconds, independent watchdog 1220,
 and irreversible Quit reserve 180, all recorded before launch. No second
 original, prior save, replay, OCR, solver, private board read or configuration
 change was used.
@@ -117,8 +122,8 @@ Escape sought the ordinary native exit/options route and was acknowledged,
 but no exit menu appeared. Subsequent complete frames became black. Later,
 after the irreversible Quit phase had begun, fresh full scenes visibly reached
 the quest map, an undead capital and turn indicator 1, then “Beginning day 1”
-with income 150/25/0/0/0. This proves ordinary NewQuest startup and its initial
-day consequence; no town interaction, manual turn advancement or battle is
+with income 150/25/0/0/0. This visually records ordinary NewQuest startup and its initial
+day consequence in the unqualified runtime; no town interaction, manual turn advancement or battle is
 claimed. A fresh exit intent was NOT_SENT because its game capture exceeded
 the unchanged five-second limit. No DOWN was delivered for it. The day dialog
 was not dismissed through gameplay after the Quit latch. Native Quit remains
@@ -132,7 +137,16 @@ The tool-managed sealed source holder and original outer launcher returned
 actual status 143. Their normal holder-close / outer-child-wait receipts are
 missing; process absence is not substituted for those receipts. The original
 supervisor and independently armed watchdog survived and retain their own
-native-child waits. Source/module hashes were verified during immutable
-launch; a final holder recheck failed because its `/proc` descriptors were
-already gone. The cause of that external tool-parent termination is unknown.
+native-child waits. Fixture/preflight source/module hashes were verified during their immutable
+launches; original sealing never activated. A final holder recheck failed
+because its `/proc` descriptors were already gone. The cause of that external tool-parent termination is unknown.
 These lifecycle limits remain explicit alongside the native fixture passes.
+
+Final provenance audit: `completionSession` does not activate sealing; the
+supervisor gates it on `moduleHolder` (or its environment counterpart), both
+missing from the original recipe. This is a launch error, not an established
+foreign-WIP effect or an identified game bug. Future authorized execution must
+require and inspect the prelaunch immutable manifest before native creation.
+The single-original authorization is spent; no corrective second original
+was launched. The native-context contract proof remains the sealed authored
+fixture result.
