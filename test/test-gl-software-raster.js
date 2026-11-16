@@ -572,10 +572,26 @@ async function main() {
     pts.forEach(([x, y, z], i) => putVertex(i, x, y, z, 1, 1, 0, 1));
     e.gl_sw_emit_triangles(verts, 3);
   };
+  // Keep the historical strip exactly: all Y/Z ratios are .02, giving zero
+  // projected area. Independent native GL leaves the entire blue frame intact.
+  const beforeDegenerateStrip = px.slice();
   // A floor-like strip from eye z=-50 to z=-200 across the centre column.
   tilted([[-10, -1, -50], [10, -1, -50], [10, -4, -200]]);
   tilted([[-10, -1, -50], [10, -4, -200], [-10, -4, -200]]);
   px = back();
+  assert.deepStrictEqual(px, beforeDegenerateStrip,
+    'the unchanged projectively degenerate far strip covers no fragments');
+  // A separate genuine floor crosses far=100. Its complete expected frame
+  // was frozen geometrically, then matched by independent system OpenGL
+  // before this edit (run 20261116-gl-fan-edge-query-contract-repair).
+  tilted([[-10, -9, -50], [10, -9, -50], [10, -9, -200]]);
+  tilted([[-10, -9, -50], [10, -9, -200], [-10, -9, -200]]);
+  px = back();
+  const expectedFarStrip = new Uint32Array(VP * VP).fill(0xff0000ff);
+  for (const [row, left, right] of [[35,28,36], [36,27,37], [37,26,38]])
+    expectedFarStrip.fill(0xffffff00, row * VP + left, row * VP + right);
+  assert.deepStrictEqual(px, expectedFarStrip,
+    'genuine far clipping matches all 4096 independently frozen pixels');
   const straddle = [...Array(VP).keys()].filter(y => rgb(VP / 2, y) === 0xFFFF00).length;
   assert.ok(straddle > 0, 'the part of a straddling strip inside the far plane draws');
 

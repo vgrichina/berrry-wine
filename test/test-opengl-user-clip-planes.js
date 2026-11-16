@@ -232,7 +232,10 @@ const extraWat=`
   clear();draw(mode,vertices);pixel(6,4,white,'crossing polygon mode '+mode);pixel(1,4,black,'polygon rejected half '+mode);
  }
  for(const [mode,vertices]of[[0,[[-.5,0,0],[.5,0,0]]],[1,[[-1,0,0],[1,0,0]]],[2,[[-1,0,0],[1,0,0]]],[3,[[-1,0,0],[1,0,0]]]]){
-  clear();draw(mode,vertices);pixel(6,3,white,'point/line accepted '+mode);pixel(2,3,black,'point/line rejected '+mode);
+  // Points use the containing pixel; integer-aligned lines retain their
+  // own diamond coverage. Independent native point reference: (6,4).
+  const row=mode===0?4:3;
+  clear();draw(mode,vertices);pixel(6,row,white,'point/line accepted '+mode);pixel(2,row,black,'point/line rejected '+mode);
  }
  for(const [mode,vertices]of[[0,[[-.5,0,0]]],[1,[[-.9,0,0],[-.2,0,0]]],[4,[[-.9,-.5,0],[-.2,-.5,0],[-.2,.5,0]]]]){
   clear();draw(mode,vertices);for(const x of [1,3,6])pixel(x,3,black,'fully rejected primitive '+mode+'/'+x);

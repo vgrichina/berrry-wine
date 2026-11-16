@@ -232,7 +232,34 @@ const extraWat=`
  q(0xc22,[.125,.25,.5,.75]);call('glEnd');call('glEndList');
  new Uint8Array(memory.buffer,ow,256).fill(0xb6);call('glCallList',[list]);
  assert(new Uint8Array(memory.buffer,ow,256).every(b=>b===0xb6),'query never recorded output pointer');
- for(const n of ['glMap1d','glClearIndex'])assert.strictEqual(call('wglGetProcAddress',[str(n)]),0);
+ // These are documented exposed API families. Invoke the returned thunks;
+ // a nonzero lookup alone does not establish the exposed contract.
+ for(const n of ['glMap1d','glClearIndex']){
+  const proc=call('wglGetProcAddress',[str(n)]);assert(proc,'exposed resolver '+n);
+  assert.strictEqual(dv.getUint32(wa(proc)+4,true),table.find(a=>a.name===n).id);
+  cache.set(n,proc);
+ }
+ const unsupported='glConvolutionFilter2D';
+ assert(!table.some(a=>a.name===unsupported),'unsupported imaging API is outside the exposed table');
+ assert.strictEqual(call('wglGetProcAddress',[str(unsupported)]),0,'unsupported API stays unavailable');
+ call('glClearIndex',[f(-12.5)]);q(0xc20,[-12.5]);
+ const coeff=[1.0000000000000002,-2,3,4,5,6],coeffAt=e.guest_alloc(48)>>>0;
+ coeff.forEach((x,i)=>dv.setFloat64(wa(coeffAt)+i*8,x,true));
+ call('glMap1d',[0xd97,...doubles([-2,3]),3,2,coeffAt]);
+ new Uint8Array(memory.buffer,wa(coeffAt),48).fill(0x5a);
+ function mapQuery(kind,want){
+  new Uint8Array(memory.buffer,ow,256).fill(0xa7);
+  call('glGetMapdv',[0xd97,kind,at]);
+  const got=want.map((_,i)=>dv.getFloat64(wa(at)+i*8,true));
+  assert.deepStrictEqual(got,want,'resolved evaluator retained binary64 state');
+  assert(new Uint8Array(memory.buffer,ow,19).every(b=>b===0xa7),'map leading canary');
+  assert(new Uint8Array(memory.buffer,wa(at)+want.length*8,256-19-want.length*8).every(b=>b===0xa7),'map trailing canary');
+  assert.strictEqual(call('glGetError'),0);checks++;expected.push({name:'glGetMapdv',kind,got});
+ }
+ mapQuery(0xa00,coeff);mapQuery(0xa01,[2]);mapQuery(0xa02,[-2,3]);
+ call('glMap1d',[0xd97,...doubles([-2,3]),3,0,0]);
+ assert.strictEqual(call('glGetError'),0x501,'invalid evaluator order is rejected before pointer access');
+ mapQuery(0xa00,coeff);
  assert.strictEqual(call('glGetError'),0);
  // A real queued draw ensures the worker route is exercised, and host query
  // replay must consume the preceding setters synchronously.

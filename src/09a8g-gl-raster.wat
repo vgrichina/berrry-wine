@@ -2809,11 +2809,11 @@
 
   ;; The fog plane through the three screen records' (x, y, factor at +28).
   (func $gl_sw_fog_plane (param $s0 i32) (param $s1 i32) (param $s2 i32)
-    (call $rast_fog_plane
-      (i32.load (local.get $s0)) (i32.load offset=4 (local.get $s0)) (f32.load offset=28 (local.get $s0))
-      (i32.load (local.get $s1)) (i32.load offset=4 (local.get $s1)) (f32.load offset=28 (local.get $s1))
-      (i32.load (local.get $s2)) (i32.load offset=4 (local.get $s2)) (f32.load offset=28 (local.get $s2))
-      (global.get $gl_sw_fog_color)))
+    (call $gl_sw_center_plane
+      (f32.load offset=28 (local.get $s0)) (f32.load offset=28 (local.get $s1)) (f32.load offset=28 (local.get $s2)))
+    (global.set $rast_fog_a (global.get $rast_pa)) (global.set $rast_fog_b (global.get $rast_pb))
+    (global.set $rast_fog_c (global.get $rast_pc)) (global.set $rast_fog_color (global.get $gl_sw_fog_color))
+    (global.set $rast_fog_on (i32.const 1)))
 
   ;; One clip record's screen record, slot $k. 0 when it has no screen
   ;; position: after the near clip w is at least the near distance for any
@@ -2821,7 +2821,7 @@
   ;; front of the eye, where a divide would still mirror the geometry.
   (func $gl_sw_emit_vertex (param $c i32) (param $vp i32) (param $k i32) (result i32)
     (local $out i32)
-    (if (f32.le (f32.load offset=12 (local.get $c)) (f32.const 0.0001))
+    (if (f32.le (f32.load offset=12 (local.get $c)) (f32.const 0))
       (then (return (i32.const 0))))
     (local.set $out (call $gl_sw_screen_at (local.get $k)))
     (call $gl_sw_project (local.get $c) (local.get $vp) (local.get $out))
@@ -3078,32 +3078,23 @@
     (local.set $q0 (f32.load offset=12 (local.get $s0)))
     (local.set $q1 (f32.load offset=12 (local.get $s1)))
     (local.set $q2 (f32.load offset=12 (local.get $s2)))
-    (call $rast_plane
-      (i32.load (local.get $s0)) (i32.load offset=4 (local.get $s0))
+    (call $gl_sw_center_plane
       (f32.mul (f32.load offset=52 (local.get $c0)) (local.get $q0))
-      (i32.load (local.get $s1)) (i32.load offset=4 (local.get $s1))
       (f32.mul (f32.load offset=52 (local.get $c1)) (local.get $q1))
-      (i32.load (local.get $s2)) (i32.load offset=4 (local.get $s2))
       (f32.mul (f32.load offset=52 (local.get $c2)) (local.get $q2)))
     (global.set $rast_t1_qa (global.get $rast_pa))
     (global.set $rast_t1_qb (global.get $rast_pb))
     (global.set $rast_t1_qc (global.get $rast_pc))
-    (call $rast_plane
-      (i32.load (local.get $s0)) (i32.load offset=4 (local.get $s0))
+    (call $gl_sw_center_plane
       (f32.mul (f32.load offset=40 (local.get $c0)) (local.get $q0))
-      (i32.load (local.get $s1)) (i32.load offset=4 (local.get $s1))
       (f32.mul (f32.load offset=40 (local.get $c1)) (local.get $q1))
-      (i32.load (local.get $s2)) (i32.load offset=4 (local.get $s2))
       (f32.mul (f32.load offset=40 (local.get $c2)) (local.get $q2)))
     (global.set $rast_t1_ua (global.get $rast_pa))
     (global.set $rast_t1_ub (global.get $rast_pb))
     (global.set $rast_t1_uc (global.get $rast_pc))
-    (call $rast_plane
-      (i32.load (local.get $s0)) (i32.load offset=4 (local.get $s0))
+    (call $gl_sw_center_plane
       (f32.mul (f32.load offset=44 (local.get $c0)) (local.get $q0))
-      (i32.load (local.get $s1)) (i32.load offset=4 (local.get $s1))
       (f32.mul (f32.load offset=44 (local.get $c1)) (local.get $q1))
-      (i32.load (local.get $s2)) (i32.load offset=4 (local.get $s2))
       (f32.mul (f32.load offset=44 (local.get $c2)) (local.get $q2)))
     (global.set $rast_t1_va (global.get $rast_pa))
     (global.set $rast_t1_vb (global.get $rast_pb))
@@ -3171,8 +3162,177 @@
       (local.set $level (i32.sub (local.get $level) (i32.const 1)))
       (br $down))))
 
+  ;; GL window coordinates stay continuous until fragment coverage is chosen.
+  ;; The point path has its own independently qualified size/snap rules.
+  (func $gl_sw_window (param $clip i32) (param $vp i32) (param $axis i32) (result f32)
+    (local $f f32) (local $offset i32)
+    (local.set $offset (i32.shl (local.get $axis) (i32.const 2)))
+    (local.set $f (f32.add
+      (f32.convert_i32_s (i32.load (i32.add (local.get $vp) (local.get $offset))))
+      (f32.mul (f32.mul (f32.add (f32.div
+        (f32.load (i32.add (local.get $clip) (local.get $offset)))
+        (f32.load offset=12 (local.get $clip))) (f32.const 1)) (f32.const 0.5))
+        (f32.convert_i32_s (i32.load (i32.add (local.get $vp) (i32.add (i32.const 8) (local.get $offset))))))))
+    (if (i32.and (i32.ne (local.get $axis) (i32.const 0)) (global.get $gl_sw_flip_y)) (then
+      (local.set $f (f32.sub (f32.convert_i32_u (load.field DxObject height (global.get $gl_sw_rt))) (local.get $f)))))
+    (if (f32.ne (local.get $f) (local.get $f)) (then (return (f32.const 0))))
+    (f32.max (f32.const -16384) (f32.min (f32.const 16384) (local.get $f))))
+
+  ;; Six continuous triangle coordinates in the gap before the viewport at
+  ;; scratch+0x7c0; span endpoints at 0x740/0x760 do not alias clip records.
+  (func $gl_sw_center_setup (param $vp i32) (param $c0 i32) (param $c1 i32) (param $c2 i32)
+    (local $g i32)
+    (local.set $g (i32.add (global.get $gl_sw_scratch) (i32.const 0x780)))
+    (f32.store offset=0 (local.get $g) (f32.sub (call $gl_sw_window (local.get $c0) (local.get $vp) (i32.const 0)) (f32.convert_i32_s (global.get $gl_sw_r_dx))))
+    (f32.store offset=4 (local.get $g) (f32.sub (call $gl_sw_window (local.get $c0) (local.get $vp) (i32.const 1)) (f32.convert_i32_s (global.get $gl_sw_r_dy))))
+    (f32.store offset=8 (local.get $g) (f32.sub (call $gl_sw_window (local.get $c1) (local.get $vp) (i32.const 0)) (f32.convert_i32_s (global.get $gl_sw_r_dx))))
+    (f32.store offset=12 (local.get $g) (f32.sub (call $gl_sw_window (local.get $c1) (local.get $vp) (i32.const 1)) (f32.convert_i32_s (global.get $gl_sw_r_dy))))
+    (f32.store offset=16 (local.get $g) (f32.sub (call $gl_sw_window (local.get $c2) (local.get $vp) (i32.const 0)) (f32.convert_i32_s (global.get $gl_sw_r_dx))))
+    (f32.store offset=20 (local.get $g) (f32.sub (call $gl_sw_window (local.get $c2) (local.get $vp) (i32.const 1)) (f32.convert_i32_s (global.get $gl_sw_r_dy))))
+  )
+
+  ;; Planes evaluated by the existing sampler at integer (x,y) represent
+  ;; GL fragment centers (x+0.5,y+0.5). D3D's shared plane helper is untouched.
+  (func $gl_sw_center_plane (param $f0 f32) (param $f1 f32) (param $f2 f32)
+    (local $g i32) (local $x0 f32) (local $y0 f32) (local $x1 f32) (local $y1 f32) (local $x2 f32) (local $y2 f32)
+    (local $dx1 f32) (local $dy1 f32) (local $dx2 f32) (local $dy2 f32)
+    (local $df1 f32) (local $df2 f32) (local $det f32)
+    (local.set $g (i32.add (global.get $gl_sw_scratch) (i32.const 0x780)))
+    (local.set $x0 (f32.load offset=0 (local.get $g)))
+    (local.set $y0 (f32.load offset=4 (local.get $g)))
+    (local.set $x1 (f32.load offset=8 (local.get $g)))
+    (local.set $y1 (f32.load offset=12 (local.get $g)))
+    (local.set $x2 (f32.load offset=16 (local.get $g)))
+    (local.set $y2 (f32.load offset=20 (local.get $g)))
+    (local.set $dx1 (f32.sub (local.get $x1) (local.get $x0)))
+    (local.set $dy1 (f32.sub (local.get $y1) (local.get $y0)))
+    (local.set $dx2 (f32.sub (local.get $x2) (local.get $x0)))
+    (local.set $dy2 (f32.sub (local.get $y2) (local.get $y0)))
+    (local.set $df1 (f32.sub (local.get $f1) (local.get $f0)))
+    (local.set $df2 (f32.sub (local.get $f2) (local.get $f0)))
+    (local.set $det (f32.sub (f32.mul (local.get $dx1) (local.get $dy2)) (f32.mul (local.get $dx2) (local.get $dy1))))
+    (global.set $rast_pa (f32.const 0)) (global.set $rast_pb (f32.const 0))
+    (if (f32.ne (local.get $det) (f32.const 0)) (then
+      (global.set $rast_pa (f32.div (f32.sub (f32.mul (local.get $df1) (local.get $dy2)) (f32.mul (local.get $df2) (local.get $dy1))) (local.get $det)))
+      (global.set $rast_pb (f32.div (f32.sub (f32.mul (local.get $dx1) (local.get $df2)) (f32.mul (local.get $dx2) (local.get $df1))) (local.get $det)))))
+    (global.set $rast_pc (f32.sub (local.get $f0) (f32.add (f32.mul (global.get $rast_pa) (f32.sub (local.get $x0) (f32.const 0.5))) (f32.mul (global.get $rast_pb) (f32.sub (local.get $y0) (f32.const 0.5)))))))
+
+  ;; Interpolate the same existing span attributes at a fragment center.
+  ;; Colors/depth are affine; texture S,T and reciprocal W are perspective
+  ;; correct. Only temporary endpoint records are written.
+  (func $gl_sw_center_sample (param $out i32) (param $x f32) (param $y f32)
+    (local $g i32) (local $x0 f32) (local $y0 f32) (local $x1 f32) (local $y1 f32) (local $x2 f32) (local $y2 f32)
+    (local $s0 i32) (local $s1 i32) (local $s2 i32)
+    (local $det f32) (local $l0 f32) (local $l1 f32) (local $l2 f32) (local $q f32)
+    (local $k i32) (local $shift i32) (local $color i32) (local $v f32)
+    (local.set $g (i32.add (global.get $gl_sw_scratch) (i32.const 0x780)))
+    (local.set $x0 (f32.load offset=0 (local.get $g)))
+    (local.set $y0 (f32.load offset=4 (local.get $g)))
+    (local.set $x1 (f32.load offset=8 (local.get $g)))
+    (local.set $y1 (f32.load offset=12 (local.get $g)))
+    (local.set $x2 (f32.load offset=16 (local.get $g)))
+    (local.set $y2 (f32.load offset=20 (local.get $g)))
+    (local.set $s0 (call $gl_sw_screen_at (i32.const 0)))
+    (local.set $s1 (call $gl_sw_screen_at (i32.const 1)))
+    (local.set $s2 (call $gl_sw_screen_at (i32.const 2)))
+    (local.set $det (f32.sub (f32.mul (f32.sub (local.get $y1) (local.get $y2)) (f32.sub (local.get $x0) (local.get $x2))) (f32.mul (f32.sub (local.get $x1) (local.get $x2)) (f32.sub (local.get $y0) (local.get $y2)))))
+    (local.set $l0 (f32.div (f32.add (f32.mul (f32.sub (local.get $y1) (local.get $y2)) (f32.sub (local.get $x) (local.get $x2))) (f32.mul (f32.sub (local.get $x2) (local.get $x1)) (f32.sub (local.get $y) (local.get $y2)))) (local.get $det)))
+    (local.set $l1 (f32.div (f32.add (f32.mul (f32.sub (local.get $y2) (local.get $y0)) (f32.sub (local.get $x) (local.get $x2))) (f32.mul (f32.sub (local.get $x0) (local.get $x2)) (f32.sub (local.get $y) (local.get $y2)))) (local.get $det)))
+    (local.set $l2 (f32.sub (f32.sub (f32.const 1) (local.get $l0)) (local.get $l1)))
+    (local.set $q (f32.add (f32.add (f32.mul (local.get $l0) (f32.load offset=12 (local.get $s0))) (f32.mul (local.get $l1) (f32.load offset=12 (local.get $s1)))) (f32.mul (local.get $l2) (f32.load offset=12 (local.get $s2)))))
+    (f32.store offset=12 (local.get $out) (local.get $q))
+    (f32.store offset=8 (local.get $out) (f32.add (f32.add (f32.mul (local.get $l0) (f32.load offset=8 (local.get $s0))) (f32.mul (local.get $l1) (f32.load offset=8 (local.get $s1)))) (f32.mul (local.get $l2) (f32.load offset=8 (local.get $s2)))))
+    (f32.store offset=16 (local.get $out) (f32.div (f32.add (f32.add (f32.mul (local.get $l0) (f32.mul (f32.load offset=16 (local.get $s0)) (f32.load offset=12 (local.get $s0)))) (f32.mul (local.get $l1) (f32.mul (f32.load offset=16 (local.get $s1)) (f32.load offset=12 (local.get $s1))))) (f32.mul (local.get $l2) (f32.mul (f32.load offset=16 (local.get $s2)) (f32.load offset=12 (local.get $s2))))) (local.get $q)))
+    (f32.store offset=20 (local.get $out) (f32.div (f32.add (f32.add (f32.mul (local.get $l0) (f32.mul (f32.load offset=20 (local.get $s0)) (f32.load offset=12 (local.get $s0)))) (f32.mul (local.get $l1) (f32.mul (f32.load offset=20 (local.get $s1)) (f32.load offset=12 (local.get $s1))))) (f32.mul (local.get $l2) (f32.mul (f32.load offset=20 (local.get $s2)) (f32.load offset=12 (local.get $s2))))) (local.get $q)))
+    (loop $channels
+      (local.set $shift (i32.shl (local.get $k) (i32.const 3)))
+      (local.set $v (f32.add (f32.add (f32.mul (local.get $l0) (f32.convert_i32_u (i32.and (i32.shr_u (i32.load offset=24 (local.get $s0)) (local.get $shift)) (i32.const 255)))) (f32.mul (local.get $l1) (f32.convert_i32_u (i32.and (i32.shr_u (i32.load offset=24 (local.get $s1)) (local.get $shift)) (i32.const 255))))) (f32.mul (local.get $l2) (f32.convert_i32_u (i32.and (i32.shr_u (i32.load offset=24 (local.get $s2)) (local.get $shift)) (i32.const 255))))))
+      (local.set $color (i32.or (local.get $color) (i32.shl
+        (call $gl_sw_u8 (f32.div (local.get $v) (f32.const 255))) (local.get $shift))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br_if $channels (i32.lt_u (local.get $k) (i32.const 4))))
+    (i32.store offset=24 (local.get $out) (local.get $color)))
+
+  ;; Half-open scanline intersections at the actual fragment-center Y.
+  ;; Left-inclusive/right-exclusive center coverage assigns a shared edge to
+  ;; exactly one triangle, independent of fan/strip/polygon lowering.
+  (func $gl_sw_center_triangle
+    (local $g i32) (local $x0 f32) (local $y0 f32) (local $x1 f32) (local $y1 f32) (local $x2 f32) (local $y2 f32)
+    (local $det f32) (local $yc f32) (local $left f32) (local $right f32) (local $ix f32)
+    (local $ax f32) (local $ay f32) (local $bx f32) (local $by f32)
+    (local $row i32) (local $end i32) (local $xa i32) (local $xb i32)
+    (local $k i32) (local $a i32) (local $b i32) (local $pa i32) (local $pb i32)
+    (local $color_vary i32) (local $col i32)
+    (local.set $g (i32.add (global.get $gl_sw_scratch) (i32.const 0x780)))
+    (local.set $x0 (f32.load offset=0 (local.get $g)))
+    (local.set $y0 (f32.load offset=4 (local.get $g)))
+    (local.set $x1 (f32.load offset=8 (local.get $g)))
+    (local.set $y1 (f32.load offset=12 (local.get $g)))
+    (local.set $x2 (f32.load offset=16 (local.get $g)))
+    (local.set $y2 (f32.load offset=20 (local.get $g)))
+    (local.set $det (f32.sub (f32.mul (f32.sub (local.get $y1) (local.get $y2)) (f32.sub (local.get $x0) (local.get $x2))) (f32.mul (f32.sub (local.get $x1) (local.get $x2)) (f32.sub (local.get $y0) (local.get $y2)))))
+    (if (f32.eq (local.get $det) (f32.const 0)) (then (return)))
+    (local.set $pa (i32.add (global.get $gl_sw_scratch) (i32.const 0x740)))
+    (local.set $pb (i32.add (global.get $gl_sw_scratch) (i32.const 0x760)))
+    (local.set $color_vary (i32.or
+      (i32.ne (i32.load offset=24 (call $gl_sw_screen_at (i32.const 0))) (i32.load offset=24 (call $gl_sw_screen_at (i32.const 1))))
+      (i32.ne (i32.load offset=24 (call $gl_sw_screen_at (i32.const 0))) (i32.load offset=24 (call $gl_sw_screen_at (i32.const 2))))))
+    (local.set $row (i32.trunc_sat_f32_s (f32.ceil (f32.sub
+      (f32.min (local.get $y0) (f32.min (local.get $y1) (local.get $y2))) (f32.const 0.5)))))
+    (local.set $end (i32.trunc_sat_f32_s (f32.ceil (f32.sub
+      (f32.max (local.get $y0) (f32.max (local.get $y1) (local.get $y2))) (f32.const 0.5)))))
+    (if (i32.lt_s (local.get $row) (i32.const 0)) (then (local.set $row (i32.const 0))))
+    (if (i32.gt_s (local.get $end) (load.field DxObject height (global.get $gl_sw_r_rt)))
+      (then (local.set $end (load.field DxObject height (global.get $gl_sw_r_rt)))))
+    (block $done (loop $rows
+      (br_if $done (i32.ge_s (local.get $row) (local.get $end)))
+      (local.set $yc (f32.add (f32.convert_i32_s (local.get $row)) (f32.const 0.5)))
+      (local.set $left (f32.const 16385)) (local.set $right (f32.const -16385))
+      (local.set $k (i32.const 0))
+      (loop $edges
+        (local.set $a (i32.add (local.get $g) (i32.shl (local.get $k) (i32.const 3))))
+        (local.set $b (i32.add (local.get $g) (i32.shl
+          (i32.rem_u (i32.add (local.get $k) (i32.const 1)) (i32.const 3)) (i32.const 3))))
+        (local.set $ax (f32.load (local.get $a))) (local.set $ay (f32.load offset=4 (local.get $a)))
+        (local.set $bx (f32.load (local.get $b))) (local.set $by (f32.load offset=4 (local.get $b)))
+        (if (i32.and (f32.ge (local.get $yc) (f32.min (local.get $ay) (local.get $by)))
+                     (f32.lt (local.get $yc) (f32.max (local.get $ay) (local.get $by)))) (then
+          (local.set $ix (f32.add (local.get $ax) (f32.mul (f32.sub (local.get $bx) (local.get $ax))
+            (f32.div (f32.sub (local.get $yc) (local.get $ay)) (f32.sub (local.get $by) (local.get $ay))))))
+          (local.set $left (f32.min (local.get $left) (local.get $ix)))
+          (local.set $right (f32.max (local.get $right) (local.get $ix)))))
+        (local.set $k (i32.add (local.get $k) (i32.const 1)))
+        (br_if $edges (i32.lt_u (local.get $k) (i32.const 3))))
+      (local.set $xa (i32.trunc_sat_f32_s (f32.ceil (f32.sub (local.get $left) (f32.const 0.5)))))
+      (local.set $xb (i32.trunc_sat_f32_s (f32.ceil (f32.sub (local.get $right) (f32.const 0.5)))))
+      (if (i32.lt_s (local.get $xa) (i32.const 0)) (then (local.set $xa (i32.const 0))))
+      (if (i32.gt_s (local.get $xb) (load.field DxObject width (global.get $gl_sw_r_rt)))
+        (then (local.set $xb (load.field DxObject width (global.get $gl_sw_r_rt)))))
+      (if (i32.lt_s (local.get $xa) (local.get $xb)) (then
+        (call $gl_sw_center_sample (local.get $pa) (f32.add (f32.convert_i32_s (local.get $xa)) (f32.const 0.5)) (local.get $yc))
+        (call $gl_sw_center_sample (local.get $pb) (f32.add (f32.convert_i32_s (local.get $xb)) (f32.const 0.5)) (local.get $yc))
+        ;; A right-exclusive endpoint can be outside the triangle. Packed
+        ;; color clamping there would distort a gradient, and extrapolated
+        ;; reciprocal W can cross zero. Sample only covered centers for
+        ;; those spans; constant-color spans with positive endpoints keep
+        ;; the existing perspective-correct scanline sampler.
+        (if (i32.or (local.get $color_vary) (i32.or
+              (i32.eqz (f32.gt (f32.load offset=12 (local.get $pa)) (f32.const 0)))
+              (i32.eqz (f32.gt (f32.load offset=12 (local.get $pb)) (f32.const 0)))))
+          (then
+            (local.set $col (local.get $xa))
+            (loop $pixels
+              (call $gl_sw_center_sample (local.get $pa) (f32.add (f32.convert_i32_s (local.get $col)) (f32.const 0.5)) (local.get $yc))
+              (call $gl_sw_span (local.get $row) (local.get $col) (local.get $pa) (i32.add (local.get $col) (i32.const 1)) (local.get $pa))
+              (local.set $col (i32.add (local.get $col) (i32.const 1)))
+              (br_if $pixels (i32.lt_s (local.get $col) (local.get $xb)))))
+          (else
+            (call $gl_sw_span (local.get $row) (local.get $xa) (local.get $pa) (local.get $xb) (local.get $pb))))))
+      (local.set $row (i32.add (local.get $row) (i32.const 1)))
+      (br $rows))))
+
   (func $gl_sw_emit (param $vp i32) (param $c0 i32) (param $c1 i32) (param $c2 i32)
-    (local $s i32) (local $caps i32) (local $area i32) (local $front i32) (local $cull i32)
+    (local $s i32) (local $caps i32) (local $front i32) (local $cull i32)
     (local $s0 i32) (local $s1 i32) (local $s2 i32)
     (if (i32.eqz (i32.and
           (i32.and (call $gl_sw_emit_vertex (local.get $c0) (local.get $vp) (i32.const 0))
@@ -3186,18 +3346,12 @@
     (local.set $s0 (call $gl_sw_screen_at (i32.const 0)))
     (local.set $s1 (call $gl_sw_screen_at (i32.const 1)))
     (local.set $s2 (call $gl_sw_screen_at (i32.const 2)))
-    ;; Face culling. In screen space (y down) a triangle GL calls CCW has a
-    ;; negative signed area, because the y flip reverses every winding.
+    ;; Classify continuous homogeneous clip coordinates before the viewport's
+    ;; pixel rounding. Positive W after clipping preserves their winding.
     (if (i32.and (local.get $caps) (i32.const 16))
       (then
-        (local.set $area (i32.sub
-          (i32.mul (i32.sub (i32.load (local.get $s1)) (i32.load (local.get $s0)))
-                   (i32.sub (i32.load offset=4 (local.get $s2)) (i32.load offset=4 (local.get $s0))))
-          (i32.mul (i32.sub (i32.load (local.get $s2)) (i32.load (local.get $s0)))
-                   (i32.sub (i32.load offset=4 (local.get $s1)) (i32.load offset=4 (local.get $s0))))))
-        ;; Unflipped (a bottom-up DIB), screen winding is GL's own.
         (local.set $front (i32.eq
-          (i32.xor (i32.lt_s (local.get $area) (i32.const 0)) (i32.eqz (global.get $gl_sw_flip_y)))
+          (f32.gt (call $gl_sw_face_area (local.get $c0) (local.get $c1) (local.get $c2)) (f32.const 0))
           (i32.load offset=32 (local.get $s))))
         (local.set $cull (i32.load offset=28 (local.get $s)))
         (if (i32.or
@@ -3213,6 +3367,7 @@
       (then (call $gl_sw_shift_screen (i32.const 3))))
     (local.set $s0 (call $gl_sw_screen_at (i32.const 0)))
     (global.set $gl_sw_triangles (i32.add (global.get $gl_sw_triangles) (i32.const 1)))
+    (call $gl_sw_center_setup (local.get $vp) (local.get $c0) (local.get $c1) (local.get $c2))
     ;; After the scissor shift, so the plane is in the coordinates the span
     ;; rasterizer will hand back.
     (if (i32.and (local.get $caps) (i32.const 64))
@@ -3227,12 +3382,9 @@
           (i32.or (f32.ne (f32.load offset=48 (local.get $c0)) (f32.const 1))
             (i32.or (f32.ne (f32.load offset=48 (local.get $c1)) (f32.const 1))
               (f32.ne (f32.load offset=48 (local.get $c2)) (f32.const 1))))) (then
-      (call $rast_plane
-        (i32.load (local.get $s0)) (i32.load offset=4 (local.get $s0))
+      (call $gl_sw_center_plane
         (f32.mul (f32.load offset=48 (local.get $c0)) (f32.load offset=12 (local.get $s0)))
-        (i32.load (local.get $s1)) (i32.load offset=4 (local.get $s1))
         (f32.mul (f32.load offset=48 (local.get $c1)) (f32.load offset=12 (local.get $s1)))
-        (i32.load (local.get $s2)) (i32.load offset=4 (local.get $s2))
         (f32.mul (f32.load offset=48 (local.get $c2)) (f32.load offset=12 (local.get $s2))))
       (global.set $rast_t0_qa (global.get $rast_pa))
       (global.set $rast_t0_qb (global.get $rast_pb))
@@ -3249,33 +3401,7 @@
     ;; Triangles need GL's alpha blend equation just as point/line spans do.
     ;; Scope this to the GL call so shared D3D draws retain their RGB path.
     (global.set $gl_sw_rgba_span (i32.const 1))
-    (call $rasterize_triangle_textured
-      (global.get $gl_sw_r_rt) (global.get $gl_sw_r_tex)
-      (i32.and (i32.ne (i32.and (local.get $caps) (i32.const 2)) (i32.const 0))
-        (i32.eqz (global.get $rast_gl_logic)))
-      (i32.load offset=4 (local.get $s)) (i32.load offset=8 (local.get $s))
-      (call $gl_sw_r_address (i32.const 2)) (call $gl_sw_r_address (i32.const 4))
-      (i32.and (global.get $gl_sw_r_flags) (i32.const 1))
-      (call $gl_sw_r_env) (call $gl_sw_r_alpha_env)
-      (i32.const 0)                                  ;; no colour key in GL
-      (global.get $gl_sw_r_alpha)
-      (i32.const 0) (i32.const 0)                    ;; dither, antialias
-      (i32.load (local.get $s0)) (i32.load offset=4 (local.get $s0))
-      (f32.load offset=16 (local.get $s0)) (f32.load offset=20 (local.get $s0))
-      (f32.load offset=12 (local.get $s0)) (i32.load offset=24 (local.get $s0))
-      (f32.load offset=8 (local.get $s0))
-      (i32.load (local.get $s1)) (i32.load offset=4 (local.get $s1))
-      (f32.load offset=16 (local.get $s1)) (f32.load offset=20 (local.get $s1))
-      (f32.load offset=12 (local.get $s1)) (i32.load offset=24 (local.get $s1))
-      (f32.load offset=8 (local.get $s1))
-      (i32.load (local.get $s2)) (i32.load offset=4 (local.get $s2))
-      (f32.load offset=16 (local.get $s2)) (f32.load offset=20 (local.get $s2))
-      (f32.load offset=12 (local.get $s2)) (i32.load offset=24 (local.get $s2))
-      (f32.load offset=8 (local.get $s2))
-      (global.get $gl_sw_r_zbuf)
-      (i32.load offset=20 (local.get $s))
-      (i32.load offset=24 (local.get $s))
-      (f32.const 1) (f32.const 1) (f32.const 1))
+    (call $gl_sw_center_triangle)
     (global.set $gl_sw_rgba_span (i32.const 0))
     (global.set $rast_gl_stipple (i32.const 0))
     (global.set $rast_t0_q_on (i32.const 0))
@@ -3437,6 +3563,12 @@
       (then
         (global.set $gl_sw_clipped (i32.add (global.get $gl_sw_clipped) (i32.const 1)))
         (return)))
+    ;; Horizontal diamond column: x=0.5 belongs to column 0, not 1.
+    ;; Integer endpoints retain the existing independently frozen line frames.
+    (i32.store (call $gl_sw_screen_at (i32.const 0))
+      (i32.trunc_sat_f32_s (f32.floor (call $gl_sw_window (local.get $a) (local.get $vp) (i32.const 0)))))
+    (i32.store (call $gl_sw_screen_at (i32.const 1))
+      (i32.trunc_sat_f32_s (f32.floor (call $gl_sw_window (local.get $b) (local.get $vp) (i32.const 0)))))
     (call $gl_stipple_line_setup)
     (if (i32.eqz (call $gl_sw_raster_state)) (then (return)))
     (if (i32.or (global.get $gl_sw_r_dx) (global.get $gl_sw_r_dy))
@@ -3546,15 +3678,18 @@
       (then
         (global.set $gl_sw_clipped (i32.add (global.get $gl_sw_clipped) (i32.const 1)))
         (return)))
-    (loop $user_planes
+    ;; Points are clipped by their center, before expanding the raster square
+    ;; (GL 2.1 section 2.12). Near/far were checked by xform_vertex above.
+    (local.set $plane (i32.const 2))
+    (loop $planes
       (if (f32.lt (call $gl_sw_plane_d (call $gl_sw_clip_at (i32.const 0))
-          (i32.add (local.get $plane) (i32.const 6))) (f32.const 0)) (then
+          (local.get $plane)) (f32.const 0)) (then
         (global.set $gl_sw_clipped (i32.add (global.get $gl_sw_clipped) (i32.const 1))) (return)))
       (local.set $plane (i32.add (local.get $plane) (i32.const 1)))
-      (br_if $user_planes (i32.lt_u (local.get $plane) (i32.const 6))))
+      (br_if $planes (i32.lt_u (local.get $plane) (i32.const 12))))
     (call $gl_period_point_clipped (local.get $vp) (call $gl_sw_clip_at (i32.const 0))))
   (func $gl_period_point_clipped (param $vp i32) (param $a i32)
-    (local $r i32) (local $x i32) (local $y i32) (local $size i32) (local $off i32) (local $j i32) (local $plane i32)
+    (local $r i32) (local $x i32) (local $y i32) (local $size i32) (local $off i32) (local $j i32) (local $plane i32) (local $bias f32) (local $rhw f32)
     (if (global.get $gl_sf_active) (then (call $gl_sf_point (local.get $vp) (local.get $a)) (return)))
     (if (i32.eqz (call $gl_sw_emit_vertex (local.get $a) (local.get $vp) (i32.const 0)))
       (then
@@ -3583,9 +3718,31 @@
         (global.set $rast_fog_color (global.get $gl_sw_fog_color))
         (global.set $rast_fog_on (i32.const 1))))
     (local.set $size (call $gl_sw_pixels (global.get $gl_sw_point_size)))
-    (local.set $off (i32.shr_s (i32.sub (local.get $size) (i32.const 1)) (i32.const 1)))
-    (local.set $x (i32.sub (i32.load (local.get $r)) (local.get $off)))
-    (local.set $y (i32.sub (i32.load offset=4 (local.get $r)) (local.get $off)))
+    ;; Aliased point coverage uses its unrounded window position, not the
+    ;; line/polygon screen record. Odd widths center at floor(window)+1/2;
+    ;; even widths center at floor(window+1/2) (GL 2.1 section 3.3.1).
+    (local.set $bias (select (f32.const 0) (f32.const 0.5)
+      (i32.and (local.get $size) (i32.const 1))))
+    (local.set $off (i32.shr_u (local.get $size) (i32.const 1)))
+    (local.set $rhw (f32.div (f32.const 1) (f32.load offset=12 (local.get $a))))
+    (local.set $x (i32.sub (i32.trunc_sat_f32_s (f32.floor (f32.add
+      (f32.add (f32.convert_i32_s (i32.load (local.get $vp)))
+        (f32.mul (f32.mul (f32.add (f32.mul (f32.load (local.get $a)) (local.get $rhw))
+          (f32.const 1)) (f32.const 0.5))
+          (f32.convert_i32_s (i32.load offset=8 (local.get $vp)))))
+      (local.get $bias)))) (local.get $off)))
+    (local.set $y (i32.sub (i32.trunc_sat_f32_s (f32.floor (f32.add
+      (f32.add (f32.convert_i32_s (i32.load offset=4 (local.get $vp)))
+        (f32.mul (f32.mul (f32.add (f32.mul (f32.load offset=4 (local.get $a)) (local.get $rhw))
+          (f32.const 1)) (f32.const 0.5))
+          (f32.convert_i32_s (i32.load offset=12 (local.get $vp)))))
+      (local.get $bias)))) (local.get $off)))
+    ;; Convert the complete bottom-up square before applying the scissor view.
+    (if (global.get $gl_sw_flip_y) (then
+      (local.set $y (i32.sub (load.field DxObject height (global.get $gl_sw_rt))
+        (i32.add (local.get $y) (local.get $size))))))
+    (local.set $x (i32.sub (local.get $x) (global.get $gl_sw_r_dx)))
+    (local.set $y (i32.sub (local.get $y) (global.get $gl_sw_r_dy)))
     (loop $rows
       (call $gl_sw_span (i32.add (local.get $y) (local.get $j))
         (local.get $x) (local.get $r) (i32.add (local.get $x) (local.get $size)) (local.get $r))
@@ -3703,8 +3860,7 @@
     (if (i32.and
           (i32.or (i32.le_s (i32.load offset=8 (local.get $vp)) (i32.const 0))
                   (i32.le_s (i32.load offset=12 (local.get $vp)) (i32.const 0)))
-          (i32.or (i32.eqz (global.get $gl_sf_active))
-            (i32.eqz (i32.load offset=168 (call $gl_list_context)))))
+          (i32.eqz (i32.load offset=168 (call $gl_list_context))))
       (then
         (local.set $vp (i32.add (global.get $gl_sw_scratch) (i32.const 0x7C0)))
         (i32.store (local.get $vp) (i32.const 0))

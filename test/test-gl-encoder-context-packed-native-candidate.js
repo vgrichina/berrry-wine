@@ -190,12 +190,12 @@ async function run(moduleName, guard) {
   const a = gl('wglCreateContext', [dc]), b = gl('wglCreateContext', [dc]);
   assert(a && b && a !== b);
   const output = e.guest_alloc(256) >>> 0;
-  const query = pname => {
+  const query = (pname, count = 4) => {
     new Uint8Array(memory.buffer, wa(output), 256).fill(0xa5);
     gl('glGetFloatv', [pname, output + 16]);
     assert.deepEqual(Array.from(new Uint8Array(memory.buffer, wa(output), 16)), Array(16).fill(0xa5));
-    assert.deepEqual(Array.from(new Uint8Array(memory.buffer, wa(output) + 32, 224)), Array(224).fill(0xa5));
-    return Array.from(new Float32Array(memory.buffer, wa(output) + 16, 4));
+    assert.deepEqual(Array.from(new Uint8Array(memory.buffer, wa(output) + 16 + count * 4, 240 - count * 4)), Array(240 - count * 4).fill(0xa5));
+    return Array.from(new Float32Array(memory.buffer, wa(output) + 16, count));
   };
   function bind(context) {
     assert.equal(gl('wglMakeCurrent', [dc, context]), 1);
@@ -203,6 +203,151 @@ async function run(moduleName, guard) {
     assert.equal(gl('wglGetCurrentDC'), dc);
     gl('glViewport', [0, 0, 16, 16]);
   }
+  function publicNoCurrentRefusal() {
+    assert.equal(gl('wglGetCurrentContext'),0);
+    const before=api('GetPixel',[dc,8,8]),firstPacket=packets.length,firstGeometry=geometries.length;
+    gl('glClearColor',[1,0,1,1].map(f));gl('glClear',[0x4000]);
+    gl('glColor4f',[1,0,0,1].map(f));gl('glBegin',[4]);
+    for(const p of [[-1,-1,0],[1,-1,0],[0,1,0]])gl('glVertex3f',p.map(f));
+    gl('glEnd');gl('glFinish');
+    assert.equal(gl('wglGetCurrentContext'),0);
+    assert.equal(api('GetPixel',[dc,8,8]),before,'GL without a current context leaves the public drawable unchanged');
+    observations.push({label:'public no-current refusal; internal fallback wire is not a rendering oracle',
+      before,after:before,firstPacket,packetCount:packets.length-firstPacket,
+      firstGeometry,geometryCount:geometries.length-firstGeometry});
+  }
+  function matrixContexts() {
+    const identity=[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+    bind(a);gl('glMatrixMode',[0x1700]);gl('glTranslatef',[.5,-.25,.125].map(f));
+    const translated=[1,0,0,0,0,1,0,0,0,0,1,0,.5,-.25,.125,1];
+    assert.deepEqual(query(0xba6,16),translated,'public column-major modelview translation');
+    bind(b);assert.deepEqual(query(0xba6,16),identity,'other context modelview remains identity');
+    gl('glMatrixMode',[0x1701]);gl('glScalef',[.5,.25,1].map(f));
+    const scaled=[.5,0,0,0,0,.25,0,0,0,0,1,0,0,0,0,1];
+    assert.deepEqual(query(0xba7,16),scaled,'public projection scale');
+    bind(a);assert.deepEqual(query(0xba6,16),translated,'context A restores its matrix');
+    assert.deepEqual(query(0xba7,16),identity,'context A projection unchanged');
+    assert.deepEqual(query(0xba0,1),[0x1700],'matrix mode restored independently');
+    assert.equal(gl('wglMakeCurrent',[dc,0xdead]),0);
+    assert.equal(gl('wglGetCurrentContext'),0);assert.equal(gl('wglGetCurrentDC'),0);
+    bind(b);assert.deepEqual(query(0xba7,16),scaled,'failed bind preserves former context projection');
+    assert.deepEqual(query(0xba0,1),[0x1701],'context B retains projection selection');
+    gl('glLoadIdentity');gl('glMatrixMode',[0x1700]);gl('glLoadIdentity');
+    assert.deepEqual(query(0xba6,16),identity);assert.deepEqual(query(0xba7,16),identity);
+    observations.push({label:'public independent matrix contexts',translated,scaled,restored:true});
+  }
+  function publicDefaults() {
+    const identity = [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1];
+    for (const pname of [0xba6,0xba7,0xba8]) assert.deepEqual(query(pname,16),identity,'initial matrix identity');
+    assert.deepEqual(query(0xb00),[1,1,1,1],'initial current white');
+    assert.deepEqual(query(0xb02,3),[0,0,1],'initial normal');
+    assert.deepEqual(query(0xb03),[0,0,0,1],'initial texture coordinates');
+    assert.deepEqual(query(0xb54,1),[0x1d01],'initial smooth shade model');
+    assert.deepEqual(query(0xb40,2),[0x1b02,0x1b02],'both polygon faces initially fill');
+    assert.deepEqual(query(0xb43,1),[1],'initial outgoing edge flag');
+  }
+  function primitivePixels() {
+    gl('glEnable',[0x0b44]);gl('glCullFace',[0x405]);gl('glFrontFace',[0x901]);
+    const tri=[[-.75,-.75,0],[.75,-.75,0],[-.75,.75,0]];
+    const square=[[-.6875,-.6875,0],[.6875,-.6875,0],[.6875,.6875,0],[-.6875,.6875,0]];
+    const cases=[
+      {mode:0,p:[[.0625,.0625,0]],xy:[8,8],prov:0},
+      {mode:1,p:[[-.6875,.0625,0],[.6875,.0625,0]],xy:[8,8],prov:1},
+      {mode:2,p:square,xy:[8,2],prov:1},
+      {mode:3,p:square,xy:[8,2],prov:1},
+      {mode:4,p:tri,xy:[4,4],prov:2},
+      {mode:5,p:[...tri,[.75,.75,0]],xy:[4,4],prov:2},
+      {mode:6,p:square,xy:[10,4],prov:2},
+      {mode:7,p:square,xy:[8,7],prov:3},
+      {mode:8,p:[square[0],square[1],square[3],square[2]],xy:[8,7],prov:3},
+      {mode:9,p:square,xy:[8,7],prov:0},
+    ];
+    const colors=[[1,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]];
+    const readLiteral=(xy,expected,label,tolerance=0)=>{
+      new Uint8Array(memory.buffer,wa(output),256).fill(0xa5);
+      gl('glReadPixels',[...xy,1,1,0x1908,0x1401,output+16]);
+      const actual=Array.from(new Uint8Array(memory.buffer,wa(output)+16,4));
+      assert(actual.every((v,i)=>i===3?v===expected[i]:Math.abs(v-expected[i])<=tolerance),label+' native pixel '+JSON.stringify({actual,expected}));
+      assert.deepEqual(Array.from(new Uint8Array(memory.buffer,wa(output),16)),Array(16).fill(0xa5));
+      assert.deepEqual(Array.from(new Uint8Array(memory.buffer,wa(output)+20,236)),Array(236).fill(0xa5));
+      api('SwapBuffers',[dc]);
+      const pixel=api('GetPixel',[dc,xy[0],15-xy[1]]);
+      const gdi=[pixel&255,(pixel>>>8)&255,(pixel>>>16)&255];
+      assert(gdi.every((v,i)=>Math.abs(v-expected[i])<=tolerance),label+' public GDI pixel '+JSON.stringify({gdi,expected}));
+      observations.push({label,xy,expected,actual,gdi,tolerance});
+    };
+    for(const mask of [0,1,8,0x40,9,0x49]){
+      gl('glShadeModel',[0x1d01]);gl('glPushAttrib',[mask]);
+      gl('glShadeModel',[0x1d00]);gl('glPopAttrib');
+      const flat=!(mask&0x40);
+      assert.deepEqual(query(0xb54,1),[flat?0x1d00:0x1d01],
+        'public shade model restores only GL_LIGHTING_BIT mask '+mask);
+      gl('glClearColor',[0,0,0,1].map(f));gl('glClear',[0x4000]);
+      gl('glBegin',[4]);tri.forEach((p,i)=>{
+        gl('glColor4f',colors[i].map(f));gl('glVertex3f',p.map(f));
+      });gl('glEnd');gl('glFinish');
+      assert.deepEqual(geometries.at(-1).vertices,tri.flatMap((p,i)=>
+        [...p,...colors[flat?2:i],0,0,0,0,1,0,0,1,0,1,0,1]),'literal masked shade vertices '+mask);
+      readLiteral([4,4],flat?[0,0,255,255]:[149,53,53,255],
+        'public masked shade '+mask,flat?0:1);
+    }
+    for(const flat of [false,true])for(const c of cases){
+      const label=`public primitive ${c.mode} ${flat?'flat':'smooth'}`;
+      const first=geometries.length;
+      gl('glShadeModel',[flat?0x1d00:0x1d01]);
+      gl('glClearColor',[0,0,0,1].map(f));gl('glClear',[0x4000]);
+      gl('glBegin',[c.mode]);
+      c.p.forEach((p,i)=>{
+        gl('glColor4f',(flat?colors[i]:[0,1,1,1]).map(f));
+        gl('glVertex3f',p.map(f));
+      });
+      gl('glEnd');gl('glFinish');
+      assert.equal(geometries.length,first+1,label+' one compact record');
+      const geometry=geometries.at(-1);
+      assert.equal(geometry.opcode,Stream.PACKED_DRAW_OPCODE,label+' exact compact opcode');
+      assert.equal(geometry.mode,[0,1,0x1000001,0x1000001,4,4,4,4,4,4][c.mode],label+' exact wire mode');
+      const lower=[ [0],[0,1],[0,1,1,2,2,3,3,0],[0,1,1,2,2,3], [0,1,2],
+        [0,1,2,2,1,3],[0,1,2,0,2,3],[0,1,2,0,2,3],[0,1,3,0,3,2],[0,1,2,0,2,3] ][c.mode];
+      const prov=[ [0],[1,1],[1,1,2,2,3,3,0,0],[1,1,2,2,3,3],[2,2,2],
+        [2,2,2,3,3,3],[2,2,2,3,3,3],[3,3,3,3,3,3],[3,3,3,3,3,3],[0,0,0,0,0,0] ][c.mode];
+      assert.deepEqual(geometry.vertices,lower.flatMap((i,n)=>[...c.p[i],...(flat?colors[prov[n]]:[0,1,1,1]),0,0,0,0,1,0,0,1,0,1,0,1]),label+' literal topology/provoking/current19 attributes');
+      readLiteral(c.xy,(flat?colors[c.prov]:[0,1,1,1]).map(v=>v*255),label);
+    }
+    gl('glShadeModel',[0x1d01]);
+    gl('glClearColor',[0,0,0,1].map(f));gl('glClear',[0x4000]);
+    gl('glBegin',[4]);tri.forEach((p,i)=>{gl('glColor4f',colors[i].map(f));gl('glVertex3f',p.map(f));});gl('glEnd');gl('glFinish');
+    // At pixel center (4.5,4.5), barycentric RGB weights are (7/12,5/24,5/24).
+    // Permit one byte for documented rasterizer conversion/interpolation rounding.
+    readLiteral([4,4],[149,53,53,255],'public smooth triangle interpolation',1);
+    gl('glClearColor',[0,0,0,1].map(f));gl('glClear',[0x4000]);
+    gl('glClearColor',[0,0,0,1].map(f));gl('glClear',[0x4000]);gl('glColor4f',[0,1,1,1].map(f));
+    const homogeneous=[[-1,-1,0,2],[1.5,-1,0,2],[-1,1.5,0,2]];
+    gl('glBegin',[4]);homogeneous.forEach(p=>gl('glVertex4f',p.map(f)));gl('glEnd');gl('glFinish');
+    assert.equal(geometries.at(-1).opcode,Stream.PACKED_DRAW_OPCODE);assert.equal(geometries.at(-1).mode,4);
+    assert.deepEqual(geometries.at(-1).vertices,homogeneous.flatMap(p=>[...p.slice(0,3),0,1,1,1,0,0,0,0,1,0,0,2,0,1,0,1]),'literal homogeneous source W retained');
+    new Uint8Array(memory.buffer,wa(output),256).fill(0xa5);
+    gl('glReadPixels',[4,4,6,6,0x1908,0x1401,output+16]);
+    const homogeneousPixels=new Uint8Array(memory.buffer,wa(output)+16,144);
+    const positive=Array.from(homogeneousPixels.subarray(0,4)),outside=Array.from(homogeneousPixels.subarray(140,144));
+    assert.deepEqual(positive,[0,255,255,255],'positive homogeneous triangle pixel');
+    assert.deepEqual(outside,[0,0,0,255],'perspective-divided boundary excludes a pixel that ignoring W would fill');
+    assert.deepEqual(Array.from(new Uint8Array(memory.buffer,wa(output),16)),Array(16).fill(0xa5));
+    assert.deepEqual(Array.from(new Uint8Array(memory.buffer,wa(output)+160,96)),Array(96).fill(0xa5));
+    api('SwapBuffers',[dc]);
+    const homogeneousGDI=[api('GetPixel',[dc,4,11]),api('GetPixel',[dc,9,6])];
+    assert.deepEqual(homogeneousGDI,[0xffff00,0]);
+    observations.push({label:'homogeneous W divide positive and exclusion pixels',positive,outside,gdi:homogeneousGDI});
+    gl('glClearColor',[0,0,0,1].map(f));gl('glClear',[0x4000]);
+    gl('glColor4f',[1,1,1,1].map(f));gl('glBegin',[4]);
+    const clockwise=[tri[0],tri[2],tri[1]];
+    clockwise.forEach(p=>gl('glVertex3f',p.map(f)));gl('glEnd');gl('glFinish');
+    assert.equal(geometries.at(-1).opcode,Stream.PACKED_DRAW_OPCODE);
+    assert.equal(geometries.at(-1).mode,4);
+    assert.deepEqual(geometries.at(-1).vertices,clockwise.flatMap(p=>[...p,1,1,1,1,0,0,0,0,1,0,0,1,0,1,0,1]),'literal clockwise geometry is preserved for renderer culling');
+    readLiteral([4,4],[0,0,0,255],'clockwise triangle culled');
+    gl('glDisable',[0x0b44]);assert.equal(gl('glGetError'),0,'primitive public calls have no ignored GL error');
+  }
+
   function draw(color, label) {
     const firstGeometry = geometries.length;
     gl('glClearColor', [0,0,1,1].map(f)); gl('glClear', [0x4000]);
@@ -226,8 +371,8 @@ async function run(moduleName, guard) {
     observations.push({ label, color, pixel });
   }
   try {
-    bind(a); gl('glColor4f', [1,0,0,1].map(f)); draw([1,0,0,1], 'context A red');
-    bind(b); assert.deepEqual(query(0x0b00), [1,1,1,1]); draw([1,1,1,1], 'fresh context B white');
+    publicNoCurrentRefusal(); bind(a); publicDefaults(); gl('glColor4f', [1,0,0,1].map(f)); draw([1,0,0,1], 'context A red');
+    bind(b); publicDefaults(); assert.deepEqual(query(0x0b00), [1,1,1,1]); draw([1,1,1,1], 'fresh context B white');
     gl('glColor4f', [0,1,0,1].map(f)); draw([0,1,0,1], 'context B green');
     bind(a); assert.deepEqual(query(0x0b00), [1,0,0,1]); draw([1,0,0,1], 'restored context A red');
     assert.equal(gl('wglMakeCurrent', [dc,0xdead]), 0);
@@ -237,6 +382,7 @@ async function run(moduleName, guard) {
     assert.equal(gl('wglDeleteContext', [0xdead]), 0);
     assert.equal(packets.length, before, 'unknown deletion is locally refused without a submission');
     bind(b); assert.deepEqual(query(0x0b00), [0,1,0,1]); draw([0,1,0,1], 'B survived failed bind');
+    matrixContexts(); primitivePixels();
     assert.equal(gl('wglMakeCurrent', [0,0]), 1);
     assert.equal(gl('wglDeleteContext', [a]), 1); assert.equal(gl('wglDeleteContext', [b]), 1);
     api('ReleaseDC', [hwnd,dc]); api('DestroyWindow', [hwnd]);
@@ -245,6 +391,10 @@ async function run(moduleName, guard) {
       version: native.getParameter(native.VERSION), physicalGPUQualified: false };
     return { moduleName, moduleSHA256: hash(binary), bootstrapPESHA256: hash(pe),
       environment, calls, packets, geometries, observations };
+  } catch(error) {
+    error.moduleEvidence = {moduleName,moduleSHA256:hash(binary),
+      bootstrapPESHA256:hash(pe),calls,packets,geometries,observations,error:String(error.stack||error)};
+    throw error;
   } finally {
     const native = bridge._webglBackend?.gl;
     if (!guard.permanentUnknown) bridge.destroy();
@@ -258,6 +408,9 @@ async function run(moduleName, guard) {
   try {
     for (const name of ['wine-assembly.wasm', 'wine-assembly.compat.wasm']) results.push(await run(name, guard));
     report.passed = true;
+  } catch(error) {
+    report.failure = error.moduleEvidence || {error:String(error.stack||error)};
+    throw error;
   } finally {
     report.operationWatchdog = await guard.close();
     if (process.env.GL_CONTEXT_PACKED_EVIDENCE) fs.writeFileSync(process.env.GL_CONTEXT_PACKED_EVIDENCE,

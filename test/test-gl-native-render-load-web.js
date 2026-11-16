@@ -12,25 +12,99 @@ const os = require('os');
 const crypto = require('crypto');
 const {spawn} = require('child_process');
 const ROOT = process.env.WINE_ROOT || path.resolve(__dirname, '..');
+const selectedPrimitiveArg=process.argv.find(arg=>arg.startsWith('--primitive-mode='));
+const selectedPrimitive=selectedPrimitiveArg?Number(selectedPrimitiveArg.split('=')[1]):null;
+if(selectedPrimitiveArg)assert(Number.isInteger(selectedPrimitive)&&selectedPrimitive>=0&&selectedPrimitive<=11,
+  'selected primitive must be an integer from zero through eleven');
+assert(!(selectedPrimitiveArg&&process.argv.includes('--point-witness')),'select one diagnostic scope');
 
 function producerWorker() {
   importScripts('/lib/region-map.generated.js', '/lib/gl-command-stream.js',
     '/lib/guest-rpc.js', '/lib/gl-software-producer.js', '/lib/gl-compat.js');
-  self.onmessage = event => {
+  self.onmessage = async event => {
     const m = event.data;
     if (m.t !== 'start') return;
     try {
-      const {memory,module,sigs,backend,hwnd,dc} = m;
+      const {memory,module,sigs,backend,hwnd,dc,primitiveMode,watchdogPort} = m;
+      // A separate physical Worker observes each fixed 3s deadline. Its port
+      // reports directly to the host even while this producer is blocked.
+      const watchdogState=new SharedArrayBuffer(32),ws=new BigInt64Array(watchdogState);
+      function deadlineThread(){
+        self.onmessage=event=>{
+          const s=new BigInt64Array(event.data.state),port=event.data.port;
+          if(Atomics.load(s,0)!==0n||BigInt(Date.now())>=Atomics.load(s,2)){
+            Atomics.store(s,0,1n);port.postMessage({t:'PERMANENT_UNKNOWN',reason:'startup expired',at:Date.now()});self.close();return;
+          }
+          Atomics.store(s,3,0n);Atomics.notify(s,3);port.postMessage({t:'ready',fixedMilliseconds:3000});
+          for(;;){
+            const active=Atomics.load(s,1);
+            if(active===-1n){port.postMessage({t:'stopped',terminal:Atomics.load(s,0)!==0n});Atomics.store(s,3,-1n);Atomics.notify(s,3);self.close();return;}
+            if(active>0n){
+              Atomics.store(s,3,active);Atomics.notify(s,3);
+              if(BigInt(Date.now())>=Atomics.load(s,2)&&Atomics.load(s,1)===active){
+                Atomics.store(s,0,1n);
+                port.postMessage({t:'PERMANENT_UNKNOWN',sequence:Number(active),deadline:Number(Atomics.load(s,2)),at:Date.now()});
+                self.close();return;
+              }
+            }
+            Atomics.wait(s,1,active,2);
+          }
+        };
+      }
+      Atomics.store(ws,3,-2n);
+      const deadlineURL=URL.createObjectURL(new Blob(['('+deadlineThread.toString()+')()'],{type:'application/javascript'}));
+      const startup={launchedAt:Date.now()};startup.deadline=startup.launchedAt+3000;
+      Atomics.store(ws,2,BigInt(startup.deadline));
+      const deadlineWorker=new Worker(deadlineURL);
+      deadlineWorker.onerror=()=>Atomics.store(ws,0,1n);
+      deadlineWorker.postMessage({state:watchdogState,port:watchdogPort},[watchdogPort]);
+      // Yield the creator's event loop while the physical child starts. The
+      // absolute startup deadline remains three seconds from launch.
+      while(Atomics.load(ws,3)===-2n&&Atomics.load(ws,0)===0n&&Date.now()<startup.deadline)
+        await new Promise(resolve=>setTimeout(resolve,2));
+      startup.readySeenAt=Date.now();
+      if(Atomics.load(ws,3)!==0n||Atomics.load(ws,0)!==0n||startup.readySeenAt>=startup.deadline){
+        Atomics.store(ws,0,1n);deadlineWorker.terminate();URL.revokeObjectURL(deadlineURL);
+        throw Error('PERMANENT_UNKNOWN independent watchdog startup');
+      }
+      URL.revokeObjectURL(deadlineURL);
+      let operationSequence=0;
+      const operationEvents=[];
+      const controlled=(name,fn)=>{
+        if(Atomics.load(ws,0)!==0n)throw Error('PERMANENT_UNKNOWN refuses later request '+name);
+        const sequence=++operationSequence,armedAt=Date.now(),deadline=armedAt+3000;
+        const event={sequence,name,armedAt,deadline};operationEvents.push(event);
+        postMessage({t:'fixture-operation',...event});
+        Atomics.store(ws,2,BigInt(deadline));Atomics.store(ws,1,BigInt(sequence));Atomics.notify(ws,1);
+        Atomics.wait(ws,3,BigInt(sequence-1),3000);
+        try{
+          if(Atomics.load(ws,3)!==BigInt(sequence)||Date.now()>=deadline||Atomics.load(ws,0)!==0n)
+            throw Error('independent watchdog did not prearm within fixed 3s');
+          const value=fn();
+          if(Date.now()>=deadline||Atomics.load(ws,0)!==0n)throw Error('fixed 3s public operation expired');
+          Atomics.store(ws,1,0n);Atomics.notify(ws,1);event.outcome='COMPLETED';event.completedAt=Date.now();return value;
+        }catch(error){
+          Atomics.store(ws,0,1n);event.outcome='PERMANENT_UNKNOWN';
+          postMessage({t:'fixture-error',error:'PERMANENT_UNKNOWN '+name+' '+String(error.stack||error)});throw error;
+        }
+      };
+      const closeDeadline=()=>{
+        Atomics.store(ws,1,-1n);Atomics.notify(ws,1);
+        Atomics.wait(ws,3,BigInt(operationSequence),3000);
+        if(Atomics.load(ws,3)!==-1n)throw Error('deadline Worker stop acknowledgement missing');
+        deadlineWorker.terminate();
+        return {workerURL:deadlineURL,startup,fixedMilliseconds:3000,prearmed:true,stopAcknowledged:true,physicallyTerminated:true,permanentUnknown:false,events:operationEvents};
+      };
       let instance;
       const software = new GLSoftwareProducer.Producer(() => instance.exports);
       const built = GuestRpc.createWorkerImports(memory, sigs, message => postMessage(message),
         {slot:0, getExports:()=>instance?.exports, softwareGLConfig:software.config,
           configureSoftwareGL:config=>software.configure(config)});
-      instance = new WebAssembly.Instance(module,built.imports);
+      instance = controlled('WebAssembly.Instance',()=>new WebAssembly.Instance(module,built.imports));
       const e = instance.exports, v = new DataView(memory.buffer);
       if(e.gl_wat_encoder_set_enabled !== undefined)throw Error('runtime JS encoder selector');
-      e.init_thread(1,0x400000,0,0,0,0,0,0);
-      if(e.gl_wat_stream_pool_enable(1)!==1)throw Error('native triple pool unavailable');
+      controlled('init_thread',()=>e.init_thread(1,0x400000,0,0,0,0,0,0));
+      if(controlled('pool-enable',()=>e.gl_wat_stream_pool_enable(1))!==1)throw Error('native triple pool unavailable');
       const stack=RegionMap.BASE.GUEST_STACK+0x4000;
       let callSequence=0;
       const call=(name,args=[],aux=0)=>{
@@ -38,7 +112,7 @@ function producerWorker() {
         new Uint8Array(memory.buffer,stack,128).fill(0);
         v.setUint32(stack,0xdec0adde,true);
         args.forEach((x,i)=>v.setUint32(stack+4+i*4,x>>>0,true));
-        return e.gl_wat_encoder_call(OpenGLCompat.CALL_INDEX[name],stack,aux)|0;
+        return controlled(name,()=>e.gl_wat_encoder_call(OpenGLCompat.CALL_INDEX[name],stack,aux)|0);
       };
       const f=x=>{v.setFloat32(stack+124,x,true);return v.getUint32(stack+124,true);};
       const timed=(name,fn)=>{const start=performance.now(),value=fn();
@@ -46,24 +120,51 @@ function producerWorker() {
       const handle=timed('create',()=>call('wglCreateContext',[],hwnd));
       if(!handle)throw Error('real backend context creation failed');
       if(timed('current',()=>call('wglMakeCurrent',[0,handle],hwnd))!==1)throw Error('make current');
+      if(primitiveMode===10)call('glPolygonMode',[0x408,0x1b01]);
       call('glViewport',[0,0,8,8]);call('glPixelStorei',[0xd05,1]);
       timed('setup-finish',()=>call('glFinish'));
-      timed('empty-flush',()=>e.gl_wat_stream_flush());
+      timed('empty-flush',()=>controlled('stream-flush',()=>e.gl_wat_stream_flush()));
+      const primitiveSpecs=[
+        {p:[[-.875,-.875,0]],prov:0},
+        {p:[[-1,-.875,0],[0,-.875,0]],prov:1},
+        {p:[[-1,-.875,0],[0,-.875,0],[-1,1,0]],prov:1},
+        {p:[[-1,-.875,0],[0,-.875,0],[-1,1,0]],prov:1},
+        {p:[[-1,-1,0],[0,-1,0],[-1,1,0]],prov:2},
+        {p:[[-1,-1,0],[0,-1,0],[-1,1,0],[0,1,0]],prov:2},
+        {p:[[-1,-1,0],[0,-1,0],[0,1,0],[-1,1,0]],prov:2},
+        {p:[[-1,-1,0],[0,-1,0],[0,1,0],[-1,1,0]],prov:3},
+        {p:[[-1,-1,0],[0,-1,0],[-1,1,0],[0,1,0]],prov:3},
+        {p:[[-1,-1,0],[0,-1,0],[0,1,0],[-1,1,0]],prov:0},
+        {p:[[-.875,-.875,0],[.125,-.875,0],[.125,.625,0],[-.875,.625,0]],prov:3},
+        {p:[[-2,-2,0,2],[0,-2,0,2],[-2,2,0,2]],prov:2},
+      ];
       const colors=[[1,0,0],[0,1,0],[0,0,1],[1,1,0],[1,0,1],[0,1,1]];
       for(let i=0;i<colors.length;i++){
         call('glClearColor',[...colors[i].map(f),f(1)]);call('glClear',[0x4000]);
-        call('glBegin',[4]);call('glColor4f',[f(1),f(1),f(1),f(1)]);
-        for(const p of [[-1,-1,0],[0,-1,0],[-1,1,0]])call('glVertex3f',p.map(f));
+        if(primitiveMode===null){
+          call('glBegin',[4]);call('glColor4f',[f(1),f(1),f(1),f(1)]);
+          for(const p of [[-1,-1,0],[0,-1,0],[-1,1,0]])call('glVertex3f',p.map(f));
+        }else{
+          const spec=primitiveSpecs[primitiveMode];
+          call('glShadeModel',[i<3?0x1d01:0x1d00]);
+          call('glBegin',[primitiveMode===10?7:primitiveMode===11?4:primitiveMode]);
+          spec.p.forEach((p,j)=>{
+            if(primitiveMode===10)call('glEdgeFlag',[j===1?0:1]);
+            const white=i<3||j===spec.prov;
+            call('glColor4f',[f(1),f(white?1:0),f(white?1:0),f(1)]);
+            call(primitiveMode===11?'glVertex4f':'glVertex3f',p.map(f));
+          });
+        }
         call('glEnd');timed('frame-'+i,()=>call('gpuPresent'));
         if(i===2)timed('queued-finish',()=>call('glFinish'));
       }
-      const gdiPixel=timed('gdi-read',()=>e.test_call_GetPixel(dc,7,0)>>>0);
+      const gdiPixel=timed('gdi-read',()=>controlled('GDI GetPixel',()=>e.test_call_GetPixel(dc,7,0)>>>0));
       timed('finish',()=>call('glFinish'));
       call('glReadBuffer',[0x404]); // Explicit FRONT: inspect the presented image after swapping.
       const out=e.guest_alloc(128)>>>0,at=e.guest_to_wasm(out)>>>0;
       new Uint8Array(memory.buffer,at,128).fill(0xa5);
-      // RED_BITS reaches the actual WebGL owner; MAX_TEXTURE_UNITS is now a
-      // native query and cannot stand in for a broker/backend output barrier.
+      // G1 owns GL queries natively on both backends, including RED_BITS.
+      // Readback below remains the actual delayed backend output barrier.
       timed('query',()=>call('glGetIntegerv',[backend==='webgl'?0xd52:0x84e2,out+16]));
       const query=v.getInt32(at+16,true);
       const queryCanaries=[v.getUint32(at+12,true),v.getUint32(at+20,true)];
@@ -76,7 +177,7 @@ function producerWorker() {
         try {
           if(next.data.t==='retired'){
             const value=timed('present-after-retire',()=>call('gpuPresent'));
-            postMessage({t:'done',value,stats:built.stats});self.close();
+            const deadline=closeDeadline();postMessage({t:'done',value,stats:built.stats,deadline});self.close();
           }
         }catch(error){postMessage({t:'fixture-error',error:String(error.stack||error)});self.close();}
       };
@@ -91,6 +192,18 @@ function delayedRenderWorker() {
   OffscreenCanvas.prototype.getContext=function(type,...args){
     const context=Reflect.apply(getContext,this,[type,...args]);
     if(context&&/^webgl/.test(type)){
+      // Observe the fresh fixture's actual driver calls without warming a
+      // program, issuing extra GL calls or changing the fixed deadline.
+      for(const name of ['compileShader','linkProgram','drawArrays','drawElements','readPixels','finish']){
+        if(typeof context[name]!=='function')continue;
+        const original=context[name];
+        context[name]=function(...args){
+          const startedAt=performance.now();
+          postMessage({t:'fixture-native-phase',name,phase:'begin',at:startedAt});
+          try{return Reflect.apply(original,this,args);}
+          finally{postMessage({t:'fixture-native-phase',name,phase:'end',at:performance.now(),elapsed:performance.now()-startedAt});}
+        };
+      }
       const extension=context.getExtension('WEBGL_debug_renderer_info');
       postMessage({t:'fixture-backend',type,version:context.getParameter(context.VERSION),
         renderer:context.getParameter(extension?extension.UNMASKED_RENDERER_WEBGL:context.RENDERER),
@@ -120,7 +233,7 @@ function delayedRenderWorker() {
   };
 }
 
-async function browserScenario(backend) {
+async function browserScenario(backend, primitiveMode = null) {
   const observations=[],steps=[],frames=[],batches=[],deliveries=[],responses=[],backends=[],contextCounts=[],ownershipFences=[];
   const assert=(ok,label)=>{if(!ok)throw Error(label);};
   const equal=(a,b,label)=>assert(JSON.stringify(a)===JSON.stringify(b),label+': '+JSON.stringify(a)+' != '+JSON.stringify(b));
@@ -158,7 +271,9 @@ async function browserScenario(backend) {
   const wait=t=>new Promise(resolve=>pending.set(t,resolve));
   const hash=raw=>{let value=2166136261;for(const x of raw)value=Math.imul(value^x,16777619)>>>0;return value;};
   let retirement,physicalTerminate=false,activeCall,workload;
-  const apiCalls=[];
+  const apiCalls=[],watchdogReceipts=[],nativePhases=[],operationEvents=[];let permanentUnknown=false,laterRequests=0;
+  const watchdogChannel=new MessageChannel();
+  watchdogChannel.port1.onmessage=event=>{watchdogReceipts.push(event.data);if(event.data.t==="PERMANENT_UNKNOWN"){permanentUnknown=true;producer?.terminate();renderWorker?.terminate();fail(Error("PERMANENT_UNKNOWN fixed 3s public-operation deadline "+JSON.stringify(event.data)));}};
   try {
     manager=new RenderWorker.Manager({module,memory,sigs,imageBase:0x400000,
       workerFactory:()=>{
@@ -169,6 +284,7 @@ async function browserScenario(backend) {
           const m=event.data;
           if(m.t==='fixture-delivery')deliveries.push({...m,at:performance.now()});
           if(m.t==='fixture-backend')backends.push(m);
+          if(m.t==='fixture-native-phase')nativePhases.push({...m,receivedAt:performance.now()});
           if(m.t==='fixture-error'||m.t==='error')fail(Error(m.error));
           if(m.t==='render-event'&&m.message.t==='render-response')responses.push({requestId:m.message.requestId,at:performance.now()});
         });return renderWorker;
@@ -181,8 +297,9 @@ async function browserScenario(backend) {
       onPresent:layer=>{
         if(!layer.canvas.isConnected){document.body.appendChild(layer.canvas);layer.canvas.style.width='256px';layer.canvas.style.imageRendering='pixelated';}
         const ctx=layer.canvas.getContext('2d');
-        frames.push({background:Array.from(ctx.getImageData(7,0,1,1).data),
-          triangle:Array.from(ctx.getImageData(0,7,1,1).data),at:performance.now()});
+        frames.push({...(primitiveMode===0 && frames.length===0 ? {pointPixels:Array.from(ctx.getImageData(0,0,8,8).data)} : {}),background:Array.from(ctx.getImageData(7,0,1,1).data),
+          triangle:Array.from(ctx.getImageData(0,7,1,1).data),
+          homogeneous:Array.from(ctx.getImageData(2,6,1,1).data),boundary:[[0,3],[2,1],[4,4],[2,4]].map(([x,y])=>Array.from(ctx.getImageData(x,y,1,1).data)),at:performance.now()});
       }});
     const broker=GuestRpc.createMainBroker(memory,{
       beep_process_begin:()=>1,beep_thread_begin:()=>1,
@@ -219,6 +336,7 @@ async function browserScenario(backend) {
     producer=new Worker('/test/gl-load-producer-fixture.js');
     producer.onerror=event=>fail(Error(event.message));
     producer.onmessage=event=>{
+      if(permanentUnknown){laterRequests++;return;}
       try {
         const m=event.data;
         if(m.t==='glBatch'){
@@ -229,12 +347,13 @@ async function browserScenario(backend) {
         else if(m.t==='calls')broker.serveCalls(m);
         else if(m.t==='api'){activeCall=m;apiCalls.push(m);}
         else if(m.t==='step')steps.push({...m,batches:batches.length});
-        else if(m.t==='fixture-error')fail(Error(m.error));
+        else if(m.t==='fixture-operation')operationEvents.push(m);
+        else if(m.t==='fixture-error'){if(String(m.error).includes('PERMANENT_UNKNOWN')){permanentUnknown=true;producer?.terminate();renderWorker?.terminate();}fail(Error(m.error));}
         else if(pending.has(m.t)){pending.get(m.t)(m);pending.delete(m.t);}
         else fail(Error('unexpected producer message '+JSON.stringify(m)));
       }catch(error){fail(error);}
     };
-    producer.postMessage({t:'start',module,memory,sigs,backend,hwnd,dc});
+    producer.postMessage({t:'start',module,memory,sigs,backend,hwnd,dc,primitiveMode,watchdogPort:watchdogChannel.port2},[watchdogChannel.port2]);
     const result=producerResult=await safe(rendered);
     await safe(bridge.drain());
     // Freeze the producer workload before the separate context-retirement
@@ -244,6 +363,8 @@ async function browserScenario(backend) {
     equal(frames.map(x=>x.background),[[255,0,0,255],[0,255,0,255],[0,0,255,255],
       [255,255,0,255],[255,0,255,255],[0,255,255,255]],'literal presented frame FIFO');
     equal(frames.map(x=>x.triangle),Array(6).fill([255,255,255,255]),'literal packed triangle pixels');
+    if(primitiveMode===10)frames.forEach((frame,i)=>equal(frame.boundary,[[255,255,255,255],[255,255,255,255],frame.background,frame.background],'literal left/top edge, suppressed right edge and absent quad diagonal frame '+i));
+    if(primitiveMode===11)equal(frames.map(frame=>frame.homogeneous),Array(6).fill([255,255,255,255]),'actual Worker homogeneous W division interior pixel');
     equal(result.pixel,[0,255,255,255],'native glReadPixels final color');
     equal(result.gdiPixel,0xffff00,'native producer GetPixel crosses actual pre-GDI readback fence');
     equal(result.query,backend==='webgl'?8:2,'query first-instruction output');
@@ -260,7 +381,8 @@ async function browserScenario(backend) {
     equal(frameBatches.length,6,'six native frame publications');
     equal(steps.filter(x=>x.name.startsWith('frame-')).map(x=>x.value),Array(6).fill(1),'literal native SwapBuffers success results');
     equal(steps.find(x=>x.name==='finish').value,0,'literal native glFinish result');
-    for(const b of frameBatches)assert(b.ops.includes(GLCommandStream.PACKED_DRAW_OPCODE),'native packed draw present');
+    const drawOpcode=primitiveMode===10?GLCommandStream.EDGE_DRAW_OPCODE:GLCommandStream.PACKED_DRAW_OPCODE;
+    for(const b of frameBatches)equal(b.ops,[drawOpcode,OpenGLCompat.CALL_INDEX.gpuPresent],'exact complete geometry/present opcodes');
     if(backend==='webgl'){
       assert(backends.some(x=>x.renderer&&/^WebGL/.test(x.version)),'actual render worker WebGL renderer identified');
       // Count leases in their actual scope: setup, clears and read-buffer
@@ -268,19 +390,20 @@ async function browserScenario(backend) {
       const C=OpenGLCompat.CALL_INDEX,expected=[
         ['wglCreateContext',[C.wglCreateContext],0],
         ['wglMakeCurrent',[C.wglMakeCurrent],0],
-        ['glPixelStorei',[C.glViewport,C.glPixelStorei],1],
+        ['glPixelStorei',[...(primitiveMode===10?[C.glPolygonMode]:[]),C.glViewport,C.glPixelStorei],1],
         ['glFinish',[C.glFinish],0],
       ];
       for(let i=0;i<6;i++){
         expected.push(['glClear',[C.glClearColor,C.glClear],1],
-          ['gpuPresent',[GLCommandStream.PACKED_DRAW_OPCODE,C.gpuPresent],1]);
+          ['gpuPresent',[drawOpcode,C.gpuPresent],1]);
         if(i===2)expected.push(['glFinish',[C.glFinish],0]);
       }
       expected.push(['glFinish',[C.glFinish],0],['glReadBuffer',[C.glReadBuffer],1],
-        ['glGetIntegerv',[C.glGetIntegerv],0],['glReadPixels',[C.glReadPixels],0]);
+        ['glReadPixels',[C.glReadPixels],0]);
       equal(batches.map(b=>[b.api.name,b.ops,b.leased]),expected,
         'every native submission has exactly one API cause and the required lease policy');
       const leased=batches.filter(b=>b.leased===1);
+      equal(leased.length,14,'exact original fourteen leased setup/clear/frame/read-buffer batches');
       equal(frameBatches.reduce((n,b)=>n+b.leased,0),6,'six scoped draw/present leases');
       equal(leased.filter(b=>b.api.name==='glClear').length,6,'six separate ordered clear leases');
       equal(bridge.packetStats,{leasedBatches:leased.length,copiedBatches:0,copiedBytes:0},
@@ -320,7 +443,8 @@ async function browserScenario(backend) {
       assert(frameBatches.every(b=>b.framesAtAck>b.framesBefore),'software waits for real presentation');
     }
     assert(steps.find(x=>x.name==='finish').elapsed>=150,'finish waits behind bounded consumer delay');
-    if(backend==='webgl')assert(steps.find(x=>x.name==='query').elapsed>=150,'backend query parks native producer');
+    equal(batches.filter(b=>b.api.name==='glGetIntegerv'),[],
+      'G1 native query writes caller output without a backend packet on either route');
     assert(steps.find(x=>x.name==='readback').elapsed>=150,'glReadPixels waits for actual consumer output');
     // Exercise production renderer readback methods inside production ordered
     // admission. The pixels are written to the real native GDI window surface.
@@ -344,7 +468,11 @@ async function browserScenario(backend) {
     equal(await safe(bridge.replay(GLCommandStream.memoryBatch(memory,deleteAt,40),2)),1,'cross-owner released context deletion');
     assert([...bridge.activeWindows.values()].every(x=>!x),'context retirement invalidates every active owner');
     producer.postMessage({t:'retired'});
-    equal((await safe(done)).value,0,'SwapBuffers reports real failure after context retirement');
+    const finalProducer=await safe(done);
+    equal(finalProducer.value,0,'SwapBuffers reports real failure after context retirement');
+    assert(finalProducer.deadline.prearmed&&finalProducer.deadline.stopAcknowledged&&finalProducer.deadline.physicallyTerminated,'independent fixed 3s watchdog prearmed and stopped');
+    assert(finalProducer.deadline.events.every(event=>event.outcome==='COMPLETED'&&event.completedAt<event.deadline),'every controlled operation completed before its fixed deadline');
+    equal(laterRequests,0,'zero requests after permanent UNKNOWN');
     equal(contextCounts.at(-1),0,'real backend reports zero surviving contexts');
     equal(Atomics.load(rpc,GuestRpc.SLOT.STATUS),GuestRpc.STATUS_IDLE,'producer RPC slot idle');
     await safe(bridge.close());assert(port.closed,'endpoint closure acknowledged');
@@ -354,14 +482,15 @@ async function browserScenario(backend) {
     assert(Object.hasOwn(retirement,'heapHead')&&manager._retired,'real worker acknowledged native heap retirement');
     equal(manager.pending.size,0,'transport pending drained');
     return {backend,moduleHash,webglImplementation:backend==='webgl'?backends:'native WAT software',
-      result,workload,frames,batches,deliveries,responses,apiCalls,ownershipFences,steps,observations,backends,contextCounts,packetStats:bridge.packetStats,retirement,physicalTerminate};
+      result,deadline:finalProducer.deadline,watchdogReceipts,nativePhases,operationEvents,laterRequests,workload,frames,batches,deliveries,responses,apiCalls,ownershipFences,steps,observations,backends,contextCounts,packetStats:bridge.packetStats,retirement,physicalTerminate};
   } catch(error) {
     window.glLoadFailure={backend,error:String(error.stack||error),moduleHash,producerResult,frames,batches,deliveries,responses,steps,observations,backends,
-      packetStats:bridge?.packetStats,queue:bridge&&{used:bridge.submissions.used,error:String(bridge.submissions.error)}};
+      permanentUnknown,laterRequests,watchdogReceipts,nativePhases,operationEvents,packetStats:bridge?.packetStats,queue:bridge&&{used:bridge.submissions.used,error:String(bridge.submissions.error)}};
     throw error;
   } finally {
     producer?.terminate();
-    if(manager&&!physicalTerminate)await manager.stop().catch(()=>{});
+    watchdogChannel.port1.close();
+    if(manager&&!physicalTerminate)renderWorker?.terminate();
   }
 }
 
@@ -372,24 +501,25 @@ async function launchBrowser() {
     '--user-data-dir='+profile,'--no-sandbox','--no-first-run','--no-default-browser-check',
     '--disable-background-networking','--disable-component-update','--disable-sync',
     '--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','about:blank'
-  ],{stdio:['ignore','ignore','pipe']});
-  let ws,spawnError,stderr='',stderrEOF=false,id=0;const pending=new Map();
-  chrome.on('error',e=>spawnError=e);chrome.stderr.on('data',b=>stderr=(stderr+b).slice(-8000));
+  ],{stdio:['ignore','pipe','pipe']});
+  let ws,spawnError,stdout='',stderr='',stdoutEOF=false,stderrEOF=false,id=0;const pending=new Map();
+  chrome.on('error',e=>spawnError=e);chrome.stdout.on('data',b=>stdout+=b);chrome.stderr.on('data',b=>stderr+=b);
+  chrome.stdout.on('end',()=>{stdoutEOF=true;});
   chrome.stderr.on('end',()=>{stderrEOF=true;});
   const exited=new Promise(resolve=>chrome.once('exit',(code,signal)=>resolve({code,signal})));
   const closed=new Promise(resolve=>chrome.once('close',(code,signal)=>resolve({code,signal})));
   const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-  async function close() {
-    if(ws?.readyState===WebSocket.OPEN)await send('Browser.close').catch(()=>{});
+  async function close(terminalUnknown=false) {
+    if(!terminalUnknown&&ws?.readyState===WebSocket.OPEN)await send('Browser.close').catch(()=>{});
     let grace;
     await Promise.race([exited,new Promise(resolve=>{grace=setTimeout(resolve,500);})]);clearTimeout(grace);
     if(chrome.exitCode===null&&!chrome.signalCode){
-      const timer=setTimeout(()=>chrome.kill('SIGKILL'),5000);
+      const timer=setTimeout(()=>chrome.kill('SIGKILL'),3000);
       try {chrome.kill('SIGTERM');await exited;} finally {clearTimeout(timer);}
     }
     ws?.close();fs.rmSync(profile,{recursive:true,force:true});
     return {pid:chrome.pid,...await closed,actualWait:true,
-      stdoutEOF:chrome.stdout===null,stderrEOF};
+      stdoutEOF,stderrEOF,stdout,stderr,terminalUnknown,fixtureHostStop:true};
   }
   function send(method,params={}) {return new Promise((resolve,reject)=>{
     const n=++id,timer=setTimeout(()=>{pending.delete(n);reject(Error('CDP timeout '+method));},45000);
@@ -456,7 +586,10 @@ async function launchBrowser() {
       const bytes=fs.readFileSync(file);served.push({path:name,bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')});
       response.end(bytes);}catch(error){response.writeHead(404);response.end(String(error));}
   }});
-  const startedAt=new Date().toISOString(),report={startedAt,results:[]};
+  const startedAt=new Date().toISOString(),report={startedAt,results:[],
+    scope:selectedPrimitiveArg?'selected-primitive-two-backends':process.argv.includes('--point-witness')?'software-point-full-pixel-witness':process.argv.includes('--primitives')?'all-26-browser-primitive-scenarios':'default-two-backends',
+    selectedPrimitive,
+    expectedScenarios:process.argv.includes('--point-witness')?1:selectedPrimitiveArg?2:process.argv.includes('--primitives')?26:2};
   let browser;
   try {
     browser=await launchBrowser();report.browser=browser.version;report.systemInfo=browser.systemInfo;
@@ -473,28 +606,37 @@ async function launchBrowser() {
       'guest-rpc','render-worker','gl-render-host','gdi-surface','surface','renderer']){
       await browser.evaluate('(async()=>{const e=document.createElement("script");e.src="/lib/'+lib+'.js";document.head.appendChild(e);await new Promise((r,j)=>{e.onload=r;e.onerror=j;});})()');
     }
-    for(const backend of ['webgl','software']){
-      const result=await browser.evaluate('('+browserScenario.toString()+')('+JSON.stringify(backend)+')');
+    for(const primitiveMode of selectedPrimitiveArg?[selectedPrimitive]:process.argv.includes('--point-witness')?[0]:process.argv.includes('--primitives')?[null,0,1,2,3,4,5,6,7,8,9,10,11]:[null]) for(const backend of process.argv.includes('--point-witness')?['software']:['webgl','software']){
+      const result=await browser.evaluate('('+browserScenario.toString()+')('+JSON.stringify(backend)+','+JSON.stringify(primitiveMode)+')');
+      result.primitiveMode=primitiveMode;
       report.results.push(result);
       let targets;
       for(let i=0;i<40;i++){
-        targets=(await browser.send('Target.getTargets')).targetInfos.filter(x=>x.type==='worker'&&/gl-load-(?:producer|delay)-fixture/.test(x.url));
+        targets=(await browser.send('Target.getTargets')).targetInfos.filter(x=>x.type==='worker'&&(/gl-load-(?:producer|delay)-fixture/.test(x.url)||x.url===result.deadline.workerURL));
         if(!targets.length)break;
         await new Promise(resolve=>setTimeout(resolve,50));
       }
       assert.deepStrictEqual(targets,[],'own physical browser Worker targets absent after retirement');
       result.workerTargetsAfter=targets;
-      if(process.env.GL_LOAD_OUTPUT){
+      if(process.env.GL_LOAD_OUTPUT && (primitiveMode===null || process.argv.includes('--point-witness') ||
+        (backend==='software' && [6,10].includes(primitiveMode)))){
         const shot=await browser.send('Page.captureScreenshot',{format:'png'});
-        fs.writeFileSync(process.env.GL_LOAD_OUTPUT+'.'+backend+'.png',Buffer.from(shot.data,'base64'));
+        const suffix=primitiveMode===null||process.argv.includes('--point-witness')?'':'.primitive-'+primitiveMode;
+        fs.writeFileSync(process.env.GL_LOAD_OUTPUT+'.'+backend+suffix+'.png',Buffer.from(shot.data,'base64'));
       }
     }
+    assert.equal(report.results.length,report.expectedScenarios,'every selected backend/primitive scenario completed');
     report.passed=true;
   }catch(error){report.error=String(error.stack||error);
     if(browser)report.firstFailure=await browser.evaluate('window.glLoadFailure || null').catch(()=>null);
+    if(browser && process.env.GL_LOAD_OUTPUT && process.argv.includes('--point-witness') && !report.firstFailure?.permanentUnknown){
+      const shot=await browser.send('Page.captureScreenshot',{format:'png'});
+      fs.writeFileSync(process.env.GL_LOAD_OUTPUT+'.failure.png',Buffer.from(shot.data,'base64'));
+    }
     throw error;}
   finally {
-    if(browser)report.chromeExit=await browser.close();
+    if(browser)report.chromeExit=await browser.close(Boolean(report.firstFailure?.permanentUnknown)||String(report.error).includes('PERMANENT_UNKNOWN'));
+    if(report.chromeExit)assert(report.chromeExit.stdoutEOF&&report.chromeExit.stderrEOF,'actual Chrome stdout and stderr EOF');
     await new Promise(resolve=>server.close(resolve));
     report.finishedAt=new Date().toISOString();
     report.served=served;

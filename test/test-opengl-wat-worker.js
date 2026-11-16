@@ -9,6 +9,7 @@ const assert = require('assert');
 const path = require('path');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 const RPC = require('../lib/guest-rpc');
+const PrimitiveContract = require('./fixtures/gl-primitive-contracts');
 const Stream = require('../lib/gl-command-stream');
 const RegionMap = require('../lib/region-map.generated');
 
@@ -17,7 +18,7 @@ const OUTPUT_GUEST = 0x405000;
 const IMAGE_BASE = 0x400000;
 const OUTPUT_WASM = OUTPUT_GUEST - IMAGE_BASE + RegionMap.BASE.GUEST_BASE;
 
-function produce(memory, instance, built, pooled, complete) {
+function produce(memory, instance, built, pooled, complete, primitiveContract = false) {
   const e = instance.exports;
   assert.strictEqual(e.gl_wat_encoder_set_enabled, undefined,
     'production worker exposes only the native encoder');
@@ -40,6 +41,34 @@ function produce(memory, instance, built, pooled, complete) {
   };
   const f32 = value => ({ f32: value });
 
+  if (primitiveContract) {
+    const cases=[];
+    for(const flat of [false,true])for(let mode=0;mode<10;mode++)for(const polygonMode of [null,0x1b01,0x1b00]){
+      e.gl_wat_encoder_reset();
+      const firstPacket=built.stats.sync-initialStats.sync;
+      assert.strictEqual(call(48,[0x1234],0x1234),0xc001);
+      assert.strictEqual(call(51,[0x1234,0xc001]),1);
+      call(19,[flat?0x1d00:0x1d01]);
+      if(polygonMode!==null)call(16,[0x408,polygonMode]);
+      const flags=Array.from({length:PrimitiveContract.COUNTS[mode]},(_,i)=>i%2);
+      call(21,[mode]);
+      for(let i=0;i<flags.length;i++){
+        const v=PrimitiveContract.attributes(i,i,mode,true);
+        call(25,v.slice(3,7).map(f32));
+        call(120,[v[7],v[8],v[15],v[16]].map(f32));
+        call(122,[0x84c1,...[v[12],v[13],v[17],v[18]].map(f32)]);
+        call(63,v.slice(9,12).map(f32));call(181,[flags[i]]);call(118,[...v.slice(0,3),v[14]].map(f32));
+      }
+      call(22);call(11);
+      cases.push({mode,flat,boundary:polygonMode!==null,polygonMode,flags,firstPacket,
+        afterPacket:built.stats.sync-initialStats.sync});
+      assert.strictEqual(call(49,[0xc001]),1,'destroy fixture context before mock handle reuse');
+    }
+    complete({t:'done',primitiveContract:true,cases,stats:Object.fromEntries(Object.entries(built.stats)
+      .map(([name,count])=>[name,count-initialStats[name]]))});
+    return;
+  }
+
   // A WGL lifecycle initializes per-context render/polygon defaults.
   // Drawing before any context is bound cannot establish a packed ABI oracle.
   assert.strictEqual(call(48, [0x1234], 0x1234), 0xC001);
@@ -52,12 +81,15 @@ function produce(memory, instance, built, pooled, complete) {
   call(22);
   const outputWa = e.guest_to_wasm(OUTPUT_GUEST) >>> 0;
   view.setUint32(outputWa, 0, true);
-  // RED_BITS reaches the drawable owner. MAX_TEXTURE_UNITS is authoritative
-  // native state once a context is bound and would bypass this RPC barrier.
-  const queryStart = Date.now();
-  const queryResult = call(103, [0x0D52, OUTPUT_GUEST]);
-  const queryElapsed = Date.now() - queryStart;
-  const queryOutput = view.getUint32(outputWa, true);
+  // G1 owns RED_BITS locally. Verify immediate native output, then exercise
+  // the real backend output barrier with a complete one-pixel readback.
+  const nativeQueryResult = call(103, [0x0D52, OUTPUT_GUEST]);
+  const nativeQueryOutput = view.getUint32(outputWa, true);
+  view.setUint32(outputWa, 0, true);
+  const readStart = Date.now();
+  const readResult = call(17, [0,0,1,1,0x1908,0x1401,OUTPUT_GUEST]);
+  const readElapsed = Date.now() - readStart;
+  const readOutput = view.getUint32(outputWa, true);
 
   // The response releases ownership of the shared stream range. Reuse it for
   // a second ordered barrier submission and prove the worker can park again.
@@ -69,12 +101,12 @@ function produce(memory, instance, built, pooled, complete) {
     // Two more barriers wrap the three-buffer writer back to its first slot.
     for (let i = 0; i < 2; i++) { call(10, [0x0B71 + i]); call(11); }
   }
-  complete({ t: 'done', queryResult, queryOutput, queryElapsed,
+  complete({ t: 'done', readResult, readOutput, readElapsed, nativeQueryResult, nativeQueryOutput,
     finishResult, finishElapsed, stats: Object.fromEntries(Object.entries(built.stats)
       .map(([name, count]) => [name, count - initialStats[name]])) });
 }
 
-function directControl(wasm, pooled) {
+function directControl(wasm, pooled, primitiveContract = false) {
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const module_ = new WebAssembly.Module(wasm), imports = {}, packets = [];
   const built = { stats: { sync: 0, async: 0, local: 0 } };
@@ -86,18 +118,20 @@ function directControl(wasm, pooled) {
     assert.strictEqual(op, Stream.WAT_STREAM_FLUSH_OPCODE);
     built.stats.sync++; built.stats.local++;
     packets.push(Buffer.from(new Uint8Array(memory.buffer, at, bytes)));
-    return Stream.replay(Stream.memoryBatch(memory, at, bytes), opcode => {
+    return Stream.replay(Stream.memoryBatch(memory, at, bytes), (opcode,_mode,capture) => {
       if (opcode === 48) return 0xC001;
-      if (opcode === 51) return 1;
-      if (opcode === 103) {
-        new DataView(memory.buffer).setUint32(OUTPUT_WASM, 4, true);
+      if (opcode === 51 || opcode === 49) return 1;
+      if (opcode === 17) {
+        const target=new DataView(capture.buffer).getUint32(capture.stackOffset+28,true);
+        assert.notEqual(target,OUTPUT_GUEST,'G2 backend writes native staging, not caller storage');
+        new DataView(memory.buffer).setUint32(target-IMAGE_BASE+RegionMap.BASE.GUEST_BASE,0x04030201,true);
         return 0x2468;
       }
       return 0x1357;
     });
   };
   let result;
-  produce(memory, new WebAssembly.Instance(module_, imports), built, pooled, value => { result = value; });
+  produce(memory, new WebAssembly.Instance(module_, imports), built, pooled, value => { result = value; }, primitiveContract);
   assert(result);
   return { packets, result };
 }
@@ -110,15 +144,15 @@ if (!isMainThread) {
     message => parentPort.postMessage(message), { slot: 0, getExports: () => instance?.exports });
   const module_ = new WebAssembly.Module(workerData.wasm);
   instance = new WebAssembly.Instance(module_, built.imports);
-  produce(memory, instance, built, workerData.pooled, message => parentPort.postMessage(message));
+  produce(memory, instance, built, workerData.pooled, message => parentPort.postMessage(message), workerData.primitiveContract);
 } else {
   const { compileSrcWasm } = require('./compile-src');
   const sigs = require('../lib/host-import-sigs.generated.json').sigs;
 
   async function main() {
-    const wasm = compileSrcWasm();
-    for (const pooled of [false, true]) {
-    const control = directControl(wasm, pooled);
+    const wasm = compileSrcWasm(),workerWaits=[];
+    for (const primitiveContract of [false, true]) for (const pooled of [false, true]) {
+    const control = directControl(wasm, pooled, primitiveContract);
     const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
     const rpcView = RPC.views(memory, 0).i32;
     const batches = [];
@@ -162,26 +196,33 @@ if (!isMainThread) {
             packed = { mode, vertices: Array.from(new Float32Array(
               capture.buffer, capture.pointerOffset, capture.pointerLength / 4)) };
           }
-          if (opcode === 103) {
+          if (opcode === 17) {
             const stack = new DataView(capture.buffer, capture.stackOffset, capture.stackBytes);
-            assert.strictEqual(stack.getUint32(4, true), 0x0D52);
-            assert.strictEqual(stack.getUint32(8, true), OUTPUT_GUEST);
-            // Publish the query output before serveGlBatch wakes Atomics.wait.
-            new DataView(memory.buffer).setUint32(OUTPUT_WASM, 4, true);
+            assert.deepStrictEqual(Array.from({length:6},(_,i)=>stack.getUint32(4+i*4,true)),
+              [0,0,1,1,0x1908,0x1401]);
+            // Publish the actual readback output before serveGlBatch wakes Atomics.wait.
+            const target=stack.getUint32(28,true);
+            assert.notEqual(target,OUTPUT_GUEST,'G2 backend writes native staging, not caller storage');
+            new DataView(memory.buffer).setUint32(target-IMAGE_BASE+RegionMap.BASE.GUEST_BASE,0x04030201,true);
           }
           if (opcode === 48) return 0xC001;
-          if (opcode === 51) return 1;
-          return opcode === 103 ? 0x2468 : 0x1357;
+          if (opcode === 51 || opcode === 49) return 1;
+          return opcode === 17 ? 0x2468 : 0x1357;
         });
         batches.push({ ...batch, snapshot, opcodes, packed });
         return result;
       },
     }, sigs, { onError: (_name, error) => { throw error; } });
 
-    const worker = new Worker(__filename, { workerData: {
-      wasm, memory, pooled,
+    const worker = new Worker(__filename, { stdout:true, stderr:true, workerData: {
+      wasm, memory, pooled, primitiveContract,
       sigsPath: path.join(__dirname, '..', 'lib', 'host-import-sigs.generated.json'),
     } });
+    const observedThreadId=worker.threadId;
+    let workerStdout='',workerStderr='';
+    worker.stdout.on('data',v=>workerStdout+=v);worker.stderr.on('data',v=>workerStderr+=v);
+    const workerExit=new Promise(resolve=>worker.once('exit',resolve));
+    const workerEOF=Promise.all([new Promise(resolve=>worker.stdout.once('end',resolve)),new Promise(resolve=>worker.stderr.once('end',resolve))]);
     const done = new Promise((resolve, reject) => {
       const timer = setTimeout(() => reject(new Error('WAT GL worker deadline')), 30000);
       worker.on('error', error => { clearTimeout(timer); reject(error); });
@@ -211,18 +252,47 @@ if (!isMainThread) {
       const result = await done;
       assert.deepStrictEqual(batches.map(batch => batch.snapshot), control.packets,
         'real Worker and direct main-thread native WAT emit identical complete packets');
-      assert.deepStrictEqual([result.queryResult, result.queryOutput, result.finishResult],
-        [control.result.queryResult, control.result.queryOutput, control.result.finishResult]);
-      assert.strictEqual(result.queryResult, 0x2468);
-      assert.strictEqual(result.queryOutput, 4,
-        'query output is visible on the first worker instruction after wake');
+      if (primitiveContract) {
+        assert.deepStrictEqual(result.cases, control.result.cases);
+        assert.strictEqual(result.cases.length, 60);
+        for (const c of result.cases) {
+          assert.strictEqual(c.afterPacket - c.firstPacket, c.boundary ? 4 : 3,
+            'exact create/bind/polygon-state publication/complete draw+finish');
+          const packets = batches.slice(c.firstPacket, c.afterPacket).map(b => b.snapshot);
+          const drawOps=c.boundary&&c.mode>=4
+            ? PrimitiveContract.TOPOLOGY[c.mode].map(()=>65545) : [65536];
+          assert.deepStrictEqual(PrimitiveContract.decode(packets).map(rs=>rs.map(r=>r.opcode)),
+            [[48],[51],...(c.boundary?[[16]]:[]),[...drawOps,11]],
+            'every complete lifecycle, polygon state and draw/finish packet retained');
+          PrimitiveContract.assertGeometry(packets, c.mode, c.flat, c.boundary, c.flags, true);
+          PrimitiveContract.assertGeometry(control.packets.slice(c.firstPacket,c.afterPacket), c.mode, c.flat, c.boundary, c.flags, true);
+        }
+        assert.strictEqual(batches.length, 280, 'all create/bind/polygon-state/finish/delete packets retained');
+        for (const c of result.cases) {
+          const cleanup=PrimitiveContract.decode([batches[c.afterPacket].snapshot]).flat();
+          assert.deepStrictEqual(cleanup.map(r=>r.opcode),[49],'separate complete lifecycle cleanup packet');
+        }
+        assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_IDLE);
+        assert.deepStrictEqual(bootstraps, ['process','thread']);
+        assert.strictEqual(result.stats.sync, 280);
+        assert.strictEqual(result.stats.local, 280);
+        console.log(`PASS real delayed Worker/main full primitive literal and byte parity ${pooled ? 'triple-pool' : 'single-buffer'}`);
+        continue;
+      }
+      assert.deepStrictEqual([result.readResult, result.readOutput, result.finishResult],
+        [control.result.readResult, control.result.readOutput, control.result.finishResult]);
+      assert.strictEqual(result.nativeQueryResult,0,'G1 query completes natively');
+      assert.strictEqual(result.nativeQueryOutput,8,'literal native RED_BITS output before readback');
+      assert.strictEqual(result.readResult, 0x2468);
+      assert.strictEqual(result.readOutput, 0x04030201,
+        'all four readback bytes are visible on the first worker instruction after wake');
       assert.strictEqual(result.finishResult, 0x1357);
-      assert(result.queryElapsed >= 15 && result.finishElapsed >= 15,
+      assert(result.readElapsed >= 15 && result.finishElapsed >= 15,
         'both barriers remained blocked until delayed main-thread replay');
       assert.deepStrictEqual(batches.map(batch => batch.opcodes),
-        pooled ? [[48], [51], [Stream.PACKED_DRAW_OPCODE, 103], [10, 11], [10, 11], [10, 11]]
-          : [[48], [51], [Stream.PACKED_DRAW_OPCODE, 103], [10, 11]],
-        'geometry, query, reuse, and finish preserve global order');
+        pooled ? [[48], [51], [Stream.PACKED_DRAW_OPCODE], [17], [10, 11], [10, 11], [10, 11]]
+          : [[48], [51], [Stream.PACKED_DRAW_OPCODE], [17], [10, 11]],
+        'geometry, readback, reuse, and finish preserve global order');
       const geometry = batches[2];
       assert.strictEqual(geometry.packed.mode, 0x0004);
       // Literal API-to-attribute oracle, independent of the encoder and host
@@ -230,7 +300,7 @@ if (!isMainThread) {
       assert.deepStrictEqual(geometry.packed.vertices,
         [[1,2,3], [4,5,6], [7,8,9]].flatMap(position =>
           [...position, 0.25,0.5,0.75,1, 0,0, 0,0,1, 0,0, 1, 0,1, 0,1]));
-      const reused = batches[pooled ? 5 : 3];
+      const reused = batches[pooled ? 5 : 4];
       assert.strictEqual(reused.memoryOffset, geometry.memoryOffset,
         'stream range is reused only after the first response wakes the worker');
       const reusedBytes = Math.min(geometry.bytes, reused.bytes);
@@ -239,12 +309,17 @@ if (!isMainThread) {
       'second submission overwrites the released range without changing its snapshot');
       assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_IDLE);
       assert.deepStrictEqual(bootstraps, ['process', 'thread']);
-      assert.strictEqual(result.stats.sync, pooled ? 6 : 4);
-      assert.strictEqual(result.stats.local, pooled ? 6 : 4,
+      assert.strictEqual(result.stats.sync, pooled ? 7 : 5);
+      assert.strictEqual(result.stats.local, pooled ? 7 : 5,
         'only native flush imports cross out of WAT after bootstrap');
       console.log(`PASS real Worker WAT GL ${pooled ? 'triple-pool' : 'single-buffer'} offset transport, Atomics barriers, ordering, and reuse`);
     } finally {
-      await worker.terminate();
+      await worker.terminate();const code=await workerExit;await workerEOF;
+      assert(worker.stdout.readableEnded&&worker.stderr.readableEnded,'actual Worker output streams reached EOF');
+      process.stdout.write(workerStdout);process.stderr.write(workerStderr);
+      const receipt={kind:'worker-thread',threadId:observedThreadId,exit:code,actualWait:true,stdoutEOF:worker.stdout.readableEnded,stderrEOF:worker.stderr.readableEnded,fixtureHostStop:true,pooled,primitiveContract};
+      workerWaits.push(receipt);console.log('GL_PRIMITIVE_WORKER_WAIT '+JSON.stringify(receipt));
+      if(process.env.GL_PRIMITIVE_WORKER_WAIT_EVIDENCE)require('node:fs').writeFileSync(process.env.GL_PRIMITIVE_WORKER_WAIT_EVIDENCE,JSON.stringify({waits:workerWaits}));
     }
     }
   }

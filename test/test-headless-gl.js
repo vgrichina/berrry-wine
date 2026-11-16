@@ -33,6 +33,11 @@ if (!hgl.available()) {
   process.exit(0);
 }
 
+(async () => {
+const { exports: native, memory: nativeMemory } = await require('./render-helper').bootRenderHarness({
+  fonts: 'none', prebuiltModule: new WebAssembly.Module(fs.readFileSync(
+    process.env.WINE_TEST_WASM || path.join(__dirname, '../build/wine-assembly.wasm'))),
+});
 const W = 32, H = 16;
 const canvas = createCanvas(W, H);
 const gl = canvas.getContext('webgl', { alpha: false });
@@ -293,11 +298,11 @@ for (let lifetime = 0; lifetime < 4; lifetime++) {
 // browser document, and its short-lived probe context must be released before
 // the real device asks the singleton native GL provider for another drawable.
 const { Bridge } = require('../lib/d3d9-host');
-const memory = new ArrayBuffer(128 * 1024);
 let d3dCanvasRequests = 0;
 const bridge = new Bridge({
   backend: 'webgl', enableProgrammable: true,
-  getMemory: () => memory, guestToWasm: p => p,
+  getMemory: () => nativeMemory.buffer, getExports: () => native,
+  guestToWasm: p => native.guest_to_wasm(p),
   renderer: () => ({ windows: { 1: {} }, getWindowCanvas() {} }),
   createCanvas: (w, h) => { d3dCanvasRequests++; return createCanvas(w, h); },
 });
@@ -318,14 +323,21 @@ const bridge = new Bridge({
   }
   hgl.destroyContext(limitGl);
 }
+// Missing native lowering must still refuse and release its probe context.
+const bareBridge = new Bridge({...bridge.options, getExports: () => null, createCanvas});
+assert.strictEqual(bareBridge.call(0x30005, 0, 0), 0);
+assert.strictEqual(hgl.liveContextCount(), 0, 'refused bare probe leaked its context');
 const programmable = bridge.call(0x30005, 0, 0);
 assert.strictEqual(programmable, 1,
   'D3D9 programmable-caps probe failed on a real native GL context (VS1.1/PS1.1 would be reported absent)');
 assert.strictEqual(d3dCanvasRequests, 1, 'D3D9 capability probe did not use the headless canvas factory');
 assert.strictEqual(hgl.liveContextCount(), 0, 'D3D9 capability probe leaked its native context');
 
-const desc = 0x100, program = 0x1000, outputState = 0x8000;
-const dv = new DataView(memory);
+const storage = native.guest_alloc(0x10000) >>> 0;
+assert(storage, 'native descriptor storage allocation');
+const base = native.guest_to_wasm(storage) >>> 0;
+const desc = base + 0x100, program = storage + 0x1000, outputState = storage + 0x8000;
+const dv = new DataView(nativeMemory.buffer);
 dv.setUint32(desc, 7, true);
 dv.setUint32(desc + 4, program, true);
 dv.setUint32(desc + 12, 16, true);
@@ -337,6 +349,7 @@ assert.strictEqual(bridge.call(0x30003, desc, 0), 1,
 assert.strictEqual(hgl.liveContextCount(), 1, 'D3D9 device did not own a native context');
 assert.strictEqual(bridge.call(0x30004, 0, 7), 1, 'D3D9 device release failed');
 assert.strictEqual(hgl.liveContextCount(), 0, 'D3D9 device release leaked its native context');
+native.guest_free(storage);
 
 // Native context allocation alone missed a desktop shader-port regression in
 // the MRT shader used by WGL. Exercise the real bridge through drawable readback.
@@ -367,3 +380,4 @@ assert.strictEqual(hgl.liveContextCount(), 0, 'D3D9 device release leaked its na
 }
 
 console.log('PASS test-headless-gl');
+})().catch(error => { console.error(error); process.exitCode = 1; });
