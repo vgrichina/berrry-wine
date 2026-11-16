@@ -5139,15 +5139,9 @@ async function main() {
       getImageBase: () => instance.exports.get_image_base() >>> 0,
     });
   }
-  if (D3DIM_GPU) {
-    const {D3DIMGpu} = require('../lib/d3dim-gpu');
-    ctx.d3dCommands = new D3DIMGpu({
-      getExports: () => instance.exports,
-      getMemory: () => memory.buffer,
-      createCanvas,
-    });
-    instance.exports.d3dim_gpu_enable(1);
-  }
+  // GPU stream v2: src/09abg-d3dim-gps.wat lowers D3DIM itself and kicks a
+  // ring that lib/d3dim-host.js drains (host-imports gpu_stream_kick).
+  if (D3DIM_GPU) instance.exports.d3dim_gpu_enable(1);
   if (GUEST_PAGE_STATS) {
     if (!instance.exports.reset_guest_page_stats || !instance.exports.get_guest_page_stat) {
       throw new Error('--guest-page-stats requires the offline artifact from ' +
@@ -11592,6 +11586,14 @@ if (VERBOSE) {
   // reply resolved in the final batch still flush while the exit path prints.
   closeControl();
   if (cpuProf && cpuProf.session) await cpuProf.stop(MAX_BATCHES);
+  if (D3DIM_GPU && instance.exports.d3dim_gps_stat) {
+    const st = i => instance.exports.d3dim_gps_stat(i) >>> 0;
+    const names = ['draws', 'fallbacks', 'readbacks', 'readbackRows', 'uploads', 'uploadRows', 'presents',
+      'syncs', 'textureUploads', 'clears', 'flips', 'bltPresents', 'points', 'fences', 'declined', 'primitives'];
+    console.log('[d3dim-gps] ' + names.map((n, i) => `${n}=${st(i)}`).join(' '));
+    const bridge = ctx.getD3dimBridge && ctx.getD3dimBridge();
+    if (bridge && bridge.stats) console.log('[d3dim-gps] bridge ' + JSON.stringify(bridge.stats));
+  }
   if (ctx.d3dCommands && D3DIM_GPU) {
     const d = ctx.d3dCommands.snapshot();
     console.log(`[d3dim-gpu] draws=${d.draws} triangles=${d.triangles} clears=${d.clears} ` +
@@ -12825,6 +12827,9 @@ if (VERBOSE) {
   }
 
   if (PNG_OUT && renderer) {
+    // GPU stream D3DIM presents without reading back: land every GPU target
+    // in its DIB before reading surfaces out of memory.
+    if (D3DIM_GPU && instance.exports.d3dim_gps_sync_all) instance.exports.d3dim_gps_sync_all();
     const { mem, surfaces } = getDxSurfaceManifest();
     const wantSlot = DX_SLOT === null ? null : (parseInt(DX_SLOT, 10) | 0);
     // Software GL drawing into a PFD_DRAW_TO_BITMAP DIB leaves only helper

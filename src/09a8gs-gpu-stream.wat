@@ -42,6 +42,7 @@
   (global $GPS_KICK_CLOSE i32 (i32.const 2))
   ;; Producer API tags (GpsRing.api): which host bridge owns the consumer.
   (global $GPS_API_GLIDE i32 (i32.const 1))
+  (global $GPS_API_D3DIM i32 (i32.const 2))
 
   ;; Opcodes. APPEND ONLY: tools/gpu-stream-ops.json is the baseline.
   (global $GPS_OP_WRAP i32 (i32.const 0))

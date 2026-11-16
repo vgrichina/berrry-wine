@@ -1051,6 +1051,10 @@
   ;; Lazy surface barriers shared by guest instances, never initialized by data.
   (region.declare $D3DIM_LAZY_SHARED (size 0x00000020) (align 0x00000010)
     (owner "09ab-handlers-d3dim-core.wat:$D3DIM_LAZY_SHARED"))
+  ;; D3DIM GPU stream v2 producer: recursive lock, producer block and ring
+  ;; handle, shared by every guest thread. The block itself is heap memory.
+  (region.declare $D3DIM_GPS (size 0x00000040) (align 0x00000010)
+    (owner "09abg-d3dim-gps.wat:$D3DIM_GPS"))
 
   (region.declare $GETMESSAGE_HOOKS (size 0x00000100) (align 0x00000010)
     (owner "09a-handlers4-late.wat:$getmessage_hook_state"))

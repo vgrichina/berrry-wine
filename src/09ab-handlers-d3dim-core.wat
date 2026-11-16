@@ -213,7 +213,7 @@
     (drop (call $d3dim_lazy_fence (i32.const 0) (i32.const 0)))
     (if (i32.or (global.get $d3dim_worker_pending) (global.get $d3dim_gpu_cooperative)) (then
       (global.set $d3dim_worker_pending (i32.const 0))
-      (drop (call $host_gpu_gl_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))))
+      (drop (call $d3dim_gpu_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))))
     (if (global.get $d3dim_present_pending) (then
       (local.set $front (global.get $d3dim_present_pending))
       (global.set $d3dim_present_pending (i32.const 0))
@@ -228,7 +228,7 @@
     (local.set $front (global.get $d3dim_present_pending))
     (if (i32.eqz (local.get $front)) (then (return)))
     (global.set $d3dim_present_pending (i32.const 0))
-    (drop (call $host_gpu_gl_call (i32.const 0x20001)
+    (drop (call $d3dim_gpu_call (i32.const 0x20001)
       (load.field DxObject misc1 (local.get $front))
       (i32.mul (load.field DxObject pitch (local.get $front))
                (load.field DxObject height (local.get $front)))))
@@ -259,7 +259,7 @@
                                   (load.field DxObject height (local.get $entry))))
         (if (i32.and (i32.ne (local.get $dib) (i32.const 0))
                      (i32.ne (local.get $length) (i32.const 0))) (then
-          (if (i32.eq (call $host_gpu_gl_call (i32.const 0x20001)
+          (if (i32.eq (call $d3dim_gpu_call (i32.const 0x20001)
                 (local.get $dib) (local.get $length)) (i32.const 1))
             (then (global.set $d3dim_worker_pending (i32.const 0))))
           (return)))))))
@@ -292,8 +292,11 @@
     (i32.store offset=4 (local.get $desc) (local.get $back))
     (i32.store offset=8 (local.get $desc) (global.get $d3dim_flip_serial))
     (i32.store offset=12 (local.get $desc) (i32.const 0x44585031))
-    (if (i32.eqz (call $host_gpu_gl_call (i32.const 0x20003) (local.get $desc) (i32.const 16)))
-      (then (return (i32.const 0))))
+    (local.set $desc (call $d3dim_gpu_call (i32.const 0x20003) (local.get $desc) (i32.const 16)))
+    (if (i32.eqz (local.get $desc)) (then (return (i32.const 0))))
+    ;; 3: the GPU stream producer swapped the chain and PRESENTed the new
+    ;; front from GPU memory itself; no present is owed to a later fence.
+    (if (i32.eq (local.get $desc) (i32.const 3)) (then (return (i32.const 1))))
     (global.set $d3dim_present_serial (global.get $d3dim_flip_serial))
     (global.set $d3dim_present_pending (local.get $front))
     (i32.const 1))
@@ -341,7 +344,7 @@
     (if (i32.eqz (local.get $parked)) (then (return)))
     (if (i32.and (i32.ne (local.get $entry) (i32.const 0))
                  (i32.ne (local.get $entry) (local.get $parked))) (then (return)))
-    (if (i32.eq (call $host_gpu_gl_call (i32.const 0x20001)
+    (if (i32.eq (call $d3dim_gpu_call (i32.const 0x20001)
           (i32.load (region.addr $D3DIM_LAZY_SHARED 28))
           (i32.mul (load.field DxObject pitch (local.get $parked))
                    (load.field DxObject height (local.get $parked)))) (i32.const 1))
@@ -448,7 +451,7 @@
     (i32.store offset=36 (local.get $d) (local.get $hwnd))
     (i32.store offset=40 (local.get $d) (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 24)))
     (i32.store offset=44 (local.get $d) (call $dx_exclusive_get))
-    (if (i32.ne (call $host_gpu_gl_call (i32.const 0x2000A) (local.get $d) (i32.const 48)) (i32.const 1))
+    (if (i32.ne (call $d3dim_gpu_call (i32.const 0x2000A) (local.get $d) (i32.const 48)) (i32.const 1))
       (then (return (i32.const 0))))
     (i32.store (region.addr $D3DIM_LAZY_SHARED 28) (load.field DxObject misc1 (local.get $dst)))
     (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 20) (local.get $dst))
@@ -551,7 +554,7 @@
       (then (return (i32.const 0))))
     ;; 0x20002: is a render Worker attached and ready? Asked before paying for
     ;; the expansion, which is wasted when the answer is no.
-    (if (i32.eqz (call $host_gpu_gl_call (i32.const 0x20002) (i32.const 0) (i32.const 0)))
+    (if (i32.eqz (call $d3dim_gpu_call (i32.const 0x20002) (i32.const 0) (i32.const 0)))
       (then (return (i32.const 0))))
     (if (i32.gt_u (local.get $index_count) (i32.const 0x20000))
       (then (return (i32.const 0))))
@@ -617,7 +620,7 @@
     (i32.store offset=12 (local.get $desc) (local.get $vertices))
     (i32.store offset=16 (local.get $desc) (local.get $count))
     (i32.store offset=20 (local.get $desc) (local.get $state))
-    (if (i32.eqz (call $host_gpu_gl_call (i32.const 0x20000) (local.get $desc) (i32.const 0)))
+    (if (i32.eqz (call $d3dim_gpu_call (i32.const 0x20000) (local.get $desc) (i32.const 0)))
       (then (return (i32.const 0))))
     (if (global.get $d3dim_gpu_on)
       (then (global.set $d3dim_gpu_last_rt (call $d3ddev_rt_entry (local.get $this)))))
@@ -704,7 +707,7 @@
   ;; Called with the mutex held. Keep the range visible until readback ends.
   (func $d3dim_lazy_materialize (param $wa i32) (param $len i32)
     (local $result i32)
-    (local.set $result (call $host_gpu_gl_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
+    (local.set $result (call $d3dim_gpu_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
     (if (i32.eqz (local.get $result)) (then (unreachable)))
     (if (i32.eq (local.get $result) (i32.const 1)) (then
       (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 16) (i32.const 0))
@@ -800,7 +803,7 @@
         ;; Publish queued snapshots to the independent renderer before another
         ;; guest can request readback. No pixel readback at this boundary.
         ;; A private executor cannot synchronize another guest: keep it eager.
-        (if (i32.ne (call $host_gpu_gl_call (i32.const 0x20007) (i32.const 0) (i32.const 0)) (i32.const 1)) (then
+        (if (i32.ne (call $d3dim_gpu_call (i32.const 0x20007) (i32.const 0) (i32.const 0)) (i32.const 1)) (then
           (call $d3dim_surface_fence (local.get $entry)) (return)))
         (call $d3dim_lazy_enter)
         (if (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)) (then
@@ -887,7 +890,7 @@
     (i32.store offset=20 (local.get $d) (local.get $y))
     (i32.store offset=24 (local.get $d) (local.get $w))
     (i32.store offset=28 (local.get $d) (local.get $h))
-    (if (i32.eqz (call $host_gpu_gl_call (i32.const 0x20004) (local.get $d) (i32.const 0)))
+    (if (i32.eqz (call $d3dim_gpu_call (i32.const 0x20004) (local.get $d) (i32.const 0)))
       (then (return (i32.const 0))))
     (global.set $d3dim_gpu_last_rt (local.get $rt))
     (global.set $d3dim_worker_pending (i32.const 1))
@@ -930,7 +933,7 @@
   ;;   29 alphafunc (0 = test off, else D3DCMPFUNC)  30 alpharef
   ;;   31 vertex fog (FOGENABLE with FOGTABLEMODE NONE)  32 fogcolor  33 wrap
   ;;   34 viewport clip on  35 x0  36 y0  37 x1  38 y1 (exclusive)
-  (func (export "d3dim_gpu_describe") (param $this i32) (result i32)
+  (func $d3dim_gpu_describe (export "d3dim_gpu_describe") (param $this i32) (result i32)
     (local $out i32) (local $rt i32) (local $state i32) (local $tex i32)
     (local $zen i32) (local $zfunc i32) (local $zwrite i32) (local $v i32)
     (local.set $rt (call $d3ddev_rt_entry (local.get $this)))
@@ -1035,7 +1038,7 @@
   ;; A validated mip successor and its own upload metadata. Reuses the clear
   ;; part (+0..39) of the seam after JS has copied describe. No guest pointers
   ;; or inferred packed layouts cross the WebGL boundary.
-  (func (export "d3dim_gpu_mip_next") (param $tex i32) (result i32)
+  (func $d3dim_gpu_mip_next (export "d3dim_gpu_mip_next") (param $tex i32) (result i32)
     (local $n i32) (local $out i32)
     (local.set $n (call $d3dim_mip_next (local.get $tex)))
     (if (i32.eqz (local.get $n)) (then (return (i32.const 0))))
@@ -1063,7 +1066,7 @@
   ;; or RGBA zero before filtering for explicit COLORKEYBLENDENABLE (mode2).
   ;; Indexed textures compare native indices; truecolor keeps RGB matching.
   ;; DDPCAPS_ALPHA/key precedence remains unresolved, not inferred here.
-  (func (export "d3dim_gpu_decode_texture") (param $tex i32) (param $keyed i32) (result i32)
+  (func $d3dim_gpu_decode_texture (export "d3dim_gpu_decode_texture") (param $tex i32) (param $keyed i32) (result i32)
     (local $tw i32) (local $th i32) (local $tbpp i32) (local $tpitch i32) (local $tdib i32)
     (local $tfmt i32) (local $tpal i32) (local $bytes i32) (local $dst i32)
     (local $x i32) (local $y i32) (local $c i32) (local $key i32) (local $key_match i32)
@@ -2442,7 +2445,7 @@
   ;; GPU acceptance is synchronous even when submission/readback is deferred.
   ;; Publish conservative clipped coverage while Execute still owns its status;
   ;; do not announce a CPU DIB write (the GPU fence owns that later).
-  (func (export "d3dim_gpu_extent") (param $rt i32)
+  (func $d3dim_gpu_extent (export "d3dim_gpu_extent") (param $rt i32)
     (param $left i32) (param $top i32) (param $right i32) (param $bottom i32)
     (if (i32.eqz (global.get $d3dim_exec_extent_guest)) (then (return)))
     (if (i32.ne (local.get $rt) (global.get $d3dim_exec_extent_rt)) (then (return)))
