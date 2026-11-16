@@ -954,6 +954,8 @@
 
   (func (export "com_owner_root") (result i64)
     (call $invocation_validate) (global.get $invocation_root))
+  (func (export "com_owner_token") (result i64)
+    (call $invocation_current))
   (func (export "com_owner_epoch") (result i64)
     (call $invocation_validate) (global.get $invocation_epoch))
 

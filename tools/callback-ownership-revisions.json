@@ -5,8 +5,8 @@
       "file": "lib/storage.js",
       "name": "host-file",
       "baseSHA256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053",
-      "sha256": "e5e76aad020c40a050b08057fc2f4454cda0dfd62ce51761f19fdcaf4e051254",
-      "reason": "LocalServer metadata reads the real class registration and copies a bounded command into the caller buffer. It never enters a guest callback or transfers a guest pointer. Public launch and factory work are scheduled later by the actual owner continuation; existing synchronous callbacks are unchanged. Native qualification is recorded separately."
+      "sha256": "669d7fff971b965ab20c79bb23f88af6a89a8b26a5d736683f58be32ed6201d8",
+      "reason": "Merged HKCR registry lookup and synchronous mutation retain existing disk and registry ownership; aliases and inferred roots introduce no guest callback, asynchronous frame or context restoration. Generic Interface root enables genuine system registrar execution; arbitrary missing keys remain errors. Native qualification is recorded separately."
     },
     {
       "file": "src/09b-dispatch.wat",
@@ -47,8 +47,8 @@
       "file": "lib/guest-worker.js",
       "name": "host-file",
       "baseSHA256": "3e09b9aa06b86ffa52bb00d4052a2b4393952ed61f2821ced4871dfbec0498ec",
-      "sha256": "d5150e13728d2bc5f5f02703e1855cc8abd61b517a3f78bbf0c494b8dec95e0e",
-      "reason": "The Worker COM runtime receives a metadata-only import closure. Class publication, actual factory calls and marshaling use that Worker instance and its existing guarded ComGuestContinuation; no host shadow or foreign CPU is entered. Existing retirement and callback scope checks remain authoritative. Merged with GPU stream v2 D2a: the in-Worker D3DIMGpu executor is removed (D3DIM lowers in WAT onto the shared ring); no guest-control producer added."
+      "sha256": "f614b3d4ad4abe601be4674207cfc9420faa11be8a8d66a63bc086cea564dd8f",
+      "reason": "Worker opts into bounded pending COM activation advancement. Each host slice receives an incomplete result while the same iterator and original invocation frame remain parked. Existing watchdog timeout, retirement and message scheduling remain unchanged; the runtime validates ownership before any later advance."
     }
   ],
   "additions": [
@@ -63,9 +63,9 @@
     {
       "file": "lib/com-interface-runtime.js",
       "name": "host-file",
-      "sha256": "aa8be2a637ea45c16615e11f81e7b54a380eb778ae3803f3af14340b700f008d",
+      "sha256": "592ce332c5e948da82f1a47f460f8ff5c5befc785d6be21282061116ade01e74",
       "kind": "host-entry",
-      "reason": "LocalServer bridge operations retain the parked public stdcall frame and dispatch registration, revoke and activation on the actual owning continuation. Draining class tickets precedes existing stub tickets under the same owner and generation checks. Registered object addresses remain private to the runtime; only authenticated opaque identities and copied bytes cross the channel.",
+      "reason": "One iterator remains attached to the original root invocation, with exact owner token, process/thread/generation, registers, stack, ABI, thunk and handler checked before and after awaited advances. Changed or retired frames are abandoned without restoration or replay. Incomplete advances preserve yield 23 and permit ordinary Worker slice completion; main and nested operations retain their original whole-operation path. Broader ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -115,6 +115,22 @@
       "sha256": "d4e464b828542fb3c3e9fa8b5e7640eb752e8fef3fc908f29b34adfaf0806ced",
       "kind": "continuation",
       "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "export:com_owner_token",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [
+        "com_owner_token"
+      ],
+      "targets": [],
+      "sha256": "a3f19420266b812d3cdf719a319a646540dbabb964817ab1a6310363d27fc4d1",
+      "kind": "continuation",
+      "reason": "Read-only full-width current invocation token export used to authenticate the original parked COM frame. It neither enters a guest callback nor mutates or restores invocation state; broader ownership remains pending.",
       "ownership": "pending"
     }
   ]
