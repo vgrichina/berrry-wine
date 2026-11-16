@@ -18,7 +18,7 @@ async function main(){
     for(const version of [1,2]){
       const page=await browser.newPage();await page.goto(origin+'/index.html?debug');
       const result=await page.evaluate(async({origin,version,op,streamVersion})=>{
-        const files=['gpu-backend','d3d-shader-ir','d3d9-shader','d3d9-fixed','render-clear',
+        const files=['gpu-backend','d3d-shader-ir','d3d9-shader','render-clear',
           'd3d9-backend','d3d-command-stream','d3d-geometry-batches','d3d9-software-backend','d3d9-render-worker'];
         const source=`importScripts(${files.map(f=>JSON.stringify(origin+'/lib/'+f+'.js')).join(',')});
           const devices=[];

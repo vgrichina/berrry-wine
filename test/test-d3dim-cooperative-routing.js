@@ -2,10 +2,14 @@
 
 'use strict';
 
-// Production WAT instances and GPU command owner, with a deterministic device
-// test double. This tests routing/order/readback, not WebGL raster accuracy.
+// Production WAT instances on one shared memory, both driving the one shared
+// WAT GPU stream producer (src/09abg-d3dim-gps.wat, its state under
+// $D3DIM_GPS), drained into the real software executor
+// (lib/gpu-stream-software.js). Tests routing, cross-instance order and
+// readback through real D3DIM draw/clear/Lock handlers.
 const assert = require('assert');
-const { D3DIMGpu } = require('../lib/d3dim-gpu');
+const GS = require('../lib/gpu-stream');
+const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
@@ -39,22 +43,11 @@ const extraWat = String.raw`
   (func (export "test_worker_surface_pitch") (param $surface i32) (result i32)
     (i32.load16_u offset=18 (call $dx_from_this (local.get $surface))))
 
-  (func (export "test_worker_device_state") (param $device i32) (result i32)
-    (call $d3ddev_state (local.get $device)))
-
   (func (export "test_worker_draw_normal")
       (param $device i32) (param $vertices i32) (param $count i32)
     (call $d3dim_draw_primitive
       (local.get $device) (i32.const 4) (i32.const 3)
       (local.get $vertices) (local.get $count)))
-
-  (func (export "test_worker_draw_indexed")
-      (param $device i32) (param $vertices i32) (param $count i32)
-      (param $indices i32) (param $index_count i32)
-    (call $d3dim_draw_indexed_primitive
-      (local.get $device) (i32.const 4) (i32.const 3)
-      (local.get $vertices) (local.get $count)
-      (local.get $indices) (local.get $index_count)))
 
   (func (export "test_clear") (param $device i32) (param $color i32)
     (call $d3dim_device7_clear (local.get $device) (i32.const 1)
@@ -67,10 +60,6 @@ const extraWat = String.raw`
       (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
   (func (export "test_break_barrier")
     (global.set $d3dim_gpu_cooperative (i32.const 0)))
-  (func (export "test_flip") (param $front i32) (param $back i32) (result i32)
-    (call $d3dim_worker_try_flip (call $dx_from_this (local.get $front))
-      (call $dx_from_this (local.get $back))))
-  (func (export "test_present_pending") (result i32) (global.get $d3dim_present_pending))
   (func (export "test_worker_fence") (call $d3dim_worker_fence))
 `;
 
@@ -109,10 +98,26 @@ function writeVertex(wat, address, x, y, color) {
   writeFloat(wat, address + 28, 0);
 }
 
-
-(async () => {
-  const a = await bootRenderHarness({extraWat, fonts: 'none'});
-  const b = await bootRenderHarness({extraWat, fonts: 'none', memory: a.memory});
+// Two instances on one memory. `consumer` false = no GPU stream consumer:
+// the ring's open handshake fails and the producer stays in software.
+async function pair(consumer) {
+  const state = { gps: null, ring: null, ringAddr: 0, kicks: 0, hostCalls: [] };
+  let memory = null, exports = null;
+  const overrides = {
+    gpu_gl_call: (...args) => { state.hostCalls.push(args[0]); return 0; },
+    gpu_stream_kick: (r, mode) => {
+      r >>>= 0; state.kicks++;
+      if (!consumer) return 0;
+      if (!state.gps) state.gps = new SoftwareExecutor({ getExports: () => exports, getMemory: () => memory.buffer });
+      if (!state.ring || state.ringAddr !== r) { state.ring = new GS.Ring(() => memory.buffer, r); state.ringAddr = r; }
+      GS.drain([state.ring], state.gps);
+      if ((mode | 0) === GS.CONST.KICK_CLOSE) { state.gps.close(); state.gps = null; state.ring = null; state.ringAddr = 0; }
+      return 1;
+    },
+  };
+  const a = await bootRenderHarness({extraWat, fonts: 'none', extraHostOverrides: overrides});
+  memory = a.memory; exports = a.exports;
+  const b = await bootRenderHarness({extraWat, fonts: 'none', memory: a.memory, extraHostOverrides: overrides});
   const main = a.exports, secondary = b.exports;
   secondary.init_thread(1, main.get_image_base(), main.get_code_start(), main.get_code_end(),
     main.get_thunk_base(), main.get_thunk_end(), main.get_num_thunks(), main.get_rsrc_rva());
@@ -121,94 +126,42 @@ function writeVertex(wat, address, x, y, color) {
   const surface = createSurface(main, desc, out, 16, 16);
   assert.equal(main.test_worker_create_device(surface, out + 4), 0);
   const device = main.guest_read32(out + 4) >>> 0;
-  let dib = main.test_worker_surface_dib(surface) >>> 0;
+  const dib = main.test_worker_surface_dib(surface) >>> 0;
   const pitch = main.test_worker_surface_pitch(surface) >>> 0;
-  let bytes = new Uint8Array(a.memory.buffer, dib, pitch * 16);
-  const calls = [], events = [], descriptions = [];
-  const exportsFor = (ex, id) => ({...ex, d3dim_gpu_describe(self) {
-    const address = ex.d3dim_gpu_describe(self);
-    descriptions.push([id, address]);
-    return address;
-  }});
-  const mainExports = exportsFor(main, 0), secondaryExports = exportsFor(secondary, 1);
-  const gpu = new D3DIMGpu({getMemory: () => a.memory.buffer,
-    getExports: () => mainExports, createCanvas: () => { throw Error('unexpected device creation'); },
-    asyncFlip: true, boundedReadback: false});
-  a.hostCtx.d3dCommands = {call: (...args) => gpu.callForExports(mainExports, ...args)};
-  b.hostCtx.d3dCommands = {call: (...args) => {
-    calls.push(args[0]);
-    return gpu.callForExports(process.argv.includes('--negative-caller') ? mainExports : secondaryExports, ...args);
-  }};
-  main.d3dim_gpu_enable(1);
-  // Seed a device test double at the real production descriptor's target key.
-  // The executor still lowers/copies draws, performs clear and fence logic,
-  // converts pixels, and invokes the calling WASM instance's exports.
-  gpu._view();
-  const description = gpu._describe(device);
-  let rgba = [0, 0, 0, 255];
-  let packBuffer = null;
-  // GPU-lowered vertex attributes are RGBA bytes, after the executor converts
-  // guest D3DCOLOR's BGRA layout. Model the backend's input, not guest memory.
-  const paint = color => { rgba = [color & 255, (color >>> 8) & 255, (color >>> 16) & 255, 255]; };
-  const target = {rt: description.rt, dib, width: 16, height: 16, pitch, bpp: 32,
-    format: description.format, check: false, textureKeys: new Set(), device: {
-      draw(draw) {
-        const data = new DataView(draw.vertices.buffer, draw.vertices.byteOffset);
-        // These opaque triangles overlap. A merged submission must model its
-        // last primitive winning, not merely inspect the first vertex.
-        const color = data.getUint32(draw.vertices.byteLength - 3 * 32 + 16, true);
-        events.push(['draw', color]); paint(color);
-      },
-      clear(color) { events.push(['clear']); rgba = color.map(v => Math.round(v * 255)); },
-      releaseTextures() {},
-      gpu: {
-        version: 2,
-        updateColorResource(_resource, pixels) { events.push(['upload']); rgba = Array.from(pixels.slice(0, 4)); },
-        bindImplicitTarget() {}, gl: {RGBA: 1, UNSIGNED_BYTE: 2,
-          PIXEL_PACK_BUFFER: 3, STREAM_READ: 4, SYNC_GPU_COMMANDS_COMPLETE: 5,
-          createBuffer() { return {}; },
-          bindBuffer(_target, buffer) { packBuffer = buffer; },
-          bufferData(_target, size) { packBuffer.data = new Uint8Array(size); },
-          fenceSync() { return {}; }, flush() {}, deleteSync() {},
-          getBufferSubData(_target, offset, out) {
-            events.push(['collect']); out.set(packBuffer.data.subarray(offset, offset + out.length));
-          },
-          readPixels(x, y, w, h, format, type, pixels) {
-            if (typeof pixels === 'number') pixels = packBuffer.data.subarray(pixels, pixels + w * h * 4);
-            events.push(['read']);
-            for (let i = 0; i < pixels.length; i += 4) pixels.set(rgba, i);
-          },
-        },
-      },
-    }};
-  gpu.targets.set(description.rt, target);
+  const bytes = new Uint8Array(a.memory.buffer, dib, pitch * 16);
   const draw = (ex, color) => {
     writeVertex(ex, vertices, 2, 2, color);
     writeVertex(ex, vertices + 32, 13, 2, color);
     writeVertex(ex, vertices + 64, 2, 13, color);
     ex.test_worker_draw_normal(device, vertices, 3);
   };
-  const pixel = () => Array.from(bytes.slice(0, 3));
-  // Real WAT Flip owns a deferred presentation when the first secondary
-  // attaches. Attaching must collect those pixels and retire that obligation
-  // before handing the shared chain to another caller.
-  const front = createSurface(main, desc, out + 8, 16, 16);
+  // (4,4) is inside every triangle drawn here; (0,0) is outside them all.
+  const pixel = (x = 4, y = 4) => Array.from(bytes.slice(y * pitch + x * 4, y * pitch + x * 4 + 3));
+  return {a, b, main, secondary, state, surface, device, dib, pitch, bytes, desc, vertices, draw, pixel};
+}
+
+(async () => {
+  const p = await pair(true);
+  const {main, secondary, state, surface, device, dib, bytes, desc, vertices, draw, pixel} = p;
+  const stat = i => main.d3dim_gps_stat(i);
+
+  // An instance drawing alone, then joining a cooperative owner: attaching
+  // fences what it still owes, so its frame lands before a sibling shares
+  // the chain.
+  main.d3dim_gpu_enable(1);
   draw(main, 0xff112233);
-  assert.equal(main.test_flip(front, surface), 1, 'single-instance Flip queues async readback');
-  assert(main.test_present_pending(), 'WAT owes the queued presentation');
-  assert(target.inflight, 'GPU readback is still in flight at secondary attachment');
-  gpu.attachCooperative(secondaryExports);
-  assert.equal(main.test_present_pending(), 0, 'attachment retires actual WAT presentation obligation');
-  assert.equal(target.inflight, null, 'attachment collects the old frame');
-  assert.deepEqual(pixel(), [0x33, 0x22, 0x11], 'old frame lands in its original DIB before attachment returns');
-  assert.equal(gpu.asyncFlip, false, 'shared cooperative mode uses synchronous Flip');
-  dib = main.test_worker_surface_dib(surface) >>> 0;
-  bytes = new Uint8Array(a.memory.buffer, dib, pitch * 16);
+  assert.equal(stat(0), 1, 'the producer took the draw');
+  assert.deepEqual(pixel(), [0, 0, 0], 'accepted GPU draw remains deferred in guest DIB');
+  let r = stat(2);
+  main.d3dim_gpu_cooperative_enable();
+  assert.equal(stat(2), r + 1, 'attachment reads the owed frame back');
+  assert.deepEqual(pixel(), [0x33, 0x22, 0x11], 'old frame lands in its DIB before attachment returns');
+  secondary.d3dim_gpu_cooperative_enable();
+
   bytes.fill(0);
-  descriptions.length = 0;
+  const draws = stat(0);
   draw(secondary, 0xffff0000);
-  assert(calls.includes(0x20000), 'secondary draw must reach GPU import');
-  assert(descriptions.some(([id]) => id === 1), 'secondary draw must describe with caller exports');
+  assert.equal(stat(0), draws + 1, 'secondary draw reaches the shared producer');
   assert.deepEqual(pixel(), [0, 0, 0], 'accepted GPU draw remains deferred in guest DIB');
   if (process.argv.includes('--negative-barrier')) main.test_break_barrier();
   main.test_lock(surface, desc);
@@ -221,65 +174,36 @@ function writeVertex(wat, address, x, y, color) {
   secondary.test_lock(surface, desc);
   assert.deepEqual(pixel(), [255, 0, 0], 'cross-instance draw order and copied vertices survive scratch reuse');
   secondary.test_unlock(surface);
-  assert.equal(gpu.targets.size, 1, 'threads share target ownership');
-  const byThread = [0, 1].map(id => descriptions.find(item => item[0] === id)?.[1]);
-  assert(byThread.every(Boolean) && byThread[0] !== byThread[1], 'descriptor scratch belongs to each caller');
+  const rts = [...state.gps.res.values()].filter(x => x.kind === GS.KIND.RT && x.width === 16);
+  assert.equal(rts.length, 1, 'threads share one GPU colour target');
 
   secondary.test_clear(device, 0xff123456);
   main.test_lock(surface, desc);
   assert.deepEqual(pixel(), [0x56, 0x34, 0x12], 'main Lock observes secondary clear');
+  assert.deepEqual(pixel(0, 0), [0x56, 0x34, 0x12]);
   // CPU writes after readback must upload before another thread draws.
   bytes[0] = 0x77;
   main.page_watch_write(dib, 1);
-  const uploadsBefore = events.filter(([type]) => type === 'upload').length;
+  const uploadsBefore = stat(4);
   main.test_unlock(surface);
   draw(secondary, 0xff998877);
-  assert(events.filter(([type]) => type === 'upload').length > uploadsBefore,
-    'CPU ownership transition triggers a new upload');
+  assert(stat(4) > uploadsBefore, 'CPU ownership transition triggers a new upload');
   main.test_worker_fence();
   assert.deepEqual(pixel(), [0x77, 0x88, 0x99], 'global barrier sees foreign draw');
+  assert.deepEqual(pixel(0, 0), [0x77, 0x34, 0x12], 'the CPU write went up before the foreign draw');
+  assert.deepEqual(state.hostCalls, [], 'no instance calls the host gpu_gl_call');
+  assert(state.kicks > 0);
 
-  const savedDraw = gpu._draw;
-  gpu._draw = () => { throw Error('injected caller failure'); };
-  assert.throws(() => gpu.callForExports(secondaryExports, 0x20000, 0), /injected caller failure/);
-  assert.equal(gpu.getExports(), mainExports, 'exception restores default caller');
-  gpu._draw = savedDraw;
-
-  // Page leases are process-scoped, but release and deferred flush must run
-  // through the sibling caller's exports. Exercise real WAT watch acquisition
-  // and release, including both raw texture and palette leases.
-  gpu._view();
-  const textureWatch = gpu._lease(dib, pitch * 16);
-  const paletteWatch = gpu._lease(dib + 4096, 1024);
-  assert(textureWatch && paletteWatch, 'real shared page-watch leases acquired');
-  const releases = [];
-  const siblingReleaseExports = {...secondaryExports,
-    page_watch_release(address, length) {
-      releases.push([address, length]); return secondary.page_watch_release(address, length);
-    },
-    d3dim_gpu_surface_live(entry) { return entry === description.rt; },
-  };
-  gpu.textures.set(123, {key: 'sibling-release-fixture', watch: textureWatch, paletteWatch});
-  draw(main, 0xffaabbcc);
-  draw(main, 0xffaabbcc);
-  assert(gpu.pendingDraw, 'texture retirement exercises a queued draw');
-  gpu.callForExports(siblingReleaseExports, 0x20001, 0, 0);
-  assert.equal(gpu.pendingDraw, null, 'sibling fence flushes deferred vertices before releasing leases');
-  assert.deepEqual(releases, [[dib, pitch * 16], [dib + 4096, 1024]],
-    'sibling exports release both texture and palette page-watch leases');
-  assert.equal(textureWatch.length, 0); assert.equal(paletteWatch.length, 0);
-  assert(!gpu.textures.has(123));
-
-  // Context creation unavailable: actual production WAT software rasterizer
-  // must still execute, with no accepted GPU draw or invented success.
-  const fallback = new D3DIMGpu({getMemory: () => a.memory.buffer,
-    getExports: () => mainExports, createCanvas: () => { throw Error('no WebGL'); },
-    onError: () => {}});
-  b.hostCtx.d3dCommands = {call: (...args) => fallback.callForExports(secondaryExports, ...args)};
-  bytes.fill(0);
-  draw(secondary, 0xffabcdef);
-  assert(fallback.unavailable && fallback.stats.draws === 0);
-  assert(bytes.some(byte => byte !== 0), 'declined GPU draw really rasterizes in WAT');
-  console.log('PASS cooperative D3DIM caller routing, shared draw/clear/Lock, scratch lifetime and fallback');
+  // No GPU stream consumer: actual production WAT software rasterizer must
+  // still execute, with no accepted GPU draw or invented success.
+  const f = await pair(false);
+  f.main.d3dim_gpu_cooperative_enable();
+  f.secondary.d3dim_gpu_cooperative_enable();
+  f.bytes.fill(0);
+  f.draw(f.secondary, 0xffabcdef);
+  assert(f.state.kicks > 0, 'the producer tried to open its ring');
+  assert.equal(f.main.d3dim_gps_stat(0), 0, 'no producer block, no GPU draw');
+  assert.deepEqual(f.pixel(), [0xef, 0xcd, 0xab], 'declined GPU draw really rasterizes in WAT');
+  assert.deepEqual(f.state.hostCalls, [], 'and does not fall through to the host');
+  console.log('PASS cooperative D3DIM: shared WAT producer, cross-instance draw/clear/Lock, scratch lifetime and software fallback');
 })().catch(error => { console.error(error); process.exitCode = 1; });
-

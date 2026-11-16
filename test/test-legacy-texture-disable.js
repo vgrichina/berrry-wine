@@ -13,16 +13,14 @@ if (process.argv.includes('--nearby')) {
   return;
 } else {
   probe = String.raw`
-const gpuSource = fs.readFileSync(path.join(root,'lib/d3dim-gpu.js'),'utf8');
-// The old helper expects a texture whenever bound. For the disabled-stage
-// oracle retain its real describe/call/submission path, but require no texture.
-const disabledGpuDraw = eval('('+gpuDraw.toString().replace(
-  'bound ? 1 : 0','bound && c !== 1 ? 1 : 0')+')');
+// The mocked GPU lowering arm (the deleted JS executor lib/d3dim-gpu.js run on
+// a WAT describe record) is gone; DISABLE through the WAT GPU stream producer
+// is rendered by test-legacy-texture-operation-web.js --offline (gps).
 function semanticReject(label,pattern,fn) {
   assert.throws(fn,e=>e instanceof assert.AssertionError && pattern.test(e.message),label);
   receipts.controls.push(label);
 }
-function disabled(f, gpuText, checkPixels = true) {
+function disabled(f, checkPixels = true) {
   for (let stage=1;stage<8;stage++)
     assert.equal(f.e.d3dim_tss_load(4096,stage,1),1,'subsequent stages initialized disabled');
   for (const bound of [true,false]) for (const alpha of [1,2,3,4]) {
@@ -31,9 +29,7 @@ function disabled(f, gpuText, checkPixels = true) {
     for (const type of [2,3,5,6]) f.e.d3dim_set_tss(1,0,type,0x22);
     f.dv.setUint32(4096+420,1,true);
     f.dv.setUint32(8192+28,0x100,true);
-    const stage = disabledGpuDraw(f,1,alpha,gpuText,bound);
-    assert.deepEqual([stage.colorOp,stage.colorArg1,stage.alphaOp,stage.alphaArg1],[2,0,2,0],
-      'mocked GPU lowering must select diffuse RGBA with no texture');
+    f.setOps(1,alpha);
     assert.equal(f.dv.getUint32(4096+2824,true),bound?1:0,'disabling must retain binding state');
     f.softwareUnbound(); // Both actual front ends must choose existing diffuse route.
     for (const bits of [0,256,512,768])
@@ -48,20 +44,16 @@ function disabled(f, gpuText, checkPixels = true) {
     }
   }
 }
-if (process.argv.includes('--baseline-gpu')) {
-  const f=makeFixture(assembled);
-  disabledGpuDraw(f,1,2,fs.readFileSync(process.env.LEGACY_DISABLE_GPU,'utf8'),true);
-} else if (process.argv.includes('--baseline-software')) {
+if (process.argv.includes('--baseline-software')) {
   const f=makeFixture(assembled);f.setOps(1,2);f.softwareOuter(diffuse);
 } else {
   disabled(makeFixture(assembled));
   // Re-enable after DISABLE on the same object: the stored texture must still
   // participate, with independent diffuse alpha, through both real front ends.
   const resumed = makeFixture(assembled);
-  disabledGpuDraw(resumed,1,2,undefined,true);
+  resumed.setOps(1,2);
   resumed.softwareUnbound();
-  const resumedStage = gpuDraw(resumed,2,3);
-  assert.deepEqual([resumedStage.colorOp,resumedStage.alphaOp],[2,3]);
+  resumed.setOps(2,3);
   resumed.softwareOuter(0x80c08040);
   receipts.controls.push('disable then re-enable retains bound texture and independent alpha');
   // Independent discriminating reversions: restore each actual old decision.
@@ -75,16 +67,8 @@ if (process.argv.includes('--baseline-gpu')) {
     '(if (i32.const 0)');
   assert.notEqual(oldCombine,assembled);
   semanticReject('old disabled combiner',/disable preserves incoming RGBA/,()=>disabled(makeFixture(oldCombine)));
-  // Force the descriptor's texture metadata back on to test JS independently
-  // from the repaired descriptor resolver. No actual WebGL is exercised.
-  const gpuOld = gpuSource.replace('!lines && d.colorOp !== 1 &&','!lines &&');
-  assert.notEqual(gpuOld,gpuSource);
-  // Without the WAT route fix, JS must still lower a bound disabled descriptor.
-  const routeFixture=makeFixture(oldRoute);
-  disabledGpuDraw(routeFixture,1,2,undefined,true);
-  semanticReject('old GPU texture activation',/1 == 0/,()=>disabledGpuDraw(routeFixture,1,2,gpuOld,true));
-  receipts.status='PASS'; receipts.controls.push('disabled GPU guard independent of WAT resolver');
-  console.log('PASS disabled stage: 8 bound/unbound alpha configurations, real span RGBA, both diffuse routes, 3 rejecting reversions; GPU mocked lowering only');
+  receipts.status='PASS';
+  console.log('PASS disabled stage: 8 bound/unbound alpha configurations, real span RGBA, both diffuse routes, 2 rejecting reversions');
 }
 if(process.env.LEGACY_DISABLE_RECEIPT) fs.writeFileSync(process.env.LEGACY_DISABLE_RECEIPT,JSON.stringify(receipts,null,2)+'\n');
 `;

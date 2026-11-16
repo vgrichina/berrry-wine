@@ -2465,8 +2465,11 @@
     (local.set $mip (call $d3d9_texture_mip (local.get $arg0) (local.get $arg1)))
     (if (local.get $mip) (then
       (if (i32.load offset=20 (local.get $mip)) (then
+        ;; A D3DLOCK_READONLY (0x10) lock cannot have changed the level, so it
+        ;; leaves the content identity alone: nothing is re-decoded or re-sent.
+        (if (i32.eqz (i32.and (i32.load offset=20 (local.get $mip)) (i32.const 0x10)))
+          (then (call $d3d9_texture_touch (i32.add (local.get $mip) (i32.const 28)))))
         (i32.store offset=20 (local.get $mip) (i32.const 0))
-        (i32.store offset=28 (local.get $mip) (i32.add (i32.load offset=28 (local.get $mip)) (i32.const 1)))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
@@ -2476,7 +2479,7 @@
     ;; It never misses guest writes; dirty rectangles are not clipping bounds.
     (local $mip i32)
     (local.set $mip (call $d3d9_texture_mip (local.get $arg0) (i32.const 0)))
-    (i32.store offset=28 (local.get $mip) (i32.add (i32.load offset=28 (local.get $mip)) (i32.const 1)))
+    (call $d3d9_texture_touch (i32.add (local.get $mip) (i32.const 28)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 

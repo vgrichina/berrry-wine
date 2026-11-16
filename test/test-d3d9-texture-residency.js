@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 'use strict';
+// Uploads decode through the standalone build of the WAT decoder (slice 9.1).
+require('./helpers/wat-texture-decoder').installStandalone();
 // Texture residency: a converted mip level travels to the executor once under
 // a host-assigned key and is referenced by the key alone afterwards. Covers
 // the software Device's keyed bind/release path and the host bridge's keyed

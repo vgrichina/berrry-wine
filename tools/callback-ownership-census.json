@@ -203,7 +203,8 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "4f2fc9d55fadfea736aadc5b96436a9b5cd95abd9b7b9fa545088c216d321be6",
+      "sha256": "924969232493d1edd85238eb7ac10924ba6d8327f0ca8b44fe919dc051eeed22",
+      "gpuStreamD2cReview20261115": "D3DIM 0x2000A GPU branch removed; the shared D3DIM bridge is software-only and the WAT producer owns GPU records. No guest invocation, callback, continuation or memory ownership change.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "windowLookupRetirementReview20261112": "Native register_dialog_frame publications retain the calling context's captured process incarnation, just like create_window/dialog_loaded. The existing instance/memory/receiver and WND generation identity remain unchanged. FindWindow excludes the publication once that process exits, before export queries. Original TR2 owner inspection identified this separate native-popup publication path; actualHost regression covers it alongside surface-less WND trees. No guest invocation or continuation change; broader callback ownership remains pending.",

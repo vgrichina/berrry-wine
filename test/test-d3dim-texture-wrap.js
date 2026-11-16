@@ -3,7 +3,9 @@
 
 // D3D texture wrapping (D3DRENDERSTATE_WRAPU/WRAPV, and WRAP0's D3DWRAP_U/V
 // bits) on the software rasterizer, the state the GPU arm reads, and the GPU
-// arm's per-triangle coordinate fix-up.
+// arm's per-triangle coordinate fix-up -- done by the WAT GPU stream producer
+// (src/09abg-d3dim-gps.wat, $d3g_draw) and read here from the DRAW_UP
+// vertices it hands the software GPU stream executor.
 //
 // With WRAPU on, a triangle whose u values are more than half a texture apart
 // interpolates the short way, across the seam. A sphere's texture seam
@@ -13,7 +15,8 @@
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 const apiTable = require('../src/api_table.json');
-const { D3DIMGpu, OPCODES } = require('../lib/d3dim-gpu');
+const GS = require('../lib/gpu-stream');
+const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
 
 const extraWat = String.raw`
   (func (export "test_wrap_seed")
@@ -52,6 +55,13 @@ const extraWat = String.raw`
       (call $g2w (local.get $vertices))
       (call $g2w (i32.add (local.get $vertices) (i32.const 32)))
       (call $g2w (i32.add (local.get $vertices) (i32.const 64)))))
+  ;; The GPU arm: the same 0x20000 draw the core issues, into the producer.
+  (func (export "test_wrap_gpu_draw") (param $device i32) (param $vertices i32) (param $count i32) (result i32)
+    (global.set $d3dim_gpu_on (i32.const 1))
+    (call $d3dim_worker_try_draw (local.get $device) (i32.const 4) (i32.const 3)
+      (local.get $vertices) (local.get $count)))
+  (func (export "test_wrap_gpu_fence") (result i32)
+    (call $d3dim_gpu_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))
 `;
 
 function makeSurface(wat, desc, out, width, height) {
@@ -74,7 +84,30 @@ function makeSurface(wat, desc, out, width, height) {
 const RED = 0xf800, GREEN = 0x07e0, BLUE = 0x001f, WHITE = 0xffff;
 
 async function software() {
-  const { exports: wat, memory } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  // GPU stream consumer: drain the producer's ring into the software
+  // executor, keeping each DRAW_UP's vertex bytes as the executor saw them.
+  let wat, memory, sw = null, ring = null, ringAddr = 0;
+  const gpuDraws = [];
+  const tee = {
+    caps: () => sw.caps(),
+    execute(rec) {
+      if (rec.op === GS.OP.DRAW_UP) {
+        const f = rec.fields, b = Buffer.from(rec.arena(f.voff, f.count * f.stride));
+        gpuDraws.push({ prim: f.prim, stride: f.stride, count: f.count, dv: new DataView(b.buffer, b.byteOffset, b.length) });
+      }
+      sw.execute(rec);
+    },
+  };
+  ({ exports: wat, memory } = await bootRenderHarness({ extraWat, fonts: 'none', extraHostOverrides: {
+    gpu_stream_kick: (addr, mode) => {
+      addr >>>= 0;
+      if (!sw) sw = new SoftwareExecutor({ getExports: () => wat, getMemory: () => memory.buffer });
+      if (!ring || ringAddr !== addr) { ring = new GS.Ring(() => memory.buffer, addr); ringAddr = addr; }
+      GS.drain([ring], tee);
+      if ((mode | 0) === GS.CONST.KICK_CLOSE) { sw.close(); sw = null; ring = null; ringAddr = 0; }
+      return 1;
+    },
+  } }));
   const mem = new DataView(memory.buffer);
   const desc = 0x410000, out = 0x410100, devOut = 0x410110, vertices = 0x411000;
   const W = 16;
@@ -198,81 +231,70 @@ async function software() {
     assert.deepStrictEqual(colColors(7), [RED], `${label}: column 7 belongs to the left quad (${hex(colColors(7))})`);
     assert.deepStrictEqual(colColors(8), [BLUE], `${label}: the shared column 8 belongs to the right quad, not the left one (${hex(colColors(8))})`);
   }
-}
 
-// The GPU executor with a recording device: submitted UVs, not GPU pixels.
-// Observe native16 storage boundaries explicitly; the real conversion/pixel
-// contract is covered by test-legacy-framebuffer-blend-web.js (dependent mode).
-function gpu(wrap, us) {
-  const memory = new ArrayBuffer(0x10000);
-  const dv = new DataView(memory);
-  const DESC = 0x1000, VERTS = 0x2000, CALL = 0x3000;
-  const f = [];
-  f[0] = 0x4000; f[1] = 640; f[2] = 480; f[3] = 16; f[4] = 1280; f[5] = 0x8000; f[6] = 1;
-  f[7] = 0x9000; f[8] = 4; f[9] = 4; f[10] = 16; f[11] = 8; f[12] = 0xa000;
-  f[17] = 4; f[24] = 1; f[25] = 1; f[27] = 1; f[28] = 2; f[33] = wrap;
-  for (let i = 0; i < 34; i++) dv.setUint32(DESC + i * 4, f[i] | 0, true);
-  us.forEach((uv, i) => {
-    const o = VERTS + i * 32;
-    dv.setFloat32(o, 10 * i, true); dv.setFloat32(o + 4, 20 + i, true);
-    dv.setFloat32(o + 8, 0.5, true); dv.setFloat32(o + 12, 1, true);
-    dv.setUint32(o + 16, 0xffffffff, true);
-    dv.setFloat32(o + 24, uv[0], true); dv.setFloat32(o + 28, uv[1], true);
-  });
-  dv.setUint32(CALL, 0x5000, true);
-  dv.setUint32(CALL + 4, 4, true);       // triangle list
-  dv.setUint32(CALL + 8, 3, true);       // TL vertex
-  dv.setUint32(CALL + 12, VERTS, true);
-  dv.setUint32(CALL + 16, us.length, true);
-  const draws = [], submissions = [];
-  const exec = new D3DIMGpu({
-    exactNative16: true,
-    getExports: () => ({ d3dim_gpu_describe: () => DESC, guest_to_wasm: a => a }),
-    getMemory: () => memory,
-    createCanvas: () => null,
-    onError: message => { throw new Error(message); },
-  });
-  const target = { width: 640, height: 480, bpp: 16, dib: 0x8000, check: false, textureKeys: new Set(),
-    device: { draw: d => { draws.push(d); submissions.push('draw'); } } };
-  // Instance-local observation only: this fake has no GL storage and cannot
-  // validate native16 pixels. Keep production's per-primitive submission path.
-  exec._storeNative16 = t => {
-    assert.strictEqual(t, target, 'storage observation belongs to the recording target');
-    assert.strictEqual(t.device.gpu, undefined, 'UV recorder has no real GPU');
-    submissions.push('store');
-  };
-  exec._target = () => target;
-  exec._texture = () => ({ width: 4, height: 4 });
-  assert.strictEqual(exec.call(OPCODES.DRAW, CALL), 1, 'the draw is taken, not declined');
-  assert.strictEqual(draws.length, us.length / 3, 'every triangle is submitted');
-  assert.deepStrictEqual(submissions, draws.flatMap(() => ['draw', 'store']),
-    'every primitive submission is immediately followed by a storage observation');
-  return draws.flatMap(d => {
-    assert.strictEqual(d.primitive, 4, 'recorded primitive is a triangle');
-    assert.strictEqual(d.primitiveCount, 1, 'native16 submits one triangle at a time');
+  // ---- GPU arm: the WAT producer's per-triangle fix-up ----
+  // Same device and texture, now through $d3dim_gpu_call(0x20000) with
+  // $d3dim_gpu_on = 1. Each later vertex of a triangle moves by a whole
+  // texture toward that triangle's first vertex when they are more than half
+  // a texture apart; the DRAW_UP vertices carry the corrected coordinates.
+  wat.test_wrap_set_rs(device, 1, wat.guest_read32(out + 8) >>> 0);
+  for (let y = 0; y < 4; y++) [RED, GREEN, BLUE, WHITE].forEach((c, x) =>
+    mem.setUint16(texDib + y * texPitch + x * 2, c, true));
+  const gpu = (wrapU, wrapV, uvs, at = null) => {
+    wat.test_wrap_set_rs(device, 5, wrapU); wat.test_wrap_set_rs(device, 6, wrapV);
+    uvs.forEach(([u, v], i) => {
+      const p = vertices + i * 32;
+      const [x, y] = at ? at[i] : [(i % 3) * 5, 2 + (i % 3)];
+      float(p, x); float(p + 4, y); float(p + 8, 0.5); float(p + 12, 1);
+      wat.guest_write32(p + 16, 0xffffffff); wat.guest_write32(p + 20, 0xff000000);
+      float(p + 24, u); float(p + 28, v);
+    });
+    const from = gpuDraws.length;
+    assert.strictEqual(wat.test_wrap_gpu_draw(device, vertices, uvs.length), 1, 'the draw is taken, not declined');
+    assert.strictEqual(wat.test_wrap_gpu_fence(), 1);
+    const got = gpuDraws.slice(from);
+    assert.strictEqual(got.length, 1, 'one DRAW_UP');
+    const d = got[0];
+    assert.strictEqual(d.prim, GS.CONST.PRIM_TRIANGLELIST, 'recorded primitive is a triangle list');
     assert.strictEqual(d.stride, 32, 'TL vertex stride');
-    assert.strictEqual(d.vertices.byteLength, 3 * d.stride, 'exactly three submitted vertices');
-    const out = new DataView(d.vertices.buffer, d.vertices.byteOffset, d.vertices.byteLength);
-    return Array.from({ length: 3 }, (_, i) =>
-      [out.getFloat32(i * d.stride + 24, true), out.getFloat32(i * d.stride + 28, true)]);
-  });
+    assert.strictEqual(d.count, uvs.length, 'every vertex is submitted');
+    return Array.from({ length: d.count }, (_, i) =>
+      [d.dv.getFloat32(i * 32 + 24, true), d.dv.getFloat32(i * 32 + 28, true)]);
+  };
+  const tri = [[0.875, 0.875], [0.125, 0.125], [0.5, 0.5]];
+  assert.deepStrictEqual(gpu(0, 0, tri), tri, 'GPU, no wrap: coordinates untouched');
+  assert.deepStrictEqual(gpu(1, 0, tri), [[0.875, 0.875], [1.125, 0.125], [0.5, 0.5]],
+    'GPU, WRAPU: u crosses the seam, v untouched');
+  assert.deepStrictEqual(gpu(0, 1, tri), [[0.875, 0.875], [0.125, 1.125], [0.5, 0.5]],
+    'GPU, WRAPV: v crosses the seam, u untouched');
+  assert.deepStrictEqual(gpu(1, 1, tri), [[0.875, 0.875], [1.125, 1.125], [0.5, 0.5]],
+    'GPU, WRAPU+WRAPV: both cross');
+  // A second triangle is fixed up relative to its own first vertex.
+  const two = [[0.1, 0.5], [0.2, 0.5], [0.3, 0.5], [0.95, 0.5], [0.05, 0.5], [0.9, 0.5]];
+  const gotU = gpu(1, 0, two).map(([u]) => Math.round(u * 100) / 100);
+  assert.deepStrictEqual(gotU, [0.1, 0.2, 0.3, 0.95, 1.05, 0.9], `GPU, per-triangle reference: ${gotU}`);
+
+  // And the pixels: the seam triangle drawn by the software GPU executor
+  // never samples green/blue once WRAPU is on (it does without it).
+  const seam = () => {
+    for (let i = 0; i < W * W; i++) mem.setUint16(rtDib + i * 2, 0, true);
+    gpu(wrapOn, 0, [[0.875, 0.5], [0.125, 0.5], [0.125, 0.5]], [[0, 0], [W - 1, 0], [W - 1, W - 1]]);
+    const row = [];
+    for (let x = 1; x < W - 1; x++) row.push(mem.getUint16(rtDib + (1 * W + x) * 2, true));
+    return row;
+  };
+  let wrapOn = 0;
+  row = seam();
+  assert(middle(row) > 0, `GPU no wrap: interpolation crosses green/blue, row ${hexes(row)}`);
+  wrapOn = 1;
+  row = seam();
+  assert.strictEqual(middle(row), 0, `GPU WRAPU: the short way never samples green/blue, row ${hexes(row)}`);
+  assert(row.includes(WHITE) && row.includes(RED), `GPU WRAPU: white then red, row ${hexes(row)}`);
 }
 
 (async () => {
   await software();
-
-  const tri = [[0.875, 0.875], [0.125, 0.125], [0.5, 0.5]];
-  assert.deepStrictEqual(gpu(0, tri), tri, 'GPU, no wrap: coordinates untouched');
-  assert.deepStrictEqual(gpu(1, tri), [[0.875, 0.875], [1.125, 0.125], [0.5, 0.5]],
-    'GPU, WRAPU: u crosses the seam, v untouched');
-  assert.deepStrictEqual(gpu(3, tri), [[0.875, 0.875], [1.125, 1.125], [0.5, 0.5]],
-    'GPU, WRAPU+WRAPV: both cross');
-  // A second triangle is fixed up relative to its own first vertex.
-  const two = [[0.1, 0.5], [0.2, 0.5], [0.3, 0.5], [0.95, 0.5], [0.05, 0.5], [0.9, 0.5]];
-  const got = gpu(1, two).map(([u]) => Math.round(u * 100) / 100);
-  assert.deepStrictEqual(got, [0.1, 0.2, 0.3, 0.95, 1.05, 0.9], `GPU, per-triangle reference: ${got}`);
-
-  console.log('PASS D3DIM texture wrap: WRAPU/WRAPV/WRAP0 on software, describe field 33, GPU per-triangle fix-up');
+  console.log('PASS D3DIM texture wrap: WRAPU/WRAPV/WRAP0 on software, describe field 33, GPU producer per-triangle fix-up');
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exit(1);

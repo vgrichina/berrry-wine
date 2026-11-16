@@ -189,7 +189,8 @@ async function runtime() {
   const dir=process.env.LEGACY_BLEND_EVIDENCE;assert(dir,'LEGACY_BLEND_EVIDENCE required');fs.mkdirSync(dir,{recursive:true});
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend',
+    'gpu-stream.generated','gpu-stream','d3d-geometry-batches','d3d9-software-backend','gpu-stream-software'];
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   const config={...base.plan(),immediate:true,immediateSource:blendFixture.toString(),
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),
@@ -217,7 +218,7 @@ async function runtime() {
     timer=setTimeout(()=>{evidence.deadlineExceeded=true;browser.close().catch(()=>{});},360000);
     for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
       wasm=fs.readFileSync(path.join(ROOT,'build',name));const moduleHash=hash(wasm);
-      for(const mode of ['software','webgl','worker']){
+      for(const mode of ['software','gps','worker']){
         page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');
         const result=await page.evaluate(base.browserFixture,mode,config,base.oracle.toString());
         evidence.results.push({name,moduleHash,mode,result});
@@ -226,7 +227,7 @@ async function runtime() {
       }
       // Omit the real legacy setter; all surrounding COM calls and draws still
       // succeed. The independent pixel equation must reject ignored state.
-      for(const mode of ['software','webgl','worker'])for(const control of ['ignored','ignored-add']){
+      for(const mode of ['software','gps','worker'])for(const control of ['ignored','ignored-add']){
         page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/legacy-render-fixture');
         let failure;try{await page.evaluate(base.browserFixture,mode,config,base.oracle.toString(),control);}catch(e){failure=String(e);}
         const partial=await page.evaluate(()=>globalThis.legacyTextureEvidence);
@@ -256,5 +257,32 @@ async function runtime() {
     fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(evidence,null,2)+'\n');
   }
 }
-if(require.main===module)runtime().catch(error=>{console.error(error);process.exitCode=1;});
-module.exports={blendFixture,runtime};
+// --offline: node, no browser. The same fixture through the shared offline
+// context against build/wine-assembly.wasm: 'software' and 'gps' (the WAT GPU
+// stream producer drained into lib/gpu-stream-software.js), plus both controls.
+async function offline() {
+  const assert=require('node:assert/strict');
+  const base=require('./test-legacy-texture-rendered-contract');
+  const config={...base.offlineConfig(),immediate:true,immediateSource:blendFixture.toString()};
+  for(const mode of ['software','gps']){
+    const result=await base.runOffline(mode,{...config},base.oracle.toString());
+    assert.equal(result.status,'PASS');
+    console.log('PASS offline '+mode+' public legacy COM blend pixels ('+result.legacyBlend.pixels.length+')'+
+      (result.stats?' gps draws='+result.stats.drawCalls+' readbacks='+result.stats.readbacks:''));
+  }
+  for(const mode of ['software','gps'])for(const control of ['ignored','ignored-add']){
+    const c={...config};let failure;
+    try{await base.runOffline(mode,c,base.oracle.toString(),control);}catch(e){failure=String(e);}
+    const partial=c.lastEvidence,blend=control==='ignored-add'?8:1;
+    assert(failure?.includes('PIXEL ORACLE mode '+blend+' RGBA'),'ignored-mode control must fail independent RGB, after successful calls: '+failure);
+    if(control==='ignored-add'){
+      assert(partial.calls.some(c=>c.label==='SetRenderState3 21'&&c.args[1]===21&&c.args[2]===8&&c.result===0),'actual ADD setter S_OK');
+      assert.equal(partial.legacyBlend.ignoredADD.raw,8);
+      assert(partial.calls.some(c=>/^Draw(Indexed)?Primitive3$/.test(c.label)&&c.result===0),'actual draw S_OK');
+    }
+    const pixel=partial.observations.at(-1);assert.notDeepEqual(pixel.actual,pixel.expected);
+    console.log('PASS offline '+mode+' '+control+' rejected by pixels');
+  }
+}
+if(require.main===module)(process.argv.includes('--offline')?offline():runtime()).catch(error=>{console.error(error);process.exitCode=1;});
+module.exports={blendFixture,runtime,offline};

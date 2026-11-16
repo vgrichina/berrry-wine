@@ -90,7 +90,7 @@ const {bootRenderHarness}=require('./render-helper');
   args:['--no-first-run','--no-default-browser-check']});
  try{
   const page=await browser.newPage();
-  for(const file of['d3d-shader-ir.js','gpu-backend.js','d3d9-shader.js','d3d9-fixed.js','render-clear.js','d3d9-backend.js'])
+  for(const file of['d3d-shader-ir.js','gpu-backend.js','d3d9-shader.js','render-clear.js','d3d9-backend.js'])
    await page.addScriptTag({path:path.join(__dirname,'../lib',file)});
   const results=await page.evaluate(({vs,shaders,coordinates,depthCases})=>{
    const bytes=x=>({...x,nativeBytes:Uint8Array.from(x.nativeBytes)});vs=bytes(vs);shaders=shaders.map(bytes);

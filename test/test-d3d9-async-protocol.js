@@ -4,6 +4,7 @@
 // covered separately by test-d3d9-software-worker and software-bridge.
 const assert = require('assert');
 const {Bridge} = require('../lib/d3d9-host');
+require('./helpers/wat-texture-decoder').installStandalone(); // slice 9.1: texture uploads decode in WAT
 const {OPCODES:OP} = require('../lib/d3d-command-stream');
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
 const tick=()=>new Promise(resolve=>setImmediate(resolve));

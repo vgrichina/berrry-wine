@@ -15,7 +15,7 @@ function read(filename) {
   } finally { fs.closeSync(fd); }
 }
 const original = read(host), helperSource = read(helper);
-const anchor = 'const src=new Uint8Array(memory,g2w(bits),byteLength);';
+const anchor='const bits=u32(m+16),byteLength=u32(m+12),seq=u32(m+28);',sourceView='const src=new Uint8Array(memory,g2w(bits),byteLength);';
 function load(code, prefix = '') {
   const saved = [host,helper].map(p => [p,require.cache[p]]);
   function compile(filename, source) {
@@ -25,7 +25,7 @@ function load(code, prefix = '') {
   }
   try {
     assert.equal(original.split(anchor).length,2);
-    compile(host,prefix+original.replace(anchor,anchor+code)); return compile(helper,helperSource);
+    compile(host,prefix+original.replace(anchor,anchor+sourceView+code)); return compile(helper,helperSource);
   } finally { for (const [p,m] of saved) { if (m) require.cache[p] = m; else delete require.cache[p]; } }
 }
 
@@ -49,8 +49,8 @@ for (const p of ranges) test(`indexed accounting: ${p.name}`,async()=>{
     assert.equal(sum,new Uint8Array(f.source().buffer,offset,length).reduce((a,b)=>a+b,0));
     assert.equal(c.indexedSourceReads,p.bytes(f.bytes));
     assert.deepEqual(f.seen.at(-1).pixels,f.expected());
-    if (p.bytes(f.bytes)) assert.throws(()=>h.budget(c,f.bytes,f.bytes,true),/indexed source read/);
-    else h.budget(c,f.bytes,f.bytes,true);
+    if (p.bytes(f.bytes)) assert.throws(()=>h.budget(c,f.bytes,0,true),/indexed source read/);
+    else h.budget(c,f.bytes,0,true);
   } finally { await f.close(); }
 });
 
@@ -63,7 +63,7 @@ test('source key coercion, valid bounds and outside-range indices are counted ex
     assert.equal(f.draw(),1); await f.drain(); const c = h.measure(f); await f.drain();
     assert.deepEqual(f.bridge.rangeProbe,[f.source()[0],0,0,undefined,undefined,undefined,1]);
     assert.equal(c.indexedSourceReads,1);
-    assert.throws(()=>h.budget(c,f.bytes,f.bytes,true),/indexed source read/);
+    assert.throws(()=>h.budget(c,f.bytes,0,true),/indexed source read/);
   } finally { await f.close(); }
 });
 
@@ -74,7 +74,7 @@ test('constructor copies through nested source aliases count the copied range',a
     assert.equal(f.draw(),1); await f.drain(); const c = h.measure(f); await f.drain();
     assert.deepEqual(f.bridge.rangeProbe,f.source().subarray(8,-10));
     assert.equal(c.sourceCopyBytes,f.bytes-18); assert.equal(c.constructorCopyBytes,f.bytes-18);
-    assert.throws(()=>h.budget(c,f.bytes,f.bytes,true),/private source copy/);
+    assert.throws(()=>h.budget(c,f.bytes,0,true),/private source copy/);
   } finally { await f.close(); }
 });
 
@@ -92,8 +92,8 @@ for (const p of [
     const v = new Uint8Array(f.source().buffer,f.bits[0]-8,f.bytes+16);
     assert.deepEqual(f.bridge.rangeProbe,{pixels:v.slice(p.start,p.end),log:['start','end']});
     assert.equal(c.sourceCopyBytes,p.copied); assert.equal(c.sliceBytes,5632+f.bridge.rangeProbe.pixels.length);
-    if (p.copied) assert.throws(()=>h.budget(c,f.bytes,f.bytes,true),/private source copy/);
-    else h.budget(c,f.bytes,f.bytes,true);
+    if (p.copied) assert.throws(()=>h.budget(c,f.bytes,0,true),/private source copy/);
+    else h.budget(c,f.bytes,0,true);
   } finally { await f.close(); }
 });
 
@@ -141,8 +141,8 @@ test('actual producer tag throw restores descriptors, snapshot source and observ
     // real recovery allocation rather than hiding it to make a warm budget pass.
     const recovery = h.measure(f); await f.drain();
     assert.equal(recovery.backingAllocationBytes,4096);
-    assert.throws(()=>h.budget(recovery,f.bytes,f.bytes,true),/backing allocation/);
-    h.budget(h.measure(f),f.bytes,f.bytes,true); await f.drain();
+    assert.throws(()=>h.budget(recovery,f.bytes,0,true),/backing allocation/);
+    h.budget(h.measure(f),f.bytes,0,true); await f.drain();
     assert.deepEqual(f.seen.at(-1).pixels,f.expected());
   } finally { await f.close(); }
 });

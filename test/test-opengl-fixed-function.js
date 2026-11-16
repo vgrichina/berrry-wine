@@ -74,12 +74,11 @@ assert.strictEqual(backend.uploads.length, 1);
 assert.strictEqual(gl.unpackAlignment,4,'desktop client alignment retains its default');
 assert.strictEqual(backend.uploads[0].alignment, 1,
   'converted backend pixels use a tight layout independent of client unpack state');
-gl.texImage(0, 4, 1, 1, 0, GL.BGRA, GL.UNSIGNED_BYTE,
-  new Uint8Array([0x11, 0x22, 0x33, 0x44]));
-assert.strictEqual(backend.uploads.at(-1).format, GL.RGBA,
-  'desktop BGRA textures use the WebGL-compatible RGBA format');
-assert.deepStrictEqual(Array.from(backend.uploads.at(-1).pixels), [0x33, 0x22, 0x11, 0x44],
-  'desktop BGRA texture bytes are converted to RGBA without changing alpha');
+// Desktop BGRA (and every other client format) is converted in WAT
+// (src/09a8t-gl-texture.wat); the executor refuses anything but RGBA8.
+assert.throws(() => gl.texImage(0, 4, 1, 1, 0, GL.BGRA, GL.UNSIGNED_BYTE,
+  new Uint8Array([0x11, 0x22, 0x33, 0x44])), /must be converted to RGBA8 in WAT/,
+  'unconverted desktop BGRA texels fail fast');
 
 gl.bindTexture(0);
 gl.texParameter(GL.TEXTURE_MIN_FILTER, GL.LINEAR);
@@ -169,10 +168,11 @@ bridgeView.setUint32(stack + 4, GL.TEXTURE_2D, true);
 bridgeView.setInt32(stack + 8, 3, true);
 bridgeView.setInt32(stack + 12, 2, true);
 bridgeView.setInt32(stack + 16, 2, true);
-bridgeView.setUint32(stack + 20, GL.RGB, true);
+// WAT rewrote the GLU source to finished RGBA8 before it reached the bridge.
+bridgeView.setUint32(stack + 20, GL.RGBA, true);
 bridgeView.setUint32(stack + 24, GL.UNSIGNED_BYTE, true);
 bridgeView.setUint32(stack + 28, 0x200, true);
-new Uint8Array(bridgeMemory, 0x200, 12).fill(0x7f);
+new Uint8Array(bridgeMemory, 0x200, 16).fill(0x7f);
 assert.strictEqual(bridge.call(CALL_INDEX.gluBuild2DMipmaps, stack, 0), 0,
   'gluBuild2DMipmaps returns GLU_NO_ERROR');
 assert.strictEqual(matrixFrontend.backend.uploads.find(x=>x.level===0).level, 0,
@@ -183,13 +183,13 @@ assert.strictEqual(matrixFrontend.backend.mipmapTextures.length, 1,
   const backend = new FakeBackend(), f = new FixedFunctionGL(backend);
   // The original Tux Racer tree is 256x255 RGBA. Its alpha must survive the
   // GLU resize rather than becoming an incomplete WebGL1 texture.
-  f.unpackAlignment = 8;
+  // Sources arrive from WAT as tight finished RGBA8 (unpack, transfer and
+  // the base format already applied), so the resize never sees row padding.
   const pixels = new Uint8Array(256 * 255 * 4);
   for (let i = 0; i < pixels.length; i += 4) pixels.set([20, 90, 30, 128], i);
   f.build2DMipmaps(4, 256, 255, GL.RGBA, GL.UNSIGNED_BYTE, pixels);
   const image = backend.uploads.findLast(x=>x.level===0);
   assert.deepStrictEqual([image.width, image.height, image.alignment], [256, 256, 1]);
-  assert.strictEqual(f.unpackAlignment, 8, 'internal resize restores guest unpack alignment');
   assert.strictEqual(image.pixels.length, 256 * 256 * 4);
   for (let i = 0; i < image.pixels.length; i += 4)
     assert.deepStrictEqual(Array.from(image.pixels.subarray(i, i + 4)), [20, 90, 30, 128]);
@@ -197,29 +197,29 @@ assert.strictEqual(matrixFrontend.backend.mipmapTextures.length, 1,
   assert(f._textureComplete(f._textureState()), 'resized chain is complete');
   assert.strictEqual(pixels.length, 256 * 255 * 4, 'client image is untouched');
 
-  // Nearest-power rounding: 5 rounds down to 4, 6 ties upward to 8. RGB
-  // rows include padding which must never enter the resampling footprint.
-  const rgb = new Uint8Array(16 * 6).fill(0xee);
-  for (let y = 0; y < 6; y++) for (let x = 0; x < 5; x++)
-    rgb.set([50, 100, 150], y * 16 + x * 3);
-  f.build2DMipmaps(3, 5, 6, GL.RGB, GL.UNSIGNED_BYTE, rgb);
+  // Nearest-power rounding: 5 rounds down to 4, 6 ties upward to 8. An RGB
+  // source arrives from WAT with alpha already 255.
+  const rgb = new Uint8Array(5 * 6 * 4);
+  for (let i = 0; i < rgb.length; i += 4) rgb.set([50, 100, 150, 255], i);
+  f.build2DMipmaps(3, 5, 6, GL.RGBA, GL.UNSIGNED_BYTE, rgb);
   const rounded = backend.uploads.findLast(x=>x.level===0);
   assert.deepStrictEqual([rounded.width, rounded.height], [4, 8]);
   assert.deepStrictEqual(Array.from(rounded.pixels), Array.from({length: 32}, () => [50, 100, 150,255]).flat());
 
   // A black/white 3x1 image enlarges with GLU's periodic box filter,
-  // rather than a nearest-neighbour copy or zeroed edge alpha.
-  f.unpackAlignment = 1;
-  f.build2DMipmaps(1, 3, 1, GL.LUMINANCE, GL.UNSIGNED_BYTE, new Uint8Array([0, 100, 200]));
+  // rather than a nearest-neighbour copy or zeroed edge alpha. LUMINANCE
+  // arrives as L,L,L,255; filtering each channel equals filtering L.
+  const lum = values => Uint8Array.from(values.flatMap(v => [v, v, v, 255]));
+  f.build2DMipmaps(1, 3, 1, GL.RGBA, GL.UNSIGNED_BYTE, lum([0, 100, 200]));
   assert.deepStrictEqual(Array.from(backend.uploads.findLast(x=>x.level===0).pixels), [25,25,25,255,63,63,63,255,138,138,138,255,175,175,175,255]);
   backend.getParameter = pname => { assert.strictEqual(pname, GL.MAX_TEXTURE_SIZE); return 2; };
-  f.build2DMipmaps(1, 4, 1, GL.LUMINANCE, GL.UNSIGNED_BYTE, new Uint8Array([0, 100, 100, 200]));
+  f.build2DMipmaps(1, 4, 1, GL.RGBA, GL.UNSIGNED_BYTE, lum([0, 100, 100, 200]));
   assert.deepStrictEqual(Array.from(backend.uploads.findLast(x=>x.level===0).pixels), [50,50,50,255,150,150,150,255], 'maximum size clamps and averages');
+  assert.throws(() => f.build2DMipmaps(1, 3, 1, GL.LUMINANCE, GL.UNSIGNED_BYTE, new Uint8Array(3)),
+    /must be converted to RGBA8 in WAT/, 'unconverted GLU sources fail fast');
 
-  f.unpackAlignment = 8;
   backend.uploadTexture2D = () => { throw new Error('upload failed'); };
   assert.throws(() => f.build2DMipmaps(4, 3, 1, GL.RGBA, GL.UNSIGNED_BYTE, new Uint8Array(12)), /upload failed/);
-  assert.strictEqual(f.unpackAlignment, 8, 'failed upload also restores unpack alignment');
   for (const size of [0, -1, NaN, Infinity, 0xffffffff]) {
     assert.strictEqual(f.build2DMipmaps(4, size, 1, GL.RGBA, GL.UNSIGNED_BYTE, pixels), 100901);
     assert.strictEqual(f.build2DMipmaps(4, 1, size, GL.RGBA, GL.UNSIGNED_BYTE, pixels), 100901);
@@ -316,15 +316,13 @@ assert.strictEqual(lifecycleWin._gpuFrameLayer, null,
   assert.deepStrictEqual(f.getTexParameter(GL.TEXTURE_WRAP_S), [GL.CLAMP],
     'query preserves desktop enum rather than hardware CLAMP_TO_EDGE alias');
   const count = b.parameters.length;
-  assert.strictEqual(f.texParameter(GL.TEXTURE_MAG_FILTER, 0x2703), false);
-  assert.strictEqual(f.lastError, GL.INVALID_ENUM);
+  // GPU stream v2 G1: WAT validates texture parameters before a record
+  // exists; an error decided by the frontend is refused loudly.
+  assert.throws(() => f.texParameter(GL.TEXTURE_MAG_FILTER, 0x2703), /decided in the JS executor/);
   assert.strictEqual(b.parameters.length, count, 'invalid filter cannot touch hardware');
   assert.deepStrictEqual(f.getTexParameter(GL.TEXTURE_MAG_FILTER), [GL.LINEAR]);
-  f.lastError = 0;
-  assert.strictEqual(f.texBorderColor([0, 0, 0, 0], 0xDE2), false);
-  assert.strictEqual(f.lastError, GL.INVALID_ENUM);
+  assert.throws(() => f.texBorderColor([0, 0, 0, 0], 0xDE2), /decided in the JS executor/);
   assert.deepStrictEqual(Array.from(f.getTexParameter(GL.TEXTURE_BORDER_COLOR)), [0, 0.25, 1, 0.5]);
-  f.lastError = 0;
   f.deleteTextures([12]);
   f.bindTexture(12);
   assert.deepStrictEqual(Array.from(f.getTexParameter(GL.TEXTURE_BORDER_COLOR)), [0, 0, 0, 0],
@@ -342,55 +340,21 @@ assert.strictEqual(lifecycleWin._gpuFrameLayer, null,
   };
   [0.125,0.25,0.5,1].forEach((v,i)=>dv.setFloat32(256+i*4,v,true));
   call('glTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_BORDER_COLOR,256);
-  call('glGetTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_BORDER_COLOR,320);
-  assert.deepStrictEqual(Array.from(new Float32Array(memory,320,4)),[0.125,0.25,0.5,1]);
+  assert.deepStrictEqual(Array.from(f.getTexParameter(GL.TEXTURE_BORDER_COLOR)),[0.125,0.25,0.5,1]);
   dv.setFloat32(256,0.375,true);
   call('glTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_PRIORITY,256);
-  call('glGetTexParameterfv',GL.TEXTURE_2D,GL.TEXTURE_PRIORITY,320);
-  assert.strictEqual(dv.getFloat32(320,true),0.375);
-  call('glTexParameterfv',0xDE2,GL.TEXTURE_BORDER_COLOR,0xFFFFFFF0);
-  assert.strictEqual(call('glGetError'),GL.INVALID_ENUM);
-  assert.strictEqual(call('glGetError'),0,'frontend error is cleared when consumed');
-  dv.setUint32(320,0xDEADBEEF,true);
-  call('glGetTexParameterfv',GL.TEXTURE_2D,0xDEADBEEF,320);
-  assert.strictEqual(dv.getUint32(320,true),0xDEADBEEF,'invalid query must not write output');
-  assert.strictEqual(call('glGetError'),GL.INVALID_ENUM);
-  // glGetTexLevelParameter: Serious Sam's Engine specifies a 1x1 GL_RGBA8
-  // image and enables 32-bit textures only if GL_TEXTURE_GREEN_SIZE is 8.
-  f.texImage(0,0x8058,1,1,0,GL.RGBA,0x1401,new Uint8Array(4));
-  const level=(pname,lv=0,fv=false)=>{
-    dv.setUint32(336,0xDEADBEEF,true);
-    call(fv?'glGetTexLevelParameterfv':'glGetTexLevelParameteriv',GL.TEXTURE_2D,lv,pname,336);
-    return fv?dv.getFloat32(336,true):dv.getInt32(336,true);
-  };
-  assert.strictEqual(level(0x805D),8,'RGBA8 green size');
-  assert.strictEqual(level(0x805F),8,'RGBA8 alpha size');
-  assert.strictEqual(level(0x8060),0,'RGBA8 has no luminance');
-  assert.strictEqual(level(0x1000),1,'level 0 width');
-  assert.strictEqual(level(0x1003),0x8058,'internal format as specified');
-  assert.strictEqual(level(0x1001,0,true),1,'fv form answers in float');
-  assert.strictEqual(level(0x1000,3),0,'an unspecified level has width 0');
-  assert.strictEqual(level(0x1003,3),1,'and internal format 1');
-  f.texImage(0,GL.ALPHA,1,1,0,GL.ALPHA,0x1401,new Uint8Array(1));
-  assert.deepStrictEqual([level(0x805C),level(0x805F)],[0,8],'alpha-only image');
-  assert.strictEqual(call('glGetError'),0);
-  dv.setUint32(336,0xDEADBEEF,true);
-  call('glGetTexLevelParameteriv',GL.TEXTURE_2D,0,0xDEADBEEF,336);
-  assert.strictEqual(dv.getUint32(336,true),0xDEADBEEF,'invalid level query must not write output');
-  assert.strictEqual(call('glGetError'),GL.INVALID_ENUM);
-  // glIsTexture (Soldier of Fortune's ref_gl, during a level load): a name is
-  // a texture from its first bind until it is deleted; a reserved-only name,
-  // an unknown one and 0 are not.
-  call('glBindTexture',GL.TEXTURE_2D,77);
-  assert.strictEqual(call('glIsTexture',77),1,'a bound name is a texture');
-  assert.strictEqual(call('glIsTexture',78),0,'a never-bound name is not');
-  assert.strictEqual(call('glIsTexture',0),0,'0 is never a texture');
-  dv.setUint32(352,77,true);
-  call('glDeleteTextures',1,352);
-  assert.strictEqual(call('glIsTexture',77),0,'a deleted name is not');
+  assert.deepStrictEqual(f.getTexParameter(GL.TEXTURE_PRIORITY),[0.375]);
+  // GPU stream v2 G1: every query and the error flag are answered in WAT
+  // (glGetTexParameterfv/glGetTexLevelParameter*: 09a8b, glIsTexture and
+  // glGetError: 09a8e/09a8ca; test-opengl-texture-state-query and
+  // test-opengl-one-dimensional-textures run them). None may reach here.
+  for (const name of ['glGetError','glGetTexParameterfv','glGetTexLevelParameteriv',
+    'glGetTexLevelParameterfv','glIsTexture','glGetIntegerv','glGetFloatv',
+    'glGetDoublev','glGetBooleanv','glIsEnabled'])
+    assert.throws(()=>call(name,GL.TEXTURE_2D,0,0,320),/answered in WAT/,name);
+  // An executor-side failure (allocation) is not a guest GL error any more.
   dv.setUint32(4,GL.TEXTURE_2D,true);dv.setUint32(8,GL.TEXTURE_BORDER_COLOR,true);dv.setUint32(12,256,true);
-  host.call(CALL_INDEX.glTexParameterfv,0,0x505);
-  assert.strictEqual(call('glGetError'),0x505,'native allocation failure reaches guest error query');
+  assert.throws(()=>host.call(CALL_INDEX.glTexParameterfv,0,0x505),/decided in the JS executor/);
 }
 
 // A scalar state update must not inspect unrelated light/projection state.

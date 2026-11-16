@@ -14,7 +14,7 @@ const { bootRenderHarness } = require('./render-helper');
     args: ['--no-first-run', '--no-default-browser-check'] });
   try {
     const page = await browser.newPage();
-    for (const file of ['gpu-backend.js', 'd3d-shader-ir.js', 'd3d9-shader.js', 'd3d9-fixed.js', 'render-clear.js','d3d9-backend.js'])
+    for (const file of ['gpu-backend.js', 'd3d-shader-ir.js', 'd3d9-shader.js', 'render-clear.js','d3d9-backend.js'])
       await page.addScriptTag({ path: path.join(__dirname, '../lib', file) });
     const webglVersion = Number(process.env.D3D9_WEBGL_VERSION || 2);
     assert([1,2].includes(webglVersion), 'D3D9_WEBGL_VERSION must be 1 or 2');

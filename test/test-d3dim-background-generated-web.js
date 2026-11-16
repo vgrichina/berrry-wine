@@ -158,18 +158,9 @@ async function backgroundBody(ctx) {
   await observe('first device unaffected by second removal',a,config.a);
   await background(a,0);await background(a,a.mh);
   await observe('background restored after removal',a,config.a);
-  if(mode!=='software'){
-    if(mode==='worker')await until(()=>getStats()?.stats.clears+getStats()?.stats.textureClears===clears,'Worker clear stats');
-    const stats=getGpu()?getGpu().snapshot():getStats().stats;
-    evidence.stats=stats;eq(stats.clears+stats.textureClears,clears,'every clear executed on GPU');
-    eq(stats.textureClears,textureClears,'every textured clear executed on GPU');
-    eq(stats.fallbacks,0,'no fallback');eq(stats.errors,0,'no GPU errors');check(stats.syncs>0,'actual readback');
-    if(getGpu()){
-      const t=[...getGpu().targets.values()][0],gl=t.device.gpu.gl,ext=gl.getExtension('WEBGL_debug_renderer_info');
-      evidence.backend={version:gl.getParameter(gl.VERSION),renderer:gl.getParameter(gl.RENDERER),
-        unmaskedRenderer:ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):null};
-    }else{evidence.backend={version:getStats().stats.glVersion,renderer:getStats().stats.glRenderer};check(transport.batches.length>0,'actual queued batches');}
-  }
+  // The GPU half (the WAT producer's textured clear) is
+  // test-d3dim-gps-background-clear.js; this page runs the software route.
+  evidence.clears={clears,textureClears};
   for(const t of targets){await background(t,0);await ok(com('DeleteViewport3',t.device,6,t.vp));}
   for(const obj of owned.reverse())await com('Release',obj,2);
   await com('Release d3d',d3d,2);await com('Release dd',dd,2);
@@ -196,7 +187,7 @@ async function runtime() {
   assert(dir&&moduleDir,'D3DIM_BACKGROUND_EVIDENCE and D3DIM_BACKGROUND_MODULE_DIR required');fs.mkdirSync(dir,{recursive:true});
   const result={status:'RUNNING',startedAt:new Date().toISOString(),plan:plan(),controls:controls(),modules:[],results:[]};
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend'];
   let wasm,server,browser,page;
   try{
     server=await require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
@@ -214,7 +205,7 @@ async function runtime() {
       factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
     for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
       wasm=fs.readFileSync(path.join(moduleDir,name));result.modules.push({name,sha256:sha(wasm),bytes:wasm.length});
-      for(const mode of ['software','webgl','worker']){
+      for(const mode of ['software']){
         page=await browser.newPage();await page.goto('http://127.0.0.1:'+server.address().port+'/fixture');
         const row=await page.evaluate(Function('return ('+fixtureSource()+')')(),mode,config,oracle.toString());
         result.results.push({module:name,...row});await page.screenshot({path:path.join(dir,name+'-'+mode+'.png'),fullPage:true});

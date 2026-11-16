@@ -96,7 +96,7 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
     (local.set $mip (call $d3d9_texture_mip (local.get $arg0) (call $d3d9_cube_index (local.get $arg0) (local.get $arg1) (i32.const 0))))
     (if (local.get $mip) (then
-      (i32.store offset=28 (local.get $mip) (i32.add (i32.load offset=28 (local.get $mip)) (i32.const 1)))
+      (call $d3d9_texture_touch (i32.add (local.get $mip) (i32.const 28)))
       (i32.store offset=0 (global.get $reg_base) (i32.const 0))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
@@ -1833,6 +1833,79 @@
     (call $d3d9_texture_create_kind (local.get $device) (local.get $width) (local.get $height)
       (local.get $levels) (local.get $usage) (local.get $format) (local.get $pool) (local.get $out) (i32.const 3)))
 
+  ;; ── Level content identity (GPU stream v2 slice 9.1 dirty tracking) ──
+  ;; A level's seq word (mip+28) is its content identity: 0 while the level
+  ;; still holds the zeroed bytes it was created with, and otherwise a serial
+  ;; drawn from one process-wide counter at every point the guest (or WAT on
+  ;; its behalf) changes the bytes -- UnlockRect after a writable lock,
+  ;; AddDirtyRect, UpdateTexture, UpdateSurface and D3D8 CopyRects. Because no
+  ;; serial is ever issued twice, a host cache keyed by (mip, seq) cannot be
+  ;; fooled by a freed level's record being reused (the ABA the old JS byte
+  ;; compare and allocation generation guarded), and a clean level is neither
+  ;; re-decoded nor re-uploaded. The same stamp serves the colour-storage seq
+  ;; ($d3d9_update_surface's seq pointer), which only ever compares for change.
+  (global $D3D9_TEXTURE_SERIAL i32 (region.addr $D3D9_TEXTURE_SERIAL 0))
+  (global $D3D9_TEXTURE_SERIAL_SIZE i32 (region.size $D3D9_TEXTURE_SERIAL))
+  (global $D3D9_TEXTURE_DECODE i32 (region.addr $D3D9_TEXTURE_DECODE 0))
+  (global $D3D9_TEXTURE_DECODE_SIZE i32 (region.size $D3D9_TEXTURE_DECODE))
+
+  (func $d3d9_texture_touch (param $seq i32)
+    (local $serial i32)
+    (loop $again
+      (local.set $serial (i32.add (i32.atomic.rmw.add (global.get $D3D9_TEXTURE_SERIAL) (i32.const 1)) (i32.const 1)))
+      ;; 0 means "never written"; skip it on wrap.
+      (br_if $again (i32.eqz (local.get $serial))))
+    ;; A colour-storage seq is also bumped by +1 elsewhere, so it can run ahead
+    ;; of the counter; never let a stamp move a word back to a value it held.
+    ;; Mip seq words are only ever stamped, so for them this is the serial.
+    (i32.store (local.get $seq) (select (local.get $serial)
+      (i32.add (i32.load (local.get $seq)) (i32.const 1))
+      (i32.gt_u (local.get $serial) (i32.load (local.get $seq))))))
+
+  ;; The decode band (one for the process). Worker instances share it, so a
+  ;; level is decoded under the owner lock at SERIAL+4: row 0 takes it
+  ;; (spinning; the holder only ever runs a bounded decode and a host-side
+  ;; copy), every later band asserts it, and the host releases it with
+  ;; d3d9_texture_decode_release once it has copied the last band out. The
+  ;; owner word is this instance's register file address, unique per thread.
+  (func $d3d9_texture_decode_scratch (export "d3d9_texture_decode_scratch") (result i32)
+    (global.get $D3D9_TEXTURE_DECODE))
+
+  (func $d3d9_texture_decode_release (export "d3d9_texture_decode_release")
+    (drop (i32.atomic.rmw.cmpxchg offset=4 (global.get $D3D9_TEXTURE_SERIAL)
+      (global.get $reg_base) (i32.const 0))))
+
+  ;; Decode the band of a texture level that starts at row $y0 into the band
+  ;; (A8B8G8R8, width*4 per row) and return how many rows it holds; 0 for an
+  ;; undecodable format. $mip is the level record's wasm address. The host
+  ;; copies the band out before calling again.
+  (func $d3d9_texture_decode_rows (export "d3d9_texture_decode_rows") (param $mip i32) (param $format i32) (param $y0 i32) (result i32)
+    (local $w i32) (local $h i32) (local $band i32) (local $held i32)
+    (local.set $w (i32.load (local.get $mip)))
+    (local.set $h (i32.load offset=4 (local.get $mip)))
+    (if (i32.or (i32.eqz (local.get $w)) (i32.ge_u (local.get $y0) (local.get $h))) (then (return (i32.const 0))))
+    (if (i32.eqz (local.get $y0))
+      (then
+        (loop $acquire
+          (local.set $held (i32.atomic.rmw.cmpxchg offset=4 (global.get $D3D9_TEXTURE_SERIAL)
+            (i32.const 0) (global.get $reg_base)))
+          (br_if $acquire (i32.and (i32.ne (local.get $held) (i32.const 0))
+            (i32.ne (local.get $held) (global.get $reg_base))))))
+      (else
+        (if (i32.ne (i32.atomic.load offset=4 (global.get $D3D9_TEXTURE_SERIAL)) (global.get $reg_base))
+          (then (unreachable)))))
+    (local.set $band (i32.div_u (global.get $D3D9_TEXTURE_DECODE_SIZE) (i32.shl (local.get $w) (i32.const 2))))
+    (if (call $d3d9_tex_dxt_kind (local.get $format)) (then
+      (local.set $band (i32.and (local.get $band) (i32.const -4)))))
+    (if (i32.eqz (local.get $band)) (then (unreachable)))
+    (if (i32.gt_u (local.get $band) (i32.sub (local.get $h) (local.get $y0)))
+      (then (local.set $band (i32.sub (local.get $h) (local.get $y0)))))
+    (if (i32.eqz (call $d3d9_tex_decode (call $g2w (i32.load offset=16 (local.get $mip))) (i32.load offset=8 (local.get $mip))
+        (local.get $format) (local.get $w) (local.get $h) (local.get $y0) (local.get $band)
+        (call $d3d9_texture_decode_scratch)))
+      (then (return (i32.const 0))))
+    (local.get $band))
+
   ;; Cube descriptors are face-major: face * levels + level. Surface aliases
   ;; retain this flattened index, sharing the same bytes and lock state.
   (func $d3d9_texture_block_bytes (param $format i32) (result i32)
@@ -2074,7 +2147,7 @@
           (else
             (memory.copy (call $g2w (i32.load offset=16 (local.get $dm)))
               (call $g2w (i32.load offset=16 (local.get $sm))) (i32.load offset=12 (local.get $sm)))
-            (i32.store offset=28 (local.get $dm) (i32.add (i32.load offset=28 (local.get $dm)) (i32.const 1)))))
+            (call $d3d9_texture_touch (i32.add (local.get $dm) (i32.const 28)))))
           (local.set $level (i32.add (local.get $level) (i32.const 1)))
           (br_if $levels_loop (i32.lt_u (local.get $level) (local.get $dl))))
         (local.set $face (i32.add (local.get $face) (i32.const 1)))

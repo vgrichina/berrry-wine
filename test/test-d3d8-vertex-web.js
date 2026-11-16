@@ -180,7 +180,7 @@ const declarationBytes = (colorStream, colorOffset, positionStream = 0) => {
     pixelShader:{...snapshot.pixelShader,nativeBytes:Array.from(snapshot.pixelShader.nativeBytes)}};
   const browser=await puppeteer.launch({headless:true,executablePath:process.env.CHROME||'/usr/bin/google-chrome',args:['--no-sandbox','--enable-unsafe-swiftshader']});
   try{const page=await browser.newPage();
-    for(const file of ['gpu-backend.js','d3d-shader-ir.js','d3d9-shader.js','d3d9-fixed.js','render-clear.js','d3d9-backend.js'])await page.addScriptTag({path:path.join(__dirname,'../lib',file)});
+    for(const file of ['gpu-backend.js','d3d-shader-ir.js','d3d9-shader.js','render-clear.js','d3d9-backend.js'])await page.addScriptTag({path:path.join(__dirname,'../lib',file)});
     const results=await page.evaluate(payload=>{const results=[];for(const webglVersion of [1,2]){
       const canvas=document.createElement('canvas');canvas.width=canvas.height=8;
       const device=new D3D9Backend.Device(canvas,{webglVersion}),gl=device.gpu.gl;

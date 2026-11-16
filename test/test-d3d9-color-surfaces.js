@@ -333,6 +333,8 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
       bad(e.Device9_UpdateTexture(ad,source,destination));
       assert.deepStrictEqual(destBytes(),before,'late locked mip rejects without changing earlier mips');
       ok(e.Texture9_UnlockRect(destination,count*3-1));
+      const unlockedSeq=read(record(destination,count*3-1)+28),stamped=new Set();
+      assert.notStrictEqual(unlockedSeq,0,'a writable unlock stamps a content identity');
       ok(e.Texture9_LockRect(source,0,lock,0,16));
       bad(e.Device9_UpdateTexture(ad,source,destination));
       ok(e.Texture9_UnlockRect(source,0));
@@ -342,7 +344,11 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
         const sr=record(source,face*4+level+1),dr=record(destination,face*3+level);
         assert.deepStrictEqual(new Uint8Array(memory.buffer,wa(read(dr+16)),read(dr+12)),
           new Uint8Array(memory.buffer,wa(read(sr+16)),read(sr+12)),'face/mip bytes including compressed padding');
-        assert.strictEqual(read(dr+28),face*3+level===count*3-1?2:1,'destination sampler snapshot invalidated');
+        // WAT dirty tracking (slice 9.1): every copied level takes a fresh,
+        // never-reissued content identity, so no host snapshot can survive.
+        const seq=read(dr+28);
+        assert.ok(seq!==0&&seq!==unlockedSeq&&!stamped.has(seq),'destination sampler snapshot invalidated');
+        stamped.add(seq);
       }
       const copied=destBytes();
       bad(e.Device9_UpdateTexture(ad,destination,source));
@@ -623,7 +629,7 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
       ok(e.cpu_texture(ad,0,out),'default normal texture destination');const destTexture=read(out);
       ok(e.Texture9_GetSurfaceLevel(destTexture,1,out),'default destination mip');const destMip=read(out);
       ok(await invoke(e.Device9_UpdateSurface,ad,sourceMip,0,destMip,0),'system to ordinary texture');
-      const destRecord=destTexture+64+32;assert.strictEqual(read(destRecord+28),1,'destination dirty sequence');
+      const destRecord=destTexture+64+32;assert.notStrictEqual(read(destRecord+28),0,'destination dirty sequence (fresh WAT content identity)');
       assert.strictEqual(read(read(destRecord+16)+12),0x3456789a,'ordinary texture CPU data updated');
       e.Surface9_Release(destMip);e.Texture9_Release(destTexture);e.Surface9_Release(sourceMip);e.Texture9_Release(sourceTexture);
       if(!cube){

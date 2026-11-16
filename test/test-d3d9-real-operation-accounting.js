@@ -14,7 +14,7 @@ function read(filename) {
   } finally { fs.closeSync(fd); }
 }
 const original=read(host), helperSource=read(helper);
-const anchor='const src=new Uint8Array(memory,g2w(bits),byteLength);';
+const anchor='const bits=u32(m+16),byteLength=u32(m+12),seq=u32(m+28);',sourceView='const src=new Uint8Array(memory,g2w(bits),byteLength);';
 function load(prefix='',code='') {
   const saved=[host,helper].map(p=>[p,require.cache[p]]);
   function compile(filename,source) {
@@ -23,7 +23,7 @@ function load(prefix='',code='') {
   }
   try {
     assert.equal(original.split(anchor).length,2);
-    compile(host,prefix+original.replace(anchor,anchor+code));
+    compile(host,prefix+original.replace(anchor,anchor+sourceView+code));
     return compile(helper,helperSource);
   } finally {for(const [p,m] of saved) {if(m)require.cache[p]=m;else delete require.cache[p];}}
 }
@@ -43,7 +43,7 @@ for (const side of [16,32,64]) for (const p of probes) test(`${p.name}, actual w
   try {
     assert.equal(f.draw(),1);await f.drain();
     const c=h.measure(f);await f.drain();p.check(c,f.bytes);
-    assert.throws(()=>h.budget(c,f.bytes,f.bytes,true),p.reason);
+    assert.throws(()=>h.budget(c,f.bytes,0,true),p.reason);
     assert.deepEqual(f.seen.at(-1).pixels,f.expected());
   } finally {await f.close();}
 });
@@ -68,7 +68,7 @@ for(const throwing of [false,true]) test(`entry accessors and own descriptors re
     const own=Object.getOwnPropertyDescriptor(f.bridge,'_residentLevel');
     const snap=f.bridge._textureSnapshots.get(f.records[0]+64),source=snap.source;
     if(throwing) assert.throws(()=>h.measure(f,()=>{throw Error('restoration sentinel');}),/sentinel/);
-    else {h.budget(h.measure(f),f.bytes,f.bytes,true);assert(calls>0);await f.drain();}
+    else {h.budget(h.measure(f),f.bytes,0,true);assert(calls>0);await f.drain();}
     assert.deepEqual(Object.getOwnPropertyDescriptor(globalThis,'Uint8Array'),globalEntry);
     for(const k of Object.keys(hooks)) assert.deepEqual(Object.getOwnPropertyDescriptor(Native.prototype,k),hooks[k]);
     assert.deepEqual(Object.getOwnPropertyDescriptor(f.bridge,'_residentLevel'),own);
@@ -108,7 +108,7 @@ test('object-valued source indices are observed with one native key conversion',
     assert.equal(f.bridge.extraOperation.coercions,f.bytes);
     assert.equal(f.bridge.extraOperation.total,f.source().reduce((a,b)=>a+b,0));
     assert.equal(c.indexedSourceReads,f.bytes);
-    assert.throws(()=>h.budget(c,f.bytes,f.bytes,true),/indexed source read/);
+    assert.throws(()=>h.budget(c,f.bytes,0,true),/indexed source read/);
   } finally {await f.close();}
 });
 

@@ -151,21 +151,18 @@ check('software viewport queries fill all four words and retain per-context stat
     args.forEach((value, i) => view.setInt32(stack + 4 + i * 4, value, true));
     return bridge.call(CALL_INDEX[name], stack, 0);
   }
+  // GPU stream v2 G1: glGetIntegerv(GL_VIEWPORT) and glGetError are answered
+  // in WAT (test-wgl-copy-context, test-opengl-getdoublev-native-state) and
+  // negative sizes are rejected there before a record exists. This checks
+  // the executor side only: each context's backend holds its own viewport.
   function query(expected) {
-    for (let i = -1; i < 5; i++) view.setInt32(output + i * 4, sentinel, true);
-    call('glGetIntegerv', [0x0BA2, output]);
-    assert.deepStrictEqual(Array.from(new Int32Array(memory, output, 4)), expected);
-    assert.strictEqual(view.getInt32(output - 4, true), sentinel);
-    assert.strictEqual(view.getInt32(output + 16, true), sentinel);
+    assert.deepStrictEqual(Array.from(bridge.contexts.get(bridge.current).backend.getParameter(0x0BA2)), expected);
   }
   bridge.current = a;
   query([0, 0, 800, 600]);
   call('glViewport', [-12, 7, 640, 480]);
   query([-12, 7, 640, 480]);
-  call('glViewport', [0, 0, -1, 400]);
-  query([-12, 7, 640, 480]);
-  assert.strictEqual(call('glGetError', []), 0x0501);
-  assert.strictEqual(call('glGetError', []), 0);
+  assert.throws(() => call('glGetError', []), /answered in WAT/);
   bridge.current = b;
   query([0, 0, 320, 240]);
   bridge.current = a;

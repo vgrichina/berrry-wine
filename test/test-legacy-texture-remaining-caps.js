@@ -7,7 +7,6 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const vm = require('node:vm');
 const { compile } = require('../tools/watx');
 const root = path.join(__dirname, '..');
 const read = p => fs.readFileSync(path.join(root, p), 'utf8');
@@ -15,7 +14,6 @@ const dx = process.argv[2] ? fs.readFileSync(process.argv[2], 'utf8')
   : read('src/09a8-handlers-directx.wat');
 const core = read('src/09ab-handlers-d3dim-core.wat');
 const handlers = read('src/09aa-handlers-d3dim.wat');
-const gpu = read('lib/d3dim-gpu.js');
 
 function extract(source, name) {
   const matches = [...source.matchAll(new RegExp(`\\(func \\$${name}\\s`, 'g'))];
@@ -148,13 +146,9 @@ const sampler = extract(core, 'd3dim_texture_sample_keyed');
 assert.equal(sampler.split('(call $d3dim_address_texel').length - 1, 6);
 assert(sampler.includes('(local.get $tw) (local.get $address_u)'));
 assert(sampler.includes('(local.get $th) (local.get $address_v)'));
-const lowering = gpu.match(/const address = ([^;\n]+);/g);
-assert.equal(lowering?.length, 1, 'unique GPU address lowering');
-const gpuAddress = vm.runInNewContext(`(${lowering[0].slice('const address = '.length, -1)})`);
-assert.equal(gpuAddress(4), 3, 'GPU BORDER currently lowered to CLAMP');
-for (const mode of [1, 2, 3]) assert.equal(gpuAddress(mode), mode);
-assert(gpu.includes('addressU: address(d.addressU), addressV: address(d.addressV)'),
-  'GPU descriptor uses independent address lowering');
+// The GPU address lowering (BORDER -> CLAMP) moved from the deleted JS
+// executor into the WAT producer ($d3g_addr); its rendered effect is the gps
+// cube-border arm of test-legacy-texture-rendered-contract.js --offline.
 
 const fixed = '(i32.const 0xF7))     ;; dwTextureAddressCaps';
 assert.equal(dx.split(fixed).length, 2);
@@ -170,4 +164,4 @@ for (const [mask, message] of [
     `(i32.const ${mask}))     ;; dwTextureAddressCaps`)), message);
 }
 console.log(`PASS: ${checks} descriptor address fields; 72 software address cases; ` +
-  'GPU lowering; 6 negative controls; combined cube/filter masks. Extracted source only.');
+  '6 negative controls; combined cube/filter masks. Extracted source only.');

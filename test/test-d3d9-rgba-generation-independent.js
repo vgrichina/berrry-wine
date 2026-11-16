@@ -7,6 +7,10 @@ const {test} = require('node:test');
 const {Bridge} = require('../lib/d3d9-host');
 const Worker = require('../lib/d3d9-render-worker');
 const {OPCODES: OP} = require('../lib/d3d-command-stream');
+// Slice 9.1: uploads decode in WAT (standalone build here) and the level's
+// dirty serial at mip+28 is the whole content identity; the device texture
+// generation (+25596) no longer takes part in the host cache decision.
+require('./helpers/wat-texture-decoder').installStandalone();
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return {promise, resolve}; };
 
@@ -73,36 +77,35 @@ const level = (draw, stage = 0, mip = 0) => draw.textures[stage][mip];
 const pixel = (draw, at = 0, stage = 0) => [...level(draw, stage).pixels.slice(at, at + 4)];
 
 
-test('single unsigned counter rollover invalidates an observed old generation', async () => {
+test('the device texture generation does not take part; only the level serial does', async () => {
   const f=fixture();
   try {
     f.set(f.program+25596,0xffffffff);
     assert.equal(f.draw(),1);await f.drain();
-    f.fill(f.texels,16384,[71,82,93,255]);
-    f.set(f.program+25596,(0xffffffff+1)>>>0);
+    const first=level(f.observations[0]).key;
+    f.set(f.program+25596,0);
     assert.equal(f.draw(),1);await f.drain();
-    assert.deepEqual(pixel(f.observations[1]),[71,82,93,255]);
+    assert.equal(level(f.observations[1]).key,first,'a generation change alone is not a content change');
+    f.fill(f.texels,16384,[71,82,93,255]);f.set(f.mip+28,0x80000001);
+    assert.equal(f.draw(),1);await f.drain();
+    assert.deepEqual(pixel(f.observations[2]),[71,82,93,255]);
+    assert.notEqual(level(f.observations[2]).key,first);
   } finally { await f.bridge.close(); }
 });
-test('an unbound cached mip cannot inherit bytes after a complete allocation-counter cycle', async () => {
+test('a reallocated mip at the same address is fresh once its first write is stamped', async () => {
   const f=fixture();
   try {
     assert.equal(f.draw(),1);await f.drain();
     const first=level(f.observations[0]);
-    // The producer uses i32.add by one after each successful allocation.
-    // Summarize 2**32 successful create/release operations without inspecting
-    // this mip again. This models their final state, not their execution.
-    // The cache is not flushed by RESOURCE_RELEASE of a texture, and may
-    // retain this sole 16KiB snapshot while the mip is unbound.
     f.set(f.program+1700,0);
     assert.equal(f.draw(),1);await f.drain();
-    const generation=new DataView(f.memory).getUint32(f.program+25596,true);
-    f.set(f.program+25596,(generation+2**32)>>>0);
-    f.texture(0,f.record,f.texels); // same allocation address/layout/initial seq
-    f.fill(f.texels,16384,[71,82,93,255]);
+    // Same allocation address and layout; the guest's first write to the new
+    // texture ends in Unlock, which stamps a serial no earlier level holds.
+    f.texture(0,f.record,f.texels);
+    f.fill(f.texels,16384,[71,82,93,255]);f.set(f.mip+28,0x80000002);
     assert.equal(f.draw(),1);await f.drain();
     assert.deepEqual(pixel(f.observations[2]),[71,82,93,255],
-      'replacement texture must publish its current bytes after counter ABA');
+      'replacement texture publishes its current bytes');
     assert.notEqual(level(f.observations[2]).key,first.key);
   } finally { await f.bridge.close(); }
 });

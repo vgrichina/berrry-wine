@@ -8,7 +8,10 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const Fixed = require('../lib/d3d9-fixed');
+// The retained JS fixed compiler was deleted in GPU stream v2 slice 9.2;
+// its shader-source checks below need a port to the 09aj IR path. The
+// analytic coverage helpers exported at the bottom stay importable.
+const Fixed = new Proxy({}, { get() { throw new Error('lib/d3d9-fixed.js was removed (slice 9.2); port to 09aj IR'); } });
 const {Device} = require('../lib/d3d9-backend');
 const near = (a,b,why) => assert(Math.abs(a-b)<1e-10, `${why}: ${a} != ${b}`);
 const vectorNear = (a,b,why) => a.forEach((v,i)=>near(v,b[i],why));

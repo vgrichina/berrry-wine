@@ -139,7 +139,7 @@ async function runtime(){
   let wasm,server,browser,page;
   try{
     const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','d3d9-fixed','d3d9-texture','render-clear','d3d9-backend','d3dim-gpu'];
+      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend'];
     server=await require(path.join(ROOT,'test/static-server')).startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
       res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');
       if(req.url==='/legacy-render.wasm'){res.writeHead(200,{'Content-Type':'application/wasm'});res.end(wasm);return true;}
@@ -149,7 +149,9 @@ async function runtime(){
     result.serverPort=server.address().port;
     for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
       wasm=fs.readFileSync(path.join(moduleDir,name));result.modules.push({name,sha256:sha(wasm),bytes:wasm.length});
-      for(const mode of ['software','webgl','worker'])for(const webglVersion of mode==='software'?[null]:[1,2]){
+      // Software route only; the GPU route (WAT GPU stream producer) is
+      // test-d3dim-gps-keyed-mip.js.
+      for(const mode of ['software'])for(const webglVersion of mode==='software'?[null]:[1,2]){
         try{
           const cfg={...config(),webglVersion,falseMode:process.argv.includes('--unsupported-false')};let row;
           if(mode==='software'){
@@ -185,7 +187,7 @@ async function runtime(){
       }
     }
     if(expectFailure){
-      assert.equal(result.failures.length,10,'both old modules reject all five routes');
+      assert.equal(result.failures.length,2,'both old modules reject the software route');
       assert(result.failures.every(f=>f.partial?.calls.some(c=>c.label==='SetColorKey7 mip'&&c.result===0)));
       for(const f of result.failures){
         if(f.mode==='worker'){
@@ -199,7 +201,7 @@ async function runtime(){
       assert(result.failures.filter(f=>f.mode==='software').every(f=>f.error.includes('D3DIM:keyed mip filtering')),
         'native failure names the actual production trap');
       result.status=process.argv.includes('--old-fail')?'OLD FAIL REPRODUCED; no new behavior claimed':'UNSUPPORTED FALSE FAILS EXPLICITLY';
-    }else {assert.equal(result.results.length,10);result.status='PASS';}
+    }else {assert.equal(result.results.length,2);result.status='PASS';}
   }catch(error){result.status='FAIL';result.error=error.stack;throw error;}
   finally{if(browser){await browser.close();result.browserCloseResolved=true;}if(server)await require(path.join(ROOT,'test/static-server')).closeServer(server);result.finishedAt=new Date().toISOString();save();}
 }

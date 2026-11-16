@@ -7,6 +7,12 @@ const {test} = require('node:test');
 const {Bridge} = require('../lib/d3d9-host');
 const Worker = require('../lib/d3d9-render-worker');
 const {OPCODES: OP} = require('../lib/d3d-command-stream');
+// Uploads decode through the WAT decoder (GPU stream v2 slice 9.1), here its
+// standalone build. Content identity is WAT's seq stamp, not the bytes: a
+// write the guest makes is always followed by $d3d9_texture_touch (Unlock,
+// AddDirtyRect, UpdateTexture...), modelled below by stamp().
+require('./helpers/wat-texture-decoder').installStandalone();
+let stampSerial = 0x1000;
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return {promise, resolve}; };
 
@@ -66,32 +72,36 @@ function fixture(options = {}) {
     for (const entry of bridge.devices.values()) await entry.queue.fence();
     await serial; await tick();
   };
-  return {bridge,endpoint,memory,set,desc,program,mip,texels,record,texture,fill,rgba,commands,observations,instances,draw,drain,
+  const stamp = (at = mip) => set(at + 28, ++stampSerial);
+  return {bridge,endpoint,memory,set,desc,program,mip,texels,record,texture,fill,rgba,commands,observations,instances,draw,drain,stamp,
     hold() { hold = deferred(); return () => { hold.resolve(); hold = null; }; }};
 }
 const level = (draw, stage = 0, mip = 0) => draw.textures[stage][mip];
 const pixel = (draw, at = 0, stage = 0) => [...level(draw, stage).pixels.slice(at, at + 4)];
 
 
-test('wrapped metadata rejects a change in the last source byte', async () => {
+test('a clean level is not re-decoded; a stamped change in the last byte is', async () => {
   const f=fixture();
   try {
     assert.equal(f.draw(),1);await f.drain();
     const before=level(f.observations[0]);
     new Uint8Array(f.memory,f.texels+16383,1)[0]=17;
+    // No stamp: WAT says the level is clean, so the resident key is reused.
     assert.equal(f.draw(),1);await f.drain();
-    assert.deepEqual(pixel(f.observations[1],16380),[10,20,30,17]);
-    assert.notEqual(level(f.observations[1]).key,before.key);
+    assert.equal(level(f.observations[1]).key,before.key);
+    f.stamp();
+    assert.equal(f.draw(),1);await f.drain();
+    assert.deepEqual(pixel(f.observations[2],16380),[10,20,30,17]);
+    assert.notEqual(level(f.observations[2]).key,before.key);
     assert.deepEqual([...before.pixels.slice(-4)],[10,20,30,255]);
   } finally {await f.bridge.close();}
 });
-test('wrapped replacement queued behind the old draw owns fresh immutable bytes', async () => {
+test('stamped replacement queued behind the old draw owns fresh immutable bytes', async () => {
   const f=fixture();
   try {
     const resume=f.hold();
     assert.equal(f.draw(),1);
-    // Model a full producer-counter cycle: numeric metadata is unchanged.
-    f.fill(f.texels,16384,[71,82,93,255]);
+    f.fill(f.texels,16384,[71,82,93,255]);f.stamp();
     assert.equal(f.draw(),1);
     new Uint8Array(f.memory,f.texels,16384).fill(0);
     resume();await f.drain();
@@ -99,23 +109,23 @@ test('wrapped replacement queued behind the old draw owns fresh immutable bytes'
     assert.notEqual(level(f.observations[0]).key,level(f.observations[1]).key);
   } finally {await f.bridge.close();}
 });
-test('source copies share the bounded LRU budget; resident budget counts RGBA only', async () => {
-  const f=fixture({maxTextureSnapshotBytes:32768,maxResidentTextureBytes:16384});
+test('the snapshot LRU holds decoded RGBA only (no source copy); resident budget counts RGBA', async () => {
+  const f=fixture({maxTextureSnapshotBytes:16384,maxResidentTextureBytes:16384});
   try {
     assert.equal(f.draw(),1);await f.drain();
     let snap=f.bridge._textureSnapshots.get(f.mip);
-    assert.equal(f.bridge._textureSnapshotBytes,32768);
-    assert.equal(snap.cacheBytes,32768);assert.equal(snap.bytes,16384);
-    assert.notEqual(snap.source.buffer,f.memory);
+    assert.equal(f.bridge._textureSnapshotBytes,16384);
+    assert.equal(snap.cacheBytes,16384);assert.equal(snap.bytes,16384);
+    assert.equal(snap.source,undefined,'no guest source copy is retained');
     assert.equal(f.bridge.devices.get(7).residentBytes,16384);
     f.texture(0,100000,120000);f.fill(120000,16384,[71,82,93,255]);
     assert.equal(f.draw(),1);await f.drain();
     assert.equal(f.bridge._textureSnapshots.size,1);
     assert(!f.bridge._textureSnapshots.has(f.mip));
-    assert.equal(f.bridge._textureSnapshotBytes,32768);
+    assert.equal(f.bridge._textureSnapshotBytes,16384);
     assert.equal(f.bridge.devices.get(7).residentBytes,16384);
   } finally {await f.bridge.close();}
-  const small=fixture({maxTextureSnapshotBytes:32767});
+  const small=fixture({maxTextureSnapshotBytes:16383});
   try {
     assert.equal(small.draw(),1);await small.drain();
     assert.equal(small.bridge._textureSnapshots.size,0);
@@ -127,15 +137,16 @@ for (const [format,bytes,initial,replacement,expected] of [
   [23,8192,[0,0],[255,255],[255,255,255,255]],
   [50,4096,[0],[71],[71,71,71,255]],
   [0x31545844,2048,[0,0,0,0,0,0,0,0],[255,255,0,0,0,0,0,0],[255,255,255,255]]
-]) test(`full source identity covers format ${format}`, async () => {
+]) test(`stamped content identity covers format ${format}`, async () => {
   const f=fixture();
   try {
-    f.set(f.record+36,format);f.set(f.mip+12,bytes);
+    f.set(f.record+36,format);f.set(f.mip+12,bytes);f.set(f.mip+8,bytes/(format===0x31545844?16:64));
     const src=new Uint8Array(f.memory,f.texels,bytes);
     for(let i=0;i<bytes;i+=initial.length)src.set(initial,i);
     assert.equal(f.draw(),1);await f.drain();
     const old=level(f.observations[0]).key;
     for(let i=0;i<bytes;i+=replacement.length)src.set(replacement,i);
+    f.stamp();
     assert.equal(f.draw(),1);await f.drain();
     assert.deepEqual(pixel(f.observations[1]),expected);
     assert.notEqual(level(f.observations[1]).key,old);

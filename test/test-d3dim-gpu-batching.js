@@ -1,197 +1,201 @@
 #!/usr/bin/env node
 'use strict';
+// D3DIM draws on the GPU route, through the WAT GPU stream producer
+// (src/09abg-d3dim-gps.wat): what each accepted draw covers, and the order
+// its records reach the executor.
+//
+//   - Coverage is the dirty rect a later CPU reader reads back: the draw's
+//     vertex bounds padded by two pixels and clipped to the target; points
+//     their exact 2x2 rects; a line list excludes its unused trailing vertex;
+//     a vertex with rhw <= 0 (or non-finite x/y) makes it the whole target;
+//     fully clipped geometry and a declined shape add nothing.
+//   - Records keep draw order: overlapping transparent draws blend in
+//     submission order, a state change gives the next draw its own RASTER,
+//     and a clear lands after the draws before it.
+//   - A large draw is cut into whole primitives and never changes their
+//     total count.
+//
+// Driven through the real seam: a DirectDraw surface + D3D device built by
+// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) with
+// $d3dim_gpu_on = 1, the ring drained into lib/gpu-stream-software.js.
 const assert = require('assert');
-const { D3DIMGpu, OPCODES } = require('../lib/d3dim-gpu');
+const GS = require('../lib/gpu-stream');
+const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
+const { bootRenderHarness } = require('./render-helper');
 
-function fixture(batchDraws = true) {
-  const memory = new ArrayBuffer(0x10000), dv = new DataView(memory);
-  const desc = 0x1000, vertices = 0x2000, call = 0x3000, rt = 0x4000, dib = 0x8000;
-  const fields = [rt, 4, 4, 32, 16, dib, 1];
-  fields.forEach((v, i) => dv.setUint32(desc + i * 4, v, true));
-  dv.setUint32(desc + 17 * 4, 8, true);
-  dv.setUint32(desc + 19 * 4, 1, true); // transparent draws must retain order
-  dv.setUint32(desc + 20 * 4, 5, true);
-  dv.setUint32(desc + 21 * 4, 6, true);
-  dv.setUint32(desc + 27 * 4, 1, true);
-  dv.setUint32(desc + 28 * 4, 2, true);
-  [0x5000, 4, 3, vertices, 3].forEach((v, i) => dv.setUint32(call + i * 4, v, true));
-  const events = [], draws = [], extents = [];
-  let fail = false;
-  const target = { rt, width: 4, height: 4, bpp: 32, pitch: 16, format: 1,
-    dib, check: false, textureKeys: new Set(), device: {
-      draw(draw) {
-        if (fail) throw new Error('injected failure');
-        events.push('draw'); draws.push({...draw, vertices:draw.vertices.slice()});
-      }, clear() { events.push('clear'); }, releaseTextures() {},
-      gpu: { bindImplicitTarget() {}, updateColorResource() {}, gl: { RGBA: 1, UNSIGNED_BYTE: 2,
-        readPixels(...args) { events.push('read'); args[6].fill(0); } } },
-    } };
-  const gpu = new D3DIMGpu({ getMemory: () => memory,
-    getExports: () => ({ d3dim_gpu_describe: () => desc, guest_to_wasm: a => a,
-      d3dim_gpu_extent: (...args) => extents.push(args) }),
-    createCanvas: () => null, batchDraws, onError: () => {} });
-  gpu._target = () => target;
-  gpu.targets.set(rt, target);
-  const draw = (x, color = 0x80ff0000) => {
-    for (let i = 0; i < 3; i++) {
-      const p = vertices + i * 32;
-      dv.setFloat32(p, x + i, true); dv.setFloat32(p + 4, i, true);
-      dv.setFloat32(p + 8, 0.5, true); dv.setFloat32(p + 12, 1, true);
-      dv.setUint32(p + 16, color, true);
-    }
-    return gpu.call(OPCODES.DRAW, call);
+const extraWat = String.raw`
+  (func (export "test_seed") (param $ddraw i32) (param $surf i32) (param $dev i32)
+    (global.set $DX_VTBL_DDRAW (local.get $ddraw))
+    (global.set $DX_VTBL_DDSURF2 (local.get $surf))
+    (global.set $DX_VTBL_D3DDEV1 (local.get $dev)))
+  (func (export "test_create_surface") (param $desc i32) (param $out i32) (result i32)
+    (local $ddraw i32)
+    (local.set $ddraw (call $dx_create_com_obj (i32.const 1) (global.get $DX_VTBL_DDRAW)))
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x30000))
+    (call $handle_IDirectDraw_CreateSurface (local.get $ddraw) (local.get $desc) (local.get $out)
+      (i32.const 0) (i32.const 0) (i32.const 0))
+    (i32.load offset=0 (global.get $reg_base)))
+  (func (export "test_create_device") (param $surface i32) (param $out i32) (result i32)
+    (call $d3dim_create_device (i32.const 0) (local.get $surface) (local.get $out) (global.get $DX_VTBL_D3DDEV1))
+    (i32.load offset=0 (global.get $reg_base)))
+  (func (export "test_dib") (param $surface i32) (result i32)
+    (i32.load offset=20 (call $dx_from_this (local.get $surface))))
+  (func (export "test_set_rs") (param $device i32) (param $state i32) (param $value i32)
+    (call $d3dim_set_render_state (local.get $device) (local.get $state) (local.get $value)))
+  (func (export "test_gpu_draw") (param $device i32) (param $prim i32) (param $vtype i32)
+      (param $verts i32) (param $count i32) (result i32)
+    (global.set $d3dim_gpu_on (i32.const 1))
+    (call $d3dim_worker_try_draw (local.get $device) (local.get $prim) (local.get $vtype)
+      (local.get $verts) (local.get $count)))
+  ;; A whole-surface D3DCLEAR_TARGET of $color through the producer's 0x20004.
+  (func (export "test_gpu_clear") (param $this i32) (param $color i32) (result i32)
+    (local $entry i32) (local $ga i32) (local $d i32) (local $r i32)
+    (global.set $d3dim_gpu_on (i32.const 1))
+    (local.set $entry (call $dx_from_this (local.get $this)))
+    (local.set $ga (call $heap_alloc (i32.const 64)))
+    (local.set $d (call $g2w (local.get $ga)))
+    (memory.fill (local.get $d) (i32.const 0) (i32.const 64))
+    (i32.store offset=0 (local.get $d) (local.get $entry))
+    (i32.store offset=4 (local.get $d) (i32.const 1))
+    (i32.store offset=8 (local.get $d) (local.get $color))
+    (i32.store offset=24 (local.get $d) (load.field DxObject width (local.get $entry)))
+    (i32.store offset=28 (local.get $d) (load.field DxObject height (local.get $entry)))
+    (local.set $r (call $d3dim_gpu_call (i32.const 0x20004) (local.get $d) (i32.const 0)))
+    (call $heap_free (local.get $ga))
+    (local.get $r))
+  (func (export "test_gps_fence") (result i32)
+    (global.set $d3dim_gpu_on (i32.const 1))
+    (call $d3dim_gpu_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))
+`;
+
+(async () => {
+  let ex, mem, sw = null, ring = null, ringAddr = 0, raster = null;
+  const ops = [], draws = [], readbacks = [];
+  const tee = {
+    caps: () => sw.caps(),
+    execute(rec) {
+      const f = rec.fields;
+      ops.push(rec.name);
+      if (rec.op === GS.OP.RASTER) raster = { ...f };
+      if (rec.op === GS.OP.READBACK) readbacks.push([f.x, f.y, f.w, f.h]);
+      if (rec.op === GS.OP.DRAW_UP) {
+        const b = Buffer.from(rec.arena(f.voff, f.count * f.stride));
+        draws.push({ prim: f.prim, stride: f.stride, count: f.count, raster, seq: rec.seq,
+          dv: new DataView(b.buffer, b.byteOffset, b.length) });
+      }
+      sw.execute(rec);
+    },
   };
-  return { gpu, target, dv, desc, call, draw, draws, events, extents, fail: () => { fail = true; } };
-}
+  const harness = await bootRenderHarness({ fonts: 'none', extraWat, extraHostOverrides: {
+    gpu_stream_kick: (addr, mode) => {
+      addr >>>= 0;
+      if (!sw) sw = new SoftwareExecutor({ getExports: () => ex, getMemory: () => mem.buffer });
+      if (!ring || ringAddr !== addr) { ring = new GS.Ring(() => mem.buffer, addr); ringAddr = addr; }
+      GS.drain([ring], tee);
+      if ((mode | 0) === GS.CONST.KICK_CLOSE) { sw.close(); sw = null; ring = null; ringAddr = 0; }
+      return 1;
+    },
+  } });
+  ex = harness.exports; mem = harness.memory;
+  const gw = (a, v) => ex.guest_write32(a, v >>> 0), gr = a => ex.guest_read32(a) >>> 0;
+  const f32 = new DataView(new ArrayBuffer(4));
+  const gf = (a, v) => { f32.setFloat32(0, v, true); gw(a, f32.getUint32(0, true)); };
 
-// Coverage is published at acceptance, including deferred batches and targets
-// already fully dirty. It must not depend on the readback optimization.
-const coverage = fixture();
-coverage.gpu.boundedReadback = false;
-assert.equal(coverage.draw(0), 1);
-assert.deepEqual(coverage.extents, [[0x4000, 0, 0, 4, 4]]);
-assert.equal(coverage.draw(1), 1);
-assert(coverage.gpu.pendingDraw, 'second accepted draw is still deferred');
-assert.equal(coverage.extents.length, 2, 'Execute gets coverage before flush');
-coverage.gpu.fence();
-assert.equal(coverage.extents.length, 2, 'flush must not touch a later Execute scope');
-coverage.dv.setUint32(coverage.desc + 34 * 4, 1, true);
-[1, 1, 3, 3].forEach((v, i) => coverage.dv.setUint32(coverage.desc + (35 + i) * 4, v, true));
-coverage.draw(0);
-assert.deepEqual(coverage.extents.at(-1), [0x4000, 1, 1, 3, 3]);
-const accepted = coverage.extents.length;
-coverage.draw(100);
-assert.equal(coverage.extents.length, accepted, 'fully clipped geometry adds no extent');
-coverage.dv.setUint32(coverage.call + 8, 99, true);
-assert.equal(coverage.draw(0), 0);
-assert.equal(coverage.extents.length, accepted, 'declined shape adds no extent');
-const rejected = fixture(false); rejected.fail();
-assert.equal(rejected.draw(0), 0);
-assert.deepEqual(rejected.extents, [], 'failed submission adds no extent');
-const uncertain = fixture(false);
-uncertain.draw(0);
-uncertain.dv.setFloat32(0x2000 + 12, -1, true);
-assert.equal(uncertain.gpu.call(OPCODES.DRAW, uncertain.call), 1);
-assert.deepEqual(uncertain.extents.at(-1), [0x4000, 0, 0, 4, 4], 'mixed W uses conservative clip');
+  const DESC = 0x410000, OUT = 0x410100, VERTS = 0x420000, W = 32;
+  ex.test_seed(0x51000000, 0x52000000, 0x53000000);
+  for (let i = 0; i < 128; i += 4) gw(DESC + i, 0);
+  [[0, 108], [4, 0x1007], [8, W], [12, W], [72, 32], [76, 0x40], [84, 16],
+    [88, 0xf800], [92, 0x07e0], [96, 0x001f], [104, 0x40]].forEach(([o, v]) => gw(DESC + o, v));
+  assert.strictEqual(ex.test_create_surface(DESC, OUT) >>> 0, 0);
+  const rt = gr(OUT);
+  assert.strictEqual(ex.test_create_device(rt, OUT + 4) >>> 0, 0);
+  const device = gr(OUT + 4);
+  const dib = ex.test_dib(rt) >>> 0;
+  const px = (x, y) => new DataView(mem.buffer).getUint16(dib + (y * W + x) * 2, true);
+  ex.test_set_rs(device, 22, 1);  // no culling: winding is not under test
 
-const points = fixture();
-points.dv.setUint32(points.call + 4, 1, true);
-assert.equal(points.draw(0, 0xffffffff), 1);
-assert.deepEqual(points.extents, [[0x4000, 0, 0, 2, 2], [0x4000, 1, 1, 3, 3], [0x4000, 2, 2, 4, 4]],
-  'points publish their exact clipped rectangles');
-const lines = fixture();
-lines.dv.setUint32(lines.call + 4, 2, true);
-assert.equal(lines.draw(0), 1);
-assert.deepEqual(lines.extents, [[0x4000, 0, 0, 3, 3]], 'line list excludes the unused trailing vertex');
+  // vertices: [x, y, color = opaque white, rhw = 1]
+  const put = (verts) => verts.forEach(([x, y, color = 0xffffffff, rhw = 1], i) => {
+    const o = VERTS + i * 32;
+    gf(o, x); gf(o + 4, y); gf(o + 8, 0.5); gf(o + 12, rhw);
+    gw(o + 16, color); gw(o + 20, 0); gf(o + 24, 0); gf(o + 28, 0);
+  });
+  const draw = (prim, verts, count = verts.length) => { put(verts); return ex.test_gpu_draw(device, prim, 3, VERTS, count); };
+  // Draw, fence, and return the rects the fence read back.
+  const covered = (prim, verts, count) => {
+    const rb = readbacks.length, d = draws.length;
+    const r = draw(prim, verts, count);
+    assert.strictEqual(ex.test_gps_fence(), 1);
+    return { r, rects: readbacks.slice(rb), draws: draws.slice(d) };
+  };
+  const tri = (x, y, color) => [[x, y, color], [x + 2, y + 1, color], [x + 1, y + 2, color]];
 
-const f = fixture();
-assert.equal(f.draw(0), 1); // first shape is validated synchronously
-assert.equal(f.draw(10, 0x8000ff00), 1);
-assert.equal(f.draw(20, 0x800000ff), 1);
-assert.equal(f.draws.length, 1);
-f.dv.setFloat32(0x2000, 999, true); // guest reuses the borrowed input buffer
-f.gpu.fence();
-assert.deepEqual(f.events, ['draw', 'draw', 'read']);
-assert.equal(f.draws[1].primitiveCount, 2);
-const v = new DataView(f.draws[1].vertices.buffer);
-assert.equal(v.getFloat32(0, true), 10);
-assert.equal(v.getFloat32(96, true), 20);
-assert.equal(v.getUint32(16, true), 0x8000ff00);
-assert.equal(v.getUint32(112, true), 0x80ff0000, 'transparent primitive order is preserved');
-assert.equal(f.gpu.stats.drawCalls, 3);
-assert.equal(f.gpu.stats.draws, 2);
-assert.equal(f.gpu.stats.mergedDraws, 1);
+  // ---- Coverage ----
+  let c = covered(4, tri(10, 10));
+  assert.strictEqual(c.r, 1);
+  assert.deepStrictEqual(c.rects, [[8, 8, 6, 6]], 'triangle bounds padded by two pixels');
+  c = covered(4, tri(0, 29));
+  assert.deepStrictEqual(c.rects, [[0, 27, 4, 5]], 'clipped to the target');
+  c = covered(1, [[3, 4], [20.4, 6.6]]);
+  // (3,4) -> [3,5)x[4,6); (20.4,6.6) rounds to (20,7) -> [20,22)x[7,9).
+  assert.deepStrictEqual(c.rects, [[3, 4, 19, 5]], 'points publish their exact rects (union)');
+  c = covered(2, [[4, 4], [6, 6], [30, 30]]);
+  assert.strictEqual(c.r, 1);
+  assert.strictEqual(c.draws[0].count, 2, 'line list draws one segment');
+  assert.deepStrictEqual(c.rects, [[2, 2, 6, 6]], 'line list excludes the unused trailing vertex');
+  c = covered(4, [[10, 10], [12, 11, 0xffffffff, -1], [11, 12]]);
+  assert.deepStrictEqual(c.rects, [[0, 0, W, W]], 'rhw <= 0 uses the whole target');
+  c = covered(4, [[10, 10], [NaN, 11], [11, 12]]);
+  assert.deepStrictEqual(c.rects, [[0, 0, W, W]], 'non-finite position uses the whole target');
+  c = covered(4, tri(100, 100));
+  assert.strictEqual(c.r, 1, 'fully clipped geometry is accepted');
+  assert.deepStrictEqual(c.rects, [], 'and adds no coverage');
+  c = covered(4, tri(10, 10), 2);
+  assert.strictEqual(c.r, 0, 'a declined shape returns to software');
+  assert.deepStrictEqual([c.rects, c.draws], [[], []], 'and adds no records or coverage');
+  // With no dirty pixels the fences above had nothing to read back, so the
+  // clipped draw's record is still queued; the next readback drains it, in
+  // order, ahead of the draw that dirtied the target.
+  c = covered(4, tri(10, 10));
+  assert.deepStrictEqual(c.draws.map(d => d.dv.getFloat32(0, true)), [100, 10], 'queued clipped draw, then this one');
+  assert.deepStrictEqual(c.rects, [[8, 8, 6, 6]]);
 
-// A scoped CPU access issues buffered GPU work, but reads back only targets
-// whose backing bytes overlap. The remaining dirty target keeps WAT pending.
-const scoped = fixture();
-scoped.draw(1); scoped.draw(2);
-assert(scoped.gpu.pendingDraw);
-assert.equal(scoped.gpu.call(OPCODES.FENCE, 0x9000, 1), 2);
-assert.equal(scoped.gpu.pendingDraw, null, 'scoped fence submits queued draws');
-assert.deepEqual(scoped.events, ['draw', 'draw'], 'unrelated range triggers no readback');
-assert.equal(scoped.gpu.call(OPCODES.FENCE, 0, 0), 1);
-assert.deepEqual(scoped.events, ['draw', 'draw', 'read'], 'global fence materializes remaining target');
+  // ---- Order ----
+  // Transparent draws keep submission order: half red, then half green
+  // over black leaves more green than red at the overlap.
+  ex.test_set_rs(device, 27, 1); ex.test_set_rs(device, 19, 5); ex.test_set_rs(device, 20, 6);
+  new Uint8Array(mem.buffer, dib, W * W * 2).fill(0);
+  const big = (color) => [[0, 0, color], [W, 0, color], [0, W, color]];
+  let d0 = draws.length;
+  assert.strictEqual(draw(4, big(0x80ff0000)), 1);
+  assert.strictEqual(draw(4, big(0x8000ff00)), 1);
+  ex.test_set_rs(device, 27, 0);
+  assert.strictEqual(draw(4, tri(20, 2, 0xff0000ff)), 1);
+  ex.test_gps_fence();
+  const seq = draws.slice(d0);
+  assert.strictEqual(seq.length, 3, 'one DRAW_UP per draw');
+  assert(seq[0].seq < seq[1].seq && seq[1].seq < seq[2].seq, 'records in submission order');
+  assert.deepStrictEqual(seq.map(d => d.raster.blend), [1, 1, 0], 'a state change gives the next draw its own RASTER');
+  const p = px(4, 4), r5 = p >> 11, g6 = (p >> 5) & 63;
+  assert(r5 > 0 && g6 > 0 && g6 / 63 > r5 / 31, `green blended over red, not the reverse (0x${p.toString(16)})`);
+  // A clear after draws lands after them.
+  let o0 = ops.length;
+  assert.strictEqual(draw(4, tri(4, 4, 0xffff0000)), 1);
+  assert.strictEqual(ex.test_gpu_clear(rt, 0xff0000ff), 1, 'a target the GPU drew on clears on the GPU');
+  ex.test_gps_fence();
+  const order = ops.slice(o0).filter(n => n === 'DRAW_UP' || n === 'CLEAR');
+  assert.deepStrictEqual(order, ['DRAW_UP', 'CLEAR'], 'the clear follows the draw before it');
+  assert.strictEqual(px(5, 5), 0x001f, 'the clear wins');
 
-
-// A state change flushes the old batch before validating/submitting the new.
-f.draw(30);
-f.dv.setUint32(f.desc + 19 * 4, 0, true);
-f.draw(40);
-assert.equal(new DataView(f.draws.at(-2).vertices.buffer).getFloat32(0, true), 30);
-assert.equal(f.draws.at(-2).state.blend, true);
-assert.equal(f.draws.at(-1).state.blend, false);
-
-// Even an early rejection must finish earlier accepted draws before fallback.
-f.draw(50);
-f.dv.setUint32(f.call + 4, 1, true);
-assert.equal(f.draw(60), 0);
-assert.equal(f.gpu.pendingDraw, null);
-assert.equal(new DataView(f.draws.at(-1).vertices.buffer).getFloat32(0, true), 50);
-
-// Texture release and a clear are ordering barriers, even a declined clear.
-f.dv.setUint32(f.call + 4, 4, true);
-f.draw(70);
-f.gpu._releaseTexture({key:'old', watch:{release(){f.events.push('release');}}});
-assert.deepEqual(f.events.slice(-2), ['draw', 'release']);
-f.draw(80); f.draw(90);
-f.dv.setUint32(0x5000, 0, true); // no owned target: clear returns to software
-assert.equal(f.gpu.call(OPCODES.CLEAR, 0x5000), 0);
-assert.equal(f.gpu.pendingDraw, null);
-
-// A size limit flushes whole primitives and never changes their total count.
-const bounded = fixture();
-for (let i = 0; i < 1400; i++) bounded.draw(i);
-bounded.gpu.fence();
-assert.equal(bounded.draws.reduce((n, d) => n + d.primitiveCount, 0), 1400);
-assert(bounded.draws.every(d => d.vertices.byteLength <= 65536));
-assert(bounded.draws.length < 10);
-
-// Context loss after deferred calls cannot silently drop those accepted calls.
-const broken = fixture(); broken.draw(0); broken.draw(1); broken.fail();
-assert.throws(() => broken.gpu.fence(), /deferred GPU draw failed/);
-assert.equal(broken.gpu.stats.errors, 1);
-
-// Shutdown reports lost accepted draws, but still releases every resource.
-const stopping = fixture(); stopping.draw(0); stopping.draw(1); stopping.fail();
-const released = [];
-stopping.gpu.textures.set(1, {
-  watch: { release() { released.push('texture'); throw new Error('cleanup failure'); } },
-  paletteWatch: { release() { released.push('palette'); } }
-});
-stopping.target.watch = { release() { released.push('target'); } };
-stopping.target.device.destroy = () => released.push('device');
-assert.throws(() => stopping.gpu.stop(), /deferred GPU draw failed/);
-assert.deepEqual(released, ['texture', 'palette', 'target', 'device']);
-assert.equal(stopping.gpu.pendingDraw, null);
-assert.equal(stopping.gpu.targets.size, 0);
-assert.equal(stopping.gpu.textures.size, 0);
-assert.equal(stopping.gpu.pendingReleases.length, 0);
-
-// A deterministic clock isolates submission cost: charge a fallback-triggered
-// flush once, and charge an external fence flush once as well.
-const performanceDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'performance');
-let clock = 0;
-Object.defineProperty(globalThis, 'performance', { configurable: true, value: { now: () => clock } });
-try {
-  const timed = fixture();
-  const submit = timed.target.device.draw;
-  timed.target.device.draw = draw => { clock += 5; return submit(draw); };
-  timed.draw(0); timed.draw(1);
-  assert.equal(timed.gpu.stats.drawMs, 5);
-  timed.dv.setUint32(timed.call + 4, 1, true);
-  assert.equal(timed.draw(2), 0);
-  assert.equal(timed.gpu.stats.drawMs, 10, 'fallback flush submission time is counted once');
-  timed.dv.setUint32(timed.call + 4, 4, true);
-  timed.draw(3); timed.gpu.fence();
-  assert.equal(timed.gpu.stats.drawMs, 15, 'external fence submission time is counted once');
-  assert.equal(timed.gpu.stats.submitMs, 15);
-} finally {
-  if (performanceDescriptor) Object.defineProperty(globalThis, 'performance', performanceDescriptor);
-  else delete globalThis.performance;
-}
-
-const immediate = fixture(false); immediate.draw(0); immediate.draw(1);
-assert.equal(immediate.draws.length, 2);
-assert.equal(immediate.gpu.pendingDraw, null);
-console.log('PASS D3DIM batching: owned vertices, transparency order, state/fallback/release/clear barriers, bound and failure');
+  // ---- A large draw keeps every primitive ----
+  const N = 1400, prims = ex.d3dim_gps_stat(15);
+  const many = [];
+  for (let i = 0; i < N; i++) many.push(...tri(i % 28, (i * 7) % 28, 0xff00ff00));
+  d0 = draws.length;
+  assert.strictEqual(draw(4, many), 1);
+  ex.test_gps_fence();
+  assert.strictEqual(ex.d3dim_gps_stat(15) - prims, N, 'primitive counter');
+  assert.strictEqual(draws.slice(d0).reduce((n, d) => n + d.count, 0), 3 * N, 'every vertex reaches the executor');
+  assert(draws.slice(d0).every(d => d.count % 3 === 0), 'cut on whole triangles');
+  console.log('PASS D3DIM GPU producer: coverage rects, point/line/rhw/clip bounds, record order, state, clear order, primitive count');
+})().catch(e => { console.error(e.stack || e); process.exit(1); });

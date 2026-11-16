@@ -37,11 +37,16 @@ function texturedDraw(span) {
   return d;
 }
 
+// Fixed function lowers through 09aj WAT (slice 9.2): the GL Device needs
+// the native exports, as every production caller passes them.
+(async () => {
+const { exports: native, memory } = await require('./render-helper').bootRenderHarness({ fonts: 'none' });
+const lowering = { getExports: () => native, getMemory: () => memory.buffer };
 let ran = 0;
 for (const webglVersion of [1, 2]) {
   const canvas = createCanvas(4, 4);
   let device;
-  try { device = new Device(canvas, { webglVersion }); } catch (e) {
+  try { device = new Device(canvas, { webglVersion, ...lowering }); } catch (e) {
     if (webglVersion === 2) { console.log(`SKIP WebGL2 arm: ${e.message}`); continue; }
     throw e;
   }
@@ -70,3 +75,4 @@ for (const webglVersion of [1, 2]) {
 }
 assert(ran > 0);
 console.log(`PASS D3D9 WebGL partial mip chains and NORMAL-less lighting (${ran} GL version${ran > 1 ? 's' : ''})`);
+})().catch(error => { console.error(error); process.exit(1); });

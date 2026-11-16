@@ -33,7 +33,7 @@
 (func $gl_is_barrier (param $op i32) (result i32)
   (block $no
     (block $yes
-      (br_table $no $no $no $no $no $no $no $no $no $no $no $yes $yes $yes $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $yes $yes $yes $yes $yes $yes $yes $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $yes $yes $yes $yes $no $no $no $no $no $no $no $yes $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $yes $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $yes $yes $yes $no $no $no $yes $yes $yes $no $no $no $yes $yes $no $no $yes $no $yes $no $no $no $no $no $no (local.get $op))
+      (br_table $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $yes $yes $yes $yes $yes $yes $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $no $no $no $no $no $no $no $no $no $yes $no $no $no $no $yes $no $yes $no $no $no $yes $yes $yes $no $no $no $yes $yes $no $no $yes $no $yes $no $no $no $no $no $no (local.get $op))
     ) (return (i32.const 1))
   )
   (i32.const 0))

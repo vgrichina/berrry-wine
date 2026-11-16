@@ -265,6 +265,44 @@
           (return)))))))
     (call $d3dim_worker_fence))
 
+  ;; $d3dim_surface_fence, its readback (if any) charged to site $site (see
+  ;; the d3dim_gps_stat export).
+  (func $d3dim_site_fence (param $entry i32) (param $site i32)
+    (global.set $d3dim_fence_site (local.get $site))
+    (call $d3dim_surface_fence (local.get $entry))
+    (global.set $d3dim_fence_site (i32.const 0)))
+
+  ;; $d3dim_worker_fence for a site that reads no pixels (a reference drop,
+  ;; attachment, palette, colour key, Flip's CPU swap, render-target switch).
+  ;; The GPU stream keeps every GPU target's pixels where they are; whoever
+  ;; reads a DIB later fences that DIB itself. The software render Worker
+  ;; keeps its global ordering.
+  (func $d3dim_gpu_barrier
+    (if (global.get $d3dim_gpu_on) (then
+      (drop (call $d3dim_lazy_fence (i32.const 0) (i32.const 0)))
+      (call $d3dim_gpu_present_owed)
+      (return)))
+    (call $d3dim_worker_fence))
+
+  ;; $d3dim_worker_fence for one software draw or clear the GPU declined
+  ;; (site 6): the rasterizer writes whatever target it is given.
+  (func $d3dim_sw_fence
+    (global.set $d3dim_fence_site (i32.const 6))
+    (call $d3dim_worker_fence)
+    (global.set $d3dim_fence_site (i32.const 0)))
+
+  ;; BltFast($dst <- $src, dwTrans) will copy on the CPU. A GPU source is
+  ;; read back (site 2). A GPU destination is left on the GPU when the
+  ;; stream can replay the copy (1: call $d3dim_gps_blt_end after it);
+  ;; otherwise it is read back (site 3) and the result is 0.
+  (func $d3dim_blt_fast_fence (param $dst i32) (param $src i32) (param $trans i32) (result i32)
+    (if (i32.eqz (global.get $d3dim_gpu_on)) (then (call $d3dim_worker_fence) (return (i32.const 0))))
+    (if (local.get $src) (then (call $d3dim_site_fence (local.get $src) (i32.const 2))))
+    (if (call $d3dim_gps_blt_begin (local.get $dst) (local.get $src) (local.get $trans))
+      (then (return (i32.const 1))))
+    (call $d3dim_site_fence (local.get $dst) (i32.const 3))
+    (i32.const 0))
+
   ;; Queue a flip-chain DIB swap behind the draws still on the render Worker,
   ;; so the frame keeps rasterizing into the buffer it started in while the
   ;; guest runs on. Only worth it with draws outstanding: with none, the
@@ -534,7 +572,7 @@
             (else (select (i32.const 4) (i32.const 3) (global.get $d3dim_supplied_projection))))
           (local.get $vertices) (local.get $count))
       (then (return (i32.const 1))))
-    (call $d3dim_worker_fence)
+    (call $d3dim_sw_fence)
     (i32.const 0))
 
   ;; The Worker consumes non-indexed vertices, so with one attached an indexed
@@ -706,8 +744,11 @@
     (drop (memory.atomic.notify (region.addr $D3DIM_LAZY_SHARED 0) (i32.const 2147483647))))
   ;; Called with the mutex held. Keep the range visible until readback ends.
   (func $d3dim_lazy_materialize (param $wa i32) (param $len i32)
-    (local $result i32)
+    (local $result i32) (local $site i32)
+    (local.set $site (global.get $d3dim_fence_site))
+    (global.set $d3dim_fence_site (i32.const 14))
     (local.set $result (call $d3dim_gpu_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
+    (global.set $d3dim_fence_site (local.get $site))
     (if (i32.eqz (local.get $result)) (then (unreachable)))
     (if (i32.eq (local.get $result) (i32.const 1)) (then
       (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 16) (i32.const 0))
@@ -1801,7 +1842,7 @@
     (local.set $rt (call $d3ddev_rt_entry (local.get $this)))
     (if (local.get $rt) (then
       (if (i32.and (i32.load (i32.add (local.get $rt) (i32.const 28))) (i32.const 1))
-        (then (call $d3dim_worker_fence) (call $dx_present (local.get $rt))
+        (then (call $d3dim_gpu_barrier) (call $dx_present (local.get $rt))
           (call $present_frame_end)))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
@@ -5246,8 +5287,8 @@
           (i32.load (local.get $dst)) (i32.load (local.get $src))
           (i32.const 0) (i32.const 0))
         (return)))
-    (call $d3dim_surface_fence (local.get $src))
-    (call $d3dim_surface_fence (local.get $dst))
+    (call $d3dim_site_fence (local.get $src) (i32.const 5))
+    (call $d3dim_site_fence (local.get $dst) (i32.const 5))
     (local.set $dw (i32.and (i32.load (i32.add (local.get $dst) (i32.const 12))) (i32.const 0xFFFF)))
     (local.set $dh (i32.shr_u (i32.load (i32.add (local.get $dst) (i32.const 12))) (i32.const 16)))
     (local.set $dbpp (i32.and (i32.load (i32.add (local.get $dst) (i32.const 16))) (i32.const 0xFFFF)))
@@ -5735,7 +5776,7 @@
   (func $d3dim_set_render_target (param $this i32) (param $rt_surf i32)
     (local $entry i32) (local $rt_entry i32) (local $rt_slot i32)
     (if (call $d3dim_immediate_forbid (local.get $this)) (then (return)))
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (local.set $entry (call $dx_from_this (local.get $this)))
     (if (i32.eqz (local.get $rt_surf)) (then
       (store.field DxObject misc0 (local.get $entry) (i32.const 0))
@@ -8261,7 +8302,7 @@
             (local.get $color) (local.get $zval)
             (local.get $vx) (local.get $vy) (local.get $vw) (local.get $vh) (local.get $bgtex))
         (then (return)))
-      (call $d3dim_worker_fence)))
+      (call $d3dim_sw_fence)))
     (if (i32.and (local.get $dwFlags) (i32.const 1)) (then
       ;; A background material carrying an image wins over its (usually white)
       ;; diffuse. 8bpp targets stay on the colour path -- sampling RGB into a
@@ -8308,7 +8349,7 @@
             (local.get $color) (local.get $zval)
             (local.get $vx) (local.get $vy) (local.get $vw) (local.get $vh) (i32.const 0))
         (then (return)))
-      (call $d3dim_worker_fence)))
+      (call $d3dim_sw_fence)))
     (if (i32.and (local.get $dwFlags) (i32.const 1)) (then
       (call $viewport_fill_rect (local.get $rt) (local.get $vx) (local.get $vy)
         (local.get $vw) (local.get $vh) (local.get $color))))
@@ -9412,7 +9453,7 @@
           (local.get $lpwIndices) (local.get $dwIndexCount))
       (then (return)))
     ;; Rasterizing here: anything still queued must land first.
-    (call $d3dim_worker_fence)
+    (call $d3dim_sw_fence)
     (local.set $rt (call $d3ddev_rt_entry (local.get $this)))
     (local.set $state_guest (call $d3ddev_state (local.get $this)))
     (if (i32.or (i32.eqz (local.get $rt)) (i32.eqz (local.get $state_guest))) (then (return)))
@@ -10543,7 +10584,7 @@
                  (i32.ne (local.get $state) (i32.const 0)))))
     (global.set $d3dim_exec_batch_prim
       (select (i32.const 2) (i32.const 4) (i32.eq (local.get $fillmode) (i32.const 2))))
-    (if (i32.eqz (global.get $d3dim_exec_batching)) (then (call $d3dim_worker_fence)))
+    (if (i32.eqz (global.get $d3dim_exec_batching)) (then (call $d3dim_sw_fence)))
     (local.set $i (i32.const 0))
     (block $done (loop $lp
       (br_if $done (i32.ge_u (local.get $i) (local.get $wCount)))
@@ -10647,7 +10688,7 @@
     (if (i32.or (i32.eqz (local.get $buf_guest)) (i32.eqz (local.get $wCount))) (then (return)))
     (local.set $rt (call $d3ddev_rt_entry (local.get $dev_this)))
     (if (i32.eqz (local.get $rt)) (then (return)))
-    (call $d3dim_worker_fence)
+    (call $d3dim_sw_fence)
     (local.set $vbase (call $d3dim_execbuf_output_guest (local.get $buf_guest) (i32.const 0)))
     (local.set $i (i32.const 0))
     (block $done (loop $lp
@@ -10712,7 +10753,7 @@
     (if (i32.or (i32.eqz (local.get $buf_guest)) (i32.eqz (local.get $wCount))) (then (return)))
     (local.set $rt (call $d3ddev_rt_entry (local.get $dev_this)))
     (if (i32.eqz (local.get $rt)) (then (return)))
-    (call $d3dim_worker_fence)
+    (call $d3dim_sw_fence)
     (local.set $vbase (call $d3dim_execbuf_output_guest (local.get $buf_guest) (i32.const 0)))
     (local.set $i (i32.const 0))
     (block $done (loop $lp
@@ -11545,5 +11586,5 @@
     (i32.const 0))
 
   (func $d3dim_device_release (param $this i32) (result i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (call $d3dim_device_release_entry (call $dx_from_this (local.get $this))))

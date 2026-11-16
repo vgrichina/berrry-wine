@@ -1430,8 +1430,8 @@
             (if (i32.and (i32.eqz (local.get $same)) (i32.eq (local.get $dbpp) (i32.const 8)))
               (then (return (i32.const 0x80004001))))
             (if (local.get $pass) (then
-              (call $d3dim_surface_fence (local.get $src))
-              (call $d3dim_surface_fence (local.get $dst))
+              (call $d3dim_site_fence (local.get $src) (i32.const 5))
+              (call $d3dim_site_fence (local.get $dst) (i32.const 5))
               (local.set $src_pal (call $dx_surf_pal_get (local.get $src)))
               (local.set $dst_pal (call $dx_surf_pal_get (local.get $dst)))
               (if (i32.and (i32.ne (local.get $src_pal) (i32.const 0))
@@ -2012,7 +2012,7 @@
 
   ;; IDirect3DTexture_Unload — 1 args (incl. this)
   (func $handle_IDirect3DTexture_Unload (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
@@ -2042,7 +2042,7 @@
         (i32.store offset=0 (global.get $reg_base)
           (call $dx_surface_release (local.get $this)))
         (return)))
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (local.set $rc (i32.sub (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
     (if (i32.le_s (local.get $rc) (i32.const 0))
       (then (call $dx_free (local.get $entry)) (i32.store offset=0 (global.get $reg_base) (i32.const 0)))

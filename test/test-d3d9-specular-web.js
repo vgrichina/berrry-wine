@@ -10,7 +10,7 @@ assert.throws(()=>SoftwareDevice.prototype.fixedPrograms.call({},
   args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader','--disable-dev-shm-usage']});
  try{
   const page=await browser.newPage();
-  for(const file of['lib/gpu-backend.js','lib/d3d9-shader.js','lib/d3d9-fixed.js','lib/render-clear.js','lib/d3d9-backend.js','test/fixtures/d3d9-lighting-cases.js'])
+  for(const file of['lib/gpu-backend.js','lib/d3d9-shader.js','lib/render-clear.js','lib/d3d9-backend.js','test/fixtures/d3d9-lighting-cases.js'])
    await page.addScriptTag({path:path.join(__dirname,'..',file)});
   const results=await page.evaluate(()=>{
    const f=a=>new Float32Array(a),out=[];

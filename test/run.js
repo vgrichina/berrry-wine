@@ -198,9 +198,10 @@ if (GL_RENDERER !== null && GL_RENDERER !== 'software' && GL_RENDERER !== 'webgl
 // the shared memory, the CLI twin of the browser's render Worker. The guest's
 // main instance can Atomics.wait here, so no --threads is needed.
 const D3D_WORKER = hasFlag('d3d-worker');
-// --d3dim-gpu: rasterize D3DIM (DX2-7) triangles on WebGL instead of the
-// software rasterizer. Needs --headless-gl for a context; WAT still does all
-// transform and lighting (lib/d3dim-gpu.js).
+// --d3dim-gpu: put D3DIM (DX2-7) on GPU stream v2: the WAT producer
+// (src/09abg-d3dim-gps.wat) lowers draws, clears and presents into the ring
+// and lib/d3dim-host.js executes it on WebGL. Needs --headless-gl for a
+// context. Without the flag D3DIM is the WAT software rasterizer.
 const D3DIM_GPU = hasFlag('d3dim-gpu');
 if (D3DIM_GPU && D3D_WORKER) { console.error('--d3dim-gpu and --d3d-worker are exclusive'); process.exit(2); }
 if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --headless-gl'); process.exit(2); }
@@ -11853,17 +11854,19 @@ if (VERBOSE) {
     const names = ['draws', 'fallbacks', 'readbacks', 'readbackRows', 'uploads', 'uploadRows', 'presents',
       'syncs', 'textureUploads', 'clears', 'flips', 'bltPresents', 'points', 'fences', 'declined', 'primitives'];
     console.log('[d3dim-gps] ' + names.map((n, i) => `${n}=${st(i)}`).join(' '));
+    // Readbacks by CPU-access site (src/09abg-d3dim-gps.wat d3dim_gps_stat).
+    const sites = ['global', 'getDC', 'bltSrc', 'bltDst', 'lock', 'texLoad', 'swDraw', 'release', 'cpuPresent',
+      'parkLand', 'prepare', 'texFromRT', 'retarget', 'capture', 'lazy', 'other'];
+    console.log('[d3dim-gps] readback sites ' + sites.map((n, i) => `${n}=${st(16 + i)}`).join(' ')
+      + ` gpuBltFastKeyed=${st(32)} gpuBltFastUpload=${st(33)} readbackBytes=${st(34)}`
+      + ` lazyLocks armed=${instance.exports.get_d3dim_lazy_armed?.() ?? 0}`
+      + ` touched=${instance.exports.get_d3dim_lazy_touched?.() ?? 0}`
+      + ` untouched=${instance.exports.get_d3dim_lazy_untouched?.() ?? 0}`);
+    // Software declines by reason ($d3g_decline).
+    const why = ['stageArg', 'texture', 'zfunc', 'blendFactor', 'noDepth', 'clearTarget', 'clearBackground'];
+    console.log('[d3dim-gps] decline reasons ' + why.map((n, i) => `${n}=${st(35 + i)}`).join(' '));
     const bridge = ctx.getD3dimBridge && ctx.getD3dimBridge();
     if (bridge && bridge.stats) console.log('[d3dim-gps] bridge ' + JSON.stringify(bridge.stats));
-  }
-  if (ctx.d3dCommands && D3DIM_GPU) {
-    const d = ctx.d3dCommands.snapshot();
-    console.log(`[d3dim-gpu] draws=${d.draws} triangles=${d.triangles} clears=${d.clears} ` +
-      `fallbacks=${d.fallbacks} errors=${d.errors} fences=${d.fences} syncs=${d.syncs} ` +
-      `uploads=${d.uploads} uploadRows=${d.uploadRows} textureUploads=${d.textureUploads} drawMs=${d.drawMs.toFixed(1)} ` +
-      `syncMs=${d.syncMs.toFixed(1)} uploadMs=${d.uploadMs.toFixed(1)} textureMs=${d.textureMs.toFixed(1)}`);
-    ctx.d3dCommands.stop();
-    ctx.d3dCommands = null;
   }
   if (ctx.d3dCommands) {
     ctx.d3dCommands.fence();

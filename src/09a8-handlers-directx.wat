@@ -5238,7 +5238,12 @@
         ;; A parked GPU frame must land before its DIB can be freed.
         (if (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 1))
           (then (call $d3dim_gpu_unpark (local.get $entry))))
-        (call $d3dim_worker_fence)))
+        ;; Freed storage needs no pixels; client memory (0x200) outlives the
+        ;; surface, so the guest can still read it.
+        (if (i32.and (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 1))
+                     (i32.ne (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 0x200)) (i32.const 0)))
+          (then (call $d3dim_site_fence (local.get $entry) (i32.const 7)))
+          (else (call $d3dim_gpu_barrier)))))
     (local.set $rc (i32.sub (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
     (store.field DxObject refcount (local.get $entry) (local.get $rc))
     (if (i32.le_s (local.get $rc) (i32.const 0))
@@ -5300,7 +5305,7 @@
   ;; too and are ordinary colour surfaces.
   (func $handle_IDirectDrawSurface_AddAttachedSurface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $parent i32) (local $child i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (local.set $parent (call $dx_from_this (local.get $arg0)))
     (local.set $child (call $dx_from_this (local.get $arg1)))
     (if (i32.and
@@ -5537,9 +5542,9 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
         (return)))
-    (call $d3dim_surface_fence (local.get $dst_entry))
+    (call $d3dim_site_fence (local.get $dst_entry) (i32.const 3))
     (if (local.get $arg2) (then
-      (call $d3dim_surface_fence (call $dx_from_this (local.get $arg2)))))
+      (call $d3dim_site_fence (call $dx_from_this (local.get $arg2)) (i32.const 2))))
     (local.set $dst_dib (load.field DxObject misc1 (local.get $dst_entry)))
     (local.set $dst_w (load.field DxObject width (local.get $dst_entry)))
     (local.set $dst_h (load.field DxObject height (local.get $dst_entry)))
@@ -6340,12 +6345,16 @@
     (local $dst_pitch i32) (local $src_pitch i32)
     (local $sx i32) (local $sy i32) (local $sw i32) (local $sh i32)
     (local $bps i32) (local $row i32) (local $trans i32)
-    (local $reverse i32) (local $copy_row i32)
-    (call $d3dim_worker_fence)
+    (local $reverse i32) (local $copy_row i32) (local $gpu i32)
     (local.set $dst_entry (call $dx_from_this (local.get $arg0)))
     ;; Either side may be a primary whose DIB holds a parked GPU frame.
     (call $d3dim_gpu_unpark (local.get $dst_entry))
     (if (local.get $arg3) (then (call $d3dim_gpu_unpark (call $dx_from_this (local.get $arg3)))))
+    ;; A GPU source is read back; a GPU destination may stay on the GPU
+    ;; ($gpu = 1: the copy is replayed there below).
+    (local.set $gpu (call $d3dim_blt_fast_fence (local.get $dst_entry)
+      (if (result i32) (local.get $arg3) (then (call $dx_from_this (local.get $arg3))) (else (i32.const 0)))
+      (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))))
     ;; Microsoft explicitly excludes clipping from BltFast. The receiver is
     ;; the destination surface, so any attached clipper makes this call fail;
     ;; callers that need clipping must use Blt.
@@ -6494,6 +6503,10 @@
             (i32.mul (local.get $sw) (local.get $bps)))
           (local.set $row (i32.add (local.get $row) (i32.const 1)))
           (br $bf_row)))))
+    (if (local.get $gpu)
+      (then (call $d3dim_gps_blt_end (local.get $dst_entry) (local.get $src_entry)
+        (local.get $arg1) (local.get $arg2) (local.get $sx) (local.get $sy)
+        (local.get $sw) (local.get $sh) (local.get $trans))))
     ;; If dest is primary, present
     (if (i32.and (load.field DxObject flags (local.get $dst_entry)) (i32.const 1))
       (then
@@ -6511,7 +6524,7 @@
       (param $parent_guest i32) (param $flags i32) (param $child_guest i32)
       (result i32)
     (local $parent i32) (local $child i32) (local $slot i32) (local $parent_id i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (if (local.get $flags)
       (then (return (i32.const 0x80070057)))) ;; DDERR_INVALIDPARAMS
     (local.set $parent (call $dx_from_this (local.get $parent_guest)))
@@ -6737,7 +6750,8 @@
             (i32.store offset=0 (global.get $reg_base) (i32.const 0))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
             (return)))))
-    (call $d3dim_worker_fence)
+    ;; The CPU swap moves no pixels; its $dx_present fences the new front.
+    (call $d3dim_gpu_barrier)
     (if (local.get $back_guest)
       (then
         (local.set $back_entry (call $dx_from_this (local.get $back_guest)))
@@ -7075,8 +7089,8 @@
   (func $handle_IDirectDrawSurface_GetDC (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $slot i32) (local $hdc i32)
     ;; GDI reads and writes the surface bits directly.
-    (call $d3dim_worker_fence)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
+    (call $d3dim_site_fence (local.get $entry) (i32.const 1))
     (call $d3dim_gpu_unpark (local.get $entry))
     (local.set $slot (i32.div_u
       (i32.sub (local.get $entry) (global.get $DX_OBJECTS))
@@ -7304,7 +7318,9 @@
       (load.field DxObject flags (local.get $entry))
       (load.field DxObject misc1 (local.get $entry))
       (i32.const 0))
+    (global.set $d3dim_fence_site (i32.const 4))
     (call $d3dim_lock_fence (local.get $entry))
+    (global.set $d3dim_fence_site (i32.const 0))
     (local.set $wa (call $g2w (local.get $arg2)))
     ;; Fill DDSURFACEDESC
     (call $zero_memory (local.get $wa) (call $dx_native_desc_size (local.get $arg0)))
@@ -7344,7 +7360,7 @@
   ;; GDI output directly into the surface's native DIB.
   (func $handle_IDirectDrawSurface_ReleaseDC (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $slot i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (local.set $slot (call $dx_slot_of (local.get $entry)))
     (call $gdi_dx_dc_release (local.get $arg1))
@@ -7414,7 +7430,7 @@
   (func $handle_IDirectDrawSurface_SetColorKey (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $ck i32) (local $high i32) (local $bpp i32)
     (local $keys i32) (local $direction i32) (local $mask i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (local.set $keys (call $dx_surf_blit_keys_ptr (local.get $entry)))
     (local.set $direction (i32.and (local.get $arg1) (i32.const -2)))
@@ -7501,7 +7517,7 @@
   ;; SetPalette(this, lpDDPalette) — associate palette with surface
   (func $handle_IDirectDrawSurface_SetPalette (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $pal_entry i32) (local $surf_entry i32) (local $pal_wa i32) (local $old i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (local.set $surf_entry (call $ddraw_surface_entry_checked (local.get $arg0)))
     (if (local.get $arg1) (then
       (local.set $pal_entry (call $dx_palette_entry_checked (local.get $arg1)))))
@@ -7636,7 +7652,7 @@
         ;; An untouched lazy Unlock may have left GPU-owned pixels pending;
         ;; the caller may immediately reuse the detached backing allocation.
         (if (i32.and (local.get $flags) (i32.const 0x00000808))
-          (then (call $d3dim_surface_fence (local.get $entry))))
+          (then (call $d3dim_site_fence (local.get $entry) (i32.const 15))))
         (if (i32.and (local.get $flags) (i32.const 0x00000008))
           (then (store.field.memarg DxObject pitch (local.get $entry) (i32.load offset=16 (local.get $desc)))))
         ;; DDSD_LPSURFACE. A null pointer remains null rather than becoming
@@ -7908,6 +7924,7 @@
     ;; A CPU present reads this DIB and supersedes any GPU-presented layer
     ;; (docs/d3dim-gpu-present.md): land a parked frame, then retire layers.
     (call $d3dim_gpu_unpark (local.get $entry_wa))
+    (if (global.get $d3dim_gpu_on) (then (call $d3dim_site_fence (local.get $entry_wa) (i32.const 8))))
     (call $d3dim_cpu_present_note)
     (local.set $w (i32.load16_u (i32.add (local.get $entry_wa) (i32.const 12))))
     (local.set $h (i32.load16_u (i32.add (local.get $entry_wa) (i32.const 14))))
@@ -8065,7 +8082,7 @@
 
   (func $handle_IDirectDrawPalette_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $rc i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (local.set $entry (call $dx_palette_entry_checked (local.get $arg0)))
     (local.set $rc (call $dx_palette_release_ref (local.get $entry)))
     (i32.store offset=0 (global.get $reg_base) (select (local.get $rc) (i32.const 0) (i32.gt_s (local.get $rc) (i32.const 0))))
@@ -8095,7 +8112,7 @@
   (func $handle_IDirectDrawPalette_SetEntries (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $pal_wa i32) (local $src_wa i32) (local $skip_copy i32)
     (local $prim i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (local.set $pal_wa (load.field DxObject misc1 (local.get $entry)))
     (if (local.get $arg4)
@@ -14797,7 +14814,7 @@
 
 
   (func $handle_IDirect3DDevice3_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (i32.store offset=0 (global.get $reg_base) (call $d3dim_device_release (local.get $arg0)))
 
 
@@ -14882,7 +14899,7 @@
 
   (func $handle_IDirect3DDevice3_SetRenderTarget (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
-    (call $d3dim_worker_fence)
+    (call $d3dim_gpu_barrier)
     (call $d3dim_set_render_target (local.get $arg0) (local.get $arg1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
@@ -16634,7 +16651,7 @@
   ;; NULL removes the source key. The old native setter dereferences NULL
   ;; and sets key0 instead; avoid claiming that behavior implements removal.
   (if (i32.eqz (local.get $arg2)) (then
-   (call $d3dim_worker_fence)
+   (call $d3dim_gpu_barrier)
    (store.field DxObject flags (local.get $entry) (i32.and (load.field DxObject flags (local.get $entry)) (i32.const -257)))
    (store.field DxObject misc2 (local.get $entry) (i32.const 0))
    (local.set $hr (i32.const 0)) (br $done)))

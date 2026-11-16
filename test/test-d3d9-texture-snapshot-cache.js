@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 'use strict';
+// Uploads decode through the standalone build of the WAT decoder (slice 9.1).
+require('./helpers/wat-texture-decoder').installStandalone();
 // A bound texture is decoded once, not once per draw.
 //
 // Every D3D9 DRAW carries its bound textures as decoded RGBA, and the bridge
@@ -83,7 +85,7 @@ const drawnPixels = command => drawnLevel(command).pixels;
     assert.strictEqual(f.bridge._textureSnapshots.size, 1, 'the decoded level is kept');
     const first = f.bridge._textureSnapshots.get(f.mip).pixels;
     assert.strictEqual(first.byteLength, 16 * 16 * 4, 'kept as decoded RGBA');
-    assert.strictEqual(f.bridge._textureSnapshotBytes, first.byteLength + f.bytes, 'RGBA and source charged to the budget');
+    assert.strictEqual(f.bridge._textureSnapshotBytes, first.byteLength, 'only the decoded RGBA is charged (no source copy)');
 
     f.bridge.call(0x30001, f.desc, 0); await f.flush();
     assert.strictEqual(f.bridge._textureSnapshots.get(f.mip).pixels, first,
@@ -110,16 +112,16 @@ const drawnPixels = command => drawnLevel(command).pixels;
     // 0x1f1f: r=3 -> 24, g=56 -> 227, b=31 -> 255.
     assert.deepStrictEqual(Array.from(drawnPixels(draws(f)[2]).slice(0, 4)), [24, 227, 255, 255],
       'and the new picture is what is drawn');
-    assert.strictEqual(f.bridge._textureSnapshotBytes, second.byteLength + f.bytes,
+    assert.strictEqual(f.bridge._textureSnapshotBytes, second.byteLength,
       'the replaced snapshot is not charged twice');
     await f.bridge.close();
   }
 
   // ---- The budget: a cache that cannot grow without bound ---------------
   {
-    // Room for exactly one 16x16 RGBA plus source, so the second texture must evict
+    // Room for exactly one 16x16 RGBA, so the second texture must evict
     // the first rather than keeping both.
-    const f = fixture({ maxTextureSnapshotBytes: 16 * 16 * 6 });
+    const f = fixture({ maxTextureSnapshotBytes: 16 * 16 * 4 });
     new Uint8Array(f.memory, f.texels, f.bytes).fill(0x5a);
     f.initialized.resolve(); await tick();
     f.bridge.call(0x30001, f.desc, 0); await f.flush();
@@ -136,7 +138,7 @@ const drawnPixels = command => drawnLevel(command).pixels;
     f.bridge.call(0x30001, f.desc, 0); await f.flush();
     assert.strictEqual(f.bridge._textureSnapshots.size, 1, 'the budget evicts rather than grows');
     assert.ok(f.bridge._textureSnapshots.has(other + 64), 'and keeps the one just used');
-    assert.strictEqual(f.bridge._textureSnapshotBytes, 16 * 16 * 6, 'the charge follows the eviction');
+    assert.strictEqual(f.bridge._textureSnapshotBytes, 16 * 16 * 4, 'the charge follows the eviction');
 
     // A level too big for the whole budget is drawn but never kept: keeping it
     // would evict everything and then be evicted itself on the next draw.
@@ -186,8 +188,9 @@ const drawnPixels = command => drawnLevel(command).pixels;
     assert.strictEqual(e.dirty_seq(t, 0) >>> 0, before,
       'a lock alone does not bump -- the level is undrawable while it is held');
     assert.strictEqual(e.unlock(t, 0), 0);
-    assert.strictEqual(e.dirty_seq(t, 0) >>> 0, (before + 1) >>> 0,
-      'releasing a written level bumps the dirty sequence');
+    const after = e.dirty_seq(t, 0) >>> 0;
+    assert.ok(after !== before && after !== 0,
+      'releasing a written level stamps a fresh nonzero dirty serial');
 
     // A refused call must not invalidate anything: a cache that threw away a
     // good snapshot for one would pay the decode again for nothing.
@@ -198,35 +201,27 @@ const drawnPixels = command => drawnLevel(command).pixels;
     assert.strictEqual(e.dirty_seq(t, 0) >>> 0, armed, 'and bumps nothing either');
   }
 
-  // ---- The dirty-sequence boundary within one allocation ----------------
+  // ---- The dirty serial is the whole identity (slice 9.1) -------------
   {
-    // Metadata alone cannot distinguish an unchanged allocation from a
-    // replacement after 2**32 allocations. Exact source comparison must
-    // notice changed bytes even when neither numeric counter changes.
+    // Every guest write path ends in $d3d9_texture_touch, which stamps the
+    // level with a process-unique serial; the host never reads the source to
+    // decide, so an unstamped change is (by contract) not a change, and a
+    // stamped one always decodes again even if no other metadata moved.
     const f = fixture({}, 256, 256);
     new Uint8Array(f.memory, f.texels, f.bytes).fill(0x5a);
     f.initialized.resolve(); await tick();
     f.bridge.call(0x30001, f.desc, 0); await f.flush();
     const kept = f.bridge._textureSnapshots.get(f.mip).pixels;
-    // This offset was also outside the historical sparse fingerprint.
     new Uint8Array(f.memory, f.texels + 1000, 64).fill(0x1f);
     f.bridge.call(0x30001, f.desc, 0); await f.flush();
-    assert.notStrictEqual(f.bridge._textureSnapshots.get(f.mip).pixels, kept,
-      'changed bytes reject matching metadata');
-
-    // A full rewrite must also reject matching metadata.
-    new Uint8Array(f.memory, f.texels, f.bytes).fill(0x1f);
+    assert.strictEqual(f.bridge._textureSnapshots.get(f.mip).pixels, kept,
+      'a clean level is neither re-read nor re-decoded');
+    f.set(f.mip + 28, 0x5eed0001);
     f.bridge.call(0x30001, f.desc, 0); await f.flush();
-    assert.notStrictEqual(f.bridge._textureSnapshots.get(f.mip).pixels, kept,
-      'source identity is checked even without a new observed generation');
-
-    // The same address and sequence can name a different texture. Creating
-    // it bumps the generation ($d3d9_texture_create_kind), so this must decode
-    // again, regardless of whether any historical sparse sample would match.
-    f.set(f.program + 25596, 1);
-    f.bridge.call(0x30001, f.desc, 0); await f.flush();
-    assert.notStrictEqual(f.bridge._textureSnapshots.get(f.mip).pixels, kept,
-      'replacement content at the same address and sequence gets a fresh snapshot');
+    const fresh = f.bridge._textureSnapshots.get(f.mip).pixels;
+    assert.notStrictEqual(fresh, kept, 'a new serial forces a fresh decode');
+    assert.deepStrictEqual(Array.from(fresh.slice(2000, 2004)), [24, 227, 255, 255],
+      'and the decode sees the bytes written before the stamp');
     await f.bridge.close();
   }
 
