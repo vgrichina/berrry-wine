@@ -69,9 +69,19 @@ def supervise_controller(run,args,command=None):
  cmd=command or [sys.executable,'-B',str(ROOT/'tools/halflife2-reviewed-next.py'),*args]
  supervisor=ControllerSupervisor(out,cmd,preparation=bounds['outerSeconds'],runtime=bounds['outerSeconds'],
      preparation_watchdog=bounds['watchdogSeconds'],runtime_watchdog=bounds['watchdogSeconds'],grace=1)
+ started=time.time()
  rc=supervisor.run()
  base.BASE.write(out/'operation.json',dict(**bounds,arguments=args,command=cmd))
- if rc and not (run/'PERMANENT-UNKNOWN.json').exists():
+ local_refusal=False
+ if rc==75 and args[0]=='bind' and command is None:
+  try:
+   wait=read(out/'wait.json')
+   assert wait['actualWait'] and wait['returncode']==75 and wait['stdoutEOF'] and wait['stderrEOF']
+   assert not wait['remainingAfterRuntime'] and not wait['timedOut'] and not wait['signals']
+   assert all(w['actualWait'] and w['returncode']==0 and w['stdoutEOF'] and w['stderrEOF'] for w in wait['watchdogs'])
+   local_refusal=load('tools/halflife2-reviewed-next.py').verified_local_refusal(run,args[1],started)
+  except (AssertionError,OSError,ValueError,KeyError,TypeError):pass
+ if rc and not local_refusal and not (run/'PERMANENT-UNKNOWN.json').exists():
   pending=run/('controller-unknown-'+uuid.uuid4().hex+'.pending')
   pending.write_text(json.dumps(dict(name='controller-supervision',operation=args[0],
       supervisorExitCode=rc,wait=str(out/'wait.json'),at=time.time(),noLaterRequests=True)))

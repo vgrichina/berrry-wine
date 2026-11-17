@@ -5,8 +5,90 @@ This preflight uses public captured USER metadata only. The existing native
 broker still proves the actual actor, generation and dispatch return fence.
 No label selection, OCR, solver, or original installer automation lives here.
 """
-import hashlib,json,os,pathlib,subprocess,sys,types,signal
+import hashlib,json,os,pathlib,subprocess,sys,types,signal,uuid,fcntl
 ROOT=pathlib.Path(__file__).resolve().parent.parent
+LOCAL_REFUSAL=75
+
+def transport_journal(m):
+    """An unfinished or non-observational request can never justify recovery."""
+    original=m.call
+    def record(v):
+        with (m.R/'prebind-transport.jsonl').open('a') as f:
+            f.write(json.dumps(v)+'\n');f.flush();os.fsync(f.fileno())
+    def call(command,*args,**kwargs):
+        # bind-intent is durable before the first binding request and forever
+        # excludes recovery. Keep this proof's IO off the native input clocks.
+        if (m.R/'bind-intent.json').exists():return original(command,*args,**kwargs)
+        token=uuid.uuid4().hex
+        record(dict(token=token,phase='started',action=command.get('action')))
+        result=original(command,*args,**kwargs)
+        record(dict(token=token,phase='complete',action=command.get('action')))
+        return result
+    m.call=call
+
+def unbound_proof(m):
+    assert not (m.R/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN'
+    for pattern in ('*intent.json','*owner.json','*-release-*','*-up*.json','*-down.json','*-completion.json'):
+        assert not list(m.R.glob(pattern)),'prior binding, armed release or side effect'
+    rows=[json.loads(s) for s in (m.R/'prebind-transport.jsonl').read_text().splitlines()]
+    requests=[json.loads(s) for s in (m.R/'requests.jsonl').read_text().splitlines()]
+    assert rows and len(rows)==2*len(requests),'incomplete transport proof'
+    for i,request in enumerate(requests):
+        a,b=rows[i*2:i*2+2]
+        assert a['phase']=='started' and b==dict(a,phase='complete'),'inflight/ambiguous transport'
+        assert a['action']==request['action'] and a['action'] in ('native-startup-readiness','native-reviewed-capture')
+        assert request['cleanup'] is False
+    ready=m.read('startup-ready.json')
+    assert ready['ready'] and ready['passive'] and ready['target']==m.identity() and ready['port']==m.PORT
+    return dict(target=ready['target'],port=m.PORT,requests=len(requests),
+                journalSHA256=hashlib.sha256((m.R/'prebind-transport.jsonl').read_bytes()).hexdigest(),
+                requestsSHA256=hashlib.sha256((m.R/'requests.jsonl').read_bytes()).hexdigest())
+
+def local_expiry(m,scene):
+    """Only the local pre-bind freshness refusal; never intercept bind errors."""
+    # Validate every non-time condition first. Wrong owner, missing pixels,
+    # incomplete review and ambiguous IO still take the terminal exception path.
+    rr=m.read(scene+'.json');r=m.read(scene+'-review.json')
+    assert r['kind'] in ('install','quit') and r['rawCompleteScene'] is True
+    assert r['observation'] and r['visibleLabel'] and rr['captureId']
+    assert rr['target']==m.identity() and rr['port']==m.PORT
+    assert r['pngSHA256']==rr['pngSHA256']==hashlib.sha256((m.R/(scene+'.png')).read_bytes()).hexdigest()
+    assert rr['image']['contract']=='native-reviewed-context-v1'
+    assert rr['image']['captureId']==rr['captureId']
+    assert rr['image']['pngSHA256']==rr['pngSHA256']
+    assert rr['at']==rr['image']['startedAt']/1000 and rr['completedAt']==rr['image']['completedAt']/1000
+    assert 0<=rr['completedAt']-rr['at']<3 and rr['completedAt']<=r['at']
+    assert rr['observationStartedAt']<=rr['at']<rr['completedAt']<rr['observationDeadline']
+    assert rr['observationDeadline']==rr['observationStartedAt']+3
+    assert rr['snapshot']==rr['image']['snapshot'] and rr['completedAt']>=rr['at']
+    p=r['buttonPreflight']
+    assert preflight(rr['snapshot'],r['targetHwnd'],p['x'],p['y'],r['visibleLabel'])==p
+    now=m.time.time();capture_age=now-rr['at'];review_age=now-r['at']
+    assert capture_age>=0 and review_age>=0
+    if capture_age<30:return False
+    proof=unbound_proof(m)
+    m.save('local-prebind-refusal-'+uuid.uuid4().hex+'.json',dict(
+        contract='hl2-local-prebind-expiry-v1',scene=scene,at=now,
+        captureAgeSeconds=capture_age,reviewAgeSeconds=review_age,**proof,
+        captureSHA256=hashlib.sha256((m.R/(scene+'.json')).read_bytes()).hexdigest(),
+        noBinding=True,noDispatch=True,newCompleteCaptureAndPersonalReviewRequired=True))
+    return True
+
+def verified_local_refusal(run,scene,after):
+    """Supervisor accepts only this invocation's exact zero-dispatch receipt."""
+    m=types.SimpleNamespace(R=pathlib.Path(run))
+    m.read=lambda n:json.loads((m.R/n).read_text())
+    rows=[m.read(p.name) for p in m.R.glob('local-prebind-refusal-*.json')]
+    rows=[r for r in rows if r.get('scene')==scene and r.get('at',0)>=after]
+    if len(rows)!=1:return False
+    r=rows[0]
+    if r.get('contract')!='hl2-local-prebind-expiry-v1' or r.get('captureAgeSeconds',0)<30:return False
+    # Identity is proved again by the actual helper on the next capture, before HTTP.
+    m.identity=lambda:r['target'];m.PORT=m.read('launch.json')['rootPort']
+    proof=unbound_proof(m)
+    return all(r.get(k)==v for k,v in proof.items()) and all(r.get(k) is True for k in
+        ('noBinding','noDispatch','newCompleteCaptureAndPersonalReviewRequired')) and \
+        r['captureSHA256']==hashlib.sha256((m.R/(scene+'.json')).read_bytes()).hexdigest()
 
 def startup(m):
     m.reserve();target=m.identity();started=m.time.time()
@@ -37,6 +119,16 @@ def capture(m,name):
     never executes guest instructions on behalf of the controller.
     """
     m.reserve();target=m.identity();started=m.time.time();deadline=started+3
+    refusals=sorted(m.R.glob('local-prebind-refusal-*.json'))
+    refused=None
+    if refusals and not (m.R/'input-owner.json').exists():
+        unbound_proof(m)
+        refusal=max((m.read(p.name) for p in refusals),key=lambda r:r['at'])
+        assert name!=refusal['scene'],'new complete capture required'
+        assert refusal['captureSHA256']==hashlib.sha256((m.R/(refusal['scene']+'.json')).read_bytes()).hexdigest()
+        refused=m.read(refusal['scene']+'.json')
+        assert refused['pngSHA256']==hashlib.sha256((m.R/(refusal['scene']+'.png')).read_bytes()).hexdigest()
+        assert refused['target']==target and refused['port']==m.PORT
     p=m.R/(name+'.png');assert not p.exists()
     expected=None
     if (m.R/'input-owner.json').exists():
@@ -47,6 +139,10 @@ def capture(m,name):
         ready=m.call(dict(action='native-startup-readiness'),timeout=remaining)
         assert ready['contract']=='native-startup-readiness-v1'
         snapshot=ready['snapshot']
+        if refused:
+            old=refused['snapshot']
+            assert snapshot['nativeProcess']==old['nativeProcess'] and snapshot['screen']==old['screen']
+            assert all(snapshot['focusWindow'][k]==old['focusWindow'][k] for k in ('processId','threadId')),'changed actual owner'
         polls.append(dict(at=m.time.time(),ready=ready['ready'],failures=ready['failures'],
             mainHwnd=snapshot['mainHwnd'],modalHwnd=snapshot['modalHwnd'],focus=snapshot['focus'],
             focusTopLevel=snapshot['focusTopLevel'],ordinaryOwner=ready['ordinaryOwner']))
@@ -66,6 +162,11 @@ def capture(m,name):
     reply=m.call(dict(action='native-reviewed-capture',path=str(p)),timeout=remaining)
     assert m.time.time()<deadline and reply['contract']=='native-reviewed-context-v1'
     assert target==m.identity()
+    if refused:
+        assert reply['captureId']!=refused['captureId'],'old capture cannot be reused'
+        old=refused['snapshot'];new=reply['snapshot']
+        assert new['nativeProcess']==old['nativeProcess'] and new['screen']==old['screen']
+        assert all(new['focusWindow'][k]==old['focusWindow'][k] for k in ('processId','threadId')),'changed actual owner'
     m.save(name+'.json',dict(at=reply['startedAt']/1000,completedAt=reply['completedAt']/1000,
         target=target,port=m.PORT,snapshot=reply['snapshot'],image=reply,captureId=reply['captureId'],
         pngSHA256=hashlib.sha256(p.read_bytes()).hexdigest(),observationStartedAt=started,observationDeadline=deadline))
@@ -131,6 +232,10 @@ def controller():
         assert hashlib.sha256(body).hexdigest()==pins['sources'][helper_name]
         assert hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest()==pins['sources']['tools/halflife2-reviewed-next.py']
     m.sourcecheck=sourcecheck
+    # An exclusive operation lock prevents a capture/refusal proof racing a bind.
+    lock=(m.R/'controller-operation.lock').open('a')
+    fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    transport_journal(m)
     reviewed=m.reviewed
     def checked(scene):
         rr,r=reviewed(scene)
@@ -156,7 +261,10 @@ def controller():
             p=preflight(rr['snapshot'],target,int(x),int(y),label)
             m.save(scene+'-review.json',dict(at=m.time.time(),rawCompleteScene=True,observation=description,
                  visibleLabel=label,kind=kind,targetHwnd=target,pngSHA256=rr['pngSHA256'],buttonPreflight=p))
-        elif mode=='bind':m.bind(sys.argv[2])
+        elif mode=='bind':
+            m.reserve()
+            if local_expiry(m,sys.argv[2]):return LOCAL_REFUSAL
+            m.bind(sys.argv[2])
         elif mode=='intent':
             name,scene,x,y,kind=sys.argv[2:7];rr,r=checked(scene)
             assert (int(x),int(y))==(r['buttonPreflight']['x'],r['buttonPreflight']['y'])
@@ -164,4 +272,4 @@ def controller():
         else:raise AssertionError('unsupported finite control operation')
     except BaseException as e:m.fail('hl2-button-preflight',e);raise
 
-if __name__=='__main__':controller()
+if __name__=='__main__':sys.exit(controller())
