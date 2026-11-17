@@ -3,7 +3,7 @@
 // image supplies the reference pixels, and no counter substitutes for pixels.
 function classifyOwnershipPixels(bytes,width,height){
   if(width!==640||height!==480||bytes.length!==1228800)return {kind:'other',reason:'extent',width,height};
-  const mismatch={blue:0,black:0,blueInteger:0,blackInteger:0,white:0,red:0,green:0};let firstOther=null;const samples=[];
+  const mismatch={blue:0,black:0,blueInteger:0,blackInteger:0,white:0,red:0,green:0,blueRedPatch:0,blackGreenPatch:0};let firstOther=null;const samples=[];
   for(let y=0;y<480;y++)for(let x=0;x<640;x++){
     const at=(y*640+x)*4,r=bytes[at],g=bytes[at+1],b=bytes[at+2],a=bytes[at+3];
     if((x===20&&y===20)||(x===400&&y===300))samples.push({x,y,rgba:[r,g,b,a]});
@@ -14,6 +14,9 @@ function classifyOwnershipPixels(bytes,width,height){
     const blueInteger=integerRect?r===0&&g===0&&b===255:r===255&&g===255&&b===255;
     const blackInteger=integerRect?r===0&&g===0&&b===0:r===255&&g===255&&b===255;
     const red=r===255&&g===0&&b===0,green=r===0&&g===255&&b===0;
+    const patch=x>=96&&x<320&&y>=72&&y<240;
+    if(!(patch?red:blueInteger)||a!==255)mismatch.blueRedPatch++;
+    if(!(patch?green:blackInteger)||a!==255)mismatch.blackGreenPatch++;
     if(!blue||a!==255)mismatch.blue++;if(!black||a!==255)mismatch.black++;
     if(!blueInteger||a!==255)mismatch.blueInteger++;if(!blackInteger||a!==255)mismatch.blackInteger++;
     if(r!==255||g!==255||b!==255||a!==255)mismatch.white++;
@@ -21,11 +24,11 @@ function classifyOwnershipPixels(bytes,width,height){
     if(!firstOther&&a!==255)firstOther={x,y,rgba:[r,g,b,a]};
   }
   const exact=Object.keys(mismatch).find(k=>!mismatch[k])||'other';
-  return {kind:exact.replace('Integer',''),rasterConvention:exact.endsWith('Integer')?'integer':(['blue','black'].includes(exact)?'half-pixel':null),pixels:307200,mismatch,firstOther,samples};
+  return {kind:exact.replace('Integer',''),rasterConvention:exact.endsWith('Integer')||exact.endsWith('Patch')?'integer':(['blue','black'].includes(exact)?'half-pixel':null),pixels:307200,mismatch,firstOther,samples};
 }
 // Appended only to the authored fixture's existing browser modules. Reads
 // completed natural publications; does not request/flush/repaint or call guest.
-function installOwnershipObserver(root,classify){
+function installOwnershipObserver(root,classify,partial=false){
   const trace=root.__boidsOwnership||(root.__boidsOwnership={events:[],publications:[],errors:[],counts:{}});
   const ids=root.__boidsOwnershipIdentity||(root.__boidsOwnershipIdentity=new WeakMap());
   const id=o=>o&&(typeof o==='object'||typeof o==='function')?(ids.has(o)?ids.get(o):(ids.set(o,trace.nextId=(trace.nextId||0)+1),trace.nextId)):null;
@@ -65,7 +68,12 @@ function installOwnershipObserver(root,classify){
       // This fixture makes no CPU DirectDraw present or CPU render-target
       // write. A signature-polled DIB is not an authored new GPU/GDI write.
       const gpu=trace.lastGPU;
-      const expected=!gpu||(s.gdiWriteSeq||0)>(gpu.state?.layerWriteSeq||0)?row.backPixels:gpu.pixels;
+      let expected=!gpu||(s.gdiWriteSeq||0)>(gpu.state?.layerWriteSeq||0)?row.backPixels:gpu.pixels;
+      if(partial&&gpu&&(s.gdiWriteSeq||0)>(gpu.state?.layerWriteSeq||0)) {
+        // The authored partial fixture always paints red over its blue phase,
+        // green over its black phase, in the literal 96,72..320,240 rectangle.
+        expected={kind:gpu.pixels.kind.startsWith('blue')?'blueRedPatch':'blackGreenPatch'};
+      }
       row.expectedLatestWriter=expected?.kind;row.matchesLatestWriter=expected?.kind!=='other'&&expected?.kind===row.sourcePixels?.kind;
       if(['blue','black'].includes(row.sourcePixels?.kind)&&s.layerKind==='gpu')trace.seenAuthoredGPU=true;
       if(trace.seenAuthoredGPU&&!row.matchesLatestWriter&&!trace.firstUnexpectedPublication)trace.firstUnexpectedPublication=row;
@@ -89,7 +97,8 @@ function qualifyOwnershipSnapshot(snapshot){
     const sx=Math.floor((x+.5-v.dstX)*640/v.dstW),sy=Math.floor((y+.5-v.dstY)*480/v.dstH);
     const rect=sx<320&&(reference.rasterConvention==='integer'?sy>=0&&sy<240:sy>=1&&sy<=240);
     const kind=reference.kind;
-    const expected=!inside?[0,0,0,255]:kind==='red'?[255,0,0,255]:kind==='green'?[0,255,0,255]:kind==='white'||!rect?[255,255,255,255]:[0,0,kind==='blue'?255:0,255];
+    const patch=sx>=96&&sx<320&&sy>=72&&sy<240;
+    const expected=!inside?[0,0,0,255]:kind==='red'||(kind==='blueRedPatch'&&patch)?[255,0,0,255]:kind==='green'||(kind==='blackGreenPatch'&&patch)?[0,255,0,255]:kind==='white'||!rect?[255,255,255,255]:[0,0,kind.startsWith('blue')?255:0,255];
     const at=(y*width+x)*4;
     if(expected.some((n,i)=>b[at+i]!==n))throw Error(`literal complete output mismatch ${x},${y}: ${[...b.subarray(at,at+4)]}`);
   }

@@ -16,7 +16,18 @@ assert.throws(()=>e.execute({...record,fail:true}),/native failure/);
 const present={name:'PRESENT',seq:2,fields:{},refs:[]};for(let i=0;i<3;i++)e.execute(present);assert.equal(root.__boidsPublicTrace.frames.length,2);
 for(let i=0;i<600;i++)e.execute(record);assert.equal(root.__boidsPublicTrace.pending.length,512);assert(root.__boidsPublicTrace.dropped>0);assert.equal(seen.length,605);
 const app=require('../lib/apps').APPS.dx_boids;assert.equal(app.exe,'binaries/dx-sdk/bin/boids.exe');assert.equal(app.files.length,37);
-for(const f of app.files)assert.equal(fs.statSync(f.url).size,f.size,f.url);
+// These original SDK models deliberately differ from the deployed copies
+// catalogued by app-file-sizes. Pin the retained original bytes explicitly.
+const originalModels={
+  'camera.x':'1c56daf9d94fa31c3a721d69d07d223c44ebe1972914af497da40dd251295383',
+  'mslogo.x':'bbe967bbe686d5b3bc25979b70abf2d8ce6aea4b821f4ced9ca59d7902a6727d',
+  'sphere2.x':'804a4b79b7de03ed529bc7af7e9a904278956d6c052c9b81cc617ce703d633be'
+};
+for(const f of app.files){const expected=originalModels[f.url.split('/').pop()];
+  if(expected)assert.equal(require('crypto').createHash('sha256').update(fs.readFileSync(f.url)).digest('hex'),expected,f.url);
+  else assert.equal(fs.statSync(f.url).size,f.size,f.url);
+}
+assert.throws(()=>require('../lib/gpu-stream-webgl').Executor.prototype.execute.call({gl:{isContextLost:()=>true}},{}),/context lost/);
 const instance={},win={hwnd:65537,visible:true,w:640,h:480,processId:1000,wasm:instance},owner={processId:1000,instance,renderer:{windows:{65537:win}}};
 assert.equal(selectWindow(owner),win);assert.throws(()=>selectWindow({...owner,instance:{}}),/missing/);
 owner.renderer.windows[65538]={...win,hwnd:65538};assert.throws(()=>selectWindow(owner),/ambiguous/);
@@ -77,6 +88,37 @@ async function driverControls(){
   console.log('PASS shared exact driver delayed window, absent/wrong/replaced owners, failed/UNKNOWN/pending, fixed deadlines and sticky refusal');
 }
 driverControls().catch(e=>{console.error(e);process.exitCode=1;});
+{
+  const {Bridge}=require('../lib/gpu-stream-host');
+  const b=new Bridge({api:'d3dim-gps'});let shown=0,closed=0;
+  b.workerEpoch=7;b.device={};b.endpoint={closed:false};b.presenter={present(){shown++;}};
+  const frame=()=>({bitmap:{close(){closed++;}}});
+  b._workerFrame(frame(),6);assert.equal(closed,1);
+  for(const fault of ['workerAsyncError','workerClosing','endpoint','device']){
+    const old=b[fault];b[fault]=fault==='endpoint'?{closed:true}:fault==='device'?null:Error('authored loss');
+    b._workerFrame(frame(),7);b[fault]=old;
+  }
+  assert.equal(shown,0);assert.equal(closed,5);b._workerFrame(frame(),7);assert.equal(shown,1);
+  console.log('PASS source epoch, lost stream/context fault, closing and closed endpoint refusal before bitmap publication; every refused bitmap closed');
+}
+// Production dirty-rectangle merge and delayed delivery order. Every byte of
+// the composed image is checked against literal colours, including offsets.
+{
+  const {Win98Renderer}=require('../lib/renderer'),{createCanvas}=require('../lib/raster-canvas');
+  const r=Object.create(Win98Renderer.prototype),canvas=createCanvas(6,4),ctx=canvas.getContext('2d');
+  const fill=color=>{ctx.fillStyle=color;ctx.fillRect(0,0,6,4);};fill('#0000ff');
+  const exports={d3dim_gps_window_present:()=>10},instance={exports},win={hwnd:91,wasm:instance},layer={api:'d3dim-gps',kind:'gpu',canvas,d3dimWindow:win,d3dimInstance:instance,d3dimPresentSeq:10};
+  win._dxFrameLayer=layer;r.windows={91:win};r._createOffscreen=createCanvas;r._frameLayerOffset=()=>({x:2,y:1});
+  const presentation={targetHwnd:91,surface:{rgbaRect(x,y,w,h){const b=new Uint8Array(w*h*4);for(let i=0;i<b.length;i+=4)b.set([255,0,0,255],i);return b;}}};
+  assert.equal(r.composeD3dimWindowGdiUpload(91,presentation,3,2,5,4,{d3dim_gps_window_present:()=>10}),false,'foreign native instance refused');
+  r.composeD3dimWindowGdiUpload(91,presentation,3,2,5,4,exports);
+  const verify=(base,patch)=>{const b=ctx.getImageData(0,0,6,4).data;for(let y=0;y<4;y++)for(let x=0;x<6;x++)assert.deepEqual([...b.subarray((y*6+x)*4,(y*6+x+1)*4)],patch&&x>=1&&x<3&&y>=1&&y<3?[255,0,0,255]:base);};
+  verify([0,0,255,255],true);fill('#0000ff');r.composeD3dimPendingGdi(win,layer,10);verify([0,0,255,255],true);
+  fill('#00ff00');r.composeD3dimPendingGdi(win,layer,11);verify([0,255,0,255],false);
+  assert.equal(win._d3dimGdiPatches.length,0,'later native PRESENT covers earlier GDI damage');
+  r.windows[91]={...win};assert.equal(r._overlayFrameLayer(r.windows[91]),null,'same handle/new window object cannot inherit GPU ownership');
+  console.log('PASS full literal dirtyrect composition, client offsets, delayed matching record replay, later record replacement and HWND object reuse refusal');
+}
 // The ownership oracle refuses even a single corrupted pixel anywhere in
 // the full frame, including alpha, and never derives expected pixels from it.
 {

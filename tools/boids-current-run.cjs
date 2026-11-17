@@ -10,6 +10,12 @@ async function run(out,commit,backend,mode,fixtureFile){
   fs.writeFileSync(path.join(out,'owned-harness.patch'),cp.execFileSync('git',['diff','--binary',commit,'--','tools/boids-current-fixture.cjs','tools/boids-current-runtime.cjs','tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-supervise.py','test/test-boids-current-rendering.cjs']));
   fs.writeFileSync(path.join(out,'owner-helper.patch'),cp.spawnSync('git',['diff','--no-index','--binary','--','/dev/null','tools/boids-current-owner.cjs']).stdout);
   const files=gitFiles(commit);
+  if(process.env.BOIDS_REPAIR_OWNED_OVERLAY){
+    if(!fixtureFile)throw Error('Repair overlay is authored-only');
+    const paths=['lib/host-imports.js','lib/renderer.js','src/09abg-d3dim-gps.wat','lib/gpu-stream-host.js','lib/gpu-stream-webgl.js','lib/gpu-stream-software.js','lib/gpu-stream-render-worker.js'];
+    save('repair-overlay.json',paths.map(path=>{const bytes=fs.readFileSync(path);files.set(path,bytes);return {path,sha256:sha(bytes)};}));
+    fs.writeFileSync(path.join(out,'repair-overlay.patch'),cp.execFileSync('git',['diff','--binary',commit,'--',...paths]));
+  }
   if(process.env.BOIDS_CAPTURE_OWNED_OVERLAY){
     if(!fixtureFile)throw Error('Owned overlay is fixture-only');
     const paths=['host.js','lib/renderer.js'];
@@ -21,8 +27,13 @@ async function run(out,commit,backend,mode,fixtureFile){
   const sandbox={module:{exports:{}},console,URL,require:n=>{if(n!=='./app-file-sizes.generated.js')throw Error('unexpected registry dependency');return sizes.module.exports;}};vm.runInNewContext(files.get('lib/apps.js').toString(),sandbox);const app=sandbox.module.exports.APPS.dx_boids;
   const media=[app.exe,...app.files.map(f=>f.url)].map(n=>{const b=fs.readFileSync(path.join(ROOT,n));files.set(n,b);return {path:n,size:b.length,sha256:sha(b)};});
   save('pins-before.json',{commit,sourcePins,media,app,foreignWIPAdopted:false});
-  const module=compile(files);files.set('build/wine-assembly.wasm',module);save('module.json',{sha256:sha(module),size:module.length,commit,persisted:false});
+  const module=compile(files);files.set('build/wine-assembly.wasm',module);fs.writeFileSync(path.join(out,'native.wasm'),module);save('module.json',{sha256:sha(module),size:module.length,commit,persisted:true,path:'native.wasm'});
   if(fixtureFile){const b=fs.readFileSync(fixtureFile);files.set(app.exe,b);save('fixture.json',{path:fixtureFile,sha256:sha(b),bytes:b.length,original:false});}
+  if(process.env.BOIDS_CONTEXT_LOSS){
+    if(!fixtureFile)throw Error('Context loss is authored-only');
+    const n='lib/gpu-stream-webgl.js',old=files.get(n),suffix='\n;(()=>{const p=GpuStreamWebGL.Executor.prototype,execute=p.execute;p.execute=function(rec){globalThis.__boidsContextExecutor=this;return execute.call(this,rec);};})();\n';
+    files.set(n,Buffer.concat([old,Buffer.from(suffix)]));save('context-fault-observer.json',{path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});
+  }
   const observerPatches=[];for(const [n,api]of [['lib/gpu-stream-webgl.js','GpuStreamWebGL'],['lib/gpu-stream-software.js','GpuStreamSoftware']]){const suffix='\n;('+installObserver.toString()+')(globalThis,'+JSON.stringify(api)+');\n';const old=files.get(n);files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});}const n='lib/d3dim-render-worker.js',old=files.get(n),suffix='\n;('+installSoftwareObserver.toString()+')(globalThis);\n';files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});save('observer-patches.json',observerPatches);
   if(process.env.BOIDS_CONTENT_DIAGNOSTIC){
     const n='lib/gpu-stream-host.js',old=files.get(n),suffix='\n;('+installPresentationObserver.toString()+')(globalThis);\n';
@@ -34,7 +45,7 @@ async function run(out,commit,backend,mode,fixtureFile){
   }
   if(process.env.BOIDS_OWNERSHIP_SEQUENCE){
     if(!fixtureFile)throw Error('ownership sequence instrumentation is authored-only');
-    for(const n of ['lib/gpu-stream-host.js','lib/renderer.js']){const old=files.get(n),suffix='\n;('+installOwnershipObserver.toString()+')(globalThis,('+classifyOwnershipPixels.toString()+'));\n';files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});}
+    for(const n of ['lib/gpu-stream-host.js','lib/renderer.js']){const old=files.get(n),suffix='\n;('+installOwnershipObserver.toString()+')(globalThis,('+classifyOwnershipPixels.toString()+'),'+(process.env.BOIDS_DEVICE2==='partial-paint-sequence')+');\n';files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});}
     save('observer-patches.json',observerPatches);
   }
   save('prepared.json',{at:Date.now(),commit,moduleSHA256:sha(module),fixture:!!fixtureFile});
@@ -98,7 +109,7 @@ async function run(out,commit,backend,mode,fixtureFile){
       }
       for(const kind of ['source','output']){const dims=snapshot.metadata[kind],png=new PNG({width:dims.width,height:dims.height});png.data=Buffer.from(snapshot[kind],'base64');fs.writeFileSync(path.join(out,`frame-${i}-${kind}.png`),PNG.sync.write(png));}
       const row={index:i,metadata:snapshot.metadata,identity:await identity(),at:new Date().toISOString()};save(`frame-${i}.json`,row);captures.push(row);
-      const traces=[{target:'page',trace:await page.evaluate(()=>({records:globalThis.__boidsPublicTrace||null,pixelStages:globalThis.__boidsPixelStages||null,bridge:(()=>{const b=runningApps.find(a=>a.name==='dx_boids').wine.hostCtx.d3dimBridge;return {workerEpoch:b?.workerEpoch,endpointId:b?.endpoint?.id};})()}))}];for(const {session,target}of workerSessions)try{const r=await session.send('Runtime.evaluate',{expression:'JSON.stringify({executors:globalThis.__boidsPublicTraces||null,presentation:globalThis.__boidsPresentationTrace||null,pixelStages:globalThis.__boidsPixelStages||null})',returnByValue:true});traces.push({target:target.url(),trace:JSON.parse(r.result.value)});}catch(e){traces.push({target:target.url(),error:String(e)});}save(`public-trace-${i}.json`,traces);
+      const traces=[{target:'page',trace:await page.evaluate(()=>({records:globalThis.__boidsPublicTrace||null,pixelStages:globalThis.__boidsPixelStages||null,bridge:(()=>{const b=runningApps.find(a=>a.name==='dx_boids').wine.hostCtx.d3dimBridge;return {workerEpoch:b?.workerEpoch,endpointId:b?.endpoint?.id};})()}))}];for(const {session,target}of workerSessions.filter(x=>x.target.type()==='page'||x.target.url().includes('/d3d-render-worker.js')))try{const r=await session.send('Runtime.evaluate',{expression:'JSON.stringify({executors:globalThis.__boidsPublicTraces||null,presentation:globalThis.__boidsPresentationTrace||null,pixelStages:globalThis.__boidsPixelStages||null})',returnByValue:true});traces.push({target:target.url(),trace:JSON.parse(r.result.value)});}catch(e){traces.push({target:target.url(),error:String(e)});}save(`public-trace-${i}.json`,traces);
       if(process.env.BOIDS_CONTENT_DIAGNOSTIC||process.env.BOIDS_PIXEL_STAGES)save(`content-boundary-${i}.json`,await page.evaluate(()=>{
         const w=runningApps.find(a=>a.name==='dx_boids').wine,b=w.hostCtx.d3dimBridge,r=w.renderer;
         const layer=b?.presenter?.layer;
@@ -112,7 +123,7 @@ async function run(out,commit,backend,mode,fixtureFile){
     }
     if(process.env.BOIDS_OWNERSHIP_SEQUENCE)save('ownership-sequence.json',await page.evaluate(()=>globalThis.__boidsOwnership));
     terminal.outcome='observed';save('identity-end.json',await identity());
-    if(fixtureFile){
+    if(fixtureFile&&!process.env.BOIDS_CONTEXT_LOSS){
       // Fault only the authored fixture's ownership records. Never runs on originals.
       const controls=await page.evaluate(async(source,deadline,mode)=>{
         const install=(app='dx_boids',end=deadline)=>(0,eval)('('+source+')')(globalThis,{app,mode,deadline:end});
@@ -148,6 +159,21 @@ async function run(out,commit,backend,mode,fixtureFile){
         return rows;
       },installDriver.toString(),deadline,mode);
       save('native-owner-controls.json',controls);
+    }
+    if(process.env.BOIDS_CONTEXT_LOSS){
+      await page.evaluate(()=>{globalThis.__boidsContextBridge=runningApps.find(a=>a.name==='dx_boids').wine.hostCtx.d3dimBridge;});
+      let injected=false;
+      for(const {session,target}of workerSessions.filter(x=>x.target.url().includes('/d3d-render-worker.js'))){
+        let v;try{v=await session.send('Runtime.evaluate',{expression:`(()=>{const e=globalThis.__boidsContextExecutor;if(!e)return null;const x=e.gl.getExtension('WEBGL_lose_context');if(!x)throw Error('WEBGL_lose_context unavailable');x.loseContext();return {target:location.href,at:Date.now(),backend:e.stats().backend};})()`,returnByValue:true});}catch(error){save('context-loss-skipped-'+workerSessions.indexOf(workerSessions.find(x=>x.session===session))+'.json',{target:target.url(),error:String(error)});continue;}
+        if(v.exceptionDetails)throw Error(JSON.stringify(v.exceptionDetails));
+        if(v.result.value){save('context-loss-injected.json',v.result.value);injected=true;break;}
+      }
+      if(!injected)throw Error('No actual WebGL executor for context fault');
+      const end=Math.min(deadline,Date.now()+5000);let loss;
+      while(Date.now()<end){loss=await page.evaluate(()=>{const b=globalThis.__boidsContextBridge;return {error:String(b.workerAsyncError||''),count:b.presenter.presents,epoch:b.workerEpoch,at:Date.now()};});if(loss.error)break;await sleep(20);}
+      if(!loss?.error.includes('context lost'))throw Error('Natural native records did not refuse actual context loss '+JSON.stringify(loss));
+      await sleep(250);const after=await page.evaluate(()=>globalThis.__boidsContextBridge.presenter.presents);
+      save('context-loss-refusal.json',{...loss,after,noLaterPresentation:after===loss.count});if(after!==loss.count)throw Error('Frame published after context loss');
     }
     await browser.close();await closed;terminal.chromeClose=chromeClose;browser=null;
   }catch(e){terminal.error=String(e);terminal.outcome='blocked';}

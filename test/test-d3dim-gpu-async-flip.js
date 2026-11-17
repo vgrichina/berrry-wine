@@ -19,6 +19,35 @@ const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = `
+  (func (export "flip_slot") (param $this i32) (result i32)
+    (call $dx_slot_of (call $dx_from_this (local.get $this))))
+  (func (export "flip_write") (param $this i32) (param $off i32) (param $word i32)
+    (call $gs32 (call $w2g (i32.add (load.field DxObject misc1 (call $dx_from_this (local.get $this))) (local.get $off))) (local.get $word)))
+  (func (export "flip_release") (param $this i32) (result i32)
+    (call $dx_surface_release (local.get $this)))
+  (func (export "flip_lock") (param $this i32) (param $flags i32) (result i32)
+    (local $ga i32) (local $wa i32) (local $pixels i32)
+    (local.set $ga (call $heap_alloc (i32.const 108)))
+    (local.set $wa (call $g2w (local.get $ga)))
+    (memory.fill (local.get $wa) (i32.const 0) (i32.const 108))
+    (i32.store (local.get $wa) (i32.const 108))
+    (call $handle_IDirectDrawSurface_Lock (local.get $this) (i32.const 0)
+      (local.get $ga) (local.get $flags) (i32.const 0) (i32.const 0))
+    (local.set $pixels (i32.load offset=36 (local.get $wa)))
+    (call $heap_free (local.get $ga))
+    (local.get $pixels))
+  (func (export "flip_bind") (param $this i32) (param $dib i32) (param $pitch i32)
+    (local $ga i32) (local $wa i32)
+    (local.set $ga (call $heap_alloc (i32.const 108)))
+    (local.set $wa (call $g2w (local.get $ga)))
+    (memory.fill (local.get $wa) (i32.const 0) (i32.const 108))
+    (i32.store (local.get $wa) (i32.const 108))
+    (i32.store offset=4 (local.get $wa) (i32.const 0x808))
+    (i32.store offset=16 (local.get $wa) (local.get $pitch))
+    (i32.store offset=36 (local.get $wa) (local.get $dib))
+    (call $handle_IDirectDrawSurface3_SetSurfaceDesc (local.get $this) (local.get $ga)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $heap_free (local.get $ga)))
   (func (export "flip_surface") (param $w i32) (param $h i32) (result i32)
     (local $this i32) (local $entry i32)
     (local.set $this (call $dx_create_com_obj (i32.const 2) (global.get $DX_VTBL_DDSURF3)))
@@ -126,9 +155,17 @@ const extraWat = `
   assert.strictEqual(ex.flip_dib(front) >>> 0, dibA, 'the drawn DIB is the front now');
   assert.strictEqual(ex.flip_dib(back) >>> 0, dibB);
   assert.strictEqual(readbacks(), r, 'no readback on Flip');
+  assert.strictEqual(ex.d3dim_gps_dib_is_derived(ex.flip_slot(front), dibA), 1, 'exact GPU Flip front is derived');
+  assert.strictEqual(ex.d3dim_gps_dib_is_derived(ex.flip_slot(back), dibA), 0, 'same DIB with wrong surface is refused');
+  assert.strictEqual(ex.d3dim_gps_dib_is_derived(ex.flip_slot(front), dibB), 0, 'old allocation of same front is refused');
   assert.deepStrictEqual(bytes(dibA), Array(LEN).fill(0x11), 'the pixels are not in the DIB until something fences it');
   assert.strictEqual(frames.length, p0 + 1, 'the executor received the presented frame');
   const fr = frames.at(-1);
+  assert.strictEqual(ex.d3dim_gps_window_present(0x1234, fr.rt), fr.presentSeq, 'actual native RT and PRESENT record identify the primary');
+  assert.strictEqual(ex.d3dim_gps_window_present(0x1234, fr.rt + 100), 0, 'different source RT cannot impersonate a present');
+  ex.flip_exclusive(0x5678);
+  assert.strictEqual(ex.d3dim_gps_window_present(0x1234, fr.rt), 0, 'cooperative window switch revokes old publication owner');
+  ex.flip_exclusive(0x1234);
   assert.deepStrictEqual([fr.width, fr.height, fr.hwnd], [W, H, 0x1234]);
   assert.deepStrictEqual(Array.from(fr.pixels.subarray(0, 4)), [255, 0, 0, 255], 'presented from GPU memory');
 
@@ -140,6 +177,7 @@ const extraWat = `
   ex.flip_reader(front);
   assert.strictEqual(readbacks(), r + 1);
   assert.deepStrictEqual(bytes(dibA), red, 'every pixel arrived in the DIB it was drawn into');
+  assert.strictEqual(ex.d3dim_gps_dib_is_derived(ex.flip_slot(front), dibA), 1, 'read-only materialization does not author a CPU frame');
   assert.deepStrictEqual(bytes(dibB), Array(LEN).fill(0x22), 'the new back buffer is untouched');
   assert.strictEqual(ex.flip_fence(0, 0), 1, 'nothing GPU-only remains');
   assert.strictEqual(readbacks(), r + 1, 'nothing is read back twice');
@@ -167,6 +205,43 @@ const extraWat = `
   const oddDib = ex.flip_dib(odd) >>> 0;
   assert.strictEqual(ex.flip_try(odd, back), 0, 'size mismatch declines');
   assert.strictEqual(ex.flip_dib(odd) >>> 0, oddDib);
+
+  const generation = ex.d3dim_gps_dib_cpu_generation(ex.flip_slot(front), dibB);
+  ex.flip_write(front, 4, 0xf800f800);
+  assert.strictEqual(ex.d3dim_gps_dib_is_derived(ex.flip_slot(front), dibB), 0, 'later retained native CPU pointer write takes ownership');
+  assert.notStrictEqual(ex.d3dim_gps_dib_cpu_generation(ex.flip_slot(front), dibB), generation);
+  const cpuGreen = green.slice(); cpuGreen.splice(4, 4, 0, 0xf8, 0, 0xf8);
+  assert.deepStrictEqual(bytes(dibB), cpuGreen, 'all literal pixels including the later native two-pixel CPU write');
+
+  // Public SetSurfaceDesc supplies the exact same client allocation to two
+  // successive native surface lifetimes. Retirement must erase GPU ownership.
+  const allocation = ex.guest_alloc(4096), first = ex.flip_surface(W, H);
+  ex.flip_bind(first, allocation, PITCH);
+  const sharedDib = ex.flip_dib(first) >>> 0, reusedSlot = ex.flip_slot(first);
+  assert.strictEqual(ex.flip_paint(first, RED), 1);
+  assert.strictEqual(ex.d3dim_gps_dib_is_derived(reusedSlot, sharedDib), 1);
+  assert.strictEqual(ex.flip_release(first), 0);
+  assert.strictEqual(ex.d3dim_gps_dib_is_derived(reusedSlot, sharedDib), 0, 'retirement erases exact allocation owner');
+  const second = ex.flip_surface(W, H);ex.flip_bind(second, allocation, PITCH);
+  const secondSlot = ex.flip_slot(second);
+  assert.notStrictEqual(secondSlot, reusedSlot, 'native allocator initially retires COM slots');
+  assert.strictEqual(ex.flip_dib(second) >>> 0, sharedDib, 'actual same-address client allocation reused');
+  assert.strictEqual(ex.d3dim_gps_dib_is_derived(secondSlot, sharedDib), 0, 'new lifetime does not inherit old GPU pixels');
+  assert.strictEqual(ex.flip_paint(second, GREEN), 1);ex.flip_reader(second);
+  assert.deepStrictEqual(bytes(sharedDib), green, 'complete new-lifetime literal pixels');
+
+  // A later public native CPU Lock fences a still GPU-dirty allocation
+  // before changing two pixels; untouched pixels come from the GPU.
+  assert.strictEqual(ex.flip_paint(front, GREEN), 1);
+  assert.strictEqual(ex.guest_to_wasm(ex.flip_lock(front, 0)) >>> 0, dibB);
+  ex.flip_write(front, 4, 0xf800f800);
+  assert.strictEqual(ex.d3dim_gps_dib_is_derived(ex.flip_slot(front), dibB), 0);
+  assert.deepStrictEqual(bytes(dibB), cpuGreen, 'later native Lock/read/write preserves all untouched GPU pixels');
+  const lastFrame = frames.at(-1);
+  assert.strictEqual(ex.d3dim_gps_window_present(0x1234, fr.rt), 0, 'previous actual RT cannot impersonate the later Flip');
+  assert.strictEqual(ex.d3dim_gps_window_present(0x1234, lastFrame.rt), lastFrame.presentSeq);
+  assert.strictEqual(ex.flip_release(front), 0);
+  assert.strictEqual(ex.d3dim_gps_window_present(0x1234, lastFrame.rt), 0, 'retired primary revokes its actual PRESENT');
 
   assert.deepStrictEqual(calls, [], 'the WAT producer never calls the host gpu_gl_call');
   assert(kicks > 0, 'records went through the GPU stream consumer');

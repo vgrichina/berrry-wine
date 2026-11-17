@@ -56,6 +56,20 @@
       "baseSHA256": "38b7b4a34b859a10d1be548cffcaec7b91f0ed802dd4fdd1190ffdf487bcb303",
       "sha256": "ddbb708bd495f1b89629aef8a1e65574f3028f5ac298fdc8ac2c0c19c557029c",
       "reason": "Reject actual QT call continuations as FT parents at either alignment, preserving FT compiler frames, alignment and restoration. Native FT and invalidQT-asFT controls retained in run20261117-neverhood-ls32-qt-implementation; general invocation ownership remains pending."
+    },
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "178ccbc01d427ef19375472b00eeeb8d6047e0cec376957d38ae82441ea1cc80",
+      "sha256": "9265109c8b2184b389116c01804d6f74482ab3e56caf6e5b93061af1c03b222b",
+      "reason": "Review 20261117 Boids repair: native per-window primary allocation and actual PRESENT rt/record identity validate delayed frames. Actual native window GDI uploads retain disjoint dirty rectangles ordered by their preceding native PRESENT. GPU-only or read-only materialized primary DIBs do not become signature-polled CPU publications; later watched CPU Lock writes remain eligible. No guest callback, continuation, host clock, stepping, pause or extra publication is introduced. Existing process/endpoint retirement and CPU-present guards remain active; general invocation ownership remains pending. Qualification: run 20261117-boids-primary-gdi-ownership-repair."
+    },
+    {
+      "file": "lib/renderer.js",
+      "name": "host-file",
+      "baseSHA256": "06e2d182efe7d6859bc318e731c3f8c0f0e48d2a674d61aa99e55994d1faf4ec",
+      "sha256": "082395af9f85b7837ed35690355d107063fefe89601fe6c4c05652b5bab3f878",
+      "reason": "Review 20261117 Boids repair: native per-window primary allocation and actual PRESENT rt/record identity validate delayed frames. Actual native window GDI uploads retain disjoint dirty rectangles ordered by their preceding native PRESENT. GPU-only or read-only materialized primary DIBs do not become signature-polled CPU publications; later watched CPU Lock writes remain eligible. No guest callback, continuation, host clock, stepping, pause or extra publication is introduced. Existing process/endpoint retirement and CPU-present guards remain active; general invocation ownership remains pending. Qualification: run 20261117-boids-primary-gdi-ownership-repair."
     }
   ],
   "additions": [
