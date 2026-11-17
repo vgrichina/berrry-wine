@@ -74,3 +74,11 @@ The compaction helper also runs during long qualification tests, using a lock,
 checking that each trace writer has exited before reading it, and joining its
 thread before releasing the runtime. This preserves the host floor without
 adding an admission threshold, changing guest clocks or discarding trace bytes.
+
+The startup handoff retains the fixture's exact published Git revision through
+later unrelated publication. A fresh sealed source pool, compiled module and
+inheritance probe must match the fixture's entire source hash map, source-pool
+hash, retained module bytes and full native/outer wait proof. The completed
+identical native controls are reused rather than repeated on a refreshed graph.
+No failed or interrupted qualification can pass this handoff. The own periodic
+compactor and a subsequently published shared helper compactor use one lock.

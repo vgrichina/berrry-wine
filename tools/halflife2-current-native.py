@@ -6,7 +6,8 @@ startup after complete authored controls and own outer lifecycle proof.
 """
 import gzip,hashlib,json,os,pathlib,re,signal,socket,subprocess,sys,threading,time,types,uuid
 ROOT=pathlib.Path(__file__).resolve().parent.parent
-RUN=pathlib.Path(os.environ.get('HL2_RUN',ROOT/'scratch/runs/20261117-halflife2-normal-virtual-storage-installer-startup/native'))
+TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-normal-virtual-storage-installer-startup'
+RUN=pathlib.Path(os.environ.get('HL2_RUN',TASK_RUN/'native'))
 MEDIA=ROOT/'scratch/media/half-life-2-demo-original.exe'
 DLL=ROOT/'scratch/runs/20261117-halflife2-original-demo-startup-gameplay/WISE0132.dll'
 OWN=('tools/halflife2-current-native.py','lib/filesystem.js','test/test-vfs-volume-capacity.cjs')
@@ -64,13 +65,16 @@ def supervised():
  working='--working-qualification' in sys.argv;original='--original' in sys.argv
  assert not (working and original)
  if original:
-  assert not (RUN.parent/'original-installer-invocation.json').exists(),'original allowance already reserved'
+  assert not (TASK_RUN/'original-installer-invocation.json').exists(),'original allowance already reserved'
   assert git('show',revision+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
   assert (RUN.parent/'outer-fixture/outer/wait.json').exists(),'own outer adapter must be proved first'
   proof=json.loads((RUN.parent/'outer-fixture/outer/wait.json').read_text())
   assert proof['supervisorExitCode']==0 and proof['returncode']==0
   pins=json.loads((RUN.parent/'outer-fixture/outer-source-pins.json').read_text())
   assert pins['adapterSHA256']==sha(pathlib.Path(__file__).read_bytes())
+  revision=pins['gitSHA']
+  assert git('merge-base','--is-ancestor',revision,'origin/main')==b''
+  assert git('show',revision+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
  for name in ('tools/gltron-current-supervise.py','tools/boids-current-supervise.py'):
   assert git('show',revision+':'+name)==(ROOT/name).read_bytes()
  save('outer-source-pins.json',dict(gitSHA=revision,sources={n:sha(git('show',revision+':'+n)) for n in ('tools/gltron-current-supervise.py','tools/boids-current-supervise.py')},adapterSHA256=sha(pathlib.Path(__file__).read_bytes()),workingAuthoredOnly=working,preparationSeconds=900,preparationWatchdogSeconds=920,nativeSeconds=600,independentWatchdogSeconds=620))
@@ -87,6 +91,27 @@ def ready():
  while not (out/'runtime-start.json').exists():assert time.monotonic()<due;time.sleep(.005)
  arm=json.loads((out/'native-armed.json').read_text());assert arm['seconds']==600
  save('preclock-proof.json',dict(prepared=True,outerNative=arm,independentWatchdog=json.loads((out/'runtime-watchdog-armed.json').read_text()),at=time.time()))
+
+def qualified_graph(env,revision):
+ fixture=RUN.parent/'outer-fixture'
+ proof=json.loads((fixture/'full-native-qualification.json').read_text())
+ manifest=json.loads((fixture/'immutable-manifest.json').read_text())
+ inputs=json.loads((fixture/'runtime-inputs.json').read_text())
+ wait=json.loads((fixture/'outer/wait.json').read_text())
+ assert proof['passed'] and proof['mainCPUWorkerOSchild'] and proof['gitSHA']==revision
+ assert manifest['gitSHA']==inputs['gitSHA']==revision
+ assert proof['moduleSHA256']==env['DISCIPLES2_MODULE_SHA256']==sha((fixture/'module.wasm').read_bytes())
+ assert manifest['sourceSHA256']==env['DISCIPLES2_SOURCE_SHA256']
+ assert inputs['sources']==json.loads((RUN/'runtime-inputs.json').read_text())['sources']
+ assert wait['actualWait'] and wait['returncode']==wait['supervisorExitCode']==0
+ assert wait['stdoutEOF'] and wait['stderrEOF'] and not wait['remainingAfterRuntime']
+ assert all(w['actualWait'] and w['returncode']==0 and w['stdoutEOF'] and w['stderrEOF'] for w in wait['watchdogs'])
+ return dict(passed=True,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],
+     sourceSHA256=env['DISCIPLES2_SOURCE_SHA256'],
+     proofSHA256=sha((fixture/'full-native-qualification.json').read_bytes()),
+     actualOuterWaitSHA256=sha((fixture/'outer/wait.json').read_bytes()),
+     freshSealedInheritance=True,identicalCompleteSourceMap=True,
+     sourceRefresh=False,qualificationRepeated=False,at=time.time())
 
 def original(env,source,module,helper):
  disk()
@@ -105,7 +130,7 @@ def original(env,source,module,helper):
  '--native-exit-receipt='+str(RUN/'native-exit.json'),'--native-invocation-token='+invocation,
  '--control='+str(port),'--max-seconds=600','--max-batches=1000000000','--stuck-after=0','--quiet-api','--quiet-blocks']
  save('launch.json',dict(args=argv,rootPort=port,at=start,deadline=deadline,gameplayCutoff=deadline-30,reserveSeconds=30,nativeSeconds=600,watchdogSeconds=620,ordinaryStartup=True,inputsAuthorized=True,scriptModified=False))
- with (RUN.parent/'original-installer-invocation.json').open('x') as f:
+ with (TASK_RUN/'original-installer-invocation.json').open('x') as f:
   json.dump(dict(at=time.time(),run=str(RUN),invocationToken=invocation,
       args=argv,gitSHA=helper.HEAD,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],
       ordinaryStartup=True,allowanceReserved=True),f)
@@ -144,12 +169,21 @@ def run():
  helper.ROOT,helper.RUN,helper.HEAD=ROOT,RUN,revision;helper.OWN_SOURCES=OWN
  if not working:assert git('show',revision+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
  original_qualify=helper.qualify
+ if hasattr(helper,'compact_closed_observations'):
+  shared_compact=helper.compact_closed_observations
+  def serialized_shared_compact():
+   with COMPACTION_LOCK:shared_compact()
+  helper.compact_closed_observations=serialized_shared_compact
  checked=helper.checked
  def checked_and_compact(*args,**kwargs):
   try:return checked(*args,**kwargs)
   finally:compact_finished_traces()
  helper.checked=checked_and_compact
  def qualify(env,files,source,module,**unused):
+  if requested:
+   save('qualification-reuse.json',qualified_graph(env,revision))
+   original(env,source,module,helper)
+   return
   helper.checked('storage-public-api',['node','test/test-vfs-volume-capacity.cjs'],env,(source,module))
   assert sha(DLL.read_bytes())=='a87f19f9fee475d2b2e82acfb4589be6d816b613064cd06826e1d4c147beb50a'
   helper.checked('bootstrap-authored',['node','test/test-halflife2-original-package.cjs','--native',str(RUN/'bootstrap-authored'),str(DLL)],env,(source,module))
@@ -157,9 +191,7 @@ def run():
   helper.checked('modal-fence',['node','test/test-vb5-modal-invocation-fence.cjs',str(RUN/'modal-fence')],env,(source,module))
   original_qualify(env,files,source,module)
   save('full-native-qualification.json',dict(passed=True,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],mainCPUWorkerOSchild=True,fullSourceSealed=True,ordinaryBootstrapOnly=True,WiseMainInvoked=False,originalStarted=False))
-  if requested:original(env,source,module,helper)
-  else:
-   ready();helper.checked('outer-native',['node','test/test-halflife2-original-package.cjs','--native',str(RUN/'outer-native'),str(DLL)],env,(source,module))
+  ready();helper.checked('outer-native',['node','test/test-halflife2-original-package.cjs','--native',str(RUN/'outer-native'),str(DLL)],env,(source,module))
  helper.qualify=qualify
  sys.argv=[__file__,*(['--working-qualification'] if working else [])]
  stopped=threading.Event();compaction_errors=[]
