@@ -5,7 +5,7 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const {gitFiles,compile}=require('./boids-current-runtime.cjs');
 const {installInitializedObserver,fixture}=require('./gltron-current-native-capture.cjs');
 const {connection,GL_OBSERVER}=require('./gltron-browser-controller.cjs');
-const {completeCapture,encodeCapturePNG}=require('./gltron-current-capture.cjs');
+const {completeCapture,prepareCapturePNGs}=require('./gltron-current-capture.cjs');
 const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner,observeAndPrepareNativeIntent}=require('./gltron-current-native-input.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function run(out,commit,authored=false,backend='webgl',qualifyNative=false){
@@ -49,7 +49,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
  const evaluate=async(expression,s=session)=>{const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},s);if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
  const bounded=async work=>{let timer;try{return await Promise.race([work(),new Promise((_,reject)=>{timer=setTimeout(()=>{terminal=true;c?.ws.close();reject(Error('DISPLAY_UNKNOWN complete 3000ms deadline; permanently closed'));},3000);})]);}finally{clearTimeout(timer);}};
  async function capture(label){
-  assert(!terminal);const at=Date.now();let hostCapturedAt;
+  assert(!terminal);const at=Date.now();let hostCapturedAt;const written=[];
   try{const shot=await completeCapture({
    close:()=>{terminal=true;c?.ws.close();},record:v=>append(label+'-phases.jsonl',v),
    requestTicket:async()=>{
@@ -57,17 +57,26 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
    },
    readTicket:async()=>{const shot=await evaluate(`(()=>{const p=__originalPin,t=__originalTicket;p.verify();if(t.status!=='complete')return {status:t.status,error:t.error,participant:__nativeInitialized.ticketEvents};if(globalThis.__originalCapture)throw Error('existing transported capture');const r=globalThis.__originalCapture=t.read(),receipt=__nativeInitialized.receipts.find(v=>v.publication===r.metadata.publication);if(!receipt)throw Error('capture lacks initialized GL producer join');return {status:'complete',metadata:r.metadata,receipt};})()`);
     if(shot.participant)append(label+'-participants.jsonl',{at:Date.now(),status:shot.status,events:shot.participant});return shot;},
-   transportTicket:async()=>evaluate(`(async()=>{const p=__originalPin,r=__originalCapture;const verify=()=>{p.verify();};verify();const encode=b=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('immutable byte transport failed'));reader.onload=()=>resolve(reader.result.slice(reader.result.indexOf(',')+1));reader.readAsDataURL(new Blob([b],{type:'application/octet-stream'}));});const [source,output]=await Promise.all([encode(r.sourceRGBA),encode(r.outputRGBA)]);verify();return {source,output};})()`),
+   transportTicket:async shot=>{
+   const bytes=await evaluate(`(async()=>{const p=__originalPin,r=__originalCapture;const verify=()=>{p.verify();};verify();const encode=b=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('immutable byte transport failed'));reader.onload=()=>resolve(reader.result.slice(reader.result.indexOf(',')+1));reader.readAsDataURL(new Blob([b],{type:'application/octet-stream'}));});const [source,output]=await Promise.all([encode(r.sourceRGBA),encode(r.outputRGBA)]);verify();return {source,output};})()`);
+   const encodeAt=Date.now(),pngs=prepareCapturePNGs({...shot,...bytes});
+   append(label+'-retention.jsonl',{phase:'png-preparation-complete',at:Date.now(),startedAt:encodeAt,elapsedMs:Date.now()-encodeAt});
+   return {...bytes,pngs};},
    captureHost:async()=>{const host=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session);hostCapturedAt=Date.now();return host;},
-   retain:async(shot,host)=>{
+   retain:async(shot,host,{live})=>{
+   const verifyAt=Date.now();append(label+'-retention.jsonl',{phase:'identity-verification-start',at:verifyAt});
    await evaluate('(__originalPin.verify(),true)');
-   for(const k of ['source','output']){const dim=shot.metadata[k],b=Buffer.from(shot[k],'base64');fs.writeFileSync(out+'/'+label+'-'+k+'.png',encodeCapturePNG(dim.width,dim.height,b),{flag:'wx'});}
-   fs.writeFileSync(out+'/'+label+'-host.png',Buffer.from(host.data,'base64'),{flag:'wx'});
+   live();
+   append(label+'-retention.jsonl',{phase:'identity-verification-complete',at:Date.now(),elapsedMs:Date.now()-verifyAt});
+   const encodeAt=Date.now();
+   for(const k of ['source','output','host']){const file=out+'/'+label+'-'+k+'.png';fs.writeFileSync(file,k==='host'?Buffer.from(host.data,'base64'):shot.pngs[k],{flag:'wx'});written.push(file);}
+   append(label+'-retention.jsonl',{phase:'png-retention-complete',at:Date.now(),elapsedMs:Date.now()-encodeAt});
    save(label+'.json',{at,completedAt:Date.now(),hostCapturedAt,elapsedMs:Date.now()-at,metadata:shot.metadata,receipt:shot.receipt,hostJoin:{samePinnedNativeAndHostIdentity:true,screenshotAfterTicketSelection:true,pixelSynchronized:false},authored,inputEvents:nativeDownAttempts});
+   written.push(out+'/'+label+'.json');live();
    }});
    await evaluate('delete globalThis.__originalTicket;delete globalThis.__originalPin;delete globalThis.__originalCapture;true');
    lastImage={label,completedAt:hostCapturedAt,sha256:sha(fs.readFileSync(out+'/'+label+'-host.png'))};return shot;
-  }catch(e){terminal=true;c?.ws.close();throw e;}
+  }catch(e){terminal=true;c?.ws.close();for(const file of written)fs.unlinkSync(file);throw e;}
  }
  try{
   server=http.createServer((req,res)=>{const n=decodeURIComponent(new URL(req.url,'http://localhost').pathname).slice(1)||'index.html',b=files.get(n);append('requests.jsonl',{at:Date.now(),path:n,status:b?200:404,sha256:b?sha(b):null});res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');res.setHeader('Content-Type',n.endsWith('.js')?'text/javascript':n.endsWith('.wasm')?'application/wasm':n.endsWith('.html')?'text/html':n.endsWith('.json')?'application/json':'application/octet-stream');res.statusCode=b?200:404;res.end(b||'not found');});

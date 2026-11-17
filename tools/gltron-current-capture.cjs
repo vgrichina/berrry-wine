@@ -23,9 +23,12 @@ async function completeCapture({requestTicket,readTicket,captureHost,transportTi
         // The ticket's immutable publication has already been selected. Its
         // byte transport and the later host screenshot are independent reads;
         // join both under the same original deadline before retaining either.
-        live();mark('host-capture');const [host,transported]=await Promise.all([captureHost(),transportTicket(shot)]);live();
+        const component=async(name,work)=>{const at=now();const value=await work();live();
+          record({phase:'component-complete',component:name,at:now(),elapsedMs:now()-started,durationMs:now()-at});return value;};
+        live();mark('host-capture');const [host,transported]=await Promise.all([
+          component('host-screenshot',captureHost),component('immutable-transport',()=>transportTicket(shot))]);live();
         shot={...shot,...transported};
-        mark('host-complete');await retain(shot,host);live();mark('complete');return shot;
+        mark('host-complete');await retain(shot,host,{live});live();mark('complete');return shot;
       })()
     ]);
   }catch(error){terminal(error);throw error;}finally{timers.clear(timer);}
@@ -39,4 +42,14 @@ function encodeCapturePNG(width,height,rgba) {
   return require('pngjs').PNG.sync.write({width,height,data:Buffer.from(rgba)},
     {filterType:0,deflateLevel:1,deflateStrategy:0});
 }
-module.exports={completeCapture,encodeCapturePNG};
+// Preparation reads only the already-selected immutable byte transport. It
+// publishes no files and can overlap the independent whole host screenshot.
+function prepareCapturePNGs(shot) {
+  const pngs={};
+  for(const kind of ['source','output']) {
+    const dim=shot.metadata[kind];
+    pngs[kind]=encodeCapturePNG(dim.width,dim.height,Buffer.from(shot[kind],'base64'));
+  }
+  return pngs;
+}
+module.exports={completeCapture,encodeCapturePNG,prepareCapturePNGs};

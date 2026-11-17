@@ -80,6 +80,31 @@ if(require.main===module)(async()=>{for(const mode of [null,'request','ticket','
     assert.equal(closed,1);assert.equal(phases.length,stopped);
     assert.equal(phases.at(-1).phase,'UNKNOWN','retention shares original deadline');
   }
+  // A verification reply delivered after the original deadline must not
+  // publish files, even when the async retention callback resumes later.
+  {
+    let clock=0,fire,verifyDone,published=0,closed=0;
+    const task=completeCapture({now:()=>clock,timers:{set:fn=>{fire=fn;return 1;},clear:()=>{}},
+      requestTicket:async()=>{},readTicket:async()=>({status:'complete'}),captureHost:async()=>({}),
+      retain:async(shot,host,{live})=>{await new Promise(r=>verifyDone=r);live();published++;},
+      close:()=>closed++,record:()=>{}});
+    while(!verifyDone)await Promise.resolve();clock=3000;fire();
+    await assert.rejects(task,/DISPLAY_UNKNOWN/);verifyDone();
+    for(let i=0;i<10;i++)await Promise.resolve();assert.equal(published,0);assert.equal(closed,1);
+  }
+  {
+    const {prepareCapturePNGs}=require('../tools/gltron-current-capture.cjs');
+    const shot={metadata:{publication:91,source:{width:800,height:600},output:{width:1060,height:744}}};
+    const selected={};
+    for(const kind of ['source','output']){const dim=shot.metadata[kind],b=Buffer.alloc(dim.width*dim.height*4);
+      for(let i=0;i<b.length;i++)b[i]=(i*31+(i>>>8))&255;
+      selected[kind]=b;shot[kind]=b.toString('base64');}
+    const pngs=prepareCapturePNGs(shot);
+    // Later producer bytes and metadata cannot be adopted by prepared PNGs.
+    shot.source=Buffer.alloc(800*600*4,255).toString('base64');shot.metadata.publication++;
+    for(const kind of ['source','output']){const dim=shot.metadata[kind];verifyPNG(pngs[kind],dim.width,dim.height,selected[kind]);}
+    assert.throws(()=>prepareCapturePNGs({...shot,output:''}),/invalid complete RGBA/);
+  }
   const {encodeCapturePNG}=require('../tools/gltron-current-capture.cjs'),{PNG}=require('pngjs');
   for(const [width,height]of [[1,1],[480,360],[1060,744]]){
     const bytes=Buffer.alloc(width*height*4);
