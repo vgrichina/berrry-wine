@@ -66,7 +66,7 @@ async function main(){
   words.length=0;activeMutation=item.mutation;
   const allowed=!activeMutation&&(name==='KERNEL'||name==='KRNL386.EXE');
   if(allowed){assert(service());assert.equal(e.get_eip(),f.body);assert.equal(e.get_esp(),saved.esp+38);}
-  else{assert.throws(service,WebAssembly.RuntimeError);assert(words.includes(95),'native KERNEL95 refusal reached');assert.equal(e.get_esp(),saved.esp);assert.equal(e.get_ebp(),saved.ebp);assert.equal(e.guest_read32(saved.esp),ret);}
+  else{assert.throws(service,activeMutation?WebAssembly.RuntimeError:/source identity mismatch/);if(activeMutation)assert(words.includes(95),'native KERNEL95 refusal reached');assert.equal(e.get_esp(),saved.esp);assert.equal(e.get_ebp(),saved.ebp);assert.equal(e.guest_read32(saved.esp),ret);}
   assert.equal(e.win16_bridge_fixed_usage(1),usage,'balanced references after return/refusal');
   assert.equal(e.win16_ft_checkpoint(),0n);assert.equal(e.get_sync_msg_depth(),0);assert.equal(mutation,null);
   retireNativeFtConnections(ctx);assert.equal(e.guest_read32(f.data+8),0);

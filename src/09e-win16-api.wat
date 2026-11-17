@@ -7026,11 +7026,12 @@
       (then (call $win16_GetProcAddress) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 95))
       (then
-        ;; Only owned fileless fixed acquisition can complete synchronously.
-        ;; Image-backed/dynamic nested loading still requires a request stack.
+        ;; Fixed acquisition is immediate. Images use a separate frame-owned
+        ;; request, leaving the parked PE/QT request untouched.
         (if (i64.ne (global.get $win16_bridge_frame) (i64.const 0))
           (then
             (if (call $win16_bridge_fixed_load_api) (then (return (i32.const 1))))
+            (if (call $win16_nested_request_begin (i32.const 1)) (then (return (i32.const 1))))
             (call $host_log_i32 (local.get $ordinal)) (unreachable)))
         (call $win16_LoadLibrary) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 96))
@@ -7038,6 +7039,7 @@
         (if (i64.ne (global.get $win16_bridge_frame) (i64.const 0))
           (then
             (if (call $win16_bridge_fixed_free_api) (then (return (i32.const 1))))
+            (if (call $win16_nested_request_begin (i32.const 2)) (then (return (i32.const 1))))
             (call $host_log_i32 (local.get $ordinal)) (unreachable)))
         (call $win16_FreeLibrary) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 97))
@@ -7055,18 +7057,14 @@
   ;; descriptor deliberately points outside the NE arena, so the ordinary
   ;; arena-selector predicate cannot validate it. Admit only this frame's
   ;; exact live alias and mapping lease, never an arbitrary external selector.
-  (func $win16_bridge_fixed_api_stack_selector (result i32)
+  (func $win16_bridge_qt_alias_valid (param $token i64) (result i32)
     (local $frame i32) (local $index i32) (local $base i32)
     (local $i i32) (local $rec i32) (local $valid i32)
-    (if (i32.eqz (call $win16_bridge_fixed_owner)) (then (return (i32.const 0))))
-    (local.set $frame (i32.wrap_i64 (global.get $win16_bridge_frame)))
-    (if (i32.eqz (i32.load offset=352 (local.get $frame)))
-      (then (return (call $win16_bridge_selector_valid (global.get $sreg_ss) (i32.const 1)))))
+    (local.set $frame (i32.wrap_i64 (local.get $token)))
     (if (i32.or (i32.ne (i32.load offset=24 (local.get $frame)) (i32.const 1))
       (i32.eqz (i32.load offset=268 (local.get $frame)))) (then (return (i32.const 0))))
     (local.set $index (i32.load offset=12 (local.get $frame)))
-    (if (i32.or (i32.ne (global.get $sreg_ss) (i32.load offset=352 (local.get $frame)))
-      (i32.ne (global.get $sreg_ss) (call $win16_index_to_sel (local.get $index))))
+    (if (i32.ne (i32.load offset=352 (local.get $frame)) (call $win16_index_to_sel (local.get $index)))
       (then (return (i32.const 0))))
     (local.set $base (i32.and (i32.load offset=48 (local.get $frame)) (i32.const 0xFFFF0000)))
     (if (i32.or (i32.ne (call $win16_seg_base (local.get $index)) (local.get $base))
@@ -7074,11 +7072,10 @@
         (i32.ne (i32.load offset=8 (i32.add (global.get $WIN16_SEG_TABLE)
           (i32.shl (local.get $index) (i32.const 4)))) (i32.const 1))))
       (then (return (i32.const 0))))
-    (if (i32.ne (global.get $seg_base_ss) (local.get $base)) (then (return (i32.const 0))))
     (call $lock_acquire (global.get $LOCK_VIRTUAL_MAP))
     (loop $leases
       (local.set $rec (call $virtual_map_lease_record (local.get $i)))
-      (if (i64.eq (i64.load (local.get $rec)) (global.get $win16_bridge_frame))
+      (if (i64.eq (i64.load (local.get $rec)) (local.get $token))
         (then
           (local.set $valid (i32.and (i32.eq (i32.load offset=8 (local.get $rec)) (local.get $base))
             (i32.and (i32.ne (i32.load offset=12 (local.get $rec)) (global.get $NULL_SENTINEL))
@@ -7087,6 +7084,16 @@
       (br_if $leases (i32.lt_u (local.get $i) (i32.const 16))))
     (call $lock_release (global.get $LOCK_VIRTUAL_MAP))
     (local.get $valid))
+
+  (func $win16_bridge_fixed_api_stack_selector (result i32)
+    (local $frame i32)
+    (if (i32.eqz (call $win16_bridge_fixed_owner)) (then (return (i32.const 0))))
+    (local.set $frame (i32.wrap_i64 (global.get $win16_bridge_frame)))
+    (if (i32.eqz (i32.load offset=352 (local.get $frame)))
+      (then (return (call $win16_bridge_selector_valid (global.get $sreg_ss) (i32.const 1)))))
+    (i32.and (call $win16_bridge_qt_alias_valid (global.get $win16_bridge_frame))
+      (i32.and (i32.eq (global.get $sreg_ss) (i32.load offset=352 (local.get $frame)))
+        (i32.eq (global.get $seg_base_ss) (i32.and (i32.load offset=48 (local.get $frame)) (i32.const 0xFFFF0000))))))
 
   ;; Validate a complete API stack and its far return before acquiring or
   ;; releasing a reference. The bridge stacks live in the affine owned arena.
@@ -7131,6 +7138,125 @@
     (if (i32.eqz (call $win16_bridge_fixed_release (call $win16_arg16 (i32.const 0)))) (then (return (i32.const 0))))
     ;; FreeLibrary is void: keep the caller's EAX intact.
     (call $win16_api_return (i32.const 2)) (i32.const 1))
+
+  ;; Nested image requests occupy +464..+503 of their running frame, not the
+  ;; singleton PE request. +4096 is a bounded private copy of the source path.
+  ;; Only QT and its synchronous lifecycle descendants may use this direction.
+  ;; Ordinary FT/callback invocation does not gain loader capabilities.
+  (global $win16_nested_serial (mut i64) (i64.const 0))
+  (func $win16_nested_owner (result i32)
+    (local $token i64) (local $f i32) (local $n i32)
+    (if (i32.eqz (call $win16_bridge_fixed_owner)) (then (return (i32.const 0))))
+    (local.set $token (global.get $win16_bridge_frame))
+    (loop $parents
+      (local.set $f (i32.wrap_i64 (local.get $token)))
+      (if (i32.or (i32.ne (i32.load offset=8 (local.get $f)) (call $lock_owner_id))
+        (i32.ne (i32.load offset=20 (local.get $f)) (i32.const 0x4E454354))) (then (return (i32.const 0))))
+      (if (i32.load offset=352 (local.get $f)) (then
+        (if (i32.or (i32.ne (global.get $win16_guest_op) (i32.const 4))
+          (i32.or (global.get $win16_guest_arg1)
+            (i64.ne (i64.load offset=384 (local.get $f)) (global.get $win16_guest_pending))))
+          (then (return (i32.const 0))))
+        (if (i32.or (i32.eqz (i32.load offset=312 (local.get $f)))
+          (i32.ne (global.get $win16_guest_owner) (call $lock_owner_id))) (then (return (i32.const 0))))
+        (return (i32.and (call $win16_bridge_qt_alias_valid (local.get $token))
+          (call $win16_ls_qt_return_valid (local.get $f))))))
+      (if (i32.load offset=408 (local.get $f)) (then (return (i32.const 0))))
+      (local.set $token (i64.load (local.get $f)))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (if (i32.or (i64.eqz (local.get $token)) (i32.ge_u (local.get $n) (i32.const 31)))
+        (then (return (i32.const 0))))
+      (br $parents))
+    (i32.const 0))
+
+  (func $win16_nested_request_begin (param $op i32) (result i32)
+    (local $f i32) (local $sel i32) (local $off i32) (local $limit i32)
+    (local $name i32) (local $n i32) (local $arg i32) (local $scratch i32)
+    (if (i32.or (global.get $yield_reason) (i32.eqz (call $win16_nested_owner))) (then (return (i32.const 0))))
+    (local.set $f (i32.wrap_i64 (global.get $win16_bridge_frame)))
+    (if (i32.or (i32.ne (i32.load offset=24 (local.get $f)) (i32.const 1))
+      (i64.ne (i64.load offset=464 (local.get $f)) (i64.const 0))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $win16_bridge_fixed_api_stack
+      (select (i32.const 8) (i32.const 6) (i32.eq (local.get $op) (i32.const 1))))) (then (return (i32.const 0))))
+    (if (i32.eq (local.get $op) (i32.const 1)) (then
+      (local.set $sel (call $win16_arg16 (i32.const 1)))
+      (local.set $off (call $win16_arg16 (i32.const 0)))
+      (if (i32.eqz (i32.or (call $win16_bridge_selector_valid (local.get $sel) (i32.const 0))
+        (call $win16_bridge_selector_valid (local.get $sel) (i32.const 1)))) (then (return (i32.const 0))))
+      (local.set $limit (call $win16_seg_limit (call $win16_sel_to_index (local.get $sel))))
+      (local.set $name (call $win16_far_to_guest (local.get $sel) (local.get $off)))
+      (block $terminated (loop $string
+        (if (i32.or (i32.gt_u (local.get $n) (i32.const 260))
+          (i32.ge_u (i32.add (local.get $off) (local.get $n)) (local.get $limit))) (then (return (i32.const 0))))
+        (i32.store8 offset=4096 (i32.add (local.get $f) (local.get $n)) (call $gl8 (i32.add (local.get $name) (local.get $n))))
+        (br_if $terminated (i32.eqz (call $gl8 (i32.add (local.get $name) (local.get $n)))))
+        (local.set $n (i32.add (local.get $n) (i32.const 1))) (br $string)))
+      (local.set $scratch (call $win16_name_scratch))
+      (call $win16_cstr_to_pstr (local.get $name) (local.get $scratch) (i32.const 1))
+      ;; A failed fixed acquisition cannot be bypassed via image loading.
+      (if (call $win16_bridge_fixed_id (call $win16_system_module_id (call $g2w (local.get $scratch))))
+        (then (return (i32.const 0))))
+      (local.set $arg (call $w2g (i32.add (local.get $f) (i32.const 4096)))))
+    (else
+      (local.set $arg (call $win16_arg16 (i32.const 0)))
+      (if (i32.eqz (call $win16_bridge_module_resolve (local.get $arg))) (then (return (i32.const 0))))))
+    (if (i64.eq (global.get $win16_nested_serial) (i64.const -1)) (then (unreachable)))
+    (global.set $win16_nested_serial (i64.add (global.get $win16_nested_serial) (i64.const 1)))
+    (i64.store offset=464 (local.get $f) (global.get $win16_nested_serial))
+    (i32.store offset=472 (local.get $f) (local.get $op))
+    (i32.store offset=476 (local.get $f) (local.get $arg))
+    (i32.store offset=480 (local.get $f) (global.get $eip))
+    (i32.store offset=484 (local.get $f) (i32.load offset=16 (global.get $reg_base)))
+    (i32.store offset=488 (local.get $f) (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+    (i32.store offset=492 (local.get $f) (global.get $sreg_ss))
+    (i32.store offset=496 (local.get $f) (global.get $sreg_cs))
+    (global.set $handler_set_eip (i32.const 1))
+    (global.set $steps (i32.const 0))
+    (global.set $yield_reason (i32.const 19))
+    (global.set $yield_flag (i32.const 1)) (i32.const 1))
+
+  (func $win16_nested_request_valid (export "win16_nested_request_valid")
+    (param $frame i64) (param $serial i64) (result i32)
+    (local $f i32)
+    (if (i32.eqz (call $win16_bridge_frame_valid (local.get $frame))) (then (return (i32.const 0))))
+    (if (i32.or (i64.eqz (local.get $serial)) (i32.eqz (call $win16_nested_owner))) (then (return (i32.const 0))))
+    (local.set $f (i32.wrap_i64 (local.get $frame)))
+    (if (i32.or (i64.ne (local.get $serial) (i64.load offset=464 (local.get $f)))
+      (i32.ne (global.get $yield_reason) (i32.const 19))) (then (return (i32.const 0))))
+    (if (i32.or (i32.ne (global.get $eip) (i32.load offset=480 (local.get $f)))
+      (i32.ne (i32.load offset=16 (global.get $reg_base)) (i32.load offset=484 (local.get $f)))) (then (return (i32.const 0))))
+    (if (i32.or (i32.ne (global.get $sreg_ss) (i32.load offset=492 (local.get $f)))
+      (i32.ne (global.get $sreg_cs) (i32.load offset=496 (local.get $f)))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $win16_bridge_fixed_api_stack
+      (select (i32.const 8) (i32.const 6) (i32.eq (i32.load offset=472 (local.get $f)) (i32.const 1))))) (then (return (i32.const 0))))
+    (i32.eq (call $gl32 (i32.load offset=484 (local.get $f))) (i32.load offset=488 (local.get $f))))
+  (func (export "win16_nested_request_frame") (result i64) (global.get $win16_bridge_frame))
+  (func (export "win16_nested_request_serial") (result i64)
+    (if (i32.eqz (call $win16_bridge_frame_valid (global.get $win16_bridge_frame))) (then (return (i64.const 0))))
+    (i64.load offset=464 (i32.wrap_i64 (global.get $win16_bridge_frame))))
+  (func (export "win16_nested_request_field") (param $frame i64) (param $serial i64) (param $field i32) (result i32)
+    (if (i32.eqz (call $win16_nested_request_valid (local.get $frame) (local.get $serial))) (then (unreachable)))
+    (if (i32.gt_u (local.get $field) (i32.const 1)) (then (unreachable)))
+    (i32.load offset=472 (i32.add (i32.wrap_i64 (local.get $frame)) (i32.shl (local.get $field) (i32.const 2)))))
+  (func (export "win16_nested_request_settle") (param $frame i64) (param $serial i64) (param $value i32) (result i32)
+    (local $f i32) (local $id i32) (local $scratch i32) (local $op i32)
+    (if (i32.eqz (call $win16_nested_request_valid (local.get $frame) (local.get $serial))) (then (return (i32.const 0))))
+    (local.set $f (i32.wrap_i64 (local.get $frame)))
+    (local.set $op (i32.load offset=472 (local.get $f)))
+    (if (i32.eq (local.get $op) (i32.const 1)) (then
+      (if (i32.ge_u (local.get $value) (i32.const 32)) (then
+        (local.set $id (call $win16_bridge_module_resolve (local.get $value)))
+        (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 3))) (then (return (i32.const 0))))
+        (local.set $scratch (call $win16_name_scratch))
+        (call $win16_cstr_to_pstr (i32.load offset=476 (local.get $f)) (local.get $scratch) (i32.const 1))
+        (if (i32.ne (call $win16_module_id (call $g2w (local.get $scratch))) (local.get $id)) (then (return (i32.const 0)))))
+      (else (if (i32.ne (local.get $value) (i32.const 2)) (then (return (i32.const 0))))))
+      (i32.store16 (global.get $reg_base) (local.get $value))))
+    (global.set $yield_reason (i32.const 0))
+    (global.set $yield_flag (i32.const 0))
+    (i64.store offset=464 (local.get $f) (i64.const 0))
+    (call $win16_api_return (select (i32.const 4) (i32.const 2) (i32.eq (local.get $op) (i32.const 1))))
+    (i32.const 1))
   ;;
   ;; The names in an NE's tables are upper case Pascal strings, and everything
   ;; an app passes to LoadLibrary or GetProcAddress is a C string in whatever
