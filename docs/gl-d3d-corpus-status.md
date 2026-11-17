@@ -1,4 +1,22 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-11-08
+# OpenGL / Direct3D corpus status, updated 2026-11-17
+
+## November 17 renderer regression results
+
+These component results do not update the historical per-game/backend rows
+below. Current original-game checks and the full 27-app requirement remain open.
+
+| Path | Result | Scope and evidence |
+| --- | --- | --- |
+| D3DIM palette color-key rejection | Fixed in `280503c1a`; mandatory palette oracle passes all 32 observations | The producer saturated alpha-minus-threshold before `TEXKILL`, so keyed fragments survived. The fix preserves the negative intermediate. Real WAT palette handlers/stream production into the software executor, shader canonicalization, keyed-mipmap regression and locked build pass. No browser/game claim. [Cause and tests](re-notes/d3dim-key-kill-saturation-20261117.md); run `20261117-coordinator-gps-palette-fixed`. |
+| Shared browser render Worker | RGBA8 wire test corrected in `5cf975062`; actual Chrome WebGL and native software arms pass | One physical shared Worker, four readbacks, 4,096 channel comparisons, 576 padding/end-canary comparisons and four presents. Chrome process exit/close and both EOFs observed. Raw RGB565 requests correctly refused; native Glide conversion tested separately. ANGLE SwiftShader, no physical-GPU claim. Run `20261117-coordinator-browser-shared-graphics`. |
+| D3DIM surface fences | Native regression passes | Real WAT stream producer/software executor checks alias-specific/global readback, RGB565 pixels, dirty state, lazy Lock/Unlock and old/new backing replacement. Native process and watchdog waits/EOFs complete. Instrumented authored fixture, no original app or WebGL claim. Run `20261117-coordinator-d3dim-surface-fences`. |
+
+The separate current browser palette-lifetime fixture stopped before its first
+pixel observation: its retired legacy transport rejected `gpu_stream_kick`.
+Run `20261117-coordinator-browser-palette-lifetime` retains that failure. It
+establishes a stale fixture dependency, not a production rendering defect or
+browser palette-lifetime success. Original GLTron gameplay through the current
+GPS paths is assigned for fresh native-input/backend evidence.
 
 ## November 12 current original-game progress
 
