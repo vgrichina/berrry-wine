@@ -10,8 +10,63 @@ def until(path):
         assert time.monotonic()<end,str(path)
         time.sleep(.01)
     return json.loads(path.read_text())
+def listener_tests(out):
+    import socket,tempfile
+    from unittest.mock import patch
+    out.mkdir()
+    # Real listener creation between the old FD snapshot and TCP read faithfully
+    # reproduces the failed local admission without any HTTP or native input.
+    race=out/'race';race.mkdir()
+    info=dict(pid=os.getpid(),startToken=m.H.token(os.getpid()))
+    m.save(race,'native-pid.json',info)
+    sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+    before={str(p.readlink()) for p in pathlib.Path(f'/proc/{os.getpid()}/fd').iterdir() if p.exists()}
+    # Use a second socket: bind/listen after the old snapshot, so its inode is new.
+    sock.close();sock=socket.socket();sock.bind(('127.0.0.1',port));sock.listen()
+    rows=[r.split() for r in pathlib.Path('/proc/net/tcp').read_text().splitlines()[1:]]
+    row=next(r for r in rows if r[1]=='0100007F:'+format(port,'04X') and r[3]=='0A')
+    assert 'socket:['+row[9]+']' not in before
+    receipt=m.wait_owned_listener(race,port,1)
+    assert receipt['inode']==row[9] and receipt['tcpBeforeFDs']
+    sock.close()
+    # PID alone never admits a socket; the unchanged process creates a real
+    # delayed listener, after which matching ownership is required.
+    run=out/'delayed';run.mkdir()
+    code="import socket,time;time.sleep(.25);s=socket.socket();s.bind(('127.0.0.1',"+str(port)+"));s.listen();print('listening',flush=True);time.sleep(60)"
+    p=subprocess.Popen([sys.executable,'-c',code],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    m.save(run,'native-pid.json',dict(pid=p.pid,startToken=m.H.token(p.pid)))
+    try:
+        result=m.wait_owned_listener(run,port,2)
+        assert result['pidWithoutListenerSamples']>0 and result['verifiedAt']-result['startedAt']>=.2
+        foreign=out/'foreign';foreign.mkdir();m.save(foreign,'native-pid.json',info)
+        try:m.wait_owned_listener(foreign,port,1)
+        except AssertionError as e:assert 'not owned' in str(e)
+        else:raise AssertionError('foreign listener admitted')
+        stale=out/'stale';stale.mkdir();m.save(stale,'native-pid.json',dict(pid=p.pid,startToken='wrong'))
+        try:m.wait_owned_listener(stale,port,1)
+        except AssertionError as e:assert 'identity changed' in str(e)
+        else:raise AssertionError('stale PID admitted')
+    finally:
+        p.terminate();a,b=p.communicate(timeout=5)
+        m.save(run,'native-wait.json',dict(exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode()))
+    absent=out/'absent';absent.mkdir();m.save(absent,'native-pid.json',info)
+    try:m.wait_owned_listener(absent,port,.05)
+    except AssertionError as e:assert 'deadline' in str(e)
+    else:raise AssertionError('PID alone admitted')
+    closed=out/'unknown';closed.mkdir();m.save(closed,'PERMANENT-UNKNOWN.json',{})
+    with patch.object(m.pathlib.Path,'read_text',side_effect=AssertionError('read after UNKNOWN')):
+        try:m.wait_owned_listener(closed,port,1)
+        except AssertionError as e:assert 'permanent UNKNOWN' in str(e)
+        else:raise AssertionError('UNKNOWN read process state')
+    assert not list(out.rglob('requests.jsonl'))
+    m.save(out,'listener-proof.json',dict(passed=True,oldOrderRaceReproduced=True,tcpBeforeFDs=True,
+        actualDelayedSocket=True,pidAloneRefused=True,foreignRefused=True,staleIdentityRefused=True,
+        UNKNOWNNoReads=True,HTTPRequests=0))
+    print('PASS real listener sampling race, delayed socket/PID-alone, foreign/stale/deadline/UNKNOWN; zero HTTP')
+
 def main():
     mode=sys.argv[1];out=pathlib.Path(sys.argv[2]).resolve()
+    if mode=='listener':return listener_tests(out)
     if mode=='native':
         m.RUN=out
         code="import signal,time,sys;signal.signal(signal.SIGTERM,lambda s,f:sys.exit(0));print('ready',flush=True);time.sleep(60)"

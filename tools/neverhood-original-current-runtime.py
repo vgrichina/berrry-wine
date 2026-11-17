@@ -590,6 +590,40 @@ def pipeline(out,revision,fixture=False,working=False):
     for fd in held:os.close(fd)
     save(out,'holder-closed.json',dict(at=time.time(),descriptorsClosed=True))
 
+def wait_owned_listener(out,port,seconds=30):
+    """Passively admit an actual local listener before importing the controller.
+
+    Read TCP before FDs: a listener may be created between the two reads. The
+    reverse order can mistake that ordinary startup transition for a foreign
+    socket. Preserve strict token/inode ownership and never make a probe request.
+    """
+    assert 0<port<65536 and 0<seconds<=30
+    started=time.time();deadline=time.monotonic()+seconds;samples=0;missing=0
+    while True:
+        assert not (out/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN'
+        assert time.monotonic()<deadline,'owned listener readiness deadline'
+        if (out/'native-pid.json').exists():
+            info=json.loads((out/'native-pid.json').read_text());pid=info['pid']
+            assert H.token(pid)==info['startToken'],'native PID identity changed'
+            rows=[r.split() for r in pathlib.Path('/proc/net/tcp').read_text().splitlines()[1:]]
+            matches=[r for r in rows if r[1]=='0100007F:'+format(port,'04X') and r[3]=='0A']
+            samples+=1
+            if matches:
+                assert len(matches)==1,'ambiguous local listener'
+                sockets=set()
+                for fd in pathlib.Path(f'/proc/{pid}/fd').iterdir():
+                    try:sockets.add(str(fd.readlink()))
+                    except FileNotFoundError:pass
+                assert H.token(pid)==info['startToken'],'native PID identity changed'
+                assert 'socket:['+matches[0][9]+']' in sockets,'listener not owned by native process'
+                receipt=dict(passed=True,target=info,port=port,inode=matches[0][9],startedAt=started,
+                    verifiedAt=time.time(),samples=samples,pidWithoutListenerSamples=missing,
+                    passiveOnly=True,beforeControllerStartup=True,tcpBeforeFDs=True)
+                save(out,'owned-listener-ready.json',receipt)
+                return receipt
+            missing+=1
+        time.sleep(.01)
+
 def pin_process(pid,token):
     assert H.token(pid)==token
     fd=os.pidfd_open(pid);poll=select.poll();poll.register(fd,select.POLLIN)
@@ -652,6 +686,7 @@ def main():
     elif mode=='prepare':prepare(out,sys.argv[3],list(OWN) if '--owned-patches' in sys.argv else [])
     elif mode=='recipe':save(out,'recipe.json',recipe(pathlib.Path(sys.argv[3]),out))
     elif mode=='watchdog':watchdog(out,float(sys.argv[3]))
+    elif mode=='listener':wait_owned_listener(out,int(sys.argv[3]),float(sys.argv[4]) if len(sys.argv)>4 else 30)
     elif mode=='owner-watchdog':owner_watchdog(out,int(sys.argv[3]),sys.argv[4],float(sys.argv[5]))
     elif mode=='persistent-owner':return persistent_owner(out,int(sys.argv[3]),sys.argv[4],float(sys.argv[5]),sys.argv[6:])
     elif mode in ('run','admit'):run(out,json.loads(pathlib.Path(sys.argv[3]).read_text()),mode=='admit')
