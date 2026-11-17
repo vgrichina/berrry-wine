@@ -6,15 +6,25 @@ source pool, compiled module, guard and existing CD without archiving them.
 """
 import pathlib, subprocess, sys, os, time, json, signal, threading, fcntl, hashlib, importlib.util, socket
 ROOT=pathlib.Path(__file__).resolve().parent.parent
-RUN=ROOT/'scratch/runs/20261116-neverhood-original-install-after-setupx'
+RUN=ROOT/'scratch/runs/20261117-neverhood-original-install'
+PRIOR_RUN=ROOT/'scratch/runs/20261116-neverhood-original-install-after-setupx'
 PRELOAD='tools/disciples2-current-native-source-view.cjs'
 HELPER='tools/disciples2-current-supervisor.py'
 OWN=('tools/neverhood-original-current-runtime.py','tools/neverhood-original-current-control.py',
      'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs')
 POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=5,menuFreshnessSeconds=30)
 def helper():
+    # Shared sources can change while another worker owns them. Refuse those
+    # bytes before executing them; only published helpers may be borrowed.
+    bodies={}
+    for name in (HELPER,PRELOAD):
+        published=subprocess.check_output(['git','show','main:'+name],cwd=ROOT)
+        assert (ROOT/name).read_bytes()==published,'unpublished borrowed helper: '+name
+        bodies[name]=published
     spec=importlib.util.spec_from_file_location('published_sealing',ROOT/HELPER)
-    m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
+    m=importlib.util.module_from_spec(spec)
+    exec(compile(bodies[HELPER],str(ROOT/HELPER),'exec'),m.__dict__)
+    return m
 H=helper()
 def save(out,name,value):H.save(out,name,value)
 def checked(out,name,args,env=None,timeout=240,pass_fds=()):
@@ -137,7 +147,7 @@ def run(out,recipe,only_admit=False):
     if only_admit:
         for fd in fds:os.close(fd)
         return
-    assert not (RUN/'original-spawned.json').exists(),'one pipeline permanently consumed'
+    assert not any((p/'original-spawned.json').exists() for p in (RUN,PRIOR_RUN)), 'one pipeline permanently consumed'
     start=time.time();deadline=start+2400
     w=subprocess.Popen([sys.executable,'-B',__file__,'watchdog',str(out),str(start+2420)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     while not (out/'watchdog-armed.json').exists():assert w.poll() is None;time.sleep(.01)

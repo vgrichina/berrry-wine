@@ -24,7 +24,20 @@ with tempfile.TemporaryDirectory() as d:
   except AssertionError as e:assert 'permanent UNKNOWN' in str(e)
   else:raise AssertionError('postUNKNOWN')
  assert not (m.R/'requests.jsonl').exists()
-print('PASS actual BUTTON identity/generation/label/enabled refusals; permanent UNKNOWN no normal or cleanup HTTP')`;
+runtime=importlib.util.spec_from_file_location('runtime','tools/neverhood-original-current-runtime.py');rt=importlib.util.module_from_spec(runtime);runtime.loader.exec_module(rt)
+from unittest.mock import patch
+with patch('importlib.machinery.SourceFileLoader.exec_module',side_effect=AssertionError('mutable path re-read')):
+ assert callable(rt.helper().seal)
+original_read=pathlib.Path.read_bytes
+for borrowed in (rt.HELPER,rt.PRELOAD):
+ def changed_read(p):
+  body=original_read(p)
+  return body+b'\\n# unpublished' if p==rt.ROOT/borrowed else body
+ with patch.object(pathlib.Path,'read_bytes',changed_read):
+  try:rt.helper()
+  except AssertionError as e:assert 'unpublished borrowed helper' in str(e)
+  else:raise AssertionError('executed unpublished helper')
+print('PASS actual BUTTON identity/generation/label/enabled refusals; permanent UNKNOWN zero HTTP; unpublished borrowed helper/preload refused before import')`;
  const p=cp.spawnSync('python3',['-B','-c',code],{cwd:path.resolve(__dirname,'..'),encoding:'utf8'});
  process.stdout.write(p.stdout);process.stderr.write(p.stderr);assert.equal(p.status,0);process.exit(0);
 }
