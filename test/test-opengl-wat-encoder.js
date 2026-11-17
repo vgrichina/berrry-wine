@@ -26,6 +26,17 @@ const sectionEnabled = name => SECTION === 'all' || SECTION === name;
 const u32 = value => ({ kind: 'u32', value });
 const f32 = value => ({ kind: 'f32', value });
 
+// An instance's first GL record is the lone 0x10008 WGL-mode query
+// (src/09a8cw-gl-wgl.wat, answered in lib/host-imports.js). It is not an
+// encoded call: every mock answers it like a host where WAT does not own WGL
+// (tag 0x5747, bit0 clear) so the encoder streams, and never records it.
+const WGL_MODE_NOT_OWNED = 0x57470000;
+function isWglModeQuery(memory, base, length) {
+  if ((length >>> 0) < 8) return false;
+  const view = new DataView(memory.buffer, base >>> 0, 8);
+  return view.getUint32(0, true) === (length >>> 0) && view.getUint32(4, true) === 0x10008;
+}
+
 function submissionResult(bytes, memory, guestToWasm = pointer => pointer) {
   const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   let at = 0, opcode = -1, lastAt = 0;
@@ -291,6 +302,7 @@ async function main() {
     assert.strictEqual(opcode >>> 0, STREAM_CALL,
       'production GL crosses the host boundary only as a native WAT stream');
     const bytes = Buffer.from(new Uint8Array(memory.buffer, streamWa >>> 0, byteLength >>> 0));
+    if (isWglModeQuery(memory, streamWa, byteLength)) return WGL_MODE_NOT_OWNED;
     activeSubmissions.push(bytes);
     return submissionResult(bytes, memory, translateGuest);
   };
@@ -953,7 +965,10 @@ async function main() {
       // instance or expose its memory to a later producer/isolation test.
       const trapMemory = new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
       const trapImports = {host:{...imports.host,memory:trapMemory}};
-      trapImports.host.gpu_gl_call = () => { throw Error('invalid fixture unexpectedly published'); };
+      trapImports.host.gpu_gl_call = (opcode, base, length) => {
+        if (isWglModeQuery(trapMemory, base, length)) return WGL_MODE_NOT_OWNED;
+        throw Error('invalid fixture unexpectedly published');
+      };
       const trapped = new WebAssembly.Instance(module_,trapImports).exports;
       trapped.init_thread(0,0x400000,0,0,0,0,0);trapped.heap_init(0x420000);
       assert.throws(() => action(watRunner(trapMemory,trapped)),WebAssembly.RuntimeError,
@@ -1008,6 +1023,7 @@ async function main() {
       let rejectNext = false;
       poolImports.host.gpu_gl_call = (opcode, base, length) => {
         assert.strictEqual(opcode, STREAM_CALL);
+        if (isWglModeQuery(poolMemory, base, length)) return WGL_MODE_NOT_OWNED;
         if (rejectNext) { rejectNext = false; throw new Error('test rejected publication'); }
         published.push({ base, length, bytes: Buffer.from(new Uint8Array(poolMemory.buffer, base, length)) });
         return 700 + published.length;
@@ -1045,8 +1061,10 @@ async function main() {
             'two published buffers remain intact while writing the third');
         }
         assert.strictEqual(gl.flush(), 701 + i, 'flush preserves host result');
-        assert.strictEqual(published[i].base, bases[pooled ? i % 3 : 0]);
-        assert.strictEqual(e.gl_wat_stream_base() >>> 0, bases[pooled ? (i + 1) % 3 : 0]);
+        // +1: the first record's lone WGL-mode query already published (and
+        // rotated past) pool buffer 0; the mock answers it without recording.
+        assert.strictEqual(published[i].base, bases[pooled ? (i + 1) % 3 : 0]);
+        assert.strictEqual(e.gl_wat_stream_base() >>> 0, bases[pooled ? (i + 2) % 3 : 0]);
         const next = e.gl_wat_stream_base();
         assert.strictEqual(gl.flush(), 0, 'empty flush does not publish or rotate');
         assert.strictEqual(e.gl_wat_stream_base(), next);

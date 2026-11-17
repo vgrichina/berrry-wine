@@ -477,6 +477,10 @@
 
   (func $gl_packed_begin (param $mode i32) (result i32)
     (local $start i32)
+    ;; A packed draw can be an instance's first record. Ask who owns WGL
+    ;; before writing it, exactly as $gl_emit_record does: the host only
+    ;; recognizes the lone 0x10008 query, never one queued behind a draw.
+    (if (i32.lt_s (global.get $gl_owned) (i32.const 0)) (then (call $gl_wgl_query_mode)))
     ;; WAT-owned WGL: the last draw was rasterized at its finish; reuse the stream.
     (if (call $gl_wgl_owned) (then
       (global.set $gl_stream_used_bytes (i32.const 0))
