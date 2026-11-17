@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 294,
+  "count": 300,
   "sigs": {
     "log": {
       "params": [
@@ -336,6 +336,12 @@
       "results": [
         "i32"
       ]
+    },
+    "input_pump_idle": {
+      "params": [
+        "i32"
+      ],
+      "results": []
     },
     "check_input_lparam": {
       "params": [],
@@ -2132,6 +2138,46 @@
         "i32"
       ]
     },
+    "com_localserver_information": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "com_interface_operation": {
+      "params": [
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "com_interface_result": {
+      "params": [
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "com_proxy_stub": {
+      "params": [
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
     "com_create_instance": {
       "params": [
         "i32",
@@ -2726,6 +2772,16 @@
     },
     "net_link_open": {
       "params": [
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "com_treat_as_class": {
+      "params": [
+        "i32",
+        "i32",
         "i32"
       ],
       "results": [

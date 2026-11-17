@@ -4,7 +4,7 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "sha256": "e82db51aed2ef968ca0d901e46a17a01ebffe5f61e177c23d01796997b1282d0",
+      "sha256": "2f0b9ae34726c27c662f5c3df4451689c51bfc4cefe459cedc45c25aab2ebc6a",
       "nfs2seThreadBootClockReview20261116": "_guestClockNow holds the guest tick clock while ThreadManager reports a runnable thread still booting its Worker, then slides wallStartMs past the held interval. Clock arithmetic only: no callback, continuation, invocation or register change.",
       "hitmanWorkerExitRegsReview20261115": "Worker-main exit report prints the slice reply's own registers (r.regs) instead of the idle page instance's zeros. Diagnostic text only: no callback, continuation, invocation or register restoration change.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
@@ -22,7 +22,10 @@
       "reviewSmcOptIn20261110": "Adds the set_smc_same_block decode-time config setter (app smcSameBlock / ?smc-same-block), applied with and inherited like set_aggressive_stack; data only, no guest callback, invocation or context restoration. Ownership remains pending.",
       "reviewStartupResources20261109": "Browser host now retains registerDllResources in loadDlls options for host-local registration during the Worker startup barrier, removes late post-initializer registration. Callback never crosses structured clone. No guest entry or register restoration added to host. Actual Node protocol tests cover mapping-before-registration-before-entry, rejection and retirement; browser visual qualification still pending.",
       "reviewReleaseMerge20261113": "Release merge 2026-11-13 (boat origin/main b39104e2b + local main bf9ad5676): content is the union of both lines' separately reviewed changes. Where both implemented MIDI Worker callbacks, the boat's fenced transport (typed/rooted registrations, window and function callbacks, retirement on delivered MOM_CLOSE) is kept and the local duplicate registration/retirement wrappers are dropped. Render publication queue/snapshot state, guest main owner, DLL startup resources and close-time memory release are ported unchanged. No new EIP target, owner or retained invocation; ownership remains pending.",
-      "d3dimGpsReview20261115": "2026-11-15 GPU stream v2 D2a: _startD3DIMGpu only enables the WAT producer (no lib/d3dim-gpu.js executor); cooperative siblings get d3dCommands null and d3dim_gpu_cooperative_enable on both instances. No guest invocation, callback owner, continuation or retained guest reference added."
+      "d3dimGpsReview20261115": "2026-11-15 GPU stream v2 D2a: _startD3DIMGpu only enables the WAT producer (no lib/d3dim-gpu.js executor); cooperative siblings get d3dCommands null and d3dim_gpu_cooperative_enable on both instances. No guest invocation, callback owner, continuation or retained guest reference added.",
+      "reviewCurrentDisplay20261114": "20261114 current-display capture: synchronous host wrapper derives PID/instance from this live host and refuses stopped/pending-surface state. No guest invocation, export, input, clock, callback, timer, context restoration or hold release added. The existing renderer ticket owns cancellation/readback and next-publication semantics remain distinct. Ownership remains pending; run 20261114-gltron-current-display-capture.",
+      "mergeOrigin20261117": "Merge 2026-11-17 of local main (GPU stream v2: GL/D3D9 retire, render targets, readback cuts) with origin/main 2d3a248f3: this producer was changed on both lines; content is the union of both separately reviewed changes, no new callback, continuation or invocation.",
+      "anchoredReview_11653b8e": "20261116 passive current-display observation: a real pending host surface arms the existing owner-bound request until an ordinary unheld successful composition/display. No upload, guest invocation, new callback/timer, clock change, hold release or input admission change. Immediate held/partial reads still refuse; existing request cancellation and immutable readback lifetime remain authoritative. General invocation ownership remains pending. Run 20261116-boids-pending-publication-display-capture."
     },
     {
       "file": "lib/app-profiles.js",
@@ -124,7 +127,7 @@
     {
       "file": "lib/dll-loader.js",
       "name": "host-file",
-      "sha256": "a821356728a03e63c97591a847f1d727dbc68472450de1edd30cf39250ab8f6d",
+      "sha256": "deb6b1b6bd417cac7007c7f27748ad117729349a9c5fb64e2237dca4ccb99bd5",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261031 Pirates: asynchronous thread notification retains its existing DLL gate, generation pins, generator and saved caller frame across a blocking CS yield. Worker resolver reads the mapped owner word and exact parked stack argument, awaits without guest execution, verifies unchanged EIP/ESP/yield before clearing only that wait, then lets native EnterCriticalSection retry acquisition. Unsupported waits and synchronous callbacks still reject incomplete completion. Focused test-worker-dll-critical-section.js rejects retained old source; broader ownership remains pending. Async DLL continuation retirement review 20261031: bind an owner to the actual endpoint instance; track each async callback gate and generator through its real finally unwind, including nested LoadLibrary. Cancellation fences admission and gives mapping iterators an incomplete outcome for rollback/quarantine, never a completed callback. Failed notification snapshot pins retain their exact generation until endpoint retirement joins the command; release only those owned pins. A generation cleanup fault prevents acknowledgment, and unfinished PROCESS_ATTACH mapping pins remain quarantined. Scoped/cooperative ownership remains separate and unchanged. Deterministic actual Worker/RPC failed-init, nested CS/lookup cancellation, lost reply, stale generation, unresponsive transport and ordinary-success tests plus retained-host causal orphan-gate rejection; evidence scratch/runs/20261031T1022Z-pirates-retirement/. No new native replay; broader ownership remains pending. Review 20261031 builtin execution policy: reject builtin-only native mapping before lifecycle acquisition; central classification delegation adds no callback, continuation or cleanup path. Review 20261103 Alice CLI gate admission: an optional contention hook runs only after failed real gate admission and receives the observed owner word. It never owns or releases the gate; callback rejection propagates unchanged, and the next loop checks endpoint cancellation before another atomic admission. Immediate and same-owner recursive acquisition never invokes the hook. Existing generator, generation pin, quarantine and finally release paths are unchanged. Production CLI real PE old-fail/new-pass, ordinary scheduling, actual owner-id/nested load/unload, owner fault quarantine, gate hook rejection/retired requester and existing real Worker serialization/lifecycle tests are retained in scratch/runs/20261103-alice-gate-scheduling-repair/. Broader invocation ownership remains pending. Stronghold profile-2 coverage review 20261105: optional native begin/finish token replaces only ordinary DllMain stack setup and saved EIP/ESP restoration. Native token checks registered entrypoint/generation, process/root, actual RET sentinel and exact parent stack; incomplete outcomes keep failed native history. Existing DLL gate, generator, initialization policy, register/yield restoration, profile-1 behavior and endpoint retirement remain unchanged; broader invocation ownership remains pending.",
@@ -180,7 +183,7 @@
     {
       "file": "lib/guest-worker.js",
       "name": "host-file",
-      "sha256": "4aea239ce4fe65a57906081d16c4f15c96d12f18d107360309210054b89f59b3",
+      "sha256": "9fa351560f5e7d865ff366eb8ee8049cd948cedbe10efd8ca1d3cd73aba3088e",
       "glRetireS3Review20261116": "gl-retire S3 removes the software-GL producer mailbox and the GL publication options; the Worker's GL flush is only the synchronous 0x10008 mode query, no callback or ownership state is added.",
       "d3dimOldPathDeleteReview20261115": "2026-11-15 GPU stream v2 D2c: lib/d3dim-gpu.js deleted. The lazy D3D9 backend loader drops d3dim-gpu.js (renamed loadD3D9BackendScripts, keyed on D3D9Backend); the shared encoder no longer takes gpuCalls/sharedSurfaceSync and d3dCommands forwards 0x20000-0x20006 only. Includes gps-9.2's d3d9-fixed.js token removal. No guest invocation, callback owner, continuation or retained guest reference added.",
       "gpuStreamDoorbellReview20261114": "2026-11-14 GPU stream doorbell: the Worker loads gpu-stream.generated.js + gpu-stream-doorbell.js so guest-rpc can notify/wait on a ring's shared header words, and slice results carry the gps counters. No guest invocation, callback owner, continuation or retained guest reference added.",
@@ -198,7 +201,10 @@
       "reviewSnapshotState20261108": "Delta from 157b7a991 adds one queued data-only renderSnapshotState handler. It rejects retirement/foreign endpoint identity and stores validated metadata in the existing import transport. It performs no guest export call, callback, context restoration or native state mutation. Existing command-queue and teardown ownership are unchanged; invocation ownership remains pending.",
       "review20261108": "Delta from 7d2a9ec08: route leased D3D descriptors through process publication, fence before non-batch messages, publish final batch and fence admission after existing DLL detach before normal sliceDone. No new guest entry/context restoration. Trap/termination still skip arbitrary guest detach. Lifetime ordering covered by shared Worker protocol tests; invocation ownership remains pending.",
       "reviewReleaseMerge20261113": "Release merge 2026-11-13 (boat origin/main b39104e2b + local main bf9ad5676): content is the union of both lines' separately reviewed changes. Where both implemented MIDI Worker callbacks, the boat's fenced transport (typed/rooted registrations, window and function callbacks, retirement on delivered MOM_CLOSE) is kept and the local duplicate registration/retirement wrappers are dropped. Render publication queue/snapshot state, guest main owner, DLL startup resources and close-time memory release are ported unchanged. No new EIP target, owner or retained invocation; ownership remains pending.",
-      "d3dimGpsReview20261115": "2026-11-15 GPU stream v2 D2a: d3dimGpu enables the WAT producer in every Worker shape; the in-Worker lib/d3dim-gpu.js executor and the lazy-Lock enable are removed and the shared encoder no longer carries D3DIM GPU calls. No guest invocation, callback owner, continuation or retained guest reference added."
+      "d3dimGpsReview20261115": "2026-11-15 GPU stream v2 D2a: d3dimGpu enables the WAT producer in every Worker shape; the in-Worker lib/d3dim-gpu.js executor and the lazy-Lock enable are removed and the shared encoder no longer carries D3DIM GPU calls. No guest invocation, callback owner, continuation or retained guest reference added.",
+      "threadReturnReview20261114": "2026-11-14 ThreadProc return sentinel: a per-instance host-armed slot record observes the actual RET target and pre/post stack addresses, including fused pop/RET. Only consuming the seeded zero return slot with stdcall argument cleanup certifies normal return. Main stays unarmed; NULL transfers and mismatched frames do not certify return. Secondary schedulers capture the returned DWORD before exactly-once DLL detach; unexpected EIP zero retires as fault without arbitrary guest detach. Explicit ExitThread and existing crash diagnostics stay distinct. ThreadManager also adopts the fully reviewed released cleanup delta: exit fenced before reentry, independent resource retries, once-only notifications, cancelling owner retention and permanent exact cancellation-fault quarantine; incomplete cleanup retains slot/stack. Tests and run: 20261114-thread-return-sentinel. Broader invocation ownership remains pending.",
+      "mergeOrigin20261117": "Merge 2026-11-17 of local main (GPU stream v2: GL/D3D9 retire, render targets, readback cuts) with origin/main 2d3a248f3: this producer was changed on both lines; content is the union of both separately reviewed changes, no new callback, continuation or invocation.",
+      "anchoredReview_fdc42f0e": "Worker opts into bounded pending COM activation advancement. Each host slice receives an incomplete result while the same iterator and original invocation frame remain parked. Existing watchdog timeout, retirement and message scheduling remain unchanged; the runtime validates ownership before any later advance. GPU stream v2 (D2c/9.2, 20261115): D3D9 backend script list loses d3d9-fixed.js/d3dim-gpu.js and d3dCommands forwards only 0x20000-0x20006; no guest invocation, callback or continuation change."
     },
     {
       "file": "lib/host-audio.js",
@@ -243,12 +249,13 @@
       "review20261108": "Delta from 7d2a9ec08: owned GL/Glide replay and D3D9 snapshot adapter; synchronous GL ownership clear runs only under empty-publication guard, with compositor duplicate clear disabled. The guard retains process queue metadata, not a guest invocation. Deferred D3D9 admission consumes its own result token; no guest context restore. GL/GDI ordering and real broker snapshot tests pass. Invocation ownership remains pending.",
       "reviewReleaseMerge20261113": "Release merge 2026-11-13 (boat origin/main b39104e2b + local main bf9ad5676): content is the union of both lines' separately reviewed changes. Where both implemented MIDI Worker callbacks, the boat's fenced transport (typed/rooted registrations, window and function callbacks, retirement on delivered MOM_CLOSE) is kept and the local duplicate registration/retirement wrappers are dropped. Render publication queue/snapshot state, guest main owner, DLL startup resources and close-time memory release are ported unchanged. No new EIP target, owner or retained invocation; ownership remains pending.",
       "d3dimGpsReview20261115": "2026-11-15 GPU stream v2 D2a: gpu_stream_kick also routes GpsRing.api D3DIM to a lazily built lib/d3dim-host.js bridge, whose onPresent marks the layer stale against the CPU present sequence. Host-side rendering only; no guest invocation, callback owner, continuation or retained guest reference added.",
-      "d3d9GpsDefaultReview20261116": "2026-11-16 GPU stream v2 slice 9.5b: the ring api 4 bridge's executor defaults to the D3D9 renderer (software outside a page), and a host without lib/gpu-stream-host.js answers kick with 0 instead of throwing. No guest invocation, callback owner, continuation or retained guest reference added."
+      "d3d9GpsDefaultReview20261116": "2026-11-16 GPU stream v2 slice 9.5b: the ring api 4 bridge's executor defaults to the D3D9 renderer (software outside a page), and a host without lib/gpu-stream-host.js answers kick with 0 instead of throwing. No guest invocation, callback owner, continuation or retained guest reference added.",
+      "gpuStreamD2cReview20261115": "D3DIM 0x2000A GPU branch removed; the shared D3DIM bridge is software-only and the WAT producer owns GPU records. No guest invocation, callback, continuation or memory ownership change."
     },
     {
       "file": "lib/ne-guest-bridge.js",
       "name": "host-file",
-      "sha256": "25e7c3778236e90bfc6cb030712104b4b5cc605bc61a7579fba48cfbd1b368ca",
+      "sha256": "e2fbe5e0307efb4bb6e805b51b850ef51763b00d5afda1055cb9dfb1733fa419",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Review 20261107 Outlaws Worker NE lifecycle: source closure preflight awaits only after native temporary scopes unwind, under the existing callback gate and serialized owning Worker command. Request token/frame and live endpoint are checked before and after I/O. Existing synchronous NE transaction/invocation owns LibEntry, exports, WEP and exactly-once settlement; no asynchronous NE guest execution added. Slice and nested PE callbacks use that same service. Stop joins existing endpoint cancellation/generator retirement before termination; failed or cancelled initializers retain quarantine pins. Actual production Worker original-style nested DLL regression fails on prior source and covers success, parked I/O, transitive imports, typed errors, LibEntry/import/WEP failures and cancellation. Broader invocation ownership remains pending; see docs/re-notes/outlaws-worker-ne-lifecycle-20261107.md.",
       "ownership": "pending"
@@ -256,7 +263,7 @@
     {
       "file": "lib/ne-invoke.js",
       "name": "host-file",
-      "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5",
+      "sha256": "7ba05ed04385218cd0da7fdb9639531bdfcf3c973729aab7304daf5c5be5da88",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"
@@ -264,7 +271,7 @@
     {
       "file": "lib/ne-lifecycle.js",
       "name": "host-file",
-      "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4",
+      "sha256": "884149e2dd610c7bfb8a94e346d499389fe29057212ee1df5c0888498ba091c0",
       "kind": "host-entry",
       "reason": "Conservative lexical host boundary match; entire file retained for alias, exception and restoration review.",
       "ownership": "pending"
@@ -272,7 +279,7 @@
     {
       "file": "lib/process-boot.js",
       "name": "host-file",
-      "sha256": "b667f657e2432a340a797fd85f8ec5f3ea39d6a932b1143916093511a37374b7",
+      "sha256": "ba54542269320d2a6bcf82d33445989840a872a62d27448e349afe0f97113a9c",
       "hitmanModulePathReview20261115": "Runtime LoadLibrary records the absolute module path (EXE directory + relative name) instead of the caller's spelling; reads GetModuleFileName(NULL) through a scratch guest buffer before mapping. Path data only: no callback, continuation, invocation or register restoration change.",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
@@ -280,7 +287,9 @@
       "ownership": "pending",
       "reviewOwnedEnvironment20261109": "Environment staging retains only invocation-local placement/encoded bytes across awaits; caller owns quiescent pre-DLL startup interval and awaits native consumption before reuse. Bounds and NUL validation precede writes, owner errors propagate. Native set_process_environment_a only copies into launch overrides without callbacks or heap allocation; null remains rejected. Real Node Worker test verifies owner-local lazy length/environment globals and untouched shadow. Existing loader callbacks and cleanup unchanged; broader ownership pending.",
       "reviewOwnedBoot20261109": "New async boot helpers retain only invocation-local placement values and metadata bytes across awaited owner calls. Canonical stagePe performs host-owned copies; load_pe executes on selected owner. Staging ranges are validated, setter failures propagate. Helpers require caller-owned quiescent startup interval and do not invent a new loader lock or callback continuation. Existing DLL yield/generator/cleanup machinery unchanged. CLI and Node Worker boot plus oversized image cases pass; broader ownership pending.",
-      "reviewReleaseMerge20261113": "Release merge 2026-11-13 (boat origin/main b39104e2b + local main bf9ad5676): content is the union of both lines' separately reviewed changes. Where both implemented MIDI Worker callbacks, the boat's fenced transport (typed/rooted registrations, window and function callbacks, retirement on delivered MOM_CLOSE) is kept and the local duplicate registration/retirement wrappers are dropped. Render publication queue/snapshot state, guest main owner, DLL startup resources and close-time memory release are ported unchanged. No new EIP target, owner or retained invocation; ownership remains pending."
+      "reviewReleaseMerge20261113": "Release merge 2026-11-13 (boat origin/main b39104e2b + local main bf9ad5676): content is the union of both lines' separately reviewed changes. Where both implemented MIDI Worker callbacks, the boat's fenced transport (typed/rooted registrations, window and function callbacks, retirement on delivered MOM_CLOSE) is kept and the local duplicate registration/retirement wrappers are dropped. Render publication queue/snapshot state, guest main owner, DLL startup resources and close-time memory release are ported unchanged. No new EIP target, owner or retained invocation; ownership remains pending.",
+      "mergeOrigin20261117": "Merge 2026-11-17 of local main (GPU stream v2: GL/D3D9 retire, render targets, readback cuts) with origin/main 2d3a248f3: this producer was changed on both lines; content is the union of both separately reviewed changes, no new callback, continuation or invocation.",
+      "anchoredReview_fb5d9796": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
     },
     {
       "file": "lib/quake2-owning-load-core.js",
@@ -303,15 +312,18 @@
     {
       "file": "lib/renderer-input.js",
       "name": "host-file",
-      "sha256": "57e81372a76822f3b8ac34eaa4eb380fdb879b1c0714a1c287f358726f50c42d",
+      "sha256": "a8de6b537ff492cebe763fee3a9e30bd5b7e16a0751a63e922671045f73c4fcf",
       "kind": "host-entry",
       "reason": "Review 20261113 wheel delivery: handleWheel reuses foreground keyboard ownership restoration, maps the exclusive presentation to native screen coordinates, retains MK flags and targets native focus without edit fallback. No new retained producer/context; existing direct-input physical path and native send_message ownership remain. Conservative lexical host boundary match; entire file retained for alias, exception and restoration review. Dialog-tree review 20261021: same-instance candidates compare their WS_CHILD top-level surfaces before area preference; cross-instance z-order and existing delivery paths remain. No new retained callback or context restoration. Production routing and modal input regressions passed. Modifier review 20261027: side owners retire when the physical map changes; queued boolean side snapshots preserve event order and consumed press bits. Existing keyboard-owner restoration precedes updates; Worker/modal/native routing, exceptions and guest context paths unchanged. Retained invocation ownership remains pending. Recovery review 2026-10-30: physical transition recording feeds per-host-context/device bounded FIFOs held through WeakRef client maps. Staged format selection is inactive until one synchronous activate operation; unacquire and final COM release delete device buffers. No guest callback or context retained; existing Worker/modal restoration unchanged. Actual OS Worker acquisition boundary and failure-cleanup regressions pass; ownership remains pending. Modeless keyboard review 2026-10-31: guest DLGPROC receives raw keys through its own loop instead of synchronous browser IDCANCEL/traversal; native pseudo-procedures and modal pumps retain existing dispatch. No new retained callback or context; ownership remains pending. Release integration: Review 20261031: wantsHiddenMouse reads the hit window owning thread cursor state from shared memory instead of host-shadow defaults. Synchronous read-only exports, no callback retention or guest entry added; ownership pending. Integration 20261106: merged the previously reviewed Half-Life cursor/startup/popup and launch-policy changes with current-main behavior; retained both callback lifetime contracts and pending ownership status. No additional retained invocation introduced by conflict resolution. Review 20261106 Disciples income diagnosis: GetAsyncKeyState mouse high bit reads the current physical button mask rather than the active message snapshot. Full eight-line producer delta adds only synchronous state selection; callback creation, entry, retention, restoration, event ownership, routing, queue ordering and timers are unchanged. Physical-down/released-message and physical-up/down-message regressions cover all five mouse VKs; press-bit consumption and message snapshots remain separate. Broader ownership remains pending. Review20261106 Aranna relative control: guestCounts retain original count arithmetic for DirectInput and start inverse presentation at the native pixel center to avoid a reproduced96-to95 cursor roundtrip. Synchronous numeric locals only; native DOM delivery, callback entry/retention/restoration, routing and queue ownership unchanged. Exact fractional-letterbox regression, clip-edge and lock-gate/latch tests pass; broader ownership pending. Review 20261107 Aranna relative delivery: synchronous host cursor-warp serial increments on SetCursorPos; queued browser and guest mouse events capture the serial. GetCursorPos ignores pre-warp position snapshots, including restored per-Worker active events, while lParam and button snapshots remain unchanged. No callback entry, retention, context restoration, scheduling, routing or button edges change. Poll-first/message-first and fresh/stale restored-event regressions plus real generated PE old-fail/new-pass on both modules retained in scratch/runs/20261107-aranna-relative-move/. Broader ownership remains pending. Review 2026-11-07 AVP2 async recovery: GetAsyncKeyState high bit reads existing physical key owner; pressed-since-query latch and queued message snapshots unchanged. No callback, retained invocation, exception or restoration path changed; ownership remains pending. Review 20261111 AVP2 capture lifecycle: only the synchronous same-point warp cadence threshold changes after three qualifying warps. Established loops may refresh within their existing 2 s allowance; cold detection remains 500 ms and silence expires. No callback entry, retained context, async work, cancellation, unwind or restoration changes. Native cadence regression reproduces prior loss and browser lock expiry remains covered; broader invocation ownership remains pending. Review 20261112 Pause: complete delta adds VK_PAUSE/DOM Pause scan 0x45 and distinguishes legacy NumLock KF_EXTENDED; no callback, context, continuation, cancellation, scheduling or restoration change. Owning OS Worker PeekMessage MSG regression covers down/repeat/up and numeric fallback. Ownership remains pending; run 20261112-halflife-native-pause-2000. Review 20261113 SDL pointer consumption: reviewed complete producer delta; takeInput retains one latest hover record per target HWND for the renderer lifetime instead of one global record. The record contains input data only; owner-filtered empty polls mark only matching hover records. Press clears only its target pending hold. Existing timer wake, callback entry, exceptions, saved guest context and restoration remain unchanged; no guest callback or context is retained by the new map. Three deterministic cross-window old-fail/new-pass cases cover same screen coordinates, unrelated press and unrelated empty poll, with release FIFO preserved. Broader invocation ownership remains pending. Review 20261113 pointer-release-1145: synchronous takeInput press bookkeeping is keyed by target HWND and button; empty polls apply the existing owner predicate to retained press events as to moves. No guest callback, continuation, timer policy, exception interception, coordinate conversion, context restoration or timing floor change. Production host closures with real renderer, two process owners, normal 30ms floor and both ownership modes cover premature release, suppression, independent UP, coordinates and propagated predicate faults. Ownership remains pending. Review 20261113 menu-escape-1225: full delta routes Worker menu Escape through the existing WAT menu_handle_key_open Escape-only branch, which closes shared tracking and frees its popup without guest callbacks. Common-modal dispatch keeps precedence. A renderer boolean consumes repeat, char and release for that physical menu press; ordinary Escape payload and unrelated key queues remain. No retained guest context, async callback, continuation or restoration change; broader ownership remains pending. Review 20261113 keyboard-retirement-1920: queued keys retain the existing window lookup process-incarnation token; host dequeue requires that live incarnation, with PID/instance fallback for older publications and unchanged unowned CLI routing. Stop compacts only that incarnation's queued keys and clears its last delivery. No guest callbacks, async continuations, scheduling, focus writes, exception or restoration paths added. Actual production hosts/renderer/WASM and ThreadManager cooperative spawn cover cross-process theft, retirement/HWND reuse, same-process pumping and live-focus delivery. Broader ownership remains pending. Review 20261113 pointer retirement: DOM and injected mouse events retain enqueue-time process incarnation; Stop compacts only that incarnation, delayed held-target dispatch rejects retired or replaced window records, and a weak instance/process map rejects native capture resolution from stopped owners before replacement activation. No guest callback, async continuation, scheduling, focus write, exception or restoration path added. Production hosts/renderer, native USER capture/destruction and actual cooperative auxiliary cover stale queue/release/capture, reused PID/HWND, sibling preservation and balanced physical edges. Ownership remains pending; run 20261113-pointer-retirement-2010. Review 20261113 keyboard focus/held state: complete delta calculates ordinary keydown previous-state from the existing physical-key reader before publishing the press, rather than an older queued message snapshot. Per-side modifier ownership, press latches, queued release ordering and enqueue-time process identity remain unchanged. No guest callback, retained context, continuation, scheduling, focus write, capture or restoration path changes. Production DOM blur/hidden/key-up and native USER MSG regression reproduces a released key falsely marked held; native focus transitions, actual cooperative auxiliary pumping, foreign-owner exclusion, valid capture and Stop/relaunch controls pass. Broader ownership remains pending; run 20261113-keyboard-focus-held-2110. Review 20261113 relative warp ownership: physical relative motion restores the existing foreground input owner and records DirectInput counts in that process memory rather than hit-testing the virtual cursor against covering sibling windows. Absolute motion and native message points are unchanged. No new callback, retained context, continuation, focus write, capture, scheduling or lifetime path. Native SetCursorPos/GetCursorPos, GetMessage and DirectInput GetDeviceState reproduce captured aiming stolen by a sibling; scaled letterbox, intervening recenter, foreign slice, cooperative auxiliary clip edge and balanced physical button controls pass. Broader ownership remains pending; run 20261113-relative-warp-2210. Review 20261113 wheel/device ownership: wheel restores the live foreground owner and uses its process memory rather than the retained button-release memory; the existing weak process lifetime rejects a stopped last owner. The original device still receives its balancing physical release, including after Stop. No new callback, retained context, continuation, focus write, capture mutation, scheduling or lifetime mechanism. Ordinary production DOM click/wheel, real host activation/capture, independent native memories and GetMessage/GetDeviceState reproduce live/retired sibling wheel theft; signed consume-once accumulators, exactly-one device ring records and balanced button pairs pass. Broader ownership remains pending; run 20261113-di-device-owner-2250. Review 20261113 DirectInput foreground acquisition: renderer foreground-record replacement synchronously invalidates matching weakly registered keyboard acquisitions and clears their physical FIFO; loss remains sticky across unpolled away/back. Immediate devices retain a zero-capacity acquisition record. Complete selection publication binds the actual foreground window record; background/default fanout and queued USER events remain independent. No guest callback, EIP/stack write, async continuation, or new strong process owner; existing context-owned device maps and weak registrations remain. Native/API renderer regression covers activation boundaries, hide/show, retirement, default and foreground lifecycle. Ownership remains pending. Review 20261116 AoE edit subclass: handleKeyDown/handleKeyPress no longer enter send_message for a WAT EDIT whose wndproc slot holds an x86 subclass (read-only wnd_get_proc_export, nonzero and below 0xFFFF0000); those keys take the existing queued keyboard path the Worker owner already uses, so the guest dispatches them from its own pump. This removes a synchronous guest entry rather than adding one; no new callback, retained context, continuation, scheduling or restoration. Native unsubclassed EDIT typing is unchanged. test/test-edit-subclass-key-queue.js and the AoE Quit->Close->Cancel->Cancel route (scratch/runs/20261116-aoe-fixes) cover it; ownership remains pending.",
-      "ownership": "pending"
+      "ownership": "pending",
+      "lmarblesPointerArrivalReview20261114": "Coordinate CLI presses reuse existing handleMouseMove and per-window hover-hold timer/empty-poll path independently of scripted release timing. No new callback entry, guest invocation, export, context restore, owner or timer class. Existing guarded queue tagging/purge and renderer wake lifecycle remain authoritative. Original public SDL consumer distinguishes queue-only failure from motion then button across pumps; actual CLI/RPC main and worker per-slot scopes remain tested. Native game validation pending; broader ownership pending.",
+      "mergeOrigin20261117": "Merge 2026-11-17 of local main (GPU stream v2: GL/D3D9 retire, render targets, readback cuts) with origin/main 2d3a248f3: this producer was changed on both lines; content is the union of both separately reviewed changes, no new callback, continuation or invocation.",
+      "anchoredReview_b8abec93": "Coordinate arrival waits for native USER pump completion, scoped to the original memory, native thread, window object and generation. The acknowledgement changes only pending hover admission; it invokes no guest callback and grants no invocation ownership. Existing physical release timing, guarded cancellation and message order remain authoritative."
     },
     {
       "file": "lib/renderer.js",
       "name": "host-file",
-      "sha256": "07dd7a1b0c33da8dd4e6df7c501a1e1614a81ee521602ec444bb191a3cfba74f",
+      "sha256": "4a80ea7de0baa549b31cc1ea99dee04b5e6ba3b300b1569332ca59961eff463a",
       "glideModeSwitchReview20261116": "2026-11-16 D2 Glide menu in 512x384: the exclusive compositor now draws a kind 'gpu' frame layer at its own size times the exclusive scale, as every other composite path does, instead of stretching it to the (lazily sized, possibly stale) GDI back canvas. Pure draw-geometry change inside _repaintOnce; no callback, timer, retained guest reference or lifetime change. test/test-gpu-layer-exclusive-mode-switch.js.",
       "crtPresetReview20261116": "CRT presets: presentation-effect normalization now delegates to presentation-filter's normalizeCrtEffects ({preset, curvature, persistence}; legacy flags map to vga), and the direct-canvas and change checks read the preset. Display-only state; no guest callback, invocation, continuation, timer or retained guest reference added. Ownership remains pending.",
       "d3dimGpuPresentReview": "2026-11-14 D3DIM GPU present: endpoint d3dim frames go to the page compositor synchronously (bitmap closed after drawImage); no new callback owner, timer or retained guest reference; kill switch is a WASM global set at boot",
@@ -322,7 +334,10 @@
       "ownership": "pending",
       "reviewThreadsCloseLeak20261112": "2026-11-12 Threads-mode app-close leak: releases references that outlived a closed app (deferred repaint queued at Worker slice end; renderer _guestNowMs, recorder audio-tap pump, _mainImports, import-scope _dxMemoryBuffer cache cleared at guest-memory release; shell keeps the stopped host weakly). No new callback owner or lifetime.",
       "review20261108": "Delta from 7d2a9ec08: optional suppression of synchronous gl_window_set_gpu_owned lets the import perform it under the common publication guard. Default callers retain prior behavior. No callback, context retention, restoration or asynchronous continuation added. Ownership remains pending.",
-      "reviewReleaseMerge20261113": "Release merge 2026-11-13 (boat origin/main b39104e2b + local main bf9ad5676): content is the union of both lines' separately reviewed changes. Where both implemented MIDI Worker callbacks, the boat's fenced transport (typed/rooted registrations, window and function callbacks, retirement on delivered MOM_CLOSE) is kept and the local duplicate registration/retirement wrappers are dropped. Render publication queue/snapshot state, guest main owner, DLL startup resources and close-time memory release are ported unchanged. No new EIP target, owner or retained invocation; ownership remains pending."
+      "reviewReleaseMerge20261113": "Release merge 2026-11-13 (boat origin/main b39104e2b + local main bf9ad5676): content is the union of both lines' separately reviewed changes. Where both implemented MIDI Worker callbacks, the boat's fenced transport (typed/rooted registrations, window and function callbacks, retirement on delivered MOM_CLOSE) is kept and the local duplicate registration/retirement wrappers are dropped. Render publication queue/snapshot state, guest main owner, DLL startup resources and close-time memory release are ported unchanged. No new EIP target, owner or retained invocation; ownership remains pending.",
+      "reviewCurrentDisplay20261114": "20261114 current-display capture: ordinary completed composition retains weak window/instance identity plus display canvas/geometry/timestamp receipt, with no cached bytes or guest-context callback. Current requests reuse the existing single cancellable ticket slot; synchronous request-local readback or next ordinary damage publication, refusing in-flight paint, replaced/hidden/clipped identity, unsupported crop and nonopaque output. Failed/display-only updates invalidate the receipt; public byte reads copy arrays. No repaint scheduling, guest callback/invocation, EIP/stack/clock/input write, extra swap, hold release or context restoration added. Weak receipt refs cannot retain a closed guest. Existing broader ownership remains pending; run 20261114-gltron-current-display-capture.",
+      "mergeOrigin20261117": "Merge 2026-11-17 of local main (GPU stream v2: GL/D3D9 retire, render targets, readback cuts) with origin/main 2d3a248f3: this producer was changed on both lines; content is the union of both separately reviewed changes, no new callback, continuation or invocation.",
+      "anchoredReview_54fa1df2": "20261116 passive current-display observation: a real pending host surface arms the existing owner-bound request until an ordinary unheld successful composition/display. No upload, guest invocation, new callback/timer, clock change, hold release or input admission change. Immediate held/partial reads still refuse; existing request cancellation and immutable readback lifetime remain authoritative. General invocation ownership remains pending. Run 20261116-boids-pending-publication-display-capture."
     },
     {
       "file": "lib/storage.js",
@@ -335,7 +350,7 @@
     {
       "file": "lib/thread-manager.js",
       "name": "host-file",
-      "sha256": "e29fd3ec58e015f8f8ab6e8a4ed61b02b93e29bd8a0f994e97da61f3b7e35068",
+      "sha256": "a71ff357dbdf0d47c9f7333247a168ebd9a63cf2ba37a97ab8e401d3de8fdbd3",
       "nfs2seThreadBootClockReview20261116": "hasBootingRunnableThread is a read-only scan of _pendingThreads for a Worker-backend thread with suspendCount 0. No scheduling, callback or continuation change.",
       "mergeOriginReview20261112": "Merge 20261112 of origin/main into main: textual union of two already-reviewed sides; the merge resolution adds no guest invocation, callback, continuation, receiver or memory ownership change. Broader ownership unchanged.",
       "kind": "host-entry",
@@ -344,7 +359,10 @@
       "reviewMessageWait20261109": "Awaited main message-wait service retains local send/render-frame fences, observes sleep via owner before wake, and delegates atomic resume to selected owner. Host input probe is a non-consuming indication; native endpoint verifies wait and callback reservation. Refused wake keeps main parked; transport failures propagate without shadow fallback. Other checkMainYield reasons remain on legacy path and require migration. Broader ownership pending.",
       "reviewMainSleep20261109": "Awaited main admission consumes sleep flag through selected stopped owner once, reading timeout only when yielded. Worker run already consumes that flag: validated slice sleep fields feed the same host deadline without another export query. No new guest entry, replay or register restoration. Actual native Sleep(77) normal/compat local/Node Worker and exact CLI scheduler tests cover deadline, consumed flag, delayed/error reads and all three slice sites. Legacy checkMainYield/APC callers and broader ownership remain pending.",
       "reviewReleaseMerge20261113": "Release merge 2026-11-13 (boat origin/main b39104e2b + local main bf9ad5676): content is the union of both lines' separately reviewed changes. Where both implemented MIDI Worker callbacks, the boat's fenced transport (typed/rooted registrations, window and function callbacks, retirement on delivered MOM_CLOSE) is kept and the local duplicate registration/retirement wrappers are dropped. Render publication queue/snapshot state, guest main owner, DLL startup resources and close-time memory release are ported unchanged. No new EIP target, owner or retained invocation; ownership remains pending.",
-      "reviewReleaseMergeSleep20261113": "Release merge 2026-11-13: noteMainSleepOwned (local guest-main-owner path) now performs the boat's noteMainSleep bookkeeping: _syncMainHelpCallback before reading the deadline, and the strict service-clock run end as the Sleep deadline base. Same owner calls, no new callback entry, owner or retained invocation; ownership remains pending."
+      "reviewReleaseMergeSleep20261113": "Release merge 2026-11-13: noteMainSleepOwned (local guest-main-owner path) now performs the boat's noteMainSleep bookkeeping: _syncMainHelpCallback before reading the deadline, and the strict service-clock run end as the Sleep deadline base. Same owner calls, no new callback entry, owner or retained invocation; ownership remains pending.",
+      "threadReturnReview20261114": "2026-11-14 ThreadProc return sentinel: a per-instance host-armed slot record observes the actual RET target and pre/post stack addresses, including fused pop/RET. Only consuming the seeded zero return slot with stdcall argument cleanup certifies normal return. Main stays unarmed; NULL transfers and mismatched frames do not certify return. Secondary schedulers capture the returned DWORD before exactly-once DLL detach; unexpected EIP zero retires as fault without arbitrary guest detach. Explicit ExitThread and existing crash diagnostics stay distinct. ThreadManager also adopts the fully reviewed released cleanup delta: exit fenced before reentry, independent resource retries, once-only notifications, cancelling owner retention and permanent exact cancellation-fault quarantine; incomplete cleanup retains slot/stack. Tests and run: 20261114-thread-return-sentinel. Broader invocation ownership remains pending.",
+      "mergeOrigin20261117": "Merge 2026-11-17 of local main (GPU stream v2: GL/D3D9 retire, render targets, readback cuts) with origin/main 2d3a248f3: this producer was changed on both lines; content is the union of both separately reviewed changes, no new callback, continuation or invocation.",
+      "anchoredReview_c9c8453f": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
     },
     {
       "file": "lib/thread-send-waits.js",
@@ -1127,10 +1145,11 @@
           "$ret"
         ]
       ],
-      "sha256": "6e5f3a9d23fc9ae577926bcd392644c2b52168ea82f867bbcf05d8d9d6e589b8",
+      "sha256": "9c78d03efa21a5c07e4ab2fe0862440b70bdd31004008e87affa963acafca76c",
       "kind": "guest-control",
       "ownership": "pending",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: Fused POP/RET preserves stack_run_pop early return and guard16; loads return local via existing sr_fast/sr_delta or gl32 path, snapshots kind4 before EIP from same local and ESP=cur+4+imm. No retained callback ownership; guest word origin remains unproven. Ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Review 20261110 callback-transition-feed-1520: opt-in private bounded CPU callback states and Worker session only; existing invocation admission/leave and guest context restoration retained. Writer enrollment and authenticated object lifetime remain OPEN; no continuous GLTron acceptance."
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: Fused POP/RET preserves stack_run_pop early return and guard16; loads return local via existing sr_fast/sr_delta or gl32 path, snapshots kind4 before EIP from same local and ESP=cur+4+imm. No retained callback ownership; guest word origin remains unproven. Ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Review 20261110 callback-transition-feed-1520: opt-in private bounded CPU callback states and Worker session only; existing invocation admission/leave and guest context restoration retained. Writer enrollment and authenticated object lifetime remain OPEN; no continuous GLTron acceptance.",
+      "threadReturnReview20261114": "2026-11-14 ThreadProc return sentinel: a per-instance host-armed slot record observes the actual RET target and pre/post stack addresses, including fused pop/RET. Only consuming the seeded zero return slot with stdcall argument cleanup certifies normal return. Main stays unarmed; NULL transfers and mismatched frames do not certify return. Secondary schedulers capture the returned DWORD before exactly-once DLL detach; unexpected EIP zero retires as fault without arbitrary guest detach. Explicit ExitThread and existing crash diagnostics stay distinct. ThreadManager also adopts the fully reviewed released cleanup delta: exit fenced before reentry, independent resource retries, once-only notifications, cancelling owner retention and permanent exact cancellation-fault quarantine; incomplete cleanup retains slot/stack. Tests and run: 20261114-thread-return-sentinel. Broader invocation ownership remains pending."
     },
     {
       "file": "src/05-alu.wat",
@@ -1161,10 +1180,11 @@
           "$ret"
         ]
       ],
-      "sha256": "78d5e492c83bef586bb45874cd7a35fbd9fe2a668a6f170a92d17109b9e2a8d2",
+      "sha256": "ddc41ad9ebca138159c3e29a9c0394e1f9ebc740495e1b1805bc5e82600e4907",
       "kind": "guest-control",
       "ownership": "pending",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: RET reads guest ESP/return word into locals once after guard16, snapshots kind2 before EIP assignment from that same local and ESP+=4; cs_pop is diagnostic depth only. No invocation enter/leave or retained callback owner. Guest return word origin/writer and lifetime remain unproven. Ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Review 20261110 callback-transition-feed-1520: opt-in private bounded CPU callback states and Worker session only; existing invocation admission/leave and guest context restoration retained. Writer enrollment and authenticated object lifetime remain OPEN; no continuous GLTron acceptance."
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: RET reads guest ESP/return word into locals once after guard16, snapshots kind2 before EIP assignment from that same local and ESP+=4; cs_pop is diagnostic depth only. No invocation enter/leave or retained callback owner. Guest return word origin/writer and lifetime remain unproven. Ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Review 20261110 callback-transition-feed-1520: opt-in private bounded CPU callback states and Worker session only; existing invocation admission/leave and guest context restoration retained. Writer enrollment and authenticated object lifetime remain OPEN; no continuous GLTron acceptance.",
+      "threadReturnReview20261114": "2026-11-14 ThreadProc return sentinel: a per-instance host-armed slot record observes the actual RET target and pre/post stack addresses, including fused pop/RET. Only consuming the seeded zero return slot with stdcall argument cleanup certifies normal return. Main stays unarmed; NULL transfers and mismatched frames do not certify return. Secondary schedulers capture the returned DWORD before exactly-once DLL detach; unexpected EIP zero retires as fault without arbitrary guest detach. Explicit ExitThread and existing crash diagnostics stay distinct. ThreadManager also adopts the fully reviewed released cleanup delta: exit fenced before reentry, independent resource retries, once-only notifications, cancelling owner retention and permanent exact cancellation-fault quarantine; incomplete cleanup retains slot/stack. Tests and run: 20261114-thread-return-sentinel. Broader invocation ownership remains pending."
     },
     {
       "file": "src/05-alu.wat",
@@ -1178,10 +1198,11 @@
           "$ret"
         ]
       ],
-      "sha256": "96c8ac7c8c51cd4947b4c7896980bd325ff433fc61c01289ea6cd7b9dd6afb27",
+      "sha256": "fe31a6a144bba7c8e31e61b2d0f073054fa5dc9aa508d354fb193a5ab3acbe90",
       "kind": "guest-control",
       "ownership": "pending",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: RET imm reads guest ESP/return word into locals once after guard16, snapshots kind3 before EIP from that same local and ESP+=4+op. No callback owner acquired or released; return word provenance/lifetime remain unproven. Ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Review 20261110 callback-transition-feed-1520: opt-in private bounded CPU callback states and Worker session only; existing invocation admission/leave and guest context restoration retained. Writer enrollment and authenticated object lifetime remain OPEN; no continuous GLTron acceptance."
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Shadow Man exact-candidate source review 2026-10-28: RET imm reads guest ESP/return word into locals once after guard16, snapshots kind3 before EIP from that same local and ESP+=4+op. No callback owner acquired or released; return word provenance/lifetime remain unproven. Ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). Review 20261110 callback-transition-feed-1520: opt-in private bounded CPU callback states and Worker session only; existing invocation admission/leave and guest context restoration retained. Writer enrollment and authenticated object lifetime remain OPEN; no continuous GLTron acceptance.",
+      "threadReturnReview20261114": "2026-11-14 ThreadProc return sentinel: a per-instance host-armed slot record observes the actual RET target and pre/post stack addresses, including fused pop/RET. Only consuming the seeded zero return slot with stdcall argument cleanup certifies normal return. Main stays unarmed; NULL transfers and mismatched frames do not certify return. Secondary schedulers capture the returned DWORD before exactly-once DLL detach; unexpected EIP zero retires as fault without arbitrary guest detach. Explicit ExitThread and existing crash diagnostics stay distinct. ThreadManager also adopts the fully reviewed released cleanup delta: exit fenced before reentry, independent resource retries, once-only notifications, cancelling owner retention and permanent exact cancellation-fault quarantine; incomplete cleanup retains slot/stack. Tests and run: 20261114-thread-return-sentinel. Broader invocation ownership remains pending."
     },
     {
       "file": "src/05-alu.wat",
@@ -2501,7 +2522,7 @@
           "$entry_point"
         ]
       ],
-      "sha256": "9b30acb45b46a596e6ea1709b5f10046cb71af3b7918cf1086b4f0e5145f6ac4",
+      "sha256": "9f3547626c8598daf65356e18ce615221af62cf43acfb144ce4f74facb9d0df5",
       "kind": "lifecycle",
       "reason": "Process or task entry; must establish a fresh lifetime before nonlocal contexts can be registered. Pending-context v1 invalidates post-execution context replacement without changing process/thread entry behavior; broader callback ownership remains pending (20261105-mdk2-native-pending-context).",
       "ownership": "pending",
@@ -5755,7 +5776,7 @@
           ]
         ]
       ],
-      "sha256": "ef33f2885e316e2c3b1935bcd408b49a1754ac8941d695d377cca17e5b2dcad0",
+      "sha256": "5a9f6a834b9ad5a58d4090c18f714961416dc9583908990087503ebbf715f25b",
       "kind": "mixed-dispatch",
       "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending. Shadow Man exact-candidate source review 2026-10-28: CACA0005 remains intentional EIP=0 nested-run completion with handler_set_eip=1, no ESP pop here. Added kind1 snapshot precedes zero assignment, requires run thunk-entry route and matching current EIP/thunk in helper. Other EIP targets and lifetime boundaries unchanged; sender context restoration still belongs to enclosing synchronous caller, not this diagnostic record. Ownership remains pending. Release integration: Implicit-show correction 2026-11-01: guest-stack CSHW marker retains target/caller across yielding WM_SHOWWINDOW; activation follows completion, destruction returns NULL. Ordering, nested-main replacement and frame cleanup regression passes. Broader ownership remains pending. Nested child returns leave the main implicit-show latch pending. Review 20261105: explicit SWND frame retains target, resolved show command, return convention and prior visibility across callbacks. Resume validates HWND before host mutation. Legacy cdecl return normalizes four arguments only when the owned marker, WM_SHOWWINDOW and retained HWND agree; stdcall layout unchanged. No new shared continuation state; broader ownership remains pending. Integration 20261106: merged the previously reviewed Half-Life cursor/startup/popup and launch-policy changes with current-main behavior; retained both callback lifetime contracts and pending ownership status. No additional retained invocation introduced by conflict resolution.",
       "ownership": "pending",
@@ -6204,10 +6225,11 @@
           "$pump_eip"
         ]
       ],
-      "sha256": "aa16b32357ed77a6220676396a776df589f993dc175491461ae141ad0a3c94bf",
+      "sha256": "dc12e4d662a9a2c5ad3e0f181a744d7b487f0666c204df515c105dd22dd63da0",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
-      "ownership": "pending"
+      "ownership": "pending",
+      "forsakenModalQuitReview20261114": "Explicit PostQuitMessage marker 2 ends the owning modal wait via existing modal_finish_local and continuation splice; leaves quit pending for outer retrieval. Marker 1 and ordinary button completion unchanged. No new EIP target, retained context, callback owner or success button result. Public synthetic x86 A/W red-green, exact stdcall stack/outer PeekMessage and nine adjacent suites pass in 20261114-forsaken-native-exit-repair; general ownership remains pending."
     },
     {
       "file": "src/09c3a-dialog-runtime.wat",
@@ -7043,7 +7065,7 @@
           ]
         ]
       ],
-      "sha256": "07ca997e43c199a35fad829cce7a68efb2de663f9b5582b010f547b020ea9661",
+      "sha256": "6fc4609101658b2cb42f57eba4966842cc55267263ea53bea7639bf2c4238269",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"
@@ -7088,24 +7110,15 @@
     {
       "file": "src/09e-win16-api.wat",
       "name": "$win16_bridge_frame_end",
-      "writes": 1,
+      "writes": 0,
       "boundaryCalls": [
-        "$sync_depth_leave"
+        "$win16_bridge_frame_close"
       ],
       "exports": [
         "win16_bridge_frame_end"
       ],
-      "targets": [
-        [
-          "i32.load",
-          "offset=64",
-          [
-            "local.get",
-            "$frame"
-          ]
-        ]
-      ],
-      "sha256": "f4313294be7ade6f819685e0685b7fa1d78d8ed58c3594cd4e162dac4c637a51",
+      "targets": [],
+      "sha256": "58a07ce941daa57f4195a044f02bdac1cb1d956158ca35e5e22a5e336acf1c0a",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"
@@ -7157,7 +7170,7 @@
           "0"
         ]
       ],
-      "sha256": "8fc0e36b8d4bcb92f369bd75ebc20f20cde917321d68b7d43381b25c0387f1a7",
+      "sha256": "7c94c4f48443b060d81b6e1ebc9b0e0a43f29e0b08f844dd8d4d077bbbe4e6e9",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"
@@ -7410,7 +7423,7 @@
           "0"
         ]
       ],
-      "sha256": "0df962ef1cb10f49406b4a811babdb84a16a016e204ffe4b15036aee9df845c4",
+      "sha256": "74b68b5a4622448b787861a562e7c1332b44f2a736891bb677126fb23cb09687",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"
@@ -7841,7 +7854,7 @@
           "0"
         ]
       ],
-      "sha256": "39a3340e99f9c5ff2f137be64c656d02de0421096088ddcd669a22e122ba85ca",
+      "sha256": "49a70d8a9fe53d9c422096b9a81f11e9e44a92f393a4e51906a1bdc43eebcb62",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"
@@ -8037,7 +8050,7 @@
           "$win16_guest_return"
         ]
       ],
-      "sha256": "64403554fd7fea281aa96a13809fda310461030e931a3f81007406906abab8ee",
+      "sha256": "dbd6a20937c6188eed874786e4f0bae03b847bed9920b4aad43aa7df530125e9",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"
@@ -9814,6 +9827,223 @@
       "kind": "host-entry",
       "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth.",
       "ownership": "pending"
+    },
+    {
+      "file": "src/08c-ne-loader.wat",
+      "name": "$win16_ls32_pair",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_new_id"
+      ],
+      "exports": [
+        "win16_bridge_ls32_pair"
+      ],
+      "targets": [],
+      "sha256": "b4044ab43998db1f92a213efa4e3c50498185e01004f4828a7c5785dabac3b6c",
+      "kind": "lifecycle",
+      "ownership": "pending",
+      "reason": "Native LS32 prepublication pairing. Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed."
+    },
+    {
+      "file": "src/08c-ne-loader.wat",
+      "name": "export:win16_bridge_ls32_invoke_begin",
+      "writes": 0,
+      "boundaryCalls": [
+        "$win16_bridge_scope_begin",
+        "$win16_ls32_find",
+        "$win16_ls32_matches",
+        "$win16_bridge_ls_target",
+        "$win16_bridge_invoke_module",
+        "$win16_bridge_module_data",
+        "$win16_bridge_invoke_begin"
+      ],
+      "exports": [
+        "win16_bridge_ls32_invoke_begin"
+      ],
+      "targets": [],
+      "sha256": "b168eaaad063915bc2c525ca6b725848418c5306cb6e56c1cb98b1ac395b4b8c",
+      "kind": "lifecycle",
+      "ownership": "pending",
+      "reason": "Native LS32 prepublication pairing. Review 20261115 LS32: parked six-argument request; exact owner/process/PE generation; native image/LS16/export/name/target checks and bounded native refs/pins; synchronous invocation frames restore on trap/cancel and reject reentry. FT publication remains closed."
+    },
+    {
+      "file": "src/09e-win16-api.wat",
+      "name": "$win16_bridge_frame_close",
+      "writes": 1,
+      "boundaryCalls": [
+        "$sync_depth_leave"
+      ],
+      "exports": [],
+      "targets": [
+        [
+          "i32.load",
+          "offset=64",
+          [
+            "local.get",
+            "$frame"
+          ]
+        ]
+      ],
+      "sha256": "bab61b44037beae9874a37dd83dfef8d962c09294de398550e00556aaf81e596",
+      "kind": "mixed-dispatch",
+      "ownership": "pending",
+      "reason": "Native FT invocation boundary. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending."
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "$win16_ft_exit",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "local.get",
+          "$ret"
+        ]
+      ],
+      "sha256": "b77566742fa04e0f717bb88acabe81351bb9f6bb4eb197fbc8b3222bcd83be9e",
+      "kind": "mixed-dispatch",
+      "ownership": "pending",
+      "reason": "Native FT invocation boundary. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending."
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "$win16_ft_prolog",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "local.get",
+          "$ret"
+        ]
+      ],
+      "sha256": "38b7b4a34b859a10d1be548cffcaec7b91f0ed802dd4fdd1190ffdf487bcb303",
+      "kind": "mixed-dispatch",
+      "ownership": "pending",
+      "reason": "Native FT invocation boundary. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending."
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "$win16_ft_unwind",
+      "writes": 0,
+      "boundaryCalls": [
+        "$win16_bridge_frame_end"
+      ],
+      "exports": [
+        "win16_ft_unwind"
+      ],
+      "targets": [],
+      "sha256": "e8011cf20ed13a1fb1b87c87db93d7ce8a81819989fb5f6047ca7ceed95f8621",
+      "kind": "mixed-dispatch",
+      "ownership": "pending",
+      "reason": "Native FT invocation boundary. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending."
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "export:win16_bridge_ft_begin",
+      "writes": 0,
+      "boundaryCalls": [
+        "$win16_bridge_frame_valid",
+        "$gl32",
+        "$win16_ft_parent",
+        "$win16_ls32_span",
+        "$win16_bridge_scope_begin",
+        "$win16_bridge_invoke_target",
+        "$gl32",
+        "$gl32",
+        "$win16_bridge_invoke_begin",
+        "$win16_set_sreg",
+        "$win16_set_sreg",
+        "$win16_set_sreg",
+        "$win16_set_sreg",
+        "$gs8",
+        "$gl8",
+        "$gs32",
+        "$gl32",
+        "$gs32"
+      ],
+      "exports": [
+        "win16_bridge_ft_begin"
+      ],
+      "targets": [],
+      "sha256": "055215e5a616d052125875af79d4e979f963656199a016541c0c5c0b78c2c81d",
+      "kind": "mixed-dispatch",
+      "ownership": "pending",
+      "reason": "Native FT invocation boundary. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending."
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "export:win16_ft_abort_call",
+      "writes": 0,
+      "boundaryCalls": [
+        "$win16_bridge_frame_end"
+      ],
+      "exports": [
+        "win16_ft_abort_call"
+      ],
+      "targets": [],
+      "sha256": "739b260b8d1c1edca204b6fc9ba6feb7d5ac3c85e28d3b9e64b51f40fa4dcca1",
+      "kind": "mixed-dispatch",
+      "ownership": "pending",
+      "reason": "Native FT invocation boundary. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending."
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "export:win16_guest_ft_connect_settle",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [
+        "win16_guest_ft_connect_settle"
+      ],
+      "targets": [
+        [
+          "global.get",
+          "$win16_guest_return"
+        ]
+      ],
+      "sha256": "986c459549633f81f8ce5f1a9a162a54ad2ddee6530b47e27cfdc985c6bb2749",
+      "kind": "mixed-dispatch",
+      "ownership": "pending",
+      "reason": "Native FT invocation boundary. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending."
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "export:win16_guest_ft_detach",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [
+        "win16_guest_ft_detach"
+      ],
+      "targets": [
+        [
+          "global.get",
+          "$win16_guest_return"
+        ]
+      ],
+      "sha256": "622aefba370697a74609163729c2a580e27d9b858f77f365c43b46ddaefcd4f2",
+      "kind": "mixed-dispatch",
+      "ownership": "pending",
+      "reason": "Native FT invocation boundary. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending."
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "export:win16_guest_ft_settle",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [
+        "win16_guest_ft_settle"
+      ],
+      "targets": [
+        [
+          "global.get",
+          "$win16_guest_return"
+        ]
+      ],
+      "sha256": "acdbef03d639e1824420136f6bc68f3c2c6a421490fe5fc113ab9133ddc0875f",
+      "kind": "mixed-dispatch",
+      "ownership": "pending",
+      "reason": "Native FT invocation boundary. Review 20261115 native FT: exact LS32 native connection binds original PE generation/process/owner and retained NE selectors. Compiler Prolog owns a native LIFO frame, stack mapping lease and active PE pin; FT child owns NE scope/private bounded packet and checked original target. Only completed native RETF can settle independent AX/DX/CX, measured cleanup and copy-back. Exit releases its own frame/pin with the register ABI. DllMain cancellation/trap/failed attach/detach and joined Worker retirement unwind before publication/continuation restoration. QT and other directions stay guarded; broader nonlocal ownership remains pending."
     }
   ]
 }

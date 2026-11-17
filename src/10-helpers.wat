@@ -8202,8 +8202,11 @@
     (local $slot i32)
     (local.set $slot (call $win98_sys_color_slot (local.get $idx)))
     (if (i32.eqz (local.get $slot)) (then (return)))
+    (call $lock_acquire (global.get $GDI_ALLOC_LOCK))
     (i32.store offset=4 (local.get $slot) (local.get $color))
-    (i32.store offset=0 (local.get $slot) (i32.const 1)))
+    (i32.store offset=0 (local.get $slot) (i32.const 1))
+    (call $gdi_system_brush_recolor (local.get $idx) (local.get $color))
+    (call $lock_release (global.get $GDI_ALLOC_LOCK)))
 
   (func $win98_sys_color (param $idx i32) (result i32)
     (local $slot i32)
@@ -8242,6 +8245,10 @@
     (if (i32.eq (local.get $idx) (i32.const 21)) (then (return (i32.const 0x00000000)))) ;; 3DDKSHADOW
     (if (i32.eq (local.get $idx) (i32.const 23)) (then (return (i32.const 0x00000000)))) ;; INFOTEXT
     (if (i32.eq (local.get $idx) (i32.const 24)) (then (return (i32.const 0x00E1FFFF)))) ;; INFOBK
+    (if (i32.eq (local.get $idx) (i32.const 26)) (then (return (i32.const 0x00800000)))) ;; HOTLIGHT
+    (if (i32.eq (local.get $idx) (i32.const 27)) (then (return (i32.const 0x00D08410)))) ;; GRADIENTACTIVECAPTION
+    (if (i32.eq (local.get $idx) (i32.const 28)) (then (return (i32.const 0x00808080)))) ;; GRADIENTINACTIVECAPTION
+    (if (i32.eq (local.get $idx) (i32.const 29)) (then (return (i32.const 0x00800000)))) ;; MENUHILIGHT
     (i32.const 0x00C0C0C0))
 
   ;; LockWindowUpdate is USER state, shared by every guest thread/instance.

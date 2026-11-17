@@ -928,6 +928,167 @@
   ;; In-process inter-thread marshaling. The interpreted processes share one
   ;; linear memory, so a one-shot stream only needs to retain and transfer the
   ;; interface pointer; no proxy wire format is required.
+  ;; HRESULT marshaling is a single native four-byte IStream transfer, with
+  ;; no transferred-count output and the stream's own HRESULT propagated.
+  ;; The stream is borrowed. A DLL-private stream executes on this guest's
+  ;; real stack, including yields and nested callbacks; no host shadow call.
+  ;; Standard interface remoting parks the original stdcall frame while its
+  ;; actual owning scheduler executes guest COM/stream/proxy callbacks.
+  (func $com_interface_bridge (param $operation i32) (param $arguments i32)
+    (local $esp i32) (local $pending i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $pending (call $host_com_interface_operation
+      (local.get $operation) (local.get $esp) (global.get $current_thread_id)))
+    (if (local.get $pending)
+      (then
+        (global.set $eip (global.get $current_thunk_eip))
+        (global.set $handler_set_eip (i32.const 1))
+        (global.set $yield_reason (i32.const 23))
+        (global.set $yield_flag (i32.const 1))
+        (global.set $steps (i32.const 0)))
+      (else
+        (i32.store offset=0 (global.get $reg_base)
+          (call $host_com_interface_result (local.get $esp) (global.get $current_thread_id)))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (local.get $esp) (i32.mul (i32.add (local.get $arguments) (i32.const 1)) (i32.const 4)))))))
+
+  (func (export "com_owner_root") (result i64)
+    (call $invocation_validate) (global.get $invocation_root))
+  (func (export "com_owner_token") (result i64)
+    (call $invocation_current))
+  (func (export "com_owner_epoch") (result i64)
+    (call $invocation_validate) (global.get $invocation_epoch))
+
+  (func (export "com_bridge_vtable") (param $first_api i32) (param $count i32) (result i32)
+    (local $table i32) (local $index i32) (local $thunk i32)
+    (if (i32.or (i32.le_s (local.get $count) (i32.const 0))
+                (i32.gt_u (local.get $count) (i32.const 32))) (then (unreachable)))
+    (local.set $table (call $heap_alloc (i32.mul (local.get $count) (i32.const 4))))
+    (if (i32.eqz (local.get $table)) (then (return (i32.const 0))))
+    (block $done (loop $next
+      (br_if $done (i32.ge_u (local.get $index) (local.get $count)))
+      (local.set $thunk (call $com_cont_thunk (i32.const 0xCACA0010)))
+      (call $gs32 (i32.add (local.get $thunk) (i32.const 4))
+        (i32.add (local.get $first_api) (local.get $index)))
+      (call $gs32 (i32.add (local.get $table) (i32.mul (local.get $index) (i32.const 4))) (local.get $thunk))
+      (local.set $index (i32.add (local.get $index) (i32.const 1))) (br $next)))
+    (local.get $table))
+
+  (func $handle_CoGetPSClsid (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (if (result i32) (i32.or (i32.eqz (local.get $arg0)) (i32.eqz (local.get $arg1)))
+        (then (i32.const 0x80070057))
+        (else (call $host_com_proxy_stub (i32.const 0) (call $g2w (local.get $arg0)) (call $g2w (local.get $arg1))))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  (func $handle_CoRegisterPSClsid (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (if (result i32) (i32.or (i32.eqz (local.get $arg0)) (i32.eqz (local.get $arg1)))
+        (then (i32.const 0x80070057))
+        (else (call $host_com_proxy_stub (i32.const 1) (call $g2w (local.get $arg0)) (call $g2w (local.get $arg1))))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  (func $handle_CoMarshalInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 1) (i32.const 6)))
+
+  (func $handle_CoUnmarshalInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 2) (i32.const 3)))
+
+  (func $handle_CoReleaseMarshalData (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 3) (i32.const 1)))
+
+  (func $handle_ComOwnedUnknown_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 4) (i32.const 3)))
+
+  (func $handle_ComOwnedUnknown_AddRef (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 5) (i32.const 1)))
+
+  (func $handle_ComOwnedUnknown_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 6) (i32.const 1)))
+
+  (func $handle_ComOwnedChannel_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 7) (i32.const 3)))
+
+  (func $handle_ComOwnedChannel_AddRef (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 8) (i32.const 1)))
+
+  (func $handle_ComOwnedChannel_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 9) (i32.const 1)))
+
+  (func $handle_ComOwnedChannel_GetBuffer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 10) (i32.const 3)))
+
+  (func $handle_ComOwnedChannel_SendReceive (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 11) (i32.const 3)))
+
+  (func $handle_ComOwnedChannel_FreeBuffer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 12) (i32.const 2)))
+
+  (func $handle_ComOwnedChannel_GetDestCtx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 13) (i32.const 3)))
+
+  (func $handle_ComOwnedChannel_IsConnected (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 14) (i32.const 1)))
+  (func $handle_CoMarshalHresult (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $ctx i32) (local $ret i32)
+    (if (i32.eqz (local.get $arg0))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80030009))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (if (call $ole_interface_is_local (local.get $arg0))
+      (then
+        (i32.store offset=0 (global.get $reg_base)
+          (if (result i32) (i32.eq (call $gl32 (local.get $arg0)) (global.get $DX_VTBL_OLE_STREAM))
+            (then (call $ole_stream_write (local.get $arg0)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))
+              (i32.const 4) (i32.const 0)))
+            (else (i32.const 0x80030009))))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (if (i32.eqz (call $ole_guest_method_addr (local.get $arg0) (i32.const 4)))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80030009))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (local.set $ret (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+    (local.set $ctx (call $ole_guest_callback_context
+      (i32.const 38) (i32.const 0) (local.get $ret)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))
+      (local.get $arg0) (local.get $arg1) (i32.const 0) (i32.const 0) (i32.const 0)))
+    ;; p1 is invocation-owned storage for the HRESULT, live until Write returns.
+    (drop (call $ole_guest_callback_invoke4 (local.get $ctx) (local.get $arg0)
+      (i32.const 4) (i32.add (local.get $ctx) (i32.const 24)) (i32.const 4) (i32.const 0))))
+
+  (func $handle_CoUnmarshalHresult (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $ctx i32) (local $ret i32)
+    (if (i32.or (i32.eqz (local.get $arg0)) (i32.eqz (local.get $arg1)))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80030009))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (if (call $ole_interface_is_local (local.get $arg0))
+      (then
+        (i32.store offset=0 (global.get $reg_base)
+          (if (result i32) (i32.eq (call $gl32 (local.get $arg0)) (global.get $DX_VTBL_OLE_STREAM))
+            (then (call $ole_stream_read (local.get $arg0) (local.get $arg1) (i32.const 4) (i32.const 0)))
+            (else (i32.const 0x80030009))))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (if (i32.eqz (call $ole_guest_method_addr (local.get $arg0) (i32.const 3)))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80030009))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (local.set $ret (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+    (local.set $ctx (call $ole_guest_callback_context
+      (i32.const 38) (i32.const 0) (local.get $ret)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))
+      (local.get $arg0) (local.get $arg1) (i32.const 0) (i32.const 0) (i32.const 0)))
+    ;; Read directly into the caller's output, preserving partial transfers.
+    (drop (call $ole_guest_callback_invoke4 (local.get $ctx) (local.get $arg0)
+      (i32.const 3) (local.get $arg1) (i32.const 4) (i32.const 0))))
+
   (func $handle_CoMarshalInterThreadInterfaceInStream (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $stream i32)
     (if (local.get $arg2) (then (call $gs32 (local.get $arg2) (i32.const 0))))
@@ -1950,20 +2111,102 @@
     (call $crash_unimplemented (local.get $name_ptr))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
-  ;; CoLoadLibrary(lpszLibName, bAutoFree) uses the ordinary Unicode module
-  ;; loader. Loaded images are process-lifetime mappings here; bAutoFree only
-  ;; affects CoUninitialize bookkeeping that has no distinct observable
-  ;; mapping lifetime in the emulator.
+  ;; Legacy COM automatic references are a subset of ordinary loader roots.
+  ;; Synthetic system modules are permanently resident; real images use the
+  ;; same lock, detach callbacks and generation retirement as FreeLibrary.
+  (global $COM_DLL_AUTO_ROOTS i32 (region.addr $COM_DLL_AUTO_ROOTS 0))
+  (global $COM_DLL_AUTO_ROOTS_SIZE i32 (region.size $COM_DLL_AUTO_ROOTS))
+  (global $com_load_auto (mut i32) (i32.const 0))
+  (func (export "take_com_load_auto") (result i32)
+    (local $auto i32)
+    (local.set $auto (global.get $com_load_auto))
+    (global.set $com_load_auto (i32.const 0))
+    (local.get $auto))
+  (func (export "get_com_dll_auto_roots") (result i32) (region.addr $COM_DLL_AUTO_ROOTS 0))
+  ;; The tail holds 64 static-dispatch counters plus the kernel32 counter.
+  ;; These references retire too, while the builtin code stays resident.
+  (func $com_synthetic_auto_cell (param $module i32) (result i32)
+    (local $cell i32) (local $index i32)
+    (local.set $cell (call $dll_synthetic_reference (local.get $module)))
+    (if (i32.eqz (local.get $cell)) (then (return (i32.const 0))))
+    (local.set $index (if (result i32) (call $kernel32_is_module (local.get $module))
+      (then (i32.const 64))
+      (else (i32.shr_u (i32.sub (local.get $cell) (global.get $DLL_SYNTHETIC_REFS)) (i32.const 2)))))
+    (i32.add (region.addr $COM_DLL_AUTO_ROOTS 0x100) (i32.shl (local.get $index) (i32.const 2))))
+  (func (export "clamp_com_synthetic_auto_root") (param $module i32)
+    (local $cell i32) (local $roots i32)
+    (local.set $cell (call $com_synthetic_auto_cell (local.get $module)))
+    (if (i32.eqz (local.get $cell)) (then (return)))
+    (call $dll_load_lock_begin)
+    (local.set $roots (i32.load (call $dll_synthetic_reference (local.get $module))))
+    (if (i32.gt_u (i32.load (local.get $cell)) (local.get $roots))
+      (then (i32.store (local.get $cell) (local.get $roots))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)))
+  (func (export "release_com_synthetic_roots_locked")
+    (local $i i32) (local $cell i32) (local $ref i32) (local $count i32)
+    (loop $scan
+      (local.set $cell (i32.add (region.addr $COM_DLL_AUTO_ROOTS 0x100) (i32.shl (local.get $i) (i32.const 2))))
+      (local.set $ref (if (result i32) (i32.eq (local.get $i) (i32.const 64))
+        (then (region.addr $KERNEL32_MODULE 4))
+        (else (i32.add (global.get $DLL_SYNTHETIC_REFS) (i32.shl (local.get $i) (i32.const 2))))))
+      (local.set $count (i32.load (local.get $cell)))
+      (if (i32.gt_u (local.get $count) (i32.load (local.get $ref))) (then (unreachable)))
+      (i32.store (local.get $ref) (i32.sub (i32.load (local.get $ref)) (local.get $count)))
+      (i32.store (local.get $cell) (i32.const 0))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.le_u (local.get $i) (i32.const 64)))))
+  (func $com_dll_auto_retain (export "record_com_dll_auto_root") (param $module i32)
+    (local $i i32) (local $cell i32) (local $roots i32) (local $found i32)
+    (if (i32.eqz (local.get $module)) (then (return)))
+    (call $dll_load_lock_begin)
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (i32.atomic.load (global.get $DLL_SHARED))))
+      (if (i32.eq (local.get $module)
+            (i32.load (i32.add (global.get $DLL_TABLE) (i32.shl (local.get $i) (i32.const 5)))))
+        (then
+          (local.set $cell (i32.add (region.addr $COM_DLL_AUTO_ROOTS 0) (i32.shl (local.get $i) (i32.const 2))))
+          (local.set $roots (i32.load offset=8 (call $dll_lifecycle_row (local.get $i))))
+          (if (i32.ge_u (i32.load (local.get $cell)) (local.get $roots)) (then (unreachable)))
+          (i32.store (local.get $cell) (i32.add (i32.load (local.get $cell)) (i32.const 1)))
+          (local.set $found (i32.const 1))
+          (br $done)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (if (i32.eqz (local.get $found))
+      (then
+        (local.set $cell (call $com_synthetic_auto_cell (local.get $module)))
+        (if (local.get $cell)
+          (then
+            (local.set $roots (i32.load (call $dll_synthetic_reference (local.get $module))))
+            (if (i32.ge_u (i32.load (local.get $cell)) (local.get $roots)) (then (unreachable)))
+            (i32.store (local.get $cell) (i32.add (i32.load (local.get $cell)) (i32.const 1)))))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)))
+
   (func $handle_CoLoadLibrary (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $stack i32)
     (local.set $stack (i32.load offset=16 (global.get $reg_base)))
     (call $handle_LoadLibraryW
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
-    ;; LoadLibraryW consumes its return address and name argument. Consume the
-    ;; additional bAutoFree word without disturbing a pending DLL-load yield.
+    ;; A contended loader parks at the unchanged thunk/frame. Do not consume
+    ;; either argument or publish a new intent until delegation has accepted it.
+    (if (i32.eq (local.get $stack) (i32.load offset=16 (global.get $reg_base))) (then (return)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $stack) (i32.const 12)))
+    (if (local.get $arg1)
+      (then
+        (if (i32.eq (global.get $yield_reason) (i32.const 5))
+          (then (global.set $com_load_auto (i32.const 1)))
+          (else (call $com_dll_auto_retain (i32.load (global.get $reg_base)))))))
   )
+
+  (func $handle_CoFreeAllLibraries (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    ;; Reuse the ordinary release continuation; this void API has no argument.
+    (call $handle_FreeLibrary (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (local.get $name_ptr))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (global.set $dll_unload_kind (i32.const 4)))
+  (func $handle_CoFreeLibrary (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_FreeLibrary (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (global.set $dll_unload_kind (i32.const 5)))
 
   ;; IMoniker / IPersistStream for process-local file moniker values.
   (func $handle_IMoniker_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -8864,6 +9107,7 @@
   ;; 35: CoGetState returned-reference AddRef.
   ;; 36: DoDragDrop source/target modal callback sequence.
   ;; 37: COMCTL32 ImageList_Read through a DLL-private IStream (09a9).
+  ;; 38: CoMarshalHresult/CoUnmarshalHresult IStream transfer completion.
   (func $ole_guest_callback_continue
     (local $ctx i32) (local $operation i32) (local $stage i32)
     (local $root i32) (local $p1 i32) (local $p2 i32) (local $p3 i32) (local $p4 i32)
@@ -8876,6 +9120,10 @@
     (local.set $p2 (call $gl32 (i32.add (local.get $ctx) (i32.const 28))))
     (local.set $p3 (call $gl32 (i32.add (local.get $ctx) (i32.const 32))))
     (local.set $p4 (call $gl32 (i32.add (local.get $ctx) (i32.const 36))))
+    (if (i32.eq (local.get $operation) (i32.const 38))
+      (then
+        (call $ole_guest_callback_finish (local.get $ctx) (i32.load offset=0 (global.get $reg_base)))
+        (return)))
     (if (i32.eq (local.get $operation) (i32.const 36))
       (then
         (call $ole_drag_continue (local.get $ctx) (local.get $root))

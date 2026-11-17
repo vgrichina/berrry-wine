@@ -2529,8 +2529,33 @@
       (then (call $defwndproc_do_ncpaint (local.get $hwnd)) (return (i32.const 0))))
     (if (i32.eq (local.get $msg) (i32.const 0x0014))   ;; WM_ERASEBKGND
       (then (return (call $host_erase_background (local.get $hwnd) (i32.const 16)))))
+    ;; Native MessageBox chrome uses USER's ordinary non-client tracking.
+    ;; Translate its released HTCLOSE click through SC_CLOSE/WM_CLOSE here,
+    ;; as the other WAT-native dialog procedures do.
+    (if (i32.and
+          (i32.eq (local.get $msg) (i32.const 0x00A1))
+          (i32.eq (local.get $wParam) (i32.const 20)))
+      (then
+        (drop (call $wnd_send_message
+          (local.get $hwnd) (i32.const 0x0112) (i32.const 0xF060) (i32.const 0)))
+        (return (i32.const 0))))
+    (if (i32.and
+          (i32.eq (local.get $msg) (i32.const 0x0112))
+          (i32.eq (i32.and (local.get $wParam) (i32.const 0xFFF0)) (i32.const 0xF060)))
+      (then
+        (drop (call $wnd_send_message
+          (local.get $hwnd) (i32.const 0x0010) (i32.const 0) (i32.const 0)))
+        (return (i32.const 0))))
     (if (i32.eq (local.get $msg) (i32.const 0x0010))   ;; WM_CLOSE
-      (then (call $modal_done (i32.const 2)) (return (i32.const 0))))  ;; IDCANCEL
+      (then
+        ;; Cancel when available; the sole OK button supplies IDOK instead.
+        ;; Yes/No and Abort/Retry/Ignore have no cancellation result.
+        (if (call $ctrl_find_by_id (local.get $hwnd) (i32.const 2))
+          (then (call $modal_done (i32.const 2)))
+          (else
+            (if (call $ctrl_find_by_id (local.get $hwnd) (i32.const 1))
+              (then (call $modal_done (i32.const 1))))))
+        (return (i32.const 0))))
     (if (i32.ne (local.get $msg) (i32.const 0x0111)) (then (return (i32.const 0))))
     (local.set $cmd (i32.and (local.get $wParam) (i32.const 0xFFFF)))
     ;; Any of IDOK..IDCONTINUE: report the id verbatim. Unknown cmds drop.

@@ -301,7 +301,8 @@
     "name": "CoCreateInstance",
     "nargs": 5,
     "convention": "stdcall",
-    "hash": 2716892748
+    "hash": 2716892748,
+    "handler": "CoCreateInstance_TreatAs"
   },
   {
     "id": 35,
@@ -21459,7 +21460,8 @@
     "name": "CoGetClassObject",
     "nargs": 5,
     "convention": "stdcall",
-    "hash": 1401680208
+    "hash": 1401680208,
+    "handler": "CoGetClassObject_TreatAs"
   },
   {
     "id": 2512,
@@ -39082,5 +39084,278 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 3224646603
+  },
+  {
+    "id": 4605,
+    "name": "FT_Prolog",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 1735308931
+  },
+  {
+    "id": 4606,
+    "name": "FT_Thunk",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 699430900
+  },
+  {
+    "id": 4607,
+    "name": "FT_Exit0",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3477706216
+  },
+  {
+    "id": 4608,
+    "name": "FT_Exit4",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3544816692
+  },
+  {
+    "id": 4609,
+    "name": "FT_Exit8",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3343485264
+  },
+  {
+    "id": 4610,
+    "name": "FT_Exit12",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 752429035
+  },
+  {
+    "id": 4611,
+    "name": "FT_Exit16",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 819539511
+  },
+  {
+    "id": 4612,
+    "name": "FT_Exit20",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3034332314
+  },
+  {
+    "id": 4613,
+    "name": "FT_Exit24",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2967221838
+  },
+  {
+    "id": 4614,
+    "name": "FT_Exit28",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2900111362
+  },
+  {
+    "id": 4615,
+    "name": "FT_Exit32",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2631816553
+  },
+  {
+    "id": 4616,
+    "name": "FT_Exit36",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2698927029
+  },
+  {
+    "id": 4617,
+    "name": "FT_Exit40",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2699074124
+  },
+  {
+    "id": 4618,
+    "name": "FT_Exit44",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2631963648
+  },
+  {
+    "id": 4619,
+    "name": "FT_Exit48",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2833295076
+  },
+  {
+    "id": 4620,
+    "name": "FT_Exit52",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 618899631
+  },
+  {
+    "id": 4621,
+    "name": "FT_Exit56",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 551789155
+  },
+  {
+    "id": 4622,
+    "name": "CoTreatAsClass",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2870905131
+  },
+  {
+    "id": 4623,
+    "name": "CoGetTreatAsClass",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2144012897
+  },
+  {
+    "id": 4624,
+    "name": "CoFreeAllLibraries",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2312399559
+  },
+  {
+    "id": 4625,
+    "name": "CoFreeLibrary",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 729723280
+  },
+  {
+    "id": 4626,
+    "name": "CoMarshalHresult",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1369931112
+  },
+  {
+    "id": 4627,
+    "name": "CoUnmarshalHresult",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 817163475
+  },
+  {
+    "id": 4628,
+    "name": "CoMarshalInterface",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 3994981338
+  },
+  {
+    "id": 4629,
+    "name": "CoUnmarshalInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3027935373
+  },
+  {
+    "id": 4630,
+    "name": "CoReleaseMarshalData",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3846356354
+  },
+  {
+    "id": 4631,
+    "name": "CoGetPSClsid",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1214597209
+  },
+  {
+    "id": 4632,
+    "name": "CoRegisterPSClsid",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 47606764
+  },
+  {
+    "id": 4633,
+    "name": "ComOwnedUnknown_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3990298903
+  },
+  {
+    "id": 4634,
+    "name": "ComOwnedUnknown_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1397812476
+  },
+  {
+    "id": 4635,
+    "name": "ComOwnedUnknown_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 686428573
+  },
+  {
+    "id": 4636,
+    "name": "ComOwnedChannel_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 867504100
+  },
+  {
+    "id": 4637,
+    "name": "ComOwnedChannel_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3345165055
+  },
+  {
+    "id": 4638,
+    "name": "ComOwnedChannel_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 69513224
+  },
+  {
+    "id": 4639,
+    "name": "ComOwnedChannel_GetBuffer",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 918417931
+  },
+  {
+    "id": 4640,
+    "name": "ComOwnedChannel_SendReceive",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2161129018
+  },
+  {
+    "id": 4641,
+    "name": "ComOwnedChannel_FreeBuffer",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1575862935
+  },
+  {
+    "id": 4642,
+    "name": "ComOwnedChannel_GetDestCtx",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2137586526
+  },
+  {
+    "id": 4643,
+    "name": "ComOwnedChannel_IsConnected",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2303014306
   }
 ]

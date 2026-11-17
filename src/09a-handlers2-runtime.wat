@@ -656,8 +656,8 @@
   (func $handle_RegOpenKeyA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; RegOpenKeyA(hKey, lpSubKey, phkResult) — 3 args stdcall
     (local $hResult i32)
-    (local.set $hResult (call $host_reg_open_key
-      (local.get $arg0) (call $g2w (local.get $arg1)) (i32.const 0)))
+    (local.set $hResult (call $reg_open_key_legacy
+      (local.get $arg0) (local.get $arg1) (i32.const 0)))
     (if (local.get $hResult)
       (then (call $gs32 (local.get $arg2) (local.get $hResult))
              (i32.store offset=0 (global.get $reg_base) (i32.const 0)))  ;; ERROR_SUCCESS

@@ -8,7 +8,7 @@ const {g2w}=require('../lib/mem-utils');
 const api=require('../src/api_table.json');
 const moduleBytes=compileSrcWasm(),moduleObject=new WebAssembly.Module(moduleBytes);
 const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});let storage,hostCalls=0,missingOnce=false;
-function instance(){const imports={};for(const i of WebAssembly.Module.imports(moduleObject)){imports[i.module]||={};imports[i.module][i.name]=i.kind==='memory'?memory:()=>0;}imports.host.com_create_instance=(...args)=>{hostCalls++;if(missingOnce){missingOnce=false;return 0x800401f0;}return storage.com_create_instance(...args);};return new WebAssembly.Instance(moduleObject,imports).exports;}
+function instance(){const imports={};for(const i of WebAssembly.Module.imports(moduleObject)){imports[i.module]||={};imports[i.module][i.name]=i.kind==='memory'?memory:()=>0;}imports.host.com_treat_as_class=(...args)=>storage.com_treat_as_class(...args);imports.host.com_create_instance=(...args)=>{hostCalls++;if(missingOnce){missingOnce=false;return 0x800401f0;}return storage.com_create_instance(...args);};return new WebAssembly.Instance(moduleObject,imports).exports;}
 const owner=instance(),shadow=instance(),fixture=fs.readFileSync(path.join(__dirname,'binaries/notepad.exe'));
 new Uint8Array(memory.buffer).set(fixture,owner.get_staging());assert(owner.load_pe(fixture.length));
 shadow.set_host_shadow(1);shadow.init_thread(7,owner.get_image_base(),owner.get_code_start(),owner.get_code_end(),owner.get_thunk_base(),owner.get_thunk_end(),owner.get_num_thunks(),0);
