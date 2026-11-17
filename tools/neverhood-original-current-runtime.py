@@ -4,7 +4,7 @@
 Git and explicit own patches recover source. Transient sealed memfds hold the
 source pool, compiled module, guard and existing CD without archiving them.
 """
-import pathlib, subprocess, sys, os, time, json, signal, threading, fcntl, hashlib, importlib.util, socket, types, uuid
+import pathlib, subprocess, sys, os, time, json, signal, threading, fcntl, hashlib, importlib.util, socket, types, uuid, ctypes, select
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 RUN=pathlib.Path(os.environ.get('NEVERHOOD_RUN',ROOT/'scratch/runs/20261117-neverhood-published-loader-normal-install-room'))
 PRIOR_RUN=ROOT/'scratch/runs/20261116-neverhood-original-install-after-setupx'
@@ -155,7 +155,16 @@ def prepare(out,revision,patches,hold=True):
         DISCIPLES2_SOURCE_SHA256=H.digest(pool),DISCIPLES2_SOURCE_INDEX_SHA256=H.digest(index),DISCIPLES2_PHASE='compile',COMPILE_FD=str(raw))
     code="const c=require('./tools/watx-closure'),h=require('./tools/region-layout-hash');const r=c.compileClosure(c.watxSourceClosure(),{tailCalls:true});if(!r.success)throw Error(r.error);require('fs').writeFileSync(Number(process.env.COMPILE_FD),h.appendSection(Buffer.from(r.wasmBinary),h.layoutHash(r.regions.regions)));"
     prepath=f'/proc/{os.getpid()}/fd/{preload}'
-    checked(out,'compile',['node','--preserve-symlinks','--require',prepath,'-e',code],env,pass_fds=(raw,))
+    retained=os.environ.get('NEVERHOOD_RETAINED_PREPARATION')
+    if retained:
+        prior=pathlib.Path(retained);old=json.loads((prior/'manifest.json').read_text())
+        pins=lambda rows:{r['path']:r['sha256'] for r in rows if r['path'].startswith('src/') or r['path'].startswith('tools/watx') or r['path'] in ('tools/region-layout-hash.js','tools/region-layout.js','lib/region-map.generated.js')}
+        assert pins(rows)==pins(old['sources']),'retained module compilation inputs differ'
+        b=(prior/'module.wasm').read_bytes();assert H.digest(b)==old['moduleSHA256']
+        os.write(raw,b)
+        save(out,'retained-module.json',dict(prior=str(prior),moduleSHA256=H.digest(b),unchangedCompilationInputs=pins(rows),compiledBeforeClock=True))
+    else:
+        checked(out,'compile',['node','--preserve-symlinks','--require',prepath,'-e',code],env,pass_fds=(raw,))
     os.lseek(raw,0,0);module=H.seal('neverhood-module',os.read(raw,10000000));os.close(raw)
     modulebytes=pathlib.Path(f'/proc/{os.getpid()}/fd/{module}').read_bytes()
     manifest=dict(version=1,gitSHA=revision,patchSHA256=H.digest(b''.join(diffs)),sourceSHA256=H.digest(pool),moduleSHA256=H.digest(modulebytes),
@@ -258,17 +267,23 @@ def run(out,recipe,only_admit=False):
         except BaseException as e:errors.append(repr(e))
     threads=[threading.Thread(target=drain,args=(p.stdout,'stdout')),threading.Thread(target=drain,args=(p.stderr,'stderr'))]
     for t in threads:t.start()
-    sent=False
-    while p.poll() is None:
-        if (out/'cancel-request.json').exists() and not sent:
-            H.kill_owned(info,signal.SIGTERM);sent=True;save(out,'host-cancellation.json',dict(at=time.time(),nativeQuit=False))
-        time.sleep(.02)
-    rc=p.wait()
-    for t in threads:t.join()
-    save(out,'native-wait.json',dict(**info,exit=rc,actualWait=True,stdoutEOF=eof.get('stdout',False),stderrEOF=eof.get('stderr',False),drainErrors=errors,atWait=time.time(),atWaitMono=time.monotonic(),disposition='normal' if rc>=0 else 'signal'))
-    a,b=w.communicate();save(out,'watchdog-wait.json',dict(pid=w.pid,exit=w.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode()))
-    for fd in fds:os.close(fd)
-    save(out,'runtime-closed.json',dict(at=time.time(),nativeExit=rc,watchdogExit=w.returncode,descriptorsClosed=True))
+    sent=False;requests=[]
+    old={s:signal.signal(s,lambda s,f:requests.append(s)) for s in (signal.SIGTERM,signal.SIGINT)}
+    try:
+        while p.poll() is None:
+            if ((out/'cancel-request.json').exists() or requests) and not sent:
+                H.kill_owned(info,signal.SIGTERM);sent=True;save(out,'host-cancellation.json',dict(at=time.time(),nativeQuit=False,signals=requests))
+            time.sleep(.02)
+    finally:
+        if p.poll() is None:H.kill_owned(info,signal.SIGTERM)
+        try:rc=p.wait(timeout=3)
+        except subprocess.TimeoutExpired:H.kill_owned(info,signal.SIGKILL);rc=p.wait()
+        for t in threads:t.join()
+        save(out,'native-wait.json',dict(**info,exit=rc,actualWait=True,stdoutEOF=eof.get('stdout',False),stderrEOF=eof.get('stderr',False),drainErrors=errors,atWait=time.time(),atWaitMono=time.monotonic(),disposition='host-cancellation' if sent or requests else 'process-exit'))
+        a,b=w.communicate();save(out,'watchdog-wait.json',dict(pid=w.pid,exit=w.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode()))
+        for fd in fds:os.close(fd)
+        for s,h in old.items():signal.signal(s,h)
+        save(out,'runtime-closed.json',dict(at=time.time(),nativeExit=rc,watchdogExit=w.returncode,descriptorsClosed=True))
 def published(name,revision):
     body=H.git(ROOT,'show',revision+':'+name)
     assert (ROOT/name).read_bytes()==body,'unpublished borrowed/executed helper: '+name
@@ -391,11 +406,24 @@ def pipeline(out,revision,fixture=False,working=False):
         H.inheritance_probe(qualified,r,env)
         module=H.holder_bytes(json.loads((out/'prepared/holder.json').read_text()),'fdPath')
         qualify_native(qualified,revision,module,env,fds)
-        arm_desktop_observations(qualified,env)
-        checked(qualified,'desktop-participants',['node','test/test-neverhood-original-current.cjs','--desktop-participants'],env,timeout=40,pass_fds=fds)
-        for label,args in [('controller-unit',['node','test/test-neverhood-original-current.cjs','--unit']),
+        reused=os.environ.get('NEVERHOOD_REUSE_QUALIFICATION')
+        if reused:
+            prior=pathlib.Path(reused);old=json.loads((prior/'runtime-inputs.json').read_text());current=json.loads((qualified/'runtime-inputs.json').read_text())
+            # Runtime lifecycle/watchdog diagnostics do not change the controller,
+            # native transport, source loader, or actor/freshness/modal policy.
+            pins=lambda m:{r['path']:r['sha256'] for r in m['sources'] if r['path']!='tools/neverhood-original-current-runtime.py' and (r['path'].startswith(('src/','lib/','tools/vb5','test/')) or r['path'] in ('host.js',PRELOAD,'tools/neverhood-original-current-control.py'))}
+            assert pins(old)==pins(current) and old['moduleSHA256']==current['moduleSHA256']
+            labels=('desktop-participants','controller-unit','provenance','native-controller')
+            for label in labels:
+                record=json.loads((prior/(label+'-wait.json')).read_text())
+                assert record['exit']==0 and all(record[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+            save(qualified,'reused-controller-proof.json',dict(passed=True,prior=str(prior),unchangedComponentPins=pins(current),waitSHA256={label:H.digest((prior/(label+'-wait.json')).read_bytes()) for label in labels},moduleSHA256=current['moduleSHA256']))
+        else:
+            arm_desktop_observations(qualified,env)
+            checked(qualified,'desktop-participants',['node','test/test-neverhood-original-current.cjs','--desktop-participants'],env,timeout=40,pass_fds=fds)
+        for label,args in ([] if reused else [('controller-unit',['node','test/test-neverhood-original-current.cjs','--unit']),
                            ('provenance',['node','test/test-neverhood-original-current.cjs','--installed-provenance']),
-                           ('native-controller',['node','test/test-neverhood-original-current.cjs',str(qualified/'native-controller')])]:
+                           ('native-controller',['node','test/test-neverhood-original-current.cjs',str(qualified/'native-controller')])]):
             checked(qualified,label,args,env,timeout=180,pass_fds=fds)
         save(qualified,'qualification.json',dict(passed=True,gitSHA=revision,moduleSHA256=H.digest(module),originalStarted=False))
     finally:
@@ -416,6 +444,61 @@ def pipeline(out,revision,fixture=False,working=False):
     for fd in held:os.close(fd)
     save(out,'holder-closed.json',dict(at=time.time(),descriptorsClosed=True))
 
+def pin_process(pid,token):
+    assert H.token(pid)==token
+    fd=os.pidfd_open(pid);poll=select.poll();poll.register(fd,select.POLLIN)
+    assert H.token(pid)==token and not poll.poll(0)
+    return fd,poll
+
+def owner_watchdog(out,pid,token,seconds):
+    fd,poll=pin_process(pid,token);end=time.monotonic()+seconds
+    save(out,'owner-watchdog-armed.json',dict(pid=os.getpid(),ownerPid=pid,seconds=seconds,independent=True,at=time.time()))
+    fired=False
+    while not poll.poll(20):
+        if (out/'owner-watchdog-cancel').exists():break
+        if time.monotonic()>=end:
+            signal.pidfd_send_signal(fd,signal.SIGTERM);fired=True;break
+    save(out,'owner-watchdog-result.json',dict(fired=fired,at=time.time()));os.close(fd)
+
+def persistent_owner(out,worker,token,seconds,command):
+    out.mkdir(parents=True,exist_ok=True)
+    ancestor=os.getppid();chain=[]
+    while ancestor>1:
+        chain.append(ancestor)
+        if ancestor==worker:break
+        ancestor=int(pathlib.Path(f'/proc/{ancestor}/stat').read_text().rsplit(')',1)[1].split()[1])
+    assert worker in chain,'persistent worker must be an actual ancestor'
+    fd,poll=pin_process(worker,token)
+    libc=ctypes.CDLL(None,use_errno=True);inherited=ctypes.c_int()
+    assert libc.prctl(2,ctypes.byref(inherited),0,0,0)==0 and inherited.value in (0,signal.SIGTERM)
+    assert libc.prctl(1,0,0,0,0)==0 and not poll.poll(0)
+    requests=[];old={s:signal.signal(s,lambda s,f:requests.append(s)) for s in (signal.SIGTERM,signal.SIGINT)}
+    save(out,'persistent-owner-armed.json',dict(pid=os.getpid(),startToken=H.token(os.getpid()),workerPid=worker,workerStartToken=token,ancestorChain=chain,inheritedPdeathsig=inherited.value,clearedPdeathsig=0,at=time.time()))
+    w=subprocess.Popen([sys.executable,'-B',__file__,'owner-watchdog',str(out),str(os.getpid()),H.token(os.getpid()),str(seconds)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    p=None
+    try:
+        due=time.monotonic()+5
+        while not (out/'owner-watchdog-armed.json').exists():
+            assert w.poll() is None and time.monotonic()<due;time.sleep(.005)
+        p=subprocess.Popen(command,cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+        save(out,'wait-owner-child.json',dict(pid=p.pid,startToken=H.token(p.pid),owner=os.getpid(),args=command))
+        sent=False
+        while True:
+            try:a,b=p.communicate(timeout=.05);break
+            except subprocess.TimeoutExpired:
+                if (poll.poll(0) or requests) and not sent:
+                    p.send_signal(signal.SIGTERM);sent=True
+                    save(out,'owner-cancellation.json',dict(workerDied=bool(poll.poll(0)),signals=requests,at=time.time()))
+        (out/'owner.stdout.log').write_bytes(a);(out/'owner.stderr.log').write_bytes(b)
+        save(out,'owner-wait.json',dict(pid=p.pid,exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,workerAlive=not bool(poll.poll(0))))
+        return p.returncode
+    finally:
+        if p is not None and p.poll() is None:p.terminate();p.communicate(timeout=20)
+        (out/'owner-watchdog-cancel').touch();a,b=w.communicate(timeout=10)
+        save(out,'owner-watchdog-wait.json',dict(pid=w.pid,exit=w.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode()))
+        os.close(fd)
+        for s,h in old.items():signal.signal(s,h)
+
 def main():
     mode=sys.argv[1];out=pathlib.Path(sys.argv[2]).resolve()
     if mode=='supervised':return supervised(out,'--fixture' in sys.argv,'--owned-patches' in sys.argv)
@@ -423,6 +506,8 @@ def main():
     elif mode=='prepare':prepare(out,sys.argv[3],list(OWN) if '--owned-patches' in sys.argv else [])
     elif mode=='recipe':save(out,'recipe.json',recipe(pathlib.Path(sys.argv[3]),out))
     elif mode=='watchdog':watchdog(out,float(sys.argv[3]))
+    elif mode=='owner-watchdog':owner_watchdog(out,int(sys.argv[3]),sys.argv[4],float(sys.argv[5]))
+    elif mode=='persistent-owner':return persistent_owner(out,int(sys.argv[3]),sys.argv[4],float(sys.argv[5]),sys.argv[6:])
     elif mode in ('run','admit'):run(out,json.loads(pathlib.Path(sys.argv[3]).read_text()),mode=='admit')
     elif mode=='owner':
         p=subprocess.Popen([sys.executable,'-B',__file__,*sys.argv[3:]],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
