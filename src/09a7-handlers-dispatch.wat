@@ -4053,6 +4053,41 @@
     (call $gs32 (local.get $arg1) (local.get $sa))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
+  ;; Return a borrowed element address under the caller's existing lock.
+  ;; This API performs no element copy, refcount change or implicit lock.
+  (func $handle_SafeArrayPtrOfIndex (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $dims i32) (local $i i32) (local $bound i32) (local $n i32) (local $cb i32)
+    (local $data i32) (local $source i32) (local $delta i64) (local $offset i64) (local $stride i64)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057))
+    (if (i32.or (i32.eqz (local.get $arg0)) (i32.or (i32.eqz (local.get $arg1)) (i32.eqz (local.get $arg2)))) (then (return)))
+    (local.set $dims (call $gl16 (local.get $arg0)))
+    (if (i32.or (i32.eqz (local.get $dims)) (i32.gt_u (local.get $dims) (i32.const 64))) (then (return)))
+    (local.set $cb (call $gl32 (i32.add (local.get $arg0) (i32.const 4))))
+    (if (i32.eqz (local.get $cb)) (then (return)))
+    (local.set $stride (i64.const 1))
+    (block $indexed (loop $indices
+      (br_if $indexed (i32.ge_u (local.get $i) (local.get $dims)))
+      (local.set $bound (i32.add (local.get $arg0) (i32.add (i32.const 16)
+        (i32.shl (i32.sub (i32.sub (local.get $dims) (i32.const 1)) (local.get $i)) (i32.const 3)))))
+      (local.set $n (call $gl32 (local.get $bound)))
+      (local.set $delta (i64.sub
+        (i64.extend_i32_s (call $gl32 (i32.add (local.get $arg1) (i32.shl (local.get $i) (i32.const 2)))))
+        (i64.extend_i32_s (call $gl32 (i32.add (local.get $bound) (i32.const 4))))))
+      (if (i64.ge_u (local.get $delta) (i64.extend_i32_u (local.get $n)))
+        (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8002000B)) (return)))
+      (local.set $offset (i64.add (local.get $offset) (i64.mul (local.get $delta) (local.get $stride))))
+      (local.set $stride (i64.mul (local.get $stride) (i64.extend_i32_u (local.get $n))))
+      (if (i64.gt_u (local.get $stride) (i64.const 0x10000000)) (then (return)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $indices)))
+    (local.set $data (call $gl32 (i32.add (local.get $arg0) (i32.const 12))))
+    (if (i32.eqz (local.get $data)) (then (return)))
+    (local.set $offset (i64.mul (local.get $offset) (i64.extend_i32_u (local.get $cb))))
+    (if (i64.gt_u (i64.add (i64.extend_i32_u (local.get $data)) (local.get $offset)) (i64.const 0xFFFFFFFF)) (then (return)))
+    (local.set $source (i32.add (local.get $data) (i32.wrap_i64 (local.get $offset))))
+    (call $gs32 (local.get $arg2) (local.get $source))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
+
   ;; SafeArrayAccessData(psa, ppvData) takes a lock and hands out pvData.
   (func $handle_SafeArrayAccessData (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))

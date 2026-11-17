@@ -118,8 +118,23 @@ async function main(){
  // Descriptor/data allocation failure must not publish or free source data.
  put(values+16,0x10000000);assert.equal(await call('SafeArrayCopy',[values,p+72]),0x8007000e);assert.equal(word(p+72),0);assert.equal(word(values+12),valueData);put(values+16,2);
  assert.equal(await call('SafeArrayDestroy',[values]),0);
+
+ const ptrName=a.string('SafeArrayPtrOfIndex',false),ptrNamed=await api('GetProcAddress',[module,ptrName]),ptrOrdinal=await api('GetProcAddress',[module,202]);assert(ptrNamed&&ptrOrdinal);m.free(ptrName);
+ const ptrArray=await create([[2,-2],[3,7],[4,-9]]),ptrData=word(ptrArray+12);assert.equal(await call('SafeArrayAccessData',[ptrArray,p+64]),0);
+ const pointer=async(array,indices,out=p+72)=>{indices.forEach((v,i)=>put(p+128+i*4,v));return call('SafeArrayPtrOfIndex',[array,p+128,out]);};
+ assert.equal(await pointer(ptrArray,[-1,9,-6]),0);assert.equal(word(p+72),ptrData+23*4);assert.equal(word(ptrArray+8),1);
+ const borrowed=word(p+72),borrowedString=await str('borrowed\0element');put(borrowed,borrowedString);assert.equal(await get(ptrArray,[-1,9,-6]),0);const retrieved=word(p+72);assert(retrieved!==borrowedString);assert.equal(readString(retrieved),'borrowed\0element');await call('SysFreeString',[retrieved]);
+ for(const indices of [[-3,9,-6],[-1,10,-6],[-1,9,-5],[0x7fffffff,9,-6],[-0x80000000,9,-6]]){put(p+72,0x11223344);assert.equal(await pointer(ptrArray,indices),0x8002000b);assert.equal(word(p+72),0x11223344);assert.equal(word(ptrArray+8),1);}
+ put(p+128,-2);put(p+132,7);put(p+136,-9);assert.equal(await c.invoke(ptrOrdinal,[ptrArray,p+128,p+72]),0);assert.equal(word(p+72),ptrData);
+ assert.equal(await pointer(ptrArray,[-2,7,-9],0),0x80070057);assert.equal(await pointer(0,[0]),0x80070057);assert.equal(await call('SafeArrayPtrOfIndex',[ptrArray,0,p+72]),0x80070057);
+ assert.equal(await call('SafeArrayUnaccessData',[ptrArray]),0);assert.equal(await call('SafeArrayDestroy',[ptrArray]),0);
+ // Pointer lookup is layout-based and also works for valid descriptors with
+ // no VARTYPE prefix, including fixed-size records with caller-owned data.
+ const record=m.allocate(24),recordData=m.allocate(32);m.write(record,new Uint8Array(24));dv.setUint16(address(record),1,true);dv.setUint16(address(record+2),2,true);put(record+4,16);put(record+8,1);put(record+12,recordData);put(record+16,2);put(record+20,-5);
+ assert.equal(await pointer(record,[-4]),0);assert.equal(word(p+72),recordData+16);assert.equal(word(record+8),1);
+ put(record+4,0);put(p+72,0x11223344);assert.equal(await pointer(record,[-4]),0x80070057);assert.equal(word(p+72),0x11223344);put(record+4,16);put(record+16,0);assert.equal(await pointer(record,[-5]),0x8002000b);m.free(recordData);m.free(record);
  m.free(p);await m.drain();assert.equal(c.frames.length,0);
- console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,nativeCopyOrdinal17:true,partialCopyRollback:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
+ console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,nativeCopyOrdinal17:true,nativePtrOfIndexOrdinal202:true,borrowedAddress:true,partialCopyRollback:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={main};
