@@ -314,7 +314,10 @@ def pulse(name,keys,ms,review,description,final=False,intent='gameplay',route=No
             time.sleep(.02)
         else:raise RuntimeError('no postrelease progress')
         save(name+'-progress.json',dict(before=before,afterRelease=b,postProgress=a,at=time.time()))
-        time.sleep(1.2)
+        # UP has been acknowledged and a later native batch has completed.
+        # The ordinary queued PNG action forces dirty presentation, composites,
+        # encodes and writes before its HTTP completion. A fixed delay adds no
+        # completion evidence; keep the original operation deadline for capture.
         if strict:assert time.monotonic()<end,'3000ms operation completion exceeded'
         result=capture(name,deadline) if strict else capture(name)
         if strict:assert time.monotonic()<end,'3000ms operation completion exceeded'
