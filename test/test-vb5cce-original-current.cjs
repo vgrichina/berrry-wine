@@ -3,8 +3,70 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const cp=require('node:child_process'),net=require('node:net');
 const {startControlSession}=require('./control-session');
+function installQuestion({noMain=false,owned=false}={}){
+  const b=require('./test-sims-child-mount-native.cjs').untitledModal(),raw=r=>r-0x1000+0x200;
+  const at=b.indexOf(Buffer.from([0x68,1,0,0,0,0x68,0x40,0x25,0x40,0,0x68,0x80,0x25,0x40,0]));assert(at>0);
+  b.writeUInt32LE(0x10024,at+1);
+  b.write('VB 5.0 Control Creation Edition\0',raw(0x2540));
+  b.writeUInt32LE(0x402800,at+11);
+  b.write('Would you like to install Visual Basic 5.0 Control Creation Edition? (You will be prompted for an install directory).  This application requires Microsoft Windows 95 or greater, or else Microsoft Windows NT 4.0 or greater.\0',raw(0x2800));
+  // Replace PUSH ESI (actual created main) with PUSH 0 for genuine NULL owner.
+  if(!owned){b.copy(b,at+17,at+16,raw(0x2500)-1);b[at+15]=0x6a;b[at+16]=0;}
+  // Enter at MessageBox's argument pushes: no RegisterClass/CreateWindow runs.
+  if(noMain)b.writeUInt32LE(at-0x200+0x1000,0x80+24+16);
+  return b;
+}
+async function firstDialogTests(out){
+  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
+  for(const shape of ['no-main','main-owned','main-ownerless']){
+    const image=path.join(out,shape+'.exe');fs.writeFileSync(image,installQuestion({noMain:shape==='no-main',owned:shape==='main-owned'}),{flag:'wx'});
+    const watchdog=cp.spawn(process.execPath,['-e',`let pid;const t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGKILL')}catch{};process.exit(2)},25000);console.log('ARMED');process.stdin.on('data',b=>pid=Number(b));process.stdin.on('end',()=>clearTimeout(t));`],{stdio:['pipe','pipe','pipe']});
+    let armed='';watchdog.stdout.on('data',b=>armed+=b);const wait=new Promise(r=>watchdog.on('close',(exit,signal)=>r({exit,signal})));
+    while(!armed.includes('ARMED'))await new Promise(r=>setTimeout(r,5));
+    save(shape+'-watchdog-arm.json',{pid:watchdog.pid,prearmed:true,deadlineMs:25000,at:Date.now()});
+    const s=startControlSession(['test/run.js','--exe='+image,'--no-build','--winver=nt4','--threads','--real-ticks','--screen=800x600','--control-stdin','--max-seconds=20','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});
+    watchdog.stdin.write(String(s.child.pid));
+    try{
+      let scene;const due=Date.now()+15000;
+      do{scene=await s.send({action:'snapshot'});if(scene.modalHwnd!=='0x0')break;assert(Date.now()<due);await new Promise(r=>setTimeout(r,20));}while(true);
+      save(shape+'-snapshot.json',scene);
+      assert.equal(scene.mainHwnd,shape==='no-main'?'0x0':'0x10001');
+      const modal=scene.windows.find(w=>w.hwnd===scene.modalHwnd),button=scene.windows.find(w=>w.hwnd===scene.focus);
+      assert.equal(modal.title,'VB 5.0 Control Creation Edition');assert.equal(modal.controlClass,16);
+      assert.equal(modal.owner,shape==='main-owned'?scene.mainHwnd:'0x0');assert.equal(button.controlClass,1);assert.equal(button.title,'Yes');
+      assert.equal(scene.focusTopLevel,modal.hwnd);assert.notEqual(button.hwnd,modal.hwnd);
+      let capture,error;try{capture=await s.send({action:'native-reviewed-capture',path:path.join(out,shape+'.png')});}catch(e){error=e.message;}
+      save(shape+'-capture.json',{capture,error});
+      if(shape==='no-main'&&!process.env.VB5_EXPECT_NO_MAIN_REPAIR){assert(error?.includes('main.liveIdentity'));assert(error.includes('"controls":[]'));}
+      else assert(capture,error);
+    }finally{
+      if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch(e){if(e.code!=='ESRCH')throw e;}
+      await s.exited;fs.writeFileSync(path.join(out,shape+'.log'),s.output());
+      save(shape+'-wait.json',{pid:s.child.pid,exit:s.child.exitCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,hostTeardown:true});
+      watchdog.stdin.end();const w=await wait;save(shape+'-watchdog-wait.json',{...w,actualWait:true,stdoutEOF:watchdog.stdout.readableEnded,stderrEOF:watchdog.stderr.readableEnded});assert.equal(w.exit,0);
+    }
+  }
+  console.log('PASS actual NT4 install-question no-main/main-owned/main-ownerless and real child focus/caption/class');
+}
+if(process.argv[2]==='--first-dialog'){firstDialogTests(path.resolve(process.argv[3])).catch(e=>{console.error(e);process.exitCode=1;});}
+else {
 if(process.argv[2]==='--unit'){
   require('./test-disciples2-native-paint-binding.cjs').contextUnits();
+  const {contextFailures,captureFailures}=require('../lib/cli-native-scene');
+  const w={hwnd:'0x1',generation:'1',processId:1000,threadId:1,live:true,visible:true,isChild:false,owner:'0x0',controlClass:0,nativeTextAvailable:true};
+  const s={mainHwnd:w.hwnd,windows:[w],modalHwnd:'0x0',focus:w.hwnd,focusTopLevel:w.hwnd,focusWindow:w,capture:'0x0',physicalUp:true,nativeProcess:{pid:1,executable:'fixture'},screen:{w:800,h:600},eip:'0x400000',quit:false};
+  assert.deepEqual(captureFailures(s),{context:[],controls:[]});
+  for(const [mutate,field] of [
+    [v=>v.quit=true,'runtime.running'],[v=>v.eip='0x0','runtime.eip'],
+    [v=>v.physicalUp=false,'input.physicalUp'],[v=>v.capture='0x1','input.capture'],
+    [v=>v.windows[0].live=false,'main.liveIdentity'],[v=>v.windows[0].visible=false,'main.visible'],
+    [v=>v.windows[0].isChild=true,'main.topLevel'],[v=>v.focusWindow={...w,threadId:2},'focus.thread'],
+    [v=>v.focusWindow={...w,processId:2},'focus.process'],[v=>v.nativeProcess=null,'process.identity'],
+    [v=>v.screen=null,'screen.dimensions'],[v=>v.focusTopLevel='0x2','focus.mainTopLevel']
+  ]){const v=structuredClone(s);mutate(v);assert(contextFailures(v,s).includes(field),field);}
+  const unsupported=structuredClone(s);unsupported.windows.push({...w,controlClass:999,title:'SECRET',textBytes:'SECRET',nativeTextAvailable:false});
+  assert.deepEqual(captureFailures(unsupported),{context:[],controls:['control.unsupportedClass','control.textUnavailable']});
+  assert(!JSON.stringify(captureFailures(unsupported)).includes('SECRET'));
   const code=`import importlib.util, pathlib, tempfile, time
 s=importlib.util.spec_from_file_location('control','tools/vb5cce-reviewed-control.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 with tempfile.TemporaryDirectory() as d:
@@ -181,3 +243,4 @@ async function main(){
  console.log('PASS actual native two-dialog transition/independent UP/ExitProcess, focus/owner/semantic/stale faults, repaint admitted and permanent UNKNOWN zero later requests');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});
+}
