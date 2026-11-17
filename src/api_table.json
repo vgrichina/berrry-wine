@@ -39756,5 +39756,12 @@
     "nargs": 5,
     "convention": "stdcall",
     "hash": 1140149058
+  },
+  {
+    "id": 4701,
+    "name": "VariantChangeType",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 185794306
   }
 ]

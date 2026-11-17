@@ -1050,6 +1050,7 @@
         (if (i32.eq (local.get $ordinal) (i32.const 8))  (then (return (call $lookup_api_id "VariantInit"))))
         (if (i32.eq (local.get $ordinal) (i32.const 9))  (then (return (call $lookup_api_id "VariantClear"))))
         (if (i32.eq (local.get $ordinal) (i32.const 10)) (then (return (call $lookup_api_id "VariantCopy"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 12)) (then (return (call $lookup_api_id "VariantChangeType"))))
         ;; DirectX 8.1 devenum.dll registers filters through these by ordinal.
         (if (i32.eq (local.get $ordinal) (i32.const 15)) (then (return (call $lookup_api_id "SafeArrayCreate"))))
         (if (i32.eq (local.get $ordinal) (i32.const 16)) (then (return (call $lookup_api_id "SafeArrayDestroy"))))

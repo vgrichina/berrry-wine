@@ -2945,6 +2945,9 @@ for (const api of existing.filter(a => /^IDirectPlay[34]_/.test(a.name))) {
   }
 }
 
+// Native Automation ordinal12, append-only public API identity.
+if(!seen.has('VariantChangeType')){existing.push({id:existing.length,name:'VariantChangeType',nargs:4,convention:'stdcall'});seen.add('VariantChangeType');}
+
 // Reassign IDs and recompute hashes; preserve dispatch/testing metadata that
 // belongs to the API row rather than the name/hash generator.
 const table = existing.map((api, id) => {
