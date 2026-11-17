@@ -164,7 +164,8 @@ def bind(scene):
         reply=call(dict(action='guarded-bind',reviewedScene=native_review(rr,r)))
         save(owner_file(),reply)
     except BaseException as e:fail('bind',e);raise
-def release(name,owner,due):
+def release(name,owner,due,deadline=None):
+    deadline=due+.35 if deadline is None else deadline
     print(json.dumps(dict(armed=True,pid=os.getpid(),due=due)),flush=True)
     while time.time()<due:
         p=R/(name+'-up-at.json')
@@ -174,14 +175,16 @@ def release(name,owner,due):
 
         time.sleep(min(.003,max(0,due-time.time())))
     try:
-        sent=time.time();reply=call(dict(action='guarded-release',owner=owner),timeout=.2,cleanup=True)
+        sent=time.time();remaining=deadline-sent;assert remaining>0,'physical UP deadline'
+        reply=call(dict(action='guarded-release',owner=owner),timeout=remaining,cleanup=True)
+        assert time.time()<deadline,'physical UP deadline'
         save(name+'-up.json',dict(at=time.time(),sentAt=sent,monotonic=time.monotonic(),reply=reply,physicalUpACK=reply.get('released') is True))
     except BaseException as e:save(name+'-up.json',dict(at=time.time(),error=str(e),physicalUpACK=False));raise
-def release_process(name,owner,due,stdout_read,stdout_write,stderr_read,stderr_write):
+def release_process(name,owner,due,deadline,stdout_read,stdout_write,stderr_read,stderr_write):
     os.close(stdout_read);os.close(stderr_read)
     os.dup2(stdout_write,1);os.dup2(stderr_write,2)
     os.close(stdout_write);os.close(stderr_write)
-    try:release(name,owner,due)
+    try:release(name,owner,due,deadline)
     except BaseException:
         traceback.print_exc();sys.stderr.flush();raise SystemExit(1)
 class ArmedRelease:
@@ -190,11 +193,11 @@ class ArmedRelease:
     Keep actual join and pipe EOF evidence, with the same absolute deadlines.
     The controller is single-threaded and has closed all earlier HTTP requests.
     """
-    def __init__(self,name,owner,due):
+    def __init__(self,name,owner,due,deadline):
         out_r,out_w=os.pipe();err_r,err_w=os.pipe()
         sys.stdout.flush();sys.stderr.flush()
         self.process=multiprocessing.get_context('fork').Process(target=release_process,
-            args=(name,owner,due,out_r,out_w,err_r,err_w))
+            args=(name,owner,due,deadline,out_r,out_w,err_r,err_w))
         self.process.start();self.pid=self.process.pid;self.returncode=None;self.result=None
         os.close(out_w);os.close(err_w)
         self.stdout=os.fdopen(out_r,'rb',buffering=0);self.stderr=os.fdopen(err_r,'rb',buffering=0)
@@ -276,7 +279,7 @@ def intent(name,scene,x,y,kind,handoff=None):
         command=f'keydown:{y}' if x==-1 else f'mousedown:{x}:{y}'
         save(name+'-intent.json',dict(scene=scene,x=x,y=y,kind=kind,owner=owner,nonce=nonce,
              at=start,confirmationDeadline=start+.5,physicalUpDeadline=start+1.75,observationDeadline=start+3))
-        child=ArmedRelease(name,owner['owner'],start+1.4)
+        child=ArmedRelease(name,owner['owner'],start+1.4,start+1.75)
         ready,_,_=select.select([child.stdout],[],[],.15);assert ready,'release was not prearmed'
         arm=json.loads(child.stdout.readline());save(name+'-release-arm.json',arm);assert arm['armed']
         if handoff:

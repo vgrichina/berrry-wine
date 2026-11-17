@@ -47,6 +47,31 @@ function unit(out){
  const racers=String.raw`const cp=require('node:child_process');const code="const {ChildObservation,identity}=require('./lib/cli-child-observation');ChildObservation.prototype.fail.call({armRecord:JSON.parse(process.argv[1]),self:identity()},'parallel terminal failure')";Promise.all(Array.from({length:8},()=>new Promise((resolve,reject)=>{const c=cp.spawn(process.execPath,['-e',code,process.argv[1]],{stdio:'pipe'});let err='';c.stderr.on('data',b=>err+=b);c.on('close',n=>n?reject(Error(err)):resolve());}))).catch(e=>{console.error(e);process.exitCode=1;});`;
  const raced=cp.spawnSync(process.execPath,['-e',racers,JSON.stringify({...a,directory:concurrent})],{encoding:'utf8',timeout:10000});
  assert.equal(raced.status,0,raced.stderr);assert.equal(fs.readdirSync(concurrent).join(','),'failure.json');
+ const transport=String.raw`import pathlib,json,sys,os,types,time,threading,http.server,socket
+m=types.ModuleType('ctl');m.__file__=str(pathlib.Path('tools/neverhood-original-current-control.py').resolve());os.environ.update(NEVERHOOD_CURRENT_RUN=sys.argv[1],NEVERHOOD_CURRENT_PORT='1');exec(compile(sys.argv[2],m.__file__,'exec'),m.__dict__)
+root=pathlib.Path(sys.argv[1]);root.mkdir()
+for name,delay,budget in [('delayed-disconnect',.30,.70),('absolute-deadline',.70,.25)]:
+ class Handler(http.server.BaseHTTPRequestHandler):
+  def log_message(self,*args):pass
+  def do_POST(self):
+   self.rfile.read(int(self.headers['Content-Length']));time.sleep(delay);self.connection.shutdown(socket.SHUT_RDWR)
+ server=http.server.HTTPServer(('127.0.0.1',0),Handler);thread=threading.Thread(target=server.serve_forever);thread.start()
+ try:
+  m.R=root/name;m.R.mkdir();m.PORT=server.server_port
+  m.save('launch.json',dict(rootPort=m.PORT));stat=pathlib.Path('/proc/self/stat').read_text();m.save('native-pid.json',dict(pid=os.getpid(),startToken=stat[stat.rindex(')')+2:].split()[19]))
+  start=time.time()
+  try:m.release('release','owner',start,start+budget)
+  except Exception:pass
+  else:raise AssertionError('closed transport cannot acknowledge UP')
+  elapsed=time.time()-start;record=m.read('release-up.json');assert not record['physicalUpACK']
+  if name=='delayed-disconnect':assert .28<=elapsed<.70 and 'timed out' not in record['error'],(elapsed,record)
+  else:assert .23<=elapsed<.45 and 'timed out' in record['error'],(elapsed,record)
+  assert len((m.R/'requests.jsonl').read_text().splitlines())==1
+  m.save('transport-proof.json',dict(elapsed=elapsed,budget=budget,physicalUpACK=False,noRetry=True))
+ finally:server.shutdown();thread.join();server.server_close()
+print('PASS actual TCP delayed disconnect exceeds old 200ms timeout; absolute UP deadline still closes; no synthetic ACK or retry')`;
+ const tcp=cp.spawnSync('python3',['-B','-c',transport,path.join(out,'release-transport'),fs.readFileSync('tools/neverhood-original-current-control.py','utf8')],{encoding:'utf8',timeout:10000});
+ assert.equal(tcp.status,0,tcp.stderr);console.log(tcp.stdout.trim());
  console.log('PASS one-shot provenance, actor/nonce/owner/source/foreign-child/late refusal; actual child validates module/source/executable/parent and reused PID');
 }
 function negative(run,out){

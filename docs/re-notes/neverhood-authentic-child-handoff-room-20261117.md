@@ -60,3 +60,36 @@ full historical native-suite pass. Earlier broad fixture failures and a later
 three-second deadline refusal remain in the evidence, without pass credit.
 Concurrent parent/child failure publication preserves the first terminal record
 and removes its temporary file; eight real OS publishers exercise that race.
+
+Published implementation: `95990aee3`. Its locked build and complete sealed
+qualification passed before the single authorized authentic installed-shortcut
+run. That run restored the authentic 65-record/58-file state, preserved WININIT,
+opened SETUP95 through the generated ShellLink, and consumed the personally
+reviewed Play button. It forked the expected installed NHC with authenticated
+prearmed provenance and recorded launcher guest ExitProcess(0).
+
+The original stopped before child observation: independent UP encountered the
+controller's old fixed 200 ms HTTP timeout during synchronous child VFS export.
+The actual parent fork and guest zero exit occurred before the unchanged
+1750 ms UP deadline, but the premature transport timeout had already failed
+the release. The permanent UNKNOWN latch closed all later transport; host
+cancellation and actual waits/EOFs are cleanup, not native Quit. No child scene,
+room action or authentic save was earned, and no second original is authorized.
+
+The subsequent repair gives the one prearmed release HTTP request only the
+remaining time before its original absolute UP deadline. It does not change
+500/1750/3000 ms limits, image freshness or input/context predicates. Real TCP
+negative tests deliberately disconnect after 300 ms and stall past the absolute
+deadline: the first must reach the actual disconnect instead of the old 200 ms
+timeout, the second must time out at the deadline. Both record no ACK and one
+request without retry; no synthetic successful transport is used. Real native
+handoff/input/UP/Quit and terminal failure regressions are rerun separately.
+
+Final repaired-source qualification passed in `fixture-release-final`: native
+handoff, child game input/UP/Quit, parent Exit23, child cancellation, source and
+identity refusals, inherited ISO, installed provenance, controller units,
+desktop participants and all twelve ordinary native controller cases. The locked
+build passed again. An earlier repaired-source authored Quit run lost its UP
+connection before child shutdown under load; it remains a recorded failure,
+without pass credit or a deadline/fixture clock change. A fresh authored run of
+the same sources passed. The authentic original was never repeated.
