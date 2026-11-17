@@ -15,6 +15,24 @@ async function host(out){
   assert.equal(child.createFile('E:\\new',0x40000000,2),0);
   assert(context.capture(child).length);
   const bad=structuredClone(snapshot);bad[0].recipe.drive='d';await assert.rejects(context.restore(new VirtualFS(),bad),/identity mismatch|drive became writable/);
+  // A real remount must hash all source bytes once, through its held provider,
+  // and compare the resulting digest/identity before adopting any guest files.
+  // Count full-source reads, rather than asserting a particular call sequence.
+  const read=fs.readSync,size=fs.statSync(file).size;let scanned=0;
+  fs.readSync=function(fd,buffer,offset,length,position){
+   const n=Reflect.apply(read,this,arguments);
+   if(length===1024*1024&&position===null)scanned+=n;
+   return n;
+  };
+  let once=[];
+  try{once=await context.restore(new VirtualFS(),snapshot);assert.equal(scanned,size,'one complete source digest');}
+  finally{fs.readSync=read;for(const m of once)require('../lib/media-cli').closeMedia(m);}
+  for(const change of [r=>r.sources[0].sha256='0'.repeat(64),r=>r.sources[0].identity[1]='0']){
+   const corrupt=structuredClone(snapshot),untouched=new VirtualFS();change(corrupt[0]);
+   await assert.rejects(context.restore(untouched,corrupt),/source pin mismatch/);
+   assert.equal(untouched.files.size,0,'refused staged media must not enter the child');
+   assert.equal(untouched.readOnlyDrives.size,0);
+  }
   mounted.media.parts[0].source.close();assert.throws(()=>context.capture(parent),/ownership revoked|replaced/);
   opened[0].parts[0].source.close();assert.throws(()=>context.capture(child),/ownership revoked|replaced/);
  }finally{require('../lib/media-cli').closeMedia(mounted.media);for(const m of opened)require('../lib/media-cli').closeMedia(m);}
