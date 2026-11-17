@@ -7051,12 +7051,49 @@
     (i32.const 0))
 
   ;; ---- Loading a library by name ----
+  ;; A running QT invocation owns a leased alias of its real PE stack. That
+  ;; descriptor deliberately points outside the NE arena, so the ordinary
+  ;; arena-selector predicate cannot validate it. Admit only this frame's
+  ;; exact live alias and mapping lease, never an arbitrary external selector.
+  (func $win16_bridge_fixed_api_stack_selector (result i32)
+    (local $frame i32) (local $index i32) (local $base i32)
+    (local $i i32) (local $rec i32) (local $valid i32)
+    (if (i32.eqz (call $win16_bridge_fixed_owner)) (then (return (i32.const 0))))
+    (local.set $frame (i32.wrap_i64 (global.get $win16_bridge_frame)))
+    (if (i32.eqz (i32.load offset=352 (local.get $frame)))
+      (then (return (call $win16_bridge_selector_valid (global.get $sreg_ss) (i32.const 1)))))
+    (if (i32.or (i32.ne (i32.load offset=24 (local.get $frame)) (i32.const 1))
+      (i32.eqz (i32.load offset=268 (local.get $frame)))) (then (return (i32.const 0))))
+    (local.set $index (i32.load offset=12 (local.get $frame)))
+    (if (i32.or (i32.ne (global.get $sreg_ss) (i32.load offset=352 (local.get $frame)))
+      (i32.ne (global.get $sreg_ss) (call $win16_index_to_sel (local.get $index))))
+      (then (return (i32.const 0))))
+    (local.set $base (i32.and (i32.load offset=48 (local.get $frame)) (i32.const 0xFFFF0000)))
+    (if (i32.or (i32.ne (call $win16_seg_base (local.get $index)) (local.get $base))
+      (i32.or (i32.ne (call $win16_seg_limit (local.get $index)) (i32.const 0x10000))
+        (i32.ne (i32.load offset=8 (i32.add (global.get $WIN16_SEG_TABLE)
+          (i32.shl (local.get $index) (i32.const 4)))) (i32.const 1))))
+      (then (return (i32.const 0))))
+    (if (i32.ne (global.get $seg_base_ss) (local.get $base)) (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $LOCK_VIRTUAL_MAP))
+    (loop $leases
+      (local.set $rec (call $virtual_map_lease_record (local.get $i)))
+      (if (i64.eq (i64.load (local.get $rec)) (global.get $win16_bridge_frame))
+        (then
+          (local.set $valid (i32.and (i32.eq (i32.load offset=8 (local.get $rec)) (local.get $base))
+            (i32.and (i32.ne (i32.load offset=12 (local.get $rec)) (global.get $NULL_SENTINEL))
+              (i32.eq (i32.load offset=12 (local.get $rec)) (call $g2w (local.get $base))))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $leases (i32.lt_u (local.get $i) (i32.const 16))))
+    (call $lock_release (global.get $LOCK_VIRTUAL_MAP))
+    (local.get $valid))
+
   ;; Validate a complete API stack and its far return before acquiring or
   ;; releasing a reference. The bridge stacks live in the affine owned arena.
   (func $win16_bridge_fixed_api_stack (param $bytes i32) (result i32)
     (local $sp i32) (local $limit i32) (local $sel i32)
     (if (i32.eqz (call $win16_bridge_fixed_owner)) (then (return (i32.const 0))))
-    (if (i32.eqz (call $win16_bridge_selector_valid (global.get $sreg_ss) (i32.const 1))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $win16_bridge_fixed_api_stack_selector)) (then (return (i32.const 0))))
     (local.set $sp (i32.sub (i32.load offset=16 (global.get $reg_base)) (global.get $seg_base_ss)))
     (local.set $limit (call $win16_seg_limit (call $win16_sel_to_index (global.get $sreg_ss))))
     (if (i32.or (i32.lt_u (local.get $limit) (local.get $bytes))
