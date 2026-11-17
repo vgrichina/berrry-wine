@@ -53,7 +53,7 @@ async function run(out,commit,backend,mode,fixtureFile){
   const {deadline}=JSON.parse(fs.readFileSync(path.join(out,'runtime-start.json')));
   if(!(deadline>Date.now()&&deadline<=Date.now()+300000))throw Error('invalid fixed runtime deadline');
 
-  let browser,server;const requests=[],consoleLog=[],modules=[],workerSessions=[],workerTasks=[],captures=[],errors=[];
+  let browser,server;const requests=[],consoleLog=[],modules=[],workerSessions=[],workerTasks=[],captures=[],errors=[],targetClosures=[];
   let terminal={outcome:'unknown',backend,mode,commit,originalInputs:0,clock:'real unmodified',nativeDeadlineSeconds:300,independentWatchdogSeconds:320};
   try{
     server=http.createServer((req,res)=>{const n=decodeURIComponent(new URL(req.url,'http://localhost').pathname).slice(1)||'index.html';let b=files.get(n);if(!b&&/^(fonts|icons|images)\/[\w./-]+$/.test(n)&&!n.includes('..')){try{b=fs.readFileSync(path.join(ROOT,n));files.set(n,b);}catch{}}
@@ -63,6 +63,7 @@ async function run(out,commit,backend,mode,fixtureFile){
     const proc=browser.process();let chromeClose;const closed=new Promise(r=>proc.once('close',(code,signal)=>{chromeClose={pid:proc.pid,code,signal,actualWait:true};r();}));save('browser.json',{pid:proc.pid,spawnargs:proc.spawnargs,version:await browser.version()});
     async function observeTarget(target){if(!['page','other'].includes(target.type()))return;const s=await target.createCDPSession();workerSessions.push({session:s,target});s.on('Debugger.scriptParsed',ev=>{if(ev.scriptLanguage!=='WebAssembly'&&!ev.url.startsWith('wasm:'))return;const task=s.send('Debugger.getScriptSource',{scriptId:ev.scriptId}).then(r=>{modules.push({target:target.url(),scriptId:ev.scriptId,bytecodeAvailable:!!r.bytecode,sha256:r.bytecode?sha(Buffer.from(r.bytecode,'base64')):null});});workerTasks.push(task);task.catch(e=>errors.push(String(e)));});await s.send('Debugger.enable');}
     browser.on('targetcreated',t=>{const p=observeTarget(t);workerTasks.push(p);p.catch(e=>errors.push(String(e)));});
+    browser.on('targetdestroyed',t=>targetClosures.push({url:t.url(),type:t.type(),at:Date.now()}));
     const page=(await browser.pages())[0];
     if(process.env.BOIDS_CONTENT_DIAGNOSTIC)await page.evaluateOnNewDocument(()=>{
       const names=new Set(['DefWindowProcA','DispatchMessageA','ShowWindow','SetFocus','SetActiveWindow','SetForegroundWindow','IDirectDraw_SetCooperativeLevel','IDirectDrawSurface_IsLost','IDirectDrawSurface_Restore','IDirect3DDevice2_BeginScene','IDirect3DDevice2_EndScene','IDirectDrawSurface_Flip']);
@@ -197,6 +198,7 @@ async function run(out,commit,backend,mode,fixtureFile){
       await sleep(250);const after=await page.evaluate(()=>globalThis.__boidsContextBridge.presenter.presents);
       save('context-loss-refusal.json',{...loss,after,noLaterPresentation:after===loss.count});if(after!==loss.count)throw Error('Frame published after context loss');
     }
+    if(fixtureFile){await page.close();terminal.fixturePageClose={actualAwait:true,closed:page.isClosed(),at:Date.now()};}
     await browser.close();await closed;terminal.chromeClose=chromeClose;browser=null;
   }catch(e){terminal.error=String(e);terminal.outcome='blocked';}
   finally{
@@ -205,8 +207,9 @@ async function run(out,commit,backend,mode,fixtureFile){
     save('modules.json',modules);save('requests.json',requests);save('console.json',consoleLog);save('errors.json',errors);
     save('capture-boundary-trace.json',consoleLog.filter(r=>r.text.startsWith('BOIDS_CAPTURE_TRACE ')).map(r=>({deliveredAt:r.at,...JSON.parse(r.text.slice('BOIDS_CAPTURE_TRACE '.length))})));
     save('pins-after.json',{media:media.map(p=>({...p,sha256After:sha(fs.readFileSync(path.join(ROOT,p.path)))})),served:[...files].map(([path,b])=>({path,size:b.length,sha256:sha(b)}))});
-    terminal.captures=captures.map(r=>({index:r.index,publication:r.metadata.publication}));terminal.endedAt=new Date().toISOString();save('terminal.json',terminal);
+    terminal.targetClosures=targetClosures;terminal.captures=captures.map(r=>({index:r.index,publication:r.metadata.publication}));terminal.endedAt=new Date().toISOString();save('terminal.json',terminal);
   }
+  if(terminal.outcome!=='observed')throw Error(terminal.error||'Boids observation failed');
 }
 if(require.main===module)run(...process.argv.slice(2)).catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={run};
