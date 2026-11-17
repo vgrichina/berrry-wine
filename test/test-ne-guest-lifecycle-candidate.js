@@ -12,8 +12,11 @@ const {ThreadManager}=require('../lib/thread-manager');
 const {invokeNeEntrySync}=require('../lib/ne-invoke');
 
 async function main() {
-  assert(process.env.WA_TEST_WASM,'explicit prebuilt module required');
-  const module=await WebAssembly.compile(fs.readFileSync(process.env.WA_TEST_WASM));
+  // WA_TEST_WASM names a candidate module; default to the built one, as the
+  // Worker sibling test-worker-ne-guest-lifecycle.js does. Never compiled here.
+  const wasmPath=process.env.WA_TEST_WASM||require('node:path').join(__dirname,'../build/wine-assembly.wasm');
+  assert(fs.existsSync(wasmPath),'prebuilt module required (run tools/build.sh or set WA_TEST_WASM): '+wasmPath);
+  const module=await WebAssembly.compile(fs.readFileSync(wasmPath));
   const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
   let vfs;
   const imports=createHostImports({getMemory:()=>memory.buffer,renderer:null,resourceJson:{},get vfs(){return vfs;}});
