@@ -30,6 +30,47 @@ def startup(m):
             return
         m.time.sleep(min(.02,max(0,deadline-m.time.time())))
 
+def capture(m,name):
+    """Observe a null-focus transition inside the original capture clock.
+
+    No refused capture is retried. Readiness creates no PNG/lease/input and
+    never executes guest instructions on behalf of the controller.
+    """
+    m.reserve();target=m.identity();started=m.time.time();deadline=started+3
+    p=m.R/(name+'.png');assert not p.exists()
+    expected=None
+    if (m.R/'input-owner.json').exists():
+        expected=m.read(m.read('bind-intent.json')['scene']+'.json')['snapshot']
+    polls=[]
+    while True:
+        remaining=deadline-m.time.time();assert remaining>0,'capture readiness UNKNOWN'
+        ready=m.call(dict(action='native-startup-readiness'),timeout=remaining)
+        assert ready['contract']=='native-startup-readiness-v1'
+        snapshot=ready['snapshot']
+        polls.append(dict(at=m.time.time(),ready=ready['ready'],failures=ready['failures'],
+            mainHwnd=snapshot['mainHwnd'],modalHwnd=snapshot['modalHwnd'],focus=snapshot['focus'],
+            focusTopLevel=snapshot['focusTopLevel'],ordinaryOwner=ready['ordinaryOwner']))
+        with (m.R/(name+'-readiness-polls.jsonl')).open('a') as f:f.write(json.dumps(polls[-1])+'\n')
+        if ready['ready']:break
+        # Passive admission is diagnosed by the sealed scene module. Still
+        # pin it to the actor/process/screen of the one permanent binding.
+        assert expected and ready.get('nullFocusTransition'),'non-transient owner/context refusal'
+        anchor=next(w for w in snapshot['windows'] if w['hwnd']==
+            (snapshot['modalHwnd'] if snapshot['modalHwnd']!='0x0' else snapshot['mainHwnd']))
+        assert anchor['processId']==expected['focusWindow']['processId']
+        assert anchor['threadId']==expected['focusWindow']['threadId']
+        assert snapshot['nativeProcess']==expected['nativeProcess'] and snapshot['screen']==expected['screen']
+        m.time.sleep(min(.02,max(0,deadline-m.time.time())))
+    m.save(name+'-readiness.json',dict(startedAt=started,deadline=deadline,polls=polls,passive=True))
+    remaining=deadline-m.time.time();assert remaining>0,'capture readiness UNKNOWN'
+    reply=m.call(dict(action='native-reviewed-capture',path=str(p)),timeout=remaining)
+    assert m.time.time()<deadline and reply['contract']=='native-reviewed-context-v1'
+    assert target==m.identity()
+    m.save(name+'.json',dict(at=reply['startedAt']/1000,completedAt=reply['completedAt']/1000,
+        target=target,port=m.PORT,snapshot=reply['snapshot'],image=reply,captureId=reply['captureId'],
+        pngSHA256=hashlib.sha256(p.read_bytes()).hexdigest(),observationStartedAt=started,observationDeadline=deadline))
+    print(p)
+
 def preflight(snapshot,target,x,y,label):
     rows=snapshot['windows'];matches=[w for w in rows if w['hwnd']==target]
     assert len(matches)==1,'target must be one captured native control'
@@ -87,7 +128,7 @@ def controller():
         elif mode=='capture':
             ready=m.read('startup-ready.json')
             assert ready['ready'] and ready['passive'] and ready['target']==m.identity() and ready['port']==m.PORT
-            m.capture(sys.argv[2])
+            capture(m,sys.argv[2])
         elif mode=='review':
             scene,description,label,kind,target,x,y=sys.argv[2:9]
             assert kind in ('install','quit')

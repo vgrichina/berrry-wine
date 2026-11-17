@@ -7,7 +7,7 @@ PRIOR=ROOT/'scratch/runs/20261117-halflife2-startup-ready-agreement-install-prog
 BASE='70e85792eefac2489f655a415490f9e0a5c9297d'
 COMPONENT='63d7b0d0e8d979772a4e527a4d3561b4bdeb3692'
 EDIT_PROOF=ROOT/'scratch/runs/20261117-halflife2-native-large-edit-viewport-install'
-DIAGNOSTICS=('lib/cli-native-user-windows.js','lib/cli-native-scene.js',
+DIAGNOSTICS=('tools/halflife2-reviewed-next.py','lib/cli-native-user-windows.js','lib/cli-native-scene.js',
              'test/test-cli-native-capture-refusal-details.cjs','test/test-edit-wrap-resize.js',
              'src/13-exports.wat','src/09c3-wndprocs5-edit.wat','tools/control-variant-gate.js',
              'lib/process-desktop.js','test/test-process-desktop-observation.js',
@@ -84,7 +84,7 @@ def main():
  # transport and focused tests in addition to those already proved bodies.
  changed={}
  for name in DIAGNOSTICS:
-  b=(ROOT/name).read_bytes() if working and name=='lib/cli-native-scene.js' else m.git('show',revision+':'+name)
+  b=(ROOT/name).read_bytes() if working and name in ('lib/cli-native-scene.js','tools/halflife2-reviewed-next.py') else m.git('show',revision+':'+name)
   if name=='lib/cli-native-scene.js':assert b==(ROOT/name).read_bytes(),'publish scene first'
   changed[name]=dict(before=m.sha(files[name]) if name in files else None,after=m.sha(b));files[name]=b
  current_runner=(ROOT/'test/run.js').read_bytes() if working else m.git('show',revision+':test/run.js')
@@ -110,8 +110,8 @@ def main():
  # Default reuse is byte-identical. The explicit repair variant recompiles
  # only Edit against this exact graph and records a separate module hash.
  for name,digest in editpins['sources'].items():
-  if name.startswith(('src/','tools/watx')) or name in DIAGNOSTICS[:7]:
-   if name=='lib/cli-native-scene.js':continue # explicit reviewed ownership JS delta above
+  if name.startswith(('src/','tools/watx')) or name in ('lib/cli-native-user-windows.js','lib/cli-native-scene.js','test/test-cli-native-capture-refusal-details.cjs','test/test-edit-wrap-resize.js','src/13-exports.wat','src/09c3-wndprocs5-edit.wat','tools/control-variant-gate.js'):
+   if name in ('lib/cli-native-scene.js','tools/halflife2-reviewed-next.py'):continue # explicit reviewed ownership JS delta above
    if not (layout_repair and name=='src/09c3-wndprocs5-edit.wat'):
     assert m.sha(files[name])==digest,'published Edit/module input differs: '+name
  retained=EDIT_PROOF/'fixture/module.wasm';retained_body=retained.read_bytes()

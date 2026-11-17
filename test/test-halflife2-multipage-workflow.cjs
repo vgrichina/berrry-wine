@@ -2,21 +2,25 @@
 // Real authored DLGPROC replaces its Next BUTTON on every ordinary WM_COMMAND.
 // The full released CLI controller must inspect each new captured HWND.
 const fs=require('node:fs'),assert=require('node:assert/strict');
-function fixture(){
+function fixture({transitionDelayMs=0,childPages=false}={}){
  const b=require('./test-halflife2-native-wizard.cjs').dialogFixture(),raw=r=>r-0x1000+0x200;
  const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
  for(const [slot,r,name]of [[0x1964,0x1e00,'DestroyWindow'],[0x1968,0x1e30,'CreateWindowExA'],[0x196c,0x1e60,'SetFocus'],
-  [0x1970,0x1e90,'GetAsyncKeyState'],[0x1974,0x1ec0,'SetTimer'],[0x1978,0x1ee0,'KillTimer']]){
+  [0x1970,0x1e90,'GetAsyncKeyState'],[0x1974,0x1ec0,'SetTimer'],[0x1978,0x1ee0,'KillTimer'],[0x197c,0x1f00,'GetMessageA'],
+  [0x1980,0x1f30,'TranslateMessage'],[0x1984,0x1f60,'DispatchMessageA']]){
   b.writeUInt32LE(r,raw(slot));b.write(name+'\0',raw(r+2));
  }
- b.writeUInt32LE(0,raw(0x197c));
+ b.writeUInt32LE(0,raw(0x1988));
+ if(childPages)b.writeUInt32LE(0x50000400,raw(0x1500));
+ b.write('Wizard: Welcome\0',raw(0x27a0));
  b.write('Wizard: Internet Required\0',raw(0x2580));
  b.write('Authored page two: current Next has a new HWND.\0',raw(0x25c0));
  b.write('Wizard: SubscriberAgreement\0',raw(0x2700));
  b.write('BUTTON\0',raw(0x2740));b.write('Next >\0',raw(0x2760));
  b.write('Authored wizard owner\0',raw(0x2780));
- // Each real DialogBox returns after physical UP. The guest destroys its
- // owner main and creates a new main before opening the next modal page.
+ // Modal pages return after physical UP. The child-page variant instead
+ // ends a real modeless child and keeps its main live with null focus until
+ // the ordinary main timer creates the next page. Both replace the main.
  // No host mutation of HWNDs, generations or globals participates.
  function assemble(r,limit,body){
   const a=[],labels={},fix=[],e=(...v)=>a.push(...v),push=n=>e(0x68,...u32(n));
@@ -29,9 +33,28 @@ function fixture(){
  assemble(0x2000,0x300,({e,push,call,label,j})=>{
   e(0xa1,...u32(0x401944),0xa3,...u32(0x402604));push(0x402600);call(0x1940);
   label('page');
-  for(const n of [0,0x400000,0,0,360,640,40,40,0x10cf0000,0x402780,0x402500,0])push(n);
+  if(childPages)e(0xc7,0x05,...u32(0x4026b0),...u32(0),0xc7,0x05,...u32(0x4026b8),...u32(0));
+  for(const n of [0,0x400000,0,0,360,640,40,40,0x10cf0000,childPages?0x4027a0:0x402780,0x402500,0])push(n);
   call(0x1948);e(0xa3,...u32(0x4026a8));
-  push(0);push(0x402300);e(0x50);push(1);push(0x400000);call(0x1950);
+  if(childPages){
+   e(0x83,0x3d,...u32(0x4026a0),0);j('owner-title-done',[0x0f,0x84]);
+   e(0x83,0x3d,...u32(0x4026a0),1);j('owner-third',[0x0f,0x85]);
+   push(0x402580);j('owner-title',[0xe9]);label('owner-third');push(0x402700);
+   label('owner-title');e(0xff,0x35,...u32(0x4026a8));call(0x195c);label('owner-title-done');
+   push(0);push(10);push(9);e(0xff,0x35,...u32(0x4026a8));call(0x1974);
+   e(0xa1,...u32(0x4026a8));
+  }
+  push(0);push(0x402300);e(0x50);push(1);push(0x400000);call(childPages?0x1958:0x1950);
+  if(childPages){
+   label('messages');for(const n of [0,0,0,0x402800])push(n);call(0x197c);
+   push(0x402800);call(0x1980);push(0x402800);call(0x1984);
+   e(0x83,0x3d,...u32(0x4026b8),0);j('messages',[0x0f,0x84]);
+   call(0x1908);e(0x83,0x3d,...u32(0x4026b0),0);j('gap',[0x0f,0x85]);
+   e(0xa3,...u32(0x4026b0));j('messages',[0xe9]);
+   label('gap');e(0x2b,0x05,...u32(0x4026b0),0x3d,...u32(transitionDelayMs));j('messages',[0x0f,0x82]);
+   push(9);e(0xff,0x35,...u32(0x4026a8));call(0x1978);
+   e(0x31,0xc0,0x83,0x3d,...u32(0x4026a4),1,0x0f,0x94,0xc0);
+  }
   e(0x89,0xc6);e(0xff,0x35,...u32(0x4026a8));call(0x1964);
   e(0x85,0xf6);j('exit',[0x0f,0x84]);
   e(0xff,0x05,...u32(0x4026a0));j('page',[0xe9]);
@@ -63,11 +86,12 @@ function fixture(){
   push(1);e(0xff,0x75,8);call(0x1978);
   e(0x31,0xc0,0x83,0x3d,...u32(0x4026a4),1,0x0f,0x94,0xc0,0x50);
   e(0xff,0x75,8);call(0x1954);
+  if(childPages)e(0xc7,0x05,...u32(0x4026b8),...u32(1));
   label('done');e(0xb8,1,0,0,0,0xc9,0xc2,16,0);
  });return b;
 }
 
-function verify(dir){
+function verify(dir,{focusTransition=false}={}){
  const path=require('node:path'),read=n=>JSON.parse(fs.readFileSync(path.join(dir,n+'.json')));
  const targets=[],mains=[];
  assert(read('startup-ready').ready&&read('startup-ready').passive);
@@ -104,7 +128,20 @@ function verify(dir){
  const observation=read('cancel-observation');assert(observation.outcome==='process-exited'&&observation.noPostExitRequest);
  const wait=read('native-wait');assert(wait.actualWait&&wait.stdoutEOF&&wait.stderrEOF&&!wait.hostCleanup&&wait.exit===0&&wait.disposition==='normal');
  assert(read('native-exit').exitCode===0);
- console.log(JSON.stringify({passed:true,actualCompleteCLIWorkflow:true,changingNextHWNDs:targets,changingMainWindows:mains.map(w=>({hwnd:w.hwnd,generation:w.generation})),oneBinding:true,nativeACK500:true,independentUP1750:true,capture3000:true,reviewAge30:true,nativeQuit:true,hostCleanup:false,noOriginal:true}));
+ if(focusTransition){
+  for(const [scene,previous]of [['internet-required','welcome'],['subscriber-agreement','internet-required']]){
+   const readiness=read(scene+'-readiness'),capture=read(scene),before=read(previous);
+   const pending=readiness.polls.filter(p=>!p.ready);
+   assert(pending.length>0,'must actually observe the native transition');
+   assert(pending.every(p=>p.focus==='0x0'&&p.focusTopLevel==='0x0'&&p.modalHwnd==='0x0'&&
+    p.mainHwnd===before.snapshot.mainHwnd&&p.ordinaryOwner.actorContext));
+   assert(readiness.polls.at(-1).ready);
+   assert(capture.observationStartedAt===readiness.startedAt&&capture.observationDeadline===readiness.deadline);
+   assert(readiness.deadline===readiness.startedAt+3&&capture.completedAt<readiness.deadline);
+   assert(capture.image.startedAt/1000>=readiness.polls.at(-1).at);
+  }
+ }
+ console.log(JSON.stringify({passed:true,actualCompleteCLIWorkflow:true,focusTransitionQualified:focusTransition,changingNextHWNDs:targets,changingMainWindows:mains.map(w=>({hwnd:w.hwnd,generation:w.generation})),oneBinding:true,nativeACK500:true,independentUP1750:true,capture3000:true,reviewAge30:true,nativeQuit:true,hostCleanup:false,noOriginal:true}));
 }
 function unit(){
  const native=require('../lib/cli-native-scene'),{createGuardedInput}=require('../lib/cli-guarded-input');
@@ -162,7 +199,57 @@ for bad in (r,b.replace(m.OWNER_START,b'changed',1),b.replace(b'sameReviewedOwne
 print('PASS sealed runner adoption changes only exact owned owner block')
 `],{encoding:'utf8'});
  assert.equal(check.status,0,check.stderr);process.stdout.write(check.stdout);
+ const ready={ready:false,snapshot:{...scene,focus:'0x0',focusTopLevel:'0x0',focusWindow:{hwnd:'0x0',generation:'0',live:false,processId:1000,threadId:0}},
+  failures:['focus.live','focus.generation','focus.threadIdentity','focus.liveIdentity','focus.thread','focus.mainTopLevel','owner.ordinaryUSER'],
+  ordinaryOwner:{actorContext:true,processId:1000,threadId:1}};
+ assert(native.focusTransitionPending(ready,scene));
+ assert(native.captureFailures(ready.snapshot).context.length,'null focus never authorizes capture');
+ for(const change of [r=>r.snapshot.nativeProcess.pid++,r=>r.snapshot.windows[0].threadId++,
+  r=>r.snapshot.windows[0].processId++,r=>r.snapshot.windows[0].generation='0',
+  r=>r.snapshot.focusWindow.processId++,r=>r.ordinaryOwner.actorContext=false,
+  r=>r.failures.push('runtime.running'),r=>r.failures.push('input.capture'),
+  r=>r.failures.push('main.liveIdentity'),r=>r.failures.push('context.unchanged')]){
+  const v=structuredClone(ready);change(v);
+  // Production readiness supplies identity failures for an invalid generation.
+  if(v.snapshot.windows[0].generation==='0')v.failures.push('main.liveIdentity');
+  assert(!native.focusTransitionPending(v,scene));
+ }
+ const clocks=require('node:child_process').spawnSync('python3',['-B','-c',String.raw`import importlib.util,pathlib,tempfile,json,types
+s=importlib.util.spec_from_file_location('hl2','tools/halflife2-reviewed-next.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h)
+base=dict(focusWindow=dict(processId=1000,threadId=1),nativeProcess=dict(pid=123,executable='authored.exe'),screen=dict(w=640,h=480))
+anchor=dict(hwnd='0x1',live=True,visible=True,isChild=False,processId=1000,threadId=1)
+snapshot=dict(base,mainHwnd='0x1',modalHwnd='0x0',windows=[anchor],focus='0x0',focusTopLevel='0x0')
+for mode in ['transient','permanent','foreign-process','owner-violation','capture-refused','capture-late']:
+ with tempfile.TemporaryDirectory() as d:
+  r=pathlib.Path(d);(r/'input-owner.json').write_text('{}');clock=[100.];calls=[];records={};timeouts=[]
+  def call(command,timeout):
+   calls.append(command['action']);timeouts.append(timeout);clock[0]+=.1
+   if command['action']=='native-startup-readiness':
+    ready=mode in ['capture-refused','capture-late'] or (mode=='transient' and len(calls)>2)
+    snap=json.loads(json.dumps(snapshot))
+    if mode=='foreign-process':snap['nativeProcess']['pid']+=1
+    return dict(contract='native-startup-readiness-v1',ready=ready,snapshot=snap,
+      failures=[] if ready else ['focus.live'],nullFocusTransition=mode!='owner-violation',ordinaryOwner=dict(actorContext=True,processId=1000,threadId=1))
+   assert command['action']=='native-reviewed-capture'
+   if mode=='capture-refused':raise AssertionError('strict capture refused')
+   if mode=='capture-late':clock[0]+=3
+   pathlib.Path(command['path']).write_bytes(b'authored-unit-encoder')
+   return dict(contract='native-reviewed-context-v1',startedAt=clock[0]*1000,completedAt=clock[0]*1000,snapshot=snapshot,captureId='unit')
+  m=types.SimpleNamespace(R=r,PORT=1,identity=lambda:dict(pid=123),reserve=lambda:None,call=call,
+   time=types.SimpleNamespace(time=lambda:clock[0],sleep=lambda t:clock.__setitem__(0,clock[0]+t)),
+   save=lambda n,v:records.__setitem__(n,v),read=lambda n:dict(scene='bound') if n=='bind-intent.json' else dict(snapshot=base))
+  try:h.capture(m,'scene')
+  except AssertionError:
+   assert mode!='transient'
+  else:assert mode=='transient'
+  assert calls.count('native-reviewed-capture')==(1 if mode in ['transient','capture-refused','capture-late'] else 0)
+  if mode=='permanent':assert 103<=clock[0]<103.11
+  if mode in ['foreign-process','owner-violation']:assert len(calls)==1
+  if mode=='transient':assert records['scene.json']['observationDeadline']==103
+print('PASS bounded passive transient/never-ready/foreign-owner/strict-refusal/late-encoder; at most one strict capture, original deadline unchanged')
+`],{encoding:'utf8'});
+ assert.equal(clocks.status,0,clocks.stderr);process.stdout.write(clocks.stdout);
  console.log('PASS main replacement requires fresh whole image/current native metadata; stale main/generation/recycled handle/process/thread/module/device/queue/runtime refusals; one binding');
 }
 module.exports={fixture,verify,unit};
-if(require.main===module){if(process.argv[2]==='--unit')unit();else if(process.argv[2]==='--verify')verify(process.argv[3]);else fs.writeFileSync(process.argv[2],fixture(),{flag:'wx'});}
+if(require.main===module){if(process.argv[2]==='--unit')unit();else if(['--verify','--verify-focus'].includes(process.argv[2]))verify(process.argv[3],{focusTransition:process.argv[2]==='--verify-focus'});else fs.writeFileSync(process.argv[2],fixture({transitionDelayMs:process.argv.includes('--focus-transition')?1200:0,childPages:process.argv.includes('--focus-transition')}),{flag:'wx'});}
