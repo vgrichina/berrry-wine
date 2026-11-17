@@ -39462,5 +39462,19 @@
     "nargs": 0,
     "convention": "stdcall",
     "hash": 391800565
+  },
+  {
+    "id": 4659,
+    "name": "ImageList_SetOverlayImage",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4187758740
+  },
+  {
+    "id": 4660,
+    "name": "ImageList_GetImageInfo",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3294435810
   }
 ]

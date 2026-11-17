@@ -17,7 +17,9 @@ SUPPORT_PACKAGE_SHA256='564de93dcc50691480332e2ccb5565908760b295faa70f8c68854f69
 CFGMGR32_SHA256='572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b80'
 SUPPORT_MOUNTS=[]
 OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/run.js',
-    'lib/installed-dll-closure.js','test/test-installed-dll-closure.cjs','test/test-vb5-runtime-shutdown.py')
+    'lib/installed-dll-closure.js','test/test-installed-dll-closure.cjs','test/test-vb5-runtime-shutdown.py',
+    'src/09a9-comctl32.wat','src/api_table.json','src/01b-api-hashes.generated.wat',
+    'src/09b2-dispatch-table.generated.wat','tools/gen_api_table.js','test/test-image-list-icons.js')
 
 class ShutdownRequested(SystemExit):pass
 def shutdown_signal(signum,frame):
@@ -240,6 +242,9 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
+    if '--comctl-only' in sys.argv:
+        checked('image-list-apis',['node','test/test-image-list-icons.js'],env,(source,module))
+        return
     if installed or '--closure-only' in sys.argv or '--complete-qualification' in sys.argv:
         checked('authentic-dll-closure',['node','test/test-installed-dll-closure.cjs',str(RUN/'authentic-dll-closure')],env,(source,module))
         if '--closure-only' in sys.argv:return
@@ -442,6 +447,7 @@ def original_pipeline(env,source,module,started,deadline,passive,installed_input
                 '--control='+str(port),'--max-seconds='+str(max(1,int(deadline-time.time()))),
                 '--max-batches=1000000000','--stuck-after=0','--real-ticks',
                 '--quiet-api','--quiet-blocks','--png-canvas',
+                '--trace-api=LoadLibraryA,LoadLibraryExA,GetProcAddress,GetModuleHandleA,GetModuleFileNameA,GetFileVersionInfoSizeA,GetFileVersionInfoA,VerQueryValueA,MessageBoxA','--trace-to=20000',
                 '--pipe-child-args=--control='+str(childport)+' --winver=nt4 --threads --real-ticks --png-canvas',*SUPPORT_MOUNTS,*extra]
             publish(target/'launch.json',dict(args=argv,at=started,deadline=deadline,
                  gameplayCutoff=deadline-reserve_seconds,reserveSeconds=reserve_seconds,

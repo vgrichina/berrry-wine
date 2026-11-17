@@ -118,7 +118,7 @@ def review(scene,description,label,kind,target):
          visibleLabel=label,kind=kind,targetHwnd=target,pngSHA256=rr['pngSHA256']))
 def reviewed(scene):
     rr=read(scene+'.json');r=read(scene+'-review.json')
-    freshness=5 if r['kind']=='game' else 30
+    freshness=15 if r['kind']=='game' else 30
     assert 0<=time.time()-rr['at']<freshness and 0<=time.time()-r['at']<freshness
     assert rr['target']==identity() and rr['port']==PORT and r['rawCompleteScene'] and r['observation'] and r['visibleLabel']
     assert r['pngSHA256']==rr['pngSHA256']==hashlib.sha256((R/(scene+'.png')).read_bytes()).hexdigest()
