@@ -24,22 +24,30 @@ from the original package. It does not unpack game content.
 Further small CRC-checked streams contain an **Internet Connection Required**
 dialog that instructs users without Internet to cancel. A 1,208,320-byte PE
 contains the Valve Steam registry path and `Steam.exe` strings. Its role as a
-Steam client is an inference from those bytes; an installed filename, installed
-launch command, game content completeness and authentication requirements have
-not been established. The installer title alone is not their proof.
+Steam client is an inference from those bytes. The independently CRC-verified
+14,849-byte installation script establishes the normal target separately:
+`%PROGRAM_FILES%\Valve\Steam`, six `SteamApps\*.gcf` files and Steam shortcuts
+and final launch targeting `%MAINDIR%\Steam.exe`. It does not establish game
+content completeness, an actual installed launch or authentication success.
+The installer title alone is not their proof.
 
 The authored fixture uses ordinary x86 `LoadLibraryA`, `GetProcAddress`,
-`FreeLibrary` and `ExitProcess` through `test/run.js`, with a real CPU Worker.
-It loads the genuine Wise DLL, resolves its export, and unloads it successfully.
-It **never calls WiseMain**, loads the original EXE or performs installation.
-The sealed runtime comes from published Git
-`2ff781be2ea05b6469aec1a93e2e90cac0fbb647`, with module SHA-256
-`83eb159dc132c362808a86bfc82c8cd0b72a392919390a938884282a1909e65c`.
-Only the two owned inspection/test helpers were overlaid in memory; all runtime
-sources are Git bytes. The actual native exit is zero. Native and independently
-prearmed watchdog waits are zero with both observed pipe EOFs. A preliminary
-fixture attempt rejected an invalid invocation-token format before guest
-execution; that harness error was corrected to a UUID and is retained separately.
+`FreeLibrary` and thread/lifecycle APIs through `test/run.js`. It loads the
+genuine Wise DLL, resolves its export, and unloads it successfully. It **never
+calls WiseMain**, loads the original EXE or performs installation.
+
+The first successful fixture (`probe2`) ran on the main guest thread. Its
+initial proof incorrectly described `--threads` alone as actual Worker coverage;
+`coverage-correction.json` explicitly supersedes that field. A subsequent
+fixture uses `CreateThread`, joins through `WaitForSingleObject`, verifies
+`GetExitCodeThread` and observes actual Worker creation and exit. Its sealed
+runtime is published Git `5df4bcb0f9ed85dc970421e025a1470b5f1b1ebf`, module SHA-256
+`f1dd81b43b94bdab0783e0de2a4616d7b19bb0dd7165c43b295b3068b763e831`.
+Only the two owned inspection/test helpers are overlaid in memory; all runtime
+sources are Git bytes. Native and independently prearmed watchdog waits and
+pipe EOFs are recorded separately. A preliminary invalid invocation-token
+attempt and a later incorrect log-assertion failure are retained as harness
+failures, separately from successful guest execution.
 
 Original invocation remains conditional on current native route/capture/input
 and lifecycle qualification. The VB worker owns the modal actor fault discovered
@@ -56,6 +64,18 @@ also passed. This does not substitute for the material modal actor follow-up or
 the independently owned lifecycle repair; those must be qualified before an
 original. Package checks include the standard CRC-32 vector and independently
 corrupted/truncated stream, wrong output size and compressed-boundary controls.
+
+The fresh installation script initializes REQUIREDSPACE to 10,000 and adds
+900,000 for absent Half-Life 2 content, 5,000 for the demo, 80,000 for the engine,
+1,300,000 for materials, 500,000 for models and 1,200,000 for sounds: **3,995,000
+installer free-space units**. Its missing-space display divides by 1,000 to
+report MB. These are the genuine installer's declared requirements, not an
+independently measured installed footprint. Current `/home` has less than
+2 GB free, of which 1.5 GB must remain free. That cannot accommodate the
+declared normal installation. No substitute storage, box, content editing,
+disk-space success override or attempted partial install is used. Both one-shot
+original stages remain unused. The next step is sufficient compliant local disk
+headroom and the published, freshly qualified material actor/lifecycle fixes.
 
 Recovery uses Git plus the recorded owned-helper patches and the original media
 path/hash. No source tree archive, capture bundle or duplicate installer is made.

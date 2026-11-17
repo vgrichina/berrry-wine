@@ -37,6 +37,17 @@ function inspect(file){
     const lengths=[b.readUInt32LE(overlay+0x51),b.readUInt32LE(overlay+0x1d),b.readUInt32LE(overlay+0x21),b.readUInt32LE(overlay+0x31)];
     streams.forEach((s,i)=>{if(s.compressedBytes+4!==lengths[i])throw Error('Wise header compressed length mismatch');});
     if(bodies[2].subarray(0,2).toString()!=='MZ'||bodies[3].subarray(0,2).toString()!=='MZ'||!bodies[2].includes(Buffer.from('WiseMain\0')))throw Error('genuine bootstrap DLL identity missing');
+    const script=bodies[1].toString('latin1');
+    const spaceVariables=['REQUIREDSPACE','HL2_CONTENT','HL2_DEMO','SOURCE_ENGINE','SOURCE_MATERIALS','SOURCE_MODELS','SOURCE_SOUNDS'];
+    const space=Object.fromEntries(spaceVariables.map(name=>{
+      const match=new RegExp(name+'\\x7f([0-9]+)\\x00').exec(script);
+      if(!match)throw Error('Wise space assignment missing: '+name);
+      return [name,Number(match[1])];
+    }));
+    const content=['half-life 2 content.gcf','half-life 2 demo.gcf','source engine.gcf','source materials.gcf','source models.gcf','source sounds.gcf'].map(n=>'%MAINDIR%\\SteamApps\\'+n);
+    for(const n of content)if(!script.includes(n))throw Error('Wise content path missing');
+    for(const n of ['%PROGRAM_FILES%\\Valve\\Steam','%MAINDIR%\\Steam.exe','%GROUP%\\Steam.lnk','ShellLink'])if(!script.includes(n))throw Error('Wise normal launch evidence missing');
+    const installation={script:streams[1],defaultDirectory:'%PROGRAM_FILES%\\Valve\\Steam',normalClientLaunch:'%MAINDIR%\\Steam.exe',shortcut:'%GROUP%\\Steam.lnk',content,spaceVariables:space,freshRequiredSpaceUnits:Object.values(space).reduce((a,b)=>a+b,0),spaceInterpretation:'script adds each absent GCF requirement to REQUIREDSPACE and divides missing space by 1000 for displayed MB; declared requirement is not a measured installed footprint',installed:false};
     const supportingStreams=[];let internetDialog=null,steamClient=null;
     // Inspect only small startup/dialog/client streams. The next large content
     // stream is deliberately left compressed in the one retained installer.
@@ -54,7 +65,7 @@ function inspect(file){
       at=r.next;
     }
     if(!internetDialog||!steamClient)throw Error('Steam startup dependency evidence missing');
-    return {record:{file,bytes:size,sha256:digest,format:'PE32 Wise bootstrap with CRC-protected raw DEFLATE streams',entryRVA:b.readUInt32LE(o+16),imageBytes:b.readUInt32LE(o+56),overlay,sections,title:title.text,initializing:initializing.text,streams,supportingStreams,bootstrap:'WISE0132.dll',bootstrapExport:'WiseMain',internetDialog,steamClient,originalInvocations:0,installedGameLaunch:null,SteamRequirement:'installer explicitly requires Internet and includes Steam client; installed launch and authentication still unproved'},bootstrap:bodies[2]};
+    return {record:{file,bytes:size,sha256:digest,format:'PE32 Wise bootstrap with CRC-protected raw DEFLATE streams',entryRVA:b.readUInt32LE(o+16),imageBytes:b.readUInt32LE(o+56),overlay,sections,title:title.text,initializing:initializing.text,streams,supportingStreams,bootstrap:'WISE0132.dll',bootstrapExport:'WiseMain',installation,internetDialog,steamClient,originalInvocations:0,installedGameLaunch:null,SteamRequirement:'script installs and launches Steam.exe with six GCFs; Internet dialog is explicit; actual installed startup and authentication still unproved'},bootstrap:bodies[2]};
   }finally{fs.closeSync(fd);}
 }
 module.exports={inspect,stream,crc32,ORIGINAL};

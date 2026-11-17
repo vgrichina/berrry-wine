@@ -9,20 +9,25 @@ const r=stream(bytes,2,plain.length);assert.deepEqual(r.body,plain);assert.equal
 assert.throws(()=>stream(bytes,2,plain.length+1),/size/);
 const bad=Buffer.from(bytes);bad[2+packed.length]^=1;assert.throws(()=>stream(bad,2),/CRC/);
 assert.throws(()=>stream(bytes.subarray(0,2+packed.length+2),2),/CRC/);
-if(process.argv[2]&&process.argv[2]!=='--native'){const r=inspect(process.argv[2]);assert.equal(r.record.title,'Steam Install');assert.equal(r.bootstrap.length,165376);assert.equal(r.record.streams[2].sha256,'a87f19f9fee475d2b2e82acfb4589be6d816b613064cd06826e1d4c147beb50a');}
+if(process.argv[2]&&process.argv[2]!=='--native'){const r=inspect(process.argv[2]);assert.equal(r.record.title,'Steam Install');assert.equal(r.bootstrap.length,165376);assert.equal(r.record.streams[2].sha256,'a87f19f9fee475d2b2e82acfb4589be6d816b613064cd06826e1d4c147beb50a');assert.equal(r.record.installation.freshRequiredSpaceUnits,3995000);assert.equal(r.record.installation.content.length,6);assert.equal(r.record.installation.normalClientLaunch,'%MAINDIR%\\Steam.exe');}
 console.log('PASS Wise raw DEFLATE boundary, size, CRC, corruption and original bootstrap identity');
 async function native(out){
   const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),{once}=require('node:events');
-  const {X86,pe,BASE}=require('./test-dll-lifecycle-real-pe');
+  const {X86,pe,BASE,DATA,u32}=require('./test-dll-lifecycle-real-pe');
   fs.mkdirSync(out,{recursive:true});
   const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
   const a=new X86();
   a.push(BASE+0x2800).api('LoadLibraryA').emit(0x85,0xc0).branch([0x0f,0x84],'bad');
   a.emit(0x89,0xc3).push(BASE+0x2840).emit(0x53).api('GetProcAddress').emit(0x85,0xc0).branch([0x0f,0x84],'bad');
-  a.emit(0x53).api('FreeLibrary').checkEax(1).push(0).api('ExitProcess');
-  a.label('bad').push(71).api('ExitProcess');
+  a.emit(0x53).api('FreeLibrary').checkEax(1).push(0).api('ExitThread');
+  a.label('bad').push(71).api('ExitThread');
+  const main=new X86();
+  main.push(0).push(0).push(0).push(BASE+0x2400).push(0).push(0).api('CreateThread');
+  main.emit(0x85,0xc0).branch([0x0f,0x84],'bad-thread').eaxTo(0).push(0xffffffff).emit(0x50).api('WaitForSingleObject').checkEax(0);
+  main.push(DATA+4).emit(0xff,0x35,u32(DATA)).api('GetExitCodeThread').checkEax(1).checkMem(4,0).push(0).api('ExitProcess');
+  main.label('bad-thread').push(72).api('ExitProcess');
   const image=path.join(out,'authored-load.exe');
-  fs.writeFileSync(image,pe([[0x2000,a.finish()],[0x2800,'c:\\wise0132.dll\0'],[0x2840,'WiseMain\0']]),{flag:'wx'});
+  fs.writeFileSync(image,pe([[0x2000,main.finish()],[0x2400,a.finish()],[0x2800,'c:\\wise0132.dll\0'],[0x2840,'WiseMain\0']]),{flag:'wx'});
   // This ordinary authored startup calls LoadLibrary/GetProcAddress/FreeLibrary.
   // It never calls the installer export or loads the original EXE.
   const wd=cp.spawn(process.execPath,['-e',`let pid;const timer=setTimeout(()=>{if(pid)try{process.kill(pid,'SIGKILL')}catch{};process.exitCode=2;process.stdin.destroy()},45000);console.log('ARMED');process.stdin.on('data',b=>pid=+b);process.stdin.on('end',()=>clearTimeout(timer));`]);
@@ -40,6 +45,8 @@ async function native(out){
   assert.equal(wx,0);assert.equal(exit,0,stdout+stderr);
   const result=JSON.parse(fs.readFileSync(path.join(out,'native-exit.json')));
   assert.equal(result.exitCode,0);
-  save('proof.json',{authored:true,originalInstallerInvoked:false,WiseMainInvoked:false,ordinaryWin32LoadAndFree:true,guestThreadMode:'actual CPU Worker',exitReceipt:result});
+  assert.match(stdout+stderr,/\[ThreadManager\] spawned WORKER thread 1/);
+  assert.match(stdout+stderr,/\[ThreadManager\] worker thread 1 exited/);
+  save('proof.json',{authored:true,originalInstallerInvoked:false,WiseMainInvoked:false,ordinaryWin32LoadAndFree:true,guestThreadMode:'actual CreateThread CPU Worker, joined by WaitForSingleObject and GetExitCodeThread',exitReceipt:result});
 }
 if(process.argv[2]==='--native')native(require('node:path').resolve(process.argv[3])).catch(e=>{console.error(e);process.exitCode=1;});
