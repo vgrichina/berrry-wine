@@ -4773,6 +4773,7 @@ async function main() {
 
   // --- Override input for test injection ---
   let lastInputEvent = null;
+  let guardedInput = null;
   h.check_input = () => {
     if (mainSchedulerObserver) mainSchedulerObserver.hostInput();
     let evt = null;
@@ -4810,6 +4811,13 @@ async function main() {
     lastInputEvent = evt;
     if (renderer) renderer._activeInputEvent = evt;
     inputConsumptionTrace.dequeue(evt, source);
+    // A host handler may have queued DOWN long before USER polls it. Only
+    // this actual input import return can acknowledge the matching edge.
+    if (guardedInput?.delivered(evt) === false) {
+      lastInputEvent = null;
+      if (renderer) renderer._activeInputEvent = null;
+      return 0;
+    }
     const packed = (evt.wParam << 16) | (evt.msg & 0xFFFF);
     logs.push(`[check_input] msg=0x${evt.msg.toString(16)} wParam=0x${evt.wParam.toString(16)} lParam=0x${(evt.lParam >>> 0).toString(16)} packed=0x${packed.toString(16)}`);
     return packed;
@@ -7654,6 +7662,7 @@ async function main() {
           threadId: we.get_window_thread(h) >>> 0, controlClass: 16 };
       })(),
       physicalUp: !(renderer?._mouseButtonsMask || Object.values(renderer?._physicalKeys || {}).some(Boolean)),
+      nativeDialogBox: require('../lib/cli-native-user-windows').nativeDialogBoxIdentity(instance,threadManager),
       nativeProcess: { pid: process.pid, executable: EXE_PROCESS_GUEST_PATH || EXE_PATH },
       screen: renderer && renderer.canvas
         ? { w: renderer.canvas.width | 0, h: renderer.canvas.height | 0 } : null,
@@ -7739,7 +7748,10 @@ async function main() {
   const sameReviewedWindow = (a, b) => a && b &&
     ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
       .every(k => a[k] === b[k]);
-  const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
+  guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
+    nativeDelivery: true,
+    captureDelivery: () => nativeScene.reviewedContext(controlSnapshot()),
+    validateDelivery: expected => JSON.stringify(nativeScene.reviewedContext(controlSnapshot())) === JSON.stringify(expected),
     validateIntent: intent => {
       if (!nativeSceneLease) return true;
       if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {

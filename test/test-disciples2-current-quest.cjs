@@ -76,9 +76,9 @@ def check(source,should_close):
 old=subprocess.check_output(['git','show','68543c27cc4173b085205216c3e2979179f9140f:'+path]).decode()
 check(old,False);check(pathlib.Path(path).read_text(),True)
 m=types.ModuleType('receipt');m.__file__=str(pathlib.Path(path).resolve());exec(compile(pathlib.Path(path).read_text(),path,'exec'),m.__dict__)
-g=dict(owner='one',epoch=1,nonce='finite',deadline=5000);r=dict(**g,state='CONSUMED',consumed=True,consumedAt=4999)
+g=dict(owner='one',epoch=1,nonce='finite',deadline=5000);r=dict(**g,state='CONSUMED',consumed=True,consumedAt=4999,receiptBoundary='native-input-return',nativeMessage=dict(msg=513))
 m.confirm_receipt(r,g,5)
-for patch in (dict(consumedAt=5000),dict(consumedAt=5001),dict(owner='replacement'),dict(nonce='replayed'),dict(deadline=6000)):
+for patch in (dict(receiptBoundary='host-handler'),dict(nativeMessage=None),dict(consumedAt=5000),dict(consumedAt=5001),dict(owner='replacement'),dict(nonce='replayed'),dict(deadline=6000)):
  try:m.confirm_receipt(dict(r,**patch),g,5)
  except AssertionError:pass
  else:raise AssertionError(patch)
