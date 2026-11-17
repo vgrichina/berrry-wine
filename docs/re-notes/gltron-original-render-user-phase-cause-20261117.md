@@ -8,6 +8,34 @@ original native Quit is established. The WebGL attempt isolates an unresolved
 444 ms interval before the owning Worker's next USER import. The recorded
 623.46 ms render drain starts **after** cancellation and cannot explain it.
 
+## Later external persistence diagnostic
+
+Evidence: `scratch/runs/20261117-gltron-page-stall-passive-tail-cause/result.json`.
+Test-only observer commit `4b141013d` adds an independent exporter Worker.
+Direct console events from a blocked producer failed to reach Node in the
+authored proof. The exporter instead reads atomically committed shared records
+and returns from its own timer before Chrome sends its console batch to an
+external append-only file. A page spinning inside capture and a producer blocked
+in Atomics.wait both retained their final entry stacks through actual browser
+exit, both pipe EOFs and external file fsync. Another blocked producer retained
+two records and reported exactly twenty capped drops. This is transport
+qualification, not reconstruction of missing original GL inputs.
+
+The separately authorized single WebGL original reached the GAME submenu.
+Its one physical Enter returned through native USER in 130 ms, with independent
+UP at 222 ms. START GAME admission expired before DOWN: the bound owner remained
+healthy but its last USER observation was old. The participant confirmed
+cancelNoDown; no later transport query or second original followed.
+
+The external tail preserves an 802 ms interval between the last presentation
+transfer return and publication entry in the repaint path. It also preserves
+an 855 ms gap between main Worker wait boundaries; the later stack resolves
+through handle_ReleaseSemaphore using the exact retained module's name section.
+Neither interval alone separates JavaScript/native canvas work, guest execution,
+GPU driver blocking or OS scheduling. No OS CPU, historical 444 ms cause,
+production repair, live turn, round consequence or original native Quit is
+claimed. The older request-ticket timeout was not reproduced by this attempt.
+
 ## Review failure and qualification limits
 
 The software original's first Enter was incorrectly written in the same tool
