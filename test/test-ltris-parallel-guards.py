@@ -175,7 +175,70 @@ for(const [name,kind] of [['handleKeyDown','DOWN'],['handleKeyUp','UP']]) {
     result=dict(kind=kind,pass_=True,nativeFixture=True,original=False,exception=caught,physical=physical,laterRequestsAfterClosure=0)
     m.save('qualification.json',result);print(json.dumps(result),flush=True)
     return result
+
+def sdl_route():
+    out=RUN/os.environ.get('LTRIS_SDL_TAG','fixture-sdl-route');out.mkdir()
+    head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip()
+    f=json.loads(subprocess.check_output(['node','test/test-ltris-sdl-latency.cjs'],cwd=ROOT))
+    with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
+    game=ROOT/'test/binaries/candidates/ltris-128/game/LTRIS'
+    env=dict(os.environ,LTRIS_OWNED_CONTROL_SHA256=hashlib.sha256((ROOT/'lib/control-server.js').read_bytes()).hexdigest(),LTRIS_MODULE_PATH=os.environ.get('LTRIS_MODULE_PATH',str(ROOT/'build/wine-assembly.wasm')),WINE_PUBLIC_INPUT_TRACE=str(out/'input.ndjson'),WINE_CONTROL_PHASE_TRACE=str(out/'http-phases.json'))
+    args=['python3','-B','tools/ltris-parallel-native-runtime.py',str(out),'240','node','test/run.js','--exe='+f['file'],'--no-build','--threads','--real-ticks','--screen=1024x768','--max-seconds=240','--max-batches=10000000','--control='+str(port),'--quiet-api','--quiet-blocks','--no-close']
+    for n in ['SDL.dll','libgcc_s_sjlj-1.dll','libwinpthread-1.dll']:args+=['--dll-seed='+str(game/n)]
+    args+=['--dll-seed='+str(ROOT/'test/binaries/dlls/msvcrt.dll')]
+    p=subprocess.Popen(args,cwd=ROOT,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+    def save(n,v):(out/n).write_text(json.dumps(v,indent=2)+'\n')
+    save('fixture.json',dict(fixture=f,head=head,args=args,original=False,SDL=hashlib.sha256((game/'SDL.dll').read_bytes()).hexdigest()))
+    error=None
+    try:
+     while not (out/'native-pid.json').exists():assert p.poll() is None;time.sleep(.02)
+     os.environ.update(FORSAKEN_CONTROL_OUT=str(out),FORSAKEN_CONTROL_URL='http://127.0.0.1:'+str(port)+'/ctl',LTRIS_CONTROL_HEAD=head,LTRIS_CONTROL_PHASES='1')
+     spec=importlib.util.spec_from_file_location('manual',ROOT/'tools/ltris-parallel-control.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);c=m.c
+     until=time.monotonic()+10
+     while True:
+      try:
+       s=m.call(dict(action='snapshot'))
+       if s['mainHwnd']!='0x0' and s['physicalUp']:break
+      except Exception as e:
+       if 'ConnectionRefusedError' not in str(e):raise
+      assert time.monotonic()<until;time.sleep(.05)
+     time.sleep(.4)
+     c.capture('menu');c.save('menu-review.json',dict(at=time.time(),pngSHA256=c.read('menu.json')['pngSHA256'],observation='Authored SDL controls fixture complete surface',submittedScene=True))
+     rr=c.read('menu.json');owner=m.call(dict(action='guarded-bind',reviewedScene=dict(route='native-scene-v1',snapshot=rr['snapshot'],pngSHA256=rr['pngSHA256'])))
+     c.save('input-owner.json',owner);c.save('lease-snapshot.json',{k:rr['snapshot'][k] for k in ('mainHwnd','screen')})
+     for name,cmd,review in [('controls','mousedown:180:317','menu'),('player1','mousedown:180:302','controls'),('escape','keydown:27','player1')]:
+      os.environ['LTRIS_REVIEW']=review
+      c.save(review+'-review.json' if name!='controls' else 'menu-manual-review.json',dict(at=time.time(),pngSHA256=c.read(review+'.json')['pngSHA256'],observation='Authored SDL complete route synthetic review'))
+      c.call=m.safe_call
+      result=c.pulse(name,[cmd],120,review,'Authored SDL Controls Player1 route',maxSceneAge=30,final=name=='escape')
+      print(name,result,flush=True)
+    except BaseException as e:
+     error=repr(e);save('failure.json',dict(error=error));print(error,flush=True)
+    finally:
+     if p.poll() is None and error:
+      info=json.loads((out/'native-pid.json').read_text());stat=pathlib.Path('/proc/'+str(info['pid'])+'/stat').read_text();assert stat[stat.rindex(')')+2:].split()[19]==info['startToken'];os.killpg(info['pid'],signal.SIGTERM);save('host-cleanup.json',dict(signal=15,nativeQuit=False))
+     a,b=p.communicate(timeout=30);save('outer-wait.json',dict(pid=p.pid,exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode()))
+     print('done',p.returncode,error,flush=True)
+    assert error is None,error
+    assert p.returncode==0
+    for name in ['native-wait.json','watchdog-wait.json','supervisor-child-wait.json']:
+        wait=json.loads((out/name).read_text())
+        assert wait['exit']==0 and wait['actualWait'] and wait['stdoutEOF'] and wait['stderrEOF'],wait
+    assert '[Exit] code=0' in (out/'native.stdout.log').read_text()
+    assert not (out/'host-cleanup.json').exists() and not (out/'watchdog-fired.json').exists()
+    # Public rendered fixture consequences, never original game state.
+    pixels=json.loads(subprocess.check_output(['node','-e',"const fs=require('fs'),{PNG}=require('pngjs'); console.log(JSON.stringify(process.argv.slice(1).map(p=>{const v=PNG.sync.read(fs.readFileSync(p)),i=(200*v.width+400)*4;return Array.from(v.data.slice(i,i+4));})))",*[str(out/(n+'.png')) for n in ['menu','controls','player1']]],cwd=ROOT))
+    assert len(set(map(tuple,pixels)))==3,pixels
+    receipts=[json.loads((out/(n+'-receipt.json')).read_text()) for n in ['controls','player1','escape']]
+    assert all(r['consumed'] and r['receiptBoundary']=='native-input-return' and r['nativeMessage']['consumption']=='owner-user-return' for r in receipts)
+    http=[json.loads(f.read_text()) for f in out.glob('http-*.json')]
+    timings=[dict(command=v['command'],milliseconds=1000*(v['completedAt']-v['at']),limit=v['limitSeconds']) for v in http if v.get('command',{}).get('action')=='guarded-input']
+    assert len(timings)==3 and all(t['limit']==.5 and t['milliseconds']<500 for t in timings),timings
+    save('qualification.json',dict(pass_=True,original=False,nativeQuit=True,SDLConsumer=True,nativeReturnProof=True,renderedPixels=pixels,timings=timings,latencyFailureReproduced=False))
+
 if __name__=='__main__':
+    if '--sdl-route' in sys.argv:
+        sdl_route();raise SystemExit(0)
     if '--worker-module' in sys.argv:
         worker_module();raise SystemExit(0)
     if '--observer-loss' in sys.argv:

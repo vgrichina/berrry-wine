@@ -43,8 +43,12 @@ def source_pool(out):
     import re, posixpath
     selected = list(dict.fromkeys(selected))
     bodies = {}
+    owned_control_sha = os.environ.get('LTRIS_OWNED_CONTROL_SHA256')
     for p in selected:
-        body = (ROOT/p).read_bytes() if p.startswith('node_modules/') else git('show', head+':'+p)
+        adopted_control = p == 'lib/control-server.js' and owned_control_sha is not None
+        body = (ROOT/p).read_bytes() if p.startswith('node_modules/') or adopted_control else git('show', head+':'+p)
+        if adopted_control:
+            assert digest(body) == owned_control_sha, 'owned HTTP observation provider changed'
         bodies[p] = body
         for relative in re.findall(rb'require\([\'\"](\.[^\'\"]+)[\'\"]\)', body):
             candidate=posixpath.normpath(posixpath.join(posixpath.dirname(p),relative.decode()))
@@ -53,7 +57,7 @@ def source_pool(out):
                     selected.append(found);break
     owned=['tools/ltris-parallel-native-runtime.py','tools/ltris-parallel-native-runtime.cjs',
            'tools/ltris-parallel-control.py','test/test-ltris-parallel-native-runtime.cjs',
-           'test/test-ltris-parallel-guards.py']
+           'test/test-ltris-parallel-guards.py','lib/control-server.js','test/test-ltris-sdl-latency.cjs','test/test-control-server-phases.cjs']
     patches=[]
     for p in owned:
         if not (ROOT/p).is_file():continue
@@ -73,7 +77,8 @@ def source_pool(out):
     files.append(dict(path=str(preload.relative_to(ROOT)), body=base64.b64encode(body).decode(), sha256=digest(body)))
     patch = git('diff', '--binary', head, '--', *[p for p in selected if not p.startswith('node_modules/')])
     (out/'relevant-unadopted-wip.patch').write_bytes(patch)
-    save(out, 'source-identity.json', dict(head=head, provider='Git HEAD; foreign WIP excluded',
+    save(out, 'source-identity.json', dict(head=head, provider='Git HEAD plus explicitly hash-pinned owned control-server.js if requested; foreign WIP excluded',
+         ownedControlSHA256=owned_control_sha,
          ownedPatchSHA256=digest(owned_patch),
          necessaryRuntimeInventory=[dict(path=i['path'],sha256=i['sha256']) for i in files],
          patchSHA256=digest(patch), sourceArchive='Git plus patches; no source snapshot'))
