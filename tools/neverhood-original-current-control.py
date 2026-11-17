@@ -84,8 +84,12 @@ def capture(name):
         if not (R/'input-owner.json').exists():startup()
         target=identity();at=time.time()
         p=R/(name+'.png');assert not p.exists()
-        remaining=at+3-time.time();assert remaining>0,'initial presentation UNKNOWN'
-        reply=call(dict(action='native-reviewed-capture',path=str(p)),timeout=remaining)
+        while True:
+            remaining=at+3-time.time();assert remaining>0,'initial presentation UNKNOWN'
+            reply=call(dict(action='native-presentation-capture',path=str(p)),timeout=remaining)
+            if reply.get('contract')!='native-presentation-pending-v1':break
+            assert reply['pending']
+            time.sleep(min(.005,max(0,at+3-time.time())))
         assert time.time()-at<3
         assert reply['contract']=='native-reviewed-context-v1'
         save(name+'.json',dict(at=reply['startedAt']/1000,completedAt=reply['completedAt']/1000,
@@ -253,7 +257,12 @@ def intent(name,scene,x,y,kind):
                 time.sleep(.005);continue
             if after['physicalUp'] and (kind=='game' or context(after)!=context(rr['snapshot'])):
                 image=R/(name+'-after.png')
-                cap=call(dict(action='native-reviewed-capture',path=str(image)),timeout=max(.001,start+3-time.time()))
+                cap=call(dict(action='native-presentation-capture',path=str(image)),timeout=max(.001,start+3-time.time()))
+                if cap.get('contract')=='native-presentation-pending-v1':
+                    assert cap['pending']
+                    if not (R/(name+'-atomic-pending.json')).exists():
+                        save(name+'-atomic-pending.json',dict(at=time.time(),reply=cap,originalObservationDeadline=start+3))
+                    time.sleep(.005);continue
                 assert cap['contract']=='native-reviewed-context-v1' and cap['snapshot']['physicalUp']
                 save(name+'-observation.json',dict(at=time.time(),snapshot=after,image=cap,pngSHA256=hashlib.sha256(image.read_bytes()).hexdigest()));break
             time.sleep(.005)

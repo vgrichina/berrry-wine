@@ -245,6 +245,24 @@ function delayedStartupFixture(delayMs){
    0x6a,1,0x56,0xff,0x15,...u32(0x401950)]);
  b.copy(b,at+extra.length,at,raw(0x2500)-extra.length);extra.copy(b,at);return b;
 }
+function delayedDialogFixture(transition=false){
+ const b=require('./test-vb5-native-dialog-identity.cjs').fixture({simpleButton:true}),u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
+ b.writeUInt32LE(0x1af0,raw(0x1904));b.fill(0,raw(0x1af2),raw(0x1b00));b.write('GetTickCount\0',raw(0x1af2));
+ const callback=Buffer.from(b.subarray(raw(0x2300),raw(0x2400)));
+ const delay=Buffer.from([0x81,0x7c,0x24,8,...u32(0x110),0x75,26,
+   0xff,0x15,...u32(0x401904),0x50,0xff,0x15,...u32(0x401904),
+   0x2b,0x04,0x24,0x3d,...u32(transition?900:3800),0x72,0xf0,0x83,0xc4,4]);
+ Buffer.concat([delay,callback]).copy(b,raw(0x2300),0,0x100);
+ if(transition){
+   const boxCall=fixture.indexOf(Buffer.from([0xff,0x15,0x4c,0x19,0x40,0]),first);
+   const entry=Buffer.concat([fixture.subarray(raw(0x2000),boxCall+6),
+     Buffer.from([0x6a,0,0x68,...u32(0x402300),0x56,0x6a,1,0x68,...u32(0x400000),
+       0xff,0x15,...u32(0x401950),0x6a,0,0xff,0x15,...u32(0x401900)])]);
+   b.fill(0,raw(0x2000),raw(0x2300));entry.copy(b,raw(0x2000));
+   b.write('Native controller: first\0',raw(0x2540));
+ }
+ return b;
+}
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function main(){
@@ -252,8 +270,10 @@ async function main(){
  for(const [index,mode] of modes.entries()){
   const run=path.join(out,mode);fs.mkdirSync(run);
   const startupMode=mode.startsWith('startup-');
-  const nativeImage=startupMode?path.join(run,'delayed-show.exe'):image;
+  const atomicMode=mode.startsWith('atomic-');
+  const nativeImage=startupMode||atomicMode?path.join(run,'delayed-show.exe'):image;
   if(startupMode)fs.writeFileSync(nativeImage,delayedStartupFixture(mode==='startup-never-visible'?60000:3800),{flag:'wx'});
+  if(atomicMode)fs.writeFileSync(nativeImage,delayedDialogFixture(mode==='atomic-transition-positive'),{flag:'wx'});
   const inventoryBytes=fs.readFileSync(path.join(out,'../runtime-inputs.json'));
   const inventory=JSON.parse(inventoryBytes),crypto=require('node:crypto');
   // One complete sealed inventory per run; each generated controller needs
@@ -304,6 +324,24 @@ async function main(){
     return p;
   };
   try{
+    if(mode==='atomic-hidden-repro'||mode==='atomic-hidden-positive'){
+      let hidden;const end=Date.now()+10000;
+      do{hidden=await s.send({action:'native-startup-readiness'});if(hidden.failures.includes('modal.visible'))break;assert(Date.now()<end);await pause(5);}while(true);
+      if(mode==='atomic-hidden-repro'){
+        await assert.rejects(s.send({action:'native-reviewed-capture',path:path.join(run,'refused.png')}),/modal.visible/);
+        assert(!fs.existsSync(path.join(run,'refused.png')));
+        fs.writeFileSync(path.join(run,'PERMANENT-UNKNOWN.json'),JSON.stringify({reason:'authored modal.visible native refusal',noLaterRequests:true}));
+      }else{
+        const file=path.join(run,'atomic.png'),started=Date.now();let cap,polls=0;
+        do{cap=await s.send({action:'native-presentation-capture',path:file});polls++;
+          if(cap.contract!=='native-presentation-pending-v1')break;
+          assert(cap.pending&&!fs.existsSync(file));assert(Date.now()-started<5000);await pause(5);
+        }while(true);
+        assert(polls>1);assert.equal(cap.contract,'native-reviewed-context-v1');assert(cap.completedAt-cap.startedAt<3000);
+        assert(require('pngjs').PNG.sync.read(fs.readFileSync(file)).width===800);
+      }
+      save(mode+'-proof.json',{passed:true,authoredNativeDialog:true,actualHiddenWM_INITDIALOG:true,unchangedRefusal:true,pendingAllocatesNoPNG:true,zeroBindInput:true,noRefusedCaptureRetry:true});continue;
+    }
     if(startupMode){
       const first=await s.send({action:'native-startup-readiness'});assert.equal(first.ready,false);
       if(mode==='startup-never-visible'){
@@ -331,7 +369,7 @@ async function main(){
       const proof=path.join(run,'native-visibility-transition.json');
       await s.send({action:'eval',code:`(()=>{const e=instance.exports,first=e.modal_dialog_hwnd();const timer=setInterval(()=>{const h=e.modal_dialog_hwnd();if(!h||h===first)return;clearInterval(timer);const style=e.wnd_get_style_export(h);e.wnd_set_style_export(h,style&~0x10000000);renderer.showWindow(h,0);const p={authoredOnly:true,hwnd:h,hiddenAt:Date.now(),restored:false};console.log('NV_NATIVE_VISIBILITY '+JSON.stringify(p));${mode==='transition-hidden-positive'?`setTimeout(()=>{e.wnd_set_style_export(h,style);renderer.showWindow(h,1);renderer.repaint();p.restored=true;p.shownAt=Date.now();console.log('NV_NATIVE_VISIBILITY '+JSON.stringify(p));},650);`:''}},1);return true})()`});
     }
-    if(!['startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive','transition-hidden-timeout'].includes(mode)){
+    if(!['atomic-transition-positive','startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive','transition-hidden-timeout'].includes(mode)){
       await s.send({action:'frozen',mode:'on'});
       await controller(['capture','fault-scene']);
       const rr=JSON.parse(fs.readFileSync(path.join(run,'fault-scene.json')));scene=rr.snapshot;
@@ -366,8 +404,8 @@ async function main(){
     }else{
       let generation;
       for(let i=0;i<2;i++){
-        const controls=await s.send({action:'eval',code:'(()=>{const e=instance.exports,h=e.modal_dialog_hwnd(),out=[];for(let s=0;(s=e.wnd_next_child_slot(h,s))!==-1;s++){const c=e.wnd_slot_hwnd(s);out.push({id:e.ctrl_get_id(c),x:e.wnd_window_screen_x(c),y:e.wnd_window_screen_y(c),w:e.wnd_screen_w(c),h:e.wnd_screen_h(c)})}return out})()'});
-        const b=controls.find(x=>x.id===1);assert(b);
+        const current=await s.send({action:'snapshot'});
+        const b=current.windows.find(w=>w.isChild&&w.controlClass===1&&w.controlId===1&&w.parent===current.modalHwnd);assert(b);
         const name='scene'+i;await controller(['capture',name]);
         const record=JSON.parse(fs.readFileSync(path.join(run,name+'.json')));
         if(startupMode&&!i){
@@ -375,7 +413,7 @@ async function main(){
           assert(record.at>=ready.completedAt);assert(record.completedAt-record.at<3);
         }
         const modal=record.snapshot.windows.find(w=>w.hwnd===record.snapshot.modalHwnd);
-        assert.equal(modal.title,'Native controller: '+(i?'second':'first'));
+        assert.equal(modal.title,i&&mode==='atomic-transition-positive'?'Native DialogBox outer':'Native controller: '+(i?'second':'first'));
         const png=require('pngjs').PNG.sync.read(fs.readFileSync(path.join(run,name+'.png')));
         assert.equal(png.width,800);assert.equal(png.height,600);
         const colors=new Set();for(let y=modal.y;y<modal.y+modal.h;y++)for(let x=modal.x;x<modal.x+modal.w;x++)colors.add(png.data.readUInt32LE((y*png.width+x)*4));

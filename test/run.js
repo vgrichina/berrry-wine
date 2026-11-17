@@ -7870,8 +7870,15 @@ async function main() {
     if (cmd.action === 'native-startup-readiness')
       return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
-    if (cmd.action === 'native-reviewed-capture') {
+    if (cmd.action === 'native-reviewed-capture' || cmd.action === 'native-presentation-capture') {
       if (!cmd.path) throw new Error('reviewed capture needs a complete PNG path');
+      if (cmd.action === 'native-presentation-capture') {
+        // Public presentation and capture share this synchronous dispatch.
+        // A pending scene allocates no capture, lease or input. Never retry a
+        // refused capture; the caller retains its original observation bound.
+        const ready=nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);
+        if (!ready.ready) return {contract:'native-presentation-pending-v1',pending:true,failures:ready.failures};
+      }
       return reviewedContexts.capture(controlSnapshot,()=>{
         presentForRead();
         return require('../lib/cli-native-pointer-coordinates').encodeReviewedCanvas(renderer,canvas=>

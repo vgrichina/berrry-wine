@@ -11,7 +11,7 @@ PRIOR_RUN=ROOT/'scratch/runs/20261116-neverhood-original-install-after-setupx'
 PRELOAD='tools/disciples2-current-native-source-view.cjs'
 HELPER='tools/disciples2-current-supervisor.py'
 OWN=('tools/neverhood-original-current-runtime.py','tools/neverhood-original-current-control.py',
-     'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD)
+     'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD,'test/run.js')
 POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=15,menuFreshnessSeconds=30)
 def helper():
     # Shared sources can change while another worker owns them. Refuse those
@@ -326,7 +326,7 @@ def supervised(out,fixture=False,working=False):
 def material_native_pins(inputs):
     return {row['path']:row['sha256'] for row in inputs['sources']
         if row['path'].startswith(('src/','lib/','tools/vb5')) or row['path'] in ('host.js',PRELOAD)
-        or (row['path'].startswith('test/') and row['path'] not in OWN)}
+        or (row['path'].startswith('test/') and (row['path'] not in OWN or row['path']=='test/run.js'))}
 
 def startup_proof(out,module):
     """Reuse only an actual focused run with the identical composed inventory."""
@@ -340,11 +340,17 @@ def startup_proof(out,module):
         assert wait['exit']==0 and all(wait[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
     native=prior/'native-controller'
     q=json.loads((native/'initial-presentation-qualification.json').read_text())
-    assert q['passed'] and set(q['modes'])=={'startup-delayed-visible','startup-never-visible','positive'}
+    assert q['passed'] and set(q['modes'])=={'startup-delayed-visible','startup-never-visible','positive','atomic-hidden-repro','atomic-hidden-positive','atomic-transition-positive'}
     controller=(ROOT/'tools/neverhood-original-current-control.py').read_bytes()
     prior_controller=H.git(ROOT,'show','97670c226:tools/neverhood-original-current-control.py')
     policy=lambda b:b[b.index(b'def context(s):'):b.index(b"if __name__=='__main__':")]
-    assert policy(controller)==policy(prior_controller),'review/bind/receipt/UP/intent policy changed'
+    # Only the atomic presentation observation is substituted in intent().
+    old=b"cap=call(dict(action='native-reviewed-capture',path=str(image)),timeout=max(.001,start+3-time.time()))"
+    new=b"cap=call(dict(action='native-presentation-capture',path=str(image)),timeout=max(.001,start+3-time.time()))"
+    p=policy(controller).replace(new,old)
+    begin=p.index(b"                if cap.get('contract')=='native-presentation-pending-v1':")
+    end=p.index(b"                assert cap['contract']=='native-reviewed-context-v1'",begin)
+    assert p[:begin]+p[end:]==policy(prior_controller),'review/bind/receipt/UP/intent policy changed'
     for mode in q['modes']:
         for suffix in ('native-wait','watchdog-wait'):
             w=json.loads((native/(mode+'-'+suffix+'.json')).read_text())
@@ -371,6 +377,10 @@ def reuse_native_proof(out,revision,module):
             begin=scene.index('// Passive startup only:');end=scene.index('// An actual reviewed pre-main',begin)
             assert (scene[:begin]+scene[end:]).replace('captureFailures,startupReadiness,','captureFailures,')==base
             runner=(ROOT/'test/run.js').read_text()
+            runner=runner.replace("if (cmd.action === 'native-reviewed-capture' || cmd.action === 'native-presentation-capture')", "if (cmd.action === 'native-reviewed-capture')")
+            begin=runner.index("      if (cmd.action === 'native-presentation-capture') {")
+            end=runner.index('      return reviewedContexts.capture(',begin)
+            runner=runner[:begin]+runner[end:]
             addition="    if (cmd.action === 'native-startup-readiness')\n      return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);\n"
             assert runner.count(addition)==1 and runner.replace(addition,'')==H.git(ROOT,'show',proof['gitSHA']+':test/run.js').decode()
             save(out,'matching-native-proof.json',dict(passed=True,proof=str(prior/'complete-native-qualification.json'),
