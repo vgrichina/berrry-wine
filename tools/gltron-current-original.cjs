@@ -7,6 +7,7 @@ const {installInitializedObserver,fixture}=require('./gltron-current-native-capt
 const {connection,GL_OBSERVER}=require('./gltron-browser-controller.cjs');
 const {completeCapture,prepareCapturePNGs}=require('./gltron-current-capture.cjs');
 const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner,observeAndPrepareNativeIntent,finishNativeRelease,waitForNativeConsumption}=require('./gltron-current-native-input.cjs');
+const {checkReviewedImage,pinRecoveryIdentity}=require('./gltron-current-review.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function run(out,commit,authored=false,backend='webgl',qualifyNative=false){
  assert(['software','webgl'].includes(backend));
@@ -22,7 +23,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
  const walk=d=>{for(const e of fs.readdirSync(path.join(ROOT,d),{withFileTypes:true})){const n=d+'/'+e.name;if(e.isDirectory())walk(n);else if(e.isFile()||(e.isSymbolicLink()&&fs.statSync(path.join(ROOT,n)).isFile()))add(n);}};
  if(!authored){add(app.exe);for(const f of app.files||[])add(f.url);walk(path.posix.dirname(app.exe));}
  for(const d of ['binaries/dlls','test/binaries/tlbs','fonts','icons','images'])if(fs.existsSync(path.join(ROOT,d)))walk(d);
- const helpers=['tools/gltron-current-original.cjs','tools/gltron-current-capture.cjs','tools/gltron-current-native-input.cjs','tools/gltron-current-supervise.py','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py','tools/gltron-current-native-capture.cjs','tools/gltron-browser-controller.cjs','tools/gltron-browser-binding.cjs'];
+ const helpers=['tools/gltron-current-review.cjs','tools/gltron-current-original.cjs','tools/gltron-current-capture.cjs','tools/gltron-current-native-input.cjs','tools/gltron-current-supervise.py','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py','tools/gltron-current-native-capture.cjs','tools/gltron-browser-controller.cjs','tools/gltron-browser-binding.cjs'];
  const helperPins=helpers.map(n=>{const b=fs.readFileSync(path.join(ROOT,n)),r=cp.spawnSync('git',['show',commit+':'+n],{cwd:ROOT});return {path:n,sha256:sha(b),published:r.status===0&&r.stdout.equals(b)};});
  save('source.json',{commit,candidate,authored,backend,qualifyNative,registry:app,media,source:[...files].filter(([n])=>!seen.has(n)).map(([path,b])=>({path,bytes:b.length,sha256:sha(b)})),helpers:helperPins,foreignWIPAdopted:false});
  if(!authored)assert(helperPins.every(p=>p.published),'original requires exact published helper bytes');
@@ -45,14 +46,17 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
  save('module.json',{commit,sha256:sha(wasm),bytes:wasm.length,retainedBeforeExecution:true});save('prepared.json',{at:Date.now(),commit,authored});
  while(!fs.existsSync(out+'/runtime-start.json'))await sleep(10);
  const {deadline}=JSON.parse(fs.readFileSync(out+'/runtime-start.json'));assert(deadline>Date.now()&&deadline<=Date.now()+420000);
- let server,browser,c,session,browserWait,physicalRelease,terminal=false,lastImage,nativeQuit=false,nativeDownAttempts=0;const workers=new Map(),tasks=[],destroyed=[];
+ let server,browser,c,session,browserWait,physicalRelease,terminal=false,lastImage,nativeQuit=false,nativeDownAttempts=0;let transport=0,inflight=0,transportFault=false,phase='idle',refusal=null;const rejectedNonces=new Set();
+ const localState=()=>({terminal:terminal||transportFault||!!c?.closed,transport,inflight,phase,down:nativeDownAttempts});
+ const workers=new Map(),tasks=[],destroyed=[];
  const evaluate=async(expression,s=session)=>{const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},s);if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
  const bounded=async work=>{let timer;try{return await Promise.race([work(),new Promise((_,reject)=>{timer=setTimeout(()=>{terminal=true;c?.ws.close();reject(Error('DISPLAY_UNKNOWN complete 3000ms deadline; permanently closed'));},3000);})]);}finally{clearTimeout(timer);}};
- async function capture(label){
+ async function capture(label,recovery=false){
   assert(!terminal);const at=Date.now();let hostCapturedAt;const written=[];
   try{const shot=await completeCapture({
    close:()=>{terminal=true;c?.ws.close();},record:v=>append(label+'-phases.jsonl',v),
    requestTicket:async()=>{
+   if(recovery)await evaluate('__originalRecoveryVerify()');
    await evaluate(`(()=>{if(globalThis.__originalTicket)throw Error('existing ticket');const w=runningApps[0].wine,r=w.renderer;const wins=Object.values(r.windows).filter(v=>v.visible&&!v.isChild&&v.processId===w.processId&&v.wasm===w.instance);if(wins.length!==1)throw Error('ambiguous owner');const win=wins[0];const b=w.hostCtx.getGlGpsBridge(),endpoint=b.endpoint,epoch=b.workerEpoch,device=b.device,layer=b.presenter.layer,process=w._processObject,processId=w.processId,instance=w.instance,canvas=r.canvas,presentation=r.presentationCanvas;const verify=()=>{if(w._stopped||!w.running||w.instance!==instance||w.processId!==processId||w._processObject!==process||w.renderer!==r||r.windows[win.hwnd]!==win||win.wasm!==instance||r.canvas!==canvas||r.presentationCanvas!==presentation||w.hostCtx.getGlGpsBridge()!==b||b.endpoint!==endpoint||endpoint.closed||b.workerEpoch!==epoch||b.workerAsyncError||b.device!==device||b.presenter.layer!==layer)throw Error('capture native/host identity retired or replaced');};verify();globalThis.__originalPin={w,r,win,instance,verify};globalThis.__originalTicket=w.requestCurrentDisplayCapture({hwnd:win.hwnd});return true;})()`);
    },
    readTicket:async()=>{const shot=await evaluate(`(()=>{const p=__originalPin,t=__originalTicket;p.verify();if(t.status!=='complete')return {status:t.status,error:t.error,participant:__nativeInitialized.ticketEvents};if(globalThis.__originalCapture)throw Error('existing transported capture');const r=globalThis.__originalCapture=t.read(),receipt=__nativeInitialized.receipts.find(v=>v.publication===r.metadata.publication);if(!receipt)throw Error('capture lacks initialized GL producer join');return {status:'complete',metadata:r.metadata,receipt};})()`);
@@ -66,6 +70,9 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
    retain:async(shot,host,{live})=>{
    const verifyAt=Date.now();append(label+'-retention.jsonl',{phase:'identity-verification-start',at:verifyAt});
    await evaluate('(__originalPin.verify(),true)');
+   if(recovery)await evaluate('__originalRecoveryVerify()');
+   if(qualifyNative)await evaluate(`globalThis.__originalRecoveryVerify=(${pinRecoveryIdentity.toString()})(__nativeBridgeOwner);true`);
+
    live();
    append(label+'-retention.jsonl',{phase:'identity-verification-complete',at:Date.now(),elapsedMs:Date.now()-verifyAt});
    const encodeAt=Date.now();
@@ -87,9 +94,9 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
   browserWait=new Promise(resolve=>browser.once('close',(code,signal)=>{save('browser-wait.json',{pid:browser.pid,code,signal,actualWait:true,stdoutEOF:browser.stdout.readableEnded,stderrEOF:browser.stderr.readableEnded});resolve();}));
   save('browser.json',{pid:browser.pid,args:browser.spawnargs});c=connection(endpoint);await c.ready;
   const send=c.send;c.send=async(method,params,sessionId)=>{
-   const at=Date.now();append('wire.jsonl',{event:'request',at,method,sessionId});
+   transport++;inflight++;const at=Date.now();append('wire.jsonl',{event:'request',at,method,sessionId});
    try{const result=await send(method,params,sessionId);append('wire.jsonl',{event:'return',at:Date.now(),requestedAt:at,method,sessionId});return result;}
-   catch(error){append('wire.jsonl',{event:'error',at:Date.now(),requestedAt:at,method,sessionId,error:String(error)});throw error;}
+   catch(error){transportFault=true;append('wire.jsonl',{event:'error',at:Date.now(),requestedAt:at,method,sessionId,error:String(error)});throw error;}finally{inflight--;}
   };
   c.event=v=>{
    if(v.method==='Target.attachedToTarget'&&v.params.targetInfo.type==='worker'){
@@ -138,18 +145,27 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
     for(let n=0;n<16;n++){
       const file=out+'/action-'+n+'.json';while(!fs.existsSync(file)&&Date.now()<deadline-4000)await sleep(10);
       assert(Date.now()<deadline-4000,'finite native command wait');const intent=JSON.parse(fs.readFileSync(file));
+      assert(!localState().terminal&&phase==='idle'&&inflight===0,'terminal or outstanding operation');
       if(intent.action==='stop')break;
+      if(refusal){
+        assert(intent.action==='observe'&&intent.recoveryNonce===refusal.invalidatedNonce&&intent.review?.trim(),
+          'local refusal requires explicit fresh capture; old input/review invalidated');
+        await capture('selected-'+(n+1),true);
+        assert(lastImage.completedAt>refusal.at,'capture must follow refusal');
+        save('action-'+n+'-recovered.json',{at:Date.now(),refusal,lastImage});refusal=null;
+        save('action-'+n+'-complete.json',{at:Date.now(),inputEvents:0});continue;
+      }
       if(intent.action==='observe'){await capture('selected-'+(n+1));save('action-'+n+'-complete.json',{at:Date.now(),inputEvents:0});continue;}
-      assert(intent.action==='key'&&intent.review?.trim());
+      assert(!rejectedNonces.has(intent.nonce),'refused nonce cannot be replayed');
+      const before=localState();
+      refusal=checkReviewedImage(intent,lastImage,before,localState());
+      if(refusal){rejectedNonces.add(intent.nonce);save('action-'+n+'-refused.json',refusal);lastImage=null;continue;}
       const reviewAge=Date.now()-lastImage.completedAt;
-      assert(intent.imageSHA256===lastImage.sha256&&intent.reviewedAt>=lastImage.completedAt&&
-        intent.reviewedAt<=Date.now()&&reviewAge<(intent.mode==='game'?15000:30000),
-        'finite input requires the fresh complete selected host image');
       save('action-'+n+'-image-join.json',{...lastImage,reviewAge,reviewedAt:intent.reviewedAt,nonce:intent.nonce});
       // A separate process owns physical UP before any DOWN may be sent.
       let downSent=false,actionError=null,nativeProof=null;
       try{
-        const armed=await physicalRelease.arm({name:'action-'+n,nonce:intent.nonce,key:intent.key,code:intent.code});save('action-'+n+'-up-armed.json',armed);
+        phase='armed';const armed=await physicalRelease.arm({name:'action-'+n,nonce:intent.nonce,key:intent.key,code:intent.code});save('action-'+n+'-up-armed.json',armed);
         if(intent.cancelNoDown){assert(authored,'noDown rehearsal is authored only');physicalRelease.cancel(intent.nonce);}
         else {
         const notBefore=Date.now(),admission=await waitForNativeOwner({
@@ -175,6 +191,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
       }catch(error){actionError=error;if(!downSent)physicalRelease.cancel(intent.nonce);throw error;
       }finally{const result=await finishNativeRelease(physicalRelease,intent.nonce,actionError);save('action-'+n+'-physical-result.json',result);if(!actionError){assert(result.ok);
         if(downSent){const up=JSON.parse(fs.readFileSync(out+'/action-'+n+'-up.json'));assert(up.receipt.at-nativeProof.appliedAt<=1750,'physical UP exceeded unchanged 1750ms edge deadline');}}}
+      phase='idle';
       if(intent.expectQuit){
         const until=Math.min(deadline,Date.now()+3000);let exit;
         do{exit=await evaluate('({running:__nativeBridgeOwner.running,exited:__nativeBridgeOwner._processObject.exited,nativeCode:__nativeBridgeOwner._exitCode})');if(exit.exited&&!exit.running&&Number.isInteger(exit.nativeCode))break;await sleep(10);}while(Date.now()<until);
