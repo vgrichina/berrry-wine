@@ -88,6 +88,30 @@ All original media/defaults are untouched and no original endpoint was opened.
 
 ## Checks and shutdown
 
+The final `native-published` check serves **only published Git
+`fa5ed3fc81352fb039ef370889c089019f6189af`**, including all five exact helper
+pins and empty relevant patch. Both actual Worker modules match
+`cff5da9a64e3df960918df28ae7e06bd1db7cfae49d189f4281d82ea09e7f274`.
+The current GPS owner is explicitly observed: `gl-gps`, endpoint 1, epoch 1,
+101 native presentations, live 480 by 360 layer, actual focus/visible document.
+The legacy binding still reports render endpoint `none`.
+
+Its public ticket completes in **915 ms** on ordinary publication 5, again
+retaining exactly 172,800 opaque white source pixels. After publication 7,
+both retained arrays and original timestamps are unchanged. The subsequent
+full-host screenshot becomes **permanent UNKNOWN at 3,001 ms**. There are zero
+later CDP requests, zero input, no adopted late PNG and no rebind/replay. This
+is the terminal current-source prerequisite refusal; the earlier 2,299 ms host
+success is not a causal repair and is not substituted for this failed capture.
+
+Native process actual exit 1 is preserved. Both independently prearmed
+watchdogs have actual exit 0 and observed pipe EOF. Browser actual exit is 0
+with both pipe EOFs. The separate outer supervisor actual exit 1 and both EOFs
+are recorded by completed `Popen.communicate`; its saved regular files are
+identified as logs, not pipe-EOF observations. Scoped processes and profile are
+absent. No actual Worker target-destruction receipt was obtained after terminal
+transport close; the empty event list is not promoted to one.
+
 The canonical flock build passed; it is a separate shared-tree gate, not the
 immutable native fixture module. Its post-build shared diff and module hashes
 are retained. Fixture byte equality, JS syntax and the focused retained-image/
