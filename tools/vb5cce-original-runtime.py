@@ -17,6 +17,7 @@ SUPPORT_PACKAGE_SHA256='564de93dcc50691480332e2ccb5565908760b295faa70f8c68854f69
 CFGMGR32_SHA256='572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b80'
 SUPPORT_MOUNTS=[]
 OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/test-vb5-native-dialog-identity.cjs',
+    'test/test-vb5-installed-native.cjs',
     'tools/vb5cce-reviewed-control.py','test/run.js','test/test-vb5cce-original-current.cjs',
     'test/test-vb5-normal-exit-completion.py','test/test-vb5-normal-exit-native.cjs',
     'test/test-vb5-nested-owned-modal.cjs','test/test-vb5-runtime-shutdown.py','lib/cli-native-scene.js','lib/cli-native-user-windows.js',
@@ -216,6 +217,14 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
+    if '--installed-qualification' in sys.argv:
+        checked('installed-scope',['node','test/test-vb5-installed-native.cjs',str(RUN/'installed-scope'),'--run'],env,(source,module))
+        # A passing diagnostic establishes a refusal boundary, never admission
+        # to an installed original. No installer or application is launched.
+        proof=json.loads((RUN/'installed-scope/qualification.json').read_text())
+        save('installed-admission.json',dict(safeForInstalledOriginal=proof['safeForInstalledOriginal'],
+            diagnosticPassed=proof['passed'],boundary=proof['boundary'],originalStarted=False))
+        return
     if '--normal-exit-only' in sys.argv:
         checked('normal-exit',['python3','-B','test/test-vb5-normal-exit-completion.py',str(RUN/'normal-exit')],env,(source,module))
         checked('runtime-shutdown',['python3','-B','test/test-vb5-runtime-shutdown.py',str(RUN/'shutdown-qualification')],env,(source,module))
