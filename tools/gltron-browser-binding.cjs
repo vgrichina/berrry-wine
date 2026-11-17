@@ -7,6 +7,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 const FIELDS = ['processId', 'processObject', 'endpoint', 'endpointObject', 'workerObject',
   'workerTarget', 'workerInstance', 'moduleObject', 'moduleSha256', 'epoch',
   'renderEndpoint', 'renderEndpointObject', 'renderWorkerObject',
+  'renderApi','renderBridgeObject','renderGeneration',
   'rendererTarget', 'rendererEpoch', 'rendererModuleSha256', 'pageRendererObject', 'canvasObject',
   'windowHwnd','windowObject','windowInstance','outputCanvasObject'];
 const MAX_AGE_MS = 30000;
@@ -68,9 +69,11 @@ const PAGE_READ = `(() => {
   return {isolated:crossOriginIsolated, apps:(typeof runningApps==='undefined'?[]:runningApps).map(a=>{
     const w=a.wine, g=w?.guestWorker, l=g?.link;
     const ports=[...(w?._renderWorkerManager?.ports?.values()||[])].filter(p=>!p.closed);
-    const owned=ports.filter(p=>p.options?.api==='gl');
+    const owned=ports.filter(p=>['gl','gl-gps'].includes(p.options?.api));
     if(owned.length>1)throw Error('ambiguous actual GL endpoints');
     const p=owned.length===1?owned[0]:null;
+    const gps=w?.hostCtx?.getGlGpsBridge?.();
+    if(p?.options.api==='gl-gps'&&(!gps||gps.endpoint!==p||gps.workerClosing||gps.workerAsyncError||!gps.device))throw Error('current GPS owner retired or mismatched');
     const windows=Object.values(w?.renderer?.windows||{}).filter(v=>v.visible&&!v.isChild&&v.w>0&&v.h>0&&v.processId===w.processId&&v.wasm===w.instance);
     const win=windows.length===1?windows[0]:null;
     const output=w?.renderer&&(!w.renderer.presentationFilter||w.renderer._directPresentation?w.renderer.canvas:w.renderer.presentationCanvas||w.renderer.canvas);
@@ -81,6 +84,7 @@ const PAGE_READ = `(() => {
       outputCanvasObject:token(w?.renderer&&(!w.renderer.presentationFilter||w.renderer._directPresentation?w.renderer.canvas:w.renderer.presentationCanvas||w.renderer.canvas)),publication:w?.renderer?._immutablePublicationSequence||0,
       pageRendererObject:token(w?.renderer),canvasObject:token(document.getElementById('screen')),processId:w?.processId,processObject:token(w),endpoint:l?.endpointIdentity,endpointObject:token(l),
       renderEndpoint:p?.id??'none',renderEndpointObject:p?token(p):'none',
+      renderApi:p?.options.api??'none',renderBridgeObject:p?.options.api==='gl-gps'?token(gps):'none',renderGeneration:p?.options.api==='gl-gps'?gps.workerEpoch:'none',
       renderWorkerObject:token(w?._renderWorkerManager?.worker)??'none',
       guestEndpoint:l?.endpointIdentity,slot:l?.slot,workerObject:token(l?.worker),
       moduleObject:token(l?.module),epoch:state.epoch,
@@ -242,7 +246,7 @@ const RENDER_READ = `(() => {
     if(!s.ids.has(e))s.ids.set(e,s.epoch+':'+(++s.next));
     if(typeof instance==='undefined'||!instance)throw Error('renderer instance unavailable');
     if(!s.ids.has(instance))s.ids.set(instance,s.epoch+':'+(++s.next));
-    return {id,epoch:s.ids.get(e)+'/'+s.ids.get(instance),failed:!!e.failed,
+    return {id,api:e.options?.api,epoch:s.ids.get(e)+'/'+s.ids.get(instance),failed:!!e.failed,
       control:e.control?{completed:Atomics.load(e.control,1),error:Atomics.load(e.control,2),commands:Atomics.load(e.control,5)}:null};
   });
 })()`;
@@ -318,7 +322,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
         for(const endpoint of endpoints)if(endpoint.id===a.renderEndpoint)owners.push({r,endpoint});
       }
       assert.equal(owners.length,1,'unique actual owning renderer required');
-      const {r,endpoint}=owners[0];assert(!endpoint.failed&&!endpoint.control?.error,'live renderer required');
+      const {r,endpoint}=owners[0];assert.equal(endpoint.api,a.renderApi,'actual renderer API changed');assert(!endpoint.failed&&!endpoint.control?.error,'live renderer required');
       rendererTarget=r.targetId;rendererEpoch=endpoint.epoch;
       const modules=[...new Map(r.scripts.filter(s=>s.sha256&&s.bytecodeAvailable&&!s.error).map(s=>[s.scriptId,s])).values()];
       assert.equal(new Set(modules.map(s=>s.sha256)).size,1,'unique actual renderer module required');
@@ -412,7 +416,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
   async function progress(identity) {
     const page = await evaluate(PAGE_READ), a = page.apps[0];
     assert(page.apps.length === 1 && a?.running && !a.stopped);
-    for (const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject'])
+    for (const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderApi','renderBridgeObject','renderGeneration'])
       assert.equal(a[f], identity[f], 'held identity changed: '+f);
     const w = [...workers.values()].find(w=>w.targetId===identity.workerTarget&&!w.closed);
     assert(w, 'held Worker retired');

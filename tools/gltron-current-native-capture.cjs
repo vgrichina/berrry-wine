@@ -7,14 +7,49 @@ const {gitFiles,compile}=require('./boids-current-runtime.cjs');
 const controller=require('./gltron-browser-controller.cjs'),binding=require('./gltron-browser-binding.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-function fixture(){
+// Passive identity joins. A complete desktop may legitimately precede the
+// first native GPU frame. Neither white/nonwhite pixels nor elapsed time
+// identifies that transition.
+function installInitializedObserver(root,getApps=()=>root.runningApps||[]) {
+  const p=root.Win98Renderer.prototype;
+  const transfer=p.observePresentationTransfer,publish=p.observePresentationPublication;
+  const ids=new WeakMap();let next=0;
+  const token=o=>{if(!o)return null;if(!ids.has(o))ids.set(o,++next);return ids.get(o);};
+  const state=root.__nativeInitialized={receipts:[],initialPublications:0,transfers:[]};
+  p.observePresentationTransfer=function(source,destination,geometry){
+    const result=transfer.apply(this,arguments);
+    const w=getApps().find(a=>a.wine?.renderer===this)?.wine,b=w?.hostCtx.getGlGpsBridge?.();
+    if(b?.presenter.layer?.canvas===source&&b.presenter.win){
+      state.transfers.push({renderer:this,source,destination,geometry:[...geometry],layer:b.presenter.layer,
+        writeSeq:b.presenter.layer.writeSeq,stamp:b.presenter.stamp,endpoint:b.endpoint,epoch:b.workerEpoch});
+      if(state.transfers.length>32)state.transfers.shift();
+    }
+    return result;
+  };
+  p.observePresentationPublication=function(display,sequence){
+    const result=publish.apply(this,arguments);
+    const w=getApps().find(a=>a.wine?.renderer===this)?.wine,b=w?.hostCtx.getGlGpsBridge?.();
+    const layer=b?.presenter.layer,win=b?.presenter.win;
+    const t=state.transfers.findLast(t=>t.renderer===this&&t.destination===display.source&&t.layer===layer&&t.writeSeq===layer?.writeSeq);
+    if(t&&t.endpoint===b.endpoint&&t.epoch===b.workerEpoch&&b.api==='gl-gps'&&b.endpoint&&!b.endpoint.closed&&!b.workerAsyncError&&win?._dxFrameLayer===layer&&win.wasm===w.instance){
+      // Identity/sequence observation only, after the ordinary display call.
+      const receipt={publication:sequence,at:Date.now(),api:b.api,endpoint:b.endpoint.id,endpointObject:token(b.endpoint),epoch:b.workerEpoch,
+        window:win.hwnd,windowObject:token(win),instance:token(win.wasm),layer:token(layer),sourceCanvas:token(t.source),
+        writeSeq:t.writeSeq,stamp:t.stamp,presents:b.presenter.presents,geometry:t.geometry};
+      state.receipts.push(receipt);if(state.receipts.length>8)state.receipts.shift();
+    }else state.initialPublications++;
+    state.transfers=[];
+    return result;
+  };
+}
+function fixture({messageDriven=false}={}){
   const b=Buffer.alloc(0x6400),base=0x400000,raw=r=>r-0x1000+0x400;
   const d=(o,n)=>b.writeUInt32LE(n>>>0,o),w=(o,n)=>b.writeUInt16LE(n,o),pe=0x80,opt=pe+24,s=opt+224;
   w(0,0x5a4d);d(0x3c,pe);d(pe,0x4550);w(pe+4,0x14c);w(pe+6,1);w(pe+20,224);w(pe+22,0x10e);
   w(opt,0x10b);d(opt+16,0x2000);d(opt+28,base);d(opt+32,4096);d(opt+36,1024);w(opt+40,4);w(opt+48,4);
   d(opt+56,0x7000);d(opt+60,1024);w(opt+68,2);d(opt+72,0x100000);d(opt+76,4096);d(opt+80,0x100000);d(opt+84,4096);d(opt+92,16);
   b.write('.native',s);d(s+8,0x6000);d(s+12,0x1000);d(s+16,0x6000);d(s+20,1024);d(s+36,0xe0000060);
-  const libraries=[['kernel32.dll',['ExitProcess','OutputDebugStringA']],['user32.dll',['RegisterClassA','CreateWindowExA','SetFocus','PeekMessageA','TranslateMessage','DispatchMessageA','DefWindowProcA','GetDC','ChangeDisplaySettingsA']],['gdi32.dll',['SwapBuffers']],['opengl32.dll',['wglCreateContext','wglMakeCurrent','glClearColor','glClear','glBegin','glColor3f','glVertex2f','glEnd']]];
+  const libraries=[['kernel32.dll',['ExitProcess','OutputDebugStringA']],['user32.dll',['RegisterClassA','CreateWindowExA','SetFocus',messageDriven?'GetMessageA':'PeekMessageA','TranslateMessage','DispatchMessageA','DefWindowProcA','GetDC','ChangeDisplaySettingsA']],['gdi32.dll',['SwapBuffers']],['opengl32.dll',['wglCreateContext','wglMakeCurrent','glClearColor','glClear','glBegin','glColor3f','glVertex2f','glEnd']]];
   d(opt+104,0x1000);d(opt+108,(libraries.length+1)*20);let str=0x1800;const apis=new Map();
   libraries.forEach(([dll,names],i)=>{const desc=raw(0x1000+i*20),thunk=0x1200+i*256;d(desc,thunk);d(desc+12,str);d(desc+16,thunk);b.write(dll+'\0',raw(str));str+=dll.length+1;
     names.forEach((name,j)=>{d(raw(thunk+j*4),str);b.write(name+'\0',raw(str+2));str+=name.length+3;apis.set(name,base+thunk+j*4);});});assert(str<0x2000);
@@ -28,7 +63,8 @@ function fixture(){
     push(base+0x3500);call('RegisterClassA');for(const n of [0,base,0,0,360,480,40,40,0x90000000,base+0x3060,base+0x3000,0])push(n);call('CreateWindowExA');emit(0xa3,...u(base+0x3600),0x50);call('SetFocus');
     push(4);push(base+0x3800);call('ChangeDisplaySettingsA');
     emit(0xff,0x35,...u(base+0x3600));call('GetDC');emit(0xa3,...u(base+0x3604),0x50);call('wglCreateContext');emit(0x50,0xff,0x35,...u(base+0x3604));call('wglMakeCurrent');
-    label('loop');for(const n of [1,0,0,0,base+0x3640])push(n);call('PeekMessageA');emit(0x85,0xc0);jump('draw',0x84);push(base+0x3640);call('TranslateMessage');push(base+0x3640);call('DispatchMessageA');
+    if(messageDriven)jump('draw'); // The authored initial frame precedes the normal message wait.
+    label('loop');for(const n of (messageDriven?[0,0,0,base+0x3640]:[1,0,0,0,base+0x3640]))push(n);call(messageDriven?'GetMessageA':'PeekMessageA');emit(0x85,0xc0);jump('draw',0x84);push(base+0x3640);call('TranslateMessage');push(base+0x3640);call('DispatchMessageA');
     label('draw');push(0x3f800000);push(0x3e800000);push(0x3e000000);emit(0xff,0x35,...u(base+0x3608));call('glClearColor');push(0x4000);call('glClear');
     push(4);call('glBegin');for(const n of [0x3f000000,0x3f800000,0x3f800000])push(n);call('glColor3f');
     for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){for(const n of p)push(n);call('glVertex2f');}call('glEnd');emit(0xff,0x35,...u(base+0x3604));call('SwapBuffers');jump('loop');
@@ -46,7 +82,7 @@ function fixture(){
 async function run(out,commit){
   const save=(name,value)=>fs.writeFileSync(path.join(out,name),JSON.stringify(value,null,2)+'\n',{flag:'wx'});
   assert(fs.existsSync(out),'observable independent supervisor must create output directory');
-  const files=gitFiles(commit),exe=fixture();
+  const files=gitFiles(commit),messageDriven=process.env.GLTRON_FIXTURE_MESSAGE_DRIVEN==='1',exe=fixture({messageDriven});
   const helpers=['tools/gltron-current-native-capture.cjs','tools/gltron-browser-controller.cjs','tools/gltron-browser-binding.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py'];
   save('source.json',{commit,foreignWIPAdopted:false,helpers:helpers.map(n=>{const r=cp.spawnSync('git',['show',commit+':'+n],{cwd:ROOT});return {path:n,sha256:sha(fs.readFileSync(path.join(ROOT,n))),published:r.status===0&&r.stdout.equals(fs.readFileSync(path.join(ROOT,n)))};}),runtime:[...files].map(([path,b])=>({path,sha256:sha(b),bytes:b.length})),fixture:{sha256:sha(exe),bytes:exe.length,clock:'real',slice:1000}});
   const wasm=compile(files);files.set('build/wine-assembly.wasm',wasm);files.set('authored-native.exe',exe);
@@ -84,8 +120,14 @@ async function run(out,commit){
     await c.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true},session);await c.send('Page.enable',{},session);await c.send('Runtime.enable',{},session);
     await c.send('Page.navigate',{url:'http://127.0.0.1:'+server.address().port+'/index.html?debug&threads&gl-renderer=webgl'},session);await c.send('Page.bringToFront',{},session);
     const startup=Math.min(deadline,Date.now()+30000);while(!await evaluate('typeof wineShell!=="undefined"&&typeof wineShell.launchApp==="function"')){assert(Date.now()<startup,'shell startup');await sleep(25);}
+    await evaluate(`(${installInitializedObserver.toString()})(globalThis,()=>runningApps);true`);
     await evaluate(`(()=>{wineApps.APPS.live_input_fixture={exe:'authored-native.exe',threads:true,runSlice:{cooperative:1000,worker:1000,compat:1000}};globalThis.nativeKeys=[];for(const type of ['keydown','keyup'])document.addEventListener(type,e=>nativeKeys.push({type,key:e.key,trusted:e.isTrusted,at:Date.now()}),true);wineShell.launchApp('live_input_fixture');return true;})()`);
-    while(!await evaluate('runningApps.length===1&&!!runningApps[0].wine._workerLastSlice&&!!runningApps[0].wine.renderer._currentDisplayRecord')){assert(Date.now()<startup,'native ordinary display startup');await sleep(25);}await Promise.all(tasks);
+    const startupObservations=[];
+    for(;;){const state=await evaluate(`(()=>{const w=runningApps[0]?.wine,b=w?.hostCtx.getGlGpsBridge?.();return {at:Date.now(),ready:runningApps.length===1&&!!w?._workerLastSlice&&__nativeInitialized.receipts.length>0,publication:w?.renderer._immutablePublicationSequence,initialPublications:__nativeInitialized.initialPublications,slice:w?._workerLastSlice?.seq,presents:b?.presenter.presents,endpoint:b?.endpoint?.id,epoch:b?.workerEpoch,error:String(b?.workerAsyncError||'')};})()`);
+      startupObservations.push(state);if(startupObservations.length>32)startupObservations.shift();fs.writeFileSync(out+'/startup-observations.json',JSON.stringify(startupObservations,null,2)+'\n');
+      if(state.ready)break;assert(Date.now()<startup,'native initialized GPS ordinary publication startup');await sleep(25);
+    }await Promise.all(tasks);
+    save('initialized-before.json',await evaluate('({initialPublications:__nativeInitialized.initialPublications,receipts:__nativeInitialized.receipts})'));
     save('owner-before.json',await evaluate(binding.PAGE_READ));save('host-before.json',await evaluate(binding.HOST_READ));
     save('native-gps-owner.json',await evaluate(`(()=>{const w=runningApps[0].wine,b=w.hostCtx.getGlGpsBridge?.();return {at:Date.now(),focus:document.hasFocus(),visibility:document.visibilityState,bridge:b?{api:b.api,stats:b.stats,epoch:b.workerEpoch,endpoint:b.endpoint?.id,error:String(b.workerAsyncError||''),presents:b.presenter.presents,layer:b.presenter.layer?{api:b.presenter.layer.api,writeSeq:b.presenter.layer.writeSeq,width:b.presenter.layer.canvas.width,height:b.presenter.layer.canvas.height}:null}:null,ports:[...w._renderWorkerManager.ports.values()].map(p=>({id:p.id,closed:p.closed,options:p.options})),slice:w._workerLastSlice?.seq,publication:w.renderer._immutablePublicationSequence};})()`));
     save('actual-gl.json',await Promise.all([...workers.values()].filter(w=>!w.closed&&w.url.includes('d3d-render-worker')).map(async w=>({targetId:w.targetId,observation:await evaluate('globalThis.__gltronObserver?.snapshot?.()??null',w.sessionId),endpoints:await evaluate(binding.RENDER_READ,w.sessionId)}))));
@@ -109,7 +151,9 @@ async function run(out,commit){
         const state={at:Date.now(),status:t.status,error:t.error,publication:p.r._immutablePublicationSequence,held:p.r._workerPublicationHeld(),slice:p.w._workerLastSlice?.seq,pending:{dirty:!!p.w._dxDirty,lockDeferred:!!p.w._dxLockDeferred,presentDue:!!p.w._presentFrameDue},gdi:p.r._workerGdiPaintDepth};
         if(t.status!=='complete')return {state};const first=t.read();globalThis.__gltronRetainedFirst=first;
         const encode=b=>{let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode(...b.subarray(i,i+8192));return btoa(s);};
-        return {state,snapshot:{metadata:first.metadata,source:encode(first.sourceRGBA),output:encode(first.outputRGBA)}};
+        const receipt=__nativeInitialized.receipts.find(r=>r.publication===first.metadata.publication);
+        if(!receipt)throw Error('capture is not joined to an initialized GPS publication');
+        return {state,snapshot:{metadata:first.metadata,receipt,source:encode(first.sourceRGBA),output:encode(first.outputRGBA)}};
       })()`);
       observations.push({stage:'poll',...row.state});fs.writeFileSync(out+'/capture-observations.json',JSON.stringify({nonce,observations},null,2)+'\n');
       if(row.snapshot){snapshot=row.snapshot;break;}
@@ -123,6 +167,7 @@ async function run(out,commit){
     save('capture.json',{startedAt:captureStart,completedAt:Date.now(),elapsedMs:Date.now()-captureStart,...snapshot,source:undefined,output:undefined});
     for(const kind of ['source','output']){const dim=snapshot.metadata[kind],bytes=Buffer.from(snapshot[kind],'base64');assert.equal(bytes.length,dim.width*dim.height*4);const png=new PNG(dim);png.data=bytes;fs.writeFileSync(out+'/authored-'+kind+'.png',PNG.sync.write(png),{flag:'wx'});}
     save('scene-characterization.json',characterizeSource(Buffer.from(snapshot.source,'base64'),snapshot.metadata.source));
+    save('literal-oracle.json',literalOracle(Buffer.from(snapshot.source,'base64'),snapshot.metadata.source));
     await sleep(250);
     save('retained.json',await evaluate(`(()=>{const t=__gltronCurrentTicket,a=__gltronRetainedFirst,b=t.read();let mismatch=0;for(const k of ['sourceRGBA','outputRGBA']){if(a[k].length!==b[k].length)throw Error('retained length changed');for(let i=0;i<a[k].length;i++)if(a[k][i]!==b[k][i])mismatch++;}return {at:Date.now(),status:t.status,mismatch,metadataSame:JSON.stringify(a.metadata)===JSON.stringify(b.metadata),capturedPublication:a.metadata.publication,currentPublication:runningApps[0].wine.renderer._immutablePublicationSequence,cancelComplete:t.cancel()};})()`));
     // Canvas bytes do not depict host HTML consent/occlusion. The required
@@ -191,4 +236,20 @@ function verifyPendingNegative(out,{published=false}={}){
   return {outcome:'EXPECTED_PENDING_CURRENT_DISPLAY_NEGATIVE',qualified:false,originalLaunched:false,commit:source.commit,module:module.sha256,boundMs:3000,observedFailureMs:failure.at-start.at,publication:arm.publication,firstSlice:arm.slice,lastSlice:trace.observations.at(-1).slice,polls:trace.observations.length,actualWaits:true,pipeEOFObserved:true,publishedHelpers:published};
 }
 if(require.main===module){const [first,arg]=process.argv.slice(2);if(['--verify-pending','--verify-observed'].includes(first)){console.log(JSON.stringify((first==='--verify-pending'?verifyPendingNegative:verifyObserved)(path.resolve(arg),{published:process.env.GLTRON_VERIFY_PUBLISHED==='1'}),null,2));}else{assert(first&&arg,'explicit supervised OUTPUT and exact COMMIT required');run(path.resolve(first),arg).catch(e=>{console.error(e);process.exitCode=1;});}}
-module.exports={fixture,run,verifyPendingNegative,verifyObserved,characterizeSource};
+function literalOracle(bytes,{width,height}) {
+  assert.equal(width,480);assert.equal(height,360);assert.equal(bytes.length,width*height*4);
+  let checked=0,mismatches=0;const colors={};
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+    const i=(y*width+x)*4,p=[...bytes.subarray(i,i+4)],key=p.join(',');colors[key]=(colors[key]||0)+1;
+    // Independent authored coordinates: (120,270), (360,270), (240,90).
+    // Exclude a two-pixel raster edge; all other bytes have literal colors.
+    const half=(y+.5-90)*2/3,left=240-half,right=240+half;
+    const edge=Math.min(Math.abs(y+.5-270),Math.abs(x+.5-left),Math.abs(x+.5-right));
+    if(edge<2)continue;
+    const inside=y+.5>90&&y+.5<270&&x+.5>left&&x+.5<right;
+    const want=inside?[255,255,128,255]:[0,32,64,255];
+    checked++;if(p.some((v,j)=>v!==want[j]))mismatches++;
+  }
+  return {width,height,checked,mismatches,colors,qualified:mismatches===0};
+}
+module.exports={fixture,run,verifyPendingNegative,verifyObserved,characterizeSource,literalOracle,installInitializedObserver};

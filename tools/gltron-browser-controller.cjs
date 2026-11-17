@@ -81,7 +81,7 @@ async function release(out,file) {
   async function checkOwner(){if(cfg.owner){
     const live=await c.send('Runtime.evaluate',{expression:require(ROOT+'/'+HELPER).PAGE_READ,returnByValue:true},session);
     assert(!live.exceptionDetails);const apps=live.result.value.apps;assert.equal(apps.length,1);assert.equal(apps[0].name,'gltron');
-    for(const key of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','pageRendererObject','canvasObject','windowHwnd','windowObject','windowInstance','outputCanvasObject'])assert.equal(apps[0][key],cfg.owner[key],'independent release owner mismatch '+key);
+    for(const key of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderApi','renderBridgeObject','renderGeneration','pageRendererObject','canvasObject','windowHwnd','windowObject','windowInstance','outputCanvasObject'])assert.equal(apps[0][key],cfg.owner[key],'independent release owner mismatch '+key);
   }}
   async function checkHost(){if(cfg.hostOwner){
     const stat=fs.readFileSync('/proc/'+cfg.pid+'/stat','utf8');assert.equal(stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],cfg.startToken);
@@ -170,7 +170,7 @@ async function browser(out,backend) {
     latest=captured.capture;record(name+'.json',{...captured,png:undefined});const observed=await state();record(name+'-state.json',observed);
     if(latest.identity.renderEndpoint!=='none'){
       const owners=observed.owners.flatMap(w=>w.value.filter(e=>e.id===latest.identity.renderEndpoint&&w.targetId===latest.identity.rendererTarget));
-      assert.equal(owners.length,1,'unique actual owning backend');assert.equal(owners[0].options.api,'gl');assert.equal(owners[0].options.backend,backend,'actual backend differs from selected arm');assert(!owners[0].failed);
+      assert.equal(owners.length,1,'unique actual owning backend');assert.equal(owners[0].options.api,latest.identity.renderApi);assert(['gl','gl-gps'].includes(owners[0].options.api));assert.equal(owners[0].options.backend,backend,'actual backend differs from selected arm');assert(!owners[0].failed);
     }
     return latest;
   }
@@ -237,7 +237,7 @@ async function browser(out,backend) {
     await c.send('Page.navigate',{url:'http://127.0.0.1:'+port+'/index.html?debug&threads&gl-renderer=webgl&app=gltron'},session);
     const startupEnd=Math.min(Date.now()+90000,gameplayCutoff(launch));
     for(;;){
-      const ready=await evaluate(`typeof runningApps==='undefined'?null:runningApps.map(a=>({name:a.name,running:a.wine?.running,stopped:a.wine?._stopped,worker:!!a.wine?.guestWorker,slice:!!a.wine?._workerLastSlice,glPorts:[...(a.wine?._renderWorkerManager?.ports?.values()||[])].filter(p=>!p.closed&&p.options?.api==='gl').length}))`);
+      const ready=await evaluate(`typeof runningApps==='undefined'?null:runningApps.map(a=>({name:a.name,running:a.wine?.running,stopped:a.wine?._stopped,worker:!!a.wine?.guestWorker,slice:!!a.wine?._workerLastSlice,glPorts:[...(a.wine?._renderWorkerManager?.ports?.values()||[])].filter(p=>!p.closed&&['gl','gl-gps'].includes(p.options?.api)).length}))`);
       if(ready?.length===1&&ready[0].running&&ready[0].worker&&ready[0].slice&&ready[0].glPorts===1)break;
       assert(!ready?.some(a=>a.stopped),'original stopped during startup');assert(Date.now()<startupEnd,'bounded original startup readiness');await wait(250);
     }
