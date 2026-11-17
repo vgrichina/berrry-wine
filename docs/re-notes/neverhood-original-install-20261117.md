@@ -46,5 +46,58 @@ the completed guard was frozen before the passing rerun. No original was used
 for either test. Completed genuine dependency/thunk investigations were not
 repeated.
 
-Results will be recorded below after the bounded attempt. Installed Play,
-first-room action and native Quit are not yet established.
+## Single original result
+
+Material fix `f6a959e51` was published before the original. Its prepared source
+is main `001f59ebc9832f060771974881a02f0ef928b95e` plus the two explicit owned
+source patches. All 4572 source rows equal the passing final native fixture
+inventory. The original module is
+`5c9f7126daff2e586685c0dd2ad46b79c5e43e8dbf569aea2919b733b075614a`.
+Independent descriptor/hash checks and the production admission's actual
+Worker/process inheritance pass before runtime clocks begin. No concurrent
+scene, renderer or NE-loader WIP was adopted.
+
+One complete original launcher capture succeeded and was personally viewed:
+gray launcher on a teal desktop, enabled Install and Exit, disabled Uninstall
+and Play. The actual focused native BUTTON is HWND 0x10002, control ID 105,
+generation 2, label `&Install`; no container surrogate was used. The selected
+image is `original/launcher.png` in the run directory.
+
+The single finite Install press was consumed, but the receipt's completion
+timestamp was 564.7 ms after intent start and its HTTP response 613.7 ms after
+start, exceeding the 500 ms confirmation limit. The independently prearmed
+release sent at 1401.6 ms and acknowledged physical UP at 1907.1 ms, exceeding
+1750 ms. The release process joined with exit 0 and both pipes drained before
+permanent UNKNOWN was published. Effect-start time is not recorded; a late
+completion timestamp does not establish when effects began. No limit was
+extended and no successful finite-action completion is claimed.
+
+The ledger has exactly four requests: capture, bind, the one input and its
+original independent release. There were no requests after UNKNOWN, no second
+capture, replay, rebind or second original. The frozen source and module were
+unchanged throughout the original.
+
+The retained native log demonstrates new progress beyond the old SETUPX
+dependency boundary: genuine DSETUPE's ThunkConnect32 returns 1, it resolves
+`iDirectXSetup`, opens its real dialog, reads `D:\setup\directx\directx.inf`
+and performs temporary DirectX file copies. It then traps with
+**UNIMPLEMENTED API: SMapLS_IP_EBP_12**, EIP **0x006d4028**, ESP
+**0x074fd44a**, return address **0x006d074b**. That exact imported API is absent
+from the tested published API table. Existing LS32/FT/thunk qualification does
+not establish this import family's ABI or mapped-pointer lifetime. The exact
+unsupported unsuffixed DirectXSetup guard remains armed and was not reached.
+No fabricated success, install files or registry state were introduced.
+
+Native actual exit is **1**, both log streams reached EOF, and the independent
+watchdog joined with exit 0 after the actual native wait; its deadline did not
+fire. A cancellation request written after the native exit caused no host
+signal. The supervisor and holder owners have actual exit-0 waits with both
+pipes drained, and the holder records its descriptors closed. Historical
+missing November 16 joins remain UNKNOWN.
+
+Installed Play, first-room action and native Quit remain **unproved**. The
+concrete next work is real SMapLS_IP_EBP_12/matching unmap semantics and bounded
+input completion/release latency, qualified without replaying this original.
+Shared core files carrying foreign NE work were not changed for this task.
+No box or worker was created: box ID null, state NOT_CREATED, expiry null,
+stop receipt NOT_APPLICABLE.
