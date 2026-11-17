@@ -6,6 +6,7 @@ TASK=pathlib.Path(os.environ.get('HL2_TASK_RUN',ROOT/'scratch/runs/20261117-half
 PRIOR=ROOT/'scratch/runs/20261117-halflife2-startup-ready-agreement-install-progress/working-final5'
 BASE='70e85792eefac2489f655a415490f9e0a5c9297d'
 COMPONENT='63d7b0d0e8d979772a4e527a4d3561b4bdeb3692'
+RETAINED_DIAGNOSTIC_GIT='fe074afb6341bb9b1294924638424184a441ae08'
 EDIT_PROOF=ROOT/'scratch/runs/20261117-halflife2-native-large-edit-viewport-install'
 DIAGNOSTICS=('tools/halflife2-reviewed-next.py','lib/cli-native-user-windows.js','lib/cli-native-scene.js',
              'test/test-cli-native-capture-refusal-details.cjs','test/test-edit-wrap-resize.js',
@@ -84,9 +85,11 @@ def main():
  # transport and focused tests in addition to those already proved bodies.
  changed={}
  for name in DIAGNOSTICS:
-  b=(ROOT/name).read_bytes() if working and name in ('lib/cli-native-scene.js','tools/halflife2-reviewed-next.py') else m.git('show',revision+':'+name)
+  owned=name in ('lib/cli-native-scene.js','tools/halflife2-reviewed-next.py')
+  origin=revision if owned else RETAINED_DIAGNOSTIC_GIT
+  b=(ROOT/name).read_bytes() if working and owned else m.git('show',origin+':'+name)
   if name=='lib/cli-native-scene.js':assert b==(ROOT/name).read_bytes(),'publish scene first'
-  changed[name]=dict(before=m.sha(files[name]) if name in files else None,after=m.sha(b));files[name]=b
+  changed[name]=dict(before=m.sha(files[name]) if name in files else None,after=m.sha(b),sourceGit=origin);files[name]=b
  current_runner=(ROOT/'test/run.js').read_bytes() if working else m.git('show',revision+':test/run.js')
  assert current_runner[current_runner.index(OWNER_START):current_runner.index(OWNER_END)]==OWNER_BLOCK
  assert files['test/run.js']==m.git('show',COMPONENT+':test/run.js'),'reviewed owner delta requires exact proved runner'
