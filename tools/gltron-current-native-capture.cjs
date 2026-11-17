@@ -125,7 +125,7 @@ async function run(out,commit){
   if(process.env.GLTRON_CAPTURE_HOST_CANDIDATE==='1')for(const n of ['host.js','lib/renderer.js'])files.set(n,fs.readFileSync(path.join(ROOT,n)));
   const [viewportWidth,viewportHeight]=(process.env.GLTRON_NATIVE_VIEWPORT||'1280x960').split('x').map(Number);
   assert(Number.isInteger(viewportWidth)&&viewportWidth>=800&&viewportWidth<=1920&&Number.isInteger(viewportHeight)&&viewportHeight>=600&&viewportHeight<=1440);
-  const helpers=['tools/gltron-current-native-capture.cjs','tools/gltron-browser-controller.cjs','tools/gltron-browser-binding.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py'];
+  const helpers=['tools/gltron-current-native-capture.cjs','tools/gltron-browser-controller.cjs','tools/gltron-browser-binding.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.js'];
   save('source.json',{commit,foreignWIPAdopted:false,helpers:helpers.map(n=>{const r=cp.spawnSync('git',['show',commit+':'+n],{cwd:ROOT});return {path:n,sha256:sha(fs.readFileSync(path.join(ROOT,n))),published:r.status===0&&r.stdout.equals(fs.readFileSync(path.join(ROOT,n)))};}),runtime:[...files].map(([path,b])=>({path,sha256:sha(b),bytes:b.length})),fixture:{sha256:sha(exe),bytes:exe.length,clock:'real',slice:1000}});
   const wasm=compile(files);files.set('build/wine-assembly.wasm',wasm);files.set('authored-native.exe',exe);
   const modulePath=path.join(path.dirname(out),'tested-'+sha(wasm)+'.wasm');

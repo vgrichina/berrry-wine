@@ -39,6 +39,44 @@ function parentPid(pid){
   if(linux)return Number(statFields(pid)[1]);
   return Number(psRow(pid,'ppid='));
 }
+function pgid(pid){
+  if(linux)return Number(statFields(pid)[2]);
+  return Number(psRow(pid,'pgid='));
+}
+// Kernel session id (os.getsid). macOS ps exposes only a session pointer, not
+// the id, so this is null there; a setsid child is also its own group leader.
+function sid(pid){
+  if(linux)return Number(statFields(pid)[3]);
+  return null;
+}
+// Another process's environment entries; null where the OS will not show them
+// (macOS ps -E and KERN_PROCARGS2 omit other processes' environments).
+function environ(pid){
+  if(!linux)return null;
+  let b;
+  try{b=fs.readFileSync(`/proc/${pid}/environ`);}
+  catch(e){if(e.code==='ENOENT')throw noProcess(pid);throw e;}
+  return b.toString('latin1').split('\0');
+}
+// One snapshot of every visible process: [{pid,ppid,pgid,sid,state,startToken}].
+// Linux reads /proc/<pid>/stat; macOS takes one `ps -A` (sid is null there).
+function processes(){
+  const rows=[];
+  if(linux){
+    for(const n of fs.readdirSync('/proc')){
+      if(!/^\d+$/.test(n))continue;
+      try{const f=statFields(n);rows.push({pid:Number(n),ppid:Number(f[1]),pgid:Number(f[2]),sid:Number(f[3]),state:f[0],startToken:f[19]});}
+      catch(e){if(!['ESRCH','ENOENT','EACCES','EPERM'].includes(e.code))throw e;}
+    }
+    return rows;
+  }
+  const out=cp.execFileSync('ps',['-A','-o','pid=,ppid=,pgid=,stat=,lstart='],{encoding:'utf8',stdio:['ignore','pipe','ignore'],maxBuffer:1<<26});
+  for(const line of out.split('\n')){
+    const m=/^\s*(\d+)\s+(\d+)\s+(\d+)\s+(\S+)\s+(.*?)\s*$/.exec(line);
+    if(m)rows.push({pid:Number(m[1]),ppid:Number(m[2]),pgid:Number(m[3]),sid:null,state:m[4][0],startToken:m[5]});
+  }
+  return rows;
+}
 function exists(pid){
   if(linux)return fs.existsSync(`/proc/${pid}`);
   try{process.kill(pid,0);return true;}catch(e){return e.code==='EPERM';}
@@ -102,4 +140,4 @@ const sleep=ms=>new Promise(r=>setTimeout(r,Math.max(0,ms)));
 // Python time.time() / time.monotonic() equivalents, in seconds.
 const now=()=>Date.now()/1000;
 const monotonic=()=>Number(process.hrtime.bigint())/1e9;
-module.exports={linux,token,state,parentPid,exists,alive,bootId,processIdentity,listener,openFds,schedstat,freeBytes,killpg,killOwned,sleepSync,sleep,now,monotonic};
+module.exports={linux,token,state,parentPid,pgid,sid,environ,processes,exists,alive,bootId,processIdentity,listener,openFds,schedstat,freeBytes,killpg,killOwned,sleepSync,sleep,now,monotonic};

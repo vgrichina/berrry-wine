@@ -34,7 +34,7 @@ M.ROOT=ROOT;
 M.RUN=path.resolve(process.env.NEVERHOOD_RUN||path.join(ROOT,'scratch/runs/20261117-neverhood-published-loader-normal-install-room'));
 M.PRIOR_RUN=path.join(ROOT,'scratch/runs/20261116-neverhood-original-install-after-setupx');
 const PRELOAD='tools/disciples2-current-native-source-view.cjs';
-const HELPER='tools/disciples2-current-supervisor.js';
+const HELPER='tools/disciples2-current-supervisor.cjs';
 M.PRELOAD=PRELOAD;M.HELPER=HELPER;
 const OWN=['tools/neverhood-original-current-runtime.js','tools/neverhood-original-current-control.js',
   'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD,'test/run.js',
@@ -248,7 +248,7 @@ M.prepare=async function prepare(out,revision,patches,hold=true){
   const walk=d=>{for(const e of fs.readdirSync(d,{withFileTypes:true})){const f=path.join(d,e.name);
     if(e.isDirectory())walk(f);else if(e.isFile()&&/\.(js|json)$/.test(e.name))bodies[path.relative(ROOT,f)]=fs.readFileSync(f);}};
   walk(path.join(ROOT,'node_modules/pngjs'));
-  const [pool,index,rows]=H.indexed_sources(bodies);
+  const [pool,index,rows]=H.indexedSources(bodies);
   const source=H.seal('neverhood-sources',pool),preload=H.seal('neverhood-preload',bodies[PRELOAD]);
   const raw=anonymousFd('neverhood-compile');
   const env={...process.env,DISCIPLES2_ROOT:ROOT,DISCIPLES2_SOURCE_FD:fdPath(source),
@@ -360,9 +360,9 @@ M.admit=function admit(out,recipe){
       M.save(out,'installed-preclock-verification.json',{passed:true,files:state.files.length,
         registrySHA256:state.registrySHA256,indexSHA256:state.indexSHA256,pendingRenamesUnchanged:true,at:now()});
     }
-    let env;[env,fds]=H.frozen_inputs(out,recipe);fds=[...fds];
+    let env;[env,fds]=H.frozenInputs(out,recipe);fds=[...fds];
     const holder=readJSON(recipe.moduleHolder);
-    let media=H.holder_bytes(holder,'mediaPath');
+    let media=H.holderBytes(holder,'mediaPath');
     assert(digest(media)===holder.mediaSHA256&&holder.mediaSHA256==='94de724bb47eb2aa588ac4eff28ddc6fd10edebcf2be4dd131ef76875ef5ffd3');
     const mediafd=H.seal('neverhood-admitted-cd',media);fds.push(mediafd);media=null;
     const manifest=readJSON(path.join(out,'runtime-inputs.json'));const pins=Object.fromEntries(manifest.sources.map(r=>[r.path,r.sha256]));
@@ -374,7 +374,7 @@ M.admit=function admit(out,recipe){
     env.WINE_COM_PROTOCOL_DIR=path.join(out,'children');
     M.arm_desktop_observations(out,env);
     env.NODE_OPTIONS+=' --require='+fdPath(guardfd);
-    H.inheritance_probe(out,recipe,env);
+    H.inheritanceProbe(out,recipe,env);
     const args=recipe.args.map(a=>a.startsWith('--iso=')?'--iso='+fdPath(mediafd):a);
     M.save(out,'admission.json',{passed:true,at:now(),originalSpawned:false,inputPolicy:POLICY,mediaSHA256:holder.mediaSHA256,
       childInheritance:'sealed-node-v1',manifestSHA256:holder.manifestSHA256,args,allInputsPreparedBeforeClock:true});
@@ -709,13 +709,13 @@ M.pipeline=async function pipeline(out,revision,fixture=false,working=false){
   const held=await M.prepare(path.join(out,'prepared'),revision,working||own_revision!==revision?[...OWN]:[],false);
   const qualified=path.join(out,'qualification');fs.mkdirSync(qualified);
   const r=await M.recipe(path.join(out,'prepared'),out);
-  const [env,fds]=H.frozen_inputs(qualified,r);
+  const [env,fds]=H.frozenInputs(qualified,r);
   Object.assign(env,{DELPHI5_MODULE_FD:env.DISCIPLES2_MODULE_FD,DELPHI5_SOURCE_FD:env.DISCIPLES2_SOURCE_FD,
     DELPHI5_MODULE_SHA256:env.DISCIPLES2_MODULE_SHA256});
   const pre_json=JSON.parse(pre);
   try{
-    H.inheritance_probe(qualified,r,env);
-    const module=H.holder_bytes(readJSON(path.join(out,'prepared/holder.json')),'fdPath');
+    H.inheritanceProbe(qualified,r,env);
+    const module=H.holderBytes(readJSON(path.join(out,'prepared/holder.json')),'fdPath');
     if(process.env.NEVERHOOD_ISO_FIXTURE==='1'){
       await M.checked(qualified,'iso-host',['node','test/test-cli-iso-child-context.cjs','--host',path.join(qualified,'iso-host')],env,30,fds);
       await M.checked(qualified,'iso-native',['node','test/test-cli-iso-child-context.cjs','--native',path.join(qualified,'iso-native')],env,40,fds);

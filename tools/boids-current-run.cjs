@@ -6,7 +6,7 @@ const {installDriver}=require('./boids-current-driver.cjs');
 const {installOwnershipObserver,classifyOwnershipPixels}=require('./boids-current-owner.cjs');
 async function run(out,commit,backend,mode,fixtureFile){
   fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2));
-  save('harness-pins.json',['tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py','tools/boids-current-fixture.cjs','tools/boids-current-owner.cjs','test/test-boids-current-rendering.cjs'].map(path=>({path,sha256:sha(fs.readFileSync(path))})));
+  save('harness-pins.json',['tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.js','tools/boids-current-fixture.cjs','tools/boids-current-owner.cjs','test/test-boids-current-rendering.cjs'].map(path=>({path,sha256:sha(fs.readFileSync(path))})));
   fs.writeFileSync(path.join(out,'owned-harness.patch'),cp.execFileSync('git',['diff','--binary',commit,'--','tools/boids-current-fixture.cjs','tools/boids-current-runtime.cjs','tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-supervise.py','test/test-boids-current-rendering.cjs']));
   fs.writeFileSync(path.join(out,'owner-helper.patch'),cp.spawnSync('git',['diff','--no-index','--binary','--','/dev/null','tools/boids-current-owner.cjs']).stdout);
   const files=gitFiles(commit);

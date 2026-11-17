@@ -255,8 +255,8 @@ async function main(){
   for(const name of Object.keys(pins.sources))
     if(name.startsWith('node_modules/'))files[name]=fs.readFileSync(path.join(ROOT,name));
   ok(isDeepStrictEqual(Object.fromEntries(Object.entries(files).map(([n,b])=>[n,m.sha(b)])),pins.sources),'exact proved source inventory required');
-  const sealhelper=compile_module(files['tools/disciples2-current-supervisor.js'],path.join(ROOT,'tools/disciples2-current-supervisor.js'));
-  let [pool,index_,rows]=await sealhelper.indexed_sources(files);
+  const sealhelper=compile_module(files['tools/disciples2-current-supervisor.cjs'],path.join(ROOT,'tools/disciples2-current-supervisor.cjs'));
+  let [pool,index_,rows]=await sealhelper.indexedSources(files);
   ok(m.sha(pool)===manifest.sourceSHA256&&m.sha(index_)===manifest.sourceIndexSHA256,'proved source pool differs');
   const original_source_sha=m.sha(pool);
   // Reuse exact published Edit bodies/proofs. Adopt only the explicit desktop
@@ -280,7 +280,7 @@ async function main(){
   }
   fs.writeFileSync(at('reviewed-owner-runner.patch'),unified_diff(m.git('show',COMPONENT+':test/run.js').toString(),files['test/run.js'].toString(),'a/test/run.js','b/test/run.js'));
   m.save('reviewed-owner-runner.json',{...changed['test/run.js'],publishedGit:revision,unrelatedRunnerChangesExcluded:true,patchSHA256:m.sha(fs.readFileSync(at('reviewed-owner-runner.patch')))});
-  [pool,index_,rows]=await sealhelper.indexed_sources(files);
+  [pool,index_,rows]=await sealhelper.indexedSources(files);
   manifest={...manifest,sourceSHA256:m.sha(pool),sourceIndexSHA256:m.sha(index_),sources:rows,
     diagnosticGit:revision,diagnosticChanges:changed,unchangedNativeSourceSHA256:original_source_sha};
   const old_body=fs.readFileSync(path.join(PRIOR,'native/module.wasm'));

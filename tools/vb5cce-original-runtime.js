@@ -190,7 +190,7 @@ function publish(file,value){
 function save(name,value){M.publish(R(name),value);}
 // memfd_create + F_ADD_SEALS(15) have no Node API: the disciples2 helper owns
 // the sealed descriptor primitive (required lazily so unit modes load without it).
-function disciples2(){return require('./disciples2-current-supervisor.js');}
+function disciples2(){return require('./disciples2-current-supervisor.cjs');}
 function seal(name,body){
   const fd=disciples2().seal(name,body);
   M.OWN_FDS.add(fd);
@@ -355,12 +355,12 @@ async function run(){
   // source body on demand and preserves sealed child inheritance. The Python
   // original executed the HEAD blob; the JS helper is required from the working
   // tree only when its bytes equal that published blob.
-  const helperName='tools/disciples2-current-supervisor.js';
+  const helperName='tools/disciples2-current-supervisor.cjs';
   check(files[helperName]&&files[helperName].equals(fs.readFileSync(path.join(M.ROOT,helperName))),'publish helper before sealing: '+helperName);
   const helper=disciples2();
   for(const p of walk(path.join(M.ROOT,'node_modules/pngjs')))
     if(['.js','.json'].includes(path.extname(p)))files[rel(M.ROOT,p)]=fs.readFileSync(p);
-  const indexed=await helper.indexed_sources(files);
+  const indexed=await helper.indexedSources(files);
   const [pool,index,rows]=Array.isArray(indexed)?indexed:[indexed.pool,indexed.index,indexed.rows];
   const source=M.seal('vb5-source',pool);
   const preload=M.seal('vb5-preload',files['tools/disciples2-current-native-source-view.cjs']);
@@ -422,7 +422,7 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
   M.save('runtime-inputs.json',{gitSHA:M.HEAD,moduleSHA256:sha(body),moduleBytes:body.length,moduleSeals:15,sourceSeals:15,
     sources:hashes(),foreignWIPAdopted:false,
     recovery:'Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor:module});
-  await helper.inheritance_probe(String(M.RUN),{childInheritance:'sealed-node-v1',args:['node'],cwd:M.ROOT},env);
+  await helper.inheritanceProbe(String(M.RUN),{childInheritance:'sealed-node-v1',args:['node'],cwd:M.ROOT},env);
   const fds=[source,module],node=(...a)=>['node',...a];
   const shutdownTest=['runtime-shutdown',[process.execPath,'test/test-vb5-runtime-shutdown.cjs',R('shutdown-qualification')]];
   const nestedOwned=['native-nested-owned',node('test/test-vb5-nested-owned-modal.cjs',R('nested-qualification'))];
