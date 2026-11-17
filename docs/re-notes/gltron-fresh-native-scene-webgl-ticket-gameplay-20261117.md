@@ -105,8 +105,11 @@ permanently with zero later queries. Two turns and a round consequence remain
 unproved on both backends; no additional original is run.
 
 Original cleanup is scoped host/browser shutdown, distinct from native Quit.
-All native/browser/outer/persistent-owner/watchdog and release processes have
-actual waits and both EOFs, and each original has an empty remaining scope.
+For successful recipes and originals, native/browser/outer/persistent-owner/
+watchdog and release processes have actual waits and both EOFs, and each
+original has an empty remaining scope. The cancelled parked-USER development
+rehearsal has supervisor SIGTERM and empty-scope proof but lacks a separate
+browser close/EOF receipt; it is not qualification evidence.
 The concrete remaining work is faithful bounded capture while a real software
 writer is active, and reliable independent physical-UP admission under the
 existing bounds. Neither failure permits replay, owner rebinding or relaxed
