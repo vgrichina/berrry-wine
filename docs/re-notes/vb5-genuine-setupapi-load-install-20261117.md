@@ -55,3 +55,43 @@ nonzero generic API thunks cannot satisfy the test.
 Publication and the sole fresh original pipeline outcome are recorded in the
 run's final `result.json`; native loader conformance alone does not establish
 installation, IDE startup, sample execution or ordinary IDE Quit.
+
+Material repair `7c84a0ae08088267e63a1b152173f672b65cc18c` was published after
+the required canonical build and five native cases passed. The first canonical
+attempt failed on unrelated media-size metadata; its owner corrected that
+metadata, and the required subsequent build completed with exit 0.
+
+The sole fresh original used a recorded composition: published native core
+`e9ee194a20b3ec7754c6465b999bd65dd0252e95` plus the byte-verified published
+helper/test from `7c84a0ae0`, producing the exact previously qualified module
+`33ef36c2...`. It did not test the entire later main tree. Git identities,
+owned helper patches, source hashes and the actual module are retained;
+unchanged predecessor control proofs were reused by exact consumed hashes.
+
+The original accepted Yes and its license, extracted its files, loaded genuine
+CFGMGR32 at entry `0x1ac21f1`, then attached SetupAPI at entry `0x1af5b40`
+(`mapped base 0x1acc000 + RVA 0x29b40`), each returning EAX 1. It displayed the
+default `C:\Program Files\VB5CCE` destination dialog. Its reviewed OK click
+completed in 191 ms including independent physical UP and observation.
+
+The subsequent create-folder question reached a new boundary: reviewed capture
+refused `context: ["modal.ownerless"]`. The already retained public observation
+shows no main HWND, destination DialogBox `0x10012`, and native MessageBox
+`0x10018` genuinely owned by `0x10012`, with matching live process/thread
+identities. The scene validator's pre-main MessageBox branch requires owner 0;
+this is an owned nested MessageBox, not another SetupAPI load failure.
+That refusal permanently closed the endpoint. No later HTTP, capture, input,
+rebind, replay, second original or IDE/sample launch occurred. The refused
+capture has no screenshot; the last personally viewed complete image is the
+default destination dialog.
+
+Identity-checked SIGTERM requested local shutdown after UNKNOWN. The CLI logged
+orderly shutdown and flushed 87 overlay records and 78 registry entries, but
+the outer process exited 143 before native wait, watchdog wait and descriptor
+release receipts were published. Those receipts remain explicitly missing.
+The remaining owned watchdog was terminated; supervisor, native process and
+watchdog are absent and both control ports are closed. This establishes cleanup
+observation, not a native Quit or successful join. Installation, IDE and sample
+execution remain unproven. Future work needs the nested MessageBox provenance
+boundary and reliable outer shutdown receipts; this closed pipeline must stay
+closed. No boxes were created.
