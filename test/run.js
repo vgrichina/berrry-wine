@@ -4377,7 +4377,16 @@ async function main() {
         if (!waitDirectory) return;
         try {
           fs.mkdirSync(waitDirectory, { recursive: true });
-          fs.writeFileSync(path.join(waitDirectory, `native-child-${process.pid}-${child.pid}-wait.json`), JSON.stringify(childWait, null, 2) + '\n');
+          // Readers sample these evolving exit/EOF/close receipts from another
+          // process. Never truncate the published version while replacing it.
+          const target = path.join(waitDirectory, `native-child-${process.pid}-${child.pid}-wait.json`);
+          const pending = target + '.' + process.pid + '.pending';
+          try {
+            const fd = fs.openSync(pending, 'wx', 0o600);
+            try { fs.writeFileSync(fd, JSON.stringify(childWait, null, 2) + '\n'); fs.fsyncSync(fd); }
+            finally { fs.closeSync(fd); }
+            fs.renameSync(pending, target);
+          } finally { if (fs.existsSync(pending)) fs.unlinkSync(pending); }
         } catch (error) { console.error('[spawn] child wait evidence failed: ' + error.message); }
       };
       child.once('exit', (code, signal) => { Object.assign(childWait, { actualWait: true, exit: code, signal }); saveChildWait(); });

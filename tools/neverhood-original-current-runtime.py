@@ -20,6 +20,8 @@ POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnes
 # tests below; unchanged core libraries retain their historical qualification.
 CHILD_RUNNER_SHA256='4aaf21a17ba0fe3cc8aa013d35332fd1af2a2a22fb8ed7dda0670af4215629fd'
 CHILD_RUNNER_BASE='d4b41d4015bb0b5a066bfa01c82a00df741893c0'
+WAIT_RUNNER_BASE='d97dc35ad63c75abe188b14745439325c5197020'
+WAIT_RUNNER_SHA256='96cf0a27a3af9fffc201377ae66376cefdee490f34dfd49c707572f004fa378d'
 def installed():return os.environ.get('NEVERHOOD_INSTALLED_SHORTCUT')=='1'
 def limits():return (1800,1820,180) if installed() else (900,920,90)
 def prior_iso_mount(runner):
@@ -439,6 +441,23 @@ def reuse_native_proof(out,revision,module):
     if 'materialSourcePins' in proof:
         current=material_native_pins(json.loads((out/'runtime-inputs.json').read_text()))
         changed=sorted(n for n in set(current)|set(proof['materialSourcePins']) if current.get(n)!=proof['materialSourcePins'].get(n))
+        if changed==['test/run.js'] and current['test/run.js']==WAIT_RUNNER_SHA256:
+            old_runner=H.git(ROOT,'show',WAIT_RUNNER_BASE+':test/run.js')
+            assert H.digest(old_runner)==proof['materialSourcePins']['test/run.js']
+            assert H.digest(module)==proof['moduleSHA256']
+            for name in ('complete-child-handoff-proof.json','wait-publication/wait-publication-proof.json'):
+                assert json.loads((out/name).read_text())['passed'],'fresh native and partial-write reader proofs required'
+            save(out,'matching-native-proof.json',dict(passed=True,proof=str(prior/'complete-native-qualification.json'),
+                proofSHA256=H.digest((prior/'complete-native-qualification.json').read_bytes()),
+                moduleSHA256=H.digest(module),unchangedPaths=len(current)-1,runnerBase=WAIT_RUNNER_BASE,
+                runnerSHA256=WAIT_RUNNER_SHA256,scope='only atomic OS-child wait evidence replacement; exact remaining native core and module unchanged; fresh native handoff/input/UP/Quit and old/fixed independent partial-write reader regression'))
+            save(out,'complete-native-qualification.json',dict(passed=True,nativeProtocolQualified=True,
+                gitSHA=revision,moduleSHA256=H.digest(module),materialSourcePins=current,
+                priorUnchangedCoreProof=str(prior/'complete-native-qualification.json'),
+                focusedHandoffProof=str(out/'complete-child-handoff-proof.json'),
+                waitPublicationProof=str(out/'wait-publication/wait-publication-proof.json'),
+                scope='exact unchanged core; atomic wait publication tested separately, no full-suite rerun claim'))
+            return True
         child_delta=changed==['lib/cli-child-observation.js','lib/cli-native-scene.js','lib/readonly-media-context.js','test/run.js']
         if child_delta:
             assert H.digest(component_bytes('test/run.js'))==CHILD_RUNNER_SHA256,'unreviewed runner delta'
@@ -542,11 +561,12 @@ def qualify_child_handoff(out,module,env,fds):
     if prior:
         prior=pathlib.Path(prior);proof=json.loads((prior/'complete-child-handoff-proof.json').read_text())
         assert proof['passed'] and proof['sourcePins']==source_pins and proof['moduleSHA256']==H.digest(module)
-        for label in ('child-observation-unit','native-child-handoff','native-parent-failure','native-child-cancellation','native-iso-child'):
+        for label in ('wait-publication','child-observation-unit','native-child-handoff','native-parent-failure','native-child-cancellation','native-iso-child'):
             wait=json.loads((prior/(label+'-wait.json')).read_text())
             assert wait['exit']==0 and all(wait[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
         save(out,'reused-child-handoff-proof.json',dict(passed=True,prior=str(prior),proofSHA256=H.digest((prior/'complete-child-handoff-proof.json').read_bytes()),sameSealedSourcesAndModule=True))
         return
+    checked(out,'wait-publication',['node','test/test-neverhood-child-handoff.cjs',str(out/'wait-publication'),'wait-publication'],env,timeout=30,pass_fds=fds)
     checked(out,'child-observation-unit',['node','test/test-cli-child-observation.cjs',str(out/'child-observation-unit')],env,timeout=30,pass_fds=fds)
     checked(out,'native-child-handoff',['node','test/test-neverhood-child-handoff.cjs',str(out/'native-child-handoff')],env,timeout=80,pass_fds=fds)
     for label,mode in (('native-parent-failure','parent-failure'),('native-child-cancellation','child-cancellation')):
@@ -556,7 +576,8 @@ def qualify_child_handoff(out,module,env,fds):
     assert proof['passed'] and proof['nativeChildQuit'] and proof['childOwnedSourceModuleProcessUSER']
     save(out,'complete-child-handoff-proof.json',dict(passed=True,sourceSHA256=inputs['sourceSHA256'],sourcePins=source_pins,moduleSHA256=H.digest(module),
         ordinaryNativePlayCreateProcessParentExit0ChildSurvives=True,childOwnedSourceModuleProcessUSER=True,
-        independentChildNativeInputUPQuit=True,negativeProvenanceBeforeTransport=True,nativeParentFailureAndChildCancellation=True,originalStarted=False))
+        independentChildNativeInputUPQuit=True,negativeProvenanceBeforeTransport=True,nativeParentFailureAndChildCancellation=True,
+        atomicOSChildWaitPublication=True,originalStarted=False))
 
 def pipeline(out,revision,fixture=False,working=False):
     global RUN

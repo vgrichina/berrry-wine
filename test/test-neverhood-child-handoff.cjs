@@ -22,7 +22,62 @@ function fixture(parent,parentFailure=false){
   b.fill(0,raw(0x2000),raw(0x2300));b.set(code,raw(0x2000));return b;
 }
 async function freePort(){const s=net.createServer();await new Promise(r=>s.listen(0,'127.0.0.1',r));const p=s.address().port;await new Promise(r=>s.close(r));return p;}
+function waitPublication(out){
+ fs.mkdirSync(out,{recursive:true});
+ const oldRevision='d97dc35ad63c75abe188b14745439325c5197020';
+ const old=cp.execFileSync('git',['show',oldRevision+':test/run.js'],{encoding:'utf8'});
+ const current=fs.readFileSync('test/run.js','utf8'),results=[];
+ const waited=cp.spawnSync(process.execPath,['-e','process.exit(0)']);assert.equal(waited.status,0);
+ for(const [label,source]of [['old',old],['fixed',current]]){
+  const directory=path.join(out,label);fs.mkdirSync(directory);
+  const target=path.join(directory,`native-child-${process.pid}-${waited.pid}-wait.json`);
+  const samples=[],errors=[],childWait={pid:waited.pid,actualWait:false,stdoutEOF:false,stderrEOF:false,closed:false};
+  let failWrite=false;
+  const instrumented=Object.create(fs);
+  instrumented.writeFileSync=(file,data,options)=>{
+   const bytes=Buffer.from(data),half=Math.floor(bytes.length/2);
+   if(typeof file==='number')fs.writeSync(file,bytes.subarray(0,half));
+   else fs.writeFileSync(file,bytes.subarray(0,half),options);
+   // Sample from a real independent process while the production writer is
+   // halfway through its write. No timing guess or controller retry is needed.
+   const reader=cp.spawnSync('python3',['-B','-c',`import pathlib,json,sys,hashlib
+p=pathlib.Path(sys.argv[1]);r={'exists':p.exists(),'valid':True}
+if r['exists']:
+ b=p.read_bytes();r['sha256']=hashlib.sha256(b).hexdigest()
+ try:r['value']=json.loads(b)
+ except (ValueError,UnicodeDecodeError):r['valid']=False
+print(json.dumps(r))`,target],{encoding:'utf8'});
+   assert.equal(reader.status,0,reader.stderr);
+   samples.push({...JSON.parse(reader.stdout),pid:reader.pid,actualWait:true,stdoutEOF:true,stderrEOF:true});
+   if(failWrite)throw Error('authored partial write failure');
+   if(typeof file==='number')fs.writeSync(file,bytes.subarray(half));
+   else fs.appendFileSync(file,bytes.subarray(half));
+  };
+  const begin=source.indexOf('      const saveChildWait = () => {');
+  const end=source.indexOf("      child.once('exit'",begin);assert(begin>=0&&end>begin);
+  const callback=source.slice(begin,end);
+  const publish=new Function('fs','path','waitDirectory','childWait','child','console',callback+';return saveChildWait;')(
+   instrumented,path,directory,childWait,{pid:waited.pid},{error:e=>errors.push(e)});
+  for(const state of [{},{actualWait:true,exit:0,signal:null},{stdoutEOF:true,stderrEOF:true,closed:true}]){
+   Object.assign(childWait,state);publish();assert.deepEqual(JSON.parse(fs.readFileSync(target)),childWait);
+  }
+  const before=fs.readFileSync(target);failWrite=true;publish();
+  if(label==='fixed'){
+   assert.deepEqual(fs.readFileSync(target),before,'failed replacement preserves the last complete receipt');
+   assert(!fs.readdirSync(directory).some(n=>n.endsWith('.pending')));
+   assert(samples.every(r=>r.valid),'no partial version is ever published');
+  }else assert(samples.some(r=>!r.valid),'old production callback must reproduce the partial JSON race');
+  assert.equal(errors.length,1);
+  results.push({label,callbackSHA256:hash(Buffer.from(callback)),samples,unsafeReads:samples.filter(r=>!r.valid).length,
+   failedReplacementPreservesCompleteVersion:label==='fixed'});
+ }
+ fs.writeFileSync(path.join(out,'wait-publication-proof.json'),JSON.stringify({passed:true,oldRevision,
+  realOSChildWait:{pid:waited.pid,exit:waited.status,actualWait:true,stdoutEOF:true,stderrEOF:true},
+  actualProductionCallbacks:true,independentReaderAtPartialWrite:true,results},null,2)+'\n',{flag:'wx'});
+ console.log('PASS exact old production callback publishes partial JSON; atomic replacement keeps complete old/new versions and preserves old receipt on failed write; independent OS readers/waits');
+}
 async function run(out,mode='positive'){
+ if(mode==='wait-publication')return waitPublication(out);
  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
  const parent=path.join(out,'parent.exe'),child=path.join(out,'child.exe');fs.writeFileSync(parent,fixture(true,mode==='parent-failure'));fs.writeFileSync(child,fixture(false));
  const port=await freePort(),childPort=await freePort(),started=Date.now();
