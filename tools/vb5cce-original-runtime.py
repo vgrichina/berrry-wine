@@ -4,7 +4,7 @@
 Never builds or changes shared outputs. Runtime sources and module are sealed
 in memory; only Git identities, hashes and helper diffs persist in evidence.
 """
-import fcntl, hashlib, json, os, pathlib, signal, socket, subprocess, sys, time, types, uuid
+import fcntl, gzip, hashlib, json, os, pathlib, signal, socket, subprocess, sys, time, types, uuid
 
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 RUN=pathlib.Path(os.environ.get('DELPHI5_RUN',ROOT/'scratch/runs/20261116-vb5cce-reviewed-context-install-ide'))
@@ -17,7 +17,7 @@ SUPPORT_PACKAGE_SHA256='564de93dcc50691480332e2ccb5565908760b295faa70f8c68854f69
 CFGMGR32_SHA256='572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b80'
 SUPPORT_MOUNTS=[]
 OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/run.js',
-    'lib/installed-dll-closure.js','test/test-installed-dll-closure.cjs')
+    'lib/installed-dll-closure.js','test/test-installed-dll-closure.cjs','test/test-vb5-runtime-shutdown.py')
 
 class ShutdownRequested(SystemExit):pass
 def shutdown_signal(signum,frame):
@@ -70,6 +70,25 @@ def seal(name,body):
     return fd
 def close_owned(fd):
     os.close(fd);OWN_FDS.discard(fd)
+def compact_closed_observations():
+    # Desktop observations are bounded per native actor, but a full sequence
+    # of authored tests creates many actors. Preserve every byte losslessly
+    # after its actual process has gone; never compress an active writer.
+    for p in sorted((RUN/'desktop-observations').glob('desktop-*.trace')):
+        parts=p.name.split('-')
+        if len(parts)<4 or not parts[1].isdigit() or pathlib.Path('/proc',parts[1]).exists():continue
+        body=p.read_bytes();digest=sha(body);target=p.with_suffix('.trace.gz')
+        encoded=gzip.compress(body,mtime=0)
+        if target.exists():assert gzip.decompress(target.read_bytes())==body
+        else:
+            with target.open('xb') as f:f.write(encoded);f.flush();os.fsync(f.fileno())
+        assert sha(gzip.decompress(target.read_bytes()))==digest
+        with (RUN/'observation-recovery.jsonl').open('a') as f:
+            f.write(json.dumps(dict(path=str(p.relative_to(RUN)),gzip=str(target.relative_to(RUN)),
+                sha256=digest,bytes=len(body),gzipBytes=target.stat().st_size,
+                writerAbsent=True,restore='gzip -dc gzip > path; verify sha256'))+'\n')
+            f.flush();os.fsync(f.fileno())
+        p.unlink()
 def genuine_setupapi_support():
     # The exact NT SetupAPI from this package statically imports CFGMGR32.
     # Keep both original PE bodies intact. Nothing is installed or copied into
@@ -124,6 +143,7 @@ def checked(name,args,env,fds,expected=0):
         raise
     (RUN/(name+'.stdout.log')).write_bytes(a);(RUN/(name+'.stderr.log')).write_bytes(b)
     save(name+'-wait.json',dict(pid=p.pid,exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,expected=expected,timedOut=timed_out))
+    compact_closed_observations()
     assert not timed_out and p.returncode==expected,name+' failed; original not authorized by qualification'
 def watchdog(deadline):
     save('watchdog-armed.json',dict(pid=os.getpid(),at=time.time(),deadline=deadline,independent=True,prearmed=True))

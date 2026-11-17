@@ -4,7 +4,7 @@
 Uses the production shutdown functions, not process absence as a wait oracle.
 No original media is launched. Each regular output file is closed explicitly.
 """
-import importlib.util,json,os,pathlib,signal,subprocess,sys,time
+import gzip,hashlib,importlib.util,json,os,pathlib,signal,subprocess,sys,time
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 def module():
     spec=importlib.util.spec_from_file_location('runtime',ROOT/'tools/vb5cce-original-runtime.py')
@@ -44,6 +44,18 @@ def child(mode,run,exe):
             nativeOutputClosed=out.closed and err.closed))
 def main(run):
     run.mkdir(parents=True)
+    # The actual live PID remains untouched; a closed actor is losslessly
+    # recoverable before its original observation file is removed.
+    m=module();m.RUN=run
+    obs=run/'desktop-observations';obs.mkdir()
+    live=obs/f'desktop-{os.getpid()}-1-live.trace';live.write_bytes(b'live-writer')
+    closed=obs/'desktop-2147483647-1-closed.trace';body=b'closed-native-observation\0'*4096;closed.write_bytes(body)
+    m.compact_closed_observations()
+    assert live.read_bytes()==b'live-writer' and not closed.exists()
+    assert gzip.decompress(closed.with_suffix('.trace.gz').read_bytes())==body
+    row=json.loads((run/'observation-recovery.jsonl').read_text())
+    assert row['sha256']==hashlib.sha256(body).hexdigest() and row['writerAbsent']
+    m.compact_closed_observations();assert live.read_bytes()==b'live-writer'
     exe=run/'modal.exe';normal=run/'normal.exe'
     subprocess.run(['node','-e',"const fs=require('fs');fs.writeFileSync(process.argv[1],require('./test/test-sims-child-mount-native.cjs').untitledModal());const b=require('./tools/kernel32-native-fixture').makeFixture();b.fill(0,0xb00,0xb20);b.writeUInt32LE(0x1a00,0xb00);b.write('ExitProcess\\0',0xc02);b.set([0x6a,0,0xff,0x15,0,0x19,0x40,0],0x1200);fs.writeFileSync(process.argv[2],b);",str(exe),str(normal)],cwd=ROOT,check=True)
     results=[]
