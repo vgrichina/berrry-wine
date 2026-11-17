@@ -41,6 +41,9 @@ def supervise_controller(run,args,command=None):
  """
  bounds=controller_operation(args);run=pathlib.Path(run).resolve()
  assert not (run/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; no later controller'
+ # A local invocation before launch is invalid, not an observation of USER.
+ # Refuse it before constructing a supervisor or a permanent runtime latch.
+ assert (run/'launch.json').is_file(),'native launch receipt is not published'
  base=load('tools/gltron-current-supervise.py')
  out=run/'controller-supervision'/(args[0]+'-'+uuid.uuid4().hex)
  class ControllerSupervisor(base.ParentProcessSupervisor):
@@ -101,10 +104,14 @@ def reviewed_owner_runner(body):
  a,z,old=block(body)
  assert b'sameReviewedOwner(main,nativeSceneLease.main)' in old
  return body[:a]+OWNER_BLOCK+body[z:]
+def assert_original_launchable(run):
+ assert not (pathlib.Path(run)/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; original launch refused'
+
 def main():
  m=load('tools/halflife2-current-native.py');m.TASK_RUN=TASK
  assert TASK.parent==ROOT/'scratch/runs','task evidence must stay under scratch/runs'
  m.RUN=pathlib.Path(os.environ['HL2_RUN']);m.RUN.mkdir(parents=True,exist_ok=True);m.disk()
+ if '--original' in sys.argv:assert_original_launchable(m.RUN)
  revision=m.git('rev-parse','--verify',os.environ['HL2_RESTORED_PIN']+'^{commit}').decode().strip()
  assert len(revision)==40,'exact Git commit required'
  working=os.environ.get('HL2_WORKING_AUTHORED')=='1'
@@ -277,6 +284,9 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,h.appendSection(Buffer.from(r.was
        exactPublishedEditProofReuse=not layout_repair,retainedEditBaseline=str(EDIT_PROOF.relative_to(ROOT)),
        editLayoutRepair=layout_repair,desktopDelta=changed['lib/process-desktop.js']))
   if '--original' in sys.argv:
+   # Preparation may have outlived a controller's terminal refusal. Never
+   # reserve or start an original after that independently published latch.
+   assert_original_launchable(m.RUN)
    f=TASK/'fixture';w=read(f/'outer/wait.json');assert w['supervisorExitCode']==0
    assert read(f/'native-wait.json')['actualWait']
    assert read(f/'qualification-reuse.json')['adapterGit']==revision
