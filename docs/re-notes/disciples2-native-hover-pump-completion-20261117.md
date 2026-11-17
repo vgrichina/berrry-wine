@@ -72,9 +72,63 @@ recorded with the final outcome in the evidence result.
 
 ## Original and next boundary
 
-The one fresh diagnostic original is conditional on published observation and
-native qualification. Its complete fresh frames, individual reviewed intents,
-immutable Git-only source/module, unchanged 128 media files, fixed native and
-independent watchdog deadlines, terminal boundary and shutdown are recorded in
-the evidence result. This report does not claim a map action, turn consequence,
-native Quit, or a causal repair from authored fixtures alone.
+The one fresh diagnostic original used published `7810e8a2a0f8cef8bb27daa956453a62c2934382`,
+Git-only full source SHA `714208d3b7ec4e7f2f89ce6619c593a8b617330ea0d8d8cb3c847d18c8b607ea`
+and qualified module SHA `a01678daa31393ac24eff152c7ac9586700eeb166ef7dcbe20e642faa2434a2c`.
+All 4589 Git bodies were independently verified; no owned patch or foreign WIP was
+applied. The intervening published commit changed another worker's report only;
+the sealed runtime inventory remained identical. Main, actual Worker and child
+inheritance passed. The canonical flock build and focused guard/context tests
+passed. Exact sealed native units, trace units, ordinary unfiltered control,
+filtered on/off controls and PM_NOREMOVE control all passed with actual wait/EOF
+receipts. The ordinary wndproc saw `UP after DOWN`; both filtered controls saw
+`UP WITHOUT DOWN`, with no late DOWN. The 128-media preflight passed unchanged.
+
+Five individually reviewed finite setup clicks were consumed and independently
+released. The personally viewed complete fresh quest-intro frame is retained as
+`original/questintro.png`; it is a story introduction, not a map. Continue then
+reached permanent UNKNOWN at the unchanged 500-ms transport boundary. There was
+no subsequent interactive HTTP, rebind, replay or second original. Only the
+already armed independent release continued.
+
+The new public observations materially narrow the missing fact. During this
+specific Continue attempt, the same thread 1 owns target HWND 65537, generation 1,
+with matching window and memory and a live visible target. Its consecutive USER
+entry identities are 16939 through 16943: prior WM_TIMER dispatch; unfiltered
+`PeekMessage(..., 0, 0, 0, PM_REMOVE)` at +244.276 ms; NCHITTEST dispatch at
++244.936 ms; another unfiltered PM_REMOVE Peek at +466.494 ms; and SETCURSOR
+dispatch at +468.840 ms. Times are relative to trace preparation. Completed Peek
+identities 16940 and 16942 each returned a message (NCHITTEST and SETCURSOR), not
+exhaustion. The last observed entry at cancellation remains SETCURSOR dispatch.
+These positive observations refute a filtered-query or changed-owner explanation
+for those calls. They do not measure application callback return, prove that an
+application frame processed, or explain why owner exhaustion did not occur.
+Later owner Peek entries and timer/message dispatches show continuing public
+execution after cancellation; they cannot authorize delivery of the purged DOWN.
+
+Exact DOWN 23 remained behind pending hover and was purged at +499.718 ms.
+Distinct UP 24 returned at +503.218 ms. Independent release acknowledged at
++1500.239 ms. Retained pre-purge rows include at least 127 renderer returns,
+125 null returns and 121 sibling idle entries, all observed on thread 4. The
+512-row per-ticket cap was not increased: final ticket saw 700 rows; the union
+of bounded flushes retains 683, with sequences 129–145 absent. Counts are lower
+bounds; positive USER entry identities above are consecutive and retained.
+No absence-based claim relies on those missing rows.
+
+Original native observation cost was 1976 host samples, 26.954 ms total,
+0.293 ms maximum; 18 bounded flushes cost 13.118 ms total, 3.115 ms maximum.
+Published filtered native control measured 1026 samples, 27.976 ms total,
+0.942 ms maximum and 4.657 ms total flushing (2.208 ms maximum). Raw contention
+outliers from earlier qualification remain in evidence; these are measurements,
+not universal scheduling bounds. On/off public transcripts and seven guard
+negative pairs remained equal; observation adds no guest calls or slices.
+
+Native, independent watchdog, both outer wait owners and the module holder all
+returned zero with actual waits and both EOFs. The unique module was retrieved
+and hash-verified before normal holder shutdown. The control port is closed;
+own processes and watcher are absent. No boxes were created. No map action,
+turn consequence or native Quit was achieved. No contract defect was established
+and no speculative readiness repair was made. The next boundary is actual native
+callback/consumer completion and legitimate hover readiness/wakeup under this
+observed unfiltered, nonempty owner path, using public execution evidence. This
+original stays closed; another original needs new authorization.
