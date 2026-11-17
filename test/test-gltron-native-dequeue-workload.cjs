@@ -216,6 +216,28 @@ function installWorkerPhases(root){
 }
 function installPagePhases(root,Wine,limit=12000){
   let emitted=0,dropped=0;const rows=[];const log=row=>{root.__externalPassiveLog?.(row);if(emitted<limit){rows.push(row);emitted++;}else dropped++;};
+  // Native boundaries, rather than the observer callbacks after a blit. The
+  // elapsed interval includes scheduling; it is not an OS CPU/GPU claim.
+  const ids=new WeakMap();let nextId=0;
+  let painting=0;
+  const image=v=>v&&typeof v==='object'?{id:ids.get(v)||(ids.set(v,++nextId),nextId),width:v.width,height:v.height}:null;
+  const wrap=(p,name,describe)=>{const original=p?.[name];if(typeof original!=='function')return;
+    p[name]=function(...args){if(describe&&!painting)return original.apply(this,args);
+      const at=Date.now(),start=performance.now(),details=describe?.call(this,args);
+      log({role:'page',name,edge:'enter',at,...details});
+      try{return original.apply(this,args);}finally{log({role:'page',name,edge:'return',at,end:Date.now(),ms:performance.now()-start,...details});}};};
+  for(const type of ['CanvasRenderingContext2D','OffscreenCanvasRenderingContext2D']){
+    const p=root[type]?.prototype;
+    for(const name of ['drawImage','getImageData','putImageData','clearRect'])wrap(p,name,function(args){return {nativeCanvas:true,destination:image(this.canvas),source:image(args[0]),geometry:args.filter(v=>typeof v==='number')};});
+  }
+  for(const type of ['HTMLCanvasElement','OffscreenCanvas']){
+    const p=root[type]?.prototype;
+    for(const name of ['getContext','transferToImageBitmap'])wrap(p,name,function(args){return {nativeCanvas:true,canvas:image(this),context:args[0],options:args[1]};});
+  }
+  wrap(root.ImageBitmapRenderingContext?.prototype,'transferFromImageBitmap',function(args){return {nativeCanvas:true,destination:image(this.canvas),source:image(args[0])};});
+  for(const name of ['_repaintOnce','_presentDisplayCanvas','_blitSurface','_drawPresentedCanvas'])wrap(root.Win98Renderer.prototype,name);
+  const repaint=root.Win98Renderer.prototype.repaint;
+  if(repaint)root.Win98Renderer.prototype.repaint=function(...args){painting++;try{return repaint.apply(this,args);}finally{painting--;}};
   const flush=()=>{const batch=rows.splice(0);console.log('GLTRON_ORIGINAL_BATCH',JSON.stringify({rows:batch,events:emitted,dropped,at:Date.now()}));};
   root.__dequeuePageFlush=flush;if(root.setInterval)root.setInterval(flush,1000);
   const stop=Wine.prototype.stop;
@@ -316,6 +338,17 @@ async function phaseRun(out,backend,authored){
   const runtime=require('../tools/boids-current-runtime.cjs'),files=runtime.gitFiles(commit);
   for(const row of source.source)if(row.path==='host.js'||/^src\/|^lib\//.test(row.path))assert.equal(sha(files.get(row.path)),row.sha256,row.path);
   const modulePath=fs.realpathSync(previous+'/tested-'+pin.sha256+'.wasm'),wasm=fs.readFileSync(modulePath);assert.equal(sha(wasm),pin.sha256);
+  const canvasRepair=process.env.GLTRON_CANVAS_REPAIR==='1';
+  if(canvasRepair){
+    const published=cp.execFileSync('git',['show','HEAD:lib/renderer.js']);
+    const renderer=fs.readFileSync(path.resolve('lib/renderer.js'));
+    if(!authored)assert(published.equals(renderer),'original repaint repair must be published');
+    const baseline=files.get('lib/renderer.js').toString();
+    assert.equal(renderer.toString().replace(/            \/\/ This canvas receives[\s\S]*?            const ctx = canvas.getContext\('2d'\);/,
+      "            const ctx = canvas.getContext('2d', { willReadFrequently: true });"),baseline,'only qualified retained-canvas storage change');
+    files.set('lib/renderer.js',renderer);
+    fs.writeFileSync(out+'/canvas-runtime-delta.json',JSON.stringify({baseCommit:commit,path:'lib/renderer.js',baseSHA256:sha(Buffer.from(baseline)),sha256:sha(renderer),moduleUnchanged:true})+'\n',{flag:'wx'});
+  }
   if(process.env.GLTRON_NATIVE_ATTRIBUTION==='1'){
     const localRequire=require('node:module').createRequire(path.resolve('tools/boids-current-runtime.cjs'));
     const namedCompile=new Function('require','fs','path','ROOT','return ('+runtime.compile.toString().replace('{tailCalls:true}',"{tailCalls:true,nameSection:'wine-assembly'}")+')')(localRequire,fs,path,path.resolve('.'));
@@ -375,13 +408,15 @@ async function phaseRun(out,backend,authored){
       return send(method,params,session);
     };return c;
   };
-  if(authored){const native=require('../tools/gltron-current-native-capture.cjs'),fixture=native.fixture;native.fixture=()=>fixture({drawOnce:true,timerMs:16,triangles:8,width:480,height:360});}
+  if(authored){const native=require('../tools/gltron-current-native-capture.cjs'),fixture=native.fixture;
+    const fullSize=process.env.GLTRON_CANVAS_FULLSIZE==='1';
+    native.fixture=()=>fixture({drawOnce:true,timerMs:16,triangles:fullSize?30:8,width:fullSize?800:480,height:fullSize?600:360});}
   const observer=fs.readFileSync(__filename),observerCommit=cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
   if(!authored)assert.equal(sha(cp.execFileSync('git',['show',observerCommit+':test/test-gltron-native-dequeue-workload.cjs'])),sha(observer),'original requires published observer');
-  fs.writeFileSync(out+'/diagnostic.json',JSON.stringify({commit,observerCommit,observerSHA256:sha(observer),backend,authored,modulePath,moduleSHA256:pin.sha256,moduleVerifiedBeforeExecution:true,runtimeSourceUnchanged:true,rendererDataOnly:true,recordByteCap:16384,recordCap:64,phaseEventCap:120000,sharedBytesPerWorker:32*1024*1024,originalInvocations:authored?0:1})+'\n',{flag:'wx'});
+  fs.writeFileSync(out+'/diagnostic.json',JSON.stringify({commit,observerCommit,observerSHA256:sha(observer),backend,authored,modulePath,moduleSHA256:pin.sha256,moduleVerifiedBeforeExecution:true,runtimeSourceUnchanged:!canvasRepair,canvasRepair,rendererDataOnly:true,recordByteCap:16384,recordCap:64,phaseEventCap:120000,sharedBytesPerWorker:32*1024*1024,originalInvocations:authored?0:1})+'\n',{flag:'wx'});
   const write=fs.writeFileSync;
   fs.writeFileSync=function(file,bytes,...rest){if(file===out+'/tested-'+pin.sha256+'.wasm'){assert.equal(sha(bytes),pin.sha256);fs.linkSync(modulePath,file);return;}
-    if([out+'/source.json',out+'/module.json'].includes(file)){const value=JSON.parse(bytes);value.commit=commit;value.helperCommit=observerCommit;value.exactRuntimeGraphReused=true;bytes=JSON.stringify(value,null,2)+'\n';}
+    if([out+'/source.json',out+'/module.json'].includes(file)){const value=JSON.parse(bytes);value.commit=commit;value.helperCommit=observerCommit;value.exactRuntimeGraphReused=!canvasRepair;value.canvasRepair=canvasRepair;bytes=JSON.stringify(value,null,2)+'\n';}
     return write.call(this,file,bytes,...rest);};
   try{await require('../tools/gltron-current-original.cjs').run(out,observerCommit,authored,backend,true);}finally{fs.writeFileSync=write;fs.fsyncSync(externalFD);fs.closeSync(externalFD);}
   const duplicate=out+'/tested-'+pin.sha256+'.wasm';assert.equal(sha(fs.readFileSync(duplicate)),pin.sha256);fs.unlinkSync(duplicate);fs.linkSync(modulePath,duplicate);
@@ -468,6 +503,20 @@ else if(require.main===module&&process.argv[2]==='phase-run')phaseRun(process.ar
 else if(require.main===module&&process.argv[2]==='run')run(process.argv[3],process.argv[4],process.argv[5],Number(process.argv[6])).catch(e=>{console.error(e);process.exitCode=1;});
 else if(require.main===module){
   const test=require('node:test'),vm=require('node:vm');
+  test('canvas probes observe repaint native boundaries without adding calls or changing native failures',()=>{
+    const rows=[],failure=Error('native canvas lost'),canvas={width:800,height:600};let calls=0;
+    class Context{constructor(){this.canvas=canvas;}drawImage(source,x,y){assert.equal(this.canvas,canvas);assert.equal(source,canvas);assert.deepEqual([x,y],[0,0]);calls++;if(calls===3)throw failure;return 41;}}
+    const ctx=new Context();
+    class Renderer{repaint(){return this._repaintOnce();}_repaintOnce(){return ctx.drawImage(canvas,0,0);}}
+    class Wine{getImports(){return {};}}
+    const root={Win98Renderer:Renderer,CanvasRenderingContext2D:Context,__externalPassiveLog:r=>rows.push(r)};
+    vm.runInNewContext('('+installPagePhases.toString()+')(root,Wine)',{root,Wine,WeakMap,Date,performance,console:{log(){}}});
+    assert.equal(ctx.drawImage(canvas,0,0),41);assert.equal(rows.length,0,'outside repaint requires no canvas telemetry');
+    assert.equal(new Renderer().repaint(),41);assert.equal(calls,2);
+    assert.deepEqual(rows.filter(r=>r.nativeCanvas).map(r=>r.edge),['enter','return']);
+    assert.throws(()=>new Renderer().repaint(),e=>e===failure);assert.equal(calls,3);
+    assert.equal(rows.filter(r=>r.nativeCanvas).at(-1).edge,'return','native throw retains the final boundary');
+  });
   test('external native events retain pre-block entry stacks and bound cap/drop notices',()=>{
     const rows=[],root={};
     vm.runInNewContext('('+installExternalPassive.toString()+')(root,"page",{events:2,bytes:8192})',
