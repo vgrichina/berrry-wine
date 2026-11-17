@@ -8,6 +8,8 @@ invocation check. An inner common API restores its parent rather than clearing
 its still-live modal. Retired or reused HWNDs cancel their own invocation and
 never dispatch into or destroy the replacement. DestroyWindow preserves live
 focus established by its destruction callback before considering its fallback.
+If another CPU actor is selected while the pump is parked, it yields without
+looking up that actor's invocation stack or running or unwinding the owner.
 
 File dialogs focus their filename edit after construction. Their generation
 checked focus lease disables an enabled owner and restores the saved live

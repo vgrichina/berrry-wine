@@ -39,7 +39,12 @@ async function workerProof(out){
    }else{
     if(mode==='wrong-owner')view.setUint32(require('../lib/region-map.generated').BASE.OWNER_TABLE+await slot(h)*4,0,true);
     if(mode==='callback')view.setUint32(require('../lib/region-map.generated').BASE.DIALOG_STATE_TABLE+await slot(parent)*16,0x402400,true);
-    if(mode==='actor')await call('set_process_id',99);
+    if(mode==='actor'){
+     await call('set_process_id',99);
+     const r=await host.link.slice(128);assert(!r.trapped,JSON.stringify(r));
+     assert.equal(await call('get_yield_reason'),7,'foreign actor leaves owner parked');
+     assert.equal(await call('modal_dialog_hwnd'),h,'foreign actor cannot unwind modal');
+    }
     if(mode==='retirement')await call('wnd_lookup_retire',parent);
     if(mode==='parent-generation'){await call('destroy_dialog_frame',parent);await call('wnd_table_set',parent,0xffff0001);}
     assert.equal(await f(0),0n,'actual Worker creation seal must refuse '+mode);

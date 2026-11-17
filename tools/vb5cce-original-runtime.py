@@ -18,7 +18,7 @@ CFGMGR32_SHA256='572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b8
 SUPPORT_MOUNTS=[]
 OWN_SOURCES=('tools/vb5cce-original-runtime.py',
     'src/09c3-controls2-open-save-dialog.wat','src/09c3a-dialog-runtime.wat','lib/cli-native-common-controls.js','lib/renderer-input.js',
-    'test/test-vb5cce-original-current.cjs','test/test-vb5-normal-exit-native.cjs','test/test-vb5-modal-invocation-fence.cjs','test/test-vb5-installed-native.cjs','test/test-vb5-native-progress.cjs','test/test-vb5-native-dialog-identity.cjs',
+    'test/test-vb5cce-original-current.cjs','test/test-vb5-normal-exit-native.cjs','test/test-vb5-modal-invocation-fence.cjs','test/test-vb5-installed-native.cjs','test/test-vb5-native-progress.cjs','test/test-vb5-native-dialog-identity.cjs','test/test-vb5-nested-owned-modal.cjs',
     'src/09a-handlers1-user.wat','src/13-exports.wat','lib/host-window.js','lib/cli-guarded-input.js',
     'tools/callback-ownership-census.json','tools/callback-ownership-revisions.json','tools/layout-offsets.json',
     'lib/cli-native-scene.js','lib/cli-native-user-windows.js')

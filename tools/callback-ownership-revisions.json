@@ -110,8 +110,8 @@
       "file": "src/09c3a-dialog-runtime.wat",
       "name": "$modal_pump_step",
       "baseSHA256": "dc12e4d662a9a2c5ad3e0f181a744d7b487f0666c204df515c105dd22dd63da0",
-      "sha256": "ef18e4080f836709041f28d08dd8ea6961acb72e3b54cf67d454fcd7b7bd53fe",
-      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission."
+      "sha256": "cb79df54b8234f396eb6e64daa885b74fd3ef0950eac7821093782f9d050ec0b",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission. Foreign CPU actor in the parked pump yields without invoking or unwinding the initiating actor; actual native main/Worker actor mutation controls cover refusal."
     },
     {
       "file": "src/09a-handlers1-user.wat",

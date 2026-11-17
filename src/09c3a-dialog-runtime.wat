@@ -1302,6 +1302,20 @@
     (local $packed i32) (local $msg i32) (local $wp i32) (local $lp i32)
     (local $token i32) (local $message i32)
     (local $frame_w i32)
+    ;; A parked modal belongs to its initiating CPU actor. An observer or
+    ;; temporarily selected sibling cannot run, unwind or retire that frame.
+    ;; In particular, do not look up the sibling's invocation stack here.
+    (if (global.get $modal_frame)
+      (then
+        (local.set $frame_w (call $g2w (global.get $modal_frame)))
+        (if (i32.or
+              (i32.ne (load.field ModalContinuation process (local.get $frame_w)) (call $current_process_id))
+              (i32.ne (load.field ModalContinuation thread (local.get $frame_w)) (global.get $current_thread_id)))
+          (then
+            (global.set $yield_flag (i32.const 1))
+            (global.set $yield_reason (i32.const 7))
+            (global.set $steps (i32.const 0))
+            (return (i32.const 1))))))
     (call $modal_frame_actor_check)
     (call $modal_callback_return)
     (call $modal_frame_invocation_check)
