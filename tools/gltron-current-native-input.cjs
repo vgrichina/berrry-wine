@@ -33,7 +33,26 @@ function requireNativeRoute(audit,proof) {
     throw Error('NATIVE_INPUT_UNQUALIFIED: capability presence is not native API-return/physical-UP proof');
   return proof;
 }
-module.exports={installNativeRouteObserver,inspectNativeRoute,requireNativeRoute};
+// Startup can publish a GL clear before the first native USER poll. Observe
+// that poll without calling bind, injecting an event, or entering idle WASM.
+async function waitForNativeOwner({observe,deadline,record=()=>{},close=()=>{},
+  now=Date.now,wait=ms=>new Promise(r=>setTimeout(r,ms))}) {
+  let timer,count=0,closed=false;
+  const fail=error=>{if(!closed){closed=true;close();}return error;};
+  try{return await Promise.race([
+    new Promise((_,reject)=>{timer=setTimeout(()=>reject(fail(Error('NATIVE_OWNER_UNKNOWN startup deadline; permanently closed'))),Math.max(0,deadline-now()));}),
+    (async()=>{for(;;){
+      if(closed||now()>=deadline)throw fail(Error('NATIVE_OWNER_UNKNOWN startup deadline; permanently closed'));
+      const state=await observe();
+      if(closed||now()>=deadline)throw fail(Error('NATIVE_OWNER_UNKNOWN late observation discarded'));
+      if(count++<256||state.ready||state.terminal||!state.healthy)record({at:now(),state});
+      if(state.terminal||!state.healthy)throw fail(Error('NATIVE_OWNER_UNKNOWN retired actor; permanently closed'));
+      if(state.ready)return state;
+      await wait(25);
+    }})(),
+  ]);}catch(error){throw fail(error);}finally{clearTimeout(timer);}
+}
+module.exports={installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner};
 
 // Dedicated physical-release participant. Arm before DOWN, then send only UP
 // on its immutable deadline, even if the parent stops running. Observe the

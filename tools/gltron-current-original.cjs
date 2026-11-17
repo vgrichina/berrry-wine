@@ -2,11 +2,11 @@
 // Personally reviewed finite native input, or read-only observation. All
 // keyboard edges enter through the browser, never through a guest callback.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),http=require('node:http'),vm=require('node:vm'),crypto=require('node:crypto'),assert=require('node:assert/strict');
-const {PNG}=require('pngjs'),{gitFiles,compile}=require('./boids-current-runtime.cjs');
+const {gitFiles,compile}=require('./boids-current-runtime.cjs');
 const {installInitializedObserver,fixture}=require('./gltron-current-native-capture.cjs');
 const {connection,GL_OBSERVER}=require('./gltron-browser-controller.cjs');
-const {completeCapture}=require('./gltron-current-capture.cjs');
-const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute}=require('./gltron-current-native-input.cjs');
+const {completeCapture,encodeCapturePNG}=require('./gltron-current-capture.cjs');
+const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner}=require('./gltron-current-native-input.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function run(out,commit,authored=false,backend='webgl',qualifyNative=false){
  assert(['software','webgl'].includes(backend));
@@ -38,7 +38,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
  }else wasm=compile(files);
  files.set('build/wine-assembly.wasm',wasm);
  fs.writeFileSync(path.join(out,'tested-'+sha(wasm)+'.wasm'),wasm,{flag:'wx'});
- if(authored)files.set('authored-native.exe',fixture({drawOnce:true,timerMs:16}));
+ if(authored)files.set('authored-native.exe',fixture({drawOnce:true,timerMs:16,firstInputDelay:process.env.GLTRON_AUTHORED_INPUT_DELAY==='1'?1800:0}));
  save('module.json',{commit,sha256:sha(wasm),bytes:wasm.length,retainedBeforeExecution:true});save('prepared.json',{at:Date.now(),commit,authored});
  while(!fs.existsSync(out+'/runtime-start.json'))await sleep(10);
  const {deadline}=JSON.parse(fs.readFileSync(out+'/runtime-start.json'));assert(deadline>Date.now()&&deadline<=Date.now()+300000);
@@ -56,7 +56,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
     if(shot.participant)append(label+'-participants.jsonl',{at:Date.now(),status:shot.status,events:shot.participant});return shot;},
    captureHost:async()=>{const host=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session);hostCapturedAt=Date.now();return host;},
    retain:async(shot,host)=>{
-   for(const k of ['source','output']){const dim=shot.metadata[k],b=Buffer.from(shot[k],'base64');assert.equal(b.length,dim.width*dim.height*4);const p=new PNG(dim);p.data=b;fs.writeFileSync(out+'/'+label+'-'+k+'.png',PNG.sync.write(p),{flag:'wx'});}
+   for(const k of ['source','output']){const dim=shot.metadata[k],b=Buffer.from(shot[k],'base64');fs.writeFileSync(out+'/'+label+'-'+k+'.png',encodeCapturePNG(dim.width,dim.height,b),{flag:'wx'});}
    fs.writeFileSync(out+'/'+label+'-host.png',Buffer.from(host.data,'base64'),{flag:'wx'});
    save(label+'.json',{at,completedAt:Date.now(),hostCapturedAt,elapsedMs:Date.now()-at,metadata:shot.metadata,receipt:shot.receipt,authored,inputEvents:0});
    }});
@@ -106,6 +106,9 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
   save('actual-backend.json',await evaluate(`(()=>{const w=runningApps[0].wine,b=w.hostCtx.getGlGpsBridge?.();return {requested:${JSON.stringify(backend)},api:b?.api,configuredBackend:b?.options.backend,endpointBackend:b?.endpoint?.options?.backend,endpoint:b?.endpoint?.id,epoch:b?.workerEpoch,device:b?.device,receipts:__nativeInitialized.receipts};})()`));
   save('actual-render-workers.json',await Promise.all([...workers.values()].filter(w=>w.url.includes('d3d-render-worker')).map(async w=>({targetId:w.targetId,observation:await evaluate('globalThis.__gltronObserver?.snapshot?.()??null',w.sessionId)}))));
   if(qualifyNative){const audit=await evaluate(`(${inspectNativeRoute.toString()})(globalThis,runningApps[0].wine)`);save('native-route.json',audit);}
+  if(qualifyNative)save('native-ready.json',await waitForNativeOwner({deadline:deadline-4000,
+    observe:()=>evaluate('runningApps[0].wine._browserNativeInput.snapshot()'),
+    record:v=>append('native-ready-phases.jsonl',v),close:()=>{terminal=true;c?.ws.close();}}));
   await capture('selected-0');save('ready.json',{at:Date.now(),authored,readOnly:true});
   if(qualifyNative){
     const binding=await evaluate('(globalThis.__nativeBridgeOwner=runningApps[0].wine)._browserNativeInput.bind()');save('native-binding.json',binding);
@@ -131,9 +134,10 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
       const joined=new Promise(resolve=>release.once('close',(code,signal)=>resolve({code,signal,actualWait:true,stdoutEOF:release.stdout.readableEnded,stderrEOF:release.stderr.readableEnded,stdout,stderr})));
       try{
         const until=Date.now()+1000;while(!stdout.includes('\n')){assert(release.exitCode===null&&Date.now()<until,'independent physical UP arm');await sleep(5);}
-        save('action-'+n+'-up-armed.json',JSON.parse(stdout.split('\n')[0]));
+        const armed=JSON.parse(stdout.split('\n')[0]);save('action-'+n+'-up-armed.json',armed);
         const ready=await evaluate(`runningApps[0].wine._browserNativeInput.prepare(${JSON.stringify({...intent,owner:binding.owner,reviewed:true})})`);
         save('action-'+n+'-prepared.json',ready);assert.equal(ready.state,'PREPARED');
+        assert(release.exitCode===null&&Date.now()<armed.fallback-500,'independent UP must remain armed through native receipt deadline');
         const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'rawKeyDown',key:intent.key,code:intent.key,windowsVirtualKeyCode:intent.code},session);
         if(authored&&intent.parentStallMs){assert(intent.parentStallMs>=1800&&intent.parentStallMs<=2500);
           save('action-'+n+'-parent-stall.json',{at:Date.now(),milliseconds:intent.parentStallMs});

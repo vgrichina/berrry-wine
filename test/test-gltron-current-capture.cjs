@@ -18,5 +18,14 @@ async function fixture(failure) {
   }else{await task;assert.equal(retained,1);assert.equal(closed,0);assert.equal(phases.at(-1).phase,'complete');}
 }
 (async()=>{for(const mode of [null,'request','ticket','host'])await fixture(mode);
+  const {encodeCapturePNG}=require('../tools/gltron-current-capture.cjs'),{PNG}=require('pngjs');
+  for(const [width,height]of [[1,1],[480,360],[1060,744]]){
+    const bytes=Buffer.alloc(width*height*4);
+    for(let n=0;n<bytes.length;n++)bytes[n]=(n*37+(n>>>9))&255;
+    const decoded=PNG.sync.read(encodeCapturePNG(width,height,bytes));
+    assert.equal(decoded.width,width);assert.equal(decoded.height,height);assert.deepEqual(decoded.data,bytes);
+  }
+  assert.throws(()=>encodeCapturePNG(2,2,Buffer.alloc(4)),/invalid complete RGBA/);
+  console.log('PASS bounded capture PNG codec preserves every RGBA byte, dimensions and alpha');
   console.log('PASS capture success and request/ticket/host deadline: phase retained, late pixels discarded, zero later calls');
 })().catch(e=>{console.error(e);process.exitCode=1;});

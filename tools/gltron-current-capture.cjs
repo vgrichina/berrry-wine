@@ -26,4 +26,13 @@ async function completeCapture({requestTicket,readTicket,captureHost,retain,clos
     ]);
   }catch(error){terminal(error);throw error;}finally{timers.clear(timer);}
 }
-module.exports={completeCapture};
+// These are evidence pixels, not size-critical downloads. Avoid trying five
+// row filters and maximum deflate on the observation's single 3000ms budget.
+// The decoder recovers exactly the same RGBA bytes.
+function encodeCapturePNG(width,height,rgba) {
+  if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||
+    width*height>16777216||rgba.length!==width*height*4)throw Error('invalid complete RGBA capture');
+  return require('pngjs').PNG.sync.write({width,height,data:Buffer.from(rgba)},
+    {filterType:0,deflateLevel:1});
+}
+module.exports={completeCapture,encodeCapturePNG};

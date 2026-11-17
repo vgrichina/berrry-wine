@@ -57,7 +57,8 @@ function installInitializedObserver(root,getApps=()=>root.runningApps||[]) {
     return result;
   };
 }
-function fixture({messageDriven=false,drawOnce=false,timerMs=0}={}){
+function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0}={}){
+  assert(Number.isInteger(firstInputDelay)&&firstInputDelay>=0&&firstInputDelay<=5000);
   const b=Buffer.alloc(0x6400),base=0x400000,raw=r=>r-0x1000+0x400;
   const d=(o,n)=>b.writeUInt32LE(n>>>0,o),w=(o,n)=>b.writeUInt16LE(n,o),pe=0x80,opt=pe+24,s=opt+224;
   w(0,0x5a4d);d(0x3c,pe);d(pe,0x4550);w(pe+4,0x14c);w(pe+6,1);w(pe+20,224);w(pe+22,0x10e);
@@ -66,6 +67,7 @@ function fixture({messageDriven=false,drawOnce=false,timerMs=0}={}){
   b.write('.native',s);d(s+8,0x6000);d(s+12,0x1000);d(s+16,0x6000);d(s+20,1024);d(s+36,0xe0000060);
   const libraries=[['kernel32.dll',['ExitProcess','OutputDebugStringA']],['user32.dll',['RegisterClassA','CreateWindowExA','SetFocus',messageDriven?'GetMessageA':'PeekMessageA','TranslateMessage','DispatchMessageA','DefWindowProcA','GetDC','ChangeDisplaySettingsA']],['gdi32.dll',['SwapBuffers']],['opengl32.dll',['wglCreateContext','wglMakeCurrent','glClearColor','glClear','glBegin','glColor3f','glVertex2f','glEnd']]];
   if(timerMs)libraries[1][1].push('SetTimer');
+  if(firstInputDelay)libraries[0][1].push('Sleep');
   d(opt+104,0x1000);d(opt+108,(libraries.length+1)*20);let str=0x1800;const apis=new Map();
   libraries.forEach(([dll,names],i)=>{const desc=raw(0x1000+i*20),thunk=0x1200+i*256;d(desc,thunk);d(desc+12,str);d(desc+16,thunk);b.write(dll+'\0',raw(str));str+=dll.length+1;
     names.forEach((name,j)=>{d(raw(thunk+j*4),str);b.write(name+'\0',raw(str+2));str+=name.length+3;apis.set(name,base+thunk+j*4);});});assert(str<0x2000);
@@ -86,7 +88,10 @@ function fixture({messageDriven=false,drawOnce=false,timerMs=0}={}){
     else if(drawOnce)jump('loop');
     label('draw');push(0x3f800000);push(0x3e800000);push(0x3e000000);emit(0xff,0x35,...u(base+0x3608));call('glClearColor');push(0x4000);call('glClear');
     push(4);call('glBegin');for(const n of [0x3f000000,0x3f800000,0x3f800000])push(n);call('glColor3f');
-    for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){for(const n of p)push(n);call('glVertex2f');}call('glEnd');emit(0xff,0x35,...u(base+0x3604));call('SwapBuffers');jump('loop');
+    for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){for(const n of p)push(n);call('glVertex2f');}call('glEnd');emit(0xff,0x35,...u(base+0x3604));call('SwapBuffers');
+    if(firstInputDelay){emit(0x83,0x3d,...u(base+0x360c),0);jump('after-initial-delay',0x85);
+      emit(0xc7,0x05,...u(base+0x360c),...u(1));push(firstInputDelay);call('Sleep');label('after-initial-delay');}
+    jump('loop');
   });
   asm(0x2800,({emit,push,call,label,jump})=>{
     emit(0x55,0x89,0xe5,0x81,0x7d,0x0c,...u(0x100));jump('down',0x84);emit(0x81,0x7d,0x0c,...u(0x101));jump('up',0x84);

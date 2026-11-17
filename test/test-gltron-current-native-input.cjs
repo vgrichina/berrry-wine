@@ -120,3 +120,20 @@ for(const fault of [null,'actor','focus','modal','generation','late','unknown'])
   assert.equal(f.guard.status('n').consumed,!fault,String(fault));
 }
 console.log('PASS production Worker/broker metadata and MSG translation, native return and actor/focus/modal/generation/late/UNKNOWN refusals');
+
+(async()=>{
+  const {waitForNativeOwner}=require('../tools/gltron-current-native-input.cjs');
+  let clock=0,observed=0,closed=0;
+  const states=[{healthy:true,ready:false},{healthy:true,ready:false},{healthy:true,ready:true}];
+  const ready=await waitForNativeOwner({observe:async()=>states[observed++],deadline:1000,
+    now:()=>clock,wait:async ms=>{clock+=ms;},close:()=>closed++});
+  assert(ready.ready);assert.equal(observed,3);assert.equal(closed,0);
+  observed=0;clock=0;
+  await assert.rejects(waitForNativeOwner({observe:async()=>{observed++;return {healthy:true,ready:false};},
+    deadline:50,now:()=>clock,wait:async ms=>{clock+=ms;},close:()=>closed++}),/startup deadline/);
+  assert.equal(observed,2);assert.equal(closed,1,'terminal deadline closes once without a bind or later observation');
+  await assert.rejects(waitForNativeOwner({observe:async()=>({healthy:false,ready:false}),
+    deadline:Date.now()+1000,close:()=>closed++}),/retired actor/);
+  assert.equal(closed,2);
+  console.log('PASS passive pre-USER startup readiness, no early bind/input and terminal deadline/retirement closure');
+})().catch(error=>{console.error(error);process.exitCode=1;});
