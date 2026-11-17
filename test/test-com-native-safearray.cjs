@@ -209,12 +209,12 @@ async function main(){
  assert.equal(await ind(p+16,p+16),0);assert.equal(vt(p+16),3);assert.equal(word(p+24),0x12345678);await clear(p+16);
  // Failure is atomic for both source and an already-owned destination.
  const bad=async(tag,data,expected)=>{const old=await str('keep\0owner');variant(p+16,8,old);variant(p,tag,data);const before=m.read(p+16,16),source=m.read(p,16);assert.equal(await ind(p+16,p),expected);assert.deepEqual(m.read(p+16,16),before);assert.deepEqual(m.read(p,16),source);assert.equal(readString(old),'keep\0owner');await clear(p+16);variant(p,0);};
- await bad(0x4003,0,0x80070057);await bad(0x4000,p+64,0x80070057);await bad(0x4001,p+64,0x80070057);await bad(0x400c,p,0x80070057);await bad(0xffff,0,0x80020008);await bad(12,0,0x80020008);await bad(36,0,0x80004001);await bad(0x200c,0,0x80004001);
+ await bad(0x4003,0,0x80070057);await bad(0x4000,p+64,0x80070057);await bad(0x4001,p+64,0x80070057);await bad(0x400c,p,0x80070057);await bad(0xffff,0,0x80020008);await bad(12,0,0x80020008);await bad(36,0,0x80004001);await bad(0x200d,0,0x80004001);
  variant(p+16,0);assert.equal(await ind(0,p+16),0x80070057);assert.equal(await ind(p+16,0),0x80070057);
  assert.equal(await ind(p+16,0xdeadbeef),0x80070057);assert.equal(await ind(0xdeadbeef,p+16),0x80070057);await bad(0x4003,0xdeadbeef,0x80070057);await bad(8,1,0x80070057);
  // Overflow is an allocation failure, never a wrapped successful clone.
  put(p+80,0xfffffffc);await bad(8,p+84,0x8007000e);
- const fake=m.allocate(32);put(fake,3);dv.setUint16(address(fake+4),1,true);dv.setUint16(address(fake+6),0x80,true);put(fake+8,4);put(fake+16,p+64);put(fake+20,0x10000000);await bad(0x2003,fake+4,0x8007000e);put(fake+20,1);put(fake+16,0);await bad(0x2003,fake+4,0x80070057);m.free(fake);
+ const fake=m.allocate(32);put(fake,3);dv.setUint16(address(fake+4),1,true);dv.setUint16(address(fake+6),0x80,true);put(fake+8,4);put(fake+16,p+64);put(fake+20,0x40000000);await bad(0x2003,fake+4,0x8007000e);put(fake+20,1);put(fake+16,0);await bad(0x2003,fake+4,0x80070057);m.free(fake);
  // Exact original iKernel call shape, including native return stack cleanup.
  const emit32=n=>{const b=Buffer.alloc(4);b.writeUInt32LE(n>>>0);return b;};
  const machine=[];const hex=s=>machine.push(Buffer.from(s,'hex'));const store=(opcode,at)=>{hex(opcode);machine.push(emit32(at));};
@@ -259,7 +259,84 @@ async function main(){
   }
   assert.equal(runtime.pending.size,0);assert.equal(c.frames.length,0);
  };
- for(let i=0;i<4;i++)await indCycle();const indHeap=e.get_heap_ptr();for(let i=0;i<128;i++)await indCycle();assert.equal(e.get_heap_ptr(),indHeap,'CopyInd owns and repeatedly reclaims strings/arrays/interfaces');assert.equal(word(object+4),1);await m.release(object);assert.equal(word(object+4),0);m.free(object);
+ for(let i=0;i<4;i++)await indCycle();const indHeap=e.get_heap_ptr();for(let i=0;i<128;i++)await indCycle();assert.equal(e.get_heap_ptr(),indHeap,'CopyInd owns and repeatedly reclaims strings/arrays/interfaces');assert.equal(word(object+4),1);
+ // Primary ABI evidence: oleauto.h, Microsoft SAFEARRAY/Get/Put docs and
+ // Wine's safearray.c. FADF_VARIANT=0x800; 32-bit VARIANT stride=16.
+ // GetElement ignores uninitialized output, PutElement clears an owned slot.
+ const makeVariants=async(dims=[[2,-3],[3,7]])=>{dims.forEach(([n,lo],i)=>{put(p+80+i*8,n);put(p+84+i*8,lo);});return call('SafeArrayCreate',[12,dims.length,p+80]);};
+ const vaCycle=async()=>{
+  const sa=await makeVariants(),data=word(sa+12);assert(sa);assert.equal(vt(sa+2),0x880);assert.equal(word(sa+4),16);assert.equal(word(sa-4),12);
+  assert.deepEqual(m.read(data,96),new Uint8Array(96));
+  variant(p,3,71);assert.equal(await assign(sa,[-3,7],p),0);assert.equal(int(data),71);
+  variant(p,8,await str('variant\0owner'));assert.equal(await assign(sa,[-2,7],p),0);const first=word(data+24);assert.notEqual(first,word(p+8));await clear(p);assert.equal(readString(first),'variant\0owner');
+  assert.equal(await assign(sa,[-2,7],data+16),0);assert.equal(word(data+24),first,'VariantCopy self is a no-op');assert.equal(readString(word(data+24)),'variant\0owner');
+  variant(p,13,object);assert.equal(await assign(sa,[-3,8],p),0);assert.equal(word(object+4),2);variant(p,0);
+  // BYREF interface slots remain borrowed, including in copied arrays.
+  put(p+160,object);variant(p,0x400d,p+160);assert.equal(await assign(sa,[-2,8],p),0);assert.equal(word(object+4),2);variant(p,0);
+  const nested=await makeVariants([[1,4]]);variant(p,8,await str('nested'));assert.equal(await assign(nested,[4],p),0);await clear(p);
+  variant(p,0x200c,nested);assert.equal(await assign(sa,[-3,9],p),0);await clear(p);assert.notEqual(word(data+72),nested);
+  // Unknown output bytes must never be interpreted as an existing owner.
+  m.write(p+16,new Uint8Array(16).fill(0xa5));assert.equal(await get(sa,[-3,8],p+16),0);assert.equal(vt(p+16),13);assert.equal(word(object+4),3);await clear(p+16);assert.equal(word(object+4),2);
+  assert.equal(await get(sa,[-2,9],p+16),0);assert.equal(vt(p+16),0);await clear(p+16);
+  assert.equal(await call('SafeArrayCopy',[sa,p+72]),0);const cloned=word(p+72),clonedData=word(cloned+12);assert.equal(word(object+4),3);assert.notEqual(clonedData,data);assert.notEqual(word(clonedData+24),word(data+24));assert.notEqual(word(clonedData+72),word(data+72));
+  variant(p,0x200c,sa);variant(p+16,0);assert.equal(await call('VariantCopy',[p+16,p]),0);assert.equal(word(object+4),4);await clear(p+16);assert.equal(word(object+4),3);
+  variant(p+32,0x600c,p+8);assert.equal(await ind(p+16,p+32),0);assert.equal(word(object+4),4);await clear(p+16);await clear(p+32);assert.equal(word(object+4),3);
+  assert.equal(await call('VariantCopy',[p,p]),0);assert.equal(word(object+4),3);
+  // A nested lock forbids the whole release, before earlier refs/strings free.
+  const nestedOwner=word(data+72);put(nestedOwner+8,1);const before=m.read(data,96);
+  assert.equal(await call('VariantCopy',[p,p]),0);assert.equal(await ind(p,p),0);assert.deepEqual(m.read(data,96),before);assert.equal(word(object+4),3);
+  assert.equal(await assign(sa,[-3,9],data+64),0,'locked nested element self copy performs no clear');
+  assert.equal(await call('VariantClear',[p]),0x8002000d);assert.deepEqual(m.read(data,96),before);assert.equal(word(object+4),3);put(nestedOwner+8,0);
+  // Locked outer arrays allow Get/Put; preserve caller lock and bound errors.
+  put(sa+8,1);variant(p+16,3,99);assert.equal(await assign(sa,[-3,7],p+16),0);assert.equal(word(sa+8),1);assert.equal(await assign(sa,[-4,7],p+16),0x8002000b);assert.equal(word(sa+8),1);
+  put(sa+8,0xffffffff);assert.equal(await get(sa,[-3,7],p+16),0x8000ffff);assert.equal(word(sa+8),0xffffffff);put(sa+8,0);await clear(p+16);
+  // Fail at the final slot, after cloning a string, interface bytes, and a
+  // nested array. No refs have transferred when native staging fails.
+  variant(p+16,8,await str('last-failure'));assert.equal(await assign(sa,[-2,9],p+16),0);await clear(p+16);
+  const failing=word(data+88),length=word(failing-4);put(failing-4,0x7ffffff0);put(p+72,0x12345678);
+  assert.equal(await call('SafeArrayCopy',[sa,p+72]),0x8007000e);assert.equal(word(p+72),0);assert.equal(word(object+4),3);put(failing-4,length);
+  // Failed AddRef cannot overwrite an owned destination or retain earlier refs.
+  variant(p+16,8,await str('preserved'));const dest=m.read(p+16,16);put(vtable+4,0);
+  await assert.rejects(()=>call('VariantCopy',[p+16,p]),/null method/);assert.deepEqual(m.read(p+16,16),dest);assert.equal(word(object+4),3);put(vtable+4,object+32);await clear(p+16);
+  variant(p+16,36,0);assert.equal(await assign(sa,[-3,7],p+16),0x80004001);variant(p+16,0);assert.equal(int(data),99);
+  await clear(p);assert.equal(word(object+4),2);assert.equal(readString(word(clonedData+24)),'variant\0owner');assert.equal(await call('SafeArrayDestroy',[cloned]),0);assert.equal(word(object+4),1);
+  assert.equal(runtime.pending.size,0);assert.equal(c.frames.length,0);
+ };
+ for(let i=0;i<4;i++)await vaCycle();const vaHeap=e.get_heap_ptr();for(let i=0;i<128;i++)await vaCycle();assert.equal(e.get_heap_ptr(),vaHeap,'VARIANT array nested/ref/borrowed/failure lifetime heap stable');
+ const emptyVariants=await makeVariants([[0,9]]);assert(emptyVariants);assert.equal(await call('SafeArrayDestroy',[emptyVariants]),0);
+ put(p+80,1);put(p+84,0);const highWord=await call('SafeArrayCreate',[0x7654000c,1,p+80]);assert(highWord);assert.equal(vt(highWord+2),0x880);assert.equal(await call('SafeArrayDestroy',[highWord]),0);
+ const scalarVariants=await makeVariants([[1,0]]);
+ for(const [tag,size]of [[0,0],[1,0],[2,2],[3,4],[4,4],[5,8],[6,8],[7,8],[10,4],[11,2],[14,16],[16,1],[17,1],[18,2],[19,4],[20,8],[21,8],[22,4],[23,4]]){
+  variant(p,tag,0x12345678);if(tag===14)m.write(p,decimal);
+  assert.equal(await assign(scalarVariants,[0],p),0);m.write(p+16,new Uint8Array(16).fill(0xbb));assert.equal(await get(scalarVariants,[0],p+16),0);assert.equal(vt(p+16),tag);
+  assert.deepEqual(m.read(p+16+(tag===14?0:8),size),m.read(p+(tag===14?0:8),size));await clear(p+16);await clear(p);
+ }
+ put(scalarVariants+8,0xffffffff);put(p+72,0x12345678);assert.equal(await call('SafeArrayAccessData',[scalarVariants,p+72]),0x8000ffff);assert.equal(word(scalarVariants+8),0xffffffff);assert.equal(word(p+72),0x12345678);put(scalarVariants+8,0);await call('SafeArrayDestroy',[scalarVariants]);
+ // Execute real guest x86 CALL instructions and record ESP before/after the
+ // API itself, before ComGuestContinuation can restore the caller frame.
+ const abiRows=[],observed=m.allocate(16),code=m.allocate(128);
+ const exact=async(name,ordinal,args,mode)=>{
+  const text=a.string(name,false),entry=await api('GetProcAddress',[module,mode==='ordinal'?ordinal:text]);m.free(text);assert(entry);
+  const bytes=[],emit=(...x)=>bytes.push(...x),dword=n=>emit(n&255,n>>>8&255,n>>>16&255,n>>>24&255);
+  emit(0x55,0x89,0xe5,0x68);dword(0x13579bdf);emit(0x89,0x25);dword(observed);
+  for(const arg of [...args].reverse()){emit(0x68);dword(arg);}
+  emit(0xb8);dword(entry);emit(0xff,0xd0,0xa3);dword(observed+4);emit(0x89,0x25);dword(observed+8);emit(0x8b,0x04,0x24,0xa3);dword(observed+12);emit(0x89,0xec,0x5d,0xc3);
+  m.write(code,Uint8Array.from(bytes));e.invalidate_code_range(code,128);await c.invoke(code,[]);
+  const row={name,ordinal,mode,eax:word(observed+4),espBefore:word(observed),espAfter:word(observed+8),canary:word(observed+12)};
+  assert.equal(row.espAfter,row.espBefore);assert.equal(row.canary,0x13579bdf);abiRows.push(row);return row.eax;
+ };
+ for(const mode of ['named','ordinal']){
+  put(p+80,1);put(p+84,-5);const sa=await exact('SafeArrayCreate',15,[12,1,p+80],mode);assert(sa);put(p+128,-5);variant(p,13,object);variant(p+16,0);
+  assert.equal(await exact('SafeArrayPutElement',26,[sa,p+128,p],mode),0);variant(p,0);assert.equal(word(object+4),2);
+  assert.equal(await exact('SafeArrayGetElement',25,[sa,p+128,p+16],mode),0);assert.equal(word(object+4),3);await clear(p+16);
+  assert.equal(await exact('SafeArrayCopy',27,[sa,p+72],mode),0);assert.equal(word(object+4),3);
+  assert.equal(await exact('SafeArrayDestroy',16,[sa],mode),0);assert.equal(await exact('SafeArrayDestroy',16,[word(p+72)],mode),0);assert.equal(word(object+4),1);
+ }
+ m.free(code);m.free(observed);console.log(JSON.stringify({nativeVariantArrayABI:abiRows}));
+ put(p+80,0x10000000);put(p+84,0);assert.equal(await call('SafeArrayCreate',[12,1,p+80]),0,'16-byte element allocation overflow refused');
+ for(const kind of [0,1,9,13,36,0x200c])assert.equal(await call('SafeArrayCreate',[kind,1,p+80]),0,'unsupported array kind explicitly fails');
+ console.log(JSON.stringify({nativeVariantElementSAFEARRAY:true,descriptorFlags:0x880,stride:16,emptyScalarBSTRNestedInterfaceBorrowed:true,independentCopies:true,selfAliasReplacement:true,actualIUnknownRefs:true,lockedTreeAtomic:true,uninitializedGetOutput:true,failedAddRefAtomic:true,partialCloneRollback:true,cycles:128,heapStable:true}));
+ await m.release(object);assert.equal(word(object+4),0);m.free(object);
  console.log(JSON.stringify({nativeVariantCopyIndOrdinal11:true,scalarAndByref:true,decimalOverlay:true,nestedAndSelf:true,aliasOwnedBSTR:true,borrowedArray:true,actualIUnknownCounts:true,failureAtomic:true,exactCaller:true,ownershipCycles:128,heapStable:true}));
  m.free(p);await m.drain();assert.equal(c.frames.length,0);
  console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeLBoundOrdinal20:true,nativeUBoundOrdinal19:true,boundOverflowAtomic:true,nativeBSTRArray:true,nativeGetDimOrdinal17:true,ordinal202Closed:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,nativeCopyOrdinal27:true,nativePtrOfIndexOrdinal148:true,borrowedAddress:true,partialCopyRollback:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
