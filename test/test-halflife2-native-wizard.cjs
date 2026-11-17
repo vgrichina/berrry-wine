@@ -54,10 +54,14 @@ async function runOne(out,dialog=false,wrapper=false){
   let snap;const due=Date.now()+10000;do{snap=await s.send({action:'snapshot'});if(snap.windows.filter(w=>w.controlClass===1).length===2)break;assert(Date.now()<due);await pause(20);}while(true);
   if(wrapper){
    const crypto=require('node:crypto'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-   const gitSHA=cp.execFileSync('git',['rev-parse','8d4973866'],{encoding:'utf8'}).trim();
+   const originalMetadata=process.env.HL2_RUNTIME_INPUTS?JSON.parse(fs.readFileSync(process.env.HL2_RUNTIME_INPUTS)):{};
+   const gitSHA=originalMetadata.gitSHA||cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
    const helper='tools/vb5cce-reviewed-control.py',own='tools/halflife2-reviewed-next.py';
-   const sources={[helper]:hash(cp.execFileSync('git',['show',gitSHA+':'+helper])),[own]:hash(fs.readFileSync(own))};
-   save('runtime-inputs.json',{gitSHA,sources,authoredWrapperTest:true});
+   const sources={...originalMetadata.sources,[helper]:hash(cp.execFileSync('git',['show',gitSHA+':'+helper])),[own]:hash(fs.readFileSync(own))};
+   // Keep the complete original metadata, including an opaque source field;
+   // it must never become the immutable helper lookup key or intent name.
+   const source=originalMetadata.source??{gitSHA,path:'tools/vb5cce-reviewed-control.py'};
+   save('runtime-inputs.json',{...originalMetadata,source,gitSHA,sources,authoredWrapperTest:true});
    fs.writeFileSync(path.join(out,'wrapper.patch'),cp.execFileSync('git',['diff','--binary','--',own,'test/test-halflife2-native-wizard.cjs']));
    const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8'),started=Date.now()/1000;
    save('native-pid.json',{pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],invocationToken:crypto.randomUUID(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()});
@@ -67,15 +71,19 @@ async function runOne(out,dialog=false,wrapper=false){
    await control(['capture','wrapper-scene']);const rr=JSON.parse(fs.readFileSync(path.join(out,'wrapper-scene.json'))),button=rr.snapshot.windows.find(w=>w.title==='Next >');
    const x=button.screenX+10,y=button.screenY+10;
    await control(['review','wrapper-scene','Automated authored wizard complete image protocol test','Next >','install',button.hwnd,String(x),String(y)]);
-   await control(['bind','wrapper-scene']);await control(['intent','wrapper-next','wrapper-scene',String(x),String(y),'install']);
-   const receipt=JSON.parse(fs.readFileSync(path.join(out,'wrapper-next-down.json'))).receipt,after=JSON.parse(fs.readFileSync(path.join(out,'wrapper-next-observation.json'))).snapshot;
-   assert(receipt.consumed);assert.equal(receipt.receiptBoundary,'native-button-dispatch-return');assert(after.windows.some(w=>w.title==='License page: read the authored terms.'));
+   const intentName='arbitrary-source-welcome-next';
+   await control(['bind','wrapper-scene']);await control(['intent',intentName,'wrapper-scene',String(x),String(y),'install']);
+   const receipt=JSON.parse(fs.readFileSync(path.join(out,intentName+'-down.json'))).receipt,after=JSON.parse(fs.readFileSync(path.join(out,intentName+'-observation.json'))).snapshot;
+   assert(receipt.consumed);assert.equal(receipt.receiptBoundary,'native-button-dispatch-return');assert(after.windows.some(w=>w.title==='Wizard: License agreement'));assert(after.windows.some(w=>w.title==='License page: read the authored terms.'));
+   await control(['intent','reuse-source','wrapper-scene',String(x),String(y),'install'],false);
+   const reuse=JSON.parse(fs.readFileSync(path.join(out,'reuse-source-down.json'))).receipt;
+   assert(!reuse.consumed);assert(['CANCELLED','UNKNOWN'].includes(reuse.state));
    // A terminal fixture latch must refuse every later helper operation before
    // HTTP, including a different finite name that formerly shadowed source ID.
-   const ledger=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');save('PERMANENT-UNKNOWN.json',{authoredTest:true,noLaterRequests:true});
+   const ledger=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');assert(fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));
    for(const args of [['capture','later'],['bind','wrapper-scene'],['intent','different-name','wrapper-scene',String(x),String(y),'install']])await control(args,false);
    assert.equal(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'),ledger);
-   save('proof.json',{passed:true,fullWrapperCaptureReviewBindIntent:true,arbitraryIntentName:true,actualPageChanged:true,receiptBoundary:receipt.receiptBoundary,physicalUpConfirmed:true,permanentUnknownLaterHTTP:0,noOriginal:true});return;
+   save('proof.json',{passed:true,fullWrapperCaptureReviewBindIntent:true,completeOriginalMetadata:true,sourceFieldPreserved:true,arbitraryIntentName:intentName,actualPageChanged:true,titleAndBodyChanged:true,receiptBoundary:receipt.receiptBoundary,physicalUpConfirmed:true,reuseRefused:reuse.state,permanentUnknownLaterHTTP:0,noOriginal:true});return;
   }
   const c=await s.send({action:'native-reviewed-capture',path:path.join(out,'wizard.png')});save('capture.json',c);
   const button=c.snapshot.windows.find(w=>w.title==='Next >'),review={contract:c.contract,captureId:c.captureId,pngSHA256:c.pngSHA256,reviewed:true,reviewedAt:Date.now(),scope:'menu',targetHwnd:button.hwnd};

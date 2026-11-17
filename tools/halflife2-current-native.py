@@ -6,13 +6,13 @@ startup after complete authored controls and own outer lifecycle proof.
 """
 import gzip,hashlib,json,os,pathlib,re,signal,socket,subprocess,sys,threading,time,types,uuid
 ROOT=pathlib.Path(__file__).resolve().parent.parent
-TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-native-next-target-normal-install'
+TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-fixed-wrapper-normal-install-progress'
 RUN=pathlib.Path(os.environ.get('HL2_RUN',TASK_RUN/'native'))
 MEDIA=ROOT/'scratch/media/half-life-2-demo-original.exe'
 DLL=ROOT/'scratch/runs/20261117-halflife2-original-demo-startup-gameplay/WISE0132.dll'
 OWN=('tools/halflife2-current-native.py','tools/halflife2-reviewed-next.py',
      'test/test-halflife2-reviewed-next.cjs','test/test-halflife2-native-wizard.cjs')
-CORE_FIXTURE=ROOT/'scratch/runs/20261117-halflife2-normal-virtual-storage-installer-startup/pinned/outer-fixture'
+CORE_FIXTURE=ROOT/'scratch/runs/20261117-vb5-real-comctl-startup-ide-sample/installed-published'
 NATIVE_SECONDS,WATCHDOG_SECONDS=600,620
 COMPACTION_LOCK=threading.Lock()
 
@@ -123,14 +123,19 @@ def reusable_core(files,module_hash,fixture=CORE_FIXTURE):
  scene freshness policy and the sealed loader's source resolver/inheritance.
  All other lib/src/host/runner/shared-control bytes must match the old proof.
  """
- proof=json.loads((fixture/'full-native-qualification.json').read_text())
+ proof=json.loads((fixture/'complete-native-qualification.json').read_text())
  inputs=json.loads((fixture/'runtime-inputs.json').read_text())
- wait=json.loads((fixture/'outer/wait.json').read_text())
- assert proof['passed'] and proof['mainCPUWorkerOSchild']
+ assert proof['passed'] and proof['nativeProtocolAndFullRegression'] and not proof['originalStarted']
  assert proof['moduleSHA256']==inputs['moduleSHA256']==module_hash==sha((fixture/'module.wasm').read_bytes())
- assert wait['actualWait'] and wait['returncode']==wait['supervisorExitCode']==0
- assert wait['stdoutEOF'] and wait['stderrEOF'] and not wait['remainingAfterRuntime']
- assert all(w['actualWait'] and w['returncode']==0 and w['stdoutEOF'] and w['stderrEOF'] for w in wait['watchdogs'])
+ # Reuse completed component tests, not the later VB original's host stop.
+ # This adapter's own outer lifecycle is qualified freshly below.
+ waits={}
+ for p in fixture.glob('*-wait.json'):
+  if p.name=='watchdog-wait.json':continue
+  w=json.loads(p.read_text())
+  assert w['actualWait'] and w['exit']==0 and w['stdoutEOF'] and w['stderrEOF'],p.name
+  waits[p.name]=sha(p.read_bytes())
+ assert {'inheritance-wait.json','native-controller-wait.json','runtime-shutdown-wait.json','native-dialogbox-wait.json'}<=waits.keys()
  refreshed=('lib/cli-native-scene.js','tools/disciples2-current-native-source-view.cjs')
  material={n:sha(b) for n,b in files.items() if n.startswith(('src/','lib/')) or n in
      ('host.js','test/run.js','tools/vb5cce-original-runtime.py','tools/vb5cce-reviewed-control.py')}
@@ -140,8 +145,8 @@ def reusable_core(files,module_hash,fixture=CORE_FIXTURE):
  for n,h in material.items():
   if n not in refreshed:assert inputs['sources'].get(n)==h,'native core changed: '+n
  return dict(passed=True,moduleSHA256=module_hash,proofGit=proof['gitSHA'],
-     proofSHA256=sha((fixture/'full-native-qualification.json').read_bytes()),
-     outerWaitSHA256=sha((fixture/'outer/wait.json').read_bytes()),
+     proofSHA256=sha((fixture/'complete-native-qualification.json').read_bytes()),
+     componentWaitSHA256=waits,priorOriginalLifecycleReused=False,freshOwnOuterRequired=True,
      materialSourcePins=material,freshComponentTests=list(refreshed),
      unchangedNativeCoreReused=True,fixture=str(fixture.relative_to(ROOT)))
 
@@ -216,6 +221,7 @@ def run():
    original(env,source,module,helper)
    return
   core=reusable_core(files,env['DISCIPLES2_MODULE_SHA256'])
+  env['HL2_RUNTIME_INPUTS']=str(RUN/'runtime-inputs.json')
   helper.checked('next-preflight',['node','test/test-halflife2-reviewed-next.cjs'],env,(source,module))
   helper.checked('wizard-next',['node','test/test-halflife2-native-wizard.cjs',str(RUN/'wizard-next')],env,(source,module))
   helper.checked('scene-current',['node','test/test-disciples2-native-paint-binding.cjs','--unit'],env,(source,module))
