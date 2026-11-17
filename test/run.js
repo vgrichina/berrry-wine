@@ -7662,7 +7662,6 @@ async function main() {
           threadId: we.get_window_thread(h) >>> 0, controlClass: 16 };
       })(),
       physicalUp: !(renderer?._mouseButtonsMask || Object.values(renderer?._physicalKeys || {}).some(Boolean)),
-      nativeDialogBox: require('../lib/cli-native-user-windows').nativeDialogBoxIdentity(instance,threadManager),
       nativeProcess: { pid: process.pid, executable: EXE_PROCESS_GUEST_PATH || EXE_PATH },
       screen: renderer && renderer.canvas
         ? { w: renderer.canvas.width | 0, h: renderer.canvas.height | 0 } : null,

@@ -92,6 +92,25 @@ function units(){
  }
  console.log('PASS production guard + real renderer queue: '+checks.join(', '));return checks;
 }
+async function transportUnits(){
+ const {createGuardedInput}=require('../lib/cli-guarded-input'),{startControlServer}=require('../lib/control-server');
+ const queue=[],refs={queue};let ticket,down;
+ const g=createGuardedInput({nativeDelivery:true,snapshot:()=>({healthy:true,refs}),cleanup:()=>queue.push({msg:0x202})}),o=g.bind();
+ const server=startControlServer({port:0,commandTimeoutMs:40,onCommand:()=>{
+  ticket=g.prepare({...o,nonce:'after-handler-timeout',reviewed:true,deadline:Date.now()+1000},{action:'mousedown'});
+  down={msg:0x201,hwnd:1,wParam:1};g.consume(ticket,()=>queue.push(down));return g.wait(ticket);
+ }});
+ await once(server.server,'listening');
+ try{
+  const response=await fetch('http://127.0.0.1:'+server.server.address().port+'/ctl',{method:'POST',body:'{}'}),body=await response.json();
+  assert.equal(response.status,504);assert.equal(body.guarded.state,'UNKNOWN');assert(!body.guarded.consumed);
+  assert.deepEqual(queue.map(e=>e.msg),[0x202]);g.delivered(down);assert.equal(g.status(ticket.nonce).state,'UNKNOWN');assert(!ticket.consumed);
+ }finally{g.close();server.close();}
+ const q=[],h=createGuardedInput({nativeDelivery:true,snapshot:()=>({healthy:true,refs:{queue:q}}),cleanup:()=>{}}),b=h.bind();
+ const t=h.prepare({...b,nonce:'coalesced',reviewed:true,deadline:Date.now()+1000},{action:'mousemove'}),move={msg:0x200,hwnd:1};
+ h.consume(t,()=>q.push(move));q[0]={...move};h.delivered(q.shift());assert(!t.consumed);h.release(b.owner);assert.equal(t.state,'CANCELLED');h.close();
+ console.log('PASS actual transport timeout after host application: sticky UNKNOWN, purged DOWN, independent UP, no forged consumption; coalesced lookalike MOVE cannot acknowledge original');
+}
 async function native(out,{delay=0,baseline=false,early=false}={}){
  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
  const image=path.join(out,'slow-pump.exe'),bytes=fixture(delay);fs.writeFileSync(image,bytes,{flag:'wx'});
@@ -138,8 +157,8 @@ async function native(out,{delay=0,baseline=false,early=false}={}){
   fs.writeFileSync(path.join(out,'native.log'),s.output(),{flag:'wx'});wd.stdin.end();const [exit,signal]=await ww;save('watchdog-wait.json',{pid:wd.pid,exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
  }
 }
-module.exports={fixture,native,units};
+module.exports={fixture,native,units,transportUnits};
 if(require.main===module){
  if(process.argv[2]==='--native')native(path.resolve(process.argv[3]),JSON.parse(process.argv[4]||'{}')).catch(e=>{console.error(e);process.exitCode=1;});
- else{units();assert(fixture(250).includes(Buffer.from('UP WITHOUT DOWN')));console.log('PASS authored slow-pump PE structure; use --native OUT OPTIONS for actual delivery');}
+ else{units();assert(fixture(250).includes(Buffer.from('UP WITHOUT DOWN')));transportUnits().catch(e=>{console.error(e);process.exitCode=1;});}
 }
