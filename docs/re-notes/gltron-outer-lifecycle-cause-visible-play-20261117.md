@@ -16,6 +16,11 @@ the unchanged policy dies by signal 15; the repaired supervisor finishes 0,
 with that thread gone and the parent process alive. A separate control kills
 the actual parent process: the repaired supervisor detects its pidfd, requests
 termination, waits for its native child and both EOFs, and returns 143.
+The historical failing wrapper did not retain its spawning TID. Its trace
+proves the sender process but cannot by itself distinguish this kernel
+notification from a userspace kill by the same parent. The thread mechanism is
+causally demonstrated by the controlled before/after tests; no historical
+parent kill syscall or particular retired historical TID is invented.
 
 `tools/gltron-current-supervise.py` replaces only that unsafe inherited policy
 with a pinned parent-process pidfd, armed before clearing the thread policy.
@@ -75,3 +80,28 @@ boundary and publication hashes; successful fixture pixels are not gameplay.
 No boxes, workers or deployment are created. Git plus recorded binary patches
 is the source archive; tested modules and only result-named selected images are
 retained as evidence.
+
+## Published boundary
+
+Repair publication `5df4bcb0f9ed85dc970421e025a1470b5f1b1ebf` passed the
+canonical build and focused lifecycle controls. The default-clock candidate
+observation completed in 935 ms, with zero literal source/output mismatches and
+actual guest/render Worker module inheritance. Its complete images were
+personally inspected. This candidate success is not substituted for the later
+published check.
+
+The exact published check retained module
+`f1dd81b43b94bdab0783e0de2a4616d7b19bb0dd7165c43b295b3068b763e831`
+before execution and confirmed both actual Worker modules. Its complete capture
+hit permanent `DISPLAY_UNKNOWN` at the unchanged 3,000 ms deadline. No complete
+fresh capture was saved, and the helper does not retain enough intermediate
+capture phases to attribute this timeout to ticket service versus host pixels.
+There were no later endpoint queries, rebinds or replay. The native harness
+returned 1, both watchdogs returned 0, all three had actual waits and both EOFs,
+and the browser had actual wait 0 with both EOFs. The parent remained alive and
+no owned live processes remained. This was a capture refusal, not outer SIGTERM.
+
+No original GLTron invocation or input was attempted. The single original
+allowance remains unused. Two visible turns, round outcome and native Quit are
+unproved. The next work is causal localization of the bounded complete-capture
+timeout on a fresh authored endpoint; unchanged qualification is not repeated.
