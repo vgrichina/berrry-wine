@@ -68,7 +68,7 @@ async function run(out,commit,backend,mode,fixtureFile){
       const names=new Set(['DefWindowProcA','DispatchMessageA','ShowWindow','SetFocus','SetActiveWindow','SetForegroundWindow','IDirectDraw_SetCooperativeLevel','IDirectDrawSurface_IsLost','IDirectDrawSurface_Restore','IDirect3DDevice2_BeginScene','IDirect3DDevice2_EndScene','IDirectDrawSurface_Flip']);
       const counts={};const has=names.has.bind(names);names.has=name=>{if(!has(name))return false;counts[name]=(counts[name]||0)+1;return counts[name]<=40;};
       globalThis.__waTraceApiNames=names;globalThis.__boidsApiCounts=counts;
-    });await page.evaluateOnNewDocument('('+installDriver.toString()+')(globalThis,'+JSON.stringify({app:'dx_boids',mode,deadline})+');');await page.evaluateOnNewDocument(()=>{globalThis.__boidsInputs=[];for(const type of ['keydown','keyup','pointerdown','pointerup','mousedown','mouseup'])document.addEventListener(type,e=>globalThis.__boidsInputs.push({type,trusted:e.isTrusted,at:Date.now()}),true);});page.on('console',m=>consoleLog.push({at:Date.now(),type:m.type(),text:m.text()}));page.on('pageerror',e=>errors.push(String(e)));await observeTarget(page.target());
+    });await page.evaluateOnNewDocument('('+installDriver.toString()+')(globalThis,'+JSON.stringify({app:'dx_boids',mode,deadline,trace:!!process.env.BOIDS_CAPTURE_TRACE})+');');await page.evaluateOnNewDocument(()=>{globalThis.__boidsInputs=[];for(const type of ['keydown','keyup','pointerdown','pointerup','mousedown','mouseup'])document.addEventListener(type,e=>globalThis.__boidsInputs.push({type,trusted:e.isTrusted,at:Date.now()}),true);});page.on('console',m=>consoleLog.push({at:Date.now(),type:m.type(),text:m.text()}));page.on('pageerror',e=>errors.push(String(e)));await observeTarget(page.target());
     const url='http://127.0.0.1:'+server.address().port+'/index.html?app=dx_boids&'+(mode==='worker'?'threads':'no-threads')+'&d3d-renderer='+backend;
     terminal.url=url;terminal.launchedAt=new Date().toISOString();await page.goto(url,{waitUntil:'domcontentloaded',timeout:Math.max(1,deadline-Date.now())});
     save('readiness.json',await page.evaluate(()=>__boidsDriver.ready()));
@@ -79,7 +79,7 @@ async function run(out,commit,backend,mode,fixtureFile){
     // Originals retain all three independent passive observations.
     for(const delay of fixtureFile&&(process.env.BOIDS_CAPTURE_ACTIVE||process.env.BOIDS_FLIP_DIAGNOSTIC||process.env.BOIDS_DEVICE2)?[15000]:[15000,15000,15000]){
       await sleep(delay);const i=captures.length;
-      const captureStarted=Date.now();let captureTimer;
+      const captureStarted=Date.now();save('controller-capture-start.json',{at:captureStarted,index:i,boundMs:3000});let captureTimer;
       const snapshot=await Promise.race([page.evaluate(async active=>{
         if(active){
           // Fixture only: select a naturally queued update and request within
@@ -98,6 +98,8 @@ async function run(out,commit,backend,mode,fixtureFile){
         return __boidsDriver.capture();
       },!!fixtureFile&&!!process.env.BOIDS_CAPTURE_ACTIVE),new Promise((_,reject)=>{captureTimer=setTimeout(()=>reject(Error('DISPLAY_UNKNOWN controller capture deadline')),Math.max(1,Math.min(3000,deadline-Date.now())));})]).finally(()=>clearTimeout(captureTimer));
       if(Date.now()>=Math.min(deadline,captureStarted+3000))throw Error('late controller capture delivery');
+      save('controller-capture-complete.json',{at:Date.now(),startedAt:captureStarted,index:i,elapsedMs:Date.now()-captureStarted,pageElapsedMs:snapshot.elapsedMs});
+      if(process.env.BOIDS_CAPTURE_TRACE)save('capture-trace-cost.json',await page.evaluate(()=>globalThis.__boidsCaptureTraceCost));
       if(fixtureFile&&!process.env.BOIDS_DEVICE2){
         save(`literal-reference-${i}.json`,process.env.BOIDS_FLIP_DIAGNOSTIC?require('./boids-current-fixture.cjs').qualifyFlip(snapshot,process.env.BOIDS_FLIP_DIAGNOSTIC==='black'):require('./boids-current-fixture.cjs').qualify(snapshot,mode));
         if(process.env.BOIDS_CAPTURE_ACTIVE){
@@ -123,17 +125,35 @@ async function run(out,commit,backend,mode,fixtureFile){
     }
     if(process.env.BOIDS_OWNERSHIP_SEQUENCE)save('ownership-sequence.json',await page.evaluate(()=>globalThis.__boidsOwnership));
     terminal.outcome='observed';save('identity-end.json',await identity());
-    if(fixtureFile&&!process.env.BOIDS_CONTEXT_LOSS){
+    if(process.env.BOIDS_LATE_CALLBACK){
+      if(!fixtureFile)throw Error('Late callback retirement is authored-only');
+      save('native-late-callback.json',await page.evaluate(async()=>{
+        const b=runningApps.find(a=>a.name==='dx_boids').wine.hostCtx.d3dimBridge;
+        const original=b._workerFrame;let held;
+        b._workerFrame=function(frame,epoch){if(!held){held={frame,epoch};return;}return original.call(this,frame,epoch);};
+        try {
+          const end=Date.now()+2000;while(!held&&Date.now()<end)await new Promise(r=>setTimeout(r,10));
+          if(!held?.frame.bitmap)throw Error('No actual native GPU bitmap callback');
+          const before={epoch:held.epoch,width:held.frame.bitmap.width,height:held.frame.bitmap.height};
+          await b.close();const count=b.presenter.presents,epoch=b.workerEpoch;
+          original.call(b,held.frame,held.epoch);
+          const closed=held.frame.bitmap.width===0&&held.frame.bitmap.height===0;
+          if(!closed||b.presenter.presents!==count||epoch===before.epoch)throw Error('Late native bitmap admitted after retirement');
+          return {before,epoch,afterPresents:b.presenter.presents,count,closed,actualBridgeCloseAwaited:true};
+        } finally { b._workerFrame=original; }
+      }));
+    }
+    if(fixtureFile&&!process.env.BOIDS_CONTEXT_LOSS&&!process.env.BOIDS_LATE_CALLBACK){
       // Fault only the authored fixture's ownership records. Never runs on originals.
       const controls=await page.evaluate(async(source,deadline,mode)=>{
         const install=(app='dx_boids',end=deadline)=>(0,eval)('('+source+')')(globalThis,{app,mode,deadline:end});
         const a=runningApps.find(a=>a.name==='dx_boids'),w=a.wine,r=w.renderer,win=Object.values(r.windows).find(v=>v.wasm===w.instance&&v.visible&&!v.isChild);
         const rows=[];
-        for(const fault of ['absent-app','wrong-process','replaced-window','replaced-renderer','failed-renderer','closed-endpoint','retired-renderer',...(w.hostCtx?.d3dimBridge?['lost-stream']:[]),'bad-readiness']){
+        for(const fault of ['absent-app','wrong-process','replaced-window','replaced-instance','replaced-source','replaced-renderer','failed-renderer','closed-endpoint','retired-renderer',...(w.hostCtx?.d3dimBridge?['lost-stream']:[]),'bad-readiness']){
           install(fault==='absent-app'?'missing-authored-app':'dx_boids',Math.min(deadline,Date.now()+(['absent-app','bad-readiness'].includes(fault)?200:5000)));
           let refused=false,stage='ready';
           const pid=win.processId,guest=w.guestWorker,manager=w._renderWorkerManager,port=[...(w._renderWorkerManager?.ports?.values()||[])][0],bridge=w.hostCtx?.d3dimBridge;
-          const prior={failure:manager?._failure,closed:port?.closed,retired:w._renderWorkerRetired,streamError:bridge?.workerAsyncError};
+          const prior={failure:manager?._failure,closed:port?.closed,retired:w._renderWorkerRetired,streamError:bridge?.workerAsyncError,instance:w.instance,device:bridge?.device};
           try{
             if(fault==='bad-readiness')w.guestWorker=mode==='worker'?null:{};
             if(fault==='absent-app'||fault==='bad-readiness')await __boidsDriver.ready();
@@ -141,6 +161,8 @@ async function run(out,commit,backend,mode,fixtureFile){
               await __boidsDriver.ready();stage='capture';
               if(fault==='wrong-process')win.processId++;
               if(fault==='replaced-window')r.windows[win.hwnd]={...win};
+              if(fault==='replaced-instance')w.instance={};
+              if(fault==='replaced-source'){if(!bridge)throw Error('missing fixture bridge');bridge.device={};}
               if(fault==='replaced-renderer')w.renderer={...r};
               if(fault==='failed-renderer'){if(!manager)throw Error('missing fixture manager');manager._failure=Error('authored native renderer failure');}
               if(fault==='closed-endpoint'){if(!port)throw Error('missing fixture endpoint');port.closed=true;}
@@ -153,7 +175,7 @@ async function run(out,commit,backend,mode,fixtureFile){
             if(String(e).includes('missing fixture'))throw e;
             refused=true;rows.push({fault,stage,refused,error:String(e)});
           }
-          finally{win.processId=pid;r.windows[win.hwnd]=win;w.renderer=r;w.guestWorker=guest;if(manager)manager._failure=prior.failure;if(port)port.closed=prior.closed;w._renderWorkerRetired=prior.retired;if(bridge)bridge.workerAsyncError=prior.streamError;}
+          finally{win.processId=pid;r.windows[win.hwnd]=win;w.renderer=r;w.instance=prior.instance;w.guestWorker=guest;if(manager)manager._failure=prior.failure;if(port)port.closed=prior.closed;w._renderWorkerRetired=prior.retired;if(bridge){bridge.workerAsyncError=prior.streamError;bridge.device=prior.device;}}
           if(!refused)throw Error('native fault admitted '+fault);
         }
         return rows;
@@ -181,6 +203,7 @@ async function run(out,commit,backend,mode,fixtureFile){
     if(browser){const p=browser.process();const closed=new Promise(r=>{if(p.exitCode!==null)return r();p.once('close',(code,signal)=>{terminal.chromeClose={pid:p.pid,code,signal,actualWait:true};r();});});await browser.close().catch(e=>errors.push(String(e)));await closed;}
     if(server)await new Promise(r=>server.close(r));await Promise.allSettled(workerTasks);
     save('modules.json',modules);save('requests.json',requests);save('console.json',consoleLog);save('errors.json',errors);
+    save('capture-boundary-trace.json',consoleLog.filter(r=>r.text.startsWith('BOIDS_CAPTURE_TRACE ')).map(r=>({deliveredAt:r.at,...JSON.parse(r.text.slice('BOIDS_CAPTURE_TRACE '.length))})));
     save('pins-after.json',{media:media.map(p=>({...p,sha256After:sha(fs.readFileSync(path.join(ROOT,p.path)))})),served:[...files].map(([path,b])=>({path,size:b.length,sha256:sha(b)}))});
     terminal.captures=captures.map(r=>({index:r.index,publication:r.metadata.publication}));terminal.endedAt=new Date().toISOString();save('terminal.json',terminal);
   }

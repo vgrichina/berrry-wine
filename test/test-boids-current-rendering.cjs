@@ -37,20 +37,27 @@ installSoftwareObserver(sw);const adapter=sw.D3DIMRenderWorker.create({memory,in
 assert.equal(adapter.execute({opcode:0x20000,wa:0}),9);assert.equal(sw.__boidsPublicTrace.records[0].complete,true);assert.equal(sw.__boidsPublicTrace.records[0].state.length,4096);assert.equal(sw.__boidsPublicTrace.records[0].vertices.length,96);
 assert.throws(()=>adapter.execute({opcode:0x20000,wa:0,fail:true}),/raster failure/);assert.equal(sw.__boidsPublicTrace.records[1].complete,false);assert.equal(calls,2);
 console.log('PASS passive public-record preservation, copied inputs, exception propagation, bounded frames; complete registered Boids media manifest');
-async function driverControls(){
+async function driverControls(trace=false){
   const {installDriver}=require('../tools/boids-current-driver.cjs');
   function setup(status='complete'){
     const instance={},win={hwnd:71,visible:true,w:32,h:32,processId:1000,wasm:instance},renderer={windows:{},_currentDisplayRecord:{windows:[{window:new WeakRef(win)}]}};
     let requests=0,cancelled=0;
     const w={instance,processId:1000,renderer,running:true,requestCurrentDisplayCapture(){requests++;return {status,error:'authored control',cancel(){cancelled++;},read(){return {metadata:{observation:'current-display',captureOwner:{hwnd:71,processId:1000},readbackCompletedAt:Date.now(),source:{width:1,height:1},output:{width:1,height:1}},sourceRGBA:new Uint8Array(4),outputRGBA:new Uint8Array(4)};}};}};
     w._renderWorkerManager={ports:new Map([[1,{id:1,closed:false}]]),_failure:null};w.hostCtx={d3dimBridge:{device:{},stats:{records:1}}};
-    const context=vm.createContext({runningApps:[{name:'selected',wine:w}],Date,setTimeout,innerWidth:32,innerHeight:32,btoa:s=>Buffer.from(s,'binary').toString('base64')});
-    const install=(app='selected',ms=500)=>vm.runInContext('('+installDriver.toString()+')(globalThis,'+JSON.stringify({app,mode:'coop',deadline:Date.now()+ms})+')',context);
+    const logs=[];
+    const context=vm.createContext({runningApps:[{name:'selected',wine:w}],Date,setTimeout,console:{debug:s=>logs.push(s)},innerWidth:32,innerHeight:32,btoa:s=>Buffer.from(s,'binary').toString('base64')});
+    const install=(app='selected',ms=500)=>vm.runInContext('('+installDriver.toString()+')(globalThis,'+JSON.stringify({app,mode:'coop',deadline:Date.now()+ms,trace})+')',context);
     install();return {context,w,win,renderer,install,get requests(){return requests;},get cancelled(){return cancelled;}};
   }
   const delayed=setup();setTimeout(()=>{delayed.renderer.windows[71]=delayed.win;},35);
   const before=Date.now();await delayed.context.__boidsDriver.ready();assert(Date.now()-before>=30);
   assert.equal((await delayed.context.__boidsDriver.capture()).metadata.captureOwner.hwnd,71);
+  for(let i=0;i<30;i++)await delayed.context.__boidsDriver.capture();
+  assert.equal(delayed.context.__boidsCaptureTrace?.length||0,trace?64:0,'trace bounded and opt-in');
+  const brokenLog=setup();brokenLog.renderer.windows[71]=brokenLog.win;
+  brokenLog.context.console.debug=()=>{throw Error('authored observer failure');};
+  await brokenLog.context.__boidsDriver.ready();
+  assert.equal((await brokenLog.context.__boidsDriver.capture()).metadata.captureOwner.hwnd,71);
   for(const fault of ['absent','wrong-process','wrong-instance','replaced-window','replaced-renderer','stopped','failed','closed','retired','lost']){
     const f=setup();f.renderer.windows[71]=f.win;await f.context.__boidsDriver.ready();
     if(fault==='absent')delete f.renderer.windows[71];
@@ -85,9 +92,11 @@ async function driverControls(){
   const absent=setup();absent.install('absent',45);await assert.rejects(absent.context.__boidsDriver.ready(),/deadline/);assert.equal(absent.requests,0);
   const pending=setup('pending');pending.renderer.windows[71]=pending.win;pending.install('selected',60);await pending.context.__boidsDriver.ready();
   await assert.rejects(pending.context.__boidsDriver.capture(),/late|deadline/);assert.equal(pending.cancelled,1);
-  console.log('PASS shared exact driver delayed window, absent/wrong/replaced owners, failed/UNKNOWN/pending, fixed deadlines and sticky refusal');
+  console.log('PASS shared exact driver delayed window, absent/wrong/replaced owners, failed/UNKNOWN/pending, fixed deadlines and sticky refusal; trace='+trace);
 }
-driverControls().catch(e=>{console.error(e);process.exitCode=1;});
+// Start the timed controls after the synchronous full-frame oracle blocks.
+// Their CPU work must not consume the delayed-window control's own deadline.
+setImmediate(()=>driverControls().then(()=>driverControls(true)).catch(e=>{console.error(e);process.exitCode=1;}));
 {
   const {Bridge}=require('../lib/gpu-stream-host');
   const b=new Bridge({api:'d3dim-gps'});let shown=0,closed=0;

@@ -30,6 +30,10 @@ function prepare(out, active = false, flip = false, device2 = false){
     if(flip==='black')source=source.replace('v[i*8+4]=0xff3344cc','v[i*8+4]=0xff000000');
   }
   if(device2)source=['sequence','paint-sequence','partial-paint-sequence'].includes(device2)?ownershipSequenceSource(device2!=='sequence',device2==='partial-paint-sequence'):device2Source(device2);
+  if(device2==='static-current')source=source.replace('Sleep(10);','for(;;)Sleep(100);');
+  // Native wall-clock delay before the first public Flip; later frames follow
+  // the unchanged natural guest loop. No host flush or capture-triggered work.
+  if(device2==='delayed-first')source=source.replace('check(C2(primary,11,target,1),28);','if(!checked)Sleep(1800);check(C2(primary,11,target,1),28);');
   const imports={kernel32:['ExitProcess@4','Sleep@4','OutputDebugStringA@4','GetTickCount@0'],user32:['CreateWindowExA@48','SetFocus@4','SetForegroundWindow@4','SetWindowTextA@8'],gdi32:['GetPixel@12'],ddraw:['DirectDrawCreateEx@16']};
   if(device2){imports.user32.push('GetDC@4','ReleaseDC@8');imports.gdi32.push('TextOutA@20');}
   if(['sequence','paint-sequence','partial-paint-sequence'].includes(device2)){imports.user32.push('FillRect@12');imports.gdi32.push('CreateSolidBrush@4','DeleteObject@4');}
