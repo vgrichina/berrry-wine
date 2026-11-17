@@ -412,19 +412,18 @@
             (call $startup_create_show
               (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-            ;; USER sends WM_SIZE then WM_MOVE before CreateWindowEx returns
-            ;; (Wine: WIN_CreateWindowEx after WM_CREATE). A hidden frame used
-            ;; to get its first WM_SIZE only at ShowWindow or the message pump,
-            ;; too late for WordPad: its OnSize records the restored frame rect
-            ;; that ActivateFrame hands SetWindowPlacement before showing, so it
-            ;; placed a 0x0 rect and opened as a 112x27 frame. Visible windows
-            ;; keep the implicit-show chain, which already sends both.
+            ;; Hidden popups receive WM_SIZE/WM_MOVE during creation. Hidden
+            ;; overlapped windows defer them until positioning/showing (Wine's
+            ;; WIN_NEED_SIZE); their caller may initialize state after this API
+            ;; returns. Viewer has no device yet in its creation-time WM_SIZE.
+            ;; Visible windows retain the existing implicit-show chain.
             (local.set $show_hwnd
               (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
             (local.set $arg0 (call $wnd_table_get (local.get $show_hwnd)))
             (if (i32.and
                   (i32.and
-                    (i32.eqz (i32.and (call $wnd_get_style (local.get $show_hwnd)) (i32.const 0x50000000)))
+                    (i32.eq (i32.and (call $wnd_get_style (local.get $show_hwnd)) (i32.const 0xD0000000))
+                            (i32.const 0x80000000))
                     (i32.ne (local.get $arg0) (i32.const 0)))
                   (i32.and
                     (i32.ne (local.get $arg0) (global.get $WNDPROC_DIALOG))

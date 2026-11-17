@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "baseSHA256": "682ab78e7e3f03d7a784f6552a8dd57de56bd637c2874de1d4fbb8a3930ab92f",
+      "sha256": "7b4d070a889192105ef43e5d9c6054f9b410ddedf76da23894f4a23ded9ef580",
+      "reason": "Review 20261117 DXSDK retained-mode Viewer: creation-time WM_SIZE/WM_MOVE is restricted to hidden popups; hidden overlapped windows defer until position/show, matching WIN_NEED_SIZE. This removes early callbacks before the caller initializes its device. Existing CACA0001/32/33 frame identity, window liveness checks, stack restoration and rejected-create cleanup remain unchanged. Native API before/after counterexample, rejection negatives, hidden popup positive and position/show neighbors qualify this bounded condition; general callback ownership remains pending. Run 20261117-dxsdk-globe-viewer-paired-retained-rendering."
+    }
+  ]
+}

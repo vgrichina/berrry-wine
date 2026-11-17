@@ -177,15 +177,27 @@ const extraWat = String.raw`
   e.test_return_callback(1);
   assert.strictEqual(e.test_callback_msg() >>> 0, 0x0001, 'successful WM_NCCREATE advances to WM_CREATE');
   e.test_return_callback(0);
-  // USER sends WM_SIZE then WM_MOVE before CreateWindowEx returns, also to a
-  // hidden window: WordPad records its frame rect from that WM_SIZE.
+  // Hidden overlapped windows defer their first size notification until
+  // sizing/showing. Viewer initializes its device after CreateWindow returns;
+  // an early WM_SIZE enters its resize handler with no device yet.
+  assert.strictEqual(e.get_eip() >>> 0, 0x00abcdef,
+    'hidden overlapped creation returns before WM_SIZE/WM_MOVE');
+  assert.strictEqual(e.get_eax() >>> 0, accepted, 'successful creation returns its HWND');
+  assert.strictEqual(e.test_window_exists(accepted) >>> 0, 1);
+
+  // A hidden popup has no deferred overlapped-size state. Preserve its
+  // creation notifications, including callback owner and return-frame order.
+  const popup = e.test_begin_create(0, classA, titleA, 0x80000000, 0, stack) >>> 0;
+  e.test_return_callback(1);
+  assert.strictEqual(e.test_callback_msg() >>> 0, 0x0001);
+  e.test_return_callback(0);
   assert.strictEqual(e.test_callback_msg() >>> 0, 0x0005, 'successful WM_CREATE is followed by WM_SIZE');
-  assert.strictEqual(e.test_callback_hwnd() >>> 0, accepted);
+  assert.strictEqual(e.test_callback_hwnd() >>> 0, popup);
   e.test_return_callback(0);
   assert.strictEqual(e.test_callback_msg() >>> 0, 0x0003, 'WM_SIZE is followed by WM_MOVE');
   e.test_return_callback(0);
-  assert.strictEqual(e.get_eax() >>> 0, accepted, 'successful creation returns its HWND');
-  assert.strictEqual(e.test_window_exists(accepted) >>> 0, 1);
+  assert.strictEqual(e.get_eax() >>> 0, popup, 'popup creation returns its HWND');
+  assert.strictEqual(e.test_window_exists(popup) >>> 0, 1);
   assert.strictEqual(e.guest_read32(teardownCount) >>> 0, 1,
     'successful creation does not enter teardown');
 
