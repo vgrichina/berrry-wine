@@ -289,7 +289,7 @@ async function main() {
   if (DLL_OVERRIDE) {
     dlls = DLL_OVERRIDE.split(',').map(p => ({ name: path.basename(p.trim()), bytes: fs.readFileSync(p.trim()) }));
   } else {
-    const LOADABLE = new Set(['msvcrt20.dll','mfc30.dll','msvcrt.dll','mfc42.dll','mfc42u.dll','comctl32.dll','msvcp60.dll','riched20.dll','cabinet.dll','usp10.dll','cards.dll']);
+    const LOADABLE = new Set(Object.keys(require('../lib/dll-registry').DLL_PATHS));
     const required = [...requiredDlls].sort((a, b) => {
       const rank = name => name.toLowerCase() === 'msvcrt20.dll' ? 0 : 1;
       return rank(a) - rank(b);

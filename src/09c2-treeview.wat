@@ -141,6 +141,18 @@
           (local.get $sw)
           (i32.sub (i32.shl (memory.size) (i32.const 16)) (i32.const 64)))
       (then (return (i32.const 0))))
+    ;; Our own ImageList record (tag "HIML" at +32) keeps its images either as
+    ;; a bitmap strip or as owned icon copies (ImageList_ReplaceIcon/AddIcon:
+    ;; RegEdit's tree). $image_list_draw is the one renderer for both, the same
+    ;; one ImageList_Draw uses; vertically centre the cell in the 16px row.
+    (if (i32.eq (i32.load offset=32 (local.get $sw)) (i32.const 0x4C4D4948))
+      (then
+        (local.set $cy (i32.load offset=4 (local.get $sw)))
+        (return (call $image_list_draw (local.get $himl) (local.get $index) (local.get $hdc)
+          (local.get $x)
+          (i32.add (local.get $y) (i32.div_s (i32.sub (i32.const 16) (local.get $cy)) (i32.const 2)))
+          (i32.const 0) (i32.const 0)
+          (i32.const 1))))) ;; ILD_TRANSPARENT
     (local.set $sig (i32.load (local.get $sw)))
     (if (i32.eq (local.get $sig) (i32.const 0x4C4D4948)) ;; "HIML"
       (then

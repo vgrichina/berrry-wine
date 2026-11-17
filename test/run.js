@@ -11711,6 +11711,22 @@ async function main() {
         if (ctx.pumpAudioCompletions) ctx.pumpAudioCompletions();
       }
     }
+    // A queued press held behind the renderer's hover floor (takeInput) is a
+    // deadline of its own. A main thread parked in GetMessage re-polls once
+    // per batch, retiring a few blocks, so the idle rule above never sees it
+    // idle and the service clock creeps ~1ms a batch toward the 30ms floor --
+    // RegEdit on WAT common controls sat on a click for the whole run. While
+    // the guest is only waiting for messages, let that time pass at once.
+    // Yield 7 is GetMessage's empty-poll park (1, a blocking wait); the idle
+    // rule above sees the held input as a pending message and returns 0.
+    const parkedReason = instance.exports.get_yield_reason();
+    if (serviceClock && renderer && renderer.inputHoldDeadlineMs &&
+        (parkedReason === 7 || parkedReason === 1)) {
+      const now = batchClock.batchTicks();
+      const inputDue = renderer.inputHoldDeadlineMs();
+      if (Number.isFinite(inputDue) && inputDue > now)
+        batchClock.advanceIdle(Math.ceil(inputDue) - now);
+    }
     // Check if main thread is waiting on an event
     await threadManager.resolveMainThreadSend();
     if (await mainOwner.call('get_yield_reason') === 7

@@ -423,7 +423,7 @@
     (br_if $gpa (i32.lt_u (local.get $arg1) (i32.const 0x10000)))
     ;; Allocate hint(2) + name in guest heap
     (local.set $tmp (call $guest_strlen (local.get $arg1)))
-    (local.set $v (call $heap_alloc (i32.add (local.get $tmp) (i32.const 3)))) (local.set $v_wa (call $g2w (local.get $v))) ;; 2 hint + name + NUL
+    (local.set $v (call $heap_alloc (i32.add (local.get $tmp) (i32.const 4)))) (local.set $v_wa (call $g2w (local.get $v))) ;; 2 hint + name + 'A' + NUL
     ;; Write hint = 0
     (i32.store16 (local.get $v_wa) (i32.const 0))
     ;; Copy name string
@@ -439,6 +439,18 @@
         (then (local.set $i (call $glide3_named_api (local.get $name_wa)))))))
     (if (i32.eq (local.get $i) (i32.const -1))
       (then (local.set $i (call $lookup_api_id (i32.add (local.get $v_wa) (i32.const 2))))))
+    ;; COMCTL32 4.72 exports three pre-Unicode names unsuffixed, as aliases of
+    ;; the ANSI entry points. WinHelp resolves PropertySheet,
+    ;; CreatePropertySheetPage and ImageList_LoadImage by those names and
+    ;; quits instead of opening Help Topics when any is NULL.
+    (if (i32.and (i32.eq (local.get $i) (i32.const 0xFFFF))
+          (i32.or (call $str_eq (local.get $name_wa) "PropertySheet")
+            (i32.or (call $str_eq (local.get $name_wa) "CreatePropertySheetPage")
+                    (call $str_eq (local.get $name_wa) "ImageList_LoadImage"))))
+      (then
+        (i32.store16 (i32.add (local.get $v_wa) (i32.add (local.get $tmp) (i32.const 2)))
+          (i32.const 0x41)) ;; "A\0"
+        (local.set $i (call $lookup_api_id (i32.add (local.get $v_wa) (i32.const 2))))))
     (if (i32.eq (local.get $i) (i32.const 0xFFFF))
       (then (br $gpa))) ;; return 0 — function not found
     ;; SDL retries failed WGL extension lookups through GetProcAddress. A name
@@ -1759,9 +1771,12 @@
       (then (return (i32.const 1))))
     (if (i32.eqz (call $guest_name_is_static_system_dll (local.get $name)))
       (then (return (i32.const 0))))
+    ;; COMCTL32 is not exempt: its controls are WAT wndprocs and the real PE
+    ;; is no longer loadable (lib/dll-registry.js), so a LoadLibrary of it --
+    ;; WinHelp's, after it SearchPathA's the placeholder file -- takes the
+    ;; builtin handle instead of a native map the loader refuses.
     (i32.eqz (i32.or
-      (i32.or (call $dll_name_match (local.get $name) "ole32.dll")
-              (call $dll_name_match (local.get $name) "comctl32.dll"))
+      (call $dll_name_match (local.get $name) "ole32.dll")
       (i32.or (call $dll_name_match (local.get $name) "d3drm.dll")
               (call $dll_name_match (local.get $name) "oleaut32.dll")))))
 

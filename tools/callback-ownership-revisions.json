@@ -5,8 +5,8 @@
       "file": "lib/renderer-input.js",
       "name": "host-file",
       "baseSHA256": "a8de6b537ff492cebe763fee3a9e30bd5b7e16a0751a63e922671045f73c4fcf",
-      "sha256": "a37789c7a971c4c96967c4e28ac54ff20c70024d6b67206038f41d69cd0a27d4",
-      "reason": "Review 20261117 coordinate press hover: retain the original canvas coordinates in local constants before native mapping and cursor clipping, then pass them to the existing synchronous handleMouseMove call. Non-strict argument aliasing previously remapped the native point. No callback, scheduling, retained owner, continuation, input receipt, physical release or context-restoration rule changes; ownership remains pending. Actual native hover and DOWN coordinates plus production transform and refusal regressions qualify this bounded repair."
+      "sha256": "b5ed60d997d6073466cb3759149ca57d087867c9f830a13ca70c7ad6e48219d6",
+      "reason": "Review 20261117 coordinate press hover: retain the original canvas coordinates in local constants before native mapping and cursor clipping, then pass them to the existing synchronous handleMouseMove call. Non-strict argument aliasing previously remapped the native point. No callback, scheduling, retained owner, continuation, input receipt, physical release or context-restoration rule changes; ownership remains pending. Actual native hover and DOWN coordinates plus production transform and refusal regressions qualify this bounded repair. Review 20261117 comctl32: inputHoldDeadlineMs only reports when queued press/hover holds release; it calls no guest code."
     },
     {
       "file": "src/09a5-handlers-window.wat",
@@ -56,6 +56,13 @@
       "baseSHA256": "38b7b4a34b859a10d1be548cffcaec7b91f0ed802dd4fdd1190ffdf487bcb303",
       "sha256": "ddbb708bd495f1b89629aef8a1e65574f3028f5ac298fdc8ac2c0c19c557029c",
       "reason": "Reject actual QT call continuations as FT parents at either alignment, preserving FT compiler frames, alignment and restoration. Native FT and invalidQT-asFT controls retained in run20261117-neverhood-ls32-qt-implementation; general invocation ownership remains pending."
+    },
+    {
+      "file": "lib/process-boot.js",
+      "name": "host-file",
+      "baseSHA256": "ba54542269320d2a6bcf82d33445989840a872a62d27448e349afe0f97113a9c",
+      "sha256": "bc411b912e4a67c2dcfbdbbb1b402181b89a88cd21754f9c57e8680a9cf3d89b",
+      "reason": "Review 20261117 comctl32: COMCTL32.DLL joins the static system-module placeholder files (file presence and RT_VERSION only, never mapped); no host boundary, run loop or guest-control change."
     }
   ],
   "additions": [

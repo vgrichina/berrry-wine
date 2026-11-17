@@ -2159,6 +2159,31 @@
       (then
         (call $statusbar_state_release (local.get $hwnd))
         (return (i32.const 0))))
+    ;; WM_SIZE: the SDK contract is that the parent forwards its WM_SIZE and the
+    ;; bar re-lays itself out across the parent's client width, at the bottom
+    ;; (CCS_TOP 0x1: at the top) and at its own height. CCS_NORESIZE (0x4)
+    ;; opts out. CreateStatusWindow makes the bar 0 wide at the origin, so
+    ;; without this RegEdit's bar never appears and GetEffectiveClientRect
+    ;; gives the panes the whole client area.
+    (if (i32.eq (local.get $msg) (i32.const 0x0005))
+      (then
+        (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
+        (if (i32.and (i32.ne (local.get $parent) (i32.const 0))
+              (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x4))))
+          (then
+            (local.set $sz (call $wnd_get_client_size_packed (local.get $parent)))
+            (local.set $w (i32.and (local.get $sz) (i32.const 0xFFFF)))
+            (local.set $h (i32.shr_u (call $ctrl_get_wh_packed (local.get $hwnd)) (i32.const 16)))
+            (if (i32.eqz (local.get $h)) (then (local.set $h (i32.const 20))))
+            (drop (call $move_window_core (local.get $hwnd) (i32.const 0)
+              (i32.const 0)
+              (select (i32.const 0)
+                (i32.sub (i32.shr_u (local.get $sz) (i32.const 16)) (local.get $h))
+                (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x1)))
+              (local.get $w) (local.get $h)
+              (i32.const 0x14) ;; SWP_NOZORDER|SWP_NOACTIVATE
+              (i32.const 0)))))
+        (return (i32.const 0))))
     ;; WM_SETTEXT updates the ordinary pane. SB_SETTEXTA/W part 0xFF updates
     ;; the simple pane that MenuHelp uses; part zero remains the ordinary pane.
     (if (i32.or

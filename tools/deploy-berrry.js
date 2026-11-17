@@ -58,7 +58,7 @@ const ASSET_PART_SIZE = 10 * 1024 * 1024;
 // Skip individual large files (>500KB) that aren't essential
 const MAX_BINARY_SIZE = 500 * 1024;
 // But always include these even if large
-const LARGE_OK = new Set(['cards.dll', 'comctl32.dll']);
+const LARGE_OK = new Set(['cards.dll']);
 const LARGE_OK_PATHS = new Set([
   'build/wine-assembly.wasm',
   'build/wine-assembly.compat.wasm',

@@ -154,7 +154,8 @@ async function main() {
 
     fs.writeFileSync(PNG, Buffer.from(result.png.split(',')[1], 'base64'));
     for (const dll of ['browseui.dll', 'shdoc401.dll', 'ole32.dll', 'shlwapi.dll',
-      'shdocvw.dll', 'comctl32.dll', 'shell32.dll']) {
+      // No comctl32.dll: the common controls are WAT, never the Win98 PE.
+      'shdocvw.dll', 'shell32.dll']) {
       assert(result.dlls.includes(dll), `browser did not load local stock ${dll}`);
     }
     assert.strictEqual(result.label, 'My Computer',
