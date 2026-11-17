@@ -43,3 +43,31 @@ build passed. Real persistent-owner healthy and owner-death native fixtures
 passed on the newly composed 9099 graph, including actual waits, both EOFs,
 transient-launcher return and cancellation of the exact native child. These
 proofs precede publication and any original city run.
+
+The one authorized original then ran with native1200 / watchdog1220 / reserve180
+seconds. Compilation retained module9099 before the clock; all15 seals and
+all114 media hashes were checked. Passive native unfiltered USER readiness
+preceded the first title capture and the permanent input binding. Normal title,
+new game, name C and Assignment1 reached a fresh Aventine city, Dn2000/Pop0.
+No save continuity was assumed.
+
+One attempted housing site was rejected without a cost. A separate clear-site
+placement then reduced funds to Dn1990 in February500BC (`housing-result.png`),
+with Pop0. No occupied dwelling or population growth is proved. Before the next
+housing-expansion MOVE, the worker spent too long assessing the scene: the
+capture was28.56 seconds old, over the unchanged15-second game limit. The
+controller refused before intent/DOWN and permanently closed UNKNOWN. This is
+an operator stale-review error, not a native runtime fault. There were zero
+later HTTP requests, no rebind/replay/retry and no second original.
+
+Actual native, outer, persistent owner and watchdog waits finished with both
+EOFs and an empty created-process scope. Original exit0 was explicit host
+cleanup, not normal Quit. The run never reached Save or Quit; no authentic.sav,
+original modal input, food building, new road or progress beyond the earlier
+housing/Pop5 evidence is claimed. All114 media files remained unchanged.
+
+The task stops with the public modal mapping fault faithfully reproduced,
+repaired, tested on real native physical BUTTON paths and published as
+c268de57ff943ecc8209fd79037ab510f3cd242b. A later original requires a separate
+assignment; the spent endpoint must remain closed. No box was created: ID null,
+state NOT_CREATED, expiry null, stop receipt NOT_APPLICABLE.
