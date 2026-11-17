@@ -5,6 +5,18 @@ const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_pro
 const {identity,hash}=require('../lib/cli-child-observation');
 const raw=r=>r-0x1000+0x200,u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
+function releaseBeforeExit(b,slot=0x1950,name=0x1c60){
+  // Authored guest behavior: a modal may finish on DOWN, but this program
+  // remains alive until the actual physical button/Enter release. Sleep's
+  // batch-based completion never establishes that release happened.
+  assert.equal(b.readUInt32LE(raw(slot)),0,'unused contiguous USER32 IAT slot');
+  b.writeUInt32LE(name,raw(slot));b.write('GetAsyncKeyState\0',raw(name+2));
+  const at=b.indexOf(Buffer.from([0xff,0x15,...u32(0x401900)]),raw(0x2000));
+  assert(at>=raw(0x2000)&&at<raw(0x2300));
+  const gate=Buffer.from([1,13].flatMap(key=>[0x6a,key,0xff,0x15,...u32(0x400000+slot),
+    0xa9,0,0x80,0,0,0x75,0xf1]));
+  b.copy(b,at+gate.length,at,raw(0x2300)-gate.length);gate.copy(b,at);return b;
+}
 function fixture(parent,parentFailure=false){
   const b=require('./test-vb5-native-dialog-identity.cjs').fixture({simpleButton:true});
   b.writeUInt32LE(0x1c00,raw(0x1960));b.write('CreateProcessA\0',raw(0x1c02));
@@ -16,10 +28,10 @@ function fixture(parent,parentFailure=false){
     e(0x85,0xc0,0x75,12);push(23);call(0x401900);e(0xcc);
   }else{
     for(const n of [0,0x402400,0,2,0x400000])push(n);call(0x401950);
-    push(1000);call(0x401904);
   }
   push(parentFailure?23:0);call(0x401900);e(0xcc);
-  b.fill(0,raw(0x2000),raw(0x2300));b.set(code,raw(0x2000));return b;
+  b.fill(0,raw(0x2000),raw(0x2300));b.set(code,raw(0x2000));
+  return parent?b:releaseBeforeExit(b,0x1964);
 }
 async function freePort(){const s=net.createServer();await new Promise(r=>s.listen(0,'127.0.0.1',r));const p=s.address().port;await new Promise(r=>s.close(r));return p;}
 function waitPublication(out){
@@ -157,5 +169,5 @@ async function run(out,mode='positive'){
  }
  console.log('PASS actual native Play/CreateProcess/parent Exit0/child survives; child module/source/USER scene, independent input+UP, native child Quit0, real waits+both EOF');
 }
-module.exports={fixture,run};
+module.exports={fixture,run,releaseBeforeExit};
 if(require.main===module)run(path.resolve(process.argv[2]),process.argv[3]||'positive').catch(e=>{console.error(e);process.exitCode=1;});

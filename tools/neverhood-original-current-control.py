@@ -6,6 +6,17 @@ image expiry before dispatch permits explicit fresh capture and review. An
 independently prearmed release may finish its original cleanup. No replay.
 """
 import hashlib, json, multiprocessing, os, pathlib, select, subprocess, sys, time, traceback, urllib.request, uuid
+TIMING=[]
+def phase(stage,**detail):
+    if os.environ.get('NEVERHOOD_CONFIRMATION_PHASES')!='1':return
+    # Diagnostic samples never supply or replace a policy clock or receipt.
+    wall=time.time();mono=time.monotonic_ns();cpu=time.process_time_ns()
+    sched=pathlib.Path('/proc/self/schedstat').read_text().split()
+    TIMING.append(dict(phase=stage,pid=os.getpid(),at=wall,monotonicNs=mono,cpuNs=cpu,
+        schedulerRunNs=int(sched[0]),schedulerWaitNs=int(sched[1]),**detail))
+def report_phases():
+    rows=[r for r in TIMING if r['pid']==os.getpid()]
+    if rows:print('NEVERHOOD_CONFIRMATION_PHASES '+json.dumps(rows),flush=True)
 R=pathlib.Path(os.environ['NEVERHOOD_CURRENT_RUN'])
 PORT=int(os.environ['NEVERHOOD_CURRENT_PORT'])
 ROOT_PORT=lambda:read('launch.json').get('rootPort',45761)
@@ -13,10 +24,14 @@ def owner_file():return 'child-input-owner.json' if (R/'child-target.json').exis
 def startup_file():return 'child-startup-ready.json' if owner_file()=='child-input-owner.json' else 'startup-ready.json'
 def read(n):return json.loads((R/n).read_text())
 def save(n,v):
+    phase('save-begin',file=n)
     target=R/n;pending=target.with_name(target.name+'.'+str(os.getpid())+'.pending')
-    with pending.open('x') as f:json.dump(v,f,indent=2);f.write('\n');f.flush();os.fsync(f.fileno())
+    with pending.open('x') as f:
+        json.dump(v,f,indent=2);f.write('\n');f.flush()
+        phase('save-fsync-begin',file=n);os.fsync(f.fileno());phase('save-fsync-end',file=n)
     # Publish a complete file without overwriting any earlier record.
     os.link(pending,target);pending.unlink()
+    phase('save-end',file=n)
 def fail(name,e):
     if not (R/'PERMANENT-UNKNOWN.json').exists():save('PERMANENT-UNKNOWN.json',dict(name=name,error=str(e),at=time.time(),noLaterRequests=True))
 class RefusedBeforeDispatch(Exception):
@@ -86,13 +101,17 @@ def listener_identity(info,port):
     assert len(owned)==1 and 'socket:['+owned[0]+']' in sockets
     return info
 def call(command,timeout=1,cleanup=False,target=None,port=None):
+    phase('call-begin',action=command.get('action'))
     assert not (R/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; no later requests'
     if target is None:identity();port=PORT
     else:listener_identity(target,port)
+    phase('call-identity-checked',action=command.get('action'))
     with (R/'requests.jsonl').open('a') as log:
         log.write(json.dumps(dict(at=time.time(),action=command.get('action'),port=port,cleanup=cleanup))+'\n')
     req=urllib.request.Request(f'http://127.0.0.1:{port}/ctl',data=json.dumps(command).encode(),headers={'Content-Type':'application/json'})
+    phase('http-begin',action=command.get('action'))
     with urllib.request.urlopen(req,timeout=timeout) as f:r=json.load(f)
+    phase('http-end',action=command.get('action'))
     assert r.get('ok'),r
     return r['value']
 def startup():
@@ -226,7 +245,23 @@ def release(name,owner,due,deadline=None):
         reply=call(dict(action='guarded-release',owner=owner),timeout=remaining,cleanup=True)
         assert time.time()<deadline,'physical UP deadline'
         save(name+'-up.json',dict(at=time.time(),sentAt=sent,monotonic=time.monotonic(),reply=reply,physicalUpACK=reply.get('released') is True))
-    except BaseException as e:save(name+'-up.json',dict(at=time.time(),error=str(e),physicalUpACK=False));raise
+    except BaseException as e:
+        # An observed OS owner exit explains a failed release, never proves
+        # physical UP. Read only already-published waits; do not probe a dead
+        # endpoint or turn its absence into an acknowledgement.
+        exited=None
+        try:
+            if PORT==ROOT_PORT():
+                wait=read('native-wait.json');target=read('native-pid.json')
+                if wait['pid']==target['pid'] and all(wait.get(k) for k in ('actualWait','stdoutEOF','stderrEOF')):exited=wait
+            else:
+                target=read('child-target.json');directory=pathlib.Path(target['arm']).parent
+                wait=json.loads((directory/'child-wait.json').read_text())
+                if wait['child']==target['child'] and all(wait.get(k) for k in ('actualWait','stdoutEOF','stderrEOF')):exited=wait
+        except (OSError,ValueError,KeyError):pass
+        save(name+'-up.json',dict(at=time.time(),error=str(e),physicalUpACK=False,
+            outcome='OWNER_EXITED' if exited else 'RELEASE_FAILED',ownerWait=exited))
+        raise
 def release_process(name,owner,due,deadline,stdout_read,stdout_write,stderr_read,stderr_write):
     os.close(stdout_read);os.close(stderr_read)
     os.dup2(stdout_write,1);os.dup2(stderr_write,2)
@@ -234,6 +269,7 @@ def release_process(name,owner,due,deadline,stdout_read,stdout_write,stderr_read
     try:release(name,owner,due,deadline)
     except BaseException:
         traceback.print_exc();sys.stderr.flush();raise SystemExit(1)
+    finally:report_phases()
 class ArmedRelease:
     """Independent forked process: no second Python import/startup on DOWN's path.
 
@@ -344,7 +380,9 @@ def intent(name,scene,x,y,kind,handoff=None):
         receipt=call(dict(action='guarded-input',cmd=command,guard={**owner,'nonce':nonce,
              'reviewed':True,'intent':dict(review=native_review(rr,r)),
              'deadline':int(min(start+.5,min(rr['at'],r['at'])+(15 if kind=='game' else 30))*1000)}),timeout=max(.001,start+.5-time.time()))
+        phase('input-reply',name=name,start=start)
         save(name+'-down.json',dict(at=time.time(),receipt=receipt))
+        phase('confirmation-check',name=name,start=start)
         assert time.time()<start+.5 and receipt['state']=='CONSUMED' and receipt['consumed'],'confirmation UNKNOWN'
         assert all(receipt.get(k)==v for k,v in dict(owner=owner['owner'],epoch=owner['epoch'],nonce=nonce).items())
         assert start*1000<=receipt['consumedAt']<min((start+.5)*1000,(min(rr['at'],r['at'])+(15 if kind=='game' else 30))*1000),'late consumption'
@@ -455,4 +493,6 @@ if __name__=='__main__':
     except RefusedBeforeDispatch as e:
         print(str(e),flush=True)
         raise SystemExit(3)
+    finally:
+        report_phases()
 

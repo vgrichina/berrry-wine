@@ -143,6 +143,23 @@ with tempfile.TemporaryDirectory() as d:
   else:raise AssertionError('postUNKNOWN')
  assert not (m.R/'requests.jsonl').exists()
 with tempfile.TemporaryDirectory() as d:
+ # A real independently waited OS process has exited before release. The
+ # identity check must refuse transport, and its wait must never become UP ACK.
+ import subprocess
+ m.R=pathlib.Path(d)
+ p=subprocess.Popen(['node','-e','process.exit(0)'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+ stat=pathlib.Path('/proc/'+str(p.pid)+'/stat').read_text()
+ m.save('native-pid.json',dict(pid=p.pid,startToken=stat[stat.rindex(')')+2:].split()[19]))
+ a,b=p.communicate();assert p.returncode==0
+ m.save('native-wait.json',dict(pid=p.pid,exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True))
+ m.save('launch.json',dict(rootPort=1))
+ try:m.release('exited','original-owner',time.time(),time.time()+1.75)
+ except (OSError,AssertionError):pass
+ else:raise AssertionError('dead owner acknowledged UP')
+ up=m.read('exited-up.json');assert not up['physicalUpACK'] and up['outcome']=='OWNER_EXITED'
+ assert up['ownerWait']['actualWait'] and up['ownerWait']['exit']==0
+ assert not (m.R/'requests.jsonl').exists()
+with tempfile.TemporaryDirectory() as d:
  m.R=pathlib.Path(d)
  original_identity=m.identity;m.identity=lambda:dict(pid=1,startToken='fixture')
  image=b'unit only; native PNG path exercised separately';(m.R/'expired.png').write_bytes(image)
@@ -272,19 +289,20 @@ fixture.write('Native controller: first\0',raw(0x2540));
 fixture.writeUInt32LE(0x402700,second+6);fixture.writeUInt32LE(0x402780,second+11);
 fixture.write('Native controller: second\0',raw(0x2700));
 fixture.write('Second native modal. OK exits the generated fixture.\0',raw(0x2780));
+require('./test-neverhood-child-handoff.cjs').releaseBeforeExit(fixture);
 fs.writeFileSync(image,fixture,{flag:'wx'});
 function delayedStartupFixture(delayMs){
  const b=Buffer.from(fixture),u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
  // Authored real GetTickCount loop then ShowWindow. Uncapped CLI Sleep
  // intentionally uses batch time; do not alter the production clock policy.
  b.writeUInt32LE(0x1c00,raw(0x1904));b.write('GetTickCount\0',raw(0x1c02));
- b.writeUInt32LE(0x1c20,raw(0x1950));b.write('ShowWindow\0',raw(0x1c22));
+ b.writeUInt32LE(0x1c20,raw(0x1954));b.write('ShowWindow\0',raw(0x1c22));
  const style=b.indexOf(Buffer.from([0x68,0,0,0,0x90]),raw(0x2000));assert(style>=0);
  b.writeUInt32LE(0x80000000,style+1);
  const create=b.indexOf(Buffer.from([0xff,0x15,0x48,0x19,0x40,0,0x89,0xc6]),style);assert(create>style);
  const at=create+8,extra=Buffer.from([0xff,0x15,...u32(0x401904),0x50,
    0xff,0x15,...u32(0x401904),0x2b,0x04,0x24,0x3d,...u32(delayMs),0x72,0xf0,0x83,0xc4,4,
-   0x6a,1,0x56,0xff,0x15,...u32(0x401950)]);
+   0x6a,1,0x56,0xff,0x15,...u32(0x401954)]);
  b.copy(b,at+extra.length,at,raw(0x2500)-extra.length);extra.copy(b,at);return b;
 }
 function delayedDialogFixture(transition=false){
