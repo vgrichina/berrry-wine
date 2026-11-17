@@ -143,6 +143,45 @@ with tempfile.TemporaryDirectory() as d:
   else:raise AssertionError('postUNKNOWN')
  assert not (m.R/'requests.jsonl').exists()
 with tempfile.TemporaryDirectory() as d:
+ m.R=pathlib.Path(d)
+ original_identity=m.identity;m.identity=lambda:dict(pid=1,startToken='fixture')
+ image=b'unit only; native PNG path exercised separately';(m.R/'expired.png').write_bytes(image)
+ rr=dict(at=time.time()-31,completedAt=time.time()-30,target=m.identity(),port=1,captureId='unit-capture',pngSHA256=hashlib.sha256(image).hexdigest(),snapshot=dict(windows=[w],physicalUp=True,capture='0x0'))
+ m.save('expired.json',rr)
+ m.save('expired-review.json',dict(at=time.time()-30,rawCompleteScene=True,observation='unit',visibleLabel='OK',kind='install',targetHwnd='0x123',pngSHA256=rr['pngSHA256']))
+ operation=m.local_operation()
+ # Any transport since entry, even read-only, forbids this typed outcome.
+ (m.R/'requests.jsonl').write_text('{"action":"snapshot"}\\n')
+ try:m.reviewed('expired',operation)
+ except AssertionError as e:assert 'publication' in str(e)
+ else:raise AssertionError('transport accepted for recovery')
+ assert not (m.R/'expired-refused.json').exists()
+ (m.R/'requests.jsonl').unlink()
+ for artifact in ('pending-intent.json','pending-release-arm.json','pending-child-arm.json','bind-intent.json','child-bind-intent.json'):
+  m.save(artifact,{})
+  try:m.local_operation()
+  except AssertionError as e:assert 'pending' in str(e)
+  else:raise AssertionError('pending publication accepted '+artifact)
+  (m.R/artifact).unlink()
+ operation=m.local_operation()
+ try:m.reviewed('expired',operation)
+ except m.RefusedBeforeDispatch:pass
+ else:raise AssertionError('expired image was not typed')
+ refusal=m.read('expired-refused.json');assert refusal['invalidatedNonce']==operation['nonce']
+ # A fresh review cannot revive this capture, even after a new operation.
+ try:m.review('expired','new words','OK','install','0x123')
+ except AssertionError as e:assert 'invalidated' in str(e)
+ else:raise AssertionError('old image restamped')
+ m.save('other-old.json',rr);(m.R/'other-old.png').write_bytes(image)
+ try:m.review('other-old','new words','OK','install','0x123')
+ except AssertionError as e:assert 'fresh native capture' in str(e)
+ else:raise AssertionError('pre-refusal capture reviewed')
+ try:m.release('no-new-intent','owner',time.time())
+ except (AssertionError,FileNotFoundError):pass
+ else:raise AssertionError('release without a fresh reviewed intent')
+ assert not (m.R/'requests.jsonl').exists()
+ m.identity=original_identity
+with tempfile.TemporaryDirectory() as d:
  m.R=pathlib.Path(d);m.reserve=lambda:dict(gameplayCutoff=time.time()+30)
  m.identity=lambda:dict(pid=1,startToken='fixture')
  m.call=lambda *a,**k:dict(contract='native-startup-readiness-v1',ready=True,failures=[],ordinaryOwner=dict(healthy=True,actorContext=False))
@@ -269,7 +308,7 @@ function delayedDialogFixture(transition=false){
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function main(){
- const modes=process.env.NEVERHOOD_NATIVE_MODES?.split(',')||['positive','game-positive','game-aged-positive','game-stale-fault','repaint-positive','transition-hidden-positive','transition-hidden-timeout','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault'];
+ const modes=process.env.NEVERHOOD_NATIVE_MODES?.split(',')||['positive','game-positive','game-aged-positive','game-stale-fault','stale-intent-recovery','repaint-positive','transition-hidden-positive','transition-hidden-timeout','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault'];
  for(const [index,mode] of modes.entries()){
   const run=path.join(out,mode);fs.mkdirSync(run);
   const startupMode=mode.startsWith('startup-');
@@ -323,7 +362,7 @@ async function main(){
     fs.writeFileSync(path.join(run,prefix+'.log'),p.stdout+p.stderr);
     fs.writeFileSync(path.join(run,prefix+'-wait.json'),JSON.stringify({...p,stdout:undefined,stderr:undefined,args}));
     assert(p.stdoutEOF&&p.stderrEOF,'controller pipes must drain before its result');
-    if(expected===0)assert.equal(p.status,0,p.stdout+p.stderr);else assert.notEqual(p.status,0,'fault must fail');
+    if(expected===0||expected===3)assert.equal(p.status,expected,p.stdout+p.stderr);else assert.notEqual(p.status,0,'fault must fail');
     return p;
   };
   try{
@@ -372,7 +411,34 @@ async function main(){
       const proof=path.join(run,'native-visibility-transition.json');
       await s.send({action:'eval',code:`(()=>{const e=instance.exports,first=e.modal_dialog_hwnd();const timer=setInterval(()=>{const h=e.modal_dialog_hwnd();if(!h||h===first)return;clearInterval(timer);const style=e.wnd_get_style_export(h);e.wnd_set_style_export(h,style&~0x10000000);renderer.showWindow(h,0);const p={authoredOnly:true,hwnd:h,hiddenAt:Date.now(),restored:false};console.log('NV_NATIVE_VISIBILITY '+JSON.stringify(p));${mode==='transition-hidden-positive'?`setTimeout(()=>{e.wnd_set_style_export(h,style);renderer.showWindow(h,1);renderer.repaint();p.restored=true;p.shownAt=Date.now();console.log('NV_NATIVE_VISIBILITY '+JSON.stringify(p));},650);`:''}},1);return true})()`});
     }
-    if(!['atomic-transition-positive','startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive','transition-hidden-timeout'].includes(mode)){
+    const staleRecovery=['stale-fault','game-stale-fault','stale-intent-recovery'].includes(mode);
+    if(staleRecovery){
+      await controller(['capture','expired-scene']);
+      const rr=JSON.parse(fs.readFileSync(path.join(run,'expired-scene.json')));
+      const kind=mode==='stale-fault'?'install':'game';
+      const target=rr.snapshot.windows.find(w=>w.isChild&&w.controlClass===1&&w.controlId===1).hwnd;
+      await controller(['review','expired-scene','Authored native fixture complete whole image','OK',kind,target]);
+      if(mode==='stale-intent-recovery')await controller(['bind','expired-scene']);
+      const ledger=fs.readFileSync(path.join(run,'requests.jsonl'),'utf8');
+      const launch=fs.readFileSync(path.join(run,'launch.json'),'utf8');
+      const image=fs.readFileSync(path.join(run,'expired-scene.json'),'utf8');
+      const review=fs.readFileSync(path.join(run,'expired-scene-review.json'),'utf8');
+      await pause(Math.max(0,(rr.at+(kind==='game'?15.05:30.05))*1000-Date.now()));
+      const args=mode==='stale-intent-recovery'?['intent','expired-action','expired-scene','215','139',kind]:['bind','expired-scene'];
+      const refused=await controller(args,3);
+      assert.equal(JSON.parse(refused.stdout).outcome,'REFUSED_BEFORE_DISPATCH');
+      assert(!fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')));
+      assert(!fs.existsSync(path.join(run,'expired-action-intent.json')));
+      assert(!fs.existsSync(path.join(run,'expired-action-release-arm.json')));
+      assert.equal(fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'),ledger);
+      assert.equal(fs.readFileSync(path.join(run,'launch.json'),'utf8'),launch);
+      assert.equal(fs.readFileSync(path.join(run,'expired-scene.json'),'utf8'),image);
+      assert.equal(fs.readFileSync(path.join(run,'expired-scene-review.json'),'utf8'),review);
+      await controller(['review','expired-scene','Cannot restamp an invalidated capture','OK',kind,target],1);
+      assert.equal(fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'),ledger);
+      save(mode+'-recovery-proof.json',{passed:true,typedRefusal:true,zeroTransportIntentArm:true,oldCaptureReviewImmutable:true,originalClocksUnchanged:true,invalidatedOldReview:true,explicitFreshCaptureAndReviewRequired:true});
+    }
+    if(!staleRecovery&&!['atomic-transition-positive','startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive','transition-hidden-timeout'].includes(mode)){
       await s.send({action:'frozen',mode:'on'});
       await controller(['capture','fault-scene']);
       const rr=JSON.parse(fs.readFileSync(path.join(run,'fault-scene.json')));scene=rr.snapshot;
@@ -401,7 +467,7 @@ async function main(){
       }
       assert(fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')));
       const count=requests,ledger=fs.readFileSync(path.join(run,'requests.jsonl'),'utf8');
-      for(const args of [['capture','after-unknown'],['bind','fault-scene'],['intent','retry','fault-scene','215','139','install']])await controller(args,1);
+      for(const args of [['startup'],['capture','after-unknown'],['bind','fault-scene'],['intent','retry','fault-scene','215','139','install'],['review','fault-scene','No UNKNOWN recovery','OK','install',scene.focus],['release','forbidden','owner',String(Date.now()/1000)]])await controller(args,1);
       assert.equal(requests,count);assert.equal(fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'),ledger);
       save(mode+'-terminal.json',{permanentUNKNOWN:true,laterRequests:0,rebindReplayRetry:false,hostTeardownOnly:true});
     }else{
@@ -441,7 +507,7 @@ async function main(){
           assert.notEqual(hash,record.pngSHA256,'same-target repaint must actually change full PNG');
           save(name+'-repaint-proof.json',{original:record.pngSHA256,current:hash,unchangedTarget:true});
         }
-        if(!i)await controller(['bind',name]);
+        if(!i&&!fs.existsSync(path.join(run,'input-owner.json')))await controller(['bind',name]);
         await controller(['intent','press'+i,name,String(b.x+Math.floor(b.w/2)),String(b.y+Math.floor(b.h/2)),inputKind],mode==='transition-hidden-timeout'&&!i?1:0);
         if(!i&&mode==='game-aged-positive'){
           const down=JSON.parse(fs.readFileSync(path.join(run,'press0-down.json')));
@@ -483,7 +549,15 @@ async function main(){
     if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch(error){if(error.code!=='ESRCH')throw error;}
     await s.exited;
     fs.writeFileSync(path.join(run,'native.log'),s.output());
-    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:['startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive'].includes(mode)&&s.child.exitCode===0,hostTeardown:!['startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive'].includes(mode)});
+    const nativeQuitModes=['stale-fault','game-stale-fault','stale-intent-recovery','startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive'];
+    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:nativeQuitModes.includes(mode)&&s.child.exitCode===0,hostTeardown:!nativeQuitModes.includes(mode)});
+    if(['stale-fault','game-stale-fault','stale-intent-recovery'].includes(mode)&&s.child.exitCode===0){
+      const expired=JSON.parse(fs.readFileSync(path.join(run,'expired-scene.json'))),fresh=JSON.parse(fs.readFileSync(path.join(run,'scene0.json')));
+      const refusal=JSON.parse(fs.readFileSync(path.join(run,'expired-scene-refused.json'))),review=JSON.parse(fs.readFileSync(path.join(run,'scene0-review.json')));
+      assert(fresh.captureId!==expired.captureId&&fresh.at>refusal.at&&review.at>=fresh.completedAt);
+      assert(fs.existsSync(path.join(run,'press0-completion.json'))&&fs.existsSync(path.join(run,'press1-completion.json')));
+      save(mode+'-fresh-action-proof.json',{passed:true,explicitNewNativeCaptureId:fresh.captureId,newReviewAfterCapture:true,independentUP:true,nativeQuit:true,exit:0});
+    }
     watchdog.stdin.end();const w=await wclosed;save(mode+'-watchdog-wait.json',{pid:watchdog.pid,...w,actualWait:true,stdoutEOF:watchdog.stdout.readableEnded,stderrEOF:watchdog.stderr.readableEnded,stdout:ws,stderr:we});
     assert.equal(w.exit,0,'independent watchdog must close normally');
   }

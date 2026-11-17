@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Personal complete-scene reviews and single finite ordinary UI intents.
 
-One permanent binding. UNKNOWN closes all later requests. An independently
-prearmed release may finish its original cleanup. No replay, rebind or solver.
+One permanent binding. UNKNOWN closes all later requests. Only proved local
+image expiry before dispatch permits explicit fresh capture and review. An
+independently prearmed release may finish its original cleanup. No replay.
 """
 import hashlib, json, multiprocessing, os, pathlib, select, subprocess, sys, time, traceback, urllib.request, uuid
 R=pathlib.Path(os.environ['NEVERHOOD_CURRENT_RUN'])
@@ -18,6 +19,33 @@ def save(n,v):
     os.link(pending,target);pending.unlink()
 def fail(name,e):
     if not (R/'PERMANENT-UNKNOWN.json').exists():save('PERMANENT-UNKNOWN.json',dict(name=name,error=str(e),at=time.time(),noLaterRequests=True))
+class RefusedBeforeDispatch(Exception):
+    """Only an expired local image, before any publication by this operation."""
+    pass
+def latest_refusal():
+    return max((read(p.name)['at'] for p in R.glob('*-refused.json')),default=0)
+def publication_state():
+    names={p.name for pattern in ('*-intent.json','*-release-arm.json','*-child-arm.json') for p in R.glob(pattern)}
+    for name in names:
+        if name in ('bind-intent.json','child-bind-intent.json'):
+            assert (R/('input-owner.json' if name=='bind-intent.json' else 'child-input-owner.json')).exists(),'pending bind intent'
+        else:
+            suffix=next(s for s in ('-release-arm.json','-child-arm.json','-intent.json') if name.endswith(s))
+            assert (R/(name[:-len(suffix)]+'-completion.json')).exists(),'pending intent/arm'
+    ledger=R/'requests.jsonl'
+    return (ledger.read_bytes() if ledger.exists() else b'',sorted(names))
+def local_operation():
+    assert not (R/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; no later requests'
+    return dict(nonce=str(uuid.uuid4()),publication=publication_state())
+def refuse_expired(scene,rr,operation):
+    assert operation is not None and publication_state()==operation['publication'],'publication prevents local refusal'
+    assert not (R/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; no recovery'
+    record=dict(outcome='REFUSED_BEFORE_DISPATCH',reason='LOCAL_IMAGE_EXPIRED',at=time.time(),
+        scene=scene,captureId=rr['captureId'],pngSHA256=rr['pngSHA256'],invalidatedNonce=operation['nonce'],
+        reviewInvalidated=True,zeroTransport=True,zeroActionIntentArmPublication=True,
+        recovery='explicit fresh native whole-image capture and new personal review only')
+    save(scene+'-refused.json',record)
+    raise RefusedBeforeDispatch(json.dumps(record))
 def sourcecheck():
     manifest=read('runtime-inputs.json')
     root=pathlib.Path(__file__).resolve().parent.parent
@@ -139,32 +167,51 @@ def button(rr,r):
         assert w['parent']!='0x0' and w.get('buttonFlags') is not None
     return w
 def review(scene,description,label,kind,target):
+    assert not (R/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; no later review'
+    assert not (R/(scene+'-refused.json')).exists(),'capture and review invalidated'
     rr=read(scene+'.json')
+    assert rr['at']>latest_refusal(),'fresh native capture required before a new review'
     assert hashlib.sha256((R/(scene+'.png')).read_bytes()).hexdigest()==rr['pngSHA256']
     record=dict(at=time.time(),rawCompleteScene=True,observation=description,
          visibleLabel=label,kind=kind,targetHwnd=target,pngSHA256=rr['pngSHA256'])
     button(rr,record)
     save(scene+'-review.json',record)
-def reviewed(scene):
+def reviewed(scene,operation=None,kind=None,point=None):
+    assert not (R/(scene+'-refused.json')).exists(),'capture and review invalidated'
     rr=read(scene+'.json');r=read(scene+'-review.json')
     freshness=15 if r['kind']=='game' else 30
-    assert 0<=time.time()-rr['at']<freshness and 0<=time.time()-r['at']<freshness
     assert rr['target']==identity() and rr['port']==PORT and r['rawCompleteScene'] and r['observation'] and r['visibleLabel']
     assert r['pngSHA256']==rr['pngSHA256']==hashlib.sha256((R/(scene+'.png')).read_bytes()).hexdigest()
-    button(rr,r)
+    w=button(rr,r)
+    if kind is not None:assert r['kind']==kind,'review kind differs'
+    if point is not None and point[0]!=-1:
+        x,y=point
+        assert w['x']<=x<w['x']+w['w'] and w['y']<=y<w['y']+w['h'],'point outside reviewed target'
+    latest=latest_refusal()
+    if latest:
+        assert rr['at']>latest and r['at']>=rr['completedAt'],'fresh capture and new review required'
+    age=time.time()-rr['at'];review_age=time.time()-r['at']
+    assert age>=0 and review_age>=0,'invalid image/review clock'
+    if age>=freshness:refuse_expired(scene,rr,operation)
+    assert review_age<freshness,'review expired'
     return rr,r
 def native_review(rr,r):
     return dict(contract='native-reviewed-context-v1',captureId=rr['captureId'],pngSHA256=rr['pngSHA256'],
         reviewed=True,reviewedAt=r['at']*1000,scope='game' if r['kind']=='game' else 'menu',targetHwnd=r['targetHwnd'])
 def bind(scene):
     try:
+        operation=local_operation()
         reserve();assert not (R/owner_file()).exists()
-        rr,r=reviewed(scene)
+        rr,r=reviewed(scene,operation)
         save('bind-intent.json' if PORT==ROOT_PORT() else 'child-bind-intent.json',dict(scene=scene,at=time.time(),permanent=True))
         reply=call(dict(action='guarded-bind',reviewedScene=native_review(rr,r)))
         save(owner_file(),reply)
+    except RefusedBeforeDispatch:raise
     except BaseException as e:fail('bind',e);raise
 def release(name,owner,due,deadline=None):
+    assert not (R/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; no later requests'
+    latest=latest_refusal()
+    if latest:assert read(name+'-intent.json')['at']>latest,'fresh reviewed intent required before release'
     deadline=due+.35 if deadline is None else deadline
     print(json.dumps(dict(armed=True,pid=os.getpid(),due=due)),flush=True)
     while time.time()<due:
@@ -267,11 +314,14 @@ def observe_child(name,arm,start):
 def intent(name,scene,x,y,kind,handoff=None):
     child=None
     try:
-        launch=reserve(kind=='quit');rr,r=reviewed(scene)
-        assert kind in ('install','game','quit') and r['kind']==kind
+        operation=local_operation()
+        launch=reserve(kind=='quit')
+        assert kind in ('install','game','quit')
         if kind!='quit':assert not (R/'quit-phase.json').exists() and time.time()+3<launch['gameplayCutoff']
         assert not (R/'PERMANENT-UNKNOWN.json').exists()
-        owner=read(owner_file());nonce=str(uuid.uuid4());start=time.time()
+        owner=read(owner_file())
+        rr,r=reviewed(scene,operation,kind,(x,y))
+        nonce=operation['nonce'];start=time.time()
         # The retained personally reviewed full image is immutable. Native
         # verification checks every public semantic control, not repaint bytes.
         w=button(rr,r)
@@ -368,6 +418,7 @@ def intent(name,scene,x,y,kind,handoff=None):
         print(json.dumps(dict(completedAt=time.time(),elapsedMs=(time.time()-start)*1000,
               durableEvidencePublished=True,aggregateGuardPassed=True)),flush=True)
         assert time.time()<start+3
+    except RefusedBeforeDispatch:raise
     except BaseException as e:
         try:
             if child:
@@ -380,7 +431,7 @@ def intent(name,scene,x,y,kind,handoff=None):
             # terminal latch. Once UNKNOWN is visible even cleanup cannot request.
             fail(name,e)
         raise
-if __name__=='__main__':
+def main():
     mode=sys.argv[1]
     if mode=='startup':startup()
     elif mode=='capture':capture(sys.argv[2])
@@ -398,4 +449,10 @@ if __name__=='__main__':
         if not (R/owner_file()).exists():bind(scene)
         intent(name,scene,int(x),int(y),kind,(guestExe,exeHash))
     elif mode=='release':release(sys.argv[2],sys.argv[3],float(sys.argv[4]))
+
+if __name__=='__main__':
+    try:main()
+    except RefusedBeforeDispatch as e:
+        print(str(e),flush=True)
+        raise SystemExit(3)
 
