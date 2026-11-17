@@ -43,7 +43,20 @@ function install(observer, {http, hostModule, guardModule}) {
   };
   const createGuard = guardModule.createGuardedInput;
   guardModule.createGuardedInput = function(...args) {
-    const guard = Reflect.apply(createGuard, this, args);
+    let renderer, boundRenderer;
+    const snapshot = args[0].snapshot;
+    const options = {...args[0], snapshot(...a) {
+      const result = Reflect.apply(snapshot, this, a);
+      renderer = result.refs?.renderer;
+      return result;
+    }};
+    const guard = Reflect.apply(createGuard, this, [options, ...args.slice(1)]);
+    const bind = guard.bind;
+    guard.bind = function(...a) {
+      const result = Reflect.apply(bind, this, a);
+      boundRenderer = renderer;
+      return result;
+    };
     const identity = a => ({nonce: a[0]?.nonce});
     observer.wrap(guard, 'prepare', 'guard-prepare', identity);
     observer.wrap(guard, 'consume', 'guard-application', identity);
@@ -51,7 +64,7 @@ function install(observer, {http, hostModule, guardModule}) {
     // calls or queue modifications; key state belongs to the public renderer.
     const release = guard.release;
     guard.release = function(...a) {
-      const result = Reflect.apply(release, this, a), r = args[0].snapshot().refs.renderer;
+      const result = Reflect.apply(release, this, a), r = boundRenderer;
       if (r?.peekKeyDownState) observer.mark('physical-up', {
         escape: r.peekKeyDownState(27), up: r.peekKeyDownState(38),
         left: r.peekKeyDownState(37), right: r.peekKeyDownState(39),

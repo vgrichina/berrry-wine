@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const {createObserver, install} = require('../tools/nfs-public-timing.cjs');
 const realGuard = require('../lib/cli-guarded-input');
 function exercise(on) {
-  let at = 100, applications = 0;
+  let at = 100, applications = 0, snapshots = 0;
   const queue = [], renderer = {inputQueue: queue, peekKeyDownState: () => 0};
   const hostModule = {createHostImports: () => ({gpu_stream_kick(x) {
     if (x === 'throw') throw Error('render failure'); return x;
@@ -17,7 +17,7 @@ function exercise(on) {
   assert.equal(host.gpu_stream_kick(73), 73);
   assert.throws(() => host.gpu_stream_kick('throw'), /render failure/);
   const guard = guardModule.createGuardedInput({now: () => at, monotonic: () => at,
-    snapshot: () => ({healthy: true, refs: {queue, renderer}}), cleanup() {queue.length = 0;}});
+    snapshot: () => { snapshots++; return {healthy: true, refs: {queue, renderer}}; }, cleanup() {queue.length = 0;}});
   const binding = guard.bind(), ticket = nonce => guard.prepare({...binding, nonce,
     reviewed: true, deadline: 110}, {action: 'keydown', code: 27});
   const expired = ticket('expired'); at = 111;
@@ -28,11 +28,12 @@ function exercise(on) {
   assert.equal(receipt.consumed, true);
   guard.release(binding.owner);
   assert.throws(() => ticket('valid'), /already used/);
-  return {applications, state: receipt.state, observer};
+  return {applications, snapshots, state: receipt.state, observer};
 }
 const off = exercise(false), on = exercise(true);
 assert.equal(off.applications, 1); assert.equal(on.applications, 1);
 assert.equal(on.state, off.state);
+assert.equal(on.snapshots, off.snapshots, 'observation must not invoke extra ownership/native snapshots');
 assert(on.observer.report().rows.some(r => r.phase === 'physical-up'));
 assert(on.observer.report().rows.some(r => r.phase === 'http-entry'));
 const bounded = createObserver({capacity: 8});
