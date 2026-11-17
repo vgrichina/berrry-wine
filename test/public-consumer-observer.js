@@ -6,8 +6,19 @@ function observePublicConsumers(h, getExports, buffer, translate, file) {
   const fs = require('node:fs');
   const fd = fs.openSync(file, 'wx');
   const origin = performance.now();
-  let pending = null, count = 0, scheduled = false, rows = [];
-  const counts = new Map(), firstPolls = new Set();
+  let pending = null, count = 0, readinessCount = 0, scheduled = false, rows = [];
+  const counts = new Map(), firstPolls = new Map();
+  // Passive native USER identity reads from the same instance and memory used
+  // for this public API return. Never invoke a guest function or pump input.
+  const actor = e => {
+    const focus=e.get_focus_hwnd(), main=e.get_main_hwnd();
+    return {processId:e.get_process_id(),threadId:e.get_current_thread_id(),
+      focus,main,focusGeneration:String(e.wnd_lookup_generation(focus)),
+      mainGeneration:String(e.wnd_lookup_generation(main)),
+      focusThread:e.get_window_thread(focus),live:!!e.wnd_lookup_live(focus),
+      modal:e.modal_dialog_hwnd()||e.dialogbox_hwnd()||0,capture:e.get_capture_hwnd(),
+      memoryBytes:buffer().byteLength};
+  };
   const nargs = {GetMessageA:4, GetMessageW:4, PeekMessageA:5, PeekMessageW:5,
     DispatchMessageA:1, DispatchMessageW:1, TranslateMessage:1, WaitMessage:0,
     GetAsyncKeyState:1, GetKeyState:1, GetKeyboardState:1, GetCursorPos:1,
@@ -31,15 +42,20 @@ function observePublicConsumers(h, getExports, buffer, translate, file) {
     pending=null;
     // Retain bounded first ordinary USER polls even after verbose startup
     // exhausts the diagnostic trace. This is readiness, never input delivery.
-    if(count>=8192 && (!/^(Get|Peek)Message[AW]$/.test(name) || firstPolls.size>=32))
+    if(count>=8192 && (!/^(Get|Peek)Message[AW]$/.test(name) || firstPolls.size>=4096))
       return Reflect.apply(log,this,[ptr,len]);
     const e=getExports();
-    if(count>=8192 && firstPolls.has(e.get_current_thread_id()+':'+name))
+    if(count>=8192 && performance.now()-(firstPolls.get(e.get_current_thread_id()+':'+name)??-Infinity)<1000)
       return Reflect.apply(log,this,[ptr,len]);
     counts.set(name,(counts.get(name)||0)+1);
     const args=[];
     if (Object.hasOwn(nargs,name)) for(let i=0;i<nargs[name];i++) args.push(read(e,e.get_esp()+4+i*4));
     pending={name,args,threadId:e.get_current_thread_id(),sp:e.get_esp()>>>0};
+    if (/^(Get|Peek)Message[AW]$/.test(name)) {
+      pending.actor=actor(e);
+      // Keep reference identities out of JSON but check them on return.
+      Object.defineProperties(pending,{instance:{value:e},memory:{value:buffer()}});
+    }
     emit({phase:'entry',...pending});
     return Reflect.apply(log,this,[ptr,len]);
   };
@@ -54,10 +70,14 @@ function observePublicConsumers(h, getExports, buffer, translate, file) {
         row.publicMSG=Array.from({length:4},(_,i)=>read(e,p.args[0]+i*4));
       emit(row);
       const key=p.threadId+':'+p.name;
-      if (/^(Get|Peek)Message[AW]$/.test(p.name) && !row.yieldFlag && !row.yieldReason &&
+      if (/^(Get|Peek)Message[AW]$/.test(p.name) && p.instance===e && p.memory===buffer() &&
+          JSON.stringify(p.actor)===JSON.stringify(actor(e)) && p.actor.live &&
+          p.actor.focusThread===p.threadId && p.actor.processId && p.actor.focusGeneration!=='0' &&
+          p.args[0] && (p.args[1]===0||p.args[1]===p.actor.focus) && p.args[2]===0 && p.args[3]===0 &&
+          !row.yieldFlag && !row.yieldReason &&
           row.doneSp===p.sp+4*(p.args.length+1) && (/^Peek/.test(p.name)||row.eax) &&
-          firstPolls.size<32 && !firstPolls.has(key)) {
-        firstPolls.add(key);emit({...row,phase:'input-poll-return'},true);
+          readinessCount<4096 && performance.now()-(firstPolls.get(key)??-Infinity)>=1000) {
+        readinessCount++;firstPolls.set(key,performance.now());emit({...row,phase:'input-poll-return',sameInstanceMemory:true},true);
       }
     }
     if(exit)return Reflect.apply(exit,this,args);

@@ -196,17 +196,28 @@ def public_input_ready(run, snapshot):
     """
     run=pathlib.Path(run);launch=json.loads((run/'launch.json').read_text())
     focus=snapshot['focusWindow'];target=int(snapshot['focus'],16)
+    main=next((w for w in snapshot.get('windows',[]) if w['hwnd']==snapshot.get('mainHwnd')),None)
+    if not (main and focus.get('live') and main.get('live') and focus.get('processId')==main.get('processId')
+            and focus.get('threadId')==main.get('threadId') and snapshot.get('modalHwnd')=='0x0'
+            and snapshot.get('capture')=='0x0' and snapshot.get('physicalUp')):return None
     p=run/'public-consumers.jsonl'
     if not p.exists():return None
-    for line in p.read_text().splitlines():
+    for line in reversed(p.read_text().splitlines()):
         try:r=json.loads(line)
         except json.JSONDecodeError:continue # an active writer's incomplete last row
         a=r.get('args',[])
+        actor=r.get('actor',{})
         if (r.get('phase')=='input-poll-return' and r.get('name') in ('GetMessageA','GetMessageW','PeekMessageA','PeekMessageW')
+            and r.get('sameInstanceMemory') is True and actor.get('live') is True and actor.get('memoryBytes',0)>0
+            and actor.get('processId')==focus['processId'] and actor.get('threadId')==focus['threadId']
+            and actor.get('focusThread')==focus['threadId'] and actor.get('focus')==target
+            and actor.get('focusGeneration')==focus['generation']
+            and actor.get('main')==int(main['hwnd'],16) and actor.get('mainGeneration')==main['generation']
+            and actor.get('modal')==actor.get('capture')==0
             and r.get('threadId')==focus['threadId'] and len(a) in (4,5) and a[0] and a[1] in (0,target)
             and a[2:4]==[0,0] and not r.get('yieldFlag') and not r.get('yieldReason')
             and r.get('doneSp')==r.get('sp',0)+4*(len(a)+1) and (r['name'].startswith('Peek') or r.get('eax'))
-            and launch['at']*1000<=r.get('at',0)<=time.time()*1000):return r
+            and max(launch['at']*1000,time.time()*1000-3000)<=r.get('at',0)<=time.time()*1000):return r
     return None
 
 def controller():

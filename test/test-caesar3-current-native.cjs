@@ -236,26 +236,37 @@ async function inputReadinessFixture(out){
  fs.mkdirSync(out,{recursive:true});
  const trace=path.join(out,'observer-limit.jsonl');
  const code=String.raw`const {observePublicConsumers}=require('./test/public-consumer-observer');
-const b=Buffer.alloc(65536);let sp=0x1000;
-const e={get_image_base:()=>0,get_esp:()=>sp,get_current_thread_id:()=>1,get_eax:()=>0,get_yield_reason:()=>0,get_yield_flag:()=>0};
+let b=Buffer.alloc(65536),sp=0x1000,generation=1n;
+let e={get_image_base:()=>0,get_esp:()=>sp,get_current_thread_id:()=>1,get_eax:()=>0,get_yield_reason:()=>0,get_yield_flag:()=>0,
+get_focus_hwnd:()=>0x10001,get_main_hwnd:()=>0x10001,get_process_id:()=>7,wnd_lookup_generation:()=>generation,get_window_thread:()=>1,wnd_lookup_live:()=>1,modal_dialog_hwnd:()=>0,dialogbox_hwnd:()=>0,get_capture_hwnd:()=>0};
 const h={log(){},log_api_exit(){}};observePublicConsumers(h,()=>e,()=>b.buffer,x=>x,process.argv[1]);
-function call(name,args){b.fill(0,0x100,0x200);b.write(name,0x100);sp=0x1000;for(let i=0;i<args.length;i++)b.writeUInt32LE(args[i],sp+4+i*4);h.log(0x100,name.length);sp+=4*(args.length+1);h.log_api_exit()}
-for(let i=0;i<5000;i++)call('GetTickCount',[]);call('PeekMessageA',[0x2000,0,0,0,0]);`;
+function call(name,args,mutate=()=>{}){b.fill(0,0x100,0x200);b.write(name,0x100);sp=0x1000;for(let i=0;i<args.length;i++)b.writeUInt32LE(args[i],sp+4+i*4);h.log(0x100,name.length);sp+=4*(args.length+1);mutate();h.log_api_exit()}
+for(let i=0;i<5000;i++)call('GetTickCount',[]);
+call('PeekMessageA',[0x2000,0,0x100,0x201,0]);
+call('PeekMessageA',[0x2000,0,0,0,0],()=>generation++);generation=1n;
+call('PeekMessageA',[0x2000,0,0,0,0],()=>e={...e});
+call('PeekMessageA',[0x2000,0,0,0,0],()=>b=Buffer.alloc(65536));
+call('PeekMessageA',[0x2000,0,0,0,0]);`;
  cp.execFileSync(process.execPath,['-e',code,trace]);
  const rows=fs.readFileSync(trace,'utf8').trim().split('\n').map(l=>JSON.parse(l)),polls=rows.filter(r=>r.phase==='input-poll-return');
  assert.equal(polls.length,1);assert(rows.find(r=>r.phase==='summary').seen>=8192);assert.equal(polls[0].receipt,false);
  const unit=String.raw`import runpy,pathlib,json,sys,copy,time
 f=runpy.run_path('tools/caesar3-current-native.py')['public_input_ready'];r=pathlib.Path(sys.argv[1]);p=json.loads((r/'observer-limit.jsonl').read_text().splitlines()[-2])
 (r/'launch.json').write_text(json.dumps(dict(at=time.time()-60)))
-s=dict(focus='0x10001',focusWindow=dict(threadId=1))
+s=dict(focus='0x10001',mainHwnd='0x10001',modalHwnd='0x0',capture='0x0',physicalUp=True,focusWindow=dict(threadId=1,processId=7,generation='1',live=True),windows=[dict(hwnd='0x10001',threadId=1,processId=7,generation='1',live=True)])
 def write(v):(r/'public-consumers.jsonl').write_text(json.dumps(v)+'\n')
 write(p);assert f(r,s)
-for field,value in [('threadId',2),('phase','handler-exit'),('yieldFlag',1),('yieldReason',1),('doneSp',0),('at',0),('name','GetAsyncKeyState')]:
+for field,value in [('threadId',2),('phase','handler-exit'),('yieldFlag',1),('yieldReason',1),('doneSp',0),('at',0),('at',time.time()*1000-3100),('name','GetAsyncKeyState'),('sameInstanceMemory',False)]:
  q=copy.deepcopy(p);q[field]=value;write(q);assert f(r,s) is None,field
 for i,value in [(0,0),(1,0x10002),(2,0x100),(3,0x201)]:
  q=copy.deepcopy(p);q['args'][i]=value;write(q);assert f(r,s) is None,str(i)
+for field,value in [('processId',8),('threadId',2),('focusThread',2),('focus',0x10002),('focusGeneration','2'),('mainGeneration','2'),('main',0x10002),('modal',0x10002),('capture',0x10001),('live',False),('memoryBytes',0)]:
+ q=copy.deepcopy(p);q['actor'][field]=value;write(q);assert f(r,s) is None,field
+write(p)
+for field,value in [('modalHwnd','0x10002'),('capture','0x10001'),('physicalUp',False)]:
+ q=copy.deepcopy(s);q[field]=value;assert f(r,q) is None,field
 (r/'public-consumers.jsonl').unlink()
-print('PASS first USER poll survives trace cap; wrong actor/target/filter/yield/stack/clock/non-poll refused')`;
+print('PASS current USER poll survives trace cap; stale/foreign actor/generation/target/filter/yield/stack/memory/modal/capture/non-poll refused')`;
  const text=cp.execFileSync('python3',['-B','-c',unit,out],{encoding:'utf8'});fs.writeFileSync(path.join(out,'readiness-units.log'),text);
  await reviewedController(path.join(out,'native'),false,false,false,false,'initial-pump');
 }
