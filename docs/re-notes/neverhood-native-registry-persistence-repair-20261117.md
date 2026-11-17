@@ -47,7 +47,12 @@ reconstruct missing installation paths. The earlier verifier's recovery checks
 still verify all 65 overlay records/58 blobs, full 257-member CD and genuine
 shortcut target `setup95.exe`, with zero writes and tamper refusal.
 
-The canonical locked build and focused tests pass. This is a registry repair,
+The canonical locked build and focused tests pass. Published commit
+`42feb3f564442df3a7344f7b20162def51216a3a` also passes all 92 native registry
+cases and the storage suite with repository source reads fenced to Git,
+including the OS child. The diagnostic module was compiled from that same Git
+closure with the published test-only exports. Consumed source hashes and
+module hashes are retained. This is a registry repair,
 not evidence of an authentic completed installation or a gameplay result.
 The fresh installer remains unlaunched: the shared USER native confirmation
 repair is still uncommitted and its direct-Get/cached-Peek qualification is
