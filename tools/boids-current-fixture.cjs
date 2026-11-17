@@ -120,9 +120,10 @@ function qualifyDevice2(snapshot,black=false){
     for(let y=0;y<height;y++)for(let x=0;x<width;x++){
       const inside=k==='source'||(x>=v.dstX&&x<v.dstX+v.dstW&&y>=v.dstY&&y<v.dstY+v.dstH);
       const sx=k==='source'?x:Math.floor((x+.5-v.dstX)*640/v.dstW),sy=k==='source'?y:Math.floor((y+.5-v.dstY)*480/v.dstH);
-      // Stream integer centres become GL half-integer centres. The
-      // upper horizontal edge excludes its centre, lower edge includes it.
-      const expected=!inside?[0,0,0,255]:sx<320&&sy>=1&&sy<=240?[0,0,black?0:255,255]:[255,255,255,255];
+      // The authored rectangle has integer-centred edges (0,0)-(320,240).
+      // D3D's top-left rule includes its upper edge and excludes its lower
+      // edge, as implemented by the published GPU subpixel-lift repair.
+      const expected=!inside?[0,0,0,255]:sx<320&&sy<240?[0,0,black?0:255,255]:[255,255,255,255];
       const at=(y*width+x)*4;if(expected.some((n,i)=>b[at+i]!==n))throw Error(`Device2 literal pixel mismatch ${k} ${x},${y}: ${[...b.subarray(at,at+4)]}`);
     }
     result[k+'Pixels']=width*height;

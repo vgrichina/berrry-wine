@@ -150,7 +150,7 @@ async function run(out,commit,backend,mode,fixtureFile){
         const install=(app='dx_boids',end=deadline)=>(0,eval)('('+source+')')(globalThis,{app,mode,deadline:end});
         const a=runningApps.find(a=>a.name==='dx_boids'),w=a.wine,r=w.renderer,win=Object.values(r.windows).find(v=>v.wasm===w.instance&&v.visible&&!v.isChild);
         const rows=[];
-        for(const fault of ['absent-app','wrong-process','replaced-window','replaced-instance','replaced-source','replaced-renderer','failed-renderer','closed-endpoint','retired-renderer',...(w.hostCtx?.d3dimBridge?['lost-stream']:[]),'bad-readiness']){
+        for(const fault of ['absent-app','wrong-process','replaced-window','replaced-instance',...(w.hostCtx?.d3dimBridge?['replaced-source','lost-stream']:[]),'replaced-renderer','failed-renderer','closed-endpoint','retired-renderer','bad-readiness']){
           install(fault==='absent-app'?'missing-authored-app':'dx_boids',Math.min(deadline,Date.now()+(['absent-app','bad-readiness'].includes(fault)?200:5000)));
           let refused=false,stage='ready';
           const pid=win.processId,guest=w.guestWorker,manager=w._renderWorkerManager,port=[...(w._renderWorkerManager?.ports?.values()||[])][0],bridge=w.hostCtx?.d3dimBridge;
