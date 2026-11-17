@@ -78,19 +78,20 @@ function units(){
  assert(!progress.supported({...w,controlClass:18}));assert(!progress.supported({...w,controlClass:2,nativeTextAvailable:false}));
  const b=fixture();assert.equal(b.readUInt16LE(raw(0x1508)),3);assert.equal(b.readUInt16LE(raw(b.readUInt32LE(raw(0x12b0))+8)),3);
  assert.equal(b.readUInt32LE(raw(0x1800)),0x1900);assert.equal(b.readUInt32LE(raw(0x1810)),0x1900);
- const script=String.raw`import importlib.util,copy
-s=importlib.util.spec_from_file_location('control','tools/vb5cce-reviewed-control.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-bar=dict(controlClass=17,live=True,generation='3',processId=1000,threadId=1,parent='0x1',owner='0x0',style=0x50000000,title='Generic1',progress=dict(contract='native-progress-v1',available=True,min=0,max=0,pos=0,step=0))
-scene={k:None for k in ('mainHwnd','windows','modalHwnd','focus','focusTopLevel','focusWindow','capture','physicalUp','nativeProcess','nativeMessageBox','nativeDialogBox','screen')};scene['windows']=[bar]
-before=m.context(scene);assert before['windows'][0]['progress']==dict(contract='native-progress-v1',available=True)
-bar['progress'].update(min=-2147483648,max=2147483647,pos=2147483647,step=-100);assert m.context(scene)==before
-for key,value in [('title','Changed'),('parent','0x9'),('generation','4'),('owner','0x9'),('processId',1001),('threadId',2),('style',0)]:
- old=bar[key];bar[key]=value;assert m.context(scene)!=before,key;bar[key]=old
-bar['progress']['extra']=1;assert m.context(scene)!=before;del bar['progress']['extra']
-bar['progress']['available']=False;assert m.context(scene)!=before
-print('PASS progress-only repaint cannot acknowledge finite intent completion')`;
- const p=require('node:child_process').spawnSync('python3',['-B','-c',script],{encoding:'utf8'});
- assert.equal(p.status,0,p.stdout+p.stderr);process.stdout.write(p.stdout);
+ {
+  // The controller's own projection, in process: m.context is pure.
+  const m=require('../tools/vb5cce-reviewed-control.js');
+  const bar={controlClass:17,live:true,generation:'3',processId:1000,threadId:1,parent:'0x1',owner:'0x0',style:0x50000000,title:'Generic1',progress:{contract:'native-progress-v1',available:true,min:0,max:0,pos:0,step:0}};
+  const scene={};for(const k of ['mainHwnd','windows','modalHwnd','focus','focusTopLevel','focusWindow','capture','physicalUp','nativeProcess','nativeMessageBox','nativeDialogBox','screen'])scene[k]=null;scene.windows=[bar];
+  const before=m.context(scene);assert.deepStrictEqual(before.windows[0].progress,{contract:'native-progress-v1',available:true});
+  Object.assign(bar.progress,{min:-2147483648,max:2147483647,pos:2147483647,step:-100});assert.deepStrictEqual(m.context(scene),before);
+  for(const [key,value] of [['title','Changed'],['parent','0x9'],['generation','4'],['owner','0x9'],['processId',1001],['threadId',2],['style',0]]){
+   const old=bar[key];bar[key]=value;assert.notDeepStrictEqual(m.context(scene),before,key);bar[key]=old;
+  }
+  bar.progress.extra=1;assert.notDeepStrictEqual(m.context(scene),before);delete bar.progress.extra;
+  bar.progress.available=false;assert.notDeepStrictEqual(m.context(scene),before);
+  console.log('PASS progress-only repaint cannot acknowledge finite intent completion');
+ }
  console.log('PASS typed native ProgressBar zero/edge values, availability, identity and strict observational projection');
 }
 function reviewUnits(){
@@ -196,9 +197,9 @@ async function refusalTests(out){
   let ws='',we='';w.stdout.on('data',b=>ws+=b);w.stderr.on('data',b=>we+=b);const ww=new Promise(r=>w.on('close',(exit,signal)=>r({exit,signal})));
   while(!ws.includes('ARMED'))await pause(5);save('watchdog-arm.json',{pid:w.pid,prearmed:true,deadlineMs:25000,at:Date.now()});
   const s=startControlSession(['test/run.js','--exe='+exe,'--no-build','--winver=nt4','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=20','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});
-  w.stdin.write(String(s.child.pid));const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');save('native-pid.json',{pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19]});
+  w.stdin.write(String(s.child.pid));save('native-pid.json',{pid:s.child.pid,startToken:require('../tools/native-proc.cjs').token(s.child.pid)});
   let controllerCount=0;const controller=async(args,ok)=>{const r=await new Promise(resolve=>{
-   const child=cp.spawn('python3',['-B','tools/vb5cce-reviewed-control.py',...args],{env:{...process.env,DELPHI5_RUN:dir,DELPHI5_PORT:String(port)},timeout:5000});let stdout='',stderr='';
+   const child=cp.spawn(process.execPath,['tools/vb5cce-reviewed-control.js',...args],{env:{...process.env,DELPHI5_RUN:dir,DELPHI5_PORT:String(port)},timeout:5000});let stdout='',stderr='';
    child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);child.on('close',(exit,signal)=>resolve({exit,signal,stdout,stderr,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded}));
   });save('controller-'+(++controllerCount)+'.json',{args,...r});assert.equal(r.exit===0,ok,r.stdout+r.stderr);};
   try{

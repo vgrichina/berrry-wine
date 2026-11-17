@@ -4,42 +4,45 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const cp=require('node:child_process'),net=require('node:net');
 const {startControlSession}=require('./control-session');
 if(process.argv[2]==='--watchdog-observation'){
- const parentCommand=fs.readFileSync(`/proc/${process.ppid}/cmdline`,'utf8').split('\0');
+ const proc=require('../tools/native-proc.cjs');
+ // The parent's argv: /proc cmdline on Linux, ps elsewhere (space-split).
+ const parentCommand=proc.linux?fs.readFileSync(`/proc/${process.ppid}/cmdline`,'utf8').split('\0'):
+  cp.execFileSync('ps',['-o','command=','-p',String(process.ppid)],{encoding:'utf8'}).trim().split(/\s+/);
  assert(path.basename(parentCommand[0])==='timeout'&&parentCommand.includes('30s'),'independent timeout parent required');
  fs.writeFileSync(path.join(path.dirname(process.argv[3]),'watchdog-observation-armed.json'),JSON.stringify({
   at:Date.now(),parentPid:process.ppid,parentCommand,independent:true,beforeAuthoredNativeSpawn:true},null,2)+'\n',{flag:'wx'});
- const code=`import importlib.util,pathlib,subprocess,sys,json,time,threading,signal,os
-from unittest.mock import patch
-s=importlib.util.spec_from_file_location('runtime','tools/neverhood-original-current-runtime.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-base=pathlib.Path(sys.argv[1]);base.mkdir()
-for name in ('disk-floor','deadline'):
- out=base/name;out.mkdir()
- p=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
- m.save(out,'native-pid.json',dict(pid=p.pid,startToken=m.H.token(p.pid)))
- waited={}
- def wait():
-  a,b=p.communicate();waited.update(exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True)
- thread=threading.Thread(target=wait);thread.start()
- try:
-  fake=type('Disk',(),dict(f_bavail=1499999999 if name=='disk-floor' else 1500000000,f_frsize=1))()
-  with patch.object(m.os,'statvfs',return_value=fake):m.watchdog(out,time.time()+(30 if name=='disk-floor' else -.01))
-  thread.join(2);assert not thread.is_alive()
-  assert waited['exit']==-signal.SIGTERM and waited['actualWait'] and waited['stdoutEOF'] and waited['stderrEOF']
-  m.save(out,'authored-native-wait.json',waited)
-  trigger=json.loads((out/'watchdog-trigger.json').read_text());end=json.loads((out/'watchdog-exit.json').read_text())
-  assert trigger['reason']==name and trigger['freeBytes']==fake.f_bavail
-  assert trigger['deadlineElapsed']==(name=='deadline') and not trigger['nativeQuit']
-  assert end['signals'][0]['delivered'] and not end['signals'][1]['delivered']
- finally:
-  if p.poll() is None:os.killpg(p.pid,signal.SIGKILL)
-  thread.join()
-out=base/'wait-completed';out.mkdir();m.save(out,'native-wait.json',{'actualWait':True})
-m.watchdog(out,time.time()+30)
-assert json.loads((out/'watchdog-exit.json').read_text())['reason']=='actual-native-wait'
-assert not (out/'watchdog-trigger.json').exists()
-print('PASS exact authored disk-floor/deadline triggers, real native TERM/wait/both EOF, no later KILL, completed wait sends no signal')`;
- const p=cp.spawnSync('python3',['-B','-c',code,process.argv[3]],{cwd:path.resolve(__dirname,'..'),encoding:'utf8',timeout:30000});
- process.stdout.write(p.stdout||'');process.stderr.write(p.stderr||'');assert.equal(p.status,0);return;
+ const m=require('../tools/neverhood-original-current-runtime.js');
+ (async()=>{
+  const base=path.resolve(process.argv[3]);fs.mkdirSync(base);
+  for(const name of ['disk-floor','deadline']){
+   const out=path.join(base,name);fs.mkdirSync(out);
+   const p=cp.spawn(process.execPath,['-e','setTimeout(()=>{},60000)'],{stdio:['ignore','pipe','pipe'],detached:true});
+   m.save(out,'native-pid.json',{pid:p.pid,startToken:proc.token(p.pid)});
+   const waited={};p.stdout.resume();p.stderr.resume();
+   const thread=new Promise(r=>p.once('close',(code,signal)=>{Object.assign(waited,{exit:code??-require('node:os').constants.signals[signal],actualWait:true,stdoutEOF:true,stderrEOF:true});r();}));
+   const free=name==='disk-floor'?1499999999:1500000000,original=m.free_bytes;
+   try{
+    m.free_bytes=()=>free;
+    try{await m.watchdog(out,Date.now()/1000+(name==='disk-floor'?30:-.01));}finally{m.free_bytes=original;}
+    await Promise.race([thread,proc.sleep(2000)]);assert('exit' in waited,'native wait did not finish');
+    assert(waited.exit===-15&&waited.actualWait&&waited.stdoutEOF&&waited.stderrEOF);
+    m.save(out,'authored-native-wait.json',waited);
+    const trigger=JSON.parse(fs.readFileSync(path.join(out,'watchdog-trigger.json'))),end=JSON.parse(fs.readFileSync(path.join(out,'watchdog-exit.json')));
+    assert(trigger.reason===name&&trigger.freeBytes===free);
+    assert(trigger.deadlineElapsed===(name==='deadline')&&!trigger.nativeQuit);
+    assert(end.signals[0].delivered&&!end.signals[1].delivered);
+   }finally{
+    if(!('exit' in waited))try{proc.killpg(p.pid,'SIGKILL');}catch{}
+    await thread;
+   }
+  }
+  const out=path.join(base,'wait-completed');fs.mkdirSync(out);m.save(out,'native-wait.json',{actualWait:true});
+  await m.watchdog(out,Date.now()/1000+30);
+  assert(JSON.parse(fs.readFileSync(path.join(out,'watchdog-exit.json'))).reason==='actual-native-wait');
+  assert(!fs.existsSync(path.join(out,'watchdog-trigger.json')));
+  console.log('PASS exact authored disk-floor/deadline triggers, real native TERM/wait/both EOF, no later KILL, completed wait sends no signal');
+ })().catch(e=>{console.error(e&&e.stack||e);process.exitCode=1;});
+ return;
 }
 if(process.argv[2]==='--desktop-participants'){
  const {ProcessDesktop,readProcessDesktopObservations:read}=require('../lib/process-desktop');
@@ -109,173 +112,187 @@ if(process.argv[2]==='--installed-provenance'){
  process.exit(0);
 }
 if(process.argv[2]==='--unit'){
- const code=`import importlib.util,pathlib,tempfile,os,json,time,hashlib
-# This unit constructs the installer profile's 900/920/90 recipe. An outer
-# installed-shortcut qualification must not silently select a different unit.
-os.environ.pop('NEVERHOOD_INSTALLED_SHORTCUT',None)
-os.environ.update(NEVERHOOD_CURRENT_RUN='/unused',NEVERHOOD_CURRENT_PORT='1')
-s=importlib.util.spec_from_file_location('control','tools/neverhood-original-current-control.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-w=dict(hwnd='0x123',live=True,visible=True,generation='1',processId=1,threadId=1,isChild=True,controlClass=1,style=0x50000000,nativeTextAvailable=True,textBytes='4f4b',title='OK',parent='0x100',buttonFlags=0)
-r=dict(targetHwnd='0x123',kind='install',visibleLabel='OK');rr=dict(snapshot=dict(windows=[w],physicalUp=True,capture='0x0'))
-assert m.button(rr,r)==w
-assert m.presented(dict(modalHwnd='0x0',windows=[]))
-modal=dict(hwnd='0x200',live=True,visible=False,isChild=False,processId=1,threadId=1)
-assert not m.presented(dict(modalHwnd='0x200',windows=[modal]))
-modal['visible']=True
-assert m.presented(dict(modalHwnd='0x200',windows=[modal]))
-assert m.presented(dict(modalHwnd='0x200',windows=[modal]),w)
-for k in ('processId','threadId'):
- modal[k]=2
- assert not m.presented(dict(modalHwnd='0x200',windows=[modal]),w)
- modal[k]=1
-for key,value in [('isChild',False),('controlClass',16),('style',0x58000000),('title','Exit'),('generation',''),('nativeTextAvailable',False)]:
- old=w[key];w[key]=value
- try:m.button(rr,r)
- except AssertionError:pass
- else:raise AssertionError(key)
- w[key]=old
-with tempfile.TemporaryDirectory() as d:
- m.R=pathlib.Path(d);m.save('PERMANENT-UNKNOWN.json',{})
- m.identity=lambda:(_ for _ in ()).throw(AssertionError('network identity after UNKNOWN'))
- for cleanup in (True,False):
-  try:m.call({'action':'snapshot'},cleanup=cleanup)
-  except AssertionError as e:assert 'permanent UNKNOWN' in str(e)
-  else:raise AssertionError('postUNKNOWN')
- assert not (m.R/'requests.jsonl').exists()
-with tempfile.TemporaryDirectory() as d:
- # A real independently waited OS process has exited before release. The
- # identity check must refuse transport, and its wait must never become UP ACK.
- import subprocess
- m.R=pathlib.Path(d)
- p=subprocess.Popen(['node','-e','process.exit(0)'],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
- stat=pathlib.Path('/proc/'+str(p.pid)+'/stat').read_text()
- m.save('native-pid.json',dict(pid=p.pid,startToken=stat[stat.rindex(')')+2:].split()[19]))
- a,b=p.communicate();assert p.returncode==0
- m.save('native-wait.json',dict(pid=p.pid,exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True))
- m.save('launch.json',dict(rootPort=1))
- try:m.release('exited','original-owner',time.time(),time.time()+1.75)
- except (OSError,AssertionError):pass
- else:raise AssertionError('dead owner acknowledged UP')
- up=m.read('exited-up.json');assert not up['physicalUpACK'] and up['outcome']=='OWNER_EXITED'
- assert up['ownerWait']['actualWait'] and up['ownerWait']['exit']==0
- assert not (m.R/'requests.jsonl').exists()
-with tempfile.TemporaryDirectory() as d:
- m.R=pathlib.Path(d)
- original_identity=m.identity;m.identity=lambda:dict(pid=1,startToken='fixture')
- image=b'unit only; native PNG path exercised separately';(m.R/'expired.png').write_bytes(image)
- rr=dict(at=time.time()-31,completedAt=time.time()-30,target=m.identity(),port=1,captureId='unit-capture',pngSHA256=hashlib.sha256(image).hexdigest(),snapshot=dict(windows=[w],physicalUp=True,capture='0x0'))
- m.save('expired.json',rr)
- m.save('expired-review.json',dict(at=time.time()-30,rawCompleteScene=True,observation='unit',visibleLabel='OK',kind='install',targetHwnd='0x123',pngSHA256=rr['pngSHA256']))
- operation=m.local_operation()
- # Any transport since entry, even read-only, forbids this typed outcome.
- (m.R/'requests.jsonl').write_text('{"action":"snapshot"}\\n')
- try:m.reviewed('expired',operation)
- except AssertionError as e:assert 'publication' in str(e)
- else:raise AssertionError('transport accepted for recovery')
- assert not (m.R/'expired-refused.json').exists()
- (m.R/'requests.jsonl').unlink()
- for artifact in ('pending-intent.json','pending-release-arm.json','pending-child-arm.json','bind-intent.json','child-bind-intent.json'):
-  m.save(artifact,{})
-  try:m.local_operation()
-  except AssertionError as e:assert 'pending' in str(e)
-  else:raise AssertionError('pending publication accepted '+artifact)
-  (m.R/artifact).unlink()
- operation=m.local_operation()
- try:m.reviewed('expired',operation)
- except m.RefusedBeforeDispatch:pass
- else:raise AssertionError('expired image was not typed')
- refusal=m.read('expired-refused.json');assert refusal['invalidatedNonce']==operation['nonce']
- # A fresh review cannot revive this capture, even after a new operation.
- try:m.review('expired','new words','OK','install','0x123')
- except AssertionError as e:assert 'invalidated' in str(e)
- else:raise AssertionError('old image restamped')
- m.save('other-old.json',rr);(m.R/'other-old.png').write_bytes(image)
- try:m.review('other-old','new words','OK','install','0x123')
- except AssertionError as e:assert 'fresh native capture' in str(e)
- else:raise AssertionError('pre-refusal capture reviewed')
- try:m.release('no-new-intent','owner',time.time())
- except (AssertionError,FileNotFoundError):pass
- else:raise AssertionError('release without a fresh reviewed intent')
- assert not (m.R/'requests.jsonl').exists()
- m.identity=original_identity
-with tempfile.TemporaryDirectory() as d:
- m.R=pathlib.Path(d);m.reserve=lambda:dict(gameplayCutoff=time.time()+30)
- m.identity=lambda:dict(pid=1,startToken='fixture')
- m.call=lambda *a,**k:dict(contract='native-startup-readiness-v1',ready=True,failures=[],ordinaryOwner=dict(healthy=True,actorContext=False))
- try:m.startup()
- except AssertionError:pass
- else:raise AssertionError('startup accepted wrong native actor')
- assert (m.R/'PERMANENT-UNKNOWN.json').exists() and not (m.R/'startup-ready.json').exists()
-runtime=importlib.util.spec_from_file_location('runtime','tools/neverhood-original-current-runtime.py');rt=importlib.util.module_from_spec(runtime);runtime.loader.exec_module(rt)
-assert rt.POLICY==dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=15,menuFreshnessSeconds=30)
-from unittest.mock import patch
-recipe=dict(seconds=900,watchdogGrace=20,reserveSeconds=90,inputPolicy=rt.POLICY,childInheritance='sealed-node-v1',cwd=str(rt.ROOT),originalPipelineOrdinal=1,args=['node','test/run.js','--iso=existing','--iso-drive=D','--iso-exe=SETUP95.EXE','--max-seconds=900','--real-ticks','--threads','--spawn-processes','--no-build'])
-rt.validate_recipe(recipe)
-for k,v in [('seconds',2400),('reserveSeconds',240),('watchdogGrace',30)]:
- bad=dict(recipe);bad[k]=v
- try:rt.validate_recipe(bad)
- except AssertionError:pass
- else:raise AssertionError('accepted obsolete clock '+k)
-with patch('importlib.machinery.SourceFileLoader.exec_module',side_effect=AssertionError('mutable path re-read')):
- assert callable(rt.helper().seal)
-original_read=pathlib.Path.read_bytes
-for borrowed in (rt.HELPER,):
- def changed_read(p):
-  body=original_read(p)
-  return body+b'\\n# unpublished' if p==rt.ROOT/borrowed else body
- with patch.object(pathlib.Path,'read_bytes',changed_read):
-  try:rt.helper()
-  except AssertionError as e:assert 'unpublished borrowed helper' in str(e)
-  else:raise AssertionError('executed unpublished helper')
-# No physical fixture modules exist: resolve only inventoried, verified bytes.
-bodies={'lib/neverhood-sealed-fixture.js':b"module.exports=require('./neverhood-sealed-value.json').value",'lib/neverhood-sealed-value.json':b'{"value":73}',
- 'test/neverhood-sealed-python-child.py':b"print(73)",
- 'test/neverhood-sealed-python.py':b"import importlib.util,pathlib,subprocess,sys; p=pathlib.Path(__file__).with_name('neverhood-sealed-python-child.py'); s=importlib.util.spec_from_file_location('child',p); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); assert p.read_bytes()==b'print(73)'; assert pathlib.Path('lib/neverhood-sealed-fixture.js').read_bytes().startswith(b'module.exports='); import json; assert json.loads(pathlib.Path('lib/neverhood-sealed-value.json').read_bytes())['value']==73; assert pathlib.Path('test/test-vb5cce-original-current.cjs').read_bytes()==b'SEALED_CJS_HASH'; r=subprocess.run([sys.executable,'-B',str(p)],capture_output=True); assert r.returncode==0,r.stderr; assert r.stdout.strip()==b'73'; print('PYTHON_INHERITANCE_PASS')"}
-bodies['test/test-vb5cce-original-current.cjs']=b'SEALED_CJS_HASH'
-pool,index,rows=rt.H.indexed_sources(bodies);source=rt.H.seal('resolver-test-source',pool)
-preload=rt.H.seal('resolver-test-preload',(rt.ROOT/rt.PRELOAD).read_bytes());module=rt.H.seal('resolver-test-module',b'\\0asm')
-env=dict(os.environ,DISCIPLES2_ROOT=str(rt.ROOT),DISCIPLES2_PHASE='runtime',DISCIPLES2_SOURCE_FD=f'/proc/{os.getpid()}/fd/{source}',DISCIPLES2_SOURCE_SHA256=rt.H.digest(pool),DISCIPLES2_SOURCE_INDEX_SHA256=rt.H.digest(index),DISCIPLES2_MODULE_FD=f'/proc/{os.getpid()}/fd/{module}',DISCIPLES2_MODULE_SHA256=rt.H.digest(b'\\0asm'),DISCIPLES2_MANIFEST_SHA256='a'*64)
-prepath=f'/proc/{os.getpid()}/fd/{preload}';env['NODE_OPTIONS']='--preserve-symlinks --require='+prepath
-env['NEVERHOOD_FROZEN_PYTHON']=rt.FROZEN_PYTHON
-code="""const a=require('node:assert/strict'),cp=require('node:child_process'),{Worker}=require('node:worker_threads');const req=\"require('./lib/neverhood-sealed-fixture')\";a.equal(eval(req),73);a.throws(()=>require('./lib/neverhood-not-in-source-inventory'),{code:'MODULE_NOT_FOUND'});const c=cp.spawnSync(process.execPath,['-e','console.log('+req+')'],{env:process.env});a.equal(c.status,0,c.stderr.toString());a.equal(c.stdout.toString().trim(),'73');new Worker(\"require('node:worker_threads').parentPort.postMessage(\"+req+\")\",{eval:true}).on('message',n=>a.equal(n,73));"""
-code+="const py=cp.spawnSync('python3',['-B','test/neverhood-sealed-python.py'],{env:process.env});a.equal(py.status,0,py.stderr.toString());a.match(py.stdout.toString(),/PYTHON_INHERITANCE_PASS/);a.throws(()=>cp.spawnSync('python3',['-B','test/neverhood-unsealed-python.py']),/unsealed Python child/);"
-p=rt.subprocess.run(['node','-e',code],env=env,capture_output=True)
-assert p.returncode==0,p.stderr
-with tempfile.TemporaryDirectory() as d:
- out=pathlib.Path(d)
- result=rt.checked(out,'frozen-python',['python3','-B','test/neverhood-sealed-python.py'],env)
- assert b'PYTHON_INHERITANCE_PASS' in result
-for fd in (source,preload,module):os.close(fd)
-print('PASS native BUTTON/obsolete clock/UNKNOWN guards; borrowed helper refusal; sealed missing-path main/Worker/OSchild JS+JSON resolution, unknown source refused')`;
- const p=cp.spawnSync('python3',['-B','-c',code],{cwd:path.resolve(__dirname,'..'),encoding:'utf8'});
- process.stdout.write(p.stdout);process.stderr.write(p.stderr);assert.equal(p.status,0);process.exit(0);
+ // This unit constructs the installer profile's 900/920/90 recipe. An outer
+ // installed-shortcut qualification must not silently select a different unit.
+ delete process.env.NEVERHOOD_INSTALLED_SHORTCUT;
+ Object.assign(process.env,{NEVERHOOD_CURRENT_RUN:'/unused',NEVERHOOD_CURRENT_PORT:'1'});
+ process.chdir(path.resolve(__dirname,'..'));
+ const os=require('node:os'),crypto=require('node:crypto'),Module=require('node:module');
+ const m=require('../tools/neverhood-original-current-control.js');
+ const rejects=async(f,check,why)=>{
+  try{await f();}catch(e){if(check)check(e);return e;}
+  throw new assert.AssertionError({message:why});
+ };
+ const isAssert=e=>{if(!(e instanceof assert.AssertionError))throw e;};
+ const has=text=>e=>{isAssert(e);assert(e.message.includes(text),e.message);};
+ const tmp=()=>fs.mkdtempSync(path.join(os.tmpdir(),'nh-unit-'));
+ const now=()=>Date.now()/1000;
+ (async()=>{
+  const w={hwnd:'0x123',live:true,visible:true,generation:'1',processId:1,threadId:1,isChild:true,controlClass:1,style:0x50000000,nativeTextAvailable:true,textBytes:'4f4b',title:'OK',parent:'0x100',buttonFlags:0};
+  const r={targetHwnd:'0x123',kind:'install',visibleLabel:'OK'},rr={snapshot:{windows:[w],physicalUp:true,capture:'0x0'}};
+  assert.equal(m.button(rr,r),w);
+  assert(m.presented({modalHwnd:'0x0',windows:[]}));
+  const modal={hwnd:'0x200',live:true,visible:false,isChild:false,processId:1,threadId:1};
+  assert(!m.presented({modalHwnd:'0x200',windows:[modal]}));
+  modal.visible=true;
+  assert(m.presented({modalHwnd:'0x200',windows:[modal]}));
+  assert(m.presented({modalHwnd:'0x200',windows:[modal]},w));
+  for(const k of ['processId','threadId']){modal[k]=2;assert(!m.presented({modalHwnd:'0x200',windows:[modal]},w));modal[k]=1;}
+  for(const [key,value]of [['isChild',false],['controlClass',16],['style',0x58000000],['title','Exit'],['generation',''],['nativeTextAvailable',false]]){
+   const old=w[key];w[key]=value;
+   await rejects(()=>m.button(rr,r),isAssert,key);
+   w[key]=old;
+  }
+  const originalIdentity=m.identity;
+  {
+   m.R=tmp();m.save('PERMANENT-UNKNOWN.json',{});
+   m.identity=()=>{throw new assert.AssertionError({message:'network identity after UNKNOWN'});};
+   for(const cleanup of [true,false])await rejects(()=>m.call({action:'snapshot'},{cleanup}),has('permanent UNKNOWN'),'postUNKNOWN');
+   assert(!fs.existsSync(path.join(m.R,'requests.jsonl')));
+   m.identity=originalIdentity;
+  }
+  {
+   // A real independently waited OS process has exited before release. The
+   // identity check must refuse transport, and its wait must never become UP ACK.
+   m.R=tmp();
+   const p=cp.spawn(process.execPath,['-e','setTimeout(()=>process.exit(0),200)'],{stdio:['ignore','pipe','pipe']});
+   p.stdout.resume();p.stderr.resume();
+   m.save('native-pid.json',{pid:p.pid,startToken:require('../tools/native-proc.cjs').token(p.pid)});
+   const exit=await new Promise(res=>p.once('close',res));assert.equal(exit,0);
+   m.save('native-wait.json',{pid:p.pid,exit,actualWait:true,stdoutEOF:true,stderrEOF:true});
+   m.save('launch.json',{rootPort:1});
+   await rejects(()=>m.release('exited','original-owner',now(),now()+1.75),null,'dead owner acknowledged UP');
+   const up=m.read('exited-up.json');assert(!up.physicalUpACK&&up.outcome==='OWNER_EXITED');
+   assert(up.ownerWait.actualWait&&up.ownerWait.exit===0);
+   assert(!fs.existsSync(path.join(m.R,'requests.jsonl')));
+  }
+  {
+   m.R=tmp();
+   m.identity=()=>({pid:1,startToken:'fixture'});
+   const image=Buffer.from('unit only; native PNG path exercised separately');fs.writeFileSync(path.join(m.R,'expired.png'),image);
+   const sha=crypto.createHash('sha256').update(image).digest('hex');
+   const rr={at:now()-31,completedAt:now()-30,target:m.identity(),port:1,captureId:'unit-capture',pngSHA256:sha,snapshot:{windows:[w],physicalUp:true,capture:'0x0'}};
+   m.save('expired.json',rr);
+   m.save('expired-review.json',{at:now()-30,rawCompleteScene:true,observation:'unit',visibleLabel:'OK',kind:'install',targetHwnd:'0x123',pngSHA256:sha});
+   let operation=m.local_operation();
+   // Any transport since entry, even read-only, forbids this typed outcome.
+   fs.writeFileSync(path.join(m.R,'requests.jsonl'),'{"action":"snapshot"}\n');
+   await rejects(()=>m.reviewed('expired',operation),has('publication'),'transport accepted for recovery');
+   assert(!fs.existsSync(path.join(m.R,'expired-refused.json')));
+   fs.unlinkSync(path.join(m.R,'requests.jsonl'));
+   for(const artifact of ['pending-intent.json','pending-release-arm.json','pending-child-arm.json','bind-intent.json','child-bind-intent.json']){
+    m.save(artifact,{});
+    await rejects(()=>m.local_operation(),has('pending'),'pending publication accepted '+artifact);
+    fs.unlinkSync(path.join(m.R,artifact));
+   }
+   operation=m.local_operation();
+   await rejects(()=>m.reviewed('expired',operation),e=>{if(!(e instanceof m.RefusedBeforeDispatch))throw e;},'expired image was not typed');
+   const refusal=m.read('expired-refused.json');assert.equal(refusal.invalidatedNonce,operation.nonce);
+   // A fresh review cannot revive this capture, even after a new operation.
+   await rejects(()=>m.review('expired','new words','OK','install','0x123'),has('invalidated'),'old image restamped');
+   m.save('other-old.json',rr);fs.writeFileSync(path.join(m.R,'other-old.png'),image);
+   await rejects(()=>m.review('other-old','new words','OK','install','0x123'),has('fresh native capture'),'pre-refusal capture reviewed');
+   await rejects(()=>m.release('no-new-intent','owner',now()),e=>{if(e.code!=='ENOENT')isAssert(e);},'release without a fresh reviewed intent');
+   assert(!fs.existsSync(path.join(m.R,'requests.jsonl')));
+   m.identity=originalIdentity;
+  }
+  {
+   m.R=tmp();m.reserve=()=>({gameplayCutoff:now()+30});
+   m.identity=()=>({pid:1,startToken:'fixture'});
+   m.call=async()=>({contract:'native-startup-readiness-v1',ready:true,failures:[],ordinaryOwner:{healthy:true,actorContext:false}});
+   await rejects(()=>m.startup(),isAssert,'startup accepted wrong native actor');
+   assert(fs.existsSync(path.join(m.R,'PERMANENT-UNKNOWN.json'))&&!fs.existsSync(path.join(m.R,'startup-ready.json')));
+  }
+  const rt=require('../tools/neverhood-original-current-runtime.js');
+  assert.deepEqual(rt.POLICY,{confirmationMs:500,physicalUpMs:1750,observationMs:3000,gameFreshnessSeconds:15,menuFreshnessSeconds:30});
+  const recipe={seconds:900,watchdogGrace:20,reserveSeconds:90,inputPolicy:rt.POLICY,childInheritance:'sealed-node-v1',cwd:rt.ROOT,originalPipelineOrdinal:1,args:['node','test/run.js','--iso=existing','--iso-drive=D','--iso-exe=SETUP95.EXE','--max-seconds=900','--real-ticks','--threads','--spawn-processes','--no-build']};
+  rt.validate_recipe(recipe);
+  for(const [k,v]of [['seconds',2400],['reserveSeconds',240],['watchdogGrace',30]])
+   await rejects(()=>rt.validate_recipe({...recipe,[k]:v}),isAssert,'accepted obsolete clock '+k);
+  console.log('PASS native BUTTON/presentation/UNKNOWN/expired-image/startup-actor guards; obsolete clocks refused');
+  // The borrowed helper is compiled from published bytes, never re-read
+  // through the mutable module loader.
+  {
+   const ext=Module._extensions['.js'];
+   Module._extensions['.js']=()=>{throw new assert.AssertionError({message:'mutable path re-read'});};
+   try{assert.equal(typeof rt.helper().seal,'function');}finally{Module._extensions['.js']=ext;}
+   const originalRead=fs.readFileSync;
+   fs.readFileSync=function(p,...rest){const body=originalRead.call(fs,p,...rest);
+    return path.resolve(String(p))===path.join(rt.ROOT,rt.HELPER)?Buffer.concat([Buffer.from(body),Buffer.from('\n// unpublished')]):body;};
+   try{await rejects(()=>rt.helper(),has('unpublished borrowed helper'),'executed unpublished helper');}
+   finally{fs.readFileSync=originalRead;}
+  }
+  // No physical fixture modules exist: resolve only inventoried, verified bytes.
+  // The sealed Node child route replaces the removed sealed-Python route: a
+  // non-existent inventoried script runs, reads inventoried bytes, launches its
+  // own non-existent inventoried child, and an on-disk uninventoried source is refused.
+  // Off Linux a /dev/fd/N descriptor path only exists in a process that holds
+  // N, so every sealed Node child is handed the source/module/preload fds at
+  // the same numbers (Linux /proc/<pid>/fd paths work either way).
+  const KEEP="const keep=[process.env.DISCIPLES2_SOURCE_FD,process.env.DISCIPLES2_MODULE_FD,(process.env.NODE_OPTIONS.match(/--require=(\\S+)/)||[])[1]].map(p=>/\\/dev\\/fd\\/(\\d+)$/.exec(p||'')).filter(Boolean).map(x=>+x[1]);const stdio=['ignore','pipe','pipe'];for(const fd of keep){while(stdio.length<fd)stdio.push('ignore');stdio[fd]=fd;}";
+  const bodies={'lib/neverhood-sealed-fixture.js':Buffer.from("module.exports=require('./neverhood-sealed-value.json').value"),'lib/neverhood-sealed-value.json':Buffer.from('{"value":73}'),
+   'test/neverhood-sealed-node-child.cjs':Buffer.from('console.log(73)'),
+   'test/neverhood-sealed-node.cjs':Buffer.from("const a=require('node:assert/strict'),fs=require('node:fs'),cp=require('node:child_process');"+KEEP+
+    "a.equal(fs.readFileSync('test/neverhood-sealed-node-child.cjs','utf8'),'console.log(73)');"+
+    "a(fs.readFileSync('lib/neverhood-sealed-fixture.js','utf8').startsWith('module.exports='));"+
+    "a.equal(JSON.parse(fs.readFileSync('lib/neverhood-sealed-value.json')).value,73);"+
+    "a.equal(fs.readFileSync('test/test-vb5cce-original-current.cjs','utf8'),'SEALED_CJS_HASH');"+
+    "const r=cp.spawnSync(process.execPath,['-e',\"require('./test/neverhood-sealed-node-child.cjs')\"],{stdio});"+
+    "a.equal(r.status,0,String(r.stderr));a.equal(String(r.stdout).trim(),'73');"+
+    "a.throws(()=>require('./tools/native-proc.cjs'),/unsealed runtime input/);"+
+    "console.log('NODE_INHERITANCE_PASS');"),
+   'test/test-vb5cce-original-current.cjs':Buffer.from('SEALED_CJS_HASH')};
+  const [pool,index]=rt.H.indexed_sources(bodies);const source=rt.H.seal('resolver-test-source',pool);
+  const preload=rt.H.seal('resolver-test-preload',fs.readFileSync(path.join(rt.ROOT,rt.PRELOAD))),module=rt.H.seal('resolver-test-module',Buffer.from('\0asm'));
+  const env={...process.env,DISCIPLES2_ROOT:rt.ROOT,DISCIPLES2_PHASE:'runtime',DISCIPLES2_SOURCE_FD:rt.fdPath(source),DISCIPLES2_SOURCE_SHA256:rt.H.digest(pool),DISCIPLES2_SOURCE_INDEX_SHA256:rt.H.digest(index),DISCIPLES2_MODULE_FD:rt.fdPath(module),DISCIPLES2_MODULE_SHA256:rt.H.digest(Buffer.from('\0asm')),DISCIPLES2_MANIFEST_SHA256:'a'.repeat(64)};
+  env.NODE_OPTIONS='--preserve-symlinks --require='+rt.fdPath(preload);
+  const fds=[source,preload,module];
+  let code="const a=require('node:assert/strict'),cp=require('node:child_process'),{Worker}=require('node:worker_threads');"+KEEP+"const req=\"require('./lib/neverhood-sealed-fixture')\";a.equal(eval(req),73);a.throws(()=>require('./lib/neverhood-not-in-source-inventory'),{code:'MODULE_NOT_FOUND'});const c=cp.spawnSync(process.execPath,['-e','console.log('+req+')'],{env:process.env,stdio});a.equal(c.status,0,c.stderr.toString());a.equal(c.stdout.toString().trim(),'73');new Worker(\"require('node:worker_threads').parentPort.postMessage(\"+req+\")\",{eval:true}).on('message',n=>a.equal(n,73));";
+  code+="const sealed=cp.spawnSync(process.execPath,['-e',\"require('./test/neverhood-sealed-node.cjs')\"],{env:process.env,stdio});a.equal(sealed.status,0,sealed.stderr.toString());a.match(sealed.stdout.toString(),/NODE_INHERITANCE_PASS/);a.throws(()=>require('./tools/native-proc.cjs'),/unsealed runtime input/);";
+  const p=cp.spawnSync(process.execPath,['-e',code],{env,stdio:rt.stdioWith(['ignore','pipe','pipe'],fds)});
+  assert.equal(p.status,0,String(p.stderr));
+  {
+   const out=tmp();
+   const result=await rt.checked(out,'sealed-node',[process.execPath,'-e',"require('./test/neverhood-sealed-node.cjs')"],env,240,fds);
+   assert(result.includes('NODE_INHERITANCE_PASS'));
+  }
+  for(const fd of fds)fs.closeSync(fd);
+  console.log('PASS native BUTTON/obsolete clock/UNKNOWN guards; borrowed helper refusal; sealed missing-path main/Worker/OSchild JS+JSON resolution, unknown source refused');
+ })().then(()=>process.exit(0),e=>{console.error(e&&e.stack||e);process.exit(1);});
+ return;
 }
 if(process.argv[2]==='--admission'){
- const code=`import importlib.util,pathlib,json,sys,copy,os
-s=importlib.util.spec_from_file_location('runtime','tools/neverhood-original-current-runtime.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-base=pathlib.Path(sys.argv[1]);base.mkdir();original=json.loads(pathlib.Path(sys.argv[2]).read_text())
-cases=[('valid',None),('missing-holder','moduleHolder'),('missing-manifest','immutableManifest'),('missing-inheritance','childInheritance'),('wrong-reserve','reserveSeconds'),('wrong-source','sourceSHA256'),('wrong-holder','holder'),('unsealed-holder','unsealed')]
-for name,fault in cases:
- out=base/name;out.mkdir();r=copy.deepcopy(original)
- if fault in ('moduleHolder','immutableManifest','childInheritance'):r.pop(fault)
- elif fault=='reserveSeconds':r[fault]=180
- elif fault=='sourceSHA256':r['immutableManifest'][fault]='0'*64
- elif fault in ('holder','unsealed'):
-  holder=json.loads(pathlib.Path(r['moduleHolder']).read_text())
-  if fault=='holder':holder['startToken']='wrong'
-  else:
-   raw=os.memfd_create('unsealed-negative',os.MFD_ALLOW_SEALING);os.write(raw,b'{}')
-   holder.update(pid=os.getpid(),startToken=m.H.token(os.getpid()),manifestPath=f'/proc/{os.getpid()}/fd/{raw}')
-  path=out/'fake-holder.json';path.write_text(json.dumps(holder));r['moduleHolder']=str(path)
- try:m.run(out,r,only_admit=True);passed=True
- except (AssertionError,KeyError,StopIteration):passed=False
- assert passed==(fault is None),name
- assert not (out/'native-pid.json').exists() and not (out/'watchdog-armed.json').exists()
- if fault:assert json.loads((out/'prelaunch-refusal.json').read_text())['originalLaunched'] is False
- if fault=='unsealed':os.close(raw)
-print('PASS exact original admission path: valid sealed Worker/process inheritance and seven pre-spawn fail-closed refusals')`;
- const p=cp.spawnSync('python3',['-B','-c',code,...process.argv.slice(3)],{cwd:path.resolve(__dirname,'..'),encoding:'utf8',timeout:120000});
- process.stdout.write(p.stdout);process.stderr.write(p.stderr);assert.equal(p.status,0);process.exit(0);
+ process.chdir(path.resolve(__dirname,'..'));
+ const m=require('../tools/neverhood-original-current-runtime.js'),os=require('node:os'),crypto=require('node:crypto');
+ (async()=>{
+  const base=path.resolve(process.argv[3]);fs.mkdirSync(base);const original=JSON.parse(fs.readFileSync(process.argv[4],'utf8'));
+  const cases=[['valid',null],['missing-holder','moduleHolder'],['missing-manifest','immutableManifest'],['missing-inheritance','childInheritance'],['wrong-reserve','reserveSeconds'],['wrong-source','sourceSHA256'],['wrong-holder','holder'],['unsealed-holder','unsealed']];
+  for(const [name,fault]of cases){
+   const out=path.join(base,name);fs.mkdirSync(out);const r=structuredClone(original);let raw=null;
+   if(['moduleHolder','immutableManifest','childInheritance'].includes(fault))delete r[fault];
+   else if(fault==='reserveSeconds')r[fault]=180;
+   else if(fault==='sourceSHA256')r.immutableManifest[fault]='0'.repeat(64);
+   else if(fault==='holder'||fault==='unsealed'){
+    const holder=JSON.parse(fs.readFileSync(r.moduleHolder,'utf8'));
+    if(fault==='holder')holder.startToken='wrong';
+    else{
+     // An ordinary writable (never sealed) descriptor: an unlinked file.
+     const file=path.join(os.tmpdir(),'unsealed-negative-'+crypto.randomUUID());
+     raw=fs.openSync(file,'wx+');fs.unlinkSync(file);fs.writeSync(raw,'{}');
+     Object.assign(holder,{pid:process.pid,startToken:require('../tools/native-proc.cjs').token(process.pid),manifestPath:m.fdPath(raw)});
+    }
+    const p=path.join(out,'fake-holder.json');fs.writeFileSync(p,JSON.stringify(holder));r.moduleHolder=p;
+   }
+   let passed;
+   try{await m.run(out,r,true);passed=true;}catch{passed=false;}
+   assert.equal(passed,fault===null,name);
+   assert(!fs.existsSync(path.join(out,'native-pid.json'))&&!fs.existsSync(path.join(out,'watchdog-armed.json')));
+   if(fault)assert.equal(JSON.parse(fs.readFileSync(path.join(out,'prelaunch-refusal.json'),'utf8')).originalLaunched,false);
+   if(raw!==null)fs.closeSync(raw);
+  }
+  console.log('PASS exact original admission path: valid sealed Worker/process inheritance and seven pre-spawn fail-closed refusals');
+ })().then(()=>process.exit(0),e=>{console.error(e&&e.stack||e);process.exit(1);});
+ return;
 }
 const out=path.resolve(process.argv[2]),root=path.resolve(__dirname,'..');
 fs.mkdirSync(out,{recursive:true});
@@ -337,11 +354,11 @@ async function main(){
   const inventoryBytes=fs.readFileSync(path.join(out,'../runtime-inputs.json'));
   const inventory=JSON.parse(inventoryBytes),crypto=require('node:crypto');
   // One complete sealed inventory per run; each generated controller needs
-  // only its two executed Python pins, not thousands of duplicate source rows.
+  // only its two executed controller pins, not thousands of duplicate source rows.
   fs.writeFileSync(path.join(run,'runtime-inputs.json'),JSON.stringify({gitSHA:inventory.gitSHA,moduleSHA256:inventory.moduleSHA256,
     completeInventorySHA256:crypto.createHash('sha256').update(inventoryBytes).digest('hex'),
     completeInventory:'../../runtime-inputs.json',sources:inventory.sources.filter(r=>[
-      'tools/neverhood-original-current-control.py','tools/neverhood-original-current-runtime.py'].includes(r.path))}));
+      'tools/neverhood-original-current-control.js','tools/neverhood-original-current-runtime.js'].includes(r.path))}));
   // Ask the OS for a fresh local port rather than sharing a fixed fixture
   // range with other workers. The PID/socket identity check still refuses
   // any intervening bind; it never contacts or retries a foreign listener.
@@ -365,13 +382,12 @@ async function main(){
   };
   s.child.once('close',(exit,signal)=>{const target=path.join(run,'native-wait.json'),pending=target+'.pending';fs.writeFileSync(pending,JSON.stringify({pid:s.child.pid,exit,signal,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}),{flag:'wx'});fs.renameSync(pending,target);});
   watchdog.stdin.write(String(s.child.pid));
-  const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');
-  fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify({pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19]}));
+  fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify({pid:s.child.pid,startToken:require('../tools/native-proc.cjs').token(s.child.pid)}));
   let controllerRuns=0;
   const controller=async(args,expected=0)=>{
     const startedAt=Date.now();
     const p=await new Promise(resolve=>{
-      const child=cp.spawn('python3',['-B','tools/neverhood-original-current-control.py',...args],{cwd:root,env:{...process.env,NEVERHOOD_CURRENT_RUN:run,NEVERHOOD_CURRENT_PORT:String(port)},timeout:7000});
+      const child=cp.spawn(process.execPath,['tools/neverhood-original-current-control.js',...args],{cwd:root,env:{...process.env,NEVERHOOD_CURRENT_RUN:run,NEVERHOOD_CURRENT_PORT:String(port)},timeout:7000});
       let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);
       child.on('close',(status,signal)=>resolve({pid:child.pid,status,signal,stdout,stderr,actualWait:true,
         stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,startedAt,waitedAt:Date.now()}));

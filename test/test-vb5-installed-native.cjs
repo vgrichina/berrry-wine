@@ -191,13 +191,13 @@ async function run(out){
  while(!arm.includes('ARMED'))await pause(5);save('watchdog-armed.json',{pid:w.pid,prearmed:true,deadlineMs:45000});
  const invocationToken=require('node:crypto').randomUUID();
  const s=startControlSession(['test/run.js','--exe='+path.join(out,'installed-scope.exe'),'--no-build','--threads','--real-ticks','--winver=nt4','--control-stdin','--control='+port,'--max-seconds=40','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--png-canvas','--native-exit-receipt='+path.join(out,'native-exit.json'),'--native-invocation-token='+invocationToken],{spawnOptions:{detached:true}});
- const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8'),info={pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim(),invocationToken};
+ const np=require('../tools/native-proc.cjs'),info={pid:s.child.pid,startToken:np.token(s.child.pid),bootId:np.bootId(),invocationToken};
  save('native-pid.json',info);w.stdin.write(String(s.child.pid));
  let teardown=false;
  s.child.on('close',(exit,signal)=>save('native-wait.json',{...info,exit,signal,actualWait:true,disposition:teardown?'cleanup':'normal',hostTeardown:teardown,atWait:Date.now()/1000,atWaitMono:Number(process.hrtime.bigint())/1e9,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
  let index=0;
  const control=async(args,expected=0)=>{
-  const p=cp.spawn('python3',['-B','tools/vb5cce-reviewed-control.py',...args],{env:{...process.env,DELPHI5_RUN:out,DELPHI5_PORT:String(port)}});let stdout='',stderr='';p.stdout.on('data',b=>stdout+=b);p.stderr.on('data',b=>stderr+=b);
+  const p=cp.spawn(process.execPath,['tools/vb5cce-reviewed-control.js',...args],{env:{...process.env,DELPHI5_RUN:out,DELPHI5_PORT:String(port)}});let stdout='',stderr='';p.stdout.on('data',b=>stdout+=b);p.stderr.on('data',b=>stderr+=b);
   const result=await new Promise(r=>p.on('close',(exit,signal)=>r({exit,signal,stdout,stderr,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded})));
   save('controller-'+(++index)+'.json',{args,...result});if(expected!==null)assert.equal(result.exit,expected,stdout+stderr);return result;
  };

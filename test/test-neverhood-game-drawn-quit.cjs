@@ -4,6 +4,7 @@
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),net=require('node:net'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const raw=r=>r-0x1000+0x200,u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+const proc=require('../tools/native-proc.cjs');
 function fixture(){
  const b=require('./test-sims-child-mount-native.cjs').untitledModal();
  const names=['RegisterClassA','DefWindowProcA','CreateWindowExA','GetMessageA','TranslateMessage','DispatchMessageA','ShowWindow','UpdateWindow','BeginPaint','EndPaint','DrawTextA','FillRect'];
@@ -42,25 +43,24 @@ async function run(out,mode='positive'){
  const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
  const read=n=>JSON.parse(fs.readFileSync(path.join(out,n)));
  const exe=path.join(out,'drawn.exe');fs.writeFileSync(exe,fixture(),{flag:'wx'});
- const sourceNames=['tools/neverhood-original-current-control.py','tools/neverhood-original-current-runtime.py'];
+ const sourceNames=['tools/neverhood-original-current-control.js','tools/neverhood-original-current-runtime.js'];
  save('runtime-inputs.json',{sources:sourceNames.map(n=>({path:n,sha256:hash(fs.readFileSync(n))}))});
  const reservation=net.createServer();await new Promise(r=>reservation.listen(0,'127.0.0.1',r));const port=reservation.address().port;await new Promise(r=>reservation.close(r));
  const start=Date.now()/1000;save('launch.json',{deadline:start+240,gameplayCutoff:start+60,reserveSeconds:180,rootPort:port});
  const wd=cp.spawn(process.execPath,['-e',`let pid;let t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGTERM')}catch{};process.exitCode=2},60000);console.log('ARMED');process.stdin.on('data',b=>pid=Number(b));process.stdin.on('end',()=>clearTimeout(t));`]);
  let wo='',we='';wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const wc=new Promise(r=>wd.on('close',(exit,signal)=>r({exit,signal})));
  while(!wo.includes('ARMED'))await pause(5);save('watchdog-armed.json',{pid:wd.pid,prearmed:true,observable:wo,deadlineMs:60000});
- const token=crypto.randomUUID(),bootId=fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim();
+ const token=crypto.randomUUID(),bootId=proc.bootId();
  const s=startControlSession(['test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--screen=640x480','--control-stdin','--control='+port,'--native-exit-receipt='+path.join(out,'native-exit.json'),'--native-invocation-token='+token,'--max-seconds=50','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{cwd:process.cwd(),spawnOptions:{detached:true}});
- wd.stdin.write(String(s.child.pid));const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');const identity={pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],invocationToken:token,bootId};save('native-pid.json',identity);
+ wd.stdin.write(String(s.child.pid));const identity={pid:s.child.pid,startToken:proc.token(s.child.pid),invocationToken:token,bootId};save('native-pid.json',identity);
  s.child.once('close',(exit,signal)=>save('native-wait.json',{...identity,exit,signal,actualWait:true,
   stdoutEOF:mode==='exit-unsettled'?false:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,
   ...(mode==='exit-unsettled'?{fault:'deliberately withhold stdout settlement',actualObservedStdoutEOF:s.child.stdout.readableEnded}:{}),atWaitMono:Number(process.hrtime.bigint())/1e9}));
  let i=0;
- async function ctl(args,success=true){const result=await new Promise(resolve=>{const p=cp.spawn('python3',['-B','tools/neverhood-original-current-control.py',...args],{env:{...process.env,NEVERHOOD_CURRENT_RUN:out,NEVERHOOD_CURRENT_PORT:String(port)}});let a='',b='';p.stdout.on('data',v=>a+=v);p.stderr.on('data',v=>b+=v);p.on('close',(exit,signal)=>resolve({pid:p.pid,exit,signal,stdout:a,stderr:b,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded}));});save('controller-'+(++i)+'-wait.json',{...result,args});if(success)assert.equal(result.exit,0,result.stderr);else assert.notEqual(result.exit,0);return result;}
+ async function ctl(args,success=true){const result=await new Promise(resolve=>{const p=cp.spawn(process.execPath,['tools/neverhood-original-current-control.js',...args],{env:{...process.env,NEVERHOOD_CURRENT_RUN:out,NEVERHOOD_CURRENT_PORT:String(port)}});let a='',b='';p.stdout.on('data',v=>a+=v);p.stderr.on('data',v=>b+=v);p.on('close',(exit,signal)=>resolve({pid:p.pid,exit,signal,stdout:a,stderr:b,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded}));});save('controller-'+(++i)+'-wait.json',{...result,args});if(success)assert.equal(result.exit,0,result.stderr);else assert.notEqual(result.exit,0);return result;}
  try{
   // Use the production passive listener ownership precondition before ctl.
-  const code=`import importlib.util,pathlib; s=importlib.util.spec_from_file_location('rt','tools/neverhood-original-current-runtime.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m);m.wait_owned_listener(pathlib.Path(${JSON.stringify(out)}),${port},30)`;
-  await new Promise((resolve,reject)=>{const p=cp.spawn('python3',['-B','-c',code]);let a='',b='';p.stdout.on('data',v=>a+=v);p.stderr.on('data',v=>b+=v);p.on('close',(exit,signal)=>{save('listener-helper-wait.json',{pid:p.pid,exit,signal,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded,stdout:a,stderr:b});exit===0?resolve():reject(Error(b));});});
+  await new Promise((resolve,reject)=>{const p=cp.spawn(process.execPath,['tools/neverhood-original-current-runtime.js','listener',out,String(port),'30']);let a='',b='';p.stdout.on('data',v=>a+=v);p.stderr.on('data',v=>b+=v);p.on('close',(exit,signal)=>{save('listener-helper-wait.json',{pid:p.pid,exit,signal,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded,stdout:a,stderr:b});exit===0?resolve():reject(Error(b));});});
   await ctl(['capture','quit-scene']);const scene=read('quit-scene.json');assert.equal(scene.snapshot.windows.length,1);assert(!scene.snapshot.windows[0].isChild);
   const target=scene.snapshot.mainHwnd;
   await ctl(['review-drawn-quit','quit-scene','Authored whole image protocol fixture: game draws Quit in client region; no original review claim',target,'20','20','130','60']);

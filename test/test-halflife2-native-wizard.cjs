@@ -66,18 +66,20 @@ async function runOne(out,dialog=false,wrapper=false,options={}){
    const crypto=require('node:crypto'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
    const originalMetadata=process.env.HL2_RUNTIME_INPUTS?JSON.parse(fs.readFileSync(process.env.HL2_RUNTIME_INPUTS)):{};
    const gitSHA=originalMetadata.gitSHA||cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
-   const helper='tools/vb5cce-reviewed-control.py',own='tools/halflife2-reviewed-next.py';
-   const sources={...originalMetadata.sources,[helper]:hash(cp.execFileSync('git',['show',gitSHA+':'+helper])),[own]:options.sourceMismatch?'0'.repeat(64):hash(fs.readFileSync(own))};
+   const helper='tools/vb5cce-reviewed-control.js',own='tools/halflife2-reviewed-next.js';
+   // The Node controller compiles the working-tree helper pinned by digest
+   // (the Python one compiled `git show <gitSHA>:helper.py`).
+   const sources={...originalMetadata.sources,[helper]:hash(fs.readFileSync(helper)),[own]:options.sourceMismatch?'0'.repeat(64):hash(fs.readFileSync(own))};
    // Keep the complete original metadata, including an opaque source field;
    // it must never become the immutable helper lookup key or intent name.
-   const source=originalMetadata.source??{gitSHA,path:'tools/vb5cce-reviewed-control.py'};
+   const source=originalMetadata.source??{gitSHA,path:'tools/vb5cce-reviewed-control.js'};
    save('runtime-inputs.json',{...originalMetadata,source,gitSHA,sources,authoredWrapperTest:true});
    fs.writeFileSync(path.join(out,'wrapper.patch'),cp.execFileSync('git',['diff','--binary','--',own,'test/test-halflife2-native-wizard.cjs']));
-   const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8'),started=Date.now()/1000;
-   save('native-pid.json',{pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],invocationToken:crypto.randomUUID(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()});
+   const np=require('../tools/native-proc.cjs'),started=Date.now()/1000;
+   save('native-pid.json',{pid:s.child.pid,startToken:np.token(s.child.pid),invocationToken:crypto.randomUUID(),bootId:np.bootId()});
    save('launch.json',{rootPort:port,deadline:started+(options.never?7:20),gameplayCutoff:started+(options.never?4:17),reserveSeconds:3});
    let number=0;
-   async function control(args,ok=true){const child=cp.spawn('python3',['-B','tools/halflife2-reviewed-next.py',...args],{env:{...process.env,DELPHI5_RUN:out,DELPHI5_PORT:String(port)}});let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);const status=await new Promise(r=>child.on('close',r));save('wrapper-'+(++number)+'-wait.json',{args,pid:child.pid,status,stdout,stderr,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded});if(ok)assert.equal(status,0,stderr);else assert.notEqual(status,0);}
+   async function control(args,ok=true){const child=cp.spawn(process.execPath,['tools/halflife2-reviewed-next.js',...args],{env:{...process.env,DELPHI5_RUN:out,DELPHI5_PORT:String(port)}});let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);const status=await new Promise(r=>child.on('close',r));save('wrapper-'+(++number)+'-wait.json',{args,pid:child.pid,status,stdout,stderr,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded});if(ok)assert.equal(status,0,stderr);else assert.notEqual(status,0);}
    if(options.never||options.sourceMismatch){
     await control(['startup'],false);
     const ledger=fs.existsSync(path.join(out,'requests.jsonl'))?fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'):'';
@@ -123,15 +125,15 @@ async function runOne(out,dialog=false,wrapper=false,options={}){
   }
   const c=await s.send({action:'native-reviewed-capture',path:path.join(out,'wizard.png')});save('capture.json',c);
   const button=c.snapshot.windows.find(w=>w.title==='Next >'),review={contract:c.contract,captureId:c.captureId,pngSHA256:c.pngSHA256,reviewed:true,reviewedAt:Date.now(),scope:'menu',targetHwnd:button.hwnd};
-  const targetCheck=cp.spawnSync('python3',['-B','-c',`import importlib.util,json,sys
-s=importlib.util.spec_from_file_location('next','tools/halflife2-reviewed-next.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-scene=json.load(sys.stdin);b=next(w for w in scene['windows'] if w.get('title')=='Next >');x=b['screenX']+10;y=b['screenY']+10
-assert m.preflight(scene,b['hwnd'],x,y,b['title'])['nativeDispatchFenceRequired']
-for target in [scene['modalHwnd'] if scene['modalHwnd']!='0x0' else scene['mainHwnd'],next(w['hwnd'] for w in scene['windows'] if w.get('title')=='Cancel')]:
- try:m.preflight(scene,target,x,y,b['title'])
- except AssertionError:pass
- else:raise AssertionError('wrong frame/sibling accepted')
-print('PASS actual captured tree Next binding; wrong frame/sibling refused before DOWN and ACK')`],{input:JSON.stringify(c.snapshot),encoding:'utf8'});
+  const targetCheck=(()=>{try{
+   const m=require('../tools/halflife2-reviewed-next.js'),scene=structuredClone(c.snapshot);
+   const b=scene.windows.find(w=>w.title==='Next >'),x=b.screenX+10,y=b.screenY+10;
+   assert(m.preflight(scene,b.hwnd,x,y,b.title).nativeDispatchFenceRequired);
+   for(const target of [scene.modalHwnd!=='0x0'?scene.modalHwnd:scene.mainHwnd,scene.windows.find(w=>w.title==='Cancel').hwnd])
+    assert.throws(()=>m.preflight(scene,target,x,y,b.title),/^AssertionError/,'wrong frame/sibling accepted');
+   const stdout='PASS actual captured tree Next binding; wrong frame/sibling refused before DOWN and ACK\n';process.stdout.write(stdout);
+   return {status:0,stdout,stderr:''};
+  }catch(e){return {status:1,stdout:'',stderr:String(e&&e.stack||e)};}})();
   save('target-preflight.json',{exit:targetCheck.status,stdout:targetCheck.stdout,stderr:targetCheck.stderr});assert.equal(targetCheck.status,0,targetCheck.stderr);
   const owner=await s.send({action:'guarded-bind',reviewedScene:review});save('binding.json',owner);
   const nonce=require('node:crypto').randomUUID();
@@ -157,21 +159,6 @@ async function startupTests(out){
 }
 async function shutdown(out){
  fs.mkdirSync(out,{recursive:true});const exe=path.join(out,'authored-wizard.exe');fs.writeFileSync(exe,fixture(),{flag:'wx'});
- const code=String.raw`import importlib.util,os,pathlib,sys,json,time
-s=importlib.util.spec_from_file_location('hl2','tools/halflife2-current-native.py');rt=importlib.util.module_from_spec(s);s.loader.exec_module(rt)
-rt.RUN=pathlib.Path(sys.argv[1]);rt.RUN.mkdir();mode=sys.argv[2];exe=sys.argv[3]
-os.environ['HL2_REVISION']=sys.argv[4]
-sys.argv=['authored-adapter','--working-qualification']
-published=rt.published
-def fixture_helper(name,revision):
- h=published(name,revision)
- if name=='tools/vb5cce-original-runtime.py':
-  def execute():
-   rt.execute_native(['node','test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--max-seconds=20','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks'],dict(os.environ),(),h,'authored-shutdown')
-  h.run=execute
- return h
-rt.published=fixture_helper
-rt.run()`;
  const gitSHA=process.env.HL2_RUNTIME_INPUTS?JSON.parse(fs.readFileSync(process.env.HL2_RUNTIME_INPUTS)).gitSHA:cp.execFileSync('git',['rev-parse','origin/main'],{encoding:'utf8'}).trim();
  const results=[];
  for(const mode of ['term','int']){
@@ -179,7 +166,7 @@ rt.run()`;
   let wo='',we='';const wd=cp.spawn(process.execPath,['-e',"let pid;const t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGKILL')}catch{};process.exit(2)},25000);console.log('ARMED');process.stdin.on('data',b=>pid=+b);process.stdin.on('end',()=>clearTimeout(t))"]);
   wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=new Promise(r=>wd.on('close',(exit,signal)=>r({exit,signal})));
   while(!wo.includes('ARMED'))await pause(5);
-  const p=cp.spawn('python3',['-B','-c',code,target,mode,exe,gitSHA],{detached:true});wd.stdin.write(String(p.pid));let stdout='',stderr='';p.stdout.on('data',b=>stdout+=b);p.stderr.on('data',b=>stderr+=b);const waited=new Promise(r=>p.on('close',(exit,signal)=>r({exit,signal})));
+  const p=cp.spawn(process.execPath,[__filename,'--shutdown-adapter',target,mode,exe,gitSHA],{detached:true});wd.stdin.write(String(p.pid));let stdout='',stderr='';p.stdout.on('data',b=>stdout+=b);p.stderr.on('data',b=>stderr+=b);const waited=new Promise(r=>p.on('close',(exit,signal)=>r({exit,signal})));
   try{
    const due=Date.now()+10000;
    while(!fs.existsSync(path.join(target,'native.stdout.log'))||!fs.readFileSync(path.join(target,'native.stdout.log'),'utf8').includes('[CreateWindow]')){assert(Date.now()<due,'live authored native startup required');assert(p.exitCode===null,stderr);await pause(10);}
@@ -193,4 +180,18 @@ rt.run()`;
  }
  fs.writeFileSync(path.join(out,'proof.json'),JSON.stringify({passed:true,actualAdapterRun:true,actualNativeCLI:true,noOriginal:true,results},null,2)+'\n');
 }
-module.exports={fixture,dialogFixture,run,shutdown,startupTests};if(require.main===module)(process.argv[2]==='--shutdown'?shutdown(path.resolve(process.argv[3])):process.argv[2]==='--startup'?startupTests(path.resolve(process.argv[3])):run(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
+// The actual published adapter around an authored native wizard: its helper's
+// run() is replaced by one native execution that the parent TERM/INTs.
+async function shutdownAdapter(target,mode,exe,gitSHA){
+ const rt=require('../tools/halflife2-current-native.js');
+ rt.RUN=target;fs.mkdirSync(target);process.env.HL2_REVISION=gitSHA;
+ process.argv=[process.argv[0],'authored-adapter','--working-qualification'];
+ const published=rt.published;
+ rt.published=(name,revision)=>{
+  const h=published(name,revision);
+  if(name==='tools/vb5cce-original-runtime.js')h.run=()=>rt.execute_native(['node','test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--max-seconds=20','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks'],{...process.env},[],h,'authored-shutdown');
+  return h;
+ };
+ await rt.run();
+}
+module.exports={fixture,dialogFixture,run,shutdown,startupTests};if(require.main===module&&process.argv[2]==='--shutdown-adapter')shutdownAdapter(...process.argv.slice(3)).catch(e=>{if(e&&(e.name==='SystemExit'||e.name==='ShutdownRequested'))process.exitCode=e.exitCode??e.code;else{console.error(e);process.exitCode=1;}});else if(require.main===module)(process.argv[2]==='--shutdown'?shutdown(path.resolve(process.argv[3])):process.argv[2]==='--startup'?startupTests(path.resolve(process.argv[3])):run(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});

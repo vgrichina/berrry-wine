@@ -143,7 +143,7 @@ function verify(dir,{focusTransition=false}={}){
  }
  console.log(JSON.stringify({passed:true,actualCompleteCLIWorkflow:true,focusTransitionQualified:focusTransition,changingNextHWNDs:targets,changingMainWindows:mains.map(w=>({hwnd:w.hwnd,generation:w.generation})),oneBinding:true,nativeACK500:true,independentUP1750:true,capture3000:true,reviewAge30:true,nativeQuit:true,hostCleanup:false,noOriginal:true}));
 }
-function unit(){
+async function unit(){
  const native=require('../lib/cli-native-scene'),{createGuardedInput}=require('../lib/cli-guarded-input');
  const main={hwnd:'0x10001',generation:'1',processId:1000,threadId:1,owner:'0x0',parent:'0x0',
   live:true,visible:true,isChild:false,title:'Main',style:0x10cf0000,controlClass:0,nativeTextAvailable:true,textBytes:'4d61696e',nativeClientRect:{screenX:0,screenY:0,w:800,h:600}};
@@ -185,20 +185,17 @@ function unit(){
   assert(!consume(fresh).consumed,name+' replacement must refuse');refs[name]=saved;
  }
  assert.equal(effects,2);guard.close();
- const check=require('node:child_process').spawnSync('python3',['-B','-c',`
-import importlib.util,subprocess
-s=importlib.util.spec_from_file_location('r','tools/halflife2-restored-native.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-b=subprocess.check_output(['git','show',m.COMPONENT+':test/run.js']);r=m.reviewed_owner_runner(b)
-a=b.index(m.OWNER_START);z=b.index(m.OWNER_END,a)
-assert r==b[:a]+m.OWNER_BLOCK+b[z:]
-current=open('test/run.js','rb').read();assert current[current.index(m.OWNER_START):current.index(m.OWNER_END)]==m.OWNER_BLOCK
-for bad in (r,b.replace(m.OWNER_START,b'changed',1),b.replace(b'sameReviewedOwner(main,nativeSceneLease.main)',b'other')):
- try:m.reviewed_owner_runner(bad)
- except (AssertionError,ValueError):pass
- else:raise AssertionError('changed/duplicate transformation accepted')
-print('PASS sealed runner adoption changes only exact owned owner block')
-`],{encoding:'utf8'});
- assert.equal(check.status,0,check.stderr);process.stdout.write(check.stdout);
+ {
+  const m=require('../tools/halflife2-restored-native.js');
+  const b=require('node:child_process').execFileSync('git',['show',m.COMPONENT+':test/run.js'],{maxBuffer:1<<30}),r=m.reviewed_owner_runner(b);
+  const a=b.indexOf(m.OWNER_START),z=b.indexOf(m.OWNER_END,a);
+  assert(a>=0&&z>=0&&r.equals(Buffer.concat([b.subarray(0,a),m.OWNER_BLOCK,b.subarray(z)])));
+  const current=fs.readFileSync('test/run.js');assert(current.subarray(current.indexOf(m.OWNER_START),current.indexOf(m.OWNER_END)).equals(m.OWNER_BLOCK));
+  const replaceOnce=(body,from,to)=>{const i=body.indexOf(from);return i<0?body:Buffer.concat([body.subarray(0,i),Buffer.from(to),body.subarray(i+from.length)]);};
+  for(const bad of [r,replaceOnce(b,m.OWNER_START,'changed'),Buffer.from(b.toString('latin1').split('sameReviewedOwner(main,nativeSceneLease.main)').join('other'),'latin1')])
+   assert.throws(()=>m.reviewed_owner_runner(bad),/^AssertionError/,'changed/duplicate transformation accepted');
+  console.log('PASS sealed runner adoption changes only exact owned owner block');
+ }
  const ready={ready:false,snapshot:{...scene,focus:'0x0',focusTopLevel:'0x0',focusWindow:{hwnd:'0x0',generation:'0',live:false,processId:1000,threadId:0}},
   failures:['focus.live','focus.generation','focus.threadIdentity','focus.liveIdentity','focus.thread','focus.mainTopLevel','owner.ordinaryUSER'],
   ordinaryOwner:{actorContext:true,processId:1000,threadId:1}};
@@ -214,42 +211,46 @@ print('PASS sealed runner adoption changes only exact owned owner block')
   if(v.snapshot.windows[0].generation==='0')v.failures.push('main.liveIdentity');
   assert(!native.focusTransitionPending(v,scene));
  }
- const clocks=require('node:child_process').spawnSync('python3',['-B','-c',String.raw`import importlib.util,pathlib,tempfile,json,types
-s=importlib.util.spec_from_file_location('hl2','tools/halflife2-reviewed-next.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h)
-base=dict(focusWindow=dict(processId=1000,threadId=1),nativeProcess=dict(pid=123,executable='authored.exe'),screen=dict(w=640,h=480))
-anchor=dict(hwnd='0x1',live=True,visible=True,isChild=False,processId=1000,threadId=1)
-snapshot=dict(base,mainHwnd='0x1',modalHwnd='0x0',windows=[anchor],focus='0x0',focusTopLevel='0x0')
-for mode in ['transient','permanent','foreign-process','owner-violation','capture-refused','capture-late']:
- with tempfile.TemporaryDirectory() as d:
-  r=pathlib.Path(d);(r/'input-owner.json').write_text('{}');clock=[100.];calls=[];records={};timeouts=[]
-  def call(command,timeout):
-   calls.append(command['action']);timeouts.append(timeout);clock[0]+=.1
-   if command['action']=='native-startup-readiness':
-    ready=mode in ['capture-refused','capture-late'] or (mode=='transient' and len(calls)>2)
-    snap=json.loads(json.dumps(snapshot))
-    if mode=='foreign-process':snap['nativeProcess']['pid']+=1
-    return dict(contract='native-startup-readiness-v1',ready=ready,snapshot=snap,
-      failures=[] if ready else ['focus.live'],nullFocusTransition=mode!='owner-violation',ordinaryOwner=dict(actorContext=True,processId=1000,threadId=1))
-   assert command['action']=='native-reviewed-capture'
-   if mode=='capture-refused':raise AssertionError('strict capture refused')
-   if mode=='capture-late':clock[0]+=3
-   pathlib.Path(command['path']).write_bytes(b'authored-unit-encoder')
-   return dict(contract='native-reviewed-context-v1',startedAt=clock[0]*1000,completedAt=clock[0]*1000,snapshot=snapshot,captureId='unit')
-  m=types.SimpleNamespace(R=r,PORT=1,identity=lambda:dict(pid=123),reserve=lambda:None,call=call,
-   time=types.SimpleNamespace(time=lambda:clock[0],sleep=lambda t:clock.__setitem__(0,clock[0]+t)),
-   save=lambda n,v:records.__setitem__(n,v),read=lambda n:dict(scene='bound') if n=='bind-intent.json' else dict(snapshot=base))
-  try:h.capture(m,'scene')
-  except AssertionError:
-   assert mode!='transient'
-  else:assert mode=='transient'
-  assert calls.count('native-reviewed-capture')==(1 if mode in ['transient','capture-refused','capture-late'] else 0)
-  if mode=='permanent':assert 103<=clock[0]<103.11
-  if mode in ['foreign-process','owner-violation']:assert len(calls)==1
-  if mode=='transient':assert records['scene.json']['observationDeadline']==103
-print('PASS bounded passive transient/never-ready/foreign-owner/strict-refusal/late-encoder; at most one strict capture, original deadline unchanged')
-`],{encoding:'utf8'});
- assert.equal(clocks.status,0,clocks.stderr);process.stdout.write(clocks.stdout);
+ await (async()=>{
+  const os=require('node:os'),path=require('node:path'),h=require('../tools/halflife2-reviewed-next.js');
+  const base={focusWindow:{processId:1000,threadId:1},nativeProcess:{pid:123,executable:'authored.exe'},screen:{w:640,h:480}};
+  const anchor={hwnd:'0x1',live:true,visible:true,isChild:false,processId:1000,threadId:1};
+  const snapshot={...base,mainHwnd:'0x1',modalHwnd:'0x0',windows:[anchor],focus:'0x0',focusTopLevel:'0x0'};
+  for(const mode of ['transient','permanent','foreign-process','owner-violation','capture-refused','capture-late']){
+   const r=fs.mkdtempSync(path.join(os.tmpdir(),'hl2-capture-'));
+   try{
+    fs.writeFileSync(path.join(r,'input-owner.json'),'{}');const clock=[100];const calls=[],records={},timeouts=[];
+    const call=(command,timeout)=>{
+     calls.push(command.action);timeouts.push(timeout);clock[0]+=.1;
+     if(command.action==='native-startup-readiness'){
+      const ready=['capture-refused','capture-late'].includes(mode)||(mode==='transient'&&calls.length>2);
+      const snap=structuredClone(snapshot);
+      if(mode==='foreign-process')snap.nativeProcess.pid++;
+      return {contract:'native-startup-readiness-v1',ready,snapshot:snap,
+       failures:ready?[]:['focus.live'],nullFocusTransition:mode!=='owner-violation',ordinaryOwner:{actorContext:true,processId:1000,threadId:1}};
+     }
+     assert.equal(command.action,'native-reviewed-capture');
+     if(mode==='capture-refused'){const e=new Error('strict capture refused');e.name='AssertionError';throw e;}
+     if(mode==='capture-late')clock[0]+=3;
+     fs.writeFileSync(command.path,'authored-unit-encoder');
+     return {contract:'native-reviewed-context-v1',startedAt:clock[0]*1000,completedAt:clock[0]*1000,snapshot,captureId:'unit'};
+    };
+    const m={R:r,PORT:1,identity:()=>({pid:123}),reserve:()=>null,call,
+     time:{time:()=>clock[0],sleep:t=>{clock[0]+=t;}},
+     save:(n,v)=>{records[n]=v;},read:n=>n==='bind-intent.json'?{scene:'bound'}:{snapshot:base}};
+    let refused=false;
+    try{await h.capture(m,'scene');}
+    catch(e){if(e.name!=='AssertionError')throw e;refused=true;}
+    assert.equal(refused,mode!=='transient',mode);
+    assert.equal(calls.filter(c=>c==='native-reviewed-capture').length,['transient','capture-refused','capture-late'].includes(mode)?1:0);
+    if(mode==='permanent')assert(103<=clock[0]&&clock[0]<103.11);
+    if(['foreign-process','owner-violation'].includes(mode))assert.equal(calls.length,1);
+    if(mode==='transient')assert.equal(records['scene.json'].observationDeadline,103);
+   }finally{fs.rmSync(r,{recursive:true,force:true});}
+  }
+  console.log('PASS bounded passive transient/never-ready/foreign-owner/strict-refusal/late-encoder; at most one strict capture, original deadline unchanged');
+ })();
  console.log('PASS main replacement requires fresh whole image/current native metadata; stale main/generation/recycled handle/process/thread/module/device/queue/runtime refusals; one binding');
 }
 module.exports={fixture,verify,unit};
-if(require.main===module){if(process.argv[2]==='--unit')unit();else if(['--verify','--verify-focus'].includes(process.argv[2]))verify(process.argv[3],{focusTransition:process.argv[2]==='--verify-focus'});else fs.writeFileSync(process.argv[2],fixture({transitionDelayMs:process.argv.includes('--focus-transition')?1200:0,childPages:process.argv.includes('--focus-transition')}),{flag:'wx'});}
+if(require.main===module){if(process.argv[2]==='--unit')unit().catch(e=>{console.error(e);process.exitCode=1;});else if(['--verify','--verify-focus'].includes(process.argv[2]))verify(process.argv[3],{focusTransition:process.argv[2]==='--verify-focus'});else fs.writeFileSync(process.argv[2],fixture({transitionDelayMs:process.argv.includes('--focus-transition')?1200:0,childPages:process.argv.includes('--focus-transition')}),{flag:'wx'});}

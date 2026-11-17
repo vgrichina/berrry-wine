@@ -102,13 +102,10 @@ function waitPublication(out){
    else fs.writeFileSync(file,bytes.subarray(0,half),options);
    // Sample from a real independent process while the production writer is
    // halfway through its write. No timing guess or controller retry is needed.
-   const reader=cp.spawnSync('python3',['-B','-c',`import pathlib,json,sys,hashlib
-p=pathlib.Path(sys.argv[1]);r={'exists':p.exists(),'valid':True}
-if r['exists']:
- b=p.read_bytes();r['sha256']=hashlib.sha256(b).hexdigest()
- try:r['value']=json.loads(b)
- except (ValueError,UnicodeDecodeError):r['valid']=False
-print(json.dumps(r))`,target],{encoding:'utf8'});
+   const reader=cp.spawnSync(process.execPath,['-e',`const fs=require('fs'),crypto=require('crypto');const p=process.argv[1];const r={exists:fs.existsSync(p),valid:true};
+if(r.exists){const b=fs.readFileSync(p);r.sha256=crypto.createHash('sha256').update(b).digest('hex');
+ try{r.value=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(b));}catch{r.valid=false;}}
+console.log(JSON.stringify(r));`,target],{encoding:'utf8'});
    assert.equal(reader.status,0,reader.stderr);
    samples.push({...JSON.parse(reader.stdout),pid:reader.pid,actualWait:true,stdoutEOF:true,stderrEOF:true});
    if(failWrite)throw Error('authored partial write failure');
@@ -144,7 +141,7 @@ async function run(out,mode='positive'){
  const parent=path.join(out,'parent.exe'),child=path.join(out,'child.exe');fs.writeFileSync(parent,fixture(true,mode==='parent-failure'));fs.writeFileSync(child,fixture(false));
  const port=await freePort(),childPort=await freePort(),started=Date.now();
  save('launch.json',{rootPort:port,childPort,deadline:started/1000+60,reserveSeconds:10,gameplayCutoff:started/1000+50});
- const pins=['tools/neverhood-original-current-control.py','tools/neverhood-original-current-runtime.py'].map(p=>({path:p,sha256:hash(fs.readFileSync(p))}));
+ const pins=['tools/neverhood-original-current-control.js','tools/neverhood-original-current-runtime.js'].map(p=>({path:p,sha256:hash(fs.readFileSync(p))}));
  save('runtime-inputs.json',{sources:pins});
  // Independent deadline process is armed and observable before native spawn.
  const watchdog=cp.spawn(process.execPath,['-e',`let pid;const t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGTERM')}catch{};process.exit(2)},65000);console.log('ARMED');process.stdin.on('data',b=>pid=Number(b));process.stdin.on('end',()=>clearTimeout(t));`],{stdio:['pipe','pipe','pipe']});
@@ -161,7 +158,7 @@ async function run(out,mode='positive'){
  const identityAtSpawn=identity(p.pid);save('native-pid.json',identityAtSpawn);
  let ordinal=0;
  async function ctl(argv,targetPort=port,expected=0){
-  const c=cp.spawn('python3',['-B','tools/neverhood-original-current-control.py',...argv],{env:{...process.env,NEVERHOOD_CURRENT_RUN:out,NEVERHOOD_CURRENT_PORT:String(targetPort)},stdio:['ignore','pipe','pipe']});
+  const c=cp.spawn(process.execPath,['tools/neverhood-original-current-control.js',...argv],{env:{...process.env,NEVERHOOD_CURRENT_RUN:out,NEVERHOOD_CURRENT_PORT:String(targetPort)},stdio:['ignore','pipe','pipe']});
   let a='',b='';c.stdout.on('data',v=>a+=v);c.stderr.on('data',v=>b+=v);
   const status=await new Promise(r=>c.once('close',r));save('controller-'+(++ordinal)+'-wait.json',{args:argv,pid:c.pid,exit:status,actualWait:true,stdoutEOF:c.stdout.readableEnded,stderrEOF:c.stderr.readableEnded,stdout:a,stderr:b});
   assert.equal(status,expected,b);return a;
