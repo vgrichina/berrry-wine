@@ -274,6 +274,33 @@ async function main(){
   try{
     let scene;const due=Date.now()+15000;
     do{scene=await s.send({action:'snapshot'});if(scene.modalHwnd!=='0x0')break;assert(Date.now()<due);await pause(30);}while(true);
+    if(mode.startsWith('initial-hidden-')){
+      // Reproduce the observed public main.visible refusal on an authored
+      // native window, without touching original media or relaxing capture.
+      await s.send({action:'eval',code:`(()=>{const e=instance.exports,h=e.get_main_hwnd(),style=e.wnd_get_style_export(h);e.wnd_set_style_export(h,style&~0x10000000);renderer.showWindow(h,0);${mode==='initial-hidden-positive'?`setTimeout(()=>{e.wnd_set_style_export(h,style);renderer.showWindow(h,1);},650);`:''}return h})()`});
+      if(mode==='initial-hidden-repro'){
+        const before=await s.send({action:'snapshot'});assert.equal(before.windows.find(w=>w.hwnd===before.mainHwnd).visible,false);
+        await assert.rejects(s.send({action:'native-reviewed-capture',path:path.join(run,'refused.png')}),/main.visible/);
+      }else await controller(['capture','initial'],mode==='initial-hidden-timeout'?1:0);
+      if(mode==='initial-hidden-positive'){
+        const proof=JSON.parse(fs.readFileSync(path.join(run,'initial-presentation.json')));
+        assert.equal(proof.first.mainVisible,false);assert.equal(proof.ready,true);assert(proof.polls>1);
+        const record=JSON.parse(fs.readFileSync(path.join(run,'initial.json')));
+        assert(record.completedAt-proof.startedAt<3);
+        const png=require('pngjs').PNG.sync.read(fs.readFileSync(path.join(run,'initial.png')));assert.equal(png.width,800);assert.equal(png.height,600);
+      }else{
+        if(mode==='initial-hidden-repro')fs.writeFileSync(path.join(run,'PERMANENT-UNKNOWN.json'),JSON.stringify({name:mode,noLaterRequests:true}),{flag:'wx'});
+        assert(fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')));
+        const ledger=fs.existsSync(path.join(run,'requests.jsonl'))?fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'):'';
+        if(mode==='initial-hidden-timeout'){
+          assert(!ledger.includes('native-reviewed-capture'),'hidden window must not reach capture');
+          await controller(['capture','after-unknown'],1);
+          assert.equal(fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'),ledger);
+        }
+      }
+      save(mode+'-proof.json',{authoredOnly:true,initialMainHidden:true,inputRequests:0,boundedThreeSeconds:true,noCaptureRetry:true});
+      continue;
+    }
     if(mode.startsWith('transition-hidden-')){
       // Authored lifecycle injection only: use the actual next native modal's
       // visibility bit. The original application is never modified or resumed.
@@ -392,8 +419,14 @@ async function main(){
     assert.equal(w.exit,0,'independent watchdog must close normally');
   }
  }
- save('neverhood-native-admission.json',{generatedTestsPassed:true,safeForNeverhoodOriginal:true,actualNativeButtonTargets:true,childCaptionChangeRefused:true,originalStarted:false});
- console.log('PASS actual native two-dialog transition/independent UP/ExitProcess, focus/owner/semantic/stale faults, repaint admitted and permanent UNKNOWN zero later requests');
+ if(modes.some(mode=>mode.startsWith('initial-hidden-'))){
+  save('initial-presentation-qualification.json',{passed:true,modes,authoredOnly:true,originalStarted:false,
+    scope:'public initial USER visibility; unchanged native capture refusal; bounded wait; permanent UNKNOWN'});
+  console.log('PASS focused authored native modes: '+modes.join(', '));
+ }else{
+  save('neverhood-native-admission.json',{generatedTestsPassed:true,safeForNeverhoodOriginal:true,actualNativeButtonTargets:true,childCaptionChangeRefused:true,originalStarted:false});
+  console.log('PASS actual native two-dialog transition/independent UP/ExitProcess, focus/owner/semantic/stale faults, repaint admitted and permanent UNKNOWN zero later requests');
+ }
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});
 

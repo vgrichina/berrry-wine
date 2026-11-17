@@ -58,7 +58,23 @@ def capture(name):
     try:
         reserve();target=identity();at=time.time()
         p=R/(name+'.png');assert not p.exists()
-        reply=call(dict(action='native-reviewed-capture',path=str(p)),timeout=3)
+        # A listening control socket can precede the guest's first ShowWindow.
+        # Observe public USER visibility before the first capture; never retry
+        # a refused capture or extend its original three-second deadline.
+        if not (R/'input-owner.json').exists():
+            polls=0;first=None
+            while True:
+                remaining=at+3-time.time();assert remaining>0,'initial presentation UNKNOWN'
+                scene=call(dict(action='snapshot'),timeout=remaining);polls+=1
+                main=next((w for w in scene['windows'] if w['hwnd']==scene['mainHwnd']),None)
+                ready=(bool(main and main['live'] and main['visible'] and not main['isChild'])
+                    or (scene['mainHwnd']=='0x0' and scene['modalHwnd']!='0x0')) and presented(scene)
+                if first is None:first=dict(mainHwnd=scene['mainHwnd'],mainVisible=bool(main and main['visible']),ready=ready)
+                if ready:break
+                time.sleep(min(.005,max(0,at+3-time.time())))
+            save(name+'-presentation.json',dict(at=time.time(),startedAt=at,polls=polls,first=first,ready=True,deadline=at+3))
+        remaining=at+3-time.time();assert remaining>0,'initial presentation UNKNOWN'
+        reply=call(dict(action='native-reviewed-capture',path=str(p)),timeout=remaining)
         assert time.time()-at<3
         assert reply['contract']=='native-reviewed-context-v1'
         save(name+'.json',dict(at=reply['startedAt']/1000,completedAt=reply['completedAt']/1000,
