@@ -1,7 +1,8 @@
 'use strict';
+const inspection=require('./lbreakout-case-inspection.cjs');
 const assert=require('node:assert/strict'),cp=require('node:child_process'),vm=require('node:vm'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
-const source=cp.execFileSync('python3',['-c',"import importlib.util;s=importlib.util.spec_from_file_location('h','tools/lbreakout-case-inspection.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h);print(h.paddle_completion_observer_source())"],{cwd:root,encoding:'utf8'});
+const source=(inspection.paddleCompletionObserverSource()+'\n');
 const context={setTimeout,clearTimeout,Date,DataView};vm.createContext(context);vm.runInContext(source+';globalThis.install=installPaddleCompletion',context);
 (async()=>{
  const binding={exe:0x10000,sdl:0x100000,index:0,generation:7,mappingState:2,keys:0x160000};

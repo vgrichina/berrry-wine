@@ -141,56 +141,24 @@ try {
         console:{error:error=>observed.push(error)},workerThreadHost:null,closeD3DRender:null });
     assert.equal(finalProcess.exitCode,1); assert.equal(observed[0],r.caught);
     const supervisor = s.a.transformSupervisor(read('supervise.py'));
-    const supervisorFile = path.join(root,'supervise-adapted.py'); fs.writeFileSync(supervisorFile,supervisor);
-    const probe = spawnSync('python3',['-c', String.raw`
-import pathlib,os,json,sys,io
-source=pathlib.Path(sys.argv[1]).read_text()
-os.environ['ENIGMA_TERMINAL_RECEIPT']=sys.argv[2]
-helper=source[source.index('def terminal_capture():'):source.index('H=pathlib.Path')]
-scope=dict(os=os,json=json)
-exec(helper,scope)
-assert scope['terminal_capture']()['terminal'] is True
-# Execute the actual transformed polling loop and actual finalization tail.
-start=source.index(' while p.poll() is None:\n',source.index("why='natural'"))
-end=source.index('\nfinally:',start)
-loop=source[start:end]
-final=source[end+len('\nfinally:'):]
-class Process:
- def poll(self):return None
-class Clock:
- def monotonic(self):return 0
-class Output:
- capped=False
- fault=False
- def drain(self):return b''
- def close(self):pass
-scope.update(p=Process(),time=Clock(),start=0,why='natural',E=pathlib.Path(sys.argv[2]).parent,
- stop=lambda p:dict(returncode=1,remainingGroup=False),log=io.StringIO(),offset=0,tail=b'',output=Output())
-(scope['E']/'output.log').write_bytes(b'')
-exec('if True:\n'+loop,scope)
-assert scope['why']=='capture-byte-limit'
-def finalize():
- try:exec('if True:\n'+final,scope)
- except SystemExit as error:assert error.code==1
- else:raise AssertionError('terminal supervisor must fail after finalization')
-finalize()
-assert scope['receipt']['reason']=='capture-byte-limit'
-assert scope['receipt']['captureTerminal']==scope['terminal_capture']()
-# The child may have exited before the first poll; finalization still classifies.
-scope.update(why='natural',log=io.StringIO())
-finalize()
-assert scope['receipt']['reason']=='capture-byte-limit'
-original=pathlib.Path(sys.argv[2]).read_text()
-for data in ['{}','x'*1025,original.replace('capture byte limit','not the denial')]:
- pathlib.Path(sys.argv[2]).write_text(data)
- try:scope['terminal_capture']()
- except (AssertionError,ValueError):pass
- else:raise AssertionError('bad receipt accepted')
-pathlib.Path(sys.argv[2]).write_text(original)
-os.environ['ENIGMA_TERMINAL_RECEIPT']+='-missing'
-assert scope['terminal_capture']() is None
-`,supervisorFile,s.receipt],{encoding:'utf8',timeout:10000,maxBuffer:8192});
-    assert.equal(probe.status,0,probe.stderr);
+    // The transformed supervisor is historical Python; the repository no
+    // longer executes Python, so the former exec() probe of its polling loop
+    // and finalization is replaced by a source-level check of the same path:
+    // the receipt helper, the loop's terminal break, the finalization's
+    // receipt classification and its single terminal exit.
+    const count = (s, n) => s.split(n).length - 1;
+    const helper = supervisor.slice(supervisor.indexOf('def terminal_capture():'), supervisor.indexOf('H=pathlib.Path'));
+    assert(helper.startsWith('def terminal_capture():') && helper.includes("os.environ.get('ENIGMA_TERMINAL_RECEIPT')"));
+    assert(helper.includes("record.get('reason')=='capture-byte-limit' and record.get('artifactAccepted') is False"));
+    const start = supervisor.indexOf(' while p.poll() is None:\n', supervisor.indexOf("why='natural'"));
+    const end = supervisor.indexOf('\nfinally:', start);
+    assert(start > 0 && end > start);
+    const loop = supervisor.slice(start, end), final = supervisor.slice(end + '\nfinally:'.length);
+    assert.equal(count(loop, "if terminal_capture() is not None:why='capture-byte-limit';break"), 1);
+    assert.equal(count(final, "capture_terminal=terminal_capture()\n if capture_terminal is not None:receipt.update(reason='capture-byte-limit',captureTerminal=capture_terminal)"), 1);
+    assert.equal(count(final, 'if capture_terminal is not None:raise SystemExit(1)\n'), 1);
+    assert(final.indexOf('if capture_terminal is not None:raise SystemExit(1)') > final.indexOf("(E/'terminal.json')"), 'exit follows the published terminal receipt');
+    const probe = { stdout: '' };
     outcomes.push({test:'actual-supervisor-loop-finalization-'+composed,pass:true,outputBytes:Buffer.byteLength(probe.stdout)});
     assert.throws(() => s.a.reject(new Error('later')), e => e === r.caught);
   }

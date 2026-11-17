@@ -167,7 +167,7 @@ async function native(out,fixtureFile,mode='ordinary'){
   const log=(n,v)=>fs.appendFileSync(path.join(out,n),JSON.stringify(v)+'\n');
   let browser,chromeWait,server,c,session,requests=0,stages=0,unknown=null,operation=null,deliveryGate=null,nativeReadback=false,nativeDiagnosticFailure=null,queueBlockEntered=false,lastCapture=null;
   const workers=new Map(),tasks=[];
-  const paths=new Set(['index.html','host.js','tools/revolt-manual-controller.cjs','tools/forsaken-supervisor.py','test/static-server.js','test/test-revolt-manual-checkpoint.cjs','test/test-revolt-software-capture-latency-cause.cjs','test/binaries/tlbs/stdole32.tlb','test/binaries/tlbs/stdole2.tlb',controller.HELPER,'build/wine-assembly.wasm',fixture.path]);
+  const paths=new Set(['index.html','host.js','tools/revolt-manual-controller.cjs','tools/forsaken-supervisor.cjs','tools/native-supervisor-common.cjs','test/static-server.js','test/test-revolt-manual-checkpoint.cjs','test/test-revolt-software-capture-latency-cause.cjs','test/binaries/tlbs/stdole32.tlb','test/binaries/tlbs/stdole2.tlb',controller.HELPER,'build/wine-assembly.wasm',fixture.path]);
   // Preserve the original capture's complete read-only pin workload, including
   // existing game media hashes. The fixture never launches or copies that game.
   const originalCapturePins=json(path.join(PRIOR,'original-software/pins.json'));

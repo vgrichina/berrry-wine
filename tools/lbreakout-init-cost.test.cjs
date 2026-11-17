@@ -1,9 +1,10 @@
 'use strict';
+const inspection=require('./lbreakout-case-inspection.cjs');
 // Isolated original board-background work, through original SDL and CRT.
 // No browser, copied implementation, substituted blitter, or altered module.
 const assert=require('node:assert/strict'),fs=require('node:fs'),cp=require('node:child_process'),vm=require('node:vm'),crypto=require('node:crypto');
 const root=require('node:path').resolve(__dirname,'..');
-const source=cp.execFileSync('python3',['-c',"import importlib.util;s=importlib.util.spec_from_file_location('h','tools/lbreakout-case-inspection.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h);print(h.level_start_driver_source())"],{cwd:root,encoding:'utf8'});
+const source=(inspection.levelStartDriverSource()+'\n');
 const context={setTimeout,clearTimeout,Date,DataView};vm.createContext(context);vm.runInContext(source+';globalThis.create=createLevelStartDriver',context);
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 (async()=>{
@@ -116,7 +117,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
  }
  // Execute the entire generated preload and its authentic media/loaded-image
  // validator against the same compiled instance, then disarm without input.
- const preload=cp.execFileSync('python3',['-c',"import importlib.util;s=importlib.util.spec_from_file_location('h','tools/lbreakout-case-inspection.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h);print(h.pause_completion_preload_source())"],{cwd:root,encoding:'utf8'});
+ const preload=(inspection.pauseCompletionPreloadSource()+'\n');
  context.WebAssembly={instantiate:async()=>({instance:{exports:e},module})};
  context.LBreakoutInputObserver=require(root+'/lib/lbreakout-input-observer');
  context.fetch=async url=>({arrayBuffer:async()=>url.endsWith('SDL.dll')?dlls[0].bytes:pe});

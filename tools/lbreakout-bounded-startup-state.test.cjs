@@ -1,9 +1,10 @@
 'use strict';
+const inspection=require('./lbreakout-case-inspection.cjs');
 // Offline original code and retained-frame interpretation. No browser or box.
 const assert=require('node:assert/strict'),fs=require('node:fs'),cp=require('node:child_process'),vm=require('node:vm'),crypto=require('node:crypto');
 const root=require('node:path').resolve(__dirname,'..'),run=process.argv[2];assert(run,'evidence directory required');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-const source=cp.execFileSync('python3',['-c',"import importlib.util;s=importlib.util.spec_from_file_location('h','tools/lbreakout-case-inspection.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h);print(h.level_start_driver_source());print(h.startup_completion_observer_source())"],{cwd:root,encoding:'utf8'});
+const source=(inspection.levelStartDriverSource()+'\n'+inspection.startupCompletionObserverSource()+'\n');
 const scope={setTimeout,clearTimeout,Date,DataView};vm.createContext(scope);vm.runInContext(source+';globalThis.create=createLevelStartDriver;globalThis.install=installStartupCompletion;',scope);
 (async()=>{
  const wasm=fs.readFileSync(root+'/build/wine-assembly.wasm'),module=await WebAssembly.compile(wasm),memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
@@ -45,34 +46,31 @@ const scope={setTimeout,clearTimeout,Date,DataView};vm.createContext(scope);vm.r
  for(let i=0;i<expected.length;i++){const gray=expected[i];assert.equal(v.getUint32(pixels+i*4,true),(gray<<16)|(gray<<8)|gray,'full original grayscale output '+i);}
  observer.stop('offline original return');
  // Decode the retained native sample, including conservative refusal controls.
- const decode=String.raw`
-import importlib.util,json,pathlib,copy,datetime
-s=importlib.util.spec_from_file_location('h','tools/lbreakout-case-inspection.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h)
-r=pathlib.Path(RUN);receipt=json.loads((r/'recovered/original/completion-failure-startup-startup.json').read_text());failure=json.loads((r/'recovered/original/first-browser-failure.json').read_text())
-at=datetime.datetime.fromisoformat(failure['at'].replace('Z','+00:00')).timestamp()*1000
-result=h.classify_startup_failure(receipt,at)
-assert result['kind']=='original-theme-grayscale' and result['preMenu']
-assert result['pixel']==dict(x=240,y=168) and result['rectangle']==dict(x=0,y=0,width=640,height=480)
-assert result['processedPixels']==107760 and result['remainingPixelsIncludingCurrent']==199440
-assert result['sampleAgeAtFailureMs']==11 and result['sampleBeforeDeadlineMs']==4
-assert result['inferredPitch']==2560 and result['copy']['size']==4 and result['surface']!=result['screen']
-for mutation in ['return','caller','frame','width','x','size','offset','destination','future','media','missing']:
- v=copy.deepcopy(receipt);o=v['lastObservation'];p=o['lastSample'];words=p['stack']['words']
- if mutation=='return':words[0]+=1
- elif mutation=='caller':words[16]+=1
- elif mutation=='frame':p['registers']['ebp']+=4
- elif mutation=='width':words[20]=0
- elif mutation=='x':words[14]=640
- elif mutation=='size':words[3]=0x100000
- elif mutation=='offset':words[11]+=1
- elif mutation=='destination':words[1]+=4
- elif mutation=='future':p['at']=at+1
- elif mutation=='media':o['binding']['media']['exe']='foreign'
- elif mutation=='missing':o['lastSample']=None
- assert h.classify_startup_failure(v,at)['kind']=='unknown',mutation
-(r/'native-startup-classification.json').write_text(json.dumps(result,indent=2));print(json.dumps(result))
-`;
- const decoded=JSON.parse(cp.execFileSync('python3',['-c','RUN='+JSON.stringify(run)+'\n'+decode],{cwd:root,encoding:'utf8'}));
+ const r=require('node:path').resolve(run),readRun=n=>JSON.parse(fs.readFileSync(r+'/'+n,'utf8'));
+ const receipt=readRun('recovered/original/completion-failure-startup-startup.json'),failure=readRun('recovered/original/first-browser-failure.json');
+ const at=Date.parse(failure.at);
+ const decoded=inspection.classifyStartupFailure(receipt,at);
+ assert(decoded.kind==='original-theme-grayscale'&&decoded.preMenu);
+ assert.deepEqual(decoded.pixel,{x:240,y:168});assert.deepEqual(decoded.rectangle,{x:0,y:0,width:640,height:480});
+ assert(decoded.processedPixels===107760&&decoded.remainingPixelsIncludingCurrent===199440);
+ assert(decoded.sampleAgeAtFailureMs===11&&decoded.sampleBeforeDeadlineMs===4);
+ assert(decoded.inferredPitch===2560&&decoded.copy.size===4&&decoded.surface!==decoded.screen);
+ for(const mutation of ['return','caller','frame','width','x','size','offset','destination','future','media','missing']){
+  const m=structuredClone(receipt),o=m.lastObservation,p=o.lastSample,words=p.stack.words;
+  if(mutation==='return')words[0]+=1;
+  else if(mutation==='caller')words[16]+=1;
+  else if(mutation==='frame')p.registers.ebp+=4;
+  else if(mutation==='width')words[20]=0;
+  else if(mutation==='x')words[14]=640;
+  else if(mutation==='size')words[3]=0x100000;
+  else if(mutation==='offset')words[11]+=1;
+  else if(mutation==='destination')words[1]+=4;
+  else if(mutation==='future')p.at=at+1;
+  else if(mutation==='media')o.binding.media.exe='foreign';
+  else if(mutation==='missing')o.lastSample=null;
+  assert.equal(inspection.classifyStartupFailure(m,at).kind,'unknown',mutation);
+ }
+ fs.writeFileSync(r+'/native-startup-classification.json',JSON.stringify(decoded,null,2));
  const result={passed:true,module:sha(wasm),exe:sha(pe),sdl:sha(sdl),blocks,samples,decoded,fullPixels:expected.length,originalCdeclReturn:true,scope:'offline isolated original grayscale; native sample interpretation, no native completion/time claim'};
  fs.writeFileSync(run+'/original-gray-control.json',JSON.stringify(result,null,2));
  console.log('PASS original grayscale advances one pixel and returns with all 307200 pixels correct; retained native frame and 11 refusal controls; sample age distinct from failure time');

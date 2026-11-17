@@ -46,49 +46,54 @@ if (process.argv[2] === '--emit-native-fixture') {
   fs.writeFileSync(process.argv[3], b);
   process.exit(0);
 }
-const r = spawnSync('python3', ['-B', '-c', String.raw`
-import pathlib,subprocess,os,json,hashlib,base64,importlib.util,re,threading,signal
-root=pathlib.Path.cwd();s=importlib.util.spec_from_file_location('sup',root/'tools/lmarbles-supervisor.py');sup=importlib.util.module_from_spec(s);s.loader.exec_module(sup)
-sha=lambda b:hashlib.sha256(b).hexdigest()
-files={};todo=['lib/process-desktop.js']
-while todo:
- name=todo.pop()
- if name in files:continue
- body=(root/name).read_bytes();files[name]=body
- for relative in re.findall(rb'require\([\'\"](\.[^\'\"]+)[\'\"]\)',body):
-  base=os.path.normpath(str(pathlib.Path(name).parent/relative.decode()))
-  for suffix in ('','.js','.json','/index.js'):
-   candidate=base+suffix
-   if (root/candidate).is_file():todo.append(candidate);break
-rows=[dict(path=n,sha256=sha(b),body=base64.b64encode(b).decode()) for n,b in sorted(files.items())]
-packed,pin=sup.indexed_source(rows)
-code="const fs=require('node:fs');const {ProcessDesktop}=require('./lib/process-desktop');(async()=>{const d=new ProcessDesktop();try{d.call({op:'snapshot'});console.log('HELLO')}finally{await d.close()}})().catch(e=>{console.error(e);process.exitCode=1});"
-def run(label,body=packed,index_pin=pin,program=code,module=b'',module_pin=None):
- source=sup.seal('startup-test-source',body);wasm=sup.seal('startup-test-module',module)
- env=os.environ.copy();env.update(NODE_OPTIONS='--require='+str(root/'tools/lmarbles-native-source-view.cjs'),LMARBLES_SOURCE_FD='/proc/self/fd/'+str(source),LMARBLES_SOURCE_INDEX_SHA256=index_pin,LMARBLES_MODULE_FD='/proc/self/fd/'+str(wasm),LMARBLES_MODULE_SHA256=module_pin or sha(module))
- p=subprocess.Popen(['node','-e',program],env=env,pass_fds=(source,wasm),stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
- fired=[]
- def expire():
-  fired.append(True)
-  try:os.killpg(p.pid,signal.SIGKILL)
-  except ProcessLookupError:pass
- timer=threading.Timer(12,expire);timer.start()
- try:a,b=p.communicate()
- finally:timer.cancel();timer.join();os.close(source);os.close(wasm)
- assert not fired,(label,'independent watchdog expired')
- return p.returncode,a.decode(),b.decode()
-for i in range(3):
- rc,a,b=run('cold-workers');assert rc==0 and 'HELLO' in a,(rc,a,b)
-print('PASS three cold authority/client Worker handshakes and closure')
-rc,a,b=run('index-tamper',index_pin='0'*64);assert rc!=0 and 'sealed source index differs' in b
-size=int.from_bytes(packed[:4],'little');index=json.loads(packed[4:4+size]);entry=next(r for r in index['files'] if r['path']=='lib/process-desktop.js');bad=bytearray(packed);bad[4+size+entry['offset']]^=1
-rc,a,b=run('source-tamper',body=bytes(bad));assert rc!=0 and 'sealed source digest differs' in b
-missing=[r for r in rows if r['path']!='lib/process-desktop.js'];blob,p= sup.indexed_source(missing)
-rc,a,b=run('missing-source',body=blob,index_pin=p);assert rc!=0 and 'unsealed runtime input' in b
-for method in ["fs.readFileSync('lib/process-desktop.js')","fs.readFile('lib/process-desktop.js',(e)=>{if(e)throw e})","fs.promises.readFile('lib/process-desktop.js')","fs.createReadStream('lib/process-desktop.js')"]:
- rc,a,b=run('tampered-read',body=bytes(bad),program="const fs=require('node:fs');"+method);assert rc!=0 and 'sealed source digest differs' in b
-rc,a,b=run('module-tamper',module=b'bad',module_pin='0'*64,program="require('node:fs').readFileSync('build/wine-assembly.wasm')");assert rc!=0 and 'sealed module differs' in b
-print('PASS missing/tampered index/source/module and sync/async/promise/stream fail-closed controls')
-`], { encoding: 'utf8', timeout: 120000 });
-process.stdout.write(r.stdout || ''); process.stderr.write(r.stderr || '');
-assert.equal(r.status, 0, 'sealed threaded desktop startup controls');
+(async () => {
+  const fs = require('node:fs'), path = require('node:path'), cp = require('node:child_process');
+  const root = process.cwd(), sup = require(path.join(root, 'tools/lmarbles-supervisor.cjs'));
+  const c = require(path.join(root, 'tools/native-supervisor-common.cjs'));
+  const sha = c.sha256;
+  const files = new Map(), todo = ['lib/process-desktop.js'];
+  while (todo.length) {
+    const name = todo.pop();
+    if (files.has(name)) continue;
+    const body = fs.readFileSync(path.join(root, name)); files.set(name, body);
+    for (const m of body.toString('latin1').matchAll(/require\(['"](\.[^'"]+)['"]\)/g)) {
+      const base = path.normalize(path.join(path.dirname(name), m[1]));
+      for (const suffix of ['', '.js', '.json', '/index.js']) {
+        if (fs.statSync(path.join(root, base + suffix), { throwIfNoEntry: false })?.isFile()) { todo.push(base + suffix); break; }
+      }
+    }
+  }
+  const rows = [...files.keys()].sort().map(n => ({ path: n, sha256: sha(files.get(n)), body: files.get(n).toString('base64') }));
+  const [packed, pin] = sup.indexedSource(rows);
+  const code = "const fs=require('node:fs');const {ProcessDesktop}=require('./lib/process-desktop');(async()=>{const d=new ProcessDesktop();try{d.call({op:'snapshot'});console.log('HELLO')}finally{await d.close()}})().catch(e=>{console.error(e);process.exitCode=1});";
+  async function run(label, { body = packed, indexPin = pin, program = code, module = Buffer.alloc(0), modulePin = null } = {}) {
+    const source = sup.seal('startup-test-source', body), wasm = sup.seal('startup-test-module', module);
+    const fdp = fd => process.platform === 'linux' ? '/proc/self/fd/' + fd : c.fdPath(fd);
+    const env = { ...process.env, NODE_OPTIONS: '--require=' + path.join(root, 'tools/lmarbles-native-source-view.cjs'),
+      LMARBLES_SOURCE_FD: fdp(source), LMARBLES_SOURCE_INDEX_SHA256: indexPin,
+      LMARBLES_MODULE_FD: fdp(wasm), LMARBLES_MODULE_SHA256: modulePin || sha(module) };
+    const p = cp.spawn(process.execPath, ['-e', program], { env, stdio: c.stdioWithFds([source, wasm]), detached: true });
+    const fired = [];
+    const timer = setTimeout(() => { fired.push(true); try { process.kill(-p.pid, 'SIGKILL'); } catch (e) { if (e.code !== 'ESRCH') throw e; } }, 12000);
+    let r;
+    try { r = await c.communicate(p); } finally { clearTimeout(timer); fs.closeSync(source); fs.closeSync(wasm); }
+    assert(!fired.length, label + ': independent watchdog expired');
+    return [r.returncode, r.stdout.toString(), r.stderr.toString()];
+  }
+  let rc, a, b;
+  for (let i = 0; i < 3; i++) { [rc, a, b] = await run('cold-workers'); assert(rc === 0 && a.includes('HELLO'), JSON.stringify([rc, a, b])); }
+  console.log('PASS three cold authority/client Worker handshakes and closure');
+  [rc, a, b] = await run('index-tamper', { indexPin: '0'.repeat(64) }); assert(rc !== 0 && b.includes('sealed source index differs'));
+  const size = packed.readUInt32LE(0), index = JSON.parse(packed.subarray(4, 4 + size));
+  const entry = index.files.find(r => r.path === 'lib/process-desktop.js');
+  const bad = Buffer.from(packed); bad[4 + size + entry.offset] ^= 1;
+  [rc, a, b] = await run('source-tamper', { body: bad }); assert(rc !== 0 && b.includes('sealed source digest differs'));
+  const missing = rows.filter(r => r.path !== 'lib/process-desktop.js'); const [blob, p] = sup.indexedSource(missing);
+  [rc, a, b] = await run('missing-source', { body: blob, indexPin: p }); assert(rc !== 0 && b.includes('unsealed runtime input'));
+  for (const method of ["fs.readFileSync('lib/process-desktop.js')", "fs.readFile('lib/process-desktop.js',(e)=>{if(e)throw e})", "fs.promises.readFile('lib/process-desktop.js')", "fs.createReadStream('lib/process-desktop.js')"]) {
+    [rc, a, b] = await run('tampered-read', { body: bad, program: "const fs=require('node:fs');" + method }); assert(rc !== 0 && b.includes('sealed source digest differs'));
+  }
+  [rc, a, b] = await run('module-tamper', { module: Buffer.from('bad'), modulePin: '0'.repeat(64), program: "require('node:fs').readFileSync('build/wine-assembly.wasm')" });
+  assert(rc !== 0 && b.includes('sealed module differs'));
+  console.log('PASS missing/tampered index/source/module and sync/async/promise/stream fail-closed controls');
+})().catch(e => { console.error(e); process.exitCode = 1; });

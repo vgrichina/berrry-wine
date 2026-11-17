@@ -238,7 +238,7 @@ function native(directory,wasm){
   const dir=path.join(out,name);fs.mkdirSync(dir);
   const args=[process.execPath,path.join(root,'test/run.js'),'--exe='+path.join(fixtures,exe+'.exe'),'--no-build','--wasm='+path.resolve(wasm),'--exe-guest-path=C:\\order\\parent.exe','--vfs-mount='+path.join(fixtures,failure?'failure.exe':'registrar.exe')+'=C:\\order\\registrar.exe','--vfs-mount='+path.join(fixtures,'factory.dll')+'=C:\\order\\factory.dll','--dll-seed='+path.join(fixtures,'factory.dll'),'--spawn-processes','--real-ticks','--max-seconds=30','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--save-vfs='+path.join(dir,'saves')];
   fs.writeFileSync(path.join(dir,'recipe.json'),JSON.stringify({args,cwd:root,seconds:40,watchdogGrace:5,env:{WINE_COM_PROTOCOL_DIR:dir}},null,2));
-  const p=cp.spawnSync('python3',['-B',path.join(root,'tools/forsaken-supervisor.py'),'outerwait',dir],{encoding:'utf8',timeout:55000});
+  const p=cp.spawnSync(process.execPath,[path.join(root,'tools/forsaken-supervisor.cjs'),'outerwait',dir],{encoding:'utf8',timeout:55000});
   fs.writeFileSync(path.join(dir,'direct-wait.json'),JSON.stringify({pid:p.pid,exit:p.status,signal:p.signal,actualWait:p.status!==null,stdoutEOF:!p.error,stderrEOF:!p.error,stdout:p.stdout,stderr:p.stderr,error:p.error?.message},null,2));assert.equal(p.status,0,p.stderr||p.error?.message);
   results.push({name,...verifyNative(dir,failure,poll)});assert.equal(sha(wasm),pins.module.sha256);
  }
