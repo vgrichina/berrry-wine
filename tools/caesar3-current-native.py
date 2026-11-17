@@ -91,6 +91,36 @@ def media_inventory():
     return [dict(path=str(p.relative_to(ROOT)), size=p.stat().st_size, sha256=sha(p.read_bytes()))
             for p in sorted(media.rglob('*')) if p.is_file()]
 
+def verify_native_proof(reference, sources, module_sha):
+    """Reuse completed native evidence only for the identical executed graph.
+
+    An unrelated main publication changes the Git label, not these source bytes.
+    Fresh compilation, sealed inheritance and media prehash still run each time.
+    """
+    reference=pathlib.Path(reference)
+    read=lambda n:json.loads((reference/n).read_text())
+    pins=read('runtime-inputs.json');compiled=read('compile-inputs.json')
+    assert pins['sources']==compiled['sources']==sources, 'native proof source graph differs'
+    assert pins['moduleSHA256']==compiled['moduleSHA256']==module_sha, 'native proof module differs'
+    assert pins['sourceSeals']==pins['moduleSeals']==15 and not pins['foreignWIPAdopted']
+    assert not compiled['workingQualification'], 'native proof must be published'
+    q=read('qualification.json')
+    assert q['passed'] and not q['originalStarted'] and q['gitSHA']==pins['gitSHA'] and q['moduleSHA256']==module_sha
+    assert read('runtime-release.json')['success'] and read('runtime-release.json')['descriptorsClosed']
+    for name in ('authored-native-wait.json','outer-native-printable-wait.json','inheritance-wait.json'):
+        w=read(name)
+        assert w['exit']==0 and w['actualWait'] and w['stdoutEOF'] and w['stderrEOF'], 'incomplete native proof: '+name
+    assert read('authored/assertions.json')['pass']
+    outer=read('outer/wait.json')
+    assert outer['actualWait'] and outer['nativeWait']['actualWait'] and outer['returncode']==outer['supervisorExitCode']==0
+    assert outer['stdoutEOF'] and outer['stderrEOF'] and not outer['timedOut'] and not outer['remainingAfterRuntime']
+    assert len(outer['watchdogs'])==2
+    for w in outer['watchdogs']:
+        assert w['actualWait'] and w['returncode']==0 and w['stdoutEOF'] and w['stderrEOF'] and not w['result']['fired']
+    return dict(gitSHA=pins['gitSHA'],moduleSHA256=module_sha,sourceCount=len(sources),
+        nativeProofSHA256=sha((reference/'qualification.json').read_bytes()),
+        parentProofSHA256=sha((reference/'outer/wait.json').read_bytes()))
+
 def original(env, source, module):
     free_disk()
     pins = media_inventory()
@@ -326,7 +356,13 @@ def run():
             return
         # Native controls invoke only sealed JS. No mutable external Python
         # controller or original-game startup test is launched as a fixture.
-        helper.checked('authored-native', ['node', 'test/test-caesar3-current-native.cjs', str(RUN/'authored')], env, (source, module))
+        reference=os.environ.get('CAESAR3_NATIVE_PROOF') if requested else None
+        if reference:
+            proof=verify_native_proof(reference,{n:sha(b) for n,b in files.items()},env['DISCIPLES2_MODULE_SHA256'])
+            assert git('merge-base','--is-ancestor',proof['gitSHA'],'origin/main')==b''
+            save('native-proof-reuse.json',dict(**proof,reference=reference,freshInheritance=True,at=time.time()))
+        else:
+            helper.checked('authored-native', ['node', 'test/test-caesar3-current-native.cjs', str(RUN/'authored')], env, (source, module))
         save('qualification.json', dict(passed=True, gitSHA=revision, originalStarted=False,
              moduleSHA256=env['DISCIPLES2_MODULE_SHA256'], at=time.time()))
         if outer_fixture:

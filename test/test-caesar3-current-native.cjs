@@ -4,6 +4,32 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const cp=require('node:child_process'),net=require('node:net'),crypto=require('node:crypto');
 const {once}=require('node:events'),{startControlSession}=require('./control-session');
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
+function reuseProofUnits(){
+ const code=String.raw`import runpy,tempfile,pathlib,json,copy
+f=runpy.run_path('tools/caesar3-current-native.py')['verify_native_proof']
+sources={'owned.py':'abc','broker.js':'def'};module='module'
+wait=dict(exit=0,actualWait=True,stdoutEOF=True,stderrEOF=True)
+pins=dict(sources=sources,moduleSHA256=module,sourceSeals=15,moduleSeals=15,foreignWIPAdopted=False,gitSHA='published')
+outer=dict(actualWait=True,nativeWait=dict(actualWait=True),returncode=0,supervisorExitCode=0,stdoutEOF=True,stderrEOF=True,timedOut=False,remainingAfterRuntime=[],watchdogs=[dict(actualWait=True,returncode=0,stdoutEOF=True,stderrEOF=True,result=dict(fired=False))]*2)
+records={'runtime-inputs.json':pins,'compile-inputs.json':dict(sources=sources,moduleSHA256=module,workingQualification=False),'qualification.json':dict(passed=True,originalStarted=False,gitSHA='published',moduleSHA256=module),'runtime-release.json':dict(success=True,descriptorsClosed=True),'authored-native-wait.json':wait,'outer-native-printable-wait.json':wait,'inheritance-wait.json':wait,'authored/assertions.json':dict(pass_=True),'outer/wait.json':outer}
+records['authored/assertions.json']={'pass':True}
+def write(root,rows):
+ for n,v in rows.items():
+  p=root/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(v))
+with tempfile.TemporaryDirectory() as d:
+ root=pathlib.Path(d);write(root,records);assert f(root,sources,module)
+ for s,m in [(dict(sources,extra='x'),module),({'owned.py':'changed','broker.js':'def'},module),(sources,'changed')]:
+  try:f(root,s,m)
+  except AssertionError:pass
+  else:raise AssertionError('changed graph accepted')
+ for name,field,value in [('runtime-inputs.json','sourceSeals',0),('compile-inputs.json','workingQualification',True),('qualification.json','gitSHA','different'),('authored-native-wait.json','actualWait',False),('outer-native-printable-wait.json','stderrEOF',False),('runtime-release.json','descriptorsClosed',False),('outer/wait.json','remainingAfterRuntime',[123]),('outer/wait.json','returncode',143)]:
+  rows=copy.deepcopy(records);rows[name][field]=value;write(root,rows)
+  try:f(root,sources,module)
+  except AssertionError:pass
+  else:raise AssertionError(name+' '+field+' accepted')
+print('PASS native proof reuse: exact graph, module, seals, published identity, actual waits, EOF, closure and empty parent scope')`;
+ return cp.execFileSync('python3',['-B','-c',code],{encoding:'utf8'});
+}
 async function keyboard(out){
  fs.mkdirSync(out);const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
  const image=path.join(out,'keyboard.exe');fs.writeFileSync(image,require('./test-cli-native-button-delivery.cjs').fixture(0));
@@ -154,6 +180,7 @@ async function reviewedController(out,late=false,printable=false,personal=false,
 }
 async function main(out){
  fs.mkdirSync(out,{recursive:true});
+ fs.writeFileSync(path.join(out,'proof-reuse-units.log'),reuseProofUnits());
  require('./test-disciples2-native-paint-binding.cjs').contextUnits();
  require('./test-cli-native-pointer-coordinates.cjs').units();require('./test-cli-native-pointer-coordinates.cjs').contextUnits();
  require('./test-cli-native-button-delivery.cjs').units();await require('./test-cli-native-button-delivery.cjs').transportUnits();
@@ -397,4 +424,4 @@ async function textBoundary(out){
  }
 }
 if(require.main===module)(process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
-module.exports={keyboard,main,titleConsumerFixture,consumerDiagnostic,consumerUnits,textFixture,textBoundary};
+module.exports={keyboard,main,titleConsumerFixture,consumerDiagnostic,consumerUnits,textFixture,textBoundary,reuseProofUnits};
