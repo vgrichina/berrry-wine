@@ -81,9 +81,9 @@ async function run() {
     const out = alloc(128), guid = alloc(16);
     Buffer.from('3004020000000000c000000000000046', 'hex').forEach((b, i) => w.guest_write8(guid + i, b));
     for (const target of [0x402000, dynamic]) {
-      for (const version of [1, 2]) {
-        assert.equal(call(target, [guid, version, 0, 0x409, out]), 0);
-        const lib = read(out); assert(lib); assert(com(lib, 3) >= (version === 1 ? 6 : 27));
+      for (const version of [1, 2, 0x074f0001, 0x074f0002]) {
+        assert.equal(call(target, [guid, version, 0x074f0000, 0x409, out]), 0);
+        const lib = read(out); assert(lib); assert(com(lib, 3) >= ((version & 0xffff) === 1 ? 6 : 27));
         assert.equal(com(lib, 1), 2); assert.equal(com(lib, 2), 1); assert.equal(com(lib, 2), 0);
       }
       write(out, 0xdeadbeef);

@@ -3939,7 +3939,12 @@
   ;; Native registry loading and registration use the ordinary registry owner.
   (func $handle_LoadRegTypeLib (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $hr i32)
-    (local.set $hr (call $tl_load_reg (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
+    ;; Versions are WORD parameters in four-byte x86 stack slots. Native
+    ;; callers may leave the upper halves untouched (Sims does).
+    (local.set $hr (call $tl_load_reg (local.get $arg0)
+      (i32.and (local.get $arg1) (i32.const 65535))
+      (i32.and (local.get $arg2) (i32.const 65535))
+      (local.get $arg3) (local.get $arg4)))
     (i32.store offset=0 (global.get $reg_base) (local.get $hr))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
     (if (i32.eq (local.get $hr) (i32.const -2)) (then (call $io_block (i32.const 24))))
