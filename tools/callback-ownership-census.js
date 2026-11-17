@@ -194,6 +194,33 @@ function checkNonlocalAPIs(sources, api = []) {
   }
   return errors;
 }
+// Separate feature reviews avoid committing unrelated shared-worktree registry
+// edits. Each step must anchor the preceding reviewed hash; check() still
+// validates the resulting review against the base inventory and producer shape.
+function chainReviews(base, steps) {
+  const result = JSON.parse(JSON.stringify(base));
+  if (result.version !== 1 || !Array.isArray(result.revisions)) throw Error('invalid base reviews');
+  for (const step of steps) {
+    if (step.version !== 1 || !Array.isArray(step.revisions) || Object.keys(step).some(k => !['version', 'revisions'].includes(k))) throw Error('invalid feature reviews');
+    const seen = new Set();
+    for (const review of step.revisions) {
+      const id = key(review), prior = result.revisions.find(r => key(r) === id);
+      if (seen.has(id) || !prior || review.baseSHA256 !== prior.sha256 ||
+          !/^[a-f0-9]{64}$/.test(review.sha256 || '') || !review.reason?.trim() ||
+          Object.keys(review).some(k => !['file', 'name', 'baseSHA256', 'sha256', 'reason'].includes(k))) throw Error(`invalid feature review anchor ${id}`);
+      seen.add(id);
+      prior.sha256 = review.sha256;
+      prior.reason += ' ' + review.reason;
+    }
+  }
+  return result;
+}
+function loadReviews() {
+  const directory = path.join(__dirname, 'callback-ownership-reviews');
+  const steps = fs.existsSync(directory) ? fs.readdirSync(directory).filter(n => n.endsWith('.json')).sort().map(n => JSON.parse(fs.readFileSync(path.join(directory, n), 'utf8'))) : [];
+  const reviews = chainReviews(JSON.parse(fs.readFileSync(path.join(__dirname, 'callback-ownership-revisions.json'), 'utf8')), steps);
+  return reviews;
+}
 function main() {
   const sources = sourceFiles(ROOT).map(file => ({ file, src: fs.readFileSync(path.join(ROOT, file), 'utf8') }));
   const entries = scanSources(sources);
@@ -203,7 +230,7 @@ function main() {
     return;
   }
   const api = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/api_table.json'), 'utf8'));
-  const reviews = JSON.parse(fs.readFileSync(path.join(__dirname, 'callback-ownership-revisions.json'), 'utf8'));
+  const reviews = loadReviews();
   const errors = check(entries, JSON.parse(fs.readFileSync(CENSUS, 'utf8')), reviews)
     .concat(checkNonlocalAPIs(sources, api));
   if (errors.length) {
@@ -212,4 +239,4 @@ function main() {
   } else console.log(`callback ownership census: ${entries.length} source boundaries unchanged; nonlocal APIs remain disabled (ownership pending)`);
 }
 if (require.main === module) main();
-module.exports = { sourceFiles, scanWat, scanSources, check, checkNonlocalAPIs };
+module.exports = { sourceFiles, scanWat, scanSources, check, checkNonlocalAPIs, chainReviews, loadReviews };

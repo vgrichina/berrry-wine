@@ -3,7 +3,7 @@
 // Source-only mutation tests. No wasm compilation, guest execution or model
 // token simulation: these establish inventory enforcement, not jump safety.
 const assert = require('assert');
-const { sourceFiles, scanWat, scanSources, check, checkNonlocalAPIs } = require('../tools/callback-ownership-census');
+const { sourceFiles, scanWat, scanSources, check, checkNonlocalAPIs, loadReviews } = require('../tools/callback-ownership-census');
 const source = `(func $entry (export "inject") (global.set $eip (local.get $callback)))`;
 const sources = [{ file: 'src/fixture.wat', src: source }];
 const entries = scanSources(sources);
@@ -117,7 +117,7 @@ const root = path.resolve(__dirname, '..');
 const real = { entries: scanSources(sourceFiles(root).map(file => ({ file,
   src: fs.readFileSync(path.join(root, file), 'utf8') }))) };
 const reviewed = require('../tools/callback-ownership-census.json');
-const revisions = require('../tools/callback-ownership-revisions.json');
+const revisions = loadReviews();
 assert.deepStrictEqual(check(real.entries, reviewed, revisions), [], 'real source must match reviewed manifest');
 const hostSource = fs.readFileSync(path.join(root, 'host.js'), 'utf8');
 const retirement = 'this._processObject.wine = null;';

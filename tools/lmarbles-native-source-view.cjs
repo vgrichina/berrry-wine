@@ -84,6 +84,56 @@ const decode = (b, opts) => {
   const encoding = typeof opts === 'string' ? opts : opts?.encoding;
   return encoding ? b.toString(encoding) : Buffer.from(b);
 };
+// Node's normal resolver stats the live tree before _extensions/readFile run.
+// Resolve against the inventory itself, so deleted and replaced live paths
+// cannot change which sealed module a request names.
+const resolveFilename = Module._resolveFilename;
+const builtin = new Set(Module.builtinModules.flatMap(n => [n, 'node:' + n]));
+function sealedFile(base) {
+  for (const suffix of ['', '.js', '.json', '.node']) {
+    if (files.has(base + suffix)) return base + suffix;
+  }
+  return null;
+}
+function sealedPath(base, seen = new Set()) {
+  const file = sealedFile(base);
+  if (file) return file;
+  if (seen.has(base)) return null;
+  seen.add(base);
+  const manifest = path.join(base, 'package.json');
+  if (files.has(manifest)) {
+    const pkg = JSON.parse(select(manifest).toString());
+    if (typeof pkg.main === 'string') {
+      const entry = path.resolve(base, pkg.main);
+      if (!entry.startsWith(base + path.sep)) throw Error('unsealed package entry: ' + entry);
+      const main = sealedPath(entry, seen);
+      if (main) return main;
+    }
+  }
+  return sealedFile(path.join(base, 'index'));
+}
+Module._resolveFilename = function(request, parent, isMain, options) {
+  if (builtin.has(request)) return resolveFilename.call(this, request, parent, isMain, options);
+  const from = parent?.filename ? path.dirname(parent.filename) : process.cwd();
+  const local = path.isAbsolute(request) || request.startsWith('./') || request.startsWith('../');
+  const inside = p => p === root || p.startsWith(root + path.sep);
+  if (local) {
+    const base = path.resolve(from, request);
+    if (inside(base)) {
+      const found = sealedPath(base);
+      if (found) return found;
+      throw Error('unsealed runtime input: ' + base);
+    }
+    if (files.has(parent?.filename)) throw Error('unsealed runtime input: ' + base);
+  } else if (inside(from)) {
+    for (let dir = from; inside(dir); dir = path.dirname(dir)) {
+      const found = sealedPath(path.join(dir, 'node_modules', request));
+      if (found) return found;
+    }
+    throw Error('unsealed runtime input: ' + request);
+  }
+  return resolveFilename.call(this, request, parent, isMain, options);
+};
 fs.readFileSync = (file, opts) => { const b = select(file); return b ? decode(b, opts) : read(file, opts); };
 const asyncRead = fs.readFile.bind(fs), promiseRead = fs.promises.readFile.bind(fs.promises);
 fs.readFile = (file, opts, callback) => {
