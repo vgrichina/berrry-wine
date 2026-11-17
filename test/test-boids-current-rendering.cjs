@@ -4,8 +4,13 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const {installObserver,selectWindow,installSoftwareObserver}=require('../tools/boids-current-runtime.cjs');
 const seen=[];class Executor{execute(r){seen.push(r);if(r.fail)throw Error('native failure');return 731;}stats(){return {draws:seen.length};}}
 const root={Fake:{Executor}};installObserver(root,'Fake');installObserver(root,'Fake');const e=new Executor();
+// Loading another executor must not hide records from the active executor.
+class OtherExecutor{execute(){return 12;}}
+root.Other={Executor:OtherExecutor};installObserver(root,'Other');
 const data=new Uint8Array([1,2,3]);const record={name:'DRAW_UP',seq:1,fields:{count:3},refs:[{input:true,pos:0,len:3}],arena:()=>data};
 assert.equal(e.execute(record),731);data[0]=99;record.fields.count=9;
+assert.equal(root.__boidsPublicTrace,root.__boidsPublicTraces.Fake);
+assert.equal(root.__boidsPublicTraces.Other.executor,'Other');
 assert.deepEqual(root.__boidsPublicTrace.pending[0].inputs[0].bytes,[1,2,3]);assert.equal(root.__boidsPublicTrace.pending[0].fields.count,3);
 assert.throws(()=>e.execute({...record,fail:true}),/native failure/);
 const present={name:'PRESENT',seq:2,fields:{},refs:[]};for(let i=0;i<3;i++)e.execute(present);assert.equal(root.__boidsPublicTrace.frames.length,2);
@@ -72,3 +77,14 @@ async function driverControls(){
   console.log('PASS shared exact driver delayed window, absent/wrong/replaced owners, failed/UNKNOWN/pending, fixed deadlines and sticky refusal');
 }
 driverControls().catch(e=>{console.error(e);process.exitCode=1;});
+// The passive presenter observer preserves errors/returns and bounds storage.
+{
+  const {installPresentationObserver}=require('../tools/boids-current-runtime.cjs');
+  class Presenter{constructor(){this.presents=0;this.stale=0;}present(f){if(f.fail)throw Error('present failed');this.presents++;return 19;}}
+  const root={GpuStreamHost:{Presenter}};installPresentationObserver(root);installPresentationObserver(root);const p=new Presenter();
+  const f={hwnd:1,width:2,height:2,stamp:1};
+  assert.equal(p.present(f),19);assert.deepEqual(f,{hwnd:1,width:2,height:2,stamp:1});
+  assert.throws(()=>p.present({...f,fail:true}),/present failed/);
+  for(let i=0;i<100;i++)p.present(f);
+  assert.equal(root.__boidsPresentationTrace.rows.length,64);assert.equal(root.__boidsPresentationTrace.count,102);assert.equal(root.__boidsPresentationTrace.errors,1);
+}

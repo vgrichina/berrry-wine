@@ -2,7 +2,7 @@
 // Newly authored input derived from the existing public-COM native fixture.
 // Only the fixture uses Sleep before window creation and a native GetPixel oracle.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),crypto=require('node:crypto');
-function prepare(out, active = false){
+function prepare(out, active = false, flip = false){
   fs.mkdirSync(out,{recursive:true});
   let source=require('../test/test-revolt-software-capture-latency-cause.cjs').fixtureSource(1);
   source=source.replace(' P hwnd=CreateWindowExA',' Sleep(1500);\n P hwnd=CreateWindowExA')
@@ -21,6 +21,14 @@ function prepare(out, active = false){
     .replace('C0(device,9)','C0(device,5)').replace('C0(device,10)','C0(device,6)')
     .replace('C5(device,28,','C5(device,25,')
     .replace('i==1?640:-320','i==1?1280:-320').replace('i==2?480:-240','i==2?960:-240');
+  if(flip){
+    source=source.replace('C2(dd,20,hwnd,8)','C2(dd,20,hwnd,17)')
+      .replace('U desc[31]={124,1};desc[26]=0x200;', 'check(C5(dd,21,640,480,32,0,0),40);U desc[31]={124,0x21};desc[5]=1;desc[26]=0x218;')
+      .replace(/for\(U i=0;i<31;i\+\+\)desc\[i\]=0;[\s\S]*?check\(C3\(dd,6,desc,&target,0\),15\);/, 'U caps[4]={4};check(C2(primary,12,caps,&target),15);')
+      .replace('C5(primary,5,0,target,0,0x1000000,0)','C2(primary,11,target,1)')
+      .replace(/if\(!checked\)\{[\s\S]*?checked=1;\}/,'if(!checked){SetWindowTextA(hwnd,"AUTHORED native COM FLIP geometry");checked=1;}');
+    if(flip==='black')source=source.replace('v[i*8+4]=0xff3344cc','v[i*8+4]=0xff000000');
+  }
   const imports={kernel32:['ExitProcess@4','Sleep@4','OutputDebugStringA@4','GetTickCount@0'],user32:['CreateWindowExA@48','SetFocus@4','SetForegroundWindow@4','SetWindowTextA@8'],gdi32:['GetPixel@12'],ddraw:['DirectDrawCreateEx@16']};
   for(const [dll,names]of Object.entries(imports)){
     fs.writeFileSync(path.join(out,dll+'.def'),'LIBRARY '+dll+'.dll\nEXPORTS\n'+names.join('\n')+'\n',{flag:'wx'});
@@ -51,5 +59,18 @@ function qualify(snapshot,mode){
   }
   return proof;
 }
-module.exports={prepare,qualify};
-if(require.main===module)prepare(path.resolve(process.argv[2]),process.argv[3]==='active');
+function qualifyFlip(snapshot,black=false){
+  const assert=require('node:assert/strict'),m=snapshot.metadata;
+  assert(snapshot.identity.guestWorker);assert(snapshot.identity.title.includes('native COM FLIP geometry'));
+  assert.equal(snapshot.identity.bridgeDevice.stats.backend,'webgl1');
+  assert(snapshot.identity.bridgeDevice.stats.draws>0);assert(snapshot.identity.bridgeDevice.stats.presents>0);
+  assert.equal(m.source.width,640);assert.equal(m.source.height,480);
+  const b=Buffer.from(snapshot.source,'base64');assert.equal(b.length,640*480*4);
+  for(let y=0;y<480;y++)for(let x=0;x<640;x++){
+    const expected=!black&&x<320&&y<240?[51,68,204,255]:[0,0,0,255],at=(y*640+x)*4;
+    assert.deepEqual([...b.subarray(at,at+4)],expected,`native Flip pixel ${x},${y}`);
+  }
+  return {passed:true,black,sourcePixels:640*480,visibleGeometry:!black,actualBackend:'webgl1',publicCOM:true};
+}
+module.exports={prepare,qualify,qualifyFlip};
+if(require.main===module)prepare(path.resolve(process.argv[2]),process.argv[3]==='active',process.argv[4]==='black'?'black':process.argv[4]==='flip');

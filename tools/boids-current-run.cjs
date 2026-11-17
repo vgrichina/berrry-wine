@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process'),crypto=require('node:crypto'),vm=require('node:vm');
-const {PNG}=require('pngjs'),{gitFiles,compile,installObserver,selectWindow,installSoftwareObserver}=require('./boids-current-runtime.cjs');
+const {PNG}=require('pngjs'),{gitFiles,compile,installObserver,selectWindow,installSoftwareObserver,installPresentationObserver}=require('./boids-current-runtime.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const {installDriver}=require('./boids-current-driver.cjs');
 async function run(out,commit,backend,mode,fixtureFile){
@@ -21,6 +21,10 @@ async function run(out,commit,backend,mode,fixtureFile){
   const module=compile(files);files.set('build/wine-assembly.wasm',module);save('module.json',{sha256:sha(module),size:module.length,commit,persisted:false});
   if(fixtureFile){const b=fs.readFileSync(fixtureFile);files.set(app.exe,b);save('fixture.json',{path:fixtureFile,sha256:sha(b),bytes:b.length,original:false});}
   const observerPatches=[];for(const [n,api]of [['lib/gpu-stream-webgl.js','GpuStreamWebGL'],['lib/gpu-stream-software.js','GpuStreamSoftware']]){const suffix='\n;('+installObserver.toString()+')(globalThis,'+JSON.stringify(api)+');\n';const old=files.get(n);files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});}const n='lib/d3dim-render-worker.js',old=files.get(n),suffix='\n;('+installSoftwareObserver.toString()+')(globalThis);\n';files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});save('observer-patches.json',observerPatches);
+  if(process.env.BOIDS_CONTENT_DIAGNOSTIC){
+    const n='lib/gpu-stream-host.js',old=files.get(n),suffix='\n;('+installPresentationObserver.toString()+')(globalThis);\n';
+    files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});save('observer-patches.json',observerPatches);
+  }
   save('prepared.json',{at:Date.now(),commit,moduleSHA256:sha(module),fixture:!!fixtureFile});
   while(!fs.existsSync(path.join(out,'runtime-start.json')))await sleep(20);
   const {deadline}=JSON.parse(fs.readFileSync(path.join(out,'runtime-start.json')));
@@ -36,7 +40,12 @@ async function run(out,commit,backend,mode,fixtureFile){
     const proc=browser.process();let chromeClose;const closed=new Promise(r=>proc.once('close',(code,signal)=>{chromeClose={pid:proc.pid,code,signal,actualWait:true};r();}));save('browser.json',{pid:proc.pid,spawnargs:proc.spawnargs,version:await browser.version()});
     async function observeTarget(target){if(!['page','other'].includes(target.type()))return;const s=await target.createCDPSession();workerSessions.push({session:s,target});s.on('Debugger.scriptParsed',ev=>{if(ev.scriptLanguage!=='WebAssembly'&&!ev.url.startsWith('wasm:'))return;const task=s.send('Debugger.getScriptSource',{scriptId:ev.scriptId}).then(r=>{modules.push({target:target.url(),scriptId:ev.scriptId,bytecodeAvailable:!!r.bytecode,sha256:r.bytecode?sha(Buffer.from(r.bytecode,'base64')):null});});workerTasks.push(task);task.catch(e=>errors.push(String(e)));});await s.send('Debugger.enable');}
     browser.on('targetcreated',t=>{const p=observeTarget(t);workerTasks.push(p);p.catch(e=>errors.push(String(e)));});
-    const page=(await browser.pages())[0];await page.evaluateOnNewDocument('('+installDriver.toString()+')(globalThis,'+JSON.stringify({app:'dx_boids',mode,deadline})+');');await page.evaluateOnNewDocument(()=>{globalThis.__boidsInputs=[];for(const type of ['keydown','keyup','pointerdown','pointerup','mousedown','mouseup'])document.addEventListener(type,e=>globalThis.__boidsInputs.push({type,trusted:e.isTrusted,at:Date.now()}),true);});page.on('console',m=>consoleLog.push({at:Date.now(),type:m.type(),text:m.text()}));page.on('pageerror',e=>errors.push(String(e)));await observeTarget(page.target());
+    const page=(await browser.pages())[0];
+    if(process.env.BOIDS_CONTENT_DIAGNOSTIC)await page.evaluateOnNewDocument(()=>{
+      const names=new Set(['DefWindowProcA','DispatchMessageA','ShowWindow','SetFocus','SetActiveWindow','SetForegroundWindow','IDirectDraw_SetCooperativeLevel','IDirectDrawSurface_IsLost','IDirectDrawSurface_Restore','IDirect3DDevice2_BeginScene','IDirect3DDevice2_EndScene','IDirectDrawSurface_Flip']);
+      const counts={};const has=names.has.bind(names);names.has=name=>{if(!has(name))return false;counts[name]=(counts[name]||0)+1;return counts[name]<=40;};
+      globalThis.__waTraceApiNames=names;globalThis.__boidsApiCounts=counts;
+    });await page.evaluateOnNewDocument('('+installDriver.toString()+')(globalThis,'+JSON.stringify({app:'dx_boids',mode,deadline})+');');await page.evaluateOnNewDocument(()=>{globalThis.__boidsInputs=[];for(const type of ['keydown','keyup','pointerdown','pointerup','mousedown','mouseup'])document.addEventListener(type,e=>globalThis.__boidsInputs.push({type,trusted:e.isTrusted,at:Date.now()}),true);});page.on('console',m=>consoleLog.push({at:Date.now(),type:m.type(),text:m.text()}));page.on('pageerror',e=>errors.push(String(e)));await observeTarget(page.target());
     const url='http://127.0.0.1:'+server.address().port+'/index.html?app=dx_boids&'+(mode==='worker'?'threads':'no-threads')+'&d3d-renderer='+backend;
     terminal.url=url;terminal.launchedAt=new Date().toISOString();await page.goto(url,{waitUntil:'domcontentloaded',timeout:Math.max(1,deadline-Date.now())});
     save('readiness.json',await page.evaluate(()=>__boidsDriver.ready()));
@@ -45,7 +54,7 @@ async function run(out,commit,backend,mode,fixtureFile){
     save('identity-start.json',await identity());
     // One selected queued boundary suffices for the authored delay regression.
     // Originals retain all three independent passive observations.
-    for(const delay of fixtureFile&&process.env.BOIDS_CAPTURE_ACTIVE?[15000]:[15000,15000,15000]){
+    for(const delay of fixtureFile&&(process.env.BOIDS_CAPTURE_ACTIVE||process.env.BOIDS_FLIP_DIAGNOSTIC)?[15000]:[15000,15000,15000]){
       await sleep(delay);const i=captures.length;
       const captureStarted=Date.now();let captureTimer;
       const snapshot=await Promise.race([page.evaluate(async active=>{
@@ -67,7 +76,7 @@ async function run(out,commit,backend,mode,fixtureFile){
       },!!fixtureFile&&!!process.env.BOIDS_CAPTURE_ACTIVE),new Promise((_,reject)=>{captureTimer=setTimeout(()=>reject(Error('DISPLAY_UNKNOWN controller capture deadline')),Math.max(1,Math.min(3000,deadline-Date.now())));})]).finally(()=>clearTimeout(captureTimer));
       if(Date.now()>=Math.min(deadline,captureStarted+3000))throw Error('late controller capture delivery');
       if(fixtureFile){
-        save(`literal-reference-${i}.json`,require('./boids-current-fixture.cjs').qualify(snapshot,mode));
+        save(`literal-reference-${i}.json`,process.env.BOIDS_FLIP_DIAGNOSTIC?require('./boids-current-fixture.cjs').qualifyFlip(snapshot,process.env.BOIDS_FLIP_DIAGNOSTIC==='black'):require('./boids-current-fixture.cjs').qualify(snapshot,mode));
         if(process.env.BOIDS_CAPTURE_ACTIVE){
           save(`pending-host-${i}.json`,await page.evaluate(()=>__boidsPendingAttempt));
           const pending=snapshot.metadata.pendingHostPublicationAtRequest;
@@ -77,7 +86,16 @@ async function run(out,commit,backend,mode,fixtureFile){
       }
       for(const kind of ['source','output']){const dims=snapshot.metadata[kind],png=new PNG({width:dims.width,height:dims.height});png.data=Buffer.from(snapshot[kind],'base64');fs.writeFileSync(path.join(out,`frame-${i}-${kind}.png`),PNG.sync.write(png));}
       const row={index:i,metadata:snapshot.metadata,identity:await identity(),at:new Date().toISOString()};save(`frame-${i}.json`,row);captures.push(row);
-      const traces=[{target:'page',trace:await page.evaluate(()=>globalThis.__boidsPublicTrace||null)}];for(const {session,target}of workerSessions)try{const r=await session.send('Runtime.evaluate',{expression:'JSON.stringify(globalThis.__boidsPublicTrace||null)',returnByValue:true});traces.push({target:target.url(),trace:JSON.parse(r.result.value)});}catch(e){traces.push({target:target.url(),error:String(e)});}save(`public-trace-${i}.json`,traces);
+      const traces=[{target:'page',trace:await page.evaluate(()=>globalThis.__boidsPublicTrace||null)}];for(const {session,target}of workerSessions)try{const r=await session.send('Runtime.evaluate',{expression:'JSON.stringify({executors:globalThis.__boidsPublicTraces||null,presentation:globalThis.__boidsPresentationTrace||null})',returnByValue:true});traces.push({target:target.url(),trace:JSON.parse(r.result.value)});}catch(e){traces.push({target:target.url(),error:String(e)});}save(`public-trace-${i}.json`,traces);
+      if(process.env.BOIDS_CONTENT_DIAGNOSTIC)save(`content-boundary-${i}.json`,await page.evaluate(()=>{
+        const w=runningApps.find(a=>a.name==='dx_boids').wine,b=w.hostCtx.d3dimBridge,r=w.renderer;
+        const layer=b?.presenter?.layer;
+        return {at:Date.now(),presentation:globalThis.__boidsPresentationTrace,apiCounts:globalThis.__boidsApiCounts,
+          presentCount:b?.presenter?.presents,staleCount:b?.presenter?.stale,
+          layer:layer?{kind:layer.kind,api:layer.api,width:layer.canvas?.width,height:layer.canvas?.height,writeSeq:layer.writeSeq,merged:layer.mergedIntoWindow,stale:layer.stale?.(),window:b.presenter.win?.hwnd}:null,
+          publicState:{focus:w.instance.exports.get_focus_hwnd?.(),exclusive:w.instance.exports.get_dx_exclusive_hwnd?.(),presentHwnd:w.instance.exports.get_dx_present_hwnd?.(),cpuPresentSeq:w.instance.exports.get_d3dim_cpu_present_seq?.()},
+          compositorLayer:Object.values(r.windows).filter(v=>v.visible&&!v.isChild).map(v=>({hwnd:v.hwnd,layerAPI:v._dxFrameLayer?.api,writeSeq:v._dxFrameLayer?.writeSeq,stale:v._dxFrameLayer?.stale?.(),overlay:!!r._overlayFrameLayer(v)}))};
+      }));
     }
     terminal.outcome='observed';save('identity-end.json',await identity());
     if(fixtureFile){
