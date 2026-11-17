@@ -51,3 +51,41 @@ to the prior qualified module (SHA-256 3e0887b2424d3aa9f90f5707425c75e71b680128a
 so unchanged proxy, input-guard, BW2 and native-module evidence can be reused by
 hash. NV's published desktop preparation is reused without changing its hunks.
 The authorized original run is recorded separately in result.json when finished.
+
+## Published fix and the authorized original
+
+Fix `5ec45cc69` is published on main. The one authorized normal original used
+the unchanged qualified module and ordinary real ticks. Caller arguments were
+validated and the exact native PID exclusively owned the loopback listener before
+capture. NV's active scene-module WIP was preserved: the previously qualified
+published scene (Git b2118cb19, SHA-256
+5a62a5ec9fc542305219719b09fc2ce0c45305664f3d64dab6af20b871f489cd)
+was loaded directly from Git in memory, with per-process execution-source pins.
+No source tree or media was copied.
+
+The genuine registrar reached registry import in 1,024.9 ms and exited normally.
+The parent merged 293 keys, then its original 10,000 ms wait returned success
+after 1,744 ms. The original launched the genuine -Embedding child and its
+CoCreateInstance returned S_OK. That child subsequently failed with
+`COM continuation: unsupported yield 12` in NativeAutomation.invokeStub,
+through ComInterfaceRuntime.service and ComOwnedProxyHost.invokeStub. The
+owner continuation rejects an unsupported reason without restoring its saved
+CPU frame. This is the demonstrated remaining execution blocker; it is not
+reported as the separate authored non-Automation provider's missing proxy.
+
+The personally viewed complete bootstrap PNG shows the Sims backdrop,
+InstallShield progress window and error "An installation support file could
+not be installed. (0x80010108)". A fresh full image after permanent binding
+was entirely teal, with no visible close target. The session became terminal
+UNKNOWN, with zero physical input and no later HTTP queries. No installation
+or native Quit is claimed. After host cancellation, the unsupported continuation
+left the embedding process live; identity-checked SIGKILL retired that child,
+then its parent recorded actual close/both EOF and exited 0. The registrar,
+embedding child, parent, helper, watchdog, supervisor and outer waits are retained.
+The failed embedding child had no completion marker and its state was refused.
+
+Host provider/media hashes remain unchanged. Provider omission is execution-only;
+the embedding SIGKILL prevents its exit-only provider audit, so that missing audit
+is explicit rather than reconstructed. Its inherited preload enforces the same
+read refusal before main startup. Full T-db74d863 and original BW2 setup remain
+open. No box was created; its ID and expiry are null and stop is not applicable.
