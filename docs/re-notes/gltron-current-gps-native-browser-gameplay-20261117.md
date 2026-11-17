@@ -56,3 +56,41 @@ measurements and their exact source identity are recorded in the final evidence.
 The next required implementation is an actual browser native receipt bridge,
 followed by the same-path positive/negative input qualification and only then
 the authorized original arms. No boxes, other workers or public deployment.
+
+## Published measurements
+
+Both fresh authored arms serve published Git
+`2380bf5f6f94701388f8a2b9d7ff831dd683086d`, with every helper pin matching.
+Both retain the same `cdcbd50d…be42dd49` module before clocks and verify the
+actual guest and render Worker modules. No foreign shared-tree WIP is served.
+
+The software arm observes `gl-gps`, endpoint 1/epoch 1, both configured and
+endpoint backend `software`, real software executor native-draw counters and
+no observed WebGL contexts. Its complete capture finishes in **1,004 ms**.
+The independent literal source and output oracles both have **zero pixel
+mismatches**. All three complete images were personally reviewed. It then
+refuses the missing native authority before DOWN.
+
+The WebGL arm observes `gl-gps`, endpoint 1/epoch 1, backend `webgl`, actual
+render Worker WebGL context and `webgl1` executor counters. Its complete-capture
+transaction reaches permanent UNKNOWN in **3,001 ms**, in `read-ticket`.
+Several earlier read evaluations returned pending; the final evaluation is
+still outstanding when transport closes. **No host screenshot request is
+sent** for this observation. There is no fresh complete triplet to review or
+substitute from the candidate. The repaired phase log distinguishes this
+boundary from host screenshot completion; it does not establish the renderer
+cause of the pending ticket or repair the intermittent timeout. Its earlier
+passive native-route observation independently records the missing authority.
+
+Both published arms have zero DOWNs, zero later CDP requests/HTTP after closure,
+no rebind, replay or retry. Actual native harness and outer exits are 1;
+preparation/runtime/owner watchdog exits are 0, and browser exits are 0.
+Native, browser, outer and watchdog actual waits and both EOFs are preserved.
+The dedicated owners remain alive through their outer joins with the actual
+worker alive. Owned browser scopes and profiles are absent after cleanup.
+These are host-cleanup outcomes, not native Quit.
+
+The selector and diagnostic repairs are tested and published. The browser
+native receipt bridge and its physical-release/fault qualification remain the
+concrete input blocker. Original allowances remain unspent for both backends;
+there is no original gameplay or round evidence in this run.
