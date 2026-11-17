@@ -12,7 +12,7 @@ DIAGNOSTICS=('tools/halflife2-reviewed-next.py','lib/cli-native-user-windows.js'
              'test/test-cli-native-capture-refusal-details.cjs','test/test-edit-wrap-resize.js',
              'src/13-exports.wat','src/09c3-wndprocs5-edit.wat','tools/control-variant-gate.js',
              'lib/process-desktop.js','test/test-process-desktop-observation.js',
-             'test/test-process-desktop-observer-stall.cjs')
+             'test/test-process-desktop-observer-stall.cjs','tools/native-lifecycle-trace.cjs')
 def load(name):
  s=importlib.util.spec_from_file_location(name.replace('/','_'),ROOT/name)
  m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
@@ -148,7 +148,7 @@ def main():
  # transport and focused tests in addition to those already proved bodies.
  changed={}
  for name in DIAGNOSTICS:
-  owned=name in ('lib/cli-native-scene.js','tools/halflife2-reviewed-next.py')
+  owned=name in ('lib/cli-native-scene.js','tools/halflife2-reviewed-next.py','tools/native-lifecycle-trace.cjs')
   origin=revision if owned else RETAINED_DIAGNOSTIC_GIT
   b=(ROOT/name).read_bytes() if working and owned else m.git('show',origin+':'+name)
   if name=='lib/cli-native-scene.js':assert b==(ROOT/name).read_bytes(),'publish scene first'
@@ -252,6 +252,17 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,h.appendSection(Buffer.from(r.was
      previous=str(PRIOR.relative_to(ROOT)),fullProofSHA256=m.sha((fixture/'full-native-qualification.json').read_bytes()),
      coreSuitesRepeated=False,nativeEditDelta=manifest['nativeEditDelta'],
      unchangedNativeSourceSHA256=original_source_sha,diagnosticChanges=changed,at=time.time()))
+ # Trace only an explicitly requested bounded passive observer. It receives
+ # the same sealed source identity as every other runtime helper.
+ if os.environ.get('HL2_LIFECYCLE_TRACE')=='1':
+  trace=m.RUN/'native-lifecycle';trace.mkdir()
+  env['WINE_NATIVE_LIFECYCLE_TRACE']=str(trace)
+  env['NODE_OPTIONS']+=' --require='+str(ROOT/'tools/native-lifecycle-trace.cjs')
+  execute=m.execute_native
+  def traced_execute(argv,*args,**kwargs):
+   argv=[*argv,'--trace-api=EndDialog,DestroyWindow,PostQuitMessage,ExitProcess,CreateWindowExA,CreateWindowExW,CreateDialogParamA,DialogBoxParamA,CreateProcessA,WinExec,SendMessageA,PostMessageA,DispatchMessageA']
+   return execute(argv,*args,**kwargs)
+  m.execute_native=traced_execute
  try:
   if '--diagnostic-qualification' in sys.argv:
    assert '--original' not in sys.argv,'authored qualification only'

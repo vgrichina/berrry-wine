@@ -1,0 +1,12 @@
+'use strict';
+const assert=require('node:assert/strict'),{observer}=require('../tools/native-lifecycle-trace.cjs');
+const memory=new WebAssembly.Memory({initial:1}),dv=new DataView(memory.buffer),rows=[];
+Buffer.from('EndDialog').copy(Buffer.from(memory.buffer),0);
+let quit=0,calls=0;const e={get_esp:()=>256,guest_read32:a=>dv.getUint32(a,true),get_quit_flag:()=>quit,get_eip:()=>0x401234,get_main_hwnd:()=>123,get_focus_hwnd:()=>124,get_current_thread_id:()=>1,get_process_id:()=>1000};
+dv.setUint32(256,0x401111,true);dv.setUint32(260,123,true);dv.setUint32(264,1,true);
+const o=observer({write:r=>rows.push(r),limit:8,clock:()=>String(rows.length)}),imports=o.imports({host:{memory,log:()=>++calls,log_api_exit:()=>{quit=2;return 42;}}});
+o.attach({exports:e});assert.equal(imports.host.log(0,9),1);assert.equal(imports.host.log_api_exit(),42);
+assert.equal(calls,1);assert.equal(rows.find(r=>r.kind==='api-enter').args[0],123);assert.equal(rows.find(r=>r.kind==='api-enter').returnPC,0x401111);
+assert(rows.some(r=>r.kind==='state'&&r.quit===2));assert.equal(quit,2,'observer preserves a real posted quit');
+for(let i=0;i<20;i++)o.emit('extra');assert.equal(rows.length,9);assert.equal(rows.at(-1).kind,'trace-limit');assert.deepEqual(rows.map(r=>r.sequence),[1,2,3,4,5,6,7,8,9]);
+console.log('PASS monotonic native observer, return forwarding, explicit quit preservation and finite saturation');
