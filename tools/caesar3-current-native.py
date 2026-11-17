@@ -60,7 +60,10 @@ def original(env, source, module):
     args = ['node', 'test/run.js', '--app=caesar3_demo', '--no-build', '--threads', '--real-ticks',
             '--native-exit-receipt='+str(RUN/'native-exit.json'), '--native-invocation-token='+invocation,
             '--screen=800x600', '--control='+str(port), '--max-seconds='+str(NATIVE_SECONDS),
-            '--max-batches=1000000000', '--stuck-after=0', '--quiet-api', '--quiet-blocks', '--png-canvas']
+            '--max-batches=1000000000', '--stuck-after=0', '--quiet-api', '--quiet-blocks', '--png-canvas',
+            '--public-consumer-trace='+str(RUN/'public-consumers.jsonl'),
+            '--trace-api=GetMessageA,PeekMessageA,WaitMessage,DispatchMessageA,GetAsyncKeyState,GetKeyState,GetCursorPos,DirectInputCreateA,IDirectInputDevice_GetDeviceState,IDirectInputDevice_GetDeviceData',
+            '--trace-input-dispatch']
     save('launch.json', dict(at=start, deadline=deadline, gameplayCutoff=deadline-QUIT_RESERVE,
          reserveSeconds=QUIT_RESERVE, rootPort=port, args=args, nativeSeconds=NATIVE_SECONDS,
          watchdogSeconds=WATCHDOG_SECONDS, nativeScene=True, bindingContract='native-reviewed-context-v1',
@@ -72,7 +75,8 @@ def original(env, source, module):
     try:
         while not (RUN/'watchdog-armed.json').exists():
             assert w.poll() is None; time.sleep(.01)
-        p = subprocess.Popen(args, cwd=ROOT, env=env, pass_fds=(source, module),
+        native_env = dict(env, WINE_PUBLIC_INPUT_TRACE=str(RUN/'public-input.jsonl'))
+        p = subprocess.Popen(args, cwd=ROOT, env=native_env, pass_fds=(source, module),
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
         info = dict(pid=p.pid, startToken=token(p.pid), port=port, invocationToken=invocation,
                     bootId=pathlib.Path('/proc/sys/kernel/random/boot_id').read_text().strip())
@@ -132,6 +136,10 @@ def controller():
     try:
         launch=m.reserve(kind=='quit'); rr,r=m.reviewed(scene)
         assert kind in ('install','game','quit') and r['kind']==kind
+        snap=rr['snapshot']
+        target=next(w for w in snap['windows'] if w['hwnd']==snap['mainHwnd'])
+        assert target['controlClass']==0 and snap['focus']==snap['mainHwnd']
+        assert snap['modalHwnd']=='0x0' and snap['nativeMessageBox'] is None and snap['nativeDialogBox'] is None
         if kind!='quit': assert not (RUN/'quit-phase.json').exists() and time.time()+3<launch['gameplayCutoff']
         owner=m.read('input-owner.json'); start=time.time(); nonce=str(uuid.uuid4())
         invocation=dict(rr['target']); assert invocation==m.identity() and m.same_live_invocation(invocation)
@@ -147,7 +155,7 @@ def controller():
         receipt=m.call(dict(action='guarded-input',cmd=command,guard=guard),timeout=max(.001,start+.5-time.time()))
         save(name+'-down.json',dict(at=time.time(),receipt=receipt))
         assert time.time()<start+.5 and receipt['state']=='CONSUMED' and receipt['consumed'],'confirmation UNKNOWN'
-        assert receipt.get('receiptBoundary') in ('native-input-return','native-button-dispatch-return')
+        assert receipt.get('receiptBoundary') == 'native-input-return'
         if receipt['receiptBoundary']=='native-input-return':
             proof=receipt['nativeMessage']
             assert proof['consumption']=='owner-user-return' and proof['nonce']==nonce and proof['token']>0
@@ -197,10 +205,8 @@ def run():
     # The imported supervisor body comes from Git, never the shared worktree.
     helper = published_module('tools/vb5cce-original-runtime.py', revision)
     helper.ROOT, helper.RUN, helper.HEAD = ROOT, RUN, revision
-    helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs', 'test/run.js',
-        'src/13-exports.wat','src/01-header.wat','src/09a-handlers.wat','src/09a5-handlers-window.wat',
-        'src/09a5b-handlers-window-late.wat','src/09a2-handlers-console.wat',
-        'lib/host-window.js','lib/guest-rpc.js','lib/cli-guarded-input.js','lib/host-import-sigs.generated.json')
+    helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs',
+        'test/run.js', 'test/public-consumer-observer.js')
     if baseline: helper.OWN_SOURCES = ('test/test-caesar3-current-native.cjs',)
     if not working:
         assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
@@ -218,7 +224,10 @@ def run():
         helper.checked('authored-native', ['node', 'test/test-caesar3-current-native.cjs', str(RUN/'authored')], env, (source, module))
         save('qualification.json', dict(passed=True, gitSHA=revision, originalStarted=False,
              moduleSHA256=env['DISCIPLES2_MODULE_SHA256'], at=time.time()))
-        if requested: original(env, source, module)
+        if requested:
+            assert git('rev-parse','HEAD').decode().strip()==revision, 'HEAD changed during qualification; no original'
+            assert git('rev-parse','origin/main').decode().strip()==revision, 'qualification is not exact current published main'
+            original(env, source, module)
     helper.qualify = qualify
     # Its --original option is intentionally not forwarded: this wrapper owns
     # the single Caesar invocation, media identity and fixed native deadline.

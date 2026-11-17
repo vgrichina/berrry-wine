@@ -3419,7 +3419,7 @@ async function main() {
   // one Heroes III run. The count survives in WAT ($api_calls, apiTotal()).
   // The list is every reader of an API name or exit below, plus --esp-audit,
   // which wraps a worker's log. --quiet-api-fast is now an alias of this.
-  const apiLogRequired = traceOn => !QUIET_API || traceOn ||
+  const apiLogRequired = traceOn => !QUIET_API || traceOn || !!getArg('public-consumer-trace', '') ||
     TRACE_API_COUNTS || API_THREAD_CENSUS || TRACE_CRITICAL || TRACE_INPUT_DISPATCH || ESP_DELTA ||
     ESP_AUDIT || breakApis.length || hasFlag('observe-morrowind-name') ||
     // Memory dumps accompany a paused API trace; they must not force its
@@ -4683,6 +4683,10 @@ async function main() {
   // Resolve the reader at call time so the optional observer below sees the
   // same mapped return as GetTickCount/timeGetTime/QueryPerformanceCounter.
   h.get_ticks = () => guestClock.ticks();
+  if (getArg('public-consumer-trace', '')) {
+    require('./public-consumer-observer').observePublicConsumers(h, () => instance.exports,
+      () => memory.buffer, translateGuest, getArg('public-consumer-trace', ''));
+  }
   // Independent of --trace-input-dispatch; no initialization or hooks by default.
   const mainSchedulerObserver = hasFlag('trace-main-scheduler')
     ? require('./main-scheduler-observer').createMainSchedulerObserver({ logs, isOpen: traceWindowOpen }) : null;

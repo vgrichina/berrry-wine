@@ -215,7 +215,7 @@ async function consumerDiagnostic(out){
   const reservation=net.createServer();await new Promise(r=>reservation.listen(0,'127.0.0.1',r));const port=reservation.address().port;await new Promise(r=>reservation.close(r));
   const s=startControlSession(['test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--screen=800x600',
    '--wasm='+(process.env.C3_CONSUMER_WASM||'build/wine-assembly.wasm'),'--control-stdin','--control='+port,'--max-seconds=20','--max-batches=10000000','--stuck-after=0','--trace-thread',
-   '--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true,env:{...process.env,WINE_PUBLIC_INPUT_TRACE:path.join(dir,'public-input.jsonl')}}});
+   '--quiet-api','--quiet-blocks','--no-close','--public-consumer-trace='+path.join(dir,'public-consumers.jsonl')],{spawnOptions:{detached:true,env:{...process.env,WINE_PUBLIC_INPUT_TRACE:path.join(dir,'public-input.jsonl')}}});
   wd.stdin.write(String(s.child.pid));let release,rw;
   const observed=()=>s.send({action:'eval',code:`(()=>{const e=instance.exports;return {peekReturns:e.guest_read32(0x403700)>>>0,getReturns:e.guest_read32(0x403704)>>>0,asyncPressReturns:e.guest_read32(0x403708)>>>0,asyncResult:e.guest_read32(0x40370c)>>>0,siblingProgress:e.guest_read32(0x403710)>>>0,siblingMessages:e.guest_read32(0x403714)>>>0,busyReads:e.guest_read32(0x403718)>>>0,busyElapsed:e.guest_read32(0x40371c)>>>0}})()`});
   try{
@@ -253,6 +253,12 @@ async function consumerDiagnostic(out){
    if(s.child.exitCode===null&&s.child.signalCode===null)process.kill(-s.child.pid,'SIGTERM');await s.exited;
    if(release&&release.exitCode===null){release.kill();await rw;}
    save('native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,hostCleanup:true,nativeQuit:false});
+   const observations=fs.readFileSync(path.join(dir,'public-consumers.jsonl'),'utf8').trim().split('\n').map(JSON.parse);
+   assert(observations.length<=8193,'bounded public observer');
+   assert(observations.some(r=>r.phase==='entry'&&r.name==='CreateWindowExA'&&r.threadId===1),'observe startup before intent');
+   assert(observations.filter(r=>r.phase==='handler-exit').every(r=>r.receipt===false&&r.callbackReturn==='unmeasured'),'public observation cannot invent receipt');
+   assert.equal(observations.at(-1).phase,'summary');
+   save('observer-assertions.json',{pass:true,rows:observations.length,startupObserved:true,neverReceipt:true});
    fs.writeFileSync(path.join(dir,'native.log'),s.output());wd.stdin.end();const [exit,signal]=await ww;
    save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
   }
