@@ -50,8 +50,31 @@ async function main(){
  };
  for(let i=0;i<4;i++)await exercise();const heap=e.get_heap_ptr();for(let i=0;i<128;i++)await exercise();assert.equal(e.get_heap_ptr(),heap,'all owned element strings, data and descriptors reclaimed');
  assert.equal(await call('SafeArrayAccessData',[0,p+64]),0x80070057);assert.equal(await call('SafeArrayDestroy',[0]),0);
+
+ // Both resolver paths expose the same real three-argument native ABI.
+ const dll=a.string('oleaut32.dll',false),name=a.string('SafeArrayGetElement',false),module=await api('LoadLibraryA',[dll]);assert(module);
+ const named=await api('GetProcAddress',[module,name]),ordinal=await api('GetProcAddress',[module,25]);assert(named&&ordinal);m.free(dll);m.free(name);
+ const get=async(array,indices,out=p+72)=>{indices.forEach((v,i)=>put(p+128+i*4,v));return call('SafeArrayGetElement',[array,p+128,out]);};
+ const getCycle=async()=>{
+  const array=await create([[2,-3],[3,7]]);assert.equal(await call('SafeArrayAccessData',[array,p+64]),0);const data=word(p+64),source=await str('own\0tail');put(data+20,source);
+  // Rightmost dimension index first; non-square sizes and unequal/negative
+  // lower bounds ensure a transposed or one-based implementation fails.
+  assert.equal(await get(array,[-2,9]),0);const clone=word(p+72);assert.notEqual(clone,source);assert.equal(readString(clone),'own\0tail');assert.equal(word(array+8),1);
+  put(p+72,0x12345678);assert.equal(await get(array,[-4,9]),0x8002000b);assert.equal(word(p+72),0x12345678);
+  assert.equal(await get(array,[-2,10]),0x8002000b);assert.equal(word(p+72),0x12345678);
+  assert.equal(await get(array,[-3,7]),0);assert.equal(word(p+72),0,'null BSTR stays null');
+  put(p+128,-2);put(p+132,9);assert.equal(await c.invoke(ordinal,[array,p+128,p+72]),0);const second=word(p+72);assert(second&&second!==clone&&second!==source);
+  assert.equal(await call('SafeArrayUnaccessData',[array]),0);assert.equal(await call('SafeArrayDestroy',[array]),0);
+  assert.equal(readString(clone),'own\0tail');assert.equal(readString(second),'own\0tail');await call('SysFreeString',[clone]);await call('SysFreeString',[second]);
+ };
+ for(let i=0;i<4;i++)await getCycle();const getHeap=e.get_heap_ptr();for(let i=0;i<128;i++)await getCycle();assert.equal(e.get_heap_ptr(),getHeap,'retrieved owners reclaimed independently');
+ put(p+80,3);put(p+84,-1);const ints=await call('SafeArrayCreate',[3,1,p+80]);assert(ints);const intData=word(ints+12);put(intData,100);put(intData+4,200);put(intData+8,300);
+ assert.equal(await get(ints,[0]),0);assert.equal(word(p+72),200);
+ put(ints+8,0xffffffff);put(p+72,0x11223344);assert.equal(await get(ints,[0]),0x8000ffff);assert.equal(word(p+72),0x11223344);assert.equal(word(ints+8),0xffffffff);put(ints+8,0);
+ put(ints+4,8);assert.equal(await get(ints,[0]),0x80070057);assert.equal(word(p+72),0x11223344);put(ints+4,4);assert.equal(await call('SafeArrayDestroy',[ints]),0);
+ assert.equal(await get(0,[0]),0x80070057);assert.equal(await get(0,[0],0),0x80070057);
  m.free(p);await m.drain();assert.equal(c.frames.length,0);
- console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
+ console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,nativeGetElementOrdinal25:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={main};

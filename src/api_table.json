@@ -39763,5 +39763,12 @@
     "nargs": 4,
     "convention": "stdcall",
     "hash": 185794306
+  },
+  {
+    "id": 4702,
+    "name": "SafeArrayGetElement",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1494902505
   }
 ]
