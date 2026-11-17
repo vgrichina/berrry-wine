@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 'use strict';
 
-// GPU arms of the mirror UV contract: 'gps' (the WAT GPU stream producer
-// drained into lib/gpu-stream-software.js) and, in the browser,
-// GuestWorkerLink -> RenderWorker. --offline runs gps in node against
+// GPU arm of the mirror UV contract: 'gps' (the WAT GPU stream producer
+// drained into lib/gpu-stream-software.js; the browser runs the same arm).
+// --offline runs gps in node against
 // build/wine-assembly.wasm; --plan does not launch a browser.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -19,55 +19,11 @@ const scripts = ['region-map.generated','gl-command-stream','d3d-command-stream'
   'd3d9-software-backend','gpu-stream-software'].map(n=>'lib/'+n+'.js');
 
 function fixtureSource() {
-  let source = softwareSource();
-  const replace = (from,to) => {
-    assert.equal(source.split(from).length,2,'unique browser fixture adaptation seam');
-    source=source.replace(from,to);
-  };
-  replace('port=manager.createEndpoint(config.exactNative16===true?{...options,exactNative16:true}:options);',
-    'port=manager.createEndpoint({...options,webglVersion:config.webglVersion});');
-  const begin=source.indexOf('      const transitions=config.cubeBorder?');
-  const end=source.indexOf('      for(const [old,next] of transitions)',begin);
-  assert(begin>0&&end>begin,'held queue transition seam');
-  // Every requested state is captured before the live device changes. Include
-  // both filter changes and restoration, plus all one-axis address changes.
-  replace(source.slice(begin,end),`      const transitions=config.states.map((old,i)=>
-        [old,config.states[(i+1)%config.states.length]]);
-`);
-  replace("      eq(actual,expected,'PIXEL ORACLE '+label);",`      if(mode==='worker'){
-        await until(()=>lastStats?.stats.drawCalls===drawCount,'observed worker draw stats');
-        row.workerStats=lastStats.stats;
-        eq(row.workerStats.requestedBackend,'webgl','observed worker WebGL');
-        checkVersion(row.workerStats.glVersion,'actual worker context VERSION');
-        eq(row.workerStats.fallbacks,0,'observed worker no fallback');
-        eq(row.workerStats.errors,0,'observed worker no errors');
-        eq(row.workerStats.d3dimSoftwareDrawCallsCompleted,0,'observed worker no native rasterization');
-        eq(row.workerStats.d3dimFallbackSoftwareDrawCallsCompleted,0,'observed worker no fallback rasterization');
-        check(row.workerStats.glRenderer&&row.workerStats.renderEndpointId,'observed actual worker identity');
-      }
-      eq(actual,expected,'PIXEL ORACLE '+label);`);
-  replace("await until(()=>lastStats?.stats.drawCalls===drawCount,'all production GPU stats');evidence.stats=lastStats.stats;",
-    `await until(()=>lastStats?.stats.drawCalls===drawCount,'all production GPU stats');evidence.stats=lastStats.stats;
-      evidence.workerIdentity={guestUrl:'/lib/guest-worker.js',renderUrl:'/lib/d3d-render-worker.js',
-        endpointId:lastStats.stats.renderEndpointId,api:lastStats.stats.renderApi,
-        backend:lastStats.stats.requestedBackend,renderer:lastStats.stats.glRenderer,
-        version:lastStats.stats.glVersion,requestedVersion:config.webglVersion};
-      eq(evidence.workerIdentity.api,'legacy','actual render worker API');
-      eq(evidence.workerIdentity.backend,'webgl','actual render worker backend');
-      check(evidence.workerIdentity.endpointId&&evidence.workerIdentity.renderer,'actual worker endpoint and renderer');
-      eq(evidence.stats.d3dimSoftwareDrawCallsCompleted,0,'no native worker rasterization');
-      eq(evidence.stats.d3dimFallbackSoftwareDrawCallsCompleted,0,'no worker fallback rasterization');
-      eq(evidence.queued.length,config.states.length*config.samples.length,'all held transitions executed');
-      for(const q of evidence.queued){check(q.liveChangedBeforeDrain,'live state changed before drain');
-        check(q.messages.includes('batch'),'held production draw batch');}`);
-  replace("  const held=[],heldPackets=[];let queueBuffers,queueControl;",`  const held=[],heldPackets=[];let queueBuffers,queueControl;
-  const checkVersion=(version,label)=>{
-    check(typeof version==='string',label+' present');
-    if(config.webglVersion!=='auto')
-      check(new RegExp('^WebGL '+config.webglVersion+'[.]0').test(version),label+' '+version);
-  };`);
+  // The browser fixture runs unchanged in 'gps'. The old 'worker' arm queued
+  // D3DIM draws to a legacy WebGL render endpoint; D3DIM is the WAT GPU stream
+  // producer and never reaches that endpoint, so its adaptations are gone.
   // Cleanup belongs to the ordinary fixture; no resource-lifetime contract.
-  return source;
+  return softwareSource();
 }
 
 function apiVersion(value='auto') {
@@ -130,12 +86,12 @@ async function runtime() {
       wasm=fs.readFileSync(path.join(moduleDir,name));
       const module={name,sha256:sha(wasm),bytes:wasm.length};evidence.modules.push(module);
       fs.writeFileSync(path.join(dir,name),wasm);
-      for(const mode of ['gps','worker']){
+      for(const mode of ['gps']){
         page=await browser.newPage();
         await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
         const result=await page.evaluate(fixture,mode,config,oracle.toString(),null);
         assert.equal(result.status,'PASS');
-        assert.equal(result.observations.length,mode==='worker'?1440:480);
+        assert.equal(result.observations.length,480);
         evidence.results.push({module,...result});
         await page.screenshot({path:path.join(dir,name+'-'+mode+'.png')});
         await page.close();page=null;save();
@@ -152,8 +108,6 @@ async function runtime() {
           assert(partial.observations.some(o=>JSON.stringify(o.actual)!==JSON.stringify(o.expected)),
             'negative must observe a wrong actual rendered pixel');
           assert(partial.calls.some(c=>c.label==='DrawPrimitive7'&&c.result===0),'successful public draw');
-          if(mode==='worker')assert(partial.observations.some(o=>o.workerStats?.drawCalls>0&&
-            o.workerStats.requestedBackend==='webgl'&&o.workerStats.fallbacks===0), 'actual queued WebGL draw');
           await page.close();page=null;
           console.log('PASS rendered negative '+name+' '+mode+' '+filter+' '+negative);
         }

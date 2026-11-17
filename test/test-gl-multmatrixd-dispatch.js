@@ -6,11 +6,12 @@ const assert = require('assert');
 const {bootRenderHarness} = require('./render-helper');
 const {CALL_INDEX: GL} = require('../lib/gl-command-stream');
 const {multiply} = require('./helpers/gl-matrix-reference');
-const stream = require('../lib/gl-command-stream');
 const api = require('../src/api_table.json');
 const id = api.findIndex(a=>a.name==='glMultMatrixd');
 function checkSparseAndFailureBoundary() {
   const fs=require('fs'),{compile}=require('../tools/watx');
+  // Production globals the extracted bodies read (gl32's SEH redirect check, ...).
+  const {supply}=require('./helpers/wat-closure-fixture');
   const source=fs.readFileSync('src/09a8b-handlers-opengl.wat','utf8')+'\n'+
     fs.readFileSync('src/09a8c-gl-encoder.wat','utf8')+'\n'+fs.readFileSync('src/03-registers.wat','utf8');
   function extract(name){
@@ -42,10 +43,11 @@ function checkSparseAndFailureBoundary() {
       (global $GUEST_BASE i32 (i32.const 4096)) (global $NULL_SENTINEL i32 (i32.const 240))
       (global $fault_sync_epoch (mut i32) (i32.const 0))
       (defmacro (g2w-fast $ga) (call $g2w $ga))
+      ;;@supply
       ${extract('gl_alloc_affine')} ${extract('gl32')} ${extract('gl64')} ${body}
       (func (export "invoke") (param $p i32)
         (call $handle_glMultMatrixd (local.get $p) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))`;
-    const binary=compile(wat.replaceAll('(region.end $DIRECT_WINDOW)','(i32.const 65536)'),new Map(),{mode:'production'}).wasmBinary;
+    const binary=compile(wat.replace(';;@supply',supply(wat)).replaceAll('(region.end $DIRECT_WINDOW)','(i32.const 65536)'),new Map(),{mode:'production'}).wasmBinary;
     const e=new WebAssembly.Instance(new WebAssembly.Module(binary),{fixture:{g2w:t,
       alloc:n=>{allocated++;assert.strictEqual(n,72);return failAlloc?0:0x410000;},free:()=>freed++,
       encode:(op,stack,aux)=>{assert.strictEqual(op,109);assert.strictEqual(aux,0);
@@ -113,14 +115,12 @@ checkSparseAndFailureBoundary();
     assert.deepStrictEqual(top(),base);
     put(m);invoke();
     assert.deepStrictEqual(top(),Array.from(multiply(base,m.map(Math.fround))).map(Math.fround),'postmultiply in column-major order');
-    const records=[];
-    stream.replay(stream.memoryBatch(memory,e.gl_wat_stream_base(),e.gl_wat_stream_used()),(op,aux,c)=>{
-      if(op===GL.glMultMatrixf)records.push(Array.from(new Float32Array(c.buffer,c.pointerOffset,16)));
-      return 0;
-    });
-    assert.deepStrictEqual(records.at(-1),m.map(Math.fround),'packed pointed payload captured by value');
+    // WAT owns WGL (9192def5a): the call executes in WAT and no stream record
+    // reaches a host, so the by-value claim is read back from the matrix stack.
+    // Rewriting the guest doubles after the call cannot change what was applied.
+    const applied=top();
     put(Array(16).fill(99));
-    assert.deepStrictEqual(records.at(-1),m.map(Math.fround));
+    assert.deepStrictEqual(top(),applied,'pointed payload consumed by value');
   }
   // List definition captures values. Compile defers; compile-and-execute
   // applies immediately. Source changes and temporary frees cannot alter replay.
@@ -145,5 +145,5 @@ checkSparseAndFailureBoundary();
     v.setUint32(regs+16,stack,true);assert.throws(()=>e.matrix_dispatch(bad),WebAssembly.RuntimeError);
     assert.strictEqual(v.getUint32(regs+16,true),stack);assert.deepStrictEqual(top(),unchanged);
   }
-  console.log('PASS glMultMatrixd real dispatch, matrix modes/postmultiply, ABI, stream/list capture and Begin errors');
+  console.log('PASS glMultMatrixd real dispatch, matrix modes/postmultiply, ABI, by-value/list capture and Begin errors');
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -160,3 +160,15 @@ are not applicable. Coordinator retains all runtime ownership. Next required
 work is an explicit coverage/interpolation implementation contract and its
 rendered oblique shared-edge, perspective, depth and public queued regressions;
 the remaining public spatial matrix is still unexecuted.
+
+## Retired 2026-11-17
+
+`test/test-legacy-integer-center-interpolation.js` was deleted. Everything it
+measured is gone: `lib/d3d9-fixed.js` (GPU stream v2 slice 9.2, 4b489cb1b),
+the legacy D3DIM GPU route (51ca79f5d) and `lib/d3d9-backend.js` (a6ee42aed).
+Its `(0.5-1/16)` two-axis displacement, the backend `createProgram` spy and the
+retained readbacks all described that lowering. Nothing in 09aj IR maps screen
+positions anymore: D3D9/D3DIM vertices reach the GPU stream as POSITIONT
+pixels, and `lib/gpu-stream-webgl.js` maps integer centres (+0.5 x, +`Y_CENTRE`
+y lift for top-left ties). That mapping and its tie rule are covered by
+`test/test-gpu-stream-webgl-subpixel.js`.

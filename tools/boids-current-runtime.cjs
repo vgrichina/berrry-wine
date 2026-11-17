@@ -49,20 +49,6 @@ function selectWindow(w){
   const wins=Object.values(w.renderer?.windows||{}).filter(v=>v.visible&&!v.isChild&&v.w>0&&v.h>0&&v.processId===w.processId&&v.wasm===w.instance);
   if(wins.length!==1)throw Error('ambiguous or missing live app window');return wins[0];
 }
-function installSoftwareObserver(root){
-  const api=root.D3DIMRenderWorker,create=api.create;
-  api.create=function(options){const adapter=create.call(this,options),execute=adapter.execute;
-    const trace=root.__boidsPublicTrace={kind:'public-d3dim-raster-arguments',records:[],completed:0,dropped:0};
-    adapter.execute=function(message){let row;
-      try{if(message.opcode===0x20000){const d=new DataView(options.memory.buffer),a=Array.from({length:6},(_,i)=>d.getUint32(message.wa+i*4,true)),e=options.instance.exports;
-        const state=e.guest_to_wasm(a[5])>>>0,vertices=e.guest_to_wasm(a[3])>>>0;
-        row={at:Date.now(),args:a,state:Array.from(new Uint8Array(options.memory.buffer,state,4096)),vertices:Array.from(new Uint8Array(options.memory.buffer,vertices,Math.min(a[4]*32,262144))),complete:false};
-        if(trace.records.length===32){trace.records.shift();trace.dropped++;}trace.records.push(row);
-      }}catch(error){trace.error=String(error);}
-      const result=execute.call(this,message);if(row){row.complete=true;trace.completed++;}return result;
-    };return adapter;
-  };
-}
 // Bounded pixel observations at existing completed PRESENT callbacks only.
 // Reading a completed framebuffer never submits a guest operation or flush.
 function installPixelObserver(root){
@@ -116,4 +102,4 @@ function installPixelObserver(root){
     };
   }
 }
-module.exports={gitFiles,compile,installObserver,selectWindow,installSoftwareObserver,installPresentationObserver,installPixelObserver};
+module.exports={gitFiles,compile,installObserver,selectWindow,installPresentationObserver,installPixelObserver};

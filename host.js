@@ -4103,7 +4103,6 @@ class WineAssembly {
         // The D3DIM executor the page's GPU select names: WebGL unless Software.
         d3dimGpu: !(window.WineD3D && window.WineD3D.renderer === 'software'),
         d3dimLazySync: window.WINE_D3DIM_LAZY_SYNC !== false,
-        onD3dimFrame: frame => self.hostCtx?.presentD3dimGpuFrame?.(frame),
         sharedRenderWorker: true,
         createRenderEndpoint: options => self._createRenderWorkerEndpoint(options),
         // ?rpc-census: count every host import a guest thread hands back to

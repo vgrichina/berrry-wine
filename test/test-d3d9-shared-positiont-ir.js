@@ -62,7 +62,11 @@ if(require.main===module)(async()=>{
  w.fill(0);e.d3d_fixed_free(bundle);assert.deepStrictEqual(n.vertex.nativeBytes,original,'copied IR survives producer storage reuse');
  assert.throws(()=>Shader.compileNativeIR(n.vertex),/guest profile/,'fixed origin must not enter guest path');
  assert.throws(()=>Shader.compileNativeFixedIR({...n.vertex,nativeBytes:reference.vertex.nativeBytes.map((b,i)=>i===28?0:b)}),/origin/);
- const vs=Shader.compileNativeFixedIR(n.vertex),ps=Shader.compileNativeFixedIR(n.pixel);
+ // Pixel IR reaches GLSL only as core IR (09af1, since bd12cd470): the raw
+ // ps1.x-shaped fixed pixel IR is rejected, its WAT canonical form compiles.
+ assert.throws(()=>Shader.compileNativeFixedIR(n.pixel),/invalid D3D shader IR|core IR/,'raw fixed pixel IR must be canonicalized');
+ const corePixel=IR.canonicalBytes(e,()=>memory.buffer,n.pixel.nativeBytes);assert.strictEqual(corePixel.flags,12);
+ const vs=Shader.compileNativeFixedIR(n.vertex),ps=Shader.compileNativeFixedIR(corePixel);
  assert(vs.source.includes('gl_Position'));assert(ps.source.includes('texture2D'));
  assert.deepStrictEqual(vs.uniforms,[],'viewport constants are native DEF, not JS uniform bindings');
  assert(!ps.uniforms.some(u=>/d3d_ps_c/.test(u)),'fixed constants never bind guest banks');

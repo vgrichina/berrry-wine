@@ -40,8 +40,9 @@ function checkRendererRestore(source){
  // injected draw failure after save. Assert both draw and overlay failures.
  const block=slice(source,'    for (const child of layers) {','    return canvas;');
  for(const overlay of [false,true]){
-  let depth=0;const boom=Error('canvas failure'),ctx={save(){depth++;},restore(){depth--;},beginPath(){},rect(){},clip(){},drawImage(){if(!overlay)throw boom;}},host={_flushCanonicalCanvas(){},_windowOriginForComposite:()=>({x:0,y:0}),_clipRectForChildSurface:()=>({x:0,y:0,w:2,h:2}),_overlayFrameLayer(){throw boom;}};
-  const fn=new Function('layers','topPos','ctx',block);assert.throws(()=>fn.call(host,[{_backCanvas:{}}],{x:0,y:0},ctx),e=>e===boom);assert.equal(depth,0,'exception must restore canvas clip');cases++;
+  let depth=0;const boom=Error('canvas failure'),ctx={save(){depth++;},restore(){depth--;},beginPath(){},rect(){},clip(){},drawImage(){if(!overlay)throw boom;}},host={_flushCanonicalCanvas(){},_windowOriginForComposite:()=>({x:0,y:0}),_clipRectForChildSurface:()=>({x:0,y:0,w:2,h:2}),_overlayFrameLayer(){throw boom;},_observePresentationTransfer(){},_frameLayerOffset:()=>({x:0,y:0})};
+  // The loop reports each transfer into the presentation canvas (663f1c139).
+  const fn=new Function('layers','topPos','ctx','canvas',block);assert.throws(()=>fn.call(host,[{_backCanvas:{}}],{x:0,y:0},ctx,{}),e=>e===boom);assert.equal(depth,0,'exception must restore canvas clip');cases++;
  }
 }
 (async()=>{

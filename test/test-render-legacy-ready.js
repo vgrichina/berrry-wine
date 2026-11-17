@@ -72,7 +72,9 @@ async function probe(mode) {
         postMessage: message => parentPort.postMessage(message), terminate() {}
       }) });
     try {
-      const result = encoder.call(0x20002, 0);
+      // The retired 0x20002 READY opcode asked exactly this; the transport now
+      // refuses it, so probe the strict-ready wait directly.
+      const result = encoder.ready() ? 1 : 0;
       if (workerData.mode === 'fence-error') encoder.fence();
       parentPort.postMessage({ t: 'result', result, fallbacks: encoder.stats.fallbacks });
     } catch (error) { parentPort.postMessage({ t: 'result', error: error.message,

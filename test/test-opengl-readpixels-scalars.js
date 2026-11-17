@@ -181,9 +181,11 @@ const extraWat=`
  noWrite('RGBA context rejects COLOR_INDEX',[0,0,1,1,0x1900,0x1401,output],0x502);
  noWrite('Begin/End',[0,0,1,1,0x1908,0x1401,output],0x502,true);
  // A queued point proves the native producer/consumer path was exercised.
- call('glColor4f',[f(1),f(0),f(0),f(1)]);call('glBegin',[0]);call('glVertex3f',[f(-.9375),f(.55),f(0)]);call('glEnd');call('glFinish');
+ call('glColor4f',[f(1),f(0),f(0),f(1)]);call('glBegin',[0]);call('glVertex3f',[f(-.9375),f(.3),f(0)]);call('glEnd');call('glFinish');
  if(queued)encoder.fence();
- // The native point rasterizer places this point in physical row1 (GL row2).
+ // Window (0.25,2.6): GL1.1 3.3 puts a size-1 point at (floor x, floor y), GL row2 /
+ // physical row1. (y=.55 gave window y 3.1 = GL row3; the old rounded point path,
+ // replaced by the spec point raster in 769227f75, had drawn it one row low.)
  const entry=e.gl_sw_entry(),bits=dv.getUint32(entry+20,true),pitch=dv.getUint16(entry+18,true);
  assert.strictEqual(dv.getUint32(bits+pitch,true),0xffff0000,'independent native source control');
  read(0,2,1,1,0x1908,0x1401);assert.deepStrictEqual(Array.from(new Uint8Array(memory.buffer,outWa,4)),[255,0,0,255]);guards([0,1,2,3],'native point');cleanError('native point');

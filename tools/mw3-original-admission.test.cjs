@@ -63,7 +63,7 @@ test('passive snapshot handles the actual legacy render adapter without inventin
   const adapter = require('../lib/d3dim-render-worker.js').create({
     instance:{exports:{}}, memory:{buffer:new ArrayBuffer(1024)},
   });
-  const entry = {adapter, options:{api:'legacy',backend:'webgl'},
+  const entry = {adapter, options:{api:'d3dim',backend:'software'},
     control:new Int32Array([1,1153,0,0,576,576])};
   const endpoints = new Map([[1,entry]]);
   // The actual failed diagnostic assumed a field the production adapter does
@@ -76,7 +76,6 @@ test('passive snapshot handles the actual legacy render adapter without inventin
   assert.equal(row.stats,null);
   assert.match(row.targetsUnavailableReason,/no target collection/);
   assert.deepEqual(row.control,[1,1153,0,0,576,576]);
-  assert.equal(adapter.d3dimSoftwareDrawCallsCompleted,0);
   // The exact serialized function is what a Worker evaluation executes.
   const evaluate = require('node:vm').runInNewContext('('+snapshotRenderEndpoints.toString()+')', {performance});
   assert.equal(evaluate(endpoints).endpoints[0].targets,null);

@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process'),crypto=require('node:crypto'),vm=require('node:vm');
-const {PNG}=require('pngjs'),{gitFiles,compile,installObserver,selectWindow,installSoftwareObserver,installPresentationObserver,installPixelObserver}=require('./boids-current-runtime.cjs');
+const {PNG}=require('pngjs'),{gitFiles,compile,installObserver,selectWindow,installPresentationObserver,installPixelObserver}=require('./boids-current-runtime.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const {installDriver}=require('./boids-current-driver.cjs');
 const {installOwnershipObserver,classifyOwnershipPixels}=require('./boids-current-owner.cjs');

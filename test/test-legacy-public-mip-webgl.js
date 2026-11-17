@@ -317,8 +317,6 @@ function fixtureSource() {
         eq(row.workerStats.requestedBackend,'webgl','worker backend');
         eq(row.workerStats.renderApi,'legacy','worker API');
         eq(row.workerStats.fallbacks,0,'worker no fallback');eq(row.workerStats.errors,0,'worker no errors');
-        eq(row.workerStats.d3dimSoftwareDrawCallsCompleted,0,'no native software pixels');
-        eq(row.workerStats.d3dimFallbackSoftwareDrawCallsCompleted,0,'no fallback software pixels');
         check(row.workerStats.renderEndpointId&&row.workerStats.glRenderer,'actual worker identity');
       }
       if(mode==='worker'){
@@ -630,7 +628,11 @@ async function runtime(){
     };
     for(const planName of pointNone?['point-none']:combined?['combined']:['solid','spatial'])for(const module of evidence.modules){
       wasm=fs.readFileSync(path.join(moduleDir,module.name));
-      for(const mode of ['software','gps','worker'])
+      // 'software' (the retired WAT D3DIM rasterizer) and 'worker' (D3DIM
+      // queued to a legacy WebGL render endpoint) are gone: D3DIM is the WAT
+      // GPU stream producer. The fixture's worker branches stay for the
+      // fixtures derived from this one.
+      for(const mode of ['gps'])
       for(const webglVersion of mode==='worker'?[1,2]:[null]){
         const cfg={...config(planName),webglVersion};
         activeNegative=null;await open();const result=await page.evaluate(fixture,mode,cfg,oracleSource);
@@ -666,8 +668,8 @@ async function runtime(){
 
 // --offline: node, no browser, build/wine-assembly.wasm. The rendered
 // matrices (solid, spatial, combined, point-none) and their pixel negatives in
-// 'software' and 'gps' (the WAT GPU stream producer drained into
-// lib/gpu-stream-software.js). Worker and WebGL-version arms stay browser-only.
+// 'gps' (the WAT GPU stream producer drained into lib/gpu-stream-software.js),
+// the only D3DIM path; the retired WAT 'software' rasterizer arm is gone.
 async function offline(){
   controls();
   const base=require('./test-legacy-texture-rendered-contract');
@@ -680,7 +682,7 @@ async function offline(){
   const failures=[];
   for(const planName of ['solid','spatial','combined','point-none']){
     const source=planName==='solid'||planName==='spatial'?fixtureSource():combinedFixtureSource();
-    for(const mode of ['software','gps'])try{
+    for(const mode of ['gps'])try{
       const cfg=config(planName);
       // GAP (lib): lib/gpu-stream-software.js selects the wrong level for the
       // steep-perspective trilinear sample (got [116,88,104], oracle

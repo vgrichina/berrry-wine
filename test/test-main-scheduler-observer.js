@@ -37,6 +37,17 @@ function extract(run, tm) {
 const production = extract(runSource, tmSource);
 const records = logs => logs.filter(x => x.startsWith('[main-scheduler] {')).map(x => JSON.parse(x.slice('[main-scheduler] '.length)));
 
+function stripComPolls(calls, throws, local) {
+  if (!local) { assert(!calls.includes('com-yield'), 'Worker-owned main must not poll the local COM yield'); return calls; }
+  let runOpen = false;
+  for (const x of calls) {
+    if (Array.isArray(x) && x[0] === 'run') { assert(!runOpen || throws, 'COM poll missing after a completed main run'); runOpen = !throws; }
+    else if (x === 'com-yield') { assert(runOpen, 'COM poll without a completed main run'); runOpen = false; }
+  }
+  assert(!runOpen, 'COM poll missing after the last completed main run');
+  return calls.filter(x => x !== 'com-yield');
+}
+
 function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 25015,
   deadline = 25021, live = true, real = false, named = false, yieldReason = 0,
   suspended = false, timer = false, renderSend = false, render = false,
@@ -89,7 +100,11 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
     require(name) { assert.equal(name, './main-scheduler-observer'); factoryCalls++; return { createMainSchedulerObserver }; },
     nativeFault: { capture: () => false, wait: async () => {}, isHeld: () => false },
     h, wh, tid: 7, instance: { exports: ex }, mainOwner: createGuestMainOwner({localExports:ex}), threadManager: tm, tickState, logs,
-    ctx: { waitD3DRender() { calls.push('wait-render'); }, d3d9Bridge: { requests: new Map() } },
+    // Production sets ctx.exports = instance.exports; after an ordinary local
+    // slice it reads the yield for the COM interface service (23, since
+    // 295182375). Tagged separately so the baseline normalization can name it.
+    ctx: { exports: { get_yield_reason() { calls.push('com-yield'); return yieldReason; } },
+      comInterfaces: { service() { calls.push('com-service'); } }, waitD3DRender() { calls.push('wait-render'); }, d3d9Bridge: { requests: new Map() } },
     mainRenderWait: render ? { token: 123, done: false, polls: 0, since: 0 } : null,
     renderWaitAttribution: null, renderParkStats: { skippedBatches: 0 },
     inputEvent: pending, crossThreadMsgs: [...cross], inputQueue: [...buttons], installingFiles: installing,
@@ -102,14 +117,25 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
   const init = baselineMode ? 'const mainSchedulerObserver = null;' : parts.args + '\n' + parts.flag + '\n' + parts.getArg + '\n' + parts.window + '\n' + parts.init;
   vm.runInContext(init + '\n' + parts.input + '\n' + parts.workerInput + '\n' + parts.gate, context);
   return {
-    calls, logs, dequeues, context, tm, h, wh, ex, factoryCalls: () => factoryCalls,
+    // Production polls the COM service yield once after every completed
+    // local main run (295182375); the pinned baseline predates it. Check that
+    // placement here, then compare the remaining calls against the baseline.
+    // A Worker-owned main services COM on its own endpoint: no local poll.
+    get calls() { return baselineMode ? calls : stripComPolls(calls, throws, context.mainOwner.kind === 'local'); }, rawCalls: calls,
+    logs, dequeues, context, tm, h, wh, ex, factoryCalls: () => factoryCalls,
     async dispatch(which = mode) {
       const key = which === 'worker' ? 'worker' : which === 'cooperative' ? 'cooperative' : 'ordinary';
       // The saved baseline predates the native-fault stop guard. Normalize
       // that existing guard so this test compares observer behavior.
+      // Ordinary: the baseline's suspended-path yield-16 render park went
+      // with the old JS D3D9 path (a6ee42aed); drop it from the baseline.
       const snippet = baselineMode && key === 'cooperative'
         ? parts[key].replace('const sliceStats = threadManager.runSlice(BATCH_SIZE);',
-          'const sliceStats = threadManager.runSlice(BATCH_SIZE); if (stopped) break;') : parts[key];
+          'const sliceStats = threadManager.runSlice(BATCH_SIZE); if (stopped) break;')
+        : baselineMode && key === 'ordinary'
+          ? parts[key].replace('\n      else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;', '')
+          : parts[key];
+      if (baselineMode && key === 'ordinary') assert(!snippet.includes('=== 16'), 'baseline yield-16 normalization anchor');
       return vm.runInContext('(async () => { for (let fixtureTurn = 0; fixtureTurn < 1; fixtureTurn++) {\n' + snippet + '\n} })()', context);
     },
     gate() { return vm.runInContext('mainExecutionSuspended()', context); },
@@ -159,8 +185,22 @@ async function acceptance(parts) {
       const disabled = harness(parts, config);
       const enabled = harness(parts, { ...config, enabled: true });
       const results = await Promise.allSettled([original.dispatch(), disabled.dispatch(), enabled.dispatch()]);
-      assert.deepEqual(results.map(r => r.status), [results[0].status, results[0].status, results[0].status]);
-      if (mode === 'cooperative' && options.stopped) {
+      const faultRetired = mode !== 'ordinary' && options.throws;
+      if (faultRetired) {
+        // The pinned baseline swallowed an interleaved main-run exception and
+        // kept running. Since 0c2bc2da5 an uncaptured native fault rethrows:
+        // never continue a guest whose handler unwound. Assert that directly.
+        assert.deepEqual(results.map(r => r.status), ['fulfilled', 'rejected', 'rejected']);
+        for (const r of results.slice(1)) assert.match(r.reason.message, /stub guest exception/);
+      } else assert.deepEqual(results.map(r => r.status), [results[0].status, results[0].status, results[0].status],
+        `dispatch status ${mode} ${JSON.stringify(options)}: ${results.map(r => r.reason?.stack || r.status).join(' | ')}`);
+      if (faultRetired) {
+        const firstRun = original.calls.findIndex(x => Array.isArray(x) && x[0] === 'run');
+        // The faulting run still polled host input once before it threw.
+        assert.deepEqual(disabled.calls, [...original.calls.slice(0, firstRun + 1), 'renderer-input'],
+          'fault retires at the faulting main run');
+        assert.deepEqual(enabled.calls, disabled.calls, 'observer preserves fault retirement');
+      } else if (mode === 'cooperative' && options.stopped) {
         // The pinned pre-fault-lifecycle baseline ran all three sibling
         // slices after stop. Current production retires after the first;
         // assert that behavior explicitly rather than restoring old work.

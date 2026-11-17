@@ -32,8 +32,13 @@ function fixture(legacy=false,nativeMemory=false){
   const sharedMemory=nativeMemory ? new WebAssembly.Memory({initial:96,maximum:96,shared:true})
     : {buffer:new SharedArrayBuffer(legacy?6*1024*1024:1024)};
   let allocation=4096;
+  const word=wa=>new DataView(sharedMemory.buffer).getUint32(wa,true);
   const exports={d3d_render_reset_transients(){transients=0;},d3dim_worker_init(){init++;},d3d_render_retire_heap(){retire++;return 1234;},
     guest_to_wasm:p=>p,
+    // Native software-GL replay, recorded rather than rasterized: the first
+    // word of the snapshot and of the draw, or the texture copy's arguments.
+    gl_sw_worker_draw(snap,rec){events.push(['gl-draw',word(snap),word(rec)]);return 1;},
+    gl_sw_worker_tex_copy(stage,...args){events.push(['gl-tex',...args,word(stage)]);},
     guest_alloc(bytes){const p=allocation;allocation+=bytes;return p;}};
   if(legacy){
     // The production D3DIM adapter (software OpenGL replay only); load it unmodified.
@@ -73,7 +78,7 @@ function encoderScopedFence(){
     }
   },terminate(){}};
   const encoder=new Stream.Encoder({workerFactory:()=>worker,memory,module:{},
-    getImageBase:()=>0x400000,guestToWasm:p=>p,explicitFence:true});
+    getImageBase:()=>0x400000,explicitFence:true});
   assert.strictEqual(encoder.call(0x20005,0),1);
   assert.strictEqual(encoder.call(0x20005,0),1);
   assert.strictEqual(messages.filter(m=>m.t==='batch').length,1,'second draw is pending before barrier');
@@ -85,13 +90,16 @@ function encoderScopedFence(){
   assert(messages.at(-1).seq>scopedSequence);
   assert.deepStrictEqual([messages.at(-1).address,messages.at(-1).length],[0,0]);
   assert.strictEqual(encoder.snapshot().transportFences,2);
-  // 0x20007 (lazy shared-surface publication), 0x2000A (present) and 0x20004
-  // (clear) belong to the WAT producer since GPU stream v2 D2c; the software
-  // transport declines them without posting anything.
+  // The transport carries software GL only. The retired D3DIM records
+  // (0x20000 draw, 0x20002 ready, 0x20003 flip, 0x20004 clear) and D3DIM's
+  // GPU-stream opcodes (0x20007 lazy publish, 0x2000A present) are producer
+  // bugs: they throw and post nothing.
   const before=messages.length;
-  for(const opcode of [0x20004,0x20007,0x2000A])
-    assert.strictEqual(encoder.call(opcode,0,0),-1,'software transport declines GPU opcode 0x'+opcode.toString(16));
-  assert.strictEqual(messages.length,before,'declined GPU opcodes post nothing');
+  for(const opcode of [0x20000,0x20002,0x20003,0x20004,0x20007,0x2000A,0x10001])
+    assert.throws(()=>encoder.call(opcode,0,0),/retired or unknown opcode/,'transport refuses 0x'+opcode.toString(16));
+  assert.strictEqual(messages.length,before,'refused opcodes post nothing');
+  assert.deepStrictEqual([...Stream.OPCODES],[0x20001,0x20005,0x20006]);
+  assert.strictEqual(Stream.DRAW_OPCODE,undefined,'retired D3DIM draw opcode is not exported');
   encoder.stop();
 }
 encoderScopedFence();
@@ -107,11 +115,13 @@ encoderScopedFence();
     memory:{buffer:new ArrayBuffer(64)},instance:{exports:{
       gl_sw_worker_draw(){if(fail)throw new Error('native draw failed');return 1;},
     }}});
-  assert.throws(()=>adapter.execute({opcode:0x20000,wa:0}),/retired or unknown/);
+  for(const opcode of [0x20000,0x20002,0x20003,0x20004])
+    assert.throws(()=>adapter.execute({opcode,wa:0}),/retired or unknown/);
   assert.strictEqual(adapter.execute({opcode:0x20005,wa:0}),1);
+  assert.strictEqual(adapter.execute({opcode:0x20001,wa:0}),1);
   fail=true;
   assert.throws(()=>adapter.execute({opcode:0x20005,wa:0}),/native draw failed/);
-  assert.strictEqual(adapter.d3dimSoftwareDrawCallsCompleted,0,'no D3DIM draw completes on the adapter');
+  assert.deepStrictEqual(Object.keys(adapter).sort(),['destroy','execute','fence'],'no D3DIM evidence or diagnostics surface');
 }
 (async()=>{
   const f=fixture(),a=f.manager.createEndpoint({api:'glide',name:'a'}),b=f.manager.createEndpoint({api:'d3dim',name:'b'});
@@ -151,8 +161,51 @@ encoderScopedFence();
   assert.deepStrictEqual(f.adopted,[1234]);
   assert.deepStrictEqual(f.counts(),{init:1,retire:1,terminated:1});
   await f.manager.stop();assert.strictEqual(f.counts().retire,1,'idempotent process shutdown');
-  // The legacy decoder's D3DIM draw/flip replay into the D3DIM adapter is
-  // retired (D3DIM is GPU stream v2 only; the adapter replays software GL).
+  // Legacy endpoint: the shared owner replays software-GL records natively and
+  // in order. D3DIM never reaches it, so it has no GPU backend, and the
+  // retired D3DIM draw (kind 0) and flip (kind 1) records fail the batch.
+  {
+    const l=fixture(true,true);
+    await assert.rejects(l.manager.createEndpoint({api:'legacy',backend:'webgl'}).ready,/software-GL only/);
+    const open=async()=>{
+      const port=l.manager.createEndpoint({api:'legacy'});await port.ready;
+      const control=new Int32Array(new SharedArrayBuffer(64)),packet=new SharedArrayBuffer(4096);
+      port.postMessage({t:'init',control:control.buffer,buffers:[packet]});await tick();
+      assert.strictEqual(Atomics.load(control,0),1,'legacy endpoint ready');
+      let offset=0;const d=new DataView(packet);
+      const record=(kind,words,payload)=>{
+        const size=32+payload.length*4;
+        [size,...words].forEach((v,i)=>d.setUint32(offset+i*4,v,true));d.setUint32(offset+28,kind,true);
+        payload.forEach((v,i)=>d.setUint32(offset+32+i*4,v,true));offset+=size;
+      };
+      return {port,control,record,bytes:()=>offset};
+    };
+    const p=await open();
+    p.record(2,[8,4],[11,0,21]);           // GL draw: 8-byte snapshot, 4-byte draw
+    p.record(3,[5,0,0,1,1,4],[0xff00ff00]); // GL texels: entry 5, 1x1 at 0,0
+    p.record(2,[4,4],[12,22]);
+    p.port.postMessage({t:'batch',index:0,seq:1,bytes:p.bytes(),commands:3,imageBase:0x400000});await tick();
+    assert.strictEqual(Atomics.load(p.control,1),1,'batch completes');
+    assert.strictEqual(Atomics.load(p.control,5),3,'three commands replayed');
+    assert.deepStrictEqual(l.events.filter(e=>e[0].startsWith('gl-')),
+      [['gl-draw',11,21],['gl-tex',5,0,0,1,1,0xff00ff00],['gl-draw',12,22]],'GL records replay in FIFO order');
+    let stats;p.port.addEventListener('message',event=>{if(event.data.t==='stats')stats=event.data.stats;});
+    p.port.postMessage({t:'legacy-fence',seq:2,address:8194,length:3});await tick();
+    assert.deepStrictEqual([Atomics.load(p.control,1),Atomics.load(p.control,11)],[2,1],'fence completes behind the batch');
+    assert.deepStrictEqual(stats,{renderEndpointId:stats.renderEndpointId,renderApi:'legacy',
+      requestedBackend:'software',completedFenceSequence:2},'fence stats carry no D3DIM evidence');
+    for(const kind of [0,1]){
+      const r=await open();let failure;
+      r.port.addEventListener('error',error=>{failure=error;});
+      r.record(kind,[0,0],[]);
+      r.port.postMessage({t:'batch',index:0,seq:1,bytes:r.bytes(),commands:1,imageBase:0x400000});await tick();
+      assert.strictEqual(Atomics.load(r.control,2),1,'retired record kind '+kind+' fails the endpoint');
+      assert.match(String(failure),/retired or unknown render command record kind/);
+    }
+    p.port.postMessage({t:'legacy-close'});await tick();
+    assert.strictEqual(l.counts().retire,0,'closing a legacy endpoint keeps the process heap');
+    await l.manager.stop();
+  }
   let orphanTerminated=0;
   assert.throws(()=>new Manager({workerFactory:()=>({addEventListener(){},postMessage(){throw new Error('clone failed');},
     terminate(){orphanTerminated++;}}),module:{},memory:{},imageBase:0x400000}),/clone failed/);

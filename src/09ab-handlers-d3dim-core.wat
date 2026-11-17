@@ -715,15 +715,6 @@
     (global.set $heap_base
       (i32.load (region.addr $HEAP_SHARED 4))))
 
-  ;; D3DIM no longer replays draws on a render owner (the GPU stream producer
-  ;; lowers them in the guest's own instance). The export survives only
-  ;; because lib/d3d-render-worker.js checks for it before it starts; a
-  ;; legacy D3DIM draw record reaching it is a bug, so it traps.
-  (func (export "d3dim_worker_draw")
-    (param $this i32) (param $primitive i32) (param $vertex_type i32)
-    (param $vertices i32) (param $count i32) (param $state i32)
-    (unreachable))
-
   ;; Render endpoints share one instance. A native trap bypasses ordinary
   ;; draw epilogues, so its scheduler clears optional raster hooks before the
   ;; next endpoint can run. Only call after all asynchronous draw slices end.
