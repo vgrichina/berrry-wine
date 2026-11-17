@@ -3054,6 +3054,7 @@ async function main() {
   const { ComInterfaceRuntime, comRuntimeSourcePin } = require('../lib/com-interface-runtime');
   ctx.comInterfaces = new ComInterfaceRuntime({
     getExports: () => ctx.exports, getMemory: () => memory.buffer, desktop: processDesktop,
+    getVfs: () => ctx.vfs,
     modulePin: process.env.WINE_COM_MODULE_SHA256, sourcePin: comRuntimeSourcePin(),
     information: (...args) => base.host.com_localserver_information(...args),
     serviceYield: async ({ reason }) => {

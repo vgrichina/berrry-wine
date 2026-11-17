@@ -332,8 +332,8 @@
     (i32.const 1))
 
   ;; JS COM frames retain this exact i64 child token, never a depth surrogate.
-  ;; A failed/aborted call deliberately leaves its child live: only explicit
-  ;; process/thread retirement may discard it, not a JS exception handler.
+  ;; Both return and exceptional unwind validate the exact live child before
+  ;; restoring its suspended caller. Stale owners cannot restore a frame.
   (func $com_callback_enter (export "com_callback_enter") (result i64)
     (call $sync_depth_enter)
     (call $invocation_current))
@@ -343,6 +343,22 @@
   (func $com_callback_leave (export "com_callback_leave") (param $expected i64)
     (call $com_callback_check (local.get $expected))
     (call $sync_depth_leave))
+  (func (export "com_callback_get_flags") (param $expected i64) (param $index i32) (result i32)
+    (call $com_callback_check (local.get $expected))
+    (if (i32.eqz (local.get $index)) (then (return (global.get $flag_op))))
+    (if (i32.eq (local.get $index) (i32.const 1)) (then (return (global.get $flag_a))))
+    (if (i32.eq (local.get $index) (i32.const 2)) (then (return (global.get $flag_b))))
+    (if (i32.eq (local.get $index) (i32.const 3)) (then (return (global.get $flag_res))))
+    (if (i32.eq (local.get $index) (i32.const 4)) (then (return (global.get $saved_cf))))
+    (if (i32.eq (local.get $index) (i32.const 5)) (then (return (global.get $flag_sign_shift))))
+    (unreachable))
+  (func (export "com_callback_set_flags") (param $expected i64)
+      (param $op i32) (param $a i32) (param $b i32) (param $res i32)
+      (param $cf i32) (param $sign i32)
+    (call $com_callback_check (local.get $expected))
+    (global.set $flag_op (local.get $op)) (global.set $flag_a (local.get $a))
+    (global.set $flag_b (local.get $b)) (global.set $flag_res (local.get $res))
+    (global.set $saved_cf (local.get $cf)) (global.set $flag_sign_shift (local.get $sign)))
   ;; Sequential JS callbacks must re-enter with the suspended stream's IP:
   ;; sync_depth_enter uses it to pin spill code. Guest EIP is not this cursor.
   (func $com_callback_get_ip (export "com_callback_get_ip") (result i32)
