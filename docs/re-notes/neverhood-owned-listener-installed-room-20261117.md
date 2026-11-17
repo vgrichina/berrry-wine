@@ -18,8 +18,10 @@ to installed SETUP95. Published shortcut and explicit-ISO ownership fixes
 were reused with their exact component/module proofs. No installer ran.
 
 The local admission helper sampled process FDs before TCP state. The original
-listener appeared between these reads, so the helper refused a newly listed
-socket absent from its older FD snapshot. The controller never started: zero
+failed its local ownership assertion. A listener appearing between these reads
+can produce exactly that refusal; the focused test reproduces this race. The
+failing FD snapshot was not retained, so attributing the original refusal to
+this race is an inference. The controller never started: zero
 HTTP, capture, bind or input. A later local diagnostic, taken before host
 cleanup, showed the listener inode in the expected native PID's FDs. This is
 an operator/harness sampling error, not a material native fault. The endpoint
