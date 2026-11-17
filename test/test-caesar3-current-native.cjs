@@ -70,6 +70,23 @@ function controllerFixture(){
  const code=Buffer.from([0x68,...u32(50),0xff,0x15,...u32(0x401204),...quit,0xe9,...u32(guestAt+quit.length-(stub+11+quit.length+5))]);
  code.copy(b,raw(0x2d00));b.fill(0x90,at,at+quit.length);b[at]=0xe9;b.writeInt32LE(stub-guestAt-5,at+1);return b;
 }
+function initialPumpFixture(){
+ const b=controllerFixture(),raw=r=>r-0x1000+0x400,u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
+ // Delay only the first ordinary pump with the existing real GetTickCount.
+ // No original code, real clock, API implementation or deadline is changed.
+ const wait=[0xff,0x15,...u32(0x40120c),0x89,0xc3,0xff,0x15,...u32(0x40120c),0x29,0xd8,0x3d,...u32(4000),0x72,0xf1];
+ const at=raw(0x2c00),pump=Buffer.from(b.subarray(at+wait.length,at+wait.length+26));
+ assert.equal(pump[0],0x68);assert.equal(pump[25],0x00);
+ const resume=0x402c00+wait.length+26+5+b.readInt32LE(at+wait.length+27);
+ const prefix=[0x83,0x3d,...u32(0x403630),1,0x74,10+wait.length,0xc7,0x05,...u32(0x403630),...u32(1)];
+ const code=Buffer.from([...prefix,...wait,...pump,0xe9,...u32(resume-(0x402e00+prefix.length+wait.length+pump.length+5))]);
+ code.copy(b,raw(0x2e00));b[at]=0xe9;b.writeInt32LE(0x402e00-0x402c05,at+1);return b;
+}
+function slowFrameFixture(){
+ const b=controllerFixture(),s=titleConsumerFixture('slow-frame'),raw=r=>r-0x1000+0x400;
+ for(const [a,z] of [[0x1334,0x133c],[0x1d00,0x1d80],[0x2c00,0x3000]])s.copy(b,raw(a),raw(a),raw(z));
+ return b;
+}
 async function reviewedController(out,late=false,printable=false,personal=false,stale=false,fault=null){
  fs.mkdirSync(out);const save=(n,v)=>{
   const target=path.join(out,n),pending=target+'.'+process.pid+'.pending';
@@ -77,14 +94,14 @@ async function reviewedController(out,late=false,printable=false,personal=false,
   fs.linkSync(pending,target);fs.unlinkSync(pending);
  };
  fs.copyFileSync(path.join(out,personal?'../runtime-inputs.json':'../../runtime-inputs.json'),path.join(out,'runtime-inputs.json'));
- const image=path.join(out,'reviewed.exe');fs.writeFileSync(image,printable?require('../tools/native-printable-fixture.cjs').fixture():controllerFixture());
+ const image=path.join(out,'reviewed.exe');fs.writeFileSync(image,fault?.startsWith('slow-')?slowFrameFixture():fault==='initial-pump'?initialPumpFixture():printable?require('../tools/native-printable-fixture.cjs').fixture():controllerFixture());
  const reservation=net.createServer();await new Promise(r=>reservation.listen(0,'127.0.0.1',r));const port=reservation.address().port;await new Promise(r=>reservation.close(r));
  const invocationToken=crypto.randomUUID(),start=Date.now()/1000;
- save('launch.json',{at:start,deadline:start+240,gameplayCutoff:start+60,reserveSeconds:180,rootPort:port});
+ save('launch.json',{at:start,deadline:start+240,gameplayCutoff:start+60,reserveSeconds:180,rootPort:port,inputReadinessRequired:fault==='initial-pump'});
  const wd=cp.spawn(process.execPath,['-e',`let p;const t=setTimeout(()=>{if(p)try{process.kill(-p,'SIGTERM')}catch{};process.exit(2)},${personal?120000:35000});console.log('ARMED');process.stdin.on('data',b=>p=+b);process.stdin.on('end',()=>clearTimeout(t));`]);
  let wo='',we='';wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=once(wd,'close');
  while(!wo.includes('ARMED'))await pause(2);save('watchdog-arm.json',{pid:wd.pid,beforeNative:true,seconds:personal?120:35});
- const s=startControlSession(['test/run.js','--exe='+image,'--native-exit-receipt='+path.join(out,'native-exit.json'),'--native-invocation-token='+invocationToken,'--no-build','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds='+ (personal?115:30),'--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});
+ const s=startControlSession(['test/run.js','--exe='+image,'--public-consumer-trace='+path.join(out,'public-consumers.jsonl'),'--native-exit-receipt='+path.join(out,'native-exit.json'),'--native-invocation-token='+invocationToken,'--no-build','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds='+ (personal?115:30),'--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});
  wd.stdin.write(String(s.child.pid));
  const st=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8'),info={pid:s.child.pid,startToken:st.slice(st.lastIndexOf(')')+2).split(' ')[19],invocationToken,bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()};save('native-pid.json',info);
  let hostCleanup=false;
@@ -103,7 +120,52 @@ async function reviewedController(out,late=false,printable=false,personal=false,
    while(!fs.existsSync(path.join(out,'stop-personal.json')) && s.child.exitCode===null && !fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json'))){assert(Date.now()<due);await pause(10);}
    save('personal-finished.json',{at:Date.now(),originalStarted:false});return;
   }
-  if(fault){
+  if(fault?.startsWith('slow-')){
+   await control(['capture','before']);
+   await control(['review','before','Authored ordinary slow-frame USER window; finite pointer phase.','Fixture','game',snap.mainHwnd]);await control(['bind','before']);
+   // Align only an authored test with its ordinary empty public USER return. No
+   // pump, idle notification, callback, clock or guest state is forced.
+   let seen=fs.readFileSync(path.join(out,'public-consumers.jsonl'),'utf8').length;
+   const due=Date.now()+3000;
+   while(true){const log=fs.readFileSync(path.join(out,'public-consumers.jsonl'),'utf8');
+    const rows=log.slice(seen).trim().split('\n').filter(Boolean).map(l=>JSON.parse(l));seen=log.length;
+    if(rows.some(v=>v.phase==='input-poll-return'&&v.name==='PeekMessageA'&&v.threadId===1&&v.eax===0))break;
+    assert(Date.now()<due);await pause(2);
+   }
+   if(fault==='slow-combined'){
+    await control(['intent','combined','before','500','220','game'],1);
+    assert(fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));
+    assert.equal(JSON.parse(fs.readFileSync(path.join(out,'combined-down.json'))).receipt.consumed,false);
+    const requests=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');await control(['capture','forbidden'],1);
+    assert.equal(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'),requests);
+    save('assertions.json',{pass:true,combinedMoveDownExpired500:true,noFalseACK:true,permanentUNKNOWN:true,zeroLaterRequests:true,syntheticAuthoredAttestation:true});
+   }else{
+    await control(['hover-intent','arrive','before','500','220','game']);
+    const receipt=JSON.parse(fs.readFileSync(path.join(out,'arrive-down.json'))).receipt;
+    assert.equal(receipt.nativeMessage.msg,0x200);assert(receipt.consumed);
+    // Let the authored application's own next ordinary frame run. This is
+    // not permission for another original action: it gets a new review.
+    await pause(400);await control(['capture','settled']);
+    await control(['review-intent','click','settled','500','220','game','Authored separate arrival completed; same coordinate press.','Fixture',snap.mainHwnd]);
+    const got=JSON.parse(fs.readFileSync(path.join(out,'click-down.json'))).receipt;assert(got.consumed);assert.equal(got.nativeMessage.msg,0x201);
+    // Ordinary callbacks can complete after the immediate receipt capture.
+    await pause(400);const final=await s.send({action:'snapshot'});
+    assert.equal(final.windows.find(w=>w.hwnd===snap.mainHwnd).title,'UP after DOWN');
+    save('assertions.json',{pass:true,separateNativeMoveAndDown:true,ordinary350msFrames:true,noForcedPumpIdleOrCallback:true,freshReviewForPress:true,actualUPAfterDOWNCaption:true,nativeConfirmation500:true,independentUP1750:true,aggregate3000:true,syntheticAuthoredAttestation:true});
+   }
+  }else if(fault==='initial-pump'){
+   await control(['capture','too-early'],1);
+   assert(!fs.existsSync(path.join(out,'too-early.png')));assert(!fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));
+   assert(!fs.existsSync(path.join(out,'input-owner.json')));
+   assert(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8').trim().split('\n').every(l=>JSON.parse(l).action==='snapshot'));
+   const due=Date.now()+15000;
+   while(!fs.readFileSync(path.join(out,'public-consumers.jsonl'),'utf8').includes('input-poll-return')){assert(Date.now()<due);await pause(20);}
+   await control(['ready']);await control(['capture','ready']);
+   await control(['review','ready','Authored first pump now returned; complete native fixture.','Fixture','game',snap.mainHwnd]);await control(['bind','ready']);
+   await control(['intent','click','ready','500','220','game']);
+   assert.equal(JSON.parse(fs.readFileSync(path.join(out,'click-observed.json'))).snapshot.windows.find(w=>w.hwnd===snap.mainHwnd).title,'UP after DOWN');
+   save('assertions.json',{pass:true,firstPumpDelayedMs:4000,prePumpZeroCapture:true,prePumpZeroBind:true,prePumpZeroDown:true,ordinaryOwnerPollObserved:true,nativeConfirmation500:true,independentUP1750:true,aggregate3000:true,syntheticAuthoredAttestation:true});
+  }else if(fault){
    await control(['capture','before']);
    await control(['review','before','Authored deadline negative only, complete native scene.','Fixture','game',snap.mainHwnd]);
    await control(['bind','before']);
@@ -197,7 +259,39 @@ async function main(out){
  await require('./test-native-printable-input.cjs').ownerNative(out);
  await consumerDiagnostic(path.join(out,'consumer'));
  await controllerFixtures(out);
+ await adapterShutdown(path.join(out,'adapter-shutdown'));
  fs.writeFileSync(path.join(out,'assertions.json'),JSON.stringify({pass:true,originalStarted:false,sealedManifest:globalThis.__disciples2Manifest}));
+}
+async function adapterShutdown(out){
+ fs.mkdirSync(out,{recursive:true});
+ const fixture=path.join(out,'authored.exe');fs.writeFileSync(fixture,controllerFixture());
+ const adapterSHA=crypto.createHash('sha256').update(fs.readFileSync('tools/caesar3-current-native.py')).digest('hex');
+ for(const [name,sig,status] of [['term','SIGTERM',143],['int','SIGINT',130]]){
+  const dir=path.join(out,name);fs.mkdirSync(dir);
+  const code=String.raw`import runpy,os,sys,pathlib,hashlib,time,uuid
+assert hashlib.sha256(pathlib.Path('tools/caesar3-current-native.py').read_bytes()).hexdigest()==sys.argv[2]
+m=runpy.run_path('tools/caesar3-current-native.py')
+h=m['published_module']('tools/vb5cce-original-runtime.py',os.environ['CAESAR3_PINNED_REVISION'])
+h.install_shutdown_handlers()
+args=['node','test/run.js','--exe='+sys.argv[1],'--no-build','--threads','--real-ticks','--wasm='+os.environ['DELPHI5_MODULE_FD'],'--no-close','--max-seconds=20','--max-batches=1000000000','--stuck-after=0','--quiet-api','--quiet-blocks']
+m['execute_native'](args,os.environ.copy(),(),0,str(uuid.uuid4()),time.time()+25)`;
+  const c=cp.spawn('python3',['-B','-c',code,fixture,adapterSHA],{env:{...process.env,CAESAR3_RUN:dir}});
+  let stdout='',stderr='';c.stdout.on('data',b=>stdout+=b);c.stderr.on('data',b=>stderr+=b);const done=once(c,'close');
+  try{
+   const due=Date.now()+15000;
+   while(!fs.existsSync(path.join(dir,'native.stdout.log'))||!fs.readFileSync(path.join(dir,'native.stdout.log'),'utf8').includes('[CreateWindow]')){
+    assert(c.exitCode===null&&c.signalCode===null,stdout+stderr);assert(Date.now()<due,'incremental native stdout before cancellation');await pause(10);
+   }
+   c.kill(sig);const [exit,signal]=await done;assert.equal(exit,status,stderr);assert.equal(signal,null);
+   const w=JSON.parse(fs.readFileSync(path.join(dir,'native-wait.json'))),watch=JSON.parse(fs.readFileSync(path.join(dir,'watchdog-wait.json')));
+   assert(w.actualWait&&w.stdoutEOF&&w.stderrEOF&&w.hostCleanup&&w.interrupted&&w.nativeQuit===false);
+   assert.equal(w.exit,0);assert(watch.actualWait&&watch.stdoutEOF&&watch.stderrEOF);assert.equal(watch.exit,0);
+   fs.writeFileSync(path.join(dir,'assertions.json'),JSON.stringify({pass:true,signal:sig,adapterExit:exit,nativeWait:w,watchdogWait:watch,incrementalOutputBeforeSignal:true,originalStarted:false}));
+  }finally{
+   if(c.exitCode===null&&c.signalCode===null){c.kill('SIGTERM');await done;}
+   fs.writeFileSync(path.join(dir,'adapter-wait.json'),JSON.stringify({exit:c.exitCode,signal:c.signalCode,actualWait:true,stdoutEOF:c.stdout.readableEnded,stderrEOF:c.stderr.readableEnded,stdout,stderr}));
+  }
+ }
 }
 async function controllerFixtures(out){
  fs.mkdirSync(out,{recursive:true});
@@ -208,11 +302,55 @@ async function controllerFixtures(out){
  for(const fault of ['confirmation','physical-up','aggregate'])await reviewedController(path.join(out,fault+'-negative'),false,false,false,false,fault);
  fs.writeFileSync(path.join(out,'controllers-passed.json'),JSON.stringify({pass:true,originalStarted:false}));
 }
+async function hoverFixtures(out){
+ fs.mkdirSync(out,{recursive:true});
+ await reviewedController(path.join(out,'combined'),false,false,false,false,'slow-combined');
+ await reviewedController(path.join(out,'separate'),false,false,false,false,'slow-hover');
+ fs.writeFileSync(path.join(out,'assertions.json'),JSON.stringify({pass:true,originalStarted:false,syntheticAuthoredAttestation:true}));
+}
+async function inputReadinessFixture(out){
+ fs.mkdirSync(out,{recursive:true});
+ const trace=path.join(out,'observer-limit.jsonl');
+ const code=String.raw`const {observePublicConsumers}=require('./test/public-consumer-observer');
+let b=Buffer.alloc(65536),sp=0x1000,generation=1n;
+let e={get_image_base:()=>0,get_esp:()=>sp,get_current_thread_id:()=>1,get_eax:()=>0,get_yield_reason:()=>0,get_yield_flag:()=>0,
+get_focus_hwnd:()=>0x10001,get_main_hwnd:()=>0x10001,get_process_id:()=>7,wnd_lookup_generation:()=>generation,get_window_thread:()=>1,wnd_lookup_live:()=>1,modal_dialog_hwnd:()=>0,dialogbox_hwnd:()=>0,get_capture_hwnd:()=>0};
+const h={log(){},log_api_exit(){}};observePublicConsumers(h,()=>e,()=>b.buffer,x=>x,process.argv[1]);
+function call(name,args,mutate=()=>{}){b.fill(0,0x100,0x200);b.write(name,0x100);sp=0x1000;for(let i=0;i<args.length;i++)b.writeUInt32LE(args[i],sp+4+i*4);h.log(0x100,name.length);sp+=4*(args.length+1);mutate();h.log_api_exit()}
+for(let i=0;i<5000;i++)call('GetTickCount',[]);
+call('PeekMessageA',[0x2000,0,0x100,0x201,0]);
+call('PeekMessageA',[0x2000,0,0,0,0],()=>generation++);generation=1n;
+call('PeekMessageA',[0x2000,0,0,0,0],()=>e={...e});
+call('PeekMessageA',[0x2000,0,0,0,0],()=>b=Buffer.alloc(65536));
+call('PeekMessageA',[0x2000,0,0,0,0]);`;
+ cp.execFileSync(process.execPath,['-e',code,trace]);
+ const rows=fs.readFileSync(trace,'utf8').trim().split('\n').map(l=>JSON.parse(l)),polls=rows.filter(r=>r.phase==='input-poll-return');
+ assert.equal(polls.length,1);assert(rows.find(r=>r.phase==='summary').seen>=8192);assert.equal(polls[0].receipt,false);
+ const unit=String.raw`import runpy,pathlib,json,sys,copy,time
+f=runpy.run_path('tools/caesar3-current-native.py')['public_input_ready'];r=pathlib.Path(sys.argv[1]);p=json.loads((r/'observer-limit.jsonl').read_text().splitlines()[-2])
+(r/'launch.json').write_text(json.dumps(dict(at=time.time()-60)))
+s=dict(focus='0x10001',mainHwnd='0x10001',modalHwnd='0x0',capture='0x0',physicalUp=True,focusWindow=dict(threadId=1,processId=7,generation='1',live=True),windows=[dict(hwnd='0x10001',threadId=1,processId=7,generation='1',live=True)])
+def write(v):(r/'public-consumers.jsonl').write_text(json.dumps(v)+'\n')
+write(p);assert f(r,s)
+for field,value in [('threadId',2),('phase','handler-exit'),('yieldFlag',1),('yieldReason',1),('doneSp',0),('at',0),('at',time.time()*1000-3100),('name','GetAsyncKeyState'),('sameInstanceMemory',False)]:
+ q=copy.deepcopy(p);q[field]=value;write(q);assert f(r,s) is None,field
+for i,value in [(0,0),(1,0x10002),(2,0x100),(3,0x201)]:
+ q=copy.deepcopy(p);q['args'][i]=value;write(q);assert f(r,s) is None,str(i)
+for field,value in [('processId',8),('threadId',2),('focusThread',2),('focus',0x10002),('focusGeneration','2'),('mainGeneration','2'),('main',0x10002),('modal',0x10002),('capture',0x10001),('live',False),('memoryBytes',0)]:
+ q=copy.deepcopy(p);q['actor'][field]=value;write(q);assert f(r,s) is None,field
+write(p)
+for field,value in [('modalHwnd','0x10002'),('capture','0x10001'),('physicalUp',False)]:
+ q=copy.deepcopy(s);q[field]=value;assert f(r,q) is None,field
+(r/'public-consumers.jsonl').unlink()
+print('PASS current USER poll survives trace cap; stale/foreign actor/generation/target/filter/yield/stack/memory/modal/capture/non-poll refused')`;
+ const text=cp.execFileSync('python3',['-B','-c',unit,out],{encoding:'utf8'});fs.writeFileSync(path.join(out,'readiness-units.log'),text);
+ await reviewedController(path.join(out,'native'),false,false,false,false,'initial-pump');
+}
 // Authored consumer diagnostic also runs in full qualification. Running it alone
 // never qualifies or authorizes an original-game launch.
 // Authored x86 records API returns; no original private memory is inspected.
 function titleConsumerFixture(mode){
- assert(['title','get-only','peek-delayed','busy-title','peek-only','filtered','async','none','sibling'].includes(mode));
+ assert(['title','slow-frame','get-only','peek-delayed','busy-title','peek-only','filtered','async','none','sibling'].includes(mode));
  const b=require('./test-cli-native-button-delivery.cjs').fixture(0);
  const raw=r=>r-0x1000+0x400,u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
  for(const [r,n] of [[0x1334,'PeekMessageA'],[0x1338,'GetAsyncKeyState']]){
@@ -235,7 +373,7 @@ function titleConsumerFixture(mode){
    call(0x40120c);emit(0x89,0xc3);label('busy');call(0x40120c);
    emit(0xff,0x05,...u32(0x403718),0x29,0xd8,0xa3,...u32(0x40371c),0x3d,...u32(1500));jump('busy',0x82);
   }
-  if(mode==='title'||mode==='get-only'||mode==='peek-delayed'||mode==='busy-title'||mode==='peek-only'||mode==='filtered'){
+  if(mode==='title'||mode==='slow-frame'||mode==='get-only'||mode==='peek-delayed'||mode==='busy-title'||mode==='peek-only'||mode==='filtered'){
    if(mode!=='get-only'){
    // Caesar's public import pattern: PeekMessage(NULL,0,0,PM_NOREMOVE),
    // followed by GetMessage/TranslateMessage/DispatchMessage on success.
@@ -254,13 +392,21 @@ function titleConsumerFixture(mode){
     emit(0x85,0xc0);jump('exit',0x84);
     emit(0xff,0x05,...u32(0x403704));
     push(0x403640);call(0x401310);push(0x403640);call(0x401314);
+    if(mode==='slow-frame')jump('pump');
    }
   }else if(mode==='async'){
    push(65);call(0x401338);emit(0xa9,...u32(1));jump('idle',0x84);
    // The actual native API returned this press's low bit, exactly once.
    emit(0xa3,...u32(0x40370c),0xff,0x05,...u32(0x403708));
   }
-  label('idle');push(5);call(0x401204);jump('pump');
+  label('idle');
+  if(mode==='slow-frame'){
+   // Real bounded interpreter work between frames; observe the existing
+   // GetTickCount exactly as the delayed-first-pump fixture does.
+   call(0x40120c);emit(0x89,0xc3);label('frame-work');call(0x40120c);
+   emit(0x29,0xd8,0x3d,...u32(350));jump('frame-work',0x82);
+  }else{push(5);call(0x401204);}
+  jump('pump');
   label('exit');push(0);call(0x401200);emit(0xcc);
  });
  asm(0x2800,({emit,push,call,label,jump})=>{
@@ -353,14 +499,16 @@ async function consumerDiagnostic(out){
    if(s.child.exitCode===null&&s.child.signalCode===null)process.kill(-s.child.pid,'SIGTERM');await s.exited;
    if(release&&release.exitCode===null){release.kill();await rw;}
    save('native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,hostCleanup:true,nativeQuit:false});
+   // Join the independent watchdog before checking trace assertions too.
+   // An assertion failure must not leave its stdin keeping this process alive.
+   fs.writeFileSync(path.join(dir,'native.log'),s.output());wd.stdin.end();const [exit,signal]=await ww;
+   save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
    const observations=fs.readFileSync(path.join(dir,'public-consumers.jsonl'),'utf8').trim().split('\n').map(JSON.parse);
-   assert(observations.length<=8193,'bounded public observer');
+   assert(observations.length<=8192+4096+1,'bounded public observer including passive readiness records');
    assert(observations.some(r=>r.phase==='entry'&&r.name==='CreateWindowExA'&&r.threadId===1),'observe startup before intent');
    assert(observations.filter(r=>r.phase==='handler-exit').every(r=>r.receipt===false&&r.callbackReturn==='unmeasured'),'public observation cannot invent receipt');
    assert.equal(observations.at(-1).phase,'summary');
    save('observer-assertions.json',{pass:true,rows:observations.length,startupObserved:true,neverReceipt:true});
-   fs.writeFileSync(path.join(dir,'native.log'),s.output());wd.stdin.end();const [exit,signal]=await ww;
-   save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
   }
  }
  fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify({diagnosticCompleted:true,baseline,contractPassed:!baseline,safeForOriginal:false,originalStarted:false,unitChecks,results},null,2)+'\n');
@@ -423,5 +571,5 @@ async function textBoundary(out){
   save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
  }
 }
-if(require.main===module)(process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
+if(require.main===module)(process.argv[2]==='--adapter-shutdown'?adapterShutdown(path.resolve(process.argv[3])):process.argv[2]==='--hover-fixtures'?hoverFixtures(path.resolve(process.argv[3])):process.argv[2]==='--input-readiness-fixture'?inputReadinessFixture(path.resolve(process.argv[3])):process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={keyboard,main,titleConsumerFixture,consumerDiagnostic,consumerUnits,textFixture,textBoundary,reuseProofUnits};

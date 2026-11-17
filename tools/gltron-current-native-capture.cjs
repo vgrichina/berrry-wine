@@ -57,7 +57,13 @@ function installInitializedObserver(root,getApps=()=>root.runningApps||[]) {
     return result;
   };
 }
-function fixture({messageDriven=false,drawOnce=false,timerMs=0}={}){
+function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0,afterFirstInputDelay=0,
+  triangles=1,width=480,height=360}={}){
+  assert(Number.isInteger(triangles)&&triangles>=1&&triangles<=16384);
+  assert(Number.isInteger(width)&&width>=480&&width<=1920);
+  assert(Number.isInteger(height)&&height>=360&&height<=1440);
+  assert(Number.isInteger(firstInputDelay)&&firstInputDelay>=0&&firstInputDelay<=5000);
+  assert(Number.isInteger(afterFirstInputDelay)&&afterFirstInputDelay>=0&&afterFirstInputDelay<=5000);
   const b=Buffer.alloc(0x6400),base=0x400000,raw=r=>r-0x1000+0x400;
   const d=(o,n)=>b.writeUInt32LE(n>>>0,o),w=(o,n)=>b.writeUInt16LE(n,o),pe=0x80,opt=pe+24,s=opt+224;
   w(0,0x5a4d);d(0x3c,pe);d(pe,0x4550);w(pe+4,0x14c);w(pe+6,1);w(pe+20,224);w(pe+22,0x10e);
@@ -66,27 +72,37 @@ function fixture({messageDriven=false,drawOnce=false,timerMs=0}={}){
   b.write('.native',s);d(s+8,0x6000);d(s+12,0x1000);d(s+16,0x6000);d(s+20,1024);d(s+36,0xe0000060);
   const libraries=[['kernel32.dll',['ExitProcess','OutputDebugStringA']],['user32.dll',['RegisterClassA','CreateWindowExA','SetFocus',messageDriven?'GetMessageA':'PeekMessageA','TranslateMessage','DispatchMessageA','DefWindowProcA','GetDC','ChangeDisplaySettingsA']],['gdi32.dll',['SwapBuffers']],['opengl32.dll',['wglCreateContext','wglMakeCurrent','glClearColor','glClear','glBegin','glColor3f','glVertex2f','glEnd']]];
   if(timerMs)libraries[1][1].push('SetTimer');
+  if(firstInputDelay||afterFirstInputDelay)libraries[0][1].push('Sleep');
   d(opt+104,0x1000);d(opt+108,(libraries.length+1)*20);let str=0x1800;const apis=new Map();
   libraries.forEach(([dll,names],i)=>{const desc=raw(0x1000+i*20),thunk=0x1200+i*256;d(desc,thunk);d(desc+12,str);d(desc+16,thunk);b.write(dll+'\0',raw(str));str+=dll.length+1;
     names.forEach((name,j)=>{d(raw(thunk+j*4),str);b.write(name+'\0',raw(str+2));str+=name.length+3;apis.set(name,base+thunk+j*4);});});assert(str<0x2000);
   for(const [r,text]of [[0x3000,'ContinuousNativeGL'],[0x3060,'Native continuous GL input qualification'],[0x3100,'NATIVE_DOWN'],[0x3140,'NATIVE_UP'],[0x3180,'NATIVE_QUIT']])b.write(text+'\0',raw(r));
   d(raw(0x3504),base+0x2800);d(raw(0x3510),base);d(raw(0x3524),base+0x3000);
-  w(raw(0x3800+36),156);d(raw(0x3800+40),0x1c0000);d(raw(0x3800+104),32);d(raw(0x3800+108),480);d(raw(0x3800+112),360);
+  w(raw(0x3800+36),156);d(raw(0x3800+40),0x1c0000);d(raw(0x3800+104),32);d(raw(0x3800+108),width);d(raw(0x3800+112),height);
   const u=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
   const asm=(r,work)=>{const code=[],labels=new Map(),fix=[];const emit=(...a)=>code.push(...a),push=n=>emit(0x68,...u(n)),call=n=>{assert(apis.has(n));emit(0xff,0x15,...u(apis.get(n)));},label=n=>labels.set(n,code.length),jump=(n,c)=>{emit(...(c?[0x0f,c]:[0xe9]));fix.push([code.length,n]);emit(0,0,0,0);};
     work({emit,push,call,label,jump});const a=Buffer.from(code);for(const [o,n]of fix){assert(labels.has(n));a.writeInt32LE(labels.get(n)-o-4,o);}assert(a.length<0x800);a.copy(b,raw(r));};
   asm(0x2000,({emit,push,call,label,jump})=>{
-    push(base+0x3500);call('RegisterClassA');for(const n of [0,base,0,0,360,480,40,40,0x90000000,base+0x3060,base+0x3000,0])push(n);call('CreateWindowExA');emit(0xa3,...u(base+0x3600),0x50);call('SetFocus');
+    push(base+0x3500);call('RegisterClassA');for(const n of [0,base,0,0,height,width,40,40,0x90000000,base+0x3060,base+0x3000,0])push(n);call('CreateWindowExA');emit(0xa3,...u(base+0x3600),0x50);call('SetFocus');
     push(4);push(base+0x3800);call('ChangeDisplaySettingsA');
     emit(0xff,0x35,...u(base+0x3600));call('GetDC');emit(0xa3,...u(base+0x3604),0x50);call('wglCreateContext');emit(0x50,0xff,0x35,...u(base+0x3604));call('wglMakeCurrent');
     if(timerMs){push(0);push(timerMs);push(1);emit(0xff,0x35,...u(base+0x3600));call('SetTimer');}
     if(messageDriven||drawOnce)jump('draw'); // The authored initial frame precedes the normal message wait.
-    label('loop');for(const n of (messageDriven?[0,0,0,base+0x3640]:[1,0,0,0,base+0x3640]))push(n);call(messageDriven?'GetMessageA':'PeekMessageA');emit(0x85,0xc0);jump(drawOnce?'loop':'draw',0x84);push(base+0x3640);call('TranslateMessage');push(base+0x3640);call('DispatchMessageA');
+    label('loop');for(const n of (messageDriven?[0,0,0,base+0x3640]:[1,0,0,0,base+0x3640]))push(n);call(messageDriven?'GetMessageA':'PeekMessageA');
+    if(afterFirstInputDelay){emit(0x50,0x83,0x3d,...u(base+0x3610),0);jump('after-first-input-delay',0x85);
+      emit(0xc7,0x05,...u(base+0x3610),...u(1));push(afterFirstInputDelay);call('Sleep');label('after-first-input-delay');emit(0x58);}
+    emit(0x85,0xc0);jump(drawOnce?'loop':'draw',0x84);push(base+0x3640);call('TranslateMessage');push(base+0x3640);call('DispatchMessageA');
     if(timerMs){emit(0x81,0x3d,...u(base+0x3644),...u(0x113));jump('loop',0x85);}
     else if(drawOnce)jump('loop');
     label('draw');push(0x3f800000);push(0x3e800000);push(0x3e000000);emit(0xff,0x35,...u(base+0x3608));call('glClearColor');push(0x4000);call('glClear');
-    push(4);call('glBegin');for(const n of [0x3f000000,0x3f800000,0x3f800000])push(n);call('glColor3f');
-    for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){for(const n of p)push(n);call('glVertex2f');}call('glEnd');emit(0xff,0x35,...u(base+0x3604));call('SwapBuffers');jump('loop');
+    if(triangles>1)emit(0xc7,0x05,...u(base+0x3614),...u(triangles));
+    label('triangle');push(4);call('glBegin');for(const n of [0x3f000000,0x3f800000,0x3f800000])push(n);call('glColor3f');
+    for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){for(const n of p)push(n);call('glVertex2f');}call('glEnd');
+    if(triangles>1){emit(0xff,0x0d,...u(base+0x3614));jump('triangle',0x85);}
+    emit(0xff,0x35,...u(base+0x3604));call('SwapBuffers');
+    if(firstInputDelay){emit(0x83,0x3d,...u(base+0x360c),0);jump('after-initial-delay',0x85);
+      emit(0xc7,0x05,...u(base+0x360c),...u(1));push(firstInputDelay);call('Sleep');label('after-initial-delay');}
+    jump('loop');
   });
   asm(0x2800,({emit,push,call,label,jump})=>{
     emit(0x55,0x89,0xe5,0x81,0x7d,0x0c,...u(0x100));jump('down',0x84);emit(0x81,0x7d,0x0c,...u(0x101));jump('up',0x84);
@@ -104,12 +120,18 @@ async function run(out,commit){
   const timerMs=Number(process.env.GLTRON_FIXTURE_TIMER_MS||0);
   assert(Number.isInteger(timerMs)&&(timerMs===0||(timerMs>=16&&timerMs<=2000)));
   const files=gitFiles(commit),messageDriven=process.env.GLTRON_FIXTURE_MESSAGE_DRIVEN==='1',drawOnce=process.env.GLTRON_FIXTURE_DRAW_ONCE==='1'||timerMs>0,exe=fixture({messageDriven,drawOnce,timerMs});
+  // Explicit authored-only runtime candidate. All other runtime sources stay
+  // on the immutable Git graph, including concurrent foreign Worker edits.
+  if(process.env.GLTRON_CAPTURE_HOST_CANDIDATE==='1')for(const n of ['host.js','lib/renderer.js'])files.set(n,fs.readFileSync(path.join(ROOT,n)));
   const [viewportWidth,viewportHeight]=(process.env.GLTRON_NATIVE_VIEWPORT||'1280x960').split('x').map(Number);
   assert(Number.isInteger(viewportWidth)&&viewportWidth>=800&&viewportWidth<=1920&&Number.isInteger(viewportHeight)&&viewportHeight>=600&&viewportHeight<=1440);
   const helpers=['tools/gltron-current-native-capture.cjs','tools/gltron-browser-controller.cjs','tools/gltron-browser-binding.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py'];
   save('source.json',{commit,foreignWIPAdopted:false,helpers:helpers.map(n=>{const r=cp.spawnSync('git',['show',commit+':'+n],{cwd:ROOT});return {path:n,sha256:sha(fs.readFileSync(path.join(ROOT,n))),published:r.status===0&&r.stdout.equals(fs.readFileSync(path.join(ROOT,n)))};}),runtime:[...files].map(([path,b])=>({path,sha256:sha(b),bytes:b.length})),fixture:{sha256:sha(exe),bytes:exe.length,clock:'real',slice:1000}});
   const wasm=compile(files);files.set('build/wine-assembly.wasm',wasm);files.set('authored-native.exe',exe);
-  save('module.json',{sha256:sha(wasm),bytes:wasm.length,commit,persisted:false,fixture:{messageDriven,drawOnce,timerMs,viewport:{width:viewportWidth,height:viewportHeight}}});
+  const modulePath=path.join(path.dirname(out),'tested-'+sha(wasm)+'.wasm');
+  if(!fs.existsSync(modulePath))fs.writeFileSync(modulePath,wasm,{flag:'wx'});
+  assert.equal(sha(fs.readFileSync(modulePath)),sha(wasm));
+  save('module.json',{sha256:sha(wasm),bytes:wasm.length,commit,persisted:true,retainedBeforeExecution:true,fixture:{messageDriven,drawOnce,timerMs,viewport:{width:viewportWidth,height:viewportHeight}}});
   save('prepared.json',{at:Date.now(),commit,module:sha(wasm)});
   while(!fs.existsSync(out+'/runtime-start.json'))await sleep(10);
   const {deadline}=JSON.parse(fs.readFileSync(out+'/runtime-start.json'));
@@ -174,14 +196,13 @@ async function run(out,commit){
     observations.push({stage:'arm',...arm});save('capture-arm.json',{nonce,...arm});
     let snapshot;
     while(Date.now()-captureStart<3000){
-      const row=await evaluate(`(()=>{const p=__gltronCurrentPin,t=__gltronCurrentTicket;if(p.nonce!==${JSON.stringify(nonce)})throw Error('ticket nonce replaced');p.verify();
+      const row=await evaluate(`(async()=>{const p=__gltronCurrentPin,t=__gltronCurrentTicket;if(p.nonce!==${JSON.stringify(nonce)})throw Error('ticket nonce replaced');p.verify();
         const state={at:Date.now(),status:t.status,error:t.error,publication:p.r._immutablePublicationSequence,held:p.r._workerPublicationHeld(),slice:p.w._workerLastSlice?.seq,pending:{dirty:!!p.w._dxDirty,lockDeferred:!!p.w._dxLockDeferred,presentDue:!!p.w._presentFrameDue},gdi:p.r._workerGdiPaintDepth};
         state.ticketEvents=__nativeInitialized.ticketEvents;
         if(t.status!=='complete')return {state};const first=t.read();globalThis.__gltronRetainedFirst=first;
-        const encode=b=>{let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode(...b.subarray(i,i+8192));return btoa(s);};
         const receipt=__nativeInitialized.receipts.find(r=>r.publication===first.metadata.publication);
         if(!receipt)throw Error('capture is not joined to an initialized GPS publication');
-        return {state,snapshot:{metadata:first.metadata,receipt,source:encode(first.sourceRGBA),output:encode(first.outputRGBA)}};
+        p.verify();return {state,snapshot:{metadata:first.metadata,receipt}};
       })()`);
       observations.push({stage:'poll',...row.state});fs.writeFileSync(out+'/capture-observations.json',JSON.stringify({nonce,observations},null,2)+'\n');
       if(row.snapshot){snapshot=row.snapshot;break;}
@@ -190,21 +211,30 @@ async function run(out,commit){
     }
     assert(snapshot,'DISPLAY_UNKNOWN current-display completion deadline; no replay');
     assert(Date.now()-captureStart<3000,'late controller current-display completion');
+    // The host image and immutable-byte transport share the original total
+    // deadline and begin only after selecting the complete native ticket.
+    const hostStart=Date.now();
+    save('host-capture-start.json',{at:hostStart,boundMs:3000,params:{format:'png',captureBeyondViewport:false}});
+    const [host,bytes]=await Promise.all([
+      c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session),
+      evaluate(`(async()=>{const p=__gltronCurrentPin;p.verify();const first=__gltronRetainedFirst;
+        const encode=b=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('immutable byte transport failed'));reader.onload=()=>resolve(reader.result.slice(reader.result.indexOf(',')+1));reader.readAsDataURL(new Blob([b],{type:'application/octet-stream'}));});
+        const [source,output]=await Promise.all([encode(first.sourceRGBA),encode(first.outputRGBA)]);p.verify();return {source,output};})()`)
+    ]);
+    assert(Date.now()-captureStart<3000,'late complete native pixels/host observation');
+    Object.assign(snapshot,bytes);
+    save('capture.json',{startedAt:captureStart,completedAt:Date.now(),elapsedMs:Date.now()-captureStart,...snapshot,source:undefined,output:undefined});
+    for(const kind of ['source','output']){const dim=snapshot.metadata[kind],data=Buffer.from(snapshot[kind],'base64');assert.equal(data.length,dim.width*dim.height*4);fs.writeFileSync(out+'/authored-'+kind+'.png',require('./gltron-current-capture.cjs').encodeCapturePNG(dim.width,dim.height,data),{flag:'wx'});}
+    const png=Buffer.from(host.data,'base64');fs.writeFileSync(out+'/authored-host.png',png,{flag:'wx'});save('host-capture.json',{at:hostStart,elapsedMs:Date.now()-hostStart,totalObservationMs:Date.now()-captureStart,sha256:sha(png),reviewed:false});
     return snapshot;
     })(),new Promise((_,reject)=>{captureTimer=setTimeout(()=>{c.ws.close();reject(Error('DISPLAY_UNKNOWN controller current-display deadline; permanent close'));},Math.max(1,3000-(Date.now()-captureStart)));})]).finally(()=>clearTimeout(captureTimer));
-    save('capture.json',{startedAt:captureStart,completedAt:Date.now(),elapsedMs:Date.now()-captureStart,...snapshot,source:undefined,output:undefined});
-    for(const kind of ['source','output']){const dim=snapshot.metadata[kind],bytes=Buffer.from(snapshot[kind],'base64');assert.equal(bytes.length,dim.width*dim.height*4);const png=new PNG(dim);png.data=bytes;fs.writeFileSync(out+'/authored-'+kind+'.png',PNG.sync.write(png),{flag:'wx'});}
     save('scene-characterization.json',characterizeSource(Buffer.from(snapshot.source,'base64'),snapshot.metadata.source));
     const oracle=literalOracle(Buffer.from(snapshot.source,'base64'),snapshot.metadata.source);
     save('literal-oracle.json',oracle);
-    save('literal-output-oracle.json',literalOutputOracle(Buffer.from(snapshot.output,'base64'),snapshot.metadata));
+    save('literal-output-math-diagnostic.json',literalOutputOracle(Buffer.from(snapshot.output,'base64'),snapshot.metadata));
+    save('literal-output-oracle.json',await evaluate(`(${canvasLiteralOutputOracle.toString()})(__gltronRetainedFirst)`));
     await sleep(250);
     save('retained.json',await evaluate(`(()=>{const t=__gltronCurrentTicket,a=__gltronRetainedFirst,b=t.read();let mismatch=0;for(const k of ['sourceRGBA','outputRGBA']){if(a[k].length!==b[k].length)throw Error('retained length changed');for(let i=0;i<a[k].length;i++)if(a[k][i]!==b[k][i])mismatch++;}return {at:Date.now(),status:t.status,mismatch,metadataSame:JSON.stringify(a.metadata)===JSON.stringify(b.metadata),capturedPublication:a.metadata.publication,currentPublication:runningApps[0].wine.renderer._immutablePublicationSequence,cancelComplete:t.cancel()};})()`));
-    // Canvas bytes do not depict host HTML consent/occlusion. The required
-    // full host review remains an independent unchanged 3000ms observation.
-    save('host-capture-start.json',{at:Date.now(),boundMs:3000,params:{format:'png',captureBeyondViewport:false}});
-    const hostStart=Date.now(),host=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session);
-    assert(Date.now()-hostStart<3000&&Date.now()-captureStart<3000,'late complete native pixels/host observation');const png=Buffer.from(host.data,'base64');fs.writeFileSync(out+'/authored-host.png',png,{flag:'wx'});save('host-capture.json',{at:hostStart,elapsedMs:Date.now()-hostStart,totalObservationMs:Date.now()-captureStart,sha256:sha(png),reviewed:false});
     save('boundary.json',{at:Date.now(),nativeContinuousProducer:timerMs>0||!drawOnce,currentDisplayObserved:true,hostPixelsObserved:true,
       initializedLiteralSceneQualified:oracle.qualified,fullInputQualification:false,originalPermitted:false,
       next:'Current-display pixels are display observations; shared USER input qualification and full native fault/lifecycle scope remain separate prerequisites for any original.'});
@@ -214,7 +244,7 @@ async function run(out,commit){
           const old={epoch:b.workerEpoch,endpoint:b.endpoint.id},t=w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});
           const closing=b.close(),immediate={status:t.status,error:t.error};
           Promise.resolve(closing).then(()=>resolve({at:Date.now(),old,epoch:b.workerEpoch,endpoint:b.endpoint?.id??null,
-            immediate,status:t.status,error:t.error,read:t.read(),retainedStatus:__gltronCurrentTicket.status}),e=>resolve({error:String(e)}));};})`));
+            immediate,status:t.status,error:t.error,read:(()=>{const a=t.read();return a?{metadata:a.metadata,sourceLength:a.sourceRGBA.length,outputLength:a.outputRGBA.length}:null;})(),retainedStatus:__gltronCurrentTicket.status}),e=>resolve({error:String(e)}));};})`));
       let afterRetirement;
       try{
         afterRetirement=await evaluate(binding.PAGE_READ);
@@ -236,7 +266,7 @@ async function run(out,commit){
       save('context-loss-request.json',{at,request,actualExtension:true});
       let loss;
       while(Date.now()-at<3000){
-        loss=await evaluate(`(()=>{const {w,r,b}=__gltronLifecycle;return {at:Date.now(),error:String(b.workerAsyncError||''),stopped:!!w._stopped,running:w.running,recordPresent:!!r._currentDisplayRecord,retainedStatus:__gltronCurrentTicket.status};})()`);
+        loss=await evaluate(`(()=>{const {w,r,b,win}=__gltronLifecycle;return {at:Date.now(),error:String(b.workerAsyncError||''),stopped:!!w._stopped,running:w.running,recordPresent:!!r._currentDisplayRecord,recordHasProducer:!!r._currentDisplayRecord?.windows.some(p=>p.window.deref()===win),retainedStatus:__gltronCurrentTicket.status};})()`);
         if(loss.error)break;await sleep(20);
       }
       assert(loss.error,'actual native producer did not report context loss within 3000ms');
@@ -247,7 +277,7 @@ async function run(out,commit){
       const shutdown=await evaluate(`(async()=>{const p=__gltronCurrentPin,w=p.w;let ticket=null;
         if(!w._stopped){await new Promise(resolve=>{const r=p.r,prior=r.beginWorkerGuestSlice;
           r.beginWorkerGuestSlice=function(){r.beginWorkerGuestSlice=prior;prior.apply(this,arguments);
-            const t=w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});w.stop({repaint:false});ticket={status:t.status,error:t.error,read:t.read()};resolve();};});}
+            const t=w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});w.stop({repaint:false});ticket={status:t.status,error:t.error,read:(()=>{const a=t.read();return a?{metadata:a.metadata,sourceLength:a.sourceRGBA.length,outputLength:a.outputRGBA.length}:null;})()};resolve();};});}
         const guest=await w._guestRuntimeStopPromise;
         const end=Date.now()+2000;while(!w._renderWorkerRetired&&!w._renderWorkerRetirementError&&Date.now()<end)await new Promise(r=>setTimeout(r,10));
         return {at:Date.now(),kind:'explicit-host-stop',nativeQuit:false,ticket,guest:guest?{ok:guest.ok,error:String(guest.error||'')}:null,
@@ -299,13 +329,13 @@ function verifyObserved(out,{published=false}={}){
   }
   if(fs.existsSync(path.join(out,'context-loss.json'))){
     const loss=read('context-loss.json');assert.match(loss.error,/context lost/);assert(loss.elapsedMs<3000);
-    assert.equal(loss.recordPresent,false);assert.equal(loss.retainedStatus,'complete');
+    assert.equal(loss.recordHasProducer,false);assert.equal(loss.retainedStatus,'complete');
     assert(['failed','refused'].includes(read('late-capture-after-loss.json').status));
   }
   if(fs.existsSync(path.join(out,'host-shutdown.json'))){
     const stop=read('host-shutdown.json'),targets=read('worker-target-close.json');
     assert.equal(stop.nativeQuit,false);assert.equal(stop.guest.ok,true);assert.equal(stop.renderRetired,true);assert.equal(stop.renderError,'');
-    if(stop.ticket){assert.equal(stop.ticket.status,'failed');assert.match(stop.ticket.error,/owner stopped/);assert.equal(stop.ticket.read,null);}
+    if(stop.ticket){if(stop.ticket.status==='complete'){assert(stop.ticket.read?.metadata);assert(stop.ticket.read.sourceLength>0&&stop.ticket.read.outputLength>0);}else{assert.equal(stop.ticket.status,'failed');assert.match(stop.ticket.error,/owner stopped/);assert.equal(stop.ticket.read,null);}}
     assert(targets.workers.length>=2&&targets.workers.every(w=>w.closed));
     for(const w of targets.workers)assert(targets.events.some(e=>e.method==='Target.targetDestroyed'&&e.targetId===w.targetId));
   }
@@ -369,6 +399,25 @@ function literalOutputOracle(bytes,metadata){
     const i=(y*width+x)*4;if(want.some((n,j)=>bytes[i+j]!==n))mismatches++;
   }
   return {width,height,checked:width*height,mismatches,qualified:mismatches===0};
+}
+// Canvas nearest-neighbour rasterization rounds subpixel source boundaries.
+// Use the browser's rasterizer on an independent literal image (no captured
+// source pixels), rather than approximating that rounding with JS division.
+function canvasLiteralOutputOracle(retained) {
+  const {metadata:m,outputRGBA:got}=retained,v=m.presentationViewport;
+  if(!v||m.backend!=='canvas-nearest')throw Error('literal canvas oracle needs complete nearest viewport');
+  const src=new OffscreenCanvas(480,360),s=src.getContext('2d'),image=s.createImageData(480,360);
+  for(let y=0;y<360;y++)for(let x=0;x<480;x++){
+    const half=(y+.5-90)*2/3,inside=y+.5>90&&y+.5<270&&x+.5>240-half&&x+.5<240+half;
+    image.data.set(inside?[255,255,128,255]:[0,32,64,255],(y*480+x)*4);
+  }
+  s.putImageData(image,0,0);
+  const out=new OffscreenCanvas(m.output.width,m.output.height),ctx=out.getContext('2d');
+  ctx.fillStyle='#000';ctx.fillRect(0,0,out.width,out.height);ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(src,0,0,480,360,v.dstX,v.dstY,v.dstW,v.dstH);
+  const want=ctx.getImageData(0,0,out.width,out.height).data;let mismatches=0;
+  for(let i=0;i<want.length;i+=4)if(want[i]!==got[i]||want[i+1]!==got[i+1]||want[i+2]!==got[i+2]||want[i+3]!==got[i+3])mismatches++;
+  return {width:out.width,height:out.height,checked:out.width*out.height,mismatches,qualified:mismatches===0,oracle:'independent literal raster through browser Canvas2D nearest'};
 }
 function verifyNativeProducer(pinned,observed){
   assert(pinned&&pinned.renderEndpoint!=='none','initialized native producer required');

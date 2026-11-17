@@ -18,6 +18,7 @@ const apiTable = [
   { id: 3315, name: 'SysAllocStringByteLen' },
   { id: 3316, name: 'SysStringByteLen' },
   { id: 2406, name: 'VariantInit' },
+  { id: 3317, name: 'LoadRegTypeLib' },
 ];
 const { host } = createHostImports({
   getMemory: () => memory.buffer,
@@ -92,6 +93,7 @@ const extraWat = String.raw`
   assert.strictEqual(host.resolve_ordinal(dllNameWA, 8), id('VariantInit'));
   assert.strictEqual(host.resolve_ordinal(dllNameWA, 149), 3316,
     'host OLEAUT32 ordinal 149 resolves SysStringByteLen');
+  assert.strictEqual(host.resolve_ordinal(dllNameWA, 162), id('LoadRegTypeLib'));
   assert.strictEqual(host.resolve_ordinal(dllNameWA, 150), 3315,
     'host OLEAUT32 ordinal 150 resolves SysAllocStringByteLen');
   assert.notStrictEqual(host.resolve_ordinal(dllNameWA, 150), 970,
@@ -100,6 +102,8 @@ const extraWat = String.raw`
     'unknown neighboring host OLEAUT32 ordinals remain fail-fast diagnostics');
 
   const dllNameGA = str('OLEAUT32.dll');
+  assert.strictEqual(wat.test_system_ordinal(dllNameGA, 162), id('LoadRegTypeLib'));
+  assert.strictEqual(wat.guest_read32(lookup(oleaut, 162) + 4), id('LoadRegTypeLib'));
   Buffer.from('OLEAUT32.dll\0', 'ascii').forEach((value, i) =>
     wat.guest_write8(dllNameGA + i, value));
   assert.strictEqual(wat.test_system_ordinal(dllNameGA, 149), 3316,

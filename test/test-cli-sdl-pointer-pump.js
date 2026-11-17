@@ -7,6 +7,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const vm = require('node:vm');
+const { createRequire } = require('node:module');
 const { inputEventHwnd } = require('../lib/host-window');
 const { createHostImports } = require('../lib/host-imports');
 const { Win98Renderer } = require('../lib/renderer');
@@ -26,6 +27,7 @@ const hash = b => crypto.createHash('sha256').update(b).digest('hex');
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const renderer = new Win98Renderer(createCanvas(1024, 712));
   const context = { console, createHostImports, inputEventHwnd, performance,
+    require: createRequire(path.join(root, 'host.js')),
     setTimeout, clearTimeout, setInterval, clearInterval, WebAssembly };
   vm.runInNewContext(fs.readFileSync(require.resolve('../host.js'), 'utf8') +
     '\n;globalThis.WineAssembly = WineAssembly;', context);

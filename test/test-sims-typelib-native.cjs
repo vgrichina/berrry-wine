@@ -102,7 +102,8 @@ function prepare(directory){
   const out=path.resolve(directory);fs.mkdirSync(out,{recursive:true});const put=(name,bytes)=>fs.writeFileSync(path.join(out,name),bytes,{flag:'wx'});
   const r=resource();put('typelib.dat',r.data);put('client.c',source);
   put('client.rc','1 TYPELIB "'+path.join(out,'typelib.dat').replace(/\\/g,'\\\\')+'"\n');
-  cp.execFileSync('llvm-rc',['/fo',path.join(out,'client.res'),path.join(out,'client.rc')]);
+  // llvm-rc parses an absolute POSIX input as another /option.
+  cp.execFileSync('llvm-rc',['/fo','client.res','client.rc'],{cwd:out});
   cp.execFileSync('llvm-cvtres',['/machine:x86','/out:'+path.join(out,'resource.obj'),path.join(out,'client.res')]);
   for(const [dll,names]of Object.entries({kernel32:['GetModuleFileNameW@12','ExitProcess@4','GetStdHandle@4','WriteFile@20'],oleaut32:['LoadTypeLib@8','RegisterTypeLib@12','LoadRegTypeLib@20']})){
     put(dll+'.def','LIBRARY '+dll+'.dll\nEXPORTS\n'+names.join('\n')+'\n');

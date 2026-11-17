@@ -9,7 +9,7 @@ const { verifyNativeProducer } = require('../tools/gltron-current-native-capture
 
 function fixture() {
   const r = new Win98Renderer(createCanvas(8, 8));
-  const context = { URLSearchParams, console, setTimeout, clearTimeout,
+  const context = { URLSearchParams, console, setTimeout, clearTimeout, require: n => require('../' + n),
     performance: { now: () => 0 }, requestAnimationFrame() {} };
   vm.runInNewContext(fs.readFileSync(require.resolve('../host.js'), 'utf8') +
     '\n;globalThis.Host = WineAssembly;', context);
@@ -32,6 +32,52 @@ const arm = ({ r, h }) => {
   return h.requestCurrentDisplayCapture({ hwnd: 123 });
 };
 
+test('active native writer reads exact retained ordinary publication without joining future pixels', () => {
+  for (const kind of ['writer', 'paint', 'dirty', 'due', 'shared', 'scheduled']) {
+    const {r,h,win}=fixture();
+    h.requestCurrentDisplayCapture({hwnd:123}); // opt in before next ordinary frame
+    r.repaint();
+    const record=r._currentDisplayRecord,seq=r._immutablePublicationSequence;
+    const literal=Uint8ClampedArray.from(Array.from({length:64},()=>[23,57,91,255]).flat());
+    r.beginWorkerGuestSlice();
+    win._backCanvas.getContext('2d').fillStyle='#ff0000';
+    win._backCanvas.getContext('2d').fillRect(0,0,8,8);
+    // Even a directly mutable published canvas cannot replace its retained
+    // source. No new composition occurs in this continuously writing slice.
+    r.canvas.getContext('2d').fillStyle='#00ff00';
+    r.canvas.getContext('2d').fillRect(0,0,8,8);
+    if(kind==='paint')r.beginWorkerGdiPaint(123);
+    if(kind==='dirty')h._dxDirty=true;
+    if(kind==='due')h._presentFrameDue=true;
+    if(kind==='shared')h.guestWorker={broker:{dxState:()=>({dirty:7})}};
+    if(kind==='scheduled')r._repaintScheduled=true;
+    const ticket=h.requestCurrentDisplayCapture({hwnd:123});
+    assert.equal(ticket.status,'complete',ticket.error);
+    const got=ticket.read();
+    assert.deepEqual(got.sourceRGBA,literal,kind);assert.deepEqual(got.outputRGBA,literal,kind);
+    assert.equal(got.metadata.publication,seq);assert.equal(got.metadata.displayedAt,record.displayedAt);
+    assert.equal(got.metadata.content,'already-displayed');assert.equal(r._workerGuestSliceDepth,1);
+    assert.equal(r._immutablePublicationSequence,seq);
+    r._workerGdiPaintDepth=0;r.endWorkerGuestSlice();r.repaint();
+    assert.deepEqual(ticket.read(),got,'ordinary later publication cannot rewrite retained bytes');
+  }
+});
+
+test('retained canvas capture keeps identity, display, context and read-error fences under an active writer', () => {
+  for(const kind of ['window','process','instance','display','error','read','hidden']){
+    const {r,h,win}=fixture();h.requestCurrentDisplayCapture({hwnd:123});r.repaint();r.beginWorkerGuestSlice();
+    if(kind==='window')r.windows[123]={...win};
+    if(kind==='process')win.processId++;
+    if(kind==='instance')win.wasm={};
+    if(kind==='display')r._presentDisplayCanvas();
+    if(kind==='error')r.failCurrentDisplayCapture({processId:h.processId,instance:h.instance},Error('actual context loss'));
+    if(kind==='read')r._currentDisplayRecord.pixels.output.getContext('2d').getImageData=()=>{throw Error('retained read lost');};
+    if(kind==='hidden')win.visible=false;
+    let ticket;try{ticket=h.requestCurrentDisplayCapture({hwnd:123});}catch(e){assert(['window','process','instance'].includes(kind));continue;}
+    assert.notEqual(ticket.status,'complete',kind);assert.equal(ticket.read(),null,kind);ticket.cancel();
+  }
+});
+
 test('clean completed slice services already displayed literal pixels without a new publication', () => {
   const f = fixture(), { r, h } = f;
   const record = r._currentDisplayRecord, seq = r._immutablePublicationSequence;
@@ -39,7 +85,7 @@ test('clean completed slice services already displayed literal pixels without a 
   assert.equal(t.status, 'pending');
   h._presentAtBoundary(); assert.equal(t.status, 'pending', 'active writer');
   r.endWorkerGuestSlice();
-  assert.equal(t.status, 'pending', 'renderer release does not bypass host live queues');
+  assert.equal(t.status, 'complete', 'reading joins the final release without another slice');
   h._presentAtBoundary();
   assert.equal(t.status, 'complete', t.error);
   const got = t.read(), literal = Uint8ClampedArray.from(Array.from({ length: 64 }, () => [23, 57, 91, 255]).flat());
@@ -84,6 +130,43 @@ test('initial queued damage requires ordinary publication even after queues clea
   h._presentAtBoundary(); assert.equal(t.status, 'pending');
   r.repaint(); assert.equal(t.status, 'complete', t.error);
   assert.equal(t.read().metadata.content, 'ordinary-publication-after-request');
+});
+
+test('paused producer read joins final writer release; read and status retain the same complete frame', () => {
+  const f = fixture(), { r, h } = f;
+  const sequence = r._immutablePublicationSequence, display = r._currentDisplayRecord;
+  const ticket = arm(f);
+  assert.equal(ticket.read(), null);
+  r.endWorkerGuestSlice();
+  // The producer parks here: no host boundary, repaint, future frame or timer.
+  const first = ticket.read();
+  assert(first, ticket.error);
+  assert.equal(ticket.status, 'complete');
+  assert.equal(first.metadata.publication, sequence);
+  assert.equal(first.metadata.displayedAt, display.displayedAt);
+  assert.equal(first.metadata.content, 'already-displayed');
+  assert.equal(r._immutablePublicationSequence, sequence);
+  h._stopped = true;
+  first.sourceRGBA.fill(0);
+  assert.equal(ticket.read().sourceRGBA[0], 23);
+  assert.equal(ticket.cancel(), false);
+});
+
+test('paused read cannot substitute a host generation or bypass a newly queued frame', () => {
+  for (const kind of ['host-renderer', 'host-instance', 'host-process', 'dirty', 'due']) {
+    const f = fixture(), { r, h } = f, ticket = arm(f);
+    r.endWorkerGuestSlice();
+    if (kind === 'host-renderer') h.renderer = {};
+    if (kind === 'host-instance') h.instance = {};
+    if (kind === 'host-process') h.processId++;
+    if (kind === 'dirty') h._dxDirty = true;
+    if (kind === 'due') h._presentFrameDue = true;
+    assert.equal(ticket.read(), null, kind);
+    assert.equal(ticket.status, kind.startsWith('host-') ? 'failed' : 'pending', kind);
+    ticket.cancel();
+    r.repaint();
+    assert.notEqual(ticket.status, 'complete', kind);
+  }
 });
 
 test('retirement, identity substitution, unreceipted display and read faults never produce stale success', () => {
@@ -167,4 +250,12 @@ test('passive page inspection with no producer cannot certify a retired native b
   verifyNativeProducer(pinned, { ...pinned });
   assert.throws(() => verifyNativeProducer(pinned, { ...pinned, renderEndpoint: 'none' }), /identity changed/);
   assert.throws(() => verifyNativeProducer(pinned, { ...pinned, renderGeneration: 2 }), /identity changed/);
+});
+
+
+test('host refuses a new current-display request after native producer error even with an active writer', () => {
+  const f=fixture();f.r.beginWorkerGuestSlice();
+  f.h.hostCtx={getGlGpsBridge:()=>({workerAsyncError:Error('actual native context lost')})};
+  assert.throws(()=>f.h.requestCurrentDisplayCapture({hwnd:123}),/actual native context lost/);
+  assert.equal(f.r._immutableCaptureRequest,null);
 });

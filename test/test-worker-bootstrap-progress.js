@@ -36,12 +36,14 @@ async function bounded(promise, label) {
 }
 const workerContext = { URL, performance, setTimeout, clearTimeout, importScripts() {},
   location: { href: 'https://example.invalid/guest-worker.js' }, postMessage() {},
+  GuestRpc: require('../lib/guest-rpc'), RenderWorker: require('../lib/render-worker'),
   ThreadSendWaits: require('../lib/thread-send-waits') };
 workerContext.self = workerContext;
 vm.createContext(workerContext);
 vm.runInContext(fs.readFileSync(require.resolve('../lib/guest-worker'), 'utf8'), workerContext);
 const waitForLock = vm.runInContext('waitForDllCriticalSection', workerContext);
-const hostContext = { console, performance, URLSearchParams, setTimeout, clearTimeout };
+const hostContext = { console, performance, URLSearchParams, setTimeout, clearTimeout,
+  require: require('node:module').createRequire(require.resolve('../host')) };
 vm.runInNewContext(fs.readFileSync(process.env.WA_HOST || require.resolve('../host'), 'utf8') +
   '\n;globalThis.Host = WineAssembly;', hostContext);
 

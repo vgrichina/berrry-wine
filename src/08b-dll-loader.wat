@@ -1050,13 +1050,19 @@
         (if (i32.eq (local.get $ordinal) (i32.const 8))  (then (return (call $lookup_api_id "VariantInit"))))
         (if (i32.eq (local.get $ordinal) (i32.const 9))  (then (return (call $lookup_api_id "VariantClear"))))
         (if (i32.eq (local.get $ordinal) (i32.const 10)) (then (return (call $lookup_api_id "VariantCopy"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 12)) (then (return (call $lookup_api_id "VariantChangeType"))))
         ;; DirectX 8.1 devenum.dll registers filters through these by ordinal.
         (if (i32.eq (local.get $ordinal) (i32.const 15)) (then (return (call $lookup_api_id "SafeArrayCreate"))))
         (if (i32.eq (local.get $ordinal) (i32.const 16)) (then (return (call $lookup_api_id "SafeArrayDestroy"))))
         (if (i32.eq (local.get $ordinal) (i32.const 23)) (then (return (call $lookup_api_id "SafeArrayAccessData"))))
         (if (i32.eq (local.get $ordinal) (i32.const 24)) (then (return (call $lookup_api_id "SafeArrayUnaccessData"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 25)) (then (return (call $lookup_api_id "SafeArrayGetElement"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 26)) (then (return (call $lookup_api_id "SafeArrayPutElement"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 17)) (then (return (call $lookup_api_id "SafeArrayCopy"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 202)) (then (return (call $lookup_api_id "SafeArrayPtrOfIndex"))))
         (if (i32.eq (local.get $ordinal) (i32.const 64)) (then (return (call $lookup_api_id "VarI4FromStr"))))
         (if (i32.eq (local.get $ordinal) (i32.const 161)) (then (return (call $lookup_api_id "LoadTypeLib"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 162)) (then (return (call $lookup_api_id "LoadRegTypeLib"))))
         (if (i32.eq (local.get $ordinal) (i32.const 163)) (then (return (call $lookup_api_id "RegisterTypeLib"))))
         ;; InstallShield 11 imports the binary-BSTR helpers by ordinal. Keep
         ;; these in the guest resolver as well as the host fallback so loaded

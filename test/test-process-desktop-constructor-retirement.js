@@ -71,12 +71,31 @@ async function failedBootstrap(stalledRole) {
 (async () => {
   await failedBootstrap('desktop-authority');
   await failedBootstrap('desktop-client');
-  const { ProcessDesktop } = require('../lib/process-desktop');
+  const { ProcessDesktop, prepareClient } = require('../lib/process-desktop');
   const desktop = new ProcessDesktop({ endpoint: null, observeDirectory: null });
   const directory = desktop.directory;
   try {
     assert.equal(typeof desktop.processId, 'number');
     assert.deepEqual(desktop.call({ op: 'snapshot' }).rows, []);
+    const options = { endpoint: desktop.endpoint, observeDirectory: null };
+    const preparation = prepareClient(options);
+    const child = new ProcessDesktop({ ...options, preparation });
+    try {
+      assert.notEqual(child.processId, desktop.processId);
+      assert.deepEqual(child.call({ op: 'snapshot' }).rows, []);
+      assert.throws(() => new ProcessDesktop({ ...options, preparation }), e => e.code === 'EINVAL');
+      await preparation.cancel(); // Ownership was transferred; cannot kill it.
+      assert.deepEqual(child.call({ op: 'snapshot' }).rows, []);
+    } finally { await child.close(); }
+    const cancelled = prepareClient(options);
+    await cancelled.cancel(); await cancelled.cancel();
+    assert.throws(() => new ProcessDesktop({ ...options, preparation: cancelled }), e => e.code === 'EINVAL');
+    const wrong = prepareClient(options);
+    assert.throws(() => new ProcessDesktop({ ...options, endpoint: { ...desktop.endpoint, token: 'wrong' }, preparation: wrong }), e => e.code === 'EINVAL');
+    await wrong.cancel();
+    const unauthorized = prepareClient({ ...options, endpoint: { ...desktop.endpoint, token: 'wrong' } });
+    assert.throws(() => new ProcessDesktop({ ...options, endpoint: { ...desktop.endpoint, token: 'wrong' }, preparation: unauthorized }),
+      e => e.code === 'EAUTH');
   } finally { await desktop.close(); }
   assert.equal(fs.existsSync(directory), false);
   console.log('PASS failed authority/client construction retires Workers and healthy transport still works');

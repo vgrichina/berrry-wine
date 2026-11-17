@@ -1,0 +1,297 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute}=require('../tools/gltron-current-native-input.cjs');
+class Wine {getImports(){this.hostCtx={};return {host:{check_input_token:()=>0,input_consumed:()=>0}};}}
+const root={},w=new Wine();w.running=true;w.guestWorker={};w.processId=1;
+installNativeRouteObserver(root,Wine);const actual=w.getImports();
+assert.equal(root.__gltronNativeRoutes[0].host,actual.host);
+const audit=inspectNativeRoute(root,w);assert.equal(audit.scopes[0].guardedInput,false);
+assert.equal(audit.scopes[0].nativeInputActor,false);assert.match(audit.scopes[0].tokenImportSource,/=>0/);
+assert.throws(()=>requireNativeRoute(audit),/NATIVE_INPUT_UNAVAILABLE/);
+const capable={running:true,stopped:false,guestWorker:true,scopes:[{currentContext:true,guardedInput:true,nativeInputActor:true,tokenImport:true,consumedImport:true}]};
+assert.throws(()=>requireNativeRoute(capable),/UNQUALIFIED/,'capability is never native proof');
+// Execute the real current selector, not a duplicated expected selector.
+const source=fs.readFileSync('lib/host-imports.js','utf8');
+const start=source.indexOf('  const _glGpsBackend = () => {'),end=source.indexOf('  let _glGpsBridgeObj',start);
+assert(start>0&&end>start);
+const select=query=>vm.runInNewContext(source.slice(start,end)+';_glGpsBackend()',{
+  ctx:{},location:{search:query},URLSearchParams});
+assert.equal(select('?gl-renderer=software'),'webgl','legacy selector does not select GPS software');
+assert.equal(select('?gl-gps=software'),'software');assert.equal(select('?gl-gps=webgl'),'webgl');
+assert.throws(()=>select('?gl-gps=legacy'));
+console.log('PASS actual import scope capability refusal and current GPS backend selector (legacy query ignored)');
+
+const {createBrowserNativeInput}=require('../host.js');
+function nativeFixture(buffer=new ArrayBuffer(4096),bindImmediately=true){
+  let time=1000,mono=0,trust=true;
+  const instance={},endpoint={},worker={link:{}},process={};
+  const renderer={canvas:{},inputQueue:[],windows:{},
+    handleKeyDown(code){this.inputQueue.push({hwnd:0,msg:0x100,wParam:code,lParam:0x12340001});
+      if(this.failDown)throw Error('authored handler fault');}};
+  renderer.windows[10]={hwnd:10,visible:true,wasm:instance,processId:7};
+  const gps={endpoint,workerEpoch:1,device:{},presenter:{layer:{canvas:{}}}};
+  const wine={memory:{buffer},renderer,instance,guestWorker:worker,_processObject:process,
+    running:true,processId:7,hostCtx:{getGlGpsBridge:()=>gps}};
+  const guard=createBrowserNativeInput(wine,{now:()=>time,monotonic:()=>mono,trusted:()=>trust});
+  const scene=[1,7,10,10,0,0,1,0,1,0];
+  const call=(name,fn,actor=0)=>guard.withActor(actor,name,fn);
+  call('check_input',()=>guard.observe(scene));const binding=bindImmediately?guard.bind():null;
+  const prepare=(nonce='n')=>guard.prepare({owner:binding.owner,nonce,code:37,reviewed:true,
+    reviewedAt:time,imageSHA256:'a'.repeat(64),mode:'game'});
+  const down=(code=37)=>{renderer.handleKeyDown(code);const event=renderer.inputQueue.shift();
+    const token=call('check_input',()=>guard.dequeued(event));
+    const dv=new DataView(buffer);[10,event.msg,event.wParam,event.lParam].forEach((n,i)=>dv.setUint32(32+4*i,n,true));
+    return {event,token};};
+  return {guard,renderer,wine,scene,call,prepare,down,
+    clock:(n,m=n-1000)=>{time=n;mono=m;},trust:v=>trust=v};
+}
+{
+  const f=nativeFixture();f.prepare();const {token}=f.down();
+  assert(token>0);assert.equal(f.guard.status('n').consumed,false,'host handler is not consumption');
+  assert.equal(f.guard.consumed(token,1,32,2,1,[...f.scene,32]),0,'direct host call has no actor scope');
+  const consumed=(scene=f.scene,kind=2,remove=1,actor=0)=>f.call('input_consumed',()=>f.guard.consumed(token,1,32,kind,remove,[...scene,32]),actor);
+  assert.equal(consumed(f.scene,2,1,1),0,'wrong actor');
+  for(const index of [0,1,2,3,4,5,6,7,8,9]){
+    const scene=f.scene.slice();scene[index]++;
+    assert.equal(consumed(scene),0,'native context field '+index);
+  }
+  assert.equal(consumed(f.scene,0),0);assert.equal(consumed(f.scene,1,0),0);
+  assert.equal(consumed(),1);assert.equal(f.guard.status('n').consumed,true);
+  assert.equal(f.guard.status('n').nativeMessage.slot,0);
+  assert.throws(()=>f.prepare(),/refused/,'nonce tombstone');
+}
+for(const mode of ['late','monotonic','unknown','focus','modal','generation','target','context','closed','fault','untrusted']){
+  const f=nativeFixture();f.prepare();
+  if(mode==='untrusted'){f.trust(false);f.renderer.handleKeyDown(37);assert.equal(f.renderer.inputQueue.length,0);continue;}
+  const {token}=f.down();
+  if(mode==='late')f.clock(1500);
+  if(mode==='monotonic')f.clock(1000,500);
+  if(mode==='unknown')f.guard.close();
+  if(mode==='target')f.wine.guestWorker={link:{}};
+  if(mode==='context')f.wine.hostCtx.getGlGpsBridge().device={};
+  if(mode==='closed')f.wine.hostCtx.getGlGpsBridge().endpoint.closed=true;
+  if(mode==='fault')f.wine.hostCtx.getGlGpsBridge().workerAsyncError=Error('authored fault');
+  if(['focus','modal','generation'].includes(mode)){
+    const s=f.scene.slice();s[{focus:3,modal:4,generation:6}[mode]]++;
+    f.call('check_input',()=>f.guard.observe(s));
+  }
+  assert.equal(f.call('input_consumed',()=>f.guard.consumed(token,1,32,2,1,[...f.scene,32])),0,mode);
+  assert.equal(f.guard.status('n').consumed,false,mode);
+}
+console.log('PASS browser receipt native return, actor/context/target/deadline/UNKNOWN fences and nonce tombstones');
+{
+  // A context can cross its existing 250ms fence after preparation but
+  // before any next native USER poll. Preserve the exact first refusal;
+  // later observations must not rewrite that diagnostic or revive its edge.
+  const f=nativeFixture();f.clock(1240);f.prepare();f.down();f.clock(1270);
+  const refused=f.guard.status('n');assert.equal(refused.state,'CANCELLED');
+  assert.equal(refused.fence.sceneAge,270);assert.equal(refused.fence.wallExpired,false);
+  assert.equal(refused.fence.monotonicExpired,false);assert.deepEqual(refused.fence.changedRefs,[]);
+  assert.equal(refused.fence.sceneMatches,true);assert.equal(refused.fence.slotMatches,true);
+  f.call('check_input',()=>f.guard.observe(f.scene));
+  assert.deepEqual(f.guard.status('n'),refused);assert.equal(f.renderer.inputQueue.length,0);
+}
+{
+  const f=nativeFixture();f.prepare();f.renderer.failDown=true;
+  assert.throws(()=>f.renderer.handleKeyDown(37),/authored handler fault/);
+  assert.equal(f.renderer.inputQueue.length,0,'throwing handler cannot leave an unowned DOWN');
+  assert.equal(f.guard.status('n').state,'UNKNOWN');
+}
+
+// Exercise the production Worker encoder and page broker as well as the
+// guard. The native exports below stand for USER runtime globals, not the
+// page's idle WASM instance. MSG translation must happen on this side.
+const RPC=require('../lib/guest-rpc');
+for(const fault of [null,'actor','focus','modal','generation','late','unknown']){
+  const f=nativeFixture(new SharedArrayBuffer(8192*65536));let current=f.scene.slice(),event;
+  const sigs={check_input:{params:[],results:['i32']},check_input_token:{params:[],results:['i32']},
+    input_validate:{params:['i32'],results:['i32']},input_consumed:{params:Array(5).fill('i32'),results:['i32']}};
+  const table={check_input:(...values)=>{f.guard.observe(values);f.guard.sweep();event=f.renderer.inputQueue.shift();
+      return event&&f.guard.owns(event)&&f.guard.dequeued(event)!==false?event.msg:0;},
+    check_input_token:()=>f.guard.token(event),input_validate:(token,...values)=>f.guard.validate(token,values),
+    input_consumed:(token,tid,ptr,kind,remove,...values)=>f.guard.consumed(token,tid,ptr,kind,remove,values)};
+  Object.defineProperty(table,'browserInputScope',{value:f.guard});
+  const main=RPC.createMainBroker(f.wine.memory,table,sigs);
+  const exportsOf=()=>({get_main_hwnd:()=>current[2],get_focus_hwnd:()=>current[3],
+    get_current_thread_id:()=>current[0],get_process_id:()=>current[1],modal_dialog_hwnd:()=>current[4],
+    get_capture_hwnd:()=>current[5],get_window_thread:()=>current[0],
+    wnd_lookup_generation:()=>BigInt(current[6])+(BigInt(current[7])<<32n)});
+  const make=slot=>RPC.createWorkerImports(f.wine.memory,sigs,msg=>main.serveRpc(msg.slot),
+    {slot,getExports:exportsOf,guestToWasm:ptr=>{assert.equal(ptr,0x400020);return 32;}}).imports.host;
+  const worker=make(0);assert.equal(worker.check_input(),0);f.prepare();f.renderer.handleKeyDown(37);
+  main.publish({inputPending:1});assert.equal(worker.check_input(),0x100);
+  const token=worker.check_input_token();assert(token>0);
+  const dv=new DataView(f.wine.memory.buffer);[10,event.msg,event.wParam,event.lParam].forEach((n,i)=>dv.setUint32(32+i*4,n,true));
+  if(fault==='focus')current[3]++;
+  if(fault==='modal')current[4]=20;
+  if(fault==='generation')current[6]++;
+  if(fault==='late')f.clock(1500);
+  if(fault==='unknown')f.guard.close();
+  const consumer=fault==='actor'?make(1):worker;
+  assert.equal(consumer.input_consumed(token,1,0x400020,2,1),fault?0:1,String(fault));
+  assert.equal(f.guard.status('n').consumed,!fault,String(fault));
+}
+console.log('PASS production Worker/broker metadata and MSG translation, native return and actor/focus/modal/generation/late/UNKNOWN refusals');
+{
+  const {observeAndBindNativeOwner}=require('../tools/gltron-current-native-input.cjs');
+  const f=nativeFixture(new ArrayBuffer(4096),false);f.wine._browserNativeInput=f.guard;
+  assert(f.guard.snapshot().ready);f.clock(1300);
+  assert.throws(()=>f.guard.bind(),/unavailable/,'old observe/capture/bind ordering expires the real guard freshness fence');
+  assert.equal(observeAndBindNativeOwner(f.wine).ready,false);assert.equal(f.guard.snapshot().bound,false);
+  f.call('check_input',()=>f.guard.observe(f.scene));
+  const admission=observeAndBindNativeOwner(f.wine);assert(admission.binding.owner);assert(admission.bound);
+  f.clock(1600);assert.equal(f.guard.snapshot().ready,false);assert(f.guard.snapshot().bound,
+    'a later screenshot does not move the already completed bind across the freshness fence');
+  assert(!observeAndBindNativeOwner(f.wine).binding,'never rebind an existing owner');
+}
+{
+  const {observeAndPrepareNativeIntent}=require('../tools/gltron-current-native-input.cjs');
+  const f=nativeFixture(new ArrayBuffer(4096),false);f.wine._browserNativeInput=f.guard;
+  const binding=f.guard.bind();
+  const intent={owner:binding.owner,nonce:'fresh-native-poll',code:13,reviewed:true,
+    reviewedAt:1589,imageSHA256:'b'.repeat(64),mode:'menu'};
+  f.clock(1589);
+  const old=f.guard.prepare({...intent,nonce:'old-order'});
+  assert.equal(old.state,'CANCELLED');assert.equal(old.fence.sceneAge,589,
+    'exact original software preparation age, with every other predicate valid');
+  const pending=observeAndPrepareNativeIntent(f.wine,intent,1500);
+  assert.equal(pending.ready,false);assert.equal(pending.prepared,undefined);
+  assert.throws(()=>f.guard.status(intent.nonce),/unknown browser native nonce/,
+    'stale observation must not create a ticket');
+  f.clock(1600);f.call('check_input',()=>f.guard.observe(f.scene));
+  const fresh=observeAndPrepareNativeIntent(f.wine,intent,1500);
+  assert.equal(fresh.prepared.state,'PREPARED');assert(fresh.observedAt>1500);
+  assert.equal(fresh.preparedAt>0,true);assert.equal(f.guard.snapshot().bound,true);
+  const {token}=f.down(13);f.clock(1610);
+  assert.equal(f.call('input_consumed',()=>f.guard.consumed(token,1,32,2,1,[...f.scene,32])),1);
+  assert.equal(f.guard.status(intent.nonce).consumed,true);
+  assert.equal(f.guard.status('old-order').state,'CANCELLED','no replay of original refused nonce');
+  assert.throws(()=>observeAndPrepareNativeIntent(f.wine,intent,1500),/refused/);
+  const idle={...intent,nonce:'no-new-poll'};
+  assert.equal(observeAndPrepareNativeIntent(f.wine,idle,1600).ready,false,
+    'even a fresh earlier poll cannot stand for the required new native observation');
+  console.log('PASS measured 589ms original stale prepare refusal, passive new USER scene and atomic ticket admission without rebind');
+}
+
+(async()=>{
+  {
+  const {waitForNativeConsumption}=require('../tools/gltron-current-native-input.cjs');
+  for(const mode of ['success','cancelled','late-reply','late-down','monotonic','pending']){
+    let wall=0,mono=0,queries=0,closed=0;const rows=[];
+    const work=waitForNativeConsumption({deadline:500,now:()=>wall,monotonic:()=>mono,
+      close:()=>closed++,record:v=>rows.push(v),
+      dispatch:async()=>{if(mode==='late-down')wall=mono=501;},
+      observe:async()=>{queries++;
+        if(mode==='late-reply')wall=mono=501;
+        if(mode==='monotonic')mono=501;
+        return {state:mode==='cancelled'?'CANCELLED':mode==='pending'?'DELIVERY_PENDING':'CONSUMED'};
+      },wait:async()=>{wall=mono=501;}});
+    if(mode==='success'){assert.equal((await work).state,'CONSUMED');assert.equal(closed,0);}
+    else if(mode==='cancelled'){await assert.rejects(work,/native input refused.*CANCELLED/);assert.equal(rows[0].late,false);}
+    else {await assert.rejects(work,/NATIVE_INPUT_UNKNOWN/);assert.equal(closed,1);}
+    assert.equal(queries,mode==='late-down'?0:1,'no queries after the immutable boundary '+mode);
+    if(['late-reply','monotonic'].includes(mode))assert.equal(rows[0].late,true,'late CONSUMED is evidence, never success');
+  }
+  // An actually pending promise also closes, and its later completion cannot
+  // trigger another observation. This exercises the timer as well as clocks.
+  let lateResolve,queries=0,closed=0;
+  const pending=waitForNativeConsumption({deadline:Date.now()+20,dispatch:async()=>{},
+    observe:()=>{queries++;return new Promise(resolve=>lateResolve=resolve);},close:()=>closed++});
+  await assert.rejects(pending,/NATIVE_INPUT_UNKNOWN/);assert.equal(closed,1);
+  lateResolve({state:'CONSUMED'});await new Promise(resolve=>setTimeout(resolve,5));
+  assert.equal(queries,1);assert.equal(closed,1);
+  console.log('PASS immutable native delivery boundary: timely success, cancellation, late DOWN/reply, monotonic expiry, pending timer and zero later queries');
+  }
+
+  const {finishNativeRelease}=require('../tools/gltron-current-native-input.cjs');
+  const nativeError=Error('CANCELLED native owner context age 275ms');
+  const releaseError=Error('independent trusted physical UP missing');
+  let calls=0;
+  const participant={finish:async nonce=>{calls++;assert.equal(nonce,'cancelled');throw releaseError;}};
+  await assert.rejects(finishNativeRelease(participant,'cancelled',nativeError),error=>{
+    assert(error instanceof AggregateError);assert.equal(error.cause,nativeError);
+    assert.deepEqual(error.errors,[nativeError,releaseError]);
+    assert.match(error.message,/CANCELLED.*275ms.*physical UP missing/);return true;
+  });
+  assert.equal(calls,1,'failure reporting never retries release');
+  await assert.rejects(finishNativeRelease(participant,'cancelled',null),error=>error===releaseError);
+  const receipt={ok:true};assert.equal(await finishNativeRelease({finish:async()=>receipt},'success',null),receipt);
+  assert.equal(await finishNativeRelease({finish:async()=>receipt},'cancelled',nativeError),receipt,
+    'successful independent UP does not suppress caller native failure');
+  console.log('PASS native cancellation and independent release failures remain distinct with original cause and no retry');
+
+  const {waitForNativeOwner}=require('../tools/gltron-current-native-input.cjs');
+  let clock=0,observed=0,closed=0;
+  const states=[{healthy:true,ready:false},{healthy:true,ready:false},{healthy:true,ready:true}];
+  const ready=await waitForNativeOwner({observe:async()=>states[observed++],deadline:1000,
+    now:()=>clock,wait:async ms=>{clock+=ms;},close:()=>closed++});
+  assert(ready.ready);assert.equal(observed,3);assert.equal(closed,0);
+  observed=0;clock=0;
+  await assert.rejects(waitForNativeOwner({observe:async()=>{observed++;return {healthy:true,ready:false};},
+    deadline:50,now:()=>clock,wait:async ms=>{clock+=ms;},close:()=>closed++}),/startup deadline/);
+  assert.equal(observed,2);assert.equal(closed,1,'terminal deadline closes once without a bind or later observation');
+  await assert.rejects(waitForNativeOwner({observe:async()=>({healthy:false,ready:false}),
+    deadline:Date.now()+1000,close:()=>closed++}),/retired actor/);
+  assert.equal(closed,2);
+  console.log('PASS passive pre-USER startup readiness, no early bind/input and terminal deadline/retirement closure');
+})().catch(error=>{console.error(error);process.exitCode=1;});
+
+// Optional real-browser, real-child protocol exercise. This never installs a
+// receipt stand-in or sends DOWN/UP; native physical UP is qualified only by
+// the separately supervised full guest recipes.
+if(process.env.GLTRON_RELEASE_PROTOCOL_OUT)(async()=>{
+  const path=require('node:path'),out=path.resolve(process.env.GLTRON_RELEASE_PROTOCOL_OUT);
+  const {createReleaseParticipant}=require('../tools/gltron-current-native-input.cjs');
+  fs.mkdirSync(out,{recursive:true});let browser,child;
+  try{
+    browser=await require('puppeteer').launch({executablePath:'/opt/google/chrome/chrome',headless:true,
+      userDataDir:out+'/profile',args:['--no-sandbox','--disable-dev-shm-usage','--disable-component-update']});
+    const p=browser.process();p.stdout.resume();p.stderr.resume();
+    const wait=new Promise(resolve=>p.once('close',(code,signal)=>{fs.writeFileSync(out+'/browser-wait.json',JSON.stringify({pid:p.pid,code,signal,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded})+'\n');resolve();}));
+    const {connection}=require('../tools/gltron-browser-controller.cjs'),c=connection(browser.wsEndpoint());await c.ready;
+    const targets=(await c.send('Target.getTargets')).targetInfos.filter(t=>t.type==='page');c.ws.close();assert.equal(targets.length,1);
+    const cfg={pid:p.pid,startToken:fs.readFileSync('/proc/'+p.pid+'/stat','utf8').split(') ').at(-1).split(' ')[19],url:browser.wsEndpoint(),targetId:targets[0].targetId};
+    const cancel=out+'/cancel';fs.mkdirSync(cancel);child=await createReleaseParticipant(cancel,cfg);
+    for(let i=0;i<2;i++){
+      const nonce='noDown-'+i,armed=await child.arm({name:'action-'+i,nonce,key:'a',code:65});
+      assert(armed.latencyMs<1000);child.cancel(nonce);assert((await child.finish(nonce)).cancelNoDown);
+      assert.equal(JSON.parse(fs.readFileSync(cancel+'/action-'+i+'-up.json')).inputDispatches,0);
+    }
+    await assert.rejects(child.arm({name:'action-2',nonce:'noDown-0',key:'a',code:65}));
+    assert.equal((await child.close()).code,0,'a stale nonce is refused before any repeated arm transport');child=null;
+    const stale=out+'/stale';fs.mkdirSync(stale);
+    await assert.rejects(createReleaseParticipant(stale,{...cfg,startToken:'0'}));
+    assert.equal(JSON.parse(fs.readFileSync(stale+'/release-participant-wait.json')).code,1);
+    const idle=out+'/idle';fs.mkdirSync(idle);child=await createReleaseParticipant(idle,cfg);
+    assert.equal((await child.close()).code,0,'parent EOF with no arm sends no release');child=null;
+    // Real late CDP connection and a parent whose read callback cannot run
+    // before the deadline. Neither may accept a queued/late ready record.
+    const net=require('node:net'),url=new URL(cfg.url),sockets=new Set();
+    const proxy=net.createServer(socket=>{sockets.add(socket);socket.on('close',()=>sockets.delete(socket));
+      const timer=setTimeout(()=>{if(socket.destroyed)return;const remote=net.connect(Number(url.port),url.hostname,()=>{socket.pipe(remote);remote.pipe(socket);});
+        sockets.add(remote);remote.on('close',()=>sockets.delete(remote));remote.on('error',()=>socket.destroy());socket.on('close',()=>remote.destroy());},1200);
+      socket.on('close',()=>clearTimeout(timer));socket.on('error',()=>{});
+    });
+    await new Promise(r=>proxy.listen(0,'127.0.0.1',r));
+    try{
+      const late=out+'/late';fs.mkdirSync(late);
+      await assert.rejects(createReleaseParticipant(late,{...cfg,url:cfg.url.replace(':'+url.port,':'+proxy.address().port)}),/ready deadline/);
+      const blocked=out+'/parent-blocked';fs.mkdirSync(blocked);
+      const pending=createReleaseParticipant(blocked,cfg);pending.catch(()=>{});
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,1400);
+      await assert.rejects(pending,/ready deadline/);
+      for(const dir of [late,blocked]){
+        const clocks=JSON.parse(fs.readFileSync(dir+'/release-parent-clocks.json'));
+        assert(!clocks.some(v=>v.name==='accepted'&&v.event==='ready'));
+        const receipt=JSON.parse(fs.readFileSync(dir+'/release-participant-wait.json'));
+        assert(receipt.actualWait&&receipt.stdoutEOF&&receipt.stderrEOF);
+      }
+      const failed=out+'/invalid-target';fs.mkdirSync(failed);
+      await assert.rejects(createReleaseParticipant(failed,{...cfg,targetId:'not-a-real-target'}));
+      assert.equal(JSON.parse(fs.readFileSync(failed+'/release-participant-wait.json')).code,1);
+    }finally{for(const socket of sockets)socket.destroy();await new Promise(r=>proxy.close(r));}
+    await browser.close();await wait;browser=null;
+    fs.writeFileSync(out+'/result.json',JSON.stringify({passed:true,realChrome:true,realChildren:true,inputDispatches:0,cancelNoDown:2,staleNonceRefused:true,staleBrowserIdentityRefused:true,idleEOF:true,trueLateReadyRefused:true,parentBlockedLateReadRefused:true,failedAttachRefused:true,nativeReceiptQualification:false})+'\n');
+    console.log('PASS real Chrome release participant cancellation, nonce/identity refusals and idle EOF; zero input');
+  }finally{if(child)await child.close();if(browser)await browser.close();fs.rmSync(out+'/profile',{recursive:true,force:true});}
+})().catch(error=>{console.error(error);process.exitCode=1;});

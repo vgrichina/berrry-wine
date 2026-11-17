@@ -4,7 +4,7 @@
 Never builds or changes shared outputs. Runtime sources and module are sealed
 in memory; only Git identities, hashes and helper diffs persist in evidence.
 """
-import fcntl, gzip, hashlib, json, os, pathlib, signal, socket, subprocess, sys, time, types, uuid
+import fcntl, gzip, hashlib, json, os, pathlib, signal, socket, subprocess, sys, threading, time, types, uuid
 
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 RUN=pathlib.Path(os.environ.get('DELPHI5_RUN',ROOT/'scratch/runs/20261116-vb5cce-reviewed-context-install-ide'))
@@ -17,7 +17,9 @@ SUPPORT_PACKAGE_SHA256='564de93dcc50691480332e2ccb5565908760b295faa70f8c68854f69
 CFGMGR32_SHA256='572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b80'
 SUPPORT_MOUNTS=[]
 OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/run.js',
-    'lib/installed-dll-closure.js','test/test-installed-dll-closure.cjs','test/test-vb5-runtime-shutdown.py')
+    'lib/installed-dll-closure.js','test/test-installed-dll-closure.cjs','test/test-vb5-runtime-shutdown.py',
+    'src/09a9-comctl32.wat','src/api_table.json','src/01b-api-hashes.generated.wat',
+    'src/09b2-dispatch-table.generated.wat','tools/gen_api_table.js','test/test-image-list-icons.js')
 
 class ShutdownRequested(SystemExit):pass
 def shutdown_signal(signum,frame):
@@ -37,6 +39,36 @@ def terminate_owned(p):
         try:os.killpg(p.pid,signal.SIGKILL)
         except ProcessLookupError:pass
         return p.wait(timeout=10)
+def start_native(args,out,err,**kwargs):
+    """Drain both native pipes while retaining the actual EOF observations.
+
+    Readers finish before their output files close. Process exit alone does
+    not establish pipe EOF: an inherited writer can outlive the direct child.
+    """
+    p=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,**kwargs)
+    capture=dict(stdoutEOF=False,stderrEOF=False,errors=[],threads=[])
+    p.vb5_capture=capture
+    def drain(pipe,target,key):
+        try:
+            while True:
+                body=pipe.read1(65536)
+                if not body:
+                    capture[key]=True;break
+                target.write(body);target.flush()
+        except BaseException as e:capture['errors'].append(repr(e))
+        finally:pipe.close()
+    for pipe,target,key in ((p.stdout,out,'stdoutEOF'),(p.stderr,err,'stderrEOF')):
+        t=threading.Thread(target=drain,args=(pipe,target,key),daemon=True)
+        capture['threads'].append(t);t.start()
+    return p
+def join_native_output(p):
+    capture=getattr(p,'vb5_capture',None)
+    if capture is None:return dict(outputMode='regular files; no pipe EOF claim')
+    due=time.monotonic()+10
+    for t in capture['threads']:t.join(max(0,due-time.monotonic()))
+    return dict(outputMode='drained native pipes',stdoutEOF=capture['stdoutEOF'],
+        stderrEOF=capture['stderrEOF'],outputErrors=capture['errors'],
+        readersJoined=all(not t.is_alive() for t in capture['threads']))
 def wait_native(p,target,info,timeout=None):
     normal=False
     try:
@@ -44,9 +76,12 @@ def wait_native(p,target,info,timeout=None):
     finally:
         # poll/absence is never represented as a join: always call wait.
         rc=terminate_owned(p)
+        output=join_native_output(p)
         publish(target/'native-wait.json',dict(**info,exit=rc,actualWait=True,
             disposition='normal' if normal else 'cleanup',
-            outputMode='regular files; no pipe EOF claim',atWait=time.time(),atWaitMono=time.monotonic()))
+            **output,atWait=time.time(),atWaitMono=time.monotonic()))
+        if getattr(p,'vb5_capture',None) is not None:
+            assert output['stdoutEOF'] and output['stderrEOF'] and output['readersJoined'] and not output['outputErrors'], 'native output drain incomplete'
 def join_watchdog(w):
     try:a,b=w.communicate(timeout=10)
     except subprocess.TimeoutExpired:
@@ -240,6 +275,9 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
+    if '--comctl-only' in sys.argv:
+        checked('image-list-apis',['node','test/test-image-list-icons.js'],env,(source,module))
+        return
     if installed or '--closure-only' in sys.argv or '--complete-qualification' in sys.argv:
         checked('authentic-dll-closure',['node','test/test-installed-dll-closure.cjs',str(RUN/'authentic-dll-closure')],env,(source,module))
         if '--closure-only' in sys.argv:return
@@ -442,12 +480,13 @@ def original_pipeline(env,source,module,started,deadline,passive,installed_input
                 '--control='+str(port),'--max-seconds='+str(max(1,int(deadline-time.time()))),
                 '--max-batches=1000000000','--stuck-after=0','--real-ticks',
                 '--quiet-api','--quiet-blocks','--png-canvas',
+                '--trace-api=LoadLibraryA,LoadLibraryExA,GetProcAddress,GetModuleHandleA,GetModuleFileNameA,GetFileVersionInfoSizeA,GetFileVersionInfoA,VerQueryValueA,MessageBoxA','--trace-to=20000',
                 '--pipe-child-args=--control='+str(childport)+' --winver=nt4 --threads --real-ticks --png-canvas',*SUPPORT_MOUNTS,*extra]
             publish(target/'launch.json',dict(args=argv,at=started,deadline=deadline,
                  gameplayCutoff=deadline-reserve_seconds,reserveSeconds=reserve_seconds,
                  rootPort=port,childPort=childport,winver='nt4',passiveDiagnostic=passive))
             with (target/'native.stdout.log').open('xb') as out,(target/'native.stderr.log').open('xb') as err:
-                p=subprocess.Popen(argv,cwd=ROOT,env=env,pass_fds=(source,module),stdout=out,stderr=err,start_new_session=True)
+                p=start_native(argv,out,err,cwd=ROOT,env=env,pass_fds=(source,module),start_new_session=True)
                 info=native_identity(p)
                 info['invocationToken']=invocation
                 try:
@@ -467,7 +506,7 @@ def original_pipeline(env,source,module,started,deadline,passive,installed_input
                     if not (target/'native-wait.json').exists():
                         terminate_owned(p)
                         publish(target/'native-wait.json',dict(**info,exit=p.returncode,actualWait=True,
-                            disposition='cleanup',outputMode='regular files; no pipe EOF claim',
+                            disposition='cleanup',**join_native_output(p),
                             atWait=time.time(),atWaitMono=time.monotonic()))
             if (target/'PERMANENT-UNKNOWN.json').exists() or rc!=0:return
 

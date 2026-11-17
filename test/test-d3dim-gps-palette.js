@@ -40,15 +40,6 @@ const WAT = String.raw`
  (load.field DxObject misc1 (call $dx_from_this (local.get $p))))
 `;
 const RGB = [64, 128, 192];
-// KNOWN GAP (src, not this test): the producer's colour-key kill shader
-// ($d3g_shader key bit 0x2000: SUB r2 = r1.w - c0; TEXKILL r2, finished as
-// ps_1_4) does not reject on lib/gpu-stream-software.js: the keyed texel is
-// written as RGB with alpha 0. (The deleted WAT software rasterizer rejected it.) Cause
-// not yet isolated (suspect: the shader VM's PS1.x TEXKILL tests original
-// texture coordinates, not r2). Logged, not hidden; GPS_PALETTE_STRICT=1
-// makes it fail.
-const KNOWN_GPS_GAPS = new Set(['FALSE legacy key rejection']);
-const gaps = [];
 const ok = (hr, label) => assert.strictEqual(hr >>> 0, 0, label + ' HRESULT');
 
 async function arm(gpu) {
@@ -89,7 +80,6 @@ async function arm(gpu) {
     const actual = read(); observations.push({ name, actual });
     const bad = actual.some((p, i) => p.some((c, j) => Math.abs(c - expected[i][j]) > tol));
     const message = `${label} ${name}: actual=${JSON.stringify(actual)} expected=${JSON.stringify(expected)}`;
-    if (bad && gpu && KNOWN_GPS_GAPS.has(name) && !process.env.GPS_PALETTE_STRICT) { gaps.push(message); return; }
     assert(!bad, message);
   };
   const rgba = (a, colors = [RGB, RGB, RGB]) => a.map((v, i) => [...colors[i], v]);
@@ -178,7 +168,6 @@ async function arm(gpu) {
 
 (async () => {
   const gps = await arm(1);
-  for (const gap of gaps) console.log('KNOWN GAP ' + gap);
   console.log(`PASS GPS producer PAL8 textures: ${gps.n} GPS pixel observations; ` +
     `GPS draws=${gps.s.draws} textureUploads=${gps.s.textureUploads} clears=${gps.s.clears}`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

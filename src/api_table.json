@@ -39462,5 +39462,334 @@
     "nargs": 0,
     "convention": "stdcall",
     "hash": 391800565
+  },
+  {
+    "id": 4659,
+    "name": "ImageList_SetOverlayImage",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4187758740
+  },
+  {
+    "id": 4660,
+    "name": "ImageList_GetImageInfo",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3294435810
+  },
+  {
+    "id": 4661,
+    "name": "NativeTypeLib_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3233343285
+  },
+  {
+    "id": 4662,
+    "name": "NativeTypeLib_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3202051934
+  },
+  {
+    "id": 4663,
+    "name": "NativeTypeLib_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1101110451
+  },
+  {
+    "id": 4664,
+    "name": "NativeTypeLib_GetTypeInfoCount",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 509819485
+  },
+  {
+    "id": 4665,
+    "name": "NativeTypeLib_GetTypeInfo",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3078229982
+  },
+  {
+    "id": 4666,
+    "name": "NativeTypeLib_GetTypeInfoType",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1973028414
+  },
+  {
+    "id": 4667,
+    "name": "NativeTypeLib_GetTypeInfoOfGuid",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4109148138
+  },
+  {
+    "id": 4668,
+    "name": "NativeTypeLib_GetLibAttr",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4212695754
+  },
+  {
+    "id": 4669,
+    "name": "NativeTypeLib_GetTypeComp",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 317443437
+  },
+  {
+    "id": 4670,
+    "name": "NativeTypeLib_GetDocumentation",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 1323951992
+  },
+  {
+    "id": 4671,
+    "name": "NativeTypeLib_IsName",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2385714165
+  },
+  {
+    "id": 4672,
+    "name": "NativeTypeLib_FindName",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 1494258998
+  },
+  {
+    "id": 4673,
+    "name": "NativeTypeLib_ReleaseTLibAttr",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2163932415
+  },
+  {
+    "id": 4674,
+    "name": "NativeTypeInfo_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 159209656
+  },
+  {
+    "id": 4675,
+    "name": "NativeTypeInfo_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1114580875
+  },
+  {
+    "id": 4676,
+    "name": "NativeTypeInfo_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2787183116
+  },
+  {
+    "id": 4677,
+    "name": "NativeTypeInfo_GetTypeAttr",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 46011174
+  },
+  {
+    "id": 4678,
+    "name": "NativeTypeInfo_GetTypeComp",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3800114382
+  },
+  {
+    "id": 4679,
+    "name": "NativeTypeInfo_GetFuncDesc",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2187710486
+  },
+  {
+    "id": 4680,
+    "name": "NativeTypeInfo_GetVarDesc",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 970783755
+  },
+  {
+    "id": 4681,
+    "name": "NativeTypeInfo_GetNames",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 341193739
+  },
+  {
+    "id": 4682,
+    "name": "NativeTypeInfo_GetRefTypeOfImplType",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1425340369
+  },
+  {
+    "id": 4683,
+    "name": "NativeTypeInfo_GetImplTypeFlags",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2703975778
+  },
+  {
+    "id": 4684,
+    "name": "NativeTypeInfo_GetIDsOfNames",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 824457416
+  },
+  {
+    "id": 4685,
+    "name": "NativeTypeInfo_Invoke",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 3293200391
+  },
+  {
+    "id": 4686,
+    "name": "NativeTypeInfo_GetDocumentation",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 3151854085
+  },
+  {
+    "id": 4687,
+    "name": "NativeTypeInfo_GetDllEntry",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 4217763913
+  },
+  {
+    "id": 4688,
+    "name": "NativeTypeInfo_GetRefTypeInfo",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1248967686
+  },
+  {
+    "id": 4689,
+    "name": "NativeTypeInfo_AddressOfMember",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2564601658
+  },
+  {
+    "id": 4690,
+    "name": "NativeTypeInfo_CreateInstance",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1694103772
+  },
+  {
+    "id": 4691,
+    "name": "NativeTypeInfo_GetMops",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2559499776
+  },
+  {
+    "id": 4692,
+    "name": "NativeTypeInfo_GetContainingTypeLib",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3522010312
+  },
+  {
+    "id": 4693,
+    "name": "NativeTypeInfo_ReleaseTypeAttr",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3230525943
+  },
+  {
+    "id": 4694,
+    "name": "NativeTypeInfo_ReleaseFuncDesc",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3155801867
+  },
+  {
+    "id": 4695,
+    "name": "NativeTypeInfo_ReleaseVarDesc",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4072110168
+  },
+  {
+    "id": 4696,
+    "name": "NativeTypeInvokeReturn",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 206737508
+  },
+  {
+    "id": 4697,
+    "name": "CreateDispTypeInfo",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2422681909
+  },
+  {
+    "id": 4698,
+    "name": "DispInvoke",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 472404381
+  },
+  {
+    "id": 4699,
+    "name": "ComAutomationOperation",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1311518962
+  },
+  {
+    "id": 4700,
+    "name": "UnRegisterTypeLib",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1140149058
+  },
+  {
+    "id": 4701,
+    "name": "VariantChangeType",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 185794306
+  },
+  {
+    "id": 4702,
+    "name": "SafeArrayGetElement",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1494902505
+  },
+  {
+    "id": 4703,
+    "name": "SafeArrayPutElement",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3657684182
+  },
+  {
+    "id": 4704,
+    "name": "SafeArrayCopy",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2987568820
+  },
+  {
+    "id": 4705,
+    "name": "SafeArrayPtrOfIndex",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2812059496
   }
 ]

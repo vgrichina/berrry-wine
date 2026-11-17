@@ -8,6 +8,9 @@ const ProcessBoot = (typeof window !== 'undefined' && window.processBoot) || nul
 const HostMemUtils = (typeof window !== 'undefined' && window.memUtils) ||
   (typeof require !== 'undefined' ? require('./lib/mem-utils') : null);
 
+const createBrowserNativeInput = typeof window !== 'undefined'
+  ? window.createBrowserNativeInput : require('./lib/browser-native-input').createBrowserNativeInput;
+
 // Private provenance, populated only at the actual compile boundary. A public
 // Module or a caller-provided buffer cannot authenticate one another.
 const drakanCompiledBytes = new WeakMap();
@@ -2855,7 +2858,9 @@ class WineAssembly {
     };
 
     // --- Input ---
-    h.check_input = () => {
+    h.check_input = (...nativeContext) => {
+      ctx.guardedInput?.observe(nativeContext);
+      ctx.guardedInput?.sweep();
       if (!self.renderer) return 0;
       // Retained main/auxiliary imports may still be polled after Stop or
       // reinitialization. Their captured process incarnation is authoritative.
@@ -2895,6 +2900,7 @@ class WineAssembly {
           return !win || !win.wasm || win.wasm === ownerInstance;
         };
       const owns = e => {
+        if (ctx.guardedInput && !ctx.guardedInput.owns(e)) return false;
         if (e && e.pointerProcess) {
           return e.pointerProcess === ctx.windowLookupLifetime && !e.pointerProcess.exited;
         }
@@ -2910,6 +2916,9 @@ class WineAssembly {
         if (self.renderer.inputQueue.length === 0) clearInactiveInput();
         return 0;
       }
+      if (ctx.guardedInput?.dequeued(evt) === false) {
+        clearInactiveInput();return 0;
+      }
       self._lastInputEvent = evt;
       self.renderer._activeInputEvent = evt;
       if (evt.msg !== 0x200) {
@@ -2917,6 +2926,15 @@ class WineAssembly {
       }
       return (evt.wParam << 16) | (evt.msg & 0xFFFF);
     };
+    if (typeof window!=='undefined' && window.WINE_BROWSER_NATIVE_INPUT===true && !opts.detached) {
+      const guard=self._browserNativeInput || (self._browserNativeInput=createBrowserNativeInput(self));
+      ctx.guardedInput=guard;
+      ctx.nativeInputActor=()=>guard.snapshot();
+      Object.defineProperty(h,'browserInputScope',{value:guard});
+      h.check_input_token=()=>guard.token(self._lastInputEvent);
+      h.input_validate=(token,...values)=>guard.validate(token,values);
+      h.input_consumed=(token,tid,ptr,kind,remove,...values)=>guard.consumed(token,tid,ptr,kind,remove,values);
+    }
     h.check_input_lparam = () => {
       return self._lastInputEvent ? (self._lastInputEvent.lParam | 0) : 0;
     };
@@ -7129,10 +7147,7 @@ class WineAssembly {
     // was executing needs no new frame. Service it at this ordinary unheld
     // boundary, using live host queues (including shared DirectDraw damage).
     // Do not let a closing host certify its retained display.
-    if (!this._stopped && this.running !== false && !this._presentFrameDue &&
-        !this._presentWanted() && this.renderer?.serviceCurrentDisplayCapture) {
-      this.renderer.serviceCurrentDisplayCapture();
-    }
+    this._serviceCurrentDisplayCapture();
     if (typeof requestAnimationFrame !== 'function') {
       const r = this.renderer;
       if (r && r._workerPublicationHeld && r._workerPublicationHeld()) {
@@ -7228,6 +7243,10 @@ class WineAssembly {
   requestCurrentDisplayCapture(options) {
     if (!this.renderer || !options) throw new Error('Current display capture requires a renderer and owner');
     if (this._stopped || this.running === false) throw new Error('Current display capture owner is stopped');
+    // A reported native producer failure stays terminal for new observations,
+    // including requests made while its next guest slice is still running.
+    const producer = this.hostCtx?.getGlGpsBridge?.();
+    if (producer?.workerAsyncError) throw producer.workerAsyncError;
     // A queued surface is not a completed display. Arm the existing capture
     // transaction for its next ordinary unheld publication instead of refusing
     // observation merely because the application keeps rendering. Never upload
@@ -7236,10 +7255,37 @@ class WineAssembly {
       dirty: !!this._dxDirty, lockDeferred: !!this._dxLockDeferred,
       presentDue: !!this._presentFrameDue,
     });
-    return this.renderer.requestCurrentDisplayCapture({
+    const renderer = this.renderer, instance = this.instance, processId = this.processId;
+    const ticket = renderer.requestCurrentDisplayCapture({
       hwnd: options.hwnd, processId: this.processId, instance: this.instance,
       pendingHostPublication,
     });
+    // A producer may park after releasing its last writer. Reading a ticket
+    // must join that release even when no further guest slice/present occurs.
+    // This only services an already displayed, clean, unheld receipt; it
+    // neither schedules nor uploads anything. Retained complete tickets never
+    // revisit live state.
+    const service = () => {
+      if (ticket.status !== 'pending') return;
+      if (this.renderer !== renderer || this.instance !== instance || this.processId !== processId) {
+        renderer.failCurrentDisplayCapture({ instance, processId }, new Error('Current display host owner replaced'));
+        return;
+      }
+      this._serviceCurrentDisplayCapture();
+    };
+    return Object.freeze({
+      get status() { service(); return ticket.status; },
+      get error() { return ticket.error; },
+      read() { service(); return ticket.read(); },
+      cancel() { return ticket.cancel(); },
+    });
+  }
+
+  _serviceCurrentDisplayCapture() {
+    if (!this._stopped && this.running !== false && !this._presentFrameDue &&
+        !this._presentWanted() && this.renderer?.serviceCurrentDisplayCapture) {
+      this.renderer.serviceCurrentDisplayCapture();
+    }
   }
 
   // Upload the newest guest frame and composite, now. Called from the rAF,
@@ -8112,5 +8158,5 @@ for (const name of ['_loadWin16Dlls', '_stageWin16Module', 'loadDlls', 'handleCo
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness };
+  module.exports = { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness, createBrowserNativeInput };
 }

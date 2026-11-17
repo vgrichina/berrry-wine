@@ -116,6 +116,9 @@ async function main() {
   const destroyIcon = makeCaller('DestroyIcon');
   const drawIcon = makeCaller('DrawIcon');
   const deleteObject = makeCaller('DeleteObject');
+  const imageInfo = makeCaller('ImageList_GetImageInfo');
+  const overlay = makeCaller('ImageList_SetOverlayImage');
+  const draw = makeCaller('ImageList_Draw');
 
   assert.strictEqual(loadA([0xffffffff, 0, 15, 1, 0xffffffff, 1, 0]), 0,
     'ImageList_LoadImage rejects non-bitmap image types');
@@ -274,12 +277,40 @@ async function main() {
     'ImageList_AddMasked copies pixels instead of retaining the source bitmap');
   assert(e.guest_read32(bitmapList + 24) >>> 0,
     'copied cells are retained in the private icon array');
+  { const info = alloc(40);
+  bytes.fill(0xa5, wa(info), wa(info) + 40);
+  for (const args of [[0,0,info],[0xfffffff0,0,info],[bitmapList,2,info],
+    [bitmapList,0,0],[bitmapList,0,0xfffffff0]]) {
+    assert.strictEqual(imageInfo(args), 0, 'invalid IMAGEINFO request fails');
+  }
+  assert.strictEqual(dv.getUint32(wa(info),true),0xa5a5a5a5,'refusal does not write output');
+  assert.strictEqual(imageInfo([bitmapList,1,info]),1);
+  const colorPlane=e.guest_read32(info)>>>0, maskPlane=e.guest_read32(info+4)>>>0;
+  assert(colorPlane && maskPlane,'IMAGEINFO borrows real image and mask bitmaps');
+  assert.deepStrictEqual(Array.from({length:6},(_,i)=>e.guest_read32(info+8+i*4)>>>0),[0,0,0,0,4,4]);
+  assert.strictEqual(dv.getUint32(wa(info)+32,true),0xa5a5a5a5,'IMAGEINFO writes exactly 32 bytes');
+  assert.strictEqual(imageInfo([bitmapList,1,info]),1);
+  assert.strictEqual(e.guest_read32(info)>>>0,colorPlane,'repeat query returns the same live bitmap');
+  assert.strictEqual(overlay([bitmapList,1,15]),1,'last 4.71 overlay slot supported');
+  for(const args of [[0,0,1],[0xfffffff0,0,1],[bitmapList,2,15],
+    [bitmapList,0,0],[bitmapList,0,16],[bitmapList,0xffffffff,15]])assert.strictEqual(overlay(args),0);
+  const dst=e.test_call_CreateBitmap(4,4,1,32,0)>>>0;
+  const dstBits=e.test_gdi_bitmap_storage(dst)>>>0;
+  const dc=e.test_call_CreateCompatibleDC(0)>>>0;e.test_call_SelectObject(dc,dst);
+  const liveBits=e.test_gdi_bitmap_storage(colorPlane)>>>0;
+  dv.setUint32(liveBits+(1*4+1)*4,0x0000ffff,true);
+  assert.strictEqual(draw([bitmapList,0,dc,0,0,0x0f01]),1,'draw applies selected overlay');
+  assert.strictEqual(dv.getUint32(dstBits+(1*4+1)*4,true),0x0000ffff,'drawing reads edits through borrowed IMAGEINFO bitmap');
+  dv.setUint32(liveBits+(1*4+1)*4,0x0000ff00,true);
+  e.test_call_DeleteDC(dc);e.test_call_DeleteObject(dst);
+  }
   e.test_call_DeleteObject(strip);
   assert.strictEqual(remove([bitmapList, 2]), 0,
     'ImageList_Remove rejects an out-of-range index without changing the list');
   assert.strictEqual(e.guest_read32(bitmapList + 12) >>> 0, 2);
   assert.strictEqual(remove([bitmapList, 0]), 1,
     'ImageList_Remove removes a selected entry');
+  assert.strictEqual(e.guest_read32(bitmapList+36+14*4)>>>0,1,'removal adjusts overlay index');
   assert.strictEqual(e.guest_read32(bitmapList + 12) >>> 0, 1,
     'removal closes the image-index gap');
   assert.strictEqual(get([bitmapList, 1, 0]), 0,

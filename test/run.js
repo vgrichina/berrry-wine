@@ -1,5 +1,68 @@
 const fs = require('fs');
 const path = require('path');
+// Parse args (need these before autoBuild)
+const args = process.argv.slice(2);
+// WINE_RUN_EXTRA_ARGS='--lazy-ranges=5 ...': appended to every run.js command
+// line, so an existing gameplay test that spawns run.js becomes, unedited, the
+// same route under an extra flag (the lazy-loading audit runs each one this
+// way). Whitespace-separated; a flag given twice resolves as getArg reads it.
+if (process.env.WINE_RUN_EXTRA_ARGS) {
+  const extra = process.env.WINE_RUN_EXTRA_ARGS.split(/\s+/).filter(Boolean);
+  args.push(...extra);
+  process.argv.push(...extra);
+  console.error(`[run] WINE_RUN_EXTRA_ARGS: ${extra.join(' ')}`);
+}
+// --tee=PATH: also write everything this process prints (stdout and stderr)
+// to PATH. With WINE_RUN_EXTRA_ARGS it keeps the log of a run a test spawned
+// and only parsed, e.g. for tools/io-range-census.js over its --trace-fs.
+{
+  const tee = args.find(value => value.startsWith('--tee='));
+  if (tee) {
+    const fd = fs.openSync(tee.slice('--tee='.length), 'w');
+    for (const stream of [process.stdout, process.stderr]) {
+      const write = stream.write.bind(stream);
+      stream.write = (chunk, encoding, callback) => {
+        try { fs.writeSync(fd, typeof chunk === 'string' ? chunk : Buffer.from(chunk)); } catch (_) {}
+        return write(chunk, encoding, callback);
+      };
+    }
+  }
+}
+const getArg = (name, def) => {
+  const prefix = `--${name}=`;
+  const arg = args.find(value => value.startsWith(prefix));
+  return arg ? arg.slice(prefix.length) : def;
+};
+const getArgs = name => {
+  const prefix = `--${name}=`;
+  return args.filter(value => value.startsWith(prefix))
+    .flatMap(value => value.slice(prefix.length).split(','))
+    .map(value => value.trim()).filter(Boolean);
+};
+const hasFlag = name => args.includes(`--${name}`);
+// Was `--name=...` written at all? Distinct from getArg(), which cannot tell an
+// absent option from one that was given its default value.
+const argHas = name => args.some(a => a.startsWith(`--${name}=`));
+
+// This launch-local digest runs while host modules/imports are constructed.
+// It grants no adoption or input: restore joins it and verifies the real live
+// provider, source identity, tree and metadata before any PE initializer.
+const CHILD_STATE_TOKEN = getArg('child-state-token', '');
+const CHILD_READONLY_CONTEXT = getArg('child-readonly-context', '');
+const SPAWNED_CHILD = hasFlag('spawned-child');
+let inheritedReadonly=null,readonlyPreparation=null;
+if (CHILD_READONLY_CONTEXT) {
+  if (!SPAWNED_CHILD || typeof process.send !== 'function' || !CHILD_STATE_TOKEN)
+    throw new Error('readonly media context requires a native child launch');
+  inheritedReadonly=JSON.parse(fs.readFileSync(CHILD_READONLY_CONTEXT,'utf8'));
+  if (inheritedReadonly.version!==1 || inheritedReadonly.token!==CHILD_STATE_TOKEN)
+    throw new Error('readonly media context launch identity mismatch');
+  readonlyPreparation=require('../lib/readonly-media-source-pin').prepareRestore(inheritedReadonly.contexts);
+}
+// Bootstrap the existing desktop transport concurrently with child imports.
+// Registration/hello, USER ownership and readiness stay at the constructor.
+const desktopPreparation = SPAWNED_CHILD ? require('../lib/process-desktop').prepareClient() : null;
+
 const { execSync } = require('child_process');
 const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
 const { createHostImports } = require('../lib/host-imports');
@@ -117,50 +180,6 @@ async function decodeMountedImage(hostPath) {
     0, 0, source.width, source.height).data);
   return { width: source.width, height: source.height, rgba };
 }
-// Parse args (need these before autoBuild)
-const args = process.argv.slice(2);
-// WINE_RUN_EXTRA_ARGS='--lazy-ranges=5 ...': appended to every run.js command
-// line, so an existing gameplay test that spawns run.js becomes, unedited, the
-// same route under an extra flag (the lazy-loading audit runs each one this
-// way). Whitespace-separated; a flag given twice resolves as getArg reads it.
-if (process.env.WINE_RUN_EXTRA_ARGS) {
-  const extra = process.env.WINE_RUN_EXTRA_ARGS.split(/\s+/).filter(Boolean);
-  args.push(...extra);
-  process.argv.push(...extra);
-  console.error(`[run] WINE_RUN_EXTRA_ARGS: ${extra.join(' ')}`);
-}
-// --tee=PATH: also write everything this process prints (stdout and stderr)
-// to PATH. With WINE_RUN_EXTRA_ARGS it keeps the log of a run a test spawned
-// and only parsed, e.g. for tools/io-range-census.js over its --trace-fs.
-{
-  const tee = args.find(value => value.startsWith('--tee='));
-  if (tee) {
-    const fd = fs.openSync(tee.slice('--tee='.length), 'w');
-    for (const stream of [process.stdout, process.stderr]) {
-      const write = stream.write.bind(stream);
-      stream.write = (chunk, encoding, callback) => {
-        try { fs.writeSync(fd, typeof chunk === 'string' ? chunk : Buffer.from(chunk)); } catch (_) {}
-        return write(chunk, encoding, callback);
-      };
-    }
-  }
-}
-const getArg = (name, def) => {
-  const prefix = `--${name}=`;
-  const arg = args.find(value => value.startsWith(prefix));
-  return arg ? arg.slice(prefix.length) : def;
-};
-const getArgs = name => {
-  const prefix = `--${name}=`;
-  return args.filter(value => value.startsWith(prefix))
-    .flatMap(value => value.slice(prefix.length).split(','))
-    .map(value => value.trim()).filter(Boolean);
-};
-const hasFlag = name => args.includes(`--${name}`);
-// Was `--name=...` written at all? Distinct from getArg(), which cannot tell an
-// absent option from one that was given its default value.
-const argHas = name => args.some(a => a.startsWith(`--${name}=`));
-
 // WINE_ASSEMBLY_WASM=PATH pins one prebuilt artifact for this process and every
 // test that spawns it. Several tests already read that variable and forward it
 // as `--no-build --wasm=`; reading it here means a test that only passes
@@ -172,6 +191,7 @@ const NO_BUILD = hasFlag('no-build') || !!ENV_WASM; // --no-build: skip auto-bui
 const NO_CLOSE = hasFlag('no-close');      // --no-close: don't inject WM_CLOSE
 const recordNativeExit = require('../lib/cli-native-scene').createNativeExitRecorder(
   getArg('native-exit-receipt',null),getArg('native-invocation-token',null));
+let childObservation = null;
 const CLI_NATIVE_OBSERVATION = hasFlag('cli-native-observation');
 if (CLI_NATIVE_OBSERVATION) require('../lib/cli-observation-lease').validateObservationArgs(args);
 const NO_RENDERER = hasFlag('no-renderer'); // --no-renderer: skip CLI canvas/renderer (guest-state diagnostics)
@@ -507,8 +527,6 @@ const REG_EXPORT = getArg('reg-export', '');
 // Private per-launch completion handshake for spawnVfsChild, independent of
 // guest/host exit codes and the earlier child-exit IPC notification.
 const CHILD_STATE_COMPLETION = getArg('child-state-completion', '');
-const CHILD_STATE_TOKEN = getArg('child-state-token', '');
-const CHILD_READONLY_CONTEXT = getArg('child-readonly-context', '');
 // --import-saves=FILE / --export-saves=FILE: the same state as a *save bundle*
 // (lib/save-bundle.js) — the app's persistFiles matches plus the registry/INI
 // store, in one zip. --reg-export carries only the second half, so a game whose
@@ -571,7 +589,6 @@ const PIPE_CHILD_ARGS = (getArg('pipe-child-args', '') || '').split(' ').filter(
 const SPAWN_PROCESSES_FLAG = hasFlag('spawn-processes');
 // --spawned-child: this process is such a child (set by the parent, not by
 // hand): report the guest's exit code to the parent over IPC.
-const SPAWNED_CHILD = hasFlag('spawned-child');
 // Child IPC also covers redirected-pipe children and externally forked callers.
 // Once a launch is attempted, pending children/siblings cannot be enumerated
 // by this process-local ThreadManager. Keep failure conservative until exit.
@@ -1718,6 +1735,8 @@ function buildHandlerNameList() {
 
 async function main() {
   return withCliFailureCleanup(async onFailure => {
+  onFailure(()=>readonlyPreparation?.cancel());
+  onFailure(()=>desktopPreparation?.cancel());
   // Fail closed before compilation, PE loading or any VFS mutation.
   const verifiedAssetFiles = ASSET_ENTRY && ASSET_ENTRY.localManifestIntegrity
     ? getAssetFiles(ASSET_ENTRY) : null;
@@ -3020,16 +3039,22 @@ async function main() {
   };
   const h = base.host;
   const { ProcessDesktop } = require('../lib/process-desktop');
-  const processDesktop = new ProcessDesktop();
+  const processDesktop = new ProcessDesktop({ preparation: desktopPreparation });
   ctx.processDesktop = processDesktop;
   ctx.processId = processDesktop.processId;
   // Guest Workers authenticate their own connection and execute their own
   // callbacks. Never broker a Worker COM callback through this local CPU.
   process.env.WINE_PROCESS_DESKTOP = JSON.stringify(processDesktop.endpoint);
   process.env.WINE_COM_MODULE_SHA256 = require('node:crypto').createHash('sha256').update(wasmBytes).digest('hex');
+  childObservation = new (require('../lib/cli-child-observation').ChildObservation)({
+    moduleBytes:wasmBytes,runner:__filename,executable:EXE_PATH,
+    guestExe:EXE_PROCESS_GUEST_PATH || EXE_PATH,port:CONTROL ? CONTROL_PORT : null,
+    envelope:getArg('native-child-envelope',null),
+  });
   const { ComInterfaceRuntime, comRuntimeSourcePin } = require('../lib/com-interface-runtime');
   ctx.comInterfaces = new ComInterfaceRuntime({
     getExports: () => ctx.exports, getMemory: () => memory.buffer, desktop: processDesktop,
+    getVfs: () => ctx.vfs,
     modulePin: process.env.WINE_COM_MODULE_SHA256, sourcePin: comRuntimeSourcePin(),
     information: (...args) => base.host.com_localserver_information(...args),
     serviceYield: async ({ reason }) => {
@@ -4083,6 +4108,7 @@ async function main() {
 
   // --- Override exit to also log ---
   h.exit = code => {
+    childObservation.exit(code);
     recordNativeExit(code);
     processDesktop.retire();
     hostExitRequested = true;
@@ -4345,9 +4371,18 @@ async function main() {
         // and on down the tree: instmsi's msiexec is a grandchild.
         ...(PIPE_CHILD_ARGS.length ? [`--pipe-child-args=${PIPE_CHILD_ARGS.join(' ')}`] : []),
       ];
+      const observation = childObservation.prepare(guestExe,exeRow.outputPath,{
+        processId:instance.exports.get_process_id()>>>0,threadId:instance.exports.get_current_thread_id()>>>0});
+      if (observation) {
+        // Observation options are parent-owned, never supplied via guest args
+        // or forwarded to unrelated grandchildren through pipe-child-args.
+        for(let i=args.length-1;i>=0;i--)if(args[i].startsWith('--native-child-envelope='))args.splice(i,1);
+        args.push('--native-child-envelope='+JSON.stringify(observation));
+      }
       const { fork } = require('child_process');
       const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: processDesktop.environment(ThreadManager.namedEventEnvironment()) });
       const pid = nextChildPid();
+      childObservation.forked(child,observation,pid);
       relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
       pipeChildren.push(child);
       pipeChildClosures.push(new Promise(resolve => child.once('close', resolve)));
@@ -4361,7 +4396,16 @@ async function main() {
         if (!waitDirectory) return;
         try {
           fs.mkdirSync(waitDirectory, { recursive: true });
-          fs.writeFileSync(path.join(waitDirectory, `native-child-${process.pid}-${child.pid}-wait.json`), JSON.stringify(childWait, null, 2) + '\n');
+          // Readers sample these evolving exit/EOF/close receipts from another
+          // process. Never truncate the published version while replacing it.
+          const target = path.join(waitDirectory, `native-child-${process.pid}-${child.pid}-wait.json`);
+          const pending = target + '.' + process.pid + '.pending';
+          try {
+            const fd = fs.openSync(pending, 'wx', 0o600);
+            try { fs.writeFileSync(fd, JSON.stringify(childWait, null, 2) + '\n'); fs.fsyncSync(fd); }
+            finally { fs.closeSync(fd); }
+            fs.renameSync(pending, target);
+          } finally { if (fs.existsSync(pending)) fs.unlinkSync(pending); }
         } catch (error) { console.error('[spawn] child wait evidence failed: ' + error.message); }
       };
       child.once('exit', (code, signal) => { Object.assign(childWait, { actualWait: true, exit: code, signal }); saveChildWait(); });
@@ -5343,6 +5387,7 @@ async function main() {
     process.on(sig, () => {
       if (signalExitStarted) return;
       signalExitStarted = true;
+      childObservation?.fail('host cancellation: '+sig);
       recordNativeExit.cancel(sig);
       terminationSignal = sig;
       console.log(`[signal] ${sig} requested orderly shutdown`);
@@ -6016,12 +6061,7 @@ async function main() {
   };
   mountExplicitVfsFiles();
   if (CHILD_READONLY_CONTEXT) {
-    if (!SPAWNED_CHILD || typeof process.send !== 'function' || !CHILD_STATE_TOKEN)
-      throw new Error('readonly media context requires a native child launch');
-    const inherited = JSON.parse(fs.readFileSync(CHILD_READONLY_CONTEXT, 'utf8'));
-    if (inherited.version !== 1 || inherited.token !== CHILD_STATE_TOKEN)
-      throw new Error('readonly media context launch identity mismatch');
-    const media = await require('../lib/readonly-media-context').restore(ctx.vfs, inherited.contexts);
+    const media = await require('../lib/readonly-media-context').restore(ctx.vfs, inheritedReadonly.contexts,readonlyPreparation);
     process.on('exit', () => { for (const source of media) require('../lib/media-cli').closeMedia(source); });
     // Native DLL initializers may read profiles relative to the inherited CD.
     // Validate the real directory now, before invoking any PE DllMain.
@@ -6280,11 +6320,12 @@ async function main() {
     // Read-only ISO 9660 mounts (docs/design-byo-media.md phase 3). A disc is
     // its own drive letter, so it never collides with the app manifest on C:.
     if (ISO_MOUNTS.length) {
-      const { mountIso } = require('../lib/iso9660');
+      const { mountIso } = require('../lib/readonly-media-context');
       let drive = (ISO_DRIVE || 'D').replace(/:$/, '').toUpperCase();
       for (const isoPath of ISO_MOUNTS) {
-        const result = mountIso(ctx.vfs, new Uint8Array(fs.readFileSync(isoPath)),
+        const result = mountIso(ctx.vfs, isoPath,
           { drive, prefer: ISO_PRIMARY ? 'primary' : 'joliet' });
+        process.on('exit', () => require('../lib/media-cli').closeMedia(result.media));
         console.log(`[iso] mounted ${isoPath} -> ${result.root} ` +
           `label="${result.volumeLabel}" (${result.fileCount} files, ` +
           `${result.iso.joliet ? 'Joliet' : 'primary'} names)`);
@@ -7701,23 +7742,15 @@ async function main() {
     snapshot: () => {
       let current = cliInputSnapshot();
       if (nativeSceneLease) {
-        const s=controlSnapshot(), main=reviewedWindow(s,s.mainHwnd);
-        const mainlessReview=nativeSceneContract===nativeScene.REVIEWED_CONTEXT &&
-          nativeSceneLease.mainHwnd==='0x0' && nativeSceneLease.main===null;
-        if(mainlessReview)current=nativeScene.reviewedProcessOwner(current,nativeSceneLease,instance,threadManager);
-        // A retained no-main MessageBox review binds the real process/thread.
-        // Its HWNDs and any subsequently created main still undergo the full
-        // per-intent capture/consume check; no modal is substituted as main.
-        const ownerWindow=mainlessReview
-          ? s.focusWindow.processId===nativeSceneLease.focusWindow.processId &&
-            s.focusWindow.threadId===nativeSceneLease.focusWindow.threadId
-          : (nativeSceneContract===nativeScene.REVIEWED_CONTEXT
-            ? sameReviewedOwner(main,nativeSceneLease.main)
-            : sameReviewedWindow(main,nativeSceneLease.main));
-        current.healthy=current.healthy && ownerWindow &&
-          JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
-          JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
-        current.refs.nativeSceneMainGeneration=mainlessReview?null:main?.generation;
+        if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {
+          current=nativeScene.reviewedOwnerSnapshot(current,controlSnapshot(),nativeSceneLease,instance,threadManager);
+        } else {
+          const s=controlSnapshot(), main=reviewedWindow(s,s.mainHwnd);
+          current.healthy=current.healthy && sameReviewedWindow(main,nativeSceneLease.main) &&
+            JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
+            JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
+          current.refs.nativeSceneMainGeneration=main?.generation;
+        }
       }
       if (reviewedSceneLease) {
         const s = controlSnapshot(), lease = reviewedSceneLease;
@@ -7781,6 +7814,8 @@ async function main() {
   };
   const executeControlCommand = (cmdIn) => {
     const cmd = typeof cmdIn === 'string' ? { cmd: cmdIn } : (cmdIn || {});
+    if (stopped && childObservation.begun && cmd.action !== 'guarded-release')
+      throw new Error('launcher guest retired; only prearmed physical release is admitted');
     if (cmd.action === 'fault-status') return nativeFault.status();
     if (cmd.action === 'fault-arm') {
       if (!controlFrozen || workerThreadHost || threadManager.workerBackend)
@@ -7820,7 +7855,9 @@ async function main() {
         reviewedSceneBindAttempted=true;
         const verified=reviewedContexts.verify(controlSnapshot(),cmd.reviewedScene);
         nativeSceneLease=verified.context; nativeSceneContract=verified.contract;
-        return {...guardedInput.bind(),contract:nativeSceneContract};
+        const binding=guardedInput.bind();
+        childObservation.bind(binding);
+        return {...binding,contract:nativeSceneContract};
       }
       if (cmd.reviewedScene?.route === 'native-scene-v1') {
         reviewedSceneBindAttempted=true;
@@ -7866,9 +7903,24 @@ async function main() {
       }
       return guardedInput.bind();
     }
+    if (cmd.action === 'native-child-arm') {
+      const verified=reviewedContexts.verify(controlSnapshot(),cmd.reviewedScene);
+      return childObservation.arm(cmd,verified,controlSnapshot());
+    }
+    if (cmd.action === 'native-child-attest')
+      return childObservation.attest(cmd,nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager));
+    if (cmd.action === 'native-startup-readiness')
+      return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
-    if (cmd.action === 'native-reviewed-capture') {
+    if (cmd.action === 'native-reviewed-capture' || cmd.action === 'native-presentation-capture') {
       if (!cmd.path) throw new Error('reviewed capture needs a complete PNG path');
+      if (cmd.action === 'native-presentation-capture') {
+        // Public presentation and capture share this synchronous dispatch.
+        // A pending scene allocates no capture, lease or input. Never retry a
+        // refused capture; the caller retains its original observation bound.
+        const ready=nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);
+        if (!ready.ready) return {contract:'native-presentation-pending-v1',pending:true,failures:ready.failures};
+      }
       return reviewedContexts.capture(controlSnapshot,()=>{
         presentForRead();
         return require('../lib/cli-native-pointer-coordinates').encodeReviewedCanvas(renderer,canvas=>
@@ -7890,6 +7942,7 @@ async function main() {
         cmd.guard={...cmd.guard,intent:{review:cmd.guard?.intent?.review,event:{action:ev.action,code:ev.code,charCode:ev.charCode,x:ev.x,y:ev.y},nonce:cmd.guard?.nonce}};
       }
       const ticket = guardedInput.prepare(cmd.guard, ev);
+      childObservation.begin(cmd.guard);
       if (ticket.state === 'QUEUED') {
         ev.guardedTicket = ticket;
         let at = scheduledInput.findIndex(e => e.batch > ev.batch);
@@ -8069,6 +8122,7 @@ async function main() {
       port: CONTROL_PORT, host: CONTROL_HOST,
       onCommand: handleControlCommand, log: line => console.log(line),
     }) : null;
+    if (server) server.server.once('listening',()=>childObservation.ready());
     if (CONTROL_STDIN) {
       const rl = require('readline').createInterface({ input: process.stdin, terminal: false });
       let stdinCommands = Promise.resolve();
@@ -11871,6 +11925,7 @@ if (VERBOSE) {
   }
   // The control server would otherwise hold the process open; unref lets a
   // reply resolved in the final batch still flush while the exit path prints.
+  await childObservation.drainRelease();
   closeControl();
   if (cpuProf && cpuProf.session) await cpuProf.stop(MAX_BATCHES);
   // Once D3DIM opened its ring (an app that never drew prints nothing).
@@ -13318,6 +13373,7 @@ if (VERBOSE) {
 }
 
 main().catch(async e => {
+  childObservation?.fail('runner error: '+e.message);
   recordNativeExit.cancel('runner error');
   process.exitCode = process.exitCode || 1;
   console.error(e);

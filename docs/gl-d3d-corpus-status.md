@@ -1,4 +1,68 @@
-# OpenGL / Direct3D corpus status, reconciled 2026-11-08
+# OpenGL / Direct3D corpus status, updated 2026-11-17
+
+## November 17 Quake III arena and unresolved trap
+
+The registered original on pinned `e7c13db29` / module `f40fc54c…` reached
+Q3DM1 with an actual guest Worker and owning software GPS executor. The
+coordinator reviewed the complete before/after images and verified a turn;
+the arena image was delivered on Telegram as message2995.
+
+Mouse1 was followed by a guest `unreachable` at `0x4629e8`, whose retained
+instruction is `call *0x7bde6c`. The actual callee and trap cause remain
+unknown; temporal proximity does not establish a firing or GL defect. Forward
+movement, visible firing/enemy consequence and native Quit remain unproved.
+Health125→124→123 is excess-health decay, not evidence of enemy damage.
+All21 gestures completed independent physical release; host dequeue is separate
+from the uninstrumented native USER return boundary. The terminal UNKNOWN run
+stayed closed without further guest queries or input.
+
+Findings `f44b5577c` and run
+`20261117-quake3-known-menu-focus-arena-gameplay` retain the accepted images,
+240 focused evidence checks and lifecycle limits, including the missing outer
+helper wait. [Detailed result and next investigation](re-notes/quake3-known-menu-focus-arena-gameplay-20261117.md).
+This updates that software original only; earlier backend results below and
+the full27, parity, FPS and audio requirements remain separate and open.
+
+## November 17 renderer regression results
+
+These component results do not update the historical per-game/backend rows
+below. Current original-game checks and the full 27-app requirement remain open.
+
+| Path | Result | Scope and evidence |
+| --- | --- | --- |
+| Repeatable browser palette oracle | `c2a980c5f`: all32 observations pass on each software/WebGL executor | Permanent `test/test-d3dim-gps-palette-web.js` runs the unchanged native oracle in Chrome, with26 draws/32 readbacks per backend and zero fallbacks/declines. Actual driver/Chrome exit and EOF checked; cooperative component fixture, no original-game or Worker-lifetime claim. [Regression and provenance](re-notes/browser-gps-palette-regression-20261117.md); run `20261117-coordinator-palette-browser-regression-final`. |
+| Browser Worker palette lifetime | `b06190e7b`: current GPS fixture passes23 exact pixel observations and26 producer draws per backend | Real guest/shared render Workers on software and Chrome WebGL cover caller Release, SetEntries generations, final detach, natural COM-slot reuse, queued state snapshots, alpha/key/depth pixels, pending CPU fences and retirement. Actual scheduled callbacks are held at the supported boundary; no decoder or Release substitute. Run `20261117-d3dim-current-browser-worker-palette-lifetime`. |
+| D3DIM palette color-key rejection | Fixed in `280503c1a`; mandatory palette oracle passes all 32 observations | The producer saturated alpha-minus-threshold before `TEXKILL`, so keyed fragments survived. The fix preserves the negative intermediate. Real WAT palette handlers/stream production into the software executor, shader canonicalization, keyed-mipmap regression and locked build pass. No browser/game claim. [Cause and tests](re-notes/d3dim-key-kill-saturation-20261117.md); run `20261117-coordinator-gps-palette-fixed`. |
+| Browser D3DIM palette pixels | All 32 existing observations pass on each of software and WebGL, with identical pixel values | Real WAT producer and READBACK into Chrome, 26 draws/32 readbacks per backend, zero producer fallbacks/declines. Retained module `ad38e26f…`; cooperative executor fixture, no Worker lifetime or original-game claim. Both driver and Chrome actual exit/EOF observed. [Route and limits](re-notes/browser-gps-palette-pixels-20261117.md); run `20261117-coordinator-browser-gps-palette`. |
+| Shared browser render Worker | RGBA8 wire test corrected in `5cf975062`; actual Chrome WebGL and native software arms pass | One physical shared Worker, four readbacks, 4,096 channel comparisons, 576 padding/end-canary comparisons and four presents. Chrome process exit/close and both EOFs observed. Raw RGB565 requests correctly refused; native Glide conversion tested separately. ANGLE SwiftShader, no physical-GPU claim. Run `20261117-coordinator-browser-shared-graphics`. |
+| D3DIM surface fences | Native regression passes | Real WAT stream producer/software executor checks alias-specific/global readback, RGB565 pixels, dirty state, lazy Lock/Unlock and old/new backing replacement. Native process and watchdog waits/EOFs complete. Instrumented authored fixture, no original app or WebGL claim. Run `20261117-coordinator-d3dim-surface-fences`. |
+
+The earlier browser palette-lifetime failure is retained in
+`20261117-coordinator-browser-palette-lifetime`: its retired legacy transport
+rejected `gpu_stream_kick` before rendering. The fixture migration in
+`b06190e7b` resolves that dependency through the current production GPS path.
+Queued records own their palette snapshot, so palette API completion may precede
+drain; a real pending CPU fence and unchanged old-generation pixels verify the
+current contract. Pending readback completes on CLOSE, and a reopened completed
+empty ring rejects an old scheduled callback. This does not claim that destroyed
+resource IDs can resume. All four actual browser Worker targets retire; Chrome
+and driver exit/close and both EOFs are recorded. These authored component
+results establish no original-game, historical27 or physical-GPU coverage.
+Original GLTron gameplay remains assigned for native-input/backend evidence.
+
+The later original checks in
+`20261117-gltron-continuous-capture-release-arm-gameplay` use published
+`b29ef843a`: continuous software arena capture completes in655 ms and
+independent-UP arms in6–7 ms. Subsequent input cancels with reported context
+ages293 ms software and259 ms WebGL, beyond the unchanged250 ms fence.
+Diagnostic report `60371e9f3` establishes that these token-zero receipts do not
+prove native USER dequeue. Its authored software workload reproduces cancellation
+at255 ms while the guest waits492 ms for rendering, but equivalence to either
+original workload remains unproved. No production fix follows. Physical release
+succeeds; no two-turn, round or native Quit result follows. A fresh original
+diagnostic targets the missing command-mix and phase evidence.
+[Repairs and original limits](re-notes/gltron-continuous-capture-release-arm-gameplay-20261117.md);
+[phase evidence and attribution limits](re-notes/gltron-native-user-context-dequeue-latency-20261117.md).
 
 ## November 12 current original-game progress
 

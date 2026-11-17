@@ -104,6 +104,10 @@ const seen = new Set(existing.map(e => e.name));
 
 // APIs from sub-dispatchers (not in main dispatch comment pattern)
 const extra = [
+  { name: 'ComAutomationOperation', nargs: 4 },
+  { name: 'UnRegisterTypeLib', nargs: 5 },
+  { name: 'ImageList_SetOverlayImage', nargs: 3 },
+  { name: 'ImageList_GetImageInfo', nargs: 3 },
   { name: 'CoMarshalHresult', nargs: 2 },
   { name: 'CoUnmarshalHresult', nargs: 2 },
   { name: 'CoMarshalInterface', nargs: 6 },
@@ -2940,6 +2944,13 @@ for (const api of existing.filter(a => /^IDirectPlay[34]_/.test(a.name))) {
     seen.add(name);
   }
 }
+
+// Native Automation ordinal12, append-only public API identity.
+if(!seen.has('VariantChangeType')){existing.push({id:existing.length,name:'VariantChangeType',nargs:4,convention:'stdcall'});seen.add('VariantChangeType');}
+if(!seen.has('SafeArrayGetElement')){existing.push({id:existing.length,name:'SafeArrayGetElement',nargs:3,convention:'stdcall'});seen.add('SafeArrayGetElement');}
+if(!seen.has('SafeArrayPutElement')){existing.push({id:existing.length,name:'SafeArrayPutElement',nargs:3,convention:'stdcall'});seen.add('SafeArrayPutElement');}
+if(!seen.has('SafeArrayCopy')){existing.push({id:existing.length,name:'SafeArrayCopy',nargs:2,convention:'stdcall'});seen.add('SafeArrayCopy');}
+if(!seen.has('SafeArrayPtrOfIndex')){existing.push({id:existing.length,name:'SafeArrayPtrOfIndex',nargs:3,convention:'stdcall'});seen.add('SafeArrayPtrOfIndex');}
 
 // Reassign IDs and recompute hashes; preserve dispatch/testing metadata that
 // belongs to the API row rather than the name/hash generator.

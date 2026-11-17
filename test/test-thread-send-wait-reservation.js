@@ -73,7 +73,8 @@ async function pendingAndFences(kind, module) {
       await assert.rejects(link.completeThreadSend(77), /fences command/);
     } else {
       assert.strictEqual(manager.checkMainYield(), true);
-      const sandbox = { console, setTimeout, clearTimeout, URL, URLSearchParams };
+      const sandbox = { console, setTimeout, clearTimeout, URL, URLSearchParams,
+        require: require('module').createRequire(require.resolve('../host')) };
       vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../host.js'), 'utf8')
         + '\n;globalThis.WineAssembly = WineAssembly;', sandbox);
       const stats = sandbox.WineAssembly.prototype._runCooperativeSlice.call({ threadManager: manager }, 1000);

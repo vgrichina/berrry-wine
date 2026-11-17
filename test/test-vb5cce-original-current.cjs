@@ -119,7 +119,7 @@ with tempfile.TemporaryDirectory() as d:
  # Exercise the real freshness predicate with aged evidence, not altered clocks.
  m.identity=lambda:{'pid':1};(m.R/'scene.png').write_bytes(b'fixture')
  digest=m.hashlib.sha256(b'fixture').hexdigest()
- for kind,age,allowed in [('game',4,True),('game',6,False),('install',6,True),('install',31,False)]:
+ for kind,age,allowed in [('game',10,True),('game',16,False),('install',6,True),('install',31,False)]:
   rows={'scene.json':dict(at=time.time()-age,target={'pid':1},port=m.PORT,pngSHA256=digest),
         'scene-review.json':dict(at=time.time()-age,kind=kind,pngSHA256=digest,rawCompleteScene=True,observation='fixture',visibleLabel='OK')}
   m.read=lambda n:rows[n]

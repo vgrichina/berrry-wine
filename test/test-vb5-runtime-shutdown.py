@@ -17,9 +17,9 @@ def child(mode,run,exe):
     try:
         while not (run/'watchdog-armed.json').exists():assert w.poll() is None;time.sleep(.01)
         with (run/'native.stdout.log').open('xb') as out,(run/'native.stderr.log').open('xb') as err:
-            p=subprocess.Popen(['node','test/run.js','--exe='+str(exe),'--no-build','--threads','--real-ticks',
+            p=m.start_native(['node','test/run.js','--exe='+str(exe),'--no-build','--threads','--real-ticks',
                 '--max-seconds=30','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks'],
-                cwd=ROOT,stdout=out,stderr=err,start_new_session=True)
+                out,err,cwd=ROOT,start_new_session=True)
             info=dict(pid=p.pid,startToken=m.token(p.pid));m.save('current-native-pid.json',info)
             try:
                 if mode!='normal':
@@ -33,7 +33,7 @@ def child(mode,run,exe):
                 m.wait_native(p,run,info,timeout=.1 if mode=='timeout' else 8)
             finally:
                 if not (run/'native-wait.json').exists():
-                    m.terminate_owned(p);m.publish(run/'native-wait.json',dict(**info,exit=p.returncode,actualWait=True))
+                    m.terminate_owned(p);m.publish(run/'native-wait.json',dict(**info,exit=p.returncode,actualWait=True,**m.join_native_output(p)))
         success=True
     finally:
         # Native's regular descriptors close on unwinding before watchdog join.
@@ -71,6 +71,7 @@ def main(run):
         assert p.returncode==expected,(mode,p.returncode,b.decode())
         native=json.loads((target/'native-wait.json').read_text());watch=json.loads((target/'watchdog-wait.json').read_text());release=json.loads((target/'runtime-release.json').read_text())
         assert native['actualWait'] and watch['actualWait'] and watch['stdoutEOF'] and watch['stderrEOF']
+        assert native['stdoutEOF'] and native['stderrEOF'] and native['readersJoined'] and not native['outputErrors']
         assert watch['exit']==0 and release['ownDescriptorsClosed'] and release['nativeOutputClosed']
         if mode=='normal':assert native['exit']==0
         if mode=='watchdog':assert json.loads((target/'watchdog-exit.json').read_text())['reason']=='independent fixed deadline'

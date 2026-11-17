@@ -18,7 +18,7 @@ function fixture(mode = 'integer') {
   return r;
 }
 function host(r) {
-  const context = { URLSearchParams, console, setTimeout, clearTimeout,
+  const context = { URLSearchParams, console, setTimeout, clearTimeout, require: n => require('../' + n),
     performance: { now: () => 0 }, requestAnimationFrame() {} };
   vm.runInNewContext(fs.readFileSync(require.resolve('../host.js'), 'utf8') +
     '\n;globalThis.Host = WineAssembly;', context);
@@ -338,6 +338,9 @@ test('renderer-only writer queues without host flags, reads or scheduling until 
     assert.equal(r._immutablePublicationSequence, old.metadata.publication);
     win._backCanvas.getContext('2d').fillStyle = '#0000ff';
     win._backCanvas.getContext('2d').fillRect(0, 0, 8, 8);
+    // Model the real surface onDirty hook: backing bytes changed after the
+    // retained display, so publication work is pending even after release.
+    r.scheduleRepaint();
     if (kind === 'slice' || kind === 'render-writer') {
       r.repaint(); assert.equal(t.status, 'pending');
     }

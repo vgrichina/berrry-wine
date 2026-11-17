@@ -60,6 +60,9 @@ function watI32(value) {
 // Emit the names beside the generated dispatcher so an append/reorder repair
 // updates every consumer through the existing `gen_dispatch.js --check` gate.
 const namedApiIds = [
+  ['NativeTypeInvokeReturn', 'API_ID_NATIVE_TYPEINVOKE_RETURN'],
+  ['NativeTypeLib_QueryInterface', 'API_ID_NATIVE_TYPELIB'],
+  ['NativeTypeInfo_QueryInterface', 'API_ID_NATIVE_TYPEINFO'],
   ['QT_Thunk', 'API_ID_QT_Thunk'],
   ['FT_Prolog', 'API_ID_FT_Prolog'],
   ['FT_Exit0', 'API_ID_FT_Exit0'],

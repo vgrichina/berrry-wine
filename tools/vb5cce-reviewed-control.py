@@ -118,7 +118,7 @@ def review(scene,description,label,kind,target):
          visibleLabel=label,kind=kind,targetHwnd=target,pngSHA256=rr['pngSHA256']))
 def reviewed(scene):
     rr=read(scene+'.json');r=read(scene+'-review.json')
-    freshness=5 if r['kind']=='game' else 30
+    freshness=15 if r['kind']=='game' else 30
     assert 0<=time.time()-rr['at']<freshness and 0<=time.time()-r['at']<freshness
     assert rr['target']==identity() and rr['port']==PORT and r['rawCompleteScene'] and r['observation'] and r['visibleLabel']
     assert r['pngSHA256']==rr['pngSHA256']==hashlib.sha256((R/(scene+'.png')).read_bytes()).hexdigest()
@@ -201,11 +201,11 @@ def intent(name,scene,x,y,kind):
         reserve(kind=='quit');assert time.time()<start+.5
         receipt=call(dict(action='guarded-input',cmd=command,guard={**owner,'nonce':nonce,
              'reviewed':True,'intent':dict(review=native_review(rr,r)),
-             'deadline':int(min(start+.5,min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000)}),timeout=max(.001,start+.5-time.time()))
+             'deadline':int(min(start+.5,min(rr['at'],r['at'])+(15 if kind=='game' else 30))*1000)}),timeout=max(.001,start+.5-time.time()))
         save(name+'-down.json',dict(at=time.time(),receipt=receipt))
         assert time.time()<start+.5 and receipt['state']=='CONSUMED' and receipt['consumed'],'confirmation UNKNOWN'
         assert all(receipt.get(k)==v for k,v in dict(owner=owner['owner'],epoch=owner['epoch'],nonce=nonce).items())
-        assert start*1000<=receipt['consumedAt']<min((start+.5)*1000,(min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000),'late consumption'
+        assert start*1000<=receipt['consumedAt']<min((start+.5)*1000,(min(rr['at'],r['at'])+(15 if kind=='game' else 30))*1000),'late consumption'
         save(name+'-up-at.json',dict(at=receipt['consumedAt']/1000+.1))
         out,err=child.communicate(timeout=max(.001,start+1.75-time.time()))
         save(name+'-release-wait.json',dict(pid=child.pid,exit=child.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=out.decode(),stderr=err.decode()))

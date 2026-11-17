@@ -4,15 +4,39 @@
 Git and explicit own patches recover source. Transient sealed memfds hold the
 source pool, compiled module, guard and existing CD without archiving them.
 """
-import pathlib, subprocess, sys, os, time, json, signal, threading, fcntl, hashlib, importlib.util, socket, types, uuid
+import pathlib, subprocess, sys, os, time, json, signal, threading, fcntl, hashlib, importlib.util, socket, types, uuid, ctypes, select
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 RUN=pathlib.Path(os.environ.get('NEVERHOOD_RUN',ROOT/'scratch/runs/20261117-neverhood-published-loader-normal-install-room'))
 PRIOR_RUN=ROOT/'scratch/runs/20261116-neverhood-original-install-after-setupx'
 PRELOAD='tools/disciples2-current-native-source-view.cjs'
 HELPER='tools/disciples2-current-supervisor.py'
 OWN=('tools/neverhood-original-current-runtime.py','tools/neverhood-original-current-control.py',
-     'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD)
-POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=5,menuFreshnessSeconds=30)
+     'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD,'test/run.js',
+     'tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs',
+     'lib/readonly-media-context.js','test/test-cli-iso-child-context.cjs',
+     'lib/cli-child-observation.js','test/test-cli-child-observation.cjs','test/test-neverhood-child-handoff.cjs')
+POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=15,menuFreshnessSeconds=30)
+# Exact reviewed runner delta. Its new path is qualified by real native child
+# tests below; unchanged core libraries retain their historical qualification.
+CHILD_RUNNER_SHA256='4aaf21a17ba0fe3cc8aa013d35332fd1af2a2a22fb8ed7dda0670af4215629fd'
+CHILD_RUNNER_BASE='d4b41d4015bb0b5a066bfa01c82a00df741893c0'
+WAIT_RUNNER_BASE='d97dc35ad63c75abe188b14745439325c5197020'
+WAIT_RUNNER_SHA256='96cf0a27a3af9fffc201377ae66376cefdee490f34dfd49c707572f004fa378d'
+def installed():return os.environ.get('NEVERHOOD_INSTALLED_SHORTCUT')=='1'
+def limits():return (1800,1820,180) if installed() else (900,920,90)
+def prior_iso_mount(runner):
+    old="""      const { mountIso } = require('../lib/iso9660');"""
+    new="""      const { mountIso } = require('../lib/readonly-media-context');"""
+    return runner.replace(new,old).replace('mountIso(ctx.vfs, isoPath,','mountIso(ctx.vfs, new Uint8Array(fs.readFileSync(isoPath)),').replace("        process.on('exit', () => require('../lib/media-cli').closeMedia(result.media));\n",'')
+def iso_proof(out,module):
+    prior=pathlib.Path(os.environ['NEVERHOOD_ISO_PROOF'])
+    proof=json.loads((prior/'iso-child-proof.json').read_text())
+    assert proof['passed'] and proof['moduleSHA256']==H.digest(module)
+    for n,digest in proof['components'].items():assert H.digest(component_bytes(n))==digest
+    for label in ('iso-host','iso-native'):
+        wait=json.loads((prior/(label+'-wait.json')).read_text())
+        assert wait['exit']==0 and all(wait[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+    save(out,'reused-iso-proof.json',dict(passed=True,prior=str(prior),proofSHA256=H.digest((prior/'iso-child-proof.json').read_bytes())))
 def helper():
     # Shared sources can change while another worker owns them. Refuse those
     # bytes before executing them; only published helpers may be borrowed.
@@ -37,8 +61,12 @@ assert hashlib.sha256(index).hexdigest()==os.environ['DISCIPLES2_SOURCE_INDEX_SH
 rows={str(root/r['path']):r for r in json.loads(index)['files']}
 def body(file):
  p=str(pathlib.Path(file).resolve())
- if not p.startswith(str(root)+'/') or not p.endswith('.py'):return None
- assert p in rows,'unsealed Python source: '+p
+ if not p.startswith(str(root)+'/'):return None
+ # Python source checks also hash JS/CJS helpers. Those reads must see the
+ # same inventoried bytes as Node, even when the live checkout has advanced.
+ if p not in rows:
+  assert not p.endswith('.py'),'unsealed Python source: '+p
+  return None
  r=rows[p];b=os.pread(fd,r['size'],4+size+r['offset'])
  assert len(b)==r['size'] and hashlib.sha256(b).hexdigest()==r['sha256']
  return b
@@ -70,6 +98,55 @@ namespace=dict(__name__='__main__',__file__=file,__package__=None)
 exec(compile(body(file),file,'exec'),namespace)
 '''
 def save(out,name,value):H.save(out,name,value)
+def component_bytes(name):
+    """Read an explicitly published component, independent of shared-tree drift.
+
+    The same selection feeds preparation and compatibility comparisons. The
+    sealed source inventory, rather than another agent's current file, is the
+    runtime input. No other path may be substituted by this mechanism.
+    """
+    components=json.loads(os.environ.get('NEVERHOOD_PUBLISHED_COMPONENTS','{}'))
+    assert set(components)<= {'lib/cli-native-scene.js','test/run.js'}
+    if name not in components:return (ROOT/name).read_bytes()
+    revision=components[name]
+    assert subprocess.run(['git','merge-base','--is-ancestor',revision,'origin/main'],cwd=ROOT).returncode==0
+    return H.git(ROOT,'show',revision+':'+name)
+def arm_desktop_observations(out,env):
+    directory=(out/'desktop-participants').resolve()
+    directory.mkdir()
+    env['WINE_PROCESS_DESKTOP_OBSERVE']=str(directory)
+    save(out,'desktop-observation-armed.json',dict(at=time.time(),directory=str(directory),
+        beforeNativeSpawn=True,environment='WINE_PROCESS_DESKTOP_OBSERVE',timeoutMs=3000,
+        boundedWorkerLocalRecords=True,diagnosticsOnly=True))
+    return directory
+def watchdog(out,deadline):
+    # Preserve the borrowed watchdog's deadline, disk floor and signal policy,
+    # but retain the actual triggering sample before touching the native group.
+    save(out,'watchdog-armed.json',dict(pid=os.getpid(),deadline=deadline,at=time.time(),independent=True,diskFloorBytes=1500000000))
+    while True:
+        now=time.time()
+        if (out/'native-wait.json').exists():
+            save(out,'watchdog-exit.json',dict(reason='actual-native-wait',at=now));return
+        st=os.statvfs('/home');free=st.f_bavail*st.f_frsize
+        reason='deadline' if now>=deadline else 'disk-floor' if free<1500000000 else None
+        if reason:break
+        time.sleep(.05)
+    trigger=dict(reason=reason,at=now,deadline=deadline,deadlineElapsed=now>=deadline,
+        freeBytes=free,diskFloorBytes=1500000000,nativeQuit=False)
+    save(out,'watchdog-trigger.json',trigger)
+    signals=[]
+    p=out/'native-pid.json'
+    if p.exists():
+        info=json.loads(p.read_text())
+        for sig in (signal.SIGTERM,signal.SIGKILL):
+            delivered=False
+            try:
+                if H.token(info['pid'])==info['startToken']:
+                    os.killpg(info['pid'],sig);delivered=True
+            except (FileNotFoundError,ProcessLookupError):pass
+            signals.append(dict(signal=signal.Signals(sig).name,at=time.time(),delivered=delivered))
+            if sig==signal.SIGTERM:time.sleep(3)
+    save(out,'watchdog-exit.json',dict(**trigger,finishedAt=time.time(),signals=signals))
 def checked(out,name,args,env=None,timeout=240,pass_fds=()):
     if env and env.get('DISCIPLES2_PHASE')=='runtime' and pathlib.Path(args[0]).name.startswith('python') and args[2].endswith('.py'):
         env=dict(env,NEVERHOOD_FROZEN_PYTHON=FROZEN_PYTHON)
@@ -100,6 +177,13 @@ def prepare(out,revision,patches,hold=True):
         bodies[n]=(ROOT/n).read_bytes()
         d=subprocess.run(['git','diff','--binary',revision,'--',n] if n in names else ['git','diff','--no-index','--binary','--','/dev/null',n],cwd=ROOT,capture_output=True)
         assert d.returncode in (0,1) and not d.stderr;diffs.append(d.stdout)
+    components=json.loads(os.environ.get('NEVERHOOD_PUBLISHED_COMPONENTS','{}'))
+    assert set(components)<= {'lib/cli-native-scene.js','test/run.js'},'only passive startup components may be composed'
+    for n,rev in components.items():
+        assert subprocess.run(['git','merge-base','--is-ancestor',rev,'origin/main'],cwd=ROOT).returncode==0
+        bodies[n]=component_bytes(n)
+        diffs.append(H.git(ROOT,'diff','--binary',revision,rev,'--',n))
+    save(out,'published-component-pins.json',dict(components=components,sha256={n:H.digest(bodies[n]) for n in components}))
     (out/'runtime-source.patch').write_bytes(b''.join(diffs))
     inputs=json.loads((RUN/'media-preflight.json').read_text())['inputs']
     for k,row in inputs.items():
@@ -115,7 +199,16 @@ def prepare(out,revision,patches,hold=True):
         DISCIPLES2_SOURCE_SHA256=H.digest(pool),DISCIPLES2_SOURCE_INDEX_SHA256=H.digest(index),DISCIPLES2_PHASE='compile',COMPILE_FD=str(raw))
     code="const c=require('./tools/watx-closure'),h=require('./tools/region-layout-hash');const r=c.compileClosure(c.watxSourceClosure(),{tailCalls:true});if(!r.success)throw Error(r.error);require('fs').writeFileSync(Number(process.env.COMPILE_FD),h.appendSection(Buffer.from(r.wasmBinary),h.layoutHash(r.regions.regions)));"
     prepath=f'/proc/{os.getpid()}/fd/{preload}'
-    checked(out,'compile',['node','--preserve-symlinks','--require',prepath,'-e',code],env,pass_fds=(raw,))
+    retained=os.environ.get('NEVERHOOD_RETAINED_PREPARATION')
+    if retained:
+        prior=pathlib.Path(retained);old=json.loads((prior/'manifest.json').read_text())
+        pins=lambda rows:{r['path']:r['sha256'] for r in rows if r['path'].startswith('src/') or r['path'].startswith('tools/watx') or r['path'] in ('tools/region-layout-hash.js','tools/region-layout.js','lib/region-map.generated.js')}
+        assert pins(rows)==pins(old['sources']),'retained module compilation inputs differ'
+        b=(prior/'module.wasm').read_bytes();assert H.digest(b)==old['moduleSHA256']
+        os.write(raw,b)
+        save(out,'retained-module.json',dict(prior=str(prior),moduleSHA256=H.digest(b),unchangedCompilationInputs=pins(rows),compiledBeforeClock=True))
+    else:
+        checked(out,'compile',['node','--preserve-symlinks','--require',prepath,'-e',code],env,pass_fds=(raw,))
     os.lseek(raw,0,0);module=H.seal('neverhood-module',os.read(raw,10000000));os.close(raw)
     modulebytes=pathlib.Path(f'/proc/{os.getpid()}/fd/{module}').read_bytes()
     manifest=dict(version=1,gitSHA=revision,patchSHA256=H.digest(b''.join(diffs)),sourceSHA256=H.digest(pool),moduleSHA256=H.digest(modulebytes),
@@ -134,14 +227,22 @@ def prepare(out,revision,patches,hold=True):
     for fd in (source,preload,module,manifestfd,mediafd):os.close(fd)
     save(out,'holder-closed.json',dict(at=time.time(),descriptorsClosed=True))
 def validate_recipe(recipe):
-    assert recipe['seconds']==900 and recipe['watchdogGrace']==20 and recipe['reserveSeconds']==90
+    seconds,watch,reserve=limits()
+    assert recipe['seconds']==seconds and recipe['watchdogGrace']==watch-seconds and recipe['reserveSeconds']==reserve
     assert recipe['inputPolicy']==POLICY and recipe['childInheritance']=='sealed-node-v1'
     assert pathlib.Path(recipe['cwd']).resolve()==ROOT
     args=recipe['args'];assert args[:2]==['node','test/run.js']
-    for flag in ('--iso-drive=D','--iso-exe=SETUP95.EXE','--max-seconds=900','--real-ticks','--threads','--spawn-processes','--no-build'):
+    for flag in ('--iso-drive=D','--max-seconds='+str(seconds),'--real-ticks','--threads','--spawn-processes','--no-build'):
         assert flag in args,flag
+    if installed():
+        state=json.loads((RUN/'installed-state.json').read_text());s=state['shortcut']
+        assert state['verified'] and state['pendingRenamesUnchanged']
+        for flag in ('--exe='+state['exePath'],'--exe-guest-path='+s['exe'],'--cwd='+s['cwd'],
+                     '--reg-import='+state['registryPath'],'--overlay-dir='+state['overlayPath']):assert flag in args
+        assert not s['args'] and not any(a.startswith('--iso-exe=') for a in args)
+    else:assert '--iso-exe=SETUP95.EXE' in args
     assert sum(a.startswith('--iso=') for a in args)==1
-    for prefix in ('--tick-ms-per-batch','--winver','--force-host','--input=','--reg-import','--args='):
+    for prefix in ('--tick-ms-per-batch','--winver','--force-host','--input=','--args=')+(() if installed() else ('--reg-import',)):
         assert not any(a.startswith(prefix) for a in args),'unqualified original option '+prefix
     assert recipe.get('originalPipelineOrdinal')==1
 def recipe(holderdir,out):
@@ -161,7 +262,13 @@ def recipe(holderdir,out):
         '--native-exit-receipt='+str(out/'native-exit.json'),'--native-invocation-token='+str(uuid.uuid4()),
         '--overlay-dir='+str(out/'guest-overlay'),'--overlay-flush-ms=0','--reg-export='+str(out/'guest-registry.json'),
         '--trace-api=ThunkConnect32,FT_Prolog,DirectXSetup,LoadLibraryA,GetProcAddress,CreateDialogParamA,DialogBoxParamA,MessageBoxA,CopyFileA,RegSetValueExA,CreateProcessA,ExitProcess']
-    r=dict(cwd=str(ROOT),args=args,seconds=900,watchdogGrace=20,reserveSeconds=90,inputPolicy=POLICY,
+    seconds,watch,reserve=limits()
+    if installed():
+        state=json.loads((RUN/'installed-state.json').read_text());s=state['shortcut']
+        args=[a for a in args if not a.startswith(('--iso-exe=','--max-seconds=','--overlay-dir='))]
+        args+=['--exe='+state['exePath'],'--exe-guest-path='+s['exe'],'--cwd='+s['cwd'],
+               '--reg-import='+state['registryPath'],'--overlay-dir='+state['overlayPath'],'--max-seconds='+str(seconds)]
+    r=dict(cwd=str(ROOT),args=args,seconds=seconds,watchdogGrace=watch-seconds,reserveSeconds=reserve,inputPolicy=POLICY,
         childInheritance='sealed-node-v1',originalPipelineOrdinal=1,moduleHolder=str(holderdir/'holder.json'),
         immutableManifest={k:manifest[k] for k in ('gitSHA','sourceSHA256','moduleSHA256','preloadSHA256')})
     r['immutableManifest']['manifestSHA256']=holder['manifestSHA256'];validate_recipe(r)
@@ -170,17 +277,30 @@ def admit(out,recipe):
     fds=()
     try:
         validate_recipe(recipe)
+        if installed():
+            state=json.loads((RUN/'installed-state.json').read_text())
+            assert H.digest(pathlib.Path(state['registryPath']).read_bytes())==state['registrySHA256']
+            overlay=pathlib.Path(state['overlayPath'])
+            index=overlay/'index.json';assert H.digest(index.read_bytes())==state['indexSHA256']
+            records={r['path']:r for r in json.loads(index.read_text())['records']}
+            for row in state['files']:
+                b=(overlay/'blobs'/records[row['path']]['blob']).read_bytes()
+                assert len(b)==row['size'] and H.digest(b)==row['sha256']
+            assert H.digest(pathlib.Path(state['exePath']).read_bytes())==state['shortcut']['targetSHA256']
+            save(out,'installed-preclock-verification.json',dict(passed=True,files=len(state['files']),
+                registrySHA256=state['registrySHA256'],indexSHA256=state['indexSHA256'],pendingRenamesUnchanged=True,at=time.time()))
         env,fds=H.frozen_inputs(out,recipe)
         holder=json.loads(pathlib.Path(recipe['moduleHolder']).read_text())
         media=H.holder_bytes(holder,'mediaPath');assert H.digest(media)==holder['mediaSHA256']=='94de724bb47eb2aa588ac4eff28ddc6fd10edebcf2be4dd131ef76875ef5ffd3'
         mediafd=H.seal('neverhood-admitted-cd',media);fds+= (mediafd,);del media
         manifest=json.loads((out/'runtime-inputs.json').read_text());pins={r['path']:r['sha256'] for r in manifest['sources']}
-        for n in (HELPER,*OWN):assert H.digest((ROOT/n).read_bytes())==pins[n],'executed helper/source mismatch: '+n
+        for n in (HELPER,*OWN):assert H.digest(component_bytes(n))==pins[n],'executed helper/source mismatch: '+n
         # The exact published guard is part of the sealed source inventory.
         guard=(ROOT/'tools/neverhood-setupx-stop.cjs').read_bytes();assert H.digest(guard)==pins['tools/neverhood-setupx-stop.cjs']
         guardfd=H.seal('neverhood-guard',guard);fds+=(guardfd,)
         env['NEVERHOOD_EVIDENCE_DIR']=str(out)
         env['WINE_COM_PROTOCOL_DIR']=str(out/'children')
+        arm_desktop_observations(out,env)
         env['NODE_OPTIONS']+=' --require='+f'/proc/{os.getpid()}/fd/{guardfd}'
         H.inheritance_probe(out,recipe,env)
         args=[('--iso='+f'/proc/{os.getpid()}/fd/{mediafd}') if a.startswith('--iso=') else a for a in recipe['args']]
@@ -197,12 +317,13 @@ def run(out,recipe,only_admit=False):
         for fd in fds:os.close(fd)
         return
     assert not (RUN/'original-spawned.json').exists(), 'one current pipeline permanently consumed'
-    start=time.time();deadline=start+900
-    w=subprocess.Popen([sys.executable,'-B',__file__,'watchdog',str(out),str(start+920)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+    seconds,watch,reserve=limits()
+    start=time.time();deadline=start+seconds
+    w=subprocess.Popen([sys.executable,'-B',__file__,'watchdog',str(out),str(start+watch)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     while not (out/'watchdog-armed.json').exists():assert w.poll() is None;time.sleep(.01)
     port=int(next(a.split('=')[1] for a in args if a.startswith('--control=')))
     childport=int(next(a.split('--control=')[1].split()[0] for a in args if a.startswith('--pipe-child-args=')))
-    save(out,'launch.json',dict(at=start,deadline=deadline,gameplayCutoff=deadline-90,reserveSeconds=90,rootPort=port,childPort=childport,args=args,clock='real-defaults',inputPolicy=POLICY))
+    save(out,'launch.json',dict(at=start,deadline=deadline,gameplayCutoff=deadline-reserve,reserveSeconds=reserve,rootPort=port,childPort=childport,args=args,clock='real-defaults',inputPolicy=POLICY))
     save(RUN,'original-spawned.json',dict(at=time.time(),ordinal=1,secondOriginalForbidden=True))
     p=subprocess.Popen(args,cwd=ROOT,env=env,pass_fds=fds,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     info=dict(pid=p.pid,startToken=H.token(p.pid),at=time.time(),
@@ -217,17 +338,23 @@ def run(out,recipe,only_admit=False):
         except BaseException as e:errors.append(repr(e))
     threads=[threading.Thread(target=drain,args=(p.stdout,'stdout')),threading.Thread(target=drain,args=(p.stderr,'stderr'))]
     for t in threads:t.start()
-    sent=False
-    while p.poll() is None:
-        if (out/'cancel-request.json').exists() and not sent:
-            H.kill_owned(info,signal.SIGTERM);sent=True;save(out,'host-cancellation.json',dict(at=time.time(),nativeQuit=False))
-        time.sleep(.02)
-    rc=p.wait()
-    for t in threads:t.join()
-    save(out,'native-wait.json',dict(**info,exit=rc,actualWait=True,stdoutEOF=eof.get('stdout',False),stderrEOF=eof.get('stderr',False),drainErrors=errors,atWait=time.time(),atWaitMono=time.monotonic(),disposition='normal' if rc>=0 else 'signal'))
-    a,b=w.communicate();save(out,'watchdog-wait.json',dict(pid=w.pid,exit=w.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode()))
-    for fd in fds:os.close(fd)
-    save(out,'runtime-closed.json',dict(at=time.time(),nativeExit=rc,watchdogExit=w.returncode,descriptorsClosed=True))
+    sent=False;requests=[]
+    old={s:signal.signal(s,lambda s,f:requests.append(s)) for s in (signal.SIGTERM,signal.SIGINT)}
+    try:
+        while p.poll() is None:
+            if ((out/'cancel-request.json').exists() or requests) and not sent:
+                H.kill_owned(info,signal.SIGTERM);sent=True;save(out,'host-cancellation.json',dict(at=time.time(),nativeQuit=False,signals=requests))
+            time.sleep(.02)
+    finally:
+        if p.poll() is None:H.kill_owned(info,signal.SIGTERM)
+        try:rc=p.wait(timeout=3)
+        except subprocess.TimeoutExpired:H.kill_owned(info,signal.SIGKILL);rc=p.wait()
+        for t in threads:t.join()
+        save(out,'native-wait.json',dict(**info,exit=rc,actualWait=True,stdoutEOF=eof.get('stdout',False),stderrEOF=eof.get('stderr',False),drainErrors=errors,atWait=time.time(),atWaitMono=time.monotonic(),disposition='host-cancellation' if sent or requests else 'process-exit'))
+        a,b=w.communicate();save(out,'watchdog-wait.json',dict(pid=w.pid,exit=w.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode()))
+        for fd in fds:os.close(fd)
+        for s,h in old.items():signal.signal(s,h)
+        save(out,'runtime-closed.json',dict(at=time.time(),nativeExit=rc,watchdogExit=w.returncode,descriptorsClosed=True))
 def published(name,revision):
     body=H.git(ROOT,'show',revision+':'+name)
     assert (ROOT/name).read_bytes()==body,'unpublished borrowed/executed helper: '+name
@@ -241,30 +368,132 @@ def supervised(out,fixture=False,working=False):
     if not working:
         assert subprocess.run(['git','merge-base','--is-ancestor',revision,'origin/main'],cwd=ROOT).returncode==0,'selected preparation must be published on main'
     assert not working or fixture,'unpublished code allowed only for authored fixture'
+    own_revision=os.environ.get('NEVERHOOD_PUBLISHED_HELPERS_REVISION',revision)
+    if not working:
+        assert H.git(ROOT,'rev-parse',own_revision+'^{commit}').decode().strip()==own_revision
+        assert subprocess.run(['git','merge-base','--is-ancestor',own_revision,'origin/main'],cwd=ROOT).returncode==0
     for name in OWN:
-        if not working:assert (ROOT/name).read_bytes()==H.git(ROOT,'show',revision+':'+name)
+        if not working:assert (ROOT/name).read_bytes()==H.git(ROOT,'show',own_revision+':'+name)
     save(out,'preparation-published-main.json',dict(gitSHA=revision,workingAuthoredOnly=working,at=time.time(),
-        originMain=H.git(ROOT,'rev-parse','origin/main').decode().strip(),policy='published main ancestor with required fixes, immutable through later publication'))
+        originMain=H.git(ROOT,'rev-parse','origin/main').decode().strip(),publishedHelpersRevision=own_revision,
+        policy='published main ancestor plus explicit published owned helpers, immutable through later publication'))
     (out/'excluded-working-tree.patch').write_bytes(H.git(ROOT,'diff','--binary',revision,'--','src','lib','tools','host.js','test/run.js'))
     m=published('tools/gltron-current-supervise.py',revision)
     published('tools/boids-current-supervise.py',revision)
     command=[sys.executable,'-B',__file__,'pipeline',str(out),revision]
     if fixture:command.append('--fixture')
     if working:command.append('--owned-patches')
-    return m.ParentProcessSupervisor(out/'outer',command,preparation=600,runtime=900,
-        preparation_watchdog=620,runtime_watchdog=920,grace=5).run()
+    seconds,watch,reserve=limits()
+    return m.ParentProcessSupervisor(out/'outer',command,preparation=600,runtime=seconds,
+        preparation_watchdog=620,runtime_watchdog=watch,grace=5).run()
 
 def material_native_pins(inputs):
     return {row['path']:row['sha256'] for row in inputs['sources']
         if row['path'].startswith(('src/','lib/','tools/vb5')) or row['path'] in ('host.js',PRELOAD)
-        or (row['path'].startswith('test/') and row['path'] not in OWN)}
+        or (row['path'].startswith('test/') and (row['path'] not in OWN or row['path']=='test/run.js'))}
+
+def startup_proof(out,module):
+    """Reuse only an actual focused run with the identical composed inventory."""
+    prior=pathlib.Path(os.environ['NEVERHOOD_STARTUP_PROOF'])
+    old=json.loads((prior/'runtime-inputs.json').read_text())
+    current=json.loads((out/'runtime-inputs.json').read_text())
+    # Installed preparation changes only the adapter and adds its shortcut
+    # recovery tests. All native, input, capture and lifecycle components match.
+    excluded={'tools/neverhood-original-current-runtime.py','tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs','test/test-cli-iso-child-context.cjs'} if installed() else set()
+    if os.environ.get('NEVERHOOD_ISO_PROOF'):
+        iso_proof(out,module);excluded|={'lib/readonly-media-context.js','test/run.js'}
+        assert prior_iso_mount(component_bytes('test/run.js').decode())==H.git(ROOT,'show','e16a4713b:test/run.js').decode()
+    if installed():excluded.add(str(pathlib.Path(json.loads((RUN/'installed-state.json').read_text())['exePath']).relative_to(ROOT)))
+    pins=lambda m:{r['path']:r['sha256'] for r in m['sources'] if r['path'] not in excluded}
+    assert pins(old)==pins(current) and old['moduleSHA256']==current['moduleSHA256']==H.digest(module)
+    for label in ('unit','participants','startup-native'):
+        wait=json.loads((prior/(label+'-wait.json')).read_text())
+        assert wait['exit']==0 and all(wait[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+    native=prior/'native-controller'
+    q=json.loads((native/'initial-presentation-qualification.json').read_text())
+    assert q['passed'] and set(q['modes'])=={'startup-delayed-visible','startup-never-visible','positive','atomic-hidden-repro','atomic-hidden-positive','atomic-transition-positive'}
+    controller=(ROOT/'tools/neverhood-original-current-control.py').read_bytes()
+    prior_controller=H.git(ROOT,'show','97670c226:tools/neverhood-original-current-control.py')
+    policy=lambda b:b[b.index(b'def context(s):'):b.index(b"if __name__=='__main__':")]
+    # Only the atomic presentation observation is substituted in intent().
+    old=b"cap=call(dict(action='native-reviewed-capture',path=str(image)),timeout=max(.001,start+3-time.time()))"
+    new=b"cap=call(dict(action='native-presentation-capture',path=str(image)),timeout=max(.001,start+3-time.time()))"
+    p=policy(controller).replace(new,old)
+    begin=p.index(b"                if cap.get('contract')=='native-presentation-pending-v1':")
+    end=p.index(b"                assert cap['contract']=='native-reviewed-context-v1'",begin)
+    assert p[:begin]+p[end:]==policy(prior_controller),'review/bind/receipt/UP/intent policy changed'
+    for mode in q['modes']:
+        for suffix in ('native-wait','watchdog-wait'):
+            w=json.loads((native/(mode+'-'+suffix+'.json')).read_text())
+            assert w['exit']==0 and all(w[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+    save(out,'reused-startup-proof.json',dict(passed=True,prior=str(prior),
+        exactInventorySHA256=H.digest(json.dumps(pins(current),sort_keys=True).encode()),
+        moduleSHA256=H.digest(module),unchangedControllerPolicySHA256=H.digest(policy(controller)),
+        priorControllerRevision='97670c226',qualificationSHA256=H.digest((native/'initial-presentation-qualification.json').read_bytes())))
+    if installed():save(out,'startup-component-exclusions.json',dict(paths=sorted(excluded),
+        reason='adapter separately unit/lifecycle tested; authentic restored executable data independently hashed, not protocol code'))
+    return prior
 
 def reuse_native_proof(out,revision,module):
     prior=pathlib.Path(os.environ.get('NEVERHOOD_NATIVE_PROOF',ROOT/'scratch/runs/20261117-vb5-native-modal-continuation-fence-repair/published-final'))
     proof=json.loads((prior/'complete-native-qualification.json').read_text())
-    assert proof['passed'] and proof['nativeProtocolAndFullRegression']
+    assert proof['passed'] and (proof.get('nativeProtocolAndFullRegression') or proof.get('nativeProtocolQualified'))
     if 'materialSourcePins' in proof:
         current=material_native_pins(json.loads((out/'runtime-inputs.json').read_text()))
+        changed=sorted(n for n in set(current)|set(proof['materialSourcePins']) if current.get(n)!=proof['materialSourcePins'].get(n))
+        if changed==['test/run.js'] and current['test/run.js']==WAIT_RUNNER_SHA256:
+            old_runner=H.git(ROOT,'show',WAIT_RUNNER_BASE+':test/run.js')
+            assert H.digest(old_runner)==proof['materialSourcePins']['test/run.js']
+            assert H.digest(module)==proof['moduleSHA256']
+            for name in ('complete-child-handoff-proof.json','wait-publication/wait-publication-proof.json'):
+                assert json.loads((out/name).read_text())['passed'],'fresh native and partial-write reader proofs required'
+            save(out,'matching-native-proof.json',dict(passed=True,proof=str(prior/'complete-native-qualification.json'),
+                proofSHA256=H.digest((prior/'complete-native-qualification.json').read_bytes()),
+                moduleSHA256=H.digest(module),unchangedPaths=len(current)-1,runnerBase=WAIT_RUNNER_BASE,
+                runnerSHA256=WAIT_RUNNER_SHA256,scope='only atomic OS-child wait evidence replacement; exact remaining native core and module unchanged; fresh native handoff/input/UP/Quit and old/fixed independent partial-write reader regression'))
+            save(out,'complete-native-qualification.json',dict(passed=True,nativeProtocolQualified=True,
+                gitSHA=revision,moduleSHA256=H.digest(module),materialSourcePins=current,
+                priorUnchangedCoreProof=str(prior/'complete-native-qualification.json'),
+                focusedHandoffProof=str(out/'complete-child-handoff-proof.json'),
+                waitPublicationProof=str(out/'wait-publication/wait-publication-proof.json'),
+                scope='exact unchanged core; atomic wait publication tested separately, no full-suite rerun claim'))
+            return True
+        child_delta=changed==['lib/cli-child-observation.js','lib/cli-native-scene.js','lib/readonly-media-context.js','test/run.js']
+        if child_delta:
+            assert H.digest(component_bytes('test/run.js'))==CHILD_RUNNER_SHA256,'unreviewed runner delta'
+            focused=out/'complete-child-handoff-proof.json'
+            assert focused.exists() and json.loads(focused.read_text())['passed'],'actual new native handoff proof required'
+            changed=[n for n in changed if n!='lib/cli-child-observation.js']
+        if (changed==['lib/cli-native-scene.js','test/run.js'] or
+            (changed==['lib/cli-native-scene.js','lib/readonly-media-context.js','test/run.js'] and (os.environ.get('NEVERHOOD_ISO_PROOF') or child_delta))) and (os.environ.get('NEVERHOOD_STARTUP_PROOF') or child_delta):
+            if not child_delta:startup_proof(out,module)
+            # Exact unchanged input/receipt/lease components, with only a new
+            # passive command and the already tested public refusal diagnostics.
+            base=H.git(ROOT,'show','9c6eb037f:lib/cli-native-scene.js').decode()
+            scene=component_bytes('lib/cli-native-scene.js').decode()
+            begin=scene.index('// Passive startup only:');end=scene.index('// An actual reviewed pre-main',begin)
+            assert (scene[:begin]+scene[end:]).replace('captureFailures,startupReadiness,','captureFailures,')==base
+            runner=(H.git(ROOT,'show',CHILD_RUNNER_BASE+':test/run.js') if child_delta else component_bytes('test/run.js')).decode()
+            if os.environ.get('NEVERHOOD_ISO_PROOF') or child_delta:runner=prior_iso_mount(runner)
+            runner=runner.replace("if (cmd.action === 'native-reviewed-capture' || cmd.action === 'native-presentation-capture')", "if (cmd.action === 'native-reviewed-capture')")
+            begin=runner.index("      if (cmd.action === 'native-presentation-capture') {")
+            end=runner.index('      return reviewedContexts.capture(',begin)
+            runner=runner[:begin]+runner[end:]
+            addition="    if (cmd.action === 'native-startup-readiness')\n      return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);\n"
+            assert runner.count(addition)==1 and runner.replace(addition,'')==H.git(ROOT,'show',proof['gitSHA']+':test/run.js').decode()
+            save(out,'matching-native-proof.json',dict(passed=True,proof=str(prior/'complete-native-qualification.json'),
+                proofSHA256=H.digest((prior/'complete-native-qualification.json').read_bytes()),proofGitSHA=proof['gitSHA'],
+                preparedGitSHA=revision,moduleSHA256=H.digest(module),unchangedPaths=len(current)-len(changed)-(1 if child_delta else 0),
+                changedComponents=changed+(['lib/cli-child-observation.js'] if child_delta else []),passiveStartupFocusedProof=True,diagnosticsPublishedRevision='9c6eb037f',
+                scope='unchanged native lifecycle/participants/receipt/context/lease components; startup/ISO plus exact child runner delta tested separately' if child_delta else 'unchanged native lifecycle/participants/receipt/context/lease components; passive startup tested separately'))
+            if child_delta:
+                inputs=json.loads((out/'runtime-inputs.json').read_text())
+                save(out,'complete-native-qualification.json',dict(passed=True,nativeProtocolQualified=True,
+                    gitSHA=revision,moduleSHA256=H.digest(module),materialSourcePins=current,
+                    priorUnchangedCoreProof=str(prior/'complete-native-qualification.json'),
+                    focusedHandoffProof=str(focused),runnerBase=CHILD_RUNNER_BASE,runnerSHA256=CHILD_RUNNER_SHA256,
+                    scope='unchanged core libraries and prior startup/ISO runner; exact new runner+bridge tested by ordinary native handoff, input/UP/Quit, parent failure, child cancellation and ISO child tests; no full-suite rerun claim'))
+            return True
         if current==proof['materialSourcePins'] and H.digest(module)==proof['moduleSHA256']:
             save(out,'matching-native-proof.json',dict(passed=True,proof=str(prior/'complete-native-qualification.json'),
                 proofSHA256=H.digest((prior/'complete-native-qualification.json').read_bytes()),
@@ -322,13 +551,55 @@ def qualify_native(out,revision,module,env,fds):
         nativeProtocolAndFullRegression=True,originalStarted=False,tests=[label for label,_ in tests],
         scope='native CLI USER owner/refusal/focus/modal/nested/lifecycle main/CPUWorker/OSchild; excludes unrelated browser GL'))
 
+def qualify_child_handoff(out,module,env,fds):
+    inputs=json.loads((out/'runtime-inputs.json').read_text())
+    # The restored authentic launcher is a data input at a run-specific path.
+    # Compare every executable source/dependency byte, including both test
+    # drivers and controllers, while allowing that data path to change.
+    source_pins={r['path']:r['sha256'] for r in inputs['sources'] if not r['path'].startswith('scratch/')}
+    prior=os.environ.get('NEVERHOOD_CHILD_PROOF')
+    if prior:
+        prior=pathlib.Path(prior);proof=json.loads((prior/'complete-child-handoff-proof.json').read_text())
+        assert proof['passed'] and proof['sourcePins']==source_pins and proof['moduleSHA256']==H.digest(module)
+        for label in ('wait-publication','child-observation-unit','native-child-handoff','native-parent-failure','native-child-cancellation','native-iso-child'):
+            wait=json.loads((prior/(label+'-wait.json')).read_text())
+            assert wait['exit']==0 and all(wait[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+        save(out,'reused-child-handoff-proof.json',dict(passed=True,prior=str(prior),proofSHA256=H.digest((prior/'complete-child-handoff-proof.json').read_bytes()),sameSealedSourcesAndModule=True))
+        return
+    checked(out,'wait-publication',['node','test/test-neverhood-child-handoff.cjs',str(out/'wait-publication'),'wait-publication'],env,timeout=30,pass_fds=fds)
+    checked(out,'child-observation-unit',['node','test/test-cli-child-observation.cjs',str(out/'child-observation-unit')],env,timeout=30,pass_fds=fds)
+    checked(out,'native-child-handoff',['node','test/test-neverhood-child-handoff.cjs',str(out/'native-child-handoff')],env,timeout=80,pass_fds=fds)
+    for label,mode in (('native-parent-failure','parent-failure'),('native-child-cancellation','child-cancellation')):
+        checked(out,label,['node','test/test-neverhood-child-handoff.cjs',str(out/label),mode],env,timeout=80,pass_fds=fds)
+    checked(out,'native-iso-child',['node','test/test-cli-iso-child-context.cjs','--native',str(out/'native-iso-child')],env,timeout=40,pass_fds=fds)
+    proof=json.loads((out/'native-child-handoff/handoff-proof.json').read_text())
+    assert proof['passed'] and proof['nativeChildQuit'] and proof['childOwnedSourceModuleProcessUSER']
+    save(out,'complete-child-handoff-proof.json',dict(passed=True,sourceSHA256=inputs['sourceSHA256'],sourcePins=source_pins,moduleSHA256=H.digest(module),
+        ordinaryNativePlayCreateProcessParentExit0ChildSurvives=True,childOwnedSourceModuleProcessUSER=True,
+        independentChildNativeInputUPQuit=True,negativeProvenanceBeforeTransport=True,nativeParentFailureAndChildCancellation=True,
+        atomicOSChildWaitPublication=True,originalStarted=False))
+
 def pipeline(out,revision,fixture=False,working=False):
     global RUN
     RUN=out
     st=os.statvfs('/home');assert st.f_bavail*st.f_frsize>1500000000
     pre=checked(out,'media-preflight',['node','tools/neverhood-original-current-preflight.cjs'])
     (out/'media-preflight.json').write_bytes(pre)
-    held=prepare(out/'prepared',revision,list(OWN) if working else [],hold=False)
+    if installed():
+        state=json.loads(checked(out,'installed-restore',['node','tools/neverhood-installed-shortcut.cjs',str(out)]))
+        data=json.loads(pre);b=pathlib.Path(state['exePath']).read_bytes()
+        assert H.digest(b)==state['shortcut']['targetSHA256']
+        data['inputs']['installedLauncher']=dict(path=str(pathlib.Path(state['exePath']).relative_to(ROOT)),size=len(b),sha256=H.digest(b))
+        save(out,'media-with-installed.json',data)
+        (out/'media-preflight.json').write_text(json.dumps(data))
+    own_revision=os.environ.get('NEVERHOOD_PUBLISHED_HELPERS_REVISION',revision)
+    if not working:
+        assert H.git(ROOT,'rev-parse',own_revision+'^{commit}').decode().strip()==own_revision
+        assert subprocess.run(['git','merge-base','--is-ancestor',own_revision,'origin/main'],cwd=ROOT).returncode==0
+        for name in OWN:assert (ROOT/name).read_bytes()==H.git(ROOT,'show',own_revision+':'+name)
+    save(out,'published-helper-composition.json',dict(baseGitSHA=revision,publishedHelpersRevision=own_revision,
+        ownedPaths=list(OWN),workingAuthoredOnly=working,wholeGraphEqualityClaimed=False))
+    held=prepare(out/'prepared',revision,list(OWN) if working or own_revision!=revision else [],hold=False)
     qualified=out/'qualification';qualified.mkdir()
     r=recipe(out/'prepared',out)
     env,fds=H.frozen_inputs(qualified,r)
@@ -337,10 +608,46 @@ def pipeline(out,revision,fixture=False,working=False):
     try:
         H.inheritance_probe(qualified,r,env)
         module=H.holder_bytes(json.loads((out/'prepared/holder.json').read_text()),'fdPath')
+        if os.environ.get('NEVERHOOD_ISO_FIXTURE')=='1':
+            checked(qualified,'iso-host',['node','test/test-cli-iso-child-context.cjs','--host',str(qualified/'iso-host')],env,timeout=30,pass_fds=fds)
+            checked(qualified,'iso-native',['node','test/test-cli-iso-child-context.cjs','--native',str(qualified/'iso-native')],env,timeout=40,pass_fds=fds)
+            save(qualified,'iso-child-proof.json',dict(passed=True,moduleSHA256=H.digest(module),
+                components={n:H.digest((ROOT/n).read_bytes()) for n in ('lib/readonly-media-context.js','test/run.js','test/test-cli-iso-child-context.cjs')}))
+            os.environ['NEVERHOOD_ISO_PROOF']=str(qualified)
+        qualify_child_handoff(qualified,module,env,fds)
         qualify_native(qualified,revision,module,env,fds)
-        for label,args in [('controller-unit',['node','test/test-neverhood-original-current.cjs','--unit']),
+        reused=os.environ.get('NEVERHOOD_STARTUP_PROOF') or os.environ.get('NEVERHOOD_REUSE_QUALIFICATION')
+        if os.environ.get('NEVERHOOD_STARTUP_PROOF'):
+            # qualify_native verified the focused inventory and actual waits.
+            assert (qualified/'reused-startup-proof.json').exists()
+            save(qualified,'reused-controller-proof.json',dict(passed=True,prior=reused,
+                scope='exact composed inventory; focused startup/units/participants plus unchanged historical controller policy'))
+        elif reused:
+            prior=pathlib.Path(reused);old=json.loads((prior/'runtime-inputs.json').read_text());current=json.loads((qualified/'runtime-inputs.json').read_text())
+            # Runtime lifecycle/watchdog diagnostics do not change the controller,
+            # native transport, source loader, or actor/freshness/modal policy.
+            test='test/test-neverhood-original-current.cjs'
+            before=H.git(ROOT,'show',os.environ['NEVERHOOD_REUSE_TEST_REVISION']+':'+test)
+            after=(ROOT/test).read_bytes()
+            oldpins={r['path']:r['sha256'] for r in old['sources']};newpins={r['path']:r['sha256'] for r in current['sources']}
+            assert H.digest(before)==oldpins[test] and H.digest(after)==newpins[test]
+            marker=b"if(process.argv[2]==='--desktop-participants'){"
+            assert before.count(marker)==after.count(marker)==1
+            assert before[before.index(marker):]==after[after.index(marker):],'controller/native test components changed'
+            save(qualified,'unchanged-test-components.json',dict(priorGitSHA=os.environ['NEVERHOOD_REUSE_TEST_REVISION'],priorWholeSHA256=H.digest(before),currentWholeSHA256=H.digest(after),unchangedComponentsSHA256=H.digest(after[after.index(marker):]),excludedPrefix='authored independent watchdog observation diagnostic only'))
+            pins=lambda m:{r['path']:r['sha256'] for r in m['sources'] if r['path'] not in ('tools/neverhood-original-current-runtime.py',test) and (r['path'].startswith(('src/','lib/','tools/vb5','test/')) or r['path'] in ('host.js',PRELOAD,'tools/neverhood-original-current-control.py'))}
+            assert pins(old)==pins(current) and old['moduleSHA256']==current['moduleSHA256']
+            labels=('desktop-participants','controller-unit','provenance','native-controller')
+            for label in labels:
+                record=json.loads((prior/(label+'-wait.json')).read_text())
+                assert record['exit']==0 and all(record[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+            save(qualified,'reused-controller-proof.json',dict(passed=True,prior=str(prior),unchangedComponentPins=pins(current),waitSHA256={label:H.digest((prior/(label+'-wait.json')).read_bytes()) for label in labels},moduleSHA256=current['moduleSHA256']))
+        else:
+            arm_desktop_observations(qualified,env)
+            checked(qualified,'desktop-participants',['node','test/test-neverhood-original-current.cjs','--desktop-participants'],env,timeout=40,pass_fds=fds)
+        for label,args in ([] if reused else [('controller-unit',['node','test/test-neverhood-original-current.cjs','--unit']),
                            ('provenance',['node','test/test-neverhood-original-current.cjs','--installed-provenance']),
-                           ('native-controller',['node','test/test-neverhood-original-current.cjs',str(qualified/'native-controller')])]:
+                           ('native-controller',['node','test/test-neverhood-original-current.cjs',str(qualified/'native-controller')])]):
             checked(qualified,label,args,env,timeout=180,pass_fds=fds)
         save(qualified,'qualification.json',dict(passed=True,gitSHA=revision,moduleSHA256=H.digest(module),originalStarted=False))
     finally:
@@ -361,13 +668,105 @@ def pipeline(out,revision,fixture=False,working=False):
     for fd in held:os.close(fd)
     save(out,'holder-closed.json',dict(at=time.time(),descriptorsClosed=True))
 
+def wait_owned_listener(out,port,seconds=30):
+    """Passively admit an actual local listener before importing the controller.
+
+    Read TCP before FDs: a listener may be created between the two reads. The
+    reverse order can mistake that ordinary startup transition for a foreign
+    socket. Preserve strict token/inode ownership and never make a probe request.
+    """
+    assert 0<port<65536 and 0<seconds<=30
+    started=time.time();deadline=time.monotonic()+seconds;samples=0;missing=0
+    while True:
+        assert not (out/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN'
+        assert time.monotonic()<deadline,'owned listener readiness deadline'
+        if (out/'native-pid.json').exists():
+            info=json.loads((out/'native-pid.json').read_text());pid=info['pid']
+            assert H.token(pid)==info['startToken'],'native PID identity changed'
+            rows=[r.split() for r in pathlib.Path('/proc/net/tcp').read_text().splitlines()[1:]]
+            matches=[r for r in rows if r[1]=='0100007F:'+format(port,'04X') and r[3]=='0A']
+            samples+=1
+            if matches:
+                assert len(matches)==1,'ambiguous local listener'
+                sockets=set()
+                for fd in pathlib.Path(f'/proc/{pid}/fd').iterdir():
+                    try:sockets.add(str(fd.readlink()))
+                    except FileNotFoundError:pass
+                assert H.token(pid)==info['startToken'],'native PID identity changed'
+                assert 'socket:['+matches[0][9]+']' in sockets,'listener not owned by native process'
+                receipt=dict(passed=True,target=info,port=port,inode=matches[0][9],startedAt=started,
+                    verifiedAt=time.time(),samples=samples,pidWithoutListenerSamples=missing,
+                    passiveOnly=True,beforeControllerStartup=True,tcpBeforeFDs=True)
+                save(out,'owned-listener-ready.json',receipt)
+                return receipt
+            missing+=1
+        time.sleep(.01)
+
+def pin_process(pid,token):
+    assert H.token(pid)==token
+    fd=os.pidfd_open(pid);poll=select.poll();poll.register(fd,select.POLLIN)
+    assert H.token(pid)==token and not poll.poll(0)
+    return fd,poll
+
+def owner_watchdog(out,pid,token,seconds):
+    fd,poll=pin_process(pid,token);end=time.monotonic()+seconds
+    save(out,'owner-watchdog-armed.json',dict(pid=os.getpid(),ownerPid=pid,seconds=seconds,independent=True,at=time.time()))
+    fired=False
+    while not poll.poll(20):
+        if (out/'owner-watchdog-cancel').exists():break
+        if time.monotonic()>=end:
+            signal.pidfd_send_signal(fd,signal.SIGTERM);fired=True;break
+    save(out,'owner-watchdog-result.json',dict(fired=fired,at=time.time()));os.close(fd)
+
+def persistent_owner(out,worker,token,seconds,command):
+    out.mkdir(parents=True,exist_ok=True)
+    ancestor=os.getppid();chain=[]
+    while ancestor>1:
+        chain.append(ancestor)
+        if ancestor==worker:break
+        ancestor=int(pathlib.Path(f'/proc/{ancestor}/stat').read_text().rsplit(')',1)[1].split()[1])
+    assert worker in chain,'persistent worker must be an actual ancestor'
+    fd,poll=pin_process(worker,token)
+    libc=ctypes.CDLL(None,use_errno=True);inherited=ctypes.c_int()
+    assert libc.prctl(2,ctypes.byref(inherited),0,0,0)==0 and inherited.value in (0,signal.SIGTERM)
+    assert libc.prctl(1,0,0,0,0)==0 and not poll.poll(0)
+    requests=[];old={s:signal.signal(s,lambda s,f:requests.append(s)) for s in (signal.SIGTERM,signal.SIGINT)}
+    save(out,'persistent-owner-armed.json',dict(pid=os.getpid(),startToken=H.token(os.getpid()),workerPid=worker,workerStartToken=token,ancestorChain=chain,inheritedPdeathsig=inherited.value,clearedPdeathsig=0,at=time.time()))
+    w=subprocess.Popen([sys.executable,'-B',__file__,'owner-watchdog',str(out),str(os.getpid()),H.token(os.getpid()),str(seconds)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    p=None
+    try:
+        due=time.monotonic()+5
+        while not (out/'owner-watchdog-armed.json').exists():
+            assert w.poll() is None and time.monotonic()<due;time.sleep(.005)
+        p=subprocess.Popen(command,cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+        save(out,'wait-owner-child.json',dict(pid=p.pid,startToken=H.token(p.pid),owner=os.getpid(),args=command))
+        sent=False
+        while True:
+            try:a,b=p.communicate(timeout=.05);break
+            except subprocess.TimeoutExpired:
+                if (poll.poll(0) or requests) and not sent:
+                    p.send_signal(signal.SIGTERM);sent=True
+                    save(out,'owner-cancellation.json',dict(workerDied=bool(poll.poll(0)),signals=requests,at=time.time()))
+        (out/'owner.stdout.log').write_bytes(a);(out/'owner.stderr.log').write_bytes(b)
+        save(out,'owner-wait.json',dict(pid=p.pid,exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,workerAlive=not bool(poll.poll(0))))
+        return p.returncode
+    finally:
+        if p is not None and p.poll() is None:p.terminate();p.communicate(timeout=20)
+        (out/'owner-watchdog-cancel').touch();a,b=w.communicate(timeout=10)
+        save(out,'owner-watchdog-wait.json',dict(pid=w.pid,exit=w.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode()))
+        os.close(fd)
+        for s,h in old.items():signal.signal(s,h)
+
 def main():
     mode=sys.argv[1];out=pathlib.Path(sys.argv[2]).resolve()
     if mode=='supervised':return supervised(out,'--fixture' in sys.argv,'--owned-patches' in sys.argv)
     elif mode=='pipeline':pipeline(out,sys.argv[3],'--fixture' in sys.argv,'--owned-patches' in sys.argv)
     elif mode=='prepare':prepare(out,sys.argv[3],list(OWN) if '--owned-patches' in sys.argv else [])
     elif mode=='recipe':save(out,'recipe.json',recipe(pathlib.Path(sys.argv[3]),out))
-    elif mode=='watchdog':H.watchdog(out,float(sys.argv[3]))
+    elif mode=='watchdog':watchdog(out,float(sys.argv[3]))
+    elif mode=='listener':wait_owned_listener(out,int(sys.argv[3]),float(sys.argv[4]) if len(sys.argv)>4 else 30)
+    elif mode=='owner-watchdog':owner_watchdog(out,int(sys.argv[3]),sys.argv[4],float(sys.argv[5]))
+    elif mode=='persistent-owner':return persistent_owner(out,int(sys.argv[3]),sys.argv[4],float(sys.argv[5]),sys.argv[6:])
     elif mode in ('run','admit'):run(out,json.loads(pathlib.Path(sys.argv[3]).read_text()),mode=='admit')
     elif mode=='owner':
         p=subprocess.Popen([sys.executable,'-B',__file__,*sys.argv[3:]],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)

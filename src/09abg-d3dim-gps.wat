@@ -923,8 +923,12 @@
         (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_MOV) (i32.const 2)
           (call $d3g_dst (i32.const 1) (i32.const 15)) (i32.const 0x80E40000) (i32.const 0) (i32.const 0)))
         (if (i32.and (local.get $key) (i32.const 0x2000)) (then
+          ;; Keep negative alpha-minus-threshold values for TEXKILL. The
+          ;; ordinary stage destination saturates, which would turn them into
+          ;; zero and make every keyed fragment survive the strict <0 test.
           (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_SUB) (i32.const 3)
-            (call $d3g_dst (i32.const 2) (i32.const 15)) (i32.const 0x80FF0001) (i32.const 0xA0E40000) (i32.const 0)))
+            (i32.and (call $d3g_dst (i32.const 2) (i32.const 15)) (i32.const -1048577))
+            (i32.const 0x80FF0001) (i32.const 0xA0E40000) (i32.const 0)))
           (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_TEXKILL) (i32.const 1)
             (call $d3g_dst (i32.const 2) (i32.const 15)) (i32.const 0) (i32.const 0) (i32.const 0)))))
         (local.set $n (call $d3g_ir_op (local.get $buf) (local.get $n)
