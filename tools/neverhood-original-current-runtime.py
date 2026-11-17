@@ -411,7 +411,16 @@ def pipeline(out,revision,fixture=False,working=False):
             prior=pathlib.Path(reused);old=json.loads((prior/'runtime-inputs.json').read_text());current=json.loads((qualified/'runtime-inputs.json').read_text())
             # Runtime lifecycle/watchdog diagnostics do not change the controller,
             # native transport, source loader, or actor/freshness/modal policy.
-            pins=lambda m:{r['path']:r['sha256'] for r in m['sources'] if r['path']!='tools/neverhood-original-current-runtime.py' and (r['path'].startswith(('src/','lib/','tools/vb5','test/')) or r['path'] in ('host.js',PRELOAD,'tools/neverhood-original-current-control.py'))}
+            test='test/test-neverhood-original-current.cjs'
+            before=H.git(ROOT,'show',os.environ['NEVERHOOD_REUSE_TEST_REVISION']+':'+test)
+            after=(ROOT/test).read_bytes()
+            oldpins={r['path']:r['sha256'] for r in old['sources']};newpins={r['path']:r['sha256'] for r in current['sources']}
+            assert H.digest(before)==oldpins[test] and H.digest(after)==newpins[test]
+            marker=b"if(process.argv[2]==='--desktop-participants'){"
+            assert before.count(marker)==after.count(marker)==1
+            assert before[before.index(marker):]==after[after.index(marker):],'controller/native test components changed'
+            save(qualified,'unchanged-test-components.json',dict(priorGitSHA=os.environ['NEVERHOOD_REUSE_TEST_REVISION'],priorWholeSHA256=H.digest(before),currentWholeSHA256=H.digest(after),unchangedComponentsSHA256=H.digest(after[after.index(marker):]),excludedPrefix='authored independent watchdog observation diagnostic only'))
+            pins=lambda m:{r['path']:r['sha256'] for r in m['sources'] if r['path'] not in ('tools/neverhood-original-current-runtime.py',test) and (r['path'].startswith(('src/','lib/','tools/vb5','test/')) or r['path'] in ('host.js',PRELOAD,'tools/neverhood-original-current-control.py'))}
             assert pins(old)==pins(current) and old['moduleSHA256']==current['moduleSHA256']
             labels=('desktop-participants','controller-unit','provenance','native-controller')
             for label in labels:
