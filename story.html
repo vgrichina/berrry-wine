@@ -5,22 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>How Wine-Assembly was built: a Windows 98 emulator in raw WebAssembly</title>
   <meta name="description" content="The history of Wine-Assembly, a Windows 98 emulator in WebAssembly: from the first x86 decoder to a browser running Pinball, Winamp, DirectX and Win16 apps.">
-  <link rel="canonical" href="https://wine-assembly.berrry.app/story.html">
+  <link rel="canonical" href="https://berrry.wine/story.html">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Wine-Assembly">
   <meta property="og:title" content="How Wine-Assembly was built: a Windows 98 emulator in raw WebAssembly">
   <meta property="og:description" content="The history of Wine-Assembly, a Windows 98 emulator in WebAssembly: from the first x86 decoder to a browser running Pinball, Winamp, DirectX and Win16 apps.">
-  <meta property="og:url" content="https://wine-assembly.berrry.app/story.html">
-  <meta property="og:image" content="https://wine-assembly.berrry.app/icons/og-image.png">
+  <meta property="og:url" content="https://berrry.wine/story.html">
+  <meta property="og:image" content="https://berrry.wine/icons/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="How Wine-Assembly was built: a Windows 98 emulator in raw WebAssembly">
   <meta name="twitter:description" content="The history of Wine-Assembly, a Windows 98 emulator in WebAssembly: from the first x86 decoder to a browser running Pinball, Winamp, DirectX and Win16 apps.">
-  <meta name="twitter:image" content="https://wine-assembly.berrry.app/icons/og-image.png">
+  <meta name="twitter:image" content="https://berrry.wine/icons/og-image.png">
   <meta name="theme-color" content="#008080">
-  <link rel="icon" href="https://wine-assembly.berrry.app/icons/icon-192.png">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How Wine-Assembly was built: a Windows 98 emulator in raw WebAssembly","description":"The history of Wine-Assembly, a Windows 98 emulator in WebAssembly: from the first x86 decoder to a browser running Pinball, Winamp, DirectX and Win16 apps.","url":"https://wine-assembly.berrry.app/story.html","image":"https://wine-assembly.berrry.app/icons/og-image.png","author":{"@type":"Person","name":"Vladimir Grichina","url":"https://github.com/vgrichina/wine-assembly"},"publisher":{"@type":"Organization","name":"Wine-Assembly","url":"https://wine-assembly.berrry.app"},"isPartOf":{"@type":"WebSite","name":"Wine-Assembly","url":"https://wine-assembly.berrry.app"},"inLanguage":"en","datePublished":"2026-04-15","dateModified":"2026-11-04"}</script>
+  <link rel="icon" href="https://berrry.wine/icons/icon-192.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"How Wine-Assembly was built: a Windows 98 emulator in raw WebAssembly","description":"The history of Wine-Assembly, a Windows 98 emulator in WebAssembly: from the first x86 decoder to a browser running Pinball, Winamp, DirectX and Win16 apps.","url":"https://berrry.wine/story.html","image":"https://berrry.wine/icons/og-image.png","author":{"@type":"Person","name":"Vladimir Grichina","url":"https://github.com/vgrichina/berrry-wine"},"publisher":{"@type":"Organization","name":"Wine-Assembly","url":"https://berrry.wine"},"isPartOf":{"@type":"WebSite","name":"Wine-Assembly","url":"https://berrry.wine"},"inLanguage":"en","datePublished":"2026-04-15","dateModified":"2026-11-04"}</script>
   <style>
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
@@ -80,7 +80,7 @@
 </head>
 <body>
   <div class="wrap">
-    <nav class="top"><a href="/">&larr; Run the emulator</a> <a href="/apps/">Apps</a> <a href="/design/">Design</a> <a href="/story.html">The Story</a> <a href="https://github.com/vgrichina/wine-assembly">GitHub</a></nav>
+    <nav class="top"><a href="/">&larr; Run the emulator</a> <a href="/apps/">Apps</a> <a href="/design/">Design</a> <a href="/story.html">The Story</a> <a href="https://github.com/vgrichina/berrry-wine">GitHub</a></nav>
     <article>
 <h1>Wine-Assembly — The Whole Story</h1>
 <p><em>A retrospective from the initial commit (2026-03-26) through 2026-11-04: 10,740 commits across 224 calendar days and 167 active commit days. The two months since Sep 4 added 6,927 of them, most written by a Codex coordinator and its workers on a remote ops box. About 100 billion agent tokens are on record for the period the logs survive (<a href="#tokens-and-commits">Tokens and commits</a>).</em></p>
@@ -91,7 +91,7 @@
 <p>Run real Windows 98 <code>.exe</code> files in the browser. No source, no recompilation, no porting layer. Just raw WebAssembly Text interpreting x86 machine code, with the Win32 API reimplemented inside the WASM module itself.</p>
 </blockquote>
 <p>This is the kind of project that &quot;shouldn&#39;t&quot; be a sprint at all. It started as a single WAT file. It is now about 360k lines of WAT across 134 files (32k of them generated tables) plus several hundred thousand lines of browser, test, and tooling JavaScript, compiled by its own vendored compiler for a WAT dialect that allocates the emulator&#39;s memory map and type-checks its structs. The app registry holds 363 entries (199 at Sep 4, counted the same way): Win98/XP accessories, MFC applications, games, installers, screensavers, DirectDraw, Direct3D Immediate/Retained Mode, OpenGL, audio, RichEdit, and OLE — and since Aug 15 it is no longer only a 32-bit story: 16-bit NE images load, link and run, so the original Windows Entertainment Pack plays in the browser next to its 32-bit remake. Since late August there is a third machine beside them: a toy 8086 VM that runs a corpus of 199 DOS demoscene programs and exists to answer interpreter-design questions the big emulator is too expensive to ask.</p>
-<p>The history is also a record of AI-assisted systems work. The implementation is <strong>coded directly in WAT</strong>—there is no C/Rust-to-WASM emulator build—but it should not be described as solely &quot;hand-written.&quot; Large parts of the reverse engineering, code, tests, and design were produced through sustained collaboration with Claude Code and Codex. This retrospective was refreshed from all three available records: Git, the repository&#39;s Claude session history/memories, and Codex rollout transcripts. The final week is visibly a <em>multi-agent</em> record: up to six sessions worked the same tree at once, coordinating through an append-only <code>messageboard.txt</code> and building every commit in a throwaway <code>GIT_INDEX_FILE</code> so nobody swept up a neighbour&#39;s in-flight edits. From October the record changes shape again: a long-running Codex coordinator on a remote ops box dispatches bounded workers, reviews their evidence and commits straight to main, and the maintainer steers it from a phone over Telegram. Token counts from the surviving Codex and Claude logs are summarised per day in <a href="https://github.com/vgrichina/wine-assembly/blob/main/docs/stats/README.md"><code>docs/stats/</code></a>.</p>
+<p>The history is also a record of AI-assisted systems work. The implementation is <strong>coded directly in WAT</strong>—there is no C/Rust-to-WASM emulator build—but it should not be described as solely &quot;hand-written.&quot; Large parts of the reverse engineering, code, tests, and design were produced through sustained collaboration with Claude Code and Codex. This retrospective was refreshed from all three available records: Git, the repository&#39;s Claude session history/memories, and Codex rollout transcripts. The final week is visibly a <em>multi-agent</em> record: up to six sessions worked the same tree at once, coordinating through an append-only <code>messageboard.txt</code> and building every commit in a throwaway <code>GIT_INDEX_FILE</code> so nobody swept up a neighbour&#39;s in-flight edits. From October the record changes shape again: a long-running Codex coordinator on a remote ops box dispatches bounded workers, reviews their evidence and commits straight to main, and the maintainer steers it from a phone over Telegram. Token counts from the surviving Codex and Claude logs are summarised per day in <a href="https://github.com/vgrichina/berrry-wine/blob/main/docs/stats/README.md"><code>docs/stats/</code></a>.</p>
 <hr>
 <h2>1. The arc, in twenty acts</h2>
 <pre><code>Act I     Mar 26-28   Decoder, lazy flags, FPU, SEH        →  Notepad runs
@@ -1989,7 +1989,7 @@ lines of WAT in 54 files and 2,131 commits.</p>
 <p><em>Refreshed 2026-11-04; the Sep 4 list is in this file&#39;s history.</em></p>
 <ol>
 <li><strong>The GL/D3D corpus</strong> — every OpenGL and Direct3D app on both the software and WebGL paths. MDK2, Stronghold Crusader, Alice and Deus Ex have live lanes. The original 27-app membership, backend coverage and crash scope are still being reconciled (<a href="/docs/gl-d3d-corpus-status.html">status</a>).</li>
-<li><strong>The coordinator itself</strong> — at most four production workers, with memory and disk floors checked before each launch, builds behind one lock, and heavy runtimes on short-lived leased boxes. The box&#39;s disk is the binding constraint, and evidence retention is now planned around Git (<a href="https://github.com/vgrichina/wine-assembly/blob/main/ops/COORDINATOR.md">rules</a>).</li>
+<li><strong>The coordinator itself</strong> — at most four production workers, with memory and disk floors checked before each launch, builds behind one lock, and heavy runtimes on short-lived leased boxes. The box&#39;s disk is the binding constraint, and evidence retention is now planned around Git (<a href="https://github.com/vgrichina/berrry-wine/blob/main/ops/COORDINATOR.md">rules</a>).</li>
 <li><strong>A compiled tier for the 32-bit machine</strong> — the uop tier is on by default and pays on Heroes III and MCM. The main-emulator region JIT is studied but not landed; its own measurement recommended &quot;a narrower thing&quot; than the toy VM&#39;s result (<a href="/docs/uop-tier-design.html">uop tier</a>, <a href="/docs/region-jit-transfer-study.html">transfer study</a>).</li>
 <li><strong>The remaining commercial-demo blockers</strong> — each has a note naming what was ruled out (<a href="/docs/re-notes/">RE notes</a>).</li>
 <li><strong>CJK beyond Big5</strong> — CP950 is opt-in per app with optional Ming fonts; other code pages have not been started.</li>
@@ -2069,9 +2069,9 @@ of starting over.</p>
 
     </article>
     <footer>
-      <a href="https://wine-assembly.berrry.app/">Run Windows 98 apps in your browser</a> ·
-      <a href="https://github.com/vgrichina/wine-assembly">Source on GitHub</a> ·
-      <a href="https://github.com/vgrichina/wine-assembly/blob/main/PROJECT_STORY.md">Edit this page</a> · Updated 2026-11-04
+      <a href="https://berrry.wine/">Run Windows 98 apps in your browser</a> ·
+      <a href="https://github.com/vgrichina/berrry-wine">Source on GitHub</a> ·
+      <a href="https://github.com/vgrichina/berrry-wine/blob/main/PROJECT_STORY.md">Edit this page</a> · Updated 2026-11-04
     </footer>
   </div>
 </body>

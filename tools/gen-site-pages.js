@@ -26,10 +26,10 @@ const { createGitDates } = require('./site-page-dates');
 const { marked } = require('marked');
 
 const ROOT = path.join(__dirname, '..');
-const SITE = 'https://wine-assembly.berrry.app';
+const SITE = 'https://berrry.wine';
 const SITE_NAME = 'Wine-Assembly';
 const AUTHOR = 'Vladimir Grichina';
-const REPO = 'https://github.com/vgrichina/wine-assembly';
+const REPO = 'https://github.com/vgrichina/berrry-wine';
 const OG_IMAGE = `${SITE}/icons/og-image.png`;
 // Pinned: a diagram that rendered under one mermaid parser should keep
 // rendering, and a floating "latest" has broken flowchart syntax before.

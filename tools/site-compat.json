@@ -2961,12 +2961,12 @@
               "evidence": "scratch/runs/20261025-uplink-gameplay"
             },
             {
-              "build": "422eba5a4",
-              "browser": "Chrome 157.0.8103.46",
+              "build": "live site, wasm e017b4a4",
+              "browser": "Chrome 157",
               "device": "Android phone (A142)",
-              "os": "Android",
-              "date": "2026-11-07",
-              "evidence": "scratch/runs/20261107-uplink-android-showwindow"
+              "os": "Android 10",
+              "date": "2026-11-16",
+              "evidence": "scratch/runs/20261116-hl-uplink-android-live"
             }
           ],
           "facts": {
@@ -2975,7 +2975,7 @@
             "saves": null,
             "multiplayer": null,
             "touchPlayable": null,
-            "phoneFps": 10.2
+            "phoneFps": 14.5
           }
         }
       ],
