@@ -68,3 +68,45 @@ compiling; its receipt is retained and is not counted as a passing build.
 Incoming foreign NE/lifecycle changes are preserved byte-exact and excluded
 from the material commit. Source evidence is Git plus the owned patch and
 manifest pins; no source archive or media copy is made.
+
+## Published capability and original outcome
+
+Material commit `57c40c5c39f5ee92d741a72ffe97a90e3898666c` is published on main.
+The fresh pipeline used current published Git-only
+`efcf47369966a1bcc1f0e8b0a2d74f99c1eca293`, production module
+`2c7d23d9c735bdec75884528482e1b1d8c73334bd02c8d1f3b15850011b57093`,
+and zero source patch bytes. All Git source pins were verified; the native
+41-case nested suite and fixed/QT/FT/LS32/SMapLS/Win4 regressions passed again
+against that revision. Seven native BUTTON cases and full media257 validation
+also passed. The module was compiled and sealed before the unchanged
+2400-second native / 2420-second independent watchdog / 240-second Quit reserve
+clocks. No unrelated worktree edits were consumed.
+
+One personally viewed complete launcher supported one Install intent. Its
+native BUTTON DOWN was CONSUMED within 500 ms, an independently prearmed
+physical UP was acknowledged within 1750 ms, and durable finite completion
+was reported in 392 ms, within 3000 ms. The original then passed its former
+DSETUP6E KERNEL.95 call at return 0885131b. Subsequent real GetProcAddress calls
+used image handle 0110 and returned nonzero genuine SETUPX exports. This
+original exercises retaining the already loaded SETUPX image; new-source
+loading is established by the separate native authored/genuine proofs.
+
+Execution entered more SETUPX code and trapped at **KERNEL.217 RegOpenKey**,
+return 08555880. A name-section build has byte-identical executable sections to
+the consumed production module and identifies the trap in `win16_dispatch`.
+The hash-pinned genuine SETUPX code2 call at 587b, relocation-chain member 587c,
+imports KERNEL ordinal217 and returns at 5880, matching the retained original
+trace. The registry path bytes were not captured. The original runtime library
+string was also not captured: its identification remains a relocation-based
+reconstruction, separately confirmed by the authored genuine native caller's
+captured runtime string.
+
+Installation completion, Play, room entry and native Quit are not established.
+Native exit1, watchdog exit0 and outer supervisor exit0 were actually waited
+with both streams drained. Permanent UNKNOWN was recorded locally after the
+terminal wait; no later HTTP, capture, rebind, replay or second original was
+sent. An admission-only bookkeeping refusal before launch is retained
+separately and launched neither native nor watchdog. The source/module holder
+closed normally after the unique module was retrieved and hash-verified.
+No box was created. The next implementation boundary is real Win16 registry
+API adaptation for the genuine SETUPX caller; the closed original stays closed.
