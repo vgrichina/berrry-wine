@@ -25,11 +25,11 @@ function fixture(){
  // The ordinary sibling worker remains alive without changing UI metadata.
  b.set(Buffer.from([0x68,...u32(1000),0xff,0x15,...u32(0x401204),0xeb,0xf3]),raw(0x2800));return b;
 }
-function dialogFixture(){
+function dialogFixture({passwordEdit=false}={}){
  const b=require('./test-vb5-native-dialog-identity.cjs').fixture({simpleButton:true}),raw=r=>r-0x1000+0x200;
  let a=raw(0x1500);const start=a,w=n=>{b.writeUInt16LE(n,a);a+=2;},d=n=>{b.writeUInt32LE(n>>>0,a);a+=4;},s=t=>{for(const c of t)w(c.charCodeAt(0));w(0);},align=()=>a=(a+3)&~3;
  d(0x80c80000);d(0);w(3);w(30);w(30);w(220);w(100);w(0);w(0);s('Wizard: Welcome');
- align();d(0x50000000);d(0);w(10);w(10);w(195);w(30);w(100);w(0xffff);w(0x82);s('Authored wizard welcome page');w(0);
+ align();d(passwordEdit?0x50000020:0x50000000);d(0);w(10);w(10);w(195);w(30);w(100);w(0xffff);w(passwordEdit?0x81:0x82);s('Authored wizard welcome page');w(0);
  for(const[id,x,label]of [[1,70,'Next >'],[2,140,'Cancel']]){align();d(0x50010000);d(0);w(x);w(65);w(60);w(15);w(id);w(0xffff);w(0x80);s(label);w(0);}
  b.writeUInt32LE(a-start,raw(0x12a4));b.write('Wizard: License agreement\0',raw(0x2580));
  b.write('License page: read the authored terms.\0',raw(0x25c0));

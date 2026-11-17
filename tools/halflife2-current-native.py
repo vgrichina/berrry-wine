@@ -6,14 +6,17 @@ startup after complete authored controls and own outer lifecycle proof.
 """
 import gzip,hashlib,json,os,pathlib,re,signal,socket,subprocess,sys,threading,time,types,uuid
 ROOT=pathlib.Path(__file__).resolve().parent.parent
-TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-persistent-owner-normal-installer-progress'
+TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-agreement-native-control-install-progress'
 RUN=pathlib.Path(os.environ.get('HL2_RUN',TASK_RUN/'native'))
 MEDIA=ROOT/'scratch/media/half-life-2-demo-original.exe'
 DLL=ROOT/'scratch/runs/20261117-halflife2-original-demo-startup-gameplay/WISE0132.dll'
 OWN=('tools/halflife2-current-native.py','tools/halflife2-reviewed-next.py',
      'test/test-halflife2-reviewed-next.cjs','test/test-halflife2-native-wizard.cjs')
 PREVIOUS=ROOT/'scratch/runs/20261117-halflife2-fixed-wrapper-normal-install-progress/repair-working/outer-fixture'
-COMPONENTS=('tools/halflife2-current-native.py','tools/halflife2-persistent-owner.py','test/test-halflife2-persistent-owner.py')
+COMPONENTS=('tools/halflife2-current-native.py','tools/halflife2-persistent-owner.py','test/test-halflife2-persistent-owner.py',
+    'lib/cli-native-scene.js','lib/cli-native-user-windows.js',
+    'test/test-cli-native-capture-refusal-details.cjs','test/test-halflife2-native-wizard.cjs')
+PRIOR_TASK=ROOT/'scratch/runs/20261117-halflife2-persistent-owner-normal-installer-progress'
 CORE_FIXTURE=ROOT/'scratch/runs/20261117-vb5-real-comctl-startup-ide-sample/installed-published'
 NATIVE_SECONDS,WATCHDOG_SECONDS=600,620
 COMPACTION_LOCK=threading.Lock()
@@ -70,8 +73,10 @@ def supervised():
  working='--working-qualification' in sys.argv;original='--original' in sys.argv
  assert not (working and original)
  if original:
-  route=json.loads((TASK_RUN/'route-native/proof.json').read_text())
-  assert route['passed'] and route['realNative'] and route['componentGit']==os.environ['HL2_COMPONENT_PIN']
+  route=json.loads((PRIOR_TASK/'route-native/proof.json').read_text())
+  assert route['passed'] and route['realNative'] and route['componentGit'].startswith('9945c2998')
+  for name in ('tools/halflife2-persistent-owner.py','tools/gltron-current-supervise.py','tools/boids-current-supervise.py'):
+   assert git('show','9945c2998:'+name)==(ROOT/name).read_bytes(),'lifecycle component changed: '+name
   assert not (TASK_RUN/'original-installer-invocation.json').exists(),'original allowance already reserved'
   assert git('show',os.environ['HL2_COMPONENT_PIN']+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
   assert (RUN.parent/'outer-fixture/outer/wait.json').exists(),'own outer adapter must be proved first'
@@ -259,6 +264,14 @@ def run():
   wait=json.loads((PREVIOUS/'outer/wait.json').read_text())
   assert wait['actualWait'] and wait['stdoutEOF'] and wait['stderrEOF'] and wait['supervisorExitCode']==0
   save('qualification-reuse.json',dict(previous=str(PREVIOUS),fullWrapperSHA256=sha((PREVIOUS/'wizard-next/wrapper/proof.json').read_bytes()),shutdownSHA256=sha((PREVIOUS/'adapter-shutdown/proof.json').read_bytes()),allUnchangedSourcesExact=True,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],freshRouteOnly=True))
+  for name in ('lib/cli-native-scene.js','lib/cli-native-user-windows.js'):
+   assert files[name]==git('show','762ce2c29:'+name),'unreviewed diagnostic component: '+name
+  helper.checked('capture-refusal-diagnostics',['node','test/test-cli-native-capture-refusal-details.cjs','--native',str(RUN/'capture-refusal-diagnostics')],env,(source,module))
+  helper.checked('captured-next-guards',['node','test/test-halflife2-reviewed-next.cjs'],env,(source,module))
+  save('persistent-route-reuse.json',dict(passed=True,routeProofSHA256=sha((PRIOR_TASK/'route-native/proof.json').read_bytes()),
+      inheritedTERMProofSHA256=sha((PRIOR_TASK/'inherited-term-route-verified/proof.json').read_bytes()),
+      unchangedLifecycle={n:sha(files[n]) for n in ('tools/halflife2-persistent-owner.py','tools/gltron-current-supervise.py','tools/boids-current-supervise.py')},
+      freshOwnOuterRequired=True,diagnosticOnlyOriginalAttempt=True))
   helper.checked('route-fixture-create',['node','-e',"require('fs').writeFileSync(process.argv[1],require('./test/test-halflife2-native-wizard.cjs').dialogFixture())",str(RUN/'route-wizard.exe')],env,(source,module))
   save('full-native-qualification.json',dict(passed=True,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],mainCPUWorkerOSchild=True,fullSourceSealed=True,originalStarted=False,reusedUnchangedWrapper=True))
   ready()

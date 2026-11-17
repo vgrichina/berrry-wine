@@ -48,3 +48,47 @@ for(const [options,reason] of [
   assert.equal(row.nativeTextUnavailableReason,reason);
 }
 console.log('PASS native capture refusal identity/reason diagnostics; unchanged refusal and private-text exclusion');
+
+async function native(out){
+  const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
+  const pause=ms=>new Promise(r=>setTimeout(r,ms));
+  const {startControlSession}=require('./control-session');
+  fs.mkdirSync(out,{recursive:true});
+  const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
+  const exe=path.join(out,'password-edit.exe');
+  fs.writeFileSync(exe,require('./test-halflife2-native-wizard.cjs').dialogFixture({passwordEdit:true}));
+  let wo='',we='';
+  const wd=cp.spawn(process.execPath,['-e',"let pid;const timer=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGKILL')}catch{};process.exit(2)},20000);console.log('ARMED');process.stdin.on('data',b=>pid=+b);process.stdin.on('end',()=>clearTimeout(timer))"]);
+  wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);
+  const ww=new Promise(r=>wd.on('close',(exit,signal)=>r({exit,signal})));
+  while(!wo.includes('ARMED'))await pause(5);
+  save('watchdog-arm.json',{pid:wd.pid,prearmed:true,milliseconds:20000});
+  const s=startControlSession(['test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--png-canvas','--control-stdin','--max-seconds=15','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});
+  wd.stdin.write(String(s.child.pid));
+  try{
+    let snap;const due=Date.now()+10000;
+    do{snap=await s.send({action:'snapshot'});if(snap.windows.some(w=>w.controlClass===2))break;assert(Date.now()<due);await pause(20);}while(true);
+    const edit=snap.windows.find(w=>w.controlClass===2);
+    assert.equal(edit.nativeTextAvailable,false);assert.equal(edit.nativeTextUnavailableReason,'passwordEdit');
+    assert(snap.windows.filter(w=>w.controlClass===1).length===2,'all native siblings retained');
+    const png=path.join(out,'refused.png');let refusal;
+    try{await s.send({action:'native-reviewed-capture',path:png});}catch(e){
+      assert(e.message.startsWith('native capture refused '),e.message);
+      refusal=JSON.parse(e.message.slice('native capture refused '.length));
+    }
+    assert(refusal);assert.deepEqual(refusal.context,[]);
+    assert.deepEqual(refusal.controlDetails,[{hwnd:edit.hwnd,controlClass:2,
+      reasons:['control.unsupportedClass','control.textUnavailable'],textReason:'passwordEdit'}]);
+    assert(!fs.existsSync(png));assert(!JSON.stringify(refusal).includes('Authored wizard welcome page'));
+    save('proof.json',{passed:true,ordinaryDialogCreation:true,nativeEdit:true,refusal,
+      allSiblingsRetained:true,noCaptureWritten:true,noAcceptanceWeakening:true,noOriginal:true,commandsAfterRefusal:0});
+  }finally{
+    if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch{}
+    await s.exited;save('native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,actualWait:true,
+      stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,hostCleanup:true,nativeQuit:false});
+    fs.writeFileSync(path.join(out,'native.log'),s.output());wd.stdin.end();
+    save('watchdog-wait.json',{...await ww,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});
+  }
+}
+module.exports={native};
+if(require.main===module&&process.argv[2]==='--native')native(require('node:path').resolve(process.argv[3])).catch(e=>{console.error(e);process.exitCode=1;});
