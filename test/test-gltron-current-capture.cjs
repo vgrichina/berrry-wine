@@ -18,6 +18,14 @@ async function fixture(failure) {
   }else{await task;assert.equal(retained,1);assert.equal(closed,0);assert.equal(phases.at(-1).phase,'complete');}
 }
 (async()=>{for(const mode of [null,'request','ticket','host'])await fixture(mode);
+  for(const status of ['failed','cancelled','unknown']){
+    let reads=0,closed=0,host=0,retained=0;
+    await assert.rejects(completeCapture({requestTicket:async()=>{},
+      readTicket:async()=>{reads++;return {status,error:'producer context lost or retired'};},
+      captureHost:async()=>host++,retain:async()=>retained++,close:()=>closed++,record:()=>{}}),/DISPLAY_UNKNOWN/);
+    assert.equal(reads,1);assert.equal(closed,1);assert.equal(host,0);assert.equal(retained,0);
+    await new Promise(r=>setTimeout(r,15));assert.equal(reads,1,'no query after terminal ticket');
+  }
   const {encodeCapturePNG}=require('../tools/gltron-current-capture.cjs'),{PNG}=require('pngjs');
   for(const [width,height]of [[1,1],[480,360],[1060,744]]){
     const bytes=Buffer.alloc(width*height*4);

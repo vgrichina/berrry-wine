@@ -9,7 +9,7 @@ const { verifyNativeProducer } = require('../tools/gltron-current-native-capture
 
 function fixture() {
   const r = new Win98Renderer(createCanvas(8, 8));
-  const context = { URLSearchParams, console, setTimeout, clearTimeout,
+  const context = { URLSearchParams, console, setTimeout, clearTimeout, require: n => require('../' + n),
     performance: { now: () => 0 }, requestAnimationFrame() {} };
   vm.runInNewContext(fs.readFileSync(require.resolve('../host.js'), 'utf8') +
     '\n;globalThis.Host = WineAssembly;', context);
@@ -39,7 +39,7 @@ test('clean completed slice services already displayed literal pixels without a 
   assert.equal(t.status, 'pending');
   h._presentAtBoundary(); assert.equal(t.status, 'pending', 'active writer');
   r.endWorkerGuestSlice();
-  assert.equal(t.status, 'pending', 'renderer release does not bypass host live queues');
+  assert.equal(t.status, 'complete', 'reading joins the final release without another slice');
   h._presentAtBoundary();
   assert.equal(t.status, 'complete', t.error);
   const got = t.read(), literal = Uint8ClampedArray.from(Array.from({ length: 64 }, () => [23, 57, 91, 255]).flat());
@@ -84,6 +84,43 @@ test('initial queued damage requires ordinary publication even after queues clea
   h._presentAtBoundary(); assert.equal(t.status, 'pending');
   r.repaint(); assert.equal(t.status, 'complete', t.error);
   assert.equal(t.read().metadata.content, 'ordinary-publication-after-request');
+});
+
+test('paused producer read joins final writer release; read and status retain the same complete frame', () => {
+  const f = fixture(), { r, h } = f;
+  const sequence = r._immutablePublicationSequence, display = r._currentDisplayRecord;
+  const ticket = arm(f);
+  assert.equal(ticket.read(), null);
+  r.endWorkerGuestSlice();
+  // The producer parks here: no host boundary, repaint, future frame or timer.
+  const first = ticket.read();
+  assert(first, ticket.error);
+  assert.equal(ticket.status, 'complete');
+  assert.equal(first.metadata.publication, sequence);
+  assert.equal(first.metadata.displayedAt, display.displayedAt);
+  assert.equal(first.metadata.content, 'already-displayed');
+  assert.equal(r._immutablePublicationSequence, sequence);
+  h._stopped = true;
+  first.sourceRGBA.fill(0);
+  assert.equal(ticket.read().sourceRGBA[0], 23);
+  assert.equal(ticket.cancel(), false);
+});
+
+test('paused read cannot substitute a host generation or bypass a newly queued frame', () => {
+  for (const kind of ['host-renderer', 'host-instance', 'host-process', 'dirty', 'due']) {
+    const f = fixture(), { r, h } = f, ticket = arm(f);
+    r.endWorkerGuestSlice();
+    if (kind === 'host-renderer') h.renderer = {};
+    if (kind === 'host-instance') h.instance = {};
+    if (kind === 'host-process') h.processId++;
+    if (kind === 'dirty') h._dxDirty = true;
+    if (kind === 'due') h._presentFrameDue = true;
+    assert.equal(ticket.read(), null, kind);
+    assert.equal(ticket.status, kind.startsWith('host-') ? 'failed' : 'pending', kind);
+    ticket.cancel();
+    r.repaint();
+    assert.notEqual(ticket.status, 'complete', kind);
+  }
 });
 
 test('retirement, identity substitution, unreceipted display and read faults never produce stale success', () => {

@@ -7148,10 +7148,7 @@ class WineAssembly {
     // was executing needs no new frame. Service it at this ordinary unheld
     // boundary, using live host queues (including shared DirectDraw damage).
     // Do not let a closing host certify its retained display.
-    if (!this._stopped && this.running !== false && !this._presentFrameDue &&
-        !this._presentWanted() && this.renderer?.serviceCurrentDisplayCapture) {
-      this.renderer.serviceCurrentDisplayCapture();
-    }
+    this._serviceCurrentDisplayCapture();
     if (typeof requestAnimationFrame !== 'function') {
       const r = this.renderer;
       if (r && r._workerPublicationHeld && r._workerPublicationHeld()) {
@@ -7255,10 +7252,37 @@ class WineAssembly {
       dirty: !!this._dxDirty, lockDeferred: !!this._dxLockDeferred,
       presentDue: !!this._presentFrameDue,
     });
-    return this.renderer.requestCurrentDisplayCapture({
+    const renderer = this.renderer, instance = this.instance, processId = this.processId;
+    const ticket = renderer.requestCurrentDisplayCapture({
       hwnd: options.hwnd, processId: this.processId, instance: this.instance,
       pendingHostPublication,
     });
+    // A producer may park after releasing its last writer. Reading a ticket
+    // must join that release even when no further guest slice/present occurs.
+    // This only services an already displayed, clean, unheld receipt; it
+    // neither schedules nor uploads anything. Retained complete tickets never
+    // revisit live state.
+    const service = () => {
+      if (ticket.status !== 'pending') return;
+      if (this.renderer !== renderer || this.instance !== instance || this.processId !== processId) {
+        renderer.failCurrentDisplayCapture({ instance, processId }, new Error('Current display host owner replaced'));
+        return;
+      }
+      this._serviceCurrentDisplayCapture();
+    };
+    return Object.freeze({
+      get status() { service(); return ticket.status; },
+      get error() { return ticket.error; },
+      read() { service(); return ticket.read(); },
+      cancel() { return ticket.cancel(); },
+    });
+  }
+
+  _serviceCurrentDisplayCapture() {
+    if (!this._stopped && this.running !== false && !this._presentFrameDue &&
+        !this._presentWanted() && this.renderer?.serviceCurrentDisplayCapture) {
+      this.renderer.serviceCurrentDisplayCapture();
+    }
   }
 
   // Upload the newest guest frame and composite, now. Called from the rAF,

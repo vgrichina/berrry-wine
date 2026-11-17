@@ -38,7 +38,8 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
  }else wasm=compile(files);
  files.set('build/wine-assembly.wasm',wasm);
  fs.writeFileSync(path.join(out,'tested-'+sha(wasm)+'.wasm'),wasm,{flag:'wx'});
- if(authored){const options={drawOnce:true,timerMs:16,firstInputDelay:process.env.GLTRON_AUTHORED_INPUT_DELAY==='1'?1800:0,
+ if(authored){const pausedProducer=process.env.GLTRON_AUTHORED_PAUSED_PRODUCER==='1';
+   const options={drawOnce:true,messageDriven:pausedProducer,timerMs:pausedProducer?0:16,firstInputDelay:process.env.GLTRON_AUTHORED_INPUT_DELAY==='1'?1800:0,
    afterFirstInputDelay:process.env.GLTRON_AUTHORED_AFTER_INPUT_DELAY==='1'?1800:0};
    const pe=fixture(options);files.set('authored-native.exe',pe);save('authored-fixture.json',{options,bytes:pe.length,sha256:sha(pe)});}
  save('module.json',{commit,sha256:sha(wasm),bytes:wasm.length,retainedBeforeExecution:true});save('prepared.json',{at:Date.now(),commit,authored});
@@ -54,7 +55,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
    requestTicket:async()=>{
    await evaluate(`(()=>{if(globalThis.__originalTicket)throw Error('existing ticket');const w=runningApps[0].wine,r=w.renderer;const wins=Object.values(r.windows).filter(v=>v.visible&&!v.isChild&&v.processId===w.processId&&v.wasm===w.instance);if(wins.length!==1)throw Error('ambiguous owner');const win=wins[0];globalThis.__originalPin={w,r,win,instance:w.instance};globalThis.__originalTicket=w.requestCurrentDisplayCapture({hwnd:win.hwnd});return true;})()`);
    },
-   readTicket:async()=>{const shot=await evaluate(`(()=>{const p=__originalPin,t=__originalTicket;if(p.w._stopped||!p.w.running||p.w.instance!==p.instance||p.r.windows[p.win.hwnd]!==p.win)throw Error('owner retired');if(t.status!=='complete')return {status:t.status,error:t.error,participant:__nativeInitialized.ticketEvents};const r=t.read(),receipt=__nativeInitialized.receipts.find(v=>v.publication===r.metadata.publication);if(!receipt)throw Error('capture lacks initialized GL producer join');const encode=b=>{let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode(...b.subarray(i,i+8192));return btoa(s);};return {status:'complete',metadata:r.metadata,receipt,source:encode(r.sourceRGBA),output:encode(r.outputRGBA)};})()`);
+   readTicket:async()=>{const shot=await evaluate(`(async()=>{const p=__originalPin,t=__originalTicket;const verify=()=>{if(p.w._stopped||!p.w.running||p.w.instance!==p.instance||p.r.windows[p.win.hwnd]!==p.win)throw Error('owner retired');};verify();if(t.status!=='complete')return {status:t.status,error:t.error,participant:__nativeInitialized.ticketEvents};const r=t.read(),receipt=__nativeInitialized.receipts.find(v=>v.publication===r.metadata.publication);if(!receipt)throw Error('capture lacks initialized GL producer join');const encode=b=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('immutable byte transport failed'));reader.onload=()=>resolve(reader.result.slice(reader.result.indexOf(',')+1));reader.readAsDataURL(new Blob([b],{type:'application/octet-stream'}));});const source=await encode(r.sourceRGBA),output=await encode(r.outputRGBA);verify();return {status:'complete',metadata:r.metadata,receipt,source,output};})()`);
     if(shot.participant)append(label+'-participants.jsonl',{at:Date.now(),status:shot.status,events:shot.participant});return shot;},
    captureHost:async()=>{const host=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session);hostCapturedAt=Date.now();return host;},
    retain:async(shot,host)=>{

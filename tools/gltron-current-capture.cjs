@@ -33,6 +33,6 @@ function encodeCapturePNG(width,height,rgba) {
   if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||
     width*height>16777216||rgba.length!==width*height*4)throw Error('invalid complete RGBA capture');
   return require('pngjs').PNG.sync.write({width,height,data:Buffer.from(rgba)},
-    {filterType:0,deflateLevel:1});
+    {filterType:0,deflateLevel:0});
 }
 module.exports={completeCapture,encodeCapturePNG};
