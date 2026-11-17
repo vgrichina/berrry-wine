@@ -77,6 +77,41 @@ screenshot exceeded the unchanged total 3000 ms bound. It is retained as a
 failure with permanent closure and no subsequent queries, not a pending-ticket
 success. The canonical locked build passes with the scoped host producer review.
 
+`6a02a98ce` publishes the runtime repair, byte transport, native evidence helper,
+tests and this note. Strict immediate pull/push succeeds. The final complete
+published WebGL Enter/A/S/Escape recipe exits through native Quit(0); its five
+complete captures take 1055/389/2400/1561/1108 ms. Every helper matches that Git
+commit. This is a faithful authored input route, not original turn evidence.
+
+The single new software original uses unchanged media and defaults, retained
+module `6de8753b667362e909292536a340219ccbf90eedccb2b8405c31975193f5e78e`
+before execution, normal ticks and the 420/440 second limits. Two native Enter
+returns reach GAME, START GAME and the yellow lightcycle arena with GAME IS
+PAUSED. A local stale-image check refuses Space before writing an intent; it
+sends no transport. A separate fresh observation then exceeds 3000 ms at
+read-ticket, permanently closes, and issues zero later queries. No turn or
+native Quit is claimed. Its trace still has an active writer for most of the
+bound and queued ordinary publication after release; the repair does not bypass
+either condition.
+
+After the published complete recipe passes, the single new WebGL original uses
+the same module, immutable media/defaults and normal limits. Two acknowledged
+Enter inputs reach the paused arena. Acknowledged Space removes the pause text
+and produces a visible yellow trail in `original-webgl/selected-4-host.png`.
+The first A turn is refused before DOWN when the separate physical-UP child
+does not arm within the unchanged admission bound. Its eventual arm is
+cancelled with `noDown`; the child exits 0 with both EOFs. The endpoint closes
+permanently with zero later queries. Two turns and a round consequence remain
+unproved on both backends; no additional original is run.
+
+Original cleanup is scoped host/browser shutdown, distinct from native Quit.
+All native/browser/outer/persistent-owner/watchdog and release processes have
+actual waits and both EOFs, and each original has an empty remaining scope.
+The concrete remaining work is faithful bounded capture while a real software
+writer is active, and reliable independent physical-UP admission under the
+existing bounds. Neither failure permits replay, owner rebinding or relaxed
+deadlines.
+
 The run's final `result.json` records publication, original allowances and
 outcomes, named personally reviewed images, exact Git/patch/module identities,
 actual waits and both EOFs, independent watchdogs and distinct host cleanup.
