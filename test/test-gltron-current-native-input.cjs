@@ -264,8 +264,34 @@ if(process.env.GLTRON_RELEASE_PROTOCOL_OUT)(async()=>{
     assert.equal(JSON.parse(fs.readFileSync(stale+'/release-participant-wait.json')).code,1);
     const idle=out+'/idle';fs.mkdirSync(idle);child=await createReleaseParticipant(idle,cfg);
     assert.equal((await child.close()).code,0,'parent EOF with no arm sends no release');child=null;
+    // Real late CDP connection and a parent whose read callback cannot run
+    // before the deadline. Neither may accept a queued/late ready record.
+    const net=require('node:net'),url=new URL(cfg.url),sockets=new Set();
+    const proxy=net.createServer(socket=>{sockets.add(socket);socket.on('close',()=>sockets.delete(socket));
+      const timer=setTimeout(()=>{if(socket.destroyed)return;const remote=net.connect(Number(url.port),url.hostname,()=>{socket.pipe(remote);remote.pipe(socket);});
+        sockets.add(remote);remote.on('close',()=>sockets.delete(remote));remote.on('error',()=>socket.destroy());socket.on('close',()=>remote.destroy());},1200);
+      socket.on('close',()=>clearTimeout(timer));socket.on('error',()=>{});
+    });
+    await new Promise(r=>proxy.listen(0,'127.0.0.1',r));
+    try{
+      const late=out+'/late';fs.mkdirSync(late);
+      await assert.rejects(createReleaseParticipant(late,{...cfg,url:cfg.url.replace(':'+url.port,':'+proxy.address().port)}),/ready deadline/);
+      const blocked=out+'/parent-blocked';fs.mkdirSync(blocked);
+      const pending=createReleaseParticipant(blocked,cfg);pending.catch(()=>{});
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,1400);
+      await assert.rejects(pending,/ready deadline/);
+      for(const dir of [late,blocked]){
+        const clocks=JSON.parse(fs.readFileSync(dir+'/release-parent-clocks.json'));
+        assert(!clocks.some(v=>v.name==='accepted'&&v.event==='ready'));
+        const receipt=JSON.parse(fs.readFileSync(dir+'/release-participant-wait.json'));
+        assert(receipt.actualWait&&receipt.stdoutEOF&&receipt.stderrEOF);
+      }
+      const failed=out+'/invalid-target';fs.mkdirSync(failed);
+      await assert.rejects(createReleaseParticipant(failed,{...cfg,targetId:'not-a-real-target'}));
+      assert.equal(JSON.parse(fs.readFileSync(failed+'/release-participant-wait.json')).code,1);
+    }finally{for(const socket of sockets)socket.destroy();await new Promise(r=>proxy.close(r));}
     await browser.close();await wait;browser=null;
-    fs.writeFileSync(out+'/result.json',JSON.stringify({passed:true,realChrome:true,realChildren:true,inputDispatches:0,cancelNoDown:2,staleNonceRefused:true,staleBrowserIdentityRefused:true,idleEOF:true,nativeReceiptQualification:false})+'\n');
+    fs.writeFileSync(out+'/result.json',JSON.stringify({passed:true,realChrome:true,realChildren:true,inputDispatches:0,cancelNoDown:2,staleNonceRefused:true,staleBrowserIdentityRefused:true,idleEOF:true,trueLateReadyRefused:true,parentBlockedLateReadRefused:true,failedAttachRefused:true,nativeReceiptQualification:false})+'\n');
     console.log('PASS real Chrome release participant cancellation, nonce/identity refusals and idle EOF; zero input');
   }finally{if(child)await child.close();if(browser)await browser.close();fs.rmSync(out+'/profile',{recursive:true,force:true});}
 })().catch(error=>{console.error(error);process.exitCode=1;});

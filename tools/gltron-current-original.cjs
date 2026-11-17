@@ -108,6 +108,13 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
    else if(['Runtime.consoleAPICalled','Runtime.exceptionThrown'].includes(v.method))append('console.jsonl',v);
   };
   await c.send('Target.setDiscoverTargets',{discover:true});const pages=(await c.send('Target.getTargets')).targetInfos.filter(t=>t.type==='page');assert.equal(pages.length,1);
+  // Establish the independent release session on the existing blank target,
+  // before navigation starts shell parsing/compilation. No app or input is
+  // created by readiness; the unchanged 1000ms clock covers spawn to read.
+  if(qualifyNative){
+    physicalRelease=await require('./gltron-current-native-input.cjs').createReleaseParticipant(out,{
+      pid:browser.pid,startToken:fs.readFileSync('/proc/'+browser.pid+'/stat','utf8').split(') ').at(-1).split(' ')[19],url:endpoint,targetId:pages[0].targetId});
+  }
   session=(await c.send('Target.attachToTarget',{targetId:pages[0].targetId,flatten:true})).sessionId;
   await c.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true},session);await c.send('Page.enable',{},session);await c.send('Runtime.enable',{},session);
   await c.send('Page.navigate',{url:'http://127.0.0.1:'+server.address().port+'/index.html?debug&threads&gl-gps='+backend},session);await c.send('Page.bringToFront',{},session);
@@ -117,10 +124,6 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
   if(qualifyNative)await evaluate('window.WINE_BROWSER_NATIVE_INPUT=true;true');
   if(qualifyNative)await evaluate(`(${installNativeRouteObserver.toString()})(globalThis,WineAssembly);true`);
   if(authored)await evaluate('wineApps.APPS.lifecycle_gl_authored={exe:"authored-native.exe",threads:true};true');
-  if(qualifyNative){
-    physicalRelease=await require('./gltron-current-native-input.cjs').createReleaseParticipant(out,{
-      pid:browser.pid,startToken:fs.readFileSync('/proc/'+browser.pid+'/stat','utf8').split(') ').at(-1).split(' ')[19],url:endpoint,targetId:pages[0].targetId});
-  }
   save('invocation.json',{at:Date.now(),app:authored?'lifecycle_gl_authored':'gltron',authored,registeredDefaults:!authored,originalInvocations:authored?0:1,inputDispatches:0});
   await evaluate(`wineShell.launchApp(${JSON.stringify(authored?'lifecycle_gl_authored':'gltron')});true`);
   const startupAt=Date.now();let startupHost=false;

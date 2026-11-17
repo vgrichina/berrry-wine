@@ -1,4 +1,5 @@
 'use strict';
+const moduleEnteredMonotonic=Number(process.hrtime.bigint())/1e6;
 // Passive capability observation, never an input adapter or delivery ACK.
 // Retain the actual installed import scopes rather than calling getImports
 // again (which would create a different host context).
@@ -112,12 +113,13 @@ if(require.main===module&&process.argv[2]==='release')release(process.argv[3],pr
 // deadline, nonce, cancellation and actual trusted renderer-UP receipt.
 async function releaseParticipant(out,file){
   const fs=require('node:fs'),assert=require('node:assert/strict');
+  const bootstrapMonotonic=Number(process.hrtime.bigint())/1e6;
   const cfg=JSON.parse(fs.readFileSync(file)),{connection}=require('./gltron-browser-controller.cjs');
-  const phase=(name,extra={})=>fs.appendFileSync(out+'/release-phases.jsonl',JSON.stringify({name,at:Date.now(),...extra})+'\n');
+  const phase=(name,extra={})=>fs.appendFileSync(out+'/release-phases.jsonl',JSON.stringify({name,at:Date.now(),monotonic:Number(process.hrtime.bigint())/1e6,cpu:process.cpuUsage(),schedstat:fs.readFileSync('/proc/self/schedstat','utf8').trim(),...extra})+'\n');
   const identity=()=>assert.equal(fs.readFileSync('/proc/'+cfg.pid+'/stat','utf8').split(') ').at(-1).split(' ')[19],cfg.startToken,'release browser identity changed');
   const emit=v=>process.stdout.write(JSON.stringify(v)+'\n');
   let active=null,ended=false,task=null;const nonces=new Set();
-  phase('started',{processStartedAt:Date.now()-process.uptime()*1000});identity();const c=connection(cfg.url);
+  phase('started',{processStartedAt:Date.now()-process.uptime()*1000,processStartedMonotonic:Number(process.hrtime.bigint())/1e6-process.uptime()*1000,moduleEnteredMonotonic,bootstrapMonotonic});identity();phase('identity-checked');const c=connection(cfg.url);phase('websocket-constructed');
   try{
     await c.ready;phase('websocket-ready');
     const session=(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;phase('target-attached');
@@ -156,7 +158,7 @@ async function releaseParticipant(out,file){
           else{assert(v.command==='due'&&v.at>=active.armed&&v.at<=active.fallback);active.due=Math.min(active.due,v.at);}
         }
       }}catch(e){reject(e);}});
-      emit({event:'ready',pid:process.pid,at:Date.now(),inputDispatches:0});
+      identity();assert(!c.closed,'release connection retired before ready');phase('ready');emit({event:'ready',pid:process.pid,at:Date.now(),inputDispatches:0,sessionId:session,targetId:cfg.targetId,startToken:cfg.startToken});
     });
     await done;
   }finally{c.ws.close();process.stdin.destroy();phase('closed');}
@@ -164,21 +166,30 @@ async function releaseParticipant(out,file){
 async function createReleaseParticipant(out,cfg){
   const fs=require('node:fs'),cp=require('node:child_process'),path=require('node:path');
   const file=out+'/release-participant.json';fs.writeFileSync(file,JSON.stringify(cfg)+'\n',{flag:'wx'});
+  const monotonic=()=>Number(process.hrtime.bigint())/1e6;
+  const clocks=[];const clock=(name,extra={})=>clocks.push({name,at:Date.now(),monotonic:monotonic(),...extra});
+  clock('prepared');const spawnedAt=monotonic();clock('spawn');
   const child=cp.spawn(process.execPath,[__filename,'participant',out,file],{stdio:['pipe','pipe','pipe']});
   let stdout='',stderr='',lines='',failure=null,closed=false;const messages=[],waiters=new Set();
   const notify=()=>{for(const f of waiters)f();};
   child.stdin.on('error',error=>{failure??=error;notify();});
   child.on('error',error=>{failure??=error;notify();});
-  child.stdout.on('data',b=>{stdout+=b;lines+=b;let i;while((i=lines.indexOf('\n'))>=0){messages.push(JSON.parse(lines.slice(0,i)));lines=lines.slice(i+1);}notify();});
+  child.stdout.on('data',b=>{clock('read',{bytes:b.length});stdout+=b;lines+=b;let i;while((i=lines.indexOf('\n'))>=0){messages.push(JSON.parse(lines.slice(0,i)));lines=lines.slice(i+1);}notify();});
   child.stderr.on('data',b=>stderr+=b);
   const joined=new Promise(resolve=>child.once('close',(code,signal)=>{failure=Error('independent release participant closed '+code+' '+stderr);notify();
     const receipt={pid:child.pid,code,signal,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr};
+    clock('close');fs.writeFileSync(path.join(out,'release-parent-clocks.json'),JSON.stringify(clocks,null,2)+'\n',{flag:'wx'});
     fs.writeFileSync(path.join(out,'release-participant-wait.json'),JSON.stringify(receipt,null,2)+'\n',{flag:'wx'});resolve(receipt);
   }));
-  const receive=(event,nonce,ms)=>new Promise((resolve,reject)=>{
-    let timer;const check=()=>{const found=messages.find(v=>v.event===event&&(nonce===undefined||v.nonce===nonce));
-      if(!found&&!failure)return;clearTimeout(timer);waiters.delete(check);found?resolve(found):reject(failure);};
-    timer=setTimeout(()=>{waiters.delete(check);reject(Error('independent physical UP '+event+' deadline'));},ms);waiters.add(check);check();
+  const receive=(event,nonce,ms,until)=>new Promise((resolve,reject)=>{
+    const started=monotonic(),deadline=until??started+ms;clock('wait',{event,started,deadline});
+    // Test the read/accept boundary itself: timer callbacks can be delayed
+    // by parent scheduling even when the child has already written ready.
+    let timer;const check=()=>{
+      if(monotonic()>=deadline){clearTimeout(timer);waiters.delete(check);clock('late',{event,deadline});reject(Error('independent physical UP '+event+' deadline'));return;}
+      const found=messages.find(v=>v.event===event&&(nonce===undefined||v.nonce===nonce));
+      if(!found&&!failure)return;clearTimeout(timer);waiters.delete(check);clock(found?'accepted':'failed',{event,deadline});found?resolve(found):reject(failure);};
+    timer=setTimeout(()=>{waiters.delete(check);clock('timeout',{event,deadline});reject(Error('independent physical UP '+event+' deadline'));},Math.max(0,deadline-monotonic()));waiters.add(check);check();
   });
   const send=v=>{if(failure)throw failure;child.stdin.write(JSON.stringify(v)+'\n');};
   const nonces=new Set();
@@ -189,7 +200,8 @@ async function createReleaseParticipant(out,cfg){
     finish:nonce=>receive('done',nonce,3000),
     async close(){if(!closed){closed=true;child.stdin.end();}return joined;},
   };
-  try{await receive('ready',undefined,1000);return api;}catch(e){child.stdin.end();await joined;throw e;}
+  try{const ready=await receive('ready',undefined,1000,spawnedAt+1000);
+    require('node:assert/strict')(ready.pid===child.pid&&ready.targetId===cfg.targetId&&ready.startToken===cfg.startToken&&typeof ready.sessionId==='string'&&ready.sessionId.length>0,'independent release ready identity mismatch');return api;}catch(e){child.stdin.end();await joined;throw e;}
 }
 module.exports.createReleaseParticipant=createReleaseParticipant;
 if(require.main===module&&process.argv[2]==='participant')releaseParticipant(process.argv[3],process.argv[4]).catch(e=>{console.error(e);process.exitCode=1;});
