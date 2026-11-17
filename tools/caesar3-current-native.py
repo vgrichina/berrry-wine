@@ -8,7 +8,9 @@ import ast, fcntl, hashlib, json, os, pathlib, select, signal, socket, subproces
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 RUN = pathlib.Path(os.environ.get('CAESAR3_RUN', ROOT/'scratch/runs/20261117-caesar3-current-native-assignment2-food'))
-NATIVE_SECONDS, WATCHDOG_SECONDS, QUIT_RESERVE = 1200, 1220, 180
+NATIVE_SECONDS = int(os.environ.get('CAESAR3_NATIVE_SECONDS', '1200'))
+assert NATIVE_SECONDS in (600, 1200), 'only owner-authorized ordinary durations'
+WATCHDOG_SECONDS, QUIT_RESERVE = NATIVE_SECONDS+20, 180
 GAME_FRESHNESS_SECONDS, MENU_FRESHNESS_SECONDS = 15, 30
 COMPONENTS = ('tools/caesar3-current-native.py',)
 REPAIR_PROOF = ROOT/'scratch/runs/20261117-caesar3-reviewed-hover-city-construction/repair-outer'

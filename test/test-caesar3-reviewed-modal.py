@@ -142,8 +142,26 @@ fs.writeFileSync(process.argv[1],b,{flag:'wx'});"""
         w = m.read('watchdog-wait.json'); assert w['actualWait'] and w['stdoutEOF'] and w['stderrEOF'] and w['exit'] == 0
     print('PASS owned native MessageBox target checks, physical BUTTON, fresh review, finite Yes and native Quit')
 
+def serve_cli(run):
+    """Authored File/Exit fixture; every review/input is a real external CLI."""
+    run.mkdir(parents=True)
+    (run/'runtime-inputs.json').write_bytes(pathlib.Path(os.environ['CAESAR3_TEST_INPUTS']).read_bytes())
+    code=pathlib.Path(os.environ['CAESAR3_CLI_GENERATOR']).read_text()
+    subprocess.run(['node','-e',code,str(run/'modal.exe')],cwd=ROOT,check=True)
+    with socket.socket() as sock: sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+    start=time.time()
+    (run/'launch.json').write_text(json.dumps(dict(at=start,deadline=start+160,gameplayCutoff=start+130,
+        reserveSeconds=30,rootPort=port,authoredFixture=True)))
+    p=subprocess.Popen([sys.executable,'-B',__file__,'--supervise',str(run)],
+        cwd=ROOT,env=dict(os.environ,CAESAR3_RUN=str(run)),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    a,b=p.communicate()
+    (run/'supervisor.stdout.log').write_bytes(a);(run/'supervisor.stderr.log').write_bytes(b)
+    (run/'supervisor-wait.json').write_text(json.dumps(dict(exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True)))
+    assert p.returncode==0,b.decode()
+
 if __name__ == '__main__':
     if sys.argv[1] == '--supervise': supervise(pathlib.Path(sys.argv[2]), dict(os.environ))
+    elif os.environ.get('CAESAR3_MODAL_CLI')=='1': serve_cli(pathlib.Path(sys.argv[1]).resolve())
     else:
         root=pathlib.Path(sys.argv[1]).resolve();root.mkdir(parents=True)
         for mode in ('wrong-actor','foreign-owner','late','stale','normal'):
