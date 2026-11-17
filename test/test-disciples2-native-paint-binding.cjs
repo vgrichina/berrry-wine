@@ -117,12 +117,13 @@ async function native(out,mode){
  const wwait=new Promise(r=>watchdog.on('close',(exit,signal)=>r({exit,signal})));
  while(!wo.includes('ARMED'))await pause(5);save('watchdog-armed.json',{pid:watchdog.pid,at:Date.now(),beforeNative:true,deadline:start+90});
  const s=startControlSession(['test/run.js','--exe='+image,'--no-build','--threads','--real-ticks','--screen=1024x712','--control-stdin','--control='+port,'--max-seconds=85','--max-batches=100000000','--stuck-after=0','--trace-thread','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});
- watchdog.stdin.write(String(s.child.pid));const st=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');save('native-pid.json',{pid:s.child.pid,startToken:st.slice(st.lastIndexOf(')')+2).split(' ')[19],port});
+ watchdog.stdin.write(String(s.child.pid));save('native-pid.json',{pid:s.child.pid,startToken:require('../tools/native-supervisor-common.cjs').token(s.child.pid),port});
  const env={...process.env,DISCIPLES2_CONTROL_OUT:out,DISCIPLES2_CONTROL_URL:'http://127.0.0.1:'+port+'/ctl'};
  let calls=0,terminal=false;
  async function controller(args,ok=true){
-  const auditCode="import os,json,time,urllib.request,runpy,sys; original=urllib.request.urlopen\ndef traced(*a,**kw):\n with open(os.environ['DISCIPLES2_CONTROL_OUT']+'/requests.jsonl','a') as f:f.write(json.dumps(dict(at=time.time(),body=a[0].data.decode()))+'\\n')\n return original(*a,**kw)\nurllib.request.urlopen=traced;sys.argv=['tools/disciples2-current-controller.py']+sys.argv[1:];runpy.run_path(sys.argv[0],run_name='__main__')";
-  const p=cp.spawn('python3',['-B','-c',auditCode,...args],{env});let a='',b='';p.stdout.on('data',v=>a+=v);p.stderr.on('data',v=>b+=v);
+  // Every HTTP request body the controller sends is appended to requests.jsonl.
+  const auditCode="const fs=require('node:fs'),http=require('node:http'),original=http.request;\nhttp.request=function(...a){const req=original.apply(this,a),end=req.end;req.end=function(data,...rest){fs.appendFileSync(process.env.DISCIPLES2_CONTROL_OUT+'/requests.jsonl',JSON.stringify({at:Date.now()/1000,body:String(data)})+'\\n');return end.call(this,data,...rest);};return req;};\nrequire("+JSON.stringify(path.resolve('tools/disciples2-current-controller.cjs'))+").main(process.argv.slice(2)).catch(e=>{console.error(e);process.exitCode=1;});";
+  const p=cp.spawn(process.execPath,['-',...args],{env});p.stdin.end(auditCode);let a='',b='';p.stdout.on('data',v=>a+=v);p.stderr.on('data',v=>b+=v);
   const result=await new Promise(r=>p.on('close',(exit,signal)=>r({pid:p.pid,exit,signal,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded,stdout:a,stderr:b,args})));
   save('controller-'+(++calls)+'-wait.json',result);if(ok)assert.equal(result.exit,0,a+b);else assert.notEqual(result.exit,0,a+b);return result;
  }

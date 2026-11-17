@@ -115,7 +115,7 @@ async function native(out,{delay=0,baseline=false,early=false}={}){
  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
  const image=path.join(out,'slow-pump.exe'),bytes=fixture(delay);fs.writeFileSync(image,bytes,{flag:'wx'});
  save('source.json',{repositoryHeadObserved:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),sealedManifest:globalThis.__disciples2Manifest||null,moduleSHA256:hash(fs.readFileSync('build/wine-assembly.wasm')),fixtureSHA256:hash(bytes),node:process.version});
- fs.writeFileSync(path.join(out,'runtime.patch'),cp.execFileSync('git',['diff','--binary','--','lib/cli-guarded-input.js','test/run.js','test/test-cli-guarded-input.js','tools/disciples2-current-controller.py','test/test-disciples2-current-quest.cjs']),{flag:'wx'});
+ fs.writeFileSync(path.join(out,'runtime.patch'),cp.execFileSync('git',['diff','--binary','--','lib/cli-guarded-input.js','test/run.js','test/test-cli-guarded-input.js','tools/disciples2-current-controller.cjs','test/test-disciples2-current-quest.cjs']),{flag:'wx'});
  const wd=cp.spawn(process.execPath,['-e',`let p;const t=setTimeout(()=>{console.log('FIRED');if(p)try{process.kill(-p,'SIGTERM')}catch{}},45000);console.log('ARMED');process.stdin.on('data',b=>p=+b);process.stdin.on('end',()=>clearTimeout(t));`]);
  let wo='',we='';wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=once(wd,'close');
  while(!wo.includes('ARMED'))await pause(5);save('watchdog-armed.json',{pid:wd.pid,at:Date.now(),deadlineMs:45000,beforeNative:true});

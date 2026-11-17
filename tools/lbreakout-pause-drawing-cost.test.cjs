@@ -1,10 +1,11 @@
 'use strict';
+const inspection=require('./lbreakout-case-inspection.cjs');
 // Execute original surface_gray and stk_surface_blit, never the P handler.
 // LB_COST_BASELINE compares whole surface bytes from a separately built control.
 const assert=require('node:assert/strict'),fs=require('node:fs'),cp=require('node:child_process'),vm=require('node:vm'),crypto=require('node:crypto');
 const root=require('node:path').resolve(__dirname,'..');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
-const source=cp.execFileSync('python3',['-c',"import importlib.util;s=importlib.util.spec_from_file_location('h','tools/lbreakout-case-inspection.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h);print(h.level_start_driver_source())"],{cwd:root,encoding:'utf8'});
+const source=(inspection.levelStartDriverSource()+'\n');
 const context={};vm.createContext(context);vm.runInContext(source+';globalThis.create=createLevelStartDriver',context);
 (async()=>{
  const wasm=fs.readFileSync(process.env.LB_COST_MODULE||root+'/build/wine-assembly.wasm'),module=await WebAssembly.compile(wasm);

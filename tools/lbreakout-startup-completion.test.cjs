@@ -1,8 +1,8 @@
 'use strict';
 const assert=require('node:assert/strict'),cp=require('node:child_process'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const root=path.resolve(__dirname,'..'),run=path.resolve(process.argv[2]);
-const python=s=>cp.execFileSync('python3',['-c',"import importlib.util;s=importlib.util.spec_from_file_location('h','tools/lbreakout-case-inspection.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h);"+s],{cwd:root,encoding:'utf8'});
-const scope={setTimeout,clearTimeout,Date,DataView};vm.createContext(scope);vm.runInContext(python('print(h.startup_completion_observer_source())')+';globalThis.install=installStartupCompletion;',scope);
+const inspection=require('./lbreakout-case-inspection.cjs');
+const scope={setTimeout,clearTimeout,Date,DataView};vm.createContext(scope);vm.runInContext((inspection.startupCompletionObserverSource()+'\n')+';globalThis.install=installStartupCompletion;',scope);
 function setup(){
  const binding={exe:0x10000,sdl:0x100000,index:0,generation:7,mappingState:2},memory={buffer:new ArrayBuffer(0x190000)},v=new DataView(memory.buffer);
  const w=(p,n)=>v.setUint32(p,n,true);let clock=0,target;
@@ -31,12 +31,12 @@ function setup(){
  }
  console.log('PASS startup original SDL/menu display ordering, absent menu, owner/generation, deadline, sticky terminal');
  const native=fs.readFileSync(run+'/browser-corrected.cjs','utf8');
- const generated=python('print(h.startup_workflow_source('+JSON.stringify(native)+'))');
+ const generated=inspection.startupWorkflowSource(native)+'\n';
  const repaired=run+'/offline-repaired';fs.mkdirSync(repaired,{recursive:true});
- fs.writeFileSync(repaired+'/browser-corrected.cjs',generated);fs.writeFileSync(repaired+'/worker-preload.js',python('print(h.pause_completion_preload_source())'));
+ fs.writeFileSync(repaired+'/browser-corrected.cjs',generated);fs.writeFileSync(repaired+'/worker-preload.js',inspection.pauseCompletionPreloadSource()+'\n');
  fs.writeFileSync(repaired+'/bound-input.cjs',fs.readFileSync(run+'/bound-input.cjs','utf8').replaceAll('../../../ops/','../../../../ops/'));
  assert(generated.indexOf("phase:'startup'")<generated.indexOf("await capture('startup')"));
- assert.throws(()=>python("print(h.startup_workflow_source('drift'))"));
+ assert.throws(()=>inspection.startupWorkflowSource('drift'));
  let base=fs.readFileSync(root+'/tools/lbreakout-sdl-input-controls.cjs','utf8').replace("require('path').resolve(__dirname,'..')",JSON.stringify(root));
  base=base.replace("if(s==='globalThis.__lbObserver.snapshot()'){",`if(s==='globalThis.__lbObserver.snapshot()'&&completionArm?.phase==='startup'){
    const mode=process.env.LB_STARTUP_MODE;completionPolls++;

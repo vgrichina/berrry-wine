@@ -437,7 +437,7 @@ async function browserFixture(out,mode,fault='none') {
     extraPins:['test/test-gta2-current-scene-prearm.cjs','test/test-gta2-final-pin-prearm-scheduling.cjs',
       'test/test-gta2-worker-complete-confirmation.cjs',
       'tools/gta2-verified-source-view.cjs','tools/gta2-renderer-startup-runtime.cjs',
-      'tools/gta2-renderer-startup-runtime.py','test/test-gta2-renderer-startup-publication.cjs'],
+      'tools/gta2-renderer-startup-launcher.cjs','test/test-gta2-renderer-startup-publication.cjs'],
     captureWitness:async({label,png,evaluate,record})=>{
       const witness=await current.readPublishedPixels(evaluate);
       record(label+'-pixel-witness.json',witness);

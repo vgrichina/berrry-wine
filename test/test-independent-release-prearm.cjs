@@ -82,11 +82,13 @@ function nativeRecipe(output, fixture, diagnostic = 'none') {
   assert(path.isAbsolute(fixture) && fs.statSync(fixture).isFile());
   fs.mkdirSync(output, {recursive: true});
   assert(['none', 'imports', 'syscalls'].includes(diagnostic));
-  let args = ['python3', '-B', path.join(ROOT, 'test/test-cli-native-scene-context.py'),
+  let args = ['node', path.join(ROOT, 'test/test-cli-native-scene-context-native.cjs'),
     path.join(output, 'native-context'), fixture];
-  // Import profiling propagates to the actual independent release child. Its
+  // Require profiling (WINE_PREARM_REQUIRE_TIMING=1, the Node stand-in for
+  // PYTHONPROFILEIMPORTTIME, consumed by the runner and by the controller)
+  // propagates through the environment to the actual independent release child. Its
   // stderr is retained in that child's sealed release-wait, not synthesized.
-  // Launch later through tools/forsaken-supervisor.py outerwait. That existing
+  // Launch later through tools/forsaken-supervisor.cjs outerwait. That existing
   // path arms an independent observable watchdog before starting this suite.
   // -s 0 retains syscall times/counts only, not read/write buffer contents.
   // Trace overhead is diagnostic and never replaces an untraced qualification.
@@ -94,27 +96,28 @@ function nativeRecipe(output, fixture, diagnostic = 'none') {
     '-e', 'trace=execve,pselect6,write,writev', '-o', path.join(output, 'startup.syscalls'), ...args];
   fs.writeFileSync(path.join(output, 'recipe.json'), JSON.stringify({
     args, cwd: ROOT, seconds: 180, heavy: true,
-    env: diagnostic === 'imports' ? {PYTHONPROFILEIMPORTTIME: '1'} : {},
+    env: diagnostic === 'imports' ? {WINE_PREARM_REQUIRE_TIMING: '1'} : {},
     fixtureSHA256: sha(fs.readFileSync(fixture)), diagnostic, originalLaunched: false,
   }, null, 2) + '\n', {flag: 'wx'});
 }
 
 function authoredStartup(output) {
-  // A small, newly authored standard-library import control only. It does NOT
-  // import or execute any repository helper or qualify native prearm readiness.
+  // A small, newly authored Node built-in require control only. It does NOT
+  // require or execute any repository helper or qualify native prearm readiness.
   // Actual production-parent/child timings remain necessary after lane release.
+  // The program is fed on stdin (`node -`), so totalMs covers Node startup too.
   assert(path.isAbsolute(output) && !fs.existsSync(output));
-  const code = `import time,sys,json,os
-t=time.monotonic();rows=[]
-for name in ['pathlib','json','time','sys','urllib.request','subprocess','os','uuid','hashlib','select','re','urllib.parse']:
- s=time.monotonic();__import__(name);rows.append(dict(module=name,milliseconds=(time.monotonic()-s)*1000))
-print(json.dumps(dict(pid=os.getpid(),importsMs=(time.monotonic()-t)*1000,rows=rows)),flush=True)
+  const code = `const t=performance.now(),rows=[];
+for (const name of ['node:path','node:fs','node:http','node:child_process','node:crypto','node:url','node:os']) {
+ const s=performance.now();require(name);rows.push({module:name,milliseconds:performance.now()-s});
+}
+process.stdout.write(JSON.stringify({pid:process.pid,importsMs:performance.now()-t,rows})+'\\n');
 `;
   const start = performance.now();
-  const result = cp.spawnSync('python3', ['-B', '-c', code], {
-    cwd: ROOT, encoding: 'utf8', timeout: 3000, maxBuffer: 65536,
+  const result = cp.spawnSync(process.execPath, ['-'], {
+    cwd: ROOT, encoding: 'utf8', timeout: 3000, maxBuffer: 65536, input: code,
   });
-  const record = {at: new Date().toISOString(), meaning: 'Authored stdlib startup control; not actual helper/native qualification',
+  const record = {at: new Date().toISOString(), meaning: 'Authored Node startup + built-in require control; not actual helper/native qualification',
     totalMs: performance.now() - start, code, exit: result.status, signal: result.signal,
     actualWait: !result.error, stdoutEOF: !result.error, stderrEOF: !result.error,
     stdout: result.stdout, stderr: result.stderr, error: result.error?.message,
@@ -132,65 +135,82 @@ function nativeFaultRecipe(output, fixture) {
   fs.mkdirSync(output, {recursive: true});
   // All faults are explicit diagnostic interventions around the real helper.
   // They do not substitute a response, weaken native guards, or run a game.
-  const script = `import importlib.util,pathlib,sys,time,json,subprocess,unittest
-from unittest.mock import patch
-ROOT=pathlib.Path(sys.argv[1]);OUT=pathlib.Path(sys.argv[2]);FIXTURE=pathlib.Path(sys.argv[3])
-spec=importlib.util.spec_from_file_location('prearm_native',ROOT/'test/test-cli-native-scene-context.py')
-f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f)
-f.n.n.m.NATIVE_OUT=OUT;f.n.n.m.NATIVE_FIXTURE=FIXTURE
-a,c=f.a,f.c
-class NativeStartupFault(f.NativeSceneContext):
- def fault(self,kind):
-  original_call=c.call;real_spawn=subprocess.Popen;requests=[]
-  def observe(command,timeout=10):
-   requests.append(dict(command=command,at=time.time()))
-   reply=original_call(command,timeout)
-   if kind=='late-ack' and command.get('action')=='guarded-input':time.sleep(.5)
-   return reply
-  def spawn(args,*pos,**kw):
-   if len(args)>=5 and args[-2]=='release' and pathlib.Path(args[-3]).name=='sims-install-controller.py':
-    if kind=='start-failure':args=[args[0],'-B','-c','raise SystemExit(73)']
-    elif kind=='late-start':args=[args[0],'-B','-c',"import time,runpy,sys;time.sleep(.6);p=sys.argv[1];sys.argv=sys.argv[1:];runpy.run_path(p,run_name='__main__')",*args[-3:]]
-   return real_spawn(args,*pos,**kw)
-  c.call=observe
-  try:
-   with patch.object(subprocess,'Popen',spawn):
-    with self.assertRaises(Exception) as failure:f.NativeSceneContext.test_transition(self)
-   intent=c.read('press0-intent.json');wait=c.read('press0-release-wait.json')
-   self.assertTrue(wait['actualWait'] and wait['stdoutEOF'] and wait['stderrEOF'])
-   self.assertTrue((self.out/'terminal-input-failure.json').exists())
-   self.assertFalse((self.out/'press0-completed.json').exists())
-   downs=[r for r in requests if r['command'].get('action')=='guarded-input']
-   self.assertEqual(len(downs),1 if kind=='late-ack' else 0)
-   if kind=='late-start':
-    self.assertIn('independent UP not armed',str(failure.exception))
-    arm=json.loads(wait['stdout']);self.assertEqual(arm['pid'],wait['pid'])
-    self.assertEqual(c.read('press0-up.json')['reason'],'parent EOF')
-    self.assertFalse((self.out/'press0-armed.json').exists())
-   elif kind=='start-failure':
-    self.assertEqual(wait['exit'],73);self.assertFalse((self.out/'press0-up.json').exists())
-   else:
-    self.assertIn('late ACK',str(failure.exception))
-    up=c.read('press0-up.json');self.assertEqual(up['state'],'ACK')
-    self.assertLessEqual(up['at']-intent['createdAt'],1.750)
-   count=len(requests)
-   for work in [lambda:c.capture('after-failure'),lambda:c.bind(),lambda:c.lease()]:
-    with self.assertRaises(Exception):work()
-   self.assertEqual(len(requests),count)
-   c.save('startup-fault-checks.json',dict(kind=kind,injectedFault=True,actualProductionCauseClaim=False,
-    failure=str(failure.exception),guardedDownRequests=len(downs),laterRequests=0,endpointPermanentlyClosed=True,
-    originalExecuted=False,requests=requests))
-  finally:c.call=original_call
- def test_late_start(self):self.fault('late-start')
- def test_start_failure(self):self.fault('start-failure')
- def test_late_ack(self):self.fault('late-ack')
-names=['test_late_start','test_start_failure','test_late_ack']
-raise SystemExit(not unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite(NativeStartupFault(n) for n in names)).wasSuccessful())
+  // The release child is intercepted at child_process.spawn (args script
+  // basename sims-install-controller.cjs, args[-2] 'release'); its fault is
+  // applied by preloading this same script (--require) with
+  // WINE_PREARM_FAULT_CHILD set, so the child keeps the real controller's pid.
+  const script = `'use strict';
+if (process.env.WINE_PREARM_FAULT_CHILD) {
+ // Preload role inside the release child: inject the fault, then (late-start) run the real controller.
+ const kind = process.env.WINE_PREARM_FAULT_CHILD; delete process.env.WINE_PREARM_FAULT_CHILD;
+ if (kind === 'start-failure') process.exit(73);
+ if (kind === 'late-start') Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 600);
+} else {
+const path = require('node:path'), fs = require('node:fs'), cp = require('node:child_process'), assert = require('node:assert/strict');
+const [ROOT, OUT, FIXTURE] = process.argv.slice(2);
+const f = require(path.join(ROOT, 'test/test-cli-native-scene-context-native.cjs'));
+f.configure(OUT, FIXTURE, false);
+const {c} = f;
+const has = name => fs.existsSync(path.join(c.R, name));
+class NativeStartupFault extends f.NativeSceneContext {
+ async fault(kind) {
+  const originalCall = c.call, realSpawn = cp.spawn, requests = [];
+  c.call = async (command, timeout = 10) => {
+   requests.push({command, at: Date.now() / 1000});
+   const reply = await originalCall(command, timeout);
+   if (kind === 'late-ack' && command.action === 'guarded-input') await new Promise(r => setTimeout(r, 500));
+   return reply;
+  };
+  cp.spawn = function spawn(command, args, options) {
+   if (Array.isArray(args) && args.length >= 3 && args[args.length - 2] === 'release' &&
+       path.basename(args[args.length - 3]) === 'sims-install-controller.cjs' && kind !== 'late-ack')
+    [args, options] = [['--require', __filename, ...args], {...options, env: {...(options?.env ?? process.env), WINE_PREARM_FAULT_CHILD: kind}}];
+   return realSpawn.call(cp, command, args, options);
+  };
+  try {
+   let failure;
+   try { failure = await f.raises(() => f.NativeSceneContext.prototype.test_transition.call(this)); }
+   finally { cp.spawn = realSpawn; }
+   const intent = c.read('press0-intent.json'), wait = c.read('press0-release-wait.json');
+   assert(wait.actualWait && wait.stdoutEOF && wait.stderrEOF);
+   assert(has('terminal-input-failure.json'));
+   assert(!has('press0-completed.json'));
+   const downs = requests.filter(r => r.command.action === 'guarded-input');
+   assert.equal(downs.length, kind === 'late-ack' ? 1 : 0);
+   if (kind === 'late-start') {
+    assert(String(failure.message).includes('independent UP not armed'));
+    const arm = JSON.parse(wait.stdout); assert.equal(arm.pid, wait.pid);
+    assert.equal(c.read('press0-up.json').reason, 'parent EOF');
+    assert(!has('press0-armed.json'));
+   } else if (kind === 'start-failure') {
+    assert.equal(wait.exit, 73); assert(!has('press0-up.json'));
+   } else {
+    assert(String(failure.message).includes('late ACK'));
+    const up = c.read('press0-up.json'); assert.equal(up.state, 'ACK');
+    assert(up.at - intent.createdAt <= 1.750);
+   }
+   const count = requests.length;
+   for (const work of [() => c.capture('after-failure'), () => c.bind(), () => c.lease()]) await f.raises(work);
+   assert.equal(requests.length, count);
+   c.save('startup-fault-checks.json', {kind, injectedFault: true, actualProductionCauseClaim: false,
+    failure: String(failure.message), guardedDownRequests: downs.length, laterRequests: 0, endpointPermanentlyClosed: true,
+    originalExecuted: false, requests});
+  } finally { c.call = originalCall; }
+ }
+ test_late_start() { return this.fault('late-start'); }
+ test_start_failure() { return this.fault('start-failure'); }
+ test_late_ack() { return this.fault('late-ack'); }
+}
+const names = ['test_late_start', 'test_start_failure', 'test_late_ack'];
+f.runSuite(names.map(n => new NativeStartupFault(n)))
+ .catch(e => { console.error(e); return false; })
+ .then(ok => process.stderr.write('', () => process.exit(ok ? 0 : 1)));
+}
 `;
-  const scriptPath = path.join(output, 'authored-native-startup-faults.py');
+  const scriptPath = path.join(output, 'authored-native-startup-faults.cjs');
   fs.writeFileSync(scriptPath, script, {flag: 'wx'});
   fs.writeFileSync(path.join(output, 'recipe.json'), JSON.stringify({
-    args: ['python3', '-B', scriptPath, ROOT, path.join(output, 'native-context'), fixture],
+    args: ['node', scriptPath, ROOT, path.join(output, 'native-context'), fixture],
     cwd: ROOT, seconds: 180, heavy: true, fixtureSHA256: sha(fs.readFileSync(fixture)),
     injectedFaults: ['late-start', 'start-failure', 'late-ack'], originalLaunched: false,
   }, null, 2) + '\n', {flag: 'wx'});

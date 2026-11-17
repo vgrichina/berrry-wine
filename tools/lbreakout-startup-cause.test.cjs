@@ -1,8 +1,9 @@
 'use strict';
+const inspection=require('./lbreakout-case-inspection.cjs');
 // Offline causal controls: actual original SDL fill and EXE display caller.
 const assert=require('node:assert/strict'),fs=require('node:fs'),cp=require('node:child_process'),vm=require('node:vm'),crypto=require('node:crypto');
 const root=require('node:path').resolve(__dirname,'..'),run=process.argv[2];assert(run);
-const source=cp.execFileSync('python3',['-c',"import importlib.util;s=importlib.util.spec_from_file_location('h','tools/lbreakout-case-inspection.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h);print(h.level_start_driver_source());print(h.startup_completion_observer_source())"],{cwd:root,encoding:'utf8'});
+const source=(inspection.levelStartDriverSource()+'\n'+inspection.startupCompletionObserverSource()+'\n');
 const scope={setTimeout,clearTimeout,Date,DataView};vm.createContext(scope);vm.runInContext(source+';globalThis.create=createLevelStartDriver;globalThis.install=installStartupCompletion;',scope);
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 (async()=>{

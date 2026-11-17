@@ -4,29 +4,30 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const cp=require('node:child_process'),net=require('node:net');
 const {startControlSession}=require('./control-session');
 if(process.argv[2]==='--unit'){
-  const code=`import importlib.util, pathlib, tempfile, time
-s=importlib.util.spec_from_file_location('control','tools/delphi5-control.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-with tempfile.TemporaryDirectory() as d:
- m.R=pathlib.Path(d);m.save('PERMANENT-UNKNOWN.json',{})
- m.identity=lambda: (_ for _ in ()).throw(AssertionError('identity must not run'))
- for cleanup in (False,True):
-  try:m.call({'action':'quit'},cleanup=cleanup)
-  except AssertionError as e:assert 'permanent UNKNOWN' in str(e)
-  else:raise AssertionError('postUNKNOWN request')
- assert not (m.R/'requests.jsonl').exists()
- # Exercise the real freshness predicate with aged evidence, not altered clocks.
- m.identity=lambda:{'pid':1};(m.R/'scene.png').write_bytes(b'fixture')
- digest=m.hashlib.sha256(b'fixture').hexdigest()
- for kind,age,allowed in [('game',4,True),('game',6,False),('install',6,True),('install',31,False)]:
-  rows={'scene.json':dict(at=time.time()-age,target={'pid':1},port=m.PORT,pngSHA256=digest),
-        'scene-review.json':dict(at=time.time()-age,kind=kind,pngSHA256=digest,rawCompleteScene=True,observation='fixture',visibleLabel='OK')}
-  m.read=lambda n:rows[n]
-  try:m.reviewed('scene');passed=True
-  except AssertionError:passed=False
-  assert passed==allowed,(kind,age)
-print('PASS permanent UNKNOWN forbids normal and cleanup requests before identity/network')`;
-  const p=cp.spawnSync('python3',['-B','-c',code],{cwd:path.resolve(__dirname,'..'),encoding:'utf8'});
-  process.stdout.write(p.stdout);process.stderr.write(p.stderr);assert.equal(p.status,0);process.exit(0);
+  (async()=>{
+    const os=require('node:os'),crypto=require('node:crypto');
+    const m=require('../tools/delphi5-control.cjs');
+    const d=fs.mkdtempSync(path.join(os.tmpdir(),'delphi5-unit-'));
+    try{
+      m.R=d;m.save('PERMANENT-UNKNOWN.json',{});
+      m.identity=()=>{throw Object.assign(Error('identity must not run'),{name:'AssertionError'});};
+      for(const cleanup of [false,true])
+        await assert.rejects(m.call({action:'quit'},1,cleanup),e=>e.message.includes('permanent UNKNOWN'),'postUNKNOWN request');
+      assert(!fs.existsSync(path.join(m.R,'requests.jsonl')));
+      // Exercise the real freshness predicate with aged evidence, not altered clocks.
+      m.identity=()=>({pid:1});fs.writeFileSync(path.join(m.R,'scene.png'),'fixture');
+      const digest=crypto.createHash('sha256').update('fixture').digest('hex');
+      for(const [kind,age,allowed] of [['game',4,true],['game',6,false],['install',6,true],['install',31,false]]){
+        const rows={'scene.json':{at:Date.now()/1000-age,target:{pid:1},port:m.PORT,pngSHA256:digest},
+          'scene-review.json':{at:Date.now()/1000-age,kind,pngSHA256:digest,rawCompleteScene:true,observation:'fixture',visibleLabel:'OK'}};
+        m.read=n=>rows[n];
+        let passed;try{m.reviewed('scene');passed=true;}catch(e){if(e.name!=='AssertionError')throw e;passed=false;}
+        assert.equal(passed,allowed,JSON.stringify([kind,age]));
+      }
+      console.log('PASS permanent UNKNOWN forbids normal and cleanup requests before identity/network');
+    }finally{fs.rmSync(d,{recursive:true,force:true});}
+  })().then(()=>process.exit(0),e=>{console.error(e);process.exit(1);});
+  return;
 }
 const out=path.resolve(process.argv[2]),root=path.resolve(__dirname,'..');
 fs.mkdirSync(out,{recursive:true});
@@ -71,13 +72,12 @@ async function main(){
   };
   s.child.once('close',(exit,signal)=>fs.writeFileSync(path.join(run,'native-wait.json'),JSON.stringify({pid:s.child.pid,exit,signal,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded})));
   watchdog.stdin.write(String(s.child.pid));
-  const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');
-  fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify({pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19]}));
+  fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify({pid:s.child.pid,startToken:require('../tools/native-supervisor-common.cjs').token(s.child.pid)}));
   let controllerRuns=0;
   const controller=async(args,expected=0)=>{
     const startedAt=Date.now();
     const p=await new Promise(resolve=>{
-      const child=cp.spawn('python3',['-B','tools/delphi5-control.py',...args],{cwd:root,env:{...process.env,DELPHI5_RUN:run,DELPHI5_PORT:String(port)},timeout:7000});
+      const child=cp.spawn(process.execPath,['tools/delphi5-control.cjs',...args],{cwd:root,env:{...process.env,DELPHI5_RUN:run,DELPHI5_PORT:String(port)},timeout:7000});
       let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);
       child.on('close',(status,signal)=>resolve({pid:child.pid,status,signal,stdout,stderr,actualWait:true,
         stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,startedAt,waitedAt:Date.now()}));

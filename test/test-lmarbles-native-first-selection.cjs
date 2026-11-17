@@ -39,56 +39,54 @@ function verifyMedia() {
   console.log('PASS exact original inventory/CRT and all 86 SHA-bearing rows; seven manifest corruptions rejected');
 }
 
-function controllerTest() {
-  const result = require('node:child_process').spawnSync('python3', ['-B', '-c', String.raw`
-import pathlib,json,subprocess,time,os,socket,importlib.util
-root=pathlib.Path.cwd()
-spec=importlib.util.spec_from_file_location('manual',root/'tools/lmarbles-controller.py')
-c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c)
-out=pathlib.Path(os.environ['LMARBLES_NATIVE_TEST_OUT']).resolve();out.mkdir(parents=True)
-c.R=out
-with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
-c.URL='http://127.0.0.1:'+str(port)+'/ctl'
-os.environ['LMARBLES_CONTROL_URL']=c.URL;os.environ['LMARBLES_CONTROL_OUT']=str(out)
-args=['node','test/run.js','--app=sol','--no-build','--threads','--real-ticks','--screen=1024x712',
-      '--max-seconds=45','--max-batches=10000000','--control='+str(port),'--quiet-api','--quiet-blocks','--no-close']
-c.save('recipe.json',dict(cwd=str(root),args=args,seconds=315,reserveSeconds=300,watchdogGrace=2,nativeScene=True,
-                        inputPolicy=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=5,menuFreshnessSeconds=30),
-                        moduleHolder=os.environ['LMARBLES_MODULE_HOLDER']))
-p=subprocess.Popen(['python3','-B','tools/lmarbles-supervisor.py','durablewait',str(out)],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-try:
-    end=time.time()+20
-    while True:
-        try:
-            s=c.call({'action':'snapshot'},1)
-            if s['mainHwnd']!='0x0' and s['focusWindow']['live'] and s['physicalUp']:break
-        except Exception:pass
-        assert time.time()<end,'synthetic native scene startup';time.sleep(.02)
-    time.sleep(.3)
-    c.capture('binding');r=c.read('binding.json')
-    c.save('binding-review.json',dict(at=time.time(),pngSHA256=r['pngSHA256'],scene='game',observation='Automated synthetic Solitaire controller fixture, no original/personal review claim'))
-    c.bind('binding')
-    c.pulse('finite',['keydown:40'],100,'binding','automated synthetic controller fixture')
-    while time.time()<c.reserve():time.sleep(.01)
-    c.capture('quit-reserve')
-    assert c.read('quit-phase.json')['irreversible']
-    try:c.policy('gameplay',['keydown:39']);raise RuntimeError('cutoff accepted gameplay')
-    except c.ReserveRejected:pass
-    assert not (out/'terminal-input-failure.json').exists()
-    c.save('controller-assertions.json',dict(nativeSceneBound=True,finiteUp=c.read('finite-up.json')['state'],
-        captureLatchedQuit=True,noAfterCutoffDown=True))
-finally:
-    try:c.call({'action':'quit'})
-    except Exception:pass
-    a,b=p.communicate(timeout=15)
-    c.save('tool-wait.json',dict(pid=p.pid,exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=a.decode(),stderr=b.decode()))
-for name in ('native-wait.json','watchdog-wait.json','outer-child-wait.json','outer-wait.json'):
-    w=c.read(name);assert w['exit']==0 and w['actualWait'] and w['stdoutEOF'] and w['stderrEOF'],w
-for image in out.glob('*.png'):image.unlink()
-print('PASS reviewed native-scene binding, actual finite DOWN/independent UP, capture cutoff irreversible, actual native/watchdog/supervisor waits')
-`], { encoding: 'utf8', timeout: 65000, env: process.env });
-  process.stdout.write(result.stdout || ''); process.stderr.write(result.stderr || '');
-  assert.equal(result.status, 0, 'actual native controller fixture');
+async function controllerTest() {
+  const path = require('node:path'), cp = require('node:child_process'), net = require('node:net');
+  const root = process.cwd();
+  const c = require(path.join(root, 'tools/lmarbles-controller.cjs'));
+  const common = require(path.join(root, 'tools/native-supervisor-common.cjs'));
+  const out = path.resolve(process.env.LMARBLES_NATIVE_TEST_OUT); fs.mkdirSync(path.dirname(out), { recursive: true }); fs.mkdirSync(out);
+  c.R = out;
+  const port = await new Promise((resolve, reject) => { const s = net.createServer(); s.once('error', reject);
+    s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => resolve(p)); }); });
+  c.URL = 'http://127.0.0.1:' + port + '/ctl';
+  process.env.LMARBLES_CONTROL_URL = c.URL; process.env.LMARBLES_CONTROL_OUT = out;
+  const args = ['node', 'test/run.js', '--app=sol', '--no-build', '--threads', '--real-ticks', '--screen=1024x712',
+    '--max-seconds=45', '--max-batches=10000000', '--control=' + port, '--quiet-api', '--quiet-blocks', '--no-close'];
+  c.save('recipe.json', { cwd: root, args, seconds: 315, reserveSeconds: 300, watchdogGrace: 2, nativeScene: true,
+    inputPolicy: { confirmationMs: 500, physicalUpMs: 1750, observationMs: 3000, gameFreshnessSeconds: 5, menuFreshnessSeconds: 30 },
+    moduleHolder: process.env.LMARBLES_MODULE_HOLDER });
+  const p = cp.spawn(process.execPath, ['tools/lmarbles-supervisor.cjs', 'durablewait', out], { stdio: ['ignore', 'pipe', 'pipe'] });
+  const waited = common.communicate(p);
+  try {
+    const end = Date.now() / 1000 + 20;
+    while (true) {
+      try {
+        const s = await c.call({ action: 'snapshot' }, 1);
+        if (s.mainHwnd !== '0x0' && s.focusWindow.live && s.physicalUp) break;
+      } catch {}
+      assert(Date.now() / 1000 < end, 'synthetic native scene startup'); await common.sleep(20);
+    }
+    await common.sleep(300);
+    await c.capture('binding'); const r = c.read('binding.json');
+    c.save('binding-review.json', { at: Date.now() / 1000, pngSHA256: r.pngSHA256, scene: 'game', observation: 'Automated synthetic Solitaire controller fixture, no original/personal review claim' });
+    await c.bind('binding');
+    await c.pulse('finite', ['keydown:40'], 100, 'binding', 'automated synthetic controller fixture');
+    while (Date.now() / 1000 < c.reserve()) await common.sleep(10);
+    await c.capture('quit-reserve');
+    assert(c.read('quit-phase.json').irreversible);
+    assert.throws(() => c.policy('gameplay', ['keydown:39']), c.ReserveRejected, 'cutoff accepted gameplay');
+    assert(!fs.existsSync(path.join(out, 'terminal-input-failure.json')));
+    c.save('controller-assertions.json', { nativeSceneBound: true, finiteUp: c.read('finite-up.json').state, captureLatchedQuit: true, noAfterCutoffDown: true });
+  } finally {
+    try { await c.call({ action: 'quit' }); } catch {}
+    const w = await Promise.race([waited, common.sleep(15000).then(() => { throw Error('TimeoutExpired: supervisor'); })]);
+    c.save('tool-wait.json', { pid: p.pid, exit: w.returncode, actualWait: true, stdoutEOF: true, stderrEOF: true, stdout: w.stdout.toString(), stderr: w.stderr.toString() });
+  }
+  for (const name of ['native-wait.json', 'watchdog-wait.json', 'outer-child-wait.json', 'outer-wait.json']) {
+    const w = c.read(name); assert(w.exit === 0 && w.actualWait && w.stdoutEOF && w.stderrEOF, JSON.stringify(w));
+  }
+  for (const image of fs.readdirSync(out).filter(n => n.endsWith('.png'))) fs.unlinkSync(path.join(out, image));
+  console.log('PASS reviewed native-scene binding, actual finite DOWN/independent UP, capture cutoff irreversible, actual native/watchdog/supervisor waits');
 }
 
 async function main() {
@@ -257,5 +255,5 @@ async function main() {
   console.log('PASS authentic SDL motion/button ordering, modal Y transition, stale focus/window generation refusal, native video recreation; no original game loaded');
 }
 if (process.argv.includes('--verifier')) verifyMedia();
-else if (process.argv.includes('--controller')) controllerTest();
+else if (process.argv.includes('--controller')) controllerTest().catch(e => { console.error(e.stack); process.exitCode = 1; });
 else main().catch(e => { console.error(e.stack); process.exitCode = 1; });

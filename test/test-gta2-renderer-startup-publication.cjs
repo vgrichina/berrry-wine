@@ -423,7 +423,7 @@ async function nativePlan(base){
   for(const row of plan){
     assert(/^[a-z0-9-]+$/.test(row.name));const out=path.join(base,row.name);
     if(!fs.existsSync(path.join(out,'outer-child-wait.json'))){
-      const child=cp.spawn('python3',['-u','-B','tools/forsaken-supervisor.py','outerwait',out],{cwd:ROOT,stdio:['ignore','pipe','pipe']});
+      const child=cp.spawn(process.execPath,['tools/forsaken-supervisor.cjs','outerwait',out],{cwd:ROOT,stdio:['ignore','pipe','pipe']});
       const stdout=[],stderr=[];child.stdout.on('data',b=>stdout.push(b));child.stderr.on('data',b=>stderr.push(b));
       const waited=await new Promise((resolve,reject)=>{child.once('error',reject);child.once('close',(code,signal)=>resolve({code,signal}));});
       fs.writeFileSync(path.join(out,'plan-child-wait.json'),JSON.stringify({pid:child.pid,...waited,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded})+'\n',{flag:'wx'});
@@ -480,7 +480,7 @@ async function originalSoftware(out,qualification){
       files.push({path:p,sha256:sha(fs.readFileSync(p))});
   for(const p of files)assert.equal(sha(fs.readFileSync(p.path)),p.sha256,'fresh qualified original pin '+p.path);
   for(const name of ['tools/gta2-browser-release-binding.cjs','tools/gta2-paired-controller.cjs',
-    'tools/gta2-renderer-startup-runtime.cjs','tools/gta2-renderer-startup-runtime.py',
+    'tools/gta2-renderer-startup-runtime.cjs','tools/gta2-renderer-startup-launcher.cjs',
     'test/test-gta2-renderer-startup-publication.cjs','test/test-gta2-worker-complete-confirmation.cjs']){
     const pin=files.find(p=>p.path===name);assert(pin,'qualified published owned input '+name);
     assert.equal(sha(cp.execFileSync('git',['show',q.implementation+':'+name])),pin.sha256,'published implementation differs from qualified input '+name);
@@ -488,7 +488,7 @@ async function originalSoftware(out,qualification){
   const http=files.filter(p=>['comctl32.dll','commctrl.dll','gta2.exe','mss32.dll'].some(n=>p.path.endsWith('/'+n)))
     .map(p=>({url:'/'+p.path.replace(/^test\//,''),sha256:p.sha256}));
   assert.equal(http.length,4);
-  for(const name of ['tools/gta2-renderer-startup-runtime.cjs','tools/gta2-renderer-startup-runtime.py']){
+  for(const name of ['tools/gta2-renderer-startup-runtime.cjs','tools/gta2-renderer-startup-launcher.cjs','tools/forsaken-supervisor.cjs','tools/native-supervisor-common.cjs']){
     if(!files.some(p=>p.path===name))files.push({path:name,sha256:sha(fs.readFileSync(name))});
   }
   const launch=JSON.parse(fs.readFileSync(path.join(out,'..','launch.json')));
