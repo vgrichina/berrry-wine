@@ -53,6 +53,7 @@
     (if (i32.eqz (global.get $pending_input_packed))
       (then
         (local.set $packed (call $host_check_input))
+        (global.set $pending_input_token (call $host_check_input_token))
         (if (i32.ne (local.get $packed) (i32.const 0))
           (then
             (global.set $pending_input_packed (local.get $packed))
@@ -126,6 +127,7 @@
     ;; PeekMessage/GetMessage and do not probe again while that event is cached.
     (if (i32.eqz (global.get $pending_input_packed)) (then
       (local.set $packed (call $host_check_input))
+        (global.set $pending_input_token (call $host_check_input_token))
       (if (local.get $packed) (then
         (global.set $pending_input_packed (local.get $packed))
         (global.set $pending_input_hwnd (call $host_check_input_hwnd (global.get $focus_hwnd)))

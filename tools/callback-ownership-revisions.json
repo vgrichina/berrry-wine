@@ -19,8 +19,8 @@
       "file": "src/09a5-handlers-window.wat",
       "name": "$handle_PeekMessageA_fetch",
       "baseSHA256": "efcb7dda81314d186771f176b66ff594a7ebb82b6718db9cccd3a7b1270ef929",
-      "sha256": "5d8a0280cc60f5ffc0a3227305216e415c9975a1aa0e0a4c967fed0d74453981",
-      "reason": "A synchronous host notification on the proven-empty unfiltered native USER path acknowledges pointer-arrival pump completion. Filtered queries, successful posted/input/paint/timer retrieval and native callbacks do not acknowledge it. No guest frame, continuation, callback admission or context restoration is added; invocation ownership remains pending."
+      "sha256": "403ffc8ba151e610958392f2eed234d6979e36b6bb51e97182e810f2426a5c2f",
+      "reason": "Review 20261117 native consumer confirmation: host dequeue creates only an opaque immutable-intent token. Peek/Get validate token and exact memory/context before routing or guest-visible MSG; successful native USER return confirms exact full MSG, actual owner thread and API/removal provenance only after hooks/callbacks complete synchronously with matching stack. PM_NOREMOVE may confirm an exact successful owner return; filtered, sibling, stale, yielded, asynchronous-state-only and nonconsumer routes cannot confirm. Existing callback admission, stack restoration and empty unfiltered hover observation remain unchanged. Authored real x86 main plus CPUWorker positives/refusals and published baseline false acknowledgments recorded in run20261117-caesar3-native-consumer-confirmation-repair; general callback ownership remains pending."
     },
     {
       "file": "lib/storage.js",
@@ -98,6 +98,13 @@
       "baseSHA256": "2f0b9ae34726c27c662f5c3df4451689c51bfc4cefe459cedc45c25aab2ebc6a",
       "sha256": "0b2b8e47e215112c95dad3444d21afecab630711725ed668127d44666589e084",
       "reason": "Review 20261117 current-display ticket servicing: existing ordinary completed host boundary services only clean live host/shared DirectDraw queues and unheld renderer/paint/damage. A ticket armed with pending host damage still requires later ordinary publication. Readback uses retained published canvases, preserves exact publication/timestamp and schedules no frame, guest entry, flush, timer or callback. Host stop explicitly fails only its own pending current-display ticket and invalidates its retained display receipt. Scoped producer loss/retirement invalidation preserves foreign tickets and completed immutable bytes. Actual x86 GL guest/render Worker clean-slice before timeout versus same-publication serviced after, literal source/output, cancellation/identity/writer/fault regressions in run20261117-gl-gps-current-display-ticket-servicing-repair. Broader retained callback ownership remains pending."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:resume_message_wait",
+      "baseSHA256": "dfaab82f4b250df4b516c6d6be15bd26ecb57c1836fddc7f07765fa492e0caae",
+      "sha256": "7ca351abbc0f119e4d4e130a7e5d1ac956bab84095b5dea42cf1d3714090a7ba",
+      "reason": "Review 20261117 ordinary native GetMessage wait resumption: clear the old reason-7 yield flag before calling the existing handler together with its existing reason reset. Previously a completed GetMessage could inherit stale suspended state and lose exact native return confirmation. No new guest call, callback admission, stack change, flush, deadline or interpreter budget; fresh handler/callback yields remain unconfirmed. Authored main plus CPUWorker, filtered/sibling/nonconsumer refusals and delayed Peek/Get after UP are recorded in run20261117-caesar3-native-consumer-confirmation-repair; general invocation ownership remains pending."
     }
   ],
   "additions": [

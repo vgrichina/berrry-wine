@@ -852,6 +852,17 @@
         (param $tid i32) (param $msg_ptr i32) (param $hwnd_filter i32)
         (param $msg_min i32) (param $msg_max i32) (param $remove i32)
         (result i32)
+    (call $shared_post_queue_peek_tid_token (local.get $tid) (local.get $msg_ptr)
+      (local.get $hwnd_filter) (local.get $msg_min) (local.get $msg_max)
+      (local.get $remove) (i32.const 0)))
+
+  ;; An invalid PM_NOREMOVE candidate is discarded only if its exact token
+  ;; still exists after the unlocked host validation. A concurrent HWND purge
+  ;; must not let that cleanup remove an unrelated same-message successor.
+  (func $shared_post_queue_peek_tid_token
+        (param $tid i32) (param $msg_ptr i32) (param $hwnd_filter i32)
+        (param $msg_min i32) (param $msg_max i32) (param $remove i32)
+        (param $expected_token i32) (result i32)
     (local $cnt i32) (local $head i32) (local $tail i32) (local $queue i32)
     (local $slot i32) (local $src i32) (local $index i32) (local $j i32)
     (local $found i32) (local $hwnd i32) (local $msg i32)
@@ -861,6 +872,7 @@
     (local $free_node i32) (local $free_state i32)
     (local $flags i32)
     (global.set $user_queue_input_flags (i32.const 0))
+    (global.set $input_return_token (i32.const 0))
     (local.set $queue (call $thread_msg_queue_addr (local.get $tid)))
     (if (i32.eqz (local.get $queue)) (then (return (i32.const 0))))
     ;; Count is the producer's publication word. Avoid taking the process-wide
@@ -886,9 +898,13 @@
             (i32.rem_u (i32.add (local.get $head) (local.get $index))
               (global.get $THREAD_MSG_QUEUE_MAX))
             (i32.const 16)))))
-      (if (call $shared_post_queue_matches
+      (if (i32.and (call $shared_post_queue_matches
             (i32.load (local.get $slot)) (i32.load offset=4 (local.get $slot))
             (local.get $hwnd_filter) (local.get $msg_min) (local.get $msg_max))
+          (i32.or (i32.eqz (local.get $expected_token))
+            (i32.eq (local.get $expected_token) (i32.shr_u
+              (i32.load (call $thread_msg_input_flags_addr (local.get $tid) (local.get $queue) (local.get $slot)))
+              (i32.const 2)))))
         (then
           (local.set $found (i32.const 1))
           (br $ring_done)))
@@ -907,10 +923,13 @@
               (br_if $overflow_done (i32.eqz (local.get $node)))
               (local.set $node_wa (call $g2w (local.get $node)))
               (local.set $next (i32.load (local.get $node_wa)))
-              (if (call $shared_post_queue_matches
+              (if (i32.and (call $shared_post_queue_matches
                     (i32.load offset=4 (local.get $node_wa))
                     (i32.load offset=8 (local.get $node_wa))
                     (local.get $hwnd_filter) (local.get $msg_min) (local.get $msg_max))
+                  (i32.or (i32.eqz (local.get $expected_token))
+                    (i32.eq (local.get $expected_token)
+                      (i32.shr_u (i32.load offset=20 (local.get $node_wa)) (i32.const 2)))))
                 (then
                   (local.set $found (i32.const 2))
                   (br $overflow_done)))
@@ -1019,6 +1038,18 @@
     (call $lock_wnd_release)
     (if (local.get $free_node) (then (call $heap_free (local.get $free_node))))
     (if (local.get $free_state) (then (call $heap_free (local.get $free_state))))
+    ;; Guarded provenance occupies the otherwise unused upper flag bits.
+    ;; Cancelled cached/routed edges are discarded before any guest MSG write.
+    (if (i32.shr_u (local.get $flags) (i32.const 2))
+      (then
+        (if (i32.eqz (call $host_input_validate (i32.shr_u (local.get $flags) (i32.const 2))))
+          (then
+            (if (i32.eqz (local.get $remove))
+              (then (drop (call $shared_post_queue_peek_tid_token (local.get $tid) (i32.const 0)
+                (local.get $hwnd_filter) (local.get $msg_min) (local.get $msg_max) (i32.const 1)
+                (i32.shr_u (local.get $flags) (i32.const 2))))))
+            (return (i32.const 0))))
+        (global.set $input_return_token (i32.shr_u (local.get $flags) (i32.const 2)))))
     (global.set $user_queue_raw_flags (local.get $flags))
     (global.set $user_queue_raw_hwnd (local.get $hwnd))
     (global.set $user_queue_raw_msg (local.get $msg))

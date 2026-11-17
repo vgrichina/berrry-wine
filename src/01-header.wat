@@ -113,6 +113,10 @@
   (import "host" "draw_text" (func $host_draw_text (param i32 i32 i32 i32 i32)))
   ;; draw_text(x, y, text_ptr, text_len, color)
   (import "host" "check_input" (func $host_check_input (result i32)))
+  ;; Opaque guarded intent provenance; zero for ordinary physical input.
+  (import "host" "check_input_token" (func $host_check_input_token (result i32)))
+  (import "host" "input_validate" (func $host_input_validate (param i32) (result i32)))
+  (import "host" "input_consumed" (func $host_input_consumed (param i32 i32 i32 i32 i32) (result i32)))
   ;; check_input() → packed event (0 = none)
   (import "host" "input_pump_idle" (func $host_input_pump_idle (param i32)))
   ;; input_pump_idle(thread) — native unfiltered message pump exhausted all
@@ -3297,6 +3301,8 @@
   ;; When PeekMessageA is called with PM_NOREMOVE, we fetch from JS but cache here.
   ;; Next PM_REMOVE call consumes the cache instead of fetching again.
   (global $pending_input_packed (mut i32) (i32.const 0))
+  (global $pending_input_token (mut i32) (i32.const 0))
+  (global $input_return_token (mut i32) (i32.const 0))
   (global $pending_input_lparam (mut i32) (i32.const 0))
   (global $pending_input_hwnd   (mut i32) (i32.const 0))
   ;; Win32 MSG bookkeeping for GetMessagePos/GetMessageTime and MSG.pt.

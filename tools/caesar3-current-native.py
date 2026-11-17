@@ -43,13 +43,16 @@ def watchdog(deadline):
         except (FileNotFoundError, ProcessLookupError): pass
         if sig == signal.SIGTERM: time.sleep(3)
     save('watchdog-exit.json', dict(reason='immutable deadline', signals=sent, at=time.time()))
+def media_inventory():
+    media = ROOT/'test/binaries/candidates/caesar-3-demo/installed'
+    return [dict(path=str(p.relative_to(ROOT)), size=p.stat().st_size, sha256=sha(p.read_bytes()))
+            for p in sorted(media.rglob('*')) if p.is_file()]
+
 def original(env, source, module):
     free_disk()
-    media = ROOT/'test/binaries/candidates/caesar-3-demo/installed'
-    pins = [dict(path=str(p.relative_to(ROOT)), size=p.stat().st_size, sha256=sha(p.read_bytes()))
-            for p in sorted(media.iterdir()) if p.is_file()]
+    pins = media_inventory()
     assert next(p['sha256'] for p in pins if p['path'].endswith('/c3.exe')) == 'd7c73f21d3837b1fc465a6035f4fea6ab5a7eddf62907c72c4dd076a5193d236'
-    save('media.json', dict(files=pins, unchangedFullLocalMedia=True))
+    save('media.json', dict(files=pins, recursive=True, beforeNativeClock=True, at=time.time()))
     with socket.socket() as s:
         s.bind(('127.0.0.1', 0)); port = s.getsockname()[1]
     start = time.time(); deadline = start+NATIVE_SECONDS
@@ -103,8 +106,7 @@ def original(env, source, module):
         a, b = w.communicate(timeout=10)
         save('watchdog-wait.json', dict(pid=w.pid, exit=w.returncode, actualWait=True,
                                       stdoutEOF=True, stderrEOF=True, stdout=a.decode(), stderr=b.decode()))
-    for row in pins:
-        assert sha((ROOT/row['path']).read_bytes()) == row['sha256']
+    assert media_inventory() == pins, 'recursive media paths, sizes or hashes changed'
     save('media-after.json', dict(unchanged=True, files=len(pins)))
 def controller():
     """One personally reviewed intent, with an independently forked UP.
@@ -146,6 +148,10 @@ def controller():
         save(name+'-down.json',dict(at=time.time(),receipt=receipt))
         assert time.time()<start+.5 and receipt['state']=='CONSUMED' and receipt['consumed'],'confirmation UNKNOWN'
         assert receipt.get('receiptBoundary') in ('native-input-return','native-button-dispatch-return')
+        if receipt['receiptBoundary']=='native-input-return':
+            proof=receipt['nativeMessage']
+            assert proof['consumption']=='owner-user-return' and proof['nonce']==nonce and proof['token']>0
+            assert proof['apiKind'] in (1,2,3) and proof['threadId']>0
         assert all(receipt.get(k)==guard[k] for k in ('owner','epoch','nonce','deadline'))
         assert start*1000<=receipt['consumedAt']<guard['deadline']
         save(name+'-up-at.json',dict(at=receipt['consumedAt']/1000+.1))
@@ -181,16 +187,32 @@ def controller():
 def run():
     RUN.mkdir(parents=True, exist_ok=True); free_disk()
     requested = '--original' in sys.argv
+    diagnostic = '--consumer-diagnostic' in sys.argv
     working = '--working-qualification' in sys.argv
+    baseline = '--consumer-baseline' in sys.argv
+    assert not baseline or (working and diagnostic), 'baseline is authored working diagnosis only'
     assert not (requested and working), 'original requires published Git-only helpers'
+    assert not (requested and diagnostic), 'consumer diagnosis never authorizes an original'
     revision = git('rev-parse', 'HEAD').decode().strip()
     # The imported supervisor body comes from Git, never the shared worktree.
     helper = published_module('tools/vb5cce-original-runtime.py', revision)
     helper.ROOT, helper.RUN, helper.HEAD = ROOT, RUN, revision
-    helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs', 'test/run.js')
+    helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs', 'test/run.js',
+        'src/13-exports.wat','src/01-header.wat','src/09a-handlers.wat','src/09a5-handlers-window.wat',
+        'src/09a5b-handlers-window-late.wat','src/09a2-handlers-console.wat',
+        'lib/host-window.js','lib/guest-rpc.js','lib/cli-guarded-input.js','lib/host-import-sigs.generated.json')
+    if baseline: helper.OWN_SOURCES = ('test/test-caesar3-current-native.cjs',)
     if not working:
         assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
     def qualify(env, files, source, module, **unused):
+        if diagnostic:
+            if baseline: env['C3_HOST_BOUNDARY_BASELINE']='1'
+            helper.checked('consumer-diagnostic', ['node', 'test/test-caesar3-current-native.cjs',
+                           '--consumer-diagnostic', str(RUN/'consumer')], env, (source, module))
+            save('diagnostic-completion.json', dict(completed=True, contractPassed=json.loads((RUN/'consumer/diagnostic.json').read_text())['contractPassed'],
+                 safeForOriginal=False, originalStarted=False, gitSHA=revision,
+                 moduleSHA256=env['DISCIPLES2_MODULE_SHA256'], at=time.time()))
+            return
         # Native controls invoke only sealed JS. No mutable external Python
         # controller or original-game startup test is launched as a fixture.
         helper.checked('authored-native', ['node', 'test/test-caesar3-current-native.cjs', str(RUN/'authored')], env, (source, module))

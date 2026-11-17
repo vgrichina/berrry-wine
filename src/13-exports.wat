@@ -2345,6 +2345,10 @@
     (local $msg_ptr i32)
     (if (i32.ne (global.get $yield_reason) (i32.const 7))
       (then (return (i32.const 0))))
+    ;; This ordinary resumption owns the old reason-7 wait. Clear its flag
+    ;; before re-entering USER so a newly yielded callback remains distinct
+    ;; from the completed wait; never clear a yield produced by the new call.
+    (global.set $yield_flag (i32.const 0))
     (local.set $msg_ptr (global.get $message_wait_msg_ptr))
     (global.set $message_wait_msg_ptr (i32.const 0))
     (global.set $yield_reason (i32.const 0))

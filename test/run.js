@@ -1754,6 +1754,10 @@ async function main() {
     const { layoutHash, appendSection } = require('../tools/region-layout-hash.js');
     wasmBytes = appendSection(Buffer.from(r.wasmBinary), layoutHash(r.regions.regions));
   }
+  if (process.env.DISCIPLES2_MODULE_SHA256 &&
+      require('node:crypto').createHash('sha256').update(wasmBytes).digest('hex') !== process.env.DISCIPLES2_MODULE_SHA256) {
+    throw new Error('actual CLI module differs from sealed qualification');
+  }
   const exeBytes = verifiedAssetFiles ? verifiedAssetFiles.verifiedMedia.exeBytes : readAssetBytes(EXE_PATH);
 
   // Where a DLL the guest asks for at run time comes from: what the app mounted
@@ -4776,9 +4780,9 @@ async function main() {
     lastInputEvent = evt;
     if (renderer) renderer._activeInputEvent = evt;
     inputConsumptionTrace.dequeue(evt, source);
-    // A host handler may have queued DOWN long before USER polls it. Only
-    // this actual input import return can acknowledge the matching edge.
-    if (guardedInput?.delivered(evt) === false) {
+    // Host dequeue only issues a candidate token. Exact successful native USER
+    // return must confirm that token before this intent can be consumed.
+    if (guardedInput?.dequeued(evt) === false) {
       lastInputEvent = null;
       if (renderer) renderer._activeInputEvent = null;
       return 0;
@@ -4804,6 +4808,7 @@ async function main() {
     inputConsumptionTrace.route(focusHwnd, hwnd);
     return hwnd;
   };
+  h.check_input_token = () => guardedInput?.token(lastInputEvent) || 0;
   h.check_input_lparam = () => (lastInputEvent ? (lastInputEvent.lParam || 0) : 0);
   h.check_input_wparam = () => (lastInputEvent ? (lastInputEvent.wParam || 0) : 0);
   // Match the browser host contract: the broker restores both metadata and
@@ -5447,6 +5452,8 @@ async function main() {
       sharedGdi: base.gdi,  // the live GDI table, not the copy in ctx
       g2w: (addr) => translateGuest(addr, instance.exports.get_image_base(), memory.buffer),
     });
+    Object.defineProperty(workerCtx, 'guardedInput', { get: () => guardedInput });
+    workerCtx.nativeInputActor = () => workerInstance?.exports;
     Object.defineProperty(workerCtx, 'waveCallbackOwner', {
       get: () => waveCallbackRouting.owner(workerInstance?.exports, tid, WORKER_THREADS),
     });
@@ -5476,6 +5483,7 @@ async function main() {
     // metadata latch as the main instance.
     wh.check_input = mainSchedulerObserver
       ? () => mainSchedulerObserver.workerInput(tid, h.check_input) : h.check_input;
+    wh.check_input_token = h.check_input_token;
     wh.check_input_lparam = h.check_input_lparam;
     wh.check_input_wparam = h.check_input_wparam;
     wh.check_input_hwnd = h.check_input_hwnd;
@@ -7726,7 +7734,7 @@ async function main() {
     ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'visible', 'isChild', 'live']
       .every(k => a[k] === b[k]);
   guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
-    nativeDelivery: true,
+    nativeDelivery: true, nativeProofRequired: true,
     captureNativeControl: (event,intent) => require('../lib/cli-native-user-windows').captureNativeButton(event,intent,controlSnapshot(),instance,threadManager),
     confirmNativeControl: (fence,event) => require('../lib/cli-native-user-windows').confirmNativeButton(fence,event),
     captureDelivery: () => nativeScene.reviewedContext(controlSnapshot()),
@@ -7800,6 +7808,8 @@ async function main() {
       if (ev.action === 'mousedown') refs.mouseUp.call(refs.renderer, ev.x, ev.y, 1);
     },
   });
+  ctx.guardedInput = guardedInput;
+  ctx.nativeInputActor = () => instance.exports;
   // takeInput itself publishes async key state. Guard queued delivery before
   // that effect, including callers other than h.check_input.
   if (renderer) {

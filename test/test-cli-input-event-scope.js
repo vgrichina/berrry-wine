@@ -40,6 +40,7 @@ if (process.env.CLI_SCOPE_PRELOAD === '1') {
         globalThis.aTable=${mode==='main'?'table':'scopeFactory(1,1)'};
         globalThis.bTable=${mode==='main'?'table':'scopeFactory(2,2)'};
         globalThis.sigs={check_input:{params:[],results:['i32']},
+          check_input_token:{params:[],results:['i32']},
           check_input_lparam:{params:[],results:['i32']},
           check_input_wparam:{params:[],results:['i32']},
           check_input_hwnd:{params:['i32'],results:['i32']},
@@ -55,14 +56,17 @@ if (process.env.CLI_SCOPE_PRELOAD === '1') {
         renderer.checkInput=()=>null;true`);
       const owner = await send({ action: 'guarded-bind' });
       let serial = 0;
-      async function produce(cmd) {
+      async function produce(cmd, guarded=false) {
+        if(!guarded){await send({cmd});await send({action:'step',n:1});return;}
         const ticket = await send({ action: 'guarded-input', cmd,
           guard: { ...owner, nonce: 'scope-'+(++serial), reviewed: true,
             deadline: Date.now()+5000 } });
         await send({ action: 'step', n: 1 });
-        assert((await send({ action: 'guarded-status', nonce: ticket.nonce })).consumed);
+        const status=await send({ action: 'guarded-status', nonce: ticket.nonce });
+        assert(status.handlerApplied);
+        assert.equal(status.consumed,false,'suspended native polling cannot confirm a host handler');
       }
-      await produce('mousedown:354:330');
+      await produce('mousedown:354:330',true);
       // Coordinate delivery now gives hover a pump before its button. Drain
       // that arrival through the real broker, then advance the CLI guest clock
       // with polling suspended; the scope assertions below still bind DOWN.
@@ -76,11 +80,12 @@ if (process.env.CLI_SCOPE_PRELOAD === '1') {
       await send({ action: 'step', n: 1 });
       const first = await ev(`renderer.checkInput=realCheck;
         broker.publish({inputPending:1});
-        globalThis.read=w=>({lp:w.check_input_lparam(),wp:w.check_input_wparam(),
+        globalThis.read=w=>({token:w.check_input_token(),lp:w.check_input_lparam(),wp:w.check_input_wparam(),
           hwnd:w.check_input_hwnd(0),point:w.get_mouse_position(),buttons:w.get_mouse_buttons()});
         globalThis.firstPacked=a.check_input();while(firstPacked && (firstPacked&65535)!==513)firstPacked=a.check_input();globalThis.first=read(a);
         renderer.checkInput=()=>null;({packed:firstPacked,...first})`);
       assert.equal(first.packed & 0xffff, 0x201);
+      assert(first.token>0,'exact guarded edge carries an opaque token through the real broker');
       await send({ action: 'guarded-release', owner: owner.owner });
       await send({ action: 'step', n: 1 });
       await produce('mousemove:200:180');
@@ -123,6 +128,7 @@ if (process.env.CLI_SCOPE_PRELOAD === '1') {
       assert.equal(contract.failed, true);
       assert.equal(contract.restored, true);
       assert.equal(contract.empty, 0);
+      assert.equal(contract.cleared.token, 0);
       assert.equal(contract.cleared.lp, 0);
       assert.equal(contract.cleared.wp, 0);
       assert.equal(contract.hidden, true);
