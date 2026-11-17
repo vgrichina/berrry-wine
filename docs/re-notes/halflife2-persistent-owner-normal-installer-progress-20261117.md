@@ -85,3 +85,13 @@ extraction outputs were replaced after closure by exact original-media stream
 recovery recipes, with complete decoded-byte and CRC/SHA roundtrip verification.
 Unique runtime output remains. The original EXE hash was verified again after
 closure. No box was created; ID and expiry are null and stop is not applicable.
+
+An additional authored route fixture explicitly sets inherited
+`PR_SET_PDEATHSIG=SIGTERM` before executing the same owner. All three actual
+process cases record inherited 15 and safely cleared 0, then prove healthy
+survival, parent-death cancellation, or independent deadline cleanup. During
+that diagnostic, a live `/proc/PID/fdinfo` descriptor closed between enumeration
+and reading; the test now ignores such vanished unrelated descriptors while
+still requiring a matching live parent pidfd. This changes test robustness
+only. The original's sealed source graph and executed component bytes remain
+those recorded under `9945c2998`, before this follow-up test edit.

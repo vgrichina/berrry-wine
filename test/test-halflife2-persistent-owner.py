@@ -44,7 +44,8 @@ def run(out,native_mode=False):
   signal.pidfd_send_signal(fd,0)
   outerpid=read(o/'outer-child.json')['pid'];pidfds=[]
   for f in pathlib.Path(f'/proc/{outerpid}/fdinfo').iterdir():
-   body=f.read_text()
+   try:body=f.read_text()
+   except FileNotFoundError:continue # unrelated child descriptors can close during enumeration
    if any(line.split()==['Pid:',str(pid)] for line in body.splitlines()):pidfds.append(dict(fd=int(f.name),fdinfo=body))
   assert pidfds,'actual supervisor must hold actual dedicated-parent pidfd'
   (r/'tool-return-proof.json').write_text(json.dumps(dict(launcherActualWait=True,launcherExit=launcher.returncode,ownerAlive=True,ownerPid=pid,ownerStartToken=token(pid),actualOuterParent=armed,actualParentPidfds=pidfds,worker=identity)))
