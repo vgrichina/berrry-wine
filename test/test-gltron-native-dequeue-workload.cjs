@@ -7,7 +7,7 @@ const assert=require('node:assert/strict');
 // This is observer transport, never a guest/renderer request or a replay.
 function installTerminalTransport(root){
   if(root.__terminalPhases)throw Error('duplicate terminal transport');
-  const state=root.__terminalPhases={workers:[],bytes:8*1024*1024};
+  const state=root.__terminalPhases={workers:[],bytes:32*1024*1024};
   const Native=root.Worker,decode=new TextDecoder();
   const drain=(w,reason)=>{
     const end=Atomics.load(w.header,0),rows=[];
@@ -35,7 +35,7 @@ function installTerminalTransport(root){
 // existing native-input/import boundary are observed; no guest exports run.
 function installOriginalWorkerPhases(root){
   if(root.__originalPhases)throw Error('duplicate phase observer');
-  const state=root.__originalPhases={events:0,limit:24000,recordBytes:0,recordLimit:16384,records:0,rows:[],dropped:0,flushed:0};
+  const state=root.__originalPhases={events:0,limit:120000,recordBytes:0,recordLimit:16384,records:0,rows:[],dropped:0,flushed:0};
   let transport=null;const encoder=root.TextEncoder?new root.TextEncoder():null;
   const publish=row=>{if(!transport)return false;const bytes=encoder.encode(JSON.stringify(row)),offset=Atomics.load(transport.header,0);
     if(offset+4+bytes.length>transport.data.length){Atomics.add(transport.header,1,1);return true;}
@@ -48,7 +48,7 @@ function installOriginalWorkerPhases(root){
     publish({role:'transport',edge:'armed',at:Date.now()});});
   // Serialization/copy cost is observer overhead, never OS CPU attribution.
   // A synchronous bounded append retains entry before a blocking native call.
-  const log=row=>{state.events++;if(state.events<=state.limit){if(!publish(row))state.rows.push(row);}else state.dropped++;};
+  const log=row=>{state.events++;if(state.events<=state.limit){if(!publish(row))state.rows.push(row);}else{state.dropped++;if(transport)Atomics.add(transport.header,1,1);}};
   state.flush=()=>{const rows=state.rows;state.rows=[];state.flushed+=rows.length;
     console.log('GLTRON_ORIGINAL_BATCH',JSON.stringify({rows,dropped:state.dropped,events:state.events,flushed:state.flushed,at:Date.now(),recordBytes:state.recordBytes,records:state.records}));};
   if(root.setInterval)root.setInterval(state.flush,1000);
@@ -278,7 +278,7 @@ async function phaseRun(out,backend,authored){
   if(authored){const native=require('../tools/gltron-current-native-capture.cjs'),fixture=native.fixture;native.fixture=()=>fixture({drawOnce:true,timerMs:16,triangles:8,width:480,height:360});}
   const observer=fs.readFileSync(__filename),observerCommit=cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
   if(!authored)assert.equal(sha(cp.execFileSync('git',['show',observerCommit+':test/test-gltron-native-dequeue-workload.cjs'])),sha(observer),'original requires published observer');
-  fs.writeFileSync(out+'/diagnostic.json',JSON.stringify({commit,observerCommit,observerSHA256:sha(observer),backend,authored,modulePath,moduleSHA256:pin.sha256,moduleVerifiedBeforeExecution:true,runtimeSourceUnchanged:true,rendererDataOnly:true,recordByteCap:16384,recordCap:64,phaseEventCap:24000,originalInvocations:authored?0:1})+'\n',{flag:'wx'});
+  fs.writeFileSync(out+'/diagnostic.json',JSON.stringify({commit,observerCommit,observerSHA256:sha(observer),backend,authored,modulePath,moduleSHA256:pin.sha256,moduleVerifiedBeforeExecution:true,runtimeSourceUnchanged:true,rendererDataOnly:true,recordByteCap:16384,recordCap:64,phaseEventCap:120000,sharedBytesPerWorker:32*1024*1024,originalInvocations:authored?0:1})+'\n',{flag:'wx'});
   const write=fs.writeFileSync;
   fs.writeFileSync=function(file,bytes,...rest){if(file===out+'/tested-'+pin.sha256+'.wasm'){assert.equal(sha(bytes),pin.sha256);fs.linkSync(modulePath,file);return;}
     if([out+'/source.json',out+'/module.json'].includes(file)){const value=JSON.parse(bytes);value.commit=commit;value.helperCommit=observerCommit;value.exactRuntimeGraphReused=true;bytes=JSON.stringify(value,null,2)+'\n';}
@@ -318,6 +318,8 @@ else if(require.main===module){
     host.gpu_gl_call(1,2,3);assert(Atomics.load(header,1)>0);
     let offset=0;while(offset<Atomics.load(header,0)){const len=new DataView(buffer,16).getUint32(offset,true);offset+=4;JSON.parse(new TextDecoder().decode(new Uint8Array(buffer,16+offset,len)));offset+=len;}
     assert.equal(offset,Atomics.load(header,0));
+    const dropped=Atomics.load(header,1);root.__originalPhases.limit=root.__originalPhases.events;host.gpu_gl_call(1,2,3);
+    assert.equal(Atomics.load(header,1),dropped+2,'event-cap drops survive a blocked flush timer');
   });
   test('original observer prearms IPC/import and renderer phases without changing native answers',()=>{
     let time=0;const logs=[],error=Error('renderer error'),root={},host={check_input(x){return x+2;},gpu_stream_kick(){throw error;}},postRows=[];
