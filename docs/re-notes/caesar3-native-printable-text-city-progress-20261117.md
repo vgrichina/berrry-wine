@@ -42,3 +42,14 @@ evidence from the single authorized fresh invocation. The predecessor's empty
 name field, failed Escape exit, missing native wait/EOF and unproved old timeout
 cause are preserved as facts; this change does not reinterpret their filenames
 or revive any old UNKNOWN endpoint.
+
+The subsequent outer adapter reuses the GL worker's published
+`ParentProcessSupervisor` at the actual command boundary (`exec python3 ...
+supervised`). It pins that supervisor, the underlying Boids helper and the
+Caesar helper to a chosen current published revision. Preparation remains 240 s;
+the runtime and independent runtime watchdog remain 2400/2420 s. The prepared
+handshake follows compilation, full authored qualification and (for an original)
+all 114 recursive media hashes. Inner native timing and input limits are
+unchanged. Later unrelated main publication may advance the branch without
+refreshing the sealed source/module/helpers. Actual parent-process loss still
+causes shutdown. This integration does not assign a historical signal cause.
