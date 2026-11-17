@@ -3655,6 +3655,62 @@
         }
       ]
     },
+    "OpenFileFocusState": {
+      "file": "src/09c3-controls2-open-save-dialog.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 32,
+      "fields": [
+        {
+          "name": "owner",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "enable_owner",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "owner_generation",
+          "type": "i64",
+          "offset": 8,
+          "size": 8,
+          "count": 1,
+          "stride": 8
+        },
+        {
+          "name": "focus",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "reserved",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "focus_generation",
+          "type": "i64",
+          "offset": 24,
+          "size": 8,
+          "count": 1,
+          "stride": 8
+        }
+      ]
+    },
     "AnimateState": {
       "file": "src/09c3-wndprocs6-animate.wat",
       "frozen": null,
@@ -3892,6 +3948,214 @@
           "size": 4,
           "count": 1,
           "stride": 4
+        }
+      ]
+    },
+    "ModalContinuation": {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 120,
+      "fields": [
+        {
+          "name": "parent",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "hwnd",
+          "type": "i32",
+          "offset": 4,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "generation",
+          "type": "i64",
+          "offset": 8,
+          "size": 8,
+          "count": 1,
+          "stride": 8
+        },
+        {
+          "name": "process",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "thread",
+          "type": "i32",
+          "offset": 20,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ret",
+          "type": "i32",
+          "offset": 24,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "esp",
+          "type": "i32",
+          "offset": 28,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "adjust",
+          "type": "i32",
+          "offset": 32,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ebx",
+          "type": "i32",
+          "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "esi",
+          "type": "i32",
+          "offset": 40,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "edi",
+          "type": "i32",
+          "offset": 44,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ebp",
+          "type": "i32",
+          "offset": 48,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "kind",
+          "type": "i32",
+          "offset": 52,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "structure",
+          "type": "i32",
+          "offset": 56,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "wide",
+          "type": "i32",
+          "offset": 60,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "root",
+          "type": "i32",
+          "offset": 64,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "ofn",
+          "type": "i32",
+          "offset": 68,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "callback_pending",
+          "type": "i32",
+          "offset": 72,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "callback_esp",
+          "type": "i32",
+          "offset": 76,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "invocation",
+          "type": "i64",
+          "offset": 80,
+          "size": 8,
+          "count": 1,
+          "stride": 8
+        },
+        {
+          "name": "root_invocation",
+          "type": "i64",
+          "offset": 88,
+          "size": 8,
+          "count": 1,
+          "stride": 8
+        },
+        {
+          "name": "depth",
+          "type": "i32",
+          "offset": 96,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "callback_depth",
+          "type": "i32",
+          "offset": 100,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "callback_invocation",
+          "type": "i64",
+          "offset": 104,
+          "size": 8,
+          "count": 1,
+          "stride": 8
+        },
+        {
+          "name": "callback_root",
+          "type": "i64",
+          "offset": 112,
+          "size": 8,
+          "count": 1,
+          "stride": 8
         }
       ]
     },

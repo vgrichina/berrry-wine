@@ -1701,6 +1701,7 @@
     ;; PM_NOREMOVE may already own the cached event.
     (if (global.get $pending_input_packed) (then (return)))
     (local.set $packed (call $host_check_input))
+        (global.set $pending_input_token (call $host_check_input_token))
     (if (i32.eqz (local.get $packed)) (then (return)))
     (global.set $pending_input_hwnd (call $host_check_input_hwnd (global.get $focus_hwnd)))
     (global.set $pending_input_lparam (call $host_check_input_lparam))

@@ -170,6 +170,8 @@ const argHas = name => args.some(a => a.startsWith(`--${name}=`));
 const ENV_WASM = process.env.WINE_ASSEMBLY_WASM || '';
 const NO_BUILD = hasFlag('no-build') || !!ENV_WASM; // --no-build: skip auto-build
 const NO_CLOSE = hasFlag('no-close');      // --no-close: don't inject WM_CLOSE
+const recordNativeExit = require('../lib/cli-native-scene').createNativeExitRecorder(
+  getArg('native-exit-receipt',null),getArg('native-invocation-token',null));
 const CLI_NATIVE_OBSERVATION = hasFlag('cli-native-observation');
 if (CLI_NATIVE_OBSERVATION) require('../lib/cli-observation-lease').validateObservationArgs(args);
 const NO_RENDERER = hasFlag('no-renderer'); // --no-renderer: skip CLI canvas/renderer (guest-state diagnostics)
@@ -1757,6 +1759,10 @@ async function main() {
     const { layoutHash, appendSection } = require('../tools/region-layout-hash.js');
     wasmBytes = appendSection(Buffer.from(r.wasmBinary), layoutHash(r.regions.regions));
   }
+  if (process.env.DISCIPLES2_MODULE_SHA256 &&
+      require('node:crypto').createHash('sha256').update(wasmBytes).digest('hex') !== process.env.DISCIPLES2_MODULE_SHA256) {
+    throw new Error('actual CLI module differs from sealed qualification');
+  }
   const exeBytes = verifiedAssetFiles ? verifiedAssetFiles.verifiedMedia.exeBytes : readAssetBytes(EXE_PATH);
 
   // Where a DLL the guest asks for at run time comes from: what the app mounted
@@ -2302,6 +2308,10 @@ async function main() {
         // parent dialog. Generic helper for simple modal prompt dialogs.
         scheduledInput.push({ batch, action: 'edit-ok',
           ctrlId: parseInt(parts[2]), text: parts.slice(3).join(':') });
+      } else if (kind === 'keytext') {
+        if (parts.length !== 4 || !/^\d+$/.test(parts[2]) || !/^\d+$/.test(parts[3]))
+          throw new Error('keytext needs explicit VK and printable character code');
+        scheduledInput.push({ batch, action: 'keydown', code: Number(parts[2]), charCode: Number(parts[3]) });
       } else if (kind === 'keypress' || kind === 'keydown' || kind === 'keyup' ||
                  kind === 'di-keydown' || kind === 'di-keyup') {
         scheduledInput.push({ batch, action: kind, code: parseInt(parts[2]) });
@@ -3399,7 +3409,7 @@ async function main() {
   // one Heroes III run. The count survives in WAT ($api_calls, apiTotal()).
   // The list is every reader of an API name or exit below, plus --esp-audit,
   // which wraps a worker's log. --quiet-api-fast is now an alias of this.
-  const apiLogRequired = traceOn => !QUIET_API || traceOn ||
+  const apiLogRequired = traceOn => !QUIET_API || traceOn || !!getArg('public-consumer-trace', '') ||
     TRACE_API_COUNTS || API_THREAD_CENSUS || TRACE_CRITICAL || TRACE_INPUT_DISPATCH || ESP_DELTA ||
     ESP_AUDIT || breakApis.length || hasFlag('observe-morrowind-name') ||
     // Memory dumps accompany a paused API trace; they must not force its
@@ -4068,6 +4078,7 @@ async function main() {
 
   // --- Override exit to also log ---
   h.exit = code => {
+    recordNativeExit(code);
     processDesktop.retire();
     hostExitRequested = true;
     logs.push('[Exit] code=' + code); stopped = true;
@@ -4662,6 +4673,10 @@ async function main() {
   // Resolve the reader at call time so the optional observer below sees the
   // same mapped return as GetTickCount/timeGetTime/QueryPerformanceCounter.
   h.get_ticks = () => guestClock.ticks();
+  if (getArg('public-consumer-trace', '')) {
+    require('./public-consumer-observer').observePublicConsumers(h, () => instance.exports,
+      () => memory.buffer, translateGuest, getArg('public-consumer-trace', ''));
+  }
   // Independent of --trace-input-dispatch; no initialization or hooks by default.
   const mainSchedulerObserver = hasFlag('trace-main-scheduler')
     ? require('./main-scheduler-observer').createMainSchedulerObserver({ logs, isOpen: traceWindowOpen }) : null;
@@ -4759,9 +4774,9 @@ async function main() {
     lastInputEvent = evt;
     if (renderer) renderer._activeInputEvent = evt;
     inputConsumptionTrace.dequeue(evt, source);
-    // A host handler may have queued DOWN long before USER polls it. Only
-    // this actual input import return can acknowledge the matching edge.
-    if (guardedInput?.delivered(evt) === false) {
+    // Host dequeue only issues a candidate token. Exact successful native USER
+    // return must confirm that token before this intent can be consumed.
+    if (guardedInput?.dequeued(evt) === false) {
       lastInputEvent = null;
       if (renderer) renderer._activeInputEvent = null;
       return 0;
@@ -4787,6 +4802,7 @@ async function main() {
     inputConsumptionTrace.route(focusHwnd, hwnd);
     return hwnd;
   };
+  h.check_input_token = () => guardedInput?.token(lastInputEvent) || 0;
   h.check_input_lparam = () => (lastInputEvent ? (lastInputEvent.lParam || 0) : 0);
   h.check_input_wparam = () => (lastInputEvent ? (lastInputEvent.wParam || 0) : 0);
   // Match the browser host contract: the broker restores both metadata and
@@ -5323,6 +5339,7 @@ async function main() {
     process.on(sig, () => {
       if (signalExitStarted) return;
       signalExitStarted = true;
+      recordNativeExit.cancel(sig);
       terminationSignal = sig;
       console.log(`[signal] ${sig} requested orderly shutdown`);
       // Leave through the normal cleanup path. In particular, a controlled
@@ -5424,6 +5441,8 @@ async function main() {
       sharedGdi: base.gdi,  // the live GDI table, not the copy in ctx
       g2w: (addr) => translateGuest(addr, instance.exports.get_image_base(), memory.buffer),
     });
+    Object.defineProperty(workerCtx, 'guardedInput', { get: () => guardedInput });
+    workerCtx.nativeInputActor = () => workerInstance?.exports;
     Object.defineProperty(workerCtx, 'waveCallbackOwner', {
       get: () => waveCallbackRouting.owner(workerInstance?.exports, tid, WORKER_THREADS),
     });
@@ -5453,6 +5472,7 @@ async function main() {
     // metadata latch as the main instance.
     wh.check_input = mainSchedulerObserver
       ? () => mainSchedulerObserver.workerInput(tid, h.check_input) : h.check_input;
+    wh.check_input_token = h.check_input_token;
     wh.check_input_lparam = h.check_input_lparam;
     wh.check_input_wparam = h.check_input_wparam;
     wh.check_input_hwnd = h.check_input_hwnd;
@@ -7629,13 +7649,20 @@ async function main() {
   const sameReviewedWindow = (a, b) => a && b &&
     ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
       .every(k => a[k] === b[k]);
+  // A permanent reviewed-context binding pins the native owner, while each
+  // fresh intent below still verifies every caption/control/focus field. An
+  // ordinary SetWindowText after a completed intent does not replace an HWND.
+  const sameReviewedOwner = (a, b) => a && b &&
+    ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'visible', 'isChild', 'live']
+      .every(k => a[k] === b[k]);
   guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
-    nativeDelivery: true,
+    nativeDelivery: true, nativeProofRequired: true,
     captureNativeControl: (event,intent) => require('../lib/cli-native-user-windows').captureNativeButton(event,intent,controlSnapshot(),instance,threadManager),
     confirmNativeControl: (fence,event) => require('../lib/cli-native-user-windows').confirmNativeButton(fence,event),
     captureDelivery: () => nativeScene.reviewedContext(controlSnapshot()),
     validateDelivery: expected => JSON.stringify(nativeScene.reviewedContext(controlSnapshot())) === JSON.stringify(expected),
-    validateIntent: intent => {
+    validateIntent: (intent,event) => {
+      if (event.charCode !== undefined) require('../lib/cli-native-printable').validatePrintable(event,controlSnapshot(),renderer);
       if (!nativeSceneLease) return true;
       if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {
         try { reviewedContexts.verify(controlSnapshot(),intent.review,intent.event,intent.nonce); return true; }
@@ -7665,7 +7692,9 @@ async function main() {
         const ownerWindow=mainlessReview
           ? s.focusWindow.processId===nativeSceneLease.focusWindow.processId &&
             s.focusWindow.threadId===nativeSceneLease.focusWindow.threadId
-          : sameReviewedWindow(main,nativeSceneLease.main);
+          : (nativeSceneContract===nativeScene.REVIEWED_CONTEXT
+            ? sameReviewedOwner(main,nativeSceneLease.main)
+            : sameReviewedWindow(main,nativeSceneLease.main));
         current.healthy=current.healthy && ownerWindow &&
           JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
           JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
@@ -7702,6 +7731,8 @@ async function main() {
       if (ev.action === 'mousedown') refs.mouseUp.call(refs.renderer, ev.x, ev.y, 1);
     },
   });
+  ctx.guardedInput = guardedInput;
+  ctx.nativeInputActor = () => instance.exports;
   // takeInput itself publishes async key state. Guard queued delivery before
   // that effect, including callers other than h.check_input.
   if (renderer) {
@@ -7709,7 +7740,10 @@ async function main() {
     renderer.takeInput = function(...args) { guardedInput.sweep(); return take.apply(this, args); };
   }
   const applyGuardedInput = ev => {
-    if (ev.action === 'keydown') renderer.handleKeyDown(ev.code);
+    if (ev.action === 'keydown') {
+      renderer.handleKeyDown(ev.code);
+      if (ev.charCode !== undefined) renderer.handleKeyPress(ev.charCode);
+    }
     else if (ev.action === 'keyup') renderer.handleKeyUp(ev.code);
     else if (ev.action === 'mousemove') renderer.handleMouseMove(ev.x, ev.y);
     else if (ev.action === 'mousedown') renderer.handleMouseDown(ev.x, ev.y, 1);
@@ -7831,9 +7865,10 @@ async function main() {
       if (['keydown', 'keyup'].includes(ev.action) ?
           !Number.isInteger(ev.code) || ev.code < 1 || ev.code > 255 :
           !Number.isFinite(ev.x) || !Number.isFinite(ev.y)) throw new Error('invalid guarded input arguments');
+      if (ev.charCode !== undefined) require('../lib/cli-native-printable').validatePrintable(ev,controlSnapshot(),renderer);
       if (nativeSceneContract===nativeScene.REVIEWED_CONTEXT) {
         // Bind the actual parsed edge and nonce, never caller-provided event data.
-        cmd.guard={...cmd.guard,intent:{review:cmd.guard?.intent?.review,event:{action:ev.action,code:ev.code,x:ev.x,y:ev.y},nonce:cmd.guard?.nonce}};
+        cmd.guard={...cmd.guard,intent:{review:cmd.guard?.intent?.review,event:{action:ev.action,code:ev.code,charCode:ev.charCode,x:ev.x,y:ev.y},nonce:cmd.guard?.nonce}};
       }
       const ticket = guardedInput.prepare(cmd.guard, ev);
       if (ticket.state === 'QUEUED') {
@@ -10407,6 +10442,7 @@ async function main() {
         logs.push(`[input] ime-commit text=${JSON.stringify(ev.text)} at batch ${batch}`);
       } else if (ev.action === 'keydown' && renderer && renderer.handleKeyDown) {
         renderer.handleKeyDown(ev.code);
+        if (ev.charCode !== undefined) renderer.handleKeyPress(ev.charCode);
         logs.push(`[input] keydown vk=${ev.code} at batch ${batch}`);
       } else if (ev.action === 'keyup' && renderer && renderer.handleKeyUp) {
         renderer.handleKeyUp(ev.code);
@@ -13263,6 +13299,7 @@ if (VERBOSE) {
 }
 
 main().catch(async e => {
+  recordNativeExit.cancel('runner error');
   process.exitCode = process.exitCode || 1;
   console.error(e);
   // The threads have to be stopped either way

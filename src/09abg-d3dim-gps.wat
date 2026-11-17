@@ -24,7 +24,7 @@
   ;; ================================================================
   (global $D3DIM_GPS i32 (region.addr $D3DIM_GPS 0))
   (global $D3DIM_GPS_SIZE i32 (region.size $D3DIM_GPS))
-  (global $D3G_PB_SIZE i32 (i32.const 23360))
+  (global $D3G_PB_SIZE i32 (i32.const 24384))
   ;; The CPU-access site asking for the next readback (stats 16 + site).
   (global $d3dim_fence_site (mut i32) (i32.const 0))
   (global $D3G_RING_BYTES i32 (i32.const 1048576))
@@ -49,8 +49,12 @@
   ;; +28 rt id, +32 flags (1 dirty, 2 check, 4 drawn, 8 shadow valid),
   ;; +36..+48 dirty rect, +52 shadow wa, +56 shadow guest, +64 i64 watch
   ;; generation, +72 watched length (0 none), +76 length.
+  ;; +80 i64 materialized generation, +88 materialized watch valid. A CPU
+  ;; readback is a cache fill, not a new writer of the displayed primary.
   ;; Texture: +0 root entry, +4 id, +8 w, +12 h, +16 levels, +20 signature,
   ;; +24 tracked, +32 i64 generation, +40 range count, +48 ranges (wa, len).
+  ;; At 23360: 32 window publication owners, 32 bytes each: hwnd, primary
+  ;; entry, current DIB, RT, actual PRESENT record sequence, surface creator.
 
   (func $d3g_fail
     (call $host_log_i32 (i32.const 0x44334750))
@@ -410,6 +414,53 @@
       (br_if $scan (i32.lt_u (local.get $i) (global.get $D3G_TARGETS))))
     (i32.const 0))
 
+  ;; Read-only fallback policy for one live surface and its CURRENT allocation.
+  ;; Dirty GPU pixels, and a read-only materialization of those pixels, are
+  ;; not CPU publications. The normal retained-Lock path resumes as soon as
+  ;; the watched allocation is written. Targets are cleared by final release;
+  ;; a recycled slot/address cannot inherit this ownership.
+  (func (export "d3dim_gps_dib_is_derived") (param $slot i32) (param $dib i32) (result i32)
+    (local $pb i32) (local $entry i32) (local $t i32)
+    (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return (i32.const 0))))
+    (local.set $entry (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $slot) (i32.const 5))))
+    (if (i32.or (i32.ne (load.field DxObject type (local.get $entry)) (i32.const 2))
+          (i32.ne (load.field DxObject misc1 (local.get $entry)) (local.get $dib)))
+      (then (return (i32.const 0))))
+    (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
+    (if (i32.eqz (local.get $pb)) (then (return (i32.const 0))))
+    (if (i32.and (i32.ne (i32.load offset=184 (local.get $pb)) (i32.const 0))
+          (i32.and (i32.eq (i32.load offset=188 (local.get $pb)) (local.get $entry))
+                   (i32.eq (i32.load offset=164 (local.get $pb)) (local.get $dib))))
+      (then (return (i32.const 1))))
+    (local.set $t (call $d3g_find (local.get $pb) (local.get $dib)))
+    (if (i32.eqz (local.get $t)) (then (return (i32.const 0))))
+    (if (i32.or (i32.ne (load.field DxObject width (local.get $entry)) (i32.load offset=8 (local.get $t)))
+          (i32.or (i32.ne (load.field DxObject height (local.get $entry)) (i32.load offset=12 (local.get $t)))
+            (i32.or (i32.ne (load.field DxObject pitch (local.get $entry)) (i32.load offset=20 (local.get $t)))
+                    (i32.ne (load.field DxObject bpp (local.get $entry)) (i32.load offset=16 (local.get $t))))))
+      (then (return (i32.const 0))))
+    (if (i32.and (i32.load offset=32 (local.get $t)) (i32.const 1)) (then (return (i32.const 1))))
+    (if (i32.and (i32.ne (i32.load offset=88 (local.get $t)) (i32.const 0)) (call $d3g_watch_ok)) (then
+      (return (i64.eq (i64.load offset=80 (local.get $t))
+        (call $d3g_gensum (local.get $dib) (i32.load offset=76 (local.get $t)))))))
+    (i32.const 0))
+
+  ;; Read RT $id's rect (x, y, w, hgt) back into DIB $dib at (dx, dy).
+  (func (export "d3dim_gps_dib_cpu_generation") (param $slot i32) (param $dib i32) (result i64)
+    (local $pb i32) (local $entry i32) (local $t i32)
+    (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return (i64.const -1))))
+    (local.set $entry (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $slot) (i32.const 5))))
+    (if (i32.or (i32.ne (load.field DxObject type (local.get $entry)) (i32.const 2))
+          (i32.ne (load.field DxObject misc1 (local.get $entry)) (local.get $dib)))
+      (then (return (i64.const -1))))
+    (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
+    (if (i32.eqz (local.get $pb)) (then (return (i64.const -1))))
+    (local.set $t (call $d3g_find (local.get $pb) (local.get $dib)))
+    (if (i32.eqz (local.get $t)) (then (return (i64.const -1))))
+    (if (i32.or (i32.eqz (i32.load offset=72 (local.get $t))) (i32.eqz (call $d3g_watch_ok)))
+      (then (return (i64.const -1))))
+    (call $d3g_gensum (local.get $dib) (i32.load offset=76 (local.get $t))))
+
   ;; Read RT $id's rect (x, y, w, hgt) back into DIB $dib at (dx, dy).
   (func $d3g_read_rect (param $pb i32) (param $id i32) (param $x i32) (param $y i32) (param $w i32) (param $hgt i32)
       (param $dib i32) (param $pitch i32) (param $bpp i32) (param $fmt i32) (param $dx i32) (param $dy i32)
@@ -469,8 +520,9 @@
     (local.set $tp (i32.load offset=40 (local.get $t)))
     (local.set $r (i32.load offset=44 (local.get $t)))
     (local.set $b (i32.load offset=48 (local.get $t)))
-    (i32.store offset=32 (local.get $t) (i32.and (i32.load offset=32 (local.get $t)) (i32.const -2)))
-    (if (i32.or (i32.le_s (local.get $r) (local.get $l)) (i32.le_s (local.get $b) (local.get $tp))) (then (return)))
+    (if (i32.or (i32.le_s (local.get $r) (local.get $l)) (i32.le_s (local.get $b) (local.get $tp))) (then
+      (i32.store offset=32 (local.get $t) (i32.and (i32.load offset=32 (local.get $t)) (i32.const -2)))
+      (return)))
     (call $d3g_read_rect (local.get $pb) (i32.load offset=28 (local.get $t))
       (local.get $l) (local.get $tp) (i32.sub (local.get $r) (local.get $l)) (i32.sub (local.get $b) (local.get $tp))
       (i32.load (local.get $t)) (i32.load offset=20 (local.get $t)) (i32.load offset=16 (local.get $t))
@@ -485,7 +537,15 @@
           (i32.add (i32.load (local.get $t)) (local.get $off))
           (i32.mul (i32.sub (local.get $r) (local.get $l)) (i32.shr_u (i32.load offset=16 (local.get $t)) (i32.const 3))))
         (local.set $y (i32.add (local.get $y) (i32.const 1)))
-        (br $rows))))))
+        (br $rows)))))
+    (i32.store offset=88 (local.get $t) (i32.const 0))
+    (if (i32.and (i32.ne (i32.load offset=72 (local.get $t)) (i32.const 0)) (call $d3g_watch_ok)) (then
+      (i64.store offset=80 (local.get $t)
+        (call $d3g_gensum (i32.load (local.get $t)) (i32.load offset=76 (local.get $t))))
+      (i32.store offset=88 (local.get $t) (i32.const 1))))
+    ;; Keep GPU ownership while the consumer/readback conversion is in flight.
+    ;; A page-side fallback must never publish an incomplete materialization.
+    (i32.store offset=32 (local.get $t) (i32.and (i32.load offset=32 (local.get $t)) (i32.const -2))))
 
   ;; Union a dirty rect (floats, already padded) into $t; $bounded 0 = all.
   (func $d3g_mark (param $t i32) (param $bounded i32) (param $l f32) (param $tp f32) (param $r f32) (param $b f32)
@@ -1682,11 +1742,46 @@
     (call $d3g_upload (local.get $pb) (local.get $id) (i32.const 0) (i32.const 0) (i32.const 256) (i32.const 1) (local.get $pos))
     (local.get $id))
 
+  (func $d3g_window_owner (param $pb i32) (param $hwnd i32) (param $create i32) (result i32)
+    (local $i i32) (local $r i32) (local $free i32)
+    (loop $scan
+      (local.set $r (i32.add (i32.add (local.get $pb) (i32.const 23360)) (i32.shl (local.get $i) (i32.const 5))))
+      (if (i32.eq (i32.load (local.get $r)) (local.get $hwnd)) (then (return (local.get $r))))
+      (if (i32.eqz (i32.load (local.get $r))) (then (local.set $free (local.get $r))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.lt_u (local.get $i) (i32.const 32))))
+    (if (i32.and (i32.ne (local.get $free) (i32.const 0)) (i32.ne (local.get $create) (i32.const 0)))
+      (then (i32.store (local.get $free) (local.get $hwnd)) (return (local.get $free))))
+    (i32.const 0))
+
+  ;; An exact HWND/primary allocation owns each submitted PRESENT. The page
+  ;; can compare a delayed bitmap with its originating native RT and record,
+  ;; and bind GDI damage to that window's preceding record, not a global clock.
+  (func (export "d3dim_gps_window_present") (param $hwnd i32) (param $rt i32) (result i32)
+    (local $pb i32) (local $r i32) (local $entry i32) (local $seq i32)
+    (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
+    (if (i32.eqz (local.get $pb)) (then (return (i32.const 0))))
+    (local.set $r (call $d3g_window_owner (local.get $pb) (local.get $hwnd) (i32.const 0)))
+    (if (i32.eqz (local.get $r)) (then (return (i32.const 0))))
+    (local.set $seq (i32.atomic.load offset=16 (local.get $r)))
+    (local.set $entry (i32.load offset=4 (local.get $r)))
+    (if (i32.or (i32.ne (load.field DxObject type (local.get $entry)) (i32.const 2))
+          (i32.or (i32.ne (load.field DxObject misc1 (local.get $entry)) (i32.load offset=8 (local.get $r)))
+            (i32.ne (i32.load (call $dx_surf_creator_ptr (local.get $entry))) (i32.load offset=20 (local.get $r)))))
+      (then (return (i32.const 0))))
+    (if (i32.ne (call $dx_surface_target_hwnd (local.get $entry)) (local.get $hwnd))
+      (then (return (i32.const 0))))
+    (if (i32.and (i32.ne (local.get $rt) (i32.const 0)) (i32.ne (local.get $rt) (i32.load offset=12 (local.get $r))))
+      (then (return (i32.const 0))))
+    (if (i32.ne (local.get $seq) (i32.atomic.load offset=16 (local.get $r)))
+      (then (return (i32.const 0))))
+    (local.get $seq))
+
   ;; PRESENT; at most two in flight. stamp = the CPU present sequence, so a
   ;; later CPU present retires this layer.
   (func $d3g_present (param $pb i32) (param $rt i32) (param $x i32) (param $y i32) (param $w i32) (param $hgt i32)
-      (param $hwnd i32) (param $dx i32) (param $dy i32)
-    (local $h i32) (local $old i32) (local $p i32) (local $seq i32) (local $gamma i32)
+      (param $hwnd i32) (param $dx i32) (param $dy i32) (param $primary i32)
+    (local $h i32) (local $old i32) (local $p i32) (local $seq i32) (local $gamma i32) (local $owner i32)
     (local.set $h (call $d3g_h))
     (local.set $gamma (call $d3g_gamma (local.get $pb)))
     (local.set $old (i32.load offset=24 (local.get $pb)))
@@ -1706,7 +1801,18 @@
     (store.field GpsPresent dst_x (local.get $p) (local.get $dx))
     (store.field GpsPresent dst_y (local.get $p) (local.get $dy))
     (store.field GpsPresent stamp (local.get $p) (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 24)))
-    (local.set $seq (call $d3g_end (local.get $p)))
+    ;; This producer owns the ring under D3DIM_GPS. Publish the native owner
+    ;; before gps_end exposes the record to an already-running consumer.
+    (local.set $seq (i32.add (i32.atomic.load (load.field.memarg GpsRing seq_counter (local.get $h))) (i32.const 1)))
+    (local.set $owner (call $d3g_window_owner (local.get $pb) (local.get $hwnd) (i32.const 1)))
+    (if (i32.eqz (local.get $owner)) (then (call $d3g_fail)))
+    (i32.atomic.store offset=16 (local.get $owner) (i32.const 0))
+    (i32.store offset=4 (local.get $owner) (local.get $primary))
+    (i32.store offset=8 (local.get $owner) (load.field DxObject misc1 (local.get $primary)))
+    (i32.store offset=12 (local.get $owner) (local.get $rt))
+    (i32.store offset=20 (local.get $owner) (i32.load (call $dx_surf_creator_ptr (local.get $primary))))
+    (i32.atomic.store offset=16 (local.get $owner) (local.get $seq))
+    (if (i32.ne (call $d3g_end (local.get $p)) (local.get $seq)) (then (call $d3g_fail)))
     (i32.store offset=24 (local.get $pb) (i32.load offset=28 (local.get $pb)))
     (i32.store offset=28 (local.get $pb) (local.get $seq))
     (call $d3g_stat (local.get $pb) (i32.const 6) (i32.const 1))
@@ -1756,7 +1862,7 @@
     (store.field DxObject misc1 (local.get $front) (load.field DxObject misc1 (local.get $back)))
     (store.field DxObject misc1 (local.get $back) (local.get $tmp))
     (call $d3g_present (local.get $pb) (i32.load offset=28 (local.get $t))
-      (local.get $px) (local.get $py) (local.get $pw) (local.get $ph) (local.get $hwnd) (i32.const 0) (i32.const 0))
+      (local.get $px) (local.get $py) (local.get $pw) (local.get $ph) (local.get $hwnd) (i32.const 0) (i32.const 0) (local.get $front))
     (call $d3g_stat (local.get $pb) (i32.const 10) (i32.const 1))
     (i32.const 3))
 
@@ -2107,7 +2213,7 @@
       (i32.load offset=8 (local.get $s)) (i32.load offset=12 (local.get $s))
       (local.get $hwnd)
       (i32.sub (i32.load (local.get $s)) (call $wnd_client_screen_x (local.get $hwnd)))
-      (i32.sub (i32.load offset=4 (local.get $s)) (call $wnd_client_screen_y (local.get $hwnd))))
+      (i32.sub (i32.load offset=4 (local.get $s)) (call $wnd_client_screen_y (local.get $hwnd))) (local.get $dst))
     (call $d3g_stat (local.get $pb) (i32.const 11) (i32.const 1))
     (i32.const 1))
 
@@ -2359,6 +2465,7 @@
               (i32.load (local.get $t)) (i32.load offset=76 (local.get $t))) (then
           (if (i32.and (local.get $flags) (i32.const 1)) (then
             (local.set $flags (i32.and (local.get $flags) (i32.const -10)))
+            (i32.store offset=88 (local.get $t) (i32.const 0))
             (local.set $inside (i32.const 1))))
           (i32.store offset=32 (local.get $t) (i32.or (local.get $flags) (i32.const 2)))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
@@ -2430,6 +2537,13 @@
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
     (if (i32.eqz (local.get $pb)) (then (return)))
     (call $lock_acquire (global.get $D3DIM_GPS))
+    (loop $owners
+      (local.set $e (i32.add (i32.add (local.get $pb) (i32.const 23360)) (i32.shl (local.get $i) (i32.const 5))))
+      (if (i32.eq (i32.load offset=4 (local.get $e)) (local.get $entry))
+        (then (memory.fill (local.get $e) (i32.const 0) (i32.const 32))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $owners (i32.lt_u (local.get $i) (i32.const 32))))
+    (local.set $i (i32.const 0))
     (local.set $t (call $d3g_find (local.get $pb) (load.field DxObject misc1 (local.get $entry))))
     (if (local.get $t) (then (call $d3g_target_drop (local.get $pb) (local.get $t) (i32.const 0))))
     (loop $depth

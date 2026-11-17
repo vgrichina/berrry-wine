@@ -6169,6 +6169,11 @@
       "name": "$dialog_route_mouse",
       "writes": 0,
       "boundaryCalls": [
+        "$wnd_lookup_live",
+        "$wnd_get_thread",
+        "$wnd_lookup_live",
+        "$wnd_lookup_generation",
+        "$wnd_get_thread",
         "$ctrl_get_xy_packed",
         "$wnd_send_message",
         "$wnd_next_child_slot",
@@ -6182,21 +6187,18 @@
         "$combobox_hit_h",
         "$dialog_route_mouse",
         "$combobox_close_dropdown",
-        "$wnd_table_get",
-        "$wnd_lookup_generation",
-        "$current_process_id",
         "$wnd_get_thread",
-        "$wnd_send_message",
-        "$native_button_returned",
+        "$wnd_lookup_generation",
+        "$dialog_native_mouse",
         "$combobox_close_dropdown"
       ],
       "exports": [
         "dialog_route_mouse"
       ],
       "targets": [],
-      "sha256": "b139f6ac05494f56062b387490356cdb41a5343fb8d330ea9a616bd1be9a4c7b",
+      "sha256": "5df18097cadbf366d3772d9a6d33b9d647dfe25d794fa8bee64d49a11e447124",
       "kind": "mixed-dispatch",
-      "reason": "Existing synchronous native control dispatch retains its callback/frame/continuation lifetime. After an actual native WAT BUTTON WM_LBUTTONDOWN dispatch returns, publish one actor-local sequenced historical USER identity captured before callbacks. Read-only identity helpers and native_button_returned add no guest callback, EIP write or restoration. Host must match exact reviewed actor/HWND/generation/parent/message and one new sequence. General invocation ownership remains pending; authored nested modal and queued-input regressions qualify the two distinct input boundaries.",
+      "reason": "Review 20261117 modal continuation repair: heap-owned exact actor, window generation, full child/root invocation and callback stack validation govern nested native modal continuations. Actual native BUTTON refuses wrong actors before effects and confirms only its matching synchronous invocation return. Main and CPUWorker qualification in progress, no installed invocation or general ownership assertion.",
       "ownership": "pending"
     },
     {

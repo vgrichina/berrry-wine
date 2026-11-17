@@ -44,6 +44,35 @@ def identity():
     owned=[x[9] for x in rows if x[1]=='0100007F:'+format(PORT,'04X') and x[3]=='0A']
     assert len(owned)==1 and 'socket:['+owned[0]+']' in sockets
     return info
+def same_live_invocation(info):
+    # This is an observation, never a wait or a success oracle. Zombies have
+    # already exited and cannot establish pre-DOWN liveness.
+    assert type(info.get('pid')) is int and info['pid']>0
+    assert info.get('invocationToken') and info.get('startToken') and info.get('bootId')
+    assert pathlib.Path('/proc/sys/kernel/random/boot_id').read_text().strip()==info['bootId']
+    try:s=pathlib.Path(f"/proc/{info['pid']}/stat").read_text()
+    except FileNotFoundError:return False
+    fields=s[s.rindex(')')+2:].split()
+    assert fields[19]==info['startToken'],'stale/reused native identity'
+    return fields[0] not in ('Z','X','x')
+def normal_exit(info,up_ack_mono,start):
+    assert not (R/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN'
+    assert time.time()<start+3,'aggregate observation UNKNOWN'
+    p=R/'native-wait.json'
+    if not p.exists():return None
+    native=read(p.name)
+    assert all(native.get(k)==info[k] for k in ('pid','startToken','invocationToken','bootId')),'unrelated native wait'
+    assert native.get('actualWait') is True and type(native.get('exit')) is int and native['exit']==0
+    assert native.get('disposition')=='normal' and native.get('signal') in (None,0)
+    assert type(native.get('atWaitMono')) in (int,float) and native['atWaitMono']>=up_ack_mono
+    assert type(native.get('atWait')) in (int,float) and start<=native['atWait']<start+3
+    guest=read('native-exit.json')
+    assert not (R/'native-exit.json.cancelled').exists(),'native invocation cancelled'
+    assert guest.get('contract')=='native-process-exit-v1'
+    assert all(guest.get(k)==info[k] for k in ('pid','startToken','invocationToken','bootId')),'unrelated native exit'
+    assert type(guest.get('exitCode')) is int and guest['exitCode']==0,'native error exit'
+    assert type(guest.get('atExitMono')) in (int,float) and up_ack_mono<=guest['atExitMono']<=native['atWaitMono']
+    return native
 def call(command,timeout=1,cleanup=False):
     assert not (R/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; no later requests'
     identity()
@@ -117,7 +146,7 @@ def release(name,owner,due):
         time.sleep(min(.003,max(0,due-time.time())))
     try:
         sent=time.time();reply=call(dict(action='guarded-release',owner=owner),timeout=.2,cleanup=True)
-        save(name+'-up.json',dict(at=time.time(),sentAt=sent,reply=reply,physicalUpACK=reply.get('released') is True))
+        save(name+'-up.json',dict(at=time.time(),monotonic=time.monotonic(),sentAt=sent,reply=reply,physicalUpACK=reply.get('released') is True))
     except BaseException as e:save(name+'-up.json',dict(at=time.time(),error=str(e),physicalUpACK=False));raise
 def release_process(name,owner,due,stdout_read,stdout_write,stderr_read,stderr_write):
     os.close(stdout_read);os.close(stderr_read)
@@ -158,11 +187,14 @@ def intent(name,scene,x,y,kind):
         if kind!='quit':assert not (R/'quit-phase.json').exists() and time.time()+3<launch['gameplayCutoff']
         assert not (R/'PERMANENT-UNKNOWN.json').exists()
         owner=read('input-owner.json');nonce=str(uuid.uuid4());start=time.time()
+        # Retain once, before DOWN. Never reread a replacement PID as authority.
+        invocation=dict(rr['target']);assert invocation==identity()
+        assert same_live_invocation(invocation),'native not live before DOWN'
         # The retained personally reviewed full image is immutable. Native
         # verification checks every public semantic control, not repaint bytes.
         command=f'keydown:{y}' if x==-1 else f'mousedown:{x}:{y}'
         save(name+'-intent.json',dict(scene=scene,x=x,y=y,kind=kind,owner=owner,nonce=nonce,
-             at=start,confirmationDeadline=start+.5,physicalUpDeadline=start+1.75,observationDeadline=start+3))
+             nativeIdentity=invocation,at=start,confirmationDeadline=start+.5,physicalUpDeadline=start+1.75,observationDeadline=start+3))
         child=ArmedRelease(name,owner['owner'],start+1.4)
         ready,_,_=select.select([child.stdout],[],[],.15);assert ready,'release was not prearmed'
         arm=json.loads(child.stdout.readline());save(name+'-release-arm.json',arm);assert arm['armed']
@@ -173,30 +205,43 @@ def intent(name,scene,x,y,kind):
         save(name+'-down.json',dict(at=time.time(),receipt=receipt))
         assert time.time()<start+.5 and receipt['state']=='CONSUMED' and receipt['consumed'],'confirmation UNKNOWN'
         assert all(receipt.get(k)==v for k,v in dict(owner=owner['owner'],epoch=owner['epoch'],nonce=nonce).items())
-        assert 0<receipt['consumedAt']<min((start+.5)*1000,(min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000),'late consumption'
+        assert start*1000<=receipt['consumedAt']<min((start+.5)*1000,(min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000),'late consumption'
         save(name+'-up-at.json',dict(at=receipt['consumedAt']/1000+.1))
         out,err=child.communicate(timeout=max(.001,start+1.75-time.time()))
         save(name+'-release-wait.json',dict(pid=child.pid,exit=child.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=out.decode(),stderr=err.decode()))
         up=read(name+'-up.json');assert child.returncode==0 and up['physicalUpACK'] and up['at']<start+1.75
+        assert up['reply'].get('owner')==owner['owner'],'unrelated physical UP'
+        assert receipt['consumedAt']/1000<=up['sentAt']<=up['at']
+        # The independent release process retains its ACK clock before joining.
+        # A fast guest may already have exited by the time join returns. The
+        # native exit callback below must be later than that actual ACK.
+        up_ack_mono=up['monotonic']
+        assert type(up_ack_mono) in (int,float) and up_ack_mono<=time.monotonic()
         # Acknowledgement proves input consumption only. Observe a later scene.
         # Observe the actual transition immediately. There is no minimum
         # completion delay: 3000ms bounds the entire intent and its evidence.
         while True:
             assert time.time()<start+3,'aggregate observation UNKNOWN'
-            waited=R/'native-wait.json'
-            if waited.exists():
-                native=read('native-wait.json');assert kind=='quit' and native['actualWait'] and native['exit']==0
-                save(name+'-observation.json',dict(at=time.time(),nativeWait=native,noPostExitRequest=True))
+            native=normal_exit(invocation,up_ack_mono,start)
+            if native is not None:
+                save(name+'-observation.json',dict(at=time.time(),outcome='process-exited',nativeWait=native,
+                     nativeExit=read('native-exit.json'),noPostExitRequest=True))
                 break
             if kind=='quit':
                 time.sleep(.005);continue # Quit is proved by parent wait, never a request to a retiring endpoint.
-            if not pathlib.Path(f"/proc/{read('native-pid.json')['pid']}").exists():
+            if not same_live_invocation(invocation):
                 time.sleep(.005);continue # Parent still drains pipes/publishes its actual wait.
-            after=call(dict(action='snapshot'),timeout=max(.001,start+3-time.time()))
+            try:after=call(dict(action='snapshot'),timeout=max(.001,start+3-time.time()))
+            except OSError:
+                # Endpoint loss while still live is terminal. If the exact
+                # invocation has exited, only its independent wait can decide;
+                # no retry/rebind/replay or blanket connection-refused waiver.
+                if same_live_invocation(invocation):raise
+                continue
             if kind!='quit' and after['physicalUp'] and context(after)!=context(rr['snapshot']):
                 save(name+'-observation.json',dict(at=time.time(),snapshot=after));break
             time.sleep(.005)
-        assert time.time()<start+3
+        assert not (R/'PERMANENT-UNKNOWN.json').exists() and time.time()<start+3
         save(name+'-completion.json',dict(at=time.time(),elapsedMs=(time.time()-start)*1000,limitsMs=dict(confirmation=500,physicalUp=1750,aggregate=3000)))
         assert time.time()<start+3
         print(json.dumps(dict(completedAt=time.time(),elapsedMs=(time.time()-start)*1000,

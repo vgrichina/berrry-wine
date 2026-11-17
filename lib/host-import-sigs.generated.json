@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 300,
+  "count": 303,
   "sigs": {
     "log": {
       "params": [
@@ -333,6 +333,32 @@
     },
     "check_input": {
       "params": [],
+      "results": [
+        "i32"
+      ]
+    },
+    "check_input_token": {
+      "params": [],
+      "results": [
+        "i32"
+      ]
+    },
+    "input_validate": {
+      "params": [
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "input_consumed": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
       "results": [
         "i32"
       ]

@@ -100,6 +100,62 @@ writeGuestU32(cbGA, 0);
 assert.strictEqual(storage.reg_query_value(hKey, g2w(valueNameGA, IMAGE_BASE), 0, 0, cbGA, 0), 0);
 assert.strictEqual(readGuestU32(cbGA), 4);
 
+// Creating an existing key with a trailing separator must not clear values.
+// Exercise ordinary names, default data, types, close/reopen and persistence.
+{
+  const key = 'Software\\Separator Persistence Proof';
+  const create = suffix => {
+    writeGuestString(subKeyGA, key + suffix);
+    assert.strictEqual(storage.reg_create_key(0x80000001,
+      g2w(subKeyGA, IMAGE_BASE), phkGA, 0, dispositionGA), 0);
+    return readGuestU32(phkGA);
+  };
+  const first = create('');
+  for (const [name, type, data] of [['Space Value', 1, 'caf\xe9'], ['', 1, 'default'],
+    ['Number', 4, 0xdeadbeef], ['Bytes', 3, [0, 255, 128, 1]]]) {
+    writeGuestString(valueNameGA, name);
+    if (type === 1) writeGuestString(valueGA, data);
+    else if (type === 4) writeGuestU32(valueGA, data);
+    else mem.set(data, g2w(valueGA, IMAGE_BASE));
+    assert.strictEqual(storage.reg_set_value(first, g2w(valueNameGA, IMAGE_BASE),
+      type, valueGA, type === 1 ? data.length + 1 : 4, 0), 0);
+  }
+  const record = () => Object.entries(exportStore()).filter(([k]) =>
+    k.toLowerCase().startsWith('reg:hkcu\\' + key.toLowerCase()));
+  const before = record();
+  for (const suffix of ['\\', '\\\\', '']) {
+    const next = create(suffix);
+    assert.strictEqual(readGuestU32(dispositionGA), 2);
+    assert.deepStrictEqual(record(), before, 'CreateKey preserves the existing record');
+    writeGuestString(valueNameGA, 'space value');
+    writeGuestU32(cbGA, 64);
+    assert.strictEqual(storage.reg_query_value(next, g2w(valueNameGA, IMAGE_BASE),
+      0, outGA, cbGA, 0), 0);
+    assert.strictEqual(readStrA(memory, g2w(outGA, IMAGE_BASE)), 'caf\xe9');
+    assert.strictEqual(storage.reg_close_key(next), 0);
+    assert.strictEqual(storage.reg_set_value(next, 0, 1, valueGA, 1, 0), 6);
+    assert.deepStrictEqual(record(), before, 'closed handle never mutates values');
+  }
+  assert.strictEqual(storage.reg_flush_key(first), 0);
+  assert.strictEqual(storage.reg_close_key(first), 0);
+  const persisted = JSON.parse(JSON.stringify(exportStore()));
+  const { clearStore } = require('../lib/storage');
+  clearStore(); importStore(persisted);
+  assert.deepStrictEqual(record(), before, 'JSON export/import preserves values');
+  const reopened = create('\\');
+  writeGuestString(valueNameGA, 'Space Value');
+  assert.strictEqual(storage.reg_delete_value(reopened, g2w(valueNameGA, IMAGE_BASE), 0), 0);
+  assert.strictEqual(storage.reg_delete_value(reopened, g2w(valueNameGA, IMAGE_BASE), 0), 2);
+  assert.strictEqual(storage.reg_query_value(reopened, g2w(valueNameGA, IMAGE_BASE), 0, 0, cbGA, 0), 2);
+  assert.strictEqual(storage.reg_close_key(reopened), 0);
+  writeGuestString(subKeyGA, key + '\\');
+  assert.strictEqual(storage.reg_delete_key(0x80000001, g2w(subKeyGA, IMAGE_BASE), 0), 0);
+  assert.deepStrictEqual(record(), [], 'legitimate key deletion still removes the record');
+}
+writeGuestString(subKeyGA, 'Software\\WineAssemblyTest');
+writeGuestString(valueNameGA, 'PlayerName');
+writeGuestString(valueGA, 'Ada');
+
 // RegFlushKey: succeeds for an open handle and for a predefined root, and
 // reports ERROR_INVALID_HANDLE for anything else. Diablo flushes its Multi
 // Player key before starting a game, so a handle it just opened has to pass.
@@ -364,9 +420,9 @@ const factoryOut = 0x140;
 const cookie = comStorage.com_register_class_object(clsidWA, factory, 5, 1) >>> 0;
 assert(cookie, 'CoRegisterClassObject host state issues a nonzero cookie');
 assert.strictEqual(
-  comStorage.com_create_instance(clsidWA, 0, 0x80000001, iidWA, factoryOut),
-  0,
-  'CoGetClassObject resolves a process-registered guest class factory'
+  comStorage.com_create_instance(clsidWA, 0, 0xc0000001, iidWA, factoryOut),
+  3,
+  'owner-side resolution returns a registered factory for native QueryInterface'
 );
 assert.strictEqual(comDv.getUint32(factoryOut, true), factory,
   'registered class-factory pointers survive until activation');

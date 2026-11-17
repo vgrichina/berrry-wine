@@ -142,13 +142,14 @@ fixture.write('Native controller: first\0',raw(0x2540));
 fixture.writeUInt32LE(0x402700,second+6);fixture.writeUInt32LE(0x402780,second+11);
 fixture.write('Native controller: second\0',raw(0x2700));
 fixture.write('Second native modal. OK exits the generated fixture.\0',raw(0x2780));
-// Author an ordinary guest Sleep before ExitProcess so an immediately closing
-// MessageBox cannot retire the endpoint before the independent physical UP.
-// This affects generated fixtures only; original clocks and EXEs are untouched.
-fixture.writeUInt32LE(0x1a20,raw(0x1904));fixture.write('Sleep\0',raw(0x1a22));
+// Observe elapsed --real-ticks time: uncapped Sleep uses the batch clock.
+// This authored guest stays alive through independent UP; original media,
+// runtime clocks and the strict exit-after-ACK contract remain unchanged.
+fixture.writeUInt32LE(0x1a20,raw(0x1904));fixture.write('GetTickCount\0',raw(0x1a22));
 const exit=fixture.indexOf(Buffer.from([0x50,0xff,0x15,0,0x19,0x40,0,0xcc]),raw(0x2000));assert(exit>0);
-fixture.copy(fixture,exit+12,exit+1,raw(0x2500)-11);
-Buffer.from([0x68,0xe8,3,0,0,0xff,0x15,4,0x19,0x40,0]).copy(fixture,exit+1);
+const wait=Buffer.from(require('./test-vb5-normal-exit-native.cjs').elapsedWait(1000));
+fixture.copy(fixture,exit+1+wait.length,exit+1,raw(0x2500)-wait.length);
+wait.copy(fixture,exit+1);
 fs.writeFileSync(image,fixture,{flag:'wx'});
 const premain=Buffer.from(fixture),prefix=Buffer.from([0x68,0x10,0,0,0,0x68,0x40,0x25,0x40,0,0x68,0x80,0x25,0x40,0,0x6a,0,0xff,0x15,0x4c,0x19,0x40,0,0xe9,0,0,0,0]);
 prefix.writeUInt32LE(0x402d00,6);premain.write('Native controller: pre-main\0',raw(0x2d00));
@@ -179,16 +180,18 @@ async function main(){
   const wclosed=new Promise(resolve=>watchdog.on('close',(exit,signal)=>resolve({exit,signal})));
   while(!ws.includes('ARMED'))await pause(5);
   fs.writeFileSync(path.join(run,'watchdog-armed.json'),JSON.stringify({pid:watchdog.pid,at:Date.now(),prearmed:true,deadlineMs:65000,stdout:ws}));
-  const s=startControlSession(['test/run.js','--exe='+(mode.startsWith('no-main-')?premainImage:image),'--winver=nt4','--no-build','--spawn-processes','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=60','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{cwd:root,spawnOptions:{detached:true}});
+  const invocationToken=require('node:crypto').randomUUID();
+  const s=startControlSession(['test/run.js','--native-exit-receipt='+path.join(run,'native-exit.json'),'--native-invocation-token='+invocationToken,'--exe='+(mode.startsWith('no-main-')?premainImage:image),'--winver=nt4','--no-build','--spawn-processes','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=60','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{cwd:root,spawnOptions:{detached:true}});
   const send=s.send;let requests=0;
   s.send=command=>{
     assert(!fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')),'permanent UNKNOWN; fixture sends no later requests');
     requests++;fs.appendFileSync(path.join(run,'fixture-requests.jsonl'),JSON.stringify({at:Date.now(),action:command.action})+'\n');return send(command);
   };
-  s.child.once('close',(exit,signal)=>publishJSON(path.join(run,'native-wait.json'),{pid:s.child.pid,exit,signal,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
+  s.child.once('close',(exit,signal)=>publishJSON(path.join(run,'native-wait.json'),{...nativeIdentity,exit,signal,actualWait:true,disposition:'normal',atWait:Date.now()/1000,atWaitMono:Number(process.hrtime.bigint())/1e9,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
   watchdog.stdin.write(String(s.child.pid));
   const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');
-  fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify({pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19]}));
+  const nativeIdentity={pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],invocationToken,bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()};
+  fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify(nativeIdentity));
   let controllerRuns=0;
   const controller=async(args,expected=0)=>{
     const startedAt=Date.now();

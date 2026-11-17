@@ -1,7 +1,39 @@
 'use strict';
 // This exact browser entry is shared by authored PE qualification and originals.
-function installDriver(root, {app, mode, deadline}) {
+function installDriver(root, {app, mode, deadline, trace = false}) {
   let pin=null, closed=null;
+  // Bounded, opt-in scalar observations only. Never query a guest surface,
+  // release a writer, schedule a repaint or retain a frame to diagnose a wait.
+  let observations=0,lastState=null,nextObject=1;
+  const objects=new WeakMap(),identity=o=>{if(!o||(typeof o!=='object'&&typeof o!=='function'))return null;
+    if(!objects.has(o))objects.set(o,nextObject++);return objects.get(o);};
+  function observe(stage,p,t) {
+    if(!trace||observations>=64)return;
+    const before=root.performance?.now?.()??Date.now();
+    try {
+    const w=p?.w,r=p?.renderer,b=w?.hostCtx?.d3dimBridge,record=r?._currentDisplayRecord;
+    const state={stage,status:t?.status,dirty:!!w?._dxDirty,lockDeferred:!!w?._dxLockDeferred,
+      presentDue:!!w?._presentFrameDue,slice:r?._workerGuestSliceDepth,
+      gdi:r?._workerGdiPaintDepth,repainting:!!r?._repainting,scheduled:!!r?._repaintScheduled,
+      pending:!!r?._repaintPending,deferred:!!r?._workerRepaintDeferred,
+      publication:r?._immutablePublicationSequence,displayedAt:r?._currentDisplayRecord?.displayedAt,
+      source:identity(record?.display?.source),output:identity(record?.display?.output),
+      producer:{received:b?.presenter?.presents,stale:b?.presenter?.stale,epoch:b?.workerEpoch,
+        error:String(b?.workerAsyncError||''),closing:!!b?.workerClosing,
+        layer:identity(b?.presenter?.layer),layerCanvas:identity(b?.presenter?.layer?.canvas)},
+      joins:[...(r?._d3dimPublicationJoins||[])].slice(0,8).map(j=>({live:j.live,
+        words:j.epoch?.words?Array.from(j.epoch.words.subarray(0,4),(_,i)=>Atomics.load(j.epoch.words,i)):null}))};
+    const key=JSON.stringify(state);if(stage==='poll'&&key===lastState)return;lastState=key;
+    const row={...state,at:Date.now(),ordinal:++observations};
+    (root.__boidsCaptureTrace||(root.__boidsCaptureTrace=[])).push(row);
+    root.console?.debug('BOIDS_CAPTURE_TRACE '+JSON.stringify(row));
+    } catch (_) { /* Diagnostics cannot change capture returns or failures. */ }
+    finally {
+      const elapsed=(root.performance?.now?.()??Date.now())-before;
+      const c=root.__boidsCaptureTraceCost||(root.__boidsCaptureTraceCost={samples:0,totalMs:0,maxMs:0});
+      c.samples++;c.totalMs+=elapsed;c.maxMs=Math.max(c.maxMs,elapsed);
+    }
+  }
   const waits={missingApp:0,missingInstance:0,missingWindow:0,missingDisplay:0,missingRenderer:0};
   const check=(v,s)=>{if(!v)throw Error(s);};
   const live=()=>{
@@ -47,23 +79,24 @@ function installDriver(root, {app, mode, deadline}) {
         // A live renderer/window is mandatory. Scalar instance readiness is insufficient.
         // Pin only after ordinary creation has selected this owner.
         pin={...p,ports:p.ports.slice(),hwnd:p.win.hwnd,processId:p.w.processId,portIds:p.ports.map(v=>v.id)};
-        return describe(verify());
+        observe('ready',verify());return describe(verify());
       }await new Promise(r=>setTimeout(r,20));}
       throw Error('live app/window readiness deadline');
     }catch(e){closed=String(e);throw e;}},
     identity(){try{return describe(verify());}catch(e){closed=String(e);throw e;}},
     async capture(){let t;const started=Date.now(),end=Math.min(deadline,started+3000);try{
-      const p=verify();t=p.w.requestCurrentDisplayCapture({hwnd:pin.hwnd});
-      while(t.status==='pending'&&Date.now()<end){verify();await new Promise(r=>setTimeout(r,20));}
+      observe('capture-enter',pin);
+      const p=verify();observe('request-enter',p);t=p.w.requestCurrentDisplayCapture({hwnd:pin.hwnd});observe('request-return',p,t);
+      while(t.status==='pending'&&Date.now()<end){const p=verify();observe('poll',p,t);await new Promise(r=>setTimeout(r,20));}
       check(Date.now()<end,'late capture data');check(t.status==='complete','DISPLAY_UNKNOWN '+t.status+' '+t.error);
-      verify();const r=t.read(),m=r?.metadata;
+      observe('ticket-complete',verify(),t);const r=t.read(),m=r?.metadata;
       check(m?.observation==='current-display'&&m.captureOwner?.hwnd===pin.hwnd&&m.captureOwner?.processId===pin.processId,'wrong complete capture owner');
       check(m.readbackCompletedAt>=started&&m.readbackCompletedAt<end,'late complete capture');
       for(const k of ['source','output'])check(Number.isInteger(m[k]?.width)&&m[k].width>0&&Number.isInteger(m[k].height)&&m[k].height>0&&r[k+'RGBA']?.length===m[k].width*m[k].height*4,'incomplete frame');
       const encode=b=>{let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode(...b.subarray(i,i+8192));return btoa(s);};
       const result={metadata:m,source:encode(r.sourceRGBA),output:encode(r.outputRGBA),identity:describe(verify()),elapsedMs:Date.now()-started};
-      check(Date.now()<end,'late encoded capture');return result;
-    }catch(e){t?.cancel();closed=String(e);throw e;}},
+      check(Date.now()<end,'late encoded capture');observe('encoded',verify(),t);return result;
+    }catch(e){observe('refused',pin,t);t?.cancel();closed=String(e);throw e;}},
   };
 }
 module.exports={installDriver};

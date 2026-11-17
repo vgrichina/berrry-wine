@@ -69,6 +69,7 @@ const SOURCE_FILES = WAT_FILES.map((file) => `src/${file}`);
 // sites and compares their literal arguments to the parsed layout size.
 const alloc = (func, count = 1) => ({ func, target: '$state', count });
 const VARIANTS = {
+  OpenFileFocusState: { allocators: [{func:'$opendlg_focus_begin',target:'$s',count:1}] },
   ButtonState:        { allocators: [alloc('$button_wndproc')] },
   StaticState:        { allocators: [alloc('$static_wndproc'), alloc('$syslink_wndproc')] },
   ProgressState:      { allocators: [alloc('$progress_wndproc', 2)] },
@@ -103,6 +104,8 @@ const add = (variant, names, why) => {
   }
 };
 
+add('OpenFileFocusState', ['$opendlg_focus_begin','$opendlg_focus_end'],
+  'class 12 create_open_dialog owns the shared focus lease; WM_DESTROY detaches it before notifications');
 // Accessor layers. Each function's NAME is the field name, so the mapping is
 // self-evidencing: $btn_flags is ButtonState.flags and cannot be anything else.
 add('ButtonState', [

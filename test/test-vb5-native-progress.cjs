@@ -8,7 +8,19 @@ const raw=r=>r-0x1000+0x200,u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
 // Add actual msctls_progress32 template children and real guest timer updates.
 function fixture(options={}){
  const b=require('./test-vb5-native-dialog-identity.cjs').fixture(options);
- for(const [r,entry]of [[0x1500,0x12a0],[0x1700,0x12b0]]){
+ // The extra child makes the nested template larger than the gap before
+ // the import directory at 0x1800. Keep those PE tables intact: corrupting
+ // kernel32's descriptor leaves Sleep's name RVA executable as guest code.
+ const nestedTemplate=0x2c00,nestedBytes=b.readUInt32LE(raw(0x12b4));
+ b.copy(b,raw(nestedTemplate),raw(0x1700),raw(0x1700)+nestedBytes);
+ b.writeUInt32LE(nestedTemplate,raw(0x12b0));
+ if(options.indirect){
+  // The base fixture's two nested indirect calls use a template address.
+  for(let i=raw(0x2000);i<raw(0x2500)-4;i++)
+   if(b[i]===0x68&&b.readUInt32LE(i+1)===0x401700)b.writeUInt32LE(0x400000+nestedTemplate,i+1);
+ }
+ const importDirectory=Buffer.from(b.subarray(raw(0x1800),raw(0x1850)));
+ for(const [r,entry]of [[0x1500,0x12a0],[nestedTemplate,0x12b0]]){
   b.writeUInt16LE(3,raw(r+8));
   let a=raw(r+b.readUInt32LE(raw(entry+4)));a=(a+3)&~3;
   const w=n=>{b.writeUInt16LE(n&65535,a);a+=2;},d=n=>{b.writeUInt32LE(n>>>0,a);a+=4;},s=t=>{for(const c of t)w(c.charCodeAt(0));w(0);};
@@ -16,6 +28,7 @@ function fixture(options={}){
   s(options.password?'EDIT':options.unsupported?'msctls_trackbar32':'msctls_progress32');s('Generic1');w(0);
   assert(a<=raw(r+0x200));b.writeUInt32LE(a-raw(r),raw(entry+4));
  }
+ assert(b.subarray(raw(0x1800),raw(0x1850)).equals(importDirectory),'resource templates must not overwrite PE imports');
  let p=0x1c00;
  for(const [i,name]of ['SetTimer','GetDlgItem','SendMessageA'].entries()){
   b.writeUInt32LE(p,raw(0x1960+i*4));b.write(name+'\0',raw(p+2));p+=name.length+3;
@@ -63,7 +76,8 @@ function units(){
  assert.equal(progress.observe({...e,ctrl_get_class:()=>1},3),null);
  let reads=0;assert.throws(()=>progress.observe({...e,wnd_lookup_generation:()=>++reads},3),/retired/);
  assert(!progress.supported({...w,controlClass:18}));assert(!progress.supported({...w,controlClass:2,nativeTextAvailable:false}));
- const b=fixture();assert.equal(b.readUInt16LE(raw(0x1508)),3);assert.equal(b.readUInt16LE(raw(0x1708)),3);
+ const b=fixture();assert.equal(b.readUInt16LE(raw(0x1508)),3);assert.equal(b.readUInt16LE(raw(b.readUInt32LE(raw(0x12b0))+8)),3);
+ assert.equal(b.readUInt32LE(raw(0x1800)),0x1900);assert.equal(b.readUInt32LE(raw(0x1810)),0x1900);
  const script=String.raw`import importlib.util,copy
 s=importlib.util.spec_from_file_location('control','tools/vb5cce-reviewed-control.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 bar=dict(controlClass=17,live=True,generation='3',processId=1000,threadId=1,parent='0x1',owner='0x0',style=0x50000000,title='Generic1',progress=dict(contract='native-progress-v1',available=True,min=0,max=0,pos=0,step=0))

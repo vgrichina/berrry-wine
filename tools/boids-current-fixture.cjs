@@ -29,11 +29,15 @@ function prepare(out, active = false, flip = false, device2 = false){
       .replace(/if\(!checked\)\{[\s\S]*?checked=1;\}/,'if(!checked){SetWindowTextA(hwnd,"AUTHORED native COM FLIP geometry");checked=1;}');
     if(flip==='black')source=source.replace('v[i*8+4]=0xff3344cc','v[i*8+4]=0xff000000');
   }
-  if(device2)source=['sequence','paint-sequence'].includes(device2)?ownershipSequenceSource(device2==='paint-sequence'):device2Source(device2);
+  if(device2)source=['sequence','paint-sequence','partial-paint-sequence'].includes(device2)?ownershipSequenceSource(device2!=='sequence',device2==='partial-paint-sequence'):device2Source(device2);
+  if(device2==='static-current')source=source.replace('Sleep(10);','for(;;)Sleep(100);');
+  // Native wall-clock delay before the first public Flip; later frames follow
+  // the unchanged natural guest loop. No host flush or capture-triggered work.
+  if(device2==='delayed-first')source=source.replace('check(C2(primary,11,target,1),28);','if(!checked)Sleep(1800);check(C2(primary,11,target,1),28);');
   const imports={kernel32:['ExitProcess@4','Sleep@4','OutputDebugStringA@4','GetTickCount@0'],user32:['CreateWindowExA@48','SetFocus@4','SetForegroundWindow@4','SetWindowTextA@8'],gdi32:['GetPixel@12'],ddraw:['DirectDrawCreateEx@16']};
   if(device2){imports.user32.push('GetDC@4','ReleaseDC@8');imports.gdi32.push('TextOutA@20');}
-  if(['sequence','paint-sequence'].includes(device2)){imports.user32.push('FillRect@12');imports.gdi32.push('CreateSolidBrush@4','DeleteObject@4');}
-  if(device2==='paint-sequence')imports.user32.push('RegisterClassA@4','DefWindowProcA@16','BeginPaint@8','EndPaint@8','InvalidateRect@12','PeekMessageA@20','TranslateMessage@4','DispatchMessageA@4');
+  if(['sequence','paint-sequence','partial-paint-sequence'].includes(device2)){imports.user32.push('FillRect@12');imports.gdi32.push('CreateSolidBrush@4','DeleteObject@4');}
+  if(['paint-sequence','partial-paint-sequence'].includes(device2))imports.user32.push('RegisterClassA@4','DefWindowProcA@16','BeginPaint@8','EndPaint@8','InvalidateRect@12','PeekMessageA@20','TranslateMessage@4','DispatchMessageA@4');
   for(const [dll,names]of Object.entries(imports)){
     fs.writeFileSync(path.join(out,dll+'.def'),'LIBRARY '+dll+'.dll\nEXPORTS\n'+names.join('\n')+'\n',{flag:'wx'});
     cp.execFileSync('llvm-dlltool',['-m','i386','-k','-d',path.join(out,dll+'.def'),'-l',path.join(out,dll+'.lib')]);
@@ -116,9 +120,10 @@ function qualifyDevice2(snapshot,black=false){
     for(let y=0;y<height;y++)for(let x=0;x<width;x++){
       const inside=k==='source'||(x>=v.dstX&&x<v.dstX+v.dstW&&y>=v.dstY&&y<v.dstY+v.dstH);
       const sx=k==='source'?x:Math.floor((x+.5-v.dstX)*640/v.dstW),sy=k==='source'?y:Math.floor((y+.5-v.dstY)*480/v.dstH);
-      // Stream integer centres become GL half-integer centres. The
-      // upper horizontal edge excludes its centre, lower edge includes it.
-      const expected=!inside?[0,0,0,255]:sx<320&&sy>=1&&sy<=240?[0,0,black?0:255,255]:[255,255,255,255];
+      // The authored rectangle has integer-centred edges (0,0)-(320,240).
+      // D3D's top-left rule includes its upper edge and excludes its lower
+      // edge, as implemented by the published GPU subpixel-lift repair.
+      const expected=!inside?[0,0,0,255]:sx<320&&sy<240?[0,0,black?0:255,255]:[255,255,255,255];
       const at=(y*width+x)*4;if(expected.some((n,i)=>b[at+i]!==n))throw Error(`Device2 literal pixel mismatch ${k} ${x},${y}: ${[...b.subarray(at,at+4)]}`);
     }
     result[k+'Pixels']=width*height;
@@ -127,7 +132,7 @@ function qualifyDevice2(snapshot,black=false){
 }
 // Real guest API writes on real clocks. GPU blue -> GDI red -> GPU black ->
 // GDI green repeats; no input, private simulation reads or host-driven stepping.
-function ownershipSequenceSource(paint=false){
+function ownershipSequenceSource(paint=false,partial=false){
   let source=device2Source().replace('void start(void){',
     'I P S CreateSolidBrush(U);I int S DeleteObject(P);I int S FillRect(P,P,P);\nvoid start(void){')
     .replace('for(;;){',`for(;;){
@@ -148,6 +153,7 @@ void start(void){U wc[10]={0};wc[1]=(U)ownerProc;wc[9]=(U)"OWNER_SEQUENCE";if(!R
       .replace('if(phase&1){P dc=GetDC(hwnd);P brush=CreateSolidBrush(phase==1?0x000000ff:0x0000ff00);int r[4]={0,0,640,480};\n    if(!FillRect(dc,r,brush))ExitProcess(46);DeleteObject(brush);ReleaseDC(hwnd,dc);Sleep(10);continue;}',
         'if(phase&1){ownerPhase=phase;InvalidateRect(hwnd,0,0);U msg[7]={0};while(PeekMessageA(msg,0,0,0,1)){TranslateMessage(msg);DispatchMessageA(msg);}Sleep(10);continue;}');
   }
+  if(partial)source=source.replaceAll('int r[4]={0,0,640,480}', 'int r[4]={96,72,320,240}');
   return source;
 }
 module.exports={prepare,qualify,qualifyFlip,device2Source,qualifyDevice2,ownershipSequenceSource};
