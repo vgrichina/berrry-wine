@@ -6,12 +6,14 @@ startup after complete authored controls and own outer lifecycle proof.
 """
 import gzip,hashlib,json,os,pathlib,re,signal,socket,subprocess,sys,threading,time,types,uuid
 ROOT=pathlib.Path(__file__).resolve().parent.parent
-TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-fixed-wrapper-normal-install-progress'
+TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-persistent-owner-normal-installer-progress'
 RUN=pathlib.Path(os.environ.get('HL2_RUN',TASK_RUN/'native'))
 MEDIA=ROOT/'scratch/media/half-life-2-demo-original.exe'
 DLL=ROOT/'scratch/runs/20261117-halflife2-original-demo-startup-gameplay/WISE0132.dll'
 OWN=('tools/halflife2-current-native.py','tools/halflife2-reviewed-next.py',
      'test/test-halflife2-reviewed-next.cjs','test/test-halflife2-native-wizard.cjs')
+PREVIOUS=ROOT/'scratch/runs/20261117-halflife2-fixed-wrapper-normal-install-progress/repair-working/outer-fixture'
+COMPONENTS=('tools/halflife2-current-native.py','tools/halflife2-persistent-owner.py','test/test-halflife2-persistent-owner.py')
 CORE_FIXTURE=ROOT/'scratch/runs/20261117-vb5-real-comctl-startup-ide-sample/installed-published'
 NATIVE_SECONDS,WATCHDOG_SECONDS=600,620
 COMPACTION_LOCK=threading.Lock()
@@ -68,8 +70,10 @@ def supervised():
  working='--working-qualification' in sys.argv;original='--original' in sys.argv
  assert not (working and original)
  if original:
+  route=json.loads((TASK_RUN/'route-native/proof.json').read_text())
+  assert route['passed'] and route['realNative'] and route['componentGit']==os.environ['HL2_COMPONENT_PIN']
   assert not (TASK_RUN/'original-installer-invocation.json').exists(),'original allowance already reserved'
-  assert git('show',revision+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
+  assert git('show',os.environ['HL2_COMPONENT_PIN']+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
   assert (RUN.parent/'outer-fixture/outer/wait.json').exists(),'own outer adapter must be proved first'
   proof=json.loads((RUN.parent/'outer-fixture/outer/wait.json').read_text())
   assert proof['supervisorExitCode']==0 and proof['returncode']==0
@@ -77,7 +81,7 @@ def supervised():
   assert pins['adapterSHA256']==sha(pathlib.Path(__file__).read_bytes())
   revision=pins['gitSHA']
   assert git('merge-base','--is-ancestor',revision,'origin/main')==b''
-  assert git('show',revision+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
+  assert git('show',os.environ['HL2_COMPONENT_PIN']+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
  for name in ('tools/gltron-current-supervise.py','tools/boids-current-supervise.py'):
   assert git('show',revision+':'+name)==(ROOT/name).read_bytes()
  save('outer-source-pins.json',dict(gitSHA=revision,sources={n:sha(git('show',revision+':'+n)) for n in ('tools/gltron-current-supervise.py','tools/boids-current-supervise.py')},adapterSHA256=sha(pathlib.Path(__file__).read_bytes()),workingAuthoredOnly=working,preparationSeconds=900,preparationWatchdogSeconds=920,nativeSeconds=600,independentWatchdogSeconds=620))
@@ -207,11 +211,34 @@ def run():
  assert not(working and requested)
  assert git('merge-base','--is-ancestor',revision,'origin/main')==b''
  helper=published('tools/vb5cce-original-runtime.py',revision)
- helper.ROOT,helper.RUN,helper.HEAD=ROOT,RUN,revision;helper.OWN_SOURCES=OWN
+ helper.ROOT,helper.RUN,helper.HEAD=ROOT,RUN,revision;helper.OWN_SOURCES=()
+ component=os.environ['HL2_COMPONENT_PIN']
+ assert git('merge-base','--is-ancestor',component,'origin/main')==b''
+ base_sources=helper.sources
+ def composed_sources():
+  files=base_sources()
+  for name in OWN+COMPONENTS:
+   body=(ROOT/name).read_bytes() if working and name in COMPONENTS else git('show',component+':'+name)
+   assert body==(ROOT/name).read_bytes(),'published component changed: '+name
+   files[name]=body
+  # Every unchanged component must match the completed repaired wrapper proof.
+  old=json.loads((PREVIOUS/'runtime-inputs.json').read_text())
+  current={n:sha(b) for n,b in files.items()}
+  changed=set(COMPONENTS)
+  assert {n:h for n,h in current.items() if n not in changed}=={n:h for n,h in old['sources'].items() if n not in changed and not n.startswith('node_modules/')},'unchanged graph differs'
+  patches=git('diff','--binary',revision,component,'--',*COMPONENTS) if not working else git('diff','--binary',revision,'--',*COMPONENTS)
+  if working:
+   for name in COMPONENTS:
+    if subprocess.run(['git','cat-file','-e',revision+':'+name],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode:
+     patch=subprocess.run(['git','diff','--no-index','--binary','--','/dev/null',name],cwd=ROOT,capture_output=True);assert patch.returncode==1;patches+=patch.stdout
+  (RUN/'composed-components.patch').write_bytes(patches)
+  save('component-pins.json',dict(baseGit=revision,componentGit=component,components={n:current[n] for n in COMPONENTS},previousProof=str(PREVIOUS),unchangedGraphExact=True))
+  return files
+ helper.sources=composed_sources
  # Calling an imported helper bypasses its __main__ shutdown installation.
  # Unwind our native wait/drains and descriptor cleanup on outer TERM/INT.
  helper.install_shutdown_handlers()
- if not working:assert git('show',revision+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
+ if not working:assert git('show',os.environ['HL2_COMPONENT_PIN']+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
  if hasattr(helper,'compact_closed_observations'):
   shared_compact=helper.compact_closed_observations
   def serialized_shared_compact():
@@ -227,23 +254,18 @@ def run():
    save('qualification-reuse.json',qualified_graph(env,revision))
    original(env,source,module,helper)
    return
-  core=reusable_core(files,env['DISCIPLES2_MODULE_SHA256'])
-  env['HL2_RUNTIME_INPUTS']=str(RUN/'runtime-inputs.json')
-  helper.checked('next-preflight',['node','test/test-halflife2-reviewed-next.cjs'],env,(source,module))
-  helper.checked('wizard-next',['node','test/test-halflife2-native-wizard.cjs',str(RUN/'wizard-next')],env,(source,module))
-  helper.checked('adapter-shutdown',['node','test/test-halflife2-native-wizard.cjs','--shutdown',str(RUN/'adapter-shutdown')],env,(source,module))
-  helper.checked('scene-current',['node','test/test-disciples2-native-paint-binding.cjs','--unit'],env,(source,module))
-  # Fresh exact loader inheritance is performed by helper.run before qualify.
-  # Also exercise its resolver with absent-on-disk JS/JSON/Python sources,
-  # real main/Worker/OSchild inheritance and an unsealed-source refusal.
-  helper.checked('sealed-resolver',['node','test/test-neverhood-original-current.cjs','--unit'],env,(source,module))
-  helper.checked('storage-public-api',['node','test/test-vfs-volume-capacity.cjs'],env,(source,module))
-  assert sha(DLL.read_bytes())=='a87f19f9fee475d2b2e82acfb4589be6d816b613064cd06826e1d4c147beb50a'
-  helper.checked('bootstrap-authored',['node','test/test-halflife2-original-package.cjs','--native',str(RUN/'bootstrap-authored'),str(DLL)],env,(source,module))
-  helper.checked('modal-fence',['node','test/test-vb5-modal-invocation-fence.cjs',str(RUN/'modal-fence')],env,(source,module))
-  save('native-core-reuse.json',core)
-  save('full-native-qualification.json',dict(passed=True,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],mainCPUWorkerOSchild=True,fullSourceSealed=True,ordinaryBootstrapOnly=True,WiseMainInvoked=False,originalStarted=False,coreProofReused=True,freshComponentTests=core['freshComponentTests']))
-  ready();helper.checked('outer-native',['node','test/test-halflife2-original-package.cjs','--native',str(RUN/'outer-native'),str(DLL)],env,(source,module))
+  old=json.loads((PREVIOUS/'full-native-qualification.json').read_text())
+  assert old['passed'] and old['moduleSHA256']==env['DISCIPLES2_MODULE_SHA256']
+  wait=json.loads((PREVIOUS/'outer/wait.json').read_text())
+  assert wait['actualWait'] and wait['stdoutEOF'] and wait['stderrEOF'] and wait['supervisorExitCode']==0
+  save('qualification-reuse.json',dict(previous=str(PREVIOUS),fullWrapperSHA256=sha((PREVIOUS/'wizard-next/wrapper/proof.json').read_bytes()),shutdownSHA256=sha((PREVIOUS/'adapter-shutdown/proof.json').read_bytes()),allUnchangedSourcesExact=True,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],freshRouteOnly=True))
+  helper.checked('route-fixture-create',['node','-e',"require('fs').writeFileSync(process.argv[1],require('./test/test-halflife2-native-wizard.cjs').dialogFixture())",str(RUN/'route-wizard.exe')],env,(source,module))
+  save('full-native-qualification.json',dict(passed=True,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],mainCPUWorkerOSchild=True,fullSourceSealed=True,originalStarted=False,reusedUnchangedWrapper=True))
+  ready()
+  with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+  invocation=str(uuid.uuid4())
+  argv=['node','test/run.js','--native-invocation-token='+invocation,'--control='+str(port),'--native-exit-receipt='+str(RUN/'native-exit.json'),'--exe='+str(RUN/'route-wizard.exe'),'--no-build','--threads','--real-ticks','--png-canvas','--max-seconds='+os.environ.get('HL2_FIXTURE_SECONDS','8'),'--max-batches=1000000000','--stuck-after=0','--quiet-api','--quiet-blocks']
+  execute_native(argv,env,(source,module),helper,invocation)
  helper.qualify=qualify
  sys.argv=[__file__,*(['--working-qualification'] if working else [])]
  stopped=threading.Event();compaction_errors=[]
