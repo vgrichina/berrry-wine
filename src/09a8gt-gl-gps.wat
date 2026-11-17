@@ -1450,35 +1450,45 @@
         (f32.store offset=40 (local.get $o) (f32.const 0))
         (f32.store offset=44 (local.get $o) (f32.const 1)))))
 
+  ;; 09a8g rasterizes triangles from continuous window coordinates (its
+  ;; $gl_sw_center_setup, scissor-view, at scratch+0x780) and samples every
+  ;; fragment at its GL centre (x + 1/2, y + 1/2), left/top-inclusive. The
+  ;; executor's contract is D3D's: integer pixel centres, top-left rule. So a
+  ;; vertex goes at its window position less 1/2 -- the executor's sample at
+  ;; pixel x is then GL's at x + 1/2, and its top-left rule owns the same
+  ;; tied centres. Never the rounded screen record: that half-pixel shift
+  ;; moves every interpolated colour and texel.
   (func $glg_tri_v (param $o i32) (param $k i32) (param $c i32)
-    (local $r i32)
+    (local $r i32) (local $g i32) (local $gx f32) (local $gy f32)
     (local.set $r (call $gl_sw_screen_at (local.get $k)))
+    (local.set $g (i32.add (i32.add (global.get $gl_sw_scratch) (i32.const 0x780)) (i32.shl (local.get $k) (i32.const 3))))
+    (local.set $gx (f32.load (local.get $g)))
+    (local.set $gy (f32.load offset=4 (local.get $g)))
     (call $glg_v (local.get $o)
-      (f32.convert_i32_s (i32.add (i32.load (local.get $r)) (global.get $gl_sw_r_dx)))
-      (f32.convert_i32_s (i32.add (i32.load offset=4 (local.get $r)) (global.get $gl_sw_r_dy)))
+      (f32.sub (f32.add (local.get $gx) (f32.convert_i32_s (global.get $gl_sw_r_dx))) (f32.const 0.5))
+      (f32.sub (f32.add (local.get $gy) (f32.convert_i32_s (global.get $gl_sw_r_dy))) (f32.const 0.5))
       (local.get $r) (f32.load offset=48 (local.get $c)) (local.get $c)
       (if (result i32) (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 64))
         (then (call $glg_fogc (f32.load offset=28 (local.get $r))))
         (else (i32.const 0xff000000))))
-    ;; A 1D unit's S is software GL's own per-fragment plane, which it reads
-    ;; at pixel centres (x + 0.5); the executor samples at integer pixels.
-    ;; Give it the plane's value half a pixel on, already divided by Q.
+    ;; A 1D unit's S is software GL's own per-fragment plane, read at pixel
+    ;; x's centre (x + 0.5). The executor's vertex sits at window - 1/2, so
+    ;; its affine S there is the plane at the window position itself,
+    ;; already divided by Q.
     (if (call $gl_1d_selected (i32.const 0)) (then
-      (f32.store offset=24 (local.get $o) (call $glg_1d_s (i32.const 0) (local.get $r)))
+      (f32.store offset=24 (local.get $o) (call $glg_1d_s (i32.const 0) (local.get $gx) (local.get $gy)))
       (f32.store offset=28 (local.get $o) (f32.const 0.5))
       (f32.store offset=32 (local.get $o) (f32.const 1))))
     (if (i32.and (i32.ne (global.get $rast_t1_on) (i32.const 0)) (call $gl_1d_selected (i32.const 1))) (then
-      (f32.store offset=36 (local.get $o) (call $glg_1d_s (i32.const 1) (local.get $r)))
+      (f32.store offset=36 (local.get $o) (call $glg_1d_s (i32.const 1) (local.get $gx) (local.get $gy)))
       (f32.store offset=40 (local.get $o) (f32.const 0.5))
       (f32.store offset=44 (local.get $o) (f32.const 1)))))
 
-  ;; S of 1D unit $unit at screen record $r's pixel centre (09a8b
+  ;; S of 1D unit $unit at scissor-view window position ($fx, $fy) (09a8b
   ;; $gl_1d_sample's planes: S*w at +32, w at +44, each a*x + b*y + c).
-  (func $glg_1d_s (param $unit i32) (param $r i32) (result f32)
-    (local $d i32) (local $fx f32) (local $fy f32) (local $q f32)
+  (func $glg_1d_s (param $unit i32) (param $fx f32) (param $fy f32) (result f32)
+    (local $d i32) (local $q f32)
     (local.set $d (i32.add (global.get $gl_1d_draw) (i32.mul (local.get $unit) (i32.const 56))))
-    (local.set $fx (f32.add (f32.convert_i32_s (i32.load (local.get $r))) (f32.const 0.5)))
-    (local.set $fy (f32.add (f32.convert_i32_s (i32.load offset=4 (local.get $r))) (f32.const 0.5)))
     (local.set $q (f32.add (f32.load offset=52 (local.get $d))
       (f32.add (f32.mul (f32.load offset=44 (local.get $d)) (local.get $fx)) (f32.mul (f32.load offset=48 (local.get $d)) (local.get $fy)))))
     (if (i32.eqz (f32.gt (f32.abs (local.get $q)) (f32.const 0.000000000001))) (then (return (f32.const 0))))
