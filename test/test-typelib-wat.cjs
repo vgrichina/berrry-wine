@@ -44,6 +44,9 @@ console.log(JSON.stringify({moduleSHA256:sha(bytes),resource:sims.metadata,metad
 for(const n of [0,1,4,35,36,100,sims.data.length-1024])assert.equal(parse(sims.data.subarray(0,n),2),0,'SLTG truncation '+n);
 const cycle=Buffer.from(sims.data);cycle.writeUInt16LE(cycle.readUInt16LE(10),36+(cycle.readUInt16LE(10)-1)*8+6);assert.equal(parse(cycle,2),0,'cyclic SLTG block chain');
 console.log('PASS native WAT SLTG readers: genuine resource metadata, truncation, cyclic chain');
+const bw2Inputs=[];
+if(process.env.TYPELIB_BW2_INPUT_DIR)for(const [name,format,hash]of [['ISProBE9x.tlb',2,'a6ed9effa544886941ac2977eb843b0136123fa06f415d4bfae840a561aa6c28'],['ISProBENT.tlb',1,'38b3d8a37e89e8899be78f7787aa2f0ced65c77772689c11115146c8f6654167']]){const data=fs.readFileSync(require('path').join(process.env.TYPELIB_BW2_INPUT_DIR,name));assert.equal(sha(data),hash);const lib=parse(data,format);assert(lib,name);const meta=metadata(lib);assert(meta.count>0);bw2Inputs.push({name,data,hash,count:meta.count});console.log(JSON.stringify({BW2NativeParser:name,hash,metadata:meta}));}
+
 // Authored MSFT file: one interface, one I4 method, one I4 parameter.
 function msftFixture(recursive=false){
  const names=['Fixture','ICalculator','Add','amount'];let nameBytes=0;const no=names.map(s=>{const o=nameBytes;nameBytes+=12+s.length;return o;});
@@ -109,9 +112,15 @@ async function nativeABI(){
  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),vfs=new VirtualFS();
  vfs.files.set('c:\\sims.exe',{data:fs.readFileSync(sims.metadata.enginePath),attrs:0x20});vfs.files.set('c:\\fixture.tlb',{data:ms,attrs:0x20});vfs.files.set('c:\\authored-sltg.tlb',{data:sltg,attrs:0x20});vfs.files.set('c:\\imported.tlb',{data:msImport,attrs:0x20});vfs.files.set('c:\\sims.tlb',{data:sims.data,attrs:0x20});
  vfs.files.set('c:\\retval.tlb',{data:retval,attrs:0x20});vfs.files.set('c:\\truncated.exe',{data:fs.readFileSync(sims.metadata.enginePath).subarray(0,64),attrs:0x20});
+ const automation=Buffer.from(ms);automation.writeUInt16LE(0x100,328+48);
+ automation.writeUInt16LE(16,328+78);automation.writeUInt16LE(12,automation.readUInt32LE(332)+16);
+ vfs.files.set('c:\\automation.tlb',{data:automation,attrs:0x20});
+ const unsupported=Buffer.from(automation);unsupported.writeUInt32LE(0x800c000c,unsupported.readUInt32LE(332)+28);vfs.files.set('c:\\unsupported.tlb',{data:unsupported,attrs:0x20});
  const badImport=Buffer.from(msImport);badImport.writeUInt32LE(0xfffffff0,ms.length+100);vfs.files.set('c:\\bad-import.tlb',{data:badImport,attrs:0x20});
+ for(const input of bw2Inputs)vfs.files.set('c:\\'+input.name.toLowerCase(),{data:input.data,attrs:0x20});
  const ctx={getMemory:()=>memory.buffer,renderer:null,vfs,resourceJson:{},apiTable};
  const imports=createHostImports(ctx);Object.assign(imports.host,{memory,create_thread:()=>0,exit_thread:()=>0,terminate_thread:()=>0,create_event:()=>0,set_event:()=>0,reset_event:()=>0,wait_single:()=>0,wait_multiple:()=>0,com_create_instance:()=>0x80004002});
+ const registryFault={};for(const name of ['reg_set_value','reg_delete_key']){const original=imports.host[name];imports.host[name]=(...args)=>registryFault[name]||original(...args);}
  const currentClosure=require('../tools/watx-closure').watxSourceClosure();const rawSourcePins={};for(const [file,pin]of Object.entries(sourcePins)){assert.equal(sha(Buffer.from(currentClosure.vfs.get(file))),pin,'source stable through compile: '+file);rawSourcePins[file]=sha(fs.readFileSync(require('node:path').join(__dirname,'../src',file)));}
  console.log(JSON.stringify({nativeModuleBeforeExec:{modulePath,sha256:sha(wasm),sourcePins,rawSourcePins}}));
  const {instance}=await WebAssembly.instantiate(wasm,imports),w=instance.exports;ctx.exports=w;
@@ -162,9 +171,25 @@ async function nativeABI(){
  com(rt,2);com(rl,2);write(vt,code);write(dp+8,1);
  assert.notEqual(api('LoadTypeLib',[wide('c:\\truncated.exe'),out+60]),0);assert.equal(read(out+60),0);
  assert.equal(api('RegisterTypeLib',[l,wide('c:\\fixture.tlb'),0]),0);
+ // Real x86 imports: registration must couple an Automation interface to its
+ // typelib and universal marshaler, without a host-supplied registry seed.
+ assert.equal(api('LoadTypeLib',[wide('c:\\automation.tlb'),out+60]),0);const automationLib=read(out+60);
+ assert.equal(com(automationLib,4,[0,out+64]),0);const automationTi=read(out+64);
+ assert.equal(com(automationTi,3,[out+68]),0);const automationAttr=read(out+68);
+ assert.equal(api('CoGetPSClsid',[automationAttr,out+104]),0x80040155,'unregistered IID');
+ assert.equal(api('RegisterTypeLib',[automationLib,wide('c:\\automation.tlb'),0]),0);
+ assert.equal(api('CoGetPSClsid',[automationAttr,out+104]),0,'RegisterTypeLib publishes Automation proxy');
+ assert.equal(read(out+104),0x20424);
+ com(automationTi,19,[automationAttr]);com(automationTi,2);com(automationLib,2);
  assert.equal(com(l,7,[out+20]),0);const la=read(out+20);assert.equal(api('LoadRegTypeLib',[la,1,0,0,out+24]),0);assert.equal(com(read(out+24),3),1);com(read(out+24),2);com(l,12,[la]);
  assert.equal(com(l,2),1,'typeinfo keeps library alive');assert.equal(com(ti,2),0,'last typeinfo retires arena');
  assert.equal(api('LoadTypeLib',[wide('c:\\sims.tlb'),out]),0);const sl=read(out);assert.equal(com(sl,3),87);
+ assert.equal(api('RegisterTypeLib',[sl,wide('c:\\sims.tlb'),0]),0);
+ for(const [index,expected]of [[26,0],[39,0],[40,0x80040155]]){
+  assert.equal(com(sl,4,[index,out+4]),0);const info=read(out+4);assert.equal(com(info,3,[out+8]),0);const attr=read(out+8);
+  assert.equal(api('CoGetPSClsid',[attr,out+104]),expected,'SLTG metadata registration '+index);
+  if(!expected)assert.equal(read(out+104),0x20424);com(info,19,[attr]);com(info,2);
+ }
  assert.equal(com(sl,4,[8,out+4]),0);const st=read(out+4);assert.equal(com(st,8,[0,out+8]),0);assert.equal(com(st,14,[read(out+8),out+12]),0);const ref=read(out+12);assert.equal(com(ref,12,[0xffffffff,out+16,0,0,0]),0);assert.equal(bstr(read(out+16)),'IUnknown');com(ref,2);com(st,2);com(sl,2);
  assert.equal(api('LoadTypeLib',[wide('c:\\sims.exe'),out]),0);const peLib=read(out);assert.equal(com(peLib,3),87);com(peLib,2);
  assert.equal(api('LoadTypeLib',[wide('c:\\sims.exe\\1'),out]),0);assert.equal(com(read(out),3),87);com(read(out),2);
@@ -193,10 +218,99 @@ async function nativeABI(){
  assert.equal(com(standard,4,[8,out+4]),0);const cls=read(out+4);assert.equal(com(cls,9,[0,out+8]),0);assert.equal(read(out+8),1);assert.equal(com(cls,8,[0,out+8]),0);assert.equal(com(cls,14,[read(out+8),out+12]),0);com(read(out+12),2);com(cls,2);
  assert.equal(com(standard,4,[10,out+4]),0);const alias=read(out+4);assert.equal(com(alias,3,[out+8]),0);assert.equal(read(read(out+8)+40),6);com(alias,19,[read(out+8)]);com(alias,2);com(standard,2);
  assert.equal(vfs.files.has('c:\\windows\\system\\oleaut32.dll'),false);assert.equal(vfs.files.has('c:\\windows\\system\\stdole32.tlb'),false);
+ for(const input of bw2Inputs){assert.equal(api('LoadTypeLib',[wide('c:\\'+input.name),out]),0,input.name);const lib=read(out);assert.equal(com(lib,3),input.count);assert.equal(api('RegisterTypeLib',[lib,wide('c:\\'+input.name),0]),0);for(let i=0;i<input.count;i++){assert.equal(com(lib,4,[i,out+4]),0);const ti=read(out+4);assert.equal(com(ti,3,[out+8]),0);const attr=read(out+8),impls=w.guest_read8(attr+48)|(w.guest_read8(attr+49)<<8);for(let base=0;base<impls;base++){assert.equal(com(ti,8,[base,out+12]),0,input.name+' href '+i);assert.equal(com(ti,14,[read(out+12),out+16]),0,input.name+' ref '+i);com(read(out+16),2);}com(ti,19,[attr]);com(ti,2);}com(lib,2);console.log(JSON.stringify({BW2NativeABI:input.name,status:'PASS',types:input.count,sha256:input.hash}));}
+ await automationProxies({w,memory,ctx,alloc,write,read,wide,automation,apiTable,stack,registryFault});
  console.log(JSON.stringify({status:'PASS',nativeGuestVtables:true,nativeInvokeResult:42,modulePath,moduleSHA256:sha(wasm),mappedFiles:[...vfs.files.keys()]}));
  if(process.argv.includes('--clients'))await nativeClientMatrix(wasm);
 }
 if(process.argv.includes('--native'))nativeABI().catch(e=>{console.error(e);process.exitCode=1;});
+
+async function automationProxies({w,memory,ctx,alloc,write,read,wide,automation,apiTable,stack,registryFault}){
+ const {ComInterfaceRuntime,comRuntimeSourcePin}=require('../lib/com-interface-runtime');
+ const {OwnedComAuthority}=require('../lib/com-owned-channel'),{dispatchCom}=require('../lib/com-owned-transport');
+ const authority=new OwnedComAuthority(),session=authority.connect('native-automation-test');
+ const runtime=new ComInterfaceRuntime({getExports:()=>w,getMemory:()=>memory.buffer,
+  desktop:{call:request=>dispatchCom(authority,session,request)},serviceYield:async()=>false,
+  modulePin:sha(fs.readFileSync(process.env.TYPELIB_NATIVE_MODULE||'/dev/shm/typelib-native-test.wasm')),
+  sourcePin:comRuntimeSourcePin(),information:()=>null});ctx.comInterfaces=runtime;
+ w.set_esp(stack);w.set_eip(0);w.set_yield_state(0,0);
+ const {c,m,proxy,automation:native}=runtime.initialize();
+ const thunk=name=>{const id=apiTable.find(x=>x.name===name).id,table=w.com_bridge_vtable(id,1),address=read(table);w.guest_free(table);return address;};
+ const invoke=(name,args)=>c.invoke(thunk(name),args),scratch=alloc(128);
+ const guid=(hex,p)=>{Buffer.from(hex,'hex').forEach((b,i)=>w.guest_write8(p+i,b));return p;};
+ const unknown=guid('0000000000000000c000000000000046',scratch),factoryIID=guid('d069f5d53b591a10b56908002b2dbf7a',scratch+16),clsid=guid('2404020000000000c000000000000046',scratch+32);
+ const iid=guid(automation.subarray(automation.readUInt32LE(88+5*16)+24,automation.readUInt32LE(88+5*16)+40).toString('hex'),scratch+48);
+ assert.equal(await invoke('CoGetClassObject',[clsid,1,0,factoryIID,scratch+80]),0);const factory=read(scratch+80);assert(factory);
+ assert.equal(await c.call(factory,0,[unknown,scratch+84]),0);assert.equal(read(scratch+84),factory);await c.call(factory,2);
+ assert.equal(await invoke('CoGetClassObject',[clsid,1,0,iid,scratch+84]),0x80004002);assert.equal(read(scratch+84),0);
+ assert.equal(await invoke('CoGetClassObject',[clsid,1,0,factoryIID,0]),0x80004003);
+ assert.equal(await c.call(factory,4,[iid,0,0]),0x80004003);
+ assert.equal(await c.call(factory,3,[0,iid,scratch+84,scratch+88]),0x80004003);assert.equal(read(scratch+84),0);assert.equal(read(scratch+88),0);
+ // x86 IUnknown + method implementations, with observable real reference
+ // counts and invocations in the server object. No success callback provider.
+ const server=alloc(16),table=alloc(16),code=bytes=>{const p=alloc(bytes.length);bytes.forEach((b,i)=>w.guest_write8(p+i,b));return p;};
+ write(server,table);write(server+4,1);write(server+8,0);
+ const qi=[0x8b,0x44,0x24,4,0x8b,0x54,0x24,8,0x8b,0x4c,0x24,12,0xc7,1,0,0,0,0,0x83,0x3a,3,0x74,0x0a,0x89,1,0xff,0x40,4,0x31,0xc0,0xc2,12,0,0xb8,2,0x40,0,0x80,0xc2,12,0];
+ write(table,code(qi));write(table+4,code([0x8b,0x4c,0x24,4,0xff,0x41,4,0x8b,0x41,4,0xc2,4,0]));write(table+8,code([0x8b,0x4c,0x24,4,0xff,0x49,4,0x8b,0x41,4,0xc2,4,0]));
+ write(table+12,code([0x8b,0x4c,0x24,4,0xff,0x41,8,0x8b,0x44,0x24,8,0x83,0xc0,10,0xc2,8,0]));
+ if(process.env.TYPELIB_NATIVE_DIAG){
+  const text='{90abcdef-6789-2345-0123-456789abcdef}';
+  for(const name of ['', 'Version'])try{console.log('NATIVE_REG',name,await native.reg('Interface\\'+text+'\\TypeLib',name));}catch(e){console.log('NATIVE_REG_ERROR',name,e);}
+ }
+ console.log(JSON.stringify({nativeAutomationBeforeExec:{sourcePin:comRuntimeSourcePin(),files:Object.fromEntries(['com-automation-native.js','com-interface-runtime.js'].map(name=>[name,sha(fs.readFileSync(require.resolve('../lib/'+name)))]))}}));
+ assert.equal(await invoke('LoadTypeLib',[wide('c:\\unsupported.tlb'),scratch+112]),0);let unsupportedLib=read(scratch+112);assert.equal(await invoke('RegisterTypeLib',[unsupportedLib,wide('c:\\unsupported.tlb'),0]),0);await m.release(unsupportedLib);
+ assert.equal(await c.call(factory,4,[iid,server,scratch+112]),0x80004001);assert.equal(read(scratch+112),0);assert.equal(read(server+4),1,'unsupported metadata publishes no stub or server ref');
+ assert.equal(await invoke('LoadTypeLib',[wide('c:\\automation.tlb'),scratch+112]),0);unsupportedLib=read(scratch+112);assert.equal(await invoke('RegisterTypeLib',[unsupportedLib,wide('c:\\automation.tlb'),0]),0);await m.release(unsupportedLib);
+ const exported=await m.marshalReference(iid,server);assert.equal(exported.hresult,0);assert(exported.reference);
+ assert.equal(await proxy.unmarshalReference(exported.reference,iid,scratch+88),0);const typed=read(scratch+88);assert(typed);
+ assert.equal(await c.call(typed,3,[32]),42);assert.equal(read(server+8),1,'real x86 method executed');
+ const stub=[...native.objects.values()].find(r=>r.kind===3),message=alloc(64),payload=alloc(256),channel=[...native.objects.values()].find(r=>r.kind===2).channel;
+ const invalid=async(bytes,representation=0x57410101,slot=3)=>{write(message+4,representation);write(message+8,payload);write(message+12,bytes.length);write(message+16,slot);native.m.write(payload,bytes);return c.call(stub.address,5,[message,channel]);};
+ assert.equal(await invalid(Buffer.from('{}'),0),0x80070057);
+ assert.equal(await invalid(Buffer.from('{')),0x80070057);
+ assert.equal(await invalid(Buffer.from(JSON.stringify(['WA_AUTOMATION_1',stub.meta.iid,4,[]]))),0x80070057);
+ assert.equal(await c.call(stub.address,4),0);assert.equal(await invalid(Buffer.from('{}')),0x80010108);assert.equal(await c.call(stub.address,3,[server]),0);
+ const method=stub.meta.methods.get(3);stub.meta.methods.set(3,{...method,result:{kind:'unsupported'}});assert.equal(await invalid(Buffer.from('[]')),0x80004001);stub.meta.methods.set(3,method);assert.equal(read(server+8),1,'invalid packets never invoke guest server');
+ // Private wire values are copied, including embedded NUL, and malformed
+ // values fail before publication. Native vtable calls above exercise transport.
+ const owned=[],bstr=await native.decode({kind:'bstr'},'410000004200',owned);assert.equal(await native.encode({kind:'bstr'},bstr),'410000004200');await native.cleanup(owned);
+ await assert.rejects(native.decode({kind:'bstr'},'xyz',[]),e=>e.value===0x80070057);
+
+ // Real x86 output methods exercise ownership and deep copies through the
+ // authenticated channel, using the same already-created native proxy/stub.
+ const proxyRow=[...native.objects.values()].find(r=>r.kind===2),oldCode=read(table+12);
+ const setMethod=method=>{stub.meta.methods.set(3,method);proxyRow.meta.methods.set(3,method);};
+ const outputCode=pointer=>{const bytes=Buffer.from([0x8b,0x54,0x24,8,0xc7,2,0,0,0,0,0x31,0xc0,0xc2,8,0]);bytes.writeUInt32LE(pointer,6);return code(bytes);};
+ const result={kind:'scalar',vt:25,size:4},bstrOut={slot:3,result,params:[{flags:2,type:{kind:'pointer',child:{kind:'bstr'}}}]};
+ const bstrBase=m.allocate(12);write(bstrBase,6);m.write(bstrBase+4,Buffer.from('410000004200','hex'));
+ setMethod(bstrOut);write(table+12,outputCode(bstrBase+4));write(scratch+120,0);
+ assert.equal(await c.call(typed,3,[scratch+120]),0);const returnedBstr=read(scratch+120);assert(returnedBstr&&returnedBstr!==bstrBase+4);assert.equal(await native.encode({kind:'bstr'},returnedBstr),'410000004200');m.free(returnedBstr-4);
+ const interfaceOut={slot:3,result,params:[{flags:2,type:{kind:'pointer',child:{kind:'interface',iid:'0000000000000000c000000000000046'}}}]};
+ setMethod(interfaceOut);const returnedCode=Buffer.from([0x8b,0x44,0x24,4,0xff,0x40,4,0x8b,0x54,0x24,8,0x89,2,0x31,0xc0,0xc2,8,0]);write(table+12,code(returnedCode));
+ assert.equal(await c.call(typed,3,[scratch+120]),0);const returnedInterface=read(scratch+120);assert(returnedInterface);assert.equal(await c.call(returnedInterface,0,[unknown,scratch+124]),0);await c.call(read(scratch+124),2);await c.call(returnedInterface,2);await m.drain();
+ setMethod(method);write(table+12,oldCode);
+ await c.call(channel,1);assert.equal(await c.call(proxyRow.address,4),0);assert.equal(await c.call(typed,3,[1]),0x80010108);assert.equal(await c.call(proxyRow.address,3,[channel]),0);await c.call(channel,2);
+ // The genuine SLTG inheritance and imported IUnknown descriptors must also
+ // support creation through the native factory, independent of fixture GUIDs.
+ const libOut=alloc(32);assert.equal(await invoke('LoadTypeLib',[wide('c:\\sims.tlb'),libOut]),0);const simsLib=read(libOut);
+ for(const index of [26,39]){assert.equal(await c.call(simsLib,4,[index,libOut+4]),0);const ti=read(libOut+4);const metadata=await native.describe(ti);assert(metadata.methods.has(index===26?4:5));for(const [slot,method]of metadata.methods)if(slot>=3)native.validate(method);guid(metadata.iid,libOut+12);assert.equal(await c.call(factory,4,[libOut+12,0,scratch+112]),0,'genuine SLTG registered native factory '+index);assert.equal(await c.call(read(scratch+112),2),0);console.log(JSON.stringify({simsAutomationMetadata:index,slots:metadata.slots,methods:[...metadata.methods.keys()]}));await m.release(ti);}
+ await m.release(simsLib);
+ const libGuid=guid(automation.subarray(automation.readUInt32LE(88+5*16),automation.readUInt32LE(88+5*16)+16).toString('hex'),scratch+96);
+ assert.equal(await invoke('LoadTypeLib',[wide('c:\\automation.tlb'),scratch+112]),0);const registeredLib=read(scratch+112);
+ registryFault.reg_set_value=5;assert.equal(await invoke('RegisterTypeLib',[registeredLib,wide('c:\\automation.tlb'),0]),0x8002801c);registryFault.reg_set_value=0;assert.equal(await invoke('RegisterTypeLib',[registeredLib,wide('c:\\automation.tlb'),0]),0);await m.release(registeredLib);
+ registryFault.reg_delete_key=5;assert.equal(await invoke('UnRegisterTypeLib',[libGuid,1,0,0,1]),0x8002801c);registryFault.reg_delete_key=0;
+ assert.equal(await invoke('UnRegisterTypeLib',[libGuid,1,0,0,99]),0x80070057);
+ assert.equal(await invoke('UnRegisterTypeLib',[libGuid,1,0,0,1]),0);
+ assert.equal(await invoke('CoGetPSClsid',[iid,scratch+112]),0x80040155);
+ assert.equal(await c.call(factory,4,[iid,server,scratch+112]),0x8002801d);assert.equal(read(scratch+112),0);
+ assert.equal(await invoke('UnRegisterTypeLib',[libGuid,1,0,0,1]),0x80070057);
+ assert.equal(await c.call(typed,3,[0xffffffff]),9);assert.equal(read(server+8),2);
+ assert.equal(await c.call(typed,0,[unknown,scratch+92]),0);await c.call(read(scratch+92),2);
+ await c.call(typed,2);await m.drain();assert.equal(read(server+4),1,'all canonical and stub server references released');
+ assert.equal(authority.exports.size,0,'final channel exports retired');
+ assert.equal(await c.call(factory,2),0);assert.equal(native.objects.size,0,'all native factory/proxy/stub/typed objects retired');
+ console.log(JSON.stringify({automationNativeProxy:'PASS',actualX86Invocations:read(server+8),finalServerRefs:read(server+4),exports:authority.exports.size,nativeObjects:native.objects.size}));
+}
 
 // Existing Sims fixture clients run as complete guest programs through ordinary
 // imports, with no genuine Automation runtime providers present in the VFS.
@@ -210,7 +324,8 @@ async function nativeClientMatrix(wasm){
    new Uint8Array(memory.buffer).fill(0);
    const image=fs.readFileSync(dir+'/'+name+'.exe'),vfs=new VirtualFS();
    vfs.files.set('c:\\client.exe',{data:image,attrs:0x20});vfs.files.set('c:\\typelib.dat',{data:sims.data,attrs:0x20});
-   let exit=null;const ctx={getMemory:()=>memory.buffer,renderer:null,vfs,resourceJson:{},apiTable:require('../src/api_table.json'),onExit:c=>{exit=c>>>0;}};
+   let exit=null;for(const input of bw2Inputs)vfs.files.set('c:\\'+input.name.toLowerCase(),{data:input.data,attrs:0x20});
+ const ctx={getMemory:()=>memory.buffer,renderer:null,vfs,resourceJson:{},apiTable:require('../src/api_table.json'),onExit:c=>{exit=c>>>0;}};
    const imports=createHostImports(ctx);Object.assign(imports.host,{memory,create_thread:()=>0,exit_thread:()=>0,terminate_thread:()=>0,create_event:()=>0,set_event:()=>0,reset_event:()=>0,wait_single:()=>0,wait_multiple:()=>0,com_create_instance:()=>0x80004002});
    const instance=new WebAssembly.Instance(module,imports),w=instance.exports;ctx.exports=w;
    new Uint8Array(memory.buffer).set(image,w.get_staging());assert(w.load_pe(image.length));

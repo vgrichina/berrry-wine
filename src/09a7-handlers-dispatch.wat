@@ -3512,6 +3512,8 @@
   ;; to return the requested class-factory interface directly.
   (func $handle_CoGetClassObject (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $hr i32) (local $host_ctx i32) (local $factory i32)
+    (if (call $tl_proxy_class (local.get $arg0))
+      (then (call $com_interface_bridge (i32.const 19) (i32.const 5)) (return)))
     ;; CLSID_CommonDialog {F9043C85-F6F2-101A-A3C9-08002B2F49FB}.
     (if (i32.eq (call $gl32 (local.get $arg0)) (i32.const 0xF9043C85))
       (then

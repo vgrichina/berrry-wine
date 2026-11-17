@@ -168,9 +168,9 @@
     {
       "file": "lib/com-interface-runtime.js",
       "name": "host-file",
-      "sha256": "592ce332c5e948da82f1a47f460f8ff5c5befc785d6be21282061116ade01e74",
+      "sha256": "bc812cae071f1b78f6a7bba9ccfe2095d3d9035743f760d55f8c6d7cbff4560c",
       "kind": "host-entry",
-      "reason": "One iterator remains attached to the original root invocation, with exact owner token, process/thread/generation, registers, stack, ABI, thunk and handler checked before and after awaited advances. Changed or retired frames are abandoned without restoration or replay. Incomplete advances preserve yield 23 and permit ordinary Worker slice completion; main and nested operations retain their original whole-operation path. Broader ownership remains pending.",
+      "reason": "One iterator remains attached to the original root invocation, with exact owner token, process/thread/generation, registers, stack, ABI, thunk and handler checked before and after awaited advances. Changed or retired frames are abandoned without restoration or replay. Incomplete advances preserve yield 23 and permit ordinary Worker slice completion; main and nested operations retain their original whole-operation path. Native Automation factory and typed proxy operations use the same checked suspended frame and ComGuestContinuation, including nested channel-to-stub callbacks; they transfer owned bytes rather than guest pointers. Actual x86 invocation, unregister lifetime and malformed/error qualification is recorded in run20261117-sims-native-interface-proxy-registration. Broader ownership remains pending.",
       "ownership": "pending"
     },
     {

@@ -39742,5 +39742,19 @@
     "nargs": 8,
     "convention": "stdcall",
     "hash": 472404381
+  },
+  {
+    "id": 4699,
+    "name": "ComAutomationOperation",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1311518962
+  },
+  {
+    "id": 4700,
+    "name": "UnRegisterTypeLib",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1140149058
   }
 ]

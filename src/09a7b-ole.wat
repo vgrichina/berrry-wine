@@ -988,6 +988,18 @@
         (else (call $host_com_proxy_stub (i32.const 1) (call $g2w (local.get $arg0)) (call $g2w (local.get $arg1))))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
+  ;; Internal entry used by guest x86 Automation vtables. Its four arguments
+  ;; describe an invocation-owned guest stack, never another process's memory.
+  (func $handle_ComAutomationOperation (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $com_interface_bridge (i32.const 20) (i32.const 4)))
+
+  (func $handle_UnRegisterTypeLib (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $hr i32)
+    (local.set $hr (call $tl_unregister (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $hr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+    (if (i32.eq (local.get $hr) (i32.const -2)) (then (call $io_block (i32.const 24)))))
+
   (func $handle_CoMarshalInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (call $com_interface_bridge (i32.const 1) (i32.const 6)))
 
