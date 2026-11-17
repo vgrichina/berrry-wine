@@ -4,12 +4,48 @@
 The game clock begins after compilation, sealed inheritance and authored USER
 controls. No old endpoint, save, source checkout or media copy is used.
 """
-import fcntl, hashlib, json, os, pathlib, select, signal, socket, subprocess, sys, threading, time, types, uuid
+import ast, fcntl, hashlib, json, os, pathlib, select, signal, socket, subprocess, sys, threading, time, types, uuid
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 RUN = pathlib.Path(os.environ.get('CAESAR3_RUN', ROOT/'scratch/runs/20261117-caesar3-current-native-assignment2-food'))
 NATIVE_SECONDS, WATCHDOG_SECONDS, QUIT_RESERVE = 2400, 2420, 240
 GAME_FRESHNESS_SECONDS, MENU_FRESHNESS_SECONDS = 15, 30
+COMPONENTS = ('tools/caesar3-current-native.py',)
+REPAIR_PROOF = ROOT/'scratch/runs/20261117-caesar3-reviewed-hover-city-construction/repair-outer'
+
+def component_revision(base):
+    return os.environ.get('CAESAR3_COMPONENT_REVISION', base)
+
+def verify_components(reference, sources, module_sha):
+    """Reuse the completed repaired controls by exact bytes, excluding this adapter.
+
+    This adapter's composition and actual native owner lifecycle are tested
+    separately. Its controller and native execution bodies must remain exact.
+    """
+    reference=pathlib.Path(reference)
+    old=json.loads((reference/'runtime-inputs.json').read_text())
+    assert {n:h for n,h in sources.items() if n not in COMPONENTS} == {n:h for n,h in old['sources'].items() if n not in COMPONENTS}, 'unchanged component graph differs'
+    assert old['moduleSHA256']==module_sha==sha((reference/'module.wasm').read_bytes())
+    assert old['sourceSeals']==old['moduleSeals']==15 and not old['foreignWIPAdopted']
+    for name in ('authored-native-wait.json','outer-native-printable-wait.json','inheritance-wait.json'):
+        w=json.loads((reference/name).read_text())
+        assert w['exit']==0 and w['actualWait'] and w['stdoutEOF'] and w['stderrEOF']
+    assert json.loads((reference/'authored/assertions.json').read_text())['pass']
+    assert json.loads((reference/'runtime-release.json').read_text())['success']
+    outer=json.loads((reference/'outer/wait.json').read_text())
+    assert outer['actualWait'] and outer['stdoutEOF'] and outer['stderrEOF'] and outer['supervisorExitCode']==0 and not outer['remainingAfterRuntime']
+    assert all(w['actualWait'] and w['stdoutEOF'] and w['stderrEOF'] and w['returncode']==0 for w in outer['watchdogs'])
+    prior=git('show','aa25b83f8:tools/caesar3-current-native.py').decode()
+    current=pathlib.Path(__file__).read_text()
+    def bodies(source):
+        return {n.name:ast.get_source_segment(source,n) for n in ast.parse(source).body
+                if isinstance(n,ast.FunctionDef)}
+    before,after=bodies(prior),bodies(current)
+    for name in ('original','execute_native','public_input_ready','controller'):
+        assert before[name]==after[name], 'native execution/controller changed: '+name
+    return dict(passed=True,reference=str(reference),referenceGit=old['gitSHA'],moduleSHA256=module_sha,
+        unchangedComponentsExact=True,excludedComponents=list(COMPONENTS),
+        originalWaitsReused=False,proofSHA256=sha((reference/'qualification.json').read_bytes()))
 
 def sha(body): return hashlib.sha256(body).hexdigest()
 def save(name, value):
@@ -55,7 +91,8 @@ def supervised():
            'tools/caesar3-current-native.py')
     for name in names:
         if working and name=='tools/caesar3-current-native.py':continue
-        assert git('show',revision+':'+name)==(ROOT/name).read_bytes(), 'publish exact supervisor before use: '+name
+        pin=component_revision(revision) if name in COMPONENTS else revision
+        assert git('show',pin+':'+name)==(ROOT/name).read_bytes(), 'publish exact supervisor before use: '+name
     assert ('--original' in sys.argv) != ('--outer-fixture' in sys.argv)
     (RUN/'outer-owned-helper.patch').write_bytes(git('diff','--binary',revision,'--','tools/caesar3-current-native.py'))
     save('outer-source-pins.json',dict(gitSHA=revision,sources={n:sha((ROOT/n).read_bytes()) for n in names},workingAuthoredOnly=working,
@@ -393,8 +430,27 @@ def run():
         helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs',
             'lib/cli-native-scene.js', 'test/test-disciples2-native-paint-binding.cjs','test/public-consumer-observer.js')
     if baseline: helper.OWN_SOURCES = ('test/test-caesar3-current-native.cjs',)
+    composed=os.environ.get('CAESAR3_COMPONENT_REVISION')
+    if composed:
+        assert revision==git('rev-parse','c993e385c').decode().strip(), 'explicit reviewed base required'
+        assert git('merge-base','--is-ancestor',composed,'origin/main')==b''
+        helper.OWN_SOURCES=()
+        base_sources=helper.sources
+        def component_sources():
+            files=base_sources()
+            files['test/test-caesar3-current-native.cjs']=git('show','aa25b83f8:test/test-caesar3-current-native.cjs')
+            for name in COMPONENTS:
+                body=(ROOT/name).read_bytes() if working else git('show',composed+':'+name)
+                assert body==(ROOT/name).read_bytes(), 'published component changed: '+name
+                files[name]=body
+            patch=git('diff','--binary',revision,'--',*COMPONENTS,'test/test-caesar3-current-native.cjs') if working else git('diff','--binary',revision,composed,'--',*COMPONENTS,'test/test-caesar3-current-native.cjs')
+            (RUN/'composed-components.patch').write_bytes(patch)
+            save('component-pins.json',dict(baseGit=revision,componentGit=composed,workingAuthoredOnly=working,
+                 components={n:sha(files[n]) for n in COMPONENTS},repairTestGit='aa25b83f8'))
+            return files
+        helper.sources=component_sources
     if not working:
-        assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
+        assert git('show', component_revision(revision)+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
     def qualify(env, files, source, module, **unused):
         if diagnostic:
             if shutdown_fixture:
@@ -442,8 +498,13 @@ def run():
             return
         # Native controls invoke only sealed JS. No mutable external Python
         # controller or original-game startup test is launched as a fixture.
+        if composed:
+            proof=verify_components(REPAIR_PROOF,{n:sha(b) for n,b in files.items()},env['DISCIPLES2_MODULE_SHA256'])
+            save('component-proof-reuse.json',proof)
         reference=os.environ.get('CAESAR3_NATIVE_PROOF') if requested else None
-        if reference:
+        if composed:
+            pass
+        elif reference:
             proof=verify_native_proof(reference,{n:sha(b) for n,b in files.items()},env['DISCIPLES2_MODULE_SHA256'])
             assert git('merge-base','--is-ancestor',proof['gitSHA'],'origin/main')==b''
             save('native-proof-reuse.json',dict(**proof,reference=reference,freshInheritance=True,at=time.time()))
@@ -453,10 +514,26 @@ def run():
              moduleSHA256=env['DISCIPLES2_MODULE_SHA256'], at=time.time()))
         if outer_fixture:
             outer_ready()
-            helper.checked('outer-native-printable',['node','test/test-native-printable-input.cjs',str(RUN/'outer-native')],env,(source,module))
+            if composed:
+                helper.checked('owner-fixture-create',['node','-e',"require('fs').writeFileSync(process.argv[1],require('./test/test-cli-native-button-delivery.cjs').fixture(0))",str(RUN/'owner-fixture.exe')],env,(source,module))
+                with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
+                invocation=str(uuid.uuid4())
+                seconds=os.environ.get('CAESAR3_FIXTURE_SECONDS','8')
+                args=['node','test/run.js','--exe='+str(RUN/'owner-fixture.exe'),'--control='+str(port),
+                    '--native-invocation-token='+invocation,'--native-exit-receipt='+str(RUN/'native-exit.json'),
+                    '--no-build','--threads','--real-ticks','--max-seconds='+seconds,'--max-batches=1000000000',
+                    '--stuck-after=0','--quiet-api','--quiet-blocks']
+                execute_native(args,env,(source,module),port,invocation,time.time()+WATCHDOG_SECONDS)
+            else:
+                helper.checked('outer-native-printable',['node','test/test-native-printable-input.cjs',str(RUN/'outer-native')],env,(source,module))
         if requested:
             assert git('merge-base','--is-ancestor',revision,'origin/main')==b'', 'chosen published main graph retired'
-            assert git('show',revision+':tools/caesar3-current-native.py')==pathlib.Path(__file__).read_bytes(), 'chosen helper changed; no original'
+            assert git('show',component_revision(revision)+':tools/caesar3-current-native.py')==pathlib.Path(__file__).read_bytes(), 'chosen helper changed; no original'
+            if composed:
+                route=json.loads(pathlib.Path(os.environ['CAESAR3_OWNER_PROOF']).read_text())
+                assert route['passed'] and route['realNative'] and route['transientLauncherActuallyReturned']
+                assert route['adapterSHA256']==sha(pathlib.Path(__file__).read_bytes())
+                assert route['ownerSHA256']==sha((ROOT/'tools/caesar3-persistent-owner.py').read_bytes())
             original(env, source, module)
     helper.qualify = qualify
     # Its --original option is intentionally not forwarded: this wrapper owns
