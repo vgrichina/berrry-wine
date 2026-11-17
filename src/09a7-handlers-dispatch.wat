@@ -3703,12 +3703,18 @@
   ;; (devenum's FilterData is VT_UI1|VT_ARRAY), so that one is destroyed. Zero
   ;; the whole 16-byte VARIANT so callers don't re-read stale tagged pointers.
   (func $handle_VariantClear (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $vt i32)
+    (local $vt i32) (local $hr i32)
     (if (local.get $arg0)
       (then
         (local.set $vt (call $gl16 (local.get $arg0)))
         (if (i32.eq (i32.and (local.get $vt) (i32.const 0x6000)) (i32.const 0x2000)) ;; VT_ARRAY, not VT_BYREF
-          (then (drop (call $safearray_destroy (call $gl32 (i32.add (local.get $arg0) (i32.const 8)))))))
+          (then
+            (local.set $hr (call $safearray_destroy (call $gl32 (i32.add (local.get $arg0) (i32.const 8)))))
+            ;; A failed clear retains the array owner and the complete VARIANT.
+            (if (local.get $hr) (then
+              (i32.store offset=0 (global.get $reg_base) (local.get $hr))
+              (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+              (return)))))
         (call $zero_memory (call $g2w (local.get $arg0)) (i32.const 16))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))  ;; S_OK
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
@@ -3770,9 +3776,10 @@
   ;; ULONG cLocks +8, PVOID pvData +12, SAFEARRAYBOUND[cDims] +16 as
   ;; {cElements, lLbound}. OLEAUT32 keeps the VARTYPE in the dword before the
   ;; descriptor and flags that with FADF_HAVEVARTYPE; this layout matches.
-  ;; Only element types that own nothing are supported: an array of BSTRs,
-  ;; VARIANTs or interfaces would need its elements released on destroy.
+  ;; BSTR elements own their counted strings. Interface and VARIANT element
+  ;; lifetimes require separate callback-aware support and still fail closed.
   (func $safearray_elem_size (param $vt i32) (result i32)
+    (if (i32.eq (local.get $vt) (i32.const 8)) (then (return (i32.const 4)))) ;; BSTR
     (if (i32.or (i32.eq (local.get $vt) (i32.const 16)) (i32.eq (local.get $vt) (i32.const 17))) ;; I1 UI1
       (then (return (i32.const 1))))
     (if (i32.or (i32.eq (local.get $vt) (i32.const 2))
@@ -3812,7 +3819,9 @@
     (local.set $sa (i32.add (local.get $block) (i32.const 4)))
     (call $gs32 (local.get $block) (i32.and (local.get $arg0) (i32.const 0xFFFF)))
     (call $gs16 (local.get $sa) (local.get $arg1))
-    (call $gs16 (i32.add (local.get $sa) (i32.const 2)) (i32.const 0x80)) ;; FADF_HAVEVARTYPE
+    (call $gs16 (i32.add (local.get $sa) (i32.const 2))
+      (select (i32.const 0x180) (i32.const 0x80)
+        (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF)) (i32.const 8)))) ;; HAVEVARTYPE | BSTR
     (call $gs32 (i32.add (local.get $sa) (i32.const 4)) (local.get $cb))
     (call $gs32 (i32.add (local.get $sa) (i32.const 8)) (i32.const 0))
     ;; OLEAUT32 stores the bounds in reverse order of the caller's array.
@@ -3840,11 +3849,26 @@
 
   ;; Shared by SafeArrayDestroy and VariantClear. A locked array is not freed.
   (func $safearray_destroy (param $sa i32) (result i32)
-    (local $data i32)
+    (local $data i32) (local $count i32) (local $i i32) (local $bstr i32)
     (if (i32.eqz (local.get $sa)) (then (return (i32.const 0))))
     (if (call $gl32 (i32.add (local.get $sa) (i32.const 8)))
       (then (return (i32.const 0x8002000D)))) ;; DISP_E_ARRAYISLOCKED
     (local.set $data (call $gl32 (i32.add (local.get $sa) (i32.const 12))))
+    (if (i32.and (i32.ne (local.get $data) (i32.const 0))
+          (i32.ne (i32.and (call $gl16 (i32.add (local.get $sa) (i32.const 2))) (i32.const 0x100)) (i32.const 0)))
+      (then
+        (local.set $count (i32.const 1))
+        (block $dimensions_done (loop $dimensions
+          (br_if $dimensions_done (i32.ge_u (local.get $i) (call $gl16 (local.get $sa))))
+          (local.set $count (i32.mul (local.get $count)
+            (call $gl32 (i32.add (local.get $sa) (i32.add (i32.const 16) (i32.shl (local.get $i) (i32.const 3)))))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $dimensions)))
+        (local.set $i (i32.const 0))
+        (block $strings_done (loop $strings
+          (br_if $strings_done (i32.ge_u (local.get $i) (local.get $count)))
+          (local.set $bstr (call $gl32 (i32.add (local.get $data) (i32.shl (local.get $i) (i32.const 2)))))
+          (if (local.get $bstr) (then (call $heap_free (i32.sub (local.get $bstr) (i32.const 4)))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $strings)))))
     (if (local.get $data) (then (call $heap_free (local.get $data))))
     (call $heap_free (i32.sub (local.get $sa) (i32.const 4)))
     (i32.const 0))
