@@ -112,4 +112,42 @@ print('PASS actual captured tree Next binding; wrong frame/sibling refused befor
  }finally{if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch{}await s.exited;save('native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,hostCleanup:true,nativeQuit:false});fs.writeFileSync(path.join(out,'native.log'),s.output());wd.stdin.end();save('watchdog-wait.json',{...await ww,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});}
 }
 async function run(out){await runOne(path.join(out,'ordinary'));await runOne(path.join(out,'dialog'),true);await runOne(path.join(out,'wrapper'),true,true);}
-module.exports={fixture,dialogFixture,run};if(require.main===module)run(path.resolve(process.argv[2])).catch(e=>{console.error(e);process.exitCode=1;});
+async function shutdown(out){
+ fs.mkdirSync(out,{recursive:true});const exe=path.join(out,'authored-wizard.exe');fs.writeFileSync(exe,fixture(),{flag:'wx'});
+ const code=String.raw`import importlib.util,os,pathlib,sys,json,time
+s=importlib.util.spec_from_file_location('hl2','tools/halflife2-current-native.py');rt=importlib.util.module_from_spec(s);s.loader.exec_module(rt)
+rt.RUN=pathlib.Path(sys.argv[1]);rt.RUN.mkdir();mode=sys.argv[2];exe=sys.argv[3]
+os.environ['HL2_REVISION']=sys.argv[4]
+sys.argv=['authored-adapter','--working-qualification']
+published=rt.published
+def fixture_helper(name,revision):
+ h=published(name,revision)
+ if name=='tools/vb5cce-original-runtime.py':
+  def execute():
+   rt.execute_native(['node','test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--max-seconds=20','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks'],dict(os.environ),(),h,'authored-shutdown')
+  h.run=execute
+ return h
+rt.published=fixture_helper
+rt.run()`;
+ const gitSHA=process.env.HL2_RUNTIME_INPUTS?JSON.parse(fs.readFileSync(process.env.HL2_RUNTIME_INPUTS)).gitSHA:cp.execFileSync('git',['rev-parse','origin/main'],{encoding:'utf8'}).trim();
+ const results=[];
+ for(const mode of ['term','int']){
+  const target=path.join(out,mode);
+  let wo='',we='';const wd=cp.spawn(process.execPath,['-e',"let pid;const t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGKILL')}catch{};process.exit(2)},25000);console.log('ARMED');process.stdin.on('data',b=>pid=+b);process.stdin.on('end',()=>clearTimeout(t))"]);
+  wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=new Promise(r=>wd.on('close',(exit,signal)=>r({exit,signal})));
+  while(!wo.includes('ARMED'))await pause(5);
+  const p=cp.spawn('python3',['-B','-c',code,target,mode,exe,gitSHA],{detached:true});wd.stdin.write(String(p.pid));let stdout='',stderr='';p.stdout.on('data',b=>stdout+=b);p.stderr.on('data',b=>stderr+=b);const waited=new Promise(r=>p.on('close',(exit,signal)=>r({exit,signal})));
+  try{
+   const due=Date.now()+10000;
+   while(!fs.existsSync(path.join(target,'native.stdout.log'))||!fs.readFileSync(path.join(target,'native.stdout.log'),'utf8').includes('[CreateWindow]')){assert(Date.now()<due,'live authored native startup required');assert(p.exitCode===null,stderr);await pause(10);}
+   const signal=mode==='term'?'SIGTERM':'SIGINT';p.kill(signal);const outer=await waited;
+   assert.equal(outer.exit,mode==='term'?143:130,stderr);assert.equal(outer.signal,null);
+   const native=JSON.parse(fs.readFileSync(path.join(target,'native-wait.json'))),release=JSON.parse(fs.readFileSync(path.join(target,'runtime-release.json')));
+   assert(native.actualWait&&native.stdoutEOF&&native.stderrEOF&&native.hostCleanup);assert.equal(native.nativeQuit,false);
+   assert(release.ownDescriptorsClosed&&release.compactorJoined);assert.deepEqual(release.compactionErrors,[]);
+   results.push({mode,outer:{...outer,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded},native,release});
+  }finally{if(p.exitCode===null)p.kill('SIGTERM');await waited;wd.stdin.end();const w=await ww;assert.equal(w.exit,0);fs.writeFileSync(path.join(target,'watchdog-wait.json'),JSON.stringify({...w,pid:wd.pid,actualWait:true,prearmed:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we},null,2));}
+ }
+ fs.writeFileSync(path.join(out,'proof.json'),JSON.stringify({passed:true,actualAdapterRun:true,actualNativeCLI:true,noOriginal:true,results},null,2)+'\n');
+}
+module.exports={fixture,dialogFixture,run,shutdown};if(require.main===module)(process.argv[2]==='--shutdown'?shutdown(path.resolve(process.argv[3])):run(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});

@@ -171,13 +171,17 @@ def original(env,source,module,helper):
   json.dump(dict(at=time.time(),run=str(RUN),invocationToken=invocation,
       args=argv,gitSHA=helper.HEAD,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],
       ordinaryStartup=True,allowanceReserved=True),f)
- p=subprocess.Popen(argv,cwd=ROOT,env=env,pass_fds=(source,module),stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
- helper.ORIGINAL_STARTED=True
+ execute_native(argv,env,(source,module),helper,invocation,original=True)
+
+def execute_native(argv,env,fds,helper,invocation,original=False):
+ """Own the actual process wait and both drains, including outer cancellation."""
+ p=subprocess.Popen(argv,cwd=ROOT,env=env,pass_fds=fds,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+ if original:helper.ORIGINAL_STARTED=True
  info=helper.native_identity(p);info['invocationToken']=invocation;save('native-pid.json',info)
  ends={};threads=[]
  def drain(pipe,name):
   with (RUN/('native.'+name+'.log')).open('xb') as f:
-   while b:=pipe.read(65536):f.write(b);f.flush()
+   while b:=pipe.read1(65536):f.write(b);f.flush()
   ends[name]=True
  for name in ('stdout','stderr'):
   t=threading.Thread(target=drain,args=(getattr(p,name),name));t.start();threads.append(t)
@@ -204,6 +208,9 @@ def run():
  assert git('merge-base','--is-ancestor',revision,'origin/main')==b''
  helper=published('tools/vb5cce-original-runtime.py',revision)
  helper.ROOT,helper.RUN,helper.HEAD=ROOT,RUN,revision;helper.OWN_SOURCES=OWN
+ # Calling an imported helper bypasses its __main__ shutdown installation.
+ # Unwind our native wait/drains and descriptor cleanup on outer TERM/INT.
+ helper.install_shutdown_handlers()
  if not working:assert git('show',revision+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
  if hasattr(helper,'compact_closed_observations'):
   shared_compact=helper.compact_closed_observations
@@ -224,6 +231,7 @@ def run():
   env['HL2_RUNTIME_INPUTS']=str(RUN/'runtime-inputs.json')
   helper.checked('next-preflight',['node','test/test-halflife2-reviewed-next.cjs'],env,(source,module))
   helper.checked('wizard-next',['node','test/test-halflife2-native-wizard.cjs',str(RUN/'wizard-next')],env,(source,module))
+  helper.checked('adapter-shutdown',['node','test/test-halflife2-native-wizard.cjs','--shutdown',str(RUN/'adapter-shutdown')],env,(source,module))
   helper.checked('scene-current',['node','test/test-disciples2-native-paint-binding.cjs','--unit'],env,(source,module))
   # Fresh exact loader inheritance is performed by helper.run before qualify.
   # Also exercise its resolver with absent-on-disk JS/JSON/Python sources,
