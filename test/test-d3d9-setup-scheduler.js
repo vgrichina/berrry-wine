@@ -5,7 +5,7 @@ const {Device,copyPayload}=require('../lib/d3d9-software-backend');
 
 // A scheduling oracle, not a replacement for actual WAT pixel tests.
 function fixture(results=[1,0,1,0]){
-  const events=[],draw={context:0,contexts:[],setup:{snapshot:{},batches:[{id:1},{id:2}],index:0}};
+  const events=[],draw={context:0,contexts:[],owned:[],setup:{snapshot:{},batches:[{id:1},{id:2}],index:0}};
   const device={quadBudget:3,prepareBatch(batch,d){
     events.push(['create',batch.id]);d.context=batch.id;d.contexts.push(batch.id);
     d.finishSetup=()=>events.push(['bind',batch.id]);
