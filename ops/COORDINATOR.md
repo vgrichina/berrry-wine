@@ -18,14 +18,17 @@ access controls take precedence. Public deployment needs its existing authorizat
   workers (owner decision 2026-11-03 22:45Z); the ceiling is not a target. Prefer
   filling eligible slots with independent, high-value lanes while quota remains.
   Respect laptop and other agents' ownership.
-- Check immediately before **each** worker launch: `MemAvailable` must be at
-  least **1.5 GB** and root filesystem free space at least **5 GB**. Run fewer
-  workers when either gate fails. These launch gates supersede the older
-  two-worker cap and lower disk launch floors; the 8 GB cleanup target remains.
-- At most **one** Chrome/browser or heavy CLI runtime may run on this coordinator
-  box at a time. Put other heavy runtimes on separate leased `bx_*` test boxes;
-  independent lanes there may run concurrently. Serialize shared integration and
-  every full build with `flock /tmp/wine-build.lock bash tools/build.sh`.
+- The current owner AGENTS instruction replaces older resource gates: keep free
+  disk on `/home` above **1.5 GB** and clean up task-owned unnecessary run files.
+  Do not gate worker launches or runtime work on RAM. Keep three workers running;
+  owner Telegram199 authorizes filling the fourth slot with independent work.
+- Owner Telegram199 authorizes independent local runtimes with immutable source
+  and modules to run concurrently. Coordinate ownership of shared files and
+  outputs; serialize every full build with
+  `flock /tmp/wine-build.lock bash tools/build.sh`. Prepare modules before an
+  original's fixed runtime budget starts. Do not hold the build lock for an
+  entire persistent runtime. Separate test boxes are not a prerequisite for
+  authorized local work; do not retry denied box access or bypass permissions.
 - Start a fresh worker for each new task; same-task clarification is allowed.
   Workers do not spawn agents or refill the queue.
 - Worker automatic compaction is **200,000 total-context tokens**. Coordinator

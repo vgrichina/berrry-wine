@@ -87,7 +87,7 @@ async function main() {
   };
   const clear = () => glCall(CALL_INDEX.glClear, 0x4000);
   snap();
-  assert.deepStrictEqual(litList(), [[10, VP - 20]], 'a size-1 point is the one pixel under it');
+  assert.deepStrictEqual(litList(), [[10, VP - 1 - 20]], 'GL 2.1 point pixel index uses height-1-floor(windowY), independently native-verified');
 
   // --- glPointSize -----------------------------------------------------------
   clear();

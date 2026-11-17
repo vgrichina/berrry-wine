@@ -324,6 +324,9 @@ function createReader(options = {}) {
   const codexRoot = options.codexRoot === false ? null : options.codexRoot || path.join(os.homedir(), '.codex', 'sessions');
   const claudeRoot = options.claudeRoot === false ? null : options.claudeRoot || path.join(os.homedir(), '.claude', 'projects', root.replace(/[^a-zA-Z0-9-]/g, '-'));
   const sessionCache = new Map();
+  // Keep only normalized metadata, never raw result payloads. Check file
+  // identity on every snapshot; artifact paths are still revalidated below.
+  const runCache = new Map();
   const observeProcesses = createProcessObserver(options);
   const assets = new Map();
   let discovery = null, discoveredAt = 0, discoveryWarnings = [];
@@ -382,6 +385,7 @@ function createReader(options = {}) {
   }
   async function runs(warnings) {
     const result = [];
+    const seen = new Set();
     const corpus = await fs.readFile(path.join(root, 'test/toyvm-dos-corpus/manifest.json'), 'utf8').then(JSON.parse).catch(() => null);
     const explicitRuns = new Set((corpus?.titles || []).flatMap(t => (t.toyvm?.evidence || []).map(e => e.run)));
     for (const directory of ['scratch/runs', 'ops/runs']) {
@@ -391,27 +395,40 @@ function createReader(options = {}) {
       for (const entry of entries) {
         if (!entry.isDirectory()) continue;
         const relative = `${directory}/${entry.name}`;
+        seen.add(relative);
         try {
           const file = await safeFile(root, `${relative}/result.json`);
-          if (!file) continue;
-          const r = JSON.parse(await readText(file, MB));
-          if (!r || typeof r !== 'object' || (typeof r.candidateId !== 'string' && !(r.candidateId === null && explicitRuns.has(relative))) || !date(r.startedAt)) throw new Error('candidateId and ISO startedAt are required');
-          const allowed = ['passed', 'failed', 'timeout', 'harness-error', 'running', 'unknown'];
-          if (!allowed.includes(r.outcome)) throw new Error('invalid outcome');
-          const run = { id: entry.name, key: relative, source: directory, candidateId: r.candidateId, taskId: clip(r.taskId), agentId: clip(r.agentId),
-            startedAt: date(r.startedAt), finishedAt: date(r.finishedAt), outcome: r.outcome, route: clip(r.route),
-            command: clip(r.command, 4000), build: clip(typeof r.build === 'string' ? r.build : JSON.stringify(r.build || {}), 2000),
-            environment: clip(typeof r.environment === 'string' ? r.environment : JSON.stringify(r.environment || {}), 1000),
-            summary: clip(r.summary, 2000), verification: r.verification === 'reviewed' ? 'reviewed' : 'unreviewed',
-            performance: normalizePerformance(r.performance),
-            screenshots: [], gameplayScreenshots: [], visuals: [], artifacts: [] };
-          const gameplayNames = new Set(run.verification === 'reviewed' && typeof r.gameplaySceneReview?.reviewer === 'string' && r.gameplaySceneReview.reviewer.trim() && Array.isArray(r.gameplayScreenshots)
-            ? r.gameplayScreenshots.filter(v => typeof v === 'string') : []);
-          const diagrams = new Set(Array.isArray(r.diagrams) ? r.diagrams.filter(v => typeof v === 'string') : []);
-          const names = new Set(['result.json', 'output.log']);
-          for (const value of [r.screenshot, ...(Array.isArray(r.screenshots) ? r.screenshots : []), ...diagrams, ...(Array.isArray(r.artifacts) ? r.artifacts : [])]) {
-            if (typeof value === 'string') names.add(value);
+          if (!file) { runCache.delete(relative); continue; }
+          const stat = await fs.stat(file);
+          const key = `${file}:${stat.dev}:${stat.ino}:${stat.birthtimeMs}:${stat.size}:${stat.mtimeMs}:${stat.ctimeMs}`;
+          let metadata = runCache.get(relative);
+          if (!metadata || metadata.key !== key) {
+            const r = JSON.parse(await readText(file, MB));
+            if (!r || typeof r !== 'object' || (typeof r.candidateId !== 'string' && !(r.candidateId === null && explicitRuns.has(relative))) || !date(r.startedAt)) throw new Error('candidateId and ISO startedAt are required');
+            const allowed = ['passed', 'failed', 'timeout', 'harness-error', 'running', 'unknown'];
+            if (!allowed.includes(r.outcome)) throw new Error('invalid outcome');
+            const run = { id: entry.name, key: relative, source: directory, candidateId: r.candidateId, taskId: clip(r.taskId), agentId: clip(r.agentId),
+              startedAt: date(r.startedAt), finishedAt: date(r.finishedAt), outcome: r.outcome, route: clip(r.route),
+              command: clip(r.command, 4000), build: clip(typeof r.build === 'string' ? r.build : JSON.stringify(r.build || {}), 2000),
+              environment: clip(typeof r.environment === 'string' ? r.environment : JSON.stringify(r.environment || {}), 1000),
+              summary: clip(r.summary, 2000), verification: r.verification === 'reviewed' ? 'reviewed' : 'unreviewed',
+              performance: normalizePerformance(r.performance),
+              screenshots: [], gameplayScreenshots: [], visuals: [], artifacts: [] };
+            const gameplayNames = new Set(run.verification === 'reviewed' && typeof r.gameplaySceneReview?.reviewer === 'string' && r.gameplaySceneReview.reviewer.trim() && Array.isArray(r.gameplayScreenshots)
+              ? r.gameplayScreenshots.filter(v => typeof v === 'string') : []);
+            const diagrams = new Set(Array.isArray(r.diagrams) ? r.diagrams.filter(v => typeof v === 'string') : []);
+            const names = new Set(['result.json', 'output.log']);
+            for (const value of [r.screenshot, ...(Array.isArray(r.screenshots) ? r.screenshots : []), ...diagrams, ...(Array.isArray(r.artifacts) ? r.artifacts : [])]) {
+              if (typeof value === 'string') names.add(value);
+            }
+            metadata = { key, run, gameplayNames, diagrams, names };
+            runCache.set(relative, metadata);
           }
+          // Explicit DOS associations can change independently of result.json.
+          if (metadata.run.candidateId === null && !explicitRuns.has(relative)) throw new Error('candidateId and ISO startedAt are required');
+          // Callers get independent objects, just as on a freshly parsed run.
+          const run = structuredClone(metadata.run);
+          const { gameplayNames, diagrams, names } = metadata;
           for (const name of names) {
             if (!/\.(png|jpe?g|webp|json|txt|log)$/i.test(name)) continue;
             const file = await safeFile(path.join(root, relative), name);
@@ -429,9 +446,10 @@ function createReader(options = {}) {
             }
           }
           result.push(run);
-        } catch (e) { warnings.push(`${relative}/result.json: ${e.message}`); }
+        } catch (e) { runCache.delete(relative); warnings.push(`${relative}/result.json: ${e.message}`); }
       }
     }
+    for (const relative of runCache.keys()) if (!seen.has(relative)) runCache.delete(relative);
     return result.sort((a, b) => b.startedAt.localeCompare(a.startedAt));
   }
   async function snapshot() {

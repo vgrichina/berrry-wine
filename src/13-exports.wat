@@ -5822,6 +5822,49 @@
     (call $enable_scroll_bar_core
       (local.get $hwnd) (local.get $bar) (local.get $arrows)))
 
+  ;; Read-only public USER text, equivalent to WM_GETTEXT. Native controls
+  ;; share a backing canvas and need not have a JS renderer window. These
+  ;; readers expose their actual captions without allocating guest buffers,
+  ;; sending messages, or examining application-private state.
+  (func $native_user_text_ptr (export "native_user_text_ptr")
+    (param $hwnd i32) (result i32)
+    (local $class i32) (local $state i32) (local $sw i32) (local $ptr i32)
+    (local.set $class (call $ctrl_table_get_class (local.get $hwnd)))
+    (if (i32.and (i32.ge_u (local.get $class) (i32.const 1))
+                 (i32.le_u (local.get $class) (i32.const 3)))
+      (then
+        (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
+        (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        (local.set $sw (call $g2w (local.get $state)))
+        (if (i32.eq (local.get $class) (i32.const 1))
+          (then (local.set $ptr (call $btn_text_ptr (local.get $sw)))))
+        (if (i32.eq (local.get $class) (i32.const 2))
+          (then (local.set $ptr (load.field EditState text_buf_ptr
+            (cast ptr<EditState> (local.get $sw))))))
+        (if (i32.eq (local.get $class) (i32.const 3))
+          (then (local.set $ptr (call $static_text_ptr (local.get $sw)))))
+        (if (i32.eqz (local.get $ptr)) (then (return (i32.const 0))))
+        (return (call $g2w (local.get $ptr)))))
+    (call $title_table_get_ptr (local.get $hwnd)))
+
+  (func (export "native_user_text_length") (param $hwnd i32) (result i32)
+    (local $class i32) (local $state i32) (local $sw i32) (local $ptr i32)
+    (local.set $class (call $ctrl_table_get_class (local.get $hwnd)))
+    (if (i32.and (i32.ge_u (local.get $class) (i32.const 1))
+                 (i32.le_u (local.get $class) (i32.const 3)))
+      (then
+        (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
+        (if (i32.eqz (local.get $state)) (then (return (i32.const -1))))
+        (local.set $sw (call $g2w (local.get $state)))
+        (if (i32.eq (local.get $class) (i32.const 1))
+          (then (return (call $btn_text_len (local.get $sw)))))
+        (if (i32.eq (local.get $class) (i32.const 2))
+          (then (return (load.field EditState text_len (cast ptr<EditState> (local.get $sw))))))
+        (return (call $static_text_len (local.get $sw)))))
+    (local.set $ptr (call $native_user_text_ptr (local.get $hwnd)))
+    (if (i32.eqz (local.get $ptr)) (then (return (i32.const 0))))
+    (call $strlen (local.get $ptr)))
+
   ;; ButtonState text reader (parallel to get_edit_text).
   (func (export "button_get_text")
     (param $hwnd i32) (param $dest_guest i32) (param $max i32) (result i32)

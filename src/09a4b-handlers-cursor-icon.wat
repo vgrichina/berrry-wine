@@ -253,6 +253,8 @@
           (i32.store offset=12 (local.get $p) (local.get $mask))
           (i32.store offset=16 (local.get $p) (local.get $color))
           (i32.store offset=20 (local.get $p) (i32.const 0))
+          (i32.store offset=24 (local.get $p) (i32.const 0))
+          (i32.store offset=28 (local.get $p) (i32.const 0))
           (return (i32.or (global.get $CURSOR_HANDLE_TAG)
             (i32.add (local.get $i) (i32.const 1))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
@@ -672,7 +674,10 @@
                 (i32.le_s (local.get $h) (i32.const 0)))
       (then (return (i32.const 0))))
     ;; Already composited once: the host keeps the picture under this handle.
-    (if (i32.load offset=20 (local.get $rec))
+    ;; Loaded NE cursors can cross host instances. Their shared pushed flag
+    ;; cannot prove that this instance's private CSS cache holds the image.
+    (if (i32.and (i32.ne (i32.load offset=20 (local.get $rec)) (i32.const 0))
+                 (i32.eqz (i32.load offset=24 (local.get $rec))))
       (then
         (call $host_set_cursor_image (local.get $handle)
           (local.get $w) (local.get $h)
@@ -702,6 +707,8 @@
     (local $rec i32)
     (local.set $rec (call $cursor_record (local.get $handle)))
     (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    ;; LoadCursor resources belong to their module, not to the caller.
+    (if (i32.load offset=24 (local.get $rec)) (then (return (i32.const 1))))
     (if (i32.load offset=12 (local.get $rec))
       (then (drop (call $gdi_object_delete_full (i32.load offset=12 (local.get $rec))))))
     (if (i32.load offset=16 (local.get $rec))

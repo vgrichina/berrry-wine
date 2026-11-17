@@ -650,7 +650,8 @@
     (if (i32.eqz (i32.or
         (i32.or (i32.or (i32.eq (local.get $op) (i32.const 7)) (i32.eq (local.get $op) (i32.const 18)))
                 (i32.or (i32.eq (local.get $op) (i32.const 20)) (i32.eq (local.get $op) (i32.const 35))))
-        (i32.or (i32.eq (local.get $op) (i32.const 105)) (i32.eq (local.get $op) (i32.const 106)))))
+        (i32.or (i32.or (i32.eq (local.get $op) (i32.const 105)) (i32.eq (local.get $op) (i32.const 106)))
+          (i32.or (i32.eq (local.get $op) (i32.const 15)) (i32.eq (local.get $op) (i32.const 94))))))
       (then (return (i32.const 0))))
     (local.set $ctx (call $gl_list_context))
     (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
@@ -667,6 +668,11 @@
     (if (i32.and (i32.or (i32.eq (local.get $op) (i32.const 18)) (i32.eq (local.get $op) (i32.const 20)))
         (i32.or (i32.lt_s (i32.load offset=12 (local.get $stack)) (i32.const 0))
                 (i32.lt_s (i32.load offset=16 (local.get $stack)) (i32.const 0))))
+      (then (local.set $error (i32.const 0x501))))
+    ;; Point/line widths share the positive-size contract. Reject before
+    ;; observers or transport can change retained state, and expose the error.
+    (if (i32.and (i32.or (i32.eq (local.get $op) (i32.const 15)) (i32.eq (local.get $op) (i32.const 94)))
+        (f32.le (f32.load offset=4 (local.get $stack)) (f32.const 0)))
       (then (local.set $error (i32.const 0x501))))
     (if (local.get $error) (then (call $gl_list_error (local.get $ctx) (local.get $error)) (return (i32.const 1))))
     (i32.const 0))
@@ -1199,7 +1205,10 @@
           (global.set $gl_normal_x (f32.load offset=36 (local.get $p)))
           (global.set $gl_normal_y (f32.load offset=40 (local.get $p)))
           (global.set $gl_normal_z (f32.load offset=44 (local.get $p)))))
-        (global.set $gl_shade_model (i32.load offset=48 (local.get $p)))
+        ;; Shade model belongs to GL_LIGHTING_BIT, not GL_CURRENT_BIT or an
+        ;; unrelated/empty attribute mask. Preserve changes to unsaved groups.
+        (if (i32.and (i32.load offset=68 (local.get $p)) (i32.const 0x40)) (then
+          (global.set $gl_shade_model (i32.load offset=48 (local.get $p)))))
         (call $heap_free (call $w2g (local.get $p)))))
       (return (i32.const 0))))
     (if (i32.or (i32.eq (local.get $op) (i32.const 86)) (i32.eq (local.get $op) (i32.const 99))) (then

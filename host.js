@@ -7273,6 +7273,23 @@ class WineAssembly {
     });
   }
 
+  requestCurrentDisplayCapture(options) {
+    if (!this.renderer || !options) throw new Error('Current display capture requires a renderer and owner');
+    if (this._stopped || this.running === false) throw new Error('Current display capture owner is stopped');
+    // A queued surface is not a completed display. Arm the existing capture
+    // transaction for its next ordinary unheld publication instead of refusing
+    // observation merely because the application keeps rendering. Never upload
+    // or flush here, and never read the in-flight guest-backed source.
+    const pendingHostPublication = Object.freeze({
+      dirty: !!this._dxDirty, lockDeferred: !!this._dxLockDeferred,
+      presentDue: !!this._presentFrameDue,
+    });
+    return this.renderer.requestCurrentDisplayCapture({
+      hwnd: options.hwnd, processId: this.processId, instance: this.instance,
+      pendingHostPublication,
+    });
+  }
+
   // Upload the newest guest frame and composite, now. Called from the rAF,
   // from a step boundary when a frame fell due mid-slice, and wherever
   // stepping comes to rest (frozen park, recording tap, stop) so the last

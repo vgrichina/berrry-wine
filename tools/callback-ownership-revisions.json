@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_PeekMessageA_fetch",
+      "baseSHA256": "efcb7dda81314d186771f176b66ff594a7ebb82b6718db9cccd3a7b1270ef929",
+      "sha256": "5d8a0280cc60f5ffc0a3227305216e415c9975a1aa0e0a4c967fed0d74453981",
+      "reason": "A synchronous host notification on the proven-empty unfiltered native USER path acknowledges pointer-arrival pump completion. Filtered queries, successful posted/input/paint/timer retrieval and native callbacks do not acknowledge it. No guest frame, continuation, callback admission or context restoration is added; invocation ownership remains pending."
+    },
+    {
+      "file": "lib/storage.js",
+      "name": "host-file",
+      "baseSHA256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053",
+      "sha256": "669d7fff971b965ab20c79bb23f88af6a89a8b26a5d736683f58be32ed6201d8",
+      "reason": "Merged HKCR registry lookup and synchronous mutation retain existing disk and registry ownership; aliases and inferred roots introduce no guest callback, asynchronous frame or context restoration. Generic Interface root enables genuine system registrar execution; arbitrary missing keys remain errors. Native qualification is recorded separately."
+    },
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "baseSHA256": "5a9f6a834b9ad5a58d4090c18f714961416dc9583908990087503ebbf715f25b",
+      "sha256": "682ab78e7e3f03d7a784f6552a8dd57de56bd637c2874de1d4fbb8a3930ab92f",
+      "reason": "TreatAs activation uses the existing COM jump/continuation mechanism with a private guest-stack frame. Marker CACA0041 restores the original stdcall frame after ordinary activation completes, including DLL-load yields and native class-factory callbacks. No foreign activation frame, global GUID scratch, callback admission or nonlocal ownership assertion is added; native guest-DLL, builtin-chain, cycle and unchanged activation regressions qualify the bounded route; ownership remains pending."
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_pump_step",
+      "baseSHA256": "dc12e4d662a9a2c5ad3e0f181a744d7b487f0666c204df515c105dd22dd63da0",
+      "sha256": "799ed01516e1441d54a457b1daabca35849a5609185553cae4e9ce442c66191c",
+      "reason": "The owning parked MessageBox pump retrieves and synchronously dispatches one posted message filtered to its current HWND through its built-in USER procedure. Class 16 only: no guest dialog procedure, foreign continuation, callback admission, new EIP write or retained interface is introduced. Completion uses existing modal_finish_local and owning continuation splice; general ownership remains pending. Exact native NULL-owner error OK/X, OKCANCEL and strict guarded-input opposition controls qualify the route."
+    },
+    {
+      "file": "lib/dll-loader.js",
+      "name": "host-file",
+      "baseSHA256": "deb6b1b6bd417cac7007c7f27748ad117729349a9c5fb64e2237dca4ccb99bd5",
+      "sha256": "cbdca7ed6ecce5d26002c13b42a613e3637c9c5ecd4a95e8c9c6b0670f138ca0",
+      "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
+    }
+  ],
+  "additions": [
+    {
+      "file": "lib/com-guest-continuation.js",
+      "name": "host-file",
+      "sha256": "f8cfed9c5a0c97886749116fa479acb0eb2b992ddbfcaaf06cd2abd3375f5afb",
+      "kind": "host-entry",
+      "reason": "Actual owner-only COM callbacks retain full i64 child tokens and validate source/process/thread/generation before and after suspension. All registers, private IP/thunk, handler, SEH and parent yield are restored only after a complete native stdcall return and ABI checks. Trap, unsupported wait or replacement leaves the child live for explicit retirement; no shadow CPU or finally resurrection.",
+      "ownership": "pending"
+    },
+    {
+      "file": "lib/com-interface-runtime.js",
+      "name": "host-file",
+      "sha256": "592ce332c5e948da82f1a47f460f8ff5c5befc785d6be21282061116ade01e74",
+      "kind": "host-entry",
+      "reason": "One iterator remains attached to the original root invocation, with exact owner token, process/thread/generation, registers, stack, ABI, thunk and handler checked before and after awaited advances. Changed or retired frames are abandoned without restoration or replay. Incomplete advances preserve yield 23 and permit ordinary Worker slice completion; main and nested operations retain their original whole-operation path. Broader ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "$com_interface_bridge",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "global.get",
+          "$current_thunk_eip"
+        ]
+      ],
+      "sha256": "7377ce8aba18065b539e4f78b563d454c257eaada7b59b82b2e5190f55c42ea9",
+      "kind": "continuation",
+      "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "export:com_owner_epoch",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [
+        "com_owner_epoch"
+      ],
+      "targets": [],
+      "sha256": "2c2590aad9f2059b9cb83e9eb49e9ab1970d3017e284cfe818cde2ac008f1ae5",
+      "kind": "continuation",
+      "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "export:com_owner_root",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_validate"
+      ],
+      "exports": [
+        "com_owner_root"
+      ],
+      "targets": [],
+      "sha256": "d4e464b828542fb3c3e9fa8b5e7640eb752e8fef3fc908f29b34adfaf0806ced",
+      "kind": "continuation",
+      "reason": "COM interface bridge retains and re-enters the exact original stdcall thunk on yield 23; owner root and epoch exports validate the existing full-width invocation lifetime. No foreign CPU entry or pointer serialization. Ownership remains pending outside this bounded implementation.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a7b-ole.wat",
+      "name": "export:com_owner_token",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [
+        "com_owner_token"
+      ],
+      "targets": [],
+      "sha256": "a3f19420266b812d3cdf719a319a646540dbabb964817ab1a6310363d27fc4d1",
+      "kind": "continuation",
+      "reason": "Read-only full-width current invocation token export used to authenticate the original parked COM frame. It neither enters a guest callback nor mutates or restores invocation state; broader ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "lib/com-owned-proxy.js",
+      "name": "host-file",
+      "sha256": "10fb71d7574aed4e9ffea326770f061505c89591434c99143fb9444cd873780e",
+      "kind": "continuation",
+      "reason": "Remote QI retains the existing proxy root while awaiting authenticated exporter work. It reads the full-width current invocation token before suspension and validates token, exact IID and owner around every await. Ordinary HRESULT completion cancels pending work and releases the pin; traps and changed ownership do not replay or clean an abandoned guest frame. No new guest entry or context restoration; broader ownership remains pending.",
+      "ownership": "pending"
+    }
+  ]
+}

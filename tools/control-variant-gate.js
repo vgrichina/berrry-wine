@@ -249,6 +249,9 @@ add('EditState', [
   'export:get_edit_text', 'export:get_edit_cursor', 'export:get_edit_sel_start',
   'export:get_edit_flags', 'export:get_edit_text_len', '$test_edit_visual_line_count',
 ], '13-exports test/renderer readers receive an EDIT hwnd and follow its state_ptr');
+add('EditState', ['$native_user_text_ptr', 'export:native_user_text_length'],
+  '13-exports public USER text readers access EditState only inside the ctrl_class == 2 branch; ' +
+  'BUTTON/STATIC branches call their existing typed accessor layers instead');
 add('ButtonState', ['$dialog_first_default_button'],
   '10-helpers filters children to ctrl_class 1 before following state_ptr');
 add('ColorGridState', ['export:colorgrid_get_sel'],

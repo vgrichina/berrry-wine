@@ -501,6 +501,7 @@ const REG_EXPORT = getArg('reg-export', '');
 // guest/host exit codes and the earlier child-exit IPC notification.
 const CHILD_STATE_COMPLETION = getArg('child-state-completion', '');
 const CHILD_STATE_TOKEN = getArg('child-state-token', '');
+const CHILD_READONLY_CONTEXT = getArg('child-readonly-context', '');
 // --import-saves=FILE / --export-saves=FILE: the same state as a *save bundle*
 // (lib/save-bundle.js) — the app's persistFiles matches plus the registry/INI
 // store, in one zip. --reg-export carries only the second half, so a game whose
@@ -3021,6 +3022,24 @@ async function main() {
   const processDesktop = new ProcessDesktop();
   ctx.processDesktop = processDesktop;
   ctx.processId = processDesktop.processId;
+  // Guest Workers authenticate their own connection and execute their own
+  // callbacks. Never broker a Worker COM callback through this local CPU.
+  process.env.WINE_PROCESS_DESKTOP = JSON.stringify(processDesktop.endpoint);
+  process.env.WINE_COM_MODULE_SHA256 = require('node:crypto').createHash('sha256').update(wasmBytes).digest('hex');
+  const { ComInterfaceRuntime, comRuntimeSourcePin } = require('../lib/com-interface-runtime');
+  ctx.comInterfaces = new ComInterfaceRuntime({
+    getExports: () => ctx.exports, getMemory: () => memory.buffer, desktop: processDesktop,
+    modulePin: process.env.WINE_COM_MODULE_SHA256, sourcePin: comRuntimeSourcePin(),
+    information: (...args) => base.host.com_localserver_information(...args),
+    serviceYield: async ({ reason }) => {
+      const options = { exports: ctx.exports, memoryBuffer: memory.buffer,
+        exeBytes: new Uint8Array(exeBytes), resourceHost: ctx, log: console.log,
+        findDll: findRuntimeDllBytes, findDllSync: findRuntimeDllBytes, onDllCallbackGateWait };
+      if (reason === 3) { await handleComDllYield(options); return true; }
+      if (reason === 5 || reason === 18) { await handleLoadLibraryYield(options); return true; }
+      return false;
+    },
+  });
   onFailure(() => processDesktop.close());
   // --latency-stats: how long an injected event takes to reach pixels. The
   // blit is the moment GDI hands a dirty rect to the presentation surface,
@@ -4166,6 +4185,7 @@ async function main() {
   // wire. This process becomes the hub of that wire. 0 = "cannot", and the
   // guest falls back to its old CreateProcess path.
   const pipeChildren = [];
+  const pipeChildClosures = [];
   const pipeChildByPid = new Map();
   const livePipeChildren = new Set();
   // Browser aliases require a target-owned table; CLI IPC is unsupported.
@@ -4192,9 +4212,10 @@ async function main() {
     if (op === 8) return rec.exited ? 0 : 0x102;
     if (op === 1 || op === 5) {
       if (rec.exited) return -5;
-      rec.exitCode = arg >>> 0;
-      rec.exited = true;
-      rec.child.kill();
+      // A signal request is not process completion. Keep STILL_ACTIVE and
+      // the wait unsignaled until the native child has closed both pipes.
+      if (!rec.child.kill()) return -5;
+      rec.terminationCode = arg >>> 0;
       return 1;
     }
     return -1;
@@ -4259,6 +4280,23 @@ async function main() {
       const regOut = path.join(tmp, 'reg-out.json');
       const completion = path.join(tmp, 'complete.json');
       const token = require('crypto').randomBytes(32).toString('hex');
+      // Borrowed disc bytes stay outside mutable state. Carry the actual
+      // source-owned mount plan, directory tree and drive identity separately.
+      let readonlyContextArgs = [];
+      if (vfs.readOnlyDrives?.size || vfs.readonlyMediaContexts?.length) {
+        let contexts;
+        try { contexts = require('../lib/readonly-media-context').capture(vfs); }
+        catch (error) {
+          console.log(`[spawn] CreateProcess "${cmd}": readonly media context refused: ${error.message}`);
+          fs.rmSync(tmp, { recursive: true, force: true });
+          return 0;
+        }
+        if (contexts.length) {
+          const contextPath = path.join(tmp, 'readonly-context.json');
+          fs.writeFileSync(contextPath, JSON.stringify({ version: 1, token, contexts }));
+          readonlyContextArgs = [`--child-readonly-context=${contextPath}`];
+        }
+      }
       const written = saveVfsToHost(vfs, inDir);
       const before = new Map(written.map(row => [String(row.guestPath).toLowerCase(), row.outputPath]));
       const exeRow = written.find(row => String(row.guestPath).toLowerCase() === guestExe);
@@ -4275,7 +4313,22 @@ async function main() {
       const childDllSeeds = [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED]
         .map(appAsset).filter(p => fs.existsSync(p))
         .map(p => childDllSeedPath(p, written));
+      // VFS trees are mounted after DLL initializers. Forward only explicit
+      // files into the child's early mount pass, using the exported native
+      // state when present. Never replace guest writes with the original host
+      // input, resurrect a deleted file, or materialize unrelated lazy media.
+      const childMountArgs = VFS_MOUNT.flatMap(spec => {
+        const eq = spec.lastIndexOf('=');
+        if (eq <= 0) throw new Error(`invalid explicit mount: ${spec}`);
+        const guest = spec.slice(eq + 1).trim();
+        const normalized = vfs._resolvePath(/^[a-z]:/i.test(guest) ? guest : 'c:\\' + guest.replace(/^\\+/, ''));
+        if (!vfs.files.has(normalized)) return [];
+        const row = written.find(row => String(row.guestPath).toLowerCase() === normalized);
+        return [`--vfs-mount=${row ? row.outputPath : appAsset(spec.slice(0, eq).trim())}=${guest}`];
+      });
       const args = [
+        ...childMountArgs,
+        ...readonlyContextArgs,
         `--exe=${exeRow.outputPath}`, `--vfs-tree=${inDir}`, `--exe-guest-path=${guestExe}`,
         `--cwd=${cwd}`, `--args=${parsed.params.trim()}`,
         '--no-build', `--wasm=${WASM_PATH}`, '--quiet-api', '--quiet-blocks',
@@ -4295,7 +4348,24 @@ async function main() {
       const pid = nextChildPid();
       relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
       pipeChildren.push(child);
+      pipeChildClosures.push(new Promise(resolve => child.once('close', resolve)));
       const rec = { child, ready: false, exited: false, exitCode: 259 };
+      // Optional run observability records real OS-child waits, not a signal
+      // request or a guest ExitProcess message. It also covers grandchildren.
+      const waitDirectory = process.env.WINE_COM_PROTOCOL_DIR;
+      const childWait = { pid: child.pid, parent: process.pid, guestPid: pid, guestExe,
+        actualWait: false, stdoutEOF: false, stderrEOF: false, closed: false };
+      const saveChildWait = () => {
+        if (!waitDirectory) return;
+        try {
+          fs.mkdirSync(waitDirectory, { recursive: true });
+          fs.writeFileSync(path.join(waitDirectory, `native-child-${process.pid}-${child.pid}-wait.json`), JSON.stringify(childWait, null, 2) + '\n');
+        } catch (error) { console.error('[spawn] child wait evidence failed: ' + error.message); }
+      };
+      child.once('exit', (code, signal) => { Object.assign(childWait, { actualWait: true, exit: code, signal }); saveChildWait(); });
+      child.stdout.once('end', () => { childWait.stdoutEOF = true; saveChildWait(); });
+      child.stderr.once('end', () => { childWait.stderrEOF = true; saveChildWait(); });
+      saveChildWait();
       livePipeChildren.add(rec);
       pipeChildByPid.set(pid, rec);
       let guestCode = null;
@@ -4303,14 +4373,17 @@ async function main() {
         if (msg && msg.t === 'process-input-ready') rec.ready = true;
         if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0;
       });
-      child.on('exit', code => {
+      child.on('close', code => {
         try {
-          mergeChildState(vfs, storage, before, outDir, regOut, completion, token);
+          childWait.guardedMerge = mergeChildState(vfs, storage, before, outDir, regOut, completion, token);
         } catch (e) {
+          childWait.guardedMerge = { merged: false, reason: String(e.message) };
           console.log(`[spawn] merging ${path.win32.basename(guestExe)}'s files back failed: ${e.message}`);
         }
+        childWait.closed = true;saveChildWait();
         fs.rmSync(tmp, { recursive: true, force: true });
-        if (!rec.exited) rec.exitCode = (guestCode != null ? guestCode : (code == null ? 1 : code)) >>> 0;
+        rec.exitCode = (rec.terminationCode != null ? rec.terminationCode :
+          (guestCode != null ? guestCode : (code == null ? 1 : code))) >>> 0;
         rec.exited = true;
         livePipeChildren.delete(rec);
       });
@@ -4388,20 +4461,20 @@ async function main() {
     }
     ctx.vlanWire.addChild(child, ip);
     pipeChildren.push(child);
+    pipeChildClosures.push(new Promise(resolve => child.once('close', resolve)));
     const pid = (0x4000 + pipeChildren.length * 4) & 0xFFFF;
     const rec = { child, exited: false, exitCode: 259 };
     livePipeChildren.add(rec);
     pipeChildByPid.set(pid, rec);
+    let guestCode = null;
     child.on('message', msg => {
-      if (msg && msg.t === 'child-exit' && !rec.exited) {
-        rec.exitCode = msg.code >>> 0;
-        rec.exited = true;
-      }
+      if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0;
     });
     // An emulator that ends without a guest ExitProcess (a crash, a
     // --max-seconds stop) still ends the child process: report it as exited.
-    child.on('exit', code => {
-      if (!rec.exited) rec.exitCode = (code == null ? 1 : code) >>> 0;
+    child.on('close', code => {
+      rec.exitCode = (rec.terminationCode != null ? rec.terminationCode :
+        (guestCode != null ? guestCode : (code == null ? 1 : code))) >>> 0;
       rec.exited = true;
       livePipeChildren.delete(rec);
     });
@@ -4644,7 +4717,12 @@ async function main() {
   // of the release's own posted follow-ups. Paint's tool buttons PostMessage
   // their clicks to the toolbox, so the toolbox's release landed after the
   // canvas press and took its capture. Floor 0 alone was not enough.
-  if (renderer) renderer._buttonHoldFloorMs = -1;
+  if (renderer) {
+    renderer._buttonHoldFloorMs = -1;
+    // Preserve a distinct hover pump for coordinate presses even though the
+    // CLI script/controller owns button release timing.
+    renderer._coordinatePressHoverMs = 30;
+  }
   // --wall-clock-ms pins the calendar's ORIGIN; the calendar then advances
   // with GUEST time. Freezing it outright was deterministic but not a clock:
   // GetSystemTime returned one instant for the whole run, so anything that
@@ -4671,7 +4749,11 @@ async function main() {
     } else if (inputQueue && inputQueue.length > 0) {
       source = 'button-queue';
       // Delay button clicks while on "Installing Files" page (let extraction thread work)
-      if (installingFiles) return 0;
+      if (installingFiles) {
+        lastInputEvent = null;
+        if (renderer) renderer._activeInputEvent = null;
+        return 0;
+      }
       const id = inputQueue.shift();
       if (typeof id === 'object') { evt = id; } // allow full event objects in queue
       // Button-id form: WM_COMMAND from a menu, hwnd=0 → WAT routes to main_hwnd.
@@ -4682,8 +4764,13 @@ async function main() {
       source = 'renderer';
       evt = renderer.checkInput();
     }
-    if (!evt) return 0;
+    if (!evt) {
+      lastInputEvent = null;
+      if (renderer) renderer._activeInputEvent = null;
+      return 0;
+    }
     lastInputEvent = evt;
+    if (renderer) renderer._activeInputEvent = evt;
     inputConsumptionTrace.dequeue(evt, source);
     const packed = (evt.wParam << 16) | (evt.msg & 0xFFFF);
     logs.push(`[check_input] msg=0x${evt.msg.toString(16)} wParam=0x${evt.wParam.toString(16)} lParam=0x${(evt.lParam >>> 0).toString(16)} packed=0x${packed.toString(16)}`);
@@ -4708,6 +4795,18 @@ async function main() {
   };
   h.check_input_lparam = () => (lastInputEvent ? (lastInputEvent.lParam || 0) : 0);
   h.check_input_wparam = () => (lastInputEvent ? (lastInputEvent.wParam || 0) : 0);
+  // Match the browser host contract: the broker restores both metadata and
+  // renderer pointer/button snapshots around a slot's follow-up reads.
+  Object.defineProperty(h, 'inputEventScope', {
+    enumerable: false,
+    value: {
+      save: () => [lastInputEvent, renderer ? renderer._activeInputEvent || null : null],
+      restore: saved => {
+        lastInputEvent = saved[0];
+        if (renderer) renderer._activeInputEvent = saved[1];
+      },
+    },
+  });
   let lastMouseTracePos = -1;
   let lastMouseTraceButtons = -1;
   const lastAsyncMouseTrace = Object.create(null);
@@ -5368,6 +5467,10 @@ async function main() {
     wh.check_input_lparam = h.check_input_lparam;
     wh.check_input_wparam = h.check_input_wparam;
     wh.check_input_hwnd = h.check_input_hwnd;
+    Object.defineProperty(wh, 'inputEventScope', {
+      enumerable: false,
+      value: h.inputEventScope,
+    });
     // Child processes belong to the process, not to the thread that started
     // them: Windows Installer runs its custom-action EXEs (msiexec /D, /Y)
     // from its engine thread, and waits on them from there.
@@ -5950,6 +6053,45 @@ async function main() {
   // modules\TCPIP.DLL) uses the resident-byte resolver below. So does
   // one from inside a nested synchronous send ($wnd_send_message asks through
   // the service_load_library import), which cannot return to this loop either.
+  // Explicit system/runtime inputs must exist before a PE initializer can
+  // request them. Keep their final override pass below for manifest precedence.
+  const mountExplicitVfsFiles = () => {
+    if (!ctx.vfs) return;
+    for (const spec of VFS_MOUNT) {
+      const eq = spec.lastIndexOf('=');
+      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);
+      const hostPath = appAsset(spec.slice(0, eq).trim());
+      const guestPath = spec.slice(eq + 1).trim();
+      if (!guestPath) throw new Error(`--vfs-mount needs a guest path: ${spec}`);
+      const size = fs.statSync(hostPath).size;
+      const add = raw => {
+        let name = raw.toLowerCase().replace(/\//g, '\\');
+        if (!/^[a-z]:/.test(name)) name = 'c:\\' + name.replace(/^\\+/, '');
+        ctx.vfs.ensureParentDirs(name);
+        ctx.vfs.setLazyFile(name.slice(0, name.lastIndexOf('\\') + 1) + raw.replace(/^.*[\\/]/, ''), {
+          attrs: 0x20, size, load: () => new Uint8Array(readAssetBytes(hostPath)),
+        });
+      };
+      add(guestPath);
+      const base = guestPath.replace(/^.*[\\/]/, '').toLowerCase();
+      if (/\.(ttf|ttc|fon)$/.test(base)) add('c:\\windows\\fonts\\' + base);
+    }
+  };
+  mountExplicitVfsFiles();
+  if (CHILD_READONLY_CONTEXT) {
+    if (!SPAWNED_CHILD || typeof process.send !== 'function' || !CHILD_STATE_TOKEN)
+      throw new Error('readonly media context requires a native child launch');
+    const inherited = JSON.parse(fs.readFileSync(CHILD_READONLY_CONTEXT, 'utf8'));
+    if (inherited.version !== 1 || inherited.token !== CHILD_STATE_TOKEN)
+      throw new Error('readonly media context launch identity mismatch');
+    const media = await require('../lib/readonly-media-context').restore(ctx.vfs, inherited.contexts);
+    process.on('exit', () => { for (const source of media) require('../lib/media-cli').closeMedia(source); });
+    // Native DLL initializers may read profiles relative to the inherited CD.
+    // Validate the real directory now, before invoking any PE DllMain.
+    if (GUEST_CWD && ctx.vfs.readOnlyDrives.has(GUEST_CWD.slice(0, 1).toLowerCase()) &&
+        !ctx.vfs.setCurrentDirectory(GUEST_CWD))
+      throw new Error(`working directory is not present in the inherited readonly media: ${GUEST_CWD}`);
+  }
   const onLoadLibraryYield = ex => serviceLoadLibraryYieldSync({
     exports: ex, memoryBuffer: memory.buffer, resourceHost: ctx, log: console.log,
     findDllSync: findRuntimeDllBytes, onLoadLibraryYield,
@@ -6199,16 +6341,7 @@ async function main() {
     // Explicit --vfs-mount files go last, so one can replace a single file of
     // a registered app's manifest for this run (e.g. a test INI over the
     // app's own) without touching the files on disk.
-    for (const spec of VFS_MOUNT) {
-      const eq = spec.lastIndexOf('=');
-      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);
-      const hostPath = appAsset(spec.slice(0, eq).trim());
-      const guestPath = spec.slice(eq + 1).trim();
-      if (!guestPath) throw new Error(`--vfs-mount needs a guest path: ${spec}`);
-      const size = fs.statSync(hostPath).size;
-      addFile(guestPath, hostPath, size);
-      addFontAlias(guestPath, hostPath, size);
-    }
+    mountExplicitVfsFiles();
     if (VFS_DRIVE) {
       const drive = VFS_DRIVE.replace(/:$/, '').toLowerCase();
       if (!/^[a-z]$/.test(drive)) throw new Error(`invalid --vfs-drive: ${VFS_DRIVE}`);
@@ -6317,6 +6450,8 @@ async function main() {
       const { analyzeMediaPaths } = require('../lib/media-cli');
       const media = await analyzeMediaPaths(MEDIA_MOUNTS, { exePath: MEDIA_EXE });
       const result = await media.plan.mount(ctx.vfs);
+      if (ctx.vfs.readOnlyDrives.has(media.plan.mountRoot?.slice(0, 1).toLowerCase()))
+        require('../lib/readonly-media-context').remember(ctx.vfs, media);
       const guestExe = media.candidate.path;
       const slash = guestExe.lastIndexOf('\\');
       const guestDir = slash >= 2 ? guestExe.slice(0, slash) : guestExe.slice(0, 3);
@@ -7437,18 +7572,55 @@ async function main() {
   };
   const controlSnapshot = () => {
     const we = instance.exports;
-    const windows = renderer ? Object.values(renderer.windows).map(w => ({
+    let windows = renderer ? Object.values(renderer.windows).map(w => {
+      const e = w.wasm?.exports || we;
+      return ({
       hwnd: '0x' + ((w.hwnd >>> 0) || 0).toString(16),
       x: w.x | 0, y: w.y | 0, w: w.w | 0, h: w.h | 0,
       visible: !!w.visible, isChild: !!w.isChild, title: w.title || '',
-    })) : [];
+      live: !!e.wnd_lookup_live?.(w.hwnd),
+      generation: String(e.wnd_lookup_generation?.(w.hwnd) || 0),
+      processId: e.get_process_id?.() >>> 0,
+      threadId: e.get_window_thread?.(w.hwnd) >>> 0,
+      owner: '0x' + ((e.wnd_get_owner?.(w.hwnd) || 0) >>> 0).toString(16),
+      parent: '0x' + ((e.wnd_get_parent?.(w.hwnd) || 0) >>> 0).toString(16),
+      style: e.wnd_get_style_export?.(w.hwnd) >>> 0,
+      controlClass: e.ctrl_get_class?.(w.hwnd) >>> 0,
+      controlId: e.ctrl_get_id?.(w.hwnd) >>> 0,
+      buttonFlags: e.ctrl_get_class?.(w.hwnd)===1 ? e.button_get_flags?.(w.hwnd) >>> 0 : null,
+      screenX: e.wnd_window_screen_x?.(w.hwnd) | 0,
+      screenY: e.wnd_window_screen_y?.(w.hwnd) | 0,
+    }); }) : [];
+    if(renderer)windows=require('../lib/cli-native-user-windows').withNativeUserChildren(windows,renderer,memory);
     return {
       batch: tickState.batch | 0,
       eip: '0x' + (we.get_eip() >>> 0).toString(16),
       quit: we.get_quit_flag ? !!we.get_quit_flag() : false,
       yieldReason: we.get_yield_reason ? we.get_yield_reason() | 0 : 0,
       focus: '0x' + ((we.get_focus_hwnd ? we.get_focus_hwnd() : 0) >>> 0).toString(16),
+      focusTopLevel: '0x' + ((we.wnd_top_level?.(we.get_focus_hwnd?.() || 0) || 0) >>> 0).toString(16),
+      focusWindow: {
+        hwnd: '0x' + ((we.get_focus_hwnd?.() || 0) >>> 0).toString(16),
+        generation: String(we.wnd_lookup_generation?.(we.get_focus_hwnd?.() || 0) || 0),
+        live: !!we.wnd_lookup_live?.(we.get_focus_hwnd?.() || 0),
+        processId: we.get_process_id?.() >>> 0,
+        threadId: we.get_window_thread?.(we.get_focus_hwnd?.() || 0) >>> 0,
+      },
       mainHwnd: '0x' + ((we.get_main_hwnd ? we.get_main_hwnd() : 0) >>> 0).toString(16),
+      capture: '0x' + ((we.get_capture_hwnd?.() || 0) >>> 0).toString(16),
+      modalHwnd: '0x' + ((we.modal_dialog_hwnd?.() || we.dialogbox_hwnd?.() || 0) >>> 0).toString(16),
+      // Only the native common-dialog pump plus the actual USER control class
+      // identify a live MessageBox. An arbitrary ownerless renderer window
+      // cannot manufacture this record or the HWND generation/thread identity.
+      nativeMessageBox: (() => {
+        const h = we.modal_dialog_hwnd?.() || 0;
+        if (!h || we.ctrl_get_class?.(h) !== 16 || !we.wnd_lookup_live?.(h)) return null;
+        return { hwnd: '0x' + (h >>> 0).toString(16),
+          generation: String(we.wnd_lookup_generation(h)), processId: we.get_process_id() >>> 0,
+          threadId: we.get_window_thread(h) >>> 0, controlClass: 16 };
+      })(),
+      physicalUp: !(renderer?._mouseButtonsMask || Object.values(renderer?._physicalKeys || {}).some(Boolean)),
+      nativeProcess: { pid: process.pid, executable: EXE_PROCESS_GUEST_PATH || EXE_PATH },
       screen: renderer && renderer.canvas
         ? { w: renderer.canvas.width | 0, h: renderer.canvas.height | 0 } : null,
       frozen: {
@@ -7521,11 +7693,71 @@ async function main() {
     wakeControlLoop();
     return result;
   };
-  const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
-    snapshot: require('../lib/cli-input-owner').createCliInputSnapshot({
+  let reviewedSceneBindAttempted = false, reviewedSceneLease = null, nativeSceneLease = null;
+  const nativeScene = require('../lib/cli-native-scene');
+  const reviewedContexts = nativeScene.createReviewedContexts();
+  let nativeSceneContract = null;
+  const cliInputSnapshot = require('../lib/cli-input-owner').createCliInputSnapshot({
       instance, memory, renderer, getDevice: () => ctx.d3dCommands,
       getThreadManager: () => threadManager,
-    }),
+    });
+  const reviewedWindow = (s, hwnd) => s.windows.find(w => w.hwnd === hwnd);
+  const sameReviewedWindow = (a, b) => a && b &&
+    ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
+      .every(k => a[k] === b[k]);
+  const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
+    validateIntent: intent => {
+      if (!nativeSceneLease) return true;
+      if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {
+        try { reviewedContexts.verify(controlSnapshot(),intent.review,intent.event,intent.nonce); return true; }
+        catch { return false; }
+      }
+      if (!nativeScene.matches(controlSnapshot(), intent)) return false;
+      // A reviewed native intent can pin its complete composited frame as
+      // well as its USER identities. Check again at consumption: paint may
+      // change while input waits even though HWND/focus remain unchanged.
+      if (intent.pngSHA256 !== undefined) {
+        if (!/^[a-f0-9]{64}$/.test(intent.pngSHA256)) return false;
+        const paint = require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
+        if (paint !== intent.pngSHA256) return false;
+      }
+      return true;
+    },
+    snapshot: () => {
+      const current = cliInputSnapshot();
+      if (nativeSceneLease) {
+        const s=controlSnapshot(), main=reviewedWindow(s,s.mainHwnd);
+        current.healthy=current.healthy && sameReviewedWindow(main,nativeSceneLease.main) &&
+          JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
+          JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
+        current.refs.nativeSceneMainGeneration=main?.generation;
+      }
+      if (reviewedSceneLease) {
+        const s = controlSnapshot(), lease = reviewedSceneLease;
+        const main = reviewedWindow(s, lease.main.hwnd), modal = lease.modal && reviewedWindow(s, lease.modal.hwnd);
+        const insideModal = value => {
+          let h = parseInt(value, 16) >>> 0;
+          const e = instance.exports, seen = new Set();
+          while (h && !seen.has(h)) {
+            if (h === parseInt(lease.modal.hwnd, 16)) return true;
+            seen.add(h); h = e.wnd_get_parent(h) >>> 0;
+          }
+          return false;
+        };
+        current.healthy = current.healthy && sameReviewedWindow(main, lease.main) &&
+          (!lease.modal || (sameReviewedWindow(modal, lease.modal) && s.modalHwnd === modal.hwnd &&
+            insideModal(s.focus) && (s.capture === '0x0' || insideModal(s.capture)) &&
+            (!lease.nativeMessageBox || (JSON.stringify(s.nativeMessageBox) === JSON.stringify(lease.nativeMessageBox) &&
+              s.focusWindow.live && s.focusWindow.processId === main.processId &&
+              s.focusWindow.threadId === main.threadId))));
+        // Native generations protect against recycled HWNDs even if a renderer
+        // window object survives. The original physical-release refs stay exact.
+        current.refs.reviewedMainGeneration = main?.generation;
+        current.refs.reviewedModalGeneration = modal?.generation;
+        current.refs.reviewedModalWindow = lease.modal ? renderer?.windows[parseInt(lease.modal.hwnd, 16)] : null;
+      }
+      return current;
+    },
     cleanup: (refs, ev) => {
       if (ev.action === 'keydown') refs.up.call(refs.renderer, ev.code);
       if (ev.action === 'mousedown') refs.mouseUp.call(refs.renderer, ev.x, ev.y, 1);
@@ -7590,8 +7822,63 @@ async function main() {
       if (cmd.action === 'native-observe') return cliObservation.run(instance, (exports, owned) =>
         require('../tools/pawn-cli-observation.cjs').observeNative(exports, memory, owned, cmd));
     }
-    if (cmd.action === 'guarded-bind') return guardedInput.bind();
+    if (cmd.action === 'guarded-bind') {
+      if (reviewedSceneBindAttempted) throw new Error('reviewed scene binding is permanent; no replay/rebind');
+      if (cmd.reviewedScene?.contract === nativeScene.REVIEWED_CONTEXT) {
+        reviewedSceneBindAttempted=true;
+        const verified=reviewedContexts.verify(controlSnapshot(),cmd.reviewedScene);
+        nativeSceneLease=verified.context; nativeSceneContract=verified.contract;
+        return {...guardedInput.bind(),contract:nativeSceneContract};
+      }
+      if (cmd.reviewedScene?.route === 'native-scene-v1') {
+        reviewedSceneBindAttempted=true;
+        const expected=cmd.reviewedScene, s=controlSnapshot();
+        if (!nativeScene.matches(s,expected.snapshot)) throw new Error('reviewed native scene changed before binding');
+        const paint=require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
+        if (paint!==expected.pngSHA256) throw new Error('reviewed native paint changed');
+        nativeSceneLease=nativeScene.context(s);
+        return guardedInput.bind();
+      }
+      if (cmd.reviewedScene) {
+        reviewedSceneBindAttempted = true;
+        const expected = cmd.reviewedScene, s = controlSnapshot();
+        const main = reviewedWindow(s, s.mainHwnd), modal = expected.modal && reviewedWindow(s, expected.modal.hwnd);
+        const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+        if (!main?.live || !main.visible || main.isChild || main.generation === '0' || !main.processId ||
+            !sameReviewedWindow(main, expected.main) || !same(s.nativeProcess, expected.nativeProcess) ||
+            !same(s.screen, expected.screen) || s.mainHwnd !== expected.main.hwnd ||
+            !s.physicalUp || s.capture !== '0x0' || s.focus !== expected.focus ||
+            !same(s.focusWindow, expected.focusWindow) || s.quit || s.eip === '0x0')
+          throw new Error('reviewed native main/process/window/focus/physical state changed');
+        const nullOwnerMessageBox = expected.modalRoute === 'null-owner-message-box';
+        const nativeBox = s.nativeMessageBox;
+        const preciseNativeBox = nullOwnerMessageBox && modal?.owner === '0x0' &&
+          nativeBox && same(nativeBox, expected.nativeMessageBox) && nativeBox.controlClass === 16 &&
+          nativeBox.hwnd === modal.hwnd && nativeBox.generation === modal.generation &&
+          nativeBox.processId === main.processId && nativeBox.threadId > 0 &&
+          nativeBox.threadId === main.threadId && nativeBox.threadId === modal.threadId &&
+          nativeBox.threadId === s.focusWindow.threadId;
+        if (!main.title.trim()) {
+          if (!modal?.live || !modal.visible || modal.isChild || !modal.title.trim() ||
+              modal.hwnd === main.hwnd || modal.generation === '0' || modal.processId !== main.processId ||
+              (nullOwnerMessageBox ? !preciseNativeBox : modal.owner !== main.hwnd) || s.modalHwnd !== modal.hwnd ||
+              s.focusTopLevel !== modal.hwnd || !s.focusWindow.live ||
+              s.focusWindow.generation === '0' || s.focusWindow.processId !== main.processId ||
+              !sameReviewedWindow(modal, expected.modal))
+            throw new Error('untitled main requires the exact current native owned modal');
+        } else if (expected.modal || expected.modalRoute) throw new Error('unexpected reviewed modal binding');
+        const paint = require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
+        if (paint !== expected.pngSHA256) throw new Error('reviewed native paint changed');
+        reviewedSceneLease = { main: { ...main }, modal: modal ? { ...modal } : null,
+          nativeMessageBox: nullOwnerMessageBox ? { ...nativeBox } : null };
+      }
+      return guardedInput.bind();
+    }
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
+    if (cmd.action === 'native-reviewed-capture') {
+      if (!cmd.path) throw new Error('reviewed capture needs a complete PNG path');
+      return reviewedContexts.capture(controlSnapshot,()=>canvasToPng(renderer.canvas),bytes=>fs.writeFileSync(cmd.path,bytes,{flag:'wx'}));
+    }
     if (cmd.action === 'guarded-release') return guardedInput.release(cmd.owner);
     if (cmd.action === 'guarded-input') {
       const evs = parseInputEntries([`${tickState.batch | 0}:${String(cmd.cmd || '')}`]);
@@ -7601,6 +7888,10 @@ async function main() {
       if (['keydown', 'keyup'].includes(ev.action) ?
           !Number.isInteger(ev.code) || ev.code < 1 || ev.code > 255 :
           !Number.isFinite(ev.x) || !Number.isFinite(ev.y)) throw new Error('invalid guarded input arguments');
+      if (nativeSceneContract===nativeScene.REVIEWED_CONTEXT) {
+        // Bind the actual parsed edge and nonce, never caller-provided event data.
+        cmd.guard={...cmd.guard,intent:{review:cmd.guard?.intent?.review,event:{action:ev.action,code:ev.code,x:ev.x,y:ev.y},nonce:cmd.guard?.nonce}};
+      }
       const ticket = guardedInput.prepare(cmd.guard, ev);
       if (ticket.state === 'QUEUED') {
         ev.guardedTicket = ticket;
@@ -7865,6 +8156,7 @@ async function main() {
   const executionStartedAt = performance.now();
   for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {
     processDesktop.poll();
+    if (mainOwner.kind === 'local') await ctx.comInterfaces.drain();
     traceGateBatch = batch;
     if (deadlineMs && Date.now() >= deadlineMs) {
       traceGateBatch = -1; // why the run stopped is not per-batch trace output
@@ -10772,7 +11064,7 @@ async function main() {
       // An external event can change only while real time passes. Park the
       // host asynchronously between probes; runnable guest siblings still
       // receive their ordinary slices below, and main's guest frame stays put.
-      if (threadManager.isMainNamedEventWaiting()) {
+      if (threadManager.isMainNamedEventWaiting() || threadManager.isMainNativeProcessWaiting()) {
         await new Promise(resolve => setTimeout(resolve, 4));
       }
       // A main thread parked in GetMessage is otherwise resumed only by the
@@ -10795,6 +11087,8 @@ async function main() {
         const slice = mainSchedulerObserver
           ? await mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE))
           : await mainOwner.run(BATCH_SIZE);
+        if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
+          await ctx.comInterfaces.service();
         if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
         } catch (error) {
           if (!nativeFault.capture(error, instance.exports,
@@ -11202,6 +11496,8 @@ async function main() {
             const slice = mainSchedulerObserver
               ? await mainSchedulerObserver.run('worker-interleaved', () => mainOwner.run(BATCH_SIZE))
               : await mainOwner.run(BATCH_SIZE);
+            if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
+              await ctx.comInterfaces.service();
             if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,
@@ -11262,6 +11558,8 @@ async function main() {
             const slice = mainSchedulerObserver
               ? await mainSchedulerObserver.run('cooperative-interleaved', () => mainOwner.run(BATCH_SIZE))
               : await mainOwner.run(BATCH_SIZE);
+            if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
+              await ctx.comInterfaces.service();
             if (mainOwner.kind === 'worker') await threadManager.noteMainSleepOwned(mainOwner, slice);
             } catch (error) {
               if (!nativeFault.capture(error, instance.exports,
@@ -11342,7 +11640,10 @@ async function main() {
     // The same for a --spawn-processes child: its end (and the merge of what
     // it left behind) arrives as a child-process event, so a parent parked in
     // WaitForSingleObject on it would otherwise spin until its own run ended.
-    else if ((batch & 63) === 0 && ctx.hasLiveChildren && ctx.hasLiveChildren()) {
+    // The child also owes its parent a turn for termination signals and IPC,
+    // even when it has no children, wire or asynchronous render requests.
+    else if ((batch & 63) === 0 && (SPAWNED_CHILD ||
+        (ctx.hasLiveChildren && ctx.hasLiveChildren()))) {
       await new Promise(resolve => setImmediate(resolve));
     }
     if (AUDIO_EXIT_BYTES > 0 && ctx._audioOutFd !== undefined) {
@@ -13003,15 +13304,14 @@ if (VERBOSE) {
   processDesktop.retire();
   // The launcher guest can exit while real child hosts still use its desktop.
   // Keep the authority until those OS processes close their transports.
-  await Promise.all(pipeChildren.filter(c => c.exitCode === null && c.signalCode === null)
-    .map(c => new Promise(resolve => c.once('exit', resolve))));
+  await Promise.all(pipeChildClosures);
   await processDesktop.close();
   // A --vlan-wire run is a forked child, and an open IPC channel keeps node
   // alive after everything else has finished: the run printed its Stats, hit
   // --max-seconds, and then sat resident forever with its 512 MiB guest until
   // the parent killed it. Every two-process test used to kill its seats for
   // exactly this reason. The run is over, so hang up the wire.
-  if (VLAN_WIRE && process.connected) process.disconnect();
+  if ((VLAN_WIRE || SPAWNED_CHILD) && process.connected) process.disconnect();
   });
 }
 

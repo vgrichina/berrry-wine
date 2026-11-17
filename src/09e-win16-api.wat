@@ -33,6 +33,9 @@
   ;; which under Pascal is every byte the caller pushed.
   (func $win16_api_return (param $argbytes i32)
     (local $ip i32) (local $sel i32)
+    ;; Process/task termination has no far return. Keep its terminal EIP and
+    ;; stack instead of resuming the callback that called DOS3Call.
+    (if (i32.eq (global.get $yield_reason) (i32.const 2)) (then (return)))
     (local.set $ip  (call $gl16 (i32.load offset=16 (global.get $reg_base))))
     (local.set $sel (call $gl16 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 2))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.add (i32.const 4) (local.get $argbytes))))
@@ -150,6 +153,7 @@
   ;; and keep the selectors their LoadResource filled.
   (func $win16_res_forget_module (param $module i32)
     (local $index i32) (local $p i32) (local $sel i32)
+    (call $win16_cursor_forget_module (local.get $module))
     (local.set $index (i32.const 1))
     (block $done (loop $scan
       (br_if $done (i32.gt_u (local.get $index) (call $win16_res_handle_next_get)))
@@ -424,17 +428,20 @@
   (global $win16_guest_esp (mut i32) (i32.const 0))
   (global $win16_guest_eip (mut i32) (i32.const 0))
   (global $win16_guest_return (mut i32) (i32.const 0))
+  (global $win16_ls32_request_generation (mut i32) (i32.const 0))
 
   (func $win16_guest_request_begin (export "win16_guest_request_begin")
     (param $op i32) (param $arg0 i32) (param $arg1 i32) (result i64)
     (local $esp i32) (local $pop i32) (local $i i32)
     (if (i32.or (global.get $is_win16) (global.get $yield_reason)) (then (return (i64.const 0))))
     (if (i64.ne (global.get $win16_guest_pending) (i64.const 0)) (then (return (i64.const 0))))
-    (if (i32.or (i32.lt_u (local.get $op) (i32.const 1)) (i32.gt_u (local.get $op) (i32.const 4)))
+    (if (i32.or (i32.lt_u (local.get $op) (i32.const 1)) (i32.ge_u (local.get $op) (i32.const 6)))
       (then (return (i64.const 0))))
     (local.set $esp (i32.load offset=16 (global.get $reg_base)))
     (local.set $pop (select (i32.const 12) (i32.const 8) (i32.eq (local.get $op) (i32.const 3))))
     (if (i32.eq (local.get $op) (i32.const 4)) (then (local.set $pop (i32.const 4))))
+    ;; Native LS32 pairing parks six arguments; relay settlement stays closed.
+    (if (i32.eq (local.get $op) (i32.const 5)) (then (local.set $pop (i32.const 28))))
     (if (i32.gt_u (local.get $esp) (i32.sub (i32.const -1) (local.get $pop)))
       (then (return (i64.const 0))))
     (loop $stack_bytes
@@ -442,6 +449,11 @@
         (then (return (i64.const 0))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $stack_bytes (i32.lt_u (local.get $i) (local.get $pop))))
+    (if (i32.eq (local.get $op) (i32.const 5)) (then
+      (local.set $i (call $dll_index_from_module (call $gl32 (i32.add (local.get $esp) (i32.const 20)))))
+      (global.set $win16_ls32_request_generation (i32.const 0))
+      (if (i32.ge_s (local.get $i) (i32.const 0)) (then
+        (global.set $win16_ls32_request_generation (i32.atomic.load offset=4 (call $dll_lifecycle_row (local.get $i))))))))
     (if (i64.eq (global.get $win16_guest_serial) (i64.const 0xFFFFFFFF)) (then (unreachable)))
     (global.set $win16_guest_serial (i64.add (global.get $win16_guest_serial) (i64.const 1)))
     (global.set $win16_guest_owner (call $lock_owner_id))
@@ -481,6 +493,8 @@
     (local $pop i32)
     (if (i32.eqz (call $win16_guest_request_valid (local.get $serial))) (then (return (i32.const 0))))
     (if (i32.eq (global.get $win16_guest_op) (i32.const 4)) (then (return (i32.const 0))))
+    ;; Pairing alone cannot complete a guest ThunkConnect32 attach.
+    (if (i32.eq (global.get $win16_guest_op) (i32.const 5)) (then (return (i32.const 0))))
     (local.set $pop (select (i32.const 12) (i32.const 8) (i32.eq (global.get $win16_guest_op) (i32.const 3))))
     (if (i32.gt_u (global.get $win16_guest_esp) (i32.sub (i32.const -1) (local.get $pop)))
       (then (return (i32.const 0))))
@@ -495,6 +509,7 @@
     (i32.const 1))
   (func $win16_guest_request_cancel (export "win16_guest_request_cancel")
     ;; Process reset/retirement invalidates old completions without resuming.
+    (call $win16_ls32_cancel)
     (global.set $win16_guest_pending (i64.const 0)))
 
   ;; QT settlement owns a completed native frame, never a host-supplied result.
@@ -675,7 +690,9 @@
     (param $token i64) (param $base i32) (param $backing i32) (result i32)
     (local $i i32) (local $rec i32) (local $free i32) (local $offset i32) (local $fixed i32)
     (if (i32.eqz (call $win16_bridge_frame_valid (local.get $token))) (then (return (i32.const 0))))
-    (if (i32.eqz (i32.load offset=268 (i32.wrap_i64 (local.get $token)))) (then (return (i32.const 0))))
+    (if (i32.and (i32.eqz (i32.load offset=268 (i32.wrap_i64 (local.get $token))))
+      (i32.ne (i32.load offset=408 (i32.wrap_i64 (local.get $token))) (i32.const 0x46545052)))
+      (then (return (i32.const 0))))
     (if (i32.or (i32.ne (i32.and (local.get $base) (i32.const 0xFFFF)) (i32.const 0))
       (i32.gt_u (local.get $base) (i32.const 0xFFFE0000))) (then (return (i32.const 0))))
     (if (i32.or (i32.eq (local.get $backing) (global.get $NULL_SENTINEL))
@@ -722,7 +739,7 @@
       (br_if $slots (i32.lt_u (local.get $i) (i32.const 16))))
     (call $lock_release (global.get $LOCK_VIRTUAL_MAP)))
 
-  (func $win16_bridge_frame_end (export "win16_bridge_frame_end") (param $token i64) (result i32)
+  (func $win16_bridge_frame_close (param $token i64) (param $restore i32) (result i32)
     (local $frame i32) (local $previous i64)
     (if (i32.eqz (call $win16_bridge_frame_valid (local.get $token))) (then (return (i32.const 0))))
     (local.set $frame (i32.wrap_i64 (local.get $token)))
@@ -733,6 +750,8 @@
           (i32.add (i32.load offset=256 (local.get $frame)) (i32.const 1)))
           (then (return (i32.const 0))))))
     (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (call $win16_ft_frame_end (local.get $token) (local.get $restore))
+    (call $win16_ls32_frame_end (local.get $token))
     ;; QT owns the overwritten PE return slot until this exact frame ends.
     ;; Scratch writes are already visible through the alias; never copy a
     ;; private BP frame over them. Restore the return before dropping the lease.
@@ -747,6 +766,7 @@
     (call $win16_arena_give (i32.load offset=12 (local.get $frame)) (i32.const 2))
     (i32.store (call $win16_task_shared (i32.const 36))
       (i32.sub (i32.load (call $win16_task_shared (i32.const 36))) (i32.const 1)))
+    (if (local.get $restore) (then
     (memory.copy (global.get $reg_base) (i32.add (local.get $frame) (i32.const 32)) (i32.const 32))
     (global.set $eip (i32.load offset=64 (local.get $frame)))
     (global.set $ip (i32.load offset=68 (local.get $frame)))
@@ -799,6 +819,7 @@
     (memory.copy (global.get $fpu_base) (i32.add (local.get $frame) (i32.const 512)) (i32.const 128))
     (memory.copy (global.get $mmx_base) (i32.add (local.get $frame) (i32.const 640)) (i32.const 128))
     (memory.copy (global.get $xmm_base) (i32.add (local.get $frame) (i32.const 768)) (i32.const 128))
+    ))
     (if (i32.load offset=24 (local.get $frame))
       (then
         (call $sync_depth_leave)
@@ -819,6 +840,9 @@
     (global.set $win16_bridge_frame (local.get $previous))
     (call $lock_release (global.get $DLL_LOAD_LOCK))
     (i32.const 1))
+
+  (func $win16_bridge_frame_end (export "win16_bridge_frame_end") (param $token i64) (result i32)
+    (call $win16_bridge_frame_close (local.get $token) (i32.const 1)))
 
   (func $win16_bridge_abort (export "win16_bridge_abort") (result i32)
     (local $count i32)
@@ -1093,6 +1117,9 @@
       (i32.eqz (call $win16_bridge_frame_valid (global.get $win16_bridge_frame))))
       (then (unreachable)))
     (local.set $frame (i32.wrap_i64 (global.get $win16_bridge_frame)))
+    (if (i32.eq (i32.load offset=408 (local.get $frame)) (i32.const 0x46545448))
+      (then (call $win16_ft_capture_return (local.get $frame)))
+      (else
     (if (i32.load offset=352 (local.get $frame))
       (then
         (if (i32.or (i32.ne (i32.load offset=24 (local.get $frame)) (i32.const 1))
@@ -1113,6 +1140,7 @@
       (i32.or (i32.ne (global.get $sreg_ss) (call $win16_index_to_sel (i32.load offset=12 (local.get $frame))))
         (i32.ne (i32.load offset=16 (global.get $reg_base)) (i32.load offset=260 (local.get $frame)))))
       (then (unreachable)))))
+    ))
     (i32.store offset=28 (local.get $frame)
       (i32.or (i32.and (i32.load (global.get $reg_base)) (i32.const 0xFFFF))
         (i32.shl (i32.load offset=8 (global.get $reg_base)) (i32.const 16))))
@@ -1717,6 +1745,7 @@
   ;; is over either way and the marker is what names it in a capture.
   (func $win16_TerminateApp
     (call $host_log_i32 (i32.const 0xCA16A99D))   ;; TOOLHELP TerminateApp
+    (global.set $yield_reason (i32.const 2))
     (call $host_exit (i32.const 1))
     (global.set $eip (i32.const 0))
     (global.set $steps (i32.const 0)))
@@ -4685,6 +4714,7 @@
         (return)))
     (if (i32.eq (local.get $ah) (i32.const 0x4C))
       (then
+        (global.set $yield_reason (i32.const 2))
         (call $host_exit (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFF)))
         (global.set $eip (i32.const 0))
         (global.set $steps (i32.const 0))
@@ -6732,6 +6762,13 @@
       (i32.shl (i32.add (local.get $count) (i32.const 3)) (i32.const 2))))
 
   (func $win16_kernel (param $ordinal i32) (result i32)
+    ;; KERNEL.651: FAR PASCAL str,str,WORD,DWORD,ptr,str,WORD (24 bytes).
+    ;; UINT is returned through DX:AX, including a cleared DX on failure.
+    (if (i32.eq (local.get $ordinal) (i32.const 651))
+      (then
+        (i32.store (global.get $reg_base) (call $win16_ls_connect))
+        (i32.store offset=8 (global.get $reg_base) (i32.const 0))
+        (call $win16_api_return (i32.const 24)) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 92))
       (then (call $win16_GetTempDrive) (return (i32.const 1))))
     ;; Windows 95 generic thunks, resolved by name through GetProcAddress.
@@ -8663,14 +8700,13 @@
   ;; from a module are shared: USER reports success but leaves them live.
   (func $win16_DestroyIcon
     (local $h i32) (local $record i32) (local $owned i32)
-    (local.set $h (call $win16_h32 (call $win16_arg16 (i32.const 0))))
+    (local.set $h (call $win16_cursor_h32 (call $win16_arg16 (i32.const 0))))
     ;; Sample ownership before the shared handler clears a private record.
-    ;; Cursor handles are accepted by DestroyIcon too; every CURSOR_TABLE
-    ;; record is private, while an ICON_TABLE record uses the resource-id high
-    ;; bit to distinguish a copied/built slot from a loaded shared resource.
+    ;; Cursor records carry an NE owner for shared loads. ICON_TABLE uses
+    ;; the resource-id high bit to distinguish private copies from loads.
     (local.set $record (call $cursor_record (local.get $h)))
     (if (local.get $record)
-      (then (local.set $owned (i32.const 1)))
+      (then (local.set $owned (i32.eqz (i32.load offset=24 (local.get $record)))))
       (else
         (local.set $record (call $icon_table_record (local.get $h)))
         (if (local.get $record)
@@ -9276,6 +9312,8 @@
       (then (call $win16_SetMenu) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 180))
       (then (call $win16_GetSysColor) (return (i32.const 1))))
+    (if (i32.eq (local.get $ordinal) (i32.const 281))
+      (then (call $win16_GetSysColorBrush) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 181))
       (then (call $win16_SetSysColors) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 6))
@@ -9308,18 +9346,19 @@
       (then (call $win16_WinHelp) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 16))
       (then (call $win16_ClipCursor) (return (i32.const 1))))
-    ;; SetCursor answers with the cursor it replaced, and the renderer draws
-    ;; the host cursor either way; ShowCursor keeps the display count Windows
-    ;; keeps, which apps do read back.
     (if (i32.eq (local.get $ordinal) (i32.const 69))
-      (then (call $win16_local_identity (i32.const 2)
-              (call $win16_arg16 (i32.const 0))) (return (i32.const 1))))
+      (then (call $win16_SetCursor) (return (i32.const 1))))
+    (if (i32.eq (local.get $ordinal) (i32.const 247))
+      (then (call $win16_local_identity (i32.const 0)
+        (call $win16_h16 (call $cursor_thread_handle (global.get $current_thread_id))))
+        (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 71))
       (then
-        (global.set $win16_cursor_count (i32.add (global.get $win16_cursor_count)
+        (drop (i32.atomic.rmw.add offset=8
+          (call $cursor_thread_addr (global.get $current_thread_id))
           (select (i32.const 1) (i32.const -1) (call $win16_arg16 (i32.const 0)))))
-        (call $win16_local_identity (i32.const 2)
-          (i32.and (global.get $win16_cursor_count) (i32.const 0xFFFF)))
+        (call $win16_local_identity (i32.const 2) (i32.and
+          (call $cursor_thread_count (global.get $current_thread_id)) (i32.const 0xFFFF)))
         (return (i32.const 1))))
     (if (i32.and (i32.ge_u (local.get $ordinal) (i32.const 433))
                  (i32.le_u (local.get $ordinal) (i32.const 436)))
@@ -9769,11 +9808,213 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.add (i32.const 4) (local.get $argbytes))))
     (local.get $packed))
 
-  ;; USER.173 LoadCursor(hInstance, lpCursorName). Opaque, like LoadIcon: it
-  ;; identifies the cursor for a class registration, and the renderer draws the
-  ;; host cursor regardless.
+  (func $win16_system_cursor (param $id i32) (result i32)
+    (i32.or
+      (i32.and (i32.ge_u (local.get $id) (i32.const 0x7F00))
+               (i32.le_u (local.get $id) (i32.const 0x7F04)))
+      (i32.or
+        (i32.and (i32.ge_u (local.get $id) (i32.const 0x7F82))
+                 (i32.le_u (local.get $id) (i32.const 0x7F86)))
+        (i32.and (i32.ge_u (local.get $id) (i32.const 0x7F88))
+                 (i32.le_u (local.get $id) (i32.const 0x7F8B))))))
+
+  ;; Public cursor APIs reject stale/out-of-range narrow handles rather than
+  ;; entering the internal handle-map assertion used by trusted adapters.
+  (func $win16_cursor_h32 (param $h i32) (result i32)
+    (if (i32.and (i32.ge_u (local.get $h) (global.get $WIN16_HANDLE_BASE))
+          (i32.gt_u (i32.sub (local.get $h) (global.get $WIN16_HANDLE_BASE))
+            (call $win16_handle_next_get)))
+      (then (return (i32.const 0))))
+    (call $win16_h32 (local.get $h)))
+
+  (func $win16_SetCursor
+    (local $narrow i32) (local $h i32) (local $rec i32) (local $valid i32)
+    (local.set $narrow (call $win16_arg16 (i32.const 0)))
+    (local.set $h (call $win16_cursor_h32 (local.get $narrow)))
+    (local.set $valid (i32.eqz (local.get $narrow)))
+    (if (i32.eq (i32.and (local.get $h) (i32.const 0xFFFF0000)) (i32.const 0x60000))
+      (then (local.set $valid (call $win16_system_cursor (i32.and (local.get $h) (i32.const 0xFFFF))))))
+    (local.set $rec (call $cursor_record (local.get $h)))
+    (if (local.get $rec)
+      (then (local.set $valid (i32.eqz (i32.load (local.get $rec))))))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (if (local.get $valid)
+      (then (i32.store (global.get $reg_base)
+        (call $win16_h16 (call $set_cursor_internal (local.get $h)))))
+      (else (global.set $last_error (i32.const 1402))))
+    (call $win16_api_return (i32.const 2)))
+
+  ;; Acquire the ordinary resource holder. Dynamic modules may retain only
+  ;; metadata, so never decode the walker's file-offset pointer directly.
+  (func $win16_cursor_resource (param $module i32) (param $type i32)
+      (param $rid i32) (result i32)
+    (local $desc i32) (local $len i32) (local $sel i32)
+    (global.set $win16_res_module_id (local.get $module))
+    (if (call $win16_find_resource_rid (local.get $type) (local.get $rid))
+      (then
+        (local.set $len (global.get $win16_res_len))
+        (local.set $desc (call $win16_res_desc_from_handle (call $win16_res_handle_alloc
+          (i32.shl (local.get $type) (i32.const 16)) (local.get $module) (local.get $rid))))
+        (local.set $sel (call $win16_res_load (local.get $desc)))))
+    (global.set $win16_res_module_id (i32.const 0))
+    (global.set $win16_res_len (local.get $len))
+    (select (local.get $desc) (i32.const 0) (local.get $sel)))
+
+  (func $win16_cursor_resource_release (param $desc i32)
+    (local $word i32)
+    (if (i32.eqz (local.get $desc)) (then (return)))
+    (local.set $word (i32.load offset=8 (local.get $desc)))
+    (if (i32.gt_u (local.get $word) (i32.const 0x1FFFF))
+      (then (i32.store offset=8 (local.get $desc) (i32.sub (local.get $word) (i32.const 0x10000))))
+      (else
+        (call $win16_global_free (i32.and (local.get $word) (i32.const 0xFFFF)))
+        (i32.store offset=8 (local.get $desc) (i32.const 0)))))
+
+  (func $win16_cursor_resource_data (param $desc i32) (result i32)
+    (call $win16_seg_base (call $win16_sel_to_index
+      (i32.and (i32.load offset=8 (local.get $desc)) (i32.const 0xFFFF)))))
+
+  ;; Return {BytesInRes, image ordinal}. RESDIR uses WORD cursor dimensions;
+  ;; LOCALHEADER in the child owns the hotspot, not the directory entry.
+  (func $win16_cursor_group_image (param $ga i32) (param $len i32) (result i64)
+    (local $p i32) (local $count i32) (local $i i32) (local $q i32)
+    (local $w i32) (local $h i32) (local $score i32) (local $best i32) (local $entry i32)
+    (if (i32.lt_u (local.get $len) (i32.const 6)) (then (return (i64.const 0))))
+    (local.set $p (call $g2w (local.get $ga)))
+    (if (i32.or (i32.ne (i32.load16_u (local.get $p)) (i32.const 0))
+                (i32.ne (i32.load16_u offset=2 (local.get $p)) (i32.const 2)))
+      (then (return (i64.const 0))))
+    (local.set $count (i32.load16_u offset=4 (local.get $p)))
+    (if (i32.gt_u (local.get $count) (i32.div_u (i32.sub (local.get $len) (i32.const 6)) (i32.const 14)))
+      (then (return (i64.const 0))))
+    (local.set $best (i32.const -1))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $q (i32.add (i32.add (local.get $p) (i32.const 6)) (i32.mul (local.get $i) (i32.const 14))))
+      (local.set $w (i32.load16_u (local.get $q)))
+      (local.set $h (i32.load16_u offset=2 (local.get $q)))
+      (if (i32.eqz (local.get $w)) (then (local.set $w (i32.const 256))))
+      (if (i32.eqz (local.get $h)) (then (local.set $h (i32.const 256))))
+      (local.set $w (i32.sub (local.get $w) (i32.const 32)))
+      (local.set $h (i32.sub (local.get $h) (i32.const 32)))
+      (local.set $score (i32.shl (i32.add
+        (select (i32.sub (i32.const 0) (local.get $w)) (local.get $w) (i32.lt_s (local.get $w) (i32.const 0)))
+        (select (i32.sub (i32.const 0) (local.get $h)) (local.get $h) (i32.lt_s (local.get $h) (i32.const 0)))) (i32.const 8)))
+      (local.set $score (i32.add (local.get $score) (i32.sub (i32.const 32)
+        (select (i32.load16_u offset=6 (local.get $q)) (i32.const 32)
+          (i32.lt_u (i32.load16_u offset=6 (local.get $q)) (i32.const 32))))))
+      (if (i32.lt_u (local.get $score) (local.get $best))
+        (then (local.set $best (local.get $score)) (local.set $entry (local.get $q))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (if (i32.eqz (local.get $entry)) (then (return (i64.const 0))))
+    (i64.or (i64.shl (i64.extend_i32_u (i32.load offset=8 (local.get $entry))) (i64.const 32))
+      (i64.extend_i32_u (i32.load16_u offset=12 (local.get $entry)))))
+
+  (func $win16_cursor_materialize (param $module i32) (param $key i32) (result i32)
+    (local $desc i32) (local $ga i32) (local $len i32) (local $image i64)
+    (local $h i32) (local $rec i32)
+    (local.set $desc (call $win16_cursor_resource (local.get $module)
+      (i32.shr_u (local.get $key) (i32.const 16)) (i32.and (local.get $key) (i32.const 0xFFFF))))
+    (if (i32.eqz (local.get $desc)) (then (return (i32.const 0))))
+    (local.set $ga (call $win16_cursor_resource_data (local.get $desc)))
+    (local.set $len (global.get $win16_res_len))
+    (if (i32.eq (i32.shr_u (local.get $key) (i32.const 16)) (i32.const 12))
+      (then
+        (local.set $image (call $win16_cursor_group_image (local.get $ga) (local.get $len)))
+        (call $win16_cursor_resource_release (local.get $desc))
+        (if (i32.eqz (i32.wrap_i64 (local.get $image))) (then (return (i32.const 0))))
+        (local.set $desc (call $win16_cursor_resource (local.get $module) (i32.const 1)
+          (i32.or (i32.wrap_i64 (local.get $image)) (i32.const 0x8000))))
+        (if (i32.eqz (local.get $desc)) (then (return (i32.const 0))))
+        (local.set $ga (call $win16_cursor_resource_data (local.get $desc)))
+        (local.set $len (i32.wrap_i64 (i64.shr_u (local.get $image) (i64.const 32))))
+        (if (i32.gt_u (local.get $len) (global.get $win16_res_len))
+          (then (call $win16_cursor_resource_release (local.get $desc)) (return (i32.const 0))))))
+    (local.set $h (call $cursor_create_from_resource (local.get $ga) (local.get $len)
+      (i32.const 0) (i32.const 0x30000) (i32.const 0) (i32.const 0) (i32.const 0)))
+    (call $win16_cursor_resource_release (local.get $desc))
+    (local.set $rec (call $cursor_record (local.get $h)))
+    (if (local.get $rec)
+      (then (i32.store offset=24 (local.get $rec) (local.get $module))
+            (i32.store offset=28 (local.get $rec) (local.get $key))))
+    (local.get $h))
+
+  (func $win16_cursor_forget_module (param $module i32)
+    (local $i i32) (local $p i32) (local $h i32) (local $tid i32) (local $state i32)
+    (if (i32.eqz (local.get $module)) (then (return)))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (global.get $MAX_CURSORS)))
+      (local.set $p (i32.add (global.get $CURSOR_TABLE) (i32.mul (local.get $i) (global.get $CURSOR_TABLE_STRIDE))))
+      (if (i32.eq (i32.load offset=24 (local.get $p)) (local.get $module))
+        (then
+          (local.set $h (i32.or (global.get $CURSOR_HANDLE_TAG) (i32.add (local.get $i) (i32.const 1))))
+          (local.set $tid (i32.const 0))
+          (block $threads_done (loop $threads
+            (br_if $threads_done (i32.gt_u (local.get $tid) (global.get $REGFILE_THREADS)))
+            (local.set $state (call $cursor_thread_addr (local.get $tid)))
+            (if (i32.eq (call $cursor_thread_handle (local.get $tid)) (local.get $h))
+              (then
+                (i32.atomic.store offset=4 (local.get $state) (i32.const 0))
+                (i32.atomic.store (local.get $state) (i32.const 1))
+                (if (i32.eq (local.get $tid) (global.get $current_thread_id))
+                  (then (call $host_set_cursor (i32.const 0))))))
+            (local.set $tid (i32.add (local.get $tid) (i32.const 1))) (br $threads)))
+          (i32.store offset=24 (local.get $p) (i32.const 0))
+          (drop (call $cursor_destroy (local.get $h)))
+          (call $win16_h16_forget (local.get $h))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan))))
+
+  ;; USER.173: predefined system ids or module-qualified NE names/ordinals.
   (func $win16_LoadCursor
-    (i32.store offset=0 (global.get $reg_base) (call $win16_h16 (i32.const 0x70001)))
+    (local $id i32) (local $module i32) (local $type i32) (local $found i32)
+    (local $key i32) (local $i i32) (local $p i32) (local $h i32)
+    (local.set $id (call $win16_res_arg (i32.const 0)))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (if (i32.eqz (call $win16_arg16 (i32.const 2)))
+      (then
+        (if (call $win16_system_cursor (local.get $id))
+          (then (i32.store (global.get $reg_base) (call $win16_h16 (i32.or (i32.const 0x60000) (local.get $id)))))
+          (else (global.set $last_error (i32.const 1814))))
+        (call $win16_api_return (i32.const 6)) (return)))
+    (local.set $id (call $win16_arg16 (i32.const 2)))
+    (if (i32.or
+          (i32.eq (local.get $id) (call $win16_index_to_sel (global.get $win16_auto_data)))
+          (call $win16_cursor_h32 (local.get $id)))
+      (then (local.set $module (call $win16_res_module (local.get $id)))))
+    (if (i32.and (local.get $module) (i32.const 0x10000))
+      (then
+        (local.set $id (i32.and (local.get $module) (i32.const 0xFFFF)))
+        (if (i32.or (i32.eqz (local.get $id)) (i32.ge_u (local.get $id)
+              (i32.add (global.get $WIN16_DYNAMIC_BASE) (global.get $WIN16_DYNAMIC_MODULES))))
+          (then (local.set $module (i32.const 0)))
+          (else
+            (local.set $p (call $win16_dll_rec (local.get $id)))
+            (if (i32.or (i32.eqz (i32.load (local.get $p)))
+                        (i32.eqz (i32.load offset=12 (local.get $p))))
+              (then (local.set $module (i32.const 0))))))))
+    (if (i32.eqz (local.get $module))
+      (then (global.set $last_error (i32.const 126)) (call $win16_api_return (i32.const 6)) (return)))
+    (global.set $win16_res_module_id (local.get $module))
+    (local.set $type (i32.const 12))
+    (local.set $found (call $win16_res_lookup (local.get $type) (i32.const 0)))
+    (if (i32.eqz (local.get $found))
+      (then (local.set $type (i32.const 1))
+            (local.set $found (call $win16_res_lookup (local.get $type) (i32.const 0)))))
+    (global.set $win16_res_module_id (i32.const 0))
+    (if (i32.eqz (local.get $found))
+      (then (global.set $last_error (i32.const 1814)) (call $win16_api_return (i32.const 6)) (return)))
+    (local.set $key (i32.or (i32.shl (local.get $type) (i32.const 16)) (global.get $win16_res_found_id)))
+    (block $cached (loop $scan
+      (br_if $cached (i32.ge_u (local.get $i) (global.get $MAX_CURSORS)))
+      (local.set $p (i32.add (global.get $CURSOR_TABLE) (i32.mul (local.get $i) (global.get $CURSOR_TABLE_STRIDE))))
+      (if (i32.and (i32.eq (i32.load offset=24 (local.get $p)) (local.get $module))
+                   (i32.eq (i32.load offset=28 (local.get $p)) (local.get $key)))
+        (then (local.set $h (i32.or (global.get $CURSOR_HANDLE_TAG) (i32.add (local.get $i) (i32.const 1)))) (br $cached)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (if (i32.eqz (local.get $h))
+      (then (local.set $h (call $win16_cursor_materialize (local.get $module) (local.get $key)))))
+    (if (i32.eqz (local.get $h)) (then (global.set $last_error (i32.const 13))))
+    (i32.store (global.get $reg_base) (call $win16_h16 (local.get $h)))
     (call $win16_api_return (i32.const 6)))
 
   ;; USER.57 RegisterClass(lpWndClass) -> ATOM.
@@ -12555,6 +12796,13 @@
     (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
     (call $win16_api_return (i32.const 2)))
 
+  ;; USER.281 GetSysColorBrush: one WORD, FAR PASCAL, HBRUSH16 in AX.
+  ;; Share the real system-owned cache with USER32, then narrow its handle.
+  (func $win16_GetSysColorBrush
+    (i32.store (global.get $reg_base) (call $win16_h16
+      (call $gdi_system_brush (call $win16_arg16 (i32.const 0)))))
+    (call $win16_api_return (i32.const 2)))
+
   ;; USER.181 SetSysColors(nChanges, lpSysColor, lpColorValues). The 16-bit
   ;; shape is not the 32-bit one: lpSysColor is an array of *ints*, two bytes
   ;; each, while lpColorValues is an array of COLORREFs, four bytes each. So
@@ -14654,9 +14902,11 @@
     ;; way. Reading it after meant the forget below never ran, and every
     ;; CreateBrush/DeleteObject pair burned a slot of the 4096-entry Win16
     ;; handle map — IdleWild filled it and trapped after ~400 batches.
-    (local.set $dynamic (i32.or
-      (i32.ne (call $gdi_object_record (local.get $h)) (i32.const 0))
-      (i32.ne (call $gdi_rgn_record (local.get $h)) (i32.const 0))))
+    (local.set $dynamic (i32.and
+      (i32.eqz (call $gdi_system_brush_owned (local.get $h)))
+      (i32.or
+        (i32.ne (call $gdi_object_record (local.get $h)) (i32.const 0))
+        (i32.ne (call $gdi_rgn_record (local.get $h)) (i32.const 0)))))
     (call $win16_call32_begin (i32.const 1))
     (call $handle_DeleteObject (local.get $h)
       (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))

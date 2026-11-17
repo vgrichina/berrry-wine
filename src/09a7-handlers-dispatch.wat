@@ -4327,10 +4327,9 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
 
-  ;; 784: ThunkConnect32 — Win9x 16/32-bit thunking, no-op in pure 32-bit
+  ;; LS32 native pairing owns a parked six-argument connection request.
   (func $handle_ThunkConnect32 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+    (call $handle_ne_guest_request (i32.const 5) (local.get $arg0) (i32.load offset=16 (global.get $reg_base)))
   )
 
   ;; IsTextUnicode(lpv, iSize, lpiResult) — SetupAPI sniffs every INF with it.

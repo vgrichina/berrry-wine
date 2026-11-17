@@ -1127,11 +1127,32 @@
   )
 
   ;; 430: RegOpenKeyW — STUB: unimplemented
+  ;; Legacy RegOpenKeyA/W return the original handle for an empty subkey.
+  ;; Extended opens instead retain an independent allocated-key handle.
+  (func $reg_open_key_legacy (param $key i32) (param $subkey i32)
+                             (param $wide i32) (result i32)
+    (local $opened i32) (local $empty i32)
+    (local.set $opened (call $host_reg_open_key
+      (local.get $key) (call $g2w (local.get $subkey)) (local.get $wide)))
+    (if (local.get $opened)
+      (then
+        (local.set $empty (if (result i32) (i32.eqz (local.get $subkey))
+          (then (i32.const 1))
+          (else (i32.eqz (if (result i32) (local.get $wide)
+            (then (i32.load16_u (call $g2w (local.get $subkey))))
+            (else (i32.load8_u (call $g2w (local.get $subkey)))))))))
+        (if (local.get $empty)
+          (then
+            (if (i32.ne (local.get $opened) (local.get $key))
+              (then (drop (call $host_reg_close_key (local.get $opened)))))
+            (local.set $opened (local.get $key))))))
+    (local.get $opened))
+
   (func $handle_RegOpenKeyW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; RegOpenKeyW(hKey, lpSubKey, phkResult) — 3 args stdcall
     (local $hResult i32)
-    (local.set $hResult (call $host_reg_open_key
-      (local.get $arg0) (call $g2w (local.get $arg1)) (i32.const 1)))
+    (local.set $hResult (call $reg_open_key_legacy
+      (local.get $arg0) (local.get $arg1) (i32.const 1)))
     (if (local.get $hResult)
       (then (call $gs32 (local.get $arg2) (local.get $hResult))
              (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
@@ -1156,8 +1177,8 @@
       (if (result i32) (local.get $subkey_g)
         (then (call $g2w (local.get $subkey_g)))
         (else (i32.const 0))))
-    ;; Even an empty subkey is opened into a normal host handle: predefined
-    ;; root constants are not writable handles in the storage backend.
+    ;; Close only a separately opened/created handle. The backend can return
+    ;; a predefined root unchanged; the caller retains its original key.
     (local.set $target (call $host_reg_open_key
       (local.get $hkey) (local.get $sub_wa) (local.get $wide)))
     (if (i32.eqz (local.get $target))
@@ -1174,7 +1195,8 @@
     (local.set $res (call $host_reg_set_value
       (local.get $target) (i32.const 0) (local.get $type)
       (local.get $data_g) (local.get $cb) (local.get $wide)))
-    (drop (call $host_reg_close_key (local.get $target)))
+    (if (i32.ne (local.get $target) (local.get $hkey))
+      (then (drop (call $host_reg_close_key (local.get $target)))))
     (local.get $res))
 
   ;; 432: RegSetValueW — 5 args stdcall.

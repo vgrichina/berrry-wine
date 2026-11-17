@@ -8,6 +8,10 @@ const {
 } = ABI;
 const TEXTURE_UNITS = 2;
 const SOURCE_FLOATS = 28;
+// Published G1: native queries never become executor packets. This transport
+// reference specifies context-zero consumption; public state queries are
+// independently checked through real resolved API thunks, not a host mock.
+const NATIVE_QUERY_OPS = new Set([12,13,65,103,113,114,115,116,145,161]);
 const stats = {
   calls: 0, byOpcode: new Float64Array(128), spans: 0,
   packedRecords: 0, packedVertices: 0, flushes: 0,
@@ -278,6 +282,9 @@ const stats = {
         throw new TypeError('GL command encoder needs getMemory, guestToWasm, and submit');
       }
       this.exactColors = !!options.exactColors;
+      // Public native transport publishes shared server calls at completion;
+      // context-local geometry/state may remain deferred until a barrier.
+      this.publishCompletedServerCalls = !!options.publishCompletedServerCalls;
       this.capacity = Math.max(256, options.capacity || DEFAULT_BYTES);
       const BufferType = options.shared !== false && typeof SharedArrayBuffer === 'function'
         ? SharedArrayBuffer : ArrayBuffer;
@@ -288,6 +295,7 @@ const stats = {
       this.commands = 0;
       this.submissions = 0;
       this.currentContext = 0;
+      this.knownContexts = new Set();
       this.immediateStates = new Map();
       this.immediate = null;
       // Reused across glBegin/glEnd spans. Immediate-mode games submit many
@@ -304,7 +312,7 @@ const stats = {
         // Texture coordinates are (s, t, r, q): q is 1 unless glTexCoord4f,
         // glMultiTexCoord4fARB or a 4-component array set it.
         state = { source: null, color: [1, 1, 1, 1], texCoord: [0, 0, 0, 1], normal: [0, 0, 1],
-          shadeModel: GL.SMOOTH, attribStack: [], clientEnabled: new Set(),
+          shadeModel: GL.SMOOTH, edgeFlag: 1, polygonModes: [0x1b02,0x1b02], attribStack: [], clientEnabled: new Set(),
           vertexPointer: null, normalPointer: null, colorPointer: null,
           // ARB_multitexture makes the current texture coordinate, the client
           // array pointer and the GL_TEXTURE_COORD_ARRAY enable all per-unit,
@@ -422,6 +430,7 @@ const stats = {
       const source=state.source || [0,0,0,0,0];
       for(let i=1;i<=4;i++){this.immediateVertices[offset++]=source[i]&65535;this.immediateVertices[offset++]=source[i]>>>16;}
       this.immediateVertices[offset++]=source[0];
+      this.immediate.edges.push(state.edgeFlag);
       this.immediate.length = offset;
       return true;
     }
@@ -505,7 +514,7 @@ const stats = {
       if (!state.clientEnabled.has(GL.VERTEX_ARRAY) || !state.vertexPointer) return;
       const saved = { source: state.source?.slice() || null, color: state.color.slice(), texCoord: state.texCoord.slice(),
         texCoord1: state.texCoord1.slice(), normal: state.normal.slice() };
-      this.immediate = { mode, length: 0 };
+      this.immediate = { mode, length: 0, edges: [] };
       try {
         for (let i = 0; i < count; i++) this._arrayElement(first + i);
         this._finishImmediate();
@@ -532,7 +541,7 @@ const stats = {
         texCoord1: state.texCoord1.slice(), normal: state.normal.slice() };
       const view = this._memoryView();
       const wa = this.guestToWasm(indices >>> 0) >>> 0;
-      this.immediate = { mode, length: 0 };
+      this.immediate = { mode, length: 0, edges: [] };
       try {
         for (let i = 0; i < count; i++) {
           this._arrayElement(view[info.get](wa + i * info.bytes, true));
@@ -590,8 +599,54 @@ const stats = {
       const vertices = this.immediateVertices.subarray(0, immediate.length);
       stats.spans++;
       const exact=this.exactColors && vertices.some((x,i)=>i%SOURCE_FLOATS===27 && x!==0);
+      const state = this._state();
+      if (immediate.mode >= GL.TRIANGLES && immediate.mode <= GL.POLYGON
+          && state.polygonModes.some(mode => mode !== 0x1b02)) {
+        this._captureBoundary(immediate, vertices, state.shadeModel === GL.FLAT);
+        return;
+      }
       const geometry = normalizeImmediate(immediate.mode, vertices, this._state().shadeModel, SOURCE_FLOATS);
       if (geometry.vertices.length) this._capturePacked(geometry.mode, geometry.vertices, exact);
+    }
+
+    // Keep each logical polygon intact. Edge flags label outgoing boundaries;
+    // connected primitives ignore the caller's edge flag (GL 2.1 section 2.6).
+    _captureBoundary(immediate, vertices, flat) {
+      const count = vertices.length / SOURCE_FLOATS, mode = immediate.mode;
+      const polygons = [];
+      if (mode === GL.TRIANGLES || mode === GL.QUADS) {
+        const size = mode === GL.TRIANGLES ? 3 : 4;
+        for (let i = 0; i + size <= count; i += size)
+          polygons.push([Array.from({ length: size }, (_, j) => i + j), i + size - 1]);
+      } else if (mode === GL.TRIANGLE_STRIP) {
+        for (let i = 2; i < count; i++)
+          polygons.push([i % 2 ? [i - 1, i - 2, i] : [i - 2, i - 1, i], i]);
+      } else if (mode === GL.TRIANGLE_FAN) {
+        for (let i = 2; i < count; i++) polygons.push([[0, i - 1, i], i]);
+      } else if (mode === GL.QUAD_STRIP) {
+        for (let i = 3; i < count; i += 2) polygons.push([[i - 3, i - 2, i, i - 1], i]);
+      } else if (mode === GL.POLYGON && count >= 3) {
+        polygons.push([Array.from({ length: count }, (_, i) => i), 0]);
+      }
+      for (const [indices, provoking] of polygons) {
+        const payloadBytes = indices.length * 29 * 4;
+        const recordBytes = HEADER_BYTES + payloadBytes;
+        if (recordBytes > this.capacity) throw new RangeError('complete edge polygon exceeds stream capacity');
+        if (this.used + recordBytes > this.capacity) this.flush();
+        const at = this.used, pointer = at + HEADER_BYTES;
+        [recordBytes, ABI.EDGE_DRAW_OPCODE, GL.POLYGON, 0, 0, payloadBytes, pointer, FLAG_POINTER_COPY]
+          .forEach((word, i) => this.view.setUint32(at + i * 4, word, true));
+        indices.forEach((index, j) => {
+          const vertex = Array.from(vertices.subarray(index * SOURCE_FLOATS, (index + 1) * SOURCE_FLOATS));
+          if (flat) {
+            for (let k = 3; k < 7; k++) vertex[k] = vertices[provoking * SOURCE_FLOATS + k];
+            for (let k = 19; k < SOURCE_FLOATS; k++) vertex[k] = vertices[provoking * SOURCE_FLOATS + k];
+          }
+          const edge = [GL.TRIANGLES, GL.QUADS, GL.POLYGON].includes(mode) ? immediate.edges[index] : 1;
+          new Float32Array(this.buffer, pointer + j * 116, 29).set([...vertex, edge]);
+        });
+        this.used += recordBytes; this.commands++;
+      }
     }
 
     _capture(opcode, stackWa, aux, pointer, borrowed) {
@@ -629,6 +684,20 @@ const stats = {
     }
 
     call(opcode, stackWa, aux) {
+      // Explicit wire publication contract, separate from primitive semantics.
+      // Immediate setters may publish earlier pending records even when their
+      // own value is absorbed into vertices. Unknown deletion emits no record,
+      // but completion can still publish an earlier bound-context prefix.
+      const result = this._call(opcode, stackWa, aux);
+      const local = [0,1,3,4,5,6,7,8,10,15,16,18,19,20,21,22,23,24,25,26,27,
+        28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,44,56,57,58,63,
+        82,90,107,109,111,147].includes(opcode);
+      if (this.publishCompletedServerCalls && this.currentContext && !local)
+        this.flush();
+      return result;
+    }
+
+    _call(opcode, stackWa, aux) {
       opcode |= 0; stackWa >>>= 0; aux >>>= 0;
       stats.calls++;
       if (opcode >= 0 && opcode < 128) stats.byOpcode[opcode]++;
@@ -811,6 +880,8 @@ const stats = {
       if (opcode === 76) {
         const state = this._state();
         state.attribStack.push({
+          mask: u32At(memoryView, stackWa, 0), edgeFlag: state.edgeFlag,
+          polygonModes: state.polygonModes.slice(),
           source: state.source?.slice() || null, color: state.color.slice(), texCoord: state.texCoord.slice(),
           texCoord1: state.texCoord1.slice(),
           normal: state.normal.slice(), shadeModel: state.shadeModel,
@@ -819,12 +890,29 @@ const stats = {
         const state = this._state();
         const saved = state.attribStack.pop();
         if (saved) {
+          if (saved.mask & 1) {
+          state.edgeFlag = saved.edgeFlag;
           state.source=saved.source;
           for (let i = 0; i < 4; i++) state.color[i] = saved.color[i];
           for (let i = 0; i < 4; i++) state.texCoord[i] = saved.texCoord[i];
           for (let i = 0; i < 4; i++) state.texCoord1[i] = saved.texCoord1[i];
           for (let i = 0; i < 3; i++) state.normal[i] = saved.normal[i];
-          state.shadeModel = saved.shadeModel;
+          }
+          if (saved.mask & 0x40) state.shadeModel = saved.shadeModel;
+          if (saved.mask & 8) state.polygonModes = saved.polygonModes.slice();
+        }
+      }
+      if (opcode === 181) {
+        this._state().edgeFlag = (u32At(memoryView, stackWa, 0) & 255) ? 1 : 0;
+        return 0;
+      }
+      if (opcode === 16) {
+        if (this.immediate) throw new RangeError('GL polygon mode inside glBegin/glEnd');
+        const face = u32At(memoryView, stackWa, 0), mode = u32At(memoryView, stackWa, 1);
+        if ([0x404,0x405,0x408].includes(face) && [0x1b00,0x1b01,0x1b02].includes(mode)) {
+          const modes = this._state().polygonModes;
+          if (face !== 0x405) modes[0] = mode;
+          if (face !== 0x404) modes[1] = mode;
         }
       }
       if (opcode === 19) {
@@ -834,7 +922,7 @@ const stats = {
       }
       if (opcode === 21) {
         if (this.immediate) throw new RangeError('nested glBegin is unsupported');
-        this.immediate = { mode: u32At(memoryView, stackWa, 0), length: 0 };
+        this.immediate = { mode: u32At(memoryView, stackWa, 0), length: 0, edges: [] };
         return 0;
       }
       if ((opcode >= 29 && opcode <= 31) || opcode === 118 || opcode === 119) {
@@ -846,6 +934,16 @@ const stats = {
         return 0;
       }
       if (this.immediate) throw new RangeError(`GL opcode ${opcode} inside glBegin/glEnd`);
+      if (NATIVE_QUERY_OPS.has(opcode)) {
+        if (this.currentContext) throw new RangeError(
+          'public native query requires the independent API-state probe, opcode ' + opcode);
+        // No public current context: consume without writing or flushing.
+        return 0;
+      }
+      // An unknown WGL handle is rejected by the native namespace before
+      // host publication; it must not flush pending geometry as a barrier.
+      if (opcode === 49 && (!u32At(memoryView, stackWa, 0) ||
+          !this.knownContexts.has(u32At(memoryView, stackWa, 0)))) return 0;
       const pointer = pointerSpec(opcode, memoryView, stackWa);
 
       // OpenGL promises that client pixels have been consumed when a texture
@@ -872,11 +970,23 @@ const stats = {
         throw new RangeError(`GL command ${opcode} does not fit command buffer`);
       }
       const result = BARRIERS.has(opcode) ? this.flush() : 0;
-      if (opcode === 51 && result) this.currentContext = u32At(memoryView, stackWa, 1);
+      if (opcode === 48 && result) this.knownContexts.add(result >>> 0);
+      if (opcode === 51) {
+        // WGL failure detaches the previous current context (Microsoft WGL
+        // contract), while preserving that context's saved attributes.
+        this.currentContext = result ? u32At(memoryView, stackWa, 1) : 0;
+        if (result && this.currentContext) this.knownContexts.add(this.currentContext);
+        // Private encoder fallback is reset on detachment, not a persistent
+        // public context namespace member. Public GL has no rendering here.
+        if (!this.currentContext) this.immediateStates.delete(0);
+      }
       if (opcode === 49 && result) {
         const deleted = u32At(memoryView, stackWa, 0);
+        this.knownContexts.delete(deleted);
         this.immediateStates.delete(deleted);
-        if (this.currentContext === deleted) this.currentContext = 0;
+        if (this.currentContext === deleted) {
+          this.currentContext = 0; this.immediateStates.delete(0);
+        }
       }
       return result;
     }
