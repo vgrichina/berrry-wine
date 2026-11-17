@@ -1,5 +1,36 @@
 # OpenGL / Direct3D corpus status, updated 2026-11-17
 
+## November 17 NFS3 driving and paired SDK rendering
+
+[NFS3 inherited-timing report](re-notes/nfs3-inherited-timing-visible-driving-20261117.md),
+published `c9ff55052`, records released acceleration and steering in the
+original: speed rose from 0 to 3 and 4 MPH, the wheel turned left, and road
+alignment changed. The first hold overlapped the countdown. The coordinator
+reviewed the whole after-steering frame at 4 MPH and delivered it as Telegram
+message3008. This is evidence of manual driving on the pinned Direct3D route,
+not a high-speed race or lap completion. The tested runtime remains
+`013d916c6`, module `cf674e8d…`, with all135 media hashes unchanged.
+Escape expired unapplied at its unchanged release-bound deadline; Pause,
+Continue and native Quit remain unproved. Native and enclosing process waits
+and both pipe EOFs completed. The terminal input attempt stays closed.
+Evidence: `scratch/runs/20261117-nfs3-inherited-timing-visible-driving/result.json`.
+
+[Four SDK examples](re-notes/dxsdk-four-examples-paired-rendering-20261117.md)
+(`112c6ef43`) and the
+[software Tunnel/Flip follow-up](re-notes/dxsdk-software-tunnel-flip-rendering-finish-20261117.md)
+(`53bce46ea`) together record moving scenes for Boids, Flip3DTL, Tunnel and
+Twist on both actual software and WebGL GPS executors. These runs use pinned
+`70a680b54`, module `cf674e8d…`; they do not establish current-main parity.
+The coordinator reviewed Boids bird/terrain motion, Flip3DTL textured-cube
+rotation and the fresh software Tunnel's changing textured scene. The fresh
+software Tunnel and Flip runs include complete enclosing waits and EOFs.
+The earlier software Tunnel capture refusal and earlier Flip software missing
+enclosing waits remain separate UNKNOWN results. These observations do not
+establish visual parity, FPS, audio, native Quit or the complete historical
+27-app goal. Globe and Viewer remain active work.
+Evidence: `scratch/runs/20261117-dxsdk-four-examples-paired-rendering/result.json`
+and `scratch/runs/20261117-dxsdk-software-tunnel-flip-rendering-finish/result.json`.
+
 ## November 17 Quake III arena, depth repair and delayed input
 
 The registered original on pinned `e7c13db29` / module `f40fc54c…` reached
