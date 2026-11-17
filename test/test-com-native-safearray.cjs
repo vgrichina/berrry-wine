@@ -193,6 +193,74 @@ async function main(){
  put(boundDescriptor+16,0);put(boundDescriptor+20,0x80000000);assert.equal(await bound('SafeArrayGetUBound',boundDescriptor,1),0x8002000a);assert.equal(word(p+72),0x11223344);
  // Metadata does not require VARTYPE, element data, or a new array lock.
  dv.setUint16(address(boundDescriptor),65,true);put(boundDescriptor+20,-42);put(boundDescriptor+8,9);assert.equal(await bound('SafeArrayGetLBound',boundDescriptor,65),0);assert.equal(word(p+72),(-42)>>>0);assert.equal(word(boundDescriptor+8),9);m.free(boundDescriptor);
+ // Native VariantCopyInd #11. No serialized host values or provider DLLs.
+ const indName=a.string('VariantCopyInd',false),indNamed=await api('GetProcAddress',[exactModule,indName]),indOrdinal=await api('GetProcAddress',[exactModule,11]);m.free(indName);assert(indNamed&&indOrdinal);
+ const ind=async(dst,src)=>call('VariantCopyInd',[dst,src]);
+ const clear=async at=>{assert.equal(await call('VariantClear',[at]),0);};
+ for(const [tag,size,bits]of [[0,0,0n],[1,0,0n],[2,2,0xff81n],[3,4,0x89abcdefn],[4,4,0x7fc00001n],[5,8,0x7ff8000000000123n],[6,8,0x123456789abcdef0n],[7,8,0xc004000000000000n],[10,4,0x80020004n],[11,2,0xffffn],[16,1,0x81n],[17,1,0xffn],[18,2,0xfe01n],[19,4,0xffffffffn],[20,8,0x8000000000000001n],[21,8,0xffffffffffffffffn],[22,4,0x80000000n],[23,4,0xfedcba98n]]){
+  variant(p,tag,bits);variant(p+16,0);assert.equal(await ind(p+16,p),0);assert.equal(vt(p+16),tag);assert.deepEqual(m.read(p+24,size),m.read(p+8,size));
+  assert.equal(await ind(p+16,p+16),0);await clear(p+16);
+  if(tag>1){variant(p+32,tag|0x4000,p+8);assert.equal(await ind(p+16,p+32),0);assert.equal(vt(p+16),tag);assert.deepEqual(m.read(p+24,size),m.read(p+8,size));assert.equal(vt(p+32),tag|0x4000);await clear(p+16);await clear(p+32);}
+ }
+ // DECIMAL overlays the tag in its reserved word, rather than union +8.
+ const decimal=Uint8Array.from(Buffer.from('0e00028078563412f0debc9a78563412','hex'));m.write(p,decimal);variant(p+32,0x400e,p);variant(p+16,0);assert.equal(await ind(p+16,p+32),0);assert.deepEqual(m.read(p+16,16),decimal);await clear(p+16);await clear(p+32);await clear(p);
+ // Nested references and indirect self-copy own the terminal value.
+ variant(p+64,3,0x12345678);variant(p+48,0x4003,p+72);variant(p+32,0x400c,p+48);variant(p+16,0x400c,p+32);
+ assert.equal(await ind(p+16,p+16),0);assert.equal(vt(p+16),3);assert.equal(word(p+24),0x12345678);await clear(p+16);
+ // Failure is atomic for both source and an already-owned destination.
+ const bad=async(tag,data,expected)=>{const old=await str('keep\0owner');variant(p+16,8,old);variant(p,tag,data);const before=m.read(p+16,16),source=m.read(p,16);assert.equal(await ind(p+16,p),expected);assert.deepEqual(m.read(p+16,16),before);assert.deepEqual(m.read(p,16),source);assert.equal(readString(old),'keep\0owner');await clear(p+16);variant(p,0);};
+ await bad(0x4003,0,0x80070057);await bad(0x4000,p+64,0x80070057);await bad(0x4001,p+64,0x80070057);await bad(0x400c,p,0x80070057);await bad(0xffff,0,0x80020008);await bad(12,0,0x80020008);await bad(36,0,0x80004001);await bad(0x200c,0,0x80004001);
+ variant(p+16,0);assert.equal(await ind(0,p+16),0x80070057);assert.equal(await ind(p+16,0),0x80070057);
+ assert.equal(await ind(p+16,0xdeadbeef),0x80070057);assert.equal(await ind(0xdeadbeef,p+16),0x80070057);await bad(0x4003,0xdeadbeef,0x80070057);await bad(8,1,0x80070057);
+ // Overflow is an allocation failure, never a wrapped successful clone.
+ put(p+80,0xfffffffc);await bad(8,p+84,0x8007000e);
+ const fake=m.allocate(32);put(fake,3);dv.setUint16(address(fake+4),1,true);dv.setUint16(address(fake+6),0x80,true);put(fake+8,4);put(fake+16,p+64);put(fake+20,0x10000000);await bad(0x2003,fake+4,0x8007000e);put(fake+20,1);put(fake+16,0);await bad(0x2003,fake+4,0x80070057);m.free(fake);
+ // Exact original iKernel call shape, including native return stack cleanup.
+ const emit32=n=>{const b=Buffer.alloc(4);b.writeUInt32LE(n>>>0);return b;};
+ const machine=[];const hex=s=>machine.push(Buffer.from(s,'hex'));const store=(opcode,at)=>{hex(opcode);machine.push(emit32(at));};
+ hex('5589e583ec30c745d800000000c745dc00000000c745e000000000c745e400000000c745d4df9b5713c745e8e0ac6824');
+ hex('8d451c508d45d850ff15c4c24600');store('a3',p+192);store('8925',p+196);hex('8d45d0');store('a3',p+200);hex('8b45d4');store('a3',p+204);hex('8b45e8');store('a3',p+208);hex('0fb745d8');store('a3',p+212);hex('8b45e0');store('a3',p+216);hex('89ec5dc22400');
+ const caller=m.allocate(Buffer.concat(machine).length);m.write(caller,Buffer.concat(machine));variant(p+64,3,0xfedcba98);variant(p+48,0x4003,p+72);
+ const exactInd=[];
+ for(const [tag,data,entry]of [[3,0xfedcba98,indNamed],[0x4003,p+72,indOrdinal],[0x400c,p+48,indOrdinal]]){
+  put(0x46c2c4,entry);await c.invoke(caller,[0,0,0,0,0,tag,0,data,0]);
+  const row={tag,eax:word(p+192),esp:word(p+196),expectedESP:word(p+200),canaries:[word(p+204),word(p+208)],vt:word(p+212),value:word(p+216)};
+  assert.equal(row.eax,0);assert.equal(row.esp,row.expectedESP);assert.deepEqual(row.canaries,[0x13579bdf,0x2468ace0]);assert.equal(row.vt,3);assert.equal(row.value,0xfedcba98);exactInd.push(row);
+ }
+ m.free(caller);await clear(p+48);await clear(p+64);console.log(JSON.stringify({exactVariantCopyIndCaller:exactInd}));
+ // Actual guest x86 IUnknown AddRef/Release; counts live in native memory.
+ const object=m.allocate(128),vtable=object+16;put(object,vtable);put(object+4,1);put(vtable+4,object+32);put(vtable+8,object+64);
+ m.write(object+32,Buffer.from('8b442404ff40048b4004c20400','hex'));m.write(object+64,Buffer.from('8b442404ff48048b4004c20400','hex'));
+ // A failed native AddRef lookup preserves the destination and restores the
+ // parked caller, rather than manufacturing a successful owned pointer.
+ variant(p,13,object);variant(p+16,8,await str('callback-failure'));const callbackBefore=frame(),callbackDest=m.read(p+16,16);put(vtable+4,0);
+ await assert.rejects(()=>ind(p+16,p),/null method/);assert.deepEqual(frame(),callbackBefore);assert.deepEqual(m.read(p+16,16),callbackDest);assert.equal(readString(word(p+24)),'callback-failure');assert.equal(word(object+4),1);assert.equal(runtime.pending.size,0);assert.equal(c.frames.length,0);put(vtable+4,object+32);variant(p,0);await clear(p+16);
+ const indCycle=async()=>{
+  const bstr=await str('copy\0ind');variant(p,8,bstr);variant(p+16,0);
+  assert.equal(await ind(p,p),0);assert.equal(word(p+8),bstr);
+  assert.equal(await ind(p+16,p),0);const clone=word(p+24);assert.notEqual(clone,bstr);await clear(p);assert.equal(readString(clone),'copy\0ind');await clear(p+16);
+  const owned=await str('alias');variant(p,8,owned);variant(p+32,0x4008,p+8);assert.equal(await ind(p,p+32),0);assert.notEqual(word(p+8),owned);assert.equal(readString(word(p+8)),'alias');await clear(p);await clear(p+32);
+  const sa=await create([[2,-3]]);put(word(sa+12),await str('array\0ind'));variant(p,0x2008,sa);variant(p+32,0x6008,p+8);variant(p+16,0);
+  assert.equal(await ind(p,p),0);assert.equal(word(p+8),sa);
+  assert.equal(await ind(p+16,p),0);assert.notEqual(word(p+24),sa);await clear(p+16);
+  assert.equal(await ind(p+16,p+32),0);const copied=word(p+24);assert.notEqual(copied,sa);assert.equal(readString(word(word(copied+12))),'array\0ind');await clear(p+32);await clear(p);assert.equal(readString(word(word(copied+12))),'array\0ind');await clear(p+16);
+  // Array owner replacement must fail atomically while locked.
+  const locked=await create([[1,0]]);variant(p+16,0x2008,locked);put(locked+8,1);variant(p,3,42);const snapshot=m.read(p+16,16);assert.equal(await ind(p+16,p),0x8002000d);assert.deepEqual(m.read(p+16,16),snapshot);put(locked+8,0);await clear(p+16);await clear(p);
+  for(const tag of [9,13]){
+   variant(p,tag,object);variant(p+16,0);assert.equal(await ind(p+16,p),0);assert.equal(word(object+4),2);await clear(p+16);assert.equal(word(object+4),1);
+   // Borrowed Copy keeps a wrapper; CopyInd takes an independent reference.
+   put(p+80,object);variant(p+32,tag|0x4000,p+80);assert.equal(await call('VariantCopy',[p+16,p+32]),0);assert.equal(vt(p+16),tag|0x4000);assert.equal(word(object+4),1);await clear(p+16);assert.equal(word(object+4),1);
+   assert.equal(await ind(p+16,p+32),0);assert.equal(word(object+4),2);assert.equal(await call('VariantCopy',[p+16,p+16]),0);assert.equal(word(object+4),2);
+   variant(p+64,0x400c,p+32);await clear(p+16);assert.equal(await ind(p+16,p+64),0);assert.equal(word(object+4),2);await clear(p+64);
+   // Replacing an owned interface with a scalar consumes the pending bridge
+   // result once; a re-entry must never rerun the changed destination.
+   variant(p+48,3,123);assert.equal(await ind(p+16,p+48),0);assert.equal(word(object+4),1);await clear(p+16);
+   assert.equal(await ind(p+32,p+32),0);assert.equal(vt(p+32),tag);assert.equal(word(object+4),2);await clear(p+32);await clear(p+32);assert.equal(word(object+4),1);variant(p,0);await clear(p+48);
+  }
+  assert.equal(runtime.pending.size,0);assert.equal(c.frames.length,0);
+ };
+ for(let i=0;i<4;i++)await indCycle();const indHeap=e.get_heap_ptr();for(let i=0;i<128;i++)await indCycle();assert.equal(e.get_heap_ptr(),indHeap,'CopyInd owns and repeatedly reclaims strings/arrays/interfaces');assert.equal(word(object+4),1);await m.release(object);assert.equal(word(object+4),0);m.free(object);
+ console.log(JSON.stringify({nativeVariantCopyIndOrdinal11:true,scalarAndByref:true,decimalOverlay:true,nestedAndSelf:true,aliasOwnedBSTR:true,borrowedArray:true,actualIUnknownCounts:true,failureAtomic:true,exactCaller:true,ownershipCycles:128,heapStable:true}));
  m.free(p);await m.drain();assert.equal(c.frames.length,0);
  console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeLBoundOrdinal20:true,nativeUBoundOrdinal19:true,boundOverflowAtomic:true,nativeBSTRArray:true,nativeGetDimOrdinal17:true,ordinal202Closed:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,nativeCopyOrdinal27:true,nativePtrOfIndexOrdinal148:true,borrowedAddress:true,partialCopyRollback:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
 }

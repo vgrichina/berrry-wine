@@ -39812,5 +39812,12 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 4181942110
+  },
+  {
+    "id": 4709,
+    "name": "VariantCopyInd",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2319115076
   }
 ]
