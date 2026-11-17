@@ -178,14 +178,26 @@ def button(rr,r):
     w=matches[0]
     assert w['live'] and w['visible'] and w['generation'] and w['processId'] and w['threadId']
     assert s['physicalUp'] and s['capture']=='0x0','capture or held physical input'
-    if r['kind']!='game' or w.get('isChild'):
+    if r.get('drawnRegion') is not None:
+        region=r['drawnRegion']
+        assert r['kind']=='quit' and r['visibleLabel']=='Quit','explicit game-drawn Quit review required'
+        assert not w.get('isChild') and w['hwnd']==s['mainHwnd'] and s['modalHwnd']=='0x0'
+        assert not (w['style']&0x08000000),'disabled game window'
+        assert region['binding']==region_binding(rr,w),'wrong actor/window/frame/provenance for region'
+        x,y,width,height=region['rect']
+        assert all(type(v) is int for v in (x,y,width,height)) and width>0 and height>0
+        assert w['x']<=x and w['y']<=y and x+width<=w['x']+w['w'] and y+height<=w['y']+w['h'],'region outside game window'
+    elif r['kind']!='game' or w.get('isChild'):
         assert w.get('isChild') and w.get('controlClass')==1,'actual BUTTON child required'
         assert not (w['style']&0x08000000),'disabled BUTTON'
         assert w.get('nativeTextAvailable') is True and w.get('textBytes') is not None
         assert w['title'].replace('&','').strip()==r['visibleLabel'].replace('&','').strip(),'BUTTON label differs'
         assert w['parent']!='0x0' and w.get('buttonFlags') is not None
     return w
-def review(scene,description,label,kind,target):
+def region_binding(rr,w):
+    return dict(captureId=rr['captureId'],pngSHA256=rr['pngSHA256'],nativeProcess=rr['snapshot']['nativeProcess'],
+        window={k:w[k] for k in ('hwnd','generation','processId','threadId')})
+def review(scene,description,label,kind,target,region=None):
     assert not (R/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; no later review'
     assert not (R/(scene+'-refused.json')).exists(),'capture and review invalidated'
     rr=read(scene+'.json')
@@ -193,6 +205,9 @@ def review(scene,description,label,kind,target):
     assert hashlib.sha256((R/(scene+'.png')).read_bytes()).hexdigest()==rr['pngSHA256']
     record=dict(at=time.time(),rawCompleteScene=True,observation=description,
          visibleLabel=label,kind=kind,targetHwnd=target,pngSHA256=rr['pngSHA256'])
+    if region is not None:
+        w=next(w for w in rr['snapshot']['windows'] if w['hwnd']==target)
+        record['drawnRegion']=dict(rect=list(region),binding=region_binding(rr,w))
     button(rr,record)
     save(scene+'-review.json',record)
 def reviewed(scene,operation=None,kind=None,point=None):
@@ -206,6 +221,10 @@ def reviewed(scene,operation=None,kind=None,point=None):
     if point is not None and point[0]!=-1:
         x,y=point
         assert w['x']<=x<w['x']+w['w'] and w['y']<=y<w['y']+w['h'],'point outside reviewed target'
+        if r.get('drawnRegion') is not None:
+            rx,ry,rw,rh=r['drawnRegion']['rect']
+            assert rx<=x<rx+rw and ry<=y<ry+rh,'point outside reviewed drawn region'
+    if r.get('drawnRegion') is not None:assert point is None or point[0]!=-1,'drawn Quit requires mouse input'
     latest=latest_refusal()
     if latest:
         assert rr['at']>latest and r['at']>=rr['completedAt'],'fresh capture and new review required'
@@ -215,8 +234,10 @@ def reviewed(scene,operation=None,kind=None,point=None):
     assert review_age<freshness,'review expired'
     return rr,r
 def native_review(rr,r):
-    return dict(contract='native-reviewed-context-v1',captureId=rr['captureId'],pngSHA256=rr['pngSHA256'],
+    result=dict(contract='native-reviewed-context-v1',captureId=rr['captureId'],pngSHA256=rr['pngSHA256'],
         reviewed=True,reviewedAt=r['at']*1000,scope='game' if r['kind']=='game' else 'menu',targetHwnd=r['targetHwnd'])
+    if r.get('drawnRegion') is not None:result['drawnRegion']=r['drawnRegion']
+    return result
 def bind(scene):
     try:
         operation=local_operation()
@@ -390,6 +411,11 @@ def intent(name,scene,x,y,kind,handoff=None):
             native=receipt['nativeMessage']
             assert native['hwnd']==int(w['hwnd'],16) and str(native['generation'])==str(w['generation'])
             assert native['processId']==w['processId'] and native['threadId']==w['threadId']
+        if r.get('drawnRegion') is not None:
+            assert receipt['receiptBoundary']=='native-input-return','native USER consumption required'
+            native=receipt['nativeMessage']
+            assert native['consumption']=='owner-user-return' and native['token']>0 and native['nonce']==nonce
+            assert native['hwnd']==int(w['hwnd'],16) and native['threadId']==w['threadId'] and native['msg']==0x201
         save(name+'-up-at.json',dict(at=receipt['consumedAt']/1000+.1))
         out,err=child.communicate(timeout=max(.001,start+1.75-time.time()))
         save(name+'-release-wait.json',dict(pid=child.pid,exit=child.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=out.decode(),stderr=err.decode()))
@@ -421,6 +447,7 @@ def intent(name,scene,x,y,kind,handoff=None):
             waited=R/'native-wait.json'
             if waited.exists():
                 native=read('native-wait.json');assert kind=='quit' and native['actualWait'] and native['exit']==0
+                assert native['stdoutEOF'] and native['stderrEOF'] and native.get('signal') is None,'native exit not settled'
                 info=read('native-pid.json')
                 if info.get('invocationToken'):
                     guest=read('native-exit.json')
@@ -474,6 +501,14 @@ def main():
     if mode=='startup':startup()
     elif mode=='capture':capture(sys.argv[2])
     elif mode=='review':review(*sys.argv[2:7])
+    elif mode=='review-drawn-quit':
+        scene,description,target,x,y,w,h=sys.argv[2:9]
+        review(scene,description,'Quit','quit',target,tuple(map(int,(x,y,w,h))))
+    elif mode=='drawn-quit':
+        scene,description,target,rx,ry,rw,rh,name,x,y=sys.argv[2:12]
+        review(scene,description,'Quit','quit',target,tuple(map(int,(rx,ry,rw,rh))))
+        if not (R/owner_file()).exists():bind(scene)
+        intent(name,scene,int(x),int(y),'quit')
     elif mode=='bind':bind(sys.argv[2])
     elif mode=='intent':intent(sys.argv[2],sys.argv[3],int(sys.argv[4]),int(sys.argv[5]),sys.argv[6])
     elif mode=='review-intent':
