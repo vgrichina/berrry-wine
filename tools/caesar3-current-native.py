@@ -25,6 +25,48 @@ def published_module(name, revision):
     return m
 def free_disk():
     s = os.statvfs('/home'); assert s.f_bavail*s.f_frsize > 1500000000
+def outer_ready(media_before_clock=False):
+    outer=os.environ.get('CAESAR3_OUTER_RUN')
+    if not outer:return
+    p=pathlib.Path(outer)
+    assert p.parent==RUN and p.name=='outer'
+    prepared=p/'prepared.json'
+    with prepared.open('x') as f:json.dump(dict(at=time.time(),compiledAndQualified=True,mediaBeforeClock=media_before_clock),f)
+    due=time.monotonic()+5
+    while not (p/'runtime-start.json').exists():
+        assert time.monotonic()<due,'outer runtime watchdog did not prearm'
+        time.sleep(.005)
+    ready=json.loads((p/'native-armed.json').read_text())
+    assert ready['seconds']==NATIVE_SECONDS
+
+def supervised():
+    """Reuse the GL worker's published process-parent ownership repair.
+
+    This adds an outer OS lifecycle boundary; guest clocks, input receipts,
+    native deadline and independent release are unchanged.
+    """
+    RUN.mkdir(parents=True,exist_ok=True);free_disk()
+    revision=git('rev-parse','HEAD').decode().strip()
+    assert git('rev-parse','origin/main').decode().strip()==revision
+    working='--working-qualification' in sys.argv
+    assert not working or '--outer-fixture' in sys.argv
+    names=('tools/gltron-current-supervise.py','tools/boids-current-supervise.py',
+           'tools/caesar3-current-native.py')
+    for name in names:
+        if working and name=='tools/caesar3-current-native.py':continue
+        assert git('show',revision+':'+name)==(ROOT/name).read_bytes(), 'publish exact supervisor before use: '+name
+    assert ('--original' in sys.argv) != ('--outer-fixture' in sys.argv)
+    (RUN/'outer-owned-helper.patch').write_bytes(git('diff','--binary',revision,'--','tools/caesar3-current-native.py'))
+    save('outer-source-pins.json',dict(gitSHA=revision,sources={n:sha((ROOT/n).read_bytes()) for n in names},workingAuthoredOnly=working,
+        preparationSeconds=240,runtimeSeconds=NATIVE_SECONDS,independentRuntimeWatchdogSeconds=WATCHDOG_SECONDS))
+    m=published_module('tools/gltron-current-supervise.py',revision)
+    os.environ['CAESAR3_OUTER_RUN']=str(RUN/'outer')
+    os.environ['CAESAR3_PINNED_REVISION']=revision
+    command=[sys.executable,'-B',str(ROOT/'tools/caesar3-current-native.py'),
+             '--original' if '--original' in sys.argv else '--outer-fixture']
+    if working:command.append('--working-qualification')
+    return m.ParentProcessSupervisor(RUN/'outer',command,preparation=240,runtime=NATIVE_SECONDS,
+        preparation_watchdog=260,runtime_watchdog=WATCHDOG_SECONDS,grace=5).run()
 def token(pid):
     s = pathlib.Path(f'/proc/{pid}/stat').read_text()
     return s[s.rindex(')')+2:].split()[19]
@@ -54,6 +96,7 @@ def original(env, source, module):
     assert len(pins)==114, 'complete installed recursive media inventory required before clocks'
     assert next(p['sha256'] for p in pins if p['path'].endswith('/c3.exe')) == 'd7c73f21d3837b1fc465a6035f4fea6ab5a7eddf62907c72c4dd076a5193d236'
     save('media.json', dict(files=pins, recursive=True, beforeNativeClock=True, at=time.time()))
+    outer_ready(media_before_clock=True)
     with socket.socket() as s:
         s.bind(('127.0.0.1', 0)); port = s.getsockname()[1]
     start = time.time(); deadline = start+NATIVE_SECONDS
@@ -206,13 +249,15 @@ def run():
     RUN.mkdir(parents=True, exist_ok=True); free_disk()
     requested = '--original' in sys.argv
     text_diagnostic = '--text-diagnostic' in sys.argv
+    outer_fixture = '--outer-fixture' in sys.argv
     diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic
     working = '--working-qualification' in sys.argv
     baseline = '--consumer-baseline' in sys.argv
     assert not baseline or (working and diagnostic), 'baseline is authored working diagnosis only'
     assert not (requested and working), 'original requires published Git-only helpers'
     assert not (requested and diagnostic), 'consumer diagnosis never authorizes an original'
-    revision = git('rev-parse', 'HEAD').decode().strip()
+    revision = os.environ.get('CAESAR3_PINNED_REVISION') or git('rev-parse', 'HEAD').decode().strip()
+    assert git('merge-base','--is-ancestor',revision,'origin/main')==b''
     # The imported supervisor body comes from Git, never the shared worktree.
     helper = published_module('tools/vb5cce-original-runtime.py', revision)
     helper.ROOT, helper.RUN, helper.HEAD = ROOT, RUN, revision
@@ -242,9 +287,12 @@ def run():
         helper.checked('authored-native', ['node', 'test/test-caesar3-current-native.cjs', str(RUN/'authored')], env, (source, module))
         save('qualification.json', dict(passed=True, gitSHA=revision, originalStarted=False,
              moduleSHA256=env['DISCIPLES2_MODULE_SHA256'], at=time.time()))
+        if outer_fixture:
+            outer_ready()
+            helper.checked('outer-native-printable',['node','test/test-native-printable-input.cjs',str(RUN/'outer-native')],env,(source,module))
         if requested:
-            assert git('rev-parse','HEAD').decode().strip()==revision, 'HEAD changed during qualification; no original'
-            assert git('rev-parse','origin/main').decode().strip()==revision, 'qualification is not exact current published main'
+            assert git('merge-base','--is-ancestor',revision,'origin/main')==b'', 'chosen published main graph retired'
+            assert git('show',revision+':tools/caesar3-current-native.py')==pathlib.Path(__file__).read_bytes(), 'chosen helper changed; no original'
             original(env, source, module)
     helper.qualify = qualify
     # Its --original option is intentionally not forwarded: this wrapper owns
@@ -258,6 +306,7 @@ def run():
         save('runtime-release.json', dict(success=success, descriptorsClosed=True, at=time.time(), box=None))
         sys.argv = previous
 if __name__ == '__main__':
-    if len(sys.argv)>1 and sys.argv[1]=='watchdog': watchdog(float(sys.argv[2]))
+    if len(sys.argv)>1 and sys.argv[1]=='supervised': sys.exit(supervised())
+    elif len(sys.argv)>1 and sys.argv[1]=='watchdog': watchdog(float(sys.argv[2]))
     elif len(sys.argv)>1 and sys.argv[1]=='control': controller()
     else: run()
