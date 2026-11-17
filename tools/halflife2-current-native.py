@@ -6,7 +6,7 @@ startup after complete authored controls and own outer lifecycle proof.
 """
 import gzip,hashlib,json,os,pathlib,re,signal,socket,subprocess,sys,threading,time,types,uuid
 ROOT=pathlib.Path(__file__).resolve().parent.parent
-TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-agreement-native-control-install-progress'
+TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-startup-ready-agreement-install-progress'
 RUN=pathlib.Path(os.environ.get('HL2_RUN',TASK_RUN/'native'))
 MEDIA=ROOT/'scratch/media/half-life-2-demo-original.exe'
 DLL=ROOT/'scratch/runs/20261117-halflife2-original-demo-startup-gameplay/WISE0132.dll'
@@ -14,6 +14,7 @@ OWN=('tools/halflife2-current-native.py','tools/halflife2-reviewed-next.py',
      'test/test-halflife2-reviewed-next.cjs','test/test-halflife2-native-wizard.cjs')
 PREVIOUS=ROOT/'scratch/runs/20261117-halflife2-fixed-wrapper-normal-install-progress/repair-working/outer-fixture'
 COMPONENTS=('tools/halflife2-current-native.py','tools/halflife2-persistent-owner.py','test/test-halflife2-persistent-owner.py',
+    'tools/halflife2-reviewed-next.py','test/test-halflife2-reviewed-next.cjs','test/run.js',
     'lib/cli-native-scene.js','lib/cli-native-user-windows.js',
     'test/test-cli-native-capture-refusal-details.cjs','test/test-halflife2-native-wizard.cjs')
 PRIOR_TASK=ROOT/'scratch/runs/20261117-halflife2-persistent-owner-normal-installer-progress'
@@ -152,7 +153,11 @@ def reusable_core(files,module_hash,fixture=CORE_FIXTURE):
      ('host.js','test/run.js','tools/vb5cce-original-runtime.py','tools/vb5cce-reviewed-control.py')}
  assert set(material)==previous,'native component inventory changed'
  for n,h in material.items():
-  if n not in refreshed:assert inputs['sources'].get(n)==h,'native core changed: '+n
+  if n=='test/run.js' and inputs['sources'].get(n)!=h:
+   passive=b"    if (cmd.action === 'native-startup-readiness')\n      return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);\n"
+   assert files[n].count(passive)==1
+   assert sha(files[n].replace(passive,b''))==inputs['sources'][n],'runner changed beyond passive readiness'
+  elif n not in refreshed:assert inputs['sources'].get(n)==h,'native core changed: '+n
  return dict(passed=True,moduleSHA256=module_hash,proofGit=proof['gitSHA'],
      proofSHA256=sha((fixture/'complete-native-qualification.json').read_bytes()),
      componentWaitSHA256=waits,priorOriginalLifecycleReused=False,freshOwnOuterRequired=True,
@@ -231,6 +236,9 @@ def run():
   current={n:sha(b) for n,b in files.items()}
   changed=set(COMPONENTS)
   assert {n:h for n,h in current.items() if n not in changed}=={n:h for n,h in old['sources'].items() if n not in changed and not n.startswith('node_modules/')},'unchanged graph differs'
+  passive=b"    if (cmd.action === 'native-startup-readiness')\n      return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);\n"
+  assert files['test/run.js'].count(passive)==1
+  assert sha(files['test/run.js'].replace(passive,b''))==old['sources']['test/run.js'],'runner changed beyond passive startup command'
   patches=git('diff','--binary',revision,component,'--',*COMPONENTS) if not working else git('diff','--binary',revision,'--',*COMPONENTS)
   if working:
    for name in COMPONENTS:
@@ -264,10 +272,14 @@ def run():
   wait=json.loads((PREVIOUS/'outer/wait.json').read_text())
   assert wait['actualWait'] and wait['stdoutEOF'] and wait['stderrEOF'] and wait['supervisorExitCode']==0
   save('qualification-reuse.json',dict(previous=str(PREVIOUS),fullWrapperSHA256=sha((PREVIOUS/'wizard-next/wrapper/proof.json').read_bytes()),shutdownSHA256=sha((PREVIOUS/'adapter-shutdown/proof.json').read_bytes()),allUnchangedSourcesExact=True,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],freshRouteOnly=True))
-  for name in ('lib/cli-native-scene.js','lib/cli-native-user-windows.js'):
-   assert files[name]==git('show','762ce2c29:'+name),'unreviewed diagnostic component: '+name
+  assert files['lib/cli-native-user-windows.js']==git('show','762ce2c29:lib/cli-native-user-windows.js')
+  # The changed scene receives fresh passive/context/control-refusal proofs;
+  # its capture clock, registry and consume-time verification remain exact.
+  old_scene=git('show','762ce2c29:lib/cli-native-scene.js')
+  assert files['lib/cli-native-scene.js'].split(b'function createReviewedContexts',1)[1].split(b'module.exports=',1)[0]==old_scene.split(b'function createReviewedContexts',1)[1].split(b'module.exports=',1)[0]
   helper.checked('capture-refusal-diagnostics',['node','test/test-cli-native-capture-refusal-details.cjs','--native',str(RUN/'capture-refusal-diagnostics')],env,(source,module))
   helper.checked('captured-next-guards',['node','test/test-halflife2-reviewed-next.cjs'],env,(source,module))
+  helper.checked('passive-startup-wrapper',['node','test/test-halflife2-native-wizard.cjs','--startup',str(RUN/'passive-startup-wrapper')],env,(source,module))
   save('persistent-route-reuse.json',dict(passed=True,routeProofSHA256=sha((PRIOR_TASK/'route-native/proof.json').read_bytes()),
       inheritedTERMProofSHA256=sha((PRIOR_TASK/'inherited-term-route-verified/proof.json').read_bytes()),
       unchangedLifecycle={n:sha(files[n]) for n in ('tools/halflife2-persistent-owner.py','tools/gltron-current-supervise.py','tools/boids-current-supervise.py')},

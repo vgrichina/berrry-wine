@@ -5,17 +5,18 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const {startControlSession}=require('./control-session');
 const net=require('node:net');
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
-function fixture(){
+function fixture({delayShowMs=0}={}){
  const b=require('./test-disciples2-native-paint-binding.cjs').fixture(false),raw=r=>r-0x1000+0x400,u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
  b.write('BUTTON\0',raw(0x3040));b.write('Wizard: Welcome\0',raw(0x3080));b.write('Next >\0',raw(0x3100));b.write('Wizard: License agreement\0',raw(0x3180));b.write('Cancel\0',raw(0x3200));
  function asm(r,body){const a=[],labels={},fix=[];const emit=(...v)=>a.push(...v),push=n=>emit(0x68,...u32(n));
- const api={RegisterClassA:0x401300,CreateWindowExA:0x401304,SetFocus:0x401308,GetMessageA:0x40130c,TranslateMessage:0x401310,DispatchMessageA:0x401314,DefWindowProcA:0x401318,SetWindowTextA:0x40131c,PostQuitMessage:0x401320,ExitProcess:0x401200,CreateThread:0x401208};
+ const api={RegisterClassA:0x401300,CreateWindowExA:0x401304,SetFocus:0x401308,GetMessageA:0x40130c,TranslateMessage:0x401310,DispatchMessageA:0x401314,DefWindowProcA:0x401318,SetWindowTextA:0x40131c,PostQuitMessage:0x401320,ShowWindow:0x401334,ExitProcess:0x401200,CreateThread:0x401208,GetTickCount:0x40120c};
  const call=n=>emit(0xff,0x15,...u32(api[n])),label=n=>labels[n]=a.length,jump=(n,c)=>{emit(...(c?[0x0f,c]:[0xe9]));fix.push([a.length,n]);emit(0,0,0,0);};
  body({emit,push,call,label,jump});const out=Buffer.from(a);for(const[o,n]of fix)out.writeInt32LE(labels[n]-o-4,o);assert(out.length<0x400);b.fill(0,raw(r),raw(r+0x400));out.copy(b,raw(r));}
  asm(0x2000,({emit,push,call,label,jump})=>{
-  push(0x403500);call('RegisterClassA');for(const n of [0,0x400000,0,0,300,500,40,40,0x10cf0000,0x403080,0x403000,0])push(n);call('CreateWindowExA');emit(0xa3,...u32(0x403600));
+  push(0x403500);call('RegisterClassA');for(const n of [0,0x400000,0,0,300,500,40,40,delayShowMs?0x00cf0000:0x10cf0000,0x403080,0x403000,0])push(n);call('CreateWindowExA');emit(0xa3,...u32(0x403600));
   for(const[id,x,title]of [[1,220,0x403100],[2,320,0x403200]]){for(const n of [0,0x400000,id])push(n);emit(0xff,0x35,...u32(0x403600));for(const n of [24,80,200,x,0x50010000,title,0x403040,0])push(n);call('CreateWindowExA');if(id===1){emit(0xa3,...u32(0x40360c));}}
   emit(0xff,0x35,...u32(0x40360c));call('SetFocus');for(const n of [0x403680,0,0,0x402800,0,0])push(n);call('CreateThread');
+  if(delayShowMs){call('GetTickCount');emit(0x50);label('delayed-show');call('GetTickCount');emit(0x2b,0x04,0x24,0x3d,...u32(delayShowMs));jump('delayed-show',0x82);emit(0x83,0xc4,4);push(1);emit(0xff,0x35,...u32(0x403600));call('ShowWindow');emit(0xff,0x35,...u32(0x40360c));call('SetFocus');}
   label('pump');for(const n of [0,0,0,0x403640])push(n);call('GetMessageA');emit(0x85,0xc0);jump('exit',0x84);push(0x403640);call('TranslateMessage');push(0x403640);call('DispatchMessageA');jump('pump');label('exit');push(0);call('ExitProcess');
  });
  asm(0x2400,({emit,push,call,label,jump})=>{
@@ -23,9 +24,11 @@ function fixture(){
   label('cancel');push(0);call('PostQuitMessage');jump('zero');label('default');for(const n of [20,16,12,8])emit(0xff,0x75,n);call('DefWindowProcA');emit(0xc9,0xc2,16,0);label('zero');emit(0x31,0xc0,0xc9,0xc2,16,0);
  });
  // The ordinary sibling worker remains alive without changing UI metadata.
- b.set(Buffer.from([0x68,...u32(1000),0xff,0x15,...u32(0x401204),0xeb,0xf3]),raw(0x2800));return b;
+ b.set(Buffer.from([0x68,...u32(1000),0xff,0x15,...u32(0x401204),0xeb,0xf3]),raw(0x2800));
+ b.writeUInt32LE(0x1e00,raw(0x120c));b.write('GetTickCount\0',raw(0x1e02));
+ b.writeUInt32LE(0x1e40,raw(0x1334));b.write('ShowWindow\0',raw(0x1e42));return b;
 }
-function dialogFixture({passwordEdit=false}={}){
+function dialogFixture({passwordEdit=false,delayShowMs=0}={}){
  const b=require('./test-vb5-native-dialog-identity.cjs').fixture({simpleButton:true}),raw=r=>r-0x1000+0x200;
  let a=raw(0x1500);const start=a,w=n=>{b.writeUInt16LE(n,a);a+=2;},d=n=>{b.writeUInt32LE(n>>>0,a);a+=4;},s=t=>{for(const c of t)w(c.charCodeAt(0));w(0);},align=()=>a=(a+3)&~3;
  d(0x80c80000);d(0);w(3);w(30);w(30);w(220);w(100);w(0);w(0);s('Wizard: Welcome');
@@ -41,11 +44,18 @@ function dialogFixture({passwordEdit=false}={}){
   0x68,...u32(100),0xff,0x74,0x24,8,0xff,0x15,...u32(0x401960),
   0x68,...u32(0x4025c0),0x50,0xff,0x15,...u32(0x40195c),
   0xb8,1,0,0,0,0xc2,16,0]);
- code.copy(b,raw(0x2300));return b;
+ // Ordinary real GetTickCount loop delays WM_INITDIALOG's return and hence
+ // ShowWindow. An uncapped CLI Sleep intentionally charges guest batch time,
+ // so it cannot establish this wall-clock regression. No host timer/eval.
+ b.writeUInt32LE(0x1ac0,raw(0x1908));b.write('GetTickCount\0',raw(0x1ac2));
+ const delay=delayShowMs?Buffer.from([0x81,0x7c,0x24,8,...u32(0x110),0x75,26,
+   0xff,0x15,...u32(0x401908),0x50,0xff,0x15,...u32(0x401908),
+   0x2b,0x04,0x24,0x3d,...u32(delayShowMs),0x72,0xf0,0x83,0xc4,4]):Buffer.alloc(0);
+ Buffer.concat([delay,code]).copy(b,raw(0x2300));return b;
 }
-async function runOne(out,dialog=false,wrapper=false){
+async function runOne(out,dialog=false,wrapper=false,options={}){
  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
- const exe=path.join(out,'wizard.exe');fs.writeFileSync(exe,dialog?dialogFixture():fixture(),{flag:'wx'});
+ const exe=path.join(out,'wizard.exe');fs.writeFileSync(exe,dialog?dialogFixture(options):fixture(options),{flag:'wx'});
  let wo='',we='';const wd=cp.spawn(process.execPath,['-e',"let pid;const t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGKILL')}catch{};process.exit(2)},25000);console.log('ARMED');process.stdin.on('data',b=>pid=+b);process.stdin.on('end',()=>clearTimeout(t))"]);wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=new Promise(r=>wd.on('close',(exit,signal)=>r({exit,signal})));
  while(!wo.includes('ARMED'))await pause(5);save('watchdog-arm.json',{pid:wd.pid,prearmed:true,milliseconds:25000});
  const reservation=net.createServer();await new Promise(r=>reservation.listen(0,'127.0.0.1',r));const port=reservation.address().port;await new Promise(r=>reservation.close(r));
@@ -57,7 +67,7 @@ async function runOne(out,dialog=false,wrapper=false){
    const originalMetadata=process.env.HL2_RUNTIME_INPUTS?JSON.parse(fs.readFileSync(process.env.HL2_RUNTIME_INPUTS)):{};
    const gitSHA=originalMetadata.gitSHA||cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
    const helper='tools/vb5cce-reviewed-control.py',own='tools/halflife2-reviewed-next.py';
-   const sources={...originalMetadata.sources,[helper]:hash(cp.execFileSync('git',['show',gitSHA+':'+helper])),[own]:hash(fs.readFileSync(own))};
+   const sources={...originalMetadata.sources,[helper]:hash(cp.execFileSync('git',['show',gitSHA+':'+helper])),[own]:options.sourceMismatch?'0'.repeat(64):hash(fs.readFileSync(own))};
    // Keep the complete original metadata, including an opaque source field;
    // it must never become the immutable helper lookup key or intent name.
    const source=originalMetadata.source??{gitSHA,path:'tools/vb5cce-reviewed-control.py'};
@@ -65,16 +75,42 @@ async function runOne(out,dialog=false,wrapper=false){
    fs.writeFileSync(path.join(out,'wrapper.patch'),cp.execFileSync('git',['diff','--binary','--',own,'test/test-halflife2-native-wizard.cjs']));
    const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8'),started=Date.now()/1000;
    save('native-pid.json',{pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],invocationToken:crypto.randomUUID(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()});
-   save('launch.json',{rootPort:port,deadline:started+20,gameplayCutoff:started+17,reserveSeconds:3});
+   save('launch.json',{rootPort:port,deadline:started+(options.never?7:20),gameplayCutoff:started+(options.never?4:17),reserveSeconds:3});
    let number=0;
    async function control(args,ok=true){const child=cp.spawn('python3',['-B','tools/halflife2-reviewed-next.py',...args],{env:{...process.env,DELPHI5_RUN:out,DELPHI5_PORT:String(port)}});let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);const status=await new Promise(r=>child.on('close',r));save('wrapper-'+(++number)+'-wait.json',{args,pid:child.pid,status,stdout,stderr,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded});if(ok)assert.equal(status,0,stderr);else assert.notEqual(status,0);}
+   if(options.never||options.sourceMismatch){
+    await control(['startup'],false);
+    const ledger=fs.existsSync(path.join(out,'requests.jsonl'))?fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'):'';
+    assert(!ledger||ledger.trim().split('\n').every(l=>JSON.parse(l).action==='native-startup-readiness'));
+    assert(!fs.existsSync(path.join(out,'startup-ready.json')));
+    await control(['capture','later'],false);await control(['startup'],false);
+    assert.equal(fs.existsSync(path.join(out,'requests.jsonl'))?fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'):'',ledger);
+    save('proof.json',{passed:true,noOriginal:true,passiveFailure:true,sourceMismatch:!!options.sourceMismatch,zeroCaptureBindDown:true,zeroLaterHTTP:true});return;
+   }
+   await control(['startup']);
+   const ready=JSON.parse(fs.readFileSync(path.join(out,'startup-ready.json')));
+   const ledgerBefore=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8').trim().split('\n').map(JSON.parse);
+   assert(ready.ready&&ready.passive&&ready.ordinaryOwner.healthy&&ready.ordinaryOwner.actorContext);
+   assert(ledgerBefore.every(r=>r.action==='native-startup-readiness'));
+   if(options.delayShowMs){assert(ready.completedAt-ready.startedAt>3,'delayed native ShowWindow must exceed capture bound');assert(JSON.parse(fs.readFileSync(path.join(out,'startup-polls.jsonl'),'utf8').trim().split('\n')[0]).ready===false);}
+   if(options.passwordEdit){
+    await control(['capture','unsupported'],false);
+    const unknown=JSON.parse(fs.readFileSync(path.join(out,'PERMANENT-UNKNOWN.json')));
+    assert(unknown.error.includes('passwordEdit')&&unknown.error.includes('controlDetails'));
+    assert(!fs.existsSync(path.join(out,'unsupported.png')));
+    const ledger=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');await control(['startup'],false);await control(['capture','later'],false);
+    assert.equal(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'),ledger);
+    save('proof.json',{passed:true,noOriginal:true,readinessDidNotWaitAwayUnsupported:true,zeroBindDown:true,zeroLaterHTTP:true,unknown});return;
+   }
    await control(['capture','wrapper-scene']);const rr=JSON.parse(fs.readFileSync(path.join(out,'wrapper-scene.json'))),button=rr.snapshot.windows.find(w=>w.title==='Next >');
+   assert(rr.at>=ready.completedAt&&rr.at===rr.image.startedAt/1000&&rr.completedAt===rr.image.completedAt/1000);
+   assert(rr.completedAt-rr.at<3);
    const x=button.screenX+10,y=button.screenY+10;
    await control(['review','wrapper-scene','Automated authored wizard complete image protocol test','Next >','install',button.hwnd,String(x),String(y)]);
    const intentName='arbitrary-source-welcome-next';
    await control(['bind','wrapper-scene']);await control(['intent',intentName,'wrapper-scene',String(x),String(y),'install']);
    const receipt=JSON.parse(fs.readFileSync(path.join(out,intentName+'-down.json'))).receipt,after=JSON.parse(fs.readFileSync(path.join(out,intentName+'-observation.json'))).snapshot;
-   assert(receipt.consumed);assert.equal(receipt.receiptBoundary,'native-button-dispatch-return');assert(after.windows.some(w=>w.title==='Wizard: License agreement'));assert(after.windows.some(w=>w.title==='License page: read the authored terms.'));
+   assert(receipt.consumed);assert.equal(receipt.receiptBoundary,dialog?'native-button-dispatch-return':'native-input-return');assert(after.windows.some(w=>w.title==='Wizard: License agreement'));if(dialog)assert(after.windows.some(w=>w.title==='License page: read the authored terms.'));
    await control(['intent','reuse-source','wrapper-scene',String(x),String(y),'install'],false);
    const reuse=JSON.parse(fs.readFileSync(path.join(out,'reuse-source-down.json'))).receipt;
    assert(!reuse.consumed);assert(['CANCELLED','UNKNOWN'].includes(reuse.state));
@@ -83,7 +119,7 @@ async function runOne(out,dialog=false,wrapper=false){
    const ledger=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');assert(fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));
    for(const args of [['capture','later'],['bind','wrapper-scene'],['intent','different-name','wrapper-scene',String(x),String(y),'install']])await control(args,false);
    assert.equal(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'),ledger);
-   save('proof.json',{passed:true,fullWrapperCaptureReviewBindIntent:true,completeOriginalMetadata:true,sourceFieldPreserved:true,arbitraryIntentName:intentName,actualPageChanged:true,titleAndBodyChanged:true,receiptBoundary:receipt.receiptBoundary,physicalUpConfirmed:true,reuseRefused:reuse.state,permanentUnknownLaterHTTP:0,noOriginal:true});return;
+   save('proof.json',{passed:true,separatePassiveStartup:true,delayShowMs:options.delayShowMs||0,zeroCaptureBindDownBeforeReadiness:true,originalCaptureTimes:true,captureDeadlineMs:3000,fullWrapperCaptureReviewBindIntent:true,completeOriginalMetadata:true,sourceFieldPreserved:true,arbitraryIntentName:intentName,actualPageChanged:true,titleAndBodyChanged:dialog,receiptBoundary:receipt.receiptBoundary,physicalUpConfirmed:true,reuseRefused:reuse.state,permanentUnknownLaterHTTP:0,noOriginal:true});return;
   }
   const c=await s.send({action:'native-reviewed-capture',path:path.join(out,'wizard.png')});save('capture.json',c);
   const button=c.snapshot.windows.find(w=>w.title==='Next >'),review={contract:c.contract,captureId:c.captureId,pngSHA256:c.pngSHA256,reviewed:true,reviewedAt:Date.now(),scope:'menu',targetHwnd:button.hwnd};
@@ -112,6 +148,13 @@ print('PASS actual captured tree Next binding; wrong frame/sibling refused befor
  }finally{if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch{}await s.exited;save('native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,hostCleanup:true,nativeQuit:false});fs.writeFileSync(path.join(out,'native.log'),s.output());wd.stdin.end();save('watchdog-wait.json',{...await ww,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});}
 }
 async function run(out){await runOne(path.join(out,'ordinary'));await runOne(path.join(out,'dialog'),true);await runOne(path.join(out,'wrapper'),true,true);}
+async function startupTests(out){
+ await runOne(path.join(out,'delayed-main-show'),false,true,{delayShowMs:3800});
+ await runOne(path.join(out,'delayed-show'),true,true,{delayShowMs:3800});
+ await runOne(path.join(out,'never-show'),true,true,{delayShowMs:60000,never:true});
+ await runOne(path.join(out,'unsupported-after-ready'),true,true,{passwordEdit:true});
+ await runOne(path.join(out,'source-mismatch'),true,true,{sourceMismatch:true});
+}
 async function shutdown(out){
  fs.mkdirSync(out,{recursive:true});const exe=path.join(out,'authored-wizard.exe');fs.writeFileSync(exe,fixture(),{flag:'wx'});
  const code=String.raw`import importlib.util,os,pathlib,sys,json,time
@@ -150,4 +193,4 @@ rt.run()`;
  }
  fs.writeFileSync(path.join(out,'proof.json'),JSON.stringify({passed:true,actualAdapterRun:true,actualNativeCLI:true,noOriginal:true,results},null,2)+'\n');
 }
-module.exports={fixture,dialogFixture,run,shutdown};if(require.main===module)(process.argv[2]==='--shutdown'?shutdown(path.resolve(process.argv[3])):run(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
+module.exports={fixture,dialogFixture,run,shutdown,startupTests};if(require.main===module)(process.argv[2]==='--shutdown'?shutdown(path.resolve(process.argv[3])):process.argv[2]==='--startup'?startupTests(path.resolve(process.argv[3])):run(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});

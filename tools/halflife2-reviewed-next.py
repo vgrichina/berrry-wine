@@ -8,6 +8,28 @@ No label selection, OCR, solver, or original installer automation lives here.
 import hashlib,json,os,pathlib,subprocess,sys,types
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 
+def startup(m):
+    m.reserve();target=m.identity();started=m.time.time()
+    assert not (m.R/'startup-ready.json').exists(),'startup preflight is single-use'
+    assert not (m.R/'input-owner.json').exists(),'startup cannot wait away a later context'
+    deadline=min(started+15,m.read('launch.json')['gameplayCutoff']-3)
+    polls=0
+    while True:
+        remaining=deadline-m.time.time();assert remaining>0,'passive startup readiness UNKNOWN'
+        reply=m.call(dict(action='native-startup-readiness'),timeout=min(1,remaining));polls+=1
+        assert reply['contract']=='native-startup-readiness-v1'
+        with (m.R/'startup-polls.jsonl').open('a') as f:
+            s=reply['snapshot']
+            f.write(json.dumps(dict(at=m.time.time(),ready=reply['ready'],failures=reply['failures'],
+                mainHwnd=s['mainHwnd'],modalHwnd=s['modalHwnd'],focus=s['focus'],
+                focusTopLevel=s['focusTopLevel'],ordinaryOwner=reply['ordinaryOwner']))+'\n')
+        if reply['ready']:
+            assert m.identity()==target
+            m.save('startup-ready.json',dict(startedAt=started,completedAt=m.time.time(),deadline=deadline,
+                polls=polls,target=target,port=m.PORT,passive=True,**reply))
+            return
+        m.time.sleep(min(.02,max(0,deadline-m.time.time())))
+
 def preflight(snapshot,target,x,y,label):
     rows=snapshot['windows'];matches=[w for w in rows if w['hwnd']==target]
     assert len(matches)==1,'target must be one captured native control'
@@ -61,7 +83,11 @@ def controller():
     m.reviewed=checked
     mode=sys.argv[1]
     try:
-        if mode=='capture':m.capture(sys.argv[2])
+        if mode=='startup':startup(m)
+        elif mode=='capture':
+            ready=m.read('startup-ready.json')
+            assert ready['ready'] and ready['passive'] and ready['target']==m.identity() and ready['port']==m.PORT
+            m.capture(sys.argv[2])
         elif mode=='review':
             scene,description,label,kind,target,x,y=sys.argv[2:9]
             assert kind in ('install','quit')

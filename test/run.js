@@ -7867,6 +7867,8 @@ async function main() {
       }
       return guardedInput.bind();
     }
+    if (cmd.action === 'native-startup-readiness')
+      return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
     if (cmd.action === 'native-reviewed-capture') {
       if (!cmd.path) throw new Error('reviewed capture needs a complete PNG path');

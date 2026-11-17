@@ -34,3 +34,20 @@ print('PASS exact completed published core component reuse; changed module/mater
 `],{encoding:'utf8'});
 process.stdout.write(p.stdout);process.stderr.write(p.stderr);assert.equal(p.status,0);
 require('./test-vb5-native-dialog-identity.cjs');
+// Context readiness and actual ordinary owner are separate from capabilities.
+{
+ const fs=require('node:fs'),{startupReadiness}=require('../lib/cli-native-scene');
+ const s=JSON.parse(fs.readFileSync('scratch/runs/20261117-halflife2-normal-virtual-storage-installer-startup/pinned/native/original-startup.json')).snapshot;
+ const anchor=s.windows.find(w=>w.hwnd===s.mainHwnd);
+ const actor={get_process_id:()=>anchor.processId,get_current_thread_id:()=>anchor.threadId};
+ const base={healthy:true,refs:{actorExports:actor}};
+ assert(startupReadiness(s,base).ready);
+ for(const change of [v=>v.windows.find(w=>w.hwnd===v.mainHwnd).visible=false,v=>v.focusTopLevel='0xdead',v=>v.focusWindow.threadId++,v=>v.physicalUp=false,v=>v.capture='0x1',v=>v.modalHwnd='0xdead',v=>v.quit=true]){
+  const v=structuredClone(s);change(v);assert(!startupReadiness(v,base).ready);
+ }
+ assert(!startupReadiness(s,{...base,healthy:false}).ready);
+ assert(!startupReadiness(s,{healthy:true,refs:{actorExports:{...actor,get_current_thread_id:()=>999}}}).ready);
+ const unsupported=structuredClone(s);unsupported.windows.push({...anchor,hwnd:'0xdead',controlClass:999,nativeTextAvailable:false});
+ assert(startupReadiness(unsupported,base).ready,'readiness must end before unsupported-control diagnosis');
+ console.log('PASS passive startup actual owner/context refusals; unsupported controls do not extend readiness');
+}
