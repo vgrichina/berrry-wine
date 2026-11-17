@@ -5,7 +5,7 @@ This preflight uses public captured USER metadata only. The existing native
 broker still proves the actual actor, generation and dispatch return fence.
 No label selection, OCR, solver, or original installer automation lives here.
 """
-import hashlib,json,os,pathlib,subprocess,sys,types
+import hashlib,json,os,pathlib,subprocess,sys,types,signal
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 
 def startup(m):
@@ -123,6 +123,10 @@ def controller():
         return rr,r
     m.reviewed=checked
     mode=sys.argv[1]
+    def cancelled(signum,frame):
+        raise SystemExit(128+signum)
+    # Unwind through intent's existing independent-release drain on TERM/INT.
+    for sig in (signal.SIGTERM,signal.SIGINT):signal.signal(sig,cancelled)
     try:
         if mode=='startup':startup(m)
         elif mode=='capture':

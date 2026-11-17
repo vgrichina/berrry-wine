@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Reuse the published Edit/module proofs; qualify the desktop transport delta."""
-import importlib.util,json,os,pathlib,subprocess,sys,types,time
+import importlib.util,json,os,pathlib,subprocess,sys,types,time,signal,uuid
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 TASK=pathlib.Path(os.environ.get('HL2_TASK_RUN',ROOT/'scratch/runs/20261117-halflife2-restored-disk-normal-agreement-install')).resolve()
 PRIOR=ROOT/'scratch/runs/20261117-halflife2-startup-ready-agreement-install-progress/working-final5'
@@ -17,6 +17,68 @@ def load(name):
  s=importlib.util.spec_from_file_location(name.replace('/','_'),ROOT/name)
  m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 def read(p):return json.loads(p.read_text())
+
+def controller_operation(args):
+ """Validate the finite call before spawning; clocks here are supervision only."""
+ counts={'startup':0,'capture':1,'review':7,'bind':1,'intent':5}
+ assert args and args[0] in counts,'unsupported controller operation'
+ mode=args[0];assert len(args)==counts[mode]+1,'controller call schema'
+ if mode=='review':
+  assert args[4] in ('install','quit');int(args[6]);int(args[7])
+ if mode=='intent':
+  assert args[5] in ('install','quit');int(args[3]);int(args[4])
+ inner=15 if mode=='startup' else 3 if mode in ('capture','intent') else 1
+ # Import/identity/receipt overhead is outside the unchanged operation clock.
+ # Intent also owns the existing bounded independent-release error drain.
+ return dict(operation=mode,innerSeconds=inner,outerSeconds=inner+5,
+             watchdogSeconds=inner+12,cancellationDrainSeconds=3)
+
+def supervise_controller(run,args,command=None):
+ """One owner for helper, independent watchdog, actual wait and both EOFs.
+
+ The optional command is an authored lifecycle-test seam, never a CLI option.
+ Parent-process death, TERM/INT, helper errors and deadlines share cleanup.
+ """
+ bounds=controller_operation(args);run=pathlib.Path(run).resolve()
+ assert not (run/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; no later controller'
+ base=load('tools/gltron-current-supervise.py')
+ out=run/'controller-supervision'/(args[0]+'-'+uuid.uuid4().hex)
+ class ControllerSupervisor(base.ParentProcessSupervisor):
+  def spawn(self,cmd,prefix,env):
+   if prefix=='':
+    env=dict(env,DELPHI5_RUN=str(run),DELPHI5_PORT=str(read(run/'launch.json')['rootPort']))
+   p=super().spawn(cmd,prefix,env)
+   if prefix=='':base.BASE.write(self.out/'prepared.json',dict(at=time.time()))
+   return p
+  def pump(self):
+   if (run/'PERMANENT-UNKNOWN.json').exists() and not self.signals:
+    self.requested(signal.SIGTERM,None)
+   super().pump()
+  def cleanup(self):
+   # Signal only the direct helper first. Its exception handler drains the
+   # prearmed physical release before UNKNOWN; do not kill that release early.
+   if self.native is not None and self.native.poll() is None:
+    self.native.send_signal(signal.SIGTERM)
+    end=time.monotonic()+bounds['cancellationDrainSeconds']
+    while self.native.poll() is None and time.monotonic()<end:self.pump()
+   super().cleanup()
+ out.parent.mkdir(parents=True,exist_ok=True)
+ cmd=command or [sys.executable,'-B',str(ROOT/'tools/halflife2-reviewed-next.py'),*args]
+ supervisor=ControllerSupervisor(out,cmd,preparation=bounds['outerSeconds'],runtime=bounds['outerSeconds'],
+     preparation_watchdog=bounds['watchdogSeconds'],runtime_watchdog=bounds['watchdogSeconds'],grace=1)
+ rc=supervisor.run()
+ base.BASE.write(out/'operation.json',dict(**bounds,arguments=args,command=cmd))
+ if rc and not (run/'PERMANENT-UNKNOWN.json').exists():
+  pending=run/('controller-unknown-'+uuid.uuid4().hex+'.pending')
+  pending.write_text(json.dumps(dict(name='controller-supervision',operation=args[0],
+      supervisorExitCode=rc,wait=str(out/'wait.json'),at=time.time(),noLaterRequests=True)))
+  try:os.link(pending,run/'PERMANENT-UNKNOWN.json')
+  except FileExistsError:pass
+  finally:pending.unlink()
+ for name,stream in (('stdout',sys.stdout),('stderr',sys.stderr)):
+  p=out/(name+'.log')
+  if p.exists():stream.write(p.read_text(errors='replace'));stream.flush()
+ return rc
 OWNER_START=b"      if (nativeSceneLease) {\n"
 OWNER_END=b"      if (reviewedSceneLease) {\n"
 OWNER_BLOCK=b"""      if (nativeSceneLease) {
@@ -241,4 +303,7 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,h.appendSection(Buffer.from(r.was
   m.compact_finished_traces()
   m.save('runtime-release.json',dict(ownDescriptorsClosed=True,at=time.time(),originalMode='--original' in sys.argv))
  return 0
-if __name__=='__main__':sys.exit(main())
+if __name__=='__main__':
+ if len(sys.argv)>1 and sys.argv[1]=='--controller':
+  sys.exit(supervise_controller(sys.argv[2],sys.argv[3:]))
+ sys.exit(main())
