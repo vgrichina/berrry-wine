@@ -1057,6 +1057,7 @@
         (if (i32.eq (local.get $ordinal) (i32.const 23)) (then (return (call $lookup_api_id "SafeArrayAccessData"))))
         (if (i32.eq (local.get $ordinal) (i32.const 24)) (then (return (call $lookup_api_id "SafeArrayUnaccessData"))))
         (if (i32.eq (local.get $ordinal) (i32.const 25)) (then (return (call $lookup_api_id "SafeArrayGetElement"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 26)) (then (return (call $lookup_api_id "SafeArrayPutElement"))))
         (if (i32.eq (local.get $ordinal) (i32.const 64)) (then (return (call $lookup_api_id "VarI4FromStr"))))
         (if (i32.eq (local.get $ordinal) (i32.const 161)) (then (return (call $lookup_api_id "LoadTypeLib"))))
         (if (i32.eq (local.get $ordinal) (i32.const 162)) (then (return (call $lookup_api_id "LoadRegTypeLib"))))

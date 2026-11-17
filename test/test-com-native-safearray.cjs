@@ -73,8 +73,27 @@ async function main(){
  put(ints+8,0xffffffff);put(p+72,0x11223344);assert.equal(await get(ints,[0]),0x8000ffff);assert.equal(word(p+72),0x11223344);assert.equal(word(ints+8),0xffffffff);put(ints+8,0);
  put(ints+4,8);assert.equal(await get(ints,[0]),0x80070057);assert.equal(word(p+72),0x11223344);put(ints+4,4);assert.equal(await call('SafeArrayDestroy',[ints]),0);
  assert.equal(await get(0,[0]),0x80070057);assert.equal(await get(0,[0],0),0x80070057);
+
+ const putName=a.string('SafeArrayPutElement',false),putNamed=await api('GetProcAddress',[module,putName]),putOrdinal=await api('GetProcAddress',[module,26]);assert(putNamed&&putOrdinal);m.free(putName);
+ const assign=async(array,indices,value)=>{indices.forEach((v,i)=>put(p+128+i*4,v));return call('SafeArrayPutElement',[array,p+128,value]);};
+ const putCycle=async()=>{
+  const array=await create([[2,-3],[3,7]]),data=word(array+12),incoming=await str('new\0owner');
+  assert.equal(await assign(array,[-2,9],incoming),0);const owned=word(data+20);assert(owned&&owned!==incoming);assert.equal(readString(owned),'new\0owner');
+  await call('SysFreeString',[incoming]);assert.equal(readString(owned),'new\0owner');
+  assert.equal(await assign(array,[-2,9],owned),0);const replacement=word(data+20);assert(replacement&&replacement!==owned);assert.equal(readString(replacement),'new\0owner');
+  const before=m.read(data,24);assert.equal(await assign(array,[-2,10],replacement),0x8002000b);assert.deepEqual(m.read(data,24),before);assert.equal(word(array+8),0);
+  // The API automatically adds/removes its own lock, preserving the caller's.
+  assert.equal(await call('SafeArrayAccessData',[array,p+64]),0);assert.equal(await assign(array,[-2,9],0),0);assert.equal(word(data+20),0);assert.equal(word(array+8),1);
+  put(p+128,-3);put(p+132,7);const next=await str('ordinal');assert.equal(await c.invoke(putOrdinal,[array,p+128,next]),0);await call('SysFreeString',[next]);assert.equal(readString(word(data)),'ordinal');
+  put(array+8,0xffffffff);const unchanged=word(data);assert.equal(await assign(array,[-3,7],0),0x8000ffff);assert.equal(word(data),unchanged);put(array+8,1);
+  assert.equal(await call('SafeArrayUnaccessData',[array]),0);assert.equal(await call('SafeArrayDestroy',[array]),0);
+ };
+ for(let i=0;i<4;i++)await putCycle();const putHeap=e.get_heap_ptr();for(let i=0;i<128;i++)await putCycle();assert.equal(e.get_heap_ptr(),putHeap,'put replacements and caller strings have distinct reclaimed ownership');
+ put(p+80,3);put(p+84,-1);const numbers=await call('SafeArrayCreate',[3,1,p+80]);put(p+160,0x88776655);assert.equal(await assign(numbers,[0],p+160),0);assert.equal(await get(numbers,[0]),0);assert.equal(word(p+72),0x88776655);
+ assert.equal(await assign(numbers,[0],0),0x80070057);assert.equal(await get(numbers,[0]),0);assert.equal(word(p+72),0x88776655);assert.equal(await call('SafeArrayDestroy',[numbers]),0);
+ assert.equal(await assign(0,[0],0),0x80070057);
  m.free(p);await m.drain();assert.equal(c.frames.length,0);
- console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,nativeGetElementOrdinal25:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
+ console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={main};
