@@ -30,14 +30,26 @@ def preflight(s, target, x, y, label):
     assert button['parent'] == modal['hwnd'] and not button['style'] & 0x08000000
     assert button['nativeTextAvailable'] and button['title'] == label
     assert type(x) is int and type(y) is int
-    assert button['screenX'] <= x < button['screenX'] + button['w']
-    assert button['screenY'] <= y < button['screenY'] + button['h']
     mapping = s['pointerMapping']
     assert mapping['canvas'] == s['screen']
-    assert all(mapping.get(k) is None for k in ('transform', 'viewport', 'clip'))
+    if mapping['transform'] is not None:
+        assert mapping['sourceHwnd'] == int(main['hwnd'], 16)
+    # Use the public production mapper, including bars, cursor clip and every
+    # native ancestor client rectangle. The reviewed point is in whole-image
+    # canvas units, never assumed to be a native desktop coordinate.
+    code = """const fs=require('fs');
+const {s,target,x,y}=JSON.parse(fs.readFileSync(0,'utf8'));
+const w=s.windows.find(w=>w.hwnd===target);
+console.log(JSON.stringify(require('./lib/cli-native-pointer-coordinates').containsPointer(s,w,{x,y})));"""
+    p = subprocess.run(['node', '-e', code], cwd=ROOT,
+        input=json.dumps(dict(s=s, target=target, x=x, y=y)), text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    assert p.returncode == 0, p.stderr
+    native = json.loads(p.stdout)
     return dict(target=target, generation=button['generation'], processId=button['processId'],
                 threadId=button['threadId'], main=main['hwnd'], modal=modal['hwnd'],
-                modalGeneration=modal['generation'], x=x, y=y, label=label)
+                modalGeneration=modal['generation'], x=x, y=y, label=label,
+                nativeX=native['x'], nativeY=native['y'])
 
 def validate_receipt(receipt, guard, expected):
     assert receipt['state'] == 'CONSUMED' and receipt['consumed'] is True
@@ -71,6 +83,8 @@ def load(run, working=False):
         assert pathlib.Path(__file__).read_bytes() == own
         assert hashlib.sha256(body).hexdigest() == pins['sources'][name]
         assert hashlib.sha256((ROOT/'tools/caesar3-current-native.py').read_bytes()).hexdigest() == pins['sources']['tools/caesar3-current-native.py']
+        mapping_name = 'lib/cli-native-pointer-coordinates.js'
+        assert hashlib.sha256((ROOT/mapping_name).read_bytes()).hexdigest() == pins['sources'][mapping_name]
     m.sourcecheck = sourcecheck
     reviewed = m.reviewed
     def checked(scene):

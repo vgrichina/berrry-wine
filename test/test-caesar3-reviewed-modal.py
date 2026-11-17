@@ -6,13 +6,55 @@ def module(name, file):
     spec = importlib.util.spec_from_file_location(name, ROOT/file)
     m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m
 
+def mapping_units():
+    tool = module('modal_mapping', 'tools/caesar3-reviewed-modal.py')
+    common = dict(live=True, visible=True, generation='1', processId=1000,
+                  threadId=1, isChild=False, controlClass=0)
+    main = dict(common, hwnd='0x10001')
+    modal = dict(common, hwnd='0x10002', owner=main['hwnd'], controlClass=16,
+                 nativeClientRect=dict(screenX=40, screenY=60, w=300, h=140))
+    button = dict(common, hwnd='0x10004', parent=modal['hwnd'], isChild=True,
+                  controlClass=1, style=0, nativeTextAvailable=True, title='Yes',
+                  screenX=100, screenY=100, w=72, h=24)
+    s = dict(windows=[main,modal,button], mainHwnd=main['hwnd'], modalHwnd=modal['hwnd'],
+             focusWindow=button, focus=button['hwnd'], nativeMessageBox=modal,
+             nativeDialogBox=None, focusTopLevel=modal['hwnd'], physicalUp=True,
+             capture='0x0', screen=dict(w=1024,h=712))
+    identity=dict(srcX=0,srcY=0,srcW=1024,srcH=712,dstX=0,dstY=0,dstW=1024,dstH=712)
+    scaled=dict(srcX=40,srcY=30,srcW=800,srcH=600,dstX=100,dstY=56,dstW=800,dstH=600)
+    cases=[(None,None,120,110),(identity,None,120,110),(scaled,None,180,136),
+           (identity,dict(outputW=2048,outputH=1424,dstX=200,dstY=112,dstW=1600,dstH=1200,
+                          nativeX=40,nativeY=30,nativeW=800,nativeH=600),180,136)]
+    rejected=[]
+    for transform,viewport,x,y in cases:
+        s['pointerMapping']=dict(canvas=s['screen'],sourceHwnd=int(main['hwnd'],16),
+                                 transform=transform,viewport=viewport,clip=None)
+        p=tool.preflight(s,button['hwnd'],x,y,'Yes')
+        assert (p['nativeX'],p['nativeY']) == (120,110)
+        mutations=[('canvas',lambda t:t['pointerMapping'].update(canvas=dict(w=0,h=1))),
+                   ('clip',lambda t:t['pointerMapping'].update(clip=dict(left=0,top=0,right=80,bottom=80))),
+                   ('ancestor',lambda t:t['windows'][1]['nativeClientRect'].update(w=20))]
+        if transform:
+            mutations += [('source',lambda t:t['pointerMapping'].update(sourceHwnd=99)),
+                          ('transform',lambda t:t['pointerMapping']['transform'].update(srcW=0))]
+        for name,mutate in mutations:
+            changed=copy.deepcopy(s);mutate(changed)
+            try:tool.preflight(changed,button['hwnd'],x,y,'Yes')
+            except (AssertionError,KeyError,TypeError):rejected.append(name)
+            else:raise AssertionError('accepted '+name)
+        for px,py in [(-1,0),(1024,0),(0,712),(0,0),(500,300)]:
+            try:tool.preflight(s,button['hwnd'],px,py,'Yes')
+            except AssertionError:rejected.append('outside')
+            else:raise AssertionError('outside accepted')
+    print(json.dumps(dict(passed=True,cases=len(cases),refused=len(rejected),productionMapper=True)))
+
 def supervise(run, env):
     c = module('caesar_fixture_runtime', 'tools/caesar3-current-native.py'); c.RUN = run
     (run/'desktop-observations').mkdir(exist_ok=True)
     port = json.loads((run/'launch.json').read_text())['rootPort']
     args = ['node', 'test/run.js', '--exe='+str(run/'modal.exe'), '--no-build', '--threads', '--real-ticks',
         '--native-exit-receipt='+str(run/'native-exit.json'), '--native-invocation-token='+str(uuid.uuid4()),
-        '--control='+str(port), '--screen=800x600', '--png-canvas', '--max-seconds=90',
+        '--control='+str(port), '--screen='+env.get('CAESAR3_FIXTURE_SCREEN','800x600'), '--png-canvas', '--max-seconds=90',
         '--max-batches=1000000000', '--stuck-after=0', '--quiet-api', '--quiet-blocks']
     c.execute_native(args, env, (), port, args[7].split('=', 1)[1], time.time()+95)
 
@@ -160,7 +202,8 @@ def serve_cli(run):
     assert p.returncode==0,b.decode()
 
 if __name__ == '__main__':
-    if sys.argv[1] == '--supervise': supervise(pathlib.Path(sys.argv[2]), dict(os.environ))
+    if sys.argv[1] == '--mapping-units': mapping_units()
+    elif sys.argv[1] == '--supervise': supervise(pathlib.Path(sys.argv[2]), dict(os.environ))
     elif os.environ.get('CAESAR3_MODAL_CLI')=='1': serve_cli(pathlib.Path(sys.argv[1]).resolve())
     else:
         root=pathlib.Path(sys.argv[1]).resolve();root.mkdir(parents=True)

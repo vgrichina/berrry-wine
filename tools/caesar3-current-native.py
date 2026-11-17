@@ -12,7 +12,7 @@ NATIVE_SECONDS = int(os.environ.get('CAESAR3_NATIVE_SECONDS', '1200'))
 assert NATIVE_SECONDS in (600, 1200), 'only owner-authorized ordinary durations'
 WATCHDOG_SECONDS, QUIT_RESERVE = NATIVE_SECONDS+20, 180
 GAME_FRESHNESS_SECONDS, MENU_FRESHNESS_SECONDS = 15, 30
-COMPONENTS = ('tools/caesar3-current-native.py',)
+COMPONENTS = ('tools/caesar3-current-native.py', 'lib/host-imports.js')
 REPAIR_PROOF = ROOT/'scratch/runs/20261117-caesar3-reviewed-hover-city-construction/repair-outer'
 
 def component_revision(base):
@@ -26,6 +26,9 @@ def verify_components(reference, sources, module_sha):
     """
     reference=pathlib.Path(reference)
     old=json.loads((reference/'runtime-inputs.json').read_text())
+    # Only the separately reproduced delayed-primary coverage repair joins the
+    # sealed graph. No other current host or foreign worktree source is adopted.
+    assert sources['lib/host-imports.js'] == sha(git('show', 'd1120f026:lib/host-imports.js'))
     assert {n:h for n,h in sources.items() if n not in COMPONENTS} == {n:h for n,h in old['sources'].items() if n not in COMPONENTS}, 'unchanged component graph differs'
     assert old['moduleSHA256']==module_sha==sha((reference/'module.wasm').read_bytes())
     assert old['sourceSeals']==old['moduleSeals']==15 and not old['foreignWIPAdopted']
@@ -443,7 +446,8 @@ def run():
             files=base_sources()
             files['test/test-caesar3-current-native.cjs']=git('show','aa25b83f8:test/test-caesar3-current-native.cjs')
             for name in COMPONENTS:
-                body=(ROOT/name).read_bytes() if working else git('show',composed+':'+name)
+                pin = 'd1120f026' if name == 'lib/host-imports.js' else composed
+                body=(ROOT/name).read_bytes() if working else git('show',pin+':'+name)
                 assert body==(ROOT/name).read_bytes(), 'published component changed: '+name
                 files[name]=body
             patch=git('diff','--binary',revision,'--',*COMPONENTS,'test/test-caesar3-current-native.cjs') if working else git('diff','--binary',revision,composed,'--',*COMPONENTS,'test/test-caesar3-current-native.cjs')
