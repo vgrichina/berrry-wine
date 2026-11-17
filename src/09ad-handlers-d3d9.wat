@@ -44,12 +44,14 @@
         ;; wait parameters). Keep io_block's retry EIP/stack and yield flag.
         (global.set $yield_reason (i32.const 0))
         (return (i32.const 0)))))))
+    (if (i32.eqz (global.get $d3d_state_depth)) (then (call $d9g_state_load)))
     (global.set $d3d_state_depth (i32.add (global.get $d3d_state_depth) (i32.const 1)))
     (i32.const 1))
   (func $d3d_state_leave
     (global.set $d3d_state_depth (i32.sub (global.get $d3d_state_depth) (i32.const 1)))
     (if (i32.eqz (global.get $d3d_state_depth))
       (then
+        (call $d9g_state_save)
         (i32.atomic.store offset=36 (global.get $DX_PROCESS_STATE) (i32.const 0))
         (drop (memory.atomic.notify (region.addr $DX_PROCESS_STATE 36) (i32.const -1))))))
 

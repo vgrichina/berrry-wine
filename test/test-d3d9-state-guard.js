@@ -6,8 +6,24 @@ const assert=require('node:assert/strict');
 const {Worker}=require('node:worker_threads');
 const {bootRenderHarness}=require('./render-helper');
 const api=require('../src/api_table.json');
+// A new persistent frontend field must survive CPU instance handoff too.
+const source=require('node:fs').readFileSync(require('node:path').join(__dirname,'../src/09akg-d3d9-gps.wat'),'utf8');
+const fields=[...source.matchAll(/\(global \$(\w+) \(mut (\w+)\)/g)].map(m=>[m[1],m[2]]);
+const layout=source.slice(source.indexOf('(layout D3d9GpsState'),source.indexOf('(func $d9g_state_load'));
+assert.deepEqual([...layout.matchAll(/\(field (\w+) (\w+)\)/g)].map(m=>[m[1],m[2]]),fields,'every persistent D3D9 GPS field is process owned');
 const id=api.findIndex(a=>a.name==='IDirect3DDevice9_GetAvailableTextureMem');
 const extraWat=`
+ (func (export "guard_gps_ring") (result i32) (global.get $d9g_h))
+ (func (export "guard_gps_frame") (result i32) (global.get $d9g_frame))
+ (func (export "guard_gps_create") (result i32)
+   (local $id i32)
+   (if (i32.eqz (call $d3d_state_try_enter)) (then (return (i32.const 0))))
+   (drop (call $d9g_open))
+   (local.set $id (call $d9g_id))
+   (call $gps_create (global.get $d9g_h) (local.get $id) (global.get $GPS_KIND_RT)
+     (global.get $GPS_FMT_A8B8G8R8) (i32.const 1) (i32.const 1) (i32.const 1) (i32.const 0))
+   (global.set $d9g_frame (i32.add (global.get $d9g_frame) (i32.const 1)))
+   (call $d3d_state_leave) (local.get $id))
  (func (export "guard_init") (param $regs i32)
    (global.set $reg_base (local.get $regs))
    (global.set $current_thunk_eip (i32.const 123456)))
@@ -33,7 +49,7 @@ const extraWat=`
    (call $d3d_state_leave) (i32.const 1))`;
 
 (async()=>{
- const h=await bootRenderHarness({extraWat,fonts:'none'}),e=h.exports;
+ const h=await bootRenderHarness({extraWat,fonts:'none',extraHostOverrides:{gpu_stream_kick:()=>1}}),e=h.exports;
  e.d3dim_worker_init(0x400000);
  const alloc=n=>e.guest_to_wasm(e.guest_alloc(n))>>>0;
  const mainRegs=alloc(64),workerRegs=alloc(64),pair=alloc(8);
@@ -45,17 +61,21 @@ const extraWat=`
    (async()=>{
     const host={memory:d.memory};
     for(const i of WebAssembly.Module.imports(d.module))if(i.kind==='function')host[i.name]=()=>0;
+    host.gpu_stream_kick=()=>1;
     const e=(await WebAssembly.instantiate(d.module,{host})).exports;
+    e.d3dim_worker_init(0x400000);
     e.guard_init(d.regs);
     parentPort.on('message',async m=>{
       try{
        let value;
-       if(m.op==='stress'){
+       if(m.op==='gpsStress'){
+        let done=0;while(done<2000){if(e.guard_gps_create())done++;else await new Promise(r=>setImmediate(r));}value=done;
+       }else if(m.op==='stress'){
         let done=0;
         while(done<2000){if(e.guard_pair(d.pair,2))done++;else await new Promise(r=>setImmediate(r));}
         value=done;
        }else value=e[m.op]();
-       parentPort.postMessage({value});
+       parentPort.postMessage({value,ring:e.guard_gps_ring(),frame:e.guard_gps_frame()});
       }catch(error){parentPort.postMessage({error:error.stack});}
     });
     parentPort.postMessage({ready:true});
@@ -92,6 +112,23 @@ const extraWat=`
   const racing=call('stress');let done=0;
   while(done<2000){if(e.guard_pair(pair,1))done++;await new Promise(r=>setImmediate(r));}
   assert.equal((await racing).value,2000);
-  console.log('PASS native D3D state guard: contention, retry, nesting and 4000 concurrent consistent updates');
+  // A second CPU instance uses the SAME process-owned consumer. Reproduce
+  // Conan's worker-start CREATE id=1 collision with real native GPS records.
+  const GpuStream=require('../lib/gpu-stream'),executor=new GpuStream.NullExecutor();
+  const drain=ring=>GpuStream.drain([new GpuStream.Ring(()=>h.memory.buffer,ring)],executor);
+  const first=e.guard_gps_create(),ring=e.guard_gps_ring();drain(ring);
+  const second=await call('guard_gps_create');drain(second.ring);
+  assert.equal(second.value,first+1,'worker continues process resource namespace');
+  assert.equal(second.ring,ring,'worker continues the same process ring/sequence');
+  const third=e.guard_gps_create();drain(e.guard_gps_ring());
+  assert.equal(third,second.value+1,'main resumes after worker without resource reuse');
+  assert.equal(e.guard_gps_frame(),3,'frame/cache state survives both instance handoffs');
+  assert.equal(executor.live.size,3,'three distinct live RTs in the actual consumer');
+  const gpsRacing=call('gpsStress');let created=0;
+  while(created<2000){if(e.guard_gps_create())created++;await new Promise(r=>setImmediate(r));}
+  assert.equal((await gpsRacing).value,2000);drain(ring);
+  assert.equal(executor.live.size,4003,'concurrent instances never reuse any live RT id');
+  assert.equal(e.guard_enter(),1);assert.equal(e.guard_gps_frame(),4003,'all concurrent frame updates retained');e.guard_leave();
+  console.log('PASS native D3D state guard: contention/retry/nesting, 4000 updates, 4003 cross-instance GPS CREATEs and frame handoff');
  }finally{await worker.terminate();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
