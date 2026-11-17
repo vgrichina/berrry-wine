@@ -2,7 +2,7 @@
 // D3DIM device fixture over the WAT GPU stream producer (src/09abg-d3dim-gps.wat).
 //
 //   real CreateSurface / d3dim_create_device / d3dim_draw_primitive handlers
-//        |  $d3dim_gpu_on = 1 (or 0: the WAT software rasterizer)
+//        |  (the producer is the only D3DIM draw path)
 //        v
 //   GPS ring  --gpu_stream_kick-->  lib/gpu-stream-software.js Executor
 //
@@ -35,7 +35,6 @@ const WAT = String.raw`
  (call $dx_surf_fmt_set (call $dx_from_this (local.get $s)) (local.get $fmt)))
 (func (export "gd_flags") (param $s i32) (param $caps i32)
  (i32.store (call $dx_surf_meta_ptr (call $dx_from_this (local.get $s))) (local.get $caps)))
-(func (export "gd_gpu") (param $on i32) (global.set $d3dim_gpu_on (local.get $on)))
 (func (export "gd_entry") (param $s i32) (result i32) (call $dx_from_this (local.get $s)))
 (func (export "gd_next") (param $s i32) (result i32)
  (load.field DxObject misc0 (call $dx_from_this (local.get $s))))
@@ -71,14 +70,12 @@ const WAT = String.raw`
  (call $d3dim_gpu_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
 `;
 
-// opts.gpu: 1 producer (default), 0 the WAT software rasterizer.
-async function bootGpsDevice({ extraWat = '', gpu = 1 } = {}) {
+async function bootGpsDevice({ extraWat = '' } = {}) {
   let ex, memory, executor = null, ring = null, ringAddr = 0;
   const errors = [], kicks = { n: 0 }, hostCalls = [];
   const h = await bootRenderHarness({ fonts: 'none', extraWat: WAT + extraWat,
     extraHostOverrides: {
-      // Only $d3dim_gpu_on = 0 reaches the host (the software render Worker
-      // seam); 0 = not taken, so the WAT rasterizes.
+      // Observation hooks only (0x20008/0x20009); D3DIM draws never reach it.
       gpu_gl_call: (...args) => { hostCalls.push(args); return 0; },
       gpu_stream_kick: (addr, mode) => {
         addr >>>= 0; kicks.n++;
@@ -91,7 +88,7 @@ async function bootGpsDevice({ extraWat = '', gpu = 1 } = {}) {
     } });
   ex = h.exports; memory = h.memory;
   const e = ex, m = new DataView(memory.buffer);
-  e.gd_seed(); e.gd_gpu(gpu);
+  e.gd_seed();
   const scratch = e.guest_alloc(0x1000), out = scratch + 0x200;
   const w32 = (a, v) => e.guest_write32(a, v >>> 0);
   const fbits = v => { const b = new DataView(new ArrayBuffer(4)); b.setFloat32(0, v, true); return b.getUint32(0, true); };
@@ -122,9 +119,7 @@ async function bootGpsDevice({ extraWat = '', gpu = 1 } = {}) {
     for (let y = 0; y < height(s); y++) for (let x = 0; x < width(s); x++) m.setUint32(dib(s) + y * pitch(s) + 4 * x, c >>> 0, true);
     cpuWrote(s);
   }
-  let gpuOn = gpu;
-  const setGpu = on => { gpuOn = on ? 1 : 0; e.gd_gpu(gpuOn); };
-  const fence = () => { if (!gpuOn) return 1; const r = e.gd_fence(0, 0); if (r !== 1 && r !== 2) throw new Error('fence ' + r); return r; };
+  const fence = () => { const r = e.gd_fence(0, 0); if (r !== 1 && r !== 2) throw new Error('fence ' + r); return r; };
   // TL vertices: [x, y, z, rhw, diffuse, specular, u, v].
   function vertices(addr, list) {
     list.forEach((v, i) => { const a = addr + i * 32;
@@ -137,7 +132,7 @@ async function bootGpsDevice({ extraWat = '', gpu = 1 } = {}) {
     fences: stat(13), declined: stat(14), primitives: stat(15), readbackBytes: stat(34),
     declines: Array.from({ length: 8 }, (_, i) => stat(35 + i)) });
   return { h, e, m, memory: () => memory, PF, surface, device, entry, dib, pitch, width, height, cpuWrote, fill32,
-    fence, setGpu, vertices, w32, f32, fbits, stat, stats, kicks, errors, hostCalls,
+    fence, vertices, w32, f32, fbits, stat, stats, kicks, errors, hostCalls,
     executor: () => executor };
 }
 

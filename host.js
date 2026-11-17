@@ -3442,9 +3442,6 @@ class WineAssembly {
     if (this.instance.exports.set_cpu_sse) this.instance.exports.set_cpu_sse(cpuSSE);
     const presentCap = Math.max(0, this.presentCap | 0);
     if (this.instance.exports.set_present_cap) this.instance.exports.set_present_cap(presentCap);
-    // ?no-d3dim-gpu-present: every D3DIM present reads back to the DIB.
-    const d3dimGpuPresent = window.WINE_D3DIM_GPU_PRESENT === false ? 0 : 1;
-    if (this.instance.exports.set_d3dim_gpu_present) this.instance.exports.set_d3dim_gpu_present(d3dimGpuPresent);
     const spinParkK = Number.isInteger(this.spinParkK) ? this.spinParkK : null;
     if (spinParkK !== null && this.instance.exports.set_spin_park_k) this.instance.exports.set_spin_park_k(spinParkK);
     const presentPaceMode = this.presentPace === 'deadline' ? 0 : 1;
@@ -3494,11 +3491,10 @@ class WineAssembly {
         throw error;
       }
     }
-    // D3DIM (DX2-7) triangles on WebGL instead of the WAT software rasterizer.
-    // The executor belongs to whichever thread owns the guest instance, so the
-    // Worker builds its own (lib/guest-worker.js) and this is the cooperative
-    // case only — with a guest Worker running, this.instance executes nothing.
-    if (window.WINE_D3DIM_GPU === true && !this.guestWorker) this._startD3DIMGpu();
+    // D3DIM (DX2-7) is always GPU stream v2: the WAT producer lowers it and
+    // host-imports' gpu_stream_kick builds the bridge on the first kick, on
+    // the executor the page's GPU select names (WebGL, falling back to the
+    // software executor on a device without it).
     // In real-thread mode slot 0 owns a second WASM instance in a Worker.
     // Configure that live decoder too; the browser-thread instance above is
     // then only an ownership token and host-call mirror.
@@ -3533,9 +3529,6 @@ class WineAssembly {
       }
       if (this.instance.exports.set_present_cap) {
         await this.guestWorker.callExport('set_present_cap', presentCap);
-      }
-      if (this.instance.exports.set_d3dim_gpu_present) {
-        await this.guestWorker.callExport('set_d3dim_gpu_present', d3dimGpuPresent);
       }
       if (spinParkK !== null && this.instance.exports.set_spin_park_k) {
         await this.guestWorker.callExport('set_spin_park_k', spinParkK);
@@ -3581,10 +3574,8 @@ class WineAssembly {
       wi.__setInstance = (instance) => { workerInstance = instance; };
       wi.__initializeCooperative = () => {
         // Siblings share the ring, so CPU barriers must be global ones.
-        if (self.d3dimGpu) {
-          self.instance.exports.d3dim_gpu_cooperative_enable();
-          workerInstance.exports.d3dim_gpu_cooperative_enable();
-        }
+        self.instance.exports.d3dim_gpu_cooperative_enable();
+        workerInstance.exports.d3dim_gpu_cooperative_enable();
       };
       wi.host.memory = self.memory;
       const markAudioThread = () => {
@@ -3725,7 +3716,6 @@ class WineAssembly {
     }
     this.threadManager.recordInheritedWasmGlobal('set_cpu_sse', cpuSSE);
     this.threadManager.recordInheritedWasmGlobal('set_present_cap', presentCap);
-    this.threadManager.recordInheritedWasmGlobal('set_d3dim_gpu_present', d3dimGpuPresent);
     if (spinParkK !== null) this.threadManager.recordInheritedWasmGlobal('set_spin_park_k', spinParkK);
     this.threadManager.recordInheritedWasmGlobal('set_present_pace_mode',
       this.presentPace === 'deadline' ? 0 : 1);
@@ -4006,25 +3996,6 @@ class WineAssembly {
     }
   }
 
-  // Put the main-thread instance's D3DIM on GPU stream v2. Frames reach the
-  // page as GPU layers (PRESENT); CPU readers of a surface fence it back
-  // into the guest's DIB. A device with no WebGL keeps working on the
-  // bridge's software executor rather than failing to launch.
-  _startD3DIMGpu() {
-    if (this.d3dimGpu) return this.d3dimGpu;
-    if (!this.instance.exports.d3dim_gpu_cooperative_enable || typeof window.D3DIMHost !== 'object') {
-      this.logToUI('[d3dim-gpu] lib/d3dim-host.js not loaded — software D3DIM');
-      return null;
-    }
-    // GPU stream v2: the WAT producer lowers D3DIM itself; host-imports'
-    // gpu_stream_kick builds the lib/d3dim-host.js bridge on the first kick
-    // (WebGL, or its software executor on a device without WebGL).
-    this.d3dimGpu = { gpuStream: true };
-    this.instance.exports.d3dim_gpu_enable(1);
-    this.logToUI('[d3dim-gpu] D3DIM draws on GPU stream v2');
-    return this.d3dimGpu;
-  }
-
   // EXPERIMENTAL: run the guest's main thread in a Worker.
   //
   // Only when the page asked for it AND the document is cross-origin isolated,
@@ -4111,7 +4082,8 @@ class WineAssembly {
           window.__waTraceCategories.has('dx')) &&
           !(window.__waTraceHostNames && [...window.__waTraceHostNames].includes('dx_trace')),
         d3dRenderWorker: window.WINE_D3D_RENDER_WORKER === true,
-        d3dimGpu: window.WINE_D3DIM_GPU === true,
+        // The D3DIM executor the page's GPU select names: WebGL unless Software.
+        d3dimGpu: !(window.WineD3D && window.WineD3D.renderer === 'software'),
         d3dimLazySync: window.WINE_D3DIM_LAZY_SYNC !== false,
         onD3dimFrame: frame => self.hostCtx?.presentD3dimGpuFrame?.(frame),
         sharedRenderWorker: true,

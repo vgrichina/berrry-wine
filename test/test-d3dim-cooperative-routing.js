@@ -148,7 +148,6 @@ async function pair(consumer) {
   // An instance drawing alone, then joining a cooperative owner: attaching
   // fences what it still owes, so its frame lands before a sibling shares
   // the chain.
-  main.d3dim_gpu_enable(1);
   draw(main, 0xff112233);
   assert.equal(stat(0), 1, 'the producer took the draw');
   assert.deepEqual(pixel(), [0, 0, 0], 'accepted GPU draw remains deferred in guest DIB');
@@ -194,16 +193,16 @@ async function pair(consumer) {
   assert.deepEqual(state.hostCalls, [], 'no instance calls the host gpu_gl_call');
   assert(state.kicks > 0);
 
-  // No GPU stream consumer: actual production WAT software rasterizer must
-  // still execute, with no accepted GPU draw or invented success.
+  // No GPU stream consumer: the WAT software rasterizer is retired, so the
+  // draw fails fast (traps) rather than inventing success or drawing.
   const f = await pair(false);
   f.main.d3dim_gpu_cooperative_enable();
   f.secondary.d3dim_gpu_cooperative_enable();
   f.bytes.fill(0);
-  f.draw(f.secondary, 0xffabcdef);
+  assert.throws(() => f.draw(f.secondary, 0xffabcdef), WebAssembly.RuntimeError, 'a draw with no consumer traps');
   assert(f.state.kicks > 0, 'the producer tried to open its ring');
   assert.equal(f.main.d3dim_gps_stat(0), 0, 'no producer block, no GPU draw');
-  assert.deepEqual(f.pixel(), [0xef, 0xcd, 0xab], 'declined GPU draw really rasterizes in WAT');
+  assert.deepEqual(f.pixel(), [0, 0, 0], 'nothing is drawn');
   assert.deepEqual(f.state.hostCalls, [], 'and does not fall through to the host');
-  console.log('PASS cooperative D3DIM: shared WAT producer, cross-instance draw/clear/Lock, scratch lifetime and software fallback');
+  console.log('PASS cooperative D3DIM: shared WAT producer, cross-instance draw/clear/Lock, scratch lifetime and no-consumer trap');
 })().catch(error => { console.error(error); process.exitCode = 1; });

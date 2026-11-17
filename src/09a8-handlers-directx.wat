@@ -5230,14 +5230,12 @@
     (local $entry i32) (local $rc i32) (local $surf_bytes i32) (local $dib_wa i32)
     (local $clipper i32) (local $attached i32) (local $owner i32) (local $child i32)
     (local.set $entry (call $dx_from_this (local.get $this)))
-    ;; A nonfinal WebGL reference drop touches no pixels or resource lifetime.
-    ;; Final teardown and queued software rendering retain their global fence.
-    (if (i32.or (i32.eqz (global.get $d3dim_gpu_on))
-                (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
+    ;; A nonfinal reference drop touches no pixels or resource lifetime.
+    ;; Final teardown retains its fence.
+    (if (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 1))
       (then
         ;; A parked GPU frame must land before its DIB can be freed.
-        (if (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 1))
-          (then (call $d3dim_gpu_unpark (local.get $entry))))
+        (call $d3dim_gpu_unpark (local.get $entry))
         ;; Freed storage needs no pixels; client memory (0x200) outlives the
         ;; surface, so the guest can still read it.
         (if (i32.and (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 1))
@@ -7924,7 +7922,7 @@
     ;; A CPU present reads this DIB and supersedes any GPU-presented layer
     ;; (docs/d3dim-gpu-present.md): land a parked frame, then retire layers.
     (call $d3dim_gpu_unpark (local.get $entry_wa))
-    (if (global.get $d3dim_gpu_on) (then (call $d3dim_site_fence (local.get $entry_wa) (i32.const 8))))
+    (call $d3dim_site_fence (local.get $entry_wa) (i32.const 8))
     (call $d3dim_cpu_present_note)
     (local.set $w (i32.load16_u (i32.add (local.get $entry_wa) (i32.const 12))))
     (local.set $h (i32.load16_u (i32.add (local.get $entry_wa) (i32.const 14))))
@@ -15194,7 +15192,6 @@
   ;; software; with the GPU executor a fence here would read back a frame
   ;; for a clear the GPU is about to take.
   (func $handle_IDirect3DViewport3_Clear (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (i32.eqz (global.get $d3dim_gpu_on)) (then (call $d3dim_worker_fence)))
     (call $d3dim_viewport_clear_full (local.get $arg0) (local.get $arg3)
       (call $d3dim_viewport_background_color (local.get $arg0)) (f32.const 1.0))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
@@ -15233,7 +15230,6 @@
   ;; arg3=dwFlags, arg4=dwColor; dvZ and dwStencil are deeper on the stack.
   (func $handle_IDirect3DViewport3_Clear2 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $dvZ_bits i32)
-    (if (i32.eqz (global.get $d3dim_gpu_on)) (then (call $d3dim_worker_fence)))
     ;; dvZ sits 1 dword past arg4 on the caller stack: [retaddr][a0][a1][a2][a3][a4=dwColor][dvZ][stencil]
     ;; esp currently still points at retaddr (we haven't popped yet).
     (local.set $dvZ_bits (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))

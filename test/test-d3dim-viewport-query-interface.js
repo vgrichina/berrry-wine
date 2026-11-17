@@ -109,9 +109,12 @@ const extraWat=String.raw`
  for(const p of [sparseBase,sparseBase+0x10000,sparseBase+4096])e.test_virtual_map_commit(p,4096);
  assert.notStrictEqual(e.guest_to_wasm(sparseBase+4096),e.guest_to_wasm(sparseBase)+4096);
  const sparseVp=sparseBase+4090;
+ // The first Clear opens the GPS producer's process-lifetime state (its
+ // block, layouts, ring and the target entry); later Clears allocate nothing.
+ let producerHeap=null;
  for(const v of versions) {
    const p=e.create(v),original=e.guest_read32(p);
-   const heap=e.live_heap();
+   let heap=e.live_heap();
    write(vp,[44,...Array(10).fill(0x12345678)]);
    for(const method of ['GetViewport','SetViewport']) {
      assert.strictEqual(invoke(v,method,0,0),0x88760082,'object error precedes descriptor error');
@@ -136,7 +139,10 @@ const extraWat=String.raw`
    e.fail_alloc(1);
    // Clear has the same four-argument ABI on all three interfaces. A no-op
    // clear must still write its HRESULT, not return the incoming EAX poison.
+   const preClear=e.live_heap();
    assert.strictEqual(invoke(v,'Clear',p,0,0,20),0,'Clear HRESULT');
+   if(producerHeap===null){producerHeap=e.live_heap()-preClear;heap+=producerHeap;}
+   else assert.strictEqual(e.live_heap(),preClear,'a later Clear allocates nothing');
    for(const suffix of v===1?['']:['','2']) for(const buffer of [vp,sparseVp,sparseBase+4094]) {
      const rectangle=[3+v,5+v,91+v,73+v];
      const tail=suffix==='2'?[-0.25,0.75,2,1.5,0.125,0.875]:[23,19,99,98,0.25,0.75];

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 'use strict';
-// D3D7 mip-chain sampling through the WAT GPU stream producer
-// ($d3dim_gpu_on = 1) into the software executor: the real CreateSurface /
+// D3D7 mip-chain sampling through the WAT GPU stream producer into the
+// software executor: the real CreateSurface /
 // CreateDevice / SetTexture / state / draw closure, pixels read back only
 // by the producer's own fence. Ported from the deleted WebGL
-// test-d3dim-gpu-mip-web.js; the WAT-software twin is test-d3dim-native-mip.js.
+// test-d3dim-gpu-mip-web.js. Its WAT-software twin (test-d3dim-native-mip.js)
+// went with the deleted WAT software rasterizer.
 const assert = require('assert');
 const { bootGpsDevice } = require('./helpers/d3dim-gps-device');
 

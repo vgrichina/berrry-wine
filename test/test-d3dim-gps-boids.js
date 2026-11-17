@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 'use strict';
-// --d3dim-gpu puts a real D3DIM app on GPU stream v2: Boids draws through
+// A real D3DIM app runs on GPU stream v2 by default: Boids draws through
 // Device2::DrawIndexedPrimitive, so a nonzero producer draw count with no
-// fallback proves the WAT producer, not the WAT rasterizer, drew its frames.
-// Without the flag nothing is lowered. Replaces test-d3dim-gpu-web.js, which
+// fallback proves the WAT producer drew its frames (the WAT rasterizer is
+// retired). --d3dim-gpu is still accepted and changes nothing. Replaces test-d3dim-gpu-web.js, which
 // checked the same thing for the deleted lib/d3dim-gpu.js executor in Chrome.
 const assert = require('assert');
 const fs = require('fs');
@@ -23,7 +23,7 @@ const run = extra => {
   assert(!/UNIMPLEMENTED API:|RuntimeError|FATAL:/.test(out), `guest failure\n${out.slice(-2000)}`);
   return out;
 };
-const on = run(['--headless-gl', '--d3dim-gpu']);
+const on = run(['--headless-gl']);
 if (/--headless-gl requested but UNAVAILABLE/.test(on)) {
   console.log('SKIP  headless GL unavailable: ' + (on.match(/UNAVAILABLE: (.*)/) || [])[1]);
   process.exit(0);
@@ -34,7 +34,7 @@ const stats = Object.fromEntries(line.slice(12).split(' ').map(kv => kv.split('=
 assert(stats.draws > 0, `no producer draws: ${line}`);
 assert.strictEqual(stats.fallbacks, 0, `software fallbacks: ${line}`);
 assert(stats.presents > 0, `no presents: ${line}`);
-const off = run([]);
-assert(!/\[d3dim-gps\]/.test(off), 'nothing is lowered without --d3dim-gpu');
-console.log(`PASS  --d3dim-gpu draws Boids on the GPU stream producer (${stats.draws} draws, ` +
-  `${stats.primitives} primitives, ${stats.presents} presents, ${stats.fences} fences); off by default`);
+const sw = run([]).split('\n').find(l => l.startsWith('[d3dim-gps] draws='));
+assert(sw && /draws=[1-9]/.test(sw) && /fallbacks=0\b/.test(sw), 'software executor lowers Boids by default: ' + sw);
+console.log(`PASS  Boids draws on the GPU stream producer by default (${stats.draws} draws, ` +
+  `${stats.primitives} primitives, ${stats.presents} presents, ${stats.fences} fences); software executor too`);

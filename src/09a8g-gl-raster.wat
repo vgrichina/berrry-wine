@@ -1788,7 +1788,7 @@
     ;; 55 SwapBuffers, 61 gluBuild2DMipmaps. glTexSubImage2D queues its texels
     ;; behind the draws instead (below). Everything else, glTexParameter
     ;; included, only changes state a queued draw carries its own copy of.
-    (if (global.get $d3dim_worker_pending)
+    (if (global.get $gl_sw_host_pending)
       (then (if (i32.or (i32.or (i32.eq (local.get $op) (i32.const 2))
                                 (i32.eq (local.get $op) (i32.const 55)))
                   (i32.or (i32.or (i32.eq (local.get $op) (i32.const 43))
@@ -2729,23 +2729,6 @@
       (i32.or (i32.and (global.get $rast_fog_color) (i32.const 0x00FFFFFF))
               (i32.and (local.get $color) (i32.const 0xFF000000)))
       (local.get $color) (local.get $f)))
-
-  ;; The span rasterizer's fog plane f(x, y) = a*x + b*y + c through three
-  ;; screen points' fog factors (1 = unfogged), with $color the fog colour.
-  ;; A degenerate triangle gets the first vertex's factor everywhere. Shared
-  ;; by GL fog and D3D vertex fog (specular alpha), which have the same sense.
-  (func $rast_fog_plane
-    (param $x0 i32) (param $y0 i32) (param $f0 f32)
-    (param $x1 i32) (param $y1 i32) (param $f1 f32)
-    (param $x2 i32) (param $y2 i32) (param $f2 f32) (param $color i32)
-    (call $rast_plane (local.get $x0) (local.get $y0) (local.get $f0)
-      (local.get $x1) (local.get $y1) (local.get $f1)
-      (local.get $x2) (local.get $y2) (local.get $f2))
-    (global.set $rast_fog_a (global.get $rast_pa))
-    (global.set $rast_fog_b (global.get $rast_pb))
-    (global.set $rast_fog_c (global.get $rast_pc))
-    (global.set $rast_fog_color (local.get $color))
-    (global.set $rast_fog_on (i32.const 1)))
 
   ;; The plane f(x, y) = a*x + b*y + c through three screen points, into
   ;; $rast_pa/$rast_pb/$rast_pc. A degenerate triangle gets f0 everywhere.
@@ -3955,7 +3938,7 @@
       (param $w i32) (param $h i32) (param $format i32) (param $pixels i32)
       (param $opaque i32) (result i32)
     (local $bytes i32) (local $d i32) (local $g i32)
-    (if (i32.eqz (global.get $d3dim_worker_pending)) (then (return (i32.const 0))))
+    (if (i32.eqz (global.get $gl_sw_host_pending)) (then (return (i32.const 0))))
     (if (i32.ne (global.get $gl_sw_worker_ok) (i32.const 1)) (then (return (i32.const 0))))
     (if (i32.or (i32.le_s (local.get $w) (i32.const 0)) (i32.le_s (local.get $h) (i32.const 0)))
       (then (return (i32.const 0))))
@@ -4116,7 +4099,7 @@
         (global.set $gl_sw_worker_ok (i32.const 2))
         (return (i32.const 0))))
     (global.set $gl_sw_worker_ok (i32.const 1))
-    (global.set $d3dim_worker_pending (i32.const 1))
+    (global.set $gl_sw_host_pending (i32.const 1))
     ;; A DIB is directly visible to guest memory and GDI immediately after
     ;; this draw returns. Keep its historical synchronous visibility while
     ;; moving the raster loop onto the common renderer owner.

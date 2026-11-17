@@ -5,7 +5,7 @@ const {bootRenderHarness}=req('test/render-helper'),{CALL_INDEX:O}=req('lib/gl-c
 const Stream=req('lib/gl-command-stream');
 const extraWat=`
  (func (export "residency_last_error") (result i32) (global.get $last_error))
- (func (export "residency_pending") (result i32) (global.get $d3dim_worker_pending))
+ (func (export "residency_pending") (result i32) (global.get $gl_sw_host_pending))
  (func (export "residency_init")
    (global.set $thunk_guest_base (i32.add (global.get $image_base) (i32.sub (global.get $THUNK_BASE) (global.get $GUEST_BASE))))
    (call $update_thunk_end))

@@ -228,7 +228,7 @@ async function immediateFixture(c) {
     }
   }
   // Capacity uses one real x86 loop, not 65537 host API dispatch injections.
-  if(mode==='software'){
+  if(mode==='gps'){
     await start(A);await words(scratch,rows(0x1c4,colors.A)[3]);
     await ok(call(A,'indexed',4,3,scratch,1,0));
     const result=await guard(8),code=[],u32=n=>code.push(n&255,n>>>8&255,n>>>16&255,n>>>24&255);
@@ -313,21 +313,19 @@ async function immediateFixture(c) {
 
 async function main() {
   const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
-  const root=path.resolve(__dirname,'..'),{browserFixture,plan,oracle}=require('./test-legacy-texture-rendered-contract');
+  const root=path.resolve(__dirname,'..'),{runOffline,plan,oracle}=require('./test-legacy-texture-rendered-contract');
   const api=require('../src/api_table.json'),base=require('../lib/region-map.generated').BASE;
   const pe=fs.readFileSync(path.join(root,'test/binaries/calc.exe'));
   const config={...plan(),immediate:true,immediateSource:immediateFixture.toString(),noPreview:true,
     thunkBase:base.THUNK_BASE,factoryId:api.find(x=>x.name==='DirectDrawCreateEx').id,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52)};
-  const saved=globalThis.fetch;
-  try{for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
-    globalThis.fetch=async url=>{const p=url==='/legacy-render.wasm'?path.join(root,'build',name):path.join(root,url.slice(1));
-      const b=fs.readFileSync(p);return {arrayBuffer:async()=>b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),json:async()=>JSON.parse(b)};};
-    const result=await browserFixture('software',config,oracle.toString());assert.equal(result.status,'PASS');
+  for(const name of ['wine-assembly.wasm','wine-assembly.compat.wasm']){
+    const result=await runOffline('gps',{...config,gpsDeclined:0,gpsPointDraws:2},oracle.toString(),null,
+      fs.readFileSync(path.join(root,'build',name)));assert.equal(result.status,'PASS');
     console.log('PASS real x86 Device2/3 immediate '+name+' '+result.calls.length+' COM records, '+result.observations.length+' pixel checkpoints');
     if(process.env.D3DIM_IMMEDIATE_EVIDENCE){fs.mkdirSync(process.env.D3DIM_IMMEDIATE_EVIDENCE,{recursive:true});
       fs.writeFileSync(path.join(process.env.D3DIM_IMMEDIATE_EVIDENCE,name+'.json'),JSON.stringify(result,null,2)+'\n');}
-  }}finally{globalThis.fetch=saved;}
+  }
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={immediateFixture};

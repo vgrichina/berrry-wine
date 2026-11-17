@@ -11,8 +11,8 @@
 // alpha, so DESTALPHA reads 1.
 //
 // Driven through the real seam: a DirectDraw surface + D3D device built by
-// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) with
-// $d3dim_gpu_on = 1, the ring drained into lib/gpu-stream-software.js.
+// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) (the GPU stream
+// producer, unconditional), the ring drained into lib/gpu-stream-software.js.
 const assert = require('assert/strict');
 const GS = require('../lib/gpu-stream');
 const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
@@ -41,11 +41,10 @@ const extraWat = String.raw`
     (call $d3dim_set_render_state (local.get $device) (local.get $state) (local.get $value)))
   (func (export "test_gpu_draw") (param $device i32) (param $prim i32) (param $vtype i32)
       (param $verts i32) (param $count i32) (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_worker_try_draw (local.get $device) (local.get $prim) (local.get $vtype)
-      (local.get $verts) (local.get $count)))
+      (local.get $verts) (local.get $count))
+    (i32.const 1))
   (func (export "test_gps_fence") (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_gpu_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))
 `;
 

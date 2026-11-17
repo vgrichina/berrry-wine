@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 'use strict';
-// Colour-keyed mip chains through the WAT GPU stream producer and the WAT
-// software rasterizer, with the real SetColorKey handler on every level:
+// Colour-keyed mip chains through the WAT GPU stream producer, with the real SetColorKey handler on every level:
 // with COLORKEYBLENDENABLE (state 144) key-to-zero precedes spatial and mip
 // filtering, so a fully keyed level reads as transparent black, a linear mip
 // blend halves the unkeyed neighbour, and an alpha blend over a keyed level
@@ -15,9 +14,9 @@ const { bootGpsDevice } = require('./helpers/d3dim-gps-device');
 const KEY = 0xffff00ff, BG = 0xff111111;
 const MIP_POINT = 2, MIP_LINEAR = 3; // DirectX 7 d3dtypes.h
 
-async function arm(gpu) {
-  const label = gpu ? 'GPS' : 'WAT software';
-  const g = await bootGpsDevice({ gpu }), { e, m } = g;
+async function arm() {
+  const label = 'GPS';
+  const g = await bootGpsDevice(), { e, m } = g;
   const vertices = e.guest_alloc(256), key = e.guest_alloc(16);
   const rt = g.surface(32, 32), dev = g.device(rt);
   const tex = g.surface(16, 16, { caps: 0x401008 }), levels = [];
@@ -38,7 +37,7 @@ async function arm(gpu) {
     g.vertices(vertices, [[0, 0], [32, 0], [0, 32]].map(([x, y], i) => [x, y, .5, 1, 0xffffffff, 0, i === 1 ? n : 0, i === 2 ? n : 0]));
     const before = g.stat(0);
     e.gd_draw(dev, 4, vertices, 3); g.fence();
-    if (gpu) { assert.strictEqual(g.stat(0), before + 1, 'draw lowered by the producer'); assert.strictEqual(g.stat(14), 0, 'no decline'); }
+    assert.strictEqual(g.stat(0), before + 1, 'draw lowered by the producer'); assert.strictEqual(g.stat(14), 0, 'no decline');
   };
   const expect = (name, c, tol = 2) => {
     const got = m.getUint32(g.dib(rt) + 4 * g.pitch(rt) + 16, true) >>> 0;
@@ -64,7 +63,7 @@ async function arm(gpu) {
 }
 
 (async () => {
-  const sw = await arm(0), gps = await arm(1);
-  console.log(`PASS GPS producer keyed mip chains: ${gps.checks} GPS + ${sw.checks} WAT software pixel checks; ` +
+  const gps = await arm();
+  console.log(`PASS GPS producer keyed mip chains: ${gps.checks} GPS pixel checks; ` +
     `GPS draws=${gps.s.draws} textureUploads=${gps.s.textureUploads} fallbacks=${gps.s.fallbacks}`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

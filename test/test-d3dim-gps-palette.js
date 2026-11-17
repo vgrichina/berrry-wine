@@ -2,7 +2,7 @@
 'use strict';
 // Indexed (PAL8) textures through the WAT GPU stream producer ($d3g_texture:
 // palette words in the texture signature, a palette page watch, decode by
-// $d3dim_gpu_decode_texture) against the WAT software rasterizer, with the
+// $d3dim_gpu_decode_texture) into the software executor, with the
 // real CreatePalette / SetPalette / SetEntries / SetColorKey handlers:
 //   - DDPCAPS_ALPHA peFlags alpha 0/128/255 for draws and textured clears;
 //     an ordinary palette with the same bytes stays opaque
@@ -43,7 +43,7 @@ const RGB = [64, 128, 192];
 // KNOWN GAP (src, not this test): the producer's colour-key kill shader
 // ($d3g_shader key bit 0x2000: SUB r2 = r1.w - c0; TEXKILL r2, finished as
 // ps_1_4) does not reject on lib/gpu-stream-software.js: the keyed texel is
-// written as RGB with alpha 0. The WAT software rasterizer rejects it. Cause
+// written as RGB with alpha 0. (The deleted WAT software rasterizer rejected it.) Cause
 // not yet isolated (suspect: the shader VM's PS1.x TEXKILL tests original
 // texture coordinates, not r2). Logged, not hidden; GPS_PALETTE_STRICT=1
 // makes it fail.
@@ -177,9 +177,8 @@ async function arm(gpu) {
 }
 
 (async () => {
-  const sw = await arm(0), gps = await arm(1);
-  assert.strictEqual(gps.n - 1, sw.n, 'same cases (the depth case is GPS only)');
+  const gps = await arm(1);
   for (const gap of gaps) console.log('KNOWN GAP ' + gap);
-  console.log(`PASS GPS producer PAL8 textures: ${gps.n} GPS + ${sw.n} WAT software pixel observations; ` +
+  console.log(`PASS GPS producer PAL8 textures: ${gps.n} GPS pixel observations; ` +
     `GPS draws=${gps.s.draws} textureUploads=${gps.s.textureUploads} clears=${gps.s.clears}`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

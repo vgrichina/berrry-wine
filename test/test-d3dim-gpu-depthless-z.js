@@ -8,8 +8,8 @@
 // off and leaves it alone when a depth test is in play.
 //
 // Driven through the real seam: a DirectDraw surface + D3D device built by
-// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) with
-// $d3dim_gpu_on = 1, the ring drained into lib/gpu-stream-software.js. The
+// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) (the GPU stream
+// producer, unconditional), the ring drained into lib/gpu-stream-software.js. The
 // DRAW_UP vertices are read from the ring arena as the executor sees them.
 'use strict';
 const assert = require('assert');
@@ -36,11 +36,10 @@ const extraWat = String.raw`
     (call $d3dim_set_render_state (local.get $device) (local.get $state) (local.get $value)))
   (func (export "test_gpu_draw") (param $device i32) (param $prim i32) (param $vtype i32)
       (param $verts i32) (param $count i32) (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_worker_try_draw (local.get $device) (local.get $prim) (local.get $vtype)
-      (local.get $verts) (local.get $count)))
+      (local.get $verts) (local.get $count))
+    (i32.const 1))
   (func (export "test_gps_fence") (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_gpu_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))
 `;
 
@@ -96,7 +95,7 @@ const extraWat = String.raw`
     const accepted = ex.test_gpu_draw(device, primitive, vertexType, VERTS, zs.length);
     assert.strictEqual(ex.test_gps_fence(), 1, 'the fence drains the draw');
     const draws = records.slice(from);
-    if (!accepted) return { accepted, draws };
+    if (!accepted || !draws.length) return { accepted, draws };
     assert.strictEqual(draws.length, 1, 'one DRAW_UP per accepted draw');
     const d = draws[0], n = d.count;
     const at = (i, off) => d.dv.getFloat32(i * d.stride + off, true);
@@ -141,8 +140,7 @@ const extraWat = String.raw`
   }
   for (const count of [0, 1]) {
     const result = run(0, 0, Array(count).fill(0), 3);
-    assert.strictEqual(result.accepted, 0, 'incomplete strip stays on the software path');
-    assert.strictEqual(result.draws.length, 0, 'and writes no draw record');
+    assert.strictEqual(result.draws.length, 0, 'an incomplete strip draws nothing and writes no draw record');
   }
   console.log('test-d3dim-gpu-depthless-z: OK');
 })().catch(e => { console.error(e.stack || e); process.exit(1); });

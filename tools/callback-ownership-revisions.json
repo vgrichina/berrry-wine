@@ -68,29 +68,29 @@
       "file": "host.js",
       "name": "host-file",
       "baseSHA256": "2f0b9ae34726c27c662f5c3df4451689c51bfc4cefe459cedc45c25aab2ebc6a",
-      "sha256": "41c8e3edfc966895e91056ee50b141dce2aa09b18ddfbc64ad24135482fb9b86",
-      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+      "sha256": "f8af8edb70a8b91c98cc43768d31e314f851a12563aa6cf9db45b62e7288d336",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
     },
     {
       "file": "lib/guest-thread-host.js",
       "name": "host-file",
       "baseSHA256": "490dadce6dac421df16529b075919ff5effe3c7dc4679e1ad9d1d2d8be3c8253",
-      "sha256": "5c47b9ef5d8e947fcc6dea4a6bf6ccf814c9eff2305647f0800c1f1005a2b2bf",
-      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+      "sha256": "e827d39aab719aaeb7bfdbf96d3fb85e846195cd6f7625ba017344417af2ea3d",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
     },
     {
       "file": "lib/guest-worker.js",
       "name": "host-file",
       "baseSHA256": "9fa351560f5e7d865ff366eb8ee8049cd948cedbe10efd8ca1d3cd73aba3088e",
-      "sha256": "4aece0b198e950bb3d82c59d00a2ea0352abc8288e9780f0977641960d3843fa",
-      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+      "sha256": "a3841cde6aec3eadfee73c063f53d355701e092fa6c584aff5842a66d240f122",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
     },
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
       "baseSHA256": "178ccbc01d427ef19375472b00eeeb8d6047e0cec376957d38ae82441ea1cc80",
-      "sha256": "f28a2ffdedf53c153dd9130142fb86823f9729bdb532d686e1206cc227276a50",
-      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+      "sha256": "f710a023427ccba46834717b67dbe845b403d59e24a44086bcd745ed0c60e795",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
     },
     {
       "file": "lib/thread-manager.js",
@@ -98,6 +98,13 @@
       "baseSHA256": "a71ff357dbdf0d47c9f7333247a168ebd9a63cf2ba37a97ab8e401d3de8fdbd3",
       "sha256": "e4a12430ea3109f0ac161185a00746005a9db90b49df0ff82ae5dda355410f74",
       "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+    },
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "53d6f5370385dcd23c45d263c7cc08a02f46f2d1e82ed08dcb24f97b8ee59d05",
+      "sha256": "4dd4c6dbc032c1168b755e47be9c3ba36010f18943bda7744e66f02edad29717",
+      "reason": "retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
     }
   ],
   "additions": [

@@ -1,9 +1,7 @@
 'use strict';
 // D3DIM surface fences.
 //
-//   1. $d3dim_gpu_on = 0, the software render Worker: the host owns every
-//      fence, and the WAT keeps global ordering (FENCE 0,0).
-//   2. $d3dim_gpu_on = 1, the WAT GPU stream producer (src/09abg-d3dim-gps.wat)
+// The WAT GPU stream producer (src/09abg-d3dim-gps.wat)
 //      draining into the real software executor (lib/gpu-stream-software.js):
 //      the producer lowers fences into READBACK records itself and never calls
 //      the host's gpu_gl_call. A GPU clear leaves the DIB stale until a CPU
@@ -22,16 +20,14 @@
 const assert = require('assert');
 const GS = require('../lib/gpu-stream');
 const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
-const { FENCE_OPCODE } = require('../lib/d3d-command-stream');
 const { bootRenderHarness } = require('./render-helper');
-const OPCODES = { FENCE: FENCE_OPCODE };
 
 async function main() {
   const calls = [];
   let ex, wasmMemory, gps = null, gpsRing = null, gpsRingAddr = 0, kicks = 0;
   const harness = await bootRenderHarness({ fonts: 'none',
     extraHostOverrides: {
-      // Only the software render Worker ($d3dim_gpu_on = 0) may reach this.
+      // D3DIM never reaches the host draw seam; asserted empty at the end.
       gpu_gl_call: (...args) => { calls.push(args); return 2; },
       // The GPU stream consumer: drain the WAT-written ring into the software
       // executor, as lib/gpu-stream-host.js does with --d3dim-gpu.
@@ -70,7 +66,6 @@ async function main() {
         (store.field DxObject misc1 (local.get $entry) (local.get $dib))
         (store.field DxObject flags (local.get $entry) (i32.const 0))
         (local.get $dib))
-      (func (export "test_gpu_on") (param $on i32) (global.set $d3dim_gpu_on (local.get $on)))
       (func (export "test_lazy_epoch") (result i32) (i32.atomic.load (global.get $UOP_WIN_EPOCH)))
       (func (export "test_lazy_float") (param $wa i32) (param $pipeline i32) (result i32)
         (if (local.get $pipeline) (then
@@ -85,13 +80,11 @@ async function main() {
         (i64.reinterpret_f64 (call $fpu_pop)))
       (func (export "test_lazy_arm") (param $this i32) (param $on i32)
         (global.set $d3dim_lazy_on (local.get $on))
-        (global.set $d3dim_gpu_on (i32.const 1))
         (global.set $d3dim_worker_pending (i32.const 1))
         (call $d3dim_lock_fence (call $dx_from_this (local.get $this))))
       (func (export "test_lazy_unlock") (param $this i32) (result i32)
         (call $d3dim_lazy_unlock (call $dx_from_this (local.get $this))))
       (func (export "test_lazy_scope") (param $this i32) (param $gpu i32) (param $pending i32) (result i32)
-        (global.set $d3dim_gpu_on (local.get $gpu))
         (global.set $d3dim_worker_pending (local.get $pending))
         (call $d3dim_surface_fence (call $dx_from_this (local.get $this)))
         (global.get $d3dim_worker_pending))
@@ -104,7 +97,6 @@ async function main() {
           (return (i32.load16_u (call $g2w_affine_span (local.get $ga) (i32.const 4))))))
         (call $gl16 (local.get $ga)))
       (func (export "test_surface_fence") (param $gpu i32) (param $pending i32) (result i32)
-        (global.set $d3dim_gpu_on (local.get $gpu))
         (global.set $d3dim_worker_pending (local.get $pending))
         (store.field DxObject misc1 (global.get $DX_OBJECTS) (i32.const 4096))
         (store.field DxObject pitch (global.get $DX_OBJECTS) (i32.const 1280))
@@ -129,11 +121,9 @@ async function main() {
       (func (export "test_fence_pitch") (param $this i32) (result i32)
         (load.field DxObject pitch (call $dx_from_this (local.get $this))))
       (func (export "test_fence_load") (param $dst i32) (param $src i32)
-        (global.set $d3dim_gpu_on (i32.const 1))
         (global.set $d3dim_worker_pending (i32.const 1))
         (call $d3dim_texture_load (local.get $dst) (local.get $src)))
       (func (export "test_fence_release") (param $this i32) (param $gpu i32) (param $refs i32) (result i32)
-        (global.set $d3dim_gpu_on (local.get $gpu))
         (global.set $d3dim_worker_pending (i32.const 1))
         (store.field DxObject refcount (call $dx_from_this (local.get $this)) (local.get $refs))
         (call $d3dim_texture_view_release (local.get $this))
@@ -143,7 +133,6 @@ async function main() {
       ;; on (flag 4, set by a draw); the test marks that instead of drawing.
       (func (export "test_gps_paint") (param $this i32) (param $color i32) (result i32)
         (local $entry i32) (local $pb i32) (local $t i32) (local $ga i32) (local $d i32) (local $r i32)
-        (global.set $d3dim_gpu_on (i32.const 1))
         (local.set $entry (call $dx_from_this (local.get $this)))
         (call $lock_acquire (global.get $D3DIM_GPS))
         (local.set $pb (call $d3g_pb))
@@ -187,7 +176,6 @@ async function main() {
       ;; destination stayed on the GPU.
       (func (export "test_gps_bltfast") (param $dst i32) (param $src i32) (param $trans i32) (result i32)
         (local $d i32) (local $s i32) (local $gpu i32) (local $w i32)
-        (global.set $d3dim_gpu_on (i32.const 1))
         (global.set $d3dim_worker_pending (i32.const 1))
         (local.set $d (call $dx_from_this (local.get $dst)))
         (local.set $s (call $dx_from_this (local.get $src)))
@@ -207,7 +195,6 @@ async function main() {
       ;; producer's 0x2000A lowering (window 0: screen-relative).
       (func (export "test_gps_blt_present") (param $dst i32) (param $src i32) (param $x i32) (param $sx i32) (result i32)
         (local $ga i32) (local $d i32) (local $r i32)
-        (global.set $d3dim_gpu_on (i32.const 1))
         (local.set $ga (call $heap_alloc (i32.const 48)))
         (local.set $d (call $g2w (local.get $ga)))
         (memory.fill (local.get $d) (i32.const 0) (i32.const 48))
@@ -223,7 +210,6 @@ async function main() {
         (local.get $r))
       ;; A raw producer fence (0x20001) over [wa, wa+len); len 0 = global.
       (func (export "test_gps_fence") (param $wa i32) (param $len i32) (result i32)
-        (global.set $d3dim_gpu_on (i32.const 1))
         (call $d3dim_gpu_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
     ` });
   ex = harness.exports; wasmMemory = harness.memory;
@@ -235,13 +221,6 @@ async function main() {
   ex.init_dx_com_thunks();
   const other = (await WebAssembly.instantiate(harness.module, { host: harness.host, gdi: harness.gdi })).exports;
 
-  // ---- 2. Software render Worker ($d3dim_gpu_on = 0): global ordering ----
-  assert.strictEqual(ex.test_surface_fence(0, 1), 0, 'software Worker keeps global fence');
-  assert.deepStrictEqual(calls.splice(0), [[OPCODES.FENCE, 0, 0]]);
-  assert.strictEqual(ex.test_surface_fence(0, 0), 0);
-  assert.deepStrictEqual(calls, [], 'no outstanding Worker work means no host call');
-  assert.strictEqual(ex.test_global_fence(), 0);
-  assert.deepStrictEqual(calls, [], 'no redundant global barrier once the Worker drained');
 
   const A = ex.test_fence_surface(), B = ex.test_fence_surface();
   const C = ex.test_fence_surface(), D = ex.test_fence_surface();
@@ -250,12 +229,8 @@ async function main() {
   const px = s => Array.from(new Uint8Array(wasmMemory.buffer, dib(s), 4));
   const zero = (...ss) => ss.forEach(s => new Uint8Array(wasmMemory.buffer, dib(s), 4).fill(0));
 
-  assert.strictEqual(ex.test_fence_release(C, 0, 2), 1);
-  assert.deepStrictEqual(calls.splice(0), [[OPCODES.FENCE, 0, 0]], 'software release still drains queued work');
-  assert.strictEqual(ex.test_lazy_scope(C, 0, 1), 0, 'software path still completes its global barrier');
-  assert.deepStrictEqual(calls.splice(0), [[OPCODES.FENCE, 0, 0]], 'software fallback synchronizes all targets');
 
-  // ---- 3. WAT GPU stream producer ($d3dim_gpu_on = 1) ----
+  // ---- WAT GPU stream producer ----
   // Clear colours (D3DCOLOR) and the RGB565 bytes they must land as.
   const RED = 0xffff0000, GREEN = 0xff00ff00, BLUE = 0xff0000ff;
   const red = [0x00, 0xf8, 0x00, 0xf8], green = [0xe0, 0x07, 0xe0, 0x07], blue = [0x1f, 0x00, 0x1f, 0x00];
@@ -321,7 +296,6 @@ async function main() {
   const lzero = () => new Uint8Array(wasmMemory.buffer, lDib - 4, 12).fill(0);
   const cnt = () => [ex.get_d3dim_lazy_armed(), ex.get_d3dim_lazy_touched(), ex.get_d3dim_lazy_untouched()];
   const lazyRb = () => ex.d3dim_gps_stat(16 + 14);
-  other.test_gpu_on(1);
   const arm = () => { paint(L, RED); lzero(); r = readbacks(); ex.test_lazy_arm(L, 1); };
   let c0 = cnt(), lr = lazyRb();
   const epoch = ex.test_lazy_epoch();

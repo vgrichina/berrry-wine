@@ -55,7 +55,8 @@ const extraWat = String.raw`
   ;; TRIANGLELIST (4) of TLVERTEX (3).
   (func (export "test_vpc_draw") (param $device i32) (param $vertices i32) (param $count i32)
     (call $d3dim_draw_primitive (local.get $device) (i32.const 4) (i32.const 3)
-      (local.get $vertices) (local.get $count)))
+      (local.get $vertices) (local.get $count))
+    (call $d3dim_worker_fence))
   ;; A draw scope around the exported d3dim_gpu_describe, as a draw has.
   (func (export "test_vpc_clip_begin") (param $device i32)
     (call $d3dim_clip_begin (local.get $device)))
@@ -104,7 +105,7 @@ function makeSurface(wat, desc, out, width, height) {
     wat.guest_write32(p + 16, 0xffff0000); wat.guest_write32(p + 20, 0);
     float(p + 24, 0); float(p + 28, 0);
   });
-  const clear = () => { const m = mem(); for (let i = 0; i < W * pitch; i += 2) m.setUint16(dib + i, 0, true); };
+  const clear = () => { const m = mem(); for (let i = 0; i < W * pitch; i += 2) m.setUint16(dib + i, 0, true); wat.page_watch_write(dib, W * pitch); };
   const px = (x, y) => mem().getUint16(dib + y * pitch + x * 2, true);
   const drawn = () => { let n = 0; for (let y = 0; y < W; y++) for (let x = 0; x < W; x++) if (px(x, y) === RED) n++; return n; };
 
