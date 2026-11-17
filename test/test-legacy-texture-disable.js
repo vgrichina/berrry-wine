@@ -35,13 +35,6 @@ function disabled(f, checkPixels = true) {
     for (const bits of [0,256,512,768])
       assert.equal(f.e.d3dim_texture_stage_combine(tex,diffuse,1|bits,alpha|bits)>>>0,diffuse,
         'disable preserves incoming RGBA before independent operand selection');
-    if (bound && checkPixels) {
-      // Directly exercise the actual textured triangle/raster/span combiner as
-      // well as production routing; unequal alpha and nonwhite texels matter.
-      new Uint8Array(f.e.memory.buffer,32768,16).fill(0);
-      f.e.d3dim_draw_tl_triangle_textured(1,24576,8192,0,20480,20512,20544);
-      assert.equal(f.dv.getUint32(32768,true)>>>0,diffuse,'real software span disabled RGBA');
-    }
   }
 }
 if (process.argv.includes('--baseline-software')) {
@@ -57,18 +50,13 @@ if (process.argv.includes('--baseline-software')) {
   resumed.softwareOuter(0x80c08040);
   receipts.controls.push('disable then re-enable retains bound texture and independent alpha');
   // Independent discriminating reversions: restore each actual old decision.
-  const oldRoute = assembled.replace(
-    '(if (i32.eq (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 1)) (i32.const 1))',
-    '(if (i32.const 0)');
-  assert.notEqual(oldRoute,assembled);
-  semanticReject('old bound-texture route',/unbound routes to diffuse triangle/,()=>disabled(makeFixture(oldRoute)));
   const oldCombine = assembled.replace(
     '(if (i32.eq (i32.and (local.get $colorop) (i32.const 255)) (i32.const 1))',
     '(if (i32.const 0)');
   assert.notEqual(oldCombine,assembled);
   semanticReject('old disabled combiner',/disable preserves incoming RGBA/,()=>disabled(makeFixture(oldCombine)));
   receipts.status='PASS';
-  console.log('PASS disabled stage: 8 bound/unbound alpha configurations, real span RGBA, both diffuse routes, 2 rejecting reversions');
+  console.log('PASS disabled stage: 8 bound/unbound alpha configurations, combiner RGBA, 1 rejecting reversion');
 }
 if(process.env.LEGACY_DISABLE_RECEIPT) fs.writeFileSync(process.env.LEGACY_DISABLE_RECEIPT,JSON.stringify(receipts,null,2)+'\n');
 `;

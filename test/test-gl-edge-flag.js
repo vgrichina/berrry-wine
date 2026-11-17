@@ -10,7 +10,7 @@ const extraWat=`
   (call $handle_gpu_api (i32.const 50) (i32.const 1) (local.get $p) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
   (local.set $answer (i32.load (global.get $reg_base)))
   (i32.store offset=16 (global.get $reg_base) (local.get $esp)) (local.get $answer))
- (func (export "edge_pending") (result i32) (global.get $d3dim_worker_pending))
+ (func (export "edge_pending") (result i32) (global.get $gl_sw_host_pending))
  (func (export "edge_init")
    (global.set $thunk_guest_base (i32.add (global.get $image_base) (i32.sub (global.get $THUNK_BASE) (global.get $GUEST_BASE))))
    (call $update_thunk_end))

@@ -90,6 +90,7 @@ const extraWat = String.raw`
     (call $handle_IDirect3DDevice3_DrawIndexedPrimitiveVB
       (local.get $device) (local.get $primType) (local.get $vb)
       (local.get $indices) (local.get $index_count) (i32.const 0))
+    (call $d3dim_worker_fence)
     (i32.load offset=16 (global.get $reg_base)))
 
   (func (export "test_v3vb_draw")
@@ -100,6 +101,7 @@ const extraWat = String.raw`
     (call $handle_IDirect3DDevice3_DrawPrimitiveVB
       (local.get $device) (local.get $primType) (local.get $vb)
       (local.get $start) (local.get $count) (i32.const 0))
+    (call $d3dim_worker_fence)
     (i32.load offset=16 (global.get $reg_base)))
 
   (func (export "test_v3vb_dib") (param $surface i32) (result i32)
@@ -209,6 +211,7 @@ if (!process.argv.includes('--public-ranges')) (async () => {
   };
   const clearRt = () => {
     for (let i = 0; i < RT * RT; i++) mem.setUint16(rtDib + i * 2, 0, true);
+    wat.page_watch_write(rtDib, RT * RT * 2);
   };
 
   clearRt();

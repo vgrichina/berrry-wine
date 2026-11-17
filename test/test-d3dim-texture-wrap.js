@@ -2,8 +2,8 @@
 'use strict';
 
 // D3D texture wrapping (D3DRENDERSTATE_WRAPU/WRAPV, and WRAP0's D3DWRAP_U/V
-// bits) on the software rasterizer, the state the GPU arm reads, and the GPU
-// arm's per-triangle coordinate fix-up -- done by the WAT GPU stream producer
+// bits) drawn through the GPU stream producer into the software executor,
+// the state the producer reads, and its per-triangle coordinate fix-up -- done by the WAT GPU stream producer
 // (src/09abg-d3dim-gps.wat, $d3g_draw) and read here from the DRAW_UP
 // vertices it hands the software GPU stream executor.
 //
@@ -50,16 +50,14 @@ const extraWat = String.raw`
   (func (export "test_wrap_set_rs") (param $device i32) (param $state i32) (param $value i32)
     (call $d3dim_set_render_state (local.get $device) (local.get $state) (local.get $value)))
   (func (export "test_wrap_draw") (param $device i32) (param $rt i32) (param $vertices i32)
-    (call $d3dim_draw_tl_triangle_dp
-      (local.get $device) (call $dx_from_this (local.get $rt)) (i32.const 0)
-      (call $g2w (local.get $vertices))
-      (call $g2w (i32.add (local.get $vertices) (i32.const 32)))
-      (call $g2w (i32.add (local.get $vertices) (i32.const 64)))))
+    ;; One TL triangle through the GPU stream producer, landed for the CPU.
+    (call $d3dim_worker_route (local.get $device) (i32.const 4) (local.get $vertices) (i32.const 3))
+    (call $d3dim_worker_fence))
   ;; The GPU arm: the same 0x20000 draw the core issues, into the producer.
   (func (export "test_wrap_gpu_draw") (param $device i32) (param $vertices i32) (param $count i32) (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_worker_try_draw (local.get $device) (i32.const 4) (i32.const 3)
-      (local.get $vertices) (local.get $count)))
+      (local.get $vertices) (local.get $count))
+    (i32.const 1))
   (func (export "test_wrap_gpu_fence") (result i32)
     (call $d3dim_gpu_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))
 `;
@@ -142,6 +140,7 @@ async function software() {
       float(p + 24, u); float(p + 28, 0.5);
     });
     for (let i = 0; i < W * W; i++) mem.setUint16(rtDib + i * 2, 0, true);
+    wat.page_watch_write(rtDib, W * W * 2);
     wat.test_wrap_draw(device, rt, vertices);
     const row = [];
     for (let x = 1; x < W - 1; x++) row.push(mem.getUint16(rtDib + (1 * W + x) * 2, true));
@@ -198,11 +197,13 @@ async function software() {
     wat.test_wrap_draw(device, rt, vertices);
   };
   const y0Of = pts => Math.min(...pts.map(q => q[1]));
-  const fillTex = c => { for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) mem.setUint16(texDib + y * texPitch + x * 2, c, true); };
+  const fillTex = c => { for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) mem.setUint16(texDib + y * texPitch + x * 2, c, true);
+    wat.page_watch_write(texDib, texPitch * 4); };
   const rowColors = y => { const s = new Set(); for (let x = 0; x < W - 1; x++) s.add(mem.getUint16(rtDib + (y * W + x) * 2, true)); return [...s]; };
   for (const textured of [true, false]) {
     wat.test_wrap_set_rs(device, 1, textured ? wat.guest_read32(out + 8) >>> 0 : 0);
     for (let i = 0; i < W * W; i++) mem.setUint16(rtDib + i * 2, 0, true);
+    wat.page_watch_write(rtDib, W * W * 2);
     fillTex(BLUE);
     for (const tri of quad(8, W)) drawTri(tri, 0xff0000ff);   // lower: blue
     fillTex(RED);
@@ -222,6 +223,7 @@ async function software() {
   for (const textured of [true, false]) {
     wat.test_wrap_set_rs(device, 1, textured ? wat.guest_read32(out + 8) >>> 0 : 0);
     for (let i = 0; i < W * W; i++) mem.setUint16(rtDib + i * 2, 0, true);
+    wat.page_watch_write(rtDib, W * W * 2);
     fillTex(BLUE);
     for (const tri of quadX(8, W)) drawTri(tri, 0xff0000ff);   // right: blue
     fillTex(RED);
@@ -233,8 +235,8 @@ async function software() {
   }
 
   // ---- GPU arm: the WAT producer's per-triangle fix-up ----
-  // Same device and texture, now through $d3dim_gpu_call(0x20000) with
-  // $d3dim_gpu_on = 1. Each later vertex of a triangle moves by a whole
+  // Same device and texture, now through $d3dim_gpu_call(0x20000)
+  // (the GPU stream producer). Each later vertex of a triangle moves by a whole
   // texture toward that triangle's first vertex when they are more than half
   // a texture apart; the DRAW_UP vertices carry the corrected coordinates.
   wat.test_wrap_set_rs(device, 1, wat.guest_read32(out + 8) >>> 0);
@@ -278,6 +280,7 @@ async function software() {
   // never samples green/blue once WRAPU is on (it does without it).
   const seam = () => {
     for (let i = 0; i < W * W; i++) mem.setUint16(rtDib + i * 2, 0, true);
+    wat.page_watch_write(rtDib, W * W * 2);
     gpu(wrapOn, 0, [[0.875, 0.5], [0.125, 0.5], [0.125, 0.5]], [[0, 0], [W - 1, 0], [W - 1, W - 1]]);
     const row = [];
     for (let x = 1; x < W - 1; x++) row.push(mem.getUint16(rtDib + (1 * W + x) * 2, true));
@@ -294,7 +297,7 @@ async function software() {
 
 (async () => {
   await software();
-  console.log('PASS D3DIM texture wrap: WRAPU/WRAPV/WRAP0 on software, describe field 33, GPU producer per-triangle fix-up');
+  console.log('PASS D3DIM texture wrap: WRAPU/WRAPV/WRAP0 and top-left fill through the producer, describe field 33, GPU producer per-triangle fix-up');
 })().catch(error => {
   console.error(error.stack || error.message);
   process.exit(1);

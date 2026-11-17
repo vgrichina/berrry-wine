@@ -63,7 +63,6 @@ const result = spawnSync('node', [
   // so the same capture does not alternate between birds and terrain only.
   '--wall-clock-ms=978307200000',
   '--max-batches=9000',
-  '--dx-surfaces',
   `--input=8000:png:${png}`,
 ], {
   cwd: ROOT,
@@ -107,13 +106,9 @@ assert.ok(drawnShare > 0.0005,
 assert.ok(drawnShare < 0.25,
   `${(drawnShare * 100).toFixed(1)}% of the frame is geometry — near-plane clip is not holding`);
 
-// The surface census is the other half of the story: it is what distinguishes
-// "drew nothing" from "drew nothing visible".
-const primary = output.split('\n').find(l => l.includes('slot=') && l.includes('flags=0x1'));
-assert.ok(primary, `no primary surface in the --dx-surfaces census\n${output.slice(-4000)}`);
-const colors = /colors=(\d+)/.exec(primary);
-assert.ok(colors && Number(colors[1]) > 1,
-  `primary census still reports a single colour: ${primary.trim()}`);
-
+// No --dx-surfaces census of the primary's guest DIB: D3DIM always runs on
+// the GPU stream, and a GPU present never lands the frame in that DIB (it is
+// read back only when the guest touches it). The presented PNG above is the
+// pixel evidence.
 fs.rmSync(outDir, { recursive: true, force: true });
 console.log(`PASS: D3DIM line primitives rasterize (${seen.size} colours, ${(drawnShare * 100).toFixed(2)}% geometry)`);

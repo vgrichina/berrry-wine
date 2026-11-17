@@ -200,13 +200,16 @@ if (GL_RENDERER !== 'software') {
 // the shared memory, the CLI twin of the browser's render Worker. The guest's
 // main instance can Atomics.wait here, so no --threads is needed.
 const D3D_WORKER = hasFlag('d3d-worker');
-// --d3dim-gpu: put D3DIM (DX2-7) on GPU stream v2: the WAT producer
+// D3DIM (DX2-7) is always GPU stream v2: the WAT producer
 // (src/09abg-d3dim-gps.wat) lowers draws, clears and presents into the ring
-// and lib/d3dim-host.js executes it on WebGL. Needs --headless-gl for a
-// context. Without the flag D3DIM is the WAT software rasterizer.
-const D3DIM_GPU = hasFlag('d3dim-gpu');
-if (D3DIM_GPU && D3D_WORKER) { console.error('--d3dim-gpu and --d3d-worker are exclusive'); process.exit(2); }
-if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --headless-gl'); process.exit(2); }
+// and lib/gpu-stream-host.js executes it -- on WebGL with --headless-gl,
+// else on the software executor. --d3dim-renderer=webgl|software|null picks
+// one explicitly. --d3dim-gpu is accepted and does nothing (it was the
+// opt-in when D3DIM also had a software rasterizer of its own).
+const D3DIM_RENDERER = getArg('d3dim-renderer', null);
+if (D3DIM_RENDERER !== null && !['webgl', 'software', 'null'].includes(D3DIM_RENDERER)) {
+  console.error('--d3dim-renderer must be webgl, software or null'); process.exit(2);
+}
 // Software GL (--gl-renderer=software) on GPU stream v2: the WAT producer
 // (src/09a8gt-gl-gps.wat) lowers its screen-space triangles, clears and
 // swaps into a ring an executor drains. On by default: the WebGL executor
@@ -2769,6 +2772,7 @@ async function main() {
       || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl'),
     glideBackend: GLIDE_RENDERER,
     glGpsBackend: GL_GPS_BACKEND,
+    d3dimBackend: D3DIM_RENDERER || (hasFlag('headless-gl') ? 'webgl' : 'software'),
     d3d9GpsBackend: D3D9_GPS_EXPLICIT ? D3D9_GPS_ARG
       : (HEADLESS_GL && (D3D9_RENDERER || 'webgl') === 'webgl' ? 'webgl'
         : (D3D9_RENDERER || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl')) === 'software'
@@ -5216,9 +5220,6 @@ async function main() {
       getImageBase: () => instance.exports.get_image_base() >>> 0,
     });
   }
-  // GPU stream v2: src/09abg-d3dim-gps.wat lowers D3DIM itself and kicks a
-  // ring that lib/d3dim-host.js drains (host-imports gpu_stream_kick).
-  if (D3DIM_GPU) instance.exports.d3dim_gpu_enable(1);
   if (GL_GPS) instance.exports.gl_gps_enable(1);
   instance.exports.d3d9_gps_enable?.(D3D9_GPS ? 1 : 0);
   // D3D9/D3D8 presents so far (09akg stat 4 GPU + 5 old-path frames), for --cpu-window.
@@ -5226,7 +5227,7 @@ async function main() {
     ? (instance.exports.d3d9_gps_stat(4) >>> 0) + (instance.exports.d3d9_gps_stat(5) >>> 0) : 0;
   // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
   // turns it off there); the WAT default and the CLI default are off.
-  if (D3DIM_GPU && hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
+  if (hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
   if (GUEST_PAGE_STATS) {
     if (!instance.exports.reset_guest_page_stats || !instance.exports.get_guest_page_stat) {
       throw new Error('--guest-page-stats requires the offline artifact from ' +
@@ -11534,7 +11535,7 @@ async function main() {
             }
             await nativeFault.wait();
             if (stopped) break;
-          } catch (e) { /* reported below */ }
+          } catch (e) { throw e; /* never continue a guest whose handler unwound */ }
         }
         ran = await workerSlices;
         if (!ran || stopped || !threadManager.hasActiveThreads()) break;
@@ -11596,7 +11597,14 @@ async function main() {
             }
             await nativeFault.wait();
             if (stopped) break;
-          } catch (e) { break; }
+          } catch (e) {
+            // Never swallow a host error thrown through the guest: the wasm
+            // stack unwound mid-handler, so its stdcall frame was never
+            // popped and EIP sits at the block entry. Continuing re-ran the
+            // block on the unpopped frame (Diablo II's D3D draw, later "AV at
+            // EIP 0x100").
+            throw e;
+          }
         }
       }
       if (TRACE_BATCH_TIMING) {
@@ -11894,7 +11902,9 @@ if (VERBOSE) {
   // reply resolved in the final batch still flush while the exit path prints.
   closeControl();
   if (cpuProf && cpuProf.session) await cpuProf.stop(MAX_BATCHES);
-  if (D3DIM_GPU && instance.exports.d3dim_gps_stat) {
+  // Once D3DIM opened its ring (an app that never drew prints nothing).
+  if (instance.exports.d3dim_gps_stat
+      && [0, 6, 7, 9, 10, 13].some(i => instance.exports.d3dim_gps_stat(i))) {
     const st = i => instance.exports.d3dim_gps_stat(i) >>> 0;
     const names = ['draws', 'fallbacks', 'readbacks', 'readbackRows', 'uploads', 'uploadRows', 'presents',
       'syncs', 'textureUploads', 'clears', 'flips', 'bltPresents', 'points', 'fences', 'declined', 'primitives'];
@@ -13139,7 +13149,7 @@ if (VERBOSE) {
   if (PNG_OUT && renderer) {
     // GPU stream D3DIM presents without reading back: land every GPU target
     // in its DIB before reading surfaces out of memory.
-    if (D3DIM_GPU && instance.exports.d3dim_gps_sync_all) instance.exports.d3dim_gps_sync_all();
+    if (instance.exports.d3dim_gps_sync_all) instance.exports.d3dim_gps_sync_all();
     if (GL_GPS) instance.exports.gl_gps_sync_front();
     if (D3D9_GPS && instance.exports.d3d9_gps_stat(14)) {
       instance.exports.d3d9_gps_sync_front();

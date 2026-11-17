@@ -2,8 +2,9 @@
   ;; D3DIM -> GPU stream v2 producer (docs/gpu-stream-v2-migration.md, D2a).
   ;; Replaces lib/d3dim-gpu.js behind the same WAT seam: the d3dim core still
   ;; calls opcodes 0x20000 draw, 0x20001 fence, 0x20002 ready, 0x20003 flip,
-  ;; 0x20004 clear, 0x20007 lazy publish and 0x2000A Blt present, but with
-  ;; $d3dim_gpu_on they are lowered HERE into GPS records ($d3dim_gpu_call).
+  ;; 0x20004 clear, 0x20007 lazy publish and 0x2000A Blt present, and they
+  ;; are lowered HERE into GPS records ($d3dim_gpu_call) -- the only D3DIM
+  ;; renderer; the host only picks the executor (WebGL, software or null).
   ;; Every rule the JS executor applied (strip/fan expansion, flat shading,
   ;; depthless z clamp, rhw fix, WRAPU/V, BOTHSRCALPHA, supplied projection,
   ;; points as 2x2 quads, texture decode and invalidation, DIB <-> RGBA) is
@@ -13,7 +14,7 @@
   ;; through a Flip; depth buffers are keyed by the render-target entry.
   ;; Pixels come back (READBACK + SYNC) only for CPU access to a GPU-owned
   ;; DIB (D2b): Lock, GetDC, a CPU Blt/BltFast reading a GPU source, a CPU
-  ;; present, Texture::Load from a target and the software-fallback draw.
+  ;; present and Texture::Load from a target.
   ;; Flip, Blt-present, clears and a CPU-source BltFast onto a GPU target
   ;; (re-uploaded, or a keyed textured quad) stay on the GPU. Every readback
   ;; is counted by its site ($d3dim_fence_site, stats 16..31).
@@ -61,17 +62,22 @@
     (local.set $a (i32.add (i32.add (local.get $pb) (i32.const 80)) (i32.shl (local.get $i) (i32.const 2))))
     (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (local.get $n))))
 
-  ;; A draw or clear sent back to software (stat 1), with its reason
-  ;; (d3dim_gps_stat 35 + $why): 0 unused (stage-0 operands follow the
-  ;; software rule since D2c and no longer decline), 1 texture not
-  ;; uploadable, 2 Z function out of range, 3 blend factor out of range, 4 no
-  ;; depth surface, 5 clear target not creatable, 6 clear background without
-  ;; texture words, 7 unused.
+  ;; A draw or clear the stream cannot express. There is no software D3DIM
+  ;; rasterizer behind the producer any more, so a decline is counted (stat
+  ;; 1, and d3dim_gps_stat 35 + $why) and then traps loudly, with
+  ;; 0x44334744 'D3GD' and the reason in the log: 0 target not representable
+  ;; (no DIB, over 2048, not 16/32bpp, or the target table full), 1 texture
+  ;; not uploadable, 2 Z function out of range, 3 blend factor out of range,
+  ;; 4 no depth surface, 5 clear target not creatable, 6 clear background
+  ;; without texture words, 7 unused.
   (func $d3g_decline (param $pb i32) (param $why i32)
     (local $a i32)
     (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1))
     (local.set $a (i32.add (i32.add (local.get $pb) (i32.const 23312)) (i32.shl (local.get $why) (i32.const 2))))
-    (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (i32.const 1))))
+    (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (i32.const 1)))
+    (call $host_log_i32 (i32.const 0x44334744))
+    (call $host_log_i32 (local.get $why))
+    (unreachable))
 
   ;; One readback, charged to the CPU-access site that asked for it.
   (func $d3g_site_stat (param $pb i32)
@@ -365,7 +371,6 @@
     (local $pb i32) (local $guest i32) (local $h i32)
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
     (if (local.get $pb) (then (return (local.get $pb))))
-    (if (i32.load offset=20 (global.get $D3DIM_GPS)) (then (return (i32.const 0))))
     (local.set $guest (call $gps_alloc (global.get $D3G_PB_SIZE)))
     (if (i32.eqz (local.get $guest)) (then (call $d3g_fail)))
     (local.set $pb (call $gps_wa (local.get $guest)))
@@ -385,10 +390,9 @@
       (i32.store offset=16 (global.get $D3DIM_GPS) (local.get $h))))
     (i32.store offset=4 (local.get $pb) (call $d3g_layout (local.get $pb) (i32.const 32) (global.get $GPS_VTYPE_FLOAT2)))
     (i32.store offset=8 (local.get $pb) (call $d3g_layout (local.get $pb) (i32.const 40) (global.get $GPS_VTYPE_FLOAT4)))
-    (if (i32.ne (call $d3g_kick (local.get $pb) (global.get $GPS_KICK_SYNC)) (i32.const 1)) (then
-      (call $gps_ring_reset (local.get $h))
-      (i32.store offset=20 (global.get $D3DIM_GPS) (i32.const 1))
-      (return (i32.const 0))))
+    ;; No executor took the opening kick: D3DIM has no other renderer.
+    (if (i32.ne (call $d3g_kick (local.get $pb) (global.get $GPS_KICK_SYNC)) (i32.const 1))
+      (then (call $d3g_fail)))
     (i32.store offset=8 (global.get $D3DIM_GPS) (local.get $pb))
     (local.get $pb))
 
@@ -1198,22 +1202,17 @@
     (local $cl i32) (local $ct i32) (local $cr i32) (local $cb i32) (local $sz f32) (local $z f32)
     (local $pos i32) (local $o i32) (local $n i32) (local $chunk i32) (local $f f32)
     (local $bl i32) (local $bt i32) (local $br i32) (local $bb i32)
-    ;; 32-bit and 555 targets needed exact per-point readbacks before: keep
-    ;; them (and 4444) in software.
-    (if (i32.or (i32.ne (i32.load offset=12 (local.get $d)) (i32.const 16))
-                (i32.ne (i32.load offset=24 (local.get $d)) (i32.const 1)))
-      (then (return (i32.const 0))))
     (local.set $t (call $d3g_target (local.get $pb) (i32.load (local.get $d)) (i32.load offset=20 (local.get $d))
       (i32.load offset=4 (local.get $d)) (i32.load offset=8 (local.get $d)) (i32.load offset=12 (local.get $d))
       (i32.load offset=16 (local.get $d)) (i32.load offset=24 (local.get $d))))
-    (if (i32.eqz (local.get $t)) (then (return (i32.const 0))))
+    (if (i32.eqz (local.get $t)) (then (call $d3g_decline (local.get $pb) (i32.const 0))))
     (local.set $zen (i32.ne (i32.load offset=64 (local.get $d)) (i32.const 0)))
     (if (i32.and (local.get $zen) (i32.or (i32.lt_u (i32.load offset=68 (local.get $d)) (i32.const 1))
           (i32.gt_u (i32.load offset=68 (local.get $d)) (i32.const 8))))
-      (then (return (i32.const 0))))
+      (then (call $d3g_decline (local.get $pb) (i32.const 2))))
     (local.set $ds (call $d3g_depth (local.get $pb) (i32.load (local.get $d))
       (i32.load offset=4 (local.get $d)) (i32.load offset=8 (local.get $d)) (local.get $zen)))
-    (if (i32.and (local.get $zen) (i32.eqz (local.get $ds))) (then (return (i32.const 0))))
+    (if (i32.and (local.get $zen) (i32.eqz (local.get $ds))) (then (call $d3g_decline (local.get $pb) (i32.const 4))))
     (call $d3g_prepare (local.get $pb) (local.get $t) (i32.const 0))
     (call $d3g_targets (local.get $pb) (i32.load offset=28 (local.get $t)) (local.get $ds))
     (call $d3g_raster (local.get $pb) (local.get $zen)
@@ -1292,7 +1291,8 @@
       (then (local.get $v)) (else (i32.const 4))))
 
   ;; 0x20000: the draw record {this, primitive, vertex type, vertices,
-  ;; count, state}. 1 = drawn on the GPU, 0 = software.
+  ;; count, state}. 1 = lowered into the stream, 0 = nothing to draw (too few
+  ;; vertices, or no target/state to describe). Everything else traps.
   (func $d3g_draw (param $pb i32) (param $desc i32) (result i32)
     (local $this i32) (local $prim i32) (local $vtype i32) (local $verts i32) (local $count i32)
     (local $lines i32) (local $istride i32) (local $dw i32) (local $d i32) (local $t i32)
@@ -1331,7 +1331,7 @@
     (local.set $t (call $d3g_target (local.get $pb) (i32.load (local.get $d)) (i32.load offset=20 (local.get $d))
       (i32.load offset=4 (local.get $d)) (i32.load offset=8 (local.get $d)) (i32.load offset=12 (local.get $d))
       (i32.load offset=16 (local.get $d)) (i32.load offset=24 (local.get $d))))
-    (if (i32.eqz (local.get $t)) (then (return (i32.const 0))))
+    (if (i32.eqz (local.get $t)) (then (call $d3g_decline (local.get $pb) (i32.const 0))))
     (local.set $textured (i32.and (i32.and (i32.eqz (local.get $lines))
         (i32.ne (i32.load offset=88 (local.get $d)) (i32.const 1)))
       (i32.and (i32.and (i32.ne (i32.load offset=28 (local.get $d)) (i32.const 0))
@@ -2204,7 +2204,6 @@
   ;; CPU writes still pending (merging those needs the readback anyway).
   (func $d3dim_gps_blt_begin (param $dst i32) (param $src i32) (param $trans i32) (result i32)
     (local $pb i32) (local $t i32) (local $fmt i32) (local $ok i32)
-    (if (i32.eqz (global.get $d3dim_gpu_on)) (then (return (i32.const 0))))
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
     (if (i32.or (i32.eqz (local.get $pb)) (i32.or (i32.eqz (local.get $src)) (i32.eqz (local.get $dst))))
       (then (return (i32.const 0))))
@@ -2249,7 +2248,6 @@
   (func $d3dim_gps_blt_end (param $dst i32) (param $src i32) (param $dx i32) (param $dy i32)
       (param $sx i32) (param $sy i32) (param $w i32) (param $hgt i32) (param $trans i32)
     (local $pb i32) (local $t i32) (local $x i32) (local $id i32) (local $tw i32) (local $th i32)
-    (if (i32.eqz (global.get $d3dim_gpu_on)) (then (return)))
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
     (if (i32.eqz (local.get $pb)) (then (return)))
     (call $lock_acquire (global.get $D3DIM_GPS))
@@ -2421,18 +2419,14 @@
     (call $lock_release (global.get $D3DIM_GPS))
     (local.get $r))
 
-  ;; The d3dim GPU seam: the WAT producer with $d3dim_gpu_on, otherwise the
-  ;; host (the software render Worker's queued draws and fences).
+  ;; The d3dim GPU seam: always the WAT producer.
   (func $d3dim_gpu_call (param $op i32) (param $wa i32) (param $len i32) (result i32)
-    (if (result i32) (global.get $d3dim_gpu_on)
-      (then (call $d3dim_gps_call (local.get $op) (local.get $wa) (local.get $len)))
-      (else (call $host_gpu_gl_call (local.get $op) (local.get $wa) (local.get $len)))))
+    (call $d3dim_gps_call (local.get $op) (local.get $wa) (local.get $len)))
 
   ;; Final release of surface $entry: drop its GPU resources (the caller has
   ;; already fenced, so nothing is read back here).
   (func $d3dim_gps_forget (param $entry i32)
     (local $pb i32) (local $t i32) (local $i i32) (local $e i32)
-    (if (i32.eqz (global.get $d3dim_gpu_on)) (then (return)))
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
     (if (i32.eqz (local.get $pb)) (then (return)))
     (call $lock_acquire (global.get $D3DIM_GPS))
@@ -2489,7 +2483,6 @@
   ;; all surfaces would see them. Not called on any guest path.
   (func (export "d3dim_gps_sync_all")
     (local $pb i32)
-    (if (i32.eqz (global.get $d3dim_gpu_on)) (then (return)))
     (call $lock_acquire (global.get $D3DIM_GPS))
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
     (if (local.get $pb) (then

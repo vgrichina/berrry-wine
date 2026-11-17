@@ -19,8 +19,6 @@ const extraWat=String.raw`
   (func (export "vb_entry") (param $obj i32) (result i32) (call $dx_from_this (local.get $obj)))
   (func (export "vb_pack") (param $fvf i32) (param $src i32) (param $count i32) (result i32)
     (call $d3dim_pack_fvf_vertices (local.get $fvf) (local.get $src) (local.get $count) (i32.const 0)))
-  (func (export "vb_unpack") (param $fvf i32) (param $src i32) (param $dst i32)
-    (call $d3dim_unpack_tl_vertex (local.get $fvf) (call $g2w (local.get $src)) (call $g2w (local.get $dst))))
   (func (export "vb_copy_texcoords") (param $fvf i32) (param $src i32) (param $dst i32)
     (call $d3dim_vb_copy_texcoords (local.get $fvf) (call $g2w (local.get $src))
       (local.get $fvf) (call $g2w (local.get $dst)) (i32.const 0)))
@@ -122,19 +120,15 @@ const extraWat=String.raw`
         'packing preserves second-vertex stride, color and UV offsets');
       const dst=e.guest_alloc(stride+8)>>>0;
       for(let i=0;i<stride+8;i++)e.guest_write8(dst+i,0xcc);
-      e.vb_unpack(fvf,packed,dst+4);
-      const expected=[0x3f800000,0x40000000,0x40400000];
-      if(reserved)expected.push(0);
-      const header=expected.concat([0xff123456,0xffabcdef,0xcccccccc,0xcccccccc]);
-      assert.deepStrictEqual(header.map((_,j)=>e.guest_read32(dst+4+j*4)>>>0),header,
-        'header unpack leaves texture components for the separate dimensional copy');
       e.vb_copy_texcoords(fvf,data,dst+4);
-      expected.push(0xff123456,0xffabcdef,0x3e800000,0x3f400000);
-      assert.deepStrictEqual(expected.map((_,j)=>e.guest_read32(dst+4+j*4)>>>0),expected,'unpack and dimensional copy write reserved slot and correct colors/UV');
+      const uv=(reserved?4:3)+2;
+      assert.deepStrictEqual([0,1].map(j=>e.guest_read32(dst+4+(uv+j)*4)>>>0),[0x3e800000,0x3f400000],
+        'dimensional copy writes UV after the header and colours');
+      assert.strictEqual(e.guest_read32(dst+4)>>>0,0xcccccccc,'dimensional copy leaves the header alone');
       assert.strictEqual(e.guest_read32(dst)>>>0,0xcccccccc);
       assert.strictEqual(e.guest_read32(dst+stride+4)>>>0,0xcccccccc);
     }
     invoke(`${prefix}_Release`,obj,0,0,0,8);
   }
-  console.log('PASS legacy FVF Create/Lock capacity, neighbor integrity, packing and unpacking');
+  console.log('PASS legacy FVF Create/Lock capacity, neighbor integrity, packing and texcoord copy');
 })().catch(error=>{console.error(error);process.exitCode=1;});

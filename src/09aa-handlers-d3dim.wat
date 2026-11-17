@@ -377,7 +377,6 @@
     ;; Execute buffers never go to the render Worker. With the GPU executor
     ;; their triangles do go to it, in order, so the fence waits for the ops
     ;; that still rasterize into the DIB (points, lines, wireframe).
-    (if (i32.eqz (global.get $d3dim_gpu_on)) (then (call $d3dim_worker_fence)))
     (local.set $saved_extent (global.get $d3dim_exec_extent_guest))
     (local.set $saved_extent_rt (global.get $d3dim_exec_extent_rt))
     (global.set $d3dim_exec_extent_guest (i32.const 0))

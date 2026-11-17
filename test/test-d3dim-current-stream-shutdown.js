@@ -200,18 +200,21 @@ async function workerCases(module) {
 function adapterContract() {
   // Routing contract only: scripted exports are deliberately not native proof.
   const memory = { buffer: new SharedArrayBuffer(256) }, calls = [];
+  // D3DIM draws/clears no longer reach the adapter (GPU stream v2 only);
+  // it replays software OpenGL and the barrier, and refuses the retired ops.
   const adapter = Adapter.create({ memory, instance: { exports: {
-    d3dim_worker_draw: (...args) => calls.push(args), d3dim_worker_flip: () => calls.push('flip'),
+    gl_sw_worker_draw: (...args) => { calls.push(args); return 1; },
   } }, backend: 'software' });
   new Uint32Array(memory.buffer).set([1,2,3,4,5,6], 16);
-  assert.equal(adapter.execute({ opcode: 0x20000, wa: 64 }), 1);
-  assert.deepEqual(calls, [[1,2,3,4,5,6]]);
-  assert.equal(adapter.d3dimSoftwareDrawCallsCompleted, 1);
+  assert.equal(adapter.execute({ opcode: 0x20005, wa: 64 }), 1);
+  assert.deepEqual(calls, [[1,3]]);
+  assert.equal(adapter.d3dimSoftwareDrawCallsCompleted, 0);
   assert.equal(adapter.fence(), 1);
-  assert.equal(adapter.execute({ opcode: 0x20004, wa: 64 }), 0);
+  for (const opcode of [0x20000, 0x20003, 0x20004])
+    assert.throws(() => adapter.execute({ opcode, wa: 64 }), /retired or unknown/);
   assert.throws(() => adapter.diagnostic(), /stream v2 replaced/);
   adapter.destroy(); adapter.destroy();
-  assert.deepEqual(calls, [[1,2,3,4,5,6]], 'destroy creates no delayed native call');
+  assert.deepEqual(calls, [[1,3]], 'destroy creates no delayed native call');
   console.log('PASS synchronous software adapter routing (scripted exports; no async/native claim)');
 }
 (async () => {

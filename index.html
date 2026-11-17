@@ -2758,8 +2758,8 @@ Resource-aware Win98 emulator
     // software fallback when a context or operation is unavailable.
     window.WineD3D = window.WineD3D || {};
     const D3D_MODES = {
-      'webgl':     { renderer: 'webgl',    d3dim: true },
-      'software':  { renderer: 'software', d3dim: false },
+      'webgl':     { renderer: 'webgl' },
+      'software':  { renderer: 'software' },
     };
     function d3dModeName() {
       return window.WineD3D.renderer === 'software' ? 'software' : 'webgl';
@@ -2774,16 +2774,11 @@ Resource-aware Win98 emulator
       const q = new URLSearchParams(location.search);
       // Keep old URLs usable, but every selector now controls both versions.
       // The unified parameter takes precedence over the old D3D9 spelling.
-      const wanted = q.get('d3d-renderer') ?? q.get('d3d9-renderer') ??
-        (q.has('d3dim-gpu') && /^(0|false|off)$/i.test(q.get('d3dim-gpu')) ? 'software' : 'webgl');
+      const wanted = q.get('d3d-renderer') ?? q.get('d3d9-renderer') ?? 'webgl';
       window.WineD3D.renderer = wanted === 'software' ? 'software' : 'webgl';
-      window.WINE_D3DIM_GPU = window.WineD3D.renderer === 'webgl';
       window.addEventListener('load', syncD3DSelect);
       // Lazy surface sync is on unless ?no-lazy-sync; the toolbar box follows.
       window.WINE_D3DIM_LAZY_SYNC = !q.has('no-lazy-sync');
-      // D3DIM frames go straight from the GPU to the page unless
-      // ?no-d3dim-gpu-present (docs/d3dim-gpu-present.md).
-      window.WINE_D3DIM_GPU_PRESENT = !q.has('no-d3dim-gpu-present');
       window.addEventListener('load', () => {
         const box = document.getElementById('lazy-sync-toggle');
         if (box) box.checked = window.WINE_D3DIM_LAZY_SYNC;
@@ -2793,10 +2788,8 @@ Resource-aware Win98 emulator
       const mode = D3D_MODES[value];
       if (!mode) return;
       window.WineD3D.renderer = mode.renderer;
-      window.WINE_D3DIM_GPU = mode.d3dim;
       syncD3DSelect();
-      appendDebugLog(`[gpu] Glide and D3D8/9 on ${mode.renderer === 'software' ? 'the software backend' : 'WebGL'}, ` +
-        `DX2-7 on ${mode.d3dim ? 'WebGL' : 'the WAT software rasterizer'}` +
+      appendDebugLog(`[gpu] Glide, DX2-7 and D3D8/9 on ${mode.renderer === 'software' ? 'the software executor' : 'WebGL'}` +
         ' — takes effect on the next launch');
     }
     async function setLazySync(on) {

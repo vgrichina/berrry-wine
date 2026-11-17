@@ -16,8 +16,8 @@
 //     total count.
 //
 // Driven through the real seam: a DirectDraw surface + D3D device built by
-// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) with
-// $d3dim_gpu_on = 1, the ring drained into lib/gpu-stream-software.js.
+// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) (the GPU stream
+// producer, unconditional), the ring drained into lib/gpu-stream-software.js.
 const assert = require('assert');
 const GS = require('../lib/gpu-stream');
 const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
@@ -44,13 +44,12 @@ const extraWat = String.raw`
     (call $d3dim_set_render_state (local.get $device) (local.get $state) (local.get $value)))
   (func (export "test_gpu_draw") (param $device i32) (param $prim i32) (param $vtype i32)
       (param $verts i32) (param $count i32) (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_worker_try_draw (local.get $device) (local.get $prim) (local.get $vtype)
-      (local.get $verts) (local.get $count)))
+      (local.get $verts) (local.get $count))
+    (i32.const 1))
   ;; A whole-surface D3DCLEAR_TARGET of $color through the producer's 0x20004.
   (func (export "test_gpu_clear") (param $this i32) (param $color i32) (result i32)
     (local $entry i32) (local $ga i32) (local $d i32) (local $r i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (local.set $entry (call $dx_from_this (local.get $this)))
     (local.set $ga (call $heap_alloc (i32.const 64)))
     (local.set $d (call $g2w (local.get $ga)))
@@ -64,7 +63,6 @@ const extraWat = String.raw`
     (call $heap_free (local.get $ga))
     (local.get $r))
   (func (export "test_gps_fence") (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_gpu_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))
 `;
 
@@ -151,8 +149,7 @@ const extraWat = String.raw`
   assert.strictEqual(c.r, 1, 'fully clipped geometry is accepted');
   assert.deepStrictEqual(c.rects, [], 'and adds no coverage');
   c = covered(4, tri(10, 10), 2);
-  assert.strictEqual(c.r, 0, 'a declined shape returns to software');
-  assert.deepStrictEqual([c.rects, c.draws], [[], []], 'and adds no records or coverage');
+  assert.deepStrictEqual([c.rects, c.draws], [[], []], 'an incomplete triangle draws nothing: no records or coverage');
   // With no dirty pixels the fences above had nothing to read back, so the
   // clipped draw's record is still queued; the next readback drains it, in
   // order, ahead of the draw that dirtied the target.

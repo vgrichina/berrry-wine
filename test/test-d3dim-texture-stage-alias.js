@@ -68,10 +68,6 @@ const extraWat = String.raw`
     (call $d3dim_set_render_state (local.get $device) (i32.const 21) (local.get $mode)))
   (func (export "legacy_effective") (param $device i32) (param $type i32) (result i32)
     (call $d3dim_tss_load (call $d3ddev_state (local.get $device)) (i32.const 0) (local.get $type)))
-  (func (export "legacy_combine") (param $device i32) (param $tex i32) (param $diffuse i32) (result i32)
-    (call $d3dim_texture_stage_combine (local.get $tex) (local.get $diffuse)
-      (call $d3dim_stage_operation (call $d3ddev_state (local.get $device)) (i32.const 1))
-      (call $d3dim_stage_operation (call $d3ddev_state (local.get $device)) (i32.const 4))))
   (func (export "d3dim_tss_esp") (result i32) (i32.load offset=16 (global.get $reg_base)))
 `;
 
@@ -179,16 +175,13 @@ const extraWat = String.raw`
     assert(descriptor, 'owning GPU descriptor available');
     assert.strictEqual(new DataView(memory.buffer).getUint32(descriptor + 92, true), 3,
       'GPU descriptor carries the same effective diffuse alpha selection');
-    assert.strictEqual(wat.legacy_combine(device, 0xffffffff, 0x40ffffff) >>> 24, 64);
   }
   for (const fmt of [3, 4, 5, 7]) { // alpha-bearing formats retain texture alpha
     wat.legacy_texture(device, fmt);
     assert.strictEqual(wat.legacy_effective(device, 4), 2);
-    assert.strictEqual(wat.legacy_combine(device, 0x20ffffff, 0x40ffffff) >>> 24, 32);
   }
   wat.legacy_rs(device, 4); // D3DTBLEND_MODULATEALPHA
   assert.strictEqual(wat.legacy_effective(device, 4), 4);
-  assert.strictEqual(wat.legacy_combine(device, 0x20ffffff, 0x40ffffff) >>> 24, 8);
   for (const api of [d3, d7]) {
     wat.d3dim_tss_get(api.id, device, 0, 4, out);
     assert.strictEqual(wat.guest_read32(out), 2, 'legacy lowering preserves raw public TSS query');

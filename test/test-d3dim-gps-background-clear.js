@@ -4,8 +4,7 @@
 // GPU stream producer as the texture stretched nearest-neighbour over the
 // viewport rect ($d3g_clear's textured blit): the texture wins over the
 // diffuse colour, a CPU rewrite of the texture is re-uploaded, an inset rect
-// leaves the outside alone, and the WAT software fill
-// ($viewport_fill_rect_texture) gives the same pixels. Ported from the deleted
+// leaves the outside alone. Ported from the deleted
 // WebGL modes of test-d3dim-background-generated-web.js (its public-COM
 // material/viewport handle plumbing is software-path API, unchanged).
 const assert = require('assert');
@@ -39,8 +38,7 @@ const B = A.map(([r, g, b]) => [b, r, g]), OUTSIDE = [11, 22, 33], FULL = [0, 0,
     for (let y = 0; y < 8; y++) for (let x = 0; x < 12; x++) { const v = m.getUint32(g.dib(s) + y * g.pitch(s) + x * 4, true); out.push([v >>> 16 & 255, v >>> 8 & 255, v & 255]); }
     return out; };
   let observations = 0;
-  for (const gpu of [1, 0]) {
-    g.setGpu(gpu);
+  {
     const rt = g.surface(12, 8, { caps: 0x2840 }), dev = g.device(rt);
     const texture = g.surface(4, 2, { caps: 0x1000 }), alternate = g.surface(4, 2, { caps: 0x1000 });
     fill(texture, A); fill(alternate, B);
@@ -49,14 +47,13 @@ const B = A.map(([r, g, b]) => [b, r, g]), OUTSIDE = [11, 22, 33], FULL = [0, 0,
     rs(7, 0); rs(22, 1); rs(27, 0); tss(1, 2); tss(2, 0); tss(4, 2); tss(5, 0);
     g.vertices(vertices, [[-4, -4, .5, 1, 0xff0b1621], [32, -4, .5, 1, 0xff0b1621], [-4, 24, .5, 1, 0xff0b1621]]);
     e.gd_draw(dev, 4, vertices, 3); g.fence();
-    const label = gpu ? 'GPS' : 'WAT software';
+    const label = 'GPS';
     const observe = (name, tex, colors, rect = FULL, diffuse = [255, 255, 255]) => {
       const before = g.stat(9);
-      if (gpu) assert.strictEqual(e.gd_clear(rt, 1, rgb(diffuse), 1, ...rect, tex), 1, `${label} ${name}: producer takes the clear`);
-      else e.gd_fill(rt, rgb(diffuse), ...rect, tex);
+      assert.strictEqual(e.gd_clear(rt, 1, rgb(diffuse), 1, ...rect, tex), 1, `${label} ${name}: producer takes the clear`);
       g.fence();
       // A textured clear is a blit, not a CLEAR record; a colour clear counts.
-      if (gpu && !tex) assert.strictEqual(g.stat(9), before + 1, name + ' counted as a GPU clear');
+      if (!tex) assert.strictEqual(g.stat(9), before + 1, name + ' counted as a GPU clear');
       assert.deepStrictEqual(read(rt), oracle(colors, rect, OUTSIDE), `PIXEL ORACLE ${label} ${name}`);
       observations++;
     };
@@ -71,5 +68,5 @@ const B = A.map(([r, g, b]) => [b, r, g]), OUTSIDE = [11, 22, 33], FULL = [0, 0,
   }
   const s = g.stats();
   assert.strictEqual(s.fallbacks, 0, 'no software fallback');
-  console.log(`PASS GPS producer textured background clear: ${observations} pixel-oracle observations (GPS and WAT software), clears=${s.clears} readbacks=${s.readbacks}`);
+  console.log(`PASS GPS producer textured background clear: ${observations} pixel-oracle observations, clears=${s.clears} readbacks=${s.readbacks}`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

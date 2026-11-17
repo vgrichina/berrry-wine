@@ -34,7 +34,6 @@ const extraWat = `
 (func (export "file_ga") (result i32)
   (i32.add (global.get $DIB_GUEST_BASE) (i32.const 4096)))
 (func (export "file_arm") (param $this i32)
-  (global.set $d3dim_gpu_on (i32.const 1))
   (global.set $d3dim_lazy_on (i32.const 1))
   (global.set $d3dim_worker_pending (i32.const 1))
   (call $d3dim_lock_fence (call $dx_from_this (local.get $this))))
@@ -43,7 +42,6 @@ const extraWat = `
 ;; lowering (as test-d3dim-surface-fence.js; flag 4 stands in for a draw).
 (func (export "file_paint") (param $this i32) (param $color i32) (param $x i32) (param $w i32) (result i32)
   (local $entry i32) (local $pb i32) (local $t i32) (local $ga i32) (local $d i32) (local $r i32)
-  (global.set $d3dim_gpu_on (i32.const 1))
   (local.set $entry (call $dx_from_this (local.get $this)))
   (call $lock_acquire (global.get $D3DIM_GPS))
   (local.set $pb (call $d3g_pb))

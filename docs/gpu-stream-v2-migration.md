@@ -198,6 +198,7 @@ Without this, every new backend would have to reimplement the 846 lines of
 - **D3. 2D drawing onto GPU surfaces on the GPU.** A Blt or BltFast from a DIB surface becomes an UPLOAD plus a keyed, textured quad. ColorFill becomes a CLEAR. This removes the HUD and sprite readbacks.
   - Apps: gta2_demo, Forsaken, Blood2, Re-Volt.
 - **D4. Move the D3DIM software arm to the v2 software executor.**
+  - **Status (2026-11-17, branch retire/d3dim-20261117): done.** `$d3dim_gpu_call` always calls the producer; the WAT software draw entries (29 functions, ~90 KB), `d3dim_gpu_enable`/`set_d3dim_gpu_present`, the 0x20000-0x20004 host forwarding and the render Worker's D3DIM replay are deleted. A state decline traps. Executors: WebGL, software, null (`--d3dim-renderer`). `test-d3dim-native-mip`, `test-d3dim-worker-parity` and `test-d3dim-publication-source-lifetime` were deleted with the paths they tested. Known gaps the software rasterizer covered: DITHERENABLE/ANTIALIAS pixels, near/far clipping of pre-transformed vertices, and the attached Z surface's DIB (depth is executor-private).
 - **D5. DX6/7 multi-stage texture stages and specular through the 09aj cascade.** Removes the software fallback.
 
 **Risks:**

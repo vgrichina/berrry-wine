@@ -3,8 +3,8 @@
 
 // --plan never compiles, instantiates Wasm or starts a browser.
 // --offline runs the same fixture in node against build/wine-assembly.wasm:
-// 'software' (WAT rasterizer) and 'gps' (the WAT GPU stream producer drained
-// into lib/gpu-stream-software.js), with the nearest/stale/border negatives.
+// 'gps' (the WAT GPU stream producer drained into
+// lib/gpu-stream-software.js; the WAT software rasterizer mode is retired), with the nearest/stale/border negatives.
 // Runtime: LEGACY_RENDER_EVIDENCE=... node test/test-legacy-texture-rendered-contract.js
 // --stateblocks exercises selective Begin/End/Apply/Capture pixels and delayed
 // two-device production Worker batches; requires LEGACY_RENDER_MODULE_DIR=build.
@@ -119,7 +119,7 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     raw=(name,...args)=>link.callExport(name,...args);
     await link.start();
   } else {
-    // gps: $d3dim_gpu_on = 1, the WAT GPU stream producer
+    // gps: the WAT GPU stream producer
     // (src/09abg-d3dim-gps.wat) drained into the GPU stream v2 software
     // executor (lib/gpu-stream-software.js), exactly as test-d3dim-surface-fence.js.
     // The producer never calls gpu_gl_call; an executor error throws out of the kick.
@@ -142,7 +142,7 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     new Uint8Array(memory.buffer).set(pe,await raw('get_staging'));
     check((await raw('load_pe',pe.length))>0,'load_pe bootstrap');
     eq((await raw('get_image_base'))>>>0,config.imageBase,'original PE image base');
-    await raw('init_dx_com_thunks');await raw('d3dim_gpu_enable',mode==='software'?0:1);
+    await raw('init_dx_com_thunks');
     const read=async p=>(await raw('guest_read32',p))>>>0;
     const alloc=async n=>{const p=(await raw('guest_alloc',n))>>>0;check(p,'guest allocation');return p;};
     const wa=p=>raw('guest_to_wasm',p);
@@ -480,14 +480,16 @@ async function browserFixture(mode, config, oracleSource, negative=null) {
     }
     if(mode==='gps'){
       // Producer counters (test/run.js "[d3dim-gps]"): 0 draws, 1 fallbacks,
-      // 2 readbacks, 14 declined. Every public draw lowered, none fell back,
-      // except that $d3g_points keeps POINTLIST on a 32-bit target in software
-      // by design (config.gpsDeclined names how many such draws a fixture makes).
+      // 2 readbacks, 14 declined. Every public draw lowered, none fell back
+      // (config.gpsDeclined names any draw a fixture expects declined).
       const stat=async i=>(await raw('d3dim_gps_stat',i))>>>0;
-      evidence.stats={drawCalls:await stat(0),fallbacks:await stat(1),readbacks:await stat(2),declined:await stat(14)};
+      evidence.stats={drawCalls:await stat(0),fallbacks:await stat(1),readbacks:await stat(2),declined:await stat(14),points:await stat(12)};
       const declined=config.gpsDeclined|0;
       eq(evidence.stats.declined,declined,'declined draws '+JSON.stringify(evidence.stats));
-      eq(evidence.stats.drawCalls,drawCount-declined,'every draw reached the WAT GPU producer');
+      // A lowered POINTLIST counts points (stat 12), not draws (stat 0).
+      const pointDraws=config.gpsPointDraws|0;
+      eq(evidence.stats.drawCalls,drawCount-declined-pointDraws,'every draw reached the WAT GPU producer');
+      check(!pointDraws||evidence.stats.points>=pointDraws,'POINTLIST draws lowered as points '+JSON.stringify(evidence.stats));
       eq(evidence.stats.fallbacks,0,'no software fallback');
       check(evidence.stats.readbacks>0,'public Lock read the GPU target back');
     }
@@ -523,7 +525,7 @@ async function runtime() {
   evidence.productionJS=Object.fromEntries(fs.readdirSync(path.join(ROOT,'lib')).filter(p=>p.endsWith('.js')||p.endsWith('.json'))
     .map(p=>['lib/'+p,sha(fs.readFileSync(path.join(ROOT,'lib',p)))]));
   const config={...plan(cubeBorder),stateblocks,immediate,
-    ...(immediate?{gpsDeclined:2,immediateSource:require('./test-d3dim-immediate-drawing').immediateFixture.toString()}:{}),
+    ...(immediate?{gpsDeclined:0,gpsPointDraws:2,immediateSource:require('./test-d3dim-immediate-drawing').immediateFixture.toString()}:{}),
     thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
   const bootstrapPE=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
@@ -559,14 +561,14 @@ async function runtime() {
     const child=browser.process();evidence.browserProcess={pid:child.pid,startTicks:fs.readFileSync('/proc/'+child.pid+'/stat','utf8').split(') ')[1].split(' ')[19]};
     evidence.browserProcess.profile=child.spawnargs.find(a=>a.startsWith('--user-data-dir='))?.slice('--user-data-dir='.length);
     child.once('exit',(code,signal)=>{evidence.browserProcess.exit={code,signal,at:new Date().toISOString()};});
-    for(const mode of ['software','gps','worker']){
+    for(const mode of ['gps','worker']){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       evidence.results.push(await page.evaluate(browserFixture,mode,config,oracle.toString()));
       await page.screenshot({path:path.join(dir,mode+'.png'),fullPage:true});await page.close();page=null;
       console.log('PASS public-COM '+(immediate?'Device2/3 immediate':stateblocks?'selective state-block':'sampler')+' rendered pixels '+mode);
     }
-    for(const [negative,mode] of immediate?[['dropped','software'],['cross-device','software'],['queued-vertices','worker']]:stateblocks?[['recording','software'],['full-state','software'],['queued-stale','worker'],['queued-cross','worker']]:cubeBorder?['software','gps','worker'].map(m=>['border',m])
-      :['nearest','stale'].map(n=>[n,'software'])){
+    for(const [negative,mode] of immediate?[['dropped','gps'],['cross-device','gps'],['queued-vertices','worker']]:stateblocks?[['recording','gps'],['full-state','gps'],['queued-stale','worker'],['queued-cross','worker']]:cubeBorder?['gps','worker'].map(m=>['border',m])
+      :['nearest','stale'].map(n=>[n,'gps'])){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       let failure;
       const negativeConfig=negative==='border'?{...config,states:config.states.filter(s=>s.address===4)}:config;
@@ -612,8 +614,8 @@ async function runtime() {
 }
 
 // Node, no browser: the same serialized fixture in a vm context against the
-// built module. 'software' is the WAT rasterizer; 'gps' is the WAT GPU stream
-// producer drained into lib/gpu-stream-software.js.
+// built module. 'gps' is the WAT GPU stream producer drained into
+// lib/gpu-stream-software.js (the only D3DIM path).
 function offlineContext(wasm) {
   const routes=new Map([['/legacy-render.wasm',wasm||fs.readFileSync(path.join(ROOT,'build/wine-assembly.wasm'))],
     ['/test/binaries/calc.exe',fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))],
@@ -638,13 +640,13 @@ function offlineConfig(cubeBorder=false) {
 async function offline() {
   for(const cubeBorder of [false,true]){
     const config=offlineConfig(cubeBorder);
-    for(const mode of ['software','gps']){
+    for(const mode of ['gps']){
       const result=await runOffline(mode,config,oracle.toString());
       assert.equal(result.status,'PASS');
       console.log(`PASS offline ${mode}${cubeBorder?' cube-border':''}: ${result.observations.length} public-COM sampler pixels`+
         (result.stats?` (gps draws=${result.stats.drawCalls} readbacks=${result.stats.readbacks})`:''));
     }
-    const negatives=cubeBorder?['software','gps'].map(m=>['border',m]):[['nearest','software'],['stale','software'],['nearest','gps'],['stale','gps']];
+    const negatives=cubeBorder?[['border','gps']]:[['nearest','gps'],['stale','gps']];
     for(const [negative,mode] of negatives){
       const c=negative==='border'?{...config,states:config.states.filter(s=>s.address===4)}:{...config};
       let failure;try{await runOffline(mode,c,oracle.toString(),negative);}catch(error){failure=String(error);}
@@ -654,9 +656,9 @@ async function offline() {
     }
   }
   const variants={stateblocks:{stateblocks:true},
-    // One POINTLIST per 8x8 X8R8G8B8 device: two draws $d3g_points declines.
-    immediate:{immediate:true,gpsDeclined:2,immediateSource:require('./test-d3dim-immediate-drawing').immediateFixture.toString()}};
-  for(const [name,extra] of Object.entries(variants))for(const mode of ['software','gps']){
+    // $d3g_points lowers POINTLIST on every target format now: nothing declined.
+    immediate:{immediate:true,gpsDeclined:0,gpsPointDraws:2,immediateSource:require('./test-d3dim-immediate-drawing').immediateFixture.toString()}};
+  for(const [name,extra] of Object.entries(variants))for(const mode of ['gps']){
     const result=await runOffline(mode,{...offlineConfig(),...extra},oracle.toString());
     assert.equal(result.status,'PASS');
     console.log(`PASS offline ${name} ${mode}: ${result.observations.length} pixels`+
