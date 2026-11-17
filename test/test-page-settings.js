@@ -27,11 +27,19 @@ assert.strictEqual(normalize2dScalingMode('bogus'), 'nearest');
 assert.strictEqual(normalizeDeditherMode('checkerboard'), 'mdapt');
 assert.strictEqual(normalizeDeditherMode('ordered2'), 'mdapt');
 assert.strictEqual(normalizeDeditherMode('bogus'), 'off');
-assert.deepStrictEqual(normalizeCrtEffects({ scanlines: 1, mask: 0, glow: 'yes' }), {
-  scanlines: true,
-  mask: false,
-  glow: true,
-});
+// The old three-checkbox preference maps onto a preset: any on -> VGA.
+assert.deepStrictEqual(normalizeCrtEffects({ scanlines: 1, mask: 0, glow: 'yes' }),
+  { preset: 'vga', curvature: false, persistence: false });
+assert.deepStrictEqual(normalizeCrtEffects({ scanlines: false, mask: false, glow: false }),
+  { preset: 'off', curvature: false, persistence: false });
+assert.deepStrictEqual(normalizeCrtEffects(null),
+  { preset: 'off', curvature: false, persistence: false },
+  'a user who never enabled CRT stays at Off');
+assert.deepStrictEqual(normalizeCrtEffects({ preset: 'arcade', curvature: 1 }),
+  { preset: 'arcade', curvature: true, persistence: false });
+assert.deepStrictEqual(normalizeCrtEffects({ preset: 'bogus', scanlines: true }),
+  { preset: 'off', curvature: false, persistence: false },
+  'an explicit but unknown preset fails closed to Off');
 
 const values = new Map([
   [RUNTIME_LOG_KEY, '1'],
@@ -51,9 +59,9 @@ const elements = new Map([
   ['runtime-log-toggle', { checked: true }],
   ['presentation-scale-select', { value: 'nearest' }],
   ['presentation-dedither-select', { value: 'off' }],
-  ['crt-scanlines-toggle', { checked: false }],
-  ['crt-mask-toggle', { checked: false }],
-  ['crt-glow-toggle', { checked: false }],
+  ['crt-preset-select', { value: 'off' }],
+  ['crt-curvature-toggle', { checked: false }],
+  ['crt-persistence-toggle', { checked: false }],
 ]);
 const document = { getElementById: id => elements.get(id) || null };
 const pageWindow = { location: { search: '?debug&no-log' } };
@@ -80,10 +88,11 @@ assert.strictEqual(elements.get('presentation-scale-select').value, 'scale-auto'
 assert.strictEqual(pageWindow.WINE_DEDITHER_MODE, 'mdapt');
 assert.strictEqual(elements.get('presentation-dedither-select').value, 'mdapt');
 assert.deepStrictEqual(pageWindow.WINE_CRT_EFFECTS,
-  { scanlines: true, mask: false, glow: true });
-assert.strictEqual(elements.get('crt-scanlines-toggle').checked, true);
-assert.strictEqual(elements.get('crt-mask-toggle').checked, false);
-assert.strictEqual(elements.get('crt-glow-toggle').checked, true);
+  { preset: 'vga', curvature: false, persistence: false },
+  'a saved legacy CRT preference should restore as the VGA preset');
+assert.strictEqual(elements.get('crt-preset-select').value, 'vga');
+assert.strictEqual(elements.get('crt-curvature-toggle').checked, false);
+assert.strictEqual(elements.get('crt-persistence-toggle').checked, false);
 
 assert.strictEqual(settings.setRuntimeLogging(true), true);
 assert.strictEqual(pageWindow.WINE_RUNTIME_LOGGING, true);
@@ -99,17 +108,29 @@ assert.strictEqual(pageWindow.WINE_DEDITHER_MODE, 'jinc2');
 assert.deepStrictEqual(calls.pop(), ['dedither', 'jinc2']);
 assert.deepStrictEqual(writes.pop(), [PRESENTATION_DEDITHER_KEY, 'jinc2']);
 
-elements.get('crt-scanlines-toggle').checked = false;
-elements.get('crt-mask-toggle').checked = true;
-elements.get('crt-glow-toggle').checked = false;
-assert.deepStrictEqual(settings.applyCrtEffects(),
-  { scanlines: false, mask: true, glow: false });
-assert.deepStrictEqual(pageWindow.WINE_CRT_EFFECTS,
-  { scanlines: false, mask: true, glow: false });
-assert.deepStrictEqual(calls.pop(), ['crt',
-  { scanlines: false, mask: true, glow: false }]);
-assert.deepStrictEqual(writes.pop(), [PRESENTATION_CRT_KEY,
-  JSON.stringify({ scanlines: false, mask: true, glow: false })]);
+elements.get('crt-preset-select').value = 'arcade';
+elements.get('crt-curvature-toggle').checked = true;
+elements.get('crt-persistence-toggle').checked = false;
+const arcade = { preset: 'arcade', curvature: true, persistence: false };
+assert.deepStrictEqual(settings.applyCrtEffects(), arcade);
+assert.deepStrictEqual(pageWindow.WINE_CRT_EFFECTS, arcade);
+assert.deepStrictEqual(calls.pop(), ['crt', arcade]);
+assert.deepStrictEqual(writes.pop(), [PRESENTATION_CRT_KEY, JSON.stringify(arcade)]);
+
+// No saved preference at all: CRT is Off, and the select shows it.
+{
+  const fresh = new Map([['crt-preset-select', { value: 'vga' }]]);
+  const freshWindow = { location: { search: '' } };
+  createPageSettings({
+    window: freshWindow,
+    document: { getElementById: id => fresh.get(id) || null },
+    storage: { getItem: () => null, setItem() {} },
+    getRenderer: () => null,
+  });
+  assert.deepStrictEqual(freshWindow.WINE_CRT_EFFECTS,
+    { preset: 'off', curvature: false, persistence: false });
+  assert.strictEqual(fresh.get('crt-preset-select').value, 'off');
+}
 
 assert.doesNotThrow(() => createPageSettings({
   window: {},

@@ -23,9 +23,9 @@ assert(html.includes('<option value="fsr1">FSR 1 (EASU + RCAS)</option>'));
 assert(html.includes('id="presentation-dedither-select"'));
 assert(html.includes('<option value="mdapt">MDAPT</option>'));
 assert(html.includes('<option value="jinc2">Jinc2</option>'));
-assert(html.includes('id="crt-scanlines-toggle"'));
-assert(html.includes('id="crt-mask-toggle"'));
-assert(html.includes('id="crt-glow-toggle"'));
+assert(html.includes('id="crt-preset-select"'));
+assert(html.includes('id="crt-curvature-toggle"'));
+assert(html.includes('id="crt-persistence-toggle"'));
 assert(!html.includes('<option value="stretch"'),
   'presentation scaling must never offer aspect-ratio stretching');
 // 8c7314234 scales against stageH (the board's share of the display height)
@@ -230,10 +230,16 @@ assert.strictEqual(renderer.setPresentationDeditherMode('unknown'), 'off');
 
 assert.deepStrictEqual(
   renderer.setPresentationEffects({ scanlines: 1, mask: false, glow: true }),
-  { scanlines: true, mask: false, glow: true });
+  { preset: 'vga', curvature: false, persistence: false },
+  'legacy CRT flags should map onto the VGA preset');
+assert.deepStrictEqual(
+  renderer.setPresentationEffects({ preset: 'arcade', persistence: true }),
+  { preset: 'arcade', curvature: false, persistence: true });
 assert.deepStrictEqual(renderer.presentationEffects,
-  { scanlines: true, mask: false, glow: true },
-  'CRT effects should remain independent from the selected scaler');
+  { preset: 'arcade', curvature: false, persistence: true },
+  'the CRT preset should be held independently of the selected scaler');
+assert.strictEqual(renderer.presentationScaleMode, 'fsr1');
+renderer.setPresentationEffects({});
 
 assert.strictEqual(renderer.setPresentationScaleMode('unknown'), 'nearest',
   'unknown modes should fail closed to nearest-neighbour');

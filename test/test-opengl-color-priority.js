@@ -26,7 +26,7 @@ async function run(){
    source=fs.readFileSync(path.join(baseline,file),'utf8');
   return file==='13-exports.wat'?source+extraWat:source;
  }
- const queued=process.argv.includes('--worker');let owner=0;let encoder=null,manager=null,bridge=null,render=null,producer=null,memory;
+ const queued=(()=>{if(process.argv.some(a=>a==='--worker'||a==='--worker-fallback'))throw new Error('the --worker arm replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');return false;})();let owner=0;let encoder=null,manager=null,bridge=null,render=null,producer=null,memory;
  const captures=[],cases=[],events=[]; let prebuiltModule=null;
  const recordModule=bytes=>{const sha=require('crypto').createHash('sha256').update(bytes).digest('hex');console.log('NATIVE_MODULE_SHA256',sha,'bytes',bytes.length);if(process.env.GL_COLOR_PRIORITY_MODULE_OUT)fs.writeFileSync(process.env.GL_COLOR_PRIORITY_MODULE_OUT,bytes);};
  if(process.env.GL_COLOR_PRIORITY_MUTATION){

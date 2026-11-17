@@ -178,11 +178,13 @@ const NO_RENDERER = hasFlag('no-renderer'); // --no-renderer: skip CLI canvas/re
 // Keep capability opt-in separate: the implementation is not a full SM profile.
 const D3D9_RENDERER = getArg('d3d9-renderer', null);
 const D3D9_PROGRAMMABLE = hasFlag('d3d9-programmable');
-// --gl-renderer=software: draw OpenGL in WAT (src/09a8g-gl-raster.wat) into a
-// DirectDraw surface. Needs no --headless-gl and no native deps, so it is the
-// only way a GL app gets a context on a box without a display; --png captures
-// the surface like any DX primary. The browser twin is ?gl-renderer=software.
-const GL_RENDERER = getArg('gl-renderer', null);
+// OpenGL is drawn in WAT (src/09a8g-gl-raster.wat) and lowered onto GPU
+// stream v2 (src/09a8gt-gl-gps.wat): the default, and the browser's. It needs
+// no --headless-gl and no native deps, so a GL app gets a context on any box;
+// --png captures the presented frame. WAT owns the WGL contexts
+// (src/09a8cw-gl-wgl.wat); the JS FixedFunctionGL path (--gl-renderer=webgl)
+// is retired.
+const GL_RENDERER = getArg('gl-renderer', 'software');
 const GLIDE_RENDERER = getArg('glide-renderer', 'webgl');
 // null: the GPU stream null executor (validates records, draws nothing).
 if (!['software', 'webgl', 'null'].includes(GLIDE_RENDERER))
@@ -191,8 +193,8 @@ if (!['software', 'webgl', 'null'].includes(GLIDE_RENDERER))
 // (with its arena inputs) into a lib/gpu-stream.js DumpWriter at FILE, for
 // tools/gpu-stream.js list|stats|replay.
 const GPU_STREAM_DUMP = getArg('gpu-stream-dump', null);
-if (GL_RENDERER !== null && GL_RENDERER !== 'software' && GL_RENDERER !== 'webgl') {
-  throw new Error('--gl-renderer must be software or webgl');
+if (GL_RENDERER !== 'software') {
+  throw new Error('--gl-renderer must be software (the JS webgl renderer is retired; --headless-gl puts GL on the WebGL executor)');
 }
 // --d3d-worker: rasterize D3DIM (DX2-7) draws on a render worker_thread over
 // the shared memory, the CLI twin of the browser's render Worker. The guest's
@@ -205,12 +207,31 @@ const D3D_WORKER = hasFlag('d3d-worker');
 const D3DIM_GPU = hasFlag('d3dim-gpu');
 if (D3DIM_GPU && D3D_WORKER) { console.error('--d3dim-gpu and --d3d-worker are exclusive'); process.exit(2); }
 if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --headless-gl'); process.exit(2); }
-// --gl-gps: put software GL (--gl-renderer=software) on GPU stream v2: the
-// WAT producer (src/09a8gt-gl-gps.wat) lowers its screen-space triangles,
-// clears and swaps into a ring the software executor drains.
-// --gl-gps=webgl picks the WebGL executor (needs --headless-gl).
-const GL_GPS = hasFlag('gl-gps') || getArg('gl-gps', null) !== null;
-const GL_GPS_BACKEND = getArg('gl-gps', null) || 'software';
+// Software GL (--gl-renderer=software) on GPU stream v2: the WAT producer
+// (src/09a8gt-gl-gps.wat) lowers its screen-space triangles, clears and
+// swaps into a ring an executor drains. On by default: the WebGL executor
+// with --headless-gl, the software executor (lib/gpu-stream-software.js)
+// without one. --gl-gps (bare) forces the software executor,
+// --gl-gps=webgl|software|null picks one, --gl-gps=off keeps software GL
+// drawing the DIB.
+const GL_GPS_ARG = getArg('gl-gps', null);
+if (GL_GPS_ARG !== null && !['off', 'software', 'webgl', 'null'].includes(GL_GPS_ARG))
+  throw new Error('--gl-gps must be off, software, webgl or null');
+const GL_GPS = GL_GPS_ARG !== 'off';
+const GL_GPS_BACKEND = GL_GPS_ARG !== null && GL_GPS_ARG !== 'off' ? GL_GPS_ARG
+  : hasFlag('gl-gps') || !hasFlag('headless-gl') ? 'software' : 'webgl';
+// --d3d9-gps[=software|webgl|none|off]: D3D9 / D3D8 frames are also lowered
+// onto GPU stream v2 (src/09akg-d3d9-gps.wat), which leads once its frames
+// hold (d3d9-retire S1). On by default (slice 9.5b); --d3d9-gps=off or
+// --no-d3d9-gps turns the arm off. The executor follows the D3D9 renderer
+// unless one is named: webgl with --headless-gl, software for the software
+// renderer, and none when the D3D9 renderer has no GPU either (WebGL
+// without --headless-gl), since WAT now decides caps from the executor
+// (d3d9-retire S2). 'none' is a host without an executor (the arm turns
+// itself off).
+const D3D9_GPS_ARG = getArg('d3d9-gps', null);
+const D3D9_GPS = !hasFlag('no-d3d9-gps') && D3D9_GPS_ARG !== 'off';
+const D3D9_GPS_EXPLICIT = D3D9_GPS_ARG !== null && D3D9_GPS_ARG !== 'off' && D3D9_GPS_ARG !== '';
 if (args.some(arg => arg === '--gl-encoder' || arg.startsWith('--gl-encoder='))) {
   throw new Error('--gl-encoder was removed; OpenGL encoding always runs in WAT');
 }
@@ -441,73 +462,10 @@ const DX_SURFACES = hasFlag('dx-surfaces'); // --dx-surfaces: print the DX_OBJEC
 // real pixel format (565/555/1555/4444/8888) through the same WAT decoder both D3DIM backends sample with.
 const DUMP_DX_SURFACES = getArg('dump-dx-surfaces', null);
 const GL_CENSUS = hasFlag('gl-census'); // --gl-census: at exit, which GL entry points this run actually issued, and whether the WAT mirror stayed trusted
-// --trace-gl[=Name1,Name2]: one line per GL command as the backend receives it,
-// arguments as hex with a float reading beside any word that looks like one
-// (GL passes GLfloat and GLenum through the same stack slots), and for a
-// packed draw its vertex count and first vertex. Honours --trace-from/-to.
-const TRACE_GL_RAW = args.find(a => a === '--trace-gl' || a.startsWith('--trace-gl='));
-const TRACE_GL_VERTS = hasFlag('trace-gl-verts'); // with --trace-gl: print every vertex of each packed draw
-if (TRACE_GL_RAW) {
-  const GLCompatTrace = require('../lib/gl-compat');
-  const only = TRACE_GL_RAW.includes('=')
-    ? new Set(TRACE_GL_RAW.slice(TRACE_GL_RAW.indexOf('=') + 1).split(',').filter(Boolean)) : null;
-  const names = GLCompatTrace.OP_NAMES || GLCompatTrace.CALLS;
-  // Entry points whose arguments are all GLdouble, and how many.
-  const GL_DOUBLE_ARGS = { gluLookAt: 9, gluPerspective: 4, gluOrtho2D: 4, glOrtho: 6,
-    glFrustum: 6, glDepthRange: 2, glClearDepth: 1, glTranslated: 3, glScaled: 3, glRotated: 4 };
-  const word = (dv, off) => {
-    const u = dv.getUint32(off, true) >>> 0;
-    const f = dv.getFloat32(off, true);
-    const a = Math.abs(f);
-    const floaty = u > 0xFFFF && Number.isFinite(f) && a >= 1e-4 && a <= 1e6;
-    return floaty ? `0x${u.toString(16)}~${+f.toPrecision(5)}` : `0x${u.toString(16)}`;
-  };
-  GLCompatTrace.hooks.trace = (slot, opcode, aux, capture) => {
-    if (!traceWindowOpen()) return;
-    const name = names[slot] || `op${opcode}`;
-    if (only && !only.has(name)) return;
-    const parts = [];
-    const doubles = GL_DOUBLE_ARGS[name] || 0;
-    if (capture && capture.buffer && doubles && capture.stackBytes >= 4 + doubles * 8) {
-      // Every argument is a GLdouble: print them as numbers, all of them.
-      // Split into words and capped at ten, gluLookAt lost its up vector.
-      const dv = new DataView(capture.buffer, capture.stackOffset, capture.stackBytes);
-      for (let i = 0; i < doubles; i++) parts.push(`${+dv.getFloat64(4 + i * 8, true).toPrecision(6)}`);
-    } else if (capture && capture.buffer && capture.stackBytes >= 8) {
-      const dv = new DataView(capture.buffer, capture.stackOffset, capture.stackBytes);
-      for (let off = 4; off + 4 <= capture.stackBytes && parts.length < 10; off += 4) parts.push(word(dv, off));
-    }
-    let tail = '';
-    if (capture && capture.pointerOffset && capture.pointerLength) {
-      tail = ` ptr=${capture.pointerLength}B`;
-      if (capture.pointerLength % 76 === 0) {
-        const v = new Float32Array(capture.buffer, capture.pointerOffset, 19);
-        tail += ` verts=${capture.pointerLength / 76} v0=(${Array.from(v.slice(0, 3), x => +x.toPrecision(4))})`
-          + ` rgba=(${Array.from(v.slice(3, 7), x => +x.toPrecision(3))})`;
-        if (TRACE_GL_VERTS) {
-          // --trace-gl-verts: every vertex of the packed draw, object-space
-          // x,y,z and unit-0 u,v, for finding the one triangle that is wrong.
-          const all = new Float32Array(capture.buffer, capture.pointerOffset, capture.pointerLength / 4);
-          const rows = [];
-          for (let i = 0; i + 19 <= all.length; i += 19) {
-            rows.push(`  [gl]   v${i / 19} xyz=(${Array.from(all.slice(i, i + 3), x => +x.toPrecision(6))}) w=${+all[i + 14].toPrecision(4)}`
-              + ` uv=(${+all[i + 7].toPrecision(4)},${+all[i + 8].toPrecision(4)})`
-              + (all[i + 16] !== 1 ? ` q=${+all[i + 16].toPrecision(4)}` : ''));
-          }
-          tail += '\n' + rows.join('\n');
-        }
-      } else if (capture.pointerLength <= 64 && capture.pointerLength % 4 === 0) {
-        // A small array argument (glFogfv, glLightfv, glLoadMatrixf): its
-        // values, since the guest pointer is gone by the time anyone asks.
-        const dv = new DataView(capture.buffer, capture.pointerOffset, capture.pointerLength);
-        const vals = [];
-        for (let off = 0; off < capture.pointerLength; off += 4) vals.push(+dv.getFloat32(off, true).toPrecision(5));
-        tail += ` [${vals.join(', ')}]`;
-      }
-    }
-    console.log(`[gl] ${traceGateBatch >= 0 ? `b${traceGateBatch} ` : ''}${name}(${parts.join(', ')}) aux=0x${(aux >>> 0).toString(16)}${tail}`);
-  };
-}
+// --trace-gl hooked the JS GL replay, which is retired: WAT answers every GL
+// call in place (src/09a8cw-gl-wgl.wat). --trace-api=<gl names> traces them.
+if (args.some(a => a === '--trace-gl' || a.startsWith('--trace-gl=') || a === '--trace-gl-verts'))
+  throw new Error('--trace-gl is retired with the JS GL transport; use --trace-api=glBegin,glVertex3f,...');
 const TRACE_DX_RAW = hasFlag('trace-dx-raw'); // --trace-dx-raw: on each Execute, walk+hexdump the full instruction stream
 const TRACE_FS = hasFlag('trace-fs');     // --trace-fs: log filesystem CreateFile hits/misses
 const QUIET_FS = hasFlag('quiet-fs');     // --quiet-fs: omit ReadFile diagnostics implied by --trace-api; explicit --trace-fs wins
@@ -2809,9 +2767,13 @@ async function main() {
     // when no GPU is available. An explicit --d3d9-renderer always wins.
     d3d9Backend: D3D9_RENDERER
       || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl'),
-    glBackend: GL_RENDERER || 'webgl',
     glideBackend: GLIDE_RENDERER,
     glGpsBackend: GL_GPS_BACKEND,
+    d3d9GpsBackend: D3D9_GPS_EXPLICIT ? D3D9_GPS_ARG
+      : (HEADLESS_GL && (D3D9_RENDERER || 'webgl') === 'webgl' ? 'webgl'
+        : (D3D9_RENDERER || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl')) === 'software'
+          ? 'software' : 'none'),
+    glGps: GL_GPS,
     gpuStreamDump: GPU_STREAM_DUMP,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
     createD3DRenderWorker: () => {
@@ -5258,6 +5220,10 @@ async function main() {
   // ring that lib/d3dim-host.js drains (host-imports gpu_stream_kick).
   if (D3DIM_GPU) instance.exports.d3dim_gpu_enable(1);
   if (GL_GPS) instance.exports.gl_gps_enable(1);
+  instance.exports.d3d9_gps_enable?.(D3D9_GPS ? 1 : 0);
+  // D3D9/D3D8 presents so far (09akg stat 4 GPU + 5 old-path frames), for --cpu-window.
+  const d3d9Frames = () => instance.exports.d3d9_gps_stat
+    ? (instance.exports.d3d9_gps_stat(4) >>> 0) + (instance.exports.d3d9_gps_stat(5) >>> 0) : 0;
   // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
   // turns it off there); the WAT default and the CLI default are off.
   if (D3DIM_GPU && hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
@@ -8227,11 +8193,11 @@ async function main() {
       break;
     }
     for (const w of CPU_WINDOWS) {
-      if (!w.cpu && !w.done && batch >= w.start) { w.cpu = process.cpuUsage(); w.wall = performance.now(); }
+      if (!w.cpu && !w.done && batch >= w.start) { w.cpu = process.cpuUsage(); w.wall = performance.now(); w.d9 = d3d9Frames(); }
       else if (w.cpu && !w.done && batch >= w.stop) {
         const d = process.cpuUsage(w.cpu);
         w.done = true;
-        console.log(`[cpu-window] batches ${w.start}..${w.stop}: user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s`);
+        console.log(`[cpu-window] batches ${w.start}..${w.stop}: user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}`);
       }
     }
     if (cpuProf) {
@@ -11922,7 +11888,7 @@ if (VERBOSE) {
     if (!w.cpu || w.done) continue;
     const d = process.cpuUsage(w.cpu);
     w.done = true;
-    console.log(`[cpu-window] batches ${w.start}..run end (asked ${w.stop}): user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s`);
+    console.log(`[cpu-window] batches ${w.start}..run end (asked ${w.stop}): user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}`);
   }
   // The control server would otherwise hold the process open; unref lets a
   // reply resolved in the final batch still flush while the exit path prints.
@@ -11940,7 +11906,8 @@ if (VERBOSE) {
       + ` gpuBltFastKeyed=${st(32)} gpuBltFastUpload=${st(33)} readbackBytes=${st(34)}`
       + ` lazyLocks armed=${instance.exports.get_d3dim_lazy_armed?.() ?? 0}`
       + ` touched=${instance.exports.get_d3dim_lazy_touched?.() ?? 0}`
-      + ` untouched=${instance.exports.get_d3dim_lazy_untouched?.() ?? 0}`);
+      + ` untouched=${instance.exports.get_d3dim_lazy_untouched?.() ?? 0}`
+      + ` overwritten=${st(43)}`);
     // Software declines by reason ($d3g_decline).
     const why = ['stageArg', 'texture', 'zfunc', 'blendFactor', 'noDepth', 'clearTarget', 'clearBackground'];
     console.log('[d3dim-gps] decline reasons ' + why.map((n, i) => `${n}=${st(35 + i)}`).join(' '));
@@ -13094,55 +13061,14 @@ if (VERBOSE) {
   }
 
   if (GL_CENSUS) {
-    // Which GL entry points did this app really use? The counters are
-    // load-immune, so this is readable on a busy box where no timing is.
-    const GLCompat = require('../lib/gl-compat');
-    const stats = GLCompat.stats;
-    const ops = stats.ops;
-    const names = GLCompat.OP_NAMES || GLCompat.CALLS;
-    const seen = [];
-    for (let i = 0; i < ops.length; i++) {
-      if (ops[i]) seen.push([names[i] || `op${i}`, ops[i], i]);
-    }
-    seen.sort((a, b) => b[1] - a[1]);
-    const total = seen.reduce((n, entry) => n + entry[1], 0);
-    console.log(`[gl-census] ${seen.length} distinct GL entry point(s), ${total} call(s)`);
-    for (const [name, count, index] of seen) {
-      console.log(`  ${String(count).padStart(10)}  ${name} (#${index})`);
-    }
-    // Geometry does NOT show up as glBegin/glVertex in the list above once the
-    // encoder packs a span: it arrives as one packed-draw record carrying many
-    // vertices. Print the executor's own counters beside the histogram so a
-    // run that draws plenty can never read as a run that draws nothing.
-    console.log(`[gl-census] packed spans enqueued=${stats.enqueued} draws=${stats.draws}` +
-      ` vertices=${stats.drawVertices} presents=${stats.presents}` +
-      ` frontFlushes=${stats.frontFlushes}`);
-    // The families src/09a8f-gl-matrix.wat cannot mirror yet. A zero here is
-    // what licenses a consumer to trust the WAT state for THIS app; it is not
-    // a general claim, which is exactly why it is printed per run.
-    // This list is EMPTY for the first time: gluPerspective/gluLookAt/
-    // gluOrtho2D, then glPushAttrib/glPopAttrib, all grew mirrors. It is kept
-    // rather than deleted because it is the shape the next gap gets reported
-    // in, and because an empty list and a missing check print differently
-    // below.
-    //
-    // With nothing in it the latch beside it is the only reading that can
-    // move, and it still can: the mirror caps the attribute stack at GL's
-    // required minimum of 16 and latches on a deeper push, because a dropped
-    // push leaves every later pop restoring the wrong nesting level.
-    const UNMIRRORED = [];
-    const used = UNMIRRORED.filter(name => {
-      const index = GLCompat.CALL_INDEX[name];
-      return index !== undefined && ops[index];
-    });
-    // The WAT mirror's own verdict, which is the one that counts: the JS list
-    // above says what was called, this says whether the mirror noticed. They
-    // are printed together because a disagreement is itself the finding.
+    // WAT's own readings: the GL mirror's untrusted latch and the software
+    // rasterizer's counters. (The JS per-entry-point histogram went with the
+    // JS GL transport; --host-census / --trace-api count calls.)
+    const GLCalls = require('../lib/gl-compat').CALLS;
     const latched = instance.exports.gl_mtx_untrusted
       ? instance.exports.gl_mtx_untrusted() | 0 : -1;
-    const latchedName = latched > 0 ? (GLCompat.CALLS[latched] || `op${latched}`) : '';
-    console.log(`[gl-census] unmirrored families used: ${used.length ? used.join(', ') : 'none'}` +
-      `; WAT untrusted latch: ${latched < 0 ? 'export missing'
+    const latchedName = latched > 0 ? (GLCalls[latched] || `op${latched}`) : '';
+    console.log(`[gl-census] WAT untrusted latch: ${latched < 0 ? 'export missing'
         : latched === 0 ? 'clear' : `${latchedName} (#${latched})`}`);
     // The WAT software rasterizer (src/09a8g-gl-raster.wat): what it drew and
     // what it had to drop for want of near-plane clipping, so a black frame
@@ -13169,7 +13095,10 @@ if (VERBOSE) {
         (sw.gl_sw_bitmap && sw.gl_sw_bitmap() ? ` bitmap=0x${(sw.gl_sw_bitmap() >>> 0).toString(16)}` : ''));
     }
   }
-  if (GL_GPS) {
+  // Only a run that opened the GL ring (glg_mem: gl_gps_stat answers 0
+  // before it) has anything to report.
+  if (GL_GPS && (instance.exports.gl_gps_stat(4) || instance.exports.gl_gps_stat(0)
+      || instance.exports.gl_gps_stat(3) || instance.exports.gl_gps_stat(14))) {
     // src/09a8gt-gl-gps.wat gl_gps_stat: counters, decline reasons 16+r,
     // readback sites 48+s.
     const st = i => instance.exports.gl_gps_stat(i) >>> 0;
@@ -13182,7 +13111,29 @@ if (VERBOSE) {
     for (let s = 0; s < 16; s++) if (st(48 + s)) sites.push(`${s}:${st(48 + s)}`);
     console.log(`[gl-gps] ${names.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
       ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
+      ` front-presents=${st(64)} cpu-stencil-pixels=${st(65)} canon-declines=${st(66)}` +
       ` active=${instance.exports.gl_gps_active()}`);
+  }
+  if (D3D9_GPS && instance.exports.d3d9_gps_stat(14)) {
+    // src/09akg-d3d9-gps.wat d3d9_gps_stat: counters, decline reasons 16+r,
+    // readback sites 48+s (0 lock, 1 getdc, 2 rtdata, 3 capture, 4 handover
+    // to the old path), 80 handovers, 81 lead-mode entries (S1).
+    const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
+    const names = ['draws', 'prims', 'clears', 'presents', 'gpu-frames', 'old-frames', 'readbacks',
+      'rt-uploads', 'tex-uploads', 'tex-hits', 'shaders', 'syncs', 'declines', 'old-fail', 'opens', 'dead'];
+    const reasons = [];
+    for (let r = 1; r < 32; r++) if (st(16 + r)) reasons.push(`${r}:${st(16 + r)}`);
+    const sites = [];
+    for (let s = 0; s < 16; s++) if (st(48 + s)) sites.push(`${s}:${st(48 + s)}`);
+    const old = [];
+    for (let k = 0; k < 6; k++) if (st(64 + k)) old.push(`${['other-device', 'declined', 'stale', 'no-hwnd', 'capture-stale', 'capture-no-rt'][k]}:${st(64 + k)}`);
+    console.log(`[d3d9-gps] ${names.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
+      ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
+      ` old-present=${old.join(',') || 'none'}` +
+      ` buffer-draws=${st(74)} buffer-uploads=${st(72)} buffer-hits=${st(73)}` +
+      ` lock-current=${st(76)} lock-fills=${st(77)} uploads-folded=${st(78)} old-readbacks-skipped=${st(79)}` +
+      ` handovers=${st(80)} lead-entries=${st(81)}` +
+      ` active=${instance.exports.d3d9_gps_active()}`);
   }
 
   if (PNG_OUT && renderer) {
@@ -13190,6 +13141,11 @@ if (VERBOSE) {
     // in its DIB before reading surfaces out of memory.
     if (D3DIM_GPU && instance.exports.d3dim_gps_sync_all) instance.exports.d3dim_gps_sync_all();
     if (GL_GPS) instance.exports.gl_gps_sync_front();
+    if (D3D9_GPS && instance.exports.d3d9_gps_stat(14)) {
+      instance.exports.d3d9_gps_sync_front();
+      const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
+      console.log(`[d3d9-gps] capture: executor-readback=${st(51)} stale=${st(68)} no-rt=${st(69)}`);
+    }
     const { mem, surfaces } = getDxSurfaceManifest();
     const wantSlot = DX_SLOT === null ? null : (parseInt(DX_SLOT, 10) | 0);
     // Software GL drawing into a PFD_DRAW_TO_BITMAP DIB leaves only helper

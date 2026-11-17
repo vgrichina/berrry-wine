@@ -99,17 +99,21 @@ u32 fields shared with the consumer are accessed with Atomics.
 header before it executes the first record, and sets `CAP_VALID` (1) last.
 WAT reads it to decide what the guest is told; nothing else negotiates
 features. Flags: 2 VS_IR, 4 STENCIL, 8 LOGIC_OP, 16 OCCLUSION, 32
-BORDER_LINEAR, 64 MIRRORONCE. `formats` is a bit per fmt code (bit 15 =
+BORDER_LINEAR, 64 MIRRORONCE, 128 CLIP_PLANES, 256 WBUFFER. `formats` is a bit per fmt code (bit 15 =
 A8B8G8R8). Each executor's caps:
 
 | executor | flags | max_texture | max_samplers | max_aniso |
 |---|---|---|---|---|
 | null | all | 16384 | 16 | 16 |
-| software | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE | 2048 | 6 (the native VM's stages) | 1 |
-| webgl | STENCIL, LOGIC_OP, OCCLUSION | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
+| software | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES, WBUFFER | 2048 | 6 (the native VM's stages) | 1 |
+| webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, CLIP_PLANES (with VS_IR, 266 vertex uniform vectors and 12 varyings), WBUFFER (WebGL2, desktop GL or EXT_frag_depth) | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
 
 The WebGL executor keeps two texture units past the samplers: the fog
-table and the logic-op destination copy.
+table and the logic-op destination copy. GL has no border wrap mode: a
+point-filtered BORDER axis is a test on the coordinate, and any linear
+filtering on a BORDER sampler is done in the fragment shader from NEAREST
+texel fetches (the four taps, the min/mag choice and the mip levels), with
+the software executor's arithmetic.
 
 A record that needs a capability the executor did not advertise is refused
 with error 3 (unsupported), never approximated.
@@ -207,6 +211,11 @@ fmt:
 | 14 | A8 |
 | 15 | A8B8G8R8 (bytes R,G,B,A — what WebGL and the software rasterizer take without a swizzle) |
 
+**Buffers.** CREATE of a VBUF or IBUF gives `size` bytes (1 .. 64 MB) with
+w = size, h 1, levels 1, fmt 0; contents start zeroed. UPLOAD into one has
+level 0, face 0, y 0, h 1, w = pitch = bytes, and x is the destination byte
+offset (x + bytes ≤ size). A buffer is read only by DRAW.
+
 Further formats are appended to this list. Codes 1–4 match the D3DIM
 native16 format codes (`$dx_surf_fmt_get`). Resources start zeroed, except
 a DS, which starts at depth 1.0 (far) and stencil 0 in every executor, so a
@@ -224,15 +233,16 @@ bit is not in its caps (all three in-tree executors refuse the rest).
 | 1 | CREATE | u32 id, u8 kind, u8 fmt, u16 levels, u32 w, u32 h, u32 size |
 | 2 | UPLOAD | u32 id, u16 level, u16 face, x, y, w, h, u32 pitch, u32 src (arena position), u32 bytes. Rows top-down. |
 | 3 | RELEASE | u32 id |
-| 4 | SHADER | u32 id, u8 stage, u32 ir_bytes, IR (the `src/09af-d3d-shader-ir.wat` encoding, ABI 1) |
+| 4 | SHADER | u32 id, u8 stage (0 vertex, 1 pixel), u32 ir_bytes, IR (the `src/09af-d3d-shader-ir.wat` encoding, ABI 1; stage 0 is core vertex IR, see "Vertex shaders") |
 | 5 | LAYOUT | u32 id, u32 n, u32 stride, n × {u8 slot, u8 type, u8 usage, u8 index, u16 offset, u16 pad}; see "Core executor contract" |
 | 6 | SAMPLER | u32 id, u8 address_u, u8 address_v (D3DTADDRESS: 1 wrap, 2 mirror, 3 clamp, 4 border, 5 mirror-once), u8 min, u8 mag (1 point, 2 linear), u8 mip (0 none, 1 point, 2 linear), u8 address_w (0 = unused), u8 max_level (D3D MAXMIPLEVEL: the most detailed level sampled), u8 max_aniso (≤ caps), f32 lod_bias, u32 border (R \| G<<8 \| B<<16 \| A<<24) |
 | 10 | TARGETS | u32 color_rt, u32 depth_ds (0 = none) |
 | 11 | VIEWPORT | i32 x,y,w,h; f32 zmin,zmax (0 ≤ zmin ≤ zmax ≤ 1). Inside the colour target; clips pretransformed draws (intersected with the scissor). TARGETS resets it to the whole target |
 | 12 | RASTER | fixed 96-byte block, see below |
 | 13 | BIND | u32 n, n × {u32 slot, u32 texture id (TEX2D, CUBE or RT), u32 sampler id}. Sampling the bound colour target is refused |
-| 14 | CONSTS | u8 stage, u16 first, u32 count, f32×4×count |
-| 20 | DRAW | u8 prim (1–5), u8 index_size (0 none, 2, 4), u32 vs, u32 ps, u32 layout, u32 vbuf, u32 voff, u32 stride, u32 ibuf (0 = none), u32 ioff, u32 count (indices, or vertices when index_size 0), u32 vcount (vertices addressed; = count when not indexed; every index < vcount) |
+| 14 | CONSTS | u8 stage (0 vertex: c0..c255, 1 pixel: c0..c7), u16 first, u32 count, f32×4×count |
+| 15 | CLIP | u32 mask (bits 0–5), f32×4×6 planes (a, b, c, d) in D3D clip space; disabled planes zero. Sticky. A draw with `vs ≠ 0` keeps only what satisfies a·x + b·y + c·z + d·w ≥ 0 on the output position for every enabled plane (before the divide; z 0..w); `vs 0` draws ignore it, as D3D does for pretransformed vertices. A nonzero mask needs CAP_CLIP_PLANES |
+| 20 | DRAW | u8 prim (1–5), u8 index_size (0 none, 2, 4), u32 vs, u32 ps, u32 layout, u32 vbuf, u32 voff, u32 stride, u32 ibuf (0 = none), u32 ioff, u32 count (indices, or vertices when index_size 0), u32 vcount (vertices addressed; = count when not indexed; every index < vcount). voff and ioff are byte offsets into the VBUF and IBUF: D3D's base vertex is `voff = (offset + BaseVertexIndex) × stride` and its start index `ioff = StartIndex × index_size` (ioff aligned to index_size); vertex 0 of the draw is at voff, and indices are relative to it |
 | 21 | DRAW_UP | same as DRAW; vbuf and ibuf 0, voff (and ioff when indexed) are arena positions |
 | 22 | CLEAR | u8 mask (1 color, 2 z, 4 stencil), u8 colormask, u32 rgba (R \| G<<8 \| B<<16 \| A<<24), f32 z, u32 stencil, rect |
 | 23 | COPY | u32 src, u32 dst, src rect, dst rect, u32 filter |
@@ -251,7 +261,7 @@ strip); fans are lowered to indexed lists by the producer.
 
 | off | fields |
 |---|---|
-| 0 | u8 depth_mode (0 off, 1 Z, 2 W: depth from interpolated 1/rhw), zfunc, zwrite, cull |
+| 0 | u8 depth_mode (0 off, 1 Z, 2 W: depth from interpolated 1/rhw, 3 D3D W-buffer: w / w_far, needs CAP_WBUFFER), zfunc, zwrite, cull |
 | 4 | u8 blend (0/1), src_rgb, dst_rgb, src_alpha, dst_alpha (D3DBLEND 1–11) |
 | 9 | u8 alpha_func, alpha_ref, colormask (R,G,B,A = 1,2,4,8) |
 | 12 | u8 fog_mode (0 none, 1 vertex alpha, 2 table on W, 3 Z), fog_flags (1 no multiply, 2 no add), fill (D3DFILL; executors take 3 solid), linear (1 = screen-linear varyings) |
@@ -261,7 +271,8 @@ strip); fans are lowered to indexed lists by the producer.
 | 46 | u8 stencil_enable, two_sided, stencil_func, fail, zfail, pass (D3DCMP / D3DSTENCILOP 1–8), ccw_func, ccw_fail, ccw_zfail, ccw_pass, ref, mask, wmask |
 | 59 | u8 logic_op: 0 off, else 1 + (GL logic op − GL_CLEAR 0x1500), so 1..16: 1 CLEAR, 2 AND, 3 AND_REVERSE, 4 COPY, 5 AND_INVERTED, 6 NOOP, 7 XOR, 8 OR, 9 NOR, 10 EQUIV, 11 INVERT, 12 OR_REVERSE, 13 COPY_INVERTED, 14 OR_INVERTED, 15 NAND, 16 SET. n = logic_op − 1 is the truth table: result bit = (n >> ((1−s)·2 + (1−d))) & 1. Needs CAP_LOGIC_OP and blend 0 (a logic op replaces blending, as in GL); see "Logic ops" |
 | 60 | f32 z_bias (fraction of the depth range), f32 slope_bias (depth_mode 1 only) |
-| 68 | 28 reserved bytes, zero |
+| 68 | f32 w_far (depth_mode 3: finite, > 0; otherwise 0) |
+| 72 | 24 reserved bytes, zero |
 
 Enums are D3D's: compare functions are D3DCMP (1 never … 8 always), blend
 factors D3DBLEND, cull is D3DCULL in render-target pixel space (1 none, 2
@@ -270,7 +281,7 @@ plain write: the blend factors and ops are then not read. `two_sided` needs
 `stencil_enable`; the main set applies to clockwise triangles and the ccw
 set to counter-clockwise ones. Stencil needs a D24S8 depth target.
 
-**Sticky state.** RASTER, CONSTS, BIND and TARGETS persist in the executor
+**Sticky state.** RASTER, CONSTS, CLIP, BIND and TARGETS persist in the executor
 until the next record of the same op, across SHADER changes and draws. A
 RASTER block is always complete (never a partial update), but the producer
 re-emits a block only when its bytes differ from the last one it sent — on
@@ -294,8 +305,18 @@ and the generated layouts alone (`lib/gpu-stream.js` `validateLayout`,
   rhw in the Voodoo 16-bit floating W form (4-bit exponent, 12-bit
   mantissa), plus `depth_bias`, and compared/stored as a fraction of 65535.
   Table fog indexes the 64-entry fog table by the same value / 1024.
+- **D3D W-buffer (depth_mode 3, CAP_WBUFFER).** Depth is w / w_far clamped
+  to 0..1, w = 1 / the perspective-interpolated rhw (a vertex-shader draw's
+  clip w), tested and stored like Z in the depth target's format. z and the
+  viewport's z range do not enter it; `linear` must be 0 and the biases 0.
+  The WebGL executor writes it as the fragment depth, so only these draws
+  give up early depth rejection.
 - **LAYOUT.** Stream slot 0 only; stride 4–1024 and 4-aligned; elements
-  4-aligned inside the stride. Exactly one FLOAT4 POSITIONT0; COLOR0/1
+  4-aligned inside the stride. A layout without POSITIONT is
+  *programmable*: its elements are D3DDECLUSAGE 0..13, index 0..15, each at
+  most once, and they feed a vertex shader (see "Vertex shaders"); `vs 0`
+  draws need a POSITIONT layout and `vs ≠ 0` draws a programmable one. In a
+  pretransformed layout: exactly one FLOAT4 POSITIONT0; COLOR0/1
   (FLOATn or D3DCOLOR, B,G,R,A bytes → R,G,B,A) and TEXCOORD0..7 at most once
   each. A missing FLOATn component reads (0, 0, 1) behind; a missing COLOR0
   is (1, 1, 1, 1).
@@ -336,15 +357,18 @@ and the generated layouts alone (`lib/gpu-stream.js` `validateLayout`,
   1/255, depth and stencil unwritten), then the real pass; it sums the
   count target at END, and every 255 runs, with one `readPixels` of it.
 - **Optional state (caps).** logic_op, occlusion, mirror-once,
-  linear-filtered border. Without the cap the record fails as unsupported.
-- **Samplers 6 and 7 (open, IR side).** BIND and the WebGL executor take
-  slots 0..7, but IR ABI 1 is ps_1_x, whose texld names its stage by the
-  destination register r0..r5, so no shader can sample slot 6 or 7 yet.
-  Proposed minimal extension, for gps-9.3: IR header version 0xffff0200
-  with texld (66) taking a third operand of bank 10 (D3DSPR_SAMPLER) whose
-  index is the slot, the stage no longer implied by the destination. The
-  software executor's native VM has six stages, so its caps stay at 6 until
-  09ag grows two more.
+  linear-filtered border, user clip planes, W-buffer (depth_mode 3). Without the cap the record fails as unsupported.
+- **Samplers 6 and 7: the sampler-naming pixel IR.** Core pixel IR
+  (header flag 8) with version **0xffff0200** names its sampler: texld (66)
+  is `texld dst, coord, s#` with a third operand of bank 10 (D3DSPR_SAMPLER)
+  whose index is the slot 0..7 (selector 0/2 = 2D, 3 = cube), and t0..t7 are
+  readable inputs. Its op set is the core one (mov add mad mul rcp dp3 dp4
+  min max lrp cmp def texkill texld). The canonicalizer
+  (`$d3d_ps_core_copy`, 09af1) checks and copies it. The WebGL executor
+  reaches slots 0..7 through it; the software executor's native VM has six
+  stages, so its caps say 6 and it refuses a texld of s6/s7 at SHADER.
+  ps_1_x core IR (0xffff0101..0104) keeps implying the stage by the
+  destination (s0..s5).
 - **Readback and present.** READBACK writes A8B8G8R8 rows top-down at the
   given pitch. PRESENT hands the page a frame with `dstX`, `dstY` and
   `stamp`; the page shows a frame only if its stamp is not older (serial
@@ -356,6 +380,54 @@ and the generated layouts alone (`lib/gpu-stream.js` `validateLayout`,
 - **Fail fast.** Anything outside this section, or anything an executor
   cannot do exactly, throws a `GpsError`; `drain()` stores it in
   `error_seq`/`error_code` and the producer traps on its next SYNC kick.
+
+## Vertex shaders
+
+A SHADER of stage 0 carries **core vertex IR** (stage 0, version
+0xfffe0200, header flag 8, flag 1 when relative constants are read),
+produced in WAT by `$d3d_vs_canonicalize` (`src/09af1-d3d-shader-canon.wat`)
+from validated vs_1_1 or vs_2_0 IR. It has temps r0..r31 (r28..r31 are the
+lowering's scratch and its literal register), inputs v0..v15, constants
+c0..c255 (DEF'd ones replace the CONSTS value), a0, and outputs oPos (bank
+4:0), oFog (4:1), oPts (4:2), oD0..1 (bank 5), oT0..7 (bank 6). Its ops are
+mov add mad mul rcp rsq dp3 dp4 min max slt sge exp log frc mova and cmp
+(op 88, per component `a >= 0 ? b : c`, a pure select whose destination is
+never one of its sources; only 09aj fixed-function IR's cnd lowers to it),
+plus dcl and def; every macro and composite is lowered there: m4x4/m4x3/m3x4/m3x3/
+m3x2 to dp rows, sub/abs/lrp, lit (gated pow, power clamped to ±127.996),
+dst, expp/logp (vs_1_1 partial forms), pow, nrm, crs, and vs_1_1's
+`mov a0` to floor + mova. Numerics are the shader VM's (09ag): rsq and log
+of |x|, log(0) = −FLT_MAX, exp/log full precision, mova rounds to nearest
+even, `c[a0.? + n]` reads zero outside c0..c255 or at a non-integer
+address. Each `v#` read must be DCL'd (D3D8-style vs_1_1 without DCLs is
+declined: the producer synthesizes DCLs from its declaration); coissue,
+result shift and source modifiers other than negate, loops and aL are
+declined (counted by `d3d_shader_ir_canon_declines`).
+
+A draw with `vs ≠ 0` binds every DCL'd input by (usage, index) to the
+programmable layout's element of that semantic (a missing one fails the
+draw); D3DCOLOR elements read as (R, G, B, A). Output positions are clip
+space: x, y through the viewport (VIEWPORT, or the whole target) onto the
+same pixel centres as pretransformed draws, z/w 0..1 into zmin..zmax, w
+for perspective-correct varyings. oD0/oD1 and oT0..7 feed the pixel
+shader's v0/v1 and t0..7 (an unwritten output reads zero). `fog_mode 1`
+(vertex) blends with D3D's oFog factor (1 = no fog) and needs a shader that
+writes oFog; fog modes 2/3, W depth, `linear 1` and z/slope bias are
+refused with a vertex shader. CONSTS stage 0 sets c0..c255. Executors with
+a vertex stage set CAP_VS_IR: the software one runs the IR in the native
+VM (oT0..5, six samplers); the WebGL one prints it to GLSL
+(`compileCoreVS` in `lib/d3d9-shader.js`) when the context has 260 vertex
+uniform vectors, 11 varyings and 16 attributes.
+
+User clip planes (CLIP) are tested on the output position. The software
+executor clips each primitive against them in the native rasterizer
+(`d3d_software_create_deferred_clipped`, real polygon clipping); the WebGL
+one, which has no `gl_ClipDistance` in GLSL ES, passes the six distances as
+varyings and discards a fragment whose interpolated distance is negative.
+The D3D9 producer sends a guest vertex shader's planes as they are (D3D9
+defines them in clip space for programmable vertex processing) and moves
+fixed-function ones from world space through inverse(View × Projection);
+a singular View × Projection declines the draw (reason 27).
 
 ## Upload arena
 

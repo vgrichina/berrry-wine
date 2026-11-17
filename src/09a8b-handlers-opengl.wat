@@ -1713,6 +1713,7 @@
     (local.set $b (call $gl_texture_block))
     (loop $names
       (local.set $name (call $gl32 (i32.add (i32.load offset=8 (local.get $s)) (i32.shl (local.get $i) (i32.const 2)))))
+      (call $gl_wgl_unreserve (i32.load offset=308 (local.get $b)) (local.get $name))
       (local.set $prev (i32.const 0))
       (local.set $p (i32.load offset=8 (i32.load offset=308 (local.get $b))))
       (block $done (loop $scan
@@ -1800,6 +1801,7 @@
   ;; Called only by the final context, after worker leases have been fenced.
   (func $gl_texture_group_free (param $group i32)
     (local $p i32) (local $next i32) (local $i i32)
+    (call $gl_wgl_group_free (local.get $group))
     (local.set $i (i32.const 8))
     (loop $heads
       (local.set $p (i32.load (i32.add (local.get $group) (local.get $i))))

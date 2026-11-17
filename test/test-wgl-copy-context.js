@@ -29,7 +29,8 @@ async function main(){
  if(process.env.GL_COPY_MODULE_OUT)fs.writeFileSync(process.env.GL_COPY_MODULE_OUT,bytes);
  console.log('TRANSACTION_MODULE',bytes.length,crypto.createHash('sha256').update(bytes).digest('hex'));
  const module=new WebAssembly.Module(bytes);
- const queued=process.argv.includes('--worker');
+ if(process.argv.includes('--worker'))throw new Error('--worker replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');
+ const queued=false;
  let memory,e,owner=1,drawTarget=42,bridge,render,producer,manager,encoder,delay=false;const events=[],captures=[],delayed=[];
  const h=await req('test/render-helper').bootRenderHarness({fonts:'none',width:64,height:64,prebuiltModule:module,
   extraHostOverrides:{gpu_gl_call(op,at,used){
@@ -44,22 +45,6 @@ async function main(){
  source.init_thread(1,0x400000,0,0,0,0,0);source.heap_init(0x800000);
  bridge=new OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:()=>e,
   renderer:{windows:Object.fromEntries([42,43].map(hwnd=>[hwnd,{hwnd,w:64,h:64,clientRect:{w:64,h:64}}])),repaint(){}}});
- if(queued){
-  const GL=req('lib/gl-compat'),{Worker}=require('worker_threads');
-  producer=new(req('lib/gl-software-producer').Producer)(()=>e);
-  const consumer=new WebAssembly.Instance(module,{host:h.host});consumer.exports.d3dim_worker_init(0x400000);
-  bridge.destroy();const Base=GL.OpenGLHostBridge;
-  GL.OpenGLHostBridge=class extends Base{constructor(options){super(options);bridge=this;}};
-  try{render=req('lib/gl-render-worker').create({instance:consumer,memory,backend:'software',sendFrame(){}});}finally{GL.OpenGLHostBridge=Base;}
-  manager=new(req('lib/render-worker').Manager)({module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,imageBase:0x400000,
-   workerFactory:()=>new Worker(path.join(root,'lib/d3d-render-worker.js')),reclaimHeap:head=>source.d3d_render_adopt_free_list(head)});
-  await manager.ready;const port=manager.createEndpoint({api:'legacy',backend:'software'});await port.ready;
-  const transport={postMessage(msg){if(delay&&msg.t==='batch')delayed.push(msg);else port.postMessage(msg);},
-   set onmessage(fn){port.onmessage=fn;},set onerror(fn){port.onerror=fn;},terminate(){return port.terminate();}};
-  encoder=new(req('lib/d3d-command-stream').Encoder)({module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-   getImageBase:()=>0x400000,guestToWasm:p=>e.guest_to_wasm(p)>>>0,workerFactory:()=>transport,capacity:0x400000,explicitFence:true,strictReady:true});
-  assert(encoder.ready());encoder.releaseHeld=()=>{delay=false;for(const msg of delayed.splice(0))port.postMessage(msg);};
- }
  const stackGuest=e.guest_alloc(256)>>>0,stack=e.guest_to_wasm(stackGuest)>>>0,out=e.guest_alloc(256)>>>0,wa=p=>e.guest_to_wasm(p)>>>0;
  const publicThunks=new Map();
  function publicCopy(){
@@ -87,7 +72,7 @@ async function main(){
   const other=new WebAssembly.Instance(module,{host:h.host}).exports;
   other.init_thread(2,0x400000,0,0,0,0,0);other.heap_init(0x1000000);
   const checkpoints=[],leases=[],checks=[],eq=(name,actual,expected)=>{assert.deepStrictEqual(actual,expected,name);checks.push({name,actual,expected});};
-  const switchTo=(p,id)=>{e=p;owner=id;drawTarget=42;if(!queued)new(req('lib/gl-software-producer').Producer)(()=>e).configure([1,64,64,0]);};
+  const switchTo=(p,id)=>{e=p;owner=id;drawTarget=42;if(!e.gl_sw_enabled())e.gl_sw_set_enabled(1);if(e.gl_sw_bitmap())e.gl_sw_bind_drawable(0);e.gl_sw_set_default_size(64,64);};
   const q=(p,n=1)=>{new Uint8Array(memory.buffer,wa(out),n*8).fill(0xa5);call('glGetDoublev',[p,out]);return Array.from({length:n},(_,i)=>dv.getFloat64(wa(out)+i*8,true));};
   const setup=(src)=>{
    call('glColor4f',src?[0,0,1,1]:[1,0,0,1],[0,1,2,3]);

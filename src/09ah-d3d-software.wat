@@ -1268,7 +1268,14 @@
             (i32.load offset=24 (local.get $glide)) (local.get $u) (local.get $v) (local.get $w)))
           (if (i32.eq (i32.load offset=12 (local.get $glide)) (i32.const 2)) (then
             (local.set $z (f32.div (f32.min (f32.const 65535) (f32.max (f32.const 0)
-              (f32.add (call $d3d_software_glide_w (local.get $glide_q)) (f32.load offset=16 (local.get $glide))))) (f32.const 65535)))))))
+              (f32.add (call $d3d_software_glide_w (local.get $glide_q)) (f32.load offset=16 (local.get $glide))))) (f32.const 65535)))))
+          ;; depthMode 3, the D3D W-buffer: w / w_far, w = 1 / q, stored like Z.
+          (if (i32.eq (i32.load offset=12 (local.get $glide)) (i32.const 3)) (then
+            (local.set $z (call $d3d_software_quantize_depth
+              (i32.shr_u (i32.load offset=204 (local.get $ctx)) (i32.const 16))
+              (if (result f32) (f32.gt (local.get $glide_q) (f32.const 0))
+                (then (f32.div (f32.const 1) (f32.mul (local.get $glide_q) (f32.load offset=28 (local.get $glide)))))
+                (else (f32.const 1)))))))))
         (f32.store (i32.add (i32.add (local.get $ctx) (i32.const 208)) (i32.shl (local.get $lane) (i32.const 2))) (local.get $z))
         (local.set $iw (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 12) (local.get $u) (local.get $v) (local.get $w)))
         ;; Every varying is perspective-corrected by the SAME interpolated 1/W,
@@ -1284,11 +1291,14 @@
         ;; $d3d_software_perspective so finite tiny-RHW ratios survive.
         (local.set $riw (f32.div (f32.const 1) (local.get $iw)))
         (f32.store (i32.add (i32.add (local.get $ctx) (i32.const 264)) (i32.shl (local.get $lane) (i32.const 2)))
-          (if (result f32) (local.get $glide)
+          ;; A fogless W-buffer descriptor (depthMode 3) leaves the vertex fog.
+          (if (result f32) (i32.and (i32.ne (local.get $glide) (i32.const 0))
+                (i32.or (i32.ne (i32.load offset=20 (local.get $glide)) (i32.const 0))
+                  (i32.ne (i32.load offset=12 (local.get $glide)) (i32.const 3))))
             (then (call $d3d_software_glide_fog (local.get $glide) (local.get $glide_q)
               (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 8) (local.get $u) (local.get $v) (local.get $w))
               (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 28) (local.get $u) (local.get $v) (local.get $w))))
-            (else (if (result f32) (i32.load offset=280 (local.get $ctx))
+            (else (if (result f32) (i32.and (i32.eqz (local.get $glide)) (i32.ne (i32.load offset=280 (local.get $ctx)) (i32.const 0)))
             (then (call $d3d_software_table_fog_factor (i32.load offset=280 (local.get $ctx))
               (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 8) (local.get $u) (local.get $v) (local.get $w)) (local.get $iw)))
             (else (call $d3d_software_perspective (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 128) (local.get $u) (local.get $v) (local.get $w)) (local.get $iw) (local.get $riw)))))))
@@ -1554,8 +1564,9 @@
   (if (i32.eq (local.get $op) (i32.const 3)) (then (return (f32x4.sub (local.get $b) (local.get $a)))))
   (f32x4.add (local.get $a) (local.get $b)))
 ;; Glide uses an opt-in owned 96-byte descriptor in the existing table-fog
-;; allocation: version1, mode4, ARGBcolor, depthMode0/1/2, bias:f32,
-;; fogMode0/1(alpha)/2(table)/3(Z), two reserved zeroes, table[64].
+;; allocation: version1, mode4, ARGBcolor, depthMode0/1/2/3, bias:f32,
+;; fogMode0/1(alpha)/2(table)/3(Z), q-lane offset, w_far:f32 (depthMode 3,
+;; the D3D W-buffer; else zero), table[64].
 ;; This is internal shader lowering, never a guest D3D capability.
 (func $d3d_software_glide_w (export "d3d_software_glide_w") (param $q f32) (result f32)
   (local $e i32)
@@ -1596,9 +1607,13 @@
       (i32.or (i32.load offset=128 (local.get $ctx)) (i32.load offset=192 (local.get $ctx))))) (then (return (i32.const 0))))
   (if (i32.or (i32.ne (i32.load (local.get $desc)) (i32.const 1))
     (i32.or (i32.ne (i32.load offset=4 (local.get $desc)) (i32.const 4))
-      (i32.or (i32.gt_u (i32.load offset=12 (local.get $desc)) (i32.const 2))
-        (i32.or (i32.gt_u (i32.load offset=20 (local.get $desc)) (i32.const 3))
-          (i32.load offset=28 (local.get $desc)))))) (then (return (i32.const 0))))
+      (i32.or (i32.gt_u (i32.load offset=12 (local.get $desc)) (i32.const 3))
+        (i32.gt_u (i32.load offset=20 (local.get $desc)) (i32.const 3))))) (then (return (i32.const 0))))
+  ;; Word 7: zero, or depthMode 3's (D3D W-buffer) finite positive f32 w_far.
+  (if (i32.eq (i32.load offset=12 (local.get $desc)) (i32.const 3))
+    (then (if (i32.eqz (i32.and (f32.gt (f32.load offset=28 (local.get $desc)) (f32.const 0))
+        (f32.lt (f32.load offset=28 (local.get $desc)) (f32.const inf)))) (then (return (i32.const 0)))))
+    (else (if (i32.load offset=28 (local.get $desc)) (then (return (i32.const 0))))))
   ;; q lane: 12 (position w) or the x lane of output texture 0..5 (32 + 16n).
   (local.set $copy (i32.load offset=24 (local.get $desc)))
   (if (i32.eqz (i32.or (i32.eq (local.get $copy) (i32.const 12))
@@ -1609,6 +1624,9 @@
   (local.set $copy (call $g2w (local.get $copy))) (memory.copy (local.get $copy) (local.get $desc) (i32.const 96))
   (call $d3d_shader_vm_free (i32.load offset=280 (local.get $ctx)))
   (i32.store offset=280 (local.get $ctx) (local.get $copy))
+  ;; A W-buffer descriptor without fog keeps the vertex fog bound before it.
+  (if (i32.and (i32.eq (i32.load offset=12 (local.get $copy)) (i32.const 3)) (i32.eqz (i32.load offset=20 (local.get $copy))))
+    (then (return (i32.const 1))))
   (i32.store offset=256 (local.get $ctx) (i32.ne (i32.load offset=20 (local.get $copy)) (i32.const 0)))
   (i32.store offset=260 (local.get $ctx) (i32.load offset=8 (local.get $copy))) (i32.const 1))
 

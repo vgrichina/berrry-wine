@@ -19,8 +19,8 @@ const extraWat=`
  (drop (call $gdi_dc_set_field (i32.load (global.get $reg_base)) (i32.const 92) (i32.const 42) (i32.const 0)))
  (i32.load (global.get $reg_base)))`;
 (async()=>{
- const fallback=process.argv.includes('--worker-fallback');
- const queued=fallback||process.argv.includes('--worker');let encoder=null,manager=null,bridge=null,render=null,producer=null,memory;
+ const fallback=false;
+ const queued=(()=>{if(process.argv.some(a=>a==='--worker'||a==='--worker-fallback'))throw new Error('the --worker arm replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');return false;})();let encoder=null,manager=null,bridge=null,render=null,producer=null,memory;
  let prebuiltModule=null;
  if(process.env.GL_STIPPLE_MUTATION){
   const mutation=JSON.parse(fs.readFileSync(process.env.GL_STIPPLE_MUTATION));let applied=false;

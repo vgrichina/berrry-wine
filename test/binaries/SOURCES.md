@@ -488,6 +488,26 @@ mission pack) and [Steam](https://store.steampowered.com/app/9060/); the
 compat page
 (`tools/site-compat.json`, slug `hexen-ii`) links both.
 
+## Age of Empires trial (`shareware/aoe/aoe_ex/`)
+
+Source: `https://archive.org/details/AgeofEmpires_1020` (the Shareware table
+above). `MSAoE.exe` (24,786,864 bytes, SHA-1
+`ccd19bd57e7070ffe7c0b20ed9265d680fbe36c7`) is Microsoft's 1997 trial
+package; `aoe_ex/` is its extraction: 129 files, `Empires.exe` SHA-1
+`8bf5b2f7d480f01974670e22ccaf6f40828d58c9`. The game calls itself the trial
+version: Random Map, Death Match and Scenario are locked, the campaign plays.
+
+**Terms.** The bundled `eula.txt` (SHA-1
+`31ff6b99eb9ea7be4de6c39b1550f5c2a54169ba`) grants unlimited reproduction and
+distribution provided each copy is true and complete with its copyright and
+trademark notices, is accompanied by the EULA, and is not distributed for
+commercial purposes. The `aoe1` registry entry mounts every file of `aoe_ex/`
+(the exe plus all 128 `aoe1Files`, `eula.txt` among them), so a deploy of the
+desktop entry (2026-11-15 preparation) ships the complete, unmodified trial
+with its EULA; `test/test-deploy-aoe1-assets.js` holds that. `MSAoE.exe`
+itself stays local. The EULA's reverse-engineering clause applies as for the
+other Microsoft packages here.
+
 ## Candidate corpus (`candidates/`)
 
 The optional CLI-only candidate pool is described by

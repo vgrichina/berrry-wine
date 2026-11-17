@@ -396,8 +396,8 @@ const nativeMessages = [], nativeOps = [];
 const nativeBroker = RPC.createMainBroker(rpcMemory, {
   gpu_gl_batch: (batch, owner) => {
     assert.strictEqual(owner, 0);
-    assert.deepStrictEqual(batch, { memoryOffset: nativeOffset, bytes: brokerBatch.bytes,
-      softwareFront: 0 }, 'no software front buffer without a gl_sw_front export');
+    assert.deepStrictEqual(batch, { memoryOffset: nativeOffset, bytes: brokerBatch.bytes },
+      'the broker forwards only the shared-memory range');
     assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_REQ);
     return Stream.replay(Stream.memoryBatch(rpcMemory, batch.memoryOffset, batch.bytes),
       (opcode, _aux, capture) => {
@@ -418,55 +418,10 @@ assert.strictEqual(nativeWorker.imports.host.gpu_gl_call(Stream.WAT_STREAM_FLUSH
   nativeOffset, brokerBatch.bytes), 91);
 assert.deepStrictEqual(nativeOps, [10, 129]);
 assert.deepStrictEqual(nativeMessages, [{ t: 'glBatch', slot: 0,
-  memoryOffset: nativeOffset, bytes: brokerBatch.bytes, softwareFront: 0,
-  softwareConfig: undefined, pool: undefined }],
-  "without pool exports the worker sends an undefined descriptor; the broker omits it");
+  memoryOffset: nativeOffset, bytes: brokerBatch.bytes }],
+  "the worker sends only the batch's shared-memory range");
 assert.strictEqual(new DataView(rpcMemory.buffer).getUint32(nativeOffset - 4, true), 123);
 assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_IDLE);
-
-// Pool metadata is optional transport information, independent of command replay.
-// A supported native pool advertises all three ranges; old/disabled producers
-// still submit the same shared-memory batch without a descriptor at the broker.
-const nativePool = { version: 1, capacity: 4096,
-  offsets: [nativeOffset, nativeOffset + 4096, nativeOffset + 8192] };
-for (const [version, thirdBase, expectedPool] of [
-  [1, nativePool.offsets[2], nativePool],
-  [2, nativePool.offsets[2], undefined],
-  [1, 0, undefined],
-]) {
-  const poolMessages = [], poolOps = [];
-  let receivedBatch;
-  const poolBroker = RPC.createMainBroker(rpcMemory, {
-    gpu_gl_batch: batch => {
-      receivedBatch = batch;
-      return Stream.replay(Stream.memoryBatch(rpcMemory, batch.memoryOffset, batch.bytes),
-        opcode => { poolOps.push(opcode); return 91; });
-    },
-  }, {});
-  const poolWorker = RPC.createWorkerImports(rpcMemory, {
-    gpu_gl_call: { params: ['i32', 'i32', 'i32'], results: ['i32'] },
-  }, message => {
-    poolMessages.push(message);
-    poolBroker.serveGlBatch(message);
-  }, { getExports: () => ({
-    gl_wat_stream_pool_version: () => version,
-    gl_wat_stream_pool_base: i => i === 2 ? thirdBase : nativePool.offsets[i],
-    gl_wat_stream_capacity: () => nativePool.capacity,
-  }) });
-  assert.strictEqual(poolWorker.imports.host.gpu_gl_call(Stream.WAT_STREAM_FLUSH_OPCODE,
-    nativeOffset, brokerBatch.bytes), 91);
-  assert.deepStrictEqual(poolMessages, [{ t: 'glBatch', slot: 0,
-    memoryOffset: nativeOffset, bytes: brokerBatch.bytes, softwareFront: 0,
-    softwareConfig: undefined, pool: expectedPool }],
-    "only supported, enabled native pools are advertised by the worker");
-  const expectedBatch = { memoryOffset: nativeOffset, bytes: brokerBatch.bytes,
-    softwareFront: 0 };
-  if (expectedPool) expectedBatch.pool = expectedPool;
-  assert.deepStrictEqual(receivedBatch, expectedBatch,
-    "the broker forwards a present descriptor and omits an unavailable pool");
-  assert.deepStrictEqual(poolOps, [10, 129], "pool metadata preserves ordered replay");
-  assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_IDLE);
-}
 
 // A query that writes into guest memory has to have written it by the time the
 // call returns, because the guest's very next instruction may read it. Warcraft

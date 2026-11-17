@@ -11,6 +11,7 @@
         (i32.or (i32.eq (local.get $op) (i32.const 0x10024)) (i32.eq (local.get $op) (i32.const 0x10027)))))))
     (if (i32.eq (local.get $op) (i32.const 0x10006)) (then (return (i32.const 4))))
     (if (i32.eq (local.get $op) (i32.const 0x10007)) (then (return (i32.const 0))))
+    (if (i32.eq (local.get $op) (i32.const 0x10008)) (then (return (i32.const 0))))
     (if (result i32) (i32.eq (local.get $op) (i32.const 0x10004))
       (then (i32.const 4)) (else
     (if (result i32) (i32.eq (local.get $op) (i32.const 0x10003))
@@ -241,6 +242,15 @@
 
   (func $gl_wat_stream_flush (result i32)
     (local $result i32)
+    ;; WAT-owned WGL (09a8cw): the record was answered when it was emitted.
+    ;; Packed draws still pass through the stream for the rasterizer to read;
+    ;; nothing else does, and nothing is sent.
+    (if (call $gl_wgl_owned) (then
+      (local.set $result (global.get $gl_owned_result))
+      (global.set $gl_owned_result (i32.const 0))
+      (global.set $gl_stream_used_bytes (i32.const 0))
+      (global.set $gl_stream_command_count (i32.const 0))
+      (return (local.get $result))))
     (if (i32.eqz (global.get $gl_stream_used_bytes)) (then (return (i32.const 0))))
     (local.set $result (call $host_gpu_gl_call (i32.const 0x10001)
       (global.get $gl_stream_wa) (global.get $gl_stream_used_bytes)))
@@ -275,6 +285,11 @@
     (local $record_bytes i32) (local $start i32) (local $ptr_off i32)
     (local.set $words (call $gl_source_arg_words (local.get $op)))
     (if (i32.lt_s (local.get $words) (i32.const 0)) (then (return (i32.const 0))))
+    ;; The first record of an instance asks the host who owns WGL (09a8cw).
+    (if (i32.lt_s (global.get $gl_owned) (i32.const 0)) (then (call $gl_wgl_query_mode)))
+    (if (call $gl_wgl_owned) (then
+      (global.set $gl_owned_result (call $gl_wgl_execute (local.get $op) (local.get $stack) (local.get $aux)))
+      (return (i32.const 1))))
     (local.set $stack_bytes (i32.shl (i32.add (local.get $words) (i32.const 1)) (i32.const 2)))
     (local.set $copy_bytes (select (i32.const 0) (local.get $ptr_len) (local.get $borrow)))
     (local.set $record_bytes (i32.and
@@ -462,6 +477,14 @@
 
   (func $gl_packed_begin (param $mode i32) (result i32)
     (local $start i32)
+    ;; A packed draw can be an instance's first record. Ask who owns WGL
+    ;; before writing it, exactly as $gl_emit_record does: the host only
+    ;; recognizes the lone 0x10008 query, never one queued behind a draw.
+    (if (i32.lt_s (global.get $gl_owned) (i32.const 0)) (then (call $gl_wgl_query_mode)))
+    ;; WAT-owned WGL: the last draw was rasterized at its finish; reuse the stream.
+    (if (call $gl_wgl_owned) (then
+      (global.set $gl_stream_used_bytes (i32.const 0))
+      (global.set $gl_stream_command_count (i32.const 0))))
     (if (i32.gt_u (i32.add (global.get $gl_stream_used_bytes) (i32.const 32))
         (i32.const 0x00200000)) (then (drop (call $gl_wat_stream_flush))))
     (local.set $start (i32.add (global.get $gl_stream_wa) (global.get $gl_stream_used_bytes)))

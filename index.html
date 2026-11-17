@@ -1802,9 +1802,13 @@
       </span>
       <span class="debug-crt">
         <label>CRT:</label>
-        <label title="Darken the gaps between the game's logical rows"><input id="crt-scanlines-toggle" type="checkbox" onchange="applyCrtEffects()">Scanlines</label>
-        <label title="Apply a subtle RGB phosphor triad"><input id="crt-mask-toggle" type="checkbox" onchange="applyCrtEffects()">Mask</label>
-        <label title="Bleed a little energy from bright pixels into their neighbours"><input id="crt-glow-toggle" type="checkbox" onchange="applyCrtEffects()">Glow</label>
+        <select id="crt-preset-select" onchange="applyCrtEffects()" autocomplete="off" title="Draw the native frame as a CRT beam with a phosphor mask; replaces the scaler and dedither while on">
+          <option value="off" selected>Off</option>
+          <option value="vga">VGA monitor</option>
+          <option value="arcade">Arcade/TV</option>
+        </select>
+        <label title="Curved tube: barrel distortion, rounded corners and vignette"><input id="crt-curvature-toggle" type="checkbox" onchange="applyCrtEffects()">Curve</label>
+        <label title="Phosphor persistence: moving images leave a short fading trail"><input id="crt-persistence-toggle" type="checkbox" onchange="applyCrtEffects()">Persistence</label>
       </span>
       <span class="debug-midi">
         <label>MIDI:</label>
@@ -2127,8 +2131,6 @@ Resource-aware Win98 emulator
       "lib/d3dim-host.js",
       "lib/d3d9-host.js",
       "lib/gl-command-stream.js",
-      "lib/gl-compat.js",
-      "lib/gl-render-host.js",
       "lib/worker-imports.js",
       "lib/vfs-seed.js",
       "lib/debug-midi.js",

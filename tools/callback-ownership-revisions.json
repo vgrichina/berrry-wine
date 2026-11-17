@@ -2,13 +2,6 @@
   "version": 1,
   "revisions": [
     {
-      "file": "lib/renderer-input.js",
-      "name": "host-file",
-      "baseSHA256": "5c54551666f6d20edd865cc3e9e481e2317fe33fd54781b0675442cd70220fc2",
-      "sha256": "b8abec9347b5814daf2a1804b92e765b36503e71497e682d9e9e9e007aff1ee2",
-      "reason": "Coordinate arrival waits for native USER pump completion, scoped to the original memory, native thread, window object and generation. The acknowledgement changes only pending hover admission; it invokes no guest callback and grants no invocation ownership. Existing physical release timing, guarded cancellation and message order remain authoritative."
-    },
-    {
       "file": "src/09a5-handlers-window.wat",
       "name": "$handle_PeekMessageA_fetch",
       "baseSHA256": "efcb7dda81314d186771f176b66ff594a7ebb82b6718db9cccd3a7b1270ef929",
@@ -30,13 +23,6 @@
       "reason": "TreatAs activation uses the existing COM jump/continuation mechanism with a private guest-stack frame. Marker CACA0041 restores the original stdcall frame after ordinary activation completes, including DLL-load yields and native class-factory callbacks. No foreign activation frame, global GUID scratch, callback admission or nonlocal ownership assertion is added; native guest-DLL, builtin-chain, cycle and unchanged activation regressions qualify the bounded route; ownership remains pending."
     },
     {
-      "file": "lib/process-boot.js",
-      "name": "host-file",
-      "baseSHA256": "7e3a7abc458b1049f6873e89ed6c2bf0b1e3d80f8626292cb47fd8d2e9665be7",
-      "sha256": "fb5d9796f8af64d4a6b78b61f756f88d5b6ef93f64713509ec91bf7a81425333",
-      "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
-    },
-    {
       "file": "src/09c3a-dialog-runtime.wat",
       "name": "$modal_pump_step",
       "baseSHA256": "dc12e4d662a9a2c5ad3e0f181a744d7b487f0666c204df515c105dd22dd63da0",
@@ -49,34 +35,6 @@
       "baseSHA256": "deb6b1b6bd417cac7007c7f27748ad117729349a9c5fb64e2237dca4ccb99bd5",
       "sha256": "cbdca7ed6ecce5d26002c13b42a613e3637c9c5ecd4a95e8c9c6b0670f138ca0",
       "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
-    },
-    {
-      "file": "lib/thread-manager.js",
-      "name": "host-file",
-      "baseSHA256": "79026e9016ade1a709c29a9449590bbd60b36991acdab582eeec2059c3486019",
-      "sha256": "c9c8453fd9f3935f7f65ef95b4df2fab71053dcd052015a75ed7f5e8ed3f74af",
-      "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
-    },
-    {
-      "file": "lib/guest-worker.js",
-      "name": "host-file",
-      "baseSHA256": "3e09b9aa06b86ffa52bb00d4052a2b4393952ed61f2821ced4871dfbec0498ec",
-      "sha256": "fdc42f0e5044cd6692a48b5931005ca1fdb3b5d6e2a621a637de4a3fe4ad43bf",
-      "reason": "Worker opts into bounded pending COM activation advancement. Each host slice receives an incomplete result while the same iterator and original invocation frame remain parked. Existing watchdog timeout, retirement and message scheduling remain unchanged; the runtime validates ownership before any later advance. GPU stream v2 (D2c/9.2, 20261115): D3D9 backend script list loses d3d9-fixed.js/d3dim-gpu.js and d3dCommands forwards only 0x20000-0x20006; no guest invocation, callback or continuation change."
-    },
-    {
-      "file": "host.js",
-      "name": "host-file",
-      "baseSHA256": "8f2da4eb3cee84139a603fa5c0b85897ba038b74b54845415756eb0858ddf261",
-      "sha256": "11653b8eae45606e056e4882a2b4795446e02095aacbd1dc13cda5548f1c1e6e",
-      "reason": "20261116 passive current-display observation: a real pending host surface arms the existing owner-bound request until an ordinary unheld successful composition/display. No upload, guest invocation, new callback/timer, clock change, hold release or input admission change. Immediate held/partial reads still refuse; existing request cancellation and immutable readback lifetime remain authoritative. General invocation ownership remains pending. Run 20261116-boids-pending-publication-display-capture."
-    },
-    {
-      "file": "lib/renderer.js",
-      "name": "host-file",
-      "baseSHA256": "42cfc02c59fb2b7178a2becec3b34f781050122c23293a12045f6b5027be38b9",
-      "sha256": "f19189191c7d106999a70c134d0d7dbe08c703c8dc38ab680ec25103061d3ed5",
-      "reason": "20261117 passive current-display observation: renderer-only executing writer or in-flight paint now retains the existing one owner-bound cancellable ticket until ordinary unheld complete composition/display/readback, even without queued host flags. Request records immutable boolean predicates only, schedules no work, reads no in-flight source, releases no hold and adds no guest callback, timer, invocation, clock or input admission. Existing complete/partial validation, replacement refusal and detached ticket copies remain authoritative. General invocation ownership remains pending. Run 20261117-boids-held-display-capture."
     },
     {
       "file": "src/09a-handlers1-user.wat",

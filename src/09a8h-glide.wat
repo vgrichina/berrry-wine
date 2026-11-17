@@ -767,7 +767,7 @@
   (global $GPS_IR_SUB i32 (i32.const 3))
   (global $GPS_IR_MAD i32 (i32.const 4))
   (global $GPS_IR_MUL i32 (i32.const 5))
-  (global $GPS_IR_MAX i32 (i32.const 11))
+  (global $GPS_IR_CMP i32 (i32.const 88))
   (global $GPS_IR_TEXKILL i32 (i32.const 65))
   (global $GPS_IR_TEX i32 (i32.const 66))
 
@@ -964,7 +964,9 @@
           (call $glide_ir_dest (i32.const 2) (i32.const 15) (i32.const 0)) (i32.const 0xA0E40001) (i32.const 0) (i32.const 0)))))
     (if (i32.load offset=80 (local.get $s)) (then
       ;; Chroma compares the color-combine OTHER source before combining:
-      ;; max(abs(other.rgb - key.rgb)) < half an 8-bit quantum is a match.
+      ;; every |other.rgb - key.rgb| < half an 8-bit quantum is a match.
+      ;; ps_1_4 has no max: e = |d| - q via cmp, then r1.x = e.y >= 0 ? e.y
+      ;; : e.x and r1 = e.z >= 0 ? e.z : r1.x is negative iff all three are.
       (if (i32.gt_u (i32.load offset=12 (local.get $s)) (i32.const 2)) (then (call $glide_fail)))
       (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_SUB) (i32.const 3)
         (call $glide_ir_dest (i32.const 1) (i32.const 15) (i32.const 0))
@@ -972,14 +974,14 @@
           (select (i32.const 0x80E40002) (i32.const 0xA0E40000) (i32.eq (i32.load offset=12 (local.get $s)) (i32.const 1)))
           (i32.eqz (i32.load offset=12 (local.get $s))))
         (i32.const 0xA0E40003) (i32.const 0)))
-      (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_MAX) (i32.const 3)
-        (call $glide_ir_dest (i32.const 1) (i32.const 15) (i32.const 0)) (i32.const 0x80E40001) (i32.const 0x81E40001) (i32.const 0)))
-      (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_MAX) (i32.const 3)
-        (call $glide_ir_dest (i32.const 1) (i32.const 1) (i32.const 0)) (i32.const 0x80000001) (i32.const 0x80550001) (i32.const 0)))
-      (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_MAX) (i32.const 3)
-        (call $glide_ir_dest (i32.const 1) (i32.const 15) (i32.const 0)) (i32.const 0x80000001) (i32.const 0x80AA0001) (i32.const 0)))
+      (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_CMP) (i32.const 4)
+        (call $glide_ir_dest (i32.const 1) (i32.const 15) (i32.const 0)) (i32.const 0x80E40001) (i32.const 0x80E40001) (i32.const 0x81E40001)))
       (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_SUB) (i32.const 3)
         (call $glide_ir_dest (i32.const 1) (i32.const 15) (i32.const 0)) (i32.const 0x80E40001) (i32.const 0xA0E40004) (i32.const 0)))
+      (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_CMP) (i32.const 4)
+        (call $glide_ir_dest (i32.const 1) (i32.const 1) (i32.const 0)) (i32.const 0x80550001) (i32.const 0x80550001) (i32.const 0x80000001)))
+      (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_CMP) (i32.const 4)
+        (call $glide_ir_dest (i32.const 1) (i32.const 15) (i32.const 0)) (i32.const 0x80AA0001) (i32.const 0x80AA0001) (i32.const 0x80000001)))
       (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_TEXKILL) (i32.const 1)
         (call $glide_ir_dest (i32.const 1) (i32.const 15) (i32.const 0)) (i32.const 0) (i32.const 0) (i32.const 0)))))
     (local.set $n (call $glide_ir_channel (local.get $buf) (local.get $n)

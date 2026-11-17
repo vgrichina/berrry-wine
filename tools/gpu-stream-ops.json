@@ -23,6 +23,7 @@
     "FENCE": 30,
     "READBACK": 31,
     "PRESENT": 32,
-    "MARK": 33
+    "MARK": 33,
+    "CLIP": 15
   }
 }

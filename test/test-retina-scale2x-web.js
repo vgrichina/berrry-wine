@@ -138,8 +138,12 @@ const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/M
 
       uniform.fillStyle = 'rgb(128, 64, 32)';
       uniform.fillRect(0, 0, 4, 4);
-      renderer.setPresentationEffects({ scanlines: true, mask: true, glow: true });
+      // The 12px output is CSS-stretched in this page; pin a 1:1 device
+      // mapping so the phosphor mask is not (correctly) switched off.
+      renderer.presentationFilter.devicePixelScale = 1;
+      renderer.setPresentationEffects({ preset: 'vga' });
       renderer._presentDisplayCanvas();
+      renderer.presentationFilter.devicePixelScale = null;
       const crtPixels = output.getContext('2d').getImageData(0, 0, 12, 12).data;
       const composed = {
         backend: renderer.presentationFilter.lastBackend,
@@ -204,10 +208,12 @@ const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/M
         stage: renderer.presentationFilter.lastPixelScaleStage,
       };
       renderer.presentationFilter.present(source, 'scale-auto',
-        { scanlines: true, mask: true, glow: true }, { viewport: sharpViewport });
+        { preset: 'vga' }, { viewport: sharpViewport });
       const scaleCrt = {
         backend: renderer.presentationFilter.lastBackend,
         effects: renderer.presentationFilter.lastEffects,
+        crt: renderer.presentationFilter.lastCrt,
+        passes: renderer.presentationFilter.lastPixelScalePasses,
       };
       renderer.presentationFilter.present(source, 'sharp-hq', {}, { viewport: sharpViewport });
       const sharp = {
@@ -415,11 +421,12 @@ const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/M
     assert.deepStrictEqual(result.scaleFractional.stage,
       { width: 6, height: 6, targetWidth: 7, targetHeight: 7, corrected: true },
       'browser HQ should only correct the canonical stage into the exact aspect-fit viewport');
-    assert.strictEqual(result.scaleCrt.backend,
-      'webgl-scale3x+canvas-hq+crt', result.gpuError);
+    assert.strictEqual(result.scaleCrt.backend, 'webgl-beam+crt', result.gpuError);
     assert.deepStrictEqual(result.scaleCrt.effects,
-      { scanlines: true, mask: true, glow: true },
-      'CRT should run after the canonical scale and browser-HQ correction');
+      { preset: 'vga', curvature: false, persistence: false });
+    assert.strictEqual(result.scaleCrt.crt.backend, 'webgl-beam');
+    assert.deepStrictEqual(result.scaleCrt.passes, [],
+      'CRT replaces the pixel scaler: the beam reads the native frame');
 
     assert.strictEqual(result.mdapt.backend, 'webgl-mdapt', result.gpuError);
     assert.strictEqual(result.mdapt.scale, 2,
@@ -444,15 +451,15 @@ const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/M
     assert(result.fsr1.edge[2] > 159 && result.fsr1.edge[3] > 223,
       `EASU should keep the bright side of a vertical edge crisp: ${result.fsr1.edge}`);
 
-    assert.strictEqual(result.composed.backend, 'webgl-fsr1+crt', result.gpuError);
+    assert.strictEqual(result.composed.backend, 'webgl-beam+crt', result.gpuError);
     assert.deepStrictEqual(result.composed.effects,
-      { scanlines: true, mask: true, glow: true });
+      { preset: 'vga', curvature: false, persistence: false });
     assert(result.composed.triadR[0] > result.composed.triadG[0],
       'red phosphor column should preserve more red than the green column');
     assert(result.composed.triadG[1] > result.composed.triadR[1],
       'green phosphor column should preserve more green than the red column');
     assert.notDeepStrictEqual(result.composed.triadR, result.fsr1.center,
-      'CRT effects should alter FSR1 output without becoming a scaling mode');
+      'the CRT beam should replace the FSR1 output while FSR1 stays selected');
 
     assert.strictEqual(result.integer.backend, 'canvas-nearest');
     assert.strictEqual(result.integer.multiplier, 3);

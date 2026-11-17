@@ -1390,11 +1390,19 @@
           "stride": 4
         },
         {
+          "name": "w_far",
+          "type": "f32",
+          "offset": 68,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
           "name": "reserved",
           "type": "i32",
-          "offset": 68,
-          "size": 28,
-          "count": 7,
+          "offset": 72,
+          "size": 24,
+          "count": 6,
           "stride": 4
         }
       ]
@@ -1483,6 +1491,30 @@
           "offset": 4,
           "size": 4,
           "count": 1,
+          "stride": 4
+        }
+      ]
+    },
+    "GpsClip": {
+      "file": "src/09a8gs-gpu-stream.wat",
+      "frozen": null,
+      "frozenNote": null,
+      "size": 100,
+      "fields": [
+        {
+          "name": "mask",
+          "type": "i32",
+          "offset": 0,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "planes",
+          "type": "f32",
+          "offset": 4,
+          "size": 96,
+          "count": 24,
           "stride": 4
         }
       ]

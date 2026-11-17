@@ -57,6 +57,7 @@
   (global $GPS_OP_RASTER i32 (i32.const 12))
   (global $GPS_OP_BIND i32 (i32.const 13))
   (global $GPS_OP_CONSTS i32 (i32.const 14))
+  (global $GPS_OP_CLIP i32 (i32.const 15))
   (global $GPS_OP_DRAW i32 (i32.const 20))
   (global $GPS_OP_DRAW_UP i32 (i32.const 21))
   (global $GPS_OP_CLEAR i32 (i32.const 22))
@@ -140,6 +141,10 @@
   (global $GPS_CAP_OCCLUSION i32 (i32.const 16))
   (global $GPS_CAP_BORDER_LINEAR i32 (i32.const 32))
   (global $GPS_CAP_MIRRORONCE i32 (i32.const 64))
+  (global $GPS_CAP_CLIP_PLANES i32 (i32.const 128))
+  (global $GPS_CAP_WBUFFER i32 (i32.const 256))
+  ;; COPY records (RT -> RT stretch, RT -> TEX2D/CUBE level): see GpsCopy.
+  (global $GPS_CAP_COPY i32 (i32.const 512))
 
   ;; CLEAR mask bits; RASTER colormask bits (R,G,B,A = 1,2,4,8).
   (global $GPS_CLEAR_COLOR i32 (i32.const 1))
@@ -150,6 +155,7 @@
   (global $GPS_DEPTH_OFF i32 (i32.const 0))
   (global $GPS_DEPTH_Z i32 (i32.const 1))
   (global $GPS_DEPTH_W i32 (i32.const 2))
+  (global $GPS_DEPTH_WBUFFER i32 (i32.const 3))
   (global $GPS_FOG_NONE i32 (i32.const 0))
   (global $GPS_FOG_VERTEX_ALPHA i32 (i32.const 1))
   (global $GPS_FOG_TABLE_W i32 (i32.const 2))
@@ -267,7 +273,10 @@
   ;; depth_mode 2 tests interpolated rhw stored as the 16-bit floating W
   ;; encoding (4-bit exponent, 12-bit mantissa of 1/rhw), biased by
   ;; depth_bias in that encoding's units; table fog indexes the same
-  ;; encoding (+ depth_bias). linear 1 = varyings interpolate screen-linear
+  ;; encoding (+ depth_bias). depth_mode 3 (D3D W-buffer, GPS_CAP_WBUFFER,
+  ;; linear 0) tests w / w_far clamped to 0..1 and stored like Z, w being
+  ;; 1 / interpolated rhw (the clip w of a vertex-shader draw).
+  ;; linear 1 = varyings interpolate screen-linear
   ;; and rhw is used only for W depth and table fog (Glide); 0 = varyings
   ;; are perspective-correct by rhw (D3D).
   (layout GpsRaster
@@ -285,12 +294,20 @@
     (field ccw_func u8) (field ccw_fail u8) (field ccw_zfail u8) (field ccw_pass u8)
     (field stencil_ref u8) (field stencil_mask u8) (field stencil_wmask u8) (field logic_op u8)
     (field z_bias f32) (field slope_bias f32)
-    (field reserved i32 7))
+    (field w_far f32)           ;; depth_mode 3 only (else 0): depth = w / w_far
+    (field reserved i32 6))
   ;; Followed by count GpsBindEntry.
   (layout GpsBind (field count i32))
   (layout GpsBindEntry (field slot i32) (field texture i32) (field sampler i32))
   ;; Followed by count * 16 bytes of f32x4.
   (layout GpsConsts (field stage u8) (field pad u8) (field first u16) (field count i32))
+  ;; User clip planes, sticky like RASTER. Bit i of mask enables planes[4i..4i+3]
+  ;; = (a,b,c,d) in D3D clip space: a vertex is kept where a*x+b*y+c*z+d*w >= 0
+  ;; on the vertex shader's output position (before the divide and viewport,
+  ;; z in 0..w). Disabled planes are zero. Applies to draws with a vertex
+  ;; shader only; vs 0 (pretransformed) draws ignore it, as D3D does. A
+  ;; nonzero mask needs GPS_CAP_CLIP_PLANES.
+  (layout GpsClip (field mask i32) (field planes f32 24))
   ;; index_size 0 = not indexed (count vertices from voff), 2 or 4 = count
   ;; u16/u32 indices from ioff, each < vcount. vcount = vertices readable at
   ;; voff (== count when not indexed). DRAW: voff/ioff are byte offsets
@@ -306,6 +323,11 @@
     (field mask u8) (field colormask u8) (field pad u16)
     (field rgba i32) (field z f32) (field stencil i32)
     (field left i32) (field top i32) (field right i32) (field bottom i32))
+  ;; Needs GPS_CAP_COPY. src is an RT. filter = D3DTEXF (0/1 point, 2
+  ;; linear) | dst level << 8 | dst face << 16 | 1 << 24 (write alpha 255).
+  ;; dst RT: rects may differ in size; each dst pixel samples its center
+  ;; mapped into the src rect, clamped to that rect (D3D9 StretchRect).
+  ;; dst TEX2D/CUBE: same size, point, into that level / face.
   (layout GpsCopy
     (field src i32) (field dst i32)
     (field sx i32) (field sy i32) (field sw i32) (field sh i32)

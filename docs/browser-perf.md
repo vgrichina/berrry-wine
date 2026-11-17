@@ -10,26 +10,15 @@ Turn on **FPS graph** in the `?debug` toolbar (or load `?debug&perf` to start it
 
 ### Null OpenGL diagnostic
 
-Load `?debug&perf&gl-renderer=null` before launching an OpenGL game to discard
-packed geometry and pixel presentation. This diagnostic retains guest CPU
-execution, command generation, transport, queue ordering, synchronization,
-texture upload decoding and the software backend's GL state/query mirror.
-It never enables the native software rasterizer. Completed swaps still count
-in `PRESENT/s`, but no new GL image appears; GDI menus may remain visible.
-
-This currently applies to OpenGL, not Direct3D or Glide. Bitmap drawables and
-framebuffer reads/copies fail explicitly because null mode has no pixels to
-return. Capability queries use the software state mirror, so check whether a
-game selects a different path before interpreting a comparison. This is a
-benchmark mode, not a usable display renderer.
-
-Compare the same build, scene, resolution, thread mode and measurement window
-against `gl-renderer=webgl`. Exclude loading and verify gameplay independently
-of the blank image. The difference includes renderer CPU work, backpressure,
-pixel transfer and presentation; it is not a GPU timing measurement. A small
-difference points toward retained work (such as guest emulation), while a
-large difference warrants profiling the rendering path. Overlapping work and
-game frame caps prevent simply subtracting the rates to obtain GPU cost.
+Load `?debug&perf&gl-gps=null` before launching an OpenGL game: the GPU stream
+null executor validates every ring record and draws nothing. Guest CPU
+execution, WAT transform/lighting and the producer's lowering stay; the
+executor's rasterization and presentation go. Completed swaps still count in
+`PRESENT/s`, but no new GL image appears; GDI menus may remain visible.
+Compare against the same build, scene, resolution, thread mode and window
+with the default (`gl-gps` unset). Exclude loading and verify gameplay
+independently of the blank image; the difference is executor CPU work and
+presentation, not a GPU timing measurement.
 
 ### Streaming a real session
 

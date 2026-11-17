@@ -43,6 +43,12 @@
   (global $cn_clamp (mut i32) (i32.const 0))
   (global $cn_fixed (mut i32) (i32.const 0))
   (global $cn_pad (mut i32) (i32.const 0))
+  ;; d9cl: D3DTTFF_PROJECTED stages for a ps1.1-1.3 (fixed T&L): 4 bits per
+  ;; stage, 3 (divide by z) or 4 (by w). A raw `tex t#` samples t# with the
+  ;; core texld DZ / DW modifier (9 / 10); any other texture-addressing
+  ;; instruction on such a stage declines. Set by the caller around one
+  ;; canonicalization and cleared after it (09akg $d9cl_ps_emit).
+  (global $cn_projected (mut i32) (i32.const 0))
   (func (export "d3d_shader_ir_canon_declines") (result i32) (global.get $d3d_canon_declines))
   (func (export "d3d_shader_ir_canon_decline_op") (result i32) (global.get $d3d_canon_decline_op))
 
@@ -313,6 +319,16 @@
     (if (i32.ne (i32.load offset=28 (local.get $ins)) (i32.const 0)) (then (return (call $cn_decline (local.get $op)))))
     (local.set $dst (call $cn_d (i32.const 0) (i32.add (i32.const 8) (local.get $n)) (i32.const 15)))
     (local.set $u (call $cn_d (i32.const 0) (i32.const 26) (i32.const 15)))
+    ;; d9cl: projected stage (see $cn_projected).
+    (local.set $sel (i32.and (i32.shr_u (global.get $cn_projected) (i32.shl (local.get $n) (i32.const 2))) (i32.const 15)))
+    (if (i32.and (i32.ne (local.get $sel) (i32.const 0))
+          (i32.and (i32.ne (local.get $op) (i32.const 66)) (i32.ne (local.get $op) (i32.const 64))))
+      (then (return (call $cn_decline (local.get $op)))))
+    (if (i32.and (i32.eq (local.get $op) (i32.const 66)) (i32.ne (local.get $sel) (i32.const 0))) (then
+      (return (call $cn_op2 (i32.const 66) (local.get $dst)
+        (call $cn_s (i32.const 3) (local.get $n) (i32.const 0xe4) (select (i32.const 9) (i32.const 10) (i32.eq (local.get $sel) (i32.const 3))))
+        (call $cn_s (i32.const 10) (local.get $n) (i32.const 0) (i32.const 0))))))
+    (local.set $sel (i32.const 0))
     (if (i32.eq (local.get $op) (i32.const 66)) (then
       (return (call $cn_op2 (i32.const 66) (local.get $dst) (call $cn_in (local.get $n)) (call $cn_s (i32.const 10) (local.get $n) (i32.const 0) (i32.const 0))))))
     (if (i32.eq (local.get $op) (i32.const 64)) (then
@@ -503,6 +519,9 @@
     (if (i32.eqz (call $d3d_shader_vm_range (local.get $ir)
           (i32.add (i32.const 32) (i32.shl (i32.and (i32.load offset=16 (local.get $ir)) (i32.const 0xffff)) (i32.const 7)))))
       (then (drop (call $cn_decline (i32.const 0x40000))) (return (i32.const 0))))
+    ;; Vertex IR and already-core sampler-naming pixel IR: the VS section below.
+    (if (i32.eqz (i32.load offset=8 (local.get $ir))) (then (return (call $d3d_vs_canonicalize (local.get $ir)))))
+    (if (i32.eq (i32.load offset=12 (local.get $ir)) (i32.const 0xffff0200)) (then (return (call $d3d_ps_core_copy (local.get $ir)))))
     (local.set $flags (i32.load offset=28 (local.get $ir)))
     (if (i32.or (i32.ne (i32.load offset=8 (local.get $ir)) (i32.const 1))
           ;; Bit0 (relative) is admitted: GPS producers set it, and ps1.x has no
@@ -607,6 +626,7 @@
             (br_if $fail (i32.ne (local.get $r) (i32.const 1)))
             (br $handled)))
           (if (global.get $cn_ps14) (then
+            (if (global.get $cn_projected) (then (local.set $r (call $cn_decline (local.get $op))) (br $fail))) ;; d9cl
             (local.set $r (call $cn_tex14 (local.get $ins)))
             (br_if $fail (i32.ne (local.get $r) (i32.const 1)))
             (br $handled)))
@@ -636,3 +656,571 @@
     (if (i32.eq (local.get $r) (i32.const 1)) (then (drop (call $cn_decline (i32.const 0x40005)))))
     (call $heap_free (local.get $guest))
     (i32.const 0))
+
+;; vs_1_x / vs_2_0 -> core VERTEX shader IR (GPU stream v2 slice 9.4b), and
+;; the core pixel IR version 0xffff0200 pass-through (sampler-naming ABI).
+;;
+;; Reached from $d3d_shader_ir_canonicalize (above) for a stage-0 IR (from
+;; $d3d_shader_ir_compile vs_1_0/1_1, or the private vs_2_0 IR) and for a
+;; pixel IR that is already core at version 0xffff0200. Output: a NEW IR in
+;; ABI 1, stage 0, version 0xfffe0200, header flags 8 (core) | guest bit0.
+;; docs/gpu-stream-v2.md "Vertex shaders" is the contract. Core vertex ops:
+;;   mov1 add2 mad4 mul5 rcp6 rsq7 dp3 8 dp4 9 min10 max11 slt12 sge13
+;;   exp14 log15 frc19 mova46 (round to nearest even) cmp88 (per component
+;;   a >= 0 ? b : c, a pure select, destination never a source) dcl31 def81
+;; rcp/rsq/exp/log sources always carry a replicate swizzle. Source modifiers
+;; are 0 or 1 (negate) plus the relative bits (256 = c[a0.? + n], component
+;; in bits 11..12; an index outside c0..c255 reads 0). Destinations carry a
+;; write mask and optional saturate (modifier 1), never a shift.
+;; Registers: r0..r11 guest temps, r28..r31 scratch of this file
+;;   (r31 = (0, 0.5, 1, 2) and r30.x = 127.99609375 when a lowering needs
+;;   them; built from c0 by slt/sge, so no constant slot is taken from the
+;;   guest), v0..v15 inputs each named by a DCL, c0..c255, a0,
+;;   oPos (bank 4 index 0), oFog (4/1, .x), oPts (4/2, .x), oD0..1, oT0..7.
+;; Lowered here: sub, abs, lrp, lit, dst, expp, logp, m4x4/m4x3/m3x4/m3x3/
+;; m3x2, pow, nrm, crs, vs_1_x "mov a0" (floor, then mova), and the 09aj
+;; fixed-function cnd (via cmp).
+;; Declined (counted, never silently wrong): flow control, sincos, sgn,
+;; defb/defi, a source modifier other than negate, a result shift, and a v#
+;; read that no DCL names (the executor binds inputs only by declaration).
+  (global $vc_out (mut i32) (i32.const 0))
+  (global $vc_n (mut i32) (i32.const 0))
+  (global $vc_cap (mut i32) (i32.const 0))
+  (global $vc_origin (mut i32) (i32.const 1))
+
+  ;; Append one zeroed record with $count operands; 0 when full.
+  (func $vc_rec (param $op i32) (param $count i32) (result i32)
+    (local $rec i32)
+    (if (i32.ge_u (global.get $vc_n) (global.get $vc_cap)) (then (return (i32.const 0))))
+    (local.set $rec (i32.add (i32.add (global.get $vc_out) (i32.const 32)) (i32.shl (global.get $vc_n) (i32.const 7))))
+    (memory.fill (local.get $rec) (i32.const 0) (i32.const 128))
+    (i32.store (local.get $rec) (local.get $op))
+    (i32.store offset=4 (local.get $rec) (global.get $vc_origin))
+    (i32.store offset=8 (local.get $rec) (local.get $count))
+    (global.set $vc_n (i32.add (global.get $vc_n) (i32.const 1)))
+    (local.get $rec))
+  (func $vc_slot (param $rec i32) (param $j i32) (result i32)
+    (i32.add (local.get $rec) (i32.add (i32.const 16) (i32.shl (local.get $j) (i32.const 4)))))
+  (func $vc_put (param $rec i32) (param $j i32) (param $bank i32) (param $index i32) (param $sel i32) (param $mod i32)
+    (local $p i32)
+    (local.set $p (call $vc_slot (local.get $rec) (local.get $j)))
+    (i32.store (local.get $p) (local.get $bank))
+    (i32.store offset=4 (local.get $p) (local.get $index))
+    (i32.store offset=8 (local.get $p) (local.get $sel))
+    (i32.store offset=12 (local.get $p) (local.get $mod)))
+  ;; Swizzle composition: component i reads $sel's component $pat[i].
+  (func $vc_compose (param $sel i32) (param $pat i32) (result i32)
+    (local $i i32) (local $r i32)
+    (loop $each
+      (local.set $r (i32.or (local.get $r) (i32.shl
+        (i32.and (i32.shr_u (local.get $sel)
+          (i32.shl (i32.and (i32.shr_u (local.get $pat) (i32.shl (local.get $i) (i32.const 1))) (i32.const 3)) (i32.const 1)))
+          (i32.const 3))
+        (i32.shl (local.get $i) (i32.const 1)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $each (i32.lt_u (local.get $i) (i32.const 4))))
+    (local.get $r))
+  ;; Guest source operand $p into slot $j: swizzle composed with $pat (0xe4 =
+  ;; unchanged), negate toggled by $neg, register index advanced by $row.
+  (func $vc_src (param $rec i32) (param $j i32) (param $p i32) (param $pat i32) (param $neg i32) (param $row i32)
+    (call $vc_put (local.get $rec) (local.get $j) (i32.load (local.get $p))
+      (i32.add (i32.load offset=4 (local.get $p)) (local.get $row))
+      (call $vc_compose (i32.load offset=8 (local.get $p)) (local.get $pat))
+      (i32.xor (i32.load offset=12 (local.get $p)) (local.get $neg))))
+  ;; Replicate component $k of guest source $p (its swizzle applied first).
+  (func $vc_srck (param $rec i32) (param $j i32) (param $p i32) (param $k i32)
+    (call $vc_src (local.get $rec) (local.get $j) (local.get $p) (i32.mul (local.get $k) (i32.const 85)) (i32.const 0) (i32.const 0)))
+  ;; Guest destination $p into slot 0 unchanged (mask, saturate).
+  (func $vc_dst (param $rec i32) (param $p i32)
+    (memory.copy (call $vc_slot (local.get $rec) (i32.const 0)) (local.get $p) (i32.const 16)))
+  ;; Scratch/literal register helpers: temp $r with swizzle $sel, modifier $mod.
+  (func $vc_t (param $rec i32) (param $j i32) (param $r i32) (param $sel i32) (param $mod i32)
+    (call $vc_put (local.get $rec) (local.get $j) (i32.const 0) (local.get $r) (local.get $sel) (local.get $mod)))
+  ;; One-source / two-source scratch ops: dst temp $d mask $m.
+  (func $vc_op (param $op i32) (param $count i32) (param $d i32) (param $m i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $vc_rec (local.get $op) (local.get $count)))
+    (if (local.get $rec) (then (call $vc_put (local.get $rec) (i32.const 0) (i32.const 0) (local.get $d) (local.get $m) (i32.const 0))))
+    (local.get $rec))
+  ;; mov guest-dest, r28 (the guest's mask and saturate).
+  (func $vc_commit (param $p i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $vc_rec (i32.const 1) (i32.const 2)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_dst (local.get $rec) (local.get $p))
+    (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0xe4) (i32.const 0))
+    (i32.const 1))
+  ;; Literal sources: r31 = (0, .5, 1, 2), r30.x = 127.99609375.
+  (func $vc_lit (param $rec i32) (param $j i32) (param $k i32) (param $mod i32)
+    (call $vc_t (local.get $rec) (local.get $j) (i32.const 31) (i32.mul (local.get $k) (i32.const 85)) (local.get $mod)))
+
+  ;; Prologue: r31 from c0 (any finite c0: c0.x < c0.x is 0, >= is 1).
+  (func $vc_prologue (param $lit i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $vc_op (i32.const 12) (i32.const 3) (i32.const 31) (i32.const 1)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_put (local.get $rec) (i32.const 1) (i32.const 2) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $vc_put (local.get $rec) (i32.const 2) (i32.const 2) (i32.const 0) (i32.const 0) (i32.const 0))
+    (local.set $rec (call $vc_op (i32.const 13) (i32.const 3) (i32.const 31) (i32.const 4)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_put (local.get $rec) (i32.const 1) (i32.const 2) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $vc_put (local.get $rec) (i32.const 2) (i32.const 2) (i32.const 0) (i32.const 0) (i32.const 0))
+    (local.set $rec (call $vc_op (i32.const 2) (i32.const 3) (i32.const 31) (i32.const 8)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_lit (local.get $rec) (i32.const 1) (i32.const 2) (i32.const 0))
+    (call $vc_lit (local.get $rec) (i32.const 2) (i32.const 2) (i32.const 0))
+    (local.set $rec (call $vc_op (i32.const 6) (i32.const 2) (i32.const 31) (i32.const 2)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_lit (local.get $rec) (i32.const 1) (i32.const 3) (i32.const 0))
+    (if (i32.eqz (local.get $lit)) (then (return (i32.const 1))))
+    ;; r30.x = 2*2, ^2, ^2 = 256; r30.y = 1/256; r30.x = 256*0.5 - 1/256.
+    (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 30) (i32.const 1)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_lit (local.get $rec) (i32.const 1) (i32.const 3) (i32.const 0))
+    (call $vc_lit (local.get $rec) (i32.const 2) (i32.const 3) (i32.const 0))
+    (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 30) (i32.const 1)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_t (local.get $rec) (i32.const 1) (i32.const 30) (i32.const 0) (i32.const 0))
+    (call $vc_t (local.get $rec) (i32.const 2) (i32.const 30) (i32.const 0) (i32.const 0))
+    (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 30) (i32.const 1)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_t (local.get $rec) (i32.const 1) (i32.const 30) (i32.const 0) (i32.const 0))
+    (call $vc_t (local.get $rec) (i32.const 2) (i32.const 30) (i32.const 0) (i32.const 0))
+    (local.set $rec (call $vc_op (i32.const 6) (i32.const 2) (i32.const 30) (i32.const 2)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_t (local.get $rec) (i32.const 1) (i32.const 30) (i32.const 0) (i32.const 0))
+    (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 30) (i32.const 1)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_t (local.get $rec) (i32.const 1) (i32.const 30) (i32.const 0) (i32.const 0))
+    (call $vc_lit (local.get $rec) (i32.const 2) (i32.const 1) (i32.const 0))
+    (local.set $rec (call $vc_op (i32.const 2) (i32.const 3) (i32.const 30) (i32.const 1)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $vc_t (local.get $rec) (i32.const 1) (i32.const 30) (i32.const 0) (i32.const 0))
+    (call $vc_t (local.get $rec) (i32.const 2) (i32.const 30) (i32.const 0x55) (i32.const 1))
+    (i32.const 1))
+
+  ;; Copy a guest record whose op is already core; rcp/rsq/exp/log get their
+  ;; replicate swizzle made explicit (component x of the guest swizzle).
+  (func $vc_copy (param $ins i32) (param $op i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $vc_rec (local.get $op) (i32.load offset=8 (local.get $ins))))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (memory.copy (i32.add (local.get $rec) (i32.const 16)) (i32.add (local.get $ins) (i32.const 16)) (i32.const 80))
+    (if (i32.or (i32.or (i32.eq (local.get $op) (i32.const 6)) (i32.eq (local.get $op) (i32.const 7)))
+          (i32.or (i32.eq (local.get $op) (i32.const 14)) (i32.eq (local.get $op) (i32.const 15)))) (then
+      (call $vc_srck (local.get $rec) (i32.const 1) (i32.add (local.get $ins) (i32.const 32)) (i32.const 0))))
+    (i32.const 1))
+
+  ;; One guest instruction. 1 = done, 0 = output full, -1 = declined.
+  (func $vc_ins (param $ins i32) (param $vs1 i32) (result i32)
+    (local $op i32) (local $d i32) (local $a i32) (local $b i32) (local $c i32)
+    (local $rec i32) (local $j i32) (local $p i32) (local $rows i32) (local $dot i32)
+    (local.set $op (i32.load (local.get $ins)))
+    (local.set $d (i32.add (local.get $ins) (i32.const 16)))
+    (local.set $a (i32.add (local.get $ins) (i32.const 32)))
+    (local.set $b (i32.add (local.get $ins) (i32.const 48)))
+    (local.set $c (i32.add (local.get $ins) (i32.const 64)))
+    (if (i32.eqz (local.get $op)) (then (return (i32.const 1))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 31)) (i32.eq (local.get $op) (i32.const 81)))
+      (then (return (call $vc_copy (local.get $ins) (local.get $op)))))
+    (if (i32.load offset=12 (local.get $ins)) (then (return (call $cn_decline (i32.const 0x60001)))))
+    ;; Destination: mask + optional saturate only.
+    (if (i32.gt_u (i32.load offset=12 (local.get $d)) (i32.const 1)) (then (return (call $cn_decline (i32.const 0x60002)))))
+    ;; Sources: negate and relative bits only.
+    (local.set $j (i32.const 1))
+    (block $ok (loop $each
+      (br_if $ok (i32.ge_u (local.get $j) (i32.load offset=8 (local.get $ins))))
+      (local.set $p (call $vc_slot (local.get $ins) (local.get $j)))
+      (if (i32.gt_u (i32.and (i32.load offset=12 (local.get $p)) (i32.const 0xff)) (i32.const 1))
+        (then (return (call $cn_decline (i32.const 0x60003)))))
+      (if (i32.and (i32.load offset=12 (local.get $p)) (i32.const 0x400))
+        (then (return (call $cn_decline (i32.const 0x60004)))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $each)))
+    ;; vs_1_x "mov a0": floor (x - frc x) then an exact mova.
+    (if (i32.and (i32.eq (local.get $op) (i32.const 1)) (i32.eq (i32.load (local.get $d)) (i32.const 3))) (then
+      (local.set $rec (call $vc_op (i32.const 19) (i32.const 2) (i32.const 28) (i32.const 15)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 2) (i32.const 3) (i32.const 28) (i32.const 15)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 28) (i32.const 0xe4) (i32.const 1))
+      (local.set $rec (call $vc_rec (i32.const 46) (i32.const 2)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_dst (local.get $rec) (local.get $d))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0xe4) (i32.const 0))
+      (return (i32.const 1))))
+    (if (i32.or (i32.or (i32.or (i32.eq (local.get $op) (i32.const 1)) (i32.eq (local.get $op) (i32.const 2)))
+          (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 4)) (i32.le_u (local.get $op) (i32.const 15)))
+            (i32.eq (local.get $op) (i32.const 19))))
+          (i32.eq (local.get $op) (i32.const 46)))
+      (then (return (call $vc_copy (local.get $ins) (local.get $op)))))
+    ;; sub a, b = add a, -b.
+    (if (i32.eq (local.get $op) (i32.const 3)) (then
+      (if (i32.eqz (call $vc_copy (local.get $ins) (i32.const 2))) (then (return (i32.const 0))))
+      (local.set $p (call $vc_slot (i32.add (i32.add (global.get $vc_out) (i32.const 32))
+        (i32.shl (i32.sub (global.get $vc_n) (i32.const 1)) (i32.const 7))) (i32.const 2)))
+      (i32.store offset=12 (local.get $p) (i32.xor (i32.load offset=12 (local.get $p)) (i32.const 1)))
+      (return (i32.const 1))))
+    ;; abs a = max(a, -a).
+    (if (i32.eq (local.get $op) (i32.const 35)) (then
+      (local.set $rec (call $vc_rec (i32.const 11) (i32.const 3)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_dst (local.get $rec) (local.get $d))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 2) (local.get $a) (i32.const 0xe4) (i32.const 1) (i32.const 0))
+      (return (i32.const 1))))
+    ;; lrp a, b, c = a * (b - c) + c.
+    (if (i32.eq (local.get $op) (i32.const 18)) (then
+      (local.set $rec (call $vc_op (i32.const 2) (i32.const 3) (i32.const 28) (i32.const 15)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $b) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 2) (local.get $c) (i32.const 0xe4) (i32.const 1) (i32.const 0))
+      (local.set $rec (call $vc_rec (i32.const 4) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_dst (local.get $rec) (local.get $d))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 28) (i32.const 0xe4) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 3) (local.get $c) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (return (i32.const 1))))
+    ;; Matrix macros: one dp per row into r28, then the guest's masked write.
+    (if (i32.and (i32.ge_u (local.get $op) (i32.const 20)) (i32.le_u (local.get $op) (i32.const 24))) (then
+      (local.set $rows (select (i32.const 4)
+        (select (i32.const 2) (i32.const 3) (i32.eq (local.get $op) (i32.const 24)))
+        (i32.or (i32.eq (local.get $op) (i32.const 20)) (i32.eq (local.get $op) (i32.const 22)))))
+      (local.set $dot (select (i32.const 9) (i32.const 8) (i32.le_u (local.get $op) (i32.const 21))))
+      (local.set $j (i32.const 0))
+      (loop $row
+        (local.set $rec (call $vc_op (local.get $dot) (i32.const 3) (i32.const 28) (i32.shl (i32.const 1) (local.get $j))))
+        (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+        (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+        (call $vc_src (local.get $rec) (i32.const 2) (local.get $b) (i32.const 0xe4) (i32.const 0) (local.get $j))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br_if $row (i32.lt_u (local.get $j) (local.get $rows))))
+      (return (call $vc_commit (local.get $d)))))
+    ;; dst = (1, a.y * b.y, a.z, b.w).
+    (if (i32.eq (local.get $op) (i32.const 17)) (then
+      (local.set $rec (call $vc_op (i32.const 1) (i32.const 2) (i32.const 28) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_lit (local.get $rec) (i32.const 1) (i32.const 2) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 28) (i32.const 2)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 2) (local.get $b) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 1) (i32.const 2) (i32.const 28) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 1) (i32.const 2) (i32.const 28) (i32.const 8)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $b) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (return (call $vc_commit (local.get $d)))))
+    ;; lit: (1, max(x,0), x>0 && y>0 ? 2^(clamp(w,+-L) * log2 y) : 0, 1).
+    ;; y is replaced by 1 when y <= 0, so the gated power is always finite.
+    (if (i32.eq (local.get $op) (i32.const 16)) (then
+      ;; r29.x = 0 < x, r29.y = 0 < y, r29.z = gate, r29.w = 1 - r29.y.
+      (local.set $rec (call $vc_op (i32.const 12) (i32.const 3) (i32.const 29) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_lit (local.get $rec) (i32.const 1) (i32.const 0) (i32.const 0))
+      (call $vc_srck (local.get $rec) (i32.const 2) (local.get $a) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 12) (i32.const 3) (i32.const 29) (i32.const 2)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_lit (local.get $rec) (i32.const 1) (i32.const 0) (i32.const 0))
+      (call $vc_srck (local.get $rec) (i32.const 2) (local.get $a) (i32.const 1))
+      (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 29) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 29) (i32.const 0x00) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 29) (i32.const 0x55) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 2) (i32.const 3) (i32.const 29) (i32.const 8)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_lit (local.get $rec) (i32.const 1) (i32.const 2) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 29) (i32.const 0x55) (i32.const 1))
+      ;; r28.z = y * gy + (1 - gy)
+      (local.set $rec (call $vc_op (i32.const 4) (i32.const 4) (i32.const 28) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_srck (local.get $rec) (i32.const 1) (local.get $a) (i32.const 1))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 29) (i32.const 0x55) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 3) (i32.const 29) (i32.const 0xff) (i32.const 0))
+      ;; r29.x = clamp(w, -L, L)
+      (local.set $rec (call $vc_op (i32.const 10) (i32.const 3) (i32.const 29) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_srck (local.get $rec) (i32.const 1) (local.get $a) (i32.const 3))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 30) (i32.const 0x00) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 11) (i32.const 3) (i32.const 29) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 29) (i32.const 0x00) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 30) (i32.const 0x00) (i32.const 1))
+      ;; r28.z = gate * exp(w' * log(y'))
+      (local.set $rec (call $vc_op (i32.const 15) (i32.const 2) (i32.const 28) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0xaa) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 28) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0xaa) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 29) (i32.const 0x00) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 14) (i32.const 2) (i32.const 28) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0xaa) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 28) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0xaa) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 29) (i32.const 0xaa) (i32.const 0))
+      ;; r28.y = max(x, 0); r28.xw = 1
+      (local.set $rec (call $vc_op (i32.const 11) (i32.const 3) (i32.const 28) (i32.const 2)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_srck (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0))
+      (call $vc_lit (local.get $rec) (i32.const 2) (i32.const 0) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 1) (i32.const 2) (i32.const 28) (i32.const 9)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_lit (local.get $rec) (i32.const 1) (i32.const 2) (i32.const 0))
+      (return (call $vc_commit (local.get $d)))))
+    ;; expp: vs_1_x (2^floor x, frc x, 2^x, 1); vs_2_0 replicated 2^x.
+    ;; logp: replicated log2|x| (both profiles; log 0 is the finite sentinel).
+    (if (i32.or (i32.eq (local.get $op) (i32.const 78)) (i32.eq (local.get $op) (i32.const 79))) (then
+      (if (i32.or (i32.eq (local.get $op) (i32.const 79)) (i32.eqz (local.get $vs1)))
+        (then (return (call $vc_copy (local.get $ins) (select (i32.const 15) (i32.const 14) (i32.eq (local.get $op) (i32.const 79)))))))
+      (local.set $rec (call $vc_op (i32.const 19) (i32.const 2) (i32.const 29) (i32.const 15)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_srck (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 2) (i32.const 3) (i32.const 28) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_srck (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 29) (i32.const 0x00) (i32.const 1))
+      (local.set $rec (call $vc_op (i32.const 14) (i32.const 2) (i32.const 28) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0x00) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 1) (i32.const 2) (i32.const 28) (i32.const 2)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 29) (i32.const 0x00) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 14) (i32.const 2) (i32.const 28) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_srck (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 1) (i32.const 2) (i32.const 28) (i32.const 8)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_lit (local.get $rec) (i32.const 1) (i32.const 2) (i32.const 0))
+      (return (call $vc_commit (local.get $d)))))
+    ;; pow a, b = 2^(b * log2|a|) (log2 0 = -FLT_MAX gives 0^+ = 0, 0^- = inf, x^0 = 1).
+    (if (i32.eq (local.get $op) (i32.const 32)) (then
+      (local.set $rec (call $vc_op (i32.const 15) (i32.const 2) (i32.const 28) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_srck (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 28) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0x00) (i32.const 0))
+      (call $vc_srck (local.get $rec) (i32.const 2) (local.get $b) (i32.const 0))
+      (local.set $rec (call $vc_rec (i32.const 14) (i32.const 2)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_dst (local.get $rec) (local.get $d))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0x00) (i32.const 0))
+      (return (i32.const 1))))
+    ;; nrm a = a * rsq(dp3(a, a)).
+    (if (i32.eq (local.get $op) (i32.const 36)) (then
+      (local.set $rec (call $vc_op (i32.const 8) (i32.const 3) (i32.const 28) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 2) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 7) (i32.const 2) (i32.const 28) (i32.const 1)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0x00) (i32.const 0))
+      (local.set $rec (call $vc_rec (i32.const 5) (i32.const 3)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_dst (local.get $rec) (local.get $d))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 2) (i32.const 28) (i32.const 0x00) (i32.const 0))
+      (return (i32.const 1))))
+    ;; crs a, b = a.yzx * b.zxy - a.zxy * b.yzx.
+    (if (i32.eq (local.get $op) (i32.const 33)) (then
+      (local.set $rec (call $vc_op (i32.const 5) (i32.const 3) (i32.const 28) (i32.const 7)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xd2) (i32.const 0) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 2) (local.get $b) (i32.const 0xc9) (i32.const 0) (i32.const 0))
+      (local.set $rec (call $vc_rec (i32.const 4) (i32.const 4)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_dst (local.get $rec) (local.get $d))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xc9) (i32.const 0) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 2) (local.get $b) (i32.const 0xd2) (i32.const 0) (i32.const 0))
+      (call $vc_t (local.get $rec) (i32.const 3) (i32.const 28) (i32.const 0xe4) (i32.const 1))
+      (return (i32.const 1))))
+    ;; cnd a, b, c = a > 0.5 ? b : c per component (09aj fixed-function IR
+    ;; only: its normalize selects rather than multiplying a non-finite length
+    ;; by zero) = cmp(0.5 - a, c, b) into r29 -- cmp never writes one of its
+    ;; sources -- then the guest's write.
+    (if (i32.eq (local.get $op) (i32.const 80)) (then
+      (local.set $rec (call $vc_op (i32.const 2) (i32.const 3) (i32.const 28) (i32.const 15)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_src (local.get $rec) (i32.const 1) (local.get $a) (i32.const 0xe4) (i32.const 1) (i32.const 0))
+      (call $vc_lit (local.get $rec) (i32.const 2) (i32.const 1) (i32.const 0))
+      (local.set $rec (call $vc_op (i32.const 88) (i32.const 4) (i32.const 29) (i32.const 15)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 28) (i32.const 0xe4) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 2) (local.get $c) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (call $vc_src (local.get $rec) (i32.const 3) (local.get $b) (i32.const 0xe4) (i32.const 0) (i32.const 0))
+      (local.set $rec (call $vc_rec (i32.const 1) (i32.const 2)))
+      (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+      (call $vc_dst (local.get $rec) (local.get $d))
+      (call $vc_t (local.get $rec) (i32.const 1) (i32.const 29) (i32.const 0xe4) (i32.const 0))
+      (return (i32.const 1))))
+    (call $cn_decline (local.get $op)))
+
+  ;; Allocate the output for $cap records; returns the guest pointer or 0.
+  (func $vc_alloc (param $cap i32) (result i32)
+    (local $bytes i32) (local $guest i32)
+    (local.set $bytes (i32.add (i32.const 32) (i32.shl (local.get $cap) (i32.const 7))))
+    (if (i32.gt_u (i32.add (global.get $d3d_ir_live_bytes) (local.get $bytes)) (i32.const 4194304)) (then (return (i32.const 0))))
+    (local.set $guest (call $heap_alloc (i32.add (local.get $bytes) (i32.const 16))))
+    (if (i32.eqz (local.get $guest)) (then (return (i32.const 0))))
+    (global.set $vc_out (i32.add (call $g2w (local.get $guest)) (i32.const 16)))
+    (global.set $vc_cap (local.get $cap))
+    (global.set $vc_n (i32.const 0))
+    (global.set $vc_origin (i32.const 1))
+    (memory.fill (global.get $vc_out) (i32.const 0) (i32.const 32))
+    (local.get $guest))
+  ;; Publish: header, then link into the IR ownership list.
+  (func $vc_publish (param $guest i32) (param $ir i32) (param $stage i32) (param $version i32) (param $flags i32) (result i32)
+    (local $base i32) (local $bytes i32)
+    (local.set $base (i32.sub (global.get $vc_out) (i32.const 16)))
+    (local.set $bytes (i32.add (i32.const 32) (i32.shl (global.get $vc_cap) (i32.const 7))))
+    (i32.store (global.get $vc_out) (i32.const 0x44534952))
+    (i32.store offset=4 (global.get $vc_out) (i32.const 1))
+    (i32.store offset=8 (global.get $vc_out) (local.get $stage))
+    (i32.store offset=12 (global.get $vc_out) (local.get $version))
+    (i32.store offset=16 (global.get $vc_out) (global.get $vc_n))
+    (i32.store offset=20 (global.get $vc_out) (i32.load offset=20 (local.get $ir)))
+    (i32.store offset=24 (global.get $vc_out) (i32.add (i32.const 32) (i32.shl (global.get $vc_n) (i32.const 7))))
+    (i32.store offset=28 (global.get $vc_out) (local.get $flags))
+    (i32.store (local.get $base) (global.get $d3d_ir_head))
+    (i32.store offset=4 (local.get $base) (local.get $guest))
+    (i32.store offset=8 (local.get $base) (local.get $bytes))
+    (global.set $d3d_ir_live_bytes (i32.add (global.get $d3d_ir_live_bytes) (local.get $bytes)))
+    (global.set $d3d_ir_head (local.get $base))
+    (global.get $vc_out))
+
+  ;; Implicit declarations (wasm address of 16 words, 0 = none), set by a
+  ;; producer around one canonicalize call: word v = 0x80000000 | usage |
+  ;; index << 16 names v# for an IR without DCLs (D3D8 vs_1_1 declares its
+  ;; inputs in the device declaration; 09aj fixed-function IR names none).
+  (global $vc_implicit_dcl (mut i32) (i32.const 0))
+
+  ;; Stage-0 entry (range and magic already checked by the caller).
+  (func $d3d_vs_canonicalize (param $ir i32) (result i32)
+    (local $n i32) (local $i i32) (local $ins i32) (local $op i32) (local $j i32) (local $p i32)
+    (local $declared i32) (local $lits i32) (local $lit i32) (local $vs1 i32) (local $guest i32) (local $r i32)
+    (local $version i32) (local $flags i32) (local $implicit i32) (local $w i32) (local $rec i32)
+    (local.set $version (i32.load offset=12 (local.get $ir)))
+    (local.set $flags (i32.load offset=28 (local.get $ir)))
+    ;; Flags: 1 guest-origin, 4 fixed-function origin (09aj); nothing else.
+    (if (i32.or (i32.ne (i32.and (local.get $flags) (i32.const -6)) (i32.const 0))
+          (i32.eqz (i32.or (i32.or (i32.eq (local.get $version) (i32.const 0xfffe0100))
+            (i32.eq (local.get $version) (i32.const 0xfffe0101))) (i32.eq (local.get $version) (i32.const 0xfffe0200)))))
+      (then (drop (call $cn_decline (i32.const 0x60000))) (return (i32.const 0))))
+    (local.set $vs1 (i32.ne (local.get $version) (i32.const 0xfffe0200)))
+    (local.set $n (i32.load offset=16 (local.get $ir)))
+    (if (i32.gt_u (local.get $n) (i32.const 1024)) (then (drop (call $cn_decline (i32.const 0x40002))) (return (i32.const 0))))
+    ;; Declarations, literal needs, and the DCL rule.
+    (block $scanned (loop $scan
+      (br_if $scanned (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $ins (i32.add (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $i) (i32.const 7))))
+      (local.set $op (i32.load (local.get $ins)))
+      (if (i32.gt_u (i32.load offset=8 (local.get $ins)) (i32.const 5)) (then (drop (call $cn_decline (i32.const 0x60005))) (return (i32.const 0))))
+      (if (i32.eq (local.get $op) (i32.const 31)) (then
+        (if (i32.or (i32.ne (i32.load offset=32 (local.get $ins)) (i32.const 1)) (i32.ge_u (i32.load offset=36 (local.get $ins)) (i32.const 16)))
+          (then (drop (call $cn_decline (i32.const 0x60006))) (return (i32.const 0))))
+        (local.set $declared (i32.or (local.get $declared) (i32.shl (i32.const 1) (i32.load offset=36 (local.get $ins)))))))
+      (if (i32.or (i32.or (i32.eq (local.get $op) (i32.const 16)) (i32.eq (local.get $op) (i32.const 80)))
+            (i32.or (i32.eq (local.get $op) (i32.const 17)) (i32.and (local.get $vs1) (i32.eq (local.get $op) (i32.const 78)))))
+        (then (local.set $lits (i32.const 1))))
+      (if (i32.eq (local.get $op) (i32.const 16)) (then (local.set $lit (i32.const 1))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (if (global.get $vc_implicit_dcl) (then
+      (local.set $i (i32.const 0))
+      (loop $imp
+        (if (i32.and (i32.ne (i32.and (i32.load (i32.add (global.get $vc_implicit_dcl) (i32.shl (local.get $i) (i32.const 2))))
+                (i32.const 0x80000000)) (i32.const 0))
+              (i32.eqz (i32.and (local.get $declared) (i32.shl (i32.const 1) (local.get $i)))))
+          (then (local.set $implicit (i32.or (local.get $implicit) (i32.shl (i32.const 1) (local.get $i))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $imp (i32.lt_u (local.get $i) (i32.const 16))))
+      (local.set $declared (i32.or (local.get $declared) (local.get $implicit)))))
+    (local.set $i (i32.const 0))
+    (block $checked (loop $check
+      (br_if $checked (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $ins (i32.add (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $i) (i32.const 7))))
+      (if (i32.and (i32.ne (i32.load (local.get $ins)) (i32.const 31)) (i32.ne (i32.load (local.get $ins)) (i32.const 81))) (then
+        (local.set $j (i32.const 1))
+        (block $ops (loop $operands
+          (br_if $ops (i32.ge_u (local.get $j) (i32.load offset=8 (local.get $ins))))
+          (local.set $p (call $vc_slot (local.get $ins) (local.get $j)))
+          (if (i32.eq (i32.load (local.get $p)) (i32.const 1)) (then
+            (if (i32.or (i32.ge_u (i32.load offset=4 (local.get $p)) (i32.const 16))
+                  (i32.eqz (i32.and (local.get $declared) (i32.shl (i32.const 1) (i32.load offset=4 (local.get $p))))))
+              (then (drop (call $cn_decline (i32.const 0x60007))) (return (i32.const 0))))))
+          (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $operands)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $check)))
+    ;; Worst case: 18 records per guest instruction (lit) plus the prologue.
+    (local.set $guest (call $vc_alloc (i32.add (i32.mul (local.get $n) (i32.const 18)) (i32.const 32))))
+    (if (i32.eqz (local.get $guest)) (then (drop (call $cn_decline (i32.const 0x40004))) (return (i32.const 0))))
+    (local.set $r (i32.const 1))
+    (block $fail
+      (local.set $i (i32.const 0))
+      (block $dcls (loop $dcl
+        (br_if $dcls (i32.ge_u (local.get $i) (i32.const 16)))
+        (if (i32.and (local.get $implicit) (i32.shl (i32.const 1) (local.get $i))) (then
+          (local.set $w (i32.load (i32.add (global.get $vc_implicit_dcl) (i32.shl (local.get $i) (i32.const 2)))))
+          (local.set $rec (call $vc_rec (i32.const 31) (i32.const 2)))
+          (if (i32.eqz (local.get $rec)) (then (local.set $r (i32.const 0)) (br $fail)))
+          (call $vc_put (local.get $rec) (i32.const 0) (i32.const 254) (i32.and (local.get $w) (i32.const 0xffff))
+            (i32.and (i32.shr_u (local.get $w) (i32.const 16)) (i32.const 0x7fff)) (i32.const 0))
+          (call $vc_put (local.get $rec) (i32.const 1) (i32.const 1) (local.get $i) (i32.const 15) (i32.const 0))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $dcl)))
+      (if (local.get $lits) (then (br_if $fail (i32.eqz (call $vc_prologue (local.get $lit))))))
+      (local.set $i (i32.const 0))
+      (block $body (loop $each
+        (br_if $body (i32.ge_u (local.get $i) (local.get $n)))
+        (local.set $ins (i32.add (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $i) (i32.const 7))))
+        (global.set $vc_origin (i32.load offset=4 (local.get $ins)))
+        (local.set $r (call $vc_ins (local.get $ins) (local.get $vs1)))
+        (br_if $fail (i32.ne (local.get $r) (i32.const 1)))
+        (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $each)))
+      (return (call $vc_publish (local.get $guest) (local.get $ir) (i32.const 0) (i32.const 0xfffe0200)
+        (i32.or (i32.const 8) (i32.and (local.get $flags) (i32.const 1))))))
+    (if (i32.eqz (local.get $r)) (then (drop (call $cn_decline (i32.const 0x40005)))))
+    (call $heap_free (local.get $guest))
+    (i32.const 0))
+
+  ;; Core pixel IR at version 0xffff0200 (texld names its sampler 0..7, t0..7):
+  ;; validated against the core pixel subset and copied unchanged.
+  (func $d3d_ps_core_copy (param $ir i32) (result i32)
+    (local $n i32) (local $i i32) (local $ins i32) (local $op i32) (local $j i32) (local $p i32) (local $guest i32)
+    (if (i32.ne (i32.and (i32.load offset=28 (local.get $ir)) (i32.const -2)) (i32.const 8))
+      (then (drop (call $cn_decline (i32.const 0x60010))) (return (i32.const 0))))
+    (local.set $n (i32.load offset=16 (local.get $ir)))
+    (if (i32.gt_u (local.get $n) (i32.const 4096)) (then (drop (call $cn_decline (i32.const 0x40002))) (return (i32.const 0))))
+    (block $checked (loop $check
+      (br_if $checked (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $ins (i32.add (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $i) (i32.const 7))))
+      (local.set $op (i32.load (local.get $ins)))
+      (if (i32.eqz (i32.or (i32.or (i32.or (i32.eq (local.get $op) (i32.const 1)) (i32.eq (local.get $op) (i32.const 2)))
+              (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 4)) (i32.le_u (local.get $op) (i32.const 6)))
+                (i32.and (i32.ge_u (local.get $op) (i32.const 8)) (i32.le_u (local.get $op) (i32.const 11)))))
+            (i32.or (i32.or (i32.eq (local.get $op) (i32.const 18)) (i32.eq (local.get $op) (i32.const 88)))
+              (i32.or (i32.eq (local.get $op) (i32.const 81))
+                (i32.or (i32.eq (local.get $op) (i32.const 65)) (i32.eq (local.get $op) (i32.const 66)))))))
+        (then (drop (call $cn_decline (local.get $op))) (return (i32.const 0))))
+      (if (i32.load offset=12 (local.get $ins)) (then (drop (call $cn_decline (i32.const 0x60011))) (return (i32.const 0))))
+      (if (i32.ne (local.get $op) (i32.const 81)) (then
+        (local.set $j (i32.const 0))
+        (block $ops (loop $operands
+          (br_if $ops (i32.ge_u (local.get $j) (i32.load offset=8 (local.get $ins))))
+          (br_if $ops (i32.ge_u (local.get $j) (i32.const 5)))
+          (local.set $p (call $vc_slot (local.get $ins) (local.get $j)))
+          ;; t# (bank 3) and samplers (bank 10) name 0..7; temps < 32, c < 32.
+          (if (i32.ge_u (i32.load offset=4 (local.get $p))
+                (select (i32.const 8) (i32.const 32)
+                  (i32.or (i32.eq (i32.load (local.get $p)) (i32.const 3)) (i32.eq (i32.load (local.get $p)) (i32.const 10)))))
+            (then (drop (call $cn_decline (i32.const 0x60012))) (return (i32.const 0))))
+          (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $operands)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $check)))
+    (local.set $guest (call $vc_alloc (local.get $n)))
+    (if (i32.eqz (local.get $guest)) (then (drop (call $cn_decline (i32.const 0x40004))) (return (i32.const 0))))
+    (memory.copy (i32.add (global.get $vc_out) (i32.const 32)) (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $n) (i32.const 7)))
+    (global.set $vc_n (local.get $n))
+    (call $vc_publish (local.get $guest) (local.get $ir) (i32.const 1) (i32.const 0xffff0200) (i32.load offset=28 (local.get $ir))))

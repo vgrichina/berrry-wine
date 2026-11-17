@@ -154,11 +154,15 @@ Without this, every new backend would have to reimplement the 846 lines of
     - W depth keeps the Voodoo 16-bit float encoding as *the* depth_mode 2
       encoding; D3DIM W-buffering uses it too.
     - The WebGL executor advertises STENCIL only: no occlusion, mirror-once,
-      linear-filtered border or logic op, and max_aniso 1. The software
+      linear-filtered border or logic op, and max_aniso 1. (Since then it
+      has gained all of them but mirror-once; see the caps table in
+      `gpu-stream-v2.md`.) The software
       executor has occlusion, mirror-once and linear-filtered border.
-    - WebGL perspective-mode (`linear 0`) rasterization lifts y by 1/128 px
+    - WebGL perspective-mode (`linear 0`) rasterization lifts y by 1/16 px
       so the top-left tie rule survives GL's y flip; the linear (Glide) path
-      is unchanged.
+      is unchanged. (It was 1/128 px until 2026-11-16, which SwiftShader's
+      4-bit subpixel grid rounds away: Heretic II's seam, the same bug as
+      the 2026-10-06 NFS III horizon line in `docs/re-notes/need-for-speed.md`.)
     - The page Presenter refuses a non-zero PRESENT dst; D2 implements
       windowed / child-window present on top of it. Stale stamps are
       already dropped.
@@ -232,6 +236,165 @@ Without this, every new backend would have to reimplement the 846 lines of
   - Apps: pawn, B&W2, Morrowind (D3D8), Die Hard (D3D8 A1R5G5B5), GeneRally.
   - On the CLI with no GPU, the kick must return 0 so that CreateDevice
     still fails.
+  - **S1 (2026-11-16): the ring leads.** After two ring-presented frames
+    the old draw/clear calls are skipped; a decline or a back-buffer
+    operation the ring cannot do hands the executor picture to the old
+    path (readback, one 0x30015 upload) and returns to shadow mode
+    (`09akg` "Lead mode", `test-d3d9-gps-lead.js`). CPU per present:
+    Alien Shooter −52%, Die Hard −24%, B&W2 −14%, pixels identical.
+  - **S2 (2026-11-16): WAT decides the caps.** `09akg` picks the D3D9 caps
+    profile (`d3d9_profile_set`, from the ring's CAP flags at open) and
+    09ad/09ae answer GetDeviceCaps, the shader-version gate, RGB565 and
+    occlusion queries from it, with no JS round trip
+    (`test-d3d9-gps-caps.js`).
+  - **S3 (2026-11-16): fewer declines.** Lit fixed T&L (28) lowers: the
+    09aj DLT1 is built in WAT from the device's lights and material, the VS
+    compiles once per lighting *shape* and the values go out as c40..c95
+    per draw (`test-d3d9-gps-lit.js`). Texture transforms and texgen (12)
+    lower the same way, the matrices as c16..c39 and a normal texgen's
+    normal matrix as c40..c42 (`test-d3d9-gps-texgen.js`); PROJECTED still
+    declines (the executor has no raster divide on this path). A vertex
+    declaration that is exactly an FVF layout runs fixed T&L as that FVF
+    (2, `test-d3d9-gps-decl-fixed.js`). The core vertex IR gained `cmp`
+    (op 88, a per-component select): 09aj's normalize selects with CND, and
+    09af1 lowers it. Still declined: 27 (user clip planes need clip
+    distances in the executor protocol; multi-stream declarations need a
+    WAT interleave; vertex blending has no 09aj lowering on either path),
+    and the reasons outside this slice (4..7, 11, 14..26).
+  - **User clip planes (2026-11-16).** D3DRS_CLIPPLANEENABLE + SetClipPlane
+    no longer decline 27 when the executor advertises
+    `GPS_CAP_CLIP_PLANES` (128): a sticky CLIP record (op 15, mask + six
+    clip-space planes) is sent with the viewport for every vertex-stage
+    draw. A guest VS's planes are clip space already; fixed T&L's are
+    world space and go out as `plane * inverse(View * Projection)` (a
+    singular product still declines 27). POSITIONT draws ignore them. The
+    software executor clips the polygons; WebGL computes the distances in
+    the VS and discards a fragment with any negative interpolated distance
+    (WebGL has no `gl_ClipDistance`), on WebGL1 and WebGL2
+    (`test-d3d9-gps-clip.js`, scenario step 13).
+  - **Projected texture coordinates (2026-11-16).** D3DTTFF_PROJECTED |
+    COUNT3/4 under fixed T&L no longer declines 12, and needs no new record
+    or cap: the fixed VS writes the full transformed coordinate and the
+    pixel stage's raw `tex t#` (the fixed cascade, or a guest ps1.1-1.3)
+    canonicalizes to a core texld with the DZ / DW coordinate modifier,
+    which both executors already divide per pixel (09af1 `$cn_projected`,
+    set by 09akg for that one canonicalization; the guest-PS cache key
+    includes it). q == 0 samples (1, 1) as texld_dz does (the old path drew
+    black). Still 12: PROJECTED with COUNT1/2, a ps1.4 / 2.0 under it, a
+    dependent texture op on a projected stage, and POSITIONT. A generated
+    coordinate behind a guest PS no longer drops its VS output
+    (`test-d3d9-gps-texgen.js` frames 8..11).
+  - **d9pj (2026-11-16): the rest of PROJECTED.** Also reshaped in WAT
+    into the same DZ / DW divide, with no new record or cap: COUNT2 |
+    PROJECTED divides by the second coordinate and leaves (x/y, 0) --
+    under fixed T&L the texture matrix's y column goes out as its w
+    column with y zeroed (c16.. constants) and the stage runs as COUNT4;
+    on POSITIONT (no matrix, still projected) the CPU expansion appends
+    one FLOAT4 (x, 0, 0, y) of that set to each vertex (layout nibble 13)
+    and the stage reads it with DW. POSITIONT COUNT3 / COUNT4 | PROJECTED
+    read the set in place with DZ / DW; the fixed PS is emitted through
+    the projected canonicalization, with the stages in its cache key. A
+    guest ps1.4+ ignores PROJECTED (it projects explicitly), as D3D does.
+    Still 12: PROJECTED | COUNT1 (nothing is left after the divide), a
+    second POSITIONT COUNT2 stage in one draw, a projected set the vertex
+    lacks or that is too short to hold the divisor, PROJECTED under a
+    ps_1_0 or a non-ps shader, plain transform flags on POSITIONT
+    (`test-d3d9-gps-projected.js`, against an equivalent COUNT4 draw and
+    the old path; `--webgl` for the WebGL executor).
+  - **d9wb (2026-11-16): W-buffering (17) as an executor feature.**
+    D3DZB_USEW cannot be reshaped on the CPU (depth is 1 / interpolated
+    rhw per pixel, not linear in screen space), so it is RASTER
+    depth_mode 3 behind GPS_CAP_WBUFFER (256): depth = w / w_far, w_far
+    from the PROJECTION transform as the D3D9 runtime takes it, (m44 -
+    m43) / (m33 - m34) * m34 + m44, for every vertex stage (POSITIONT,
+    fixed T&L, guest VS). The software executor computes it in the native
+    rasterizer (glide descriptor depthMode 3, w_far at +28); the WebGL
+    executor writes gl_FragDepth / gl_FragDepthEXT in those draws'
+    programs only, and advertises the cap with WebGL2, desktop GL or
+    EXT_frag_depth. Still 17: no cap, m33 == m34 or a w_far that is not
+    finite and positive, DEPTHBIAS / SLOPESCALEDEPTHBIAS under W
+    (`test-d3d9-gps-wbuffer.js`, against the picture W-buffering defines
+    worked out on the CPU, and the scenario's step 14). The decline and
+    lead tests now decline through 14 (BLENDFACTOR), which the old path
+    draws exactly.
+  - **d9ms (2026-11-16): gathered vertex input.** Input the executor
+    cannot read in place is gathered per draw in WAT (`09akg` "d9ms") into
+    one interleaved arena vertex, drawn as DRAW_UP: declaration elements on
+    streams 1..15, every D3DDECLTYPE (converted as D3D defines it, the f64
+    quotient rounded once), declarations that are not an FVF layout under
+    fixed T&L (2) or POSITIONT (`XYZRHW` byte order), and XYZW / XYZBn
+    FVFs. BaseVertexIndex, MinIndex and NumVertices are the D3D ones.
+    SetStreamSourceFreq is still `crash_unimplemented`, so instancing
+    cannot reach a draw (`test-d3d9-gps-streams.js`, 7 frames pixel-exact
+    against the old path; each declined 2 or 27 before).
+  - **d9ms (2026-11-16): fixed-function vertex blending.** VERTEXBLEND
+    1..3 WEIGHTS, indexed blending (INDEXEDVERTEXBLENDENABLE, 0WEIGHTS
+    included, UBYTE4 or D3DCOLOR indices) and TWEENING lower like S3's
+    lighting: a prologue on the 09aj cascade VS compiled once per shape
+    (matrix count, indexed, index type, tween, NORMAL), the world matrices
+    0..3 or palette entries 0..21 (position columns and inverse transposes)
+    or TWEENFACTOR sent as c96.. CONSTS per draw; the cascade then runs on
+    the blended world-space vertex under an identity world. Inputs are
+    always gathered. Still 27: an index past 21 (checked over the draw's
+    vertices before it is lowered), missing BLENDWEIGHT / BLENDINDICES /
+    POSITION1 / NORMAL1. The old path ignores blending, so
+    `test-d3d9-gps-blend.js` compares against CPU-blended meshes (dyadic,
+    exact) drawn unblended. Caps still report MaxVertexBlendMatrices 0.
+  - **d9cpu (2026-11-16): indexed blending past the shader palette on the
+    CPU.** A draw whose indices name an entry 22..255 no longer declines:
+    09akg ("d9cpu") blends it inside the gather in WAT (v128: 1.77x less
+    user CPU than the bit-identical scalar version), writing the blended
+    world-space POSITION (4 floats) and NORMAL (through each entry's
+    inverse transpose) with the prologue's arithmetic, and draws the plain
+    cascade VS under an identity world, so lighting and texgen are
+    unchanged. Only an index that is not an integer in 0..255 or a
+    non-finite matrix declines 27. Caps now report MaxVertexBlendMatrices
+    4 and MaxVertexBlendMatrixIndex 21 (hardware vertex processing) or
+    255 (a SOFTWARE_VERTEXPROCESSING device, or a MIXED one switched by
+    SetSoftwareVertexProcessing, which is now stateful), while the ring
+    is live; the old path does not blend. Stat 82 counts CPU-blended
+    draws.
+  - **d9fv (2026-11-16): flat shading under a vertex stage (16) on the
+    CPU.** Under a guest VS or fixed-function lighting the flat colours are
+    VS outputs, so 09akg runs the VS itself in the 09ag shader VM (the
+    software executor's own VM; constants from the ring's VS shadow) over
+    the d9cpu-expanded list, and draws POSITIONT FLOAT4 vertices (oD0,
+    oD1 clamped, oT0..5) with the provoking vertex's colours through the
+    draw's own pixel shader. Clip space maps through the viewport as 09ah
+    `$d3d_software_project` does. The program comes from re-emitting the
+    SHADER once with `$d9fv_force` (the core IR is compiled before it is
+    freed); programmable LAYOUT payloads are copied as published to map
+    DCLs to elements. A primitive wholly outside z 0..w / w > 0 / an
+    enabled user plane, or with a non-finite vertex, is dropped; points
+    ignore SHADEMODE and draw on the GPU. Still 16, each with a stat:
+    vertex fog (121; POSITIONT fog reads COLOR0 alpha), no program or a VM
+    failure (122), an input missing from the layout or an oT6/7 write
+    (123), a primitive that needs clipping (124; earlier chunks of the
+    same draw stay drawn on a target the decline marks stale)
+    (`test-d3d9-gps-flat-vs.js`: list, strip, fan, lit, near-plane drop,
+    each against a Gouraud reference with the provoking colour or normal
+    in every vertex, software and `--webgl`).
+  - **d9cpu fallbacks (2026-11-16): reshaping declines into plain draws.**
+    09akg's "CPU expansion into list DRAW_UPs" rewrites a draw the ring
+    could not express into non-indexed list DRAW_UPs the executors already
+    run, with no protocol change. 16: a flat-shaded draw (fixed PS, no
+    lighting) gets its own vertices per primitive with the provoking
+    vertex's colours copied over (first vertex; the second of a fan
+    triangle). 24: a POSITIONT stage reading a missing texcoord set reads
+    a FLOAT2 (0,0) appended to a padded copy of each vertex (layout
+    nibble 14). 20: a draw over the arena or index limits is split into
+    chunks of at most 1 MB; a Clear with more than 256 rects is just
+    more CLEAR records. 6: cube textures upload as CREATE kind CUBE with
+    six faces (both executors already sample CUBE). 25 is unreachable
+    (CreateTexture refuses textures over 2048). Stats 83 / 84 count
+    expanded draws and the chunks they emitted. Still declining: 16 under
+    a guest VS or fixed lighting (needs a flat varying in the executor),
+    17 W-buffer (needs depth from w in the executor; not exact on the
+    CPU; lowers since d9wb, see above), 12 PROJECTED with COUNT1/2 or under POSITIONT (the per-pixel
+    divide cannot be done per vertex exactly; reshaped since d9pj into
+    the executors' DZ / DW divide, see above). `test-d3d9-gps-cpu.js`
+    compares each reshaped frame to an equivalent plain draw on both
+    executors (`--webgl`) and to the old path where it draws the same.
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
   a performance step.
 
@@ -286,6 +449,71 @@ The v2 lowering reuses the 09a8g pipeline:
   rasterizer.
   - Apps: Quake II, Quake III, Hexen II, Heretic II, Half-Life, GLTron,
     SimGolf, WC3, each in both software and webgl modes.
+  - **Status (G3a/G3a-2/G3b/G3c).** `src/09a8gt-gl-gps.wat` lowers the
+    09a8g pipeline onto ring api 3. The browser's default GL renderer is
+    `software` with gps on, on the WebGL executor (the page GPU select
+    "Software" picks the software executor; `?gl-gps=off|software|webgl|null`
+    overrides it). In Threads mode the guest instance's producer is turned on
+    through word 4 of the software-GL producer mailbox
+    (`lib/gl-software-producer.js`, written by `lib/gl-render-host.js` from
+    the host's `glGps`), its kicks reach the render Worker through
+    `lib/guest-rpc.js`, and the render owner sends no CPU frame while the
+    executor presents. `?gl-renderer=webgl`, or `glRenderer: 'webgl'` on an
+    app in `lib/apps.js`, keeps the JS path; no app opts out. (`heretic2_demo`
+    did until 2026-11-16, for a 1 px dark seam where the main-menu book's
+    tiled quads meet: the perspective y lift was rounded away on
+    SwiftShader, see D1. Hexen II declined every frame with reason 10 until
+    the WebGL executor gained linear-filtered border the same day.) The CLI default is unchanged
+    (`--gl-renderer` defaults to webgl; `--gl-renderer=software
+    --headless-gl` is gps on WebGL).
+  - **What of the old JS transport is still live, and why.** Nothing became
+    dead with the flip, so nothing was deleted:
+    `gl-compat.js` is still the WGL context manager for software contexts
+    (create/share/make-current/swap bookkeeping, PFD_DRAW_TO_BITMAP,
+    `gl_sw_*` drawable sizing) and still the whole `webgl` renderer
+    (FixedFunctionGL over `gpu-backend.js`), which serves `?gl-renderer=webgl`,
+    per-app opt-outs, the CLI and Node default, and about 150 tests;
+    `gl-command-stream.js` is the WAT GL encoder's batch format every context
+    (software included) is replayed from; `gl-render-host.js`,
+    `gl-render-worker.js` and `gl-software-producer.js` carry software
+    contexts in Threads mode (the render owner's context table and the
+    producer mailbox). Deleting them needs the WGL context table and the
+    wgl* lifecycle in WAT (the G3 plan's "routing part"), and the CLI/test
+    default moved off `webgl`.
+  - **Status (gl-retire S1/S2).** The CLI/Node default is `software` with
+    gps on: the software executor, or the WebGL executor with
+    `--headless-gl` (`--gl-renderer=webgl` still selects the JS path).
+    `src/09a8cw-gl-wgl.wat` owns the WGL lifecycle for software contexts:
+    an instance's first GL record (0x10008) asks the host, and
+    `lib/host-imports.js` answers "WAT owns" for the software backend (with
+    its glGps decision). From then on `$gl_emit_record` answers each record
+    in place and nothing is flushed to a host: context handles (a
+    process-wide counter), make-current with a per-instance owner mark,
+    delete, wglShareLists, wglCopyContext validation, SwapBuffers/glFlush
+    presentation, glReadPixels from the leased read surface, glGenTextures
+    (generated names reserved per share group), gluScaleImage and the
+    gluBuild*Mipmaps status. Threads mode needs no mailbox: each guest
+    instance asks and answers for itself. `test-gl-wgl-owned` compares every
+    answer and the picture against the JS-hosted path. The JS GL transport is
+    now reachable only from `webgl` and from test harnesses that replay the
+    stream into `OpenGLHostBridge` themselves.
+  - **Status (gl-retire S3).** The JS GL transport is deleted:
+    `lib/gl-render-host.js` (its D3DIM endpoint bridge moved into
+    `lib/host-imports.js` unchanged), `lib/gl-render-worker.js` (the
+    render-Worker `gl` kind), `lib/gl-software-producer.js` (the Threads
+    producer mailbox), the GL packet publication in `lib/guest-rpc.js`,
+    `?gl-renderer=`, the app `glRenderer` opt-out, `--gl-renderer=webgl` and
+    `--trace-gl` (both now fail fast). A host answers exactly one GL record,
+    the 0x10008 mode query; any other GL batch reaching a host throws. Still
+    in the tree, and why: `lib/gl-command-stream.js` is the encoder's record
+    ABI (ARG_WORDS/BARRIERS, generated into `09a8d-gl-abi.generated.wat` and
+    checked by the build gates) and the Worker's query transport;
+    `lib/gl-compat.js` is no longer loaded by any page or host, but it holds
+    the `CALLS` opcode table the GL tools and gates read and the
+    `OpenGLHostBridge` oracle about a hundred GL tests (including
+    `test-gl-wgl-owned`) replay the stream into. Retiring it means moving
+    those tests onto the owned harness (`test/helpers/gl-gps-context.js`
+    with `owned: true`) and the table into the stream ABI file.
 - **G4. Optional: GPU transform and lighting through vertex-shader IR.**
 
 **Readbacks:**

@@ -256,7 +256,11 @@
       (i32.or (i32.eq (local.get $op) (i32.const 42)) (i32.eq (local.get $op) (i32.const 43))))
     (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 35)) (i32.le_u (local.get $op) (i32.const 39)))
     (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 46)) (i32.le_u (local.get $op) (i32.const 48)))
-      (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 78)) (i32.le_u (local.get $op) (i32.const 79))) (i32.eq (local.get $op) (i32.const 81)))))))))) (then (return (i32.const 0))))
+      (i32.or (i32.and (i32.ge_u (local.get $op) (i32.const 78)) (i32.le_u (local.get $op) (i32.const 79)))
+        (i32.or (i32.eq (local.get $op) (i32.const 81))
+          ;; cmp: core vertex IR only (09af1 lowers 09aj's fixed-function cnd to
+          ;; it); guest vs_2_0 has no cmp.
+          (i32.and (i32.ne (global.get $d3d_vm_core_vs) (i32.const 0)) (i32.eq (local.get $op) (i32.const 88)))))))))))) (then (return (i32.const 0))))
   (local.set $arity (call $d3d_shader_vm_arity20 (local.get $op)))
   (if (i32.or (i32.ne (i32.load offset=8 (local.get $ins)) (local.get $arity))
     (i32.load offset=12 (local.get $ins))) (then (return (i32.const 0))))
@@ -339,7 +343,7 @@
           (then (if (i32.or (i32.ne (local.get $bank) (i32.const 3))
             (i32.or (local.get $index) (local.get $mod))) (then (return (i32.const 0)))))
           (else (if (i32.eqz (i32.or
-            (i32.and (i32.eqz (local.get $bank)) (i32.lt_u (local.get $index) (i32.const 12)))
+            (i32.and (i32.eqz (local.get $bank)) (i32.lt_u (local.get $index) (global.get $d3d_vm_temps)))
             (i32.or (i32.and (i32.eq (local.get $bank) (i32.const 4)) (i32.lt_u (local.get $index) (i32.const 3)))
             (i32.or (i32.and (i32.eq (local.get $bank) (i32.const 5)) (i32.lt_u (local.get $index) (i32.const 2)))
               (i32.and (i32.eq (local.get $bank) (i32.const 6)) (i32.lt_u (local.get $index) (i32.const 8))))))) (then (return (i32.const 0))))))
@@ -358,7 +362,7 @@
           (if (i32.and (i32.eq (local.get $op) (i32.const 33)) (i32.ne (local.get $selector) (i32.const 228)))
             (then (return (i32.const 0))))))
         (if (i32.eqz (i32.or
-          (i32.and (i32.eqz (local.get $bank)) (i32.lt_u (local.get $index) (i32.const 12)))
+          (i32.and (i32.eqz (local.get $bank)) (i32.lt_u (local.get $index) (global.get $d3d_vm_temps)))
           (i32.or (i32.and (i32.eq (local.get $bank) (i32.const 1)) (i32.lt_u (local.get $index) (i32.const 16)))
             (i32.and (i32.eq (local.get $bank) (i32.const 2)) (i32.lt_u (local.get $index) (i32.const 256)))))) (then (return (i32.const 0))))
         (if (i32.or (i32.gt_u (local.get $selector) (i32.const 255))
@@ -387,10 +391,23 @@
     (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $operands)))
   (i32.const 1))
 
+;; Core VERTEX IR (flag 8, stage 0, 09af1) is the vs_2_0 profile restricted to
+;; core ops, with canonicalizer scratch r28..r31: the vs20 path with flag 8
+;; admitted and a 32-temp limit.
+(global $d3d_vm_core_vs (mut i32) (i32.const 0))
+(global $d3d_vm_temps (mut i32) (i32.const 12))
 (func $d3d_shader_vm_compile (export "d3d_shader_vm_compile") (param $ir i32) (result i32)
+  (local $program i32)
   (if (call $d3d_shader_vm_range (local.get $ir) (i32.const 32)) (then
-    (if (i32.and (i32.load offset=28 (local.get $ir)) (i32.const 8))
-      (then (return (call $d3d_shader_vm_compile_core (local.get $ir)))))))
+    (if (i32.and (i32.load offset=28 (local.get $ir)) (i32.const 8)) (then
+      (if (i32.eqz (i32.load offset=8 (local.get $ir))) (then
+        (global.set $d3d_vm_core_vs (i32.const 1))
+        (global.set $d3d_vm_temps (i32.const 32))
+        (local.set $program (call $d3d_shader_vm_compile_profile (local.get $ir) (i32.const 1)))
+        (global.set $d3d_vm_core_vs (i32.const 0))
+        (global.set $d3d_vm_temps (i32.const 12))
+        (return (local.get $program))))
+      (return (call $d3d_shader_vm_compile_core (local.get $ir)))))))
   (call $d3d_shader_vm_compile_profile (local.get $ir) (i32.const 0)))
 
 ;; Core pixel IR (header flag 8, written by 09af1's canonicalizer): every ps1.x
@@ -593,7 +610,8 @@
       (i32.ne (i32.load offset=12 (local.get $ir)) (i32.const 0xfffe0200))) (then (return (i32.const 0)))))
     (else (if (i32.eq (i32.load offset=12 (local.get $ir)) (i32.const 0xfffe0200)) (then (return (i32.const 0))))))
   (local.set $n (i32.load offset=16 (local.get $ir)))
-  (if (i32.and (local.get $vs20) (i32.ne (i32.and (i32.load offset=28 (local.get $ir)) (i32.const -2)) (i32.const 0)))
+  (if (i32.and (local.get $vs20) (i32.ne (i32.and (i32.load offset=28 (local.get $ir))
+      (select (i32.const -10) (i32.const -2) (global.get $d3d_vm_core_vs))) (i32.const 0)))
     (then (return (i32.const 0))))
   (local.set $ps14 (i32.and (i32.eq (i32.load offset=8 (local.get $ir)) (i32.const 1)) (i32.eq (i32.load offset=12 (local.get $ir)) (i32.const 0xffff0104))))
   ;; Flag0 relative constants, flag2 emulator-generated fixed-function IR.
@@ -601,7 +619,8 @@
   ;; Shared IR permits4096 records, including zero-slot definitions. Packet
   ;; storage remains bounded to262160 bytes; profile slots are decoder-owned.
   (if (i32.or (i32.gt_u (local.get $n) (i32.const 4096))
-    (i32.ne (i32.and (i32.load offset=28 (local.get $ir)) (i32.const -8)) (i32.const 0))) (then (return (i32.const 0))))
+    (i32.ne (i32.and (i32.load offset=28 (local.get $ir))
+      (select (i32.const -16) (i32.const -8) (global.get $d3d_vm_core_vs))) (i32.const 0))) (then (return (i32.const 0))))
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $ir)
     (i32.add (i32.const 32) (i32.shl (local.get $n) (i32.const 7))))) (then (return (i32.const 0))))
   (if (i32.ne (i32.load offset=24 (local.get $ir))

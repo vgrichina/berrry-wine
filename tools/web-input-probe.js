@@ -11,9 +11,15 @@
 // but only launches and samples frame timing; it has no mouse scripting.
 // Anything of the form "WAT looks right, the browser looks wrong" needs this.
 //
-// Coordinates are GUEST canvas pixels (the same numbers test/run.js takes for
-// --input=B:mousemove:X:Y). They are converted to page coordinates through the
-// canvas bounding rect, so the CSS scaling of #screen-wrap is accounted for.
+// Coordinates are GUEST canvas pixels. They are converted to page coordinates
+// through the canvas bounding rect, so the CSS scaling of #screen-wrap is
+// accounted for. They match test/run.js --input=B:click:X:Y only while both
+// canvases have the same size: the CLI keeps its 640x480 canvas and scales an
+// app's larger fullscreen mode into it, while the page's #screen takes the
+// mode's size. AoE's menus run at 800x600, so CLI click:320:200 (Single
+// Player) is page-probe click:400,250, and probe click:320,200 lands above the
+// button (2026-11-16, scratch/runs/20261116-aoe-fixes). Read #screen's
+// width/height before reusing CLI coordinates here.
 //
 // Steps (semicolon separated, left to right):
 //   move:X,Y      move the pointer to guest pixel X,Y

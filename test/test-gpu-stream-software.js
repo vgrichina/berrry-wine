@@ -251,10 +251,10 @@ function raster(over = {}) {
   {
     const q = makeProducer({ ringBytes: 4096, arenaBytes: 4096, memBytes: 1 << 16 });
     const x = new Executor({ getExports: () => e, getMemory: () => memory.buffer });
-    q.emit('COPY', {});
+    q.emit('COPY', {}); // COPY (CAP_COPY) of ids never created
     const r = q.ring();
     assert.throws(() => GS.drain([r], x), /COPY/);
-    assert.strictEqual(r.errorCode, CONST.ERR_UNSUPPORTED);
+    assert.strictEqual(r.errorCode, CONST.ERR_EXECUTOR);
     x.close();
   }
 

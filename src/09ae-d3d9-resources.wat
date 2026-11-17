@@ -187,6 +187,7 @@
     (i32.store offset=28 (local.get $wa) (local.get $usage))
     (i32.store offset=32 (local.get $wa) (local.get $format))
     (i32.store offset=36 (local.get $wa) (local.get $pool))
+    (call $d9g_buffer_dirty (local.get $wa) (i32.const 0) (local.get $length))
     (call $d3d9_reset_resource (local.get $wa) (i32.const 1))
     (drop (call $d3d9_device_addref (local.get $device)))
     (call $gs32 (local.get $out) (local.get $obj))
@@ -214,6 +215,7 @@
     ;; Synchronous draw snapshots make DISCARD/NOOVERWRITE safe without retaining
     ;; previous CPU storage: no in-flight GPU command references these bytes.
     (i32.store offset=40 (local.get $wa) (i32.or (local.get $flags) (i32.const 0x80000000)))
+    (call $d9g_buffer_dirty (local.get $wa) (local.get $offset) (local.get $size))
     (call $gs32 (local.get $out) (i32.add (local.get $buffer) (i32.add (i32.const 64) (local.get $offset))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
@@ -438,8 +440,11 @@
       (i32.store offset=48 (local.get $desc) (local.get $format))
       (i32.store offset=52 (local.get $desc) (local.get $min))
       (i32.store offset=56 (local.get $desc) (local.get $num))))
-    (local.set $result (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))
+    (local.set $result (if (result i32) (call $d9g_lead_draw (local.get $device)
+          (i32.add (i32.const 2) (i32.ne (local.get $indexed) (i32.const 0)))) (then (i32.const 1))
+      (else (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))))
     (if (call $d3d_render_park (local.get $result) (i32.const 0)) (then (return)))
+    (call $d9g_draw (local.get $device) (i32.add (i32.const 2) (i32.ne (local.get $indexed) (i32.const 0))) (local.get $result))
     (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x8876086c) (i32.eq (local.get $result) (i32.const 1)))))
 
   ;; Why $d3d9_declaration_create refused, counted. The refusal itself is
@@ -645,7 +650,7 @@
   ;; Async broker callbacks never write this allocation: only current GetData
   ;; copies a ready result, so Release may reclaim it while END is in flight.
   (func $d3d9_query_create (param $device i32) (param $type i32) (param $out i32)
-    (local $state i32) (local $vtbl i32) (local $obj i32) (local $wa i32)
+    (local $state i32) (local $vtbl i32) (local $obj i32) (local $wa i32) (local $profile i32)
     (if (local.get $out) (then (call $gs32 (local.get $out) (i32.const 0))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
     (local.set $state (call $d3d9_program_state (local.get $device)))
@@ -653,7 +658,11 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086a)) ;; D3DERR_NOTAVAILABLE
     (if (i32.ne (local.get $type) (i32.const 8)) (then
       (if (i32.ne (local.get $type) (i32.const 9)) (then (return)))
-      (if (i32.ne (call $host_gpu_gl_call (i32.const 0x3000a) (i32.const 0) (local.get $device)) (i32.const 1))
+      (local.set $profile (call $d3d9_caps_profile))
+      (if (i32.eqz (if (result i32) (i32.ge_s (local.get $profile) (i32.const 0))
+            (then (i32.and (call $d3d9_caps_software (local.get $profile))
+              (i32.ne (i32.and (global.get $d9g_caps) (global.get $GPS_CAP_OCCLUSION)) (i32.const 0))))
+            (else (i32.eq (call $host_gpu_gl_call (i32.const 0x3000a) (i32.const 0) (local.get $device)) (i32.const 1)))))
         (then (return)))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (if (i32.eqz (local.get $out)) (then (return))) ;; support probe
@@ -703,6 +712,8 @@
           (i32.eq (local.get $arg1) (i32.const 2)))))
         (local.set $desc (call $d3d9_gpu_descriptor (call $gl32 (i32.add (local.get $arg0) (i32.const 8)))))
         (br_if $query_done (i32.eqz (local.get $desc)))
+        ;; Occlusion counts the old path's draws: it must have the frame.
+        (call $d9g_to_old (call $gl32 (i32.add (local.get $arg0) (i32.const 8))))
         (local.set $result (call $host_gpu_gl_call
           (select (i32.const 0x3000b) (i32.const 0x3000c) (i32.eq (local.get $arg1) (i32.const 2)))
           (local.get $desc) (local.get $arg0)))
@@ -1406,6 +1417,7 @@
     (if (i32.or (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 3))
       (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 5))) (then
       (if (i32.load offset=56 (local.get $wa)) (then
+        (call $d9r_forget_texture (local.get $wa)) ;; d9rt
         ;; The broker copies all IDs into one ordered retirement command.
         ;; Its executor storage is independent of this canonical allocation.
         (drop (call $host_gpu_gl_call (i32.const 0x30013) (local.get $wa) (i32.load offset=8 (local.get $wa))))))))

@@ -61,3 +61,10 @@ Chrome falls back to SwiftShader. Evidence: `scratch/runs/20261113-hexen2-1024/`
 
 Not looked at: the browser, combat, sound, the software build, why meshing
 is so slow (worth a profile; Kingpin's level load has the same shape).
+
+GPU stream v2 (2026-11-16): the menu and world use GL_CLAMP + GL_LINEAR,
+which the gps producer lowers to BORDER + linear (`$glg_addr`). The WebGL
+executor had no linear-filtered border, so every frame declined with reason
+10 and went to the CPU. It now filters BORDER samplers in the shader
+(`_filteredTex` in `lib/gpu-stream-webgl.js`); at 1950 batches the CLI run
+shows 222 gpu frames, 0 declines. Evidence `scratch/runs/20261116-gps-edges/`.

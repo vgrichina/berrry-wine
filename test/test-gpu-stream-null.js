@@ -96,7 +96,9 @@ expectFail((p) => p.emit('RASTER', Object.assign({}, RASTER, { two_sided: 1 })),
 expectFail((p) => p.emit('RASTER', Object.assign({}, RASTER, { stencil_enable: 1, two_sided: 1, stencil_func: 8, stencil_fail: 1, stencil_zfail: 1, stencil_pass: 1, ccw_func: 0 })), /ccw_func 0/);
 expectFail((p) => p.emit('RASTER', Object.assign({}, RASTER, { depth_mode: 2, z_bias: 1 })), /depth_mode 1 only/);
 expectFail((p) => p.emit('RASTER', Object.assign({}, RASTER, { reserved: [0, 0, 1] })), /reserved/);
-expectFail((p) => layout(p, [{ usage: CONST.USAGE_COLOR, type: CONST.VTYPE_D3DCOLOR }], 4), /no POSITIONT/);
+// A layout without POSITIONT is programmable (vertex shader input); a vs 0
+// (pretransformed) draw through it is refused.
+expectFail((p) => { layout(p, [{ usage: CONST.USAGE_COLOR, type: CONST.VTYPE_D3DCOLOR }], 4); p.emit('DRAW_UP', { prim: 1, layout: 5, stride: 4, count: 1, vcount: 1 }); }, /no POSITIONT/);
 expectFail((p) => layout(p, [POS, { usage: CONST.USAGE_TEXCOORD, type: 1, offset: 16 }, { usage: CONST.USAGE_TEXCOORD, type: 1, offset: 24 }], 32), /declared twice/);
 expectFail((p) => layout(p, [POS, { usage: CONST.USAGE_COLOR, type: CONST.VTYPE_D3DCOLOR, offset: 18 }], 24), /outside|unaligned/);
 expectFail((p) => layout(p, [POS], 16) && p.emit('DRAW_UP', { prim: PRIM.TRIANGLELIST, layout: 5, count: 3, vcount: 2 }), /vcount 2 differs/);

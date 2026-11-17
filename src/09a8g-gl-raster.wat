@@ -3759,6 +3759,7 @@
     (if (i32.eqz (global.get $gl_sw_enabled)) (then (return)))
     (if (i32.eqz (call $gl_sw_target)) (then (return)))
     (local.set $back (global.get $gl_sw_rt))
+    (global.set $glg_sw_back (local.get $back))
     (local.set $mode (call $gl_color_selection (i32.const 0)))
     (global.set $gl_sw_color_off (i32.eqz (local.get $mode)))
     (global.set $gl_sw_second (select (global.get $gl_sw_front) (i32.const 0)
@@ -3766,6 +3767,7 @@
     (if (i32.and (call $gl_color_front (local.get $mode)) (i32.ne (global.get $gl_sw_front) (i32.const 0)))
       (then (global.set $gl_sw_rt (global.get $gl_sw_front))))
     (call $gl_sw_consume_selected (local.get $start) (local.get $vertices))
+    (call $glg_draw_end)
     (global.set $gl_sw_rt (local.get $back))
     (global.set $gl_sw_second (i32.const 0))
     (global.set $gl_sw_color_off (i32.const 0)))
@@ -4270,7 +4272,7 @@
   ;; were right there and a browser window stayed black. The frame is
   ;; client-sized with (0,0) at the client origin, so a client DC is exact.
   ;; Result 1 when a frame was blitted.
-  (func (export "gl_sw_present_window") (param $hwnd i32) (result i32)
+  (func $gl_sw_export_present_window (export "gl_sw_present_window") (param $hwnd i32) (result i32)
     (if (i32.or (i32.eqz (global.get $gl_sw_front)) (i32.eqz (local.get $hwnd)))
       (then (return (i32.const 0))))
     ;; GPU stream (09a8gt): the executor's PRESENT is the picture.

@@ -23,7 +23,7 @@
   ;; ================================================================
   (global $D3DIM_GPS i32 (region.addr $D3DIM_GPS 0))
   (global $D3DIM_GPS_SIZE i32 (region.size $D3DIM_GPS))
-  (global $D3G_PB_SIZE i32 (i32.const 23344))
+  (global $D3G_PB_SIZE i32 (i32.const 23360))
   ;; The CPU-access site asking for the next readback (stats 16 + site).
   (global $d3dim_fence_site (mut i32) (i32.const 0))
   (global $D3G_RING_BYTES i32 (i32.const 1048576))
@@ -41,7 +41,9 @@
   ;; park sequence at 23168, the merge spare slot at 23184. Readbacks per
   ;; site: 16 words at 23216. At 23280: +0 keyed GPU BltFasts, +4 uploaded
   ;; GPU BltFasts, +8 key texture id, +12 its w, +16 its h, +20 readback
-  ;; bytes. Decline reasons: 8 words at 23312 ($d3g_decline).
+  ;; bytes. Decline reasons: 8 words at 23312 ($d3g_decline). At 23344:
+  ;; lazy Locks whose readback a whole-range CPU overwrite made useless
+  ;; ($d3g_discard, stat 43).
   ;; Target: +0 dib, +4 entry, +8 w, +12 h, +16 bpp, +20 pitch, +24 fmt,
   ;; +28 rt id, +32 flags (1 dirty, 2 check, 4 drawn, 8 shadow valid),
   ;; +36..+48 dirty rect, +52 shadow wa, +56 shadow guest, +64 i64 watch
@@ -2322,6 +2324,62 @@
           (then (call $d3g_materialize (local.get $pb))))))
     (select (i32.const 2) (i32.const 1) (local.get $pending)))
 
+  ;; The CPU is about to overwrite every byte of [addr, addr+len) without
+  ;; reading any of it (a REP MOVS / STOS over a whole lazily-locked
+  ;; surface): a readback of the targets inside it would be thrown away. Each
+  ;; dirty one forgets its GPU-only pixels instead and is re-checked with its
+  ;; shadow invalid, so its next GPU use uploads the whole new DIB. 0 when a
+  ;; dirty target or the parked primary only partly overlaps: the caller
+  ;; reads back as before.
+  (func $d3g_discard (param $pb i32) (param $addr i32) (param $len i32) (result i32)
+    (local $i i32) (local $t i32) (local $flags i32) (local $inside i32)
+    (if (i32.eqz (local.get $len)) (then (return (i32.const 0))))
+    (if (i32.ne (i32.load offset=184 (local.get $pb)) (i32.const 0)) (then
+      (if (call $d3g_overlap (local.get $addr) (local.get $len) (i32.load offset=164 (local.get $pb))
+            (i32.mul (i32.load offset=168 (local.get $pb)) (i32.load offset=180 (local.get $pb))))
+        (then (return (i32.const 0))))))
+    (loop $check
+      (local.set $t (call $d3g_t (local.get $pb) (local.get $i)))
+      (if (i32.and (i32.ne (i32.load (local.get $t)) (i32.const 0))
+            (i32.ne (i32.and (i32.load offset=32 (local.get $t)) (i32.const 1)) (i32.const 0))) (then
+        (if (call $d3g_overlap (local.get $addr) (local.get $len)
+              (i32.load (local.get $t)) (i32.load offset=76 (local.get $t))) (then
+          (if (i32.or (i32.lt_u (i32.load (local.get $t)) (local.get $addr))
+                (i64.gt_u (i64.add (i64.extend_i32_u (i32.load (local.get $t))) (i64.extend_i32_u (i32.load offset=76 (local.get $t))))
+                  (i64.add (i64.extend_i32_u (local.get $addr)) (i64.extend_i32_u (local.get $len)))))
+            (then (return (i32.const 0))))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $check (i32.lt_u (local.get $i) (global.get $D3G_TARGETS))))
+    (local.set $i (i32.const 0))
+    (loop $drop
+      (local.set $t (call $d3g_t (local.get $pb) (local.get $i)))
+      (local.set $flags (i32.load offset=32 (local.get $t)))
+      ;; As $d3g_fence: every overlapping target is re-checked; a dirty one
+      ;; also loses its GPU-only pixels and its (now stale) shadow.
+      (if (i32.load (local.get $t)) (then
+        (if (call $d3g_overlap (local.get $addr) (local.get $len)
+              (i32.load (local.get $t)) (i32.load offset=76 (local.get $t))) (then
+          (if (i32.and (local.get $flags) (i32.const 1)) (then
+            (local.set $flags (i32.and (local.get $flags) (i32.const -10)))
+            (local.set $inside (i32.const 1))))
+          (i32.store offset=32 (local.get $t) (i32.or (local.get $flags) (i32.const 2)))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $drop (i32.lt_u (local.get $i) (global.get $D3G_TARGETS))))
+    (if (local.get $inside)
+      (then (i32.store offset=23344 (local.get $pb) (i32.add (i32.load offset=23344 (local.get $pb)) (i32.const 1)))))
+    (i32.const 1))
+
+  ;; 09ab $d3dim_lazy_overwrite: [wa, wa+len) is about to be overwritten
+  ;; whole. 1 = nothing there needs reading back any more.
+  (func $d3dim_gps_discard (param $wa i32) (param $len i32) (result i32)
+    (local $pb i32) (local $r i32)
+    (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
+    (if (i32.eqz (local.get $pb)) (then (return (i32.const 1))))
+    (call $lock_acquire (global.get $D3DIM_GPS))
+    (local.set $r (call $d3g_discard (local.get $pb) (local.get $wa) (local.get $len)))
+    (call $lock_release (global.get $D3DIM_GPS))
+    (local.get $r))
+
   ;; ---- Entry points ------------------------------------------------------
   (func $d3dim_gps_call (param $op i32) (param $wa i32) (param $len i32) (result i32)
     (local $pb i32) (local $r i32)
@@ -2408,10 +2466,12 @@
   ;; target re-create, 13 host capture, 14 lazy Lock first touch, 15 other).
   ;; 32 keyed GPU BltFasts, 33 uploaded GPU BltFasts, 34 readback bytes.
   ;; 35 + reason: software declines by reason ($d3g_decline), 35..42.
+  ;; 43 lazy Lock readbacks dropped for a whole-range overwrite.
   (func (export "d3dim_gps_stat") (param $i i32) (result i32)
     (local $pb i32)
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
-    (if (i32.or (i32.eqz (local.get $pb)) (i32.ge_u (local.get $i) (i32.const 43))) (then (return (i32.const 0))))
+    (if (i32.or (i32.eqz (local.get $pb)) (i32.ge_u (local.get $i) (i32.const 44))) (then (return (i32.const 0))))
+    (if (i32.eq (local.get $i) (i32.const 43)) (then (return (i32.load offset=23344 (local.get $pb)))))
     (if (i32.ge_u (local.get $i) (i32.const 35))
       (then (return (i32.load (i32.add (i32.add (local.get $pb) (i32.const 23312))
         (i32.shl (i32.sub (local.get $i) (i32.const 35)) (i32.const 2)))))))

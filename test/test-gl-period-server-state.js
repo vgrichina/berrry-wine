@@ -7,7 +7,7 @@ const {CALL_INDEX:O,OpenGLHostBridge}=req('lib/gl-compat'),Stream=req('lib/gl-co
 async function main(){
  const bytes=process.env.GL_PERIOD_MODULE?fs.readFileSync(process.env.GL_PERIOD_MODULE):req('test/compile-src').compileSrcWasm();
  const module=new WebAssembly.Module(bytes);
- const queued=process.argv.includes('--worker');
+ const queued=false; // --worker drove the retired GL render Worker
  let memory,e,owner=1,bridge,render,producer,manager,encoder,delay=false;const events=[],captures=[],delayed=[];
  const h=await req('test/render-helper').bootRenderHarness({fonts:'none',width:64,height:64,prebuiltModule:module,
   extraHostOverrides:{gpu_gl_call(op,at,used){
@@ -22,22 +22,6 @@ async function main(){
  source.init_thread(1,0x400000,0,0,0,0,0);source.heap_init(0x800000);
  bridge=new OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:()=>e,
   renderer:{windows:{42:{hwnd:42,w:64,h:64,clientRect:{w:64,h:64}}},repaint(){}}});
- if(queued){
-  const GL=req('lib/gl-compat'),{Worker}=require('worker_threads');
-  producer=new(req('lib/gl-software-producer').Producer)(()=>e);
-  const consumer=new WebAssembly.Instance(module,{host:h.host});consumer.exports.d3dim_worker_init(0x400000);
-  bridge.destroy();const Base=GL.OpenGLHostBridge;
-  GL.OpenGLHostBridge=class extends Base{constructor(options){super(options);bridge=this;}};
-  try{render=req('lib/gl-render-worker').create({instance:consumer,memory,backend:'software',sendFrame(){}});}finally{GL.OpenGLHostBridge=Base;}
-  manager=new(req('lib/render-worker').Manager)({module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,imageBase:0x400000,
-   workerFactory:()=>new Worker(path.join(root,'lib/d3d-render-worker.js')),reclaimHeap:head=>source.d3d_render_adopt_free_list(head)});
-  await manager.ready;const port=manager.createEndpoint({api:'legacy',backend:'software'});await port.ready;
-  const transport={postMessage(msg){if(delay&&msg.t==='batch')delayed.push(msg);else port.postMessage(msg);},
-   set onmessage(fn){port.onmessage=fn;},set onerror(fn){port.onerror=fn;},terminate(){return port.terminate();}};
-  encoder=new(req('lib/d3d-command-stream').Encoder)({module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-   getImageBase:()=>0x400000,guestToWasm:p=>e.guest_to_wasm(p)>>>0,workerFactory:()=>transport,capacity:0x400000,explicitFence:true,strictReady:true});
-  assert(encoder.ready());encoder.releaseHeld=()=>{delay=false;for(const msg of delayed.splice(0))port.postMessage(msg);};
- }
  const stack=e.guest_to_wasm(e.guest_alloc(256))>>>0,out=e.guest_alloc(256)>>>0,wa=p=>e.guest_to_wasm(p)>>>0;
  function call(name,args=[],floats=[]){assert(Number.isInteger(O[name]),name);dv.setUint32(stack,0,true);
   args.forEach((v,i)=>floats.includes(i)?dv.setFloat32(stack+4+i*4,v,true):dv.setUint32(stack+4+i*4,v>>>0,true));
@@ -49,7 +33,7 @@ async function main(){
   const other=new WebAssembly.Instance(module,{host:h.host}).exports;
   other.init_thread(2,0x400000,0,0,0,0,0);other.heap_init(0x1000000);
   e=other;owner=2;
-  if(!queued)new(req('lib/gl-software-producer').Producer)(()=>e).configure([1,64,64,0]);
+  if(!e.gl_sw_enabled())e.gl_sw_set_enabled(1);e.gl_sw_set_default_size(64,64);
   bind(b);bind(0);e=source;owner=1;
   const checks=[],cases=[],leases=[];
   const eq=(name,actual,expected)=>{assert.deepStrictEqual(actual,expected,name);checks.push({name,actual,expected});};
