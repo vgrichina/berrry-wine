@@ -16,12 +16,12 @@ SUPPORT_PACKAGE=ROOT/'test/binaries/win98-games-a-d/Colin-Mcrae-Rally2-demo-D3D/
 SUPPORT_PACKAGE_SHA256='564de93dcc50691480332e2ccb5565908760b295faa70f8c68854f69dad87189'
 CFGMGR32_SHA256='572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b80'
 SUPPORT_MOUNTS=[]
-OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/test-vb5-native-dialog-identity.cjs',
-    'test/test-vb5-installed-native.cjs',
-    'tools/vb5cce-reviewed-control.py','test/run.js','test/test-vb5cce-original-current.cjs',
-    'test/test-vb5-normal-exit-completion.py','test/test-vb5-normal-exit-native.cjs',
-    'test/test-vb5-nested-owned-modal.cjs','test/test-vb5-runtime-shutdown.py','lib/cli-native-scene.js','lib/cli-native-user-windows.js',
-    'src/13-exports.wat','src/09a5-handlers-window.wat')
+OWN_SOURCES=('tools/vb5cce-original-runtime.py',
+    'src/09c3-controls2-open-save-dialog.wat','src/09c3a-dialog-runtime.wat','lib/cli-native-common-controls.js','lib/renderer-input.js',
+    'test/test-vb5cce-original-current.cjs','test/test-vb5-normal-exit-native.cjs','test/test-vb5-modal-invocation-fence.cjs','test/test-vb5-installed-native.cjs','test/test-vb5-native-progress.cjs','test/test-vb5-native-dialog-identity.cjs',
+    'src/09a-handlers1-user.wat','src/13-exports.wat','lib/host-window.js','lib/cli-guarded-input.js',
+    'tools/callback-ownership-census.json','tools/callback-ownership-revisions.json','tools/layout-offsets.json',
+    'lib/cli-native-scene.js','lib/cli-native-user-windows.js')
 
 class ShutdownRequested(SystemExit):pass
 def shutdown_signal(signum,frame):
@@ -106,7 +106,7 @@ def sources():
     # Qualification can test this worker's explicit patch in memory. An original
     # always requires one exact published tree and never consumes this overlay.
     working='--working-qualification' in sys.argv
-    assert not (working and any(x in sys.argv for x in ('--original','--passive-original')))
+    assert not (working and any(x in sys.argv for x in ('--original','--passive-original','--installed-original')))
     for name in OWN_SOURCES:
         if working:files[name]=(ROOT/name).read_bytes()
         elif name.endswith('.py'):assert files[name]==(ROOT/name).read_bytes(), 'publish helper before sealing: '+name
@@ -147,7 +147,8 @@ def run():
     global ORIGINAL_STARTED
     RUN.mkdir(parents=True,exist_ok=True)
     passive='--passive-original' in sys.argv
-    original='--original' in sys.argv or passive
+    installed='--installed-original' in sys.argv
+    original='--original' in sys.argv or installed or passive
     assert not (original and '--baseline-paint' in sys.argv)
     if original:
         assert not os.environ.get('VB5_DIALOG_MODES') and not os.environ.get('DELPHI5_NATIVE_MODES'), 'original requires full default qualification'
@@ -217,14 +218,21 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
-    if '--installed-qualification' in sys.argv:
+    if '--installed-qualification' in sys.argv or '--modal-fence-only' in sys.argv or '--complete-qualification' in sys.argv or installed:
+        checked('modal-invocation-fence',['node','test/test-vb5-modal-invocation-fence.cjs',str(RUN/'modal-invocation-fence')],env,(source,module))
+        if '--modal-fence-only' in sys.argv:return
+        checked('common-control-state',['node','test/test-vb5-installed-native.cjs',str(RUN/'common-control-state'),'--state'],env,(source,module))
+        checked('nested-common',['node','test/test-vb5-installed-native.cjs',str(RUN/'nested-common'),'--nested'],env,(source,module))
         checked('installed-scope',['node','test/test-vb5-installed-native.cjs',str(RUN/'installed-scope'),'--run'],env,(source,module))
-        # A passing diagnostic establishes a refusal boundary, never admission
-        # to an installed original. No installer or application is launched.
         proof=json.loads((RUN/'installed-scope/qualification.json').read_text())
-        save('installed-admission.json',dict(safeForInstalledOriginal=proof['safeForInstalledOriginal'],
-            diagnosticPassed=proof['passed'],boundary=proof['boundary'],originalStarted=False))
-        return
+        state=json.loads((RUN/'common-control-state/state-proof.json').read_text())
+        nested=json.loads((RUN/'nested-common/nested-proof.json').read_text())
+        fence=json.loads((RUN/'modal-invocation-fence/modal-fence-proof.json').read_text())
+        assert proof['passed'] and proof['boundary'] is None and proof['nativeQuit']
+        assert state['nestingBoundary'] is None and nested['passed'] and fence['passed']
+        save('installed-protocol-qualification.json',dict(passed=True,nativeProtocolQualified=True,
+            fullQualificationPending=True,personalOriginalReviewRequired=True,originalStarted=False))
+        if not installed and '--complete-qualification' not in sys.argv:return
     if '--normal-exit-only' in sys.argv:
         checked('normal-exit',['python3','-B','test/test-vb5-normal-exit-completion.py',str(RUN/'normal-exit')],env,(source,module))
         checked('runtime-shutdown',['python3','-B','test/test-vb5-runtime-shutdown.py',str(RUN/'shutdown-qualification')],env,(source,module))
@@ -283,18 +291,27 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
             checked('native-nested-owned',['node','test/test-vb5-nested-owned-modal.cjs',str(RUN/'nested-qualification')],env,(source,module))
             checked('runtime-shutdown',['python3','-B','test/test-vb5-runtime-shutdown.py',str(RUN/'shutdown-qualification')],env,(source,module))
         qualify(env,files,source,module)
+    if installed or '--complete-qualification' in sys.argv:
+        save('complete-native-qualification.json',dict(passed=True,gitSHA=HEAD,moduleSHA256=sha(body),
+            fullSourceSHA256=sha(pool),nativeProtocolAndFullRegression=True,originalStarted=False,
+            personalFreshFrameRequired=True,immutableIntentLimitsMs=dict(confirmation=500,physicalUp=1750,completion=3000)))
     if not original:return
+    if installed:installed_inputs=prepare_installed()
     while not (RUN/'original-go.json').exists():time.sleep(.1)
-    started=time.time();native_seconds=120 if passive else 2400;watchdog_seconds=140 if passive else 2420
+    if installed:
+        for ref in ('HEAD','origin/main'):
+            assert subprocess.check_output(['git','rev-parse',ref],cwd=ROOT).decode().strip()==HEAD, 'requalify CURRENT published Git before original'
+    started=time.time();native_seconds=120 if passive else 1800 if installed else 2400;watchdog_seconds=140 if passive else 1820 if installed else 2420
+    reserve_seconds=0 if passive else 180 if installed else 240
     deadline=started+native_seconds
     save('pipeline-launch.json',dict(at=started,deadline=deadline,watchdogDeadline=started+watchdog_seconds,
-         reserveSeconds=0 if passive else 240,gameplayCutoff=deadline if passive else deadline-240,
+         reserveSeconds=reserve_seconds,gameplayCutoff=deadline-reserve_seconds,
          winver='nt4',secondPipeline=False,passiveDiagnostic=passive,inputsAuthorized=not passive))
     w=subprocess.Popen([sys.executable,'-B',__file__,'watchdog',str(started+watchdog_seconds)],
          stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     try:
         while not (RUN/'watchdog-armed.json').exists():assert w.poll() is None;time.sleep(.01)
-        original_pipeline(env,source,module,started,deadline,passive)
+        original_pipeline(env,source,module,started,deadline,passive,installed_inputs if installed else None)
     finally:
         save('pipeline-closed.json',dict(at=time.time(),originalStarted=ORIGINAL_STARTED))
         join_watchdog(w)
@@ -320,15 +337,52 @@ def progress_qualify(env,source,module):
     checked('native-progress-state',['node','test/test-vb5-native-progress.cjs','--state',str(RUN/'state-qualification')],env,(source,module))
     checked('native-progress-dialogs',['node','test/test-vb5-native-progress.cjs','--native',str(RUN/'progress-qualification')],env,(source,module))
     checked('native-progress-refusals',['node','test/test-vb5-native-progress.cjs','--refusals',str(RUN/'progress-refusals')],env,(source,module))
-def original_pipeline(env,source,module,started,deadline,passive):
+def prepare_installed():
+    # Previously authenticated installer output. Pin the complete verification
+    # manifest, then rehash every original blob/registry/provenance byte before
+    # creating this invocation's writable overlay. The old endpoint is closed.
+    manifest_path=ROOT/'scratch/runs/20261117-vb5-native-common-dialog-focus-state-repair/authentic-recovery-manifest.json'
+    body=manifest_path.read_bytes()
+    assert sha(body)=='7b162aeb1206c40382f915c57ede6b74461a1a3414acd09184f5518854eb20bb'
+    m=json.loads(body);assert m['passed'] and m['records']==258 and m['files']==86 and m['registryEntries']==836
+    for item in [*m['provenance'].values(),*m['blobs']]:
+        actual=(ROOT/item['path']).read_bytes()
+        assert len(actual)==item['bytes'] and sha(actual)==item['sha256'],item['path']
+    index_item=m['provenance']['original-published/guest-overlay/index.json']
+    registry_item=m['provenance']['original-published/guest-registry.json']
+    index=json.loads((ROOT/index_item['path']).read_bytes())
+    assert len(index['records'])==258
+    assert len(json.loads((ROOT/registry_item['path']).read_bytes()))==836
+    overlay=RUN/'guest-overlay';(overlay/'blobs').mkdir(parents=True)
+    (overlay/'index.json').write_bytes((ROOT/index_item['path']).read_bytes())
+    # Opaque store blobs are immutable and replaced with fresh UUIDs. Symlinks
+    # reference existing verified media; cleanup unlinks only our references.
+    for item in m['blobs']:
+        target=ROOT/item['path'];(overlay/'blobs'/target.name).symlink_to(target)
+    (RUN/'guest-registry.json').write_bytes((ROOT/registry_item['path']).read_bytes())
+    guest='c:\\program files\\vb5cce\\vb5cce.exe'
+    sample='c:\\program files\\vb5cce\\samples\\axbutton\\axbutton.vbp'
+    exe=next(item for item in m['blobs'] if item['guest'].lower()==guest)
+    sample_item=next(item for item in m['blobs'] if item['guest'].lower()==sample)
+    save('authentic-installed-recovery.json',dict(passed=True,manifest=str(manifest_path.relative_to(ROOT)),
+        manifestSHA256=sha(body),records=258,blobCount=86,registryEntries=836,exe=exe,sample=sample_item,
+        provenance=m['provenance'],blobs=m['blobs'],originalInvocationsBeforeThisTask=0,
+        oldUnknown='closed; no endpoint request/rebind/replay',mediaCopied=False,registryEdited=False))
+    return ROOT/exe['path'],guest,sample
+
+def original_pipeline(env,source,module,started,deadline,passive,installed_inputs=None):
     global ORIGINAL_STARTED
-    for stage in range(1 if passive else 3):
+    reserve_seconds=0 if passive else 180 if installed_inputs else 240
+    for stage in range(1 if passive or installed_inputs else 3):
             if stage:
                 while not (RUN/f'stage-{stage}-go.json').exists():
                     if (RUN/'stop-pipeline.json').exists() or time.time()>=deadline-240:return
                     time.sleep(.05)
-            assert time.time()<deadline-(0 if passive else 240)
-            if stage==0:
+            assert time.time()<deadline-reserve_seconds
+            if installed_inputs:
+                exe,guest,sample=installed_inputs;cwd='C:\\Program Files\\VB5CCE\\'
+                extra=['--reg-import='+str(RUN/'guest-registry.json'),'--args="'+sample+'"']
+            elif stage==0:
                 exe=MEDIA/'vb5ccein.exe';guest='C:\\vb5ccein.exe';cwd='C:\\';extra=['--vfs-include=setupapi.dll']
             else:
                 request=json.loads((RUN/f'stage-{stage}-go.json').read_text())
@@ -355,7 +409,7 @@ def original_pipeline(env,source,module,started,deadline,passive):
                 '--quiet-api','--quiet-blocks','--png-canvas',
                 '--pipe-child-args=--control='+str(childport)+' --winver=nt4 --threads --real-ticks --png-canvas',*SUPPORT_MOUNTS,*extra]
             publish(target/'launch.json',dict(args=argv,at=started,deadline=deadline,
-                 gameplayCutoff=deadline-(0 if passive else 240),reserveSeconds=0 if passive else 240,
+                 gameplayCutoff=deadline-reserve_seconds,reserveSeconds=reserve_seconds,
                  rootPort=port,childPort=childport,winver='nt4',passiveDiagnostic=passive))
             with (target/'native.stdout.log').open('xb') as out,(target/'native.stderr.log').open('xb') as err:
                 p=subprocess.Popen(argv,cwd=ROOT,env=env,pass_fds=(source,module),stdout=out,stderr=err,start_new_session=True)

@@ -1,19 +1,31 @@
 'use strict';
 // Authored USER/x86 fixtures only. No original media or review claims.
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+function elapsedWait(ms){
+ const code=[];
+ if(ms){
+  code.push(0xff,0x15,4,0x19,0x40,0,0x89,0xc3);
+  const loop=code.length;
+  code.push(0xff,0x15,4,0x19,0x40,0,0x29,0xd8,0x3d,ms&255,(ms>>>8)&255,(ms>>>16)&255,ms>>>24,0x72);
+  code.push((loop-code.length-1)&255);
+ }
+ return code;
+}
 function fixture(mode='normal'){
  const b=require('./test-sims-child-mount-native.cjs').untitledModal(),raw=r=>r-0x1000+0x200;
- b.writeUInt32LE(0x1a20,raw(0x1904));b.write('Sleep\0',raw(0x1a22));
+ b.writeUInt32LE(0x1a20,raw(0x1904));b.write('GetTickCount\0',raw(0x1a22));
  const at=b.indexOf(Buffer.from([0x83,0xf8,2,0x0f,0x95,0xc0]));assert(at>0);
- // Keep the native dialog during UP; exit from actual x86 after a real Sleep.
+ // Uncapped CLI Sleep intentionally advances its batch clock. Observe the
+ // actual --real-ticks clock instead: the normal fixture must remain alive
+ // through independent physical UP, without changing any runtime clock.
  const ms=mode==='early'?0:mode==='live'?5000:500;
- const code=[0x68,ms&255,(ms>>>8)&255,0,0,0xff,0x15,4,0x19,0x40,0];
+ const code=elapsedWait(ms);
  if(mode==='crash')code.push(0x0f,0x0b);
  else code.push(0x6a,mode==='nonzero'?7:0,0xff,0x15,0,0x19,0x40,0,0xcc);
  b.fill(0,at,at+64);b.set(code,at);
  return b;
 }
-module.exports={fixture};
+module.exports={fixture,elapsedWait};
 async function workerTests(out){
  const {GuestThreadHost}=require('../lib/guest-thread-host'),{createHostImports}=require('../lib/host-imports');
  const module=await WebAssembly.compile(fs.readFileSync(process.env.DELPHI5_MODULE_FD||'build/wine-assembly.wasm'));

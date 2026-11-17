@@ -577,6 +577,53 @@
   ;; reimplementing CONTROL_GEOM hit-testing for WAT-managed dialogs.
   ;; NSIS wizard pages are child dialogs inside an outer dialog frame, so
   ;; recurse into child windows before delivering the mouse event to the page.
+  (global $dialog_button_capture_generation (mut i64) (i64.const 0))
+  (func $dialog_native_mouse (param $parent i32) (param $ch i32) (param $cls i32)
+    (param $msg i32) (param $wParam i32) (param $lp i32)
+    (local $native_button i32) (local $native_generation i64)
+    (local $native_pid i32) (local $native_tid i32)
+    (local $native_invocation i64) (local $native_root i64) (local $native_depth i32)
+    (local $native_complete i32) (local $old_yield i32) (local $old_reason i32)
+              (local.set $native_button (i32.and
+                (i32.and (i32.eq (local.get $cls) (i32.const 1))
+                  (i32.eq (local.get $msg) (i32.const 0x0201)))
+                (i32.ge_u (call $wnd_table_get (local.get $ch)) (i32.const 0xFFFF0000))))
+              (local.set $native_generation (call $wnd_lookup_generation (local.get $ch)))
+              (local.set $native_pid (call $current_process_id))
+              (local.set $native_tid (global.get $current_thread_id))
+              (if (local.get $native_button)
+                (then
+                  (call $sync_depth_enter)
+                  (local.set $native_invocation (call $invocation_current))
+                  (local.set $native_root (global.get $invocation_root))
+                  (local.set $native_depth (global.get $sync_msg_depth))
+                  (local.set $old_yield (global.get $yield_flag))
+                  (local.set $old_reason (global.get $yield_reason))
+                  (global.set $yield_flag (i32.const 0))
+                  (global.set $yield_reason (i32.const 0))))
+              (drop (call $wnd_send_message (local.get $ch)
+                      (local.get $msg) (local.get $wParam) (local.get $lp)))
+              (if (local.get $native_button)
+                (then
+                  (if (i32.or
+                        (i32.or (i64.ne (local.get $native_invocation) (call $invocation_current))
+                          (i64.ne (local.get $native_root) (global.get $invocation_root)))
+                        (i32.ne (local.get $native_depth) (global.get $sync_msg_depth)))
+                    (then (unreachable)))
+                  (local.set $native_complete (i32.and (global.get $wnd_send_completed)
+                    (i32.and (i32.eqz (global.get $yield_flag))
+                      (i32.and (i32.eq (local.get $native_tid) (global.get $current_thread_id))
+                        (i32.eq (local.get $native_pid) (call $current_process_id))))))
+                  (if (local.get $native_complete)
+                    (then (call $native_button_returned (local.get $ch) (local.get $native_generation)
+                      (local.get $native_pid) (local.get $native_tid) (local.get $parent)
+                      (local.get $msg) (local.get $wParam))))
+                  (call $sync_depth_leave)
+                  (if (i32.eqz (global.get $yield_flag))
+                    (then
+                      (global.set $yield_flag (local.get $old_yield))
+                      (global.set $yield_reason (local.get $old_reason))))))
+  )
   (func $dialog_route_mouse (export "dialog_route_mouse")
     (param $parent i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
     (local $slot i32) (local $ch i32) (local $cls i32)
@@ -584,8 +631,11 @@
     (local $cx i32) (local $cy i32) (local $cw i32) (local $chh i32)
     (local $px i32) (local $py i32) (local $style i32) (local $ch_lp i32)
     (local $hit i32) (local $dispatchable i32)
-    (local $native_button i32) (local $native_generation i64)
-    (local $native_pid i32) (local $native_tid i32)
+    ;; Input may be observed by a renderer shadow or a sibling CPU, but only
+    ;; the window's actual owning CPU may execute its native procedure.
+    (if (i32.or (i32.eqz (call $wnd_lookup_live (local.get $parent)))
+          (i32.ne (call $wnd_get_thread (local.get $parent)) (global.get $current_thread_id)))
+      (then (return (i32.const 0))))
     (local.set $px (i32.shr_s (i32.shl (local.get $lParam) (i32.const 16)) (i32.const 16)))
     (local.set $py (i32.shr_s (local.get $lParam) (i32.const 16)))
     (if (i32.and
@@ -595,6 +645,14 @@
             (i32.ne (global.get $dialog_button_capture_hwnd) (i32.const 0))))
       (then
         (local.set $ch (global.get $dialog_button_capture_hwnd))
+        (if (i32.or (i32.eqz (call $wnd_lookup_live (local.get $ch)))
+              (i32.or
+                (i64.ne (global.get $dialog_button_capture_generation) (call $wnd_lookup_generation (local.get $ch)))
+                (i32.ne (call $wnd_get_thread (local.get $ch)) (global.get $current_thread_id))))
+          (then
+            (global.set $dialog_button_capture_parent (i32.const 0))
+            (global.set $dialog_button_capture_hwnd (i32.const 0))
+            (return (i32.const 0))))
         (global.set $dialog_button_capture_parent (i32.const 0))
         (global.set $dialog_button_capture_hwnd (i32.const 0))
         (local.set $xy (call $ctrl_get_xy_packed (local.get $ch)))
@@ -687,28 +745,20 @@
                                   (i32.eq (local.get $cls) (i32.const 27))))))))
           (if (local.get $dispatchable)
             (then
+              (if (i32.ne (call $wnd_get_thread (local.get $ch)) (global.get $current_thread_id))
+                (then (return (i32.const 0))))
               (if (i32.and
                     (i32.eq (local.get $msg) (i32.const 0x0201))
                     (i32.eq (local.get $cls) (i32.const 1)))
                 (then
                   (global.set $dialog_button_capture_parent (local.get $parent))
-                  (global.set $dialog_button_capture_hwnd (local.get $ch))))
+                  (global.set $dialog_button_capture_hwnd (local.get $ch))
+                  (global.set $dialog_button_capture_generation (call $wnd_lookup_generation (local.get $ch)))))
               ;; Capture the actual WAT BUTTON's identity before callbacks can
               ;; destroy it. Only this precise dispatch-return path publishes
               ;; a receipt; a host handler, queued edge or class tag cannot.
-              (local.set $native_button (i32.and
-                (i32.and (i32.eq (local.get $cls) (i32.const 1))
-                  (i32.eq (local.get $msg) (i32.const 0x0201)))
-                (i32.ge_u (call $wnd_table_get (local.get $ch)) (i32.const 0xFFFF0000))))
-              (local.set $native_generation (call $wnd_lookup_generation (local.get $ch)))
-              (local.set $native_pid (call $current_process_id))
-              (local.set $native_tid (call $wnd_get_thread (local.get $ch)))
-              (drop (call $wnd_send_message (local.get $ch)
-                      (local.get $msg) (local.get $wParam) (local.get $ch_lp)))
-              (if (local.get $native_button)
-                (then (call $native_button_returned (local.get $ch) (local.get $native_generation)
-                  (local.get $native_pid) (local.get $native_tid) (local.get $parent)
-                  (local.get $msg) (local.get $wParam))))
+              (call $dialog_native_mouse (local.get $parent) (local.get $ch) (local.get $cls)
+                (local.get $msg) (local.get $wParam) (local.get $ch_lp))
               (return (i32.const 1))))))
       (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
       (br $walk)))
@@ -770,6 +820,88 @@
           (br $scan)))))
 
   ;; ============================================================
+  ;; Read-only public native control observation. Status is explicit: -1 means
+  ;; unavailable (absent, wrong class, subclassed or not initialized). These
+  ;; getters never dispatch messages or allocate/copy into guest scratch space.
+  ;; JS brackets every read with generation/actor/memory checks.
+  (func $native_observation_state (param $h i32) (param $class i32) (result i32)
+    (if (i32.or (i32.eqz (call $wnd_lookup_live (local.get $h)))
+          (i32.ne (call $ctrl_table_get_class (local.get $h)) (local.get $class)))
+      (then (return (i32.const 0))))
+    (if (i32.ne (call $wnd_table_get (local.get $h)) (global.get $WNDPROC_CTRL_NATIVE))
+      (then (return (i32.const 0))))
+    (call $wnd_get_state_ptr (local.get $h)))
+
+  ;; Listbox: count, selection, top row, string-buffer pointer/used bytes.
+  ;; Owner-draw lists without strings have no public text contract here.
+  (func (export "native_listbox_get") (param $h i32) (param $field i32) (result i32)
+    (local $s ptr<ListBoxState>) (local $g i32) (local $style i32)
+    (local.set $g (call $native_observation_state (local.get $h) (i32.const 4)))
+    (if (i32.eqz (local.get $g)) (then (return (i32.const -1))))
+    (local.set $style (call $wnd_get_style (local.get $h)))
+    (if (i32.and (i32.ne (i32.and (local.get $style) (i32.const 0x30)) (i32.const 0))
+          (i32.eqz (i32.and (local.get $style) (i32.const 0x40))))
+      (then (return (i32.const -1))))
+    (local.set $s (cast ptr<ListBoxState> (call $g2w (local.get $g))))
+    (if (i32.eqz (local.get $field)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (call $lb_count (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (call $lb_cur_sel (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (call $lb_top_index (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 4))
+      (then (return (select (call $g2w (call $lb_items_ptr (local.get $s))) (i32.const 0)
+        (i32.ne (call $lb_items_ptr (local.get $s)) (i32.const 0))))))
+    (if (i32.eq (local.get $field) (i32.const 5)) (then (return (call $lb_items_used (local.get $s)))))
+    (i32.const -1))
+
+  (func (export "native_listbox_selected") (param $h i32) (param $index i32) (result i32)
+    (local $s ptr<ListBoxState>) (local $g i32)
+    (local.set $g (call $native_observation_state (local.get $h) (i32.const 4)))
+    (if (i32.eqz (local.get $g)) (then (return (i32.const -1))))
+    (local.set $s (cast ptr<ListBoxState> (call $g2w (local.get $g))))
+    (if (i32.ge_u (local.get $index) (call $lb_count (local.get $s)))
+      (then (return (i32.const -1))))
+    (if (i32.eqz (call $lb_sel_ptr (local.get $s)))
+      (then (return (i32.eq (local.get $index) (call $lb_cur_sel (local.get $s))))))
+    (if (i32.ge_u (local.get $index) (call $lb_sel_cap (local.get $s)))
+      (then (return (i32.const -1))))
+    (i32.load8_u (i32.add (call $g2w (call $lb_sel_ptr (local.get $s))) (local.get $index))))
+
+  ;; ComboBox: selection, dropped flag, variant, list/edit/popup identities,
+  ;; and actual selected/typed public text (ANSI bytes).
+  (func (export "native_combobox_get") (param $h i32) (param $field i32) (result i32)
+    (local $s ptr<ComboBoxState>) (local $g i32)
+    (local.set $g (call $native_observation_state (local.get $h) (i32.const 5)))
+    (if (i32.eqz (local.get $g)) (then (return (i32.const -1))))
+    (local.set $s (cast ptr<ComboBoxState> (call $g2w (local.get $g))))
+    (if (i32.eqz (local.get $field)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (call $cb_cur_sel (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (call $cb_is_dropped (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (call $cb_variant (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 4)) (then (return (call $cb_lb_hwnd (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 5)) (then (return (call $cb_edit_hwnd (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 6)) (then (return (call $cb_popup_hwnd (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 7))
+      (then (return (select (call $g2w (call $cb_text_ptr (local.get $s))) (i32.const 0)
+        (i32.ne (call $cb_text_ptr (local.get $s)) (i32.const 0))))))
+    (if (i32.eq (local.get $field) (i32.const 8)) (then (return (call $cb_text_len (local.get $s)))))
+    (i32.const -1))
+
+  ;; Common-file frame and popup provenance, without exposing OPENFILENAME
+  ;; pointers, application buffers or other private caller state.
+  (func (export "native_common_frame") (param $h i32) (result i32)
+    (i32.ne (call $native_observation_state (local.get $h) (i32.const 12)) (i32.const 0)))
+  (func (export "native_combo_popup_owner") (param $h i32) (result i32)
+    (local $owner i32) (local $s i32)
+    (if (i32.or (i32.ne (call $ctrl_table_get_class (local.get $h)) (i32.const 9))
+          (i32.ne (call $wnd_table_get (local.get $h)) (global.get $WNDPROC_CTRL_NATIVE)))
+      (then (return (i32.const 0))))
+    (local.set $owner (call $wnd_get_userdata (local.get $h)))
+    (local.set $s (call $native_observation_state (local.get $owner) (i32.const 5)))
+    (if (i32.eqz (local.get $s)) (then (return (i32.const 0))))
+    (if (i32.ne (call $cb_popup_hwnd (call $g2w (local.get $s))) (local.get $h))
+      (then (return (i32.const 0))))
+    (local.get $owner))
+
   ;; Modal common-dialog scaffolding
   ;; ============================================================
   ;;
@@ -787,12 +919,153 @@
   ;;     Called by the dialog's wndproc on OK or Cancel/X. Records the
   ;;     result, tears the dialog down, and clears $modal_dlg_hwnd which
   ;;     unblocks the CACA0006 pump on the next interpreter iteration.
+  ;; Each parked 32-bit API owns a heap frame. The globals are only the
+  ;; current frame's working view; a nested callback cannot replace its
+  ;; parent's return address, registers or common-dialog writeback state.
+  (layout ModalContinuation
+    (field parent i32) (field hwnd i32) (field generation i64)
+    (field process i32) (field thread i32)
+    (field ret i32) (field esp i32) (field adjust i32)
+    (field ebx i32) (field esi i32) (field edi i32) (field ebp i32)
+    (field kind i32) (field structure i32) (field wide i32)
+    (field root i32) (field ofn i32)
+    (field callback_pending i32) (field callback_esp i32)
+    (field invocation i64) (field root_invocation i64)
+    (field depth i32) (field callback_depth i32)
+    (field callback_invocation i64) (field callback_root i64))
+  (global $modal_frame (mut i32) (i32.const 0))
+  (global $modal_entry_pending (mut i32) (i32.const 0))
+  (global $modal_entry_ebx (mut i32) (i32.const 0))
+  (global $modal_entry_esi (mut i32) (i32.const 0))
+  (global $modal_entry_edi (mut i32) (i32.const 0))
+  (global $modal_entry_ebp (mut i32) (i32.const 0))
+
   (func $modal_capture_nonvolatile
+    (global.set $modal_entry_pending (i32.const 1))
+    (global.set $modal_entry_ebx (i32.load offset=12 (global.get $reg_base)))
+    (global.set $modal_entry_esi (i32.load offset=24 (global.get $reg_base)))
+    (global.set $modal_entry_edi (i32.load offset=28 (global.get $reg_base)))
+    (global.set $modal_entry_ebp (i32.load offset=20 (global.get $reg_base))))
+
+  (func $modal_frame_save
+    (local $f i32) (local $g i32)
+    (call $invocation_ensure)
+    (local.set $g (call $heap_alloc (i32.const 120)))
+    (local.set $f (call $g2w (local.get $g)))
+    (call $zero_memory (local.get $f) (i32.const 120))
+    (store.field ModalContinuation invocation (local.get $f) (call $invocation_current))
+    (store.field ModalContinuation root_invocation (local.get $f) (global.get $invocation_root))
+    (store.field ModalContinuation depth (local.get $f) (global.get $sync_msg_depth))
+    (store.field ModalContinuation parent (local.get $f) (global.get $modal_frame))
+    (store.field ModalContinuation hwnd (local.get $f) (global.get $modal_dlg_hwnd))
+    (store.field ModalContinuation generation (local.get $f) (call $wnd_lookup_generation (global.get $modal_dlg_hwnd)))
+    (store.field ModalContinuation process (local.get $f) (call $current_process_id))
+    (store.field ModalContinuation thread (local.get $f) (global.get $current_thread_id))
+    (store.field ModalContinuation ret (local.get $f) (global.get $modal_ret_addr))
+    (store.field ModalContinuation esp (local.get $f) (global.get $modal_saved_esp))
+    (store.field ModalContinuation adjust (local.get $f) (global.get $modal_esp_adjust))
+    (store.field ModalContinuation ebx (local.get $f) (global.get $modal_saved_ebx))
+    (store.field ModalContinuation esi (local.get $f) (global.get $modal_saved_esi))
+    (store.field ModalContinuation edi (local.get $f) (global.get $modal_saved_edi))
+    (store.field ModalContinuation ebp (local.get $f) (global.get $modal_saved_ebp))
+    (store.field ModalContinuation kind (local.get $f) (global.get $common_dialog_kind))
+    (store.field ModalContinuation structure (local.get $f) (global.get $common_dialog_struct))
+    (store.field ModalContinuation wide (local.get $f) (global.get $opendlg_wide))
+    (store.field ModalContinuation root (local.get $f) (global.get $cd_dlg_root))
+    (store.field ModalContinuation ofn (local.get $f) (global.get $cd_dlg_ofn))
+    (global.set $modal_frame (local.get $g)))
+
+  (func $modal_frame_restore
+    (local $f i32) (local $text i32) (local $dir i32)
+    (local.set $f (call $g2w (global.get $modal_frame)))
+    (global.set $modal_dlg_hwnd (load.field ModalContinuation hwnd (local.get $f)))
+    (global.set $modal_ret_addr (load.field ModalContinuation ret (local.get $f)))
+    (global.set $modal_saved_esp (load.field ModalContinuation esp (local.get $f)))
+    (global.set $modal_esp_adjust (load.field ModalContinuation adjust (local.get $f)))
+    (global.set $modal_saved_ebx (load.field ModalContinuation ebx (local.get $f)))
+    (global.set $modal_saved_esi (load.field ModalContinuation esi (local.get $f)))
+    (global.set $modal_saved_edi (load.field ModalContinuation edi (local.get $f)))
+    (global.set $modal_saved_ebp (load.field ModalContinuation ebp (local.get $f)))
     (global.set $modal_restore_pending (i32.const 1))
-    (global.set $modal_saved_ebx (i32.load offset=12 (global.get $reg_base)))
-    (global.set $modal_saved_esi (i32.load offset=24 (global.get $reg_base)))
-    (global.set $modal_saved_edi (i32.load offset=28 (global.get $reg_base)))
-    (global.set $modal_saved_ebp (i32.load offset=20 (global.get $reg_base))))
+    (global.set $common_dialog_kind (load.field ModalContinuation kind (local.get $f)))
+    (global.set $common_dialog_struct (load.field ModalContinuation structure (local.get $f)))
+    (global.set $opendlg_wide (load.field ModalContinuation wide (local.get $f)))
+    (global.set $cd_dlg_root (load.field ModalContinuation root (local.get $f)))
+    (global.set $cd_dlg_ofn (load.field ModalContinuation ofn (local.get $f)))
+    ;; The inner picker can replace the directory allocation. Recreate this
+    ;; frame's working directory from its own native path edit, without
+    ;; sending callbacks or touching a retired/reused window.
+    (if (i32.and (call $modal_frame_window_live)
+          (i32.eq (call $ctrl_table_get_class (global.get $modal_dlg_hwnd)) (i32.const 12)))
+      (then
+        (local.set $text (call $native_user_text_ptr
+          (call $ctrl_find_by_id (global.get $modal_dlg_hwnd) (i32.const 0x440))))
+        (if (local.get $text)
+          (then
+            (local.set $dir (call $wat_str_to_heap (local.get $text) (call $strlen (local.get $text))))
+            (call $heap_free (global.get $opendlg_current_dir))
+            (global.set $opendlg_current_dir (local.get $dir))))))
+    (i32.atomic.store (global.get $SHARED_MODAL_DLG_HWND) (global.get $modal_dlg_hwnd))
+    (i32.atomic.store (global.get $SHARED_MODAL_RESULT) (i32.const 0))
+    (i32.atomic.store (global.get $SHARED_MODAL_DONE) (i32.const 0)))
+
+  (func $modal_frame_actor_check
+    (local $f i32)
+    (if (global.get $modal_frame)
+      (then
+        (local.set $f (call $g2w (global.get $modal_frame)))
+        (if (i32.or
+              (i32.ne (load.field ModalContinuation process (local.get $f)) (call $current_process_id))
+              (i32.ne (load.field ModalContinuation thread (local.get $f)) (global.get $current_thread_id)))
+          (then (unreachable))))))
+
+  (func $modal_frame_window_live (result i32)
+    (local $f i32)
+    (if (i32.eqz (global.get $modal_frame)) (then (return (i32.const 1))))
+    (local.set $f (call $g2w (global.get $modal_frame)))
+    (i32.and (call $wnd_lookup_live (load.field ModalContinuation hwnd (local.get $f)))
+      (i64.eq (load.field ModalContinuation generation (local.get $f))
+        (call $wnd_lookup_generation (load.field ModalContinuation hwnd (local.get $f))))))
+
+  (func $modal_frame_invocation_check
+    (local $f i32)
+    (if (global.get $modal_frame)
+      (then
+        (local.set $f (call $g2w (global.get $modal_frame)))
+        (if (i32.or
+              (i32.or
+                (i64.ne (load.field ModalContinuation invocation (local.get $f)) (call $invocation_current))
+                (i64.ne (load.field ModalContinuation root_invocation (local.get $f)) (global.get $invocation_root)))
+              (i32.ne (load.field ModalContinuation depth (local.get $f)) (global.get $sync_msg_depth)))
+          (then (unreachable))))))
+
+  ;; Return 1 when we performed the splice ourselves. The legacy Win16
+  ;; adapter still owns its far-return ABI. Never splice a parent's frame
+  ;; until the inner native pump has returned to the real guest caller.
+  (func $modal_resume_completed (result i32)
+    (local $f i32) (local $g i32) (local $parent i32)
+    (if (i32.eqz (global.get $modal_frame)) (then (return (i32.const 0))))
+    (call $modal_frame_actor_check)
+    (call $modal_frame_invocation_check)
+    (local.set $g (global.get $modal_frame))
+    (local.set $f (call $g2w (local.get $g)))
+    (local.set $parent (load.field ModalContinuation parent (local.get $f)))
+    (i32.store offset=0 (global.get $reg_base) (global.get $modal_result))
+    (i32.store offset=12 (global.get $reg_base) (load.field ModalContinuation ebx (local.get $f)))
+    (i32.store offset=24 (global.get $reg_base) (load.field ModalContinuation esi (local.get $f)))
+    (i32.store offset=28 (global.get $reg_base) (load.field ModalContinuation edi (local.get $f)))
+    (i32.store offset=20 (global.get $reg_base) (load.field ModalContinuation ebp (local.get $f)))
+    (global.set $eip (load.field ModalContinuation ret (local.get $f)))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (load.field ModalContinuation esp (local.get $f)) (load.field ModalContinuation adjust (local.get $f))))
+    (global.set $yield_flag (i32.const 0))
+    (global.set $yield_reason (i32.const 0))
+    (global.set $steps (i32.const 0))
+    (global.set $modal_restore_pending (i32.const 0))
+    (global.set $modal_frame (local.get $parent))
+    (call $heap_free (local.get $g))
+    (if (local.get $parent) (then (call $modal_frame_restore)))
+    (i32.const 1))
 
   (func $modal_begin (param $dlg i32) (param $esp_adjust i32)
     (global.set $modal_dlg_hwnd  (local.get $dlg))
@@ -805,12 +1078,20 @@
     (global.set $modal_esp_adjust (local.get $esp_adjust))
     ;; Direct exported test helpers may call modal_begin without entering a
     ;; guest ABI handler. Do not restore stale register state in that case.
-    (if (i32.eqz (global.get $modal_restore_pending))
+    (if (global.get $modal_entry_pending)
       (then
+        (global.set $modal_saved_ebx (global.get $modal_entry_ebx))
+        (global.set $modal_saved_esi (global.get $modal_entry_esi))
+        (global.set $modal_saved_edi (global.get $modal_entry_edi))
+        (global.set $modal_saved_ebp (global.get $modal_entry_ebp)))
+      (else
         (global.set $modal_saved_ebx (i32.load offset=12 (global.get $reg_base)))
         (global.set $modal_saved_esi (i32.load offset=24 (global.get $reg_base)))
         (global.set $modal_saved_edi (i32.load offset=28 (global.get $reg_base)))
         (global.set $modal_saved_ebp (i32.load offset=20 (global.get $reg_base)))))
+    (global.set $modal_entry_pending (i32.const 0))
+    (global.set $modal_restore_pending (i32.const 1))
+    (if (i32.eqz (global.get $code16)) (then (call $modal_frame_save)))
     (global.set $eip             (global.get $modal_loop_thunk))
     (global.set $yield_flag      (i32.const 1))
     (global.set $yield_reason    (i32.const 6))
@@ -822,8 +1103,213 @@
   ;; dismissed, which is when the API call it belongs to can be spliced back
   ;; together. The two worlds differ only in how that splice works, which is why
   ;; the splice stays with each caller and only this part is shared.
+  (func $modal_dispatch_posted (param $pump_eip i32) (result i32)
+    (local $hwnd i32) (local $msg i32) (local $wp i32) (local $lp i32)
+    (local $proc i32) (local $esp i32) (local $frame_w i32)
+    (local.set $frame_w (call $g2w (global.get $modal_frame)))
+    ;; A modal loop still dispatches posted thread messages. Enter guest
+    ;; procedures on the owning CPU, returning through this pump, so a nested
+    ;; common API can yield normally rather than timing out a recursive run.
+    ;; Keyboard tokens remain on the dedicated exact native consumer below.
+    (if (i32.and (i32.eqz (global.get $code16))
+          (call $shared_post_queue_peek (i32.const 0) (i32.const 0)
+            (i32.const 0x400) (i32.const 0xFFFF) (i32.const 1)))
+      (then
+        (local.set $hwnd (global.get $user_queue_probe_hwnd))
+        (local.set $msg (global.get $user_queue_probe_msg))
+        (local.set $wp (global.get $user_queue_probe_wparam))
+        (local.set $lp (global.get $user_queue_probe_lparam))
+        (local.set $proc (call $wnd_table_get (local.get $hwnd)))
+        (if (i32.and (call $wnd_lookup_live (local.get $hwnd))
+              (i32.eq (call $wnd_get_thread (local.get $hwnd)) (global.get $current_thread_id)))
+          (then
+            (if (i32.ge_u (local.get $proc) (i32.const 0xFFFF0000))
+              (then (drop (call $wnd_send_message (local.get $hwnd) (local.get $msg) (local.get $wp) (local.get $lp))))
+              (else
+                (if (i32.and (i32.ne (local.get $proc) (i32.const 0))
+                      (i32.ne (local.get $proc) (global.get $WNDPROC_BUILTIN)))
+                  (then
+                    (call $sync_depth_enter)
+                    (store.field ModalContinuation callback_pending (local.get $frame_w) (i32.const 1))
+                    (store.field ModalContinuation callback_esp (local.get $frame_w) (i32.load offset=16 (global.get $reg_base)))
+                    (store.field ModalContinuation callback_invocation (local.get $frame_w) (call $invocation_current))
+                    (store.field ModalContinuation callback_root (local.get $frame_w) (global.get $invocation_root))
+                    (store.field ModalContinuation callback_depth (local.get $frame_w) (global.get $sync_msg_depth))
+                    (local.set $esp (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+                    (i32.store offset=16 (global.get $reg_base) (local.get $esp))
+                    (call $gs32 (local.get $esp) (local.get $pump_eip))
+                    (call $gs32 (i32.add (local.get $esp) (i32.const 4)) (local.get $hwnd))
+                    (call $gs32 (i32.add (local.get $esp) (i32.const 8)) (local.get $msg))
+                    (call $gs32 (i32.add (local.get $esp) (i32.const 12)) (local.get $wp))
+                    (call $gs32 (i32.add (local.get $esp) (i32.const 16)) (local.get $lp))
+                    (global.set $eip (local.get $proc))
+                    (global.set $yield_flag (i32.const 0))
+                    (global.set $yield_reason (i32.const 0))
+                    (global.set $steps (i32.const 0))
+                    (return (i32.const 1))))))))))
+    (i32.const 0))
+
+  ;; Private, actor-local publication is visible only while its real native
+  ;; consumer is on the stack. MSG and all generations belong to that child.
+  (global $modal_key_fence (mut i32) (i32.const 0))
+  (func $modal_key_observe (result i32)
+    (local $slot i32) (local $f i32) (local $w i32) (local $depth i32)
+    (if (i32.ge_u (i32.sub (global.get $current_thread_id) (i32.const 1)) (i32.const 16))
+      (then (return (i32.const 0))))
+    (local.set $slot (i32.add (region.addr $CALLBACK_OWNERSHIP 16)
+      (i32.mul (i32.sub (global.get $current_thread_id) (i32.const 1)) (i32.const 528))))
+    (local.set $f (i32.wrap_i64 (i64.atomic.load offset=8 (local.get $slot))))
+    (if (i32.eqz (local.get $f)) (then (return (i32.const 0))))
+    (local.set $w (call $g2w (local.get $f)))
+    (local.set $depth (i32.wrap_i64 (i64.load offset=112 (local.get $w))))
+    (if (i32.or (i32.ge_u (local.get $depth) (i32.const 64))
+          (i32.or
+            (i64.ne (i64.load offset=184 (local.get $w)) (i64.atomic.load (region.addr $CALLBACK_OWNERSHIP 8)))
+            (i32.or (i64.ne (i64.load offset=104 (local.get $w)) (i64.atomic.load (local.get $slot)))
+              (i64.ne (i64.load offset=96 (local.get $w))
+                (i64.load (i32.add (local.get $slot) (i32.add (i32.const 16) (i32.shl (local.get $depth) (i32.const 3)))))))))
+      (then (return (i32.const 0))))
+    (local.get $f))
+  (func (export "native_modal_key_fence_word") (param $field i32) (result i64)
+    (local $f i32)
+    (local.set $f (call $modal_key_observe))
+    (if (result i64) (i32.and (i32.ne (local.get $f) (i32.const 0)) (i32.lt_u (local.get $field) (i32.const 24)))
+      (then (i64.load (i32.add (call $g2w (local.get $f)) (i32.mul (local.get $field) (i32.const 8)))))
+      (else (i64.const 0))))
+  (func $modal_native_key (param $hwnd i32) (param $msg i32) (param $wp i32) (param $lp i32) (param $token i32)
+    (local $f i32) (local $w i32) (local $message i32) (local $prev i32)
+    (local $modal i32) (local $owner i32) (local $tid i32) (local $pid i32)
+    (local $inv i64) (local $root i64) (local $depth i32)
+    (local $old_yield i32) (local $old_reason i32) (local $completed i32)
+    (call $modal_frame_actor_check)
+    (call $modal_frame_invocation_check)
+    (local.set $modal (global.get $modal_dlg_hwnd))
+    (if (i32.or (i32.eqz (call $modal_frame_window_live))
+          (i32.or (i32.ne (local.get $hwnd) (global.get $focus_hwnd))
+            (i32.or (i32.ne (call $wnd_get_thread (local.get $hwnd)) (global.get $current_thread_id))
+              (i32.or (i32.ne (call $wnd_top_level (local.get $hwnd)) (local.get $modal))
+                (i32.ne (call $wnd_table_get (local.get $hwnd)) (global.get $WNDPROC_CTRL_NATIVE))))))
+      (then (return)))
+    (if (i32.and (local.get $token) (i32.eqz (call $host_input_validate (local.get $token)))) (then (return)))
+    (local.set $tid (global.get $current_thread_id))
+    (local.set $pid (call $current_process_id))
+    (local.set $owner (call $wnd_get_owner (local.get $modal)))
+    (call $sync_depth_enter)
+    (local.set $inv (call $invocation_current))
+    (local.set $root (global.get $invocation_root))
+    (local.set $depth (global.get $sync_msg_depth))
+    (local.set $f (call $heap_alloc (i32.const 208)))
+    (local.set $w (call $g2w (local.get $f)))
+    (local.set $message (i32.add (local.get $f) (i32.const 192)))
+    (i64.store offset=0 (local.get $w) (i64.const 1))
+    (i64.store offset=8 (local.get $w) (i64.extend_i32_u (local.get $token)))
+    (i64.store offset=16 (local.get $w) (i64.extend_i32_u (local.get $message)))
+    (i64.store offset=24 (local.get $w) (i64.extend_i32_u (local.get $tid)))
+    (i64.store offset=32 (local.get $w) (i64.extend_i32_u (local.get $pid)))
+    (i64.store offset=40 (local.get $w) (i64.extend_i32_u (local.get $modal)))
+    (i64.store offset=48 (local.get $w) (call $wnd_lookup_generation (local.get $modal)))
+    (i64.store offset=56 (local.get $w) (i64.extend_i32_u (local.get $owner)))
+    (i64.store offset=64 (local.get $w) (call $wnd_lookup_generation (local.get $owner)))
+    (i64.store offset=72 (local.get $w) (i64.extend_i32_u (local.get $hwnd)))
+    (i64.store offset=80 (local.get $w) (call $wnd_lookup_generation (local.get $hwnd)))
+    (i64.store offset=88 (local.get $w) (i64.extend_i32_u (global.get $modal_frame)))
+    (i64.store offset=96 (local.get $w) (local.get $inv))
+    (i64.store offset=104 (local.get $w) (local.get $root))
+    (i64.store offset=112 (local.get $w) (i64.extend_i32_u (local.get $depth)))
+    (i64.store offset=120 (local.get $w) (i64.extend_i32_u (local.get $hwnd)))
+    (i64.store offset=128 (local.get $w) (i64.extend_i32_u (local.get $msg)))
+    (i64.store offset=136 (local.get $w) (i64.extend_i32_u (local.get $wp)))
+    (i64.store offset=144 (local.get $w) (i64.extend_i32_u (local.get $lp)))
+    (i64.store offset=184 (local.get $w) (global.get $invocation_epoch))
+    (call $gs32 (local.get $message) (local.get $hwnd))
+    (call $gs32 (i32.add (local.get $message) (i32.const 4)) (local.get $msg))
+    (call $gs32 (i32.add (local.get $message) (i32.const 8)) (local.get $wp))
+    (call $gs32 (i32.add (local.get $message) (i32.const 12)) (local.get $lp))
+    (local.set $prev (global.get $modal_key_fence))
+    (global.set $modal_key_fence (local.get $f))
+    (i64.atomic.store offset=8 (global.get $invocation_slot) (i64.extend_i32_u (local.get $f)))
+    (if (local.get $token)
+      (then
+        (if (i32.eqz (call $host_input_consumed (local.get $token) (local.get $tid) (local.get $message) (i32.const 4) (i32.const 1)))
+          (then
+            (global.set $modal_key_fence (local.get $prev))
+    (i64.atomic.store offset=8 (global.get $invocation_slot) (i64.extend_i32_u (local.get $prev)))
+            (call $heap_free (local.get $f))
+            (call $sync_depth_leave)
+            (return)))))
+    (local.set $old_yield (global.get $yield_flag))
+    (local.set $old_reason (global.get $yield_reason))
+    (global.set $yield_flag (i32.const 0))
+    (global.set $yield_reason (i32.const 0))
+    (local.set $completed (i32.const 1))
+    (if (if (result i32) (i32.eq (local.get $msg) (i32.const 0x100))
+          (then (call $dialog_handle_key (local.get $modal) (local.get $wp)
+            (i32.ne (i32.and (call $host_get_async_key_state (i32.const 16)) (i32.const 0x8000)) (i32.const 0))))
+          (else (i32.const 0)))
+      (then (nop))
+      (else
+        (drop (call $wnd_send_message (local.get $hwnd) (local.get $msg) (local.get $wp) (local.get $lp)))
+        (local.set $completed (global.get $wnd_send_completed))))
+    ;; No continuation, actor or parent lifetime may be replaced by a callback.
+    ;; A yielded or incomplete consumer leaves no return publication.
+    (if (i32.or
+          (i32.or (i64.ne (local.get $inv) (call $invocation_current)) (i64.ne (local.get $root) (global.get $invocation_root)))
+          (i32.or (i32.ne (local.get $depth) (global.get $sync_msg_depth))
+            (i32.or (i32.ne (local.get $tid) (global.get $current_thread_id)) (i32.ne (local.get $pid) (call $current_process_id)))))
+      (then (unreachable)))
+    (if (i32.or (i32.ne (global.get $modal_frame) (i32.wrap_i64 (i64.load offset=88 (local.get $w))))
+          (i64.ne (call $wnd_lookup_generation (local.get $owner)) (i64.load offset=64 (local.get $w))))
+      (then (unreachable)))
+    (if (i32.and (local.get $completed) (i32.eqz (global.get $yield_flag)))
+      (then
+        (i64.store offset=152 (local.get $w) (i64.extend_i32_u (global.get $focus_hwnd)))
+        (i64.store offset=160 (local.get $w) (call $wnd_lookup_generation (global.get $focus_hwnd)))
+        (i64.store offset=168 (local.get $w) (i64.extend_i32_u (global.get $modal_dlg_hwnd)))
+        (i64.store offset=176 (local.get $w) (call $wnd_lookup_generation (global.get $modal_dlg_hwnd)))
+        (i64.store (local.get $w) (i64.const 2))
+        (if (local.get $token)
+          (then (drop (call $host_input_consumed (local.get $token) (local.get $tid) (local.get $message) (i32.const 5) (i32.const 1)))))))
+    (global.set $modal_key_fence (local.get $prev))
+    (i64.atomic.store offset=8 (global.get $invocation_slot) (i64.extend_i32_u (local.get $prev)))
+    (if (global.get $yield_flag) (then (return)))
+    (call $heap_free (local.get $f))
+    (call $sync_depth_leave)
+    (global.set $yield_flag (local.get $old_yield))
+    (global.set $yield_reason (local.get $old_reason)))
+
+  (func $modal_callback_return
+    (local $frame_w i32)
+    (if (global.get $modal_frame)
+      (then
+        (local.set $frame_w (call $g2w (global.get $modal_frame)))
+        (if (load.field ModalContinuation callback_pending (local.get $frame_w))
+          (then
+            (if (i32.or
+                  (i32.or
+                    (i64.ne (load.field ModalContinuation callback_invocation (local.get $frame_w)) (call $invocation_current))
+                    (i64.ne (load.field ModalContinuation callback_root (local.get $frame_w)) (global.get $invocation_root)))
+                  (i32.ne (load.field ModalContinuation callback_depth (local.get $frame_w)) (global.get $sync_msg_depth)))
+              (then (unreachable)))
+            (if (i32.ne (load.field ModalContinuation callback_esp (local.get $frame_w))
+                  (i32.load offset=16 (global.get $reg_base)))
+              (then (unreachable)))
+            (call $sync_depth_leave)
+            (store.field ModalContinuation callback_pending (local.get $frame_w) (i32.const 0))))))
+  )
+
   (func $modal_pump_step (param $pump_eip i32) (result i32)
     (local $flags i32) (local $hwnd i32) (local $proc i32)
+    (local $packed i32) (local $msg i32) (local $wp i32) (local $lp i32)
+    (local $token i32) (local $message i32)
+    (local $frame_w i32)
+    (call $modal_frame_actor_check)
+    (call $modal_callback_return)
+    (call $modal_frame_invocation_check)
+    ;; Destruction or HWND reuse cancels this invocation. Never dispatch or
+    ;; tear down the replacement window under the retired numeric handle.
+    (if (i32.and (i32.ne (global.get $modal_dlg_hwnd) (i32.const 0))
+          (i32.eqz (call $modal_frame_window_live)))
+      (then (call $modal_finish_local (i32.const 0))))
     ;; A renderer-side shadow instance may have delivered the button command.
     ;; Finish in the instance that owns the parked API call: its private
     ;; common-dialog kind/struct and saved register frame are authoritative.
@@ -832,7 +1318,7 @@
         (i32.atomic.store (global.get $SHARED_MODAL_DONE) (i32.const 0))
         (call $modal_finish_local
           (i32.atomic.load (global.get $SHARED_MODAL_RESULT)))))
-    (if (i32.eqz (global.get $modal_dlg_hwnd)) (then (return (i32.const 0))))
+    (if (i32.eqz (global.get $modal_dlg_hwnd)) (then (return (call $modal_resume_completed))))
     ;; Like GetMessage in a native modal loop, an explicit WM_QUIT ends
     ;; this wait. Leave it pending for the outer caller instead of turning
     ;; it into a button command. Flag 1 is only a window-recreation marker.
@@ -840,7 +1326,9 @@
     (if (i32.eq (global.get $quit_flag) (i32.const 2))
       (then
         (call $modal_finish_local (i32.const 0))
-        (return (i32.const 0))))
+        (return (call $modal_resume_completed))))
+    (if (call $modal_dispatch_posted (local.get $pump_eip)) (then (return (i32.const 1))))
+    (if (i32.eqz (global.get $modal_dlg_hwnd)) (then (return (call $modal_resume_completed))))
     ;; MessageBox is parked here rather than in an application's GetMessage
     ;; loop. Dispatch its own posted messages in the owning instance: NC
     ;; release posts WM_NCLBUTTONDOWN, which otherwise stays queued forever.
@@ -854,7 +1342,49 @@
             (drop (call $wnd_send_message
               (global.get $user_queue_probe_hwnd) (global.get $user_queue_probe_msg)
               (global.get $user_queue_probe_wparam) (global.get $user_queue_probe_lparam)))
-            (if (i32.eqz (global.get $modal_dlg_hwnd)) (then (return (i32.const 0))))))))
+            (if (i32.eqz (global.get $modal_dlg_hwnd)) (then (return (call $modal_resume_completed))))))))
+    ;; File dialogs pump ordinary native keyboard messages in their owning
+    ;; instance, including real CPU Workers. Renderer shadows only enqueue.
+    ;; Never enter a guest callback on the shadow or manufacture consumption.
+    (if (i32.eq (call $ctrl_table_get_class (global.get $modal_dlg_hwnd)) (i32.const 12))
+      (then
+        (local.set $hwnd (global.get $focus_hwnd))
+        (if (call $shared_post_queue_peek (i32.const 0) (local.get $hwnd)
+              (i32.const 0x100) (i32.const 0x109) (i32.const 1))
+          (then
+            (local.set $token (i32.shr_u (global.get $user_queue_raw_flags) (i32.const 2)))
+            (local.set $msg (global.get $user_queue_probe_msg))
+            (local.set $wp (global.get $user_queue_probe_wparam))
+            (local.set $lp (global.get $user_queue_probe_lparam)))
+          (else
+            (local.set $packed (call $host_check_input))
+            (global.set $pending_input_token (call $host_check_input_token))
+            (local.set $token (global.get $pending_input_token))
+            (if (local.get $packed)
+              (then
+                (global.set $pending_input_hwnd (call $host_check_input_hwnd (global.get $focus_hwnd)))
+                (global.set $pending_input_lparam (call $host_check_input_lparam))
+                (local.set $packed (call $input_route_to_owner (local.get $packed)))
+                (local.set $hwnd (global.get $pending_input_hwnd))
+                (local.set $msg (i32.and (local.get $packed) (i32.const 0xFFFF)))
+                (local.set $wp (i32.shr_u (local.get $packed) (i32.const 16)))
+                (local.set $lp (global.get $pending_input_lparam))))))
+        ;; Only this modal's current native focus can receive the key. A
+        ;; routed foreign event, stale token or guest subclass cannot be
+        ;; converted into dialog traversal or a guarded native completion.
+        (if (i32.or
+              (i32.ne (call $wnd_top_level (local.get $hwnd)) (global.get $modal_dlg_hwnd))
+              (i32.ne (call $wnd_table_get (local.get $hwnd)) (global.get $WNDPROC_CTRL_NATIVE)))
+          (then (local.set $msg (i32.const 0))))
+        (if (local.get $token)
+          (then
+            (if (i32.eqz (call $host_input_validate (local.get $token)))
+              (then (local.set $msg (i32.const 0))))))
+        (if (local.get $msg)
+          (then
+            (call $modal_native_key (local.get $hwnd) (local.get $msg)
+              (local.get $wp) (local.get $lp) (local.get $token))
+            (if (i32.eqz (global.get $modal_dlg_hwnd)) (then (return (call $modal_resume_completed))))))))
     ;; Drain nc_flags for the dialog hwnd only: child controls have no
     ;; non-client chrome and would leave spurious fragments.
     (if (global.get $nc_flags_count)
@@ -901,8 +1431,12 @@
     (local $owner i32) (local $hwnd i32) (local $class i32)
     (local $ret i32) (local $esp i32) (local $adjust i32) (local $pending i32)
     (local $ebx i32) (local $esi i32) (local $edi i32) (local $ebp i32)
+    (local $live i32)
     (local.set $hwnd (global.get $modal_dlg_hwnd))
     (if (i32.eqz (local.get $hwnd)) (then (return)))
+    (call $modal_frame_actor_check)
+    (local.set $live (call $modal_frame_window_live))
+    (if (i32.eqz (local.get $live)) (then (local.set $result (i32.const 0))))
     ;; A callback during teardown may complete another common dialog. Keep
     ;; this parked API's continuation invocation-owned until it is published
     ;; back for the owning pump, rather than borrowing the nested globals.
@@ -914,7 +1448,7 @@
     (local.set $esi (global.get $modal_saved_esi))
     (local.set $edi (global.get $modal_saved_edi))
     (local.set $ebp (global.get $modal_saved_ebp))
-    (local.set $class (call $ctrl_table_get_class (local.get $hwnd)))
+    (if (local.get $live) (then (local.set $class (call $ctrl_table_get_class (local.get $hwnd)))))
     ;; The shell picker sends the selected HTREEITEM through shared modal
     ;; state. Convert it to a caller-owned PIDL only in this owning instance;
     ;; renderer shadows have separate heap globals even though memory is shared.
@@ -940,16 +1474,22 @@
         (local.set $result (i32.const 0))))
     (global.set $modal_result (local.get $result))
     (call $cd_modal_writeback (local.get $result))
-    (local.set $owner (call $wnd_get_owner (local.get $hwnd)))
-    (call $wnd_destroy_tree (local.get $hwnd))
-    (call $host_destroy_window (local.get $hwnd))
+    (if (local.get $live)
+      (then
+        (local.set $owner (call $wnd_get_owner (local.get $hwnd)))
+        (call $wnd_destroy_tree (local.get $hwnd))
+        (call $host_destroy_window (local.get $hwnd))))
     (global.set $modal_dlg_hwnd (i32.const 0))
     (i32.atomic.store (global.get $SHARED_MODAL_RESULT) (local.get $result))
     (i32.atomic.store (global.get $SHARED_MODAL_DLG_HWND) (i32.const 0))
     (i32.atomic.store (global.get $SHARED_MODAL_DONE) (i32.const 0))
     ;; The dialog held the focus; give it back to the owner, or the app never
     ;; hears WM_SETFOCUS again. See $focus_restore_after_modal.
-    (call $focus_restore_after_modal (local.get $owner))
+    ;; File dialogs restore their saved USER focus lease in WM_DESTROY, which
+    ;; also checks owner generation and prior disabled state. A generic owner
+    ;; fallback here would focus a reused owner HWND after that check refused.
+    (if (i32.and (local.get $live) (i32.ne (local.get $class) (i32.const 12)))
+      (then (call $focus_restore_after_modal (local.get $owner))))
     ;; A completed nested dialog may have published a different shared result.
     (i32.atomic.store (global.get $SHARED_MODAL_RESULT) (local.get $result))
     (global.set $modal_result (local.get $result))

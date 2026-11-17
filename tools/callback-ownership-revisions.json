@@ -12,8 +12,8 @@
       "file": "lib/renderer-input.js",
       "name": "host-file",
       "baseSHA256": "a8de6b537ff492cebe763fee3a9e30bd5b7e16a0751a63e922671045f73c4fcf",
-      "sha256": "a37789c7a971c4c96967c4e28ac54ff20c70024d6b67206038f41d69cd0a27d4",
-      "reason": "Review 20261117 coordinate press hover: retain the original canvas coordinates in local constants before native mapping and cursor clipping, then pass them to the existing synchronous handleMouseMove call. Non-strict argument aliasing previously remapped the native point. No callback, scheduling, retained owner, continuation, input receipt, physical release or context-restoration rule changes; ownership remains pending. Actual native hover and DOWN coordinates plus production transform and refusal regressions qualify this bounded repair."
+      "sha256": "46daf41c272cbc6c154314be435a22c4b224ae16163a48accf4b0c41e725b1fd",
+      "reason": "Review 20261117: class12 native file-dialog keys and WM_CHAR now enqueue ordinary physical events for the owning native modal pump instead of synchronously executing shadow dialog/edit functions. All other modal/menu routes, physical release, guard rules and immutable deadlines remain unchanged. No native receipt is fabricated. Main and actual CPUWorker authored keyboard/focus and unchanged input regressions qualify the bounded routing change; general retained callback ownership remains pending."
     },
     {
       "file": "src/09a5-handlers-window.wat",
@@ -35,13 +35,6 @@
       "baseSHA256": "5a9f6a834b9ad5a58d4090c18f714961416dc9583908990087503ebbf715f25b",
       "sha256": "682ab78e7e3f03d7a784f6552a8dd57de56bd637c2874de1d4fbb8a3930ab92f",
       "reason": "TreatAs activation uses the existing COM jump/continuation mechanism with a private guest-stack frame. Marker CACA0041 restores the original stdcall frame after ordinary activation completes, including DLL-load yields and native class-factory callbacks. No foreign activation frame, global GUID scratch, callback admission or nonlocal ownership assertion is added; native guest-DLL, builtin-chain, cycle and unchanged activation regressions qualify the bounded route; ownership remains pending."
-    },
-    {
-      "file": "src/09c3a-dialog-runtime.wat",
-      "name": "$modal_pump_step",
-      "baseSHA256": "dc12e4d662a9a2c5ad3e0f181a744d7b487f0666c204df515c105dd22dd63da0",
-      "sha256": "799ed01516e1441d54a457b1daabca35849a5609185553cae4e9ce442c66191c",
-      "reason": "The owning parked MessageBox pump retrieves and synchronously dispatches one posted message filtered to its current HWND through its built-in USER procedure. Class 16 only: no guest dialog procedure, foreign continuation, callback admission, new EIP write or retained interface is introduced. Completion uses existing modal_finish_local and owning continuation splice; general ownership remains pending. Exact native NULL-owner error OK/X, OKCANCEL and strict guarded-input opposition controls qualify the route."
     },
     {
       "file": "lib/dll-loader.js",
@@ -105,6 +98,27 @@
       "baseSHA256": "dfaab82f4b250df4b516c6d6be15bd26ecb57c1836fddc7f07765fa492e0caae",
       "sha256": "7ca351abbc0f119e4d4e130a7e5d1ac956bab84095b5dea42cf1d3714090a7ba",
       "reason": "Review 20261117 ordinary native GetMessage wait resumption: clear the old reason-7 yield flag before calling the existing handler together with its existing reason reset. Previously a completed GetMessage could inherit stale suspended state and lose exact native return confirmation. No new guest call, callback admission, stack change, flush, deadline or interpreter budget; fresh handler/callback yields remain unconfirmed. Authored main plus CPUWorker, filtered/sibling/nonconsumer refusals and delayed Peek/Get after UP are recorded in run20261117-caesar3-native-consumer-confirmation-repair; general invocation ownership remains pending."
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_begin",
+      "baseSHA256": "1c13804d9553f10f792e5fa293075c2f56bcea3e9e32a3cff609acf653a54dfa",
+      "sha256": "0f2d01c475d33ded2503466e7fab3bb1b7dedbb888d7c12679f1f44159934432",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission."
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_pump_step",
+      "baseSHA256": "dc12e4d662a9a2c5ad3e0f181a744d7b487f0666c204df515c105dd22dd63da0",
+      "sha256": "ef18e4080f836709041f28d08dd8ea6961acb72e3b54cf67d454fcd7b7bd53fe",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission."
+    },
+    {
+      "file": "src/09a-handlers1-user.wat",
+      "name": "$handle_DestroyWindow",
+      "baseSHA256": "16fd031bb06e678c4fead7e54bb9239eb63c3d2f72a7cac9d751fe85e16a4b71",
+      "sha256": "f3dd83325a72d5f8b2e1b34973484d664912777d6452d20ee94ef9a2c8f46cf1",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission."
     }
   ],
   "additions": [
@@ -218,6 +232,141 @@
       "sha256": "e78e836eed0e673163c4ff36b3ecd386d4d03d1f1e44e51229c8c7a13b2bc7d9",
       "kind": "continuation",
       "reason": "Review 20261117 QT nested native image loading: a distinct per-frame request serial plus full frame-generation token parks only KERNEL.95/96 below the exact active QT/LS connection. Settlement validates actor, caller EIP/ESP/CS/SS/far return, original alias descriptor and backing lease, module lifetime and PE generation; the PE request is untouched. Source bytes use the process resolver and canonical resident identity. Actual LibMain, Win4 semantic usage notifications, native handles/exports/pins/refcounts, rollback, WEP and final unload remain owned by the native lifecycle. Worker source I/O parks the same command/callback owner and checks it after each await; synchronous initializer reentry cannot fetch unavailable async sources. Native success, reference reuse, reentry, cancellation/fault/missing/wrong source, generation/actor/selector/lease/retired refusal and actual CPUWorker proofs are in run20261117-neverhood-native-nested-image-load. No FT, general callback or unrelated direction admission; general ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$dialog_native_mouse",
+      "writes": 0,
+      "boundaryCalls": [
+        "$sync_depth_enter",
+        "$invocation_current",
+        "$invocation_current",
+        "$sync_depth_leave"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "7b871dd51133a2b33be6c686a54b14c42b0eb863d9519c9bf7d34349b4b1d7cf",
+      "kind": "continuation",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_callback_return",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current",
+        "$sync_depth_leave"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "cec9b668f7ae74a93ea36c52891a0fb8eda6fc0b48e10b166e44c18cc64458dc",
+      "kind": "continuation",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_dispatch_posted",
+      "writes": 1,
+      "boundaryCalls": [
+        "$sync_depth_enter",
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [
+        [
+          "local.get",
+          "$proc"
+        ]
+      ],
+      "sha256": "6d7fe3bf1a8e81f3187c5e1e476f60fe7e891d8a9c6682bbce9edc5dce725a74",
+      "kind": "continuation",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_frame_invocation_check",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "009eedf5edb640c39f2fd244fdc2240363baa55e72bc978811e3082098abe3aa",
+      "kind": "continuation",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_frame_save",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_ensure",
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "5ab61939c87407f628bbbdbd04e59e12167cfcd2d56649b383fb298e0416c000",
+      "kind": "continuation",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_native_key",
+      "writes": 0,
+      "boundaryCalls": [
+        "$sync_depth_enter",
+        "$invocation_current",
+        "$sync_depth_leave",
+        "$invocation_current",
+        "$sync_depth_leave"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "67f5716e10539643fa0b24472bedd625d499a5f99f9875fb8dc3143fdb70c4ba",
+      "kind": "continuation",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_resume_completed",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "load.field",
+          "ModalContinuation",
+          "ret",
+          [
+            "local.get",
+            "$f"
+          ]
+        ]
+      ],
+      "sha256": "103677bfe91dd075ea24411f3bf3612a289b26cbb72c4deb4eea3f3f38c3c6bb",
+      "kind": "continuation",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "$native_button_returned",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "05260eeca0f427972fe16b0207fb138b6c852d11d515cbf0941485a9887d2dd2",
+      "kind": "continuation",
+      "reason": "Review 20261117 exact modal/native BUTTON lifetime repair: actual CPU actor is checked before effects; native synchronous consumer has an exact child/root/depth, private MSG and pre/post modal, owner and focus generations. Nested continuations retain their own guest return and parent frame, validate callback stack/invocation, and refuse retired/reused windows. Real native regression qualification remains in progress; no installed invocation or general retained ownership admission.",
       "ownership": "pending"
     }
   ]

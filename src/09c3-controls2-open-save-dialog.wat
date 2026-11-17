@@ -32,6 +32,64 @@
   ;;   +0x30  lpstrTitle
 
   ;; ---- File-type filter ----
+  ;; Per-window modal focus lease, shared with renderer shadows. It contains
+  ;; only USER identities: owner + generation, previous focus + generation,
+  ;; and whether this invocation disabled the owner. Never restore a reused
+  ;; HWND or enable an owner which was already disabled on entry.
+  (layout OpenFileFocusState
+    (field owner i32) (field enable_owner i32) (field owner_generation i64)
+    (field focus i32) (field reserved i32) (field focus_generation i64))
+  (func $opendlg_focus_begin (param $dlg i32) (param $owner i32)
+    (local $s i32) (local $style i32)
+    (local.set $s (call $heap_alloc (i32.const 32)))
+    (call $zero_memory (call $g2w (local.get $s)) (i32.const 32))
+    (call $wnd_set_state_ptr (local.get $dlg) (local.get $s))
+    (local.set $s (call $g2w (local.get $s)))
+    (store.field OpenFileFocusState owner (local.get $s) (local.get $owner))
+    (store.field OpenFileFocusState owner_generation (local.get $s) (call $wnd_lookup_generation (local.get $owner)))
+    (store.field OpenFileFocusState focus (local.get $s) (global.get $focus_hwnd))
+    (store.field OpenFileFocusState focus_generation (local.get $s) (call $wnd_lookup_generation (global.get $focus_hwnd)))
+    (if (call $wnd_lookup_live (local.get $owner))
+      (then
+        (local.set $style (call $wnd_get_style (local.get $owner)))
+        (if (i32.eqz (i32.and (local.get $style) (i32.shl (i32.const 1) (i32.const 27))))
+          (then
+            (store.field OpenFileFocusState enable_owner (local.get $s) (i32.const 1))
+            (drop (call $wnd_set_style (local.get $owner) (i32.or (local.get $style) (i32.shl (i32.const 1) (i32.const 27)))))
+            (drop (call $wnd_send_message (local.get $owner) (i32.const 10) (i32.const 0) (i32.const 0))))))))
+
+  (func $opendlg_focus_end (param $dlg i32)
+    (local $s i32) (local $sw i32) (local $owner i32) (local $focus i32)
+    (local $enable i32) (local $og i64) (local $fg i64)
+    (local.set $s (call $wnd_get_state_ptr (local.get $dlg)))
+    (if (i32.eqz (local.get $s)) (then (return)))
+    (local.set $sw (call $g2w (local.get $s)))
+    (local.set $owner (load.field OpenFileFocusState owner (local.get $sw)))
+    (local.set $enable (load.field OpenFileFocusState enable_owner (local.get $sw)))
+    (local.set $og (load.field OpenFileFocusState owner_generation (local.get $sw)))
+    (local.set $focus (load.field OpenFileFocusState focus (local.get $sw)))
+    (local.set $fg (load.field OpenFileFocusState focus_generation (local.get $sw)))
+    ;; Detach before notifications: destruction and focus callbacks may reenter.
+    (call $wnd_set_state_ptr (local.get $dlg) (i32.const 0))
+    (call $heap_free (local.get $s))
+    (if (i32.or (i32.eqz (local.get $owner))
+          (i32.and (call $wnd_lookup_live (local.get $owner))
+            (i64.eq (call $wnd_lookup_generation (local.get $owner)) (local.get $og))))
+      (then
+        (if (local.get $enable)
+          (then
+            (drop (call $wnd_set_style (local.get $owner)
+              (i32.and (call $wnd_get_style (local.get $owner)) (i32.const 0xF7FFFFFF))))
+            (drop (call $wnd_send_message (local.get $owner) (i32.const 10) (i32.const 1) (i32.const 0)))))
+        (if (i32.and
+              (i64.eq (call $wnd_lookup_generation (local.get $owner)) (local.get $og))
+              (i32.or (i32.eqz (call $wnd_lookup_live (global.get $focus_hwnd)))
+                (i32.eq (global.get $focus_hwnd) (local.get $dlg))))
+          (then
+            (if (i32.and (call $wnd_lookup_live (local.get $focus))
+                  (i64.eq (call $wnd_lookup_generation (local.get $focus)) (local.get $fg)))
+              (then (call $set_focus (local.get $focus)))
+              (else (call $set_focus (local.get $owner)))))))))
   ;;
   ;; "Files of type" decides which files the list shows; directories are
   ;; always listed so the user can still navigate. The pattern is found from
@@ -346,6 +404,9 @@
     (local $required_w i32) (local $is_wide i32)
     (local $output_len i32) (local $char_bytes i32) (local $decoded i32) (local $cp i32)
     (local $filter_cb i32) (local $filter_sel i32)
+
+    (if (i32.eq (local.get $msg) (i32.const 2))
+      (then (call $opendlg_focus_end (local.get $hwnd)) (return (i32.const 0))))
 
     (if (i32.eq (local.get $msg) (i32.const 0x0085))   ;; WM_NCPAINT
       (then (call $defwndproc_do_ncpaint (local.get $hwnd)) (return (i32.const 0))))
@@ -767,6 +828,7 @@
     (local $w i32) (local $h i32) (local $title_wa i32) (local $btn_g i32)
     (local $lb i32) (local $ofn_w i32) (local $filter_g i32) (local $filter_cb i32)
     (local $filename_g i32)
+    (local $generation i64)
     (local.set $w (i32.const 360))
     (local.set $h (i32.const 240))
     ;; Title goes to JS (WASM offset). Button text goes through
@@ -813,7 +875,7 @@
     ;; Current directory display (read-only-ish edit at id 0x440)
     (drop (call $ctrl_create_child (local.get $dlg) (i32.const 2) (i32.const 0x440)
             (i32.const 76) (i32.const 8) (i32.const 200) (i32.const 18)
-            (i32.const 0x50810000)
+            (i32.const 0x50800800)
             (call $wat_str_to_heap (region.addr $USER_DIALOG_STRINGS 0x62) (i32.const 3))))  ;; "C:\"
     ;; File listbox (id 0x441) — WS_VSCROLL so the scrollbar strip renders.
     (local.set $lb (call $ctrl_create_child (local.get $dlg) (i32.const 4) (i32.const 0x441)
@@ -880,4 +942,11 @@
     (call $heap_free (global.get $opendlg_current_dir))
     (global.set $opendlg_current_dir (call $wat_str_to_heap (region.addr $USER_DIALOG_STRINGS 0x62) (i32.const 3)))
     (call $opendlg_populate_listbox (local.get $lb)
-      (call $wat_str_to_heap (region.addr $USER_DIALOG_STRINGS 0x5D) (i32.const 4))))
+      (call $wat_str_to_heap (region.addr $USER_DIALOG_STRINGS 0x5D) (i32.const 4)))
+    ;; The proposed filename is the initial keyboard target, after all children
+    ;; and filters exist. Use the real USER focus transaction and notifications.
+    (local.set $generation (call $wnd_lookup_generation (local.get $dlg)))
+    (call $opendlg_focus_begin (local.get $dlg) (local.get $owner))
+    (if (i32.and (call $wnd_lookup_live (local.get $dlg))
+          (i64.eq (call $wnd_lookup_generation (local.get $dlg)) (local.get $generation)))
+      (then (call $set_focus (call $ctrl_find_by_id (local.get $dlg) (i32.const 0x442))))))

@@ -10,7 +10,7 @@ function publishJSON(file,value){
  try{fs.writeFileSync(fd,JSON.stringify(value,null,2)+'\n');fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
  fs.linkSync(pending,file);fs.unlinkSync(pending);
 }
-function fixture({modeless=false,fake=false,indirect=false,nestedBox=false}={}){
+function fixture({modeless=false,fake=false,indirect=false,nestedBox=false,simpleButton=false}={}){
  const b=require('./test-sims-child-mount-native.cjs').untitledModal();
  // Additional ordinary imports; no runtime export/handler shortcut.
  const names=['RegisterClassA','DefWindowProcA','CreateWindowExA','MessageBoxA',indirect?'DialogBoxIndirectParamA':'DialogBoxParamA','EndDialog','CreateDialogParamA','SetWindowTextA'];
@@ -52,6 +52,7 @@ function fixture({modeless=false,fake=false,indirect=false,nestedBox=false}={}){
  // second OK ends it. Use a guest-owned flag only for authored guest behavior.
  asm(0x2300,({e,push,call,j,label})=>{
   e(0x81,0x7c,0x24,8,...u32(0x111));j([0x0f,0x85],'default');
+  if(simpleButton)j([0xe9],'end');
   e(0x83,0x3d,...u32(0x4026a0),0);j([0x0f,0x85],'end');
   e(0xc7,0x05,...u32(0x4026a0),...u32(1));
   if(nestedBox){push(0x24);push(0x402540);push(0x402580);e(0xff,0x74,0x24,16);call(3);}
@@ -67,14 +68,14 @@ module.exports={fixture};
 function units(){
  const native=require('../lib/cli-native-user-windows'),{createGuardedInput}=require('../lib/cli-guarded-input');
  const target={hwnd:'0x10003',generation:'3',processId:1000,threadId:1,parent:'0x10001',live:true,visible:true,controlClass:1,style:0x50010001,screenX:10,screenY:10,w:60,h:24};
- let row=[0n,3n,65539n,1000n,1n,65537n,513n,1n];
+ let row=[0n,3n,65539n,1000n,1n,65537n,513n,1n,12n,2n];
  const e={get_current_thread_id:()=>1,get_process_id:()=>1000,native_button_receipt:i=>row[i],wnd_lookup_live:()=>1,wnd_lookup_generation:()=>3n,wnd_get_proc_export:()=>-65535};
  const event={action:'mousedown',x:20,y:20},intent={review:{targetHwnd:target.hwnd}},instance={exports:e},snapshot={windows:[target]};
  snapshot.pointerMapping={canvas:{w:800,h:600},transform:null,viewport:null,clip:null};
  const fence=()=>native.captureNativeButton(event,intent,snapshot,instance);
  let captured=fence();assert(captured);assert.equal(native.confirmNativeButton(captured,event),null,'unchanged historical witness cannot acknowledge a new input');
  row[0]=1n;assert(native.confirmNativeButton(captured,event));
- for(const [i,value]of [[0,2n],[1,4n],[2,65540n],[3,1001n],[4,2n],[5,65538n],[6,512n],[7,0n]]){
+ for(const [i,value]of [[0,2n],[1,4n],[2,65540n],[3,1001n],[4,2n],[5,65538n],[6,512n],[7,0n],[8,0n],[9,0n]]){
   const prior=row[i];row[i]=value;assert.equal(native.confirmNativeButton(captured,event),null,'foreign/stale/unrelated native receipt');row[i]=prior;
  }
  const duplicate={threads:new Map([[2,{state:'active',instance:{exports:e}}]])};assert.equal(native.captureNativeButton(event,intent,snapshot,instance,duplicate),null,'ambiguous native actor');

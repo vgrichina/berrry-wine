@@ -250,7 +250,10 @@
     ;; Transfer focus to main_hwnd: deliver WM_SETFOCUS synchronously via EIP redirect.
     ;; On real Windows, destroying the focused window gives focus to the next foreground window.
     ;; Only if main_hwnd is valid and different from the destroyed window (may have been promoted).
-    (if (i32.and (i32.ne (local.get $focus_lost) (i32.const 0))
+    ;; WM_DESTROY may already have restored a modal owner's live focus.
+    ;; Do not overwrite that synchronous consequence with the main fallback.
+    (if (i32.and (i32.and (i32.ne (local.get $focus_lost) (i32.const 0))
+                   (i32.eqz (call $wnd_lookup_live (global.get $focus_hwnd))))
                  (i32.and (i32.ne (global.get $main_hwnd) (i32.const 0))
                           (i32.ne (global.get $main_hwnd) (local.get $arg0))))
       (then
