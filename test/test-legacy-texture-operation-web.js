@@ -183,8 +183,6 @@ function fixtureSource(){
       check(new RegExp('^WebGL '+config.webglVersion+'[.]0').test(version),'actual requested context version '+version);
       eq(evidence.stats.requestedBackend,'webgl','actual worker backend');
       eq(evidence.stats.renderApi,'legacy','actual worker API');
-      eq(evidence.stats.d3dimSoftwareDrawCallsCompleted,0,'no native worker rasterization');
-      eq(evidence.stats.d3dimFallbackSoftwareDrawCallsCompleted,0,'no fallback rasterization');
       check(evidence.stats.renderEndpointId,'actual render endpoint identity');
     }`);
   return s;

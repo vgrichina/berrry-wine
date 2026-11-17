@@ -208,11 +208,10 @@ function adapterContract() {
   new Uint32Array(memory.buffer).set([1,2,3,4,5,6], 16);
   assert.equal(adapter.execute({ opcode: 0x20005, wa: 64 }), 1);
   assert.deepEqual(calls, [[1,3]]);
-  assert.equal(adapter.d3dimSoftwareDrawCallsCompleted, 0);
   assert.equal(adapter.fence(), 1);
   for (const opcode of [0x20000, 0x20003, 0x20004])
     assert.throws(() => adapter.execute({ opcode, wa: 64 }), /retired or unknown/);
-  assert.throws(() => adapter.diagnostic(), /stream v2 replaced/);
+  assert.equal(adapter.diagnostic, undefined, 'no D3DIM diagnostic surface');
   adapter.destroy(); adapter.destroy();
   assert.deepEqual(calls, [[1,3]], 'destroy creates no delayed native call');
   console.log('PASS synchronous software adapter routing (scripted exports; no async/native claim)');

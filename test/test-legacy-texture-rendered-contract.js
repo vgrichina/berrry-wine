@@ -561,13 +561,17 @@ async function runtime() {
     const child=browser.process();evidence.browserProcess={pid:child.pid,startTicks:fs.readFileSync('/proc/'+child.pid+'/stat','utf8').split(') ')[1].split(' ')[19]};
     evidence.browserProcess.profile=child.spawnargs.find(a=>a.startsWith('--user-data-dir='))?.slice('--user-data-dir='.length);
     child.once('exit',(code,signal)=>{evidence.browserProcess.exit={code,signal,at:new Date().toISOString()};});
-    for(const mode of ['gps','worker']){
+    // The 'worker' arm queued D3DIM draws to a legacy WebGL render endpoint;
+    // D3DIM is the WAT GPU stream producer and never reaches that endpoint, so
+    // 'gps' is the only D3DIM arm (the fixture's worker branches remain for
+    // dependent fixtures and no longer run here).
+    for(const mode of ['gps']){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       evidence.results.push(await page.evaluate(browserFixture,mode,config,oracle.toString()));
       await page.screenshot({path:path.join(dir,mode+'.png'),fullPage:true});await page.close();page=null;
       console.log('PASS public-COM '+(immediate?'Device2/3 immediate':stateblocks?'selective state-block':'sampler')+' rendered pixels '+mode);
     }
-    for(const [negative,mode] of immediate?[['dropped','gps'],['cross-device','gps'],['queued-vertices','worker']]:stateblocks?[['recording','gps'],['full-state','gps'],['queued-stale','worker'],['queued-cross','worker']]:cubeBorder?['gps','worker'].map(m=>['border',m])
+    for(const [negative,mode] of immediate?[['dropped','gps'],['cross-device','gps']]:stateblocks?[['recording','gps'],['full-state','gps']]:cubeBorder?[['border','gps']]
       :['nearest','stale'].map(n=>[n,'gps'])){
       page=await browser.newPage();await page.goto(`http://127.0.0.1:${server.address().port}/legacy-render-fixture`);
       let failure;
@@ -578,11 +582,11 @@ async function runtime() {
       if(cubeBorder||stateblocks||immediate)await page.screenshot({path:path.join(dir,`negative-${negative}-${mode}.png`),fullPage:true});
       assert(failure?.includes('PIXEL ORACLE'),'negative control must fail pixel oracle, not bootstrap');
       if(immediate){
-        const label={dropped:'v2 1c4 Vertex','cross-device':'interleaved B','queued-vertices':'queued immutable vertices 0'}[negative];
+        const label={dropped:'v2 1c4 Vertex','cross-device':'interleaved B'}[negative];
         assert(failure.includes('PIXEL ORACLE '+label),'immediate fault must fail its designated pixel');
       }
       if(stateblocks){
-        const label={recording:'during recording','full-state':'selective Apply preserves changed binding','queued-stale':'queued recaptured A state','queued-cross':'queued B captured state'}[negative];
+        const label={recording:'during recording','full-state':'selective Apply preserves changed binding'}[negative];
         assert(failure.includes('PIXEL ORACLE '+label),'fault must fail at its designated state-block pixel');
       }
       assert(partial.observations.some(x=>JSON.stringify(x.actual)!==JSON.stringify(x.expected)),'actual discriminating pixel');

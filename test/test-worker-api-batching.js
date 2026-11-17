@@ -443,18 +443,20 @@ assert.deepStrictEqual(generated.sigs.get_keyboard_state,
   { params: ['i32'], results: ['i32'] },
   'generated Worker signature includes the snapshot import');
 
-// D3DIM's opt-in Worker transport must own every byte before the guest handler
-// frees/reuses its temporary packed vertices. A synchronous fake consumer also
-// exercises sequence publication and the mandatory fence without timing races.
+// The software-GL render command stream (lib/d3d-command-stream.js) must own
+// every byte before the guest reuses its state snapshot and packed draw. A
+// synchronous fake consumer also exercises sequence publication and the
+// mandatory fence without timing races.
 const d3dMemory = { buffer: new SharedArrayBuffer(16384) };
 const d3dBytes = new Uint8Array(d3dMemory.buffer);
 const descriptor = 64;
 const state = 512;
+const STATE_BYTES = 256;
 const vertices = 8192;
-new Uint32Array(d3dMemory.buffer, descriptor, 6).set([
-  0x1000, 4, 3, vertices, 3, state,
+new Uint32Array(d3dMemory.buffer, descriptor, 4).set([
+  state, STATE_BYTES, vertices, 96,
 ]);
-d3dBytes.fill(0x5a, state, state + D3D.STATE_BYTES);
+d3dBytes.fill(0x5a, state, state + STATE_BYTES);
 d3dBytes.fill(0xa5, vertices, vertices + 96);
 const replayed = [];
 class FakeRenderWorker {
@@ -486,7 +488,7 @@ global.Worker = class extends FakeRenderWorker {
 };
 const defaultD3d = new D3D.Encoder({
   memory: d3dMemory, module: {}, sigs: {}, capacity: 8192, bufferCount: 2,
-  guestToWasm: value => value, getImageBase: () => 0x400000,
+  getImageBase: () => 0x400000,
 });
 defaultD3d.stop();
 if (savedWorker === undefined) delete global.Worker;
@@ -501,26 +503,26 @@ assert(guestWorkerSource.includes("workerUrl: versionedWorkerUrl('d3d-render-wor
 
 const d3d = new D3D.Encoder({
   memory: d3dMemory, module: {}, sigs: {}, capacity: 8192, bufferCount: 2,
-  guestToWasm: value => value, getImageBase: () => 0x400000,
+  getImageBase: () => 0x400000,
   workerFactory: () => new FakeRenderWorker(),
 });
-assert.strictEqual(d3d.call(D3D.DRAW_OPCODE, descriptor), 1,
-  'valid D3DIM draw is accepted by the render command stream');
-d3dBytes.fill(0, state, state + D3D.STATE_BYTES);
+assert.strictEqual(d3d.call(D3D.GL_DRAW_OPCODE, descriptor), 1,
+  'valid software-GL draw is accepted by the render command stream');
+d3dBytes.fill(0, state, state + STATE_BYTES);
 d3dBytes.fill(0, vertices, vertices + 96);
 assert.strictEqual(d3d.call(D3D.FENCE_OPCODE, 0), 1,
-  'D3DIM fence waits through the last submitted sequence');
+  'fence waits through the last submitted sequence');
 assert.strictEqual(replayed.length, 1, 'fence submitted exactly one pending batch');
 assert.strictEqual(replayed[0][D3D.HEADER_BYTES], 0x5a,
-  'device state was copied before the guest reused it');
-assert.strictEqual(replayed[0][D3D.HEADER_BYTES + D3D.STATE_BYTES], 0xa5,
-  'canonical vertices were copied before the guest freed them');
+  'GL state snapshot was copied before the guest reused it');
+assert.strictEqual(replayed[0][D3D.HEADER_BYTES + STATE_BYTES], 0xa5,
+  'packed draw was copied before the guest freed it');
 assert.deepStrictEqual(d3d.stats,
   {
-    queued: 1, submissions: 1, fences: 1, waits: 0, fallbacks: 0,
-    bytes: D3D.STATE_BYTES + 96, waitMs: 0,
-    maxBatchBytes: D3D.HEADER_BYTES + D3D.STATE_BYTES + 96,
-    submitIdle: 1, submitThreshold: 0, submitCapacity: 0, submitFlip: 0,
+    queued: 1, glQueued: 1, submissions: 1, fences: 1, waits: 0, fallbacks: 0,
+    bytes: STATE_BYTES + 96, waitMs: 0,
+    maxBatchBytes: D3D.HEADER_BYTES + STATE_BYTES + 96,
+    submitIdle: 1, submitThreshold: 0, submitCapacity: 0,
     submitFence: 0, submitPublication: 0, submitCall: 0, submitOther: 0,
     singleCommandBatches: 1,
   },
@@ -529,5 +531,8 @@ assert.strictEqual(d3d.call(D3D.FENCE_OPCODE, 0), 1,
   'an idle fence still observes the completed sequence');
 assert.strictEqual(replayed.length, 1,
   'an idle fence must not resubmit stale bytes from a rotated ring slot');
+// D3DIM never reaches this transport: its retired draw opcode throws.
+assert.throws(() => d3d.call(0x20000, descriptor), /retired or unknown opcode 0x20000/);
+assert.strictEqual(replayed.length, 1, 'the retired opcode posted nothing');
 
-console.log('PASS Worker API logging, keyboard snapshots, and D3D draws are batched');
+console.log('PASS Worker API logging, keyboard snapshots, and render commands are batched');
