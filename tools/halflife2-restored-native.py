@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Reuse the proved graph; compile and qualify the explicit native Edit delta."""
+"""Reuse the published Edit/module proofs; qualify the desktop transport delta."""
 import importlib.util,json,os,pathlib,subprocess,sys,types,time
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 TASK=pathlib.Path(os.environ.get('HL2_TASK_RUN',ROOT/'scratch/runs/20261117-halflife2-restored-disk-normal-agreement-install')).resolve()
 PRIOR=ROOT/'scratch/runs/20261117-halflife2-startup-ready-agreement-install-progress/working-final5'
 BASE='70e85792eefac2489f655a415490f9e0a5c9297d'
 COMPONENT='63d7b0d0e8d979772a4e527a4d3561b4bdeb3692'
+EDIT_PROOF=ROOT/'scratch/runs/20261117-halflife2-native-large-edit-viewport-install'
 DIAGNOSTICS=('lib/cli-native-user-windows.js','lib/cli-native-scene.js',
              'test/test-cli-native-capture-refusal-details.cjs','test/test-edit-wrap-resize.js',
-             'src/13-exports.wat','src/09c3-wndprocs5-edit.wat','tools/control-variant-gate.js')
+             'src/13-exports.wat','src/09c3-wndprocs5-edit.wat','tools/control-variant-gate.js',
+             'lib/process-desktop.js','test/test-process-desktop-observation.js',
+             'test/test-process-desktop-observer-stall.cjs')
 def load(name):
  s=importlib.util.spec_from_file_location(name.replace('/','_'),ROOT/name)
  m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
@@ -54,13 +57,13 @@ def main():
  pool,index,rows=sealhelper.indexed_sources(files)
  assert m.sha(pool)==manifest['sourceSHA256'] and m.sha(index)==manifest['sourceIndexSHA256']
  original_source_sha=m.sha(pool)
- # Reuse unchanged proofs and source bodies. Only the named native Edit,
- # public observer and focused qualification delta is adopted from this task.
+ # Reuse exact published Edit bodies/proofs. Adopt only the explicit desktop
+ # transport and focused tests in addition to those already proved bodies.
  changed={}
  for name in DIAGNOSTICS:
   b=(ROOT/name).read_bytes()
   if not working:assert m.git('show',revision+':'+name)==b,'publish diagnostic first'
-  changed[name]=dict(before=m.sha(files[name]),after=m.sha(b));files[name]=b
+  changed[name]=dict(before=m.sha(files[name]) if name in files else None,after=m.sha(b));files[name]=b
  pool,index,rows=sealhelper.indexed_sources(files)
  manifest={**manifest,'sourceSHA256':m.sha(pool),'sourceIndexSHA256':m.sha(index),'sources':rows,
            'diagnosticGit':revision,'diagnosticChanges':changed,'unchangedNativeSourceSHA256':original_source_sha}
@@ -69,28 +72,30 @@ def main():
  source=h.seal('hl2-restored-source',pool)
  module=os.memfd_create('hl2-native-edit-module',os.MFD_ALLOW_SEALING);h.OWN_FDS.add(module)
  preload=h.seal('hl2-restored-preload',files['tools/disciples2-current-native-source-view.cjs'])
- compile_env=dict(os.environ,NODE_OPTIONS='--preserve-symlinks --require='+f'/proc/{os.getpid()}/fd/{preload}',
-     DISCIPLES2_ROOT=str(ROOT),DISCIPLES2_SOURCE_FD=f'/proc/{os.getpid()}/fd/{source}',
-     DISCIPLES2_SOURCE_SHA256=m.sha(pool),DISCIPLES2_SOURCE_INDEX_SHA256=m.sha(index),DISCIPLES2_PHASE='compile',
-     DELPHI5_MODULE_FD=f'/proc/{os.getpid()}/fd/{module}')
- code="""const fs=require('node:fs');
-const {watxSourceClosure,compileClosure}=require('./tools/watx-closure');
-const {layoutHash,appendSection}=require('./tools/region-layout-hash');
-const r=compileClosure(watxSourceClosure(),{tailCalls:true});if(!r.success)throw Error(JSON.stringify(r));
-fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmBinary),layoutHash(r.regions.regions)));
-"""
- h.checked('native-edit-compile',['node','-e',code],compile_env,(source,module))
+ editpins=read(EDIT_PROOF/'fixture/runtime-inputs.json')
+ editproof=read(EDIT_PROOF/'fixture/diagnostic-qualification.json')
+ assert editproof['passed'] and read(EDIT_PROOF/'fixture/complete-authored-workflow.json')['passed']
+ assert read(EDIT_PROOF/'fixture/outer/wait.json')['supervisorExitCode']==0
+ # Every WAT/compiler input is identical to the retained tested module. No
+ # recompile, new module attribution, or duplicate media/source archive.
+ for name,digest in editpins['sources'].items():
+  if name.startswith(('src/','tools/watx')) or name in DIAGNOSTICS[:7]:
+   assert m.sha(files[name])==digest,'published Edit/module input differs: '+name
+ retained=EDIT_PROOF/'fixture/module.wasm';retained_body=retained.read_bytes()
+ assert m.sha(retained_body)==editpins['moduleSHA256']==editproof['moduleSHA256']
+ assert os.write(module,retained_body)==len(retained_body)
  os.lseek(module,0,0);body=os.read(module,os.fstat(module).st_size)
  import fcntl
  fcntl.fcntl(module,fcntl.F_ADD_SEALS,15);assert body[:4]==b'\0asm'
- (m.RUN/'module.wasm').write_bytes(body)
+ os.link(retained,m.RUN/'module.wasm')
  assert m.sha((m.RUN/'module.wasm').read_bytes())==m.sha(body)
  manifest={**manifest,'moduleSHA256':m.sha(body),'priorModuleSHA256':m.sha(old_body),
            'nativeEditDelta':{n:changed[n] for n in DIAGNOSTICS if n.startswith('src/')}}
  encoded=json.dumps(manifest,sort_keys=True).encode()
  # Preserve paths and bytes without duplicate manifest/module writes.
  m.save('compile-inputs.json',dict(gitSHA=revision,sources={n:m.sha(b) for n,b in files.items()},
-     moduleSHA256=m.sha(body),priorModuleSHA256=m.sha(old_body),nativeEditDelta=manifest['nativeEditDelta']))
+     moduleSHA256=m.sha(body),priorModuleSHA256=m.sha(old_body),nativeEditDelta=manifest['nativeEditDelta'],
+     retainedModuleReference=str(retained.relative_to(ROOT)),exactPublishedEditProofReuse=True))
  m.save('immutable-manifest.json',manifest)
  pins={**pins,'sources':{n:m.sha(b) for n,b in files.items()},'diagnosticGit':revision,'diagnosticChanges':changed,'moduleSHA256':m.sha(body)}
  m.save('runtime-inputs.json',pins)
@@ -115,16 +120,14 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
   if '--diagnostic-qualification' in sys.argv:
    assert '--original' not in sys.argv,'authored qualification only'
    for name,args in (
+       ('native-startup-wrapper',['node','test/test-halflife2-native-wizard.cjs','--startup',str(m.RUN/'native-startup-wrapper')]),
        ('numeric-refusal',['node','test/test-cli-native-capture-refusal-details.cjs']),
-       ('large-native-edit',['node','test/test-cli-native-capture-refusal-details.cjs','--native-large',str(m.RUN/'large-native-edit')]),
-       ('password-native-edit',['node','test/test-cli-native-capture-refusal-details.cjs','--native',str(m.RUN/'password-native-edit')]),
-       ('native-edit-wrap',['node','test/test-edit-wrap-resize.js']),
-       ('native-edit-crlf',['node','test/test-edit-crlf-lines.js']),
        ('captured-next',['node','test/test-halflife2-reviewed-next.cjs']),
        ('scene-context',['node','test/test-cli-native-scene-context.cjs'])):
     h.checked(name,args,env,(source,module))
    m.save('diagnostic-qualification.json',dict(passed=True,diagnosticChanges=changed,
-       moduleSHA256=m.sha(body),nativeEditDelta=manifest['nativeEditDelta'],unchangedOtherNativeGraph=True,noOriginal=True))
+       moduleSHA256=m.sha(body),nativeEditDelta=manifest['nativeEditDelta'],unchangedOtherNativeGraph=True,noOriginal=True,
+       exactPublishedEditProofReuse=str(EDIT_PROOF.relative_to(ROOT)),desktopDelta=changed['lib/process-desktop.js']))
   if '--original' in sys.argv:
    f=TASK/'fixture';w=read(f/'outer/wait.json');assert w['supervisorExitCode']==0
    assert read(f/'native-wait.json')['actualWait']

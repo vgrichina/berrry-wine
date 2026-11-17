@@ -7,7 +7,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { Worker } = require('node:worker_threads');
 const { ProcessDesktop, readProcessDesktopObservations: read } = require('../lib/process-desktop');
-const directory = process.env.DESKTOP_OBSERVATION_TEST_DIR || fs.mkdtempSync(path.join(os.tmpdir(), 'desktop-observation-'));
+const directory = path.resolve(process.env.DESKTOP_OBSERVATION_TEST_DIR || fs.mkdtempSync(path.join(os.tmpdir(), 'desktop-observation-')));
 fs.mkdirSync(directory, { recursive: true });
 const results = [];
 function area(name) { const p = path.join(directory, name); fs.mkdirSync(p); return p; }
@@ -74,6 +74,7 @@ async function main() {
     assert(!all.some(r => r.client === child.observationClient && r.seq === seq), 'old phases overwritten');
     await root.authority.terminate();
     failClosed(child, 'ECONNECTION');
+    await child.observer.flush();
     assert(read(success).some(r => r.phase === 'request-error' && r.code === 'ECONNECTION'));
   } finally { await child.close(); await root.close(); }
   const traceFile = path.join(success, fs.readdirSync(success).find(n => n.endsWith('.trace')));
@@ -93,6 +94,7 @@ async function main() {
   try {
     await deadClient.worker.terminate();
     failClosed(deadClient, 'ETIMEDOUT');
+    await deadClient.observer.flush();
     const all = read(dead), timeout = all.find(r => r.phase === 'timeout');
     // Word 1 retains the previous successful response length; it is not a reply.
     assert.equal(timeout.responseWords[0], 0);
@@ -147,6 +149,7 @@ async function main() {
     assert.equal(authority.call({ op: 'post', hwnd: row.hwnd, generation: row.generation,
       session: row.session, msg: 0x8001 }), true);
     failClosed(client, 'ETIMEDOUT');
+    await client.observer.flush();
     const all = read(lost), timeout = all.find(r => r.phase === 'timeout');
     const phases = all.filter(r => r.client === client.observationClient && r.seq === timeout.seq);
     assert.equal(phases.find(r => r.phase === 'authority-receipt').queueBefore, 1);
