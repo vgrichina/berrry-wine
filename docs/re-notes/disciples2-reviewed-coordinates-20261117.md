@@ -82,3 +82,24 @@ The holders were hash-verified and normally closed with actual successful waits.
 
 No fresh original has started at this checkpoint. The authorized fresh original
 route is conditional on material publication and immutable native qualification.
+
+The material repair is local main commit `78d99e63df492695c0355dd4ee1b318052468cf3`.
+A further Git-only sealed replay of that exact commit, with no working-tree
+patches, passed all seven native cases (including the complete displayed-output
+pixel assertion); actual native and watchdog waits were zero with both EOFs.
+Its source SHA-256 is `78339c95363bea2dc8c714efe96dfd80cce7d01fd71c070c8f67804d50745f5e`
+and its module matches the sealed qualification above. One recipe initially
+used the pretty-printed manifest file hash instead of the holder's canonical
+manifest hash and was refused before any native/watchdog child; the corrected
+recipe passed without a code change.
+
+Publication is blocked: the required strict pull exits 2 because incoming
+origin/main changes would overwrite foreign WIP in the D3D worker, guest thread
+host, two GL tests, and callback ownership census/revisions. No foreign changes
+were stashed, reset, adopted or resolved, and no push was attempted. Owners and
+the coordinator were notified on the messageboard. The fresh original was
+not started: publication is an explicit prerequisite. There is no map action
+or native Quit claim. Next: reconcile those foreign files, publish the material
+commit, then qualify the exact published runtime before the one authorized
+original route. All task-created native processes and holders are closed; no
+box was created.
