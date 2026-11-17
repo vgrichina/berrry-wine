@@ -53,3 +53,22 @@ selected complete PNGs and actual process waits are recorded in the run.
 No box or worker is created. Installation outcome and final published workflow
 receipts are recorded in result.json after execution; this source note does not
 claim agreement acceptance, installation, authentication or gameplay.
+
+Published repair: `f1aa883e1`, strict immediate pull/push successful. The matching
+sealed module is `53c2791da77f4e751c92b77a02f1503ea23741b695db1073230f1b4116eaba2e`.
+Published focused tests and the personally viewed three-page authored workflow
+passed, including current Next HWNDs 10004/10006/10007, one binding, native
+ACK500, independent UP1750 and capture3000. Native, outer, owner and watchdog
+actual waits include both EOFs.
+
+One authorized 600/620 original then captured and personally reviewed the real
+Welcome page, with current Next 10011/generation17. A command stall preceded
+binding. The runtime exited with `Process desktop: ETIMEDOUT`; binding failed
+the unchanged 30-second scene freshness check before sending any bind or input
+request. Only passive startup and Welcome capture HTTP requests were sent.
+UNKNOWN closed the endpoint with zero later HTTP/query/rebind/replay/retry.
+The actual agreement, acceptance and normal install progress remain unproved.
+The stale binding/runtime timeout is not reclassified as a new native Edit
+fault, and no further original was used. Native exit1, adapter/outer/owner
+exit1 and all watchdog cancellations have actual waits and both EOFs; the owned
+scope is empty. No box was created (ID/expiry null, stop not applicable).
