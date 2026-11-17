@@ -7,7 +7,7 @@ const read=fs.readFileSync,hash=b=>crypto.createHash('sha256').update(b).digest(
 const opts={moduleVersion:current.version},results=[];
 assert.throws(()=>current.validate(),/explicit supported Q2 module version/);
 assert.throws(()=>current.validate({moduleVersion:'unknown'}),/explicit supported Q2 module version/);
-const old=cp.spawnSync('python3',['-B','tools/native-startup-barrier.py','publish',root,path.join(root,current.historical),'/dev/null'],{cwd:root,encoding:'utf8'});
+const old=cp.spawnSync(process.execPath,['tools/native-startup-barrier.js','publish',root,path.join(root,current.historical),'/dev/null'],{cwd:root,encoding:'utf8'});
 assert.notEqual(old.status,0);assert.match(old.stderr,/startup provider mismatch: build\/wine-assembly.compat.wasm/);
 results.push({name:'actual old startup fingerprint',result:'REFUSED current source drift'});
 const baseline=read(path.join(root,current.historical));
