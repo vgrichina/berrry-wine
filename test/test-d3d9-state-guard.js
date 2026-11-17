@@ -13,6 +13,41 @@ const layout=source.slice(source.indexOf('(layout D3d9GpsState'),source.indexOf(
 assert.deepEqual([...layout.matchAll(/\(field (\w+) (\w+)\)/g)].map(m=>[m[1],m[2]]),fields,'every persistent D3D9 GPS field is process owned');
 const id=api.findIndex(a=>a.name==='IDirect3DDevice9_GetAvailableTextureMem');
 const extraWat=`
+ (func (export "guard_host_seed") (param $nested i32)
+   (global.set $api_io_retry (i32.const 100))
+   (global.set $handler_set_eip (i32.const 101))
+   (global.set $eip (i32.const 102))
+   (global.set $current_thunk_eip (i32.const 103))
+   (global.set $yield_flag (i32.const 104))
+   (global.set $yield_reason (i32.const 105))
+   (global.set $steps (i32.const 106))
+   (global.set $eflags_extra (i32.const 107))
+   (global.set $df (i32.const 108))
+   (global.set $flag_op (i32.const 109))
+   (global.set $flag_a (i32.const 110))
+   (global.set $flag_b (i32.const 111))
+   (global.set $flag_res (i32.const 112))
+   (global.set $saved_cf (i32.const 113))
+   (global.set $flag_sign_shift (i32.const 114))
+   (global.set $sync_msg_depth (local.get $nested)))
+ (func (export "guard_host_state") (param $p i32)
+   (i32.store offset=0 (local.get $p) (global.get $api_io_retry))
+   (i32.store offset=4 (local.get $p) (global.get $handler_set_eip))
+   (i32.store offset=8 (local.get $p) (global.get $eip))
+   (i32.store offset=12 (local.get $p) (global.get $current_thunk_eip))
+   (i32.store offset=16 (local.get $p) (global.get $yield_flag))
+   (i32.store offset=20 (local.get $p) (global.get $yield_reason))
+   (i32.store offset=24 (local.get $p) (global.get $steps))
+   (i32.store offset=28 (local.get $p) (global.get $eflags_extra))
+   (i32.store offset=32 (local.get $p) (global.get $df))
+   (i32.store offset=36 (local.get $p) (global.get $flag_op))
+   (i32.store offset=40 (local.get $p) (global.get $flag_a))
+   (i32.store offset=44 (local.get $p) (global.get $flag_b))
+   (i32.store offset=48 (local.get $p) (global.get $flag_res))
+   (i32.store offset=52 (local.get $p) (global.get $saved_cf))
+   (i32.store offset=56 (local.get $p) (global.get $flag_sign_shift))
+   (i32.store offset=60 (local.get $p) (global.get $sync_msg_depth))
+)
  (func (export "guard_gps_ring") (result i32) (global.get $d9g_h))
  (func (export "guard_gps_frame") (result i32) (global.get $d9g_frame))
  (func (export "guard_gps_create") (result i32)
@@ -109,6 +144,22 @@ const extraWat=`
   assert.equal(e.get_yield_reason(),0,'contention stays runnable, never resolves an unrelated handle wait');
   assert.equal(e.get_eip(),123456,'contention preserves the retry thunk');
   await call('guard_leave');e.guard_dispatch();assert.equal(state(mainRegs).esp,7000008);
+  // The public host export runs outside API dispatch. A busy lock must
+  // synchronously refuse without redirecting any parked guest CPU frame.
+  const hostState=alloc(64),snapshot=()=>{e.guard_host_state(hostState);return Buffer.from(new Uint8Array(h.memory.buffer,hostState,64));};
+  for(const syncDepth of [0,1]){
+  e.guard_host_seed(syncDepth);const beforeHost=snapshot(),beforeRegs=Buffer.from(new Uint8Array(h.memory.buffer,mainRegs,64));
+  assert.equal((await call('guard_enter')).value,1);
+  let hostRefused=false;try{e.d3d9_gps_sync_front();}catch(error){assert(error instanceof WebAssembly.RuntimeError);hostRefused=true;}
+  assert.deepEqual(snapshot(),beforeHost,'busy actual host export preserves all guest CPU control globals');
+  assert(hostRefused,'busy host capture refuses synchronously');
+  assert.deepEqual(Buffer.from(new Uint8Array(h.memory.buffer,mainRegs,64)),beforeRegs,'busy host capture preserves register bytes');
+  assert.equal(e.d3d_state_guard_held(),0,'refusal never claims foreign ownership');
+  await call('guard_leave');
+  assert.equal(e.guard_enter(),1);e.d3d9_gps_sync_front();assert.equal(e.d3d_state_guard_held(),1,'nested host capture retains outer ownership');e.guard_leave();
+  e.d3d9_gps_sync_front();assert.equal(e.d3d_state_guard_held(),0,'uncontended host export releases its own lock');
+  assert.deepEqual(snapshot(),beforeHost,'successful and nested host sync preserve CPU control state');
+  }
   const racing=call('stress');let done=0;
   while(done<2000){if(e.guard_pair(pair,1))done++;await new Promise(r=>setImmediate(r));}
   assert.equal((await racing).value,2000);
@@ -129,6 +180,6 @@ const extraWat=`
   assert.equal((await gpsRacing).value,2000);drain(ring);
   assert.equal(executor.live.size,4003,'concurrent instances never reuse any live RT id');
   assert.equal(e.guard_enter(),1);assert.equal(e.guard_gps_frame(),4003,'all concurrent frame updates retained');e.guard_leave();
-  console.log('PASS native D3D state guard: contention/retry/nesting, 4000 updates, 4003 cross-instance GPS CREATEs and frame handoff');
+  console.log('PASS native D3D state guard: contention/retry/nesting, 4000 updates, 4003 cross-instance GPS CREATEs, frame handoff and CPU-preserving host sync refusal/nesting');
  }finally{await worker.terminate();}
 })().catch(error=>{console.error(error);process.exitCode=1;});

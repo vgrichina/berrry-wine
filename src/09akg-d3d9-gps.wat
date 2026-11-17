@@ -5122,7 +5122,9 @@
   ;; ring presented it; the DIB is only the CPU's copy) and present that.
   ;; Skipped (stat 68 + k): 0 executor not coherent, 1 no target entry.
   (func (export "d3d9_gps_sync_front")
-    (if (i32.eqz (call $d3d_state_try_enter)) (then (return)))
+    ;; A synchronous host capture cannot return success with stale pixels.
+    ;; Contention traps without touching the guest's API retry/CPU state.
+    (if (i32.eqz (call $d3d_state_try_enter_host)) (then (unreachable)))
     (call $d9g_sync_front_locked)
     (call $d3d_state_leave))
   (func $d9g_sync_front_locked

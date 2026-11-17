@@ -44,9 +44,19 @@
         ;; wait parameters). Keep io_block's retry EIP/stack and yield flag.
         (global.set $yield_reason (i32.const 0))
         (return (i32.const 0)))))))
-    (if (i32.eqz (global.get $d3d_state_depth)) (then (call $d9g_state_load)))
-    (global.set $d3d_state_depth (i32.add (global.get $d3d_state_depth) (i32.const 1)))
+    (call $d3d_state_acquired)
     (i32.const 1))
+  ;; Host exports have no API frame to retry. Refuse a foreign lock without
+  ;; io_block, an EIP redirect, yield/step changes, or a nested host wait.
+  (func $d3d_state_try_enter_host (result i32)
+    (if (i32.eqz (global.get $d3d_state_depth)) (then
+      (if (i32.atomic.rmw.cmpxchg offset=36 (global.get $DX_PROCESS_STATE)
+            (i32.const 0) (i32.const 1)) (then (return (i32.const 0))))))
+    (call $d3d_state_acquired)
+    (i32.const 1))
+  (func $d3d_state_acquired
+    (if (i32.eqz (global.get $d3d_state_depth)) (then (call $d9g_state_load)))
+    (global.set $d3d_state_depth (i32.add (global.get $d3d_state_depth) (i32.const 1))))
   (func $d3d_state_leave
     (global.set $d3d_state_depth (i32.sub (global.get $d3d_state_depth) (i32.const 1)))
     (if (i32.eqz (global.get $d3d_state_depth))
