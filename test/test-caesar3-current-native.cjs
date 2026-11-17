@@ -82,6 +82,11 @@ function initialPumpFixture(){
  const code=Buffer.from([...prefix,...wait,...pump,0xe9,...u32(resume-(0x402e00+prefix.length+wait.length+pump.length+5))]);
  code.copy(b,raw(0x2e00));b[at]=0xe9;b.writeInt32LE(0x402e00-0x402c05,at+1);return b;
 }
+function slowFrameFixture(){
+ const b=controllerFixture(),s=titleConsumerFixture('slow-frame'),raw=r=>r-0x1000+0x400;
+ for(const [a,z] of [[0x1334,0x133c],[0x1d00,0x1d80],[0x2c00,0x3000]])s.copy(b,raw(a),raw(a),raw(z));
+ return b;
+}
 async function reviewedController(out,late=false,printable=false,personal=false,stale=false,fault=null){
  fs.mkdirSync(out);const save=(n,v)=>{
   const target=path.join(out,n),pending=target+'.'+process.pid+'.pending';
@@ -89,7 +94,7 @@ async function reviewedController(out,late=false,printable=false,personal=false,
   fs.linkSync(pending,target);fs.unlinkSync(pending);
  };
  fs.copyFileSync(path.join(out,personal?'../runtime-inputs.json':'../../runtime-inputs.json'),path.join(out,'runtime-inputs.json'));
- const image=path.join(out,'reviewed.exe');fs.writeFileSync(image,fault==='initial-pump'?initialPumpFixture():printable?require('../tools/native-printable-fixture.cjs').fixture():controllerFixture());
+ const image=path.join(out,'reviewed.exe');fs.writeFileSync(image,fault?.startsWith('slow-')?slowFrameFixture():fault==='initial-pump'?initialPumpFixture():printable?require('../tools/native-printable-fixture.cjs').fixture():controllerFixture());
  const reservation=net.createServer();await new Promise(r=>reservation.listen(0,'127.0.0.1',r));const port=reservation.address().port;await new Promise(r=>reservation.close(r));
  const invocationToken=crypto.randomUUID(),start=Date.now()/1000;
  save('launch.json',{at:start,deadline:start+240,gameplayCutoff:start+60,reserveSeconds:180,rootPort:port,inputReadinessRequired:fault==='initial-pump'});
@@ -115,7 +120,40 @@ async function reviewedController(out,late=false,printable=false,personal=false,
    while(!fs.existsSync(path.join(out,'stop-personal.json')) && s.child.exitCode===null && !fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json'))){assert(Date.now()<due);await pause(10);}
    save('personal-finished.json',{at:Date.now(),originalStarted:false});return;
   }
-  if(fault==='initial-pump'){
+  if(fault?.startsWith('slow-')){
+   await control(['capture','before']);
+   await control(['review','before','Authored ordinary slow-frame USER window; finite pointer phase.','Fixture','game',snap.mainHwnd]);await control(['bind','before']);
+   // Align only an authored test with its ordinary empty public USER return. No
+   // pump, idle notification, callback, clock or guest state is forced.
+   let seen=fs.readFileSync(path.join(out,'public-consumers.jsonl'),'utf8').length;
+   const due=Date.now()+3000;
+   while(true){const log=fs.readFileSync(path.join(out,'public-consumers.jsonl'),'utf8');
+    const rows=log.slice(seen).trim().split('\n').filter(Boolean).map(l=>JSON.parse(l));seen=log.length;
+    if(rows.some(v=>v.phase==='input-poll-return'&&v.name==='PeekMessageA'&&v.threadId===1&&v.eax===0))break;
+    assert(Date.now()<due);await pause(2);
+   }
+   if(fault==='slow-combined'){
+    await control(['intent','combined','before','500','220','game'],1);
+    assert(fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));
+    assert.equal(JSON.parse(fs.readFileSync(path.join(out,'combined-down.json'))).receipt.consumed,false);
+    const requests=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');await control(['capture','forbidden'],1);
+    assert.equal(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'),requests);
+    save('assertions.json',{pass:true,combinedMoveDownExpired500:true,noFalseACK:true,permanentUNKNOWN:true,zeroLaterRequests:true,syntheticAuthoredAttestation:true});
+   }else{
+    await control(['hover-intent','arrive','before','500','220','game']);
+    const receipt=JSON.parse(fs.readFileSync(path.join(out,'arrive-down.json'))).receipt;
+    assert.equal(receipt.nativeMessage.msg,0x200);assert(receipt.consumed);
+    // Let the authored application's own next ordinary frame run. This is
+    // not permission for another original action: it gets a new review.
+    await pause(400);await control(['capture','settled']);
+    await control(['review-intent','click','settled','500','220','game','Authored separate arrival completed; same coordinate press.','Fixture',snap.mainHwnd]);
+    const got=JSON.parse(fs.readFileSync(path.join(out,'click-down.json'))).receipt;assert(got.consumed);assert.equal(got.nativeMessage.msg,0x201);
+    // Ordinary callbacks can complete after the immediate receipt capture.
+    await pause(400);const final=await s.send({action:'snapshot'});
+    assert.equal(final.windows.find(w=>w.hwnd===snap.mainHwnd).title,'UP after DOWN');
+    save('assertions.json',{pass:true,separateNativeMoveAndDown:true,ordinary350msFrames:true,noForcedPumpIdleOrCallback:true,freshReviewForPress:true,actualUPAfterDOWNCaption:true,nativeConfirmation500:true,independentUP1750:true,aggregate3000:true,syntheticAuthoredAttestation:true});
+   }
+  }else if(fault==='initial-pump'){
    await control(['capture','too-early'],1);
    assert(!fs.existsSync(path.join(out,'too-early.png')));assert(!fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));
    assert(!fs.existsSync(path.join(out,'input-owner.json')));
@@ -232,6 +270,12 @@ async function controllerFixtures(out){
  for(const fault of ['confirmation','physical-up','aggregate'])await reviewedController(path.join(out,fault+'-negative'),false,false,false,false,fault);
  fs.writeFileSync(path.join(out,'controllers-passed.json'),JSON.stringify({pass:true,originalStarted:false}));
 }
+async function hoverFixtures(out){
+ fs.mkdirSync(out,{recursive:true});
+ await reviewedController(path.join(out,'combined'),false,false,false,false,'slow-combined');
+ await reviewedController(path.join(out,'separate'),false,false,false,false,'slow-hover');
+ fs.writeFileSync(path.join(out,'assertions.json'),JSON.stringify({pass:true,originalStarted:false,syntheticAuthoredAttestation:true}));
+}
 async function inputReadinessFixture(out){
  fs.mkdirSync(out,{recursive:true});
  const trace=path.join(out,'observer-limit.jsonl');
@@ -274,7 +318,7 @@ print('PASS current USER poll survives trace cap; stale/foreign actor/generation
 // never qualifies or authorizes an original-game launch.
 // Authored x86 records API returns; no original private memory is inspected.
 function titleConsumerFixture(mode){
- assert(['title','get-only','peek-delayed','busy-title','peek-only','filtered','async','none','sibling'].includes(mode));
+ assert(['title','slow-frame','get-only','peek-delayed','busy-title','peek-only','filtered','async','none','sibling'].includes(mode));
  const b=require('./test-cli-native-button-delivery.cjs').fixture(0);
  const raw=r=>r-0x1000+0x400,u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
  for(const [r,n] of [[0x1334,'PeekMessageA'],[0x1338,'GetAsyncKeyState']]){
@@ -297,7 +341,7 @@ function titleConsumerFixture(mode){
    call(0x40120c);emit(0x89,0xc3);label('busy');call(0x40120c);
    emit(0xff,0x05,...u32(0x403718),0x29,0xd8,0xa3,...u32(0x40371c),0x3d,...u32(1500));jump('busy',0x82);
   }
-  if(mode==='title'||mode==='get-only'||mode==='peek-delayed'||mode==='busy-title'||mode==='peek-only'||mode==='filtered'){
+  if(mode==='title'||mode==='slow-frame'||mode==='get-only'||mode==='peek-delayed'||mode==='busy-title'||mode==='peek-only'||mode==='filtered'){
    if(mode!=='get-only'){
    // Caesar's public import pattern: PeekMessage(NULL,0,0,PM_NOREMOVE),
    // followed by GetMessage/TranslateMessage/DispatchMessage on success.
@@ -316,13 +360,21 @@ function titleConsumerFixture(mode){
     emit(0x85,0xc0);jump('exit',0x84);
     emit(0xff,0x05,...u32(0x403704));
     push(0x403640);call(0x401310);push(0x403640);call(0x401314);
+    if(mode==='slow-frame')jump('pump');
    }
   }else if(mode==='async'){
    push(65);call(0x401338);emit(0xa9,...u32(1));jump('idle',0x84);
    // The actual native API returned this press's low bit, exactly once.
    emit(0xa3,...u32(0x40370c),0xff,0x05,...u32(0x403708));
   }
-  label('idle');push(5);call(0x401204);jump('pump');
+  label('idle');
+  if(mode==='slow-frame'){
+   // Real bounded interpreter work between frames; observe the existing
+   // GetTickCount exactly as the delayed-first-pump fixture does.
+   call(0x40120c);emit(0x89,0xc3);label('frame-work');call(0x40120c);
+   emit(0x29,0xd8,0x3d,...u32(350));jump('frame-work',0x82);
+  }else{push(5);call(0x401204);}
+  jump('pump');
   label('exit');push(0);call(0x401200);emit(0xcc);
  });
  asm(0x2800,({emit,push,call,label,jump})=>{
@@ -487,5 +539,5 @@ async function textBoundary(out){
   save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
  }
 }
-if(require.main===module)(process.argv[2]==='--input-readiness-fixture'?inputReadinessFixture(path.resolve(process.argv[3])):process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
+if(require.main===module)(process.argv[2]==='--hover-fixtures'?hoverFixtures(path.resolve(process.argv[3])):process.argv[2]==='--input-readiness-fixture'?inputReadinessFixture(path.resolve(process.argv[3])):process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={keyboard,main,titleConsumerFixture,consumerDiagnostic,consumerUnits,textFixture,textBoundary,reuseProofUnits};

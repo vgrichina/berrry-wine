@@ -258,14 +258,16 @@ def controller():
     if mode=='capture': return m.capture(sys.argv[3])
     if mode=='review': return m.review(*sys.argv[3:8])
     if mode=='bind': return m.bind(sys.argv[3])
-    assert mode in ('intent','review-intent')
+    assert mode in ('intent','review-intent','hover-intent','review-hover-intent')
+    hover=mode in ('hover-intent','review-hover-intent')
     name,scene,x,y,kind=sys.argv[3:8];x=int(x);y=int(y)
-    offset=11 if mode=='review-intent' else 8
+    offset=11 if mode.startswith('review-') else 8
     char_code=int(sys.argv[offset]) if x==-2 else None
     if x==-2: assert kind!='quit' and 32<=char_code<=126 and 1<=y<=255
+    if hover:assert x>=0 and y>=0 and kind!='quit'
     child=None
     try:
-        if mode=='review-intent':
+        if mode.startswith('review-'):
             # A single explicitly supplied personal review and finite intent.
             # Retain the original capture clock; never recapture or replay.
             m.reserve(kind=='quit')
@@ -283,6 +285,7 @@ def controller():
         owner=m.read('input-owner.json'); start=time.time(); nonce=str(uuid.uuid4())
         invocation=dict(rr['target']); assert invocation==m.identity() and m.same_live_invocation(invocation)
         save(name+'-intent.json',dict(scene=scene,x=x,y=y,charCode=char_code,kind=kind,nonce=nonce,at=start,
+             action='mousemove' if hover else 'keydown' if x<0 else 'mousedown',
              confirmationDeadline=start+.5,physicalUpDeadline=start+1.75,observationDeadline=start+3,
              latency=dict(controllerInvokedAt=invoked_at,captureStartedAt=rr['at'],
                           captureCompletedAt=rr['completedAt'],personalReviewAt=r['at'],
@@ -290,7 +293,7 @@ def controller():
         child=m.ArmedRelease(name,owner['owner'],start+1.4)
         ready,_,_=select.select([child.stdout],[],[],.15); assert ready,'independent release not prearmed'
         arm=json.loads(child.stdout.readline());save(name+'-release-arm.json',arm);assert arm['armed']
-        command=f'keytext:{y}:{char_code}' if x==-2 else f'keydown:{y}' if x==-1 else f'mousedown:{x}:{y}'
+        command=f'mousemove:{x}:{y}' if hover else f'keytext:{y}:{char_code}' if x==-2 else f'keydown:{y}' if x==-1 else f'mousedown:{x}:{y}'
         guard={**owner,'nonce':nonce,'reviewed':True,'intent':dict(review=m.native_review(rr,r)),
                'deadline':int(min(start+.5,min(rr['at'],r['at'])+(GAME_FRESHNESS_SECONDS if kind=='game' else MENU_FRESHNESS_SECONDS))*1000)}
         m.reserve(kind=='quit');assert time.time()<start+.5
@@ -302,6 +305,9 @@ def controller():
             proof=receipt['nativeMessage']
             assert proof['consumption']=='owner-user-return' and proof['nonce']==nonce and proof['token']>0
             assert proof['apiKind'] in (1,2,3) and proof['threadId']>0
+            # The native token already pins the exact mapped client lParam;
+            # reviewed canvas coordinates need not equal client coordinates.
+            if hover:assert proof['msg']==0x200 and proof['hwnd']==int(target['hwnd'],16) and proof['wParam']==0
             if x==-2:
                 pair=receipt['nativeMessages'];assert len(pair)==2
                 assert [p['msg'] for p in pair]==[0x100,0x102]
@@ -348,8 +354,9 @@ def run():
     personal_fixture = '--personal-fixture' in sys.argv
     controller_fixtures = '--controller-fixtures' in sys.argv
     readiness_fixture = '--input-readiness-fixture' in sys.argv
+    hover_fixture = '--hover-fixtures' in sys.argv
     outer_fixture = '--outer-fixture' in sys.argv
-    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic or personal_fixture or controller_fixtures or readiness_fixture
+    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic or personal_fixture or controller_fixtures or readiness_fixture or hover_fixture
     working = '--working-qualification' in sys.argv
     baseline = '--consumer-baseline' in sys.argv
     assert not baseline or (working and diagnostic), 'baseline is authored working diagnosis only'
@@ -372,6 +379,12 @@ def run():
         assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
     def qualify(env, files, source, module, **unused):
         if diagnostic:
+            if hover_fixture:
+                helper.checked('hover-fixtures',['node','test/test-caesar3-current-native.cjs',
+                    '--hover-fixtures',str(RUN/'hover')],env,(source,module))
+                save('diagnostic-completion.json',dict(completed=True,originalStarted=False,safeForOriginal=False,
+                    gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256']))
+                return
             if readiness_fixture:
                 helper.checked('input-readiness-fixture',['node','test/test-caesar3-current-native.cjs',
                     '--input-readiness-fixture',str(RUN/'readiness')],env,(source,module))
