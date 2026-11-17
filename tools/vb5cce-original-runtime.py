@@ -4,7 +4,7 @@
 Never builds or changes shared outputs. Runtime sources and module are sealed
 in memory; only Git identities, hashes and helper diffs persist in evidence.
 """
-import fcntl, gzip, hashlib, json, os, pathlib, signal, socket, subprocess, sys, time, types, uuid
+import fcntl, gzip, hashlib, json, os, pathlib, signal, socket, subprocess, sys, threading, time, types, uuid
 
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 RUN=pathlib.Path(os.environ.get('DELPHI5_RUN',ROOT/'scratch/runs/20261116-vb5cce-reviewed-context-install-ide'))
@@ -39,6 +39,36 @@ def terminate_owned(p):
         try:os.killpg(p.pid,signal.SIGKILL)
         except ProcessLookupError:pass
         return p.wait(timeout=10)
+def start_native(args,out,err,**kwargs):
+    """Drain both native pipes while retaining the actual EOF observations.
+
+    Readers finish before their output files close. Process exit alone does
+    not establish pipe EOF: an inherited writer can outlive the direct child.
+    """
+    p=subprocess.Popen(args,stdout=subprocess.PIPE,stderr=subprocess.PIPE,**kwargs)
+    capture=dict(stdoutEOF=False,stderrEOF=False,errors=[],threads=[])
+    p.vb5_capture=capture
+    def drain(pipe,target,key):
+        try:
+            while True:
+                body=pipe.read1(65536)
+                if not body:
+                    capture[key]=True;break
+                target.write(body);target.flush()
+        except BaseException as e:capture['errors'].append(repr(e))
+        finally:pipe.close()
+    for pipe,target,key in ((p.stdout,out,'stdoutEOF'),(p.stderr,err,'stderrEOF')):
+        t=threading.Thread(target=drain,args=(pipe,target,key),daemon=True)
+        capture['threads'].append(t);t.start()
+    return p
+def join_native_output(p):
+    capture=getattr(p,'vb5_capture',None)
+    if capture is None:return dict(outputMode='regular files; no pipe EOF claim')
+    due=time.monotonic()+10
+    for t in capture['threads']:t.join(max(0,due-time.monotonic()))
+    return dict(outputMode='drained native pipes',stdoutEOF=capture['stdoutEOF'],
+        stderrEOF=capture['stderrEOF'],outputErrors=capture['errors'],
+        readersJoined=all(not t.is_alive() for t in capture['threads']))
 def wait_native(p,target,info,timeout=None):
     normal=False
     try:
@@ -46,9 +76,12 @@ def wait_native(p,target,info,timeout=None):
     finally:
         # poll/absence is never represented as a join: always call wait.
         rc=terminate_owned(p)
+        output=join_native_output(p)
         publish(target/'native-wait.json',dict(**info,exit=rc,actualWait=True,
             disposition='normal' if normal else 'cleanup',
-            outputMode='regular files; no pipe EOF claim',atWait=time.time(),atWaitMono=time.monotonic()))
+            **output,atWait=time.time(),atWaitMono=time.monotonic()))
+        if getattr(p,'vb5_capture',None) is not None:
+            assert output['stdoutEOF'] and output['stderrEOF'] and output['readersJoined'] and not output['outputErrors'], 'native output drain incomplete'
 def join_watchdog(w):
     try:a,b=w.communicate(timeout=10)
     except subprocess.TimeoutExpired:
@@ -453,7 +486,7 @@ def original_pipeline(env,source,module,started,deadline,passive,installed_input
                  gameplayCutoff=deadline-reserve_seconds,reserveSeconds=reserve_seconds,
                  rootPort=port,childPort=childport,winver='nt4',passiveDiagnostic=passive))
             with (target/'native.stdout.log').open('xb') as out,(target/'native.stderr.log').open('xb') as err:
-                p=subprocess.Popen(argv,cwd=ROOT,env=env,pass_fds=(source,module),stdout=out,stderr=err,start_new_session=True)
+                p=start_native(argv,out,err,cwd=ROOT,env=env,pass_fds=(source,module),start_new_session=True)
                 info=native_identity(p)
                 info['invocationToken']=invocation
                 try:
@@ -473,7 +506,7 @@ def original_pipeline(env,source,module,started,deadline,passive,installed_input
                     if not (target/'native-wait.json').exists():
                         terminate_owned(p)
                         publish(target/'native-wait.json',dict(**info,exit=p.returncode,actualWait=True,
-                            disposition='cleanup',outputMode='regular files; no pipe EOF claim',
+                            disposition='cleanup',**join_native_output(p),
                             atWait=time.time(),atWaitMono=time.monotonic()))
             if (target/'PERMANENT-UNKNOWN.json').exists() or rc!=0:return
 
