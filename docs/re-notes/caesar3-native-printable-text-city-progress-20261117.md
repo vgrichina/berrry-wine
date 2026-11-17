@@ -53,3 +53,22 @@ all 114 recursive media hashes. Inner native timing and input limits are
 unchanged. Later unrelated main publication may advance the branch without
 refreshing the sealed source/module/helpers. Actual parent-process loss still
 causes shutdown. This integration does not assign a historical signal cause.
+
+
+The single fresh original at published `2639be4c01f6a7483fe3575d55fb430a3cdd9769`
+passed exact source/module/helper/main/Worker/OS-child qualification and all 114
+recursive media hashes before the runtime clocks. Caesar visibly accepted exactly
+`C`: the DOWN and CHAR had distinct native tokens, matching HWND/thread/lParam,
+and actual owner Peek PM_NOREMOVE returns. Confirmation took 88.867 ms,
+independent UP 245.942 ms, and complete immutable observation 375.150 ms.
+Personally inspected complete images then showed Assignment 1 — Aventine and
+the actual city landscape (Dn 2000, Pop 0, Jan 500 BC).
+
+The next housing selection failed the five-second gameplay image freshness
+preflight, before its intent or physical DOWN was created. The controller
+permanently closed the endpoint as UNKNOWN. No later endpoint request, rebind,
+replay or second original was made. Housing, road, food consequences and native
+Quit are not proved. Host cleanup is distinct: actual native wait returned zero
+with both EOF and `hostCleanup: true`; outer actual wait and both independent
+watchdogs returned zero with both EOF and no remaining owned processes. A zero
+cleanup status is not a native Quit receipt. No box was created.
