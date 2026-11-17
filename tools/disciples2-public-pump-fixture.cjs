@@ -6,14 +6,15 @@ const {once}=require('node:events'),{startControlSession}=require('../test/contr
 const http=require('node:http');
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null}={}) {
+async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null,callbackFixture=null}={}) {
  fs.mkdirSync(out,{recursive:true});
  const save=(name,value)=>fs.writeFileSync(path.join(out,name),JSON.stringify(value,null,2)+'\n',{flag:'wx'});
- const bytes=hoverFixture
+ const callback=callbackFixture?require('../test/test-disciples2-native-callback-readiness.cjs'):null;
+ const bytes=callbackFixture?callback.fixture(callbackFixture):hoverFixture
   ?require('../test/test-disciples2-native-hover-pump.cjs').fixture(hoverFixture)
   :require('../test/test-cli-native-button-delivery.cjs').fixture(delay);
  const image=path.join(out,'public-pump.exe');fs.writeFileSync(image,bytes,{flag:'wx'});
- save('inputs.json',{delay,trace,cancel,hoverFixture,head:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
+ save('inputs.json',{delay,trace,cancel,hoverFixture,callbackFixture,head:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
   fixtureSHA256:hash(bytes),moduleSHA256:hash(fs.readFileSync('build/wine-assembly.wasm')),node:process.version});
  const wd=cp.spawn(process.execPath,['-e',`let p;const t=setTimeout(()=>{console.log('FIRED');if(p)try{process.kill(-p,'SIGTERM')}catch{}},35000);console.log('ARMED');process.stdin.on('data',b=>p=+b);process.stdin.on('end',()=>clearTimeout(t));`]);
  let wo='',we='';wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=once(wd,'close');
@@ -30,7 +31,7 @@ async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null}={
   let snap;const startup=Date.now()+15000;
   do {snap=await s.send({action:'snapshot'});if(snap.focusWindow?.live&&snap.windows.length>=2)break;
    assert(Date.now()<startup,'native startup');await pause(20);} while(true);
-  if(hoverFixture){
+  if(hoverFixture||callbackFixture){
    const due=Date.now()+5000;
    while(!await s.send({action:'eval',code:'!!renderer.windows[instance.exports.get_main_hwnd()]?._nativeInputPumpCompletion'})){
     assert(Date.now()<due,'owner must establish an actual unfiltered idle before filtered transition');await pause(10);
@@ -38,12 +39,20 @@ async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null}={
    assert.equal(await s.send({action:'eval',code:'instance.exports.post_message_q(instance.exports.get_main_hwnd(),0x8000,0,0)'}),1);
    await pause(100);
   }
+  const callbackBefore=callbackFixture?await s.send({action:'eval',code:callback.observationCode()}):null;
   const owner=await s.send({action:'guarded-bind'}),nonce=crypto.randomUUID();
   const url='http://127.0.0.1:'+port+'/ctl',fallback=Date.now()+1500;
   release=cp.spawn(process.execPath,['-e',`const http=require('node:http');let due=${fallback};console.log('ARMED');process.stdin.on('data',b=>due=Math.min(due,+b));const t=setInterval(()=>{if(Date.now()<due)return;clearInterval(t);const sent=Date.now(),r=http.request(${JSON.stringify(url)},{method:'POST'},res=>{let b='';res.on('data',v=>b+=v);res.on('end',()=>{console.log(JSON.stringify({sent,at:Date.now(),status:res.statusCode,reply:JSON.parse(b)}));process.stdin.destroy()})});r.on('error',e=>{console.error(e);process.exitCode=1;process.stdin.destroy()});r.setTimeout(250,()=>r.destroy(Error('independent UP timeout')));r.end(JSON.stringify({action:'guarded-release',owner:${JSON.stringify(owner.owner)}}))},2);`]);
   let ro='',re='';release.stdout.on('data',b=>ro+=b);release.stderr.on('data',b=>re+=b);releaseWait=once(release,'close');
   while(!ro.includes('ARMED'))await pause(2);save('release-armed.json',{pid:release.pid,fallback,beforeDown:true});
   const sent=Date.now(),guard={...owner,nonce,reviewed:true,deadline:sent+1500};let receipt,error;
+  const callbackSamples=[];let sampling=true;
+  const sampleWait=callbackFixture?(async()=>{
+   for(let i=0;i<20&&sampling&&Date.now()<sent+450;i++){
+    const value=await s.send({action:'eval',code:callback.observationCode()});
+    callbackSamples.push({at:Date.now(),value});await pause(20);
+   }
+  })():Promise.resolve();
   try {
    const body=await new Promise((resolve,reject)=>{
     const r=http.request(url,{method:'POST'},res=>{let b='';res.on('data',v=>b+=v);res.on('end',()=>{clearTimeout(timer);try{resolve(JSON.parse(b));}catch(e){reject(e);}});});
@@ -54,11 +63,32 @@ async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null}={
    assert(body.ok);receipt=body.value;
   } catch(e) {error=String(e);}
   const returnedAt=Date.now();save('confirmation.json',{sent,returnedAt,elapsedMs:returnedAt-sent,receipt,error});
+  sampling=false;await sampleWait;
   if(receipt?.consumed)release.stdin.write(String(receipt.consumedAt+100));
   const [exit,signal]=await releaseWait;
   save('release-wait.json',{pid:release.pid,exit,signal,actualWait:true,stdoutEOF:release.stdout.readableEnded,stderrEOF:release.stderr.readableEnded,stdout:ro,stderr:re});assert.equal(exit,0);
   // Fixtures may query terminal status to test cancellation; original UNKNOWN
   // sessions permanently close and must never use this diagnostic query.
+  const callbackAfter=callbackFixture?await s.send({action:'eval',code:callback.observationCode()}):null;
+  if(callbackFixture){
+   save('callback-return.json',{before:callbackBefore,samples:callbackSamples,after:callbackAfter});
+   assert.equal(callbackAfter.badStack,0,'actual Dispatch caller stack restored');
+   for(const key of ['owner','generation','hwnd'])assert.equal(callbackAfter[key],callbackBefore[key],key+' retained');
+   assert(callbackBefore.sameMemory&&callbackAfter.sameMemory&&callbackBefore.visible&&callbackAfter.visible);
+   assert(!callbackBefore.retired&&!callbackAfter.retired);
+   assert(callbackAfter.siblingPeeks>callbackBefore.siblingPeeks,'actual sibling CPUWorker continued');
+   for(const msg of [0x200,0x84,0x20])assert(callbackAfter.returns[msg]>callbackBefore.returns[msg],
+    'actual x86 caller continuation after callback '+msg.toString(16));
+   if(callbackFixture.nonempty!==false){
+    assert(callbackSamples.some(({at,value:v})=>at<=sent+500&&[0x200,0x84,0x20].every(m=>v.returns[m]>callbackBefore.returns[m])&&
+     v.hover?.pending&&!v.hover.polled&&v.empty===callbackBefore.empty&&v.consumerSamples===callbackBefore.consumerSamples),
+     'actual callback returns observed before confirmation deadline while exact hover remains pending');
+    assert(callbackAfter.returns[0x113]>callbackBefore.returns[0x113],'real timer callbacks returned');
+    assert.equal(callbackAfter.empty,callbackBefore.empty,'owner queries remained nonempty');
+    assert.equal(callbackAfter.consumerSamples,callbackBefore.consumerSamples,'actual consumer has not sampled hover');
+    assert(!callbackAfter.hover.polled,'callback completion alone does not complete owner pump');
+   }else assert(callbackAfter.consumerSamples>callbackBefore.consumerSamples,'actual drained consumer sampled cursor');
+  }
   await pause(delay*4+150);const terminal=await s.send({action:'guarded-status',nonce});
   snap=await s.send({action:'snapshot'});save('terminal.json',{receipt:terminal,snapshot:snap});
   const title=snap.windows.find(w=>w.hwnd===snap.mainHwnd)?.title;
