@@ -6,8 +6,16 @@ const assert=require('node:assert/strict');
 // existing native-input/import boundary are observed; no guest exports run.
 function installOriginalWorkerPhases(root){
   if(root.__originalPhases)throw Error('duplicate phase observer');
-  const state=root.__originalPhases={events:0,limit:12000,recordBytes:0,recordLimit:16384,records:0};
-  const log=row=>{if(state.events++<state.limit)console.log('GLTRON_ORIGINAL_PHASE',JSON.stringify(row));};
+  const state=root.__originalPhases={events:0,limit:24000,recordBytes:0,recordLimit:16384,records:0,rows:[],dropped:0,flushed:0};
+  // Hot imports only append scalars. Serialization and CDP transport happen
+  // from a separate task, never inside a native import or renderer call.
+  const log=row=>{state.events++;if(state.events<=state.limit)state.rows.push(row);else state.dropped++;};
+  state.flush=()=>{const rows=state.rows;state.rows=[];state.flushed+=rows.length;
+    console.log('GLTRON_ORIGINAL_BATCH',JSON.stringify({rows,dropped:state.dropped,events:state.events,flushed:state.flushed,at:Date.now(),recordBytes:state.recordBytes,records:state.records}));};
+  if(root.setInterval)root.setInterval(state.flush,1000);
+  const wait=root.Atomics?.wait;
+  if(wait)root.Atomics.wait=function(...args){const at=Date.now(),start=performance.now();
+    try{return wait.apply(this,args);}finally{log({role:'guest',name:'Atomics.wait',edge:'span',at,end:Date.now(),ms:performance.now()-start,index:args[1],expected:args[2],timeout:args[3],call:state.active?.call,import:state.active?.name});}};
   const hook=(name,install)=>{let value=root[name];Object.defineProperty(root,name,{configurable:true,get:()=>value,set(v){value=v;install(v);}});if(value)install(value);};
   hook('GuestRpc',api=>{
     const original=api.createWorkerImports;
@@ -17,18 +25,18 @@ function installOriginalWorkerPhases(root){
         if(active){active.posted=true;if(active.name==='check_input')log(active.entry);log({role:'guest',edge:'post',at:Date.now(),slot,call:active.call,name:active.name,type:message.t});}
         return post.call(this,message,...rest);
       },options);
-      for(const name of ['check_input','input_validate','input_consumed','gpu_stream_kick']){
+      for(const name of ['check_input','input_validate','input_consumed','gpu_stream_kick','gpu_gl_call']){
         const fn=result.imports.host[name];if(!fn)continue;
         result.imports.host[name]=function(...args){
           if(name==='gpu_stream_kick'&&args[1]===0)return fn.apply(this,args);
-          const before=active,call=++sequence,at=Date.now(),start=performance.now();active={call,name};
+          const before=active,call=++sequence,at=Date.now(),start=performance.now();active={call,name};state.active=active;
           // Entry is emitted before a blocking native import, so cancellation
           // cannot erase the evidence of a still-running render wait.
-          active.entry={role:'guest',edge:'enter',name,slot,call,at,args:args.slice(0,2)};
+          active.entry={role:'guest',edge:'enter',name,slot,call,at,args:args.slice(0,3)};
           if(name!=='check_input')log(active.entry);
           try{const answer=fn.apply(this,args);if(name!=='check_input'||active.posted||answer)log({role:'guest',edge:'return',name,slot,call,at,end:Date.now(),ms:performance.now()-start,answer});return answer;}
           catch(error){log({role:'guest',edge:'throw',name,slot,call,at,end:Date.now(),error:String(error)});throw error;}
-          finally{active=before;}
+          finally{active=before;state.active=before;}
         };
       }return result;
     };
@@ -95,7 +103,9 @@ function installWorkerPhases(root){
   }
 }
 function installPagePhases(root,Wine,limit=12000){
-  let emitted=0;const log=row=>{if(emitted++<limit)console.log('GLTRON_DEQUEUE_PHASE',JSON.stringify(row));};
+  let emitted=0,dropped=0;const rows=[];const log=row=>{if(emitted<limit){rows.push(row);emitted++;}else dropped++;};
+  const flush=()=>{const batch=rows.splice(0);console.log('GLTRON_ORIGINAL_BATCH',JSON.stringify({rows:batch,events:emitted,dropped,at:Date.now()}));};
+  root.__dequeuePageFlush=flush;if(root.setInterval)root.setInterval(flush,1000);
   const p=Wine.prototype,imports=p.getImports;
   p.getImports=function(...args){
     const result=imports.apply(this,args),g=this._browserNativeInput;
@@ -174,11 +184,38 @@ async function phaseRun(out,backend,authored){
   const runtime=require('../tools/boids-current-runtime.cjs'),files=runtime.gitFiles(commit);
   for(const row of source.source)if(row.path==='host.js'||/^src\/|^lib\//.test(row.path))assert.equal(sha(files.get(row.path)),row.sha256,row.path);
   const modulePath=fs.realpathSync(previous+'/tested-'+pin.sha256+'.wasm'),wasm=fs.readFileSync(modulePath);assert.equal(sha(wasm),pin.sha256);
+  if(process.env.GLTRON_NATIVE_ATTRIBUTION==='1'){
+    const localRequire=require('node:module').createRequire(path.resolve('tools/boids-current-runtime.cjs'));
+    const namedCompile=new Function('require','fs','path','ROOT','return ('+runtime.compile.toString().replace('{tailCalls:true}',"{tailCalls:true,nameSection:'wine-assembly'}")+')')(localRequire,fs,path,path.resolve('.'));
+    const named=namedCompile(files),stripNames=buffer=>{const parts=[buffer.subarray(0,8)];let p=8;const u=()=>{let n=0,shift=0,v;do{v=buffer[p++];n|=(v&127)<<shift;shift+=7;}while(v&128);return n>>>0;};while(p<buffer.length){const at=p,id=buffer[p++],size=u(),end=p+size;let omit=false;if(id===0){const len=u();omit=buffer.subarray(p,p+len).toString()==='name';}if(!omit)parts.push(buffer.subarray(at,end));p=end;}return Buffer.concat(parts);};
+    assert.equal(sha(stripNames(named)),sha(stripNames(wasm)),'exact named compile code sections match retained module');
+    const sections=WebAssembly.Module.customSections(new WebAssembly.Module(named),'name');assert.equal(sections.length,1);
+    fs.writeFileSync(out+'/exact-module-names.bin',Buffer.from(sections[0]),{flag:'wx'});
+    fs.writeFileSync(out+'/exact-module-map.json',JSON.stringify({commit,moduleSHA256:pin.sha256,namedCompileSHA256:sha(named),codeSectionsEqual:true,nameSectionSHA256:sha(Buffer.from(sections[0])),compile:'Git-backed in-memory compile; only custom name section removed for comparison; no source archive'})+'\n',{flag:'wx'});
+  }
   runtime.compile=()=>wasm;
   const controller=require('../tools/gltron-browser-controller.cjs'),connect=controller.connection;
+  const attribution=process.env.GLTRON_NATIVE_ATTRIBUTION==='1';
+  if(attribution&&!authored){const q=JSON.parse(fs.readFileSync(process.env.GLTRON_ATTRIBUTION_QUALIFICATION));assert.equal(q.qualified,true);assert.equal(q.moduleSHA256,pin.sha256);}
   controller.connection=function(...args){const c=connect.apply(this,args),send=c.send;
+    const sessions=new Map(),profileTasks=new Set();
+    const saveProfile=(name,value)=>fs.writeFileSync(out+'/'+name,JSON.stringify(value)+'\n',{flag:'wx'});
+    const sample=async(id)=>{const start={wall:Date.now(),monotonic:performance.now()};try{
+      await send('Profiler.enable',{},id);await send('Profiler.setSamplingInterval',{interval:5000},id);await send('Profiler.start',{},id);
+      sessions.set(id,{start,chunk:0});
+    }catch(error){saveProfile('profile-arm-'+id+'.json',{start,error:String(error)});}};
+    // Bounded profile chunks preserve worker stacks and actual WASM indices.
+    // Sampling describes sampled execution, never OS CPU utilization.
+    const timer=attribution?setInterval(()=>{for(const [id,state]of sessions){if(state.busy||c.closed||state.chunk>=180)continue;state.busy=true;
+      const task=(async()=>{try{const stopAt=Date.now(),r=await send('Profiler.stop',{},id);
+        saveProfile('worker-profile-'+id+'-'+state.chunk+++'.json',{start:state.start,stopRequestedAt:stopAt,end:Date.now(),sessionId:id,moduleSHA256:pin.sha256,profile:r.profile,limitations:'sampling wall time includes blocking and scheduler gaps; not OS CPU utilization'});
+        if(!c.closed){state.start={wall:Date.now(),monotonic:performance.now()};await send('Profiler.start',{},id);}
+      }catch(error){sessions.delete(id);saveProfile('profile-end-'+id+'.json',{at:Date.now(),error:String(error),terminalWindowMissing:true});}finally{state.busy=false;}})();profileTasks.add(task);task.finally(()=>profileTasks.delete(task));
+    }},1000):null;timer?.unref();
     let event=()=>{};Object.defineProperty(c,'event',{configurable:true,set(fn){event=fn;},get(){return v=>{
+      if(attribution&&v.method==='Target.attachedToTarget'&&v.params.targetInfo.type==='worker')saveProfile('profile-target-'+v.params.sessionId+'.json',v.params);
       const a=v.params?.args;
+      if(v.method==='Runtime.consoleAPICalled'&&a?.[0]?.value==='GLTRON_ORIGINAL_BATCH'){const b=JSON.parse(a[1].value);fs.appendFileSync(out+'/passive-phases.jsonl',b.rows.map(row=>JSON.stringify({sessionId:v.sessionId,...row})).join('\n')+'\n');fs.writeFileSync(out+'/phase-boundary-'+v.sessionId+'.json',JSON.stringify({...b,rows:undefined})+'\n');return;}
       if(v.method==='Runtime.consoleAPICalled'&&['GLTRON_ORIGINAL_PHASE','GLTRON_DEQUEUE_PHASE'].includes(a?.[0]?.value)){
         fs.appendFileSync(out+'/passive-phases.jsonl',JSON.stringify({sessionId:v.sessionId,consoleTimestamp:v.params.timestamp,...JSON.parse(a[1].value)})+'\n');return;
       }event(v);
@@ -186,14 +223,18 @@ async function phaseRun(out,backend,authored){
     c.send=function(method,params={},session){
       if(method==='Runtime.evaluate'&&params.expression===controller.GL_OBSERVER)params={...params,expression:params.expression+';('+installOriginalWorkerPhases.toString()+')(globalThis);true'};
       if(method==='Runtime.evaluate'&&params.expression.includes('installNativeRouteObserver'))params={...params,expression:params.expression+';('+installPagePhases.toString()+')(globalThis,WineAssembly);true'};
+      if(attribution&&method==='Runtime.runIfWaitingForDebugger')return sample(session).then(()=>send(method,params,session));
+      if(method==='Browser.close')clearInterval(timer);
       return send(method,params,session);
     };return c;
   };
   if(authored){const native=require('../tools/gltron-current-native-capture.cjs'),fixture=native.fixture;native.fixture=()=>fixture({drawOnce:true,timerMs:16,triangles:8,width:800,height:600});}
   const observer=fs.readFileSync(__filename),observerCommit=cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
   if(!authored)assert.equal(sha(cp.execFileSync('git',['show',observerCommit+':test/test-gltron-native-dequeue-workload.cjs'])),sha(observer),'original requires published observer');
-  fs.writeFileSync(out+'/diagnostic.json',JSON.stringify({commit,observerCommit,observerSHA256:sha(observer),backend,authored,modulePath,moduleSHA256:pin.sha256,moduleVerifiedBeforeExecution:true,runtimeSourceUnchanged:true,rendererDataOnly:true,recordByteCap:16384,recordCap:64,phaseEventCap:12000,originalInvocations:authored?0:1})+'\n',{flag:'wx'});
-  await require('../tools/gltron-current-original.cjs').run(out,commit,authored,backend,true);
+  fs.writeFileSync(out+'/diagnostic.json',JSON.stringify({commit,observerCommit,observerSHA256:sha(observer),backend,authored,modulePath,moduleSHA256:pin.sha256,moduleVerifiedBeforeExecution:true,runtimeSourceUnchanged:true,rendererDataOnly:true,recordByteCap:16384,recordCap:64,phaseEventCap:24000,originalInvocations:authored?0:1})+'\n',{flag:'wx'});
+  const write=fs.writeFileSync;
+  fs.writeFileSync=function(file,bytes,...rest){if(file===out+'/tested-'+pin.sha256+'.wasm'){assert.equal(sha(bytes),pin.sha256);fs.linkSync(modulePath,file);return;}return write.call(this,file,bytes,...rest);};
+  try{await require('../tools/gltron-current-original.cjs').run(out,commit,authored,backend,true);}finally{fs.writeFileSync=write;}
   const duplicate=out+'/tested-'+pin.sha256+'.wasm';assert.equal(sha(fs.readFileSync(duplicate)),pin.sha256);fs.unlinkSync(duplicate);fs.linkSync(modulePath,duplicate);
 }
 if(require.main===module&&process.argv[2]==='phase-run')phaseRun(process.argv[3],process.argv[4],process.argv[5]==='authored').catch(e=>{console.error(e);process.exitCode=1;});
@@ -202,12 +243,22 @@ else if(require.main===module){
   const test=require('node:test'),vm=require('node:vm');
   test('original observer prearms IPC/import and renderer phases without changing native answers',()=>{
     let time=0;const logs=[],error=Error('renderer error'),root={},host={check_input(x){return x+2;},gpu_stream_kick(){throw error;}},postRows=[];
-    vm.runInNewContext('('+installOriginalWorkerPhases.toString()+')(root)',{root,Date:{now:()=>++time},performance:{now:()=>++time},console:{log:(tag,row)=>logs.push(JSON.parse(row))}});
+    vm.runInNewContext('('+installOriginalWorkerPhases.toString()+')(root)',{root,Date:{now:()=>++time},performance:{now:()=>++time},console:{log:(tag,row)=>{const b=JSON.parse(row);logs.push(...(b.rows||[b]));}}});
     root.GuestRpc={createWorkerImports(memory,sigs,post){host.check_input=function(x){post({t:'rpc'});return x+2;};return {imports:{host}};}};
     root.GuestRpc.createWorkerImports(null,{},m=>postRows.push(m),{slot:3});assert.equal(host.check_input(5),7);assert.throws(()=>host.gpu_stream_kick(),e=>e===error);
+    root.__originalPhases.flush();
     const original={execute(rec){assert.equal(this,original);return rec.seq;}};function Executor(){}Executor.prototype=original;
     root.GpuStreamSoftware={Executor};assert.equal(original.execute({name:'PRESENT',seq:4,fields:{width:800},refs:[]}),4);
-    assert.deepEqual(logs.filter(r=>r.name==='check_input').map(r=>r.edge),['enter','post','return']);assert.equal(postRows.length,1);assert(logs.some(r=>r.edge==='throw'));assert(logs.some(r=>r.edge==='frame'));
+    assert.deepEqual(logs.filter(r=>r.name==='check_input').map(r=>r.edge),['enter','post','return']);assert.equal(postRows.length,1);assert(logs.some(r=>r.edge==='throw'));root.__originalPhases.flush();assert(logs.some(r=>r.edge==='frame'));
+  });
+  test('legacy GL and waits buffer spans, preserve results and expose overflow',()=>{
+    let now=0;const batches=[],root={Atomics:{wait(){return 'timed-out';}}};
+    vm.runInNewContext('('+installOriginalWorkerPhases.toString()+')(root)',{root,Date:{now:()=>++now},performance:{now:()=>++now},console:{log:(tag,b)=>batches.push(JSON.parse(b))}});
+    const host={gpu_gl_call(op,ptr,len){assert.equal(this,host);assert.deepEqual([op,ptr,len],[0x10001,64,80]);return root.Atomics.wait(null,2,1,1000);}};
+    root.GuestRpc={createWorkerImports:()=>({imports:{host}})};root.GuestRpc.createWorkerImports(null,null,()=>{},{slot:4});
+    assert.equal(host.gpu_gl_call(0x10001,64,80),'timed-out');assert.equal(batches.length,0,'no synchronous import logging');
+    root.__originalPhases.flush();const rows=batches[0].rows;assert.equal(rows.find(r=>r.name==='Atomics.wait').import,'gpu_gl_call');assert.deepEqual(Array.from(rows[0].args),[0x10001,64,80]);
+    root.__originalPhases.limit=root.__originalPhases.events+1;host.gpu_gl_call(0x10001,64,80);root.__originalPhases.flush();assert.equal(batches[1].rows.length,1);assert.equal(batches[1].dropped,2);
   });
   test('passive Worker spans preserve import receivers, arguments, results and exceptions',()=>{
     let clock=0;const logs=[],error=Error('native refusal'),host={check_input(a){assert.equal(this,host);return a+1;},gpu_stream_kick(){throw error;}};
