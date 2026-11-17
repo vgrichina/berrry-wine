@@ -6,12 +6,14 @@ const {once}=require('node:events'),{startControlSession}=require('../test/contr
 const http=require('node:http');
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-async function native(out,{delay=0,trace=false,cancel=false}={}) {
+async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null}={}) {
  fs.mkdirSync(out,{recursive:true});
  const save=(name,value)=>fs.writeFileSync(path.join(out,name),JSON.stringify(value,null,2)+'\n',{flag:'wx'});
- const bytes=require('../test/test-cli-native-button-delivery.cjs').fixture(delay);
+ const bytes=hoverFixture
+  ?require('../test/test-disciples2-native-hover-pump.cjs').fixture(hoverFixture)
+  :require('../test/test-cli-native-button-delivery.cjs').fixture(delay);
  const image=path.join(out,'public-pump.exe');fs.writeFileSync(image,bytes,{flag:'wx'});
- save('inputs.json',{delay,trace,cancel,head:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
+ save('inputs.json',{delay,trace,cancel,hoverFixture,head:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
   fixtureSHA256:hash(bytes),moduleSHA256:hash(fs.readFileSync('build/wine-assembly.wasm')),node:process.version});
  const wd=cp.spawn(process.execPath,['-e',`let p;const t=setTimeout(()=>{console.log('FIRED');if(p)try{process.kill(-p,'SIGTERM')}catch{}},35000);console.log('ARMED');process.stdin.on('data',b=>p=+b);process.stdin.on('end',()=>clearTimeout(t));`]);
  let wo='',we='';wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=once(wd,'close');
@@ -28,6 +30,14 @@ async function native(out,{delay=0,trace=false,cancel=false}={}) {
   let snap;const startup=Date.now()+15000;
   do {snap=await s.send({action:'snapshot'});if(snap.focusWindow?.live&&snap.windows.length>=2)break;
    assert(Date.now()<startup,'native startup');await pause(20);} while(true);
+  if(hoverFixture){
+   const due=Date.now()+5000;
+   while(!await s.send({action:'eval',code:'!!renderer.windows[instance.exports.get_main_hwnd()]?._nativeInputPumpCompletion'})){
+    assert(Date.now()<due,'owner must establish an actual unfiltered idle before filtered transition');await pause(10);
+   }
+   assert.equal(await s.send({action:'eval',code:'instance.exports.post_message_q(instance.exports.get_main_hwnd(),0x8000,0,0)'}),1);
+   await pause(100);
+  }
   const owner=await s.send({action:'guarded-bind'}),nonce=crypto.randomUUID();
   const url='http://127.0.0.1:'+port+'/ctl',fallback=Date.now()+1500;
   release=cp.spawn(process.execPath,['-e',`const http=require('node:http');let due=${fallback};console.log('ARMED');process.stdin.on('data',b=>due=Math.min(due,+b));const t=setInterval(()=>{if(Date.now()<due)return;clearInterval(t);const sent=Date.now(),r=http.request(${JSON.stringify(url)},{method:'POST'},res=>{let b='';res.on('data',v=>b+=v);res.on('end',()=>{console.log(JSON.stringify({sent,at:Date.now(),status:res.statusCode,reply:JSON.parse(b)}));process.stdin.destroy()})});r.on('error',e=>{console.error(e);process.exitCode=1;process.stdin.destroy()});r.setTimeout(250,()=>r.destroy(Error('independent UP timeout')));r.end(JSON.stringify({action:'guarded-release',owner:${JSON.stringify(owner.owner)}}))},2);`]);
@@ -65,6 +75,16 @@ async function native(out,{delay=0,trace=false,cancel=false}={}) {
    assert(rows.some(v=>v.phase==='renderer-poll-return'&&v.event?.msg===514),'independent UP must be observed');
    if(cancel){assert(rows.some(v=>v.phase==='cancel'&&v.state==='UNKNOWN'));assert(!rows.some(v=>v.phase==='native-input-return-candidate'&&v.event?.msg===513));}
    else assert(rows.some(v=>v.phase==='native-input-return-candidate'&&v.event?.msg===513));
+   if(hoverFixture){
+    const nativeRows=rows.filter(v=>v.phase==='native-user-consumer');
+    const tid=snap.focusWindow.threadId,target=parseInt(snap.mainHwnd,16);
+    assert(nativeRows.some(v=>v.publicAPI.kind===2&&v.publicAPI.threadId===tid),'actual owner PeekMessage identity');
+    assert(nativeRows.some(v=>v.publicAPI.dispatchMsg===0x200),'actual MOVE DispatchMessage entry');
+    assert(nativeRows.every(v=>v.callbackReturn==='unmeasured'),'no invented callback return');
+    if(hoverFixture.filter==='window')assert(nativeRows.some(v=>v.publicAPI.hwndFilter===target));
+    if(cancel)assert(nativeRows.some(v=>v.publicAPI.disposition===1&&v.publicAPI.result===0),
+      'native completed empty query observed separately from sibling idle');
+   }
    const cost=values.find(v=>v.kind==='public-input-trace-cost');assert(cost&&!cost.failed);assert(cost.maxFlushMs<50,'bounded flush overhead');
    save('trace-assertions.json',{pass:true,rows:rows.length,chunks:chunks.length,cost});
   }
@@ -94,6 +114,18 @@ function units(traceModule='../lib/cli-public-input-trace') {
  assert(last.rows.some(v=>v.event?.msg===513),'first-quarter prefix retains input identity');
  trace.mark('prepare',{...t,nonce:'two'});const before=writes.length;r.takeInput();trace.flush();assert.equal(writes.length,before);
  assert.throws(()=>createPublicInputTrace({write:()=>{},rowLimit:513}));
+ // An unavailable/retired native diagnostic export must never alter dequeue,
+ // synthesize acknowledgement, or propagate its failure into the input path.
+ for(const fault of ['setter','getter','property']){
+  const r={inputQueue:[edge],takeInput(){return this.inputQueue.shift()||null;}},writes=[];
+  const ex={set_user_pump_observation(){if(fault==='setter')throw Error('retired setter');},
+   get_user_pump_observation(){throw Error('unavailable native observation');}};
+  if(fault==='property')Object.defineProperty(ex,'set_user_pump_observation',{get(){throw Error('retired export property');}});
+  const trace=createPublicInputTrace({write:v=>writes.push(v)}),refs={renderer:r,exports:ex};
+  trace.attach(refs);trace.mark('prepare',{nonce:fault,state:'QUEUED',deadline:Date.now()+1000,binding:{refs}});
+  assert.equal(r.takeInput(),edge);assert.equal(r.takeInput(),null);trace.flush();
+  assert(writes.flatMap(v=>v.rows).some(v=>v.phase==='native-user-observation-unavailable'));
+ }
  const guardCases=[];
  for(const mode of ['delivered','focus','owner','deadline','transport','throw','no-edge']) {
   const outcomes=[];

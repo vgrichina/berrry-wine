@@ -2,6 +2,13 @@
   "version": 1,
   "revisions": [
     {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_DispatchMessageA",
+      "baseSHA256": "cc3f6596cac597cdd57c62a52245f8fcd6019cf6a528966bb7dbc6e2c5470982",
+      "sha256": "cb479065b8b6c20b4fd199cbfdd1177d724b02b906f1b4f24b4479789fdba34d",
+      "reason": "Review 20261117 native hover pump observation: an opt-in per-consumer budget records only the DispatchMessage public MSG header and entry identity before the unchanged dispatch body. It reads no private game state, executes no new guest callback, and never acknowledges hover or input delivery. Native Peek/Get entry and handler-return records distinguish consumed API frame, parked wait and possible redirect; callback return remains unmeasured. All existing EIP writes, callback admission, restoration, actor/window/focus/frame/writer checks and independent release rules remain unchanged. Actual x86 nested callback, native trace-on/off output parity, filtered refusal, owner transition, lifetime and bounded cost proofs are in run20261117-disciples2-native-hover-pump-completion. General retained-context ownership remains pending."
+    },
+    {
       "file": "lib/renderer-input.js",
       "name": "host-file",
       "baseSHA256": "a8de6b537ff492cebe763fee3a9e30bd5b7e16a0751a63e922671045f73c4fcf",

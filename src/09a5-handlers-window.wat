@@ -2,6 +2,70 @@
   ;; WINDOW CREATION & MESSAGE DISPATCH HANDLERS
   ;; ============================================================
 
+  ;; Bounded opt-in observations of public USER calls, per WASM consumer.
+  ;; Diagnostic only: never consulted by routing, readiness or acknowledgements.
+  ;; Entry/handler return are separate identities. A redirected callback is not
+  ;; reported as an application callback return. No private guest-state reads.
+  (global $user_observe_budget (mut i32) (i32.const 0))
+  (global $user_observe_sequence (mut i32) (i32.const 0))
+  (global $user_observe_kind (mut i32) (i32.const 0))
+  (global $user_observe_tid (mut i32) (i32.const 0))
+  (global $user_observe_ptr (mut i32) (i32.const 0))
+  (global $user_observe_filter (mut i32) (i32.const 0))
+  (global $user_observe_min (mut i32) (i32.const 0))
+  (global $user_observe_max (mut i32) (i32.const 0))
+  (global $user_observe_remove (mut i32) (i32.const 0))
+  (global $user_observe_sp (mut i32) (i32.const 0))
+  (global $user_observe_ret (mut i32) (i32.const 0))
+  (global $user_observe_done_sequence (mut i32) (i32.const 0))
+  (global $user_observe_done_kind (mut i32) (i32.const 0))
+  (global $user_observe_disposition (mut i32) (i32.const 0))
+  (global $user_observe_result (mut i32) (i32.const 0))
+  (global $user_observe_reason (mut i32) (i32.const 0))
+  (global $user_observe_hwnd (mut i32) (i32.const 0))
+  (global $user_observe_msg (mut i32) (i32.const 0))
+  (global $user_observe_done_sp (mut i32) (i32.const 0))
+  (global $user_observe_dispatch_hwnd (mut i32) (i32.const 0))
+  (global $user_observe_dispatch_msg (mut i32) (i32.const 0))
+  (global $user_observe_dispatch_sequence (mut i32) (i32.const 0))
+  (func (export "set_user_pump_observation") (param $budget i32)
+    (global.set $user_observe_budget
+      (select (i32.const 4096) (local.get $budget) (i32.gt_u (local.get $budget) (i32.const 4096)))))
+  (func (export "get_user_pump_observation") (param $field i32) (result i32)
+    (if (result i32) (i32.eq (local.get $field) (i32.const 0)) (then (global.get $user_observe_sequence)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 1)) (then (global.get $user_observe_kind)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 2)) (then (global.get $user_observe_tid)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 3)) (then (global.get $user_observe_ptr)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 4)) (then (global.get $user_observe_filter)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 5)) (then (global.get $user_observe_min)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 6)) (then (global.get $user_observe_max)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 7)) (then (global.get $user_observe_remove)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 8)) (then (global.get $user_observe_sp)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 9)) (then (global.get $user_observe_ret)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 10)) (then (global.get $user_observe_done_sequence)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 11)) (then (global.get $user_observe_done_kind)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 12)) (then (global.get $user_observe_disposition)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 13)) (then (global.get $user_observe_result)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 14)) (then (global.get $user_observe_reason)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 15)) (then (global.get $user_observe_hwnd)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 16)) (then (global.get $user_observe_msg)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 17)) (then (global.get $user_observe_done_sp)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 18)) (then (global.get $user_observe_dispatch_hwnd)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 19)) (then (global.get $user_observe_dispatch_msg)) (else (if (result i32) (i32.eq (local.get $field) (i32.const 20)) (then (global.get $user_observe_dispatch_sequence)) (else (i32.const 0))))))))))))))))))))))))))))))))))))))))))))
+  (func $user_observe_begin (param $kind i32) (param $ptr i32)
+      (param $filter i32) (param $min i32) (param $max i32) (param $remove i32) (result i32)
+    (global.set $user_observe_budget (i32.sub (global.get $user_observe_budget) (i32.const 1)))
+    (global.set $user_observe_sequence (i32.add (global.get $user_observe_sequence) (i32.const 1)))
+    (global.set $user_observe_kind (local.get $kind))
+    (global.set $user_observe_tid (global.get $current_thread_id))
+    (global.set $user_observe_ptr (local.get $ptr))
+    (global.set $user_observe_filter (local.get $filter))
+    (global.set $user_observe_min (local.get $min))
+    (global.set $user_observe_max (local.get $max))
+    (global.set $user_observe_remove (local.get $remove))
+    (global.set $user_observe_sp (i32.load offset=16 (global.get $reg_base)))
+    (global.set $user_observe_ret (call $gl32 (global.get $user_observe_sp)))
+    (global.get $user_observe_sequence))
+  (func $user_observe_end (param $sequence i32) (param $kind i32)
+      (param $ptr i32) (param $sp i32) (param $bytes i32)
+    (global.set $user_observe_done_sequence (local.get $sequence))
+    (global.set $user_observe_done_kind (local.get $kind))
+    (global.set $user_observe_result (i32.load (global.get $reg_base)))
+    (global.set $user_observe_reason (global.get $yield_reason))
+    (global.set $user_observe_done_sp (i32.load offset=16 (global.get $reg_base)))
+    (global.set $user_observe_disposition
+      (if (result i32) (global.get $yield_flag) (then (i32.const 2))
+        (else (if (result i32) (i32.eq (global.get $user_observe_done_sp) (i32.add (local.get $sp) (local.get $bytes)))
+          (then (i32.const 1)) (else (i32.const 3))))))
+    (global.set $user_observe_hwnd (i32.const 0))
+    (global.set $user_observe_msg (i32.const 0))
+    (if (i32.and (i32.eq (global.get $user_observe_disposition) (i32.const 1))
+          (i32.ne (global.get $user_observe_result) (i32.const 0)))
+      (then
+        (global.set $user_observe_hwnd (call $gl32 (local.get $ptr)))
+        (global.set $user_observe_msg (call $gl32 (i32.add (local.get $ptr) (i32.const 4)))))))
+
   ;; AdjustWindowRectEx may add a few non-client pixels to a RECT whose fields
   ;; started as CW_USEDEFAULT. SDL2 does exactly that before CreateWindowExW,
   ;; producing values such as 0x7ffffffc and 0x80000008. USER still treats
@@ -2043,7 +2107,10 @@
   ;; wait, and it consumed its stack frame) replaces the thread's extra info
   ;; with that message's, and every source here attaches 0.
   (func $handle_GetMessageA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $sp i32) (local $ret i32)
+    (local $sp i32) (local $ret i32) (local $observation i32)
+    (if (global.get $user_observe_budget)
+      (then (local.set $observation (call $user_observe_begin (i32.const 1)
+        (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (i32.const 1)))))
     ;; WinExec readiness is entry to GetMessage, even if its queue is empty.
     ;; Host process ownership crosses cooperative instances and real Workers.
     (drop (call $host_process_ctl (i32.const 11) (i32.const 0) (i32.const 0)))
@@ -2056,7 +2123,10 @@
       (then (global.set $msg_extra_info (i32.const 0))))
     (if (i32.and (i32.eqz (global.get $code16))
           (i32.and (i32.eq (i32.load offset=16 (global.get $reg_base)) (i32.add (local.get $sp) (i32.const 20))) (i32.ge_s (i32.load (global.get $reg_base)) (i32.const 0))))
-      (then (call $getmessage_hook_begin (local.get $ret) (local.get $arg0) (i32.const 1) (i32.load (global.get $reg_base))))))
+      (then (call $getmessage_hook_begin (local.get $ret) (local.get $arg0) (i32.const 1) (i32.load (global.get $reg_base)))))
+    (if (local.get $observation)
+      (then (call $user_observe_end (local.get $observation) (i32.const 1)
+        (local.get $arg0) (local.get $sp) (i32.const 20)))))
 
   (func $handle_GetMessageA_pump (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $sp i32) (local $ret i32) (local $eat i32)
@@ -2385,7 +2455,10 @@
   ;; A PeekMessage that returned a message (removed or not, as in USER)
   ;; replaces the thread's extra info with that message's: always 0 here.
   (func $handle_PeekMessageA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $sp i32) (local $ret i32)
+    (local $sp i32) (local $ret i32) (local $observation i32)
+    (if (global.get $user_observe_budget)
+      (then (local.set $observation (call $user_observe_begin (i32.const 2)
+        (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))))
     ;; A DISPDIB game draws to the VGA window with no call per frame; its
     ;; message poll is where the frame is shown (09d5-dispdib.wat).
     (if (i32.load offset=4 (global.get $DISPDIB_STATE))
@@ -2401,7 +2474,10 @@
       (then (global.set $msg_extra_info (i32.const 0))))
     (if (i32.and (i32.eqz (global.get $code16))
           (i32.and (i32.eq (i32.load offset=16 (global.get $reg_base)) (i32.add (local.get $sp) (i32.const 24))) (i32.ne (i32.load (global.get $reg_base)) (i32.const 0))))
-      (then (call $getmessage_hook_begin (local.get $ret) (local.get $arg0) (i32.and (local.get $arg4) (i32.const 1)) (i32.load (global.get $reg_base))))))
+      (then (call $getmessage_hook_begin (local.get $ret) (local.get $arg0) (i32.and (local.get $arg4) (i32.const 1)) (i32.load (global.get $reg_base)))))
+    (if (local.get $observation)
+      (then (call $user_observe_end (local.get $observation) (i32.const 2)
+        (local.get $arg0) (local.get $sp) (i32.const 24)))))
 
   (func $handle_PeekMessageA_pump (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $sp i32) (local $ret i32) (local $eat i32)
@@ -2832,6 +2908,12 @@
   ;; 75: DispatchMessageA
   (func $handle_DispatchMessageA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $tmp i32) (local $wndproc i32) (local $ctrl_class i32)
+    (if (global.get $user_observe_budget)
+      (then
+        (global.set $user_observe_dispatch_sequence (call $user_observe_begin (i32.const 3)
+          (local.get $arg0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+        (global.set $user_observe_dispatch_hwnd (call $gl32 (local.get $arg0)))
+        (global.set $user_observe_dispatch_msg (call $gl32 (i32.add (local.get $arg0) (i32.const 4))))))
     ;; ShowWindowAsync's queue record is a USER operation, not an application
     ;; message.  Run it on the owner thread at dispatch time and do not expose
     ;; the private id to the target WndProc.  Rebase DispatchMessage's two-word
