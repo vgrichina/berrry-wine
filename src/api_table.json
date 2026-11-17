@@ -39791,5 +39791,12 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 2812059496
+  },
+  {
+    "id": 4706,
+    "name": "SafeArrayGetDim",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3244762535
   }
 ]

@@ -2951,6 +2951,7 @@ if(!seen.has('SafeArrayGetElement')){existing.push({id:existing.length,name:'Saf
 if(!seen.has('SafeArrayPutElement')){existing.push({id:existing.length,name:'SafeArrayPutElement',nargs:3,convention:'stdcall'});seen.add('SafeArrayPutElement');}
 if(!seen.has('SafeArrayCopy')){existing.push({id:existing.length,name:'SafeArrayCopy',nargs:2,convention:'stdcall'});seen.add('SafeArrayCopy');}
 if(!seen.has('SafeArrayPtrOfIndex')){existing.push({id:existing.length,name:'SafeArrayPtrOfIndex',nargs:3,convention:'stdcall'});seen.add('SafeArrayPtrOfIndex');}
+if(!seen.has('SafeArrayGetDim')){existing.push({id:existing.length,name:'SafeArrayGetDim',nargs:1,convention:'stdcall'});seen.add('SafeArrayGetDim');}
 
 // Reassign IDs and recompute hashes; preserve dispatch/testing metadata that
 // belongs to the API row rather than the name/hash generator.

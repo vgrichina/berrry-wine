@@ -3847,6 +3847,12 @@
     (call $gs32 (i32.add (local.get $sa) (i32.const 12)) (local.get $data))
     (i32.store offset=0 (global.get $reg_base) (local.get $sa)))
 
+  ;; Dimension metadata is a UINT return, with a one-argument stdcall ABI.
+  (func $handle_SafeArrayGetDim (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+    (i32.store offset=0 (global.get $reg_base)
+      (if (result i32) (local.get $arg0) (then (call $gl16 (local.get $arg0))) (else (i32.const 0)))))
+
   ;; Shared by SafeArrayDestroy and VariantClear. A locked array is not freed.
   (func $safearray_destroy (param $sa i32) (result i32)
     (local $data i32) (local $count i32) (local $i i32) (local $bstr i32)
