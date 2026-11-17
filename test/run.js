@@ -6281,11 +6281,12 @@ async function main() {
     // Read-only ISO 9660 mounts (docs/design-byo-media.md phase 3). A disc is
     // its own drive letter, so it never collides with the app manifest on C:.
     if (ISO_MOUNTS.length) {
-      const { mountIso } = require('../lib/iso9660');
+      const { mountIso } = require('../lib/readonly-media-context');
       let drive = (ISO_DRIVE || 'D').replace(/:$/, '').toUpperCase();
       for (const isoPath of ISO_MOUNTS) {
-        const result = mountIso(ctx.vfs, new Uint8Array(fs.readFileSync(isoPath)),
+        const result = mountIso(ctx.vfs, isoPath,
           { drive, prefer: ISO_PRIMARY ? 'primary' : 'joliet' });
+        process.on('exit', () => require('../lib/media-cli').closeMedia(result.media));
         console.log(`[iso] mounted ${isoPath} -> ${result.root} ` +
           `label="${result.volumeLabel}" (${result.fileCount} files, ` +
           `${result.iso.joliet ? 'Joliet' : 'primary'} names)`);

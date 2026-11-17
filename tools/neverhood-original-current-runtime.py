@@ -12,10 +12,24 @@ PRELOAD='tools/disciples2-current-native-source-view.cjs'
 HELPER='tools/disciples2-current-supervisor.py'
 OWN=('tools/neverhood-original-current-runtime.py','tools/neverhood-original-current-control.py',
      'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD,'test/run.js',
-     'tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs')
+     'tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs',
+     'lib/readonly-media-context.js','test/test-cli-iso-child-context.cjs')
 POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=15,menuFreshnessSeconds=30)
 def installed():return os.environ.get('NEVERHOOD_INSTALLED_SHORTCUT')=='1'
 def limits():return (1800,1820,180) if installed() else (900,920,90)
+def prior_iso_mount(runner):
+    old="""      const { mountIso } = require('../lib/iso9660');"""
+    new="""      const { mountIso } = require('../lib/readonly-media-context');"""
+    return runner.replace(new,old).replace('mountIso(ctx.vfs, isoPath,','mountIso(ctx.vfs, new Uint8Array(fs.readFileSync(isoPath)),').replace("        process.on('exit', () => require('../lib/media-cli').closeMedia(result.media));\n",'')
+def iso_proof(out,module):
+    prior=pathlib.Path(os.environ['NEVERHOOD_ISO_PROOF'])
+    proof=json.loads((prior/'iso-child-proof.json').read_text())
+    assert proof['passed'] and proof['moduleSHA256']==H.digest(module)
+    for n,digest in proof['components'].items():assert H.digest((ROOT/n).read_bytes())==digest
+    for label in ('iso-host','iso-native'):
+        wait=json.loads((prior/(label+'-wait.json')).read_text())
+        assert wait['exit']==0 and all(wait[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+    save(out,'reused-iso-proof.json',dict(passed=True,prior=str(prior),proofSHA256=H.digest((prior/'iso-child-proof.json').read_bytes())))
 def helper():
     # Shared sources can change while another worker owns them. Refuse those
     # bytes before executing them; only published helpers may be borrowed.
@@ -366,7 +380,10 @@ def startup_proof(out,module):
     current=json.loads((out/'runtime-inputs.json').read_text())
     # Installed preparation changes only the adapter and adds its shortcut
     # recovery tests. All native, input, capture and lifecycle components match.
-    excluded={'tools/neverhood-original-current-runtime.py','tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs'} if installed() else set()
+    excluded={'tools/neverhood-original-current-runtime.py','tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs','test/test-cli-iso-child-context.cjs'} if installed() else set()
+    if os.environ.get('NEVERHOOD_ISO_PROOF'):
+        iso_proof(out,module);excluded|={'lib/readonly-media-context.js','test/run.js'}
+        assert prior_iso_mount((ROOT/'test/run.js').read_text())==H.git(ROOT,'show','e16a4713b:test/run.js').decode()
     if installed():excluded.add(str(pathlib.Path(json.loads((RUN/'installed-state.json').read_text())['exePath']).relative_to(ROOT)))
     pins=lambda m:{r['path']:r['sha256'] for r in m['sources'] if r['path'] not in excluded}
     assert pins(old)==pins(current) and old['moduleSHA256']==current['moduleSHA256']==H.digest(module)
@@ -405,7 +422,8 @@ def reuse_native_proof(out,revision,module):
     if 'materialSourcePins' in proof:
         current=material_native_pins(json.loads((out/'runtime-inputs.json').read_text()))
         changed=sorted(n for n in set(current)|set(proof['materialSourcePins']) if current.get(n)!=proof['materialSourcePins'].get(n))
-        if changed==['lib/cli-native-scene.js','test/run.js'] and os.environ.get('NEVERHOOD_STARTUP_PROOF'):
+        if (changed==['lib/cli-native-scene.js','test/run.js'] or
+            (changed==['lib/cli-native-scene.js','lib/readonly-media-context.js','test/run.js'] and os.environ.get('NEVERHOOD_ISO_PROOF'))) and os.environ.get('NEVERHOOD_STARTUP_PROOF'):
             startup_proof(out,module)
             # Exact unchanged input/receipt/lease components, with only a new
             # passive command and the already tested public refusal diagnostics.
@@ -414,6 +432,7 @@ def reuse_native_proof(out,revision,module):
             begin=scene.index('// Passive startup only:');end=scene.index('// An actual reviewed pre-main',begin)
             assert (scene[:begin]+scene[end:]).replace('captureFailures,startupReadiness,','captureFailures,')==base
             runner=(ROOT/'test/run.js').read_text()
+            if os.environ.get('NEVERHOOD_ISO_PROOF'):runner=prior_iso_mount(runner)
             runner=runner.replace("if (cmd.action === 'native-reviewed-capture' || cmd.action === 'native-presentation-capture')", "if (cmd.action === 'native-reviewed-capture')")
             begin=runner.index("      if (cmd.action === 'native-presentation-capture') {")
             end=runner.index('      return reviewedContexts.capture(',begin)
@@ -512,6 +531,12 @@ def pipeline(out,revision,fixture=False,working=False):
     try:
         H.inheritance_probe(qualified,r,env)
         module=H.holder_bytes(json.loads((out/'prepared/holder.json').read_text()),'fdPath')
+        if os.environ.get('NEVERHOOD_ISO_FIXTURE')=='1':
+            checked(qualified,'iso-host',['node','test/test-cli-iso-child-context.cjs','--host',str(qualified/'iso-host')],env,timeout=30,pass_fds=fds)
+            checked(qualified,'iso-native',['node','test/test-cli-iso-child-context.cjs','--native',str(qualified/'iso-native')],env,timeout=40,pass_fds=fds)
+            save(qualified,'iso-child-proof.json',dict(passed=True,moduleSHA256=H.digest(module),
+                components={n:H.digest((ROOT/n).read_bytes()) for n in ('lib/readonly-media-context.js','test/run.js','test/test-cli-iso-child-context.cjs')}))
+            os.environ['NEVERHOOD_ISO_PROOF']=str(qualified)
         qualify_native(qualified,revision,module,env,fds)
         reused=os.environ.get('NEVERHOOD_STARTUP_PROOF') or os.environ.get('NEVERHOOD_REUSE_QUALIFICATION')
         if os.environ.get('NEVERHOOD_STARTUP_PROOF'):
