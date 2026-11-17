@@ -87,7 +87,11 @@ class Transport:
                 if intent.name in ('bind-intent.json', 'last-intent.json'): continue
                 stem = intent.name[:-len('-intent.json')]
                 assert (c.R/(stem+'-up.json')).exists() and (c.R/(stem+'-completed.json')).exists(), 'unresolved physical gesture; no capture'
-            start=time.time();s=c.call({'action':'snapshot'});im=c.call({'cmd':'png:'+str(p)});end=time.time()
+            start=time.time();until=time.monotonic()+3
+            s=c.call({'action':'snapshot'},timeout=max(.001,until-time.monotonic()))
+            assert time.monotonic()<until,'capture deadline expired after snapshot'
+            im=c.call({'cmd':'png:'+str(p)},timeout=max(.001,until-time.monotonic()));end=time.time()
+            assert time.monotonic()<until,'capture deadline expired after image'
             c.save(name+'.json',dict(at=start,completedAt=end,snapshot=s,image=im,pngSHA256=hashlib.sha256(p.read_bytes()).hexdigest(),target=c.read('native-pid.json')))
             return str(p)
         except BaseException as e:c.fail(e,name);raise
@@ -200,7 +204,7 @@ def policy(command, scene, mode, route=None):
     if mode == 'quit' or time.time() >= end:
         if not (c.R / 'quit-phase.json').exists():
             c.save('quit-phase.json', dict(at=time.time(), reserveSeconds=180, irreversible=True))
-    age = 5 if mode in ('household', 'select', 'action', 'hover') else 30
+    age = 3  # Every physical choice uses a freshly reviewed complete image.
     rr, r = reviewed(scene, age)
     assert r['mode'] == mode
     verb = 'mousemove' if mode == 'hover' else 'mousedown'

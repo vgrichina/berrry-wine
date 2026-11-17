@@ -4799,7 +4799,7 @@
 
   ;; Open a top-level menu item for a particular hwnd and point. Used by the
   ;; browser event shell after it has already selected the top-level window.
-  (func $menu_handle_bar_click (export "menu_handle_bar_click")
+  (func $menu_handle_bar_click_impl
         (param $hwnd i32) (param $sx i32) (param $sy i32) (result i32)
     (local $idx i32) (local $cmd i32)
     (local.set $cmd (call $menu_hittest_mdi_buttons (local.get $hwnd) (local.get $sx) (local.get $sy)))
@@ -5853,3 +5853,40 @@
     (i32.store offset=0 (global.get $reg_base) (call $dynamic_menu_create))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
+
+  ;; Per-instance evidence of a completed real pointer-menu dispatch. No queued
+  ;; WM_LBUTTONDOWN is produced by USER menu tracking. Observation never pumps.
+  (global $menu_pointer_sequence (mut i64) (i64.const 0))
+  (global $menu_pointer_generation (mut i64) (i64.const 0))
+  (global $menu_pointer_hwnd (mut i32) (i32.const 0))
+  (global $menu_pointer_pid (mut i32) (i32.const 0))
+  (global $menu_pointer_tid (mut i32) (i32.const 0))
+  (global $menu_pointer_x (mut i32) (i32.const 0))
+  (global $menu_pointer_y (mut i32) (i32.const 0))
+  (global $menu_pointer_kind (mut i32) (i32.const 0))
+  (func (export "native_menu_pointer_receipt") (param $field i32) (result i64)
+    (if (i32.eq (local.get $field) (i32.const 0)) (then (return (global.get $menu_pointer_sequence))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (global.get $menu_pointer_generation))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (i64.extend_i32_u (global.get $menu_pointer_hwnd)))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (i64.extend_i32_u (global.get $menu_pointer_pid)))))
+    (if (i32.eq (local.get $field) (i32.const 4)) (then (return (i64.extend_i32_u (global.get $menu_pointer_tid)))))
+    (if (i32.eq (local.get $field) (i32.const 5)) (then (return (i64.extend_i32_u (global.get $menu_pointer_x)))))
+    (if (i32.eq (local.get $field) (i32.const 6)) (then (return (i64.extend_i32_u (global.get $menu_pointer_y)))))
+    (if (i32.eq (local.get $field) (i32.const 7)) (then (return (i64.extend_i32_u (global.get $menu_pointer_kind)))))
+    (i64.const 0))
+  (func $menu_handle_bar_click (export "menu_handle_bar_click") (param $hwnd i32) (param $sx i32) (param $sy i32) (result i32)
+    (local $generation i64) (local $pid i32) (local $tid i32) (local $handled i32)
+    (local.set $generation (call $wnd_lookup_generation (local.get $hwnd)))
+    (local.set $pid (call $current_process_id))
+    (local.set $tid (call $wnd_get_thread (local.get $hwnd)))
+    (local.set $handled (call $menu_handle_bar_click_impl (local.get $hwnd) (local.get $sx) (local.get $sy)))
+    (if (local.get $handled) (then
+      (global.set $menu_pointer_generation (local.get $generation))
+      (global.set $menu_pointer_hwnd (local.get $hwnd))
+      (global.set $menu_pointer_pid (local.get $pid))
+      (global.set $menu_pointer_tid (local.get $tid))
+      (global.set $menu_pointer_x (local.get $sx))
+      (global.set $menu_pointer_y (local.get $sy))
+      (global.set $menu_pointer_kind (i32.const 1))
+      (global.set $menu_pointer_sequence (i64.add (global.get $menu_pointer_sequence) (i64.const 1)))))
+    (local.get $handled))

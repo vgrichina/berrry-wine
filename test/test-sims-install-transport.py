@@ -47,6 +47,18 @@ class HTTP(unittest.TestCase):
   self.cap=patch.object(c,'capture',capture);self.cap.start();self.lease=patch.object(c,'lease',return_value=(self.owner,{}));self.lease.start();scene()
  def tearDown(self):
   self.lease.stop();self.cap.stop();self.env.stop();self.server.shutdown();self.thread.join();self.server.server_close();self.tmp.cleanup()
+ def test_capture_deadline_stops_before_second_request(self):
+  calls=[]
+  def snapshot(command,timeout=10):calls.append(dict(command=command,timeout=timeout));return {}
+  with patch.object(c,'opened'),patch.object(c,'call',snapshot),patch.object(time,'monotonic',side_effect=[0,0,3.001]):
+   with self.assertRaisesRegex(AssertionError,'capture deadline expired after snapshot'):self.cap.temp_original('budget')
+  self.assertEqual(len(calls),1);self.assertEqual(calls[0]['timeout'],3)
+  self.assertTrue(c.read('terminal-input-failure.json')['noReplay'])
+ def test_three_second_review_deadline(self):
+  at=c.read('fresh.json')['at']
+  with patch.object(time,'time',return_value=at+3.001):
+   with self.assertRaisesRegex(AssertionError,'expired'):a.policy('mousedown:200:240','fresh','select')
+  self.assertEqual(self.effects,[])
  def test_single_move_and_prearm(self):
   a.action('one','mousedown:200:240','fresh','select',400)
   self.assertEqual([e['command'].get('cmd') for e in self.effects],['mousedown:200:240',None]);self.assertTrue(c.read('one-release-wait.json')['stdoutEOF']);self.assertFalse(c.read('one-completed.json')['actualGameplayClaim'])
@@ -122,13 +134,18 @@ class Production(p.Production):
   fixture=p.b.R/'sims-install-drop-ack.cjs'
   if not fixture.exists():
    fixture.write_text("const transport=require("+json.dumps(str(ROOT/'lib/control-server'))+");const original=transport.startControlServer;transport.startControlServer=options=>original({...options,onCommand(command){const pending=options.onCommand(command);if(process.env.SIMS_TEST_FAULT!=='drop'||command.cmd!=='mousedown:200:240')return pending;const injected=Promise.resolve(pending).then(()=>new Promise(()=>{}));if(pending?.cancel)injected.cancel=pending.cancel.bind(pending);return injected}});\n")
+  quit_fixture=name=='sims-install-native-menu-quit'
+  if quit_fixture:
+   made=subprocess.run(['node',str(ROOT/'test/test-cli-native-menu-receipt.cjs'),'--make-fixture',str(p.b.R/'menu-quit.exe')],capture_output=True,timeout=10)
+   self.assertEqual(made.returncode,0,made.stderr.decode())
   save=p.b.save
   def recipe(out,key,value):
-   if key=='recipe.json':value={**value,'seconds':240,'args':[value['args'][0],'--require',str(fixture),*[arg.replace('--app=sol','--app=notepad') for arg in value['args'][1:]],'--trace-input-dispatch'],'env':{'SIMS_TEST_FAULT':'drop' if name=='sims-install-unknown' else 'none'}}
+   if key=='recipe.json':value={**value,'seconds':240,'args':[value['args'][0],'--require',str(fixture),*[arg.replace('--app=sol','--exe='+str(p.b.R/'menu-quit.exe') if quit_fixture else '--app=notepad') for arg in value['args'][1:]],'--trace-input-dispatch'],'env':{'SIMS_TEST_FAULT':'drop' if name=='sims-install-unknown' else 'none'}}
+   if key=='recipe.json' and quit_fixture:value['args'].append('--trace-api=ExitProcess,PostQuitMessage,SetTimer,KillTimer')
    return save(out,key,value)
   original=c.bind
   def bind():
-   c.call(dict(action='eval',code="""const children=Object.values(renderer.windows).filter(w=>w.isChild&&w.visible);if(children.length!==1)throw Error('one Notepad EDIT child required');instance.exports.set_focus(children[0].hwnd);for(const [method,kind] of [['handleMouseDown','DOWN'],['handleMouseUp','UP'],['handleMouseMove','MOVE']]){const m=renderer[method];renderer[method]=function(...args){const r=m.apply(this,args);persistenceEffects.push({kind,at:Date.now(),args});return r}};const take=renderer.checkInput;renderer.checkInput=function(...args){const r=take.apply(this,args);if(r)persistenceEffects.push({kind:'DEQUEUE',at:Date.now(),event:{msg:r.msg,hwnd:r.hwnd,key:r.wParam,x:r.mouseX,y:r.mouseY}});return r};true"""))
+   c.call(dict(action='eval',code="""const children=Object.values(renderer.windows).filter(w=>w.isChild&&w.visible);if(children.length===1)instance.exports.set_focus(children[0].hwnd);else if(!renderer.windows[instance.exports.get_main_hwnd()].title.includes('menu Quit fixture'))throw Error('one Notepad EDIT child required');for(const [method,kind] of [['handleMouseDown','DOWN'],['handleMouseUp','UP'],['handleMouseMove','MOVE']]){const m=renderer[method];renderer[method]=function(...args){const r=m.apply(this,args);persistenceEffects.push({kind,at:Date.now(),args});return r}};const take=renderer.checkInput;renderer.checkInput=function(...args){const r=take.apply(this,args);if(r)persistenceEffects.push({kind:'DEQUEUE',at:Date.now(),event:{msg:r.msg,hwnd:r.hwnd,key:r.wParam,x:r.mouseX,y:r.mouseY}});return r};true"""))
    c.capture('submitted');rr=c.read('submitted.json')
    review('submitted',sceneType='installer',exactReleaseReviewed=True,completeBootstrapReviewed=True,nativeTitle=next(w['title'] for w in rr['snapshot']['windows'] if w['hwnd']==rr['snapshot']['mainHwnd']))
    with patch.object(c,'bind',original):a.bind('submitted')
@@ -183,9 +200,33 @@ class Production(p.Production):
    c.capture('menu-before');rr=c.read('menu-before.json')
    review('menu-before','menu',point,sceneType='menu',menuRoute='start')
    a.action('menu-open','mousedown:'+':'.join(map(str,point)),'menu-before','menu',400,'start')
+   receipt=c.read('menu-open-receipt.json');up=c.read('menu-open-up.json')
+   self.assertEqual(receipt['receiptBoundary'],'native-menu-pointer-return')
+   self.assertEqual(receipt['nativeMessage']['kind'],'menu-pointer')
+   self.assertNotIn('msg',receipt['nativeMessage'])  # Menu tracking does not deliver client DOWN.
+   self.assertEqual(up['state'],'ACK');self.assertEqual(up['reason'],'consumed pulse')
    opened=c.call(dict(action='eval',code='({hwnd:instance.exports.menu_open_hwnd(),top:instance.exports.menu_open_top()})'))
    c.save('native-menu-control.json',dict(opened=opened,point=point,fixtureOnly=True));self.assertNotEqual(opened['hwnd'],0);self.assertEqual(opened['top'],0)
   finally:self.finish()
+ def test_actual_native_menu_quit(self):
+  self.start('sims-install-native-menu-quit')
+  try:
+   point=c.call(dict(action='eval',code='(()=>{const e=instance.exports,h=e.get_main_hwnd();return [e.menu_bar_screen_x(h)+18,e.menu_bar_screen_y(h)+8]})()'))
+   c.capture('quit-before');review('quit-before','quit',point,sceneType='menu',quitRoute='select-exit',visibleQuitTarget=True)
+   a.action('native-quit','mousedown:'+':'.join(map(str,point)),'quit-before','quit',120,'select-exit')
+   self.assertEqual(c.read('native-quit-receipt.json')['receiptBoundary'],'native-menu-pointer-return')
+   self.assertEqual(c.read('native-quit-up.json')['state'],'ACK')
+   out,err=self.p.communicate(timeout=10)
+   c.save('fixture-outer-wait.json',dict(pid=self.p.pid,exit=self.p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=out.decode(),stderr=err.decode()))
+   self.assertEqual(self.p.returncode,0)
+   for name in ('native-wait.json','watchdog-wait.json','outer-child-wait.json'):
+    wait=p.b.waitfile(self.out/name);self.assertTrue(wait['actualWait'] and wait['stdoutEOF'] and wait['stderrEOF']);self.assertEqual(wait['exit'],0)
+   self.assertFalse((c.R/'cancel-request.json').exists())
+   log=(c.R/'native.stdout.log').read_text();self.assertIn('ExitProcess',log)
+   c.save('native-quit-proof.json',dict(authoredFixtureOnly=True,normalGuestQuit=True,physicalUpACK=True,hostQuit=False))
+  finally:
+   if self.p.poll() is None:self.finish()  # Failure cleanup is never guest Quit proof.
+   for image in self.out.glob('*.png'):image.unlink()
  def test_actual_single_pointer(self):
   self.start('sims-install-move')
   try:scene();a.action('one','mousedown:200:240','fresh','select',400)
@@ -258,7 +299,12 @@ class Production(p.Production):
    self.assertEqual(child.returncode,0);self.assertEqual(c.read('fallback-up.json')['reason'],'fallback');self.assertTrue(c.read('terminal-input-failure.json')['noReplay'])
   finally:summary=self.finish()
   d=next(e for e in summary['effects'] if e['kind']=='DOWN');u=next(e for e in summary['effects'] if e['kind']=='UP')
-  self.assertGreater(u['at']-d['at'],1500);self.assertLess(u['at']-d['at'],1800)
+  # The fallback is anchored before child startup/HTTP, not to native DOWN.
+  # Slow admission shortens the physical hold; it must not move the fallback.
+  fired=c.read('fallback-up.json')
+  self.assertGreaterEqual(fired['firedAt'],plan['fallbackAt'])
+  self.assertGreaterEqual(u['at'],plan['fallbackAt']*1000)
+  self.assertLess(u['at']-d['at'],1750)
  def test_actual_no_capture_while_held(self):
   self.start('sims-install-capture-order');real=c.capture
   def capture(name):
