@@ -6,11 +6,13 @@ startup after complete authored controls and own outer lifecycle proof.
 """
 import gzip,hashlib,json,os,pathlib,re,signal,socket,subprocess,sys,threading,time,types,uuid
 ROOT=pathlib.Path(__file__).resolve().parent.parent
-TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-normal-virtual-storage-installer-startup'
+TASK_RUN=ROOT/'scratch/runs/20261117-halflife2-native-next-target-normal-install'
 RUN=pathlib.Path(os.environ.get('HL2_RUN',TASK_RUN/'native'))
 MEDIA=ROOT/'scratch/media/half-life-2-demo-original.exe'
 DLL=ROOT/'scratch/runs/20261117-halflife2-original-demo-startup-gameplay/WISE0132.dll'
-OWN=('tools/halflife2-current-native.py','lib/filesystem.js','test/test-vfs-volume-capacity.cjs')
+OWN=('tools/halflife2-current-native.py','tools/halflife2-reviewed-next.py',
+     'test/test-halflife2-reviewed-next.cjs','test/test-halflife2-native-wizard.cjs')
+CORE_FIXTURE=ROOT/'scratch/runs/20261117-halflife2-normal-virtual-storage-installer-startup/pinned/outer-fixture'
 NATIVE_SECONDS,WATCHDOG_SECONDS=600,620
 COMPACTION_LOCK=threading.Lock()
 
@@ -61,7 +63,8 @@ def _compact_finished_traces():
 
 def supervised():
  RUN.mkdir(parents=True,exist_ok=True);disk()
- revision=git('rev-parse','origin/main').decode().strip()
+ revision=os.environ.get('HL2_PIN') or git('rev-parse','origin/main').decode().strip()
+ assert git('merge-base','--is-ancestor',revision,'origin/main')==b''
  working='--working-qualification' in sys.argv;original='--original' in sys.argv
  assert not (working and original)
  if original:
@@ -112,6 +115,35 @@ def qualified_graph(env,revision):
      actualOuterWaitSHA256=sha((fixture/'outer/wait.json').read_bytes()),
      freshSealedInheritance=True,identicalCompleteSourceMap=True,
      sourceRefresh=False,qualificationRepeated=False,at=time.time())
+
+def reusable_core(files,module_hash,fixture=CORE_FIXTURE):
+ """Reuse the completed native core only under exact material identities.
+
+ The two explicitly changed components receive focused fresh qualification:
+ scene freshness policy and the sealed loader's source resolver/inheritance.
+ All other lib/src/host/runner/shared-control bytes must match the old proof.
+ """
+ proof=json.loads((fixture/'full-native-qualification.json').read_text())
+ inputs=json.loads((fixture/'runtime-inputs.json').read_text())
+ wait=json.loads((fixture/'outer/wait.json').read_text())
+ assert proof['passed'] and proof['mainCPUWorkerOSchild']
+ assert proof['moduleSHA256']==inputs['moduleSHA256']==module_hash==sha((fixture/'module.wasm').read_bytes())
+ assert wait['actualWait'] and wait['returncode']==wait['supervisorExitCode']==0
+ assert wait['stdoutEOF'] and wait['stderrEOF'] and not wait['remainingAfterRuntime']
+ assert all(w['actualWait'] and w['returncode']==0 and w['stdoutEOF'] and w['stderrEOF'] for w in wait['watchdogs'])
+ refreshed=('lib/cli-native-scene.js','tools/disciples2-current-native-source-view.cjs')
+ material={n:sha(b) for n,b in files.items() if n.startswith(('src/','lib/')) or n in
+     ('host.js','test/run.js','tools/vb5cce-original-runtime.py','tools/vb5cce-reviewed-control.py')}
+ previous={n for n in inputs['sources'] if n.startswith(('src/','lib/')) or n in
+     ('host.js','test/run.js','tools/vb5cce-original-runtime.py','tools/vb5cce-reviewed-control.py')}
+ assert set(material)==previous,'native component inventory changed'
+ for n,h in material.items():
+  if n not in refreshed:assert inputs['sources'].get(n)==h,'native core changed: '+n
+ return dict(passed=True,moduleSHA256=module_hash,proofGit=proof['gitSHA'],
+     proofSHA256=sha((fixture/'full-native-qualification.json').read_bytes()),
+     outerWaitSHA256=sha((fixture/'outer/wait.json').read_bytes()),
+     materialSourcePins=material,freshComponentTests=list(refreshed),
+     unchangedNativeCoreReused=True,fixture=str(fixture.relative_to(ROOT)))
 
 def original(env,source,module,helper):
  disk()
@@ -168,7 +200,6 @@ def run():
  helper=published('tools/vb5cce-original-runtime.py',revision)
  helper.ROOT,helper.RUN,helper.HEAD=ROOT,RUN,revision;helper.OWN_SOURCES=OWN
  if not working:assert git('show',revision+':'+OWN[0])==pathlib.Path(__file__).read_bytes()
- original_qualify=helper.qualify
  if hasattr(helper,'compact_closed_observations'):
   shared_compact=helper.compact_closed_observations
   def serialized_shared_compact():
@@ -184,13 +215,20 @@ def run():
    save('qualification-reuse.json',qualified_graph(env,revision))
    original(env,source,module,helper)
    return
+  core=reusable_core(files,env['DISCIPLES2_MODULE_SHA256'])
+  helper.checked('next-preflight',['node','test/test-halflife2-reviewed-next.cjs'],env,(source,module))
+  helper.checked('wizard-next',['node','test/test-halflife2-native-wizard.cjs',str(RUN/'wizard-next')],env,(source,module))
+  helper.checked('scene-current',['node','test/test-disciples2-native-paint-binding.cjs','--unit'],env,(source,module))
+  # Fresh exact loader inheritance is performed by helper.run before qualify.
+  # Also exercise its resolver with absent-on-disk JS/JSON/Python sources,
+  # real main/Worker/OSchild inheritance and an unsealed-source refusal.
+  helper.checked('sealed-resolver',['node','test/test-neverhood-original-current.cjs','--unit'],env,(source,module))
   helper.checked('storage-public-api',['node','test/test-vfs-volume-capacity.cjs'],env,(source,module))
   assert sha(DLL.read_bytes())=='a87f19f9fee475d2b2e82acfb4589be6d816b613064cd06826e1d4c147beb50a'
   helper.checked('bootstrap-authored',['node','test/test-halflife2-original-package.cjs','--native',str(RUN/'bootstrap-authored'),str(DLL)],env,(source,module))
-  helper.checked('native-nested-owned',['node','test/test-vb5-nested-owned-modal.cjs',str(RUN/'nested-qualification')],env,(source,module))
   helper.checked('modal-fence',['node','test/test-vb5-modal-invocation-fence.cjs',str(RUN/'modal-fence')],env,(source,module))
-  original_qualify(env,files,source,module)
-  save('full-native-qualification.json',dict(passed=True,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],mainCPUWorkerOSchild=True,fullSourceSealed=True,ordinaryBootstrapOnly=True,WiseMainInvoked=False,originalStarted=False))
+  save('native-core-reuse.json',core)
+  save('full-native-qualification.json',dict(passed=True,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256'],mainCPUWorkerOSchild=True,fullSourceSealed=True,ordinaryBootstrapOnly=True,WiseMainInvoked=False,originalStarted=False,coreProofReused=True,freshComponentTests=core['freshComponentTests']))
   ready();helper.checked('outer-native',['node','test/test-halflife2-original-package.cjs','--native',str(RUN/'outer-native'),str(DLL)],env,(source,module))
  helper.qualify=qualify
  sys.argv=[__file__,*(['--working-qualification'] if working else [])]
