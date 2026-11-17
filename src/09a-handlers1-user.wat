@@ -2237,6 +2237,10 @@
     ;; for ~1,900 batches while it built its eight plant pictures.
     (call $wnd_set_parent (local.get $hwnd) (i32.const 0))
     (call $wnd_set_owner (local.get $hwnd) (local.get $arg2))
+    ;; Seal this invocation before any guest callback. Class/owner/DWL_DLGPROC
+    ;; alone also exist on ordinary and modeless windows and confer no trust.
+    (call $native_dialogbox_begin (local.get $hwnd) (local.get $arg3)
+      (call $gl32 (i32.load offset=16 (global.get $reg_base))))
     (local.set $tmpl_visible
       (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000)))
     (drop (call $wnd_set_style (local.get $hwnd)

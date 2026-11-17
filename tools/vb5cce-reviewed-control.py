@@ -67,7 +67,7 @@ def capture(name):
     except BaseException as e:fail(name,e);raise
 def context(s):
     return {k:s[k] for k in ('mainHwnd','windows','modalHwnd','focus','focusTopLevel','focusWindow',
-                            'capture','physicalUp','nativeProcess','nativeMessageBox','screen')}
+                            'capture','physicalUp','nativeProcess','nativeMessageBox','nativeDialogBox','screen')}
 def review(scene,description,label,kind,target):
     rr=read(scene+'.json')
     assert hashlib.sha256((R/(scene+'.png')).read_bytes()).hexdigest()==rr['pngSHA256']
@@ -85,6 +85,7 @@ def native_review(rr,r):
         reviewed=True,reviewedAt=r['at']*1000,scope='game' if r['kind']=='game' else 'menu',targetHwnd=r['targetHwnd'])
 def bind(scene):
     try:
+        assert not read('launch.json').get('passiveDiagnostic'),'passive diagnostic forbids binding'
         reserve();assert not (R/'input-owner.json').exists()
         rr,r=reviewed(scene)
         save('bind-intent.json',dict(scene=scene,at=time.time(),permanent=True))
@@ -137,6 +138,7 @@ class ArmedRelease:
 def intent(name,scene,x,y,kind):
     child=None
     try:
+        assert not read('launch.json').get('passiveDiagnostic'),'passive diagnostic forbids input'
         launch=reserve(kind=='quit');rr,r=reviewed(scene)
         assert kind in ('install','game','quit') and r['kind']==kind
         if kind!='quit':assert not (R/'quit-phase.json').exists() and time.time()+3<launch['gameplayCutoff']

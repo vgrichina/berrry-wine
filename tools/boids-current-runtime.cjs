@@ -20,14 +20,29 @@ function compile(files){
 function installObserver(root,name){
   const api=root[name];if(!api?.Executor||api.Executor.prototype.__boidsObserved)return;
   const p=api.Executor.prototype,original=p.execute;p.__boidsObserved=true;
-  const trace=root.__boidsPublicTrace={kind:'public-gpu-stream-records',executor:name,counts:{},frames:[],pending:[],dropped:0,bytes:0};
+  const traces=root.__boidsPublicTraces||(root.__boidsPublicTraces={});
+  const trace=traces[name]={kind:'public-gpu-stream-records',executor:name,counts:{},frames:[],pending:[],dropped:0,bytes:0};
   p.execute=function(rec){
+    root.__boidsPublicTrace=trace;
     try{trace.counts[rec.name]=(trace.counts[rec.name]||0)+1;
       if(trace.pending.length<512&&trace.bytes<2097152){const row={name:rec.name,seq:rec.seq,fields:{...rec.fields},inputs:[]};for(const r of rec.refs||[])if(r.input){const b=rec.arena(r.pos,r.len);if(b.length+trace.bytes>2097152){trace.dropped++;continue;}row.inputs.push({pos:r.pos,bytes:Array.from(b)});trace.bytes+=b.length;}trace.pending.push(row);}else trace.dropped++;
     }catch(e){trace.error=String(e);}
     const result=original.call(this,rec);
     if(rec.name==='PRESENT'){trace.frames.push({at:Date.now(),records:trace.pending,stats:this.stats?.()});if(trace.frames.length>2)trace.frames.shift();trace.pending=[];trace.bytes=0;}
     return result;
+  };
+}
+// Observe only arguments and completed public presentation calls. No readback,
+// guest call, repaint, ownership mutation or extra presentation is performed.
+function installPresentationObserver(root){
+  const p=root.GpuStreamHost?.Presenter?.prototype;if(!p||p.__boidsObserved)return;
+  p.__boidsObserved=true;const original=p.present;
+  const trace=root.__boidsPresentationTrace={count:0,rows:[],errors:0};
+  p.present=function(frame){
+    const row={at:Date.now(),hwnd:frame.hwnd,width:frame.width,height:frame.height,stamp:frame.stamp,dstX:frame.dstX,dstY:frame.dstY,bitmap:!!frame.bitmap,surface:!!frame.surface,before:this.presents};
+    try{const result=original.call(this,frame);row.after=this.presents;row.stale=this.stale;row.window=this.win?.hwnd;row.writeSeq=this.layer?.writeSeq;return result;}
+    catch(error){row.error=String(error);trace.errors++;throw error;}
+    finally{trace.count++;if(trace.rows.length===64)trace.rows.shift();trace.rows.push(row);}
   };
 }
 function selectWindow(w){
@@ -48,4 +63,4 @@ function installSoftwareObserver(root){
     };return adapter;
   };
 }
-module.exports={gitFiles,compile,installObserver,selectWindow,installSoftwareObserver};
+module.exports={gitFiles,compile,installObserver,selectWindow,installSoftwareObserver,installPresentationObserver};

@@ -4735,6 +4735,7 @@ async function main() {
 
   // --- Override input for test injection ---
   let lastInputEvent = null;
+  let guardedInput = null;
   h.check_input = () => {
     if (mainSchedulerObserver) mainSchedulerObserver.hostInput();
     let evt = null;
@@ -4772,6 +4773,13 @@ async function main() {
     lastInputEvent = evt;
     if (renderer) renderer._activeInputEvent = evt;
     inputConsumptionTrace.dequeue(evt, source);
+    // A host handler may have queued DOWN long before USER polls it. Only
+    // this actual input import return can acknowledge the matching edge.
+    if (guardedInput?.delivered(evt) === false) {
+      lastInputEvent = null;
+      if (renderer) renderer._activeInputEvent = null;
+      return 0;
+    }
     const packed = (evt.wParam << 16) | (evt.msg & 0xFFFF);
     logs.push(`[check_input] msg=0x${evt.msg.toString(16)} wParam=0x${evt.wParam.toString(16)} lParam=0x${(evt.lParam >>> 0).toString(16)} packed=0x${packed.toString(16)}`);
     return packed;
@@ -7620,6 +7628,7 @@ async function main() {
           threadId: we.get_window_thread(h) >>> 0, controlClass: 16 };
       })(),
       physicalUp: !(renderer?._mouseButtonsMask || Object.values(renderer?._physicalKeys || {}).some(Boolean)),
+      nativeDialogBox: require('../lib/cli-native-user-windows').nativeDialogBoxIdentity(instance,threadManager),
       nativeProcess: { pid: process.pid, executable: EXE_PROCESS_GUEST_PATH || EXE_PATH },
       screen: renderer && renderer.canvas
         ? { w: renderer.canvas.width | 0, h: renderer.canvas.height | 0 } : null,
@@ -7705,7 +7714,12 @@ async function main() {
   const sameReviewedWindow = (a, b) => a && b &&
     ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
       .every(k => a[k] === b[k]);
-  const guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
+  guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
+    nativeDelivery: true,
+    captureNativeControl: (event,intent) => require('../lib/cli-native-user-windows').captureNativeButton(event,intent,controlSnapshot(),instance,threadManager),
+    confirmNativeControl: (fence,event) => require('../lib/cli-native-user-windows').confirmNativeButton(fence,event),
+    captureDelivery: () => nativeScene.reviewedContext(controlSnapshot()),
+    validateDelivery: expected => JSON.stringify(nativeScene.reviewedContext(controlSnapshot())) === JSON.stringify(expected),
     validateIntent: intent => {
       if (!nativeSceneLease) return true;
       if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {
@@ -7724,13 +7738,23 @@ async function main() {
       return true;
     },
     snapshot: () => {
-      const current = cliInputSnapshot();
+      let current = cliInputSnapshot();
       if (nativeSceneLease) {
         const s=controlSnapshot(), main=reviewedWindow(s,s.mainHwnd);
-        current.healthy=current.healthy && sameReviewedWindow(main,nativeSceneLease.main) &&
+        const mainlessReview=nativeSceneContract===nativeScene.REVIEWED_CONTEXT &&
+          nativeSceneLease.mainHwnd==='0x0' && nativeSceneLease.main===null;
+        if(mainlessReview)current=nativeScene.reviewedProcessOwner(current,nativeSceneLease,instance,threadManager);
+        // A retained no-main MessageBox review binds the real process/thread.
+        // Its HWNDs and any subsequently created main still undergo the full
+        // per-intent capture/consume check; no modal is substituted as main.
+        const ownerWindow=mainlessReview
+          ? s.focusWindow.processId===nativeSceneLease.focusWindow.processId &&
+            s.focusWindow.threadId===nativeSceneLease.focusWindow.threadId
+          : sameReviewedWindow(main,nativeSceneLease.main);
+        current.healthy=current.healthy && ownerWindow &&
           JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
           JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
-        current.refs.nativeSceneMainGeneration=main?.generation;
+        current.refs.nativeSceneMainGeneration=mainlessReview?null:main?.generation;
       }
       if (reviewedSceneLease) {
         const s = controlSnapshot(), lease = reviewedSceneLease;

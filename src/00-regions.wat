@@ -152,6 +152,8 @@
     (owner "09c0-window-table.wat:$menu_data_reset_slot"))
   (region.declare $WND_DLG_RECORDS (size 0x00002000) (align 0x00000010)
     (owner "01-header.wat:$WND_DLG_RECORDS"))
+  (region.declare $NATIVE_DIALOGBOX_IDENTITIES (size 0x00002000) (align 0x00000010)
+    (owner "13-exports.wat:$native_dialogbox_begin"))
   ;; Four dwords of cross-instance waveOut identity in the 16-byte hole
   ;; between WND_DLG_RECORDS and SCROLL_TABLE. Declared rather than spelled
   ;; (region.end $WND_DLG_RECORDS): it is its own object, and an adjacency is

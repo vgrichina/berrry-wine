@@ -4,8 +4,13 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const {installObserver,selectWindow,installSoftwareObserver}=require('../tools/boids-current-runtime.cjs');
 const seen=[];class Executor{execute(r){seen.push(r);if(r.fail)throw Error('native failure');return 731;}stats(){return {draws:seen.length};}}
 const root={Fake:{Executor}};installObserver(root,'Fake');installObserver(root,'Fake');const e=new Executor();
+// Loading another executor must not hide records from the active executor.
+class OtherExecutor{execute(){return 12;}}
+root.Other={Executor:OtherExecutor};installObserver(root,'Other');
 const data=new Uint8Array([1,2,3]);const record={name:'DRAW_UP',seq:1,fields:{count:3},refs:[{input:true,pos:0,len:3}],arena:()=>data};
 assert.equal(e.execute(record),731);data[0]=99;record.fields.count=9;
+assert.equal(root.__boidsPublicTrace,root.__boidsPublicTraces.Fake);
+assert.equal(root.__boidsPublicTraces.Other.executor,'Other');
 assert.deepEqual(root.__boidsPublicTrace.pending[0].inputs[0].bytes,[1,2,3]);assert.equal(root.__boidsPublicTrace.pending[0].fields.count,3);
 assert.throws(()=>e.execute({...record,fail:true}),/native failure/);
 const present={name:'PRESENT',seq:2,fields:{},refs:[]};for(let i=0;i<3;i++)e.execute(present);assert.equal(root.__boidsPublicTrace.frames.length,2);
@@ -27,6 +32,7 @@ async function driverControls(){
     const instance={},win={hwnd:71,visible:true,w:32,h:32,processId:1000,wasm:instance},renderer={windows:{},_currentDisplayRecord:{windows:[{window:new WeakRef(win)}]}};
     let requests=0,cancelled=0;
     const w={instance,processId:1000,renderer,running:true,requestCurrentDisplayCapture(){requests++;return {status,error:'authored control',cancel(){cancelled++;},read(){return {metadata:{observation:'current-display',captureOwner:{hwnd:71,processId:1000},readbackCompletedAt:Date.now(),source:{width:1,height:1},output:{width:1,height:1}},sourceRGBA:new Uint8Array(4),outputRGBA:new Uint8Array(4)};}};}};
+    w._renderWorkerManager={ports:new Map([[1,{id:1,closed:false}]]),_failure:null};w.hostCtx={d3dimBridge:{device:{},stats:{records:1}}};
     const context=vm.createContext({runningApps:[{name:'selected',wine:w}],Date,setTimeout,innerWidth:32,innerHeight:32,btoa:s=>Buffer.from(s,'binary').toString('base64')});
     const install=(app='selected',ms=500)=>vm.runInContext('('+installDriver.toString()+')(globalThis,'+JSON.stringify({app,mode:'coop',deadline:Date.now()+ms})+')',context);
     install();return {context,w,win,renderer,install,get requests(){return requests;},get cancelled(){return cancelled;}};
@@ -34,7 +40,7 @@ async function driverControls(){
   const delayed=setup();setTimeout(()=>{delayed.renderer.windows[71]=delayed.win;},35);
   const before=Date.now();await delayed.context.__boidsDriver.ready();assert(Date.now()-before>=30);
   assert.equal((await delayed.context.__boidsDriver.capture()).metadata.captureOwner.hwnd,71);
-  for(const fault of ['absent','wrong-process','wrong-instance','replaced-window','replaced-renderer','stopped']){
+  for(const fault of ['absent','wrong-process','wrong-instance','replaced-window','replaced-renderer','stopped','failed','closed','retired','lost']){
     const f=setup();f.renderer.windows[71]=f.win;await f.context.__boidsDriver.ready();
     if(fault==='absent')delete f.renderer.windows[71];
     if(fault==='wrong-process')f.win.processId++;
@@ -42,6 +48,10 @@ async function driverControls(){
     if(fault==='replaced-window')f.renderer.windows[71]={...f.win};
     if(fault==='replaced-renderer')f.w.renderer={...f.renderer};
     if(fault==='stopped')f.w._stopped=true;
+    if(fault==='failed')f.w._renderWorkerManager._failure=Error('failed native manager');
+    if(fault==='closed')f.w._renderWorkerManager.ports.get(1).closed=true;
+    if(fault==='retired')f.w._renderWorkerRetired=true;
+    if(fault==='lost')f.w.hostCtx.d3dimBridge.workerAsyncError=Error('lost native stream');
     await assert.rejects(f.context.__boidsDriver.capture());assert.equal(f.requests,0,fault);
   }
   for(const status of ['failed','UNKNOWN','cancelled']){
@@ -67,3 +77,14 @@ async function driverControls(){
   console.log('PASS shared exact driver delayed window, absent/wrong/replaced owners, failed/UNKNOWN/pending, fixed deadlines and sticky refusal');
 }
 driverControls().catch(e=>{console.error(e);process.exitCode=1;});
+// The passive presenter observer preserves errors/returns and bounds storage.
+{
+  const {installPresentationObserver}=require('../tools/boids-current-runtime.cjs');
+  class Presenter{constructor(){this.presents=0;this.stale=0;}present(f){if(f.fail)throw Error('present failed');this.presents++;return 19;}}
+  const root={GpuStreamHost:{Presenter}};installPresentationObserver(root);installPresentationObserver(root);const p=new Presenter();
+  const f={hwnd:1,width:2,height:2,stamp:1};
+  assert.equal(p.present(f),19);assert.deepEqual(f,{hwnd:1,width:2,height:2,stamp:1});
+  assert.throws(()=>p.present({...f,fail:true}),/present failed/);
+  for(let i=0;i<100;i++)p.present(f);
+  assert.equal(root.__boidsPresentationTrace.rows.length,64);assert.equal(root.__boidsPresentationTrace.count,102);assert.equal(root.__boidsPresentationTrace.errors,1);
+}

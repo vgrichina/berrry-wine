@@ -28,6 +28,7 @@ def native_review(rr,personal):
                 reviewed=True,reviewedAt=personal['at']*1000,scope=personal['scope'],targetHwnd=personal['targetHwnd'])
 def confirm_receipt(receipt,guard,review_deadline):
     assert receipt['state']=='CONSUMED' and receipt['consumed'],receipt
+    assert receipt.get('receiptBoundary')=='native-input-return' and receipt.get('nativeMessage'),'host admission is not native delivery'
     assert all(receipt.get(k)==guard[k] for k in ('owner','epoch','nonce','deadline')),'input receipt identity changed'
     consumed=receipt.get('consumedAt')
     assert isinstance(consumed,(int,float)) and 0<consumed<min(guard['deadline'],review_deadline*1000),'native consumption crossed immutable target freshness/deadline'

@@ -35,6 +35,13 @@
       "baseSHA256": "deb6b1b6bd417cac7007c7f27748ad117729349a9c5fb64e2237dca4ccb99bd5",
       "sha256": "cbdca7ed6ecce5d26002c13b42a613e3637c9c5ecd4a95e8c9c6b0670f138ca0",
       "reason": "Sims native child waits use an external monotonic deadline and yield the host loop without changing guest clocks. COM automatic roots are consumed under the existing loader lock before callbacks; normal roots, pins and generation retirement stay authoritative. Pending automatic-load intent is captured once before nested initializers. Existing synchronous, asynchronous and scoped unload paths share the operation snapshot; nested cleanup cannot consume outer intents twice. Broader invocation ownership remains pending; native lifecycle qualification is required."
+    },
+    {
+      "file": "src/09a-handlers1-user.wat",
+      "name": "$handle_DialogBoxParamA",
+      "baseSHA256": "6ab4c8eb1ba74c919323924e51e6e3091868946ddeea36905feff099644125c6",
+      "sha256": "c08da8f4c33135fea46a3ff44ad4edaa4310b5bd16099bc7e52dae12522726ba",
+      "reason": "Capture an immutable native USER generation, process/thread, owner, callback and return site after template creation and before guest WM_INITDIALOG. Read-only observation requires the executing actor active pump, unchanged callback/return site, live generation and no EndDialog. Existing guest stack nesting, callback frames, return cleanup and general invocation ownership remain unchanged/pending. Native x86 DialogBox tests qualify this observation separately."
     }
   ],
   "additions": [
