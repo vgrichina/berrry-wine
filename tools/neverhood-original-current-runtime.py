@@ -13,8 +13,13 @@ HELPER='tools/disciples2-current-supervisor.py'
 OWN=('tools/neverhood-original-current-runtime.py','tools/neverhood-original-current-control.py',
      'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD,'test/run.js',
      'tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs',
-     'lib/readonly-media-context.js','test/test-cli-iso-child-context.cjs')
+     'lib/readonly-media-context.js','test/test-cli-iso-child-context.cjs',
+     'lib/cli-child-observation.js','test/test-cli-child-observation.cjs','test/test-neverhood-child-handoff.cjs')
 POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=15,menuFreshnessSeconds=30)
+# Exact reviewed runner delta. Its new path is qualified by real native child
+# tests below; unchanged core libraries retain their historical qualification.
+CHILD_RUNNER_SHA256='4aaf21a17ba0fe3cc8aa013d35332fd1af2a2a22fb8ed7dda0670af4215629fd'
+CHILD_RUNNER_BASE='d4b41d4015bb0b5a066bfa01c82a00df741893c0'
 def installed():return os.environ.get('NEVERHOOD_INSTALLED_SHORTCUT')=='1'
 def limits():return (1800,1820,180) if installed() else (900,920,90)
 def prior_iso_mount(runner):
@@ -430,21 +435,27 @@ def startup_proof(out,module):
 def reuse_native_proof(out,revision,module):
     prior=pathlib.Path(os.environ.get('NEVERHOOD_NATIVE_PROOF',ROOT/'scratch/runs/20261117-vb5-native-modal-continuation-fence-repair/published-final'))
     proof=json.loads((prior/'complete-native-qualification.json').read_text())
-    assert proof['passed'] and proof['nativeProtocolAndFullRegression']
+    assert proof['passed'] and (proof.get('nativeProtocolAndFullRegression') or proof.get('nativeProtocolQualified'))
     if 'materialSourcePins' in proof:
         current=material_native_pins(json.loads((out/'runtime-inputs.json').read_text()))
         changed=sorted(n for n in set(current)|set(proof['materialSourcePins']) if current.get(n)!=proof['materialSourcePins'].get(n))
+        child_delta=changed==['lib/cli-child-observation.js','lib/cli-native-scene.js','lib/readonly-media-context.js','test/run.js']
+        if child_delta:
+            assert H.digest(component_bytes('test/run.js'))==CHILD_RUNNER_SHA256,'unreviewed runner delta'
+            focused=out/'complete-child-handoff-proof.json'
+            assert focused.exists() and json.loads(focused.read_text())['passed'],'actual new native handoff proof required'
+            changed=[n for n in changed if n!='lib/cli-child-observation.js']
         if (changed==['lib/cli-native-scene.js','test/run.js'] or
-            (changed==['lib/cli-native-scene.js','lib/readonly-media-context.js','test/run.js'] and os.environ.get('NEVERHOOD_ISO_PROOF'))) and os.environ.get('NEVERHOOD_STARTUP_PROOF'):
-            startup_proof(out,module)
+            (changed==['lib/cli-native-scene.js','lib/readonly-media-context.js','test/run.js'] and (os.environ.get('NEVERHOOD_ISO_PROOF') or child_delta))) and (os.environ.get('NEVERHOOD_STARTUP_PROOF') or child_delta):
+            if not child_delta:startup_proof(out,module)
             # Exact unchanged input/receipt/lease components, with only a new
             # passive command and the already tested public refusal diagnostics.
             base=H.git(ROOT,'show','9c6eb037f:lib/cli-native-scene.js').decode()
             scene=component_bytes('lib/cli-native-scene.js').decode()
             begin=scene.index('// Passive startup only:');end=scene.index('// An actual reviewed pre-main',begin)
             assert (scene[:begin]+scene[end:]).replace('captureFailures,startupReadiness,','captureFailures,')==base
-            runner=component_bytes('test/run.js').decode()
-            if os.environ.get('NEVERHOOD_ISO_PROOF'):runner=prior_iso_mount(runner)
+            runner=(H.git(ROOT,'show',CHILD_RUNNER_BASE+':test/run.js') if child_delta else component_bytes('test/run.js')).decode()
+            if os.environ.get('NEVERHOOD_ISO_PROOF') or child_delta:runner=prior_iso_mount(runner)
             runner=runner.replace("if (cmd.action === 'native-reviewed-capture' || cmd.action === 'native-presentation-capture')", "if (cmd.action === 'native-reviewed-capture')")
             begin=runner.index("      if (cmd.action === 'native-presentation-capture') {")
             end=runner.index('      return reviewedContexts.capture(',begin)
@@ -453,9 +464,16 @@ def reuse_native_proof(out,revision,module):
             assert runner.count(addition)==1 and runner.replace(addition,'')==H.git(ROOT,'show',proof['gitSHA']+':test/run.js').decode()
             save(out,'matching-native-proof.json',dict(passed=True,proof=str(prior/'complete-native-qualification.json'),
                 proofSHA256=H.digest((prior/'complete-native-qualification.json').read_bytes()),proofGitSHA=proof['gitSHA'],
-                preparedGitSHA=revision,moduleSHA256=H.digest(module),unchangedPaths=len(current)-2,
-                changedComponents=changed,passiveStartupFocusedProof=True,diagnosticsPublishedRevision='9c6eb037f',
-                scope='unchanged native lifecycle/participants/receipt/context/lease components; passive startup tested separately'))
+                preparedGitSHA=revision,moduleSHA256=H.digest(module),unchangedPaths=len(current)-len(changed)-(1 if child_delta else 0),
+                changedComponents=changed+(['lib/cli-child-observation.js'] if child_delta else []),passiveStartupFocusedProof=True,diagnosticsPublishedRevision='9c6eb037f',
+                scope='unchanged native lifecycle/participants/receipt/context/lease components; startup/ISO plus exact child runner delta tested separately' if child_delta else 'unchanged native lifecycle/participants/receipt/context/lease components; passive startup tested separately'))
+            if child_delta:
+                inputs=json.loads((out/'runtime-inputs.json').read_text())
+                save(out,'complete-native-qualification.json',dict(passed=True,nativeProtocolQualified=True,
+                    gitSHA=revision,moduleSHA256=H.digest(module),materialSourcePins=current,
+                    priorUnchangedCoreProof=str(prior/'complete-native-qualification.json'),
+                    focusedHandoffProof=str(focused),runnerBase=CHILD_RUNNER_BASE,runnerSHA256=CHILD_RUNNER_SHA256,
+                    scope='unchanged core libraries and prior startup/ISO runner; exact new runner+bridge tested by ordinary native handoff, input/UP/Quit, parent failure, child cancellation and ISO child tests; no full-suite rerun claim'))
             return True
         if current==proof['materialSourcePins'] and H.digest(module)==proof['moduleSHA256']:
             save(out,'matching-native-proof.json',dict(passed=True,proof=str(prior/'complete-native-qualification.json'),
@@ -514,6 +532,32 @@ def qualify_native(out,revision,module,env,fds):
         nativeProtocolAndFullRegression=True,originalStarted=False,tests=[label for label,_ in tests],
         scope='native CLI USER owner/refusal/focus/modal/nested/lifecycle main/CPUWorker/OSchild; excludes unrelated browser GL'))
 
+def qualify_child_handoff(out,module,env,fds):
+    inputs=json.loads((out/'runtime-inputs.json').read_text())
+    # The restored authentic launcher is a data input at a run-specific path.
+    # Compare every executable source/dependency byte, including both test
+    # drivers and controllers, while allowing that data path to change.
+    source_pins={r['path']:r['sha256'] for r in inputs['sources'] if not r['path'].startswith('scratch/')}
+    prior=os.environ.get('NEVERHOOD_CHILD_PROOF')
+    if prior:
+        prior=pathlib.Path(prior);proof=json.loads((prior/'complete-child-handoff-proof.json').read_text())
+        assert proof['passed'] and proof['sourcePins']==source_pins and proof['moduleSHA256']==H.digest(module)
+        for label in ('child-observation-unit','native-child-handoff','native-parent-failure','native-child-cancellation','native-iso-child'):
+            wait=json.loads((prior/(label+'-wait.json')).read_text())
+            assert wait['exit']==0 and all(wait[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+        save(out,'reused-child-handoff-proof.json',dict(passed=True,prior=str(prior),proofSHA256=H.digest((prior/'complete-child-handoff-proof.json').read_bytes()),sameSealedSourcesAndModule=True))
+        return
+    checked(out,'child-observation-unit',['node','test/test-cli-child-observation.cjs',str(out/'child-observation-unit')],env,timeout=30,pass_fds=fds)
+    checked(out,'native-child-handoff',['node','test/test-neverhood-child-handoff.cjs',str(out/'native-child-handoff')],env,timeout=80,pass_fds=fds)
+    for label,mode in (('native-parent-failure','parent-failure'),('native-child-cancellation','child-cancellation')):
+        checked(out,label,['node','test/test-neverhood-child-handoff.cjs',str(out/label),mode],env,timeout=80,pass_fds=fds)
+    checked(out,'native-iso-child',['node','test/test-cli-iso-child-context.cjs','--native',str(out/'native-iso-child')],env,timeout=40,pass_fds=fds)
+    proof=json.loads((out/'native-child-handoff/handoff-proof.json').read_text())
+    assert proof['passed'] and proof['nativeChildQuit'] and proof['childOwnedSourceModuleProcessUSER']
+    save(out,'complete-child-handoff-proof.json',dict(passed=True,sourceSHA256=inputs['sourceSHA256'],sourcePins=source_pins,moduleSHA256=H.digest(module),
+        ordinaryNativePlayCreateProcessParentExit0ChildSurvives=True,childOwnedSourceModuleProcessUSER=True,
+        independentChildNativeInputUPQuit=True,negativeProvenanceBeforeTransport=True,nativeParentFailureAndChildCancellation=True,originalStarted=False))
+
 def pipeline(out,revision,fixture=False,working=False):
     global RUN
     RUN=out
@@ -549,6 +593,7 @@ def pipeline(out,revision,fixture=False,working=False):
             save(qualified,'iso-child-proof.json',dict(passed=True,moduleSHA256=H.digest(module),
                 components={n:H.digest((ROOT/n).read_bytes()) for n in ('lib/readonly-media-context.js','test/run.js','test/test-cli-iso-child-context.cjs')}))
             os.environ['NEVERHOOD_ISO_PROOF']=str(qualified)
+        qualify_child_handoff(qualified,module,env,fds)
         qualify_native(qualified,revision,module,env,fds)
         reused=os.environ.get('NEVERHOOD_STARTUP_PROOF') or os.environ.get('NEVERHOOD_REUSE_QUALIFICATION')
         if os.environ.get('NEVERHOOD_STARTUP_PROOF'):

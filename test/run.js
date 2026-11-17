@@ -172,6 +172,7 @@ const NO_BUILD = hasFlag('no-build') || !!ENV_WASM; // --no-build: skip auto-bui
 const NO_CLOSE = hasFlag('no-close');      // --no-close: don't inject WM_CLOSE
 const recordNativeExit = require('../lib/cli-native-scene').createNativeExitRecorder(
   getArg('native-exit-receipt',null),getArg('native-invocation-token',null));
+let childObservation = null;
 const CLI_NATIVE_OBSERVATION = hasFlag('cli-native-observation');
 if (CLI_NATIVE_OBSERVATION) require('../lib/cli-observation-lease').validateObservationArgs(args);
 const NO_RENDERER = hasFlag('no-renderer'); // --no-renderer: skip CLI canvas/renderer (guest-state diagnostics)
@@ -3027,6 +3028,11 @@ async function main() {
   // callbacks. Never broker a Worker COM callback through this local CPU.
   process.env.WINE_PROCESS_DESKTOP = JSON.stringify(processDesktop.endpoint);
   process.env.WINE_COM_MODULE_SHA256 = require('node:crypto').createHash('sha256').update(wasmBytes).digest('hex');
+  childObservation = new (require('../lib/cli-child-observation').ChildObservation)({
+    moduleBytes:wasmBytes,runner:__filename,executable:EXE_PATH,
+    guestExe:EXE_PROCESS_GUEST_PATH || EXE_PATH,port:CONTROL ? CONTROL_PORT : null,
+    envelope:getArg('native-child-envelope',null),
+  });
   const { ComInterfaceRuntime, comRuntimeSourcePin } = require('../lib/com-interface-runtime');
   ctx.comInterfaces = new ComInterfaceRuntime({
     getExports: () => ctx.exports, getMemory: () => memory.buffer, desktop: processDesktop,
@@ -4083,6 +4089,7 @@ async function main() {
 
   // --- Override exit to also log ---
   h.exit = code => {
+    childObservation.exit(code);
     recordNativeExit(code);
     processDesktop.retire();
     hostExitRequested = true;
@@ -4345,9 +4352,18 @@ async function main() {
         // and on down the tree: instmsi's msiexec is a grandchild.
         ...(PIPE_CHILD_ARGS.length ? [`--pipe-child-args=${PIPE_CHILD_ARGS.join(' ')}`] : []),
       ];
+      const observation = childObservation.prepare(guestExe,exeRow.outputPath,{
+        processId:instance.exports.get_process_id()>>>0,threadId:instance.exports.get_current_thread_id()>>>0});
+      if (observation) {
+        // Observation options are parent-owned, never supplied via guest args
+        // or forwarded to unrelated grandchildren through pipe-child-args.
+        for(let i=args.length-1;i>=0;i--)if(args[i].startsWith('--native-child-envelope='))args.splice(i,1);
+        args.push('--native-child-envelope='+JSON.stringify(observation));
+      }
       const { fork } = require('child_process');
       const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: processDesktop.environment(ThreadManager.namedEventEnvironment()) });
       const pid = nextChildPid();
+      childObservation.forked(child,observation,pid);
       relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
       pipeChildren.push(child);
       pipeChildClosures.push(new Promise(resolve => child.once('close', resolve)));
@@ -5344,6 +5360,7 @@ async function main() {
     process.on(sig, () => {
       if (signalExitStarted) return;
       signalExitStarted = true;
+      childObservation?.fail('host cancellation: '+sig);
       recordNativeExit.cancel(sig);
       terminationSignal = sig;
       console.log(`[signal] ${sig} requested orderly shutdown`);
@@ -7783,6 +7800,8 @@ async function main() {
   };
   const executeControlCommand = (cmdIn) => {
     const cmd = typeof cmdIn === 'string' ? { cmd: cmdIn } : (cmdIn || {});
+    if (stopped && childObservation.begun && cmd.action !== 'guarded-release')
+      throw new Error('launcher guest retired; only prearmed physical release is admitted');
     if (cmd.action === 'fault-status') return nativeFault.status();
     if (cmd.action === 'fault-arm') {
       if (!controlFrozen || workerThreadHost || threadManager.workerBackend)
@@ -7822,7 +7841,9 @@ async function main() {
         reviewedSceneBindAttempted=true;
         const verified=reviewedContexts.verify(controlSnapshot(),cmd.reviewedScene);
         nativeSceneLease=verified.context; nativeSceneContract=verified.contract;
-        return {...guardedInput.bind(),contract:nativeSceneContract};
+        const binding=guardedInput.bind();
+        childObservation.bind(binding);
+        return {...binding,contract:nativeSceneContract};
       }
       if (cmd.reviewedScene?.route === 'native-scene-v1') {
         reviewedSceneBindAttempted=true;
@@ -7868,6 +7889,12 @@ async function main() {
       }
       return guardedInput.bind();
     }
+    if (cmd.action === 'native-child-arm') {
+      const verified=reviewedContexts.verify(controlSnapshot(),cmd.reviewedScene);
+      return childObservation.arm(cmd,verified,controlSnapshot());
+    }
+    if (cmd.action === 'native-child-attest')
+      return childObservation.attest(cmd,nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager));
     if (cmd.action === 'native-startup-readiness')
       return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
@@ -7901,6 +7928,7 @@ async function main() {
         cmd.guard={...cmd.guard,intent:{review:cmd.guard?.intent?.review,event:{action:ev.action,code:ev.code,charCode:ev.charCode,x:ev.x,y:ev.y},nonce:cmd.guard?.nonce}};
       }
       const ticket = guardedInput.prepare(cmd.guard, ev);
+      childObservation.begin(cmd.guard);
       if (ticket.state === 'QUEUED') {
         ev.guardedTicket = ticket;
         let at = scheduledInput.findIndex(e => e.batch > ev.batch);
@@ -8080,6 +8108,7 @@ async function main() {
       port: CONTROL_PORT, host: CONTROL_HOST,
       onCommand: handleControlCommand, log: line => console.log(line),
     }) : null;
+    if (server) server.server.once('listening',()=>childObservation.ready());
     if (CONTROL_STDIN) {
       const rl = require('readline').createInterface({ input: process.stdin, terminal: false });
       let stdinCommands = Promise.resolve();
@@ -11882,6 +11911,7 @@ if (VERBOSE) {
   }
   // The control server would otherwise hold the process open; unref lets a
   // reply resolved in the final batch still flush while the exit path prints.
+  await childObservation.drainRelease();
   closeControl();
   if (cpuProf && cpuProf.session) await cpuProf.stop(MAX_BATCHES);
   // Once D3DIM opened its ring (an app that never drew prints nothing).
@@ -13329,6 +13359,7 @@ if (VERBOSE) {
 }
 
 main().catch(async e => {
+  childObservation?.fail('runner error: '+e.message);
   recordNativeExit.cancel('runner error');
   process.exitCode = process.exitCode || 1;
   console.error(e);

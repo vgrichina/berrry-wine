@@ -110,6 +110,9 @@ if(process.argv[2]==='--installed-provenance'){
 }
 if(process.argv[2]==='--unit'){
  const code=`import importlib.util,pathlib,tempfile,os,json,time,hashlib
+# This unit constructs the installer profile's 900/920/90 recipe. An outer
+# installed-shortcut qualification must not silently select a different unit.
+os.environ.pop('NEVERHOOD_INSTALLED_SHORTCUT',None)
 os.environ.update(NEVERHOOD_CURRENT_RUN='/unused',NEVERHOOD_CURRENT_PORT='1')
 s=importlib.util.spec_from_file_location('control','tools/neverhood-original-current-control.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 w=dict(hwnd='0x123',live=True,visible=True,generation='1',processId=1,threadId=1,isChild=True,controlClass=1,style=0x50000000,nativeTextAvailable=True,textBytes='4f4b',title='OK',parent='0x100',buttonFlags=0)
@@ -454,7 +457,7 @@ async function main(){
             assert(fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')));
             assert(!fs.existsSync(path.join(run,'press0-after.png')),'unpresented modal must never be captured');
             const ledger=fs.readFileSync(path.join(run,'requests.jsonl'),'utf8');
-            assert.equal(ledger.trim().split('\n').map(JSON.parse).filter(r=>r.action==='native-reviewed-capture').length,1);
+            assert.equal(ledger.trim().split('\n').map(JSON.parse).filter(r=>r.action==='native-presentation-capture').length,1);
             await controller(['capture','after-unknown'],1);
             assert.equal(fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'),ledger,'UNKNOWN sends no later HTTP');
             assert.equal(visibility.restored,false);save(mode+'-timeout.json',{nativePendingObserved:true,noInvalidCapture:true,independentPhysicalUp:true,permanentUNKNOWN:true,laterRequests:0});break;
