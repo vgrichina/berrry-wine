@@ -10,7 +10,7 @@ function publishJSON(file,value){
  try{fs.writeFileSync(fd,JSON.stringify(value,null,2)+'\n');fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
  fs.linkSync(pending,file);fs.unlinkSync(pending);
 }
-function fixture({modeless=false,fake=false,indirect=false}={}){
+function fixture({modeless=false,fake=false,indirect=false,nestedBox=false}={}){
  const b=require('./test-sims-child-mount-native.cjs').untitledModal();
  // Additional ordinary imports; no runtime export/handler shortcut.
  const names=['RegisterClassA','DefWindowProcA','CreateWindowExA','MessageBoxA',indirect?'DialogBoxIndirectParamA':'DialogBoxParamA','EndDialog','CreateDialogParamA','SetWindowTextA'];
@@ -53,7 +53,10 @@ function fixture({modeless=false,fake=false,indirect=false}={}){
  asm(0x2300,({e,push,call,j,label})=>{
   e(0x81,0x7c,0x24,8,...u32(0x111));j([0x0f,0x85],'default');
   e(0x83,0x3d,...u32(0x4026a0),0);j([0x0f,0x85],'end');
-  e(0xc7,0x05,...u32(0x4026a0),...u32(1));push(0);push(0x402400);e(0xff,0x74,0x24,12);push(indirect?0x401700:2);push(0x400000);call(4);j([0xe9],'default');
+  e(0xc7,0x05,...u32(0x4026a0),...u32(1));
+  if(nestedBox){push(0x24);push(0x402540);push(0x402580);e(0xff,0x74,0x24,16);call(3);}
+  else{push(0);push(0x402400);e(0xff,0x74,0x24,12);push(indirect?0x401700:2);push(0x400000);call(4);}
+  j([0xe9],'default');
   label('end');push(1);e(0xff,0x74,0x24,8);call(5);
   label('default');e(0xb8,1,0,0,0,0xc2,16,0);
  });
@@ -88,12 +91,12 @@ function units(){
  console.log('PASS typed native BUTTON historical/foreign/generation/actor/disabled/deadline/UNKNOWN controls; no host-handler fallback');
 }
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
-async function run(out,{fixtureFactory=fixture,onCapture=null}={}){
+async function run(out,{fixtureFactory=fixture,onCapture=null,modes:requestedModes=null}={}){
  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>publishJSON(path.join(out,n),v);
- const modes=process.env.VB5_DIALOG_MODES?.split(',')||['positive','positive-indirect','focus','caption','child-caption','disabled','foreign-thread','foreign-process','retired','generation','callback','stale','fake-window','modeless'];
+ const modes=requestedModes||process.env.VB5_DIALOG_MODES?.split(',')||['positive','positive-indirect','focus','caption','child-caption','disabled','foreign-thread','foreign-process','retired','generation','callback','stale','fake-window','modeless'];
  for(const mode of modes){
   const dir=path.join(out,mode);fs.mkdirSync(dir);fs.copyFileSync(path.join(out,'../runtime-inputs.json'),path.join(dir,'runtime-inputs.json'));
-  const exe=path.join(dir,'fixture.exe');fs.writeFileSync(exe,fixtureFactory({fake:mode==='fake-window',modeless:mode==='modeless',indirect:mode==='positive-indirect'}));
+  const exe=path.join(dir,'fixture.exe');fs.writeFileSync(exe,fixtureFactory({fake:mode==='fake-window',modeless:mode==='modeless',indirect:mode==='positive-indirect',nestedBox:mode.includes('box')||mode.startsWith('nested-')}));
   const server=net.createServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;await new Promise(r=>server.close(r));
   const started=Date.now()/1000;fs.writeFileSync(path.join(dir,'launch.json'),JSON.stringify({deadline:started+240,gameplayCutoff:started+60,reserveSeconds:180,rootPort:port}));
   const w=cp.spawn(process.execPath,['-e',"let pid;const t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGKILL')}catch{};process.exit(2)},65000);console.log('ARMED');process.stdin.on('data',b=>pid=Number(b));process.stdin.on('end',()=>clearTimeout(t));"],{stdio:['pipe','pipe','pipe']});
@@ -119,33 +122,51 @@ async function run(out,{fixtureFactory=fixture,onCapture=null}={}){
     let binding,outer;
     for(let i=0;i<5;i++){
      const name='scene'+i;await controller(['capture',name]);const rr=JSON.parse(fs.readFileSync(path.join(dir,name+'.json'))),ss=rr.snapshot;
-     const d=ss.nativeDialogBox,modal=ss.windows.find(w=>w.hwnd===ss.modalHwnd),button=ss.windows.find(w=>w.parent===ss.modalHwnd&&w.controlClass===1&&w.controlId===1);
-     assert(d&&modal&&button);assert.equal(d.hwnd,modal.hwnd);assert.equal(d.generation,modal.generation);assert.equal(d.owner,modal.owner);assert.equal(ss.nativeMessageBox,null);
-     if(i===0){assert.equal(ss.mainHwnd,'0x0');outer=d;}if(i===1){assert.equal(d.owner,outer.hwnd);assert.notEqual(d.generation,outer.generation);}if(i===2)assert.deepEqual(d,outer,'outer invocation restored after real nested return');
+     const d=ss.nativeDialogBox,modal=ss.windows.find(w=>w.hwnd===ss.modalHwnd),button=ss.windows.find(w=>w.parent===ss.modalHwnd&&w.controlClass===1&&w.controlId===(d?.nestedMessageBox?6:1));
+     const nested=d?.nestedMessageBox;
+     const actualButton=button||ss.windows.find(w=>w.hwnd===ss.modalHwnd&&w.controlClass===16);
+     assert(d&&modal&&actualButton);
+     if(nested){assert.equal(i,1);assert.equal(d.hwnd,outer.hwnd);assert.equal(nested.hwnd,modal.hwnd);assert.equal(nested.generation,modal.generation);assert.equal(nested.ownerGeneration,outer.generation);assert.equal(nested.owner,outer.hwnd);assert(ss.nativeMessageBox);}
+     else{assert.equal(d.hwnd,modal.hwnd);assert.equal(d.generation,modal.generation);assert.equal(d.owner,modal.owner);assert.equal(ss.nativeMessageBox,null);}
+     if(i===0){assert.equal(ss.mainHwnd,'0x0');outer=d;}if(i===1&&!nested){assert.equal(d.owner,outer.hwnd);assert.notEqual(d.generation,outer.generation);}if(i===2)assert.deepEqual(d,outer,'outer invocation restored after real nested return');
      if(i>=3){assert.notEqual(ss.mainHwnd,'0x0');assert.equal(d.owner,i===3?ss.mainHwnd:'0x0');}
      if(onCapture)await onCapture({ss,send,save,name:mode+'-'+name});
-     await controller(['review',name,'Automated authored native DialogBox complete image protocol test','OK',i===4?'quit':'install',button.hwnd]);if(!i)await controller(['bind',name]);
-     await controller(['intent','press'+i,name,String(button.screenX+button.w/2|0),String(button.screenY+button.h/2|0),i===4?'quit':'install']);
+     await controller(['review',name,'Automated authored native DialogBox complete image protocol test',nested?'Yes':'OK',i===4?'quit':'install',actualButton.hwnd]);if(!i)await controller(['bind',name]);
+     const x=actualButton.screenX+actualButton.w/2,y=actualButton.screenY+actualButton.h/2;
+     await controller(['intent','press'+i,name,String(x|0),String(y|0),i===4?'quit':'install']);
     }
     const due=Date.now()+4000;while(s.child.exitCode===null){assert(Date.now()<due);await pause(20);}assert.equal(s.child.exitCode,0);
     save(mode+'-proof.json',{preMain:true,nestedAndRestored:true,realMainTransition:true,mainOwned:true,mainOwnerless:true,realButtons:5,nativeExit:0});
    }else{
+    const isNested=mode.startsWith('nested-'),faultMode=isNested?mode.slice(7):mode;
+    if(isNested){
+     await controller(['capture','outer']);const outer=JSON.parse(fs.readFileSync(path.join(dir,'outer.json'))).snapshot;
+     const b=outer.windows.find(w=>w.parent===outer.modalHwnd&&w.controlClass===1);
+     await controller(['review','outer','Authored outer DialogBox opens nested MessageBox','OK','install',b.hwnd]);await controller(['bind','outer']);
+     await controller(['intent','open-nested','outer',String(b.screenX+b.w/2|0),String(b.screenY+b.h/2|0),'install']);
+    }
     await send({action:'frozen',mode:'on'});await controller(['capture','scene']);const rr=JSON.parse(fs.readFileSync(path.join(dir,'scene.json')));scene=rr.snapshot;
-    const button=scene.windows.find(w=>w.parent===scene.modalHwnd&&w.controlClass===1),h=parseInt(scene.modalHwnd,16),bh=parseInt(button.hwnd,16);
+    const button=scene.windows.find(w=>w.parent===scene.modalHwnd&&w.controlClass===1)||scene.windows.find(w=>w.hwnd===scene.modalHwnd),h=parseInt(scene.modalHwnd,16),bh=parseInt(button.hwnd,16);
     await controller(['review','scene','Automated authored native DialogBox fault context','OK','install',button.hwnd]);
     if(mode==='stale'){await pause(Math.max(0,rr.at*1000+30050-Date.now()));await controller(['bind','scene'],1);}
     else{
-     await controller(['bind','scene']);const owner=JSON.parse(fs.readFileSync(path.join(dir,'input-owner.json'))),review=JSON.parse(fs.readFileSync(path.join(dir,'scene-review.json')));
+     if(!isNested)await controller(['bind','scene']);const owner=JSON.parse(fs.readFileSync(path.join(dir,'input-owner.json'))),review=JSON.parse(fs.readFileSync(path.join(dir,'scene-review.json')));
      const nonce='dialog-'+mode;await send({action:'guarded-input',cmd:`mousedown:${button.screenX+2}:${button.screenY+2}`,guard:{...owner,nonce,reviewed:true,deadline:Date.now()+500,intent:{review:{contract:rr.image.contract,captureId:rr.captureId,pngSHA256:rr.pngSHA256,reviewed:true,reviewedAt:review.at*1000,scope:'menu',targetHwnd:button.hwnd}}}});
      const faults={focus:`e.set_focus(${h})`,caption:`new Uint8Array(memory.buffer)[e.native_user_text_ptr(${h})]=88`,'child-caption':`new Uint8Array(memory.buffer)[e.native_user_text_ptr(${bh})]=88`,disabled:`e.wnd_set_style_export(${bh},e.wnd_get_style_export(${bh})|0x08000000)`,'foreign-thread':'e.set_current_thread_id(99)','foreign-process':'e.set_process_id(99)',retired:`e.wnd_lookup_retire(${h})`,generation:`e.destroy_dialog_frame(${h});e.wnd_table_set(${h},0xffff0001)`,callback:`e.wnd_set_long(${h},4,0x402400)`};
-     let code=faults[mode];assert(code,mode);if(mode==='callback'){
+     const parent=parseInt(scene.nativeDialogBox.hwnd,16);
+     if(isNested){
+      const base=require('../lib/region-map.generated').BASE.OWNER_TABLE;
+      Object.assign(faults,{'wrong-owner':`let slot=0;while(slot<256&&e.wnd_slot_hwnd(slot)!==${h})slot++;if(slot===256)throw Error('missing native slot');new DataView(memory.buffer).setUint32(${base}+slot*4,0,true)`,retired:`e.wnd_lookup_retire(${parent})`,'parent-generation':`e.destroy_dialog_frame(${parent});e.wnd_table_set(${parent},0xffff0001)`});
+     }
+     let code=faults[faultMode];assert(code,mode);if(faultMode==='callback'){
       const base=require('../lib/region-map.generated').BASE.DIALOG_STATE_TABLE;
-      code=`let slot=0;while(slot<256&&e.wnd_slot_hwnd(slot)!==${h})slot++;if(slot===256)throw Error('missing native slot');new DataView(memory.buffer).setUint32(${base}+slot*16,0x402400,true)`;
+      code=`let slot=0;while(slot<256&&e.wnd_slot_hwnd(slot)!==${isNested?parent:h})slot++;if(slot===256)throw Error('missing native slot');new DataView(memory.buffer).setUint32(${base}+slot*16,0x402400,true)`;
      }
      await send({action:'eval',code:`(()=>{const e=instance.exports;${code};return true})()`});await send({action:'step',n:1});
      const receipt=await send({action:'guarded-status',nonce});assert.equal(receipt.state,'CANCELLED');assert(!receipt.consumed);save(mode+'-receipt.json',receipt);
      const after=await send({action:'snapshot'});save(mode+'-after.json',after);
-     if(['foreign-thread','foreign-process','retired','generation','callback'].includes(mode))assert.equal(after.nativeDialogBox,null,'native invocation must independently refuse changed identity/lifetime');
+     if(isNested&&!['focus','disabled','caption','child-caption'].includes(faultMode))assert(!after.nativeDialogBox?.nestedMessageBox,'native nested seal must independently refuse changed identity/lifetime');
+     else if(['foreign-thread','foreign-process','retired','generation','callback'].includes(mode))assert.equal(after.nativeDialogBox,null,'native invocation must independently refuse changed identity/lifetime');
      fs.writeFileSync(path.join(dir,'PERMANENT-UNKNOWN.json'),JSON.stringify({at:Date.now(),mode,noLaterRequests:true}));
     }
     unknown=true;const n=requests,ledger=fs.readFileSync(path.join(dir,'requests.jsonl'),'utf8');for(const args of [['capture','later'],['bind','scene'],['intent','replay','scene','1','1','install']])await controller(args,1);

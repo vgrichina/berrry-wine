@@ -1273,6 +1273,7 @@
       (local.get $type))
     (if (local.get $text_gp) (then (call $heap_free (local.get $text_gp))))
     (if (local.get $cap_gp) (then (call $heap_free (local.get $cap_gp))))
+    (call $native_nested_messagebox_begin (local.get $dlg))
     (call $modal_begin (local.get $dlg) (local.get $stack_advance)))
 
   ;; 69: MessageBoxA(hWnd, lpText, lpCaption, uType) — build a real modal
