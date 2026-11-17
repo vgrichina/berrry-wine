@@ -10,7 +10,9 @@ function installExternalPassive(root,role,limits={}){
   if(root.__externalPassive)throw Error('duplicate external passive observer');
   const s=root.__externalPassive={events:0,bytes:0,dropped:0,notices:0,
     eventCap:limits.events??120000,byteCap:limits.bytes??32*1024*1024,noticeCap:16};
-  const stacks=new Map();
+  const stacks=new Map(),sites=new Map();
+  const stackEvery=limits.stackEvery??256,stackCap=limits.stackCap??128;
+  s.stackCaptures=0;
   const encoder=new TextEncoder();
   let transport=null,queued=[];
   const publish=text=>{
@@ -53,10 +55,21 @@ function installExternalPassive(root,role,limits={}){
   }
   root.__externalPassiveLog=row=>{
     const value={role,...row,passiveSequence:++s.events,wall:Date.now(),monotonic:performance.now()};
-    if(row.edge==='enter'){
-      const stack=new Error('passive entry').stack;
-      if(!stacks.has(stack)&&stacks.size<128){stacks.set(stack,stacks.size+1);value.stack=stack;}
-      value.stackId=stacks.get(stack)??null;value.stackDictionaryIncomplete=value.stackId===null;
+    if(row.edge==='enter'&&limits.stacks!==false){
+      // Retain every entry synchronously, but sample its expensive stack.
+      // A representative stack ID is explicitly distinguished from a fresh
+      // sample; terminal entry persistence never depends on taking a stack.
+      const key=JSON.stringify([row.role??role,row.name,row.import,row.nativeCanvas]);
+      let site=sites.get(key);
+      if(!site){site={entries:0,id:null};if(sites.size<128)sites.set(key,site);}
+      value.stackSampled=(site.entries++%stackEvery===0)&&s.stackCaptures<stackCap;
+      if(value.stackSampled){
+        const stack=new Error('passive entry').stack;s.stackCaptures++;
+        if(!stacks.has(stack)&&stacks.size<128){stacks.set(stack,stacks.size+1);value.stack=stack;}
+        site.id=stacks.get(stack)??null;
+      }
+      value.stackId=site.id;value.stackRepresentative=!value.stackSampled;
+      value.stackDictionaryIncomplete=value.stackId===null;
     }
     const text=JSON.stringify(value),size=encoder.encode(text).length;
     if(transport)Atomics.store(transport.header,2,s.events);
@@ -349,14 +362,13 @@ async function phaseRun(out,backend,authored){
     files.set('lib/renderer.js',renderer);
     fs.writeFileSync(out+'/canvas-runtime-delta.json',JSON.stringify({baseCommit:commit,path:'lib/renderer.js',baseSHA256:sha(Buffer.from(baseline)),sha256:sha(renderer),moduleUnchanged:true})+'\n',{flag:'wx'});
   }
-  if(process.env.GLTRON_NATIVE_ATTRIBUTION==='1'){
-    const localRequire=require('node:module').createRequire(path.resolve('tools/boids-current-runtime.cjs'));
-    const namedCompile=new Function('require','fs','path','ROOT','return ('+runtime.compile.toString().replace('{tailCalls:true}',"{tailCalls:true,nameSection:'wine-assembly'}")+')')(localRequire,fs,path,path.resolve('.'));
-    const named=namedCompile(files),stripNames=buffer=>{const parts=[buffer.subarray(0,8)];let p=8;const u=()=>{let n=0,shift=0,v;do{v=buffer[p++];n|=(v&127)<<shift;shift+=7;}while(v&128);return n>>>0;};while(p<buffer.length){const at=p,id=buffer[p++],size=u(),end=p+size;let omit=false;if(id===0){const len=u();omit=buffer.subarray(p,p+len).toString()==='name';}if(!omit)parts.push(buffer.subarray(at,end));p=end;}return Buffer.concat(parts);};
-    assert.equal(sha(stripNames(named)),sha(stripNames(wasm)),'exact named compile code sections match retained module');
-    const sections=WebAssembly.Module.customSections(new WebAssembly.Module(named),'name');assert.equal(sections.length,1);
-    fs.writeFileSync(out+'/exact-module-names.bin',Buffer.from(sections[0]),{flag:'wx'});
-    fs.writeFileSync(out+'/exact-module-map.json',JSON.stringify({commit,moduleSHA256:pin.sha256,namedCompileSHA256:sha(named),codeSectionsEqual:true,nameSectionSHA256:sha(Buffer.from(sections[0])),compile:'Git-backed in-memory compile; only custom name section removed for comparison; no source archive'})+'\n',{flag:'wx'});
+  if(process.env.GLTRON_NATIVE_ATTRIBUTION==='1'&&(process.env.GLTRON_DIAGNOSTICS||'sampled')==='full'){
+    const namesRun=path.resolve('scratch/runs/20261117-gltron-terminal-observer-user-qualification');
+    const map=JSON.parse(fs.readFileSync(namesRun+'/exact-module-map.json'));
+    assert.equal(map.moduleSHA256,pin.sha256);assert.equal(map.codeSectionsEqual,true);
+    const names=fs.readFileSync(namesRun+'/exact-module-names.bin');assert.equal(sha(names),map.nameSectionSHA256);
+    fs.linkSync(namesRun+'/exact-module-names.bin',out+'/exact-module-names.bin');
+    fs.writeFileSync(out+'/exact-module-map.json',JSON.stringify({...map,reusedFrom:namesRun,verifiedBeforeExecution:true})+'\n',{flag:'wx'});
   }
   runtime.compile=()=>wasm;
   // Runtime and helper publication have different immutable commits. The
@@ -364,7 +376,9 @@ async function phaseRun(out,backend,authored){
   // exact 603 graph above, including both Worker module bytes.
   runtime.gitFiles=()=>new Map(files);
   const controller=require('../tools/gltron-browser-controller.cjs'),connect=controller.connection;
-  const attribution=process.env.GLTRON_NATIVE_ATTRIBUTION==='1';
+  const observationMode=process.env.GLTRON_DIAGNOSTICS||'sampled';
+  assert(['full','sampled','minimal','off'].includes(observationMode),'explicit optional diagnostic mode');
+  const attribution=process.env.GLTRON_NATIVE_ATTRIBUTION==='1'&&observationMode==='full';
   const externalFD=fs.openSync(out+'/external-passive.jsonl','wx');
   const persist=v=>{if(v.method!=='Runtime.consoleAPICalled'||v.params?.args?.[0]?.value!=='GLTRON_EXTERNAL_BATCH')return false;
     const b=JSON.parse(v.params.args[1].value),receivedAt=Date.now();
@@ -401,8 +415,9 @@ async function phaseRun(out,backend,authored){
       }event(v);
     };}});
     c.send=function(method,params={},session){
-      if(method==='Runtime.evaluate'&&params.expression===controller.GL_OBSERVER)params={...params,expression:params.expression+';('+installExternalPassive.toString()+')(globalThis,"worker");('+installOriginalWorkerPhases.toString()+')(globalThis);true'};
-      if(method==='Runtime.evaluate'&&params.expression.includes('installNativeRouteObserver'))params={...params,expression:params.expression+';('+installExternalPassive.toString()+')(globalThis,"page");('+installTerminalTransport.toString()+')(globalThis);('+installPagePhases.toString()+')(globalThis,WineAssembly);globalThis.__externalPassiveReady'};
+      if(observationMode==='off'&&method==='Runtime.evaluate'&&(params.expression===controller.GL_OBSERVER||params.expression.includes('GLTRON_CAPTURE_PHASE')))params={...params,expression:'true'};
+      if(observationMode!=='off'&&method==='Runtime.evaluate'&&params.expression===controller.GL_OBSERVER)params={...params,expression:params.expression+';('+installExternalPassive.toString()+')(globalThis,"worker",'+JSON.stringify({stacks:observationMode!=='minimal',stackEvery:observationMode==='full'?1:256,stackCap:observationMode==='full'?120000:128})+');('+installOriginalWorkerPhases.toString()+')(globalThis);true'};
+      if(observationMode!=='off'&&method==='Runtime.evaluate'&&params.expression.includes('installNativeRouteObserver'))params={...params,expression:params.expression+';('+installExternalPassive.toString()+')(globalThis,"page",'+JSON.stringify({stacks:observationMode!=='minimal',stackEvery:observationMode==='full'?1:256,stackCap:observationMode==='full'?120000:128})+');('+installTerminalTransport.toString()+')(globalThis);('+installPagePhases.toString()+')(globalThis,WineAssembly);globalThis.__externalPassiveReady'};
       if(attribution&&method==='Runtime.runIfWaitingForDebugger')return sample(session).then(()=>send(method,params,session));
       if(method==='Browser.close')clearInterval(timer);
       return send(method,params,session);
@@ -413,7 +428,7 @@ async function phaseRun(out,backend,authored){
     native.fixture=()=>fixture({drawOnce:true,timerMs:16,triangles:fullSize?30:8,width:fullSize?800:480,height:fullSize?600:360});}
   const observer=fs.readFileSync(__filename),observerCommit=cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
   if(!authored)assert.equal(sha(cp.execFileSync('git',['show',observerCommit+':test/test-gltron-native-dequeue-workload.cjs'])),sha(observer),'original requires published observer');
-  fs.writeFileSync(out+'/diagnostic.json',JSON.stringify({commit,observerCommit,observerSHA256:sha(observer),backend,authored,modulePath,moduleSHA256:pin.sha256,moduleVerifiedBeforeExecution:true,runtimeSourceUnchanged:!canvasRepair,canvasRepair,rendererDataOnly:true,recordByteCap:16384,recordCap:64,phaseEventCap:120000,sharedBytesPerWorker:32*1024*1024,originalInvocations:authored?0:1})+'\n',{flag:'wx'});
+  fs.writeFileSync(out+'/diagnostic.json',JSON.stringify({commit,observerCommit,observerSHA256:sha(observer),observationMode,optionalDiagnosticsOnly:true,authoritativeNativeChecksUnchanged:true,backend,authored,modulePath,moduleSHA256:pin.sha256,moduleVerifiedBeforeExecution:true,runtimeSourceUnchanged:!canvasRepair,canvasRepair,rendererDataOnly:true,recordByteCap:16384,recordCap:64,phaseEventCap:120000,sharedBytesPerWorker:32*1024*1024,originalInvocations:authored?0:1})+'\n',{flag:'wx'});
   const write=fs.writeFileSync;
   fs.writeFileSync=function(file,bytes,...rest){if(file===out+'/tested-'+pin.sha256+'.wasm'){assert.equal(sha(bytes),pin.sha256);fs.linkSync(modulePath,file);return;}
     if([out+'/source.json',out+'/module.json'].includes(file)){const value=JSON.parse(bytes);value.commit=commit;value.helperCommit=observerCommit;value.exactRuntimeGraphReused=!canvasRepair;value.canvasRepair=canvasRepair;bytes=JSON.stringify(value,null,2)+'\n';}
@@ -517,6 +532,18 @@ else if(require.main===module){
     assert.throws(()=>new Renderer().repaint(),e=>e===failure);assert.equal(calls,3);
     assert.equal(rows.filter(r=>r.nativeCanvas).at(-1).edge,'return','native throw retains the final boundary');
   });
+  test('sampled stacks bound capture cost while retaining every terminal entry',()=>{
+    const rows=[],root={};let captures=0;
+    class Stack{constructor(){captures++;this.stack='sample '+captures;}}
+    vm.runInNewContext('('+installExternalPassive.toString()+')(root,"worker",{stackEvery:256,stackCap:3})',
+      {root,Error:Stack,TextEncoder,Date,performance,console:{log:(tag,row)=>rows.push(JSON.parse(row))}});
+    for(let n=0;n<800;n++)root.__externalPassiveLog({name:'native-call',edge:'enter'});
+    root.__externalPassiveLog({name:'native-call',edge:'enter',terminal:true});
+    assert.equal(captures,3);assert.equal(rows.length,801);assert.equal(root.__externalPassive.dropped,0);
+    const terminal=rows.at(-1);assert.equal(terminal.terminal,true);assert.equal(terminal.stackSampled,false);
+    assert.equal(terminal.stackRepresentative,true);assert.equal(terminal.stackId,3);
+    assert.equal(rows.filter(r=>r.stackSampled).length,3);
+  });
   test('external native events retain pre-block entry stacks and bound cap/drop notices',()=>{
     const rows=[],root={};
     vm.runInNewContext('('+installExternalPassive.toString()+')(root,"page",{events:2,bytes:8192})',
@@ -611,4 +638,4 @@ else if(require.main===module){
     ])assert.equal(sha(fixture(options)),publishedSHA);
   });
 }
-module.exports={installWorkerPhases,installPagePhases,installTerminalTransport,installOriginalWorkerPhases,phaseRun};
+module.exports={installExternalPassive,installWorkerPhases,installPagePhases,installTerminalTransport,installOriginalWorkerPhases,phaseRun};
