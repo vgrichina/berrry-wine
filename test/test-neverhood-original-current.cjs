@@ -3,6 +3,44 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const cp=require('node:child_process'),net=require('node:net');
 const {startControlSession}=require('./control-session');
+if(process.argv[2]==='--watchdog-observation'){
+ const parentCommand=fs.readFileSync(`/proc/${process.ppid}/cmdline`,'utf8').split('\0');
+ assert(path.basename(parentCommand[0])==='timeout'&&parentCommand.includes('30s'),'independent timeout parent required');
+ fs.writeFileSync(path.join(path.dirname(process.argv[3]),'watchdog-observation-armed.json'),JSON.stringify({
+  at:Date.now(),parentPid:process.ppid,parentCommand,independent:true,beforeAuthoredNativeSpawn:true},null,2)+'\n',{flag:'wx'});
+ const code=`import importlib.util,pathlib,subprocess,sys,json,time,threading,signal,os
+from unittest.mock import patch
+s=importlib.util.spec_from_file_location('runtime','tools/neverhood-original-current-runtime.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+base=pathlib.Path(sys.argv[1]);base.mkdir()
+for name in ('disk-floor','deadline'):
+ out=base/name;out.mkdir()
+ p=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+ m.save(out,'native-pid.json',dict(pid=p.pid,startToken=m.H.token(p.pid)))
+ waited={}
+ def wait():
+  a,b=p.communicate();waited.update(exit=p.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True)
+ thread=threading.Thread(target=wait);thread.start()
+ try:
+  fake=type('Disk',(),dict(f_bavail=1499999999 if name=='disk-floor' else 1500000000,f_frsize=1))()
+  with patch.object(m.os,'statvfs',return_value=fake):m.watchdog(out,time.time()+(30 if name=='disk-floor' else -.01))
+  thread.join(2);assert not thread.is_alive()
+  assert waited['exit']==-signal.SIGTERM and waited['actualWait'] and waited['stdoutEOF'] and waited['stderrEOF']
+  m.save(out,'authored-native-wait.json',waited)
+  trigger=json.loads((out/'watchdog-trigger.json').read_text());end=json.loads((out/'watchdog-exit.json').read_text())
+  assert trigger['reason']==name and trigger['freeBytes']==fake.f_bavail
+  assert trigger['deadlineElapsed']==(name=='deadline') and not trigger['nativeQuit']
+  assert end['signals'][0]['delivered'] and not end['signals'][1]['delivered']
+ finally:
+  if p.poll() is None:os.killpg(p.pid,signal.SIGKILL)
+  thread.join()
+out=base/'wait-completed';out.mkdir();m.save(out,'native-wait.json',{'actualWait':True})
+m.watchdog(out,time.time()+30)
+assert json.loads((out/'watchdog-exit.json').read_text())['reason']=='actual-native-wait'
+assert not (out/'watchdog-trigger.json').exists()
+print('PASS exact authored disk-floor/deadline triggers, real native TERM/wait/both EOF, no later KILL, completed wait sends no signal')`;
+ const p=cp.spawnSync('python3',['-B','-c',code,process.argv[3]],{cwd:path.resolve(__dirname,'..'),encoding:'utf8',timeout:30000});
+ process.stdout.write(p.stdout||'');process.stderr.write(p.stderr||'');assert.equal(p.status,0);return;
+}
 if(process.argv[2]==='--desktop-participants'){
  const {ProcessDesktop,readProcessDesktopObservations:read}=require('../lib/process-desktop');
  const directory=process.env.WINE_PROCESS_DESKTOP_OBSERVE;

@@ -82,6 +82,34 @@ def arm_desktop_observations(out,env):
         beforeNativeSpawn=True,environment='WINE_PROCESS_DESKTOP_OBSERVE',timeoutMs=3000,
         boundedWorkerLocalRecords=True,diagnosticsOnly=True))
     return directory
+def watchdog(out,deadline):
+    # Preserve the borrowed watchdog's deadline, disk floor and signal policy,
+    # but retain the actual triggering sample before touching the native group.
+    save(out,'watchdog-armed.json',dict(pid=os.getpid(),deadline=deadline,at=time.time(),independent=True,diskFloorBytes=1500000000))
+    while True:
+        now=time.time()
+        if (out/'native-wait.json').exists():
+            save(out,'watchdog-exit.json',dict(reason='actual-native-wait',at=now));return
+        st=os.statvfs('/home');free=st.f_bavail*st.f_frsize
+        reason='deadline' if now>=deadline else 'disk-floor' if free<1500000000 else None
+        if reason:break
+        time.sleep(.05)
+    trigger=dict(reason=reason,at=now,deadline=deadline,deadlineElapsed=now>=deadline,
+        freeBytes=free,diskFloorBytes=1500000000,nativeQuit=False)
+    save(out,'watchdog-trigger.json',trigger)
+    signals=[]
+    p=out/'native-pid.json'
+    if p.exists():
+        info=json.loads(p.read_text())
+        for sig in (signal.SIGTERM,signal.SIGKILL):
+            delivered=False
+            try:
+                if H.token(info['pid'])==info['startToken']:
+                    os.killpg(info['pid'],sig);delivered=True
+            except (FileNotFoundError,ProcessLookupError):pass
+            signals.append(dict(signal=signal.Signals(sig).name,at=time.time(),delivered=delivered))
+            if sig==signal.SIGTERM:time.sleep(3)
+    save(out,'watchdog-exit.json',dict(**trigger,finishedAt=time.time(),signals=signals))
 def checked(out,name,args,env=None,timeout=240,pass_fds=()):
     if env and env.get('DISCIPLES2_PHASE')=='runtime' and pathlib.Path(args[0]).name.startswith('python') and args[2].endswith('.py'):
         env=dict(env,NEVERHOOD_FROZEN_PYTHON=FROZEN_PYTHON)
@@ -394,7 +422,7 @@ def main():
     elif mode=='pipeline':pipeline(out,sys.argv[3],'--fixture' in sys.argv,'--owned-patches' in sys.argv)
     elif mode=='prepare':prepare(out,sys.argv[3],list(OWN) if '--owned-patches' in sys.argv else [])
     elif mode=='recipe':save(out,'recipe.json',recipe(pathlib.Path(sys.argv[3]),out))
-    elif mode=='watchdog':H.watchdog(out,float(sys.argv[3]))
+    elif mode=='watchdog':watchdog(out,float(sys.argv[3]))
     elif mode in ('run','admit'):run(out,json.loads(pathlib.Path(sys.argv[3]).read_text()),mode=='admit')
     elif mode=='owner':
         p=subprocess.Popen([sys.executable,'-B',__file__,*sys.argv[3:]],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
