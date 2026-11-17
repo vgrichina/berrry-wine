@@ -4148,9 +4148,12 @@
           (if (call $gl8 (i32.add (local.get $data) (local.get $size))) (then
             (local.set $size (i32.add (local.get $size) (i32.const 1))) (br $length)))))
         (else
-          (local.set $data (call $win16_reg_span (local.get $far)
-            (select (i32.const 4) (local.get $size) (i32.eq (local.get $type) (i32.const 4))) (i32.const 0)))
-          (if (i32.eqz (local.get $data)) (then (return (i32.const 87))))))
+          ;; The shared backend accepts NULL for zero bytes (empty binary).
+          ;; DWORD still reads four bytes regardless of the declared count.
+          (if (i32.or (local.get $far) (i32.or (local.get $size) (i32.eq (local.get $type) (i32.const 4)))) (then
+            (local.set $data (call $win16_reg_span (local.get $far)
+              (select (i32.const 4) (local.get $size) (i32.eq (local.get $type) (i32.const 4))) (i32.const 0)))
+            (if (i32.eqz (local.get $data)) (then (return (i32.const 87))))))))
       (if (i32.eq (local.get $op) (i32.const 221)) (then
         (return (call $reg_set_value (local.get $key) (local.get $name) (local.get $type)
           (local.get $data) (local.get $size) (i32.const 0)))))

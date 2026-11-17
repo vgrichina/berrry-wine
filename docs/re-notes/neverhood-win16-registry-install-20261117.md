@@ -20,6 +20,8 @@ The adapter implements those twelve registry exports against the existing
 shared Win32 registry backend. It corrects old DWORD argument indexing for
 RegSetValue, preserves missing-key errors and unmodified failed-open outputs,
 and supports ANSI/default values, DWORDs, binary data, sizing and MORE_DATA.
+NULL/zero-byte binary data writes an empty value; zero-count REG_SZ uses the
+Win16 bounded string convention.
 Historical Win16 roots 0/1 map to HKCR. Handles are actual backend handles;
 FlushKey validates the handle. Registry changes occur only through real calls.
 
@@ -49,7 +51,7 @@ export47 executes its real KERNEL217 call for existing and missing authored test
 keys; its captured return is 5880 and its genuine LONG results are 0 and 2.
 These authored paths do not establish the original installer's registry path.
 
-The prepublication focused suite passes 69 cases. Canonical locked build and
+The prepublication focused suite passes 73 cases. Canonical locked build and
 nested/fixed/QT/FT/LS32/SMapLS/Win4 regressions also pass.
 Incoming foreign hunks stay byte-exact and excluded from this commit. No foreign
 revision hashes are refreshed. A subsequent original is authorized only after

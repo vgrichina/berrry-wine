@@ -93,6 +93,10 @@ async function main(){
  test(225,()=>{write(ptr(0x104),5);return [key,str(0x200,'Ansi'),0,far(0x100),far(0x300),far(0x104)];},r=>{assert.equal(r,0);assert.equal(read(ptr(0x300)),0xe9666163);assert.equal(e.guest_read8(ptr(0x304)),0);});
  test(226,()=>{write(ptr(0x300),0x00ff807f);return [key,str(0x200,'Binary'),0,3,far(0x300),4];},r=>assert.equal(r,0));
  test(225,()=>{write(ptr(0x104),4);return [key,str(0x200,'Binary'),0,far(0x100),far(0x300),far(0x104)];},r=>{assert.equal(r,0);assert.equal(read(ptr(0x300)),0x00ff807f);});
+ test(226,()=>[key,str(0x200,'EmptyBinary'),0,3,0,0],r=>assert.equal(r,0));
+ test(225,()=>{write(ptr(0x104),0xff);return [key,str(0x200,'EmptyBinary'),0,far(0x100),0,far(0x104)];},r=>{assert.equal(r,0);assert.equal(read(ptr(0x104)),0);assert.equal(read(ptr(0x100)),3);});
+ test(226,()=>[key,str(0x200,'ZeroString'),0,1,str(0x300,'caf\xe9'),0],r=>assert.equal(r,0));
+ test(225,()=>{write(ptr(0x104),5);return [key,str(0x200,'ZeroString'),0,far(0x100),far(0x300),far(0x104)];},r=>{assert.equal(r,0);assert.equal(read(ptr(0x300)),0xe9666163);assert.equal(read(ptr(0x104)),5);});
  test(221,()=>[key,str(0x200,'Child'),1,str(0x300,'default'),8],r=>assert.equal(r,0));
  test(224,()=>{write(ptr(0x104),32);return [key,str(0x200,'Child'),far(0x300),far(0x104)];},r=>{assert.equal(r,0);assert.equal(read(ptr(0x104)),8);assert.equal(read(ptr(0x300)),0x61666564);});
  test(216,()=>[key,0,far(0x300),32],r=>{assert.equal(r,0);assert.equal(read(ptr(0x300)),0x6c696843);});
