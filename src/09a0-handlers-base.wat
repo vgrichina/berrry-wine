@@ -1502,6 +1502,12 @@
         (return (i32.const 0))))
     (local.set $base (i32.and (local.get $lctype) (i32.const 0xFFFF)))
     (local.set $flags (i32.and (local.get $lctype) (i32.const 0xFFFF0000)))
+    ;; LOCALE_SABBREVLANGNAME: the Windows abbreviation for this en-US
+    ;; locale is ENU. Resource clients concatenate it into a DLL filename.
+    ;; Use the shared A/W writer for counts, flags and buffer validation.
+    (if (i32.eq (local.get $base) (i32.const 0x0003))
+      (then (return (call $locale_write_text "ENU" (local.get $flags)
+        (local.get $out_g) (local.get $cch) (local.get $wide)))))
     ;; These string LCType values admit only NOUSEROVERRIDE and USE_CP_ACP.
     ;; RETURN_NUMBER (and every other bit) is invalid for string data.
     (if (i32.and

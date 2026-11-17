@@ -158,6 +158,7 @@ const callWat = (name, cdecl) => `
     return [r, r && cch ? rstr(OUT, wide) : null, e.t_last_error()];
   };
   for (const [type, want] of [
+    [0x0003, 'ENU'], [0x80000003, 'ENU'], [0x40000003, 'ENU'],
     [0x1F, 'M/d/yy'], [0x20, 'dddd, MMMM d, yyyy'], [0x1003, 'h:mm:ss tt'],
     [0x1D, '/'], [0x1E, ':'], [0x28, 'AM'], [0x29, 'PM'], [0x21, '0'], [0x23, '0'],
     [0x100C, '6'], [0x1009, '1'], [0x2A, 'Monday'], [0x30, 'Sunday'], [0x31, 'Mon'],
@@ -168,6 +169,17 @@ const callWat = (name, cdecl) => `
     assert.deepStrictEqual(info(type, 80, true).slice(0, 2), [want.length + 1, want], `GetLocaleInfoW 0x${type.toString(16)}`);
   }
   assert.deepStrictEqual(info(0x1F, 0).slice(0, 1), [7], 'size query');
+  for (const wide of [false, true]) {
+    assert.strictEqual(info(0x80000003, 0, wide)[0], 4, 'abbreviation size includes NUL');
+    assert.strictEqual(e.guest_read8(OUT), 0xcc, 'size query leaves output untouched');
+    assert.deepStrictEqual(info(0x80000003, 3, wide).filter((_, i) => i !== 1), [0, 122],
+      'abbreviation refuses a short buffer');
+    assert.strictEqual(e.guest_read8(OUT), 0xcc, 'short buffer leaves output untouched');
+    assert.deepStrictEqual(info(0x20000003, 4, wide).filter((_, i) => i !== 1), [0, 1004],
+      'language abbreviation is not numeric');
+    assert.deepStrictEqual(info(0x10000003, 4, wide).filter((_, i) => i !== 1), [0, 1004],
+      'language abbreviation rejects unknown flags');
+  }
   assert.deepStrictEqual([info(0x1F, 6)[0], info(0x1F, 6)[2]], [0, 122], 'short buffer');
   fill(OUT, 8);
   assert.strictEqual(e.t_GetLocaleInfoA(0x0400, 0x2000100C, OUT, 4, 0, 0), 4, 'RETURN_NUMBER: a DWORD, 4 chars (A)');
