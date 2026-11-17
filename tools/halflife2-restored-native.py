@@ -11,7 +11,7 @@ EDIT_PROOF=ROOT/'scratch/runs/20261117-halflife2-native-large-edit-viewport-inst
 DIAGNOSTICS=('tools/halflife2-reviewed-next.py','lib/cli-native-user-windows.js','lib/cli-native-scene.js',
              'test/test-cli-native-capture-refusal-details.cjs','test/test-edit-wrap-resize.js',
              'src/13-exports.wat','src/09c3-wndprocs5-edit.wat','tools/control-variant-gate.js',
-             'lib/process-desktop.js','test/test-process-desktop-observation.js',
+             'lib/process-desktop.js','test/test-process-desktop-observation.js','tools/halflife2-input-latency-trace.cjs',
              'test/test-process-desktop-observer-stall.cjs','tools/native-lifecycle-trace.cjs')
 def load(name):
  s=importlib.util.spec_from_file_location(name.replace('/','_'),ROOT/name)
@@ -107,6 +107,17 @@ def reviewed_owner_runner(body):
 def assert_original_launchable(run):
  assert not (pathlib.Path(run)/'PERMANENT-UNKNOWN.json').exists(),'permanent UNKNOWN; original launch refused'
 
+def input_latency_runner(body):
+ """Observe the real scheduled queue; retain its ordering and all guard calls."""
+ for before,after in (
+  (b'        scheduledInput.splice(at, 0, ev);',
+   b"        scheduledInput.splice(at, 0, ev);\n        globalThis[Symbol.for('wine.hl2.inputLatency')]?.('queue-enqueue',{nonce:ticket.nonce,state:ticket.state,deadline:ticket.deadline});"),
+  (b'      const ev = scheduledInput.shift();\n      if (ev.guardedTicket)',
+   b"      const ev = scheduledInput.shift();\n      if(ev.guardedTicket)globalThis[Symbol.for('wine.hl2.inputLatency')]?.('queue-dequeue',{nonce:ev.guardedTicket.nonce,state:ev.guardedTicket.state,deadline:ev.guardedTicket.deadline});\n      if (ev.guardedTicket)")):
+  assert body.count(before)==1,'pinned scheduled input boundary differs'
+  body=body.replace(before,after)
+ return body
+
 def main():
  m=load('tools/halflife2-current-native.py');m.TASK_RUN=TASK
  assert TASK.parent==ROOT/'scratch/runs','task evidence must stay under scratch/runs'
@@ -155,7 +166,7 @@ def main():
  # transport and focused tests in addition to those already proved bodies.
  changed={}
  for name in DIAGNOSTICS:
-  owned=name in ('lib/cli-native-scene.js','tools/halflife2-reviewed-next.py','tools/native-lifecycle-trace.cjs')
+  owned=name in ('lib/cli-native-scene.js','tools/halflife2-reviewed-next.py','tools/native-lifecycle-trace.cjs','tools/halflife2-input-latency-trace.cjs')
   origin=revision if owned else RETAINED_DIAGNOSTIC_GIT
   b=(ROOT/name).read_bytes() if working and owned else m.git('show',origin+':'+name)
   if name=='lib/cli-native-scene.js':assert b==(ROOT/name).read_bytes(),'publish scene first'
@@ -165,6 +176,9 @@ def main():
  assert files['test/run.js']==m.git('show',COMPONENT+':test/run.js'),'reviewed owner delta requires exact proved runner'
  before=m.sha(files['test/run.js']);files['test/run.js']=reviewed_owner_runner(files['test/run.js'])
  changed['test/run.js']=dict(before=before,after=m.sha(files['test/run.js']),onlyReviewedOwnerBlock=True)
+ if os.environ.get('HL2_INPUT_LATENCY_TRACE')=='1':
+  files['test/run.js']=input_latency_runner(files['test/run.js'])
+  changed['test/run.js'].update(after=m.sha(files['test/run.js']),onlyReviewedOwnerBlock=False,passiveInputQueueTrace=True)
  import difflib
  (m.RUN/'reviewed-owner-runner.patch').write_text(''.join(difflib.unified_diff(m.git('show',COMPONENT+':test/run.js').decode().splitlines(True),files['test/run.js'].decode().splitlines(True),fromfile='a/test/run.js',tofile='b/test/run.js')))
  m.save('reviewed-owner-runner.json',dict(**changed['test/run.js'],publishedGit=revision,unrelatedRunnerChangesExcluded=True,patchSHA256=m.sha((m.RUN/'reviewed-owner-runner.patch').read_bytes())))
@@ -270,6 +284,9 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,h.appendSection(Buffer.from(r.was
    argv=[*argv,'--trace-api=EndDialog,DestroyWindow,PostQuitMessage,ExitProcess,CreateWindowExA,CreateWindowExW,CreateDialogParamA,DialogBoxParamA,CreateProcessA,WinExec,SendMessageA,PostMessageA,DispatchMessageA']
    return execute(argv,*args,**kwargs)
   m.execute_native=traced_execute
+ if os.environ.get('HL2_INPUT_LATENCY_TRACE')=='1':
+  env['WINE_HL2_INPUT_LATENCY_TRACE']=str(m.RUN/'input-latency.json')
+  env['NODE_OPTIONS']+=' --require='+str(ROOT/'tools/halflife2-input-latency-trace.cjs')
  try:
   if '--diagnostic-qualification' in sys.argv:
    assert '--original' not in sys.argv,'authored qualification only'
