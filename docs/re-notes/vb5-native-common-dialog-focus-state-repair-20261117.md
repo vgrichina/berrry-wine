@@ -64,6 +64,10 @@ follow complete CURRENT published-Git qualification, compile before its
 for Quit. Input retains personal complete-image review, fresh nonce, 5-second
 game/30-second menu freshness, 500-ms confirmation, independent physical UP
 before 1750 ms and complete evidence before 3000 ms. UNKNOWN is terminal.
+The CURRENT published main revision is pinned at preparation. Under owner199's
+parallel-run clarification, later unrelated publication does not replace its
+sealed source, module or helpers. Execution checks the main graph, seals,
+actual descriptor hashes and helper pins without refreshing runtime inputs.
 
 Current evidence and exact Git/module identities are recorded in
 `scratch/runs/20261117-vb5-native-modal-continuation-fence-repair/result.json`.

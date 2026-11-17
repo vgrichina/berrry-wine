@@ -149,6 +149,12 @@ def run():
     passive='--passive-original' in sys.argv
     installed='--installed-original' in sys.argv
     original='--original' in sys.argv or installed or passive
+    if installed:
+        prepared={ref:subprocess.check_output(['git','rev-parse',ref],cwd=ROOT).decode().strip()
+                  for ref in ('HEAD','origin/main')}
+        assert all(value==HEAD for value in prepared.values()), 'prepare from CURRENT published main'
+        save('preparation-published-main.json',dict(gitSHA=HEAD,refs=prepared,at=time.time(),
+             policy='owner199: retain exact published preparation through unrelated later publication'))
     assert not (original and '--baseline-paint' in sys.argv)
     if original:
         assert not os.environ.get('VB5_DIALOG_MODES') and not os.environ.get('DELPHI5_NATIVE_MODES'), 'original requires full default qualification'
@@ -299,8 +305,18 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
     if installed:installed_inputs=prepare_installed()
     while not (RUN/'original-go.json').exists():time.sleep(.1)
     if installed:
-        for ref in ('HEAD','origin/main'):
-            assert subprocess.check_output(['git','rev-parse',ref],cwd=ROOT).decode().strip()==HEAD, 'requalify CURRENT published Git before original'
+        later={ref:subprocess.check_output(['git','rev-parse',ref],cwd=ROOT).decode().strip()
+               for ref in ('HEAD','origin/main')}
+        for value in later.values():
+            assert subprocess.run(['git','merge-base','--is-ancestor',HEAD,value],cwd=ROOT).returncode==0, 'published preparation left main graph'
+        for fd,expected in ((source,sha(pool)),(module,sha(body))):
+            assert fcntl.fcntl(fd,fcntl.F_GET_SEALS)==15
+            assert sha(os.pread(fd,os.fstat(fd).st_size,0))==expected, 'sealed runtime changed'
+        for name in ('tools/vb5cce-original-runtime.py','tools/vb5cce-reviewed-control.py','test/test-vb5cce-original-current.cjs'):
+            assert (ROOT/name).read_bytes()==files[name], 'prepared helper changed: '+name
+        save('prepared-execution-boundary.json',dict(gitSHA=HEAD,laterRefs=later,
+             sourceSHA256=sha(pool),moduleSHA256=sha(body),sameSealedRuntime=True,
+             sourceRefresh=False,helperPins=True,mainGraph=True,at=time.time()))
     started=time.time();native_seconds=120 if passive else 1800 if installed else 2400;watchdog_seconds=140 if passive else 1820 if installed else 2420
     reserve_seconds=0 if passive else 180 if installed else 240
     deadline=started+native_seconds
