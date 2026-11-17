@@ -1,6 +1,6 @@
 'use strict';
-globalThis.runPaletteWorker=async function(lazySync=false){
-  const evidence=globalThis.paletteWorkerEvidence={lazySync,observations:[],barriers:[],snapshots:[],logs:[]};
+globalThis.runPaletteWorker=async function(backend='software'){
+  const evidence=globalThis.paletteWorkerEvidence={backend,observations:[],barriers:[],snapshots:[],logs:[],controls:[]};
   const check=(v,s)=>{if(!v)throw Error(s);};
   const eq=(a,b,s)=>check(JSON.stringify(a)===JSON.stringify(b),`${s}: ${JSON.stringify(a)} != ${JSON.stringify(b)}`);
   const until=async(predicate,label)=>{
@@ -8,49 +8,68 @@ globalThis.runPaletteWorker=async function(lazySync=false){
     while(!predicate()){if(performance.now()>end)throw Error('timeout '+label);await new Promise(r=>setTimeout(r,5));}
   };
   check(crossOriginIsolated,'isolated shared memory');
-  const module=await WebAssembly.compile(await (await fetch('/palette-worker.wasm')).arrayBuffer());
+  const bytes=await (await fetch('/palette-worker.wasm')).arrayBuffer();
+  evidence.moduleSha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),
+    b=>b.toString(16).padStart(2,'0')).join('');
+  const module=await WebAssembly.compile(bytes);
   const sigs=(await (await fetch('/lib/host-import-sigs.generated.json')).json()).sigs;
   const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
   const host={};for(const name of Object.keys(sigs))host[name]=()=>{throw Error('unexpected broker import '+name);};
   for(const name of ['log','log_i32','log_block','log_eip','log_api_exit','dx_trace'])
     host[name]=(...args)=>evidence.logs.push({name,args});
-  const broker=GuestRpc.createMainBroker(memory,host,sigs,{onError:(name,error)=>evidence.logs.push({name,error:String(error)})});
+  const publication=new RenderWorker.PublicationQueue();
+  const broker=GuestRpc.createMainBroker(memory,host,sigs,{renderPublication:publication.buffer,
+    onError:(name,error)=>evidence.logs.push({name,error:String(error)})});
   broker.publish({tickMs:0});
-  let manager,port,lastStats,heldRecord,holding=false;
-  const held=[];
-  const link=new GuestWorkerLink({slot:0,module,memory,sigs,broker,workerUrl:'/lib/guest-worker.js',
-    sharedRenderWorker:true,d3dimGpu:true,d3dimLazySync:lazySync,log:s=>evidence.logs.push(s),
+  let manager,port,ring=0,scheduled=0,controlId=0;
+  const control=async action=>{
+    const id=++controlId;manager.worker.postMessage({t:'palette-control',id,action});
+    await until(()=>evidence.controls.some(r=>r.id===id),'scheduler '+action);
+    return evidence.controls.find(r=>r.id===id);
+  };
+  const stream=new GpuStreamHost.Bridge({api:'d3dim-gps',backend,getMemory:()=>memory,
     createRenderEndpoint:async options=>{
-      eq(options,{api:'legacy',backend:'webgl'},'production requested WebGL endpoint');
-      manager=new RenderWorker.Manager({module,memory,sigs,imageBase:0x400000,
-        workerUrl:'/lib/d3d-render-worker.js',sourceVersion:'palette-worker-fixture',
-        reclaimHeap:head=>raw('d3d_render_adopt_free_list',head)});
-      await manager.ready;port=manager.createEndpoint(options);await port.ready;
-      port.addEventListener('message',event=>{if(event.data.t==='stats')lastStats=event.data;});
-      const post=port.postMessage.bind(port);
-      port.postMessage=message=>{
-        // Deliberate delay only. Messages, native exports, Encoder shared
-        // control, dispatcher and GPU executor are otherwise unmodified.
-        if(holding && (message.t==='batch'||held.length))held.push(()=>post(message));
-        else post(message);
-        if(holding)heldRecord.messages.push(message.t);
-      };
-      return port;
+      eq(options,{api:'d3dim-gps',backend},'current production stream endpoint');
+      port=manager.createEndpoint(options);await port.ready;return port;
     }});
+  host.gpu_stream_kick=(address,mode)=>{ring=address>>>0;return stream.kick(address,mode);};
+  const link=new GuestWorkerLink({slot:0,module,memory,sigs,broker,workerUrl:'/lib/guest-worker.js',
+    renderPublication:publication.buffer,sharedRenderWorker:true,d3dimGpu:true,
+    log:s=>evidence.logs.push(s)});
   const raw=(name,...args)=>link.callExport(name,...args);
   let stack;
   const call=async(name,...args)=>{await raw('pa_stack',stack);return (await raw(name,...args))>>>0;};
   const alloc=async n=>{const p=(await raw('pa_alloc',n))>>>0;check(p,'allocation');return p;};
   const write=(p,v)=>raw('guest_write32',p,v);
   const read=async p=>(await raw('guest_read32',p))>>>0;
+  const words=new Int32Array(memory.buffer),rpc=GuestRpc.views(memory,0).i32;
+  const ringState=()=>Object.fromEntries(['read_pos','write_pos','done_seq','consumer','error_code'].map(name=>
+    [name,Atomics.load(words,(ring>>>2)+GpuStreamDoorbell.W[name])>>>0]));
+  const fencePending=()=>Atomics.load(rpc,GuestRpc.SLOT.RENDER_WAIT)===(ring|0);
+  const holdDraw=async draw=>{
+    await control('hold');const n=scheduled;await draw();
+    // Small draws publish records without requiring a kick. Notify using the
+    // ordinary production bridge, without editing any ring/producer fields.
+    await stream.kick(ring,GpuStream.CONST.KICK_ASYNC);
+    await until(()=>scheduled>n,'actual doorbell callback held');
+    const state=ringState();check(state.read_pos!==state.write_pos,'actual pending stream records');return state;
+  };
   try{
     await link.start();await raw('pw_init');stack=await alloc(4096)+2048;
+    manager=new RenderWorker.Manager({module,memory,sigs,imageBase:0x400000,
+      workerUrl:'/lib/palette-render-worker.js',sourceVersion:'palette-worker-fixture',
+      reclaimHeap:head=>raw('d3d_render_adopt_free_list',head)});
+    manager.worker.addEventListener('message',event=>{
+      if(event.data.t==='palette-control')evidence.controls.push(event.data);
+      if(event.data.t==='palette-scheduled')scheduled++;
+    });
+    await manager.ready;
     await raw('pa_seed',await alloc(1024));
     const dd=await raw('pa_ddraw'),desc=await alloc(128),out=await alloc(16),entries=await alloc(1024);
     const surface=async(bpp,caps,size=4)=>{
       for(let i=0;i<128;i+=4)await write(desc+i,0);
-      for(const [o,v] of [[0,108],[4,0x1007],[8,size],[12,size],[72,32],[76,bpp===8?0x60:0x40],[84,bpp],[104,caps]])await write(desc+o,v);
-      if(bpp===32)for(const [o,v] of [[88,0xff0000],[92,0xff00],[96,0xff]])await write(desc+o,v);
+      for(const [o,v] of [[0,108],[4,0x1007],[8,size],[12,size],[72,32],[76,bpp===8?0x60:0x41],[84,bpp],[104,caps]])await write(desc+o,v);
+      if(bpp===32)for(const [o,v] of [[88,0xff0000],[92,0xff00],[96,0xff],[100,0xff000000]])await write(desc+o,v);
       eq(await call('pa_surface',dd,desc,out),0,'CreateSurface');return read(out);
     };
     const texture=await surface(8,0x1000);
@@ -69,6 +88,7 @@ globalThis.runPaletteWorker=async function(lazySync=false){
     const palData=(await raw('pa_palette_data',alpha))>>>0;
     await alloc(8192);
     await raw('pa_bind',device,0,texture);eq(await call('pa_attach',texture,alpha),0,'attach alpha');
+    eq(await raw('pw_refs',alpha),2,'caller and attachment own palette');
     const texDib=await raw('pw_dib',texture),rtDib=await raw('pw_dib',rt),rtEntry=await raw('pa_entry',rt);
     check((texDib>>>12)!==(rtDib>>>12),'texture and RT watch pages are separate');
     evidence.watchLayout={texDib,rtDib,initialAlphaPaletteData:palData};
@@ -86,29 +106,42 @@ globalThis.runPaletteWorker=async function(lazySync=false){
     const clear=async(color=0xff000000,flags=1)=>eq(await raw('pa_clear',rtEntry,flags,color,1,0,0,4,4,0),1,'real clear');
     let drawCount=0;
     const draw=()=>{drawCount++;return raw('pa_draw',device,4,3,vertices,6);};
-    const pixel=()=>{const b=new Uint8Array(memory.buffer,rtDib+20,4);return [b[2],b[1],b[0]];};
-    const observe=(label,expected)=>{const actual=pixel();eq(actual,expected,label);evidence.observations.push({label,actual});};
+    const observe=(label,expected)=>{
+      const b=new Uint8Array(memory.buffer,rtDib+20,4),actual=[b[2],b[1],b[0],b[3]].slice(0,expected.length);
+      evidence.observations.push({label,actual,expected});eq(actual,expected,label);
+    };
     // The production GPU deliberately declines clears until it has drawn on
     // the target. Establish that ownership with a real queued draw and fence.
     await draw();await raw('pw_fence');observe('initial GPU ownership',rgb);
     const barrier=async(label,mutation,expected)=>{
-      await clear();const before=new Uint8Array(memory.buffer,palData,1024).slice();
-      const ownership=new Uint8Array(memory.buffer,alphaSlot,32).slice();
-      const record={label,messages:[]};evidence.barriers.push(record);heldRecord=record;holding=true;
-      await draw();await until(()=>held.length>0,'held draw');
-      let settled=false;const result=mutation().then(v=>{settled=true;return v;});
-      await until(()=>record.messages.includes('legacy-fence'),'actual producer fence');
-      check(!settled,'mutation cannot return before drain');
-      eq(Array.from(new Uint8Array(memory.buffer,palData,1024)),Array.from(before),'palette unchanged before drain');
-      eq(Array.from(new Uint8Array(memory.buffer,alphaSlot,32)),Array.from(ownership),'ownership unchanged before drain');
-      record.blockedBeforeDrain=true;holding=false;for(const send of held.splice(0))send();
-      const value=await result;record.value=value;observe(label+' old generation',expected);return value;
+      await clear();await raw('pw_fence');
+      const record={label,before:await holdDraw(draw),
+        ownershipBefore:Array.from(new Uint8Array(memory.buffer,alphaSlot,32)),
+        entryBefore:Array.from(new Uint8Array(memory.buffer,palData+28,4))};evidence.barriers.push(record);
+      // Current producer copies palette/geometry/state into owned ring arena
+      // records. These API mutations may complete before replay: unlike the
+      // retired executor, they need not retain the live palette until drain.
+      const value=await mutation();record.value=value;record.mutationCompletedBeforeDrain=true;
+      record.ownershipAfter=Array.from(new Uint8Array(memory.buffer,alphaSlot,32));
+      record.entryAfter=Array.from(new Uint8Array(memory.buffer,palData+28,4));
+      eq(ringState().done_seq,record.before.done_seq,'mutation did not drain held records');
+      let settled=false;const fence=raw('pw_fence').then(v=>{settled=true;return v;});
+      await until(fencePending,'real guest doorbell SYNC wait');
+      check(!settled,'CPU fence cannot complete while callback held');
+      record.pending=ringState();record.fenceBlockedBeforeDrain=true;
+      await control('flush');await fence;record.after=ringState();
+      eq(record.after.read_pos,record.after.write_pos,'all published records completed');
+      observe(label+' old generation',expected);return value;
     };
     eq(await barrier('caller Release',()=>call('pw_release',alpha),rgb),1,'surface retains reference');
     eq(await raw('pw_refs',alpha),1,'attachment survives Release');
     await write(entries,packed(128));
     eq(await barrier('SetEntries',()=>call('pa_entries',alpha,7,1,entries),rgb),0,'entry update');
-    await clear();await draw();await raw('pw_fence');observe('new alpha generation blends',[32,64,96]);
+    const alphaUploadsBefore=(await raw('d3dim_gps_stat',8))>>>0;
+    await clear();await draw();await raw('pw_fence');observe('new alpha generation blends',[32,64,96,191]);
+    const alphaUploadsAfter=(await raw('d3dim_gps_stat',8))>>>0;
+    check(alphaUploadsAfter>alphaUploadsBefore,'alpha-only SetEntries reuploads current texture');
+    evidence.alphaGeneration={alphaUploadsBefore,alphaUploadsAfter};
     check(await raw('pw_exhaust')>0,'fill unused slots through actual allocator');
     eq(await barrier('final detach',()=>call('pa_attach',texture,0),[32,64,96]),0,'detach');
     eq(await raw('pw_type',alpha),0,'attachment final release retires palette');
@@ -130,6 +163,8 @@ globalThis.runPaletteWorker=async function(lazySync=false){
       stack:(await raw('guest_to_wasm',stack))>>>0});
     eq((await raw('pa_entry',replacement))>>>0,alphaSlot,'natural retired slot reuse');
     eq(await raw('pw_refs',replacement),1,'new slot ownership');
+    evidence.slotReuse={alpha,replacement,alphaSlot,replacementSlot:(await raw('pa_entry',replacement))>>>0,
+      naturalAllocatorExhaustion:true,initialPaletteData:palData,replacementData};
     eq(await call('pa_attach',texture,replacement),0,'ordinary replacement');
     await clear();await draw();await raw('pw_fence');observe('reused ordinary palette ignores peFlags',rgb);
 
@@ -141,11 +176,8 @@ globalThis.runPaletteWorker=async function(lazySync=false){
     eq(await call('pa_key',texture,out),0,'Worker SetColorKey native index 7');
     const rs=(id,v)=>raw('pa_rs',device,id,v);
     await rs(27,0);await rs(41,1);await rs(144,1);
-    // Production fence writes opaque DIB X bytes, not framebuffer alpha.
-    // Source alpha is checked by application rejection/blend/stage behavior;
-    // the direct GPU fixture separately reads actual framebuffer RGBA.
-    evidence.readback='production DIB BGRA with X normalized to 255';
-    const opaque=[...rgb,255],zero=[0,0,0,255],background=[17,34,51,255];
+    evidence.readback='production READBACK and native ARGB DIB conversion, including actual alpha';
+    const opaque=[...rgb,255],zero=[0,0,0,0],background=[17,34,51,255];
     const recordRGBA=(label,expected)=>{
       const actual=[0,1,2].map(x=>{
         const b=new Uint8Array(memory.buffer,rtDib+16+x*4,4);
@@ -158,15 +190,15 @@ globalThis.runPaletteWorker=async function(lazySync=false){
       await clear(0xff112233);await draw();await raw('pw_fence');recordRGBA(label,expected);
     };
     await renderRGBA('Worker explicit key zero RGBA/native duplicate RGB',[zero,opaque,opaque]);
-    // Delay only message delivery. Mutate live device state after the real
-    // Encoder has copied the draw, then let the production dispatcher replay
+    // Delay only the actual doorbell schedule callback. Mutate live device
+    // state after the WAT producer has copied the draw, then let it replay
     // it. Reading live state instead of the queued snapshot must fail pixels.
     const snapshot=async(label,nextMode,expected)=>{
       await clear(0xff112233);await raw('pw_fence');
-      heldRecord={label,messages:[],nextMode};evidence.snapshots.push(heldRecord);holding=true;
-      await draw();await until(()=>held.length>0,'held keyed draw');
-      await rs(144,nextMode);heldRecord.stateChangedBeforeDrain=true;
-      holding=false;for(const send of held.splice(0))send();
+      const record={label,nextMode,before:await holdDraw(draw)};evidence.snapshots.push(record);
+      await rs(144,nextMode);record.stateChangedBeforeDrain=true;
+      eq(ringState().done_seq,record.before.done_seq,'state changed with draw still queued');
+      await control('flush');
       await raw('pw_fence');recordRGBA(label,expected);
     };
     await snapshot('Worker queued TRUE survives live FALSE',0,[zero,opaque,opaque]);
@@ -179,45 +211,13 @@ globalThis.runPaletteWorker=async function(lazySync=false){
     // visible if the subsequent TRUE transition omits keyBlend cache identity.
     await rs(41,1);await rs(144,0);
     await renderRGBA('Worker FALSE primes colored zero-alpha cache',[background,opaque,opaque]);
-    await until(()=>lastStats?.stats.drawCalls===drawCount,'FALSE prime stats');
-    const uploadsBefore=lastStats.stats.textureUploads;
-    // Read-only diagnostics mirror PageLease's published table ABI. Capture
-    // both actual lease ranges, not the retired alpha palette's address.
-    // No lease generations, decoder, transport or renderer are substituted.
-    const watchRoot=(await raw('page_watch_root'))>>>0;
-    const watch32=new Uint32Array(memory.buffer),watch64=new BigUint64Array(memory.buffer);
-    const watchRange=(address,length)=>{
-      const pages=[];
-      for(let page=address>>>12;page<=((address+length-1)>>>12);page++){
-        const table=Atomics.load(watch32,(watchRoot>>>2)+(page>>>10));
-        const cell=table?table+(page&1023)*16:0;
-        pages.push({page,cell,refs:cell?Atomics.load(watch32,cell>>>2):0,
-          generation:cell?String(Atomics.load(watch64,(cell+8)>>>3)):null});
-      }
-      return {address,length,pages};
-    };
-    const diagnostic=phase=>{
-      const record={phase,texture:watchRange(texDib,16),palette:watchRange(replacementData,1024),
-        poison:Atomics.load(watch32,(watchRoot+2048)>>>2),audit:Atomics.load(watch32,(watchRoot+2052)>>>2)};
-      evidence.cacheDiagnostics.phases.push(record);
-    };
-    evidence.cacheDiagnostics={fixtureIdentity:{texture,texDib,width:4,height:4,pitch:4,bpp:8,
-      palette:replacement,paletteData:replacementData,paletteAlpha:0,keyed:1,keyRaw:7,keyBlend:0},phases:[]};
-    const pagesOf=(address,length)=>Array.from({length:((address+length-1)>>>12)-(address>>>12)+1},(_,i)=>(address>>>12)+i);
-    const palettePages=pagesOf(replacementData,1024);
-    evidence.cacheDiagnostics.paletteOverlaps=Object.entries({
-      deviceState:[evidence.watchLayout.deviceState,4096],vertices:[evidence.watchLayout.vertices,192],
-      stack:[evidence.watchLayout.stack-2048,4096],rt:[rtDib,64],texture:[texDib,16]
-    }).filter(([,range])=>pagesOf(...range).some(page=>palettePages.includes(page))).map(([name])=>name);
-    diagnostic('before clear');await clear(0xff112233);diagnostic('after clear');
-    await draw();diagnostic('after producer draw');await raw('pw_fence');diagnostic('after fence');
-    recordRGBA('Worker unchanged FALSE uses cached texture',[background,opaque,opaque]);
-    await until(()=>lastStats?.stats.drawCalls===drawCount,'unchanged FALSE stats');
-    const first=evidence.cacheDiagnostics.phases[0],last=evidence.cacheDiagnostics.phases.at(-1);
-    evidence.cacheDiagnostics.changedRanges=['texture','palette'].filter(name=>
-      JSON.stringify(first[name].pages)!==JSON.stringify(last[name].pages));
-    evidence.cacheReuse={uploadsBefore,uploadsAfter:lastStats.stats.textureUploads};
-    eq(evidence.cacheReuse.uploadsAfter,uploadsBefore,'unchanged FALSE must hit texture cache');
+    // The current WAT producer owns texture identity/watch validation. Its
+    // upload counter replaces the retired executor's PageLease/cache stats.
+    const uploadsBefore=(await raw('d3dim_gps_stat',8))>>>0;
+    await renderRGBA('Worker unchanged FALSE uses cached texture',[background,opaque,opaque]);
+    const uploadsAfter=(await raw('d3dim_gps_stat',8))>>>0;
+    evidence.cacheReuse={uploadsBefore,uploadsAfter,contract:'current producer textureUploads'};
+    eq(uploadsAfter,uploadsBefore,'unchanged FALSE must reuse producer texture');
     await rs(144,1);
     await renderRGBA('Worker FALSE to TRUE replaces cached key RGB',[zero,opaque,opaque]);
     await rs(41,1);await rs(15,1);await rs(25,5);await rs(24,0);
@@ -253,19 +253,50 @@ globalThis.runPaletteWorker=async function(lazySync=false){
     eq(await call('pw_release',replacement),1,'replacement attachment ownership');
     eq(await call('pa_attach',texture,0),0,'replacement final detach');
     eq(await raw('pw_type',replacement),0,'replacement retired');
-    await until(()=>lastStats?.stats.drawCalls>=drawCount,'all GPU draw stats');evidence.stats=lastStats;
+    evidence.executor=await port.request({t:'gps-kick',ring,mode:0});
+    eq(evidence.executor.stats.draws,drawCount,'every completed draw ran in actual executor');
+    if(backend==='webgl')check(evidence.executor.glRenderer&&/^webgl/.test(evidence.executor.stats.backend),'actual Chrome WebGL without software fallback');
+    await clear();await raw('pw_fence');
+    const retiredEndpoint=port.id,beforeClose=await holdDraw(draw);
+    let settled=false;const pendingFence=raw('pw_fence').then(v=>{settled=true;return v;});
+    await until(fencePending,'pending CPU readback before CLOSE');check(!settled,'pending readback is real');
+    await stream.kick(ring,GpuStream.CONST.KICK_CLOSE);await pendingFence;
+    observe('CLOSE completes pending real readback',[8,8,8,255]);
+    check(!GpuStreamDoorbell.armed(words,ring),'CLOSE detached consumer');
+    const completed=ringState(),closedPort=port;
+    await stream.kick(ring,GpuStream.CONST.KICK_ASYNC);await stream.workerTail;
+    check(port.id!==retiredEndpoint,'replacement endpoint identity');
+    const beforeLate=await port.request({t:'gps-kick',ring,mode:0});
+    const flushed=await control('flush');
+    const afterLate=await port.request({t:'gps-kick',ring,mode:0});
+    eq(afterLate.stats.doorbellDrains,beforeLate.stats.doorbellDrains,'retired callback cannot drain replacement');
+    eq(ringState().done_seq,completed.done_seq,'late callback does not complete new work');
+    eq(closedPort.requests.size,0,'retired endpoint requests empty');
+    evidence.closeScope={beforeClose,completed,retiredEndpoint,replacementEndpoint:port.id,flushed,
+      oldRequests:closedPort.requests.size,doorbellDrainsBefore:beforeLate.stats.doorbellDrains,
+      doorbellDrainsAfter:afterLate.stats.doorbellDrains};
+    // Reopen only the completed empty ring for notification lifetime. CLOSE
+    // destroys device resources; this producer cannot resume old resource IDs.
+    const stat=async i=>(await raw('d3dim_gps_stat',i))>>>0;
+    evidence.producerStats={draws:await stat(0),fallbacks:await stat(1),readbacks:await stat(2),
+      textureUploads:await stat(8),declined:await stat(14)};
+    evidence.endpointStats=await port.request({t:'gps-kick',ring,mode:0});
     evidence.expectedDrawCalls=drawCount;
-    eq(lastStats.stats.drawCalls,drawCount,'every draw used actual GPU');
-    eq(lastStats.stats.fallbacks,0,'no renderer fallback');
-    eq(lastStats.stats.errors,0,'no GPU errors');
-    eq(lastStats.stats.dirtyAuditMisses,0,'no watch misses');
-    eq(lastStats.stats.textureByteChecks,0,'actual page leases, no byte shadow');
-    check(lastStats.stats.pageChecks>0,'watched textures');
+    eq(evidence.producerStats.draws,drawCount,'every draw used current producer');
+    eq(evidence.producerStats.fallbacks,0,'no producer fallback');eq(evidence.producerStats.declined,0,'no declines');
+    eq(ringState().error_code,0,'no stream error');
+    if(backend==='webgl')check(evidence.endpointStats.glRenderer,'replacement retains actual WebGL driver');
     return evidence;
   }finally{
-    holding=false;for(const send of held.splice(0))send();
     // Keep the owning guest instance alive until it has adopted the retired
     // render heap through the production export; then terminate the guest.
-    try{if(manager)evidence.retirement=await manager.stop();}finally{await link.stop();}
+    try{
+      if(manager){await control('flush');await stream.close();evidence.retirement=await manager.stop();}
+    }finally{await link.stop();}
+    evidence.ownedScopes={guestPending:link._pending.size,guestWorker:!!link.worker,
+      renderPorts:manager?.ports.size,renderPending:manager?.pending.size,
+      renderClosing:manager?.closing.size,renderBytes:manager?.queuedBytes,renderRetired:manager?._retired};
+    check(!link.worker&&link._pending.size===0,'guest retired with empty request scope');
+    check(manager?._retired&&manager.ports.size===0&&manager.pending.size===0&&manager.closing.size===0&&manager.queuedBytes===0,'shared render heap retired with empty owned scopes');
   }
 };
