@@ -1,4 +1,7 @@
 'use strict';
+// Immediate vertices are staged 28 floats wide since bd1a15a25 (19 packed
+// attributes, then the exact integer color source); the first 19 keep their layout.
+const STAGED=28;
 const {ownedAnswer,ownedRenderer}=require('./helpers/gl-owned-host');
 const assert=require('assert'),fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..'),req=p=>require(path.join(root,p));
@@ -209,7 +212,7 @@ const extraWat=`
  call('wglMakeCurrent',[dc,context2]);current([1.25,-2.5,3.75,1],'second context restored');
  call('wglDeleteContext',[context]);const fresh=call('wglCreateContext',[dc]);assert(fresh);call('wglMakeCurrent',[dc,fresh]);current([0,0,0,1],'deleted context cannot leak values');
  // Every family is legal inside Begin and captures vertex attributes immediately.
- const packed=()=>{const p=e.probe_vertices(),n=e.probe_count();return Array.from(new Float32Array(memory.buffer,p+n*4-19*4,19));};
+ const packed=()=>{const p=e.probe_vertices(),n=e.probe_count();return Array.from(new Float32Array(memory.buffer,p+n*4-STAGED*4,19));};
  for(const name of names){const {n,kind}=metadata(name),[input,want]=samples[kind];call('glBegin',[0]);typed(name,input.slice(0,n));call('glVertex3f',[0,0,0]);
   const vertex=packed();assert.deepStrictEqual([vertex[7],vertex[8],vertex[15],vertex[16]],full(want,n),'Begin packed current '+name);
   assert.deepStrictEqual([vertex[9],vertex[13],vertex[17],vertex[18]],[0,0,0,1],'fresh unit one default');call('glEnd');assert.strictEqual(call('glGetError'),0);checks++;}
@@ -264,7 +267,9 @@ const extraWat=`
  for(const name of ['glTexCoord2iv','glTexCoord2s','glTexCoord2sv']){typed('glTexCoord4dv',[0,0,0,7]);quad(name,[0,0],[1,0]);pixels('RRRRBBBB','literal 2D dimensional defaults '+name);}
  for(const mode of [0x1300,0x1301]){const id=call('glGenLists',[1]);call('glNewList',[id,mode]);quad('glTexCoord4dv',[0,0,0,1],[3,0,0,3]);call('glEndList');write(vec,Buffer.alloc(80,0x57));
   call('glClear',[0x4000]);call('glCallList',[id]);pixels('RRBBBBBB','literal list projective '+mode);}
- for(const name of ['glMap1d','glGetMapiv']){assert.strictEqual(call('wglGetProcAddress',[str(name)]),0,'unsupported control '+name);assert.strictEqual(resolve(name),0,'static unsupported control '+name);checks++;}
+ // glMap1d/glGetMapiv are real since the evaluator family (4ec8732ba); the
+ // compiled-vertex-array EXT pair is still unavailable.
+ for(const name of ['glLockArraysEXT','glUnlockArraysEXT']){assert.strictEqual(call('wglGetProcAddress',[str(name)]),0,'unsupported control '+name);assert.strictEqual(resolve(name),0,'static unsupported control '+name);checks++;}
  assert.strictEqual(call('glGetError'),0);if(encoder){encoder.fence();assert(encoder.snapshot().glQueued>0,'actual queue used');}
  call('wglDeleteContext',[context2]);call('wglDeleteContext',[fresh]);
  const result={passed:true,route:queued?'queued':'direct',checks,missingImplemented:names.length,mutation:mutation||null,observations};

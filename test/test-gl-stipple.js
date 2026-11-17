@@ -182,7 +182,9 @@ const extraWat=`
  call('glDisable',[0xb71]);call('glColor4f',[1,1,1,1],true);
  // A zero polygon mask has no effect on points or lines.
  new Uint8Array(memory.buffer,wa(input),128).fill(0);call('glPolygonStipple',[input]);call('glEnable',[0xb42]);clear();draw(1,[[4,10],[12,10]]);
- assert.strictEqual(bits(xs,9),'11111111','polygon stipple ignores lines');draw(0,[[20,20]]);assert.strictEqual(pixel(20,19),0xffffff,'polygon stipple ignores points');
+ assert.strictEqual(bits(xs,9),'11111111','polygon stipple ignores lines');// A size-1 point at window (20,20) covers (floor x, floor y) = GL row 20
+ // (GL1.1 3.3; the old rounded point path drew it at row 19 until 769227f75).
+ draw(0,[[20,20]]);assert.strictEqual(pixel(20,20),0xffffff,'polygon stipple ignores points');
  if(encoder){assert(encoder.snapshot().glQueued>0,'actual shared software queue used');assert.strictEqual(encoder.snapshot().fallbacks,fallback?1:0,'only the requested production fallback occurred');}
  // Deleting a context must finish writes to its leased continuation cell.
  call('glEnable',[0xb24]);draw(3,[[4,10],[9,10],[14,10]]);

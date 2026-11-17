@@ -10,27 +10,13 @@ const crypto = require('crypto');
 const {compile} = require('../tools/watx');
 const read = p => fs.readFileSync(path.join(__dirname, '..', p), 'utf8');
 const hash = s => crypto.createHash('sha256').update(s).digest('hex');
-function form(s, start) {
-  let d=0, quote=false, comment=false;
-  for(let i=start;i<s.length;i++) {
-    const c=s[i];
-    if(comment){if(c==='\n')comment=false;continue;}
-    if(!quote&&c===';'&&s[i+1]===';'){comment=true;continue;}
-    if(c==='"'&&s[i-1]!=='\\')quote=!quote;
-    if(quote)continue;
-    if(c==='(')d++;
-    if(c===')'&&--d===0)return s.slice(start,i+1);
-  }
-  throw Error('unterminated form');
-}
+const {closure,supply}=require('./helpers/wat-closure-fixture');
 const files=['src/09b2-dispatch-table.generated.wat','src/09a8b-handlers-opengl.wat',
   'src/09a8c-gl-encoder.wat','src/09a8d-gl-abi.generated.wat',
-  'src/09a8e-gl-state.wat','src/09a8ca-gl-lists.wat','src/03-registers.wat'];
-const sources=files.map(read), funcs=new Map(), globals=new Map();
-for(const s of sources) {
-  for(const m of s.matchAll(/\(func (\$[\w?]+)/g))funcs.set(m[1],form(s,m.index));
-  for(const m of s.matchAll(/\(global (\$\w+) /g))globals.set(m[1],form(s,m.index));
-}
+  'src/09a8e-gl-state.wat','src/09a8ca-gl-lists.wat','src/03-registers.wat',
+  // The selection/feedback (91da9cb83) and evaluator (4ec8732ba) query and
+  // enable intercepts run on every encoded call; non-matching ops pass through.
+  'src/09a8ce-gl-selection.wat','src/09a8cd-gl-evaluators.wat'];
 const api=JSON.parse(read('src/api_table.json'));
 const id=4394;assert.strictEqual(api[id].name,'glRectf');
 const rgbId=4222;assert.strictEqual(api[rgbId].name,'glColor3dv');
@@ -42,6 +28,9 @@ const roots=['$handle_gpu_api','$dispatch_api_table',page,vertexPage,'$wgl_api_a
 // No matrix/raster/backend work is needed for a color or list setter. These
 // observers are inert fixture endpoints. All other excluded paths trap.
 const seams=new Map([
+  // WGL ownership is a host stream round trip (09a8cw). Answer what production
+  // sets for an untagged host reply: WGL not WAT-owned, GPU stream off.
+  ['$gl_wgl_query_mode','(global.set $gl_owned (i32.const 0))'],
   ['$gl_sw_consume','(param i32 i32)'],['$gl_mtx_observe','(param i32 i32)'],['$gl_sw_observe','(param i32 i32)'],
   ['$gl_bitmap_context_init','(param i32)'],['$gl_stencil_init','(param i32)'],
   // Drawable selection is covered by the full-source pixel fixtures. These
@@ -52,40 +41,17 @@ const seams=new Map([
     '$gl_stencil_validate'].map(n=>[n,'(param i32 i32'+(n==='$gl_stencil_validate'?' i32':'')+') (result i32) (i32.const 0)'])
 ]);
 const excluded=new Set(['$gl_emit_record','$gl_pointer_length',
-  '$gl_wat_stream_flush','$gl_state_set_context','$gl_state_context_deleted','$gl_state_context_changed','$gs32','$gs64','$gs8','$gs16','$gl_copy_from_guest']);
-const all=fs.readdirSync(path.join(__dirname,'../src')).filter(n=>/\.wat$/.test(n)).map(n=>read('src/'+n)).join('\n');
-for(const n of ['$host_gdi_surface_create','$present_frame_end','$thunk_reserve','$update_thunk_end','$lookup_api_id','$guest_strlen','$memcpy','$gdi_dc_get_field','$gdi_dc_bitmap_record','$gdi_bitmap_record_valid']) {
-  const m=all.match(new RegExp('\\(func '+n.replace('$','\\$')+'(?= |\\n)'));
-  assert(m,'missing '+n); const body=form(all,m.index);const sig=body.slice(n.length+6).replace(/^\s*\(export "[^"]*"\)/, '').match(/^(\s*\((?:param|result)[^)]*\))*/)[0];
-  seams.set(n,sig+' (unreachable)');
-  for(const m of all.matchAll(/\(global (\$\w+) /g))if(!globals.has(m[1]))globals.set(m[1],form(all,m.index));
-}
-const selected=new Map(), traps=new Map();
-function visit(n) {
-  if(selected.has(n)||traps.has(n)||seams.has(n)||['$g2w','$w2g','$heap_alloc','$heap_free'].includes(n))return;
-  const s=funcs.get(n);
-  if(!s && (n.startsWith('$handle_') || n.startsWith('$dispatch_api_table_page_'))) {
-    const count=n==='$handle_fallback'?2:n.startsWith('$dispatch_api_table_page_')?7:6;
-    traps.set(n,`(func ${n} (param ${Array(count).fill('i32').join(' ')}) (unreachable))`);return;
-  }
-  assert(s,'missing production signature '+n);
-  if(excluded.has(n)||n.startsWith('$handle_')&&!roots.includes(n)||
-      n.startsWith('$dispatch_api_table_page_')&&!roots.includes(n)) {
-    const signature=s.slice(n.length+6).replace(/^\s*\(export "[^"]*"\)/, '').match(/^(\s*\((?:param|result)[^)]*\))*/)[0];
-    traps.set(n,`(func ${n} ${signature} (unreachable))`);return;
-  }
-  selected.set(n,s);
-  for(const m of s.matchAll(/\(call (\$\w+)/g)){try {visit(m[1]);} catch(e) {throw Error(e.message+' <- '+n);}};
-}
-// Supply exact signatures for external paths referenced by selected functions.
-for(const p of ['src/09a8cb-gl-bitmap.wat','src/09a8cc-gl-stencil.wat','src/09a8cd-gl-color-mask.wat','src/09a8f-gl-matrix.wat','src/09a8g-gl-raster.wat']) {
-  const s=read(p);
-  for(const m of s.matchAll(/\(func (\$\w+)/g)) {
-    if(!funcs.has(m[1])) {funcs.set(m[1],form(s,m.index));excluded.add(m[1]);}
-  }
-  for(const m of s.matchAll(/\(global (\$\w+) /g))if(!globals.has(m[1]))globals.set(m[1],form(s,m.index));
-}
-roots.forEach(n=>{if(funcs.has(n))visit(n);});
+  '$gl_state_set_context','$gl_state_context_deleted','$gl_state_context_changed','$gs32','$gs64','$gs8','$gs16','$gl_copy_from_guest']);
+// Real production bodies: the files above plus the per-producer state claim.
+// Any other production callee is an exact-signature trap.
+// gl_sw_state_defaults seeds the template the per-producer state copies; the
+// host runs it at launch through gl_sw_set_enabled, the fixture at start.
+const {selected,traps}=closure({roots:[...roots,'$gl_sw_state_defaults'],excluded,seams,
+  real:[...files,'$gl_sw_private_state','$gl_sw_state_defaults','$gl_stipple_defaults','$gl_period_defaults','$gl_stipple_mask',
+  // Per-call observers and intercepts; each passes through ops it does not own.
+  // glColorMaterial tracking (09a8g) is gated on its enable bit, off here.
+  '$gl_period_observe','$gl_period_validate','$gl_period_color','$gl_period_track',
+  '$gl_stipple_intercept','$gl_sw_context_publish','$gl_wgl_owned']});
 function boot(mutation='',failAlloc=false,failPage=-1,colorId=id) {
   const parts=[...selected.values()];
   if(mutation) {
@@ -95,19 +61,18 @@ function boot(mutation='',failAlloc=false,failPage=-1,colorId=id) {
     if(mutation==='bits')parts[i]=before.replace('(f32.load offset=4 (local.get $stack))', '(f32.convert_i32_s (i32.load offset=4 (local.get $stack)))');
     assert.notStrictEqual(parts[i],before);
   }
-  const needed=new Set([...parts.join('\n').matchAll(/\(global\.(?:get|set) (\$\w+)/g)].map(m=>m[1]));
-  const definedGlobals=new Map([...globals].filter(([n])=>needed.has(n)));
-  for(const n of ['$reg_base','$image_base','$GUEST_BASE','$NULL_SENTINEL','$fault_sync_epoch'])definedGlobals.delete(n);
   const src=`(memory 64) (export "memory" (memory 0))
     (import "fixture" "g2w" (func $g2w (param i32) (result i32)))
     (import "fixture" "alloc" (func $heap_alloc (param i32) (result i32)))
     (import "fixture" "free" (func $heap_free (param i32)))
+    (import "fixture" "gpu" (func $host_gpu_gl_call (param i32 i32 i32) (result i32)))
     (func $w2g (param $p i32) (result i32) (i32.add (local.get $p) (i32.const 4190208)))
     (global $reg_base i32 (i32.const 256))
     (global $image_base i32 (i32.const 4194304)) (global $GUEST_BASE i32 (i32.const 4096))
     (global $NULL_SENTINEL i32 (i32.const 240)) (global $fault_sync_epoch (mut i32) (i32.const 0))
     (defmacro (g2w-fast $ga) (call $g2w $ga))
-    ${[...definedGlobals.values()].join('\n')}
+    (start $gl_sw_state_defaults)
+    ;;@supply
     ${[...seams].map(([n,s])=>`(func ${n} ${s})`).join('\n')}
     ${[...traps.values()].join('\n')}
     ${parts.join('\n')}
@@ -130,14 +95,23 @@ function boot(mutation='',failAlloc=false,failPage=-1,colorId=id) {
     (func (export "stream") (result i32) (global.get $gl_stream_wa))
     (func (export "bytes") (result i32) (global.get $gl_stream_used_bytes))
     (func (export "count") (result i32) (global.get $gl_immediate_floats))`;
-  const transformed=src.replaceAll('(region.end $DIRECT_WINDOW)','(i32.const 65536)').replace(/\(region\.addr \$\w+(?: (?:0x[0-9A-Fa-f]+|[0-9]+))?\)/g,'(i32.const 0)');
+  const transformed=src.replace(';;@supply',supply(src)).replaceAll('(region.end $DIRECT_WINDOW)','(i32.const 65536)');
   const result=compile(transformed,new Map(),{mode:'production'});
   let next=0x10000, frees=0;
   const t=p=>(p>>>12)===failPage?240:p>=0x50000000?
     0x8000+(((p-0x50000000)>>>12)*0x2000)+(p&4095):p-0x400000+4096;
-  const e=new WebAssembly.Instance(new WebAssembly.Module(result.wasmBinary),{fixture:{g2w:t,
+  // The host side of a stream flush (0x10001): keep the batch, answer 0 as
+  // the GL host does for a batch with no query in it.
+  const sent=[];let mem=null;
+  const gpu=(cmd,wa,len)=>{assert.strictEqual(cmd,0x10001);sent.push(mem.buffer.slice(wa,wa+len));return 0;};
+  const e=new WebAssembly.Instance(new WebAssembly.Module(result.wasmBinary),{fixture:{g2w:t,gpu,
     alloc:n=>{if(failAlloc)return 0;const p=next;next=(next+n+7)&~7;return p+4190208;},free:()=>frees++}}).exports;
-  return {e,t,v:new DataView(e.memory.buffer),components:colorId===rgbId?3:4,failAlloc:()=>{failAlloc=true;},frees:()=>frees,moduleSHA:hash(result.wasmBinary),transformSHA:hash(transformed)};
+  mem=e.memory;
+  // Everything this producer emitted: flushed batches, then the pending one.
+  const batches=()=>[...sent.map(b=>({buffer:b,byteOffset:0,bytes:b.byteLength})),
+    {buffer:e.memory.buffer,byteOffset:e.stream(),bytes:e.bytes()}];
+  const emitted=()=>sent.reduce((n,b)=>n+b.byteLength,e.bytes());
+  return {e,t,v:new DataView(e.memory.buffer),sent,batches,emitted,components:colorId===rgbId?3:4,failAlloc:()=>{failAlloc=true;},frees:()=>frees,moduleSHA:hash(result.wasmBinary),transformSHA:hash(transformed)};
 }
 function acceptance(h) {
   const {e,t,v}=h, stream=require('../lib/gl-command-stream');
@@ -156,7 +130,7 @@ function acceptance(h) {
     for(let i=1;i<8;i++)if(i!==4)assert.strictEqual(v.getUint32(256+i*4,true),0x77770000+i,'GPR preserved');
     assert.deepStrictEqual(Buffer.from(new Uint8Array(e.memory.buffer,t(esp),24)),before,'argument stack preserved');
   };
-  const records=()=>{const out=[];stream.replay(stream.memoryBatch(e.memory,e.stream(),e.bytes()),(op,mode,c)=>{
+  const records=()=>{const out=[];for(const b of h.batches())stream.replay(b,(op,mode,c)=>{
     assert.strictEqual(op,stream.PACKED_DRAW_OPCODE);assert.strictEqual(mode,4,'quad triangulated through canonical path');
     assert.strictEqual(c.pointerLength,6*76);out.push(Array.from(new Float32Array(c.buffer,c.pointerOffset,c.pointerLength/4)));return 0;
   });return out;};
@@ -188,9 +162,9 @@ function acceptance(h) {
   call(127,[list]);expect(cases[1]);
   // Direct rect and a list containing rect must leave the enclosing primitive
   // intact and report INVALID_OPERATION. End still draws only our own vertices.
-  call(21,[4]);e.vertex();const count=e.count(),bytes=e.bytes();
+  call(21,[4]);e.vertex();const count=e.count(),bytes=h.emitted();
   const pending=Buffer.from(new Uint8Array(e.memory.buffer,e.vertices(),count*4));
-  invoke(a);assert.strictEqual(e.active(),4);assert.strictEqual(e.count(),count);assert.strictEqual(e.bytes(),bytes);
+  invoke(a);assert.strictEqual(e.active(),4);assert.strictEqual(e.count(),count);assert.strictEqual(h.emitted(),bytes);
   assert.strictEqual(e.error(),0x502);
   call(127,[list]);assert.strictEqual(e.error(),0x502);assert.strictEqual(e.active(),4);assert.strictEqual(e.count(),count);
   assert.deepStrictEqual(Buffer.from(new Uint8Array(e.memory.buffer,e.vertices(),count*4)),pending);
@@ -198,7 +172,7 @@ function acceptance(h) {
   // Compilation's shadow Begin state also rejects rect without recording it.
   const empty=call(124,[1]);call(125,[empty,0x1300]);call(21,[7]);invoke(a);
   assert.strictEqual(call(12),0x502);call(22);call(126);
-  const saved=e.bytes();call(127,[empty]);assert.strictEqual(e.bytes(),saved);
+  const saved=h.emitted();call(127,[empty]);assert.strictEqual(h.emitted(),saved);
   return {cases:cases.length,displayLists:true,invalidBeginPreserved:true,stdcall:true};
 }
 const h=boot();const result=acceptance(h);
@@ -209,4 +183,4 @@ for(const m of ['corner','bits'])assert.throws(()=>acceptance(boot(m)),assert.As
 const stream=require('../lib/gl-command-stream'),compat=stream;
 assert.strictEqual(compat.CALL_INDEX.glRectf,142);assert.strictEqual(stream.ARG_WORDS[142],4);
 assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);
-console.log(JSON.stringify({PASS:true,...result,moduleSHA:h.moduleSHA,sourceSHA:files.map((p,i)=>[p,hash(sources[i])])}));
+console.log(JSON.stringify({PASS:true,...result,moduleSHA:h.moduleSHA,sourceSHA:files.map((p,i)=>[p,hash(read(p))])}));

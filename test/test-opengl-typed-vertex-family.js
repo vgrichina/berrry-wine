@@ -1,4 +1,7 @@
 'use strict';
+// Immediate vertices are staged 28 floats wide since bd1a15a25 (19 packed
+// attributes, then the exact integer color source); the first 19 keep their layout.
+const STAGED=28;
 const {ownedAnswer,ownedRenderer}=require('./helpers/gl-owned-host');
 const assert=require('assert'),fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..'),req=p=>require(path.join(root,p));
@@ -133,8 +136,8 @@ const extraWat=`
  const seed=()=>{call('glColor4f',[.25,.5,.75,1].map(f));call('glNormal3f',[-.25,.5,-.75].map(f));
   call('glTexCoord4f',[.125,.25,.5,2].map(f));call('glMultiTexCoord4fARB',[0x84c1,...[.375,.5,.75,4].map(f)]);};
  seed();
- const packed=(index=-1)=>{const n=e.probe_count()/19;assert(n>0);if(index<0)index=n-1;
-  return Array.from(new Float32Array(memory.buffer,e.probe_vertices()+index*76,19));};
+ const packed=(index=-1)=>{const n=e.probe_count()/STAGED;assert(n>0);if(index<0)index=n-1;
+  return Array.from(new Float32Array(memory.buffer,e.probe_vertices()+index*STAGED*4,19));};
  function expectVertex(want,label,index=-1){const v=packed(index),actual=[v[0],v[1],v[2],v[14]];
   assert.deepStrictEqual(actual,want,label+' position');assert.deepStrictEqual(v.slice(3,14),attributes,label+' current attributes');
   assert.deepStrictEqual(v.slice(15),[.5,2,.75,4],label+' homogeneous texture attributes');
@@ -153,7 +156,7 @@ const extraWat=`
  const full=(a,n)=>n===2?[a[0],a[1],0,1]:n===3?[a[0],a[1],a[2],1]:a;
  for(const name of names){const {n,kind}=metadata(name),[input,want]=samples[kind];
   assert(call('wglGetProcAddress',[str(name)]),'WGL real availability '+name);call('glBegin',[0]);
-  typed(name,input.slice(0,n));assert.strictEqual(e.probe_count(),19);expectVertex(full(want,n),name+' literal signed/default/f64');call('glEnd');current(name);
+  typed(name,input.slice(0,n));assert.strictEqual(e.probe_count(),STAGED);expectVertex(full(want,n),name+' literal signed/default/f64');call('glEnd');current(name);
  }
  call('glBegin',[0]);call('glVertex4s',[0x12348000,0x56787fff,0x3141ffff,0x27180011]);expectVertex([-32768,32767,-1,17],'scalar shorts ignore high padding');call('glEnd');
  for(const [name,input,want] of [
@@ -213,7 +216,7 @@ const extraWat=`
  for(const name of names)for(const mode of [0x1300,0x1301]){const {n,kind}=metadata(name),[input,want]=samples[kind],id=call('glGenLists',[1]);
   const before=e.probe_count();call('glNewList',[id,mode]);typed(name,input.slice(0,n));call('glEndList');assert.strictEqual(e.probe_count(),before,'compile outside Begin');
   write(vec,Buffer.alloc(80,0x5e));typed('glVertex4d',[44,33,22,11]);
-  call('glBegin',[0]);call('glCallList',[id]);assert.strictEqual(e.probe_count(),19,'one captured vertex '+name);expectVertex(full(want,n),'list value '+name+'/'+mode);call('glEnd');listIds.push(id);
+  call('glBegin',[0]);call('glCallList',[id]);assert.strictEqual(e.probe_count(),STAGED,'one captured vertex '+name);expectVertex(full(want,n),'list value '+name+'/'+mode);call('glEnd');listIds.push(id);
  }
  const nested=call('glGenLists',[1]);call('glNewList',[nested,0x1300]);call('glCallList',[listIds[0]]);call('glEndList');call('glBegin',[0]);call('glCallList',[nested]);expectVertex([-2147483648,2147483648,0,1],'nested list vertex');call('glEnd');
  // A vertex-only list captures coordinates at compilation but takes current
@@ -226,14 +229,14 @@ const extraWat=`
   assert.strictEqual(e.probe_mode(),-1);call('glCallList',[id]);assert.strictEqual(e.probe_mode(),-1);checks++;
  }
  for(const name of names)for(const mode of [0x1300,0x1301]){const {n,kind}=metadata(name),[input,want]=samples[kind],id=call('glGenLists',[1]),before=e.probe_count();
-  call('glNewList',[id,mode]);call('glBegin',[0]);typed(name,input.slice(0,n));assert.strictEqual(e.probe_count(),mode===0x1300?before:19,'compile/execute timing '+name);
+  call('glNewList',[id,mode]);call('glBegin',[0]);typed(name,input.slice(0,n));assert.strictEqual(e.probe_count(),mode===0x1300?before:STAGED,'compile/execute timing '+name);
   if(mode===0x1301)expectVertex(full(want,n),'compile-and-execute immediate '+name);call('glEnd');call('glEndList');
  }
  const atomic=call('glGenLists',[1]);call('glNewList',[atomic,0x1300]);typed('glVertex4sv',[1,2,3,4]);bad('glVertex4dv',stack,[0x65000ff9],'malformed compilation');call('glEndList');
- call('glBegin',[0]);call('glCallList',[atomic]);assert.strictEqual(e.probe_count(),19);expectVertex([1,2,3,4],'malformed list atomic');call('glEnd');
+ call('glBegin',[0]);call('glCallList',[atomic]);assert.strictEqual(e.probe_count(),STAGED);expectVertex([1,2,3,4],'malformed list atomic');call('glEnd');
  // Nested Begin must not terminate or reset an existing primitive.
- call('glBegin',[4]);typed('glVertex2sv',[-1,-1]);assert.throws(()=>call('glBegin',[0]),WebAssembly.RuntimeError);assert.strictEqual(e.probe_mode(),4);assert.strictEqual(e.probe_count(),19);
- typed('glVertex3iv',[1,-1,0]);typed('glVertex4sv',[0,1,0,1]);assert.strictEqual(e.probe_count(),57);call('glEnd');
+ call('glBegin',[4]);typed('glVertex2sv',[-1,-1]);assert.throws(()=>call('glBegin',[0]),WebAssembly.RuntimeError);assert.strictEqual(e.probe_mode(),4);assert.strictEqual(e.probe_count(),STAGED);
+ typed('glVertex3iv',[1,-1,0]);typed('glVertex4sv',[0,1,0,1]);assert.strictEqual(e.probe_count(),3*STAGED);call('glEnd');
  // Literal pixel expectations on an 8x8 software drawable. Position w=1|3
  // gives texture s = u/(3-2u); s=.5 at u=.75, hence RRRRRRBB.
  call('glViewport',[0,0,8,8]);call('glDrawBuffer',[0x405]);call('glReadBuffer',[0x405]);call('glPixelStorei',[0xd05,1]);call('glPixelStorei',[0xcf5,1]);
@@ -267,13 +270,16 @@ const extraWat=`
  // the next Begin. Two individually incomplete primitives leave black pixels.
  call('glClear',[0x4000]);call('glBegin',[4]);typed('glVertex2sv',[-1,-1]);typed('glVertex3iv',[1,-1,0]);call('glEnd');call('glBegin',[4]);typed('glVertex4dv',[0,1,0,1]);call('glEnd');pixels(Array(8).fill('KKKKKKKK'),'incomplete primitives do not join');
  call('glBegin',[4]);typed('glVertex2sv',[-1,-1]);typed('glVertex3iv',[1,-1,0]);typed('glVertex4dv',[0,1,0,1]);call('glEnd');
- // Screen vertices (0,8),(8,8),(4,0); readback row r uses screen y=7-r.
- // Nearest integer edges and exclusive right give [1+floor(r/2),8-ceil(r/2)).
- pixels(['KGGGGGGG','KGGGGGGK','KKGGGGGK','KKGGGGKK','KKKGGGKK','KKKGGKKK','KKKKGKKK','KKKKKKKK'],'literal mixed typed triangle');
+ // Window vertices (0,0),(8,0),(4,8); readback row r is window y=r. GL1.1
+ // 3.5.1 samples fragment centers (x+.5,r+.5): covered iff
+ // (r+.5)/2 < x+.5 < 8-(r+.5)/2 (continuous centers since 769227f75; the
+ // old nearest-integer-edge rows were asymmetric).
+ pixels(['GGGGGGGG','KGGGGGGK','KGGGGGGK','KKGGGGKK','KKGGGGKK','KKKGGKKK','KKKGGKKK','KKKKKKKK'],'literal mixed typed triangle');
  // Full projective primitive lists preserve Begin/End and typed values.
  call('glEnable',[0xde1]);call('glColor4f',[1,1,1,1].map(f));
  for(const mode of [0x1300,0x1301]){const id=call('glGenLists',[1]);call('glNewList',[id,mode]);quad('glVertex4dv');call('glEndList');write(vec,Buffer.alloc(80,0x57));call('glClear',[0x4000]);call('glCallList',[id]);pixels(Array(8).fill('RRRRRRBB'),'literal projective list '+mode);}
- for(const name of ['glMap1d']){assert.strictEqual(call('wglGetProcAddress',[str(name)]),0);assert.strictEqual(resolve(name),0);}
+ // glMap1d is real since 4ec8732ba; glLockArraysEXT is still unavailable.
+ for(const name of ['glLockArraysEXT']){assert.strictEqual(call('wglGetProcAddress',[str(name)]),0);assert.strictEqual(resolve(name),0);}
  assert.strictEqual(call('glGetError'),0);if(encoder){encoder.fence();assert(encoder.snapshot().glQueued>0,'actual queue used');}
  call('wglDeleteContext',[context]);
  const result={passed:true,route:queued?'queued':'direct',checks,missingImplemented:names.length,mutation:mutation||null,observations};
