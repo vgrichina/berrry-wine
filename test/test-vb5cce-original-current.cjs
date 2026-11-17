@@ -179,16 +179,18 @@ async function main(){
   const wclosed=new Promise(resolve=>watchdog.on('close',(exit,signal)=>resolve({exit,signal})));
   while(!ws.includes('ARMED'))await pause(5);
   fs.writeFileSync(path.join(run,'watchdog-armed.json'),JSON.stringify({pid:watchdog.pid,at:Date.now(),prearmed:true,deadlineMs:65000,stdout:ws}));
-  const s=startControlSession(['test/run.js','--exe='+(mode.startsWith('no-main-')?premainImage:image),'--winver=nt4','--no-build','--spawn-processes','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=60','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{cwd:root,spawnOptions:{detached:true}});
+  const invocationToken=require('node:crypto').randomUUID();
+  const s=startControlSession(['test/run.js','--native-exit-receipt='+path.join(run,'native-exit.json'),'--native-invocation-token='+invocationToken,'--exe='+(mode.startsWith('no-main-')?premainImage:image),'--winver=nt4','--no-build','--spawn-processes','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=60','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{cwd:root,spawnOptions:{detached:true}});
   const send=s.send;let requests=0;
   s.send=command=>{
     assert(!fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')),'permanent UNKNOWN; fixture sends no later requests');
     requests++;fs.appendFileSync(path.join(run,'fixture-requests.jsonl'),JSON.stringify({at:Date.now(),action:command.action})+'\n');return send(command);
   };
-  s.child.once('close',(exit,signal)=>publishJSON(path.join(run,'native-wait.json'),{pid:s.child.pid,exit,signal,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
+  s.child.once('close',(exit,signal)=>publishJSON(path.join(run,'native-wait.json'),{...nativeIdentity,exit,signal,actualWait:true,disposition:'normal',atWait:Date.now()/1000,atWaitMono:Number(process.hrtime.bigint())/1e9,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
   watchdog.stdin.write(String(s.child.pid));
   const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');
-  fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify({pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19]}));
+  const nativeIdentity={pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],invocationToken,bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()};
+  fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify(nativeIdentity));
   let controllerRuns=0;
   const controller=async(args,expected=0)=>{
     const startedAt=Date.now();

@@ -4,7 +4,7 @@
 Never builds or changes shared outputs. Runtime sources and module are sealed
 in memory; only Git identities, hashes and helper diffs persist in evidence.
 """
-import fcntl, hashlib, json, os, pathlib, signal, socket, subprocess, sys, time, types
+import fcntl, hashlib, json, os, pathlib, signal, socket, subprocess, sys, time, types, uuid
 
 ROOT=pathlib.Path(__file__).resolve().parent.parent
 RUN=pathlib.Path(os.environ.get('DELPHI5_RUN',ROOT/'scratch/runs/20261116-vb5cce-reviewed-context-install-ide'))
@@ -17,6 +17,8 @@ SUPPORT_PACKAGE_SHA256='564de93dcc50691480332e2ccb5565908760b295faa70f8c68854f69
 CFGMGR32_SHA256='572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b80'
 SUPPORT_MOUNTS=[]
 OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/test-vb5-native-dialog-identity.cjs',
+    'tools/vb5cce-reviewed-control.py','test/run.js','test/test-vb5cce-original-current.cjs',
+    'test/test-vb5-normal-exit-completion.py','test/test-vb5-normal-exit-native.cjs',
     'test/test-vb5-nested-owned-modal.cjs','test/test-vb5-runtime-shutdown.py','lib/cli-native-scene.js','lib/cli-native-user-windows.js',
     'src/13-exports.wat','src/09a5-handlers-window.wat')
 
@@ -39,12 +41,15 @@ def terminate_owned(p):
         except ProcessLookupError:pass
         return p.wait(timeout=10)
 def wait_native(p,target,info,timeout=None):
-    try:return p.wait(timeout=timeout)
+    normal=False
+    try:
+        rc=p.wait(timeout=timeout);normal=True;return rc
     finally:
         # poll/absence is never represented as a join: always call wait.
         rc=terminate_owned(p)
         publish(target/'native-wait.json',dict(**info,exit=rc,actualWait=True,
-            outputMode='regular files; no pipe EOF claim',atWait=time.time()))
+            disposition='normal' if normal else 'cleanup',
+            outputMode='regular files; no pipe EOF claim',atWait=time.time(),atWaitMono=time.monotonic()))
 def join_watchdog(w):
     try:a,b=w.communicate(timeout=10)
     except subprocess.TimeoutExpired:
@@ -83,6 +88,9 @@ def genuine_setupapi_support():
     return fd
 def token(pid):
     s=pathlib.Path(f'/proc/{pid}/stat').read_text();return s[s.rindex(')')+2:].split()[19]
+def native_identity(p):
+    return dict(pid=p.pid,startToken=token(p.pid),invocationToken=str(uuid.uuid4()),
+        bootId=pathlib.Path('/proc/sys/kernel/random/boot_id').read_text().strip())
 def sources():
     names=subprocess.check_output(['git','ls-tree','-r','--name-only',HEAD],cwd=ROOT).decode().splitlines()
     names=[n for n in names if n.endswith(('.js','.cjs','.json','.wat','.watx','.py')) and
@@ -208,6 +216,13 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
+    if '--normal-exit-only' in sys.argv:
+        checked('normal-exit',['python3','-B','test/test-vb5-normal-exit-completion.py',str(RUN/'normal-exit')],env,(source,module))
+        checked('runtime-shutdown',['python3','-B','test/test-vb5-runtime-shutdown.py',str(RUN/'shutdown-qualification')],env,(source,module))
+        checked('native-nested-owned',['node','test/test-vb5-nested-owned-modal.cjs',str(RUN/'nested-qualification')],env,(source,module))
+        checked('native-dialogbox',['node','test/test-vb5-native-dialog-identity.cjs',str(RUN/'dialogbox-qualification')],env,(source,module))
+        checked('native-controller',['node','test/test-vb5cce-original-current.cjs',str(RUN/'native-qualification')],env,(source,module))
+        return
     if '--repair-only' in sys.argv:
         checked('native-nested-owned',['node','test/test-vb5-nested-owned-modal.cjs',str(RUN/'nested-qualification')],env,(source,module))
         checked('runtime-shutdown',['python3','-B','test/test-vb5-runtime-shutdown.py',str(RUN/'shutdown-qualification')],env,(source,module))
@@ -275,6 +290,7 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
         save('pipeline-closed.json',dict(at=time.time(),originalStarted=ORIGINAL_STARTED))
         join_watchdog(w)
 def qualify(env,files,source,module,include_progress=True):
+    checked('normal-exit',['python3','-B','test/test-vb5-normal-exit-completion.py',str(RUN/'normal-exit')],env,(source,module))
     # The legacy source-view test intentionally replaces NODE_OPTIONS with its
     # own unsealed loader. The indexed inheritance probe above qualifies this
     # runtime's loader; retain both actual desktop transport tests here.
@@ -319,7 +335,9 @@ def original_pipeline(env,source,module,started,deadline,passive):
             assert port!=childport
             target=RUN/f'stage-{stage}';target.mkdir()
             (target/'runtime-inputs.json').write_bytes((RUN/'runtime-inputs.json').read_bytes())
+            invocation=str(uuid.uuid4())
             argv=['node','test/run.js','--exe='+str(exe),'--exe-guest-path='+guest,'--cwd='+cwd,
+                '--native-exit-receipt='+str(target/'native-exit.json'),'--native-invocation-token='+invocation,
                 '--winver=nt4','--no-build',f'--wasm=/proc/{os.getpid()}/fd/{module}',
                 '--overlay-dir='+str(RUN/'guest-overlay'),'--overlay-flush-ms=0',
                 '--reg-export='+str(RUN/'guest-registry.json'),'--spawn-processes','--threads',
@@ -332,10 +350,10 @@ def original_pipeline(env,source,module,started,deadline,passive):
                  rootPort=port,childPort=childport,winver='nt4',passiveDiagnostic=passive))
             with (target/'native.stdout.log').open('xb') as out,(target/'native.stderr.log').open('xb') as err:
                 p=subprocess.Popen(argv,cwd=ROOT,env=env,pass_fds=(source,module),stdout=out,stderr=err,start_new_session=True)
-                info=dict(pid=p.pid,at=time.time())
+                info=native_identity(p)
+                info['invocationToken']=invocation
                 try:
                     ORIGINAL_STARTED=True
-                    info['startToken']=token(p.pid)
                     publish(target/'native-pid.json',info)
                     # Stage replacement is one complete atomic watchdog identity.
                     pending=RUN/'current-native-pid.pending'
@@ -351,7 +369,8 @@ def original_pipeline(env,source,module,started,deadline,passive):
                     if not (target/'native-wait.json').exists():
                         terminate_owned(p)
                         publish(target/'native-wait.json',dict(**info,exit=p.returncode,actualWait=True,
-                            outputMode='regular files; no pipe EOF claim',atWait=time.time()))
+                            disposition='cleanup',outputMode='regular files; no pipe EOF claim',
+                            atWait=time.time(),atWaitMono=time.monotonic()))
             if (target/'PERMANENT-UNKNOWN.json').exists() or rc!=0:return
 
 if __name__=='__main__':

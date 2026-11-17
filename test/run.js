@@ -171,6 +171,8 @@ const argHas = name => args.some(a => a.startsWith(`--${name}=`));
 const ENV_WASM = process.env.WINE_ASSEMBLY_WASM || '';
 const NO_BUILD = hasFlag('no-build') || !!ENV_WASM; // --no-build: skip auto-build
 const NO_CLOSE = hasFlag('no-close');      // --no-close: don't inject WM_CLOSE
+const recordNativeExit = require('../lib/cli-native-scene').createNativeExitRecorder(
+  getArg('native-exit-receipt',null),getArg('native-invocation-token',null));
 const CLI_NATIVE_OBSERVATION = hasFlag('cli-native-observation');
 if (CLI_NATIVE_OBSERVATION) require('../lib/cli-observation-lease').validateObservationArgs(args);
 const NO_RENDERER = hasFlag('no-renderer'); // --no-renderer: skip CLI canvas/renderer (guest-state diagnostics)
@@ -4082,6 +4084,7 @@ async function main() {
 
   // --- Override exit to also log ---
   h.exit = code => {
+    recordNativeExit(code);
     processDesktop.retire();
     hostExitRequested = true;
     logs.push('[Exit] code=' + code); stopped = true;
@@ -5341,6 +5344,7 @@ async function main() {
     process.on(sig, () => {
       if (signalExitStarted) return;
       signalExitStarted = true;
+      recordNativeExit.cancel(sig);
       terminationSignal = sig;
       console.log(`[signal] ${sig} requested orderly shutdown`);
       // Leave through the normal cleanup path. In particular, a controlled
@@ -13345,6 +13349,7 @@ if (VERBOSE) {
 }
 
 main().catch(async e => {
+  recordNativeExit.cancel('runner error');
   process.exitCode = process.exitCode || 1;
   console.error(e);
   // The threads have to be stopped either way
