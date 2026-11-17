@@ -14,6 +14,25 @@ async function host(out){
   assert.equal(Buffer.from(child.files.get('e:\\maxis.ini').data).toString(),'[fixture]\r\nvalue=CONTROL\r\n');
   assert.equal(child.createFile('E:\\new',0x40000000,2),0);
   assert(context.capture(child).length);
+  // A fresh independent full digest can overlap CPU/import preparation, but
+  // only its one-shot context capability can authorize the subsequent mount.
+  const preparedChild=new VirtualFS(),ticket=context.prepareRestore(snapshot);
+  const prepared=await context.restore(preparedChild,snapshot,ticket);
+  try {
+    assert.deepEqual(context.tree(preparedChild,['e']),context.tree(parent,['e']));
+    assert.equal(preparedChild.createFile('E:\\new',0x40000000,2),0);
+    await assert.rejects(context.restore(new VirtualFS(),snapshot,ticket),/preparation context mismatch/);
+  } finally {for(const m of prepared)require('../lib/media-cli').closeMedia(m);}
+  await assert.rejects(context.restore(new VirtualFS(),snapshot,{}),/preparation context mismatch/);
+  const changed=structuredClone(snapshot);changed[0].sources[0].sha256='0'.repeat(64);
+  const refused=new VirtualFS();
+  await assert.rejects(context.restore(refused,changed,context.prepareRestore(changed)),/source pin mismatch/);
+  assert.equal(refused.files.size,0);assert.equal(refused.readOnlyDrives.size,0);
+  // Changing the transfer while its worker hashes cannot change the ticket.
+  const altered=structuredClone(snapshot),alteredTicket=context.prepareRestore(altered);
+  altered[0].recipe.drive='d';
+  await assert.rejects(context.restore(new VirtualFS(),altered,alteredTicket),/preparation context mismatch/);
+  await alteredTicket.cancel();
   const bad=structuredClone(snapshot);bad[0].recipe.drive='d';await assert.rejects(context.restore(new VirtualFS(),bad),/identity mismatch|drive became writable/);
   // A real remount must hash all source bytes once, through its held provider,
   // and compare the resulting digest/identity before adopting any guest files.
@@ -33,6 +52,20 @@ async function host(out){
    assert.equal(untouched.files.size,0,'refused staged media must not enter the child');
    assert.equal(untouched.readOnlyDrives.size,0);
   }
+  // A source changed after preparation must still fail before adoption.
+  const replacement=path.join(out,'replacement.iso');fs.writeFileSync(replacement,fixture.tinyIso());
+  const replacementParent=new VirtualFS(),replacementMount=context.mountIso(replacementParent,replacement,{drive:'E',prefer:'primary'});
+  try {
+    const transfer=context.capture(replacementParent),pending=context.prepareRestore(transfer);
+    // A separate preparation and restore proves readiness; this ticket must
+    // still reject a replaced inode even if its own read finished already.
+    const once=await context.restore(new VirtualFS(),transfer,context.prepareRestore(transfer));
+    for(const m of once)require('../lib/media-cli').closeMedia(m);
+    fs.renameSync(replacement,replacement+'.old');fs.writeFileSync(replacement,fixture.tinyIso());
+    const empty=new VirtualFS();
+    await assert.rejects(context.restore(empty,transfer,pending),/source pin mismatch|prepared source changed/);
+    assert.equal(empty.files.size,0);assert.equal(empty.readOnlyDrives.size,0);
+  } finally {require('../lib/media-cli').closeMedia(replacementMount.media);}
   mounted.media.parts[0].source.close();assert.throws(()=>context.capture(parent),/ownership revoked|replaced/);
   opened[0].parts[0].source.close();assert.throws(()=>context.capture(child),/ownership revoked|replaced/);
  }finally{require('../lib/media-cli').closeMedia(mounted.media);for(const m of opened)require('../lib/media-cli').closeMedia(m);}

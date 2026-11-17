@@ -1,5 +1,65 @@
 const fs = require('fs');
 const path = require('path');
+// Parse args (need these before autoBuild)
+const args = process.argv.slice(2);
+// WINE_RUN_EXTRA_ARGS='--lazy-ranges=5 ...': appended to every run.js command
+// line, so an existing gameplay test that spawns run.js becomes, unedited, the
+// same route under an extra flag (the lazy-loading audit runs each one this
+// way). Whitespace-separated; a flag given twice resolves as getArg reads it.
+if (process.env.WINE_RUN_EXTRA_ARGS) {
+  const extra = process.env.WINE_RUN_EXTRA_ARGS.split(/\s+/).filter(Boolean);
+  args.push(...extra);
+  process.argv.push(...extra);
+  console.error(`[run] WINE_RUN_EXTRA_ARGS: ${extra.join(' ')}`);
+}
+// --tee=PATH: also write everything this process prints (stdout and stderr)
+// to PATH. With WINE_RUN_EXTRA_ARGS it keeps the log of a run a test spawned
+// and only parsed, e.g. for tools/io-range-census.js over its --trace-fs.
+{
+  const tee = args.find(value => value.startsWith('--tee='));
+  if (tee) {
+    const fd = fs.openSync(tee.slice('--tee='.length), 'w');
+    for (const stream of [process.stdout, process.stderr]) {
+      const write = stream.write.bind(stream);
+      stream.write = (chunk, encoding, callback) => {
+        try { fs.writeSync(fd, typeof chunk === 'string' ? chunk : Buffer.from(chunk)); } catch (_) {}
+        return write(chunk, encoding, callback);
+      };
+    }
+  }
+}
+const getArg = (name, def) => {
+  const prefix = `--${name}=`;
+  const arg = args.find(value => value.startsWith(prefix));
+  return arg ? arg.slice(prefix.length) : def;
+};
+const getArgs = name => {
+  const prefix = `--${name}=`;
+  return args.filter(value => value.startsWith(prefix))
+    .flatMap(value => value.slice(prefix.length).split(','))
+    .map(value => value.trim()).filter(Boolean);
+};
+const hasFlag = name => args.includes(`--${name}`);
+// Was `--name=...` written at all? Distinct from getArg(), which cannot tell an
+// absent option from one that was given its default value.
+const argHas = name => args.some(a => a.startsWith(`--${name}=`));
+
+// This launch-local digest runs while host modules/imports are constructed.
+// It grants no adoption or input: restore joins it and verifies the real live
+// provider, source identity, tree and metadata before any PE initializer.
+const CHILD_STATE_TOKEN = getArg('child-state-token', '');
+const CHILD_READONLY_CONTEXT = getArg('child-readonly-context', '');
+const SPAWNED_CHILD = hasFlag('spawned-child');
+let inheritedReadonly=null,readonlyPreparation=null;
+if (CHILD_READONLY_CONTEXT) {
+  if (!SPAWNED_CHILD || typeof process.send !== 'function' || !CHILD_STATE_TOKEN)
+    throw new Error('readonly media context requires a native child launch');
+  inheritedReadonly=JSON.parse(fs.readFileSync(CHILD_READONLY_CONTEXT,'utf8'));
+  if (inheritedReadonly.version!==1 || inheritedReadonly.token!==CHILD_STATE_TOKEN)
+    throw new Error('readonly media context launch identity mismatch');
+  readonlyPreparation=require('../lib/readonly-media-source-pin').prepareRestore(inheritedReadonly.contexts);
+}
+
 const { execSync } = require('child_process');
 const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
 const { createHostImports } = require('../lib/host-imports');
@@ -117,50 +177,6 @@ async function decodeMountedImage(hostPath) {
     0, 0, source.width, source.height).data);
   return { width: source.width, height: source.height, rgba };
 }
-// Parse args (need these before autoBuild)
-const args = process.argv.slice(2);
-// WINE_RUN_EXTRA_ARGS='--lazy-ranges=5 ...': appended to every run.js command
-// line, so an existing gameplay test that spawns run.js becomes, unedited, the
-// same route under an extra flag (the lazy-loading audit runs each one this
-// way). Whitespace-separated; a flag given twice resolves as getArg reads it.
-if (process.env.WINE_RUN_EXTRA_ARGS) {
-  const extra = process.env.WINE_RUN_EXTRA_ARGS.split(/\s+/).filter(Boolean);
-  args.push(...extra);
-  process.argv.push(...extra);
-  console.error(`[run] WINE_RUN_EXTRA_ARGS: ${extra.join(' ')}`);
-}
-// --tee=PATH: also write everything this process prints (stdout and stderr)
-// to PATH. With WINE_RUN_EXTRA_ARGS it keeps the log of a run a test spawned
-// and only parsed, e.g. for tools/io-range-census.js over its --trace-fs.
-{
-  const tee = args.find(value => value.startsWith('--tee='));
-  if (tee) {
-    const fd = fs.openSync(tee.slice('--tee='.length), 'w');
-    for (const stream of [process.stdout, process.stderr]) {
-      const write = stream.write.bind(stream);
-      stream.write = (chunk, encoding, callback) => {
-        try { fs.writeSync(fd, typeof chunk === 'string' ? chunk : Buffer.from(chunk)); } catch (_) {}
-        return write(chunk, encoding, callback);
-      };
-    }
-  }
-}
-const getArg = (name, def) => {
-  const prefix = `--${name}=`;
-  const arg = args.find(value => value.startsWith(prefix));
-  return arg ? arg.slice(prefix.length) : def;
-};
-const getArgs = name => {
-  const prefix = `--${name}=`;
-  return args.filter(value => value.startsWith(prefix))
-    .flatMap(value => value.slice(prefix.length).split(','))
-    .map(value => value.trim()).filter(Boolean);
-};
-const hasFlag = name => args.includes(`--${name}`);
-// Was `--name=...` written at all? Distinct from getArg(), which cannot tell an
-// absent option from one that was given its default value.
-const argHas = name => args.some(a => a.startsWith(`--${name}=`));
-
 // WINE_ASSEMBLY_WASM=PATH pins one prebuilt artifact for this process and every
 // test that spawns it. Several tests already read that variable and forward it
 // as `--no-build --wasm=`; reading it here means a test that only passes
@@ -508,8 +524,6 @@ const REG_EXPORT = getArg('reg-export', '');
 // Private per-launch completion handshake for spawnVfsChild, independent of
 // guest/host exit codes and the earlier child-exit IPC notification.
 const CHILD_STATE_COMPLETION = getArg('child-state-completion', '');
-const CHILD_STATE_TOKEN = getArg('child-state-token', '');
-const CHILD_READONLY_CONTEXT = getArg('child-readonly-context', '');
 // --import-saves=FILE / --export-saves=FILE: the same state as a *save bundle*
 // (lib/save-bundle.js) — the app's persistFiles matches plus the registry/INI
 // store, in one zip. --reg-export carries only the second half, so a game whose
@@ -572,7 +586,6 @@ const PIPE_CHILD_ARGS = (getArg('pipe-child-args', '') || '').split(' ').filter(
 const SPAWN_PROCESSES_FLAG = hasFlag('spawn-processes');
 // --spawned-child: this process is such a child (set by the parent, not by
 // hand): report the guest's exit code to the parent over IPC.
-const SPAWNED_CHILD = hasFlag('spawned-child');
 // Child IPC also covers redirected-pipe children and externally forked callers.
 // Once a launch is attempted, pending children/siblings cannot be enumerated
 // by this process-local ThreadManager. Keep failure conservative until exit.
@@ -1719,6 +1732,7 @@ function buildHandlerNameList() {
 
 async function main() {
   return withCliFailureCleanup(async onFailure => {
+  onFailure(()=>readonlyPreparation?.cancel());
   // Fail closed before compilation, PE loading or any VFS mutation.
   const verifiedAssetFiles = ASSET_ENTRY && ASSET_ENTRY.localManifestIntegrity
     ? getAssetFiles(ASSET_ENTRY) : null;
@@ -6043,12 +6057,7 @@ async function main() {
   };
   mountExplicitVfsFiles();
   if (CHILD_READONLY_CONTEXT) {
-    if (!SPAWNED_CHILD || typeof process.send !== 'function' || !CHILD_STATE_TOKEN)
-      throw new Error('readonly media context requires a native child launch');
-    const inherited = JSON.parse(fs.readFileSync(CHILD_READONLY_CONTEXT, 'utf8'));
-    if (inherited.version !== 1 || inherited.token !== CHILD_STATE_TOKEN)
-      throw new Error('readonly media context launch identity mismatch');
-    const media = await require('../lib/readonly-media-context').restore(ctx.vfs, inherited.contexts);
+    const media = await require('../lib/readonly-media-context').restore(ctx.vfs, inheritedReadonly.contexts,readonlyPreparation);
     process.on('exit', () => { for (const source of media) require('../lib/media-cli').closeMedia(source); });
     // Native DLL initializers may read profiles relative to the inherited CD.
     // Validate the real directory now, before invoking any PE DllMain.
